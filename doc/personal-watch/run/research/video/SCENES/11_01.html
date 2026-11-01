@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>《论文两分钟》分镜脚本 · 2026-11-01 · AI 脑子里的「星期环」，其实是七根辐条</title>
+<style>
+  :root { --primary:#1f3a93; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700; --kp:#2e8b57;
+          --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+         color:var(--text); background:var(--bg); line-height:1.7; font-size:15px; }
+  .wrap { max-width:1100px; margin:0 auto; padding:32px 20px 80px; }
+  header.hero { background:linear-gradient(135deg,#153e75 0%,#2e8b57 100%); color:#fff; border-radius:14px;
+                padding:30px 32px; margin-bottom:22px; box-shadow:0 8px 24px rgba(21,62,117,.22); }
+  header.hero h1 { margin:0 0 6px; font-size:23px; letter-spacing:.3px; }
+  header.hero .sub { font-size:15px; opacity:.95; }
+  header.hero .meta { margin-top:14px; font-size:13px; opacity:.92; display:flex; flex-wrap:wrap; gap:8px 18px; }
+  header.hero .meta span { background:rgba(255,255,255,.16); border-radius:999px; padding:2px 12px; }
+  .disc { margin-top:14px; font-size:12.5px; background:rgba(0,0,0,.20); border-radius:8px; padding:8px 12px; opacity:.96; }
+  h2.sec { font-size:19px; margin:34px 0 12px; padding-bottom:8px; border-bottom:2px solid var(--border); }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:18px 22px; margin:16px 0;
+          box-shadow:0 1px 3px rgba(27,31,36,.06); }
+  .row { display:flex; gap:10px; margin:7px 0; font-size:14px; }
+  .row .k { flex:0 0 116px; color:var(--muted); font-weight:600; }
+  .row .v { flex:1; }
+  .orig { font-style:italic; color:#153e75; }
+  code { background:#eef1f4; border:1px solid #e1e4e8; border-radius:5px; padding:1px 6px;
+         font-family:Consolas,Menlo,monospace; font-size:12.5px; color:#153e75; }
+  table { border-collapse:collapse; width:100%; margin:12px 0; font-size:13px; background:var(--card); }
+  th,td { border:1px solid var(--border); padding:8px 10px; text-align:left; vertical-align:top; }
+  th { background:#eef3fb; color:#153e75; font-weight:600; }
+  tr:nth-child(even) td { background:#fafbfc; }
+  .shot-no { display:inline-flex; align-items:center; justify-content:center; width:24px; height:24px;
+             border-radius:50%; background:var(--kp); color:#fff; font-size:13px; font-weight:700; }
+  .act { font-weight:700; color:#153e75; }
+  .vo { color:#0b3d6e; }
+  .note { background:#fff8ef; border:1px solid #f0d9b5; border-left:4px solid var(--warn); border-radius:8px;
+          padding:10px 16px; font-size:13px; color:#6a4a00; }
+  .ok-box { background:#f0fff4; border:1px solid #b7f0c5; border-left:4px solid var(--ok); border-radius:8px;
+            padding:10px 16px; font-size:13px; color:#0d5c22; }
+  .kp-box { background:#f2fbf5; border:1px solid #bfe6cd; border-left:4px solid var(--kp); border-radius:8px;
+            padding:10px 16px; font-size:13px; }
+  footer { margin-top:44px; padding-top:16px; border-top:1px solid var(--border); color:var(--muted); font-size:12.5px; }
+  ul,ol { margin:6px 0; padding-left:20px; } li { margin:3px 0; }
+</style>
+</head>
+
+<body>
+<div class="wrap">
+<header class="hero">
+  <h1>🎬《论文两分钟》分镜脚本 · 2026-11-01</h1>
+  <div class="sub">今日 TOP-1：<b>AI 脑子里的「星期环」，其实是七根辐条</b> · 论文解读（非官方 · 非结论）· 总时长 <b>120s</b> · 口播 <b>396 字</b>（纯汉字；逐镜含标点 <b>468</b> 字符）</div>
+  <div class="meta">
+    <span>📄 Spokes, not a Ring: Revisiting the Weekday Manifold in Language Models</span>
+    <span>🆔 arXiv:2610.37796</span>
+    <span>🏫 Pivotal Research（3 位署名）</span>
+    <span>🗓 首次提交 2026-10-27（cs.LG · 23 页）</span>
+  </div>
+  <div class="disc">⚠️ 本页为<b>分镜脚本（V2），不是成片</b>；V3（TTS / 文生图 / 剪辑）待用户确认工具链。所有数字<b>作者自报、本线未复现</b>；<b>论文解读 · 非官方 · 非结论</b>。</div>
+</header>
+
+<h2 class="sec">📄 选题卡（为什么选它）</h2>
+<div class="card">
+  <div class="row"><div class="k">论文原题</div><div class="v"><span class="orig">Spokes, not a Ring: Revisiting the Weekday Manifold in Language Models</span></div></div>
+  <div class="row"><div class="k">作者 / 机构</div><div class="v">Diksha Gupta, Rieke Fruengel, Stefan Heimersheim（<b>3 位署名</b>；据 PDF 首页：前两位标注 <b>Pivotal Research</b>，第三位首页未单列机构）</div></div>
+  <div class="row"><div class="k">日期 / 规格</div><div class="v">首次提交 <b>2026-10-27</b>（<code>published=2026-10-27T18:15:59Z</code>，无 v2）· 分类 <code>cs.LG</code> · PDF 实测 <b>23 页</b> / 57,986 字符（去空白）</div></div>
+  <div class="row"><div class="k">链接</div><div class="v"><a href="https://arxiv.org/abs/2610.37796">https://arxiv.org/abs/2610.37796</a> ｜ 代码 <code>github.com/dikshagup/spokes-not-a-ring</code>（作者声明）</div></div>
+  <div class="row"><div class="k">一句话</div><div class="v">语言模型的激活空间里，「星期几」确实排成一个<b>圆环</b>；但作者用<b>转向（steering）+ 敏感度（Jacobian）+ 自然文本投影</b>三套实验证明：环上真正稳定的只有 <b>7 个以星期为中心的低敏感「辐条」</b>，两个星期之间的弧段<b>并不表示「星期几和星期几之间」</b> —— <b>几何上是个环，语义上只有七个点</b>。</div></div>
+  <div class="reason kp-box" style="margin-top:12px;">
+    <b>为什么选它做《论文两分钟》</b>（四问 · 本线判断）：
+    <ol>
+      <li><b>大众能懂 + 有画面</b>：「AI 脑子里的星期几是一个圆环」本身就是好画面；而这篇的结论可以一帧讲完 —— <b>圆环上只有七根辐条，中间是空的</b>，不需要任何公式（核心只有「低敏感区」这一个概念）。</li>
+      <li><b>反直觉、有钩子</b>：先给「漂亮的圆环」，再翻成「其实是七个台阶」；第二层反转是「晚期层看起来平滑，不代表表征连续」，第三层是「时刻根本不在环上」。</li>
+      <li><b>可讲清</b>：三个实验各自对应一个可画的镜头（沿环推 → 台阶；极坐标敏感度 → 七根辐条；时刻 steering → 环上不动、环外挪一两小时）；不必搬全篇 23 页。</li>
+      <li><b>有真实来源、数字干净</b>：<code>arXiv:2610.37796</code> + 可上屏的对比（<b>≤6.30° vs 44.33°–59.81°</b>、<b>&lt;0.02h vs −1.8h / +1.1h</b>、<b>0.65 → 0.23 环半径</b>、<b>49,678 条片段</b>），均出自原文摘要 / 正文与 PDF 实测。</li>
+    </ol>
+    ⚠️ 若担心「可解释性太小众」：本片真正的看点是<b>「几何结构 ≠ 连续语义」</b> —— 这条判断对所有「沿流形转向 / 编辑模型」的说法都成立，与星期几本身无关。
+  </div>
+</div>
+
+<h2 class="sec">🎞 分镜表（5 镜 · 120s）</h2>
+<table>
+  <tr><th style="width:52px;">镜号</th><th style="width:96px;">时间轴</th><th style="width:96px;">段落</th><th style="width:30%;">口播文案</th><th style="width:26%;">画面（自绘 / 自生成）</th><th style="width:14%;">屏幕文字</th><th>音效 / BGM</th></tr>
+
+  <tr>
+    <td><span class="shot-no">1</span></td>
+    <td>0–10s（10s）</td>
+    <td class="act">钩子</td>
+    <td class="vo">问 AI：今天星期三，三天后是星期几？它答得出。可你能想到吗 —— 它脑子里，星期几是个圆环。</td>
+    <td>竖版：<b>侧脸剪影</b>看着一块半透明屏幕，屏幕上先浮出一行「星期三 + 3 = ？」；答案「星期六」弹出后，屏幕<b>从答案处化开</b>成一个由七个光点组成的圆环（星期一…星期日按顺序排一圈）。光环<b>缓慢自转</b>。</td>
+    <td>「星期三 + 3 = ？」→「星期六」<br>「它脑子里：一个<b>圆环</b>」</td>
+    <td>键盘「嗒」；光环成型时一声轻「嗡」；BGM 悬疑，72 BPM。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">2</span></td>
+    <td>10–30s（20s）</td>
+    <td class="act">问题</td>
+    <td class="vo">过去两年，研究者在模型激活里找到了这个环：七个星期按日历顺序绕成一圈，于是很多人认为沿环走就是从一天平滑走到下一天。这篇说：不一定，环上真正结实的只有七个点。</td>
+    <td>①左侧：论文里常见的<b>圆环示意图（自绘重画，不用原图）</b>，七点均匀分布在圆周上，一条光点沿环<b>匀速滑行</b>，环内浮出小字「平滑移动 = 连续变化？」；②画面切到「沿环滑行」的<b>失败演示</b>：光点滑到两个星期中间，环上出现一片<b>灰色空白区</b>（标注「这里没有语义？」）；③右下角浮出一张<b>七根辐条的草图</b>，一闪而过（预告结论）。</td>
+    <td>「沿环走 = 从一天滑到下一天？」<br>「环上真正结实的只有七个点」</td>
+    <td>滑行「唰——」；空白区出现时 BGM 断一拍（留白）；辐条草图「啪」。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">3</span></td>
+    <td>30–80s（50s）</td>
+    <td class="act">方法</td>
+    <td class="vo">作者用三招验。第一，沿环在浅层注入方向，到深层读输出变化 —— 若表征连续，变化该均匀。第二，在环周围铺极坐标网格，量每处轻推一下、深层被带动多少。第三，查环上「中间」装了什么：一天里的时刻、两个日期的不确定、文本里的星期词。主实验用 Llama 三点一八十亿，另两模型复核。</td>
+    <td>①<b>实验一</b>：模型剖面图（自绘层叠方块 1…31），一只箭头在<b>第 2 层</b>沿环注入方向，另一头在第 28 层读出；右侧曲线二分屏 —— 「星期附近」曲线<b>几乎水平</b>，「弧段」曲线<b>陡升</b>。②<b>实验二</b>：极坐标网格铺满画面（自绘），逐格量「轻推一下，深层被带动多少」，冷色 = 推不动、暖色 = 一推就动；网格上逐渐<b>浮现七条放射状暗带</b>（辐条）。③<b>实验三</b>：三张题卡并排 —— 「一天里的时刻」「两个日期的不确定」「真实网络文本」，每张卡上一条小动画：时刻词只让光点在环平面<b>轻微偏一点</b>；不确定时两个星期的光点<b>沿各自辐条向内缩</b>；真实文本里七个点<b>整体平移</b>（不旋转）。④底部一行小字列出模型：Llama-3.1-8B（主）/ Mistral-7B-v0.1 / GPT-2 XL，以及「FineWeb 49,678 条 16-token 片段」。</td>
+    <td>「① 沿环推：浅层注入，深层读」<br>「② 敏感度图：谁一推就动」<br>「③ 中间位置装了什么？」<br>「Llama-3.1-8B · Mistral-7B · GPT-2 XL」</td>
+    <td>层箭头「咔」；网格成形「沙沙」；辐条浮现低频「嗡」；题卡翻页「啪」×3。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">4</span></td>
+    <td>80–105s（25s）</td>
+    <td class="act">结果</td>
+    <td class="vo">结果是台阶：星期附近几乎推不动，两星期之间的弧段一推就跳；敏感度图上，七个低敏感区像七根辐条向外伸出。时刻也不在环上：时刻词只让表示在环平面里挪了不到六度，相邻星期之间却隔着四五十度；沿环推，预测的小时几乎不动，换个方向同样力度推，却能动一两个小时。真实文本主要把七个星期整体平移，而不是转进中间。</td>
+    <td>①<b>台阶动画</b>：光点沿环走一圈，累计位移曲线画成<b>七级台阶</b>（每个星期一级，弧段处陡升）；②切<b>敏感度极坐标图</b>（自绘示意），七条辐条高亮、弧段变暗；③<b>数字对照卡</b>三行依次亮起：<b>≤6.30° vs 44.33°–59.81°</b>（时刻词挪的角度 vs 星期之间的距离）、<b>&lt;0.02h vs −1.8h / +1.1h</b>（沿环推 vs 换方向推）、<b>0.65 → 0.23 环半径</b>（自然文本平移前 → 减去整体平移后）。</td>
+    <td>「台阶，不是斜坡」<br>「≤6.30° vs 44.33°–59.81°」<br>「&lt;0.02h vs −1.8h / +1.1h」<br>「0.65 → 0.23 环半径」</td>
+    <td>台阶「咚」×7（音高上行）；三行数字依次「滴」；BGM 抬 2 dB。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">5</span></td>
+    <td>105–120s（15s）</td>
+    <td class="act">意义 / 展望</td>
+    <td class="vo">所以，几何上是环，语义上只有七个点。下次看到「沿流形平滑转向」，先问：中间那些位置真有含义吗？论文链接在简介。</td>
+    <td>①镜 1 的圆环<b>收缩</b>成七根辐条，环上的灰弧彻底消失；②屏幕浮出一句提问：「沿流形「平滑」转向 —— 中间那些位置，真的有含义吗？」③定格片尾卡：<b>论文原题（英文照抄）</b> + <b>arXiv:2610.37796</b> + 「<b>论文解读 · 非官方 · 非结论</b>」+ 「数字作者自报 · 本线未复现」。</td>
+    <td>「几何上是环，语义上是七个点」<br>「沿流形转向：中间有含义吗？」</td>
+    <td>BGM 收尾；片尾单音「叮」后留 1s 静音。</td>
+  </tr>
+</table>
+
+<h2 class="sec">📝 口播全文（可直接念 · 396 字）</h2>
+<div class="card">
+  <p class="vo">问 AI：今天星期三，三天后是星期几？它答得出。可你能想到吗 —— 它脑子里，星期几是个圆环。</p>
+  <p class="vo">过去两年，研究者在模型激活里找到了这个环：七个星期按日历顺序绕成一圈，于是很多人认为沿环走就是从一天平滑走到下一天。这篇说：不一定，环上真正结实的只有七个点。</p>
+  <p class="vo">作者用三招验。第一，沿环在浅层注入方向，到深层读输出变化 —— 若表征连续，变化该均匀。第二，在环周围铺极坐标网格，量每处轻推一下、深层被带动多少。第三，查环上「中间」装了什么：一天里的时刻、两个日期的不确定、文本里的星期词。主实验用 Llama 三点一八十亿，另两模型复核。</p>
+  <p class="vo">结果是台阶：星期附近几乎推不动，两星期之间的弧段一推就跳；敏感度图上，七个低敏感区像七根辐条向外伸出。时刻也不在环上：时刻词只让表示在环平面里挪了不到六度，相邻星期之间却隔着四五十度；沿环推，预测的小时几乎不动，换个方向同样力度推，却能动一两个小时。真实文本主要把七个星期整体平移，而不是转进中间。</p>
+  <p class="vo">所以，几何上是环，语义上只有七个点。下次看到「沿流形平滑转向」，先问：中间那些位置真有含义吗？论文链接在简介。</p>
+</div>
+
+<h2 class="sec">🛠 制作规范（可执行）</h2>
+<ul>
+  <li><b>画面</b>：全部<b>矢量自绘 / 文生图自生成</b>；🚫 不使用论文 Figure 与表格截图（圆环、极坐标网格、辐条一律<b>按论文结论重画示意图</b>，并在角落标「示意」）。七个星期的光点用<b>统一圆形</b>，不画人脸、不用真实截图。</li>
+  <li><b>数字上屏规则</b>：每个角度 / 小时 / 半径数字第一次出现时，字幕必须带「<b>作者自报 · 本线未复现</b>」小字；口播把 ≤6.30° 念「不到六度」、44.33°–59.81° 念「四五十度」、&lt;0.02h 念「几乎不动」、−1.8h/+1.1h 念「一两个小时」（字幕仍写精确值）。</li>
+  <li><b>不能混的口径</b>：① 「台阶状」是<b>沿环 steering 的行为/残差响应曲线</b>，<b>不是</b>「模型回答准确率」；② 「晚期层看起来平滑」是<b>层 28 附近</b>的现象，<b>不能</b>反推「表征连续」；③ <b>≤6.30°</b> 是「时刻词在环平面内造成的角位移」，<b>44.33°–59.81°</b> 是「相邻星期质心的夹角」，<b>两者不是同一量纲下的误差对比</b>，字幕必须标清「vs 星期之间的距离」；④ <b>0.65 → 0.23</b> 是<b>段内 RMS 半径（以环半径为单位）</b>在「减去每条上下文七变体均值」前后的变化，<b>不是</b>准确率。</li>
+  <li><b>术语处理</b>：<code>manifold</code> 念「流形 / 表征空间里的面」；<code>steering</code> 念「转向（往某个方向推）」；<code>Jacobian</code> 念「敏感度」（不念英文）；<code>spoke</code> 念「辐条」；<code>ring</code> 念「圆环」。首次出现「激活」时加一句「就是模型内部的数值状态」。</li>
+  <li><b>节奏</b>：单镜不超过 50s（方法镜）；每 8–10s 必须有画面变化；BGM 在方法段低音量、结果段抬 2 dB；镜 5 收在静音上。</li>
+  <li><b>比例 / 时长</b>：竖版 1080×1920（抖音）与横版 1920×1080（B站）各导一版；总时长严格 120s（±1s）；字幕安全区上下各留 12%。</li>
+  <li><b>口播字数核对</b>：本页纯汉字 <b>396</b> 字、逐镜含标点 <b>468</b> 字符；按 <b>200 字/分 ≈ 119s</b>，留 <b>1s</b> 给画面停顿。</li>
+  <li><b>TTS（V3 才做）</b>：中性科普音色，语速 190–200 字/分；数字前后各留 80ms 停顿；「Llama 三点一，八十亿」按中文读，不读英文全名。</li>
+</ul>
+
+<h2 class="sec">⚖️ 合规与边界（发布前必读）</h2>
+<div class="note">
+  <ol>
+    <li><b>标明「论文解读」</b>：片头或片尾固定一行「论文解读 · 非官方 · 非结论」，简介首行放 arXiv 链接（<code>https://arxiv.org/abs/2610.37796</code>）。</li>
+    <li><b>不夸大</b>：禁用「可解释性被推翻 / 圆环是假的 / 模型没有连续概念」等表述；原文只支持「<b>在星期几这个例子上</b>，环上七个星期位置是低敏感区（辐条），中间弧段的低敏感结构并不对应有含义的中间值；时刻/不确定性/自然文本都不占据中间区」。作者在 §5.2 明确写「<b>这不意味着圆环几何是虚假的或无意义的</b>」。</li>
+    <li><b>不编造数据</b>：本片所有数字均出自摘要与正文（<code>≤6.30°</code> / <code>44.33°–59.81°</code> / <code>&lt;0.02h</code> / <code>−1.8h</code> / <code>+1.1h</code> / <code>0.65</code> / <code>0.23</code> / <code>49,678</code> / <code>574,217</code> / <code>32,799</code>），不得二次加工成新数字。</li>
+    <li><b>不盗图</b>：画面全部自绘 / 自生成；<b>不使用论文中的任何 Figure、表格截图</b>（圆环与敏感度图均为「按结论重画的示意图」）。</li>
+    <li><b>口径隔离</b>：本片属「目的 2 · 科普」，<b>不</b>写成「与 BaiZe / ZhuLong 相关」的借鉴结论；当日借鉴版解读见 <code>research/daily/2026-11-01.html</code> 早 3 篇。</li>
+    <li><b>未复现声明</b>：本片数字<b>作者自报、本线未复现</b>；PDF 完整性 = 结构校验通过（<code>%PDF-</code> + <code>%%EOF</code> + <code>pdfinfo</code> / <code>pdftotext</code> 可解析 + 字节 == <code>Content-Range</code> total；分段 Range 续传拼接，<b>sha256 与 CDN <code>etag</code> 未对齐</b>，见当日日报附录 C）。</li>
+    <li><b>栏目名</b>：《两分钟论文》为已有知名频道名，<b>发布前请用户确认</b>是否沿用或改名。</li>
+  </ol>
+</div>
+
+<footer>
+  <p>research 线 · <code>research/video/SCENES/11_01.html</code> ｜ TOP-1 = <i>Spokes, not a Ring: Revisiting the Weekday Manifold in Language Models</i>（<code>arXiv:2610.37796</code>）· 5 镜 / 120s / 口播 396 汉字（逐镜 468 字符） ｜ 数据源：当日 <code>research/daily/2026-11-01.html</code> 5 篇（早 3 借鉴 + 晚 2 科普）。</p>
+  <p>🎯 挑选口径 = 目的 2「科普」（大众看得懂 + 有传播力），<b>非</b>「借鉴」口径。⚠️ V3（成片：TTS / 文生图 / 剪辑）待用户确认工具链。本页自包含（内联 CSS、零外链资源、零 <code>&lt;script&gt;</code>），离线双击可开。</p>
+</footer>
+</div>
+</body>
+</html>

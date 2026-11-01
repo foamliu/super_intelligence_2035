@@ -1,0 +1,77 @@
+[论文日报] 2026-11-01（周日）精选 5 篇 · 当日 5/5 收口（早 3「借鉴」+ 晚 2「科普」）
+
+数据源：arXiv（export.arxiv.org API + id_list 官方元数据复核）
+本轮唤醒：2026-11-01 18:00 CST（PM 轮）；今日 06:00 轮已出早 3 篇
+批次状态：⚠️ 公告批次仍未刷新 —— 仍 2026-10-29（cat:cs.CL 探针 totalResults=124184、
+         最新 published=2026-10-29T17:59:53Z、广度 640516；PM 4 条独立复核：
+         submittedDate:[202610300000 TO 202611012359] 的 cs.CL 子区间与全库均为 0）。
+         周日美东深夜才公告 ⇒ 5 篇均取自 2026-10-30 PM 轮入账的 217 条候选池
+         （已入 SEEN，从未进过任何日报）；--fetch --seen 两轮均 kept 0 / dropped 600。
+         ⚠️ 时效：2610.37796 ≈111.7h（超 72h），按 §0.1 周末例外 ≤120h 收取，已在日报标注。
+
+━━ 一、早报 3 篇「借鉴」（与 BaiZe / ZhuLong 在研工作相关）━━
+
+1) Multi-View MoE: Letting Every Router Shape Expert Computation
+   arXiv:2610.40577 ｜ cs.CL ｜ ERNIE Team, Baidu（5 位署名）｜ 2026-10-29 ｜ 20 页
+   一句话：单路由排序与「专家真实效用」排序在中/深层明显不一致；改成多个 sigmoid 路由头
+   汇总选专家，并用路由相对分数混合多个 latent view 作为专家输入。
+   关键数：24 层 10B-A1B / 708B tokens，九任务均值 33.07 → 34.25（+1.18），参数只 +0.19%，
+   激活专家数 / 专家 FLOPs / all-to-all 通信量不变。
+   可用在哪一步：BaiZe 的 MoE 路由——「用稠密评估检验路由质量」可直接做成分析脚本；
+   先只加 Multi-Router 做等 token / 等并行配置的对照。
+   ⚠️ 边界：仅 10B-A1B 单一体量（2B 未验证）、无端到端 serving 实测、作者自报未复现。
+   附件：2610.40577.pdf（728,793 B / 20 页）
+
+2) Raincheck: Deferred Multimodal Prefill for Efficient Multi-Turn MLLM Inference
+   arXiv:2610.39562 ｜ cs.CL ｜ 浙大 / 阿里 / UCAS / CMU / Edinburgh / Tsinghua / WHU（13 位）｜ 2026-10-29 ｜ 42 页
+   一句话：多轮多模态里先只对 30% token 做 prefill，未选中的在解码阶段按源顺序渐进补 prefill
+   （attention 可见性控制 + 仿射状态映射），把「暂时不看」变成「稍后补看」。
+   关键数：找回硬剪枝损失质量 77.7% / 60.4%；MultiVerse 首轮 TTFT 相对全量 prefill −24.1% / −17.9%，
+   TPOT 仅 +0.13% / +0.47%（Qwen3-VL-8B / Qwen3.5-9B）。
+   可用在哪一步：ZhuLong 多轮长上下文（日志 / 代码库 / 报错栈）的 prefill 成本结构；
+   「仿射状态映射」对 Mamba-2×attention 混合架构的状态更新尤可直接比对。
+   ⚠️ 边界：单卡 H20-3e、TP=1、batch=1；相对硬剪枝的 TTFT 差值 CI 含 0；并发批处理仍是开放问题。
+   附件：2610.39562.pdf（3,375,541 B / 42 页）
+
+3) A Case Study of a Multi-Agent Kernel-Optimization Loop That Learns a New AI Accelerator
+   arXiv:2610.38329 ｜ cs.LG ｜ Fluidstack（1 位署名）｜ 2026-10-28 ｜ 7 页
+   一句话：在陌生、文档稀疏的 FuriosaAI RNGD NPU 上，让 agent 循环自建目标知识 + Design Tree
+   搜索 + 廉价筛选后真机复测，12 天（283h）优化 3 个 Gemma-4-12B 解码 kernel。
+   关键数：相对官方基线几何平均 9.293×，各在「仅搬权重周期」1.25× 内。
+   可用在哪一步：ZhuLong 的「陌生工具链 / 编译器」场景——先建知识再搜索、设备时间昂贵时先廉价筛。
+   ⚠️ 边界：单案例（1 芯片 / 1 比赛 / 1 run）、无消融、验收假阳性高于名义 5%。
+   附件：2610.38329.pdf（362,440 B / 7 页）
+
+━━ 二、晚报 2 篇「科普」（本日科普 TOP-1 = 第 4 篇）━━
+
+4) Spokes, not a Ring: Revisiting the Weekday Manifold in Language Models（本日科普 TOP-1）
+   arXiv:2610.37796 ｜ cs.LG ｜ Pivotal Research（3 位署名）｜ 2026-10-27 ｜ 23 页
+   一句话：语言模型里的「星期环」只有 7 个位置是结实的（辐条），弧段并不表示「两天之间」；
+   几何上是个环，语义上只有七个点。
+   关键数：沿环 steering（层 2 → 层 28）呈台阶状；Jacobian 敏感度图有七个以星期为中心的
+   低敏感辐条；时刻词在环平面内只挪 ≤6.30°（相邻星期质心相隔 44.33°–59.81°）；
+   沿环推预测小时 <0.02h，平面外同范数推 −1.8h / +1.1h；49,678 条 FineWeb 片段显示
+   上下文主要整体平移（段内 RMS 半径 0.65 → 0.23 环半径）。
+   为什么值得读：它给「沿表征流形平滑转向」这类说法加了一个必须回答的前提——中间位置有语义吗。
+   ⚠️ 边界：只测「星期」这种本来就离散的概念；作者 §5.2 明确「不意味着圆环几何虚假」；
+   敏感度能否指认离散状态仍待验证；作者自报未复现。
+   附件：2610.37796.pdf（3,949,095 B / 23 页）
+
+5) Pre-Crime for Agents, at the Last Second: Probing When a Recruited Agent Gives In
+   arXiv:2610.40588 ｜ cs.AI ｜ Leonidas Raghav（Independent，1 位署名）｜ 2026-10-29 ｜ 49 页
+   一句话：在 agent 落笔之前读激活做线性探针，预判它是否即将被同伴「劝服」泄密。
+   关键数：Qwen3-32B held-out，阈值只标记 5% 良性调用时抓住 82% 泄密调用；
+   同标记率零样本决策模型监控器 26%；gpt-oss-20b 推理激活 AUROC 0.91。
+   为什么值得读：agent 安全里「输出过滤只能查已写出的内容」，这篇把预警提前到生成之前。
+   ⚠️ 边界（作者自己写清）：同数据训练的 bag-of-words 分类器接近 ⇒ 增益主要来自有标签训练；
+   探针也会标「被允许的披露」；预警短程，一见警报就停机会停掉多数良性 episode。
+   附件：2610.40588.pdf（761,584 B / 49 页）
+
+━━ 附件与台账 ━━
+· 本封附件 5 个 PDF，合计 9,177,453 B ≈ 8.75 MiB（≤ 20 MB，未分包）。
+· 本地 PDF 目录 research/pdf/2026-11-01/（pdf/ 不入 git）；校验 = %PDF- + %%EOF +
+  pdfinfo / pdftotext 可解析 + 字节 == Content-Range total（sha256 与 CDN etag 未对齐，如实记录）。
+· 当日日报：research/daily/2026-11-01.html（5/5，含「晚报变更说明（AM → PM）」）
+· 当日分镜：research/video/SCENES/11_01.html（TOP-1 = 第 4 篇；5 镜 / 120s / 口播 396 字）
+· 台账：收录 286 / 候选 4,561 / RSS 补充 507；papers.jsonl 286
+· 免责：本日报为「推荐 / 待读线索」，非结论；数字均作者自报，本线未复现。

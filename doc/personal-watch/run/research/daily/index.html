@@ -40,11 +40,11 @@
   <tr><th>日期</th><th>标识</th><th>篇数</th><th>日报</th><th>备注</th></tr>
   <tr>
     <td>2026-11-01</td>
-    <td>早报（AM · 3/5）</td>
-    <td>3 / 5</td>
+    <td>晚报（PM · 5/5 · 当日收口）</td>
+    <td>5 / 5</td>
     <td><a href="2026-11-01.html">2026-11-01.html</a></td>
-    <td><b>☀️ 早报 3 篇「借鉴」</b>（AM 轮 · 06:0x CST，周日）：<b>公告批次仍未刷新</b>（仍 <code>2026-10-29</code>：<code>cat:cs.CL</code> 探针 <code>totalResults=124184</code>、最新 <code>published=2026-10-29T17:59:53Z</code>、广度 <code>640516</code>，与昨日两轮逐条相同；独立复核 <code>submittedDate:[202610300000 TO 202611012359]</code> 全库 + <code>cs.CL</code> 子区间<b>均为 0</b> ⇒ 上游无 10-30 之后新公告），<code>--fetch --seen</code> 15/15 200（<b>全 <code>attempts=1</code></b>）、<b><code>kept 0</code></b> / <code>dropped 600</code>（558 已入 SEEN + 42 stale，最久 693.3h；<code>window_mode=weekend_batch</code> 120h）⇒ 3 篇取自 r122 的 217 条候选池 + <code>id_list</code> 10 条短名单：<code>2610.40577</code> <b>Multi-View MoE</b>（百度 ERNIE Team；多路由 sigmoid 汇总 + 用路由相对分数混合 latent views 作专家输入；24 层 <b>10B-A1B</b> / <b>708B tokens</b> 上九任务 <b>33.07 → 34.25（+1.18）</b>，参数仅 +<b>0.19%</b>、激活 FLOPs 与 all-to-all 不变）/ <code>2610.39562</code> <b>Raincheck</b>（浙大 + 阿里等 13 位；多轮多模态把剪掉的 token 延后到解码期补 prefill，30% 初始保留下找回硬剪枝损失质量的 <b>77.7% / 60.4%</b>，MultiVerse 首轮 TTFT 相对全量 prefill <b>−24.1% / −17.9%</b>、TPOT +0.13% / +0.47%；⚠️ 单卡 H20、TP=1、batch=1）/ <code>2610.38329</code> <b>Multi-Agent Kernel-Optimization Loop</b>（Fluidstack；在 FuriosaAI RNGD NPU + 新 Rust DSL 上自建目标知识、<b>12 天 / 283 h</b> 优化 3 个 Gemma-4-12B 解码 kernel，几何平均 <b>9.293×</b>，每个都在「仅搬权重周期」1.25× 内；⚠️ 单案例、无消融）。PDF <b>3/3</b>（20 / 42 / 7 页；合计 <b>4,466,774 B ≈ 4.26 MiB</b>；⚠️ 三篇 sha256 与 <code>etag</code> 均不一致 ⇒ 只声称结构校验 + 字节数对齐）；台账 <b>收录 284 / 候选 4,563 / RSS 补充 507</b>（5,612 行）、<code>papers.jsonl</code> <b>284</b>。⚠️ 如实记录：<code>2610.38329</code> 距本轮 <b>≈87.5h（超 72h）</b>，按 §0.1 周末例外（≤120h）收、并在页内标注；另两篇 ≈52.2h / ≈62.0h 在 72h 内。PM 待办：补 2 篇「科普」收口 5/5 + 分镜 <code>SCENES/11_01.html</code> + 日报邮件。</td>
-  </tr>
+    <td><b>☀️ 早报 3 篇「借鉴」</b>（AM · 06:0x CST）= <code>2610.40577</code> <b>Multi-View MoE</b> / <code>2610.39562</code> <b>Raincheck</b> / <code>2610.38329</code> <b>Multi-Agent Kernel-Optimization Loop</b>；<b>🌙 晚报 2 篇「科普」</b>（PM · 18:0x CST）= <code>2610.37796</code> <b>Spokes, not a Ring</b>（星期环其实是七根辐条）/ <code>2610.40588</code> <b>Pre-Crime for Agents</b>（泄密前一刻的线性探针）。<b>公告批次两轮均未刷新</b>（仍 <code>2026-10-29</code>：探针 <code>totalResults=124184</code>、最新 <code>published=2026-10-29T17:59:53Z</code>、广度 <code>640516</code>；独立复核 <code>submittedDate:[202610300000 TO 202611012359]</code> 的 <code>cs.CL</code> 子区间与全库<b>均为 0</b>）⇒ 两轮 <code>kept 0</code> / <code>dropped 600</code>，5 篇均取自 r122 的 217 条候选池；两篇 PM 论文超 72h 的 1 篇（<code>2610.37796</code> ≈111.7h）按 §0.1 周末例外 ≤120h 收取并标注。PDF 5/5（合计 <b>9,177,453 B ≈ 8.75 MiB</b>）；台账 收录 <b>286</b> / 候选 <b>4,561</b>（+RSS 507）；分镜 <code>video/SCENES/11_01.html</code>
+</tr>
 
 
   <tr>
@@ -243,7 +243,7 @@
 </table>
 
 <footer>
-  research 线 · <code>research/daily/index.html</code> ｜ 最近更新：2026-11-01 06:1x CST（<b>2026-11-01 早报 · 3/5</b>：早 3 篇「借鉴」= <code>2610.40577</code> <b>Multi-View MoE</b> / <code>2610.39562</code> <b>Raincheck</b> / <code>2610.38329</code> <b>Multi-Agent Kernel-Optimization Loop</b>；<b>公告批次仍未刷新</b>（仍 <code>2026-10-29</code>，周日未到公告时点），<code>kept 0</code>；台账 收录 <b>284</b> / 候选 <b>4,563</b>（+RSS 507）｜ 上一版：2026-10-31 18:3x CST 晚报 5/5 收口）<br>
+  research 线 · <code>research/daily/index.html</code> ｜ 最近更新：2026-11-01 18:1x CST（<b>2026-11-01 晚报 · 5/5 · 当日收口</b>：早 3「借鉴」+ 晚 2「科普」= <code>2610.37796</code> <b>Spokes, not a Ring</b> / <code>2610.40588</code> <b>Pre-Crime for Agents</b>；<b>公告批次仍未刷新</b>（仍 <code>2026-10-29</code>），<code>kept 0</code>；台账 收录 <b>286</b> / 候选 <b>4,561</b>（+RSS 507）｜ 上一版：2026-11-01 06:1x CST 早报 3/5）<br>
 </footer>
 </div>
 </body>

@@ -41,6 +41,12 @@
 <table>
   <tr><th>日期</th><th>当日 TOP-1 论文</th><th>看点</th><th>分镜脚本</th></tr>
   <tr>
+    <td>2026-11-01</td>
+    <td><i>Spokes, not a Ring: Revisiting the Weekday Manifold in Language Models</i><br><code>arXiv:2610.37796</code>（Diksha Gupta, Rieke Fruengel, Stefan Heimersheim 共 3 位 · Pivotal Research）</td>
+    <td><b>AI 脑子里的「星期环」，其实是七根辐条</b>：语言模型的激活里，「星期几」确实排成一个圆环，于是很多人认为沿环移动 = 日期连续变化、可以平滑转向。这篇用三套实验拆掉这个假设：① 沿环在<b>层 2</b> steering、<b>层 28</b> 读出 ⇒ 行为是<b>台阶状</b>（星期附近几乎不动、弧段一推就跳）；② 极坐标 Jacobian 敏感度图 ⇒ <b>七个以星期为中心的低敏感辐条</b>（且径向延伸，不是「只沿切向走」的假象）；③ 中间位置装了什么 ⇒ <b>时刻词只挪 ≤6.30°</b>（相邻星期质心相隔 <b>44.33°–59.81°</b>）、沿环推预测小时 <b>&lt;0.02h</b> 而平面外同范数推 <b>−1.8h / +1.1h</b>、不确定性沿辐条<b>向内收缩</b>、<b>49,678 条</b> FineWeb 片段显示上下文主要<b>整体平移</b>（段内 RMS 半径 <b>0.65 → 0.23</b> 环半径）。主实验 Llama-3.1-8B，另在 Mistral-7B-v0.1 / GPT-2 XL 复核（<b>作者自报 · 本线未复现</b>；作者 §5.2 明确「不意味着圆环几何虚假」；论文 23 页）</td>
+    <td><a href="11_01.html">11_01.html</a></td>
+  </tr>
+  <tr>
     <td>2026-10-31</td>
     <td><i>PhysCount: Do MLLMs Count Visual Appearances or Physical Entities?</i><br><code>arXiv:2610.40530</code>（Lidong Lu, Jiaxin Lv, Liangrui Dong 等 8 位 · 南京大学 + NVIDIA）</td>
     <td><b>照片里「看见几次」≠「有几个东西」</b>：一个杯子在镜子里出现三次，实体还是一个。<b>PhysCount</b> = <b>546</b> 张真实照片 / <b>651</b> 组目标 / <b>4,595</b> 道人工题 / <b>137</b> 类目标，共 <b>7,086</b> 次出现（<b>2,416</b> 直接 + <b>3,996</b> 镜面 + <b>674</b> 隔玻璃）；四类问题拆开考「数出现 / 数实体 / 怎么成像 / 哪几次是同一个」。<b>40 个多模态模型</b>：最强 <b>Gemini 3.7 Flash</b> 整体 Score <b>36.45</b>、<b>整组全对率仅 13.36%</b>（5 位人类 <b>97.10 / 95.98</b>）；放大到 4,096 px 单题 Score <b>21.04 → 28.84</b>，但<b>整组正确率 1,024 px 后不再涨</b> ⇒ 短板不在清晰度；把同组问题<b>一起问</b>，Qwen3.8-27B 整组正确率 <b>7.37% → 23.96%</b>（<b>作者自报 · 本线未复现</b>；13.36% 是「整组全对率」而非单题准确率；论文 38 页）</td>
@@ -169,7 +175,7 @@
 </table>
 
 <footer>
-  research 线 · <code>research/video/SCENES/index.html</code> ｜ 最近更新：2026-10-31 18:4x CST（新增 <code>10_31.html</code> · TOP-1 = PhysCount: Do MLLMs Count Visual Appearances or Physical Entities? / <code>arXiv:2610.40530</code> · 5 镜 / 120s / 口播 386 字（逐镜含标点 497 字符，200 字/分 ≈ 116s，无需删句）；上一版 <code>10_30.html</code> · <code>arXiv:2610.40599</code>）<br>
+  research 线 · <code>research/video/SCENES/index.html</code> ｜ 最近更新：2026-11-01 18:1x CST（新增 <code>11_01.html</code> · TOP-1 = Spokes, not a Ring: Revisiting the Weekday Manifold in Language Models / <code>arXiv:2610.37796</code> · 5 镜 / 120s / 口播 396 字（逐镜含标点 468 字符，200 字/分 ≈ 119s，无需删句）；上一版 <code>10_31.html</code> · <code>arXiv:2610.40530</code>）<br>
 </footer>
 </div>
 </body>

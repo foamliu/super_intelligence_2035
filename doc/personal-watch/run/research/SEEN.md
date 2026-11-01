@@ -5413,7 +5413,7 @@
 | 2026-10-30 | 2610.40607 | Fight World Model: Customizable Combat through Visual Interaction Proxies | cs.CV | 候选 |
 | 2026-10-30 | 2610.40599 | HairDeck: Animation-Ready Stylized Hair Cards from a Single Image | cs.CV | 收录 |
 | 2026-10-30 | 2610.40589 | Collaborative AI agents for autonomous experimental research with solid-state quantum spins | cs.AI | 收录 |
-| 2026-10-30 | 2610.40588 | Pre-Crime for Agents, at the Last Second: Probing When a Recruited Agent Gives In | cs.AI | 候选 |
+| 2026-10-30 | 2610.40588 | Pre-Crime for Agents, at the Last Second: Probing When a Recruited Agent Gives In | cs.AI | 收录 |
 | 2026-10-30 | 2610.40587 | Beyond Ground Truth: A Heuristic Unsupervised Quality Assurance Engine for Diagnosing Calibrational Blindness in Dental Segmentation | cs.CV | 候选 |
 | 2026-10-30 | 2610.40586 | Multistatic ISAC with Deep Learning-Based Clutter Suppression for 5G and Beyond | cs.NI | 候选 |
 | 2026-10-30 | 2610.40580 | RADIOlogy: A Single-Pass Approach to Training-Free Zero-Shot Anomaly Detection | cs.CV | 候选 |
@@ -5606,7 +5606,7 @@
 | 2026-10-30 | 2610.37842 | Improving Data-Constrained Scaling with Hyperparameter Transfer and Ensembling | cs.LG | 候选 |
 | 2026-10-30 | 2610.37833 | Depth through Recurrence: Towards Ultra-Efficient On-Device ASR | cs.LG | 候选 |
 | 2026-10-30 | 2610.37826 | DeFT-RAG: Incrementally Decomposing Multi-Hop Questions into Self-Contained Sub-Questions with Reusable Answers | cs.CL | 候选 |
-| 2026-10-30 | 2610.37796 | Spokes, not a Ring: Revisiting the Weekday Manifold in Language Models | cs.LG | 候选 |
+| 2026-10-30 | 2610.37796 | Spokes, not a Ring: Revisiting the Weekday Manifold in Language Models | cs.LG | 收录 |
 | 2026-10-30 | 2610.37779 | Selective and Hybrid-State Communication for Latent Multi-Agent Systems | cs.MA | 候选 |
 > **第一百一十六轮（本地 2026-10-27 18:00（CST）· P0 第 4 批「晚 2」轮 · 当日 5/5 收口）**：**公告批次已刷新** —— `2026-10-23` → **`2026-10-26`**（主源 `HTTP 200` + `application/atom+xml; charset=utf-8`，`cat:cs.CL` 探针 `totalResults` `123669` → **`123901`**、最新样本 `published=2026-10-26T17:59:33Z`；广度扫描 `totalResults` `637936` → **`639007`**）；`window_mode=daily`（72h，脚本自动判定、**未人工放宽**）⇒ **15/15 查询 `200`、全部 `attempts=1`**、**`kept 206` / `dropped 366`**（`generated=2026-10-27T10:03:38Z`；206 条中 `published` 2026-10-26 = 131 / 2026-10-25 = 57 / 2026-10-24 = 18）。R1′ arXiv ✅ / HF ❌（`Errno 101`，如实记 FAIL）/ RSS cs.CL 374 · cs.CV 483 · cs.LG 321（仅作发现）。**晚报 2 篇「科普」直接取自本批** + **`id_list` 权威复核 3/3 返回**（`HTTP 200` + `application/atom+xml; charset=utf-8` + 含 `published`；证据 `raw/2026-10-27-pm-idlist-r116a.{xml,headers}`）：`2610.35857` *Do vision models know that three is three?*（**本日科普 TOP-1**；46 个视觉编码器 / 10 个概念族 / 2,530 检验；局部线性 99.1% 显著、全局仅 52.2% ⇒ 命名 fragmented linearity；监督 ViT 碎片化 0.67 vs CLIP 0；局部–全局 Kendall τ ∈ [0.38, 0.89]）/ `2610.34688` *From Speech Tokens to Stolen Voices*（3 秒 Moshi 表征泄漏 → 冒充说话人说任意文本：CAM++ 0.78 / WER 3.80%；Kimi-Audio 0.82 / 3.84%；Qwen3-Omni 0.75 / 4.61%；基线 SpInv+TTS 0.22 / 13.37%）。台账 **4,769 → 4,975 行（+206）**（2 行「收录」+ 204 行「候选」）→ 累计（**收录 261 / 候选 4,207 / 候选（RSS 补充）507**）；`papers.jsonl` **259 → 261**；PDF **5/5** 落地校验通过（17 / 7 / 43 / 15 / 14 页）；交付 `daily/2026-10-27.html`（5/5 收口）+ `video/SCENES/10_27.html` + 两个 index；落盘脚本 `raw/update_r116.py`。口径见 `ARXIV_API.md` §9.116。
 
