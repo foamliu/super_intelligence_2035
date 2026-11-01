@@ -5,13 +5,13 @@ WAITING: 0
 ## 📊 进度快照
 
 ```
-PHASE:        R1221 内存自检260th PASS+backlog=0(无新real-patch)·TOTAL=1638/2148 eval(unchanged)·progress:cline500(DONE)·opencode500(DONE)·pi457·claude-code430·codex303·hermes132·deepseek97·eval:cline442(326)·opencode497(401)·pi444(318)·claude-code352(269)·codex230(180)·hermes91(70)·deepseek92(74)·TOTAL=2148/1638. backlog=0✅. 5路predict alive(pi+cc+codex retry·hermes+ds 1stpass)⚠️
-已完成:       H-B✅·Gate7/7·TB报告✅·pilot20✅·R984-R988恒0调试✅·R989 incr_eval全链✅·R997硬约束修复✅·R998-R1220 incr_eval链+内存自检+体积归档✅·R1221 内存自检260th+scan_backlog=0(无新real-patch需eval)✅
-当前动作:     R1221 DONE:内存自检260th PASS(运维令10-30 11:1x):avail~1.3Ti(537Gi used/2.0Ti total)·无本线>50GB(最大~3.0GB cline-hub-daemon非本线;opencode~1.1GB stale;deepseek-sdk-runtime~0.27GB;predict runners全<35MB)·无partitions()/list()失控✅. scan_backlog=0(无新real-patch需eval;最新claude-code django-11555@23:23 patch=empty)✅. eval counts unchanged:cline442(326)·opencode497(401)·pi444(318)·claude-code352(269)·codex230(180)·hermes91(70)·deepseek92(74)·TOTAL=2148eval/1638res. predict:pi457·claude-code430·codex303·hermes132·deepseek97(+pi1 new since R1220,empty-patch). 硬约束:tracked eval result JSON=0✅.
-下一步:       ①5路predict alive(pi457+claude-code430+codex303 retry·hermes132/500·deepseek97/500)等待新预测落盘 ②每轮scan_backlog→有新real-patch则incr_eval ③hermes/deepseek predict远未达500,继续等待 ④predict全完成后final eval+full500最终报告(7路总表+Wilson CI+McNemar 7×7) ⑤infra单列(铁律③) ⑥永久硬约束:禁止commit结果JSON ⑦TASK=34.9KB·MEMORY=31.6KB
+PHASE:        R1222 内存自检261st PASS+backlog=0(无新real-patch)·TOTAL=1638/2148 eval(unchanged)·progress:cline500(DONE)·opencode500(DONE)·pi458·claude-code430·codex303·hermes133·deepseek98·eval:cline442(326)·opencode497(401)·pi444(318)·claude-code352(269)·codex230(180)·hermes91(70)·deepseek92(74)·TOTAL=2148/1638. backlog=0✅. 5路predict alive(pi+cc+codex retry·hermes+ds 1stpass)⚠️
+已完成:       H-B✅·Gate7/7·TB报告✅·pilot20✅·R984-R988恒0调试✅·R989 incr_eval全链✅·R997硬约束修复✅·R998-R1221 incr_eval链+内存自检+体积归档✅·R1222 内存自检261st+scan_backlog=0(无新real-patch需eval)✅
+当前动作:     R1222 DONE:内存自检261st PASS(运维令10-30 11:1x):avail~1.37Ti(538Gi used/2.0Ti total)·无本线>50GB(最大pi-bun~0.4GB;gw_proxy~0.22GB;predict runners全~30MB)·无partitions()/list()失控✅. scan_backlog=0(无新real-patch需eval;pi+hermes+deepseek各+1 new since R1221,all empty-patch)✅. eval counts unchanged:cline442(326)·opencode497(401)·pi444(318)·claude-code352(269)·codex230(180)·hermes91(70)·deepseek92(74)·TOTAL=2148eval/1638res. predict:pi458·claude-code430·codex303·hermes133·deepseek98(+3 new since R1221,all empty-patch). 硬约束:tracked eval result JSON=0✅.
+下一步:       ①5路predict alive(pi458+claude-code430+codex303 retry·hermes133/500·deepseek98/500)等待新预测落盘 ②每轮scan_backlog→有新real-patch则incr_eval ③hermes/deepseek predict远未达500,继续等待 ④predict全完成后final eval+full500最终报告(7路总表+Wilson CI+McNemar 7×7) ⑤infra单列(铁律③) ⑥永久硬约束:禁止commit结果JSON ⑦TASK=34.9KB·MEMORY=31.5KB
 阻塞:         无(5路runner alive产出中,hermes/deepseek predict极慢但仍在产出,不kill).
 ERROR_COUNT:  0
-  📦 体积：TASK=35757B(34.9KB,>32KB,2活跃块不可归档,<40KB红线OK) / MEMORY=32414B(31.6KB,≤32KB✅)
+  📦 体积：TASK=35757B(34.9KB,>32KB,2活跃块不可归档,<40KB红线OK) / MEMORY=32323B(31.5KB,≤32KB✅)
 ```
 
 > 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
@@ -19,7 +19,8 @@ ERROR_COUNT:  0
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 
 ### 本唤醒流水
-> [23:25] R1221 内存自检260th PASS+scan_backlog=0✅:avail~1.3Ti(537Gi used/2.0Ti)·无本线>50GB(最大~3.0GB cline-hub-daemon非本线;opencode~1.1GB stale;deepseek-sdk~0.27GB;predict runners全<35MB)·无partitions()/list()失控✅. scan_backlog=0(无新real-patch需eval;最新claude-code django-11555@23:23 patch=empty)✅. eval unchanged:cline442(326)·opencode497(401)·pi444(318)·claude-code352(269)·codex230(180)·hermes91(70)·deepseek92(74)·TOTAL=2148eval/1638res. predict:pi457(+1,empty)·claude-code430·codex303·hermes132·deepseek97. /data6.0Tfree·TASK34.9KB·MEMORY31.6KB·tracked=0✅·未完成指令:有(10-30内存自检常驻+10-28full500 5路predict仍跑)⇒WAITING=0.
+> [23:35] R1222 内存自检261st PASS+scan_backlog=0✅:avail~1.37Ti(538Gi used/2.0Ti)·无本线>50GB(最大pi-bun~0.4GB;gw_proxy~0.22GB;predict runners全~30MB)·无partitions()/list()失控✅. scan_backlog=0(无新real-patch需eval;pi+hermes+deepseek各+1 new since R1221,all empty-patch)✅. eval unchanged:cline442(326)·opencode497(401)·pi444(318)·claude-code352(269)·codex230(180)·hermes91(70)·deepseek92(74)·TOTAL=2148eval/1638res. predict:pi458·claude-code430·codex303·hermes133·deepseek98. /data6.0Tfree·TASK34.9KB·MEMORY31.5KB·tracked=0✅·未完成指令:有(10-30内存自检常驻+10-28full500 5路predict仍跑)⇒WAITING=0.
+> 📦 R1221 流水(2026-11-01 23:25,内存自检260th+scan_backlog=0)已归档 → daily-memories-harness/2026-11-01.md。结论：内存PASS·backlog=0·eval TOTAL=1638/2148 unchanged·tracked=0✅。需要时再读。
 > 📦 R1220 流水(2026-11-01 23:18,内存自检259th+incr_eval 4items all RESOLVED)已归档 → daily-memories-harness/2026-11-01.md。结论：内存PASS·pi5787+pi5809+claude-code11490+hermes11451 all RESOLVED·eval TOTAL=1638/2148·tracked=0✅。需要时再读。
 > 📦 R1219 流水(2026-11-01 23:05,内存自检258th+incr_eval 3items all RESOLVED)已归档 → daily-memories-harness/2026-11-01.md。结论：内存PASS·pi5262+pi5631+hermes11433 all RESOLVED·eval TOTAL=1634/2144·tracked=0✅。需要时再读。
 > 📦 R1218 流水(2026-11-01 22:50,内存自检257th+incr_eval 1item FAILED)已归档 → daily-memories-harness/2026-11-01.md。结论：内存PASS·pi pytest-10356 FAILED·eval TOTAL=1631/2141·tracked=0✅。需要时再读。
