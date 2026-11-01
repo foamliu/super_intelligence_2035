@@ -15,6 +15,8 @@ run/harness/**/*gate*.json
 # 补充（harness agent 2026-10-28 R580）：reports/ 下 predict/progress JSON 也是评测结果
 run/harness/**/reports/predict_*.json
 run/harness/**/reports/progress_*.json
+# 补充（harness agent 2026-11-01 R1198）：reports/ 下 backlog_scan JSON 也是评测扫描结果
+run/harness/**/reports/backlog_scan_*.json
 run/harness/**/verified_*_full.json
 # 补令 2026-10-28 20:0x：harness/ 直接下层「顶层」评测结果 JSON —— harness/**/ 的 ** 需 ≥1 层目录，不匹配顶层，必须单列。
 # （R580 漏掉这 15 个顶层结果 JSON，导致 git ls-files 仍 1925；本轮 R584 补齐 untrack + 此处加固，防 loop auto-commit 再跟踪）
