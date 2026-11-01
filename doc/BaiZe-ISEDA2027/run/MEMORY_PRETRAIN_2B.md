@@ -1,7 +1,8 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 1
 
-> 🆕 2026-11-02 07:34 #1134：**S1 健康监控**。S1 PID1415997/.29（torchrun master via ssh→.12）活着，iter 52380/700k（7.48%），loss 近20步 avg~2.117（range 2.104-2.127，极稳无spike），grad-norm 0.089-0.782（minor spike 0.782@52270单步瞬态已恢复→0.100@52280），lr 1e-3 constant，loss-scale 1.0，0 NaN/0 Inf/0 skipped（52380步全clean），step~6.92s/~606K tok/s（160步 in ~18min since #1133），ckpt@iter_52000（已保存 06:50，next@54000，~1620步/~3.1h）。双机16×H100 GPU .29 8×97-100%util/.12 8×96-100%util，均~75GB/81GB。论文6页/ERR=0 维持。ETA ~52.0天。未完成指令：无。📦 体积：TASK=23.2KB / MEMORY=18.0KB（归档0KB）。
+> 🆕 2026-11-02 07:52 #1135：**S1 健康监控**。S1 PID1415997/.29（torchrun master via ssh→.12）活着，iter 52530/700k（7.50%），loss 近20步 avg~2.119（range 2.102-2.133，极稳无spike），grad-norm 0.083-0.329（minor spike 0.782@52270单步瞬态已恢复→0.101@52280），lr 1e-3 constant，loss-scale 1.0，0 NaN/0 Inf/0 skipped（52530步全clean），step~6.91s/~602K tok/s（150步 in ~17min since #1134），ckpt@iter_52000（已保存，next@54000，~1470步/~2.8h）。双机16×H100 GPU .29 8×96-100%util/.12 8×86-100%util，均~75GB/81GB。论文6页/ERR=0 维持。ETA ~51.9天。未完成指令：无。📦 体积：TASK=23.2KB / MEMORY=18.3KB（归档0KB）。
+> 📦 §#1134（11-02 07:34, S1健康监控iter52380/loss~2.117/0NaN/~606K tok/s）→ daily-memories/2026-11-02.md；**结论**：S1健康iter52380(7.48%), loss~2.117稳态, grad-norm 0.089-0.782(minor spike 0.782@52270已恢复), ~606K tok/s, ckpt@iter_52000(next@54000)。被#1135监控。需要时再读。
 > 📦 §#1133（11-02 07:16, S1健康监控iter52220/loss~2.122/0NaN/~604K tok/s）→ daily-memories/2026-11-02.md；**结论**：S1健康iter52220(7.46%), loss~2.122稳态, grad-norm 0.085-0.479(minor spike 0.479@52160已恢复), ~604K tok/s, ckpt@iter_52000(next@54000)。被#1134监控。需要时再读。
 > 📦 §#1132（11-02 06:59, S1健康监控iter52070/loss~2.124/0NaN/~604K tok/s）→ daily-memories/2026-11-02.md；**结论**：S1健康iter52070(7.44%), loss~2.124稳态, grad-norm 0.087-0.112(极稳无spike), ~604K tok/s, ckpt@iter_52000(next@54000)。被#1133监控。需要时再读。
 > 📦 §#1131（11-02 06:42, S1健康监控iter51930/loss~2.134/0NaN/~603K tok/s）→ daily-memories/2026-11-02.md；**结论**：S1健康iter51930(7.42%), loss~2.134稳态, grad-norm 0.088-0.170(极稳无spike), ~603K tok/s, ckpt@iter_50000(next@52000)。被#1132监控。需要时再读。
@@ -65,7 +66,7 @@ WAITING: 1
 - ckpt：p3_hybrid/iter_0005000 → **HF nemotron_h ✅**（`nemo_experiments/p3_hybrid/hf_iter_5000/`，323 keys, 2.220B）+ p3_dense/iter_0005000 → **HF Llama ✅**（`nemo_experiments/p3_dense/hf_iter_5000/`，381 keys, 2.512B）；原始 mcore distcp @ `/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/`。
 
 ## GPU / 进程
-- **S1 全量预训练运行中** 10.239.2.29 + .12 双机 16×H100：iter 52380/700k(7.48%), loss~2.117, 0NaN, ~606K tok/s, ckpt@iter_52000(next@54000, 路径 nemo_experiments/baize2b/checkpoints/)。GPU .29 8×97-100%util/.12 8×96-100%util, 均~75GB/81GB。
+- **S1 全量预训练运行中** 10.239.2.29 + .12 双机 16×H100：iter 52530/700k(7.50%), loss~2.119, 0NaN, ~602K tok/s, ckpt@iter_52000(next@54000, 路径 nemo_experiments/baize2b/checkpoints/)。GPU .29 8×96-100%util/.12 8×86-100%util, 均~75GB/81GB。
 - S1 日志：.29 `/tmp/baize_s1_baize2b_worker.log`（实时训练进度，每10步一行）+ `/tmp/baize_s1_baize2b_master.log`。
 - watchdog `baize_pretrain_loop.sh` 必须 7×24 存续，🚫 绝不 kill。
 - P-9 系列实验全部 ✅ 完成（P-9.1~P-9.11）；R2 P-1~P-8 全部 ✅ 完成；论文 6 页 ERR=0。
