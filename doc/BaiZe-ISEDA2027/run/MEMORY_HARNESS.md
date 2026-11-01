@@ -5,13 +5,13 @@ WAITING: 0
 ## 📊 进度快照
 
 ```
-PHASE:        R1166 内存自检205th PASS→scan_backlog 4backlog→incr_eval 4items(3RESOLVED+1FAILED)·eval:cline326/442·opencode398/492·pi301/414·codex176/224·claude-code263/344·hermes50/67·deepseek57/73. infra单列✅.
-已完成:       H-B✅·Gate7/7·TB报告✅·pilot20✅·R984-R988恒0调试✅·R989 incr_eval全链✅·R997硬约束修复✅·R998-R1165 incr_eval链+内存自检+体积归档✅·R1166 内存自检205th+incr_eval 4items(3resolved)+报告regen+R1152-R1153归档✅
-当前动作:     R1166 内存自检205th PASS(运维令10-30 11:1x):avail~1.4TiB(504Gi used/2.0Ti total)·无本线>50GB(总harness RSS~7.1GB·最大cline-hub daemon3.3GB非predict·opencode predict1.1GB+0.6GB(sympy)·claude-code bun201MB·deepseek SDK~260MB·hermes child186MB·gw_proxy228MB·其余<35MB)·无partitions()/list()失控. scan_backlog=4→incr_eval:①opencode sympy-13878→RESOLVED(r397→398 n491→492)②pi sympy-13852→FAILED(r299 f112→113 n410→411)③pi sympy-16766→RESOLVED(r299→300)④pi sympy-23413(新产)→RESOLVED(r300→301)·re-scan=0✅·HTML报告regen(15374B,含398/301)✅. 硬约束:predictions/logs/eval-summary tracked=0✅(525tracked=500instances输入+25合法setup,非结果JSON). /data6.0Tfree.
-下一步:       ①5路predict runner仍跑(cline·opencode DONE·pi441/codex303/claude-code430/hermes103/deepseek77持续) ②每轮scan_backlog→有新real-patch则incr_eval ③predict全完成后final eval+full500最终报告(7路总表+Wilson CI+McNemar 7×7) ④infra单列(铁律③) ⑤永久硬约束:禁止commit结果JSON ⑥TASK=34.9KB·MEMORY≤32KB✅
+PHASE:        R1167 内存自检206th PASS→scan_backlog 3backlog→incr_eval 3items(3RESOLVED)·eval:cline326/442·opencode399/493·pi301/414·codex176/224·claude-code263/344·hermes51/69·deepseek58/74. infra单列✅.
+已完成:       H-B✅·Gate7/7·TB报告✅·pilot20✅·R984-R988恒0调试✅·R989 incr_eval全链✅·R997硬约束修复✅·R998-R1166 incr_eval链+内存自检+体积归档✅·R1167 内存自检206th+incr_eval 3items(3resolved)+报告regen✅
+当前动作:     R1167 内存自检206th PASS(运维令10-30 11:1x):avail~1.4TiB(517Gi used/2.0Ti total)·无本线>50GB(总harness predict RSS~2.7GB·最大cline-hub daemon3.3GB非predict·opencode1.1GB·其余<0.8GB)·无partitions()/list()失控. scan_backlog=3→incr_eval:①opencode sympy-19040→RESOLVED(r398→399 n492→493)②hermes astropy-7671→RESOLVED(r50→51 n68→69)③deepseek django-11880→RESOLVED(r57→58 n73→74)·re-scan=0✅·HTML报告regen(15374B,13:18)✅. 硬约束:predictions/logs tracked=0✅(501tracked=500instances+enriched,非结果JSON). /data6.0Tfree.
+下一步:       ①5路predict runner仍跑(cline·opencode DONE·pi441/codex303/claude-code430/hermes103/deepseek78持续) ②每轮scan_backlog→有新real-patch则incr_eval ③predict全完成后final eval+full500最终报告(7路总表+Wilson CI+McNemar 7×7) ④infra单列(铁律③) ⑤永久硬约束:禁止commit结果JSON ⑥TASK=34.9KB·MEMORY≤32KB✅
 阻塞:         无.
 ERROR_COUNT:  0
-  📦 体积：TASK=34.9KB(35757B,>32KB,2活跃块不可归档,<40KB红线OK) / MEMORY≈31.7KB(32461B→归档R1152-R1153后≤32KB✅)
+  📦 体积：TASK=34.9KB(35757B,>32KB,2活跃块不可归档,<40KB红线OK) / MEMORY≈31.2KB(31914B,≤32KB✅)
 ```
 
 > 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
@@ -19,6 +19,8 @@ ERROR_COUNT:  0
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 
 ### 本唤醒流水
+> [13:18] R1167 内存自检206th PASS+incr_eval 3items(3RESOLVED)✅:avail~1.4TiB(517Gi used)·总harness predict RSS~2.7GB·无>50GB·无partitions()/list(). scan_backlog=3→incr_eval:①opencode sympy-19040→RESOLVED(r398→399 n492→493)②hermes astropy-7671→RESOLVED(r50→51 n68→69)③deepseek django-11880→RESOLVED(r57→58 n73→74)·re-scan=0✅·HTML报告regen(15374B,13:18)✅. predict:cline500(DONE)·opencode500(DONE)·pi441·codex303·claude-code430·hermes103·deepseek78(5路runner仍跑). eval:cline326/442·opencode399/493·pi301/414·codex176/224·claude-code263/344·hermes51/69·deepseek58/74·infra单列✅·/data6.0Tfree·硬约束predictions/logs tracked=0✅(501tracked=500instances+enriched)·TASK34.9KB·MEMORY≈31.2KB·未完成指令:有(10-30内存自检常驻+10-28full500 5路predict仍跑)⇒WAITING=0.
+
 > [13:01] R1166 内存自检205th PASS+incr_eval 4items(3RESOLVED)✅:avail~1.4TiB(504Gi used)·总harness RSS~7.1GB·无>50GB·无partitions()/list(). scan_backlog=4→incr_eval:①opencode sympy-13878→RESOLVED(r397→398)②pi sympy-13852→FAILED(f112→113)③pi sympy-16766→RESOLVED(r299→300)④pi sympy-23413(新产)→RESOLVED(r300→301)·re-scan=0✅·HTML报告regen(15374B,含398/301)✅. predict:cline500(DONE)·opencode500(DONE)·pi441·codex303·claude-code430·hermes103·deepseek77(5路runner仍跑). eval:cline326/442·opencode398/492·pi301/414·codex176/224·claude-code263/344·hermes50/67·deepseek57/73·infra单列✅·/data6.0Tfree·硬约束predictions/logs/eval-summary tracked=0✅(525tracked=500instances输入+25合法)·TASK34.9KB·MEMORY≈31.7KB→归档R1152-R1153≤32KB·未完成指令:有(10-30内存自检常驻+10-28full500 5路predict仍跑)⇒WAITING=0.
 
 > [12:33] R1165 内存自检204th PASS+🔧backlog_scan修复+incr_eval 5items DONE✅:avail~1.4TiB(504Gi used)·总harness RSS 7.14GB·无>50GB·无partitions()/list(). 🔧关键修复:预测文件是JSON list格式(非dict)→之前scan用p.get('model_patch')静默跳过所有项→修正为isinstance(p,list)取p[0]→发现5条被遗漏的backlog. incr_eval 3route:①opencode sphinx-doc__sphinx-10435→FAILED(report已存在,仅regen拾取 r397 f93→94 n490→491)②pi sympy__sympy-12419→RESOLVED(r298→299 n410→411)③hermes astropy-7166/7336/7606→1RESOLVED+2FAILED(r49→50 f16→18 n65→68)·regen_eval_summaries✅·HTML报告regen(15374B)✅. predict:cline500(DONE)·opencode500·pi441+·codex303+·claude-code430+·hermes102+·deepseek77+(6路runner仍跑). eval:cline326/442·opencode397/491·pi299/411·codex176/224·claude-code263/344·hermes50/68·deepseek57/73·infra单列✅·/data6.0Tfree·硬约束0结果JSON tracked✅·TASK34.9KB·MEMORY≈31.4KB·未完成指令:有(10-30内存自检常驻+10-28full500 6路predict仍跑)⇒WAITING=0.
