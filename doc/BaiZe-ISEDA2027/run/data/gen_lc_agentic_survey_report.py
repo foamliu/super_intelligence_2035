@@ -157,6 +157,57 @@ LONG_CONTEXT_DATASETS = [
         "notes": "whole-books 的上游来源。如直接用 whole-books 则无需重复下载。",
     },
     {
+        "repo_id": "deepmind/pg19",
+        "hf_url": "https://huggingface.co/datasets/deepmind/pg19",
+        "category": "书籍/长文 (Project Gutenberg, 经典长上下文基准)",
+        "size": "11.74 GB (下载) / 11.51 GB (生成) / 23.25 GB (总磁盘)",
+        "samples": "28,752 本书 (train 28,602 + val 50 + test 100)",
+        "tokens_est": "未核到确切 tokens; 平均 50K-150K tokens/书 (数据集卡描述)",
+        "language": "英语",
+        "license": "Apache-2.0",
+        "gated": "否 (但 viewer 因 loading script 不可用，需下载后本地加载)",
+        "updated": "2019 (arXiv:1911.05507; 经典数据集，稳定)",
+        "fields": "short_book_title (string), publication_date (int32), url (string), text (string)",
+        "ge32k_ratio": "未单独标注; 但数据集卡称 'documents that are 20X longer than WikiText' + '平均 50K-150K tokens'; 大量书籍 >=32K; 需抽样实测精确占比",
+        "ge128k_ratio": "未单独标注; 部分超长书籍 (如 Bleak House ~1.98M chars) 应 >=128K tokens; 需抽样实测",
+        "evidence": "HF 数据集卡: 'Size of downloaded dataset files: 11.74 GB'; 'train 28602 / val 50 / test 100'; '20X longer than WikiText'; arXiv:1911.05507",
+        "notes": "经典长上下文预训练基准。Project Gutenberg 1919 年前出版书籍，版权干净。每条=一整本书=天然长文档。YaRN/PI 等长上下文扩展方法的标准训练数据推荐。与 whole-books 互补 (PG19=1919前古书 vs whole-books 含现代教材/学术书籍)。注意: loading script 已弃用，需 convert_to_parquet。",
+    },
+    {
+        "repo_id": "yuyijiong/LongData-Corpus",
+        "hf_url": "https://huggingface.co/datasets/yuyijiong/LongData-Corpus",
+        "category": "长上下文训练集 (中英双语, 多源筛选 >16K)",
+        "size": "36.1 GB (总文件大小)",
+        "samples": "1K - 10K 条 (HF 标注; 含多子集)",
+        "tokens_est": "未核到; 每条 >16K 字 (中文) 或 >16K words (英文)",
+        "language": "中文 + 英语",
+        "license": "CC-BY-NC-4.0 (非商用!)",
+        "gated": "是 (需同意 HF 信息共享条款才能访问)",
+        "updated": "2023-12-20",
+        "fields": "text (长文本), 子集标识 (中文/英文/ShareGPT长对话/图书小说)",
+        "ge32k_ratio": "按设计: 所有样本 >16K 字/words; 但 >16K 字 ≈ 16K-32K tokens (中文 1字≈1-2token) -> 部分 >=32K tokens; 英文 >16K words ≈ 20K+ tokens -> 多数 >=32K; 需抽样实测精确占比",
+        "ge128k_ratio": "未标注; 英文图书来自 RedPajamaBook 筛选 >100K words -> 100K words ≈ 128K+ tokens -> 图书子集应有相当比例 >=128K; 需抽样实测",
+        "evidence": "HF 数据集卡: 'Total file size: 36.1 GB'; 'samples with length greater than 16k'; 中文筛选自悟道200G/书生万卷/CCI/中文维基; 英文筛选自 SlimPajama-dc; 英文图书 >100K words from RedPajamaBook",
+        "notes": "中英双语长文本预训练数据。CC-BY-NC-4.0 非商用许可! 含中文长数据 (悟道/万卷/CCI/维基筛选) 是稀缺的中文长上下文源。gated 但仅需同意条款。注意: 部分含大量重复字符串，作者建议去重。已有 Qwen-14b-chat-yarn-32k 在此训练的案例。",
+    },
+    {
+        "repo_id": "bigcode/the-stack-v2",
+        "hf_url": "https://huggingface.co/datasets/bigcode/the-stack-v2",
+        "category": "代码仓库级 (600+ 语言, Software Heritage 归档)",
+        "size": "67.5 TB (full) / 32.1 TB (dedup) / 训练子集 ~900B tokens",
+        "samples": "3.28B unique files / 104M repositories (full); 去重后更小",
+        "tokens_est": "~900B tokens (train-full-ids, 600+ 语言); ~200B tokens (train-smol-ids, 17 语言)",
+        "language": "代码 (600+ 编程语言)",
+        "license": "other (各文件保留原始 license; 需遵守 Software Heritage 原则)",
+        "gated": "是 (需同意条款 + 批量下载需与 SoftwareHeritage/INRIA 签协议)",
+        "updated": "2024-02 (StarCoder2 发布; 持续更新移除请求)",
+        "fields": "SWHID (Software Heritage ID), file_path, detected_license, repo_info, 语言标识 (Parquet 表不含文件内容, 需从 SWH S3 获取)",
+        "ge32k_ratio": "未标注; 按 repo 分组 -> 大仓库多文件拼接后 >=32K; 但单文件多数 <32K; 需按 repo 拼接后抽样实测",
+        "ge128k_ratio": "未标注; 大型仓库 (如 Django/Flask) 全文件拼接应 >=128K; 但占比取决于仓库大小分布; 需抽样实测",
+        "evidence": "HF 数据集卡 + blog: 'full 67.5TB / dedup 32.1TB / train ~900B tokens'; '600+ programming languages'; 'grouped by repositories'; 'SWHIDs to download code files, not content itself'; gated with terms",
+        "notes": "最大开源代码数据集，按 repo 分组=天然仓库级长上下文。但: (1) gated + 需 SWH 协议; (2) Parquet 只含 SWHID 不含内容 -> 需额外从 SWH S3 下载文件内容; (3) 67.5TB 体量巨大。ProLong 的 thestackv1_concat 已预处理为即用格式，实用性更高。Stack v3 (HuggingFaceCode/stack-v3-train) 文件内联，更适合直接使用。",
+    },
+    {
         "repo_id": "princeton-nlp/prolong-data-512K (thestackv1_concat_by_repo)",
         "hf_url": "https://huggingface.co/datasets/princeton-nlp/prolong-data-512K",
         "category": "代码仓库级",
@@ -331,17 +382,17 @@ AGENTIC_DATASETS = [
         "repo_id": "nvidia/Nemotron-RL-Agentic-SWE-Pivot-v1",
         "hf_url": "https://huggingface.co/datasets/nvidia/Nemotron-RL-Agentic-SWE-Pivot-v1",
         "tier": "可直接 RL",
-        "size": "未核到",
-        "samples": "未核到",
+        "size": "10K - 100K rows (~33.8K rows, parquet ~4.8GB)",
+        "samples": "~33,800 步级行为对 (step-level behavior pairs)",
         "language": "英语",
-        "license": "未核到 (NVIDIA 通常 CC BY 4.0)",
-        "gated": "未核到 (可能需 NVIDIA 账号)",
-        "updated": "未核到",
-        "fields": "未核到完整字段",
-        "reward_signal": "step-level pass-rate rewards: 逐步骤评估 agent 行为 pass rate",
-        "stage": "RL",
-        "contamination_risk": "高: NVIDIA SWE 系列，与 SWE-bench 同源",
-        "notes": "Nexus-Coder-Alpha 训练指南引用为 Stage 2 RL 数据。step-level reward 更细粒度。gated 状态需实际确认。",
+        "license": "CC-BY-4.0",
+        "gated": "否 (公开访问，无需 NVIDIA 账号)",
+        "updated": "2025 (arXiv:2412.21139, 2504.07164)",
+        "fields": "trajectory_id (int64), info (dict: turn/step/depth), responses_create_params (dict: input messages), ref_patch (null), ref_message (dict: assistant response), expected_action (dict: function call), metadata (dict: agent_cls/instance_id), agent_ref (dict: agent type), pass_rate (float64), pass_rate_total (int64), pass_rate_passed (int64)",
+        "reward_signal": "step-level pass-rate: pass_rate = pass_rate_passed / pass_rate_total (逐步骤评估 agent 行为，单测通过率作为 reward signal)",
+        "stage": "RL (GRPO/PPO, step-level reward)",
+        "contamination_risk": "高: NVIDIA SWE 系列，含 numpy/Pillow 等 SWE-bench 同源仓库的 instance_id",
+        "notes": "HF 页面已核实: ~33.8K rows, CC-BY-4.0, 非 gated。step-level reward 比 episode-level 更细粒度。Nexus-Coder-Alpha 训练指南引用为 Stage 2 RL 数据。instance_id 包含 numpy__numpy、python-pillow__Pillow 等 SWE-bench 同源仓库 → 污染风险高。agent_cls 含 codeact/opencode/codex 多种 agent。",
     },
     {
         "repo_id": "zhangdw/to-tool-call-datasets",
@@ -411,12 +462,12 @@ AGENTIC_DATASETS = [
         "repo_id": "ia03/terminal-bench",
         "hf_url": "https://huggingface.co/datasets/ia03/terminal-bench",
         "tier": "评测集 (非训练，用于去污染 + 评测)",
-        "size": "~80+ 个任务 (完整自包含 tar.gz 归档)",
-        "samples": "80+ 个 Terminal-Bench 任务",
+        "size": "112 个任务 (完整自包含 tar.gz 归档, <1K rows)",
+        "samples": "112 个 Terminal-Bench 任务 (test split)",
         "language": "英语",
-        "license": "未核到 (Laude Institute 出品)",
+        "license": "MIT",
         "gated": "否",
-        "updated": "近期 (Terminal-Bench 2.0 已发布)",
+        "updated": "2025-07-28 (generated_at 时间戳; Terminal-Bench 2.0 已发布)",
         "fields": "task_id, archive (gzipped tarball), task_yaml, difficulty (easy/medium/hard), tags, category, base_description, max_agent_timeout_sec, max_test_timeout_sec, tar_sha256, archive_bytes, n_files",
         "reward_signal": "Docker 容器内执行 test script -> pass/fail。每个任务是完整自包含归档 (含目录结构/二进制/Docker 配置/测试脚本)。",
         "stage": "评测 (非训练，绝不可入训练集)",
@@ -634,7 +685,7 @@ def section_tldr():
 </tr>
 </table>
 <p><strong>预计总下载体量 (B 类 TOP-3):</strong> ~20-30 GiB (不含 Docker 镜像)</p>
-<p><strong>值得关注的补充候选:</strong> nvidia/Nemotron-Cascade-RL-SWE (执行无关 RL, 但含 SWE-Bench-Train 污染风险高); open-thoughts/AgentTrove (1.7M 轨迹, 最大聚合, 但 219 源污染风险高); AlienKevin/SWE-ZERO-12M-trajectories (12M 轨迹/112B tokens, 最大 SWE 轨迹, 但体量巨大); zhangdw/to-tool-call-datasets (244K 通用工具调用 SFT, 污染风险低)</p>
+<p><strong>值得关注的补充候选:</strong> deepmind/pg19 (28K 本经典书籍, Apache-2.0); nvidia/Nemotron-Cascade-RL-SWE (执行无关 RL, 但含 SWE-Bench-Train 污染风险高); open-thoughts/AgentTrove (1.7M 轨迹, 最大聚合, 但 219 源污染风险高); AlienKevin/SWE-ZERO-12M-trajectories (12M 轨迹/112B tokens, 最大 SWE 轨迹, 但体量巨大); zhangdw/to-tool-call-datasets (244K 通用工具调用 SFT, 污染风险低); yuyijiong/LongData-Corpus (中英双语长文本, 但 CC-BY-NC-4.0 非商用)</p>
 </div>
 
 <div class="info">
@@ -649,7 +700,7 @@ def section_method():
 <h3>2.1 检索工具与流程</h3>
 <ul>
 <li><strong>检索工具</strong>: 使用 web search 服务 (cimi_search) 以自然语言查询 HuggingFace 数据集，再用 cimi_fetch 抓取数据集页面全文。</li>
-<li><strong>检索查询</strong>: 共发起 16 轮针对性搜索，覆盖: 长上下文训练数据、128K/256K context、RULER/NIAH、Gutenberg 书籍、ProLong、InfLLM-V2、法律/专利文档、Wikipedia 全文、repo-level 代码拼接、Stack v3、SWE-Gym/SWE-smith、SWE-rebench 去污染、Terminal-Bench/Nemotron-Terminal-Corpus、ToolBench/BFCL、AgentTrove/SWE-ZERO 大规模轨迹、Nemotron agentic、SWE-bench 污染。</li>
+<li><strong>检索查询</strong>: 共发起 19+ 轮针对性搜索，覆盖: 长上下文训练数据、128K/256K context、RULER/NIAH、Gutenberg 书籍、ProLong、InfLLM-V2、法律/专利文档、Wikipedia 全文、repo-level 代码拼接、Stack v2/v3、PG-19、LongData-Corpus、SWE-Gym/SWE-smith、SWE-rebench 去污染、Terminal-Bench/Nemotron-Terminal-Corpus、ToolBench/BFCL、AgentTrove/SWE-ZERO 大规模轨迹、Nemotron agentic、SWE-bench 污染。</li>
 <li><strong>逐条核实</strong>: 对每个候选数据集，尝试打开其 HF 页面，核实: repo id、体量、语言、license、gated 状态、字段结构、更新时间。</li>
 <li><strong>HF 页面可达性</strong>: fetch_web_content 无法直接访问 hf.co (连接被拒)，改用 cimi_fetch 成功抓取部分页面；部分数据集仅从搜索结果摘要中获取元信息。</li>
 </ul>
@@ -658,10 +709,10 @@ def section_method():
 <table>
 <tr><th>字段</th><th>已核实</th><th>未核实 / 限制</th></tr>
 <tr><td>repo id</td><td>✅ 全部</td><td>—</td></tr>
-<tr><td>体量</td><td>✅ 大部分</td><td>NExtLong/Nemotron-Pivot 的确切体量未核到</td></tr>
+<tr><td>体量</td><td>✅ 大部分</td><td>NExtLong 的确切体量未核到</td></tr>
 <tr><td>语言</td><td>✅ 全部</td><td>—</td></tr>
-<tr><td>license</td><td>✅ 大部分</td><td>ProLong/SkyRL/Nemotron-Pivot 的 license 未明确标注</td></tr>
-<tr><td>gated 状态</td><td>✅ 大部分</td><td>Nemotron-Pivot 的 gated 状态未核到</td></tr>
+<tr><td>license</td><td>✅ 大部分</td><td>ProLong/SkyRL 的 license 未明确标注</td></tr>
+<tr><td>gated 状态</td><td>✅ 全部</td><td>—</td></tr>
 <tr><td>字段结构</td><td>✅ 大部分</td><td>NExtLong/SkyRL 部分字段未完整核到</td></tr>
 <tr><td>≥32K / ≥128K 占比</td><td>✅ whole-books (数据卡标注 ≥64K)</td><td>多数数据集未标注 → 标记「需抽样实测」</td></tr>
 <tr><td>更新时间</td><td>✅ 大部分</td><td>部分仅核到论文发表日期</td></tr>
@@ -840,7 +891,7 @@ def section_b_table():
 <li><strong>nebius/SWE-rebench</strong> — 21K+ 去污染可执行 SWE 任务，7,500 Docker 镜像 (Docker Hub)。🟢 低污染 (论文核心=去污染)。</li>
 <li><strong>nvidia/Nemotron-Cascade-RL-SWE</strong> — 40K+ 样本，execution-free reward model (不需 Docker)。CC BY 4.0。🔴 高污染风险 (含 SWE-Bench-Train)。</li>
 <li><strong>NovaSky-AI/SkyRL-v0-293-data</strong> — 293 train tasks，SWE-Gym 单测 reward。小数据量验证 RL pipeline。🟡 中等。</li>
-<li><strong>nvidia/Nemotron-RL-Agentic-SWE-Pivot-v1</strong> — step-level pass-rate reward，细粒度。🔴 高污染风险。gated 状态未核到。</li>
+<li><strong>nvidia/Nemotron-RL-Agentic-SWE-Pivot-v1</strong> — ~33.8K step-level pass-rate reward，细粒度。CC-BY-4.0, 非 gated。🔴 高污染风险 (含 numpy/Pillow 等 SWE-bench 同源仓库)。</li>
 </ul>
 <p><strong>奖励信号来源汇总</strong>: 单元测试 (SWE-smith, SWE-rebench, SkyRL) > Docker test script (Nemotron-Terminal-Corpus) > 执行无关奖励模型 (Nemotron-Cascade) > step-level pass-rate (Nemotron-Pivot)。单测最可靠但需 Docker；execution-free 最轻量但依赖 reward model 质量。SWE-rebench 独有「去污染」属性，是 RL 训练的干净数据源首选。</p>
 
@@ -858,7 +909,7 @@ def section_b_table():
 
 <h4>②.5 评测集 (仅去污染用，绝不可入训练)</h4>
 <ul>
-<li><strong>ia03/terminal-bench</strong> — Terminal-Bench 原始数据集，80+ 个自包含 Docker 任务。🔴 仅用于提取 13-gram 指纹 + 评测。</li>
+<li><strong>ia03/terminal-bench</strong> — Terminal-Bench 原始数据集，112 个自包含 Docker 任务 (MIT 协议)。🔴 仅用于提取 13-gram 指纹 + 评测。</li>
 </ul>
 
 <h4>③ 与 SWE-bench Verified / Terminal Bench 的对齐风险</h4>
@@ -878,7 +929,7 @@ def section_b_table():
 <div class="warning">
 <p><strong>🟡 Terminal-Bench 污染风险</strong>:</p>
 <ul>
-<li>Terminal-Bench ~80+ 个任务 (ia03/terminal-bench)，来自公开 GitHub 仓库 → 同样的 web crawl 污染风险。</li>
+<li>Terminal-Bench 112 个任务 (ia03/terminal-bench, MIT 协议)，来自公开 GitHub 仓库 → 同样的 web crawl 污染风险。</li>
 <li>Terminal-Bench 2.0 (harborframework/terminal-bench-2.0) 已发布，任务更新更难。</li>
 <li>Terminal-Bench 的 task instruction + test script 应提取 13-gram 指纹加入黑名单。</li>
 <li><strong>mshojaei77/terminal-command-execution-sft</strong> 是合成/改写数据，非 Terminal-Bench 原始任务 → 污染风险低，但需确认源数据集不含 Terminal-Bench 测试脚本。</li>
@@ -974,6 +1025,9 @@ def section_download():
 <tr><td>P3</td><td>ia03/terminal-bench</td><td>B 评测</td><td>&lt;5 GiB</td><td>/nas_env/datasets/terminal-bench/</td><td>评测集 (仅去污染用，不入训练)</td></tr>
 <tr><td>⚠️</td><td>AlienKevin/SWE-ZERO-12M-trajectories</td><td>B agentic</td><td>~111 GiB</td><td>/nas_env/datasets/swe-zero-12m/</td><td>12M 轨迹/112B tokens，体量大需选择性下载</td></tr>
 <tr><td>⚠️</td><td>HuggingFaceCode/stack-v3-train</td><td>A 长上下文</td><td>15.9 TB</td><td>/nas_env/datasets/stack-v3-train/</td><td>体量巨大，需选择性下载 (按语言/大小过滤)</td></tr>
+<tr><td>P2</td><td>deepmind/pg19</td><td>A 长上下文</td><td>~12 GiB</td><td>/nas_env/datasets/pg19/</td><td>经典长上下文基准, Apache-2.0, 28K 本书</td></tr>
+<tr><td>⚠️</td><td>yuyijiong/LongData-Corpus</td><td>A 长上下文</td><td>~36 GiB</td><td>/nas_env/datasets/longdata-corpus/</td><td>中英双语长文本, CC-BY-NC-4.0 (非商用!), gated</td></tr>
+<tr><td>⚠️</td><td>bigcode/the-stack-v2</td><td>A 长上下文</td><td>67.5 TB</td><td>/nas_env/datasets/stack-v2/</td><td>gated + 需 SWH 协议, 体量巨大, 不建议直接下载</td></tr>
 </table>
 <p><strong>预计总下载体量: ~280-350 GiB</strong> (P0: ~45 GiB; P1: ~160 GiB; P2: ~100 GiB; P3: ~15 GiB; SWE-ZERO-12M/stack-v3 需单独评估)</p>
 
@@ -1040,6 +1094,15 @@ hf download ia03/terminal-bench --repo-type dataset --local-dir /nas_env/dataset
 
 # ⚠️: The Stack v3 (15.9TB，需选择性下载，例如仅 Python 大仓库)
 # hf download HuggingFaceCode/stack-v3-train --repo-type dataset --local-dir /nas_env/datasets/stack-v3-train/ --include "*.parquet"
+
+# P2: PG-19 (~12 GiB, 经典长上下文基准, Apache-2.0)
+hf download deepmind/pg19 --repo-type dataset --local-dir /nas_env/datasets/pg19/
+
+# ⚠️: LongData-Corpus (~36 GiB, 中英双语, CC-BY-NC-4.0 非商用!, gated)
+# hf download yuyijiong/LongData-Corpus --repo-type dataset --local-dir /nas_env/datasets/longdata-corpus/
+
+# ⚠️: The Stack v2 (67.5TB, gated + 需 SWH 协议, 不建议直接下载)
+# hf download bigcode/the-stack-v2 --repo-type dataset --local-dir /nas_env/datasets/stack-v2/
 </code></pre>
 
 <h3>6.4 预计磁盘与 ETA</h3>
@@ -1106,7 +1169,7 @@ def section_honesty():
 <div class="warning">
 <ul>
 <li>本报告基于 web search + HF 页面抓取，<strong>未实际下载任何数据集</strong> → 所有体量、字段、占比均为数据集卡/论文声称值，未经实测验证。</li>
-<li>部分数据集 (NExtLong, Nemotron-Pivot) 的元信息不完整 → 标注「未核到」而非编造。</li>
+<li>部分数据集 (NExtLong) 的元信息不完整 → 标注「未核到」而非编造。</li>
 <li>≥32K / ≥128K 占比是核心指标，但<strong>大多数数据集未标注此指标</strong> → 必须下载后抽样实测才能确认是否满足闸门。</li>
 <li>本报告不构成下载建议——下载决策需综合考虑磁盘余量、带宽、训练优先级、去污染成本等因素。</li>
 </ul>
