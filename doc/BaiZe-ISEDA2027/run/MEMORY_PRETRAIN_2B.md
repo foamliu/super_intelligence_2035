@@ -1,7 +1,8 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 1
 
-> 🆕 2026-11-01 08:52 #1059：**S1 健康监控**。git 同步（无 ahead/behind）。S1 PID2623280/.12（torchrun master，etimes ~73739s ≈ 20.5h）活着，iter 40624/700k（5.80%），loss 近20步 avg~2.13（range 1.98-2.27，稳态），grad-norm 近20步 avg 0.098（range 0.087-0.168，极稳无spike），lr 1e-3 constant，loss-scale 1.0，0 NaN/0 Inf/0 skipped（40624步全clean，TB 44473点确认），step~6.92s/~606K tok/s，ckpt@iter_40000（next@42000，~1376步≈~2.6h后到达）。双机16×H100 GPU .12 97-100%/​.29 100%util/~75GB。论文6页/ERR=0 维持。ETA ~52.8天。未完成指令：无。📦 体积：TASK=23.2KB / MEMORY=29.1KB（归档 0KB）。
+> 🆕 2026-11-01 09:14 #1060：**S1 健康监控**。git 同步（无 ahead/behind）。S1 PID2623280/.12（torchrun master，etimes ~75095s ≈ 20.9h）活着，iter 40811/700k（5.83%），loss 近10步 avg~2.12（range 2.09-2.21，稳态），grad-norm 近10步 avg~0.135（range 0.086-0.506，minor spike@40806已恢复），lr 1e-3 constant，loss-scale 1.0，0 NaN/0 Inf/0 skipped（40811步全clean，TB确认），step~6.95s/~603K tok/s（811步 in 94min since ckpt@40000），ckpt@iter_40000（next@42000，~1189步≈~2.3h后到达）。双机16×H100 GPU .12 100%/​.29 100%util/~75GB。论文6页/ERR=0 维持。ETA ~53.0天。未完成指令：无。📦 体积：TASK=23.2KB / MEMORY=27.7KB（归档 0KB）。
+> 📦 §#1059（11-01 08:52, S1健康监控iter40624/loss~2.13/0NaN/~606K tok/s）→ daily-memories/2026-11-01.md；**结论**：S1健康iter40624(5.80%), loss~2.13稳态, grad-norm极稳无spike, ~606K tok/s, ckpt@iter_40000(next@42000)。被#1060监控。需要时再读。
 > 📦 §#1058（11-01 08:28, S1健康监控iter40432/loss~2.14/0NaN/~631K tok/s）→ daily-memories/2026-11-01.md；**结论**：S1健康iter40432(5.78%), loss~2.14稳态, grad-norm极稳无spike, ~631K tok/s, ckpt@iter_40000(next@42000)。被#1059监控。需要时再读。
 > 📦 §#1057（11-01 08:15, S1健康监控iter40258/loss~2.14/0NaN/~605K tok/s）→ daily-memories/2026-11-01.md；**结论**：S1健康iter40258(5.75%), loss~2.14稳态, grad-norm极稳无spike, ~605K tok/s, ckpt@iter_40000(next@42000)。被#1058监控。需要时再读。
 > 📦 §#1056（11-01 07:50, S1健康监控iter40087/loss~2.14/0NaN/~615K tok/s）→ daily-memories/2026-11-01.md；**结论**：S1健康iter40087(5.73%), loss~2.14稳态, grad-norm极稳无spike, ~615K tok/s, ckpt@iter_40000(next@42000)。被#1057监控。需要时再读。
@@ -35,8 +36,8 @@ WAITING: 1
 
 > 📦 §#984~#1004 流水（10-31 07:0x~13:4x, S1监控iter29900→30840 + 论文改稿验证/审校/篇幅修正/归档链）→ daily-memories/2026-10-31.md；**结论汇总**：S1重启后iter30186→30840健康loss~2.15; 论文改稿全PASS(commit 85ea67b4d), 审校4处编辑(commit b12ddfb57), 7→6页修正, TASK归档35.4→27.2KB. 被后续监控. 需要时再读。
 
-> - 未完成指令：无。S1 RUNNING(iter 34926/700k, loss ~2.14, 0NaN, ~614K tok/s, ckpt@34000)。论文全部任务已完成（paper-slim #1015 / paper-audit #1014 / paper-edit #999，6页/ERR=0）。仅剩长上下文ABF基线(需GPU空闲)。ETA ~52天。WAITING=1(30min轮询)。
-> - 📦 体积：TASK=23.2KB / MEMORY=29.4KB（归档 0KB）
+> - 未完成指令：无。S1 RUNNING(iter 40811/700k, loss ~2.12, 0NaN, ~603K tok/s, ckpt@40000)。论文全部任务已完成（paper-slim #1015 / paper-audit #1014 / paper-edit #999，6页/ERR=0）。baize-llm 项目目录已就绪(scripts/configs/README committed)。ETA ~53天。WAITING=1(30min轮询)。
+> - 📦 体积：TASK=23.2KB / MEMORY=27.7KB（归档 0KB）
 
 > 📦 §#798（22:0x归因：613K→480K=固定开销摊薄 + 方案A gbs256 + num_workers降4 commit 8b8bf31）→ daily-memories/2026-10-26.md。**⚠️ num_workers=4只在.29生效，.12仍8→#801修复**。
 
