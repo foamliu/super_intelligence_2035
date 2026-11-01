@@ -2,6 +2,8 @@
 
 WAITING: 1
 
+> 🆕 **【空唤醒 · wake #471 · 2026-11-01 15:1x】** 无新运维令。git fetch→origin/main无vision新提交（仅pretrain #1078~#1079/harness R1175/zhulong wake#441活动）。所有运维令标[已完成]/[已归档]。体积自检TASK=27230B/MEMORY=26133B→归档本唤醒流水段后≈21KB（均≤32KB✓）。写心跳+日流水+commit+push。**未完成指令：无** ⇒ **WAITING: 1**。
+
 > 🆕 **【空唤醒 · wake #470 · 2026-11-01 14:3x】** 无新运维令。git fetch→origin/main无vision新提交（仅harness R1172~R1174/pretrain #1076~#1077活动）。所有运维令标[已完成]/[已归档]。体积自检TASK=27230B/MEMORY=25770B（均≤32KB✓）。写心跳+日流水+commit+push。**未完成指令：无** ⇒ **WAITING: 1**。
 
 > 🆕 **【空唤醒 · wake #469 · 2026-11-01 13:3x】** 无新运维令。git fetch→origin/main无vision新提交（仅harness R1166~R1168/data survey wake#1064/pretrain #1073/zhulong wake#438活动）。所有运维令标[已完成]/[已归档]。体积自检TASK=27230B/MEMORY=25374B（均≤32KB✓）。写心跳+日流水+commit+push。**未完成指令：无** ⇒ **WAITING: 1**。
@@ -56,25 +58,8 @@ WAITING: 1
 
 > 🆕 **【OCR 合成数据 10M ✅ DONE · wake#275 · 2026-10-26 04:0x】** 用户令(22:4x)。全量 DONE：ok=9,999,999 fail=0 · 2000 tars · 470GB(0.5046TB) · 893.6 img/s · 3h6m30s · 8类 cat_counts==plan。交付物：数据本体+index.jsonl(9.999M)+STATS/VALIDATION/DATASET_CARD/MANIFEST+preview_200.html+preview_10k.tar+报告 `reports/report_vision_ocr_synth10m_zh.html`(15754B)+5脚本`vision/ocr_synth/*.py`。加载器兼容已验 build_gpic_loader→(16,3,224,224)。**两处质量偏差(如实披露,未掩盖)**：①文本sha1去重 **2.4486%>1%目标**(244,858多余,合成文本组合空间有限)；②泄漏 **113命中**(leak_rate1.16e-5,短串巧合如0.29→029非真实泄漏)。**✅ 已裁定：接受现状**（2026-10-28 用户直令·accept as-is·不重生成/不过滤）。本轮只造数据不启encoder训练(等用户批预算)。详见 daily-memories-vision/2026-10-26.md。
 
-## 状态头
+> 📦 wake#437~#468 本唤醒流水详细条目（2026-10-31~11-01，含16条空唤醒+论文改稿详细记录，均与上方🆕条目重复）已归档 → daily-memories-vision/2026-10-31.md + 2026-11-01.md。需要时再读。
 
-> **本唤醒流水 [wake #468, 2026-11-01 13:03]**：✅ 空唤醒（无新运维令）。git fetch→origin/main无vision新提交（仅pretrain #1069~#1072/harness R1163~R1165/zhulong wake#437~#438/data news活动） → 检查任务书运维指令区：所有指令均标[已完成]/[已归档] → 体积自检TASK=27230B/MEMORY=24490B（均≤32KB✓） → 写心跳+日流水+commit+push。📦 体积：TASK≈27KB/MEMORY≈24KB。**未完成指令：无** ⇒ **WAITING: 1**。
-
-> **本唤醒流水 [wake #443, 2026-10-31 18:0x]**：✅ 空唤醒（无新运维令）+ 体积归档。git pull --rebase（up to date）→ 检查任务书运维指令区：所有指令均标[已完成]/[已归档] → 体积自检 TASK=35733B（**>32KB**）→ 归档 16:0x 块(3856B)+11:2x 块(1830B) 原文移入 ARCHIVE_OPERATOR_VISION.md，各留 1 行指针 → 归档后 TASK=27230B（≤32KB✓）/MEMORY=14093B（≤32KB✓）→ 写心跳+日流水+commit+push。📦 体积：TASK≈27KB/MEMORY≈14KB（归档 5686B → ARCHIVE_OPERATOR_VISION.md）。**未完成指令：无** ⇒ **WAITING: 1**。
-> **本唤醒流水 [wake #448, 2026-10-31 21:0x]**：✅ 空唤醒（无新运维令）。git fetch→origin/main无vision相关新提交 → 检查任务书运维指令区：所有指令均标[已完成]/[已归档] → 体积自检TASK=27230B/MEMORY=16393B（均≤32KB✓）→ 写心跳+日流水+commit+push。📦 体积：TASK≈27KB/MEMORY≈16KB。**未完成指令：无** ⇒ **WAITING: 1**。
-> **本唤醒流水 [wake #447, 2026-10-31 20:0x]**：✅ 空唤醒（无新运维令）。git fetch→origin/main无vision相关新提交 → 检查任务书运维指令区：所有指令均标[已完成]/[已归档] → 体积自检TASK=27230B/MEMORY=15987B（均≤32KB✓）→ 写心跳+日流水+commit+push。📦 体积：TASK≈27KB/MEMORY≈16KB。**未完成指令：无** ⇒ **WAITING: 1**。
-> **本唤醒流水 [wake #446, 2026-10-31 19:3x]**：✅ 空唤醒（无新运维令）。git fetch→origin/main无vision相关新提交 → 检查任务书运维指令区：所有指令均标[已完成]/[已归档] → 体积自检TASK=27230B/MEMORY=15581B（均≤32KB✓）→ 写心跳+日流水+commit+push。📦 体积：TASK≈27KB/MEMORY≈16KB。**未完成指令：无** ⇒ **WAITING: 1**。
-> **本唤醒流水 [wake #445, 2026-10-31 19:0x]**：✅ 空唤醒（无新运维令）。git fetch→origin/main无vision相关新提交 → 检查任务书运维指令区：所有指令均标[已完成]/[已归档] → 体积自检TASK=27230B/MEMORY=15175B（均≤32KB✓）→ 写心跳+日流水+commit+push。📦 体积：TASK≈27KB/MEMORY≈15KB。**未完成指令：无** ⇒ **WAITING: 1**。
-> **本唤醒流水 [wake #449, 2026-10-31 22:1x]**：✅ 空唤醒（无新运维令）。git fetch→origin/main无vision相关新提交 → 检查任务书运维指令区：所有指令均标[已完成]/[已归档] → 体积自检TASK=27230B/MEMORY=16799B（均≤32KB✓）→ 交付物在位确认（10个report_vision_*.html）→ 写心跳+日流水+commit+push。📦 体积：TASK≈27KB/MEMORY≈17KB。**未完成指令：无** ⇒ **WAITING: 1**。
-> **本唤醒流水 [wake #444, 2026-10-31 18:3x]**：✅ 空唤醒（无新运维令）。git fetch→origin/main无vision相关新提交 → 检查任务书运维指令区：所有指令均标[已完成]/[已归档] → 体积自检TASK=27230B/MEMORY=14734B（均≤32KB✓）→ 写心跳+日流水+commit+push。📦 体积：TASK≈27KB/MEMORY≈15KB。**未完成指令：无** ⇒ **WAITING: 1**。
-> **本唤醒流水 [wake #450, 2026-10-31 22:44]**：✅ 空唤醒（无新运维令）。git fetch→origin/main无vision相关新提交 → 检查任务书运维指令区：所有指令均标[已完成]/[已归档] → 体积自检TASK=27230B/MEMORY=17261B（均≤32KB✓） → 交付物在位确认 → 写心跳+日流水+commit+push。📦 体积：TASK≈27KB/MEMORY≈17KB。**未完成指令：无** ⇒ **WAITING: 1**。
-> **本唤醒流水 [wake #453, 2026-11-01 01:5x]**：✅ 空唤醒（无新运维令）。git fetch→origin/main无vision相关新提交（仅harness R1104~R1109/pretrain #1036~#1037/zhulong活动） → 检查任务书运维指令区：所有指令均标[已完成]/[已归档] → 体积自检TASK=27230B/MEMORY=18402B（均≤32KB✓） → 写心跳+日流水+commit+push。📦 体积：TASK≈27KB/MEMORY≈18KB。**未完成指令：无** ⇒ **WAITING: 1**。
-> **本唤醒流水 [wake #451, 2026-10-31 23:4x]**：✅ 空唤醒（无新运维令）。git fetch→origin/main无vision新提交 → 检查任务书运维指令区：所有指令均标[已完成]/[已归档] → 体积自检TASK=27230B/MEMORY=17694B（均≤32KB✓）→ 写心跳+日流水+commit+push。📦 体积：TASK≈27KB/MEMORY≈18KB。**未完成指令：无** ⇒ **WAITING: 1**。
-> **本唤醒流水 [wake #441, 2026-10-31 15:4x]**：✅ 空唤醒（无新运维令）。git fetch→origin/main无vision相关新提交 → 检查任务书运维指令区：所有指令均标[已完成]/[已归档] → 体积自检TASK=29807B/MEMORY=11754B（均≤32KB✓）→ 写心跳+日流水+commit+push。📦 体积：TASK≈29KB/MEMORY≈12KB。**未完成指令：无** ⇒ **WAITING: 1**。
-> **本唤醒流水 [wake #440, 2026-10-31 14:3x]**：✅ 复核11:2x运维令完成状态。git pull --rebase(up to date) → 读6_vision_encoder.tex(18行/wake#439版) → pdflatex×3+bibtex→**6页**/ERR=0/UNDEF=0/Warning=0/Overfull=0 → 报告report_vision_paper_edit_zh.html 10429B(≥10KB✓) → commit f2ca45de5已在远端 → 任务书11:2x指令标记[已完成] → 写心跳+日流水+commit+push。📦 体积：TASK≈30KB/MEMORY≈11KB。**未完成指令：无** ⇒ **WAITING: 1**。
-> **本唤醒流水 [wake #439, 2026-10-31 13:5x]**：✅ 执行用户直令(11:2x)「请vision自行修改第6章视觉编码器并推送&提交」。git pull --rebase → 读6_vision_encoder.tex(wake#437版20行)+EXPERIMENTS_VISION.md/ROUND11.md核对 → 发现四臂消融句(L11)属「AIMv2消融」中间过程，运维令明确要求不进正文 → 整句删除(含中文注释) → 18行 → pdflatex×3+bibtex→**6页**/ERR=0/UNDEF=0/Warning=0/Overfull=0（wake#437版7页→删除后6页）→ BOM保持(ef bb bf) → 更新generate_paper_edit_report.py→生成report_vision_paper_edit_zh.html 10429B(7节/标签配平/0script/0外链/≥10KB) → 13项中间过程确认未出现 → 写心跳+日流水+commit+push。📦 体积：TASK≈29KB/MEMORY≈10KB。**未完成指令：无** ⇒ **WAITING: 1**。
-> **本唤醒流水 [wake #438, 2026-10-31 12:1x]**：✅ 执行12:0x结构变更通知「新职责：为T11-T14/RQ5-RQ7补齐可执行细则」。git pull发现unmerged main.pdf→解决冲突(checkout --theirs+add)→发现v1.2重构已被revert(commit 9ab1e4b32)→6_vision_encoder.tex回到wake#437版(20行/无T11-T14表)/revert撤销BOM→重新运行check_tex_encoding.py --fix→11个.tex恢复BOM/0 problem(s)→pdflatex×3+bibtex→6页/ERR=0/Overfull=0/Undef=0→写generate_t11_t14_protocol_report.py→生成report_vision_t11_t14_protocol_zh.html 14737B(7节/11表/标签配平/0script/0外链/≥10KB)→§6.1数字核对9项全✅→写心跳+日流水+commit+push。📦 体积：TASK≈29KB/MEMORY≈33KB。**未完成指令：无** ⇒ **WAITING: 1**。
-> **本唤醒流水 [wake #437, 2026-10-31 11:2x]**：✅ 执行用户直令「请vision自行修改第6章视觉编码器并推送&提交；各自注意篇幅」。git pull --rebase → 读6_vision_encoder.tex(改前20行)+EXPERIMENTS_VISION.md(L51/L129)+ROUND11.md(L877/L887/L1130-1137/L1543/L1268) → 重写6_vision_encoder.tex：P0修复width-1024→width-512+P1改"Both terms required"→interaction+四臂数字+P1标注20.27%@176M数据差异+P2删"trunk degrades" → pdflatex×3+bibtex→初稿7页→压缩→6页/ERR=0/UNDEF=0 → 写generate_paper_edit_report.py→生成report_vision_paper_edit_zh.html 16812B(幂等MD5=6240e703/0script/0外链/标签配平) → 写心跳+日流水+commit+push。📦 体积：TASK≈26KB/MEMORY≈34KB。**未完成指令：无** ⇒ **WAITING: 1**。
 > 📦 wake#425~#433 (2026-10-31 01:20~06:41, 9轮空唤醒·补心跳防判死·均无新令·交付物在位) 已归档 → daily-memories-vision/2026-10-31.md。需要时再读。
 > 📦 wake#415~#423 (2026-10-30 17:33~22:21, 8轮空唤醒+1轮波形报告交付, 均已归档·其中wake#424交付report_vision_waveform_zh.html) 已归档 → daily-memories-vision/2026-10-30.md。需要时再读。
 > 📦 wake#409/#410/#412/#413/#414 (2026-10-30 14:15~16:59, 5轮空唤醒·补心跳防判死·均无新令·交付物在位·体积均≤32KB) 已归档 → daily-memories-vision/2026-10-30.md。需要时再读。
@@ -90,7 +75,7 @@ WAITING: 1
 |:---|:---|
 | PHASE | ✅ **论文改稿全部完成（wake#437~#442）**。6_vision_encoder.tex(18行)/7_mllm.tex/0_abstract.tex/1_intro.tex 均已改。6页/ERR=0/UNDEF=0。所有运维令标[已完成]。任务书体积归档完成（35KB→27KB）。**WAITING=1**。 |
 | BUDGET_USED | ~999 GPU·h |
-| 更新 | **2026-11-01 13:3x (wake #469)**：空唤醒（无新运维令）。git fetch→无vision新提交。所有运维令标[已完成]。📦体积：TASK=27230B/MEMORY=25374B（均≤32KB✓）。**未完成指令：无**。**WAITING=1**。 |
+| 更新 | **2026-11-01 15:1x (wake #471)**：空唤醒（无新运维令）。git fetch→无vision新提交。所有运维令标[已完成]。📦体积：TASK=27230B/MEMORY≈21KB（均≤32KB✓）。**未完成指令：无**。**WAITING=1**。 |
 
 > 📦 评测耗时归因(2026-10-15) + 运维问答 + 历史条目(2026-10-03~31) 已滚动归档 → daily-memories-vision/各日期.md + ARCHIVE_OPERATOR_VISION.md。需要时再读。
 
