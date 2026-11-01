@@ -2,6 +2,8 @@
 
 WAITING: 1
 
+> 🆕 **【空唤醒 · wake #472 · 2026-11-01 16:2x】** 无新运维令。git fetch→origin/main无vision新提交（仅pretrain #1080~#1083/harness R1176~R1180/data survey 1068/zhulong wake#443活动）。所有运维令标[已完成]/[已归档]。体积自检TASK=27230B/MEMORY=18561B（均≤32KB✓）。写心跳+日流水+commit+push。**未完成指令：无** ⇒ **WAITING: 1**。
+
 > 🆕 **【空唤醒 · wake #471 · 2026-11-01 15:1x】** 无新运维令。git fetch→origin/main无vision新提交（仅pretrain #1078~#1079/harness R1175/zhulong wake#441活动）。所有运维令标[已完成]/[已归档]。体积自检TASK=27230B/MEMORY=26133B→归档本唤醒流水段后≈21KB（均≤32KB✓）。写心跳+日流水+commit+push。**未完成指令：无** ⇒ **WAITING: 1**。
 
 > 🆕 **【空唤醒 · wake #470 · 2026-11-01 14:3x】** 无新运维令。git fetch→origin/main无vision新提交（仅harness R1172~R1174/pretrain #1076~#1077活动）。所有运维令标[已完成]/[已归档]。体积自检TASK=27230B/MEMORY=25770B（均≤32KB✓）。写心跳+日流水+commit+push。**未完成指令：无** ⇒ **WAITING: 1**。
@@ -75,7 +77,7 @@ WAITING: 1
 |:---|:---|
 | PHASE | ✅ **论文改稿全部完成（wake#437~#442）**。6_vision_encoder.tex(18行)/7_mllm.tex/0_abstract.tex/1_intro.tex 均已改。6页/ERR=0/UNDEF=0。所有运维令标[已完成]。任务书体积归档完成（35KB→27KB）。**WAITING=1**。 |
 | BUDGET_USED | ~999 GPU·h |
-| 更新 | **2026-11-01 15:1x (wake #471)**：空唤醒（无新运维令）。git fetch→无vision新提交。所有运维令标[已完成]。📦体积：TASK=27230B/MEMORY≈21KB（均≤32KB✓）。**未完成指令：无**。**WAITING=1**。 |
+| 更新 | **2026-11-01 16:2x (wake #472)**：空唤醒（无新运维令）。git fetch→无vision新提交（仅pretrain/harness/data活动）。所有运维令标[已完成]。📦体积：TASK=27230B/MEMORY=18561B（均≤32KB✓）。**未完成指令：无**。**WAITING=1**。 |
 
 > 📦 评测耗时归因(2026-10-15) + 运维问答 + 历史条目(2026-10-03~31) 已滚动归档 → daily-memories-vision/各日期.md + ARCHIVE_OPERATOR_VISION.md。需要时再读。
 
