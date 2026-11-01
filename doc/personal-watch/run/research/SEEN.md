@@ -5429,7 +5429,7 @@
 | 2026-10-30 | 2610.40551 | Ramanujan Challenge Results: AI-Assisted Evaluation Pipeline for Multi-Format Proofs | cs.AI | 候选 |
 | 2026-10-30 | 2610.40545 | Retrieval as Traversal: Value-Indexed Memory for Stateful Long-Context Agents | cs.AI | 候选 |
 | 2026-10-30 | 2610.40544 | Machine Learning-Based Detection of Mobile Money Scan Messages in Ghana: A Comparative Evaluation of Naive Bayes, Support Vector Machine, and Randon Forest Classifiers | cs.LG | 候选 |
-| 2026-10-30 | 2610.40541 | On the Fundamental Limits of Prefill-Based Decoding Length Prediction | cs.AI | 候选 |
+| 2026-10-30 | 2610.40541 | On the Fundamental Limits of Prefill-Based Decoding Length Prediction | cs.AI | 收录 |
 | 2026-10-30 | 2610.40539 | PhysVLMM: Interaction-Conditioned Physical Belief Maps for Articulated Objects in Robot Scene Maps | cs.RO | 候选 |
 | 2026-10-30 | 2610.40536 | TRACER, a time-to-event EHR foundation model for disease detection across health systems | cs.CE | 候选 |
 | 2026-10-30 | 2610.40532 | BURGER: Benchmarking and Understanding Robotic Generalization via Embodied Drawing | cs.RO | 候选 |
@@ -5471,7 +5471,7 @@
 | 2026-10-30 | 2610.40091 | Upcycling Language Models for Multiple Specialized Domains | cs.CL | 候选 |
 | 2026-10-30 | 2610.40075 | Learning Safe Flow Matching Robot Policies from Binary Feasibility Oracles | cs.RO | 候选 |
 | 2026-10-30 | 2610.40071 | Agentic process evidence | cs.AI | 候选 |
-| 2026-10-30 | 2610.40039 | How Far Are We From On-Device VLM Inference? A Measurement Study on Edge NPUs | cs.PF | 候选 |
+| 2026-10-30 | 2610.40039 | How Far Are We From On-Device VLM Inference? A Measurement Study on Edge NPUs | cs.PF | 收录 |
 | 2026-10-30 | 2610.40031 | AI Cosmos: An Agentic Infra for Situated Learning | cs.CL | 候选 |
 | 2026-10-30 | 2610.40026 | RoboSeed: Multidimensional Evaluation of Vision-Language-Action and World-Action Models: Capability, Resource Affordability, and Research Evidence | cs.RO | 候选 |
 | 2026-10-30 | 2610.40016 | LOGIV: Graph-Verified Execution with Causal Local Repair for Long-Horizon Robot Tasks | cs.RO | 候选 |
@@ -5515,7 +5515,7 @@
 | 2026-10-30 | 2610.39419 | Diagnosing the Reference Gap: What Visual Scaffolds Can and Cannot Fix in Multimodal Reasoning | cs.CV | 候选 |
 | 2026-10-30 | 2610.39417 | Well-Specified and Well-Tested? Assessing SWE-bench-Style Datasets with a Self-Evolving Agent | cs.SE | 候选 |
 | 2026-10-30 | 2610.39416 | Decoding Geometry, Not Tokens: Efficient VLMs for Robot Affordance and Trajectory Prediction | cs.RO | 候选 |
-| 2026-10-30 | 2610.39412 | Dobb: Shard-Local Preconditioning in Block-Diagonal Eigenbases | cs.LG | 候选 |
+| 2026-10-30 | 2610.39412 | Dobb: Shard-Local Preconditioning in Block-Diagonal Eigenbases | cs.LG | 收录 |
 | 2026-10-30 | 2610.39377 | AgentDecept: Benchmarking Deceptive Behavior in Tool-Using LLM Agents under Pressure | cs.AI | 候选 |
 | 2026-10-30 | 2610.39373 | What Makes Medical Examination Items Difficult? Using Large Language Models to Explore Patterns Associated With Empirical Item Difficulty | cs.CL | 候选 |
 | 2026-10-30 | 2610.39343 | MulClip: A table-free activation function with monotonic and folding regimes for reservoir computing on microcontrollers | cs.LG | 候选 |
