@@ -1,0 +1,11 @@
+{
+  "cline-patched": [],
+  "codex": [],
+  "opencode": [],
+  "pi": [],
+  "claude-code": [],
+  "hermes": [],
+  "deepseek-harness": [
+    "django__django-11749"
+  ]
+}
