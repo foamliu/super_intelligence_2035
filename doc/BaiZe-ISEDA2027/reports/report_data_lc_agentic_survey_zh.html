@@ -96,7 +96,7 @@ a:hover { text-decoration: underline; }
 </tr>
 </table>
 <p><strong>预计总下载体量 (B 类 TOP-3):</strong> ~20-30 GiB (不含 Docker 镜像)</p>
-<p><strong>值得关注的补充候选:</strong> deepmind/pg19 (28K 本经典书籍, Apache-2.0); nvidia/Nemotron-Cascade-RL-SWE (执行无关 RL, 但含 SWE-Bench-Train 污染风险高); open-thoughts/AgentTrove (1.7M 轨迹, 最大聚合, 但 219 源污染风险高); AlienKevin/SWE-ZERO-12M-trajectories (12M 轨迹/112B tokens, 最大 SWE 轨迹, 但体量巨大); zhangdw/to-tool-call-datasets (244K 通用工具调用 SFT, 污染风险低); yuyijiong/LongData-Corpus (中英双语长文本, 但 CC-BY-NC-4.0 非商用)</p>
+<p><strong>值得关注的补充候选:</strong> deepmind/pg19 (28K 本经典书籍, Apache-2.0); microsoft/Orchard (107K SWE+3K GUI 双模态轨迹, MIT, 但匿名化致无法 13-gram 去污染); nvidia/Nemotron-Cascade-RL-SWE (执行无关 RL, 但含 SWE-Bench-Train 污染风险高); open-thoughts/AgentTrove (1.7M 轨迹, 最大聚合, 但 219 源污染风险高); AlienKevin/SWE-ZERO-12M-trajectories (12M 轨迹/112B tokens, 最大 SWE 轨迹, 但体量巨大); zhangdw/to-tool-call-datasets (244K 通用工具调用 SFT, 污染风险低); yuyijiong/LongData-Corpus (中英双语长文本, 但 CC-BY-NC-4.0 非商用)</p>
 </div>
 
 <div class="info">
@@ -915,6 +915,16 @@ a:hover { text-decoration: underline; }
 <td>SFT + RL</td>
 <td><span class="tag-low">低</span></td>
 </tr>
+
+<tr>
+<td>16</td>
+<td><a href="https://huggingface.co/datasets/microsoft/Orchard">microsoft/Orchard</a></td>
+<td><span class="tag-rl">SFT + RL (多模态: SWE + GUI agent 轨迹)</span></td>
+<td>100K-1M (swe: 107K rows + gui: 3.07K rows, parquet)</td>
+<td>SWE: metadata.verify_status (agent 最终 patch 是否通过隐藏测试套件) → 可用于 SFT (成功轨迹) + RL (pass/fail reward); GUI: judge-verified scalar reward per step</td>
+<td>SFT (成功轨迹) + RL (verify_status 作为 reward)</td>
+<td><span class="tag-high">高</span></td>
+</tr>
 </table>
 
 <h3>4.2 候选详细卡片</h3>
@@ -1174,6 +1184,23 @@ a:hover { text-decoration: underline; }
 </table>
 </div>
 
+<div class="tldr-card">
+<h4>16. <a href="https://huggingface.co/datasets/microsoft/Orchard">microsoft/Orchard</a> <small>[SFT + RL (多模态: SWE + GUI agent 轨迹)]</small></h4>
+<table>
+<tr><th>体量</th><td>100K-1M (swe: 107K rows + gui: 3.07K rows, parquet)</td></tr>
+<tr><th>样本数</th><td>swe: 107,185 多轮 SWE 轨迹 (2,788 GitHub 仓库) + gui: 3,070 GUI agent 逐步 rollout (409 任务)</td></tr>
+<tr><th>语言</th><td>英语</td></tr>
+<tr><th>License</th><td>MIT</td></tr>
+<tr><th>Gated</th><td>否</td></tr>
+<tr><th>更新时间</th><td>2026 (论文 Peng et al., 2026; Orchard: An Open-Source Agentic Modeling Framework)</td></tr>
+<tr><th>字段结构</th><td>messages (OpenAI chat schema), images (GUI 子集含截图), reward (float64, GUI=judge-verified scalar), status, metadata (含 verify_status, task_id, intent 等 JSON)</td></tr>
+<tr><th>奖励信号类型</th><td>SWE: metadata.verify_status (agent 最终 patch 是否通过隐藏测试套件) → 可用于 SFT (成功轨迹) + RL (pass/fail reward); GUI: judge-verified scalar reward per step</td></tr>
+<tr><th>适用阶段</th><td>SFT (成功轨迹) + RL (verify_status 作为 reward)</td></tr>
+<tr><th>污染风险</th><td>高: SWE 任务来源含 SWE-rebench (已去污染) 和 Scale-SWE; 2,788 仓库中部分与 SWE-bench Verified 同源。SWE 子集已匿名化 (identifiers/paths 被 scrub)。</td></tr>
+<tr><th>备注</th><td>Microsoft 出品，SWE + GUI 双模态 agent 轨迹。SWE 子集含成功/失败轨迹 (verify_status 标注)，适合 SFT + RL。GUI 子集含截图+逐步 reward，可训练多模态 agent。教师模型=MiniMax-M2.5 等。Orchard Env = Kubernetes-native sandbox，轨迹/训练配方可跨 harness 移植。SWE 子集已匿名化 → 无法直接 13-gram 去污染，需靠 instance_id 级别排除。</td></tr>
+</table>
+</div>
+
 <h3>4.3 按层级分类</h3>
 <h4>① 可直接 RL (有可执行验证信号)</h4>
 <ul>
@@ -1183,8 +1210,9 @@ a:hover { text-decoration: underline; }
 <li><strong>nvidia/Nemotron-Cascade-RL-SWE</strong> — 40K+ 样本，execution-free reward model (不需 Docker)。CC BY 4.0。🔴 高污染风险 (含 SWE-Bench-Train)。</li>
 <li><strong>NovaSky-AI/SkyRL-v0-293-data</strong> — 293 train tasks，SWE-Gym 单测 reward。小数据量验证 RL pipeline。🟡 中等。</li>
 <li><strong>nvidia/Nemotron-RL-Agentic-SWE-Pivot-v1</strong> — ~33.8K step-level pass-rate reward，细粒度。CC-BY-4.0, 非 gated。🔴 高污染风险 (含 numpy/Pillow 等 SWE-bench 同源仓库)。</li>
+<li><strong>microsoft/Orchard</strong> — 107K SWE 轨迹 (2,788 仓库) + 3K GUI agent 轨迹，verify_status 作为 reward。MIT。🔴 高污染 (SWE-rebench + Scale-SWE 来源，部分与 Verified 同源)。SWE 子集已匿名化。</li>
 </ul>
-<p><strong>奖励信号来源汇总</strong>: 单元测试 (SWE-smith, SWE-rebench, SkyRL) > Docker test script (Nemotron-Terminal-Corpus) > 执行无关奖励模型 (Nemotron-Cascade) > step-level pass-rate (Nemotron-Pivot)。单测最可靠但需 Docker；execution-free 最轻量但依赖 reward model 质量。SWE-rebench 独有「去污染」属性，是 RL 训练的干净数据源首选。</p>
+<p><strong>奖励信号来源汇总</strong>: 单元测试 (SWE-smith, SWE-rebench, SkyRL) > Docker test script (Nemotron-Terminal-Corpus) > verify_status (Orchard) > 执行无关奖励模型 (Nemotron-Cascade) > step-level pass-rate (Nemotron-Pivot)。单测最可靠但需 Docker；execution-free 最轻量但依赖 reward model 质量。SWE-rebench 独有「去污染」属性，是 RL 训练的干净数据源首选。Orchard 独有「SWE+GUI 双模态」+「已匿名化」特性，但匿名化导致无法做 13-gram 去污染。</p>
 
 <h4>② 只能 SFT (无自动验证)</h4>
 <ul>
@@ -1215,6 +1243,7 @@ a:hover { text-decoration: underline; }
 <li><strong>我们的去污染方案</strong>: 已有 193,295 条 13-gram 指纹黑名单机制 (见 CONTAMINATION_CHECK.md)，可直接复用。建议: (1) 从 SWE-bench Verified 的 500 个 instance_id 提取 patch + problem_statement + test 内容; (2) 生成 13-gram 指纹加入黑名单; (3) 对所有候选训练数据做 13-gram 扫描，命中即过滤。</li>
 <li><strong>SWE-smith 特别注意</strong>: 222 个 repo 与 SWE-bench Verified 的 repo 有重叠 → 即使 task instance 不同，同 repo 的代码风格/依赖/API 模式可能泄露信息。建议 repo 级去重: 排除与 Verified 完全相同 repo 的 SWE-smith instances。</li>
 <li><strong>Nemotron-Cascade-SFT-SWE 特别注意</strong>: NVIDIA 声称已「排除评估数据集中存在的仓库实例」→ 需独立验证 (我们的 13-gram 扫描可复验)。</li>
+<li><strong>microsoft/Orchard 特别注意</strong>: SWE 子集任务来源含 SWE-rebench (已去污染) 和 Scale-SWE; 2,788 仓库中部分与 SWE-bench Verified 同源。SWE 子集已匿名化 (identifiers/paths 被 scrub) → 无法做 13-gram 去污染，只能靠 metadata 中的 instance_id 级别排除。建议: 提取 Orchard metadata 中的 task_id，与 SWE-bench Verified 500 个 instance_id 做集合比对，命中即过滤。</li>
 </ul>
 </div>
 <div class="warning">
@@ -1313,6 +1342,7 @@ a:hover { text-decoration: underline; }
 <tr><td>P1</td><td>self-long/RULER-llama3-1M</td><td>A 长上下文</td><td>&lt;5 GiB</td><td>/nas_env/datasets/ruler-1m/</td><td>RULER 合成 haystack，MIT，117 子集</td></tr>
 <tr><td>P2</td><td>caskcsg/NExtLong</td><td>A 长上下文</td><td>&lt;50 GiB</td><td>/nas_env/datasets/nextlong/</td><td>合成长上下文，真实长文档不足时补充</td></tr>
 <tr><td>P2</td><td>open-thoughts/AgentTrove</td><td>B agentic</td><td>~18.6 GiB</td><td>/nas_env/datasets/agenttrove/</td><td>1.7M 轨迹 (219 源)，需严格去污染</td></tr>
+<tr><td>P2</td><td>microsoft/Orchard</td><td>B agentic</td><td>~15-25 GiB</td><td>/nas_env/datasets/orchard/</td><td>107K SWE+3K GUI 双模态轨迹, MIT, 需 instance_id 级去污染</td></tr>
 <tr><td>P2</td><td>nvidia/Nemotron-Cascade-RL-SWE</td><td>B agentic</td><td>~10-20 GiB</td><td>/nas_env/datasets/nemotron-cascade-rl/</td><td>execution-free RL，但需去污染</td></tr>
 <tr><td>P2</td><td>nvidia/Nemotron-Cascade-SFT-SWE</td><td>B agentic</td><td>~10-20 GiB</td><td>/nas_env/datasets/nemotron-cascade-sft/</td><td>SFT 版 (agentless mini)，CC BY 4.0，需去污染</td></tr>
 <tr><td>P2</td><td>THUDM/LongAlign-10k</td><td>A 长上下文</td><td>&lt;5 GiB</td><td>/nas_env/datasets/longalign/</td><td>10K 长指令 SFT，中英混合</td></tr>
@@ -1367,6 +1397,9 @@ hf download caskcsg/NExtLong-Instruct-dataset-Magpie-Llama-3.3-Pro-1M-v0.1 --rep
 
 # P2: AgentTrove (~18.6 GiB, 1.7M 轨迹)
 hf download open-thoughts/AgentTrove --repo-type dataset --local-dir /nas_env/datasets/agenttrove/
+
+# P2: microsoft/Orchard (~15-25 GiB, 107K SWE + 3K GUI 轨迹)
+hf download microsoft/Orchard --repo-type dataset --local-dir /nas_env/datasets/orchard/
 
 # P2: Nemotron-Cascade-RL-SWE
 hf download nvidia/Nemotron-Cascade-RL-SWE --repo-type dataset --local-dir /nas_env/datasets/nemotron-cascade-rl/
