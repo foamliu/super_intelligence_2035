@@ -298,7 +298,7 @@
 
 <h2 class="sec">附录 D · 台账与今日收口</h2>
 <ul>
-  <li><b>台账（本轮后）</b>：<code>SEEN.md</code> <b>行数不变</b>（<b>5,613</b> 行；4 行「候选」→「收录」：AM 3 + PM 2，<b>不新增行</b>）⇒ 累计 <b>收录 286 / 候选 4,561 / 候选（RSS补充）507</b>；<code>papers.jsonl</code> <b>284 → 286</b>（元数据取自官方 <code>id_list</code> XML）。</li>
+  <li><b>台账（本轮后）</b>：<code>SEEN.md</code> <b>行数不变</b>（<b>5,613</b> 行；5 行「候选」→「收录」：AM 3 + PM 2，<b>不新增行</b>）⇒ 累计 <b>收录 286 / 候选 4,561 / 候选（RSS补充）507</b>；<code>papers.jsonl</code> <b>284 → 286</b>（元数据取自官方 <code>id_list</code> XML）。</li>
   <li><b>落盘脚本</b>：<code>raw/update_r126.py</code>（幂等断言：<code>n_queries==15</code>、<code>n_kept==0</code>、<code>n_dropped==600</code>、<code>window_mode=='weekend_batch'</code>、15 条全 <code>ok/200</code>、attempts 恰为 <code>1×6 + 2 + 1×8</code>、dropped 恰为 <b>558 SEEN + 42 stale</b>、2 个推荐 ID 均在 <code>SEEN</code> 且状态为「候选」）+ 页面收口 <code>raw/html_r126.py</code>（保留 AM 原文、只替换页头 + 插入 PM 三块 + 重写附录 C/D；<code>div</code> 配平、零脚本、零外链、5 卡、序号 1–5 各一次、PDF 页数/字符数运行时实测）。</li>
   <li><b>选文说明（诚实口径）</b>：PM 的 4 条 <code>id_list</code> 短名单含 2 篇未入选备选（<code>2610.40640</code> SonoWorld4D 单视频 → 4D 音视频场景、<code>2610.38109</code> V33DA 斑胸草雀叫声归属基准），<b>留作后续轮次备选</b>，本轮不写入台账「收录」。</li>
   <li><b>今日收口状态</b>：① 5/5 已收口（早 3「借鉴」+ 晚 2「科普」）；② 公告批次复验 <b>仍未刷新</b>（周日）；③ 科普 TOP-1 分镜 → <code>video/SCENES/11_01.html</code>（<b>Spokes, not a Ring</b>）+ <code>SCENES/index.html</code>；④ 当日论文日报邮件（<code>paul.liu@cxmt.com</code>，1 封，5 篇全附，合计 ≈ 8.75 MiB ≤ 20 MB）。</li>
