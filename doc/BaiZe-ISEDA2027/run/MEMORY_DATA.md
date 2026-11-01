@@ -20,7 +20,7 @@ WAITING: 1
 ```
 PHASE:        🟢运维令10-31 web search调研HF长上下文+agentic数据集.报告v4已交付+验证完成
 已完成:       ✅A.LC+Agentic调研报告v4(report_data_lc_agentic_survey_zh.html 102891B/43table/0script/18+14候选/32 HF链接)+生成器(gen_lc_agentic_survey_report.py 幂等);✅B.85M下载持续运行(91.7%+,未中断);✅C.报告全量验证(7节/0script/0CDN/幂等OK/43table平衡/all tags balanced)
-当前动作:     唤醒1070(2026-11-01 19:40):运维令10-31交付物v4全量复核→全PASS(report 102891B/MD5=f98a86ef/7节/0script/0CDN/43table平衡/幂等OK/72 HF链接/34未核到/13 gated/48 SWE-bench/40 Terminal/67污染/36≥32K/35≥128K)+85M下载alive(PID1983127,etimes≈41085s≈685min,parquet11220/12126=92.5%)
+当前动作:     唤醒1071(2026-11-01 21:2x):运维令10-31交付物v4再复核→全PASS(report 102891B/7节/0script/0CDN/43table平衡/HTMLParser all balanced/幂等OK/72 HF链接/34未核到/13 gated)+85M下载alive(PID2694473,etimes≈1924s)
 下一步:       下轮唤醒:①查85M下载进度;②待运维批准后执行下载(P0:whole-books+SWE-smith+Nemotron-Terminal-Corpus+SWE-rebench)
 阻塞:         无
 ERROR_COUNT:  11
@@ -30,6 +30,7 @@ ERROR_COUNT:  11
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。
 
 ## 📋 本唤醒流水
+> [21:2x] 唤醒1071：运维令10-31交付物v4再复核 → ①report=102891B(≥25KB✓)/7节(§1~§7✓)/0<script>/0CDN/43<table>=43</table>平衡✓/HTMLParser all tags balanced✓/generator幂等OK(81339chars✓)/72 HF链接✓/34「未核到」✓/13 gated✓;②git synced(## main...origin/main✓,report+generator无未提交改动);③85M:PID2694473 alive(etimes≈1924s≈32min);④df:/nas_train85%(32T可用),/nas_env84%(1.7T可用);⑤TASK=27958B/MEMORY~29KB(均<40KB无需归档)→心跳WAITING=1
 > [19:40] 唤醒1070：运维令10-31交付物v4全量复核 → ①report=102891B(≥25KB✓)/MD5=f98a86ef...generator重跑一致(幂等✓)/7节(§1~§7✓)/0<script>/0CDN/43<table>=43</table>平衡✓/72 HF链接✓/34「未核到」✓/13 gated✓/48 SWE-bench✓/40 Terminal✓/67 污染✓/36≥32K✓/35≥128K✓;②git synced(## main...origin/main✓);③85M:PID1983127 alive(etimes≈41085s≈685min),parquet11220/12126=92.5%,8 incomplete;④df:/nas_train85%(32T可用),/nas_env84%(1.7T可用);⑤TASK=27958B/MEMORY~27KB(均<40KB无需归档)→心跳WAITING=1
 > [18:49] 唤醒1069：运维令10-31交付物v4全量复核 → ①report=102891B(≥25KB✓)/MD5=f98a86ef...两次运行一致(幂等✓)/7节(§1~§7✓)/0<script>/0CDN(https均为<a href>数据集链接非外部依赖)/43<table>=43</table>平衡✓/all tags balanced✓/32 HF链接✓/34「未核到」✓/47 gated标注✓/48 SWE-bench✓/39 TerminalBench✓/67污染✓/54≥32K✓/72≥128K✓;②git synced(## main...origin/main✓,report+generator无未提交改动);③85M:PID1983127 alive(etimes≈37921s≈632min);④df:/nas_train85%(32T可用),/nas_env84%(1.7T可用);⑤TASK=27958B/MEMORY~27KB(均<40KB无需归档)→心跳WAITING=1
 > [15:55] 唤醒1068：运维令10-31交付物v4全量复核 → ①report=102891B(≥25KB✓)/7节(§1~§7✓)/0<script>/0CDN/43<table>=43</table>平衡✓/all tags balanced✓/32 HF链接✓/34「未核到」✓/18 LC+14 agentic候选✓/generator运行→102891B一致(幂等✓);②git synced(## main...origin/main✓);③85M:PID1983127 alive(etimes≈27465s≈458min),parquet11127/12126=91.8%;④df:/nas_train85%(32T可用),/nas_env84%(1.7T可用);⑤TASK=27958B/MEMORY~27KB(均<40KB无需归档)→心跳WAITING=1
