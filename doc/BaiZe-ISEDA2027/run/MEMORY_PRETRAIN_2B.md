@@ -22,17 +22,18 @@ WAITING: 1
 > 📦 §#1194（11-03 01:49, CPU eval监控·37轮·ETA~8-10h稳定）→ daily-memories/2026-11-03.md；**结论**：4 eval稳定,.29~16.2s/.12~18.1s,ETA~8-10h,S1 iter61020 lr=1e-3 stable。被#1195监控(无变化)。需要时再读。
 > 📦 §#1197（11-03 02:08, CPU eval监控·40轮·ETA~8-10h稳定）→ daily-memories/2026-11-03.md；**结论**：4 eval稳定,.29~31%/.12~25%,ETA~8-10h,S1 iter61190 lr=1e-3 stable。被#1198监控(进度推进~3-4%)。需要时再读。
 > 📦 §#1200（11-03 03:08, CPU eval监控·43轮·ETA~7-8.3h稳定）→ daily-memories/2026-11-03.md；**结论**：4 eval稳定,.29~40%/.12~34%,ETA~7-8.3h,S1 iter61720 lr=1e-3 stable。被#1201监控(进度+3%)。需要时再读。
-> 🆕 2026-11-03 06:52 #1211：**📊 CPU eval 监控·54轮——4 eval 正常推进（.29~70.9%/.12~57.9%），ETA .29~3.6h/.12~6.7h，两机 CPU <<80%。✅ S1 健康 iter 63630（lr=1e-3 stable, loss 2.094）。未完成指令：有**。
+> 🆕 2026-11-03 07:12 #1212：**📊 CPU eval 监控·55轮——4 eval 正常推进（.29~73-74%/.12~60%），ETA .29~3.2h/.12~6.3h，两机 CPU <<80%。✅ S1 健康 iter 63810（lr=1e-3 stable, loss 2.09）。未完成指令：有**。
 > **① 4 eval 运行正常**（limit=100, 8集, 2599 req, bfloat16, batch=1, nice 19, OMP=8, CUDA_VISIBLE_DEVICES=""；⚠️ Mamba2 无 causal_conv1d/mamba_ssm 优化核→CPU 走 reference PyTorch，17-22s/req 属固有慢）：
-> - .29: hf_iter_10000 (PID 992664, **1842/2599=70.9%**, ~17s/req, 已~8h50m, ETA~3.6h→done~10:25 Nov3) + hf_iter_30000 (PID 1196989, **1830/2599=70.4%**, ~17s/req, 已~8h48m, ETA~3.6h→done~10:31 Nov3)
-> - .12: hf_iter_20000 (PID 3729981, **1504/2599=57.9%**, ~22s/req, 已~8h50m, ETA~6.7h→done~13:32 Nov3) + hf_iter_40000 (PID 3898654, **1505/2599=57.9%**, ~22s/req, 已~8h48m, ETA~6.7h→done~13:32 Nov3)（ssh .12 实测确认）
+> - .29: hf_iter_10000 (PID 992664, **1903/2599=73.2%**, ~17.0s/req, 已~9h08m, ETA~3.2h→done~10:30 Nov3) + hf_iter_30000 (PID 1196989, **1911/2599=73.5%**, ~17.1s/req, 已~9h08m, ETA~3.2h→done~10:30 Nov3)
+> - .12: hf_iter_20000 (PID 3729981, **1561/2599=60.1%**, ~22.3s/req, 已~9h08m, ETA~6.3h→done~13:30 Nov3) + hf_iter_40000 (PID 3898654, **1566/2599=60.3%**, ~22.2s/req, 已~9h08m, ETA~6.3h→done~13:30 Nov3)（ssh .12 实测确认）
 > - hf_iter_50000: export 完成（config mamba_dt_limit=None 已修复, 4.4GB safetensors）；待 .29 空槽（~10:30 Nov3 启动→单 ckpt 全量≈12.6h→done~23:00 Nov3）。
-> - ⚠️ lm_eval_results/ 仍空（4 eval 均未跑完，最早 ~10:25 Nov3 出新 results.json）。
+> - ⚠️ lm_eval_results/ 仍空（4 eval 均未跑完，最早 ~10:30 Nov3 出新 results.json）。hf_iter_10000/results.json 为旧 smoke 残留（sciq-only/20样本/acc=0.0，非本轮）。
 > **② 速度**：.29 ~17s/req 稳定；.12 ~22s/req 稳定（无恶化趋势）。
-> **③ CPU 负载**：.29 load36.51/224cores≈16% / .12 load38.37/224cores≈17% → 均 <<80%，不影响 S1。eval procs nice=19, OMP≤8。
-> **④ S1 状态**：iter **63630**/700k (9.09%), loss **2.094**, 0 NaN, 0 skip, ~7.0s/step, ~606K tok/s, lr=**1.0e-3** stable, grad-norm 0.094-0.117, GPU 8卡 ~100% util / ~75GB。launcher pid 4163528。ckpt@iter_62000(next@64000)。
-> **📦 体积**：TASK=30602B(29.9KB) / MEMORY≈28.4KB（均 ≤32KB，无需归档）。
+> **③ CPU 负载**：.29 load34.79/%Cpu~16% / .12 load36.78/%Cpu~15% → 均 <<80%，不影响 S1。eval procs nice=19, OMP≤8, 各~530%/~490% CPU（~5核）。
+> **④ S1 状态**：iter **63810**/700k (9.12%), loss **2.087-2.105**, 0 NaN, 0 skip, ~7.1s/step, ~606K tok/s, lr=**1.0e-3** stable, grad-norm 0.087-0.106, GPU .29 8×100%/.12 8×97-100% / ~75GB。launcher pid 4163528。ckpt@iter_62000(next@64000)。
+> **📦 体积**：TASK=30602B(29.9KB) / MEMORY≈28.6KB（均 ≤32KB，无需归档）。
 > **下一步**：持续监控（30min 间隔）；.29 ~10:30 Nov3 完成→启动 hf_iter_50000（.29 单槽）→全部 5×8 完成后(~23:00 Nov3)汇总+报告。⚠️ 全量 5×8 总墙钟≈36h（超 24h，因 CPU Mamba2 无优化核固有慢，已如实报）。未完成指令：有。WAITING: 1（eval 后台运行，监控间隔 30min）。
+> 📦 §#1211（11-03 06:52, CPU eval监控·54轮·ETA~3.6-6.7h稳定）→ daily-memories/2026-11-03.md；**结论**：4 eval稳定,.29~70.9%/.12~57.9%,ETA~3.6-6.7h,S1 iter63630健康。被#1212监控(进度+2-3%)。需要时再读。
 > 📦 §#1210（11-03 06:32, CPU eval监控·53轮·ETA~3.9-7.0h稳定）→ daily-memories/2026-11-03.md；**结论**：4 eval稳定,.29~68%/.12~56%,ETA~3.9-7.0h,S1 iter63470健康。被#1211监控(进度+2.5%)。需要时再读。
 > 📦 §#1209（11-03 06:10, CPU eval监控·52轮·ETA~4.3-7.3h稳定）→ daily-memories/2026-11-03.md；**结论**：4 eval稳定,.29~65%/.12~54%,ETA~4.3-7.3h,S1 iter63230健康。被#1210监控(进度+3%)。需要时再读。
 > 📦 §#1208（11-03 05:48, CPU eval监控·51轮·ETA~4.7-7.4h稳定）→ daily-memories/2026-11-03.md；**结论**：4 eval稳定,.29~62%/.12~51%,ETA~4.7-7.4h,S1 iter63100健康。被#1209监控(进度+3%)。需要时再读。
