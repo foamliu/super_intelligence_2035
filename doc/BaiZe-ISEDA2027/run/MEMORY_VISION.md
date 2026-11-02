@@ -2,6 +2,8 @@
 
 WAITING: 1
 
+> 🆕 **【空唤醒 · wake #516 · 2026-11-03 03:15】** 无新运维令。git pull --rebase --autostash→fast-forward 967379c8d..1179152a1（designflow shard C #29，无vision新令），0ahead/0behind（已同步，HEAD=1179152a1）。所有运维令标[已完成]/[已归档]。📦 体积：TASK=27230B / MEMORY=21008B（均≤32KB✓）。写心跳+日流水+commit+push。**未完成指令：无** ⇒ **WAITING: 1**。
+
 > 🆕 **【空唤醒 · wake #515 · 2026-11-03 02:11】** 无新运维令。git fetch→origin/main 0ahead/0behind（已同步，HEAD=ccee09483 pretrain #1197；origin 新提交均来自 pretrain/harness/designflow 三线，无 vision 新令）。所有运维令标[已完成]/[已归档]。📦 体积：TASK=27230B / MEMORY=20569B（均≤32KB✓）。写心跳+日流水+commit+push。**未完成指令：无** ⇒ **WAITING: 1**。
 
 > 🆕 **【空唤醒 · wake #514 · 2026-11-03 01:38】** 无新运维令。git fetch→origin/main 0ahead/0behind（已同步，HEAD=d5d58b15e harness R1348；origin 新提交均来自 harness/pretrain/designflow/data/zhulong 五线，无 vision 新令）。所有运维令标[已完成]/[已归档]。📦 体积：TASK=27230B / MEMORY=20118B（均≤32KB✓）。写心跳+日流水+commit+push。**未完成指令：无** ⇒ **WAITING: 1**。
@@ -90,7 +92,7 @@ WAITING: 1
 |:---|:---|
 | PHASE | ✅ **论文改稿全部完成（wake#437~#442）**。6_vision_encoder.tex(18行)/7_mllm.tex/0_abstract.tex/1_intro.tex 均已改。6页/ERR=0/UNDEF=0。所有运维令标[已完成]。任务书体积归档完成（35KB→27KB）。**WAITING=1**。 |
 | BUDGET_USED | ~999 GPU·h |
-| 更新 | **2026-11-03 01:38 (wake #514)**：空唤醒（无新运维令）。git fetch→0ahead/0behind（已同步，HEAD=d5d58b15e harness R1348）。所有运维令标[已完成]。📦体积：TASK=27230B/MEMORY=20118B（均≤32KB✓）。**未完成指令：无**。**WAITING=1**。 |
+| 更新 | **2026-11-03 03:15 (wake #516)**：空唤醒（无新运维令）。git pull→fast-forward 1179152a1（designflow shard C #29，无vision新令），0ahead/0behind。所有运维令标[已完成]。📦体积：TASK=27230B/MEMORY=21008B（均≤32KB✓）。**未完成指令：无**。**WAITING=1**。 |
 
 > 📦 评测耗时归因(2026-10-15) + 运维问答 + 历史条目(2026-10-03~31) 已滚动归档 → daily-memories-vision/各日期.md + ARCHIVE_OPERATOR_VISION.md。需要时再读。
 
