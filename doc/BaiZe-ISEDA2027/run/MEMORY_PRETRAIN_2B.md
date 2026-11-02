@@ -4,23 +4,16 @@ WAITING: 0
 
 
 
-> 🆕 2026-11-02 19:55 #1154：**CPU 评测 ETA 更新 + GPU 发现**（运维令 2026-11-02 11:1x）。
-> **5 个 export 全部完成**：hf_iter_10000/20000/30000/40000/50000 均已导出（各~4.4GB safetensors），config.json 已修（use_mamba_kernels=False, mamba_dt_limit 删除）。
-> **CPU 冒烟成功**：sciq --limit 2 → 8 requests → 93.4s（11.7s/request, batch=1, OMP=32, float32）。bfloat16 略快（14.1s vs 15.8s for seq=128），提升仅 ~11%。
-> **准确 ETA（实测 11.7s/req）**：
-> - 8 集总 loglikelihood requests ≈ 73,110（hellaswag 40,168 是大头）
-> - 单 ckpt 全量 8 集：73,110 × 11.7s ≈ 237.6h ≈ **9.9 天**
-> - 5 ckpt 并行（5 × 32 = 160 核 ≤ 224 核）：**9.9 天**（瓶颈 = 最慢的 ckpt）
-> - 24h 内完成：**❌ 不可完成**
-> **🔴 GPU 空闲发现**：`.12` 8 卡全空闲（util 0%, 1521MiB/81GB），`.29` 8 卡低占用（util 0-70%, 19GB/81GB）。运维令说「GPU 全满」但实测**未满**。若用 1 卡 GPU 评（mamba_ssm CUDA kernel 可用），单 ckpt ~30min，5 ckpt ~2.5h。
-> **脚本就绪**：`baize_cpu_lmeval.sh` + `cpu_lmeval_run.py`（清除 /dev/shm editable finders + 阻断 mamba_ssm/causal_conv1d + HF offline + HFLM 程序化创建）。
-> **建议**（等运维拍板）：
-> 1. **用 GPU**（推荐）：`.12` GPU 全空闲，用 1 卡 GPU eval，~30min/ckpt × 5 = 2.5h → 当天交付
-> 2. 减量 CPU eval（--limit 500/ckpt，~5.8h/ckpt × 5 并行 = 5.8h → 可 24h 内交付，但精度有限）
-> 3. 跳 hellaswag（40,168/73,110 = 55% 总量）+ 减量 → ~4.5 天/ckpt → 仍超 24h
-> 4. 等 GPU 完全空闲后全量 GPU eval
-> **下一步**：等运维确认方案。未完成指令：有。WAITING: 0。
-> 📦 体积：TASK=23.2KB / MEMORY=22.5KB（归档 0KB）。
+> 🆕 2026-11-02 20:35 #1155：**🔴 CPU 评测 acc=0.0 根因定位 + 修复**（运维令 2026-11-02 19:51 + 11:1x）。
+> **根因（已定位）**：Mamba2 pure-PyTorch reference 实现在 **float32** 下产生 **NaN logits** → 所有 loglikelihood=NaN → acc=0.0。实测：`"The capital of France is"` + `" Paris"` → float32 LL=**nan**，bfloat16 LL=**-0.7730**（正确，最高）；logits 检查：float32 hasNaN=True/min=max=nan，bfloat16 正常。
+> **修复（已落地）**：
+> 1. **dtype=float32 → bfloat16**：`cpu_lmeval_run.py` 默认 dtype 改为 bfloat16；`baize_cpu_lmeval.sh` DTYPE 默认改 bfloat16。
+> 2. **废弃手动 result processing → 标准 `simple_evaluate()`**：旧 `cpu_lmeval_run.py` 绕过 simple_evaluate 手动按 doc_id 分组 + 手动 process_results，对 validation_docs 类任务（sciq/boolq/hellaswag/winogrande）有 doc_id/doc_idx mismatch → 0 docs processed → acc=0（此为第二层 bug，但根因是 NaN）。已重写为调用 `lm_eval.simple_evaluate()`（标准路径，正确处理 acc/acc_norm/聚合）。
+> 3. **CPU 降载**：`baize_cpu_lmeval.sh` 加 `nice -n 19` + OMP_NUM_THREADS 上限 8。
+> **验证**：bfloat16 下 Paris LL=-0.7730 > London LL=-6.4605 > Berlin LL=-8.5230 > Madrid LL=-7.6480（排序正确）。sciq --limit 20 bfloat16 smoke test 运行中（PID 2884975，~20s/req，80 req ≈ 27min）。
+> **S1 状态**：iter 58320/700k (8.33%), loss 2.075, 0 NaN, ~592K tok/s, GPU 100%。CPU load 27.5/224（eval 进程 nice 19 + 8 线程，不影响训练）。
+> **下一步**：等 smoke test 完成确认 acc>0 → 报告 ETA（bfloat16 ~20s/req vs 旧 float32 11.7s/req，更慢但正确）→ 运维确认后全量评测。未完成指令：有。WAITING: 0。
+> 📦 §#1154（11-02 19:55, CPU ETA+GPU发现）→ daily-memories/2026-11-02.md；**结论**：5 export 完成, float32 CPU冒烟11.7s/req, ETA 9.9天, GPU空闲建议（已被19:51令否决—GPU重新满载）。被#1155修正。需要时再读。
 > 📦 §#1151（11-02 12:55, S1健康监控iter55140/loss~2.114/0NaN/~592K tok/s）→ daily-memories/2026-11-02.md；**结论**：S1健康iter55140(7.88%), loss~2.114稳态, grad-norm 0.088-0.099(极稳无spike), ~592K tok/s, ckpt@iter_54000(saved@10:41, next@56000)。被#1152监控。需要时再读。
 > 📦 §#1150（11-02 12:35, S1健康监控iter54980/loss~2.105/0NaN/~601K tok/s）→ daily-memories/2026-11-02.md；**结论**：S1健康iter54980(7.85%), loss~2.105稳态, grad-norm 0.082-0.103(极稳无spike), ~601K tok/s, ckpt@iter_54000(saved@10:41, next@56000)。被#1151监控。需要时再读。
 > 📦 §#1148（11-02 11:54, S1健康监控iter54620/loss~2.099/0NaN/~605K tok/s）→ daily-memories/2026-11-02.md；**结论**：S1健康iter54620(7.80%), loss~2.099稳态, grad-norm 0.086-0.099(极稳无spike), ~605K tok/s, ckpt@iter_54000(saved@10:41, next@56000)。被#1149监控。需要时再读。
