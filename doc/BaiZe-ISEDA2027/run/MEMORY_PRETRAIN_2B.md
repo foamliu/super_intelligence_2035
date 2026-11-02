@@ -14,17 +14,18 @@ WAITING: 0
 
 > 📦 §#1174（11-02 23:48, CPU eval监控·17轮·ETA~10.5-14.1h稳定）→ daily-memories/2026-11-02.md；**结论**：4 eval稳定,.29~16.5-17.1s/.12~21.4-21.6s,ETA~10.5-14.1h,S1 iter59970 lr=9.85e-4 warmup爬升中。被#1175监控。需要时再读。
 
-> 🆕 2026-11-03 00:25 #1180：**📊 CPU eval 监控·23轮——4 eval 全部正常推进，速度稳定，ETA ~10.0-13.1h。✅ S1 健康 iter 60300（lr=1e-3 stable）。lm_eval_results 仍空（4 eval 均未完成，最早 ~10:30 Nov3）**。
+> 📦 §#1180（11-03 00:25, CPU eval监控·23轮·ETA~10.0-13.1h）→ daily-memories/2026-11-03.md；**结论**：4 eval稳定, .29~16.9-17.0s/.12~20.9-21.0s, ETA~10.0-13.1h, S1 iter60300 lr=1e-3 stable。被#1181监控(无变化)。需要时再读。
+> 🆕 2026-11-03 00:31 #1181：**📊 CPU eval 监控·24轮——4 eval 全部正常推进，速度稳定，ETA ~10.1-13.6h。✅ S1 健康 iter 60360（lr=1e-3 stable）。lm_eval_results 仍空（4 eval 均未完成，最早 ~10:35 Nov3）**。
 > **① 4 eval 运行正常**（limit=100, 8集, 2599 total req, bfloat16, batch_size=1, nice 19, OMP=8, CUDA_VISIBLE_DEVICES=""）：
-> - .29: hf_iter_10000 (PID 992664, **452/2599=17.4%**, 16.91s/req, 已 ~144min, ETA ~10h05m→done~10:30 Nov3) + hf_iter_30000 (PID 1196989, **441/2599=17.0%**, 16.97s/req, 已 ~141min, ETA ~10h10m→done~10:35 Nov3)
-> - .12: hf_iter_20000 (PID 3729981, **~334/2599=12.9%**, ~20.9s/req, 已 ~144min, ETA ~13h09m→done~13:35 Nov3) + hf_iter_40000 (PID 3898654, **336/2599=12.9%**, 20.93s/req, 已 ~141min, ETA ~13h09m→done~13:35 Nov3)
-> - hf_iter_50000: export 完成（config 无 mamba_dt_limit=已干净），待空槽。.29 iter_10000 ~10:30 Nov3 先完成→立即启动 50000（.29 空槽，~10h→done~20:30 Nov3）。
-> - ⚠️ lm_eval_results/ 仍空（hf_iter_10000/results.json 是旧 sciq-only 测试残留 9189B@20:53，将被覆盖；4 eval 均未跑完，最早 ~10:30 Nov3 出新 results.json）。
-> **② 速度**：.29 ~16.9-17.0s/req；.12 ~20.9-21.0s/req。与#1179一致，稳定收敛。
-> **③ CPU 负载**：.29 load 35.85/224 (~16.0%)；.12 load 38.09/224 (~17.0%) → 均 <<80% 上限，不影响 S1。
-> **④ S1 状态**：iter **60300**/700k (8.61%), loss **2.11**, 0 NaN, 0 skip, ~6.9s/step, ~590K tok/s, GPU 8卡 97%/~75GB, lr=**1.0e-3**（✅ stable）。launcher pid **4163528**（✓ 从 19:51 起，起始 iter 58110）。ckpt@iter_60000。
-> **📦 体积**：TASK=30.6KB / MEMORY=30.0KB（均 ≤32KB，归档 0KB）。
-> **下一步**：持续监控；.29 iter_10000 ~10:30 Nov3 完成→立即启动 hf_iter_50000（.29 空槽）→全部 5×8 完成后(~Nov3 20:30)收集 5 个 results.json→汇总表+曲线→生成 reports/report_pretrain_cpu_eval_8sets_zh.html。未完成指令：有。WAITING: 0。
+> - .29: hf_iter_10000 (PID 992664, **473/2599=18.2%**, 17.04s/req, 已 ~150min, ETA ~10h04m→done~10:35 Nov3) + hf_iter_30000 (PID 1196989, **462/2599=17.8%**, 17.09s/req, 已 ~147min, ETA ~10h09m→done~10:40 Nov3)
+> - .12: hf_iter_20000 (PID 3729981, **364/2599=14.0%**, 21.58s/req, 已 ~150min, ETA ~13h24m→done~13:55 Nov3) + hf_iter_40000 (PID 3898654, **353/2599=13.6%**, 21.77s/req, 已 ~148min, ETA ~13h35m→done~14:06 Nov3)
+> - hf_iter_50000: export 完成（config 无 mamba_dt_limit=已干净），待空槽。.29 iter_10000 ~10:35 Nov3 先完成→立即启动 50000（.29 空槽，~10h→done~20:35 Nov3）。
+> - ⚠️ lm_eval_results/ 仍空（hf_iter_10000/results.json 是旧 sciq-only 测试残留 9189B@20:53，将被覆盖；4 eval 均未跑完，最早 ~10:35 Nov3 出新 results.json）。
+> **② 速度**：.29 ~17.0-17.1s/req；.12 ~21.6-21.8s/req。与#1180一致，稳定收敛。
+> **③ CPU 负载**：.29 load 34.54/224 (~15.4%)；.12 load 36.01/224 (~16.1%) → 均 <<80% 上限，不影响 S1。
+> **④ S1 状态**：iter **60360**/700k (8.62%), loss **2.10**, 0 NaN, 0 skip, ~6.9s/step, ~590K tok/s, GPU 8卡 90-100%/~75GB, lr=**1.0e-3**（✅ stable）。launcher pid **4163528**（✓ 从 19:51 起，起始 iter 58110）。ckpt@iter_60000。
+> **📦 体积**：TASK=29.9KB / MEMORY=29.7KB（均 ≤32KB，归档 0KB）。
+> **下一步**：持续监控；.29 iter_10000 ~10:35 Nov3 完成→立即启动 hf_iter_50000（.29 空槽）→全部 5×8 完成后(~Nov3 21:00)收集 5 个 results.json→汇总表+曲线→生成 reports/report_pretrain_cpu_eval_8sets_zh.html。未完成指令：有。WAITING: 0。
 > 📦 §#1179（11-03 00:19, CPU eval监控·22轮·ETA~10.0-13.1h）→ daily-memories/2026-11-03.md；**结论**：4 eval稳定, .29~16.5-16.7s/.12~20.4-20.6s, ETA~10.0-13.1h, S1 iter60250 lr=1e-3 stable。被#1180监控(无变化)。需要时再读。
 > 📦 §#1178（11-03 00:13, CPU eval监控·21轮·ETA~10.1-13.5h）→ daily-memories/2026-11-03.md；**结论**：4 eval稳定, .29~16.6-16.9s/.12~20.4-21.5s, ETA~10.1-13.5h, S1 iter60200 lr=1e-3 stable。被#1179监控(无变化)。需要时再读。
 > 📦 §#1177（11-03 00:05, CPU eval监控·20轮·ETA~10.0-13.5h）→ daily-memories/2026-11-03.md；**结论**：4 eval稳定, .29~16.3-16.6s/.12~20.6-20.9s, ETA~10.0-13.5h, S1 iter60150 lr=1e-3 stable。被#1178监控(无变化)。需要时再读。
