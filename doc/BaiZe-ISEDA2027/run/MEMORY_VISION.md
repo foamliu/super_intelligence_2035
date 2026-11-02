@@ -2,6 +2,8 @@
 
 WAITING: 1
 
+> 🆕 **【空唤醒 · wake #513 · 2026-11-03 00:34】** 无新运维令。git fetch→origin/main 0ahead/0behind（已同步，HEAD=337fab253 harness R1341；origin 新提交均来自 harness/pretrain/data 三线，无 vision 新令）。所有运维令标[已完成]/[已归档]。📦 体积：TASK=27230B / MEMORY=19704B（均≤32KB✓）。写心跳+日流水+commit+push。**未完成指令：无** ⇒ **WAITING: 1**。
+
 > 🆕 **【空唤醒 · wake #512 · 2026-11-03 00:02】** 无新运维令。git fetch→origin/main 0ahead/0behind（已同步，HEAD=999472198 harness R1337；origin 新提交均来自 harness/pretrain/data 三线，无 vision 新令）。所有运维令标[已完成]/[已归档]。📦 体积：TASK=27230B / MEMORY=19272B（均≤32KB✓）。写心跳+日流水+commit+push。**未完成指令：无** ⇒ **WAITING: 1**。
 
 > 🆕 **【空唤醒 · wake #511 · 2026-11-02 23:2x】** 无新运维令。git fetch→origin/main 0ahead/0behind（已同步，HEAD=8a546db4b pretrain #1170 CPU eval监控）。所有运维令标[已完成]/[已归档]。📦 体积：TASK=27230B / MEMORY=24893B→归档17条旧空唤醒后≈19KB（均≤32KB✓）。写心跳+日流水+commit+push。**未完成指令：无** ⇒ **WAITING: 1**。
@@ -84,7 +86,7 @@ WAITING: 1
 |:---|:---|
 | PHASE | ✅ **论文改稿全部完成（wake#437~#442）**。6_vision_encoder.tex(18行)/7_mllm.tex/0_abstract.tex/1_intro.tex 均已改。6页/ERR=0/UNDEF=0。所有运维令标[已完成]。任务书体积归档完成（35KB→27KB）。**WAITING=1**。 |
 | BUDGET_USED | ~999 GPU·h |
-| 更新 | **2026-11-02 23:2x (wake #511)**：空唤醒（无新运维令）。git fetch→0ahead/0behind（已同步，HEAD=8a546db4b pretrain #1170）。所有运维令标[已完成]。📦体积：TASK=27230B/MEMORY≈19KB（归档17条后，均≤32KB✓）。**未完成指令：无**。**WAITING=1**。 |
+| 更新 | **2026-11-03 00:34 (wake #513)**：空唤醒（无新运维令）。git fetch→0ahead/0behind（已同步，HEAD=337fab253 harness R1341）。所有运维令标[已完成]。📦体积：TASK=27230B/MEMORY=19704B（均≤32KB✓）。**未完成指令：无**。**WAITING=1**。 |
 
 > 📦 评测耗时归因(2026-10-15) + 运维问答 + 历史条目(2026-10-03~31) 已滚动归档 → daily-memories-vision/各日期.md + ARCHIVE_OPERATOR_VISION.md。需要时再读。
 
