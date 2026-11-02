@@ -356,42 +356,4 @@ ERROR_COUNT:  <n>
 
 ### 1.2 评测设计（核查通过后）
 
-1. 统一口径（否则不可比）：
-   - 同一子集（同一批 instance_id）
-   - 同一模型（同一 provider / 同一 checkpoint）
-   - 同一 timeout、同一 max turns / 预算
-   - 同一评测脚本（SWE-bench 官方 harness）
-2. 规模：先 20–50 条跑通全流程 → 报初步结果 → 再由运维决定是否放大。
-3. 每个 harness 报：`resolve rate（主）` · `平均轮数` · `平均 token` · `平均墙钟` · `成本` · `失败模式分类`
-4. 诚实性：失败的实例要保留日志；不许只报成功案例。
-
-### 1.3 H-A 交付物
-1. `harness/SWEBENCH_COMPARE.html`（自包含：口径 · 结果表 · 每个 harness 的失败模式 · 原始日志路径）
-2. `harness/swebench_runs/`（原始预测 patch + 评测输出，不入库）
-3. `MEMORY_HARNESS.md` 记录可复现命令
-
----
-## 3. 约束
-
-- 仓库与产物：分析产物写 `doc/BaiZe-ISEDA2027/run/harness/`（文本 md/html 入库）；
-  原始仓库副本 / 大数据 / 日志不入库。
-- 共享工作副本：`run/` 是多 agent 共享的（vision / pretrain / data 也在用）——
-  🚫 不要 `git add -A`，只提交本任务的 `harness/` 与 `MEMORY_HARNESS.md`、`daily-memories-harness/`。
-- git 规则：push 前先 `fetch` + `pull --rebase --autostash`（照抄 `baize_data_loop.sh` 的做法）。
-- 资源：SWE-bench 评测可能很吃 CPU/磁盘/Docker —— 先报预算再跑，
-  ⚠️ 注意 `.12`/`.29` 上另有训练在下（见 `AGENTS.md`），重 I/O 要避让。
-- 🚫 不碰其他 agent 的任务书与记忆文件。
-- 诚实：没跑通就写没跑通；没查到就写没查到。不要编造 API 行为。
-
----
-
-## 4. 记忆管理
-
-- `run/MEMORY_HARNESS.md` — 运行时状态（PHASE / WAITING / ERROR_COUNT / 看板 / 流水）
-- `run/daily-memories-harness/$(date +%F).md` — 当日操作日志
-- `run/harness/` — 分析报告与（不入库的）运行产物
-
-启动恢复：读 `MEMORY_HARNESS.md` → 当日日志 → 判断下一步 → 执行 → 回写。
-
-
-
+1
