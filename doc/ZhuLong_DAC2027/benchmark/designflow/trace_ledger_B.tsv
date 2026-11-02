@@ -30,5 +30,5 @@ djml8					case	EDA-Eval-DesignFlow-PFDdeadZone-001	2026-11-02 17:47
 1792372786960_4ujp9	tongni	hfeg0pfn119	155	characterization	case	EDA-Eval-DesignFlow-Vcc2scPVTvar-001	2026-11-03 03:24	Vcc2scstdby multi-corner PVT voltage-variation spec checker (cross-corner max-min <5mV). HSPICE multi-.alter .mt<N> per-corner collect. 14 cond a-n. .75 HSPICE V-2023.12 real-run verified.
 1792570431387_vdqlw	ypzheng	hfeg0pkn003	335	characterization	case	EDA-Eval-DesignFlow-TrimMarginSpec-001	2026-11-03 03:52	
 1793103982380_vdwab	tongni	hfeg0plg63	236	spice_sim	case	EDA-Eval-DesignFlow-VwlpRefDeckSet-001	2026-11-03 04:52	VwlpRef multi-analysis deck-set (tran/ac/dc/tran_mc/psrr); k=14; .75 HSPICE verified ref PASS + 5 neg FAIL
-1793177580229_11fst	e0030760	hfeg0pkn002	175	characterization	claimed		2026-11-03 05:34	
+1793177580229_11fst	e0030760	hfeg0pkn002	175	characterization	case	EDA-Eval-DesignFlow-Sram6tDcChar-001	2026-11-03 07:09	characterization L2 SRAM 6T bitcell DC char harness (wnm/iread/iwrite/ileak, 6 PVT, level-1 MOS); 14 conds; ref PASS + 5 negs FAIL; A/B GT confirmed on .75 real HSPICE; appended jsonl line 29
 1792565482572_2gmli	thqu	hfeg0plg99	231	spice_sim	claimed		2026-11-03 06:12	
