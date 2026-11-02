@@ -25,3 +25,4 @@
 1789090020843_b9bop					parked		2026-11-03 01:23	Scripted/benchmark session ('启动业务场景: 时序分析' trigger + 'can you report product yield'). Not authentic user design intent; only 2 user-text msgs. 58 editor / 40 read_files but no real task framing.
 1790566107917_f1rqc	hbpeng	10.129.2.14	147	eda_other	parked		2026-11-03 01:25	tcl2skill converter dev task. Deliverable = whole multi-file tcl2skill Python package (lexer/ast/translator/skill_visitor/expr_engine/plugin, 200 editor edits). Open-ended large dev task, not focused design-flow deliverable. Input = proprietary PDK Tcl callbacks (mosCB.tcl under /apps/imctf/.../PDK_QA). Too large to replicate as self-contained case.
 1792983707093_9sjuh	e0039602	10.129.8.136	147	verification	case	EDA-Eval-DesignFlow-FormalityLaunchDiag-001	2026-11-03 01:40	
+1791787487273_w6omm	e0045488	hfeg0pkn002	59	digital	case	EDA-Eval-DesignFlow-LibPVT-001	2026-11-03 02:11	
