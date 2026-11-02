@@ -20,3 +20,4 @@
 1789454632664_t1xjg	e0031668	hfeg0pkn003	704	layout_aether	case	EDA-Eval-DesignFlow-ERCFlowAether-001	2026-11-02 15:49	
 1790487462826_wb03t.messages.json	cwei	hfeahpc504	691	layout_aether	case	EDA-Eval-DesignFlow-CTLEAether-001	2026-11-02 16:53	deepread shows spice_sim CTLE AC flow (CTLESpec-001 designed), not layout_aether; misclassified by keyword filter; belongs to spice_sim shard
 1791444783469_mwoue.messages.json	miccao	hfeg0plg92	401	physical_verify	case	EDA-Eval-DesignFlow-DRCKDeckOpt-001	2026-11-02 17:13	
+1791362457881_awgyg	hbpeng	hfeg0plg55	445	physical_verify	parked		2026-11-02 17:31	multi-topic fragmented 20-turn session; gold LVL/DRC/LVS scripts import IMCP.* from /apps/imctf/develop/PDK_QA/pdkQaSystem codebase unreachable in .75 sandbox; no clean self-contained verifiable sub-task
