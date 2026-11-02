@@ -20,7 +20,7 @@ WAITING: 1
 ```
 PHASE:        🟢运维令10-31 web search调研HF长上下文+agentic数据集.报告v5已交付+已commit+push
 已完成:       ✅A.LC+Agentic调研报告v5(report_data_lc_agentic_survey_zh.html 106569B/44table/0script/18+15候选/33 unique HF链接)+生成器(gen_lc_agentic_survey_report.py 幂等);✅B.85M下载持续运行;✅C.报告全量验证(7节/0script/0CDN/幂等OK/44table平衡)
-当前动作:     唤醒1110(2026-11-02 23:5x):运维令10-31交付物复核全PASS→①报告HTML=106569B(≥25KB✓)/0<script>/44<table>=44</table>平衡✓/7节§1~§7齐✓/74 HF链接/34「未核到」✓;②必含关键词(2.52%×2/0.03%×2/longctx_ladder/193,295×3/SWE-bench×50/Terminal×40/RULER/NIAH/SWE-Gym/SWE-smith/ToolBench/BFCL)全在✓;③generator --check-idempotent OK(84252bytes✓);④85M:PID4174877 alive✓;⑤df:/nas_train178T/86%(30T可用),/nas_env8.3T/84%(1.7T可用);⑥git synced(##main...origin/main,data线clean✓,他线p8脚本未碰);⑦TASK=27958B/MEMORY~33KB(均<40KB无需归档)→心跳WAITING=1
+当前动作:     唤醒1111(2026-11-03 00:1x):运维令10-31交付物例行复核全PASS→①report=106569B(≥25KB✓)/0<script>/44<table>=44</table>平衡✓/7节§1~§7齐/0外链(全huggingface.co)/必含关键词全在✓;②generator --check-idempotent OK(84252bytes✓);③85M:PID4174877 alive(etimes≈28241s≈7.8h)✓;④df:/nas_train178T/86%(30T可用),/nas_env8.3T/84%(1.7T可用);⑤git synced(##main...origin/main,data线clean✓);⑥TASK=27958B/MEMORY~35KB(均<40KB无需归档)→任务已交付,心跳WAITING=1
 下一步:       下轮唤醒:①查85M下载进度;②待运维批准后执行下载(P0:whole-books+SWE-smith+Nemotron-Terminal-Corpus+SWE-rebench)
 阻塞:         无
 ERROR_COUNT:  11
@@ -30,6 +30,8 @@ ERROR_COUNT:  11
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。
 
 ## 📋 本唤醒流水
+> [11-03 00:1x] 唤醒1111：运维令10-31交付物例行复核全PASS→①report=106569B(≥25KB✓)/0<script>/44<table>=44</table>平衡✓/7节§1~§7齐/0外链(全huggingface.co)/必含关键词全在✓;②generator --check-idempotent OK(84252bytes✓);③85M:PID4174877 alive(etimes≈28241s≈7.8h)✓;④df:/nas_train178T/86%(30T可用),/nas_env8.3T/84%(1.7T可用);⑤git synced(##main...origin/main,data线clean✓);⑥TASK=27958B/MEMORY~35KB(均<40KB无需归档)→任务已交付,心跳WAITING=1
+
 > [11-02 23:5x] 唤醒1110：运维令10-31交付物复核全PASS→①report=106569B(≥25KB✓)/0<script>/44<table>=44</table>平衡✓/7节§1~§7齐/74 HF链接/34「未核到」✓;②必含关键词(2.52%×2/0.03%×2/longctx_ladder/193,295×3/SWE-bench×50/Terminal×40/RULER/NIAH/SWE-Gym/SWE-smith/ToolBench/BFCL)全在✓;③generator --check-idempotent OK(84252bytes✓);④85M:PID4174877 alive✓;⑤df:/nas_train178T/86%(30T可用),/nas_env8.3T/84%(1.7T可用);⑥git synced(##main...origin/main,data线clean✓);⑦TASK=27958B/MEMORY~33KB(均<40KB无需归档)→任务已交付,心跳WAITING=1
 
 > [11-02 23:5x] 唤醒1109：运维令10-31交付物再次复核全PASS→报告HTML=106569B(≥25KB✓)/0<script>/仅外链=huggingface.co+内网代理172.19.92.25(0CDN✓)/44<table>平衡/0unclosed 0err;7节§1~§7齐;必含关键词(TL;DR/2.52%/0.03%/longctx_ladder/193,295/SWE-bench/Terminal/RULER/NIAH/SWE-Gym/SWE-smith/ToolBench/BFCL/hf download)全在✓;generator(gen_lc_agentic_survey_report.py 88491B)在位;git synced(##main...origin/main无ahead/behind)✓;TASK=27958B/MEMORY~33KB(均<40KB无需归档)→任务已交付,心跳WAITING=1
