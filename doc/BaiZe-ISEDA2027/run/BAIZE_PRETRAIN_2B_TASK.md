@@ -1,4 +1,17 @@
 # BAIZE_PRETRAIN_2B_TASK.md
+
+### [运维令] 2026-11-02 19:51（**S1 已被运维经 ops 中继重启 → 禁止重复启动；CPU 评测必须降载**）· 运维直令 · 最高优先
+
+**① 事故（已核实）**：S1 在 **18:39:51** 被 **SIGKILL**（rank8/.29 pid 1428155）→ 其余 rank 卡在 NCCL 集合（`Watchdog caught collective operation timeout, SeqNum=2109238`）→ **18:50:18** rank1/.12 报 **SIGBUS** → torchrun `ChildFailedError` 整组退出。最后正常步 **58110**（18:39:03）。GPU 空置 18:39 → 19:51（约 72 分钟）。
+
+**② 处置（已完成，勿重做）**：19:51:12 用 `cd /nas_train/app.e0031982/code/baize-llm && setsid nohup bash scripts/train.sh s1 --nodes 2 > /tmp/baize_s1_baize2b_worker.log 2>&1 &` 从 **ckpt 58000** 续跑（launcher pid 4163528）。实测：`.29` 8 卡 **100% util**、`NCCL INFO Connected all trees`、`load-checkpoint (3414ms)`。**⇒ 训练已恢复，🚫 严禁再起第二个训练进程（会双写 ckpt）。** 判活请直接看 `/tmp/baize_s1_baize2b_worker.log` 的 `iteration N/700000` 行。
+
+**③ 证据保全**：崩溃现场日志已重命名为 `/tmp/baize_s1_baize2b_worker.log.crash_1102_1839`、`/tmp/baize_s1_baize2b_master.log.crash_1102_1839`（🚫 勿删，用于定 OOM vs 误杀）。
+
+**④ CPU 评测（11:1x 令）继续，但硬性降载**：`OMP_NUM_THREADS≤8`、`nice -n 19`、每机并发 ≤2 进程、`device=cpu` 不变；**🚫 禁止 `pkill python`/宽泛 kill**（18:39 训练被 -9 的疑似原因之一）；`sciq/acc=0.0000` 说明解码/loglikelihood 配置还没通，**先修通再全量**，不要直接跑 5×8。
+
+**⑤ 心跳必须写明**：S1 已重启（launcher pid / 起始 iter 58110）、`.29` 与 `.12` 各自 CPU% 实测值、`未完成指令：有`。
+
 > 📦 §运维令 2026-10-31 18:2x（paper-slim 压 ch4 约 1750 字符 → 6 页）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md「归档 2026-10-31 第三批」节；**结论**：✅ 4_llm_pretrain.tex 15398→11960B（省 22.3%），6 页（正文 p1-p5 + refs p6），ERR=0/UNDEF=0/Overfull=0，commit 2fef637c8，报告 report_pretrain_paper_slim_zh.html 9.9KB。需要时再读。
 
 > 📦 §运维令 2026-10-31 15:2x（全文事实审订 3_architecture.tex）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md「归档 2026-10-31 第三批」节；**结论**：✅ 84项审计，修复"52 Mamba-2"→24+28，Table1新增Mamba2/MLP行，5处.tex修改，ERR=0，commit d6ba844fc，报告 report_pretrain_paper_audit_zh.html 25.7KB。需要时再读。
