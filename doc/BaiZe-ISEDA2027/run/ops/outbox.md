@@ -24716,3 +24716,87 @@ echo "=== DONE 233 ==="
       torchrun=3 load=34.53 25.16 14.75
 === DONE 233 ===
 ```
+
+---
+
+## RUN_ID 234 · 2026-11-02 19:58:31 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 234 | S1 lr/resume audit | $(date '+%F %T') | host=$(hostname) ==="
+W=/tmp/baize_s1_baize2b_worker.log
+LLM=/nas_train/app.e0031982/code/baize-llm
+
+echo
+echo "[1] 最新 iteration 行（看 lr 是否随步数上升）"
+timeout 10 grep -E 'iteration +[0-9]+/' "$W" 2>/dev/null | tail -4 | cut -c1-175 | sed 's/^/    /'
+
+echo
+echo "[2] train.sh 启动 banner（并行/LR/迭代区间）"
+timeout 10 grep -nE '并行|LR|迭代区间|ckpt|CHECK|resume' "$W" 2>/dev/null | head -14 | cut -c1-150 | sed 's/^/    /'
+
+echo
+echo "[3] 关键参数是否 restore optimizer / scheduler"
+timeout 10 grep -nE '\-\-load|--finetune|--use-checkpoint|--no-load|--ckpt-|--use-dist-ckpt|--no-save-optim|--no-save-rng|--save-interval' "$LLM/scripts/train.sh" 2>/dev/null | head -14 | cut -c1-140 | sed 's/^/    /'
+
+echo
+echo "[4] s1.env 里的 LR 相关"
+timeout 8 grep -nE 'LR|WARMUP|DECAY|START_ITER|ITERS' "$LLM/configs/s1.env" 2>/dev/null | head -12 | cut -c1-120 | sed 's/^/    /'
+
+echo
+echo "[5] ckpt 里是否带 scheduler 状态"
+LR_DIR=$(ls -dt /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/checkpoints/iter_0058000 2>/dev/null | head -1)
+echo "    dir=$LR_DIR"
+timeout 10 ls -1 "$LR_DIR" 2>/dev/null | head -12 | sed 's/^/    /'
+
+echo
+echo "[6] 下一步（20s 后）看 lr 变化"
+sleep 20
+timeout 10 grep -E 'iteration +[0-9]+/' "$W" 2>/dev/null | tail -2 | cut -c1-175 | sed 's/^/    /'
+
+echo "=== DONE 234 ==="
+```
+
+**输出**
+```
+=== RUN_ID 234 | S1 lr/resume audit | 2026-11-02 19:58:31 | host=whag0pgpuap29 ===
+
+[1] 最新 iteration 行（看 lr 是否随步数上升）
+     [2026-11-02 19:55:40] iteration    58010/  700000 | consumed samples:     14850560 | elapsed time per iteration (ms): 12075.7 | learning rate: 5.000000E-06 | global batch siz
+     [2026-11-02 19:56:52] iteration    58020/  700000 | consumed samples:     14853120 | elapsed time per iteration (ms): 7198.2 | learning rate: 1.000000E-05 | global batch size
+     [2026-11-02 19:58:02] iteration    58030/  700000 | consumed samples:     14855680 | elapsed time per iteration (ms): 7031.8 | learning rate: 1.500000E-05 | global batch size
+
+[2] train.sh 启动 banner（并行/LR/迭代区间）
+
+[3] 关键参数是否 restore optimizer / scheduler
+    104:       --eval-interval 250 --eval-iters 0 --save-interval "$SAVE_INTERVAL"
+
+[4] s1.env 里的 LR 相关
+    5:# LR：前 2000 步线性 warmup 到 1e-3，之后恒定（本段无 decay）
+    6:# 2026-10-28 运维令：GBS 128→256，ITERS 保持 700000，总 token 2.94T
+    10:ITERS="${ITERS:-700000}"   # 累计步数（S 是第一阶段，故 = 本阶段步数）
+    11:START_ITER=0          # 本阶段起始迭代（续跑基准；epochs 对账用）
+    13:WARMUP=2000
+    14:LR_DECAY_ITERS=0      # 无 D 段
+
+[5] ckpt 里是否带 scheduler 状态
+    dir=/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/checkpoints/iter_0058000
+    __0_0.distcp
+    __0_1.distcp
+    __10_0.distcp
+    __10_1.distcp
+    __1_0.distcp
+    __11_0.distcp
+    __11_1.distcp
+    __12_0.distcp
+    __12_1.distcp
+    __13_0.distcp
+    __13_1.distcp
+    __14_0.distcp
+
+[6] 下一步（20s 后）看 lr 变化
+     [2026-11-02 19:56:52] iteration    58020/  700000 | consumed samples:     14853120 | elapsed time per iteration (ms): 7198.2 | learning rate: 1.000000E-05 | global batch size
+     [2026-11-02 19:58:02] iteration    58030/  700000 | consumed samples:     14855680 | elapsed time per iteration (ms): 7031.8 | learning rate: 1.500000E-05 | global batch size
+=== DONE 234 ===
+```
