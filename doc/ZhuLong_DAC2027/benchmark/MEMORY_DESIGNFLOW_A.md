@@ -2,15 +2,15 @@ WAITING: 0
 SHARD: A (digital_front)
 DOMAINS: digital, eda_other, pnr_signoff, verification
 
-- **PHASE**: loop 任务卡 case 合成。本轮按 loop 卡合成第 19 条 case（A 档 trace-faithful，pnr_signoff +1，Innovus PR→StarRC→PrimeTime 复现指导提取器）。
-- ✅ **本轮交付 case**：`EDA-Eval-DesignFlow-FlowGuide-001`（pnr_signoff，L1，A 档 faithful，trace 1792572659304_xt45f / johnl / hfeg0pfn119 / mc=183 / 创新用户 johnl，被恢复会话 624js 的 Innovus→StarRC→PT 流程事实提取）。A jsonl 现 19 条。
+- **PHASE**: loop 任务卡 case 合成。本轮按 loop 卡合成第 20 条 case（A 档 trace-faithful，verification +1，cov/fm 双流程搭建）。
+- ✅ **本轮交付 case**：`EDA-Eval-DesignFlow-CovFMFlow-001`（digital/verification，L1-boundary，A 档 faithful，trace 1792395564570_r3gb7 / lorikx / hfeg0pkn005 / mc=203 / freq_calibration_model 项目新建覆盖率检查 cov/ + 形式验证 fm/ 两套流程目录，参考 syn/ Makefile+setup 模式）。A jsonl 现 20 条。
 - ✅ DEBT 已清零。
-- 📊 trace 覆盖率：18/1001 = 1.8%（covered=18 · touched=20 · parked=2；A jsonl 19 条，含 1 orphan `CosimSetup-001`(ve67l) 待查）
+- 📊 trace 覆盖率：19/1001 = 1.9%（covered=19 · touched=21 · parked=2；A jsonl 20 条，含 1 orphan `CosimSetup-001`(ve67l) 待查）
 - 🎯 通过率: 本条 case 未 pi/cline 实跑（"未跑"）；cline 存量重跑 0/1（Verification-001 FAIL·L1/hook 限制）· B 档目标 20–30%；A 档本轮只报数不设目标
-- 🧾 断言: 本轮 FlowGuide-001 k_rationale=k_check=18 ≥8 ✓（日报 18/18/✓）；存量全达标
-- 📦 体积：TASK≈23.8KB / MEMORY_A≈30KB（轮 8-13 已归档 ARCHIVE 批次 49）
-- 🔒 泄漏隔离: check.py/reference/hidden 不进 SUT workdir；判分独立跑（check.py 18 条断言 (a)-(r)：subprocess 在内嵌隐藏 B session_dump_B.json+workdir_listing_B.txt 上真跑候选 flow_extractor.py 校验 B 事实 + 跨输入 A 守护 + 静态无 A/B 字面量；check.py 内嵌 A/B 输入自包含，不进 cline cwd）
-- ⚠️ 运维令进度（最高优先·跨 shard ops）：2026-11-02「被测换 cline + PreToolUse 防泄题 hook」**已在轮 9 启动**——run_one.sh 已建、hook 已部署、Verification-001(L1) cline 重跑 = FAIL（hook 把 run_commands override 成 echo，阻断 L1/offline 本地执行；L2/EDA-via-MCP 不受影响）。**待办**：挑一条 L2 shard-A PASS case 用 cline+hook 重跑验真实通过率（L2 不被 hook 拦）。本轮新交付的 FlowGuide-001 是 L1，重跑也会被 hook 拦——若要验它需先改 hook 允许 workspace 内 run_commands。本轮 shard-A 1-case 40min 预算未启动 L2 重跑；下轮第一件事评估启动。
+- 🧾 断言: 本轮 CovFMFlow-001 k_rationale=k_check=24 ≥8 ✓（日报 24/24/✓）；存量全达标
+- 📦 体积：TASK≈23.8KB / MEMORY_A≈31KB（轮 8-13 已归档 ARCHIVE 批次 49）
+- 🔒 泄漏隔离: check.py/reference/hidden 不进 SUT workdir；判分独立跑（check.py 24 条断言 (a)-(x)：静态结构 (a)-(t) on fm/+cov/ + tclsh stub 跨输入守护 (u)-(w) 在内嵌隐藏 B common_setup_B.tcl+filelist_fm_B.f 上真跑候选 fm.tcl 校验 B 设计流过 set_top/read_sverilog/read_verilog 且 A 字面量 cfreq_ctrl 缺席 + make -n 干跑 (x) on cov/Makefile 带 B DESIGN/TOP 校验 B 出现 A 缺席；check.py 内嵌 B 输入自包含，不进 cline cwd）
+- ⚠️ 运维令进度（最高优先·跨 shard ops）：2026-11-02「被测换 cline + PreToolUse 防泄题 hook」**已在轮 9 启动**——run_one.sh 已建、hook 已部署、Verification-001(L1) cline 重跑 = FAIL（hook 把 run_commands override 成 echo，阻断 L1/offline 本地执行；L2/EDA-via-MCP 不受影响）。**待办**：挑一条 L2 shard-A PASS case 用 cline+hook 重跑验真实通过率（L2 不被 hook 拦）。本轮新交付 CovFMFlow-001 是 L1-boundary，重跑也会被 hook 拦。本轮 shard-A 1-case 40min 预算未启动 L2 重跑；下轮第一件事评估启动。
 
 
 <!-- 已归档轮 8-13 → ARCHIVE_OPERATOR_DESIGNFLOW.md 归档批次 49（体积闸门）。指针： -->
@@ -20,6 +20,17 @@ DOMAINS: digital, eda_other, pnr_signoff, verification
 <!-- 2026-11-02 shard A 轮 9：cline 迁移 run_one.sh + Verification-001 cline 重跑（运维令 §四 执行） → 已归档 ARCHIVE 批次 49 -->
 <!-- 2026-11-02 shard A 轮 10：CoreTimingSig-001 交付 ✓（case 合成，WAITING: 0） → 已归档 ARCHIVE 批次 49 -->
 <!-- 2026-11-02 shard A 轮 11：InnovusAudit-001 交付 ✓（A 档 trace-faithful / pnr_signoff，WAITING: 0） → 已归档 ARCHIVE 批次 49 -->
+
+### 2026-11-02 shard A 轮 20：CovFMFlow-001 交付 ✓（A 档 trace-faithful / digital·verification，WAITING: 0）
+- 选 trace：trace_ledger.py --shard A next → mc≥300 候选多为 calibre/hspice（shard C 域）。Python 评分按 digital-tool 主导 + analog 反向过滤（dig>ana, dig≥5），挑纯数字会话 `1792395564570_r3gb7`（lorikx/hfeg0pkn005/mc=203/netlist=242 synthesis=74 innovus=4 → digital/verification，400 msgs/1.4MB）claim → mark case。lorikx 已在轮 14 (SynLintFlow-001/lond8) 出现但本会话 r3gb7 是同项目不同 session 不同任务（cov+fm 流程），复用用户可接受。
+- 深读：400 msgs；8 条 user text 轮。A档选轮 #222 逐字原文『再开两个文件夹，一个做覆盖率检查，另一个做形式验证，老样子还是参考那个文件夹内的内容去做』—— 纯「提出需求」无根因/修复 → 合 A档选轮规则。真实任务 = 在 freq_calibration_model (cfreq_ctrl VCO 校准模块) 项目新建 cov/ (VCS Code Coverage line+cond+fsm+tgl+branch + URG) 与 fm/ (Synopsys Formality RTL-vs-DC网表 LEC) 两套独立流程目录，参考 syn/ Makefile+setup 模式。从 .75:/home/lorikx/freq_calibration_model/ 取回真实金标准 10 文件（fm/{Makefile,README,SourceMe,data/filelist_fm.f,scripts/fm.tcl,setup/common_setup.tcl} + cov/{Makefile,README,SourceMe,data/filelist_cov.f}）。FM 实跑 Verification SUCCEEDED (88 比较点 6 Port+82 DFF 全等效/16s)；cov 流程结构正确但覆盖率数据记录受 VCSTools_Net/VT_CoverageURG license 限制（真实调试: 运行时 -cm_dir 重复传入致 No VCS Code Coverage Metrics monitored, 修复为 run target 不传运行时 -cm_dir）。用户接受（#355 转向新任务 verdi 网表查看）。inline 深读，未单写笔记文件。注意 .75 ssh 到 hfeg0pkn005 是 login-node pool 有 NFS 挂载抖动，需重试 + 用正确子目录路径 sessions/<sid>/<sid>.messages.json。
+- 合成（A 档 / L1-boundary / digital·verification）：prompt.txt = #222 逐字原文；task_brief.md ≤3 行只写交付接口。金标准 = 真实 10 文件入 reference_submit.zip（fm/+cov/ 结构 verbatim）。资产 A = rtl_synth/cfreq_ctrl.v (真实 RTL 358 行) + sim/tb_cfreq_ctrl_synth.v + sim/vco_fb_model.v + syn/setup/common_setup.tcl + syn/Makefile (真实模式参考) + workspace_listing.txt + prompt + task_brief，无说明性注解。隐藏 B = hidden/common_setup_B.tcl (design=dco_trim_top/tech=SMIC28/PDK=/apps/pdk/SMIC28/corner=ss_0p9v_m40c) + filelist_fm_B.f + hidden_manifest.json，结构全异于 A。
+- check.py 24 条独立断言 (a)-(x)：静态结构 (a)zip恰含10文件 (b)fm.tcl source common_setup (c)synopsys_auto_setup true (d)set_svf $SVF_FILE+file exists守护 (e)read_db -technology_library (f)read_sverilog -r -vcs $RTL_FILELIST参数化 (g)read_verilog -i $IMPL_NETLIST参数化 (h)set_top r:/WORK/$DESIGN_NAME (i)set_top i:/WORK/$DESIGN_NAME (j)match+verify (k)report_unmatched_points (l)failing/aborted/analyze调试报告 (m)fm/Makefile fm_r2g目标 (n)USE_LSF开关+bsub (o)cov:compile run report一条龙+分步 (p)-cm line+cond+fsm+tgl+branch五类 (q)-cm_dir+-cm_name (r)urg -dir $(VDB) -report (s)run target simv_cov无运行时-cm_dir(真实bug修复) (t)cov filelist≥3源文件；跨输入守护 (u)tclsh stub 跑 fm.tcl 带 B 环境(模拟 Makefile -x) set_top 流过 B 设计 dco_trim_top (v)stub read_sverilog -r 用 B filelist + read_verilog -i 用 B 网表 (w)A 字面量 cfreq_ctrl 不出现在 stub 记录命令 (x)make -n cov/Makefile 带 B DESIGN/TOP 显示 B 且 A 字面量缺席。check.py 内嵌 B common_setup+filelist 自包含，tclsh stub (lsearch 检测 -r/-i，redirect/file mkdir/source 原生) 真跑候选 fm.tcl on B + GNU make -n 干跑 cov/Makefile on B。
+- 自验：gold reference_submit.zip check() PASS（24/24）+ 5 negative 全 FAIL（NEG_RC=0，5 distinct labels：fake_empty→a / fake_print_expected→a / fake_core_deleted→j / naive_hardcode_a→h,i,u,w / naive_runtime_cmdir→s）+ §4.9 (a)(b)(c) 三假 FAIL。
+- 断言闸门：k_rationale=24 == k_check=24 ≥8 ✓（gate_triple 24/24/✓）。追加 EDA-Eval-DesignFlow_A.jsonl（A jsonl 现 20 条，test==disk roundtrip OK，14753B）。mark case 1792395564570_r3gb7（lorikx/hfeg0pkn005/digital/mc=203）。merge_shards → 主 jsonl 93 cases。日报 report_benchmark_11_02.html 93 cases，本条 24/24/✓。
+- A 档试点记账：track=faithful，未 pi/cline 实跑（"未跑"），待 cline+hook 重跑。失败归因预设：①交付形态/位置错→(a) / ②结构缺件/反模式缺位→(b)-(t) / ③能力不足（硬编码 A 字面量）→(w)+(x) / ④判分歧义（对事实严格匹配）→(u)+(v)。
+- ⚠️ 运维令进度：同上（待办挑 L2 PASS case cline+hook 重跑）。
+- ⬜ 下轮：trace_ledger.py --shard A next 开第 21 条 case；或优先挑一条 L2 shard-A PASS case 用 cline+hook 重跑。
 
 ### 2026-11-02 shard A 轮 19：FlowGuide-001 交付 ✓（A 档 trace-faithful / pnr_signoff，WAITING: 0）
 - 选 trace：trace_ledger.py --shard A next → mc≥300 候选多为 calibre/hspice（shard C 域）。Python 评分按 shard-A 数字工具计数排序，挑纯 innovus 主导会话 `1792572659304_xt45f`（johnl/hfeg0pfn119/mc=183/innovus=1391 netlist=147 synthesis=20 → pnr_signoff，269 msgs/1.4MB）claim → mark case。选 johnl（新用户，本 shard 首次覆盖）。
