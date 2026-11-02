@@ -1,13 +1,20 @@
-WAITING: 0 (本轮交付 PVTalterChar-001，DEBT 清零；下轮 trace_ledger next 续跑)
+WAITING: 0 (本轮交付 SubcktExtract-001 + park uumms；下轮 trace_ledger next 续跑)
 SHARD: B (spice_char)
 DOMAINS: characterization, spice_sim
 
 - **PHASE**: shard B 在跑 case。负责 domain: characterization, spice_sim
 - 每轮做 1 条 case：trace_ledger.py --shard B next → claim → 深读 → 合成 → 自验 → 追加 EDA-Eval-DesignFlow_B.jsonl → 日报
-- 📊 trace 覆盖率：14/1001 = 1.4%（covered=14 / target=1001, mc≥300）；已动 17：case 14 · deepread 1(已合) · parked 2
+- 📊 trace 覆盖率：15/1001 = 1.5%（covered=15 / target=1001, mc≥300）；已动 19：case 15 · deepread 1(已合) · parked 3
 - 🎯 通过率: 0/0（未实跑 cline SUT；本轮只做 case 构建+自验）
-- 🧾 断言: k_rationale=k_check=12 ✓（今日 8/30 达标，+PVTalterChar k=12）
-- 📦 体积：MEMORY_B≈14KB
+- 🧾 断言: k_rationale=k_check=14 ✓（SubcktExtract k=14，新建即过闸门）
+- 📦 体积：MEMORY_B≈15KB
+
+## 流水
+- 2026-11-02 21:4x shard B 续跑：已 claimed 的 uumms（e0029308 @ hfeg0pkn001, mc=343）深读→真实任务=verilog cell-library 提取 + AMS/maestro 仿真流设置（virtuoso:739/netlist:662/spectre:281 是目录列表关键词，非真跑 spice），session status=failed（无用户接受结果），spice 部分（FineSim/maestro/ADE/PEX）CXMT foundry 不可移植 .75。按 s2f9d/ukkn7 先例 **park uumms**。
+- 2026-11-02 21:5x 重排候选（spice-dominant）→ top 1i0em（rongtaoy @ hfeg0pkn001, mc=574, spice=12862/0.88, netlist:12568 主导）。claim 1i0em。深读 1i0em：rongtaoy 分析 115MB DRAM hspice/ALPS 大网表，cimi Instruction 002 流式提取 SpineTop .SUBCKT 段 + 解析一层 X 实例/端口/网；agent 全程 python-runner+editor（无 hspice 二进制真跑）。用户明确抓 bug："parser 把最后一个 token 误认成 cell 名了（因为跨 '+' 续行）"。深读笔记 designflow/trace_deepreads/1i0em_subckt_stream_extract_parse.md（前轮已建）。
+- 2026-11-02 21:5x 交付 EDA-Eval-DesignFlow-SubcktExtract-001（spice_sim, B档 synthesized, L1）：前轮已建 assets/reference/check.py/negatives（Oct 31），本轮补完交付。流式 .SUBCKT 提取 + 一层 X 实例/端口/网解析 harness，核心 discriminator=SPICE '+' 续行拼接。交付 extract_subckt.py（流式逐行、depth-aware .ENDS、'+' 拼接、按 --cell 泛化、JSON 报告）。隐藏 B（DqsTop_B/WrTop_B/RdTop_B，13/3-port，xTERM1 跨 3 行 '+'、RdTop_B 纯基本器件体→0 子 cell）vs 可见 A（SpineTop_A 16 端口/4 types）；跨输入守卫防硬编 A。14 条断言（k=14=k_check≥8 ✓，①…⑭ 映射 check.py a-n）。自验：**ref 14/14 PASS**；5 negative（empty_shell→c / print_expected→f / ref_core_deleted→f / naive_no_join_hardcode_A→f / naive_primitives_as_cells→f）全 FAIL(NEG_RC=0)；§4.9 三假提交含于 5 negative 全 FAIL。已 mark case，追加 EDA-Eval-DesignFlow_B.jsonl（第 19 行）。L1 补牙（netlist 解析为 shard B 此前未覆盖子技能，合规）。
+- 📦 体积：MEMORY_B≈15KB
+- 收尾提交：双仓待推（super_intelligence_2035 main + EDA-Flow-Bench master），EDA-Eval-DesignFlow_B.jsonl 现 19 行，trace_ledger_B covered=15。
 
 ## 流水
 - 2026-11-02 20:1x shard B 续跑：trace_ledger --shard B next → spice-dominant 重排（排除已用 16 session，spice_count≥15 + ratio≥0.10 过滤）。top 候选 ooyxi（sophiaw @ hfeg0plg09, mc=394, 112 spice tools / 318 total / ratio 0.35，glm-5.2 trace）。claim ooyxi。

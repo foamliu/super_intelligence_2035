@@ -15,4 +15,5 @@ djml8					case	EDA-Eval-DesignFlow-PFDdeadZone-001	2026-11-02 17:47
 1787903140887_314mt	sophiaw	hfeg0plg49	378	spice_sim	case	EDA-Eval-DesignFlow-InvPVTchar-001	2026-11-02 19:22	
 1792831256137_6qt0a	harrywu	hfeg0pkn002	319	spice_sim	case	EDA-Eval-DesignFlow-DelayChainEdgeMeas-001	2026-11-02 20:11	
 1787897609476_ooyxi	sophiaw	hfeg0plg09	394	spice_sim	case	EDA-Eval-DesignFlow-PVTalterChar-001	2026-11-02 20:51	
-1792380576403_uumms	e0029308	hfeg0pkn001	343	spice_sim	claimed		2026-11-02 20:58	
+1792380576403_uumms	e0029308	hfeg0pkn001	343	spice_sim	parked		2026-11-02 21:46	real task is verilog cell-library extraction + AMS/maestro sim flow setup (digital library + AMS sim, not spice_char); session status=failed (no accepted gold result); spice-relevant parts (FineSim/maestro/ADE/PEX) are CXMT foundry tools not reproducible on .75
+1791526272387_1i0em	rongtaoy	hfeg0pkn001	574	spice_sim	case	EDA-Eval-DesignFlow-SubcktExtract-001	2026-11-02 21:54	
