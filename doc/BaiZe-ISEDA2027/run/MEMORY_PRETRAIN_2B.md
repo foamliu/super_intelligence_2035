@@ -20,17 +20,18 @@ WAITING: 0
 > 📦 §#1184（11-03 00:50, CPU eval监控·27轮·ETA~9.4-11.2h稳定）→ daily-memories/2026-11-03.md；**结论**：4 eval稳定,.29~16.7s/.12~18.5-19.1s,ETA~9.4-11.2h,S1 iter60530 lr=1e-3 stable。被#1185监控(无变化)。需要时再读。
 > 📦 §#1185（11-03 00:55, CPU eval监控·28轮·ETA~9.6-11.9h稳定）→ daily-memories/2026-11-03.md；**结论**：4 eval稳定,.29~17.0s/.12~19.5-19.8s,ETA~9.6-11.9h,S1 iter60570 lr=1e-3 stable。被#1186监控(无变化)。需要时再读。
 > 📦 §#1194（11-03 01:49, CPU eval监控·37轮·ETA~8-10h稳定）→ daily-memories/2026-11-03.md；**结论**：4 eval稳定,.29~16.2s/.12~18.1s,ETA~8-10h,S1 iter61020 lr=1e-3 stable。被#1195监控(无变化)。需要时再读。
-> 🆕 2026-11-03 01:55 #1195：**📊 CPU eval 监控·38轮——4 eval 正常推进，ETA ~8.5-10.4h，两机 CPU <<80%。✅ S1 健康 iter 61080（lr=1e-3 stable）。未完成指令：有**。
+> 🆕 2026-11-03 02:00 #1196：**📊 CPU eval 监控·39轮——4 eval 正常推进（.29~30%/.12~25%），ETA ~8-9.5h，两机 CPU <<80%。✅ S1 健康 iter 61150（lr=1e-3 stable, GPU 100%/74.9GB）。未完成指令：有**。
 > **① 4 eval 运行正常**（limit=100, 8集, 2599 req, bfloat16, batch=1, nice 19, OMP=8, CUDA_VISIBLE_DEVICES=""）：
-> - .29: hf_iter_10000 (PID 992664, **759/2599=29.2%**, 16.59s/req, 已~4h, ETA~8.5h→done~10:22 Nov3) + hf_iter_30000 (PID 1196989, **759/2599=29.2%**, 16.6s/req, 已~4h, ETA~8.5h→done~10:23 Nov3)
-> - .12: hf_iter_20000 (PID 3729981, **619/2599=23.8%**, 18.93s/req, 已~4h, ETA~10.4h→done~12:19 Nov3) + hf_iter_40000 (PID 3898654, **621/2599=23.9%**, 18.9s/req, 已~4h, ETA~10.4h→done~12:17 Nov3)
-> - hf_iter_50000: export 完成（config mamba_dt_limit=None 已修复）；两机均满 2 并发上限→待空槽（~10:22 Nov3 .29 完成后启动→done~22:20 Nov3）。
-> - ⚠️ lm_eval_results/ 仍空（hf_iter_10000 有旧冒烟 results.json=sciq/limit20/acc=0.0，非全量；4 子目录在，全量 results.json 待 eval 跑完写入；最早 ~10:22 Nov3）。
-> **② 速度**：.29 ~16.6s/req, .12 ~18.9s/req。稳定（与#1180-#1194一致）。
-> **③ CPU 负载**：.29 load35/224≈13% (4.9us+7.3sy) / .12 load35/224≈13% (4.4us+6.9sy+1.9ni) → 均 <<80%，不影响 S1。
-> **④ S1 状态**：iter **61080**/700k (8.73%), loss **2.106**, 0 NaN, 0 skip, ~7.0s/step, ~605K tok/s, lr=**1.0e-3** stable。launcher pid 4163528。ckpt@iter_60000(next@62000)。
-> **📦 体积**：TASK=30602B(29.9KB) / MEMORY=27711B(27.1KB)（均 ≤32KB，无需归档）。
-> **下一步**：持续监控；.29 ~10:22 Nov3 完成→启动 hf_iter_50000→全部 5×8 完成后(~Nov3 22:20)汇总+报告。未完成指令：有。WAITING: 0。
+> - .29: hf_iter_10000 (PID 992664, **799/2599=30.7%**, 15.98s/req, 已~4h01m, ETA~8h→done~10:00 Nov3) + hf_iter_30000 (PID 1196989, **785/2599=30.2%**, 16.29s/req, 已~3h58m, ETA~8.2h→done~10:10 Nov3)
+> - .12: hf_iter_20000 (PID 3729981, **653/2599=25.1%**, 16.68s/req, 已~4h01m, ETA~9h→done~11:00 Nov3) + hf_iter_40000 (PID 3898654, **643/2599=24.7%**, 17.51s/req, 已~3h58m, ETA~9.5h→done~11:30 Nov3)
+> - hf_iter_50000: export 完成（config mamba_dt_limit=None 已修复, 4.4GB）；两机均满 2 并发上限→待空槽（~10:00 Nov3 .29 完成后启动→done~22:00 Nov3）。
+> - ⚠️ lm_eval_results/ 仍空（hf_iter_10000 有旧冒烟 results.json=sciq-only 残留，非全量；4 子目录在，全量 results.json 待 eval 跑完写入；最早 ~10:00 Nov3）。
+> **② 速度**：.29 ~16.0-16.3s/req, .12 ~16.7-17.5s/req。稳定（.12 较#1195 的18.9s 加速至~17s，已收敛）。
+> **③ CPU 负载**：.29 load35.37/224≈13% (4.8us+8.8sy) / .12 load33.84/224≈13% (4.8us+6.9sy) → 均 <<80%，不影响 S1。
+> **④ S1 状态**：iter **61150**/700k (8.74%), loss **2.096**, 0 NaN, 0 skip, ~7.0s/step, ~605K tok/s, lr=**1.0e-3** stable。launcher pid 4163528。GPU 8卡 100% util / 74.9GB。ckpt@iter_60000(next@62000)。
+> **📦 体积**：TASK=30602B(29.9KB) / MEMORY=27945B(27.3KB)（均 ≤32KB，无需归档）。
+> **下一步**：持续监控；.29 ~10:00 Nov3 完成→启动 hf_iter_50000→全部 5×8 完成后(~Nov3 22:00)汇总+报告。未完成指令：有。WAITING: 0。
+> 📦 §#1195（11-03 01:55, CPU eval监控·38轮·ETA~8.5-10.4h稳定）→ daily-memories/2026-11-03.md；**结论**：4 eval稳定,.29~16.6s/.12~18.9s,ETA~8.5-10.4h,S1 iter61080 lr=1e-3 stable。被#1196监控(.12加速至~17s)。需要时再读。
 > 📦 §#1193（11-03 01:43, CPU eval监控·36轮·ETA~8.5-10h稳定）→ daily-memories/2026-11-03.md；**结论**：4 eval稳定,.29~16.5-18.0s/.12~17.1-17.7s,ETA~8.5-10h,S1 iter60960 lr=1e-3 stable。被#1194监控(无变化)。需要时再读。
 > 📦 §#1192（11-03 01:37, CPU eval监控·35轮·ETA~9h稳定）→ daily-memories/2026-11-03.md；**结论**：4 eval稳定,.29~16.9-17.1s/.12~17.2-17.5s,ETA~9h,S1 iter60920 lr=1e-3 stable。被#1193监控(无变化)。需要时再读。
 > 📦 §#1191（11-03 01:30, CPU eval监控·34轮·ETA~9h稳定）→ daily-memories/2026-11-03.md；**结论**：4 eval稳定,.29~16.7-16.8s,ETA~9h,S1 iter60870 lr=1e-3 stable。被#1192监控(无变化)。需要时再读。
