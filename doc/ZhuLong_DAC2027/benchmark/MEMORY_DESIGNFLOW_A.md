@@ -2,14 +2,25 @@ WAITING: 0
 SHARD: A (digital_front)
 DOMAINS: digital, eda_other, pnr_signoff, verification
 
-- **PHASE**: loop 任务卡 case 合成。本轮按 loop 卡合成第 11 条 case（A 档 trace-faithful 试点 +1）。
-- ✅ **本轮交付 case**：`EDA-Eval-DesignFlow-InnovusAudit-001`（pnr_signoff，L1-boundary，A 档 faithful，trace 1792489769571_ch2cw / johnl / hfeg0plg49 / mc=255 / innovus=233 主导）。A jsonl 现 11 条。
+- **PHASE**: loop 任务卡 case 合成。本轮按 loop 卡合成第 12 条 case（B 档 synthesized，pnr_signoff +1）。
+- ✅ **本轮交付 case**：`EDA-Eval-DesignFlow-PTSignoff-001`（pnr_signoff，L1-boundary，B 档 synthesized，trace 1792493511731_624js / johnl / hfeg0plg49 / mc=80 / innovus=165 主导）。A jsonl 现 12 条。
 - ✅ DEBT 已清零。
-- 📊 trace 覆盖率：10/1001 = 1.0%（covered=10 · touched=11 · parked=1；A jsonl 11 条）
+- 📊 trace 覆盖率：11/1001 = 1.1%（covered=11 · touched=12 · parked=1；A jsonl 12 条）
 - 🎯 通过率: 本条 case 未 pi/cline 实跑（"未跑"）；cline 存量重跑 0/1（Verification-001 FAIL·L1/hook 限制）· B 档目标 20–30%；A 档本轮只报数不设目标
-- 🧾 断言: 本轮 InnovusAudit-001 k_rationale=k_check=14 ≥8 ✓（日报 14/14/✓）；存量全达标
+- 🧾 断言: 本轮 PTSignoff-001 k_rationale=k_check=23 ≥8 ✓（日报 23/23/✓）；存量全达标
 - 📦 体积：TASK≈17KB / MEMORY≈待测
-- 🔒 泄漏隔离: check.py/reference/hidden 不进 SUT workdir；判分独立跑（隐藏 B 上 subprocess，check.py 不进 cline cwd）
+- 🔒 泄漏隔离: check.py/reference/hidden 不进 SUT workdir；判分独立跑（隐藏 B 上 tclsh stub subprocess，check.py 不进 cline cwd）
+
+### 2026-11-02 shard A 轮 12：PTSignoff-001 交付 ✓（case 合成，WAITING: 0）
+- 选 trace：trace_ledger.py --shard A next → mc≥300 候选多为 calibre/hspice（shard C 域）；严格过滤（排除 calibre/hspice/spectre/pyAether/schematic）后挑纯 innovus 会话 `1792493511731_624js`（johnl/hfeg0plg49/mc=80/innovus=165/pnr_signoff）claim → mark case。
+- 深读：75 msgs/119KB；唯一真实意图轮 #0 = context-continuation hand-off 文档（已指出多个根因：link_path 库名非 *、read_db 非 read_liberty、env -u LD_PRELOAD、corner 不匹配 + 给已验证修复方案）→ 违反 A 档选轮规则（用户已给根因/修复）→ **做 B 档 synthesized**。真实任务 = 完成 addr_to_rowcol_v7（纯组合 107 实例/116 网络/DRAM cxmt5_CIP）的 PrimeTime (U-2022.12-SP5) 布线后 STA 签核。金标准 = .75:/home/johnl/innovus_verify/ 真产物（tcl/pt_sta.tcl + run_pt.sh + data/pt_*.rpt：WNS=-0.04@row[1]，6 setup violators，TNS=-0.17，no hold）。深读笔记 `designflow/trace_deepreads/1792493511731_624js_pt_signoff.md`。
+- 合成（B 档 / L1-boundary / pnr_signoff）：交付 = 可复用 PT STA 流程：`tcl/pt_sta.tcl`（参数化 $DESIGN/$NETLIST/$SPEF/$SDC/$DB/$LIB_NAME/$OUT_DIR，source common_setup）+ `setup/common_setup.tcl`（A 值）+ `run_pt.csh`（cshell launcher：license env + env -u LD_PRELOAD + pt_shell -file）+ `README.md`（流程 + 5 条 env 陷阱 + corner 不匹配披露）。资产 A = postroute.v（真网表 8KB）+ routed.spef（trim 6.7KB，真 header+6 D_NET）+ mapped.sdc（真 SDC，set_max_delay 0.5）+ design_context.md（5 条已验证 env 事实）+ task_brief.md。隐藏 B = common_setup_B.tcl（DESIGN=addr_decode_v3 / 不同路径 / set_max_delay 0.8→0 违例 / out_B），tclsh stub 跨输入守护用。
+- check.py 23 条独立断言 (a)-(w)：(a)zip4文件 (b)common_setup7变量 (c)A值正确 (d)source common_setup (e)read_db非read_liberty (f)link_path库名非* (g)read_verilog+current_design+link_design (h)read_sdc (i)read_parasitics -format spef (j)report_annotated_parasitics (k)report_global_timing (l)report_timing -max_paths (m)report_constraint -all_violators (n)report_design (o)run_pt.csh license env (p)env -u LD_PRELOAD (q)pt_shell -file (r)README corner 披露 (s)pt_sta 无 A 字面量 (t)stub current_design=addr_decode_v3 (u)stub read_verilog/read_parasitics=B (v)stub read_sdc/read_db=B (w)stub link_path=SS_0p98_m40c 非*。check.py 用 tclsh stub（pt_shell 命令全 stub 成记录 proc + unknown 兜底）真跑提交的 pt_sta.tcl with 隐藏 B common_setup → 断言运行时传 B 值（§4.2 subprocess on B）。静态断言对 Tcl/csh 注释做了 strip（active code only），避免注释里的字面量误判。
+- 自验：gold reference_submit.zip check() PASS（23/23）+ 5 negative 全 FAIL（NEG_RC=0：fake_empty→b / fake_print_expected→d / fake_core_deleted→i / naive_hardcode_a→s / naive_no_env_guard→p）+ §4.9 (a)(b)(c) 三假 FAIL。
+- 断言闸门：k_rationale=23 == k_check=23 ≥8 ✓。追加 EDA-Eval-DesignFlow_A.jsonl（A jsonl 现 12 条，test==disk check.py roundtrip OK）。mark case 1792493511731_624js（domain=pnr_signoff/match=80）。merge_shards → 主 jsonl 63 cases。日报 report_benchmark_11_02.html 63 cases，本条 k(断言)/k(check)/一致 = 23/23/✓。
+- 日报修复：gen_daily_report.py 的 `_CIRCLED` 仅含 ①-⑳，对 >20 条断言的 case 会少计（本条 23 显示成 20/23/✗ 误报）。已扩展 _CIRCLED 至 ①-㉚（additive，存量 ≤20 case 不受影响）→ 本条显示 23/23/✓。
+- ⬜ 下轮：trace_ledger.py --shard A next 选新 trace 开第 13 条 case（或按运维令 §四.3 挑一条 L2 shard-A PASS case 用 cline+hook 重跑验真实通过率）。
+
 
 ### 2026-11-02 shard A 轮 8：TimingECO-001 交付 ✓（DEBT 清零，WAITING: 0）
 - 交付 `EDA-Eval-DesignFlow-TimingECO-001`（domain=verification，L2，track=faithful，trace 1792572733650_pfubi / e0046913 / hfeg0plg52 / mc=153）。
