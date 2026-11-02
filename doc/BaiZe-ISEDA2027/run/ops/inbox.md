@@ -1,41 +1,47 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
-<!-- RUN_ID: 231 | TARGET: 29 -->
-## RUN_ID 231 — 重启后 3 分钟复核：是否真在出 step / 双机 16 卡 / 0 NaN / 断点是否接上 58110
+<!-- RUN_ID: 232 | TARGET: 29 -->
+## RUN_ID 232 — 复核：是否已在出 step（19:53 只见 16GB 已分配但 0% util + 74 个 launcher，需确认不是 elastic 反复重启）
 
 ```bash
 set -u
-echo "=== RUN_ID 231 | S1 restart verify | $(date '+%F %T') | host=$(hostname) ==="
+echo "=== RUN_ID 232 | S1 step check | $(date '+%F %T') | host=$(hostname) ==="
+W=/tmp/baize_s1_baize2b_worker.log
 
 echo
-echo "[1] 进程"
-echo "  torchrun=$(ps -eo cmd | grep -cE '[t]orchrun')  launcher=$(ps -eo cmd | grep -cE '[p]retrain_launcher')"
-timeout 10 ps -eo pid,etime,pcpu,rss,cmd 2>/dev/null | grep -E '[p]retrain_launcher' | head -2 | cut -c1-120 | sed 's/^/    /'
+echo "[1] 日志增长（10s 两采样）"
+S1=$(stat -c %s "$W" 2>/dev/null); sleep 10; S2=$(stat -c %s "$W" 2>/dev/null)
+echo "    size: $S1 -> $S2  (delta=$((S2-S1))B)  mtime=$(stat -c %y "$W" 2>/dev/null | cut -c1-19)"
 
 echo
-echo "[2] .29 GPU"
-timeout 12 nvidia-smi --query-gpu=index,utilization.gpu,memory.used,power.draw,temperature.gpu --format=csv,noheader 2>/dev/null | sed 's/^/    /'
+echo "[2] iteration 行数 / 最新 3 条"
+echo "    iteration_lines=$(timeout 10 grep -cE 'iteration +[0-9]+/' "$W" 2>/dev/null)"
+timeout 10 grep -E 'iteration +[0-9]+/' "$W" 2>/dev/null | tail -3 | cut -c1-165 | sed 's/^/    /'
 
 echo
-echo "[3] 训练进度（worker.log 最新 iteration 行）"
-echo "  log size=$(stat -c %s /tmp/baize_s1_baize2b_worker.log 2>/dev/null)B  mtime=$(stat -c %y /tmp/baize_s1_baize2b_worker.log 2>/dev/null | cut -c1-19)"
-timeout 10 grep -E 'iteration +[0-9]+/' /tmp/baize_s1_baize2b_worker.log 2>/dev/null | tail -3 | cut -c1-165 | sed 's/^/    /'
-echo "  尾部 8 行:"
-timeout 10 tail -8 /tmp/baize_s1_baize2b_worker.log 2>/dev/null | cut -c1-150 | sed 's/^/    /'
+echo "[3] 进程画像（判断是否 elastic 反复重启）"
+echo "    launcher 进程按 etime 分布:"
+timeout 10 ps -eo etime,cmd 2>/dev/null | grep -E '[p]retrain_launcher' | awk '{print $1}' | sort | uniq -c | sort -rn | head -6 | sed 's/^/    /'
+echo "    torchrun 行:"
+timeout 10 ps -eo pid,etime,cmd 2>/dev/null | grep -E '[t]orchrun' | head -4 | cut -c1-130 | sed 's/^/    /'
 
 echo
-echo "[4] 0 NaN / 断点是否接上（应 >=58110，不应回到 0/58000 之前）"
-timeout 10 grep -cE 'nan iterations: +[1-9]' /tmp/baize_s1_baize2b_worker.log 2>/dev/null | sed 's/^/    nan_hits=/'
-timeout 10 grep -E 'load-checkpoint|Loading checkpoint|successfully loaded' /tmp/baize_s1_baize2b_worker.log 2>/dev/null | tail -3 | cut -c1-150 | sed 's/^/    /'
+echo "[4] GPU 3 采样（.29）"
+timeout 20 nvidia-smi --query-gpu=utilization.gpu --format=csv,noheader -l 1 -c 3 2>/dev/null | paste -sd'|' | sed 's/^/    /'
 
 echo
-echo "[5] .12 侧"
+echo "[5] 日志尾 25 行里找 错误/重启/信号"
+timeout 10 tail -60 "$W" 2>/dev/null | grep -nE 'Error|error|Signal|restart|Traceback|nan|iteration' | tail -12 | cut -c1-160 | sed 's/^/    /'
+echo "    原样尾 10 行:"
+timeout 10 tail -10 "$W" 2>/dev/null | cut -c1-140 | sed 's/^/    /'
+
+echo
+echo "[6] .12 侧"
 timeout 20 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.12 '
   echo "    util: $(nvidia-smi --query-gpu=utilization.gpu --format=csv,noheader | tr "\n" " ")"
-  echo "    mem:  $(nvidia-smi --query-gpu=memory.used --format=csv,noheader | tr "\n" " ")"
-  echo "    torch=$(ps -eo cmd | grep -cE "[t]orchrun|[p]retrain_launcher")  load=$(cut -d" " -f1-3 /proc/loadavg)"
-  echo "    mem_avail=$(free -g | awk "/Mem:/{print \$7\"G\"}")"
+  echo "    n_launcher=$(ps -eo cmd | grep -cE "[p]retrain_launcher")  torchrun=$(ps -eo cmd | grep -cE "[t]orchrun")"
+  echo "    load=$(cut -d" " -f1-3 /proc/loadavg)"
 ' 2>&1 | sed 's/^/  /' || echo "    ssh .12 failed"
 
 echo
-echo "=== DONE 231 ==="
+echo "=== DONE 232 ==="
 ```
