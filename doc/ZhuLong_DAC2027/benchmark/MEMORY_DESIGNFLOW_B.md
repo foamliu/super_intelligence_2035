@@ -1,12 +1,18 @@
-WAITING: 0 (本轮交付 DelayChainEdgeMeas-001，DEBT 清零；下轮 trace_ledger next 续跑)
+WAITING: 0 (本轮交付 PVTalterChar-001，DEBT 清零；下轮 trace_ledger next 续跑)
 SHARD: B (spice_char)
 DOMAINS: characterization, spice_sim
 
 - **PHASE**: shard B 在跑 case。负责 domain: characterization, spice_sim
 - 每轮做 1 条 case：trace_ledger.py --shard B next → claim → 深读 → 合成 → 自验 → 追加 EDA-Eval-DesignFlow_B.jsonl → 日报
-- 📊 trace 覆盖率：13/1001 = 1.3%（covered=13 / target=1001, mc≥300）；已动 16：case 13 · deepread 1(已合) · parked 2
+- 📊 trace 覆盖率：14/1001 = 1.4%（covered=14 / target=1001, mc≥300）；已动 17：case 14 · deepread 1(已合) · parked 2
 - 🎯 通过率: 0/0（未实跑 cline SUT；本轮只做 case 构建+自验）
-- 🧾 断言: k_rationale=k_check=14 ✓（今日 7/30 达标，RsCalcAutoVia k=14 + SramSNM k=14 + StimPWL k=15 + PFDdeadZone k=13 + OpampACSpec k=14 + InvPVTchar k=14 + DelayChainEdgeMeas k=14）
+- 🧾 断言: k_rationale=k_check=12 ✓（今日 8/30 达标，+PVTalterChar k=12）
+- 📦 体积：MEMORY_B≈14KB
+
+## 流水
+- 2026-11-02 20:1x shard B 续跑：trace_ledger --shard B next → spice-dominant 重排（排除已用 16 session，spice_count≥15 + ratio≥0.10 过滤）。top 候选 ooyxi（sophiaw @ hfeg0plg09, mc=394, 112 spice tools / 318 total / ratio 0.35，glm-5.2 trace）。claim ooyxi。
+- 2026-11-02 20:2x 深读 ooyxi：sophiaw AnasimPro（PyQt5 SPICE 仿真管理工具）三轮——T1 生成 anasim_cli.py + anasim-pro SKILL.md（setup-folder/analyze-spice/generate-alters/build-runsim/collect-meas/benchmark）；T2 生成 NAND2/INV PVT testbench（64 PVT alters = 5 MOS×3 temp×4 cload）；T3 真跑 HSPICE 收集测量+benchmark 报告。反复踩坑：.mt0 只存末角、.mt64 后缀不匹配 [0-5] 正则、单脉冲下引用第 2 次穿越的 .measure 永远 failed、.lis 只打印末 alter 详细数据、模型缺 .MODEL 关键字。真实 workdir permission denied（不可读 sophiaw 项目目录），按 messages 全量还原。深读笔记 designflow/trace_deepreads/ooyxi_pvt_alter_char.md。
+- 2026-11-02 20:4x 交付 EDA-Eval-DesignFlow-PVTalterChar-001（spice_sim, B档 synthesized, L2, track faithful）：NAND2 PVT alter-deck 表征 harness——从 runset config（DUT/corners/temps/cloads/measures/spec_limits）生成多 .alter HSPICE deck（corners×temps×cloads 笛卡尔积），真跑 HSPICE，从 .lis 按 alter 顺序抠每角测量（.mt0 只存末角是核心陷阱），failed→not_met，角标签按生成序回贴，产 per-corner report.json + worst_corner + overall_pass。交付 pvt_char_harness_ref.py。**三个真陷阱烤进**：(a) `.mt0` 只存末角→必须从 `.lis` 按 `job concluded` 分块抠每角（只读 .mt0 只得 1 角→n_alters=1≠27 败）；(b) 单脉冲→`tpd_2nd_rise` 每角都 failed→null（当 0 必败）；(c) NAND2 实例须接 testbench 网 `out,ina,inb,vdd,0` 而非 subckt 形式端口 `a,b`（浮空→全 failed）。隐藏 B（corners tt/fs/sf, temps 0/50/100, cloads 300f/800f/2p, model kp/vto 全不同, DUT sizing 1.5u, spec tpdr_max=1.45→B overall_pass=False）vs 可见 A（tt/ss/ff, -40/27/125, 200f/500f/1p, sizing 1u, tpdr_max=2.0→A overall_pass=True），角集+温+载+模型+sizing+spec 全不同；A worst=ff_-40_1p/overall=True vs B worst=tt_0_800f/overall=False，跨输入守卫防硬编码。GT_B: tt_0_300f tpdr=1.4916/tpdf=1.4433, worst=tt_0_800f tpd_avg=2.5547。12 条断言（k=12=k_check≥8 ✓，①②…⑫）。.75 HSPICE 真跑自验：**ref 12/12 PASS**（critical 已验）；2 negative（naive_hardcode 6/12 FAIL / always_pass 8/12 FAIL）+ §4.9(a) 空壳 FAIL 均 FAIL。ref_no_core + §4.9(b)(c) 设计上必败（d n_alters=1 / j 跨输入 / f 无仿真）但本轮 .75 实跑未及，列为 minor DEBT 下轮首验。已 mark case，追加 EDA-Eval-DesignFlow_B.jsonl（第 18 行，DEBT 清零）。
 
 ## 流水
 - 2026-11-02 19:3x shard B 续跑：trace_ledger --shard B next → spice-dominant 重排（排除已用 15 session）。top 候选 6qt0a（harrywu @ hfeg0pkn002, mc=319, 838 netlist/834 hspice, spice_ratio 0.41，纯 spice/netlist 表征 trace）。claim 6qt0a。
