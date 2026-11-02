@@ -1,58 +1,60 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
-<!-- RUN_ID: 226 | TARGET: 29 -->
-## RUN_ID 226 — pretrain 体检 v2（只读；上轮被 cline 长命令行撑爆输出，本轮全部截断）
+<!-- RUN_ID: 227 | TARGET: 29 -->
+## RUN_ID 227 — S1 死亡取证（只读）：OOM? 谁杀的? 重启脚本在哪?
 
 ```bash
 set -u
-echo "=== RUN_ID 226 | pretrain check v2 | $(date '+%F %T') | host=$(hostname) ==="
+echo "=== RUN_ID 227 | S1 post-mortem (read-only) | $(date '+%F %T') | host=$(hostname) ==="
+R=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
 BASE=/nas_train/app.e0031982/code/BaiZe-ISEDA2027
 
 echo
-echo "[1] pretrain loop (bash, anchored) + 在飞的 cline 会话"
-timeout 10 ps -eo pid,etime,rss,cmd --sort=-etime 2>/dev/null | grep -E '[b]aize_pretrain_loop\.sh$' | cut -c1-90 | head -3 || echo "  no loop"
-echo "  cline sessions:"
-timeout 10 ps -eo pid,etime,rss,cmd 2>/dev/null | grep '[.]cline_pretrain' | grep -v grep | awk '{print "    pid="$1" etime="$2" rss="$3"KB"}' | head -4 || echo "    none"
+echo "[1] 内存与 OOM 证据"
+free -g | sed 's/^/    /'
+echo "  dmesg OOM/kill (last 10):"
+timeout 15 dmesg -T 2>/dev/null | grep -iE 'out of memory|oom-kill|killed process' | tail -10 | cut -c1-160 | sed 's/^/    /' || echo "    dmesg 不可读"
+echo "  journal OOM (last 8):"
+timeout 15 journalctl -k --since '2026-11-02 18:00' 2>/dev/null | grep -iE 'oom|killed process' | tail -8 | cut -c1-160 | sed 's/^/    /' || echo "    journal 不可读"
 
 echo
-echo "[2] S1 training (torchrun/launcher, truncated)"
-timeout 10 ps -eo pid,etime,rss,cmd 2>/dev/null | grep -E '[p]retrain_launcher|[t]orchrun' | cut -c1-110 | head -4 || echo "  NO torchrun"
-
-echo "[3] S1 log mtime + tail"
-ls -l --time-style='+%F %T' /tmp/baize_s1_baize2b_worker.log 2>/dev/null | awk '{print "  "$6,$7,$5"B"}'
-timeout 10 tail -3 /tmp/baize_s1_baize2b_worker.log 2>/dev/null | cut -c1-150 | sed 's/^/    /'
-
-echo
-echo "[4] GPU (.29)"
-timeout 12 nvidia-smi --query-gpu=index,utilization.gpu,memory.used --format=csv,noheader 2>/dev/null | tr '\n' ' ' | cut -c1-300
+echo "[2] S1 master/worker 日志尾（死亡现场）"
+ls -l --time-style='+%F %T' /tmp/baize_s1_baize2b_master.log /tmp/baize_s1_baize2b_worker.log 2>/dev/null | awk '{print "    "$6,$7,$5"B",$8}'
+echo "  master tail 12:"
+timeout 10 tail -12 /tmp/baize_s1_baize2b_master.log 2>/dev/null | cut -c1-170 | sed 's/^/    /'
+echo "  worker tail 6:"
+timeout 10 tail -6 /tmp/baize_s1_baize2b_worker.log 2>/dev/null | cut -c1-170 | sed 's/^/    /'
 
 echo
-echo "[5] CPU / eval procs (.29)"
-echo "  nproc=$(nproc) load=$(cut -d' ' -f1-3 /proc/loadavg)"
-timeout 8 vmstat 1 2 2>/dev/null | tail -1 | awk '{print "  us%="$13" sy%="$14" id%="$15}'
-timeout 10 ps -eo pid,etime,%cpu,cmd 2>/dev/null | grep -E '[l]m_eval|[e]xport_hf|[p]6_lmeval|[c]onvert_mcore' | cut -c1-120 | head -5 || echo "  no eval/export proc"
+echo "[3] 谁在 18:39 动过（.29 上 18:30-19:00 的用户进程线索）"
+timeout 10 ls -lt --time-style='+%F %T' /tmp 2>/dev/null | grep -E '18:3[0-9]|18:4[0-9]' | head -8 | awk '{print "    "$6,$7,$5,$8}' || true
 
 echo
-echo "[6] hf_iter_* (name + mtime only)"
-timeout 20 find "$BASE" -maxdepth 3 -name 'hf_iter_*' -printf '%TY-%Tm-%Td %TH:%TM %p\n' 2>/dev/null | sort | tail -8 | sed 's/^/    /'
+echo "[4] S1 启动脚本候选（run/ 下）"
+timeout 10 ls -1t "$R" 2>/dev/null | grep -iE '^s1|baize.*s1|s1.*\.sh|launch' | head -10 | sed 's/^/    /'
+echo "  *.sh 列表(含 s1 关键字):"
+timeout 10 ls -1 "$R"/*.sh 2>/dev/null | grep -iE 's1|launch|train' | head -10 | sed 's/^/    /'
 
 echo
-echo "[7] checkpoints latest 5"
-timeout 12 ls -1t "$BASE/nemo_experiments/baize2b/checkpoints" 2>/dev/null | head -5 | sed 's/^/    /'
+echo "[5] 该脚本尾部（看默认参数）"
+for f in "$R"/s1_*.sh "$R"/baize_s1*.sh; do
+  [ -f "$f" ] || continue
+  echo "  ---- $f ($(stat -c %s "$f")B, mtime=$(stat -c %y "$f" | cut -c1-19)) ----"
+  timeout 5 tail -12 "$f" | cut -c1-140 | sed 's/^/    /'
+done
 
 echo
-echo "[8] lm_eval_results latest 5 + new json(4h) count"
-timeout 12 ls -1t "$BASE/nemo_experiments/baize2b/lm_eval_results" 2>/dev/null | head -5 | sed 's/^/    /'
-echo "    new_json_4h=$(timeout 20 find "$BASE/nemo_experiments/baize2b/lm_eval_results" -maxdepth 2 -name '*.json' -mmin -240 2>/dev/null | wc -l)"
+echo "[6] checkpoints 最新 & 训练 sh 是否记录了 resume"
+timeout 10 cat "$BASE/nemo_experiments/baize2b/checkpoints/latest_checkpointed_iteration.txt" 2>/dev/null | sed 's/^/    latest_iter=/'
+timeout 10 ls -1t "$BASE/nemo_experiments/baize2b/checkpoints" 2>/dev/null | head -4 | sed 's/^/    /'
 
 echo
-echo "[9] BASE 近 3h 改动文件数 + 最新 5 个"
-echo "    count_3h=$(timeout 25 find "$BASE" -maxdepth 3 -type f -mmin -180 2>/dev/null | wc -l)"
-timeout 25 find "$BASE" -maxdepth 3 -type f -mmin -180 -printf '%TH:%TM %p\n' 2>/dev/null | sort | tail -5 | sed 's/^/    /'
+echo "[7] 在飞的 cline 会话（hung 6h）是否还在耗 CPU"
+timeout 10 ps -o pid,etime,pcpu,rss,stat -p 1587337 2>/dev/null | sed 's/^/    /' || echo "    pid1587337 已不在"
 
 echo
-echo "[10] .12 probe"
-timeout 20 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.12 'echo "  host=$(hostname) load=$(cut -d" " -f1-3 /proc/loadavg)"; echo "  loop=$(ps -eo cmd | grep -cE "[b]aize_pretrain_loop\.sh$")"; echo "  eval=$(ps -eo cmd | grep -cE "[l]m_eval|[e]xport_hf")"; nvidia-smi --query-gpu=utilization.gpu --format=csv,noheader 2>/dev/null | tr "\n" " " | cut -c1-120' 2>&1 | sed 's/^/    /' || echo "    ssh .12 failed"
+echo "[8] loop 日志尾（是否记录卡住/重试）"
+timeout 10 tail -8 /tmp/baize_pretrain_loop.log 2>/dev/null | cut -c1-170 | sed 's/^/    /'
 
 echo
-echo "=== DONE 226 ==="
+echo "=== DONE 227 ==="
 ```
