@@ -2273,3 +2273,160 @@ both sides.
 
 ---
 
+
+
+## 归档 batch 15 · 2026-11-02（Tab-3 + kimi-k2.6 5-run + 10-29 论文审阅 + 10-26 legacy 原文搬入）
+
+> 以下 4 块均已于 2026-11-02 前闭合，原文从 ZHULONG_TASK.md 顶部搬入此处（只搬不改·留指针）。当前活跃块见 ZHULONG_TASK.md 顶部。
+
+### 🚨 2026-11-02 21:3x 运维直令：Tab-3 美观改进中文 HTML —— 找到→入库→按此执行 · 最高优先
+
+> 用户原话：「看看 ZhuLong_DAC2027 目录下是否有个 Tab-3 美观改进中文 HTML，有的话提交入库，并按此执行。」
+
+1. **找（≤3min）**：`ls doc/ZhuLong_DAC2027/*.html`；`find doc/ZhuLong_DAC2027 -maxdepth 3 -iname '*tab*' \( -name '*.html' -o -name '*.htm' \)`；`git status --porcelain -- doc/ZhuLong_DAC2027 | grep -i tab`。判据：名/标题含 Tab-3|Tab3|表三 + 美观|改进|优化，中文、指向 `DAC2027/6_exp.tex` 表 3。
+2. **入库**：找到且未跟踪 ⇒ `git add -- <路径>`（🚫`-A`）→ commit `zhulong paper: 入库 Tab-3 美观改进建议 HTML（用户令 11-02）` → push → MEMORY 记路径+字节。已在库则跳过。
+3. **执行（本令临时解除"只审不改"，仅限 Tab-3）**：只改 `DAC2027/6_exp.tex` **表 3**（表体/表注/中文注释），其余 `.tex/.bib/main.tex` 仍只审不改。**数字/口径/CI/样本量一律不动**（57.2/23.7/7.1/71.0±0.8/74.6±1.6/253·1.1·278/634·22.8·887/449/158），只做排版（列宽、booktabs 线、对齐、`\cmidrule`、表头单位、字号、表注）；逐条标 `DONE`/`SKIP(原因)`，要改数字或结论的一律 SKIP。
+4. **验证**：`pdflatex×2+bibtex` ⇒ ERR=0/UNDEF=0；`grep 'Output written' main.log` 记页数（DAC ≤7，🚫不许删数字压页）。提交 `git add -- DAC2027/6_exp.tex main.pdf` → `zhulong paper: tab3 beautify` → push → MEMORY 记「页数 前→后 + DONE/SKIP」。
+5. **找不到** ⇒ MEMORY 写「未找到」并列出 `doc/ZhuLong_DAC2027` 全部 .html（名+字节），**不许臆造建议**；P0 双盲/页数/P1×3 不在本令内。
+6. **体积**：本令后 TASK≈39.9KB，下一轮先归档已闭合块到 ≤32KB。
+
+
+
+### 🚨 2026-10-30 22:2x 运维直令：`zhulong-full` 配置 `kimi-k2.6` 模型跑 5-run · 最高优先
+
+> **用户令**：「zhulong：zhulong-full 配置 kimi-k2.6 模型跑 5-run」
+
+1. **先确认模型可用**：查 gateway `GET /v1/models` 确认真实 model 名（大小写/前缀），写进 4 个 worker 的 `providers.json`；**不存在 → 记原文 + WAITING=1，不臆造名字**。
+2. **配置**：`C1.full`（READBACK=full）/ OMEGA=high / BUDGET=0 / LAGGED=0 / CLI_AGENT=zhulong / PROXY_PORTS=8650,8651,8652,8654 / **maxTokens=16384**（与 cline 基线对齐）/ **model=kimi-k2.6**。
+3. **跑 5-run**：r1..r5 各自独立 batch 目录；每 run 记 batch id、PID、起止时间、耗时、pass/158、regrade 结果（区分 exec_err / infra-void）。
+4. **判据**：5/5 完成且 regrade 有效（非 infra-void）→ 报 `mean ± std` + 5 个单值；任一 run infra-void 即作废重跑并写原因。
+5. **交付**：§8 表格加 kimi-k2.6 行 + 与 glm-5.3-flash / glm-5.2 / cline 基线对比；MEMORY 状态头更新。
+6. 红线：只用被裁决可用的端口池（8664/8665/8653/8669 或自有池），🚫 抢他人 license。
+
+
+
+### 🔴 运维指令 · 2026-10-29 21:5x（**论文审阅：参考文献 + 逻辑链 + 数字↔措辞一致性**）· 用户直令 · 最高优先 · 覆盖一切
+
+> 用户原话：「数字是没错的，主要核对参考文献，和论文逻辑。以及数字和措辞是否一致。」
+> 对象 = **DAC2027 论文权威树** `doc/ZhuLong_DAC2027/ZhuLong_DAC2027/`（`main.tex` + `DAC2027/0~9_*.tex` + `reference.bib` + `software.bib` + `figures/*.pdf`）。**只审不改**。
+> ⚠️ **口径（覆盖上一条 21:3x 令）**：**数值正确性已由用户确认 ⇒ 不需要回溯 batch / regrade log 去验数**。只查三件事：**① 参考文献 ② 论文逻辑 ③ 数字与措辞是否一致**。仅当同一数字在文中互相矛盾时，才允许去产物里查一次定位。
+
+**① 重点一：参考文献（权重最高——逐条 + 逐引用上下文）**
+1. **逐条核元数据**：`reference.bib` + `software.bib` 每一条 → 标题 / 全部作者 / 年份 / venue（会议或期刊全称）/ volume / pages / DOI / arXiv id；与 Crossref / DBLP / arXiv / Semantic Scholar / doi.org **原始记录**比对。
+2. **查幻觉**：条目是否真实存在（非"标题相似的另一篇"）；作者顺序是否被改；年份是否错位（arXiv v1 vs 正式发表年）；venue 是否把 workshop 写成主会、把 arXiv 预印本写成已发表。
+3. **逐引用上下文核验（最关键）**：正文每一处 `\cite{...}` 都打开该文献，判断**被引结论是否真由该文支持** ⇒ 标 `✅支持` / `⚠️部分支持` / `❌不支持`（张冠李戴、夸大、方法名错配、把他人不同设置下的数字拿来用）。
+4. **覆盖度**：同方向关键基线/近两年工作是否漏引（EDA LLM agent、scripting benchmark、execution feedback / self-debug、RAG for code、EDA benchmark）；是否存在**自引堆砌**或**凑数引用**。
+5. **格式**：字段缺失（doi / pages / publisher）、重复条目、key 命名不一致、`\cite` 未定义、孤儿条目（bib 有但正文从未引用）。
+
+**② 重点二：论文逻辑（贯穿全篇的论证链）**
+1. 建一张 **claim → 证据 → 结论** 映射表：摘要 / intro 的每条主张，在 §3–§6 是否有对应实验或论证；反之每个实验是否回扣某条主张。
+2. **定义—方法—实验闭环**：§4 的理论（如 L4 不可见性、observation fidelity）是否真的被 §6 的 ablation 检验；该检验能否区分它与替代解释。
+3. **因果 vs 相关**：凡 `because / therefore / thus / due to / attribute to` 的句子，检查有无对照实验，还是只凭相关性下结论。
+4. **ablation 归因**：组件贡献是否单变量、差值是否可加自洽、**改数后归因叙述是否仍成立**（例：回读阶梯跨度 13.5pp→7.1pp 后，围绕 13.5pp 的 "substantial/large" 措辞是否还站得住）。
+5. **前后自洽**：§1 承诺 → §6 兑现；§6 结果 → §7/§8 不引入新主张；limitation / threat-to-validity 是否覆盖真实弱点（而非安全项）。
+6. **逻辑断点单列**：跳跃（缺中间步）、循环论证、以个例代证明、把 harness 现象当模型能力。
+
+**③ 重点三：数字 ↔ 措辞一致性**
+1. **同一数字的多处出现**：摘要 / intro / 正文 / 表 / 图注 / 结论逐处比对（含四舍五入后是否仍相等，如 76.9 vs 76.86）。
+2. **措辞强度 vs 数值**：`significant / substantial / large / marginal / comparable / consistent / robust / up to / nearly / over / outperforms` 是否与差值、方差匹配；**差值 ≤ 1 倍 sd 时不得写 "substantially"**。
+3. **百分比口径**：pp 与 % 混用、相对提升（+x%）与绝对提升（+x pp）是否写错；"from A to B" 方向是否正确。
+4. **表格 ↔ 正文**：正文引用值与表中是否一致；表格加粗（最优）是否与正文 "best/outperforms" 一致；`mean ± sd` 与逐轮数据是否自洽（只查表内自洽，不回溯 batch）。
+5. **限定条件**：结论句是否带实验条件（slice / runs / toolchain），有没有把单切片结论写成全称判断。
+6. 每条给「原文摘录 → 数值 → 判定 → 建议改法」。
+
+**④ 结构与元数据（轻量，勿喧宾夺主）**
+`main.tex`（anonymous·sigconf·作者/邮箱/单位·CCS·keywords）+ **DAC 2027 规则 web 核实**（页数上限、模板版本、双盲、图表与引用格式）+ **页数实测**（`pdfinfo main.pdf`；无则 `pdftotext main.pdf - | grep -c $'\f'`；都没有写「未实测」）。
+
+**⑤ 次要项（有则记，不占主篇幅）**：术语首现定义（Pass@1、Ω、L1–L4）、caption↔正文、单位、`\label`/`\ref` 缺失、语法拼写、`.tex` 残留中文注释、商业工具许可与数据可得性表述。
+
+**⑥ web 核验手段（每条结论留 URL + 抓取时间）**
+`https://api.crossref.org/works/<DOI>` · `https://doi.org/<DOI>` · `https://dblp.org/search/publ/api?q=<title>&format=json` · `http://export.arxiv.org/api/query?id_list=<id>` · `https://api.semanticscholar.org/graph/v1/paper/search?query=...` · GitHub API（软件条目）· DAC 官网 / ACM 作者指南 · `cn.bing.com` RSS / DuckDuckGo html。
+**必须打开原始页面**，🚫 不得把搜索摘要当证据。
+网络：`export https_proxy=http://172.19.92.23:13128; export http_proxy=$https_proxy`；不可达如实写「未核实 + 命令 + 报错」。
+
+**⑦ 交付物**
+1. `doc/BaiZe-ISEDA2027/reports/report_zhulong_paper_detail_audit_zh.html` — 中文、单文件自包含、**0 `<script>` / 0 外链资源**、**≥25KB**、标题注明「基于 main.tex@`<HEAD>`」。必含：
+   - **TL;DR**（可投 / 需修 / 需重做）+ 问题分级 **P0/P1/P2**
+   - **参考文献核对表**：`key | 文献 | 核对源 URL | 元数据 ✅/❌ | 引用上下文 ✅支持/⚠️部分/❌不支持 | 建议`
+   - **逻辑链审查表**：`claim | 出处 | 支撑证据 | 强度 | 判定 | 建议` + 逻辑断点清单
+   - **数字↔措辞一致性表**：`数值 | 出现位置 | 原文措辞 | 是否匹配 | 建议`
+   - **未核实清单**（含已尝试命令与报错）
+2. `doc/ZhuLong_DAC2027/run/paper_audit_progress.md`：逐项进度 + 计数（bib 已核/总数、`\cite` 已核/总数、claim 已核/总数）
+3. `MEMORY_ZHULONG.md` 顶部：一句话结论 + 报告路径 + P0/P1 计数
+
+**⑧ 判据（缺一不算完成）**
+- bib 条目 **100%** 外部核验；正文**每一处 `\cite`** 的上下文都判过（✅/⚠️/❌）
+- 摘要 + intro 每条 claim 都进映射表；章级逻辑断点有清单
+- **所有出现过的数字**都做过多处一致性比对，且**措辞强度逐句判过**
+- 报告 ≥25KB、0 script、0 外链、标签配平；每个 ❌/⚠️ 可复现（URL 或 `文件:行`）
+
+**⑨ 红线**
+- 🚫 不改 `.tex` / `.bib` / `figures/`（改法只写进报告）
+- 🚫 不编造 DOI / 页码 / 文献；查不到写「查无 / 未核实」
+- 🚫 **不得因"数字已确认"就跳过数字↔措辞比对**（这是三大重点之一）
+- 🚫 不覆盖旧报告；不碰评测进程 / 端口 / batch；纯离线审阅
+- 🚫 不把「未核实」写成「已核实」
+
+**⑩ 节奏**
+- `WAITING=0` 立即执行；顺序：通读全文 → 建 claim 表 → bib 逐条 + cite 上下文 → 数字↔措辞 → 写 HTML
+- 允许 2–3 轮，每轮必须更新进度文件并 commit（前缀 `zhulong paper-audit:`）+ push
+- 完成后置 `WAITING=1`，MEMORY 顶部写「✅ 完成 + 报告路径 + P0/P1 计数」
+
+> 📦 §运维令·2026-10-28 14:4x（r2 收口 67.1% · 端口回自有池 8664/8665/8653/8669 · 继续 r3-r5）**✅ 已完成** → `ARCHIVE_ZHULONG_TASK.md §归档 batch 14`；结论：r3–r5 全部收口，**5/5 = 69.0±2.3%**（r1 71.5 / r2 67.1 / r3 67.1 / r4 71.5 / r5 67.7），vs cline 86.8±1.6% ⇒ **−17.8pp**；全程 0 exec_err / 0 infra / timeout≤6；报告 §9 已更新。
+
+> 📦 §运维令·2026-10-28 11:0x（换端口 8663/8666/8667 重跑 r2）→ 已被 14:4x 端口裁决取代 → `ARCHIVE §归档 batch 14`。
+
+> 📦 §运维令·2026-10-28 10:3x（重跑 r2 regrade + 推进 r3-r5）→ 已由 14:4x 及后续完成 → `ARCHIVE §归档 batch 14`。
+
+> 📦 §运维令·2026-10-27 09:0x（maxTokens 8192→16384 修正 · 作废 8192 5-run）**✅ 已执行** → `ARCHIVE §归档 batch 14`；**关键事实**：cline 基线 = maxTokens **16384** / `-p 4` / batch `2026_1019_005714`；8192 5-run（70.8±7.7%）作废不进对比。
+
+### 🟠 历史指令 · 2026-10-26 08:1x（**作废 224219（配置错误）→ 已修复 worker 配置源 → 重启 loop → 用正确配置重跑 zhulong×glm-5.3-flash×full 5-run**）· 已被 10-27 令覆盖
+
+> ⚠️ **本块已被 10-27 令覆盖**：本块里所有"maxTokens=8192"的硬约束**作废**，cline 基线实测 maxTokens = 16384（见 10-27 令 ④）。本块保留仅供历史追溯。
+
+```text
+
+> 用户原话（10-26）：「作废224219，重启 agent loop。你现在 36.15机器上，可以直接操作。」
+> **背景**：10-24 22:1x 令要求「停 cline-full → zhulong 配置对齐 cline（maxTokens 8192）→ zhulong 重跑 5-run」。但 224219 起跑时 **worker 复制了 stale providers.json**（`~/.cline/data/settings/providers.json` = `deepseek-v4-pro + maxTokens=16384`），而非令要求的 `glm-5.3-flash + maxTokens=8192`。根因：`run_cli.sh` 默认 `CLI_DATA_DIR=~/.cline/data`，而 `run_zhulong_script.sh` 的 `export CLI_DATA_DIR=~/.zhulong` 在某些启动路径下未生效。此外 agent loop 在 10-24 22:46 执行 `pkill -f 'zhulong'` 杀 cline-full r1 时**误杀了自己**（zhulong_loop.sh 匹配了 `zhulong`），导致 loop 死亡 ~34h。
+
+**① 已由运维完成（勿重复）**
+1. **作废 224219**：已写 `VOID_REASON.txt` 到 `2026_1024_224219/`；数据留证不删；不进 5-run。
+2. **修复 worker 配置源**：已把 `~/.zhulong/settings/providers.json`（正确值 `glm-5.3-flash + maxTokens=8192 + baseUrl /v1`）复制到 `~/.zhulong/data/settings/providers.json`（run_cli.sh 复制源）。验证：模拟 worker 复制 → 得 `glm-5.3-flash + 8192` ✅。
+3. **确认当前配置全对**：`.env` `CLI_AGENT=zhulong / READBACK=full / PROXY_PORTS=8650,8651,8652,8654`；`~/.zhulong/settings/providers.json` `model=glm-5.3-flash / maxTokens=8192 / baseUrl=http://agi-gateway.cxmt.com/v1 / reasoning.enabled=false`；8090 PID 2778637 活 + full readback 四字段 ✅；4 端口 8650/8651/8652/8654 全 OK。
+4. **重启 agent loop**：用**登录 shell** 启动（`setsid bash -lc "exec bash <...>/zhulong_loop.sh" > /tmp/zhulong_loop.log 2>&1 < /dev/null &`），确保 PATH 有 `zhulong`。启动后自检 `command -v zhulong` 有输出 + log 无 `No such file`。
+
+**② 你（agent）要做的（按序）**
+1. **读 MEMORY 顶部状态头** → 确认 `STAGE = zhulong×glm-5.3-flash×full 5-run（配置对齐后重跑）`、`PHASE = running`、`WAITING = 0`（loop 刚重启，需起 r1）。
+2. **起 r1**（zhulong × glm-5.3-flash × full × maxTokens=8192 × 8650 组 × `-p 4`）：
+   - `cd /nasdata/app.e0031982/code/eda_fastmcp && export PYTHON=$PWD/venv/bin/python && unset http_proxy https_proxy ALL_PROXY && export NO_PROXY="10.129.32.75,localhost,127.0.0.1" && export https_proxy="http://172.19.92.23:13128" && CLI_AGENT=zhulong EDA_RUNCODE_READBACK=full setsid bash scripts/run_zhulong_script.sh -p 4 -n > /tmp/ABL_glm-5.3-flash_zl_aligned_r1.log 2>&1 < /dev/null &`
+   - **关键**：`run_zhulong_script.sh` 会 `export CLI_DATA_DIR=~/.zhulong`（已确认 line 28），worker 会复制 `~/.zhulong/settings/providers.json`（= `glm-5.3-flash + 8192` ✅）。
+3. **起跑后验证 worker 用的模型**：从 `<batch>/cli_data/worker_1/data/settings/providers.json` grep `model` 应为 `glm-5.3-flash`、`maxTokens` 应为 `8192`。**这条必须贴证据**（若仍是 `deepseek-v4-pro` 或 `16384` 立即停跑报错）。
+4. **r1 → 手动 regrade（Step7.1 auto-grade 有已知 bug）→ 记 `pass/158` + `gen-fail` + 耗时 + `-32001` + `sandbox-timeout` → r2 → ... → r5 → 5/5 mean±std**。
+5. **与 cline 基线 86.8±1.6% 对比**，更新 `reports/report_zhulong_agent_compare_cline_vs_zhulongcli_full_zh.html`（新增"配置对齐后重测"一节）。
+
+**③ 验收判据（不达标要如实报，不得粉饰）**
+1. `maxTokens` 等配置 **diff 为空**（除 CLI 名/路径）—— **worker providers.json 必须 = glm-5.3-flash + 8192**；
+2. 单轮 **gen-fail ≤ 5/158**（对齐前 12–27）—— 这是本次对齐最该改善的指标；
+3. 5 轮判据十三有效（timeout≤10、exec_err=0、infra 0）；
+4. 若对齐后 zhulong 仍显著低于 cline，**必须**在报告里给出"已排除配置混杂"的结论。
+
+**④ ⚠️ loop 自杀防护（血泪教训）**
+- **禁止用 `pkill -f 'zhulong'`**（会匹配 `zhulong_loop.sh` 自己 → loop 自杀）。如需停 eval，用**精确 PID**：`kill <launcher_PID>`，或 `pkill -f 'run_zhulong_script.sh'`（不含 `zhulong` 字样）。
+- **禁止用 `pkill -f 'cline'`**（同理会匹配 cline 相关非目标进程）。停 cline eval 用 `pkill -f 'run_cline_script.sh'`。
+
+**⑤ 作废明细（留证不删）**
+- `2026_1024_224219`：worker stale providers.json = `deepseek-v4-pro + maxTokens=16384`（应为 `glm-5.3-flash + 8192`）→ ❌ 作废（已写 `VOID_REASON.txt`）。
+- 上一线 ZL-flash full 5/5（10-23，原始配置 maxTokens=16384）= **75.6±4.4%** ✅ 已收口（但 maxTokens 未对齐，不作为 CLI 对比锚点）。
+- cline-full r1 `2026_1023_231253` / r2 `2026_1024_141148`：被 22:1x 令停，r2 未 regrade（可补 regrade 留档，但不进 5-run）。
+
+**⑥ 口径备注**
+- 本线 = **zhulong×glm-5.3-flash×full×maxTokens=8192**（配置对齐 cline 后），目的是与 **cline×glm-5.3-flash×full×maxTokens=8192**（基线 86.8±1.6%）做"只差 CLI 二进制"的干净对比。
+- 新线（glm-5.3-flash × zhulong）**不纳入论文**（用户 10-23 直令）。论文锚点仍用旧线 (N′) fp4×cline 4 轮 mean=76.7% provisional。
+- 论文已砍到正文 6 页（DAC 限制达成，commit `e7de188d` + `3651b322`）。
+
+**⑦ 与 10-25 论文改稿令的关系**
+- 10-25 00:0x 令（按外部评审意见改论文）**与 5-run 并行**，不冲突。5-run 照跑，论文改稿在等待空档推进。
+- 若论文改稿需打断 5-run 验证关键点，按 10-25 令「先落盘 + 记 MEMORY + 事后 regrade 补记」执行。
+```
+
+---
