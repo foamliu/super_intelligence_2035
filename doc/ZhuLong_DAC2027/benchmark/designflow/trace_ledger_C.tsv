@@ -41,3 +41,14 @@
 1791969528625_p380e	yzwang	hfeg0pkn001	161	physical_verify	case	EDA-Eval-DesignFlow-DRCTimeStats-001	2026-11-03 02:29	
 1792632186733_2n3ot	weizhao	hfeg0pkn004	147	physical_verify	case	EDA-Eval-DesignFlow-FreezeMaker-001	2026-11-03 02:50	
 1792129303041_i252z	shuoran	hfeahpc505	283	layout_aether	case	EDA-Eval-DesignFlow-HierJump-001	2026-11-03 03:13	
+1792672720715_02kcl	kevinc	hfeg0pkn004	87	physical_verify	claimed		2026-11-03 03:35	
+1793018571117_y5suo					parked		2026-11-03 03:36	report-gold: calibre DRC rule 解析逆向报告 prose 非 runnable script, 需 196MB stripped ELF, 不适合 design_flow check
+1792982125759_5m5ut					parked		2026-11-03 03:36	live Calibre DRC run on user GDS+OA lib, 不可在沙盒复现, gold=prose violation report
+1791956790271_31ata					parked		2026-11-03 03:36	m8->m11 pin task 未完成(status running), 仅产通用 demo 脚本非 clean deliverable
+1789649163024_r15ih					parked		2026-11-03 03:36	SKILL noConn instTerm 连通性遍历属 schematic 非本 shard C, status failed
+1793152046824_iacrk					parked		2026-11-03 03:36	解析 calibreDummy.rule BWZ dummy 逻辑=prose 解释非 script
+1791959556511_kkjsm					parked		2026-11-03 03:36	解析 CT_F rule 24 轮 prose Q&A 非 script-deliverable
+1792465550373_n9l88					parked		2026-11-03 03:36	用户指出脚本 layer/purpose 解析 bug=debug 轮非 A-档 seed
+1792025924814_xk5uw					parked		2026-11-03 03:36	查找 PDK drc 文件+层含义 QA 非 design-flow seed
+1791785748768_pvl8c					parked		2026-11-03 03:36	T0=skill 路由定义(meta-skill)非 design-flow seed
+1792547960320_eabca					parked		2026-11-03 03:36	T0='aeGetSelSet 怎么查看选中对象信息'=QA 非 design-flow
