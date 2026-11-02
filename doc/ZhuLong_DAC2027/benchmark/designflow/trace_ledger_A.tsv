@@ -26,3 +26,4 @@
 1790566107917_f1rqc	hbpeng	10.129.2.14	147	eda_other	parked		2026-11-03 01:25	tcl2skill converter dev task. Deliverable = whole multi-file tcl2skill Python package (lexer/ast/translator/skill_visitor/expr_engine/plugin, 200 editor edits). Open-ended large dev task, not focused design-flow deliverable. Input = proprietary PDK Tcl callbacks (mosCB.tcl under /apps/imctf/.../PDK_QA). Too large to replicate as self-contained case.
 1792983707093_9sjuh	e0039602	10.129.8.136	147	verification	case	EDA-Eval-DesignFlow-FormalityLaunchDiag-001	2026-11-03 01:40	
 1791787487273_w6omm	e0045488	hfeg0pkn002	59	digital	case	EDA-Eval-DesignFlow-LibPVT-001	2026-11-03 02:11	
+1792401589701_f9heo	e0046913	hfeg0pkn003	94	pnr_signoff	case	EDA-Eval-DesignFlow-STAFlow-001	2026-11-03 02:52	
