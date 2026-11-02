@@ -2,11 +2,12 @@ WAITING: 0
 SHARD: A (digital_front)
 DOMAINS: digital, eda_other, pnr_signoff, verification
 
-- **PHASE**: shard A 断言闸门整改阶段。负责 domain: digital, eda_other, pnr_signoff, verification
-- 每轮做 1 条 case：rewrite_queue 优先（断言闸门），清零后 trace_ledger.py --shard A next → claim → 深读 → 合成
-- 📊 trace 覆盖率：见 designflow/trace_ledger.py --shard A stats
-- 🎯 通过率: 0/0（A 档尚未实跑；先清断言债）
-- 🧾 断言: k_rationale=k_check 达标（今日 4/4 达标：Digital-010 k=19 / Digital-021 k=17 / Digital-022 k=17 / Digital-023 k=17）· 队列清零 ✓（4/4 全部 done，下轮起开新 case：trace_ledger.py --shard A next → claim → 深读 → 合成）
+- **PHASE**: shard A 新 case 合成阶段（断言债已清零）。负责 domain: digital, eda_other, pnr_signoff, verification
+- 每轮做 1 条 case：trace_ledger.py --shard A next → claim → 深读 → 合成 → 自验 → 追加 EDA-Eval-DesignFlow_A.jsonl
+- 📊 trace 覆盖率：8/1001 = 0.8%（covered=8 · case 8 · parked 1）
+- 🎯 通过率: 0/0（A 档尚未实跑；先清断言债）· B 档目标 20–30%
+- 🧾 断言: k_rationale=k_check 达标（今日 5/5 达标：Digital-010 k=19 / Digital-021 k=17 / Digital-022 k=17 / Digital-023 k=17 / CosimSetup-001 k=16）· 队列清零 ✓
+- 📦 体积：TASK≈17KB / MEMORY≈待测
 
 ### 2026-11-02 shard A 轮 2：Digital-021 断言闸门整改 ✓
 - 队列队首 `EDA-Eval-DesignFlow-Digital-021`（digital, PrimeTime 时序报告负 slack 路径提取, L1 离线 Python）标 `incomplete`：jsonl test 字段是旧 1568B 弱判分（4 packed 条件），rationale 是散文。
@@ -51,3 +52,10 @@ DOMAINS: digital, eda_other, pnr_signoff, verification
 - negative/ + negative_selftest.py：3 §4.9 假 + 2 naive（fake_empty->a / fake_print_expected[hardcoded -top PuTopDftEcc in verdi]->q / fake_core_deleted[comp body -f ../tb/pu.f]->m / naive_no_online_switch[unconditional bsub]->n / naive_qmark_in_cfg[tpl cfg ?=]->o），NEG_RC=0 全 FAIL，5 个不同标签。
 - 闸门：k_rationale=17=k_check=17≥8 ✓；jsonl test 1500→9803B 同步（test==disk check.py roundtrip OK）；7 行/7 unique id 保留。
 - 队列 `rewrite_queue.tsv` Digital-023 → done；今日 4/4 达标，shard A 断言债清零 ✓。下轮起开新 case：`trace_ledger.py --shard A next → claim → 深读 → 合成`。
+
+### 2026-11-02 shard A 轮 6：EDA-Eval-DesignFlow-CosimSetup-001（断言债清零后首条新 case，L2 真跑 tcsh）✓
+- 选料：trace_ledger.py --shard A next → 在 .75 summary.tsv 按 shard A tools 过滤取候选；最高 mc=679 是 johnl/mt7ua（已 parked，Innovus PnR+GenLEF 无 self-contained L2 grader）；按 domain 偏好扩展扫描，选 `1789887279405_ve67l.messages.json`（mike/hfhds211, mc=279, innovus:100+voltus:98+synopsys:2264）—— DDR6 logic-cosim (SystemC phy_model+VCS+Spike) Quick Start 多步构建编排 trace（695 msgs/2.6MB）。claim domain=eda_other。深读：scp 整条 messages.json 到 .75，解析 user 22 轮意图 + assistant 工具链，提取真实 setup_standalone.csh 全文（118 行 csh/tcsh）+ 真实 8 个预编译产物清单 + 真实 Step-1 stdout（`Standalone environment setup complete!`）。
+- 合成：A 档 trace-faithful Step-1 子任务。A 附件 = 真实 csh + manifest + 8 个 truncate stub 产物（按真实字节）。隐藏 B 结构性不同：gcc 11.3.0 / spike gcc-9.3.0_Aug14_2026_v2 / systemcDir 2024.06-SP1-1 / 安装根 /proj/dscqa/phyv_n6_arch_sim_1/wanglj / license 占位符 LICENSE_SERVER_PLACEHOLDER / boost 1.81.0 / 全部产物 size 不同（ddrArchmodel 158M vs A 126M）。B 不进 SUT 沙箱，check() 内嵌字符串 + truncate 重建。
+- L2 grader：check.py 16 独立标签 (a)-(p)。静态 csh 解析（set/setenv + $var/${var} 展开）+ 8 产物大小校验 + license 占位符 + /proj//tool/ TODO 标记 + **真跑 tcsh source**（subprocess `tcsh -c 'source ...; echo ENV_REAL ...'`，验证 D6_DIR/SYSTEMC_HOME/VCS_HOME/SPIKE_DIR/RISCV_PATH/VERDI_HOME 真被设置 + libboost_program_options.so 软链接真被创建）。cross-input guard (m)(n)(o)(p) 在 B 上重跑候选，击败硬编码 A 的 fake_print_expected 与 naive。
+- 自验（.75 hfhds201, tcsh 6.18.01）：verify_env.py 在 A 上 exit 0（12 ENV_OK + 8 ARTIFACT_OK + 3 LICENSE + 9 TODO + 6 ENV_REAL + SYMLINK_OK）；check.py reference_submit.zip workdir_A → CHECK PASS（16 全过）；negative_selftest.py NEG_RC=5 全 FAIL（fake_empty→b / fake_print_expected→m / fake_core_deleted→j / fake_hardcode_sizes→o / fake_literal_license→n，5 标签），REF re-PASS。**真 L2：tcsh source 实际执行，env var 与软链接真实生效。**
+- 闸门：k_rationale=16=k_check=16≥8 ✓；jsonl test 11163B == disk check.py roundtrip OK；8 行/8 unique id 保留。trace_ledger.py --shard A mark → case（covered=8/1001=0.8%）。domain 覆盖：digital:4 · eda_other:2 · pnr_signoff:2 · verification:1。下轮：WAITING: 0。
