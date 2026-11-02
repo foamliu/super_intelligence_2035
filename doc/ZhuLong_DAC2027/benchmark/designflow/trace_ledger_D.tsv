@@ -11,3 +11,5 @@
 1791966358446_82iou.messages.json	fxian	hfeg0pkn002	606	schematic_netlist	case	EDA-Eval-DesignFlow-HierDescend-001	2026-11-02 12:54	
 1792376698189_1nsgi.messages.json	e0039602	hfeg0plg17	394	schematic_netlist	case	EDA-Eval-DesignFlow-Schematic-001	2026-11-02 13:08	
 1792573537545_enbl7.messages.json	e0039602	hfeg0plg17	515	schematic_netlist	case	EDA-Eval-DesignFlow-SimlibIndex-001	2026-11-02 13:32	
+1788770994295_x4b0p.messages.json	xinqiaoz	hfeg0plg76	1367	schematic_netlist	parked		2026-11-02 13:37	dominant task=calibre/DRC=physical_verify, not shard D domain; matched filter via netlist:1/skill:1 only
+1787798131361_82ybr.messages.json	haoyut	hfeg0plg49	878	schematic_netlist	case	EDA-Eval-DesignFlow-Backannot-001	2026-11-02 13:55	

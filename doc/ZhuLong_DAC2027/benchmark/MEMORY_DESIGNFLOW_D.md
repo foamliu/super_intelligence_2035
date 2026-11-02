@@ -2,14 +2,15 @@ WAITING: 0
 SHARD: D (netlist_wave)
 DOMAINS: analog_context, schematic_netlist, waveform
 
-- **PHASE**: shard D 运行中。已交付 12 条 case（6 schematic_netlist · 2 analog_context · 3 waveform · 1 dummydeck-seeded）。本轮 #161 完成 EDA-Eval-DesignFlow-SimlibIndex-001；并回填台账遗漏的 1nsgi→Schematic-001（覆盖率先前少计 1）。
+- **PHASE**: shard D 运行中。已交付 13 条 case（7 schematic_netlist · 2 analog_context · 3 waveform · 1 dummydeck-seeded）。本轮 #162 完成 EDA-Eval-DesignFlow-Backannot-001（82ybr，PrimeTime 反标失败诊断）。
 - 每轮做 1 条 case：trace_ledger.py --shard D next → claim → 深读 → 合成 → 自验 → 追加 EDA-Eval-DesignFlow_D.jsonl → 日报
-- 📊 trace 覆盖率：13 / 1001 = 1.3%（mc>=300 候选池）；已覆盖 domain：schematic_netlist:6 · analog_context:3 · waveform:3 · dummydeck:1
+- 📊 trace 覆盖率：14 / 1001 = 1.4%（mc>=300 候选池）；已覆盖 domain：schematic_netlist:7 · analog_context:3 · waveform:3 · dummydeck:1
 - 🎯 通过率: 0/0（shard D 尚未跑 pi；SUT 通过率由主 loop 统一跑后回填）
-- 🧾 断言: k_rationale=k_check=14 ✓（今日 SimlibIndex-001 达标；shard D 存量 12 条 test_rationale 全部以 `k 条断言：①…` 开头已核验达标；今日 x/30 达标=1）
-- 📦 体积：TASK≈17KB / MEMORY_D≈1.0KB
+- 🧾 断言: k_rationale=k_check=16 ✓（今日 Backannot-001 达标；shard D 存量 13 条 test_rationale 全部以 `k 条断言：①…` 开头已核验达标；今日 x/30 达标=1）
+- 📦 体积：TASK≈17KB / MEMORY_D≈1.1KB
 
 ## 流水
+- 2026-11-02 13:36 | shard D #162 | next --n 5 → x4b0p(mc=1367) 先 claim 后判为 physical_verify(非本 shard 域)→parked；重选 82ybr (haoyut/hfeg0plg49, mc=878, schematic_netlist) claim → 复用既有深读笔记 82ybr_pt_parasitics_backannot_diag.md（333 msgs，PIM LPDDR6 DRAMTOP PrimeTime U-2022.12-SP5 read_parasitics 反标失败诊断：9,660/1,041,009=0.93% net 未反标，PARA-044/043/124 三类，SPEF StarRC R-2020.09-SP5-4 ↔ Verilog 网表 Cadence SI net/pin 名不匹配 + hierarchy 展开策略差异 + Calibre LVS CDL modify 映射缺失）→ 既有 assets/reference/check.py(Oct30/Nov02 build) 完整 → 自验 ref PASS(16/16) / 5 negatives ALL-FAIL(NEG_RC=0: fake_empty→a/fake_print→a/fake_core→j/naive_error_count_only→l/naive_dump_all_into_ignore→o) / §4.9 三假提交全 FAIL → 16 条断言闸门 PASS(k_rationale=k_check=16≥8) → 追加 D.jsonl（13 行）→ mark --status case。domain=schematic_netlist, level=L1, track=B。DEBT: 0。
 - 2026-11-02 13:30 | shard D #161 | 台账回填 1nsgi→Schematic-001（先前台账遗漏，jsonl 已有该 case 但 trace 未 claim/mark，覆盖率少计 1）mark --status case；claim 1792573537545_enbl7 (e0039602/hfeg0plg17, mc=515, schematic_netlist) → 深读笔记 1nsgi_netlist_cell_convert.md 复用 + enbl7 messages.json 解析（344 msgs，netlist_cell_convert 增量：simlib_drcoa_digital.sv 全 model 名解析建可索引表 + 精确/相似匹配 + 命中 model 原文拼参考示例进 prompt + prompt 监视器 + 3 进程并行 + 无限重试）→ 合成 B 档 case EDA-Eval-DesignFlow-SimlibIndex-001（SimlibRefDB：解析 module 建索引，四档打分 exact1.0/子串0.85-0.9/SequenceMatcher/同后缀+0.06封顶，find_reference/reference_snippet(celldefine包裹+max_chars截断)/to_json/to_table/CLI；14 条断言覆盖 zip/compile/B运行exit0/B索引13名/排除decoy-task/B表/精确块内容/celldefine包裹/子串匹配/无匹配/家族后缀/截断/确定性/B2跨输入反硬编码；hidden B(13 module+decoy task/function)+B2(12 module)两输入）→ 自验 ref PASS(14/14) / 7 negatives ALL-FAIL(NEG_RC=0, fake_empty→a/fake_print→e/fake_core→f/naive_wrong→e/naive_index_all→k/naive_no_truncate→i/fake_no_match→g) / §4.9 三假提交全 FAIL → 14 条断言闸门 PASS(k_rationale=k_check=14≥8) → 追加 D.jsonl（12 行）→ mark --status case。level=L1, track=B。DEBT: 0。
 - 2026-11-02 11:34 | shard D #158 | claim 1793078405436_t0aom (easont/hfhds211, mc=650, waveform) → 深读笔记 t0aom_temp_sel_func_infer.md（415 msgs，LPDDR5 DDGOA TempHalfWL 温度传感器 cosim，用户「根据波形说明 signal 的功能」）→ 合成 B 档 case EDA-Eval-DesignFlow-TempSelInfer-001（VCD 信号功能推断：temp<7:0> 二进制计数器半频率验证 + selNNtoMM one-hot 范围选择器区间提取 + contiguous tiling + analog 分类；与 Waveform-001 仅统计/WaveView-002 仅 Tcl 读 FSDB 的差异点=功能推断+跨信号一致性验证）→ 自验 ref PASS(15/15) / 5 negatives ALL-FAIL(NEG_RC=0) → 15 条断言闸门 PASS → 追加 D.jsonl（9 行）→ mark --status case。level=L1, track=B。DEBT: 0。
 - 2026-11-02 11:33 | shard D #157 | claim 1789370647360_ukkn7 (e0031668/hfeg0plg91, mc=1478, schematic_netlist) → 深读 → 合成 B 档 case EDA-Eval-DesignFlow-SubSecFilter-001（ERC 子段 2.1-2.8 过滤，含 2.10/2.11 边界防御）→ 自验 ref PASS / 5 negatives ALL-FAIL → 14 条断言闸门 PASS → 追加 D.jsonl（8 行）→ mark --status case。level=L1, track=B。DEBT: 0。
