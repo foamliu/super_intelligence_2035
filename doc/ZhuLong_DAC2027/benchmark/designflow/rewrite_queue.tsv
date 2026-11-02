@@ -1,6 +1,6 @@
 task_id	domain	reason	status
 EDA-Eval-DesignFlow-PGLayout-001	pg_layout	marker_style_mismatch: uses (a)(b)...(n) instead of ①②…⑭ (decl=14 marks=0); quick normalize to ①② markers	done 2026-11-02 (149轮): prefix 14 条独立断言→14 条断言, (a)-(n)→①-⑭, k_rationale=k_check=14>=8 GATE PASS, test field bytes unchanged
-EDA-Eval-DesignFlow-PowerFill-001	physical_verify	count_mismatch: k_rationale=13 but check.py labels only a-l (12); reconcile (add missing (m) label to check.py or fix rationale count)	pending
+EDA-Eval-DesignFlow-PowerFill-001	physical_verify	count_mismatch: k_rationale=13 but check.py labels only a-l (12); reconcile (add missing (m) label to check.py or fix rationale count)	done 2026-11-02 (150轮): relabel (a.2)->(b) and shift (b)->(c)...(l)->(m) so 13 labels (a)-(m) == k_rationale=13>=8 GATE PASS; check() logic unchanged (only comments + _cond name strings); negative_selftest ALL-FAIL re-verified locally; jsonl test field synced to new check.py bytes (8167->8165)
 EDA-Eval-DesignFlow-Verification-001	verification	no_prefix (k_check=4 <8): prose rationale + check.py only 4 labeled conditions; needs rationale rewrite AND check.py strengthening to >=8	pending
 EDA-Eval-DesignFlow-Characterization-001	characterization	no_prefix (k_check=7 <8): prose rationale; check.py 7 labeled conditions; needs rationale rewrite AND check.py strengthen to >=8	pending
 EDA-Eval-DesignFlow-PDKQA-001	physical_verify	no_prefix (k_check=7 <8): prose rationale; check.py 7 labeled; needs rationale rewrite AND check.py strengthen to >=8	pending
