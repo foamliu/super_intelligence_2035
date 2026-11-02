@@ -37,3 +37,4 @@
 1791958525711_f1fik	chengleiy	hfeg0plg07	504	physical_verify	case	EDA-Eval-DesignFlow-VTTFLayerMap-001	2026-11-03 00:28	
 1792719518003_wkulx	qijingx	hfeg0pjn200	247	layout_aether	case	EDA-Eval-DesignFlow-WheelZoom-001	2026-11-03 01:07	
 1790235770906_8th6a	kenwang	hfeg0pkn005	367	layout_virtuoso	case	EDA-Eval-DesignFlow-DRQAPlan2Skill-001	2026-11-03 01:39	
+1790578231952_ircle	kenwang	hfeg0pkn005	150	layout_aether	parked		2026-11-03 02:03	agent_core.py gold is broken WIP (truncated from_json RuleParams unclosed paren at L476, SyntaxError L482); gds_gen.py belongs to session 8th6a already used by round25 DRQAPlan2Skill; miccao p2n1r run.tcl is static no generator for hidden-B; no clean runnable gold extractable from ircle within budget
