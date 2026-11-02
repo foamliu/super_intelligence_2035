@@ -41,7 +41,7 @@
 1791969528625_p380e	yzwang	hfeg0pkn001	161	physical_verify	case	EDA-Eval-DesignFlow-DRCTimeStats-001	2026-11-03 02:29	
 1792632186733_2n3ot	weizhao	hfeg0pkn004	147	physical_verify	case	EDA-Eval-DesignFlow-FreezeMaker-001	2026-11-03 02:50	
 1792129303041_i252z	shuoran	hfeahpc505	283	layout_aether	case	EDA-Eval-DesignFlow-HierJump-001	2026-11-03 03:13	
-1792672720715_02kcl	kevinc	hfeg0pkn004	87	physical_verify	claimed		2026-11-03 03:35	
+1792672720715_02kcl	kevinc	hfeg0pkn004	87	physical_verify	case	EDA-Eval-DesignFlow-DRConnTiming-001	2026-11-03 03:50	
 1793018571117_y5suo					parked		2026-11-03 03:36	report-gold: calibre DRC rule 解析逆向报告 prose 非 runnable script, 需 196MB stripped ELF, 不适合 design_flow check
 1792982125759_5m5ut					parked		2026-11-03 03:36	live Calibre DRC run on user GDS+OA lib, 不可在沙盒复现, gold=prose violation report
 1791956790271_31ata					parked		2026-11-03 03:36	m8->m11 pin task 未完成(status running), 仅产通用 demo 脚本非 clean deliverable
