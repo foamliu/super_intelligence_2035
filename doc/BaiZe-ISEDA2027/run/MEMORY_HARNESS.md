@@ -5,13 +5,13 @@ WAITING: 0
 ## 📊 进度快照
 
 ```
-PHASE:        R1353 incr_eval轮(内存自检392nd PASS+CPU自检PASS+incr_eval 2items:hermes pylint-6903 RESOLVED+deepseek django-14534 FAILED)·eval TOTAL=2341/1787(+2/+1 sinceR1352)·predict:cline500(DONE)·opencode500(DONE)·pi475(DONE)·claude-code433(DONE)·codex373(alive)·hermes220(alive)·deepseek143(alive)(3路alive:codex 373/500·hermes 220/500·deepseek 143/500)
-已完成:       H-B✅·Gate7/7·TB报告✅·pilot20✅·R984-R988恒0调试✅·R989 incr_eval全链✅·R997硬约束修复✅·R998-R1342 incr_eval链+内存/CPU自检+体积归档✅·R1343 quiet监控✅·R1344 incr_eval 2items both RESOLVED✅·R1345 incr_eval 1item FAILED✅·R1346 quiet监控✅·R1347 quiet监控✅·R1348 incr_eval 4items(1 RESOLVED+3 FAILED)✅·R1349 incr_eval 3items(2 RESOLVED+1 FAILED)✅·R1350 incr_eval codex 2items both RESOLVED✅·R1351 incr_eval deepseek 1item RESOLVED✅·R1352 quiet监控✅·R1353 incr_eval 2items(1 RESOLVED+1 FAILED)✅
-当前动作:     R1353:内存自检392nd PASS(运维令10-30)+CPU自检PASS(运维令11-02)+scan_backlog=1(hermes pylint-6903,patch3527)→incr_eval R1353 RESOLVED✅(32s docker)→scan_backlog=1(deepseek django-14534,patch11488)→incr_eval R1353b FAILED✅(28s docker)→scan_backlog=0✅. eval 2339→2341/1786→1787(+2/+1)·hermes 159/120(+1/+1)·deepseek 137/110(+1/+0)·predict:codex373(alive)·hermes220(alive,+1)·deepseek143(alive,+1)·均未stuck. 硬约束:predictions 0 tracked✅·eval report.json 0 tracked✅·/data 6.0T free✅·未完成指令:有(10-30内存自检常驻+11-02 CPU自检常驻+10-28full500 3路predict仍跑)⇒WAITING=0.
-下一步:       ①3路predict alive(codex 373/500·hermes 220/500·deepseek 143/500) ②每轮scan_backlog(with-patch)→incr_eval新产出 ③predict全完成后final eval+full500最终报告(7路总表+Wilson CI+McNemar 7×7) ④infra单列(铁律③) ⑤永久硬约束:禁止commit结果JSON ⑥TASK=34.9KB·MEMORY≤32KB
-阻塞:         无(3路predict alive;本轮自检无失控,无kill;scan_backlog=0 clear after incr_eval). git:clean.
+PHASE:        R1354 quiet监控轮(内存自检393rd PASS+CPU自检PASS+scan_backlog=0)·eval TOTAL=2341/1787(unchanged since R1353)·predict:cline500(DONE)·opencode500(DONE)·pi475(DONE)·claude-code433(DONE)·codex374(alive,+1)·hermes220(alive)·deepseek143(alive)(3路alive:codex 374/500·hermes 220/500·deepseek 143/500)
+已完成:       H-B✅·Gate7/7·TB报告✅·pilot20✅·R984-R988恒0调试✅·R989 incr_eval全链✅·R997硬约束修复✅·R998-R1352 incr_eval链+内存/CPU自检+体积归档✅·R1353 incr_eval 2items(1 RESOLVED+1 FAILED)✅·R1354 quiet监控scan_backlog=0✅
+当前动作:     R1354:内存自检393rd PASS(运维令10-30:MemAvail≈1446GB,无本线predict>50GB;最大本线opencode1.1GB;cline daemon4.7GB非predict)+CPU自检PASS(运维令11-02:load35.75/224≈16%,无本线predict>8000%CPU;最高本线codex1.7%/hermes1.5%/deepseek1.9%;整机top=pretrain-line cpu_lmeval533%/pretrain_launcher142%非本线不碰)+scan_backlog=0 quiet轮✅·eval 2341/1787 unchanged·predict:codex374(+1)·hermes220·deepseek143·3路alive·均未stuck. 硬约束:predictions 0 tracked✅·eval report.json 0 tracked✅·/data 6.0T free✅·未完成指令:有(10-30内存自检常驻+11-02 CPU自检常驻+10-28full500 3路predict仍跑)⇒WAITING=0.
+下一步:       ①3路predict alive(codex 374/500·hermes 220/500·deepseek 143/500) ②每轮scan_backlog(with-patch)→incr_eval新产出 ③predict全完成后final eval+full500最终报告(7路总表+Wilson CI+McNemar 7×7) ④infra单列(铁律③) ⑤永久硬约束:禁止commit结果JSON ⑥TASK=34.9KB·MEMORY≤32KB
+阻塞:         无(3路predict alive;本轮自检无失控,无kill;scan_backlog=0 quiet clear). git:clean.
 ERROR_COUNT:  0
-  📦 体积：TASK=35757B(34.9KB,>32KB,3活跃块不可归档,<40KB红线OK) / MEMORY≈31.5KB(≤32KB✅)
+  📦 体积：TASK=35757B(34.9KB,>32KB,3活跃块不可归档,<40KB红线OK) / MEMORY≈31.9KB(≤32KB✅)
 ```
 
 > 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
@@ -19,7 +19,8 @@ ERROR_COUNT:  0
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 
 ### 本唤醒流水
-[02:20] R1353 incr_eval轮:内存自检392nd PASS(MemAvail≈1449GB,无本线predict>50GB;最大本线cline daemon 3.6GB)+CPU自检PASS(load34.91/224≈16%,无本线predict>8000%CPU;最高本线cline20.4%;opencode6.5%;整机top=pretrain-line非本线不碰)+scan_backlog=1(hermes pylint-6903,patch3527)→incr_eval R1353 RESOLVED✅(32s docker)→scan_backlog=1(deepseek django-14534,patch11488)→incr_eval R1353b FAILED✅(28s docker,test failure非infra)→scan_backlog=0✅·eval 2339→2341/1786→1787(+2/+1)·hermes 159/120(+1/+1)·deepseek 137/110(+1/+0)·predict:codex373·hermes220(+1)·deepseek143(+1)·3路alive·硬约束:predictions 0 tracked✅·eval report.json 0 tracked✅·/data 6.0T free✅
+[02:29] R1354 quiet监控轮:内存自检393rd PASS(运维令10-30:MemAvail≈1446GB,无本线predict>50GB;最大本线opencode1.1GB;cline daemon4.7GB非predict)+CPU自检PASS(运维令11-02:load35.75/224≈16%,无本线predict>8000%CPU;最高本线codex1.7%/hermes1.5%/deepseek1.9%;整机top=pretrain-line cpu_lmeval533%/pretrain_launcher142%非本线不碰)+scan_backlog=0 quiet轮✅·eval 2341/1787 unchanged·predict:codex374(+1)·hermes220·deepseek143·3路alive·硬约束:predictions 0 tracked✅·eval report.json 0 tracked✅·/data 6.0T free✅
+> 📦 R1353 流水(02:20,内存自检392nd+CPU自检PASS+incr_eval 2items:hermes pylint-6903 RESOLVED+deepseek django-14534 FAILED)已归档 → daily-memories-harness/2026-11-03.md。结论：eval 2339→2341/1786→1787(+2/+1)·3路predict alive。需要时再读。
 > 📦 R1352 流水(02:12,内存自检391st+CPU自检PASS+scan_backlog=0 quiet)已归档 → daily-memories-harness/2026-11-03.md。结论：eval 2339/1786 unchanged·3路predict alive。需要时再读。
 > 📦 R1351 流水(02:03,内存自检390th+CPU自检PASS+incr_eval deepseek 1item RESOLVED)已归档 → daily-memories-harness/2026-11-03.md。结论：eval 2338→2339/1785→1786(+1/+1)·3路predict alive。需要时再读。
 > 📦 R1350 流水(01:57,内存自检389th+CPU自检PASS+incr_eval codex 2items both RESOLVED)已归档 → daily-memories-harness/2026-11-03.md。结论：eval 2336→2338/1783→1785(+2/+2)·3路predict alive。需要时再读。
