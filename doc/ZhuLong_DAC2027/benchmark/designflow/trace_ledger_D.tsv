@@ -24,3 +24,4 @@
 1785725739513_r7ah0	t0002638	hfeg0plg49	685	schematic_netlist	parked		2026-11-02 18:35	MCP/pyAether backend infra setup, not a design task (aether:1455/pyaether:323 dominant; netlist/schematic/waveform signal low)
 1789951973902_p3107					case	EDA-Eval-DesignFlow-WvEdgeTiming-001	2026-11-02 19:07	
 1792297746172_kyref	vincelu	hfeg0plg55	476	schematic_netlist	case	EDA-Eval-DesignFlow-InstCdlConsist-001	2026-11-02 19:45	
+1793070934364_gtyj5	easont	hfeg0plg58	590	waveform	case	EDA-Eval-DesignFlow-TempSelWaveform-001	2026-11-02 20:23	
