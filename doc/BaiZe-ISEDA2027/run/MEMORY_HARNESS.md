@@ -5,13 +5,13 @@ WAITING: 0
 ## 📊 进度快照
 
 ```
-PHASE:        R1368 监控轮(内存自检407th PASS+CPU自检PASS+scan_backlog=0 clean)·eval TOTAL=2356/1801(unchanged)·predict files:cline500(DONE)·opencode500(DONE)·pi475(DONE)·claude-code433(DONE)·codex381/500(alive,orchestrator running52h,on sphinx-9230)·hermes229/500(alive,on pytest-5840)·deepseek149/500(alive,on django-14725)(3路alive:codex381·hermes229·deepseek149)
-已完成:       H-B✅·Gate7/7·TB报告✅·pilot20✅·R984-R988恒0调试✅·R989 incr_eval全链✅·R997硬约束修复✅·R998-R1367 incr_eval链+内存/CPU自检+体积归档✅·R1368 监控轮自检PASS+backlog=0
-当前动作:     R1368:内存自检407th PASS(运维令10-30:MemAvail≈1.4Ti,无本线predict>50GB;最大本线gw_proxy228MB+deepseek runtime273MB)+CPU自检PASS(运维令11-02:load34.66/224≈15.5%,<80%;无本线predict>8000%CPU;3路predict run_single均0.0-2.5%CPU)·scan_backlog=0 clean(无新real patch待eval)·eval TOTAL=2356/1801(unchanged,cline326/opencode401/pi333/claude-code273/codex226/hermes126/deepseek116)·predict files实测:codex381/500(288 real patch+93 empty,orchestrator alive52h on sphinx-9230,非DONE)·hermes229/500(165 real+64 empty,alive on pytest-5840)·deepseek149/500(143 real+6 empty,alive on django-14725)·3路alive progressing(低CPU=等模型API/fetch,非stuck)·硬约束:predictions 0 tracked✅·eval result JSON 0 tracked✅·/data 6.0T free✅·docker 0 running✅·无kill·无失控·未完成指令:有(10-30内存自检常驻+11-02 CPU自检常驻+10-28full500 3路predict仍跑)⇒WAITING=0.
+PHASE:        R1369 监控轮(内存自检408th PASS+CPU自检PASS+scan_backlog=0 clean)·eval TOTAL=2356/1801(unchanged)·predict files:cline500(DONE)·opencode500(DONE)·pi475(DONE)·claude-code433(DONE)·codex381/500(alive,on sphinx-9230)·hermes229/500(alive,on pytest-5840)·deepseek149/500(alive,on django-14725)(3路alive:codex381·hermes229·deepseek149)
+已完成:       H-B✅·Gate7/7·TB报告✅·pilot20✅·R984-R988恒0调试✅·R989 incr_eval全链✅·R997硬约束修复✅·R998-R1368 incr_eval链+内存/CPU自检+体积归档✅·R1369 监控轮自检PASS+backlog=0
+当前动作:     R1369:内存自检408th PASS(运维令10-30:MemAvail≈1.51Ti,无本线predict>50GB;最大本线deepseek runtime267MB+gw_proxy222MB)+CPU自检PASS(运维令11-02:load38.83/224≈17.3%,<80%;无本线predict>8000%CPU;3路predict run_single均0.0-1.7%CPU)·scan_backlog=0 clean(无新real patch待eval)·eval TOTAL=2356/1801(unchanged,cline326/opencode401/pi333/claude-code273/codex226/hermes126/deepseek116)·predict files实测:codex381/500(288 real+93 empty,alive on sphinx-9230,非DONE)·hermes229/500(165 real+64 empty,alive on pytest-5840)·deepseek149/500(143 real+6 empty,alive on django-14725)·3路alive progressing(低CPU=等模型API/fetch,非stuck)·硬约束:predictions 0 tracked✅·eval result JSON 0 tracked✅·/data 6.0T free✅·docker 0 running✅·无kill·无失控·未完成指令:有(10-30内存自检常驻+11-02 CPU自检常驻+10-28full500 3路predict仍跑)⇒WAITING=0.
 下一步:       ①3路predict alive(codex381/500·hermes229/500·deepseek149/500) ②每轮scan_backlog→incr_eval新完成predict ③predict全完成后final eval+full500最终报告(7路总表+Wilson CI+McNemar 7×7) ④infra单列(铁律③) ⑤永久硬约束:禁止commit结果JSON ⑥TASK=34.9KB·MEMORY≤32KB
 阻塞:         无(3路predict alive progressing;scan_backlog=0 clean;本轮自检无失控,无kill). git:clean(本线文件clean,工作树有ZhuLong/pretrain在途文件未碰).
 ERROR_COUNT:  0
-  📦 体积：TASK=35757B(34.9KB,>32KB,3活跃块不可归档,<40KB红线OK) / MEMORY=31218B(30.5KB,≤32KB✅)
+  📦 体积：TASK=35757B(34.9KB,>32KB,3活跃块不可归档,<40KB红线OK) / MEMORY=31251B(30.5KB,≤32KB✅)
 ```
 
 > 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
@@ -19,7 +19,9 @@ ERROR_COUNT:  0
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 
 ### 本唤醒流水
-[05:03] R1368 监控轮:内存自检407th PASS(运维令10-30:MemAvail≈1.4Ti,无本线predict>50GB;最大本线gw_proxy228MB+deepseek runtime273MB)+CPU自检PASS(运维令11-02:load34.66/224≈15.5%,<80%;无本线predict>8000%CPU;3路predict run_single均0.0-2.5%CPU)·scan_backlog=0 clean(无新real patch待eval,本轮无incr_eval)·eval TOTAL=2356/1801(unchanged:cline326/opencode401/pi333/claude-code273/codex226/hermes126/deepseek116)·predict files实测(ls+json parse):cline500(442real+58empty,DONE)·opencode500(497real+3empty,DONE)·pi475(463real+12empty,DONE)·claude-code433(358real+75empty,DONE)·codex381/500(288real+93empty,orchestrator alive52h,working on sphinx-9230,非DONE)·hermes229/500(165real+64empty,alive on pytest-5840)·deepseek149/500(143real+6empty,alive on django-14725)·3路alive progressing(低CPU,非stuck)·硬约束:predictions 0 tracked✅·eval result JSON 0 tracked✅·/data 6.0T free✅·docker 0 running✅·无kill·无失控·体积:TASK=35757B(34.9KB)·MEMORY=31218B(30.5KB)
+[05:14] R1369 监控轮:内存自检408th PASS(运维令10-30:MemAvail≈1.51Ti,无本线predict>50GB;最大本线deepseek runtime267MB+gw_proxy222MB)+CPU自检PASS(运维令11-02:load38.83/224≈17.3%,<80%;无本线predict>8000%CPU;3路predict run_single均0.0-1.7%CPU)·scan_backlog=0 clean(无新real patch待eval,本轮无incr_eval)·eval TOTAL=2356/1801(unchanged:cline326/opencode401/pi333/claude-code273/codex226/hermes126/deepseek116)·predict files实测:cline-patched500(442real+58empty,DONE)·opencode500(497real+3empty,DONE)·pi475(463real+12empty,DONE)·claude-code433(358real+75empty,DONE)·codex381/500(288real+93empty,alive on sphinx-9230,非DONE)·hermes229/500(165real+64empty,alive on pytest-5840)·deepseek149/500(143real+6empty,alive on django-14725)·3路alive progressing(低CPU,非stuck)·硬约束:predictions 0 tracked✅·eval result JSON 0 tracked✅·/data 6.0T free✅·docker 0 running✅·无kill·无失控·体积:TASK=35757B(34.9KB)·MEMORY=31251B(30.5KB)
+
+> 📦 R1368 流水(05:03,监控轮自检407th PASS+scan_backlog=0)已归档 → daily-memories-harness/2026-11-03.md。结论：eval 2356/1801 unchanged·3路predict alive。需要时再读。
 
 > 📦 R1367 流水(04:56,incr_eval 3items ALL RESOLVED+codex500里程碑)已归档 → daily-memories-harness/2026-11-03.md。结论：eval 2353→2356/1798→1801(+3/+3)·3路predict alive。需要时再读。
 
