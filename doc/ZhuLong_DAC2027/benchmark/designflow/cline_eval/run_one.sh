@@ -209,6 +209,14 @@ PY
 ); do
       [ -f "$ASSETS_SRC/$a" ] && cp "$ASSETS_SRC/$a" "$JUDGE/" 2>/dev/null || true
     done
+    # 复制隐藏 B 输入进 judge dir（check.py 的 cross-input guard 需要 workdir/hidden/）。
+    # hidden/ 不进 SUT workdir（防泄题），但判分器在独立 judge dir 里需要它。
+    # 两个可能位置：assets/<id>/hidden/ 或 reference/<id>/hidden/（按 case 而定）。
+    if [ -d "$ASSETS_SRC/hidden" ]; then
+      cp -r "$ASSETS_SRC/hidden" "$JUDGE/hidden" 2>/dev/null || true
+    elif [ -d "$REF_DIR/hidden" ]; then
+      cp -r "$REF_DIR/hidden" "$JUDGE/hidden" 2>/dev/null || true
+    fi
     cd "$JUDGE"
     JUDGE_OUT=$(python3 - <<'PY'
 import importlib.util, sys, os, json
