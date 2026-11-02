@@ -39,6 +39,14 @@
 <table>
   <tr><th>日期</th><th>标识</th><th>篇数</th><th>日报</th><th>备注</th></tr>
   <tr>
+    <td>2026-11-03</td>
+    <td>早报（AM · 3/5 · 待 PM 收口）</td>
+    <td>3 / 5</td>
+    <td><a href="2026-11-03.html">2026-11-03.html</a></td>
+    <td><b>☀️ 早报 3 篇「借鉴」</b>（AM · 06:1x CST，周二）= <code>2610.42147</code> <b>LSA 隐空间层次稀疏注意力</b>（key 池化 + 隐空间聚类，query 只给簇中心打分；10M token 下单层 prefill 提速 <b>22.7×</b>（对全注意力 <b>72.4×</b>）、decode <b>4.6×</b>（<b>42.5×</b>）；索引 <b>246 MiB/层</b> vs 基线 331 / QSA 642；N-LSA 0.5B 混合模型 128k 验证损失 <b>1.085</b> = 全注意力，训练 <b>1.6×</b>；自建 PaperTrail 基准）/ <code>2610.41359</code> <b>LEAP 推理调度长度预测</b>（复用 prefill 隐状态 + 线性读出 + CPU 异步 RLS 在线适配；每 token 时延比 LTR <b>−15.9%</b> / TIE −19.0% / TRAIL −40.8%，吞吐 +1.9%，预测器参数少 <b>30,569×</b>；单卡 A800 + vLLM 0.8.5）/ <code>2610.41177</code> <b>TraceSpec agent 投机解码</b>（TraceSpec-Traj 10,000 训练 / 2,500 测试状态；在中间 assistant turn 上训练 draft + 状态条件化预算分配；回放吞吐比 DSpark <b>+12.5%–22.6%</b>、验证产出率 <b>+8.4–11.2 pp</b>、动态吞吐 +1.4%–5.5%；人大 + 华为）。<b>批次：本轮未刷新</b>，仍 <code>2026-10-30</code>（<code>totalResults</code> 124,270、最新 <code>2026-10-30T17:59:59Z</code>、全库 10-30~11-03 区间 <b>1,066</b>、广度 <b>640,974</b>，与 r128 逐项相同；下一批公告 = 美东 11-02 20:00 ET = 本地 11-03 09:00）⇒ 早 3 取自<b>单分类 5 查询</b>（各 100 条）合并 <b>293</b> 条 / 去重 <b>291</b> 条候选池（0 条与 SEEN 重复）+ 官方 <code>id_list</code> 3/3。PDF <b>3/3</b>（32/16/13 页；合计 <b>5,503,585 B ≈ 5.25 MiB</b>）；台账 收录 <b>294</b> / 候选 <b>4,558</b>（+RSS 507）、<code>papers.jsonl</code> <b>294</b>；<b>18:00 轮待办</b>：补 2 篇「科普」→ 5/5 收口 + 分镜 <code>SCENES/11_03.html</code> + 日报邮件
+  </tr>
+
+  <tr>
     <td>2026-11-02</td>
     <td>晚报（PM · 5/5 · 当日收口）</td>
     <td>5 / 5</td>
@@ -250,7 +258,7 @@
 </table>
 
 <footer>
-  research 线 · <code>research/daily/index.html</code> ｜ 最近更新：2026-11-02 18:1x CST（<b>2026-11-02 晚报 · 5/5 收口</b>：早 3「借鉴」= <code>2610.39412</code> <b>Dobb</b> / <code>2610.40039</code> <b>Edge-NPU VLM 测量</b> / <code>2610.40541</code> <b>解码长度预测的上界</b>；晚 2「科普」= <code>2610.42002</code> <b>GeoFlip</b> / <code>2610.41185</code> <b>端到端自驾 SAE</b>；<b>公告批次 AM 未刷新 → PM 已刷新到 <code>2026-10-30</code></b>，PM 改走单分类取数得 293 条新候选；台账 收录 <b>291</b> / 候选 <b>4,558</b>（+RSS 507）｜ 上一版：2026-11-01 18:1x CST 晚报 5/5 收口）<br>
+  research 线 · <code>research/daily/index.html</code> ｜ 最近更新：2026-11-03 06:1x CST（<b>2026-11-03 早报 · 3/5</b>：3 篇「借鉴」= <code>2610.42147</code> <b>LSA</b> 隐空间层次稀疏注意力 / <code>2610.41359</code> <b>LEAP</b> 推理调度长度预测 / <code>2610.41177</code> <b>TraceSpec</b> agent 投机解码；<b>本轮公告批次未刷新（仍 <code>2026-10-30</code>）</b> ⇒ 早 3 取自单分类 5 查询合并 293 / 去重 291 条候选池；台账 收录 <b>294</b> / 候选 <b>4,558</b>（+RSS 507）｜ 上一版：2026-11-02 18:1x CST 晚报 5/5 收口）
 </footer>
 </div>
 </body>
