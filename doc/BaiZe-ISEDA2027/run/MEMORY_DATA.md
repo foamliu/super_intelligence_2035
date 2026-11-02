@@ -20,7 +20,7 @@ WAITING: 1
 ```
 PHASE:        🟢运维令10-31 web search调研HF长上下文+agentic数据集.报告v5已交付+已commit+push
 已完成:       ✅A.LC+Agentic调研报告v5(report_data_lc_agentic_survey_zh.html 106569B/44table/0script/18+15候选/74 HF链接)+生成器(gen_lc_agentic_survey_report.py 幂等);✅B.85M下载持续运行(11459/12126=94.6%);✅C.报告全量验证(7节/0script/0CDN/幂等OK/44table平衡/all tags balanced)
-当前动作:     唤醒1087(2026-11-02 08:00):v5报告复核全PASS+85M进度94.6%(11459/12126,du=41TB)+心跳更新
+当前动作:     唤醒1088(2026-11-02):v5报告全量复核全PASS(106569B/7节/0script/0CDN/44table平衡/74HF链接/幂等OK)+85M进度94.6%(11468/12126,du=44TB)+心跳更新
 下一步:       下轮唤醒:①查85M下载进度;②待运维批准后执行下载(P0:whole-books+SWE-smith+Nemotron-Terminal-Corpus+SWE-rebench)
 阻塞:         无
 ERROR_COUNT:  11
@@ -30,6 +30,7 @@ ERROR_COUNT:  11
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。
 
 ## 📋 本唤醒流水
+> [09:0x] 唤醒1088：v5报告全量复核 → ①report=106569B(≥25KB✓)/7节(§1~§7✓)/0<script>/0CDN/44<table>=44</table>平衡✓/HTMLParser 0unclosed 0errors/74 HF链接;②generator --check-idempotent OK(84252bytes);③git synced(## main...origin/main✓);④85M:PID3339389 alive(etimes≈9637s≈2.7h),parquet11468/12126=94.6%(+9 vs唤醒1087),du=44.11TB,8 .incomplete;⑤df:/nas_train177T/86%(31T可用),/nas_env8.3T/84%(1.7T可用);⑥TASK=27958B/MEMORY~38KB(均<40KB无需归档)→心跳WAITING=1
 > [08:00] 唤醒1087：v5报告复核 → ①report=106569B(≥25KB✓)/7节/0<script>/0CDN/44<table>=44</table>平衡✓/HTMLParser 0unclosed 0errors/74 HF链接/34「未核到」✓;②generator --check-idempotent OK(84252bytes);③git synced(## main...origin/main✓,commit 46998fb11 pushed);④85M:PID3339389 alive,parquet11459/12126=94.6%(+9 vs唤醒1086),du=41TB,8 .incomplete;⑤df:/nas_train177T/86%(31T可用),/nas_env8.3T/84%(1.7T可用);⑥TASK=27958B/MEMORY~37KB(均<40KB无需归档)→心跳WAITING=1
 > [07:25] 唤醒1086：v5报告复核 → ①report=106569B(≥25KB✓)/7节/0<script>/0CDN/44<table>=44</table>平衡✓/HTMLParser 0errors/75 HF链接;②generator --check-idempotent OK(84252bytes);③git synced(## main...origin/main✓,commit 46998fb11 pushed);④85M:PID3339389 alive(etimes≈6270s≈1.7h),parquet11450/12126=94.4%(+790 vs唤醒1085),du=44.04TB,8 .incomplete;⑤df:/nas_train177T/86%(31T可用),/nas_env8.3T/84%(1.7T可用);⑥TASK=27958B/MEMORY~37KB(均<40KB无需归档)→心跳WAITING=1
 > [07:1x] 唤醒1085：运维令10-31报告v5更新 → ①web search新增microsoft/Orchard(HF页确认107K SWE+3K GUI轨迹/MIT/parquet)→添加到AGENTIC_DATASETS+更新§1 TL;DR+§4.3按层级分类+§5污染风险+§6下载方案;②report重生成=106569B(≥25KB✓)/7节/0<script>/0CDN/44<table>=44</table>平衡✓/HTMLParser 0unclosed 0errors/75 HF链接/15 agentic候选(原14+Orchard);③generator --check-idempotent OK(84252chars);④待commit+push→心跳WAITING=1
