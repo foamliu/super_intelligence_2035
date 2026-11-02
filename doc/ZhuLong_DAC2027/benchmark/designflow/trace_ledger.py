@@ -200,7 +200,10 @@ def html_block(rows=None, st=None):
            by.get("case", 0), by.get("deepread", 0), by.get("parked", 0),
            by.get("claimed", 0), dom_html or "<li>—</li>"))
 def cmd_next(args):
-    used = [r["session_file"] for r in load() if r["session_file"]]
+    # 规范化：台账存 bare 形式或带 .messages.json 后缀混存，summary.tsv 统一带后缀。
+    # strip 后缀再做 anchor 匹配，避免 $-anchor 漏放行已用 session。
+    used = [r["session_file"].replace(".messages.json", "")
+            for r in load() if r["session_file"]]
     st = load_stats()
     mc = int(st.get("target_mc", 300))
     pat = "|".join(used) if used else "__none__"
@@ -210,7 +213,8 @@ def cmd_next(args):
         tools_re = SHARD_DOMAINS[_shard][1]
         tool_filter = " && $7 ~ /%s/" % tools_re
     print("# 1) 在 .75 上跑（经 eda_flow run_commands）取候选，已排除台账里的 session%s：" % ("，按 shard %s tools 过滤" % _shard if _shard else ""))
-    print("awk -F'\\t' 'NR>1 && $5+0>=%d && $4 !~ /^(%s)$/%s {print $5\"\\t\"$4\"\\t\"$3\"\\t\"$2\"\\t\"$7}' "
+    print("# (sub(/\\.messages\\.json$/,\"\",$4) 规范化后做 anchor 匹配)")
+    print("awk -F'\\t' 'NR>1 && $5+0>=%d {sub(/\\.messages\\.json$/,\"\",$4); $4 !~ /^(%s)$/%s {print $5\"\\t\"$4\"\\t\"$3\"\\t\"$2\"\\t\"$7}' "
           "/home/t0002965/log/ssh_eda_search_20261028_174426/summary.tsv | sort -rn | head -%d"
           % (mc, pat, tool_filter, args.n))
     print("# 2) 选第一条，落台账：")
