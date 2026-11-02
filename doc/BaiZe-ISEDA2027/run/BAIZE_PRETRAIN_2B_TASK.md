@@ -28,6 +28,28 @@
 
 > 📦 §运维令 2026-10-29 14:1x（整理并提交 baize-llm 独立仓库）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：✅ commit e1c6be4 pushed to origin/master，28 files（README 19.6KB + configs/9 + scripts/18 + docs/2 + .gitignore），symlink 已删除+纳入 .gitignore，ls-remote 匹配。需要时再读。
 
+### [运维令] 2026-11-02 11:1x（**CPU 评测 5 个 checkpoint 的常识推理 8 集（1w–5w 步），先估 ETA**）· 用户直令 · 最高优先
+
+> 用户原话（2026-11-02 11:1x）：「先用 CPU 评测 5 个检查点：1w–5w 步各一个。需要先估 ETA（多少时间，多少 CPU 核等）。」
+
+**① 现状（运维已核）**：
+- **GPU 全满**：`.12`+`.29` 各 8 卡 100% util、~75GB/卡，全被 S1 占用；**评测必须纯 CPU，🚫 不许碰 GPU**。
+- **checkpoint 齐备**：`nemo_experiments/baize2b/checkpoints/` 下 `iter_0010000/0020000/0030000/0040000/0050000` 均存在（5000 步一档，save_interval=2000，故 10000/20000/30000/40000/50000 全有）。
+- **HF 导出脚本就绪**：`baize-llm/scripts/export_hf.sh <iter>`（mcore distcp → HF safetensors，CPU 操作，产出 `hf_iter_<iter>/`）。已有 `hf_iter_18000`（4.4GB）作样例。
+- **评测链已通（历史 P-6）**：环境 = `PYTHONPATH=/nas_train/app.e0031982/code/BaiZe-ISEDA2027/p6_tf5`（transformers 5.17 含 NemotronHForCausalLM）+ `vllm` env 的 lm_eval 0.4.13；脚本 `run/baize_p6_lmeval.sh`（`--model hf` + `dtype=bfloat16`）。⚠️ 原脚本**走 GPU**，CPU 评测需改 `device=cpu`。
+- **8 集**（Aligned Xmodel-2 Table 2，zero-shot，与 P-6 同口径）：`arc_challenge,arc_easy,boolq,hellaswag,openbookqa,piqa,sciq,winogrande`（同一 Avg）。
+- **CPU 资源**：两机各 224 核。
+
+**② 本轮必做（先估 ETA 再全量，不许跳过）**：
+1. **export 5 个 ckpt**：`for it in 10000 20000 30000 40000 50000; do bash baize-llm/scripts/export_hf.sh $it; done`。记**单个 export 实测耗时**（`export_hf.sh` 内 `check_rope.py` 若加载模型，务必 `device=cpu`/`CUDA_VISIBLE_DEVICES=""`，别抢 GPU）。
+2. **CPU 冒烟 + 测速**：改 `baize_p6_lmeval.sh` 为 `device=cpu`（`--model_args "pretrained=...,dtype=bfloat16,device=cpu"`），先 `--limit 8` 冒烟（8 任务 × 8 样本）确认 CPU 跑通+出分，再测**单集全量 CPU 耗时**（hellaswag ~40k 样本、arc_easy ~5.7k 等大头）→ 反推「8 集全量 / 5 ckpt」的总耗时。
+3. **报 ETA（先回报，不直接全量）**：给 ① 5×export 耗时 ② 单集 CPU 全量耗时 ③ 8集×5ckpt 总墙钟 ④ 推荐 CPU 核数/并行度（每 ckpt 用多少核、8 集是否多进程并行） ⑤ 是否 24h 内可完成。写进 `MEMORY_PRETRAIN_2B.md` 心跳回报。
+4. **ETA 确认后全量评测**：5 ckpt × 8 集 CPU 评测，结果落 `nemo_experiments/baize2b/lm_eval_results/`。
+
+**③ 交付**：① 5×8 集汇总表（Avg + 逐集）+ 对照 P-6 起点 0.4395@20k/655M + Xmodel-2/Phi-1.5 参照线；② 能力-vs-step 曲线数据（1w~5w 五点）；③ `reports/report_pretrain_cpu_eval_8sets_zh.html`（中文 HTML，0 script/0 外链）；④ 日报。
+
+**④ 纪律**：🚫 不碰 GPU（`device=cpu` 硬性、必要时 `CUDA_VISIBLE_DEVICES=""`）；🚫 不影响 S1（CPU eval 线程数别挤训练进程，可 nice）；不碰 vision/data/harness；commit `pretrain eval:`；心跳写 `未完成指令：有` ⇒ `WAITING: 0` 直到报告交付。
+
 ### [运维令] 2026-10-28 17:0x（**预训练项目目录定位：脚本&文档落在 `/nas_train/app.e0031982/code/baize-llm/baize-llm`，后续训练从此启动**）· 用户直令 · 最高优先
 
 > 用户原话（2026-10-28 17:0x）：「安排 pretrain 往项目目录 /nas_train/app.e0031982/code/baize-llm/baize-llm 写脚本&文档。后续训练从项目目录启动。」
