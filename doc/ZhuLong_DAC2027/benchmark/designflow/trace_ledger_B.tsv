@@ -23,4 +23,5 @@ djml8					case	EDA-Eval-DesignFlow-PFDdeadZone-001	2026-11-02 17:47
 1785898505302_zfrbu					parked		2026-11-02 23:06	false positive: '启动业务场景：模拟电路生成' — agent only fought Virtuoso/Aether launch env (libXss missing), never ran spice sim; spice tokens from 'which spectre/finesim' env-check cmds
 1792375390057_aq0vc	tongni	hfeg0pfn119	254	spice_sim	case	EDA-Eval-DesignFlow-Vcc2scTranGen-001	2026-11-02 23:36	
 1791960706202_66ut5	haifengf	hfeg0pkn002	301	spice_sim	case	EDA-Eval-DesignFlow-InvOptSpec-001	2026-11-03 00:36	
-1789713740053_1fgo2.messages.json	ynbai	hfhds206	179	spice_sim	claimed		2026-11-03 00:51	
+1789713740053_1fgo2.messages.json	ynbai	hfhds206	179	spice_sim	parked		2026-11-03 01:19	L1 si.out-parse sub-skill already delivered by shard D SiOutDiag-001 (case_id collision, redundant); L2 ProbeTrim (FineSim) deferred - .75 run_code queue jammed (single-worker, stuck recursive glob). Deepread 1fgo2_probe_trim_transegspeed.md has full L2 plan; resume to build EDA-Eval-DesignFlow-ProbeTrim-001 when .75 FineSim recovers.
+1792583307053_mrwvg	jasonxu	hfeahpc501	469	spice_sim	parked		2026-11-03 01:21	fork of jnf1q, same readsigCM/analogkit netlist-parsing work as ReadsigAddrTbl-001; no new sub-skill
