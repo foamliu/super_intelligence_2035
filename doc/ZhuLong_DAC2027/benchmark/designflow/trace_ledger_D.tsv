@@ -45,4 +45,9 @@
 1792724929127_2vuso.messages.json	tongni	hfeg0pfn119	468	analog_context	case	EDA-Eval-DesignFlow-SpiceDeckGen-001	2026-11-03 04:28	
 1793087996513_u78sz	hengbow	hfeg0pgn045	407	waveform	parked		2026-11-03 04:42	cross-shard dup: shard A already built EDA-Eval-DesignFlow-CoreTimingSig-001 from this trace (domain=verification, in A.jsonl); D does not rebuild
 1791960706202_66ut5	haifengf	hfeg0pkn002	301	waveform	case	EDA-Eval-DesignFlow-InvCSOpt-001	2026-11-03 04:57	
-1792829537180_vaiob	harrywu	hfeg0plg99	506	analog_context	claimed		2026-11-03 05:05	
+1792829537180_vaiob	harrywu	hfeg0plg99	506	analog_context	case	EDA-Eval-DesignFlow-DlySigmaSweep-001	2026-11-03 05:58	
+1792205753795_x5t0t.messages.json	brian	hfeg0plg95	497	schematic_netlist	parked		2026-11-03 05:51	already case EDA-Eval-DesignFlow-OpampChar-001 in main ledger (characterization, other shard); deepread exists
+1788764026073_8hdj3.messages.json	ziyuny	hfeg0pnd002	305	analog_context	parked		2026-11-03 05:58	deepread: infra/skill-creation heavy (aether LD_PRELOAD fix + open npn symbol + create SKILL.md for '模拟电路优化·二次执行'); no real netlist/sim/optimization output; weak design_flow material
+1792744168464_n1k2a.messages.json	e0045291	hfeg0plg80	451	schematic_netlist	parked		2026-11-03 05:58	deepread: user asks agent to consume 280k tokens by reading docs/files; not a design task; kw counts inflated by reading pyAether API docs
+1791958054953_qrb1b.messages.json	yan1zh	hfeg0plg65	314	analog_context	parked		2026-11-03 06:01	deepread: schematic->layout task (test_ZY/AG_VtscRef_IPD) but assistant spent whole session on Aether env setup (LD_PRELOAD/libstdc++/TCL_LIBRARY/OA_PLUGIN_PATH), got aetherTclsh working but never generated layout; no accepted deliverable; weak for case
+1788830861723_dnvv4.messages.json	miccao	hfeg0plg37	458	schematic_netlist	claimed		2026-11-03 06:01	
