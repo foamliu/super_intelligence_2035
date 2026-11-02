@@ -2,12 +2,12 @@ WAITING: 0
 SHARD: D (netlist_wave)
 DOMAINS: analog_context, schematic_netlist, waveform
 
-- **PHASE**: shard D 运行中。已交付 14 条 case（8 schematic_netlist · 3 analog_context · 3 waveform · 1 dummydeck-seeded；D.jsonl 14 行 / 台账 case 15 含 1 seeded）。本轮 #163 完成 EDA-Eval-DesignFlow-Characterization-001（9knot，SiliconSmart 库表征配置调试，复用既有深读笔记）。
+- **PHASE**: shard D 运行中。已交付 15 条 case（8 schematic_netlist · 4 analog_context · 3 waveform · 1 dummydeck-seeded；D.jsonl 15 行 / 台账 case 16 含 1 seeded）。本轮 #164 完成 EDA-Eval-DesignFlow-ResReport-001（aneeo，RsCalc 电阻分布报告生成，与 m2vah RsCalcFlow-001 互补）。
 - 每轮做 1 条 case：trace_ledger.py --shard D next → claim → 深读 → 合成 → 自验 → 追加 EDA-Eval-DesignFlow_D.jsonl → 日报
-- 📊 trace 覆盖率：15 / 1001 = 1.5%（mc>=300 候选池）；已覆盖 domain：schematic_netlist:8 · analog_context:3 · waveform:3 · dummydeck:1
+- 📊 trace 覆盖率：16 / 1001 = 1.6%（mc>=300 候选池）；已覆盖 domain：schematic_netlist:8 · analog_context:4 · waveform:3 · dummydeck:1（注：aneeo 台账 claim 标 schematic_netlist，实际 metadata.domain=analog_context，jsonl 为准）
 - 🎯 通过率: 0/0（shard D 尚未跑 pi；SUT 通过率由主 loop 统一跑后回填）
-- 🧾 断言: k_rationale=k_check=14 ✓（今日 Characterization-001 达标；shard D 存量 14 条 test_rationale 全部以 `k 条断言：①…` 开头已核验达标；今日 x/30 达标=1）
-- 📦 体积：TASK≈17KB / MEMORY_D≈1.2KB
+- 🧾 断言: k_rationale=k_check=15 ✓（今日 ResReport-001 达标；shard D 存量 15 条 test_rationale 全部以 `k 条断言：①…` 开头已核验达标；今日 x/30 达标=1）
+- 📦 体积：TASK≈17KB / MEMORY_D≈1.3KB
 
 ## 流水
 - 2026-11-02 14:08 | shard D #163 | next --n 5 → 9knot (vincelu/hfeg0plg49, mc=862, schematic_netlist) claim → 复用既有深读笔记 9knot_siliconsmart_char_debug.md（655 msgs，SiliconSmart drgqx 5 库表征配置调试 8 类 error：lc_shell权限/SMSC-99 -verilog all/add_latch空{}/^.非法/网表名漂移/default_input_state PARA-7/vssFoot重复/vwlp pintype；真实陷阱：行尾#不算注释/^<||非法Liberty）→ 既有 assets(5 .tcl + configure.tcl + 5 .inst + errors.txt，Oct30 build)/reference/check.py(14 条件 a-n)/reference_submit.zip/negative_selftest 完整 → 同步 assets/_check.py 至 14 条件版 + 新写 task_brief.md → 自验 ref PASS(14/14) / 5 negatives ALL-FAIL(NEG_RC=0: fake_empty→a/fake_print→a/fake_core→f/naive_latch→e/naive_model→c) / §4.9 三假提交全 FAIL → 14 条断言闸门 PASS(k_rationale=k_check=14≥8) → 追加 D.jsonl（14 行）→ mark --status case。domain=schematic_netlist, level=L1, track=B, single-input no hidden B（交付=patched 配置特定于给定缺陷，同 Backannot-001 范式）。DEBT: 0。
