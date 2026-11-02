@@ -24446,3 +24446,90 @@ echo "=== DONE 230 ==="
 
 === DONE 230 ===
 ```
+
+---
+
+## RUN_ID 231 · 2026-11-02 19:53:40 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 231 | S1 restart verify | $(date '+%F %T') | host=$(hostname) ==="
+
+echo
+echo "[1] 进程"
+echo "  torchrun=$(ps -eo cmd | grep -cE '[t]orchrun')  launcher=$(ps -eo cmd | grep -cE '[p]retrain_launcher')"
+timeout 10 ps -eo pid,etime,pcpu,rss,cmd 2>/dev/null | grep -E '[p]retrain_launcher' | head -2 | cut -c1-120 | sed 's/^/    /'
+
+echo
+echo "[2] .29 GPU"
+timeout 12 nvidia-smi --query-gpu=index,utilization.gpu,memory.used,power.draw,temperature.gpu --format=csv,noheader 2>/dev/null | sed 's/^/    /'
+
+echo
+echo "[3] 训练进度（worker.log 最新 iteration 行）"
+echo "  log size=$(stat -c %s /tmp/baize_s1_baize2b_worker.log 2>/dev/null)B  mtime=$(stat -c %y /tmp/baize_s1_baize2b_worker.log 2>/dev/null | cut -c1-19)"
+timeout 10 grep -E 'iteration +[0-9]+/' /tmp/baize_s1_baize2b_worker.log 2>/dev/null | tail -3 | cut -c1-165 | sed 's/^/    /'
+echo "  尾部 8 行:"
+timeout 10 tail -8 /tmp/baize_s1_baize2b_worker.log 2>/dev/null | cut -c1-150 | sed 's/^/    /'
+
+echo
+echo "[4] 0 NaN / 断点是否接上（应 >=58110，不应回到 0/58000 之前）"
+timeout 10 grep -cE 'nan iterations: +[1-9]' /tmp/baize_s1_baize2b_worker.log 2>/dev/null | sed 's/^/    nan_hits=/'
+timeout 10 grep -E 'load-checkpoint|Loading checkpoint|successfully loaded' /tmp/baize_s1_baize2b_worker.log 2>/dev/null | tail -3 | cut -c1-150 | sed 's/^/    /'
+
+echo
+echo "[5] .12 侧"
+timeout 20 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.12 '
+  echo "    util: $(nvidia-smi --query-gpu=utilization.gpu --format=csv,noheader | tr "\n" " ")"
+  echo "    mem:  $(nvidia-smi --query-gpu=memory.used --format=csv,noheader | tr "\n" " ")"
+  echo "    torch=$(ps -eo cmd | grep -cE "[t]orchrun|[p]retrain_launcher")  load=$(cut -d" " -f1-3 /proc/loadavg)"
+  echo "    mem_avail=$(free -g | awk "/Mem:/{print \$7\"G\"}")"
+' 2>&1 | sed 's/^/  /' || echo "    ssh .12 failed"
+
+echo
+echo "=== DONE 231 ==="
+```
+
+**输出**
+```
+=== RUN_ID 231 | S1 restart verify | 2026-11-02 19:53:40 | host=whag0pgpuap29 ===
+
+[1] 进程
+  torchrun=2  launcher=74
+     146283       00:03 56.3 18111264 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arc
+     146284       00:03 56.0 17938716 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arc
+
+[2] .29 GPU
+    0, 0 %, 16553 MiB, 118.57 W, 27
+    1, 0 %, 16295 MiB, 116.24 W, 28
+    2, 0 %, 16317 MiB, 121.04 W, 30
+    3, 0 %, 16295 MiB, 114.93 W, 28
+    4, 0 %, 16277 MiB, 119.81 W, 30
+    5, 0 %, 16295 MiB, 119.22 W, 29
+    6, 0 %, 16295 MiB, 116.74 W, 27
+    7, 0 %, 16295 MiB, 114.36 W, 27
+
+[3] 训练进度（worker.log 最新 iteration 行）
+  log size=117127B  mtime=2026-11-02 19:53:39
+  尾部 8 行:
+    whag0pgpuap29:4179179:36406 [3] NCCL INFO Channel 09/1 : 0[0] -> 11[3] [receive] via NET/IB/3/GDRDMA/Shared
+    whag0pgpuap29:4179177:36405 [2] NCCL INFO Channel 09/1 : 0[0] -> 10[2] [receive] via NET/IB/2/GDRDMA/Shared
+    whag0pgpuap29:4179174:36400 [0] NCCL INFO Channel 09/1 : 0[0] -> 8[0] [receive] via NET/IB/0/GDRDMA/Shared
+    INFO:megatron.core.timers:(min, max) time across ranks (ms):
+        load-checkpoint ................................: (3414.20, 3414.77)
+    INFO:megatron.core.timers:(min, max) time across ranks (ms):
+        model-and-optimizer-setup ......................: (1664.55, 1665.54)
+        train/valid/test-data-iterators-setup ..........: (46959.20, 86914.92)
+
+[4] 0 NaN / 断点是否接上（应 >=58110，不应回到 0/58000 之前）
+    nan_hits=0
+        load-checkpoint ................................: (3414.20, 3414.77)
+
+[5] .12 侧
+      util: 0 % 0 % 0 % 0 % 0 % 0 % 0 % 0 % 
+      mem:  16521 MiB 16335 MiB 16323 MiB 16315 MiB 16315 MiB 16317 MiB 16319 MiB 16337 MiB 
+      torch=73  load=18.92 10.84 8.59
+      mem_avail=1599G
+
+=== DONE 231 ===
+```
