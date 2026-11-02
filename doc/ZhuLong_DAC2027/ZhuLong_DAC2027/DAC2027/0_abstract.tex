@@ -6,15 +6,15 @@
     where closed EDA tools refuse to interoperate. We present \textbf{ZhuLong}, an
     execution-grounded LLM agent for PyAether, SKILL, and Tcl that closes a
     generate--execute--refine loop over unified MCP tools (API retrieval,
-    documentation, sandbox execution), with a \emph{grounding-gap framework} arguing
-    EDA-scripting correctness is bounded by \emph{observation fidelity}, not model
+    documentation, sandbox execution), with a \emph{grounding-gap framework} positing
+    that EDA-scripting correctness is bounded by \emph{observation fidelity}, not model
     scale. On \textbf{EDA-Scripting-Bench} (449 tasks, three languages, four
     commercial runtimes), ZhuLong reaches \textbf{76.9\%} pooled Pass@1 versus
     \textbf{19.7\%} (pure LLM)---a $57.2$~pp observation-fidelity swing exceeding
     the $23.7$~pp backbone range; ZhuLong is deployed in production EDA flows.
 \end{abstract}
 % 设计工程师最耗时的是编排 flow、补上封闭 EDA 工具之间无法互通的断链。我们提出 ZhuLong：面向 PyAether、SKILL、Tcl 的执行接地 agent，
-% 经统一 MCP 工具（API 检索 / 文档 / 沙盒执行）闭环"生成–执行–修正"，并以 grounding-gap 框架论证 EDA 脚本正确性受观测保真度而非
+% 经统一 MCP 工具（API 检索 / 文档 / 沙盒执行）闭环"生成–执行–修正"，并以 grounding-gap 框架提出 EDA 脚本正确性受观测保真度而非
 % 模型规模约束。在 EDA-Scripting-Bench（449 任务、三语言、四商业运行时）上，ZhuLong 达 76.9% 合并 Pass@1（vs 纯 LLM 19.7%），
 % 这一 57.2pp 的观测保真度摆动超过 6 个 backbone 的 23.7pp 跨度；ZhuLong 已部署于量产 EDA flow。
 
