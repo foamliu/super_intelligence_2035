@@ -20,7 +20,7 @@
 1790487462826_wb03t.messages.json	cwei	hfeg0plg93	691	analog_context	case	EDA-Eval-DesignFlow-CTLEAether-001	2026-11-02 16:58	
 1788770994295_x4b0p.messages.json	xinqiaoz	hfeg0plg76	1367	schematic_netlist	parked		2026-11-02 17:12	PDK QA Calibre DRC migration multi-phase software-eng; netlist/skill match marginal (count 2); not analog_context/schematic_netlist/waveform; belongs to physical_verify shard
 1790142100320_n91pk.messages.json	alenxu	hfeg0plg94	755	schematic_netlist	case	EDA-Eval-DesignFlow-CTLEAcMetric-001	2026-11-02 17:37	
-1793102773959_okq91.messages.json	easont	hfeg0pfn119	650	schematic_netlist	claimed		2026-11-02 17:59	
+1793102773959_okq91.messages.json	easont	hfeg0pfn119	650	schematic_netlist	case	EDA-Eval-DesignFlow-TempThreshChar-001	2026-11-02 21:56	
 1785725739513_r7ah0	t0002638	hfeg0plg49	685	schematic_netlist	parked		2026-11-02 18:35	MCP/pyAether backend infra setup, not a design task (aether:1455/pyaether:323 dominant; netlist/schematic/waveform signal low)
 1789951973902_p3107					case	EDA-Eval-DesignFlow-WvEdgeTiming-001	2026-11-02 19:07	
 1792297746172_kyref	vincelu	hfeg0plg55	476	schematic_netlist	case	EDA-Eval-DesignFlow-InstCdlConsist-001	2026-11-02 19:45	
