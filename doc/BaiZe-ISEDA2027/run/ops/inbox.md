@@ -1,39 +1,35 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
-<!-- RUN_ID: 234 | TARGET: 29 -->
-## RUN_ID 234 — 重启后核对两件事：① LR 是否从 warmup 重来（58010 步 lr=5e-6 可疑）② 是否 restore 了 optimizer/scheduler
+<!-- RUN_ID: 235 | TARGET: 29 -->
+## RUN_ID 235 — 收尾复核：S1 是否稳定在出 step、有没有出现第二个训练进程/GPU 评测
 
 ```bash
 set -u
-echo "=== RUN_ID 234 | S1 lr/resume audit | $(date '+%F %T') | host=$(hostname) ==="
+echo "=== RUN_ID 235 | S1 steady check | $(date '+%F %T') | host=$(hostname) ==="
 W=/tmp/baize_s1_baize2b_worker.log
-LLM=/nas_train/app.e0031982/code/baize-llm
+
+echo "[1] 最新 3 条 iteration（lr 应逐步爬升）"
+timeout 10 grep -E 'iteration +[0-9]+/' "$W" 2>/dev/null | tail -3 | cut -c1-175 | sed 's/^/    /'
+echo "    日志 mtime=$(stat -c %y "$W" 2>/dev/null | cut -c1-19)  size=$(stat -c %s "$W" 2>/dev/null)B"
 
 echo
-echo "[1] 最新 iteration 行（看 lr 是否随步数上升）"
-timeout 10 grep -E 'iteration +[0-9]+/' "$W" 2>/dev/null | tail -4 | cut -c1-175 | sed 's/^/    /'
+echo "[2] .29 GPU"
+timeout 12 nvidia-smi --query-gpu=index,utilization.gpu,memory.used,power.draw,temperature.gpu --format=csv,noheader 2>/dev/null | sed 's/^/    /'
 
 echo
-echo "[2] train.sh 启动 banner（并行/LR/迭代区间）"
-timeout 10 grep -nE '并行|LR|迭代区间|ckpt|CHECK|resume' "$W" 2>/dev/null | head -14 | cut -c1-150 | sed 's/^/    /'
+echo "[3] 进程唯一性（防第二个训练）"
+echo "    torchrun=$(ps -eo cmd | grep -cE '[t]orchrun')  launcher=$(ps -eo cmd | grep -cE '[p]retrain_launcher')"
+echo "    train.sh 实例:"
+timeout 10 ps -eo pid,etime,cmd 2>/dev/null | grep -E '[t]rain\.sh s1' | cut -c1-110 | sed 's/^/    /'
+echo "    GPU 评测类进程（应为 0）:"
+timeout 10 ps -eo pid,etime,pcpu,cmd 2>/dev/null | grep -E 'python[^ ]* .*(lm_eval|p6_lmeval|cpu_smoke)' | cut -c1-120 | head -5 | sed 's/^/    /' || true
 
 echo
-echo "[3] 关键参数是否 restore optimizer / scheduler"
-timeout 10 grep -nE '\-\-load|--finetune|--use-checkpoint|--no-load|--ckpt-|--use-dist-ckpt|--no-save-optim|--no-save-rng|--save-interval' "$LLM/scripts/train.sh" 2>/dev/null | head -14 | cut -c1-140 | sed 's/^/    /'
+echo "[4] .12"
+timeout 20 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.12 '
+  echo "    util: $(nvidia-smi --query-gpu=utilization.gpu --format=csv,noheader | tr "\n" " ")"
+  echo "    torchrun=$(ps -eo cmd | grep -cE "[t]orchrun")  train=$(ps -eo cmd | grep -cE "[t]rain\.sh s1")"
+  echo "    mem_avail=$(free -g | awk "/Mem:/{print \$7\"G\"}")"
+' 2>&1 | sed 's/^/  /' || echo "    ssh .12 failed"
 
-echo
-echo "[4] s1.env 里的 LR 相关"
-timeout 8 grep -nE 'LR|WARMUP|DECAY|START_ITER|ITERS' "$LLM/configs/s1.env" 2>/dev/null | head -12 | cut -c1-120 | sed 's/^/    /'
-
-echo
-echo "[5] ckpt 里是否带 scheduler 状态"
-LR_DIR=$(ls -dt /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/checkpoints/iter_0058000 2>/dev/null | head -1)
-echo "    dir=$LR_DIR"
-timeout 10 ls -1 "$LR_DIR" 2>/dev/null | head -12 | sed 's/^/    /'
-
-echo
-echo "[6] 下一步（20s 后）看 lr 变化"
-sleep 20
-timeout 10 grep -E 'iteration +[0-9]+/' "$W" 2>/dev/null | tail -2 | cut -c1-175 | sed 's/^/    /'
-
-echo "=== DONE 234 ==="
+echo "=== DONE 235 ==="
 ```
