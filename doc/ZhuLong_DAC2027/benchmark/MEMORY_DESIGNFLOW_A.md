@@ -2,14 +2,14 @@ WAITING: 0
 SHARD: A (digital_front)
 DOMAINS: digital, eda_other, pnr_signoff, verification
 
-- **PHASE**: loop 任务卡 case 合成。本轮按 loop 卡合成第 17 条 case（A 档 trace-faithful，pnr_signoff +1，PT ETM 抽取 / STA-DB 模式）。
-- ✅ **本轮交付 case**：`EDA-Eval-DesignFlow-ETMExtract-001`（pnr_signoff，L2，A 档 faithful，trace 1792723573269_t8yss / e0046913 / hfeg0plg90 / mc=120 / dc_shell+icc2+pt_shell 中端流程）。A jsonl 现 17 条。
+- **PHASE**: loop 任务卡 case 合成。本轮按 loop 卡合成第 18 条 case（A 档 trace-faithful，verification +1，SDF annotation 日志 Warning- block 过滤）。
+- ✅ **本轮交付 case**：`EDA-Eval-DesignFlow-SdfWarnFilter-001`（verification，L1，A 档 faithful，trace 1792132080120_htbqn / tabtao / hfeg0pkn004 / mc=91 / DDR5 前端仿真 SDF 日志处理）。A jsonl 现 18 条。
 - ✅ DEBT 已清零。
-- 📊 trace 覆盖率：16/1001 = 1.6%（covered=16 · touched=18 · parked=2；A jsonl 17 条，含 1 orphan `CosimSetup-001`(ve67l) 在 jsonl 未在台账，待查）
+- 📊 trace 覆盖率：17/1001 = 1.7%（covered=17 · touched=19 · parked=2；A jsonl 18 条，含 1 orphan `CosimSetup-001`(ve67l) 在 jsonl 未在台账，待查）
 - 🎯 通过率: 本条 case 未 pi/cline 实跑（"未跑"）；cline 存量重跑 0/1（Verification-001 FAIL·L1/hook 限制）· B 档目标 20–30%；A 档本轮只报数不设目标
-- 🧾 断言: 本轮 ETMExtract-001 k_rationale=k_check=18 ≥8 ✓（日报 18/18/✓）；存量全达标
-- 📦 体积：TASK≈23.8KB / MEMORY_A≈19KB
-- 🔒 泄漏隔离: check.py/reference/hidden 不进 SUT workdir；判分独立跑（check.py 18 条断言静态 + tclsh stub 在 3 组隐藏 B 环境下真跑候选 etm.tcl，check.py 不进 cline cwd）
+- 🧾 断言: 本轮 SdfWarnFilter-001 k_rationale=k_check=14 ≥8 ✓（日报 14/14/✓）；存量全达标
+- 📦 体积：TASK≈23.8KB / MEMORY_A≈20KB
+- 🔒 泄漏隔离: check.py/reference/hidden 不进 SUT workdir；判分独立跑（check.py 14 条断言：静态源码扫描 + subprocess 在隐藏 B sdf_ss_B.log 上真跑候选 sdf_filter.py，check.py 不进 cline cwd）
 
 ### 2026-11-02 shard A 轮 16：WLMMultibit-001 交付 ✓（A 档 trace-faithful / digital·synthesis，WAITING: 0）
 - 选 trace：trace_ledger.py --shard A next → mc≥300 候选多为 calibre/hspice（shard C 域）或 siliconsmart 表征（shard C 域，如 1792297573507_9knot netlist:4456 实为 char netlists，已 parked 标注）。Python 解析工具串按 strong-tool（innovus/dc_shell/verdi/vcs/pt_shell/...）主导 + 反 analog/char 过滤，挑纯 synthesis 会话 `1792719811850_q5ogm`（e0045128/hfeg0pkn001/mc=139/synthesis:171/netlist:21 → digital/synthesis 域，205 msgs/1MB）claim → mark case。选 e0045128（新用户，增多样性）。
