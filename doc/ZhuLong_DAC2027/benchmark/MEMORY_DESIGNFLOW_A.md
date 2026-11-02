@@ -2,15 +2,30 @@ WAITING: 0
 SHARD: A (digital_front)
 DOMAINS: digital, eda_other, pnr_signoff, verification
 
-- **PHASE**: cline+hook 重跑 TLEFRules-001 = **FAIL·①+④**（运维令 §四.3）。cline 266s/exit 0，仅 1× write_to_file 产出 outputs/summary.md（5KB 完整布线规则报告：M1-M5+C4_bump+RDL 走线层表 + 间距表 + cut 层 + via + viarule），但**未产出 lef_rules.py 解析器、且报告文件名错**（summary.md 而非 rules_report_A.md）→ check.py 断言 (a) lef_rules.py missing FAIL。**A-faithful 根因**：trace-faithful prompt 只说"汇总布线规则"，markdown 满足用户原话；lef_rules.py 解析器要求来自合成 README，faithful prompt 未提 → ④判分歧义叠加 ①形态错。本轮未合成新 case（40min 预算耗于 cline 266s 跑 + 状态记录）。
-- ✅ **本轮交付**：cline 重跑 TLEFRules-001（运维令 §四.3 扩样本）= FAIL·①+④。cline_eval_status.jsonl 现 7 行 = **2/7 PASS = 28.6%**。台账无变动（touched=30 / parked=7）。
+- **PHASE**: 合成 DCSynth-001 = **PASS（自验）**（A 档 trace-faithful / digital / L1-boundary）。trace 2xcr9（johnl/hfeg0pfn119/mc=68，dc_shell 综合）：用户原话"请编写约束文件 综合脚本 使用本地库进行综合"+"注意要保留层次进行综合"。金标准 = SDC + synth.tcl + run_dc.sh（层次保留 DC 综合流，env 驱动泛型）。check.py 16 条断言 a–p，自验 ref PASS + 4 negative 全 FAIL（NEG_RC=4/4）+ §4.9 三假提交全 FAIL + gate 16/16/✓。judge-sim（/tmp + A RTL flat）PASS。
+- ✅ **本轮交付**：EDA-Eval-DesignFlow-DCSynth-001（A 档 / digital / L1-boundary / DC 层次保留综合流）。A.jsonl 现 25 条，主 jsonl merge 121 条。台账 covered=24 / touched=31 / parked=7。
 - ✅ DEBT 已清零。
-- 📊 trace 覆盖率：23/1001 = 2.3%（covered=23 · touched=30 · parked=7；A jsonl 24 条，本轮无新 case）
-- 🎯 通过率: cline+hook 存量重跑 **2/7 = 28.6%**（PTSignoff-001 PASS·L2 / InnovusLaunchDiag-001 PASS·L1-style / Verification-001 FAIL·L1-harness限 / PwrGlobals-001 FAIL·L2 能力③ / ETMExtract-001 FAIL·L2 能力③ / STAFlow-001 FAIL·L1-style 形态① / TLEFRules-001 FAIL·A-faithful ①+④）。剔除 harness 限样本后 2/6 = 33%。失败归因：③×2 / ①×2(含①+④) / harness×1。**A-faithful ①+④ 占比 1/7 = 14%（≤30% 阈值，暂不修接口）**。
-- 🧾 断言: 本轮无新 case（cline 重跑路径）；存量 24 条全达标 k_rationale=k_check≥8
-- 📦 体积：TASK≈23.8KB / MEMORY_A≈25KB
-- 🔒 泄漏隔离: cline workdir 只放 prompt+assets+task_brief，0 禁忌文件进 workdir（leak 自检 clean）；cline session 7 处 forbidden 字样全良性（reasoning 文本 "I can't see check.py, I'll make my best guess"，0 实际 read 尝试）；判分独立在 /tmp/judge_*/ 跑，check.py 从 reference/ 复制（cline workdir 外）；hook 9× NOTICE/block（built-in run_commands 被拦→cline 改用 read_file + pyAether run_code）
-- ⚠️ 运维令进度：cline_eval_status.jsonl 7 行 = 2/7 PASS。**待办**：继续 cline 重跑（候选 SynLintFlow-001 / FormalityLaunchDiag-001）扩到 ≥8 看趋势，或回合成路径。
+- 📊 trace 覆盖率：24/1001 = 2.4%（covered=24 · touched=31 · parked=7；A jsonl 25 条）
+- 🎯 通过率: cline+hook 存量重跑 2/7 = 28.6%（未本轮新增 cline 跑；DCSynth-001 待下轮 cline 重跑看 A-faithful ①+④ 趋势）。合成路径自验全过。
+- 🧾 断言: 本轮 DCSynth-001 = 16/16/✓（k_rationale=k_check=16≥8）；存量 25 条全达标
+- 📦 体积：TASK≈23.8KB / MEMORY_A≈26KB
+- 🔒 泄漏隔离: 本轮合成路径不涉 cline workdir；check.py + reference_submit.zip + negative/ 仅在 reference/ 与 /tmp/judge_*；assets/hidden/ 不进 SUT 沙箱（run_one.sh FORBIDDEN 过滤）
+- ⚠️ 运维令进度：DCSynth-001 落库。**待办**：①DCSynth-001 cline 重跑验 A-faithful 真实通过率（多文件树 + env 泛型，预期形态①风险）；②继续合成或扩 cline 样本。
+
+
+### 2026-11-03 shard A 轮 31：DCSynth-001 合成 ✓（digital / L1-boundary / A 档 trace-faithful，DC 层次保留综合流，WAITING: 0）
+- 任务卡本轮路径 = 合成 1 条新 case。eda_flow bashpool 正常 → `trace_ledger --shard A next` 取候选。awk 长排除正则在 .75 仍报 syntax error，改 python 脚本解析 summary.tsv：keywords 字段按 `kw:count` 对解析 digital 信号（synopsys/primetime/dc_shell/genus/innovus/pt_shell/formality/.def）+ tools 字段 `count tool` 对（innovus/synthesis），ANALOG 信号（hspice/spectre/virtuoso/schematic/cmos/gds/...）反向过滤（ana≤dig×2），mc≥150，按 dig desc 排序得 25 候选。
+- **选料**：逐个 SSH 读首 user msg 排查。e0045128/hfeg0pkn001 三条（2h3mf/2pdn0/78z8d）= genus Q&A 短问非交付 → skip。**2xcr9**（johnl/hfeg0pfn119/10.129.33.245/mc=68，synthesis:102+dc_shell:40+netlist:223）→ scp 862KB messages.json（79 msgs / 28 toolturns）→ 首条 user #0 = "/home/johnl/spiceTdc/primelib_char_T_IsmTop/dc_addr_to_region/rtl/addr_to_rowcol_region.v 请编写约束文件 综合脚本 使用本地库进行综合"（纯目标）+ #17 "注意要保留层次进行综合"（目标细化，A 档规则 ② 合格）→ **claim（domain=digital）**。
+- **深读**：真实任务 = 用户在 `primelib_char_T_IsmTop/dc_addr_to_region` 用 Design Compiler 对 `addr_to_rowcol_region.v`（纯组合 9-bit 地址译码，顶层 + 6 子模块 addr_region_decode/addr_region0..3_calc/addr_rowcol_mux）做**层次保留综合**。agent 8× editor 写 addr_to_rowcol_region.sdc（虚拟时钟 vclk 5ns + 输入输出延迟 + invLx1 驱动 + max_transition/cap/fanout DRC）+ synth.tcl（target/link_library from $TARGET_DB env + analyze/elaborate/link + compile_enable_register_merging=false + set_dont_touch 6 子设计 + compile_ultra -no_autoungroup -no_boundary + 前后报告 + write -hierarchy ddc/verilog + write_sdc + 层次存活校验）+ run_dc.sh（${VAR:-default} 可覆盖 + dc_shell-in-PATH/文件存在健全性检查 + dc_shell -f synth.tcl + mapped netlist/ddc 后检查）。金标准 = sdc + synth.tcl(7127B) + run_dc.sh。
+- **合成**（EDA-Eval-DesignFlow-DCSynth-001，A 档 / digital / L1-boundary，静态判分不启 dc_shell）：
+  - **A（SUT 可见）**：prompt.txt（#0+#17 逐字原文）+ task_brief.md（≤3 行接口）+ rtl/addr_to_rowcol_region.v（真实 167 行）+ lib/stdcells_ac_FF_1p3_m40c.db（文本 stub，FF 1.3V -40C）。
+  - **B（隐藏）**：hidden/B_rtl/pri_enc_16to4.v（16-bit 优先编码器，4 子模块 pri_hi8/pri_lo8/enc_merge/valid_or，端口 DI[15:0]/enc[3:0]/valid）+ B_lib/stdcells_TT_0p8_25c.db（TT 0.8V 25C）+ B_sdc/pri_enc_16to4.sdc（pclk 2.5ns + invx1 驱动）。结构与 A 全异：4 子模块 vs 6 / 16-bit vs 9-bit / 优先编码 vs 地址译码 / TT vs FF / 端口名全异。击穿任何硬编码 A 字面量的解。
+  - **check.py**（16 条断言 a–p，自包含内嵌 B 证据 + HIDDEN_DIR fallback）：结构(a) / SDC(b,c,d: 端口匹配 A 顶层 RA/row/col/region/valid 且无 DI/enc) / synth.tcl(e,f,g,h,i) / run_dc.sh(j,k,l) / 泛型(m: synth.tcl 用 env 不硬编码 A 库名/顶层，注释豁免) / B 执行(n: B env bash -n subprocess + tcl 结构) / 随机化(o: 3 seed) / 鲁棒(p: 缺文件 exit 非0)。
+- **自验全过**：①ref check.py 跑 reference_submit.zip = **PASS**；②negative_selftest 4 错解（empty_shell / print_expected_b / naive_hardcode_a / core_deleted）**全 FAIL（NEG_RC=4/4）**；③§4.9 三假提交回归**全 FAIL**；④断言闸门 **k_rationale==k_check==16≥8 ✓**；⑤judge-sim（/tmp + A RTL flat）= PASS。
+- **落库**：台账 `mark --status case`（covered=24/1001=2.4%，touched=31/parked=7）。追加 `EDA-Eval-DesignFlow_A.jsonl`（A 现 25 条，sha roundtrip OK）。merge_shards → 主 jsonl 121 条 → 日报 regen（report_benchmark_11_03.html，本条 16/16/✓ 未跑）。
+- **domain 覆盖**：digital 现 8 条（本条补 DC 层次保留综合）。eda_other 1 / pnr_signoff 9 / verification 5。
+- ⬜ 下轮：①DCSynth-001 cline+hook 重跑验 A-faithful 真实通过率；或 ②继续合成；或 ③FormalityLaunchDiag-001 cline 重跑（B 档对照 A/B）。
+
 
 
 ### 2026-11-03 shard A 轮 29：STAFlow-001 cline+hook 重跑 = FAIL·①交付形态/位置错（运维令 §四.3，WAITING: 0）
