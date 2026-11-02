@@ -135,6 +135,74 @@ def test_approach(c):
     return "—"
 
 
+# 21:5x 运维令规则 4：日报 case 表新增三列 k(断言)/k(check)/一致
+_CIRCLED = ["①", "②", "③", "④", "⑤", "⑥", "⑦", "⑧", "⑨", "⑩",
+            "⑪", "⑫", "⑬", "⑭", "⑮", "⑯", "⑰", "⑱", "⑲", "⑳"]
+
+
+def _k_rationale(c):
+    """Count enumerated assertion marks (①..⑳) in test_rationale.
+    Returns int (0 if none / no rationale)."""
+    md = c.get("metadata", {}) or {}
+    tr = md.get("test_rationale") or ""
+    return sum(1 for m in _CIRCLED if m in tr)
+
+
+def _k_check(c):
+    """Count independent condition labels in check.py source.
+    Handles common labeling conventions across the benchmark:
+      - comment labels:  `# ---------- (a) ...` / `# (a) ...`
+      - string labels:   `"(a) zip has ..."` ( DummyDeck-style _cond msg)
+      - bare labels:     `_cond(results, "a", False, ...)` (CTLESpec-style)
+    Returns the count of distinct single-letter labels forming the
+    condition set (0 if no labels found)."""
+    import re
+    src = c.get("test", "") or ""
+    labels = set()
+    # pattern 1: comment labels  "# ... (x) ..."
+    for m in re.finditer(r"^\s*#[^\n]*?\(([a-z])\)", src, re.M):
+        labels.add(m.group(1))
+    # pattern 2: string labels  '"(x) ...'
+    for m in re.finditer(r"\"\(([a-z])\)", src):
+        labels.add(m.group(1))
+    # pattern 3: bare labels  _cond(results, "x", ...
+    for m in re.finditer(r"_cond\([^,]*,\s*\"([a-z])\"", src):
+        labels.add(m.group(1))
+    if not labels:
+        return 0
+    # Count the contiguous alphabetic run of condition labels.
+    # Some check.py leave the first (a) condition unlabeled (e.g. the
+    # zip-existence guard) but label (b)..(n); in that case assume an
+    # implicit (a) and add 1 to the run starting at 'b'.
+    alphabet = "abcdefghijklmnopqrstuvwxyz"
+    n = 0
+    if "a" in labels:
+        for ch in alphabet:
+            if ch in labels:
+                n += 1
+            else:
+                break
+    else:
+        for ch in alphabet[1:]:
+            if ch in labels:
+                n += 1
+            else:
+                break
+        if n > 0:
+            n += 1  # implicit unlabeled (a)
+    return n
+
+
+def gate_triple(c):
+    """Return (k_rationale_str, k_check_str, consistent_str) per 21:5x rule 4."""
+    kr = _k_rationale(c)
+    kc = _k_check(c)
+    krs = str(kr) if kr > 0 else "—"
+    kcs = str(kc) if kc > 0 else "—"
+    consistent = "✓" if (kr == kc and kc >= 8) else "✗"
+    return krs, kcs, consistent
+
+
 def main():
     mmdd = sys.argv[1] if len(sys.argv) > 1 else today_mmdd()
     cases = load_cases()
@@ -166,8 +234,10 @@ def main():
         tid = c.get("task_id", "")
         pi_st = pi_by_tid.get(tid, {}).get("status", "未跑")
         pclass = {"PASS": "pass", "FAIL": "fail"}.get(pi_st, "draft")
+        krs, kcs, gcons = gate_triple(c)
+        gclass = "pass" if gcons == "✓" else "fail"
         rows_html.append(
-            "<tr><td>{tid}</td><td>{usr}</td><td>{ts}</td><td>{sp}</td><td>{ps}</td><td>{dr}</td><td>{ta}</td><td>{tl}</td><td><span class='tag {pc}'>{pst}</span></td></tr>".format(
+            "<tr><td>{tid}</td><td>{usr}</td><td>{ts}</td><td>{sp}</td><td>{ps}</td><td>{dr}</td><td>{ta}</td><td>{tl}</td><td>{krs}</td><td>{kcs}</td><td><span class='tag {gc}'>{gcons}</span></td><td><span class='tag {pc}'>{pst}</span></td></tr>".format(
                 tid=esc(tid),
                 usr=esc(trace_user(c)),
                 ts=esc(trace_source(c)),
@@ -176,10 +246,11 @@ def main():
                 dr=esc(deliverable_req(c)),
                 ta=esc(test_approach(c)),
                 tl=esc(detect_test_lang(c.get("test", ""))),
+                krs=esc(krs), kcs=esc(kcs), gcons=esc(gcons), gc=gclass,
                 pc=pclass, pst=esc(pi_st),
             )
         )
-    table_rows = "\n".join(rows_html) or '<tr><td colspan="9">(无用例)</td></tr>'
+    table_rows = "\n".join(rows_html) or '<tr><td colspan="12">(无用例)</td></tr>'
 
     domain_dist = " · ".join(f"{esc(k)}: {v}" for k, v in sorted(by_domain.items())) or "(无)"
 
@@ -242,7 +313,7 @@ footer{{margin-top:30px;color:#999;font-size:.75rem;text-align:center}}
 {cov_html}
 
 <h2>三、用例清单（每行一个 Case · 真实 trace 在上，legacy 在下）</h2>
-<table><tr><th>task_id</th><th>用户</th><th>trace 来源</th><th>解决的问题</th><th>任务说明(prompt)</th><th>交付件要求</th><th>test 思路</th><th>test 语言</th><th>pi 结果</th></tr>
+<table><tr><th>task_id</th><th>用户</th><th>trace 来源</th><th>解决的问题</th><th>任务说明(prompt)</th><th>交付件要求</th><th>test 思路</th><th>test 语言</th><th>k(断言)</th><th>k(check)</th><th>一致</th><th>pi 结果</th></tr>
 {table_rows}
 </table>
 

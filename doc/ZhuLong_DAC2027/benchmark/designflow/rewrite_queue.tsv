@@ -1,0 +1,14 @@
+task_id	domain	reason	status
+EDA-Eval-DesignFlow-PGLayout-001	pg_layout	marker_style_mismatch: uses (a)(b)...(n) instead of ①②…⑭ (decl=14 marks=0); quick normalize to ①② markers	pending
+EDA-Eval-DesignFlow-PowerFill-001	physical_verify	count_mismatch: k_rationale=13 but check.py labels only a-l (12); reconcile (add missing (m) label to check.py or fix rationale count)	pending
+EDA-Eval-DesignFlow-Verification-001	verification	no_prefix (k_check=4 <8): prose rationale + check.py only 4 labeled conditions; needs rationale rewrite AND check.py strengthening to >=8	pending
+EDA-Eval-DesignFlow-Characterization-001	characterization	no_prefix (k_check=7 <8): prose rationale; check.py 7 labeled conditions; needs rationale rewrite AND check.py strengthen to >=8	pending
+EDA-Eval-DesignFlow-PDKQA-001	physical_verify	no_prefix (k_check=7 <8): prose rationale; check.py 7 labeled; needs rationale rewrite AND check.py strengthen to >=8	pending
+EDA-Eval-DesignFlow-Backannot-001	pnr_signoff	no_prefix (k_check=7 <8): prose rationale; check.py 7 labeled; needs rationale rewrite AND check.py strengthen to >=8	pending
+EDA-Eval-DesignFlow-Analog-001	analog_context	no_prefix (k_check=7 <8): prose rationale; check.py 7 labeled; needs rationale rewrite AND check.py strengthen to >=8	pending
+EDA-Eval-DesignFlow-LayoutAether-001	layout_aether	no_prefix (k_check=7 <8): prose rationale; check.py 7 labeled; needs rationale rewrite AND check.py strengthen to >=8	pending
+EDA-Eval-DesignFlow-LayoutVirtuoso-001	layout_virtuoso	no_prefix (k_check=7 <8): prose rationale; check.py 7 labeled; needs rationale rewrite AND check.py strengthen to >=8	pending
+EDA-Eval-DesignFlow-Digital-010	digital	no_prefix + legacy_seeded (k_check=0): check.py weak (<8 substantive conditions, substring-only); needs full rebuild	pending
+EDA-Eval-DesignFlow-Digital-021	digital	no_prefix + legacy_seeded (k_check=0): may need check.py rebuild	pending
+EDA-Eval-DesignFlow-Digital-022	digital	no_prefix + legacy_seeded (k_check=0): may need check.py rebuild	pending
+EDA-Eval-DesignFlow-Digital-023	digital	no_prefix + legacy_seeded (k_check=0): may need check.py rebuild	pending
