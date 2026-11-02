@@ -50,6 +50,10 @@
 
 **④ 纪律**：🚫 不碰 GPU（`device=cpu` 硬性、必要时 `CUDA_VISIBLE_DEVICES=""`）；🚫 不影响 S1（CPU eval 线程数别挤训练进程，可 nice）；不碰 vision/data/harness；commit `pretrain eval:`；心跳写 `未完成指令：有` ⇒ `WAITING: 0` 直到报告交付。
 
+**⑤ ⚠️ 机器分工（2026-11-02 用户补令 · 硬性）**：`.29` 当前 CPU 已被 harness eval 吃满（~91% + load>224 核），**本轮 5 ckpt 的 export + CPU 评测一律在 `.12` 执行**，🚫 不许在 `.29` 加任何 CPU 负载。`.12` 目标 CPU 利用率 ≤80%（可用 `taskset`/`OMP_NUM_THREADS` 限制单进程线程，或 `nice` 降权；如多 ckpt 并行则控制总并发，实测 + 心跳报 `.12` CPU%）。export 与评测的文件走 NFS 共享路径（`/nas_train`、`/nas_user`），两机同盘同建筑面积，`.12` 跑完 `.29` 能直接读结果。
+
+### [运维令] 2026-10-28 17:0x（**预训练项目目录定位：脚本&文档落在 `/nas_train/app.e0031982/code/baize-llm/baize-llm`，后续训练从此启动**）· 用户直令 · 最高优先
+
 ### [运维令] 2026-10-28 17:0x（**预训练项目目录定位：脚本&文档落在 `/nas_train/app.e0031982/code/baize-llm/baize-llm`，后续训练从此启动**）· 用户直令 · 最高优先
 
 > 用户原话（2026-10-28 17:0x）：「安排 pretrain 往项目目录 /nas_train/app.e0031982/code/baize-llm/baize-llm 写脚本&文档。后续训练从项目目录启动。」
