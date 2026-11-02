@@ -24303,3 +24303,146 @@ echo "=== DONE 229 ==="
 
 === DONE 229 ===
 ```
+
+---
+
+## RUN_ID 230 · 2026-11-02 19:51:12 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 230 | RESTART S1 | $(date '+%F %T') | host=$(hostname) ==="
+LLM=/nas_train/app.e0031982/code/baize-llm
+BASE=/nas_train/app.e0031982/code/BaiZe-ISEDA2027
+
+echo
+echo "[0] 前状态"
+echo "  .29 GPU mem: $(nvidia-smi --query-gpu=memory.used --format=csv,noheader | tr '\n' ' ')"
+echo "  torchrun=$(ps -eo cmd | grep -cE '[t]orchrun|[p]retrain_launcher')"
+echo "  latest ckpt: $(cat "$BASE/nemo_experiments/baize2b/checkpoints/latest_checkpointed_iteration.txt" 2>/dev/null)"
+
+echo
+echo "[1] 配方核对（s1.env 关键项 + resume 逻辑）"
+timeout 8 grep -nE '^(NAME|ITERS|START_ITER|NNODES|NPROC_PER_NODE|TP|CP|SEQ|MBS|GBS|SAVE_INTERVAL|LR|MIN_LR|WARMUP|LR_DECAY)' "$LLM/configs/s1.env" 2>/dev/null | head -20 | cut -c1-120 | sed 's/^/    /'
+echo "  train.sh resume/checkpoint 相关行:"
+timeout 8 grep -nE 'resume|load|checkpoint|--save|--no-save-optim|MASTER_ADDR|ssh ' "$LLM/scripts/train.sh" 2>/dev/null | head -12 | cut -c1-130 | sed 's/^/    /'
+
+echo
+echo "[2] 停 CPU 冒烟 / 评测（只匹配 python 进程，绝不碰训练与 cline）"
+LIST=$(timeout 10 ps -eo pid,etime,pcpu,rss,cmd 2>/dev/null | grep -E 'python[^ ]* .*(cpu_smoke|test_lmeval|lm_eval)' | grep -v ' ops_relay' | head -12)
+echo "$LIST" | cut -c1-130 | sed 's/^/    /'
+PIDS=$(echo "$LIST" | awk '{print $1}')
+echo "    命中 PID: ${PIDS:-none}"
+for p in $PIDS; do kill -TERM "$p" 2>/dev/null || true; done
+sleep 3
+for p in $PIDS; do kill -KILL "$p" 2>/dev/null || true; done
+sleep 1
+echo "    剩余 smoke/eval 进程数=$(timeout 10 ps -eo cmd 2>/dev/null | grep -E 'python[^ ]* .*(cpu_smoke|test_lmeval|lm_eval)' | grep -vc ops_relay)"
+
+echo
+echo "[3] 归档崩溃现场日志（保留证据，别覆盖）"
+for f in /tmp/baize_s1_baize2b_worker.log /tmp/baize_s1_baize2b_master.log; do
+  [ -f "$f" ] && mv "$f" "${f}.crash_1102_1839" && echo "    moved -> ${f}.crash_1102_1839"
+done
+ls -l --time-style='+%F %T' /tmp/baize_s1_baize2b_worker.log.crash_1102_1839 2>/dev/null | awk '{print "    证据: "$6,$7,$5"B"}'
+
+echo
+echo "[4] 重启 S1（2 机 16 卡，自动从 latest ckpt=58000 续跑）"
+cd "$LLM" || { echo "    ❌ $LLM 不存在"; exit 1; }
+echo "restart $(date '+%F %T') by ops RUN_ID 230 (prev crash 18:39 SIGKILL)" >> /tmp/baize_s1_restart.log
+setsid nohup bash scripts/train.sh s1 --nodes 2 > /tmp/baize_s1_baize2b_worker.log 2>&1 < /dev/null &
+LPID=$!
+echo "    launcher pid=$LPID  (转后台, 30s 后验证)"
+sleep 30
+
+echo
+echo "[5] 验证（进程 / 显存 / 日志）"
+echo "  torchrun=$(ps -eo cmd | grep -cE '[t]orchrun|[p]retrain_launcher')"
+timeout 10 ps -eo pid,etime,cmd 2>/dev/null | grep -E '[t]orchrun|[p]retrain_launcher' | head -3 | cut -c1-120 | sed 's/^/    /'
+echo "  .29 GPU mem: $(nvidia-smi --query-gpu=memory.used --format=csv,noheader | tr '\n' ' ')"
+echo "  worker.log ($(stat -c %s /tmp/baize_s1_baize2b_worker.log 2>/dev/null)B) 尾 12:"
+timeout 8 tail -12 /tmp/baize_s1_baize2b_worker.log 2>/dev/null | cut -c1-150 | sed 's/^/    /'
+
+echo
+echo "[6] 再等 45s 看是否真的在出 step"
+sleep 45
+echo "  .29 GPU util: $(nvidia-smi --query-gpu=utilization.gpu --format=csv,noheader | tr '\n' ' ')"
+echo "  最新 iteration 行:"
+timeout 8 grep -E 'iteration +[0-9]+/' /tmp/baize_s1_baize2b_worker.log 2>/dev/null | tail -3 | cut -c1-150 | sed 's/^/    /'
+echo "  worker.log 尾 6:"
+timeout 8 tail -6 /tmp/baize_s1_baize2b_worker.log 2>/dev/null | cut -c1-150 | sed 's/^/    /'
+
+echo
+echo "=== DONE 230 ==="
+```
+
+**输出**
+```
+=== RUN_ID 230 | RESTART S1 | 2026-11-02 19:51:12 | host=whag0pgpuap29 ===
+
+[0] 前状态
+  .29 GPU mem: 0 MiB 0 MiB 0 MiB 0 MiB 0 MiB 0 MiB 0 MiB 0 MiB 
+  torchrun=0
+  latest ckpt: 58000
+
+[1] 配方核对（s1.env 关键项 + resume 逻辑）
+    10:ITERS="${ITERS:-700000}"   # 累计步数（S 是第一阶段，故 = 本阶段步数）
+    11:START_ITER=0          # 本阶段起始迭代（续跑基准；epochs 对账用）
+    12:GBS="${GBS:-256}"      # 2026-10-28 定稿：GBS=256（4.19M tok/step × 700k = 2.94T）
+    13:WARMUP=2000
+    14:LR_DECAY_ITERS=0      # 无 D 段
+    15:SAVE_INTERVAL=2000    # 用户令 2026-10-26 收口：每 2000 步一个 ckpt（S=350 个 → 必须配合 prune）
+  train.sh resume/checkpoint 相关行:
+    104:       --eval-interval 250 --eval-iters 0 --save-interval "$SAVE_INTERVAL"
+    175:# the ssh command to .12 exported NCCL_ENV + PYTORCH_ENV but NOT BAIZE_NUM_WORKERS
+    179:# via `export $PYTORCH_ENV` on local + ssh remote paths).
+    218:  ssh_ok || die "ssh $MASTER_IP 不可达（16 卡需要 rank0；或改 --nodes 1 单机 8 卡）"
+    245:# The multi-node path already exports them (lines below for ssh + local),
+    261:  ssh -n -o StrictHostKeyChecking=no -o ServerAliveInterval=30 -o BatchMode=yes "$MASTER_IP" \
+
+[2] 停 CPU 冒烟 / 评测（只匹配 python 进程，绝不碰训练与 cline）
+    4158828       00:00  0.0  2228 grep -E python[^ ]* .*(cpu_smoke|test_lmeval|lm_eval)
+    命中 PID: 4158828
+    剩余 smoke/eval 进程数=1
+
+[3] 归档崩溃现场日志（保留证据，别覆盖）
+    moved -> /tmp/baize_s1_baize2b_worker.log.crash_1102_1839
+    moved -> /tmp/baize_s1_baize2b_master.log.crash_1102_1839
+    证据: 2026-11-02 18:39:51 1172111B
+
+[4] 重启 S1（2 机 16 卡，自动从 latest ckpt=58000 续跑）
+    launcher pid=4163528  (转后台, 30s 后验证)
+
+[5] 验证（进程 / 显存 / 日志）
+  torchrun=10
+    4163745       00:28 ssh -n -o StrictHostKeyChecking=no -o ServerAliveInterval=30 -o BatchMode=yes 10.239.2.12 ulimit -n 
+    4177347       00:18 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python /nas_train/app.e0031982/miniforge3/envs/py3
+    4179174       00:16 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --nam
+  .29 GPU mem: 1523 MiB 1523 MiB 1523 MiB 1523 MiB 1523 MiB 1523 MiB 1523 MiB 1523 MiB 
+  worker.log (61148B) 尾 12:
+    whag0pgpuap29:4179183:7440 [6] NCCL INFO Connected all trees
+    whag0pgpuap29:4179185:7454 [7] NCCL INFO Connected all trees
+    whag0pgpuap29:4179175:7431 [1] NCCL INFO Connected all trees
+    whag0pgpuap29:4179180:7415 [4] NCCL INFO Connected all trees
+    [rank 10] Post-init barrier passed — first communicator fully established[rank 9] Post-init barrier passed — first communicator fully established
+    
+    [rank 8] Post-init barrier passed — first communicator fully established[rank 11] Post-init barrier passed — first communicator fully established[
+    
+    
+    
+    
+    
+
+[6] 再等 45s 看是否真的在出 step
+  .29 GPU util: 100 % 100 % 100 % 100 % 100 % 100 % 100 % 100 % 
+  最新 iteration 行:
+  worker.log 尾 6:
+    whag0pgpuap29:4179174:36400 [0] NCCL INFO Channel 01/1 : 0[0] -> 8[0] [receive] via NET/IB/0/GDRDMA/Shared
+    whag0pgpuap29:4179179:36406 [3] NCCL INFO Channel 09/1 : 0[0] -> 11[3] [receive] via NET/IB/3/GDRDMA/Shared
+    whag0pgpuap29:4179177:36405 [2] NCCL INFO Channel 09/1 : 0[0] -> 10[2] [receive] via NET/IB/2/GDRDMA/Shared
+    whag0pgpuap29:4179174:36400 [0] NCCL INFO Channel 09/1 : 0[0] -> 8[0] [receive] via NET/IB/0/GDRDMA/Shared
+    INFO:megatron.core.timers:(min, max) time across ranks (ms):
+        load-checkpoint ................................: (3414.20, 3414.77)
+
+=== DONE 230 ===
+```
