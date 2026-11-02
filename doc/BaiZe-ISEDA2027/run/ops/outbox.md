@@ -23588,3 +23588,80 @@ echo "=== DONE 224 ==="
     纪律块命中: 1
 === DONE 224 ===
 ```
+
+---
+
+## RUN_ID 225 · 2026-11-02 19:30:36 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 225 | pretrain check | $(date '+%F %T') | host=$(hostname) ==="
+GR=/nas_train/app.e0031982/code/super_intelligence_2035
+BASE=/nas_train/app.e0031982/code/BaiZe-ISEDA2027
+cd "$GR" 2>/dev/null || true
+echo "[0] git HEAD=$(git rev-parse --short HEAD 2>/dev/null)  now=$(date '+%F %T')"
+
+echo
+echo "[1] pretrain watchdog loop"
+timeout 10 pgrep -af 'bash .*baize_pretrain_loop[.]sh' | head -5 || echo "  NO baize_pretrain_loop process"
+echo "  loop count = $(timeout 10 pgrep -cf 'bash .*baize_pretrain_loop[.]sh' 2>/dev/null || echo 0)"
+ls -l --time-style='+%F %T' /tmp/baize_pretrain_loop.log 2>/dev/null | awk '{print "  loop log: "$6,$7,$5"B"}' || echo "  loop log: none"
+echo "  loop log tail 6:"
+timeout 10 tail -6 /tmp/baize_pretrain_loop.log 2>/dev/null | cut -c1-200 | sed 's/^/    /' || true
+
+echo
+echo "[2] S1 training processes"
+timeout 10 pgrep -af 'pretrain_launcher|torchrun' | head -6 | cut -c1-160 || echo "  NO torchrun/pretrain_launcher"
+echo "  S1 logs mtime:"
+ls -l --time-style='+%F %T' /tmp/baize_s1_baize2b_worker.log /tmp/baize_s1_baize2b_master.log 2>/dev/null | awk '{print "    "$6,$7,$5"B",$8}'
+echo "  worker.log tail 4:"
+timeout 10 tail -4 /tmp/baize_s1_baize2b_worker.log 2>/dev/null | cut -c1-200 | sed 's/^/    /' || true
+
+echo
+echo "[3] GPU (.29 x8)"
+timeout 15 nvidia-smi --query-gpu=index,utilization.gpu,memory.used --format=csv,noheader 2>/dev/null | sed 's/^/    gpu /' || echo "  nvidia-smi unavailable"
+
+echo
+echo "[4] CPU/load (.29)"
+echo "  nproc=$(nproc 2>/dev/null)  load=$(cut -d' ' -f1-3 /proc/loadavg 2>/dev/null)"
+timeout 8 vmstat 1 2 2>/dev/null | tail -1 | awk '{print "  us%="$13" sy%="$14" id%="$15}'
+
+echo
+echo "[5] CPU eval / export processes"
+timeout 10 pgrep -af 'lm_eval|export_hf|p6_lmeval|convert_mcore_to_hf' | head -8 | cut -c1-160 || echo "  NONE"
+
+echo
+echo "[6] hf_iter_* outputs"
+timeout 25 find "$BASE" -maxdepth 3 -name 'hf_iter_*' -printf '%TY-%Tm-%Td %TH:%TM %10s %p\n' 2>/dev/null | sort | tail -12 | sed 's/^/    /' || true
+
+echo
+echo "[7] checkpoints (latest 6)"
+timeout 15 ls -lt --time-style='+%F %T' "$BASE/nemo_experiments/baize2b/checkpoints" 2>/dev/null | head -7 | awk '{print "    "$6,$7,$5,$8}'
+
+echo
+echo "[8] lm_eval_results (latest 10 + new json in 4h)"
+timeout 15 ls -lt --time-style='+%F %T' "$BASE/nemo_experiments/baize2b/lm_eval_results" 2>/dev/null | head -10 | awk '{print "    "$6,$7,$5,$8}'
+timeout 20 find "$BASE/nemo_experiments/baize2b/lm_eval_results" -maxdepth 2 -name '*.json' -mmin -240 2>/dev/null | head -10 | sed 's/^/    new: /'
+
+echo
+echo "[9] files modified in last 6h under BASE (max 12)"
+timeout 30 find "$BASE" -maxdepth 3 -type f -mmin -360 -printf '%TH:%TM %10s %p\n' 2>/dev/null | sort | tail -12 | sed 's/^/    /' || true
+
+echo
+echo "[10] .12 quick probe (20s timeout)"
+timeout 20 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.12 'echo "  host=$(hostname)"; echo "  loop=$(pgrep -cf "bash .*baize_pretrain_loop[.]sh" 2>/dev/null || echo 0)"; echo "  evalproc=$(pgrep -af "lm_eval|export_hf|p6_lmeval" | head -3 | tr "\n" "|")"; echo "  load=$(cut -d" " -f1-3 /proc/loadavg)"; nvidia-smi --query-gpu=index,utilization.gpu --format=csv,noheader 2>/dev/null | tr "\n" " " | cut -c1-140' 2>&1 | sed 's/^/    /' || echo "    ssh .12 failed/timeout"
+
+echo
+echo "=== DONE 225 ==="
+```
+
+**输出**
+```
+=== RUN_ID 225 | pretrain check | 2026-11-02 19:30:36 | host=whag0pgpuap29 ===
+[0] git HEAD=35f3af132  now=2026-11-02 19:30:36
+
+[1] pretrain watchdog loop
+1587337 cline --data-dir /nas_train/app.e0031982/.cline_pretrain -c /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run --auto-approve true -m glm-5.2 -k 02_088EE9051AAE4BF0ABFC7130331BF697_c2759d74-49f1-410a-89ea-2cf188ea2f23 -P openai-compatible -t 1500 # BAIZE_PRETRAIN_2B_TASK.md > 📦 §运维令 2026-10-31 18:2x（paper-slim 压 ch4 约 1750 字符 → 6 页）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md「归档 2026-10-31 第三批」节；**结论**：✅ 4_llm_pretrain.tex 15398→11960B（省 22.3%），6 页（正文 p1-p5 + refs p6），ERR=0/UNDEF=0/Overfull=0，commit 2fef637c8，报告 report_pretrain_paper_slim_zh.html 9.9KB。需要时再读。  > 📦 §运维令 2026-10-31 15:2x（全文事实审订 3_architecture.tex）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md「归档 2026-10-31 第三批」节；**结论**：✅ 84项审计，修复"52 Mamba-2"→24+28，Table1新增Mamba2/MLP行，5处.tex修改，ERR=0，commit d6ba844fc，报告 report_pretrain_paper_audit_zh.html 25.7KB。需要时再读。  > 📦 §运维令 2026-10-31 11:2x（直接落地改稿 4_llm_pretrain.tex + 刷新摘要/intro）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md「归档 2026-10-31 第三批」节；**结论**：✅ P0/P1×6/P2全部落地，0_abstract+1_intro+2_related+5_posttrain+9_conclusion刷新，编译0-error/6页，commit 85ea67b4d，报告 report_pretrain_paper_edit_zh.html。需要时再读。    > 📦 §运维令 2026-10-31 11:0x（论文第4章审校修订计划）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md「归档 2026-10-31 第二批」节；**结论**：✅ 交付 report_pretrain_paper_revise_plan_zh.html（34KB/6节），1 P0 + 6 P1 + 6 P2 逐条列出，已被 11:2x 令落地。需要时再读。  > 📦 §运维令 2026-10-31 09:1x（接手维护论文预训练章节）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md「归档 2026-10-31 第二批」节；**结论**：✅ 4_llm_pretrain.tex 事实核校+decay-A补全+§4.11修正，编译0-error，commit b12ddfb57。被 11:2x 令更新。需要时再读。  ### [已完成] 🚨 2026-10-30 22:2x 运维直令：写「1M 长上下文 + 95% 大海捞针」技术报告 · ✅ 已完成（#983 2026-10-30 23:17 交付 `reports/report_pretrain_1m_needle_zh.html` 33,667B/6节+总结路线图/0 script/0外链，覆盖现状基线-怎么做到1M-怎么到>95% needle-实验矩阵6组-取舍建议-与Qwen/Llama3对比；commit d0424c1f1）→ 原文归档到 `run/ARCHIVE_OPERATOR_PRETRAIN.md`「归档 2026-10-31」节。需要时再读。    > 🧷 **归档与执行纪律（2026-10-25 用户令 · 最高优先 · 覆盖任何其它归档/收尾条文）** > 用户原话：「agent 看到任务书 >32k 后要滚动归档，但是它们**在滚动归档时不要碰没有完成的运维指令**，而且在**归档后立即执行运维指令**，而不是立刻睡去等下次唤醒。」 > 1. **未完成的运维指令一律不许归档**：判断标准 = 该块任务是否**已产出交付物并 commit** 或运维已标「已闭合」。**没有 `✅ 已完成/已交付` 标记的一律视为未完成**，不许搬进 ARCHIVE。 > 2. **归档完必须原地继续执行**：归档只是「清理」，**不是本轮交付物**。归档完立即回到运维指令区，从最上面那条**未完成**指令开始做。 > 3. **禁止**「只归档 + 写心跳 + 提交 → 置 `WAITING: 1` 睡 30 分钟」。**只要有未完成指令，`WAITING` 必须置 0**（loop 60 秒后再唤醒），直到交付。 > 4. 心跳里必须写这一句：`未完成指令：<有/无>`；有 ⇒ `WAITING: 0` 且本轮内完成。  > 📁 **报告目录纪律（2026-10-28 用户直令 · 全局常驻 · 覆盖一切旧报告路径）**：所有 HTML/中文报告**一律产出在 `doc/BaiZe-ISEDA2027/reports/`**。🚫 **禁止产出到 `run/reports/` 或项目根 `reports/`**（生成器输出路径必须指向项目级 reports；run/reports 历史文件不得再新增）。  ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区  > 📦 §运维令 2026-10-29 14:1x（整理并提交 baize-llm 独立仓库）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：✅ commit e1c6be4 pushed to origin/master，28 files（README 19.6KB + configs/9 + scripts/18 + docs/2 + .gitignore），symlink 已删除+纳入 .gitignore，ls-remote 匹配。需要时再读。  ### [运维令] 2026-11-02 11:1x（**CPU 评测 5 个 checkpoint 的常识推理 8 集（1w–5w 步），先估 ETA**）· 用户直令 · 最高优先  > 用户原话（2026-11-02 11:1x）：「先用 CPU 评测 5 个检查点：1w–5w 步各一个。需要先估 ETA（多少时间，多少 CPU 核等）。」  **① 现状（运维已核）**： - **GPU 全满**：`.12`+`.29` 各 8 卡 100% util、~75GB/卡，全被 S1 占用；**评测必须纯 CPU，🚫 不许碰 GPU**。 - **checkpoint 齐备**：`nemo_experiments/baize2b/checkpoints/` 下 `iter_0010000/0020000/0030000/0040000/0050000` 均存在（5000 步一档，save_interval=2000，故 10000/20000/30000/40000/50000 全有）。 - **HF 导出脚本就绪**：`baize-llm/scripts/export_hf.sh <iter>`（mcore distcp → HF safetensors，CPU 操作，产出 `hf_iter_<iter>/`）。已有 `hf_iter_18000`（4.4GB）作样例。 - **评测链已通（历史 P-6）**：环境 = `PYTHONPATH=/nas_train/app.e0031982/code/BaiZe-ISEDA2027/p6_tf5`（transformers 5.17 含 NemotronHForCausalLM）+ `vllm` env 的 lm_eval 0.4.13；脚本 `run/baize_p6_lmeval.sh`（`--model hf` + `dtype=bfloat16`）。⚠️ 原脚本**走 GPU**，CPU 评测需改 `device=cpu`。 - **8 集**（Aligned Xmodel-2 Table 2，zero-shot，与 P-6 同口径）：`arc_challenge,arc_easy,boolq,hellaswag,openbookqa,piqa,sciq,winogrande`（同一 Avg）。 - **CPU 资源**：两机各 224 核。  **② 本轮必做（先估 ETA 再全量，不许跳过）**： 1. **export 5 个 ckpt**：`for it in 10000 20000 30000 40000 50000; do bash baize-llm/scripts/export_hf.sh $it; done`。记**单个 export 实测耗时**（`export_hf.sh` 内 `check_rope.py` 若加载模型，务必 `device=cpu`/`CUDA_VISIBLE_DEVICES=""`，别抢 GPU）。 2. **CPU 冒烟 + 测速**：改 `baize_p6_lmeval.sh` 为 `device=cpu`（`--model_args "pretrained=...,dtype=bfloat16,device=cpu"`），先 `--limit 8` 冒烟（8 任务 × 8 样本）确认 CPU 跑通+出分，再测**单集全量 CPU 耗时**（hellaswag ~40k 样本、arc_easy ~5.7k 等大头）→ 反推「8 集全量 / 5 ckpt」的总耗时。 3. **报 ETA（先回报，不直接全量）**：给 ① 5×export 耗时 ② 单集 CPU 全量耗时 ③ 8集×5ckpt 总墙钟 ④ 推荐 CPU 核数/并行度（每 ckpt 用多少核、8 集是否多进程并行） ⑤ 是否 24h 内可完成。写进 `MEMORY_PRETRAIN_2B.md` 心跳回报。 4. **ETA 确认后全量评测**：5 ckpt × 8 集 CPU 评测，结果落 `nemo_experiments/baize2b/lm_eval_results/`。  **③ 交付**：① 5×8 集汇总表（Avg + 逐集）+ 对照 P-6 起点 0.4395@20k/655M + Xmodel-2/Phi-1.5 参照线；② 能力-vs-step 曲线数据（1w~5w 五点）；③ `reports/report_pretrain_cpu_eval_8sets_zh.html`（中文 HTML，0 script/0 外链）；④ 日报。  **④ 纪律**：🚫 不碰 GPU（`device=cpu` 硬性、必要时 `CUDA_VISIBLE_DEVICES=""`）；🚫 不影响 S1（CPU eval 线程数别挤训练进程，可 nice）；不碰 vision/data/harness；commit `pretrain eval:`；心跳写 `未完成指令：有` ⇒ `WAITING: 0` 直到报告交付。  ### [运维令] 2026-10-28 17:0x（**预训练项目目录定位：脚本&文档落在 `/nas_train/app.e0031982/code/baize-llm/baize-llm`，后续训练从此启动**）· 用户直令 · 最高优先  > 用户原话（2026-10-28 17:0x）：「安排 pretrain 往项目目录 /nas_train/app.e0031982/code/baize-llm/baize-llm 写脚本&文档。后续训练从项目目录启动。」  **① 项目目录定位（运维已核现状）**：`/nas_train/app.e0031982/code/baize-llm/baize-llm` 当前是 symlink → `super_intelligence_2035/code/baize-llm`（已含 `configs/`/`scripts/`/`docs/`/`README.md` 14.3KB）。外层 `/nas_train/app.e0031982/code/baize-llm/` 是独立 git 仓库（README 仅 582B、另有 symlink）。  **② 要求**：脚本（`train.sh`/`pre_blend.py`/`gen_blend.py`/`check_rope.py`/`check_longctx_data.py`/`activate_preblend.sh` 等）与文档**全部落在该项目目录并 git 提交**；`README.md` 补全到「从零按 README 即可在项目目录启动训练」的程度（目录结构 / 启动命令 / 三阶段 S→S2→Decay 口径 / 配置说明 / 依赖环境）。  **③ 后续训练启动口径（硬性）**：一律 `bash /nas_train/app.e0031982/code/baize-llm/baize-llm/scripts/train.sh <stage>` 启动；🚫 不再从 `run/` 散落脚本启动。`common.env` 的 `BAIZE_TRAIN_CODE` 与启动文档与此路径对齐。  **④ 优先级**：不打断主线——先续跑 en_v1_4 pre-blend 剩余 s012-s015 → activate → 起 S（双机 16 卡 GBS256）；本令的「脚本&文档落项目目录」可在起 S 后的空档补齐。  commit `pretrain 项目:`。  > 📦 §运维令 2026-10-28 11:5x（blend 逻辑中文 HTML 报告）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：报告已交付 `reports/report_pretrain_blend_logic_zh.html`（11KB, commit aa6d3eddf），澄清训练时不会串行出不同源（索引层交错）。需要时再读。  > 📦 §运维令 2026-10-28 10:0x（预训练计划定稿）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md「归档 2026-10-31」节；**结论**：计划已定稿并执行，GBS=256/2.94T/700k运行中，pre-blend完成/nw=8恢复/613K，Decay后置待data线。需要时再读。  > 📦 §运维令 2026-10-28 09:3x（锁定 613K 配置 + spawn 调优）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：613K 配方已冻结（16K/CP1/DP16/FP8/graph-OFF），根因=数据加载串行化(nw=0)，spawn 路径被 10:0x pre-blend 取代。需要时再读。  > 📦 §运维提示 2026-10-27 15:2x（cimi MCP web search 已配好）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：MCP 工具就绪（cimi_search/cimi_fetch/vqa/text_to_image），授权永久有效。需要时再读。  > 📦 §运维令 2026-10-27 13:1x（杀掉 S1 + spawn smoke）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：S1 已杀，spawn 方案被 2026-10-28 10:0x pre-blend 取代。需要时再读。 > 📦 §运维令 2026-10-27 10:4x（不放弃：spawn 验证 + web 调研）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：spawn 被 pre-blend 取代；web 调研授权仍有效（见 15:2x）。需要时再读。 > 📦 §运维提示 2026-10-27 09:2x（DataLoader OOM fork-COW 根因 + spawn 方案）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：fork-COW 是 RSS 累积根因，spawn 方案被 pre-blend 取代。需要时再读。  > 📦 §运维提示 2026-10-27 08:4x（内存使用率>95%触发告警）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：内存纪律已纳入日常监控，调试时盯内存+swap，逼近95%先降载。需要时再读。  > 📦 §运维令 2026-10-26 22:0x（S1 吞吐对齐 613,992：归因 + 方案 A/B/C）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：#798 归因=gbs128 固定开销摊薄不足；吞吐目标 ≥600K 由后续 10:4x/13:1x 令推进（spawn 验证中）。参数口径 2.220B 仍有效。需要时再读。   > 📦 §运维令 2026-10-26 21:3x（RoPE θ 未生效：评估 + 方案 + 重启）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：θ=1e6 实现路径(ii) `--rotary-base` CLI + recipe 透传，commit ae3a093，三重验证 PASS；#799 运行时确认 θ=1e6 + 0崩；rank15 崩因=DDP DETAIL wrapper（非θ）；--dir 修正已落地。**仍有效红线**：check_rope.py PASS 需 ckpt（待 S1 重启）；lr-decay-shape exponential Decay 前验证。需要时再读。   > 📦 §运维令 2026-10-26 19:2x（预训练正式落地并开跑）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md「归档 2026-10-31」节；**结论**：全10步已完成，S1运行中(iter30660/700k,loss2.151,~598K tok/s)，TB6006常驻，RoPE PASS，Decay阻塞待data线。需要时再读。  > 📦 §运维令 15:3x（预训练构想报告 + ETA）**已完成**（#794：`report_pretrain_baize2b_pretrain_plan_zh.html` 22.5KB；§五执行口径已补）→ 原文归档 run/ARCHIVE_OPERATOR_PRETRAIN.md。 > 📦 §运维令 14:3x（补写 #792 双机实测进吞吐报告）**已完成**（#793：报告 14,208→20,888B）→ 原文同上归档。 > 📦 §运维令 13:2x（FP8 真实数据 16K/32K 实测）**已完成**（#792：16K=613,992 / 32K CP2=351,526）→ 原文同上归档。 > 📦 §运维令 11:1x（双机 16 卡调优 seq16K/32K）**已完成**（#791 8卡首跑 + #792 双机实测覆盖）→ 原文同上归档。 > 📦 §运维令 09:1x（优化 16K/32K 吞吐至 600K+）**已完成**（#791 8卡 + #792 双机 16K=613,992 ≥600K）→ 原文归档 ARCHIVE_OPERATOR_PRETRAIN.md。 > 📦 §运维令 08:2x（写最近工作报告 · 中文 HTML）**已完成**（#790，report_pretrain_recent_work_zh.html 20KB）→ 原文同上归档。 > 📦 §运维令 2026-10-25 23:0x（通宵攻坚：tokens/microbatch 悬崖）**已完成**（#784–#789：真因=CUDA Graph 顶格停滞·关 graph 修复·16K 双机 613,992 达标；根因报告 + seqlen rev3）→ 原文归档 ARCHIVE_OPERATOR_PRETRAIN.md。 > 📦 §运维令 2026-10-25 20:2x（seq 掉速排查初版）已并入 23:0x 通宵令 → ARCHIVE_OPERATOR_PRETRAIN.md。需要时再读。 > 📦 §运维令 2026-10-25 17:5x（seq×tok/step 16卡网格）已完成（cfg1-4 OK）→ ARCHIVE_OPERATOR_PRETRAIN.md；注意「seq≥8192 崩 5x」已被 cfg0a 证伪。需要时再读。 > 📦 §运维令 2026-10-25 07:4x（双机 16 卡吞吐报告）已完成（#770-#776）→ ARCHIVE_OPERATOR_PRETRAIN.md。需要时再读。 > 📦 §运维令 2026-10-24 23:5x（双机调通→吞吐优化）已完成（606,300 tok/s）→ ARCHIVE_OPERATOR_PRETRAIN.md。需要时再读。 > 📦 §运维指令 2026-10-24 16:0x（305K 最佳实践+longctx 报告）已完成 → ARCHIVE_OPERATOR_PRETRAIN.md。需要时再读。  ### 🧹 运维总则 · 2026-10-18（禁令作用域清理） - **保留（全局有效）**：不伪造、不泄密、不杀健康训练、不覆盖他线产物、不绕过验证/实名/风控。 - **降级为局部**：旧块里的“等运维许可 / 不重启 / 暂停 / 不开跑 / 不碰 X”只在**该块任务**内有效；与最新用户令或最新任务块冲突时，**以最新块为准**。 - **已闭合旧块**不再作为禁令来源；唤醒时按各线体积规程归档到 `ARCHIVE_*`，不要让它继续占用 prompt。  > 📦 §2026-10-16:4x（#548 误判更正）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：#548 误判根因=NFS 旧日志，判活规则已修正。需要时再读。  > 📦 §2026-10-16:2x（P0 resume + 长期授权）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：v2 resume 闭环，长期授权训练挂了自行重启。需要时再读。   > 📦 §2026-10-17 两块（P0 中继抢修 / `_orig_mod` 崩溃修复）均已闭合 → 原文已在 `daily-memories/2026-10-17.md`；结论：中继 PID2706247 健康（RUN_ID118-122 exit=0）；`_orig_mod` 修复验证通过，断点续跑至 6890/19980 无崩。  ### 💡 最佳实践 / 硬口径（常驻 · 每次唤醒先看） > 📦 已归档（R3配比 / LaTeX / R2收官 / T3）→ `ARCHIVE_OPERATOR_PRETRAIN.md`。  ### 🧭 运维规程 · 2026-10-06（【agent 归档 MEMORY + 任务书】 —— 由你自己滚，不再由运维代劳）· 常驻  > 用户裁定：「运维归档任务书不是长久之计」。`MEMORY_*.md` 一直是 agent 自滚（不经运维）⇒ 任务书同理。本轮起：MEMORY + 任务书，两样都由你自己滚。 > 判据：两者 均 ≤32KB；>40KB = 红线 ⇒ 必须先归档再提交（「收尾铁律」第 0 步已同步此判据）。 > 做法 = 只「搬迁」、不改内容：① 已闭合内容（已执行完/已作废的运维块、已完成轮次正文、较早流水）原文搬入 `run/ARCHIVE_OPERATOR_PRETRAIN.md` / `run/ARCHIVE_PRETRAIN_SPEC_HISTORY.md`（无则新建）/ `daily-memories/<日期>.md`；② 留 1 行指针；🚫 不改小节编号/标题；🚫 不新增/不改写任何指令（本区作者仍是运维）。 > 护栏：搬前 `git pull --rebase --autostash`；只搬「最新活跃块之下」的已闭合块（保留最上面 1–2 个未完成块）；冲突保留双方；提交用 `pretrain 归档: …` 前缀。 > 本轮动作：本任务书现 ≈40KB（已过 40KB 红线）⇒ 下次唤醒先归档到 ≤32KB，并把 `📦 体积：TASK=nKB / MEMORY=nKB（归档 nKB）` 抄进心跳。   ### 🧭 收尾铁律 · 2026-10-06（用户指令 · 每轮唤醒必须执行，不许省）  > 为什么新增（真实事故）：2026-10-06 06:55 → 08:30，data 线心跳文件 `MEMORY_DATA.md` 近 2 小时未更新（其间 agent 在改别的文件、push 得出去），外部运维只能靠 git 判断死活 ⇒ 被误判成静默卡死并上机排查。 > 根因：「更新记忆 + push」以前只是建议、没有硬约束；loop 的兜底 push 间隔是 5h（本日已缩短），且只覆盖固定白名单 —— 不许依赖兜底。 > 🚫 旧口径（已废）：「每 5 小时由 loop 兜底 push 一次」不再作为交付保障 —— 兜底只是保险丝，不是你的提交手段。  每轮唤醒（一次 cline 会话）结束前，按顺序做完这 5 件事，再置 `WAITING` / 去睡：  0. 体积自检（先跑，数字要抄进下一步的心跳）：    ```bash    cd /nas_train/app.e0031982/code/super_intelligence_2035    for f in doc/BaiZe-ISEDA2027/run/BAIZE_PRETRAIN_2B_TASK.md doc/BaiZe-ISEDA2027/run/MEMORY_PRETRAIN_2B.md; do      printf '%-46s %7s B\n' "$f" "$(wc -c < "$f")"; done    ```    判据：两者都应 ≤ 32KB；任一 > 32KB ⇒ 本轮收尾前【你自己】滚动归档（见本文件「📉 体积维护规程」：只把已闭合内容原文移入 `run/ARCHIVE_OPERATOR_PRETRAIN.md`、留 1 行指针），直到两者都 ≤ 32KB；> 40KB（红线）⇒ 必须先归档再提交（不许只上报等运维）。    收尾把两文件体积 + 本轮归档量抄进心跳：`📦 体积：TASK=nKB / MEMORY=nKB（归档 nKB → ARCHIVE_OPERATOR_PRETRAIN.md）`。去向/指针格式见本文件「📉 体积维护规程」。  1. 写心跳：更新 `run/MEMORY_PRETRAIN_2B.md` 顶部进度快照（`PHASE` / `WAITING` / `已完成` / `当前动作` / `下一步` / `阻塞`），并追加 1 行「本唤醒流水」：`[HH:MM] 干了什么 + 关键原始输出 1–2 行`。 2. 写日报：`run/daily-memories/<YYYY-MM-DD>.md` 追加本轮记录（当天文件必须建）。 3. 自己提交 + 推送（不许等 loop 兜底）：    ```bash    cd /nas_train/app.e0031982/code/super_intelligence_2035    git add -- doc/BaiZe-ISEDA2027/run/MEMORY_PRETRAIN_2B.md doc/BaiZe-ISEDA2027/run/EXPERIMENTS_PRETRAIN_2B.md \               doc/BaiZe-ISEDA2027/run/EXPERIMENTS_PRETRAIN_2B_ROUND2.md \               doc/BaiZe-ISEDA2027/run/BAIZE_PRETRAIN_2B_TASK.md doc/BaiZe-ISEDA2027/run/daily-memories    git commit -m "pretrain #<轮次>: <一句话>"   # 🚫 提交信息必须带线名前缀，否则运维无法溯源    git push origin main    ```    🚫 绝不用 `git add -A` —— 这是共享工作副本，`-A` 会把别线尚未完成的在途文件一并卷进你的提交（10-05 已出事故：`restore other agents files from dropped auto-commit`），后果是提交归属不可溯（运维查不出谁在干活）�
+[relay] ⚠️ 输出超长，已截断到 20000 字符
+```
