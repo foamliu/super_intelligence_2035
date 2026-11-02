@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>《论文两分钟》分镜脚本 · 2026-11-02 · AI 会拍视频，但它懂「东西为什么会倒」吗？</title>
+<style>
+  :root { --primary:#1f3a93; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700; --kp:#2e8b57;
+          --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+         color:var(--text); background:var(--bg); line-height:1.7; font-size:15px; }
+  .wrap { max-width:1100px; margin:0 auto; padding:32px 20px 80px; }
+  header.hero { background:linear-gradient(135deg,#153e75 0%,#2e8b57 100%); color:#fff; border-radius:14px;
+                padding:30px 32px; margin-bottom:22px; box-shadow:0 8px 24px rgba(21,62,117,.22); }
+  header.hero h1 { margin:0 0 6px; font-size:23px; letter-spacing:.3px; }
+  header.hero .sub { font-size:15px; opacity:.95; }
+  header.hero .meta { margin-top:14px; font-size:13px; opacity:.92; display:flex; flex-wrap:wrap; gap:8px 18px; }
+  header.hero .meta span { background:rgba(255,255,255,.16); border-radius:999px; padding:2px 12px; }
+  .disc { margin-top:14px; font-size:12.5px; background:rgba(0,0,0,.20); border-radius:8px; padding:8px 12px; opacity:.96; }
+  h2.sec { font-size:19px; margin:34px 0 12px; padding-bottom:8px; border-bottom:2px solid var(--border); }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:18px 22px; margin:16px 0;
+          box-shadow:0 1px 3px rgba(27,31,36,.06); }
+  .row { display:flex; gap:10px; margin:7px 0; font-size:14px; }
+  .row .k { flex:0 0 116px; color:var(--muted); font-weight:600; }
+  .row .v { flex:1; }
+  .orig { font-style:italic; color:#153e75; }
+  code { background:#eef1f4; border:1px solid #e1e4e8; border-radius:5px; padding:1px 6px;
+         font-family:Consolas,Menlo,monospace; font-size:12.5px; color:#153e75; }
+  table { border-collapse:collapse; width:100%; margin:12px 0; font-size:13px; background:var(--card); }
+  th,td { border:1px solid var(--border); padding:8px 10px; text-align:left; vertical-align:top; }
+  th { background:#eef3fb; color:#153e75; font-weight:600; }
+  tr:nth-child(even) td { background:#fafbfc; }
+  .shot-no { display:inline-flex; align-items:center; justify-content:center; width:24px; height:24px;
+             border-radius:50%; background:var(--kp); color:#fff; font-size:13px; font-weight:700; }
+  .vo { color:#0b3d6e; }
+  .note { background:#fff8ef; border:1px solid #f0d9b5; border-left:4px solid var(--warn); border-radius:8px;
+          padding:10px 16px; font-size:13px; color:#6a4a00; }
+  .ok-box { background:#f0fff4; border:1px solid #b7f0c5; border-left:4px solid var(--ok); border-radius:8px;
+            padding:10px 16px; font-size:13px; }
+  ul,ol { margin:6px 0; padding-left:20px; } li { margin:3px 0; }
+  footer { margin-top:44px; padding-top:16px; border-top:1px solid var(--border); color:var(--muted); font-size:12.5px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <h1>《论文两分钟》分镜脚本 · 2026-11-02</h1>
+  <div class="sub">今日 TOP-1：<b>AI 会拍视频，但它懂「东西为什么会倒」吗？</b> · 论文解读（非官方 · 非结论）· 总时长 <b>120s</b> · 口播 <b>360</b> 字（纯汉字；逐镜含标点 <b>464</b> 字符）</div>
+  <div class="meta">
+    <span>📅 日期：2026-11-02（CST）</span>
+    <span>🎬 期号：SCENES/11_02</span>
+    <span>📄 来源：arXiv <code>2610.42002</code></span>
+    <span>🏷 口径：科普（大众看得懂 + 有传播力）</span>
+  </div>
+  <div class="disc">⚠️ <b>论文解读 = 非官方 · 非结论</b>；数字均<b>作者自报</b>，本线<b>未复现</b>；画面全部自绘 / 自生成，<b>不使用论文原图</b>。V3（成片：TTS / 文生图 / 剪辑）<b>未做</b>，待用户确认工具链。</div>
+</header>
+
+
+<h2 class="sec">📄 选题卡（为什么选它）</h2>
+<div class="card">
+  <div class="row"><div class="k">论文原题</div><div class="v"><span class="orig">GeoFlip: Benchmarking Geometry-Sensitive Physics in Video Generation</span></div></div>
+  <div class="row"><div class="k">作者 / 机构</div><div class="v">Yuqi Li · Junming Liu · Bowen Hu · Ruize Niu · Huiran Duan · Yingli Tian · Hao Wu（<b>7 位</b>；据 PDF 首页：<b>City University of New York（CUNY，美国）</b> · <b>University of Melbourne（澳大利亚）</b> · <b>Sun Yat-sen University（中山大学，中国）</b> · <b>The Chinese University of Hong Kong（香港中文大学）</b> · <b>Carnegie Mellon University（CMU，美国）</b>；前两位为共同一作）</div></div>
+  <div class="row"><div class="k">arXiv</div><div class="v"><a href="https://arxiv.org/abs/2610.42002">https://arxiv.org/abs/2610.42002</a>（<code>cs.CV</code> · 首次提交 <b>2026-10-30</b> · 14 页 / 7 图）</div></div>
+  <div class="row"><div class="k">一句话看点</div><div class="v">视频生成模型能把画面做得非常真，但只要<b>把第一帧里的几何关系改一点点</b>（支撑面变窄、物体挪个位置、机关换个搭法），同一句提示词下<b>物理结果本该反过来</b> —— 论文测了 <b>16 个图生视频模型</b>，在全部模型都覆盖的 <b>442 个条件</b>上，<b>事件正确率平均最高只有 27.98%</b>。</div></div>
+  <div class="row"><div class="k">为什么选它</div><div class="v">
+    <ol>
+      <li><b>大众能懂 + 有画面</b>：「球放在斜坡上会不会滚下去」是每个人都有的生活直觉，不需要任何公式；而「AI 生成的球会悬空、刚体会被掰弯」本身就是强画面。</li>
+      <li><b>有传播力</b>：一句「AI 视频模型连球会不会滚都搞不清」就能立住钩子；<b>27.98%</b> 这个数字极具冲击力，且出处明确（论文自报）。</li>
+      <li><b>可讲清</b>：核心只有「<b>成对场景 + 只改几何 + 参考答案由物理仿真给出</b>」这一件事，两分钟讲得完，不必搬全篇。</li>
+      <li><b>有真实来源</b>：arXiv ID + abs 链接 + PDF 均可核验（本线已落地 PDF 并做结构校验）。</li>
+      <li><b>口径隔离</b>：本片属「目的 2 · 科普」，<b>不</b>写成「与 BaiZe / ZhuLong 相关」的借鉴结论。</li>
+    </ol>
+  </div></div>
+</div>
+
+<h2 class="sec">🎞 分镜表（5 镜 · 120s）</h2>
+<table>
+  <tr><th style="width:52px;">镜号</th><th style="width:96px;">时间轴</th><th style="width:92px;">段落</th><th style="width:30%;">口播文案</th><th style="width:26%;">画面（自绘 / 自生成）</th><th style="width:14%;">屏幕文字</th><th>音效 / BGM</th></tr>
+  <tr>
+    <td><span class="shot-no">1</span></td>
+    <td>0–10s</td>
+    <td>钩子</td>
+    <td class="vo">同一个球，同一句话，只把坡道改窄一点：一个稳稳待着，一个滚了下去。AI 生成的视频，分得清这两件事吗？</td>
+    <td>左右分屏：左「宽坡道 + 球静止」，右「窄坡道 + 球滚落」；两段都用<b>自绘 3D 示意</b>（低多边形球 / 坡道 / 地面网格），只在窄坡道上加一个「支撑点不足」小箭头。第 8 秒右侧球突然<b>悬空 0.5 秒</b>再落下（示意「模型的典型错误」，角落标「示意」）。</td>
+    <td>只改几何 → 结果该反过来？</td>
+    <td>轻鼓点 1 拍 + 右侧「咚」落球声；BGM 低音量铺底</td>
+  </tr>
+  <tr>
+    <td><span class="shot-no">2</span></td>
+    <td>10–30s</td>
+    <td>问题</td>
+    <td class="vo">现在的视频模型画得很真。可真，不等于懂：它可能只是学会了「像物理的画面」。要检验它有没有把第一帧的几何，翻译成后面的物理，就得让几何成为唯一的变量。这事儿以前没人系统地测过。</td>
+    <td>①「逼真」二字上方浮出一段高画质风格化片段（自生成），画面逐渐<b>去色</b>成线框；②线框里出现两个字幕气泡：「像」与「对」，中间一个问号；③画面切到一张<b>实验设计示意</b>：两个场景并排，顶部标「提示词相同」，只有第一帧的<b>支撑宽度 / 物体位置 / 机关搭法</b>三处被高亮框住（自绘三色描边）。</td>
+    <td>像 ≠ 对<br>唯一变量：几何</td>
+    <td>BGM 抬起；去色时加一声「抽气」质感转场</td>
+  </tr>
+  <tr>
+    <td><span class="shot-no">3</span></td>
+    <td>30–80s</td>
+    <td>方法</td>
+    <td class="vo">作者的做法叫 GeoFlip：造 482 对场景，一共 964 段参考视频，覆盖六类物理机制。每一对只改几何，答案不靠人打分，而是程序化搭场景、跑物理仿真、再做数值校验。然后拿 16 个图生视频模型来考，看三件事：事件对不对，结构完不完整，和参考视频像不像。</td>
+    <td>①数字动画：<b>482</b> 一对对场景卡片从两侧合拢成 <b>964</b> 段视频缩略图墙（自绘卡片，缩略图为纯色块 + 图标，不用论文图）；②六类机制用六个小图标环形排布（稳定 / 倾倒 / 滑落 / 碰撞 / 堆叠 / 支撑），逐个点亮；③流程条三步：<b>程序化搭场景 → 物理仿真 → 数值校验</b>，每步一个对勾；④16 个模型的方块阵列依次亮起；⑤右侧三根评分柱：事件正确 / 结构完整 / 与参考相似。</td>
+    <td>482 对 / 964 段 / 6 类<br>16 个模型 × 3 个维度</td>
+    <td>卡片合拢「哒哒」节奏音；点亮图标用短促提示音；方法段 BGM 降到低音量</td>
+  </tr>
+  <tr>
+    <td><span class="shot-no">4</span></td>
+    <td>80–105s</td>
+    <td>结果</td>
+    <td class="vo">结果是：16 个模型都覆盖的 442 个条件上，事件正确率平均最高只有 27.98%。失败很典型：忽略几何变化，物体运动方向错，刚体被掰弯，画面里凭空多出零件。用视觉语言模型当裁判，裁判之间的排名相关度是 0.906 和 0.929。</td>
+    <td>①一根从 0 到 100% 的横向进度条，只填到 <b>27.98%</b> 处停住（数字逐位上跳，下方小字「作者自报 · 本线未复现」）；②右侧四个「失败卡片」2×2 网格，每格一段 2 秒自绘错误动画：球不滚 / 反向滚 / 方块像软糖一样弯 / 平白多出一根杆；③底部两个小圆环显示裁判一致性 <b>0.906</b> / <b>0.929</b>。</td>
+    <td>最高 27.98%<br>忽略几何 · 方向错 · 刚体弯 · 多零件</td>
+    <td>进度条停住瞬间「刹车」音；四个失败卡片各一声轻「嗡」；BGM 抬 2 dB</td>
+  </tr>
+  <tr>
+    <td><span class="shot-no">5</span></td>
+    <td>105–120s</td>
+    <td>意义 / 展望</td>
+    <td class="vo">所以现在的高分，多半赢在像，不在对。这篇论文把「几何条件下的物理一致性」变成了一张可复现的考卷。视频模型要真进机器人、进仿真，这一关迟早要过。论文链接放在简介。</td>
+    <td>①「像」与「对」两个词重新出现，中间的问号被换成一条<b>向上的阶梯线</b>（示意「从像到对」的路），阶梯上标「几何 → 物理 → 可复现」；②阶梯顶端缩成一个小方块，飞入右下角「机器人 / 仿真」图标；③末尾 1 秒黑场，白字：「论文解读 · 非官方 · 非结论 · arXiv:2610.42002」（自绘排版）。</td>
+    <td>赢在「像」，还没赢在「对」<br>arXiv:2610.42002</td>
+    <td>BGM 渐弱，最后一拍收在静音；黑场无人声</td>
+  </tr>
+
+<h2 class="sec">📝 口播全文（可直接念 · 360 字）</h2>
+<div class="card">
+  <p class="vo">同一个球，同一句话，只把坡道改窄一点：一个稳稳待着，一个滚了下去。AI 生成的视频，分得清这两件事吗？</p>
+  <p class="vo">现在的视频模型画得很真。可真，不等于懂：它可能只是学会了「像物理的画面」。要检验它有没有把第一帧的几何，翻译成后面的物理，就得让几何成为唯一的变量。这事儿以前没人系统地测过。</p>
+  <p class="vo">作者的做法叫 GeoFlip：造 482 对场景，一共 964 段参考视频，覆盖六类物理机制。每一对只改几何，答案不靠人打分，而是程序化搭场景、跑物理仿真、再做数值校验。然后拿 16 个图生视频模型来考，看三件事：事件对不对，结构完不完整，和参考视频像不像。</p>
+  <p class="vo">结果是：16 个模型都覆盖的 442 个条件上，事件正确率平均最高只有 27.98%。失败很典型：忽略几何变化，物体运动方向错，刚体被掰弯，画面里凭空多出零件。用视觉语言模型当裁判，裁判之间的排名相关度是 0.906 和 0.929。</p>
+  <p class="vo">所以现在的高分，多半赢在像，不在对。这篇论文把「几何条件下的物理一致性」变成了一张可复现的考卷。视频模型要真进机器人、进仿真，这一关迟早要过。论文链接放在简介。</p>
+</div>
+
+<h2 class="sec">🛠 制作规范（可执行）</h2>
+<ul>
+  <li><b>画面</b>：全部<b>矢量自绘 / 文生图自生成</b>；🚫 不使用论文 Figure 与表格截图（场景对、失败案例、进度条一律<b>按结论重画示意图</b>，角落标「示意」）。</li>
+  <li><b>数字上屏规则</b>：<code>482</code> / <code>964</code> / <code>6</code> / <code>16</code> / <code>442</code> / <code>27.98%</code> / <code>0.906</code> / <code>0.929</code> 首次出现时，字幕带「<b>作者自报 · 本线未复现</b>」小字；口播把 27.98% 念「不到百分之二十八」，字幕仍写精确值。</li>
+  <li><b>不能混的口径</b>：① 27.98% 是「<b>事件正确率</b>（event correctness）在 442 个共享条件上的<b>平均最高值</b>」，<b>不是</b>「所有模型平均」也<b>不是</b>「画质评分」；② 0.906 / 0.929 是「<b>裁判之间的排名相关</b>（事件正确 / 结构完整）」，<b>不是</b>「模型得分」；③ 「16 个模型」是<b>被评估的图生视频模型数</b>，<b>不是</b>「参赛队伍」；④ 论文只测<b>几何条件变化</b>下的物理，<b>不能</b>外推为「所有物理规律都不懂」。</li>
+  <li><b>术语处理</b>：<code>GeoFlip</code> 念「吉奥-弗利普」或直接念「这项基准」；<code>benchmark</code> 念「考卷 / 基准」；<code>image-to-video</code> 念「图生视频」；<code>event correctness</code> 念「事件正确率」。</li>
+  <li><b>节奏</b>：单镜不超过 50s（方法镜）；每 8–10s 必须有画面变化；BGM 在方法段低音量、结果段抬 2 dB；镜 5 收在静音上。</li>
+  <li><b>比例 / 时长</b>：竖版 1080×1920（抖音）与横版 1920×1080（B站）各导一版；总时长严格 120s（±1s）；字幕安全区上下各留 12%。</li>
+  <li><b>口播字数核对</b>：本页纯汉字 <b>360</b> 字、逐镜含标点 <b>464</b> 字符；按 <b>200 字/分</b> 计约 <b>108s</b>，留余量给画面停顿。</li>
+  <li><b>TTS（V3 才做）</b>：中性科普音色，语速 190–200 字/分；数字前后各留 80ms 停顿；「482」「964」按中文数字读。</li>
+</ul>
+
+<h2 class="sec">⚖️ 合规与边界（发布前必读）</h2>
+<div class="note">
+  <ol>
+    <li><b>标明「论文解读」</b>：片头或片尾固定一行「论文解读 · 非官方 · 非结论」，简介首行放 arXiv 链接（<code>https://arxiv.org/abs/2610.42002</code>）。</li>
+    <li><b>不夸大</b>：禁用「AI 视频全是假的 / 物理引擎已死 / 视频模型毫无物理常识」等表述；原文只支持「<b>在几何干预的成对设定下</b>，16 个图生视频模型的事件正确率平均最高 27.98%，存在忽略几何、运动方向错、刚体形变、凭空多物等失败模式」。</li>
+    <li><b>不编造数据</b>：本片所有数字均出自摘要与正文（<code>482</code> / <code>964</code> / <code>6</code> / <code>16</code> / <code>442</code> / <code>27.98%</code> / <code>0.906</code> / <code>0.929</code>），不得二次加工成新数字。</li>
+    <li><b>不盗图</b>：画面全部自绘 / 自生成；<b>不使用论文中的任何 Figure、表格截图</b>。</li>
+    <li><b>口径隔离</b>：本片属「目的 2 · 科普」，<b>不</b>写成「与 BaiZe / ZhuLong 相关」的借鉴结论；当日借鉴版解读见 <code>research/daily/2026-11-02.html</code> 早 3 篇。</li>
+    <li><b>未复现声明</b>：本片数字<b>作者自报、本线未复现</b>；PDF 完整性 = 结构校验通过（<code>%PDF-</code> + <code>%%EOF</code> + <code>pdfinfo</code> / <code>pdftotext</code> 可解析 + 字节 == <code>Content-Range</code> total；分段 Range 续传拼接，<b>sha256 与 CDN <code>etag</code> 未对齐</b>，见当日日报附录 C）。</li>
+    <li><b>栏目名</b>：《两分钟论文》为已有知名频道名，<b>发布前请用户确认</b>是否沿用或改名。</li>
+  </ol>
+</div>
+
+<footer>
+  <p>research 线 · <code>research/video/SCENES/11_02.html</code> ｜ TOP-1 = <i>GeoFlip: Benchmarking Geometry-Sensitive Physics in Video Generation</i>（<code>arXiv:2610.42002</code>）· 5 镜 / 120s / 口播 360 汉字（逐镜 464 字符） ｜ 数据源：当日 <code>research/daily/2026-11-02.html</code> 5 篇（早 3 借鉴 + 晚 2 科普）。</p>
+  <p>🎯 挑选口径 = 目的 2「科普」（大众看得懂 + 有传播力），<b>非</b>「借鉴」口径。⚠️ V3（成片：TTS / 文生图 / 剪辑）待用户确认工具链。本页自包含（内联 CSS、零外链资源、零 <code>&lt;script&gt;</code>），离线双击可开。</p>
+</footer>
+</div>
+</body>
+</html>
+
+</table>

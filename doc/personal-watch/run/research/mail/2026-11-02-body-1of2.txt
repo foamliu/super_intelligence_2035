@@ -1,0 +1,69 @@
+[论文日报] 2026-11-02（周一）精选 5 篇 · 当日 5/5 收口（早 3「借鉴」+ 晚 2「科普」）(1/2)
+
+数据源：arXiv（export.arxiv.org API + id_list 官方元数据复核）
+本轮唤醒：2026-11-02 18:00 CST（PM 轮）；今日 06:00 轮已出早 3 篇
+📎 本封为分包 1/2：附早 3 篇 PDF（合计 6,526,008 B ≈ 6.22 MiB）。
+   晚 2 篇清单见本封末尾，PDF 见 2/2 封（其中 2610.42002 单篇 20.7 MiB 超 20 MB，只给链接 + 摘要）。
+
+批次状态（如实记录）：
+- AM（06:00 CST = 美东周日 18:00）：公告批次尚未刷新，仍 2026-10-29（早于 arXiv 周日 20:00 ET 公告，符合日历）；
+  --fetch --seen 15/15 200，kept 0 / dropped 600；早 3 篇取自 r122 的 217 条候选池。
+- PM（18:00 CST）：批次已刷新到 2026-10-30 —— cat:cs.CL totalResults 124,184 → 124,270、
+  全库 submittedDate:[202610300000 TO 202611022359] 0 → 1,066、广度 640,516 → 640,974；4 条独立复核 4/4 attempts=1。
+- ⚠️ 工具异常：PM 的 --fetch --seen（cat:A OR cat:B …）15/15 200 但 40 条/查询全落在 10-29 批（合并查询索引滞后），
+  kept 0 / dropped 458 ⇒ 不用它选文；改走「单分类 5 查询（各 100 条）+ 官方 id_list」，合并去重得 293 条
+  published ≥ 2026-10-30 的新候选（与 SEEN.md 逐 ID 比对 0 条重复）。
+
+━━ 一、早报 3 篇「借鉴」（与 BaiZe / ZhuLong 在研工作相关）━━
+
+1) Dobb: Chunked Local Updates for Matrix-Aware Optimization
+   arXiv:2610.39412 ｜ 33 页 ｜ UW–Madison CS + Meta FAIR（3 位）｜ 2026-10-29
+   一句话：把 Muon 类矩阵更新的「全局正交化」拆成分片内的对角块更新 + 块内特征基 + sign normalization，
+   分片之间不需要通信，就能保留大部分矩阵感知优化的收益。
+   关键数：GPT-2 XL 1.56B、B=16 验证损失 2.476（同秩 Dion 2.511）；B=1→64 只劣化 +0.021（Dion 满秩→1/64 劣化 +0.105）；
+   32×H100 FSDP 上优化器调用 124.1 ms → 9.2 ms。
+   可用在哪一步：BaiZe 的分布式训练优化器 —— 先量「优化器调用占总迭代时间比例」，再决定是否试跑。
+   ⚠️ 边界：作者自报、本线未复现；收益随并行度/分片数变化，需在我们自己的规模上复测。
+   附件：2610.39412.pdf（608,801 B / 33 页）
+
+2) How Far Are We From On-Device VLM Inference? A Measurement Study on Edge NPUs
+   arXiv:2610.40039 ｜ 26 页 ｜ 中南大学 + Microsoft Research China（5 位）｜ 2026-10-29
+   一句话：6 个 VLM × 3 个真实边缘平台（Hexagon v73/v79 + RK3588）× 10 基准 / 47,374 题，
+   从端到端时延下钻到 kernel 级行为，并逐条挑战社区常见假设。
+   关键数：softmax 气泡让 NPU 矩阵单元闲置；线性注意力的纸面加速在真机被张量重排吃掉；无后端在自回归解码全面占优；
+   Sweet Resolution 784 px 32.5% vs 672 px 30.7%（视觉 token 数相同）。
+   可用在哪一步：端侧评测表补三列（视觉 token 数 / KV 预算 / 后端名 + 版本）；别把论文加速比当承诺。
+   ⚠️ 边界：测量研究、不含国产加速器、以多模态理解为主；作者自报、本线未复现。
+   附件：2610.40039.pdf（4,853,260 B / 26 页）
+
+3) On the Fundamental Limits of Prefill-Based Decoding Length Prediction
+   arXiv:2610.40541 ｜ 26 页 ｜ 西安交通大学 + 山东大学（4 位）｜ 2026-10-29
+   一句话：只用 prefill 隐状态预测解码长度，精度天花板由解码固有随机性决定；把解码当停时过程，
+   得到逐 prompt 正态性 + 仿射方差律 σ = αμ + b。
+   关键数：ShareGPT 300 prompts × 200 次解码，E|Y−μ|/σ 中位 0.783 vs 高斯 0.798（差 1.9%）、KS 0.019；
+   MLP/EGTP/FiLM/soft-label/MoE 等预测器都收敛到同一上界 ⇒ 系统误差主导模型误差。
+   可用在哪一步：离线回放日志上拟合 σ=αμ+b，只用于估 SLO 违约率，不进线上调度决策。
+   ⚠️ 边界：主实验 Qwen3-32B + ShareGPT；正态近似有系统性小偏离；作者自报、本线未复现。
+   附件：2610.40541.pdf（1,063,947 B / 26 页）
+
+━━ 二、晚报 2 篇「科普」（PDF 见 2/2 封）━━
+
+4) GeoFlip: Benchmarking Geometry-Sensitive Physics in Video Generation
+   arXiv:2610.42002 ｜ 14 页 / 7 图 ｜ 2026-10-30 ｜ CUNY + 墨尔本大学 + 中山大学 + 香港中文大学 + CMU（7 位，前两位共同一作）
+   一句话：482 对「只改第一帧几何、物理结果本该翻转」的场景对（964 段参考视频、6 类机制），
+   16 个图生视频模型在 442 个共享条件上事件正确率平均最高 27.98%。
+   ⚠️ PDF 21,744,173 B ≈ 20.7 MiB 超单封 20 MB 上限 ⇒ 本日不附，链接：https://arxiv.org/abs/2610.42002
+
+5) Mechanistic Interpretability for End-to-End Self-Driving
+   arXiv:2610.41185 ｜ 26 页 ｜ 2026-10-30 ｜ Purdue University（9 位；作者称 CoRL 2026 接收）
+   一句话：单摄像头端到端路径规划模型的内部激活上训练 SAE，无监督恢复路线意图 98.3%；
+   反事实改图能定向驱动特征；单独放大/压制特征让横向偏移/曲率/刹车单调变化；轻量适配器把轨迹选择误差再降 3.44%。
+   附件：2610.41185.pdf（10,861,013 B / 26 页）
+
+━━ 三、台账与链接 ━━
+- 日报 HTML（自包含、可离线打开）：research/daily/2026-11-02.html（5/5 收口）
+- 分镜脚本（科普 TOP-1 = GeoFlip）：research/video/SCENES/11_02.html
+- 台账：收录 291 / 候选 4,558 / 候选（RSS补充）507；papers.jsonl 291 行；SEEN.md 5,615 行
+- 数字均为作者自报，本线未复现；PDF 完整性 = 结构校验 + 字节 == Content-Range total（sha256 与 CDN etag 不一致，如实记录）
+
+—— 本封 (1/2) 结束，晚 2 篇详情与附件见 (2/2) ——

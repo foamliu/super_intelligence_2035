@@ -1,0 +1,34 @@
+    attempts=1
+--- ① lastUpdatedDate cs.CL
+    url=https://export.arxiv.org/api/query?search_query=cat%3Acs.CL&start=0&max_results=5&sortBy=lastUpdatedDate&sortOrder=descending
+    status=200 ct=application/atom+xml; charset=utf-8 total=124270 n_entries=5 3.11s
+    2610.42149v1 2026-10-30T17:59:43Z 2026-10-30T17:59:43Z cs.CV Latent Reasoning in Continuous Space for Unified Multimodal Models
+    2610.42148v1 2026-10-30T17:59:38Z 2026-10-30T17:59:38Z cs.CL Flide: Accelerating Decision Inference with Exact State Forking
+    2610.42128v1 2026-10-30T17:56:58Z 2026-10-30T17:56:58Z cs.CL DecisionRank: On-Policy Distillation for Decision-Model Rerankers
+    2610.39060v2 2026-10-28T23:45:23Z 2026-10-30T17:56:18Z cs.CL Tracing the Influence of Retrieved Literature on Scientific Ideation i
+    2610.37642v2 2026-10-27T17:55:24Z 2026-10-30T17:56:17Z cs.CL Metacognitive Decoding: Efficient Inference for Diffusion Language Age
+    attempts=1
+--- ② submittedDate 20261030-20261102 (cs.CL)
+    url=https://export.arxiv.org/api/query?search_query=cat%3Acs.CL+AND+submittedDate%3A%5B202610300000+TO+202611022359%5D&start=0&max_results=5&sortBy=submittedDate&sortOrder=descending
+    status=200 ct=application/atom+xml; charset=utf-8 total=62 n_entries=5 1.77s
+    2610.42149v1 2026-10-30T17:59:43Z 2026-10-30T17:59:43Z cs.CV Latent Reasoning in Continuous Space for Unified Multimodal Models
+    2610.42148v1 2026-10-30T17:59:38Z 2026-10-30T17:59:38Z cs.CL Flide: Accelerating Decision Inference with Exact State Forking
+    2610.42128v1 2026-10-30T17:56:58Z 2026-10-30T17:56:58Z cs.CL DecisionRank: On-Policy Distillation for Decision-Model Rerankers
+    2610.42112v1 2026-10-30T17:48:37Z 2026-10-30T17:48:37Z cs.CL Subquadratic Attention with a Hierarchical Tree-Structured Indexer
+    2610.42084v1 2026-10-30T17:35:48Z 2026-10-30T17:35:48Z cs.CL RangeSWA: Training-Free Length Extrapolation for Continuous Diffusion 
+    attempts=1
+--- ③ submittedDate 20261030-20261102 (全库，不加分类)
+    url=https://export.arxiv.org/api/query?search_query=submittedDate%3A%5B202610300000+TO+202611022359%5D&start=0&max_results=5&sortBy=submittedDate&sortOrder=descending
+    status=200 ct=application/atom+xml; charset=utf-8 total=1066 n_entries=5 1.01s
+    2610.42152v1 2026-10-30T17:59:59Z 2026-10-30T17:59:59Z cs.CV GazeRIB: Systematic Evaluation of Multi-Reader Gaze-Guided Chest X-ray
+    2610.42151v1 2026-10-30T17:59:45Z 2026-10-30T17:59:45Z astro-ph.CO Model-Independent Assessments of Tidal Alignment and Density-Weighting
+    2610.42150v1 2026-10-30T17:59:43Z 2026-10-30T17:59:43Z quant-ph Secret-shared teleportation of a two-qudit gate with a deferred recipi
+    2610.42149v1 2026-10-30T17:59:43Z 2026-10-30T17:59:43Z cs.CV Latent Reasoning in Continuous Space for Unified Multimodal Models
+    2610.42148v1 2026-10-30T17:59:38Z 2026-10-30T17:59:38Z cs.CL Flide: Accelerating Decision Inference with Exact State Forking
+    attempts=1
+--- ④ 广度 sweep 5 分类
+    url=https://export.arxiv.org/api/query?search_query=cat%3Acs.CL+OR+cat%3Acs.CV+OR+cat%3Acs.SE+OR+cat%3Acs.AI+OR+cat%3Acs.LG&start=0&max_results=3&sortBy=submittedDate&sortOrder=descending
+    status=200 ct=application/atom+xml; charset=utf-8 total=640974 n_entries=3 1.43s
+    2610.42152v1 2026-10-30T17:59:59Z 2026-10-30T17:59:59Z cs.CV GazeRIB: Systematic Evaluation of Multi-Reader Gaze-Guided Chest X-ray
+    2610.42149v1 2026-10-30T17:59:43Z 2026-10-30T17:59:43Z cs.CV Latent Reasoning in Continuous Space for Unified Multimodal Models
+    2610.42148v1 2026-10-30T17:59:38Z 2026-10-30T17:59:38Z cs.CL Flide: Accelerating Decision Inference with Exact State Forking

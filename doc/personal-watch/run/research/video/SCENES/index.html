@@ -41,6 +41,12 @@
 <table>
   <tr><th>日期</th><th>当日 TOP-1 论文</th><th>看点</th><th>分镜脚本</th></tr>
   <tr>
+    <td>2026-11-02</td>
+    <td><i>GeoFlip: Benchmarking Geometry-Sensitive Physics in Video Generation</i><br><code>arXiv:2610.42002</code>（Yuqi Li, Junming Liu, Bowen Hu 等 7 位 · CUNY + 墨尔本大学 + 中山大学 + 香港中文大学 + CMU；前两位共同一作）</td>
+    <td><b>AI 会拍视频，但它懂「东西为什么会倒」吗？</b>：视频生成模型画面很真，可只要把第一帧的几何改一点点（支撑面变窄、物体挪位置、机关换搭法），同一句提示词下的物理结果就该反过来。<b>GeoFlip</b> 造 <b>482 对</b>「几何干预 → 结论翻转」的场景对、<b>964 段</b>参考视频、<b>6 类</b>物理机制，参考答案由<b>程序化搭场景 + 物理仿真 + 数值校验</b>给出（不靠人工打分），再评 <b>16 个图生视频模型</b>：在全部模型共同覆盖的 <b>442 个条件</b>上，<b>事件正确率平均最高只有 27.98%</b>；典型失败 = 忽略几何变化 / 运动方向错 / 刚体被掰弯 / 凭空多零件。视觉语言模型裁判之间的排名相关 <b>0.906</b>（事件正确）与 <b>0.929</b>（结构完整）（<b>作者自报 · 本线未复现</b>；论文 14 页 / 7 图）</td>
+    <td><a href="11_02.html">11_02.html</a></td>
+  </tr>
+  <tr>
     <td>2026-11-01</td>
     <td><i>Spokes, not a Ring: Revisiting the Weekday Manifold in Language Models</i><br><code>arXiv:2610.37796</code>（Diksha Gupta, Rieke Fruengel, Stefan Heimersheim 共 3 位 · Pivotal Research）</td>
     <td><b>AI 脑子里的「星期环」，其实是七根辐条</b>：语言模型的激活里，「星期几」确实排成一个圆环，于是很多人认为沿环移动 = 日期连续变化、可以平滑转向。这篇用三套实验拆掉这个假设：① 沿环在<b>层 2</b> steering、<b>层 28</b> 读出 ⇒ 行为是<b>台阶状</b>（星期附近几乎不动、弧段一推就跳）；② 极坐标 Jacobian 敏感度图 ⇒ <b>七个以星期为中心的低敏感辐条</b>（且径向延伸，不是「只沿切向走」的假象）；③ 中间位置装了什么 ⇒ <b>时刻词只挪 ≤6.30°</b>（相邻星期质心相隔 <b>44.33°–59.81°</b>）、沿环推预测小时 <b>&lt;0.02h</b> 而平面外同范数推 <b>−1.8h / +1.1h</b>、不确定性沿辐条<b>向内收缩</b>、<b>49,678 条</b> FineWeb 片段显示上下文主要<b>整体平移</b>（段内 RMS 半径 <b>0.65 → 0.23</b> 环半径）。主实验 Llama-3.1-8B，另在 Mistral-7B-v0.1 / GPT-2 XL 复核（<b>作者自报 · 本线未复现</b>；作者 §5.2 明确「不意味着圆环几何虚假」；论文 23 页）</td>
@@ -175,7 +181,7 @@
 </table>
 
 <footer>
-  research 线 · <code>research/video/SCENES/index.html</code> ｜ 最近更新：2026-11-01 18:1x CST（新增 <code>11_01.html</code> · TOP-1 = Spokes, not a Ring: Revisiting the Weekday Manifold in Language Models / <code>arXiv:2610.37796</code> · 5 镜 / 120s / 口播 396 字（逐镜含标点 468 字符，200 字/分 ≈ 119s，无需删句）；上一版 <code>10_31.html</code> · <code>arXiv:2610.40530</code>）<br>
+  research 线 · <code>research/video/SCENES/index.html</code> ｜ 最近更新：2026-11-02 18:1x CST（新增 <code>11_02.html</code> · TOP-1 = GeoFlip: Benchmarking Geometry-Sensitive Physics in Video Generation / <code>arXiv:2610.42002</code> · 5 镜 / 120s / 口播 360 汉字（逐镜 464 字符，200 字/分 ≈ 108s）；上一版 <code>11_01.html</code> · <code>arXiv:2610.37796</code>）<br>
 </footer>
 </div>
 </body>
