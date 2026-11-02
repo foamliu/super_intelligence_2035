@@ -2,15 +2,29 @@ WAITING: 0
 SHARD: A (digital_front)
 DOMAINS: digital, eda_other, pnr_signoff, verification
 
-- **PHASE**: 回 §3 合成新 case（运维令 §四.3 cline 重跑样本已扩 3 条，本轮按任务卡回合成路径）。本轮交付 `EDA-Eval-DesignFlow-InnovusLaunchDiag-001`（eda_other / L2 / B 档）—— 真实 trace `1792491091764_qk0vo`（pdong / 10.129.8.230 / mc=49）：innovus 2231 在 RHEL8 登录节点 module avail 有却 `-version` 报 `libssl.so.10` 缺失；真因双重（RHEL8 无 openssl1.0 兼容库 + eda-agent LD_LIBRARY_PATH 污染 libstdc++ GLIBCXX_3.4.26）；修复 = bsub 切 CentOS7 节点 / 装 compat-openssl10 + `env -u LD_LIBRARY_PATH`。case = 写启动就绪诊断脚本 `check_launch.py`，读证据目录 fixture 输出结构化 JSON 报告。
-- ✅ **本轮交付**：`InnovusLaunchDiag-001` 合成 ✓ —— assets/InnovusLaunchDiag-001/（prompt.txt + task_brief.md + evidence/ 10 个真实 A fixture + hidden/B_evidence 结构不同场景 calibre 2024.4/RHEL9.3/libncurses.so.5/无污染 + hidden_manifest.json）+ reference/InnovusLaunchDiag-001/（check.py 17 条断言 a–q 自包含嵌入 B 证据 + reference_submit/check_launch.py 参考解 + negative/ 3 个错解 + negative_selftest.py）。自验全过：ref check.py 跑 ref_submit.zip = PASS；negative_selftest 3 错解全 FAIL；断言闸门 k_rationale==k_check==17≥8 ✓；日报三列 17/17/✓。
+- **PHASE**: 运维令 §四.3 cline+hook 存量重跑扩样本。本轮 cline 重跑 `EDA-Eval-DesignFlow-InnovusLaunchDiag-001`（轮 23 合成的 eda_other / L1-style 诊断脚本任务）= **PASS ✓**（cline 1209s / exit 0 / 写 check_launch.py → harness 打包 → 独立判分 True）。cline_eval_status.jsonl 现 4 行 = **2/4 PASS**（PTSignoff+InnovusLaunchDiag PASS / Verification+PwrGlobals FAIL）。
+- ✅ **本轮交付**：InnovusLaunchDiag-001 cline+hook 重跑 PASS ✓ + 修 2 处 bug（①assets/reference 目录名短名 `InnovusLaunchDiag-001` → 全名 `EDA-Eval-DesignFlow-InnovusLaunchDiag-001` 对齐 run_one.sh 路径约定，git mv；②run_one.sh 附件复制对嵌套 name `evidence/xxx.txt` 不建父目录致 FileNotFoundError，加 os.makedirs 修复）。
+- ⚠️ **本轮外部阻塞**：eda_flow `run_commands`（.75 bashpool）本会话全程返回 exit_code -1 / 0ms / 无执行 → 无法 `trace_ledger --shard A next` 取新候选（合成路径被堵）。故本轮按 MEMORY 待办走 cline 重跑路径（不依赖 .75 取 trace；InnovusLaunchDiag-001 是 L1-style 纯写脚本任务，判分自包含，无需 eda_flow）。下轮若 bashpool 恢复优先回合成。
 - ✅ DEBT 已清零。
-- 📊 trace 覆盖率：20/1001 = 2.0%（covered=20 · touched=22 · parked=2；A jsonl 现 21 条）
-- 🎯 通过率: cline+hook 存量重跑仍 **1/3**（本轮无 cline 重跑，纯合成）；新 case 未跑 pi/cline，标「未跑」
-- 🧾 断言: k_rationale=k_check=17 ✓（今日 1/1 新 case 达标；存量全达标）
-- 📦 体积：TASK≈23.8KB / MEMORY_A≈13.5KB
-- 🔒 泄漏隔离: check.py/reference/hidden 不进 SUT workdir；判分独立跑（check.py 自包含嵌入 B 证据，无外部路径依赖；SUT 只见 assets/evidence/ A 场景）
-- ⚠️ 运维令进度（跨 shard ops）：cline_eval_status.jsonl 仍 3 行（上轮 PwrGlobals-001 后未新增 cline 重跑）。**待办**：下轮可继续 cline L2 重跑（候选 ETMExtract-001 / TLEFRules-001 / SynLintFlow-001 / InnovusLaunchDiag-001）或继续合成（trace_ledger --shard A next）。
+- 📊 trace 覆盖率：20/1001 = 2.0%（covered=20 · touched=22 · parked=2；A jsonl 仍 21 条，本轮无新 case）
+- 🎯 通过率: cline+hook 存量重跑 **2/4 = 50%**（PTSignoff-001 PASS·L2 / InnovusLaunchDiag-001 PASS·L1-style / Verification-001 FAIL·L1-harness限 / PwrGlobals-001 FAIL·L2 能力）。剔除 harness 限样本后能力口径 2/3（n 小无统计意义）
+- 🧾 断言: 本轮无新 case（重跑不涉断言闸门）；存量 21 条全达标
+- 📦 体积：TASK≈23.8KB / MEMORY_A≈14.0KB
+- 🔒 泄漏隔离: 本轮 cline workdir 自检 0 判分器/答案文件；cline_session.jsonl grep 命中 3 处全良性（①`open_layout_with_check.py` 文件名子串 / ②同上 / ③cline reasoning 提及 "check.py (hidden)... which I'm told not to access, but I won't" —— 明确拒绝访问）；hook 触发 35×（内置 run_commands→NOTICE → cline 改用 write_to_file + MCP）；判分独立在 /tmp/judge_* 跑，check.py 未进 cline cwd
+- ⚠️ 运维令进度：cline_eval_status.jsonl 4 行。**待办**：下轮继续 cline 重跑扩样本（候选 ETMExtract-001 / TLEFRules-001 / SynLintFlow-001，目标≥5 再看通过率趋势）或 bashpool 恢复后回合成。
+
+
+### 2026-11-03 shard A 轮 24：InnovusLaunchDiag-001 cline+hook 重跑 = PASS ✓（L1-style 诊断脚本·运维令 §四.3，WAITING: 0）
+- 运维令 §四.3「逐步把存量 case 用 cline 重跑」继续。本轮原任务卡路径 = 合成新 case，但 eda_flow `run_commands`（.75 bashpool）本会话全程返回 exit_code=-1 / 0ms / 无 stdout 执行（`echo hello` 都不回）→ `trace_ledger --shard A next` 取候选（需在 .75 上跑 awk summary.tsv）被堵。pyAether run_code 亦 timeout。属真外部阻塞（非卡死）。按 MEMORY「下轮可继续 cline 重跑」待办，pivot 到不依赖 .75 取 trace 的 cline 重跑路径。
+- **选 case**：`EDA-Eval-DesignFlow-InnovusLaunchDiag-001`（轮 23 刚合成的 eda_other / L1-style 任务：写 `check_launch.py` 启动就绪诊断脚本，读 10 个证据 fixture 输出结构化 JSON）。判分自包含（check.py 内嵌 B 证据，subprocess 本地跑候选）—— 无需 eda_flow / .75 EDA 工具，契合本轮 bashpool 受限。MEMORY 待办列名本条为候选。
+- **修 2 处 bug（交付质量）**：
+  - ① **assets/reference 目录名不一致**：轮 23 交付时目录用短名 `InnovusLaunchDiag-001`，但 run_one.sh `ASSETS_SRC=$BENCH/.../assets/$TASK_ID`（TASK_ID 全名 `EDA-Eval-DesignFlow-InnovusLaunchDiag-001`）→ dry-run `[ -d "$ASSETS_SRC" ]` 命中失败。其余 shard-A case（ETMExtract/FlowGuide/SdfWarnFilter 等）均用全名，本条是 outlier 交付 bug。`git mv assets/InnovusLaunchDiag-001 assets/EDA-Eval-DesignFlow-InnovusLaunchDiag-001`（reference 同）修复，对齐约定。
+  - ② **run_one.sh 附件复制不建父目录**：附件 `name` 含嵌套路径（`evidence/module_avail.txt`），原 `shutil.copy(sp, os.path.join(workdir,'assets',name))` 不建 `assets/evidence/` 父目录 → FileNotFoundError。加 `os.makedirs(os.path.dirname(dst), exist_ok=True)` 修复（提取 `_copy` helper，两个分支共用）。dry-run 复制 12/12 附件 OK。此 bug 之前未暴露因 PTSignoff 附件名是裸文件名（无子目录）。
+- **重跑**：`CLINE_TIMEOUT=1200 bash run_one.sh EDA-Eval-DesignFlow-InnovusLaunchDiag-001` → cline exit=0 / dur=1209s / 写 1 个交付件 `outputs/check_launch.py`（write_to_file）→ harness step 3b 打包 submit.zip → 独立判分 `/tmp/judge_*/` check() = **PASS (True)**。
+- **防泄题自验**：① workdir leak 自检 = 0（find 无 check.py/reference/hidden/hidden_manifest）；② cline_session.jsonl grep `check.py|_reference_check|reference_submit|hidden_manifest|reference/|hidden/` 命中 3 处全良性 —— `open_layout_with_check.py`（.75 目录列表里的无关文件名，子串匹配）/ cline reasoning 文本 `maybe check.py (hidden)... which I'm told not to access, but I won't`（明确拒绝访问，未实际 read）；③ hook 触发 35×（cline 内置 run_commands→NOTICE redirect → cline 改用 write_to_file + mcp__pyAether_MCP_server__* 工具，符合 hook 设计）；④ 判分独立在 /tmp/judge_* 跑，check.py 从 reference/ 复制到 judge dir（cline workdir 外），cline 全程未接触判分器。
+- **finding（L1+hook 兼容性细化）**：轮 21 Verification-001 在严格 hook 下 FAIL，归因「hook breaks L1/offline cases needing local subprocess」。本轮 InnovusLaunchDiag-001（同为 L1-style）却 PASS —— 区别：Verification-001 需 cline 本地 *执行* prepare_new_netlist.py 生成 erc_report（被 hook 拦 local run_commands）；InnovusLaunchDiag-001 只需 cline *写* check_launch.py（write_to_file 在 hook 白名单），判分器来跑脚本。**结论**：严格 hook 下 L1 任务二分 —— 纯文件撰写型 L1 可过、需本地执行型 L1 被堵。这细化了「L1 需单独决策是否为 in-workspace run_commands 放行」的边界：放行仅对「需本地执行生成中间产物」的 L1 必要，纯撰写型无需放行。
+- status jsonl 追加第 4 行（verdict=PASS / dur=1209 / cline_exit=0）。cline_eval_status.jsonl：Verification-001 FAIL·L1·hook限 / PTSignoff-001 PASS·L2 / PwrGlobals-001 FAIL·L2·能力 / InnovusLaunchDiag-001 PASS·L1-style = **2/4**。
+- ⬜ 下轮：①bashpool 恢复后回合成（trace_ledger --shard A next，本轮被堵的路径）；或 ②继续 cline 重跑扩样本（候选 ETMExtract-001 / TLEFRules-001 / SynLintFlow-001，目标≥5 看通过率趋势）。本轮 40min 预算耗于 cline 1209s 跑 + 阻塞诊断 + 2 bug 修复，未开新 case。
 
 
 ### 2026-11-03 shard A 轮 23：InnovusLaunchDiag-001 合成 ✓（eda_other / L2 / B 档，WAITING: 0）

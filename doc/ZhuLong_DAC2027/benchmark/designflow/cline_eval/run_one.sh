@@ -108,15 +108,18 @@ for a in case.get('attachments', []):
     name = a.get('name') or os.path.basename(src)
     if not name or name in forbidden: continue
     # source 可能是 'assets/<task_id>/<name>' 或裸 '<name>'；统一按 name 在 ASSETS_SRC 取
+    def _copy(src_path, name_):
+        dst = os.path.join(workdir, 'assets', name_)
+        os.makedirs(os.path.dirname(dst), exist_ok=True)
+        shutil.copy(src_path, dst)
+        copied.append(name_)
     sp = os.path.join(assets_src, name)
     if os.path.exists(sp):
-        shutil.copy(sp, os.path.join(workdir, 'assets', name))
-        copied.append(name)
+        _copy(sp, name)
     else:
         alt = os.path.join(assets_src, src)
         if os.path.exists(alt):
-            shutil.copy(alt, os.path.join(workdir, 'assets', name))
-            copied.append(name)
+            _copy(alt, name)
 # 防御：扫描 workdir 确认无泄漏
 leak = []
 for root, _, files in os.walk(workdir):
