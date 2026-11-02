@@ -1,0 +1,16 @@
+这是一个 ERC_AI_CHECK pipeline（附件 run_all.sh 编排 step0~step3；Python prepare_new_netlist.py 从 ERC CSV 生成 netlist 并按 section 过滤；analyze_errors_v1.py 分析报错；step3_verify.il 用 virtuoso SKILL 做原理图验证）。该项目实际是 aether 项目（经 vir 进入选择项目后，用 aetherLE / aetherSE 进入 aether），但 step3+ 的验证 flow 目前只有 virtuoso .il 脚本，无法在本项目环境跑通（virtuoso 起不来：libstdc/CXXABI 版本冲突）。
+
+任务（多步，须在一次会话里完成并交付）：
+1. 修复 prepare_new_netlist.py 中的 filter_erc_by_section：当前 --erc-section 只支持按主 section 号过滤（传 "2.1,2.2,...,2.8" 会被折叠成主号 "2"，吞掉所有 2.x 包括 2.9），不支持子 section 过滤。请使其精确支持子 section 过滤，"2.1,2.2,2.3,2.4,2.5,2.6,2.7,2.8" 只匹配这些子 section，剔除 2.9 / 3.x / 5.x。注意：源文件是 Windows CRLF (\r\n) 换行，逐行编辑时勿因 \r 残留破坏字段比较。
+2. 将 step3+ 验证 flow 从 virtuoso .il 改写为 aether flow，产出新脚本 step3_aether.il：经 vir 选定项目后用 aetherLE / aetherSE 进入 aether；用 dbOpenCellViewByType 打开 drcpa_top/ddr5top/schematic；正确处理 lib.defs（INCLUDE aether 工具的 lib.defs，并 SKIP amsLib）；规避 tbcload1.7 路径坑。改写后不得再直接调用 virtuoso（virtuoso -nograph 等），不得引用 cds.lib。
+3. 跑 pipeline 只产出 ERC 2.1~2.8 section 的报错（基于附件 ERC_Wesign.csv，剔除 2.9 / 3.1 / 5.2），生成 erc_report_2_1_to_2_8.csv。
+4. 把 lib.defs 更新为 aether 可用版本（INCLUDE aether lib.defs + SKIP amsLib + DEFINE drcpa_top）。
+
+交付：将以下 5 个文件打包成 outputs/submit.zip：
+  - prepare_new_netlist.py（修复后的）
+  - step3_aether.il（改写后的 aether flow 脚本）
+  - erc_report_2_1_to_2_8.csv（只含 2.1~2.8 的报告）
+  - lib.defs（aether 处理后的）
+  - run_all.sh（编排脚本，若你调整了就附上调整后的，否则原样）
+
+约束：不破坏 step0~step2 既有行为；交付的报告里不得出现 2.9 / 3.x / 5.x 任何行；aether flow 不得保留任何 virtuoso 直调或 cds.lib 引用。判分只校验 zip 内的脚本与报告产物（不强求你真跑 aether daemon）。

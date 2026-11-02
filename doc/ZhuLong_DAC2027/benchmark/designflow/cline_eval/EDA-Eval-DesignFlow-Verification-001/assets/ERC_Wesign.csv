@@ -1,0 +1,12 @@
+section,severity,rule_id,message,cell
+2.1,Error,ERC_001,VDD net floating on top supply,drcpa_top/ddr5top
+2.2,Error,ERC_002,GND net not connected to ground pad,drcpa_top/ddr5top
+2.3,Warning,ERC_003,Mixed-signal domain crossing without level shifter,drcpa_top/ana_top
+2.4,Error,ERC_004,NDR (non-default rule) spacing not met on VDD,drcpa_top/ddr5top
+2.5,Warning,ERC_005,Level shifter missing between domains,drcpa_top/io_top
+2.6,Error,ERC_006,Power switch (header/footer) missing,drcpa_top/pd_top
+2.7,Error,ERC_007,Isolation cell missing at domain boundary,drcpa_top/iso_top
+2.8,Warning,ERC_008,Retention register enable not connected,drcpa_top/sr_top
+2.9,Info,ERC_009,Informational note only (should be excluded),drcpa_top/misc
+3.1,Error,ERC_010,Other-domain check (should be excluded),drcpa_top/x_top
+5.2,Warning,ERC_011,Unrelated check (should be excluded),drcpa_top/y_top
