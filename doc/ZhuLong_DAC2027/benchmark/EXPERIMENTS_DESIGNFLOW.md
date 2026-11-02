@@ -170,3 +170,22 @@
 - **难度保留**：brief 只补"文件位置"（① 形态契约），**内容断言**（c–p：USE_LSF/bsub/dcnxt_shell、HL22/Au22 ulvt+lvt ssg ccs、set_svf before elaborate、compile_ultra -gate_clock、report qor/timing/area/power、cur_date tag、create_clock REFCLK/FBCLK async、set_false_path RST_N…）仍由 check.py 测，模型须凭 verbatim prompt + 自身知识写出正确 flow → 真实难度未稀释。
 - **待验证**：修复需 cline 重跑确认 ①+④ 降阈（本轮 40 min 预算不足跑 3×1500s 重跑，留下一轮）。预期：brief 送达后 cline 产对文件树 → ① 形态断言过 → 剩余内容断言测能力 → 真实通过率应低于旧 ①+④ 表观失败率。
 - **影响范围**：run_one.sh 修复惠及**所有未来 cline 重跑**（不止这 3 条）——任何写了 case 专属 brief 的 case 此前都被通用模板覆盖。
+
+## EXP-52 (2026-11-03 shard A 轮35): TLEFRules-001 cline+hook 重跑 — ①消除验证 + ④width_range schema bug 定位修复
+**背景**：EXP-51（轮34）修了 run_one.sh task_brief 覆盖 bug + 3 case brief 补全，但未跑 cline 验证。运维令 21:3x §③判据：①+④ 占比 ≤30% 才不修接口；轮32 8 条 ①+④=3/8=37.5% 破阈。本轮验轮34修复是否真降 ①。
+
+**.75 宕机**：本轮 eda_flow run_commands 全 exit -1 / duration 0 / stdout 只回显 bashpool wrapper（3 次重试+换 session 都一样），run_code pyAether MCP timeout，ssh 10.129.32.75 Connection timed out → 拿不到 summary.tsv 候选 → 合成路径阻塞。pivot 到本地 cline 重跑（不需 .75）。
+
+**TLEFRules-001 重跑**（701s/exit0/5iter）：
+- 旧跑（266s，轮32）：cline 只写 summary.md → FAIL (a) lef_rules.py missing → ①+④
+- 新跑（701s，brief 修复后）：cline 产 lef_rules.py(10.4KB)+rules_report_A.md(3.8KB)+README.md(3.1KB) → FAIL 前移到 (j)(t) width_range 格式 → **① 消除，仅剩 ④narrow**
+- ④ 根因：brief `width_range{}` 被 cline 解为嵌套 dict {min,max}；check.py 要 `{"M1":"0.88 TO 14"}` 字符串值 → brief/check schema 不一致（我的 bug）
+- 修复：brief → `width_range{<layer>:"<min> TO <max>"}` + 明示值是字符串非嵌套 dict；check.py 不动
+
+**结论**：
+1. **轮34 接口修复生效**（硬证据）：case-specific brief 送达后 cline 真产对交付件树 → ①交付形态断言消除。run_one.sh `shutil.copy(assets/task_brief.md→workdir/)` 修复惠及所有有 case-specific brief 的 case。
+2. **①+④ 重算 9 条**：3 PASS/9=33.3%；①+④=3/9=33.3%（STAFlow① + SynLintFlow①+④ + TLEFRules-rerun④narrow）。① 分量已降（TLEFRules ①→④）。待 STAFlow/SynLintFlow 重跑确认 ① 进一步消除。
+3. **④narrow 是 fixable interface bug**（brief/check schema 对齐），非难度稀释——修复后 cline 应能 PASS 或 fail 在更深的 content 断言（测能力）。
+4. **难度保留**：brief 只补"文件位置+格式契约"（运维令 21:3x §①3 允许），content 断言（routing/cut/via/viarule 解析正确性、跨输入 B 护栏）仍由 check.py 测。
+
+**待验证**（下轮）：STAFlow-001/SynLintFlow-001 重跑（brief 已修）验 ① 消除；TLEFRules-001 第 2 次重跑验 ④→PASS。

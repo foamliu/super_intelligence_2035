@@ -2,14 +2,14 @@ WAITING: 0
 SHARD: A (digital_front)
 DOMAINS: digital, eda_other, pnr_signoff, verification
 
-- **PHASE**: A-faithful 接口根因修复 = **完成（待 cline 重跑验证）**。运维令 21:3x §③判据：cline+hook 存量重跑 8 条中 ①+④ 类失败 3/8=37.5% **破 30% 阈值** → 需"先修接口与判分"。**根因**：`run_one.sh` 建 workdir 时用硬编码通用模板覆盖 `task_brief.md`，丢弃 `assets/<task_id>/task_bief.md` 的 case 专属交付件清单 → cline 看不到文件结构契约 → ①交付形态/④判分歧义 失败。**修复**：① run_one.sh 改为优先 `shutil.copy(assets/task_brief.md → workdir/)`，无则回退通用模板；② SynLintFlow-001 brief 重写为完整 9 文件 syn/ + 5 文件 lint/ 树（删悬空 ref_syn_prj 引用）；③ STAFlow-001 brief 增列 sta_main+10 编号步骤+2 csh+setup/common_setup 文件树；④ TLEFRules-001 brief 已充分不改。3 case workdir-build 隔离模拟全过（case-specific brief 送达 / leak CLEAN）。详见 EXPERIMENTS EXP-51。
-- ✅ **本轮交付**：A-faithful 接口修复（run_one.sh bug fix + 3 case brief 补全），直接对应运维令"先修接口"最高优先。**未新增 case、未跑 cline**（40min 预算不足跑 3×1500s 重跑）。A.jsonl 仍 27 条 / 台账 covered=26。
-- 📊 trace 覆盖率：26/1001 = 2.6%（covered=26 · touched=33 · parked=7；A jsonl 27 条，未变）
-- 🎯 通过率: cline+hook 存量重跑 2/8 = 25.0%（未本轮新增 cline 跑；①+④=3/8=37.5% 破阈已修接口，待重跑验证降阈）
-- 🧾 断言: 本轮无新 case（接口修复轮）；存量 27 条全达标
-- 📦 体积：TASK≈23.8KB / MEMORY_A≈12.9KB（轮 28–31 已归档 → MEMORY_A_archive.md 归档批次 1）
-- 🔒 泄漏隔离: 本轮仅改 run_one.sh + assets/task_brief.md（附件），不涉 check.py/reference/hidden；brief 只列文件位置不写内容（运维令 21:3x §①3 允许），内容断言留 check.py 测能力 → 难度未稀释
-- ⚠️ 运维令进度：A-faithful 接口修复完成（待验证）。**待办**：①cline 重跑 STAFlow/TLEFRules/SynLintFlow 验 ①+④ 降阈（优先，下轮第一件事）；②继续合成（A 档试点 2/10，候选池薄）；③A-faithful ①+④ 占比破阈已修接口，重跑后重算。
+- **PHASE**: A-faithful 接口修复**验证中**（TLEFRules-001 重跑 ✓ ① 消除）。轮34 run_one.sh task_brief 覆盖 bug 修复 + 3 case brief 补全。轮35 cline 重跑 TLEFRules-001（701s/exit0）：cline 真产出全部 3 文件含 lef_rules.py(10.4KB) → **①交付形态断言 (a)lef_rules.py-missing 消除**（旧 266s 跑只写 summary.md → ①+④）。新失败前移到 (j)(t) width_range 格式（④判分歧义：brief 写 `width_range{}` 被 cline 解为嵌套 dict，check.py 要 `{"M1":"0.88 TO 14"}` 字符串值）→ **brief/check schema 不一致（我的 bug）已修**：brief 改 `width_range{<layer>:"<min> TO <max>"}` 并明示值是字符串。详见 EXPERIMENTS EXP-52。
+- ✅ **本轮交付**：TLEFRules-001 cline+hook 重跑（验证轮34接口修复）+ ④width_range schema bug 定位与 brief 修复。**① 消除 = 接口修复生效的硬证据**。.75 bashpool/run_code 本轮宕机（run_commands exit -1 / pyAether MCP timeout）→ 合成路径阻塞，pivot 到本地 cline 重跑（不需 .75）。A.jsonl 仍 27 条 / 台账 covered=26。
+- 📊 trace 覆盖率：26/1001 = 2.6%（covered=26 · touched=33 · parked=7；A jsonl 27 条，未变；.75 宕机未刷新候选池）
+- 🎯 通过率: cline+hook 存量重跑 9 条 = 3 PASS / 9 = 33.3%（PTSignoff/InnovusLaunchDiag/FormalityLaunchDiag PASS）。①+④=3/9=33.3%（STAFlow① + SynLintFlow①+④ + TLEFRules-rerun④narrow）— **但 ① 分量已降**（TLEFRules ①→④），待 STAFlow/SynLintFlow 重跑确认 ① 进一步消除。
+- 🧾 断言: 本轮无新 case（验证轮）；存量 27 条全达标
+- 📦 体积：TASK≈23.8KB / MEMORY_A≈13.5KB
+- 🔒 泄漏隔离: cline workdir leak 自检 clean（brief+techlef 仅 2 附件，无 check.py/reference/hidden）；判分独立 /tmp/judge_*/；hook 部署+scope append（flock 多 shard 安全）
+- ⚠️ 运维令进度：TLEFRules-001 ① 消除验证 ✓。**待办**：①cline 重跑 STAFlow-001/SynLintFlow-001 验 ① 消除（brief 已修，优先下轮）；②TLEFRules-001 brief 修复后第 2 次重跑确认 ④→PASS（700s，下轮）；③.75 bashpool 恢复后继续合成（A 档试点 2/10）；④重算 ①+④ 占比是否降阈 ≤30%。
 
 
 ### 2026-11-03 shard A 轮 32：SynLintFlow-001 cline+hook 重跑 = FAIL·①+④ A-faithful（运维令 §四.3，①+④ 破 30% 阈值，WAITING: 0）
@@ -59,3 +59,14 @@ DOMAINS: digital, eda_other, pnr_signoff, verification
 - **难度保留论证**：brief 只补"文件位置"（① 形态契约，运维令允许）；**内容断言**（c–p：USE_LSF/bsub/dcnxt_shell、HL22/Au22 ulvt+lvt ssg ccs、set_svf before elaborate、compile_ultra -gate_clock、report qor/timing/area/power/clock_gating、cur_date tag、create_clock REFCLK/FBCLK async、set_false_path RST_N、sc_target.mk include…）仍由 check.py 测，模型须凭 verbatim prompt + 自身知识写正确 flow → 真实难度未稀释。这正是 A-faithful 与 B-synthesized 的区别：B 档 README 写明内容结构 → 形态+内容都给；A 档 brief 只给文件位置 → 形态给、内容考能力。
 - **影响范围**：run_one.sh 修复惠及**所有未来 cline 重跑**（不止这 3 条）——任何写了 case 专属 brief 的 case 此前都被通用模板覆盖。EXP-51 落 EXPERIMENTS。
 - ⬜ 下轮：①cline 重跑 STAFlow/TLEFRules/SynLintFlow 验 ①+④ 降阈（优先，每条 ~1500s，需单独轮次）；或 ②继续合成（A 档试点 2/10，候选池薄需扩大搜索）；或 ③FormalityLaunchDiag-001 cline 重跑（B 档对照 A/B）。
+
+### 2026-11-03 shard A 轮 35：TLEFRules-001 cline+hook 重跑 = ①消除·④width_range schema bug 定位修复（运维令 §四.3 验证轮34接口修复，WAITING: 0）
+- 任务卡本轮路径 = 合成 1 条新 case。eda_flow open_session → run_commands 取候选：**.75 bashpool 宕机**（run_commands 全 exit -1 / duration 0 / stdout 只回显 wrapper，3 次重试 + 换 session 都一样；run_code pyAether MCP timeout；ssh 10.129.32.75 Connection timed out）→ 拿不到 summary.tsv 候选 → **合成路径真外部阻塞**。pivot 到 MEMORY「下轮第一件事」优先：cline 重跑验轮34接口修复（本地跑不需 .75）。
+- **选 TLEFRules-001**（A 档 trace-faithful / pnr_signoff / L1 静态 LEF 解析）：轮32 三条 ①+④ 破阈 case 中最快（旧跑 266s），且 brief 修复最直接（轮34 已写 lef_rules.py+JSON schema 交付件清单）。ref dry-run：reference_submit.zip + check.py + A techlef + reference/hidden/ → /tmp/judge_*/ check() **PASS**（hidden/ 复制修复轮32 验证仍生效）。
+- **cline 重跑**：`CLINE_TIMEOUT=1200 bash run_one.sh TLEFRules-001 deepseek-v4-pro-cloud medium` → hook 部署 + workdir 建（2 附件: tech_thk2d0_m5.lef + task_brief.md，case-specific brief 送达 ✓，leak clean）→ cline 跑 **701s / exit 0 / 5 iterations**（thinking medium 产出超长 reasoning，session 3.1MB；iter1-4 读 prompt/brief/techlef+推理 LEF 解析逻辑，iter5 写 3 文件）→ 产出 **outputs/{lef_rules.py 10.4KB, rules_report_A.md 3.8KB, README.md 3.1KB}** → harness 打包 submit.zip → 独立判分。
+- **判分 = FAIL，但失败点前移**：旧跑（266s）FAIL 在 **(a) lef_rules.py missing**（cline 只写 summary.md → ①交付形态 + ④judge-spec-mismatch）。新跑（701s）FAIL 在 **(j)(t) width_range 格式**：cline 输出 `width_range={'M1':{'min':0.88,'max':5.0}}`（嵌套 dict），check.py 要 `{'M1':'0.88 TO 14'}`（字符串值）。**① (a)lef_rules.py-missing 消除** = 轮34 接口修复（case-specific brief 送达）生效的硬证据。
+- **④ 根因 = brief/check schema 不一致（我的 bug）**：brief 写 `viarules[{...,width_range{}}]`，`{}` 被 cline 解为"dict"但未明示值格式 → cline 合理地用嵌套 dict {min,max}。check.py 要 layer→"min TO max" 字符串。**修复**：brief 改 `width_range{<layer>:"<min> TO <max>"}` + 明示"值是字符串非嵌套 dict"。check.py 不动（grader 不应为外观格式改）。修复后 brief 与 check.py 期望一致。
+- **防泄题自验全过**：① workdir leak 自检 clean（仅 prompt+brief+techlef，0 判分器/答案/隐藏文件）；② cline 全程 0 read check.py/reference/hidden（8 read_files 全在 workspace 内：prompt/brief/techlef/outputs）；③ hook 拦截 2 built-in run_commands → cline 用 read_files+search_codebase+write_to_file（L1 不需 EDA MCP，.75 宕机无影响）；④ 判分独立 /tmp/judge_*/，check.py+hidden 从 reference/ 复制（cline workdir 外）。
+- **①+④ 重算（9 条）**：PASS=3（PTSignoff/InnovusLaunchDiag/FormalityLaunchDiag）=33.3%。①+④=3/9=33.3%（STAFlow① + SynLintFlow①+④ + TLEFRules-rerun④narrow）。**关键变化**：TLEFRules ①→④narrow（① 分量降）。待 STAFlow/SynLintFlow 重跑（brief 也已修）确认 ① 进一步消除 → ①+④ 应降阈。
+- status jsonl 追加第 9 行（verdict=FAIL / dur=701 / cline_exit=0 / failure_class=④narrow width_range schema, brief/check 不一致已修）。
+- ⬜ 下轮：①cline 重跑 STAFlow-001/SynLintFlow-001 验 ① 消除（brief 已修，优先）；②TLEFRules-001 第 2 次重跑确认 ④→PASS（brief schema 已修）；③.75 bashpool 恢复后继续合成（A 档试点 2/10）；④重算 ①+④ 占比。
