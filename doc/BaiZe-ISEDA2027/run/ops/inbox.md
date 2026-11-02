@@ -1,3 +1,73 @@
+# OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
+<!-- RUN_ID: 225 | TARGET: 29 -->
+## RUN_ID 225 — pretrain 现状体检（loop 存活 / S1 进度 / CPU 评测 5ckpt 进度 / 静默原因）
+
+> 背景：pretrain 线最后提交 11-02 16:06（health 心跳停在 13:14 #1152），已静默 ~3h。本块**只读**，不改任何进程/配置。
+
+```bash
+set -u
+echo "=== RUN_ID 225 | pretrain check | $(date '+%F %T') | host=$(hostname) ==="
+GR=/nas_train/app.e0031982/code/super_intelligence_2035
+BASE=/nas_train/app.e0031982/code/BaiZe-ISEDA2027
+cd "$GR" 2>/dev/null || true
+echo "[0] git HEAD=$(git rev-parse --short HEAD 2>/dev/null)  now=$(date '+%F %T')"
+
+echo
+echo "[1] pretrain watchdog loop"
+timeout 10 pgrep -af 'bash .*baize_pretrain_loop[.]sh' | head -5 || echo "  NO baize_pretrain_loop process"
+echo "  loop count = $(timeout 10 pgrep -cf 'bash .*baize_pretrain_loop[.]sh' 2>/dev/null || echo 0)"
+ls -l --time-style='+%F %T' /tmp/baize_pretrain_loop.log 2>/dev/null | awk '{print "  loop log: "$6,$7,$5"B"}' || echo "  loop log: none"
+echo "  loop log tail 6:"
+timeout 10 tail -6 /tmp/baize_pretrain_loop.log 2>/dev/null | cut -c1-200 | sed 's/^/    /' || true
+
+echo
+echo "[2] S1 training processes"
+timeout 10 pgrep -af 'pretrain_launcher|torchrun' | head -6 | cut -c1-160 || echo "  NO torchrun/pretrain_launcher"
+echo "  S1 logs mtime:"
+ls -l --time-style='+%F %T' /tmp/baize_s1_baize2b_worker.log /tmp/baize_s1_baize2b_master.log 2>/dev/null | awk '{print "    "$6,$7,$5"B",$8}'
+echo "  worker.log tail 4:"
+timeout 10 tail -4 /tmp/baize_s1_baize2b_worker.log 2>/dev/null | cut -c1-200 | sed 's/^/    /' || true
+
+echo
+echo "[3] GPU (.29 x8)"
+timeout 15 nvidia-smi --query-gpu=index,utilization.gpu,memory.used --format=csv,noheader 2>/dev/null | sed 's/^/    gpu /' || echo "  nvidia-smi unavailable"
+
+echo
+echo "[4] CPU/load (.29)"
+echo "  nproc=$(nproc 2>/dev/null)  load=$(cut -d' ' -f1-3 /proc/loadavg 2>/dev/null)"
+timeout 8 vmstat 1 2 2>/dev/null | tail -1 | awk '{print "  us%="$13" sy%="$14" id%="$15}'
+
+echo
+echo "[5] CPU eval / export processes"
+timeout 10 pgrep -af 'lm_eval|export_hf|p6_lmeval|convert_mcore_to_hf' | head -8 | cut -c1-160 || echo "  NONE"
+
+echo
+echo "[6] hf_iter_* outputs"
+timeout 25 find "$BASE" -maxdepth 3 -name 'hf_iter_*' -printf '%TY-%Tm-%Td %TH:%TM %10s %p\n' 2>/dev/null | sort | tail -12 | sed 's/^/    /' || true
+
+echo
+echo "[7] checkpoints (latest 6)"
+timeout 15 ls -lt --time-style='+%F %T' "$BASE/nemo_experiments/baize2b/checkpoints" 2>/dev/null | head -7 | awk '{print "    "$6,$7,$5,$8}'
+
+echo
+echo "[8] lm_eval_results (latest 10 + new json in 4h)"
+timeout 15 ls -lt --time-style='+%F %T' "$BASE/nemo_experiments/baize2b/lm_eval_results" 2>/dev/null | head -10 | awk '{print "    "$6,$7,$5,$8}'
+timeout 20 find "$BASE/nemo_experiments/baize2b/lm_eval_results" -maxdepth 2 -name '*.json' -mmin -240 2>/dev/null | head -10 | sed 's/^/    new: /'
+
+echo
+echo "[9] files modified in last 6h under BASE (max 12)"
+timeout 30 find "$BASE" -maxdepth 3 -type f -mmin -360 -printf '%TH:%TM %10s %p\n' 2>/dev/null | sort | tail -12 | sed 's/^/    /' || true
+
+echo
+echo "[10] .12 quick probe (20s timeout)"
+timeout 20 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.12 'echo "  host=$(hostname)"; echo "  loop=$(pgrep -cf "bash .*baize_pretrain_loop[.]sh" 2>/dev/null || echo 0)"; echo "  evalproc=$(pgrep -af "lm_eval|export_hf|p6_lmeval" | head -3 | tr "\n" "|")"; echo "  load=$(cut -d" " -f1-3 /proc/loadavg)"; nvidia-smi --query-gpu=index,utilization.gpu --format=csv,noheader 2>/dev/null | tr "\n" " " | cut -c1-140' 2>&1 | sed 's/^/    /' || echo "    ssh .12 failed/timeout"
+
+echo
+echo "=== DONE 225 ==="
+```
+
+<!-- 历史：RUN_ID 224 = 重启 pretrain loop（.29），命令与结果见 ops/outbox.md -->
+
 # OPS INBOX 鈥?杩愮淮涓嬪彂鍛戒护锛堝閮ㄨ繍缁寸紪杈戯紝涓户鍙锛?
 <!-- RUN_ID: 224 | TARGET: 29 -->
 ## RUN_ID 224 — 🔄 重启 pretrain loop（用户直令）+ 先修 .29 swappiness=60→0
