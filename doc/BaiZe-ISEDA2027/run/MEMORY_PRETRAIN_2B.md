@@ -4,33 +4,21 @@ WAITING: 0
 
 
 
-> 📦 §#1155（11-02 20:35, CPU acc=0.0根因+修复）→ daily-memories/2026-11-02.md；**结论**：float32 NaN→bfloat16修复, simple_evaluate重写, sciq limit=4 acc=0.5 PASS。被#1156 ETA确认。需要时再读。
+> 📦 §#1155（11-02 20:35, CPU acc=0.0根因+修复）→ daily-memories/2026-11-02.md；**结论**：float32 NaN→bfloat16修复, simple_evaluate重写, sciq limit=4 acc=0.5 PASS。被#1157修正。需要时再读。
+> 📦 §#1156（11-02 21:40, CPU ETA报告·sciq-only测速16.44s/req）→ daily-memories/2026-11-02.md；**结论**：推荐limit=100→24h。**⚠️ 被#1157修正**：sciq短序列不代表全部8集，arc_challenge实测45-59s/req（3-4×更慢），真实ETA更长。需要时再读。
 
-> 🆕 2026-11-02 21:40 #1156：**📊 CPU 评测 ETA 报告（运维令 11:1x + 19:51）——先回报，待运维确认后再全量**。
-> **① 冒烟结果（已确认 PASS）**：sciq --limit 4, bfloat16, batch_size=1 → **acc=0.5, acc_norm=0.5**（float32 时 acc=0.0 因 NaN）。日志 `/tmp/diag_hflm_sciiq.log`。模型加载 ~1.8s，5 个 HF 导出（hf_iter_10000~50000）均齐备（各 1 safetensors + config.json，无 mamba_dt_limit 字段问题）。
-> **② 实测速度（batch_size=1, bfloat16, CPU, ~4 OMP 线程）**：**16.44s/loglikelihood-request**（16 req in 262s，稳定 15.9–17.5s/it）。
-> **③ batch_size=4 测试（已否决）**：153.76s/it = **9.4× 更慢**！Mamba2 pure-PyTorch reference 在 CPU 上不受益于 batch 并行（SSM 顺序扫描 + 大张量 cache 压力）。⇒ **必须用 batch_size=1**。
-> **④ 全量 ETA（无 limit, batch_size=1, 16.44s/req）**：
-> | 任务 | docs | choices | reqs | 耗时 |
-> |---|---|---|---|---|
-> | arc_challenge | 1172 | 4 | 4688 | 21.4h |
-> | arc_easy | 2376 | 4 | 9504 | 43.4h |
-> | boolq | 3270 | 2 | 6540 | 29.9h |
-> | hellaswag | 10042 | 4 | 40168 | **183.4h** |
-> | openbookqa | 500 | 4 | 2000 | 9.1h |
-> | piqa | 1838 | 2 | 3676 | 16.8h |
-> | sciq | 1000 | 4 | 4000 | 18.3h |
-> | winogrande | 1267 | 2 | 2534 | 11.6h |
-> | **合计/ckpt** | | | **73110** | **333.9h = 13.9 天** |
-> 5 ckpt / 2 机（.29 跑 3 个、.12 跑 2 个）→ **~42 天**。❌ 不可行。
-> **⑤ 推荐方案（subsample 以在 24h 内完成）**：
-> - **limit=100/任务**（2600 req × 16.44s = 11.9h/ckpt）：5 ckpt / 2 机 / 每机 2 并行 → **~24h** ✅。stderr 较高但 5 点趋势曲线可绘。
-> - **limit=200/任务**（5200 req × 16.44s = 23.7h/ckpt）：5 ckpt / 2 机 / 每机 2 并行 → **~48h ≈ 2 天**。精度更好。
-> - **limit=500/任务**（13000 req × 16.44s = 59.4h/ckpt）：→ **~7.4 天**。❌ 超 24h。
-> **⑥ CPU 资源**：.29 load 29.1/224 (13%), .12 load 24.9/224 (11%)。每进程 ~5 核 (nice 19)，2 并行 = ~10 核 = 4.5% → 远低于 80% 上限，不影响 S1。
-> **⑦ 交付计划**（运维确认 limit 后）：5 ckpt × 8 集 → `nemo_experiments/baize2b/lm_eval_results/` → 汇总表 + 能力-vs-step 曲线 → `reports/report_pretrain_cpu_eval_8sets_zh.html`。
-> **S1 状态**：iter 58890/700k (8.41%), loss 2.061, 0 NaN, ~592K tok/s, GPU 100%。.29 CPU 13.0%, .12 CPU 11.1%。
-> **下一步**：**等运维确认 limit 值（推荐 100 → 24h, 或 200 → 48h）**，确认后立即全量评测。未完成指令：有。WAITING: 0。
+> 🆕 2026-11-02 22:05 #1157：**📊 CPU 评测已启动（limit=100, OMP=8, 2并行/机, 4 eval 运行中）——ETA 修正**。
+> **① 速度修正**：#1156 的 16.44s/req 仅适用于 sciq（短序列）。arc_challenge（长序列）实测 **45-46s/req（.29）/ 57-59s/req（.12）**。OMP=8 比 OMP=4 快（48 vs 68s/req）。8 集加权平均估计 ~34s/req（短任务 sciq/winogrande/openbookqa 快，长任务 hellaswag/arc_challenge 慢）。
+> **② 已启动 4 个 eval**（limit=100, 8集, bfloat16, batch_size=1, nice 19, OMP=8, CUDA_VISIBLE_DEVICES=""）：
+> - .29: hf_iter_10000 (PID 992664) + hf_iter_30000 (PID 1196989)
+> - .12: hf_iter_20000 (PID 3729981) + hf_iter_40000 (PID 3898654)
+> - hf_iter_50000 待 .29 有空槽时启动（第 5 个 ckpt）。
+> **③ 修正后 ETA**：按 ~34s/req 平均，limit=100 = 2599 req → ~24.8h/ckpt；2 并行/机 → .29 跑 3 ckpt（2 轮 ~50h）、.12 跑 2 ckpt（1 轮 ~25h）→ **总 ~50h ≈ 2 天**。如运维要求 24h 内完成可降至 limit=50（~25h）。
+> **④ CPU 负载**：.29 load 28.6/224 (12.8%, id=86%), .12 load 30.3/224 (13.5%, id=80%) → 远低于 80% 上限，不影响 S1。
+> **⑤ S1 状态**：iter 59110/700k (8.44%), lr=5.55e-4（warmup 爬升中, resume 未恢复 scheduler）, ~7s/step, ~590K tok/s, GPU 100%, 0 NaN。launcher pid 4163528。
+> **⑥ 交付计划**：5 ckpt × 8 集 → `nemo_experiments/baize2b/lm_eval_results/hf_iter_*/results.json` → 汇总表 + 能力-vs-step 曲线 → `reports/report_pretrain_cpu_eval_8sets_zh.html`。
+> **📦 体积**：TASK=30.6KB / MEMORY=25.7KB（归档 0KB → ARCHIVE_OPERATOR_PRETRAIN.md）。
+> **下一步**：监控 4 eval 进度；任一完成后启动 hf_iter_50000；全部完成后收集结果→生成报告。未完成指令：有。WAITING: 0。
 > 📦 §#1154（11-02 19:55, CPU ETA+GPU发现）→ daily-memories/2026-11-02.md；**结论**：5 export 完成, float32 CPU冒烟11.7s/req, ETA 9.9天, GPU空闲建议（已被19:51令否决—GPU重新满载）。被#1155修正。需要时再读。
 > 📦 §#1151（11-02 12:55, S1健康监控iter55140/loss~2.114/0NaN/~592K tok/s）→ daily-memories/2026-11-02.md；**结论**：S1健康iter55140(7.88%), loss~2.114稳态, grad-norm 0.088-0.099(极稳无spike), ~592K tok/s, ckpt@iter_54000(saved@10:41, next@56000)。被#1152监控。需要时再读。
 > 📦 §#1150（11-02 12:35, S1健康监控iter54980/loss~2.105/0NaN/~601K tok/s）→ daily-memories/2026-11-02.md；**结论**：S1健康iter54980(7.85%), loss~2.105稳态, grad-norm 0.082-0.103(极稳无spike), ~601K tok/s, ckpt@iter_54000(saved@10:41, next@56000)。被#1151监控。需要时再读。
