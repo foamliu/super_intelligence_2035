@@ -105,11 +105,18 @@ forbidden = {'_check.py','check.py','_reference_check.py',
 copied = []
 for a in case.get('attachments', []):
     src = a.get('source') or a.get('name')
-    if not src or src in forbidden: continue
-    sp = os.path.join(assets_src, src)
+    name = a.get('name') or os.path.basename(src)
+    if not name or name in forbidden: continue
+    # source 可能是 'assets/<task_id>/<name>' 或裸 '<name>'；统一按 name 在 ASSETS_SRC 取
+    sp = os.path.join(assets_src, name)
     if os.path.exists(sp):
-        shutil.copy(sp, os.path.join(workdir, 'assets', src))
-        copied.append(src)
+        shutil.copy(sp, os.path.join(workdir, 'assets', name))
+        copied.append(name)
+    else:
+        alt = os.path.join(assets_src, src)
+        if os.path.exists(alt):
+            shutil.copy(alt, os.path.join(workdir, 'assets', name))
+            copied.append(name)
 # 防御：扫描 workdir 确认无泄漏
 leak = []
 for root, _, files in os.walk(workdir):
@@ -134,13 +141,13 @@ if [ "${SKIP_RUN:-0}" = "1" ]; then
   log "3. SKIP_RUN=1，跳过 cline 执行"
 else
   log "3. 跑 cline (model=$MODEL thinking=$THINKING timeout=${CLINE_TIMEOUT}s)"
-  CLI_PROMPT="Read prompt.txt in the current directory. It describes a complete multi-step task. Use the files in the assets/ folder as inputs. Produce the deliverable exactly as prompt.txt specifies: package the required files into outputs/submit.zip. When outputs/submit.zip exists, stop immediately and do not perform any further tool calls.
+  CLI_PROMPT="Read prompt.txt in the current directory. It describes a complete multi-step task. Use the files in the assets/ folder as inputs. Produce the deliverable exactly as prompt.txt specifies: write each required deliverable file directly under the outputs/ directory, preserving the EXACT internal directory structure the task names (e.g. if the task asks for tcl/pt_sta.tcl, write it to outputs/tcl/pt_sta.tcl). Do NOT zip or package anything yourself, and do NOT run any zip/tar/packaging command — the harness will package outputs/ into outputs/submit.zip for judging after you finish. When every required deliverable file has been written under outputs/, stop immediately and do not perform any further tool calls.
 
-IMPORTANT tool usage rules (the built-in run_commands/bash/shell tools will NOT work for this task):
-- All EDA and shell commands MUST use the MCP tool 'mcp__pyAether_MCP_server__run_commands' — it executes on the EDA server (32.75) in your session workdir. The built-in run_commands runs on the local dev machine which CANNOT reach the EDA server or EDA NAS, and will only return a NOTICE telling you to switch to the MCP tool.
+IMPORTANT tool usage rules (the built-in run_commands/bash/shell tools will NOT work for this task — they are sandboxed to prevent answer leakage):
+- To WRITE deliverable files and to READ files already in your local workspace (assets/, prompt.txt, task_brief.md, outputs/), use the built-in write_to_file / read_file tools. These work inside the workspace. The internal directory structure under outputs/ must match what the task specifies — create subdirectories as needed (e.g. outputs/tcl/, outputs/setup/).
+- All EDA and shell commands (running tools, zipping, building, simulating on the EDA server) MUST use the MCP tool 'mcp__pyAether_MCP_server__run_commands' — it executes on the EDA server (32.75) in your session workdir. The built-in run_commands runs on the local dev machine which CANNOT reach the EDA server or EDA NAS, and will only return a NOTICE telling you to switch to the MCP tool.
 - To run pyAether/SKILL/Tcl code on the EDA server, use 'mcp__pyAether_MCP_server__run_code'.
 - To read EDA-side files (produced on 32.75), use 'mcp__pyAether_MCP_server__read_file'. To list EDA-side dirs, use 'mcp__pyAether_MCP_server__list_files'.
-- To read files already in your local workspace (assets/, prompt.txt, task_brief.md), use the built-in read_file tool.
 - Do NOT attempt to read, list, or access any file named check.py, _check.py, reference/, or anything outside the current workspace."
   cd "$WORKDIR"
   START=$(date +%s)
@@ -156,6 +163,19 @@ IMPORTANT tool usage rules (the built-in run_commands/bash/shell tools will NOT 
   log "   cline exit=$CLINE_EXIT dur=${DUR}s"
 fi
 
+# ---- 3b. harness 打包 outputs/ -> submit.zip（防泄题关键：cline 不能跑本地 shell
+#         建包，由 run_one.sh 在 cline 退出后打包；cline 只用 write 工具写文件，
+#         全程不接触 check.py/reference，判分仍独立在 /tmp/judge 跑）----
+if [ ! -f "$WORKDIR/outputs/submit.zip" ]; then
+  nfiles=$(find "$WORKDIR/outputs" -type f 2>/dev/null | wc -l)
+  if [ "$nfiles" -gt 0 ]; then
+    log "3b. harness 打包 outputs/ -> submit.zip ($nfiles 个文件，cline 未自建包)"
+    ( cd "$WORKDIR/outputs" && zip -r -q submit.zip . ) || err "zip 打包失败"
+  else
+    log "3b. outputs/ 为空，不打包（cline 未产出任何交付件）"
+  fi
+fi
+
 # ---- 4. 独立判分（不在 cline workdir）----
 VERDICT="ABSENT"; REASON=""
 if [ "${SKIP_JUDGE:-0}" = "1" ]; then
@@ -164,14 +184,14 @@ else
   log "4. 独立判分: $JUDGE"
   rm -rf "$JUDGE"; mkdir -p "$JUDGE"
   if [ ! -f "$WORKDIR/outputs/submit.zip" ]; then
-    VERDICT="FAIL"; REASON="no submit.zip produced"
+    VERDICT="FAIL"; REASON="no submit.zip produced (cline wrote nothing under outputs/)"
     log "   $REASON"
   else
     cp "$WORKDIR/outputs/submit.zip" "$JUDGE/"
     cp "$REF_DIR/check.py" "$JUDGE/"
     # 把合法 A 附件也复制进 judge dir（check.py 可能从 workdir 读附件）
     for a in $(python3 - "$TASK_ID" "$JSONL" <<'PY'
-import json,sys
+import json,sys,os
 tid=sys.argv[1]; jl=sys.argv[2]
 for line in open(jl):
     d=json.loads(line)
@@ -179,7 +199,8 @@ for line in open(jl):
         forbidden={'_check.py','check.py','_reference_check.py','reference_submit.zip','reference','negative','hidden','hidden_manifest.json'}
         for a in d.get('attachments',[]):
             s=a.get('source') or a.get('name')
-            if s and s not in forbidden: print(s)
+            n=a.get('name') or (os.path.basename(s) if s else '')
+            if n and n not in forbidden: print(n)
         break
 PY
 ); do
