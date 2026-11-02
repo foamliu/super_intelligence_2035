@@ -16,3 +16,5 @@
 1792573537545_enbl7					case	EDA-Eval-DesignFlow-SimlibIndex-001	2026-11-02 15:59	
 1793078405436_t0aom					case	EDA-Eval-DesignFlow-TempSelInfer-001	2026-11-02 15:59	
 1791963281932_4a852.messages.json	e0039602	hfeg0plg85	661	schematic_netlist	case	EDA-Eval-DesignFlow-CellMap-001	2026-11-02 16:37	
+1789370647360_ukkn7.messages.json	e0031668	hfeg0plg91	1478	schematic_netlist	parked		2026-11-02 16:44	duplicate of SkillToAether-001 (t1xjg): same user e0031668, same ERC_AI_CHECK step3+ SKILL->pyAether rewrite task
+1790487462826_wb03t.messages.json	cwei	hfeg0plg93	691	analog_context	case	EDA-Eval-DesignFlow-CTLEAether-001	2026-11-02 16:58	
