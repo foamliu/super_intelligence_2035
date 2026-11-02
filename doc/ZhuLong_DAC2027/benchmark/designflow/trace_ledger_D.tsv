@@ -20,3 +20,4 @@
 1790487462826_wb03t.messages.json	cwei	hfeg0plg93	691	analog_context	case	EDA-Eval-DesignFlow-CTLEAether-001	2026-11-02 16:58	
 1788770994295_x4b0p.messages.json	xinqiaoz	hfeg0plg76	1367	schematic_netlist	parked		2026-11-02 17:12	PDK QA Calibre DRC migration multi-phase software-eng; netlist/skill match marginal (count 2); not analog_context/schematic_netlist/waveform; belongs to physical_verify shard
 1790142100320_n91pk.messages.json	alenxu	hfeg0plg94	755	schematic_netlist	case	EDA-Eval-DesignFlow-CTLEAcMetric-001	2026-11-02 17:37	
+1793102773959_okq91.messages.json	easont	hfeg0pfn119	650	schematic_netlist	claimed		2026-11-02 17:59	
