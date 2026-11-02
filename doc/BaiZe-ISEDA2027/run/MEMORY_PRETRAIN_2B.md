@@ -7,18 +7,19 @@ WAITING: 0
 > 📦 §#1155（11-02 20:35, CPU acc=0.0根因+修复）→ daily-memories/2026-11-02.md；**结论**：float32 NaN→bfloat16修复, simple_evaluate重写, sciq limit=4 acc=0.5 PASS。被#1157修正。需要时再读。
 > 📦 §#1156（11-02 21:40, CPU ETA报告·sciq-only测速16.44s/req）→ daily-memories/2026-11-02.md；**结论**：推荐limit=100→24h。**⚠️ 被#1157修正**：sciq短序列不代表全部8集，arc_challenge实测45-59s/req（3-4×更慢），真实ETA更长。需要时再读。
 
-> 🆕 2026-11-02 22:05 #1157：**📊 CPU 评测已启动（limit=100, OMP=8, 2并行/机, 4 eval 运行中）——ETA 修正**。
-> **① 速度修正**：#1156 的 16.44s/req 仅适用于 sciq（短序列）。arc_challenge（长序列）实测 **45-46s/req（.29）/ 57-59s/req（.12）**。OMP=8 比 OMP=4 快（48 vs 68s/req）。8 集加权平均估计 ~34s/req（短任务 sciq/winogrande/openbookqa 快，长任务 hellaswag/arc_challenge 慢）。
-> **② 已启动 4 个 eval**（limit=100, 8集, bfloat16, batch_size=1, nice 19, OMP=8, CUDA_VISIBLE_DEVICES=""）：
-> - .29: hf_iter_10000 (PID 992664) + hf_iter_30000 (PID 1196989)
-> - .12: hf_iter_20000 (PID 3729981) + hf_iter_40000 (PID 3898654)
-> - hf_iter_50000 待 .29 有空槽时启动（第 5 个 ckpt）。
-> **③ 修正后 ETA**：按 ~34s/req 平均，limit=100 = 2599 req → ~24.8h/ckpt；2 并行/机 → .29 跑 3 ckpt（2 轮 ~50h）、.12 跑 2 ckpt（1 轮 ~25h）→ **总 ~50h ≈ 2 天**。如运维要求 24h 内完成可降至 limit=50（~25h）。
-> **④ CPU 负载**：.29 load 28.6/224 (12.8%, id=86%), .12 load 30.3/224 (13.5%, id=80%) → 远低于 80% 上限，不影响 S1。
-> **⑤ S1 状态**：iter 59110/700k (8.44%), lr=5.55e-4（warmup 爬升中, resume 未恢复 scheduler）, ~7s/step, ~590K tok/s, GPU 100%, 0 NaN。launcher pid 4163528。
-> **⑥ 交付计划**：5 ckpt × 8 集 → `nemo_experiments/baize2b/lm_eval_results/hf_iter_*/results.json` → 汇总表 + 能力-vs-step 曲线 → `reports/report_pretrain_cpu_eval_8sets_zh.html`。
-> **📦 体积**：TASK=30.6KB / MEMORY=25.7KB（归档 0KB → ARCHIVE_OPERATOR_PRETRAIN.md）。
-> **下一步**：监控 4 eval 进度；任一完成后启动 hf_iter_50000；全部完成后收集结果→生成报告。未完成指令：有。WAITING: 0。
+> 📦 §#1157（11-02 22:05, CPU eval全量启动+ETA修正）→ daily-memories/2026-11-02.md；**结论**：4 eval启动(limit=100,2599req,~34s/req),ETA~50h≈2天。被#1158监控。需要时再读。
+
+> 🆕 2026-11-02 22:12 #1158：**📊 CPU eval 进度监控——4 eval 运行正常，速度修正 ETA ~3 天**。
+> **① 4 eval 运行中**（limit=100, 8集, 2599 total req, bfloat16, batch_size=1, nice 19, OMP=8, CUDA_VISIBLE_DEVICES=""）：
+> - .29: hf_iter_10000 (PID 992664, ~38-50s/req, 14/2599) + hf_iter_30000 (PID 1196989, ~51s/req, 8/2599)
+> - .12: hf_iter_20000 (PID 3729981, ~50-61s/req, 12/2599) + hf_iter_40000 (PID 3898654, ~62s/req, 7/2599)
+> - hf_iter_50000: **已 export 完成**（config+safetensors+tokenizer 齐备），待空槽启动（两机均 2/2 满载）。
+> **② 速度实测修正**：2599 req 是 8 集总量（limit=100/集）。实测 .29 ~40-50s/req、.12 ~55-62s/req（.12 慢因 CPU 被 S1 dataloader 占）。单 ckpt ETA：.29 ~32h、.12 ~45h。.29 跑 3 ckpt(2轮)→~69h；.12 跑 2 ckpt(1轮)→~45h → **总墙钟 ~69h ≈ 3 天**（比 #1157 估的 2 天更长，因 .12 速度比预期慢）。
+> **③ CPU 负载**：.29 load 35.2/224 (id=85.2%, ~14.8% used)；.12 load 38.8/224 (id=75.7%, ~24.3% used) → 均远低于 80% 上限，不影响 S1。
+> **④ S1 状态**：iter 59160/700k (8.45%), loss ~2.078, 0 NaN, ~7s/step, ~590K tok/s, GPU 100%, lr=5.80e-4 (warmup 爬升中)。launcher pid 4163528。
+> **⑤ 旧 results.json**：hf_iter_10000/results.json (20:53) 仅有 sciq acc=0.0（#1155 冒烟遗留），当前重跑将覆盖为完整 8 集结果。
+> **📦 体积**：TASK=30.6KB / MEMORY=25.2KB（归档 0KB）。
+> **下一步**：持续监控；任一 eval 完成(~32h后)→启动 hf_iter_50000→收集 5×8 结果→生成报告。未完成指令：有。WAITING: 0。
 > 📦 §#1154（11-02 19:55, CPU ETA+GPU发现）→ daily-memories/2026-11-02.md；**结论**：5 export 完成, float32 CPU冒烟11.7s/req, ETA 9.9天, GPU空闲建议（已被19:51令否决—GPU重新满载）。被#1155修正。需要时再读。
 > 📦 §#1151（11-02 12:55, S1健康监控iter55140/loss~2.114/0NaN/~592K tok/s）→ daily-memories/2026-11-02.md；**结论**：S1健康iter55140(7.88%), loss~2.114稳态, grad-norm 0.088-0.099(极稳无spike), ~592K tok/s, ckpt@iter_54000(saved@10:41, next@56000)。被#1152监控。需要时再读。
 > 📦 §#1150（11-02 12:35, S1健康监控iter54980/loss~2.105/0NaN/~601K tok/s）→ daily-memories/2026-11-02.md；**结论**：S1健康iter54980(7.85%), loss~2.105稳态, grad-norm 0.082-0.103(极稳无spike), ~601K tok/s, ckpt@iter_54000(saved@10:41, next@56000)。被#1151监控。需要时再读。
