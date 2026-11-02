@@ -2,15 +2,15 @@ WAITING: 0
 SHARD: A (digital_front)
 DOMAINS: digital, eda_other, pnr_signoff, verification
 
-- **PHASE**: cline+hook 重跑 SynLintFlow-001 = **FAIL·①+④ A-faithful judge-spec-mismatch**（运维令 §四.3 第 8 条样本）。trace_ledger --shard A next 候选池薄（digital 高 mc 多为 analog-heavy；m1cve VCS+DC 链 A-档合规但金标准模糊——用户在 VCS+DC 交付前 pivot 到 token-plan 测试，未接受结果），pivot 到 cline 重跑扩样本。SynLintFlow-001（A 档 / digital / 26 断言）：cline 跑 1640s / exit 0 / 4 文件（lint/spyglass_lint.prj + spyglass_constraints.sgdc + syn/dc_synth.tcl + syn/.synopsys_dc.setup）→ check.py 0/26 FAIL（要求 9 文件 DC flow: syn_filelist+Makefile LSF/bsub/dcnxt_shell+DC_XARGS -x+dc_setup.tcl HL22/Au22+dw_foundation+set_svf+compile_ultra -gate_clock）。**bug fix**: run_one.sh judge 步骤漏复制 hidden/ → 加 cp -r assets/hidden 或 reference/hidden 到 $JUDGE/hidden（SynLintFlow v-z 断言需 workdir/hidden/，修复后 ref 26/26 PASS）。
-- ✅ **本轮交付**：SynLintFlow-001 cline+hook 重跑（第 8 条样本）+ run_one.sh hidden/ 复制 bug 修复。A.jsonl 仍 26 条（本轮无新合成）。台账 covered=25 / touched=32 / parked=7。
+- **PHASE**: 合成 SPFCoupling-001 = **PASS（自验）**（A 档 trace-faithful / eda_other / L1）。trace 5pv45（ray1lei/hfeg0pkn004/mc=32，SPF coupling 解析）：用户原话 U#0+U#15 逐字（SPF signal coupling 数据 → SABL 汇总 CSV，23 列规范）——**A 档规则 ② 合规（纯目标，无根因/修复）**。金标准 = sabl_summary.py（纯字符串操作 DSPF 1.3 解析器，处理 pracL/R 无 <idx> 边界）+ A CSV（40 行）。check.py 16 条断言 a–p，自验 ref PASS + 5 negative 全 FAIL（NEG_RC=0/5，fake_empty→(a) / fake_print_expected→(f) 跨输入护栏 / fake_core_deleted→(k) cslin / naive_hardcode_a→(f) / naive_no_accumulate→(c)）+ §4.9 三假提交全 FAIL + gate 16/16/✓。
+- ✅ **本轮交付**：EDA-Eval-DesignFlow-SPFCoupling-001（A 档 / eda_other / L1 / SPF coupling→CSV 解析流，eda_other 补牙 1→2）。A.jsonl 现 27 条。台账 covered=26 / touched=33 / parked=7。
 - ✅ DEBT 已清零。
-- 📊 trace 覆盖率：25/1001 = 2.5%（covered=25 · touched=32 · parked=7；A jsonl 26 条）
-- 🎯 通过率: cline+hook 存量重跑 **2/8 = 25.0%**（目标 20–30% ✓ 在带）。①+④ = 3/8 = **37.5% > 30% 阈值** → 破阈，需修接口。
-- 🧾 断言: 本轮无新 case（cline 重跑不产 case）；存量 26 条全达标
+- 📊 trace 覆盖率：26/1001 = 2.6%（covered=26 · touched=33 · parked=7；A jsonl 27 条）
+- 🎯 通过率: cline+hook 存量重跑 2/8 = 25.0%（未本轮新增 cline 跑）。合成路径自验全过。
+- 🧾 断言: 本轮 SPFCoupling-001 = 16/16/✓（k_rationale=k_check=16≥8）；存量 27 条全达标
 - 📦 体积：TASK≈23.8KB / MEMORY_A≈26KB
-- 🔒 泄漏隔离: cline workdir leak 自检 clean（0 forbidden files）；35 forbidden-mention 全 benign reasoning（"check.py I must not access"，0 实际 read）；hook 36 tool_call events；判分独立 /tmp/judge_*（hidden/ 复制到 judge dir，不进 cline workdir）
-- ⚠️ 运维令进度：**A-faithful ①+④ 占比破 30% 阈值（3/8=37.5%）**，轮 30 预测命中。**待办（下轮第一件事）**：①修 A-faithful 接口（task_brief 加 1 行交付件格式要求 OR check.py 放宽接受通用 DC flow）——STAFlow/TLEFRules/SynLintFlow 三条 ①+④ 逐条评估修哪端；②继续合成（A 档试点 1/10，下一轮优先找 A 档合规 L2 trace，候选池薄需扩大搜索）；③FormalityLaunchDiag-001 cline 重跑（B 档对照）。
+- 🔒 泄漏隔离: 本轮合成路径不涉 cline workdir；check.py + reference_submit.zip + negative/ 仅在 reference/ 与 /tmp/judge_*；assets/hidden/B_msaq_E.spf_CC 不进 SUT 沙箱（B 内嵌 gzip+b64 于 check.py 9.4KB + 镜像 reference/hidden/，判分在 /tmp/judge_* 独立跑）
+- ⚠️ 运维令进度：SPFCoupling-001 落库（eda_other 补牙，1→2；A 档试点 2/10）。**待办**：①存量 A/B 档 cline+hook 重跑验真实通过率；②继续合成（A 档试点 2/10，下一轮继续找 A 档合规 L2 trace，候选池薄需扩大搜索）；③A-faithful ①+④ 占比破 30% 阈值（3/8=37.5%）仍待修接口。
 
 
 ### 2026-11-03 shard A 轮 32：SynLintFlow-001 cline+hook 重跑 = FAIL·①+④ A-faithful（运维令 §四.3，①+④ 破 30% 阈值，WAITING: 0）
@@ -76,3 +76,27 @@ DOMAINS: digital, eda_other, pnr_signoff, verification
 - status jsonl 追加第 7 行（verdict=FAIL / dur=266 / cline_exit=0 / failure_class=①+④ A-faithful judge-spec-mismatch）。cline_eval_status.jsonl 7 行 = 2/7 PASS = 28.6%（剔除 harness 限 Verification-001 后 2/6 = 33%）。
 - ⬜ 下轮：①继续 cline 重跑 SynLintFlow-001（A-faithful / digital）看 ①+④ 占比是否破 30%；或 ②回合成路径（trace_ledger --shard A next，t2qp9 parked 后继续选 dig 候选）；或 ③FormalityLaunchDiag-001（B 档 synthesized / verification，对照 A/B 通过率）。
 
+
+
+### 2026-11-03 shard A 轮 33：SPFCoupling-001 合成 ✓（eda_other / L1 / A 档 trace-faithful，SPF coupling→CSV 解析，WAITING: 0）
+- 任务卡本轮路径 = 合成 1 条新 case。eda_flow open_session → run_commands 在 .75 解析 summary.tsv。
+- **选料**：长 awk 排除正则在 .75 报 syntax error（已知坑），改 python 脚本按 `kw:count` 解析 keywords 字段 DIG 信号（verdi/vcs/dc_shell/primetime/formality/spyglass/innovus/.def/.sdc/...）+ ANA 反向过滤（hspice/spectre/virtuoso/waveview/...），strong≥5 且 ana≤strong，mc≥30，排除台账 32 条，得 11 候选。逐个 scp+解析首 user msg：
+  - poxvz(johnl/mc=73,dc_shell)=DC run_dc.sh 调试（依赖失败状态，②前提缺失风险）→ 备选；
+  - m1cve(johnl/mc=61,synthesis+dc_shell,416msgs)=VCS+DC 但用户中途 pivot 到 tokenplan API 测试 + agent 框架开发，多任务混杂非聚焦 → skip；
+  - k5jti(e0046913/mc=45,primetime)=PT 版本选择 Q&A（非交付）→ skip；
+  - gavk7(xxchen/mc=97)=nxtgrd 文件对比报告（physical，非 digital）→ skip；
+  - 8u3iw(thomasz/mc=61)=ESD dir 数据量对比报告（非 design_flow 交付）→ skip；
+  - 1f34q(johnl/mc=35)=复制旧会话非任务 → skip；
+  - **5pv45**（ray1lei/hfeg0pkn004/10.129.2.13/mc=32，.def:69）→ scp 926KB messages.json（144 msgs / 84 user）→ 首条 user #0 = "转化为排版规律的csv文件或excel文件...SPF工具抽出来的signal之间的coupling数据...每个空白行后的第一行都是这个信号的总coupling" + #5 格式示例（DSPF 1.3 *|NET 块 + 耦合行）+ #15 详细 23 列规范。
+- **A/B 档判定**：#0+#15 = 纯目标表达（解析 SPF → SABL CSV），用户未指出根因/未给修复 → **A 档规则 ② 合规 → A 档 trace-faithful**（prompt = #0+#5+#15 逐字原文）。
+- **深读**：真实任务 = 用户在 /ai_sandbox/drgqx/V0/agentdir/ray1lei 解析 StarRC DSPF 1.3 SPF 文件 msaq_E.spf_CC（37MB/41万行/20818 NET），提取 SABL（sense-amplifier bit-line）信号 XI_msax*_cp*.XI_CXSA_*.Sa_BLa/b<bit> 的耦合汇总。agent 经多轮调试（regex 反斜杠双转义 → 改纯字符串操作；pracL 无 <idx> 实例名边界 → 加无序号分支），最终 sabl_summary.py（384 行纯字符串操作）产出 4496 行 CSV。金标准 = sabl_summary.py + CSV（23 列：idx/CP/SA_sort/Sa_BLa + a 侧 8 类耦合 + Sa_BLb + b 侧 8 类耦合 + 空列 + ab_samegroup）。
+- **合成**（EDA-Eval-DesignFlow-SPFCoupling-001，A 档 / eda_other / L1，离线 Python 静态判分不启 EDA 工具）：
+  - **A（SUT 可见）**：prompt.txt（#0+#5+#15 逐字原文）+ task_brief.md（≤3 行接口：sabl_summary.py CLI + 23 列 CSV）+ msaq_E_sample.spf_CC（合成 DSPF 1.3，10 CPs × 2 cells × 2 bits = 40 行，含 Sa_BLa/b + PreEq0 + cn09bla/blb + Cslin + IoN + Yio + pracL 无 <idx> 边界 + 2 decoy 非 Sa_BL net）。
+  - **reference**：ref_solution/sabl_summary.py（金标纯字符串操作解析器）+ run_sabl.sh + sabl_coupling_summary_A.csv + reference_submit.zip。
+  - **B（隐藏）**：hidden/B_msaq_E.spf_CC（10 CPs 但用 XI_msax512_*/XI_msax514_*/pracR，val_scale=2.7 使值全异于 A，40 行）+ hidden_manifest.json + 镜像 reference/hidden/。B 不进 SUT 沙箱：B 内嵌 gzip+b64（9.4KB）于 check.py + 镜像 reference/hidden/，判分在 /tmp/judge_* 独立跑。
+  - **check.py 16 条断言 a–p**：(a)zip 含 sabl_summary.py (b)py_compile (c)B 上 exit 0 产 CSV (d)23 列表头 (e)行数==期望 (f)CP 含 B 不含 A（跨输入护栏）(g)CP 排序 cp00-06<pracR<cp08+ (h)SA_sort <idx>/裸形式 (i)Sa_BLa/Sa_BLb 同前缀+bit (j)a_bl 累加 (k)a_Cslin 累加 (l)a_PreEq (m)a_power (n)a_total (o)ab_samegroup 非零 (p)鲁棒性缺文件 exit 非零。内嵌紧凑 reference parser 计算期望值，相对容差 1e-9。
+  - **negative/**：5 个（fake_empty/fake_print_expected/fake_core_deleted/naive_hardcode_a/naive_no_accumulate）+ negative_selftest.py，**NEG_RC=0/5 全 FAIL**。fake_print_expected→(f) CP 硬编码泄漏（跨输入护栏）；fake_core_deleted→(k) cslin 累加值 0≠期望（cslin 断言有牙）；naive_hardcode_a→(f)。
+  - **自验**：ref reference_submit.zip check() PASS；§4.9 三假提交（fake_empty/fake_print_expected/fake_core_deleted）全 FAIL；negative_selftest NEG_RC=0；jsonl test 字段 == 磁盘 check.py（sha 4b58f907 一致）；gate k_rationale=k_check=16≥8 ✓。
+- **落库**：append EDA-Eval-DesignFlow_A.jsonl（27 条 / 27 unique ids）→ mark trace_ledger_A 5pv45 case（covered=26/1001=2.6%，touched=33/parked=7）→ 收尾提交双仓。
+- **domain 覆盖**：eda_other 1→2（补牙，本条新增 SPF 数据处理）。digital 9 / pnr_signoff 9 / verification 5。
+- ⬜ 下轮：①SPFCoupling-001 cline+hook 重跑验 A-faithful 真实通过率（L1 数据处理，预期形态①风险低）；或 ②继续合成（A 档试点 2/10，候选池薄需扩大搜索到 verification/formality）；或 ③修 A-faithful ①+④ 破阈接口。
