@@ -4,10 +4,19 @@ DOMAINS: digital, eda_other, pnr_signoff, verification
 
 - **PHASE**: shard A 新 case 合成阶段（断言债已清零）。负责 domain: digital, eda_other, pnr_signoff, verification
 - 每轮做 1 条 case：trace_ledger.py --shard A next → claim → 深读 → 合成 → 自验 → 追加 EDA-Eval-DesignFlow_A.jsonl
-- 📊 trace 覆盖率：8/1001 = 0.8%（covered=8 · case 8 · parked 1）
+- 📊 trace 覆盖率：9/1001 = 0.9%（covered=9 · case 9 · parked 1）
 - 🎯 通过率: 0/0（A 档尚未实跑；先清断言债）· B 档目标 20–30%
-- 🧾 断言: k_rationale=k_check 达标（今日 5/5 达标：Digital-010 k=19 / Digital-021 k=17 / Digital-022 k=17 / Digital-023 k=17 / CosimSetup-001 k=16）· 队列清零 ✓
+- 🧾 断言: k_rationale=k_check 达标（今日 6/6 达标：Digital-010 k=19 / Digital-021 k=17 / Digital-022 k=17 / Digital-023 k=17 / CosimSetup-001 k=16 / WaveSig-001 k=17）· 队列清零 ✓
 - 📦 体积：TASK≈17KB / MEMORY≈待测
+
+### 2026-11-02 shard A 轮 5：WaveSig-001 新 case 合成 ✓（A 档 trace-faithful）
+- 选料：trace_ledger.py --shard A next 给的候选全是物理/模拟域（calibre/hspice/skill），按 shard A 工具在 keywords 列重排，挑出纯 shard A 候选。t0002441@hfhds201 的 synopsys 会话是 AskEDA Q&A bot（agent=lead，非设计流），弃。最终选 `1793087996513_u78sz`（hengbow/hfeg0pgn045, mc=407, synopsys:1013=finesim+WaveView+verdi）—— DDR5 fullchip array coretiming 波形关键信号提取，domain=verification（覆盖 1→2）。claim → mark case。
+- 深读：scp 整条 messages.json (511 msgs) + 真实产物 `/home/hengbow/zl_job/turboWave/fsdb/`（sig_demo.sig 1069B 格式参考 / _clean.sig 3367B raw 混合大小写 / coretiming_signals.sig **2747B 真实金标准** / 6 个分类中间 .sig / sxcmd.log 18661B WaveView ACE 验证日志）。用户真实意图：ddr5 fullchip finesim 波形查 array coretiming 违例 → 给 waveview 可 load 的关键信号 list → 格式同 sig_demo → **字母全小写**（raw 大写 netlist load 不到）。A 档任务说明=用户原话轮 3/5/6/8/9 逐字，根因反馈轮 7 作 hint 不进 prompt。
+- 合成：A 附件=sig_demo.sig(格式参考·真) + hierarchy_manifest_A.txt(raw netlist 全路径, 混合大小写, 顶层/控制器/地址/电源干扰 + array coretiming 真信号) + user_request.md(用户原话)。隐藏 B(不进 SUT 沙箱)=hierarchy_manifest_B.txt(结构性不同: 前缀 xiatop_a1.xi_ary8g_a_t.xi_ary1g_g0.xi_m512meg_b02 / msaq 实例 7777 / WL sec t12·t13·t14 共 6 条 vs A 13 / BL bit<5> vs <11> / cslmsaqs01<31> vs cslmsaqs00<63>) + hidden_manifest.json。B 内嵌进 check.py 字符串(_MANIFEST_B)，assets/hidden/ 留底审计。
+- L1 grader：check.py 17 独立标签 (a)-(q)。静态 .sig 解析(格式/全小写/SA≥3/列选 cslmsaqs/BL≥2/WL≥10 跨 sec×mq/dummy WL≥3/A 前缀一致) + **subprocess 在隐藏 B 上重跑候选 gen_coretiming_sig.py**(exit0/非空) + cross-input guard(B 前缀≠A / B 小写格式 / B WL 计数=6 且 sec=t12·13·14 / 无 A 专属 token lwdrq_msaq_5455·bgab01·m512meg_0·s54m0 泄漏) + 随机化(3 seed 打乱 manifest → 信号集合一致)。raw 大写 netlist(S54M0WLEU/Bla<11>/CK_t)→lowercase 陷阱 + 跨输入双前缀击败硬编码 A 的 fake。
+- 参考解 `reference/gen_coretiming_sig.py`(类别 regex 过滤, 通用 A/B) + `coretiming_signals.sig`(生成器 A 输出 37 信号) + `coretiming_signals_B_check.sig`(B 输出 20 信号) + `reference_submit.zip`。真跑：A 输出 SA5+BL12+WL13+Dummy7；B 输出 SA5+BL6+WL6+Dummy3，全 B 前缀，无 A token 泄漏。
+- 自验：ref reference_submit.zip check() PASS（17 全过）；**真实 trace 金标准 coretiming_signals.sig 也 PASS**（用户实际接受产物通过判分）；negative_selftest.py NEG_RC=0 全 5 FAIL（fake_empty→e / fake_print_expected→m / fake_core_deleted→d / naive_no_wl_filter→k / naive_hardcode_a_wl→m），3 §4.9 假 + 2 naive。
+- 闸门：k_rationale=17=k_check=17≥8 ✓；jsonl test 字段 == disk check.py roundtrip OK；9 行/9 unique id 保留。trace_ledger.py --shard A mark → case（covered=9/1001=0.9%）。domain 覆盖：digital:4 · eda_other:1 · pnr_signoff:2 · verification:2。下轮：WAITING: 0。
 
 ### 2026-11-02 shard A 轮 2：Digital-021 断言闸门整改 ✓
 - 队列队首 `EDA-Eval-DesignFlow-Digital-021`（digital, PrimeTime 时序报告负 slack 路径提取, L1 离线 Python）标 `incomplete`：jsonl test 字段是旧 1568B 弱判分（4 packed 条件），rationale 是散文。
