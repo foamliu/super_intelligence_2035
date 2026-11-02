@@ -5,13 +5,13 @@ WAITING: 0
 ## 📊 进度快照
 
 ```
-PHASE:        R1355 自检监控轮(内存自检394th PASS+CPU自检PASS)·eval TOTAL=2341/1787(unchanged,本轮未跑incr_eval)·predict:cline500(DONE)·opencode500(DONE)·pi475(DONE)·claude-code433(DONE)·codex374(alive)·hermes220(alive)·deepseek143(alive)(3路alive:codex 374/500·hermes 220/500·deepseek 143/500)
-已完成:       H-B✅·Gate7/7·TB报告✅·pilot20✅·R984-R988恒0调试✅·R989 incr_eval全链✅·R997硬约束修复✅·R998-R1353 incr_eval链+内存/CPU自检+体积归档✅·R1354 quiet监控scan_backlog=0✅·R1355 自检监控轮(内存394th+CPU PASS)✅
-当前动作:     R1355:内存自检394th PASS(运维令10-30:MemAvail≈1449GB,无本线predict>50GB;最大本线opencode stale1.1GB;cline hub daemon3.5GB非predict ppid=1)+CPU自检PASS(运维令11-02:load34.52/224≈15%,top87.7%idle≈12%busy<80%;无本线predict>8000%CPU;最高本线opencode stale6.5%/cline daemon20.4%非predict;整机top=pretrain-line cpu_lmeval534%/pretrain_launcher142%非本线不碰)·eval 2341/1787 unchanged·predict:codex374·hermes220·deepseek143·3路alive均未stuck·3 stale opencode procs(1.1GB+766MB,~6d,opencode DONE,未达杀阈note-only如R1070). 硬约束:predictions 0 tracked✅·eval report.json 0 tracked✅·未完成指令:有(10-30内存自检常驻+11-02 CPU自检常驻+10-28full500 3路predict仍跑)⇒WAITING=0.
+PHASE:        R1356 quiet监控轮(内存自检395th PASS+CPU自检PASS)·eval TOTAL=2359/1787(unchanged,本轮未跑incr_eval)·predict:cline500(DONE)·opencode500(DONE)·pi475(DONE)·claude-code433(DONE)·codex374(alive)·hermes220(alive)·deepseek143(alive)(3路alive:codex 374/500·hermes 220/500·deepseek 143/500)
+已完成:       H-B✅·Gate7/7·TB报告✅·pilot20✅·R984-R988恒0调试✅·R989 incr_eval全链✅·R997硬约束修复✅·R998-R1354 incr_eval链+内存/CPU自检+体积归档✅·R1355 自检监控轮(内存394th+CPU PASS)✅·R1356 quiet监控scan_backlog=0(内存395th+CPU PASS)✅
+当前动作:     R1356:内存自检395th PASS(运维令10-30:MemAvail≈1450GB,无本线predict>50GB;最大本线opencode stale1.15GB;cline hub daemon3.4GB非predict ppid=1)+CPU自检PASS(运维令11-02:load35.07/224≈16%,top~88%idle≈12%busy<80%;无本线predict>8000%CPU;最高本线opencode stale6.4%/cline daemon20.4%非predict;整机top=pretrain-line cpu_lmeval534%非本线不碰)·scan_backlog=0 quiet·eval 2359/1787 unchanged·predict:codex374(sphinx-8551)·hermes220(pylint-7080)·deepseek143(django-14539)·3路alive均progressing·3 stale opencode procs(1.15GB+785MB,~6d,opencode DONE,未达杀阈note-only). 硬约束:predictions 0 tracked✅·eval report.json 0 tracked✅·未完成指令:有(10-30内存自检常驻+11-02 CPU自检常驻+10-28full500 3路predict仍跑)⇒WAITING=0.
 下一步:       ①3路predict alive(codex 374/500·hermes 220/500·deepseek 143/500) ②每轮scan_backlog(with-patch)→incr_eval新产出 ③predict全完成后final eval+full500最终报告(7路总表+Wilson CI+McNemar 7×7) ④infra单列(铁律③) ⑤永久硬约束:禁止commit结果JSON ⑥TASK=34.9KB·MEMORY≤32KB
-阻塞:         无(3路predict alive;本轮自检无失控,无kill;eval unchanged quiet clear). git:clean(本线文件clean,工作树有ZhuLong在途文件未碰).
+阻塞:         无(3路predict alive progressing;本轮自检无失控,无kill;backlog=0 quiet clear). git:clean(本线文件clean,工作树有ZhuLong在途文件未碰).
 ERROR_COUNT:  0
-  📦 体积：TASK=35757B(34.9KB,>32KB,3活跃块不可归档,<40KB红线OK) / MEMORY=32432B(31.7KB,≤32KB✅)
+  📦 体积：TASK=35757B(34.9KB,>32KB,3活跃块不可归档,<40KB红线OK) / MEMORY=~32KB(归档3旧条目后≤32KB✅)
 ```
 
 > 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
@@ -20,6 +20,8 @@ ERROR_COUNT:  0
 
 ### 本唤醒流水
 [02:40] R1355 自检监控轮:内存自检394th PASS(运维令10-30:MemAvail≈1449GB,无本线predict>50GB;最大本线opencode stale1.1GB;cline hub daemon3.5GB非predict)+CPU自检PASS(运维令11-02:load34.52/224≈15%,top87.7%idle≈12%busy<80%;无本线predict>8000%CPU;最高本线opencode stale6.5%/cline daemon20.4%非predict;整机top=pretrain-line cpu_lmeval534%/pretrain_launcher142%非本线不碰)·eval 2341/1787 unchanged·predict:codex374·hermes220·deepseek143·3路alive·3 stale opencode(1.1GB+766MB,~6d,未达杀阈note-only)·硬约束:predictions 0 tracked✅·eval report.json 0 tracked✅·用户直令:本轮专注自检(report only)
+[02:46] R1356 quiet监控轮:内存自检395th PASS(运维令10-30:MemAvail≈1450GB,无本线predict>50GB;最大本线opencode stale1.15GB;cline hub daemon3.4GB非predict)+CPU自检PASS(运维令11-02:load35.07/224≈16%,top~88%idle≈12%busy<80%;无本线predict>8000%CPU;最高本线opencode stale6.4%;整机top=pretrain-line cpu_lmeval534%非本线不碰)·scan_backlog=0 quiet·eval 2359/1787 unchanged·predict:codex374(sphinx-8551,1116s)·hermes220(pylint-7080,1714s)·deepseek143(django-14539,1503s)·3路alive progressing·3 stale opencode(1.15GB+785MB,~6d,未达杀阈note-only)·硬约束:predictions 0 tracked✅·eval report.json 0 tracked✅
+
 > 📦 R1354 流水(02:29,内存自检393rd+CPU自检PASS+scan_backlog=0 quiet)已归档 → daily-memories-harness/2026-11-03.md。结论：eval 2341/1787 unchanged·3路predict alive。需要时再读。
 > 📦 R1353 流水(02:20,内存自检392nd+CPU自检PASS+incr_eval 2items:hermes pylint-6903 RESOLVED+deepseek django-14534 FAILED)已归档 → daily-memories-harness/2026-11-03.md。结论：eval 2339→2341/1786→1787(+2/+1)·3路predict alive。需要时再读。
 > 📦 R1352 流水(02:12,内存自检391st+CPU自检PASS+scan_backlog=0 quiet)已归档 → daily-memories-harness/2026-11-03.md。结论：eval 2339/1786 unchanged·3路predict alive。需要时再读。
@@ -113,10 +115,7 @@ ERROR_COUNT:  0
 > 📦 R1069 流水(2026-10-31 17:42,内存自检108th+监控轮BACKLOG=0)已归档 → daily-memories-harness/2026-10-31.md。结论：内存PASS·BACKLOG=0无incr_eval·eval全7路unchanged·predict 4路alive(claude-code405/codex282/hermes50/deepseek43)。需要时再读。
 > 📦 R1050-R1068 流水(2026-10-31 13:52~17:32, 内存自检89th~107th, ~19轮incr_eval+监控)已归档 → daily-memories-harness/2026-10-31.md。结论：内存全PASS·多条BACKLOG incr_eval(claude-code/codex/hermes/deepseek混RESOLVED+UNRESOLVED)·eval稳步增长·predict 4路alive·硬约束tracked=0✅。需要时再读。
 > 📦 R1043-R1049 流水(2026-10-31 12:32~13:44,内存自检82th~88th)已归档 → daily-memories-harness/2026-10-31.md。结论：内存全PASS·多轮incr_eval(4新patch全RESOLVED·2新patch全empty等)·predict 4路alive·tracked=0✅。需要时再读。
-> 📦 R1002-R1042 流水(2026-10-31 04:00~12:09,内存自检40th~81th+incr_eval chain step1-7全DONE+恒0分调试收尾+predict监控,~40轮)已归档 → daily-memories-harness/2026-10-31.md。结论：incr_eval_all7 chain 7路串行270新patch全eval DONE(cline325/442·opencode394/488·pi298/410·claude-code227/299·codex150/191·hermes12/18·deepseek21/26)·scikit-learn-14710 timeout→infra单列·恒0分调试verify5b hermes4/5+deepseek3/5·predict 3路DONE+4路alive·硬约束tracked=0✅。需要时再读。
-> 📦 R927-R1001 流水(2026-10-30 13:13~10-31 03:49,内存自检1st~39th+incr_eval chain+恒0分复核+硬约束修复,~75轮)已归档 → daily-memories-harness/2026-10-30.md + 2026-10-31.md。结论：内存自检全PASS无失控·incr_eval chain 5路全DONE(opencode383/467·cline302/413·pi270/363·claude-code194/257·codex129/163)·首版full500 HTML报告生成(partial banner+Wilson CI+McNemar)·4个verify5结果JSON硬约束违规修复(git rm --cached+.gitignore)·hermes/deepseek闸门FAIL未进全量。需要时再读。
-
-> 📦 R821-R926 巡检流水(2026-10-30 00:04~13:50,约100轮常态巡检)已合并归档 → daily-memories-harness/2026-10-30.md。结论：5路predict持续健康推进,进度1183→1743,全路ALIVE·timeout=0·429=0·tracked=0✓,hermes/deepseek闸门FAIL未进全量。需要时再读。
+> 📦 R1002-R1042 + R927-R1001 + R821-R926 流水(2026-10-30~10-31,~215轮)已归档 → daily-memories-harness/2026-10-30.md + 2026-10-31.md。需要时再读。
 
 > 📦 R609-R820 巡检流水(2026-10-29 00:58~18:28,~90轮常态巡检)已合并归档 → daily-memories-harness/2026-10-29.md。结论：5路predict持续健康运行,稳步推进(cline70→232·opencode80→227·pi56→195·claude-code59→188·codex47→121),全路timeout=0,无429系统级错误,infra单列,hermes/deepseek闸门FAIL未进全量。需要时再读。
 
