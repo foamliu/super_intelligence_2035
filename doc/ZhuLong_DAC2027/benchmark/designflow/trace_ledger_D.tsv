@@ -45,3 +45,4 @@
 1792724929127_2vuso.messages.json	tongni	hfeg0pfn119	468	analog_context	case	EDA-Eval-DesignFlow-SpiceDeckGen-001	2026-11-03 04:28	
 1793087996513_u78sz	hengbow	hfeg0pgn045	407	waveform	parked		2026-11-03 04:42	cross-shard dup: shard A already built EDA-Eval-DesignFlow-CoreTimingSig-001 from this trace (domain=verification, in A.jsonl); D does not rebuild
 1791960706202_66ut5	haifengf	hfeg0pkn002	301	waveform	case	EDA-Eval-DesignFlow-InvCSOpt-001	2026-11-03 04:57	
+1792829537180_vaiob	harrywu	hfeg0plg99	506	analog_context	claimed		2026-11-03 05:05	
