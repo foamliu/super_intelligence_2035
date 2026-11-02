@@ -1,44 +1,31 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
-<!-- RUN_ID: 238 | TARGET: 29 -->
-## RUN_ID 238 — 例行进展快照：S1 进度/lr 爬升、CPU smoke 结果、CPU 负载是否 ≤80%
+<!-- RUN_ID: 239 | TARGET: 29 -->
+## RUN_ID 239 — 更正：zhulong agent 在 **36.15** 这台机器上（不在 .29/.12）；本块只探测 .29 能否直达该机
+
+> 用户更正：zhulong 的 work copy 在 36.15，Tab-3 HTML 应在那边。故本块不再扫本机，只测连通性（只读）。
 
 ```bash
 set -u
-echo "=== RUN_ID 238 | progress snapshot | $(date '+%F %T') | host=$(hostname) ==="
-W=/tmp/baize_s1_baize2b_worker.log
+echo "=== RUN_ID 239 | reachability to zhulong host 36.15 | $(date '+%F %T') | host=$(hostname) ==="
 
 echo
-echo "[1] S1 训练"
-timeout 10 grep -E 'iteration +[0-9]+/' "$W" 2>/dev/null | tail -3 | cut -c1-175 | sed 's/^/    /'
-echo "    log mtime=$(stat -c %y "$W" 2>/dev/null | cut -c1-19)"
-echo "    train.sh=$(timeout 8 ps -eo pid,etime,cmd 2>/dev/null | grep -E '[t]rain\.sh s1' | awk '{print $1" "$2}')"
-
-echo
-echo "[2] .29 GPU"
-timeout 12 nvidia-smi --query-gpu=index,utilization.gpu,memory.used,power.draw,temperature.gpu --format=csv,noheader 2>/dev/null | sed 's/^/    /'
-
-echo
-echo "[3] CPU 负载 / eval 占用（要求整机 ≤80%）"
-echo "    nproc=$(nproc) load=$(cut -d' ' -f1-3 /proc/loadavg)"
-timeout 8 vmstat 1 2 2>/dev/null | tail -1 | awk '{print "    us%="$13" sy%="$14" id%="$15}'
-echo "    eval 进程:"
-timeout 10 ps -eo pid,etime,pcpu,rss,cmd 2>/dev/null | grep -E 'python[^ ]* .*(cpu_lmeval|lm_eval|test_lmeval)' | grep -v grep | cut -c1-130 | head -5 | sed 's/^/    /' || echo "    (无)"
-
-echo
-echo "[4] CPU smoke / 评测日志（找 acc 是否 >0）"
-timeout 10 ls -lt --time-style='+%F %T' /tmp 2>/dev/null | grep -iE 'cpu_lmeval|lmeval|cpu_smoke' | head -6 | awk '{print "    "$6,$7,$5"B",$8}'
-for f in $(ls -t /tmp/*cpu_lmeval*.log /tmp/*lmeval*.log 2>/dev/null | head -2); do
-  echo "    ---- $f 尾 12 ----"
-  timeout 8 tail -12 "$f" 2>/dev/null | cut -c1-140 | sed 's/^/      /'
+echo "[1] 解析/连通性候选（10.239.36.15 / 172.19.36.15 / 36.15）"
+for h in 10.239.36.15 172.19.36.15 36.15; do
+  ip=$(getent hosts "$h" 2>/dev/null | awk '{print $1}' | head -1)
+  echo "    $h -> ${ip:-未解析}"
+  if [ -n "$ip" ]; then
+    timeout 3 bash -c "echo > /dev/tcp/$ip/22" 2>/dev/null && echo "      TCP:22 OPEN" || echo "      TCP:22 closed/timeout"
+    timeout 6 ssh -o StrictHostKeyChecking=no -o BatchMode=yes -o ConnectTimeout=4 "$ip" 'echo "      ssh OK host=$(hostname)"' 2>&1 | head -2 | sed 's/^/      /'
+  fi
 done
 
 echo
-echo "[5] .12（训练 + 负载）"
-timeout 20 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.12 '
-  echo "    util: $(nvidia-smi --query-gpu=utilization.gpu --format=csv,noheader | tr "\n" " ")"
-  echo "    load=$(cut -d" " -f1-3 /proc/loadavg)  nproc=$(nproc)"
-  echo "    eval=$(ps -eo pcpu,cmd | grep -E "python[^ ]* .*(cpu_lmeval|lm_eval)" | grep -v grep | head -3 | tr "\n" "|")"
-' 2>&1 | sed 's/^/  /' || echo "    ssh .12 failed"
+echo "[2] 本机 .29 的 zhulong 工作副本（对照：应当没有那个 HTML）"
+R=/nas_train/app.e0031982/code/super_intelligence_2035
+cd "$R" 2>/dev/null && {
+  timeout 15 find doc/ZhuLong_DAC2027 -maxdepth 2 \( -iname '*tab*' -a \( -name '*.html' -o -name '*.htm' \) \) 2>/dev/null | head -5 | sed 's/^/    /'
+  echo "    .29 顶层 html 数=$(ls -1 doc/ZhuLong_DAC2027/*.html 2>/dev/null | wc -l)"
+} || echo "    repo 不存在"
 
-echo "=== DONE 238 ==="
+echo "=== DONE 239 ==="
 ```

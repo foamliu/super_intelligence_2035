@@ -1,5 +1,18 @@
 # ZHULONG_TASK.md — ZhuLong（DAC2027）EDA 消融评测 · 合并任务书
 
+### 🚨 2026-11-02 21:3x 运维直令：Tab-3 美观改进中文 HTML —— 找到→入库→按此执行 · 最高优先
+
+> 用户原话：「看看 ZhuLong_DAC2027 目录下是否有个 Tab-3 美观改进中文 HTML，有的话提交入库，并按此执行。」
+
+1. **找（≤3min）**：`ls doc/ZhuLong_DAC2027/*.html`；`find doc/ZhuLong_DAC2027 -maxdepth 3 -iname '*tab*' \( -name '*.html' -o -name '*.htm' \)`；`git status --porcelain -- doc/ZhuLong_DAC2027 | grep -i tab`。判据：名/标题含 Tab-3|Tab3|表三 + 美观|改进|优化，中文、指向 `DAC2027/6_exp.tex` 表 3。
+2. **入库**：找到且未跟踪 ⇒ `git add -- <路径>`（🚫`-A`）→ commit `zhulong paper: 入库 Tab-3 美观改进建议 HTML（用户令 11-02）` → push → MEMORY 记路径+字节。已在库则跳过。
+3. **执行（本令临时解除"只审不改"，仅限 Tab-3）**：只改 `DAC2027/6_exp.tex` **表 3**（表体/表注/中文注释），其余 `.tex/.bib/main.tex` 仍只审不改。**数字/口径/CI/样本量一律不动**（57.2/23.7/7.1/71.0±0.8/74.6±1.6/253·1.1·278/634·22.8·887/449/158），只做排版（列宽、booktabs 线、对齐、`\cmidrule`、表头单位、字号、表注）；逐条标 `DONE`/`SKIP(原因)`，要改数字或结论的一律 SKIP。
+4. **验证**：`pdflatex×2+bibtex` ⇒ ERR=0/UNDEF=0；`grep 'Output written' main.log` 记页数（DAC ≤7，🚫不许删数字压页）。提交 `git add -- DAC2027/6_exp.tex main.pdf` → `zhulong paper: tab3 beautify` → push → MEMORY 记「页数 前→后 + DONE/SKIP」。
+5. **找不到** ⇒ MEMORY 写「未找到」并列出 `doc/ZhuLong_DAC2027` 全部 .html（名+字节），**不许臆造建议**；P0 双盲/页数/P1×3 不在本令内。
+6. **体积**：本令后 TASK≈39.9KB，下一轮先归档已闭合块到 ≤32KB。
+
+
+
 ### 🚨 2026-10-30 22:2x 运维直令：`zhulong-full` 配置 `kimi-k2.6` 模型跑 5-run · 最高优先
 
 > **用户令**：「zhulong：zhulong-full 配置 kimi-k2.6 模型跑 5-run」
