@@ -48,22 +48,22 @@ The \emph{grounding gap} is the divergence between the posterior achievable with
 D_{\text{grounding}}(t) \triangleq D_{\mathrm{KL}}\!\left(p(\cdot \mid o_{1:t},\, \mathcal{K},\, \text{env}) \;\middle\|\; p_{\mathcal{K}}(\cdot)\right),
 \end{equation}
 where the right-hand side is the \emph{pure prior} unconditioned on any observation. We now bound this gap.
-% 落地鸿沟 = 有运行时观测的后验与仅靠离线先验的后验之间的散度（Eq.2）。右边是\emph{纯先验}，不条件于任何观测（10:2x §③ 修正符号错误：去掉 |o_{1:t}）。下面给出该鸿沟的上界。
+% 落地鸿沟 = 有运行时观测的后验与仅靠离线先验的后验之间的散度（Eq.2）。右边是\emph{纯先验}，不条件于任何观测。下面给出该鸿沟的上界。
 
 \textbf{Scenario: the transition is deterministic.} In EDA, \texttt{run\_code} executes a script whose effect on the design database is deterministic: the same action in the same state yields the same result, so $\mathcal{T}$ is exact---a property of the domain, not a simplifying assumption. The only mismatch is in the observation likelihood $\Omega$: retrieval may return incomplete documentation, and execution read-back may truncate---precisely what $\epsilon$ captures. Model mismatch under estimated parameters is a recognized obstacle \cite{delage2010percentile}; our setting is milder, with only $\Omega$, not $\mathcal{T}$, possibly mismatched.
-% 场景论证（10:2x §②a + 15:4x 新增 Delage&Mannor 2010 支撑"模型失配是公认问题"）：EDA 中 run_code 执行脚本对设计库的改动是确定性的——同动作在同状态产生同结果，无动作随机性——故 T 精确。这是领域真实属性而非简化假设。唯一失配在观测似然 Ω：检索可能返回不完整文档、执行回读可能截断。这正是 ε 要刻画的。模型失配是参数估计下序贯决策的公认障碍 \cite{delage2010percentile}；我们的设定是更温和的情形：只有 Ω 可能失配，T 不会。
+% 场景论证：EDA 中 run_code 执行脚本对设计库的改动是确定性的——同动作在同状态产生同结果，无动作随机性——故 T 精确。这是领域真实属性而非简化假设。唯一失配在观测似然 Ω：检索可能返回不完整文档、执行回读可能截断。这正是 ε 要刻画的。模型失配是参数估计下序贯决策的公认障碍 \cite{delage2010percentile}；我们的设定是更温和的情形：只有 Ω 可能失配，T 不会。
 
 \textbf{Claim (observation-fidelity bound).} Let $\epsilon \triangleq \sup_{\theta}\, \| p(\cdot\mid\theta) - \hat{p}(\cdot\mid\theta) \|_{\mathrm{TV}}$, the total-variation distance between the true and the agent-used observation likelihoods. We posit that $D_{\text{grounding}} \le g(\epsilon)$, with $g(\epsilon)\to 0$ as $\epsilon\to 0$ and $g$ \emph{independent of the complexity of the prior} $\mathcal{K}$: the grounding gap is bounded by observation fidelity, rather than model scale. We state this as a \emph{prediction the experiments can test} rather than a theorem derived here; the next paragraph tests it from both sides.
-% 命题（观测保真度上界，15:4x 修正：Lemma→Claim，去掉"由标准 POMDP 模型近似结果"归因，改为"我们提出"）：ε ≜ sup_θ ‖p(·|θ) − p̂(·|θ)‖_TV（真实与 agent 所用观测似然的全变差）。我们提出 D_grounding ≤ g(ε)，g(ε)→0 (ε→0)，g 不依赖先验 K 的复杂度：落地鸿沟受观测保真度而非模型规模约束。作为"实验可检验的预测"而非此处推导的定理提出，下一段从两侧检验。
+% 命题（观测保真度上界）：ε ≜ sup_θ ‖p(·|θ) − p̂(·|θ)‖_TV（真实与 agent 所用观测似然的全变差）。我们提出 D_grounding ≤ g(ε)，g(ε)→0 (ε→0)，g 不依赖先验 K 的复杂度：落地鸿沟受观测保真度而非模型规模约束。作为"实验可检验的预测"而非此处推导的定理提出，下一段从两侧检验。
 
 \textbf{Experimental correspondence (developed in Section~\ref{sec:experiments}).} Here $\epsilon$ is exactly the fidelity of this paper's $\Omega$ implementation---retrieval quality plus execution read-back. The read-back ladder (N$'$ $\to$ B $\to$ F, Table~\ref{tab:omega}) varies $\epsilon$ with retrieval and the effector fixed; the backbone axis (Table~\ref{tab:llm-comparison}) varies $\mathcal{K}$ with $\epsilon$ fixed. The experiments test whether the former axis dominates, as the claim predicts.
-% 实验对应（10-26 修正：ladder 与 ε axis 分开表述，避免归因混淆）：回读阶梯 N′→B→F（表~\ref{tab:omega}）固定检索+执行器只改回读，单调增益 7.1pp（N′→F）反映单变量切片下 g(ε) 的单调性；系统级 ε 轴——纯 LLM 无观测到完整系统——跨 57.2pp。backbone 轴（表~\ref{tab:llm-comparison}）改 K 而 ε 固定，其 23.7pp 跨度小于系统级 ε 轴的 57.2pp——与"g 不依赖 K"一致。
+% 实验对应：回读阶梯 N′→B→F（表~\ref{tab:omega}）固定检索+执行器只改回读，单调增益 7.1pp（N′→F）反映单变量切片下 g(ε) 的单调性；系统级 ε 轴——纯 LLM 无观测到完整系统——跨 57.2pp。backbone 轴（表~\ref{tab:llm-comparison}）改 K 而 ε 固定，其 23.7pp 跨度小于系统级 ε 轴的 57.2pp——与"g 不依赖 K"一致。
 
 \subsection{Design Principles}
 \label{sec:prediction}
 
 The formalization yields three architectural principles.
 \textbf{Decouple knowledge from belief:} adapt in the dynamic posterior $b_t$ the Harness maintains, not by updating the frozen prior $\mathcal{K}$.
-\textbf{Optimize observation over the prior:} the gap is bounded by $\Omega$'s fidelity ($g(\epsilon)$, independent of model scale), so observation investment pays directly while a richer prior gives diminishing returns.
+\textbf{Optimize observation over the prior:} the gap is bounded by $\Omega$'s fidelity ($g(\epsilon)$, independent of model scale), so observation investment pays directly---full observation beats binary feedback on both accuracy and operating cost (Section~\ref{sec:exp-results})---while a richer prior gives diminishing returns.
 \textbf{Design for continuous belief updating:} $\Phi$ runs online ($b_t\mapsto b_{t+1}$); in the ICL-type agent (Section~\ref{sec:system}) what is bounded is not a round count but how much evidence belief can accumulate---a graded execution budget or a lagging read-back.
-% 三条架构原则（10:0x §④ / 报告 #9：压成标题+一句）。（一）解耦知识与信念：K=静态先验，b_t=动态后验，适应吸收在 b_t 而非部署期更新 K。（二）优先优化观测而非先验：鸿沟受 Ω 保真度约束（g(ε) 与模型规模无关），观测投入有直接有界效果，模型规模在先验足够丰富后收益递减。（三）为持续信念更新而设计：Φ 在线运行；§3 的 ICL 型智能体无轮数，需约束的是信念能积累多少证据——执行的分级预算，或滞后于其报告动作的回读。
+% 三条架构原则。（一）解耦知识与信念：K=静态先验，b_t=动态后验，适应吸收在 b_t 而非部署期更新 K。（二）优先优化观测而非先验：鸿沟受 Ω 保真度约束（g(ε) 与模型规模无关），观测投入直接有效——全观测在准确率与运行成本上均胜过二值反馈（§6.2）——更丰富先验收益递减。（三）为持续信念更新而设计：Φ 在线运行；§3 的 ICL 型智能体无轮数，需约束的是信念能积累多少证据——执行的分级预算，或滞后于其报告动作的回读。
