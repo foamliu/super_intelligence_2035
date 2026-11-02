@@ -2,16 +2,27 @@ WAITING: 0
 SHARD: A (digital_front)
 DOMAINS: digital, eda_other, pnr_signoff, verification
 
-- **PHASE**: 运维令「被测换 cline + PreToolUse 防泄题 hook」§四.3 执行 —— L2 存量 case cline+hook 重跑扩大样本。本轮挑 shard-A L2 case `PwrGlobals-001`（pnr_signoff / Innovus init-globals 多文件 Tcl 合成）用 cline+hook 重跑，**结果 FAIL（能力不足，非 hook/泄漏）**。
-- ✅ **本轮交付**：`PwrGlobals-001` cline+hook 重跑 = **FAIL**（cline 47 iter / 1873s wall / 0 个交付件 / outputs/ 空 / 无 submit.zip）。cline 卡死：3× `spawn_agent`/`team_spawn_teammate` 工具报错（`undefined e.trim` / `Unrecognized key "files"`），iter 38 触发 auto-compaction（115618→38293 tokens, 77→15 msgs），188 个 MCP 名义 tool ref 但 0 次 write_to_file 到 outputs/。**失败归因 ③能力不足**（cline 在复杂多文件 Tcl 合成任务上 thrash：子代理 spawn 报错 + 自动压缩循环，产出为 0）。**非 hook 问题**：hook 未触发（cline 0 次跑 run_commands，全走 MCP/思考），0 次尝试读 check.py/reference/hidden（防泄题自验通过）。判分独立跑确认 FAIL（outputs 空 → no submit.zip）。
+- **PHASE**: 回 §3 合成新 case（运维令 §四.3 cline 重跑样本已扩 3 条，本轮按任务卡回合成路径）。本轮交付 `EDA-Eval-DesignFlow-InnovusLaunchDiag-001`（eda_other / L2 / B 档）—— 真实 trace `1792491091764_qk0vo`（pdong / 10.129.8.230 / mc=49）：innovus 2231 在 RHEL8 登录节点 module avail 有却 `-version` 报 `libssl.so.10` 缺失；真因双重（RHEL8 无 openssl1.0 兼容库 + eda-agent LD_LIBRARY_PATH 污染 libstdc++ GLIBCXX_3.4.26）；修复 = bsub 切 CentOS7 节点 / 装 compat-openssl10 + `env -u LD_LIBRARY_PATH`。case = 写启动就绪诊断脚本 `check_launch.py`，读证据目录 fixture 输出结构化 JSON 报告。
+- ✅ **本轮交付**：`InnovusLaunchDiag-001` 合成 ✓ —— assets/InnovusLaunchDiag-001/（prompt.txt + task_brief.md + evidence/ 10 个真实 A fixture + hidden/B_evidence 结构不同场景 calibre 2024.4/RHEL9.3/libncurses.so.5/无污染 + hidden_manifest.json）+ reference/InnovusLaunchDiag-001/（check.py 17 条断言 a–q 自包含嵌入 B 证据 + reference_submit/check_launch.py 参考解 + negative/ 3 个错解 + negative_selftest.py）。自验全过：ref check.py 跑 ref_submit.zip = PASS；negative_selftest 3 错解全 FAIL；断言闸门 k_rationale==k_check==17≥8 ✓；日报三列 17/17/✓。
 - ✅ DEBT 已清零。
-- 📊 trace 覆盖率：19/1001 = 1.9%（covered=19 · touched=21 · parked=2；A jsonl 20 条不变，本轮无新 case）
-- 🎯 通过率: cline+hook 存量重跑 **1/3 = 33%**（PTSignoff-001 PASS / Verification-001 FAIL·L1·hook 限制 / PwrGlobals-001 FAIL·L2·能力不足）· 样本仍太小不报百分比 · B 档目标 20–30%
-- 🧾 断言: 本轮无新 case；存量全达标
-- 📦 体积：TASK≈23.8KB / MEMORY_A≈13.5KB（轮 14-19 已归档 ARCHIVE 批次 50）
-- 🔒 泄漏隔离: check.py/reference/hidden 不进 SUT workdir；判分独立跑（本轮 PwrGlobals-001 cline 0 泄漏尝试，hook_scope 限定 cline_eval/，run_one.sh leak 自检通过）
-- ⚠️ 运维令进度（最高优先·跨 shard ops）：2026-11-02「被测换 cline + PreToolUse 防泄题 hook」§四.3 进行中——cline_eval_status.jsonl 现 3 行（Verification-001 FAIL·L1 / PTSignoff-001 PASS·L2 / PwrGlobals-001 FAIL·L2 能力）。**已验**：L2 case 在 hook 下不被 harness 阻塞（PTSignoff PASS 证实）；cline 真实能力差异显现（同 L2 域，PTSignoff 单文件 pt_sta.tcl 易过，PwrGlobals 多文件 Innovus Tcl 合成 cline thrash 全败）。**待办**：继续扩 cline L2 样本（候选 ETMExtract-001 / TLEFRules-001 / SynLintFlow-001），或回 §3 合成新 case（trace_ledger --shard A next）。
+- 📊 trace 覆盖率：20/1001 = 2.0%（covered=20 · touched=22 · parked=2；A jsonl 现 21 条）
+- 🎯 通过率: cline+hook 存量重跑仍 **1/3**（本轮无 cline 重跑，纯合成）；新 case 未跑 pi/cline，标「未跑」
+- 🧾 断言: k_rationale=k_check=17 ✓（今日 1/1 新 case 达标；存量全达标）
+- 📦 体积：TASK≈23.8KB / MEMORY_A≈13.5KB
+- 🔒 泄漏隔离: check.py/reference/hidden 不进 SUT workdir；判分独立跑（check.py 自包含嵌入 B 证据，无外部路径依赖；SUT 只见 assets/evidence/ A 场景）
+- ⚠️ 运维令进度（跨 shard ops）：cline_eval_status.jsonl 仍 3 行（上轮 PwrGlobals-001 后未新增 cline 重跑）。**待办**：下轮可继续 cline L2 重跑（候选 ETMExtract-001 / TLEFRules-001 / SynLintFlow-001 / InnovusLaunchDiag-001）或继续合成（trace_ledger --shard A next）。
 
+
+### 2026-11-03 shard A 轮 23：InnovusLaunchDiag-001 合成 ✓（eda_other / L2 / B 档，WAITING: 0）
+- 任务卡本轮路径 = 合成 1 条新 case。`trace_ledger.py --shard A next` 取候选 → 在 .75 上按 shard-A 工具过滤（innovus/pt_shell/dc_shell/verdi 等）排序，挑 digital-dominant 候选 `1792491091764_qk0vo`（pdong / 10.129.8.230 / mc=49 / innovus 359 主导，analog 工具极少）→ claim（domain=eda_other）。
+- **深读**：scp `1792491091764_qk0vo.messages.json`（90KB / 33 msgs）到 .75 workdir 解析。真实任务：用户在 RHEL8 登录节点 `module avail` 有 innovus 多版本，`module load 2231_s119_os7` 后 `innovus -version` 报 `libssl.so.10: cannot open`。agent 先误判「不需 bsub」(#11)，用户「你确定吗」(#12) → 重测发现：①RHEL8 系统只有 libssl.so.1.1（openssl 1.1），无 libssl.so.10（openssl 1.0/CentOS7 代际）；②ldd 揭示更多缺失（libjvm/libmlpack/libarmadillo/libfvengine/libzmq）+ **libstdc++ 污染**（eda-agent 自带 libstdc++.so.6 经 LD_LIBRARY_PATH 抢占，GLIBCXX_3.4.26 not found）。最终结论：需 bsub 切 CentOS7 节点或装 compat-openssl10 + `env -u LD_LIBRARY_PATH`。深读笔记落 `designflow/trace_deepreads/1792491091764_qk0vo_innovus_launch_diag.md`。
+- **合成**（EDA-Eval-DesignFlow-InnovusLaunchDiag-001，B 档 / eda_other / L2）：交付 `outputs/submit.zip` 内 `check_launch.py` —— 启动就绪诊断脚本，接口 `--evidence-dir <dir> --module <name> --version <ver>`，读 10 个固定文件名证据 fixture（module_avail/bin_path/exec_stdout/exec_rc/ldd_out/os_release/lib_search/env_ldpath/module_show/exec_stderr），输出结构化 JSON（module_avail/module_load_ok/binary_path/exec_ok/missing_libs/os/lib_provider_mismatch/ldpath_pollution/verdict/recommended_action 等）。
+  - **A（SUT 可见）**：`assets/InnovusLaunchDiag-001/evidence/` = qk0vo 真实证据（innovus 2231 / RHEL8 / libssl.so.10 缺失 / libstdc++ GLIBCXX 污染）。
+  - **B（隐藏）**：`assets/InnovusLaunchDiag-001/hidden/B_evidence/` = 结构不同场景（calibre 2024.4_u2024.10 / RHEL 9.3 / libncurses.so.5 缺失 / 系统只有 libncurses.so.6 / **无** LD 污染）—— check.py 只跑 B。
+  - **check.py**（17 条断言 a–q）：自包含嵌入 B 证据（无外部路径依赖，判分独立可跑）；subprocess 执行候选 → 解析 JSON → 断言 module_avail 含目标版本 / module_load_ok / binary_path 含 calibre / exec_ok==false / missing_libs 含 libncurses.so.5 / lib_provider_mismatch==true / ldpath_pollution==false / os.version 以 9 起头 / verdict==not_launchable_on_this_node / recommended_action 含 bsub|centos|rhel7|compat / 3-seed 随机化 verdict+mismatch+pollution 一致 / 退化回归（变体证据 libreadline.so.6 必被检出且 libncurses.so.5 消失，击穿硬编码）。
+- **自验全过**：①ref check.py 跑 ref_submit.zip = **PASS**；②negative_selftest：naive_always_launchable / stub_hardcode_A / print_B_expected 三错解 **全 FAIL**；③断言闸门 k_rationale==k_check==17≥8 ✓；④日报三列 17/17/✓（修了 check.py 标签格式以匹配 gen_daily_report._k_check 的 `# (x)` 注释模式）。
+- 台账 `mark --status case --case-id EDA-Eval-DesignFlow-InnovusLaunchDiag-001`。merge_shards → 主 jsonl 99 条 → 日报 regen。新 case 未跑 pi/cline（标「未跑」）。
+- ⬜ 下轮：①cline L2 重跑扩样本（候选 ETMExtract-001 / TLEFRules-001 / SynLintFlow-001 / InnovusLaunchDiag-001 本条）；或 ②继续合成（trace_ledger --shard A next）。
 
 ### 2026-11-03 shard A 轮 22：PwrGlobals-001 cline+hook 重跑 = FAIL（能力不足·L2，WAITING: 0）
 - 运维令 §四.3「逐步把存量 case 用 cline 重跑」继续。挑 shard-A L2 case `EDA-Eval-DesignFlow-PwrGlobals-001`（pnr_signoff / Innovus init-globals：合成 gui/power.globals + setup/common_setup.tcl + README.md 三文件 Tcl 流程，check.py 20 条断言 (a)-(t) 含 tclsh stub 跨输入守护）。
