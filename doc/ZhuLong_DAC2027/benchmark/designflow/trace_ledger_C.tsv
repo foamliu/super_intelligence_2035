@@ -57,3 +57,4 @@
 1793174783533_791f6	haoq	hfeg0pkn002	218	physical_verify	parked		2026-11-03 04:55	status=failed exit1; user wanted calibre DRC deck computing GDS layer 302:76 area; assistant wrote measure_layer_302_76.drc (15 edits) + many GDS-parser py scripts but trace ends with assistant still failing to parse GDS coords, user only said '继续'; user never got a working area value (USER[20] '不显示面积'); NO accepted gold -> disqualified as A-档; deck-verification needs calibre+LP5TOP.gds (L2 fragile); gold=prose if handoff
 1792214696328_c5y74	tongni	hfeg0pfn119	379	layout_aether	case	EDA-Eval-DesignFlow-FindCircuitByPath-001	2026-11-03 05:18	
 1792559768471_mc7z1	fxian	hfeg0pkn002	329	layout_aether	case	EDA-Eval-DesignFlow-PortPropagate-001	2026-11-03 05:44	
+1791861302008_d7v3k	jcgu	hfeg0pin003	200	layout_aether	case	EDA-Eval-DesignFlow-ListInstCV-001	2026-11-03 06:10	
