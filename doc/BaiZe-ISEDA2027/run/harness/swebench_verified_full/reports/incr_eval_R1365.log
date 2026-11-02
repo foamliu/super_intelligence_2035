@@ -1,0 +1,32 @@
+=== incr_eval R1365 START Tue Nov  3 04:25:46 AM CST 2026 === (py=/nas_train/app.e0031982/miniforge3/envs/py310/bin/python3)
+[04:25:46] --- codex: 1 instance ---
+[04:25:46] === merge codex predictions ===
+codex: 288 real patches merged
+[04:25:46] === codex eval START 1 new instances ===
+Running 1 instances...
+  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [00:23<00:00, 23.49s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:23<00:00, 23.49s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:23<00:00, 23.49s/it]
+All instances run.
+Total instances: 1
+Instances submitted: 1
+Instances completed: 1
+Instances incomplete: 0
+Instances resolved: 1
+Instances unresolved: 0
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 0
+Unremoved images: 1
+Report written to codex-kimi-k2.6-cloud.verified_full_codex.json
+[04:26:13] === codex eval DONE ===
+[04:26:13] --- regen eval summaries ---
+regen_eval_summaries: cline-patched, opencode, pi, claude-code, codex, hermes, deepseek-harness
+  cline-patched: unchanged (n=442 resolved=326 failed=116 infra=0)
+  opencode: unchanged (n=497 resolved=401 failed=96 infra=0)
+  pi: unchanged (n=463 resolved=333 failed=130 infra=0)
+  claude-code: unchanged (n=358 resolved=273 failed=85 infra=0)
+  codex: WROTE eval_codex.json  n=288 resolved=226 failed=62 infra=0
+  hermes: WROTE eval_hermes.json  n=163 resolved=124 failed=39 infra=0
+  deepseek-harness: WROTE eval_deepseek-harness.json  n=141 resolved=114 failed=27 infra=0
+=== incr_eval R1365 DONE Tue Nov  3 04:26:14 AM CST 2026 ===
