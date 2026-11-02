@@ -30,6 +30,10 @@
 
 ### [运维令] 2026-11-02 11:1x（**CPU 评测 5 个 checkpoint 的常识推理 8 集（1w–5w 步），先估 ETA**）· 用户直令 · 最高优先
 
+> 🧭 **运维提示（2026-11-02 16:0x）——CPU 冒烟卡点的根因已定位，别再在 dtype/device_map 上绕**：
+> export 已完成（`hf_iter_10000/18000/20000/30000/40000` 都在，safetensors 完整），**卡点在 HF 模型加载报错**：`p6_tf5` 的新版 transformers（含 `nemotron_h`）要求 `mamba_dt_limit`（→HF 侧 `time_step_limit`）是 **tuple**，但 `export_hf.sh` 生成的 `config.json` 里写成了 **JSON list** `["mamba_dt_limit": [0.0, "inf"]]`，触发 `huggingface_hub` strict 校验：`expected a tuple, got list`。
+> **修法（很小）**：改 `config.json`（或 `/nas_train/app.e0031982/code/BaiZe-ISEDA2027/convert_mcore_to_hf.py` 的 config 写出逻辑），把 `mamba_dt_limit` 写成 HF 能接受的形态——最简单是**直接删掉 `config.json` 里这个字段**让它用默认（`time_step_limit=inf`），或改为 `[0.0, null]`/对应 tuple；改完重新 `python -c "from transformers import NemotronHForCausalLM; ..."` 在 CPU 加载验证 PASS 再继续。注意 vllm env 的 transformers 4.57 不认 nemotron_h，必须用 py310 + `PYTHONPATH=p6_tf5` 前置。修正后可跳过重复 export，直接在此 config 上冒烟测速 → 报 ETA。
+
 > 用户原话（2026-11-02 11:1x）：「先用 CPU 评测 5 个检查点：1w–5w 步各一个。需要先估 ETA（多少时间，多少 CPU 核等）。」
 
 **① 现状（运维已核）**：
