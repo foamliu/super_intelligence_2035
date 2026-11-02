@@ -30,3 +30,5 @@
 1792066318166_hxh3n	colinxu	hfeg0plg81	250	layout_virtuoso	case	EDA-Eval-DesignFlow-AddCellPin-001	2026-11-02 21:42	
 1789351911020_i1gjh	chenyue	hfeg0plg85	204	layout_aether	case	EDA-Eval-DesignFlow-M2PathLayout-001	2026-11-02 22:09	
 1792393017757_c63e9	hongyuy	hfeg0plg64	233	layout_aether	case	EDA-Eval-DesignFlow-WireWatermark-001	2026-11-02 22:46	
+1785725739513_r7ah0	t0002638	hfeg0plg49	685	layout_aether	parked		2026-11-02 22:53	meta/tooling session: setup eda_fastmcp/Kimi/pyAether standalone server for 烛龙, no layout/physical_verify design task; user turns are all 'start MCP'/'restart service'/'open Aether console' env-probe, not a design-flow deliverable
+1785502291442_6mdxh	e0014566	hfeg0plg58	581	layout_virtuoso	case	EDA-Eval-DesignFlow-AutoViaGen-001	2026-11-02 23:12	
