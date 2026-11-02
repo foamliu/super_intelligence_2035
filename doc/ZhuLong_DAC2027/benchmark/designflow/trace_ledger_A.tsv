@@ -13,3 +13,5 @@
 1792399916731_00i9f	alan3zh	hfeg0plg49	101	pnr_signoff	case	EDA-Eval-DesignFlow-PwrGlobals-001	2026-11-02 18:40	
 1792574756685_lond8	lorikx	hfeg0pkn005	249	digital	case	EDA-Eval-DesignFlow-SynLintFlow-001	2026-11-02 19:25	
 1792998659148_31lou	claire1l	hfeg0pkn004	90	pnr_signoff	case	EDA-Eval-DesignFlow-TLEFRules-001	2026-11-02 20:00	
+1792297573507_9knot	vincelu	hfeg0plg55	862	digital	parked		2026-11-02 20:17	characterization domain (SiliconSmart .inst/.tcl liberty gen) belongs to shard C, not shard A; netlist:4456 is char netlists not digital design
+1792719811850_q5ogm	e0045128	hfeg0pkn001	139	digital	case	EDA-Eval-DesignFlow-WLMMultibit-001	2026-11-02 20:39	

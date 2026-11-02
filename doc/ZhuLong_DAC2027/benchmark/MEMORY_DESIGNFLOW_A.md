@@ -2,14 +2,25 @@ WAITING: 0
 SHARD: A (digital_front)
 DOMAINS: digital, eda_other, pnr_signoff, verification
 
-- **PHASE**: loop 任务卡 case 合成。本轮按 loop 卡合成第 15 条 case（A 档 trace-faithful，pnr_signoff +1，tech LEF 布线规则汇总域）。
-- ✅ **本轮交付 case**：`EDA-Eval-DesignFlow-TLEFRules-001`（pnr_signoff，L1-boundary，A 档 faithful，trace 1792998659148_31lou / claire1l / hfeg0pkn004 / mc=90 / innovus=278 主导）。A jsonl 现 15 条。
+- **PHASE**: loop 任务卡 case 合成。本轮按 loop 卡合成第 16 条 case（A 档 trace-faithful，digital +1，DC WLM 模式多 bit 命令段域）。
+- ✅ **本轮交付 case**：`EDA-Eval-DesignFlow-WLMMultibit-001`（digital，L1-boundary，A 档 faithful，trace 1792719811850_q5ogm / e0045128 / hfeg0pkn001 / mc=139 / synthesis=171 主导）。A jsonl 现 16 条。
 - ✅ DEBT 已清零。
-- 📊 trace 覆盖率：14/1001 = 1.4%（covered=14 · touched=15 · parked=1；A jsonl 15 条，含 1 orphan `CosimSetup-001`(ve67l) 在 jsonl 未在台账，待查）
+- 📊 trace 覆盖率：15/1001 = 1.5%（covered=15 · touched=17 · parked=2；A jsonl 16 条，含 1 orphan `CosimSetup-001`(ve67l) 在 jsonl 未在台账，待查）
 - 🎯 通过率: 本条 case 未 pi/cline 实跑（"未跑"）；cline 存量重跑 0/1（Verification-001 FAIL·L1/hook 限制）· B 档目标 20–30%；A 档本轮只报数不设目标
-- 🧾 断言: 本轮 TLEFRules-001 k_rationale=k_check=25 ≥8 ✓（日报 25/25/✓）；存量全达标
-- 📦 体积：TASK≈23.8KB / MEMORY_A≈18.5KB
-- 🔒 泄漏隔离: check.py/reference/hidden 不进 SUT workdir；判分独立跑（A/B 双 LEF 内嵌 check.py，subprocess 真跑候选 lef_rules.py，check.py 不进 cline cwd）
+- 🧾 断言: 本轮 WLMMultibit-001 k_rationale=k_check=16 ≥8 ✓（日报 16/16/✓）；存量全达标
+- 📦 体积：TASK≈23.8KB / MEMORY_A≈19KB
+- 🔒 泄漏隔离: check.py/reference/hidden 不进 SUT workdir；判分独立跑（A/B 双 common_setup，tclsh stub 真跑候选 wlm_multibit.tcl on 隐藏 B，check.py 不进 cline cwd）
+
+### 2026-11-02 shard A 轮 16：WLMMultibit-001 交付 ✓（A 档 trace-faithful / digital·synthesis，WAITING: 0）
+- 选 trace：trace_ledger.py --shard A next → mc≥300 候选多为 calibre/hspice（shard C 域）或 siliconsmart 表征（shard C 域，如 1792297573507_9knot netlist:4456 实为 char netlists，已 parked 标注）。Python 解析工具串按 strong-tool（innovus/dc_shell/verdi/vcs/pt_shell/...）主导 + 反 analog/char 过滤，挑纯 synthesis 会话 `1792719811850_q5ogm`（e0045128/hfeg0pkn001/mc=139/synthesis:171/netlist:21 → digital/synthesis 域，205 msgs/1MB）claim → mark case。选 e0045128（新用户，增多样性）。
+- 深读：205 msgs/1MB；A档选轮 #130 (idx 130) 逐字原文『给一份 无物理库下 WLM 模式开启多 bit 的完整命令段』—— 纯「提出需求」无根因/修复 → 合 A档选轮规则。真实任务 = kaidi.wang/flow_pa_cpu_merged_top 综合 log 多 bit 寄存器 0% banking 根因定位 + 求可生效命令段。根因（已定位，context）：WLM(非topo)模式跳过 identify_register_banks + MB 库仅 2/4 位 + 522 候选多为 32/64/66 位宽总线 + 控制位不匹配 + timing_only/critical_range 0.1 偏保守。dc.log 原路径权限拒，从 trace 内 assistant tool_result (idx 126/138) 取回关键摘录（L478/479 MB 库加载、L10637 compile 无 -spg、L15306-15315 topo 闸门、banking 0%、RTL 推断表 MB=Y522/N663）。深读笔记 `designflow/trace_deepreads/1792719811850_q5ogm_wlm_multibit.md`。
+- 合成（A 档 / L1-boundary / digital·synthesis）：prompt.txt = #130 逐字原文（不脱敏）；task_brief.md ≤3 行只写交付接口（submit.zip 内 wlm_multibit.tcl + README.md，source common_setup.tcl 取 6 变量）；交付 = 可复用 DC Tcl 脚本 `wlm_multibit.tcl`（参数化 $DESIGN_NAME/$MB_LIB_PREFIX/$MB_CELL_PATTERN/$OPT_MODE/$CRITICAL_RANGE/$REPORTS_DIR，三段：综合前 hdlin_infer_multibit+set_multibit_options+remove_dont_use / 编译 compile_ultra -gate_clock -scan 无 -spg / 核对 report_multibit+report_multibit_banking）+ README.md。资产 A = dc_log_excerpt.txt + mb_lib_context.txt + common_setup.tcl（A 真实环境变量）+ task_brief.md + prompt.txt。无合成说明性注解。隐藏 B = common_setup_B.tcl（结构全异：DESIGN=pa_dmem_top/MB_LIB_PREFIX=STD_MB_SVT/MB_CELL_PATTERN=MB[24]SD*/OPT_MODE=area/CRITICAL_RANGE=0.5/REPORTS_DIR=rpt_b）。
+- check.py 16 条独立断言 (a)-(p)：静态(active-line, comment-stripped) on 提交 wlm_multibit.tcl：(a)zip含wlm_multibit.tcl+README.md (b)source common_setup.tcl参数化入口 (c)set_app_var hdlin_infer_multibit default_all (d)set_multibit_options -critical_range用$CRITICAL_RANGE变量(非字面0.1) (e)-mode用$OPT_MODE变量(非字面timing_only) (f)remove_dont_use [get_lib_cells ${MB_LIB_PREFIX}/${MB_CELL_PATTERN}]参数化 (g)compile_ultra -gate_clock -scan无-spg (h)compile_ultra -incremental无-spg (i)redirect report_multibit -hierarchical路径用$REPORTS_DIR+$DESIGN_NAME (j)redirect report_multibit_banking -nosplit (k)无活跃identify_register_banks(topo反模式缺位) (l)无活跃shell_is_in_topographical_mode(根因反模式缺位) (m)任意compile_ultra行无-spg(WLM纯度) (n)无A专属字面量DBCP51H180L6W25T5_MB_SVT/MB2SDF/0.1/timing_only(反硬编码A)；跨输入守护(tclsh stub on 隐藏B common_setup)：(o)set_multibit_options调用-critical_range=0.5且-mode=area(B值) (p)remove_dont_use含STD_MB_SVT/MB[24]SD*且report_multibit路径含pa_dmem_top(B设计/库变量接到B)。check.py 用 tclsh stub（DC 命令全 stub 成记录 proc + get_lib_cells 返回参数 + redirect 记录路径 + unknown 兜底）真跑提交的 wlm_multibit.tcl with 隐藏 B common_setup → 断言运行时传 B 值（§4.2 subprocess on B）。静态断言对 Tcl 注释做了 strip（active code only）。
+- 自验：gold reference_submit.zip check() PASS（16/16）+ 5 negative 全 FAIL（NEG_RC=0，5 distinct labels：fake_empty→b/c/d/e/f/g/h/i/j/o/p / fake_print_expected→b/d/e/f/h/i/j/n/o/p / fake_core_deleted→f/p / naive_hardcode_a→d/e/f/i/n/o/p / naive_topo_path→g/h/k/l/m/p）+ §4.9 (a)(b)(c) 三假 FAIL。
+- 断言闸门：k_rationale=16 == k_check=16 ≥8 ✓。追加 EDA-Eval-DesignFlow_A.jsonl（A jsonl 现 16 条，test==disk check.py roundtrip OK，12761B）。mark case 1792719811850_q5ogm（e0045128/hfeg0pkn001/digital/mc=139）。merge_shards → 主 jsonl 77 cases。日报 report_benchmark_11_02.html 77 cases，本条 k(断言)/k(check)/一致 = 16/16/✓。
+- ⚠️ merge_shards 修：shard D line 23 用 `id` 非 `task_id`，merge 崩 KeyError；已加 defensive `tid = d.get("task_id") or d.get("id")` + skip 无 id 行（additive，不动 shard D 文件，按 shard 隔离纪律）。
+- A 档试点记账：track=faithful，未 pi/cline 实跑（"未跑"），待 cline+hook 重跑验真实通过率。失败归因预设：①交付形态/位置错→(a) / ②结构缺件/反模式缺位→(b)-(l) / ③能力不足（硬编码 A 字面量）→(n)+(o)+(p) / ④判分歧义（对事实严格匹配）。
+- ⬜ 下轮：trace_ledger.py --shard A next 选新 trace 开第 17 条 case；或按运维令 §四.3 挑一条 L2 shard-A PASS case 用 cline+hook 重跑。
 
 ### 2026-11-02 shard A 轮 15：TLEFRules-001 交付 ✓（A 档 trace-faithful / pnr_signoff，WAITING: 0）
 - 选 trace：trace_ledger.py --shard A next → mc≥300 候选多为 calibre/hspice（shard C 域）；Python 解析工具串按 shard-A 工具主导 + strong-tool 多样性排序（要求 innovus/synthesis/verdi/vcs/dc_shell/pt_shell 至少 1 类且数字占比≥0.6），挑纯 innovus 会话 `1792998659148_31lou`（claire1l/hfeg0pkn004/mc=90/innovus=278/netlist=25/synthesis=2 → pnr_signoff，117msgs/1MB）claim → mark case。选 claire1l（新用户，增多样性）。
