@@ -1,60 +1,71 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
-<!-- RUN_ID: 227 | TARGET: 29 -->
-## RUN_ID 227 — S1 死亡取证（只读）：OOM? 谁杀的? 重启脚本在哪?
+<!-- RUN_ID: 228 | TARGET: 29 -->
+## RUN_ID 228 — 复核"16 卡是否真空"+ 取证 SIGBUS/SIGKILL（只读，多手段交叉验证）
 
 ```bash
 set -u
-echo "=== RUN_ID 227 | S1 post-mortem (read-only) | $(date '+%F %T') | host=$(hostname) ==="
-R=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
-BASE=/nas_train/app.e0031982/code/BaiZe-ISEDA2027
+echo "=== RUN_ID 228 | GPU idle cross-check | $(date '+%F %T %Z') | host=$(hostname) ==="
+echo "  uptime: $(uptime | tr -s ' ')"
+echo "  nvidia-smi 设备数: $(nvidia-smi -L 2>/dev/null | wc -l)  ($(nvidia-smi -L 2>/dev/null | head -1 | cut -c1-60))"
 
 echo
-echo "[1] 内存与 OOM 证据"
+echo "[1] nvidia-smi 全表（.29）"
+timeout 15 nvidia-smi 2>/dev/null | sed -n '1,12p' | cut -c1-150 | sed 's/^/    /'
+echo "  --- GPU 行 ---"
+timeout 15 nvidia-smi 2>/dev/null | sed -n '13,24p' | cut -c1-150 | sed 's/^/    /'
+
+echo
+echo "[2] 计算进程视角（三种查法）"
+echo "  a) nvidia-smi --query-compute-apps:"
+timeout 12 nvidia-smi --query-compute-apps=pid,process_name,used_memory --format=csv 2>/dev/null | sed 's/^/    /'
+echo "  b) nvidia-smi pmon -c 1:"
+timeout 15 nvidia-smi pmon -c 1 2>/dev/null | head -12 | sed 's/^/    /'
+echo "  c) 3 次间隔采样（utilization.gpu / memory.used / power / temp）:"
+timeout 20 nvidia-smi --query-gpu=index,utilization.gpu,memory.used,power.draw,temperature.gpu --format=csv,noheader -l 1 -c 3 2>/dev/null | sed 's/^/    /'
+
+echo
+echo "[3] 有没有 python/torch 训练进程（全用户，按 CPU 排序前 10）"
+timeout 10 ps -eo user,pid,etime,pcpu,pmem,rss,cmd --sort=-pcpu 2>/dev/null | head -11 | cut -c1-120 | sed 's/^/    /'
+echo "  python 进程数=$(timeout 10 ps -eo cmd 2>/dev/null | grep -c '[p]ython')"
+
+echo
+echo "[4] 内存/swap（判断是否曾发生内存压力）"
 free -g | sed 's/^/    /'
-echo "  dmesg OOM/kill (last 10):"
-timeout 15 dmesg -T 2>/dev/null | grep -iE 'out of memory|oom-kill|killed process' | tail -10 | cut -c1-160 | sed 's/^/    /' || echo "    dmesg 不可读"
-echo "  journal OOM (last 8):"
-timeout 15 journalctl -k --since '2026-11-02 18:00' 2>/dev/null | grep -iE 'oom|killed process' | tail -8 | cut -c1-160 | sed 's/^/    /' || echo "    journal 不可读"
+echo "  oom 计数: $(timeout 5 cat /proc/vmstat 2>/dev/null | grep oom_kill | tr '\n' ' ')"
 
 echo
-echo "[2] S1 master/worker 日志尾（死亡现场）"
-ls -l --time-style='+%F %T' /tmp/baize_s1_baize2b_master.log /tmp/baize_s1_baize2b_worker.log 2>/dev/null | awk '{print "    "$6,$7,$5"B",$8}'
-echo "  master tail 12:"
-timeout 10 tail -12 /tmp/baize_s1_baize2b_master.log 2>/dev/null | cut -c1-170 | sed 's/^/    /'
-echo "  worker tail 6:"
-timeout 10 tail -6 /tmp/baize_s1_baize2b_worker.log 2>/dev/null | cut -c1-170 | sed 's/^/    /'
-
-echo
-echo "[3] 谁在 18:39 动过（.29 上 18:30-19:00 的用户进程线索）"
-timeout 10 ls -lt --time-style='+%F %T' /tmp 2>/dev/null | grep -E '18:3[0-9]|18:4[0-9]' | head -8 | awk '{print "    "$6,$7,$5,$8}' || true
-
-echo
-echo "[4] S1 启动脚本候选（run/ 下）"
-timeout 10 ls -1t "$R" 2>/dev/null | grep -iE '^s1|baize.*s1|s1.*\.sh|launch' | head -10 | sed 's/^/    /'
-echo "  *.sh 列表(含 s1 关键字):"
-timeout 10 ls -1 "$R"/*.sh 2>/dev/null | grep -iE 's1|launch|train' | head -10 | sed 's/^/    /'
-
-echo
-echo "[5] 该脚本尾部（看默认参数）"
-for f in "$R"/s1_*.sh "$R"/baize_s1*.sh; do
-  [ -f "$f" ] || continue
-  echo "  ---- $f ($(stat -c %s "$f")B, mtime=$(stat -c %y "$f" | cut -c1-19)) ----"
-  timeout 5 tail -12 "$f" | cut -c1-140 | sed 's/^/    /'
+echo "[5] 内核日志（多种入口，找 OOM / SIGBUS 线索）"
+echo "  dmesg tail 20:"
+timeout 12 dmesg 2>/dev/null | tail -20 | cut -c1-150 | sed 's/^/    /' || echo "    (dmesg 受限)"
+echo "  /var/log/syslog|messages grep -i 'killed process|oom|mce|machine check':"
+for f in /var/log/syslog /var/log/messages /var/log/kern.log; do
+  [ -r "$f" ] || continue
+  timeout 10 grep -iE 'killed process|out of memory|oom-kill|machine check|mce:' "$f" 2>/dev/null | tail -6 | cut -c1-150 | sed "s|^|    $f: |"
 done
 
 echo
-echo "[6] checkpoints 最新 & 训练 sh 是否记录了 resume"
-timeout 10 cat "$BASE/nemo_experiments/baize2b/checkpoints/latest_checkpointed_iteration.txt" 2>/dev/null | sed 's/^/    latest_iter=/'
-timeout 10 ls -1t "$BASE/nemo_experiments/baize2b/checkpoints" 2>/dev/null | head -4 | sed 's/^/    /'
+echo "[6] master 日志：失败顺序（SIGKILL vs SIGBUS 谁先）"
+timeout 10 grep -nE 'SIGKILL|SIGBUS|SIGSEGV|Root Cause|first observed|exitcode|Traceback|Error' /tmp/baize_s1_baize2b_master.log 2>/dev/null | tail -14 | cut -c1-160 | sed 's/^/    /'
+echo "  master 里最后的训练进度行:"
+timeout 10 grep -E 'iteration +[0-9]+/' /tmp/baize_s1_baize2b_worker.log 2>/dev/null | tail -2 | cut -c1-160 | sed 's/^/    /'
 
 echo
-echo "[7] 在飞的 cline 会话（hung 6h）是否还在耗 CPU"
-timeout 10 ps -o pid,etime,pcpu,rss,stat -p 1587337 2>/dev/null | sed 's/^/    /' || echo "    pid1587337 已不在"
+echo "[7] CPU 冒烟测试文件（18:46-19:18 那批）+ 是否有进程在跑"
+timeout 10 ls -lt --time-style='+%F %T' /tmp 2>/dev/null | grep -iE 'cpu_smoke|lmeval' | head -8 | awk '{print "    "$6,$7,$5"B",$8}'
+timeout 10 ps -eo pid,etime,pcpu,cmd 2>/dev/null | grep -E '[t]est_lmeval|[l]m_eval|[c]pu_smoke' | cut -c1-120 | head -5 | sed 's/^/    /' || echo "    (无相关进程)"
 
 echo
-echo "[8] loop 日志尾（是否记录卡住/重试）"
-timeout 10 tail -8 /tmp/baize_pretrain_loop.log 2>/dev/null | cut -c1-170 | sed 's/^/    /'
+echo "[8] .12 侧交叉验证"
+timeout 20 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.12 '
+  echo "    host=$(hostname) date=$(date +%H:%M:%S) up=$(cut -d" " -f1 /proc/uptime)s"
+  echo "    gpu_lines=$(nvidia-smi -L | wc -l)"
+  nvidia-smi --query-gpu=index,utilization.gpu,memory.used --format=csv,noheader | tr "\n" " " | cut -c1-160
+  echo ""
+  echo "    compute_apps=$(nvidia-smi --query-compute-apps=pid,used_memory --format=csv,noheader | tr "\n" "|")"
+  echo "    torch=$(ps -eo cmd | grep -cE "[t]orchrun|[p]retrain_launcher")"
+  echo "    mem: $(free -g | awk "/Mem:/{print \"total=\"\$2\"G used=\"\$3\"G avail=\"\$7\"G\"}")"
+' 2>&1 | sed 's/^/  /' || echo "    ssh .12 failed"
 
 echo
-echo "=== DONE 227 ==="
+echo "=== DONE 228 ==="
 ```
