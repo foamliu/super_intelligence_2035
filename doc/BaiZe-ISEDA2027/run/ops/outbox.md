@@ -24127,3 +24127,179 @@ echo "=== DONE 228 ==="
 
 === DONE 228 ===
 ```
+
+---
+
+## RUN_ID 229 · 2026-11-02 19:46:36 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 229 | find S1 launch recipe | $(date '+%F %T') | host=$(hostname) ==="
+LLM=/nas_train/app.e0031982/code/baize-llm
+R=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
+
+echo
+echo "[1] baize-llm/scripts 列表"
+timeout 10 ls -1t "$LLM/scripts" 2>/dev/null | head -20 | sed 's/^/    /'
+timeout 10 ls -1t "$LLM" 2>/dev/null | head -12 | sed 's/^/    /'
+
+echo
+echo "[2] 谁引用了 worker 日志名（找启动包装脚本）"
+timeout 25 grep -rl 'baize_s1_baize2b' "$LLM" "$R" 2>/dev/null | head -8 | sed 's/^/    /'
+
+echo
+echo "[3] 找 s1 启动脚本（可能名）"
+timeout 20 ls -1 "$LLM"/scripts/*.sh 2>/dev/null | head -20 | sed 's/^/    /'
+
+echo
+echo "[4] train.sh 头部（默认参数/用法）"
+if [ -f "$LLM/scripts/train.sh" ]; then
+  echo "    ---- head 40 ----"
+  timeout 8 sed -n '1,40p' "$LLM/scripts/train.sh" | cut -c1-150 | sed 's/^/    /'
+  echo "    ---- 关键行 ----"
+  timeout 8 grep -nE 'ITER|ITERS|CONFIG|resume|save|seq|mbs|gbs|GPUS|NODES|master_port' "$LLM/scripts/train.sh" 2>/dev/null | head -18 | cut -c1-140 | sed 's/^/    /'
+fi
+
+echo
+echo "[5] pretrain agent 此刻在跑什么（CPU smoke / lm_eval）"
+timeout 10 ls -lt --time-style='+%F %T' /tmp 2>/dev/null | grep -iE 'cpu_smoke|lmeval' | head -6 | awk '{print "    "$6,$7,$5"B",$8}'
+echo "  cpu_smoke_v2.log 尾 8:"
+timeout 8 tail -8 /tmp/cpu_smoke_v2.log 2>/dev/null | cut -c1-150 | sed 's/^/    /'
+echo "  当前 python 进程（>50% CPU）:"
+timeout 10 ps -eo pid,etime,pcpu,rss,cmd --sort=-pcpu 2>/dev/null | awk '$3>50' | head -4 | cut -c1-130 | sed 's/^/    /'
+
+echo
+echo "[6] 确认 16 卡仍空（再采一次）"
+echo "  .29: $(nvidia-smi --query-gpu=memory.used --format=csv,noheader | tr '\n' ' ')"
+timeout 15 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=6 10.239.2.12 'echo "  .12: $(nvidia-smi --query-gpu=memory.used --format=csv,noheader | tr "\n" " ")"; echo "  .12 torch=$(ps -eo cmd | grep -cE "[t]orchrun|[p]retrain_launcher")"' 2>&1 | sed 's/^/  /'
+
+echo
+echo "=== DONE 229 ==="
+```
+
+**输出**
+```
+=== RUN_ID 229 | find S1 launch recipe | 2026-11-02 19:46:36 | host=whag0pgpuap29 ===
+
+[1] baize-llm/scripts 列表
+    export_hf.sh
+    activate_preblend.sh
+    pre_blend.py
+    train.sh
+    gen_blend.py
+    check_longctx_data.py
+    longctx_ladder.sh
+    abf_plan.py
+    preflight.sh
+    check_rope.py
+    prune_ckpts.sh
+    lr_schedule.py
+    tb_6006.sh
+    status.sh
+    lib.sh
+    README.md
+    scripts
+    configs
+    docs
+
+[2] 谁引用了 worker 日志名（找启动包装脚本）
+
+[3] 找 s1 启动脚本（可能名）
+    /nas_train/app.e0031982/code/baize-llm/scripts/activate_preblend.sh
+    /nas_train/app.e0031982/code/baize-llm/scripts/export_hf.sh
+    /nas_train/app.e0031982/code/baize-llm/scripts/lib.sh
+    /nas_train/app.e0031982/code/baize-llm/scripts/longctx_ladder.sh
+    /nas_train/app.e0031982/code/baize-llm/scripts/preflight.sh
+    /nas_train/app.e0031982/code/baize-llm/scripts/prune_ckpts.sh
+    /nas_train/app.e0031982/code/baize-llm/scripts/status.sh
+    /nas_train/app.e0031982/code/baize-llm/scripts/tb_6006.sh
+    /nas_train/app.e0031982/code/baize-llm/scripts/train.sh
+
+[4] train.sh 头部（默认参数/用法）
+    ---- head 40 ----
+    #!/usr/bin/env bash
+    # ============================================================
+    # baize-llm · 训练统一入口
+    #   bash scripts/train.sh s1|s2|decay|longctx [--smoke N] [--dry-run] [--nodes N] [--name X]
+    # 配方固定：Mamba2-hybrid 2.2B / 16K / AdamW / WSD(D=exponential) / graph OFF / FP8 tensorwise
+    # ============================================================
+    set -uo pipefail
+    HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    BAIZE_LLM_HOME="$(cd "$HERE/.." && pwd)"
+    export BAIZE_LLM_HOME
+    # shellcheck source=lib.sh
+    source "$HERE/lib.sh"
+    
+    usage() {
+      sed -n '2,6p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'
+    }
+    
+    STAGE="${1:-}"
+    [ -n "$STAGE" ] && shift || true
+    SMOKE=0; DRY=0; NODES_OVERRIDE=""; NAME_OVERRIDE=""
+    while [ $# -gt 0 ]; do
+      case "$1" in
+        --smoke)   SMOKE="${2:-0}"; shift 2 ;;
+        --smoke=*) SMOKE="${1#*=}"; shift ;;
+        --dry-run) DRY=1; shift ;;
+        --nodes)   NODES_OVERRIDE="${2:-}"; shift 2 ;;
+        --name)    NAME_OVERRIDE="${2:-}"; shift 2 ;;
+        -h|--help) usage; exit 0 ;;
+        *) die "未知参数：$1" ;;
+      esac
+    done
+    case "$STAGE" in s1|s2|decay|longctx) ;; *) usage; exit 2 ;; esac
+    
+    # shellcheck source=../configs/common.env
+    source "$BAIZE_LLM_HOME/configs/common.env"
+    # shellcheck disable=SC1090
+    source "$BAIZE_LLM_HOME/configs/${STAGE}.env"
+    
+    [ -n "$NODES_OVERRIDE" ] && NNODES="$NODES_OVERRIDE"
+    DP=$(( NNODES * NPROC_PER_NODE / (TP * CP) ))
+    ---- 关键行 ----
+    20:SMOKE=0; DRY=0; NODES_OVERRIDE=""; NAME_OVERRIDE=""
+    26:    --nodes)   NODES_OVERRIDE="${2:-}"; shift 2 ;;
+    39:[ -n "$NODES_OVERRIDE" ] && NNODES="$NODES_OVERRIDE"
+    40:DP=$(( NNODES * NPROC_PER_NODE / (TP * CP) ))
+    43:  ITERS=$(( START_ITER + SMOKE ))
+    46:  NNODES=1
+    47:  DP=$(( NNODES * NPROC_PER_NODE / (TP * CP) ))
+    61:STEPS=$(( ITERS - START_ITER ))
+    66:  并行      : NNODES=$NNODES × $NPROC_PER_NODE GPU, TP=$TP CP=$CP ⇒ DP=$DP
+    69:  LR        : peak=$LR min=$MIN_LR warmup=$WARMUP decay_iters=$LR_DECAY_ITERS shape=$LR_DECAY_SHAPE
+    73:  迭代区间  : [$START_ITER, $ITERS)   累计口径（S2/Decay 必须如此，否则会误判已到终点）
+    102:       --train-iters "$ITERS" --global-batch-size "$GBS"
+    103:       --micro-batch-size "$MBS" --seq-length "$SEQ"
+    104:       --eval-interval 250 --eval-iters 0 --save-interval "$SAVE_INTERVAL"
+    106:       --lr-warmup-iters "$WARMUP" --lr-decay-iters "$LR_DECAY_ITERS"
+    143:if [ "${LR_DECAY_ITERS:-0}" -gt 0 ] && [ "${LR_DECAY_SHAPE:-linear}" != "linear" ]; then
+    197:# exhausted → OOM-kill at iter~31. Cap to 4/rank (8×4=32 workers, saves ~168GB).
+    207:  echo "--- DRY RUN：rank0=${MASTER_IP} / rank1=local（${NNODES}×${NPROC_PER_NODE} GPU）---"
+
+[5] pretrain agent 此刻在跑什么（CPU smoke / lm_eval）
+    2026-11-02 19:45:24 4096B cpu_smoke_v2
+    2026-11-02 19:45:24 6863B cpu_smoke_v2.log
+    2026-11-02 19:39:30 2139B test_lmeval.log
+    2026-11-02 19:26:49 4096B cpu_smoke_debug_f32
+    2026-11-02 19:25:59 4096B cpu_smoke_debug
+    2026-11-02 19:25:09 3806B cpu_smoke_bf16.log
+  cpu_smoke_v2.log 尾 8:
+    
+    ============================================================
+    EVALUATION RESULTS SUMMARY
+    ============================================================
+      sciq/acc: 0.0000
+      sciq/acc_norm: 0.0000
+    ============================================================
+    Total eval time: 253.7s
+  当前 python 进程（>50% CPU）:
+
+[6] 确认 16 卡仍空（再采一次）
+  .29: 0 MiB 0 MiB 0 MiB 0 MiB 0 MiB 0 MiB 0 MiB 0 MiB 
+    .12: 0 MiB 0 MiB 0 MiB 0 MiB 0 MiB 0 MiB 4 MiB 4 MiB 
+    .12 torch=0
+
+=== DONE 229 ===
+```
