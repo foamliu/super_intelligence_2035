@@ -27,5 +27,5 @@
 1793070934364_gtyj5	easont	hfeg0plg58	590	waveform	case	EDA-Eval-DesignFlow-TempSelWaveform-001	2026-11-02 20:23	
 1792215882223_qv6pl.messages.json	adaml	hfeg0pkn001	324	waveform	case	EDA-Eval-DesignFlow-ToggleTrTf-001	2026-11-02 20:53	
 1793001881089_dek1i	easont	hfhds207	590	schematic_netlist	case	EDA-Eval-DesignFlow-NetlistCmp-001	2026-11-02 21:32	
-1792551272867_jnf1q	jasonxu	hfeg0plg93	470	schematic_netlist	claimed		2026-11-02 22:48	
+1792551272867_jnf1q	jasonxu	hfeg0plg93	470	schematic_netlist	case	EDA-Eval-DesignFlow-ReadsigAddrTbl-001	2026-11-02 23:06	
 1792031875998_68gc9.messages.json					case	EDA-Eval-DesignFlow-SiOutDiag-001	2026-11-02 22:56	

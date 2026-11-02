@@ -1,52 +1,57 @@
-# trace_deepread: jnf1q — readsigCM netlist address-table extraction
+# 深读笔记 — jnf1q (jasonxu @ hfeg0plg93, mc=470)
 
-- **session**: `1792551272867_jnf1q.messages.json` (jasonxu @ hfeahpc501, mc=470)
-- **agent**: deepseek-v4-flash, 317 msgs, status=failed (skill kept being invoked despite failed session flag)
-- **tools**: editor×84, read_files×31, run_approved_command×22, list_allowed_files×16, SandBox_MCP(run_code pyAether)×3
-- **domain**: characterization (analog readout address table) — shard B
+- session: `1792551272867_jnf1q.messages.json` (1.66MB, 317 msgs, agent=lead, 180 user/137 assistant)
+- 域：schematic_netlist (ALPS netlist 解析) + analog_context (DRAM readout CM search)
+- 工具分布：editor×84 / read_files×31 / run_approved_command×22 / list_allowed_files×16
 
-## 用户意图演进（16 个有效用户轮）
+## 用户意图演进（16 个实质 user 文本轮）
 
-1. msg[0] "我需要创建一个skill" → skill-creator 启动
-2. msg[17] **提出需求**：把 `/home/jasonxu/script/ReadsigCM.py`（pyAether `TransferInfoToReport(lib,cell)`，查原理图模拟 readout 地址 + 读出 net + 排序）打包成 skill，触发词 `readsigCM_search, 库名, 电路名`
-3. msg[46]/[56] 触发 `readsigCM_search, drvqa_cmos_digital, T_ReadSigLeft` → pyAether 连接失败（项目文件不可读）
-4. msg[60]/[70] **提出需求（关键转折）**："现在我给你提供模块的 netlist，请你首先编写一个工具对 netlist 进行分析和提取，copy 一份 ReadsigCM.py 在其基础上修改…当用户输入 `readsigCM_search, netlist路径`，就开始执行" —— 从原理图版迁到 netlist 解析版
-5. msg[116] 触发 `readsigCM_search, /proj/.../netlist`
-6. msg[122] 提需求：输出文件默认存 netlist 同目录（不写死工程名）
-7. msg[136]/[139] 提需求：skill 改名 `jasonxu-analogkit`
-8. msg[164] 提需求：一次跑多个 netlist，各自输出 + 合并文件，路径不写死
-9. msg[196] 提需求：清单文件式输入（`readsig_netlist` 内每行一个 netlist 路径），输出全在清单目录
-10. msg[246] **给出修复方案（4 步后处理 spec v1）**：① 仅保留 fnReadSigGrpSel10 行 ② 排序 0000000→1111111 ③ 删前两列 + 末 token 去 fnReadSig/En ④ 无 fnReadSig 前缀→spare ⑤ EnY/EnV/En* 结尾整行删
-11. msg[269] **给出修复方案（v2，最终）**：同上但去掉 step 5，改为 step 3 把 EnY/EnV/En* 作为后缀一并剥离（行保留）。示例 `fnReadSigGrpSel10 0 0 0 0 0 0 1 vwlp fnReadSigVbgrD2En` → `0 0 0 0 0 0 1 vwlp VbgrD2`
-12. msg[316] 再次触发 `readsigCM_search, /proj/.../09_readout/readsig_netlist` → 产出 127 行最终 CSV（隐式接受）
+- U[0/17/116]：skill-creator meta（创建 skill 的写作指南，非任务本体）
+- U[3/4]：`readsigCM_search, drvqa_cmos_digital, T_ReadSigLeft`（初版触发，pyAether 原理图版）
+- U[5/6]：**关键转向**——「上述问题可能是因为你无法访问项目文件。现在我给你提供模块的 netlist，请你首先编写一个工具对 netlist 进行分析和提取，并 copy 一份 ReadsigCM.py 在该脚本基础上修改」。从 pyAether 原理图扫描改为**直接解析 ALPS netlist 文本**。
+- U[8]：输出文件保存路径默认与 netlist 路径放在一起，不要写死
+- U[9/10]：skill 改名 `jasonxu-analogkit`（readsigCM 仅是小功能，后续丰富）
+- U[11]：一次执行**多个 netlist**，各自输出 + 最后合并；路径不要写死（drvqa→drvsa 等）
+- U[12]：改为**清单文件**输入（所有待分析 netlist 路径放在一个文件中），输出全部放在清单所在目录
+- U[14/15]：**后处理 4 步**——仅留 fnReadSigGrpSel10 行 → 排序 0000000..1111111 → 删前两列 + DecOut 去 fnReadSig 前缀与 En 后缀 → 非 fnReadSig token 置 spare
+- U[15]（最终版，覆盖 U[14]）：步骤 3 的 En 处理改为「去 En* 后缀（EnY/EnV/En 等）」，**取消** U[14] 的「EnY/EnV 结尾整行删除」
+- U[16]：`readsigCM_search, /proj/drvqa/V0/simdir/hspice/jasonxu/09_readout/readsig_netlist`（最终验收调用）
 
-## agent 真实产物（gold）
+## netlist 实例格式（从 _inspect_netlist.py / _readsigcm_netlist.py / netlist.map 推得）
 
-- 最终脚本 `/home/jasonxu/script/ReadsigCM.py`（347 行，netlist 解析版）+ skill `jasonxu-analogkit` 部署在 `~/.cline/skills/jasonxu-analogkit/`
-- 算法：
-  - **extract**：扫 netlist，匹配 `X<inst> <net0..net8> <cell>`，cell ∈ {T_ReadSigDecVcc/Vccp/Vdd1/Vccp_1}；A7=col7（fnReadSigGrpSel10/00），A0..A6=col0..6（`D<n>`→'1', 其它字母<n>→'0', 无匹配→'NA'），type=vcc/vwlp/vdd1，DecOut=col8
-  - **post-process**（USER[269] 最终）：① 仅留 A7==fnReadSigGrpSel10 ② 按 7-bit 升序 ③ 删前两列 + DecOut 去 fnReadSig 前缀 + 去尾部 En/EnY/EnV/EnX（`En[A-Za-z]*$`）④ 无 fnReadSig 前缀的 DecOut → "spare"
-  - 输出 `digitalPinInfo_final_<ts>.csv` 落清单目录
-- 09_readout（3 netlist 合并）实跑 127 行（tr_291）：含 EnY 剥离（RefSpareD2EnY→RefSpareD2，行保留）、En 剥离（VbgrD2En→VbgrD2）、无前缀→spare（net10/spare_1111000→spare）、GrpSel00 decoy 已滤
+```
+X<inst> <net_A0> <net_A1> <net_A2> <net_A3> <net_A4> <net_A5> <net_A6> <net_A7> <DecOut_net> <cell>
+```
+- cell ∈ {T_ReadSigDecVcc, T_ReadSigDecVccp, T_ReadSigDecVccp_1, T_ReadSigDecVdd1} → type {vcc, vwlp, vwlp, vdd1}
+- 引脚列序（去行首实例名后，0-based）：A0=col0..A6=col6, A7=col7, DecOut=col8（来自 netlist.map 的 `P 引脚 序号`）
+- 位编码：A0..A6 的 net 名匹配 `r'([a-zA-Z])<\d+>'` → 字母 D 记 '1'，其他字母记 '0'，不匹配记 'NA'
+- A7 = 地址选通 net（fnReadSigGrpSel10 / fnReadSigGrpSel00 等）
+- DecOut = 该地址选中的读出信号 net（fnReadSigXxxEn / net42<0> / spare_1111000 等）
 
-## 可复现性判定
+## 最终脚本逻辑（idx=276 main + idx=282 En 处理 patch，idx=290 运行 127 行用户接受）
 
-- 真实 netlist `/proj/drvqa/V0/simdir/hspice/jasonxu/09_readout/` 对 e0031982 **permission denied**（不可读 jasonxu 项目）
-- 子技能 = netlist 解析 + 4 步后处理，**纯 Python L1**，完全可移植（无 pyAether/HSPICE 依赖）
-- 选为 **B 档 synthesized**：资产按 ALPS netlist 格式合成（含 fnReadSig 命名约定、GrpSel10/00、EnY/EnV/EnX、spare 情况），gold 由本仓 clean reference 实现产出
-- A 档 faithful 不适用：USER[60] 提需求轮过于宽泛（"编写一个工具对 netlist 进行分析和提取"），且真实 netlist 不可读，无法逐字复刻
+1. collect_netlists(arg)：arg 为清单文件/目录/netlist。清单文件每行（去 # 注释）为 netlist 路径，**相对清单文件目录解析**；目录则找 netlist/netlist.presim/netlist_org/*.netlist
+2. extract_readout(nl)：扫 `X.. <cell>` 实例行 → {a7, bits[7], type, decout}
+3. 合并所有 netlist 的行 → raw_rows
+4. 后处理（内存，不落盘中间文件）：
+   - 仅留 a7 == "fnReadSigGrpSel10"
+   - DecOut 清洗：若 startswith("fnReadSig") → body = decout[9:]；body = re.sub(r'En[A-Za-z0-9]*$', '', body)（等价 rfind('En') 截断）→ newtok = body；否则 newtok = "spare"
+   - final.append(bits + [type, newtok])
+   - 按 7 位二进制 0000000..1111111 升序排序
+5. 输出：`<清单目录>/digitalPinInfo_final_<时间戳>.csv`，每行 `<b6>..<b0> <type> <decout_cleaned>`（9 token）
 
-## 已有 case 区分度
+## 真实金标准（用户接受，idx=291 stdout，exit 0）
 
-- SubcktExtract-001（spice_sim L1）：.SUBCKT 段流式提取 + 一层 X 实例/端口/网解析，discriminator = '+' 续行。本 case 是 **readout 地址表抽取 + 4 步后处理**（bit 编码、A7 过滤、二进制排序、fnReadSig/En 剥离、spare 替换、多 netlist 合并），discriminator 完全不同。shard B 此前无 readout 地址表征子技能，L1 补牙合规。
+`/proj/drvqa/V0/simdir/hspice/jasonxu/09_readout/digitalPinInfo_final_20261021_194117.csv`（127 行，2 设计 Left+CenterR 合并）。逐行取自 trace idx=291 的 run_approved_command stdout。注意：0000000 行缺席（127 = 2^7 - 1）。
 
-## 陷阱烤进
+## 合成（B 档）
 
-1. **A7 过滤**：GrpSel00 decoy 必须滤掉（不能把所有 readout 实例都输出）
-2. **bit 编码**：`D<n>`→'1'，其它字母<n>→'0'，无匹配→'NA'（不能把 A<n> 也当 '1'）
-3. **7-bit 二进制排序**：A6..A0 是 MSB→LSB，不是字符串序、不是 LSB→MSB
-4. **fnReadSig 前缀剥离**：`fnReadSigVbgrD2En`→`VbgrD2` 不是 `fnReadSigVbgrD2`
-5. **En/EnY/EnV/EnX 后缀剥离**：`En[A-Za-z]*$`，行保留（USER[269] v2，不是 v1 的整行删除）
-6. **spare 替换**：无 fnReadSig 前缀的 DecOut（net10/spare_1111000）→ 字面 "spare"，不是原样保留
-7. **清单路径相对解析**：相对清单目录，不写死工程名；输出落清单目录
-8. **多 netlist 合并**：清单多行 → 合并所有 readout 实例再后处理
+- **netlist A**（可见，2 设计 T_ReadSigLeft + T_ReadSigCenterR）：22 行 GrpSel10 + GrpSel00 decoys + EnY/EnV/no-En/spare DecOut 变体，复刻真值位模式与 fnReadSig 命名
+- **netlist B**（隐藏，2 设计 T_ReadSigLeftB + T_ReadSigRightB）：23 行 GrpSel10，命名/位模式/DecOut/spare/EnY/EnV/EnX 全异于 A，跨输入守卫
+- 参考 ReadsigCM_ref.py 复刻最终 4 步逻辑；check.py 15 条件 a–o（含跨输入守卫 n + 多 netlist 合并 m + En 后缀剥离 h）
+
+## 坑
+
+- 权限：/proj/drvqa/... 在 hfeg0plg93 上 jasonxu 私有，e0031982 不可读 → 无法取真实 netlist，改用 gen_netlist.py 从 trace 结构 + 金标准派生
+- En 处理版本演进：idx=249/257/265（U[14] 版，EnY/EnV 整行删除）→ idx=276/282（U[15] 最终版，En* 后缀剥离保留行）。金标准 127 行来自最终版
+- 清单相对路径：必须相对清单文件目录解析，否则跨工程（drvqa→drvsa）失败
