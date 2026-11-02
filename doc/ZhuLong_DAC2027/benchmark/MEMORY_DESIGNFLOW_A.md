@@ -6,7 +6,7 @@ DOMAINS: digital, eda_other, pnr_signoff, verification
 - 每轮做 1 条 case：rewrite_queue 优先（断言闸门），清零后 trace_ledger.py --shard A next → claim → 深读 → 合成
 - 📊 trace 覆盖率：见 designflow/trace_ledger.py --shard A stats
 - 🎯 通过率: 0/0（A 档尚未实跑；先清断言债）
-- 🧾 断言: k_rationale=k_check 达标（今日 3/4 达标：Digital-010 k=19 / Digital-021 k=17 / Digital-022 k=17）· 队列剩 1/4（Digital-023 待整改）
+- 🧾 断言: k_rationale=k_check 达标（今日 4/4 达标：Digital-010 k=19 / Digital-021 k=17 / Digital-022 k=17 / Digital-023 k=17）· 队列清零 ✓（4/4 全部 done，下轮起开新 case：trace_ledger.py --shard A next → claim → 深读 → 合成）
 
 ### 2026-11-02 shard A 轮 2：Digital-021 断言闸门整改 ✓
 - 队列队首 `EDA-Eval-DesignFlow-Digital-021`（digital, PrimeTime 时序报告负 slack 路径提取, L1 离线 Python）标 `incomplete`：jsonl test 字段是旧 1568B 弱判分（4 packed 条件），rationale 是散文。
@@ -40,3 +40,14 @@ DOMAINS: digital, eda_other, pnr_signoff, verification
 - negative/ + negative_selftest.py：3 §4.9 假 + 2 naive（fake_empty→a / fake_print_expected[keywords-in-comments]→c / fake_core_deleted[RC3 uncommented]→g / naive_break_scanenable→i / naive_no_generic_mechanism→q），NEG_RC=0 全 FAIL，5 个不同标签。
 - 闸门：k_rationale=17=k_check=17≥8 ✓；jsonl test 1357→6209B 同步（test==disk check.py roundtrip OK）；7 行/7 unique id 保留。
 - 队列 `rewrite_queue.tsv` Digital-022 → done；与 Digital-010/021 共计今日 3/4 达标，剩 Digital-023 待整改（下轮第一件事）。
+
+### 2026-11-02 shard A 轮 5：Digital-023 断言闸门整改 ✓（队列清零）
+- 队列队首 `EDA-Eval-DesignFlow-Digital-023`（digital, VCS 编译/仿真 makefile 参数化改造, L1 离线静态 + GNU make -n 干跑）标 `incomplete`：jsonl test 字段是旧 1500B 弱判分（4 packed/substring 条件），rationale 是散文。
+- 本轮重建磁盘 `reference/EDA-Eval-DesignFlow-Digital-023/check.py` 从 4 packed 条件 → 17 独立标签 (a)-(q)：
+  (a)zip-exactly-3-files / (b)make-n-valid-syntax / (c)MOD-?= / (d)CONFIG-def / (e)RTL_F-?= / (f)NET_F-?= / (g)PR_NET_F-?= / (h)TB_TOP-?= / (i)UPF_FILE-?= / (j)QUEUE-?= / (k)ONLINE-?= / (l)-include-$(CONFIG)/cfg/$(MOD).cfg-dash-optional / (m)comp/comp_net/comp_pr_net-body-uses-$(RTL_F)/$(NET_F)/$(PR_NET_F)-no-literal-pu.f / (n)run-rule-bsub-guarded-by-$(if)-ONLINE-switch / (o)tpl_mod.cfg-7vars-plain-=-no-?= / (p)README-优先级+接入+var-table>=6 / (q)cross-input-guard
+- L1 grader 用 GNU make 4.3 `-n` 干跑（不执行 VCS，只展开 recipe），校验 makefile 语法合法 (b) + 变量替换正确 (q)；注释剥离 (#) 后在活跃行检验变量定义与 rule body。
+- 隐藏 B 配置卡 `assets/.../hidden/cfg/dma.cfg`（DMA 模块：DmaTop/normal/dma.f/dma_net.f/dma_pr_net.f/../../upf/dma.upf/FF_85，与 A 的 PU: PuTopDftEcc/gputest/pu.f/../../upf/sim.upf/TT_25 结构性不同）+ hidden_manifest.json；B 不进 SUT 沙箱，check() 内嵌 `_CFG_DMA` 字符串在临时目录写出后 `make -n MOD=dma CONFIG=cfg/dma.cfg ONLINE=0 comp run verdi`，断言输出含 dma.f + DmaTop 且不含 bsub/pu.f/PuTopDftEcc/work_pu —— 击败把 `-top PuTopDftEcc` 硬编码进 verdi rule body 的 fake_print_expected（过 a-p 静态，仅 (q) 失败）。
+- 参考解 `reference/makefile_para`（?= 默认保 PU 行为 + -include $(CONFIG) + $(if $(filter 1,$(ONLINE))...) bsub 守护 + WORK=work_$(MOD)_mix_power_case）+ `cfg/tpl_mod.cfg`（7 变量普通 = 占位符模板）+ `cfg/README.md`（变量表 12 行 + 优先级 + 新模块接入 7 步）+ `reference_submit.zip`；默认干跑复现 PU（pu.f/work_pu/bsub -q gputest），DMA 干跑复现 dma.f/DmaTop/无 bsub。
+- negative/ + negative_selftest.py：3 §4.9 假 + 2 naive（fake_empty->a / fake_print_expected[hardcoded -top PuTopDftEcc in verdi]->q / fake_core_deleted[comp body -f ../tb/pu.f]->m / naive_no_online_switch[unconditional bsub]->n / naive_qmark_in_cfg[tpl cfg ?=]->o），NEG_RC=0 全 FAIL，5 个不同标签。
+- 闸门：k_rationale=17=k_check=17≥8 ✓；jsonl test 1500→9803B 同步（test==disk check.py roundtrip OK）；7 行/7 unique id 保留。
+- 队列 `rewrite_queue.tsv` Digital-023 → done；今日 4/4 达标，shard A 断言债清零 ✓。下轮起开新 case：`trace_ledger.py --shard A next → claim → 深读 → 合成`。
