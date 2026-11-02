@@ -20,7 +20,7 @@ WAITING: 1
 ```
 PHASE:        🟢运维令10-31 web search调研HF长上下文+agentic数据集.报告v5已交付+已commit+push
 已完成:       ✅A.LC+Agentic调研报告v5(report_data_lc_agentic_survey_zh.html 106569B/44table/0script/18+15候选/33 unique HF链接)+生成器(gen_lc_agentic_survey_report.py 幂等);✅B.85M下载持续运行;✅C.报告全量验证(7节/0script/0CDN/幂等OK/44table平衡)
-当前动作:     唤醒1118(2026-11-03 02:55):运维令10-31交付物全量复核全PASS→①report=106569B(≥25KB✓)/0<script>/HTMLParser 0errors/44<table>=44</table>平衡✓/7节§1~§7齐/74链接全huggingface.co(0非HF)/34「未核到」/0CDN;②generator --check-idempotent OK(84252bytes✓);③pretrain训练运行中(torchrun alive✓);④git synced(##main...origin/main,data线clean✓,commit 46998fb11);⑤df:/nas_train178T/86%(30T),/nas_env8.3T/84%(1.7T);⑥MEMORY=38241B(<40KB无需归档)→任务已交付,心跳WAITING=1
+当前动作:     唤醒1119(2026-11-03 03:1x):运维令10-31交付物全量复核全PASS→①report=106569B(≥25KB✓)/0<script>/HTMLParser parse_ok/44<table>=44</table>平衡✓/7节sec1~sec7齐/74链接全huggingface.co(0非HF)/34「未核到」/0CDN;②generator --check-idempotent OK(84252bytes✓);③git synced(##main...origin/main,data线clean✓,commit 46998fb11);④MEMORY=38716B(<40KB无需归档)→任务已交付,心跳WAITING=1
 下一步:       下轮唤醒:①查85M下载进度;②待运维批准后执行下载(P0:whole-books+SWE-smith+Nemotron-Terminal-Corpus+SWE-rebench)
 阻塞:         无
 ERROR_COUNT:  11
@@ -30,6 +30,8 @@ ERROR_COUNT:  11
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。
 
 ## 📋 本唤醒流水
+> [11-03 03:1x] 唤醒1119：运维令10-31交付物全量复核全PASS→①report=106569B(≥25KB✓)/0<script>/HTMLParser parse_ok/44<table>=44</table>平衡✓/7节sec1~sec7齐/74链接全huggingface.co(0非HF)/34「未核到」/0CDN;②generator --check-idempotent OK(84252bytes✓);③git synced(##main...origin/main,data线clean✓,commit 46998fb11);④MEMORY=38716B(<40KB无需归档)→任务已交付,心跳WAITING=1
+
 > [11-03 02:55] 唤醒1118：运维令10-31交付物全量复核全PASS→①report=106569B(≥25KB✓)/0<script>/HTMLParser 0errors/44<table>=44</table>平衡✓/7节§1~§7齐/74 HF链接/34「未核到」/0CDN;②generator --check-idempotent OK(84252bytes✓);③pretrain训练运行中(torchrun alive✓);④git synced(##main...origin/main,data线clean✓,commit 46998fb11);⑤df:/nas_train178T/86%(30T),/nas_env8.3T/84%(1.7T);⑥MEMORY=38241B(<40KB无需归档)→任务已交付,心跳WAITING=1
 
 > [11-03 02:22] 唤醒1117：运维令10-31交付物全量复核全PASS→①report=106569B(≥25KB✓)/0<script>/HTMLParser 0unclosed 0errors/44<table>=44</table>平衡✓/7节§1~§7齐/74链接全huggingface.co(0非HF)/34「未核到」/0CDN;②generator --check-idempotent OK(84252chars✓);③85M:PID4174877 alive(etimes≈35953s≈10h)✓;④git synced(##main...origin/main,data线clean✓,commit 46998fb11);⑤df:/nas_train178T/86%(30T),/nas_env8.3T/84%(1.7T);⑥TASK=27958B/MEMORY~37KB(均<40KB无需归档)→任务已交付,心跳WAITING=1
