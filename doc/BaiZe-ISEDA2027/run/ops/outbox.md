@@ -24965,3 +24965,73 @@ echo "=== DONE 236 ==="
 [6] 收尾：确认没有遗留 python 冒烟
 === DONE 236 ===
 ```
+
+---
+
+## RUN_ID 237 · 2026-11-02 20:16:48 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 237 | post-kill safety check | $(date '+%F %T') | host=$(hostname) ==="
+
+echo "[1] 新 cline 会话"
+timeout 8 ps -eo pid,etime,pcpu,rss,cmd 2>/dev/null | grep '[.]cline_pretrain' | head -3 | cut -c1-120 | sed 's/^/    /' || echo "    (尚未启动/已结束)"
+echo "    loop: $(timeout 8 ps -eo pid,etime,cmd 2>/dev/null | grep -E '[b]aize_pretrain_loop\.sh$' | cut -c1-80)"
+echo "    loop log 尾 6:"
+timeout 8 tail -6 /tmp/baize_pretrain_loop.log 2>/dev/null | cut -c1-150 | sed 's/^/    /'
+
+echo
+echo "[2] S1 是否仍是唯一训练"
+echo "    train.sh: $(timeout 8 ps -eo pid,etime,cmd 2>/dev/null | grep -E '[t]rain\.sh s1' | cut -c1-100)"
+echo "    torchrun=$(ps -eo cmd | grep -cE '[t]orchrun')"
+timeout 10 grep -E 'iteration +[0-9]+/' /tmp/baize_s1_baize2b_worker.log 2>/dev/null | tail -2 | cut -c1-170 | sed 's/^/    /'
+echo "    .29 GPU: $(nvidia-smi --query-gpu=utilization.gpu,memory.used --format=csv,noheader | tr '\n' ' ' | cut -c1-200)"
+
+echo
+echo "[3] 有没有新起的 GPU 评测/第二训练"
+timeout 10 ps -eo pid,etime,pcpu,cmd 2>/dev/null | grep -E 'lm_eval|p6_lmeval|train\.sh s[0-9]|torchrun' | grep -v grep | cut -c1-120 | head -6 | sed 's/^/    /'
+
+echo
+echo "[4] .12"
+timeout 20 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.12 '
+  echo "    util: $(nvidia-smi --query-gpu=utilization.gpu --format=csv,noheader | tr "\n" " ")"
+  echo "    torchrun=$(ps -eo cmd | grep -cE "[t]orchrun")  train=$(ps -eo cmd | grep -cE "[t]rain\.sh")"
+' 2>&1 | sed 's/^/  /' || echo "    ssh .12 failed"
+
+echo "=== DONE 237 ==="
+```
+
+**输出**
+```
+=== RUN_ID 237 | post-kill safety check | 2026-11-02 20:16:48 | host=whag0pgpuap29 ===
+[1] 新 cline 会话
+    1734066       01:19 29.9 445976 cline --data-dir /nas_train/app.e0031982/.cline_pretrain -c /nas_train/app.e0031982/code
+    loop: 3165013  4-11:06:47 bash /nas_train/app.e0031982/code/super_intelligence_2035/do
+    loop log 尾 6:
+    DeprecationWarning: AI SDK Warning (openai-compatible.chat / glm-5.2): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' i
+          at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)
+          at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)
+          at transform (/$bunfs/root/cline-checkpoint-off:179957:22)
+    
+       [90m⎿ [0m[2mFrom https://github.com/foamliu/super_intelligence_2035  * branch            ... (+3 more)[0m
+
+[2] S1 是否仍是唯一训练
+    train.sh: 1734066       01:19 cline --data-dir /nas_train/app.e0031982/.cline_pretrain -c /nas_train/app.e0031
+4163528       25:33 bash scripts/train.sh s1 --nodes 2
+    torchrun=3
+     [2026-11-02 20:15:26] iteration    58180/  700000 | consumed samples:     14894080 | elapsed time per iteration (ms): 7108.6 | learning rate: 9.000000E-05 | global batch
+     [2026-11-02 20:16:35] iteration    58190/  700000 | consumed samples:     14896640 | elapsed time per iteration (ms): 6839.4 | learning rate: 9.500000E-05 | global batch
+    .29 GPU: 100 %, 74939 MiB 98 %, 74961 MiB 100 %, 74841 MiB 100 %, 75161 MiB 98 %, 75141 MiB 97 %, 74961 MiB 100 %, 75221 MiB 98 %, 74961 MiB 
+
+[3] 有没有新起的 GPU 评测/第二训练
+    1734066       01:19 30.2 cline --data-dir /nas_train/app.e0031982/.cline_pretrain -c /nas_train/app.e0031982/code/super_
+    4163528       25:33  0.0 bash scripts/train.sh s1 --nodes 2
+    4163745       25:30  0.0 ssh -n -o StrictHostKeyChecking=no -o ServerAliveInterval=30 -o BatchMode=yes 10.239.2.12 ulimi
+    4177347       25:20  0.7 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python /nas_train/app.e0031982/miniforge3/env
+
+[4] .12
+      util: 100 % 100 % 100 % 100 % 100 % 100 % 100 % 100 % 
+      torchrun=3  train=0
+=== DONE 237 ===
+```
