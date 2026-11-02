@@ -23,7 +23,7 @@ shift 2
 
 TASKS="arc_challenge,arc_easy,boolq,hellaswag,openbookqa,piqa,sciq,winogrande"
 LIMIT=""
-DTYPE="float32"
+DTYPE="bfloat16"
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -44,6 +44,7 @@ export HF_HOME="/nas_train/app.e0031982/.cache"
 export HF_DATASETS_OFFLINE=1
 export HF_HUB_OFFLINE=1
 export OMP_NUM_THREADS="${OMP_NUM_THREADS:-4}"
+if [[ "${OMP_NUM_THREADS:-4}" -gt 8 ]]; then export OMP_NUM_THREADS=8; fi
 export MKL_NUM_THREADS="${MKL_NUM_THREADS:-4}"
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
@@ -54,7 +55,7 @@ echo "  output=$OUT  tasks=$TASKS  limit=${LIMIT:-full}  dtype=$DTYPE"
 echo "  OMP=$OMP_NUM_THREADS  CUDA_VISIBLE_DEVICES=(empty)"
 echo "============================================================"
 
-exec /nas_train/app.e0031982/miniforge3/envs/py310/bin/python "$SCRIPT_DIR/cpu_lmeval_run.py" \
+exec nice -n 19 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python "$SCRIPT_DIR/cpu_lmeval_run.py" \
   "$MODEL" \
   "$OUT" \
   --tasks "$TASKS" \

@@ -7,7 +7,13 @@ Handles three critical issues when running on CPU:
 3. HFLM's CLI --model_args doesn't accept device=cpu cleanly
 
 This wrapper creates HFLM programmatically with device="cpu" and calls
-simple_evaluate directly, bypassing the CLI.
+lm_eval.simple_evaluate directly — the standard, well-tested path that
+correctly handles request building, loglikelihood computation,
+process_results, and metric aggregation (acc, acc_norm, etc.).
+
+The previous version bypassed simple_evaluate and manually grouped results
+by doc_id, which mismatched doc_idx for tasks using validation_docs as the
+eval split (sciq/boolq/hellaswag/winogrande) → 0 docs processed → acc=0.0.
 
 Usage:
   python cpu_lmeval_run.py <model_path> <output_path> [--tasks T1,T2,...] [--limit N]
@@ -60,9 +66,9 @@ os.environ.setdefault("HF_HUB_OFFLINE", "1")
 os.environ.setdefault("HF_DATASETS_CACHE", "/nas_train/app.e0031982/hf_cache")
 os.environ.setdefault("HF_HOME", "/nas_train/app.e0031982/.cache")
 
-# ══ 4. Import torch + patch transformers + import lm_eval ══
+# ══ 4. Import torch + Patch transformers + import lm_eval ══
 import torch
-num_threads = int(os.environ.get("OMP_NUM_THREADS", "4"))
+num_threads = int(os.environ.get("OMP_NUM_THREADS", "8"))
 torch.set_num_threads(num_threads)
 torch.set_num_interop_threads(2)
 print(f"[cpu_lmeval_run] torch threads={num_threads}", file=sys.stderr)
@@ -83,7 +89,7 @@ def _sig_handler(signum, frame):
     print(f"\n[cpu_lmeval_run] CAUGHT SIGNAL {sig_name} ({signum})", file=sys.stderr, flush=True)
     faulthandler.dump_traceback(file=sys.stderr)
     sys.exit(128 + signum)
-for sig in [signal.SIGSEGV, signal.SIGABRT, signal.SIGBUS, signal.SIGFPE, signal.SIGKILL if hasattr(signal, 'SIGKILL') else signal.SIGTERM]:
+for sig in [signal.SIGSEGV, signal.SIGABRT, signal.SIGBUS, signal.SIGFPE]:
     try:
         signal.signal(sig, _sig_handler)
     except (ValueError, OSError):
@@ -96,7 +102,7 @@ parser.add_argument("output_path", help="Directory for result files")
 parser.add_argument("--tasks", default="arc_challenge,arc_easy,boolq,hellaswag,openbookqa,piqa,sciq,winogrande")
 parser.add_argument("--limit", type=int, default=None)
 parser.add_argument("--num_fewshot", type=int, default=0)
-parser.add_argument("--dtype", default="float32")
+parser.add_argument("--dtype", default="bfloat16")
 parser.add_argument("--batch_size", type=int, default=1)
 args = parser.parse_args()
 
@@ -121,124 +127,24 @@ t_load = time.time() - t0
 print(f"[cpu_lmeval_run] HFLM loaded in {t_load:.1f}s device={lm.device} max_length={lm.max_length}", file=sys.stderr, flush=True)
 print(f"[cpu_lmeval_run] model dtype={lm.model.dtype}", file=sys.stderr, flush=True)
 
+# ══ 6. Run simple_evaluate (standard lm_eval path) ══
+from lm_eval import simple_evaluate
+
 t0 = time.time()
-print("[cpu_lmeval_run] Starting simple_evaluate...", file=sys.stderr, flush=True)
+print("[cpu_lmeval_run] Starting simple_evaluate (standard lm_eval path)...", file=sys.stderr, flush=True)
 
-# Instead of simple_evaluate (which crashes during task construction/metric
-# computation due to sklearn binary incompatibility from harness agent's
-# editable install), we directly:
-# 1. Load each task's dataset
-# 2. Build loglikelihood requests
-# 3. Call lm.loglikelihood directly
-# 4. Compute acc/acc_norm manually
-
-from lm_eval.tasks import TaskManager
-from lm_eval.api.instance import Instance
-import numpy as np
-
-all_results = {}
-total_n_samples = 0
-for task_name in task_list:
-    print(f"\n[cpu_lmeval_run] --- Task: {task_name} ---", file=sys.stderr, flush=True)
-    tm = TaskManager()
-    task_dict = tm.load_task_or_group([task_name])
-    task = task_dict[task_name]
-
-    # Build dataset
-    task.build_all_requests(limit=args.limit, rank=0, world_size=1)
-    requests = task.instances
-    print(f"[cpu_lmeval_run] {task_name}: {len(requests)} requests", file=sys.stderr, flush=True)
-    total_n_samples += len(requests)
-
-    # Run loglikelihood — but first try a single forward pass manually
-    print(f"[cpu_lmeval_run] {task_name}: {len(requests)} requests", file=sys.stderr, flush=True)
-
-    # Debug: try first request manually
-    if requests:
-        req = requests[0]
-        print(f"[cpu_lmeval_run] DEBUG: first request args={repr(req.args)[:200]}", file=sys.stderr, flush=True)
-        ctx, cont = req.args
-        ctx_enc = lm.tok_encode(ctx) if ctx else [lm.prefix_token_id]
-        cont_enc = lm.tok_encode(cont, add_special_tokens=False)
-        full_inp = (ctx_enc + cont_enc)
-        print(f"[cpu_lmeval_run] DEBUG: ctx_enc len={len(ctx_enc)} cont_enc len={len(cont_enc)} full len={len(full_inp)}", file=sys.stderr, flush=True)
-        import torch as _torch
-        inp_tensor = _torch.tensor([full_inp[:-1]], dtype=_torch.long, device="cpu")
-        print(f"[cpu_lmeval_run] DEBUG: inp_tensor shape={inp_tensor.shape}", file=sys.stderr, flush=True)
-        try:
-            with _torch.no_grad():
-                out = lm.model(inp_tensor)
-            print(f"[cpu_lmeval_run] DEBUG: forward OK, logits shape={out.logits.shape}", file=sys.stderr, flush=True)
-        except Exception as e:
-            print(f"[cpu_lmeval_run] DEBUG: forward FAILED: {e}", file=sys.stderr, flush=True)
-            import traceback
-            traceback.print_exc(file=sys.stderr)
-
-    t_task = time.time()
-    ll_results = lm.loglikelihood(requests)
-    t_task_elapsed = time.time() - t_task
-    print(f"[cpu_lmeval_run] {task_name}: eval done in {t_task_elapsed:.1f}s", file=sys.stderr, flush=True)
-
-    # Process results using the task's own process_results method
-    task_results = {}
-
-    # Group results by doc_id
-    results_by_doc = {}
-    for req, (ll, is_greedy) in zip(requests, ll_results):
-        doc_id = req.doc_id if req.doc_id is not None else 0
-        if doc_id not in results_by_doc:
-            results_by_doc[doc_id] = []
-        results_by_doc[doc_id].append((ll, is_greedy))
-
-    # Use the task's process_results for proper metric computation
-    aggregated = {}
-    doc_count = 0
-    # Get the docs that were actually evaluated
-    if hasattr(task, 'eval_docs') and task.eval_docs is not None:
-        docs_iter = task.eval_docs
-    elif hasattr(task, 'test_docs') and task.has_test_docs():
-        docs_iter = task.test_docs()
-    elif hasattr(task, 'validation_docs') and task.has_validation_docs():
-        docs_iter = task.validation_docs()
-    else:
-        docs_iter = task.training_docs()
-
-    docs_list = list(docs_iter)
-    for doc_idx, doc in enumerate(docs_list):
-        if doc_idx not in results_by_doc:
-            continue
-        resps = results_by_doc[doc_idx]
-        try:
-            processed = task.process_results(doc, resps)
-            if processed:
-                for metric, value in processed.items():
-                    if metric not in aggregated:
-                        aggregated[metric] = []
-                    aggregated[metric].append(value)
-                doc_count += 1
-        except Exception as e:
-            print(f"[cpu_lmeval_run] {task_name}: process_results error for doc {doc_idx}: {e}", file=sys.stderr, flush=True)
-
-    # Aggregate (mean for most metrics)
-    for metric, values in aggregated.items():
-        if values:
-            task_results[metric] = float(np.mean(values))
-
-    all_results[task_name] = task_results
-    metrics_str = " ".join(f"{k}={v:.4f}" for k, v in task_results.items())
-    print(f"[cpu_lmeval_run] {task_name}: {metrics_str} ({doc_count} docs)", file=sys.stderr, flush=True)
+results = simple_evaluate(
+    model=lm,
+    tasks=task_list,
+    num_fewshot=args.num_fewshot,
+    limit=args.limit,
+    log_samples=False,
+)
 
 t_eval = time.time() - t0
-print(f"\n[cpu_lmeval_run] All tasks done in {t_eval:.1f}s", file=sys.stderr, flush=True)
+print(f"[cpu_lmeval_run] simple_evaluate done in {t_eval:.1f}s", file=sys.stderr, flush=True)
 
-# Build results dict
-results = {
-    "results": {k: v for k, v in all_results.items()},
-    "n_samples": total_n_samples,
-}
-t_eval = time.time() - t0
-print(f"[cpu_lmeval_run] Evaluation done in {t_eval:.1f}s", file=sys.stderr, flush=True)
-
+# ══ 7. Save results ══
 result_file = os.path.join(args.output_path, "results.json")
 with open(result_file, "w") as f:
     json.dump(results, f, indent=2, default=str)
