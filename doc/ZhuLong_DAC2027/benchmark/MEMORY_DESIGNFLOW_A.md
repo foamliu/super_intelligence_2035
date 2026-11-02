@@ -2,15 +2,15 @@ WAITING: 0
 SHARD: A (digital_front)
 DOMAINS: digital, eda_other, pnr_signoff, verification
 
-- **PHASE**: bashpool 恢复 → 继续合成路径。本轮合成 `EDA-Eval-DesignFlow-LibPVT-001`（digital / L1-boundary / A 档 trace-faithful，CCS .lib 时序库 PVT 解码器，trace 1791787487273_w6omm / e0045488 / 选轮 #9 逐字原文）= **自验全过 ✓**（ref PASS + 4 negative FAIL + §4.9 三假提交 FAIL + 断言闸门 20==20≥8）。A jsonl 现 23 条，主 jsonl 109 条。新 case 未跑 pi/cline。
-- ✅ **本轮交付**：LibPVT-001 合成 ✓（digital/L1-boundary/A 档，trace-faithful 克隆 w6omm 真实"列出 folder 包含哪些 PVT"任务；交付 pvt_parse.py 通用解码器读 folders/filelist/sample_lib_tt_header 输出 JSON+markdown；B 隐藏输入用 TSMC7N5W{20,28,36}T5{RVT,HVT} + 不同编码(_ccs_/v0p88/n40c) + 不同 V/T(ff=0.88/-40,tt=0.80/25,ss=0.72/110) 击穿硬编码 A；自验 ref PASS + 4 negative FAIL + §4.9 三假 FAIL + 断言闸门 20==20≥8）。A jsonl 23 条，主 jsonl 109 条。选料途中 7ucl8(xxchen/disk-audit)/giuwf(johnl/find-.lib)/exwpt(johnl/slash-cmd)/fg7ey(t0002596/innovus-launch-dup) 4 条不适配候选已跳过。
+- **PHASE**: 运维令 §四.3 cline+hook 存量重跑扩样本至 ≥5（达成）。本轮跑 `EDA-Eval-DesignFlow-ETMExtract-001`（pnr_signoff/L2/PT ETM 抽 db）= **FAIL（能力不足）**。cline_eval_status.jsonl 现 5 行 = **2/5 PASS**。A jsonl 23 条（轮 26 LibPVT-001 合成），主 jsonl 109 条。本轮未开新 case。
+- ✅ **本轮交付**：ETMExtract-001 cline+hook 重跑 = **FAIL（能力不足·L2）**。cline 34 iter / 2235s wall / **0 write_to_file 到 outputs/** / 60884 reasoning content_start；工具 25× pyAether run_code + 24× read_files + 5× search_codebase + 4× run_commands(blocked→NOTICE)。防泄题自验全过：0 禁忌 read/tool 尝试（check.py/reference/提及全在 reasoning 文本）、workdir leak 自检 clean、119 hook_events+7 notices。失败归因 **③能力不足**（同 PwrGlobals-001 thrash 模式：海量 reasoning 无产出）。
 - ✅ DEBT 已清零。
 - 📊 trace 覆盖率：22/1001 = 2.2%（covered=22 · touched=28 · parked=6；A jsonl 23 条，本轮 +1 新 case）
-- 🎯 通过率: cline+hook 存量重跑 **2/4 = 50%**（PTSignoff-001 PASS·L2 / InnovusLaunchDiag-001 PASS·L1-style / Verification-001 FAIL·L1-harness限 / PwrGlobals-001 FAIL·L2 能力）。剔除 harness 限样本后能力口径 2/3（n 小无统计意义）。本轮新 case 未跑 pi/cline。
+- 🎯 通过率: cline+hook 存量重跑 **2/5 = 40%**（PTSignoff-001 PASS·L2 / InnovusLaunchDiag-001 PASS·L1-style / Verification-001 FAIL·L1-harness限 / PwrGlobals-001 FAIL·L2 能力 / ETMExtract-001 FAIL·L2 能力）。剔除 harness 限样本后能力口径 2/4 = 50%（n 小无统计意义）。本轮新 case 未跑 pi/cline。
 - 🧾 断言: 本轮 LibPVT-001 k_rationale=k_check=20 ✓（今日 1/30 达标，新增达标）；存量 22 条全达标
 - 📦 体积：TASK≈23.8KB / MEMORY_A≈24.4KB
 - 🔒 泄漏隔离: 本轮合成 case 自验 — check.py 内嵌 B 证据自包含，判分独立在 /tmp 跑；SUT workdir（待 cline 跑时）只放 prompt+assets+task_brief，无 check.py/reference/hidden
-- ⚠️ 运维令进度：cline_eval_status.jsonl 4 行。**待办**：下轮继续 cline 重跑扩样本（候选 ETMExtract-001 / TLEFRules-001 / SynLintFlow-001 / LibPVT-001 本条，目标≥5 看通过率趋势）或继续合成。
+- ⚠️ 运维令进度：cline_eval_status.jsonl **5 行（≥5 达成）** = 2/5 PASS。cline+hook 存量重跑：PTSignoff-001 PASS·L2 / InnovusLaunchDiag-001 PASS·L1-style / Verification-001 FAIL·L1-harness限 / PwrGlobals-001 FAIL·L2 能力 / ETMExtract-001 FAIL·L2 能力。剔除 harness 限样本后能力口径 2/4=50%。**待办**：继续 cline 重跑（候选 TLEFRules-001 / SynLintFlow-001 / LibPVT-001）扩到 ≥8 看趋势，或回 §3 合成。
 
 
 ### 2026-11-03 shard A 轮 26：LibPVT-001 合成 ✓（digital / L1-boundary / A 档 trace-faithful，WAITING: 0）
