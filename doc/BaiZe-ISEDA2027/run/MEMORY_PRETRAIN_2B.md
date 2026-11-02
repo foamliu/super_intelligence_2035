@@ -1,7 +1,23 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
-WAITING: 1
+WAITING: 0
 
-> 🆕 2026-11-02 13:13 #1152：**S1 健康监控**。S1 PID1415997/.29（torchrun master via ssh→.12）活着，iter 55300/700k（7.90%），loss 近5步 avg~2.099（range 2.094-2.131，极稳无spike），grad-norm 0.086-0.251（minor spike 0.251@55210单步瞬态已恢复），lr 1e-3 constant，loss-scale 1.0，0 NaN/0 Inf/0 skipped（55300步全clean），step~7.05s/~595K tok/s（160步 in ~18min since #1151），ckpt@iter_54000（已保存@10:41，next@56000，~700步/~1.4h）。双机16×H100 GPU .29 8×86-100%util（实测86/99/100/92/98/100/100/100%，~75GB/81GB），.12 8×96-100%util（96-100%，~75GB/81GB）。论文6页/ERR=0 维持。ETA ~52.6天。git: synced。未完成指令：无。📦 体积：TASK=23.2KB / MEMORY=22.5KB（归档0KB）。
+> 🆕 2026-11-02 19:55 #1154：**CPU 评测 ETA 更新 + GPU 发现**（运维令 2026-11-02 11:1x）。
+> **5 个 export 全部完成**：hf_iter_10000/20000/30000/40000/50000 均已导出（各~4.4GB safetensors），config.json 已修（use_mamba_kernels=False, mamba_dt_limit 删除）。
+> **CPU 冒烟成功**：sciq --limit 2 → 8 requests → 93.4s（11.7s/request, batch=1, OMP=32, float32）。bfloat16 略快（14.1s vs 15.8s for seq=128），提升仅 ~11%。
+> **准确 ETA（实测 11.7s/req）**：
+> - 8 集总 loglikelihood requests ≈ 73,110（hellaswag 40,168 是大头）
+> - 单 ckpt 全量 8 集：73,110 × 11.7s ≈ 237.6h ≈ **9.9 天**
+> - 5 ckpt 并行（5 × 32 = 160 核 ≤ 224 核）：**9.9 天**（瓶颈 = 最慢的 ckpt）
+> - 24h 内完成：**❌ 不可完成**
+> **🔴 GPU 空闲发现**：`.12` 8 卡全空闲（util 0%, 1521MiB/81GB），`.29` 8 卡低占用（util 0-70%, 19GB/81GB）。运维令说「GPU 全满」但实测**未满**。若用 1 卡 GPU 评（mamba_ssm CUDA kernel 可用），单 ckpt ~30min，5 ckpt ~2.5h。
+> **脚本就绪**：`baize_cpu_lmeval.sh` + `cpu_lmeval_run.py`（清除 /dev/shm editable finders + 阻断 mamba_ssm/causal_conv1d + HF offline + HFLM 程序化创建）。
+> **建议**（等运维拍板）：
+> 1. **用 GPU**（推荐）：`.12` GPU 全空闲，用 1 卡 GPU eval，~30min/ckpt × 5 = 2.5h → 当天交付
+> 2. 减量 CPU eval（--limit 500/ckpt，~5.8h/ckpt × 5 并行 = 5.8h → 可 24h 内交付，但精度有限）
+> 3. 跳 hellaswag（40,168/73,110 = 55% 总量）+ 减量 → ~4.5 天/ckpt → 仍超 24h
+> 4. 等 GPU 完全空闲后全量 GPU eval
+> **下一步**：等运维确认方案。未完成指令：有。WAITING: 0。
+> 📦 体积：TASK=23.2KB / MEMORY=22.5KB（归档 0KB）。
 > 📦 §#1151（11-02 12:55, S1健康监控iter55140/loss~2.114/0NaN/~592K tok/s）→ daily-memories/2026-11-02.md；**结论**：S1健康iter55140(7.88%), loss~2.114稳态, grad-norm 0.088-0.099(极稳无spike), ~592K tok/s, ckpt@iter_54000(saved@10:41, next@56000)。被#1152监控。需要时再读。
 > 📦 §#1150（11-02 12:35, S1健康监控iter54980/loss~2.105/0NaN/~601K tok/s）→ daily-memories/2026-11-02.md；**结论**：S1健康iter54980(7.85%), loss~2.105稳态, grad-norm 0.082-0.103(极稳无spike), ~601K tok/s, ckpt@iter_54000(saved@10:41, next@56000)。被#1151监控。需要时再读。
 > 📦 §#1148（11-02 11:54, S1健康监控iter54620/loss~2.099/0NaN/~605K tok/s）→ daily-memories/2026-11-02.md；**结论**：S1健康iter54620(7.80%), loss~2.099稳态, grad-norm 0.086-0.099(极稳无spike), ~605K tok/s, ckpt@iter_54000(saved@10:41, next@56000)。被#1149监控。需要时再读。
