@@ -20,7 +20,7 @@ WAITING: 1
 ```
 PHASE:        🟢运维令10-31 web search调研HF长上下文+agentic数据集.报告v5已交付+已commit+push
 已完成:       ✅A.LC+Agentic调研报告v5(report_data_lc_agentic_survey_zh.html 106569B/44table/0script/18+15候选/33 unique HF链接)+生成器(gen_lc_agentic_survey_report.py 幂等);✅B.85M下载持续运行;✅C.报告全量验证(7节/0script/0CDN/幂等OK/44table平衡)
-当前动作:     唤醒1121(2026-11-03 05:31):运维令10-31交付物全量复核全PASS→①report=106569B(≥25KB✓)/0<script>/0<link>/74链接全HF(0非HF)/44<table>=44</table>平衡✓/50<div>=50</div>平衡✓/标签配平0err/7节sec1~sec7齐/≥32K×37/≥128K×36/奖励信号×18/gated×48/未核到×34/SWE-bench×66/TerminalBench×54/0CDN;②generator --check-idempotent OK(84252B✓);③git synced(##main...origin/main,data线clean✓,commit 46998fb11);④MEMORY=39440B(<40KB无需归档)→任务已交付,心跳WAITING=1
+当前动作:     唤醒1122(2026-11-03 05:49):运维令10-31交付物复核全PASS→①report=106569B/0<script>/44<table>平衡/7节/0非HF链接/0CDN;②generator重跑产出逐字节一致(git diff空=真幂等);③git synced(##main...origin/main,commit 46998fb11已push);④TASK=27958B/MEMORY=40070B(均<40KB)→任务已交付,心跳WAITING=1
 下一步:       下轮唤醒:①查85M下载进度;②待运维批准后执行下载(P0:whole-books+SWE-smith+Nemotron-Terminal-Corpus+SWE-rebench)
 阻塞:         无
 ERROR_COUNT:  11
@@ -30,8 +30,8 @@ ERROR_COUNT:  11
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。
 
 ## 📋 本唤醒流水
+> [11-03 05:49] 唤醒1122：运维令10-31交付物复核全PASS→①report=106569B/0<script>/44<table>平衡/7节sec1~7/0非HF链接/0CDN;②generator重跑产出逐字节一致(git diff空=真幂等);③git synced(##main...origin/main,commit 46998fb11已push);④TASK=27958B/MEMORY=40070B(均<40KB)→任务已交付,心跳WAITING=1
 > [11-03 05:31] 唤醒1121：运维令10-31交付物全量复核全PASS→①report=106569B(≥25KB✓)/0<script>/0<link>/74链接全HF(0非HF)/44<table>=44</table>平衡✓/50<div>=50</div>平衡✓/HTMLParser 0err/7节sec1~sec7齐/≥32K×37/≥128K×36/奖励信号×18/gated×48/未核到×34/SWE-bench×66/TerminalBench×54/0CDN;②generator --check-idempotent OK(84252B✓);③git synced(##main...origin/main,data线clean✓,commit 46998fb11);④MEMORY=39440B(<40KB无需归档)→任务已交付,心跳WAITING=1
-> [11-03 04:2x] 唤醒1120：运维令10-31交付物复核全PASS→①report=106569B(≥25KB✓)/0<script>/44<table>=44</table>平衡✓/50<div>=50</div>平衡✓/7节sec1~sec7齐/74 HF链接(0非HF)/34「未核到」/0CDN;②generator --check-idempotent OK(84252B✓);③git synced(##main...origin/main,data线clean✓,commit 46998fb11);④MEMORY=39048B(<40KB无需归档)→任务已交付,心跳WAITING=1
 
 > [11-03 03:1x] 唤醒1119：运维令10-31交付物全量复核全PASS→①report=106569B(≥25KB✓)/0<script>/HTMLParser parse_ok/44<table>=44</table>平衡✓/7节sec1~sec7齐/74链接全huggingface.co(0非HF)/34「未核到」/0CDN;②generator --check-idempotent OK(84252bytes✓);③git synced(##main...origin/main,data线clean✓,commit 46998fb11);④MEMORY=38716B(<40KB无需归档)→任务已交付,心跳WAITING=1
 
