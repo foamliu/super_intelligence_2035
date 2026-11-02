@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.10.14)  2 NOV 2026 16:04
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.10.14)  2 NOV 2026 17:50
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1353,21 +1353,21 @@ LaTeX Font Info:    Font shape `OT1/LinuxLibertineT-TLF/m/n' will be
 (Font)              scaled to size 6.5pt on input line 13.
 LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/b/n' will be
 (Font)              scaled to size 6.0pt on input line 15.
-LaTeX Font Info:    Font shape `T1/zi4/b/n' will be
-(Font)              scaled to size 6.0pt on input line 15.
 LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/it' will be
-(Font)              scaled to size 6.0pt on input line 24.
-LaTeX Font Info:    Font shape `T1/zi4/m/n' will be
-(Font)              scaled to size 6.0pt on input line 24.
+(Font)              scaled to size 6.0pt on input line 25.
+LaTeX Font Info:    Font shape `TS1/LinuxLibertineT-TLF/m/n' will be
+(Font)              scaled to size 5.5pt on input line 27.
+LaTeX Font Info:    Font shape `TS1/LinuxLibertineT-TLF/m/n' will be
+(Font)              scaled to size 6.0pt on input line 32.
 
-Underfull \hbox (badness 1852) in paragraph at lines 50--52
+Underfull \hbox (badness 1852) in paragraph at lines 51--53
 \T1/LinuxLibertineT-TLF/m/n/9 to the full sys-tem, re-mov-ing ex-e-cu-tion cost
 s $\OT1/LinuxLibertineT-TLF/m/n/9 8\OML/nxlmi/m/it/9 :\OT1/LinuxLibertineT-TLF/
 m/n/9 3$ \T1/LinuxLibertineT-TLF/m/n/9 pp pooled,
  []
 
 
-Underfull \hbox (badness 1642) in paragraph at lines 50--52
+Underfull \hbox (badness 1642) in paragraph at lines 51--53
 \T1/LinuxLibertineT-TLF/m/n/9 w/o-Self-Expl. $\LMS/ntxsy/m/n/9 »\OT1/LinuxLiber
 tineT-TLF/m/n/9 72\OML/nxlmi/m/it/9 :\OT1/LinuxLibertineT-TLF/m/n/9 66\OML/nxlm
 i/m/it/9 ; \OT1/LinuxLibertineT-TLF/m/n/9 76\OML/nxlmi/m/it/9 :\OT1/LinuxLibert
@@ -1379,7 +1379,7 @@ nuxLibertineT-TLF/m/n/9 , RAG
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 50--52
+Underfull \hbox (badness 10000) in paragraph at lines 51--53
 \LMS/ntxsy/m/n/9 »\OT1/LinuxLibertineT-TLF/m/n/9 66\OML/nxlmi/m/it/9 :\OT1/Linu
 xLibertineT-TLF/m/n/9 65\OML/nxlmi/m/it/9 ; \OT1/LinuxLibertineT-TLF/m/n/9 70\O
 ML/nxlmi/m/it/9 :\OT1/LinuxLibertineT-TLF/m/n/9 49\LMS/ntxsy/m/n/9 ¼$\T1/LinuxL
@@ -1394,7 +1394,7 @@ e-LLM
  []
 
 
-Underfull \hbox (badness 2302) in paragraph at lines 50--52
+Underfull \hbox (badness 2302) in paragraph at lines 51--53
 \LMS/ntxsy/m/n/9 Ï\OT1/LinuxLibertineT-TLF/m/n/9 10\OML/nxlmi/m/it/9 :\OT1/Linu
 xLibertineT-TLF/m/n/9 7$ \T1/LinuxLibertineT-TLF/m/n/9 pp $\LMS/ntxsy/m/n/9 »\O
 T1/LinuxLibertineT-TLF/m/n/9 8\OML/nxlmi/m/it/9 :\OT1/LinuxLibertineT-TLF/m/n/9
@@ -1410,107 +1410,107 @@ T-TLF/m/n/9 ---while
 
 [4.4]
 LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/m/it' will be
-(Font)              scaled to size 9.0pt on input line 56.
+(Font)              scaled to size 9.0pt on input line 57.
 
-Underfull \hbox (badness 1454) in paragraph at lines 56--58
+Underfull \hbox (badness 1454) in paragraph at lines 57--59
  \T1/LinuxBiolinumT-TLF/m/it/9 6.2.1 S1: Ob-ser-va-tion fi-delity (RQ1).[] \T1/
 LinuxLibertineT-TLF/m/n/9 Prin-ci-ple 2 pre-dicts that
  []
 
 
-Underfull \hbox (badness 3601) in paragraph at lines 56--58
+Underfull \hbox (badness 3601) in paragraph at lines 57--59
 \U/ntxmia/m/it/9 
 $\T1/LinuxLibertineT-TLF/m/n/9 . \T1/LinuxLibertineT-TLF/b/n/9 Doc-u-men-ta-tio
 n axis. \T1/LinuxLibertineT-TLF/m/n/9 Hold-ing the agent loop, ef-fec-tor,
  []
 
 
-Underfull \hbox (badness 1189) in paragraph at lines 56--58
+Underfull \hbox (badness 1189) in paragraph at lines 57--59
 \T1/LinuxLibertineT-TLF/m/n/9 and LLM fixed, re-mov-ing re-trieval costs 10.7 p
 p pooled, but
  []
 
 
-Underfull \hbox (badness 1448) in paragraph at lines 56--58
+Underfull \hbox (badness 1448) in paragraph at lines 57--59
 \T1/LinuxLibertineT-TLF/m/n/9 highly toolchain-specific: on PyAether the read-b
 ack chan-nel
  []
 
 
-Underfull \hbox (badness 3826) in paragraph at lines 56--58
+Underfull \hbox (badness 3826) in paragraph at lines 57--59
 \T1/LinuxLibertineT-TLF/m/n/9 par-tially sub-sti-tutes for re-trieval (sand-box
  in-tro-spec-tion via
  []
 
 
-Underfull \hbox (badness 2359) in paragraph at lines 56--58
+Underfull \hbox (badness 2359) in paragraph at lines 57--59
 \T1/zi4/m/n/9 dir()\T1/LinuxLibertineT-TLF/m/n/9 /\T1/zi4/m/n/9 inspect\T1/Linu
 xLibertineT-TLF/m/n/9 /\T1/zi4/m/n/9 __doc__ \T1/LinuxLibertineT-TLF/m/n/9 rise
 s from 49.0% to 86.7% of traces
  []
 
 
-Underfull \hbox (badness 1199) in paragraph at lines 56--58
+Underfull \hbox (badness 1199) in paragraph at lines 57--59
 \T1/LinuxLibertineT-TLF/m/n/9 once re-trieval is re-moved, re-con-struct-ing th
 e API knowl-edge
  []
 
 
-Underfull \hbox (badness 1596) in paragraph at lines 56--58
+Underfull \hbox (badness 1596) in paragraph at lines 57--59
 \T1/LinuxLibertineT-TLF/m/n/9 enu-mer-ates at-tributes by trial and error---rec
 overing the API
  []
 
 
-Underfull \hbox (badness 1242) in paragraph at lines 59--61
+Underfull \hbox (badness 1242) in paragraph at lines 60--62
 \T1/LinuxLibertineT-TLF/m/n/9 queried state (the de-fault). The pre-dicted mono
 -tone or-der-ing
  []
 
 [5.5]
-Underfull \hbox (badness 2343) in paragraph at lines 99--101
+Underfull \hbox (badness 2343) in paragraph at lines 100--102
 \T1/LinuxLibertineT-TLF/m/n/9 and it does not sub-sti-tute for ob-ser-va-tion: 
 the system-level
  []
 
 
-Underfull \hbox (badness 2894) in paragraph at lines 105--107
+Underfull \hbox (badness 2894) in paragraph at lines 106--108
 \T1/LinuxLibertineT-TLF/m/n/9 SKILL, where the full sys-tem trails its w/o-Self
 -Exploration
  []
 
 
-Underfull \hbox (badness 1024) in paragraph at lines 105--107
+Underfull \hbox (badness 1024) in paragraph at lines 106--108
 \T1/LinuxLibertineT-TLF/m/n/9 Com-po-nent mag-ni-tudes are toolchain-specific--
 -execution buys
  []
 
 
-Underfull \hbox (badness 2894) in paragraph at lines 117--118
+Underfull \hbox (badness 2894) in paragraph at lines 118--119
 \T1/LinuxLibertineT-TLF/m/n/9 nowhere and only weakly ex-posed by ex-e-cu-tion:
  PyAether-
  []
 
 
-Underfull \hbox (badness 3281) in paragraph at lines 117--118
+Underfull \hbox (badness 3281) in paragraph at lines 118--119
 \T1/LinuxLibertineT-TLF/m/n/9 068 builds the cartoon-box high-light through the
  plausible-
  []
 
 
-Underfull \hbox (badness 6927) in paragraph at lines 117--118
+Underfull \hbox (badness 6927) in paragraph at lines 118--119
 \T1/LinuxLibertineT-TLF/m/n/9 but-wrong \T1/zi4/m/n/9 aeAddHighLightRect \T1/Li
 nuxLibertineT-TLF/m/n/9 where the or-a-cle re-quires
  []
 
 
-Underfull \hbox (badness 2269) in paragraph at lines 117--118
+Underfull \hbox (badness 2269) in paragraph at lines 118--119
 \T1/zi4/m/n/9 GuCartBox(emyBoxF(...))\T1/LinuxLibertineT-TLF/m/n/9 ; WaveView-0
 37 re-turns \T1/zi4/m/n/9 N/A \T1/LinuxLibertineT-TLF/m/n/9 on a
  []
 
 
-Underfull \hbox (badness 1596) in paragraph at lines 117--118
+Underfull \hbox (badness 1596) in paragraph at lines 118--119
 \T1/LinuxLibertineT-TLF/m/n/9 single-rising-edge wave-form and SKILL-037 re-jec
 ts an empty
  []
@@ -1613,13 +1613,13 @@ Package rerunfilecheck Info: File `main.out' has not changed.
 (rerunfilecheck)             Checksum: 6959019A92F1974A4250986694DD7792;4437.
  ) 
 Here is how much of TeX's memory you used:
- 21136 strings out of 475589
- 338168 string characters out of 5782859
- 1955975 words of memory out of 5000000
- 42586 multiletter control sequences out of 15000+600000
- 731616 words of font info for 200 fonts, out of 8000000 for 9000
+ 21137 strings out of 475589
+ 338275 string characters out of 5782859
+ 1957975 words of memory out of 5000000
+ 42587 multiletter control sequences out of 15000+600000
+ 732401 words of font info for 202 fonts, out of 8000000 for 9000
  474 hyphenation exceptions out of 8191
- 90i,13n,131p,1621b,600s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 90i,13n,131p,1689b,600s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/share/texlive/texmf-dist/fonts/type1/public/inconsolata/Inconsolata-zi4
 b.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/inconsolata/Inconsolata
 -zi4r.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/newtx/LibertineMath
@@ -1638,10 +1638,10 @@ xlive/texmf-dist/fonts/type1/public/newtx/txexs.pfb></usr/share/texlive/texmf-d
 ist/fonts/type1/public/newtx/txmiaX.pfb></usr/share/texlive/texmf-dist/fonts/ty
 pe1/public/newtx/txsys.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/zapfd
 ing/uzdr.pfb>
-Output written on main.pdf (8 pages, 881407 bytes).
+Output written on main.pdf (8 pages, 880786 bytes).
 PDF statistics:
- 436 PDF objects out of 1000 (max. 8388607)
- 358 compressed objects within 4 object streams
+ 437 PDF objects out of 1000 (max. 8388607)
+ 359 compressed objects within 4 object streams
  68 named destinations out of 1000 (max. 500000)
  18646 words of extra memory for PDF output out of 20736 (max. 10000000)
 

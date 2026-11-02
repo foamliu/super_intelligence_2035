@@ -12,23 +12,24 @@
 \setlength{\tabcolsep}{3.5pt}
 \begin{tabular}{@{}lccccccccc@{}}
 \toprule
- & \textbf{Overall} & \textbf{PyAether} & \textbf{SKILL} & \textbf{Tcl} & \textbf{Time (s)} & \textbf{run\_code} & \textbf{Tool calls} & \textbf{Input tokens (k)} & \textbf{Output tokens (k)} \\
-\textbf{Configuration} & (449) & (158) & (157) & (134) & \multicolumn{5}{c}{(per task, 449)} \\
+ & \multicolumn{4}{c}{\textbf{Pass@1 (\%)}} & \multicolumn{5}{c}{\textbf{Per-task operating cost (449 tasks)}} \\
+\cmidrule(lr){2-5} \cmidrule(lr){6-10}
+\textbf{Configuration} & Overall (449) & PyAether (158) & SKILL (157) & Tcl (134) & Time (s) & run\_code & Tool calls & In tok (k) & Out tok (k) \\
 \midrule
-Baseline 1: Pure LLM & 19.7 $\pm$ 1.4 & 14.3 $\pm$ 2.1 & 33.2 $\pm$ 2.3 & 10.1 $\pm$ 1.1 & 183 $\pm$ 9 & 0 & 3.6 $\pm$ 0.1 & 72 $\pm$ 2 & 6.3 $\pm$ 0.7 \\
-Baseline 2: RAG (retr.+self-expl., no sandbox) & 68.6 $\pm$ 1.6 & 71.1 $\pm$ 4.6 & 52.2 $\pm$ 1.9 & 84.6 $\pm$ 1.9 & 226 $\pm$ 9 & 0 & 16.9 $\pm$ 0.7 & 272 $\pm$ 8 & 8.6 $\pm$ 0.3 \\
-ZhuLong w/o Retrieval (execution only) & 66.2 $\pm$ 4.2 & 73.4 $\pm$ 7.3 & 45.2 $\pm$ 9.4 & 82.2 $\pm$ 2.3 & 981 $\pm$ 151 & 22.6 $\pm$ 2.8 & 26.3 $\pm$ 3.1 & 658 $\pm$ 133 & 11.7 $\pm$ 2.8 \\
-ZhuLong w/o Self-Expl. & 74.5 $\pm$ 1.8 & 77.0 $\pm$ 4.1 & \textbf{61.5 $\pm$ 0.7} & 86.7 $\pm$ 3.0 & 645 $\pm$ 132 & 12.6 $\pm$ 1.4 & 29.5 $\pm$ 2.9 & 722 $\pm$ 116 & 11.5 $\pm$ 2.3 \\
-\textbf{ZhuLong} (Full) & \textbf{76.9 $\pm$ 2.3} & \textbf{82.5 $\pm$ 2.0} & 60.3 $\pm$ 6.7 & \textbf{89.9 $\pm$ 2.0} & 464 $\pm$ 57 & 10.6 $\pm$ 0.7 & 26.3 $\pm$ 1.4 & 710 $\pm$ 21 & 12.0 $\pm$ 0.7 \\
+Pure LLM & 19.7$\pm$1.4 & 14.3$\pm$2.1 & 33.2$\pm$2.3 & 10.1$\pm$1.1 & 183$\pm$9 & --- & 3.6$\pm$0.1 & 72$\pm$2 & 6.3$\pm$0.7 \\
+RAG (retr.+self-expl., no sandbox) & 68.6$\pm$1.6 & 71.1$\pm$4.6 & 52.2$\pm$1.9 & 84.6$\pm$1.9 & 226$\pm$9 & --- & 16.9$\pm$0.7 & 272$\pm$8 & 8.6$\pm$0.3 \\
+ZhuLong w/o Retrieval & 66.2$\pm$4.2 & 73.4$\pm$7.3 & 45.2$\pm$9.4 & 82.2$\pm$2.3 & 981$\pm$151 & 22.6$\pm$2.8 & 26.3$\pm$3.1 & 658$\pm$133 & 11.7$\pm$2.8 \\
+ZhuLong w/o Self-Expl. & 74.5$\pm$1.8 & 77.0$\pm$4.1 & \textbf{61.5$\pm$0.7} & 86.7$\pm$3.0 & 645$\pm$132 & 12.6$\pm$1.4 & 29.5$\pm$2.9 & 722$\pm$116 & 11.5$\pm$2.3 \\
+\textbf{ZhuLong} (Full) & \textbf{76.9$\pm$2.3} & \textbf{82.5$\pm$2.0} & 60.3$\pm$6.7 & \textbf{89.9$\pm$2.0} & 464$\pm$57 & 10.6$\pm$0.7 & 26.3$\pm$1.4 & 710$\pm$21 & 12.0$\pm$0.7 \\
 \midrule
 \multicolumn{10}{@{}l}{\emph{Read-back axis (retrieval + effector fixed, only what} run\_code \emph{returns varies)}}\\
-(N$'$) No read-back (prior only) & 69.8 $\pm$ 2.2 & 73.4 $\pm$ 2.1 & 50.7 $\pm$ 4.9 & 87.9 $\pm$ 1.7 & 253 $\pm$ 5 & 1.1 $\pm$ 0.0 & 16.6 $\pm$ 0.9 & 278 $\pm$ 12 & 4.0 $\pm$ 0.1 \\
-(B) Binary pass/fail & 71.0 $\pm$ 0.8 & 74.6 $\pm$ 1.6 & 57.2 $\pm$ 4.8 & 83.0 $\pm$ 2.3 & 634 $\pm$ 40 & 22.8 $\pm$ 2.9 & 43.9 $\pm$ 3.9 & 887 $\pm$ 139 & 7.7 $\pm$ 0.8 \\
-(F) Full observation & \textbf{76.9 $\pm$ 2.3} & \textbf{82.5 $\pm$ 2.0} & 60.3 $\pm$ 6.7 & \textbf{89.9 $\pm$ 2.0} & 464 $\pm$ 57 & 10.6 $\pm$ 0.7 & 26.3 $\pm$ 1.4 & 710 $\pm$ 21 & 12.0 $\pm$ 0.7 \\
+(N$'$) No read-back (prior only) & 69.8$\pm$2.2 & 73.4$\pm$2.1 & 50.7$\pm$4.9 & 87.9$\pm$1.7 & 253$\pm$5 & 1.1$\pm$0.0 & 16.6$\pm$0.9 & 278$\pm$12 & 4.0$\pm$0.1 \\
+(B) Binary pass/fail & 71.0$\pm$0.8 & 74.6$\pm$1.6 & 57.2$\pm$4.8 & 83.0\textsuperscript{\dag}$\pm$2.3 & 634$\pm$40 & 22.8$\pm$2.9 & 43.9$\pm$3.9 & 887$\pm$139 & 7.7$\pm$0.8 \\
+(F) Full observation (= Full row) & 76.9$\pm$2.3 & 82.5$\pm$2.0 & 60.3$\pm$6.7 & 89.9$\pm$2.0 & 464$\pm$57 & 10.6$\pm$0.7 & 26.3$\pm$1.4 & 710$\pm$21 & 12.0$\pm$0.7 \\
 \bottomrule
 \end{tabular}
 
-\scriptsize{Bold marks the per-column best. The Tcl column pools the two Tcl hosts, WaveView (77 tasks) and Innovus (57), by summing pass counts per run over 134 tasks. Time = net-active solve time (final-session active-seconds, excluding quota wait); run\_code = execution calls per task; Tool calls = total tool invocations per task (search + details + execution + builtin); Input/Output tokens = input/output tokens per task (thousands), each averaged over all 449 tasks (five runs). Read-back-axis rows (N$'$, B) are costed on the same per-task, 449-task caliber.}
+\scriptsize{Bold marks the per-column best. --- = no sandbox execution. \dag{} On Tcl, read-back inverts at the middle rung (short near-single-shot scripts solved largely from documentation; see Section~\ref{sec:omega-fidelity}). The Tcl column pools the two Tcl hosts, WaveView (77 tasks) and Innovus (57), by summing pass counts per run over 134 tasks. Time = net-active solve time (final-session active-seconds, excluding quota wait); run\_code = execution calls per task; Tool calls = total tool invocations per task (search + details + execution + builtin); Input/Output tokens = input/output tokens per task (thousands), each averaged over all 449 tasks (five runs). Read-back-axis rows (N$'$, B) are costed on the same per-task, 449-task caliber.}
 \end{table*}
 % 表：主结果 + 回读轴 + cost 列合并表（5 配置 + 3 回读档 + 5 cost 列）。(F) 行=Full 行。tab:main-ablation / tab:omega / tab:cost 三 label 指向同表。cost（Time/run\_code/Tool calls/Input tokens/Output tokens）为全 449 逐 task 均值（Tool calls=总工具调用=search+details+run\_code+builtin）（5 轮，mean±sd）；readback 轴 N′/B 成本已补齐（2026-11-02 本地 pyAether-158 切片 trace 落地后一并纳入 449 统计）。
 
