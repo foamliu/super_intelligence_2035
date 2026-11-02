@@ -2,14 +2,14 @@ WAITING: 0
 SHARD: A (digital_front)
 DOMAINS: digital, eda_other, pnr_signoff, verification
 
-- **PHASE**: loop 任务卡 case 合成。本轮按 loop 卡合成第 16 条 case（A 档 trace-faithful，digital +1，DC WLM 模式多 bit 命令段域）。
-- ✅ **本轮交付 case**：`EDA-Eval-DesignFlow-WLMMultibit-001`（digital，L1-boundary，A 档 faithful，trace 1792719811850_q5ogm / e0045128 / hfeg0pkn001 / mc=139 / synthesis=171 主导）。A jsonl 现 16 条。
+- **PHASE**: loop 任务卡 case 合成。本轮按 loop 卡合成第 17 条 case（A 档 trace-faithful，pnr_signoff +1，PT ETM 抽取 / STA-DB 模式）。
+- ✅ **本轮交付 case**：`EDA-Eval-DesignFlow-ETMExtract-001`（pnr_signoff，L2，A 档 faithful，trace 1792723573269_t8yss / e0046913 / hfeg0plg90 / mc=120 / dc_shell+icc2+pt_shell 中端流程）。A jsonl 现 17 条。
 - ✅ DEBT 已清零。
-- 📊 trace 覆盖率：15/1001 = 1.5%（covered=15 · touched=17 · parked=2；A jsonl 16 条，含 1 orphan `CosimSetup-001`(ve67l) 在 jsonl 未在台账，待查）
+- 📊 trace 覆盖率：16/1001 = 1.6%（covered=16 · touched=18 · parked=2；A jsonl 17 条，含 1 orphan `CosimSetup-001`(ve67l) 在 jsonl 未在台账，待查）
 - 🎯 通过率: 本条 case 未 pi/cline 实跑（"未跑"）；cline 存量重跑 0/1（Verification-001 FAIL·L1/hook 限制）· B 档目标 20–30%；A 档本轮只报数不设目标
-- 🧾 断言: 本轮 WLMMultibit-001 k_rationale=k_check=16 ≥8 ✓（日报 16/16/✓）；存量全达标
+- 🧾 断言: 本轮 ETMExtract-001 k_rationale=k_check=18 ≥8 ✓（日报 18/18/✓）；存量全达标
 - 📦 体积：TASK≈23.8KB / MEMORY_A≈19KB
-- 🔒 泄漏隔离: check.py/reference/hidden 不进 SUT workdir；判分独立跑（A/B 双 common_setup，tclsh stub 真跑候选 wlm_multibit.tcl on 隐藏 B，check.py 不进 cline cwd）
+- 🔒 泄漏隔离: check.py/reference/hidden 不进 SUT workdir；判分独立跑（check.py 18 条断言静态 + tclsh stub 在 3 组隐藏 B 环境下真跑候选 etm.tcl，check.py 不进 cline cwd）
 
 ### 2026-11-02 shard A 轮 16：WLMMultibit-001 交付 ✓（A 档 trace-faithful / digital·synthesis，WAITING: 0）
 - 选 trace：trace_ledger.py --shard A next → mc≥300 候选多为 calibre/hspice（shard C 域）或 siliconsmart 表征（shard C 域，如 1792297573507_9knot netlist:4456 实为 char netlists，已 parked 标注）。Python 解析工具串按 strong-tool（innovus/dc_shell/verdi/vcs/pt_shell/...）主导 + 反 analog/char 过滤，挑纯 synthesis 会话 `1792719811850_q5ogm`（e0045128/hfeg0pkn001/mc=139/synthesis:171/netlist:21 → digital/synthesis 域，205 msgs/1MB）claim → mark case。选 e0045128（新用户，增多样性）。
@@ -107,3 +107,11 @@ DOMAINS: digital, eda_other, pnr_signoff, verification
 - 断言闸门：k_rationale=14 == k_check=14 ≥8 ✓。追加 EDA-Eval-DesignFlow_A.jsonl（A jsonl 现 11 条）。mark case 1792489769571_ch2cw（johnl/hfeg0plg49/pnr_signoff/mc=255）。merge_shards → 主 jsonl 59 cases。日报 report_benchmark_11_02.html 59 cases，本条 k(断言)/k(check)/一致 = 14/14/✓。
 - A 档试点记账：本条 track=faithful，未 pi/cline 实跑（"未跑"），待 cline+hook 重跑验真实通过率。失败归因预设：①交付形态/位置错→(a)(b)；③能力不足（硬编码 A）→(c)(e)(f)(g)(k)(l)；④判分歧义（对事实严格匹配，不对措辞）。
 - ⬜ 下轮：trace_ledger.py --shard A next 选新 trace 开第 12 条 case（或按运维令 §四.3 挑一条 L2 shard-A PASS case 用 cline+hook 重跑）。
+
+### 2026-11-02 shard A 轮 17：ETMExtract-001 交付 ✓（A 档 trace-faithful / pnr_signoff·PT ETM，WAITING: 0）
+- 选 trace：trace_ledger.py --shard A next 给的 awk 在 mc≥300 候选里 innovus/pt_shell 命中多为 calibre/hspice 主导（shard C 域），用 python 解析 keywords 字段按 digital_kw(synthesis/dc_shell/primetime/innovus/genus/tempus/voltus/def/lef/floorplan...) 主导 + analog_kw 反向过滤，挑纯中端流程会话 `1792723573269_t8yss`（e0046913/QianYuting/hfeg0plg90/mc=120，synthesis:119/icc2:89/primetime:52/dc_shell:18 → pnr_signoff 域，350 msgs/1.4MB）claim → mark case。选 e0046913（新用户，增多样性）。
+- 深读：350 msgs/1.4MB；A档选轮 #225 (idx 225) 逐字原文『将现有的 feint_flow 中的相关脚本复制到我的个人目录...我想在这套 try-run 里把"下层 ETM/db 供给 STA DB 模式"也打通，在跑完综合后自动使用ETM工具抽出db，放到输出件中。』—— 纯「提出需求」无根因/修复 → 合 A档选轮规则。真实任务 = 在 feint_flow (DC/FM/STA 中端流程) 上加 PT extract_model 抽下层 harden ETM (.lib/.db) 进输出件供顶层 STA-DB 模式。从 trace assistant editor tool_use (idx 254/256/263/292) 取回金标准三件套（etm.tcl 含 fix: LC 注释 + write_verilog -output / run_etm.sh 含 fix: module load ds/lc / Makefile.etm etm 目标 + TECH_DB 变量），用户后续 #287/#300 解读 etm_cr_pmp_comp_hit.log 确认 ETM 跑通。深读笔记 `designflow/trace_deepreads/1792723573269_t8yss_etm_extract.md`。
+- 合成（A 档 / L2 / pnr_signoff·PT ETM）：prompt.txt = #225 逐字原文（不脱敏）；task_brief.md ≤3 行只写交付接口（submit.zip 内 scripts/etm.tcl + run_etm.sh + Makefile.etm；env 变量参数化；Makefile.etm 复用 feint 既有 Make 变量）。资产 A = 真取自 /apps/imctf/cad/script/digital_flow/feint/ (10.129.8.222) 的 Makefile + scripts/dc.tcl + scripts/pt.tcl + setup/common_setup.tcl + setup/hl22_syn_dont_use.tcl + setup/pwr_setup.tcl（待扩展的原始流程，无说明性注解）。隐藏 B = hidden/etm_env_B.sh（结构全异：design=e902_alu_top/tech=lvt_ss0p72vm40c/corner=ss0p72vm40c/ETM_OUT=results/e902_alu_top_ss0p72vm40c_ETM）+ hidden_manifest.json。
+- check.py 18 条独立断言 (a)-(r)：静态(active-line, Tcl 注释 strip) on 提交三件套：(a)zip恰含3文件 (b)etm.tcl读4环境变量 (c)target_library=[list $tech_db] (d)link_library含*与$tech_db (e)read_verilog $netlist (f)current_design $design+link (g)read_sdc被[file exists $sdc]守护带else (h)extract_model -library_cell -test_design (i)extract_model -format {lib db} (j)extract_model -output $out (k)write_verilog ${out}_test_design.v (l)write_interface_timing ${out}_interface_timing.rpt (m)report_timing > ${out}_report_timing.rpt (n)ETM_OUT缺省回退./results/${design}_ETM (o)无A专属字面量(cr_pmp_comp_hit/lvt_tt0p8v25c_ccs.db/tt0p8v25c) (p)run_etm.sh:set -e+TECH_DB空守卫+ETM_DESIGN必填+module load ds/pt+ds/lc+pt_shell -f scripts/etm.tcl+tee (q)Makefile.etm:etm:目标dep $(SYN_DONE)+$(call RUN)+$(TECH_DB)$(error)守卫+导出ETM_4变量+pt_shell -f $(SCRIPT_DIR)/etm.tcl+TECH_DB ?=；跨输入守护(tclsh stub on 3 组隐藏B: e902_alu_top_ss0p72vm40c / e902_dpu_core / e902_l2_cache)：(r)stub记录extract_model -output/read_verilog参数/target_library/current_design均流过B值且A角点tt0p8v25c不泄漏(反硬编码A)。check.py 用 tclsh stub（set_app_var/read_verilog/current_design/extract_model/write_verilog/write_interface_timing/report_timing/get_clocks/sizeof_collection/exit/file mkdir 全 stub，extract_model 记录 -output，read_verilog 记录参数，target_library 记录值）真跑提交的 etm.tcl with 3 组隐藏 B env → 断言运行时传 B 值（§4.2 subprocess on B，3 seed/config 一致）。
+- 自验：gold reference_submit.zip check() PASS（18/18）+ 5 negative 全 FAIL（NEG_RC=0，5 distinct labels：fake_empty→b / fake_print_expected→n / fake_core_deleted→j / naive_hardcode_a→o / naive_no_db→i）+ §4.9 (a)(b)(c) 三假 FAIL。
+- 断言闸门：k_rationale=18 == k_check=18 ≥8 ✓。追加 EDA-Eval-DesignFlow_A.jsonl（A jsonl 现 17 条，test==disk check.py roundtrip OK，16580B）。mark case 1792723573269_t8yss（e0046913/hfeg0plg90/pnr_signoff/mc=120）。merge_shards → 主 jsonl 81 cases。日报 report_benchmark_11_02.html 81 cases，本条 k(断言)/k(check)/一致 = 18/18/✓。
