@@ -24533,3 +24533,98 @@ echo "=== DONE 231 ==="
 
 === DONE 231 ===
 ```
+
+---
+
+## RUN_ID 232 · 2026-11-02 19:54:50 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 232 | S1 step check | $(date '+%F %T') | host=$(hostname) ==="
+W=/tmp/baize_s1_baize2b_worker.log
+
+echo
+echo "[1] 日志增长（10s 两采样）"
+S1=$(stat -c %s "$W" 2>/dev/null); sleep 10; S2=$(stat -c %s "$W" 2>/dev/null)
+echo "    size: $S1 -> $S2  (delta=$((S2-S1))B)  mtime=$(stat -c %y "$W" 2>/dev/null | cut -c1-19)"
+
+echo
+echo "[2] iteration 行数 / 最新 3 条"
+echo "    iteration_lines=$(timeout 10 grep -cE 'iteration +[0-9]+/' "$W" 2>/dev/null)"
+timeout 10 grep -E 'iteration +[0-9]+/' "$W" 2>/dev/null | tail -3 | cut -c1-165 | sed 's/^/    /'
+
+echo
+echo "[3] 进程画像（判断是否 elastic 反复重启）"
+echo "    launcher 进程按 etime 分布:"
+timeout 10 ps -eo etime,cmd 2>/dev/null | grep -E '[p]retrain_launcher' | awk '{print $1}' | sort | uniq -c | sort -rn | head -6 | sed 's/^/    /'
+echo "    torchrun 行:"
+timeout 10 ps -eo pid,etime,cmd 2>/dev/null | grep -E '[t]orchrun' | head -4 | cut -c1-130 | sed 's/^/    /'
+
+echo
+echo "[4] GPU 3 采样（.29）"
+timeout 20 nvidia-smi --query-gpu=utilization.gpu --format=csv,noheader -l 1 -c 3 2>/dev/null | paste -sd'|' | sed 's/^/    /'
+
+echo
+echo "[5] 日志尾 25 行里找 错误/重启/信号"
+timeout 10 tail -60 "$W" 2>/dev/null | grep -nE 'Error|error|Signal|restart|Traceback|nan|iteration' | tail -12 | cut -c1-160 | sed 's/^/    /'
+echo "    原样尾 10 行:"
+timeout 10 tail -10 "$W" 2>/dev/null | cut -c1-140 | sed 's/^/    /'
+
+echo
+echo "[6] .12 侧"
+timeout 20 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.12 '
+  echo "    util: $(nvidia-smi --query-gpu=utilization.gpu --format=csv,noheader | tr "\n" " ")"
+  echo "    n_launcher=$(ps -eo cmd | grep -cE "[p]retrain_launcher")  torchrun=$(ps -eo cmd | grep -cE "[t]orchrun")"
+  echo "    load=$(cut -d" " -f1-3 /proc/loadavg)"
+' 2>&1 | sed 's/^/  /' || echo "    ssh .12 failed"
+
+echo
+echo "=== DONE 232 ==="
+```
+
+**输出**
+```
+=== RUN_ID 232 | S1 step check | 2026-11-02 19:54:50 | host=whag0pgpuap29 ===
+
+[1] 日志增长（10s 两采样）
+    size: 280981 -> 280981  (delta=0B)  mtime=2026-11-02 19:54:20
+
+[2] iteration 行数 / 最新 3 条
+    iteration_lines=0
+
+[3] 进程画像（判断是否 elastic 反复重启）
+    launcher 进程按 etime 分布:
+         48 01:22
+         10 01:21
+          8 03:29
+          6 01:23
+          1 03:41
+          1 03:31
+    torchrun 行:
+    4163745       03:41 ssh -n -o StrictHostKeyChecking=no -o ServerAliveInterval=30 -o BatchMode=yes 10.239.2.12 ulimit -n 65536 && c
+    4177347       03:31 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python /nas_train/app.e0031982/miniforge3/envs/py310/bin/tor
+
+[4] GPU 3 采样（.29）
+    ERROR: Option --query-gpu=utilization.gpu is not recognized. Please run 'nvidia-smi -h' for help.|
+
+[5] 日志尾 25 行里找 错误/重启/信号
+    原样尾 10 行:
+    whag0pgpuap29:4179185:199170 [7] NCCL INFO Channel 15/0 : 15[7] -> 14[6] via P2P/CUMEM
+    whag0pgpuap29:4179179:199173 [3] NCCL INFO Connected all trees
+    whag0pgpuap29:4179177:199172 [2] NCCL INFO Connected all trees
+    whag0pgpuap29:4179185:199170 [7] NCCL INFO Connected all trees
+    whag0pgpuap29:4179183:199167 [6] NCCL INFO Connected all trees
+    whag0pgpuap29:4179182:199168 [5] NCCL INFO Connected all trees
+    whag0pgpuap29:4179180:199165 [4] NCCL INFO Connected all trees
+    whag0pgpuap29:4179174:199171 [0] NCCL INFO Connected all trees
+    whag0pgpuap29:4179175:199169 [1] NCCL INFO Connected all trees
+    > setting tensorboard ...
+
+[6] .12 侧
+      util: 100 % 100 % 100 % 100 % 100 % 100 % 100 % 98 % 
+      n_launcher=73  torchrun=3
+      load=45.23 19.93 11.89
+
+=== DONE 232 ===
+```
