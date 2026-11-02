@@ -10,17 +10,18 @@ WAITING: 0
 > 📦 §#1157（11-02 22:05, CPU eval全量启动+ETA修正）→ daily-memories/2026-11-02.md；**结论**：4 eval启动(limit=100,2599req,~34s/req),ETA~50h≈2天。被#1158监控。需要时再读。
 > 📦 §#1158（11-02 22:12, CPU eval监控·ETA修正~3天）→ daily-memories/2026-11-02.md；**结论**：4 eval运行正常,.29~40-50s/req/.12~55-62s/req,ETA~69h≈3天。**⚠️ 被#1159修正**：速度已收敛(.29~33s/.12~43s),ETA修正回~2天。需要时再读。
 
-> 🆕 2026-11-02 23:19 #1169：**📊 CPU eval 进度监控·12轮——4 eval 全部正常推进，速度稳定 .29~16.6-16.7s/req、.12~20.5-21.3s/req，ETA ~11-14.5h，无变化**。
+> 🆕 2026-11-02 23:25 #1170：**📊 CPU eval 进度监控·13轮——4 eval 全部正常推进，速度稳定 .29~16.3-16.7s/req、.12~21.5-22.0s/req，ETA ~11-15h，无变化**。
 > **① 4 eval 运行正常**（limit=100, 8集, 2599 total req, bfloat16, batch_size=1, nice 19, OMP=8, CUDA_VISIBLE_DEVICES=""）：
-> - .29: hf_iter_10000 (PID 992664, **215/2599=8.3%**, 16.58s/req, 已 78min, ETA ~11.0h→done~10:20 Nov3) + hf_iter_30000 (PID 1196989, **205/2599=7.9%**, 16.71s/req, 已 75min, ETA ~11.1h→done~10:25 Nov3)
-> - .12: hf_iter_20000 (PID 3729981, **161/2599=6.2%**, 20.49s/req, 已 78min, ETA ~13.5h→done~12:50 Nov3) + hf_iter_40000 (PID 3898654, **151/2599=5.8%**, 21.33s/req, 已 75min, ETA ~14.5h→done~13:50 Nov3)
-> - hf_iter_50000: 已 export 完成（model.safetensors 4.4GB + config.json + tokenizer），待空槽（两机均 2/2 满载）。.29 两槽预计 ~10:25 Nov3 先完成→立即启动 50000（.29 空槽，单 ckpt ~12h→done~22:30 Nov3）。
+> - .29: hf_iter_10000 (PID 992664, **234/2599=9.0%**, 16.65s/req, 已 84min, ETA ~10.9h→done~10:18 Nov3) + hf_iter_30000 (PID 1196989, **225/2599=8.7%**, 16.27s/req, 已 81min, ETA ~10.7h→done~10:06 Nov3)
+> - .12: hf_iter_20000 (PID 3729981, **166/2599=6.4%**, ~21.5s/req, 已 83min, ETA ~14.5h→done~14:00 Nov3) + hf_iter_40000 (PID 3898654, **167/2599=6.4%**, 22.03s/req, 已 81min, ETA ~14.9h→done~14:20 Nov3)
+> - hf_iter_50000: 已 export 完成（model.safetensors 4.4GB + config.json + tokenizer），待空槽（两机均 2/2 满载）。.29 两槽预计 ~10:06 Nov3 先完成→立即启动 50000（.29 空槽，单 ckpt ~12h→done~22:10 Nov3）。
 > - ⚠️ 早期 lm_eval_results/hf_iter_10000/results.json (20:53) 仅为旧坏 smoke 产物（sciq acc=0.0），当前运行 eval 完成后会覆盖。
-> **② 速度**：.29 ~16.6-16.7s/req；.12 ~20.5-21.3s/req。与#1168(6min前)一致，速度稳定收敛。
-> **③ CPU 负载**：.29 load 37.3/224 (~17%)；.12 load 38.5/224 (~17%) → 均 <<80% 上限，不影响 S1。
-> **④ S1 状态**：iter **59740**/700k (8.53%), loss **2.082**, 0 NaN, 0 skip, ~7.05s/step, ~590K tok/s, GPU 8卡 100%/~75GB, lr=8.70e-4 (warmup 爬升中, 58010→59740 已 1730 步, 预计 ~270 步/~30min 后回 1e-3)。launcher pid 4163528。
-> **📦 体积**：TASK=30.6KB / MEMORY=27.5KB（归档 0KB）。
-> **下一步**：持续监控；.29 两槽 ~10:25 Nov3 完成→立即启动 hf_iter_50000（.29 空槽）→全部 5×8 完成后(~Nov3 22:30)收集 5 个 results.json→汇总表+曲线→生成 reports/report_pretrain_cpu_eval_8sets_zh.html。未完成指令：有。WAITING: 0。
+> **② 速度**：.29 ~16.3-16.7s/req；.12 ~21.5-22.0s/req。与#1169(6min前)一致，速度稳定收敛。
+> **③ CPU 负载**：.29 load 35.2/224 (~16%)；.12 load 42.8/224 (~19%) → 均 <<80% 上限，不影响 S1。
+> **④ S1 状态**：iter **59790**/700k (8.54%), loss **2.086**, 0 NaN, 0 skip, ~7.06s/step, ~590K tok/s, GPU 8卡 100%/~75GB, lr=8.95e-4 (warmup 爬升中, 58010→59790 已 1780 步, 预计 ~220 步/~26min 后回 1e-3)。launcher pid 4163528。
+> **📦 体积**：TASK=29.9KB / MEMORY=27.4KB（归档 0KB）。
+> **下一步**：持续监控；.29 两槽 ~10:06 Nov3 完成→立即启动 hf_iter_50000（.29 空槽）→全部 5×8 完成后(~Nov3 22:10)收集 5 个 results.json→汇总表+曲线→生成 reports/report_pretrain_cpu_eval_8sets_zh.html。未完成指令：有。WAITING: 0。
+> 📦 §#1169（11-02 23:19, CPU eval监控·12轮·ETA~11-14.5h稳定）→ daily-memories/2026-11-02.md；**结论**：4 eval稳定,.29~16.6-16.7s/.12~20.5-21.3s,ETA~11-14.5h,S1 iter59740健康。被#1170监控(无变化)。需要时再读。
 > 📦 §#1168（11-02 23:13, CPU eval监控·11轮·ETA~11-14.5h稳定）→ daily-memories/2026-11-02.md；**结论**：4 eval稳定,.29~16.9-17.0s/.12~21.1-21.3s,ETA~11-14.5h,S1 iter59700健康。被#1169监控(无变化)。需要时再读。
 > 📦 §#1167（11-02 23:08, CPU eval监控·10轮·ETA~11-14h稳定）→ daily-memories/2026-11-02.md；**结论**：4 eval稳定,.29~16.6-17.4s/.12~20.7-21.0s,ETA~11-14h,S1 iter59650健康。被#1168监控。需要时再读。
 > 📦 §#1166（11-02 23:03, CPU eval监控·9轮·ETA~12-14h）→ daily-memories/2026-11-02.md；**结论**：4 eval稳定,.29~16.6-18.0s/.12~20.7-20.8s,ETA~12-14h,S1 iter59610健康。被#1167监控。需要时再读。
