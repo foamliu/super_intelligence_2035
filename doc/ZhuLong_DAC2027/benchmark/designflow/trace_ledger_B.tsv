@@ -6,5 +6,6 @@
 1792653194974_s2f9d.messages.json	e0024852	hfeg0plg79	294	spice_sim	parked		2026-10-31 11:39	finesim SRAM-tailor flow runs via bsub/LSF cluster + 9.7G DSPF external /rundata files, not reproducible on .75; flow-debugging not self-contained L2
 1792829537180_vaiob.messages.json	harrywu	hfeg0pkn002	506	spice_sim	case	EDA-Eval-DesignFlow-DelaySigma-001	2026-10-31 14:02	
 1789370647360_ukkn7.messages.json	e0031668	hfeg0plg91	1478	spice_sim	parked		2026-11-02 15:31	real task is ERC flow rewrite virtuoso->aether (physical_verify domain), not spice_char; hspice/netlist keywords incidental
-1793174925139_f0vya.messages.json	e0030760	hfeg0plg74	410	spice_sim	deepread		2026-11-02 15:32	SramSNM-001 synthesized (spice_sim L2): 6T SRAM butterfly SNM harness, ref .75-verified GT, check.py+negatives written, selftest-on-.75 pending DEBT
+1793174925139_f0vya.messages.json	e0030760	hfeg0plg74	410	spice_sim	case	EDA-Eval-DesignFlow-SramSNM-001	2026-11-02 16:05	SramSNM-001 synthesized (spice_sim L2): 6T SRAM butterfly SNM harness; .75 selftest PASS (ref 14/14, 3 negs FAIL, §4.9 trio FAIL); appended to EDA-Eval-DesignFlow_B.jsonl line 12
 1785810906841_m2vah.messages.json	e0014566	hfeg0plg58	975	characterization	case	EDA-Eval-DesignFlow-RsCalcAutoVia-001	2026-11-02 15:58	
+1792495939340_13fwy.messages.json	thqu	hfeg0plg99	211	spice_sim	claimed		2026-11-02 16:07	
