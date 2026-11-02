@@ -2,15 +2,15 @@ WAITING: 0
 SHARD: A (digital_front)
 DOMAINS: digital, eda_other, pnr_signoff, verification
 
-- **PHASE**: 合成 DCSynth-001 = **PASS（自验）**（A 档 trace-faithful / digital / L1-boundary）。trace 2xcr9（johnl/hfeg0pfn119/mc=68，dc_shell 综合）：用户原话"请编写约束文件 综合脚本 使用本地库进行综合"+"注意要保留层次进行综合"。金标准 = SDC + synth.tcl + run_dc.sh（层次保留 DC 综合流，env 驱动泛型）。check.py 16 条断言 a–p，自验 ref PASS + 4 negative 全 FAIL（NEG_RC=4/4）+ §4.9 三假提交全 FAIL + gate 16/16/✓。judge-sim（/tmp + A RTL flat）PASS。
-- ✅ **本轮交付**：EDA-Eval-DesignFlow-DCSynth-001（A 档 / digital / L1-boundary / DC 层次保留综合流）。A.jsonl 现 25 条，主 jsonl merge 121 条。台账 covered=24 / touched=31 / parked=7。
+- **PHASE**: 合成 CombSynthClean-001 = **PASS（自验）**（B 档 synthesized / digital / L1-boundary）。trace c4owo（johnl/hfeg0pfn119/mc=27，dc_shell+primetime）：用户原话"我这是一个组合逻辑模块 给我把脚本 时钟相关的给删了吧"——**A 档规则 ② 命中（用户指出根因=组合逻辑 + 给出修复=删时钟）→ 降为 B 档 synthesized**。金标准 = 修改后的 synth.tcl（新增去时钟后处理 proc，泛型 [all_outputs]）+ 清理后的 addr_to_rowcol_region_mapped.sdc。check.py 13 条断言 a–m，自验 ref PASS + 5 negative 全 FAIL（NEG_RC=5/5）+ §4.9 三假提交全 FAIL + gate 13/13/✓。
+- ✅ **本轮交付**：EDA-Eval-DesignFlow-CombSynthClean-001（B 档 / digital / L1-boundary / DC 组合逻辑去时钟约束流）。A.jsonl 现 26 条。台账 covered=25 / touched=32 / parked=7。
 - ✅ DEBT 已清零。
-- 📊 trace 覆盖率：24/1001 = 2.4%（covered=24 · touched=31 · parked=7；A jsonl 25 条）
-- 🎯 通过率: cline+hook 存量重跑 2/7 = 28.6%（未本轮新增 cline 跑；DCSynth-001 待下轮 cline 重跑看 A-faithful ①+④ 趋势）。合成路径自验全过。
-- 🧾 断言: 本轮 DCSynth-001 = 16/16/✓（k_rationale=k_check=16≥8）；存量 25 条全达标
+- 📊 trace 覆盖率：25/1001 = 2.5%（covered=25 · touched=32 · parked=7；A jsonl 26 条）
+- 🎯 通过率: cline+hook 存量重跑 2/7 = 28.6%（未本轮新增 cline 跑）。合成路径自验全过。
+- 🧾 断言: 本轮 CombSynthClean-001 = 13/13/✓（k_rationale=k_check=13≥8）；存量 26 条全达标
 - 📦 体积：TASK≈23.8KB / MEMORY_A≈26KB
-- 🔒 泄漏隔离: 本轮合成路径不涉 cline workdir；check.py + reference_submit.zip + negative/ 仅在 reference/ 与 /tmp/judge_*；assets/hidden/ 不进 SUT 沙箱（run_one.sh FORBIDDEN 过滤）
-- ⚠️ 运维令进度：DCSynth-001 落库。**待办**：①DCSynth-001 cline 重跑验 A-faithful 真实通过率（多文件树 + env 泛型，预期形态①风险）；②继续合成或扩 cline 样本。
+- 🔒 泄漏隔离: 本轮合成路径不涉 cline workdir；check.py + reference_submit.zip + negative/ 仅在 reference/ 与 /tmp/judge_*；assets/hidden/ 不进 SUT 沙箱（B 输入 SDC 内嵌于 check.py + 镜像 reference/hidden/，不进 SUT workdir）
+- ⚠️ 运维令进度：CombSynthClean-001 落库。**待办**：①存量 A/B 档 cline+hook 重跑验真实通过率（DCSynth-001 / CombSynthClean-001 多文件树 + 泛型，预期形态①风险）；②继续合成（A 档试点 1/10，下一轮优先找 A 档合规 L2 trace）。
 
 
 ### 2026-11-03 shard A 轮 31：DCSynth-001 合成 ✓（digital / L1-boundary / A 档 trace-faithful，DC 层次保留综合流，WAITING: 0）
