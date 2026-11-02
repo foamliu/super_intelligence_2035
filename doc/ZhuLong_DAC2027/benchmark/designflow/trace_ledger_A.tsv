@@ -20,3 +20,8 @@
 1792572659304_xt45f	johnl	hfeg0pfn119	183	pnr_signoff	case	EDA-Eval-DesignFlow-FlowGuide-001	2026-11-02 22:27	
 1792395564570_r3gb7					case	EDA-Eval-DesignFlow-CovFMFlow-001	2026-11-02 23:11	
 1792491091764_qk0vo	hfeg0plg98	10.129.8.230	49	pnr_signoff	case	EDA-Eval-DesignFlow-InnovusLaunchDiag-001	2026-11-03 00:28	
+1789887279405_ve67l	mike	10.129.32.80	279	pnr_signoff	parked		2026-11-03 01:17	ops/build-automation trace (execute README step1/2/3, DDR6 cosim, VCS license swap, spike install). Asset-heavy (whole cosim tree + DDR6 model + spike tarball, proprietary). No clean self-contained L2 deliverable. Not design-flow.
+1792490325235_wvhcg					parked		2026-11-03 01:23	Aether library/tech-db discovery task (pyAether 151 + innovus 48 + dbGet 127). Reads /proj/drcoa/V0/libs/drcoa_stdcell, locates Aether views/tech.db/lib.defs. Domain = layout_aether (shard C), not shard A. User msgs are canned read-only command blocks + '加油/继续'.
+1789090020843_b9bop					parked		2026-11-03 01:23	Scripted/benchmark session ('启动业务场景: 时序分析' trigger + 'can you report product yield'). Not authentic user design intent; only 2 user-text msgs. 58 editor / 40 read_files but no real task framing.
+1790566107917_f1rqc	hbpeng	10.129.2.14	147	eda_other	parked		2026-11-03 01:25	tcl2skill converter dev task. Deliverable = whole multi-file tcl2skill Python package (lexer/ast/translator/skill_visitor/expr_engine/plugin, 200 editor edits). Open-ended large dev task, not focused design-flow deliverable. Input = proprietary PDK Tcl callbacks (mosCB.tcl under /apps/imctf/.../PDK_QA). Too large to replicate as self-contained case.
+1792983707093_9sjuh	e0039602	10.129.8.136	147	verification	case	EDA-Eval-DesignFlow-FormalityLaunchDiag-001	2026-11-03 01:40	

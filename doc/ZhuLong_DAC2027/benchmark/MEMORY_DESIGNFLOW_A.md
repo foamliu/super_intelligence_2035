@@ -2,16 +2,15 @@ WAITING: 0
 SHARD: A (digital_front)
 DOMAINS: digital, eda_other, pnr_signoff, verification
 
-- **PHASE**: 运维令 §四.3 cline+hook 存量重跑扩样本。本轮 cline 重跑 `EDA-Eval-DesignFlow-InnovusLaunchDiag-001`（轮 23 合成的 eda_other / L1-style 诊断脚本任务）= **PASS ✓**（cline 1209s / exit 0 / 写 check_launch.py → harness 打包 → 独立判分 True）。cline_eval_status.jsonl 现 4 行 = **2/4 PASS**（PTSignoff+InnovusLaunchDiag PASS / Verification+PwrGlobals FAIL）。
-- ✅ **本轮交付**：InnovusLaunchDiag-001 cline+hook 重跑 PASS ✓ + 修 2 处 bug（①assets/reference 目录名短名 `InnovusLaunchDiag-001` → 全名 `EDA-Eval-DesignFlow-InnovusLaunchDiag-001` 对齐 run_one.sh 路径约定，git mv；②run_one.sh 附件复制对嵌套 name `evidence/xxx.txt` 不建父目录致 FileNotFoundError，加 os.makedirs 修复）。
-- ⚠️ **本轮外部阻塞**：eda_flow `run_commands`（.75 bashpool）本会话全程返回 exit_code -1 / 0ms / 无执行 → 无法 `trace_ledger --shard A next` 取新候选（合成路径被堵）。故本轮按 MEMORY 待办走 cline 重跑路径（不依赖 .75 取 trace；InnovusLaunchDiag-001 是 L1-style 纯写脚本任务，判分自包含，无需 eda_flow）。下轮若 bashpool 恢复优先回合成。
+- **PHASE**: bashpool 恢复 → 回合成路径。本轮合成 `EDA-Eval-DesignFlow-FormalityLaunchDiag-001`（verification / L1-style / B 档，克隆 InnovusLaunchDiag-001 启动诊断模式，B 用污染驱动失败对照 InnovusLaunchDiag B 的缺库驱动）= **自验全过 ✓**（ref PASS + 3 negative FAIL + §4.9 三假提交 FAIL + 断言闸门 17==17≥8）。A jsonl 现 22 条，主 jsonl 104 条。新 case 未跑 pi/cline。
+- ✅ **本轮交付**：FormalityLaunchDiag-001 合成 ✓（verification/L1-style/B 档，克隆 InnovusLaunchDiag 启动诊断模式，B 用 GLIBCXX 污染驱动失败 vs InnovusLaunchDiag B 缺库驱动；自验 ref PASS + 3 negative FAIL + §4.9 三假提交 FAIL + 断言闸门 17==17≥8）。A jsonl 22 条，主 jsonl 104 条。选料途中 parked 4 条不适配候选（ve67l ops/DDr6、wvhcg Aether 发现、b9bop 脚本化、f1rqc tcl2skill 大工程）。
 - ✅ DEBT 已清零。
-- 📊 trace 覆盖率：20/1001 = 2.0%（covered=20 · touched=22 · parked=2；A jsonl 仍 21 条，本轮无新 case）
-- 🎯 通过率: cline+hook 存量重跑 **2/4 = 50%**（PTSignoff-001 PASS·L2 / InnovusLaunchDiag-001 PASS·L1-style / Verification-001 FAIL·L1-harness限 / PwrGlobals-001 FAIL·L2 能力）。剔除 harness 限样本后能力口径 2/3（n 小无统计意义）
-- 🧾 断言: 本轮无新 case（重跑不涉断言闸门）；存量 21 条全达标
+- 📊 trace 覆盖率：21/1001 = 2.1%（covered=21 · touched=27 · parked=6；A jsonl 22 条，本轮 +1 新 case）
+- 🎯 通过率: cline+hook 存量重跑 **2/4 = 50%**（PTSignoff-001 PASS·L2 / InnovusLaunchDiag-001 PASS·L1-style / Verification-001 FAIL·L1-harness限 / PwrGlobals-001 FAIL·L2 能力）。剔除 harness 限样本后能力口径 2/3（n 小无统计意义）。本轮新 case 未跑 pi/cline。
+- 🧾 断言: 本轮 FormalityLaunchDiag-001 k_rationale=k_check=17 ✓（今日 1/30 达标，新增达标）；存量 21 条全达标
 - 📦 体积：TASK≈23.8KB / MEMORY_A≈14.0KB
-- 🔒 泄漏隔离: 本轮 cline workdir 自检 0 判分器/答案文件；cline_session.jsonl grep 命中 3 处全良性（①`open_layout_with_check.py` 文件名子串 / ②同上 / ③cline reasoning 提及 "check.py (hidden)... which I'm told not to access, but I won't" —— 明确拒绝访问）；hook 触发 35×（内置 run_commands→NOTICE → cline 改用 write_to_file + MCP）；判分独立在 /tmp/judge_* 跑，check.py 未进 cline cwd
-- ⚠️ 运维令进度：cline_eval_status.jsonl 4 行。**待办**：下轮继续 cline 重跑扩样本（候选 ETMExtract-001 / TLEFRules-001 / SynLintFlow-001，目标≥5 再看通过率趋势）或 bashpool 恢复后回合成。
+- 🔒 泄漏隔离: 本轮合成 case 自验 — check.py 内嵌 B 证据自包含，判分独立在 /tmp 跑；SUT workdir（待 cline 跑时）只放 prompt+assets+task_brief，无 check.py/reference/hidden
+- ⚠️ 运维令进度：cline_eval_status.jsonl 4 行。**待办**：下轮继续 cline 重跑扩样本（候选 ETMExtract-001 / TLEFRules-001 / SynLintFlow-001 / FormalityLaunchDiag-001 本条，目标≥5 看通过率趋势）或继续合成（bashpool 已恢复）。
 
 
 ### 2026-11-03 shard A 轮 24：InnovusLaunchDiag-001 cline+hook 重跑 = PASS ✓（L1-style 诊断脚本·运维令 §四.3，WAITING: 0）
@@ -86,3 +85,22 @@ DOMAINS: digital, eda_other, pnr_signoff, verification
 <!-- 2026-11-02 shard A 轮 15：TLEFRules-001 交付 ✓（A 档 / pnr_signoff，WAITING: 0） → 已归档 ARCHIVE 批次 50 -->
 <!-- 2026-11-02 shard A 轮 14：SynLintFlow-001 交付 ✓（A 档 / digital·synthesis，WAITING: 0） → 已归档 ARCHIVE 批次 50 -->
 
+
+
+### 2026-11-03 shard A 轮 25：FormalityLaunchDiag-001 合成 ✓（verification / L1-style / B 档，WAITING: 0）
+- 任务卡本轮路径 = 合成 1 条新 case。bashpool 本轮恢复（`echo HELLO_BASHPOOL_OK` exit 0 / 1ms）→ `trace_ledger --shard A next` 取候选路径打通（用 python 脚本解析 summary.tsv，因 awk 长排除正则在 .75 报 syntax error，改 python 字符串匹配）。
+- **选料**：在 .75 排序 mc≥200 + digital-tool 提及 + 排除台账 22 条的候选。深读 5 条落定：
+  - `ve67l`（mike/mc=279/innovus）→ parked：ops/build-automation（执行 README step1/2/3、DDR6 cosim、VCS license、spike 安装），资产庞大专有。
+  - `wvhcg`（johnl/mc=198/pyAether+innovus）→ parked：Aether 库/tech.db 发现任务（domain=layout_aether，shard C）；用户消息全是只读命令块 + "加油/继续"。
+  - `b9bop`（zhigangw/mc=183）→ parked：脚本化 "启动业务场景: 时序分析" 会话，仅 2 条 user-text，非真实设计意图。
+  - `f1rqc`（hbpeng/mc=147/tcl2skill）→ parked：开放式大工程（整个 tcl2skill 多文件包 + 200 editor 改动 + 专有 PDK Tcl callback），非聚焦 design-flow 交付。
+  - `9sjuh`（e0039602/mc=147/formality）→ **claim（domain=verification）**：前半段「formality 启动就绪诊断」干净自包含。
+- **深读**：scp `9sjuh.messages.json`（509 msgs / 156 user / 134 assistant）解析。真实任务：用户在 RHEL6 登录节点 `module load ds/fm/2023.12-SP5` 静默成功，`which formality` 有路径，但 `fm_shell` 报 `libgraphite2.so.3: cannot open` → 装好后又报 `GLIBC_2.14/2.16 not found`（glibc 2.12 太老）。用户问能否直接用 / 是否得 bsub 到新节点。后半段延伸 formality SV 网表验证（golden/revised + simlib stub，资产专有，不取）。深读笔记落 `designflow/trace_deepreads/1792983707093_9sjuh_formality_launch_diag.md`。
+- **合成**（EDA-Eval-DesignFlow-FormalityLaunchDiag-001，B 档 / verification / L1-style）：克隆 InnovusLaunchDiag-001 的「启动就绪诊断脚本」模式（同一份通用 reference check_launch.py，generic 无硬编码），应用到 formality，但 B 用**结构不同**的失败模式：
+  - **A（SUT 可见）**：`assets/.../evidence/` = formality 2023.12-SP5 / RHEL 6.9 / libgraphite2.so.3 缺失（系统只有 .so.0 代际不匹配）/ 无 LD 污染。
+  - **B（隐藏）**：`assets/.../hidden/B_evidence/` = formality 2023.12-SP5 / CentOS 7.9 / fm_shell 因 GLIBCXX_3.4.29 not found 失败（libstdc++.so.6 被 `/apps/eda-agent/runtime/lib` 经 LD_LIBRARY_PATH 抢占）→ **pollution=True / mismatch=False / missing_libs=[]**。与 InnovusLaunchDiag B（calibre/libncurses/RHEL9/pollution=False/mismatch-True）形成对照——本条 B 是污染驱动，前者是缺库驱动。
+  - **check.py**（17 条断言 a–q）：内嵌 B 证据自包含；subprocess 跑候选 → 解析 JSON → 断言 module_avail 含 ds/fm/2023.12-SP5 / module_load_ok / binary_path 含 formality / exec_ok==false / **missing_libs 不含 libgraphite2.so.3（防硬编码 A，因 B 是 GLIBCXX 版本问题非库缺失）** / lib_provider_mismatch==false / ldpath_pollution==true / os.version 以 7 起头 / verdict==not_launchable_on_this_node / recommended_action 含 LD_LIBRARY_PATH 或 env -u 或 bsub / 3-seed 随机化 verdict+mismatch+pollution 一致 / 变体证据（换 libreadline.so.6）missing_libs 必变（防硬编码）。
+- **自验全过**：①ref check.py 跑 ref_submit.zip = **PASS (True)**；②negative_selftest：naive_always_launchable / stub_hardcode_A / print_B_expected 三错解 **全 FAIL**；③§4.9 三假提交回归（空壳 / 只 print B 期望 / 删 missing_libs 解析）**全 FAIL**；④断言闸门 **k_rationale==k_check==17≥8 ✓**。
+- **落库**：台账 `mark --status case`（covered=21 / target=1001 = 2.1%，touched=27 / parked=6）。追加 `EDA-Eval-DesignFlow_A.jsonl`（A jsonl 现 22 条）。merge_shards → 主 jsonl 104 条 → 日报 regen（report_benchmark_11_03.html）。新 case 未跑 pi/cline。
+- **domain 覆盖**：verification 现 5 条（本条补 formality 工具覆盖，原 4 条是 netlist/SDF/timing 无 formality）。eda_other 1（InnovusLaunchDiag）/ pnr_signoff 8 / digital 6。
+- ⬜ 下轮：①bashpool 已恢复 → 继续合成（trace_ledger --shard A next）；或 ②运维令 §四.3 cline 重跑扩样本（候选 ETMExtract-001 / TLEFRules-001 / SynLintFlow-001 / FormalityLaunchDiag-001 本条，目标≥5 看通过率趋势）。
