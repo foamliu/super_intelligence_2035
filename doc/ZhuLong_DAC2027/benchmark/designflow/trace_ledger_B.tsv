@@ -27,4 +27,4 @@ djml8					case	EDA-Eval-DesignFlow-PFDdeadZone-001	2026-11-02 17:47
 1792583307053_mrwvg	jasonxu	hfeahpc501	469	spice_sim	parked		2026-11-03 01:21	fork of jnf1q, same readsigCM/analogkit netlist-parsing work as ReadsigAddrTbl-001; no new sub-skill
 1793093197648_x2w2z	yueliu	hfeahpc501	303	spice_sim	case	EDA-Eval-DesignFlow-AlterDeckSplit-001	2026-11-03 02:13	L2 spice_sim AlterDeckSplit-001 交付; .75 HSPICE 真跑自验 PASS; 5 neg + 3 fake-submit 全 FAIL
 1793147699495_as67p	easont	hfhds207	786	spice_sim	parked		2026-11-03 02:31	overlaps shard D TempSelInfer-001 (same easont TempHalfWL DDGOA design); reproducible sub-skills (netlist DCE, cosim flow, fsdb sig-class) already covered by TempSelInfer/NetlistDCE/CosimSetup/WaveSig
-1792372786960_4ujp9	tongni	hfeg0pfn119	155	characterization	claimed		2026-11-03 02:38	
+1792372786960_4ujp9	tongni	hfeg0pfn119	155	characterization	case	EDA-Eval-DesignFlow-Vcc2scPVTvar-001	2026-11-03 03:24	Vcc2scstdby multi-corner PVT voltage-variation spec checker (cross-corner max-min <5mV). HSPICE multi-.alter .mt<N> per-corner collect. 14 cond a-n. .75 HSPICE V-2023.12 real-run verified.
