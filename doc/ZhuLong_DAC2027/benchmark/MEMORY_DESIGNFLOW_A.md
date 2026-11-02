@@ -2,16 +2,25 @@ WAITING: 0
 SHARD: A (digital_front)
 DOMAINS: digital, eda_other, pnr_signoff, verification
 
-- **PHASE**: 运维令「被测换 cline + PreToolUse 防泄题 hook」§四 执行 —— L2 存量 case cline+hook 重跑验证。本轮挑 shard-A L2 PASS case `PTSignoff-001`（pnr_signoff）用 cline+hook 重跑，**结果 PASS**，并修复 run_one.sh harness 的两处阻塞（见轮 21）。
-- ✅ **本轮交付**：`PTSignoff-001` cline+hook 重跑 = **PASS**（首条 L2 shard-A case 在防泄题 hook 下 PASS，237s/cline exit 0/独立判分 True）。harness 修复：①run_one.sh prompt 改为「cline 用 write 工具写交付件到 outputs/，harness 退出后打包成 submit.zip」（原 hook 把 run_commands→echo 阻断 cline 自建 zip，所有 case 都卡这）；②attachments 复制 bug（source 含 `assets/<id>/` 前缀，原逻辑再拼一次 ASSETS_SRC 致路径错、复制 0 个附件）→ 改按 `name` 在 ASSETS_SRC 取文件。防泄题自验：cline 0 次尝试读 check.py/reference/hidden（session 日志 grep 命中 0），hook 7 次 run_commands→echo redirect 生效。
+- **PHASE**: 运维令「被测换 cline + PreToolUse 防泄题 hook」§四.3 执行 —— L2 存量 case cline+hook 重跑扩大样本。本轮挑 shard-A L2 case `PwrGlobals-001`（pnr_signoff / Innovus init-globals 多文件 Tcl 合成）用 cline+hook 重跑，**结果 FAIL（能力不足，非 hook/泄漏）**。
+- ✅ **本轮交付**：`PwrGlobals-001` cline+hook 重跑 = **FAIL**（cline 47 iter / 1873s wall / 0 个交付件 / outputs/ 空 / 无 submit.zip）。cline 卡死：3× `spawn_agent`/`team_spawn_teammate` 工具报错（`undefined e.trim` / `Unrecognized key "files"`），iter 38 触发 auto-compaction（115618→38293 tokens, 77→15 msgs），188 个 MCP 名义 tool ref 但 0 次 write_to_file 到 outputs/。**失败归因 ③能力不足**（cline 在复杂多文件 Tcl 合成任务上 thrash：子代理 spawn 报错 + 自动压缩循环，产出为 0）。**非 hook 问题**：hook 未触发（cline 0 次跑 run_commands，全走 MCP/思考），0 次尝试读 check.py/reference/hidden（防泄题自验通过）。判分独立跑确认 FAIL（outputs 空 → no submit.zip）。
 - ✅ DEBT 已清零。
 - 📊 trace 覆盖率：19/1001 = 1.9%（covered=19 · touched=21 · parked=2；A jsonl 20 条不变，本轮无新 case）
-- 🎯 通过率: cline+hook 存量重跑 **1/2 = 50%**（PTSignoff-001 PASS / Verification-001 FAIL·L1/hook 限制）· 样本太小不报百分比 · B 档目标 20–30%（待更多 cline 重跑样本）
-- 🧾 断言: 本轮无新 case；存量全达标（PTSignoff-001 check.py 23 条断言 (a)-(w) 在 cline 产出上独立判分 PASS）
-- 📦 体积：TASK≈23.8KB / MEMORY_A≈13.2KB（轮 14-19 已归档 ARCHIVE 批次 50）
-- 🔒 泄漏隔离: check.py/reference/hidden 不进 SUT workdir；判分独立跑（check.py 24 条断言 (a)-(x)：静态结构 (a)-(t) on fm/+cov/ + tclsh stub 跨输入守护 (u)-(w) 在内嵌隐藏 B common_setup_B.tcl+filelist_fm_B.f 上真跑候选 fm.tcl 校验 B 设计流过 set_top/read_sverilog/read_verilog 且 A 字面量 cfreq_ctrl 缺席 + make -n 干跑 (x) on cov/Makefile 带 B DESIGN/TOP 校验 B 出现 A 缺席；check.py 内嵌 B 输入自包含，不进 cline cwd）
-- ⚠️ 运维令进度（最高优先·跨 shard ops）：2026-11-02「被测换 cline + PreToolUse 防泄题 hook」**已在轮 9 启动**——run_one.sh 已建、hook 已部署、Verification-001(L1) cline 重跑 = FAIL（hook 把 run_commands override 成 echo，阻断 L1/offline 本地执行；L2/EDA-via-MCP 不受影响）。**待办**：挑一条 L2 shard-A PASS case 用 cline+hook 重跑验真实通过率（L2 不被 hook 拦）。本轮新交付 CovFMFlow-001 是 L1-boundary，重跑也会被 hook 拦。本轮 shard-A 1-case 40min 预算未启动 L2 重跑；下轮第一件事评估启动。
+- 🎯 通过率: cline+hook 存量重跑 **1/3 = 33%**（PTSignoff-001 PASS / Verification-001 FAIL·L1·hook 限制 / PwrGlobals-001 FAIL·L2·能力不足）· 样本仍太小不报百分比 · B 档目标 20–30%
+- 🧾 断言: 本轮无新 case；存量全达标
+- 📦 体积：TASK≈23.8KB / MEMORY_A≈13.5KB（轮 14-19 已归档 ARCHIVE 批次 50）
+- 🔒 泄漏隔离: check.py/reference/hidden 不进 SUT workdir；判分独立跑（本轮 PwrGlobals-001 cline 0 泄漏尝试，hook_scope 限定 cline_eval/，run_one.sh leak 自检通过）
+- ⚠️ 运维令进度（最高优先·跨 shard ops）：2026-11-02「被测换 cline + PreToolUse 防泄题 hook」§四.3 进行中——cline_eval_status.jsonl 现 3 行（Verification-001 FAIL·L1 / PTSignoff-001 PASS·L2 / PwrGlobals-001 FAIL·L2 能力）。**已验**：L2 case 在 hook 下不被 harness 阻塞（PTSignoff PASS 证实）；cline 真实能力差异显现（同 L2 域，PTSignoff 单文件 pt_sta.tcl 易过，PwrGlobals 多文件 Innovus Tcl 合成 cline thrash 全败）。**待办**：继续扩 cline L2 样本（候选 ETMExtract-001 / TLEFRules-001 / SynLintFlow-001），或回 §3 合成新 case（trace_ledger --shard A next）。
 
+
+### 2026-11-03 shard A 轮 22：PwrGlobals-001 cline+hook 重跑 = FAIL（能力不足·L2，WAITING: 0）
+- 运维令 §四.3「逐步把存量 case 用 cline 重跑」继续。挑 shard-A L2 case `EDA-Eval-DesignFlow-PwrGlobals-001`（pnr_signoff / Innovus init-globals：合成 gui/power.globals + setup/common_setup.tcl + README.md 三文件 Tcl 流程，check.py 20 条断言 (a)-(t) 含 tclsh stub 跨输入守护）。
+- **重跑**：`bash run_one.sh EDA-Eval-DesignFlow-PwrGlobals-001`（harness 轮 21 修复版：cline 用 write_to_file 写 outputs/，harness 打包 submit.zip）。cline exit=超时（CLINE_TIMEOUT=1500s，实际 wall 1873s——cline --timeout 未硬杀，run_one.sh 被 outer shell 30min timeout 终止；status 由我手动补录）。
+- **cline 行为分析**（session jsonl 9.5MB）：47 iterations / 27657 content_start events（大量 reasoning token 生成）/ 188 MCP-named tool ref / **0 次 write_to_file 到 outputs/**。卡死根因：① cline 调 `spawn_agent`/`team_spawn_teammate` 子代理工具 3 次全报错（`undefined is not an object (evaluating 'e.trim')` / `Unrecognized key: "files"` / `Invalid input: expected string, received undefined at agentId`）；② iter 38 触发 auto-compaction（115618→38293 tokens, 77→15 msgs, triggerTokens=115200/maxInput=128000）——上下文爆炸后压缩，循环往复但无产出。outputs/ 目录空，harness 3b 步无可打包文件。
+- **失败归因 ③能力不足**（非 ①交付形态/位置错、非 ④判分歧义、非 hook/泄漏）：cline 在「合成多文件 Innovus Tcl 流程」这类需要长程规划+多文件协同的任务上 thrash；对照 PTSignoff-001（单文件 pt_sta.tcl + 复用附件 setup）cline 237s 一次过——cline 能力曲线对任务复杂度敏感。**对评测集是正向信号**：PwrGlobals-001 在 pi 下通过、cline 下 FAIL，符合「难度校准到通过率 20–30%」目标方向。
+- **防泄题自验**：grep cline_session.jsonl 命中 `check.py`/`_reference_check.py`/`reference_submit.zip`/`hidden_manifest.json`/`reference`/`hidden` = **0 次**；hook 未触发（cline 0 次 run_commands，全走 MCP+思考+子代理 spawn）；workdir leak 自检通过。判分独立：outputs 空 → 直接判 FAIL（no submit.zip），check.py 未进 cline cwd。
+- status jsonl 追加第 3 行（failure_class=③capability-insufficient）。cline_eval_status.jsonl：Verification-001 FAIL·L1·hook / PTSignoff-001 PASS·L2 / PwrGlobals-001 FAIL·L2·能力 = **1/3**。
+- ⬜ 下轮：①继续 cline L2 重跑（候选 ETMExtract-001 / TLEFRules-001 / SynLintFlow-001，扩样本到 ≥5 再看通过率趋势）；或 ②回 §3 trace_ledger --shard A next 合成第 21 条新 case（需先 next/claim）。本轮 40min 预算耗尽于 cline 1500s 跑空，未开新 case。
 
 <!-- 已归档轮 8-13 → ARCHIVE_OPERATOR_DESIGNFLOW.md 归档批次 49（体积闸门）。指针： -->
 <!-- 2026-11-02 shard A 轮 13：PwrGlobals-001 交付 ✓（A 档 trace-faithful / pnr_signoff，WAITING: 0） → 已归档 ARCHIVE 批次 49 -->
