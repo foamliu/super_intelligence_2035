@@ -23936,3 +23936,194 @@ echo "=== DONE 227 ==="
 
 === DONE 227 ===
 ```
+
+---
+
+## RUN_ID 228 · 2026-11-02 19:45:23 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 228 | GPU idle cross-check | $(date '+%F %T %Z') | host=$(hostname) ==="
+echo "  uptime: $(uptime | tr -s ' ')"
+echo "  nvidia-smi 设备数: $(nvidia-smi -L 2>/dev/null | wc -l)  ($(nvidia-smi -L 2>/dev/null | head -1 | cut -c1-60))"
+
+echo
+echo "[1] nvidia-smi 全表（.29）"
+timeout 15 nvidia-smi 2>/dev/null | sed -n '1,12p' | cut -c1-150 | sed 's/^/    /'
+echo "  --- GPU 行 ---"
+timeout 15 nvidia-smi 2>/dev/null | sed -n '13,24p' | cut -c1-150 | sed 's/^/    /'
+
+echo
+echo "[2] 计算进程视角（三种查法）"
+echo "  a) nvidia-smi --query-compute-apps:"
+timeout 12 nvidia-smi --query-compute-apps=pid,process_name,used_memory --format=csv 2>/dev/null | sed 's/^/    /'
+echo "  b) nvidia-smi pmon -c 1:"
+timeout 15 nvidia-smi pmon -c 1 2>/dev/null | head -12 | sed 's/^/    /'
+echo "  c) 3 次间隔采样（utilization.gpu / memory.used / power / temp）:"
+timeout 20 nvidia-smi --query-gpu=index,utilization.gpu,memory.used,power.draw,temperature.gpu --format=csv,noheader -l 1 -c 3 2>/dev/null | sed 's/^/    /'
+
+echo
+echo "[3] 有没有 python/torch 训练进程（全用户，按 CPU 排序前 10）"
+timeout 10 ps -eo user,pid,etime,pcpu,pmem,rss,cmd --sort=-pcpu 2>/dev/null | head -11 | cut -c1-120 | sed 's/^/    /'
+echo "  python 进程数=$(timeout 10 ps -eo cmd 2>/dev/null | grep -c '[p]ython')"
+
+echo
+echo "[4] 内存/swap（判断是否曾发生内存压力）"
+free -g | sed 's/^/    /'
+echo "  oom 计数: $(timeout 5 cat /proc/vmstat 2>/dev/null | grep oom_kill | tr '\n' ' ')"
+
+echo
+echo "[5] 内核日志（多种入口，找 OOM / SIGBUS 线索）"
+echo "  dmesg tail 20:"
+timeout 12 dmesg 2>/dev/null | tail -20 | cut -c1-150 | sed 's/^/    /' || echo "    (dmesg 受限)"
+echo "  /var/log/syslog|messages grep -i 'killed process|oom|mce|machine check':"
+for f in /var/log/syslog /var/log/messages /var/log/kern.log; do
+  [ -r "$f" ] || continue
+  timeout 10 grep -iE 'killed process|out of memory|oom-kill|machine check|mce:' "$f" 2>/dev/null | tail -6 | cut -c1-150 | sed "s|^|    $f: |"
+done
+
+echo
+echo "[6] master 日志：失败顺序（SIGKILL vs SIGBUS 谁先）"
+timeout 10 grep -nE 'SIGKILL|SIGBUS|SIGSEGV|Root Cause|first observed|exitcode|Traceback|Error' /tmp/baize_s1_baize2b_master.log 2>/dev/null | tail -14 | cut -c1-160 | sed 's/^/    /'
+echo "  master 里最后的训练进度行:"
+timeout 10 grep -E 'iteration +[0-9]+/' /tmp/baize_s1_baize2b_worker.log 2>/dev/null | tail -2 | cut -c1-160 | sed 's/^/    /'
+
+echo
+echo "[7] CPU 冒烟测试文件（18:46-19:18 那批）+ 是否有进程在跑"
+timeout 10 ls -lt --time-style='+%F %T' /tmp 2>/dev/null | grep -iE 'cpu_smoke|lmeval' | head -8 | awk '{print "    "$6,$7,$5"B",$8}'
+timeout 10 ps -eo pid,etime,pcpu,cmd 2>/dev/null | grep -E '[t]est_lmeval|[l]m_eval|[c]pu_smoke' | cut -c1-120 | head -5 | sed 's/^/    /' || echo "    (无相关进程)"
+
+echo
+echo "[8] .12 侧交叉验证"
+timeout 20 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.12 '
+  echo "    host=$(hostname) date=$(date +%H:%M:%S) up=$(cut -d" " -f1 /proc/uptime)s"
+  echo "    gpu_lines=$(nvidia-smi -L | wc -l)"
+  nvidia-smi --query-gpu=index,utilization.gpu,memory.used --format=csv,noheader | tr "\n" " " | cut -c1-160
+  echo ""
+  echo "    compute_apps=$(nvidia-smi --query-compute-apps=pid,used_memory --format=csv,noheader | tr "\n" "|")"
+  echo "    torch=$(ps -eo cmd | grep -cE "[t]orchrun|[p]retrain_launcher")"
+  echo "    mem: $(free -g | awk "/Mem:/{print \"total=\"\$2\"G used=\"\$3\"G avail=\"\$7\"G\"}")"
+' 2>&1 | sed 's/^/  /' || echo "    ssh .12 failed"
+
+echo
+echo "=== DONE 228 ==="
+```
+
+**输出**
+```
+=== RUN_ID 228 | GPU idle cross-check | 2026-11-02 19:45:23 CST | host=whag0pgpuap29 ===
+  uptime:  19:45:23 up 276 days, 6:34, 15 users, load average: 22.57, 18.23, 13.21
+  nvidia-smi 设备数: 8  (GPU 0: NVIDIA H100 80GB HBM3 (UUID: GPU-1329209a-8119-9bc8-9)
+
+[1] nvidia-smi 全表（.29）
+    Mon Nov  2 19:45:23 2026       
+    +-----------------------------------------------------------------------------------------+
+    | NVIDIA-SMI 570.195.03             Driver Version: 570.195.03     CUDA Version: 12.8     |
+    |-----------------------------------------+------------------------+----------------------+
+    | GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+    | Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+    |                                         |                        |               MIG M. |
+    |=========================================+========================+======================|
+    |   0  NVIDIA H100 80GB HBM3          On  |   00000000:16:00.0 Off |                    0 |
+    | N/A   24C    P0             71W /  700W |       0MiB /  81559MiB |      0%      Default |
+    |                                         |                        |             Disabled |
+    +-----------------------------------------+------------------------+----------------------+
+  --- GPU 行 ---
+    |   1  NVIDIA H100 80GB HBM3          On  |   00000000:17:00.0 Off |                    0 |
+    | N/A   25C    P0             69W /  700W |       0MiB /  81559MiB |      0%      Default |
+    |                                         |                        |             Disabled |
+    +-----------------------------------------+------------------------+----------------------+
+    |   2  NVIDIA H100 80GB HBM3          On  |   00000000:40:00.0 Off |                    0 |
+    | N/A   27C    P0             70W /  700W |       0MiB /  81559MiB |      0%      Default |
+    |                                         |                        |             Disabled |
+    +-----------------------------------------+------------------------+----------------------+
+    |   3  NVIDIA H100 80GB HBM3          On  |   00000000:41:00.0 Off |                    0 |
+    | N/A   25C    P0             69W /  700W |       0MiB /  81559MiB |      0%      Default |
+    |                                         |                        |             Disabled |
+    +-----------------------------------------+------------------------+----------------------+
+
+[2] 计算进程视角（三种查法）
+  a) nvidia-smi --query-compute-apps:
+    pid, process_name, used_gpu_memory [MiB]
+  b) nvidia-smi pmon -c 1:
+    # gpu         pid   type     sm    mem    enc    dec    jpg    ofa    command 
+    # Idx           #    C/G      %      %      %      %      %      %    name 
+        0          -     -      -      -      -      -      -      -    -              
+        1          -     -      -      -      -      -      -      -    -              
+        2          -     -      -      -      -      -      -      -    -              
+        3          -     -      -      -      -      -      -      -    -              
+        4          -     -      -      -      -      -      -      -    -              
+        5          -     -      -      -      -      -      -      -    -              
+        6          -     -      -      -      -      -      -      -    -              
+        7          -     -      -      -      -      -      -      -    -              
+  c) 3 次间隔采样（utilization.gpu / memory.used / power / temp）:
+    ERROR: Option --query-gpu=index,utilization.gpu,memory.used,power.draw,temperature.gpu is not recognized. Please run 'nvidia-smi -h' for help.
+    
+
+[3] 有没有 python/torch 训练进程（全用户，按 CPU 排序前 10）
+    USER         PID     ELAPSED %CPU %MEM   RSS CMD
+    app.e00+ 3422739       04:26 1773  0.0 1510924 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python /nas_train/app.e
+    root     3733347       00:01 56.0  0.0 21840 nvidia-smi -q -x
+    root     3733954       00:01 52.0  0.0 21776 nvidia-smi -q -x
+    app.e00+ 2751345 29-02:27:31 20.0  0.2 4568540 /home/app.e0031982/.npm/_npx/672d321ee4ba2150/node_modules/cline/bin/.cli
+    app.e00+ 1587337    06:15:45 12.8  0.0 496648 cline --data-dir /nas_train/app.e0031982/.cline_pretrain -c /nas_train/app
+    app.e00+  326358  3-02:53:59 12.7  0.0 48140 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python3.10 /nas_train/app
+    app.e00+ 3684619       00:48  8.2  0.0 179296 /nas_train/app.e0031982/harness_work/hermes-agent-src/.venv/bin/python /ho
+    app.e00+ 3069180  5-11:29:36  6.6  0.0 1194768 opencode
+    root        6621 276-06:33:24 5.0  0.0 728584 java -jar -Xmx512m -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=./log/
+    root     3733458       00:01  4.0  0.0  4896 /bin/bash ./scripts/nic.sh mlx5_2%1%enp66s0np0%42:00.0%1%1%0%0%0 "DEV?PORT?
+  python 进程数=18
+
+[4] 内存/swap（判断是否曾发生内存压力）
+                   total        used        free      shared  buff/cache   available
+    Mem:            2015          44         825          65        1145        1894
+    Swap:              7           5           2
+  oom 计数: oom_kill 28 
+
+[5] 内核日志（多种入口，找 OOM / SIGBUS 线索）
+  dmesg tail 20:
+  /var/log/syslog|messages grep -i 'killed process|oom|mce|machine check':
+
+[6] master 日志：失败顺序（SIGKILL vs SIGBUS 谁先）
+    8023:[rank3]: torch.distributed.DistBackendError: [Rank 3] Watchdog caught collective operation timeout: WorkNCCL(SeqNum=2109238, OpType=COALESCED, NumelIn=2650
+    8024:[rank1]: Traceback (most recent call last):
+    8049:[rank1]: torch.distributed.DistBackendError: [Rank 1] Watchdog caught collective operation timeout: WorkNCCL(SeqNum=2109238, OpType=COALESCED, NumelIn=2650
+    8052:[rank6]: Traceback (most recent call last):
+    8077:[rank6]: torch.distributed.DistBackendError: [Rank 6] Watchdog caught collective operation timeout: WorkNCCL(SeqNum=2109238, OpType=COALESCED, NumelIn=2650
+    8081:[rank5]: Traceback (most recent call last):
+    8106:[rank5]: torch.distributed.DistBackendError: [Rank 5] Watchdog caught collective operation timeout: WorkNCCL(SeqNum=2109238, OpType=COALESCED, NumelIn=2650
+    8118:E1102 18:50:18.772000 2623280 site-packages/torch/distributed/elastic/multiprocessing/api.py:874] failed (exitcode: -7) local_rank: 1 (pid: 2641967) of bin
+    8119:Traceback (most recent call last):
+    8131:    raise ChildFailedError(
+    8132:torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+    8139:Root Cause (first observed failure):
+    8144:  exitcode  : -7 (pid: 2641967)
+    8146:  traceback : Signal 7 (SIGBUS) received by PID 2641967
+  master 里最后的训练进度行:
+     [2026-11-02 18:37:54] iteration    58100/  700000 | consumed samples:     14873600 | elapsed time per iteration (ms): 6921.5 | learning rate: 1.000000E-03 | gl
+     [2026-11-02 18:39:03] iteration    58110/  700000 | consumed samples:     14876160 | elapsed time per iteration (ms): 6934.7 | learning rate: 1.000000E-03 | gl
+
+[7] CPU 冒烟测试文件（18:46-19:18 那批）+ 是否有进程在跑
+    2026-11-02 19:45:24 4096B cpu_smoke_v2
+    2026-11-02 19:45:24 6863B cpu_smoke_v2.log
+    2026-11-02 19:39:30 2139B test_lmeval.log
+    2026-11-02 19:26:49 4096B cpu_smoke_debug_f32
+    2026-11-02 19:25:59 4096B cpu_smoke_debug
+    2026-11-02 19:25:09 3806B cpu_smoke_bf16.log
+    2026-11-02 19:24:55 4096B cpu_smoke_bf16
+    2026-11-02 19:24:21 4113B cpu_smoke_wrap.log
+    1587337    06:15:45 12.8 cline --data-dir /nas_train/app.e0031982/.cline_pretrain -c /nas_train/app.e0031982/code/super_
+    3422739       04:26 1774 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python /nas_train/app.e0031982/code/super_int
+
+[8] .12 侧交叉验证
+      host=whag0pgpuap12 date=19:45:28 up=23862489.17s
+      gpu_lines=8
+  0, 0 %, 0 MiB 1, 0 %, 0 MiB 2, 0 %, 0 MiB 3, 0 %, 0 MiB 4, 0 %, 0 MiB 5, 0 %, 0 MiB 6, 0 %, 4 MiB 7, 0 %, 4 MiB 
+  
+      compute_apps=
+      torch=0
+      mem: total=2015G used=68G avail=1774G
+
+=== DONE 228 ===
+```
