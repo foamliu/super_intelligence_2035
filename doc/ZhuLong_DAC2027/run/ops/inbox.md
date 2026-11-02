@@ -1,58 +1,67 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
-<!-- RUN_ID: 141 -->
-## RUN_ID 141 — 在 36.15 找「Tab-3 美观改进」中文 HTML；找到且未入库 ⇒ 直接 commit+push 入库
+<!-- RUN_ID: 142 -->
+## RUN_ID 142 — 匿名化后重编译 main.pdf + 验证「PDF 里确实看不到作者/邮箱」+ 提交 main.pdf
 
-> 用户令 2026-11-02：「ZhuLong_DAC2027 目录下有个 Tab-3 美观改进中文 HTML，有的话提交入库，并按此执行」。本块负责"定位 + 入库"；按 HTML 改 Tab-3 由 agent 下轮按 `ZHULONG_TASK.md` 新运维令执行。
+> 用户令 2026-11-02：「关于 P0 双盲，可以改成匿名」。main.tex 已由运维改为 `[anonymous, sigconf]`（commit `699b17580`，且 18 人网格宏在 anonymous 下跳过）。本块负责**权威编译 + 匿名性实测 + 入库 main.pdf**。
 
 ```bash
 set -u
-echo "=== RUN_ID 141 | locate+commit Tab-3 beautify html | $(date '+%F %T') | host=$(hostname) ==="
-cd "$(git rev-parse --show-toplevel 2>/dev/null || echo /nasdata/app.e0031982/code/super_intelligence_2035)" || exit 1
-echo "  repo=$(pwd)  HEAD=$(git rev-parse --short HEAD)"
+echo "=== RUN_ID 142 | anonymous rebuild+verify | $(date '+%F %T') | host=$(hostname) ==="
+GR=$(git rev-parse --show-toplevel 2>/dev/null || echo /nasdata/app.e0031982/code/super_intelligence_2035)
+cd "$GR" || exit 1
+git pull --rebase --autostash origin main >/dev/null 2>&1 || true
+P="$GR/doc/ZhuLong_DAC2027/ZhuLong_DAC2027"
+cd "$P" || { echo "paper dir 不存在"; exit 1; }
+
+echo "  paper HEAD=$(git rev-parse --short HEAD)"
+echo "[0] main.tex 第 1-3 行（应为 anonymous）"
+timeout 5 head -3 main.tex | sed 's/^/    /'
 
 echo
-echo "[1] doc/ZhuLong_DAC2027 顶层 html"
-timeout 20 ls -lh --time-style='+%F %T' doc/ZhuLong_DAC2027/*.html 2>/dev/null | awk '{print "    "$6,$7,$5,$8}' || echo "    (none)"
+echo "[1] 删旧 aux/out 后跑 pdflatex + bibtex（干净构建）"
+rm -f main.aux main.out main.toc
+timeout 300 pdflatex -interaction=nonstopmode main.tex > /tmp/zl_b1.log 2>&1; echo "    pass1 exit=$?"
+timeout 120 bibtex main > /tmp/zl_bib.log 2>&1; echo "    bibtex exit=$?"
+timeout 300 pdflatex -interaction=nonstopmode main.tex > /tmp/zl_b2.log 2>&1; echo "    pass2 exit=$?"
+timeout 300 pdflatex -interaction=nonstopmode main.tex > /tmp/zl_b3.log 2>&1; echo "    pass3 exit=$?"
 
 echo
-echo "[2] 名字含 tab 的 html/htm（maxdepth 3）"
-timeout 25 find doc/ZhuLong_DAC2027 -maxdepth 3 \( -iname '*tab*' -a \( -name '*.html' -o -name '*.htm' \) \) -printf '%TY-%Tm-%Td %TH:%TM %8s %p\n' 2>/dev/null | sed 's/^/    /' || true
+echo "[2] 编译健康度"
+echo "    errors(^!): $(grep -c '^!' main.log 2>/dev/null || echo 0)"
+echo "    undefined:  $(grep -ci 'undefined' main.log 2>/dev/null || echo 0)"
+echo "    overfull:   $(grep -c 'Overfull' main.log 2>/dev/null || echo 0)"
+grep 'Output written' main.log 2>/dev/null | sed 's/^/    /'
+echo "    bibtex warnings: $(grep -c 'Warning' /tmp/zl_bib.log 2>/dev/null || echo 0)"
 
 echo
-echo "[3] git status（zhulong 树，只看 html/htm；? = 未跟踪）"
-timeout 20 git status --porcelain -- doc/ZhuLong_DAC2027 2>/dev/null | grep -iE '\.html?$' | head -10 | sed 's/^/    /' || echo "    (无 html 变更)"
-
-echo
-echo "[4] 全部 html 里命中「美观/Tab-3/表 3/改进」的（最多 10 条）"
-for f in $(timeout 25 find doc/ZhuLong_DAC2027 -maxdepth 3 -name '*.html' 2>/dev/null | head -60); do
-  if timeout 5 grep -qiE '美观|Tab-?3|表 ?3|改进建议|排版' "$f" 2>/dev/null; then
-    echo "    HIT $f ($(stat -c %s "$f")B)"
-  fi
-done
-
-echo
-echo "[5] 选定候选 → 打印结构 → 入库（commit+push）"
-CAND=$(timeout 25 find doc/ZhuLong_DAC2027 -maxdepth 3 \( -iname '*tab*' -a \( -name '*.html' -o -name '*.htm' \) \) 2>/dev/null | head -1)
-if [ -z "${CAND:-}" ]; then
-  echo "    ❌ 未找到文件名含 tab 的 html —— 不做任何提交"
+echo "[3] 匿名性实测（PDF 取文本，查作者/邮箱是否泄漏）"
+if command -v mutool >/dev/null 2>&1; then
+  timeout 60 mutool draw -F txt -o /tmp/zl_main.txt main.pdf 2>/dev/null
+  echo "    mutool pages: $(mutool info main.pdf 2>/dev/null | grep -m1 -i 'Pages')"
 else
-  echo "    candidate = $CAND  ($(stat -c %s "$CAND")B)"
-  echo "    title: $(grep -oiE '<title>[^<]*' "$CAND" 2>/dev/null | head -1 | sed 's/<title>//I')"
-  echo "    headings: $(grep -cE '<h[1-4]' "$CAND" 2>/dev/null)"
-  grep -oE '<h[1-4][^>]*>[^<]{2,80}' "$CAND" 2>/dev/null | sed -E 's/<h[1-4][^>]*>//' | head -12 | sed 's/^/      - /'
-  if git ls-files --error-unmatch "$CAND" >/dev/null 2>&1; then
-    echo "    已在库内（tracked），无需提交"
-  else
-    git add -- "$CAND"
-    git -c user.email=ops@local -c user.name=ops commit -m "zhulong paper: 入库 Tab-3 美观改进建议 HTML（用户令 2026-11-02）" -m "file: $CAND" >/dev/null 2>&1 || echo "    commit 失败/无变更"
-    timeout 60 git push origin main 2>&1 | tail -2 | sed 's/^/    /'
-    echo "    after: $(git log -1 --pretty='%h %s' | cut -c1-100)"
-  fi
+  echo "    mutool 不可用，改用 pdftotext"
+  timeout 60 pdftotext main.pdf /tmp/zl_main.txt 2>/dev/null || echo "    两种工具都不可用"
+fi
+if [ -s /tmp/zl_main.txt ]; then
+  echo "    Anonymous 命中: $(grep -ci 'anonymous' /tmp/zl_main.txt)"
+  echo "    泄漏检查（应为 0 行）:"
+  grep -inE 'Hongwen|Yiming Zhu|Yang Liu|cxmt|paul\.liu|ChangXin' /tmp/zl_main.txt | head -8 | sed 's/^/      LEAK: /'
+  echo "    首页作者区（前 12 行含 Author 的）:"
+  grep -inE 'author|anonymous' /tmp/zl_main.txt | head -6 | cut -c1-140 | sed 's/^/      /'
+else
+  echo "    ⚠️ 无法取文本，请人工看 PDF 首页"
 fi
 
 echo
-echo "[6] 确认该文件现在是否被跟踪"
-timeout 10 git ls-files doc/ZhuLong_DAC2027 2>/dev/null | grep -iE '\.html?$' | head -8 | sed 's/^/    tracked: /'
+echo "[4] 入库 main.pdf（若与上次不同）"
+git add -- main.pdf main.tex 2>/dev/null
+if git diff --cached --quiet; then
+  echo "    无变化，不提交"
+else
+  git -c user.email=ops@local -c user.name=ops commit -m "zhulong paper: rebuild main.pdf (anonymous / double-blind)" -m "pages=$(grep -m1 'Output written' main.log | sed 's/.*(\([0-9]*\) pages.*/\1/')" >/dev/null 2>&1
+  timeout 60 git push origin main 2>&1 | tail -2 | sed 's/^/    /'
+  echo "    after: $(git log -1 --pretty='%h %s' | cut -c1-90)"
+fi
 
-echo "=== DONE 141 ==="
+echo "=== DONE 142 ==="
 ```
