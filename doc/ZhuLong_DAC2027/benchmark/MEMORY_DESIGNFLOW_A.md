@@ -2,14 +2,25 @@ WAITING: 0
 SHARD: A (digital_front)
 DOMAINS: digital, eda_other, pnr_signoff, verification
 
-- **PHASE**: loop 任务卡 case 合成。本轮按 loop 卡合成第 14 条 case（A 档 trace-faithful，digital +1，synthesis 域）。
-- ✅ **本轮交付 case**：`EDA-Eval-DesignFlow-SynLintFlow-001`（digital/synthesis，L1-boundary，A 档 faithful，trace 1792574756685_lond8 / lorikx / hfeg0pkn005 / mc=249 / synthesis=90 netlist=281 主导）。A jsonl 现 14 条。
+- **PHASE**: loop 任务卡 case 合成。本轮按 loop 卡合成第 15 条 case（A 档 trace-faithful，pnr_signoff +1，tech LEF 布线规则汇总域）。
+- ✅ **本轮交付 case**：`EDA-Eval-DesignFlow-TLEFRules-001`（pnr_signoff，L1-boundary，A 档 faithful，trace 1792998659148_31lou / claire1l / hfeg0pkn004 / mc=90 / innovus=278 主导）。A jsonl 现 15 条。
 - ✅ DEBT 已清零。
-- 📊 trace 覆盖率：13/1001 = 1.3%（covered=13 · touched=14 · parked=1；A jsonl 14 条，含 1 orphan `CosimSetup-001`(ve67l) 在 jsonl 未在台账，待查）
+- 📊 trace 覆盖率：14/1001 = 1.4%（covered=14 · touched=15 · parked=1；A jsonl 15 条，含 1 orphan `CosimSetup-001`(ve67l) 在 jsonl 未在台账，待查）
 - 🎯 通过率: 本条 case 未 pi/cline 实跑（"未跑"）；cline 存量重跑 0/1（Verification-001 FAIL·L1/hook 限制）· B 档目标 20–30%；A 档本轮只报数不设目标
-- 🧾 断言: 本轮 SynLintFlow-001 k_rationale=k_check=26 ≥8 ✓（日报 26/26/✓）；存量全达标
-- 📦 体积：TASK≈23.8KB / MEMORY_A≈17.0KB
-- 🔒 泄漏隔离: check.py/reference/hidden 不进 SUT workdir；判分独立跑（隐藏 B 内嵌 check.py，tclsh stub subprocess，check.py 不进 cline cwd）
+- 🧾 断言: 本轮 TLEFRules-001 k_rationale=k_check=25 ≥8 ✓（日报 25/25/✓）；存量全达标
+- 📦 体积：TASK≈23.8KB / MEMORY_A≈18.5KB
+- 🔒 泄漏隔离: check.py/reference/hidden 不进 SUT workdir；判分独立跑（A/B 双 LEF 内嵌 check.py，subprocess 真跑候选 lef_rules.py，check.py 不进 cline cwd）
+
+### 2026-11-02 shard A 轮 15：TLEFRules-001 交付 ✓（A 档 trace-faithful / pnr_signoff，WAITING: 0）
+- 选 trace：trace_ledger.py --shard A next → mc≥300 候选多为 calibre/hspice（shard C 域）；Python 解析工具串按 shard-A 工具主导 + strong-tool 多样性排序（要求 innovus/synthesis/verdi/vcs/dc_shell/pt_shell 至少 1 类且数字占比≥0.6），挑纯 innovus 会话 `1792998659148_31lou`（claire1l/hfeg0pkn004/mc=90/innovus=278/netlist=25/synthesis=2 → pnr_signoff，117msgs/1MB）claim → mark case。选 claire1l（新用户，增多样性）。
+- 深读：117 msgs/1MB；A档选轮 #0 逐字原文『/home/pdk/chengleiy/e_innovus/QA/tsi/tech_thk2d0_m5.lef，读取这份techlef文件，汇总每一层走线层和通孔层的布线规则』—— 纯「提出需求」无根因/修复 → 合 A档选轮规则。后续 #15/#21/#52-81 多轮迭代调试「innovus 宽线不能自动打孔只出单孔」根因（context，不进 prompt）。两条真 LEF 均在 hfeg0pkn004:/home/pdk/chengleiy/e_innovus/QA/tsi/（A=tech_thk2d0_m5.lef 9473B；B=tech_thk2d0_m5_20260917.lef 9744B 更新版），scp 取回。私有 /proj/lacaa/.../claire/TSI/innovus/tsi/（run.tcl/logv5-7）权限拒绝。深读笔记 `designflow/trace_deepreads/1792998659148_31lou_tlef_rules.md`。
+- 关键结构差异（即打孔 saga 根因）：A 的 M1/M2 是厚金属宽线（PITCH 9.76 9.76 / WIDTH 8.88），VIARULE 名 GENV1-4/GENRDV，**GENV1 缺 SPACING 子句**（=Innovus 不能生成孔阵、只落单孔的根因），GENV1 M1 ENCLOSURE 0.37、WIDTH 0.88 TO 14；B 把 M1/M2 改回薄金属（PITCH 1.76/WIDTH 0.88），VIARULE 改名 GEN_M1M2.../GEN_M5RDL 且全部带 SPACING 1.4 BY 1.4，GEN_M1M2 M1 ENCLOSURE 0.08、WIDTH 0.88 TO 5.0。
+- 合成（A 档 / L1-boundary / pnr_signoff）：prompt.txt = #0 逐字原文（不脱敏，路径保留）；task_brief.md ≤3 行只写交付接口（JSON schema）+ 文件位置；交付 = 可复用 LEF 解析器 `lef_rules.py`（接受 techlef 路径，stdout 输出 JSON：routing_layers/cut_layers/vias/viarules）+ `rules_report_A.md`（人读汇总含 GENV1 异常观察）+ README。资产 A = `tech_thk2d0_m5.lef`（真实输入）；隐藏 B = `tech_thk2d0_m5_20260917.lef`（结构全异），不进 SUT 沙箱。
+- check.py 25 条独立断言 (a)-(y)：(a) zip 含 lef_rules.py+rules_report_A.md；(b) lef_rules.py 跑隐藏 B 退出 0+合法 JSON；B 断言 (c)-(m)+(x)+(y)：M1 direction HORIZONTAL / M1 width 0.88(A=8.88) / M1 pitch [1.76,1.76](A=9.76) / M2 pitch [1.76,1.76] / viarule GEN_M1M2 存在(A=GENV1) / GEN_M1M2 has_spacing true(A GENV1=False) / GEN_M1M2 M1 enclosure [0.08,0.08](A=0.37) / GEN_M1M2 M1 width_range "0.88 TO 5.0"(A="0.88 TO 14") / GEN_M5RDL 存在(A=GENRDV) / V1 spacing 0.68 / VIA1_4cut cuts 4 / C4_bump width 15.0 / M3 direction HORIZONTAL；(n) lef_rules.py 跑 A 退出 0+合法 JSON；A 断言 (o)-(u)：M1 pitch [9.76,9.76](防硬编码B) / M1 width 8.88 / GENV1 存在 / GENV1 has_spacing false(根因异常) / GENV1 M1 enclosure [0.37,0.37] / GENV1 M1 width_range "0.88 TO 14" / GENRDV 存在；(v) 跨输入 A M1 pitch != B M1 pitch（证明输入驱动非常量）；(w) 静态 lef_rules.py 源码无 A 字面量 {9.76,8.88,GENV1,GENRDV,"0.88 TO 14"}（防 §4.9b 假串）。check.py 内嵌 A/B 双 LEF，subprocess 真跑候选 lef_rules.py on A 和 B（§4.2 跨输入守护 on B）。
+- 自验：gold reference_submit.zip check() PASS（25/25）+ 5 negative 全 FAIL（NEG_RC=0，5 distinct labels：fake_empty→b / fake_print_expected→d,e,w / fake_core_deleted→g / naive_hardcode_a→d,e / naive_no_spacing→h）+ §4.9 (a)(b)(c) 三假 FAIL。
+- 断言闸门：k_rationale=25 == k_check=25 ≥8 ✓。追加 EDA-Eval-DesignFlow_A.jsonl（A jsonl 现 15 条，test==disk check.py roundtrip OK，31288B）。mark case 1792998659148_31lou（claire1l/hfeg0pkn004/pnr_signoff/mc=90）。merge_shards → 主 jsonl 73 cases。日报 report_benchmark_11_02.html 73 cases，本条 k(断言)/k(check)/一致 = 25/25/✓。
+- ⚠️ 日报兼容修：gen_daily_report._k_check pattern 3 只认 `_cond(results,"x",...)`，不认本 case 的 `_cond("x",ok,msg)`；已在本 check.py 加 25 行 `# (a)..(y)` 注释让 pattern 1 命中，日报显示 25/25/✓（additive，不影响存量 case）。
+- ⬜ 下轮：trace_ledger.py --shard A next 选新 trace 开第 16 条 case；或按运维令 §四.3 挑一条 L2 shard-A PASS case 用 cline+hook 重跑。
 
 ### 2026-11-02 shard A 轮 14：SynLintFlow-001 交付 ✓（A 档 trace-faithful / digital·synthesis，WAITING: 0）
 - 选 trace：trace_ledger.py --shard A next → mc≥300 候选多为 calibre/hspice（shard C 域）；按 digital/synthesis 工具主导排序挑纯数字会话 `1792574756685_lond8`（lorikx/hfeg0pkn005/mc=249，netlist=281/synthesis=90/innovus=4 → digital/synthesis 域，520 msgs/1.7MB）claim → mark case。选 lorikx 增用户多样性。
