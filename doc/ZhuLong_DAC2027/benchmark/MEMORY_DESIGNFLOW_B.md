@@ -1,14 +1,17 @@
-WAITING: 0 (本轮交付 OpampACSpec-001，DEBT 清零；下轮 trace_ledger next 续跑)
+WAITING: 0 (本轮交付 InvPVTchar-001，DEBT 清零；下轮 trace_ledger next 续跑)
 SHARD: B (spice_char)
 DOMAINS: characterization, spice_sim
 
 - **PHASE**: shard B 在跑 case。负责 domain: characterization, spice_sim
 - 每轮做 1 条 case：trace_ledger.py --shard B next → claim → 深读 → 合成 → 自验 → 追加 EDA-Eval-DesignFlow_B.jsonl → 日报
-- 📊 trace 覆盖率：11/1001 = 1.1%（covered=11 / target=1001, mc≥300）；已动 14：case 11 · deepread 0(已合) · parked 2
+- 📊 trace 覆盖率：12/1001 = 1.2%（covered=12 / target=1001, mc≥300）；已动 15：case 12 · deepread 0(已合) · parked 2
 - 🎯 通过率: 0/0（未实跑 cline SUT；本轮只做 case 构建+自验）
-- 🧾 断言: k_rationale=k_check=14 ✓（今日 5/30 达标，RsCalcAutoVia k=14 + SramSNM k=14 + StimPWL k=15 + PFDdeadZone k=13 + OpampACSpec k=14）
+- 🧾 断言: k_rationale=k_check=14 ✓（今日 6/30 达标，RsCalcAutoVia k=14 + SramSNM k=14 + StimPWL k=15 + PFDdeadZone k=13 + OpampACSpec k=14 + InvPVTchar k=14）
 
 ## 流水
+- 2026-11-02 18:4x shard B 续跑：trace_ledger --shard B next → spice-dominant 重排（hspice 计数≥15，排除已用 14 session）。top 候选 314mt（sophiaw @ hfeg0plg49, mc=378, **352 hspice/449 总=78% spice**，纯 spice 表征 trace）。claim 314mt。
+- 2026-11-02 18:5x 深读 314mt：glm-5.2 自身 trace「模拟电路优化·二次执行」AnasimPro SPICE 流——CMOS 反相器 PVT（5 corner×3 temp×4 cload=65 alters），首次全 FAILED（推断 Level-1 KP/tox gotcha），二次修模型+sizing(1u/2u→4u/10u)+改 cload 扫描，最坏角 FS/125°C/10p tpdf=3.04ns PASS。**Level-1 KP/tox gotcha 在 .75 HSPICE V-2023.12 不复现**（.75 直接用指定 kp，broken/fixed tpdf 均约 3.26ns），故改取可复现子技能=PVT 全交叉表征+最坏角识别+.lis 解析。深读笔记 designflow/trace_deepreads/314mt_inv_pvt_char.md。
+- 2026-11-02 19:0x 交付 EDA-Eval-DesignFlow-InvPVTchar-001（spice_sim, B档 synthesized, L2, track faithful）：CMOS 反相器 PVT 表征 harness——corners×vdds×cloads 全交叉 .alter，.measure tran tpdf/tpdr/tpd + .measure dc voh/vol，逐 alter 解析 .lis（HSPICE .mt0 只存末角），argmax tpd 找最坏角。交付 gen_pvt_char.py（generator+runner+parser）+ char_results.json + inv_tb.sp。**两个真陷阱烤进**：(a) `voh=1000.0000m` 无空格 m 后缀（vdd=1.0 时 HSPICE 真实输出），正则须 `=\s*` 非 `=\s+`；(b) 最坏角=SS×vdd_min×cload_max 非标称 TT，缺角点的部分 deck 必漏。隐藏 B（vdd 1.0-1.5 / cload 200f-1p / kp 95-145u / sizing 4u/8u / spec tpd_max 3.0）vs 可见 A（vdd 1.4-1.8 / cload 1p-5p / kp 120-180u / sizing 6u/12u / spec tpd_max 3.8）全不同；A worst=(ss,1.4,5p) tpd=3.2047 vs B worst=(ss,1.0,1p) tpd=2.6087，跨输入守卫防硬编码。14 条断言（k=14=k_check≥8 ✓，①②…⑭）。.75 HSPICE 真跑自验：ref 14/14 PASS；3 negative（naive_hardcode→C12 跨输入 / always_tt→C12 最坏角 / wrong_alter_count→C6 全交叉）全 FAIL；§4.9 三假提交（fake_empty→C5 / fake_print_expected→C5 / fake_no_core→C13）全 FAIL。已 mark case，追加 EDA-Eval-DesignFlow_B.jsonl（第 16 行，DEBT 清零）。
 - 2026-11-02 18:1x shard B 续跑：trace_ledger --shard B next → 候选重排（spice-dominant 过滤：hspice+spectre+finesim 等占比≥25% 且 spice 计数≥15，排除已用 17 session）。top 候选 ahjnv（zhukaic @ hfeahpc503, mc=397, hspice=484/netlist=226）。
 - 2026-11-02 18:2x 深读 ahjnv：用户两轮「读取skill ota_2stg.md」「立即执行」→ 二级米勒补偿运放自动调参 skill（W/L finger 限制，bsub LSF 集群，.ac+LSTB 测 gain/PM/gbw，迭代至 gain>60dB/PM>60°/gbw>1MHz）。真实流程用 CXMT foundry ptn/ntn_m + /proj/dscqa corner + LSF 集群（不可移植 .75）。取可复现子技能=开环 AC 表征+规格合规判定。深读笔记 designflow/trace_deepreads/ahjnv_opamp_ac_char.md。claim ahjnv。
 - 2026-11-02 18:3x 交付 EDA-Eval-DesignFlow-OpampACSpec-001（spice_sim, B档 synthesized, L2, track faithful）：自包含 level-1 二级米勒运放 DUT `.subckt OPAMP inn inp out vdd vss` + spec（gain_min/pm_min/gbw_min），构建 HSPICE `.ac` testbench，`.meas` 提取 gain_dc/gbw/phase@unity/f3db/gain_margin，派生 PM=180+phase、gain_margin=-gm，判定规格合规。两个 SPICE gotcha 烤进：①deck 第一行是 title，`.inc` 不能是第一行（否则 DUT subckt 被吞、X1 报 not found）；②HSPICE `m`=毫不是兆，兆是 `x`/`meg`。隐藏 B（vto=0.45/kp=150,60/ib=10u/cm=0.5p/load=1p/sizing 全不同 + spec gain_min=35dB）vs 可见 A（vto=0.50/kp=120,50/ib=20u/cm=1p/load=500f/spec gain_min=30dB）结构+数值+规格全不同；A verdict=pass(39.15dB) vs B verdict=fail(24.20<35)，跨输入守卫防硬编码。GT_A: gain=39.1471/gbw=4.547M/pm=81.89/f3db=49.6k/gm=17.87；GT_B: gain=24.1997/gbw=3.642M/pm=84.50/f3db=223k/gm=18.65。14 条断言（k=14=k_check≥8 ✓，①②…⑭）。.75 HSPICE 真跑自验：ref 14/14 PASS；3 negative（empty_shell→2/3、print_expected→12/14 被 d method + m 跨输入击穿、ref_no_core→4/14 被 d/e-j/k/m 击穿）全 FAIL(NEG_RC=0)；§4.9 三假提交(空壳/print-expected/ref-no-core)全 FAIL。已 mark case，追加 EDA-Eval-DesignFlow_B.jsonl（第 15 行，DEBT 清零）。
