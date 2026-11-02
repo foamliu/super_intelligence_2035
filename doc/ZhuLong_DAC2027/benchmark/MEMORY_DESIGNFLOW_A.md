@@ -2,14 +2,24 @@ WAITING: 0
 SHARD: A (digital_front)
 DOMAINS: digital, eda_other, pnr_signoff, verification
 
-- **PHASE**: loop 任务卡 case 合成。本轮按 loop 卡合成第 12 条 case（B 档 synthesized，pnr_signoff +1）。
-- ✅ **本轮交付 case**：`EDA-Eval-DesignFlow-PTSignoff-001`（pnr_signoff，L1-boundary，B 档 synthesized，trace 1792493511731_624js / johnl / hfeg0plg49 / mc=80 / innovus=165 主导）。A jsonl 现 12 条。
+- **PHASE**: loop 任务卡 case 合成。本轮按 loop 卡合成第 13 条 case（A 档 trace-faithful，pnr_signoff +1）。
+- ✅ **本轮交付 case**：`EDA-Eval-DesignFlow-PwrGlobals-001`（pnr_signoff，L1-boundary，A 档 faithful，trace 1792399916731_00i9f / alan3zh / hfeg0plg49 / mc=101 / innovus=1105 主导）。A jsonl 现 13 条。
 - ✅ DEBT 已清零。
-- 📊 trace 覆盖率：11/1001 = 1.1%（covered=11 · touched=12 · parked=1；A jsonl 12 条）
+- 📊 trace 覆盖率：12/1001 = 1.2%（covered=12 · touched=13 · parked=1；A jsonl 13 条，含 1 orphan `CosimSetup-001`(ve67l) 在 jsonl 未在台账，待查）
 - 🎯 通过率: 本条 case 未 pi/cline 实跑（"未跑"）；cline 存量重跑 0/1（Verification-001 FAIL·L1/hook 限制）· B 档目标 20–30%；A 档本轮只报数不设目标
-- 🧾 断言: 本轮 PTSignoff-001 k_rationale=k_check=23 ≥8 ✓（日报 23/23/✓）；存量全达标
-- 📦 体积：TASK≈17KB / MEMORY≈待测
-- 🔒 泄漏隔离: check.py/reference/hidden 不进 SUT workdir；判分独立跑（隐藏 B 上 tclsh stub subprocess，check.py 不进 cline cwd）
+- 🧾 断言: 本轮 PwrGlobals-001 k_rationale=k_check=20 ≥8 ✓（日报 20/20/✓）；存量全达标
+- 📦 体积：TASK≈23.8KB / MEMORY_A≈16.6KB
+- 🔒 泄漏隔离: check.py/reference/hidden 不进 SUT workdir；判分独立跑（隐藏 B 内嵌 check.py，tclsh stub subprocess，check.py 不进 cline cwd）
+
+### 2026-11-02 shard A 轮 13：PwrGlobals-001 交付 ✓（A 档 trace-faithful / pnr_signoff，WAITING: 0）
+- 选 trace：trace_ledger.py --shard A next → mc≥300 候选多为 calibre/hspice（shard C 域）；Python 解析工具串按 shard-A 工具主导排序（dig - ana*0.5），挑纯 innovus 会话 `1792399916731_00i9f`（alan3zh/hfeg0plg49/mc=101/innovus=1105/netlist=48，pnr_signoff，107msgs/421KB，可深读）claim → mark case。选 alan3zh（非 johnl）增用户多样性。
+- 深读：107 msgs/421KB；真实任务 = test_chip 数字后端链路 → 把 apr/innovus 初始配置固化成 Innovus 可加载的 gui/power.globals。用户意图轮 #17 (idx 29) 逐字原文『将apr/innovus下的初始配置，写入apr/innovus/gui/power.globals中，使其能在innovus中进行后续任务』—— 纯「提出需求」无根因/修复 → 合 A 档选轮规则。#1 (idx 0) = context-continuation hand-off（已给 RO 反相器/后仿0延迟根因修复 + RedHawk 环境事实）违反 A 档，仅作背景。金标准 = .75:/home/alan3zh/.../apr/innovus/gui/power.globals（102 行 Tcl，已 cat 取回）+ mmmc.view + Makefile init 变量节 + innovus_fp.tcl init_design 块（均 cat 核实）。深读笔记 `designflow/trace_deepreads/1792399916731_00i9f_pwr_globals.md`。
+- 合成（A 档 / L1-boundary / pnr_signoff）：交付 = Innovus init-globals Tcl。gold 重构为参数化版 `gui/power.globals`（`source ../setup/common_setup.tcl` 取 ROOT/PDK_ROOT/TOP/TECH_LEF/CELL_LEF/MMMC_VIEW/PWR_NETS/GND_NET/SPEF/FSDB；文件存在性预检 foreach+file exists+return；have_design 守护 `dbGet top.name`；init_verilog/init_lef_file[tech-first list]/init_top_cell/init_design_settop 1/init_pwr_net/init_gnd_net/init_mmmc_file；`catch {init_design}`；`catch {defIn $DEF_IN}` 带电源网格；INFO 指针 TOP/power nets/routed DEF/SPEF/FSDB；头注次级电源域 grid TODO）+ `setup/common_setup.tcl`（A 值：TOP=hl22_porting_test_chip_power/HVH tlef/Au22_basic_lvt/PWR={VDD VDD_PM}/ssg_0p72v_m40c）+ README.md。资产 A = apr_innovus_config/（Makefile.init-vars + mmmc.view + innovus_fp_init.tcl + work_inventory.txt + power_nets.txt）+ task_brief.md（≤3 行接口）。隐藏 B 内嵌 check.py（B：TOP=hl22_io_ctrl_top/VHV tlef/Au22_io_lvt/PWR={VDD VDD_PE}/io_ctrl 路径，结构异于 A）。
+- check.py 20 条独立断言 (a)-(t)：(a)zip3文件 (b)source common_setup (c)init_lef_file=[list $TECH_LEF $CELL_LEF] tech-first (d)init_design_settop 1 (e)catch init_design (f)catch defIn (g)have_design dbGet top.name (h)foreach+file exists+return 预检 (i)INFO 指针 power nets/SPEF/FSDB (j)活跃代码无 A 字面量硬编码(hl22_porting_test_chip_power/VDD_PM/Au22_basic_lvt)；跨输入守护 (k)stub init_verilog==B hl22_io_ctrl_top.routed.v (l)stub init_top_cell==hl22_io_ctrl_top (m)stub init_pwr_net 含 VDD_PE 不含 VDD_PM (n)stub init_lef_file 含 VHV+io_lvt tech-first (o)stub init_mmmc_file==B io_ctrl/work/mmmc.view (p)stub defIn==B hl22_io_ctrl_top.def (q)stub init_gnd_net==VSS (r)stub stdout 'session ready' (s)stub stdout 无 A 字面量泄漏 (t)stub init_design_settop==1。check.py 用 tclsh stub（file exists→1 / dbGet→"" / init_design/defIn 记录 proc）注入隐藏 B common_setup 跑 power.globals（§4.2 subprocess on B）。静态断言对 Tcl 注释做了 strip（active code only）。
+- 自验：gold reference_submit.zip check() PASS（20/20）+ 5 negative 全 FAIL（NEG_RC=0，5 distinct labels：fake_empty→a / fake_print_expected→c / fake_core_deleted→f / naive_hardcode_a→b / naive_no_source→i）+ §4.9 (a)(b)(c) 三假 FAIL。
+- 断言闸门：k_rationale=20 == k_check=20 ≥8 ✓。追加 EDA-Eval-DesignFlow_A.jsonl（A jsonl 现 13 条，test==disk check.py roundtrip OK）。mark case 1792399916731_00i9f（domain=pnr_signoff/match=101）。merge_shards → 主 jsonl 66 cases。日报 report_benchmark_11_02.html 66 cases，本条 k(断言)/k(check)/一致 = 20/20/✓。
+- ⚠️ 已知 discrepancy：A jsonl 现有 `EDA-Eval-DesignFlow-CosimSetup-001`（trace 1789887279405_ve67l / eda_other）在 jsonl 但未在台账 A（早轮遗留 orphan）。本轮未动；下轮可补 mark 或核查。
+- ⬜ 下轮：trace_ledger.py --shard A next 选新 trace 开第 14 条 case（或按运维令 §四.3 挑一条 L2 shard-A PASS case 用 cline+hook 重跑验真实通过率）。
 
 ### 2026-11-02 shard A 轮 12：PTSignoff-001 交付 ✓（case 合成，WAITING: 0）
 - 选 trace：trace_ledger.py --shard A next → mc≥300 候选多为 calibre/hspice（shard C 域）；严格过滤（排除 calibre/hspice/spectre/pyAether/schematic）后挑纯 innovus 会话 `1792493511731_624js`（johnl/hfeg0plg49/mc=80/innovus=165/pnr_signoff）claim → mark case。
