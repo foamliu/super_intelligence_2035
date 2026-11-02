@@ -19,17 +19,18 @@ WAITING: 0
 > 📦 §#1183（11-03 00:43, CPU eval监控·26轮·ETA~9.6-12.6h稳定）→ daily-memories/2026-11-03.md；**结论**：4 eval稳定,.29~16.6-17.0s/.12~19.9-20.6s,ETA~9.6-12.6h,S1 iter60470 lr=1e-3 stable。被#1184监控(无变化)。需要时再读。
 > 📦 §#1184（11-03 00:50, CPU eval监控·27轮·ETA~9.4-11.2h稳定）→ daily-memories/2026-11-03.md；**结论**：4 eval稳定,.29~16.7s/.12~18.5-19.1s,ETA~9.4-11.2h,S1 iter60530 lr=1e-3 stable。被#1185监控(无变化)。需要时再读。
 > 📦 §#1185（11-03 00:55, CPU eval监控·28轮·ETA~9.6-11.9h稳定）→ daily-memories/2026-11-03.md；**结论**：4 eval稳定,.29~17.0s/.12~19.5-19.8s,ETA~9.6-11.9h,S1 iter60570 lr=1e-3 stable。被#1186监控(无变化)。需要时再读。
-> 🆕 2026-11-03 01:43 #1193：**📊 CPU eval 监控·36轮——4 eval 正常推进，ETA ~8.5-10h，两机 CPU <<80%。✅ S1 健康 iter 60960（lr=1e-3 stable）。未完成指令：有**。
+> 🆕 2026-11-03 01:49 #1194：**📊 CPU eval 监控·37轮——4 eval 正常推进，ETA ~8-10h，两机 CPU <<80%。✅ S1 健康 iter 61020（lr=1e-3 stable）。未完成指令：有**。
 > **① 4 eval 运行正常**（limit=100, 8集, 2599 req, bfloat16, batch=1, nice 19, OMP=8, CUDA_VISIBLE_DEVICES=""）：
-> - .29: hf_iter_10000 (PID 992664, **721/2599=27.7%**, 16.53s/req, 已~3h40m, ETA~8h37m→done~10:20 Nov3) + hf_iter_30000 (PID 1196989, **707/2599=27.2%**, 17.99s/req, 已~3h37m, ETA~9h27m→done~11:10 Nov3)
-> - .12: hf_iter_20000 (PID 3729981, **579/2599=22.3%**, 17.06s/req, 已~3h39m, ETA~9h34m→done~11:17 Nov3) + hf_iter_40000 (PID 3898654, **571/2599=22.0%**, 17.70s/req, 已~3h37m, ETA~9h58m→done~11:41 Nov3)
-> - hf_iter_50000: export 完成（config mamba_dt_limit=None 已修复，无 JSON-list 问题）；两机均满 2 并发上限→待空槽（~10:20 Nov3 .29 10000 完成后启动）。
-> - ⚠️ lm_eval_results/ 仍空（4 子目录在，results.json 待 eval 跑完写入；最早 ~10:20 Nov3）。
-> **② 速度**：.29 ~16.5-18.0s/req, .12 ~17.1-17.7s/req。稳定（与#1180-#1192一致）。
-> **③ CPU 负载**：.29 ~13% (4.7us+6.8sy) / .12 ~19% (8.4us+9.3sy) → 均 <<80%，不影响 S1。
-> **④ S1 状态**：iter **60960**/700k (8.71%), loss **2.112**, 0 NaN, 0 skip, ~7.0s/step, ~590K tok/s, lr=**1.0e-3** stable。launcher pid 4163528。ckpt@iter_60000(next@62000)。
-> **📦 体积**：TASK=30602B(29.9KB) / MEMORY=~31.4KB（均 ≤32KB，归档 0KB）。
-> **下一步**：持续监控；.29 hf_iter_10000 ~10:20 Nov3 完成→启动 hf_iter_50000→全部 5×8 完成后(~Nov3 21:00)汇总+报告。未完成指令：有。WAITING: 0。
+> - .29: hf_iter_10000 (PID 992664, **747/2599=28.7%**, 16.24s/req, 已~3h47m, ETA~8h21m→done~10:08 Nov3) + hf_iter_30000 (PID 1196989, **734/2599=28.2%**, 15.86s/req, 已~3h44m, ETA~8h13m→done~10:00 Nov3)
+> - .12: hf_iter_20000 (PID 3729981, **607/2599=23.4%**, 18.08s/req, 已~3h47m, ETA~10h00m→done~11:49 Nov3) + hf_iter_40000 (PID 3898654, **598/2599=23.0%**, 18.18s/req, 已~3h45m, ETA~10h06m→done~11:55 Nov3)
+> - hf_iter_50000: export 完成（config mamba_dt_limit=None 已修复，无 JSON-list 问题）；两机均满 2 并发上限→待空槽（~10:00 Nov3 .29 30000 完成后启动）。
+> - ⚠️ lm_eval_results/ 仍空（4 子目录在，results.json 待 eval 跑完写入；最早 ~10:00 Nov3）。
+> **② 速度**：.29 ~15.9-16.2s/req, .12 ~18.1-18.4s/req。稳定（与#1180-#1193一致）。
+> **③ CPU 负载**：.29 load36/224≈16% (4.4us+6.5sy) / .12 load34/224≈15% → 均 <<80%，不影响 S1。
+> **④ S1 状态**：iter **61020**/700k (8.72%), loss **2.116**, 0 NaN, 0 skip, ~6.9s/step, ~590K tok/s, lr=**1.0e-3** stable。launcher pid 4163528。ckpt@iter_60000(next@62000)。
+> **📦 体积**：TASK=30602B(29.9KB) / MEMORY=27670B(27.0KB)（均 ≤32KB，本轮归档#1120-#1139共20条S1监控指针→1条合并，省~4.2KB）。
+> **下一步**：持续监控；.29 hf_iter_30000 ~10:00 Nov3 完成→启动 hf_iter_50000→全部 5×8 完成后(~Nov3 19:00)汇总+报告。未完成指令：有。WAITING: 0。
+> 📦 §#1193（11-03 01:43, CPU eval监控·36轮·ETA~8.5-10h稳定）→ daily-memories/2026-11-03.md；**结论**：4 eval稳定,.29~16.5-18.0s/.12~17.1-17.7s,ETA~8.5-10h,S1 iter60960 lr=1e-3 stable。被#1194监控(无变化)。需要时再读。
 > 📦 §#1192（11-03 01:37, CPU eval监控·35轮·ETA~9h稳定）→ daily-memories/2026-11-03.md；**结论**：4 eval稳定,.29~16.9-17.1s/.12~17.2-17.5s,ETA~9h,S1 iter60920 lr=1e-3 stable。被#1193监控(无变化)。需要时再读。
 > 📦 §#1191（11-03 01:30, CPU eval监控·34轮·ETA~9h稳定）→ daily-memories/2026-11-03.md；**结论**：4 eval稳定,.29~16.7-16.8s,ETA~9h,S1 iter60870 lr=1e-3 stable。被#1192监控(无变化)。需要时再读。
 > 📦 §#1190（11-03 01:25, CPU eval监控·33轮·ETA~9h稳定）→ daily-memories/2026-11-03.md；**结论**：4 eval稳定,.29~16.7-16.9s,ETA~9h,S1 iter60830 lr=1e-3 stable。被#1191监控(无变化)。需要时再读。
@@ -62,23 +63,7 @@ WAITING: 0
 > 📦 §#1142（11-02 10:01, S1健康监控iter53650/loss~2.116/0NaN/~605K tok/s）→ daily-memories/2026-11-02.md；**结论**：S1健康iter53650(7.66%), loss~2.116稳态, grad-norm 0.087-0.112(极稳无spike), ~605K tok/s, ckpt@iter_52000(next@54000)。被#1143监控。需要时再读。
 > 📦 §#1141（11-02 09:40, S1健康监控iter53460/loss~2.122/0NaN/~603K tok/s）→ daily-memories/2026-11-02.md；**结论**：S1健康iter53460(7.64%), loss~2.122稳态, grad-norm 0.088-0.124(极稳无spike), ~603K tok/s, ckpt@iter_52000(next@54000)。被#1142监控。需要时再读。
 > 📦 §#1140（11-02 09:25, S1健康监控iter53310/loss~2.125/0NaN/~603K tok/s）→ daily-memories/2026-11-02.md；**结论**：S1健康iter53310(7.61%), loss~2.125稳态, grad-norm 0.091-0.220(极稳无spike), ~603K tok/s, ckpt@iter_52000(next@54000)。被#1141监控。需要时再读。
-> 📦 §#1139（11-02 09:02, S1健康监控iter53140/loss~2.110/0NaN/~603K tok/s）→ daily-memories/2026-11-02.md；**结论**：S1健康iter53140(7.59%), loss~2.110稳态, grad-norm 0.090-0.220(minor spike 0.220@53140单步瞬态已恢复), ~603K tok/s, ckpt@iter_52000(next@54000)。被#1140监控。需要时再读。
-> 📦 §#1138（11-02 08:45, S1健康监控iter52990/loss~2.114/0NaN/~605K tok/s）→ daily-memories/2026-11-02.md；**结论**：S1健康iter52990(7.57%), loss~2.114稳态, grad-norm 0.091-0.129(极稳无spike), ~605K tok/s, ckpt@iter_52000(next@54000)。被#1139监控。需要时再读。
-> 📦 §#1137（11-02 08:27, S1健康监控iter52840/loss~2.117/0NaN/~605K tok/s）→ daily-memories/2026-11-02.md；**结论**：S1健康iter52840(7.55%), loss~2.117稳态, grad-norm 0.087-0.335(minor spike 0.335@52820已恢复), ~605K tok/s, ckpt@iter_52000(next@54000)。被#1139监控。需要时再读。
-> 📦 §#1136（11-02 08:09, S1健康监控iter52680/loss~2.118/0NaN/~602K tok/s）→ daily-memories/2026-11-02.md；**结论**：S1健康iter52680(7.53%), loss~2.118稳态, grad-norm 0.084-0.142(极稳无spike), ~602K tok/s, ckpt@iter_52000(next@54000)。被#1137监控。需要时再读。
-> 📦 §#1134（11-02 07:34, S1健康监控iter52380/loss~2.117/0NaN/~606K tok/s）→ daily-memories/2026-11-02.md；**结论**：S1健康iter52380(7.48%), loss~2.117稳态, grad-norm 0.089-0.782(minor spike 0.782@52270已恢复), ~606K tok/s, ckpt@iter_52000(next@54000)。被#1135监控。需要时再读。
-> 📦 §#1133（11-02 07:16, S1健康监控iter52220/loss~2.122/0NaN/~604K tok/s）→ daily-memories/2026-11-02.md；**结论**：S1健康iter52220(7.46%), loss~2.122稳态, grad-norm 0.085-0.479(minor spike 0.479@52160已恢复), ~604K tok/s, ckpt@iter_52000(next@54000)。被#1134监控。需要时再读。
-> 📦 §#1132（11-02 06:59, S1健康监控iter52070/loss~2.124/0NaN/~604K tok/s）→ daily-memories/2026-11-02.md；**结论**：S1健康iter52070(7.44%), loss~2.124稳态, grad-norm 0.087-0.112(极稳无spike), ~604K tok/s, ckpt@iter_52000(next@54000)。被#1133监控。需要时再读。
-> 📦 §#1131（11-02 06:42, S1健康监控iter51930/loss~2.134/0NaN/~603K tok/s）→ daily-memories/2026-11-02.md；**结论**：S1健康iter51930(7.42%), loss~2.134稳态, grad-norm 0.088-0.170(极稳无spike), ~603K tok/s, ckpt@iter_50000(next@52000)。被#1132监控。需要时再读。
-> 📦 §#1128（11-02 05:49, S1健康监控iter51470/loss~2.14/0NaN/~603K tok/s）→ daily-memories/2026-11-02.md；**结论**：S1健康iter51470(7.35%), loss~2.14稳态, grad-norm 0.083-0.146(极稳无spike), ~603K tok/s, ckpt@iter_50000(next@52000)。被#1129监控。需要时再读。
-> 📦 §#1127（11-02 05:29, S1健康监控iter51300/loss~2.124/0NaN/~603K tok/s）→ daily-memories/2026-11-02.md；**结论**：S1健康iter51300(7.33%), loss~2.124稳态, grad-norm 0.089-0.173(极稳无spike), ~603K tok/s, ckpt@iter_50000(next@52000)。被#1128监控。需要时再读。
-> 📦 §#1126（11-02 05:13, S1健康监控iter51160/loss~2.14/0NaN/~603K tok/s）→ daily-memories/2026-11-02.md；**结论**：S1健康iter51160(7.31%), loss~2.14稳态, grad-norm 0.088-0.198(极稳无spike), ~603K tok/s, ckpt@iter_50000(next@52000)。被#1127监控。需要时再读。
-> 📦 §#1125（11-02 05:00, S1健康监控iter51000/loss~2.13/0NaN/~607K tok/s）→ daily-memories/2026-11-02.md；**结论**：S1健康iter51000(7.29%), loss~2.13稳态, grad-norm 0.088-0.198(minor spike 0.773@50800已恢复), ~607K tok/s, ckpt@iter_50000(next@52000)。被#1126监控。需要时再读。
-> 📦 §#1124（11-02 04:37, S1健康监控iter50850/loss~2.124/0NaN/~607K tok/s）→ daily-memories/2026-11-02.md；**结论**：S1健康iter50850(7.26%), loss~2.124稳态, grad-norm 0.088-0.133(minor spike 1.287@50650+0.773@50800已恢复), ~607K tok/s, ckpt@iter_50000(next@52000)。被#1125监控。需要时再读。
-> 📦 §#1123（11-02 04:20, S1健康监控iter50700/loss~2.124/0NaN/~605K tok/s）→ daily-memories/2026-11-02.md；**结论**：S1健康iter50700(7.24%), loss~2.124稳态, grad-norm 0.088-0.126(minor spike 1.287@50650已恢复), ~605K tok/s, ckpt@iter_50000(next@52000)。被#1124监控。需要时再读。
-> 📦 §#1122（11-02 04:05, S1健康监控iter50560/loss~2.127/0NaN/~607K tok/s）→ daily-memories/2026-11-02.md；**结论**：S1健康iter50560(7.22%), loss~2.127稳态, grad-norm 0.088-0.129(minor spike 1.053@50310+0.338@50490已恢复), ~607K tok/s, ckpt@iter_50000(next@52000)。被#1123监控。需要时再读。
-> 📦 §#1121（11-02 03:45, S1健康监控iter50400/loss~2.129/0NaN/~607K tok/s）→ daily-memories/2026-11-02.md；**结论**：S1健康iter50400(7.20%), loss~2.129稳态, grad-norm 0.088-0.129(minor spike 1.053@50310已恢复), ~607K tok/s, ckpt@iter_50000(next@52000)。被#1122监控。需要时再读。
-> 📦 §#1120（11-02 03:28, S1健康监控iter50250/loss~2.124/0NaN/~606K tok/s）→ daily-memories/2026-11-02.md；**结论**：S1健康iter50250(7.18%), loss~2.124稳态, grad-norm 0.091-0.173(minor spike 1.843@50020已恢复), ~606K tok/s, ckpt@iter_50000(next@52000)。被#1121监控。需要时再读。
+> 📦 §#1120-#1139（11-02 03:28-09:02, S1健康监控iter50250-53140, 共20轮）→ daily-memories/2026-11-02.md；**结论**：S1全程健康, loss~2.11-2.13稳态, 0 NaN, ~603-607K tok/s, grad-norm 0.08-0.22(偶发瞬态spike均自恢复), ckpt iter_50000→52000(next@54000)。被#1140+后续监控。需要时再读。
 > 📦 §#1119（11-02 03:11, S1健康监控iter50100/loss~2.127/0NaN/~605K tok/s）→ daily-memories/2026-11-02.md；**结论**：S1健康iter50100(7.16%), loss~2.127稳态, grad-norm 0.092-0.173(minor spike 1.843@50020已恢复), ~605K tok/s, ckpt@iter_50000(已保存, next@52000)。被#1120监控。需要时再读。
 > 📦 §#1118（11-02 02:55, S1健康监控iter49950/loss~2.142/0NaN/~598K tok/s）→ daily-memories/2026-11-02.md；**结论**：S1健康iter49950(7.13%), loss~2.142稳态, grad-norm 0.087-0.406(minor spike 0.406@49840已恢复), ~598K tok/s, ckpt@iter_48000→50000(已保存)。被#1119监控。需要时再读。
 > 📦 §#1117（11-02 02:35, S1健康监控iter49800/loss~2.124/0NaN/~602K tok/s）→ daily-memories/2026-11-02.md；**结论**：S1健康iter49800(7.11%), loss~2.124稳态, grad-norm 0.087-0.251(minor spike 0.649@49740已恢复), ~602K tok/s, ckpt@iter_48000(next@50000)。被#1118监控。需要时再读。
