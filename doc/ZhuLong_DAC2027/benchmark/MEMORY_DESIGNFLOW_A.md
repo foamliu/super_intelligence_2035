@@ -2,15 +2,27 @@ WAITING: 0
 SHARD: A (digital_front)
 DOMAINS: digital, eda_other, pnr_signoff, verification
 
-- **PHASE**: bashpool 恢复 → 继续合成路径。本轮合成 `EDA-Eval-DesignFlow-STAFlow-001`（pnr_signoff / L1-boundary / A 档 trace-faithful，PrimeTime STA flow 构建，trace 1792401589701_f9heo / e0046913 / 选轮 #0 逐字原文）= **自验全过 ✓**（ref PASS + 4 negative FAIL + §4.9 三假提交 FAIL + 断言闸门 20==20≥8）。A jsonl 现 24 条，主 jsonl 113 条。新 case 未跑 pi/cline。
-- ✅ **本轮交付**：STAFlow-001 合成 ✓（pnr_signoff/L1-boundary/A 档，trace-faithful 克隆 f9heo 真实"构建 PrimeTime STA flow + demo 跑通"任务；交付 STA_flow/ 脚本树：setup/common_setup.tcl + scr/sta_main.tcl + 1_setup..10_rpt.tcl + run/run_sta.csh(cshell 选项解析 + pt_shell -f -x + done-marker PASS/FAIL) + run/run_demo.csh + README；A assets 含 feint_reference 节选 + mac demo design；B 隐藏用 alu8(8-bit ALU+scan mux) / corner ss0p72vm40c+ff1p16v0c / mode func+scan(mode-specific SDC) / alu8_typ.db@0.72V/-40C 击穿硬编码 A；check.py 20 条断言静态校验结构+tcl 命令内容+csh 语法 subprocess+泛型($DESIGN/$PT_CORNER/$MODE)+3-seed 随机化+鲁棒(-bogus)；自验 ref PASS + 4 negative FAIL + §4.9 三假 FAIL + 断言闸门 20==20≥8）。A jsonl 24 条，主 jsonl 113 条。
+- **PHASE**: cline+hook 重跑 STAFlow-001 = **FAIL·①交付形态/位置错**（运维令 §四.3）。cline 27× editor 写出 25 文件（sta_main+10 scr tcl+run_sta.csh+demo data+README）但**漏了 STA_flow/ 顶层 wrapper + setup/common_setup.tcl** → check.py 断言 (a) FAIL。非能力 thrash（有产出）非 hook 限（62 NOTICE 后 cline 改用 editor+pyAether）。本轮未合成新 case（40min 预算耗于 cline 1729s 跑 + 选料 t2qp9 parked）。
+- ✅ **本轮交付**：cline 重跑 STAFlow-001（运维令 §四.3 扩样本）= FAIL·①。cline_eval_status.jsonl 现 6 行 = **2/6 PASS**。台账号 +1 parked（t2qp9 = 纯 Q&A 咨询无交付，0 write calls/61 RAG searches）。
 - ✅ DEBT 已清零。
-- 📊 trace 覆盖率：23/1001 = 2.3%（covered=23 · touched=29 · parked=6；A jsonl 24 条，本轮 +1 新 case）
-- 🎯 通过率: cline+hook 存量重跑 **2/5 = 40%**（PTSignoff-001 PASS·L2 / InnovusLaunchDiag-001 PASS·L1-style / Verification-001 FAIL·L1-harness限 / PwrGlobals-001 FAIL·L2 能力 / ETMExtract-001 FAIL·L2 能力）。剔除 harness 限样本后能力口径 2/4 = 50%（n 小无统计意义）。本轮新 case 未跑 pi/cline。
-- 🧾 断言: 本轮 STAFlow-001 k_rationale=k_check=20 ✓（今日 1/30 达标，新增达标）；存量 23 条全达标
-- 📦 体积：TASK≈23.8KB / MEMORY_A≈24.6KB
-- 🔒 泄漏隔离: 本轮合成 case 自验 — check.py 内嵌 B 证据自包含，判分独立在 /tmp 跑；SUT workdir（待 cline 跑时）只放 prompt+assets+task_brief，无 check.py/reference/hidden
-- ⚠️ 运维令进度：cline_eval_status.jsonl 5 行（≥5 达成）= 2/5 PASS。**待办**：继续 cline 重跑（候选 TLEFRules-001 / SynLintFlow-001 / STAFlow-001 本条）扩到 ≥8 看趋势，或继续合成。
+- 📊 trace 覆盖率：23/1001 = 2.3%（covered=23 · touched=30 · parked=7；A jsonl 24 条，本轮无新 case）
+- 🎯 通过率: cline+hook 存量重跑 **2/6 = 33%**（PTSignoff-001 PASS·L2 / InnovusLaunchDiag-001 PASS·L1-style / Verification-001 FAIL·L1-harness限 / PwrGlobals-001 FAIL·L2 能力③ / ETMExtract-001 FAIL·L2 能力③ / STAFlow-001 FAIL·L1-style 形态①）。剔除 harness 限样本后 2/5 = 40%（n 小无统计意义）。失败归因：③×2 / ①×1 / harness×1。
+- 🧾 断言: 本轮无新 case（cline 重跑路径）；存量 24 条全达标 k_rationale=k_check≥8
+- 📦 体积：TASK≈23.8KB / MEMORY_A≈25KB
+- 🔒 泄漏隔离: cline workdir 只放 prompt+assets+task_brief，0 禁忌文件进 workdir（leak 自检 clean）；cline session 37 处 forbidden 字样全良性（reasoning 文本 "I'm told not to read check.py"，0 实际 read 尝试）；判分独立在 /tmp/judge_*/ 跑，check.py 从 reference/ 复制（cline workdir 外）
+- ⚠️ 运维令进度：cline_eval_status.jsonl 6 行（≥5 达成）= 2/6 PASS。**待办**：继续 cline 重跑（候选 TLEFRules-001 / SynLintFlow-001 / FormalityLaunchDiag-001）扩到 ≥8 看趋势，或回合成路径。
+
+
+### 2026-11-03 shard A 轮 29：STAFlow-001 cline+hook 重跑 = FAIL·①交付形态/位置错（运维令 §四.3，WAITING: 0）
+- 任务卡本轮路径 = 合成 1 条新 case。bashpool 恢复（`echo HELLO_BASHPOOL_OK` exit 0 / 2ms）→ `trace_ledger --shard A next` 取候选路径打通（awk 长排除正则仍报 syntax error，改 python 脚本按 `<count> <tool>` 对解析 summary.tsv 的 tools 字段，DIGITAL 计数过滤）。
+- **选料**：dig>=10 排序得 14 候选，逐个深读首 user msg。首条 t2qp9（leo27li/hfeg0pkn001/mc=156/dig=39 innovus+dbGet+skill）→ scp 506KB messages.json 解析：144 msgs，0 write/create/edit calls，61× RAG_MCP_Server__search_apis + 1× read_files；user 全是 disjoint how-to 问句（how fix setup/hold conflict / how select block attribute / pt noise margin / specifyinstpad / ecoroute / addModulePort / refinePlace ...），agent 全程 RAG 搜索答 Q&A，**无文件交付** → 非 design_flow delivery task → **claim（pnr_signoff）→ mark parked**（"pure QA consultation: 0 write calls, 61 RAG searches"）。台账 touched=30 / parked=7。
+- **pivot 到 cline 重跑**（运维令 §四.3「逐步把存量 case 用 cline 重跑」）：选 `EDA-Eval-DesignFlow-STAFlow-001`（轮 28 刚合成的 pnr_signoff/L1-boundary/A 档，PrimeTime STA flow 构建，静态判分不需 .75 EDA 工具）。ref check.py 独立 dry-run PASS（reference_submit.zip → /tmp/staflow_refcheck → True）。
+- **重跑**：`CLINE_TIMEOUT=1300 bash run_one.sh EDA-Eval-DesignFlow-STAFlow-001 deepseek-v4-pro-cloud medium` → hook 部署 + workdir 建（7 附件 copied，leak 自检 clean）→ cline 跑 1729s（超 1500s timeout，手 kill -9 → exit 137）/ 35 iter → harness 打包 outputs/ 25 文件 → submit.zip → 独立判分 `/tmp/judge_*/` check() = **FAIL**（AssertionError "a: no STA_flow/ top-level (with setup/ + scr/) found in deliverable"）。
+- **失败归因 ①交付形态/位置错**（非 ③能力不足）：cline **有产出**（27× editor write_to_file → 25 文件：scr/sta_main.tcl + 10 编号 tcl + run/run_sta.csh + data/demo_top.{vg,sdc×2} + data/lib/*.lib×5 + README + .gitkeep×4），结构上是合理的 STA flow（sta_main + 编号步骤 tcl + cshell run 脚本 + demo design + lib stubs）。**但**：① 漏了 `STA_flow/` 顶层 wrapper（文件直接写在 outputs/{scr,run,data,...} 而非 outputs/STA_flow/{...}）② 漏了 `setup/common_setup.tcl` 子目录（参考解把变量枢纽放 setup/，cline 没建 setup/）→ check.py 断言 (a) "zip 含 STA_flow/ 顶层且 setup/+scr/ 齐全" FAIL。check.py 有 fallback "tree IS at tmpdir with setup/scr directly" 但 cline 没 setup/ → fallback 也不满足。
+- **防泄题自验全过**：① workdir leak 自检 = 0（find 无 check.py/reference/hidden/hidden_manifest）；② cline_session.jsonl grep forbidden 命中 37 处全良性 —— 全是 cline reasoning 文本 "I'm told not to read check.py / _check.py / reference/ / hidden"（明确拒绝访问，0 实际 read 尝试）；③ hook 触发 62× NOTICE/block（cline 内置 run_commands 3× 被拦 → cline 改用 editor write_to_file + 16× mcp__pyAether_MCP_server__run_code + 11× read_files + 6× search_codebase + 1× fetch_web_content，符合 hook 设计）；④ 判分独立在 /tmp/judge_*/ 跑，check.py 从 reference/ 复制到 judge dir（cline workdir 外），cline 全程未接触判分器。
+- **finding（L1+hook 形态二分细化）**：轮 24 InnovusLaunchDiag-001（L1-style 纯撰写）PASS，本轮 STAFlow-001（L1-boundary 静态判分）FAIL·①。区别：InnovusLaunchDiag 要求单文件 check_launch.py，路径浅不易错位；STAFlow-001 要求多文件树 **STA_flow/{setup,scr,run}/**，顶层 wrapper + setup/ 子目录是隐含契约（prompt 说"在 run 目录编写...scr 目录下..."但没明说"放进 STA_flow/ 顶层"——该契约来自参考解结构，prompt 只说"构建一个 STA flow"）。**结论**：A 档 trace-faithful 的"逐字原文 prompt"在多文件树任务上有风险——用户原话不含目录布局细节，cline 按字面理解直接铺到 outputs/。**改进方向**：① task_brief.md 加 1 行"交付件须放在 <顶层目录>/ 下"（但这稀释 A 档难度，需权衡）；或 ② check.py fallback 放宽（接受无 wrapper 但 setup/+scr/ 齐全）—— 但这会降难度。暂记 EXPERIMENTS，不下结论。
+- status jsonl 追加第 6 行（verdict=FAIL / dur=1729 / cline_exit=137 / failure_class=①delivery-shape-location）。cline_eval_status.jsonl：Verification-001 FAIL·L1·hook限 / PTSignoff-001 PASS·L2 / PwrGlobals-001 FAIL·L2·能力③ / InnovusLaunchDiag-001 PASS·L1-style / ETMExtract-001 FAIL·L2·能力③ / STAFlow-001 FAIL·L1-style·形态① = **2/6 PASS**。
+- ⬜ 下轮：①bashpool 恢复 → 回合成路径（trace_ledger --shard A next，本轮 t2qp9 parked 后继续选）；或 ②继续 cline 重跑扩样本（候选 TLEFRules-001 / SynLintFlow-001 / FormalityLaunchDiag-001，目标≥8 看通过率趋势）。
 
 
 ### 2026-11-03 shard A 轮 28：STAFlow-001 合成 ✓（pnr_signoff / L1-boundary / A 档 trace-faithful，PrimeTime STA flow 构建，WAITING: 0）
