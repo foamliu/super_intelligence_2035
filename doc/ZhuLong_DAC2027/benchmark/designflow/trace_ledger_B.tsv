@@ -19,3 +19,6 @@ djml8					case	EDA-Eval-DesignFlow-PFDdeadZone-001	2026-11-02 17:47
 1791526272387_1i0em	rongtaoy	hfeg0pkn001	574	spice_sim	case	EDA-Eval-DesignFlow-SubcktExtract-001	2026-11-02 21:54	
 1792215882223_qv6pl	adaml	hfeg0pkn001	324	spice_sim	case	EDA-Eval-DesignFlow-Tr0TrTfMeas-001	2026-11-02 22:30	
 1792551272867_jnf1q.messages.json	jasonxu	hfeahpc501	470	characterization	case	EDA-Eval-DesignFlow-ReadsigAddrTbl-001	2026-11-02 22:55	
+1792323159551_toezr	xxchen	hfeg0pkn005	318	spice_sim	parked		2026-11-02 23:04	GDS/Skipper layout task (gds_bump2 layer number bump), not spice/char domain — false positive from RAG spice API search in trace
+1785898505302_zfrbu					parked		2026-11-02 23:06	false positive: '启动业务场景：模拟电路生成' — agent only fought Virtuoso/Aether launch env (libXss missing), never ran spice sim; spice tokens from 'which spectre/finesim' env-check cmds
+1792375390057_aq0vc	tongni	hfeg0pfn119	254	spice_sim	case	EDA-Eval-DesignFlow-Vcc2scTranGen-001	2026-11-02 23:36	
