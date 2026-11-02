@@ -42,3 +42,4 @@
 1792977240005_1mvxt	yohannw	hfeg0pkn003	565	schematic_netlist	parked		2026-11-03 03:26	IP-packaging+LVS production flow (43KB dev_CXMT_Aether_ip_package.py, real Aether aether.rc lib-substitution, 39 interactive debug turns) too entangled for clean self-verifying case
 1791944224191_6i6lk	jason17w	hfeg0pnd002	328	schematic_netlist	claimed		2026-11-03 03:26	
 1790061986818_gpdus	johnl	hfeg0pfn119	352	schematic_netlist	case	EDA-Eval-DesignFlow-PortMismatchDiag-001	2026-11-03 03:46	
+1792724929127_2vuso.messages.json	tongni	hfeg0pfn119	468	analog_context	case	EDA-Eval-DesignFlow-SpiceDeckGen-001	2026-11-03 04:28	
