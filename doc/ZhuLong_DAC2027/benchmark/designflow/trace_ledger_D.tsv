@@ -38,3 +38,7 @@
 1790064242187_1dh6s	e0031668	hfeg0pkn003	389	schematic_netlist	case	EDA-Eval-DesignFlow-ErcSetupGen-001	2026-11-03 02:01	
 1793017339067_jhdvn	t0002805	hfeg0pgn145	492	schematic_netlist	case	EDA-Eval-DesignFlow-MBistAnalyze-001	2026-11-03 02:44	
 1792834214357_qky0j	keviny	hfeg0plg57	324	schematic_netlist	case	EDA-Eval-DesignFlow-RasNetlistAnalyze-001	2026-11-03 03:12	
+1789895218929_1xhgy	miccao	hfeg0plg37	370	schematic_netlist	parked		2026-11-03 03:23	AutoCell TCL flow generator (layers/viadefs/rules/place/route) = PDK/layout, non-shard-D
+1792977240005_1mvxt	yohannw	hfeg0pkn003	565	schematic_netlist	parked		2026-11-03 03:26	IP-packaging+LVS production flow (43KB dev_CXMT_Aether_ip_package.py, real Aether aether.rc lib-substitution, 39 interactive debug turns) too entangled for clean self-verifying case
+1791944224191_6i6lk	jason17w	hfeg0pnd002	328	schematic_netlist	claimed		2026-11-03 03:26	
+1790061986818_gpdus	johnl	hfeg0pfn119	352	schematic_netlist	case	EDA-Eval-DesignFlow-PortMismatchDiag-001	2026-11-03 03:46	
