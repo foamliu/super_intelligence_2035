@@ -74,4 +74,7 @@
 ## 进度
 - ✅ 深读 + 金标准 + 隐藏 B 全部 .75 真跑验证通过
 - ✅ lib 缓存 /home/e0031982/teco_case_lib/core_typ.db
-- ⬜ check.py + reference/ + negative/ + self-verify + jsonl + 日报（DEBT，下轮第一件事）
+- ✅ check.py（14 断言 a-n，L1-boundary + tclsh 跨输入守护）+ reference_submit.zip（gold flow）+ 5 negative + negative_selftest.py
+- ✅ 自验：gold PASS 14/14 + 5 negative 全 FAIL（NEG_RC=0）+ §4.9 三假 FAIL
+- ✅ 断言闸门 k_rationale=14 == k_check=14 ≥ 8 ✓
+- ✅ 追加 EDA-Eval-DesignFlow_A.jsonl + mark case（2026-11-02 轮 8 交付）

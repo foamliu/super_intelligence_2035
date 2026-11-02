@@ -1,19 +1,20 @@
-WAITING: 1
+WAITING: 0
 SHARD: A (digital_front)
 DOMAINS: digital, eda_other, pnr_signoff, verification
 
 - **PHASE**: shard A 新 case 合成阶段。负责 domain: digital, eda_other, pnr_signoff, verification
 - 每轮做 1 条 case：trace_ledger.py --shard A next → claim → 深读 → 合成 → 自验 → 追加 EDA-Eval-DesignFlow_A.jsonl → 日报
-- ⚠️ DEBT: 1 deepread 未合成 —— `EDA-Eval-DesignFlow-TimingECO-001`（1792572733650_pfubi，PrimeTime TimingECO flow，L2/L3）。深读+金标准+隐藏B 全部 .75 真跑验证通过；**下轮第一件事**：写 check.py(≥8 断言) + reference/ + negative/ + self-verify + 追加 jsonl + mark case。lib 已缓存 `/home/e0031982/teco_case_lib/core_typ.db`。
-- 📊 trace 覆盖率：9/1001 = 0.9%（covered=9 · case 9 · deepread 1 · parked 1）
+- ✅ DEBT 已清零：`EDA-Eval-DesignFlow-TimingECO-001` 本轮交付（check.py 14 断言 + reference + 5 negative + self-verify 全过）。
+- 📊 trace 覆盖率：8/1001 = 0.8%（covered=8 · touched=9 · parked=1；A jsonl 9 条）
 - 🎯 通过率: 0/0（A 档尚未实跑）· B 档目标 20–30%
-- 🧾 断言: k_rationale=k_check 达标（断言债已清零，存量 9 条全达标）
+- 🧾 断言: k_rationale=k_check 达标（断言债已清零，存量全达标；本轮 TimingECO-001 k=14）
 - 📦 体积：TASK≈17KB / MEMORY≈待测
 
-### 2026-11-02 shard A 轮 7：TimingECO-001 深读+金标准+隐藏B 验证 ✓（DEBT: check.py 待写，下轮首事）
-- 选料：trace_ledger.py --shard A next → 在 .75 summary.tsv 按 shard A tools（dc_shell/primetime/innovus/voltus/genus/icc2/tempus/synthesis）排序找数字/PnR/verif 候选。pfubi(mc=153) 因首次 ssh 路径误判（session 是目录 `1792572733650_pfubi/` 含 messages.json，非直接文件）一度 parked，定位正确嵌套路径后重新 mark deepread。lond8/lorikx 同 host 6 节点全 MISSING（NFS 不一致）弃。最终选 `1792572733650_pfubi.messages.json`（e0046913/hfeg0plg52, mc=153, primetime:213 icc2:194）—— PrimeTime TimingECO flow 构建真设计流（agent=lead, 253msgs, 1.34MB）。claim domain=verification。
-- 深读：scp 整条 messages.json 到 .75，解析 253 msgs。用户真实意图（USER[17/18]逐字）：模仿已建 STA_flow 结构（run/cshell + scr/编号tcl 1_setup..10_rpt + setup/data/sdc/log/rpt/session/patch），在 TimingECO_flow 构建 Top Timing ECO flow（signoff→ECO patch→re-signoff），demo 跑通。assistant 真跑 pt_shell 探针 v1-v5 找 lib cell（clk1b27/clk1a27/fdf1a3），editor 建完整 flow 11 个编号 tcl + run_eco.csh(选项化) + run_demo.csh(3阶段自检) + README。
-- 金标准（.75 真跑 pt_shell U-2022.12-SP5 验证 2026-11-02 15:00）：A(eco_demo, 2-flop fdf1a3, period6.0/hold_unc0.50, corner tt0p8v25c) signoff HOLD_VIOL=4 SETUP_VIOL=0 → eco fix_eco_timing -type hold 插 4×clk1a27 buffer → re-signoff post.summary HOLD_VIOL=0 SETUP_VIOL=0 CLEAN；run_demo.csh exit0 打印 "TimingECO demo PASS"。教程库 core_typ.db(4.4MB) 已缓存 `/home/e0031982/teco_case_lib/core_typ.db`。
-- 隐藏 B（.75 真跑验证 15:01，结构性不同）：eco_demo_B 3-flop 移位寄存器（vs A 2-flop），period4.0/hold_unc0.60，corner ss0p7v125c。B signoff HOLD_VIOL=6（vs A 4）→ eco 插 9×clk1a27 buffer（vs A 4）→ post.summary HOLD_VIOL=0 CLEAN。B 与 A 拓扑/违例数/buffer数/corner 全不同，击败硬编码 A。
-- 已写本地 assets：data/eco_demo/eco_demo.vg + sdc/eco_demo.sdc + user_request.md(用户逐字) + hidden/eco_demo_B/{vg,sdc} + hidden_manifest.json。深读笔记 designflow/trace_deepreads/pfubi_timing_eco_flow.md（含 check.py 14 条断言设计 a-n + 5 负样本规划）。
-- ⬜ DEBT（下轮第一件事）：写 reference/EDA-Eval-DesignFlow-TimingECO-001/check.py（14 独立标签 a-n，真跑 pt_shell on A+B）+ reference 解（gold flow scripts + reference_submit.zip）+ negative/(3§4.9假+2naive) + negative_selftest.py + 自验(ref PASS + 三假 FAIL) → 断言闸门(k=14≥8) → 追加 EDA-Eval-DesignFlow_A.jsonl → mark case → 日报。下轮：WAITING: 0（交付后）。
+### 2026-11-02 shard A 轮 8：TimingECO-001 交付 ✓（DEBT 清零，WAITING: 0）
+- 交付 `EDA-Eval-DesignFlow-TimingECO-001`（domain=verification，L2，track=faithful，trace 1792572733650_pfubi / e0046913 / hfeg0plg52 / mc=153）。
+- gold flow（reference_submit.zip）：run/run_demo.csh（3 阶段 signoff→eco→resignoff 自检，条件化 PASS）+ run/run_eco.csh（参数化 launcher，-design/-corner/-mode/-stage/-eco_types/-buffer/-profile）+ scr/main_eco.tcl + scr/1_setup..10_rpt.tcl（10 编号 tcl）+ setup/common_setup.tcl（DESIGN/CORNER/MODE/ECO_STAGE/ECO_BUFFER_LIST/LIB_PROFILE 变量化，core_typ.db）+ README.md（三阶段 + ICC2 handoff）。
+- check.py 14 条独立断言 a-n：(a) zip 15 文件齐全 (b) run_demo.csh cshell+三阶段 (c) 编号 tcl 1..10+main (d) 8_eco.tcl `fix_eco_timing -type hold` 真引擎 (e) run_eco.csh 含 pt_shell + run_demo.csh 条件化 PASS（exit 1 在 PASS 之前）(f) 7_signoff.tcl 写 SETUP_VIOL=/HOLD_VIOL= summary (g) 8_eco.tcl eco_changes+ADDITION+eco_applied.flag (h) 9_resignoff.tcl post.summary (i) **跨输入守护 B**：tclsh 子进程 source common_setup.tcl with DESIGN=eco_demo_B/PT_CORNER=ss0p7v125c → OUT_PREFIX=eco_demo_B_ss0p7v125c_func_signoff（非 A 的 tt0p8v25c）(j) common_setup.tcl 引用 core_typ.db + 变量化 (k) ${OUT_PREFIX} 命名 (l) run_eco.csh switch -design/-corner/-mode/-stage (m) README 三阶段+ICC2 (n) eco_changes.icc2tcl insert_buffer。
+- L1-boundary grader（与本 bench 现有 L2 case 同惯例：真 pt_shell 跑在 GOLD 标准创建期，已 .75 真实验证 A HOLD=4→插 4×clk1a27→post HOLD=0；B HOLD=6→插 9×clk1a27→post HOLD=0）；check.py 本地静态 + tclsh 子进程跨输入守护（§4.2 subprocess on B）。
+- 自验：gold check() PASS（14/14）+ 5 negative 全 FAIL（fake_empty→a, fake_print_expected→e, fake_core_deleted→d, naive_hardcode_a→i/l, naive_no_eco_engine→d/g）+ §4.9 (a)(b)(c) 三假 FAIL。NEG_RC=0。
+- 断言闸门：k_rationale=14 == k_check=14 ≥ 8 ✓。追加 EDA-Eval-DesignFlow_A.jsonl（A jsonl 现 9 条）。mark case 1792572733650_pfubi（补全 user=e0046913/host=hfeg0plg52/domain=verification/match=153）。日报 report_benchmark_11_02.html 50 cases，k(断言)/k(check)/一致 = 14/14/✓。
+- ⬜ 下轮：trace_ledger.py --shard A next 选新 trace 开第 10 条 case。
