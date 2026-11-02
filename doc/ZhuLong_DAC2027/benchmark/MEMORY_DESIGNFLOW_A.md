@@ -2,14 +2,24 @@ WAITING: 0
 SHARD: A (digital_front)
 DOMAINS: digital, eda_other, pnr_signoff, verification
 
-- **PHASE**: loop 任务卡 case 合成。本轮按 loop 卡合成第 13 条 case（A 档 trace-faithful，pnr_signoff +1）。
-- ✅ **本轮交付 case**：`EDA-Eval-DesignFlow-PwrGlobals-001`（pnr_signoff，L1-boundary，A 档 faithful，trace 1792399916731_00i9f / alan3zh / hfeg0plg49 / mc=101 / innovus=1105 主导）。A jsonl 现 13 条。
+- **PHASE**: loop 任务卡 case 合成。本轮按 loop 卡合成第 14 条 case（A 档 trace-faithful，digital +1，synthesis 域）。
+- ✅ **本轮交付 case**：`EDA-Eval-DesignFlow-SynLintFlow-001`（digital/synthesis，L1-boundary，A 档 faithful，trace 1792574756685_lond8 / lorikx / hfeg0pkn005 / mc=249 / synthesis=90 netlist=281 主导）。A jsonl 现 14 条。
 - ✅ DEBT 已清零。
-- 📊 trace 覆盖率：12/1001 = 1.2%（covered=12 · touched=13 · parked=1；A jsonl 13 条，含 1 orphan `CosimSetup-001`(ve67l) 在 jsonl 未在台账，待查）
+- 📊 trace 覆盖率：13/1001 = 1.3%（covered=13 · touched=14 · parked=1；A jsonl 14 条，含 1 orphan `CosimSetup-001`(ve67l) 在 jsonl 未在台账，待查）
 - 🎯 通过率: 本条 case 未 pi/cline 实跑（"未跑"）；cline 存量重跑 0/1（Verification-001 FAIL·L1/hook 限制）· B 档目标 20–30%；A 档本轮只报数不设目标
-- 🧾 断言: 本轮 PwrGlobals-001 k_rationale=k_check=20 ≥8 ✓（日报 20/20/✓）；存量全达标
-- 📦 体积：TASK≈23.8KB / MEMORY_A≈16.6KB
+- 🧾 断言: 本轮 SynLintFlow-001 k_rationale=k_check=26 ≥8 ✓（日报 26/26/✓）；存量全达标
+- 📦 体积：TASK≈23.8KB / MEMORY_A≈17.0KB
 - 🔒 泄漏隔离: check.py/reference/hidden 不进 SUT workdir；判分独立跑（隐藏 B 内嵌 check.py，tclsh stub subprocess，check.py 不进 cline cwd）
+
+### 2026-11-02 shard A 轮 14：SynLintFlow-001 交付 ✓（A 档 trace-faithful / digital·synthesis，WAITING: 0）
+- 选 trace：trace_ledger.py --shard A next → mc≥300 候选多为 calibre/hspice（shard C 域）；按 digital/synthesis 工具主导排序挑纯数字会话 `1792574756685_lond8`（lorikx/hfeg0pkn005/mc=249，netlist=281/synthesis=90/innovus=4 → digital/synthesis 域，520 msgs/1.7MB）claim → mark case。选 lorikx 增用户多样性。
+- 深读：520 msgs/1.7MB；A档选轮 #0 逐字原文『我想在这个项目里做个lint的项目文件，以及综合的流程，都放在单独的文件夹（目标文件是rtl_synth里面的.v文件）』—— 纯「提出需求」无根因/修复 → 合 A档选轮规则。#34 指向 `lagat_flow_ref` 参考流程（context，不进 prompt）。真实任务 = 为 `rtl_synth/cfreq_ctrl.v`（VCO 自动校准 / Verilog-2001 / 358 行）建 lint（VC Static lint/CDC/RDC）+ syn（Design Compiler dcnxt_shell）两套独立文件夹；工艺 HL22 ssg_0p72v_m40c CCS。金标准 = .75:/home/lorikx/freq_calibration_model/ 真产物（30 文件 45189B：syn/ Makefile+SourceMe+README+setup/common_setup.tcl+scripts/{dc,dc_setup,dc_setup_filenames}.tcl+sdc/cfreq_ctrl.sdc+data/syn_filelist.f；lint/ README+work/{Makefile,SourceMe,cfreq_ctrl.prj,design_rtl.list,design_lib.list,lint.tcl}+config/{waiver.tcl,cdc_sdc/cdc.sdc,rdc_sdc/rdc.sdc}）。深读笔记 `designflow/trace_deepreads/1792574756685_lond8_syn_lint_flow.md`。
+- 合成（A 档 / L1-boundary / digital·synthesis）：prompt.txt = #0 逐字原文（无脱敏）；task_brief.md ≤3 行只写交付接口；gold = 用户真接受文本文件 cat 取回（30 文件 verbatim 入 reference_submit.zip，24879B）。资产 A = `rtl_synth/cfreq_ctrl.v`（真实输入）+ `workspace_listing.txt`（真实工作区清单含 lagat_flow_ref 提示）+ task_brief.md + prompt.txt。无合成说明性注解。隐藏 B = `hidden/rtl_synth/dco_trim.v`（结构性全异：CLK/DIV_CLK/RSTB/TRIG/TRIM vs A 的 REFCLK/FBCLK/RST_N/LOOP_BREAK/CAP_CTRL_OUT；8bit vs 10bit；3-state vs 7-state FSM），hidden_manifest.json 记其 common_setup B 值。
+- check.py 26 条独立断言 (a)-(z)：(a)-(p) syn 流程结构 16 条（zip 文件齐 / Makefile dcnxt_shell+bsub 兜底+USE_LSF 开关 / common_setup 7 变量 / source common_setup / analyze+elaborate+current_design+link / check_design / source SDC / set_operating_conditions / compile_ultra -gate_clock -no_autoungroup / uniquify+change_names+verilogout_no_tri / write mapped.{ddc,v,sdc,sdf} / 6 报告 qor+timing setup/hold+area+power+clock_gating+threshold_voltage_group / set_svf 读写对 / filelist .f / SDC set_max_delay+clock 双域+false_path）；(q)-(u) lint 流程结构 5 条（README / work 目录 Makefile+SourceMe+prj+rtl.list+lib.list+lint.tcl / config waiver+cdc.sdc+rdc.sdc / sc_target.mk include / SpyGlass→VC Static 名映射）；(v)-(z) tclsh stub 跨输入守护 5 条（stub_ok RC=0+::CALLS_END / stub elaborate 调用 / stub current_design=B dco_trim 非 cfreq_ctrl / stub write 用 $DESIGN 派生名非 A 字面量 / stub source 的 SDC 文件名按 $DESIGN 派生非 A 硬编码）。tclsh stub：source-override 取末参为文件路径（剥 DC-only -echo/-verbose）+ 记录 `::CALL <proc> <args>` + `::SOURCED_DUMP` + `::CALLS_END` 标记；活跃代码 strip Tcl 注释。
+- 自验：gold reference_submit.zip check() PASS（26/26）+ 5 negative 全 FAIL（NEG_RC=0，5 distinct labels：fake_empty→a / fake_print_expected→c / fake_core_deleted→j / naive_hardcode_a→w / naive_no_source_sdc→i）+ §4.9 (a)(b)(c) 三假 FAIL。
+- 断言闸门：k_rationale=26 == k_check=26 ≥8 ✓。追加 EDA-Eval-DesignFlow_A.jsonl（A jsonl 现 14 条，test==disk check.py roundtrip OK，16418B）。mark case 1792574756685_lond8（lorikx/hfeg0pkn005/digital/mc=249）。merge_shards → 主 jsonl 70 cases。日报 report_benchmark_11_02.html 70 cases，本条 k(断言)/k(check)/一致 = 26/26/✓。
+- A 档试点记账：track=faithful，未 pi/cline 实跑（"未跑"），待 cline+hook 重跑验真实通过率。失败归因预设：①交付形态/位置错→(a) / ②结构缺件→(b)-(u) / ③能力不足（硬编码 A 字面量）→(v)-(z) / ④判分歧义（对事实严格匹配）。
+- ⬜ 下轮：trace_ledger.py --shard A next 选新 trace 开第 15 条 case；或核查 orphan `CosimSetup-001`(ve67l) 台账对账；或按运维令 §四.3 挑一条 L2 shard-A PASS case 用 cline+hook 重跑。
 
 ### 2026-11-02 shard A 轮 13：PwrGlobals-001 交付 ✓（A 档 trace-faithful / pnr_signoff，WAITING: 0）
 - 选 trace：trace_ledger.py --shard A next → mc≥300 候选多为 calibre/hspice（shard C 域）；Python 解析工具串按 shard-A 工具主导排序（dig - ana*0.5），挑纯 innovus 会话 `1792399916731_00i9f`（alan3zh/hfeg0plg49/mc=101/innovus=1105/netlist=48，pnr_signoff，107msgs/421KB，可深读）claim → mark case。选 alan3zh（非 johnl）增用户多样性。
