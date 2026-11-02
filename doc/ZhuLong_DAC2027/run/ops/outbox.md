@@ -16551,3 +16551,111 @@ echo "=== DONE 141 ==="
     tracked: doc/ZhuLong_DAC2027/reports/report_zhulong_agent_compare_cline_vs_zhulongcli_full_zh.html
 === DONE 141 ===
 ```
+
+---
+
+## RUN_ID 142 · 2026-11-02 22:05:13 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 142 | anonymous rebuild+verify | $(date '+%F %T') | host=$(hostname) ==="
+GR=$(git rev-parse --show-toplevel 2>/dev/null || echo /nasdata/app.e0031982/code/super_intelligence_2035)
+cd "$GR" || exit 1
+git pull --rebase --autostash origin main >/dev/null 2>&1 || true
+P="$GR/doc/ZhuLong_DAC2027/ZhuLong_DAC2027"
+cd "$P" || { echo "paper dir 不存在"; exit 1; }
+
+echo "  paper HEAD=$(git rev-parse --short HEAD)"
+echo "[0] main.tex 第 1-3 行（应为 anonymous）"
+timeout 5 head -3 main.tex | sed 's/^/    /'
+
+echo
+echo "[1] 删旧 aux/out 后跑 pdflatex + bibtex（干净构建）"
+rm -f main.aux main.out main.toc
+timeout 300 pdflatex -interaction=nonstopmode main.tex > /tmp/zl_b1.log 2>&1; echo "    pass1 exit=$?"
+timeout 120 bibtex main > /tmp/zl_bib.log 2>&1; echo "    bibtex exit=$?"
+timeout 300 pdflatex -interaction=nonstopmode main.tex > /tmp/zl_b2.log 2>&1; echo "    pass2 exit=$?"
+timeout 300 pdflatex -interaction=nonstopmode main.tex > /tmp/zl_b3.log 2>&1; echo "    pass3 exit=$?"
+
+echo
+echo "[2] 编译健康度"
+echo "    errors(^!): $(grep -c '^!' main.log 2>/dev/null || echo 0)"
+echo "    undefined:  $(grep -ci 'undefined' main.log 2>/dev/null || echo 0)"
+echo "    overfull:   $(grep -c 'Overfull' main.log 2>/dev/null || echo 0)"
+grep 'Output written' main.log 2>/dev/null | sed 's/^/    /'
+echo "    bibtex warnings: $(grep -c 'Warning' /tmp/zl_bib.log 2>/dev/null || echo 0)"
+
+echo
+echo "[3] 匿名性实测（PDF 取文本，查作者/邮箱是否泄漏）"
+if command -v mutool >/dev/null 2>&1; then
+  timeout 60 mutool draw -F txt -o /tmp/zl_main.txt main.pdf 2>/dev/null
+  echo "    mutool pages: $(mutool info main.pdf 2>/dev/null | grep -m1 -i 'Pages')"
+else
+  echo "    mutool 不可用，改用 pdftotext"
+  timeout 60 pdftotext main.pdf /tmp/zl_main.txt 2>/dev/null || echo "    两种工具都不可用"
+fi
+if [ -s /tmp/zl_main.txt ]; then
+  echo "    Anonymous 命中: $(grep -ci 'anonymous' /tmp/zl_main.txt)"
+  echo "    泄漏检查（应为 0 行）:"
+  grep -inE 'Hongwen|Yiming Zhu|Yang Liu|cxmt|paul\.liu|ChangXin' /tmp/zl_main.txt | head -8 | sed 's/^/      LEAK: /'
+  echo "    首页作者区（前 12 行含 Author 的）:"
+  grep -inE 'author|anonymous' /tmp/zl_main.txt | head -6 | cut -c1-140 | sed 's/^/      /'
+else
+  echo "    ⚠️ 无法取文本，请人工看 PDF 首页"
+fi
+
+echo
+echo "[4] 入库 main.pdf（若与上次不同）"
+git add -- main.pdf main.tex 2>/dev/null
+if git diff --cached --quiet; then
+  echo "    无变化，不提交"
+else
+  git -c user.email=ops@local -c user.name=ops commit -m "zhulong paper: rebuild main.pdf (anonymous / double-blind)" -m "pages=$(grep -m1 'Output written' main.log | sed 's/.*(\([0-9]*\) pages.*/\1/')" >/dev/null 2>&1
+  timeout 60 git push origin main 2>&1 | tail -2 | sed 's/^/    /'
+  echo "    after: $(git log -1 --pretty='%h %s' | cut -c1-90)"
+fi
+
+echo "=== DONE 142 ==="
+```
+
+**输出**
+```
+=== RUN_ID 142 | anonymous rebuild+verify | 2026-11-02 22:05:13 | host=hfeg0tedaap02 ===
+  paper HEAD=528f61eb1
+[0] main.tex 第 1-3 行（应为 anonymous）
+    \documentclass[anonymous, sigconf]{acmart}
+    % DAC 2027 双盲投稿：默认匿名（anonymous）。camera-ready 时改回下行并在文末作者块填真实信息。
+    % \documentclass[sigconf]{acmart}
+
+[1] 删旧 aux/out 后跑 pdflatex + bibtex（干净构建）
+    pass1 exit=0
+    bibtex exit=0
+    pass2 exit=0
+    pass3 exit=0
+
+[2] 编译健康度
+    errors(^!): 0
+0
+    undefined:  0
+0
+    overfull:   1
+    Output written on main.pdf (8 pages, 871711 bytes).
+    bibtex warnings: 5
+
+[3] 匿名性实测（PDF 取文本，查作者/邮箱是否泄漏）
+    mutool pages: Pages: 8
+    Anonymous 命中: 2
+    泄漏检查（应为 0 行）:
+      LEAK: 998:[11] Bingyang Liu, Haoyi Zhang, Xiaohan Gao, Zichen Kong, Xiyuan Tang, Yibo
+    首页作者区（前 12 行含 Author 的）:
+      3:Anonymous Author(s)
+      32:Anonymous Author(s). 2026. ZhuLong: An Execution-Grounded LLM
+      855:that survives until execution rejects it; (ii) Unauthorized defen-
+
+[4] 入库 main.pdf（若与上次不同）
+    To https://github.com/foamliu/super_intelligence_2035
+       528f61eb1..47259c6f3  main -> main
+    after: 47259c6f3 zhulong paper: rebuild main.pdf (anonymous / double-blind)
+=== DONE 142 ===
+```
