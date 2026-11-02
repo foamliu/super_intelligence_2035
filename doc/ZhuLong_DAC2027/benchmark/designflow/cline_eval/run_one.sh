@@ -90,13 +90,23 @@ assert case, f'case {task_id} not found in {jsonl}'
 open(os.path.join(workdir, 'prompt.txt'), 'w').write(case['prompt'])
 
 # task_brief.md：≤3 行，只写交付接口与文件位置，不写「要做什么」
-brief = (
-    "# 交付接口\n"
-    f"- 工作目录：{workdir}\n"
-    "- 输入：assets/ 目录下的附件\n"
-    "- 交付：把要求的文件打包成 outputs/submit.zip 后停止，不要做额外的事。\n"
-)
-open(os.path.join(workdir, 'task_brief.md'), 'w').write(brief)
+# 优先用 case 专属的 assets/<task_id>/task_brief.md（含交付件清单/目录契约），
+# 否则回退到通用模板。运维令 21:3x §①3 允许 task_brief 只写交付接口与文件位置。
+# 根因修复：此前用通用模板覆盖了 case 专属 brief，导致 cline 看不到交付件结构契约
+# → ①交付形态/④判分歧义 失败（A-faithful ①+④ 破 30% 阈值）。
+brief_path = os.path.join(assets_src, 'task_brief.md')
+if os.path.isfile(brief_path):
+    shutil.copy(brief_path, os.path.join(workdir, 'task_brief.md'))
+    print('   task_brief.md: copied from assets (case-specific deliverable manifest)')
+else:
+    brief = (
+        "# 交付接口\n"
+        f"- 工作目录：{workdir}\n"
+        "- 输入：assets/ 目录下的附件\n"
+        "- 交付：把要求的文件打包成 outputs/submit.zip 后停止，不要做额外的事。\n"
+    )
+    open(os.path.join(workdir, 'task_brief.md'), 'w').write(brief)
+    print('   task_brief.md: generic template (no case-specific brief in assets/)')
 
 # 仅复制合法 attachments（按 source 名），过滤判分器/答案/隐藏
 forbidden = {'_check.py','check.py','_reference_check.py',

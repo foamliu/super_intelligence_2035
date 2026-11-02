@@ -158,3 +158,15 @@
 - **质量门**：DETERMINISM PASS（reproduce.sh 双跑 sha256 一致）；PII leak PASS（committed 文件 0 raw IP/email/真实用户名/路径/token；hash 字段 12-hex 校验过；scan.tsv 原始 IP 入 .gitignore 不入库；provenance .75 IP + 扫描属主用户名脱敏）。
 - **结论**：v0.50 = multi_machine_expansion_layer（非审计层/非 §X 递归），是 51 轮来首个真实多机扇出的 benchmark 版本；v0.1–v0.49 lineage 审计系列 halt；v0.1 单机集作废（RSI 污染）。
 - **局限**：task-distribution/coverage benchmark（session 元数据），per-task gold 需按需深挖单会话（red line 限不批量）；单次扫描快照（2026-10-28），用户持续增长→后续版本重扫扩展。
+
+## EXP-51（2026-11-03 shard A 轮 33）A-faithful 接口根因修复 — run_one.sh task_brief 覆盖 bug + 3 case 交付件清单补全
+- **背景**：运维令 21:3x §③判据「A 档 ①+④ 类失败占比 ≤30%」。cline+hook 存量重跑 8 条中 STAFlow-001 / TLEFRules-001 / SynLintFlow-001 三条 ①+④ 失败 = 3/8 = 37.5%，**破 30% 阈值** → 需"先修接口与判分，不许把格式失败当难度"。
+- **根因（关键发现）**：`designflow/cline_eval/run_one.sh` 建 workdir 时用**硬编码通用模板**覆盖 `task_brief.md`（"工作目录/输入/交付"4 行），**完全丢弃** `assets/<task_id>/task_brief.md` 里精心写好的 case 专属交付件清单。cline 只看到通用 brief + 逐字 prompt → 不知道交付件目录契约 → 按字面产通用文件 → ①交付形态/④判分歧义 失败。**三条 ①+④ 全部由此 bug 导致**，非模型能力不足。
+- **修复① run_one.sh**：改为优先 `shutil.copy(assets_src/task_brief.md → workdir/task_brief.md)`，无则回退通用模板。嵌入 heredoc 的 python 语法校验通过；3 case workdir-build 隔离模拟全过（brief_src=case-specific / leak CLEAN / attachments 正确复制）。
+- **修复② 3 case brief 补全（运维令 21:3x §①3 允许"task_brief 只写交付接口与文件位置"，不改意图）**：
+  - **SynLintFlow-001**：原 brief 仅"lint/ 与 syn/ 两个文件夹" + 悬空引用 `ref_syn_prj/lagat_flow_ref/`（assets 中不存在）→ 重写为完整 9 文件 syn/ 树（Makefile/SourceMe/README.md/setup common_setup/scripts {dc,dc_setup,dc_setup_filenames}.tcl/sdc/data syn_filelist.f）+ 5 文件 lint/ 树（work {Makefile,design_rtl.list,cfreq_ctrl.prj}/config {cdc_sdc,rdc_sdc} .sdc），删除悬空引用。**只列文件位置，不写内容**（USE_LSF/HL22/set_svf/compile_ultra 等内容断言留在 check.py 测能力）。
+  - **STAFlow-001**：原 brief 仅"STA_flow/ + setup/scr/run/README.md"（顶层+子目录）→ 增列具体文件树（sta_main.tcl + 10 编号步骤 1_setup..10_rpt + run_sta.csh/run_demo.csh + setup/common_setup.tcl + README.md）。feint_reference/ 引用保留（是合法 attachment）。
+  - **TLEFRules-001**：原 brief 已充分（lef_rules.py + rules_report_A.md + README.md + JSON schema）→ 不改。run_one.sh 修复后该 brief 终能送达 cline。
+- **难度保留**：brief 只补"文件位置"（① 形态契约），**内容断言**（c–p：USE_LSF/bsub/dcnxt_shell、HL22/Au22 ulvt+lvt ssg ccs、set_svf before elaborate、compile_ultra -gate_clock、report qor/timing/area/power、cur_date tag、create_clock REFCLK/FBCLK async、set_false_path RST_N…）仍由 check.py 测，模型须凭 verbatim prompt + 自身知识写出正确 flow → 真实难度未稀释。
+- **待验证**：修复需 cline 重跑确认 ①+④ 降阈（本轮 40 min 预算不足跑 3×1500s 重跑，留下一轮）。预期：brief 送达后 cline 产对文件树 → ① 形态断言过 → 剩余内容断言测能力 → 真实通过率应低于旧 ①+④ 表观失败率。
+- **影响范围**：run_one.sh 修复惠及**所有未来 cline 重跑**（不止这 3 条）——任何写了 case 专属 brief 的 case 此前都被通用模板覆盖。
