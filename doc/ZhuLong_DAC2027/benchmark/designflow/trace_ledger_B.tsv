@@ -1,0 +1,7 @@
+1792297573507_9knot	vincelu	hfeg0plg49	862	characterization	case	EDA-Eval-DesignFlow-Characterization-001	2026-10-30 21:42	seeded
+1791523486486_ws2bi	irene1li	hfeg0pkn004	248	spice_sim	case	EDA-Eval-DesignFlow-SpiceSim-001	2026-10-30 22:45	
+1790487462826_wb03t.messages.json	cwei	hfeg0plg93	691	spice_sim	case	EDA-Eval-DesignFlow-CTLESpec-001	2026-10-31 04:02	spice_sim L2 CTLE AC spec-compliance harness; 12 conds; ref 12/12 PASS, 5 negs FAIL; appended as jsonl line 20
+1792205753795_x5t0t.messages.json	brian	hfeg0plg95	497	characterization	case	EDA-Eval-DesignFlow-OpampChar-001	2026-10-31 06:17	
+1792724929127_2vuso.messages.json	tongni	hfeg0pkn003	468	spice_sim	case	EDA-Eval-DesignFlow-SpGen-001	2026-10-31 11:00	
+1792653194974_s2f9d.messages.json	e0024852	hfeg0plg79	294	spice_sim	parked		2026-10-31 11:39	finesim SRAM-tailor flow runs via bsub/LSF cluster + 9.7G DSPF external /rundata files, not reproducible on .75; flow-debugging not self-contained L2
+1792829537180_vaiob.messages.json	harrywu	hfeg0pkn002	506	spice_sim	case	EDA-Eval-DesignFlow-DelaySigma-001	2026-10-31 14:02	

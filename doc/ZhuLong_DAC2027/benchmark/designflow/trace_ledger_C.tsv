@@ -1,0 +1,13 @@
+1788770994295_x4b0p	xinqiaoz	hfeg0pkn004	1367	physical_verify	case	EDA-Eval-DesignFlow-PDKQA-001	2026-10-30 21:42	seeded
+1792487689184_4ybw1	yan1zh	hfeg0plg65	495	layout_aether	case	EDA-Eval-DesignFlow-LayoutAether-001	2026-10-30 21:42	seeded
+1786541065533_cgqd1	e0014566	hfeg0pkn001	772	layout_virtuoso	case	EDA-Eval-DesignFlow-LayoutVirtuoso-001	2026-10-30 21:42	seeded
+1785810906841_m2vah	e0014566	hfeg0plg58	975	layout_virtuoso	case	EDA-Eval-DesignFlow-ResFlow-001	2026-10-30 23:38	
+1791790886127_58vqx	xinqiaoz	hfeg0plg76	831	physical_verify	case	EDA-Eval-DesignFlow-DummyQA-001	2026-10-31 01:00	
+1790142100320_n91pk.messages.json	alenxu	hfeg0pkn003	755	layout_aether	case	EDA-Eval-DesignFlow-CTLEAC-001	2026-10-31 02:56	
+1787742497412_aneeo.messages.json	e0014566	hfeg0plg58	826	layout_virtuoso	parked		2026-10-31 04:17	4.5MB/1605msgs too large for single-round synth+verify; same rscalc flow as m2vah/ResFlow-001 risk of dup; defer
+1792149907675_axjv8.messages.json	xinqiaoz	hfeg0pkn004	520	physical_verify	case	EDA-Eval-DesignFlow-DummyMeas-001	2026-10-31 04:38	
+1785846039627_itvhk.messages.json	e0014566	hfeg0plg58	689	physical_verify	case	EDA-Eval-DesignFlow-PowerFill-001	2026-10-31 05:29	
+1785735994579_tckme.messages.json	e0014566	hfeg0plg58	654	layout_virtuoso	parked		2026-10-31 05:42	同 e0014566 PowerFill flow 重复 itvhk/PowerFill-001，避免同域重复
+1786504317615_fkprl.messages.json	e0014566	hfeg0plg58	633	layout_virtuoso	parked		2026-10-31 05:44	RTEXT/RNODE 打齐同 LayoutVirtuoso-001 主题，避免重复
+1792563683776_pwep8.messages.json	jianhaiq	hfeg0plg88	517	skipper	case	EDA-Eval-DesignFlow-PGLayout-001	2026-10-31 07:37	
+1792679003281_z44lk.messages.json	xinqiaoz	hfeg0pkn004	610	physical_verify	parked		2026-10-31 12:18	near-dup of DummyDeck-001 (BORD NOT empty-derived-layer->fill collapse, same xinqiaoz PDK QA dummy-flow); pivoted to vaiob for user/topic diversity

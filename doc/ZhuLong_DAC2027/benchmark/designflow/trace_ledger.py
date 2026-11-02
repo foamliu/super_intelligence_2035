@@ -19,8 +19,31 @@ import os
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-LEDGER = os.path.join(HERE, "trace_ledger.tsv")
 STATS = os.path.join(HERE, "summary_stats.json")
+
+# ---- shard 支持：按 domain 分片，每个 shard 独立 ledger + tools 过滤候选 ----
+# summary.tsv 列: ip host user session_file match_count keywords tools
+# tools 列（$7）做 domain 代理过滤（不完美，agent 可 peek-and-skip）
+SHARD_DOMAINS = {
+    "A": ("digital|verification|pnr_signoff|eda_other",
+          "verdi|vcs|dc_shell|verilint|formality|innovus|primetime|design_compiler|rc|pt_shell"),
+    "B": ("spice_sim|characterization",
+          "hspice|finesim|siliconsmart|spectre|ngspice|simulator|spice|custom_sim"),
+    "C": ("physical_verify|layout_virtuoso|layout_aether|pg_layout",
+          "calibre|virtuoso|aether|ipcustom|layout|lvs|drc|pexivirtuoso"),
+    "D": ("schematic_netlist|waveform|analog_context",
+          "waveview|cosmos|skill|netlist|spiros|spectrum|analog|schematic"),
+}
+
+# 运行时由 --shard 设定
+_shard = None
+LEDGER = os.path.join(HERE, "trace_ledger.tsv")
+
+def _set_shard(s):
+    global _shard, LEDGER
+    _shard = s
+    if s:
+        LEDGER = os.path.join(HERE, "trace_ledger_%s.tsv" % s)
 
 COLS = ["session_file", "user", "host", "match_count", "domain", "status",
         "case_id", "updated_at", "note"]
@@ -181,16 +204,23 @@ def cmd_next(args):
     st = load_stats()
     mc = int(st.get("target_mc", 300))
     pat = "|".join(used) if used else "__none__"
-    print("# 1) 在 .75 上跑（经 eda_flow run_commands）取候选，已排除台账里的 session：")
-    print("awk -F'\\t' 'NR>1 && $5+0>=%d && $4 !~ /^(%s)$/ {print $5\"\\t\"$4\"\\t\"$3\"\\t\"$2}' "
+    # shard tools 过滤（$7 = tools 列）
+    tool_filter = ""
+    if _shard and _shard in SHARD_DOMAINS:
+        tools_re = SHARD_DOMAINS[_shard][1]
+        tool_filter = " && $7 ~ /%s/" % tools_re
+    print("# 1) 在 .75 上跑（经 eda_flow run_commands）取候选，已排除台账里的 session%s：" % ("，按 shard %s tools 过滤" % _shard if _shard else ""))
+    print("awk -F'\\t' 'NR>1 && $5+0>=%d && $4 !~ /^(%s)$/%s {print $5\"\\t\"$4\"\\t\"$3\"\\t\"$2\"\\t\"$7}' "
           "/home/t0002965/log/ssh_eda_search_20261028_174426/summary.tsv | sort -rn | head -%d"
-          % (mc, pat, args.n))
+          % (mc, pat, tool_filter, args.n))
     print("# 2) 选第一条，落台账：")
-    print("python3 designflow/trace_ledger.py claim --session <session_file> --user <user> "
-          "--host <host> --match <match_count> [--domain <domain>]")
+    print("python3 designflow/trace_ledger.py%s claim --session <session_file> --user <user> "
+          "--host <host> --match <match_count> [--domain <domain>]"
+          % (" --shard %s" % _shard if _shard else ""))
     print("# 3) 出完 case 后结算（这是覆盖率的唯一分子来源）：")
-    print("python3 designflow/trace_ledger.py mark --session <session_file> --status case "
-          "--case-id <EDA-Eval-DesignFlow-XXX>")
+    print("python3 designflow/trace_ledger.py%s mark --session <session_file> --status case "
+          "--case-id <EDA-Eval-DesignFlow-XXX>"
+          % (" --shard %s" % _shard if _shard else ""))
     print("# 台账已有 %d 条，均已从候选中排除。" % len(used))
 
 
@@ -263,6 +293,8 @@ def cmd_refresh(args):
 
 def main():
     ap = argparse.ArgumentParser(description="trace ledger + coverage progress")
+    ap.add_argument("--shard", default=None, choices=sorted(SHARD_DOMAINS.keys()),
+                    help="shard ID (A/B/C/D): uses trace_ledger_<X>.tsv + tools filter in next")
     sub = ap.add_subparsers(dest="cmd", required=True)
     p = sub.add_parser("stats")
     p.add_argument("--bar", action="store_true")
@@ -286,6 +318,8 @@ def main():
     p = sub.add_parser("seed")
     p.add_argument("--jsonl", required=True)
     a = ap.parse_args()
+    if a.shard:
+        _set_shard(a.shard)
     return {"stats": cmd_stats, "next": cmd_next, "claim": cmd_claim,
             "mark": cmd_mark, "refresh": cmd_refresh, "seed": cmd_seed}[a.cmd](a) or 0
 
