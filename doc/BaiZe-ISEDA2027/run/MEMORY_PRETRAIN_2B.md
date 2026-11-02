@@ -19,17 +19,18 @@ WAITING: 0
 > 📦 §#1183（11-03 00:43, CPU eval监控·26轮·ETA~9.6-12.6h稳定）→ daily-memories/2026-11-03.md；**结论**：4 eval稳定,.29~16.6-17.0s/.12~19.9-20.6s,ETA~9.6-12.6h,S1 iter60470 lr=1e-3 stable。被#1184监控(无变化)。需要时再读。
 > 📦 §#1184（11-03 00:50, CPU eval监控·27轮·ETA~9.4-11.2h稳定）→ daily-memories/2026-11-03.md；**结论**：4 eval稳定,.29~16.7s/.12~18.5-19.1s,ETA~9.4-11.2h,S1 iter60530 lr=1e-3 stable。被#1185监控(无变化)。需要时再读。
 > 📦 §#1185（11-03 00:55, CPU eval监控·28轮·ETA~9.6-11.9h稳定）→ daily-memories/2026-11-03.md；**结论**：4 eval稳定,.29~17.0s/.12~19.5-19.8s,ETA~9.6-11.9h,S1 iter60570 lr=1e-3 stable。被#1186监控(无变化)。需要时再读。
-> 🆕 2026-11-03 01:02 #1186：**📊 CPU eval 监控·29轮——4 eval 全部正常推进，速度稳定，ETA ~9.4-11.8h。✅ S1 健康 iter 60630（lr=1e-3 stable）。lm_eval_results 仍空（最早 ~10:30 Nov3）。未完成指令：有**。
+> 🆕 2026-11-03 01:09 #1187：**📊 CPU eval 监控·30轮——4 eval 全部正常推进，速度稳定，ETA ~9.3-11.5h。✅ S1 健康 iter 60690（lr=1e-3 stable）。lm_eval_results 仍空（最早 ~10:30 Nov3）。未完成指令：有**。
 > **① 4 eval 运行正常**（limit=100, 8集, 2599 req, bfloat16, batch=1, nice 19, OMP=8, CUDA_VISIBLE_DEVICES=""）：
-> - .29: hf_iter_10000 (PID 992664, **570/2599=21.9%**, ~17.1s/req, 已~181min, ETA~9h24m→done~10:26 Nov3) + hf_iter_30000 (PID 1196989, **570/2599=21.9%**, ~17.1s/req, 已~178min, ETA~9h24m→done~10:26 Nov3)
-> - .12: hf_iter_20000 (PID 3729981, **447/2599=17.2%**, ~19.8s/req, 已~181min, ETA~11h48m→done~12:50 Nov3) + hf_iter_40000 (PID 3898654, **447/2599=17.2%**, ~18.8s/req, 已~178min, ETA~11h12m→done~12:14 Nov3)
-> - hf_iter_50000: export 完成，待 .29 空槽（.29 两 eval ~10:30 完成→立即启动 50000）。
+> - .29: hf_iter_10000 (PID 992664, **606/2599=23.3%**, ~17.1s/req, 已~3h08m, ETA~9h22m→done~10:31 Nov3) + hf_iter_30000 (PID 1196989, **594/2599=22.9%**, ~17.0s/req, 已~3h05m, ETA~9h29m→done~10:38 Nov3)
+> - .12: hf_iter_20000 (PID 3729981, ~500/2599≈19.3%, ~19.8s/req, ETA~11h→done~12:10 Nov3) + hf_iter_40000 (PID 3898654, ~500/2599≈19.3%, ~18.8s/req, ETA~10h30m→done~11:40 Nov3)（.12 数据为推算，本机无法直查）
+> - hf_iter_50000: export 完成（model.safetensors 4.4GB + config.json 齐），待 .29 空槽（.29 两 eval ~10:30 完成→立即启动 50000）。
 > - ⚠️ lm_eval_results/ 仍空（hf_iter_10000/results.json 旧 sciq 残留 9189B@20:53；最早 ~10:30 Nov3 出新 results.json）。
-> **② 速度**：.29 ~17.1s/req；.12 ~18.8-19.8s/req。稳定（与#1180-#1185一致）。
-> **③ CPU 负载**：.29 load 35.37/224 (~15.8%)；.12 load 30.95/224 (~13.8%) → 均 <<80%，不影响 S1。
-> **④ S1 状态**：iter **60630**/700k (8.66%), loss **2.097**, 0 NaN, 0 skip, ~6.9s/step, ~590K tok/s, lr=**1.0e-3** stable。launcher pid 4163528。ckpt@iter_60000(next@62000)。
-> **📦 体积**：TASK=30602B(29.9KB) / MEMORY=31612B(30.9KB)（均 ≤32KB，归档 0KB）。
+> **② 速度**：.29 ~17.0-17.1s/req。稳定（与#1180-#1186一致）。
+> **③ CPU 负载**：.29 load 34.03/224 (~15.2%) → <<80%，不影响 S1。
+> **④ S1 状态**：iter **60690**/700k (8.67%), loss **2.106**, 0 NaN, 0 skip, ~7.0s/step, ~590K tok/s, lr=**1.0e-3** stable。launcher pid 4163528。ckpt@iter_60000(next@62000)。
+> **📦 体积**：TASK=30602B(29.9KB) / MEMORY=~31.3KB（均 ≤32KB，归档 0KB）。
 > **下一步**：持续监控；.29 两 eval ~10:30 Nov3 完成→启动 hf_iter_50000→全部 5×8 完成后(~Nov3 20:30)汇总+报告。未完成指令：有。WAITING: 0。
+> 📦 §#1186（11-03 01:02, CPU eval监控·29轮·ETA~9.4-11.8h稳定）→ daily-memories/2026-11-03.md；**结论**：4 eval稳定,.29~17.1s/.12~18.8-19.8s,ETA~9.4-11.8h,S1 iter60630 lr=1e-3 stable。被#1187监控(无变化)。需要时再读。
 > 📦 §#1179（11-03 00:19, CPU eval监控·22轮·ETA~10.0-13.1h）→ daily-memories/2026-11-03.md；**结论**：4 eval稳定, .29~16.5-16.7s/.12~20.4-20.6s, ETA~10.0-13.1h, S1 iter60250 lr=1e-3 stable。被#1180监控(无变化)。需要时再读。
 > 📦 §#1178（11-03 00:13, CPU eval监控·21轮·ETA~10.1-13.5h）→ daily-memories/2026-11-03.md；**结论**：4 eval稳定, .29~16.6-16.9s/.12~20.4-21.5s, ETA~10.1-13.5h, S1 iter60200 lr=1e-3 stable。被#1179监控(无变化)。需要时再读。
 > 📦 §#1177（11-03 00:05, CPU eval监控·20轮·ETA~10.0-13.5h）→ daily-memories/2026-11-03.md；**结论**：4 eval稳定, .29~16.3-16.6s/.12~20.6-20.9s, ETA~10.0-13.5h, S1 iter60150 lr=1e-3 stable。被#1178监控(无变化)。需要时再读。
