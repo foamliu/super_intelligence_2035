@@ -1,5 +1,6 @@
-\documentclass[sigconf]{acmart}
-% \documentclass[anonymous, sigconf]{acmart}
+\documentclass[anonymous, sigconf]{acmart}
+% DAC 2027 双盲投稿：默认匿名（anonymous）。camera-ready 时改回下行并在文末作者块填真实信息。
+% \documentclass[sigconf]{acmart}
 \settopmatter{printacmref=true}
 
 \AtBeginDocument{%
@@ -50,6 +51,9 @@
 % 下方统一显示，避免 "单位 18 行重复" 的难看效果。
 % 提示：想改成每行 5 人（共 4 行，末行 3 人），只需把下面 \divide ... by 6 改为 by 5。
 \makeatletter
+% 双盲投稿：anonymous 模式下**跳过**本网格改造，交给 acmart 打印 "Anonymous Author(s)"；
+% camera-ready（sigconf）时才启用下面的 18 人网格排版。
+\if@ACM@anonymous\else
 \def\@mkauthors@iii{%
   \author@bx@wd=\textwidth\relax
   \advance\author@bx@wd by -\author@bx@sep\relax
@@ -99,6 +103,7 @@
     \fi
     \par\bigskip}%
 }
+\fi   % \if@ACM@anonymous\else
 \makeatother
 
 \begin{document}
