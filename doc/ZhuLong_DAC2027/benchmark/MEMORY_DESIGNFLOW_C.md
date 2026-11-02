@@ -15,9 +15,9 @@ DOMAINS: layout_aether, layout_virtuoso, pg_layout, physical_verify
 - 轮(14) 已归档→ designflow/MEMORY_C_archive.md（EDA-Eval-DesignFlow-DRCPatPlan-001；详细见归档）
 - 轮(13) 已归档→ designflow/MEMORY_C_archive.md（EDA-Eval-DesignFlow-DRCPatGen-001；详细见归档）
 - 轮(12) 已归档→ designflow/MEMORY_C_archive.md（EDA-Eval-DesignFlow-RsCalcMesh-001；详细见归档）
-- 📊 trace 覆盖率：见 designflow/trace_ledger.py --shard C stats（covered=28，台账已动 34：case 28 · parked 6 · deepread 0）
-- 🎯 通过率: 0/0（pi/cline 未跑；A-档 faithful 本轮只报数不设目标；⚠️ cline+hook 已就绪但 strict hook 破坏 L1/offline case，待放宽）
-- 🧾 断言清单 (shard C): 28/28 case 达标 ✓（rewrite_queue 已清零；轮(21) 交付 AutoViaGen-001 k=18/k_check=18 ✓；轮(11) 探索轮无 case 不计）
+- 📊 trace 覆盖率：见 designflow/trace_ledger.py --shard C stats（covered=29，台账已动 36：case 29 · parked 7 · deepread 0）
+- 🎯 通过率: 0/0（pi/cline 未跑；A-档 faithful 本轮只报数不设目标；⚠️ cline+hook 已就绪但 strict hook 破坏 L1/offline case，待放宽；轮(22) GDSBump2-001 为首个真 L2 可合法 cline 重跑，待放宽后首选重跑）
+- 🧾 断言清单 (shard C): 29/29 case 达标 ✓（rewrite_queue 已清零；轮(22) 交付 GDSBump2-001 k=15/k_check=15 ✓；轮(11) 探索轮无 case 不计）
 - ⚠️ DEBT: 0
 - 📦 体积：TASK≈25.9KB / MEMORY_C≈21.5KB（轮20 归档轮13/14/16/17→archive 批次49；< 32KB 软限 ✓）
 

@@ -32,3 +32,5 @@
 1792393017757_c63e9	hongyuy	hfeg0plg64	233	layout_aether	case	EDA-Eval-DesignFlow-WireWatermark-001	2026-11-02 22:46	
 1785725739513_r7ah0	t0002638	hfeg0plg49	685	layout_aether	parked		2026-11-02 22:53	meta/tooling session: setup eda_fastmcp/Kimi/pyAether standalone server for 烛龙, no layout/physical_verify design task; user turns are all 'start MCP'/'restart service'/'open Aether console' env-probe, not a design-flow deliverable
 1785502291442_6mdxh	e0014566	hfeg0plg58	581	layout_virtuoso	case	EDA-Eval-DesignFlow-AutoViaGen-001	2026-11-02 23:12	
+1789994991166_v80cd	davidwu	hfeg0pjn200	398	layout_aether	parked		2026-11-02 23:31	455-msg debugging saga (PR Boundary/siteDef/rows iteration for aeAutoPlacement); near-dup of AutoViaGen config->script pattern; L2-blocked live placer; isolating clean gold risky under budget
+1792323159551_toezr	xxchen	hfeg0pkn005	318	physical_verify	case	EDA-Eval-DesignFlow-GDSBump2-001	2026-11-03 00:01	
