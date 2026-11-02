@@ -5,13 +5,13 @@ WAITING: 0
 ## 📊 进度快照
 
 ```
-PHASE:        R1379 incr_eval轮(内存自检418th PASS+CPU自检PASS+scan_backlog=1→1RESOLVED)·eval TOTAL=2370/1814(+1/+1)·predict files:cline500(DONE)·opencode500(DONE)·pi475(DONE)·claude-code433(DONE)·codex386/500(alive)·hermes236/500(alive)·deepseek153/500(alive)(3路alive:codex386·hermes236·deepseek153)
-已完成:       H-B✅·Gate7/7·TB报告✅·pilot20✅·R984-R988恒0调试✅·R989 incr_eval全链✅·R997硬约束修复✅·R998-R1378 incr_eval链+内存/CPU自检+体积归档✅·R1379 incr_eval 1item(1resolved)
-当前动作:     R1379:内存自检418th PASS(运维令10-30:无本线predict>50GB;3路predict各~30MB RSS;MemAvailable1.4TB)+CPU自检PASS(运维令11-02:load38.98/224≈17.4%,<80%;无本线predict>8000%CPU;无containerd/runc/testbed进程)·scan_backlog=1(hermes pytest-7432)→incr_eval R1379(1item,max_workers=2,docker eval 4s)→hermes pytest-7432 RESOLVED✅·eval TOTAL=2370/1814(+1/+1:hermes 130→131/39)·scan_backlog post-incr=0(全7路clean)·eval明细:cline-patched n=442 res=326·opencode n=497 res=401·pi n=463 res=333·claude-code n=358 res=273·codex n=293 res=230·hermes n=170 res=131·deepseek n=147 res=120·predict files实测:cline-patched500(DONE)·opencode500(DONE)·pi475(DONE)·claude-code433(DONE)·codex386/500(alive)·hermes236/500(alive)·deepseek153/500(alive)·3路alive progressing(低CPU,非stuck)·硬约束:predictions 0 tracked✅·eval report.json 0 tracked✅·/data 6.0T free✅·docker 0 running✅·无kill·无失控·未完成指令:有(10-30内存自检常驻+11-02 CPU自检常驻+10-28full500 3路predict仍跑)⇒WAITING=0.
+PHASE:        R1380 巡检轮(内存自检419th PASS+CPU自检PASS+scan_backlog=0 clean)·eval TOTAL=2370/1814(unchanged)·predict files:cline500(DONE)·opencode500(DONE)·pi475(DONE)·claude-code433(DONE)·codex386/500(alive)·hermes236/500(alive)·deepseek153/500(alive)(3路alive:codex386·hermes236·deepseek153)
+已完成:       H-B✅·Gate7/7·TB报告✅·pilot20✅·R984-R988恒0调试✅·R989 incr_eval全链✅·R997硬约束修复✅·R998-R1379 incr_eval链+内存/CPU自检+体积归档✅·R1380 巡检轮(scan_backlog=0)
+当前动作:     R1380:内存自检419th PASS(运维令10-30:3路predict各~30MB RSS;MemAvailable1.4TB)+CPU自检PASS(运维令11-02:load36.57/224≈16.3%,<80%;无本线predict>8000%CPU;无containerd/runc/testbed进程)·scan_backlog=0(全7路clean,无新predict完成;predict计数未变codex386/hermes236/deepseek153)·3路alive progressing(codex sphinx-9461 workdir mtime06:22·hermes pytest-7490 mtime06:44·deepseek django-14792 mtime06:33)·eval TOTAL=2370/1814(unchanged,ground truth report.json=2388确认)·eval明细:cline-patched n=442 res=326·opencode n=497 res=401·pi n=463 res=333·claude-code n=358 res=273·codex n=293 res=230·hermes n=170 res=131·deepseek n=147 res=120·predict:codex386/500(alive)·hermes236/500(alive)·deepseek153/500(alive)·硬约束:predictions 0 tracked✅·eval 0 tracked✅·/data 6.0T free✅·docker 0 running✅·无kill·无失控·未完成指令:有(10-30内存自检常驻+11-02 CPU自检常驻+10-28full500 3路predict仍跑)⇒WAITING=0.
 下一步:       ①3路predict alive(codex386/500·hermes236/500·deepseek153/500) ②每轮scan_backlog→incr_eval新完成predict ③predict全完成后final eval+full500最终报告(7路总表+Wilson CI+McNemar 7×7) ④infra单列(铁律③) ⑤永久硬约束:禁止commit结果JSON ⑥TASK=34.9KB·MEMORY≤32KB
-阻塞:         无(3路predict alive progressing;scan_backlog=0 clean post-incr_eval;本轮自检无失控,无kill). git:clean(本线文件clean,工作树有ZhuLong/pretrain在途文件未碰).
+阻塞:         无(3路predict alive progressing;scan_backlog=0 clean;本轮自检无失控,无kill). git:clean(本线文件clean,工作树有ZhuLong/pretrain在途文件未碰).
 ERROR_COUNT:  0
-  📦 体积：TASK=35757B(34.9KB,>32KB,3活跃块不可归档,<40KB红线OK) / MEMORY=31979B(~31.2KB,≤32KB✅)
+  📦 体积：TASK=35757B(34.9KB,>32KB,3活跃块不可归档,<40KB红线OK) / MEMORY=~31.5KB(≤32KB✅)
 ```
 
 > 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
@@ -19,7 +19,9 @@ ERROR_COUNT:  0
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 
 ### 本唤醒流水
-[06:45] R1379 incr_eval轮:内存自检418th PASS(运维令10-30:3路predict各~30MB RSS;MemAvailable1.4TB)+CPU自检PASS(运维令11-02:load38.98/224≈17.4%,<80%;无本线predict>8000%CPU;无containerd/runc/testbed进程)·scan_backlog全7路=1(hermes pytest-7432)→incr_eval R1379(1item,max_workers=2,docker eval 4s)→hermes pytest-7432 RESOLVED✅·eval TOTAL=2370/1814(+1/+1:hermes 130→131/39)·scan_backlog post-incr=0(全7路clean)·eval明细:cline n=442 res=326·opencode n=497 res=401·pi n=463 res=333·claude-code n=358 res=273·codex n=293 res=230·hermes n=170 res=131·deepseek n=147 res=120·predict:codex386/500(alive)·hermes236/500(alive)·deepseek153/500(alive)·硬约束:predictions 0 tracked✅·eval 0 tracked✅·/data 6.0T free✅·docker 0 running✅·无kill·无失控·体积:TASK=34.9KB·MEMORY=31.2KB
+[06:50] R1380 巡检轮:内存自检419th PASS(运维令10-30:3路predict各~30MB RSS;MemAvailable1.4TB)+CPU自检PASS(运维令11-02:load36.57/224≈16.3%,<80%;无本线predict>8000%CPU;无containerd/runc/testbed进程)·scan_backlog=0(全7路clean,无新predict完成;predict计数未变codex386/hermes236/deepseek153)·3路alive progressing(codex sphinx-9461·hermes pytest-7490·deepseek django-14792,workdir近期mtime)·eval TOTAL=2370/1814(unchanged,ground truth report.json=2388确认)·硬约束:predictions 0 tracked✅·eval 0 tracked✅·/data 6.0T free✅·docker 0 running✅·无kill·无失控·体积:TASK=34.9KB·MEMORY=~31.5KB
+
+> 📦 R1379 流水(06:45,内存自检418th+CPU自检PASS+incr_eval hermes pytest-7432 RESOLVED)已归档 → daily-memories-harness/2026-11-03.md。结论：eval 2370/1814(+1/+1:hermes)·3路predict alive。需要时再读。
 
 > 📦 R1378 流水(06:38,内存自检417th+CPU自检PASS+incr_eval 1item 1RESOLVED)已归档 → daily-memories-harness/2026-11-03.md。结论：hermes pytest-7324 RESOLVED·eval 2369/1813(+1/+1)·3路predict alive。需要时再读。
 
@@ -39,9 +41,7 @@ ERROR_COUNT:  0
 
 > 📦 R1369 流水(05:14,监控轮自检408th PASS+scan_backlog=0)已归档 → daily-memories-harness/2026-11-03.md。结论：eval 2356/1801 unchanged·3路predict alive。需要时再读。
 
-> 📦 R1367 流水(04:56,incr_eval 3items ALL RESOLVED+codex500里程碑)已归档 → daily-memories-harness/2026-11-03.md。结论：eval 2353→2356/1798→1801(+3/+3)·3路predict alive。需要时再读。
 
-> 📦 R1366 流水(04:38,incr_eval deepseek django-14631 RESOLVED)已归档 → daily-memories-harness/2026-11-03.md。结论：eval 2352→2353/1797→1798(+1/+1)·3路predict alive。需要时再读。
 
 > 📦 R1365 流水(04:27,incr_eval codex sphinx-8721 RESOLVED)已归档 → daily-memories-harness/2026-11-03.md。结论：eval 2351→2352/1796→1797(+1/+1)·3路predict alive。需要时再读。
 
