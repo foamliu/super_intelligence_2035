@@ -25035,3 +25035,118 @@ echo "=== DONE 237 ==="
       torchrun=3  train=0
 === DONE 237 ===
 ```
+
+---
+
+## RUN_ID 238 · 2026-11-02 21:18:33 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 238 | progress snapshot | $(date '+%F %T') | host=$(hostname) ==="
+W=/tmp/baize_s1_baize2b_worker.log
+
+echo
+echo "[1] S1 训练"
+timeout 10 grep -E 'iteration +[0-9]+/' "$W" 2>/dev/null | tail -3 | cut -c1-175 | sed 's/^/    /'
+echo "    log mtime=$(stat -c %y "$W" 2>/dev/null | cut -c1-19)"
+echo "    train.sh=$(timeout 8 ps -eo pid,etime,cmd 2>/dev/null | grep -E '[t]rain\.sh s1' | awk '{print $1" "$2}')"
+
+echo
+echo "[2] .29 GPU"
+timeout 12 nvidia-smi --query-gpu=index,utilization.gpu,memory.used,power.draw,temperature.gpu --format=csv,noheader 2>/dev/null | sed 's/^/    /'
+
+echo
+echo "[3] CPU 负载 / eval 占用（要求整机 ≤80%）"
+echo "    nproc=$(nproc) load=$(cut -d' ' -f1-3 /proc/loadavg)"
+timeout 8 vmstat 1 2 2>/dev/null | tail -1 | awk '{print "    us%="$13" sy%="$14" id%="$15}'
+echo "    eval 进程:"
+timeout 10 ps -eo pid,etime,pcpu,rss,cmd 2>/dev/null | grep -E 'python[^ ]* .*(cpu_lmeval|lm_eval|test_lmeval)' | grep -v grep | cut -c1-130 | head -5 | sed 's/^/    /' || echo "    (无)"
+
+echo
+echo "[4] CPU smoke / 评测日志（找 acc 是否 >0）"
+timeout 10 ls -lt --time-style='+%F %T' /tmp 2>/dev/null | grep -iE 'cpu_lmeval|lmeval|cpu_smoke' | head -6 | awk '{print "    "$6,$7,$5"B",$8}'
+for f in $(ls -t /tmp/*cpu_lmeval*.log /tmp/*lmeval*.log 2>/dev/null | head -2); do
+  echo "    ---- $f 尾 12 ----"
+  timeout 8 tail -12 "$f" 2>/dev/null | cut -c1-140 | sed 's/^/      /'
+done
+
+echo
+echo "[5] .12（训练 + 负载）"
+timeout 20 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 10.239.2.12 '
+  echo "    util: $(nvidia-smi --query-gpu=utilization.gpu --format=csv,noheader | tr "\n" " ")"
+  echo "    load=$(cut -d" " -f1-3 /proc/loadavg)  nproc=$(nproc)"
+  echo "    eval=$(ps -eo pcpu,cmd | grep -E "python[^ ]* .*(cpu_lmeval|lm_eval)" | grep -v grep | head -3 | tr "\n" "|")"
+' 2>&1 | sed 's/^/  /' || echo "    ssh .12 failed"
+
+echo "=== DONE 238 ==="
+```
+
+**输出**
+```
+=== RUN_ID 238 | progress snapshot | 2026-11-02 21:18:33 | host=whag0pgpuap29 ===
+
+[1] S1 训练
+     [2026-11-02 21:15:59] iteration    58700/  700000 | consumed samples:     15027200 | elapsed time per iteration (ms): 7046.5 | learning rate: 3.500000E-04 | global batch size
+     [2026-11-02 21:17:09] iteration    58710/  700000 | consumed samples:     15029760 | elapsed time per iteration (ms): 6968.0 | learning rate: 3.550000E-04 | global batch size
+     [2026-11-02 21:18:18] iteration    58720/  700000 | consumed samples:     15032320 | elapsed time per iteration (ms): 6945.3 | learning rate: 3.600000E-04 | global batch size
+    log mtime=2026-11-02 21:18:18
+    train.sh=122533 27:26
+4163528 01:27:17
+
+[2] .29 GPU
+    0, 100 %, 74939 MiB, 458.48 W, 43
+    1, 100 %, 74961 MiB, 469.15 W, 51
+    2, 100 %, 74841 MiB, 435.13 W, 46
+    3, 100 %, 75161 MiB, 401.41 W, 52
+    4, 100 %, 75141 MiB, 426.13 W, 47
+    5, 100 %, 74961 MiB, 392.45 W, 54
+    6, 85 %, 75221 MiB, 348.75 W, 50
+    7, 82 %, 74961 MiB, 361.04 W, 55
+
+[3] CPU 负载 / eval 占用（要求整机 ≤80%）
+    nproc=224 load=24.51 24.53 25.40
+    us%=5 sy%=5 id%=90
+    eval 进程:
+     122533       27:28 21.5 420112 cline --data-dir /nas_train/app.e0031982/.cline_pretrain -c /nas_train/app.e0031982/code/super_int
+
+[4] CPU smoke / 评测日志（找 acc 是否 >0）
+    2026-11-02 20:10:04 4228B cpu_smoke_l1b.log
+    2026-11-02 20:09:19 4228B cpu_smoke_v2.log
+    2026-11-02 20:02:54 4230B cpu_smoke_v3.log
+    2026-11-02 19:50:23 4096B cpu_smoke_result
+    2026-11-02 19:50:23 6036B cpu_smoke_wrapper.log
+    2026-11-02 19:47:47 75B cpu_smoke_nocache.log
+    ---- /tmp/test_lmeval.log 尾 12 ----
+          return model_class.from_pretrained(
+        File "/nas_train/app.e0031982/code/BaiZe-ISEDA2027/p6_tf5/transformers/modeling_utils.py", line 4313, in from_pretrained
+          loading_info, disk_offload_index = cls._load_pretrained_model(model, state_dict, checkpoint_files, load_config)
+        File "/nas_train/app.e0031982/code/BaiZe-ISEDA2027/p6_tf5/transformers/modeling_utils.py", line 4393, in _load_pretrained_model
+          caching_allocator_warmup(model, expanded_device_map, load_config.hf_quantizer)
+        File "/nas_train/app.e0031982/code/BaiZe-ISEDA2027/p6_tf5/transformers/modeling_utils.py", line 5023, in caching_allocator_warmup
+          index = device.index if device.index is not None else accelerator_module.current_device()
+        File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/cuda/__init__.py", line 1071, in current_device
+          _lazy_init()
+        File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/cuda/__init__.py", line 412, in _lazy_init
+          torch._C._cuda_init()
+      RuntimeError: No CUDA GPUs are available
+    ---- /tmp/test_lmeval_min2.log 尾 12 ----
+      /nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is d
+        import pynvml  # type: ignore[import]
+      Creating HFLM...
+      Loading weights:   0%|          | 0/323 [00:00<?, ?it/s]Loading weights: 100%|██████████| 323/323 [00:00<00:00, 7122.9
+      HFLM loaded, device=cpu, dtype=torch.bfloat16
+      Calling loglikelihood...
+      Tokenizing inputs:   0%|          | 0/2 [00:00<?, ?it/s]Tokenizing inputs: 100%|██████████| 2/2 [00:00<00:00, 153.44it
+      Running loglikelihood requests:   0%|          | 0/2 [00:00<?, ?it/s][transformers] `causal_conv1d_fn` is falling back to its reference PyT
+      [transformers] `mamba_chunk_scan_combined` is falling back to its reference PyTorch implementation because `mamba_ssm` is not installed. Thi
+      Running loglikelihood requests:  50%|█████     | 1/2 [00:20<00:20, 20.36s/it]Running loglikelihood requests: 100%|████�
+      Results: [(nan, False), (nan, False)]
+      SUCCESS!
+
+[5] .12（训练 + 负载）
+      util: 100 % 100 % 100 % 100 % 100 % 100 % 100 % 100 % 
+      load=24.01 25.11 25.13  nproc=224
+      eval=
+=== DONE 238 ===
+```
