@@ -2,17 +2,27 @@ WAITING: 0
 SHARD: A (digital_front)
 DOMAINS: digital, eda_other, pnr_signoff, verification
 
-- **PHASE**: A-faithful 接口修复**验证中**（TLEFRules-001 重跑 ✓ ① 消除）。轮34 run_one.sh task_brief 覆盖 bug 修复 + 3 case brief 补全。轮35 cline 重跑 TLEFRules-001（701s/exit0）：cline 真产出全部 3 文件含 lef_rules.py(10.4KB) → **①交付形态断言 (a)lef_rules.py-missing 消除**（旧 266s 跑只写 summary.md → ①+④）。新失败前移到 (j)(t) width_range 格式（④判分歧义：brief 写 `width_range{}` 被 cline 解为嵌套 dict，check.py 要 `{"M1":"0.88 TO 14"}` 字符串值）→ **brief/check schema 不一致（我的 bug）已修**：brief 改 `width_range{<layer>:"<min> TO <max>"}` 并明示值是字符串。详见 EXPERIMENTS EXP-52。
-- ✅ **本轮交付**：TLEFRules-001 cline+hook 重跑（验证轮34接口修复）+ ④width_range schema bug 定位与 brief 修复。**① 消除 = 接口修复生效的硬证据**。.75 bashpool/run_code 本轮宕机（run_commands exit -1 / pyAether MCP timeout）→ 合成路径阻塞，pivot 到本地 cline 重跑（不需 .75）。A.jsonl 仍 27 条 / 台账 covered=26。
-- 📊 trace 覆盖率：26/1001 = 2.6%（covered=26 · touched=33 · parked=7；A jsonl 27 条，未变；.75 宕机未刷新候选池）
-- 🎯 通过率: cline+hook 存量重跑 9 条 = 3 PASS / 9 = 33.3%（PTSignoff/InnovusLaunchDiag/FormalityLaunchDiag PASS）。①+④=3/9=33.3%（STAFlow① + SynLintFlow①+④ + TLEFRules-rerun④narrow）— **但 ① 分量已降**（TLEFRules ①→④），待 STAFlow/SynLintFlow 重跑确认 ① 进一步消除。
-- 🧾 断言: 本轮无新 case（验证轮）；存量 27 条全达标
-- 📦 体积：TASK≈23.8KB / MEMORY_A≈13.5KB
-- 🔒 泄漏隔离: cline workdir leak 自检 clean（brief+techlef 仅 2 附件，无 check.py/reference/hidden）；判分独立 /tmp/judge_*/；hook 部署+scope append（flock 多 shard 安全）
-- ⚠️ 运维令进度：TLEFRules-001 ① 消除验证 ✓。**待办**：①cline 重跑 STAFlow-001/SynLintFlow-001 验 ① 消除（brief 已修，优先下轮）；②TLEFRules-001 brief 修复后第 2 次重跑确认 ④→PASS（700s，下轮）；③.75 bashpool 恢复后继续合成（A 档试点 2/10）；④重算 ①+④ 占比是否降阈 ≤30%。
+- **PHASE**: A-faithful 合成恢复（轮36 EmXlsModel-001 新建 ✓）。A 档试点 3/10（SPFCoupling-001/TLEFRules-001/EmXlsModel-001）。接口修复待 cline 重跑验证（TLEFRules-001 brief 修后第 2 次重跑未做）。
+- ✅ **本轮交付**：`EDA-Eval-DesignFlow-EmXlsModel-001` 合成（eda_other / L1 / A 档 trace-faithful）。trace 1791362457881_awgyg（hbpeng/mc=445）：解析 LDDB2.0_EM_File.xls 模板→5 sheet 静态类(EmTemp…)+Row 类(EmTempRow…)+EmXlsReader。gold=Lddb20EmModels.py(705 行，scp 取回 sha e2a0a0d5)。**关键工程**：原始 xls permission denied → 由 gold HEADER_MAP 重建 xlsx 附件（pure-stdlib writer，xlrd 1.2.0 验证可读）；判分机无 xlrd → **check.py 内嵌 stdlib xlrd shim**（注入 sys.modules）判分零依赖。15 条断言(a)-(o)=k_check=15≥8 GATE PASS；自验本地 ref PASS + 5 negative 全 FAIL(NEG_RC=0，标签 h/c/c/m/n) + §4.9(a)(b)(c) 覆盖。A.jsonl 28 条 / 台账 covered=27。
+- 📊 trace 覆盖率：27/1001 = 2.7%（covered=27 · touched=34 · parked=7；A jsonl 28 条）
+- 🎯 通过率: cline+hook 存量重跑 9 条 = 3 PASS / 9 = 33.3%（PTSignoff/InnovusLaunchDiag/FormalityLaunchDiag PASS）。①+④=3/9=33.3%。新 case EmXlsModel-001 待 cline 实跑。
+- 🧾 断言: 本轮新 case EmXlsModel-001 k=15 达标；存量 28 条全达标
+- 📦 体积：TASK≈23.8KB / MEMORY_A≈14KB
+- 🔒 泄漏隔离: EmXlsModel-001 workdir 仅放 prompt.txt+task_brief.md+LDDB2.0_EM_File.xlsx(A)；hidden/B+check.py+reference 在 judge 独立 dir；check.py 内嵌 xlrd shim 不泄露 B 数据
+- ⚠️ 运维令进度：A 档试点 3/10。**待办**：①cline 实跑 EmXlsModel-001（本地可判分，不依赖 .75）；②TLEFRules-001 brief 修后第 2 次重跑确认 ④→PASS；③STAFlow-001/SynLintFlow-001 cline 重跑验 ① 消除；④继续 A 档合成（候选池薄，需扩大 digital 域搜索）。
 
 
-### 2026-11-03 shard A 轮 32：SynLintFlow-001 cline+hook 重跑 = FAIL·①+④ A-faithful（运维令 §四.3，①+④ 破 30% 阈值，WAITING: 0）
+### 2026-11-03 shard A 轮 36：EmXlsModel-001 合成 ✓（eda_other / L1 / A 档 trace-faithful，LDDB2.0 EM xls 模板→静态类，WAITING: 0）
+- 任务卡本轮路径 = 合成 1 条新 case。.75 eda_flow open_session → run_commands 解析 summary.tsv。长 awk 排除正则仍 syntax error，改 python 脚本按 `kw:count` 解析 keywords + DIG 信号(verdi/vcs/dc_shell/primetime/formality/spyglass/innovus/...) + ANA 反向过滤，mc≥30，排除台账 32 条，得 19 digital-leaning 候选。逐个 scp+解析首 user msg 排查。
+- **选料**：`1791362457881_awgyg`（hbpeng/hfeg0pkn005/mc=445，dig_score=10）= 解析 LDDB2.0_EM_File.xls 模板生成静态 Python 类。用户 #0/#188/#198/#199/#277/#333 6 轮迭代规格，#277 = 最终 Row 后缀版本（A 档合规：提出需求轮，非根因/修复轮）。deepread msgs 270-345 提取 gold = `/home/hbpeng/Lddb20EmModels.py`（705 行：5 Row 类 EmTempRow…/5 容器类 EmTemp…/SHEET_CLASS_MAP/EmXlsReader/parseXls，scp 取回 sha e2a0a0d5 与本地一致）。
+- **附件重建（关键工程 1）**：原始 xls 在 .75 与 hbpeng 机器均 permission denied（属 imctf 用户），trace 中 assistant 的 run_approved_command 被 policy 拒、read_files 读二进制返回空 → gold HEADER_MAP（真实表头）来自已有 .py 推断。**故由 gold HEADER_MAP + 模板样例行重建 xlsx**：pure-stdlib .xlsx writer（zipfile+xml.etree，chr(10) 显式换行避免转义歧义），A=3 行/sheet，隐藏 B=5/4/4/5/4 行（seed=37 不同取值）。xlrd 1.2.0 在 .75 验证可读，B sheet XML sha 与 .75 stdlib 构建逐字节一致。
+- **判分零依赖（关键工程 2）**：gold EmXlsReader.parse 内 `import xlrd`，判分机 36.15 无 xlrd 且 pip 装/超时。**check.py 内嵌 stdlib-only xlrd shim**（读 .xlsx via zipfile+xml.etree，注入 sys.modules['xlrd']），候选 `import xlrd` 自动拾取 shim。判分全程零第三方依赖。.75（real xlrd）与本地（无 xlrd）均自验通过。
+- **check.py 15 条断言(a)-(o)**：(a)zip 恰 1 个 .py (b)py_compile (c)5 容器类 (d)5 Row 类 (e)Row.SHEET_NAME (f)HEADER_MAP 驼峰键 (g)ROW_CLASS 指向 (h)SHEET_CLASS_MAP 5 键 (i)EmXlsReader.parse (j)便捷访问器 (k)parseXls (l)下划线驼峰 EmIdcMetal/EmIdcVia (m)跨输入 B 行数 5/4/4/5/4 (n)B EM_TEMP 首行 M2/M3 (o)B EM_Ipeak 首行 ipeak=0.39。k_rationale=k_check=15≥8 GATE PASS。
+- **自验（本地无 xlrd）**：ref reference_submit.zip → check() PASS 15/15；5 negative（fake_empty→c / fake_print_expected→c / fake_core_deleted→h / naive_hardcode_a→m / naive_stub_constants→n）全 FAIL，NEG_RC=0；§4.9(a)(b)(c) 三假提交覆盖。test 字段 == disk check.py 字节同步。
+- **落库**：追加 EDA-Eval-DesignFlow_A.jsonl 第 28 行（task_id=EDA-Eval-DesignFlow-EmXlsModel-001, domain=eda_other, track=faithful, level=L1）。台账 mark case → covered 26→27。assets(3 文件:prompt.txt/task_brief.md/LDDB2.0_EM_File.xlsx)+hidden(B.xlsx+manifest) + reference(check.py+Lddb20EmModels.py+reference_submit.zip+negative/+negative_selftest.py) 落 EDA-Flow-Bench 仓。
+- ⬜ 下轮：①cline 实跑 EmXlsModel-001（本地可判分，不依赖 .75 bashpool）；或 ②TLEFRules-001 brief 修后第 2 次重跑；或 ③继续 A 档合成（候选池薄，需扩大 digital 域搜索到 mc<30 或 ANA 偏高的 mixed session）。
+
+
 - 任务卡本轮路径 = 合成 1 条新 case。trace_ledger --shard A next 取候选：awk 长排除正则仍报 syntax error，改 python 脚本按 `<count> <tool>` 对解析 summary.tsv tools 字段 + keywords `kw:count` 对。digital 候选池薄：topdig≥10 仅 5 条（z2knw/4xt0p/b7y8t/awgyg/748ox 全 analog-heavy 或 pyAether schematic 主导）；按 dc_shell/pt_shell/formality/vcs/verdi/genus keyword score 排序得 21 条，逐个 SSH 读首 user msg 排查。
 - **选料排查**：poxvz（johnl/dc_shell:154）= run_dc.sh 调试任务（"你看下我这个运行失败什么原因"）→ A 档规则 ② 命中（用户指出根因=运行失败）→ B 档候选但金标准=debug 后的 synth.tcl 修复，模糊。m1cve（johnl/mc=61/synthesis+dc_shell）= VCS+DC 链 A-档合规（#0 "请编写一个verilog 脚本 并用本地的vcs验证 然后yongdc综合"）但深读发现用户在 VCS+DC 交付前 pivot 到 token-plan 测试（#16 "全部失败"后转去测 token API），**金标准模糊**（用户未接受 VCS+DC 结果）→ 不宜作 A 档。k5jti（e0046913/primetime:36）= PT 版本选择 Q&A → 非 delivery。gavk7（xxchen/primetime:21）= nxtgrd 文件对比分析 → 非 design_flow。
 - **pivot 到 cline 重跑**（运维令 §四.3「逐步把存量 case 用 cline 重跑」，轮 30 待办：「若 SynLintFlow-001 也 ①+④ → 占比破 30% → 需修接口」）：选 `EDA-Eval-DesignFlow-SynLintFlow-001`（A 档 trace-faithful / digital / 26 断言，SpyGlass lint + DC 综合 flow 构建）。ref check.py 独立 dry-run：发现 hidden/ 未复制到 judge dir → v-z 断言 21/26 FAIL；修复后 26/26 PASS。
