@@ -2,14 +2,14 @@ WAITING: 0
 SHARD: A (digital_front)
 DOMAINS: digital, eda_other, pnr_signoff, verification
 
-- **PHASE**: loop 任务卡 case 合成（轮 9 已完成 cline 迁移运维令 §四.1/§四.2；§四.3 存量重跑为渐进任务）。本轮按 loop 卡合成第 10 条 case。
-- ✅ **本轮交付 case**：`EDA-Eval-DesignFlow-CoreTimingSig-001`（verification，L1-boundary，B档 synthesized，trace 1793087996513_u78sz / hengbow / hfeg0plg49 / mc=407）。A jsonl 现 10 条。
+- **PHASE**: loop 任务卡 case 合成。本轮按 loop 卡合成第 11 条 case（A 档 trace-faithful 试点 +1）。
+- ✅ **本轮交付 case**：`EDA-Eval-DesignFlow-InnovusAudit-001`（pnr_signoff，L1-boundary，A 档 faithful，trace 1792489769571_ch2cw / johnl / hfeg0plg49 / mc=255 / innovus=233 主导）。A jsonl 现 11 条。
 - ✅ DEBT 已清零。
-- 📊 trace 覆盖率：9/1001 = 0.9%（covered=9 · touched=10 · parked=1；A jsonl 10 条）
-- 🎯 通过率: 本条 case 未 pi/cline 实跑（"未跑"）；cline 存量重跑 0/1（Verification-001 FAIL·L1/hook 限制）· B 档目标 20–30%
-- 🧾 断言: 本轮 CoreTimingSig-001 k_rationale=k_check=14 ≥8 ✓（日报 14/14/✓）；存量全达标
+- 📊 trace 覆盖率：10/1001 = 1.0%（covered=10 · touched=11 · parked=1；A jsonl 11 条）
+- 🎯 通过率: 本条 case 未 pi/cline 实跑（"未跑"）；cline 存量重跑 0/1（Verification-001 FAIL·L1/hook 限制）· B 档目标 20–30%；A 档本轮只报数不设目标
+- 🧾 断言: 本轮 InnovusAudit-001 k_rationale=k_check=14 ≥8 ✓（日报 14/14/✓）；存量全达标
 - 📦 体积：TASK≈17KB / MEMORY≈待测
-- 🔒 泄漏隔离: cline workdir 不含 check.py/reference/hidden（run_one.sh 自检通过）；判分独立跑在 /tmp/judge（check.py 不进 cline cwd）
+- 🔒 泄漏隔离: check.py/reference/hidden 不进 SUT workdir；判分独立跑（隐藏 B 上 subprocess，check.py 不进 cline cwd）
 
 ### 2026-11-02 shard A 轮 8：TimingECO-001 交付 ✓（DEBT 清零，WAITING: 0）
 - 交付 `EDA-Eval-DesignFlow-TimingECO-001`（domain=verification，L2，track=faithful，trace 1792572733650_pfubi / e0046913 / hfeg0plg52 / mc=153）。
@@ -44,3 +44,13 @@ DOMAINS: digital, eda_other, pnr_signoff, verification
 - 自验：ref check() PASS（14/14）+ 5 negative 全 FAIL（NEG_RC=0：fake_empty→c / fake_print_expected→g / fake_core_deleted→d / naive_hardcode_a→g / naive_dump_all→l）+ §4.9 (a)(b)(c) 三假 FAIL。
 - 断言闸门：k_rationale=14 == k_check=14 ≥8 ✓。追加 EDA-Eval-DesignFlow_A.jsonl（A jsonl 现 10 条，test==disk check.py roundtrip OK）。merge_shards → 主 jsonl 55 cases。日报 report_benchmark_11_02.html 55 cases，本条 k(断言)/k(check)/一致 = 14/14/✓。
 - ⬜ 下轮：trace_ledger.py --shard A next 选新 trace 开第 11 条 case（或按运维令 §四.3 挑一条 L2 shard-A PASS case 用 cline+hook 重跑验真实通过率）。
+
+### 2026-11-02 shard A 轮 11：InnovusAudit-001 交付 ✓（A 档 trace-faithful / pnr_signoff，WAITING: 0）
+- 选 trace：trace_ledger.py --shard A next → mc≥300 候选多为 calibre/hspice（shard C 域）；按 innovus/verification 工具计数排序挑 `1792489769571_ch2cw`（johnl/hfeg0plg49/mc=255/innovus=233 主导/pnr_signoff）claim → mark case。cline v3 目录式 session（`<sid>/<sid>.messages.json`，949KB/158 msgs）。
+- 深读：仅 2 条真实用户轮（#0 全文审计提示词、#135「继续」）→ 符合 A 档选轮规则（提出需求，未指出根因/给修复）。真实任务 = 全定制环境下用 Innovus 做 addr_to_rowcol_v7（纯组合/107 实例/18 个 *LVSx 单元）完整数字后端能力审计（只调查、不实现）。金标准 = `.75:/home/johnl/.../dc_addr_to_region/out/innovus_audit/AUDIT_REPORT.md`（仍存，5762B）：Innovus v23.32-s091_1 真实启动验证 OK、SS_0p98_m40c_lvs.db 可读、唯一硬缺口=tech.lef+单元 abstract LEF（须 genlef/ski-genlef 从 OA layout 生成）、纯组合→CTS 不适用、明确未进行正式实现。深读笔记 `designflow/trace_deepreads/1792489769571_ch2cw_innovus_audit.md`。
+- 合成（A 档 trace-faithful / L1-boundary / pnr_signoff）：prompt.txt = 用户原话逐字（无脱敏，路径/用户名/SPICE 原文保留）；交付 = `run_audit.py`（参数化 --netlist/--manifest/--outdir → AUDIT_REPORT.md，对任意同族电路通用）；A = mapped.v（v7/107/SS/min 缺）+ mapped.sdc + lib_manifest.json + task_brief.md；隐藏 B = mapped.v（v6/91/FF/min 具/含 and2LVSx1，不含 nand3LVSx1/nand3LVSx2/oai211LVSx1/invLVSx6）+ B manifest —— 来自同批 dc_addr_to_region_36rtl/v01_baseline（真实兄弟电路，同 PDK 同单元族，结构不同）。gold「真跑商业工具」= Innovus v23.32 启动验证在金标准创建期于 .75 完成；check.py 本地静态 + subprocess 跨输入守护（与本 bench L1-boundary 惯例一致）。
+- check.py 14 条独立断言 (a)-(n)：(a)zip 含 run_audit.py (b)B 上跑出 AUDIT_REPORT.md (c)顶层=v6 且无 v7 (d)端口 N/row/col/valid (e)实例=91 且无 107 (f)含 B 专用 and2LVSx1 (g)不含 A 专属 nand3LVSx1/nand3LVSx2/oai211LVSx1/invLVSx6 (h)纯组合+CTS 不适用 (i)三分类 已具备/缺失/需注意 (j)阶段表 ≥8 (k)角=FF/1.1V/25C 且无 SS/0.98V/-40C (l)min 库已具备且无暂缺 (m)审计纪律 未进行正式实现 (n)LEF 硬缺口 tech.lef 缺失+genlef。其中 (c)(e)(f)(g)(k)(l) 为 6 条跨输入守护（反硬编码 A）。
+- 自验：ref check() PASS（14/14）+ 5 negative 全 FAIL（NEG_RC=0：fake_empty→b / fake_print_expected→c/e/g/k/l / fake_core_deleted→j / naive_hardcode_a→c/e/g/k/l / naive_no_classify→h/i）+ §4.9 (a)空 zip FAIL / (b)fake_print_expected FAIL / (c)fake_core_deleted FAIL。test==disk check.py roundtrip OK。
+- 断言闸门：k_rationale=14 == k_check=14 ≥8 ✓。追加 EDA-Eval-DesignFlow_A.jsonl（A jsonl 现 11 条）。mark case 1792489769571_ch2cw（johnl/hfeg0plg49/pnr_signoff/mc=255）。merge_shards → 主 jsonl 59 cases。日报 report_benchmark_11_02.html 59 cases，本条 k(断言)/k(check)/一致 = 14/14/✓。
+- A 档试点记账：本条 track=faithful，未 pi/cline 实跑（"未跑"），待 cline+hook 重跑验真实通过率。失败归因预设：①交付形态/位置错→(a)(b)；③能力不足（硬编码 A）→(c)(e)(f)(g)(k)(l)；④判分歧义（对事实严格匹配，不对措辞）。
+- ⬜ 下轮：trace_ledger.py --shard A next 选新 trace 开第 12 条 case（或按运维令 §四.3 挑一条 L2 shard-A PASS case 用 cline+hook 重跑）。
