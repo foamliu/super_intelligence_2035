@@ -14,7 +14,7 @@ SHARD_NAME="$SHARD"
 
 # ── 路径 ──
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-BENCH_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+BENCH_DIR="$SCRIPT_DIR"   # benchmark/ 目录本身（TASK/MEMORY/designflow 都在这里）
 TASK_MD="$BENCH_DIR/BAIZE_DESIGNFLOW_BENCH_TASK_${SHARD}.md"
 MEMORY="$BENCH_DIR/MEMORY_DESIGNFLOW_${SHARD}.md"
 LAST_PUSH_WS="/tmp/designflow_bench_shard_${SHARD}_last_push_ws"
