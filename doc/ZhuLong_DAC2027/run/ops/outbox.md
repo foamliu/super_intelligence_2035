@@ -16436,3 +16436,118 @@ awk -F'\t' 'NR>1 && $5+0>=300 && $4 !~ /^(1789900011859_zpx23|1792224347250_fww0
 1786541065533_cgqd1	e0014566	hfeg0pkn001	case	EDA-Eval-DesignFlow-LayoutVirtuoso-001
 === DONE 140 ===
 ```
+
+---
+
+## RUN_ID 141 · 2026-11-02 21:57:55 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 141 | locate+commit Tab-3 beautify html | $(date '+%F %T') | host=$(hostname) ==="
+cd "$(git rev-parse --show-toplevel 2>/dev/null || echo /nasdata/app.e0031982/code/super_intelligence_2035)" || exit 1
+echo "  repo=$(pwd)  HEAD=$(git rev-parse --short HEAD)"
+
+echo
+echo "[1] doc/ZhuLong_DAC2027 顶层 html"
+timeout 20 ls -lh --time-style='+%F %T' doc/ZhuLong_DAC2027/*.html 2>/dev/null | awk '{print "    "$6,$7,$5,$8}' || echo "    (none)"
+
+echo
+echo "[2] 名字含 tab 的 html/htm（maxdepth 3）"
+timeout 25 find doc/ZhuLong_DAC2027 -maxdepth 3 \( -iname '*tab*' -a \( -name '*.html' -o -name '*.htm' \) \) -printf '%TY-%Tm-%Td %TH:%TM %8s %p\n' 2>/dev/null | sed 's/^/    /' || true
+
+echo
+echo "[3] git status（zhulong 树，只看 html/htm；? = 未跟踪）"
+timeout 20 git status --porcelain -- doc/ZhuLong_DAC2027 2>/dev/null | grep -iE '\.html?$' | head -10 | sed 's/^/    /' || echo "    (无 html 变更)"
+
+echo
+echo "[4] 全部 html 里命中「美观/Tab-3/表 3/改进」的（最多 10 条）"
+for f in $(timeout 25 find doc/ZhuLong_DAC2027 -maxdepth 3 -name '*.html' 2>/dev/null | head -60); do
+  if timeout 5 grep -qiE '美观|Tab-?3|表 ?3|改进建议|排版' "$f" 2>/dev/null; then
+    echo "    HIT $f ($(stat -c %s "$f")B)"
+  fi
+done
+
+echo
+echo "[5] 选定候选 → 打印结构 → 入库（commit+push）"
+CAND=$(timeout 25 find doc/ZhuLong_DAC2027 -maxdepth 3 \( -iname '*tab*' -a \( -name '*.html' -o -name '*.htm' \) \) 2>/dev/null | head -1)
+if [ -z "${CAND:-}" ]; then
+  echo "    ❌ 未找到文件名含 tab 的 html —— 不做任何提交"
+else
+  echo "    candidate = $CAND  ($(stat -c %s "$CAND")B)"
+  echo "    title: $(grep -oiE '<title>[^<]*' "$CAND" 2>/dev/null | head -1 | sed 's/<title>//I')"
+  echo "    headings: $(grep -cE '<h[1-4]' "$CAND" 2>/dev/null)"
+  grep -oE '<h[1-4][^>]*>[^<]{2,80}' "$CAND" 2>/dev/null | sed -E 's/<h[1-4][^>]*>//' | head -12 | sed 's/^/      - /'
+  if git ls-files --error-unmatch "$CAND" >/dev/null 2>&1; then
+    echo "    已在库内（tracked），无需提交"
+  else
+    git add -- "$CAND"
+    git -c user.email=ops@local -c user.name=ops commit -m "zhulong paper: 入库 Tab-3 美观改进建议 HTML（用户令 2026-11-02）" -m "file: $CAND" >/dev/null 2>&1 || echo "    commit 失败/无变更"
+    timeout 60 git push origin main 2>&1 | tail -2 | sed 's/^/    /'
+    echo "    after: $(git log -1 --pretty='%h %s' | cut -c1-100)"
+  fi
+fi
+
+echo
+echo "[6] 确认该文件现在是否被跟踪"
+timeout 10 git ls-files doc/ZhuLong_DAC2027 2>/dev/null | grep -iE '\.html?$' | head -8 | sed 's/^/    tracked: /'
+
+echo "=== DONE 141 ==="
+```
+
+**输出**
+```
+=== RUN_ID 141 | locate+commit Tab-3 beautify html | 2026-11-02 21:57:55 | host=hfeg0tedaap02 ===
+  repo=/nasdata/app.e0031982/code/super_intelligence_2035  HEAD=b53d110f0
+
+[1] doc/ZhuLong_DAC2027 顶层 html
+    2026-10-06 12:58:14 21K doc/ZhuLong_DAC2027/experiment_plan_report.html
+    2026-10-06 12:58:14 21K doc/ZhuLong_DAC2027/report_10_04.html
+    2026-10-06 12:58:14 13K doc/ZhuLong_DAC2027/report_10_05.html
+    2026-11-02 17:51:26 15K doc/ZhuLong_DAC2027/Tab3_改进建议.html
+    2026-10-20 11:06:53 57K doc/ZhuLong_DAC2027/设计流Benchmark-框架改进设计文档.html
+    2026-10-20 11:06:53 31K doc/ZhuLong_DAC2027/设计流用例编写指南.html
+    2026-10-19 17:59:28 284K doc/ZhuLong_DAC2027/长鑫-DesignAI-Workshop-v0.1.html
+
+[2] 名字含 tab 的 html/htm（maxdepth 3）
+    2026-11-02 17:51    14956 doc/ZhuLong_DAC2027/Tab3_改进建议.html
+
+[3] git status（zhulong 树，只看 html/htm；? = 未跟踪）
+     M doc/ZhuLong_DAC2027/reports/report_benchmark_11_02.html
+
+[4] 全部 html 里命中「美观/Tab-3/表 3/改进」的（最多 10 条）
+    HIT doc/ZhuLong_DAC2027/reports/report_zhulong_dac_readiness_review_zh.html (41587B)
+    HIT doc/ZhuLong_DAC2027/reports/report_zhulong_review_response_zh.html (37186B)
+    HIT doc/ZhuLong_DAC2027/Tab3_改进建议.html (14956B)
+
+[5] 选定候选 → 打印结构 → 入库（commit+push）
+    candidate = doc/ZhuLong_DAC2027/Tab3_改进建议.html  (14956B)
+    title: ZhuLong Tab-3（主结果表）改进建议
+    headings: 13
+      - ZhuLong Tab-3（主结果表）改进建议
+      - 一、结论
+      - 二、现状速览
+      - 三、改进项清单（按优先级）
+      - 四、逐条详解
+      - ④ 列头两级分区（最高优先）
+      - ⑤ ± 紧凑化
+      - ② (F) 行去冗余
+      - ③ Tcl 读回轴倒挂加标注
+      - ⑥ 配置标签缩写
+      - ⑦ run_code 裸 0 → "—"
+      - 五、建议后的目标样式预览
+    To https://github.com/foamliu/super_intelligence_2035
+       b53d110f0..ae88d8416  main -> main
+    after: ae88d8416 zhulong paper: 入库 Tab-3 美观改进建议 HTML（用户令 2026-11-02）
+
+[6] 确认该文件现在是否被跟踪
+    tracked: doc/ZhuLong_DAC2027/experiment_plan_report.html
+    tracked: doc/ZhuLong_DAC2027/report_10_04.html
+    tracked: doc/ZhuLong_DAC2027/report_10_05.html
+    tracked: doc/ZhuLong_DAC2027/reports/report_benchmark_10_29.html
+    tracked: doc/ZhuLong_DAC2027/reports/report_benchmark_10_30.html
+    tracked: doc/ZhuLong_DAC2027/reports/report_benchmark_10_31.html
+    tracked: doc/ZhuLong_DAC2027/reports/report_benchmark_11_02.html
+    tracked: doc/ZhuLong_DAC2027/reports/report_zhulong_agent_compare_cline_vs_zhulongcli_full_zh.html
+=== DONE 141 ===
+```
