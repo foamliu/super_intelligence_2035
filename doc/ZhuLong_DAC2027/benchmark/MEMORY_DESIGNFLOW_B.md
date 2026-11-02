@@ -1,4 +1,4 @@
-WAITING: 0 (本轮交付 Tr0TrTfMeas-001；下轮 trace_ledger next 续跑)
+WAITING: 0 (本轮交付 AOI21ArcChar-001；下轮 trace_ledger next 续跑)
 SHARD: B (spice_char)
 DOMAINS: characterization, spice_sim
 
