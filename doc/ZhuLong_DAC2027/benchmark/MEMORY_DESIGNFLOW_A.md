@@ -6,7 +6,7 @@ DOMAINS: digital, eda_other, pnr_signoff, verification
 - 每轮做 1 条 case：rewrite_queue 优先（断言闸门），清零后 trace_ledger.py --shard A next → claim → 深读 → 合成
 - 📊 trace 覆盖率：见 designflow/trace_ledger.py --shard A stats
 - 🎯 通过率: 0/0（A 档尚未实跑；先清断言债）
-- 🧾 断言: k_rationale=k_check 达标（今日 2/4 达标：Digital-010 k=19 / Digital-021 k=17）· 队列剩 2/4（Digital-022/023 待整改）
+- 🧾 断言: k_rationale=k_check 达标（今日 3/4 达标：Digital-010 k=19 / Digital-021 k=17 / Digital-022 k=17）· 队列剩 1/4（Digital-023 待整改）
 
 ### 2026-11-02 shard A 轮 2：Digital-021 断言闸门整改 ✓
 - 队列队首 `EDA-Eval-DesignFlow-Digital-021`（digital, PrimeTime 时序报告负 slack 路径提取, L1 离线 Python）标 `incomplete`：jsonl test 字段是旧 1568B 弱判分（4 packed 条件），rationale 是散文。
@@ -29,3 +29,14 @@ DOMAINS: digital, eda_other, pnr_signoff, verification
 - 闸门：k_rationale=19=k_check=19≥8 ✓；jsonl test 1123→13297B 同步（test==disk check.py roundtrip OK）；7 行/7 unique id 保留。
 - .75 sandbox 会话 `shardA_20261102-...Digital-010-rebuild_0`：declare_done + close_session(keep=false) 已清理。
 - 队列 `rewrite_queue.tsv` Digital-010 → done；与 Digital-021 共计今日 2/4 达标，剩 Digital-022/023 待整改。
+
+### 2026-11-02 shard A 轮 4：Digital-022 断言闸门整改 ✓
+- 队列队首 `EDA-Eval-DesignFlow-Digital-022`（digital, DC 综合 DFT 插入失败根因诊断与修复, L1 离线静态 Tcl/report 检查）标 `incomplete`：jsonl test 字段是旧 1357B 弱判分（5 packed/substring 条件），rationale 是散文。
+- 本轮重建磁盘 `reference/EDA-Eval-DesignFlow-Digital-022/check.py` 从 5 packed 条件 → 17 独立标签 (a)-(q)：
+  (a)zip-exactly-2-files / (b)set_clock_gating_style-active-line / (c)active-control_signal-scan_enable[RC1 fix] / (d)no-active-control_signal-scan_mode[RC1 no-residue] / (e)active-set_dft_signal-Constant-scan_mode[RC2 fix] / (f)no-active-type-TestMode[RC2 no-residue] / (g)set_dft_configuration-fix_clock_gating-commented[RC3 fix] / (h)no-uncommented-fix_clock_gating[RC3 no-residue] / (i)ScanEnable-preserved-both-views / (j)scan_mode-Constant-both-views / (k)report-scan_enable / (l)report-TEST-130 / (m)report-Constant / (n)report-门控 / (o)report-扫描链/chain / (p)report-TestMode / (q)cross-input-guard: report generic ICG mechanism (ICG|测试引脚|test pin) 且不把 A 专属 731 当唯一解释（对隐藏 B 的 512 同样成立）
+- 关键防御：注释剥离(_strip_comments) 只在活跃行检验关键配置，击败"关键词全放注释"的 fake_print_expected。
+- 隐藏 B 附件 `assets/.../hidden/case_fail_B.tcl`：module PuTopSecDft / 门控控制信号误设 test_mode2 / scan_enable 端口 test_se / TEST-130=512 / chains baseline=256，与 A(PuTopDftEcc/scan_mode/scan_enable/731/390) 结构性不同；+ dft_drc_summary_B.txt + hidden_manifest.json；B 不进 SUT 沙箱。
+- 参考解 `reference/dc_fixed.tcl`(=baseline 三 RC 还原) + `fix_report.md`(3-RC 诊断+ICG 机制+修改对照+指标对比) + `reference_submit.zip`。
+- negative/ + negative_selftest.py：3 §4.9 假 + 2 naive（fake_empty→a / fake_print_expected[keywords-in-comments]→c / fake_core_deleted[RC3 uncommented]→g / naive_break_scanenable→i / naive_no_generic_mechanism→q），NEG_RC=0 全 FAIL，5 个不同标签。
+- 闸门：k_rationale=17=k_check=17≥8 ✓；jsonl test 1357→6209B 同步（test==disk check.py roundtrip OK）；7 行/7 unique id 保留。
+- 队列 `rewrite_queue.tsv` Digital-022 → done；与 Digital-010/021 共计今日 3/4 达标，剩 Digital-023 待整改（下轮第一件事）。
