@@ -18,3 +18,4 @@ djml8					case	EDA-Eval-DesignFlow-PFDdeadZone-001	2026-11-02 17:47
 1792380576403_uumms	e0029308	hfeg0pkn001	343	spice_sim	case	EDA-Eval-DesignFlow-AOI21ArcChar-001	2026-11-02 22:31	sub-skill: AOI21 input-arc timing char on HSPICE level-1 (7 arcs incl 1 degenerate a1_rise_deg); faithful track L2 k=13; FineSim GLIBCXX never ran in trace but xrun AMS path confirmed; portable sub-skill extracted
 1791526272387_1i0em	rongtaoy	hfeg0pkn001	574	spice_sim	case	EDA-Eval-DesignFlow-SubcktExtract-001	2026-11-02 21:54	
 1792215882223_qv6pl	adaml	hfeg0pkn001	324	spice_sim	case	EDA-Eval-DesignFlow-Tr0TrTfMeas-001	2026-11-02 22:30	
+1792551272867_jnf1q.messages.json	jasonxu	hfeahpc501	470	characterization	case	EDA-Eval-DesignFlow-ReadsigAddrTbl-001	2026-11-02 22:55	
