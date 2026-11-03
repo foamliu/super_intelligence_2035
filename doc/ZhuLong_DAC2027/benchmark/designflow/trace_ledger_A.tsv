@@ -82,3 +82,4 @@
 1791796982758_nc938					parked		2026-11-04 02:50	pure Q&A: PT-UPF purpose / DC wireload load_pin+driving_cell / clock Fmax / clock uncertainty / DFT learning path; all conceptual markdown answers, no build artifact, no tool run
 1792207124614_65efs					parked		2026-11-04 02:50	pure Q&A: large-netlist handling + DRJOA DRAM test-mode pump; AskEDA/CIMI KB mostly unconfigured/miss; markdown answers, no build artifact
 1790058749132_f0qtv					parked		2026-11-04 02:50	NOT EDA: debugging ZhuLong/cline desktop-app itself (Chinese input garble / session-switch stall / prompt-queue ordering); 108 msgs, 0 write_file, 1 run_commands; genus/synopsys/.def/.gds hits are from app codebase noise, not EDA flow
+1792745008984_bw2u5	lorikx	hfeg0pkn005	46	verification	case	EDA-Eval-DesignFlow-VCSMakefile-001	2026-11-04 03:31	
