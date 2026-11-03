@@ -53,4 +53,15 @@
 1788830861723_dnvv4.messages.json	miccao	hfeg0plg37	458	schematic_netlist	case	EDA-Eval-DesignFlow-BufPFFlatGen-001	2026-11-03 06:23	
 1785735994579_tckme	e0014566	hfeg0pkn001	654	schematic_netlist	parked		2026-11-03 07:04	physical layout/powerfill (dbCreateRect:230/schematic:1) not shard D analog/schematic_netlist/waveform
 1784623431472_gvm3g	e0014566	hfeg0pkn001	554	schematic_netlist	case	EDA-Eval-DesignFlow-PwrIremCfgFix-001	2026-11-03 07:23	
-1792742447012_djml8	wnyu	hfeg0pgn021	401	analog_context	claimed		2026-11-03 07:32	
+1792742447012_djml8	wnyu	hfeg0pgn021	401	analog_context	parked		2026-11-03 08:17	cross-shard dup: already delivered as EDA-Eval-DesignFlow-PFDdeadZone-001 in shard B (spice_sim, not shard-D domain)
+1786504317615_fkprl.messages.json	e0014566	hfeg0plg58	633	schematic_netlist	parked		2026-11-03 08:43	cross-shard dup: shard B already parked fkprl 2026-10-31 as layout_virtuoso (RTEXT/RNODE dup w/ LayoutVirtuoso-001)
+1792463960005_7frw8.messages.json					parked		2026-11-03 08:33	aether check&save infra debug (non-design)
+1789350621467_fymcr.messages.json					parked		2026-11-03 08:33	autocell pcell.tcl gen + skill-creation (physical+skill, non-D)
+1789954294975_4chsl.messages.json					parked		2026-11-03 08:33	verilog/SystemVerilog netlist analysis (digital, non-D analog)
+1793155371052_v59v8.messages.json					parked		2026-11-03 08:33	python UI script for cdslck lock files (non-EDA design)
+1793005343621_45gjq.messages.json					parked		2026-11-03 08:33	pdk/techfile infra (non-D)
+1785498914896_8du7m.messages.json					parked		2026-11-03 08:33	physical layout virtuoso/gds/calibre (non-D)
+1786615396051_enh4y.messages.json					parked		2026-11-03 08:33	physical layout virtuoso/gds (non-D)
+1785994889000_x5tcq.messages.json					parked		2026-11-03 08:33	physical layout virtuoso/gds/dbcreaterect (non-D)
+1792055923522_tqmu1.messages.json					parked		2026-11-03 08:33	cross-shard dup: same cynthiaz StrongARM comparator as nbl0h->StrongARMComp-001 (shard B)
+1791786108086_vumhg.messages.json	e03179	hfeg0plg90	251	analog_context	claimed		2026-11-03 08:33	
