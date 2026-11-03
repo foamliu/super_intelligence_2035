@@ -173,7 +173,7 @@
 
 <h2 class="sec">附录 D · 台账与今日待办</h2>
 <ul>
-  <li><b>台账（AM 落盘后）</b>：<code>SEEN.md</code> <b>5,623 行</b>（11-03 补跑 +5 后；本轮 3 条已含在内）⇒ 累计 <b>收录 299 / 候选 4,558 / 候选（RSS 补充）507</b>（状态行合计 <b>5,364</b>）；<code>papers.jsonl</code> <b>299</b>（元数据全部取自官方 <code>id_list</code> XML；本轮 3 条 <code>first_seen=2026-11-04</code>）。</li>
+  <li><b>台账（AM 落盘后）</b>：<code>SEEN.md</code> <b>5,623 行</b>（11-03 PM +2、本轮 +3 后；本轮 3 条已含在内）⇒ 累计 <b>收录 299 / 候选 4,558 / 候选（RSS 补充）507</b>（状态行合计 <b>5,364</b>）；<code>papers.jsonl</code> <b>299</b>（元数据全部取自官方 <code>id_list</code> XML；本轮 3 条 <code>first_seen=2026-11-04</code>）。</li>
   <li><b>落盘脚本</b>：<code>raw/update_r131.py</code>（幂等断言：五 ID 原先不在 SEEN、追加后各 1 行、<code>papers.jsonl</code> 恰 +5、<code>published</code> 前缀匹配）· <code>raw/pdf_range_resume_r131.py</code>（固定可达 IP + 分段 Range + 逐段续传 + 结构校验）· 批次复核脚本 <code>/tmp/verify_r131b.py</code>（4 条查询，结果已落 <code>raw/2026-11-04-am-verify-r131.txt / .json</code>）。</li>
   <li><b>今日 18:00（PM，周三）待办</b>：① 复验批次（应能看到美东 11-03 20:00 ET 公告的新批）；② 补 <b>2 篇「科普」</b>（不与早 3 重复，优先从本轮 337 条候选池剩余条目挑）→ 日报 <b>5/5 收口</b> + <code>晚报变更说明（AM → PM）</code>；③ <b>科普 TOP-1</b> 分镜 → <code>video/SCENES/11_04.html</code> + <code>SCENES/index.html</code>；④ 当日论文日报邮件（<code>paul.liu@cxmt.com</code>，PDF 合计按 20 MB 上限决定是否分包）。</li>
   <li><b>口径纪律</b>：早报 3 篇全按「<b>借鉴</b>」选（与 BaiZe / ZhuLong 在研工作的相关性），晚报 2 篇全按「<b>科普</b>」选（大众看得懂 + 有传播力），<b>两口径不混用</b>，同一 arXiv ID 全天只出现一次；「推荐」≠「结论」；<code>SOTA / 首次 / 突破</code> 一律不写（引用作者原话时加「作者称」）；所有数字可回查 PDF 与官方 Atom 元数据。</li>
