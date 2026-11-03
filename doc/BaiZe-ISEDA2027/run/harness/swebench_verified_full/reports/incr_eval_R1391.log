@@ -1,0 +1,53 @@
+=== incr_eval R1391 START Tue Nov  3 08:39:22 AM CST 2026 === (py=/nas_train/app.e0031982/miniforge3/envs/py310/bin/python3)
+[08:39:22] --- codex: 2 instances ---
+[08:39:22] === merge codex predictions ===
+codex: 296 real patches merged
+[08:39:22] === codex eval START 2 new instances ===
+Running 2 instances...
+  0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [00:24<00:24, 24.25s/it]1 ran successfully, 0 failed:  50%|█████     | 1/2 [00:24<00:24, 24.25s/it]1 ran successfully, 0 failed: 100%|██████████| 2/2 [00:25<00:00, 12.63s/it]2 ran successfully, 0 failed: 100%|██████████| 2/2 [00:25<00:00, 12.63s/it]2 ran successfully, 0 failed: 100%|██████████| 2/2 [00:25<00:00, 12.63s/it]
+All instances run.
+Total instances: 2
+Instances submitted: 2
+Instances completed: 2
+Instances incomplete: 0
+Instances resolved: 2
+Instances unresolved: 0
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 0
+Unremoved images: 2
+Report written to codex-kimi-k2.6-cloud.verified_full_codex.json
+[08:39:51] === codex eval DONE ===
+[08:39:51] --- hermes: 2 instances ---
+[08:39:51] === merge hermes predictions ===
+hermes: 182 real patches merged
+[08:39:51] === hermes eval START 2 new instances ===
+Running 2 instances...
+  0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [00:21<00:21, 21.81s/it]1 ran successfully, 0 failed:  50%|█████     | 1/2 [00:21<00:21, 21.81s/it]1 ran successfully, 0 failed: 100%|██████████| 2/2 [00:32<00:00, 16.12s/it]2 ran successfully, 0 failed: 100%|██████████| 2/2 [00:32<00:00, 16.12s/it]2 ran successfully, 0 failed: 100%|██████████| 2/2 [00:32<00:00, 16.12s/it]
+All instances run.
+Total instances: 2
+Instances submitted: 2
+Instances completed: 2
+Instances incomplete: 0
+Instances resolved: 1
+Instances unresolved: 1
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 1
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 6
+Unremoved images: 2
+Report written to hermes-kimi-k2.6-cloud.verified_full_hermes.json
+[08:40:27] === hermes eval DONE ===
+[08:40:27] --- regen eval summaries ---
+regen_eval_summaries: cline-patched, opencode, pi, claude-code, codex, hermes, deepseek-harness
+  cline-patched: unchanged (n=442 resolved=326 failed=116 infra=0)
+  opencode: unchanged (n=497 resolved=401 failed=96 infra=0)
+  pi: unchanged (n=463 resolved=333 failed=130 infra=0)
+  claude-code: unchanged (n=358 resolved=273 failed=85 infra=0)
+  codex: WROTE eval_codex.json  n=296 resolved=233 failed=63 infra=0
+  hermes: WROTE eval_hermes.json  n=182 resolved=141 failed=41 infra=0
+  deepseek-harness: unchanged (n=150 resolved=123 failed=27 infra=0)
+=== incr_eval R1391 DONE Tue Nov  3 08:40:28 AM CST 2026 ===
