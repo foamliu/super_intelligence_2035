@@ -9,18 +9,18 @@
     documentation, sandbox execution) and is already deployed in production EDA
     flows, with a \emph{grounding-gap framework} positing that EDA-scripting
     correctness is bottlenecked by \emph{observation fidelity} at the L4
-    (situated) layer, which model scale alone cannot reach---the binding
-    constraint in our setting. On
+    (situated) layer, which model scale alone cannot reach---a bottleneck, not
+    a substitution for scale. On
     \textbf{EDA-Scripting-Bench} (449 tasks, three languages, four
     commercial runtimes), ZhuLong reaches \textbf{76.9\%} pooled Pass@1 versus
     \textbf{19.7\%} (pure LLM): the system-level observation axis spans
     $57.2$~pp with the model fixed, exceeding the $23.7$~pp backbone range with
-    the harness fixed---two axes answering different questions; their relative magnitude places observation as the binding constraint in the current model-capability regime.
+    the harness fixed---two axes answering different questions; neither axis substitutes for the other, and observation is an under-invested axis whose returns are measurable and graded.
 \end{abstract}
 % 设计工程师最耗时的是编排 flow、补上封闭 EDA 工具之间无法互通的断链。我们提出 ZhuLong：面向 PyAether、SKILL、Tcl 的执行接地 agent，
 % 经统一 MCP 工具（API 检索 / 文档 / 沙盒执行）闭环"生成–执行–修正"，且已部署于量产 EDA flow；以 grounding-gap 框架提出 EDA 脚本正确性在 L4（情境）层
-% 受观测保真度瓶颈约束，而模型规模无法触及该层；在本设定下该瓶颈为 binding，我们测量两条轴以证明之。在 EDA-Scripting-Bench（449 任务、三语言、
+% 受观测保真度瓶颈约束，而模型规模无法触及该层；在本设定下该瓶颈为 bottleneck 而非对规模的替代，我们测量两条轴以证明之。在 EDA-Scripting-Bench（449 任务、三语言、
 % 四商业运行时）上，ZhuLong 达 76.9% 合并 Pass@1（vs 纯 LLM 19.7%）：固定模型时系统级观测轴跨度 57.2pp，超过固定 harness 时 23.7pp 的 backbone
-% 跨度——两轴回答不同问题，其相对量级使观测成为当前模型能力区间内的 binding constraint。
+% 跨度——两轴回答不同问题，两轴不可互相替代，观测是回报可测、被低估的轴。
 
 \keywords{LLM Agents for EDA, EDA Scripting, Code Generation, Execution Grounding, Benchmarking}
