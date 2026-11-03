@@ -1,0 +1,25 @@
+[incr-eval 00:35:01] === incr_eval for codex: ['sympy__sympy-19346'] ===
+[incr-eval 00:35:01] merged 321/500 predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/predictions_codex.json
+[incr-eval 00:35:01] EVAL codex on 1 instances: ['sympy__sympy-19346']
+[incr-eval 00:35:27]   eval finished rc=0; log -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/logs/eval_incr_verified_full_codex_1793723701.log
+[incr-eval 00:35:27]   sympy__sympy-19346: RESOLVED
+[incr-eval 00:35:27] updated /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/reports/eval_codex.json: resolved=254 failed=67 infra=0
+[incr-eval 00:35:27] === incr_eval DONE ===
+[incr-eval 00:35:28] === incr_eval for deepseek-harness: ['django__django-16082'] ===
+[incr-eval 00:35:28] merged 172/500 predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/predictions_deepseek-harness.json
+[incr-eval 00:35:28] EVAL deepseek-harness on 1 instances: ['django__django-16082']
+[incr-eval 00:36:02] === incr_eval for deepseek-harness: ['django__django-16082'] ===
+[incr-eval 00:36:03] merged 172/500 predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/predictions_deepseek-harness.json
+[incr-eval 00:36:03] EVAL deepseek-harness on 1 instances: ['django__django-16082']
+[incr-eval 00:36:33]   eval finished rc=0; log -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/logs/eval_incr_verified_full_deepseek-harness_1793723763.log
+[incr-eval 00:36:33]   django__django-16082: RESOLVED
+[incr-eval 00:36:33] updated /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/reports/eval_deepseek-harness.json: resolved=143 failed=29 infra=0
+[incr-eval 00:36:33] === incr_eval DONE ===
+[incr-eval 00:36:33] === incr_eval for hermes: ['sphinx-doc__sphinx-8593'] ===
+[incr-eval 00:36:33] merged 219/500 predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/predictions_hermes.json
+[incr-eval 00:36:33] EVAL hermes on 1 instances: ['sphinx-doc__sphinx-8593']
+[incr-eval 00:36:59]   eval finished rc=0; log -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/logs/eval_incr_verified_full_hermes_1793723793.log
+[incr-eval 00:36:59]   sphinx-doc__sphinx-8593: RESOLVED
+[incr-eval 00:36:59] updated /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/reports/eval_hermes.json: resolved=173 failed=45 infra=0
+[incr-eval 00:36:59] === incr_eval DONE ===
+=== incr_eval R1485 deepseek+hermes DONE Wed Nov  4 12:36:59 AM CST 2026 ===
