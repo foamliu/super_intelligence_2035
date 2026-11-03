@@ -163,11 +163,11 @@ else
 
 IMPORTANT tool usage rules (the built-in run_commands/bash/shell tools will NOT work for this task — they are sandboxed to prevent answer leakage):
 - To WRITE deliverable files and to READ files already in your local workspace (assets/, prompt.txt, task_brief.md, outputs/), use the built-in write_to_file / read_file tools. These work inside the workspace. The internal directory structure under outputs/ must match what the task specifies — create subdirectories as needed (e.g. outputs/tcl/, outputs/setup/).
-- First call 'mcp__eda_flow__open_session' to get a remote session workdir on the EDA server (32.75). Pass that workdir to all subsequent eda_flow calls.
-- All EDA and shell commands (running tools, building, simulating, running python scripts on the EDA server) MUST use the MCP tool 'mcp__eda_flow__run_commands' (pass the workdir from open_session). It executes on the EDA server (32.75) which has python3, EDA tools, and the session workdir. The built-in run_commands runs on the local dev machine which CANNOT reach the EDA server or EDA NAS, and will only return a NOTICE telling you to switch to the MCP tool.
-- To run pyAether/SKILL/Tcl code on the EDA server, use 'mcp__eda_flow__run_code' (pass workdir).
-- To read EDA-side files (produced on 32.75), use 'mcp__eda_flow__read_file'. To list EDA-side dirs, use 'mcp__eda_flow__list_files'.
-- To upload assets from local workspace to the EDA session workdir: read locally with read_file, then write with 'mcp__eda_flow__write_file' (pass workdir + path).
+- First call 'eda_flow__open_session' to get a remote session workdir on the EDA server (32.75). Pass that workdir to all subsequent eda_flow calls.
+- All EDA and shell commands (running tools, building, simulating, running python scripts on the EDA server) MUST use the MCP tool 'eda_flow__run_commands' (pass the workdir from open_session). It executes on the EDA server (32.75) which has python3, EDA tools, and the session workdir. The built-in run_commands runs on the local dev machine which CANNOT reach the EDA server or EDA NAS, and will only return a NOTICE telling you to switch to the MCP tool.
+- To run pyAether/SKILL/Tcl code on the EDA server, use 'eda_flow__run_code' (pass workdir).
+- To read EDA-side files (produced on 32.75), use 'eda_flow__read_file'. To list EDA-side dirs, use 'eda_flow__list_files'.
+- To upload assets from local workspace to the EDA session workdir: read locally with read_file, then write with 'eda_flow__write_file' (pass workdir + path).
 - Do NOT attempt to read, list, or access any file named check.py, _check.py, reference/, or anything outside the current workspace."
   cd "$WORKDIR"
   START=$(date +%s)
