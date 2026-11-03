@@ -1,0 +1,6 @@
+帮我用python写个程序，检查 /home/pdk  这个目录下每个子目录的大小，
+筛选大于200G的目录输出html文档，按照从小到大的顺序写给我。
+使用/home/xxchen/mail/autoMail.py + input.js 方式 发给我。
+
+不要查.snapshot目录
+脚本查询目录最大时长需要设置为1h。
