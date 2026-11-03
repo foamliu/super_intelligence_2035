@@ -36,3 +36,4 @@ djml8					case	EDA-Eval-DesignFlow-PFDdeadZone-001	2026-11-02 17:47
 1792143054616_zr9dt	jasminej	hfeahpc505	180	spice_sim	case	EDA-Eval-DesignFlow-VihTripTune-001	2026-11-03 10:23	delivered: VIH trip-point 4-width tune-to-target + 3-alter DFE spread min, tran-ramp+HSPICE, 14 cond, ref PASS + 5 neg FAIL (NEG_RC=1), cross-input guard verified (A-wids on B center=0.460, 40mV off)
 1792837595656_ymjs5	harrywu	hfeg0plg99	171	spice_sim	parked		2026-11-03 10:27	Solido HSMC mismatch-debugging core (Sigma=+inf, mis_flag/sigmaflag override) non-portable to .75 (no Solido/foundry model.sp); clean A-档 turn @idx192 but portable slice (nominal multi-corner delay sweep+sort) thin and overlaps TaperBufOpt DOE; deepread 1792837595656_ymjs5_delaycell_sigma.md
 1792373056714_2enpk.messages.json	jasonw	hfeg0plg55	129	spice_sim	case	EDA-Eval-DesignFlow-NmosAgeChar-001	2026-11-03 11:13	
+1792720528359_2tuxj	kaixuanx	hfeg0pkn001	91	spice_sim	claimed		2026-11-03 11:35	
