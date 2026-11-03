@@ -88,3 +88,4 @@
 1791963948520_hk622.messages.json	rongtaoy	hfeg0plg99	257	schematic_netlist	case	EDA-Eval-DesignFlow-SPFNetlistCompare-001	2026-11-03 15:03	
 1792139236507_7jzqb.messages.json	reedchen	hfeg0plg93	200	waveform	case	EDA-Eval-DesignFlow-FineSimTskew-001	2026-11-03 15:46	
 1793078373656_wqhsu.messages.json	xiwang	hfeg0pkn003	289	schematic_netlist	case	EDA-Eval-DesignFlow-ScmosStructFind-001	2026-11-03 16:27	
+1789983785169_qqvzo.messages.json	e0031668	hfeg0pkn003	206	schematic_netlist	parked		2026-11-03 17:14	duplicate task of ErcSetupGen-001 (same user e0031668, same ERC ercSetup.tcl task; delivered from 1dh6s mc389)
