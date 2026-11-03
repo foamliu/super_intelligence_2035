@@ -59,3 +59,5 @@ djml8					case	EDA-Eval-DesignFlow-PFDdeadZone-001	2026-11-02 17:47
 1790142100320_n91pk	alenxu	hfeg0pkn003	755	characterization	case	EDA-Eval-DesignFlow-CtleAcChar-001	2026-11-04 02:05	
 1787798131361_82ybr	haoyut	hfeg0plg49	878	spice_sim	parked		2026-11-04 02:15	PIM LPDDR6 verilog sim + PT STA + SPEF parasitics back-annotation + schematic nav; near-zero spice/spectre (only 2 incidental spectre hits); belongs to digital-verify/STA shard not spice_char
 1784623431472_gvm3g	e0014566	hfeg0plg58	554	spice_sim	case	EDA-Eval-DesignFlow-FineSimModelScopeFix-001	2026-11-04 02:43	
+1790490487765_6dx8f	cwei	hfeahpc504	328	spice_sim	parked		2026-11-04 03:02	prompt=SpiceAgent CTLE schematic gen in Aether (pyAether), 实为 schematic/layout 生成非 spice_sim/characterization；hspice 命中来自 skill 描述非任务
+1791963948520_hk622	rongtaoy	hfeg0pkn001	257	spice_sim	case	EDA-Eval-DesignFlow-FineSimNoRefCktFix-001	2026-11-04 03:26	
