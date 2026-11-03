@@ -98,3 +98,5 @@
 1792216766099_x89ek.messages.json	reedchen	hfeg0pkn004	163	waveform	case	EDA-Eval-DesignFlow-GenSPv2-001	2026-11-03 17:46	
 1791860277898_nbl0h.messages.json	cynthiaz	hfeg0plg52	547	analog_context	case	EDA-Eval-DesignFlow-StrongARM-001	2026-11-03 18:18	
 1791509106344_8zuer.messages.json	adaml	hfeg0pkn001	240	schematic_netlist	case	EDA-Eval-DesignFlow-DQTXStim-001	2026-11-03 18:46	
+1792411915181_j8f3i.messages.json	yutongy	hfeg0pgn021	221	schematic_netlist	case	EDA-Eval-DesignFlow-SpfstdBtn-001	2026-11-03 19:37	
+1789993978842_q63ux.messages.json					parked		2026-11-03 19:37	sandbox down whole session, agent never produced accepted deliverable; trn_reader.py pre-existed from prior session -- no A-faithful golden
