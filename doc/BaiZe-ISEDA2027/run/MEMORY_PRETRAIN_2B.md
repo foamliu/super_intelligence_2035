@@ -2,18 +2,19 @@
 WAITING: 0
 > 🛑 **【运维通告 · 2026-11-02 19:51】S1 已由 ops 中继重启并在跑**：`bash scripts/train.sh s1 --nodes 2`，launcher pid **4163528**，从 **ckpt 58000** 续（19:55:40 起 iter **58010**→58030，7.0–7.2 s/step ≈**582K tok/s**，双机 16 卡 **98–100%**、~75GB/卡、~690W）。⇒ **GPU 不再空闲**：🚫 严禁再起任何训练/GPU 评测进程（会双写 ckpt 或 OOM）；"GPU idle → 2.5h 评测"的结论已过期。原 **18:39:51 SIGKILL / 18:50:18 SIGBUS** 的现场日志已归档为 `/tmp/baize_s1_baize2b_worker.log.crash_1102_1839` 与 `..._master.log.crash_1102_1839`（🚫 勿删，待 root 查 dmesg 定 OOM vs 误杀）。CPU 评测继续但**必须降载**：`OMP_NUM_THREADS≤8` + `nice -n 19` + 每机并发 ≤2，**禁止 `pkill python`**（18:39 训练被 -9 的疑似原因）。另：本次 resume **未恢复 scheduler**，LR 从 warmup 重来（58010=5e-6，每 10 步 +5e-6，约 2000 步/3.9h 后回 1e-3）——实验日志须记一笔。详见 `BAIZE_PRETRAIN_2B_TASK.md` 顶部运维令。
 
-> 🆕 2026-11-03 18:48 #1259：**监控轮·iter_50000 66.8%@15.7s/it ETA~22:32·.12 双 float32 ~16.0%@29.5s/it ETA~Nov4 12:42-12:43·iter_30000 SIGSTOP·watcher PID1999093 运行中·S1 iter69750/loss2.096/0NaN 健康·CPU .29 load30.7/.12 load31.0 均<<80% ✅·未完成指令：有**。
-> **② eval 进度快照（18:48 实测，2599=8集合计请求，X/2599 即全程 X%）**：
+> 🆕 2026-11-03 18:53 #1260：**监控轮·iter_50000 67.8%@16.1s/it ETA~22:38·.12 双 float32 ~16.4%@30s/it ETA~Nov4 12:53-13:11·iter_30000 SIGSTOP·watcher PID1999093 运行中·S1 iter69790/loss2.085/0NaN 健康·CPU .29 load28.7/.12 load36.0 均<<80% ✅·未完成指令：有**。
+> **② eval 进度快照（18:53 实测，2599=8集合计请求，X/2599 即全程 X%）**：
 > - iter_10000 ✅ **DONE** float32 全程 44665s(12.4h)：arc_c=0.29,arc_e=0.49,boolq=0.61,hs=0.36,obqa=0.20,piqa=0.72,sciq=0.79,wg=0.54,**Avg=50.0%**（results.json 已存，已核验）
-> - iter_50000 🔄 bf16 .29(PID 2024390,elapsed 8h12m)：**1735/2599(66.8%)**,**~15.7s/it**(0 NaN,稳定),剩864×15.7≈3.77h→**done~22:32 Nov3** ✅on track
-> - iter_30000 ⏸ float32 .29(PID 1744762,**SIGSTOP 暂停**,state=TNLl,已做144/2599=5.5%)：watcher(`/tmp/baize_eval_watcher_30000.sh` PID **1999093 运行中**)待 iter_50000 退出后自动 SIGCONT→独享.29≈15s/it→2455×15s≈10.2h→**done~Nov4 08:50**
-> - iter_40000 🔄 float32 .12(PID 1259184,elapsed 4h04m)：**415/2599(16.0%)**,稳定**~29.5s/it**,剩2184×29.5≈17.9h→**done~Nov4 12:42**
-> - iter_20000 🔄 float32 .12(PID 1259403,elapsed 4h04m)：**412/2599(15.9%)**,稳定**~29.5s/it**,剩2187×29.5≈17.9h→**done~Nov4 12:43**
-> **③ S1 训练**：iter 69750/700000,loss 2.096,0NaN,0skip,~7.1s/step≈598K tok/s,LR=1e-3(稳态)✅。GPU .29 97-100% util/~75GB/卡。ckpt iter_68000(next@70000)。
-> **④ CPU**：.29 load 30.67/224核(≈13.7%)；.12 load 30.96/224核(≈13.8%)。均 <<80% ✅
+> - iter_50000 🔄 bf16 .29(PID 2024390,elapsed 8h17m)：**1761/2599(67.8%)**,**~16.1s/it**(0 NaN,稳定),剩838×16.1≈3.74h→**done~22:38 Nov3** ✅on track
+> - iter_30000 ⏸ float32 .29(PID 1744762,**SIGSTOP 暂停**,state=TNLl,已做144/2599=5.5%)：watcher(`/tmp/baize_eval_watcher_30000.sh` PID **1999093 运行中**)待 iter_50000 退出后自动 SIGCONT→独享.29≈16s/it→2455×16s≈10.9h→**done~Nov4 09:30**
+> - iter_40000 🔄 float32 .12(PID 1259184,elapsed 4h10m)：**427/2599(16.4%)**,稳定**~30.3s/it**,剩2172×30.3≈18.3h→**done~Nov4 13:11**
+> - iter_20000 🔄 float32 .12(PID 1259403,elapsed 4h10m)：**425/2599(16.4%)**,稳定**~29.8s/it**,剩2174×29.8≈18.0h→**done~Nov4 12:53**
+> **③ S1 训练**：iter 69790/700000,loss 2.085,0NaN,0skip,~7.05s/step≈599K tok/s,LR=1e-3(稳态)✅。GPU .29 97-100% util/~75GB/卡。ckpt iter_68000(next@70000)。
+> **④ CPU**：.29 load 28.68/224核(≈12.8%)；.12 load 35.99/224核(≈16.1%)。均 <<80% ✅
 > **⑤ SIGSTOP 优化（#1242 部署，持续有效）**：iter_30000(SIGSTOP)+iter_50000(bf16)在 .29 上→iter_50000 独享带宽。watcher PID 1999093 运行中，待 iter_50000 退出后自动 SIGCONT iter_30000。
-> **⑥ 下一步**：①下轮唤醒查 iter_50000 是否 done(~22:32)→若 done 收 results.json 并确认 iter_30000 已 SIGCONT 恢复 ②持续监控 .12 双 float32(ETA Nov4 12:42-12:43) ③全部 5/5 done→汇总表+能力-vs-step 曲线+终版报告 report_pretrain_cpu_eval_8sets_zh.html+日报。**最坏 Nov4 12:43 < 24h deadline(Nov4 ~14:50) ✅**。未完成指令：有 ⇒ WAITING: 0。
-> **📦 体积**：TASK=30602B(29.9KB)/MEMORY≈11.9KB（均 ≤32KB ✅，本轮无需归档）。
+> **⑥ 下一步**：①下轮唤醒查 iter_50000 是否 done(~22:38)→若 done 收 results.json 并确认 iter_30000 已 SIGCONT 恢复 ②持续监控 .12 双 float32(ETA Nov4 12:53-13:11) ③全部 5/5 done→汇总表+能力-vs-step 曲线+终版报告 report_pretrain_cpu_eval_8sets_zh.html+日报。**最坏 Nov4 13:11 < 24h deadline(Nov4 ~14:50) ✅**。未完成指令：有 ⇒ WAITING: 0。
+> **📦 体积**：TASK=30602B(29.9KB)/MEMORY≈12.1KB（均 ≤32KB ✅，本轮无需归档）。
+> 📦 §#1259（11-03 18:48, 监控轮·iter_50000 66.8%@15.7s/it）→ daily-memories/2026-11-03.md；**结论**：4 evals 稳定推进, iter_50000 66.8% ETA~22:32, .12 双 float32 15.9-16.0% ETA Nov4 12:42-12:43, S1 iter69750健康。被#1260 确认继续有效(67.8%@16.1s/it)。需要时再读。
 > 📦 §#1258（11-03 18:39, 监控轮·iter_50000 65.6%@15.7s/it）→ daily-memories/2026-11-03.md；**结论**：4 evals 稳定推进, iter_50000 65.6% ETA~22:33, .12 双 float32 15.2-15.4% ETA Nov4 12:40-12:45, S1 iter69680健康。被#1259 确认继续有效(66.8%@15.7s/it)。需要时再读。
 > 📦 §#1257（11-03 18:35, 监控轮·iter_50000 65.0%@15.8s/it）→ daily-memories/2026-11-03.md；**结论**：4 evals 稳定推进, iter_50000 65.0% ETA~22:35, .12 双 float32 14.9-15.0% ETA Nov4 12:53-13:26, S1 iter69640健康。被#1258-#1259 确认继续有效。需要时再读。
 > 📦 §#1256（11-03 18:30, 监控轮·iter_50000 64.1%@15.6s/it）→ daily-memories/2026-11-03.md；**结论**：4 evals 稳定推进, iter_50000 64.1% ETA~22:35, .12 双 float32 14.5% ETA Nov4 13:15, S1 iter69600健康。被#1257 确认继续有效(65.0%@15.8s/it)。需要时再读。
@@ -51,4 +52,4 @@ WAITING: 0
 - 数据：P-5b 用 `data/p5b_l3/p5b_l3_train_s{0..15}`（16 片 1:1 blend ≈20.6B token）；P-8 主体=Ultra-FineWeb-L3 全量（base 下载中）。
 - 环境：**训练**=`py310` env（`PYTHONPATH=/nas_train/app.e0031982/omegaconf_230`；python=`/nas_train/app.e0031982/miniforge3/envs/py310/bin`）；**推理/sglang 服务**=`vllm` env（sglang 0.5.9 + vllm 0.14.1 + flashinfer 0.6.3 + lm_eval 0.4.13，Python 3.12）。
 - 进程识别：单次 8 卡=1 torchrun master + 8 worker（pretrain_launcher）+ 每 rank 11×pt_data_worker，勿误判重复拉练。
-- ⚠️ **机器甄别（防误判·2026-10-19 #601 立此存照）**：pretrain watchdog loop（`baize_pretrain_loop.sh` PID1294448）跑在 **.12**，但主训练（`baize_xmodel25_decay_v2.py` PID2597555）跑在 **.29**。判活检查（`pgrep -af torchrun` / `nvidia-smi` / `tail /tmp/baize_xmodel25_decay_v2_train.log`）**必须先 `ssh -o StrictHostKeyChecking=no 10.239.2.29 '...'` 再做**——在 .12 本地做会看到 ArmC 训练(PID3565540,`mllm_bridge/stage15_train_armC.py`,port30077,.12 8卡~15GB/卡)+已杀的#550 resume 日志(止于 step8070@17:17 SIGTERM)，**误判主 run 已死** ⇒ 这正是 #548/#550 两起误判的根因。SSH 已验证可用。判活三件套只在 .29 上有效；.29 的 `/tmp` log 才是主 run 实�
+- ⚠️ **机器甄别（防误判·2026-10-19 #601 立此存照）**：pretrain watchdog loop（`baize_pretrain_loop.sh` PID1294448）跑在 **.12**，但主训练（`baize_xmodel25_decay_v2.py` PID2597555）跑在 **.29**。判活检查（`pgrep -af torchrun` / `nvidia-smi` / `tail /tmp/baize_xmodel25_decay_v2_train.log`）**必须先 `ssh -o StrictHostKeyChecking=no 10.239.2.29 '...'` 再做**——在 .12 本地做会看到 ArmC 训练(PID3565540,`mllm_bridge/stage15_train_armC.py`,port30077,.12 8卡~15GB/卡)+已杀的#550 resume 日志(止于 step8070@17:17 SIGTERM)，**误判主 run 已死** ⇒ 这正是 #548/#550 两起误判的根因。SSH 已验证可用。判活三件套只在 .29 上有效；.29 的 `/tmp` log 才是主 run 实�
