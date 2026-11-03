@@ -93,6 +93,16 @@ def _run(cmd: list[str], cwd: Path, timeout: int, env: dict | None = None) -> Dr
     import time
     t0 = time.time()
     e = dict(os.environ)
+    # CPU guardrail (2026-11-03 R1409): limit OpenMP/BLAS/joblib threads to 8
+    # to prevent sklearn HistGradientBoosting n_jobs失控 grabbing all 224 cores
+    # (incident: pytest test_gradient_boosting.py hit 18557% CPU = 186 cores,
+    #  load 233/224, threatening S1 training).  Only set if not already
+    #  explicitly in env (don't override caller's deliberate settings).
+    for _tk in ("OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS", "MKL_NUM_THREADS",
+                "NUMEXPR_NUM_THREADS", "VECLIB_MAXIMUM_THREADS",
+                "JOBLIB_CPU_COUNT"):
+        if _tk not in e:
+            e[_tk] = "8"
     if env:
         for k, v in env.items():
             if v is None:
