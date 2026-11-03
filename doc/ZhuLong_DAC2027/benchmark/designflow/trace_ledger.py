@@ -88,8 +88,8 @@ def load_stats():
 
 
 def target_of(stats):
-    """分母 = 候选池规模（默认 match_count>=300，可用 stats.target_mc 覆盖）"""
-    mc = int(stats.get("target_mc", 300))
+    """分母 = 候选池规模（默认 match_count>=100，可用 stats.target_mc 覆盖）"""
+    mc = int(stats.get("target_mc", 100))
     for k in ("mc%d" % mc, "mc300", "sessions"):
         if stats.get(k):
             return int(stats[k]), mc

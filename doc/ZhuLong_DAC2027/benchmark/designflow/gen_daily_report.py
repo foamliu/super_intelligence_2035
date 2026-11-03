@@ -32,6 +32,8 @@ THREE_MOUTH = {
     "users": 365,          # 去重（从 session 路径 /home/<user>/ 提取, 跨 host 去重）
     "session_files": 14444,  # 去重命中 session（EDA-trace-worthy, 非全部 session）
     "ic_eda_hits": 24085,  # summary.tsv 命中条目数（10/28 原扫描, 含同 session 多 keyword）
+    "pool_mc100": 696,     # 候选池 mc>=100 去重 session（11/03 改, 旧 mc>=300=172）
+    "pool_users_mc100": 182,  # 候选池去重用户
 }
 
 # (trace provenance for every proper case lives in metadata.trace_source — 即时令 XI)
@@ -323,14 +325,18 @@ footer{{margin-top:30px;color:#999;font-size:.75rem;text-align:center}}
 </table>
 <b>每日趋势</b>（qualifying sessions，去重命中 session 数）：10/29=14370 · 10/30=2641（异常低，疑似扫描中断）· 10/31=13994 · 11/01=14047 · 11/02=13890 · <b>11/03=14448</b>。会话数在增长（6 天 +78）。
 </div>
-<h3>候选池与覆盖率（候选池 = match_count≥300 的去重 session）</h3>
+<h3>候选池与覆盖率（候选池 = match_count≥100 的去重 session，11/03 调整）</h3>
 <div class="kpis">
-<div class="kpi"><div class="n">172</div><div class="l">候选池（mc≥300 去重 session）</div></div>
-<div class="kpi"><div class="n">49</div><div class="l">mc≥500 去重 session</div></div>
-<div class="kpi"><div class="n">60</div><div class="l">候选池去重用户</div></div>
+<div class="kpi"><div class="n">{THREE_MOUTH.get('pool_mc100',696)}</div><div class="l">候选池（mc≥100 去重 session）</div></div>
+<div class="kpi"><div class="n">172</div><div class="l">旧候选池（mc≥300, 已弃）</div></div>
+<div class="kpi"><div class="n">{THREE_MOUTH.get('pool_users_mc100',182)}</div><div class="l">候选池去重用户</div></div>
 <div class="kpi"><div class="n">80/365</div><div class="l">已覆盖用户（21.9%）</div></div>
 </div>
-<div class="note">benchmark 已用 152 个去重 session（出 164 case），覆盖率：候选池维度 152/172=<b>88.4%</b>（但 ledger status 规范化后实际 case 数待核）；全命中 session 维度 152/3899=<b>3.9%</b>；11/03 每日扫描维度 152/14444=<b>1.05%</b>。<br>旧日报 "2.9%" 是因 summary_stats.json 缺失导致 trace_ledger 用了错误分母。</div>
+<div class="note">
+<b>mc = match_count</b> = session 文件里命中 EDA 关键词的<b>行数</b>（grep -icE RE1，一行命中任一关键词计 1）。RE1 含 60+ EDA 关键词：virtuoso/innovus/calibre/spectre/hspice/aether/skipper/waveview/pyAether/dbGet/dbCreate*/schematic/netlist/synthesis/PDK/analog/cmos/... 11/03 已加 <code>rtl</code>。<br>
+<b>候选池阈值 mc≥300 → mc≥100</b>（11/03 用户直令）：旧阈值 300 太严（只筛出 172 个"重度 EDA 会话"），把 mc 100-299 的 524 个中等丰富 session 排除了。新阈值 mc≥100 候选池 = <b>696</b> 个去重 session / 182 个去重用户。benchmark 已用 266 个 session，覆盖率 266/696 = <b>38.2%</b>（旧口径 88.4% 是因候选池太小虚高）。<br>
+<b>mc 分布</b>（去重 session）：1-9: 1912(49%) · 10-49: 883 · 50-99: 408 · <b>100-299: 524(新纳入)</b> · 300-499: 123 · 500-999: 47 · 1000+: 2
+</div>
 
 <h2>二、评测用例盘点（benchmarks/EDA-Eval-DesignFlow/EDA-Eval-DesignFlow.jsonl）</h2>
 <div class="kpis">
