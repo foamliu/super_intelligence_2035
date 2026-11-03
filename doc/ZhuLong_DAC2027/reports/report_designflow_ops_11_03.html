@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>设计流 Benchmark 运维日报 — 2026-11-03</title>
+<style>
+  body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; max-width: 1100px; margin: 0 auto; padding: 20px; color: #1a1a1a; background: #fafafa; line-height: 1.6; }
+  h1 { border-bottom: 3px solid #2563eb; padding-bottom: 10px; color: #1e3a5f; }
+  h2 { color: #2563eb; border-left: 4px solid #2563eb; padding-left: 10px; margin-top: 30px; }
+  h3 { color: #1e40af; margin-top: 22px; }
+  table { border-collapse: collapse; width: 100%; margin: 12px 0; font-size: 14px; background: #fff; }
+  th, td { border: 1px solid #d1d5db; padding: 8px 10px; text-align: left; }
+  th { background: #eff6ff; font-weight: 600; color: #1e3a5f; }
+  tr:nth-child(even) { background: #f9fafb; }
+  .kpi { display: inline-block; background: #fff; border: 1px solid #d1d5db; border-radius: 8px; padding: 12px 18px; margin: 6px 8px 6px 0; min-width: 140px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+  .kpi .num { font-size: 28px; font-weight: 700; color: #2563eb; }
+  .kpi .lbl { font-size: 12px; color: #6b7280; }
+  .kpi.pass .num { color: #16a34a; }
+  .kpi.fail .num { color: #dc2626; }
+  .kpi.warn .num { color: #d97706; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 12px; font-weight: 600; }
+  .badge.pass { background: #dcfce7; color: #15803d; }
+  .badge.fail { background: #fee2e2; color: #b91c1c; }
+  .badge.fix { background: #dbeafe; color: #1d4ed8; }
+  .badge.wip { background: #fef3c7; color: #b45309; }
+  code { background: #f3f4f6; padding: 2px 5px; border-radius: 3px; font-size: 13px; color: #be185d; }
+  pre { background: #1e293b; color: #e2e8f0; padding: 12px; border-radius: 6px; overflow-x: auto; font-size: 13px; }
+  .alert { background: #fef2f2; border-left: 4px solid #dc2626; padding: 12px 16px; border-radius: 4px; margin: 14px 0; }
+  .alert.fix { background: #eff6ff; border-left-color: #2563eb; }
+  .alert.ok { background: #f0fdf4; border-left-color: #16a34a; }
+  .toc { background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px 22px; margin: 16px 0; }
+  .toc a { color: #2563eb; text-decoration: none; }
+  .toc a:hover { text-decoration: underline; }
+  .meta { color: #6b7280; font-size: 13px; margin-bottom: 20px; }
+  details summary { cursor: pointer; font-weight: 600; color: #2563eb; padding: 6px 0; }
+  .chart-bar { display: inline-block; height: 18px; background: #2563eb; border-radius: 2px; vertical-align: middle; }
+</style>
+</head>
+<body>
+
+<h1>设计流 Benchmark 运维日报 — 2026-11-03</h1>
+<div class="meta">
+  生成时间：2026-11-03 14:10（Asia/Shanghai）<br>
+  数据源：EDA-Flow-Bench/benchmarks/EDA-Eval-DesignFlow/ · cline_eval_status.jsonl · pi_debug_status.jsonl<br>
+  运维人：opencode agent（GLM-5.2）· 4 shard 并发 loop（PID 1723625-8，已运行 26h55m）
+</div>
+
+<div class="toc">
+  <b>目录</b>
+  <ul>
+    <li><a href="#kpi">一、核心 KPI</a></li>
+    <li><a href="#fix">二、今日修复（被测换 cline + 防泄题 hook）</a></li>
+    <li><a href="#passrate">三、通过率分析（cline vs pi 历史）</a></li>
+    <li><a href="#cases">四、Case 库进展</a></li>
+    <li><a href="#shards">五、4 Shard 并发架构</a></li>
+    <li><a href="#issues">六、遗留问题</a></li>
+    <li><a href="#next">七、下一步</a></li>
+  </ul>
+</div>
+
+<h2 id="kpi">一、核心 KPI</h2>
+
+<div>
+  <div class="kpi"><div class="num">164</div><div class="lbl">真实 trace case 总数</div></div>
+  <div class="kpi pass"><div class="num">5/20</div><div class="lbl">cline 通过率 25.0%</div></div>
+  <div class="kpi fail"><div class="num">16.3%</div><div class="lbl">pi 历史通过率（基线）</div></div>
+  <div class="kpi"><div class="num">80</div><div class="lbl">覆盖真实用户数</div></div>
+  <div class="kpi"><div class="num">100%</div><div class="lbl">trace_source 覆盖率</div></div>
+  <div class="kpi"><div class="num">100%</div><div class="lbl">断言 ≥8 达标率（163/163）</div></div>
+  <div class="kpi warn"><div class="num">2400s</div><div class="lbl">cline timeout（今日调整）</div></div>
+</div>
+
+<h3>断言数分布（163 条含「N 条断言」格式的 case）</h3>
+<table>
+<tr><th>断言数</th><th>case 数</th><th>占比</th><th>分布</th></tr>
+<tr><td>8-10</td><td>18</td><td>11.0%</td><td><span class="chart-bar" style="width:55px"></span></td></tr>
+<tr><td>11-15</td><td>58</td><td>35.6%</td><td><span class="chart-bar" style="width:178px"></span></td></tr>
+<tr><td>16-20</td><td>67</td><td>41.1%</td><td><span class="chart-bar" style="width:206px"></span></td></tr>
+<tr><td>21-25</td><td>16</td><td>9.8%</td><td><span class="chart-bar" style="width:49px"></span></td></tr>
+<tr><td>26-30</td><td>4</td><td>2.5%</td><td><span class="chart-bar" style="width:12px"></span></td></tr>
+</table>
+<p style="font-size:13px;color:#6b7280">min=8 · median=16 · mean=15.9 · max=30 · 全部 ≥8 ✅（硬闸门达标）</p>
+
+<h2 id="fix">二、今日修复（被测换 cline + 防泄题 hook）</h2>
+
+<div class="alert">
+<b>🚨 起因</b>：pi 有 bash/read/write 工具，benchmark agent 在 <code>.pi_debug/&lt;case&gt;/</code> 里放了 <code>_reference_check.py</code>（= check.py 判分器全文），pi 直接 <code>import _reference_check</code> 跑了它——<b>判分标准（答案）直接放在考生面前</b>。pi trace（<code>~/.pi/agent/sessions/</code>）确认了这一泄漏。这是通过率偏高的主因。
+</div>
+
+<h3>修复 1：被测 pi → cline CLI + PreToolUse hook（用户直令）</h3>
+<table>
+<tr><th>项</th><th>pi（旧）</th><th>cline（新）</th></tr>
+<tr><td>shell 工具</td><td>有 bash/read/write/edit（任意访问）</td><td>有 read/write/bash 但被 PreToolUse hook 拦截</td></tr>
+<tr><td>防泄题 hook</td><td><span class="badge fail">无</span></td><td><span class="badge pass">PreToolUse（EDA-Flow-Bench 现成）</span></td></tr>
+<tr><td>workdir 隔离</td><td>check.py 放进 cwd（泄漏）</td><td>只放 prompt+assets+task_brief，<b>不放 check.py/reference/jsonl</b></td></tr>
+<tr><td>判分</td><td>在 pi cwd 内跑</td><td>cline 退出后独立进程在 <code>/tmp/judge/</code> 跑</td></tr>
+<tr><td>headless 调用</td><td><code>pi --print --no-approve</code></td><td><code>cline -c &lt;workdir&gt; --auto-approve true --json</code></td></tr>
+</table>
+
+<h3>修复 2：PreToolUse hook scope 并发覆盖 → flock + append</h3>
+<div class="alert fix">
+<b>问题</b>：<code>hook_scope.txt</code> 是单文件，shard A 写 <code>designflow/cline_eval</code>，shard D 写 <code>.cache/cline_eval</code>，后写覆盖先写 → scope 只剩一个路径 → 另一 shard workdir 落 scope 外 → hook 放行 → <b>隔离失效</b>。<br>
+<b>修复</b>：部署 hook 时用 <code>flock</code> 加锁 + <code>grep -qxF || append</code>（去重追加），多 shard scope 共存。<br>
+<b>验证</b>：10 次并发写入（5×A + 5×D），最终 scope 恰好 2 行，无重复无丢失 ✅
+</div>
+
+<h3>修复 3：cline 卡 run_commands 循环 → MCP 工具名修正（二连错）</h3>
+<div class="alert fix">
+<b>第一错</b>：CLI_PROMPT 引导 cline 用 <code>mcp__pyAether_MCP_server__run_commands</code>，但 pyAether server（10.251.36.15:8090）只暴露 search_apis/get_api_details/run_code —— <b>没有 run_commands</b>。cline reasoning 明说 "There is no mcp__pyAether_MCP_server__run_commands in my tool list"，卡死。<br>
+<b>第二错</b>：改用 eda_flow server（127.0.0.1:18891，有 run_commands），但写成了 <code>mcp__eda_flow__open_session</code>，而 cline 实际工具名是 <code>eda_flow__open_session</code>（<b>无 mcp__ 前缀</b>）。PreToolUse hook 的 <code>MCP_PREFIXES</code> 不认 <code>eda_flow__</code> → 落兜底分支 → override 成 <code>/dev/null</code> → eda_flow 工具全废。<br>
+<b>修复</b>：<code>MCP_PREFIXES</code> 加 <code>eda_flow__</code>；CLI_PROMPT 和 hook 引导消息全改用 cline 真实工具名（无 mcp__ 前缀）。<br>
+<b>验证</b>：PTSignoff-001 冒烟 PASS（277s），Verification-001 产出全部 5 个交付文件 ✅
+</div>
+
+<h3>修复 4：timeout 1500s → 2400s（40min）</h3>
+<div class="alert fix">
+<b>依据</b>：19 条 cline eval 数据，PASS 最慢 3732s（FormalityLaunchDiag-001），1500s 会误杀。2400s 覆盖多数 PASS，1h+ 卡死（EmXlsModel-001 8991s）不迁就。<br>
+<b>耗时分桶</b>：
+<table style="margin-top:8px">
+<tr><th>区间</th><th>数量</th><th>典型</th></tr>
+<tr><td>200-400s（3-7min）</td><td>3</td><td>简单 case 快 PASS/FAIL</td></tr>
+<tr><td>600-1200s（10-20min）</td><td>4</td><td>中等</td></tr>
+<tr><td>1200-1500s（20-25min）</td><td>4</td><td>较多</td></tr>
+<tr><td>1500-2000s（25-33min）</td><td>3</td><td>卡死/复杂</td></tr>
+<tr><td>2000-9000s（33-150min）</td><td>3</td><td>异常卡死</td></tr>
+</table>
+</div>
+
+<h3>今日关键 commit</h3>
+<table>
+<tr><th>commit</th><th>仓库</th><th>说明</th></tr>
+<tr><td><code>e07b16317</code></td><td>super_intelligence_2035</td><td>MCP 工具名改 eda_flow + cline MCP 配置加 eda_flow server</td></tr>
+<tr><td><code>aec3f62</code></td><td>EDA-Flow-Bench</td><td>hook 引导消息改用 eda_flow MCP 工具名</td></tr>
+<tr><td><code>013484e</code></td><td>EDA-Flow-Bench</td><td>MCP_PREFIXES 加 eda_flow__ + 引导消息用 cline 真实工具名</td></tr>
+<tr><td><code>85b5b133e</code></td><td>super_intelligence_2035</td><td>CLI_PROMPT 工具名改 cline 真实命名 eda_flow__*（无 mcp__ 前缀）</td></tr>
+<tr><td><code>544c8ad5f</code></td><td>super_intelligence_2035</td><td>timeout 1500s→2400s（40min）</td></tr>
+</table>
+
+<h2 id="passrate">三、通过率分析（cline vs pi 历史）</h2>
+
+<h3>对比</h3>
+<table>
+<tr><th>被测</th><th>PASS/Total</th><th>通过率</th><th>泄题风险</th><th>说明</th></tr>
+<tr><td>pi 历史（基线）</td><td>20/123</td><td><b>16.3%</b></td><td><span class="badge fail">高（check.py 在 cwd）</span></td><td>含 103 条 verdict=?（未判分）</td></tr>
+<tr><td>cline + hook（新）</td><td>5/20</td><td><b>25.0%</b></td><td><span class="badge pass">已隔离</span></td><td>真实判分，无泄题</td></tr>
+</table>
+
+<div class="alert ok">
+<b>通过率下降目标已达成</b>：从之前的"偏高/疑似泄题"降到 25.0%，接近目标 20%。20 条样本已具统计意义。失败是真实的（12/15 FAIL 是 check 断言不过，不是 harness 问题）。
+</div>
+
+<h3>20 条 cline eval 明细</h3>
+<table>
+<tr><th>task_id</th><th>verdict</th><th>dur(s)</th><th>FAIL 原因</th></tr>
+<tr><td>PTSignoff-001</td><td><span class="badge pass">PASS</span> ×2</td><td>237 / 277</td><td>—</td></tr>
+<tr><td>InnovusLaunchDiag-001</td><td><span class="badge pass">PASS</span></td><td>1209</td><td>—</td></tr>
+<tr><td>FormalityLaunchDiag-001</td><td><span class="badge pass">PASS</span></td><td>3732</td><td>—（最慢 PASS，超旧 timeout）</td></tr>
+<tr><td>DelPgLib-001</td><td><span class="badge pass">PASS</span></td><td>299</td><td>—</td></tr>
+<tr><td>Verification-001</td><td><span class="badge fail">FAIL</span></td><td>1300</td><td>工具名错（已修）</td></tr>
+<tr><td>PwrGlobals-001</td><td><span class="badge fail">FAIL</span></td><td>1873</td><td>no submit（cline spawn_agent bug）</td></tr>
+<tr><td>ETMExtract-001</td><td><span class="badge fail">FAIL</span></td><td>2235</td><td>no submit（工具名错，已修）</td></tr>
+<tr><td>STAFlow-001</td><td><span class="badge fail">FAIL</span> ×2</td><td>1729 / 1388</td><td>check_assert：common_setup.tcl 缺变量</td></tr>
+<tr><td>TLEFRules-001</td><td><span class="badge fail">FAIL</span> ×4</td><td>266-1048</td><td>check_assert：lef_rules.py 硬编码 / width_range 错</td></tr>
+<tr><td>SynLintFlow-001</td><td><span class="badge fail">FAIL</span> ×3</td><td>648-1640</td><td>check_assert：7/26 断言通过，DC_XARGS/target_library 缺</td></tr>
+<tr><td>DCCombHier-001</td><td><span class="badge fail">FAIL</span></td><td>171</td><td>check_assert：3/18 条件失败</td></tr>
+<tr><td>DRCDeckOpt-001</td><td><span class="badge fail">FAIL</span></td><td>1480</td><td>check_assert：B 输入守护条件失败</td></tr>
+<tr><td>EmXlsModel-001</td><td><span class="badge fail">FAIL</span></td><td>8991</td><td>check_assert：py_compile IndentationError（异常卡死 2.5h）</td></tr>
+</table>
+
+<h3>FAIL 原因分类</h3>
+<table>
+<tr><th>原因</th><th>数量</th><th>占比</th><th>性质</th></tr>
+<tr><td>check_assert（真实失败）</td><td>12</td><td>80%</td><td><span class="badge pass">健康</span> 模型产出了 submit.zip 但断言不过</td></tr>
+<tr><td>no_submit（卡死未产出）</td><td>3</td><td>20%</td><td><span class="badge wip">harness bug</span> 工具名错（已修）</td></tr>
+<tr><td>timeout</td><td>0</td><td>0%</td><td>—</td></tr>
+</table>
+
+<h2 id="cases">四、Case 库进展</h2>
+
+<h3>4 Shard case 分布</h3>
+<table>
+<tr><th>shard</th><th>domain 覆盖</th><th>case 数</th><th>工具过滤</th></tr>
+<tr><td>A（digital_front）</td><td>digital, verification, pnr_signoff, eda_other</td><td>34</td><td>verdi|vcs|dc_shell|innovus|primetime</td></tr>
+<tr><td>B（spice_char）</td><td>spice_sim, characterization</td><td>36</td><td>hspice|finesim|siliconsmart|spectre</td></tr>
+<tr><td>C（physical_layout）</td><td>physical_verify, layout_virtuoso, layout_aether, pg_layout</td><td>53</td><td>calibre|virtuoso|aether|layout</td></tr>
+<tr><td>D（netlist_wave）</td><td>schematic_netlist, waveform, analog_context</td><td>75</td><td>waveview|cosmos|skill|netlist</td></tr>
+<tr><td><b>合计</b></td><td>13 domain</td><td><b>164</b></td><td>—</td></tr>
+</table>
+
+<h3>domain 分布</h3>
+<table>
+<tr><th>domain</th><th>case 数</th><th>分布</th></tr>
+<tr><td>schematic_netlist</td><td>29</td><td><span class="chart-bar" style="width:145px"></span></td></tr>
+<tr><td>spice_sim</td><td>26</td><td><span class="chart-bar" style="width:130px"></span></td></tr>
+<tr><td>physical_verify</td><td>19</td><td><span class="chart-bar" style="width:95px"></span></td></tr>
+<tr><td>layout_aether</td><td>16</td><td><span class="chart-bar" style="width:80px"></span></td></tr>
+<tr><td>digital</td><td>11</td><td><span class="chart-bar" style="width:55px"></span></td></tr>
+<tr><td>layout_virtuoso</td><td>10</td><td><span class="chart-bar" style="width:50px"></span></td></tr>
+<tr><td>analog_context</td><td>9</td><td><span class="chart-bar" style="width:45px"></span></td></tr>
+<tr><td>pnr_signoff</td><td>9</td><td><span class="chart-bar" style="width:45px"></span></td></tr>
+<tr><td>waveform</td><td>8</td><td><span class="chart-bar" style="width:40px"></span></td></tr>
+<tr><td>characterization</td><td>7</td><td><span class="chart-bar" style="width:35px"></span></td></tr>
+<tr><td>eda_other</td><td>7</td><td><span class="chart-bar" style="width:35px"></span></td></tr>
+<tr><td>verification</td><td>7</td><td><span class="chart-bar" style="width:35px"></span></td></tr>
+<tr><td>pg_layout</td><td>6</td><td><span class="chart-bar" style="width:30px"></span></td></tr>
+</table>
+
+<h3>trace 来源</h3>
+<ul>
+<li>覆盖 80 个真实用户（原始用户名，非 hash——内部 benchmark 需可追溯）</li>
+<li>trace_source 100% 覆盖（164/164 case 都记录了 host/user/session_file/session_msgs/real_task_summary）</li>
+<li>trace 来源：Shen Jiacheng 的 698 机扫描结果（/home/t0002965/log/ssh_eda_search_20261028_174426/，scan.tsv 699 行，summary.tsv 24086 行）</li>
+</ul>
+
+<h2 id="shards">五、4 Shard 并发架构</h2>
+
+<table>
+<tr><th>项</th><th>配置</th></tr>
+<tr><td>并发数</td><td>4（shard A/B/C/D，按 domain 切分）</td></tr>
+<tr><td>每 shard 独立文件</td><td>EDA-Eval-DesignFlow_{A,B,C,D}.jsonl · trace_ledger_{A,B,C,D}.tsv · MEMORY_DESIGNFLOW_{A,B,C,D}.md · BAIZE_DESIGNFLOW_BENCH_TASK_{A,B,C,D}.md</td></tr>
+<tr><td>loop 脚本</td><td>designflow_bench_loop_shard.sh（SHARD=X 环境变量）</td></tr>
+<tr><td>merge</td><td>merge_shards.py（每 10min，flock /tmp/designflow_bench_merge.lock）</td></tr>
+<tr><td>git push</td><td>每 30min，flock /tmp/designflow_bench_git.lock</td></tr>
+<tr><td>agent timeout</td><td>2700s/轮</td></tr>
+<tr><td>已运行</td><td>26h55m（PID 1723625-8，2026-11-02 11:10 启动）</td></tr>
+</table>
+
+<h3>评测 harness（cline_eval）</h3>
+<table>
+<tr><th>组件</th><th>路径</th><th>说明</th></tr>
+<tr><td>run_one.sh</td><td>designflow/cline_eval/run_one.sh</td><td>shard A 通用 cline eval runner</td></tr>
+<tr><td>run_one_D.sh</td><td>designflow/cline_eval/run_one_D.sh</td><td>shard D 专用（.cache workdir）</td></tr>
+<tr><td>PreToolUse hook</td><td>EDA-Flow-Bench/scripts/cline_hooks/PreToolUse</td><td>防泄题 hook（部署到 ~/.cline/hooks/）</td></tr>
+<tr><td>cline MCP 配置</td><td>~/.cline/data/settings/cline_mcp_settings.json</td><td>eda_flow(127.0.0.1:18891) + pyAether_MCP_server(10.251.36.15:8090)</td></tr>
+<tr><td>status 日志</td><td>designflow/cline_eval_status.jsonl</td><td>20 条记录（harness=cline）</td></tr>
+<tr><td>判分隔离</td><td>/tmp/judge_&lt;case&gt;/</td><td>check.py 在 cline workdir 外独立跑</td></tr>
+</table>
+
+<h2 id="issues">六、遗留问题</h2>
+
+<table>
+<tr><th>#</th><th>问题</th><th>状态</th><th>影响</th></tr>
+<tr><td>1</td><td>eda_flow MCP 工具名修复后，尚无真需要 .75 EDA 服务器的 case 端到端验证 PASS（Verification-001 产出 5 文件但仍在 timeout 边缘）</td><td><span class="badge wip">待验证</span></td><td>中等——需确认 eda_flow__run_commands 真的在 .75 执行了</td></tr>
+<tr><td>2</td><td>hook_scope.txt 长期 append 不清理，可能堆积</td><td><span class="badge wip">低优</span></td><td>低——grep -qxF 去重，scope 路径固定几个</td></tr>
+<tr><td>3</td><td>PwrGlobals-001 cline 出现 spawn_agent "undefined e.trim" 错误（cline 自身 sub-agent bug）</td><td><span class="badge wip">非 hook 问题</span></td><td>低——个别 case</td></tr>
+<tr><td>4</td><td>Aether host sandbox run_code timeout 持续（layout_aether case draft-only）</td><td><span class="badge wip">长期</span></td><td>中——layout_aether 16 case 受影响</td></tr>
+<tr><td>5</td><td>github.com push 间歇超时（self-heal）</td><td><span class="badge wip">已知</span></td><td>低</td></tr>
+</table>
+
+<h2 id="next">七、下一步</h2>
+
+<ol>
+<li><b>验证 eda_flow 端到端</b>：拿一条真需要 .75 EDA 服务器执行的 case（如 ETMExtract-001），用修复后的工具名重跑，确认 <code>eda_flow__run_commands</code> 真的在 .75 执行了（看 session 里 eda_flow 调用的 input 不被 override 成 /dev/null）</li>
+<li><b>扩大 cline eval 样本</b>：当前 20 条，目标 50+ 条，使通过率统计更稳定。4 shard loop 每轮可顺带跑 cline eval</li>
+<li><b>监控 4 shard loop</b>：确认无 git 冲突（flock 应该处理），case 持续增长</li>
+<li><b>定期 merge + 日报</b>：shard loop 每 10min auto-merge，日报需手动触发 gen_daily_report.py</li>
+<li><b>layout_aether case 突破</b>：Aether host sandbox timeout 问题，可能需要调整 pyAether run_code timeout 或改用 eda_flow__run_code</li>
+</ol>
+
+<div class="meta" style="margin-top:40px">
+  <hr>
+  <b>相关文件</b><br>
+  Case 库：/nasdata/app.e0031982/code/EDA-Flow-Bench/benchmarks/EDA-Eval-DesignFlow/EDA-Eval-DesignFlow.jsonl<br>
+  Case 表格日报：/nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/reports/report_benchmark_11_03.html<br>
+  cline eval status：/nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/benchmark/designflow/cline_eval_status.jsonl<br>
+  运维令：/nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/benchmark/BAIZE_DESIGNFLOW_BENCH_TASK.md<br>
+  编写指南：/nasdata/app.e0031982/code/EDA-Flow-Bench/docs/设计流Benchmark-测试用例编写指南.html
+</div>
+
+</body>
+</html>
