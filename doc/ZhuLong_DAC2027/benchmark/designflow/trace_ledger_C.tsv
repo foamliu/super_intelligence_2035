@@ -108,3 +108,10 @@
 1790130179096_bmhid	lizwen	hfeg0plg16	357	layout_aether	case	EDA-Eval-DesignFlow-DRCPatPlacePlan-001	2026-11-03 12:10	
 1787122756811_pj0ax	e0014566	hfeg0plg58	379	pg_layout	case	EDA-Eval-DesignFlow-RTextChkPlan-001	2026-11-03 12:40	
 1789612268376_pjxhr	miccao	hfeg0plg37	340	layout_aether	case	EDA-Eval-DesignFlow-PCellFlowPlan-001	2026-11-03 13:27	
+1793017339067_jhdvn	t0002805	hfeg0plg91	492	skipper	parked		2026-11-03 13:34	r50 已判: schematic 域(1844 schematic/733 netlist),非纯 shard C 物理版图
+1783577039866_4dd1i	e0014566	hfeg0plg58	491	skipper	parked		2026-11-03 13:34	r50 已判: handoff prompt_powerfill.md,重叠既有 PowerFill
+1791853171557_i3dz3	xinqiaoz	hfeg0pkn004	413	skipper	parked		2026-11-03 13:34	r50 已判: pdkQaSystem 迁移审核=meta 非 EDA 设计流
+1788914570061_39qja	xinqiaoz	hfeg0pkn004	400	skipper	parked		2026-11-03 13:34	r50 已判: pdkQaSystem 迁移审核=meta 非 EDA 设计流
+1790578654193_ke3sv	xinqiaoz	hfeg0plg76	402	skipper	parked		2026-11-03 13:37	UI#0=handoff 恢复 pdkQaSystem,非纯 EDA 设计流 seed
+1789624635745_u0vle	xinqiaoz	hfeg0plg76	394	skipper	parked		2026-11-03 13:37	UI#0=阅读 pdkQaSystem agent-command-profiles 规则并解释,meta/how-to 非 seed
+1792463960005_7frw8	zqzhan	hfeg0pkn005	371	layout_aether	case	EDA-Eval-DesignFlow-ChkSaveHistDedup-001	2026-11-03 13:57	
