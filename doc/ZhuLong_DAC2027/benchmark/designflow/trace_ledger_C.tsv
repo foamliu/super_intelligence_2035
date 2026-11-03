@@ -140,3 +140,8 @@
 1791425782404_rn6pm.messages.json	yohannw	hfeg0pkn003	322	layout_virtuoso	case	EDA-Eval-DesignFlow-SkillMenuRoute-001	2026-11-03 20:22	
 1783596713423_53n4v	e0014566	hfeg0pkn001	317	pg_layout	case	EDA-Eval-DesignFlow-PFMergeDupAudit-001	2026-11-03 20:58	
 1790069538028_bjube	lizwen	hfeg0pkn002	299	physical_verify	case	EDA-Eval-DesignFlow-DRCPatManifest-001	2026-11-03 21:36	
+1792063193685_1vto1.messages.json	e0023936	hfeg0pkn001	305	layout_virtuoso	parked		2026-11-03 21:52	schematic-domain (highlight nets/MOS in schematic), not layout_virtuoso; UI#0/24/88/189/216 all say schematic
+1783585721814_kkzh8.messages.json	e0014566	hfeg0pkn001	322	layout_virtuoso	parked		2026-11-03 21:53	same powerfill-merge domain as r62 PFMergeDupAudit (53n4v); UI#0 read prompt_powerfill.md, UI#38 verbatim=53n4v UI#5; duplicate domain
+1788764026073_8hdj3.messages.json	ziyuny	hfeg0pnd002	305	layout_aether	parked		2026-11-03 21:54	env-setup+generic launch (UI#160 启动业务场景:模拟电路优化·二次执行=generic launch非seed; UI#74/123/132 connect aether, UI#154 open npn symbol=schematic); weak layout_aether seed
+1789960398048_ajqj4.messages.json	lizwen	hfeg0pkn002	298	layout_aether	parked		2026-11-03 21:55	same drc_pattern_gen skill domain as r63 DRCPatManifest (bjube); lizwen DRC testpattern gen saga, UI#95/130/248/382 fnmatch query+.oa pattern=identical theme; techfile angle but core duplicate
+1788743635326_keqfx.messages.json	miccao	hfeg0plg37	303	physical_verify	case	EDA-Eval-DesignFlow-DRCHierLossAudit-001	2026-11-03 22:05	
