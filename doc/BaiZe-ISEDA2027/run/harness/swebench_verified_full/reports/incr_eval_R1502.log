@@ -1,0 +1,32 @@
+=== incr_eval R1502 START Wed Nov  4 03:35:49 AM CST 2026 === (py=/nas_train/app.e0031982/miniforge3/envs/py310/bin/python3) (CPU guard: OMP=8, EVAL_MAX_WORKERS=1)
+[03:35:49] --- hermes: 1 instance (sphinx-doc__sphinx-9658) ---
+[03:35:49] === merge hermes predictions ===
+hermes: 227 real patches merged
+[03:35:49] === hermes eval START 1 instances ===
+Running 1 instances...
+  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [00:21<00:00, 21.57s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:21<00:00, 21.57s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:21<00:00, 21.57s/it]
+All instances run.
+Total instances: 1
+Instances submitted: 1
+Instances completed: 1
+Instances incomplete: 0
+Instances resolved: 1
+Instances unresolved: 0
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 9
+Unremoved images: 1
+Report written to hermes-kimi-k2.6-cloud.verified_full_hermes.json
+[03:36:15] === hermes eval DONE ===
+[03:36:15] --- regen eval summaries (with no-patch detection) ---
+regen_eval_summaries: cline-patched, opencode, pi, claude-code, codex, hermes, deepseek-harness
+  cline-patched: unchanged (n=500 resolved=326 failed=116 infra=0 no_patch=58)
+  opencode: unchanged (n=500 resolved=401 failed=96 infra=0 no_patch=3)
+  pi: unchanged (n=475 resolved=333 failed=130 infra=0 no_patch=12)
+  claude-code: unchanged (n=433 resolved=273 failed=85 infra=0 no_patch=75)
+  codex: unchanged (n=448 resolved=262 failed=68 infra=0 no_patch=118)
+  hermes: WROTE eval_hermes.json  n=311 resolved=181 failed=46 infra=0 no_patch=84)
+  deepseek-harness: unchanged (n=184 resolved=147 failed=30 infra=0 no_patch=7)
+=== incr_eval R1502 DONE Wed Nov  4 03:36:16 AM CST 2026 ===
