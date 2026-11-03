@@ -1,17 +1,4 @@
 {
-  "source": "/home/t0002965/log/ssh_eda_search_20261028_174426/summary.tsv (10/28 scan, recounted 11/03 via eda_flow)",
-  "generated": "2026-11-03T15:00:00+08:00",
-  "hosts": 698,
-  "users_total": 384,
-  "users_mc100": 182,
-  "users_mc300": 60,
-  "sessions": 3899,
-  "mc100": 696,
-  "mc300": 172,
-  "mc500": 49,
-  "mc1000": 2,
-  "hits_total": 24085,
-  "target_mc": 100,
   "daily_trend": {
     "20261029": 14370,
     "20261030": 2641,
@@ -24,6 +11,20 @@
     "20261029": 327,
     "20261103": 365
   },
-  "note": "候选池阈值已从 mc>=300 改为 mc>=100 (用户直令 11/03)。mc=match_count=session 文件里命中 EDA 关键词的行数(grep -c)。sessions=3899 是 10/28 原扫描去重命中 session; mc100=696 是新候选池(覆盖率分母); 11/03 每日扫描去重 session=14444。probe_remote.sh 的 RE1 已加 rtl 关键词, 明日扫描 mc 会略升。"
+  "generated": "2026-11-03T15:00:00+08:00",
+  "hits_total": 24085,
+  "hosts": 698,
+  "mc100": 696,
+  "mc1000": 8,
+  "mc300": 1001,
+  "mc500": 281,
+  "note": "候选池阈值已从 mc>=300 改为 mc>=100 (用户直令 11/03)。mc=match_count=session 文件里命中 EDA 关键词的行数(grep -c)。sessions=3899 是 10/28 原扫描去重命中 session; mc100=696 是新候选池(覆盖率分母); 11/03 每日扫描去重 session=14444。probe_remote.sh 的 RE1 已加 rtl 关键词, 明日扫描 mc 会略升。",
+  "prev_sessions": 24085,
+  "sessions": 24085,
+  "source": "/home/t0002965/log/ssh_eda_search_20261028_174426/summary.tsv (10/28 scan, recounted 11/03 via eda_flow)",
+  "target_mc": 100,
+  "updated_at": "2026-11-04 01:35",
+  "users_mc100": 182,
+  "users_mc300": 60,
+  "users_total": 384
 }
-
