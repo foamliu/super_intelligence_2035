@@ -2,16 +2,23 @@
 WAITING: 0
 > 🛑 **【运维通告 · 2026-11-02 19:51】S1 已由 ops 中继重启并在跑**：`bash scripts/train.sh s1 --nodes 2`，launcher pid **4163528**，从 **ckpt 58000** 续（19:55:40 起 iter **58010**→58030，7.0–7.2 s/step ≈**582K tok/s**，双机 16 卡 **98–100%**、~75GB/卡、~690W）。⇒ **GPU 不再空闲**：🚫 严禁再起任何训练/GPU 评测进程（会双写 ckpt 或 OOM）；"GPU idle → 2.5h 评测"的结论已过期。原 **18:39:51 SIGKILL / 18:50:18 SIGBUS** 的现场日志已归档为 `/tmp/baize_s1_baize2b_worker.log.crash_1102_1839` 与 `..._master.log.crash_1102_1839`（🚫 勿删，待 root 查 dmesg 定 OOM vs 误杀）。CPU 评测继续但**必须降载**：`OMP_NUM_THREADS≤8` + `nice -n 19` + 每机并发 ≤2，**禁止 `pkill python`**（18:39 训练被 -9 的疑似原因）。另：本次 resume **未恢复 scheduler**，LR 从 warmup 重来（58010=5e-6，每 10 步 +5e-6，约 2000 步/3.9h 后回 1e-3）——实验日志须记一笔。详见 `BAIZE_PRETRAIN_2B_TASK.md` 顶部运维令。
 
-> 🆕 2026-11-03 13:55 #1233：**🚨 CPU eval 3/5 done——iter_20000+40000 退化(sciq=0/acc==acc_norm)·根因=checkpoint 特异(非机器)·.29 evals 仍跑(ETA~10h)·诊断在 .12 跑(待下轮查)。✅ S1 健康 iter 67240/loss 2.10/lr=1e-3/0NaN/~606K tok/s。未完成指令：有**。
-> **① 3/5 done（iter_10000 genuine, iter_20000+40000 DEGENERATE）**：
-> - iter_10000 ✅ Avg=50.00%（genuine：sciq=0.79, piqa=0.72, boolq=0.61, acc≠acc_norm 正常；44665s=12.4h；ran on .29）
-> - iter_40000 ✅ Avg=28.75%（**退化**：sciq=0.0, acc==acc_norm 全等=均匀 logits；56346s=15.6h；ran on .12；与 iter_30000/results_invalid_rope_config.json **数值完全相同**）
-> - iter_20000 ✅ Avg=28.75%（**退化**：同上模式 sciq=0.0/acc==acc_norm；56789s=15.8h；ran on .12；results.json@13:48）
-> **② 根因排查（本轮做）**：两机 HFLM 加载日志相同（loaded in ~1.6-2.1s, dtype=bf16, 同 fallback 到 reference impl）；config.json 完全一致（diff 空, rope_theta=1e6, mamba_dt_limit=None）；safetensors checksums 不同（非同文件）。⇒ **checkpoint 特异**：iter_20000/40000 权重产生均匀 logits，非机器/脚本/配置问题。待查 export_hf.sh 是否对这些 ckpt 有 bug（或 mamba_dt_limit 删除后 Mamba2 SSM 离散化用默认值≠训练值）。**已在 .12 启诊断**（iter_10000 via baize_cpu_lmeval.sh, sciq+piqa, limit=4, PID on .12, ~12min remaining → 下轮查结果判定机器 vs checkpoint）。
-> **③ .29 evals overnight**：iter_30000 PID1459766 390/2599(15%) ~17.2s/it ETA~10.3h→done~00:15 Nov4；iter_50000 PID2024390 580/2599(22%) ~17.1s/it ETA~9.5h→done~23:30 Nov3。CPU .29: ~13.9%busy(5.1us+7.0sy+1.8ni)/86.1%idle, load36.95；.12: ~13.3%busy/86.6%idle, load35.36。均 <<80%。
-> **④ 报告 3/5 已重跑**：`reports/report_pretrain_cpu_eval_8sets_zh.html`（39554B, 3/5 ckpt, 0-script）。iter_20000+40000 退化值已在表中可见（28.75% 两次相同）。
-> **📦 体积**：TASK=30602B(29.9KB)/MEMORY=25550B(24.9KB)（均 ≤32KB，无需归档）。
-> **下一步**：①查 .12 诊断结果(iter_10000 sciq>0→机器OK/ckpt问题, sciq=0→机器问题) ②等 .29 evals done(~23:30-00:15)→判 iter_30000/50000 是否也退化 ③若全退化→查 export_hf.sh+mamba_dt_limit ④全 5/5 genuine→终版报告+日报。未完成指令：有 ⇒ WAITING: 0。
+> 🆕 2026-11-03 14:50 #1234：**🎯 ROOT CAUSE FOUND + 4 evals 重跑中——bfloat16 CPU 前向 → NaN logits（iter_20000/30000/40000）·float32 修复✅·4 evals running（3×float32+1×bf16 genuine）·ETA~2-3天。✅ S1 健康 iter 67680/loss 2.10/0NaN/~600K tok/s。未完成指令：有**。
+> **① 🎯 根因定位（本轮完成）**：bfloat16 CPU forward pass 对 iter_20000/30000/40000 产生 **NaN logits**（Mamba2 SSM reference impl 在 bf16 下数值溢出）。验证：
+> - iter_20000 bf16 → logits 全 NaN（min/max/std=nan）；iter_20000 **float32** → logits 健康（min=-6.81,max=15.29,top5含"Paris"）✅
+> - iter_30000 bf16 → NaN ✅；iter_50000 bf16 → 健康（top5含"Paris"）✅；iter_10000 bf16 → 健康（已完成评测 Avg=50%）✅
+> - 尝试 monkey-patch（bf16 模型+Mamba2 mixer 强制 float32）→ 仍 NaN（conv1d/in_proj 在 bf16 下已溢出，patch 不够）
+> - **结论**：不是 checkpoint/export/config 问题——是 **bf16 精度不足** 导致 Mamba2 SSM 在某些权重分布下溢出。iter_10000/50000 恰好不触发。**修法 = float32 评测**。
+> **② 4 evals running（全部 genuine dtype）**：
+> - iter_10000 ✅ **已完成** bf16 genuine: arc_c=0.29, arc_e=0.49, boolq=0.61, hs=0.36, obqa=0.20, piqa=0.72, sciq=0.79, wg=0.54, Avg=50.0%
+> - iter_50000 🔄 bf16 genuine: 808/2599(31%) ~15s/it ETA~7h→done~22:00 Nov3 (PID 2024390 on .29)
+> - iter_20000 🔄 **float32**: 1/2599 刚启动 ~98s/it(会加速) (PID on .12)
+> - iter_30000 🔄 **float32**: 刚启动 (PID 1505873 on .29)
+> - iter_40000 🔄 **float32**: 1/2599 刚启动 ~100s/it(会加速) (PID on .12)
+> - 退化 results 已备份为 `results_bf16_nan.json`（iter_20000+40000）
+> **③ CPU 使用**：.29 ~12.5%busy/87.3%idle（2 evals）；.12 ~10.5%busy/87.5%idle（2 evals）。均 <<80% ✅
+> **④ ETA**：float32 首次 ~98s/it（bf16 收敛后 ~16s/it，float32 预计收敛到 ~30-40s/it）。3 个 float32 evals 并行(2 on .12, 1 on .29)，预计 ~24-48h 完成（Nov 4-5）。iter_50000 bf16 ~7h（Nov 3 22:00）。
+> **📦 体积**：TASK=30602B(29.9KB)/MEMORY=26030B(25.4KB)（均 ≤32KB，无需归档）。
+> **下一步**：①监控 4 evals 进度（下轮查 float32 是否加速）②iter_50000 done→收结果 ③全部 5/5 genuine→终版报告+日报。未完成指令：有 ⇒ WAITING: 0。
 
 
 
