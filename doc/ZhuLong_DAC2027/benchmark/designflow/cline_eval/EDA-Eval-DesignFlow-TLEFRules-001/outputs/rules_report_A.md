@@ -1,65 +1,53 @@
-# 工艺技术文件（Tech LEF）布线规则汇总报告
+# 布线规则汇总报告 — tech_thk2d0_m5.lef
 
-- 文件：`assets/tech_thk2d0_m5.lef`
-- LEF 版本：5.7
-- 单位：`DATABASE MICRONS 4000`（文件内尺寸数值单位均为微米 µm），`MANUFACTURINGGRID 0.00025`
-- 统计：走线层 7 个，通孔层 8 个，过孔定义 14 个，过孔规则 5 个
+> 本报告汇总 `tech_thk2d0_m5.lef`（VERSION 5.7，`DATABASE MICRONS 4000`，即 1 LEF 单位 = 1 µm）
+> 中每一层**走线层（TYPE ROUTING）**与**通孔/切割层（TYPE CUT）**的布线规则，
+> 以及其中的过孔定义（`VIA`）与生成式过孔规则（`VIARULE`）。
+> 机器可读的结构化汇总见 `lef_rules.py` 的 stdout JSON 输出。
 
----
+## 1. 走线层（routing layers）
 
-## 1. 走线层布线规则（Routing Layers, TYPE ROUTING）
+| 层名 | 方向 DIRECTION | 线宽 WIDTH | PITCH | OFFSET | MAXWIDTH | AREA | 间距规则 |
+|------|----------------|------------|-------|--------|----------|------|----------|
+| C4_bump | VERTICAL | 15.0 | 20.0 | — | — | — | SPACING 9.0 |
+| M1 | HORIZONTAL | 8.88 | 9.76 / 9.76 | 0.88 / 0.88 | 12 | 4 | SPACINGTABLE |
+| M2 | VERTICAL | 8.88 | 9.76 / 9.76 | 0.88 / 0.88 | 12 | 4 | SPACINGTABLE |
+| M3 | HORIZONTAL | 0.88 | 1.76 / 1.76 | 0.88 / 0.88 | 12 | 4 | SPACINGTABLE |
+| M4 | VERTICAL | 0.88 | 1.76 / 1.76 | 0.88 / 0.88 | 12 | 4 | SPACINGTABLE |
+| M5 | HORIZONTAL | 0.88 | 1.76 / 1.76 | 0.88 / 0.88 | 12 | 4 | SPACINGTABLE |
+| RDL | VERTICAL | 3 | 6 | 2 | — | — | SPACING 3 |
 
-| 层 | 方向 | 线宽 (µm) | Pitch (µm) | 最大线宽 (µm) | 最小面积 (µm²) | Offset (µm) | 间距规则 |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| C4_bump | VERTICAL | 15.0 | 20.0 | – | – | – | SPACING 9.0 |
-| M1 | HORIZONTAL | 8.88 | 9.76 9.76 | 12 | 4 | 0.88 0.88 | SPACINGTABLE |
-| M2 | VERTICAL | 8.88 | 9.76 9.76 | 12 | 4 | 0.88 0.88 | SPACINGTABLE |
-| M3 | HORIZONTAL | 0.88 | 1.76 1.76 | 12 | 4 | 0.88 0.88 | SPACINGTABLE |
-| M4 | VERTICAL | 0.88 | 1.76 1.76 | 12 | 4 | 0.88 0.88 | SPACINGTABLE |
-| M5 | HORIZONTAL | 0.88 | 1.76 1.76 | 12 | 4 | 0.88 0.88 | SPACINGTABLE |
-| RDL | VERTICAL | 3 | 6 | – | – | 2 | SPACING 3 |
-
-补充：
-- M1/M2 节距 9.76 µm，M3/M4/M5 节距 1.76 µm；M1–M5 最小面积均为 4 µm²、最大线宽均为 12 µm。
-- 方向交替：M1/M3/M5 为 HORIZONTAL，M2/M4 为 VERTICAL；C4_bump、RDL 为 VERTICAL。
-- 各层 `RESISTANCE RPERSQ`：M1–M5 为 0.01，RDL 为 0.012；`THICKNESS`：M1–M5 为 2.0，RDL 为 3.0。
-
-### SPACINGTABLE（M1–M5 一致）
+- M1/M2 为**厚金属**（WIDTH 8.88，PITCH 9.76），M3/M4/M5 为**细金属**（WIDTH 0.88，PITCH 1.76）。
+- M1–M5 的 SPACINGTABLE 内容相同：
 
 ```
-PARALLELRUNLENGTH 0.00 1.50 4.50
-  WIDTH 0.00   0.88 0.88 0.88
-  WIDTH 1.50   1.00 1.00 1.00
-  WIDTH 4.50   1.80 1.80 1.80
+  PARALLELRUNLENGTH 0.00  1.50  4.50
+    WIDTH 0.00   0.88  0.88  0.88
+    WIDTH 1.50   1.00  1.00  1.00
+    WIDTH 4.50   1.80  1.80  1.80
 ```
 
-即间距随平行运行长度与线宽分段变化；基准间距 0.88 µm，最长并行段（≥4.50）间距放宽到 1.80 µm。
+  即：平行走线长度阈值为 0.00 / 1.50 / 4.50 µm；同层线宽 0~1.5 时线距 0.88，线宽 1.5~4.5 时线距 1.00，
+  线宽 ≥4.5 时线距 1.80。
+- C4_bump（凸点层）与 RDL（再分布层）只定义了单一 `SPACING`，无 `SPACINGTABLE`。
 
----
+## 2. 通孔 / 切割层（cut layers）
 
-## 2. 通孔层规则（Cut Layers, TYPE CUT）
+| 层名 | SPACING | 相邻孔距（ADJACENTCUTS） | 其它规则 |
+|------|---------|--------------------------|----------|
+| TSV | 8.0（到 OVERLAP） | — | M1 与 C4_bump 之间的硅通孔 |
+| V1 | 0.68 | 1.08（ADJACENTCUTS 3 WITHIN 1.1） | ENCLOSURE BELOW/ABOVE 0.08；WIDTH 5.0 时 0.37 |
+| V2 | 0.68 | 1.08（ADJACENTCUTS 3 WITHIN 1.1） | ENCLOSURE BELOW/ABOVE 0.08；WIDTH 5.0 时 0.37 |
+| V3 | 0.68 | 1.08（ADJACENTCUTS 3 WITHIN 1.1） | ENCLOSURE BELOW/ABOVE 0.08；WIDTH 5.0 时 0.37 |
+| V4 | 0.68 | 1.08（ADJACENTCUTS 3 WITHIN 1.1） | ENCLOSURE BELOW/ABOVE 0.08；WIDTH 5.0 时 0.37 |
+| RDV | 2.0 | — | M5 与 RDL 之间的通孔 |
+| PA2 | 52 | — | 钝化层（LEF58_TYPE PASSIVATION） |
+| uBump | 52 | — | 钝化层（LEF58_TYPE PASSIVATION） |
 
-| 层 | 基本间距 (µm) | 相邻切割规则 (ADJACENTCUTS) |
-| --- | --- | --- |
-| TSV | 8.0（LAYER OVERLAP） | – |
-| V1 | 0.68 | SPACING 1.08 ADJACENTCUTS 3 WITHIN 1.1 |
-| V2 | 0.68 | SPACING 1.08 ADJACENTCUTS 3 WITHIN 1.1 |
-| V3 | 0.68 | SPACING 1.08 ADJACENTCUTS 3 WITHIN 1.1 |
-| V4 | 0.68 | SPACING 1.08 ADJACENTCUTS 3 WITHIN 1.1 |
-| RDV | 2.0 | – |
-| PA2 | 52 | –（钝化层 passivation） |
-| uBump | 52 | –（钝化层 passivation） |
+## 3. 过孔定义（vias）
 
-V1–V4 的 ENCLOSURE 规则（包围量）：
-- `ENCLOSURE BELOW 0.08 0.08`、`ENCLOSURE ABOVE 0.08 0.08`
-- 线宽 ≥5.0 时：`ENCLOSURE BELOW 0.37 0.37 WIDTH 5.0`、`ENCLOSURE ABOVE 0.37 0.37 WIDTH 5.0`
-
----
-
-## 3. 过孔定义（Vias）
-
-| 名称 | 切割数 | 电阻 (Ω) | 跨接层 |
-| --- | --- | --- | --- |
+| VIA | 孔数 cuts | 电阻 resistance | 层 layers |
+|-----|-----------|-----------------|-----------|
 | VIA_TSV | 1 | 0.15 | C4_bump / TSV / M1 |
 | VIA1_1cut | 1 | 0.15 | M1 / V1 / M2 |
 | VIA1_2cut | 2 | 0.075 | M1 / V1 / M2 |
@@ -75,16 +63,18 @@ V1–V4 的 ENCLOSURE 规则（包围量）：
 | VIA4_4cut | 4 | 0.0375 | M4 / V4 / M5 |
 | VIA_RDV_1cut | 1 | 0.072 | M5 / RDV / RDL |
 
----
+## 4. 生成式过孔规则（viarules）
 
-## 4. 过孔规则（Viarules, GENERATE）
+| name | layers | has_spacing | enclosures | width_range |
+|------|--------|-------------|------------|-------------|
+| GENV1 | M1, M2, V1 | false | M1: 0.37×0.37, M2: 0.08×0.08 | M1: "0.88 TO 14" |
+| GENV2 | M2, M3, V2 | true（SPACING 1.4 BY 1.4） | M2: 0.08×0.08, M3: 0.08×0.08 | — |
+| GENV3 | M3, M4, V3 | true（SPACING 1.4 BY 1.4） | M3: 0.08×0.08, M4: 0.08×0.08 | — |
+| GENV4 | M4, M5, V4 | true（SPACING 1.4 BY 1.4） | M4: 0.08×0.08, M5: 0.08×0.08 | — |
+| GENRDV | M5, RDL, RDV | true（SPACING 5 BY 5） | M5: 0.5×0.5, RDL: 0.5×0.5 | — |
 
-| 名称 | 参与层 | 阵列间距 | 各层包围量 (µm) | 线宽范围（如定义） |
-| --- | --- | --- | --- | --- |
-| GENV1 | M1 / M2 / V1 | 否 | M1: 0.37×0.37，M2: 0.08×0.08 | M1: 0.88–14 |
-| GENV2 | M2 / M3 / V2 | 是 (1.4×1.4) | M2: 0.08×0.08，M3: 0.08×0.08 | – |
-| GENV3 | M3 / M4 / V3 | 是 (1.4×1.4) | M3: 0.08×0.08，M4: 0.08×0.08 | – |
-| GENV4 | M4 / M5 / V4 | 是 (1.4×1.4) | M4: 0.08×0.08，M5: 0.08×0.08 | – |
-| GENRDV | M5 / RDL / RDV | 是 (5×5) | M5: 0.5×0.5，RDL: 0.5×0.5 | – |
+## 5. 说明
 
-切割矩形（cut RECT）：GENV1–GENV4 为 `-0.36 -0.36 0.36 0.36`，GENRDV 为 `-1.5 -1.5 1.5 1.5`。
+- 单位：`UNITS DATABASE MICRONS 4000`，制造栅格 `MANUFACTURINGGRID 0.00025` µm。
+- 本文件仅为技术库（techlef），仅含工艺布线规则与过孔定义，不含具体单元（MACRO）。
+- 走线层共 7 层（C4_bump / M1–M5 / RDL）；通孔切割层共 8 层（TSV / V1–V4 / RDV / PA2 / uBump）。
