@@ -20,7 +20,7 @@ WAITING: 1
 ```
 PHASE:        🟢运维令10-31 web search调研HF长上下文+agentic数据集.报告v6已交付+已commit+push
 已完成:       ✅A.LC+Agentic调研报告v6(report_data_lc_agentic_survey_zh.html 115558B/47table/0script/19+18候选/80 HF链接/36unique)+生成器(gen_lc_agentic_survey_report.py 幂等);✅B.v6新增3个HF核实数据集(SWE-smith-trajectories/MIT/HTTP200 + harborframework/terminal-bench-2.1/Apache-2.0/HTTP200 + ghostcc3/mix-context-post-training-128k/MIT/HTTP200);✅C.85M下载持续运行;✅D.报告全量验证(7节/0script/0CDN/0外链/幂等OK/47table平衡/0未闭合标签)
-当前动作:     唤醒1163(2026-11-04 07:06):运维令10-31交付物健康巡检全PASS→①report=115558B(112.8KB≥25KB✓)/0<script>/0CDN/0非HF外链(80HF链接)/47<table>=47</table>平衡✓/53<div>=53</div>平衡✓/7节sec1-7齐/HTMLParser 0errors stack EMPTY✓/49「未核到」/14gated/56处32K占比/82处128K占比;②generator --check-idempotent OK(91300bytes逐字节不变✓);③git fetch synced(##main...origin/main无ahead/behind,data线clean✓,git diff HEAD=0);④85M下载:无hf download进程→疑似已完成待运维确认;⑤df:/nas_train179T/87%(29T可用),/nas_env8.3T/84%(1.7T可用);⑥TASK=27958B(27.3KB)/MEMORY≈36KB(均<40KB无需归档)→任务已交付,心跳WAITING=1
+当前动作:     唤醒1164(2026-11-04 07:24):运维令10-31交付物健康巡检全PASS→①report=115558B(112.8KB≥25KB✓)/0<script>/0CDN/0非HF外链(82HF链接全huggingface.co)/47<table>=47</table>平衡✓/53<div>=53</div>平衡✓/7节sec1-7齐/HTMLParser 0errors stack EMPTY✓/49「未核到」/14gated/56处32K占比/82处128K占比;②generator --check-idempotent OK(91300bytes逐字节不变✓);③git fetch synced(##main...origin/main无ahead/behind,data线clean✓,report+generator均在origin/main commit ab6f89572);④85M下载:无hf download进程→疑似已完成待运维确认;⑤df:/nas_train179T/87%(29T可用),/nas_env8.3T/84%(1.7T可用);⑥TASK=27958B(27.3KB)/MEMORY≈37KB(均<40KB无需归档)→任务已交付,心跳WAITING=1
 下一步:       下轮唤醒:①确认85M下载是否已完成(无进程+0 incomplete=疑似完成,待运维核实);②待运维批准后执行下载(P0:whole-books+SWE-smith+Nemotron-Terminal-Corpus+SWE-rebench;P2:SWE-smith-trajectories;P3:mix-ctx-128k/terminal-bench-2.1)
 阻塞:         无
 ERROR_COUNT:  11
@@ -30,6 +30,7 @@ ERROR_COUNT:  11
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。
 
 ## 📋 本唤醒流水
+> [11-04 07:24] 唤醒1164：运维令10-31交付物健康巡检全PASS→①report=115558B(112.8KB≥25KB✓)/0<script>/0CDN/0非HF外链(82HF链接全huggingface.co)/47<table>=47</table>平衡✓/53<div>=53</div>平衡✓/7节sec1-7齐/HTMLParser 0errors stack EMPTY✓/49「未核到」/14gated/56处32K/82处128K;②generator --check-idempotent OK(91300B逐字节不变✓);③git fetch origin synced(##main...origin/main无ahead/behind,data线clean✓,report+generator均在commit ab6f89572已push);④85M下载:无hf download进程→疑似已完成待运维确认;⑤df:/nas_train179T/87%(29T可用),/nas_env8.3T/84%(1.7T可用);⑥TASK=27958B(27.3KB)/MEMORY≈37KB(均<40KB无需归档)→任务已交付,心跳WAITING=1
 > [11-04 07:06] 唤醒1163：运维令10-31交付物健康巡检全PASS→①report=115558B(112.8KB≥25KB✓)/0<script>/0CDN/0非HF外链(80HF链接)/47<table>=47</table>平衡✓/53<div>=53</div>平衡✓/7节sec1-7齐/HTMLParser 0errors stack EMPTY✓/49「未核到」/14gated/56处32K占比/82处128K占比;②generator --check-idempotent OK(91300bytes逐字节不变✓);③git fetch origin synced(##main...origin/main无ahead/behind,data线clean✓,git diff HEAD=0无改动);④85M下载:无hf download进程→疑似已完成待运维确认;⑤df:/nas_train179T/87%(29T可用),/nas_env8.3T/84%(1.7T可用);⑥TASK=27958B(27.3KB)/MEMORY≈36KB(均<40KB无需归档)→任务已交付,心跳WAITING=1
 > [11-04 05:56] 唤醒1162：运维令10-31交付物例行健康巡检全PASS→①report=115558B(112.8KB≥25KB✓)/0<script>/0CDN/80 HF链接/47<table>=47</table>平衡✓/7节sec1-7齐/50「未核到」/14gated/HTMLParser 0errors✓;②generator --check-idempotent OK(91300B逐字节不变✓);③git pull --rebase synced(##main...origin/main无ahead/behind,behind-1=designflow shard C已合并,data线clean✓);④85M下载:无hf download进程→疑似已完成待运维确认;⑤df:/nas_train179T/87%(29T可用),/nas_env8.3T/84%(1.7T可用);⑥TASK=27958B(27.3KB)/MEMORY≈36KB(均<40KB无需归档)→任务已交付,心跳WAITING=1
 > [11-04 05:36] 唤醒1161：运维令10-31交付物例行健康巡检全PASS→①report=115558B(≥25KB✓)/0<script>/0CDN/0非HF外链(80HF链接)/47<table>=47</table>平衡✓/7节sec1-7齐/HTMLParser 0errors✓;②generator --check-idempotent OK(91300bytes逐字节不变✓);③git synced(##main...origin/main无ahead/behind,data线clean✓);④85M下载:pgrep无hf download进程→疑似已完成待运维确认;⑤df:/nas_train179T/87%(29T可用),/nas_env8.3T/84%(1.7T可用);⑥TASK=27958B/MEMORY≈36KB(均<40KB无需归档)→任务已交付,心跳WAITING=1
@@ -130,9 +131,4 @@ ERROR_COUNT:  11
 > 关键结论：①base分词22.05B tok✅ ②SFT-2605 20.97B+Agent-2609 全4shard✅ ③S0a 2.2B单臂浪费~100 GPU·h→改道proxy BO搜索 ④proxy模型92.7M(d=512/L=14)标定s/step=1.5s ⑤smoke test✅
 
 > 📦 §s_step归因实验（2026-10-06）已归档 → `daily-memories-data/2026-10-06.md`；**结论**：MBS=16使s_step 1432ms→166ms(8.6×),overhead-bound,D=0.5B/trial→205trial/24h。需要时再读。
-## 关键路径速查（供恢复）
-
-- 训练仓库 `BASE_DIR` = `/nas_train/app.e0031982/code/BaiZe-ISEDA2027`（复用其 `mamba2_hybrid_2b/preprocess_data.py` + `data/tokenizer_eod` + `pretrain_launcher.py`）。
-- 评测集（只读红线）：`/nas_train/app.e0031982/code/eda_fastmcp/pyAether-eval/original_dataset/EDA-Eval-PyAether-v20260311.jsonl`（158 任务，**无 canonical_solution 字段**）。
-- 黑名单产物：`run/data_pipeline/blacklist/`（并集 6 快照 536 任务 / 193,295 `ngram_hashes.txt` / 10 `short_ngram_hashes.txt` / meta.json / entry_points.sha256）。
-- 校验/打包脚本：`run/data_pipeline/validate_data.py`（phase1 完整性校验，默认轻 I/O）+ `preprocess_text.sh`（phase2 分词打包，复用 Round1 `preprocess_data.py` + 污�
+## �
