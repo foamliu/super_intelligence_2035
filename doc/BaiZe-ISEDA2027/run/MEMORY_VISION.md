@@ -2,6 +2,9 @@
 
 WAITING: 1
 
+> 🆕 **【空唤醒 · wake #529 · 2026-11-03 13:10】** 无新运维令。git fetch→origin/main 0ahead/0behind（已同步，HEAD=1bb73d36d harness R1416 13:03；origin 新提交均来自 harness/designflow/pretrain 等线，无 vision 新令）。所有运维令标[已完成]/[已归档]。📦 体积：TASK=27230B / MEMORY=28188B（均≤32KB✓；空唤醒条目38 略超~20 软指引，本轮滚动归档18条旧空唤醒#508~#491→daily-memories-vision/2026-11-02.md，归档后≈14.5KB）。进程 baize_vision_loop.sh PID 669545 alive；cline in PATH（/home/app.e0031982/.bun/bin/cline）✓。工作副本改动均为别线文件（ZhuLong），vision 文件无在途改动，未触碰别线。写心跳+日流水+commit+push。**未完成指令：无** ⇒ **WAITING: 1**。
+
+
 > 🆕 **【空唤醒 · wake #528 · 2026-11-03 12:38】** 无新运维令。git fetch→origin/main 0ahead/0behind（已同步，HEAD=2cc282e12 pretrain #1226 12:34；origin 新提交均来自 pretrain/designflow/harness/zhulong/data/news 六线，无 vision 新令）。所有运维令标[已完成]/[已归档]。📦 体积：TASK=27230B / MEMORY≈27.4KB（均≤32KB✓；空唤醒条目≈37 略超~20 软指引，未触 32KB 硬上限，本轮不滚）。进程 baize_vision_loop.sh PID 669545 alive；cline in PATH（/home/app.e0031982/.bun/bin/cline）✓。工作副本改动均为别线文件（ZhuLong），vision 文件无在途改动，未触碰别线。写心跳+日流水+commit+push。**未完成指令：无** ⇒ **WAITING: 1**。
 
 
@@ -43,42 +46,7 @@ WAITING: 1
 
 > 🆕 **【空唤醒 · wake #509 · 2026-11-02 21:51】** 无新运维令。git fetch→origin/main 0ahead/0behind（已同步，HEAD=38d510df1 designflow shard C #18，无vision新提交）。所有运维令标[已完成]/[已归档]。📦 体积：TASK=27230B / MEMORY=24129B（均≤32KB✓）。写心跳+日流水+commit+push。**未完成指令：无** ⇒ **WAITING: 1**。
 
-> 🆕 **【空唤醒 · wake #508 · 2026-11-02 21:18】** 无新运维令。git pull --rebase --autostash→Already up to date（local已同步，HEAD=69b99f322 designflow shard A #17，无vision新提交）。所有运维令标[已完成]/[已归档]。📦 体积：TASK=27230B / MEMORY=23727B（均≤32KB✓）。写心跳+日流水+commit+push。**未完成指令：无** ⇒ **WAITING: 1**。
-
-> 🆕 **【空唤醒 · wake #507 · 2026-11-02 20:44】** 无新运维令。git fetch→origin/main 0ahead/0behind（已同步，HEAD=9f5df444c data唤醒1101巡检）。所有运维令标[已完成]/[已归档]。📦 体积：TASK=27230B / MEMORY=23335B（均≤32KB✓）。写心跳+日流水+commit+push。**未完成指令：无** ⇒ **WAITING: 1**。
-
-
-> 🆕 **【空唤醒 · wake #506 · 2026-11-02 20:12】** 无新运维令。git pull --rebase --autostash→Already up to date（无vision新提交，HEAD=6bba30006 designflow shard A ws-shardA）。所有运维令标[已完成]/[已归档]。📦 体积：TASK=27230B / MEMORY=22990B（均≤32KB✓）。写心跳+日流水+commit+push。**未完成指令：无** ⇒ **WAITING: 1**。
-
-> 🆕 **【空唤醒 · wake #505 · 2026-11-02 19:33】** 无新运维令。git pull --rebase --autostash 触发 ZhuLong `report_benchmark_11_02.html` autostash 冲突（origin 刚推送的完整版 vs stash 旧版）→ 已解决：保留 origin 版(HEAD)、drop autostash，工作区恢复干净(无 unmerged/无 behind)。所有运维令标[已完成]/[已归档]。📦 体积：TASK=27230B / MEMORY=22464B（均≤32KB✓）。写心跳+日流水+commit+push。**未完成指令：无** ⇒ **WAITING: 1**。
-
-> 🆕 **【空唤醒 · wake #504 · 2026-11-02 18:28】** 无新运维令。git pull --rebase --autostash→Already up to date（无vision新提交，HEAD=4b2b735f2 news auto-commit）。所有运维令标[已完成]/[已归档]。📦 体积：TASK=27230B / MEMORY=22068B（均≤32KB✓）。写心跳+日流水+commit+push。**未完成指令：无** ⇒ **WAITING: 1**。
-
-> 🆕 **【空唤醒 · wake #503 · 2026-11-02 16:23】** 无新运维令。git pull --rebase --autostash→Already up to date（无vision新提交，HEAD=5b4d84d55 提交陈熙元对Tab-3的修改+designflow shard A+harness R1300活动）。所有运维令标[已完成]/[已归档]。📦 体积：TASK=27230B / MEMORY=21617B（均≤32KB✓）。写心跳+日流水+commit+push。**未完成指令：无** ⇒ **WAITING: 1**。
-
-> 🆕 **【空唤醒 · wake #502 · 2026-11-02 15:49】** 无新运维令。git fetch→origin/main无vision新提交（HEAD=26a03a0e6 designflow shard A #8+harness R1298+pretrain CPU冒烟提示）。所有运维令标[已完成]/[已归档]。📦 体积：TASK=27230B / MEMORY=21224B（均≤32KB✓）。写心跳+日流水+commit+push。**未完成指令：无** ⇒ **WAITING: 1**。
-
-> 🆕 **【空唤醒 · wake #501 · 2026-11-02 14:42】** 无新运维令。git fetch→origin/main无vision新提交（HEAD=ba104807d 运维刷新日报+designflow shard A+harness R1295活动）。所有运维令标[已完成]/[已归档]。📦 体积：TASK=27230B / MEMORY=20834B（均≤32KB✓）。写心跳+日流水+commit+push。**未完成指令：无** ⇒ **WAITING: 1**。
-
-> 🆕 **【空唤醒 · wake #500 · 2026-11-02 14:10】** 无新运维令。git pull --rebase --autostash→Already up to date（无vision新提交，HEAD=ec743527e harness R1292）。所有运维令标[已完成]/[已归档]。📦 体积：TASK=27230B / MEMORY=20458B（均≤32KB✓）。写心跳+日流水+commit+push。**未完成指令：无** ⇒ **WAITING: 1**。
-
-> 🆕 **【空唤醒 · wake #499 · 2026-11-02 13:06】** 无新运维令。git pull --rebase --autostash→Already up to date（无vision新提交，HEAD=5c51745f9 designflow shard D）。所有运维令标[已完成]/[已归档]。📦 体积：TASK=27230B / MEMORY=20077B（均≤32KB✓）。写心跳+日流水+commit+push。**未完成指令：无** ⇒ **WAITING: 1**。
-
-> 🆕 **【空唤醒 · wake #498 · 2026-11-02 12:32】** 无新运维令。git pull --rebase --autostash→Already up to date（无vision新提交，HEAD=52e494d05 designflow #159）。所有运维令标[已完成]/[已归档]。📦 体积：TASK=27230B / MEMORY=19699B（均≤32KB✓）。写心跳+日流水+commit+push。**未完成指令：无** ⇒ **WAITING: 1**。
-
-> 🆕 **【空唤醒 · wake #497 · 2026-11-02 11:30】** 无新运维令。git pull→Already up to date（无vision新提交）。所有运维令标[已完成]/[已归档]。📦 体积：TASK=27230B / MEMORY=19375B（均≤32KB✓）。写心跳+日流水+commit+push。**未完成指令：无** ⇒ **WAITING: 1**。
-
-> 🆕 **【空唤醒 · wake #496 · 2026-11-02 11:02】** 无新运维令。git pull→Already up to date（无vision新提交）。所有运维令标[已完成]/[已归档]。📦 体积：TASK=27230B / MEMORY=19051B（均≤32KB✓）。写心跳+日流水+commit+push。**未完成指令：无** ⇒ **WAITING: 1**。
-
-> 🆕 **【空唤醒 · wake #495 · 2026-11-02 10:24】** 无新运维令。git pull→Already up to date（无vision新提交）。所有运维令标[已完成]/[已归档]。📦 体积：TASK=27230B / MEMORY=18727B（均≤32KB✓）。写心跳+日流水+commit+push。**未完成指令：无** ⇒ **WAITING: 1**。
-
-> 🆕 **【空唤醒 · wake #494 · 2026-11-02 08:48】** 无新运维令。git pull→Already up to date（无vision新提交）。所有运维令标[已完成]/[已归档]。📦 体积：TASK=27230B / MEMORY=18403B（均≤32KB✓）。写心跳+日流水+commit+push。**未完成指令：无** ⇒ **WAITING: 1**。
-
-> 🆕 **【空唤醒 · wake #493 · 2026-11-02 08:12】** 无新运维令。git pull→Already up to date（无vision新提交）。所有运维令标[已完成]/[已归档]。📦 体积：TASK=27230B / MEMORY=18371B（归档21条旧空唤醒→daily-memories-vision/2026-11-01.md，均≤32KB✓）。写心跳+日流水+commit+push。**未完成指令：无** ⇒ **WAITING: 1**。
-
-> 🆕 **【空唤醒 · wake #492 · 2026-11-02 07:11】** 无新运维令。git pull→Already up to date（无vision新提交）。所有运维令标[已完成]/[已归档]。体积自检TASK=27230B/MEMORY=25837B（均≤32KB✓）。写心跳+日流水+commit+push。**未完成指令：无** ⇒ **WAITING: 1**。
-
-> 🆕 **【空唤醒 · wake #491 · 2026-11-02 06:39】** 无新运维令。git pull→Already up to date（无vision新提交）。所有运维令标[已完成]/[已归档]。体积自检TASK=27230B/MEMORY=25517B（均≤32KB✓）。写心跳+日流水+commit+push。**未完成指令：无** ⇒ **WAITING: 1**。
+> 📦 wake #508~#491 空唤醒流水（18条）已归档 → daily-memories-vision/2026-11-02.md。需要时再读。
 
 > 📦 wake #490~#474 空唤醒流水（17条）已归档 → daily-memories-vision/2026-11-{01,02}.md。需要时再读。
 
@@ -115,13 +83,4 @@ WAITING: 1
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | ✅ **论文改稿全部完成（wake#437~#442）**。6_vision_encoder.tex(18行)/7_mllm.tex/0_abstract.tex/1_intro.tex 均已改。6页/ERR=0/UNDEF=0。所有运维令标[已完成]。任务书体积归档完成（35KB→27KB）。**WAITING=1**。 |
-| BUDGET_USED | ~999 GPU·h |
-| 更新 | **2026-11-03 12:38 (wake #528)**：空唤醒（无新运维令）。git fetch→0ahead/0behind（已同步，HEAD=2cc282e12 pretrain #1226 12:34，非vision令）。所有运维令标[已完成]。📦体积：TASK=27230B/MEMORY≈27.4KB（均≤32KB✓）。**未完成指令：无**。**WAITING=1**。 |
-
-> 📦 评测耗时归因(2026-10-15) + 运维问答 + 历史条目(2026-10-03~31) 已滚动归档 → daily-memories-vision/各日期.md + ARCHIVE_OPERATOR_VISION.md。需要时再读。
-
-## 历史条目已滚动归档
-
-- 更早的全部巡检/流水已归档至 daily-memories-vision/ 各日期文件 + ARCHIVE_OPERATOR_VISION.md。
-- 结论性产物以 EXPERIMENTS_VISION_ROUND{2..12}.md + EXPERIMENTS_VISION.md 顶部为权威。
+| PHASE | ✅ **论文改稿全部完成（wake#437~#442）**。6_vision_encoder.tex(18行)/7_mllm.tex/0_abstract.tex/1_intro.tex 均已改。6页/ERR=0/UNDEF=0。所有运维令标[已完成]。任务书体积归档完成（35KB→27KB）。**WA
