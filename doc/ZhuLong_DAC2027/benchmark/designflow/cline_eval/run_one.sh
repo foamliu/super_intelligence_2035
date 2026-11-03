@@ -69,7 +69,12 @@ log "   scope += $EVAL_ROOT (multi-shard safe)"
 
 # ---- 2. 建 workdir（防泄题核心）----
 log "2. 建 workdir: $WORKDIR"
-rm -rf "$WORKDIR"
+if [ "${SKIP_RUN:-0}" = "1" ] && [ -d "$WORKDIR/outputs" ]; then
+  log "   SKIP_RUN=1 且 workdir 已存在 → 保留 workdir（用于复判已存 submit.zip），仅重建 assets/prompt/brief"
+  rm -rf "$WORKDIR/assets" "$WORKDIR/prompt.txt" "$WORKDIR/task_brief.md"
+else
+  rm -rf "$WORKDIR"
+fi
 mkdir -p "$WORKDIR/assets" "$WORKDIR/outputs"
 
 # 绝不进 workdir 的文件名（判分器/答案/隐藏）
@@ -209,6 +214,24 @@ else
   else
     cp "$WORKDIR/outputs/submit.zip" "$JUDGE/"
     cp "$REF_DIR/check.py" "$JUDGE/"
+    # 复制 check.py 在 REF_DIR 内引用的判分侧辅助文件（grading-side helpers）：
+    # 若干 case 的 check.py 经 REF_DIR=os.path.dirname(check.py) 找兄弟文件
+    # (build_fixture.py / reference_submit.zip / mock_*.py / gold_*.py / fixture_*.json 等)。
+    # 不复制会导致独立 judge dir 缺依赖 → CalledProcessError / FileNotFoundError
+    # （非候选失败，是 judge-env 缺失 = harness bug）。下面白名单复制（排除 negative/）。
+    for h in build_fixture.py reference_submit.zip mock_pyAether.py \
+             gold_find_pcells.py fixture_A.json fixture_B.json; do
+      [ -f "$REF_DIR/$h" ] && cp "$REF_DIR/$h" "$JUDGE/" 2>/dev/null || true
+    done
+    # 兜底：把 REF_DIR 内所有 .py / .json 兄弟文件复制（除 check.py 已复制 / negative 目录），
+    # 覆盖未来新增的 grading-side helper，避免再漏。
+    for f in "$REF_DIR"/*.py "$REF_DIR"/*.json; do
+      [ -f "$f" ] || continue
+      b=$(basename "$f")
+      [ "$b" = "check.py" ] && continue
+      [ "$b" = "negative_selftest.py" ] && continue
+      [ -f "$JUDGE/$b" ] || cp "$f" "$JUDGE/" 2>/dev/null || true
+    done
     # 把合法 A 附件也复制进 judge dir（check.py 可能从 workdir 读附件）
     for a in $(python3 - "$TASK_ID" "$JSONL" <<'PY'
 import json,sys,os
