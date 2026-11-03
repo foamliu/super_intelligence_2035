@@ -40,6 +40,9 @@
 <body>
 
 <h1>设计流 Benchmark 运维日报 — 2026-11-03</h1>
+<div class="alert pass" style="margin-bottom:16px;padding:12px 16px;border-left:4px solid #2563eb;background:#eff6ff;">
+<b>今日要点</b>：用 eda_flow 在 .75 实时重扫，修正三口径两大错误（用户数 2850→365 去重、session 数 52698→14444 去重命中）；候选池阈值 mc≥300→mc≥100（172→696），EDA 关键词表 v2 修订（补 pt_shell/verilog/drc/maestro 等 15 词、删 ade 误报）；4 shard loop 持续产出，已积累 164+ 真实 trace case，cline eval 通过率 25%（基线 pi 16.3%）。
+</div>
 <div class="meta">
   生成时间：2026-11-03 14:10（Asia/Shanghai）<br>
   数据源：EDA-Flow-Bench/benchmarks/EDA-Eval-DesignFlow/ · cline_eval_status.jsonl · pi_debug_status.jsonl<br>
