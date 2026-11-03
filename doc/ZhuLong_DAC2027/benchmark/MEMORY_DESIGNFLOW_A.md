@@ -6,7 +6,7 @@ DOMAINS: digital, eda_other, pnr_signoff, verification
 - 📊 trace 覆盖率：44/696 = 6.3% mc≥100（covered=44 · touched=65 · deepread=0 · parked=21 · claimed=0；A jsonl 45 条；pnr_signoff 17）— r63 不变（无新 case）
 - 🎯 通过率: cline+hook **16 unique cases** = 4 PASS / 16（样本<30 不报百分比）。**①+④=5/16=31.2% >30% ✗（阈值突破，接口待修）**。PASS=4(PTSignoff/InnovusLaunchDiag/FormalityLaunchDiag/DelPgLib)；③=5(SynLintFlow/DCCombHier/PwrGlobals/ETMExtract/DRCDeckOpt/IMPSR1253VddPmFix)；④=3(STAFlow/TLEFRules/FindPcells)；②=1(Verification)；①=3(EmXlsModel/PdkDirSizeScan/IMPSR1253VddPmFix)。cline 实跑 backlog 剩 16 条（OstrichSpefRCFactor/SweepParallel/SweepMeasFix/PTVersionRecon/RcmaxTreeCompare/FindPcells/PyShebangFix/CdlBodyMapFix/SiliconInstGen/CalibreOpen1Fix/DeadLoopScan/PDKRunsetExplore/SPFCoupling + 修后重跑 IMPSR1253VddPmFix-schema-fix/FindPcells-mock-fix）。
 - 🧾 断言: 45 条全达标（k_rationale==k_check≥8；IMPSR1253VddPmFix-001 k=16）
-- 📦 体积：TASK≈23.8KB / MEMORY_A≈26KB（已归档批次 50）
+- 📦 体积：TASK≈23.8KB / MEMORY_A≈25.8KB（已归档批次 51：r62/r61 detail → designflow/MEMORY_A_archive.md）
 - 🔒 泄漏隔离: r63 cline 实跑验证 ✓ — workdir leak 自检过（find 无 check.py/_check.py/reference_submit.zip/hidden_manifest.json）；hook scope 限 cline_eval/ 根路径；cline 仅产出 outputs/ 文件（write 工具），判分独立 /tmp/judge（check.py + hidden B + A 附件复制进去）；cline 全程未接触 check.py/reference/hidden。IMPSR1253VddPmFix-001 stub 沙盒判分纯本地 tclsh + mock Innovus，无 license/.75 依赖。
 - ⚠️ 运维令进度：A 档 faithful **17 条全 A-faithful**。**r63 cline 实跑 1 条（IMPSR1253VddPmFix-001 FAIL①）**。**r62 pool 枯竭结论不变**。**①+④ 阈值突破 31.2% → 接口修法已定（task_brief 加 schema key 行），下轮执行或先跑 ②/③ backlog 稀释**。**待办**：①task_brief schema 行修复 IMPSR1253VddPmFix-001 + 重跑验 ①→②/③；②OstrichSpefRCFactor-001 cline 实跑（stub-local 无 license）；③FindPcells-001 (e)+mock 修后重跑；④verification 域 content-scan 探矿（ssh 逐机 grep messages.json）；⑤其余 cline 实跑 backlog；⑥STAFlow ④naming / TLEFRules ④(w) guard 决策；⑦DRCDeckOpt ③泛化缺口修复；⑧A 档 faithful 跑完→A/B 分档通过率统计（日报加两行）。
 
@@ -20,16 +20,6 @@ DOMAINS: digital, eda_other, pnr_signoff, verification
 - **下轮建议**（优先序）：①跑 ②/③ backlog case 稀释 ①+④（OstrichSpefRCFactor-001 stub-local 无 license 最易跑；或 SweepParallel/SweepMeasFix/PTVersionRecon）；②task_brief schema 行修复 IMPSR1253VddPmFix-001 + 重跑验 ①→②/③ 迁移；③FindPcells-001 (e)+mock 修后重跑；④verification 域 content-scan 探矿（ssh 逐机 grep messages.json，扩 shard A 最稀域）；⑤其余 cline 实跑 backlog。
 
 ### 2026-11-03 shard A 轮 62：pool 探矿 → 0suhi 深读→parked（无新 case，pool 约束）— 已归档（detail 见 designflow/MEMORY_A_archive.md 归档批次 51）。
-- **任务卡要求**：trace_ledger --shard A next → claim → 深读 → 合成 1 条新 case。**执行**：next 出 18 候选（mc≥100 + innovus/dbGet/synthesis marker，summary.tsv $7 无 vcs/verdi/verilint/formality/pt_shell/primetime token → verification 域无 marker-可发现候选）。
-- **逐个深读验证 top 候选**（scp messages.json → 解析 user_input）：
-  - 4xt0p (zhigangw/mc150/hfeg0pkn002, 954KB/121 msgs)：U#1「启动业务场景: 模拟电路优化·二次执行」+ skill-creator → agent 写 SKILL.md（analog 优化 meta-skill 文档）。L1 prose/markdown，weak-assertion 风险。
-  - 0suhi (e0046686/mc149/hfeg0pkn005, 1.92MB/313 msgs)：U#0「为 autosim 项目（SRAMAutoSim Qt + autosim_script）生成 README + 详细设计文档」。**doc-gen L1**。U#302/303 报 mermaid 语法错（用户给根因 parse error → 规则②排除 A-档 prompt）。
-  - wb03t (cwei/mc691, 971KB/400 msgs)：已有 2 条 deepread（wb03t_ctle_ac_spec_compliance / wb03t_ctle_topology_extract）= spice_sim 域（非 shard A）。
-  - l36g5/97mj2 (mc163/156)：analog netlist/spectre/virtuoso 倾向。
-- **0suhi claim+深读→parked**（designflow/trace_deepreads/1793165088136_0suhi_autosim_docgen.md）：U#0 A-faithful seed 合规（纯需求委托），但交付件=markdown 设计文档（非 generator-script）→ 不适配 §4.1 隐藏 B（候选只对 A 产文档，无法在 B 上重跑）+ §4.2 真跑候选-on-B；§4.3「仅子串/成员名」断言风险；§5「新建 case 只做 L2/L3」L1 doc-gen 通过率偏高违反难度校准。mermaid-fix 子任务（U#302/303）虽断言友好但规则②排除。mark --status parked。
-- **pool 约束结论**：shard A 新 case pool 已枯竭——好的 pnr_signoff/physical_verify deepread（mqop7 LVS-log/ dc4bw DRCPatGen/ 0c5yk DRC-SF-compare/ 1mvxt LVS-diag/ bmhid DRCPatPlan/ 02kcl DRC-connect-timing）**全已落 shard C 的 case**（grep EDA-Eval-DesignFlow_C.jsonl 命中）；shard-A-tagged 8 条 deepread（624js/lond8/q5ogm/qk0vo/jhdvn/kqelc/aqapd/ygrxp）除 jhdvn(shard D) 外全已落 A case。daily eda_trace_*.log tool markers 全 analog（netlist/pyAether/schematic/calibre/hspice/virtuoso，无 vcs/verdi/formality/pt_shell）→ verification 域需 content-scan（ssh 逐机 grep messages.json），超本轮预算。
-- **本轮交付**：0 条新 case（pool 约束，非预算/能力）；1 条 deepread（0suhi）+ 1 条 parked；rewrite_queue.tsv 全 done（断言闸门清空，45 条全达标）；ledger covered=44 不变、parked 20→21。
-- **下轮建议**（优先序）：①IMPSR1253VddPmFix-001 cline 实跑（stub-local 无 license，run_one.sh ready）— 推进运维令 21:3x ④ A-档通过率测量；②FindPcells-001 (e)+mock 修后重跑（fix queue ④→可能升 PASS）；③verification 域 content-scan 探矿（ssh 逐机 grep messages.json 找 vcs/verdi/formality/SVA/assertion/cover，扩 shard A 最稀域 6 条）；④其余 cline 实跑 backlog（OstrichSpefRCFactor/SweepParallel/SweepMeasFix/PTVersionRecon/RcmaxTreeCompare/...）。**新 case 合成暂停至 pool 续挖到 clean shard-A L2/L3 trace**。
 
 ### 2026-11-03 shard A 轮 61：IMPSR1253VddPmFix-001 合成 ✓（pnr_signoff / L2 / A-faithful，Innovus fp IMPSR-1253 VDD_PM 诊断 + innovus_fp.tcl 分代网表感知修复）— 已归档（detail 见 designflow/MEMORY_A_archive.md 归档批次 51 / jsonl 第45行 / reference/IMPSR1253VddPmFix-001）。
 
