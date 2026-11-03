@@ -32,3 +32,11 @@
 1790231178116_c4owo	johnl	hfeg0pfn119	27	digital	case	EDA-Eval-DesignFlow-CombSynthClean-001	2026-11-03 05:03	
 1793070113162_5pv45	ray1lei	hfeg0pkn004	32	eda_other	case	EDA-Eval-DesignFlow-SPFCoupling-001	2026-11-03 06:13	
 1791362457881_awgyg	hbpeng	hfeg0pkn005	445	eda_other	case	EDA-Eval-DesignFlow-EmXlsModel-001	2026-11-03 07:48	
+1792497366260_giuwf					parked		2026-11-03 08:04	surveyed r37: file-discovery/inventory task (find .lib/cells.yaml/.cline libs). Not design_flow delivery. 5 user turns all filesystem listing Q&A.
+1792572105701_exwpt					parked		2026-11-03 08:04	surveyed r37: single user turn '/anasimpro-gui-start' slash-command, not a task. 45 msgs, innovus:57 incidental.
+1793089887669_4c5ws					parked		2026-11-03 08:04	surveyed r37: pure Q&A/consultation (how to view png, install bcompare, list LP tools by flow stage, spyglass vs VCLP/CLP). No delivery. 67 msgs.
+1793078585671_z2knw					parked		2026-11-03 08:04	surveyed r37: resume-prior-stuck-session ('最近的一个对话卡死了...你继续干'), finesim MatrixRun analog sim. A-rule② violation (depends on prior state), gold fuzzy. 136 msgs.
+1789630394053_3dekw					parked		2026-11-03 08:04	surveyed r37: 'plese get simaple of digital design flow' single turn = generic template/sample request, not focused verifiable deliverable. pyAether:435=schematic-floorplan, not pure digital.
+1789624027491_t45kv					parked		2026-11-03 08:04	surveyed r37: 'how to start pr job' / 'do you search my own dir only for apr scripts?' = Q&A, no delivery. 43 msgs.
+1791940499909_2pdn0	e0045128	hfeg0pkn001	34	eda_other	parked		2026-11-03 08:23	surveyed r37: pure Q&A (genus/DC/starRC eat TLUPlus or QRC, milkyway suffix). 20 msgs, no delivery.
+1790219850745_1f34q	johnl	hfeg0pfn119	35	digital	claimed		2026-11-03 08:29	

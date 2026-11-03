@@ -1,0 +1,12 @@
+*mac_spef_stub
+*0.001 1.0e-6
+*D_NET clk 0.0020
+*D_NET rst_n 0.0015
+*D_NET a[0] 0.0010
+*D_NET a[1] 0.0010
+*D_NET b[0] 0.0010
+*D_NET acc[0] 0.0012
+*RES
+1 clk 2 clk_buf 0.5
+1 a[0] 2 a0_in 0.3
+*END

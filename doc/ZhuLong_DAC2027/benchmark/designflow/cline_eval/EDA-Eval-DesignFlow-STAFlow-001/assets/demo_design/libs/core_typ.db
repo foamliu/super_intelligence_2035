@@ -1,0 +1,25 @@
+/* core_typ.db — Synopsys Liberty .db (text stub) for the tutorial library.
+   Real .db is a binary Synopsys database; this is a minimal text placeholder
+   so the flow's library-resolution logic has a file to point at. A real PT
+   run would replace this with the actual compiled .db. */
+library(core_typ) {
+  delay_model : table_lookup;
+  nominal_voltage : 0.8;
+  nominal_temperature : 25;
+  operating_conditions(tt0p8v25c) {
+    voltage : 0.8;
+      temperature : 25;
+  }
+  cell (INVX1) {
+    area : 1.0;
+    pin(Z) { direction : output; function : "(!A)"; }
+    pin(A) { direction : input; }
+  }
+  cell (DFFX1) {
+    area : 4.0;
+    ff(IQ) { clocked_on : clk; next_state : D; }
+    pin(clk) { direction : input; clock : true; }
+    pin(D)   { direction : input; }
+    pin(Q)   { direction : output; function : "IQ"; }
+  }
+}
