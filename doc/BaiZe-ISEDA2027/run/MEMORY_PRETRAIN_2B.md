@@ -2,20 +2,19 @@
 WAITING: 0
 > 🛑 **【运维通告 · 2026-11-02 19:51】S1 已由 ops 中继重启并在跑**：`bash scripts/train.sh s1 --nodes 2`，launcher pid **4163528**，从 **ckpt 58000** 续（19:55:40 起 iter **58010**→58030，7.0–7.2 s/step ≈**582K tok/s**，双机 16 卡 **98–100%**、~75GB/卡、~690W）。⇒ **GPU 不再空闲**：🚫 严禁再起任何训练/GPU 评测进程（会双写 ckpt 或 OOM）；"GPU idle → 2.5h 评测"的结论已过期。原 **18:39:51 SIGKILL / 18:50:18 SIGBUS** 的现场日志已归档为 `/tmp/baize_s1_baize2b_worker.log.crash_1102_1839` 与 `..._master.log.crash_1102_1839`（🚫 勿删，待 root 查 dmesg 定 OOM vs 误杀）。CPU 评测继续但**必须降载**：`OMP_NUM_THREADS≤8` + `nice -n 19` + 每机并发 ≤2，**禁止 `pkill python`**（18:39 训练被 -9 的疑似原因）。另：本次 resume **未恢复 scheduler**，LR 从 warmup 重来（58010=5e-6，每 10 步 +5e-6，约 2000 步/3.9h 后回 1e-3）——实验日志须记一笔。详见 `BAIZE_PRETRAIN_2B_TASK.md` 顶部运维令。
 
-> 🆕 2026-11-03 15:49 #1239：**监控轮·4 evals 正常推进·.12 瞬时速率 ramp-down(60→36-39s/it)或提前 ETA·S1 iter 68220 健康·CPU .29 20%/.12 14% 均<<80% ✅·未完成指令：有**。
-> **② eval 进度快照（15:49 实测）**：
-> - iter_10000 ✅ **DONE** bf16 genuine: arc_c=0.29, arc_e=0.49, boolq=0.61, hs=0.36, obqa=0.20, piqa=0.72, sciq=0.79, wg=0.54, **Avg(acc)=50.0%**（results.json 23281B 已存）
-> - iter_50000 🔄 bf16 genuine: **1046/2599(40.3%)**, 16.1s/it, ETA ~6.9h → done ~22:45 Nov3 (PID 2024390 on .29, OMP=8, elapsed 5.2h)
-> - iter_30000 🔄 **float32 OMP=8**: **41/2599(1.6%), 33.9s/it(收敛✅)**, PID 1744762 on .29 (elapsed 28min), 日志 /tmp/baize_cpu_eval_30000_f32_omp8_v2.log。ETA (2599-41)×34≈24.1h → done ~Nov4 16:00
-> - iter_20000 🔄 **float32**: **60/2599(2.3%)**, PID 1259403 on .12(OMP=4, elapsed 65min)。avg 65s/it 但**瞬时已降至 ~39s/it**(ramp-down 中), 日志 /tmp/baize_cpu_eval_20000_f32.log
-> - iter_40000 🔄 **float32**: **61/2599(2.3%)**, PID 1259184 on .12(OMP=4, elapsed 64min)。avg 63s/it 但**瞬时已降至 ~36s/it**(ramp-down 中), 日志 /tmp/baize_cpu_eval_40000_f32.log
-> **③ S1 训练**：iter 68220/700000, loss 2.093, 0NaN, 0skip, ~7s/step≈600K tok/s, LR=1e-3(稳态) ✅。ckpt 最新 iter_66000(next@68000)。
-> **④ CPU**：.29 7.7%us+10.3%sy+2.3%ni≈20.3%busy/79.7%idle(load 36.5/224核, 2 evals)；.12 5.5%us+7.4%sy+1.1%ni≈14%busy/85.8%idle(load 35.4, 2 evals)。均 <<80% ✅
-> **⑤ .12 ramp-down 观察**：#1238 记 .12 "60s/it 已收敛(2进程竞争)"，但 15:49 实测**瞬时速率已降至 36-39s/it**（与 .29 OMP=8 的 34.78s/it 接近）。可能原因：①早期 ramp-up(JIT+cache warming)比预期长，60s/it 并非真稳态；②2 进程 OMP=4 各 4 线程共 8 线程，224 核无核数争用，瓶颈在内存带宽(已 warm)。**若 ~38s/it 持续**：ETA=(2599-60)×38/3600≈26.7h→done ~Nov4 18:30，比 #1238 的 Nov5 10:25 **提前 ~16h**。待下轮确认是否真收敛。
-> **⑥ ETA 汇总(修正)**：iter_50000 bf16→done Nov3 ~22:45。iter_30000 float32→done Nov4 ~16:00。iter_20000/40000 float32 .12→done **Nov4 ~18:30**(若 38s/it 持续) 或 Nov5 ~10:25(若回弹 60s/it)。**全部 5/5 genuine 预计 Nov4 晚 ~ Nov5 上午**。
-> **⑦ 下一步优化(不变)**：当 iter_50000 done(~22:45)后 .29 仅剩 iter_30000(OMP=8)。若 .12 已收敛 ~38s/it 则无需迁移；若回弹 60s/it 则可把 1 个 .12 float32 迁到 .29 OMP=8。下轮(iter_50000 done 后)再评估。
-> **📦 体积**：TASK=30602B(29.9KB)/MEMORY=~27.4KB（均 ≤32KB，无需归档）。
-> **下一步**：①iter_50000 done(~22:45)→收 results.json ②确认 .12 是否真收敛 ~38s/it ③全部 5/5 genuine→终版报告 report_pretrain_cpu_eval_8sets_zh.html + 日报。未完成指令：有 ⇒ WAITING: 0。
+> 🆕 2026-11-03 16:00 #1240：**监控轮·4 evals 全部加速中(ramp-down 持续)·关键校准=2599 是 8 集合计请求数(iter_10000 全程 44665s=12.4h@~17s/it 已证实)·S1 iter 68300 健康·CPU .29 13.6%/.12 13.6% 均<<80% ✅·未完成指令：有**。
+> **② eval 进度快照（16:00 实测，2599=8集合计请求，X/2599 即全程 X%）**：
+> - iter_10000 ✅ **DONE** float32 全程 44665s(12.4h)：arc_c=0.29,arc_e=0.49,boolq=0.61,hs=0.36,obqa=0.20,piqa=0.72,sciq=0.79,wg=0.54,**Avg=50.0%**（results.json 已存）
+> - iter_50000 🔄 bf16 .29(PID 2024390,elapsed 5.4h)：**1091/2599(42.0%)**,16.1s/it,ETA≈6.7h→**done~22:45 Nov3** ✅on track
+> - iter_30000 🔄 float32 OMP=8 .29(PID 1744762,elapsed 38min)：**63/2599(2.4%)**,瞬时已降至**19.3s/it**(累计35.8s/it),ramp-down 中。若收敛~20s/it→**done~Nov4 06:00**；若回35s/it→Nov4 17:00
+> - iter_20000 🔄 float32 .12(PID 1259403,elapsed 76min)：**79/2599(3.0%)**,瞬时**31.4s/it**(累计57s/it),ramp-down 中。若收敛~20s/it→done~Nov4 06:00；若持31s/it→done~Nov4 14:00
+> - iter_40000 🔄 float32 .12(PID 1259184,elapsed 76min)：**81/2599(3.1%)**,瞬时**31.5s/it**,同 20000。→**done~Nov4 06:00–14:00**
+> **③ S1 训练**：iter 68300/700000,loss 2.10,0NaN,0skip,~7s/step≈600K tok/s,LR=1e-3(稳态)✅。ckpt iter_66000(next@68000)。
+> **④ CPU**：.29 4.9us+7.2sy+1.5ni≈13.6%busy/86.2%idle(load35.3)；.12 5.0us+7.8sy+0.8ni≈13.6%busy/86.3%idle(load34.0)。均 <<80% ✅
+> **⑤ 校准洞察(新)**：iter_10000 完整日志证实 **2599=8集×~100doc×~3-4choice 合计请求**(arc_c4+arc_e4+boolq2+hs4+obqa4+piqa2+sciq4+wg2≈2600)，全程 44665s=12.4h@~17s/it 稳态(float32,单进程 OMP=8)。当前 4 个 float32/bf16 eval 仍在 ramp-down，趋于 ~16-20s/it ⇒ **全部 5/5 预计 Nov4 上午~中午完成(<24h ✅)**，比 #1239 估的 Nov4晚-Nov5上午 提前 ~12-16h。下轮(iter_50000 done 后)再核验。
+> **⑥ 下一步**：①iter_50000 done(~22:45)→收 results.json ②持续监控 ramp-down 是否真收敛~17-20s/it ③全部 5/5 genuine done→汇总表+能力-vs-step 曲线+终版报告 report_pretrain_cpu_eval_8sets_zh.html+日报。未完成指令：有 ⇒ WAITING: 0。
+> **📦 体积**：TASK=30602B(29.9KB)/MEMORY=~27.8KB（均 ≤32KB，无需归档）。
+> 📦 §#1239（11-03 15:49, 监控轮·ramp-down 观察）→ daily-memories/2026-11-03.md；**结论**：4 evals 推进, iter_10000 DONE Avg50%, .12 瞬时 36-39s/it ramp-down。被#1240 校准(2599=合计请求+iter_10000全程12.4h, ETA 提前至 Nov4 上午)。需要时再读。
 >
 > 📦 §#1238（11-03 15:35, OMP=8 收敛确认+监控）→ daily-memories/2026-11-03.md；**结论**：OMP=8 收敛 34.78s/it 省~10h, limit=100 生效(2599总请求), iter_50000 39.3% ETA~7.2h, .12 记 60s/it(后被#1239修正为 ramp-down)。需要时再读。
 > 📦 §#1237（11-03 15:17, OMP=8 优化执行·iter_30000 重启）→ daily-memories/2026-11-03.md；**结论**：OMP=4→8 重启, 预计省~12h。被#1238确认收敛34.78s/it。需要时再读。
