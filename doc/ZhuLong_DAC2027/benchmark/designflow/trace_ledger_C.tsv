@@ -147,3 +147,11 @@
 1788743635326_keqfx.messages.json	miccao	hfeg0plg37	303	physical_verify	case	EDA-Eval-DesignFlow-DRCHierLossAudit-001	2026-11-03 22:05	
 1790490487765_6dx8f.messages.json	cwei	hfeahpc504	328	layout_aether	case	EDA-Eval-DesignFlow-CTLESchGenAudit-001	2026-11-03 22:54	
 1792546322783_po4s1.messages.json	colinxu	hfeg0plg81	248	layout_virtuoso	case	EDA-Eval-DesignFlow-SchPinPlanAudit-001	2026-11-03 23:15	
+1789017399621_cmsbu	chenyue	hfeg0plg85	129	layout_aether	parked		2026-11-03 23:28	near-dup of M2PathLayout-001 (i1gjh): same chenyue/hfeg0plg85/cimi_test_cy/test_cimi/layout, same dbCreatePath theme (M2LANE/100paths/pitch0.69 vs M2/40paths/2um); parked to avoid topic dup
+1792723085633_1ggoq	ellawu	hfeg0pkn005	109	layout_aether	parked		2026-11-03 23:29	user turns all fix-direction (改ae.dmDeleteObj->dbDelCV) or error-report (ASSTRM-80158 unbound master); no clean A-档 提出需求 seed; attached cxmt_layout_remainTopPin_Virtual.py debug session
+1789993978842_q63ux	yiz	hfeg0plg101	247	layout_aether	parked		2026-11-03 23:29	sim domain: UI#0 读 ncsim.trn 信号 toggle 数值=waveform/sim 非 physical_layout; netlist124+hspice dominant
+1791526217197_87257	t0002962	hfeg0pkn003	460	layout_aether	parked		2026-11-03 23:32	meta: UI#0 policy engine caching/permission debug, UI#234 grant permission to change file; not a design-flow seed
+1789090020843_b9bop	zhigangw	hfeg0pkn002	183	layout_aether	parked		2026-11-03 23:32	generic launch: UI#0 启动业务场景:时序分析, UI#264 report product yield; innovus110 mixed timing/yield non pure layout
+1790236124444_8orer	lvyy	hfeg0pkn002	165	layout_aether	parked		2026-11-03 23:33	schematic domain: UI#135 复制电路 CkIbDiffM6+子电路到新library=schematic hierarchy copy; schematic448+netlist381 dominant; belongs schematic_netlist shard D
+1791788736494_t2qp9	leo27li	hfeg0pkn001	156	layout_virtuoso	parked		2026-11-03 23:33	STA/Innovus PnR Q&A: UI#0 setup/hold sta, UI#5 innovus block attr, UI#40/50 PT noise, UI#59-80 dontTouch, UI#92 addRepeaterByRule, UI#97/103 routing layer; 28 how-to turns non design-flow deliverable
+1792660417002_tkqpb	colinxu	hfeg0pgn041	257	layout_virtuoso	case	EDA-Eval-DesignFlow-NetDelSaveAudit-001	2026-11-03 23:49	
