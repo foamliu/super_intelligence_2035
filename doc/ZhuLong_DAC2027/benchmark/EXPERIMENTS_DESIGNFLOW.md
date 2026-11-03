@@ -189,3 +189,20 @@
 4. **难度保留**：brief 只补"文件位置+格式契约"（运维令 21:3x §①3 允许），content 断言（routing/cut/via/viarule 解析正确性、跨输入 B 护栏）仍由 check.py 测。
 
 **待验证**（下轮）：STAFlow-001/SynLintFlow-001 重跑（brief 已修）验 ① 消除；TLEFRules-001 第 2 次重跑验 ④→PASS。
+
+## EXP-53 (2026-11-03 shard B 轮36): zr9dt VIH 翻转点调优 — 便携 NMOS-diff-amp 电路 90% 就绪(0 交付, DEBT:1)
+**背景**：本轮选 zr9dt (jasminej/hfeahpc505, mc=180, 764 hspice) —— 真 L2/L3 VIH DC 扫频翻转点调优(trace T0: 改 4 PMOS 尺寸使 CSV 0→1(>0.8) 翻转点落 vih=170 + 3 alter 翻转点尽量接近)。distinct 子技能=optimization-to-target-with-closeness-constraint，shard B 首见。
+
+**.75 HSPICE 便携电路迭代**：
+1. PMOS-input diff pair + NMOS diode load：vih≈VDD/2 区 PMOS 不在工作点 → neta/netb 常值、out 钉死 → 弃。
+2. NMOS-input diff pair + PMOS mirror load, vbias=0.30：MNb Vgs<Vto(0.5) 截止→无尾电流→死锁 → 弃。
+3. 同结构 vbias=0.70：✅收敛，尾电流≈0.27mA，sharp 翻转 alter1 trip≈0.525(out high→low @ vih↑)。
+- level-1 model 缺 nsub → "nsub <= ni" abort；补 `nsub=1e16 phi=0.6 gamma=0.4 cj=0 cjsw=0 js=0` 解决。
+- V/I source value 用 `{param}` → syntax error；改裸参数名 `W=wp28 L=lp`、`idfe neta 0 idfe`、V 源直接常量。
+- `rm -f slice_A.*` 连 .sp 删 → "No valid input file"；只 rm out_*。
+
+**待修(下轮 ~10min)**：(1) 输出极性 netA(falling)→netB→2inv(rising 0→1)；(2) measure `when v(out)=0.8 rise=1`→`cross=1`；(3) idfe 注入 netB 或限幅防 neta 越界 -95mV。修后取 A/B GT → check.py(12+ 断言 a-n) + 6 negative + selftest → B.jsonl。
+
+**物理验证**：trip≈vref(0.5)，随 idfe 平移；spread=idfe_range/gm，gm∝√(Itail·W/L) → wn28/wn23 控 spread、wp10/wp3+wnb 控绝对 trip。center-vs-spread 耦合优化结构成立(可独立调控) → case 难度结构 OK。
+
+**结论**：本轮 0 交付(zr9dt 仍 claimed/in-progress, DEBT:1)，🚫 未落 jsonl/未计通过率。下轮第一件事=继续 zr9dt 交付(不 next 新 trace)。深读+完整 case 计划存 designflow/trace_deepreads/1792143054616_zr9dt_vih_trip_tune.md。
