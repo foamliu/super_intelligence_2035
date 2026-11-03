@@ -12,6 +12,17 @@ DOMAINS: digital, eda_other, pnr_signoff, verification
 - ⚠️ 运维令进度：A 档试点 3/10。**待办**：①STAFlow-001 ④naming 决策；②TLEFRules ④(w) guard 收紧 or 接受；③SPFCoupling-001 cline 实跑（轮33 合成，未跑）；④扩 mc<30 / mixed-session / verification 域（5 条最薄）继续合成；⑤② DelPgLib=clean PASS 提示 eda_other/L1 python 文本处理偏低难，下一轮 eda_other 优先 L2 真跑工具或加隐藏 B 反转结构。
 
 
+### 2026-11-03 shard A 轮 43：DelPgLib-001 cline+hook 首跑 = PASS 15/15（轮42 A-faithful eda_other/L1 删 .lib pg_pin VDD/VSS，WAITING: 0）
+- 任务卡本轮路径 = 合成 1 条新 case。候选池枯竭（轮39-42 确认 digital/eda_other mc≥15 顶候选全 surveyed/parked，4 条本轮 surveyed 全 parked: kvv66/uh82d/zggtc/uiap3）→ pivot 到 MEMORY todo ③：DelPgLib-001（轮42 合成，未跑）cline+hook 首跑。
+- **ref dry-run PASS**：reference_submit.zip + check.py + hidden/B → /tmp/judge_ref_DelPg/ check() True（15/15）。
+- **cline 首跑**：`CLINE_TIMEOUT=1500 bash run_one.sh EDA-Eval-DesignFlow-DelPgLib-001 deepseek-v4-pro-cloud medium` → hook 部署 + workdir 建（3 附件: task_brief.md + prompt.txt + sample_A.lib，case-specific brief 送达 ✓，leak clean）→ cline **299s / exit 0** → 5760 events / 12 tool_use（6 read_files + 2 search_codebase + 2 editor + 2 pyAether run_code + 2 run_commands 沙箱拦）→ 产出 delete_pg.py(2606B) → harness 打包 submit.zip → 独立判分 /tmp/judge_EDA-Eval-DesignFlow-DelPgLib-001。
+- **判分 PASS 15/15**：(a) zip 恰含 1 文件 delete_pg.py ✓ (b) py_compile ✓ (c) 双参数 CLI ✓ (d) A 上 exit0+output ✓ (e) 无 pg_pin(VDD) ✓ (f) 无 pg_pin(VSS) ✓ (g) 无 VDD 行 ✓ (h) 无 VSS 行 ✓ (i) 保留 library/cell/pin 结构+括号平衡 ✓ (j) 保留 lu_table_template/timing/internal_power ✓ (k) 保留 ≥50% 行数 ✓ (l) 跨输入护栏 B exit0+无 pg_pin/VDD-VSS 行+保留 2 cell+voltage_map(VCCI) ✓ (m) 无 A 专属字面量硬编码 ✓ (n) A/B 大括号匹配正确 ✓ (o) 不存在输入 exit 非零 ✓。
+- **归因 = clean PASS**（非 ①形态 / 非 ④分歧义 / 非 ③能力不足）：A-faithful L1 .lib 文本处理 = well-specified mechanical task。prompt 3 条规则明示（删 pg_pin(VDD) 块 + 删 pg_pin(VSS) 块 + 删含 VDD/VSS 行），task_brief 明示 CLI `python3 delete_pg.py <input.lib> <output.lib>` + 纯标准库 + brace-depth 块匹配 + 隐藏 B 跨输入校验。cline 直接产出 2606B 标准库脚本，brace-depth 匹配正确，跨输入 B 也通过 = prompt+brief 充分支撑 + python stdlib 文本处理在 cline 能力范围内。**DelPgLib=clean PASS 提示 eda_other/L1 python 文本处理偏低难**。
+- **防泄题自验全过**：① workdir leak clean（仅 prompt+brief+sample_A.lib，0 判分器/答案/隐藏）；② cline 全程 read_files 仅 4 workspace 内路径（sample_A.lib/prompt.txt/task_brief.md/outputs/delete_pg.py），**0 read check.py/reference/hidden**；③ hook PreToolUse + scope 生效；④ 判分独立 /tmp/judge_*/，check.py+hidden 从 reference/assets 复制（cline workdir 外）。
+- **①+④ 重算（12 unique，dedup latest）= 2/12 = 16.7% ≤30% 阈值 ✓**：①-only=0（全消除）/ ④-only=2（STAFlow④naming + TLEFRules④w-docstring）/ ③=4（SynLintFlow/DCCombHier/PwrGlobals/ETMExtract）/ ②=1（Verification hook-block）/ **PASS=4**（PTSignoff/InnovusLaunchDiag/FormalityLaunchDiag/**DelPgLib**）。DelPgLib=clean PASS，不增 ①+④ 分子。
+- status jsonl 追加第 16 行（verdict=PASS / dur=299 / cline_exit=0 / failure_class=clean PASS, A-faithful L1 .lib text-processing in cline capability）。
+- ⬜ 下轮：①SPFCoupling-001 cline 实跑（轮33 合成，未跑）；②STAFlow ④naming 决策；③TLEFRules ④(w) guard；④扩 mc<30 / mixed-session / verification 域续搜；⑤DelPgLib clean PASS 提示 eda_other/L1 偏低难，下轮 eda_other 优先 L2 真跑工具或加隐藏 B 反转结构。
+
 ### 2026-11-03 shard A 轮 41：TLEFRules-001 cline+hook 第 2 次重跑 = ④(j)(t)width_range 消除·新 ④(w)docstring-A-literal（brief-fix 双重验证，WAITING: 0）
 - 任务卡本轮路径 = 合成 1 条新 case。候选池枯竭（轮39-40 确认 digital mc≥20 top 候选全 surveyed/parked，verification 关键词 summary.tsv 不索引）→ pivot 到 MEMORY todo ①：TLEFRules-001 2nd 重跑确认轮35 brief width_range schema 修复（④(j)(t) 嵌套 dict → 字符串 "min TO max"）。
 - **ref dry-run PASS**：reference_submit.zip + check.py + hidden/ → /tmp/judge_ref_TLEF/ check() True。
