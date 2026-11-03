@@ -68,3 +68,16 @@
 1791526217197_87257.messages.json	t0002962	hfeg0plg90	460	schematic_netlist	parked		2026-11-03 09:37	file cleaned from disk since 2026-10-28 scan (absent on hfeg0pkn003 + hfeg0plg90); stale snapshot
 1792380576403_uumms	e0029308	hfeg0pkn001	343	schematic_netlist	case	EDA-Eval-DesignFlow-CellVerilogExtract-001	2026-11-03 10:10	
 1788577896116_33zw1.messages.json					case	EDA-Eval-DesignFlow-NetPathHL-001	2026-11-03 10:44	
+1792831256137_6qt0a	harrywu	hfeg0pkn002	319	schematic_netlist	parked	cross-shard dup = shard B EDA-Eval-DesignFlow-DelayChainEdgeMeas-001 (spice_sim)	2026-11-03 10:54	
+1790490487765_6dx8f	cwei	hfeahpc504	328	schematic_netlist	claimed		2026-11-03 11:07	
+1791958525711_f1fik	chengleiy	hfeg0pkn001	504	schematic_netlist	parked	PDK/LVS-QA infra (read-all-scripts comprehension), not D design-flow	2026-11-03 11:08	
+1792487689184_4ybw1	yan1zh	hfeg0plg65	495	schematic_netlist	parked	layout-from-schematic + LVS (shard C territory), OA binary, pyAether sandbox refused	2026-11-03 11:08	
+1792570431387_vdqlw	ypzheng	hfeg0pkn003	335	analog_context	parked	Aether tool-QA skill creation (infra), not design-flow	2026-11-03 11:08	
+1789092579396_tgs17	miccao	hfeg0plg37	378	schematic_netlist	parked	autocell pcell/GDS-from-CDL flow (layout/pdk, shard C territory)	2026-11-03 11:08	
+1787569992152_uml8e	e0024597	hfeg0pkn005	342	schematic_netlist	parked	ERC batch-run (physical_verify, shard C territory)	2026-11-03 11:08	
+1788932125428_zqelb	ziyuny	hfeg0pnd002	378	schematic_netlist	parked	DRC/LVS startup + layout delete/cleanup ops (shard C)	2026-11-03 11:08	
+1791425782404_rn6pm	yohannw	hfeg0pkn003	322	analog_context	parked	SKILL source-code analysis/documentation (tooling infra, not design-flow)	2026-11-03 11:08	
+1787897609476_ooyxi	sophiaw	hfeg0plg09	394	analog_context	parked	cross-shard dup = B PVTalterChar-001 (spice_sim)	2026-11-03 11:08	
+1792400027384_ahjnv	zhukaic	hfeahpc503	397	analog_context	parked	cross-shard dup = B OpampACSpec-001 (spice_sim)	2026-11-03 11:08	
+1793093197648_x2w2z	yueliu	hfeahpc501	303	waveform	parked	cross-shard dup = B AlterDeckSplit-001 (spice_sim)	2026-11-03 11:08	
+1787903140887_314mt	sophiaw	hfeg0plg09	378	analog_context	parked	cross-shard dup = B InvPVTchar-001 (spice_sim)	2026-11-03 11:08	
