@@ -166,3 +166,4 @@
 1790393045826_ryu54	kenwang	hfeg0pkn005	273	layout_aether	case	EDA-Eval-DesignFlow-DRCPatGenAudit-001	2026-11-04 01:51	deepread complete: DRC QA pattern gen (AA_W_1 WIDTH + M1_S_1 SPACE + dual-patterning mask color + auto_pattern_width.md); 2.3MB/641msgs qualifies deepread-only; DEBT:1 synthesize next round -> DRCPatGenAudit-001
 1792411915181_j8f3i	yutongy	hfeg0pgn021	221	layout_virtuoso	parked		2026-11-04 02:16	dup of shard D SpfstdBtn-001 (schematic_netlist); same trace j8f3i yutongy
 1792660810859_l0qrf	xiwang	hfeg0pkn003	299	physical_verify	case	EDA-Eval-DesignFlow-DdgoaDeviceAudit-001	2026-11-04 02:48	
+1785498030478_eduxu	e0014566	hfeg0plg58	306	layout_virtuoso	case	EDA-Eval-DesignFlow-RsCalcFlowOrch-001	2026-11-04 03:29	
