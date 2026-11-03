@@ -2,11 +2,11 @@
 WAITING: 0
 > 🛑 **【运维通告 · 2026-11-02 19:51】S1 已由 ops 中继重启并在跑**：`bash scripts/train.sh s1 --nodes 2`，launcher pid **4163528**，从 **ckpt 58000** 续（19:55:40 起 iter **58010**→58030，7.0–7.2 s/step ≈**582K tok/s**，双机 16 卡 **98–100%**、~75GB/卡、~690W）。⇒ **GPU 不再空闲**：🚫 严禁再起任何训练/GPU 评测进程（会双写 ckpt 或 OOM）；"GPU idle → 2.5h 评测"的结论已过期。原 **18:39:51 SIGKILL / 18:50:18 SIGBUS** 的现场日志已归档为 `/tmp/baize_s1_baize2b_worker.log.crash_1102_1839` 与 `..._master.log.crash_1102_1839`（🚫 勿删，待 root 查 dmesg 定 OOM vs 误杀）。CPU 评测继续但**必须降载**：`OMP_NUM_THREADS≤8` + `nice -n 19` + 每机并发 ≤2，**禁止 `pkill python`**（18:39 训练被 -9 的疑似原因）。另：本次 resume **未恢复 scheduler**，LR 从 warmup 重来（58010=5e-6，每 10 步 +5e-6，约 2000 步/3.9h 后回 1e-3）——实验日志须记一笔。详见 `BAIZE_PRETRAIN_2B_TASK.md` 顶部运维令。
 
-> 🆕 2026-11-03 13:28 #1231：**📊 CPU eval·74轮监控——.12 evals 97.7-98.4% ETA~15-22min(→done~13:43-13:49)；.29 iter_30000 327/2599(12.6%,~17.3s/it,ETA~10.9h)、iter_50000 518/2599(19.9%,~17.1s/it,ETA~9.9h)；CPU .12~16.6%busy/.29~17%busy <<80%。✅ S1 健康 iter 66980/loss 2.09/lr=1e-3 stable/~606K tok/s。报告生成器就绪(1/5 ckpt done, iter_10000 Avg=50.00%)。未完成指令：有**。
-> **① .12 evals 即将完成**：iter_20000 PID3729981 2540/2599(97.7%) ~22.1s/it elapsed~15h25m ETA~22min→done~13:49；iter_40000 PID3898654 2557/2599(98.4%) ~22.0s/it elapsed~15h23m ETA~15min→done~13:43。CPU .12: %Cpu~16.4%(4.3us+10.9sy+1.2ni),83.4%idle, load38.49, <<80%。
-> **② .29 evals overnight**：iter_30000 PID1459766 327/2599(12.6%) ~17.3s/it elapsed~1h59m ETA~10.9h→done~00:24 Nov4；iter_50000 PID2024390 518/2599(19.9%) ~17.1s/it elapsed~2h50m ETA~9.9h→done~23:20 Nov3。CPU .29: %Cpu~16.9%(5.5us+9.6sy+1.8ni),83.0%idle, load38.46, <<80%。
+> 🆕 2026-11-03 13:35 #1232：**📊 CPU eval·75轮监控——.12 evals 98.6-99.2% ETA~8-14min(→done~13:43-13:49, 仍未出 results.json)；.29 iter_30000 351/2599(13.5%,~17.0s/it,ETA~10.6h)、iter_50000 542/2599(20.9%,~17.3s/it,ETA~9.9h)；CPU .12~17.4%busy/.29~14.5%busy <<80%。✅ S1 健康 iter 67050/loss 2.08-2.10/lr=1e-3 stable/0NaN/~606K tok/s/ckpt@66000(next@68000)。报告生成器就绪(1/5 done, iter_10000 Avg=50.00%)。未完成指令：有**。
+> **① .12 evals 临界完成**：iter_20000 PID3729981 2562/2599(98.6%) ~22.5s/it elapsed~15h33m ETA~14min→done~13:49；iter_40000 PID3898654 2578/2599(99.2%) ~22.3s/it elapsed~15h31m ETA~8min→done~13:43。lm_eval_results/hf_iter_20000|40000 仍无 results.json（未跑完）。CPU .12: %Cpu~17.4%(6.1us+10.2sy+1.1ni),82.6%idle, load38.56, <<80%。
+> **② .29 evals overnight**：iter_30000 PID1459766 351/2599(13.5%) ~17.0s/it elapsed~2h06m ETA~10.6h→done~00:12 Nov4；iter_50000 PID2024390 542/2599(20.9%) ~17.3s/it elapsed~2h57m ETA~9.9h→done~23:28 Nov3。CPU .29: %Cpu~14.5%(5.5us+7.5sy+1.5ni),85.2%idle, load38.51, <<80%。
 > **③ 报告生成器✅就绪**：`run/gen_cpu_eval_8sets_report.py`（幂等，读 results.json→汇总表+SVG曲线+对照线，产出 `reports/report_pretrain_cpu_eval_8sets_zh.html`）。初版已生成(1/5 ckpt, iter_10000 Avg=50.00%, 35KB/0-script/标签配平)。.12 evals 完成后重跑→3/5；.29 完成后→5/5 终版。
-> **📦 体积**：TASK=30602B(29.9KB)/MEMORY=25232B(24.6KB)（均 ≤32KB，无需归档）。
+> **📦 体积**：TASK=30602B(29.9KB)/MEMORY=25245B(24.6KB)（均 ≤32KB，无需归档）。
 > **下一步**：~13:43-13:49 .12 evals 完成→收集 20000/40000 results.json→重跑生成器(3/5)→.29 overnight→5/5 终版报告+日报。未完成指令：有 ⇒ WAITING: 0。
 
 
