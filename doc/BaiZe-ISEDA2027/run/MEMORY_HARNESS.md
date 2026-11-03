@@ -5,11 +5,11 @@ WAITING: 0
 ## 📊 进度快照
 
 ```
-PHASE:        R1386 quiet监控轮(内存自检425th PASS+CPU自检PASS+scan_backlog=0)·eval TOTAL=2380/1824 unchanged·predict:cline500(DONE)·opencode500(DONE)·pi475(DONE)·claude-code433(DONE)·codex389/500(alive)·hermes243/500(alive)·deepseek155/500(alive)
-已完成:       H-B✅·Gate7/7·TB报告✅·pilot20✅·R984-R988恒0调试✅·R989 incr_eval全链✅·R997硬约束修复✅·R998-R1385 incr_eval链+内存/CPU自检+体积归档✅·R1386 quiet监控轮(scan_backlog=0)
-当前动作:     R1386:内存自检425th PASS(运维令10-30:3路predict各~15-33MB RSS;MemAvailable1430GB)+CPU自检PASS(运维令11-02:load38.6/224≈17%,<80%;top harness proc opencode6.3%,远<8000%阈值)·scan_backlog=0 quiet✅·eval TOTAL=2380/1824 unchanged·eval明细:cline-patched n=442 res=326·opencode n=497 res=401·pi n=463 res=333·claude-code n=358 res=273·codex n=294 res=231·hermes n=177 res=138·deepseek n=149 res=122·predict:codex389/500(alive,sphinx-9658 etimes≈21min)·hermes243/500(alive,scikit-learn-11310 etimes≈8min)·deepseek155/500(alive,django-14999 etimes≈12min)·硬约束:predictions 0 tracked✅·eval 0 tracked✅·/data 6.0T free✅·无kill·无失控·未完成指令:有(3路predict仍跑)⇒WAITING=0.
-下一步:       ①3路predict alive(codex389/500·hermes243/500·deepseek155/500) ②每轮scan_backlog→incr_eval新完成predict ③predict全完成后final eval+full500最终报告(7路总表+Wilson CI+McNemar 7×7) ④infra单列(铁律③) ⑤永久硬约束:禁止commit结果JSON ⑥TASK=34.9KB·MEMORY≤32KB
-阻塞:         无(3路predict alive progressing;scan_backlog=0 quiet;本轮自检无失控,无kill). git:clean.
+PHASE:        R1387 incr_eval轮(内存自检426th PASS+CPU自检PASS+incr_eval 2items ALL RESOLVED)·eval TOTAL=2382/1825(+2/+2)·predict:cline500(DONE)·opencode500(DONE)·pi475(DONE)·claude-code433(DONE)·codex390/500(alive)·hermes245/500(alive)·deepseek156/500(alive)
+已完成:       H-B✅·Gate7/7·TB报告✅·pilot20✅·R984-R988恒0调试✅·R989 incr_eval全链✅·R997硬约束修复✅·R998-R1386 incr_eval链+内存/CPU自检+体积归档✅·R1387 incr_eval 2items ALL RESOLVED
+当前动作:     R1387:内存自检426th PASS(MemAvailable1430GB)+CPU自检PASS(运维令11-02:load37.8/224≈17%,<80%;top harness proc opencode6.3%,远<8000%阈值)·scan_backlog=2→incr_eval 2items(deepseek django-14999 RESOLVED✅+hermes scikit-learn-11310 RESOLVED✅)·eval TOTAL=2382/1825(+2/+2)·eval明细:cline-patched n=442 res=326·opencode n=497 res=401·pi n=463 res=333·claude-code n=358 res=273·codex n=294 res=231·hermes n=178 res=139·deepseek n=150 res=123·predict:codex390/500(alive,sphinx-9673)·hermes245/500(alive,scikit-learn-12585)·deepseek156/500(alive,django-15022)·硬约束:predictions 0 tracked✅·eval 0 tracked✅·/data 6.0T free✅·无kill·无失控·未完成指令:有(3路predict仍跑)⇒WAITING=0.
+下一步:       ①3路predict alive(codex390/500·hermes245/500·deepseek156/500) ②每轮scan_backlog→incr_eval新完成predict(新backlog:hermes scikit-learn-11578) ③predict全完成后final eval+full500最终报告(7路总表+Wilson CI+McNemar 7×7) ④infra单列(铁律③) ⑤永久硬约束:禁止commit结果JSON ⑥TASK=34.9KB·MEMORY≤32KB
+阻塞:         无(3路predict alive progressing;incr_eval 2/2 RESOLVED;本轮自检无失控,无kill). git:clean.
 ERROR_COUNT:  0
   📦 体积：TASK=35757B(34.9KB,>32KB,3活跃块不可归档,<40KB红线OK) / MEMORY=~31.7KB(≤32KB✅)
 ```
@@ -19,7 +19,9 @@ ERROR_COUNT:  0
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 
 ### 本唤醒流水
-[07:52] R1386 quiet监控轮:内存自检425th PASS(运维令10-30:3路predict各~15-33MB RSS;MemAvailable1430GB)+CPU自检PASS(运维令11-02:load38.6/224≈17%,<80%;top harness proc opencode6.3%)·scan_backlog=0 quiet✅·eval TOTAL=2380/1824 unchanged·predict:codex389/500(alive,sphinx-9658 etimes≈21min)·hermes243/500(alive,scikit-learn-11310 etimes≈8min)·deepseek155/500(alive,django-14999 etimes≈12min)·硬约束:predictions 0 tracked✅·eval 0 tracked✅·/data 6.0T free✅·体积:TASK=34.9KB·MEMORY=~31.7KB
+[08:05] R1387 incr_eval轮:内存自检426th PASS(MemAvailable1430GB)+CPU自检PASS(运维令11-02:load37.8/224≈17%,<80%;top harness proc opencode6.3%)·scan_backlog=2→incr_eval 2items ALL RESOLVED(deepseek django-14999 RESOLVED✅+hermes scikit-learn-11310 RESOLVED✅)·eval TOTAL=2382/1825(+2/+2)·predict:codex390/500(alive,sphinx-9673)·hermes245/500(alive,scikit-learn-12585)·deepseek156/500(alive,django-15022)·硬约束:predictions 0 tracked✅·eval 0 tracked✅·/data 6.0T free✅·体积:TASK=34.9KB·MEMORY=~31.7KB
+
+> 📦 R1386 流水(07:52,quiet监控轮:内存自检425th+CPU PASS+scan_backlog=0)已归档 → daily-memories-harness/2026-11-03.md。结论：eval 2380/1824 unchanged·3路predict alive。需要时再读。
 
 > 📦 R1385 流水(07:46,incr_eval轮:内存自检424th+CPU PASS+incr_eval 1item RESOLVED)已归档 → daily-memories-harness/2026-11-03.md。结论：hermes scikit-learn-10908 RESOLVED·eval 2380/1824(+1/+1)·3路predict alive。需要时再读。
 
