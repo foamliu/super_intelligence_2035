@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.10.14)  2 NOV 2026 22:19
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.10.14)  3 NOV 2026 09:00
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1510,58 +1510,13 @@ Underfull \hbox (badness 1596) in paragraph at lines 118--119
 ts an empty
  []
 
-) (./DAC2027/7_discussion.tex
-Underfull \hbox (badness 1152) in paragraph at lines 4--6
-\T1/LinuxLibertineT-TLF/m/n/9 Section []4[] el-e-vates the er-ror anal-y-sis of
- Sec-tion []6.3[] from ob-
- []
-
-
-Underfull \hbox (badness 1014) in paragraph at lines 4--6
-\T1/LinuxLibertineT-TLF/m/n/9 ser-va-tion to struc-tural prin-ci-ple: in do-mai
-ns with long-tailed,
- []
-
-
-Underfull \hbox (badness 3657) in paragraph at lines 4--6
-\T1/LinuxLibertineT-TLF/m/n/9 under-documented APIs, the ground-ing gap is boun
-ded by
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 7--9
-[]\T1/LinuxLibertineT-TLF/m/n/9 Three lim-i-ta-tions. Base-LLM per-for-mance va
-ries widely
- []
-
-
-Underfull \hbox (badness 1852) in paragraph at lines 7--9
-\T1/LinuxLibertineT-TLF/m/n/9 com-par-isons need care; Pass@1 cer-ti-fies only 
-the ef-fects its
- []
-
-
-Underfull \hbox (badness 2073) in paragraph at lines 7--9
-\T1/LinuxLibertineT-TLF/m/n/9 as-ser-tions check, not full func-tional equiv-a-
-lence. The SKILL
- []
-
-
-Underfull \hbox (badness 1242) in paragraph at lines 7--9
-\T1/LinuxLibertineT-TLF/m/n/9 self-exploration re-gres-sion ($\LMS/ntxsy/m/n/9 
-^^@\OT1/LinuxLibertineT-TLF/m/n/9 1\OML/nxlmi/m/it/9 :\OT1/LinuxLibertineT-TLF/
-m/n/9 2$ \T1/LinuxLibertineT-TLF/m/n/9 pp) fits SKILL's smaller API
- []
-
-) (./DAC2027/8_conclusion.tex)
+) (./DAC2027/7_discussion.tex) (./DAC2027/8_conclusion.tex)
 Underfull \hbox (badness 2293) in paragraph at lines 4--184
 \T1/LinuxLibertineT-TLF/m/n/9 (ii) long-term mem-ory and re-cur-sive self-impro
 vement (RSI),
  []
 
-[6.6] [7.7
-
-] (./main.bbl
+[6.6] (./main.bbl
 Underfull \hbox (badness 10000) in paragraph at lines 56--66
 []\T1/LinuxLibertineT-TLF/m/n/7 Jianlv Chen, Shi-tao Xiao, Peitian Zhang, Kun L
 uo, Defu Lian, and
@@ -1596,7 +1551,7 @@ File: se-pdfdoc.def 2019/11/29 v1.12 stringenc: PDFDocEncoding
 )
 (/usr/share/texlive/texmf-dist/tex/generic/stringenc/se-utf8.def
 File: se-utf8.def 2019/11/29 v1.12 stringenc: UTF-8
-) [8.8
+) [7.7
 
 ]
 (./main.aux)
@@ -1608,8 +1563,8 @@ Package rerunfilecheck Info: File `main.out' has not changed.
 (rerunfilecheck)             Checksum: 6959019A92F1974A4250986694DD7792;4437.
  ) 
 Here is how much of TeX's memory you used:
- 21068 strings out of 475589
- 336890 string characters out of 5782859
+ 21067 strings out of 475589
+ 336884 string characters out of 5782859
  1960975 words of memory out of 5000000
  42523 multiletter control sequences out of 15000+600000
  721844 words of font info for 180 fonts, out of 8000000 for 9000
@@ -1632,10 +1587,10 @@ exlive/texmf-dist/fonts/type1/public/amsfonts/symbols/msam10.pfb></usr/share/te
 xlive/texmf-dist/fonts/type1/public/newtx/txexs.pfb></usr/share/texlive/texmf-d
 ist/fonts/type1/public/newtx/txmiaX.pfb></usr/share/texlive/texmf-dist/fonts/ty
 pe1/public/newtx/txsys.pfb>
-Output written on main.pdf (8 pages, 871711 bytes).
+Output written on main.pdf (7 pages, 871166 bytes).
 PDF statistics:
- 429 PDF objects out of 1000 (max. 8388607)
- 353 compressed objects within 4 object streams
- 68 named destinations out of 1000 (max. 500000)
+ 425 PDF objects out of 1000 (max. 8388607)
+ 350 compressed objects within 4 object streams
+ 67 named destinations out of 1000 (max. 500000)
  17622 words of extra memory for PDF output out of 20736 (max. 10000000)
 
