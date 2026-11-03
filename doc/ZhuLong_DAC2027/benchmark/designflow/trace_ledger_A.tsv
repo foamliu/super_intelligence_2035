@@ -61,4 +61,4 @@
 1792635809821_aqapd	johnl	hfeg0pfn119	54	digital	case	EDA-Eval-DesignFlow-SweepMeasFix-001	2026-11-03 19:14	
 1792562147898_ygrxp	johnl	hfeg0pfn119	100	digital	case	EDA-Eval-DesignFlow-SweepParallel-001	2026-11-03 19:49	
 1793088659672_4lwqr	e0047472	hfeg0pkn004	417	pnr_signoff	case	EDA-Eval-DesignFlow-OstrichSpefRCFactor-001	2026-11-03 20:31	fresh 11-03 eda_trace scan; 303 msgs; A-faithful U#84 ostrich SPEF RC factor tcl; pnr_signoff L2
-1793621923074_i9chj	alan3zh	hfeg0plg49	401	pnr_signoff	deepread		2026-11-03 20:55	IMPSR1253 VDD_PM fix; deepread done; r61 synthesize
+1793621923074_i9chj	alan3zh	hfeg0plg49	401	pnr_signoff	case	EDA-Eval-DesignFlow-IMPSR1253VddPmFix-001	2026-11-03 21:09	IMPSR1253 VDD_PM fix; deepread done; r61 synthesize
