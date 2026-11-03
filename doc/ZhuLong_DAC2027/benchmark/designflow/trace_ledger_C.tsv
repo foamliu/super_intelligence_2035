@@ -115,3 +115,15 @@
 1790578654193_ke3sv	xinqiaoz	hfeg0plg76	402	skipper	parked		2026-11-03 13:37	UI#0=handoff 恢复 pdkQaSystem,非纯 EDA 设计流 seed
 1789624635745_u0vle	xinqiaoz	hfeg0plg76	394	skipper	parked		2026-11-03 13:37	UI#0=阅读 pdkQaSystem agent-command-profiles 规则并解释,meta/how-to 非 seed
 1792463960005_7frw8	zqzhan	hfeg0pkn005	371	layout_aether	case	EDA-Eval-DesignFlow-ChkSaveHistDedup-001	2026-11-03 13:57	
+1787137440904_wyrs2.messages.json					parked		2026-11-03 14:23	handoff prompt_flow.md RsCalc+AutoVia+PowerFill flow; overlaps RNodePlan/RTextChkPlan/PowerFill/AutoViaGen/RsCalcMesh
+1788147634807_soqbk.messages.json					parked		2026-11-03 14:23	handoff prompt_flow.md + 5 reports; overlaps RsCalc/PowerFill flow
+1785761013677_e0mmo.messages.json					parked		2026-11-03 14:23	handoff prompt_flow.md bare
+1783568117344_9iqwf.messages.json					parked		2026-11-03 14:23	handoff prompt_powerfill.md; overlaps PowerFill
+1788353323015_rjizk.messages.json					parked		2026-11-03 14:23	RTEXT/checkPoints task identical to RTextChkPlan-001 (r49 pj0ax); overlap
+1789866007933_m14th.messages.json					parked		2026-11-03 14:23	meta issue-handler workflow spec, not a specific EDA task
+1789384598319_agzjb.messages.json					parked		2026-11-03 14:23	meta code-review of DrcPatternCheck.py vs proposal doc; overlaps DRCPatGen/Plan; judgment task
+1792460489351_tb0xk.messages.json					parked		2026-11-03 14:23	empty prompt
+1789092579396_tgs17.messages.json					parked		2026-11-03 14:23	miccao autocell config explain; overlaps PCellFlowPlan; r47 judged
+1789895218929_1xhgy.messages.json					parked		2026-11-03 14:23	miccao skill-content paste; r47 judged
+1790060113870_jr97m.messages.json					parked		2026-11-03 14:23	DRC issue 0922_zhaowei root cause hinted by user (not in ldr/LAYER_REPLACE); overlaps DRC log analysis; A-disqualified
+1793070839598_nud8i.messages.json	xinqiaoz	hfeg0pkn004	389	physical_verify	case	EDA-Eval-DesignFlow-DummyQaCliNoConfig-001	2026-11-03 14:38	
