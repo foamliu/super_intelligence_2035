@@ -47,6 +47,6 @@
 1792571144969_ph3ku					parked		2026-11-03 09:38	surveyed r40: DC mbist synth (T_mBistTopNew) exploration, user#0 '看下这个工程'+#6 'jix'+#24 '继续' = thin user direction (no clear verifiable goal, agent drove all work); heavy overlap with existing DCSynth-001/DCCombHier-001 (same DC Tcl idiom, johnl primelib_char family); B-synth would duplicate
 1791981018862_spnfh	e0045128	hfeg0pkn001	15	eda_other	case	EDA-Eval-DesignFlow-DelPgLib-001	2026-11-03 10:40	
 1791444783469_mwoue	miccao	hfeg0plg92	401	pnr_signoff	case	EDA-Eval-DesignFlow-DRCDeckOpt-001	2026-11-03 11:38	
-1789545344007_xchvr.messages.json	ellawu	hfeg0pkn005	122	pnr_signoff	claimed		2026-11-03 12:35	
+1789545344007_xchvr.messages.json	ellawu	hfeg0pkn005	122	pnr_signoff	case	EDA-Eval-DesignFlow-CalibreOpen1Fix-001	2026-11-03 13:48	
 1790664471639_s4xs4.messages.json					case	EDA-Eval-DesignFlow-PDKRunsetExplore-001	2026-11-03 12:52	
 1792042618272_wl9i4	xingx	hfeg0pkn002	290	verification	case	EDA-Eval-DesignFlow-DeadLoopScan-001	2026-11-03 13:23	
