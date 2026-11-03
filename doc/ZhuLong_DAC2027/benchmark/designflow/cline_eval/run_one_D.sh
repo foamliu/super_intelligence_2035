@@ -151,9 +151,11 @@ else
   CLI_PROMPT="Read prompt.txt in the current directory. It describes a complete multi-step task. Use the files in the assets/ folder as inputs. Produce the deliverable exactly as prompt.txt specifies: package the required files into outputs/submit.zip. When outputs/submit.zip exists, stop immediately and do not perform any further tool calls.
 
 IMPORTANT tool usage rules (the built-in run_commands/bash/shell tools will NOT work for this task):
-- All EDA and shell commands MUST use the MCP tool 'mcp__pyAether_MCP_server__run_commands' — it executes on the EDA server (32.75) in your session workdir. The built-in run_commands runs on the local dev machine which CANNOT reach the EDA server or EDA NAS, and will only return a NOTICE telling you to switch to the MCP tool.
-- To run pyAether/SKILL/Tcl code on the EDA server, use 'mcp__pyAether_MCP_server__run_code'.
-- To read EDA-side files (produced on 32.75), use 'mcp__pyAether_MCP_server__read_file'. To list EDA-side dirs, use 'mcp__pyAether_MCP_server__list_files'.
+- First call 'mcp__eda_flow__open_session' to get a remote session workdir on the EDA server (32.75). Pass that workdir to all subsequent eda_flow calls.
+- All EDA and shell commands MUST use the MCP tool 'mcp__eda_flow__run_commands' (pass the workdir from open_session). It executes on the EDA server (32.75) which has python3, EDA tools, and the session workdir. The built-in run_commands runs on the local dev machine which CANNOT reach the EDA server or EDA NAS, and will only return a NOTICE telling you to switch to the MCP tool.
+- To run pyAether/SKILL/Tcl code on the EDA server, use 'mcp__eda_flow__run_code' (pass workdir).
+- To read EDA-side files (produced on 32.75), use 'mcp__eda_flow__read_file'. To list EDA-side dirs, use 'mcp__eda_flow__list_files'.
+- To upload assets from local workspace to the EDA session workdir: read locally with read_file, then write with 'mcp__eda_flow__write_file' (pass workdir + path).
 - To read files already in your local workspace (assets/, prompt.txt, task_brief.md), use the built-in read_file tool.
 - Do NOT attempt to read, list, or access any file named check.py, _check.py, reference/, hidden/, or anything outside the current workspace."
   # 解析 api key（providers.json openai-compatible）
