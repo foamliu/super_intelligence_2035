@@ -155,3 +155,5 @@
 1790236124444_8orer	lvyy	hfeg0pkn002	165	layout_aether	parked		2026-11-03 23:33	schematic domain: UI#135 复制电路 CkIbDiffM6+子电路到新library=schematic hierarchy copy; schematic448+netlist381 dominant; belongs schematic_netlist shard D
 1791788736494_t2qp9	leo27li	hfeg0pkn001	156	layout_virtuoso	parked		2026-11-03 23:33	STA/Innovus PnR Q&A: UI#0 setup/hold sta, UI#5 innovus block attr, UI#40/50 PT noise, UI#59-80 dontTouch, UI#92 addRepeaterByRule, UI#97/103 routing layer; 28 how-to turns non design-flow deliverable
 1792660417002_tkqpb	colinxu	hfeg0pgn041	257	layout_virtuoso	case	EDA-Eval-DesignFlow-NetDelSaveAudit-001	2026-11-03 23:49	
+1785738164906_rqpb4.messages.json	t0002638	hfeg0plg49	517	layout_aether	parked		2026-11-04 00:03	meta-infra session: bench author t0002638 building EDA-Eval-Framework MCP/KIMI multimodal infra; embedded highlight-nets-by-prefix task given WITH reference impl (A-disqualify) + overlaps eda-highlight-by-name-pattern skill
+1789112462640_pb4ei.messages.json	davidwu	hfeg0pjn200	259	layout_aether	case	EDA-Eval-DesignFlow-APRRoutePrecondDiag-001	2026-11-04 00:20	
