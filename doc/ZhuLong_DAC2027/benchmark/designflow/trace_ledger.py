@@ -47,9 +47,10 @@ def _set_shard(s):
 
 COLS = ["session_file", "user", "host", "match_count", "domain", "status",
         "case_id", "updated_at", "note"]
-VALID_STATUS = ("claimed", "deepread", "case", "parked")
-COVERED = ("case",)                          # 计入"已覆盖"
-TOUCHED = ("claimed", "deepread", "case", "parked")   # 计入"已动过"
+VALID_STATUS = ("claimed", "deepread", "case", "parked", "seeded")
+# 'seeded' = shard agent 已把 trace 种入 jsonl (出完 case)，等同 'case' 计入覆盖
+COVERED = ("case", "seeded")                   # 计入"已覆盖"
+TOUCHED = ("claimed", "deepread", "case", "parked", "seeded")   # 计入"已动过"
 
 
 def _now():
@@ -185,20 +186,20 @@ def html_block(rows=None, st=None):
     width = pct if target else 0.0
     pool_txt = str(target) if target else "未知（待 refresh）"
     return (
-        '<h2>二、trace 覆盖率（进度条）</h2>\n'
+        '<h3>trace 覆盖率进度条（候选池 mc&ge;%d，合并 4 shard ledger）</h3>\n'
         '<div class="kpis">\n'
-        '<div class="kpi"><div class="n">%s</div><div class="l">已交付 / 候选池（mc&ge;%d）</div></div>\n'
-        '<div class="kpi"><div class="n">%d</div><div class="l">已交付 case</div></div>\n'
+        '<div class="kpi"><div class="n">%s</div><div class="l">已用 / 候选池（mc&ge;%d）</div></div>\n'
+        '<div class="kpi"><div class="n">%d</div><div class="l">已用去重 session</div></div>\n'
         '<div class="kpi"><div class="n">%s</div><div class="l">候选池总量</div></div>\n'
         '<div class="kpi"><div class="n">%d</div><div class="l">已动过（含暂缓）</div></div>\n'
         '</div>\n'
         '<div style="background:#e3e8ef;border-radius:6px;height:18px;overflow:hidden">'
         '<div style="width:%.1f%%;height:18px;background:#2c7be5"></div></div>\n'
-        '<p style="color:#666;font-size:.8rem">%s · 台账 case %d / deepread %d / parked %d / claimed %d</p>\n'
+        '<p style="color:#666;font-size:.8rem">%s · 台账 case %d / seeded %d / deepread %d / parked %d / claimed %d</p>\n'
         '<ul>%s</ul>\n'
-        % (pct_txt, mc, len(covered), pool_txt, len(touched), width, delta,
-           by.get("case", 0), by.get("deepread", 0), by.get("parked", 0),
-           by.get("claimed", 0), dom_html or "<li>—</li>"))
+        % (mc, pct_txt, mc, len(covered), pool_txt, len(touched), width, delta,
+           by.get("case", 0), by.get("seeded", 0), by.get("deepread", 0),
+           by.get("parked", 0), by.get("claimed", 0), dom_html or "<li>—</li>"))
 def cmd_next(args):
     # 规范化：台账存 bare 形式或带 .messages.json 后缀混存，summary.tsv 统一带后缀。
     # strip 后缀再做 anchor 匹配，避免 $-anchor 漏放行已用 session。

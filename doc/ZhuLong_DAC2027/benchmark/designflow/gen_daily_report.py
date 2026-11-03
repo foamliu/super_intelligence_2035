@@ -269,12 +269,35 @@ def main():
 
     domain_dist = " · ".join(f"{esc(k)}: {v}" for k, v in sorted(by_domain.items())) or "(无)"
 
-    # trace 覆盖率（进度条）：读 designflow/trace_ledger.tsv + summary_stats.json
+    # trace 覆盖率（进度条）：合并 4 shard ledger + 旧 trace_ledger.tsv + summary_stats.json
     cov_html = ""
     try:
         sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
         import trace_ledger
-        cov_html = trace_ledger.html_block()
+        # 合并 4 shard ledger + 旧默认 ledger，按 session_file 去重
+        merged = []
+        seen = set()
+        for lf in [getattr(trace_ledger, "LEDGER", ""),
+                   os.path.join(os.path.dirname(os.path.abspath(__file__)), "trace_ledger_A.tsv"),
+                   os.path.join(os.path.dirname(os.path.abspath(__file__)), "trace_ledger_B.tsv"),
+                   os.path.join(os.path.dirname(os.path.abspath(__file__)), "trace_ledger_C.tsv"),
+                   os.path.join(os.path.dirname(os.path.abspath(__file__)), "trace_ledger_D.tsv")]:
+            if not lf or not os.path.exists(lf):
+                continue
+            with open(lf, encoding="utf-8") as f:
+                for line in f:
+                    if not line.strip():
+                        continue
+                    parts = line.rstrip("\n").split("\t")
+                    parts += [""] * (len(trace_ledger.COLS) - len(parts))
+                    if parts[0] == trace_ledger.COLS[0]:
+                        continue
+                    sf = parts[0]
+                    if sf in seen:
+                        continue
+                    seen.add(sf)
+                    merged.append(dict(zip(trace_ledger.COLS, parts[:len(trace_ledger.COLS)])))
+        cov_html = trace_ledger.html_block(merged)
     except Exception as e:
         cov_html = "<p style='color:#999'>trace 台账未就绪（%s）</p>" % esc(e)
 
@@ -334,9 +357,11 @@ footer{{margin-top:30px;color:#999;font-size:.75rem;text-align:center}}
 </div>
 <div class="note">
 <b>mc = match_count</b> = session 文件里命中 EDA 关键词的<b>行数</b>（grep -icE RE1，一行命中任一关键词计 1）。RE1 含 60+ EDA 关键词：virtuoso/innovus/calibre/spectre/hspice/aether/skipper/waveview/pyAether/dbGet/dbCreate*/schematic/netlist/synthesis/PDK/analog/cmos/... 11/03 已加 <code>rtl</code>。<br>
-<b>候选池阈值 mc≥300 → mc≥100</b>（11/03 用户直令）：旧阈值 300 太严（只筛出 172 个"重度 EDA 会话"），把 mc 100-299 的 524 个中等丰富 session 排除了。新阈值 mc≥100 候选池 = <b>696</b> 个去重 session / 182 个去重用户。benchmark 已用 266 个 session，覆盖率 266/696 = <b>38.2%</b>（旧口径 88.4% 是因候选池太小虚高）。<br>
+<b>候选池阈值 mc≥300 → mc≥100</b>（11/03 用户直令）：旧阈值 300 太严（只筛出 172 个"重度 EDA 会话"），把 mc 100-299 的 524 个中等丰富 session 排除了。新阈值 mc≥100 候选池 = <b>696</b> 个去重 session / 182 个去重用户。<b>trace 覆盖率 156/696 = 22.4%</b>（严格口径：已出 case 的去重 session；另有 114 个 parked 暂缓 + 2 个 claimed/deepread 在途，宽松口径 272/696=39.1%；旧口径 88.4% 是因候选池 mc≥300=172 太小虚高，已弃）。<br>
 <b>mc 分布</b>（去重 session）：1-9: 1912(49%) · 10-49: 883 · 50-99: 408 · <b>100-299: 524(新纳入)</b> · 300-499: 123 · 500-999: 47 · 1000+: 2
 </div>
+
+{cov_html}
 
 <h2>二、评测用例盘点（benchmarks/EDA-Eval-DesignFlow/EDA-Eval-DesignFlow.jsonl）</h2>
 <div class="kpis">
@@ -347,8 +372,6 @@ footer{{margin-top:30px;color:#999;font-size:.75rem;text-align:center}}
 </div>
 <p><b>按 domain 分布：</b>{domain_dist}</p>
 <div class="note">即时令 VIII 已将原 15 个按工具分文件合并为单一 <code>EDA-Eval-DesignFlow.jsonl</code>；scripting 口径用例标记 <code>legacy:true</code> 保留存量，不再追加。新建用例只往此文件追加，按设计流契约（mode=design_flow / entry_point=outputs/submit.zip / 双参 check(deliverable, workdir) / 无 lang·host）。</div>
-
-{cov_html}
 
 <h2>三、用例清单（每行一个 Case · 真实 trace 在上，legacy 在下）</h2>
 <table><tr><th>task_id</th><th>用户</th><th>trace 来源</th><th>解决的问题</th><th>任务说明(prompt)</th><th>交付件要求</th><th>test 思路</th><th>test 语言</th><th>k(断言)</th><th>k(check)</th><th>一致</th><th>pi 结果</th></tr>

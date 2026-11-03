@@ -86,7 +86,7 @@
 <tr><td>目标机数</td><td>698</td><td>698 ✅</td><td>698 台全部有 EDA 命中</td></tr>
 </table>
 <b>每日趋势</b>（qualifying sessions）：10/29=14370 · 10/30=2641(异常低) · 10/31=13994 · 11/01=14047 · 11/02=13890 · <b>11/03=14448</b>。会话数在增长（6 天 +78）。<br><b>11/03 调整</b>：候选池阈值 mc≥300→mc≥100（旧 172→新 696）；probe_remote.sh 的 RE1 已加 <code>rtl</code> 关键词，明日扫描 mc 会略升。。<br>
-<b>trace 覆盖率</b>：候选池(mc≥100)=696 个去重 session（11/03 从 mc≥300 改为 mc≥100；旧阈值 172 太严，排除了 524 个 mc 100-299 的中等 session）。benchmark 已用 266 个 session，覆盖率 266/696=<b>38.2%</b>；旧口径 88.4% 是因候选池太小虚高。
+<b>trace 覆盖率</b>：候选池(mc≥100)=696 个去重 session（11/03 从 mc≥300 改为 mc≥100；旧阈值 172 太严，排除了 524 个 mc 100-299 的中等 session）。已出 case 的去重 session 156 个，覆盖率 156/696=<b>22.4%</b>（严格口径）；含 114 个 parked 暂缓的宽松口径 272/696=39.1%。旧口径 88.4% 是因候选池太小虚高，已弃。
 </div>
 
 <h3>断言数分布（163 条含「N 条断言」格式的 case）</h3>
@@ -229,7 +229,7 @@
 <li>覆盖 80 个真实用户（去重，占 365 总用户的 21.9%）——原始用户名，非 hash（内部 benchmark 需可追溯）</li>
 <li>trace_source 100% 覆盖（164/164 case 都记录了 host/user/session_file/session_msgs/real_task_summary）</li>
 <li>trace 来源：沈佳成 698 机扫描结果（.75 <code>/home/t0002965/log/ssh_eda_search_20261028_174426/</code>，scan.tsv 698 行，summary.tsv 24085 行）+ 每日扫描日志（<code>eda_trace_YYYYMMDD.log</code>，11/03 最新 14448 qualifying sessions）</li>
-<li>候选池（mc≥100）= 696 个去重 session，已用 266 个，覆盖率 38.2%（旧口径 mc≥300=172 时 88.4% 因候选池太小虚高，已弃）</li>
+<li>候选池（mc≥100）= 696 个去重 session，已出 case 156 个，覆盖率 22.4%（严格口径）；含 114 parked 暂缓的宽松口径 39.1%</li>
 </ul>
 
 <h2 id="shards">五、4 Shard 并发架构</h2>
