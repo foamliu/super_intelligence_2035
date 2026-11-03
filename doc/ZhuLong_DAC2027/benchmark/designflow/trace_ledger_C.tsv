@@ -157,3 +157,7 @@
 1792660417002_tkqpb	colinxu	hfeg0pgn041	257	layout_virtuoso	case	EDA-Eval-DesignFlow-NetDelSaveAudit-001	2026-11-03 23:49	
 1785738164906_rqpb4.messages.json	t0002638	hfeg0plg49	517	layout_aether	parked		2026-11-04 00:03	meta-infra session: bench author t0002638 building EDA-Eval-Framework MCP/KIMI multimodal infra; embedded highlight-nets-by-prefix task given WITH reference impl (A-disqualify) + overlaps eda-highlight-by-name-pattern skill
 1789112462640_pb4ei.messages.json	davidwu	hfeg0pjn200	259	layout_aether	case	EDA-Eval-DesignFlow-APRRoutePrecondDiag-001	2026-11-04 00:20	
+1782728857158_05p8p	e03179	hfeg0pkn002	296	layout_aether	parked		2026-11-04 00:37	meta-infra: devops e0025768 debugging Virtuoso bridge sandbox ('Virtuoso 未连接'/'shut down Aether sandbox stub'), not real EDA design task; same class as rqpb4
+1788488824102_unnkw	e02141	hfeg0pkn002	250	layout_aether	parked		2026-11-04 00:39	meta-infra: e02141 devops setup (mkdir/cp eda_sandbox, vim zl_eda_virtuoso.il) + Sentaurus TCAD manual reading, not real layout design task
+1785556613011_1al18	jojoyan	hfeg0plg56	229	layout_aether	parked		2026-11-04 00:39	canned-scenario + infra-debug: '启动业务场景: 模拟电路生成' is canned launcher; assistant mostly debugs sandbox_fastmcp/ip_port connection, not real design intent
+1792669757550_90kyw	colinxu	hfeg0pgn041	257	layout_aether	case	EDA-Eval-DesignFlow-LabelApiPolDiag-001	2026-11-04 00:55	
