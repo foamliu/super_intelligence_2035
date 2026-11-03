@@ -41,4 +41,4 @@ djml8					case	EDA-Eval-DesignFlow-PFDdeadZone-001	2026-11-02 17:47
 1792394413650_b86q7.messages.json	tongni	hfeg0plg63	99	spice_sim	case	EDA-Eval-DesignFlow-Vcc2scActDeckGen-001	2026-11-03 13:48	
 1795907092176_vdeyi.messages.json	e0025768	hfeg0plg49	65	spice_sim	case	EDA-Eval-DesignFlow-LvlshftBsubDiag-001	2026-11-03 15:28	
 1790245155745_i5ae7	jiangbaol	hfeg0pkn002	119	spice_sim	case	EDA-Eval-DesignFlow-SAoptPwrDly-001	2026-11-03 16:16	
-1792722208192_uqv1k	karlwang	hfeg0plg71	312	spice_sim	claimed		2026-11-03 16:14	
+1792722208192_uqv1k	karlwang	hfeg0plg71	312	spice_sim	case	EDA-Eval-DesignFlow-PorCapSweep-001	2026-11-03 16:54	
