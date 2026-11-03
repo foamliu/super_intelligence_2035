@@ -1,5 +1,5 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
-WAITING: 1
+WAITING: 0
 > 🛑 **【运维通告 · 2026-11-02 19:51】S1 已由 ops 中继重启并在跑**：`bash scripts/train.sh s1 --nodes 2`，launcher pid **4163528**，从 **ckpt 58000** 续（19:55:40 起 iter **58010**→58030，7.0–7.2 s/step ≈**582K tok/s**，双机 16 卡 **98–100%**、~75GB/卡、~690W）。⇒ **GPU 不再空闲**：🚫 严禁再起任何训练/GPU 评测进程（会双写 ckpt 或 OOM）；"GPU idle → 2.5h 评测"的结论已过期。原 **18:39:51 SIGKILL / 18:50:18 SIGBUS** 的现场日志已归档为 `/tmp/baize_s1_baize2b_worker.log.crash_1102_1839` 与 `..._master.log.crash_1102_1839`（🚫 勿删，待 root 查 dmesg 定 OOM vs 误杀）。CPU 评测继续但**必须降载**：`OMP_NUM_THREADS≤8` + `nice -n 19` + 每机并发 ≤2，**禁止 `pkill python`**（18:39 训练被 -9 的疑似原因）。另：本次 resume **未恢复 scheduler**，LR 从 warmup 重来（58010=5e-6，每 10 步 +5e-6，约 2000 步/3.9h 后回 1e-3）——实验日志须记一笔。详见 `BAIZE_PRETRAIN_2B_TASK.md` 顶部运维令。
 
 
@@ -21,14 +21,15 @@ WAITING: 1
 > 📦 §#1219（11-03 09:48, CPU eval监控·62轮）→ daily-memories/2026-11-03.md；**结论**：4 eval正常(.29~95%/.12~76%), ETA .29~37-40min/.12~3.8h, CPU<<80%, S1 iter65130健康。被#1220监控。需要时再读。
 > 📦 §#1220（11-03 10:10, CPU eval监控·63轮）→ daily-memories/2026-11-03.md；**结论**：.29 evals 97-98%即将完成, .12 78% ETA~3.4h, S1 iter65300健康。被#1221接续。需要时再读。
 
-> 🆕 2026-11-03 12:30 #1226：**📊 CPU eval·69轮监控——.12 evals ~92-93% ETA~1.2h(→done~13:42-51)；.29 iter_30000 133/2599(5%,~17.2s/it,ETA~11.8h)、iter_50000 322/2599(12%,~17.1s/it,ETA~10.8h→done~23:18)；CPU .29~14.8%/.12~19.5% <<80%。✅ S1 健康 iter 66510/loss 2.12/lr=1e-3。未完成指令：有**。
-> **① .12 evals**：iter_20000 2395/2599(92.1%) ~24s/it ETA~1.3h→done~13:51；iter_40000 2409/2599(92.7%) ~23s/it ETA~1.2h→done~13:42。CPU .12: %Cpu~19.5%(6.1us+12.0sy+1.4ni), load40, 80.2%idle, <<80%。
-> **② .29 iter_30000**：PID 1459766, 133/2599(5.1%), elapsed~1h, ~17.2s/it(已脱离慢启动), ETA~11.8h→done~00:18 Nov4。config已修复(mamba_dt_limit已删, rope_theta=1M)。
-> **③ .29 iter_50000**：PID 2024390, 322/2599(12.4%), elapsed~1h53m, ~17.1s/it, ETA~10.8h→done~23:18。CPU .29: %Cpu~14.8%(4.9us+8.4sy+1.5ni), load37, 85.2%idle, <<80%。
-> **④ iter_10000 results✅**：arc_c=0.29/arc_e=0.49/boolq=0.61/hs=0.36/obqa=0.20/piqa=0.72/sciq=0.79/wg=0.54。**Avg=0.5000**。
-> **⑤ S1 状态**：iter 66510/700k(9.50%), loss 2.094-2.120, 0 NaN, 0 skip, ~7.0s/step, ~606K tok/s, lr=1e-3 stable, ckpt@66000(next@68000)。
-> **📦 体积**：TASK=30602B(29.9KB) / MEMORY=23271B(22.7KB)（均 ≤32KB，无需归档）。
-> **下一步**：~13:42 .12 evals完成→收集 20000/40000 results→.29 双 eval overnight(iter_50000~23:18, iter_30000~00:18 Nov4)→全部5×8有效结果后汇总表+HTML报告。未完成指令：有。
+> 🆕 2026-11-03 12:52 #1227：**📊 CPU eval·70轮监控——.12 evals ~94-95% ETA~50-54min(→done~13:42-13:46)；.29 iter_30000 208/2599(8%,~17.5s/it,ETA~11.4h)、iter_50000 398/2599(15%,~17.5s/it,ETA~10.4h→done~23:20)；CPU .29~14.3%/.12~17.4% <<80%。✅ S1 健康 iter 66700/loss 2.106/lr=1e-3。未完成指令：有**。
+> **① .12 evals**：iter_20000 2451/2599(94.3%) ~22.5s/it ETA~54min→done~13:46；iter_40000 2466/2599(94.9%) ~22.5s/it ETA~50min→done~13:42。CPU .12: %Cpu~17.4%(5.6us+11.0sy+0.8ni), load39, 82.4%idle, <<80%。
+> **② .29 iter_30000**：PID 1459766, 208/2599(8.0%), elapsed~1h17m, ~17.5s/it(已脱离慢启动), ETA~11.4h→done~00:15 Nov4。config已修复(mamba_dt_limit已删, rope_theta=1M)。
+> **③ .29 iter_50000**：PID 2024390, 398/2599(15.3%), elapsed~2h13m, ~17.5s/it, ETA~10.4h→done~23:20。CPU .29: %Cpu~14.3%(4.8us+8.2sy+1.3ni), load36, 85.6%idle, <<80%。
+> **④ iter_10000 results✅**：arc_c=0.29/arc_e=0.49/boolq=0.61/hs=0.36/obqa=0.20/piqa=0.72/sciq=0.79/wg=0.54。**Avg=0.5000**（已核实 results.json）。
+> **⑤ S1 状态**：iter 66700/700k(9.53%), loss 2.089-2.107, 0 NaN, 0 skip, ~7.0s/step, ~606K tok/s, lr=1e-3 stable, ckpt@66000(next@68000)。
+> **📦 体积**：TASK=30602B(29.9KB) / MEMORY=23354B(22.8KB)（均 ≤32KB，无需归档）。
+> **下一步**：~13:42 .12 evals完成→收集 20000/40000 results.json→.29 双 eval overnight(iter_50000~23:20, iter_30000~00:15 Nov4)→全部5×8有效结果后汇总表+HTML报告。未完成指令：有。
+> 📦 §#1226（11-03 12:30, CPU eval·69轮）→ daily-memories/2026-11-03.md；**结论**：.12~92-93% ETA~1.2h, .29 iter_30000 5%/iter_50000 12%~17s/it, iter_10000✅Avg=0.50, S1 iter66510。被#1227监控。需要时再读。
 > 📦 §#1225（11-03 12:10, CPU eval·68轮）→ daily-memories/2026-11-03.md；**结论**：.12~90% ETA~13:45, .29 iter_30000慢启动(0.8%), iter_50000 9.5%~17s/it, iter_10000✅Avg=0.50, S1 iter66330。被#1226监控。需要时再读。
 > 📦 §#1224（11-03 11:47, CPU eval·67轮）→ daily-memories/2026-11-03.md；**结论**：.12~88% ETA~13:40, .29 iter_30000启动慢启动, iter_50000降速17→44s/it, iter_10000✅Avg=0.50, S1 iter66140。被#1225监控。需要时再读。
 > 📦 §#1223（11-03 11:25, CPU eval·66轮）→ daily-memories/2026-11-03.md；**结论**：iter_30000重跑启动(.29 config修复), .29双eval CPU~14%, .12~86% ETA~13:40, iter_10000✅, S1 iter65930。被#1224监控。需要时再读。
