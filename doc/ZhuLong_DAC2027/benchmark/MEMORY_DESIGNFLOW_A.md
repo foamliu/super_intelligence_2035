@@ -65,38 +65,7 @@ DOMAINS: digital, eda_other, pnr_signoff, verification
 
 > 轮 33（SPFCoupling-001 合成）+ 轮 34（A-faithful 接口根因修复 run_one.sh brief-copy bug）原文已归档至 MEMORY_A_archive.md（归档批次 3，2026-11-03 轮 40 体积维护）。
 
-### 2026-11-03 shard A 轮 35：TLEFRules-001 cline+hook 重跑 = ①消除·④width_range schema bug 定位修复（运维令 §四.3 验证轮34接口修复，WAITING: 0）
-- 任务卡本轮路径 = 合成 1 条新 case。eda_flow open_session → run_commands 取候选：**.75 bashpool 宕机**（run_commands 全 exit -1 / duration 0 / stdout 只回显 wrapper，3 次重试 + 换 session 都一样；run_code pyAether MCP timeout；ssh 10.129.32.75 Connection timed out）→ 拿不到 summary.tsv 候选 → **合成路径真外部阻塞**。pivot 到 MEMORY「下轮第一件事」优先：cline 重跑验轮34接口修复（本地跑不需 .75）。
-- **选 TLEFRules-001**（A 档 trace-faithful / pnr_signoff / L1 静态 LEF 解析）：轮32 三条 ①+④ 破阈 case 中最快（旧跑 266s），且 brief 修复最直接（轮34 已写 lef_rules.py+JSON schema 交付件清单）。ref dry-run：reference_submit.zip + check.py + A techlef + reference/hidden/ → /tmp/judge_*/ check() **PASS**（hidden/ 复制修复轮32 验证仍生效）。
-- **cline 重跑**：`CLINE_TIMEOUT=1200 bash run_one.sh TLEFRules-001 deepseek-v4-pro-cloud medium` → hook 部署 + workdir 建（2 附件: tech_thk2d0_m5.lef + task_brief.md，case-specific brief 送达 ✓，leak clean）→ cline 跑 **701s / exit 0 / 5 iterations**（thinking medium 产出超长 reasoning，session 3.1MB；iter1-4 读 prompt/brief/techlef+推理 LEF 解析逻辑，iter5 写 3 文件）→ 产出 **outputs/{lef_rules.py 10.4KB, rules_report_A.md 3.8KB, README.md 3.1KB}** → harness 打包 submit.zip → 独立判分。
-- **判分 = FAIL，但失败点前移**：旧跑（266s）FAIL 在 **(a) lef_rules.py missing**（cline 只写 summary.md → ①交付形态 + ④judge-spec-mismatch）。新跑（701s）FAIL 在 **(j)(t) width_range 格式**：cline 输出 `width_range={'M1':{'min':0.88,'max':5.0}}`（嵌套 dict），check.py 要 `{'M1':'0.88 TO 14'}`（字符串值）。**① (a)lef_rules.py-missing 消除** = 轮34 接口修复（case-specific brief 送达）生效的硬证据。
-- **④ 根因 = brief/check schema 不一致（我的 bug）**：brief 写 `viarules[{...,width_range{}}]`，`{}` 被 cline 解为"dict"但未明示值格式 → cline 合理地用嵌套 dict {min,max}。check.py 要 layer→"min TO max" 字符串。**修复**：brief 改 `width_range{<layer>:"<min> TO <max>"}` + 明示"值是字符串非嵌套 dict"。check.py 不动（grader 不应为外观格式改）。修复后 brief 与 check.py 期望一致。
-- **防泄题自验全过**：① workdir leak 自检 clean（仅 prompt+brief+techlef，0 判分器/答案/隐藏文件）；② cline 全程 0 read check.py/reference/hidden（8 read_files 全在 workspace 内：prompt/brief/techlef/outputs）；③ hook 拦截 2 built-in run_commands → cline 用 read_files+search_codebase+write_to_file（L1 不需 EDA MCP，.75 宕机无影响）；④ 判分独立 /tmp/judge_*/，check.py+hidden 从 reference/ 复制（cline workdir 外）。
-- **①+④ 重算（9 条）**：PASS=3（PTSignoff/InnovusLaunchDiag/FormalityLaunchDiag）=33.3%。①+④=3/9=33.3%（STAFlow① + SynLintFlow①+④ + TLEFRules-rerun④narrow）。**关键变化**：TLEFRules ①→④narrow（① 分量降）。待 STAFlow/SynLintFlow 重跑（brief 也已修）确认 ① 进一步消除 → ①+④ 应降阈。
-- status jsonl 追加第 9 行（verdict=FAIL / dur=701 / cline_exit=0 / failure_class=④narrow width_range schema, brief/check 不一致已修）。
-- ⬜ 下轮：①cline 重跑 STAFlow-001/SynLintFlow-001 验 ① 消除（brief 已修，优先）；②TLEFRules-001 第 2 次重跑确认 ④→PASS（brief schema 已修）；③.75 bashpool 恢复后继续合成（A 档试点 2/10）；④重算 ①+④ 占比。
-
-### 2026-11-03 shard A 轮 37：STAFlow-001 cline+hook 重跑 = ①消除·④naming 定位 + 6 digital 候选 surveyed→parked（①+④ 破阈闭环，WAITING: 0）
-- 任务卡本轮路径 = 合成 1 条新 case。eda_flow open_session → run_commands 解析 summary.tsv（bashpool 已恢复，轮35 宕机解除）。python 脚本按 toolcount 评分 digital 域（VERIF/STA/DC/PNR），mc≥20，排除台账 34 条，得 21 unique sessions。
-- **6 候选 surveyed 全 non-design-flow → parked**（digital 候选池薄确认）：
-  - `giuwf`(johnl/mc=20,innovus:276) = "查找home目录下的所有.lib文件"+cells.yaml+.cline libs = 文件发现/清点任务，5 user turns 全 filesystem listing Q&A → 非交付。
-  - `exwpt`(johnl/mc=20,innovus:57) = 单轮 "/anasimpro-gui-start" slash-command，非任务。
-  - `4c5ws`(e0046913/mc=49,innovus:45) = 纯 Q&A（如何看 png / 装 bcompare / LP 工具按流程阶段列 / spyglass vs VCLP/CLP），67 msgs 无交付。
-  - `z2knw`(johnl/mc=114,innovus:34) = "最近的一个对话卡死了...你继续干" = 恢复上一卡死会话，finesim MatrixRun analog sim，A 档规则②违规（依赖上一轮状态），金标准模糊。
-  - `3dekw`(zhigangw/mc=80,innovus:109) = "plese get simaple of digital design flow" 单轮 = 通用模板/样例请求，非聚焦可验证交付；pyAether:435=schematic-floorplan 非纯 digital。
-  - `t45kv`(zhigangw/mc=53,innovus:63) = "how to start pr job" + "do you search my own dir only for apr scripts?" = Q&A，43 msgs 无交付。
-  - **结论**：digital 域 top 候选已尽，需扩 mc<30 或 mixed-session 搜索（下轮）。
-- **pivot 到 ①+④ 破阈闭环**（运维令 21:3x §③ 最高优先 + §四.3 存量重跑）：选 STAFlow-001（轮33 三条 ①+④ 破阈 case 中唯一未重跑验 ① 消除的，TLEFRules 轮35 已验 ①→④narrow，SynLintFlow 轮32 后未重跑）。ref dry-run：reference_submit.zip + check.py + hidden/B → /tmp/judge_ref_STAFlow/ check() **PASS 20/20**（判分机正常）。
-- **cline 重跑**：`CLINE_TIMEOUT=1400 bash run_one.sh EDA-Eval-DesignFlow-STAFlow-001 deepseek-v4-pro-cloud medium` → hook 部署 + workdir 建（5 附件: feint_reference/{pt.tcl,common_setup.tcl}.excerpt + demo_design/mac/{mac.vg,mac_func.sdc,mac.spef} + libs/core_typ.db，case-specific brief 送达 ✓，leak clean）→ cline 跑 **1388s / exit 0** → 产出 **15 文件** STA_flow/ tree（README+setup/common_setup.tcl+scr/sta_main+1-10 编号 tcl+run/run_sta.csh+run_demo.csh）→ harness 打包 submit.zip → 独立判分。
-- **判分 = FAIL 8/20 PASS，失败点前移 (a)→(d)**：
-  - **旧跑**（轮32, 1729s）FAIL 在 **(a) no STA_flow/ top-level** = ①交付形态（cline 只写散文件，无目录结构）。
-  - **新跑**（轮37, 1388s）FAIL 在 **(d) common_setup.tcl missing set STA_ROOT** = ④ naming-mismatch。**(a)(b)(c) structure PASS** = ①消除硬证据（轮34 brief-copy 修复生效）。
-  - 逐条跑 20 条断言：PASS a/b/c/g/l/o/q/t（8）= 结构齐全+design-read+report_constraint+pt_shell 启动+csh 语法+鲁棒；FAIL d/e/f/h/i/j/k/m/n/p/r/s（12）。
-- **④ naming-mismatch 根因（关键 finding）**：check.py (d) 要 `set STA_ROOT`，但 feint_reference/common_setup.tcl.excerpt（prompt 明示"可参考 feint"）用 `ROOT_DIR`；cline 忠实适配 feint 命名 → 撞 check.py 合成名。同模式：(e) `LIB_PROFILE`（feint 无此变量，check.py 合成）、(f) `read_db`（feint 用 `read_lib`/`ANALYSIS_LIBRARY_FILES`）、(h) sdc 按 `<design>_<mode>.sdc`（feint 用单 `CONSTRAINT_FILES`）、(n) `run_sta.csh -profile` 选项（prompt 未要求）。**④ = check.py 强制 prompt/brief/feint 均未规定的命名约定**。③ minor：(j)(k)(s) set_propagated_clock 条件/-delay_type max-min/randomization = content 能力不足。
-- **防泄题自验全过**：① workdir leak 自检 clean（仅 prompt+brief+5 附件，0 判分器/答案/隐藏）；② cline 全程 0 read check.py/reference/hidden；③ hook 部署 + scope 机制；④ 判分独立 /tmp/judge_*/，check.py+hidden 从 reference/assets 复制（cline workdir 外）。
-- **①+④ 重算（10 unique cases，dedup latest-per-case）**：PASS=3（PTSignoff/InnovusLaunchDiag/FormalityLaunchDiag）=30.0%。①+④=3/10=30.0%（恰阈值，未破）：①-only=1（SynLintFlow 轮32 旧跑未重跑）/ ④-only=2（STAFlow④naming + TLEFRules④narrow brief已修待2nd重跑）/ ②=1（Verification hook-block）/ ③=2（PwrGlobals/ETMExtract no-output）。**① 分量降**：STAFlow ①→④（轮34 brief 修复生效），TLEFRules ①→④narrow（轮35 验证），仅 SynLintFlow ① 未验（下轮优先）。
-- status jsonl 追加第 11 行（verdict=FAIL / dur=1388 / cline_exit=0 / failure_class=④naming, ①eliminated by r34 brief fix, 8/20 PASS）。
-- ⬜ 下轮：①SynLintFlow-001 cline 重跑验 ① 消除（brief 已修，最后一条 ① 闭环后 ①+④ 应降阈）；②TLEFRules-001 第 2 次重跑确认 ④→PASS（brief schema 已修 width_range）；③④ naming-mismatch 改进方向决策（check.py 对齐 feint 命名 = 修 grader / brief 加变量名提示 = 稀释 A-faithful / 接受④为真实难度 = 不修）；④扩 mc<30 或 mixed-session 搜 digital 候选继续 A 档合成（A 档试点 3/10）。
+> 轮 35（TLEFRules-001 cline 重跑 = ①消除·④width_range schema bug 定位修复）+ 轮 37（STAFlow-001 cline 重跑 = ①消除·④naming 定位 + 6 digital 候选 surveyed→parked）原文已归档至 MEMORY_A_archive.md（归档批次 4，2026-11-03 轮 42 体积维护）。
 
 ### 2026-11-03 shard A 轮 40b（并发确认）：TLEFRules-001 r3 独立验证 + 2 候选 surveyed→parked（候选池枯竭再确认，WAITING: 0）
 - 并发 shard A 实例已写轮40 SynLintFlow + 轮41 TLEFRules 主体结论；本实例独立验证并补充硬证据。
