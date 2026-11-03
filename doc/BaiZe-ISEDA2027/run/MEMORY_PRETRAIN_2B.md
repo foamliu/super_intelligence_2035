@@ -6,7 +6,9 @@ WAITING: 0
 
 > 📦 §#1326（11-04 04:01, 监控轮·pilot=FAIL等令·4evals推进·S1 iter74470）→ daily-memories/2026-11-04.md；**结论**：4 evals稳定推进, 最坏ETA~13:33<~15:00deadline✅, iter_10000 DONE Avg50%, S1 iter74470健康0NaN, CPU均<<80%。被#1327确认继续有效(ETA收紧至13:01)。需要时再读。
 
-> 🆕 2026-11-04 04:07 #1327：**监控轮·pilot=FAIL等令(任务书"新·待执行"标记已过期——实际pilot已FAIL交付commit 9cdc4469f,报告8162B,根因=GGUF hybrid元数据损坏Duplicated key)·4 evals推进正常·S1 iter74520健康·最坏ETA~13:01**。4 evals实测进度(2599总请求)：.29 iter_30000=1357/2599(52.2%)@16.45s/it ETA~09:47；.29 iter_50000_f32=632/2599(24.3%)@16.29s/it ETA~13:01(最慢)；.12 iter_40000=1555/2599(59.8%)@27.88s/it ETA~12:12；.12 iter_20000=1552/2599(59.7%)@27.79s/it ETA~12:12。已完成1/5有效：iter_10000 Avg=0.5000✅。S1 iter74520/700000/loss2.082/0NaN/0skip/6902ms/step/LR=1e-3/GPU100%/~75GB✅。CPU .29 load35.9/224(16.0%)/.12 load34.3/224(15.3%)<<80%✅。pilot=FAIL等用户令(全量切换需批准)。📦 体积：TASK=31373B(31KB)/MEMORY=30446B(30KB)≤32KB✅无需归档。未完成指令：有(5ckpt CPU评测 1/5 DONE+4在跑;pilot=FAIL等令)⇒WAITING: 0。
+> 🆕 2026-11-04 04:12 #1328：**监控轮·pilot=FAIL等令·4 evals推进正常·S1 iter74580健康·最坏ETA~13:05<deadline✅**。4 evals实测进度(2599总请求)：.29 iter_30000=1376/2599(52.9%)@16.81s/it ETA~09:53；.29 iter_50000_f32=652/2599(25.1%)@16.43s/it ETA~13:05(最慢)；.12 iter_40000=1567/2599(60.3%)@27.83s/it ETA~12:11；.12 iter_20000=1564/2599(60.2%)@27.00s/it ETA~11:58。已完成1/5有效：iter_10000 Avg=0.5000✅。S1 iter74580/700000/loss2.079/0NaN/0skip/6987ms/step/LR=1e-3/GPU100%/~75GB✅。CPU .29 load36.4/224(16.2%)/.12 load33.8/224(15.1%)<<80%✅。pilot=FAIL等用户令(commit 9cdc4469f,根因=GGUF hybrid元数据Duplicated key,全量切换需批准)。📦 体积：TASK=31373B(31KB)/MEMORY≈30KB≤32KB✅无需归档。未完成指令：有(5ckpt CPU评测 1/5 DONE+4在跑;pilot=FAIL等令)⇒WAITING: 0。
+
+> 📦 §#1327（11-04 04:07, 监控轮·pilot=FAIL等令·4evals推进·S1 iter74520）→ daily-memories/2026-11-04.md；**结论**：4 evals稳定推进, 最坏ETA~13:01<deadline✅, iter_10000 DONE Avg50%, S1 iter74520健康0NaN, CPU均<<80%。被#1328确认继续有效(ETA~13:05)。需要时再读。
 
 > 📦 §#1325（11-04 03:53, 监控轮·pilot=FAIL等令·4evals推进·S1 iter74410）→ daily-memories/2026-11-04.md；**结论**：4 evals稳定推进, 最坏ETA~13:34, iter_10000 DONE Avg50%, S1 iter74410健康0NaN, CPU均<<80%。被#1326确认继续有效(ETA~13:33, 在~15:00 deadline内✅)。需要时再读。
 
