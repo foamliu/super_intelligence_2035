@@ -1,7 +1,7 @@
 WAITING: 0
 SHARD: C (physical_layout)
 DOMAINS: layout_aether, layout_virtuoso, pg_layout, physical_verify
-round: 54
+round: 55
 
 - **PHASE**: 🆕 shard C 启动，从主 loop 分片而来。负责 domain: layout_aether, layout_virtuoso, pg_layout, physical_verify
 - 每轮做 1 条 case：trace_ledger.py --shard C next → claim → 深读 → 合成 → 自验 → 追加 EDA-Eval-DesignFlow_C.jsonl → 日报
@@ -44,12 +44,13 @@ round: 54
 - 轮(8) 已归档→ designflow/MEMORY_C_archive.md（EDA-Eval-DesignFlow-ERCFlowAether-001；详细见归档）
 - 轮(7) 已归档→ designflow/MEMORY_C_archive.md（EDA-Eval-DesignFlow-NetPathHL-001；详细见归档）
 
-- 📊 trace 覆盖率：见 designflow/trace_ledger.py --shard C stats（covered=56，台账已动 131：case 56 · parked 75 · claimed 0）
+- 📊 trace 覆盖率：见 designflow/trace_ledger.py --shard C stats（covered=57，台账已动 132：case 57 · parked 75 · claimed 0）
 - 🎯 通过率: 0/0（pi/cline 未跑；A-档 faithful 本轮只报数不设目标；⚠️ cline+hook 已就绪但 strict hook 破坏 L1/offline case，待放宽；轮(22) GDSBump2-001 为首个真 L2 可合法 cline 重跑，待放宽后首选重跑；轮(23-52) 多为 L1 离线 Python/shell/gdspy，cline+strict hook 下 run_commands 被拦无法本地子进程跑候选）
-- 🧾 断言: k_rationale=k_check=15 ✓（今日 1/30 达标：RsCalcCfgSync-001）
-- 🧾 断言清单 (shard C): 54/54 case 达标 ✓（rewrite_queue 已清零；轮(54) 交付 RsCalcCfgSync-001 k=15/k_check=15 ✓；轮(11) 探索轮无 case 不计）
+- 🧾 断言: k_rationale=k_check=26 ✓（今日 2/30 达标：RsCalcCfgSync-001 k=15、ERCBootPlan-001 k=26）
+- 🧾 断言清单 (shard C): 55/55 case 达标 ✓（rewrite_queue 已清零；轮(55) 交付 ERCBootPlan-001 k=26/k_check=26 ✓；轮(54) RsCalcCfgSync-001 k=15 ✓；轮(11) 探索轮无 case 不计）
 - ⚠️ DEBT: 0（轮(37)+(38) bashpool 宕机 DEBT 已于轮(39) 清零；pyAether 读 trace 路径可行，bashpool 不再是硬阻塞）
 - 📦 体积：TASK≈17KB / MEMORY_C≈21KB（< 32KB 软限 ✓）
+- 流水 2026-11-03 r55: shard C 交付 ERCBootPlan-001 (physical_verify, B-档 synthesized, L1-boundary) · jsonl_C 56→57 · ledger 132(case57·parked75) · 断言 55/55 ✓ (k=26=k_check) · trace 覆盖率 57/696=8.2% · 通过率 0/0 · DEBT 0 · trace=e0024597/hfeg0pkn005/uml8e mc342 UI#0 逐字『ERC_AI_CHECK 代码在 ERC/codes下，请基于codes下的run_all.sh，对ERC/drcpa/下的数据文件跑完所有follow』=A-档 seed; gold=用户接受的 run_all.sh 改动+forceNet_spice.txt 依赖私有 ERC_AI_CHECK(analyze_errors_v1.py 7160+行)+36MB netlist+Virtuoso+/proj/drcpa 权限→A-disqualified→B-档 synthesized L1-boundary; 合成 erc_boot_planner.py (Python3+re+argparse+json+glob纯标准库): 静态探测 ERC 流水线项目目录产 JSON boot-plan——top_cell/top_lib 从网表头 `// top: lib/cell` 解析(非 cds.lib 第一个 DEFINE 兜底，避 TECHLIB 错库)、ERC/vtable/netlist/cds.lib glob 自动探测、cds.lib DEFINE 条目按序、python_candidates.json 选首个 version>=3.7(ProcessPoolExecutor initializer 需 3.7+)、deterministic=(无 llm_config.json 且无 ERC_LLM_* env)、run_all.sh 补丁清单(step0:--no-patch 防 greedy regex patcher 删 SUPPLY_NET_PATTERNS / step1:--deterministic)、analyze_errors_v1.py SUPPLY_NET_PATTERNS 完整性 grep; 26 条断言 a-r (含 e2/l2/m2/n2/n3/o2/o3/q2 子标); A=proj_A(drcpa_top/ddr5top, cds.lib 首 DEFINE=TECHLIB 错, 3.7.1 broken/3.6.8 old/3.11.7 ok); hidden B=proj_B(chip_top/CHIP1, cds.lib 首 DEFINE=WRONG_LIB 错, 3.6.8 first+3.12.1 ok→选 3.12.1, 无 llm→deterministic True, 两个 flag 缺); B2=proj_B2(rfblk/RFAMP, 带 llm_config.json+ERC_LLM env→deterministic False, 两 flag 已有→patches=[]); B3=proj_B3(adcsub/ADC12, analyze_errors 被腐蚀无 SUPPLY→intact False, 仅 3.6.8 ok+3.8 broken→chosen None); 交叉守卫 q2: A 上 top_lib=drcpa_top 非 TECHLIB 杀硬编码 B; 确定性 r: B 3 跑字节一致; ref PASS 26/26 ✓; 3 假提交(a空壳→a / b print B→m2 / c 删 core 用 cds 首兜底→d)全 FAIL ✓; 2 naive(忽略 version→i / 忽略 llm→k)全 FAIL ✓; NEG_RC=0; test==disk check.py roundtrip OK (11999B)
 - 流水 2026-11-03 r54: shard C 交付 RsCalcCfgSync-001 (pg_layout, A-档 faithful, L1-boundary) · jsonl_C 55→56 · ledger 131(case56·parked75) · 断言 54/54 ✓ · trace 覆盖率 56/696=8.0% · 通过率 0/0 · DEBT 0 · trace=e0014566/hfeg0pkn001/odo3s UI#0 逐字『同步 checkPoints 过来』=A-档 seed; gold=rscalc_cpsync.py (source→target checkPoints 字段同步, 保 target 结构/nil/多行/插入/rogue-net 告警); 15 条断言 a-o; negative 4 全 FAIL
 - 流水 2026-11-03 r53: shard C 交付 VlogPortAudit-001 (physical_verify, B-档 synthesized, L1-boundary) · jsonl_C 54→55 · ledger 130(case55·parked75) · 断言 53/53 ✓ · trace 覆盖率 55/172=32.0% · 通过率 0/0 · DEBT 0
 - 流水 2026-11-03 r48: shard C 交付 DRCPatPlacePlan-001 (layout_aether, B-档 synthesized, L1-boundary) · jsonl_C 49→50 · ledger 108(case50·parked58) · 断言 50/50 ✓ · trace 覆盖率 50/1001=5.0% · 通过率 0/0 · DEBT 0 · ⚠️ 跨 shard 碰撞:shard D 并发覆写共享 DRCPatPlan-001 目录已还原 HEAD,本案改用新 id DRCPatPlacePlan-001
