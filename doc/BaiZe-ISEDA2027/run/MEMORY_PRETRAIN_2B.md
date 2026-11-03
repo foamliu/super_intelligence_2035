@@ -2,18 +2,19 @@
 WAITING: 0
 > 🛑 **【运维通告 · 2026-11-02 19:51】S1 已由 ops 中继重启并在跑**：`bash scripts/train.sh s1 --nodes 2`，launcher pid **4163528**，从 **ckpt 58000** 续（19:55:40 起 iter **58010**→58030，7.0–7.2 s/step ≈**582K tok/s**，双机 16 卡 **98–100%**、~75GB/卡、~690W）。⇒ **GPU 不再空闲**：🚫 严禁再起任何训练/GPU 评测进程（会双写 ckpt 或 OOM）；"GPU idle → 2.5h 评测"的结论已过期。原 **18:39:51 SIGKILL / 18:50:18 SIGBUS** 的现场日志已归档为 `/tmp/baize_s1_baize2b_worker.log.crash_1102_1839` 与 `..._master.log.crash_1102_1839`（🚫 勿删，待 root 查 dmesg 定 OOM vs 误杀）。CPU 评测继续但**必须降载**：`OMP_NUM_THREADS≤8` + `nice -n 19` + 每机并发 ≤2，**禁止 `pkill python`**（18:39 训练被 -9 的疑似原因）。另：本次 resume **未恢复 scheduler**，LR 从 warmup 重来（58010=5e-6，每 10 步 +5e-6，约 2000 步/3.9h 后回 1e-3）——实验日志须记一笔。详见 `BAIZE_PRETRAIN_2B_TASK.md` 顶部运维令。
 
-> 🆕 2026-11-03 20:36 #1275：**监控轮·iter_50000 83.3%(2166/2599)@~15.3s/it ETA~22:26·.12 双 float32 24.2-24.3%(629+632/2599)@~30.5s/it ETA~Nov4 13:09-13:24·iter_30000 SIGSTOP 5.5%(144/2599) 待~22:26 SIGCONT→独享.29~16s/it→done~Nov4 09:20·watcher PID1999093 运行中·S1 iter70680/loss2.087/0NaN 健康·CPU .29 load28.9(12.9%)/.12 load33.1(14.8%) 均<<80% ✅·未完成指令：有**。
-> **② eval 进度快照（20:36 实测，2599=8集合计请求，X/2599 即全程 X%）**：
+> 🆕 2026-11-03 20:42 #1276：**监控轮·iter_50000 84.2%(2189/2599)@~15.6s/it ETA~22:29·.12 双 float32 24.6-24.7%(640+643/2599)@~30.2-30.3s/it ETA~Nov4 13:08-13:12·iter_30000 SIGSTOP 5.5%(144/2599) 待iter_50000退出后SIGCONT→独享.29~16s/it→done~Nov4 09:20·watcher PID1999093 运行中·S1 iter70730/loss2.116/0NaN 健康·CPU .29 load30.7(13.7%)/.12 load32.5(14.5%) 均<<80% ✅·未完成指令：有**。
+> **② eval 进度快照（20:42 实测，2599=8集合计请求，X/2599 即全程 X%）**：
 > - iter_10000 ✅ **DONE** float32 全程 44665s(12.4h)：arc_c=0.29,arc_e=0.49,boolq=0.61,hs=0.36,obqa=0.20,piqa=0.72,sciq=0.79,wg=0.54,**Avg=50.0%**（results.json 23281B 已存，已核验）
-> - iter_50000 🔄 bf16 .29(PID 2024390,elapsed ~10h)：**2166/2599(83.3%)**,**~15.3s/it**(0 NaN,稳定),剩433×15.3≈1h50m→**done~22:26 Nov3** ✅on track
-> - iter_30000 ⏸ float32 .29(PID 1744762,**SIGSTOP 暂停**,state=TNLl,已做144/2599=5.5%)：watcher(`/tmp/baize_eval_watcher_30000.sh` PID **1999093 运行中**)待 iter_50000 退出后自动 SIGCONT→独享.29≈16s/it→2455×16≈10.9h→**done~Nov4 09:20**
-> - iter_40000 🔄 float32 .12(PID 1259184,elapsed ~5h53m)：**632/2599(24.3%)**,稳定**~30.3s/it**,剩1967×30.3≈16.6h→**done~Nov4 13:09**
-> - iter_20000 🔄 float32 .12(PID 1259403,elapsed ~5h52m)：**629/2599(24.2%)**,稳定**~30.7s/it**,剩1970×30.7≈16.8h→**done~Nov4 13:24**
-> **③ S1 训练**：iter 70680/700000,loss 2.087,0NaN,0skip,~7.02s/step≈600K tok/s,LR=1e-3(稳态)✅。GPU .29 97-100% util/~75GB/卡。ckpt iter_70000(已保存)。
-> **④ CPU**：.29 load 28.87/224核(≈12.9%)；.12 load 33.11/224核(≈14.8%)。均 <<80% ✅
-> **⑤ SIGSTOP 优化（#1242 部署，持续有效）**：iter_30000(SIGSTOP)+iter_50000(bf16)在 .29 上→iter_50000 独享带宽。watcher PID 1999093 运行中，待 iter_50000 退出后自动 SIGCONT iter_30000。
-> **⑥ 下一步**：①下轮唤醒查 iter_50000 是否 done(~22:26)→若 done 收 results.json 并确认 iter_30000 已 SIGCONT 恢复 ②持续监控 .12 双 float32(ETA Nov4 13:09-13:24) ③全部 5/5 done→汇总表+能力-vs-step 曲线+终版报告 report_pretrain_cpu_eval_8sets_zh.html+日报。**最坏 Nov4 13:24 < 24h deadline(Nov4 ~14:50) ✅**。未完成指令：有 ⇒ WAITING: 0。
-> **📦 体积**：TASK=30602B(29.9KB)/MEMORY≈16.0KB（均 ≤32KB ✅，本轮无需归档）。
+> - iter_50000 🔄 bf16 .29(PID 2024390,elapsed ~10h05m)：**2189/2599(84.2%)**,**~15.6s/it**(0 NaN,稳定),剩410×15.6≈1h47m→**done~22:29 Nov3** ✅on track
+> - iter_30000 ⏸ float32 .29(PID 1744762,**SIGSTOP 暂停**,state=TNLl,已做144/2599=5.5%)：watcher(`/tmp/baize_eval_watcher_30000.sh` PID **1999093 运行中**,started 16:23)待 iter_50000 退出后自动 SIGCONT→独享.29≈16s/it→2455×16≈10.9h→**done~Nov4 09:20**
+> - iter_40000 🔄 float32 .12(PID 1259184,elapsed ~5h58m)：**643/2599(24.7%)**,稳定**~30.3s/it**,剩1956×30.3≈16.5h→**done~Nov4 13:12**
+> - iter_20000 🔄 float32 .12(PID 1259403,elapsed ~5h58m)：**640/2599(24.6%)**,稳定**~30.2s/it**,剩1959×30.2≈16.4h→**done~Nov4 13:08**
+> **③ S1 训练**：iter 70730/700000,loss 2.116,0NaN,0skip,~7.0s/step≈600K tok/s,LR=1e-3(稳态)✅。GPU .29 8卡 100% util/~75GB/卡。ckpt iter_70000(已保存)。
+> **④ CPU**：.29 load 30.68/224核(≈13.7%)；.12 load 32.52/224核(≈14.5%)。均 <<80% ✅
+> **⑤ SIGSTOP 优化（#1242 部署，持续有效）**：iter_30000(SIGSTOP)+iter_50000(bf16)在 .29 上→iter_50000 独享带宽。watcher PID 1999093 运行中(started 16:23)，待 iter_50000 退出后自动 SIGCONT iter_30000。
+> **⑥ 下一步**：①下轮唤醒查 iter_50000 是否 done(~22:29)→若 done 收 results.json 并确认 iter_30000 已 SIGCONT 恢复 ②持续监控 .12 双 float32(ETA Nov4 13:08-13:12) ③全部 5/5 done→汇总表+能力-vs-step 曲线+终版报告 report_pretrain_cpu_eval_8sets_zh.html+日报。**最坏 Nov4 13:12 < 24h deadline(Nov4 ~14:50) ✅**。未完成指令：有 ⇒ WAITING: 0。
+> **📦 体积**：TASK=30602B(29.9KB)/MEMORY≈16.5KB（均 ≤32KB ✅，本轮无需归档）。
+> 📦 §#1275（11-03 20:36, 监控轮·iter_50000 83.3%@~15.3s/it）→ daily-memories/2026-11-03.md；**结论**：4 evals 稳定推进, iter_50000 83.3% ETA~22:26, .12 双 float32 24.2-24.3% ETA Nov4 13:09-13:24, S1 iter70680健康。被#1276 确认继续有效(84.2%@~15.6s/it)。需要时再读。
 > 📦 §#1274（11-03 20:28, 监控轮·iter_50000 82.2%@~15.2s/it）→ daily-memories/2026-11-03.md；**结论**：4 evals 稳定推进, iter_50000 82.2% ETA~22:25, .12 双 float32 23.7% ETA Nov4 13:19-13:24, S1 iter70620健康。被#1275 确认继续有效(83.3%@~15.3s/it)。需要时再读。
 > 📦 §#1273（11-03 20:22, 监控轮·iter_50000 81.1%@~14.4s/it）→ daily-memories/2026-11-03.md；**结论**：4 evals 稳定推进, iter_50000 81.1% ETA~22:25, .12 双 float32 23.1-23.2% ETA Nov4 12:46-12:58, S1 iter70540健康。被#1274 确认继续有效(82.2%@~15.2s/it；iter_30000 active log 实测 144/2599 非 29)。需要时再读。
 > 📦 §#1272（11-03 20:17, 监控轮·iter_50000 80.2%@~14.6s/it）→ daily-memories/2026-11-03.md；**结论**：4 evals 稳定推进, iter_50000 80.2% ETA~22:25, .12 双 float32 22.7% ETA Nov4 12:50-12:55, S1 iter70500健康。被#1273 确认继续有效(81.1%@~14.4s/it)。需要时再读。
