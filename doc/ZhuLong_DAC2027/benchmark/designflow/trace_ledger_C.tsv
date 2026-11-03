@@ -104,4 +104,5 @@
 1792742447012_djml8.messages.json	wnyu	hfeg0plg06	401	layout_aether	parked		2026-11-03 11:11	PFD delay symbol 查找 schematic 域非 layout(r47)
 1792400027384_ahjnv.messages.json	zhukaic	hfeg0plg94	397	layout_aether	parked		2026-11-03 11:11	OTA 2-stage 调参 skill-driven sim 域非 layout(r47)
 1788932125428_zqelb.messages.json	ziyuny	hfeg0pnd002	378	layout_aether	parked		2026-11-03 11:11	meta 找已打开 aether 非 design flow(r47)
-1789350621467_fymcr.messages.json	miccao	hfeg0plg92	407	layout_aether	claimed		2026-11-03 11:11	r47 case seed: AutoCell batch GDS gen + ordered kit map
+1789350621467_fymcr.messages.json	miccao	hfeg0plg92	407	layout_aether	case	EDA-Eval-DesignFlow-AutoCellKitMap-001	2026-11-03 11:39	r47 case seed: AutoCell batch GDS gen + ordered kit map
+1790130179096_bmhid	lizwen	hfeg0plg16	357	layout_aether	claimed		2026-11-03 11:43	
