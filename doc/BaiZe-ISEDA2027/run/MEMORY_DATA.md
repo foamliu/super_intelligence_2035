@@ -20,7 +20,7 @@ WAITING: 1
 ```
 PHASE:        🟢运维令10-31 web search调研HF长上下文+agentic数据集.报告v5已交付+已commit+push
 已完成:       ✅A.LC+Agentic调研报告v5(report_data_lc_agentic_survey_zh.html 106569B/44table/0script/18+15候选/74 HF链接)+生成器(gen_lc_agentic_survey_report.py 幂等);✅B.85M下载持续运行;✅C.报告全量验证(7节/0script/0CDN/幂等OK/44table平衡)
-当前动作:     唤醒1132(2026-11-03 11:13):运维令10-31交付物例行复核全PASS→report=106569B/0<script>/44<table>平衡/7节/74HF链接/34未核到/0CDN;generator幂等OK;85M PID212578 alive(20783parquet/8incomplete);git synced;TASK=27958B/MEMORY=19.8KB(均<40KB无需归档)
+当前动作:     唤醒1133(2026-11-03 11:33):运维令10-31交付物例行复核全PASS→report=106569B/0<script>/44<table>平衡/7节/76HF链接/34未核到/0CDN/div 50=50平衡;generator幂等OK;85M PID212578 alive(11996parquet/8incomplete);git synced;TASK=27958B/MEMORY=20.5KB(均<40KB无需归档)
 下一步:       下轮唤醒:①查85M下载进度;②待运维批准后执行下载(P0:whole-books+SWE-smith+Nemotron-Terminal-Corpus+SWE-rebench)
 阻塞:         无
 ERROR_COUNT:  11
@@ -30,6 +30,7 @@ ERROR_COUNT:  11
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。
 
 ## 📋 本唤醒流水
+> [11-03 11:33] 唤醒1133：运维令10-31交付物例行复核全PASS→①report=106569B(≥25KB✓)/0<script>/44<table>=44</table>平衡✓/div 50=50平衡✓/7节§1~§7✓/76 HF链接/34「未核到」✓/0CDN;②generator --check-idempotent OK(84252B✓);③85M:PID212578 alive(etimes≈10168s≈2.8h)✓,parquet11996/8.incomplete;④git synced(##main...origin/main,data线clean✓,仅ZhuLong线改动非本线);⑤df:/nas_train179T/87%(29T可用),/nas_env8.3T/84%(1.7T可用);⑥TASK=27958B/MEMORY≈20.5KB(均<40KB无需归档)→任务已交付,心跳WAITING=1
 > [11-03 11:13] 唤醒1132：运维令10-31交付物例行复核全PASS→①report=106569B(≥25KB✓)/0<script>/44<table>=44</table>平衡✓/7节§1~§7✓/74 HF链接/34「未核到」✓/0CDN;②generator --check-idempotent OK(84252B✓);③85M:PID212578 alive(etimes≈8969s≈2.5h)✓,parquet20783/8.incomplete;④git synced(##main...origin/main,data线clean✓,仅ZhuLong线改动非本线);⑤df:/nas_train179T/87%(29T可用),/nas_env8.3T/84%(1.7T可用);⑥TASK=27958B/MEMORY≈19.8KB(均<40KB无需归档)→任务已交付,心跳WAITING=1
 > [11-03 10:52] 唤醒1131：运维令10-31交付物例行复核全PASS→①report=106569B(≥25KB✓)/0<script>/44<table>=44</table>平衡✓/7节§1~§7✓/74 HF链接/34「未核到」✓/0CDN;②generator --check-idempotent OK(84252B✓);③85M:PID212578 alive(etimes≈7678s≈2.1h)✓,parquet11984/12126=98.8%,8 .incomplete;④git synced(##main...origin/main,data线clean✓,仅ZhuLong线改动非本线);⑤df:/nas_train179T/87%(29T可用),/nas_env8.3T/84%(1.7T可用);⑥TASK=27958B/MEMORY≈19.8KB(均<40KB无需归档)→任务已交付,心跳WAITING=1
 > [11-03 10:05] 唤醒1130：运维令10-31交付物例行复核全PASS→①report=106569B(≥25KB✓)/0<script>/44<table>=44</table>平衡✓/7节§1~§7✓/33 unique HF链接/34「未核到」✓/0CDN;②generator --check-idempotent OK(84252B✓);③85M:PID212578 alive(etimes≈4881s≈1.4h)✓;④git synced(##main...origin/main,data线clean✓);⑤df:/nas_train179T/86%(29T可用),/nas_env8.3T/84%(1.7T可用);⑥MEMORY>40KB→归档唤醒1065-1106流水→daily-memories-data/2026-11-03.md,MEMORY 41KB→19KB;⑦TASK=27958B(<40KB无需归档)→任务已交付,心跳WAITING=1
