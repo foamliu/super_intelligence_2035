@@ -25,7 +25,7 @@
 set -uo pipefail
 
 TASK_ID="${1:?usage: run_one_D.sh <task_id> [cline_timeout_sec]}"
-CLINE_TIMEOUT="${2:-1500}"
+CLINE_TIMEOUT="${2:-2400}"
 
 # ---- 路径 ----
 BENCH=/nasdata/app.e0031982/code/EDA-Flow-Bench

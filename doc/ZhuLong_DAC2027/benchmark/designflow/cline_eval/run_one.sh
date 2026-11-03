@@ -36,7 +36,7 @@ STATUS_JSONL=$SUPER/doc/ZhuLong_DAC2027/benchmark/designflow/cline_eval_status.j
 JUDGE=/tmp/judge_$TASK_ID
 
 CLINE=~/.local/bin/cline
-CLINE_TIMEOUT=1500   # 秒，单 case 上限
+CLINE_TIMEOUT=2400   # 秒，单 case 上限（40min；覆盖正常 PASS 最慢 ~3700s 略不足，但 1h 卡死不迁就）
 TS=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 DUR=""           # 跑 cline 后填
 CLINE_EXIT=""    # 跑 cline 后填
