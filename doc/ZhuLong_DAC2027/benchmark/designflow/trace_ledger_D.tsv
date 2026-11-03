@@ -65,3 +65,4 @@
 1785994889000_x5tcq.messages.json					parked		2026-11-03 08:33	physical layout virtuoso/gds/dbcreaterect (non-D)
 1792055923522_tqmu1.messages.json					parked		2026-11-03 08:33	cross-shard dup: same cynthiaz StrongARM comparator as nbl0h->StrongARMComp-001 (shard B)
 1791786108086_vumhg.messages.json	e03179	hfeg0plg90	251	analog_context	case	EDA-Eval-DesignFlow-IOCABufModel-001	2026-11-03 09:21	IOCABufModel-001 delivered (analog_context L2): Verilog-AMS behavioral model builder for IO comparator cell; 16 cond a-p; ref PASS + 5 negs FAIL(e/k/l/n/m) + 3 fakes FAIL(a/n/g); appended D.jsonl (40->41 unique). Concurrent pid 986141 had parked this trace (loop dup-spawn) but THIS process (pid 1134208) performed the canonical build+append.
+1791526217197_87257.messages.json	t0002962	hfeg0plg90	460	schematic_netlist	parked		2026-11-03 09:37	file cleaned from disk since 2026-10-28 scan (absent on hfeg0pkn003 + hfeg0plg90); stale snapshot
