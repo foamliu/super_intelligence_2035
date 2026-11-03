@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""Regenerate reports/eval_{harness}.json from swebench report.json files.
+"""Regenerate reports/eval_{harness}.json from swebench report.json files
+AND prediction files (no-patch detection, R1434 2026-11-03).
 
 Why: the chain_eval script runs `swebench.harness.run_evaluation` but does NOT
 call `parse_eval` afterwards, so reports/eval_{h}.json stay stale (gate-run
@@ -8,19 +9,22 @@ data).  This script scans the per-instance report.json files produced by the
 swebench docker harness and writes the summary JSON that
 gen_report_swebench_verified_full500_zh.py consumes.
 
-Classification (三分类, aligns with 运维令 10-28 铁律 3):
+Classification (四分类, aligns with 运维令 10-28 铁律 3):
   - resolved       : report.json exists AND resolved == True
   - failed         : report.json exists AND resolved == False AND infra_failure == False
-  - infra_or_quota : report.json missing, OR infra_failure == True,
-                     OR patch_is_None / patch_does_not_exist
+  - infra_or_quota : report.json missing (has patch, needs eval), OR infra_failure == True,
+                     OR patch_is_None / patch_does_not_exist in report.json
                      (单列，不计入模型能力)
+  - no_patch       : prediction file exists but model_patch is empty/missing
+                     (model did not produce a solution — adapter health metric)
+                     (单列，不计入模型能力，也不算 infra)
 
 Reusable: re-run anytime (e.g. after claude-code / codex eval finishes).
 Only rewrites files whose content actually changed (mtime-preserving for
 unchanged harnesses so we don't create spurious git diffs).
 
 Usage:
-  python3 regen_eval_summaries.py            # all 5 gate-PASS harnesses
+  python3 regen_eval_summaries.py            # all 7 harnesses
   python3 regen_eval_summaries.py pi codex   # specific harnesses
 """
 from __future__ import annotations
@@ -66,51 +70,79 @@ def classify_one(report_path: Path, iid: str) -> str:
     return "resolved" if inst.get("resolved", False) else "failed"
 
 
+def _has_real_patch(pred_file: Path) -> bool:
+    """Check if a prediction file has a non-empty model_patch."""
+    try:
+        if pred_file.stat().st_size < 30:
+            return False
+        d = json.loads(pred_file.read_text())
+        if isinstance(d, dict):
+            d = [d]
+        return any(x.get("model_patch", "").strip() for x in d)
+    except Exception:
+        return False
+
+
 def regen(harness: str) -> dict | None:
     model = HARNESS_MAP[harness]
     run_id = f"verified_full_{harness}"
     run_dir = EVAL_LOG_ROOT / run_id
-    if not run_dir.exists():
-        print(f"  {harness}: no run dir {run_dir} — skip")
-        return None
-    model_dir = run_dir / model
-    # fall back to glob if model dir name differs
-    if not model_dir.exists():
-        cands = [p for p in run_dir.iterdir() if p.is_dir() and p.name != "run.json"]
-        model_dir = cands[0] if cands else None
-        if model_dir is None:
-            print(f"  {harness}: no model dir under {run_dir} — skip")
-            return None
+    PRED_DIR = HERE / "predictions"
 
-    resolved, failed, infra = [], [], []
-    for iid_dir in sorted(model_dir.iterdir()):
-        if not iid_dir.is_dir():
+    resolved, failed, infra, no_patch = [], [], [], []
+    evaluated_ids = set()
+
+    # Phase 1: scan report.json files from docker eval
+    if run_dir.exists():
+        model_dir = run_dir / model
+        if not model_dir.exists():
+            cands = [p for p in run_dir.iterdir() if p.is_dir() and p.name != "run.json"]
+            model_dir = cands[0] if cands else None
+        if model_dir is not None:
+            for iid_dir in sorted(model_dir.iterdir()):
+                if not iid_dir.is_dir():
+                    continue
+                iid = iid_dir.name
+                rj = iid_dir / "report.json"
+                cls = classify_one(rj, iid)
+                {"resolved": resolved, "failed": failed, "infra": infra}[cls].append(iid)
+                evaluated_ids.add(iid)
+        else:
+            print(f"  {harness}: no model dir under {run_dir}")
+    else:
+        print(f"  {harness}: no run dir {run_dir}")
+
+    # Phase 2: scan prediction files for no-patch items (R1434)
+    for pf in sorted(PRED_DIR.glob(f"{harness}__*.json")):
+        iid = pf.stem.split("__", 1)[1] if "__" in pf.stem else pf.stem
+        if iid in evaluated_ids:
             continue
-        iid = iid_dir.name
-        rj = iid_dir / "report.json"
-        cls = classify_one(rj, iid)
-        {"resolved": resolved, "failed": failed, "infra": infra}[cls].append(iid)
+        if _has_real_patch(pf):
+            infra.append(iid)
+        else:
+            no_patch.append(iid)
 
     summary = {
         "harness": DISPLAY[harness],
         "harness_code": harness,
         "run_id": run_id,
-        "n": len(resolved) + len(failed) + len(infra),
+        "n": len(resolved) + len(failed) + len(infra) + len(no_patch),
         "resolved": sorted(resolved),
         "failed": sorted(failed),
         "infra_or_quota": sorted(infra),
+        "no_patch": sorted(no_patch),
     }
 
     out = REPORT_DIR / f"eval_{harness}.json"
-    # only write if changed (avoid spurious mtime bump for running evals)
     new_text = json.dumps(summary, indent=2)
     if out.exists() and out.read_text() == new_text:
         print(f"  {harness}: unchanged (n={summary['n']} resolved={len(resolved)} "
-              f"failed={len(failed)} infra={len(infra)})")
+              f"failed={len(failed)} infra={len(infra)} no_patch={len(no_patch)})")
     else:
         out.write_text(new_text)
         print(f"  {harness}: WROTE {out.name}  n={summary['n']} "
-              f"resolved={len(resolved)} failed={len(failed)} infra={len(infra)}")
+              f"resolved={len(resolved)} failed={len(failed)} infra={len(infra)} "
+              f"no_patch={len(no_patch)})")
     return summary
 
 
