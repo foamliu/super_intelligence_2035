@@ -2,6 +2,13 @@
 WAITING: 0
 > 🛑 **【运维通告 · 2026-11-02 19:51】S1 已由 ops 中继重启并在跑**：`bash scripts/train.sh s1 --nodes 2`，launcher pid **4163528**，从 **ckpt 58000** 续（19:55:40 起 iter **58010**→58030，7.0–7.2 s/step ≈**582K tok/s**，双机 16 卡 **98–100%**、~75GB/卡、~690W）。⇒ **GPU 不再空闲**：🚫 严禁再起任何训练/GPU 评测进程（会双写 ckpt 或 OOM）；"GPU idle → 2.5h 评测"的结论已过期。原 **18:39:51 SIGKILL / 18:50:18 SIGBUS** 的现场日志已归档为 `/tmp/baize_s1_baize2b_worker.log.crash_1102_1839` 与 `..._master.log.crash_1102_1839`（🚫 勿删，待 root 查 dmesg 定 OOM vs 误杀）。CPU 评测继续但**必须降载**：`OMP_NUM_THREADS≤8` + `nice -n 19` + 每机并发 ≤2，**禁止 `pkill python`**（18:39 训练被 -9 的疑似原因）。另：本次 resume **未恢复 scheduler**，LR 从 warmup 重来（58010=5e-6，每 10 步 +5e-6，约 2000 步/3.9h 后回 1e-3）——实验日志须记一笔。详见 `BAIZE_PRETRAIN_2B_TASK.md` 顶部运维令。
 
+> 🆕 2026-11-03 13:00 #1228：**📊 CPU eval·71轮监控——.12 evals ~95-96% ETA~42-54min(→done~13:40-13:52)；.29 iter_30000 236/2599(9.1%,~17.3s/it,ETA~11.4h→done~00:15 Nov4)、iter_50000 427/2599(16.4%,~17.1s/it,ETA~10.3h→done~23:10)；CPU .12~24%/.29~15% <<80%。✅ S1 健康 iter 66750/loss 2.099/lr=1e-3 stable。iter_10000 ✅ Avg=0.499(arc_c=0.29/arc_e=0.49/boolq=0.61/hs=0.36/obqa=0.20/piqa=0.72/sciq=0.79/wg=0.54)。未完成指令：有**。
+> **① .12 evals 即将完成**：iter_20000 PID3729981 2472/2599(95.1%) ~25.7s/it elapsed14h58m ETA~54min→done~13:52；iter_40000 PID3898654 2488/2599(95.7%) ~22.9s/it elapsed14h56m ETA~42min→done~13:40。CPU .12: %Cpu~23.9%(8.3us+14.4sy+1.2ni), load38.68, 76.1%idle, <<80%。
+> **② .29 evals overnight**：iter_30000 PID1459766 236/2599(9.1%) ~17.3s/it elapsed1h33m ETA~11.4h→done~00:15 Nov4；iter_50000 PID2024390 427/2599(16.4%) ~17.1s/it elapsed2h23m ETA~10.3h→done~23:10。CPU .29: %Cpu~15.1%(5.4us+8.5sy+1.2ni), load34.77, 84.7%idle, <<80%。
+> **③ iter_10000 ✅ Avg=0.499**：results.json 已核实，8集 acc 见上。GPU 双机各8卡 100%util/~75GB(训练占用)。
+> **📦 体积**：TASK=30602B(29.9KB)/MEMORY=~24KB（均 ≤32KB，无需归档）。
+> **下一步**：~13:40-13:52 .12 evals 完成→收集 20000/40000 results.json→.29 双 eval overnight→全部5×8有效后汇总表+HTML报告。未完成指令：有 ⇒ WAITING: 0。
+
 
 
 > 📦 §#1155（11-02 20:35, CPU acc=0.0根因+修复）→ daily-memories/2026-11-02.md；**结论**：float32 NaN→bfloat16修复, simple_evaluate重写, sciq limit=4 acc=0.5 PASS。被#1157修正。需要时再读。
