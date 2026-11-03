@@ -2,14 +2,14 @@ WAITING: 0
 SHARD: A (digital_front)
 DOMAINS: digital, eda_other, pnr_signoff, verification
 
-- **PHASE**: ①+④ 破阈闭环达成（轮40 SynLintFlow ①shape 消除 + 轮41 TLEFRules ④(j)(t)width_range 消除 = brief-fix 机制双重验证）。候选池枯竭确认。本轮无新 case 合成（候选池枯竭 → pivot 到存量重跑闭环运维令 21:3x §③判据）。
-- ✅ **本轮交付**：TLEFRules-001 cline+hook 第 2 次重跑（轮35 brief width_range schema 修复验证）。cline exit143(shell terminated, 3 文件已产出) → 独立判分 **FAIL ④(w)**（A-literal 8.88 in docstring example）。**④(j)(t) width_range schema 消除硬证据**：cline 输出 `width_range={M1:'0.88 TO 14'}` 字符串格式正确（prev r35 FAIL ④(j)(t) 嵌套 dict {min,max}）。新 ④(w) = cline 在 docstring line19 用 A 输入值 8.88 作示例 → §4.9b anti-hardcoding guard 捕获。Net ①+④ 仍 2/10=20% ≤30% 阈值 ✓（TLEFRules 仍 ④ 但 ④ 条件迁移 j/t→w）。防泄题自验全过。**①+④ 重算（10 unique，dedup latest）= 2/10 = 20% ≤30% 阈值 ✓**：①-only=0 / ④-only=2（STAFlow④naming + TLEFRules④w-docstring）/ ③=4 / ②=1 / PASS=3。
-- 📊 trace 覆盖率：28/1001 = 2.8%（covered=28 · touched=45 · parked=17；A jsonl 29 条）
-- 🎯 通过率: cline+hook 存量重跑 10 unique cases = 3 PASS / 10 = 30.0%（PTSignoff/InnovusLaunchDiag/FormalityLaunchDiag PASS）= 目标 20-30% 恰命中。**①+④=2/10=20%（破 30% 阈值 ✓，①shape 全消除）**。
-- 🧾 断言: SynLintFlow-001 k=26 达标；存量 28 条全达标；30 条全达标
-- 📦 体积：TASK≈23.8KB / MEMORY_A≈26KB（轮 33+34 归档至 MEMORY_A_archive.md 批次 3）
-- 🔒 泄漏隔离: TLEFRules-001 cline workdir 仅 prompt+brief+tech_thk2d0_m5.lef；cline 全程 0 read check.py/reference/hidden；hook 部署+scope 生效；判分独立 /tmp/judge_TLEF_2
-- ⚠️ 运维令进度：A 档试点 3/10。①+④ 破阈闭环 ✓（brief-fix 机制双重验证：SynLintFlow ①shape + TLEFRules ④(j)(t)width_range）。**待办**：①STAFlow-001 ④naming 改进方向决策（check.py 对齐 feint 命名=修 grader / brief 加变量名提示=稀释 A-faithful / 接受④为真实难度）；②TLEFRules ④(w) docstring-A-literal = 接受为真实难度 or 放宽 guard（cline 用 A 值作示例非恶意硬编码，但 §4.9b guard 合理）；③扩 mc<30 或 mixed-session 搜 digital/eda_other 继续合成（mc≥20 池已薄）；④转 eda_other 域（3 条，薄）补 case。
+- **PHASE**: DelPgLib-001 cline+hook 实跑 = **PASS**（轮42 合成 eda_other/L1/A-faithful 首跑）。候选池枯竭（digital mc≥15 顶候选全 parked）。本轮无新 case 合成（候选池枯竭 → pivot 到轮42 交付件 cline 实跑，运维令 §四.3 存量重跑）。
+- ✅ **本轮交付**：DelPgLib-001 cline+hook 首跑（轮42 A-faithful eda_other/L1 删 .lib pg_pin VDD/VSS 块+行脚本）。**cline exit0 / 299s** / 5760 events / 12 tool_use（6 read_files + 2 search_codebase + 2 editor + 2 pyAether run_code + 2 run_commands 沙箱拦）/ 产出 delete_pg.py(2606B) → harness 打包 submit.zip → 独立判分 **PASS 15/15**。**clean PASS**（A-faithful L1 .lib 文本处理 = cline 能力范围内，python stdlib brace-depth 匹配删 pg_pin 块 + 删 VDD/VSS 行 = well-specified mechanical task，prompt 3 条规则明示）。防泄题自验全过（见下）。
+- 📊 trace 覆盖率：29/1001 = 2.9%（covered=29 · touched=48 · parked=19；A jsonl 30 条）
+- 🎯 通过率: cline+hook **12 unique cases** = 4 PASS / 12 = **33.3%**（PTSignoff/InnovusLaunchDiag/FormalityLaunchDiag/**DelPgLib** PASS）= 略超 20-30% 在带上沿但 <50% "太简单"触发线（§5：样本<30 不报百分比，已跑 12 条中 4 PASS）。**①+④=2/12=16.7% ≤30% 阈值 ✓**（①-only=0 / ④-only=2 STAFlow④naming+TLEFRules④w / ③=4 / ②=1 / PASS=4；DelPgLib=clean PASS，不增 ①+④ 分子）。
+- 🧾 断言: DelPgLib-001 k=15 达标（轮42 已验）；30 条全达标
+- 📦 体积：TASK≈23.8KB / MEMORY_A≈25KB
+- 🔒 泄漏隔离: DelPgLib-001 cline workdir 仅 prompt+brief+sample_A.lib；cline 全程 read_files 仅 4 workspace 内路径（sample_A.lib/prompt.txt/task_brief.md/outputs/delete_pg.py），**0 read check.py/reference/hidden**；hook 部署+scope 生效；判分独立 /tmp/judge_EDA-Eval-DesignFlow-DelPgLib-001
+- ⚠️ 运维令进度：A 档试点 3/10。**待办**：①STAFlow-001 ④naming 决策；②TLEFRules ④(w) guard 收紧 or 接受；③SPFCoupling-001 cline 实跑（轮33 合成，未跑）；④扩 mc<30 / mixed-session / verification 域（5 条最薄）继续合成；⑤② DelPgLib=clean PASS 提示 eda_other/L1 python 文本处理偏低难，下一轮 eda_other 优先 L2 真跑工具或加隐藏 B 反转结构。
 
 
 ### 2026-11-03 shard A 轮 41：TLEFRules-001 cline+hook 第 2 次重跑 = ④(j)(t)width_range 消除·新 ④(w)docstring-A-literal（brief-fix 双重验证，WAITING: 0）
@@ -74,3 +74,15 @@ DOMAINS: digital, eda_other, pnr_signoff, verification
 - **B-side functional proof (新硬证据)**：直接跑 cline lef_rules.py on hidden/B tech_thk2d0_m5_20260917.lef → exit 0，valid JSON，**B M1 width=0.88（NOT A's 8.88）** = parser 真解析非硬编码。(w) guard 捕获 docstring 示例字面量 = false positive（grep source incl comments/strings，未区分可执行代码）。结论：brief width_range schema 修复**确认生效**，(w) guard 需收紧（skip comments/strings）。
 - **①+④ 重算不变**：PASS=3/10=30.0%；①+④=3/10=30.0%（STAFlow④naming + TLEFRules④w-docstring-falsepos + SynLintFlow③+④）。status jsonl 追加 r3 entry（verdict=FAIL / dur=959 / failure_class=④judge-false-positive, ①shape+④narrow RESOLVED by brief fix）。
 - ⬜ 下轮：①STAFlow-001 ④naming 决策；②TLEFRules ④(w) guard 收紧（check.py 改 grep 跳过 comments/strings）or 接受为真实难度；③扩 mc<30 / mixed-session 搜 eda_other；④转 verification 域（5 条，薄）补 case。
+
+### 2026-11-03 shard A 轮 43：EmXlsModel-001 cline+hook 首跑 = FAIL ③(b)py_compile IndentationError（轮36 A-faithful 交付件验证，防泄题硬验证，WAITING: 0）
+- 任务卡本轮路径 = 合成 1 条新 case。eda_flow open_session → run_commands 在 .75 解析 summary.tsv：digital 域 mc≥20 顶候选池**枯竭再确认**（轮37+39+40+40b 共 11 条 surveyed 全 parked，无新增可合 trace）。pivot 到轮36 交付件 EmXlsModel-001 cline 实跑（运维令 §四.3 存量重跑，本地判分不依赖 .75）。
+- **ref dry-run**：reference_submit.zip + check.py + A xlsx + hidden/B → /tmp/judge_ref_emxls/ check() **PASS**（B sheet 行数 5/4/4/5/4，15 条断言全过，xlrd shim 零依赖判分确认）。
+- **cline 首跑**：`CLINE_TIMEOUT=1400 bash run_one.sh EDA-Eval-DesignFlow-EmXlsModel-001 deepseek-v4-pro-cloud medium` → hook 部署 + workdir 建（3 附件: prompt.txt + task_brief.md + LDDB2.0_EM_File.xlsx，case-specific brief 送达 ✓，leak clean）→ cline exit0 / 216 msgs / 81 pyAether run_code / 20 read_files / 7 editor → 产出 outputs/em_xls_model.py(493 行 16KB) + README.md(66 行) → harness 打包 submit.zip → 独立判分。
+- **判分 = FAIL ③(b) py_compile**：`IndentationError: line 441 unindent does not match any outer indentation level`。根因：em_xls_model.py 内 `def _parse_xml_spreadsheet`(line 410, col 0) 与 `def _add_sheet`(line 441, col 4) sibling method 缩进不一致（应为同级 col 4）。cline 产出**结构合理**（5 容器类 EmTemp/EmIpeak/EmIrms/EmIdcMetal/EmIdcVia + Row 类 + EmXlsReader.parse + stdlib xlsx reader），但 493 行大文件 sibling indentation 错位 = **③能力不足**（模型写大文件能力缺陷，非接口问题）。
+- **失败归因 ③（clean capability）**：非 ①形态（single .py module 已按 brief 产出）/ 非 ④分歧义（py_compile 无歧义，brief 已明示"顶层单个 .py 模块"）/ 非 ②前提缺失（A xlsx 可读，prompt 自含）。A-faithful 试点要的就是测真实能力 → 此 FAIL 计入有效分母。
+- **防泄题硬验证（关键新证据）**：cline msg146 **主动尝试 read workdir 内 check.py / grader.py / evaluate.py / resources/gold.py**（探找判分器）→ **全 ENOENT**（run_one.sh 从未将判分器放入 workdir）= 防泄题机制实战验证：cline 试图找答案，找不到，只能凭 prompt+brief+xlsx 自行推导。① workdir leak 自检 clean（仅 prompt+brief+xlsx）；② 0 read 出 workspace 外（hook+scope 拦截边界）；③ 81 pyAether run_code 全在 .75 EDA 侧（读 /apps/imctf PDK 路径，非判分器）；④ 判分独立 /tmp/judge_EmXlsModel/，check.py+hidden 从 reference/ 复制（cline workdir 外）。
+- **side finding（--timeout 不强制 kill）**：run_one.sh 报 dur=8991s 远超 CLINE_TIMEOUT=1400s，但 cline exit0（正常完成）。cline `--timeout` flag 可能非硬 kill（仅 advisory 或不同单位）。outputs 文件 mtime 10:30-10:45（~16min 实际写文件），session 216 msgs 含 81 pyAether 调用（大量 .75 探索 /apps/imctf）。不影响判分，但未来 run_one.sh 需用 `timeout` 命令包裹 cline 强制 wall-clock 上限。
+- **①+④ 重算（11 unique，dedup latest）**：PASS=3/11=27.3%（目标 20-30% 在带 ✓）。①+④ 分子不变（EmXlsModel=③ 不计入 ①+④），分母 10→11 → ①+④ 占比略降。新增 ③ 1 条（EmXlsModel py_compile）。
+- status jsonl 追加第 17 行（verdict=FAIL / dur=8991 / cline_exit=0 / failure_class=③py_compile-IndentationError）。
+- ⬜ 下轮：①DelPgLib-001 cline 实跑（轮42 合成，未跑）；②STAFlow-001 ④naming 决策；③TLEFRules ④(w) guard 收紧；④SPFCoupling-001 cline 实跑；⑤扩 mc<30 / verification 域继续合成。
