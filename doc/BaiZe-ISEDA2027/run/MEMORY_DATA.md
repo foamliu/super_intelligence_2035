@@ -20,7 +20,7 @@ WAITING: 1
 ```
 PHASE:        🟢运维令10-31 web search调研HF长上下文+agentic数据集.报告v6已交付+已commit+push
 已完成:       ✅A.LC+Agentic调研报告v6(report_data_lc_agentic_survey_zh.html 115558B/47table/0script/19+18候选/80 HF链接/36unique)+生成器(gen_lc_agentic_survey_report.py 幂等);✅B.v6新增3个HF核实数据集(SWE-smith-trajectories/MIT/HTTP200 + harborframework/terminal-bench-2.1/Apache-2.0/HTTP200 + ghostcc3/mix-context-post-training-128k/MIT/HTTP200);✅C.85M下载持续运行;✅D.报告全量验证(7节/0script/0CDN/0外链/幂等OK/47table平衡/0未闭合标签)
-当前动作:     唤醒1140(2026-11-03 17:39):运维令10-31交付物例行复验全PASS→report=115558B(≥25KB✓)/0<script>/47<table>=47</table>平衡✓/generator --check-idempotent OK(91300B)/git synced(0 ahead/0 behind)→85M下载运行中(PID212578 alive,43T/36377files,~9h)→任务已交付,心跳更新
+当前动作:     唤醒1141(2026-11-03 18:30):运维令10-31交付物完整复验全PASS→report=115558B(≥25KB✓)/0<script>/0CDN/0外链/47<table>=47</table>平衡✓/HTMLParser 0err 0未闭合 PASS✓/7节§1~§7齐/80 HF链接/49「未核到」/52 gated/106 污染/60 长文档占比/generator --check-idempotent OK(91300B)/git synced(0 ahead/0 behind,commit ab6f89572)→任务已交付,心跳更新
 下一步:       下轮唤醒:①查85M下载进度;②待运维批准后执行下载(P0:whole-books+SWE-smith+Nemotron-Terminal-Corpus+SWE-rebench;P2新增:SWE-smith-trajectories;P3新增:mix-ctx-128k/terminal-bench-2.1)
 阻塞:         无
 ERROR_COUNT:  11
@@ -30,6 +30,7 @@ ERROR_COUNT:  11
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。
 
 ## 📋 本唤醒流水
+> [11-03 18:30] 唤醒1141：运维令10-31交付物完整复验全PASS→①report=115558B(≥25KB✓)/0<script>/0CDN/0外链(80 HF链接·0非HF)/47<table>=47</table>平衡✓/HTMLParser严格检查unclosed:0 mismatch:0 PASS✓/7节§1~§7全齐/49「未核到」/52 gated/106 SWE-bench·TB污染/60 长文档占比；②generator --check-idempotent OK(91300B逐字节不变✓)；③git synced(##main...origin/main,0 ahead/0 behind,commit ab6f89572)；④TASK=27958B/MEMORY≈22KB(均<40KB无需归档)→任务已交付,心跳WAITING=1
 > [11-03 17:39] 唤醒1140：运维令10-31交付物例行复验全PASS→①report=115558B(≥25KB✓)/0<script>/47<table>=47</table>平衡✓/generator --check-idempotent OK(91300B逐字节不变✓)；②git synced(##main...origin/main,0 ahead/0 behind)；③85M下载运行中(PID212578 alive,etimes≈32089s≈9h,43T/36377files)；④df:/nas_train179T/87%(29T),/nas_env8.3T/84%(1.7T)；⑤TASK=27958B/MEMORY≈22KB(均<40KB无需归档)→任务已交付,心跳WAITING=1
 > [11-03 16:42] 唤醒1139：运维令10-31交付物再次复验全PASS→①report=115558B(≥25KB✓)/0<script>/0CDN/80链接全huggingface.co·0非HF外链/47<table>=47</table>平衡✓/53<div>=53</div>平衡✓/7节§1~§7齐(TL;DR·检索方法·A类主表·B类主表·污染·下载方案·诚实条款)；②generator --check-idempotent OK(91300bytes逐字节不变✓)；③git synced(HEAD=origin/main=ee5334e2c,0 ahead/0 behind)→任务已交付,心跳WAITING=1
 > [11-03 16:05] 唤醒1138：运维令10-31交付物独立复验全PASS→①report=115558B(≥25KB✓)/0<script>/47<table>=47</table>平衡✓/53<div>=53</div>平衡✓/HTMLParser 0err·0未闭合/0非HF外链/0CDN；②generator --check-idempotent OK(逐字节不变✓)；③git synced(0 ahead/0 behind origin/main,commit ab6f89572)→任务已交付,心跳WAITING=1
