@@ -1,0 +1,3 @@
+[incr-eval 04:57:38] === incr_eval for deepseek-harness: ['django__django-16527'] ===
+[incr-eval 04:57:38] merged 184/500 predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/predictions_deepseek-harness.json
+[incr-eval 04:57:38] EVAL deepseek-harness on 1 instances: ['django__django-16527']
