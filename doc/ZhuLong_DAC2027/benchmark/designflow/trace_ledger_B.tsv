@@ -39,4 +39,4 @@ djml8					case	EDA-Eval-DesignFlow-PFDdeadZone-001	2026-11-02 17:47
 1792720528359_2tuxj	kaixuanx	hfeg0pkn001	91	spice_sim	case	EDA-Eval-DesignFlow-CTLEtranChar-001	2026-11-03 12:43	spice_sim L2 CTLE transient eye-diagram char (concurrent iteration shipped synthesized track); 16 conds a-p; collision: faithful A-track variant reverted to respect 1-trace-1-case
 1792031875998_68gc9.messages.json	kli	hfhds206	424	spice_sim	case	EDA-Eval-DesignFlow-SiOutDiag-001	2026-11-03 12:56	
 1792394413650_b86q7.messages.json	tongni	hfeg0plg63	99	spice_sim	case	EDA-Eval-DesignFlow-Vcc2scActDeckGen-001	2026-11-03 13:48	
-1795907092176_vdeyi.messages.json	e0025768	hfeg0plg49	65	spice_sim	claimed		2026-11-03 14:17	
+1795907092176_vdeyi.messages.json	e0025768	hfeg0plg49	65	spice_sim	case	EDA-Eval-DesignFlow-LvlshftBsubDiag-001	2026-11-03 14:42	
