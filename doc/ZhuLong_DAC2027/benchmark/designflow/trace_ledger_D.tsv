@@ -119,3 +119,5 @@
 1791973035805_dodbm.messages.json	deniss	hfeg0plg87	179	analog_context	parked		2026-11-04 04:02	GUI interactive Aether schematic editing (open vir / modify I31 module to X16 type / change cell name) - no clean single verifiable deliverable
 1791526663956_p64wo.messages.json	tongfanl	hfeg0plg53	291	waveform	case	EDA-Eval-DesignFlow-MrrEnopsDelay-001	2026-11-04 04:45	
 1792487428780_fux29.messages.json	e0029308	hfeg0pkn001	212	schematic_netlist	case	EDA-Eval-DesignFlow-VfunctionalSplit-001	2026-11-04 05:15	
+1792993372322_f6x1i	e02141	hfeg0pkn002	519	schematic_netlist	parked		2026-11-04 05:34	TCAD sentaurus deck (sdevice/sprocess/svisual/SWB), KW netlist matched TCAD not circuit, not D-domain
+1787625155049_ovo6z	e0014566	hfeg0pkn001	285	analog_context	case	EDA-Eval-DesignFlow-RsCalcChk-001	2026-11-04 05:53	
