@@ -20,7 +20,7 @@ WAITING: 1
 ```
 PHASE:        🟢运维令10-31 web search调研HF长上下文+agentic数据集.报告v5已交付+已commit+push
 已完成:       ✅A.LC+Agentic调研报告v5(report_data_lc_agentic_survey_zh.html 106569B/44table/0script/18+15候选/74 HF链接)+生成器(gen_lc_agentic_survey_report.py 幂等);✅B.85M下载持续运行;✅C.报告全量验证(7节/0script/0CDN/幂等OK/44table平衡)
-当前动作:     唤醒1128(2026-11-03 08:50):运维令10-31交付物健康巡检全PASS→①report=106569B/0<script>/44<table>=44</table>平衡/74 huggingface.co链接/34未核到;②generator --check-idempotent OK(84252B);③85M:PID212578 alive(etimes≈394s≈6.5min,新重启),parquet11946/12126=98.6%(+14 vs唤醒1127),8 .incomplete;④git synced(##main...origin/main,仅vision/ZhuLong线改动非本线);⑤df:/nas_train178T/86%(30T可用),/nas_env8.3T/84%(1.7T可用);⑥TASK=27958B/MEMORY~39KB(均<40KB无需归档)→任务已交付,心跳WAITING=1
+当前动作:     唤醒1129(2026-11-03 09:09):运维令10-31交付物深度复验全PASS→①report=106569B(≥25KB✓)/0<script>/44<table>=44</table>平衡✓/HTMLParser tag-balance=unclosed:0 mismatch:0 PASS✓/7节§1~§7✓/0CDN/74 huggingface.co链接/34「未核到」✓;②generator --check-idempotent OK(84252B✓);③git synced(##main...origin/main,最后report commit=46998fb11 v5);④TASK=27958B/MEMORY≈39.5KB(均<40KB无需归档)→任务已交付,心跳WAITING=1
 下一步:       下轮唤醒:①查85M下载进度;②待运维批准后执行下载(P0:whole-books+SWE-smith+Nemotron-Terminal-Corpus+SWE-rebench)
 阻塞:         无
 ERROR_COUNT:  11
@@ -30,6 +30,7 @@ ERROR_COUNT:  11
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。
 
 ## 📋 本唤醒流水
+> [11-03 09:09] 唤醒1129：运维令10-31交付物深度复验全PASS→①report=106569B(≥25KB✓)/0<script>/44<table>=44</table>平衡✓/HTMLParser严格tag-balance检查=unclosed:none mismatch:0 RESULT:PASS✓/7节§1~§7全在✓/0CDN/0外链(仅2条内网proxy)/74 huggingface.co链接/34「未核到」✓;②generator --check-idempotent OK(84252B,输出逐字节不变✓);③git synced(##main...origin/main,report最后commit=46998fb11@11-02 07:07 v5,本线无未提交改动);④df:/nas_train178T/86%,/nas_env8.3T/84%;⑤TASK=27958B/MEMORY≈39.5KB(均<40KB无需归档)→任务已交付,心跳WAITING=1
 > [11-03 08:50] 唤醒1128：运维令10-31交付物健康巡检全PASS→①report=106569B(≥25KB✓)/0<script>/44<table>=44</table>平衡✓/74 HF链接/34「未核到」✓;②generator --check-idempotent OK(84252B✓);③85M:PID212578 alive(etimes≈394s≈6.5min,新重启),parquet11946/12126=98.6%(+14 vs唤醒1127),8 .incomplete;④git synced(##main...origin/main✓,仅vision/ZhuLong线改动非本线);⑤df:/nas_train178T/86%(30T可用),/nas_env8.3T/84%(1.7T可用);⑥TASK=27958B/MEMORY~39KB(均<40KB无需归档)→任务已交付,心跳WAITING=1
 > [11-03 08:1x] 唤醒1127：运维令10-31交付物健康巡检全PASS→①report=106569B(≥25KB✓)/0<script>/44<table>=44</table>平衡✓/74 huggingface.co链接(33 unique)/34「未核到」✓;②generator --check-idempotent OK(84252B✓);③85M:PID3389173 alive(etimes≈2545s≈42min),parquet11932/12126=98.4%(+464 vs唤醒1088),8 .incomplete;④git synced(##main...origin/main✓,仅ZhuLong线改动非本线);⑤df:/nas_train178T/86%(30T可用),/nas_env8.3T/84%(1.7T可用);⑥TASK=27958B/MEMORY~39KB(均<40KB无需归档)→任务已交付,心跳WAITING=1
 > [11-03 07:4x] 唤醒1126：运维令10-31交付物复验全PASS→①report=106569B(≥25KB✓)/0<script>/44<table>=44</table>平衡✓/7节§1~§7✓/74 HF链接/0CDN/34「未核到」✓/48 gated/58 SWE-bench/54 Terminal-Bench;②generator重跑→106569B一致(幂等✓)+--check-idempotent OK(84252chars);③85M:PID3389173 alive(hf download mvp-lab/LLaVA-OneVision-1.5-Mid-Training-85M,ppid=2668156)✓;④git synced(##main...origin/main,commit46998fb11,仅ZhuLong线改动非本线);⑤df:/nas_train178T/86%(30T可用),/nas_env8.3T/84%(1.7T可用);⑥TASK=27958B/MEMORY<40KB(均无需归档)→任务已交付,心跳WAITING=1
