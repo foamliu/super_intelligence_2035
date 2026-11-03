@@ -11,8 +11,19 @@ import json, os, datetime, html
 
 RUN_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.dirname(RUN_DIR)  # doc/BaiZe-ISEDA2027
-RESULTS_BASE = "/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/lm_eval_results"
-REPORT_PATH = os.path.join(PROJECT_ROOT, "reports", "report_pretrain_cpu_eval_8sets_zh.html")
+# 2026-11-03：支持后端切换（HF / GGUF）而不复制生成器。
+#   默认行为不变（hf_iter_）；GGUF 用：
+#     BAIZE_CKPT_PREFIX=gguf_iter_ BAIZE_REPORT_PATH=.../report_pretrain_cpu_eval_gguf_zh.html \
+#       python run/gen_cpu_eval_8sets_report.py
+RESULTS_BASE = os.environ.get(
+    "BAIZE_RESULTS_BASE",
+    "/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/lm_eval_results",
+)
+CKPT_PREFIX = os.environ.get("BAIZE_CKPT_PREFIX", "hf_iter_")
+REPORT_PATH = os.environ.get(
+    "BAIZE_REPORT_PATH",
+    os.path.join(PROJECT_ROOT, "reports", "report_pretrain_cpu_eval_8sets_zh.html"),
+)
 
 TASKS = [
     ("arc_challenge", "ARC-C"), ("arc_easy", "ARC-E"), ("boolq", "BoolQ"),
@@ -44,7 +55,7 @@ def esc(s):
 def load_results():
     out = {}
     for it in TARGET_ITERS:
-        p = os.path.join(RESULTS_BASE, f"hf_iter_{it}", "results.json")
+        p = os.path.join(RESULTS_BASE, f"{CKPT_PREFIX}{it}", "results.json")
         if not os.path.isfile(p):
             continue
         try:
