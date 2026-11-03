@@ -2,23 +2,20 @@
 WAITING: 0
 > 🛑 **【运维通告 · 2026-11-02 19:51】S1 已由 ops 中继重启并在跑**：`bash scripts/train.sh s1 --nodes 2`，launcher pid **4163528**，从 **ckpt 58000** 续（19:55:40 起 iter **58010**→58030，7.0–7.2 s/step ≈**582K tok/s**，双机 16 卡 **98–100%**、~75GB/卡、~690W）。⇒ **GPU 不再空闲**：🚫 严禁再起任何训练/GPU 评测进程（会双写 ckpt 或 OOM）；"GPU idle → 2.5h 评测"的结论已过期。原 **18:39:51 SIGKILL / 18:50:18 SIGBUS** 的现场日志已归档为 `/tmp/baize_s1_baize2b_worker.log.crash_1102_1839` 与 `..._master.log.crash_1102_1839`（🚫 勿删，待 root 查 dmesg 定 OOM vs 误杀）。CPU 评测继续但**必须降载**：`OMP_NUM_THREADS≤8` + `nice -n 19` + 每机并发 ≤2，**禁止 `pkill python`**（18:39 训练被 -9 的疑似原因）。另：本次 resume **未恢复 scheduler**，LR 从 warmup 重来（58010=5e-6，每 10 步 +5e-6，约 2000 步/3.9h 后回 1e-3）——实验日志须记一笔。详见 `BAIZE_PRETRAIN_2B_TASK.md` 顶部运维令。
 
-> 🆕 2026-11-03 14:50 #1234：**🎯 ROOT CAUSE FOUND + 4 evals 重跑中——bfloat16 CPU 前向 → NaN logits（iter_20000/30000/40000）·float32 修复✅·4 evals running（3×float32+1×bf16 genuine）·ETA~2-3天。✅ S1 健康 iter 67680/loss 2.10/0NaN/~600K tok/s。未完成指令：有**。
-> **① 🎯 根因定位（本轮完成）**：bfloat16 CPU forward pass 对 iter_20000/30000/40000 产生 **NaN logits**（Mamba2 SSM reference impl 在 bf16 下数值溢出）。验证：
-> - iter_20000 bf16 → logits 全 NaN（min/max/std=nan）；iter_20000 **float32** → logits 健康（min=-6.81,max=15.29,top5含"Paris"）✅
-> - iter_30000 bf16 → NaN ✅；iter_50000 bf16 → 健康（top5含"Paris"）✅；iter_10000 bf16 → 健康（已完成评测 Avg=50%）✅
-> - 尝试 monkey-patch（bf16 模型+Mamba2 mixer 强制 float32）→ 仍 NaN（conv1d/in_proj 在 bf16 下已溢出，patch 不够）
-> - **结论**：不是 checkpoint/export/config 问题——是 **bf16 精度不足** 导致 Mamba2 SSM 在某些权重分布下溢出。iter_10000/50000 恰好不触发。**修法 = float32 评测**。
-> **② 4 evals running（全部 genuine dtype）**：
-> - iter_10000 ✅ **已完成** bf16 genuine: arc_c=0.29, arc_e=0.49, boolq=0.61, hs=0.36, obqa=0.20, piqa=0.72, sciq=0.79, wg=0.54, Avg=50.0%
-> - iter_50000 🔄 bf16 genuine: 808/2599(31%) ~15s/it ETA~7h→done~22:00 Nov3 (PID 2024390 on .29)
-> - iter_20000 🔄 **float32**: 1/2599 刚启动 ~98s/it(会加速) (PID on .12)
-> - iter_30000 🔄 **float32**: 刚启动 (PID 1505873 on .29)
-> - iter_40000 🔄 **float32**: 1/2599 刚启动 ~100s/it(会加速) (PID on .12)
-> - 退化 results 已备份为 `results_bf16_nan.json`（iter_20000+40000）
-> **③ CPU 使用**：.29 ~12.5%busy/87.3%idle（2 evals）；.12 ~10.5%busy/87.5%idle（2 evals）。均 <<80% ✅
-> **④ ETA**：float32 首次 ~98s/it（bf16 收敛后 ~16s/it，float32 预计收敛到 ~30-40s/it）。3 个 float32 evals 并行(2 on .12, 1 on .29)，预计 ~24-48h 完成（Nov 4-5）。iter_50000 bf16 ~7h（Nov 3 22:00）。
-> **📦 体积**：TASK=30602B(29.9KB)/MEMORY=26030B(25.4KB)（均 ≤32KB，无需归档）。
-> **下一步**：①监控 4 evals 进度（下轮查 float32 是否加速）②iter_50000 done→收结果 ③全部 5/5 genuine→终版报告+日报。未完成指令：有 ⇒ WAITING: 0。
+> 🆕 2026-11-03 14:55 #1235：**4 evals 全部在跑（1 done + 4 running）·float32 仍在 ramp-up(~73-95s/it, 会加速)·bf16 iter_50000 32% ETA~7.6h·S1 iter 67720 健康·CPU .29~15.6%/.12~14.1% 均<<80% ✅·未完成指令：有**。
+> **① eval 进度快照（14:54 实测）**：
+> - iter_10000 ✅ **DONE** bf16 genuine: arc_c=0.29, arc_e=0.49, boolq=0.61, hs=0.36, obqa=0.20, piqa=0.72, sciq=0.79, wg=0.54, **Avg(acc)=50.0%**
+> - iter_50000 🔄 bf16 genuine: 837/2599(32%), 15.64s/it, ETA 7h39m → done ~22:30 Nov3 (PID 2024390 on .29)
+> - iter_30000 🔄 **float32**: 6/2599, ~73s/it ramp-up (PID 3340291 on .29, 重启于14:46)
+> - iter_20000 🔄 **float32**: 6/2599, ~95s/it ramp-up (PID 1259403 on .12, 启动于14:44)
+> - iter_40000 🔄 **float32**: 6/2599, ~93s/it ramp-up (PID 1259184 on .12, 启动于14:44)
+> **② S1 训练**：iter 67720/700000, loss 2.087, 0NaN, ~600K tok/s, LR=1e-3(warmup已完成), grad-norm 0.092-0.104 稳态 ✅
+> **③ CPU**：.29 6.0%us+8.2%sy+1.4%ni≈15.6%busy/84.3%idle(load 36.8/224核)；.12 5.1%us+9.0%sy≈14.1%busy/85.8%idle(load 33.0)。均 <<80% ✅
+> **④ ETA**：float32 ramp-up 中(当前73-95s/it, 预计收敛到~35-45s/it); 3×float32(2599×40s≈29h)并行→done Nov4-5; iter_50000 bf16→done Nov3 22:30。全部 5/5 genuine 预计 Nov4 晚~Nov5 完成。
+> **📦 体积**：TASK=30602B(29.9KB)/MEMORY=26016B(25.4KB)（均 ≤32KB，无需归档）。
+> **下一步**：①下轮查 float32 是否加速（ramp-up→收敛）②iter_50000 done→收结果 ③全部 5/5 genuine→终版报告 report_pretrain_cpu_eval_8sets_zh.html + 日报。未完成指令：有 ⇒ WAITING: 0。
+>
+> 📦 §#1234（11-03 14:50, root cause bf16 NaN + 4 evals 重跑启动）→ daily-memories/2026-11-03.md；**结论**：bf16 CPU forward 对 iter_20000/30000/40000 产生 NaN logits(Mamba2 SSM bf16 溢出); float32 修复; 4 evals 启动(1 bf16+3 float32)。被#1235监控。需要时再读。
 
 
 
