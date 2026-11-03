@@ -1,0 +1,43 @@
+{
+  "warning_code": "IMPSR-1253",
+  "severity": "warning",
+  "tool": "Innovus",
+  "design": "test_chip_v1",
+  "stage": "floorplan power routing (addStripe/sroute)",
+  "netlist_revision": "dc_2026-11-02-20.29.45",
+  "power_intent": "test_chip_v1.upf",
+  "supply_net": "VDD_PM",
+  "supply_net_type": "power",
+  "message": "Unable to find any standard cell pin connected to the VDD_PM net.",
+  "root_cause_category": "hierarchical_port_vs_leaf_pin_mismatch",
+  "root_cause": "VDD_PM is a netlist-level protected-PM supply domain. The 441 leaf INVD8 protection cells (instance basename PMRowBLK_*) have their physical power pin named 'VDD' connected to a module-local VDD_PM net inside the PM_VDDI_Inst subtree; that local net reaches the top level only through the hierarchy port PM_VDDI_Inst(.VDD_PM). Consequently the top-level VDD_PM net carries exactly 1 hierarchical instTerm and 0 leaf standard-cell pins. The original floorplan script issued an unconditional globalNetConnect 'VDD_PM -instanceBasename PMRowBLK_* -netType power' with no generation probe, no VERIFY-vs-ROUTE distinction and no explicit physical pin name, so pin resolution found no standard-cell pin on the VDD_PM net and raised IMPSR-1253.",
+  "summary_zh": "根因：VDD_PM 是网表级 PM 保护供电隔离域。441 个 INVD8 保护单元（实例基名 PMRowBLK_*）的物理电源脚名为 VDD，在 PM_VDDI_Inst 子层次内连接到模块局部 VDD_PM 网络，该局部网络仅通过层次端口 PM_VDDI_Inst(.VDD_PM) 引出到顶层。因此顶层 VDD_PM 网络只有 1 个层次 instTerm、0 个叶子标准单元引脚。原版 fp 脚本的 globalNetConnect 未探测网表代次、未区分 VERIFY/ROUTE、也未显式指定物理引脚名，导致无法在 VDD_PM 上找到任何标准单元引脚，触发 IMPSR-1253。",
+  "contributing_factors": [
+    "globalNetConnect omits the explicit -pin/-pg_pin name, so the tool does not learn that the leaf physical power pin is named 'VDD' (not 'VDD_PM')",
+    "VDD_PM is exposed at the top level only through the PM_VDDI_Inst hierarchy port, leaving 0 direct leaf std-cell pins on that net object",
+    "the floorplan script is unconditional: no netlist generation probe and no VERIFY branch to distinguish the hierarchy-port-only case"
+  ],
+  "evidence": {
+    "leaf_std_cell_ref": "INVD8",
+    "leaf_std_cell_count": 441,
+    "leaf_inst_basename": "PMRowBLK_*",
+    "leaf_physical_power_pin": "VDD",
+    "hierarchy_port": "PM_VDDI_Inst(.VDD_PM)",
+    "subtree_hierarchy": [
+      "PMArrayPart(TOPPMBLK)",
+      "PMVDDIMatrixPart(PM_VDDI_Inst)",
+      "21 x PMVDDIRowPart(PMColBLK_Blk40xx)",
+      "21 x INVD8(PMRowBLK_Blk40xx)"
+    ],
+    "verify_result": {
+      "net": "VDD_PM",
+      "inst_terms": 1,
+      "leaf_std_cell_pins": 0,
+      "note": "hierarchical port pin(s) only"
+    },
+    "gnc_search": "searched pin 'VDD' on PMRowBLK_* -> 0 leaf std-cell pin connected"
+  },
+  "expected_at_floorplan": true,
+  "corrective_action": "Make the floorplan script generation-aware and netlist-aware: (1) probe the netlist generation; (2) enumerate supply nets from power.globals/UPF; (3) add a VERIFY step that computes leaf std-cell pin count vs hierarchical instTerm count and treats the hierarchy-port-only case as an expected floorplan event; (4) connect the isolated domain net to the discovered physical leaf power pin (e.g. 'VDD') using explicit -pin plus hierarchy descent (-hinst), while scoping the generic VDD/VSS connects to exclude the protection-domain leaves so every power pin is driven exactly once.",
+  "fixed_script": "innovus_fp.tcl"
+}

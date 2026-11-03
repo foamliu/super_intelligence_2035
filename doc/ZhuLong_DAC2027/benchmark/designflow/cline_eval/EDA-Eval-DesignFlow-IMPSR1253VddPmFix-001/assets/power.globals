@@ -1,0 +1,4 @@
+# power.globals — test_chip_v1
+VDD    power
+VSS    ground
+VDD_PM power
