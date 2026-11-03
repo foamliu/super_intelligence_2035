@@ -114,3 +114,6 @@
 1792466303393_peuft	zxtu	hfeg0pkn002	167	schematic_netlist	case	EDA-Eval-DesignFlow-LatchFFExtract-001	2026-11-04 02:10	
 1792030871333_xq4ge	e0039602	hfeg0plg85	248	schematic_netlist	case	EDA-Eval-DesignFlow-NetlistSvPair-001	2026-11-04 03:00	
 1793174925139_f0vya.messages.json	e0030760	hfeg0plg74	410	analog_context	case	EDA-Eval-DesignFlow-SRAM6TSweep-001	2026-11-04 03:30	
+1792561000352_mdxo8.messages.json	kaixuanx	hfeg0pkn001	149	waveform	case	EDA-Eval-DesignFlow-PwrCornerSweep-001	2026-11-04 04:02	
+1791868151380_2zbgo.messages.json	cliu	hfeg0plg17	162	schematic_netlist	parked		2026-11-04 04:02	dup of NetlistSvPair-001 (#219): same module IO_rsnand21nand31_DL_ACT_MERGE_READ + same drcoa netlist/simlib_base.sv
+1791973035805_dodbm.messages.json	deniss	hfeg0plg87	179	analog_context	parked		2026-11-04 04:02	GUI interactive Aether schematic editing (open vir / modify I31 module to X16 type / change cell name) - no clean single verifiable deliverable
