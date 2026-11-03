@@ -1,4 +1,12 @@
 # BAIZE_DESIGNFLOW_BENCH_TASK.md — 设计流 Benchmark 任务书（2026-10-30 重构版）
+### 🚨 用户令 · 2026-11-03 22:3x（**LLM trace triage pilot：用 llama.cpp 语义预筛替代纯 mc>=100**）· 用户直令 ·【新·待执行】
+
+> 执行 `benchmark/designflow/llm_trace_triage/LLM_TRACE_TRIAGE_ORDER.md`（以该文件全文为准）。
+> 一句话：本机 `Qwen3.5-0.8B Q8_0` 对 4 个 mc 箱各 8 条（共 32）做语义判定 → 量化「mc>=100 误命中率」与「mc<100 漏检数」→ 产出 `pool_llm_v1.tsv`。
+> 硬约束：**0.8B 只做 triage，不替代 deepread**；原始 messages 不入库；不占 8090（用 18081）；不改现有 case 队列。
+> 交付：`reports/report_designflow_llm_triage_zh.html` + `compare.json` + `pool_llm_v1.tsv` + MEMORY + commit `designflow triage:`。
+> 判据：金标一致率 >=80%；**PASS 后先报告再等令**，不要擅自扩量或改阈值。
+
 ### 🚨 2026-11-02 运维令：被测换 cline + PreToolUse 防泄题 hook · 用户直令 · 最高优先
 
 > **背景**：pi 有 bash/read/write 工具，能任意读 cwd 里所有文件。benchmark agent 在 `.pi_debug/<case>/` 里放了 `_reference_check.py`（= check.py 判分器），pi 直接 `import _reference_check` 跑了它——**判分标准（答案）直接放在考生面前**。这是通过率偏高的主因，不是模型强。

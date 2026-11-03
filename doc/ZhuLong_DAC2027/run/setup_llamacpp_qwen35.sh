@@ -65,19 +65,47 @@ build() {
   "$TOOLS/llama.cpp/build/bin/llama-cli" --version || true
 }
 
+download_modelscope() {
+  say "2b. fallback: ModelScope 直连（hf-mirror 被 308 跳回 huggingface.co 时用）"
+  mkdir -p "$MODEL_DIR"
+  python3 - "$MODEL_DIR" <<'PY'
+import json, os, sys, urllib.request
+repo = "Qwen/Qwen3.5-0.8B"
+d = sys.argv[1]
+api = f"https://modelscope.cn/api/v1/models/{repo}/repo/files?Revision=master&Recursive=True"
+with urllib.request.urlopen(api, timeout=60) as r:
+    data = json.loads(r.read().decode("utf-8"))
+files = [f for f in data["Data"]["Files"] if f.get("Type") == "blob"]
+print(f"[ms] {len(files)} files")
+for f in files:
+    path, size = f["Path"], int(f["Size"])
+    dst = os.path.join(d, path)
+    os.makedirs(os.path.dirname(dst) or d, exist_ok=True)
+    if os.path.isfile(dst) and os.path.getsize(dst) == size:
+        continue
+    url = f"https://modelscope.cn/models/{repo}/resolve/master/{path}"
+    print(f"[ms] GET {path} ({size} B)")
+    urllib.request.urlretrieve(url, dst)
+    if os.path.getsize(dst) != size:
+        raise SystemExit(f"size mismatch: {path}")
+print("[ms] OK")
+PY
+}
+
 download() {
   say "2. download Qwen/Qwen3.5-0.8B"
   mkdir -p "$MODEL_DIR"
   export HF_ENDPOINT="${HF_ENDPOINT:-https://hf-mirror.com}"
   export HF_HUB_ENABLE_HF_TRANSFER=0
+  local ok=0
   if command -v hf >/dev/null 2>&1; then
-    hf download Qwen/Qwen3.5-0.8B --local-dir "$MODEL_DIR"
+    hf download Qwen/Qwen3.5-0.8B --local-dir "$MODEL_DIR" && ok=1
   elif command -v huggingface-cli >/dev/null 2>&1; then
-    huggingface-cli download Qwen/Qwen3.5-0.8B --local-dir "$MODEL_DIR"
-  else
-    echo "FAIL: 无 hf / huggingface-cli。请在独立 venv 安装："
-    echo "  python3 -m venv ~/.venvs/qtools && ~/.venvs/qtools/bin/pip install -U -i https://pypi.tuna.tsinghua.edu.cn/simple huggingface_hub"
-    return 1
+    huggingface-cli download Qwen/Qwen3.5-0.8B --local-dir "$MODEL_DIR" && ok=1
+  fi
+  if [[ "$ok" != "1" ]] || [[ ! -f "$MODEL_DIR/config.json" ]]; then
+    echo "WARN: hf/huggingface-cli 失败或文件不全 → 回退 ModelScope"
+    download_modelscope || return 1
   fi
 }
 
