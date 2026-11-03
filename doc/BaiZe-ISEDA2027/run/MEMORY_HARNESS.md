@@ -5,13 +5,13 @@ WAITING: 0
 ## 📊 进度快照
 
 ```
-PHASE:        R1432 quiet监控轮:CPU/MEM自检PASS+scan_backlog=0→eval 2427/1863 unchanged·predict:cline500(DONE)·opencode500(DONE)·pi475(DONE)·claude-code433(DONE)·codex409/500(alive)·hermes272/500(alive)·deepseek165/500(alive)
-已完成:       H-B✅·Gate7/7·TB报告✅·pilot20✅·R984-R988恒0调试✅·R989 incr_eval全链✅·R997硬约束修复✅·R998-R1431 incr_eval链+内存/CPU自检+体积归档✅·R1409 CPU失控kill+护栏修复✅·R1432 quiet监控+CPU/MEM自检PASS
-当前动作:     R1432:CPU自检PASS(运维令11-02:load38/224≈17%busy,无本线>8000%CPU,docker ps空)+内存自检PASS(运维令10-30:MemAvailable1391GB,无本线RSS>50GB)·scan_backlog=0(无新real-patch预测待eval)·eval TOTAL 2427/1863 unchanged(权威:cline442(326)·opencode497(401)·pi463(333)·claude-code358(273)·codex304(239)·hermes204(159)·deepseek159(132))·3路predict alive无stuck:codex409/500(sympy-13974,etimes1459s)·hermes272/500(sphinx-10449,etimes890s)·deepseek165/500(django-15467,etimes804s)·硬约束:predictions 0 tracked✅·eval 0 tracked✅·docker 0 running✅·/data 6.0T free✅·load38/224✅·无kill·无失控·未完成指令:有(3路predict仍跑)⇒WAITING=0.
-下一步:       ①3路predict alive(codex409/500·hermes272/500·deepseek165/500) ②每轮scan_backlog→incr_eval新完成predict ③监控CPU(护栏OMP_NUM_THREADS=8) ④predict全完成后final eval+full500最终报告(7路总表+Wilson CI+McNemar 7×7) ⑤infra单列(铁律④) ⑥永久硬约束:禁止commit结果JSON ⑦TASK=35.8KB·MEMORY≤32KB
-阻塞:         无(3路predict alive progressing·load38/224健康).
+PHASE:        R1433 incr_eval轮:CPU/MEM自检PASS+scan_backlog=1→0→deepseek django-15467 RESOLVED→eval 2428/1864(+1/+1)·predict:cline500(DONE)·opencode500(DONE)·pi475(DONE)·claude-code433(DONE)·codex410/500(alive)·hermes273/500(alive)·deepseek166/500(alive)
+已完成:       H-B✅·Gate7/7·TB报告✅·pilot20✅·R984-R988恒0调试✅·R989 incr_eval全链✅·R997硬约束修复✅·R998-R1432 incr_eval链+内存/CPU自检+体积归档✅·R1409 CPU失控kill+护栏修复✅·R1433 incr_eval+CPU/MEM自检PASS
+当前动作:     R1433:CPU自检PASS(运维令11-02:load36/224≈16%busy,无本线>8000%CPU,docker ps空)+内存自检PASS(运维令10-30:MemAvailable1.4TB,无本线RSS>50GB)·scan_backlog=1→0(deepseek django-15467 real patch 1987chars)·incr_eval deepseek django-15467 RESOLVED✅(rc=0,OMP_NUM_THREADS=8,EVAL_MAX_WORKERS=1)·eval TOTAL 2428/1864(+1/+1)(权威:cline442(326)·opencode497(401)·pi463(333)·claude-code358(273)·codex304(239)·hermes204(159)·deepseek160(133))·3路predict alive无stuck:codex410/500(sympy-14248)·hermes273/500(sphinx-10449)·deepseek166/500(django-15499)·硬约束:predictions 0 tracked✅·eval 0 tracked✅·docker 0 running✅·/data 6.0T free✅·load36/224✅·无kill·无失控·未完成指令:有(3路predict仍跑)⇒WAITING=0.
+下一步:       ①3路predict alive(codex410/500·hermes273/500·deepseek166/500) ②每轮scan_backlog→incr_eval新完成predict ③监控CPU(护栏OMP_NUM_THREADS=8) ④predict全完成后final eval+full500最终报告(7路总表+Wilson CI+McNemar 7×7) ⑤infra单列(铁律④) ⑥永久硬约束:禁止commit结果JSON ⑦TASK=35.8KB·MEMORY≤32KB
+阻塞:         无(3路predict alive progressing·load36/224健康).
 ERROR_COUNT:  0
-  📦 体积：TASK=35757B(35.8KB,>32KB,3活跃块不可归档,<40KB红线OK) / MEMORY≈19.4KB(≤32KB✅)
+  📦 体积：TASK=35757B(35.8KB,>32KB,3活跃块不可归档,<40KB红线OK) / MEMORY≈19.5KB(≤32KB✅)
 ```
 
 > 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
@@ -19,7 +19,9 @@ ERROR_COUNT:  0
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 
 ### 本唤醒流水
-[16:10] R1432 quiet监控轮: CPU自检PASS(load38/224≈17%busy,无本线>8000%CPU,docker ps空)+内存自检PASS(1391GB avail,无本线RSS>50GB)·scan_backlog=0(无新real-patch预测待eval)·eval 2427/1863 unchanged·3路predict alive无stuck(codex409/500 on sympy-13974 etimes1459s·hermes272/500 on sphinx-10449 etimes890s·deepseek165/500 on django-15467 etimes804s)·硬约束全PASS(pred0tracked✅·eval0tracked✅·docker0running✅·/data6.0Tfree✅)·无kill·无失控
+[16:21] R1433 incr_eval轮: CPU自检PASS(load36/224≈16%busy,无本线>8000%CPU,docker ps空)+内存自检PASS(1.4TB avail,无本线RSS>50GB)·scan_backlog=1→0(deepseek django-15467,patchlen=1990)·incr_eval deepseek django-15467 RESOLVED✅(rc=0,OMP_NUM_THREADS=8,EVAL_MAX_WORKERS=1,setsid detached)·eval 2428/1864(+1/+1)·3路predict alive无stuck(codex410/500 on sympy-14248·hermes273/500 on sphinx-10449·deepseek166/500 on django-15499)·硬约束全PASS(pred0tracked✅·eval0tracked✅·docker0running✅·/data6.0Tfree✅)·无kill·无失控
+
+> 📦 R1432 流水(16:10,quiet监控轮:CPU/MEM自检PASS+scan_backlog=0,eval 2427/1863 unchanged)已归档 → daily-memories-harness/2026-11-03.md。结论：3路predict alive。需要时再读。
 
 > 📦 R1431 流水(15:55,incr_eval轮:CPU/MEM自检PASS+scan_backlog=1→0,hermes sphinx-10435 FAILED,eval 2427/1863)已归档 → daily-memories-harness/2026-11-03.md。结论：3路predict alive。需要时再读。
 
