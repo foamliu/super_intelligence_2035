@@ -5,6 +5,7 @@
 
 > 目标：在 zhulong 本机（36.15 work copy 所在机器）装好 CPU 版 llama.cpp，并把 `Qwen/Qwen3.5-0.8B` 完整拉到本地，作为后续数据分析（trace / 日报摘要、标签、预筛）的离线小模型。
 > 本令**不改论文、不改评测口径、不碰其它线**；只做环境与模型准备。
+> 本令已配**一键脚本**：`doc/ZhuLong_DAC2027/run/setup_llamacpp_qwen35.sh`（全流程 `bash run/setup_llamacpp_qwen35.sh`；分步 `STEP=probe|build|download|convert|smoke`；日志 `/tmp/setup_llamacpp_qwen35_*.log`）。可用它减少试错，仍以本令 §5 的交付物为准。
 > ⚠️ 重要事实（已核实模型卡）：**Qwen3.5-0.8B 是 Image-Text-to-Text 多模态模型**（`qwen3_5`，`AutoProcessor` + `AutoModelForMultimodalLM`，Apache-2.0），**不是纯文本 LLM**。下载必须包含 processor / vision 权重；llama.cpp 若尚不支持该架构，GGUF 转换失败属预期，按下面 §3 回退，不要卡住。
 
 **0. 先探测（只读，先报再动）**
