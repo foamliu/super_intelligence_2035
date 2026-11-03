@@ -54,3 +54,4 @@ djml8					case	EDA-Eval-DesignFlow-PFDdeadZone-001	2026-11-02 17:47
 1792131744105_g48nq.messages.json					case	EDA-Eval-DesignFlow-InvTripDelay-001	2026-11-03 21:54	
 1792130844059_4ati4.messages.json	mengfeiz	hfeg0pkn004	143	spice_sim	case	EDA-Eval-DesignFlow-LvPmosVgVs-001	2026-11-03 22:52	spice_sim L2 faithful fullchip netlist-understanding + HSPICE param-conditional rail eval + subckt hierarchy expansion + lv/lvio PMOS type/polarity/bias filter; 14 conds a-n; .75 negative_selftest green (ref PASS 14/14 + 6 negs FAIL distinct {f}/{g,i}/{h,i}/{c,d,e,i,j,k,l,m,n}); A=8 devices/B=1 device cross-input; appended EDA-Eval-DesignFlow_B.jsonl line 47
 1792647604577_xv1ip	alenxu	hfeg0pkn003	186	spice_sim	case	EDA-Eval-DesignFlow-TxRonSize-001	2026-11-03 23:25	
+1793155079677_gnmu0	e0030760	hfeg0pkn002	293	characterization	claimed		2026-11-03 23:44	
