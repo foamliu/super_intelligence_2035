@@ -20,8 +20,8 @@ WAITING: 1
 ```
 PHASE:        🟢运维令10-31 web search调研HF长上下文+agentic数据集.报告v6已交付+已commit+push
 已完成:       ✅A.LC+Agentic调研报告v6(report_data_lc_agentic_survey_zh.html 115558B/47table/0script/19+18候选/80 HF链接/36unique)+生成器(gen_lc_agentic_survey_report.py 幂等);✅B.v6新增3个HF核实数据集(SWE-smith-trajectories/MIT/HTTP200 + harborframework/terminal-bench-2.1/Apache-2.0/HTTP200 + ghostcc3/mix-context-post-training-128k/MIT/HTTP200);✅C.85M下载持续运行;✅D.报告全量验证(7节/0script/0CDN/0外链/幂等OK/47table平衡/0未闭合标签)
-当前动作:     唤醒1156(2026-11-04 03:11):运维令10-31交付物例行健康巡检全PASS→①report=115558B(≥25KB✓)/0<script>/0CDN/0非HF外链/47<table>=47</table>平衡✓/7节sec1-7齐/49「未核到」/14gated/36unique HF链接;②generator --check-idempotent OK(91300B逐字节不变✓);③git synced(##main...origin/main,data线commit ab6f89572已push,working tree仅ZhuLong+harness线改动非本线);④85M下载:pgrep未见hf download进程(可能已完成或需运维确认);⑤df:/nas_train179T/87%(29T可用),/nas_env8.3T/84%(1.7T可用);⑥TASK=27958B/MEMORY≈33KB(均<40KB无需归档)→任务已交付,心跳WAITING=1
-下一步:       下轮唤醒:①查85M下载进度(是否已完成,pgrep未见进程需运维确认);②待运维批准后执行下载(P0:whole-books+SWE-smith+Nemotron-Terminal-Corpus+SWE-rebench;P2新增:SWE-smith-trajectories;P3新增:mix-ctx-128k/terminal-bench-2.1)
+当前动作:     唤醒1157(2026-11-04 03:30):运维令10-31交付物例行健康巡检全PASS→①report=115558B(≥25KB✓)/0<script>/0CDN/80 HF链接(全huggingface.co)/47<table>=47</table>平衡✓/7节sec1-7齐/49「未核到」/14gated;②generator --check-idempotent OK(91300B逐字节不变✓);③git synced(##main...origin/main,data线commit ab6f89572已push,working tree仅ZhuLong+harness线改动非本线);④TASK=27958B/MEMORY≈33KB(均<40KB无需归档)→任务已交付,心跳WAITING=1
+下一步:       下轮唤醒:①查85M下载进度(是否已完成);②待运维批准后执行下载(P0:whole-books+SWE-smith+Nemotron-Terminal-Corpus+SWE-rebench;P2新增:SWE-smith-trajectories;P3新增:mix-ctx-128k/terminal-bench-2.1)
 阻塞:         无
 ERROR_COUNT:  11
 未完成指令:   无(调研报告v6已交付+验证完成)
@@ -30,6 +30,7 @@ ERROR_COUNT:  11
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。
 
 ## 📋 本唤醒流水
+> [11-04 03:30] 唤醒1157：运维令10-31交付物例行健康巡检全PASS→①report=115558B(≥25KB✓)/0<script>/0CDN/80 HF链接(全huggingface.co)/47<table>=47</table>平衡✓/7节sec1-7齐/49「未核到」/14gated/61 SWE-bench/62 Terminal;②generator --check-idempotent OK(91300B逐字节不变✓);③git synced(##main...origin/main,data线commit ab6f89572已push,working tree仅ZhuLong+harness线改动非本线);④TASK=27958B/MEMORY≈33KB(均<40KB无需归档)→任务已交付,心跳WAITING=1
 > [11-04 03:11] 唤醒1156：运维令10-31交付物例行健康巡检全PASS→①report=115558B(≥25KB✓)/0<script>/0CDN/0非HF外链/47<table>=47</table>平衡✓/7节sec1-7齐/49「未核到」/14gated/36unique HF链接;②generator --check-idempotent OK(91300B逐字节不变✓);③git synced(##main...origin/main,data线commit ab6f89572已push,working tree仅ZhuLong+harness线改动非本线);④85M下载:pgrep未见hf download进程(可能已完成或需运维确认);⑤df:/nas_train179T/87%(29T可用),/nas_env8.3T/84%(1.7T可用);⑥TASK=27958B/MEMORY≈33KB(均<40KB无需归档)→任务已交付,心跳WAITING=1
 > [11-04 02:52] 唤醒1155：运维令10-31交付物例行健康巡检全PASS→①report=115558B(≥25KB✓)/0<script>/0CDN/0非HF外链(仅huggingface.co+内网proxy 172.19.92.25)/47<table>=47</table>平衡✓/7节sec1-7齐/49「未核到」;②generator fresh run→IDEMPOTENT_OK(115558B逐字节一致✓);③git synced(##main...origin/main,data线commit ab6f89572已push,working tree仅ZhuLong线改动非本线);④TASK=27958B/MEMORY≈31KB(均<40KB无需归档)→任务已交付,心跳WAITING=1
 > [11-04 02:34] 唤醒1154：运维令10-31交付物例行健康巡检全PASS→①report=115558B(112.8KB≥25KB✓)/0<script>/0CDN/36 unique HF链接/47<table>=47</table>平衡✓/53<div>=53</div>平衡✓/7节sec1-7齐/49「未核到」/52gated;②generator fresh run=115558B与committed报告逐字节一致(幂等✓);③git:fetch OK,commit ab6f89572已在origin/main(working tree仅ZhuLong+pretrain线改动非本线);④85M下载:pgrep未见hf download进程;⑤df:/nas_train179T/87%,/nas_env8.3T/84%;⑥TASK=27958B/MEMORY≈31KB(均<40KB无需归档)→任务已交付,心跳WAITING=1
