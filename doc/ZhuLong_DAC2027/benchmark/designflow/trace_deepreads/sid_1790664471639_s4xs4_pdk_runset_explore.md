@@ -1,0 +1,21 @@
+# 深读：s4xs4 — PDK runset 版本管理目录结构探索
+
+- **trace_source**: user=xinqiaoz, host=hfeg0pkn004, session_file=1790664471639_s4xs4.messages.json, match_count=283, tools=calibre:1459+.gds:... (calibre runset 管理)
+- **会话规模**: 517KB / 147 msgs。两个独立用户任务轮：
+  - 轮 [0]：探索 CXMT PDK runset 版本管理目录结构并反馈（A-faithful 候选 ✓ 提需求轮，未给根因/修复）
+  - 轮 [86]：收集 DYT4E dummy deck 目录下 13 个文本文件内容（另一提需求轮，本次不用）
+- **选轮 [0] 做 A 档**：用户逐字原文 = 培训笔记验证需求，明确要求探索 `/apps/imctf/cad/runset/calibre`（路径1）与 `/apps/imctf/runset`（路径2），逐层反馈四层结构（平台文件夹→current/frozen→common+产品→产品内部 package/runset link）+ README 样本 + 与笔记差异。规则②不命中（用户只提需求，未指出根因或修复方案）✓。
+- **真实 agent 行为**：用 ls/tree/readlink 探索 `.75` 上的 `/apps/imctf/`，在 [85] 产出完整 markdown 报告。关键事实（金标准）：
+  - 路径1 `/apps/imctf/cad/runset/calibre` **不存在**（ENOENT）
+  - 路径2 `/apps/imctf/runset/calibre` **存在**，37 个平台条目
+  - 厂内平台：cxmtG4B_CIP / cxmtG4C / cxmtG4D / cxmtG4W / cxmtG5_CIP / cxmtG6_1C2A / cxmtV2B / cxmtV3 / cxmtV4 / cxmt10G2_LP..cxmt10G7 / cxmtHBM3(symlink) / cxmt10G4plus_DDR(→cxmt10G4plus symlink)
+  - 代工/第三方：als / DH / DBS / bsrdl / cl028hkn* / imc19n* / smic28hkcplus / ts22
+  - td/：BSPDN / CIP / DYT_PKG / DYT3E / G4B / LDDB / MARS(mars_gen1..3) / MHC / RcHB / S24QA / TSI
+  - current/frozen 双层（多数有；DBS/V2B 无 frozen）
+  - current/ = common/ + 产品文件夹（iejoad/decqa/...）；cxmt10G5 还有工艺选项目录 1p4m1x2y1z/
+  - common/ deck 类型：DRC/LVS/Dummy/Layer/STIcmp（新平台加 LP_PreAA/layer.map_all/quality_check/UNIFORMcmp）；calibre.layer→Layer/ 符号链接
+  - 版本命名：`{平台}_{deck}_v{主}d{子}_Rev{修订}[_t{tag}]`，旧式 `x.y.z`（0.8.6）；G5_CIP 有 DDR5/LP6 产品线后缀
+  - 产品文件夹：package_iejoad_v0d5_RevXX[_t01].PCH1 + runset/（calibreDRC.rule 文件、calibreDummy.rule→common/Dummy 符号链接、releasenotes.* link）
+- **合成方向**：交付件 = `pdk_runset_explorer.py`（纯 stdlib；CLI `python3 pdk_runset_explorer.py <imctf_root>`；探索 root 下 cad/runset/calibre 与 runset/calibre 两路径，逐层提取平台/current-frozen/common-deck-类型/版本命名/产品 package/runset 符号链接/calibre.layer 符号链接/README 样本，输出结构化 JSON 到 stdout）。L2 = check.py subprocess 在 A+隐藏 B fixture 树上跑候选脚本（§4.2），不需真跑 calibre 二进制（结构探索任务）。
+- **资产**：A = prompt.txt（[0] 逐字原文 4005B）+ task_brief.md（3 行接口）+ imctf_root_A/（合成 fixture 树，含 8 平台 + td/ + symlink 平台 + 缺 frozen 平台 + common 多 deck 类型 + 版本文件 + 产品 package + runset 符号链接 + README）。hidden B = imctf_root_B/（不同平台名 cxmtG7X_Pro/cxmtG8Mini/cxmt20G1/fabA/td/Nova/Helix + 不同版本号 + 不同 DDR7 产品线 + 不同缺-frozen 平台 + 不同 symlink 平台）。
+- **防泄题**：资产仅 prompt+brief+imctf_root_A；hidden B 不进 SUT 沙箱；判分独立 /tmp，check.py+hidden 从 reference/ 复制。
