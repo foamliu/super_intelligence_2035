@@ -114,8 +114,13 @@ forbidden = {'_check.py','check.py','_reference_check.py',
              'hidden_manifest.json'}
 copied = []
 for a in case.get('attachments', []):
-    src = a.get('source') or a.get('name')
-    name = a.get('name') or os.path.basename(src)
+    # attachments 可能是 list[str]（如 'assets/<id>/<name>'）或 list[dict]
+    if isinstance(a, dict):
+        src = a.get('source') or a.get('name')
+        name = a.get('name') or os.path.basename(src) if src else ''
+    else:
+        src = str(a) if a is not None else ''
+        name = os.path.basename(src) if src else ''
     if not name or name in forbidden: continue
     # source 可能是 'assets/<task_id>/<name>' 或裸 '<name>'；统一按 name 在 ASSETS_SRC 取
     def _copy(src_path, name_):
@@ -211,8 +216,13 @@ for line in open(jl):
     if d.get('task_id')==tid:
         forbidden={'_check.py','check.py','_reference_check.py','reference_submit.zip','reference','negative','hidden','hidden_manifest.json'}
         for a in d.get('attachments',[]):
-            s=a.get('source') or a.get('name')
-            n=a.get('name') or (os.path.basename(s) if s else '')
+            # attachments 可能是 list[str] 或 list[dict]
+            if isinstance(a, dict):
+                s=a.get('source') or a.get('name')
+                n=a.get('name') or (os.path.basename(s) if s else '')
+            else:
+                s=str(a) if a is not None else ''
+                n=os.path.basename(s) if s else ''
             if n and n not in forbidden: print(n)
         break
 PY
