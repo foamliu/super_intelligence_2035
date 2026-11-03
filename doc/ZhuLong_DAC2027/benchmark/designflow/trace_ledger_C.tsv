@@ -145,3 +145,4 @@
 1788764026073_8hdj3.messages.json	ziyuny	hfeg0pnd002	305	layout_aether	parked		2026-11-03 21:54	env-setup+generic launch (UI#160 启动业务场景:模拟电路优化·二次执行=generic launch非seed; UI#74/123/132 connect aether, UI#154 open npn symbol=schematic); weak layout_aether seed
 1789960398048_ajqj4.messages.json	lizwen	hfeg0pkn002	298	layout_aether	parked		2026-11-03 21:55	same drc_pattern_gen skill domain as r63 DRCPatManifest (bjube); lizwen DRC testpattern gen saga, UI#95/130/248/382 fnmatch query+.oa pattern=identical theme; techfile angle but core duplicate
 1788743635326_keqfx.messages.json	miccao	hfeg0plg37	303	physical_verify	case	EDA-Eval-DesignFlow-DRCHierLossAudit-001	2026-11-03 22:05	
+1790490487765_6dx8f.messages.json	cwei	hfeahpc504	328	layout_aether	case	EDA-Eval-DesignFlow-CTLESchGenAudit-001	2026-11-03 22:54	
