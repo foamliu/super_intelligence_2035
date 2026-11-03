@@ -1,0 +1,53 @@
+=== incr_eval R1496 START Wed Nov  4 02:32:36 AM CST 2026 === (py=/nas_train/app.e0031982/miniforge3/envs/py310/bin/python3) (CPU guard: OMP=8, EVAL_MAX_WORKERS=1)
+[02:32:36] --- codex: 2 instances (sympy__sympy-20438 sympy__sympy-20590) ---
+[02:32:36] === merge codex predictions ===
+codex: 327 real patches merged
+[02:32:36] === codex eval START 2 instances ===
+Running 2 instances...
+  0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [01:04<01:04, 64.63s/it]1 ran successfully, 0 failed:  50%|█████     | 1/2 [01:04<01:04, 64.63s/it]1 ran successfully, 0 failed: 100%|██████████| 2/2 [01:27<00:00, 43.71s/it]2 ran successfully, 0 failed: 100%|██████████| 2/2 [01:27<00:00, 43.71s/it]2 ran successfully, 0 failed: 100%|██████████| 2/2 [01:27<00:00, 43.71s/it]
+All instances run.
+Total instances: 2
+Instances submitted: 2
+Instances completed: 2
+Instances incomplete: 0
+Instances resolved: 1
+Instances unresolved: 1
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 2
+Unremoved images: 2
+Report written to codex-kimi-k2.6-cloud.verified_full_codex.json
+[02:34:07] === codex eval DONE ===
+[02:34:07] --- deepseek-harness: 2 instances (django__django-16145 django__django-16255) ---
+[02:34:07] === merge deepseek-harness predictions ===
+deepseek-harness: 176 real patches merged
+[02:34:08] === deepseek-harness eval START 2 instances ===
+Running 2 instances...
+  0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [01:21<01:21, 81.20s/it]1 ran successfully, 0 failed:  50%|█████     | 1/2 [01:21<01:21, 81.20s/it]1 ran successfully, 0 failed: 100%|██████████| 2/2 [01:48<00:00, 54.23s/it]2 ran successfully, 0 failed: 100%|██████████| 2/2 [01:48<00:00, 54.23s/it]2 ran successfully, 0 failed: 100%|██████████| 2/2 [01:48<00:00, 54.23s/it]
+All instances run.
+Total instances: 2
+Instances submitted: 2
+Instances completed: 2
+Instances incomplete: 0
+Instances resolved: 2
+Instances unresolved: 0
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 5
+Unremoved images: 2
+Report written to deepseek-harness-kimi-k2.6-cloud.verified_full_deepseek-harness.json
+[02:36:00] === deepseek-harness eval DONE ===
+[02:36:00] --- regen eval summaries (with no-patch detection) ---
+regen_eval_summaries: cline-patched, opencode, pi, claude-code, codex, hermes, deepseek-harness
+  cline-patched: unchanged (n=500 resolved=326 failed=116 infra=0 no_patch=58)
+  opencode: unchanged (n=500 resolved=401 failed=96 infra=0 no_patch=3)
+  pi: unchanged (n=475 resolved=333 failed=130 infra=0 no_patch=12)
+  claude-code: unchanged (n=433 resolved=273 failed=85 infra=0 no_patch=75)
+  codex: WROTE eval_codex.json  n=445 resolved=259 failed=68 infra=0 no_patch=118)
+  hermes: unchanged (n=307 resolved=180 failed=46 infra=0 no_patch=81)
+  deepseek-harness: WROTE eval_deepseek-harness.json  n=182 resolved=147 failed=29 infra=0 no_patch=6)
+=== incr_eval R1496 DONE Wed Nov  4 02:36:01 AM CST 2026 ===
