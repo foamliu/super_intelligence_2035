@@ -2,6 +2,8 @@
 
 WAITING: 1
 
+> 🆕 **【空唤醒 · wake #527 · 2026-11-03 12:03】** 无新运维令。git fetch→origin/main 0ahead/0behind（已同步，HEAD=9bee928fe zhulong wake#519 11:57；origin 新提交均来自 zhulong/harness/designflow/pretrain/data 五线，无 vision 新令）。所有运维令标[已完成]/[已归档]。📦 体积：TASK=27230B / MEMORY≈26.8KB（均≤32KB✓）。进程 baize_vision_loop.sh PID 669545 alive（etimes=442436）；cline in PATH（/home/app.e0031982/.bun/bin/cline）✓。工作副本改动仅为别线文件（ZhuLong），vision 文件无在途改动，未触碰别线。写心跳+日流水+commit+push。**未完成指令：无** ⇒ **WAITING: 1**。
+
 > 🆕 **【空唤醒 · wake #526 · 2026-11-03 09:55】** 无新运维令。git fetch→origin/main 0ahead/0behind（已同步，HEAD=4692b9333 designflow shard B 09:53；origin 无 vision 新令）。所有运维令标[已完成]/[已归档]。📦 体积：TASK=27230B / MEMORY≈26.2KB（均≤32KB✓）。进程 baize_vision_loop.sh PID 669545 alive；cline in PATH（/home/app.e0031982/.bun/bin/cline）✓。工作副本改动均为别线文件（ZhuLong/harness/pretrain 等），vision 文件无在途改动，未触碰别线。写心跳+日流水+commit+push。**未完成指令：无** ⇒ **WAITING: 1**。
 
 > 🆕 **【空唤醒 · wake #525 · 2026-11-03 09:22】** 无新运维令。git fetch→origin/main 0ahead/0behind（已同步，HEAD=53c1bda29 designflow shard A 09:21；origin 无 vision 新令）。所有运维令标[已完成]/[已归档]。📦 体积：TASK=27230B / MEMORY=25705B（均≤32KB✓）。进程 baize_vision_loop.sh PID 669545 alive；cline in PATH（/home/app.e0031982/.bun/bin/cline）✓。写心跳+日流水+commit+push。**未完成指令：无** ⇒ **WAITING: 1**。
@@ -112,7 +114,7 @@ WAITING: 1
 |:---|:---|
 | PHASE | ✅ **论文改稿全部完成（wake#437~#442）**。6_vision_encoder.tex(18行)/7_mllm.tex/0_abstract.tex/1_intro.tex 均已改。6页/ERR=0/UNDEF=0。所有运维令标[已完成]。任务书体积归档完成（35KB→27KB）。**WAITING=1**。 |
 | BUDGET_USED | ~999 GPU·h |
-| 更新 | **2026-11-03 09:55 (wake #526)**：空唤醒（无新运维令）。git fetch→0ahead/0behind（已同步，HEAD=4692b9333 designflow shard B 09:53，非vision令）。所有运维令标[已完成]。📦体积：TASK=27230B/MEMORY≈26.2KB（均≤32KB✓）。**未完成指令：无**。**WAITING=1**。 |
+| 更新 | **2026-11-03 12:03 (wake #527)**：空唤醒（无新运维令）。git fetch→0ahead/0behind（已同步，HEAD=9bee928fe zhulong 11:57，非vision令）。所有运维令标[已完成]。📦体积：TASK=27230B/MEMORY≈26.8KB（均≤32KB✓）。**未完成指令：无**。**WAITING=1**。 |
 
 > 📦 评测耗时归因(2026-10-15) + 运维问答 + 历史条目(2026-10-03~31) 已滚动归档 → daily-memories-vision/各日期.md + ARCHIVE_OPERATOR_VISION.md。需要时再读。
 
