@@ -1,0 +1,5 @@
+请基于pyaether开发一个脚本，找出一个topcell里用到所有pcell
+
+交付接口：submit.zip 内只放一个文件 find_pcells.py（pyAether 脚本）。
+脚本须在 Aether 中运行：import pyAether → 取当前设计 → 取 block → 取所有 instance → 用 dbCheckIsPCell 判定 → 打印 pcell 实例表（含实例名与 master 的 lib/cell/view）。
+判分会把你的 find_pcells.py 放到一个 pyAether 环境里运行并解析其 stdout，请确保脚本可被 exec(open(...)).read() 方式执行并打印结果表。
