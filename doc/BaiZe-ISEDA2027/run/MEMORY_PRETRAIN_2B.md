@@ -21,14 +21,15 @@ WAITING: 1
 > 📦 §#1219（11-03 09:48, CPU eval监控·62轮）→ daily-memories/2026-11-03.md；**结论**：4 eval正常(.29~95%/.12~76%), ETA .29~37-40min/.12~3.8h, CPU<<80%, S1 iter65130健康。被#1220监控。需要时再读。
 > 📦 §#1220（11-03 10:10, CPU eval监控·63轮）→ daily-memories/2026-11-03.md；**结论**：.29 evals 97-98%即将完成, .12 78% ETA~3.4h, S1 iter65300健康。被#1221接续。需要时再读。
 
-> 🆕 2026-11-03 11:47 #1224：**📊 CPU eval·67轮监控——.12 evals ~88% ETA~13:40(~2h)；.29 双 eval iter_30000 启动致 iter_50000 降速 17→44s/it(内存带宽竞争,非CPU核)；CPU .29~18.5%/.12~12.3% <<80%。✅ S1 健康 iter 66140。未完成指令：有**。
-> **① .12 evals**：iter_20000 2283/2599(87.9%) ~22s/it ETA~1.9h→done~13:42；iter_40000 2292/2599(88.2%) ~22s/it ETA~1.9h→done~13:39。CPU .12: %Cpu~12.3%(4.6us+6.5sy+1.2ni), load35, 87.8%idle, <<80%。
-> **② .29 iter_30000**：PID 1459766, 21/2599(0.8%), 启动~19min, 仍在慢启动期(72s/it, 长序列请求), config已修复(mamba_dt_limit=None)。预计过~30请求后收敛。
-> **③ .29 iter_50000**：PID 2024390, 175/2599(6.7%), ~69min, 因 iter_30000 加入竞争从 17s/it 降至 44s/it(内存带宽,非CPU核争用)。待 iter_30000 过慢启动后双 eval 应收敛至~25-30s/it 各。ETA 暂估 .29 双 eval done~明晨(overnight)。CPU .29: %Cpu~18.5%(7.2us+9.6sy+1.7ni), load215(NFS D-state,非CPU争用), 81.3%idle, <<80%。
-> **④ iter_10000 results✅**：arc_c=0.29/arc_e=0.49/boolq=0.61/hs=0.36(norm0.45)/obqa=0.20(norm0.35)/piqa=0.72(norm0.73)/sciq=0.79(norm0.71)/wg=0.54。
-> **⑤ S1 状态**：iter 66140/700k(9.45%), loss~2.11, 0 NaN, 0 skip, ~7.0s/step, ~606K tok/s, lr=1e-3 stable, ckpt@64000(next@66000)。
-> **📦 体积**：TASK=30602B(29.9KB) / MEMORY=22666B(22.1KB)（均 ≤32KB，无需归档）。
-> **下一步**：~13:40 .12 evals完成→收集 20000/40000 results→.29 双 eval overnight→全部5×8有效结果后汇总表+HTML报告。未完成指令：有。WAITING: 1（eval后台运行，监控间隔30min）。
+> 🆕 2026-11-03 12:10 #1225：**📊 CPU eval·68轮监控——.12 evals ~90% ETA~13:45-55(~1.5h)；.29 iter_30000 慢启动(22/2599,0.8%)、iter_50000 247/2599(9.5%,~17s/it,ETA~11h→~23:00)；CPU .29~14.2%/.12~17.3% <<80%。✅ S1 健康 iter 66330/loss 2.105/lr=1e-3 stable。未完成指令：有**。
+> **① .12 evals**：iter_20000 2342/2599(90.1%) ~24s/it ETA~1.8h→done~13:55；iter_40000 2355/2599(90.6%) ~23.5s/it ETA~1.6h→done~13:45。CPU .12: %Cpu~17.3%(5.1us+10.8sy+1.4ni), load39, 82.5%idle, <<80%。
+> **② .29 iter_30000**：PID 1459766, 22/2599(0.8%), 启动~87min, 仍在慢启动期(~50s/it, 长序列请求+ref PyTorch fallback无mamba_ssm/causal_conv1d加速), config已修复(mamba_dt_limit=None)。预计收敛后~25-30s/it(双eval竞争)。
+> **③ .29 iter_50000**：PID 2024390, 247/2599(9.5%), ~95min, ~17s/it(已从44s/it回升), ETA~11h→done~23:00。CPU .29: %Cpu~14.2%(5.3us+7.6sy+1.3ni), load37, 85.5%idle, <<80%。
+> **④ iter_10000 results✅**：arc_c=0.29(n0.26)/arc_e=0.49(n0.47)/boolq=0.61/hs=0.36(n0.45)/obqa=0.20(n0.35)/piqa=0.72(n0.73)/sciq=0.79(n0.71)/wg=0.54。**Avg(acc)=0.500**。
+> **⑤ S1 状态**：iter 66330/700k(9.47%), loss~2.105, 0 NaN, 0 skip, ~7.1s/step, ~606K tok/s, lr=1e-3 stable, ckpt@66000(next@68000)。
+> **📦 体积**：TASK=30602B(29.9KB) / MEMORY=23026B(22.5KB)（均 ≤32KB，无需归档）。
+> **下一步**：~13:45 .12 evals完成→收集 20000/40000 results→.29 双 eval overnight(iter_50000~23:00, iter_30000明晨)→全部5×8有效结果后汇总表+HTML报告。未完成指令：有。WAITING: 1（eval后台运行，下次唤醒~13:45查.12完成）。
+> 📦 §#1224（11-03 11:47, CPU eval·67轮）→ daily-memories/2026-11-03.md；**结论**：.12~88% ETA~13:40, .29 iter_30000启动慢启动, iter_50000降速17→44s/it, iter_10000✅Avg=0.50, S1 iter66140。被#1225监控。需要时再读。
 > 📦 §#1223（11-03 11:25, CPU eval·66轮）→ daily-memories/2026-11-03.md；**结论**：iter_30000重跑启动(.29 config修复), .29双eval CPU~14%, .12~86% ETA~13:40, iter_10000✅, S1 iter65930。被#1224监控。需要时再读。
 > 📦 §#1222（11-03 11:02, CPU eval·65轮）→ daily-memories/2026-11-03.md；**结论**：.29 iter_50000跑通(1.6%), .12~85%, iter_30000 config修复✅, iter_10000✅。被#1223监控(已启动iter_30000重跑)。需要时再读。
 > 📦 §#1221（11-03 10:42, CPU eval·64轮）→ daily-memories/2026-11-03.md；**结论**：.29 evals完成(10000✅+30000❌), iter_50000启动, iter_30000 config修复, .12 ~81%。被#1222监控。需要时再读。
