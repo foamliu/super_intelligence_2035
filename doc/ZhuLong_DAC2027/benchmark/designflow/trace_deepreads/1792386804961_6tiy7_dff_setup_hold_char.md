@@ -72,3 +72,23 @@
 ## 下轮第一件事（DEBT:1）
 - 用本笔记合成 `EDA-Eval-DesignFlow-DffSetupHoldChar-001`：assets/reference/hidden/negative → .75 端到端自验（ref PASS + §4.9 三假 FAIL + negatives FAIL 互异）→ 追加 `EDA-Eval-DesignFlow_B.jsonl` → `mark --status case --case-id ...` → 日报。
 - 优先复用本笔记的陷阱清单写 check.py（hold 窗口 bug + 跷跷板 + 跨输入 + SI 后缀 是 4 个独立的「杀手断言」）。
+
+## 合成尝试日志 (2026-11-04 shard B) — BLOCKED, NOT delivered, NOT in jsonl
+
+本轮进行了实质性合成工作（非 deepread-only），但 DFF 表征在 .75 上未能干净标定，
+按质量闸门（ref 必 PASS selftest）**未追加 jsonl，未 mark --status case**。WIP 与
+详细阻塞分析见 `designflow/_wip_dff_setup_hold/BLOCKER.md`（含可复用的
+char_gen_ref.py / uploader_dff.py / dff_*.sp / params_*.json + 三种 DFF 拓扑的
+标定数据 + 下轮具体路径 A/B/C）。
+
+**核心阻塞**：level-1 Shichman-Hodges DFF 存在根本张力——快（Q 满摆但 tSU/tH~0，
+退化）vs 慢（加内部电容让 tSU/tH 落在可扫范围，但 Q 只到 0.33-0.38V 中间电平，
+从不达到 0.7*vdd，捕获失败）。三种拓扑均试：TG（反馈接错→修→s1 因 Cs1 太慢）；
+TG 减 Cs1（s1 仍 0.30V，体效应阈值降）；NAND（无阈值降，但 clk_b 缓冲带 10-15fF
+太慢→Q 卡 0.23-0.38V 中间电平）。hold 扫描 Q 随 th 单调上升但不过阈值→tH 亦不可提取。
+
+**下轮第一件事**：按 BLOCKER.md 路径 A（推荐）——用安全 level-1 sizing 让 Q 先干净
+满摆（D=1 tsu=200p → Q=vdd±5% 验证），再用 sub-ps 细扫提取 tSU/tH；若 tH 真为 0，
+trap(o) 改源码正则检查（非值）。或路径 B（.75 上拉真 PDK DFF .subckt 黑盒表征）。
+
+ledger 6tiy7 维持 `deepread`（未升 case）。DEBT 顺延。
