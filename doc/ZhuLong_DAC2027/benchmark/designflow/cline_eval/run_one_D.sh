@@ -19,7 +19,7 @@
 #
 # 用法：
 #   run_one_D.sh <task_id> [cline_timeout_sec]
-#   run_one_D.sh EDA-Eval-DesignFlow-Schematic-001 1500
+#   run_one_D.sh EDA-Eval-DesignFlow-Schematic-001 2400
 #   SKIP_RUN=1 run_one_D.sh <task_id>     # 只建 workdir + 部署 hook，不跑 cline（调试）
 #   SKIP_JUDGE=1 run_one_D.sh <task_id>   # 跑完不判分
 set -uo pipefail
