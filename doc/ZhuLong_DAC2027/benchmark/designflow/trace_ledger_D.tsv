@@ -108,3 +108,4 @@
 1792201142166_8g8rx.messages.json	jessegao	hfeg0pkn005	195	analog_context	case	EDA-Eval-DesignFlow-LDOGen-001	2026-11-03 23:10	
 1791602435253_66tx9	ynbai	hfhds206	160	schematic_netlist	parked		2026-11-03 23:31	duplicate task of EDA-Eval-DesignFlow-LibCellList-001 (shard C, zjqiao wg5u2 mc728): same lib_cell.list generation task, ynbai prompt is word-for-word identical to zjqiao
 1791965857356_a7j5y	haooy	hfeg0pkn004	182	analog_context	case	EDA-Eval-DesignFlow-ROGen-001	2026-11-03 23:32	
+1793095651315_qb1ua.messages.json	e0023936	hfhds201	103	waveform	case	EDA-Eval-DesignFlow-FMFreqVsT-001	2026-11-04 00:18	
