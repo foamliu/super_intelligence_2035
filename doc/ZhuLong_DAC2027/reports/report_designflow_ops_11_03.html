@@ -229,7 +229,7 @@
 <li>覆盖 80 个真实用户（去重，占 365 总用户的 21.9%）——原始用户名，非 hash（内部 benchmark 需可追溯）</li>
 <li>trace_source 100% 覆盖（164/164 case 都记录了 host/user/session_file/session_msgs/real_task_summary）</li>
 <li>trace 来源：沈佳成 698 机扫描结果（.75 <code>/home/t0002965/log/ssh_eda_search_20261028_174426/</code>，scan.tsv 698 行，summary.tsv 24085 行）+ 每日扫描日志（<code>eda_trace_YYYYMMDD.log</code>，11/03 最新 14448 qualifying sessions）</li>
-<li>候选池（mc≥300）= 172 个去重 session，已用 152 个，覆盖率 88.4%</li>
+<li>候选池（mc≥100）= 696 个去重 session，已用 266 个，覆盖率 38.2%（旧口径 mc≥300=172 时 88.4% 因候选池太小虚高，已弃）</li>
 </ul>
 
 <h2 id="shards">五、4 Shard 并发架构</h2>
