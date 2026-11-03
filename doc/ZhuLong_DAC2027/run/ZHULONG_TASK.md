@@ -1,92 +1,9 @@
 # ZHULONG_TASK.md — ZhuLong（DAC2027）EDA 消融评测 · 合并任务书
 
 
-### 🚨 用户令 · 2026-11-03 21:0x（**本机安装 llama.cpp + 下载 Qwen/Qwen3.5-0.8B（hf-mirror）· 供后续数据分析**）· 用户直令 ·【新·待执行】
+### 🚨 用户令 · 2026-11-03 21:0x（**本机安装 llama.cpp + 下载 Qwen/Qwen3.5-0.8B（hf-mirror）· 供后续数据分析**）· 用户直令 · ✅ 已完成 → archive §归档 batch 16
 
-> 目标：在 zhulong 本机（36.15 work copy 所在机器）装好 CPU 版 llama.cpp，并把 `Qwen/Qwen3.5-0.8B` 完整拉到本地，作为后续数据分析（trace / 日报摘要、标签、预筛）的离线小模型。
-> 本令**不改论文、不改评测口径、不碰其它线**；只做环境与模型准备。
-> 本令已配**一键脚本**：`doc/ZhuLong_DAC2027/run/setup_llamacpp_qwen35.sh`（全流程 `bash run/setup_llamacpp_qwen35.sh`；分步 `STEP=probe|build|download|convert|smoke`；日志 `/tmp/setup_llamacpp_qwen35_*.log`）。可用它减少试错，仍以本令 §5 的交付物为准。
-> ⚠️ 重要事实（已核实模型卡）：**Qwen3.5-0.8B 是 Image-Text-to-Text 多模态模型**（`qwen3_5`，`AutoProcessor` + `AutoModelForMultimodalLM`，Apache-2.0），**不是纯文本 LLM**。下载必须包含 processor / vision 权重；llama.cpp 若尚不支持该架构，GGUF 转换失败属预期，按下面 §3 回退，不要卡住。
-
-**0. 先探测（只读，先报再动）**
-```bash
-hostname; uname -a; nproc; free -g; df -h .
-command -v git cmake g++ python3 curl || true
-nvidia-smi 2>/dev/null | head -12 || echo "no nvidia-smi"
-nvcc --version 2>/dev/null || echo "no nvcc"
-```
-
-**1. 安装 llama.cpp（CPU 必装；有 CUDA 再加编 GPU 版）**
-- 目录：`TOOLS=${TOOLS:-$HOME/tools}`，源码 `$TOOLS/llama.cpp`；**不要放进 git 仓库**。
-- 网络：`export https_proxy=http://172.19.92.23:13128 http_proxy=$https_proxy`（与本 loop 同代理）；先 `curl -I -m 10 https://github.com` 验证，失败如实报 http_code。
-```bash
-git clone --depth=1 https://github.com/ggml-org/llama.cpp "$TOOLS/llama.cpp"
-cd "$TOOLS/llama.cpp"
-cmake -B build -DCMAKE_BUILD_TYPE=Release -DGGML_NATIVE=ON -DGGML_OPENMP=ON
-cmake --build build -j "$(nproc)" --target llama-cli llama-server llama-quantize
-./build/bin/llama-cli --version
-```
-- 若 `nvidia-smi` 正常且 `nvcc` 可用，再编 `build-cuda`（`-DGGML_CUDA=ON`）；失败**不阻塞**，CPU 版可用即可。
-
-**2. 下载模型（必须走镜像）**
-- 选盘：`df -h` 选剩余 ≥10GB 的路径（建议 `/data/models` 或 `$HOME/models`），**不要放进 git 仓库**。
-```bash
-export HF_ENDPOINT=https://hf-mirror.com
-export HF_HUB_ENABLE_HF_TRANSFER=0
-MODEL_DIR=${MODEL_DIR:-$HOME/models/Qwen3.5-0.8B}
-mkdir -p "$MODEL_DIR"
-hf download Qwen/Qwen3.5-0.8B --local-dir "$MODEL_DIR"
-# 若无 hf 命令：huggingface-cli download Qwen/Qwen3.5-0.8B --local-dir "$MODEL_DIR"
-```
-- 校验：`config.json` / `preprocessor_config.json` / tokenizer 文件 / `*.safetensors` 齐全；无 `*.incomplete`；`du -sh` 与文件数写进报告。
-
-**3. 转 GGUF（能转就转；不支持就记录并回退）**
-```bash
-python3 "$TOOLS/llama.cpp/convert_hf_to_gguf.py" "$MODEL_DIR" \
-  --outtype f16 --outfile "$MODEL_DIR/Qwen3.5-0.8B-f16.gguf"
-# 若成功再量化：
-"$TOOLS/llama.cpp/build/bin/llama-quantize" \
-  "$MODEL_DIR/Qwen3.5-0.8B-f16.gguf" "$MODEL_DIR/Qwen3.5-0.8B-Q8_0.gguf" Q8_0
-```
-- 若报 “unsupported architecture / qwen3_5 / 缺 mmproj”：**不要停**。保留 HF 权重，改用 transformers 冒烟：
-```bash
-python3 -c "import transformers; print(transformers.__version__)"
-# 需要较新版本才认 qwen3_5；不足则建独立 venv（勿污染共享环境）：
-# python3 -m venv ~/.venvs/qwen35 && ~/.venvs/qwen35/bin/pip install -U \
-#   -i https://pypi.tuna.tsinghua.edu.cn/simple transformers accelerate safetensors pillow
-```
-- 文本冒烟（多模态模型也可纯文本输入）：
-```python
-from transformers import AutoProcessor, AutoModelForMultimodalLM
-p = "…/Qwen3.5-0.8B"
-proc = AutoProcessor.from_pretrained(p); m = AutoModelForMultimodalLM.from_pretrained(p)
-msgs=[{"role":"user","content":[{"type":"text","text":"用一句话解释什么是 EDA 设计流程。"}]}]
-inputs=proc.apply_chat_template(msgs, add_generation_prompt=True, tokenize=True, return_dict=True, return_tensors="pt")
-print(proc.decode(m.generate(**inputs, max_new_tokens=64)[0][inputs["input_ids"].shape[-1]:], skip_special_tokens=True))
-```
-- 记录：是否加载成功、耗时、峰值内存、输出是否连贯。
-
-**4. llama.cpp 冒烟（仅当 §3 转 GGUF 成功）**
-```bash
-cd "$TOOLS/llama.cpp"
-./build/bin/llama-cli -m "$MODEL_DIR/Qwen3.5-0.8B-Q8_0.gguf" \
-  -p "用一句话解释什么是 EDA 设计流程。" -n 48 -t 8 --no-warmup
-```
-- 记录 `tok/s`、加载耗时、峰值内存；`/usr/bin/time -v` 或 `ps` 均可。
-- 如需 HTTP：`llama-server` 用 **18080**（禁止占用 8090），测完 `/health` 立即关闭，不留常驻。
-
-**5. 交付**
-1. 中文 HTML 报告：`doc/ZhuLong_DAC2027/reports/report_zhulong_llamacpp_qwen08b_zh.html`（单文件自包含，0 script / 0 CDN / 0 外链）。必含：主机与硬件、llama.cpp commit/版本、代理与镜像、模型路径/文件数/总大小、GGUF 是否成功及大小、冒烟输出片段与 tok/s、失败项与原因、后续数据分析建议（能做什么 / 不能做什么）。
-2. `run/MEMORY_ZHULONG.md` 顶部加 1 条状态（含路径与结论），并写当日 daily。
-3. commit 前缀 `zhulong env:`，push。
-
-**硬约束**
-- 不碰仓库内其它线文件；不 `pkill` 其它进程；不改论文与评测数字。
-- 模型/工具放仓库外；若被迫放仓库内，先加 `.gitignore` 并说明。
-- 下载/编译/转换失败**如实报**，禁止编造 tok/s 或大小。
-- 完成判据：模型完整 + 至少一条冒烟成功（llama.cpp 或 transformers）+ 报告/MEMORY/commit 三件齐。
-
-
+> 闭合：llama.cpp v0.8.0-dev commit `28b812d`（CPU·无 GPU）编译成功（llama-cli/server/quantize 三件齐）+ Qwen3.5-0.8B（qwen3_5 多模态）经 ModelScope 回退下载全（14 文件 1.7G·无 incomplete）+ GGUF 转换意外成功（f16 1.55G / Q8_0 833M）+ **两条冒烟均过**（llama.cpp Q8_0 90.9 tok/s · transformers float32 0.3 tok/s）+ 报告 `reports/report_zhulong_llamacpp_qwen08b_zh.html`(21.8KB·0 外链) + commit `8e6c18978`/`9a4b0504a`（`zhulong env:`）。原文（§0–§5 + 硬约束 + 一键脚本说明）移至 `run/ZHULONG_TASK_ARCHIVE.md` §归档 batch 16。
 
 > 均已闭合，原文（1-line 指针）移至 `run/ZHULONG_TASK_ARCHIVE.md` §归档 batch 15。需要时再读。
 >
