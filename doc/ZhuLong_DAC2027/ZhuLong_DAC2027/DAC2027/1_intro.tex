@@ -1,10 +1,10 @@
 \section{Introduction}
 \label{sec:introduction}
 
-Design engineers' daily work is less about writing fresh scripts than about orchestrating design flows and patching the gaps between EDA tools that refuse to interoperate---a flow that cannot run end-to-end is the single largest source of lost design time. Commercial EDA tools are closed: where they leave a gap, the only recourse is hand-written glue (a Makefile target, a Tcl driver, a SKILL wrapper), precisely the small intent-to-code synthesis at which LLMs excel. This reframes EDA scripting as the connective tissue that lets a general coding agent orchestrate flows natively and fill the breaks where tools stop; this paper asks which factor bottlenecks such an agent, and at which layer.
+Design engineers' daily work is less about fresh scripts than about orchestrating design flows and patching the gaps between EDA tools that refuse to interoperate---a flow that cannot run end-to-end is the single largest source of lost design time. Commercial EDA tools are closed: where they leave a gap, the only recourse is hand-written glue (a Makefile target, a Tcl driver, a SKILL wrapper), precisely the small intent-to-code synthesis at which LLMs excel. This reframes EDA scripting as the connective tissue that lets a general coding agent orchestrate flows natively and fill the breaks; this paper asks which factor bottlenecks such an agent, and at which layer.
 % 设计工程师日常工作与其说写全新脚本，不如说编排 design flow、补上 EDA 工具拒绝互通的断链——flow 跑不到端到端是设计耗时最大单一来源。商用 EDA 工具封闭，留白处只能手写胶水（Makefile 目标、Tcl 驱动、SKILL 封装），而这恰是 LLM 最擅长的小型"意图→代码"合成。这把 EDA scripting 重新定义为让通用 coding agent 天生编排 flow、在工具停步处补断链的结缔组织；本文追问决定这类智能体上限的因素，以及在哪个层约束。
 
-We present \textbf{ZhuLong}, an execution-grounded LLM coding agent for PyAether, SKILL, and Tcl: four unified MCP tools \cite{lee2025autoeda}---semantic and keyword API search, documentation lookup, and sandbox execution---close a generate--execute--refine loop over four commercial runtimes via a single \texttt{lang}--\texttt{host} pair, with offline \textbf{API self-exploration} as a bounded complement. We also give a \textbf{theoretical grounding} (Section~\ref{sec:grounding-theory}): EDA correctness is situated (L4), a layer that offline knowledge---and hence model scale---cannot reach; we argue that the grounding gap on L4 failures is bounded by observation fidelity, a refutable prediction rather than a post-hoc explanation.
+We present \textbf{ZhuLong}, an execution-grounded LLM coding agent for PyAether, SKILL, and Tcl: four unified MCP tools \cite{lee2025autoeda}---semantic and keyword API search, documentation lookup, and sandbox execution---close a generate--execute--refine loop over four commercial runtimes via a single \texttt{lang}--\texttt{host} pair, with offline \textbf{API self-exploration} as a bounded complement. We also give a \textbf{theoretical grounding} (Section~\ref{sec:grounding-theory}): EDA correctness is situated (L4), a layer that offline knowledge---and hence model scale---cannot reach; we argue that the grounding gap on L4 failures is bounded by observation fidelity.
 % 我们提出 ZhuLong，面向 PyAether、SKILL、Tcl 的执行接地 LLM coding agent：四个统一 MCP 工具——语义与关键词 API 检索、文档查阅、沙盒执行——经单一 lang-host 参数对在四个商业运行时闭环"生成–执行–修正"，并以离线 API 自探索为有界补充。
 % 理论论证（§4）：EDA 正确性是情境化属性（L4），是离线知识——因而也是模型规模——无法触及的层；我们论证 L4 失败上的落地鸿沟受观测保真度约束，这是可被实验反驳的预测而非事后解释。
 
@@ -13,9 +13,8 @@ We present \textbf{ZhuLong}, an execution-grounded LLM coding agent for PyAether
     \item \textbf{RQ1 (binding constraint).} We formalize the grounding gap and measure both
     axes it depends on: with the LLM fixed, the system-level observation axis (pure LLM, no
     observation $\to$ full system) spans 57.2~pp; with the harness fixed, the backbone axis
-    spans 23.7~pp. The two axes answer different questions---how much observation buys at a
-    given model, versus how much a stronger prior buys under full observation---and their
-    relative magnitude places observation as the binding constraint in the current
+    spans 23.7~pp. The two axes answer different questions, making
+    observation the binding constraint in the current
     model-capability regime, while model scale still sets the L1--L3 ceiling
     (Section~\ref{sec:grounding-theory}, \ref{sec:experiments}).
     % RQ1（binding 约束）：形式化落地鸿沟，测量其依赖的两条轴——固定 LLM 时，系统级观测轴（纯 LLM 无观测→完整系统）跨 57.2pp；固定 harness 时，backbone 轴跨 23.7pp。
@@ -24,13 +23,11 @@ We present \textbf{ZhuLong}, an execution-grounded LLM coding agent for PyAether
     \item \textbf{RQ2 (necessary components).} Ablation isolates retrieval, execution, and
     belief update as jointly necessary, with toolchain-specific magnitudes that make them
     complementary rather than interchangeable; the cost columns add that full-fidelity
-    read-back is also the cheaper feedback to operate; offline self-exploration
-    is a bounded complement, not a substitute (Section~\ref{sec:experiments}).
+    read-back is also the cheaper feedback to operate (Section~\ref{sec:experiments}).
     % RQ2（必要组件）：消融分离检索、执行、信念更新，联合必要且不可互换；成本列补充全保真回读的运行成本反而更低；自探索为有界补充非替代。
 
     \item \textbf{RQ3 (toolchain generality).} \textbf{EDA-Scripting-Bench} (449 tasks, 4
     runtimes, one schema) re-measures the same structure slice by slice; we specify the
-    harness, schema, and assertion protocol in full (Section~\ref{sec:benchmark}) so that
-    the benchmark can be re-instantiated on other toolchains.
+    harness, schema, and assertion protocol in full (Section~\ref{sec:benchmark}).
     % RQ3（工具链通用性）：EDA-Scripting-Bench（449 任务、4 运行时、单一 schema）逐切片重测同一结构；完整规范 harness、schema 与断言协议，使基准可在其他工具链上重新实例化。
 \end{itemize}
