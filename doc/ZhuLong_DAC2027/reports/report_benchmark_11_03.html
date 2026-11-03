@@ -24,16 +24,35 @@ td{word-break:break-word}
 footer{margin-top:30px;color:#999;font-size:.75rem;text-align:center}
 </style></head><body><div class="wrap">
 <h1>设计流 Benchmark 日报 · 11_03</h1>
-<p><span class="tag pass">多机扩样层 v0.50 已交付</span> <span class="tag legacy">即时令 VII/VIII 整改：单一 jsonl + 设计流契约</span> <span style="color:#999">生成时间 2026-11-03 14:32</span></p>
+<p><span class="tag pass">多机扩样层 v0.50 已交付</span> <span class="tag legacy">即时令 VII/VIII 整改：单一 jsonl + 设计流契约</span> <span style="color:#999">生成时间 2026-11-03 14:34</span></p>
 
-<h2>一、三口径数字（多机版，.75 落盘实测值）</h2>
+<h2>一、三口径数字（.75 实时重扫 2026-11-03，eda_flow run_commands 实测）</h2>
 <div class="kpis">
-<div class="kpi"><div class="n">698</div><div class="l">目标机数</div></div>
-<div class="kpi"><div class="n">365</div><div class="l">用户数（home 有 .cline/data/sessions）</div></div>
-<div class="kpi"><div class="n">14,444</div><div class="l">会话文件数 (*.json)</div></div>
-<div class="kpi"><div class="n">24,085</div><div class="l">IC/EDA 命中会话</div></div>
+<div class="kpi"><div class="n">698</div><div class="l">目标机数（全部有 EDA 命中）</div></div>
+<div class="kpi"><div class="n">365</div><div class="l">去重用户数（跨 host 去重）</div></div>
+<div class="kpi"><div class="n">14,444</div><div class="l">去重命中 session（EDA-trace-worthy）</div></div>
+<div class="kpi"><div class="n">24,085</div><div class="l">命中条目数（10/28 原扫描, 含同 session 多 keyword）</div></div>
 </div>
-<div class="note">数据来源：沈佳成 698 机 SSH 扫描结果（落盘 .75 <code>/home/t0002965/log/ssh_eda_search_20261028_174426/</code>）。11 类分布：layout_aether 14534 · layout_virtuoso 2496 · schematic_netlist 2362 · physical_verify 1295 · analog_context 1167 · spice_sim 1027 · pnr_signoff 503 · waveform 368 · logic_synth 167 · eda_other 159 · skipper 7。</div>
+<div class="note">
+<b>数据来源</b>：沈佳成 698 机 SSH 扫描（.75 <code>/home/t0002965/log/ssh_eda_search_20261028_174426/</code>）+ 每日扫描日志（<code>eda_trace_YYYYMMDD.log</code>）。<br>
+<b>11/03 重算修正</b>（旧值有误）：
+<table style="margin-top:6px;font-size:.75rem">
+<tr><th>口径</th><th>旧值（错）</th><th>实际值（修正）</th><th>错误原因</th></tr>
+<tr><td>用户数</td><td>2850</td><td><b>365</b>（11/03）/ 384（10/28）</td><td>旧值未去重：scan.tsv 各 host users_with_cline 求和，同一用户多 host 登录重复计</td></tr>
+<tr><td>session 文件数</td><td>52698</td><td><b>14444</b>（11/03 去重命中）/ 3899（10/28 去重命中）</td><td>旧值是 files_scanned 求和（所有扫描到的 session，非 EDA 命中的）</td></tr>
+<tr><td>IC/EDA 命中</td><td>24085</td><td>24085 ✅</td><td>= summary.tsv 行数（命中条目，含同 session 多 keyword）</td></tr>
+<tr><td>目标机数</td><td>698</td><td>698 ✅</td><td>698 台全部有 EDA 命中</td></tr>
+</table>
+<b>每日趋势</b>（qualifying sessions，去重命中 session 数）：10/29=14370 · 10/30=2641（异常低，疑似扫描中断）· 10/31=13994 · 11/01=14047 · 11/02=13890 · <b>11/03=14448</b>。会话数在增长（6 天 +78）。
+</div>
+<h3>候选池与覆盖率（候选池 = match_count≥300 的去重 session）</h3>
+<div class="kpis">
+<div class="kpi"><div class="n">172</div><div class="l">候选池（mc≥300 去重 session）</div></div>
+<div class="kpi"><div class="n">49</div><div class="l">mc≥500 去重 session</div></div>
+<div class="kpi"><div class="n">60</div><div class="l">候选池去重用户</div></div>
+<div class="kpi"><div class="n">80/365</div><div class="l">已覆盖用户（21.9%）</div></div>
+</div>
+<div class="note">benchmark 已用 152 个去重 session（出 164 case），覆盖率：候选池维度 152/172=<b>88.4%</b>（但 ledger status 规范化后实际 case 数待核）；全命中 session 维度 152/3899=<b>3.9%</b>；11/03 每日扫描维度 152/14444=<b>1.05%</b>。<br>旧日报 "2.9%" 是因 summary_stats.json 缺失导致 trace_ledger 用了错误分母。</div>
 
 <h2>二、评测用例盘点（benchmarks/EDA-Eval-DesignFlow/EDA-Eval-DesignFlow.jsonl）</h2>
 <div class="kpis">

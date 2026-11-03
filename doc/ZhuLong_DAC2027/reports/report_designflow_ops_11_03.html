@@ -65,10 +65,25 @@
   <div class="kpi"><div class="num">164</div><div class="lbl">真实 trace case 总数</div></div>
   <div class="kpi pass"><div class="num">5/20</div><div class="lbl">cline 通过率 25.0%</div></div>
   <div class="kpi fail"><div class="num">16.3%</div><div class="lbl">pi 历史通过率（基线）</div></div>
-  <div class="kpi"><div class="num">80</div><div class="lbl">覆盖真实用户数</div></div>
-  <div class="kpi"><div class="num">100%</div><div class="lbl">trace_source 覆盖率</div></div>
+  <div class="kpi"><div class="num">365</div><div class="lbl">去重用户数（11/03 实测, 旧值 2850 未去重）</div></div>
+  <div class="kpi"><div class="num">14444</div><div class="lbl">去重命中 session（11/03, 旧值 52698 错）</div></div>
+  <div class="kpi"><div class="num">172</div><div class="lbl">候选池（mc≥300, 覆盖率分母）</div></div>
+  <div class="kpi"><div class="num">80/365</div><div class="lbl">已覆盖用户 21.9%</div></div>
   <div class="kpi"><div class="num">100%</div><div class="lbl">断言 ≥8 达标率（163/163）</div></div>
   <div class="kpi warn"><div class="num">2400s</div><div class="lbl">cline timeout（今日调整）</div></div>
+</div>
+
+<div class="alert fix">
+<b>三口径修正（11/03 重扫 .75 实测）</b>：用 eda_flow MCP 在 .75 上重算，发现旧值两个错误：
+<table style="margin-top:8px">
+<tr><th>口径</th><th>旧值（错）</th><th>实际值</th><th>原因</th></tr>
+<tr><td>用户数</td><td><span class="badge fail">2850</span></td><td><span class="badge pass">365（去重）</span></td><td>旧值是 scan.tsv 各 host users_with_cline 求和，同一用户在多台机器登录重复计（整个 PDC 也没这么多人）</td></tr>
+<tr><td>session 文件数</td><td><span class="badge fail">52698</span></td><td><span class="badge pass">14444（去重命中）</span></td><td>旧值是 files_scanned 求和（所有扫描到的 session），非 EDA-trace-worthy 命中 session</td></tr>
+<tr><td>IC/EDA 命中</td><td>24085</td><td>24085 ✅</td><td>= summary.tsv 行数，正确</td></tr>
+<tr><td>目标机数</td><td>698</td><td>698 ✅</td><td>698 台全部有 EDA 命中</td></tr>
+</table>
+<b>每日趋势</b>（qualifying sessions）：10/29=14370 · 10/30=2641(异常低) · 10/31=13994 · 11/01=14047 · 11/02=13890 · <b>11/03=14448</b>。会话数在增长（6 天 +78）。<br>
+<b>trace 覆盖率</b>：候选池(mc≥300)=172 个去重 session，benchmark 已用 152 个 → <b>88.4%</b>（旧日报 "2.9%" 是因 summary_stats.json 缺失用了错误分母）；全命中 session 维度 152/3899=3.9%。
 </div>
 
 <h3>断言数分布（163 条含「N 条断言」格式的 case）</h3>
@@ -208,9 +223,10 @@
 
 <h3>trace 来源</h3>
 <ul>
-<li>覆盖 80 个真实用户（原始用户名，非 hash——内部 benchmark 需可追溯）</li>
+<li>覆盖 80 个真实用户（去重，占 365 总用户的 21.9%）——原始用户名，非 hash（内部 benchmark 需可追溯）</li>
 <li>trace_source 100% 覆盖（164/164 case 都记录了 host/user/session_file/session_msgs/real_task_summary）</li>
-<li>trace 来源：Shen Jiacheng 的 698 机扫描结果（/home/t0002965/log/ssh_eda_search_20261028_174426/，scan.tsv 699 行，summary.tsv 24086 行）</li>
+<li>trace 来源：沈佳成 698 机扫描结果（.75 <code>/home/t0002965/log/ssh_eda_search_20261028_174426/</code>，scan.tsv 698 行，summary.tsv 24085 行）+ 每日扫描日志（<code>eda_trace_YYYYMMDD.log</code>，11/03 最新 14448 qualifying sessions）</li>
+<li>候选池（mc≥300）= 172 个去重 session，已用 152 个，覆盖率 88.4%</li>
 </ul>
 
 <h2 id="shards">五、4 Shard 并发架构</h2>
