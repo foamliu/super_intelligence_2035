@@ -89,3 +89,9 @@
 1792139236507_7jzqb.messages.json	reedchen	hfeg0plg93	200	waveform	case	EDA-Eval-DesignFlow-FineSimTskew-001	2026-11-03 15:46	
 1793078373656_wqhsu.messages.json	xiwang	hfeg0pkn003	289	schematic_netlist	case	EDA-Eval-DesignFlow-ScmosStructFind-001	2026-11-03 16:27	
 1789983785169_qqvzo.messages.json	e0031668	hfeg0pkn003	206	schematic_netlist	parked		2026-11-03 17:14	duplicate task of ErcSetupGen-001 (same user e0031668, same ERC ercSetup.tcl task; delivered from 1dh6s mc389)
+1789526951493_wa1uw.messages.json					parked		2026-11-03 17:18	multi-turn teaching session (6-5ys/5csl hierarchy Q&A), no clean single deliverable DoD
+1790658262664_zjzz8.messages.json					parked		2026-11-03 17:18	vam-agent IO_CABufCore VAMS modeling; sim license-killed, model correctness fuzzy/subjective, no objective check
+1793021121702_24h7g.messages.json					parked		2026-11-03 17:18	FAILURE trace - agent overwrote user circuit with schCreateNoteLabel on blank cellview; user requested recovery, not golden answer
+1792394864015_10qhm.messages.json					parked		2026-11-03 17:18	build DDR5 SPICE circuit learning assistant system; infra/system-build, no single verifiable deliverable
+1787570565957_i41yw.messages.json					parked		2026-11-03 17:18	ERC_AI_CHECK batch run_all.sh over drcpa_rules; infra/batch-scripting, depends on real ERC rules
+1792649635599_u0ke5.messages.json					parked		2026-11-03 17:18	vam-agent which-cell-can-optimize-sim-speed; pure analysis/recommendation, no artifact deliverable
