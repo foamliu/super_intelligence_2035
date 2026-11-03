@@ -69,3 +69,4 @@
 1789038497364_qvkte	e0039503	hfeg0plg49	22	digital	parked		2026-11-03 22:41	templated '启动业务场景: 数字 RTL 设计'; assistant only explored /proj/ddjoc/V0, no deliverable, no gold; thin 26 msgs
 1788775118036_48swh	lorikx	hfeg0pjn200	10	eda_other	parked		2026-11-03 22:41	non-EDA: Chinese input method Q&A; skip
 1783323056207_rc0jh	e0014566	hfeg0plg49	71	pnr_signoff	parked		2026-11-03 22:41	'请尝试连接virtuoso' analog connect request; not digital/pnr task
+1793584942223_nrkph	alan3zh	hfeg0pkn003	1367	pnr_signoff	case	EDA-Eval-DesignFlow-RedhawkGenInputs-001	2026-11-04 00:17	
