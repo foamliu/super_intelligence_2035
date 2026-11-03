@@ -2,20 +2,22 @@
 WAITING: 0
 > 🛑 **【运维通告 · 2026-11-02 19:51】S1 已由 ops 中继重启并在跑**：`bash scripts/train.sh s1 --nodes 2`，launcher pid **4163528**，从 **ckpt 58000** 续（19:55:40 起 iter **58010**→58030，7.0–7.2 s/step ≈**582K tok/s**，双机 16 卡 **98–100%**、~75GB/卡、~690W）。⇒ **GPU 不再空闲**：🚫 严禁再起任何训练/GPU 评测进程（会双写 ckpt 或 OOM）；"GPU idle → 2.5h 评测"的结论已过期。原 **18:39:51 SIGKILL / 18:50:18 SIGBUS** 的现场日志已归档为 `/tmp/baize_s1_baize2b_worker.log.crash_1102_1839` 与 `..._master.log.crash_1102_1839`（🚫 勿删，待 root 查 dmesg 定 OOM vs 误杀）。CPU 评测继续但**必须降载**：`OMP_NUM_THREADS≤8` + `nice -n 19` + 每机并发 ≤2，**禁止 `pkill python`**（18:39 训练被 -9 的疑似原因）。另：本次 resume **未恢复 scheduler**，LR 从 warmup 重来（58010=5e-6，每 10 步 +5e-6，约 2000 步/3.9h 后回 1e-3）——实验日志须记一笔。详见 `BAIZE_PRETRAIN_2B_TASK.md` 顶部运维令。
 
-> 🆕 2026-11-03 14:55 #1235：**4 evals 全部在跑（1 done + 4 running）·float32 仍在 ramp-up(~73-95s/it, 会加速)·bf16 iter_50000 32% ETA~7.6h·S1 iter 67720 健康·CPU .29~15.6%/.12~14.1% 均<<80% ✅·未完成指令：有**。
-> **① eval 进度快照（14:54 实测）**：
+> 🆕 2026-11-03 15:00 #1236：**4 evals 全部在跑（1 done + 4 running）·float32 .29 正在加速(73→55s/it ✅)·.12 float32 仍慢(~93s, 2进程竞争)·bf16 iter_50000 33% ETA~7.5h·S1 iter 67790 健康·CPU .29~14%/.12~21% 均<<80% ✅·未完成指令：有**。
+> **① eval 进度快照（15:00 实测）**：
 > - iter_10000 ✅ **DONE** bf16 genuine: arc_c=0.29, arc_e=0.49, boolq=0.61, hs=0.36, obqa=0.20, piqa=0.72, sciq=0.79, wg=0.54, **Avg(acc)=50.0%**
-> - iter_50000 🔄 bf16 genuine: 837/2599(32%), 15.64s/it, ETA 7h39m → done ~22:30 Nov3 (PID 2024390 on .29)
-> - iter_30000 🔄 **float32**: 6/2599, ~73s/it ramp-up (PID 3340291 on .29, 重启于14:46)
-> - iter_20000 🔄 **float32**: 6/2599, ~95s/it ramp-up (PID 1259403 on .12, 启动于14:44)
-> - iter_40000 🔄 **float32**: 6/2599, ~93s/it ramp-up (PID 1259184 on .12, 启动于14:44)
-> **② S1 训练**：iter 67720/700000, loss 2.087, 0NaN, ~600K tok/s, LR=1e-3(warmup已完成), grad-norm 0.092-0.104 稳态 ✅
-> **③ CPU**：.29 6.0%us+8.2%sy+1.4%ni≈15.6%busy/84.3%idle(load 36.8/224核)；.12 5.1%us+9.0%sy≈14.1%busy/85.8%idle(load 33.0)。均 <<80% ✅
-> **④ ETA**：float32 ramp-up 中(当前73-95s/it, 预计收敛到~35-45s/it); 3×float32(2599×40s≈29h)并行→done Nov4-5; iter_50000 bf16→done Nov3 22:30。全部 5/5 genuine 预计 Nov4 晚~Nov5 完成。
-> **📦 体积**：TASK=30602B(29.9KB)/MEMORY=26016B(25.4KB)（均 ≤32KB，无需归档）。
-> **下一步**：①下轮查 float32 是否加速（ramp-up→收敛）②iter_50000 done→收结果 ③全部 5/5 genuine→终版报告 report_pretrain_cpu_eval_8sets_zh.html + 日报。未完成指令：有 ⇒ WAITING: 0。
+> - iter_50000 🔄 bf16 genuine: 866/2599(33%), 15.83s/it, ETA 7h37m → done ~22:30 Nov3 (PID 2024390 on .29, OMP=8)
+> - iter_30000 🔄 **float32**: 14/2599(0.5%), 55s/it **↓加速中**(73→61→55s, PID 3340291 on .29, OMP=4, 重启于14:49)
+> - iter_20000 🔄 **float32**: 10/2599, ~93s/it ramp-up慢(2进程竞争, PID 1259403 on .12, OMP=4, 启动于14:44)
+> - iter_40000 🔄 **float32**: 10/2599, ~93s/it ramp-up慢(2进程竞争, PID 1259184 on .12, OMP=4, 启动于14:44)
+> **② S1 训练**：iter 67790/700000, loss 2.10, 0NaN, 0skip, ~600K tok/s, LR=1e-3(稳态), grad-norm 0.091-0.119 ✅。ckpt 最新 iter_66000(next@68000)。
+> **③ CPU**：.29 5.1%us+8.1%sy+1.1%ni≈14.3%busy/85.5%idle(load 34.7/224核, 2 evals)；.12 8.1%us+12.0%sy+1.0%ni≈21.1%busy/78.6%idle(load 33.7, 2 evals)。均 <<80% ✅
+> **④ ETA**：float32 .29 正在收敛(55s/it↓, 预计到~35-40s → 2585×38s≈27h → done Nov4 ~18:00)；.12 float32 2进程竞争慢(93s/it, 预计收敛到~60-80s → 2589×70s≈50h → done Nov5 ~12:00)。iter_50000 bf16→done Nov3 22:30。全部 5/5 genuine 预计 **Nov5**。
+> **⑤ 观察/优化机会**：.29 float32 OMP=4 单进程已加速(73→55s)；.12 两 float32 进程竞争致慢。**当 iter_50000 done(~22:30)后 .29 空出**，可考虑把 1 个 .12 float32 迁到 .29（或重启 .12 的用 OMP=8）以缩短 ETA。下轮评估。
+> **📦 体积**：TASK=30602B(29.9KB)/MEMORY=25596B(25.0KB)（均 ≤32KB，无需归档）。
+> **下一步**：①iter_50000 done(~22:30)→收结果+考虑迁移优化 ②监控 float32 收敛速度 ③全部 5/5 genuine→终版报告 report_pretrain_cpu_eval_8sets_zh.html + 日报。未完成指令：有 ⇒ WAITING: 0。
 >
-> 📦 §#1234（11-03 14:50, root cause bf16 NaN + 4 evals 重跑启动）→ daily-memories/2026-11-03.md；**结论**：bf16 CPU forward 对 iter_20000/30000/40000 产生 NaN logits(Mamba2 SSM bf16 溢出); float32 修复; 4 evals 启动(1 bf16+3 float32)。被#1235监控。需要时再读。
+> 📦 §#1235（11-03 14:55, CPU eval 监控·float32 ramp-up）→ daily-memories/2026-11-03.md；**结论**：4 evals 在跑, iter_10000 DONE(Avg50%), float32 刚启动ramp-up(73-95s/it), ETA Nov4-5。被#1236监控(已确认.29加速中)。需要时再读。
+> 📦 §#1234（11-03 14:50, root cause bf16 NaN + 4 evals 重跑启动）→ daily-memories/2026-11-03.md；**结论**：bf16 CPU forward 对 iter_20000/30000/40000 产生 NaN logits(Mamba2 SSM bf16 溢出); float32 修复; 4 evals 启动(1 bf16+3 float32)。被#1236监控。需要时再读。
 
 
 
