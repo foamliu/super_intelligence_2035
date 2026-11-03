@@ -122,3 +122,5 @@
 1792993372322_f6x1i	e02141	hfeg0pkn002	519	schematic_netlist	parked		2026-11-04 05:34	TCAD sentaurus deck (sdevice/sprocess/svisual/SWB), KW netlist matched TCAD not circuit, not D-domain
 1787625155049_ovo6z	e0014566	hfeg0pkn001	285	analog_context	case	EDA-Eval-DesignFlow-RsCalcChk-001	2026-11-04 05:53	
 1789544872347_mi210.messages.json	zjqiao	hfhds206	119	schematic_netlist	case	EDA-Eval-DesignFlow-CompressNetlist-001	2026-11-04 06:48	
+1789644585939_3e35z	zjqiao	hfhds206	118	schematic_netlist	parked		2026-11-04 07:27	dup of existing CompressNetlist-001 (mi210, same Run_Compress_Netlist task)
+1791017602459_fwgyy	zjqiao	hfhds206	145	schematic_netlist	claimed		2026-11-04 07:29	
