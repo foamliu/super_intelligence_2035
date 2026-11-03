@@ -64,4 +64,4 @@ djml8					case	EDA-Eval-DesignFlow-PFDdeadZone-001	2026-11-02 17:47
 1792386804961_6tiy7	kaixuanx	hfeg0pkn001	250	characterization	deepread		2026-11-04 03:52	DFF setup/hold char; deepread done; synthesis DEBT next round
 1792386804961_6tiy7.messages.json					case	EDA-Eval-DesignFlow-DffSetupHoldChar-001	2026-11-04 05:11	
 1790563683904_l7aol.messages.json	jason17w	hfeg0pnd002	288	spice_sim	case	EDA-Eval-DesignFlow-NetlistLintHsp-001	2026-11-04 06:09	domain mismatch: trace=netlist syntax checker (L1 python parse), NetlistChk-001 already built in shard D (schematic_netlist); not spice_char L2
-1792042085695_uky6c.messages.json	t0002441	hfhds201	136	spice_sim	deepread		2026-11-04 06:35	FineSim DC nonconv Q&A; deepread done; synthesis DEBT next round (FineSim license outage on .75 blocks GT; HSPICE port needs reliable nonconv trigger)
+1792042085695_uky6c.messages.json	t0002441	hfhds201	136	spice_sim	case	EDA-Eval-DesignFlow-FineSimDcConvFix-001	2026-11-04 07:13	FineSim DC nonconv Q&A; deepread done; synthesis DEBT next round (FineSim license outage on .75 blocks GT; HSPICE port needs reliable nonconv trigger)
