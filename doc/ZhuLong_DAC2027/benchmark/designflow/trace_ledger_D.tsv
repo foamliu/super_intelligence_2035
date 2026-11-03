@@ -69,7 +69,7 @@
 1792380576403_uumms	e0029308	hfeg0pkn001	343	schematic_netlist	case	EDA-Eval-DesignFlow-CellVerilogExtract-001	2026-11-03 10:10	
 1788577896116_33zw1.messages.json					case	EDA-Eval-DesignFlow-NetPathHL-001	2026-11-03 10:44	
 1792831256137_6qt0a	harrywu	hfeg0pkn002	319	schematic_netlist	parked	cross-shard dup = shard B EDA-Eval-DesignFlow-DelayChainEdgeMeas-001 (spice_sim)	2026-11-03 10:54	
-1790490487765_6dx8f	cwei	hfeahpc504	328	schematic_netlist	claimed		2026-11-03 11:07	
+1790490487765_6dx8f	cwei	hfeahpc504	328	schematic_netlist	parked		2026-11-03 11:26	overlaps CTLEAether-001 (same user cwei/lib spice_agent_test/topology CTLE; golden conn table = CTLEAether-001 gen_ctle_A.py public asset -> cross-case answer leakage per §4.8)
 1791958525711_f1fik	chengleiy	hfeg0pkn001	504	schematic_netlist	parked	PDK/LVS-QA infra (read-all-scripts comprehension), not D design-flow	2026-11-03 11:08	
 1792487689184_4ybw1	yan1zh	hfeg0plg65	495	schematic_netlist	parked	layout-from-schematic + LVS (shard C territory), OA binary, pyAether sandbox refused	2026-11-03 11:08	
 1792570431387_vdqlw	ypzheng	hfeg0pkn003	335	analog_context	parked	Aether tool-QA skill creation (infra), not design-flow	2026-11-03 11:08	
@@ -81,3 +81,4 @@
 1792400027384_ahjnv	zhukaic	hfeahpc503	397	analog_context	parked	cross-shard dup = B OpampACSpec-001 (spice_sim)	2026-11-03 11:08	
 1793093197648_x2w2z	yueliu	hfeahpc501	303	waveform	parked	cross-shard dup = B AlterDeckSplit-001 (spice_sim)	2026-11-03 11:08	
 1787903140887_314mt	sophiaw	hfeg0plg09	378	analog_context	parked	cross-shard dup = B InvPVTchar-001 (spice_sim)	2026-11-03 11:08	
+1792660810859_l0qrf	xiwang	hfeg0pkn003	299	schematic_netlist	case	EDA-Eval-DesignFlow-DevUsageExtract-001	2026-11-03 11:50	
