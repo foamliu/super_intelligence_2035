@@ -5616,3 +5616,8 @@
 | 2026-11-03 | 2610.42147 | Latent Sparse Attention: Towards Subquadratic Ultra-Long Context Attention | cs.AI | 收录 |
 | 2026-11-03 | 2610.41359 | LEAP: Efficient LLM Inference Scheduling with Generalizable Length Prediction | cs.AI | 收录 |
 | 2026-11-03 | 2610.41177 | TraceSpec: Understanding and Improving Speculative Decoding for LLM Agents | cs.CL | 收录 |
+| 2026-11-03 | 2611.03330 | The SIMPLE Law for Energy Cost of LLM Inference | cs.AI | 收录 |
+| 2026-11-03 | 2611.03600 | Four Bridges: Measuring Deception Propensity in a Multi-Agent Game | cs.AI | 收录 |
+| 2026-11-04 | 2611.03590 | A Scaling Theory of Multi-Epoch Pretraining: Late-Time Overfitting and Ensembling | cs.LG | 收录 |
+| 2026-11-04 | 2611.03577 | Sonar-MoE: In-Backward Expert Updates for Memory-Efficient Mixture-of-Experts Training | cs.LG | 收录 |
+| 2026-11-04 | 2611.03633 | Pretraining Data Scale Reverses the Muon-AdamW Fine-Tuning Gap | cs.LG | 收录 |

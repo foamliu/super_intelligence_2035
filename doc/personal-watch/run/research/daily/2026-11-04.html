@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>论文推荐日报 · 2026-11-04（早报 · 3/5）· research 线</title>
+<style>
+  :root { --primary:#0b3d6e; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700; --bad:#cf222e;
+          --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+         color:var(--text); background:var(--bg); line-height:1.7; font-size:15px; }
+  .wrap { max-width:1040px; margin:0 auto; padding:32px 20px 80px; }
+  header.hero { background:linear-gradient(135deg,#0b3d6e 0%,#1f6feb 100%); color:#fff; border-radius:14px;
+                padding:30px 32px; margin-bottom:22px; box-shadow:0 8px 24px rgba(11,61,110,.18); }
+  header.hero h1 { margin:0 0 6px; font-size:24px; letter-spacing:.3px; }
+  header.hero .sub { font-size:15px; opacity:.95; }
+  header.hero .meta { margin-top:14px; font-size:13px; opacity:.9; display:flex; flex-wrap:wrap; gap:8px 18px; }
+  header.hero .meta span { background:rgba(255,255,255,.14); border-radius:999px; padding:2px 12px; }
+  .disc { margin-top:14px; font-size:12.5px; background:rgba(0,0,0,.18); border-radius:8px; padding:8px 12px; opacity:.95; }
+  .badge { display:inline-block; padding:1px 10px; border-radius:999px; font-size:12.5px; font-weight:700; vertical-align:middle; }
+  .b-am { background:#e6f4ea; color:#0b6b2f; }
+  .b-pm { background:#ddf4ff; color:#0b3d6e; }
+  .b-jz { background:#dafbe1; color:var(--ok); } .b-kp { background:#ffeef8; color:#a3238e; }
+  .progress { margin-top:8px; font-size:13.5px; }
+  h2.sec { font-size:19px; margin:34px 0 12px; padding-bottom:8px; border-bottom:2px solid var(--border); }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:18px 22px; margin:16px 0;
+          box-shadow:0 1px 3px rgba(27,31,36,.06); }
+  .card h3 { margin:0 0 4px; font-size:17px; line-height:1.45; }
+  .card .no { display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px; margin-right:8px;
+              border-radius:50%; background:var(--accent); color:#fff; font-size:14px; font-weight:700; vertical-align:middle; }
+  .row { display:flex; gap:10px; margin:7px 0; font-size:14px; }
+  .row .k { flex:0 0 108px; color:var(--muted); font-weight:600; }
+  .row .v { flex:1; }
+  .orig { font-style:italic; color:#0b3d6e; }
+  code { background:#eef1f4; border:1px solid #e1e4e8; border-radius:5px; padding:1px 6px;
+         font-family:Consolas,Menlo,monospace; font-size:12.5px; color:#0b3d6e; }
+  a { color:var(--accent); word-break:break-all; }
+  .reason { background:#f0f6ff; border:1px solid #cfe0f5; border-left:4px solid var(--accent); border-radius:8px;
+            padding:10px 14px; margin-top:10px; font-size:13.5px; }
+  table { border-collapse:collapse; width:100%; margin:12px 0; font-size:13px; background:var(--card); }
+  th,td { border:1px solid var(--border); padding:7px 10px; text-align:left; vertical-align:top; }
+  th { background:#eef3f8; color:var(--primary); font-weight:600; }
+  tr:nth-child(even) td { background:#fafbfc; }
+  .note { background:#fff8ef; border:1px solid #f0d9b5; border-left:4px solid var(--warn); border-radius:8px;
+          padding:10px 16px; font-size:13px; color:#6a4a00; }
+  .ok-box { background:#f0fff4; border:1px solid #b7f0c5; border-left:4px solid var(--ok); border-radius:8px;
+            padding:10px 16px; font-size:13px; }
+  footer { margin-top:44px; padding-top:16px; border-top:1px solid var(--border); color:var(--muted); font-size:12.5px; }
+  ul,ol { margin:6px 0; padding-left:20px; } li { margin:3px 0; }
+</style>
+</head>
+<body>
+<header class="hero">
+  <h1>论文推荐日报 · 2026-11-04 <span class="badge b-am">早报 · 3/5</span></h1>
+  <div class="sub">每日 5 篇推荐论文（早 3 / 晚 2）· <b>今日进度 3 / 5（待 18:00 晚报补 2 篇）</b> · 早 3 篇按<b>「借鉴」</b>口径（数据墙下的多轮预训练 / MoE 训练省显存 / 优化器与微调的取舍），三篇分属<b>数据与缩放 / 训练系统 / 优化器</b>，刻意避免同质。</div>
+  <div class="meta">
+    <span>📅 日期：2026-11-04（CST 本地日，<b>周三</b>；本轮 = UTC 2026-11-03T22:00）</span>
+    <span>🏷 标识：早报（AM · 3 / 5）</span>
+    <span>🎯 数据源：arXiv（export.arxiv.org API + 官方 <code>id_list</code> 复核）</span>
+    <span>🕒 生成：2026-11-04 06:0x CST</span>
+  </div>
+  <div class="progress">📈 <b>今日进度：3 / 5</b> —— 早 3 篇 <span class="badge b-jz">借鉴</span>（<b>多轮缩放</b>：10–100M 唯一 FineWeb token 上最优约 <b>9–14 轮</b>后验证损失回升，<b>4 模型集成</b>在匹配算力下比 2× 宽单模型低 <b>0.16 nats</b>，并给出「集成规模随算力增长 ≥ 单成员训练时长」的分配律；<b>Sonar-MoE</b>：反向中按整批专家张量更新并释放梯度，峰值显存 <b>−19%–22%</b>（OLMoE <b>55.6→43.6 GB</b>）、步时 <b>−17%–23%</b>、吞吐 <b>+20.2%–30.4%</b>；<b>Muon vs AdamW</b>：大数据预算下 AdamW 微调后反超，交叉点随模型增大左移（30M：<b>320 TPR</b> → 600M：<b>10 TPR</b>））。<br>ℹ️ <b>批次</b>：仍为 <code>2026-11-02</code>（<code>cat:cs.CL</code> 探针 <code>totalResults=124,521</code>、最新 <code>2026-11-02T18:57:36Z</code>（<code>2611.03634v1</code>）、cs.CL 区间 <b>304</b>、全库同区间 <b>4,570</b>、广度 <b>642,318</b> —— <b>与 11-03 PM 逐项相同</b>；4 条独立复核 <b>4/4</b> <code>200</code>）。本地 <b>11-04 周三 06:00 = 美东 11-03 周二 17:00</b>，下一批公告在 <b>美东 11-03 20:00 ET = 本地 11-04 09:00</b>，<b>晚于本轮约 3 小时</b> ⇒ 未刷新符合日历。故早 3 篇取自 PM 轮已建好的 <b>337 条</b> 11-02 批次候选池（与 <code>SEEN</code> <b>0 条重复</b>；PM 已用 2 条，本轮从剩余里选 3 条；附录 A/B）。</div>
+  <div class="disc">⚠️ <b>免责</b>：本页所有条目均为「<b>推荐 / 待读线索</b>」，<b>非结论</b>；摘要基于 arXiv 官方标题 + 摘要 + 论文 PDF 正文核对（部分表格/章节），<b>未逐篇精读全篇</b>。不得据以声称「已验证 / 可复现收益 / SOTA 已证」。数字均<b>作者自报</b>，本线未复现。</div>
+</header>
+
+<div class="wrap">
+<div class="note">
+  <b>入围与标签口径</b>：<span class="badge b-jz">借鉴</span> = 与在研工作相关（<b>BaiZe</b>：从零训练 ~2B / Mamba-2×attention 混合 / 规模律 / 数据配比 / 后训练 SFT·RL / 多模态 / 高效推理；<b>ZhuLong</b>：execution-grounded EDA coding agent / MCP 工具 / generate–execute–refine / code agent harness / 评测基准；含<b>存储/芯片</b>视角）。
+  <span class="badge b-kp">科普</span> = 面向《两分钟论文》科普视频：<b>大众看得懂 + 有传播力</b>（可与我们工作无关）。<b>两口径不混用</b> —— 早报 3 篇全按「借鉴」选；晚报 2 篇（18:00 轮）全按「科普」选。
+</div>
+
+<div class="ok-box">
+  <b>早报取数说明（诚实口径 · AM）</b>：本轮唤醒于 <b>本地 2026-11-04 06:00（CST，周三）</b> = <b>UTC 2026-11-03T22:00</b>。本轮的<b>前一半时间用于补跑 11-03 PM 中断的收口</b>（2 篇科普 / 分镜 / 日报邮件，见 <a href="2026-11-03.html">2026-11-03 日报</a>），随后做本日早 3。<br>
+  <b>取证路径</b>：本轮<b>未重复</b> R1′ 分源探针（<code>arxiv_fetch.py --probe</code>）；HF / RSS 状态<b>沿用 r129</b>（HF <code>daily_papers</code> ❌ <code>[Errno 101]</code>；RSS <code>cs.LG</code> 偶发 <code>ConnectionResetError(104)</code>），<b>仅作发现、不作本轮证据</b>。选文证据全部来自：① 4 条批次复核（<code>raw/2026-11-04-am-verify-r131.txt</code>，4/4 <code>200</code> + <code>application/atom+xml; charset=utf-8</code>）；② 官方 <code>id_list</code> 复核（<code>raw/2026-11-04-am-idlist-r131.xml</code>，5/5 命中，含 PM 的 2 篇；本轮 3 篇 <code>published</code> 前缀 <code>2026-11-02</code> 断言通过）；③ 候选池来自 PM 轮 <code>raw/2026-11-03-pm-candidates-r130.json</code>（5 条单分类查询 5/5 <code>200</code>）。<br>
+  <b>时效</b>：三篇 <code>published</code> 均为 <b>2026-11-02</b>（≈<b>27.5h / 27.6h / 27.1h</b>），<b>均在 72h 窗口内</b>，<b>未放宽窗口、未拿超窗条目凑数</b>。<br>
+  <b>去重</b>：337 条候选与 <code>SEEN.md</code> 逐 ID 比对 <b>0 条重复</b>；PM 已收录 2 条（<code>2611.03330</code> / <code>2611.03600</code>）；本轮 3 条均不在 <code>SEEN</code>，且与近 7 天日报无重复。
+</div>
+
+<div class="card">
+  <h3><span class="no">1</span>A Scaling Theory of Multi-Epoch Pretraining: Late-Time Overfitting and Ensembling</h3>
+  <div class="row"><div class="k">中文一句话</div><div class="v">未来预训练会先被<b>数据总量</b>卡住，而不是算力。固定数据反复训多轮时，验证损失<b>先降后升</b>：作者在 <b>10–100M 唯一 FineWeb token</b> 的小模型上复现 U 形曲线（最优约 <b>9–14 轮</b>后回升），并用 <b>logit 平均</b>（独立训练模型的集成）削弱晚期过拟合、推迟最优停止；在匹配参数–token 预算下，<b>4 个基座模型的集成</b>比「宽度翻倍」的单模型验证损失低 <b>0.16 nats</b>。理论上给出 power-law 随机特征集成的多轮 SGD 的 <b>DMFT</b>（跟踪轮内 / 跨轮 / 跨成员误差相关），并导出固定数据与单模型规模下的<b>算力分配律</b>：集成规模随算力增长<b>至少不慢于</b>单成员训练时长，超出极限损失的余量按算力<b>幂律</b>下降。</div></div>
+  <div class="row"><div class="k">原题</div><div class="v"><span class="orig">A Scaling Theory of Multi-Epoch Pretraining: Late-Time Overfitting and Ensembling</span></div></div>
+  <div class="row"><div class="k">作者 / 机构</div><div class="v">Zhen Yang · Yidi Miao · Blake Bordelon（<b>3 位</b>；据 PDF 首页：<b>University of Texas at Austin</b>（Zhen Yang、Blake Bordelon）+ <b>Carnegie Mellon University</b>（Yidi Miao）；前两位为共同一作）</div></div>
+  <div class="row"><div class="k">日期</div><div class="v">首次提交 <b>2026-11-02</b>（<code>published=2026-11-02T18:34:09Z</code>；<code>updated</code> 同日，无 v2）· 距本轮唤醒 <b>≈27.5h</b>（<b>在 72h 窗口内</b>）· PDF 实测 <b>84 页</b> / <b>142,757</b> 字符（去空白；含大量附录推导）</div></div>
+  <div class="row"><div class="k">分类 / 标签</div><div class="v"><code>cs.LG</code> · <span class="badge b-jz">借鉴</span> · 关键词：缩放定律 / 多轮预训练 / 重复数据 / 集成 / 最优停止 / 算力分配</div></div>
+  <div class="row"><div class="k">链接</div><div class="v"><a href="https://arxiv.org/abs/2611.03590">https://arxiv.org/abs/2611.03590</a>（PDF 已落地：<code>research/pdf/2026-11-04/2611.03590.pdf</code>，14,226,635 B，校验见附录 C）</div></div>
+  <div class="reason"><b>推荐理由（借鉴 · 与 BaiZe / ZhuLong 的关系）</b>
+    <ol>
+      <li><b>直击「数据墙 / 多轮回放」这条主线</b>：若高质量唯一 token 的增长慢于算力，多轮训练是必选项。论文回答的正是「<b>该训几轮、什么时候停、剩下的算力买集成还是买更久训练</b>」—— 这三问对 BaiZe 的数据配比与训练预算规划是直接可用的决策变量。</li>
+      <li><b>硬数字可回查</b>：① 10–100M 唯一 FineWeb token 上，最优约 <b>9–14 轮</b>后验证损失回升；② 匹配算力下 <b>E=4 集成</b>比 2× 宽单模型低 <b>0.16 nats</b>（Figure 2B；Appendix A.2）；③ 分配律：<b>集成规模随算力增长至少不慢于单成员训练时长</b>，余量按幂律下降。这些都能直接变成我们 scaling 实验的对照臂。</li>
+      <li><b>实验成本低、适合先做小规模验证</b>：作者用的是 L12/W768 级别的模型（Figure 1 最大约 679M 非嵌入参数）与单张 H100，每配置跑一次；我们可以先在自有 0.5B 级模型上复现「U 形 + 集成推迟停止」，再决定是否进大模型配方。</li>
+      <li><b>与既有 BaiZe 规模律工作的接口清楚</b>：把 <code>epochs</code> 作为独立的预算维度，与「模型宽/深」「唯一 token 数」一起做三维扫描；论文给的是「固定数据、固定单模型规模」下的分配，正好补上我们过去只扫一遍数据（single-epoch）的空缺。</li>
+      <li><b>边界（必须写清）</b>：① 实验规模仅 <b>10–100M token / ≤679M 参数</b>，<b>不能</b>直接外推到 2B+ 前沿预训练；② 单张 <b>H100-80GB</b>、每配置<b>一次</b>训练（集成成员靠独立初始化，非多种子重复）；③ 理论假设为 <b>noiseless Gaussian random-feature、N=P、power-law 谱、固定顺序 SGD</b>，真实 Transformer 的有限宽度 / 数据顺序 / 正则化会带来偏差；④ 「集成更好」是<b>匹配参数–token 预算与共同训练时域</b>下的结论，推理成本按 E 倍增加，论文未做端到端 serving 成本核算；⑤ 数字作者自报、本线未复现。</li>
+    </ol>
+    <b>建议动作</b>：<b>读原文</b>（§2 现象与 U 形曲线、§3 DMFT 与停止时间、§4 分配律、附录 A 训练配置）+ <b>试跑（低风险）</b>：在自有 0.3–0.7B 模型上先复现「最优 epoch」与 <b>E=2/4 logit 平均</b>的验证损失差，<b>不动主训练配方</b>。
+  </div>
+</div>
+<div class="card">
+  <h3><span class="no">2</span>Sonar-MoE: In-Backward Expert Updates for Memory-Efficient Mixture-of-Experts Training</h3>
+  <div class="row"><div class="k">中文一句话</div><div class="v">MoE 的绝大部分参数在专家里，标准训练要把<b>所有专家梯度</b>留到 optimizer step：OLMoE-1B-7B 的 6.92B 参数中 <b>6.44B</b> 在专家，bf16 梯度就 <b>12.9 GB</b>。作者提出 <b>Sonar-MoE</b>：反向传播中按<b>整批专家张量</b>触发 fused AdamW 更新并<b>立即释放梯度</b>，GPU 最多只保留一层专家梯度；关键是按 batch 张量触发（每层 2 次）而不是逐专家（OLMoE 每步 2,048 次），避免 <b>20%–72%</b> 的慢速；同时保留 dense 参数的 <b>global-norm clipping</b>。微调 OLMoE 与 Granite-3.1-3B-A800M（bf16、SonicMoE / ScatterMoE 两种 kernel 后端）：峰值显存降 <b>19%–22%</b>（OLMoE <b>55.6 → 43.6 GB</b>），无专家裁剪时更新<b>逐位相同</b>、held-out loss 差 <b>≤0.003</b>，每步比带 global clipping 的标准训练快 <b>17%–23%</b>，吞吐 <b>+20.2%–30.4%</b>。</div></div>
+  <div class="row"><div class="k">原题</div><div class="v"><span class="orig">Sonar-MoE: In-Backward Expert Updates for Memory-Efficient Mixture-of-Experts Training</span></div></div>
+  <div class="row"><div class="k">作者 / 机构</div><div class="v">Avni Mittal · Avinash Anand · Ashutosh Kumar · Dikshant Kukreja · Kritarth Prasad · Chaitanya Lakhchaura · Rishitej Reddy Vyalla · Erik Cambria · Zhengkui Wang · Rajiv Ratn Shah（<b>10 位</b>；据 PDF 首页：<b>Microsoft（印度）</b> · <b>Singapore Institute of Technology</b> · <b>IIT Kanpur</b> · <b>IIT Delhi</b> · <b>IIIT Delhi</b> · <b>Nanyang Technological University</b>）</div></div>
+  <div class="row"><div class="k">日期</div><div class="v">首次提交 <b>2026-11-02</b>（<code>published=2026-11-02T18:30:00Z</code>；<code>updated</code> 同日，无 v2）· 距本轮唤醒 <b>≈27.6h</b>（<b>在 72h 窗口内</b>）· PDF 实测 <b>11 页</b> / <b>40,387</b> 字符（去空白）</div></div>
+  <div class="row"><div class="k">分类 / 标签</div><div class="v"><code>cs.LG</code> · <span class="badge b-jz">借鉴</span> · 关键词：MoE 训练 / 显存优化 / optimizer-in-backward / 专家梯度 / 训练吞吐 / 训练系统</div></div>
+  <div class="row"><div class="k">链接</div><div class="v"><a href="https://arxiv.org/abs/2611.03577">https://arxiv.org/abs/2611.03577</a>（PDF 已落地：<code>research/pdf/2026-11-04/2611.03577.pdf</code>，582,285 B，校验见附录 C）</div></div>
+  <div class="reason"><b>推荐理由（借鉴 · 与 BaiZe / ZhuLong 的关系）</b>
+    <ol>
+      <li><b>正对 BaiZe 的 MoE / 混合架构训练</b>：显存是「能否在既定卡数上开大 batch、拉长序列、少切分专家」的硬约束；Sonar-MoE <b>不改模型结构、不改优化器数学</b>，只改「梯度何时释放、更新何时执行」，属于低侵入的系统级收益。</li>
+      <li><b>等价性证据硬、风险可控</b>：作者报告在<b>不做专家梯度裁剪</b>时，更新与标准训练<b>逐位相同</b>（bitwise identical），held-out loss 与所有基线差 <b>≤0.003</b> —— 这比「精度略降换显存」的方案更容易被训练团队接受。</li>
+      <li><b>收益量级可直接对标</b>：OLMoE <b>55.6 → 43.6 GB</b>（−21.6%）、Granite <b>−21.4%</b>；步时 <b>−17%–23%</b>；吞吐 <b>+20.2%–30.4%</b>。若我们的 MoE 微调也卡在「专家梯度 + 激活」峰值上，这是先量「专家梯度占峰值多少」就能判断的收益。</li>
+      <li><b>工程细节值得抄</b>：① 必须按 <b>整批专家张量</b> 挂 hook（每层 2 次），逐专家 hook 会慢 <b>20%–72%</b>；② 只提前更新专家、dense 参数仍留到最后做 global-norm clipping；③ 与 LoRA / 8-bit optimizer / gradient checkpointing 等省显存手段<b>可叠加</b>（论文 §5.5 给了操作区间）。</li>
+      <li><b>边界（必须写清）</b>：① <b>单卡</b>实验，<b>未覆盖数据并行</b>（作者说下一步接通信 hook；DDP 下更新需在梯度 all-reduce 之后）；② 只测 <b>≤7B</b> 的 OLMoE-1B-7B / Granite-3.1-3B-A800M，<b>Alpaca 单数据集、单种子</b>（同种子重复估噪声：步时 ≤1.4%、loss ≤0.0016）；③ 显存收益<b>在 batch 小、激活不主导时最大</b>，激活占大头时会缩小；④ 只适用于<b>逐元素优化器</b>（AdamW / SGD / Lion），需要跨张量统计的优化器未覆盖；⑤ 硬件为 2× RTX PRO 6000 Blackwell 96GB（两块卡功耗上限不同，作者只做同卡同后端对比）；⑥ 数字作者自报、本线未复现。</li>
+    </ol>
+    <b>建议动作</b>：<b>读原文</b>（§3 方法、§5.1 设置、§5.5 与省显存手段的叠加、§5.6 边界）+ <b>试跑（中风险）</b>：先在我们 MoE 微调脚本里量「专家梯度 / 峰值显存」占比，再做单层「早释放 + 无裁剪 baseline 逐位对比」的等价性测试；<b>不要</b>直接在主训练上开，先离线验证。
+  </div>
+</div>
+
+<div class="card">
+  <h3><span class="no">3</span>Pretraining Data Scale Reverses the Muon-AdamW Fine-Tuning Gap</h3>
+  <div class="row"><div class="k">中文一句话</div><div class="v">Muon 在<b>预训练损失</b>上常胜 AdamW，但「预训练赢」不等于「微调后还赢」。作者用 OLMo 式 <b>30M–600M</b> 模型、<b>150M–154B</b> DCLM token、约 <b>600 次预训练 + 29,000 次微调</b>（GSM8K / StackMathQA / Alpaca / MusicPile 四数据集）发现：小数据预算下 Muon 微调损失更低、遗忘更少；<b>超过交叉预算后 AdamW 反超</b>，且模型越大交叉点越早（StackMathQA：30M 需 <b>320 TPR</b>，600M 仅 <b>10 TPR</b>）。机制上用 <b>margin-to-spread ratio</b>（正确 logit 高出错误 logit 的余量 / 错误 logit 的离散度）解释：小预算 Muon 的比值更大、大预算 AdamW 更大；在线性联想记忆里证明该比值随数据预算增长向梯度下降倾斜。</div></div>
+  <div class="row"><div class="k">原题</div><div class="v"><span class="orig">Pretraining Data Scale Reverses the Muon-AdamW Fine-Tuning Gap</span></div></div>
+  <div class="row"><div class="k">作者 / 机构</div><div class="v">Catherine Li · Jingchu Gai · Andrej Risteski · Jacob Mitchell Springer · Aditi Raghunathan（<b>5 位</b>；均属 <b>Carnegie Mellon University</b>；PDF 标注前两位共同一作、后两位共同资深作者）</div></div>
+  <div class="row"><div class="k">日期</div><div class="v">首次提交 <b>2026-11-02</b>（<code>published=2026-11-02T18:56:43Z</code>；<code>updated</code> 同日，无 v2）· 距本轮唤醒 <b>≈27.1h</b>（<b>在 72h 窗口内</b>）· PDF 实测 <b>49 页</b> / <b>113,463</b> 字符（去空白）</div></div>
+  <div class="row"><div class="k">分类 / 标签</div><div class="v"><code>cs.LG</code> · <span class="badge b-jz">借鉴</span> · 关键词：优化器 / Muon / AdamW / 微调 / 预训练数据规模 / 学习–遗忘权衡</div></div>
+  <div class="row"><div class="k">链接</div><div class="v"><a href="https://arxiv.org/abs/2611.03633">https://arxiv.org/abs/2611.03633</a>（PDF 已落地：<code>research/pdf/2026-11-04/2611.03633.pdf</code>，1,575,060 B，校验见附录 C）</div></div>
+  <div class="reason"><b>推荐理由（借鉴 · 与 BaiZe / ZhuLong 的关系）</b>
+    <ol>
+      <li><b>直接影响 BaiZe 的优化器 / 后训练决策</b>：很多团队按「预训练损失最低」选优化器；本文说明在<b>大数据预算</b>下，Muon 的预训练优势可能在微调后<b>反转</b> —— 若 BaiZe 的路线是「大规模预训练 + 指令/数学后训练」，这正好是选型时必须看的第二指标（学习–遗忘权衡），而不只是预训练 loss。</li>
+      <li><b>给出可操作的判据与阈值趋势</b>：用 <b>TPR（token–parameter ratio）</b>作横轴，交叉点随模型增大而<b>左移</b>（30M：320 TPR → 600M：10 TPR，StackMathQA）；意味着「模型越大，越早需要担心 Muon 的微调劣势」。我们可先在 30M–600M 上做廉价 A/B，估计自家目标规模的交叉点。</li>
+      <li><b>机制可测量、可当代理指标</b>：<b>margin-to-spread ratio</b> 不需要重训即可在自有 checkpoint 上计算；若它随数据预算的变化趋势能复现，可作为「微调鲁棒性」的早期信号，用于在预训练中途预警。</li>
+      <li><b>实验规模与 BaiZe 的可负担区间接近</b>：30M–600M、150M–154B token、约 600 次预训练 + 29,000 次微调，说明这不是只能在大厂做的结论；我们可用小模型先验证方向，再决定是否在大模型上改配方。</li>
+      <li><b>边界（必须写清）</b>：① 模型只到 <b>600M</b>，<b>未验证 2B+</b>；② 微调数据集为 <b>GSM8K / StackMathQA / Alpaca / MusicPile</b> 四个，分布有限；作者明说「若微调数据与预训练数据很近，等价于继续预训练」，此时结论未必成立；③ 主结果是「最低预训练损失」设置，另附 best-frontier 设置；④ 线性联想记忆是<b>简化证明</b>，不是 Transformer 的严格结论；⑤ 未给出训练吞吐/显存成本对比（Muon 的工程成本未计入）；⑥ 数字作者自报、本线未复现。</li>
+    </ol>
+    <b>建议动作</b>：<b>读原文</b>（§3 预训练/微调设置与交叉点、§4 margin-to-spread 机制、§5 线性联想记忆证明、附录 C 超参）+ <b>试跑（低风险）</b>：在我们现有的 0.3–0.6B 预训练消融里加一条「AdamW vs Muon → 微调后学习–遗忘」对照，先看交叉 TPR 是否落在自家数据预算附近；<b>暂不</b>据单篇结论改主配方。
+  </div>
+</div>
+
+
+<h2 class="sec">附录 A · 检索式与命中数（可核验）</h2>
+<p>证据文件：<code>research/raw/2026-11-03-pm-candidates-r130.json</code>（<code>queries</code> 段，5 条<b>单分类</b>查询<b>全部</b> <code>status=200</code> / <code>application/atom+xml; charset=utf-8</code>；请求间隔 ≥3.2s）。</p>
+<table>
+  <tr><th>#</th><th>检索式</th><th>totalResults</th><th>取回条目</th><th>耗时</th></tr>
+  <tr><td>1</td><td><code>cat:cs.CL</code>（<code>sortBy=submittedDate&amp;sortOrder=descending</code>）</td><td>124,521</td><td>100</td><td>11.46s</td></tr>
+  <tr><td>2</td><td><code>cat:cs.CV</code></td><td>212,033</td><td>100</td><td>5.90s</td></tr>
+  <tr><td>3</td><td><code>cat:cs.LG</code></td><td>297,039</td><td>100</td><td>9.00s</td></tr>
+  <tr><td>4</td><td><code>cat:cs.AI</code></td><td>210,795</td><td>100</td><td>9.17s</td></tr>
+  <tr><td>5</td><td><code>cat:cs.SE</code></td><td>30,737</td><td>100</td><td>5.74s</td></tr>
+  <tr><td colspan="2"><b>合并去重后</b>（<code>published ≥ 2026-11-02</code>）</td><td colspan="3"><b>337 条</b>（与 <code>SEEN.md</code> 比对：<b>0 条重复</b>）</td></tr>
+</table>
+<p><b>批次复核（本轮 06:00 实测）</b>（<code>raw/2026-11-04-am-verify-r131.txt</code> / <code>.json</code>，4 条查询、间隔 ≥3.5s、<b>4/4 <code>200</code></b>）：① <code>sortBy=lastUpdatedDate</code>（cs.CL）最新 <code>2026-11-02T18:57:36Z</code>（<code>2611.03634v1</code>）、<code>totalResults=124,521</code>；② <code>cat:cs.CL AND submittedDate:[202610300000 TO 202611042359]</code> → <b>304</b>；③ 全库同区间 → <b>4,570</b>；④ 广度 5 分类 → <b>642,318</b>。四项<b>与 11-03 PM（18:00）逐项相同</b> ⇒ <b>批次未刷新</b>，仍为 <code>2026-11-02</code>；下一批 = 美东 11-03 20:00 ET = 本地 11-04 09:00。</p>
+<p class="note">⚠️ <b>本轮不重复 R1′ 分源探针</b>：HF / RSS 的失败状态沿用 r129 的实测（HF <code>[Errno 101]</code>、RSS <code>cs.LG</code> <code>ConnectionResetError(104)</code>），<b>只作发现、不作选文证据</b>；也没有把「HF/RSS 不可用」写成「无新增」。另：本机到 arXiv 的部分 Fastly 边缘 IP 在本轮出现超时（<code>151.101.3.42</code> 不可达），补跑下载与 API 复核改用可达 IP（<code>151.101.67.42</code>）并如实记录在 <code>raw/r131_pdf2.log</code> 与 <code>raw/2026-11-04-am-verify-r131.txt</code>。</p>
+
+<h2 class="sec">附录 B · 去重、选文与时效（诚实口径）</h2>
+<table>
+  <tr><th>指标</th><th>值</th><th>说明</th></tr>
+  <tr><td>候选池</td><td><b>337</b></td><td>PM 轮 5 分类各 100 条合并去重、<code>published ≥ 2026-11-02</code>（与 <code>SEEN</code> 0 重复）</td></tr>
+  <tr><td>PM 已收录</td><td><b>2</b></td><td><code>2611.03330</code> / <code>2611.03600</code>（11-03 晚报科普）</td></tr>
+  <tr><td>本轮入选</td><td><b>3</b></td><td><code>2611.03590</code> / <code>2611.03577</code> / <code>2611.03633</code>（官方 <code>id_list</code> 5/5 命中，3 篇 <code>published</code> 前缀 <code>2026-11-02</code> 断言通过）</td></tr>
+  <tr><td>时效</td><td>≈<b>27.5h / 27.6h / 27.1h</b></td><td>均 &lt; 72h，<b>在窗口内</b>；非放宽窗口</td></tr>
+  <tr><td>与近 7 天日报比对</td><td><b>无重复</b></td><td>三个 ID 在 <code>research/daily/2026-10-28 ~ 2026-11-03</code> 中均未出现（<code>grep</code> 核对）</td></tr>
+</table>
+<p><b>选文理由</b>：337 条里按「借鉴」口径先按<b>与 BaiZe 的层次</b>分组，再在每组里取<b>数字最硬、局限写得最清楚</b>的一篇 —— <b>数据与缩放层</b>选多轮预训练缩放理论（决定「epochs vs 集成 vs 更宽」的预算分配）、<b>训练系统层</b>选 Sonar-MoE（不改数学、只改梯度释放时机，省 19%–22% 峰值显存）、<b>优化器层</b>选 Muon/AdamW 的微调反转（直接关系「预训练选谁」）。刻意<b>不选同质工作</b>：同日 <code>2611.03627</code>「Not All Reasoning Generalizes」与 <code>2611.03625</code> FADE 都属 RLVR 训练策略，本轮只留备选；<code>2611.02368</code>「Beyond Accuracy: How Quantization Affects Coding Agents」与 ZhuLong 相关，留作后续。</p>
+
+<h2 class="sec">附录 C · PDF 落地与校验（3 / 3）</h2>
+<table>
+  <tr><th>arXiv ID</th><th>字节</th><th>页数</th><th>去空白字符</th><th>sha256（前 16 位）</th><th>备注</th></tr>
+  <tr><td><code>2611.03590</code></td><td>14,226,635</td><td>84</td><td>142,757</td><td><code>797b33d1510eb41b</code></td><td>6 段 Range 下载，全部一次到位</td></tr>
+  <tr><td><code>2611.03577</code></td><td>582,285</td><td>11</td><td>40,387</td><td><code>a3fe089df3fcec81</code></td><td>8 段 Range 下载，全部一次到位</td></tr>
+  <tr><td><code>2611.03633</code></td><td>1,575,060</td><td>49</td><td>113,463</td><td><code>90267d40a016bc3c</code></td><td>8 段 Range 下载，全部一次到位</td></tr>
+</table>
+<p class="note">⚠️ <b>如实记录（不写成「端到端校验通过」）</b>：① 三篇 <code>sha256</code> 与 CDN <code>etag</code> <b>均不一致</b>（如 <code>2611.03633</code> 的 <code>etag="sha256:fc9ecb4f…"</code> 与本地 <code>90267d40…</code> 不同）⇒ 完整性证据取<b>结构校验（<code>%PDF-</code> 头 + <code>%%EOF</code> 尾 + <code>pdfinfo</code> 可解析 + <code>pdftotext</code> 字符数 &gt; 2,000）+ 字节数 == <code>Content-Range</code> total</b>，<b>不声称哈希一致</b>；② 本轮三篇合计 <b>16,383,980 B ≈ 15.63 MiB</b>（18:00 轮再补 2 篇后须复核 20 MB 附件上限，必要时分包或只附链接）；③ PDF 在 <code>research/pdf/2026-11-04/</code>（<code>.gitignore</code> 已排除）⇒ <b>不入 git</b>；④ 下载期间 <code>151.101.3.42</code> 边缘 IP 超时，改用 <code>151.101.67.42</code> 后 8 段一次到位（证据 <code>/tmp/r131_pdf2.log</code>、脚本 <code>raw/pdf_range_resume_r131.py</code>）。</p>
+
+<h2 class="sec">附录 D · 台账与今日待办</h2>
+<ul>
+  <li><b>台账（AM 落盘后）</b>：<code>SEEN.md</code> <b>5,623 行</b>（11-03 补跑 +5 后；本轮 3 条已含在内）⇒ 累计 <b>收录 299 / 候选 4,558 / 候选（RSS 补充）507</b>（状态行合计 <b>5,364</b>）；<code>papers.jsonl</code> <b>299</b>（元数据全部取自官方 <code>id_list</code> XML；本轮 3 条 <code>first_seen=2026-11-04</code>）。</li>
+  <li><b>落盘脚本</b>：<code>raw/update_r131.py</code>（幂等断言：五 ID 原先不在 SEEN、追加后各 1 行、<code>papers.jsonl</code> 恰 +5、<code>published</code> 前缀匹配）· <code>raw/pdf_range_resume_r131.py</code>（固定可达 IP + 分段 Range + 逐段续传 + 结构校验）· 批次复核脚本 <code>/tmp/verify_r131b.py</code>（4 条查询，结果已落 <code>raw/2026-11-04-am-verify-r131.txt / .json</code>）。</li>
+  <li><b>今日 18:00（PM，周三）待办</b>：① 复验批次（应能看到美东 11-03 20:00 ET 公告的新批）；② 补 <b>2 篇「科普」</b>（不与早 3 重复，优先从本轮 337 条候选池剩余条目挑）→ 日报 <b>5/5 收口</b> + <code>晚报变更说明（AM → PM）</code>；③ <b>科普 TOP-1</b> 分镜 → <code>video/SCENES/11_04.html</code> + <code>SCENES/index.html</code>；④ 当日论文日报邮件（<code>paul.liu@cxmt.com</code>，PDF 合计按 20 MB 上限决定是否分包）。</li>
+  <li><b>口径纪律</b>：早报 3 篇全按「<b>借鉴</b>」选（与 BaiZe / ZhuLong 在研工作的相关性），晚报 2 篇全按「<b>科普</b>」选（大众看得懂 + 有传播力），<b>两口径不混用</b>，同一 arXiv ID 全天只出现一次；「推荐」≠「结论」；<code>SOTA / 首次 / 突破</code> 一律不写（引用作者原话时加「作者称」）；所有数字可回查 PDF 与官方 Atom 元数据。</li>
+</ul>
+
+<footer>
+  <p>research 线 · 每日论文推荐（早 3 / 晚 2）｜ 本页为 <b>2026-11-04 早报（AM · 3/5）</b>，18:00 轮将补齐第 4/5 篇并追加「晚报变更说明（AM → PM）」｜ 索引：<a href="index.html">daily/index.html</a></p>
+  <p>数据源：arXiv（<code>export.arxiv.org/api/query</code> + 官方 <code>id_list</code>）｜ 自包含单文件、内联 CSS、零外链、零脚本、离线可开 ｜ 免责：推荐 = 待读线索，非结论；数字均作者自报、本线未复现。</p>
+</footer>
+</div>
+</body>
+</html>

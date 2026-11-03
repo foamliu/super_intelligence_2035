@@ -41,6 +41,13 @@
 <table>
   <tr><th>日期</th><th>当日 TOP-1 论文</th><th>看点</th><th>分镜脚本</th></tr>
   <tr>
+    <td>2026-11-03</td>
+    <td><i>The SIMPLE Law for Energy Cost of LLM Inference</i><br><code>arXiv:2611.03330</code>（Hiari Pizzini Cavagna, Andrea Proia, Daniele Cesarini 等 5 位 · University of Bologna + CINECA）</td>
+    <td><b>AI 每说一个字，电费到底怎么算？</b>：同样一枚 token，越往后越贵 —— 它进了 KV-cache，会抬高后面所有 token 的成本。<b>SIMPLE</b> 把推理拆成 prefill 与 decode（decode 再拆 KV-cache + next-token），用架构超参推出<b>四参数定律</b>；在 <b>13 个稠密 LLM</b>、<b>H100</b> 的真实能耗轨迹上 <b>R²=0.969 / MAPE=11.97%</b>，比此前 SOTA 拟合低 <b>3.1–3.5×</b>，且不用逐模型标定。三条反直觉结论：推理预算 <b>4.0×</b> 区间内「每焦耳智能」在中间预算达峰、两端最多差 <b>3.14×</b>；agent 请求能耗 <b>13.0×</b> 普通请求；前缀缓存削减 <b>93%</b> prefill，但缓存后的 agent 仍 <b>4.8×</b>（<b>作者自报 · 本线未复现</b>；系数与 H100+框架绑定、只测稠密模型；论文 18 页）</td>
+    <td><a href="11_03.html">11_03.html</a></td>
+  </tr>
+
+  <tr>
     <td>2026-11-02</td>
     <td><i>GeoFlip: Benchmarking Geometry-Sensitive Physics in Video Generation</i><br><code>arXiv:2610.42002</code>（Yuqi Li, Junming Liu, Bowen Hu 等 7 位 · CUNY + 墨尔本大学 + 中山大学 + 香港中文大学 + CMU；前两位共同一作）</td>
     <td><b>AI 会拍视频，但它懂「东西为什么会倒」吗？</b>：视频生成模型画面很真，可只要把第一帧的几何改一点点（支撑面变窄、物体挪位置、机关换搭法），同一句提示词下的物理结果就该反过来。<b>GeoFlip</b> 造 <b>482 对</b>「几何干预 → 结论翻转」的场景对、<b>964 段</b>参考视频、<b>6 类</b>物理机制，参考答案由<b>程序化搭场景 + 物理仿真 + 数值校验</b>给出（不靠人工打分），再评 <b>16 个图生视频模型</b>：在全部模型共同覆盖的 <b>442 个条件</b>上，<b>事件正确率平均最高只有 27.98%</b>；典型失败 = 忽略几何变化 / 运动方向错 / 刚体被掰弯 / 凭空多零件。视觉语言模型裁判之间的排名相关 <b>0.906</b>（事件正确）与 <b>0.929</b>（结构完整）（<b>作者自报 · 本线未复现</b>；论文 14 页 / 7 图）</td>
@@ -181,7 +188,7 @@
 </table>
 
 <footer>
-  research 线 · <code>research/video/SCENES/index.html</code> ｜ 最近更新：2026-11-02 18:1x CST（新增 <code>11_02.html</code> · TOP-1 = GeoFlip: Benchmarking Geometry-Sensitive Physics in Video Generation / <code>arXiv:2610.42002</code> · 5 镜 / 120s / 口播 360 汉字（逐镜 464 字符，200 字/分 ≈ 108s）；上一版 <code>11_01.html</code> · <code>arXiv:2610.37796</code>）<br>
+  research 线 · <code>research/video/SCENES/index.html</code> ｜ 最近更新：2026-11-03（补跑轮）CST（新增 <code>11_03.html</code> · TOP-1 = The SIMPLE Law for Energy Cost of LLM Inference / <code>arXiv:2611.03330</code> · 5 镜 / 120s / 口播 377 汉字（200 字/分 ≈ 113s）；上一版 <code>11_02.html</code> · <code>arXiv:2610.42002</code>）<br>
 </footer>
 </div>
 </body>

@@ -1,0 +1,163 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<feed xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/" xmlns:arxiv="http://arxiv.org/schemas/atom" xmlns="http://www.w3.org/2005/Atom">
+  <id>https://arxiv.org/api/+FESqrkmWo/ttwQy3qq+PqMvNtI</id>
+  <title>arXiv Query: search_query=&amp;id_list=2611.03330,2611.03600,2611.03590,2611.03577,2611.03633&amp;start=0&amp;max_results=5</title>
+  <updated>2026-11-03T22:00:35Z</updated>
+  <link href="https://arxiv.org/api/query?search_query=&amp;start=0&amp;max_results=5&amp;id_list=2611.03330,2611.03600,2611.03590,2611.03577,2611.03633" type="application/atom+xml"/>
+  <opensearch:itemsPerPage>5</opensearch:itemsPerPage>
+  <opensearch:totalResults>5</opensearch:totalResults>
+  <opensearch:startIndex>0</opensearch:startIndex>
+  <entry>
+    <id>http://arxiv.org/abs/2611.03590v1</id>
+    <title>A Scaling Theory of Multi-Epoch Pretraining: Late-Time Overfitting and Ensembling</title>
+    <updated>2026-11-02T18:34:09Z</updated>
+    <link href="https://arxiv.org/abs/2611.03590v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2611.03590v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>In the near future language model pretraining will become bound by total data rather than total compute. Such a regime requires revisiting scaling laws and scaling law theory. Motivated by prior works that have found utility in ensembling, we study how the number of training epochs and ensemble size jointly shape generalization when training data are fixed. In language-model experiments on FineWeb, logit averaging reduces late-training deterioration, delays optimal stopping, and can outperform wider or deeper single models at matched parameter-token budgets over a common training horizon. To analyze this interaction between data reuse and ensembling, we derive a dynamical mean-field theory (DMFT) for multi-epoch stochastic gradient descent in power-law random-feature ensembles, tracking error correlations across epochs and models. Ensembling reduces the prediction variance responsible for late-time growth in expected test error, changing the optimal stopping time. We use these stopping times to derive compute-allocation laws at fixed data and individual model sizes. Under this allocation, ensemble size grows with compute at least as fast as training time per member, while excess test loss above the limiting loss decreases as a power of compute.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-11-02T18:34:09Z</published>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Zhen Yang</name>
+    </author>
+    <author>
+      <name>Yidi Miao</name>
+    </author>
+    <author>
+      <name>Blake Bordelon</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2611.03330v1</id>
+    <title>The SIMPLE Law for Energy Cost of LLM Inference</title>
+    <updated>2026-11-02T15:51:46Z</updated>
+    <link href="https://arxiv.org/abs/2611.03330v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2611.03330v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Generative AI is billed per token, yet tokens are not equally expensive. Each token enters the KV-cache and raises the cost of those that follow, so energy grows non-linearly along a sequence whose tokens look identical. No analytical model states what a token costs, and the most accurate SOTA model is a fit, not a law: it absorbs architecture into fitted coefficients, requiring per-LLM fitting. We derive closed-form expressions of the computational and memory-access complexity of LLM inference in terms of architectural hyperparameters, covering MHA and GQA, and compare a family of analytical models of increasing granularity. From these, we obtain the SIMPLE Inference Model to Predict LLMs Energy (SIMPLE), a four-parameter law that separates prefill from decode, and decode into KV-cache cost and next-token computation. Over traces of 13 dense LLMs from six families on NVIDIA H100 GPUs, it attains R2 = 0.969 and 11.97% MAPE, 3.1-3.5x below the SOTA, without per-LLM calibration. The SIMPLE law explains as well as predicts: prefill energy grows quadratically with the hidden dimension, so larger LLMs suffer most from long inputs; and more aggressive GQA KV grouping reduces the per-token energy by up to 3x relative to standard MHA. Increasing the reasoning token budget pushes output length beyond the analytically derived energy minimum, driving super-linear energy growth; although accuracy grows with the budget, energy grows faster, so Intelligence per Joule peaks at an intermediate budget and falls by up to 3.14x across a 4.0x reasoning-budget range. Agentic serving raises energy per request by 13.0x relative to non-agentic ones, driven by the growth of both the prefill and the KV-cache terms with input length; while prefix caching removes most of the prefill cost (-93%), the KV-cache term is unaffected, so even a cached agentic request costs 4.8x more.</summary>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.PF" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-11-02T15:51:46Z</published>
+    <arxiv:comment>Submitted to Future Generation Computer Systems</arxiv:comment>
+    <arxiv:primary_category term="cs.AI"/>
+    <author>
+      <name>Hiari Pizzini Cavagna</name>
+    </author>
+    <author>
+      <name>Andrea Proia</name>
+    </author>
+    <author>
+      <name>Daniele Cesarini</name>
+    </author>
+    <author>
+      <name>Zeynep Kiziltan</name>
+    </author>
+    <author>
+      <name>Andrea Bartolini</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2611.03633v1</id>
+    <title>Pretraining Data Scale Reverses the Muon-AdamW Fine-Tuning Gap</title>
+    <updated>2026-11-02T18:56:43Z</updated>
+    <link href="https://arxiv.org/abs/2611.03633v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2611.03633v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Muon has recently emerged as a promising optimizer for pretraining large language models, offering a speedup over AdamW in minimizing pretraining loss. However, it remains unclear whether Muon's advantage persists after fine-tuning. In this paper, we study the downstream behavior of Muon and AdamW and uncover a surprising trend: beyond a sufficiently large pretraining data budget, AdamW outperforms Muon after fine-tuning. Moreover, as model size increases, AdamW overtakes Muon at progressively smaller pretraining token-parameter ratios. To explain this reversal, we view fine-tuning as a perturbation of the outputs and introduce the margin-to-spread ratio, which measures how far the correct logit lies above the wrong ones relative to how widely the wrong logits are spread. In language models, Muon has the larger margin-to-spread ratio at small data budgets and AdamW at large ones, mirroring the fine-tuning trend. In a linear associative memory, we prove that after one update the margin-to-spread ratio of gradient descent gains on that of Muon as the data budget grows, and simulations show that this trend persists after extended training.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-11-02T18:56:43Z</published>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Catherine Li</name>
+    </author>
+    <author>
+      <name>Jingchu Gai</name>
+    </author>
+    <author>
+      <name>Andrej Risteski</name>
+    </author>
+    <author>
+      <name>Jacob Mitchell Springer</name>
+    </author>
+    <author>
+      <name>Aditi Raghunathan</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2611.03600v1</id>
+    <title>Four Bridges: Measuring Deception Propensity in a Multi-Agent Game</title>
+    <updated>2026-11-02T18:40:47Z</updated>
+    <link href="https://arxiv.org/abs/2611.03600v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2611.03600v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>AI agents are increasingly deployed in settings where they interact and coordinate with other agents, yet honesty is mostly measured in single-turn, single-agent benchmarks that pressure the model to deceive. We study deception that emerges in multi-agent interaction without any instruction to deceive. We introduce Kradle, a platform for evaluating AI models, and Four Bridges, an information asymmetry game in which four agents distribute across four rooms: one is the death room, the others hold food worth more if not shared. One agent, the informed agent, knows which room is the death room and can withhold or disclose that information. We evaluate eight frontier models as the informed agent. Deceptive behavior appears in every model and in 73% of all runs (6% to 100% per model), and does not decrease with capability tier within a model family. When the informed agent does disclose, the warning is often challenged, and agents that challenge it enter the death room twice as often as those that do not. Telling all agents that one of them knows the death room collapses deception in six of eight models; telling the informed agent that the room is permanently fatal moves only one. On an open-weight model, an honesty steering vector reduces deception to 0% and adversarial honesty training to 6%. The platform and game provide a testbed for measuring deceptive behavior and comparing interventions.</summary>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.MA" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-11-02T18:40:47Z</published>
+    <arxiv:comment>38 pages, 14 figures, 16 tables</arxiv:comment>
+    <arxiv:primary_category term="cs.AI"/>
+    <author>
+      <name>Raphael Casey</name>
+    </author>
+    <author>
+      <name>Michael Simeone</name>
+    </author>
+    <author>
+      <name>Alberto Tosato</name>
+    </author>
+    <author>
+      <name>Florian Ernst</name>
+    </author>
+    <author>
+      <name>Kemal El Moujahid</name>
+    </author>
+    <author>
+      <name>James Tamplin</name>
+    </author>
+    <author>
+      <name>Tommaso Tosato</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2611.03577v1</id>
+    <title>Sonar-MoE: In-Backward Expert Updates for Memory-Efficient Mixture-of-Experts Training</title>
+    <updated>2026-11-02T18:30:00Z</updated>
+    <link href="https://arxiv.org/abs/2611.03577v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2611.03577v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Most parameters of a Mixture-of-Experts (MoE) model belong to its experts, and standard training keeps every expert gradient in GPU memory until the optimizer step. This memory grows with the number and size of the experts, so it rises as MoE models scale. We introduce Sonar-MoE, which updates each expert tensor during the backward pass and frees its gradient right away. It brings optimizer-in-backward from dense models to batched MoE expert tensors, so the GPU never holds more than one layer of expert gradients. When we fine-tune OLMoE-1B-7B and Granite-3.1-3B-A800M in bf16 with two expert-kernel backends, Sonar-MoE lowers peak memory by 19% to 22%. Its updates are bitwise identical to standard training without expert gradient clipping, and held-out loss stays within 0.003 of all baselines. Each step also takes 17% to 23% less time than standard training with global-norm clipping. Updating whole batched tensors rather than individual experts is what keeps Sonar-MoE fast, as it avoids a 20% to 72% slowdown while using the same memory. Sonar-MoE matches optimizer-in-backward over all parameters in memory and speed while still clipping the dense parameters.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.PF" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-11-02T18:30:00Z</published>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Avni Mittal</name>
+    </author>
+    <author>
+      <name>Avinash Anand</name>
+    </author>
+    <author>
+      <name>Ashutosh Kumar</name>
+    </author>
+    <author>
+      <name>Dikshant Kukreja</name>
+    </author>
+    <author>
+      <name>Kritarth Prasad</name>
+    </author>
+    <author>
+      <name>Chaitanya Lakhchaura</name>
+    </author>
+    <author>
+      <name>Rishitej Reddy Vyalla</name>
+    </author>
+    <author>
+      <name>Erik Cambria</name>
+    </author>
+    <author>
+      <name>Zhengkui Wang</name>
+    </author>
+    <author>
+      <name>Rajiv Ratn Shah</name>
+    </author>
+  </entry>
+</feed>

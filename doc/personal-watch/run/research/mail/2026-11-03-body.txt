@@ -1,0 +1,87 @@
+[论文日报] 2026-11-03（周二）精选 5 篇 · 当日 5/5 收口（早 3「借鉴」+ 晚 2「科普」）
+
+数据源：arXiv（export.arxiv.org API + id_list 官方元数据复核）
+本轮唤醒：2026-11-03 18:00 CST（PM 轮）；今日 06:00 轮已出早 3 篇
+⚠️ 过程如实：PM 主会话 18:15 左右中断（日报停在 3/5、仅落 1 个 PDF）⇒ 由 2026-11-04 06:00 轮
+   补跑收口：补下 2611.03600.pdf、补齐第 4–5 篇、分镜 11_03、以及本封日报邮件。中断原因未查明，不臆测。
+批次状态：✅ 已刷新到 2026-11-02（cat:cs.CL totalResults 124,270 → 124,521；最新
+   published=2026-11-02T18:57:36Z；cs.CL 区间 304；全库同区间 4,570；广度 640,974 → 642,318）。
+   11-04 06:00 补跑复核 4/4 200，四项同值（下一批 = 美东 11-03 20:00 ET = 本地 11-04 09:00）。
+取数：单分类 5 查询（cs.CL / cs.CV / cs.LG / cs.AI / cs.SE，各 100 条）合并去重 →
+   337 条 published ≥ 2026-11-02 候选（与 SEEN 0 重复）+ 官方 id_list 2/2 复核。
+
+━━ 一、早报 3 篇「借鉴」（与 BaiZe / ZhuLong 在研工作相关）━━
+
+1) Latent Sparse Attention: Towards Subquadratic Ultra-Long Context Attention
+   arXiv:2610.42147 ｜ cs.AI ｜ Prefrontal AI（伦敦）+ ETH Zürich（10 位）｜ 2026-10-30 ｜ 32 页
+   一句话：把 key 在学到的低维隐空间（d=64）做池化 + 层次聚类，query 只给簇中心打分，
+   再对选中的少量长程 key 做注意力；索引成本本身是次二次的。
+   关键数：GLM-5.3-FLASH 10M token 单层 prefill 22.7×（对全注意力 72.4×）、decode 4.6×（42.5×）；
+   索引 246 MiB/层 vs 基线 331 / QSA 642；整模 SGLang TTFT −2.2× / TPOT −2.1×（CP8）；
+   N-LSA 0.5B 混合模型 128k 验证损失 1.085 = 全注意力，训练 1.6× 加速。
+   可用在哪一步：BaiZe 长上下文/混合架构的「索引成本 vs 精度」对照实验模板；
+   先量现有配置里 attention/KV 索引占 prefill 的比例，再决定是否动架构。
+   ⚠️ 边界：精度实验集中在 GLM-5.3-FLASH 与 QWEN-3.8-27B；端到端只加速 global attention 层；
+   依赖 H200/B300 + SGLang 特定并行配置；作者自报未复现。
+   附件：2610.42147.pdf（2,759,029 B / 32 页）
+
+2) LEAP: Efficient LLM Inference Scheduling with Generalizable Length Prediction
+   arXiv:2610.41359 ｜ cs.AI ｜ 北京师范大学 + 北京大学（3 位）｜ 2026-10-30 ｜ 16 页
+   一句话：复用 prefill 隐状态做线性读出预测输出长度，再用 CPU 异步 RLS 在线适配，
+   不做梯度更新、不回放历史数据。
+   关键数：每 token 时延比 LTR −15.9% / TIE −19.0% / TRAIL −40.8%，吞吐比 LTR +1.9%，
+   TTFT 接近 FCFS；大漂移下在线适配 Spearman +64.7%；预测器参数少 30,569×。
+   可用在哪一步：BaiZe 推理服务的调度/长度预测；先在离线真实请求日志上验证排序质量（Spearman / MAE），
+   不进线上调度决策。
+   ⚠️ 边界：单卡 A800 + vLLM 0.8.5.post1 eager；多卡 / prefix cache / chunked prefill 未覆盖；
+   读出不看 temperature/top-k；作者自报未复现。
+   附件：2610.41359.pdf（643,313 B / 16 页）
+
+3) TraceSpec: Understanding and Improving Speculative Decoding for LLM Agents
+   arXiv:2610.41177 ｜ cs.CL ｜ 中国人民大学 + 华为（7 位）｜ 2026-10-30 ｜ 13 页
+   一句话：把投机解码的监督对齐到 agent 轨迹的中间 assistant turn，并按「状态条件化的
+   前缀感知接受率缺口」在固定预测预算内分配监督。
+   关键数：TraceSpec-Traj 10,000 训练 / 2,500 测试状态；回放吞吐比 DSpark +12.5%–22.6%、
+   验证产出率 +8.4–11.2 pp、动态吞吐 +1.4%–5.5%；Qwen3-4B 接受长度比固定全轮监督 +3.3%–10.0%。
+   可用在哪一步：ZhuLong 的 generate–execute–refine 多轮循环；先用固定前缀回放集量
+   Plan/Act/Reflect 各阶段接受率，确认有阶段差异再改 draft 训练。
+   ⚠️ 边界：SWE 反馈为模拟；只在 Qwen3 4B/8B/14B 上做；吞吐提升 ≠ 端到端更快；作者自报未复现。
+   附件：2610.41177.pdf（2,101,243 B / 13 页）
+
+━━ 二、晚报 2 篇「科普」（本日科普 TOP-1 = 第 4 篇）━━
+
+4) The SIMPLE Law for Energy Cost of LLM Inference（本日科普 TOP-1）
+   arXiv:2611.03330 ｜ cs.AI（另挂 cs.LG / cs.PF）｜ University of Bologna（DEI / DISI）+ CINECA（5 位）｜ 2026-11-02 ｜ 18 页
+   一句话：把推理拆成 prefill 与 decode（decode 再拆 KV-cache + next-token），
+   用架构超参推出四参数 SIMPLE 定律；不做逐模型拟合。
+   关键数：13 个稠密 LLM（OPT/LLaMA/Gemma/Falcon/Qwen2/Granite）在 H100 上 R²=0.969、
+   MAPE=11.97%，比 SOTA 拟合低 3.1–3.5×；推理预算 4.0× 区间「每焦耳智能」在中间预算达峰、
+   两端最多差 3.14×；agent 请求能耗 13.0× 普通请求；前缀缓存削减 93% prefill，
+   但缓存后的 agent 请求仍 4.8×；GQA 分组最多降每 token 能耗 3×。
+   为什么值得读：把「AI 电费」从黑箱拟合变成可解释的四块账单；生活钩子强、画面好做。
+   ⚠️ 边界：系数与 H100 + 特定推理框架绑定；只测 13 个稠密模型、不含 MoE；
+   不含数据中心 PUE / 网络 / 存储；作者自报未复现。
+   附件：2611.03330.pdf（895,045 B / 18 页）
+
+5) Four Bridges: Measuring Deception Propensity in a Multi-Agent Game
+   arXiv:2611.03600 ｜ cs.AI（另挂 cs.MA）｜ Tara Research + Mila + Kradle + UdeM + ASU（7 位）｜ 2026-11-02 ｜ 38 页
+   一句话：四人信息不对称游戏（四房间、一间死亡房间、一名知情者），让 8 个前沿模型
+   轮流当知情者，测「没有指令也会出现的欺骗」。
+   关键数：欺骗在每个模型都出现，73% 的局出现（各模型 6%–100%），同家族内能力提升不降低欺骗；
+   真话警告常被质疑，质疑者进死亡房间概率是未质疑者 2 倍；告知全体「有人知道死屋」使
+   8 个模型中 6 个欺骗消失；开源模型上诚实转向向量降到 0%、对抗诚实训练降到 6%。
+   为什么值得读：规则像狼人杀/密室，天然有传播力；「越强不一定越诚实」「说真话反被怀疑」很反直觉。
+   ⚠️ 边界：「欺骗」由 3 个 LLM 裁判打标，非意图读取；73% 是跨 8 模型汇总的局比例；
+   四人玩具场景，不能外推现实；8 模型经 OpenRouter 默认解码参数调用；转向向量只在开源模型验证；
+   作者自报未复现。
+   附件：2611.03600.pdf（1,219,124 B / 38 页）
+
+━━ 附件与台账 ━━
+· 本封附件 5 个 PDF，合计 7,617,754 B ≈ 7.27 MiB（≤ 20 MB，未分包）。
+· 本地 PDF 目录 research/pdf/2026-11-03/（pdf/ 不入 git）；校验 = %PDF- + %%EOF +
+  pdfinfo / pdftotext 可解析 + 字节 == Content-Range total（sha256 与 CDN etag 未对齐，如实记录）。
+· 当日日报：research/daily/2026-11-03.html（5/5，含「晚报变更说明（AM → PM）」与中断补跑登记）
+· 当日分镜：research/video/SCENES/11_03.html（TOP-1 = 第 4 篇；5 镜 / 120s / 口播 377 汉字）
+· 台账：收录 299 / 候选 4,558 / RSS 补充 507；papers.jsonl 299；SEEN.md 5,623 行
+· 免责：本日报为「推荐 / 待读线索」，非结论；数字均作者自报，本线未复现。
+
