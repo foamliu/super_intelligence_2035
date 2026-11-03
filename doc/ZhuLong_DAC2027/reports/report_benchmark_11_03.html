@@ -24,13 +24,13 @@ td{word-break:break-word}
 footer{margin-top:30px;color:#999;font-size:.75rem;text-align:center}
 </style></head><body><div class="wrap">
 <h1>设计流 Benchmark 日报 · 11_03</h1>
-<p><span class="tag pass">多机扩样层 v0.50 已交付</span> <span class="tag legacy">即时令 VII/VIII 整改：单一 jsonl + 设计流契约</span> <span style="color:#999">生成时间 2026-11-03 14:09</span></p>
+<p><span class="tag pass">多机扩样层 v0.50 已交付</span> <span class="tag legacy">即时令 VII/VIII 整改：单一 jsonl + 设计流契约</span> <span style="color:#999">生成时间 2026-11-03 14:32</span></p>
 
 <h2>一、三口径数字（多机版，.75 落盘实测值）</h2>
 <div class="kpis">
 <div class="kpi"><div class="n">698</div><div class="l">目标机数</div></div>
-<div class="kpi"><div class="n">2850</div><div class="l">用户数（home 有 .cline/data/sessions）</div></div>
-<div class="kpi"><div class="n">52,698</div><div class="l">会话文件数 (*.json)</div></div>
+<div class="kpi"><div class="n">365</div><div class="l">用户数（home 有 .cline/data/sessions）</div></div>
+<div class="kpi"><div class="n">14,444</div><div class="l">会话文件数 (*.json)</div></div>
 <div class="kpi"><div class="n">24,085</div><div class="l">IC/EDA 命中会话</div></div>
 </div>
 <div class="note">数据来源：沈佳成 698 机 SSH 扫描结果（落盘 .75 <code>/home/t0002965/log/ssh_eda_search_20261028_174426/</code>）。11 类分布：layout_aether 14534 · layout_virtuoso 2496 · schematic_netlist 2362 · physical_verify 1295 · analog_context 1167 · spice_sim 1027 · pnr_signoff 503 · waveform 368 · logic_synth 167 · eda_other 159 · skipper 7。</div>
@@ -47,13 +47,13 @@ footer{margin-top:30px;color:#999;font-size:.75rem;text-align:center}
 
 <h2>二、trace 覆盖率（进度条）</h2>
 <div class="kpis">
-<div class="kpi"><div class="n">2.9%</div><div class="l">已交付 / 候选池（mc&ge;300）</div></div>
+<div class="kpi"><div class="n">16.9%</div><div class="l">已交付 / 候选池（mc&ge;300）</div></div>
 <div class="kpi"><div class="n">29</div><div class="l">已交付 case</div></div>
-<div class="kpi"><div class="n">1001</div><div class="l">候选池总量</div></div>
+<div class="kpi"><div class="n">172</div><div class="l">候选池总量</div></div>
 <div class="kpi"><div class="n">35</div><div class="l">已动过（含暂缓）</div></div>
 </div>
-<div style="background:#e3e8ef;border-radius:6px;height:18px;overflow:hidden"><div style="width:2.9%;height:18px;background:#2c7be5"></div></div>
-<p style="color:#666;font-size:.8rem">新增 traces（自上次刷新）：+0 · 台账 case 29 / deepread 0 / parked 6 / claimed 0</p>
+<div style="background:#e3e8ef;border-radius:6px;height:18px;overflow:hidden"><div style="width:16.9%;height:18px;background:#2c7be5"></div></div>
+<p style="color:#666;font-size:.8rem">— · 台账 case 29 / deepread 0 / parked 6 / claimed 0</p>
 <ul><li>analog_context：<b>2</b></li><li>characterization：<b>2</b></li><li>digital：<b>4</b></li><li>eda_other：<b>1</b></li><li>layout_aether：<b>2</b></li><li>layout_virtuoso：<b>2</b></li><li>physical_verify：<b>4</b></li><li>pnr_signoff：<b>1</b></li><li>schematic_netlist：<b>2</b></li><li>skipper：<b>1</b></li><li>spice_sim：<b>4</b></li><li>verification：<b>1</b></li><li>waveform：<b>2</b></li></ul>
 
 
