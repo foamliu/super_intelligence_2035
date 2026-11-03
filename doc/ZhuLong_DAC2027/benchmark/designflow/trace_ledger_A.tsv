@@ -72,3 +72,5 @@
 1793584942223_nrkph	alan3zh	hfeg0pkn003	1367	pnr_signoff	case	EDA-Eval-DesignFlow-RedhawkGenInputs-001	2026-11-04 00:17	
 1792552971568_dnkz8	johnl	hfeg0plg99	99	pnr_signoff	case	EDA-Eval-DesignFlow-CdlVbnBulkRemap-001	2026-11-04 00:45	
 1792133398859_0t5o9	claire1l	hfeg0pkn004	143	eda_other	case	EDA-Eval-DesignFlow-ItfCompare-001	2026-11-04 01:16	
+1792386615426_npf2k	e0045488	hfeg0pkn002	103	pnr_signoff	parked		2026-11-04 01:35	StarRC DSPF SPF resistor-layer QA. Asset /proj/drexp/V0/ver/pex/e0045488/invBx2/lpe/invBx2/invBx2.spf Permission denied from e0031982 ssh (owner e0045488); SPF content not in trace (read_files result empty). Cannot build real-asset A. Revisit if /proj access granted or in-trace-asset trace found.
+1793167986392_7bqnr	oshen	hfeg0plg36	96	eda_other	parked		2026-11-04 01:35	Aether launch / drcqa V0 exploration. User turns are infra requests (launch aether / access files); all run_approved_command attempts fail (profile/filePath errors); no verifiable deliverable produced, no accepted result. Not a valid design_flow case.
