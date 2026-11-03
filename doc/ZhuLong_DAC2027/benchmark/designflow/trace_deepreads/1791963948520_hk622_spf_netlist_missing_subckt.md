@@ -1,0 +1,24 @@
+# 深读：1791963948520_hk622 — SPF vs 前仿网表 .subckt 端口对比 + FineSim "no reference ckt" 修复
+
+- **trace**: `1791963948520_hk622` · rongtaoy @ hfeg0pkn001 · mc=257 · 266 msgs · 1.11MB · 2026-10-15
+- **session.json prompt**: rongtaoy「zl宝宝…读取 SPF 源文件 `msaq_U_CCR_fBcc_int.spf_CC` 与前仿网表 `…/sim_4_sense_margin/…/netlist`，提取所有 .subckt 的 cell name + 端口列表(顺序/名字)，对比 _spf_o / _spf 端口是否一致，判断能否 `.inc netlist` 再 `.inc spf` 直接替换」
+- **cwd**: `/home/rongtaoy` · workspace `/proj/ddgoa/V0/workdir/rongtaoy/...`
+- **真实流（按用户轮）**：
+  - T1 (idx0): SPF vs netlist .subckt 端口提取与对比，判断能否 .inc 替换。
+  - T2 (idx31): 「你没提取对，_spf_o/_spf 不止第一行…这两个模块是同一电路不同版本，端口一致则改名可替代，_spf_o/_spf 及子模块全部由 spf 替换」。
+  - T3 (idx43): 对比两份 netlist，**不要按行比较，先找实例 XI 再对比**。
+  - T4 (idx72): 「替换某模块只要名称不变、pin 不变，内部怎么样都无所谓」→ 接口兼容即黑盒替换原则。
+  - T6 (idx112): FineSim 报错 **`ERROR! no reference ckt array0p8meg_r_fbcc_spf for xi_array1p5meg_edge_r(...) of array10meg_ou_fbcc_spf`**（10+ 条）→ 「这是什么问题」→ 根因：netlist 里 X 实例引用的 .subckt 未定义（spf include 缺失）。
+  - T7 (idx114): Virtuoso export netlist 报 `Cannot find schematic view for subckt xindi_drgpx/array0P8Meg_R_fbcc_spf/symbol` → netlist 未生成。
+  - T8–T12 (idx122–155): viewlist / stoplist 设置、stoplist 必须包含在 viewlist、扫 netlist 全文 R/C 计数与模型库 .lib 叶子 subckt 引用。
+  - T14 (idx165): 换用「他们的方法」抽 netlist，对比新旧版区别，写 md。
+  - T19–T20 (idx200/216): `msaq_U_fBcc_E_spfsim` 改成 `msaq_U_CCR_fBcc_int_0812BK`（版图版本）为何不能直接替换 `msaq_U_CCR_fBcc_int_spf`。
+  - T21–T26 (idx222–264): 比较 even/odd sec netlist、看 mixb3.log 报错、追问「我提取的网表为什么会引用 spf 文件」「array1P6Meg_fbcc_spf 不是 cell 名吗」→ 最终用户自己定位「是 netlist 的问题」。
+- **可移植子技能（用于合成 case）**：FineSim「**no reference ckt**」错误诊断与修复 —— netlist 中 X 实例引用的 `.subckt` 定义缺失（寄生提取的 spf include 未 `.inc`），FineSim 在 elaboration 阶段 abort。修复 = 解析 .log 提取所有 `no reference ckt <name>` → 在提供的 spf include 文件中找到这些 `.subckt` 定义 → 在 netlist 注入 `.inc '<spf_include>'`（黑盒替换，端口不变即可）→ 重跑 FineSim 至 `Successfully Completed`。
+- **distinct vs 已有 B case**：
+  - FineSimModelScopeFix-001 = FineSim「can't find model」(`.model ./` HSPICE 本地作用域语法 name-agnostic 去 `./` 前缀修复)。
+  - BistOscRccReorder-001 = FineSim「cannot open include」(RCC 路径消去法 + var_osc 扫描重排)。
+  - **本条 = FineSim「no reference ckt」(X 实例引用的 .subckt 定义缺失 → 注入 spf include → 黑盒替换)** —— 第三种 FineSim elaboration 失败模式 + 不同的修复动作（include 注入 / 黑盒替换 vs 改 `.model` 语法 vs 重排扫描），distinct 子技能 ✓。
+- **便携化**：foundry PDK / msaq array 不可移植 .75，取 level-1 Shichman-Hodges MOS（nch/pch, kp=50u/20u, vto=0.7/-0.7）+ FineSim V-2023.12-1 `.tran`。合成一个 memory sense-margin 风格的 array_core netlist：`array_core` 实例化 `cell_fbcc_spf`（寄生版，定义被抽出放入 `spf.inc`，主 netlist 缺失）→ FineSim abort `no reference ckt cell_fbcc_spf`。候选 fixer 解 .log → 注入 `.inc 'spf.inc'` → 重跑 FineSim `Successfully Completed`。
+- **核心陷阱（烤进 check.py）**：(d) diagnosis.missing_subckts 与 B 真实名集合一致（cross-input 守卫）；(j) fixer.py 必须含 `no reference ckt` 正则（证明真解析 log，非硬编）；(k) fixer.py name-agnostic——不含 A/B 任何缺失 subckt 名字面量；(g) 判分器独立重跑 FineSim 防假 .log；(e)(h) A/B fixed log 含 `Successfully Completed` 且无 `no reference ckt`/`ERROR!`；(n) B missing_subckts 跨输入 ≠ A。
+- **金标准**：trace 末尾用户自定位「是 netlist 的问题」（X 实例引用的 spf cell 名未定义）→ 印证「黑盒替换需 .subckt 定义齐全」的修复路径。
