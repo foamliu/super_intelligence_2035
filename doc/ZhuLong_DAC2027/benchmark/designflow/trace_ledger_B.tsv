@@ -61,3 +61,4 @@ djml8					case	EDA-Eval-DesignFlow-PFDdeadZone-001	2026-11-02 17:47
 1784623431472_gvm3g	e0014566	hfeg0plg58	554	spice_sim	case	EDA-Eval-DesignFlow-FineSimModelScopeFix-001	2026-11-04 02:43	
 1790490487765_6dx8f	cwei	hfeahpc504	328	spice_sim	parked		2026-11-04 03:02	prompt=SpiceAgent CTLE schematic gen in Aether (pyAether), 实为 schematic/layout 生成非 spice_sim/characterization；hspice 命中来自 skill 描述非任务
 1791963948520_hk622	rongtaoy	hfeg0pkn001	257	spice_sim	case	EDA-Eval-DesignFlow-FineSimNoRefCktFix-001	2026-11-04 03:26	
+1792386804961_6tiy7	kaixuanx	hfeg0pkn001	250	characterization	deepread		2026-11-04 03:52	DFF setup/hold char; deepread done; synthesis DEBT next round
