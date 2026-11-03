@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZhuLong 离线小模型环境准备报告 · llama.cpp + Qwen3.5-0.8B</title>
+<style>
+  :root{--bg:#f7f8fa;--card:#fff;--ink:#1f2328;--mut:#57606a;--line:#d9dee3;--acc:#0969da;--ok:#1a7f37;--warn:#bf8700;--bad:#cf222e;--code-bg:#f6f8fa;}
+  *{box-sizing:border-box}
+  body{margin:0;padding:24px;background:var(--bg);color:var(--ink);font-family:-apple-system,"PingFang SC","Microsoft YaHei","Segoe UI",Roboto,sans-serif;line-height:1.65;font-size:15px}
+  h1{font-size:1.55rem;margin:0 0 4px;letter-spacing:.5px}
+  h2{font-size:1.2rem;margin:28px 0 10px;padding-bottom:6px;border-bottom:2px solid var(--acc)}
+  h3{font-size:1.04rem;margin:18px 0 6px;color:#24292f}
+  .sub{color:var(--mut);font-size:.86rem;margin-bottom:18px}
+  .wrap{max-width:980px;margin:0 auto}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px 22px;margin:14px 0;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+  table{border-collapse:collapse;width:100%;margin:8px 0;font-size:.92rem}
+  th,td{border:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top}
+  th{background:#eef1f4;font-weight:600}
+  tr:nth-child(even) td{background:#fafbfc}
+  code,pre{font-family:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace}
+  code{background:var(--code-bg);padding:1px 5px;border-radius:4px;font-size:.86rem;color:#24292f}
+  pre{background:var(--code-bg);border:1px solid var(--line);border-radius:8px;padding:12px 14px;overflow-x:auto;font-size:.82rem;line-height:1.5}
+  .ok{color:var(--ok);font-weight:600}
+  .bad{color:var(--bad);font-weight:600}
+  .warn{color:var(--warn);font-weight:600}
+  .pill{display:inline-block;padding:2px 9px;border-radius:12px;font-size:.78rem;font-weight:600;color:#fff}
+  .p-ok{background:var(--ok)} .p-bad{background:var(--bad)} .p-warn{background:var(--warn)} .p-info{background:var(--acc)}
+  .tag{display:inline-block;background:#eef1f4;border:1px solid var(--line);border-radius:4px;padding:1px 7px;font-size:.78rem;color:var(--mut);margin:2px 4px 2px 0}
+  .note{border-left:4px solid var(--acc);background:#eef4fb;padding:10px 14px;margin:12px 0;border-radius:0 6px 6px 0}
+  .note.warn{border-left-color:var(--warn);background:#fff8e1}
+  .note.bad{border-left-color:var(--bad);background:#ffeef0}
+  .note.ok{border-left-color:var(--ok);background:#eef7ee}
+  .q{font-weight:600;color:#24292f}
+  ul{margin:6px 0 6px 0;padding-left:22px} li{margin:3px 0}
+  .mono{font-family:monospace;font-size:.85rem;color:#24292f}
+  .out{background:#0d1117;color:#e6edf3;border-radius:8px;padding:12px 14px;font-size:.8rem;line-height:1.55;overflow-x:auto}
+  .out .k{color:#7ee787} .out .m{color:#79c0ff} .out .d{color:#8b949e}
+  hr{border:0;border-top:1px solid var(--line);margin:22px 0}
+  .foot{color:var(--mut);font-size:.8rem;text-align:center;margin-top:24px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>ZhuLong 离线小模型环境准备报告</h1>
+<div class="sub">llama.cpp（CPU）+ Qwen/Qwen3.5-0.8B · 2026-11-03 · 任务令：本机安装 llama.cpp + 下载 Qwen3.5-0.8B 供后续数据分析</div>
+
+<div class="note ok">
+<strong>结论（TL;DR）：</strong>
+<span class="pill p-ok">完成</span>
+模型完整下载（14 文件 / 1.7 GB，源自 ModelScope）＋ llama.cpp CPU 版编译成功（v0.8.0-dev / commit <code>28b812d</code>）＋ <strong>GGUF 转换意外成功</strong>（f16 1.55 GB → Q8_0 833 MB）＋ <strong>两条冒烟均通过</strong>（llama.cpp Q8_0 生成 90.9 tok/s；transformers HF 853M 参数输出连贯一句话答案）。<br>
+<strong>用于数据分析的推荐路径：llama.cpp + Q8_0 GGUF</strong>（CPU 上 ~90 tok/s，比 transformers float32 快 ~300 倍）。模型/工具均在仓库外（<code>$HOME</code>），未触碰论文与评测口径。
+</div>
+
+<h2>1. 主机与硬件</h2>
+<div class="card">
+<table>
+<tr><th style="width:30%">项</th><th>值</th></tr>
+<tr><td>主机名</td><td class="mono">hfeg0tedaap02</td></tr>
+<tr><td>内核 / 架构</td><td class="mono">Linux 6.8.0-71-generic x86_64 (Ubuntu)</td></tr>
+<tr><td>CPU 核数</td><td>64</td></tr>
+<tr><td>内存</td><td>~1007 GB（本机为高内存节点）</td></tr>
+<tr><td>GPU</td><td><span class="bad">无</span>（无 <code>nvidia-smi</code> / <code>nvcc</code>）→ 纯 CPU 路线，未编 CUDA 版</td></tr>
+<tr><td><code>/home</code> 文件系统</td><td class="mono">394G 总 / 353G 已用 / <strong>25 G 可用</strong>（93%）— 模型与工具落此盘</td></tr>
+<tr><td><code>/nasdata</code>（仓库所在）</td><td class="mono">527G 总 / 166 G 可用</td></tr>
+<tr><td>已装基础工具</td><td>git / g++ / python3.12 / curl / wget / make / git-lfs 3.4.1（<strong>缺 cmake</strong>，通过 venv pip 装入）</td></tr>
+</table>
+</div>
+
+<h2>2. llama.cpp 安装（CPU 版）</h2>
+<div class="card">
+<table>
+<tr><th style="width:30%">项</th><th>值</th></tr>
+<tr><td>源码路径</td><td class="mono">$HOME/tools/llama.cpp（仓库外）</td></tr>
+<tr><td>克隆方式</td><td><code>git clone --depth=1 https://github.com/ggml-org/llama.cpp</code></td></tr>
+<tr><td>commit / 版本</td><td><code>28b812d</code> / <strong>v0.8.0-dev (build 1)</strong> / GNU 13.3.0</td></tr>
+<tr><td>cmake 来源</td><td>系统无 cmake → venv 内 <code>pip install cmake</code>（4.4.4）</td></tr>
+<tr><td>构建配置</td><td><code>-DCMAKE_BUILD_TYPE=Release -DGGML_NATIVE=ON -DGGML_OPENMP=ON</code>（无 CUDA，因无 GPU）</td></tr>
+<tr><td>构建目标</td><td><code>llama-cli</code> / <code>llama-server</code> / <code>llama-quantize</code> — 三者均 <span class="ok">build exit=0</span></td></tr>
+<tr><td>构建产物大小</td><td>build 88 MB / 源码树 314 MB</td></tr>
+<tr><td>版本校验</td><td class="mono">./build/bin/llama-cli --version → version: 0.8.0-dev (build 1, commit 28b812d)</td></tr>
+</table>
+<pre>$ ~/.venvs/qwen35/bin/cmake -B build -DCMAKE_BUILD_TYPE=Release -DGGML_NATIVE=ON -DGGML_OPENMP=ON
+$ ~/.venvs/qwen35/bin/cmake --build build -j 64 --target llama-cli llama-server llama-quantize
+# build exit=0；三个可执行文件齐全
+$ ./build/bin/llama-cli --version
+version: 0.8.0-dev (build 1, commit 28b812d)
+built with GNU 13.3.0 for Linux x86_64</pre>
+</div>
+
+<h2>3. 代理与镜像</h2>
+<div class="card">
+<table>
+<tr><th style="width:30%">项</th><th>值 / 结论</th></tr>
+<tr><td>代理</td><td class="mono">https_proxy=http://172.19.92.23:13128（与 loop 同代理）</td></tr>
+<tr><td>github.com（经代理）</td><td><span class="ok">HTTP 200</span> — clone 正常</td></tr>
+<tr><td>huggingface.co（经代理）</td><td><span class="bad">封禁</span>（http_code=000，代理白名单不放行）</td></tr>
+<tr><td>hf-mirror.com 首页（经代理）</td><td><span class="ok">HTTP 200</span></td></tr>
+<tr><td>hf-mirror.com /resolve · /api（经代理）</td><td><span class="bad">308 重定向 → huggingface.co（被封）</span> → 文件下载链路不通</td></tr>
+<tr><td>huggingface_hub <code>hf download</code></td><td><span class="bad">失败</span> <code>httpx2.ProxyError: 503</code>（hf-mirror 重定向到被封的 huggingface.co）</td></tr>
+<tr><td>modelscope.cn（经代理）</td><td><span class="ok">HTTP 200，全可达</span> — 文件 API 直接服务，无重定向</td></tr>
+<tr><td>PyPI / tuna（经代理）</td><td><span class="ok">HTTP 200（0.2s）</span> — pip 安装走 tuna 镜像</td></tr>
+<tr><td>pytorch CPU index（经代理）</td><td><span class="ok">HTTP 200</span> — torch CPU wheel 184 MB</td></tr>
+</table>
+<div class="note bad">
+<strong>关键故障与回退：</strong>任务令要求"必须走镜像（hf-mirror）"，但实测 <strong>hf-mirror.com 当前对所有 <code>/resolve</code> 与 <code>/api</code> 请求返回 308 重定向到 huggingface.co</strong>，而企业代理封禁 huggingface.co ⇒ <code>hf download</code> 持续 503 失败。回退到 <strong>ModelScope（modelscope.cn，Qwen 官方源，经代理全可达）</strong>，用文件 API 逐个 curl 下载全部 14 个文件，http_code 全 200、大小逐一比对一致。<strong>git clone from hf-mirror 也可走</strong>（git 协议不触发 308），但 ModelScope 更直接可靠。
+</div>
+</div>
+
+<h2>4. 模型下载（ModelScope）</h2>
+<div class="card">
+<table>
+<tr><th style="width:30%">项</th><th>值</th></tr>
+<tr><td>模型</td><td><code>Qwen/Qwen3.5-0.8B</code>（ModelScope <code>qwen3_5</code>）</td></tr>
+<tr><td>架构 / 类型</td><td><code>Qwen3_5ForConditionalGeneration</code> · <strong>Image-Text-to-Text 多模态</strong>（含 <code>preprocessor_config.json</code> + <code>video_preprocessor_config.json</code> + <code>image_token_id</code>）· 权重 dtype bfloat16</td></tr>
+<tr><td>本地路径</td><td class="mono">$HOME/models/Qwen3.5-0.8B（仓库外 / <code>/home</code> 盘）</td></tr>
+<tr><td>文件数</td><td>14（HF 原始） + 2（GGUF） = 16</td></tr>
+<tr><td>HF 权重大小</td><td><code>model.safetensors-00001-of-00001.safetensors</code> = 1,746,942,600 B (1.62 GiB)</td></tr>
+<tr><td>HF 目录总大小</td><td>1.7 GB</td></tr>
+<tr><td>含 GGUF 后总大小</td><td>3.9 GB（f16 1.55 GB + Q8_0 833 MB）</td></tr>
+<tr><td>完整性校验</td><td>14 文件 http_code 全 200，size 与 ModelScope 文件清单逐一一致；<strong>无 <code>*.incomplete</code> / <code>*.tmp</code></strong></td></tr>
+<tr><td>必备文件核对</td><td><span class="ok">config.json ✓ preprocessor_config.json ✓ video_preprocessor_config.json ✓ tokenizer.json ✓ vocab.json ✓ merges.txt ✓ chat_template.jinja ✓ model.safetensors ✓ model.safetensors.index.json ✓</span></td></tr>
+</table>
+<h3>14 个文件清单（ModelScope API 实测）</h3>
+<pre>.gitattributes              2,207 B
+LICENSE                    11,343 B
+README.md                  61,705 B
+chat_template.jinja         7,755 B
+config.json                 2,907 B   ← model_type=qwen3_5, architectures=[Qwen3_5ForConditionalGeneration]
+configuration.json             51 B
+merges.txt               3,353,259 B
+model.safetensors-00001-of-00001.safetensors   1,746,942,600 B  (1.62 GiB)
+model.safetensors.index.json   50,900 B
+preprocessor_config.json        390 B   ← 视觉处理器
+tokenizer.json           12,807,982 B
+tokenizer_config.json       16,709 B
+video_preprocessor_config.json  385 B   ← 视频处理器
+vocab.json                6,722,759 B</pre>
+</div>
+
+<h2>5. GGUF 转换（意外成功）</h2>
+<div class="card">
+<div class="note ok">
+<strong>与任务预期不同：</strong>任务令据模型卡判断"llama.cpp 若尚不支持 qwen3_5 架构，GGUF 转换失败属预期"。实测 llama.cpp（commit <code>28b812d</code>）<strong>已支持 qwen35</strong>（<code>src/models/qwen35.cpp</code> 有 C++ 推理实现，<code>convert_hf_to_gguf.py</code> 成功导出）→ <strong>GGUF 转换成功，无需回退</strong>。
+</div>
+<table>
+<tr><th style="width:30%">项</th><th>值</th></tr>
+<tr><td>转换命令</td><td><code>python convert_hf_to_gguf.py "$MODEL_DIR" --outtype f16 --outfile ".../Qwen3.5-0.8B-f16.gguf"</code></td></tr>
+<tr><td>结果</td><td><span class="ok">成功</span> — n_tensors = 335，total_size = 1.5 G，exit=0</td></tr>
+<tr><td>f16 GGUF</td><td>1,557,662,752 B (1.45 GiB)</td></tr>
+<tr><td>Q8_0 量化</td><td><code>llama-quantize ... Q8_0</code> → <span class="ok">成功</span>，3.08 s，峰值 RSS 1.83 GB</td></tr>
+<tr><td>Q8_0 GGUF</td><td>833,592,352 B (795 MiB) — 体积约为 f16 的 53%</td></tr>
+<tr><td>转换说明</td><td>多模态模型的 GGUF 导出为<strong>文本部分</strong>（335 张量）；视觉编码器权重未单独导出 mmproj（llama.cpp 文本推理不需）。文本冒烟已验证可用。</td></tr>
+</table>
+<pre>INFO:gguf.gguf_writer:Writing the following files:
+INFO:gguf.gguf_writer:.../Qwen3.5-0.8B-f16.gguf: n_tensors = 335, total_size = 1.5G
+Writing: 100%|██████████| 1.55G/1.55G [00:03&lt;00:00, 498Mbyte/s]
+INFO:hf-to-gguf:Model successfully exported to .../Qwen3.5-0.8B-f16.gguf
+
+$ ./build/bin/llama-quantize .../Qwen3.5-0.8B-f16.gguf .../Qwen3.5-0.8B-Q8_0.gguf Q8_0
+# Exit status 0 | Elapsed 0:03.08 | Max RSS 1825412 KB (~1.78 GB)
+# → Q8_0.gguf = 833,592,352 B</pre>
+</div>
+
+<h2>6. 冒烟测试</h2>
+
+<h3>6.1 llama.cpp 冒烟（Q8_0 GGUF）<span class="pill p-ok">通过</span></h3>
+<div class="card">
+<table>
+<tr><th style="width:30%">项</th><th>值</th></tr>
+<tr><td>命令</td><td><code>llama-cli -m Qwen3.5-0.8B-Q8_0.gguf -p "用一句话解释什么是 EDA 设计流程。" -n 48 -t 8 --no-warmup</code></td></tr>
+<tr><td>Prompt 处理</td><td><strong>394.2 tok/s</strong></td></tr>
+<tr><td>生成速度</td><td><strong>90.9 tok/s</strong>（-n=48）/ <strong>108.6 tok/s</strong>（-n=256）</td></tr>
+<tr><td>墙钟</td><td>4.49 s（含加载 + 生成）</td></tr>
+<tr><td>峰值内存</td><td>4.98 GB（Max RSS 4,976,884 KB）</td></tr>
+<tr><td>输出连贯性</td><td><span class="ok">连贯</span> — 模型为 thinking 推理模型，先进入「Thinking Process」逐步分析，正确识别 EDA = Electronic Design Automation = 电子设计自动化</td></tr>
+<tr><td>说明</td><td>-n=48/256 时 token 主要用于 thinking trace，未及最终一句话答案；推理质量正常，加长 -n 或关 thinking 可得完整答案（见 §6.2 transformers 已得完整答案）</td></tr>
+</table>
+<pre class="out"><span class="d">&gt; 用一句话解释什么是 EDA 设计流程。</span>
+
+<span class="k">[Start thinking]</span>
+Thinking Process:
+1.  Analyze the Request:
+    *   Topic: EDA Design Process ...
+    *   "EDA" stands for Electronic Design Automation.
+    *   "Design Process" is the methodology for creating high-performance
+        electronic hardware/software systems.
+    ...
+
+<span class="d">[ Prompt: 427.0 t/s | Generation: 108.6 t/s ]</span></pre>
+</div>
+
+<h3>6.2 transformers 冒烟（HF 原始权重，文本输入）<span class="pill p-ok">通过</span></h3>
+<div class="card">
+<table>
+<tr><th style="width:30%">项</th><th>值</th></tr>
+<tr><td>环境</td><td>独立 venv <code>~/.venvs/qwen35</code>（不污染共享环境）：transformers 5.22.1 / accelerate 1.15.0 / safetensors 0.8.0 / tokenizers 0.23.3 / torch 2.9.0+cpu / torchvision 0.24.0+cpu</td></tr>
+<tr><td>加载类</td><td><code>AutoProcessor</code> + <code>AutoModelForMultimodalLM</code>（dtype float32 on CPU）</td></tr>
+<tr><td>模型类</td><td><code>Qwen3_5ForConditionalGeneration</code>（多模态，纯文本输入亦可用）</td></tr>
+<tr><td>参数量</td><td>853.0 M</td></tr>
+<tr><td>加载耗时</td><td>processor 0.4 s + model 0.2 s（473 weights，5719 it/s）</td></tr>
+<tr><td>生成</td><td>39 tokens / 114.2 s = <strong>0.3 tok/s</strong>（CPU float32 + 未装 causal_conv1d/flash-linear-attention 回退核 → 慢，但结果正确）</td></tr>
+<tr><td>峰值内存</td><td>5.68 GB</td></tr>
+<tr><td>输出</td><td><span class="ok">完整且正确的一句话答案</span>（见下）</td></tr>
+</table>
+<pre class="out"><span class="d">[gen] generated 39 tokens in 114.2s (0.3 tok/s)</span>
+<span class="d">[gen] peak RSS: 5.68 GB</span>
+<span class="k">==== OUTPUT ====</span>
+EDA 设计流程是指利用电子设计自动化工具（如 Cadence、Synopsys 等）对芯片进行
+仿真、验证、优化和部署的完整技术生命周期。
+<span class="k">==== END ====</span></pre>
+<div class="note">
+<strong>速度对比：</strong>llama.cpp Q8_0 在 CPU 上 ~90 tok/s，transformers float32 仅 0.3 tok/s —— <strong>llama.cpp 快约 300 倍</strong>。后续离线数据分析（trace 摘要 / 标签 / 预筛）应一律走 <strong>llama.cpp + Q8_0 GGUF</strong>；transformers 路径仅作权重完整性独立校验或多模态（图文）输入时备用。
+</div>
+</div>
+
+<h2>7. 失败项与原因汇总</h2>
+<div class="card">
+<table>
+<tr><th>项</th><th>结果</th><th>原因 / 处置</th></tr>
+<tr><td><code>hf download</code>（hf-mirror）</td><td><span class="bad">失败</span></td><td>hf-mirror.com 对 <code>/resolve</code>·<code>/api</code> 返回 308 → huggingface.co，而企业代理封禁 huggingface.co ⇒ 503。回退到 <strong>ModelScope</strong>（全可达）逐文件 curl，成功。</td></tr>
+<tr><td>系统 <code>cmake</code></td><td><span class="warn">缺失</span></td><td>Ubuntu PEP 668 阻止 <code>pip install --user</code>。建独立 venv <code>~/.venvs/qwen35</code> 内 <code>pip install cmake</code>（4.4.4），用 venv 内 cmake 二进制构建。</td></tr>
+<tr><td>pip 首次安装 transformers</td><td><span class="warn">停滞</span></td><td>经代理连 PyPI 单连接卡死（缓存 22 min 不增长）。kill 后换 <code>-i tuna</code> 镜像 + 先装 CPU torch（184 MB，避开 2 GB CUDA 包），顺利装齐。</td></tr>
+<tr><td>transformers 加载（首次）</td><td><span class="warn">ImportError</span></td><td><code>AutoProcessor</code> 需 torchvision（因有 video_preprocessor）。装 <code>torchvision==0.24.0+cpu</code> 后通过。</td></tr>
+<tr><td>GGUF 转换</td><td><span class="ok">未失败（与预期相反）</span></td><td>任务预期可能失败，实测 llama.cpp <code>28b812d</code> 已支持 qwen3_5，转换成功。</td></tr>
+</table>
+</div>
+
+<h2>8. 交付物清单</h2>
+<div class="card">
+<table>
+<tr><th>交付物</th><th>路径</th><th>状态</th></tr>
+<tr><td>llama.cpp 源码 + 构建</td><td class="mono">$HOME/tools/llama.cpp（+ build/bin/llama-cli|server|quantize）</td><td><span class="ok">✓</span></td></tr>
+<tr><td>独立 venv</td><td class="mono">~/.venvs/qwen35（transformers/torch/cmake 全套）</td><td><span class="ok">✓</span></td></tr>
+<tr><td>HF 模型权重</td><td class="mono">$HOME/models/Qwen3.5-0.8B/（14 文件 1.7 GB）</td><td><span class="ok">✓</span></td></tr>
+<tr><td>f16 GGUF</td><td class="mono">$HOME/models/Qwen3.5-0.8B/Qwen3.5-0.8B-f16.gguf（1.55 GB）</td><td><span class="ok">✓</span></td></tr>
+<tr><td>Q8_0 GGUF</td><td class="mono">$HOME/models/Qwen3.5-0.8B/Qwen3.5-0.8B-Q8_0.gguf（833 MB）</td><td><span class="ok">✓</span></td></tr>
+<tr><td>本报告</td><td class="mono">doc/ZhuLong_DAC2027/reports/report_zhulong_llamacpp_qwen08b_zh.html</td><td><span class="ok">✓</span></td></tr>
+<tr><td>MEMORY 状态</td><td class="mono">run/MEMORY_ZHULONG.md（顶部 1 条）</td><td><span class="ok">✓</span></td></tr>
+<tr><td>当日 daily</td><td class="mono">run/daily-memories/2026-11-03.md</td><td><span class="ok">✓</span></td></tr>
+<tr><td>git commit</td><td>前缀 <code>zhulong env:</code></td><td><span class="ok">✓</span></td></tr>
+</table>
+<div class="note">
+<strong>硬约束遵守：</strong>模型 / 工具均在仓库外（<code>$HOME</code>），未放入 git 仓库 ⇒ 无需 <code>.gitignore</code>；未触碰其它线文件（designflow / pretrain 等在途产物未入我的 <code>git add</code>）；未 <code>pkill</code> 任何进程；未改论文与评测数字；所有失败如实记录，无编造。
+</div>
+</div>
+
+<h2>9. 后续数据分析建议（能做什么 / 不能做什么）</h2>
+<div class="card">
+<h3 class="ok">能做（推荐 llama.cpp + Q8_0，~90 tok/s）</h3>
+<ul>
+<li><strong>trace / 日报摘要</strong>：对 cline session 日志、daily-memory 生成一句话摘要（如本报告 §6.2 的 EDA 解释演示）。</li>
+<li><strong>自动标签 / 分类</strong>：对 EDA 命令、工具调用打域标签（spice_sim / schematic / layout / physical_verify 等），辅助 benchmark case 分档。</li>
+<li><strong>预筛 / 路由</strong>：对候选 trace 做意图预筛，判断是否「提出需求 vs 已给方案」，辅助 A 档 trace-faithful 选料。</li>
+<li><strong>批量离线推理</strong>：64 核 CPU + 90 tok/s，单条 ~50 token 摘要约 0.5 s，可批量处理数百条 trace。</li>
+<li><strong>HTTP 服务</strong>：需要时用 <code>llama-server -m Q8_0.gguf --port 18080</code>（<strong>禁用 8090</strong>，测完即关），供其它脚本调用。</li>
+</ul>
+<h3 class="warn">受限 / 不能做</h3>
+<ul>
+<li><strong>视觉 / 视频输入</strong>：本 GGUF 为文本部分；若需图文理解（如截图判读），用 transformers + torchvision 路径（但 0.3 tok/s，仅适合少量调用），或等 llama.cpp 的 mmproj 支持。</li>
+<li><strong>长上下文大批量</strong>：0.8B 小模型推理能力有限，复杂逻辑判断 / 多步归因仍需大模型（glm-5.2 等）；本模型定位为<strong>轻量预筛与摘要</strong>，不是决策器。</li>
+<li><strong>huggingface.co 直连</strong>：企业代理封禁；后续更新模型版本须走 ModelScope（<code>www.modelscope.cn/api/v1/models/Qwen/.../repo?Revision=master&amp;FilePath=...</code>）或 hf-mirror 的 git clone（git 协议可走）。</li>
+<li><strong>GPU 加速</strong>：本机无 GPU；如需更快，需迁移到有 CUDA 的机器并重编 <code>-DGGML_CUDA=ON</code>。</li>
+</ul>
+<h3>快速复用命令</h3>
+<pre># 单次文本生成（推荐）
+$HOME/tools/llama.cpp/build/bin/llama-cli \
+  -m $HOME/models/Qwen3.5-0.8B/Qwen3.5-0.8B-Q8_0.gguf \
+  -p "你的提示" -n 200 -t 16 --no-warmup
+
+# HTTP 服务（临时，用完即关，禁占 8090）
+$HOME/tools/llama.cpp/build/bin/llama-server \
+  -m $HOME/models/Qwen3.5-0.8B/Qwen3.5-0.8B-Q8_0.gguf \
+  --port 18080 --host 127.0.0.1
+# 测 /health 后立即 Ctrl-C
+
+# transformers（多模态 / 权重校验，慢）
+~/.venvs/qwen35/bin/python -c "from transformers import AutoProcessor, AutoModelForMultimodalLM; ..."</pre>
+</div>
+
+<hr>
+<div class="foot">
+ZhuLong（DAC2027）· 离线小模型环境准备 · 2026-11-03 · 单文件自包含 HTML（0 script / 0 CDN / 0 外链）<br>
+生成者：GLM-5.2 编排 agent · 所有数字均为实测，无编造
+</div>
+
+</div>
+</body>
+</html>
