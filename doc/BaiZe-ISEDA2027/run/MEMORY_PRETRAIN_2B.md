@@ -2,31 +2,13 @@
 WAITING: 0
 > 🛑 **【运维通告 · 2026-11-02 19:51】S1 已由 ops 中继重启并在跑**：`bash scripts/train.sh s1 --nodes 2`，launcher pid **4163528**，从 **ckpt 58000** 续（19:55:40 起 iter **58010**→58030，7.0–7.2 s/step ≈**582K tok/s**，双机 16 卡 **98–100%**、~75GB/卡、~690W）。⇒ **GPU 不再空闲**：🚫 严禁再起任何训练/GPU 评测进程（会双写 ckpt 或 OOM）；"GPU idle → 2.5h 评测"的结论已过期。原 **18:39:51 SIGKILL / 18:50:18 SIGBUS** 的现场日志已归档为 `/tmp/baize_s1_baize2b_worker.log.crash_1102_1839` 与 `..._master.log.crash_1102_1839`（🚫 勿删，待 root 查 dmesg 定 OOM vs 误杀）。CPU 评测继续但**必须降载**：`OMP_NUM_THREADS≤8` + `nice -n 19` + 每机并发 ≤2，**禁止 `pkill python`**（18:39 训练被 -9 的疑似原因）。另：本次 resume **未恢复 scheduler**，LR 从 warmup 重来（58010=5e-6，每 10 步 +5e-6，约 2000 步/3.9h 后回 1e-3）——实验日志须记一笔。详见 `BAIZE_PRETRAIN_2B_TASK.md` 顶部运维令。
 
-> 🆕 2026-11-04 03:19 #1320：**f32 GGUF pilot完成·根因确认=GGUF转换hybrid元数据损坏(非F16精度)·pilot=FAIL已报告·4 evals推进·S1 iter74120健康**。f32 GGUF pilot(03:12完成)：sciq=0.61/piqa=0.56，与F16**逐位完全相同**(acc/acc_norm/stderr全等)⇒**证伪#1317的"F16精度"假设**，根因=llama.cpp convert_hf_to_gguf.py对nemotron_h的per-layer数组元数据键(head_count_kv/context_length/feed_forward_length)以"Duplicated key name…overwriting"重复写出仅留末值⇒hybrid层模式数组损坏(转换日志01_convert_v2.log:346-348三条WARNING)。f32 comparison：AvgΔ=-17.0pp/max=18.0pp/加速5.88x⇒verdict=FAIL(与F16一致)。F16 pilot=FAIL(Δ=-17pp,加速7.03x)。**两精度均FAIL⇒保留HF路线，pilot调查完毕等用户令**。报告已更新report_pretrain_llamacpp_pilot_zh.html(5804→8162B,补F32验证节+根因确认+f32 comparison.json)。4 evals仍跑：iter_30000/iter_50000_f32(.29)+iter_20000/iter_40000(.12)均无results.json。已完成1/5：iter_10000 Avg=0.5000✅。S1 iter74120/700000/loss2.091/0NaN/0skip/7.0s/step✅。CPU .29 load36.4/224(16.2%)/.12 load32.9/224(14.7%)<<80%✅。📦 体积：TASK=31373B(31KB)/MEMORY=30818B(30KB)≤32KB✅。未完成指令：有(5ckpt CPU评测 1/5 DONE+4在跑;pilot=FAIL已报告等令)⇒WAITING: 0。
+> 🆕 2026-11-04 03:28 #1321：**监控轮·pilot=FAIL等令·4 evals推进正常·S1 iter74190健康·最坏ETA~13:22<deadline✅**。4 evals实测进度(2599总请求)：.29 iter_30000_f32=1221/2599(47%)@17.1s/it ETA~09:52；.29 iter_50000_f32=496/2599(19%)@17.0s/it ETA~13:22(最慢)；.12 iter_40000_f32=1474/2599(57%)@28.7s/it ETA~12:24；.12 iter_20000_f32=1470/2599(56%)@28.2s/it ETA~12:11。最坏ETA~13:22<13:24 deadline✅。已完成1/5：iter_10000 Avg=0.5000✅。iter_50000 bf16有results.json(非NaN但sciq=0.0/acc=acc_norm存疑，float32重跑在跑)。S1 iter74190/700000/loss2.092/0NaN/0skip/7.0s/step/LR=1e-3(warmup完)✅。CPU .29 load34.5/224(15.4%)/.12 load34.9/224(15.6%)<<80%✅。pilot=FAIL(F16+f32均Δ=-17pp,根因=GGUF hybrid元数据损坏)已报告等用户令。📦 体积：TASK=31373B(31KB)/MEMORY≈30KB(归档~2.5KB)≤32KB✅。未完成指令：有(5ckpt CPU评测 1/5 DONE+4在跑;pilot=FAIL等令)⇒WAITING: 0。
 
-> 📦 §#1319（11-04 03:01, 监控轮·f32 GGUF pilot 86.5%在跑·4 evals推进·S1 iter73940）→ daily-memories/2026-11-04.md；**结论**：f32 pilot 519/600(86.5%)@~7s/it ETA~03:15, 4 evals推进, S1健康0NaN。被#1319确认f32 pilot仍在跑(~28min)。需要时再读。
+> 📦 §#1320（11-04 03:19, f32 GGUF pilot完成·根因确认=hybrid元数据损坏·pilot=FAIL已报告）→ daily-memories/2026-11-04.md；**结论**：f32与F16逐位相同,根因=convert_hf_to_gguf.py Duplicated key覆写hybrid层模式数组,两精度均FAIL保留HF路线。被#1321确认等令。需要时再读。
 
-> 📦 §#1318（11-04 03:01, 监控轮·f32 GGUF pilot 86.5%在跑·4 evals推进·S1 iter73940）→ daily-memories/2026-11-04.md；**结论**：f32 pilot 519/600(86.5%)@~7s/it ETA~03:15, 4 evals推进, S1健康0NaN。被#1319确认f32 pilot仍在跑(~28min)。需要时再读。
+> 📦 §#1317-#1319（11-04 02:43-03:01, pilot根因更正+f32验证在跑→完成）→ daily-memories/2026-11-04.md；**结论**：#1317更正根因为F16精度(后被#1320更正为元数据损坏),f32 pilot 86.5%→100%完成。被#1320-#1321确认。需要时再读。
 
-> 📦 §#1317（11-04 02:43, pilot根因更正+f32验证启动·S1 iter73730）→ daily-memories/2026-11-04.md；**结论**：pilot根因更正为F16精度(非Duplicated key), f32 GGUF验证启动, 4 evals推进。被#1318确认f32 pilot 86%在跑。需要时再读。
-
-> 📦 §#1316（11-04 02:26, 监控轮·pilot FAIL等令·4 evals推进·S1 iter73670·最坏ETA~13:03）→ daily-memories/2026-11-04.md；**结论**：4 evals推进正常, pilot=FAIL(根因被#1317更正为F16精度非Duplicated key), 最坏ETA~13:03<13:24 deadline✅。被#1317更正根因并启动f32验证。需要时再读。
-
-> 📦 §#1315（11-04 02:15, 监控轮·pilot FAIL等令·4 evals推进·S1 iter73580·最坏ETA~12:55）→ daily-memories/2026-11-04.md；**结论**：4 evals推进, iter_50000_f32共享.29@16.3s/it, 最坏ETA~12:55<13:24 deadline✅, S1健康0NaN。被#1316-#1317确认继续推进。需要时再读。
-
-
-> 📦 §#1314（11-04 02:08, 监控轮·pilot FAIL等令·4 evals推进·S1 iter73500·最坏ETA~13:07）→ daily-memories/2026-11-04.md；**结论**：4 evals推进, 最坏ETA~13:07<13:24 deadline✅, pilot=FAIL等令(根因后被#1317更正为F16精度)。被#1315-#1318确认。需要时再读。
-
-
-> 📦 §#1313（11-04 02:01, 监控轮·pilot FAIL等令·4 evals推进·S1 iter73430·最坏ETA~13:26⚠️逼近deadline）→ daily-memories/2026-11-04.md；**结论**：4 evals推进, iter_50000_f32共享.29@~17s/it, 最坏ETA~13:26⚠️逼近deadline, S1健康0NaN。被#1314-#1315确认改善(ETA~12:55)。需要时再读。
-
-> 📦 §#1311-#1312（11-04 01:46-01:54, 监控轮·pilot FAIL等令·4 evals推进·S1 iter73330-73400）→ daily-memories/2026-11-04.md；**结论**：4 evals正常推进, iter_50000_f32共享.29@~16.7s/it, 最坏ETA~13:11<13:24 deadline✅, S1健康0NaN。被#1313-#1314确认。需要时再读。
-
-> 📦 §#1309-#1310（11-04 01:31-01:36, 监控轮·pilot FAIL等令·4 evals推进·S1 iter73190-73240）→ daily-memories/2026-11-04.md；**结论**：4 evals正常推进, iter_50000_f32共享.29@~17s/it, 最坏ETA~13:20<14h, S1健康0NaN。被#1311-#1313确认。需要时再读。
-
-> 📦 §#1308（11-04 01:24, 监控轮·pilot FAIL已交付·4 evals推进·S1 iter73130）→ daily-memories/2026-11-04.md；**结论**：pilot=FAIL已交付(commit 9cdc4469f),4 evals推进 iter_30000 30%/iter_50000_f32 ramp-up 2.3%/iter_40000 46.6%/iter_20000 46.4%, S1 iter73130健康0NaN, CPU均<<80%。被#1311-#1314确认。需要时再读。
-
-> 📦 §#1307（11-04 01:14, 监控轮·pilot FAIL等令·iter_50000_f32 ETA修正36s/it·S1 iter73040）→ daily-memories/2026-11-04.md；**结论**：4 evals推进, iter_50000_f32共享.29→36s/it(非15s/it), pilot=FAIL等令, S1健康0NaN。被#1308-#1311确认。需要时再读。
+> 📦 §#1307-#1316（11-04 01:14-02:26, 10轮监控·pilot=FAIL等令·4 evals推进·S1 iter73040→73670）→ daily-memories/2026-11-04.md；**结论汇总**：pilot=FAIL已交付(commit 9cdc4469f),4 evals稳定推进(.29~17s/it/.12~28s/it),最坏ETA从13:26改善至13:03,S1全程0NaN,CPU均<<80%。被#1317-#1321确认。需要时再读。
 
 > 📦 §#1304-#1306（11-04 00:53-01:07, 监控轮·pilot FAIL等令·4 evals推进）→ daily-memories/2026-11-04.md；**结论**：pilot=FAIL(commit 9cdc4469f),4 evals推进 iter_30000 28%/iter_50000_f32 ramp-up 1.2%/iter_40000 45.3%/iter_20000 45.1%, S1 iter72990健康0NaN, CPU均<<80%。被#1307-#1310确认继续有效。需要时再读。
 
