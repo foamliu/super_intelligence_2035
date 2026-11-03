@@ -326,6 +326,23 @@ LONG_CONTEXT_DATASETS = [
         "evidence": "数据集卡: '128K and 256K sequence scales'; 6 source/tier: code_repo_pack_128k/256k, books_concat_128k/256k, arxiv_full_concat_128k/256k; 每源 512 packed examples",
         "notes": "OELLM 项目的自然长上下文扩展实验数据。已按 Megatron-LM 格式分词打包 (128K/256K)。来源: starcoderdata-repo (repo-packed code), gutenberg_multilang (books), arxiv (papers)。体量小 (586M tokens) 但格式即用 (Megatron .bin/.idx)。适合作为长上下文 continuation training 的小规模验证集。",
     },
+    {
+        "repo_id": "ghostcc3/mix-context-post-training-128k",
+        "hf_url": "https://huggingface.co/datasets/ghostcc3/mix-context-post-training-128k",
+        "category": "长上下文训练集 (128K context extension post-training, packed)",
+        "size": "未核到确切字节",
+        "samples": "未核到",
+        "tokens_est": "未核到",
+        "language": "英语 (推测; 需核字段确认)",
+        "license": "MIT",
+        "gated": "否",
+        "updated": "2026-01-23",
+        "fields": "未核到完整字段 (HF cardData tags: long-context, post-training, context-window-extension, packed-sequences, continual-training)",
+        "ge32k_ratio": "未标注具体占比; tags 标注 128K/packed-sequences → 按设计推断序列接近 128K，但需下载抽样实测确认",
+        "ge128k_ratio": "未标注; tags 标注 128K context-window-extension → 推断目标为 128K，需抽样实测",
+        "evidence": "HF API 核实: id=ghostcc3/mix-context-post-training-128k, license=MIT, downloads=245, lastModified=2026-01-23, tags=[long-context, post-training, context-window-extension, packed-sequences, continual-training]; 未打开数据集卡全文 (fetch 受限)",
+        "notes": "128K 上下文扩展 post-training 数据集 (packed sequences)。downloads 较低 (245) 但正是 LC 训练类别。MIT 协议干净、非 gated。适合作为 128K continuation training 的小规模补充。⚠️ 体量/字段/实际序列长度均未核到，下载后必须抽样实测 ≥32K/≥128K 占比再决定是否入训练。",
+    },
 ]
 
 # B 类：Agentic 数据集
@@ -345,6 +362,22 @@ AGENTIC_DATASETS = [
         "stage": "SFT + RL",
         "contamination_risk": "中: 222 个 GitHub 仓库，部分与 SWE-bench Verified repo 重叠。SWE-smith 是自动生成任务 (非真实 issue)，但 repo 级别可能重叠。",
         "notes": "目前最大规模 SWE 训练数据 (52K+)。SWE-agent-LM-32B 在此训练达 40.2% SWE-bench Verified pass@1。需 Docker 环境执行测试。",
+    },
+    {
+        "repo_id": "SWE-bench/SWE-smith-trajectories",
+        "hf_url": "https://huggingface.co/datasets/SWE-bench/SWE-smith-trajectories",
+        "tier": "SFT (轨迹) + 可辅助 RL",
+        "size": "1K<n<10K (HF size_categories)",
+        "samples": "1K-10K 条 agent 执行轨迹 (SWE-smith 任务上的轨迹)",
+        "language": "英语 (代码+NL)",
+        "license": "MIT",
+        "gated": "否",
+        "updated": "2025-07-19",
+        "fields": "未核到完整字段 (SWE-smith 任务字段 + agent 轨迹/行动序列)",
+        "reward_signal": "可附带 SWE-smith 单测结果 (FAIL_TO_PASS/PASS_TO_PASS)；轨迹含 agent 多步行动序列，成功/失败标签可辅助 reward 建模",
+        "stage": "SFT (成功轨迹) + 可选 RL (单测 reward)",
+        "contamination_risk": "中: 与 SWE-smith 同源 (222 repo)，部分与 SWE-bench Verified repo 重叠",
+        "notes": "SWE-smith 的轨迹配套数据集 (HF size_categories 1K-10K, downloads 11,107)。提供 agent 在 SWE-smith 任务上的执行轨迹，可直接 SFT；成功/失败标签可辅助 RL reward。与 SWE-smith (任务定义) 互补: SWE-smith 给任务+patch+测试，本数据集给 agent 实际跑出来的轨迹。MIT 协议干净。⚠️ 字段结构未核到全文，下载后需核实轨迹格式 (OpenHands/SWE-agent 兼容性)。",
     },
     {
         "repo_id": "nvidia/Nemotron-Cascade-RL-SWE",
@@ -473,6 +506,22 @@ AGENTIC_DATASETS = [
         "stage": "评测 (非训练，绝不可入训练集)",
         "contamination_risk": "🔴 极高 (作为评测集): 必须提取 13-gram 指纹加入黑名单。Terminal-Bench 2.0 (harborframework/terminal-bench-2.0) 已发布，任务更新。",
         "notes": "Terminal-Bench 原始数据集。每个任务是完整自包含 Docker 归档。用于评测 agent 在真实终端环境的能力 (编译/训练模型/搭建服务器/调试)。绝不可入训练集。必须提取 13-gram 指纹用于去污染。",
+    },
+    {
+        "repo_id": "harborframework/terminal-bench-2.1",
+        "hf_url": "https://huggingface.co/datasets/harborframework/terminal-bench-2.1",
+        "tier": "评测集 (最新官方 Terminal-Bench 2.1, 非训练)",
+        "size": "未核到 (HF size 未标注; Terminal-Bench 2.0 为 n<1K)",
+        "samples": "未核到确切任务数 (Terminal-Bench 2.1 Harbor git-repos dataset)",
+        "language": "英语",
+        "license": "Apache-2.0",
+        "gated": "否",
+        "updated": "2026-09-14",
+        "fields": "未核到完整字段 (task instruction + 验证脚本 + git-repos; tags 含 rl-environment)",
+        "reward_signal": "评测用 (Docker 容器内验证脚本断言 pass/fail); 非训练 reward，但 tags 标注 rl-environment → 可作为 RL 评测环境",
+        "stage": "评测 (held-out, 绝不可入训练集)",
+        "contamination_risk": "🔴 极高 (作为目标基准本体): Terminal-Bench 最新官方版 (2026-09-14)，是我们 Terminal-Bench 成绩的评测对象 → 绝对不可入训练。必须提取 13-gram 指纹加入黑名单。",
+        "notes": "🏆 Terminal-Bench 最新官方版 (2.1, 2026-09-14 更新, downloads 171,260)。官方榜单 tbench.ai/leaderboard/terminal-bench/2.0。比 ia03/terminal-bench (Terminal-Bench 2.0, 112 tasks, 2025-07) 更新。tags 含 rl-environment → 可作为 RL 评测环境。Apache-2.0。作为目标基准本体，仅用于去污染指纹提取 + held-out 评测。⚠️ 同名 harborframework/terminal-bench (downloads 134,948) 为基础版; harborframework/terminal-bench-2.0 (downloads 98,908) 为 2.0 版——三者均属同一官方系列，均不可入训练。",
     },
     {
         "repo_id": "tuandunghcmut/toolbench-v1",
@@ -701,7 +750,7 @@ def section_tldr():
 </tr>
 </table>
 <p><strong>预计总下载体量 (B 类 TOP-3):</strong> ~20-30 GiB (不含 Docker 镜像)</p>
-<p><strong>值得关注的补充候选:</strong> deepmind/pg19 (28K 本经典书籍, Apache-2.0); microsoft/Orchard (107K SWE+3K GUI 双模态轨迹, MIT, 但匿名化致无法 13-gram 去污染); nvidia/Nemotron-Cascade-RL-SWE (执行无关 RL, 但含 SWE-Bench-Train 污染风险高); open-thoughts/AgentTrove (1.7M 轨迹, 最大聚合, 但 219 源污染风险高); AlienKevin/SWE-ZERO-12M-trajectories (12M 轨迹/112B tokens, 最大 SWE 轨迹, 但体量巨大); zhangdw/to-tool-call-datasets (244K 通用工具调用 SFT, 污染风险低); yuyijiong/LongData-Corpus (中英双语长文本, 但 CC-BY-NC-4.0 非商用)</p>
+<p><strong>值得关注的补充候选:</strong> deepmind/pg19 (28K 本经典书籍, Apache-2.0); microsoft/Orchard (107K SWE+3K GUI 双模态轨迹, MIT, 但匿名化致无法 13-gram 去污染); nvidia/Nemotron-Cascade-RL-SWE (执行无关 RL, 但含 SWE-Bench-Train 污染风险高); open-thoughts/AgentTrove (1.7M 轨迹, 最大聚合, 但 219 源污染风险高); AlienKevin/SWE-ZERO-12M-trajectories (12M 轨迹/112B tokens, 最大 SWE 轨迹, 但体量巨大); zhangdw/to-tool-call-datasets (244K 通用工具调用 SFT, 污染风险低); yuyijiong/LongData-Corpus (中英双语长文本, 但 CC-BY-NC-4.0 非商用); <strong>SWE-bench/SWE-smith-trajectories</strong> (SWE-smith 轨迹配套, MIT, 1K-10K, SFT+RL); <strong>ghostcc3/mix-context-post-training-128k</strong> (128K LC post-training packed, MIT, 但体量/字段未核到需抽样实测); <strong>harborframework/terminal-bench-2.1</strong> (最新官方 Terminal-Bench 2.1, 2026-09, Apache-2.0, 评测集本体绝不可入训练)</p>
 </div>
 
 <div class="info">
@@ -989,10 +1038,10 @@ def section_contamination():
 </tr>
 <tr>
 <td>Terminal-Bench</td>
-<td>~100 个公开 GitHub 仓库任务</td>
-<td>task instruction + test script 在 web crawl 中; 但 Terminal-Bench 较新，污染窗口较短</td>
-<td><span class="tag-mid">中</span></td>
-<td>① 提取 Terminal-Bench task 13-gram; ② 对 terminal-command-execution-sft 扫描 (合成数据，风险低); ③ Terminal-Bench 作为 held-out 评测</td>
+<td>~100 个公开 GitHub 仓库任务 (官方 harborframework/terminal-bench-2.1, 2026-09-14 更新)</td>
+<td>task instruction + test script 在 web crawl 中; Terminal-Bench 2.1 (2026-09) 是最新官方版，污染窗口已扩大; harborframework 系列 (terminal-bench / -2.0 / -2.1) 均为目标基准本体</td>
+<td><span class="tag-high">高</span></td>
+<td>① 提取 Terminal-Bench 2.1 task 13-gram (instruction + test script + oracle); ② 对 terminal-command-execution-sft / Nemotron-Terminal-Corpus 扫描; ③ Terminal-Bench 2.1 作为 held-out 评测; ④ 注意 harborframework 三版本 (base/2.0/2.1) 均不可入训练</td>
 </tr>
 </table>
 
@@ -1047,6 +1096,9 @@ def section_download():
 <tr><td>P2</td><td>deepmind/pg19</td><td>A 长上下文</td><td>~12 GiB</td><td>/nas_env/datasets/pg19/</td><td>经典长上下文基准, Apache-2.0, 28K 本书</td></tr>
 <tr><td>⚠️</td><td>yuyijiong/LongData-Corpus</td><td>A 长上下文</td><td>~36 GiB</td><td>/nas_env/datasets/longdata-corpus/</td><td>中英双语长文本, CC-BY-NC-4.0 (非商用!), gated</td></tr>
 <tr><td>⚠️</td><td>bigcode/the-stack-v2</td><td>A 长上下文</td><td>67.5 TB</td><td>/nas_env/datasets/stack-v2/</td><td>gated + 需 SWH 协议, 体量巨大, 不建议直接下载</td></tr>
+<tr><td>P2</td><td>SWE-bench/SWE-smith-trajectories</td><td>B agentic</td><td>~2-5 GiB</td><td>/nas_env/datasets/swe-smith-traj/</td><td>SWE-smith 轨迹配套, MIT, 1K-10K, SFT+RL</td></tr>
+<tr><td>P3</td><td>ghostcc3/mix-context-post-training-128k</td><td>A 长上下文</td><td>未核到 (&lt;5 GiB 预估)</td><td>/nas_env/datasets/mix-ctx-128k/</td><td>128K LC post-training packed, MIT; 体量/字段未核到需抽样实测</td></tr>
+<tr><td>P3</td><td>harborframework/terminal-bench-2.1</td><td>B 评测</td><td>&lt;5 GiB</td><td>/nas_env/datasets/terminal-bench-2.1/</td><td>最新官方 Terminal-Bench 2.1 (2026-09), 评测集本体仅去污染用</td></tr>
 </table>
 <p><strong>预计总下载体量: ~280-350 GiB</strong> (P0: ~45 GiB; P1: ~160 GiB; P2: ~100 GiB; P3: ~15 GiB; SWE-ZERO-12M/stack-v3 需单独评估)</p>
 
@@ -1113,6 +1165,15 @@ hf download THUDM/LongAlign-10k --repo-type dataset --local-dir /nas_env/dataset
 
 # P3: Terminal-Bench (仅去污染用，不入训练)
 hf download ia03/terminal-bench --repo-type dataset --local-dir /nas_env/datasets/terminal-bench/
+
+# P3: Terminal-Bench 2.1 最新官方版 (2026-09, 仅去污染用，不入训练)
+hf download harborframework/terminal-bench-2.1 --repo-type dataset --local-dir /nas_env/datasets/terminal-bench-2.1/
+
+# P2: SWE-smith 轨迹配套 (MIT, SFT+RL)
+hf download SWE-bench/SWE-smith-trajectories --repo-type dataset --local-dir /nas_env/datasets/swe-smith-traj/
+
+# P3: 128K LC post-training packed (MIT, 体量/字段未核到，下载后抽样实测)
+hf download ghostcc3/mix-context-post-training-128k --repo-type dataset --local-dir /nas_env/datasets/mix-ctx-128k/
 
 # ⚠️: The Stack v3 (15.9TB，需选择性下载，例如仅 Python 大仓库)
 # hf download HuggingFaceCode/stack-v3-train --repo-type dataset --local-dir /nas_env/datasets/stack-v3-train/ --include "*.parquet"

@@ -18,18 +18,19 @@ WAITING: 1
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        🟢运维令10-31 web search调研HF长上下文+agentic数据集.报告v5已交付+已commit+push
-已完成:       ✅A.LC+Agentic调研报告v5(report_data_lc_agentic_survey_zh.html 106569B/44table/0script/18+15候选/74 HF链接)+生成器(gen_lc_agentic_survey_report.py 幂等);✅B.85M下载持续运行;✅C.报告全量验证(7节/0script/0CDN/幂等OK/44table平衡)
-当前动作:     唤醒1135(2026-11-03 12:47):运维令10-31交付物例行复核全PASS→report=106569B(≥25KB✓)/0<script>/0CDN/0外链/44<table>=44</table>平衡✓/div 50=50平衡✓/7节§1~§7✓/33 unique HF数据集链接/34「未核到」✓;generator --check-idempotent OK(84252B✓);85M PID212578 alive(hf download mvp-lab/LLaVA-OneVision-1.5-Mid-Training-85M);git synced(##main...origin/main,data线clean✓,仅ZhuLong/Harness线改动非本线);TASK=27958B/MEMORY=19KB(均<40KB无需归档)
-下一步:       下轮唤醒:①查85M下载进度;②待运维批准后执行下载(P0:whole-books+SWE-smith+Nemotron-Terminal-Corpus+SWE-rebench)
+PHASE:        🟢运维令10-31 web search调研HF长上下文+agentic数据集.报告v6已交付+已commit+push
+已完成:       ✅A.LC+Agentic调研报告v6(report_data_lc_agentic_survey_zh.html 115558B/47table/0script/19+18候选/80 HF链接/36unique)+生成器(gen_lc_agentic_survey_report.py 幂等);✅B.v6新增3个HF核实数据集(SWE-smith-trajectories/MIT/HTTP200 + harborframework/terminal-bench-2.1/Apache-2.0/HTTP200 + ghostcc3/mix-context-post-training-128k/MIT/HTTP200);✅C.85M下载持续运行;✅D.报告全量验证(7节/0script/0CDN/0外链/幂等OK/47table平衡/0未闭合标签)
+当前动作:     唤醒1136(2026-11-03 14:5x):运维令10-31报告v5→v6增强→web search复查发现3个v5未覆盖的HF数据集→curl HF API逐条核实元信息(MIT/Apache-2.0/license/downloads/lastModified/tags)→3个HTTP 200确认→生成器+3数据集+污染表更新TB2.1+TL;DR补充候选+下载方案+3命令→重生成→全量验证PASS(115558B/47table/0script/0CDN/80HF链接/36unique/0非HF/0未闭合/7节齐/3新数据集全在/50未核到/52gated)→commit+push
+下一步:       下轮唤醒:①查85M下载进度;②待运维批准后执行下载(P0:whole-books+SWE-smith+Nemotron-Terminal-Corpus+SWE-rebench;P2新增:SWE-smith-trajectories;P3新增:mix-ctx-128k/terminal-bench-2.1)
 阻塞:         无
 ERROR_COUNT:  11
-未完成指令:   无(调研报告v5已交付+验证完成)
+未完成指令:   无(调研报告v6已交付+验证完成)
 ```
 
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。
 
 ## 📋 本唤醒流水
+> [11-03 14:5x] 唤醒1136：运维令10-31报告v5→v6增强→①web search复查HF发现3个v5未覆盖数据集(SWE-bench/SWE-smith-trajectories/MIT/1K-10K/SWE轨迹+SFT/RL · harborframework/terminal-bench-2.1/Apache-2.0/2026-09-14/最新官方TB评测集本体 · ghostcc3/mix-context-post-training-128k/MIT/128K LC post-training packed)；②curl HF API(带proxy 92.25)逐条核实→3个HTTP 200确认+license/downloads/lastModified/tags核到；③生成器(gen_lc_agentic_survey_report.py)+3数据集条目(LONG_CONTEXT +1=19,AGENTIC +2=18)+污染表TB升级为TB2.1高危+TL;DR补充候选3条+下载方案表+3行+hf命令+3条；④重生成→全量验证PASS=115558B(≥25KB✓)/0<script>/0CDN/0非HF外链/47<table>=47</table>平衡/HTMLParser严格检查0未闭合0误配/7节§1~§7齐/80 HF链接36unique/3新数据集全在/50「未核到」52「gated」✓；⑤generator --check-idempotent OK(91300chars=115558bytes,逐字节不变✓)；⑥85M:PID212578 alive✓；⑦git synced→commit data survey: v6→push→心跳WAITING=1
 > [11-03 12:47] 唤醒1135：运维令10-31交付物例行复核全PASS→①report=106569B(≥25KB✓)/0<script>/0CDN/0外链/44<table>=44</table>平衡✓/div 50=50平衡✓/7节§1~§7✓/33 unique HF数据集链接/34「未核到」✓/meta×2为void元素非失衡;②generator --check-idempotent OK(84252B✓);③85M:PID212578 alive(hf download mvp-lab/LLaVA-OneVision-1.5-Mid-Training-85M)✓;④git synced(##main...origin/main,data线clean✓,仅ZhuLong/Harness线改动非本线);⑤TASK=27958B/MEMORY≈19KB(均<40KB无需归档)→任务已交付,心跳WAITING=1
 
 > [11-03 12:27] 唤醒1134：运维令10-31交付物例行复核全PASS→①report=106569B(≥25KB✓)/0<script>/44<table>=44</table>平衡✓/div 50=50平衡✓/7节§1~§7✓/74 HF链接/34「未核到」✓/0CDN;②generator --check-idempotent OK(84252B✓);③85M:PID212578 alive(etimes≈13385s≈3.7h)✓,parquet12017/8.incomplete;④git synced(##main...origin/main,data线clean✓,仅ZhuLong线改动非本线);⑤df:/nas_train179T/87%(29T可用),/nas_env8.3T/84%(1.7T可用);⑥TASK=27958B/MEMORY≈21KB(均<40KB无需归档)→任务已交付,心跳WAITING=1

@@ -96,7 +96,7 @@ a:hover { text-decoration: underline; }
 </tr>
 </table>
 <p><strong>预计总下载体量 (B 类 TOP-3):</strong> ~20-30 GiB (不含 Docker 镜像)</p>
-<p><strong>值得关注的补充候选:</strong> deepmind/pg19 (28K 本经典书籍, Apache-2.0); microsoft/Orchard (107K SWE+3K GUI 双模态轨迹, MIT, 但匿名化致无法 13-gram 去污染); nvidia/Nemotron-Cascade-RL-SWE (执行无关 RL, 但含 SWE-Bench-Train 污染风险高); open-thoughts/AgentTrove (1.7M 轨迹, 最大聚合, 但 219 源污染风险高); AlienKevin/SWE-ZERO-12M-trajectories (12M 轨迹/112B tokens, 最大 SWE 轨迹, 但体量巨大); zhangdw/to-tool-call-datasets (244K 通用工具调用 SFT, 污染风险低); yuyijiong/LongData-Corpus (中英双语长文本, 但 CC-BY-NC-4.0 非商用)</p>
+<p><strong>值得关注的补充候选:</strong> deepmind/pg19 (28K 本经典书籍, Apache-2.0); microsoft/Orchard (107K SWE+3K GUI 双模态轨迹, MIT, 但匿名化致无法 13-gram 去污染); nvidia/Nemotron-Cascade-RL-SWE (执行无关 RL, 但含 SWE-Bench-Train 污染风险高); open-thoughts/AgentTrove (1.7M 轨迹, 最大聚合, 但 219 源污染风险高); AlienKevin/SWE-ZERO-12M-trajectories (12M 轨迹/112B tokens, 最大 SWE 轨迹, 但体量巨大); zhangdw/to-tool-call-datasets (244K 通用工具调用 SFT, 污染风险低); yuyijiong/LongData-Corpus (中英双语长文本, 但 CC-BY-NC-4.0 非商用); <strong>SWE-bench/SWE-smith-trajectories</strong> (SWE-smith 轨迹配套, MIT, 1K-10K, SFT+RL); <strong>ghostcc3/mix-context-post-training-128k</strong> (128K LC post-training packed, MIT, 但体量/字段未核到需抽样实测); <strong>harborframework/terminal-bench-2.1</strong> (最新官方 Terminal-Bench 2.1, 2026-09, Apache-2.0, 评测集本体绝不可入训练)</p>
 </div>
 
 <div class="info">
@@ -379,6 +379,19 @@ a:hover { text-decoration: underline; }
 <td>128K 子集: 100% &gt;=128K (packed); 256K 子集: 100% &gt;=256K (packed)</td>
 <td>128K 和 256K 子集: 100% &gt;=128K (按 packed 设计)</td>
 <td>数据集卡: &#x27;128K and 256K sequence scales&#x27;; 6 source/tier: code_repo_pack_128k/256k, books_concat_128k/256k, arxiv_full_concat_128k/256k; 每源 512 packed examples</td>
+</tr>
+
+<tr>
+<td>19</td>
+<td><a href="https://huggingface.co/datasets/ghostcc3/mix-context-post-training-128k">ghostcc3/mix-context-post-training-128k</a></td>
+<td>长上下文训练集 (128K context extension post-training, packed)</td>
+<td>未核到确切字节</td>
+<td>英语 (推测; 需核字段确认)</td>
+<td>MIT</td>
+<td>否</td>
+<td>未标注具体占比; tags 标注 128K/packed-sequences → 按设计推断序列接近 128K，但需下载抽样实测确认</td>
+<td>未标注; tags 标注 128K context-window-extension → 推断目标为 128K，需抽样实测</td>
+<td>HF API 核实: id=ghostcc3/mix-context-post-training-128k, license=MIT, downloads=245, lastModified=2026-01-23, tags=[long-context, post-training, context-window-extension, packed-sequences, continual-training]; 未打开数据集卡全文 (fetch 受限)</td>
 </tr>
 </table>
 
@@ -708,6 +721,24 @@ a:hover { text-decoration: underline; }
 </table>
 </div>
 
+<div class="tldr-card">
+<h4>19. <a href="https://huggingface.co/datasets/ghostcc3/mix-context-post-training-128k">ghostcc3/mix-context-post-training-128k</a> <small>[长上下文训练集 (128K context extension post-training, packed)]</small></h4>
+<table>
+<tr><th>体量</th><td>未核到确切字节</td></tr>
+<tr><th>样本数</th><td>未核到</td></tr>
+<tr><th>Token 估算</th><td>未核到</td></tr>
+<tr><th>语言</th><td>英语 (推测; 需核字段确认)</td></tr>
+<tr><th>License</th><td>MIT</td></tr>
+<tr><th>Gated</th><td>否</td></tr>
+<tr><th>更新时间</th><td>2026-01-23</td></tr>
+<tr><th>字段结构</th><td>未核到完整字段 (HF cardData tags: long-context, post-training, context-window-extension, packed-sequences, continual-training)</td></tr>
+<tr><th>≥32K 占比</th><td>未标注具体占比; tags 标注 128K/packed-sequences → 按设计推断序列接近 128K，但需下载抽样实测确认</td></tr>
+<tr><th>≥128K 占比</th><td>未标注; tags 标注 128K context-window-extension → 推断目标为 128K，需抽样实测</td></tr>
+<tr><th>证据来源</th><td>HF API 核实: id=ghostcc3/mix-context-post-training-128k, license=MIT, downloads=245, lastModified=2026-01-23, tags=[long-context, post-training, context-window-extension, packed-sequences, continual-training]; 未打开数据集卡全文 (fetch 受限)</td></tr>
+<tr><th>备注</th><td>128K 上下文扩展 post-training 数据集 (packed sequences)。downloads 较低 (245) 但正是 LC 训练类别。MIT 协议干净、非 gated。适合作为 128K continuation training 的小规模补充。⚠️ 体量/字段/实际序列长度均未核到，下载后必须抽样实测 ≥32K/≥128K 占比再决定是否入训练。</td></tr>
+</table>
+</div>
+
 <h3>3.3 按方向分类汇总</h3>
 <h4>① 书籍/长文</h4>
 <ul>
@@ -778,6 +809,16 @@ a:hover { text-decoration: underline; }
 
 <tr>
 <td>2</td>
+<td><a href="https://huggingface.co/datasets/SWE-bench/SWE-smith-trajectories">SWE-bench/SWE-smith-trajectories</a></td>
+<td><span class="tag-rl">SFT (轨迹) + 可辅助 RL</span></td>
+<td>1K&lt;n&lt;10K (HF size_categories)</td>
+<td>可附带 SWE-smith 单测结果 (FAIL_TO_PASS/PASS_TO_PASS)；轨迹含 agent 多步行动序列，成功/失败标签可辅助 reward 建模</td>
+<td>SFT (成功轨迹) + 可选 RL (单测 reward)</td>
+<td><span class="tag-mid">中</span></td>
+</tr>
+
+<tr>
+<td>3</td>
 <td><a href="https://huggingface.co/datasets/nvidia/Nemotron-Cascade-RL-SWE">nvidia/Nemotron-Cascade-RL-SWE</a></td>
 <td><span class="tag-rl">可直接 RL</span></td>
 <td>100K-1M 样本</td>
@@ -787,7 +828,7 @@ a:hover { text-decoration: underline; }
 </tr>
 
 <tr>
-<td>3</td>
+<td>4</td>
 <td><a href="https://huggingface.co/datasets/NovaSky-AI/SkyRL-v0-293-data">NovaSky-AI/SkyRL-v0-293-data</a></td>
 <td><span class="tag-rl">可直接 RL</span></td>
 <td>293 train + 23 val</td>
@@ -797,7 +838,7 @@ a:hover { text-decoration: underline; }
 </tr>
 
 <tr>
-<td>4</td>
+<td>5</td>
 <td><a href="https://huggingface.co/datasets/nvidia/Nemotron-RL-Agentic-SWE-Pivot-v1">nvidia/Nemotron-RL-Agentic-SWE-Pivot-v1</a></td>
 <td><span class="tag-rl">可直接 RL</span></td>
 <td>10K - 100K rows (~33.8K rows, parquet ~4.8GB)</td>
@@ -807,7 +848,7 @@ a:hover { text-decoration: underline; }
 </tr>
 
 <tr>
-<td>5</td>
+<td>6</td>
 <td><a href="https://huggingface.co/datasets/zhangdw/to-tool-call-datasets">zhangdw/to-tool-call-datasets</a></td>
 <td><span class="tag-sft">只能 SFT</span></td>
 <td>~2.4 GB JSONL</td>
@@ -817,7 +858,7 @@ a:hover { text-decoration: underline; }
 </tr>
 
 <tr>
-<td>6</td>
+<td>7</td>
 <td><a href="https://huggingface.co/datasets/mshojaei77/terminal-command-execution-sft">mshojaei77/terminal-command-execution-sft</a></td>
 <td><span class="tag-sft">只能 SFT</span></td>
 <td>10K-100K</td>
@@ -827,7 +868,7 @@ a:hover { text-decoration: underline; }
 </tr>
 
 <tr>
-<td>7</td>
+<td>8</td>
 <td><a href="https://huggingface.co/datasets/Nethraaaaa81/swev-trm-trajectories-25models">Nethraaaaa81/swev-trm-trajectories-25models</a></td>
 <td><span class="tag-sft">SFT + 奖励模型训练</span></td>
 <td>train 10,107 + val 2,366</td>
@@ -837,7 +878,7 @@ a:hover { text-decoration: underline; }
 </tr>
 
 <tr>
-<td>8</td>
+<td>9</td>
 <td><a href="https://huggingface.co/datasets/hariharasudharsanj-008/agent-data-collection">hariharasudharsanj-008/agent-data-collection (SWE-Gym)</a></td>
 <td><span class="tag-sft">SFT (轨迹)</span></td>
 <td>未核到</td>
@@ -847,7 +888,7 @@ a:hover { text-decoration: underline; }
 </tr>
 
 <tr>
-<td>9</td>
+<td>10</td>
 <td><a href="https://huggingface.co/datasets/ia03/terminal-bench">ia03/terminal-bench</a></td>
 <td><span class="tag-sft">评测集 (非训练，用于去污染 + 评测)</span></td>
 <td>112 个任务 (完整自包含 tar.gz 归档, &lt;1K rows)</td>
@@ -857,7 +898,17 @@ a:hover { text-decoration: underline; }
 </tr>
 
 <tr>
-<td>10</td>
+<td>11</td>
+<td><a href="https://huggingface.co/datasets/harborframework/terminal-bench-2.1">harborframework/terminal-bench-2.1</a></td>
+<td><span class="tag-sft">评测集 (最新官方 Terminal-Bench 2.1, 非训练)</span></td>
+<td>未核到 (HF size 未标注; Terminal-Bench 2.0 为 n&lt;1K)</td>
+<td>评测用 (Docker 容器内验证脚本断言 pass/fail); 非训练 reward，但 tags 标注 rl-environment → 可作为 RL 评测环境</td>
+<td>评测 (held-out, 绝不可入训练集)</td>
+<td><span class="tag-high">🔴 极高 (作为目标基准本体)</span></td>
+</tr>
+
+<tr>
+<td>12</td>
 <td><a href="https://huggingface.co/datasets/tuandunghcmut/toolbench-v1">tuandunghcmut/toolbench-v1</a></td>
 <td><span class="tag-sft">只能 SFT</span></td>
 <td>100K - 1M 样本</td>
@@ -867,7 +918,7 @@ a:hover { text-decoration: underline; }
 </tr>
 
 <tr>
-<td>11</td>
+<td>13</td>
 <td><a href="https://huggingface.co/datasets/nvidia/Nemotron-Cascade-SFT-SWE">nvidia/Nemotron-Cascade-SFT-SWE</a></td>
 <td><span class="tag-sft">只能 SFT (Nemotron Cascade SFT 阶段)</span></td>
 <td>100K - 1M 样本</td>
@@ -877,7 +928,7 @@ a:hover { text-decoration: underline; }
 </tr>
 
 <tr>
-<td>12</td>
+<td>14</td>
 <td><a href="https://huggingface.co/datasets/nvidia/Nemotron-Terminal-Corpus">nvidia/Nemotron-Terminal-Corpus</a></td>
 <td><span class="tag-rl">可直接 RL (Terminal-Bench 对标)</span></td>
 <td>100K-1M (~366K 轨迹, parquet)</td>
@@ -887,7 +938,7 @@ a:hover { text-decoration: underline; }
 </tr>
 
 <tr>
-<td>13</td>
+<td>15</td>
 <td><a href="https://huggingface.co/datasets/open-thoughts/AgentTrove">open-thoughts/AgentTrove</a></td>
 <td><span class="tag-sft">只能 SFT (大规模聚合轨迹)</span></td>
 <td>~18.6 GB (1M-10M 行, parquet)</td>
@@ -897,7 +948,7 @@ a:hover { text-decoration: underline; }
 </tr>
 
 <tr>
-<td>14</td>
+<td>16</td>
 <td><a href="https://huggingface.co/datasets/AlienKevin/SWE-ZERO-12M-trajectories">AlienKevin/SWE-ZERO-12M-trajectories</a></td>
 <td><span class="tag-sft">只能 SFT (执行无关, 大规模轨迹)</span></td>
 <td>112B tokens, ~111 GB (估计)</td>
@@ -907,7 +958,7 @@ a:hover { text-decoration: underline; }
 </tr>
 
 <tr>
-<td>15</td>
+<td>17</td>
 <td><a href="https://huggingface.co/datasets/nebius/SWE-rebench">nebius/SWE-rebench</a></td>
 <td><span class="tag-rl">可直接 RL (去污染, 可执行验证)</span></td>
 <td>10K-100K (21,000+ issue-PR pairs)</td>
@@ -917,7 +968,7 @@ a:hover { text-decoration: underline; }
 </tr>
 
 <tr>
-<td>16</td>
+<td>18</td>
 <td><a href="https://huggingface.co/datasets/microsoft/Orchard">microsoft/Orchard</a></td>
 <td><span class="tag-rl">SFT + RL (多模态: SWE + GUI agent 轨迹)</span></td>
 <td>100K-1M (swe: 107K rows + gui: 3.07K rows, parquet)</td>
@@ -947,7 +998,24 @@ a:hover { text-decoration: underline; }
 </div>
 
 <div class="tldr-card">
-<h4>2. <a href="https://huggingface.co/datasets/nvidia/Nemotron-Cascade-RL-SWE">nvidia/Nemotron-Cascade-RL-SWE</a> <small>[可直接 RL]</small></h4>
+<h4>2. <a href="https://huggingface.co/datasets/SWE-bench/SWE-smith-trajectories">SWE-bench/SWE-smith-trajectories</a> <small>[SFT (轨迹) + 可辅助 RL]</small></h4>
+<table>
+<tr><th>体量</th><td>1K&lt;n&lt;10K (HF size_categories)</td></tr>
+<tr><th>样本数</th><td>1K-10K 条 agent 执行轨迹 (SWE-smith 任务上的轨迹)</td></tr>
+<tr><th>语言</th><td>英语 (代码+NL)</td></tr>
+<tr><th>License</th><td>MIT</td></tr>
+<tr><th>Gated</th><td>否</td></tr>
+<tr><th>更新时间</th><td>2025-07-19</td></tr>
+<tr><th>字段结构</th><td>未核到完整字段 (SWE-smith 任务字段 + agent 轨迹/行动序列)</td></tr>
+<tr><th>奖励信号类型</th><td>可附带 SWE-smith 单测结果 (FAIL_TO_PASS/PASS_TO_PASS)；轨迹含 agent 多步行动序列，成功/失败标签可辅助 reward 建模</td></tr>
+<tr><th>适用阶段</th><td>SFT (成功轨迹) + 可选 RL (单测 reward)</td></tr>
+<tr><th>污染风险</th><td>中: 与 SWE-smith 同源 (222 repo)，部分与 SWE-bench Verified repo 重叠</td></tr>
+<tr><th>备注</th><td>SWE-smith 的轨迹配套数据集 (HF size_categories 1K-10K, downloads 11,107)。提供 agent 在 SWE-smith 任务上的执行轨迹，可直接 SFT；成功/失败标签可辅助 RL reward。与 SWE-smith (任务定义) 互补: SWE-smith 给任务+patch+测试，本数据集给 agent 实际跑出来的轨迹。MIT 协议干净。⚠️ 字段结构未核到全文，下载后需核实轨迹格式 (OpenHands/SWE-agent 兼容性)。</td></tr>
+</table>
+</div>
+
+<div class="tldr-card">
+<h4>3. <a href="https://huggingface.co/datasets/nvidia/Nemotron-Cascade-RL-SWE">nvidia/Nemotron-Cascade-RL-SWE</a> <small>[可直接 RL]</small></h4>
 <table>
 <tr><th>体量</th><td>100K-1M 样本</td></tr>
 <tr><th>样本数</th><td>SWE-Fixer-Train 30K + SWE-Smith 3K + SWE-Bench-Train 1.5K + SWE-reBench 5.6K = ~40K</td></tr>
@@ -964,7 +1032,7 @@ a:hover { text-decoration: underline; }
 </div>
 
 <div class="tldr-card">
-<h4>3. <a href="https://huggingface.co/datasets/NovaSky-AI/SkyRL-v0-293-data">NovaSky-AI/SkyRL-v0-293-data</a> <small>[可直接 RL]</small></h4>
+<h4>4. <a href="https://huggingface.co/datasets/NovaSky-AI/SkyRL-v0-293-data">NovaSky-AI/SkyRL-v0-293-data</a> <small>[可直接 RL]</small></h4>
 <table>
 <tr><th>体量</th><td>293 train + 23 val</td></tr>
 <tr><th>样本数</th><td>293 train + 23 validation</td></tr>
@@ -981,7 +1049,7 @@ a:hover { text-decoration: underline; }
 </div>
 
 <div class="tldr-card">
-<h4>4. <a href="https://huggingface.co/datasets/nvidia/Nemotron-RL-Agentic-SWE-Pivot-v1">nvidia/Nemotron-RL-Agentic-SWE-Pivot-v1</a> <small>[可直接 RL]</small></h4>
+<h4>5. <a href="https://huggingface.co/datasets/nvidia/Nemotron-RL-Agentic-SWE-Pivot-v1">nvidia/Nemotron-RL-Agentic-SWE-Pivot-v1</a> <small>[可直接 RL]</small></h4>
 <table>
 <tr><th>体量</th><td>10K - 100K rows (~33.8K rows, parquet ~4.8GB)</td></tr>
 <tr><th>样本数</th><td>~33,800 步级行为对 (step-level behavior pairs)</td></tr>
@@ -998,7 +1066,7 @@ a:hover { text-decoration: underline; }
 </div>
 
 <div class="tldr-card">
-<h4>5. <a href="https://huggingface.co/datasets/zhangdw/to-tool-call-datasets">zhangdw/to-tool-call-datasets</a> <small>[只能 SFT]</small></h4>
+<h4>6. <a href="https://huggingface.co/datasets/zhangdw/to-tool-call-datasets">zhangdw/to-tool-call-datasets</a> <small>[只能 SFT]</small></h4>
 <table>
 <tr><th>体量</th><td>~2.4 GB JSONL</td></tr>
 <tr><th>样本数</th><td>244,949 训练样本</td></tr>
@@ -1015,7 +1083,7 @@ a:hover { text-decoration: underline; }
 </div>
 
 <div class="tldr-card">
-<h4>6. <a href="https://huggingface.co/datasets/mshojaei77/terminal-command-execution-sft">mshojaei77/terminal-command-execution-sft</a> <small>[只能 SFT]</small></h4>
+<h4>7. <a href="https://huggingface.co/datasets/mshojaei77/terminal-command-execution-sft">mshojaei77/terminal-command-execution-sft</a> <small>[只能 SFT]</small></h4>
 <table>
 <tr><th>体量</th><td>10K-100K</td></tr>
 <tr><th>样本数</th><td>7 个源数据集聚合</td></tr>
@@ -1032,7 +1100,7 @@ a:hover { text-decoration: underline; }
 </div>
 
 <div class="tldr-card">
-<h4>7. <a href="https://huggingface.co/datasets/Nethraaaaa81/swev-trm-trajectories-25models">Nethraaaaa81/swev-trm-trajectories-25models</a> <small>[SFT + 奖励模型训练]</small></h4>
+<h4>8. <a href="https://huggingface.co/datasets/Nethraaaaa81/swev-trm-trajectories-25models">Nethraaaaa81/swev-trm-trajectories-25models</a> <small>[SFT + 奖励模型训练]</small></h4>
 <table>
 <tr><th>体量</th><td>train 10,107 + val 2,366</td></tr>
 <tr><th>样本数</th><td>12,473 轨迹 (25 个 LLM 在 SWE-bench Verified)</td></tr>
@@ -1049,7 +1117,7 @@ a:hover { text-decoration: underline; }
 </div>
 
 <div class="tldr-card">
-<h4>8. <a href="https://huggingface.co/datasets/hariharasudharsanj-008/agent-data-collection">hariharasudharsanj-008/agent-data-collection (SWE-Gym)</a> <small>[SFT (轨迹)]</small></h4>
+<h4>9. <a href="https://huggingface.co/datasets/hariharasudharsanj-008/agent-data-collection">hariharasudharsanj-008/agent-data-collection (SWE-Gym)</a> <small>[SFT (轨迹)]</small></h4>
 <table>
 <tr><th>体量</th><td>未核到</td></tr>
 <tr><th>样本数</th><td>SWE-Gym 2,438 任务子集</td></tr>
@@ -1066,7 +1134,7 @@ a:hover { text-decoration: underline; }
 </div>
 
 <div class="tldr-card">
-<h4>9. <a href="https://huggingface.co/datasets/ia03/terminal-bench">ia03/terminal-bench</a> <small>[评测集 (非训练，用于去污染 + 评测)]</small></h4>
+<h4>10. <a href="https://huggingface.co/datasets/ia03/terminal-bench">ia03/terminal-bench</a> <small>[评测集 (非训练，用于去污染 + 评测)]</small></h4>
 <table>
 <tr><th>体量</th><td>112 个任务 (完整自包含 tar.gz 归档, &lt;1K rows)</td></tr>
 <tr><th>样本数</th><td>112 个 Terminal-Bench 任务 (test split)</td></tr>
@@ -1083,7 +1151,24 @@ a:hover { text-decoration: underline; }
 </div>
 
 <div class="tldr-card">
-<h4>10. <a href="https://huggingface.co/datasets/tuandunghcmut/toolbench-v1">tuandunghcmut/toolbench-v1</a> <small>[只能 SFT]</small></h4>
+<h4>11. <a href="https://huggingface.co/datasets/harborframework/terminal-bench-2.1">harborframework/terminal-bench-2.1</a> <small>[评测集 (最新官方 Terminal-Bench 2.1, 非训练)]</small></h4>
+<table>
+<tr><th>体量</th><td>未核到 (HF size 未标注; Terminal-Bench 2.0 为 n&lt;1K)</td></tr>
+<tr><th>样本数</th><td>未核到确切任务数 (Terminal-Bench 2.1 Harbor git-repos dataset)</td></tr>
+<tr><th>语言</th><td>英语</td></tr>
+<tr><th>License</th><td>Apache-2.0</td></tr>
+<tr><th>Gated</th><td>否</td></tr>
+<tr><th>更新时间</th><td>2026-09-14</td></tr>
+<tr><th>字段结构</th><td>未核到完整字段 (task instruction + 验证脚本 + git-repos; tags 含 rl-environment)</td></tr>
+<tr><th>奖励信号类型</th><td>评测用 (Docker 容器内验证脚本断言 pass/fail); 非训练 reward，但 tags 标注 rl-environment → 可作为 RL 评测环境</td></tr>
+<tr><th>适用阶段</th><td>评测 (held-out, 绝不可入训练集)</td></tr>
+<tr><th>污染风险</th><td>🔴 极高 (作为目标基准本体): Terminal-Bench 最新官方版 (2026-09-14)，是我们 Terminal-Bench 成绩的评测对象 → 绝对不可入训练。必须提取 13-gram 指纹加入黑名单。</td></tr>
+<tr><th>备注</th><td>🏆 Terminal-Bench 最新官方版 (2.1, 2026-09-14 更新, downloads 171,260)。官方榜单 tbench.ai/leaderboard/terminal-bench/2.0。比 ia03/terminal-bench (Terminal-Bench 2.0, 112 tasks, 2025-07) 更新。tags 含 rl-environment → 可作为 RL 评测环境。Apache-2.0。作为目标基准本体，仅用于去污染指纹提取 + held-out 评测。⚠️ 同名 harborframework/terminal-bench (downloads 134,948) 为基础版; harborframework/terminal-bench-2.0 (downloads 98,908) 为 2.0 版——三者均属同一官方系列，均不可入训练。</td></tr>
+</table>
+</div>
+
+<div class="tldr-card">
+<h4>12. <a href="https://huggingface.co/datasets/tuandunghcmut/toolbench-v1">tuandunghcmut/toolbench-v1</a> <small>[只能 SFT]</small></h4>
 <table>
 <tr><th>体量</th><td>100K - 1M 样本</td></tr>
 <tr><th>样本数</th><td>100K-1M 对话 (train + validation + benchmark)</td></tr>
@@ -1100,7 +1185,7 @@ a:hover { text-decoration: underline; }
 </div>
 
 <div class="tldr-card">
-<h4>11. <a href="https://huggingface.co/datasets/nvidia/Nemotron-Cascade-SFT-SWE">nvidia/Nemotron-Cascade-SFT-SWE</a> <small>[只能 SFT (Nemotron Cascade SFT 阶段)]</small></h4>
+<h4>13. <a href="https://huggingface.co/datasets/nvidia/Nemotron-Cascade-SFT-SWE">nvidia/Nemotron-Cascade-SFT-SWE</a> <small>[只能 SFT (Nemotron Cascade SFT 阶段)]</small></h4>
 <table>
 <tr><th>体量</th><td>100K - 1M 样本</td></tr>
 <tr><th>样本数</th><td>SFT 阶段: SWE-Bench-Train + SWE-reBench + SWE-Smith + R2E-Gym + SWE-Fixer-Train，按难度筛选</td></tr>
@@ -1117,7 +1202,7 @@ a:hover { text-decoration: underline; }
 </div>
 
 <div class="tldr-card">
-<h4>12. <a href="https://huggingface.co/datasets/nvidia/Nemotron-Terminal-Corpus">nvidia/Nemotron-Terminal-Corpus</a> <small>[可直接 RL (Terminal-Bench 对标)]</small></h4>
+<h4>14. <a href="https://huggingface.co/datasets/nvidia/Nemotron-Terminal-Corpus">nvidia/Nemotron-Terminal-Corpus</a> <small>[可直接 RL (Terminal-Bench 对标)]</small></h4>
 <table>
 <tr><th>体量</th><td>100K-1M (~366K 轨迹, parquet)</td></tr>
 <tr><th>样本数</th><td>~366,000 条高质量执行轨迹 (226K 数据集适配器 + 140K 合成技能任务)</td></tr>
@@ -1134,7 +1219,7 @@ a:hover { text-decoration: underline; }
 </div>
 
 <div class="tldr-card">
-<h4>13. <a href="https://huggingface.co/datasets/open-thoughts/AgentTrove">open-thoughts/AgentTrove</a> <small>[只能 SFT (大规模聚合轨迹)]</small></h4>
+<h4>15. <a href="https://huggingface.co/datasets/open-thoughts/AgentTrove">open-thoughts/AgentTrove</a> <small>[只能 SFT (大规模聚合轨迹)]</small></h4>
 <table>
 <tr><th>体量</th><td>~18.6 GB (1M-10M 行, parquet)</td></tr>
 <tr><th>样本数</th><td>1,696,847 条轨迹, 219 个源数据集</td></tr>
@@ -1151,7 +1236,7 @@ a:hover { text-decoration: underline; }
 </div>
 
 <div class="tldr-card">
-<h4>14. <a href="https://huggingface.co/datasets/AlienKevin/SWE-ZERO-12M-trajectories">AlienKevin/SWE-ZERO-12M-trajectories</a> <small>[只能 SFT (执行无关, 大规模轨迹)]</small></h4>
+<h4>16. <a href="https://huggingface.co/datasets/AlienKevin/SWE-ZERO-12M-trajectories">AlienKevin/SWE-ZERO-12M-trajectories</a> <small>[只能 SFT (执行无关, 大规模轨迹)]</small></h4>
 <table>
 <tr><th>体量</th><td>112B tokens, ~111 GB (估计)</td></tr>
 <tr><th>样本数</th><td>12,290,800 条轨迹, 122,908 个 PR, 3,222 个仓库, 16 种编程语言</td></tr>
@@ -1168,7 +1253,7 @@ a:hover { text-decoration: underline; }
 </div>
 
 <div class="tldr-card">
-<h4>15. <a href="https://huggingface.co/datasets/nebius/SWE-rebench">nebius/SWE-rebench</a> <small>[可直接 RL (去污染, 可执行验证)]</small></h4>
+<h4>17. <a href="https://huggingface.co/datasets/nebius/SWE-rebench">nebius/SWE-rebench</a> <small>[可直接 RL (去污染, 可执行验证)]</small></h4>
 <table>
 <tr><th>体量</th><td>10K-100K (21,000+ issue-PR pairs)</td></tr>
 <tr><th>样本数</th><td>21,000+ 任务, 3,400+ Python 仓库, 7,500 个预构建 Docker 镜像</td></tr>
@@ -1185,7 +1270,7 @@ a:hover { text-decoration: underline; }
 </div>
 
 <div class="tldr-card">
-<h4>16. <a href="https://huggingface.co/datasets/microsoft/Orchard">microsoft/Orchard</a> <small>[SFT + RL (多模态: SWE + GUI agent 轨迹)]</small></h4>
+<h4>18. <a href="https://huggingface.co/datasets/microsoft/Orchard">microsoft/Orchard</a> <small>[SFT + RL (多模态: SWE + GUI agent 轨迹)]</small></h4>
 <table>
 <tr><th>体量</th><td>100K-1M (swe: 107K rows + gui: 3.07K rows, parquet)</td></tr>
 <tr><th>样本数</th><td>swe: 107,185 多轮 SWE 轨迹 (2,788 GitHub 仓库) + gui: 3,070 GUI agent 逐步 rollout (409 任务)</td></tr>
@@ -1299,10 +1384,10 @@ a:hover { text-decoration: underline; }
 </tr>
 <tr>
 <td>Terminal-Bench</td>
-<td>~100 个公开 GitHub 仓库任务</td>
-<td>task instruction + test script 在 web crawl 中; 但 Terminal-Bench 较新，污染窗口较短</td>
-<td><span class="tag-mid">中</span></td>
-<td>① 提取 Terminal-Bench task 13-gram; ② 对 terminal-command-execution-sft 扫描 (合成数据，风险低); ③ Terminal-Bench 作为 held-out 评测</td>
+<td>~100 个公开 GitHub 仓库任务 (官方 harborframework/terminal-bench-2.1, 2026-09-14 更新)</td>
+<td>task instruction + test script 在 web crawl 中; Terminal-Bench 2.1 (2026-09) 是最新官方版，污染窗口已扩大; harborframework 系列 (terminal-bench / -2.0 / -2.1) 均为目标基准本体</td>
+<td><span class="tag-high">高</span></td>
+<td>① 提取 Terminal-Bench 2.1 task 13-gram (instruction + test script + oracle); ② 对 terminal-command-execution-sft / Nemotron-Terminal-Corpus 扫描; ③ Terminal-Bench 2.1 作为 held-out 评测; ④ 注意 harborframework 三版本 (base/2.0/2.1) 均不可入训练</td>
 </tr>
 </table>
 
@@ -1355,6 +1440,9 @@ a:hover { text-decoration: underline; }
 <tr><td>P2</td><td>deepmind/pg19</td><td>A 长上下文</td><td>~12 GiB</td><td>/nas_env/datasets/pg19/</td><td>经典长上下文基准, Apache-2.0, 28K 本书</td></tr>
 <tr><td>⚠️</td><td>yuyijiong/LongData-Corpus</td><td>A 长上下文</td><td>~36 GiB</td><td>/nas_env/datasets/longdata-corpus/</td><td>中英双语长文本, CC-BY-NC-4.0 (非商用!), gated</td></tr>
 <tr><td>⚠️</td><td>bigcode/the-stack-v2</td><td>A 长上下文</td><td>67.5 TB</td><td>/nas_env/datasets/stack-v2/</td><td>gated + 需 SWH 协议, 体量巨大, 不建议直接下载</td></tr>
+<tr><td>P2</td><td>SWE-bench/SWE-smith-trajectories</td><td>B agentic</td><td>~2-5 GiB</td><td>/nas_env/datasets/swe-smith-traj/</td><td>SWE-smith 轨迹配套, MIT, 1K-10K, SFT+RL</td></tr>
+<tr><td>P3</td><td>ghostcc3/mix-context-post-training-128k</td><td>A 长上下文</td><td>未核到 (&lt;5 GiB 预估)</td><td>/nas_env/datasets/mix-ctx-128k/</td><td>128K LC post-training packed, MIT; 体量/字段未核到需抽样实测</td></tr>
+<tr><td>P3</td><td>harborframework/terminal-bench-2.1</td><td>B 评测</td><td>&lt;5 GiB</td><td>/nas_env/datasets/terminal-bench-2.1/</td><td>最新官方 Terminal-Bench 2.1 (2026-09), 评测集本体仅去污染用</td></tr>
 </table>
 <p><strong>预计总下载体量: ~280-350 GiB</strong> (P0: ~45 GiB; P1: ~160 GiB; P2: ~100 GiB; P3: ~15 GiB; SWE-ZERO-12M/stack-v3 需单独评估)</p>
 
@@ -1421,6 +1509,15 @@ hf download THUDM/LongAlign-10k --repo-type dataset --local-dir /nas_env/dataset
 
 # P3: Terminal-Bench (仅去污染用，不入训练)
 hf download ia03/terminal-bench --repo-type dataset --local-dir /nas_env/datasets/terminal-bench/
+
+# P3: Terminal-Bench 2.1 最新官方版 (2026-09, 仅去污染用，不入训练)
+hf download harborframework/terminal-bench-2.1 --repo-type dataset --local-dir /nas_env/datasets/terminal-bench-2.1/
+
+# P2: SWE-smith 轨迹配套 (MIT, SFT+RL)
+hf download SWE-bench/SWE-smith-trajectories --repo-type dataset --local-dir /nas_env/datasets/swe-smith-traj/
+
+# P3: 128K LC post-training packed (MIT, 体量/字段未核到，下载后抽样实测)
+hf download ghostcc3/mix-context-post-training-128k --repo-type dataset --local-dir /nas_env/datasets/mix-ctx-128k/
 
 # ⚠️: The Stack v3 (15.9TB，需选择性下载，例如仅 Python 大仓库)
 # hf download HuggingFaceCode/stack-v3-train --repo-type dataset --local-dir /nas_env/datasets/stack-v3-train/ --include "*.parquet"
