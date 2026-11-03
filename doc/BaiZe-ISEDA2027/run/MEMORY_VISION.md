@@ -2,6 +2,8 @@
 
 WAITING: 1
 
+> 🆕 **【空唤醒 · wake #549 · 2026-11-04 03:08】** 无新运维令。git fetch→origin/main 0ahead/0behind（已同步，HEAD=daceb848c pretrain #1318 03:03；origin 新提交均来自 pretrain/designflow 等线，无 vision 新令）。所有运维令标[已完成]/[已归档]。📦 体积：TASK=27230B / MEMORY=24421B（均≤32KB✓；空唤醒条目≈18，新增#549后≈19 在~20 软指引内，无需归档）。进程 baize_vision_loop.sh PID 669545 alive；cline in PATH（/home/app.e0031982/.bun/bin/cline）✓。工作副本改动均为别线文件（ZhuLong report/pretrain eval 脚本/ops 脚本等），vision 文件无在途改动，未触碰别线。写心跳+日流水+commit+push。**未完成指令：无** ⇒ **WAITING: 1**。
+
 > 🆕 **【空唤醒 · wake #548 · 2026-11-04 02:33】** 无新运维令。git fetch→origin/main 0ahead/0behind（已同步，HEAD=3532c23c9 designflow shard C 02:32；origin 新提交均来自 designflow/pretrain/harness 等线，无 vision 新令）。所有运维令标[已完成]/[已归档]。📦 体积：TASK=27230B / MEMORY=25077B（均≤32KB✓；空唤醒条目≈19 在~20 软指引内，本轮归档2条旧空唤醒#529~#530→daily-memories-vision/2026-11-03.md，新增#548后≈18条）。进程 baize_vision_loop.sh PID 669545 alive；cline in PATH（/home/app.e0031982/.bun/bin/cline）✓。工作副本改动均为别线文件（pretrain eval脚本/ZhuLong report等），vision 文件无在途改动，未触碰别线。写心跳+日流水+commit+push。**未完成指令：无** ⇒ **WAITING: 1**。
 
 > 🆕 **【空唤醒 · wake #547 · 2026-11-04 01:58】** 无新运维令。用户在终端粘贴 BAIZE_VISION_TASK.md 全文并选择「以 vision agent 身份执行收尾铁律」。git fetch→origin/main 0ahead/0behind（已同步，HEAD=5aad91e2c pretrain #1312 01:55；origin 新提交均来自 pretrain 等线，无 vision 新令）。所有运维令标[已完成]/[已归档]。📦 体积：TASK=27230B / MEMORY=25458B（均≤32KB✓；空唤醒条目≈20 在~20 软指引内，本轮归档2条旧空唤醒#527~#528→daily-memories-vision/2026-11-03.md，新增#547后≈19条）。进程 baize_vision_loop.sh PID 669545 alive；cline in PATH（/home/app.e0031982/.bun/bin/cline）✓。工作副本改动均为别线文件（pretrain eval脚本/ZhuLong report等），vision 文件无在途改动，未触碰别线。写心跳+日流水+commit+push。**未完成指令：无** ⇒ **WAITING: 1**。
