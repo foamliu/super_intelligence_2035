@@ -33,4 +33,4 @@ djml8					case	EDA-Eval-DesignFlow-PFDdeadZone-001	2026-11-02 17:47
 1793177580229_11fst	e0030760	hfeg0pkn002	175	characterization	case	EDA-Eval-DesignFlow-Sram6tDcChar-001	2026-11-03 07:09	characterization L2 SRAM 6T bitcell DC char harness (wnm/iread/iwrite/ileak, 6 PVT, level-1 MOS); 14 conds; ref PASS + 5 negs FAIL; A/B GT confirmed on .75 real HSPICE; appended jsonl line 29
 1792565482572_2gmli	thqu	hfeg0plg99	231	spice_sim	case	EDA-Eval-DesignFlow-TaperBufOpt-001	2026-11-03 08:02	
 1792978836622_054zc	zhukaic	hfeahpc503	271	spice_sim	case	EDA-Eval-DesignFlow-OtaAcReport-001	2026-11-03 08:33	
-1792143054616_zr9dt	jasminej	hfeahpc505	180	spice_sim	claimed		2026-11-03 08:53	
+1792143054616_zr9dt	jasminej	hfeahpc505	180	spice_sim	parked		2026-11-03 10:09	circuit core verified (MNb tail+.dc Vvih+neta->1inv, trip=0.5007 on target) but idfe-spread mechanism not cleanly realizable (extreme asymmetry); simplify to single-alter VIH trip tune next round — recipe in deepread; broken check.py(Itail/.tran) removed

@@ -96,3 +96,39 @@ Sram6tDcChar=SRAM 6T DC 表征(被动测) · InvOptSpec=单反相器 W/L 网格 
 4. PMOS-input diff pair 在 vih≈VDD/2 区不在好工作点（PMOS 需 gate<源-0.5）；NMOS-input diff pair 在 vih≈0.5 区正常 → 选 NMOS-input。
 5. diff amp 输出极性：netA 随 vih↑ 而 ↓（falling），netB 随 vih↑ 而 ↑（rising）→ 取 netB→偶数 inv 得 rising 0→1。
 6. `rm -f slice_A.*` 会连同 .sp 一起删 → hspice "No valid input file"。只 rm out_* 。
+
+## 2026-11-03 09:5x 补充：电路验证结果 + 近完成 recipe（parked，下轮可直接交付）
+
+**状态**：parked（idfe-spread 机制不洁净，需简化为 single-alter；电路核心已验证可用）。
+
+### 已验证可用的电路（.75 HSPICE V-2023.12-SP1-1 真跑确认）
+- **偏置必须用 MNb NMOS 尾管（vbias=0.7, wnb=2u），🚫 不能用理想 Itail 源**（Itail 把 neta/netb 拖到负值，diff pair 死锁）。
+- **分析必须用 .dc Vvih 扫源（🚫 .dc vih——会扫不存在的 param variable；🚫 .tran ramp——init 态乱，measure 2/3 failed）**。
+- **输出取 neta→1inv（neta 随 vih↑而↓，1 inv → out 上升 = rising 0→1，measure when v(out)=0.8 rise=1 成功）**。
+- baseline(wn28=wn23=2u, wp10=wp3=1.5u, wnb=2u, vbias=0.7, vref=0.5, vdd=1.2) → **vtrip=0.5007（已命中 target 0.500！）**
+- 增大输入对 wn28/wn23 → trip 不变（仍 0.5003），说明 trip 由 vref + PMOS 负载 + 尾流决定，wn28/wn23 改 gm/灵敏度。
+- level-1 model 必须给 nsub=1e16 phi=0.6 gamma=0.4。
+- .measure 输出落在 .ms0/.ms1/.ms2（不是 .mt0），格式 $DATA1 ... vtrip temper alter#。
+
+### ❌ idfe-spread 机制不可用（已穷举验证）
+- idfe 注入 **neta**：正 idfe（sink neta）即使 0.1uA 也把 trip 压到 <0.30（out 起始就 high，measure failed）；负 idfe 仅 +10~40mV。极端不对称。
+- idfe 注入 **netb**：正 idfe +41mV，负 idfe ≈0（netb 被 MP10 diode 钳位）。仍不对称。
+- 根因：diff pair gm 小（尾流~10uA），idfe 与支路电流可比，单边拉拽主导；netb 被 diode-PMOS 钳位。spread = idfe_range/gm 公式在此拓扑不成立。
+
+### ✅ 下轮 recipe（简化为 single-alter VIH trip 调优，仍是 faithful L2 子技能）
+**case 核心**："调 4 宽度（wn28/wn23/wp10/wp3）使 VIH DC 翻转点命中 target，且在隐藏 B（异库参数）上同样命中"——丢掉 3-alter/spread（trace 的 "=1/2/3 接近" 不可移植），保留 trace 核心 "改 4 PMOS 尺寸使翻转点落 vih=X"。
+
+1. **4 宽度独立性验证**（下轮先跑 ~5min）：固定 wn28=wn23=2u，扫 wp10=wp3∈{1,1.5,2,3}u，看 trip 是否随之移动（若不动，4 宽度非独立可调→换 trace）。
+2. **check.py 重写**（基于已验证 deck）：gen_deck 用 MNb 尾 + .dc Vvih + neta→1inv + .measure when v(out)=0.8 rise=1；parse .ms0；条件 ≥8：(a)zip 含 vih_tune.py (b)py_compile (c)cand on A 出 widths 4 正键 (d)cand on B 出 widths 4 正键 (e)widths_B≠baseline_B (f)独立重跑 B trip 命中 target±6mV [KEY] (g)cand tuned.csv 与独立重跑一致±2mV (h)widths_A≠widths_B (i)独立重跑 A trip 命中 (j)cand_B ≥10 .sp (k)analysis.json n_designs≥10 (l)trip 单调 (m)deck 用 .dc Vvih 扫源 (n)≥3 种子一致。
+3. **params_A.json**：vdd=1.2/vref=0.5/vbias=0.7/kp_n=120u/kp_p=50u/vto±0.5/LL=0.5u/wnb=2u/baseline{wn28=wn23=2u,wp10=wp3=1.5u}/sweep[0.35,0.65]/step=0.001/target=0.500。
+4. **params_B.json（异库跨输入）**：vdd=1.1/vref=0.48/kp_n=90u/kp_p=40u/vto±0.45/LL=0.6u/vbias=0.68/baseline{wn28=wn23=3u,wp10=wp3=2u}/sweep[0.33,0.63]/target=0.500。B best_widths≠A。
+5. **vih_tune_ref.py**：grid 搜 wp10=wp3∈{1,1.5,2,2.5,3}u × wn28=wn23∈{1.5,2,2.5,3,4}u = 25 设计，每设计 .dc Vvih 跑 trip，选 |trip-target| 最小 → widths.json + tuned.ms0.csv + analysis.json。
+6. **negative ≥5**：naive_empty→(a) · naive_hardcode_A→(f)(h) · naive_no_rerun→(g) · naive_baseline_unchanged→(e)(f) · naive_no_search→(j)(k) · + §4.9 三假。
+7. **自验**：.75 negative_selftest.py（ref PASS + 5 neg FAIL + §4.9 三假 FAIL）。
+
+### 教训
+- 理想电流源 Itail 在 diff pair 里拖负节点；用 NMOS 尾管 MNb 自限。
+- .dc 必须扫源（.dc Vvih），扫节点名（.dc vih）创建 phantom param variable。
+- .tran ramp 测 DC trip 受 init 态影响（2/3 alter failed）；.dc sweep 才稳。
+- idfe 单边注入 diff pair 输出节点 → 极不对称；spread-minimization 需对称结构或舍弃。
+- 4 宽度独立性需先验证（wp 改 trip、wn 改灵敏度），否则 case 不成立。
