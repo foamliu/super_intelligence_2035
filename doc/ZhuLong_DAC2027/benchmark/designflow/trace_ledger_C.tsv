@@ -128,3 +128,4 @@
 1790060113870_jr97m.messages.json					parked		2026-11-03 14:23	DRC issue 0922_zhaowei root cause hinted by user (not in ldr/LAYER_REPLACE); overlaps DRC log analysis; A-disqualified
 1793070839598_nud8i.messages.json	xinqiaoz	hfeg0pkn004	389	physical_verify	case	EDA-Eval-DesignFlow-DummyQaCliNoConfig-001	2026-11-03 14:38	
 1790061986818_gpdus	johnl	hfeg0plg99	352	physical_verify	case	EDA-Eval-DesignFlow-VlogPortAudit-001	2026-11-03 15:20	
+1786712832784_odo3s	e0014566	hfeg0pkn001	334	pg_layout	claimed		2026-11-03 15:56	
