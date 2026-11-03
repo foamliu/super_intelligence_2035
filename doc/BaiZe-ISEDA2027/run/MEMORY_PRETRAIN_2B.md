@@ -21,14 +21,15 @@ WAITING: 1
 > 📦 §#1219（11-03 09:48, CPU eval监控·62轮）→ daily-memories/2026-11-03.md；**结论**：4 eval正常(.29~95%/.12~76%), ETA .29~37-40min/.12~3.8h, CPU<<80%, S1 iter65130健康。被#1220监控。需要时再读。
 > 📦 §#1220（11-03 10:10, CPU eval监控·63轮）→ daily-memories/2026-11-03.md；**结论**：.29 evals 97-98%即将完成, .12 78% ETA~3.4h, S1 iter65300健康。被#1221接续。需要时再读。
 
-> 🆕 2026-11-03 11:02 #1222：**📊 CPU eval·65轮监控——.29 iter_50000 跑通(42/2599=1.6%,~32s/req,ETA~23h)；.12 evals 仍在跑(无results.json,ETA~13:30)；iter_30000 config 已验证修复✅；iter_10000 results✅有效。✅ S1 健康 iter 65750。未完成指令：有**。
-> **① .29 iter_50000**：PID 2024390(etimes~1473s/~24.5min), boolq 首任务 loglikelihood 42/2599 req, 速率从 55s→32s/req 仍在收敛(历史 .29 稳态~16s/req), 当前 ETA~23h(若收敛到16s则~12h)→done~09:30-22:30 Nov3-4。CPU ~13%(load31/%Cpu 5.1us+5.9sy+1.4ni), 远<<80%。
-> **② .12 evals**：iter_20000(PID 3729981)+iter_40000(PID 3898654) 仍在跑, ~81%@10:42→估~85-88%现在, results.json 尚未出现(NFS共享盘), ETA~13:30 done。
-> **③ iter_30000 config 验证✅**：rope_theta=1e6 / max_pos=1048576 / rope_scaling=None / mamba_dt_limit=None —— 与 iter_10000(已知正确)完全一致。旧无效 results 已存为 results_invalid_rope_config.json。待 .12 空槽(~13:30)后重跑。
-> **④ iter_10000 results✅**：results.json@10:25 有效(arc_c=0.29/arc_e=0.49/boolq=0.61/hs=0.36/obqa=0.20/piqa=0.72/sciq=0.79/wg=0.54)。
-> **⑤ S1 状态**：iter 65750/700k(9.39%), loss 2.08, 0 NaN, 0 skip, ~7.0s/step, ~606K tok/s, lr=1e-3 stable, ckpt@64000(next@66000)。
-> **📦 体积**：TASK=30602B(29.9KB) / MEMORY=22600B(22.1KB)（均 ≤32KB，无需归档）。
-> **下一步**：~13:30 .12 evals 完成→检查 20000/40000 results→在 .12 启动 iter_30000 重跑(config已修复)→iter_50000 完成(.29)→全部5×8有效结果后汇总+报告。未完成指令：有。WAITING: 1（eval后台运行，监控间隔30min）。
+> 🆕 2026-11-03 11:25 #1223：**📊 CPU eval·66轮监控——iter_30000 重跑已在 .29 启动(PID 1459766, config已修复)！.29 双 eval(30000+50000) CPU~14%<<80%；.12 evals ~86% ETA~13:40；iter_10000✅有效。✅ S1 健康 iter 65930。未完成指令：有**。
+> **① iter_30000 重跑✅启动(.29)**：config已修复(mamba_dt_limit=None, 与 iter_10000 一致), PID 1459766, 模型加载1.7s device=cpu, loglikelihood 刚开始(0/2599)。与 iter_50000 共享 .29(2/2槽), OMP=8/nice19/CUDA_VISIBLE="". ETA~11h(同 .29 稳态~16s/req)→done~22:30。
+> **② .29 iter_50000**：PID 2024390(~50min), 124/2599=4.8%, ~16s/it, ETA~11h→done~22:30。CPU .29: %Cpu~14.4%(4.3us+8.1sy+2.0ni), load31, 远<<80%。
+> **③ .12 evals**：iter_20000(PID 3729981,~86%=2231/2599)+iter_40000(PID 3898654,~85%), ~23s/it, ETA~2.3h→done~13:40。CPU .12: %Cpu~14.7%(4.1us+9.7sy+0.9ni), load37, <<80%。
+> **④ iter_10000 results✅**：arc_c=0.29/arc_e=0.49/boolq=0.61/hs=0.36(norm0.45)/obqa=0.20(norm0.35)/piqa=0.72(norm0.73)/sciq=0.79(norm0.71)/wg=0.54。
+> **⑤ S1 状态**：iter 65930/700k(9.42%), loss~2.09, 0 NaN, 0 skip, ~7.0s/step, ~606K tok/s, lr=1e-3 stable, ckpt@64000(next@66000)。
+> **📦 体积**：TASK=30602B(29.9KB) / MEMORY=22560B(22.0KB)（均 ≤32KB，无需归档）。
+> **下一步**：~13:40 .12 evals完成→检查 20000/40000 results→.29 双 eval 继续(30000+50000)→全部5×8有效结果后汇总表+HTML报告。未完成指令：有。WAITING: 1（eval后台运行，监控间隔30min）。
+> 📦 §#1222（11-03 11:02, CPU eval·65轮）→ daily-memories/2026-11-03.md；**结论**：.29 iter_50000跑通(1.6%), .12~85%, iter_30000 config修复✅, iter_10000✅。被#1223监控(已启动iter_30000重跑)。需要时再读。
 > 📦 §#1221（11-03 10:42, CPU eval·64轮）→ daily-memories/2026-11-03.md；**结论**：.29 evals完成(10000✅+30000❌), iter_50000启动, iter_30000 config修复, .12 ~81%。被#1222监控。需要时再读。
 > 📦 §#1151（11-02 12:55, S1健康监控iter55140/loss~2.114/0NaN/~592K tok/s）→ daily-memories/2026-11-02.md；**结论**：S1健康iter55140(7.88%), loss~2.114稳态, grad-norm 0.088-0.099(极稳无spike), ~592K tok/s, ckpt@iter_54000(saved@10:41, next@56000)。被#1152监控。需要时再读。
 > 📦 §#1150（11-02 12:35, S1健康监控iter54980/loss~2.105/0NaN/~601K tok/s）→ daily-memories/2026-11-02.md；**结论**：S1健康iter54980(7.85%), loss~2.105稳态, grad-norm 0.082-0.103(极稳无spike), ~601K tok/s, ckpt@iter_54000(saved@10:41, next@56000)。被#1151监控。需要时再读。
