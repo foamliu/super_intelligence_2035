@@ -1,0 +1,31 @@
+#!/bin/bash
+# =============================================================================
+# SourceMe : cfreq_ctrl 综合流程环境设置脚本
+# 用法: source ./syn/SourceMe   (或 . ./syn/SourceMe)
+# =============================================================================
+
+# ---- 项目路径 ----
+export SYN_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+export SETUP_DIR="${SYN_ROOT}/setup"
+export SCRIPTS_DIR="${SYN_ROOT}/scripts"
+export SDC_DIR="${SYN_ROOT}/sdc"
+export DATA_DIR="${SYN_ROOT}/data"
+export NETLIST_DIR="${SYN_ROOT}/netlist"
+export REPORTS_DIR="${SYN_ROOT}/reports"
+export LOG_DIR="${SYN_ROOT}/logs"
+
+# ---- 设计属性 ----
+export DESIGN_NAME=cfreq_ctrl
+export TOP=cfreq_ctrl
+
+# ---- 工具 ----
+export DC_SHELL=${DC_SHELL:-dc_shell}
+
+# ---- 库设置 (按实际工艺配置, 支持外部覆写) ----
+export TARGET_LIBRARY_FILES=${TARGET_LIBRARY_FILES:-}
+export SYMBOL_LIBRARY_FILES=${SYMBOL_LIBRARY_FILES:-}
+export ADDITIONAL_SEARCH_PATH=${ADDITIONAL_SEARCH_PATH:-}
+
+echo "[SourceMe] cfreq_ctrl synthesis environment loaded"
+echo "[SourceMe] SYN_ROOT  = ${SYN_ROOT}"
+echo "[SourceMe] TOP       = ${TOP}"

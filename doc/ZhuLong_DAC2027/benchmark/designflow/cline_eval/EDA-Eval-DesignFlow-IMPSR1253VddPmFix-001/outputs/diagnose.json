@@ -38,6 +38,6 @@
     "gnc_search": "searched pin 'VDD' on PMRowBLK_* -> 0 leaf std-cell pin connected"
   },
   "expected_at_floorplan": true,
-  "corrective_action": "Make the floorplan script generation-aware and netlist-aware: (1) probe the netlist generation; (2) enumerate supply nets from power.globals/UPF; (3) add a VERIFY step that computes leaf std-cell pin count vs hierarchical instTerm count and treats the hierarchy-port-only case as an expected floorplan event; (4) connect the isolated domain net to the discovered physical leaf power pin (e.g. 'VDD') using explicit -pin plus hierarchy descent (-hinst), while scoping the generic VDD/VSS connects to exclude the protection-domain leaves so every power pin is driven exactly once.",
+  "corrective_action": "Make the floorplan script generation-aware and netlist-aware: (1) probe the netlist generation; (2) enumerate supply nets from power.globals/UPF; (3) add a VERIFY step that computes leaf std-cell pin count vs hierarchical instTerm count and treats the hierarchy-port-only case as an expected floorplan event; (4) connect the isolated domain net to the discovered physical leaf power pin (e.g. 'VDD') using explicit -pin plus hierarchy descent (-hierarchicalInstance), while scoping the generic VDD/VSS connects to exclude the protection-domain leaves so every power pin is driven exactly once.",
   "fixed_script": "innovus_fp.tcl"
 }

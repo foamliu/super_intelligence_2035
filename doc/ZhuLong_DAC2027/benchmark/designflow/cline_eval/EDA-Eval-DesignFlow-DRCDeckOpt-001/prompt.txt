@@ -1,0 +1,1 @@
+根据/home/miccao/zl/rep/DRC_Log_Analysis_DDR5TOP_DFM0909.txt这份报告，将deck进行修改，只修改报告里的优化内容，然后将新deck放到/home/miccao/drc下，新deck叫newdeck

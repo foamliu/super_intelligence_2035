@@ -7,14 +7,13 @@
 
 #-------------------------------------------------------------------------
 # Root cause (short):
-#   The protected PM-domain leaf cells (INVD8, base name PMRowBLK_*) have
-#   their physical power pin named "VDD" (NOT "VDD_PM") wired to a module-
-#   local supply net that reaches the top level only through the hierarchy
-#   port PM_VDDI_Inst(.VDD_PM).  At top level the VDD_PM net therefore has
+#   Some protected power-domain leaf cells (e.g. buffer/inverter keepers)
+#   name their physical power pin "VDD"/"VSS" (NOT the domain net name),
+#   wired to a module-local supply net that reaches the top level only
+#   through a hierarchy port.  At the top level that net therefore has
 #   1 hierarchical instTerm and 0 leaf std-cell pins.  The original script
-#   was unconditional and pin-ambiguous:
-#        globalNetConnect VDD_PM -instanceBasename PMRowBLK_* -netType power
-#   so pg-pin resolution found no std-cell pin on VDD_PM -> IMPSR-1253.
+#   was unconditional and pin-ambiguous (no explicit physical pg pin),
+#   so pg-pin resolution found no std-cell pin on the net -> IMPSR-1253.
 #
 # Fix:
 #   1. GENERATION probe   -> netlist / revision aware
@@ -89,7 +88,10 @@ proc fp_leaf_pin_names {net} {
 proc fp_inst_term_names {net} {
     set names {}
     foreach n [fp_net_objs $net] {
-        foreach t [get_db $n .instTerms] { lappend names [get_db $t .name] }
+        foreach t [get_db $n .instTerms] {
+            set inst [get_db $t .inst]
+            if {$inst ne "0x0" && $inst ne ""} { lappend names [get_db $inst .name] }
+        }
     }
     return $names
 }
@@ -135,7 +137,7 @@ proc fp_all_inst_names {} {
 proc fp_complement_inst_names {exclude} {
     set out {}
     foreach nm [fp_all_inst_names] {
-        if {$nm ni $exclude} { lappend out $nm }
+        if {[lsearch -exact $exclude $nm] < 0} { lappend out $nm }
     }
     return $out
 }
@@ -175,29 +177,34 @@ foreach entry $FP_PG_MAP {
     set role [lindex $entry 1]
 
     if {$role eq "ground"} {
-        globalNetConnect $net -netType ground -pin VSS -instanceBasename *
+        globalNetConnect $net -type pgpin -pin VSS -all -override
         addStripe -net $net -layer M5 -start_offset 5.0 -spacing 1.2 \
                   -width 0.8 -set_to_set_distance 40
         sroute -nets $net
         continue
     }
 
-    if {$net in $FP_HIER_PORT_ONLY} {
+    if {[lsearch -exact $FP_HIER_PORT_ONLY $net] >= 0} {
         # Isolated supply domain: bind the domain net to the discovered
-        # PHYSICAL leaf power pin (e.g. "VDD") with hierarchy descent.
+        # PHYSICAL leaf power pin (e.g. "VDD") under its owning hierarchy
+        # instance (hierarchy descent).
         set leaves [fp_hier_domain_leaf_names $net]
-        foreach pin [fp_pg_pin_names_of $leaves "VDD"] {
-            globalNetConnect $net -netType power -pin $pin -inst $leaves -hinst
+        set hinsts [fp_inst_term_names $net]
+        foreach hinst $hinsts {
+            foreach pin [fp_pg_pin_names_of $leaves "VDD"] {
+                globalNetConnect $net -type pgpin -pin $pin \
+                    -hierarchicalInstance $hinst -override
+            }
         }
         addStripe -net $net -layer M4 -start_offset 5.0 -spacing 1.2 \
                   -width 0.8 -set_to_set_distance 40
         sroute -nets $net
     } else {
         # Regular supply net: connect every remaining instance's power pin
-        # (protection-domain leaves are excluded so pins are driven once).
+        # (the isolated domain is re-bound above, so no pin is driven twice).
         set gen [fp_complement_inst_names $FP_ISOLATED_LEAF_NAMES]
         foreach pin [fp_pg_pin_names_of $gen "VDD"] {
-            globalNetConnect $net -netType power -pin $pin -inst $gen
+            globalNetConnect $net -type pgpin -pin $pin -all -override
         }
         addStripe -net $net -layer M5 -start_offset 5.0 -spacing 1.2 \
                   -width 0.8 -set_to_set_distance 40

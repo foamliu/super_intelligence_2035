@@ -1,0 +1,20 @@
+please generate a python script to generate the new lib with delete some power and ground info
+
+1. delete the part start with key word " pg_pin (VDD) {", and end with "}",
+such as:
+'''
+        pg_pin (VDD) {
+            pg_type : primary_power;
+            voltage_name : VDD;
+        }
+'''
+2. delete the part start with key word " pg_pin (VSS) {", and end with "}",
+such as:
+
+        pg_pin (VSS) {
+            pg_type : primary_ground;
+            voltage_name : VSS;
+        }
+3. delete the line wich include key word "VDD" or "VSS"
+
+refer to sample_A.lib (the original .lib with pg_pin VDD/VSS blocks and VDD/VSS lines) — produce the cleaned new lib from it.

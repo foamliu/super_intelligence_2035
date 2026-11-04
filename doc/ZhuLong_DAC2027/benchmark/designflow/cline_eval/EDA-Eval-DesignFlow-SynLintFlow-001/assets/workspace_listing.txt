@@ -1,0 +1,23 @@
+total 52
+drwxrwxr-x 12 lorikx hfdes 4096 Oct 22 14:23 .
+drwxrwxr-x 61 lorikx hfdes 8192 Nov  2 17:25 ..
+drwxrwxr-x  4 lorikx hfdes 4096 Oct 19 20:27 cov
+drwxrwxr-x  6 lorikx hfdes 4096 Oct 19 20:27 fm
+drwxrwxr-x  5 lorikx hfdes 4096 Oct 19 19:13 lint
+drwxrwxr-x  4 lorikx hfdes 4096 Oct 22 14:23 ref_syn_prj
+drwxrwxr-x  2 lorikx hfdes 4096 Oct 21 14:39 rtl
+drwxrwxr-x  2 lorikx hfdes 4096 Oct 26 17:14 rtl_synth
+drwxrwxr-x  3 lorikx hfdes 4096 Aug 27 14:21 run
+drwxrwxr-x  2 lorikx hfdes 4096 Oct 23 11:20 scripts
+drwxrwxr-x  6 lorikx hfdes 4096 Oct 28 19:52 sim
+drwxrwxr-x  7 lorikx hfdes 4096 Oct 22 14:32 syn
+
+# rtl_synth/ 内容:
+#   cfreq_ctrl.v   <- 综合目标 (可综合 RTL, Verilog-2001)
+#
+# ref_syn_prj/lagat_flow_ref/ : 同项目参考流程 (syn/ digital_static_check/ spyglass/ fm/ dft/)
+#   - syn/                              lagat FEINT 综合流程 (Makefile + scripts/ + setup/)
+#   - digital_static_check/             CAD 中央 lint/CDC/RDC 流程 (sc_target.mk + cxmt_lint_goal.tcl)
+#
+# 注: cov/ fm/ sim/ run/ scripts/ 为本项目其它已存在目录 (覆盖率 / 形式验证 / 仿真 / 历史),
+#     与本任务无直接关系。
