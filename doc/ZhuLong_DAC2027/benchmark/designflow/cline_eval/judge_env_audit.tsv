@@ -89,7 +89,7 @@ EDA-Eval-DesignFlow-SpfstdBtn-001	BROKEN	../../assets-or-hidden from __file__, n
 EDA-Eval-DesignFlow-SramButterfly-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
 EDA-Eval-DesignFlow-SramSNM-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
 EDA-Eval-DesignFlow-StaFlowScaffold-001	SAFE	r99 fixed: check.py add _resolve_a_dir/_resolve_b_dir (workdir/HERE/ASSETS + workdir/hidden/HERE/hidden/HIDDEN_DIR/TOP_HIDDEN, abspath rule ⑨); jsonl test sync 9391->11814 B (test_sha=bce9a9c8ed9f); attachments expanded dir->12 individual A files (so run_one.sh copies lint_flow_A/feint_ref_A tree into judge dir); 20 cond unchanged; judge-dir ref PASS + 5 neg/§4.9 fakes all FAIL (c/c/c/q/e); k=20 GATE PASS
-EDA-Eval-DesignFlow-StarRCFlow-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
+EDA-Eval-DesignFlow-StarRCFlow-001	SAFE	r100 completion: check.py _resolve_b_file(cell.list/sample.spf)+_resolve_a_dir(feint) fix committed by parallel agents (cee0a4b/01559a6); this round synced jsonl test field 13077->15450 B + metadata.test_sha=072abb7f + audit BROKEN->SAFE. local-judge (fakebin module/StarXtract) -> cline-runnable. Verified: in-place + judge-dir ref PASS (16/16 a-p) / 5 neg + §4.9 三假 FAIL (c/d/f/c/h) / k=16 GATE / roundtrip OK
 EDA-Eval-DesignFlow-StimPWL-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
 EDA-Eval-DesignFlow-Tcs0PatAnalyze-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
 EDA-Eval-DesignFlow-TempThreshChar-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
