@@ -25371,3 +25371,104 @@ count=11
 
 === DONE 241 ===
 ```
+
+---
+
+## RUN_ID 242 · 2026-11-04 22:00:58 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 242 | pretrain status tick (read-only) | $(date '+%F %T') | host=$(hostname) ==="
+echo
+echo "[1] S1 训练心跳"
+grep -aE 'iteration [0-9]+/' /tmp/baize_s1_baize2b_worker.log 2>/dev/null | tail -2 | cut -c1-200
+stat -c 'worker.log mtime=%y size=%s' /tmp/baize_s1_baize2b_worker.log 2>/dev/null
+nvidia-smi --query-gpu=index,utilization.gpu,memory.used --format=csv,noheader 2>&1 | head -8
+echo
+echo "[2] pretrain loop / cline"
+LOOP=$(pgrep -f 'baize_pretrain_loop\.sh' | head -1)
+echo "loop_pid=${LOOP:-none}"
+if [ -n "${LOOP:-}" ]; then
+  ps -o pid,etimes,pcpu,rss,args --ppid "$LOOP" --no-headers 2>/dev/null | cut -c1-150 | head -5
+fi
+CL=$(ps -eo pid,etimes,pcpu,rss,args --no-headers 2>/dev/null | grep 'data-dir /nas_train/app.e0031982/.cline_pretrain' | grep -v grep | awk '{print $1}' | head -1)
+echo "cline_pid=${CL:-none}"
+[ -n "${CL:-}" ] && ps -o pid,etimes,pcpu,rss --no-headers -p "$CL" 2>/dev/null
+echo
+echo "[3] llama.cpp 工作区改动（只读）"
+cd /nas_train/app.e0031982/code/llama.cpp 2>/dev/null && {
+  echo "HEAD=$(git rev-parse --short HEAD) branch=$(git rev-parse --abbrev-ref HEAD)"
+  echo "--- changed files (top 15) ---"
+  git status --short 2>/dev/null | head -15
+  echo "--- diff stat ---"
+  git diff --stat 2>/dev/null | tail -6
+}
+echo
+echo "[4] loop 日志尾部 12 行"
+tail -12 /tmp/baize_pretrain_loop.log 2>/dev/null | cut -c1-200
+echo
+echo "[5] 残留 llama-server / 最近 GGUF"
+echo "server_count=$(pgrep -fc 'llama-server' 2>/dev/null || echo 0)"
+ls -lt --time-style='+%m-%d %H:%M' /tmp/*.gguf 2>/dev/null | head -5
+echo
+echo "[6] 本线最近提交"
+cd /nas_train/app.e0031982/code/super_intelligence_2035 2>/dev/null && git log -2 --pretty='%h %ad %s' --date=format:'%m-%d %H:%M' -- doc/BaiZe-ISEDA2027/run/MEMORY_PRETRAIN_2B.md | cut -c1-160
+echo
+echo "=== DONE 242 ==="
+```
+
+**输出**
+```
+=== RUN_ID 242 | pretrain status tick (read-only) | 2026-11-04 22:00:58 | host=whag0pgpuap29 ===
+
+[1] S1 训练心跳
+worker.log mtime=2026-11-04 21:59:52.572765673 +0800 size=1091768
+0, 100 %, 74939 MiB
+1, 100 %, 74961 MiB
+2, 100 %, 74841 MiB
+3, 100 %, 75161 MiB
+4, 100 %, 75141 MiB
+5, 100 %, 74961 MiB
+6, 100 %, 75221 MiB
+7, 100 %, 74961 MiB
+
+[2] pretrain loop / cline
+loop_pid=3165004
+3165013  564657  0.0  3724 bash /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_pretrain_loop.sh
+cline_pid=3727824
+3727824    1091 31.1 473476
+
+[3] llama.cpp 工作区改动（只读）
+HEAD=149f5641b branch=master
+--- changed files (top 15) ---
+--- diff stat ---
+
+[4] loop 日志尾部 12 行
+
+在 HF 中，`Zaba2RMSNormGated.variance_epsilon = config.layer_norm_epsilon = 1e-5`。所以 eps 是匹配的。✓
+
+但这里有一个微妙的问题：`build_norm` 会重塑 `y`。让我重新阅读一下流程：
+
+在 mamba-base.cpp 第 292 行：
+```cpp
+y = ggml_reshape_4d(ctx0, y, d_inner / n_group, n_group, n_seq_tokens, n_seqs);
+// y shape: (512, 8, n_seq_tokens, n_seqs) = ne[0]=512, ne[1]=8, ne[2]=n_seq_tokens, ne[3]=n_seqs
+```
+
+然后 `build_norm(y, ...)` 配合 `LLM_NORM_RMS` 会调用 `ggml_rms_norm(ctx0, y, hparams.f_norm_r
+
+[5] 残留 llama-server / 最近 GGUF
+server_count=15
+-rw-r----- 1 app.e0031982 app.adm 4447713248 11-04 21:27 /tmp/baize_test_f16.gguf
+-rw-r----- 1 app.e0031982 app.adm 4447713248 11-04 21:17 /tmp/baize_f16.gguf
+-rw-r----- 1 app.e0031982 app.adm 4447713248 11-04 21:12 /tmp/baize_10k_f16.gguf
+-rw-r----- 1 app.e0031982 app.adm 8886335456 11-04 20:49 /tmp/baize_iter10000_f32.gguf
+-rw-r----- 1 app.e0031982 app.adm 4447713248 11-04 20:14 /tmp/baize_iter10000_f16.gguf
+
+[6] 本线最近提交
+eca8b7f49 11-04 13:49 pretrain eval: logits 逐 token 对齐定案根因=映射/计算错误(非精度累积), llamacpp.txt §6+§7 更新
+e60c026b0 11-04 13:07 pretrain #1355: llama.cpp=FAIL(精度不可用) 5/5 eval DONE(2/5有效) 报告更正根因=C++ Mamba2计算
+
+=== DONE 242 ===
+```
