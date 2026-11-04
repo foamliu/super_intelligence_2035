@@ -69,7 +69,7 @@ EDA-Eval-DesignFlow-PaCfgMigrate-001	BROKEN	../../assets-or-hidden from __file__
 EDA-Eval-DesignFlow-PorCapSweep-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
 EDA-Eval-DesignFlow-PowerFillMergeGen-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
 EDA-Eval-DesignFlow-ProbeTrim-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
-EDA-Eval-DesignFlow-QualibTimingFix-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
+EDA-Eval-DesignFlow-QualibTimingFix-001	SAFE	r97 fix: _resolve_a/_resolve_b workdir->HERE->ASSETS->TOP_HIDDEN, abspath (rule 9); self-verify repo+judge-dir PASS, 5 neg FAIL, k=12
 EDA-Eval-DesignFlow-RNodeCovAudit-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
 EDA-Eval-DesignFlow-RedhawkGenInputs-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
 EDA-Eval-DesignFlow-RsCalcAgentGen-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
