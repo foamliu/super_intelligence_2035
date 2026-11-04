@@ -113,32 +113,41 @@ else:
     open(os.path.join(workdir, 'task_brief.md'), 'w').write(brief)
     print('   task_brief.md: generic template (no case-specific brief in assets/)')
 
-# 仅复制合法 attachments（按 source 名），过滤判分器/答案/隐藏
+# 仅复制合法 attachments，保留 assets/<task_id>/ 下的相对子目录结构
+# （修复 r80：此前用 basename 抹平子目录，导致 lib/lib_A.lib 这类嵌套附件
+#   在 ASSETS_SRC/lib_A.lib 找不到 → cline 拿不到输入文件 → 假 FAIL）
 forbidden = {'_check.py','check.py','_reference_check.py',
              'reference_submit.zip','reference','negative','hidden',
              'hidden_manifest.json'}
 copied = []
+# assets_src 末尾形如 .../assets/<task_id>；prefix = 'assets/<task_id>/'
+_prefix = f'assets/{task_id}/'
 for a in case.get('attachments', []):
-    # attachments 可能是 list[str]（如 'assets/<id>/<name>'）或 list[dict]
+    # attachments 可能是 list[str]（如 'assets/<id>/<sub>/<name>'）或 list[dict]
     if isinstance(a, dict):
-        src = a.get('source') or a.get('name')
-        name = a.get('name') or os.path.basename(src) if src else ''
+        src = a.get('source') or a.get('name') or ''
+        name = a.get('name') or (os.path.basename(src) if src else '')
     else:
         src = str(a) if a is not None else ''
         name = os.path.basename(src) if src else ''
     if not name or name in forbidden: continue
-    # source 可能是 'assets/<task_id>/<name>' 或裸 '<name>'；统一按 name 在 ASSETS_SRC 取
-    def _copy(src_path, name_):
-        dst = os.path.join(workdir, 'assets', name_)
+    # 推导 assets_src 内的相对路径：剥掉 'assets/<task_id>/' 前缀，否则用裸 name
+    rel = src[len(_prefix):] if src.startswith(_prefix) else name
+    rel = rel.lstrip('/')
+    # 绝对不允许 rel 落进 forbidden 顶层名（hidden/ 等）
+    if rel in forbidden or rel.split('/')[0] in forbidden: continue
+    def _copy(src_path, rel_):
+        dst = os.path.join(workdir, 'assets', rel_)
         os.makedirs(os.path.dirname(dst), exist_ok=True)
         shutil.copy(src_path, dst)
-        copied.append(name_)
-    sp = os.path.join(assets_src, name)
+        copied.append(rel_)
+    sp = os.path.join(assets_src, rel)
     if os.path.exists(sp):
-        _copy(sp, name)
+        _copy(sp, rel)
     else:
-        alt = os.path.join(assets_src, src)
-        if os.path.exists(alt):
+        # 回退：按裸 name（旧 case 无子目录）
+        alt = os.path.join(assets_src, name)
+        if os.path.exists(alt) and os.path.basename(alt) not in forbidden:
             _copy(alt, name)
 # 防御：扫描 workdir 确认无泄漏
 leak = []
@@ -232,27 +241,35 @@ else
       [ "$b" = "negative_selftest.py" ] && continue
       [ -f "$JUDGE/$b" ] || cp "$f" "$JUDGE/" 2>/dev/null || true
     done
-    # 把合法 A 附件也复制进 judge dir（check.py 可能从 workdir 读附件）
+    # 把合法 A 附件也复制进 judge dir（保留子目录结构，r80 修复）
+    # check.py 可能从 workdir 读附件（如 lib/lib_A.lib），需要 relpath 一致
     for a in $(python3 - "$TASK_ID" "$JSONL" <<'PY'
 import json,sys,os
 tid=sys.argv[1]; jl=sys.argv[2]
+_prefix=f'assets/{tid}/'
 for line in open(jl):
     d=json.loads(line)
     if d.get('task_id')==tid:
         forbidden={'_check.py','check.py','_reference_check.py','reference_submit.zip','reference','negative','hidden','hidden_manifest.json'}
         for a in d.get('attachments',[]):
-            # attachments 可能是 list[str] 或 list[dict]
             if isinstance(a, dict):
-                s=a.get('source') or a.get('name')
+                s=a.get('source') or a.get('name') or ''
                 n=a.get('name') or (os.path.basename(s) if s else '')
             else:
                 s=str(a) if a is not None else ''
                 n=os.path.basename(s) if s else ''
-            if n and n not in forbidden: print(n)
+            if not n or n in forbidden: continue
+            rel=s[len(_prefix):] if s.startswith(_prefix) else n
+            rel=rel.lstrip('/')
+            if rel in forbidden or rel.split('/')[0] in forbidden: continue
+            print(rel)
         break
 PY
 ); do
-      [ -f "$ASSETS_SRC/$a" ] && cp "$ASSETS_SRC/$a" "$JUDGE/" 2>/dev/null || true
+      if [ -f "$ASSETS_SRC/$a" ]; then
+        mkdir -p "$JUDGE/$(dirname "$a")"
+        cp "$ASSETS_SRC/$a" "$JUDGE/$a" 2>/dev/null || true
+      fi
     done
     # 复制隐藏 B 输入进 judge dir（check.py 的 cross-input guard 需要 workdir/hidden/）。
     # hidden/ 不进 SUT workdir（防泄题），但判分器在独立 judge dir 里需要它。
