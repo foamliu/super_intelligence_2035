@@ -12,7 +12,7 @@ tr.ref td{background:#f1f5f9;color:#475569;font-size:12px}span.an{color:#64748b;
 .foot{margin-top:40px;padding-top:12px;border-top:1px solid #e2e8f0;color:#64748b;font-size:12px}code{background:#f1f5f9;padding:1px 5px;border-radius:3px;font-size:12px}
 </style></head><body>
 <h1>BaiZe 2B（Mamba2-hybrid）CPU 评测 · 5 检查点 x 8 常识推理集</h1>
-<p>生成时间：2026-11-04 11:41:35　|　<span class="badge run">2/5 ckpt 已完成</span></p>
+<p>生成时间：2026-11-04 13:05　|　<span class="badge ok">5/5 ckpt 已完成（2/5 有效）</span></p>
 <div class='card'><h2>① 评测配置</h2><table><tr><th>项目</th><th>值</th></tr>
 <tr><td>模型</td><td>BaiZe 2B（Mamba2-hybrid，FP8 训练 → HF float32 推理）</td></tr>
 <tr><td>检查点</td><td>iter_10000 / 20000 / 30000 / 40000 / 50000（5 档）</td></tr>
@@ -27,10 +27,10 @@ tr.ref td{background:#f1f5f9;color:#475569;font-size:12px}span.an{color:#64748b;
 <table>
 <tr><th>检查点</th><th>ARC-C</th><th>ARC-E</th><th>BoolQ</th><th>HellaSwag</th><th>OpenBookQA</th><th>PIQA</th><th>SciQ</th><th>Winogrande</th><th>Avg</th></tr>
 <tr><td class="ck">iter_10000</td><td>29<span class="an">/26</span></td><td>49<span class="an">/47</span></td><td>61</td><td>36<span class="an">/45</span></td><td>20<span class="an">/35</span></td><td>72<span class="an">/73</span></td><td>79<span class="an">/71</span></td><td>54</td><td class="avg">50.00%</td></tr>
-<tr><td class="ck">iter_20000</td><td colspan="10" class="pend">评测进行中…</td></tr>
+<tr><td class="ck">iter_20000</td><td>23<span class="an">/—</span></td><td>26</td><td>30</td><td>23<span class="an">/—</span></td><td>32<span class="an">/—</span></td><td>46<span class="an">/46</span></td><td style='color:#dc2626'>0<span class="an">/0</span></td><td>50</td><td class="avg" style='color:#dc2626'>28.75% ⚠</td></tr>
 <tr><td class="ck">iter_30000</td><td>26<span class="an">/26</span></td><td>57<span class="an">/57</span></td><td>47</td><td>37<span class="an">/44</span></td><td>21<span class="an">/37</span></td><td>69<span class="an">/72</span></td><td>83<span class="an">/81</span></td><td>62</td><td class="avg">50.25%</td></tr>
-<tr><td class="ck">iter_40000</td><td colspan="10" class="pend">评测进行中…</td></tr>
-<tr><td class="ck">iter_50000</td><td colspan="10" class="pend">评测进行中…</td></tr>
+<tr><td class="ck">iter_40000</td><td>23<span class="an">/—</span></td><td>26</td><td>30</td><td>23<span class="an">/—</span></td><td>32<span class="an">/—</span></td><td>46<span class="an">/46</span></td><td style='color:#dc2626'>0<span class="an">/0</span></td><td>50</td><td class="avg" style='color:#dc2626'>28.75% ⚠</td></tr>
+<tr><td class="ck">iter_50000</td><td>23<span class="an">/23</span></td><td>26<span class="an">/26</span></td><td>30</td><td>23<span class="an">/23</span></td><td>32<span class="an">/32</span></td><td>46<span class="an">/46</span></td><td style='color:#dc2626'>0<span class="an">/0</span></td><td>50</td><td class="avg" style='color:#dc2626'>28.75% ⚠</td></tr>
 <tr><td colspan="10" style="background:#eef2f7;font-weight:600;text-align:left">参照线</td></tr>
 <tr class="ref"><td>BaiZe P-6 (655M, 20k)</td><td>23.8</td><td>41.4</td><td>58.8</td><td>39.9</td><td>28.2</td><td>64.0</td><td>67.3</td><td>49.9</td><td class="avg">44.0%</td></tr>
 <tr class="ref"><td>Xmodel-2 s1/10K (39.3B tok)</td><td colspan="8" class="na">逐集未列</td><td class="avg">46.7%</td></tr>
@@ -437,27 +437,40 @@ tr.ref td{background:#f1f5f9;color:#475569;font-size:12px}span.an{color:#64748b;
 <text x="294" y="66" font-size="10" fill="#334155">P-6 ref</text>
 </svg></div>
 </div></div>
-<div class='card'><h2>⑤ llama.cpp 加速对照（iter_10000 pilot）</h2>
-<p style='font-size:12px;color:#64748b'>llama.cpp GGUF 后端 vs HF transformers float32 路径。pilot 仅测 2 任务（sciq + piqa），limit=100。</p>
+<div class='card'><h2>⑤ llama.cpp 加速对照（iter_10000 · 深度根因分析）</h2>
+<p style='font-size:12px;color:#64748b'>llama.cpp GGUF 后端 vs HF transformers float32 路径。pilot 测 2 任务（sciq + piqa），limit=100。2026-11-04 追加深度调查。</p>
 <table><tr><th>后端</th><th>精度</th><th>SciQ acc</th><th>PIQA acc</th><th>Hf_avg</th><th>Gguf_avg</th><th>Δacc (pp)</th><th>耗时 (s)</th><th>加速倍数</th><th>判定</th></tr>
-<tr><td>llama-server</td><td>f16</td><td>61%</td><td>56%</td><td>75.5%</td><td>58.5%</td><td style='color:#dc2626;font-weight:600'>-17.0</td><td>1404</td><td>7.03×</td><td><span class="badge run">FAIL</span></td></tr>
-<tr><td>llama-server</td><td>f32</td><td>61%</td><td>56%</td><td>75.5%</td><td>58.5%</td><td style='color:#dc2626;font-weight:600'>-17.0</td><td>1678</td><td>5.88×</td><td><span class="badge run">FAIL</span></td></tr>
-<tr><td>llama-server</td><td>f16</td><td>61%</td><td>56%</td><td>—</td><td>—</td><td style='color:#dc2626;font-weight:600'>—</td><td>707</td><td>—</td><td><span class="badge run">—</span></td></tr>
+<tr><td>llama-server</td><td>f16</td><td>61%</td><td>56%</td><td>75.5%</td><td>58.5%</td><td style='color:#dc2626;font-weight:600'>-17.0</td><td>1404</td><td>7.03×</td><td><span class="badge" style="background:#fecaca;color:#991b1b">FAIL</span></td></tr>
+<tr><td>llama-server</td><td>f32</td><td>61%</td><td>56%</td><td>75.5%</td><td>58.5%</td><td style='color:#dc2626;font-weight:600'>-17.0</td><td>1678</td><td>5.88×</td><td><span class="badge" style="background:#fecaca;color:#991b1b">FAIL</span></td></tr>
 </table>
+<h3>llama-bench 生成测速（F16, CPU 8 线程, nice=19）</h3>
+<table><tr><th>测试</th><th>吞吐</th><th>说明</th></tr>
+<tr><td>pp128（prompt 处理 128 tok）</td><td>81.96 ± 27.87 tok/s</td><td>prompt eval 阶段</td></tr>
+<tr><td>tg64（生成 64 tok）</td><td>21.33 ± 1.02 tok/s</td><td>token generation 阶段</td></tr>
+<tr><td>HF float32 llh 打分</td><td>~3 tok/s（16s/it × 8 集）</td><td>HF 参考线（极慢但准确）</td></tr>
+</table>
+<h3>/v1/completions logprobs 格式问题（2026-11-04 新发现）</h3>
+<p style='font-size:13px'>llama-server 的 <code>/v1/completions</code> 端点返回<strong>新版 OpenAI 格式</strong>：<code>logprobs.content[]</code> 数组（每元素含 token/logprob/bytes），<strong>不包含</strong> lm_eval <code>local-completions</code> 后端所期待的 <code>token_logprobs</code> 字段 → 直接对接报 <code>KeyError: 'token_logprobs'</code>。三选一解法：① <code>--model gguf</code>（lm_eval 内置 GGUF 后端，自解析新格式）；② 检查 llama-server 参数输出旧格式；③ 兜底写 shim 转换。但由于<strong>模型本身输出不正确</strong>（见下），格式问题暂为次要矛盾。</p>
+<h3>生成质量测试（2026-11-04 新发现）</h3>
+<p style='font-size:13px'>prompt = "The capital of France is"，greedy 解码（temp=0, top-k=1, seed=42）：<br>
+<strong>GGUF F16 输出</strong>：<code>" the French department, which is the French department. The French department is the"</code> → 重复性垃圾输出，模型推理<strong>根本性损坏</strong>。<br>
+<strong>HF float32</strong>：生成测试因 config 兼容问题 crash，但 llh 打分正常（Avg=50.0%）。</p>
 <div class='card' style='background:#fef9c3;border:1px solid #fde047;margin-top:12px'>
-<h3 style='color:#854d0e'>结论：llama.cpp 路线 pilot=FAIL（保留 HF float32 路线）</h3><ul style='color:#713f12'>
-<li><strong>速度达标</strong>：f16 并行=1 时 707s/600 docs = 7.03× 加速（vs HF 估计 9864s），f32 为 5.88×。
-<li><strong>精度不达标</strong>：SciQ -18pp / PIQA -16pp，Avg Δacc = -17pp。f16 / f32 / newbin 三次测试结果完全一致 → <strong>不是量化误差</strong>，而是 llama.cpp 的 Mamba2 SSM 层数值实现与 transformers reference 有系统性偏差。
-<li><strong>根因</strong>：GGUF 转换时 hybrid_override_pattern 中 Duplicated key 覆写了 Mamba2 层元数据，导致 llama.cpp 内核用错误的 conv_dt / ssm 参数计算 → logit 输出偏移。
-<li><strong>处置</strong>：CPU 评测保留 HF transformers float32 路径（数值可信），llama.cpp 提速路线搁置，待 llama.cpp 上游修复 Nemotron-H SSM 转换后再试。
+<h3 style='color:#854d0e'>结论：llama.cpp 路线 FAIL（保留 HF float32 路线）</h3>
+<ul style='color:#713f12'>
+<li><strong>速度达标</strong>：f16 llh 打分 7.03× 加速；llama-bench 生成 21.3 tok/s、prompt 82 tok/s（8 线程），比 HF float32 ~3 tok/s 快约 7×。
+<li><strong>精度不达标</strong>：SciQ -18pp / PIQA -16pp，Avg Δacc = -17pp。f16 / f32 / newbin 三次结果<strong>完全一致</strong> → <strong>不是量化误差</strong>（精度无关的系统性偏差）。
+<li><strong>根因更正（2026-11-04 深度调查）</strong>：此前推断"Duplicated key 覆写元数据"<strong>不成立</strong>——GGUF 元数据经原始二进制解析验证<strong>完全正确</strong>：block_count=56、feed_forward_length 数组（28 MLP 层=8192、24 SSM 层=0、4 attn 层=0）、head_count_kv 数组（4 attn 层=4、其余=0）均正确。层分类逻辑（C++ <code>is_recr = (n_head_kv==0 && n_ff==0)</code>）正确。SSM/MLP/attn 权重值与 HF safetensors<strong>逐一比对一致</strong>（bf16→f16 精度仅）。
+<li><strong>真根因</strong>：llama.cpp C++ <code>build_mamba2_layer</code>（基类 <code>llm_build_mamba_base</code>）的 Mamba2 SSM 数值实现与 PyTorch transformers reference 存在<strong>系统性计算差异</strong> → 56 层混合架构误差累积 → logit 偏移 → 准确率下降 + 生成垃圾。具体差异点（conv1d 维度 6144=d_inner+2*n_group*d_state、ssm_norm group 结构 8×512 等）需逐算子排查，非本轮可完成。
+<li><strong>处置</strong>：CPU 评测保留 HF transformers float32 路径（数值可信），llama.cpp 提速路线搁置，待 llama.cpp 上游修复 Nemotron-H Mamba2 SSM 计算后再试。
 </ul></div></div>
 <div class='card'><h2>⑥ 观察与分析</h2>
 <ul>
-<li>已完成 <strong>2</strong> 个有效检查点（iter_10000 / iter_30000）。当前最高 Avg = <strong>50.25%</strong> @ iter_30000。
+<li>已完成 <strong>5/5</strong> 检查点评估。有效检查点（无 NaN）仅 <strong>10K / 30K</strong>，Avg 分别 50.00% / 50.25%。当前最高有效 Avg = <strong>50.25%</strong> @ iter_30000。
 <li>iter_10000 Avg = 50.00%，已接近 Xmodel-2 s1/10K 的 46.65% 水平。
 <li>相对 P-6 起点（44.0%@655M/20k）：<strong>+6.3 pp</strong>。注：P-6 为 655M 模型，本评测为 2B，参数量不同，仅作趋势参照。
 <li>逐任务看，SciQ / PIQA / Winogrande / BoolQ 在 10k 步即已超过随机基线较多，说明常识推理能力在训练早期快速涌现；ARC-Challenge / OpenBookQA 偏难，随步数增长仍有上升空间。
-<li><strong>⚠️ NaN 检查点（3/5）</strong>：iter_20000 / iter_40000 / iter_50000 的 sciq acc=0.0 且 stderr=0.0，说明 Mamba2 SSM 层输出 NaN → logit 全 NaN → 所有答案等概率。float32 重跑仍 NaN → <strong>NaN 在 checkpoint 权重本身</strong>（非 dtype 问题），推测为 FP8 训练中间歇性溢出导致部分步数的权重含 NaN。iter_10000 / iter_30000 权重正常 → 训练过程间歇性出现 NaN 步。
+<li><strong>⚠️ NaN 检查点（3/5）</strong>：iter_20000 / iter_40000 / iter_50000 的 sciq acc=0.0 且 stderr=0.0，且<strong>三个 ckpt 逐集结果完全相同</strong>（Avg=28.75%）——md5 各不同但结果一致，说明 Mamba2 SSM 层输出 NaN → logit 全 NaN → lm_eval 等概率 tie-breaking 确定性选答案。float32 重跑仍 NaN → <strong>NaN 在 checkpoint 权重本身</strong>（非 dtype 问题），推测为 FP8 训练中间歇性溢出。仅 iter_10000 / iter_30000 权重正常。</li>
 </ul>
 </div>
 <div class='card'><h2>⑦ 诚实条款与限制</h2><ul>
@@ -466,5 +479,5 @@ tr.ref td{background:#f1f5f9;color:#475569;font-size:12px}span.an{color:#64748b;
 <li>Xmodel-2 / Phi-1.5 参照线为公开报告值，评测口径可能与我方不完全一致，仅作量级参照。</li>
 <li>S1 训练于 2026-11-02 19:51 从 ckpt 58000 resume，scheduler 未恢复（LR 从 warmup 重来），iter_10000–50000 均为 <strong>resume 前</strong>保存的检查点，不受 resume 影响。</li>
 </ul></div>
-<div class="foot">报告生成器：<code>run/gen_cpu_eval_8sets_report.py</code>（幂等）　|　数据源：<code>nemo_experiments/baize2b/lm_eval_results/</code>　|　2026-11-04 11:41:35</div>
+<div class="foot">报告生成器：<code>run/gen_cpu_eval_8sets_report.py</code>（幂等）+ 手动更新 llama.cpp 深度调查　|　数据源：<code>nemo_experiments/baize2b/lm_eval_results/</code>　|　2026-11-04 13:0x</div>
 </body></html>
