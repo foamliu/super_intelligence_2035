@@ -41,7 +41,7 @@ EDA-Eval-DesignFlow-DummyGeoVerify-001	BROKEN	../../assets-or-hidden from __file
 EDA-Eval-DesignFlow-DutySkewAvg-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
 EDA-Eval-DesignFlow-ERCBootPlan-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
 EDA-Eval-DesignFlow-FeintFlowAudit-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
-EDA-Eval-DesignFlow-FlatNet-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
+EDA-Eval-DesignFlow-FlatNet-001	SAFE	r78 fixed: added _resolve_a_input/_resolve_b_input(workdir) fallback (workdir/hidden -> HERE/hidden -> ASSETS/hidden -> top-level hidden/<id>); judge-dir PASS verified; 5 negatives NEG_RC=0; jsonl test synced 10202->11936B; k=14==14 GATE PASS
 EDA-Eval-DesignFlow-FloatPinToTop-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
 EDA-Eval-DesignFlow-GdsRectGen-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
 EDA-Eval-DesignFlow-GenSPv2-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
