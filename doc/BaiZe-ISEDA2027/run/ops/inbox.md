@@ -1,40 +1,47 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
-<!-- RUN_ID: 241 | TARGET: 29 -->
-## RUN_ID 241 — pretrain 细查（只读）：loop 日志尾部 / cline 会话 / 子进程树 / 残留 llama-server
+<!-- RUN_ID: 242 | TARGET: 29 -->
+## RUN_ID 242 — pretrain 状态刷新（只读）：S1 iter / cline 存活 / llama.cpp 工作区 diff / 残留 server
 
-> RUN_ID 240 已确认：S1 iter 82320 健康（6.88s/step、GPU 97–100%）、`baize_pretrain_loop.sh` alive（etimes≈554k）、`.12` torchrun alive；但本线自 14:03 起无提交。**本块只查「loop 在干什么」**。
-> 只读；不 kill、不重启、不写文件；`cline` 命令行一律截断（README §8）。
+> 距 RUN_ID 241 已约 2 小时。本块只做“现在几点、到哪一步”，不 kill、不重启、不写文件、不跑 GPU。
+> `pgrep -f` 结果截断；不 dump cline 的完整 cmdline（README §8）。
 
 ```bash
 set -u
-echo "=== RUN_ID 241 | pretrain loop forensics (read-only) | $(date '+%F %T') | host=$(hostname) ==="
+echo "=== RUN_ID 242 | pretrain status tick (read-only) | $(date '+%F %T') | host=$(hostname) ==="
 echo
-echo "[1] pretrain loop 日志尾部（最近 30 行）"
-tail -30 /tmp/baize_pretrain_loop.log 2>/dev/null | cut -c1-240
+echo "[1] S1 训练心跳"
+grep -aE 'iteration [0-9]+/' /tmp/baize_s1_baize2b_worker.log 2>/dev/null | tail -2 | cut -c1-200
+stat -c 'worker.log mtime=%y size=%s' /tmp/baize_s1_baize2b_worker.log 2>/dev/null
+nvidia-smi --query-gpu=index,utilization.gpu,memory.used --format=csv,noheader 2>&1 | head -8
 echo
-echo "[2] loop 进程与其子进程"
+echo "[2] pretrain loop / cline"
 LOOP=$(pgrep -f 'baize_pretrain_loop\.sh' | head -1)
 echo "loop_pid=${LOOP:-none}"
 if [ -n "${LOOP:-}" ]; then
-  ps -o pid,ppid,etimes,pcpu,rss,args --ppid "$LOOP" --no-headers 2>/dev/null | cut -c1-180 | head -10
-  echo "--- grandchildren ---"
-  for p in $(pgrep -P "$LOOP" 2>/dev/null); do
-    ps -o pid,ppid,etimes,pcpu,args --ppid "$p" --no-headers 2>/dev/null | cut -c1-160 | head -5
-  done
+  ps -o pid,etimes,pcpu,rss,args --ppid "$LOOP" --no-headers 2>/dev/null | cut -c1-150 | head -5
 fi
+CL=$(ps -eo pid,etimes,pcpu,rss,args --no-headers 2>/dev/null | grep 'data-dir /nas_train/app.e0031982/.cline_pretrain' | grep -v grep | awk '{print $1}' | head -1)
+echo "cline_pid=${CL:-none}"
+[ -n "${CL:-}" ] && ps -o pid,etimes,pcpu,rss --no-headers -p "$CL" 2>/dev/null
 echo
-echo "[3] 本线 cline / 调试子进程（截断 160 字符）"
-ps -eo pid,etimes,pcpu,rss,args --sort=-etimes --no-headers 2>/dev/null | grep -E 'cline|gdb|convert_hf_to_gguf|llama-cli' | grep -v -E 'grep -E|RUN_ID 241' | cut -c1-160 | head -8
+echo "[3] llama.cpp 工作区改动（只读）"
+cd /nas_train/app.e0031982/code/llama.cpp 2>/dev/null && {
+  echo "HEAD=$(git rev-parse --short HEAD) branch=$(git rev-parse --abbrev-ref HEAD)"
+  echo "--- changed files (top 15) ---"
+  git status --short 2>/dev/null | head -15
+  echo "--- diff stat ---"
+  git diff --stat 2>/dev/null | tail -6
+}
 echo
-echo "[4] 最近 20 分钟内被写过的 baize 日志"
-find /tmp -maxdepth 1 -name 'baize_*.log*' -mmin -20 -printf '%TY-%Tm-%Td %TH:%TM %10s %p\n' 2>/dev/null | sort | tail -12
+echo "[4] loop 日志尾部 12 行"
+tail -12 /tmp/baize_pretrain_loop.log 2>/dev/null | cut -c1-200
 echo
-echo "[5] 本线最近提交（MEMORY/llamacpp 视角）"
-cd /nas_train/app.e0031982/code/super_intelligence_2035 2>/dev/null && git log -4 --pretty='%h %ad %s' --date=format:'%m-%d %H:%M' -- doc/BaiZe-ISEDA2027/run/MEMORY_PRETRAIN_2B.md doc/BaiZe-ISEDA2027/llamacpp.txt | cut -c1-160
+echo "[5] 残留 llama-server / 最近 GGUF"
+echo "server_count=$(pgrep -fc 'llama-server' 2>/dev/null || echo 0)"
+ls -lt --time-style='+%m-%d %H:%M' /tmp/*.gguf 2>/dev/null | head -5
 echo
-echo "[6] 残留 llama-server（只读，不 kill）"
-echo "count=$(pgrep -fc 'llama-server' 2>/dev/null || echo 0)"
-pgrep -af 'llama-server' 2>/dev/null | cut -c1-120 | head -10
+echo "[6] 本线最近提交"
+cd /nas_train/app.e0031982/code/super_intelligence_2035 2>/dev/null && git log -2 --pretty='%h %ad %s' --date=format:'%m-%d %H:%M' -- doc/BaiZe-ISEDA2027/run/MEMORY_PRETRAIN_2B.md | cut -c1-160
 echo
-echo "=== DONE 241 ==="
+echo "=== DONE 242 ==="
 ```
