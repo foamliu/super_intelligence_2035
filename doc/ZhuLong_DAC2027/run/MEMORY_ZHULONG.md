@@ -1,10 +1,10 @@
 # MEMORY_ZHULONG.md — ZhuLong（DAC2027）EDA 消融评测 · 运行时状态
 
-WAITING: 1（wake#553·2026-11-04 08:46 on-wake done_all do-nothing 巡检·用户再次粘贴 ZHULONG_TASK.md 全文·无新指令（=loop 每次注入全文 prompt）。infra 全绿：真 loop PID813663 活带 `https_proxy=http://172.19.92.23:13128` ✅（⚠️ pgrep -f 'zhulong_loop.sh' 误命中本 opencode 子进程 PID77007·真 loop 须看 `/proc/813663/environ`）·relay PID118432/118463 活 ✅（9 天·last_run_id=142）·裁决池 4/4 OPEN(404) ✅·/home 25G(94%) ✅·git 0/0 ahead/behind（他线在途文件未碰·按规程只 add `run/` 与 `ZhuLong_DAC2027/`）·MEMORY 压缩后 ≤32KB·TASK 25144B ✅·§7 步骤C done_all·**WAITING=1** 等运维指令。详见 daily §[08:46 LIVE]。
+WAITING: 1（wake#554·2026-11-04 09:21 on-wake done_all do-nothing 巡检·用户再次粘贴 ZHULONG_TASK.md 全文·无新指令（=loop 每次注入全文 prompt）。infra 全绿：真 loop PID813663 活 8d 带 `https_proxy=http://172.19.92.23:13128` ✅（⚠️ pgrep -f 'zhulong_loop.sh' 误命中本 opencode 子进程 247595/250141 等·真 loop 须看 `/proc/813663/environ`）·relay PID118432/118463 活 ✅（9 天·last_run_id=142）·裁决池 4/4 OPEN(404) ✅·/home 22G(95%·较 wake#553 25G→22G 略紧仍 ≥8G) ✅·git 0/0 ahead/behind（benchmark/designflow/ 改动=他线在途未碰·按规程只 add `run/` 与 `ZhuLong_DAC2027/`）·MEMORY 32149B≤32KB·TASK 25144B ✅·§7 步骤C done_all·**WAITING=1** 等运维指令。详见 daily §[09:21 LIVE]。
 
 - [🚨 env-prep·2026-11-03 22:2x **本机装 llama.cpp + 下载 Qwen3.5-0.8B**（用户直令·供后续数据分析）·✅ **完成**→archive §归档 batch 16] llama.cpp v0.8.0-dev commit `28b812d` CPU 编译成功（三件齐）+ Qwen3.5-0.8B hf-mirror 失败→ModelScope 回退下载全（14 文件 1.7G）+ GGUF 转换意外成功（f16 1.55G/Q8_0 833M）+ **两条冒烟均过**（llama.cpp Q8_0 **90.9 tok/s**·transformers float32 0.3 tok/s·推荐走 llama.cpp+Q8_0）+ 报告 `reports/report_zhulong_llamacpp_qwen08b_zh.html`(21.8KB·0 外链) + commit `8e6c18978`/`9a4b0504a`（`zhulong env:`）。原文（§0–§5+硬约束+一键脚本）移至 `run/ZHULONG_TASK_ARCHIVE.md` §归档 batch 16。详见 daily §[22:2x env-prep]。
-- [wake#553·08:46 LIVE] on-wake done_all do-nothing 巡检·用户再次粘贴 ZHULONG_TASK.md 全文·无新指令（=loop 每次注入全文 prompt）。infra 全绿：真 loop PID813663 活带 `https_proxy=http://172.19.92.23:13128` ✅（⚠️ pgrep -f 'zhulong_loop.sh' 误命中本 opencode 子进程 PID77007·真 loop 须看 `/proc/813663/environ`）·relay PID118432/118463 活 ✅（9 天·last_run_id=142）·裁决池 4/4 OPEN(404) ✅·/home 25G(94%) ✅·git 0/0 ✅（他线在途文件未碰）·TASK 25144B ✅。两活跃令同 wake#552：① env-prep ✅ 归档 batch 16 ② 📕 10-25 改稿令 P0 A–E 大部分落地·补 F–J 不阻塞·等运维下一步指令。§7 步骤C done_all·**WAITING=1**。
-- [wake#552 已滚出·08:46] 原文见 `daily-memories/2026-11-04.md` §[08:13 LIVE] wake#552（08:13 do-nothing 巡检·被 wake#553 取代）。
+- [wake#554·09:21 LIVE] on-wake done_all do-nothing 巡检·用户再次粘贴 ZHULONG_TASK.md 全文·无新指令（=loop 每次注入全文 prompt）。infra 全绿：真 loop PID813663 活 8d 带 `https_proxy=http://172.19.92.23:13128` ✅（⚠️ pgrep -f 'zhulong_loop.sh' 误命中本 opencode 子进程 247595/250141 等·真 loop 须看 `/proc/813663/environ`）·relay PID118432/118463 活 ✅（9 天·last_run_id=142）·裁决池 4/4 OPEN(404) ✅·/home 22G(95%·较 wake#553 略紧仍 ≥8G) ✅·git 0/0 ✅（benchmark/designflow/ 改动=他线在途未碰）。两活跃令同 wake#553：① env-prep ✅ 归档 batch 16 ② 📕 10-25 改稿令 P0 A–E 大部分落地·补 F–J 不阻塞·等运维下一步指令。§7 步骤C done_all·**WAITING=1**。
+- [wake#553 已滚出·09:21] 原文见 `daily-memories/2026-11-04.md` §[08:46 LIVE] wake#553（08:46 do-nothing 巡检·被 wake#554 取代）。
 - [wake#551 已滚出·08:13] 原文见 `daily-memories/2026-11-04.md` §[07:40 LIVE] wake#551（07:40 do-nothing 巡检·被 wake#552 取代）。
 - [wake#550 已滚出·07:40] 原文见 `daily-memories/2026-11-04.md` §[07:07 LIVE] wake#550（07:07 do-nothing 巡检·被 wake#551 取代）。
 - [wake#549 已滚出·07:07] 原文见 `daily-memories/2026-11-04.md` §[06:34 LIVE] wake#549（06:34 do-nothing 巡检·被 wake#550 取代）。
@@ -15,7 +15,6 @@ WAITING: 1（wake#553·2026-11-04 08:46 on-wake done_all do-nothing 巡检·用�
 - [wake#544 已滚出·04:2x] 原文见 `daily-memories/2026-11-04.md` §[03:53 LIVE] wake#544（03:53 do-nothing 巡检·被 wake#545 取代）。
 - [wake#543 已滚出·03:53] 原文见 `daily-memories/2026-11-04.md` §[03:20 LIVE] wake#543（03:20 do-nothing 巡检·被 wake#544 取代）。
 - [wake#541 已滚出·02:46] 原文见 `daily-memories/2026-11-04.md` §[02:13 LIVE] wake#541（02:13 do-nothing 巡检·被 wake#542 取代）。
-- [wake#540 已滚出·02:13] 原文见 `daily-memories/2026-11-04.md` §[01:41 LIVE] wake#540（01:41 do-nothing 巡检·被 wake#541 取代）。
 - [wake#539·01:09 已滚出·01:41] 原文见 `daily-memories/2026-11-04.md` §[on-wake LIVE] wake#539（01:09 do-nothing 巡检·被 wake#540 取代）。
 - [wake#537 已滚出·00:37] 原文见 `daily-memories/2026-11-04.md` §[on-wake LIVE] wake#537（00:0x do-nothing 巡检·env-prep 归档复核·MEMORY 36727B→合并 wake#388~#479 滚出指针守 32KB·被 wake#538 取代）。
 - [wake#511–#529 已滚出·21:03] 原文见 `daily-memories/2026-11-03.md` 各 §[HH:MM LIVE]（合并指针·已多次滚出·不重复全文）。
@@ -117,7 +116,7 @@ WAITING: 1（wake#553·2026-11-04 08:46 on-wake done_all do-nothing 巡检·用�
 **结论**：full_v3 (82.1±3.0%) **未复现** r1=88.0%（异常高值）。full_v3 比 V2(r2-r5=79.8±2.1%) 高 ~2.3pp，1σ 范围内重叠，自探索增益不显著。
 - [2026-10-19 06:30–17:31 指针块·已滚出] 运维令三十二② (N′) r1/r2/r3 巡检 #1–#11、r1/r2 收口详情 → 原文已搬入 daily-memories/2026-10-19.md「归档·18:5x」段。r1=78.5%/r2=70.9%/r3 task130 stuck 6582s（RUN_ID 83 查的根因）。
 ## 操作流水
-- [wake#551·07:40] on-wake done_all do-nothing 巡检·用户再次粘贴 ZHULONG_TASK.md 全文·无新指令。infra 全绿（loop PID813663 带代理/relay 118432+118463+4044024·last_run_id=142/裁决池 4/4 OPEN/ /home 25G/ git 0/0）。§7 步骤C·WAITING=1·self-commit+push。详见 daily §[07:40 LIVE]。
-- [wake#550·07:07] on-wake done_all do-nothing 巡检·用户再次粘贴 ZHULONG_TASK.md 全文·无新指令。infra 全绿（loop PID813663 带代理/relay 118432+118463/裁决池 4/4 OPEN/ /home 25G/ git 0/0）。§7 步骤C·WAITING=1·self-commit+push。详见 daily §[07:07 LIVE]。
+- [wake#554·09:21] on-wake done_all do-nothing 巡检·用户再次粘贴 ZHULONG_TASK.md 全文·无新指令。infra 全绿（真 loop PID813663 活 8d 带代理/relay 118432+118463/裁决池 4/4 OPEN 404/ /home 22G 95%/ git 0/0·benchmark/designflow/ 改动=他线在途未碰）。§7 步骤C·WAITING=1·self-commit+push。详见 daily §[09:21 LIVE]。
+- [wake#553·08:46] on-wake done_all do-nothing 巡检·用户再次粘贴 ZHULONG_TASK.md 全文·无新指令。infra 全绿（loop PID813663 带代理/relay 118432+118463/裁决池 4/4 OPEN/ /home 25G/ git 0/0）。§7 步骤C·WAITING=1·self-commit+push。详见 daily §[08:46 LIVE]。
 - [wake#537~#540 已滚出·04:2x] 原文见 `daily-memories/2026-11-04.md` 各 §[HH:MM LIVE]（do-nothing 巡检系列·已被 wake#541~#545 取代·合并指针省 MEMORY 空间）。
 - [wake#388~#479 已滚出·2026-11-04] 原文见 `daily-memories/2026-11-02.md` 各 §[rolled-out HH:MM]。2026-11-02 era post-closure do-nothing 巡检系列 + kimi-k2.6 5-run r1~r5 gen 跑中巡检 + r5 收口里程碑（wake#429=5/5=85.0±2.5% 本线收口）·均已被 wake#536 env-prep 收口取代·2026-11-04 wake#537 合并指针省 MEMORY 空间。
