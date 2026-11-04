@@ -58,6 +58,18 @@ N_TOTAL = 500
 # 20 题试点对照（pilot20 报告实测，commit 33782ab93 系列）
 PILOT20 = {"cline-patched": (13, 20), "hermes": (11, 20)}
 
+# cline 适配器修复前基线（2026-11-04 R1569 修复前快照，固定历史值）。
+# 来源：eval_cline-patched.json 在 R1569 适配器修复前的值；见
+#   report_harness_cline_trace_analysis_zh.html（cline 326/500=65.2%）
+#   + MEMORY_HARNESS.md R1567/R1569。修复 = R1569 commit 29df7ba7f
+#   （CLINE_BIN→.bun/bin 根因修复 + gw_proxy 路由 + stdout 透传 + silent-exit retry）。
+# rerun 目标 = cline_rerun_ids.txt 的 58 题（静默退出 35 + 超时卡死 18 + 余量）。
+# 注：eval JSON 已被 incr_eval 原地更新，无法从数据文件回溯修复前值，故以快照常量保存。
+CLINE_PREFIX_BASELINE = {
+    "resolved": 326, "total": 500, "no_patch": 58,
+    "rate": 0.652, "fix_commit": "29df7ba7f", "fix_round": "R1569",
+}
+
 
 def esc(s):
     return html.escape(str(s))
@@ -401,6 +413,56 @@ def footer(now):
 </body></html>"""
 
 
+def cline_fix_split_section(per):
+    """cline 适配器修复前/修复后分列（运维令 2026-11-04 13:5x ③）。
+
+    展示 R1569 适配器修复前（主跑 326/500=65.2%）与修复后补跑 rerun 的累计
+    resolved 对比。修复前基线为固定历史常量（eval JSON 已被 incr_eval 原地
+    更新，无法回溯）；修复后列随 rerun+incr_eval 进行而上升，rerun 全部完成
+    + eval 后重新运行本生成器即得终值。
+    """
+    d = per.get("cline-patched")
+    base = CLINE_PREFIX_BASELINE
+    # rerun 进度（cline_rerun_ids.txt 中已有 prediction 文件的题数）
+    rerun_total = base["no_patch"]
+    rerun_done = 0
+    rerun_file = FULL / "cline_rerun_ids.txt"
+    if rerun_file.exists():
+        ids = [x for x in rerun_file.read_text().split() if x]
+        rerun_total = len(ids)
+        rerun_done = sum(1 for iid in ids
+                         if (PRED_DIR / f"cline-patched__{iid}.json").exists()
+                         and (PRED_DIR / f"cline-patched__{iid}.json").stat().st_size > 30)
+    rerun_status = f"rerun {rerun_done}/{rerun_total} 题已补跑" if rerun_done < rerun_total \
+        else f"rerun {rerun_total}/{rerun_total} 题已全部补跑完成"
+    if d and d["eval_done"] and d["n_eval"]:
+        r_after = len(d["resolved"]); n = d["n_eval"]
+        delta = r_after - base["resolved"]
+        delta_cls = "pass" if delta > 0 else ("nopatch" if delta == 0 else "fail")
+        after_cells = (f'<td class="pass">{r_after}/{n}</td>'
+                       f'<td>{fmt_pct(r_after, n)}</td>'
+                       f'<td class="{delta_cls}">{"+" if delta >= 0 else ""}{delta}</td>')
+    else:
+        after_cells = '<td class="evalpend" colspan="3">eval 待完成</td>'
+    return f"""<h2>三·补、cline 适配器修复前 / 修复后分列</h2>
+<div class="card"><p>运维令 2026-11-04 13:5x（用户直令：按 trace 报告修复 cline 适配器 + 补跑受影响题）。
+R1569 修复（commit {base["fix_commit"]}）：① <b>CLINE_BIN 改用 <code>.bun/bin/cline</code></b>（原编译 ELF
+二进制有静默退出 bug = 35 题静默退出根因，非 trace 报告初判的 API 网关问题）② 路由 gw_proxy
+（127.0.0.1:9090，同 opencode）③ run_single.py 透传 stdout（让 blocked 检测生效）
+④ predict_one 加 silent-exit 重试（rc=0 & patch=0 & wall&lt;10s → 重跑 1 次）。
+修复后补跑 <b>{rerun_total} 题</b>（cline_rerun_ids.txt：静默退出 + 超时卡死）。当前 {rerun_status}。</p>
+<table>
+<tr><th>阶段</th><th>resolved</th><th>resolve 率</th><th>较修复前</th><th class="l">说明</th></tr>
+<tr><td class="l">修复前（主跑）</td><td>{base["resolved"]}/{base["total"]}</td><td>{base["rate"]*100:.1f}%</td>
+<td>—</td><td class="l">R1569 适配器修复前的原始 predict+eval；详见 report_harness_cline_trace_analysis_zh.html</td></tr>
+<tr><td class="l">修复后（补跑后）</td>{after_cells}
+<td class="l">补跑 {rerun_total} 题后累计 eval 值；{rerun_status}，rerun 全部完成后此列为终值</td></tr>
+</table>
+<p class="ev">注：「修复后」列随 rerun + incr_eval 进行而上升；rerun 全部完成 + eval 后重新运行本生成器即得终值。
+修复前基线 = 固定历史快照常量（eval_cline-patched.json 已被 incr_eval 原地更新，无法从数据文件回溯）。
+命名规程：正文一律写 cline（不写 cline-patched）。</p></div>"""
+
+
 def build():
     per = {h: aggregate(h) for h in HARNESS_ORDER}
     now = datetime.now().strftime("%Y-%m-%d %H:%M")
@@ -412,6 +474,7 @@ def build():
     parts.append(predict_summary(per))
     if any_eval:
         parts.append(eval_summary(per))
+        parts.append(cline_fix_split_section(per))
         parts.append(wilson_section(per))
         parts.append(mcnemar_section(per))
     else:
