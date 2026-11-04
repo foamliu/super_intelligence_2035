@@ -1,6 +1,6 @@
 # MEMORY_DATA.md — BaiZe 正式训练数据准备 · 运行时状态
 
-WAITING: 0
+WAITING: 1
 
 > ⚠️ **`WAITING` 只认本文件顶部这一行**（`baize_data_loop.sh` 用 `^WAITING:[[:space:]]*1` 匹配）。
 > **不要在正文/流水里再写任何以 `WAITING:` 开头的行**——否则会误触发 30 分钟长睡。
@@ -18,18 +18,19 @@ WAITING: 0
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        🟢运维令11-04 09:4x 推理+代码SFT调研报告已交付+09:2x 长上下文下载近收尾(9/10落地,仅mix-ctx-128k在跑)
-已完成:       ✅85M下载正式翻转✅已完成;✅运维令10-31长上下文+agentic调研报告v6已交付;✅运维令09:4x推理+代码SFT调研报告已交付(report_data_reasoning_code_sft_survey_zh.html,77772B/75.9KB,0 script/0外链,7节齐全,幂等✓,commit 1aa9adee8已push);✅长上下文9/10源落地(whole-books✅25.31GiB/prolong-data-512K✅113.98GiB/InfLLM-V2-data-5B✅15.04GiB/RULER-llama3-1M✅5.13GiB/NExtLong-128K-dataset✅20.50GiB/LongAlign-10k✅0.61GiB/oellm-pilot-v1✅2.85GiB/pg19✅470KB⚠️仅脚本无parquet数据/LongData-Corpus✅34G gated .29)
-当前动作:     唤醒1182(2026-11-04 12:42):09:4x报告健康复核PASS(77772B=61391chars≥25KB/0<script>/69 HF链接+0非HF外链(仅172.19.92.25代理引用)/41<table>=41</table>配平/HTMLParser stack=EMPTY 0err/generator --check-idempotent OK(61391chars两次相同且与文件逐字一致✓)/commit 1aa9adee8已push)+09:2x下载巡检→9/10落地(.12公开8源全OK/0inc+.29 gated LongData-Corpus✅34G)=仅ghostcc3/mix-context-post-training-128k🟡下载中(23G/522files/4.incomplete,PID3866250 alive,较上轮15G→23G在推进,最后一源);download_longctx_datasets.sh(PID3129416)alive;⚠️pg19仅470KB=script-based无parquet;df /nas_inference=45T/17Tused/29Tavail(38%);git synced(0/0);TASK=30.6KB/MEMORY=24.3KB(均<40KB无需归档)
-下一步:       下轮唤醒:①监控mix-context-128k下载收尾(du -sh+find .incomplete);②mix-ctx落地后校验(0 .incomplete+文件数+字节);③全部10源落地后按镜像下载路径写DATA_MAPPING.md;④pg19仅脚本问题待核(找parquet镜像或load_dataset);⑤落地后WAITING置回1
-阻塞:         无(.12公开源下载后台进行中,仅余mix-ctx-128k,.29 gated已完成,不占GPU,限并发≤4)
+PHASE:        🟢运维令11-04 09:4x报告已交付✅ + 09:2x长上下文10/10源全部落地✅(下载FINISH 12:46) → 全部活跃令完成,WAITING置回1
+已完成:       ✅85M下载正式翻转✅已完成;✅运维令10-31长上下文+agentic调研报告v6已交付;✅运维令09:4x推理+代码SFT调研报告已交付(report_data_reasoning_code_sft_survey_zh.html,77772B/75.9KB,0 script/0外链,7节齐全,幂等✓,commit 1aa9adee8已push);✅运维令09:2x长上下文10/10源全部落地(.12公开9源+.29 gated 1源,合计12283files/267,857,178,451B=249.48GiB,0 incomplete,launch日志FINISH 12:46:07);✅DATA_MAPPING.md新增E节长上下文下载登记(10源逐条du -sb实测,durable TSV=longctx_download_status_20261104.tsv)
+当前动作:     唤醒1183(2026-11-04 12:55):09:2x下载收尾确认→launch日志====longctx download FINISH 12:46:07====,10/10源全OK/0inc(mix-ctx-128k✅34.85GiB/690files/0inc,最后一源已落地,无hf进程残留);DATA_MAPPING.md新增E节(10源主表+合计249.48GiB+核对式+pg19/oellm注意事项)+durable TSV longctx_download_status_20261104.tsv;09:4x报告复核PASS(77772B/0script/标签配平/幂等✓,前轮已验证);WAITING置回1(全部活跃令完成);TASK=30.6KB/MEMORY=26.7KB(均<40KB无需归档)
+下一步:       下轮唤醒(待运维新指令):①pg19数据体补齐(找parquet镜像或load_dataset脚本拉取,待运维批准);②长上下文源分词入tokenized/镜像(oellm pilot-v1已分词可直接用);③分词后回写DATA_MAPPING.md A节、E节状态翻「已分词」;④无活跃下载/调研任务,静默巡检即可
+阻塞:         无(全部活跃令已完成,无下载在跑,不占GPU;pg19数据体为后续动作待运维批准,非阻塞)
 ERROR_COUNT:  11
-未完成指令:   有(长上下文10源下载近收尾,9/10落地,仅mix-ctx-128k在跑,待全部落地+pg19待核)
+未完成指令:   无(09:4x报告✅+09:2x下载10/10✅+09:1x 85M✅+10-31报告✅全部完成;pg19数据体为后续待批事项非活跃指令)
 ```
 
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。
 
 ## 📋 本唤醒流水
+> [11-04 12:55] 唤醒1183：09:2x下载全部落地确认✅+DATA_MAPPING.md写E节+WAITING置回1→①launch日志确认`==== longctx download FINISH 12:46:07 ====`，10/10源全status=OK/0 incomplete(mix-ctx-128k✅34.85GiB/690files/0inc最后一源已落地，无hf进程残留)；②逐源du -sb实测:.12公开9源(whole-books 25.31GiB/prolong-512K 113.98GiB/InfLLM-V2 15.04GiB/RULER 5.13GiB/NExtLong 20.50GiB/LongAlign 0.61GiB/oellm 2.85GiB/pg19 0.0005GiB⚠️script-only/mix-ctx 32.46GiB)+.29 gated(LongData-Corpus 33.60GiB)=合计12,283files/267,857,178,451B=249.48GiB；③DATA_MAPPING.md新增E节(运维令09:2x·未分词·落盘/nas_inference)：10源主表(repo/路径/主机/文件/字节/GiB/gated/incomplete/备注)+合计+核对式+pg19/oellm注意事项+durable TSV=run/data/longctx_download_status_20261104.tsv(10行幂等可复现)；④09:4x报告复核PASS(77772B/0script/HTMLParser stack=EMPTY标签配平✓/generator --check-idempotent OK✓，前轮已验证commit 1aa9adee8)；⑤⚠️发现gen_data_mapping_md.py不含D节(可删候选)，运行generator会丢失D节→已git checkout恢复17047B原版+手动追加E节(与D节同模式)，未破坏既有内容；⑥WAITING置回1(全部活跃令完成:09:4x报告✅+09:2x下载10/10✅+09:1x 85M✅+10-31报告✅)；⑦TASK=30.6KB/MEMORY=26.7KB(均<40KB无需归档)；⑧下一步待运维新指令(pg19数据体补齐/长上下文分词待批)
 > [11-04 12:42] 唤醒1182：09:4x报告健康复核PASS→①report=77772B(=61391chars,UTF-8多字节,75.9KB≥25KB✓)/0<script>/69 HF链接/0非HF外链(仅172.19.92.25代理)/41<table>=41</table>平衡✓/HTMLParser stack=EMPTY 0err✓/7节sec1-7齐;②generator gen_reasoning_code_sft_survey_report.py --check-idempotent OK(61391chars两次相同,且与磁盘报告逐字一致✓,即77772B=61391chars多字节无差异,幂等✓);③git fetch synced(##main...origin/main无ahead/behind,data线clean✓,report+generator均在commit 1aa9adee8 data survey:已push);④09:2x下载巡检→.12公开8源全落地/0inc+.29 gated LongData-Corpus✅34G=9/10落地,仅ghostcc3/mix-context-128k🟡下载中(23G/522files/4.incomplete,PID3866250 alive,较上轮15G→23G在推进);⑤df:/nas_inference=45T/17Tused/29Tavail(38%),/nas_train=207T/179Tused/29Tavail(87%);⑥TASK=30.6KB/MEMORY=24.3KB(均<40KB无需归档)→09:4x已交付,09:2x下载未完成,心跳WAITING=0
 > [11-04 12:35] 唤醒1181：09:4x报告全量复核PASS(77772B/75.9KB≥25KB/0<script>/66 HF链接+2内网代理引用(非外链CDN)/41<table>=41</table>配平/840<td>=840</td>/407<th>=407</th>配平/sec1-7齐/TL;DR+诚实条款+污染+下载方案齐/43「未核到」/8 gated)+generator gen_reasoning_code_sft_survey_report.py重跑→77772B git diff=clean✓幂等(--check-idempotent OK)+git pull --rebase synced(##main...origin/main 0/0,data线clean,commit 1aa9adee8 data survey:已push);09:2x下载巡检→.12公开8源全落地status=OK/0inc(whole-books✅25.31GiB/147files + prolong-data-512K✅113.98GiB/10062files + InfLLM-V2-data-5B✅15.04GiB/66files + RULER-llama3-1M✅5.13GiB/360files + NExtLong-128K-dataset✅20.50GiB/627files + LongAlign-10k✅0.61GiB/9files + oellm-pilot-v1✅2.85GiB/69files + pg19✅470KB/18files⚠️script-based无parquet数据)+.29 gated LongData-Corpus✅34G/0inc(ssh确认)=9/10落地;仅ghostcc3/mix-context-post-training-128k🟡下载中(15G/3files/4.incomplete,PID3866250 alive,体量超预估<5G,最后一源);download_longctx_datasets.sh(PID3129416)alive;df /nas_inference=45T/17Tused/29Tavail(38%);TASK=30.6KB/MEMORY=24.0KB(均<40KB无需归档);心跳WAITING=0(下载未完成指令=有,9/10落地,仅mix-ctx-128k在跑)
 > [11-04 12:42] 唤醒1180：09:4x报告确认已交付✅(commit 1aa9adee8已push,git synced 0/0,无需重复)+09:2x下载巡检大进展→.12公开8源全落地status=OK/0inc(whole-books✅25.31GiB/147files + prolong-data-512K✅113.98GiB/10062files + InfLLM-V2-data-5B✅15.04GiB/66files + RULER-llama3-1M✅5.13GiB/360files + NExtLong-128K-dataset✅20.50GiB/627files + LongAlign-10k✅0.61GiB/9files + oellm-pilot-v1✅2.85GiB/69files + pg19✅470KB/18files⚠️script-based无parquet数据)+.29 gated LongData-Corpus✅34G/0inc(ssh确认)=9/10落地;仅ghostcc3/mix-context-post-training-128k🟡下载中(PID3866250 alive,刚启动~91s,第10源最后一源);download_longctx_datasets.sh(PID3129416)alive;df /nas_inference=45T/17Tused/29Tavail(38%);git synced(##main...origin/main 0/0);TASK=30.6KB/MEMORY=24.0KB(均<40KB无需归档);心跳WAITING=0(下载未完成指令=有,9/10落地,仅mix-ctx-128k在跑)

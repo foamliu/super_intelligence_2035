@@ -187,3 +187,33 @@
 
 > ⚠️ **待定项中 Top-5 最大可释放空间**：FineVision(4.3T) + LLaVA-Instruct-Data(5.5T) + HuggingFaceFW(1.3T) + conceptual-captions(1.2T) + nemo_experiments(645G) = **~12.9T**，但需 vision agent 确认 FineVision/conceptual-captions/Instruct-Data 是否使用，需确认 HuggingFaceFW/fineweb-edu 是否为旧下载，需确认 nemo_experiments 是否仍有参考价值。
 
+---
+
+## E. 长上下文下载（运维令 2026-11-04 09:2x · 未分词 · 落盘 `/nas_inference`）
+
+> 运维令 2026-11-04 09:2x（用户直令 · 最高优先）：批准下载「长上下文」A 类数据集，落盘 `/nas_inference/app.e0031982/datasets/<repo原名>/`。
+> **本节为下载登记（未分词）**：10 源全部 `status=OK`、`incomplete=0`，下载于 2026-11-04 12:46 全部落地（launch 日志 `==== longctx download FINISH 12:46:07 ====`）。
+> 数据源（durable）：`run/data/longctx_download_status_20261104.tsv`（10 行，幂等可复现）。字节来自 `du -sb` 实测（.12 公开 9 源 + .29 gated 1 源）。
+> ⚠️ `deepmind/pg19` 仅含加载脚本 + 文件清单（494,680 B / 18 files），**无 parquet 数据体**——HF 上 pg19 为 script-based 数据集，实际文本需经 `load_dataset` 脚本按 `train_files.txt` 拉取；当前登记如实记录「已下载文件 = 脚本+清单」，数据体待后续 `load_dataset` 或找 parquet 镜像补齐。
+> ⚠️ `birgermoell/oellm-...pilot-v1` 已为分词后 `.bin/.idx` 格式（非原始文本），可直接用于长上下文训练，无需再分词。
+
+| # | repo_id | 落盘路径 | 主机 | 文件数 | 字节(B) | GiB | gated | incomplete | 备注 |
+|:---|:---|:---|:---|---:|---:|---:|:---|---:|:---|
+| 1 | `ysngkil/whole-books` | `/nas_inference/app.e0031982/datasets/ysngkil/whole-books` | .12 | 147 | 27,173,873,250 | 25.31 | no | 0 | 书籍长文 |
+| 2 | `princeton-nlp/prolong-data-512K` | `/nas_inference/app.e0031982/datasets/princeton-nlp/prolong-data-512K` | .12 | 10,062 | 122,387,428,650 | 113.98 | no | 0 | prolong 512K 训练数据 |
+| 3 | `openbmb/InfLLM-V2-data-5B` | `/nas_inference/app.e0031982/datasets/openbmb/InfLLM-V2-data-5B` | .12 | 66 | 16,143,986,199 | 15.04 | no | 0 | InfLLM-V2 5B 训练数据 |
+| 4 | `self-long/RULER-llama3-1M` | `/nas_inference/app.e0031982/datasets/self-long/RULER-llama3-1M` | .12 | 360 | 5,506,516,210 | 5.13 | no | 0 | RULER 1M 评测/合成 haystack |
+| 5 | `caskcsg/NExtLong-128K-dataset` | `/nas_inference/app.e0031982/datasets/caskcsg/NExtLong-128K-dataset` | .12 | 627 | 22,010,223,770 | 20.50 | no | 0 | NExtLong 128K（原 401 私有，改公开变体） |
+| 6 | `THUDM/LongAlign-10k` | `/nas_inference/app.e0031982/datasets/THUDM/LongAlign-10k` | .12 | 9 | 655,080,842 | 0.61 | no | 0 | LongAlign 10k 长对齐 |
+| 7 | `birgermoell/oellm-longctx-tokenized-natural-128k-256k-pilot-v1` | `/nas_inference/app.e0031982/datasets/birgermoell/oellm-longctx-tokenized-natural-128k-256k-pilot-v1` | .12 | 69 | 3,059,986,934 | 2.85 | no | 0 | oellm pilot-v1（已分词 .bin/.idx） |
+| 8 | `deepmind/pg19` | `/nas_inference/app.e0031982/datasets/deepmind/pg19` | .12 | 18 | 494,680 | 0.00 | no | 0 | ⚠️ 仅脚本+清单，无 parquet 数据体 |
+| 9 | `ghostcc3/mix-context-post-training-128k` | `/nas_inference/app.e0031982/datasets/ghostcc3/mix-context-post-training-128k` | .12 | 690 | 34,848,792,554 | 32.46 | no | 0 | mix-context 128k 后训练 |
+| 10 | `yuyijiong/LongData-Corpus` | `/nas_inference/app.e0031982/datasets/yuyijiong/LongData-Corpus` | .29 | 235 | 36,070,795,362 | 33.60 | yes | 0 | gated（用户 token 授权，.29） |
+| **合计** | **10 源** | | | **12,283** | **267,857,178,451** | **249.48** | | **0** | .12 公开 9 源 = 215.88 GiB / 12,048 files；.29 gated 1 源 = 33.60 GiB / 235 files |
+
+核对式：`sum(文件)=12,283`；`sum(字节)=267,857,178,451`（≈ 249.48 GiB / 232.36 GB）；`.12 公开 = 231,786,383,089`；`.29 gated = 36,070,795,362`；`sum(incomplete)=0`。
+
+> 落盘校验：每源 `du -sb` + `find -name '*.incomplete' | wc -l = 0` + `find -type f | wc -l` 三项核对（2026-11-04 12:46）。launch 日志 `/tmp/data_download_lc_20261104_101957.log` 记录全部 `status=OK`。
+> 后续动作（待运维批准）：① pg19 数据体补齐（找 parquet 镜像或 `load_dataset` 脚本拉取）；② 长上下文源分词入 `tokenized/` 镜像（oellm pilot-v1 已分词可直接用）；③ 分词后回写 A 节、本节状态翻「已分词」。
+> 🚫 token 不得写入本表/日报/任何 commit（运维令 09:2x ③）。
+
