@@ -169,3 +169,12 @@
 1792827081154_d810y	jackjia	hfeg0plg95	274	schematic_netlist	parked		2026-11-05 02:32	Aether flight-line how-to Q&A, no runnable deliverable
 1789551540622_zpvgj	miccao	hfeg0plg92	258	schematic_netlist	parked		2026-11-05 02:32	mid-conv compressed context, U#0=assistant text no clean demand round
 1785745498995_8c5jw	t0002638	hfeg0plg49	289	analog_context	parked		2026-11-05 02:32	Q&A: can-you-call pyAether screenshot API, no runnable deliverable
+1792133845232_k7jwl.messages.json	reedchen	hfeg0plg93	2945	waveform	parked		2026-11-05 03:04	dup of existing case FineSimTskew-001/TskewCalc-001 (same user/csv/demand)
+1792111569663_31mbl.messages.json	reedchen	hfeg0plg93	2683	waveform	parked		2026-11-05 03:04	dup of existing Tskew cases (same user/csv/demand)
+1792110817534_r8bsl.messages.json	reedchen	hfeg0plg93	2580	waveform	parked		2026-11-05 03:04	dup of existing Tskew cases
+1792061280952_b7vkp.messages.json	reedchen	hfeg0plg93	2568	waveform	parked		2026-11-05 03:04	dup of existing Tskew cases
+1793260065712_n78nn.messages.json	t0003117	hfeg0pkn005	3906	schematic_netlist	parked		2026-11-05 03:04	multi-turn skill invocation; CIW bridge refused; no runnable deliverable (prose manual steps)
+1793238266404_bsjfb.messages.json	t0002224	hfeg0pkn002	2310	schematic_netlist	parked		2026-11-05 03:04	doc task: '介绍目录项目' + '看仿真案例', no produce-tool intent
+1793261282500_4fq1p.messages.json	t0002224	hfeg0pkn002	2310	schematic_netlist	parked		2026-11-05 03:04	doc task: same as bsjfb (intro project)
+1792560382811_jjrak.messages.json	e0032163	hfeg0pkn003	2130	analog_context	parked		2026-11-05 03:04	doc task: '详解电路原理画框架图列出模块作用', no runnable deliverable
+1793338010547_r06g9.messages.json	clarawu	hfeg0pkn002	2089	waveform	parked		2026-11-05 03:04	analysis+conditional-fix: '检查单调性,如果不单调就优化电路'; marginal/vague deliverable
