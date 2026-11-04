@@ -1,0 +1,28 @@
+# Deepread: cpv3d — si.inp connectFile net-existence verification (perl script)
+
+- trace: `1793067588685_cpv3d` / taodu @ hfeg0pfn012 (10.129.33.138) / mc=2257 (netlist) / 653 msgs / domain=verification / model glm
+- A档②: user轮0 逐字 = 「读取下面到si.inp文件，查找是否存在文件名以connectFile开头到，如果存在，则抓取网表到hierarchy, 判断connectFile中的net是否都存在，排除ignore的instance hierarchy,形成一个perl脚本 /rundata/ddgoa/.../si.inp」= clean 提需求（parse si.inp→find connectFile*→extract netlist hierarchy→check nets exist→exclude ignore hierarchy→produce perl script），未给根因/修复 → **A档②合格 → A档 faithful**
+- 后续 refine 轮（不进 A 档 prompt，但定义完整 spec / gold）：
+  - i=81: connectFile 可含路径，也可由 .inc/.include hierarchy 调用到
+  - i=377: 支持 .module 网表
+  - i=417: 加注释、变量有意义命名、规范化
+  - i=466: 脚本无输入时提示
+  - i=510: 不默认 si.inp，由用户输入；report 按时间命名避免覆盖
+  - i=531: 速度优化（connectFile 百万千万行，instance hierarchy 庞大）
+- 真实资产可达性：si.inp/connectFile/netlist 全在 /rundata/ddgoa 或 /proj/ddgoa（permission-denied，归 ddgoa 组）→ **A档⑥不可达 → B档 synthesized**
+- 真实格式（从 trace tool_results 逐字提取）：
+  - **si.inp**：`.option ...`；`.option finesim_ignore = "<space-sep hierarchy paths>"`（多条，引号包裹，空格分多个 instance path）；`.include "<path>"`；`.inc "<path>"`；`.lib '<path>' FF`。connectFile 经 `.include ".../connectFileForDDGOA_BK5.txt"` 引用；netlist 经 `.inc "netlistHeader"`/`.inc "netlist"` 引用。
+  - **si.ignore_block**：独立文件，列 skipped sub-circuit instance（全 hierarchy path，每行一条，首行 `* Skipped sub-circuit instances:`）。
+  - **connectFile**（`connectFileForDDGOA_BK0.txt`）：每行 `RConnect<N>_<M> <fullpathA> <fullpathB> <value>`，fullpath = `XinstA.XinstB....<netname>`（点分，末 token = net，前缀 = instance hierarchy path）。例：`RConnect0_1 XI_C_Top.XI_Array16GTop...XI_m512Meg_U.sdumtopcn15blo<255> XI_A_Top...XI_m512Meg_U.sdumtopcn15blo<255> 0.001`。
+  - **netlist**（`ddgoa_top_WOWTOP_config_Vcap.netlist`）：`.subckt Name <ports...>` / `.ends`；instance 行 `Xinst <nets...> SubName`；`netlistHeader` = `.GLOBAL ...` + 头注释；`netlistFooter` = `.END`。
+- 金标准（用户接受）：助手迭代产出 `/home/taodu/check_connectFile_nets.pl`（经 i=0..531 多轮 refine），最终用户接受。语义：parse si.inp → 找 connectFile*（直接 .include + 经 .inc/.include hierarchy 间接）→ parse 网表 .subckt/.module hierarchy → 排除 .option finesim_ignore + si.ignore_block 中的 instance hierarchy → 判断 connectFile 每 net 是否存在 → 产 report。
+- **verb = `si-inp-connectfile-net-verify`**（si.inp→connectFile 解析→网表 hierarchy net 存在性校验+ignore 排除→report perl 脚本）。与所有已有 shard-A verb 互斥：
+  - PortCatch-001 = `netlist-port-connectivity-extract`（CDL/cck 抓端口+连线+邻居，输入是 CDL 网表）
+  - FlatNet-001 = hier→flat verilog 扁平化（输入是层次 verilog）
+  - 本 verb = si.inp(sim control)→connectFile(RConnect 语句)→netlist .subckt hierarchy net 存在性校验+ignore 排除，输入是 finesim si.inp
+- **case_id = EDA-Eval-DesignFlow-ConnFileNetChk-001**（verification 域，A 档 faithful，L2）
+- **交付**：submit.zip{check_connectFile_nets.pl（通用 si.inp→connectFile net 校验 perl 脚本，CLI `perl check_connectFile_nets.pl <si.inp>`，纯 perl stdlib，无输入时提示，解析 .option finesim_ignore + .include/.inc connectFile* + .inc netlist→.subckt ports+instance hierarchy→逐 net 存在性校验→排除 ignore→stdout report `RESULT net=<n> path=<p> status=FOUND|MISSING|EXCLUDED` + `SUMMARY total=N found=F missing=M excluded=E`)}
+- **A 可见 bundle**（合成 faithful）：si.inp_A（.option + .option finesim_ignore + .include connectFile_A.txt + .inc netlist_A.sp + .inc netlistHeader_A/netlistFooter_A + .lib model_A.sp）、connectFile_A.txt（6 RConnect 行，含 found/missing/excluded 各类）、netlist_A.sp（.subckt LeafA/MidA/IgnSubA/BkA/ArrA/TopA + 顶层 Xtop0 实例，6 级层次）、netlistHeader_A（.GLOBAL）、netlistFooter_A（.END）、model_A.sp（dummy .lib）、si.ignore_block_A（2 条 ignored path）
+- **B 隐藏 bundle**（异构 cross-input guard）：不同 subckt 名（LeafB/MidB/IgnSubB/BkAltB/ArrB/TopB）、不同 port 名、不同 top 实例名（Xb0）、不同 ignore 路径、不同 connectFile net 集（found/missing/excluded 计数全异）→击破硬编 A
+- **判分**：纯 stdlib python3 + perl（`perl -c` 语法 + subprocess 跑候选于 A+B + 独立 python oracle 重算期望 found/missing/excluded）。check.py ≥14 条独立断言（zip 含 .pl / perl -c / 候选跑 A exit0 / A report found 集合==oracle / A missing 集合==oracle / A excluded 集合==oracle / A 排除 ignore 命中 / A 解析 connectFile 经 .include / A 解析 netlist 经 .inc / 候选跑 B exit0 / 跨输入守卫 B found 集合≠A / 跨输入守卫 B missing 集合≠A / 跨输入守卫 B connectFile 文件名≠A / 反硬编 .pl 源码不含 A 专有名 / 随机化 3 seed 跑 A 一致）。5 negatives + §4.9 三假。
+- **进度**：本轮（shard A 轮 55）合成落地。台账 cpv3d claim→case，covered 63→64，verification 10→11。
