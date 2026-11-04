@@ -1,5 +1,5 @@
 case_id	status	evidence
-# judge-env audit (r77): 102 BROKEN + 29 SAFE; LibArcExtract-001 fixed this round (now SAFE/resolve)
+# judge-env audit (r77): 102 BROKEN + 29 SAFE; LibArcExtract-001 fixed this round (now SAFE/resolve)		
 AutoPR-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
 CTLEAether-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
 EDA-Eval-DesignFlow-ABMatchPlacementCheck-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
@@ -81,7 +81,7 @@ EDA-Eval-DesignFlow-SaNPsimDiag-001	BROKEN	../../assets-or-hidden from __file__,
 EDA-Eval-DesignFlow-SaSweepOpt-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
 EDA-Eval-DesignFlow-SchWireRebuildGen-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
 EDA-Eval-DesignFlow-ScmosStructId-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
-EDA-Eval-DesignFlow-SdfWarnFilter-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
+EDA-Eval-DesignFlow-SdfWarnFilter-001	SAFE	r84-fix applied: added _resolve_b_log(workdir) workdir/hidden->HERE/hidden->ASSETS/hidden->top-level-hidden fallback (r80 AprLogAudit/r82 CoreTimingSig template); judge-dir ref PASS verified (/tmp/judge_sdfwf_test: check.py+submit.zip+sdf_ss_sample.log+hidden/sdf_ss_B.log); 5 negatives NEG_RC=0 (target conditions b/g/d/j/i unchanged: fake_empty->b, fake_print_expected->g, fake_core_deleted->d, naive_hardcode_a->j, naive_readlines->i); jsonl test synced 9039->10581B; k_rationale=k_check=14>=8 GATE PASS; reference_submit.zip + negatives unchanged (fix is check.py-only, not reference solution)
 EDA-Eval-DesignFlow-SiOutDiag-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
 EDA-Eval-DesignFlow-SimExpl-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
 EDA-Eval-DesignFlow-SkillMenuRoute-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
