@@ -203,3 +203,17 @@
 1790664471639_s4xs4	xinqiaoz	hfeg0pkn004	283	physical_verify	case	EDA-Eval-DesignFlow-PdkRunsetExplorer-001	2026-11-04 22:09	
 1793078373656_wqhsu	xiwang	hfeg0pkn003	289	layout_aether	case	EDA-Eval-DesignFlow-ScmosStructId-001	2026-11-04 22:56	
 1783342909947_149bq.messages.json	e0014566	hfeg0plg49	10	layout_virtuoso	case	EDA-Eval-DesignFlow-AutoViaLayoutMerge-001	2026-11-04 23:42	
+1791964484349_gaz6r.messages.json	jaceyx	hfeg0plg90	86	layout_aether	parked		2026-11-04 23:57	Q&A session (ITF/inline-data concept questions, 0 write ops, only search/read/RAG) - no concrete deliverable
+1783080403465_aneq6.messages.json					parked		2026-11-04 23:59	autovia IMCleAutoVia.il GUI-removal - overlaps AutoViaGen-001/AutoViaLayoutMerge-001
+1783413531894_o8i0o.messages.json					parked		2026-11-04 23:59	autovia run_autovia_agent.il exec - overlaps existing autovia cases
+1789632393597_0zg87.messages.json					parked		2026-11-05 00:00	fragmented intent (DFM SPEC FILL / print(f)deyongfa), 0 write ops, only read/search - no clean deliverable
+1792672720715_02kcl.messages.json	kevinc	hfeg0plg84	87	physical_verify	parked		2026-11-05 00:02	DUPLICATE trace - already covered by DRConnTiming-001 (same kevinc/WOWTOP_1022_fb_sl, same U#1 intent)
+1792115444722_relly.messages.json					parked		2026-11-05 00:03	SVRF SETLAYER rule paste + RAG Q&A, 0 write ops, concept explanation - no deliverable
+1791852261815_1pxm7.messages.json					parked		2026-11-05 00:05	screened r109: not shard-C deliverable (Q&A or OOS domain)
+1791795655205_1ln5m.messages.json					parked		2026-11-05 00:05	screened r109: not shard-C deliverable (Q&A or OOS domain)
+1792477596495_6f3gm.messages.json					parked		2026-11-05 00:05	screened r109: not shard-C deliverable (Q&A or OOS domain)
+1792547960320_eabca.messages.json					parked		2026-11-05 00:05	screened r109: not shard-C deliverable (Q&A or OOS domain)
+1789955535816_el8uc.messages.json					parked		2026-11-05 00:05	screened r109: not shard-C deliverable (Q&A or OOS domain)
+1787134874335_uzh9z.messages.json					parked		2026-11-05 00:05	screened r109: not shard-C deliverable (Q&A or OOS domain)
+1783414380980_uhn3f.messages.json					parked		2026-11-05 00:07	autovia run_autovia_agent.il sandbox troubleshooting - overlaps existing autovia cases
+1790217333942_1xqgw.messages.json	steveny	hfeg0plg77	72	physical_verify	case	EDA-Eval-DesignFlow-ResistAttribReport-001	2026-11-05 00:18	
