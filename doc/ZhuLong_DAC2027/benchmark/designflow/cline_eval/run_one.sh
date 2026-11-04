@@ -295,17 +295,24 @@ m = importlib.util.module_from_spec(spec); spec.loader.exec_module(m)
 deliverable = 'submit.zip'; workdir = '.'
 try:
     r = m.check(deliverable, workdir)
-    # check 返回 True/False 或 dict；统一化
-    if r is True or r == True:
+    # check 约定有三种，统一化：
+    #   (a) 抛 AssertionError/异常 -> FAIL（见 except 分支）
+    #   (b) 显式返回 True  -> PASS；显式返回 False -> FAIL
+    #   (c) 返回 None（无显式 return，仅靠 _fail raise 标 FAIL）-> PASS
+    #   (d) 返回 dict：含 pass/ok/passed=True 字段 -> PASS，否则 FAIL
+    if r is True:
         print(json.dumps({'verdict':'PASS','detail':str(r)}))
-    elif r is False or r == False:
+    elif r is False:
         print(json.dumps({'verdict':'FAIL','detail':str(r)}))
-    else:
-        # dict / 其他：含 pass/ok 字段则判 PASS
-        ok = False
-        if isinstance(r, dict):
-            ok = bool(r.get('pass') or r.get('ok') or r.get('passed'))
+    elif r is None:
+        # 无异常 + 无显式 False = 全部条件通过
+        print(json.dumps({'verdict':'PASS','detail':'None (no exception, all conditions passed)'}))
+    elif isinstance(r, dict):
+        ok = bool(r.get('pass') or r.get('ok') or r.get('passed'))
         print(json.dumps({'verdict':'PASS' if ok else 'FAIL','detail':str(r)}))
+    else:
+        # 其它真值（非空 str/list 等）按真值判定
+        print(json.dumps({'verdict':'PASS' if r else 'FAIL','detail':str(r)}))
 except Exception as e:
     print(json.dumps({'verdict':'FAIL','detail':'exception: '+repr(e)}))
 PY
