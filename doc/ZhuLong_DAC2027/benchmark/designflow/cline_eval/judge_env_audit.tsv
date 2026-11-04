@@ -88,7 +88,7 @@ EDA-Eval-DesignFlow-SkillMenuRoute-001	BROKEN	../../assets-or-hidden from __file
 EDA-Eval-DesignFlow-SpfstdBtn-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
 EDA-Eval-DesignFlow-SramButterfly-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
 EDA-Eval-DesignFlow-SramSNM-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
-EDA-Eval-DesignFlow-StaFlowScaffold-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
+EDA-Eval-DesignFlow-StaFlowScaffold-001	SAFE	r99 fixed: check.py add _resolve_a_dir/_resolve_b_dir (workdir/HERE/ASSETS + workdir/hidden/HERE/hidden/HIDDEN_DIR/TOP_HIDDEN, abspath rule ⑨); jsonl test sync 9391->11814 B (test_sha=bce9a9c8ed9f); attachments expanded dir->12 individual A files (so run_one.sh copies lint_flow_A/feint_ref_A tree into judge dir); 20 cond unchanged; judge-dir ref PASS + 5 neg/§4.9 fakes all FAIL (c/c/c/q/e); k=20 GATE PASS
 EDA-Eval-DesignFlow-StarRCFlow-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
 EDA-Eval-DesignFlow-StimPWL-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
 EDA-Eval-DesignFlow-Tcs0PatAnalyze-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
