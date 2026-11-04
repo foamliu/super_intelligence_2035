@@ -1,4 +1,16 @@
 # BAIZE_DATA_TASK.md
+### 🚀 运维令 · 2026-11-04 09:2x（**批准下载长上下文(A类)数据 · 落盘 /nas_inference**）· 用户直令 · 最高优先
+
+> 用户批准（2026-11-04 09:2x）：批准下载「长上下文」数据集，落盘 `/nas_inference/app.e0031982/datasets/`（覆盖报告 §6 里的 `/nas_env` 老路径）。
+
+**① 范围（只下 A 类长上下文，~250 GiB）**：`ysngkil/whole-books`(25G) · `princeton-nlp/prolong-data-512K`(120G) · `openbmb/InfLLM-V2-data-5B`(25G) · `self-long/RULER-llama3-1M`(<5G) · `caskcsg/NExtLong`(<50G) · `THUDM/LongAlign-10k`(<5G) · `birgermoell/oellm-longctx-...pilot-v1`(<5G) · `deepmind/pg19`(12G) · `ghostcc3/mix-context-post-training-128k`(<5G)。合计约 **250 GiB**。
+
+**② 本轮不下（⚠️）**：`HuggingFaceCode/stack-v3-train`(15.9TB) / `bigcode/the-stack-v2`(67.5TB,gated) 体量巨大**不默认下**；`yuyijiong/LongData-Corpus`(36G, CC-BY-NC 非商用+gated)**不下**；「未核到」体量的（LongBlocks 等）先核体积再下。agentic(B 类)不在本令范围。
+
+**③ 落盘**：`/nas_inference/app.e0031982/datasets/<repo原名>/`（该盘 45T 已有 17T、余 29T，足够）；下载后按「镜像下载路径」写 mapping。
+
+**④ 纪律**：`setsid` 后台 + `/tmp/data_download_*.log`；🚫 不占 GPU、不挤 S1（`nice`、限并发 ≤4、限带宽留余量给训练）；失败续传/断点；commit `data 下载:`；心跳写 `未完成指令：有` ⇒ `WAITING: 0` 直到落地。
+
 ### 🚀 运维令 · 2026-11-04 09:1x（**确认 85M 下载完成 · P0 待命**）· 用户直令 · 最高优先
 
 > 运维确认（2026-11-04 09:1x）：「85M 已经下完了。」
