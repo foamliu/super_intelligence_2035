@@ -5,13 +5,14 @@ WAITING: 0
 ## 📊 进度快照
 
 ```
-PHASE:        R1631 修复交付轮:CPU/MEM自检PASS+incr_eval 2backlog(cline sympy-20801 RESOLVED 355→356·deepseek xarray-4695 RESOLVED 195→196)+cline sympy-21596 eval FAILED(356不变)+report regen(修复后356/498=71.5% +30 over baseline326)+harness 修复:commit·cline rerun 57/58(sympy-22456最后一题在跑)·deepseek predict alive
-已完成:       H-B✅·Gate7/7·TB报告✅·pilot20✅·R984-R988恒0调试✅·R989 incr_eval全链✅·R997硬约束修复✅·R1567 cline trace归因分析✅·R1569 cline适配器修复✅·R1611-R1630 incr_eval渐进✅·R1631 incr_eval(cline sympy-20801 RESOLVED→356·deepseek xarray-4695 RESOLVED→196·cline sympy-21596 FAILED)+修复交付commit
-当前动作:     R1631:CPU/MEM自检PASS(load24.6/224~11%busy·MEM avail1292GB·topCPU=pretrain训练143%非本线·本线cline bun7%/deepseek0.1%·无单进程>8000%CPU·无需kill)→backlog scan=2(cline sympy-20801+deepseek xarray-4695)→incr_eval_R1631(7s·both RESOLVED·cline355→356·deepseek195→196)→regen all7+report→cline sympy-21596(rerun[57/58]写完04:44)→incr_eval_R1631b(4s·FAILED·356不变 failed131)→regen cline+report(修复前326/500=65.2%→修复后356/499=71.5% +30·rerun57/58)→harness 修复:commit·未完成指令:有(cline rerun 1/58 left)⇒WAITING=0.
-下一步:       ①cline rerun [58/58] sympy-22456 在跑→写完incr_eval ②rerun 58/58完成后final full500报告(修复后终值) ③deepseek predict alive(247/500) ④永久硬约束:禁止commit结果JSON ⑤TASK38KB→下轮归档已完成13:1x块到≤32KB
-阻塞:         无·cline rerun 1题 left(sympy-22456在跑)·deepseek predict alive.
+PHASE:        R1632 quiet监控轮:CPU/MEM自检PASS+scan_backlog=0(2路predict在跑均未落盘)+report regen UNCHANGED(cline356)+归档13:1x块→ARCHIVE·cline rerun 1/58 left·deepseek predict alive(248/500)
+已完成:       H-B✅·Gate7/7·TB报告✅·pilot20✅·R984-R988恒0调试✅·R989 incr_eval全链✅·R997硬约束修复✅·R1567 cline trace归因分析✅(13:1x块已归档)·R1569 cline适配器修复✅·R1611-R1631 incr_eval渐进✅·R1631 incr_eval+修复交付commit·R1632 quiet监控+13:1x归档
+当前动作:     R1632:CPU/MEM自检PASS(load21.9/224~10%busy·MEM avail1315GB·本线cline bun6.9%/deepseek1.3%·无单进程>8000%CPU·无需kill)→scan_backlog=0(2路predict在跑均未落盘:cline sympy-22456 rerun[58/58]·deepseek xarray-4966)→report regen UNCHANGED(cline356/499=71.5%修复后·deepseek196/248)→归档13:1x块(TASK→ARCHIVE+1行指针)·未完成指令:有(cline rerun 1/58 left)⇒WAITING=0.
+下一步:       ①cline rerun [58/58] sympy-22456 在跑→落盘后incr_eval→regen final report(修复后终值356或357/500) ②deepseek predict alive(248/500·xarray-4966在跑) ③永久硬约束:禁止commit结果JSON ④MEMORY略超32KB软限→下轮trim旧流水指针到≤32KB
+阻塞:         无·cline rerun 1题 left(sympy-22456在跑,~15min,timeout1800s)·deepseek predict alive.
 ERROR_COUNT:  0
-  📦 体积：TASK=38954B(38.0KB,3活跃块·13:1x✅R1567可归档,<40KB红线OK) / MEMORY=~32667B(31.9KB,<32KB OK)·本轮无需归档
+  📦 体积：TASK=37659B(36.8KB,归档13:1x后·<40KB红线OK) / MEMORY≈33KB(略超32KB软限·<40KB红线OK·下轮trim旧流水指针)·本轮归档2481B→ARCHIVE_OPERATOR_HARNESS.md
+
 ```
 
 > 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
@@ -19,7 +20,8 @@ ERROR_COUNT:  0
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 
 ### 本唤醒流水
-[04:49] R1631 修复交付轮:CPU/MEM自检PASS(load24.6/224~11%busy·本线cline bun7%/deepseek0.1%·无需kill)→backlog scan=2(cline sympy-20801 plen1260+deepseek xarray-4695 plen573)→incr_eval_R1631(7s·cline sympy-20801 RESOLVED 355→356·deepseek xarray-4695 RESOLVED 195→196)→regen all7+report→cline sympy-21596(rerun[57/58]写完04:44 patch2392B)→incr_eval_R1631b(4s·FAILED·356不变 failed131 n499)→regen cline+report(修复前326/500=65.2%→修复后356/498=71.5% +30·rerun57/58)→harness 修复:commit·cline rerun[58/58]sympy-22456在跑·未完成指令:有⇒WAITING=0.
+[05:01] R1632 quiet监控轮:CPU/MEM自检PASS(load21.9/224~10%busy·MEM avail1315GB·本线cline bun6.9%/deepseek1.3%·无单进程>8000%CPU·无需kill)→scan_backlog=0(2路predict在跑均未落盘:cline sympy-22456 rerun[58/58]·deepseek xarray-4966)→report regen UNCHANGED(cline356/499=71.5%修复后·deepseek196/248)→归档13:1x块(TASK→ARCHIVE+1行指针)·未完成指令:有(cline rerun 1/58 left)⇒WAITING=0.
+> 📦 R1631 流水(04:49,修复交付轮:cline sympy-20801 RESOLVED 355→356·deepseek xarray-4695 RESOLVED 195→196·cline sympy-21596 FAILED·report 修复后356/498=71.5% +30·harness 修复:commit)已归档 → daily-memories-harness/2026-11-05.md。结论：cline适配器修复交付·rerun57/58。需要时再读。
 > 📦 R1630 流水(04:31,incr_eval轮:cline sympy-20438 FAILED 355不变+report regen)已归档 → daily-memories-harness/2026-11-05.md。结论：cline355·2路predict alive。需要时再读。
 > 📦 R1629 流水(04:20,incr_eval轮:cline sympy-19783 RESOLVED 354→355+report regen)已归档 → daily-memories-harness/2026-11-05.md。结论：cline355·2路predict alive。需要时再读。
 > 📦 R1628 流水(04:13,incr_eval轮:2backlog(cline sympy-19040 RESOLVED 354·deepseek xarray-4687 FAILED)+report regen)已归档 → daily-memories-harness/2026-11-05.md。结论：cline354·deepseek195·3路predict alive。需要时再读。

@@ -48,20 +48,7 @@
 
 **④ 纪律**：不打断 codex/deepseek 2 路 predict；只动 cline 适配器；心跳 `未完成指令：有` ⇒ `WAITING: 0` 直到补跑交付。
 
-### 🚀 运维令 · 2026-11-04 13:1x（**评测进行中，看 trace 排查 cline 表现相对差的原因**）· 用户直令 · 最高优先
-
-> 用户原话（2026-11-04 13:1x）：「请 harness 在评测进行的同时，看 trace 排查一下为什么 cline 的表现比较差。之所以这么问，是因为在早先 SWE-bench Lite 的评测中，cline 一直在前三名。」
-
-**① 现象（运维已核 full500 报告）**：cline **326/500 = 65.2%** 排第 3，落后 opencode **401/500 = 80.2%**（−15pp）、pi **333/475 = 70.1%**（−5pp）；cline 未产出 patch 51 题、平均 423s/题（opencode 400s/题）——**花更长却更低**。试点 20 题 cline 65.0% 仍第一梯队，全量里被 opencode/pi 拉开。
-
-**② 排查任务（🚫 不打断 2 路 predict/eval，用空闲 CPU+读 trace 即可）**：
-- 逐类归因 cline 的「失败 116 题 + 未产 patch 51 题」：AgentTimeout / no-patch / resolve 前放弃 / 上下文被截断 / 工具调用失败 / 重试死循环。
-- 抽同一批题目，`diff` cline vs opencode 的 trace：opencode 强在哪（工具集？重试策略？用更长的上下文窗口？patch 格式更稳 / 更少误改？）。
-- 抓 cline 特有坑（TB_API 超时、退出码非零、stdout 截断、git fetch 失败）哪项占比最高。
-
-**③ 交付**：中文分析，可并入 full500 报告新增「cline 归因」节，或单独 `doc/BaiZe-ISEDA2027/reports/report_harness_cline_trace_analysis_zh.html`（0 script/0 外链/标签配平），给「可改进点」清单 + 若可低风险修则标注。commit `harness 分析:`。
-
-**④ 纪律**：不打断 predict/eval；不碰别的线；心跳写 `未完成指令：有` ⇒ `WAITING: 0`。
+> 📦 §运维令·2026-11-04 13:1x（看 trace 排查 cline 表现相对差）**✅ 已完成 R1567** → run/ARCHIVE_OPERATOR_HARNESS.md；**结论**：cline 326 vs opencode 401(−15pp)·3类根因(静默退出35/超时卡死18/补丁质量116，McNemar极显著)·可改进点清单已交付 report_harness_cline_trace_analysis_zh.html(24667B,commit a2c331c79)·低风险3件已由13:5x令承接修复。需要时再读。
 
 ### 🚀 运维令 · 2026-11-02 11:2x（**自检同时盯 CPU：本线评测进程 CPU 不许失控，容器内失控用 sudo/docker kill**）· 用户直令 · 最高优先
 

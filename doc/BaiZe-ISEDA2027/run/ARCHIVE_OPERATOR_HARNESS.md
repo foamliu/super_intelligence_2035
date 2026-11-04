@@ -1598,3 +1598,22 @@ git rm --cached 'doc/BaiZe-ISEDA2027/run/harness/**/*verified_full_*.json'
 
 **✅ R988 执行结论（2026-10-31）**：恒0分调试任务完成。归因表7路全列（attribution.md）；smoke hermes+deepseek PASS；根因：hermes=PYTHONPATH中毒（run_harness.py:486-491修复），deepseek=网关SSE非标字段（gw_proxy_dsh.py rewrite_sse_event修复）+超时patch丢弃bug（run_harness.py:398修复）；验收：verify5b docker eval hermes 4/5 resolved(80%)+deepseek 3/5 resolved(60%)，pass>0✅；报告 report_harness_zero_score_zh.html(18008B, commit 1c1890d83)；硬约束：verify5b结果JSON未commit✅。R997复核确认+4个漏网verify5b JSON已untrack(0147c7d25)。R998再次复核确认完整。
 
+
+---
+
+### 🚀 运维令 · 2026-11-04 13:1x（评测进行中，看 trace 排查 cline 表现相对差的原因）· 用户直令 · 最高优先  【2026-11-05 R1632 从 BAIZE_HARNESS_TASK.md 原文搬迁归档】
+
+> 用户原话（2026-11-04 13:1x）：「请 harness 在评测进行的同时，看 trace 排查一下为什么 cline 的表现比较差。之所以这么问，是因为在早先 SWE-bench Lite 的评测中，cline 一直在前三名。」
+
+**① 现象（运维已核 full500 报告）**：cline **326/500 = 65.2%** 排第 3，落后 opencode **401/500 = 80.2%**（−15pp）、pi **333/475 = 70.1%**（−5pp）；cline 未产出 patch 51 题、平均 423s/题（opencode 400s/题）——**花更长却更低**。试点 20 题 cline 65.0% 仍第一梯队，全量里被 opencode/pi 拉开。
+
+**② 排查任务（🚫 不打断 2 路 predict/eval，用空闲 CPU+读 trace 即可）**：
+- 逐类归因 cline 的「失败 116 题 + 未产 patch 51 题」：AgentTimeout / no-patch / resolve 前放弃 / 上下文被截断 / 工具调用失败 / 重试死循环。
+- 抽同一批题目，`diff` cline vs opencode 的 trace：opencode 强在哪（工具集？重试策略？用更长的上下文窗口？patch 格式更稳 / 更少误改？）。
+- 抓 cline 特有坑（TB_API 超时、退出码非零、stdout 截断、git fetch 失败）哪项占比最高。
+
+**③ 交付**：中文分析，可并入 full500 报告新增「cline 归因」节，或单独 `doc/BaiZe-ISEDA2027/reports/report_harness_cline_trace_analysis_zh.html`（0 script/0 外链/标签配平），给「可改进点」清单 + 若可低风险修则标注。commit `harness 分析:`。
+
+**④ 纪律**：不打断 predict/eval；不碰别的线；心跳写 `未完成指令：有` ⇒ `WAITING: 0`。
+
+**✅ R1567 执行结论（2026-11-04）**：cline trace 归因分析已交付。cline 326/500=65.2% vs opencode 401/500=80.2%（−15pp）vs pi 333/475=70.1%（−5pp）。3 类根因：①静默退出 35 题（rc=0 & patch=0 & wall<10s，OMP_NUM_THREADS 致 bun 退出）②超时卡死 18 题（AgentTimeout 1800s）③补丁质量 116 题（产 patch 但 resolve 失败）。cline vs opencode McNemar 配对检验极显著。可改进点清单（低风险 3 件：cline 路由 gw_proxy / run_single stdout 透传 / predict_one silent-exit 重试）已交付，并由 13:5x 运维令承接修复。报告 report_harness_cline_trace_analysis_zh.html（24667B，commit a2c331c79）。
