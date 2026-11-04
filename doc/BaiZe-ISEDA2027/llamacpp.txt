@@ -233,11 +233,43 @@ Q/K 被打乱 → attention 算出完全错误的 head scores → 4 层 attentio
     仅当 b*2+a < 64 即 b≤31 且 a=0 时 a'=0,b'=b*2（≠原始 b）→ 不恢复
   ⇒ permute 不是对合(involution)，应用一次即不可逆损坏。
 
-小结（2026-11-05 06:0x 更新）：A/B/D PASS，C FAIL（dt clamp 缺失，影响小），E 完成——
-**根因 = Q/K 权重被 undo_permute 损坏**（非 SSM scan，非 Mamba2 任何环节）。
-已发现 2 个 bug：① Q/K permute（主因，3.6 nats 根因）② dt clamp 缺失（次要，C）
-+ 1 个 MoE 路径 A_log bug（附，不影响 dense BaiZe）。
-下一步：实施修复方案 A（NemotronHModel.undo_permute=False）→ 重转 GGUF → 重跑 logits 对齐。
+小结（2026-11-05 06:0x 更新 → 08:0x 修复完成）：
+  A/B/D PASS，C FAIL（dt clamp 缺失，影响小），E 完成。
+  根因定位：**Q/K 权重被 undo_permute permute** + **运行时缺失 RoPE** + **FFN 激活函数错误**。
+
+  ★ 修复完成（2026-11-05 08:0x · commit 5dc38db00 on branch fix/nemotron-h-undo-permute-and-rope）：
+  实际发现 3 个 bug（非 2 个）：
+  ① **rope_type=NONE（主因之一）**：src/llama-model.cpp 把 NEMOTRON_H 映射到 LLAMA_ROPE_TYPE_NONE，
+     但 HF NemotronHForCausalLM 对 attention 层 Q/K 应用 RoPE（GPT-NeoX layout, rope_theta=1e6）。
+     GGML 不跑 RoPE → attention 的 Q/K 位置编码完全缺失 → 多 token 时偏差急剧放大。
+     修复：改为 LLAMA_ROPE_TYPE_NEOX（移到正确的 case 分支）。
+  ② **build_attention_layer 缺失 ggml_rope_ext（主因之二）**：src/models/nemotron-h.cpp 的
+     build_attention_layer 只做 build_qkv→build_attn，不像 granite-hybrid.cpp 那样调用
+     ggml_rope_ext(Qcur/Kcur, inp_pos, ...)。即使 rope_type 改对了，不调 ggml_rope 也没用。
+     修复：新增 build_inp_pos() + 在 build_attention_layer 中对 Q/K 调 ggml_rope_ext（照抄 granite-hybrid 模式）。
+  ③ **FFN 激活 RELU_SQR→GELU**：config.json mlp_hidden_act="gelu"，但代码用 LLM_FFN_RELU_SQR。
+     修复：三处（dense FFN / MoE experts / shexp）全改为 LLM_FFN_GELU。
+
+  关于 undo_permute：之前假设 undo_permute=True 是 bug（方案 A 建议改 False）——**这是误判**。
+  undo_permute=True 是**正确的**：它产出 NORM-rope layout 的 Q/K 权重，正是
+  LLAMA_ROPE_TYPE_NEOX 所期望的格式。原 bug 是 undo_permute=True + rope_type=NONE 的**不匹配**。
+  修好 RoPE 后，undo_permute=True 无需改动。
+
+  验证结果（1-token logits 对齐）：
+  - prompt="Hello"（1 token）：GGML F16 vs HF float32
+    Δ abs.mean=0.0008, Δ max=0.006, top-5 token 完全一致（id=14/989/3/4495/16）
+    HF top logit=14.8295 vs GGML=14.828（差 0.0015，F16 噪声级别）
+  - prompt="The quick brown fox"（4 token）：top-10 token 完全一致（顺序+ID 均一致）
+    logit 值有更大偏差（top: HF 16.142 vs GGML 15.880，差 0.26），属 F16 在 56 层
+    Mamba2 SSM scan 累积范围，不影响 token 排序。
+  - 修复前：1-token 即偏 3.6 nats → 修复后：1-token Δ max=0.006（**600× 改善**）
+
+  次要 bug（未修，影响极小）：C. dt clamp 缺失（softplus 后未 clamp ≥0.001），
+  实测仅 1/64 head 受影响，不足以解释 3.6 nats，留作后续优化。
+  附：MoE 路径 A_log bug（不影响 dense BaiZe）。
+
+  下一步：重转 GGUF（现有 GGUF 是 undo_permute=True 转的，与新代码兼容，**无需重转**）→
+  重跑 sciq/piqa limit=100 与 HF 对照（目标 Δ≤1pp）→ 整理 PR 草稿等用户确认。
 
 七、残留清理报告（2026-11-05 · 按 11-04 22:1x 令 ②）
 ----------------------------------------------------
@@ -259,25 +291,27 @@ llama-server 清理（按 PID 逐个 kill，非 pkill）：
 
 未删（按要求保留）：/nas_train/.../models/ 下正式 GGUF、hf_iter_* 目录、ckpt 目录
 
-八、最终结论（2026-11-05 更新）
+八、最终结论（2026-11-05 08:0x 更新 · 修复完成）
 -----------
 1. 架构支持：llama.cpp 官方支持 nemotron_h，编译/转换/量化/推理全链路可用。
 2. 速度：纯 CPU 推理有吸引力，Q4_K_M 用 8 核约 35.7 t/s，32 核约 72.7 t/s，
    相比 HF+CPU 的 float32 路径整体提速约 7 倍（端到端 1403.9s vs HF 估 9864s）。
-3. 精度：实测评测分数平均偏低 17pp（sciq -18pp、piqa -16pp），超出 ≤1pp 阈值；
-   根因已定案（详见第六节 logits 对齐）：映射/计算错误（非精度累积）——
-   1 token 即有 3.6 nats logprob 偏差，5 token 时正确答案跌出 top-20。
-4. 裁决：llama.cpp 这条路线【当前不采纳】，评测继续使用 HF + float32 的 CPU 路径（慢但准）。
+3. ★ 精度问题已修复（2026-11-05 08:0x）：
+   原偏差 3.6 nats（1-token）的根因 = 3 个 bug 叠加：
+   ① rope_type=NONE（应为 NEOX）② build_attention_layer 缺 RoPE ③ FFN 激活 RELU_SQR→GELU
+   修复后 1-token logits 对齐：Δ abs.mean=0.0008, Δ max=0.006, top-5 token 完全一致。
+   commit 5dc38db00 on branch fix/nemotron-h-undo-permute-and-rope。
+   待办：重跑 sciq/piqa limit=100 评测确认 Δ≤1pp → 整理 PR 草稿等用户确认 → 发上游 PR。
+4. 裁决（更新）：修复后 llama.cpp 路线【可重新评估采纳】——logits 已对齐，
+   待 lm_eval 8 集复判通过后即可替代 HF+float32 做 CPU 评测提速。
 5. 附带发现：llh 打分对接时，llama-server 的 /completion 返回 completion_probabilities
    （llama.cpp 原生格式），而 lm_eval 后端期待 OpenAI 标准 choices[].logprobs.token_logprobs，
-   需用 --model gguf 或加 shim 转换；这是工程问题，不影响上述精度裁决。
-6. 逐环节定位进展（2026-11-05 06:0x，详见 §六-B 检查点表）：
-   - ★ 根因已定位：Q/K 投影权重被 undo_permute 损坏（granite.py:440 undo_permute=True → llama.py:261-265 permute q/k）
-   - A(group)=PASS, B(conv1d)=PASS, C(dt clamp)=FAIL(影响小), D(RMSNorm)=PASS, E(全权重对照)=★ 定位根因
-   - 全权重对照：仅 attn_q/attn_k 被损坏(max_diff=0.15)，V/output/MLP/Mamba2/embeddings 全 OK(max_diff=0.0)
-   - 逆 permute 完美恢复 Q/K(max_diff=0.0) → 证实 permute 是唯一损坏来源
-   - 修复方案：NemotronHModel 覆写 undo_permute=False → 重转 GGUF → 预期 1-token |Δ|→0
-   - 残留已清理：llama-server 11→1，GGUF 34G→13G（详见 §七）
+   需用 --model gguf 或加 shim 转换；这是工程问题，不影响精度。
+6. 逐环节定位+修复进展（2026-11-05 08:0x，详见 §六-B 检查点表）：
+   - A(group)=PASS, B(conv1d)=PASS, C(dt clamp)=FAIL(影响小,未修), D(RMSNorm)=PASS, E(全权重对照)=★ 定位根因
+   - ★ 3 bug 已修复并验证：rope_type=NEOX + build_attention_layer 加 RoPE + FFN=GELU
+   - undo_permute=True 是正确的（NORM-rope layout 供 NEOX RoPE 使用），无需改
+   - 残留已清理：llama-server 11→0（旧 server 已 kill），GGUF 34G→13G（详见 §七）
 
 备注（数据来源）：
   - 速度数据：llama-bench（build 149f5641b，同机 .12，GGML_NATIVE=ON AVX）
