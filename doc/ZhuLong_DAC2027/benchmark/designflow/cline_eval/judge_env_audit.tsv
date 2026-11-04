@@ -57,7 +57,7 @@ EDA-Eval-DesignFlow-LabelApiPolDiag-001	BROKEN	../../assets-or-hidden from __fil
 EDA-Eval-DesignFlow-LibToParm-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
 EDA-Eval-DesignFlow-LvsDeckCmp-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
 EDA-Eval-DesignFlow-MVValueCmp-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
-EDA-Eval-DesignFlow-NetCellMap-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
+EDA-Eval-DesignFlow-NetCellMap-001	SAFE	r78-fix applied: _resolve_simlib/_resolve_b_netlist(workdir) workdir->HERE->ASSETS->top-level fallback; cond j SIMLIB now resolves to $JUDGE/simlib_base.sv
 EDA-Eval-DesignFlow-NetlistCmp-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
 EDA-Eval-DesignFlow-NetlistSVSDiff-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
 EDA-Eval-DesignFlow-OpampACSpec-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
