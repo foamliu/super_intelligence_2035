@@ -146,4 +146,4 @@
 1792976136186_31iga	gokuguo	hfeg0plg85	29	schematic_netlist	case	EDA-Eval-DesignFlow-LvsDeckCmp-001	2026-11-04 20:20	
 1791946488468_0ewj2.messages.json	jiangbaol	hfeg0plg99	29	analog_context	case	EDA-Eval-DesignFlow-SaSweepOpt-001	2026-11-04 20:47	
 1793177016543_3jb3i.messages.json	t0002616	hfeg0plg101	27	analog_context	case	EDA-Eval-DesignFlow-Tcs0PatAnalyze-001	2026-11-04 21:20	
-1789881196637_7fcir.messages.json	rongjiez	hfeg0plg98	16	waveform	claimed		2026-11-04 21:59	
+1789881196637_7fcir.messages.json	rongjiez	hfeg0plg98	16	waveform	case	EDA-Eval-DesignFlow-OpenWaveFmt-001	2026-11-04 22:12	
