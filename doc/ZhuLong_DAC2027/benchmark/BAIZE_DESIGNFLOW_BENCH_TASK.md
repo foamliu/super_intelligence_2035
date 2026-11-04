@@ -1,5 +1,5 @@
 # BAIZE_DESIGNFLOW_BENCH_TASK.md — 设计流 Benchmark 任务书（2026-10-30 重构版）
-### 🚨 用户令 · 2026-11-03 22:3x（**LLM trace triage pilot：用 llama.cpp 语义预筛替代纯 mc>=100**）· 用户直令 ·【新·待执行】
+### ✅ 用户令 · 2026-11-03 22:3x（**LLM trace triage pilot**）·【已完成 11-04：mc>=30 候选池 1369 session + 0.8B 两级预筛（规则+0.8B），0 reject，见 trace_prefilter.py】
 
 > 执行 `benchmark/designflow/llm_trace_triage/LLM_TRACE_TRIAGE_ORDER.md`（以该文件全文为准）。
 > 一句话：本机 `Qwen3.5-0.8B Q8_0` 对 4 个 mc 箱各 8 条（共 32）做语义判定 → 量化「mc>=100 误命中率」与「mc<100 漏检数」→ 产出 `pool_llm_v1.tsv`。
@@ -246,7 +246,7 @@ metadata:    { trace_source{...}, domain, test_rationale }
 ## 7. 当前基线（每轮只更新这一行，不堆历史）
 
 `11 条 proper（10 域）· 已跑 6 条 = 6 PASS · 6 trace_deepreads · test_rationale 断言清单 0/30（硬闸门见顶部令 21:5x）· 目标通过率（B 档）20–30%`
-`📊 trace 覆盖率：见 designflow/trace_ledger.py stats（covered / mc≥300 候选池）`
+`📊 trace 覆盖率：见 designflow/trace_ledger.py stats（covered / mc≥30 候选池）`
 明细看日报 `reports/report_benchmark_MM_DD.html`；历史结论看 `EXPERIMENTS_DESIGNFLOW.md`。
 > 现存 11 条的 `test_rationale` 本轮内全部改写成 `k 条断言：①…`（k = 该 case `check()` 的独立条件数）。
 
@@ -256,8 +256,8 @@ metadata:    { trace_source{...}, domain, test_rationale }
 
 0. **体积自检**：TASK ≤32KB（红线 40KB）、MEMORY ≤32KB；超限先把已闭合块**原文**搬 `ARCHIVE_OPERATOR_DESIGNFLOW.md`（留 1 行指针），搬前 `git pull --rebase --autostash`，🚫 不改小节编号/标题。数字抄进心跳：`📦 体积：TASK=nKB / MEMORY=nKB`。
 1. **心跳（轻）**：`MEMORY_DESIGNFLOW.md` 顶部快照**只改变化的几行** + **追加 1 行流水**（三口径 + `🎯 通过率` + `📊 trace 覆盖率 x/y=z%` + `DEBT`）；🚫 每轮重写整份快照。
-   - 顺带刷新候选池：在 `.75` 上跑一次 `awk` 统计 `sessions / mc300 / mc500 / mc1000`，然后
-     `python3 designflow/trace_ledger.py refresh --json '{"sessions":N,"mc300":N,"mc500":N,"mc1000":N}'`
+   - 顺带刷新候选池：在 `.75` 上跑一次 `awk` 统计 `sessions / mc30 / mc100 / mc300`，然后
+     `python3 designflow/trace_ledger.py refresh --json '{"sessions":N,"mc30":1369,"mc100":696,"mc300":1001,"target_mc":30}'`
      （进度条的分母与"新增 traces"都来自这里）。
 2. **日记忆**：`daily-memories-designflow/<YYYY-MM-DD>.md` **当天首轮创建，之后只追加**。
 3. **提交**：**每轮（1 条 case）结束即提交**（loop 另有每 30 分钟兜底）；🚫 把工作留在工作树过夜。双仓命令：
