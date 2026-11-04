@@ -91,4 +91,4 @@ djml8					case	EDA-Eval-DesignFlow-PFDdeadZone-001	2026-11-02 17:47
 1787821853675_z72bi.messages.json	sophiaw	hfeg0plg09	167	spice_sim	parked		2026-11-04 15:01	presim/nanospice多仿真器skill.75不可用
 1793178408819_r4p2e.messages.json	clarawu	hfeg0pkn001	56	characterization	case	EDA-Eval-DesignFlow-McRonMismatch-001	2026-11-04 16:06	MC RON mismatch extraction; deepread done; FineSim MC .md0 format reverse-engineered (汇总行陷阱bite实测std 2936->41000 14x); synthesis DEBT next round
 1790241654352_5kcuw	ghyang	hfeg0pkn003	41	spice_sim	case	EDA-Eval-DesignFlow-StimLoopComplianceFix-001	2026-11-04 18:33	B档 synthesized L2 spice_sim k=15 .75 FineSim -spice ref PASS 15/15 + 6neg FAIL distinct + 3fake FAIL
-1792134251943_q9r9s	lanxinz	hfeg0pkn001	97	spice_sim	claimed		2026-11-04 19:48	
+1792134251943_q9r9s	lanxinz	hfeg0pkn001	97	spice_sim	case	EDA-Eval-DesignFlow-FineSimTbAuditFix-001	2026-11-04 20:32	
