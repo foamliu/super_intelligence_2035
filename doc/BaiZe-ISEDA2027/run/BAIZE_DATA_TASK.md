@@ -1,4 +1,34 @@
 # BAIZE_DATA_TASK.md
+### 🚀 运维令 · 2026-11-04 13:2x（**放行 B 类 agentic 数据下载 · 落盘 /nas_inference**）· 用户直令 · 最高优先
+
+> 用户批准（2026-11-04 13:2x）：放行数据下载（A+B 类）。A 类已落地 10/10；本条放行 **B 类 agentic**。
+
+**① B 类下载清单（~90–180 GiB，不含巨大项）**：
+- P0：`SWE-bench/SWE-smith`(5-10G,MIT) · `nvidia/Nemotron-Terminal-Corpus`(10-15G,CC BY 4.0) · `nebius/SWE-rebench`(3-5G)
+- P1：`zhangdw/to-tool-call-datasets`(2.4G) · `tuandunghcmut/toolbench-v1`(10-50G,Apache-2.0)
+- P2：`open-thoughts/AgentTrove`(18.6G) · `microsoft/Orchard`(15-25G,MIT) · `nvidia/Nemotron-Cascade-RL-SWE`(10-20G) · `nvidia/Nemotron-Cascade-SFT-SWE`(10-20G,CC BY 4.0) · `SWE-bench/SWE-smith-trajectories`(2-5G)
+- P3：`mshojaei77/terminal-command-execution-sft`(<5G) · `ia03/terminal-bench`(<5G,评测集仅去污染)
+
+**② 巨大项不默认下**：`AlienKevin/SWE-ZERO-12M-trajectories`(111G) 体量大，选择性下或后置。
+
+**③ 落盘**：`/nas_inference/app.e0031982/datasets/<repo原名>/`；gated 源用已配 token（`.29` `~/.cache/huggingface/token`）；走代理 `HTTPS_PROXY=http://172.19.92.25:13128`。
+
+**④ 纪律**：`setsid` 后台 + `/tmp/data_download_*.log`；🚫 不挤 S1（nice、限并发、留带宽）；断点续传；93 完成后写 mapping；commit `data 下载:`；心跳 `未完成指令：有` ⇒ `WAITING: 0`。
+
+### 🚀 运维令 · 2026-11-04 13:2x（**调研提升复杂推理/代码/数学/agentic 能力的 SFT+RL 数据集 · 不含 A+B 类**）· 用户直令 · 最高优先
+
+> 用户原话（2026-11-04 13:2x）：「调研能够提升 LLM 复杂推理、代码、数学和 agentic 能力的 SFT 和 RL 数据集（不包含在 A+B 类之内的），写成中文 HTML 报告。」
+
+**① 范围界定（关键）**：排除 10-31 已调研的 A 类（长上下文）+ B 类（agentic），也避免与 09:4x（复杂推理+代码 SFT）重复——**本令增量 = RL（强化学习，有可验证 reward 信号）+ 数学 + agentic RL**。已覆盖的只列「已覆盖」指针即可。
+
+**② 调研方法（同前，硬性）**：真去 hf.co 检索核实（repo id/体量/语言/license/gated/字段/更新时间/奖励信号类型），核不到写「未核到」禁编造；与盘上 12 源 + A/B 类 + 09:4x 报告去重；与 SWE-bench Verified·Terminal Bench 污染风险单列。
+
+**③ 分层**：① RL 数据集（数学 RL：DAPO/OpenR 类、代码 RL、通用 agent RL、process reward 轨迹）② 数学 SFT ③ 复杂推理补强 ④ agentic RL（可执行验证信号）。每候选给「奖励信号从哪来」（单测/diff/答案匹配/环境奖励）。
+
+**④ 报告结构（7 节）**：TL;DR（TOP-3+体量）→ 方法口径 → 主表（repo/体量/license/gated/奖励信号/适用 SFT|RL）→ 污染去重 → 下载方案（体量/落盘 /nas_inference/ETA）→ 诚实条款。中文 HTML，0 script/0 外链、标签配平、≥25KB，生成器幂等，commit `data survey:`。
+
+**⑤ 红线**：只调研不下载；不挤 S1 与正在跑的 A/B 下载；不编造；心跳 `未完成指令：有` ⇒ `WAITING: 0` 直到报告交付。
+
 ### 🚀 运维令 · 2026-11-04 09:4x（**web search 调研强化复杂推理 + 代码能力的 SFT / Code-SFT 数据集**）· 用户直令 · 最高优先
 
 > 用户原话（2026-11-04 09:4x）：「请 data 调研能够强化 LLM 复杂推理和代码能力的 SFT 和 Code-SFT 数据集，写成中文 HTML 报告。」
@@ -309,4 +339,4 @@ ERROR_COUNT:  <n>
 - 机制必须包含：① 黑名单指纹 ② 训练集侧扫描 ③ 阈值写明可复现 ④ SFT 语料同闸 ⑤ 独立报告
 - 同一条规则适用于多模态 held-out 评估集（如 `eval5k`）：与训练集不同源 + 跨集去重比对
 
-评测集本体路径（用于建黑名单，只读，绝不写入任何训�
+评测集本体路径（用于建黑名单，只读，绝不写入任何训�
