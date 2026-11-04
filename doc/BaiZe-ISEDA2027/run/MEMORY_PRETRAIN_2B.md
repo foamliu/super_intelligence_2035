@@ -8,7 +8,9 @@ WAITING: 0
 
 > 📦 §#1334（11-04 08:42, 监控轮+归档pilot块·4evals推进正常·S1 iter76880健康）→ daily-memories/2026-11-04.md；**结论**：4 evals推进, 最坏ETA~13:15, iter_10000 DONE Avg50%, S1 iter76880健康0NaN, CPU<<80%, pilot块已归档。被#1335确认继续有效。需要时再读。
 
-> 🆕 2026-11-04 09:07 #1339：**监控轮·4evals推进正常·S1 iter77120健康·最坏ETA~13:12<deadline✅**。4 evals实测进度(2599总请求)：.29 iter_30000=2429/2599(93%)@16.7s/it ETA~09:54(最先完成)；.29 iter_50000_f32=1716/2599(66%)@16.5s/it ETA~13:12(最慢)；.12 iter_40000=2239/2599(86%)@23.9s/it ETA~11:30；.12 iter_20000=2230/2599(86%)@23.85s/it ETA~11:33。已完成1/5有效：iter_10000 Avg=0.5000✅(arc_ch=0.29/arc_e=0.49/boolq=0.61/hs=0.36/obqa=0.20/piqa=0.72/sciq=0.79/wg=0.54)。S1 iter77120/700000/loss2.10/0NaN/0skip/6906ms/step/LR=1e-3✅。CPU .29 load36.47/224(16.3%)<<80%✅ / .12 load30.09/224(13.4%)<<80%✅。📦 体积：TASK=30971B(30.8KB)/MEMORY=~30.5KB≤32KB✅。未完成指令：有(5ckpt CPU评测 1/5有效DONE+4在跑;pilot=FAIL等令)⇒WAITING: 0。
+> 📦 §#1339（11-04 09:07, 监控轮·4evals推进正常·S1 iter77120健康·最坏ETA~13:12）→ daily-memories/2026-11-04.md；**结论**：4 evals推进, 最坏ETA~13:12, iter_10000 DONE Avg50%, S1 iter77120健康0NaN, CPU<<80%。被#1340确认继续有效。需要时再读。
+
+> 🆕 2026-11-04 09:13 #1340：**监控轮·4evals推进正常·S1 iter77180健康·最坏ETA~13:08<deadline✅**。4 evals实测进度(2599总请求)：.29 iter_30000=2451/2599(94%)@16.7s/it ETA~09:54(最先完成)；.29 iter_50000_f32=1739/2599(67%)@16.5s/it ETA~13:08(最慢)；.12 iter_40000=2255/2599(87%)@24s/it ETA~11:30；.12 iter_20000=2245/2599(86%)@24s/it ETA~11:34。已完成1/5有效：iter_10000 Avg=0.5000✅。S1 iter77180/700000/loss2.10/0NaN/0skip/6926ms/step/LR=1e-3✅。CPU .29 load35.87/224(16.0%)<<80%✅ / .12 load29.07/224(13.0%)<<80%✅。📦 体积：TASK=30971B(30.8KB)/MEMORY=~30.7KB≤32KB✅。未完成指令：有(5ckpt CPU评测 1/5有效DONE+4在跑;pilot=FAIL等令)⇒WAITING: 0。
 
 > 📦 §#1338（11-04 09:03, 监控轮·4evals推进正常·S1 iter77080健康）→ daily-memories/2026-11-04.md；**结论**：4 evals推进, 最坏ETA~13:15, iter_10000 DONE Avg50%, S1 iter77080健康0NaN, CPU<<80%。被#1339确认继续有效。需要时再读。
 
@@ -23,8 +25,6 @@ WAITING: 0
 > 📦 §#1331（11-04 08:20, 监控轮·4evals推进正常·S1 iter76720健康）→ daily-memories/2026-11-04.md；**结论**：4 evals推进, 最坏ETA~13:13, iter_10000 DONE Avg50%, S1 iter76720健康0NaN, CPU<<80%。被#1332确认。需要时再读。
 
 > 📦 §#1329（11-04 08:07, 监控+报告补全·pilot根因更正·4 evals推进）→ daily-memories/2026-11-04.md；**结论**：pilot报告补全8422B根因=Mamba2-hybrid算法层logit偏移(7假设全排除),速度7.03x达标但Δacc16-18pp FAIL,4 evals推进ETA~13:04,S1 iter76590健康。被#1330-#1331确认。需要时再读。
-
-> 📦 §#1320（11-04 03:19, f32 GGUF pilot完成·根因确认=hybrid元数据损坏·pilot=FAIL已报告）→ daily-memories/2026-11-04.md；**结论**：f32与F16逐位相同,根因=convert_hf_to_gguf.py Duplicated key覆写hybrid层模式数组,两精度均FAIL保留HF路线。被#1321确认等令。需要时再读。
 
 > 📦 §#1317-#1319（11-04 02:43-03:01, pilot根因更正+f32验证在跑→完成）→ daily-memories/2026-11-04.md；**结论**：#1317更正根因为F16精度(后被#1320更正为元数据损坏),f32 pilot 86.5%→100%完成。被#1320-#1321确认。需要时再读。
 
