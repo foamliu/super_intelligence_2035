@@ -191,3 +191,4 @@
 1787625155049_ovo6z	e0014566	hfeg0pkn001	285	layout_virtuoso	case	EDA-Eval-DesignFlow-RsCalcChkPtGen-001	2026-11-04 15:05	
 1789540996998_8qjr2	xinqiaoz	hfeg0plg76	325	physical_verify	case	EDA-Eval-DesignFlow-DrcPairWaiveClassify-001	2026-11-04 15:56	re-claimed: file exists at nested path sessions/<sid>/<sid>.messages.json (1.2MB); earlier GONE was flat-path mistake
 1789892841041_i4c8d	xinqiaoz	hfeg0plg76	321	physical_verify	case	EDA-Eval-DesignFlow-DrcLegacyFallback-001	2026-11-04 16:36	
+1792489769571_ch2cw	johnl	hfeg0pfn119	255	pg_layout	case	EDA-Eval-DesignFlow-InnovusDbAudit-001	2026-11-04 17:09	
