@@ -192,3 +192,4 @@
 1793600748187_dq8bz.messages.json					parked		2026-11-05 03:49	multi-turn LVS exploration: 'run LVS + show report' across DIV_3bit/blcnand2PFx4; deliverable=report not script, multi-cell
 1793792759786_ujw1y.messages.json					parked		2026-11-05 03:49	doc+analysis: '总结电路' + '查看仿真结果给优化建议'
 1793328354943_p7jfx.messages.json					parked		2026-11-05 03:49	skill scaffold (sim-sp-gen) + '提交仿真/还是没跑出来' = skill-use, U#0=skill_instructions boilerplate
+1793337530823_x6taw.messages.json					case	EDA-Eval-DesignFlow-RonMismatchMd0-001	2026-11-05 04:34	
