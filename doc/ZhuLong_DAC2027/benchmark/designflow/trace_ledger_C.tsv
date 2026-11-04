@@ -223,3 +223,4 @@
 1790061417120_p2n1r	miccao	hfeg0plg37	187	physical_verify	case	EDA-Eval-DesignFlow-AutoCellFlowAudit-001	2026-11-05 02:55	
 1792570431387_vdqlw.messages.json	ypzheng	hfeg0plg103	335	physical_verify	parked		2026-11-05 03:21	schematic/netlist/analog comprehension (cmos:3023 netlist:1320 aether:740 schematic:622); not physical_verify/layout; belongs to schematic_netlist/analog shard
 1789520357933_3duob.messages.json	ellawu	hfeg0pkn005	335	physical_verify	case	EDA-Eval-DesignFlow-ViaFillSvrfGen-001	2026-11-05 03:36	
+1782905118695_h80lc	e0014566	hfeg0pkn001	225	layout_virtuoso	parked		2026-11-05 03:59	gold污染:agent全程未成功读取and2LVSDx1版图内容(sandbox桥接失败/pyAether端口refused/SKILL沙箱未加载MDE),最终输出是工艺节点查询(USER#3 cxmt10G3_LP)非版图描述;非合格A-档layout_virtuoso seed
