@@ -5,13 +5,13 @@ WAITING: 0
 ## 📊 进度快照
 
 ```
-PHASE:        R1600 incr_eval轮:CPU/MEM自检PASS+scan_backlog genuine=2(cline django-17087+matplotlib-20676)+incr_eval R1600(django-17087 RESOLVED→cline 337→338·matplotlib-20676 FAILED)+regen+report regen(17110B)·3路predict alive(cline rerun 28/58·codex predict·deepseek 442/500)
-已完成:       H-B✅·Gate7/7·TB报告✅·pilot20✅·R984-R988恒0调试✅·R989 incr_eval全链✅·R997硬约束修复✅·R998-R1599 incr_eval链+内存/CPU自检+体积归档✅·R1567 cline trace归因分析✅·R1569 cline适配器修复✅·R1597 incr_eval(regen修复+cline+2 335→337·deepseek+1 181→182)✅·R1598 incr_eval(cline 16263 FAILED+deepseek 25287/26342 2/2 RESOLVED 182→184)✅·R1599 incr_eval(deepseek matplotlib-26466 FAILED)✅·R1600 incr_eval(cline django-17087 RESOLVED 337→338·matplotlib-20676 FAILED)✅
-当前动作:     R1600:CPU/MEM自检PASS(load27/224·MEM avail1.3TB·无失控·无单进程>8000%CPU·S1训练非本线)→git pull(up to date)→scan_backlog genuine=2(cline django-17087 patchlen=1639 finalized 22:05·matplotlib-20676 patchlen=2313 finalized 22:18·其余7 cline+deepseek-26291=FALSE正例已eval于rerun dir)→incr_eval R1600(rerun_R1600 dir·django-17087 RESOLVED·matplotlib-20676 FAILED·1/2 resolved)+regen_eval_summaries(cline n=469 resolved=338 failed=122 infra=0 no_patch=9)+report regen(17110B·cline338)→3路predict alive(cline rerun 28/58 matplotlib-24149·codex predict django-12209·deepseek predict seaborn-3069)→未完成指令:有(cline rerun+3路predict)⇒WAITING=0.
-下一步:       ①cline rerun 28/58继续→后续产patch即incr_eval ②cline rerun全部完成后更新full500报告cline数字(修前326→修后新值,分列) ③3路predict alive(cline rerun·codex predict·deepseek 442/500) ④predict全完成后final full500报告 ⑤永久硬约束:禁止commit结果JSON ⑥TASK≤40KB红线
-阻塞:         无·3路predict alive(cline rerun 28/58 matplotlib-24149·codex predict django-12209·deepseek predict seaborn-3069).
+PHASE:        R1601 incr_eval轮:CPU/MEM自检PASS+scan_backlog genuine=2(cline matplotlib-24026+24149)+R1601 eval running(matplotlib-24026 RESOLVED→cline 338→339·matplotlib-24149 evaluating)+regen+report regen(17110B·cline339)·3路predict alive(cline 473/500·codex 488/500·deepseek 231/500)
+已完成:       H-B✅·Gate7/7·TB报告✅·pilot20✅·R984-R988恒0调试✅·R989 incr_eval全链✅·R997硬约束修复✅·R998-R1600 incr_eval链+内存/CPU自检+体积归档✅·R1567 cline trace归因分析✅·R1569 cline适配器修复✅·R1600 incr_eval(cline django-17087 RESOLVED 337→338·matplotlib-20676 FAILED)✅·R1601 incr_eval(cline matplotlib-24026 RESOLVED 338→339·matplotlib-24149 eval仍在跑)✅
+当前动作:     R1601:CPU/MEM自检PASS(load25/224·MEM avail1.3TB·无失控·无单进程>8000%CPU·S1训练非本线)→git pull(up to date)→scan_backlog genuine=2(cline matplotlib-24026 patchlen=1649+matplotlib-24149 patchlen=1298·其余10=FALSE正例已eval于rerun dirs)→R1601 eval running(rerun_R1601 dir·matplotlib-24026 RESOLVED·matplotlib-24149 still evaluating etimes=831s)+regen_eval_summaries(cline n=473 resolved=339 failed=122 infra=2 no_patch=10)+report regen(17110B·cline339)→3路predict alive(cline 473/500 pydata-xarray-6721·codex 488/500 django-12273·deepseek 231/500 seaborn-3187)→未完成指令:有(cline rerun+3路predict)⇒WAITING=0.
+下一步:       ①R1601 eval(matplotlib-24149)完成后regen+report ②cline rerun继续(473/500→后续产patch即incr_eval) ③cline rerun全部完成后更新full500报告cline数字(修前326→修后新值,分列) ④3路predict alive(cline rerun·codex 488/500·deepseek 231/500) ⑤predict全完成后final full500报告 ⑥永久硬约束:禁止commit结果JSON ⑦TASK≤40KB红线
+阻塞:         无·R1601 eval仍跑(matplotlib-24149)·3路predict alive(cline 473/500·codex 488/500·deepseek 231/500).
 ERROR_COUNT:  0
-  📦 体积：TASK=38954B(38.0KB,3活跃块无✅不可归档,<40KB红线OK) / MEMORY=31078B(30.2KB,<32KB OK,本轮无归档)
+  📦 体积：TASK=38954B(38.0KB,3活跃块无✅不可归档,<40KB红线OK) / MEMORY=31078B(30.2KB,<32KB OK,本轮归档R1600流水→daily-memories)
 ```
 
 > 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
@@ -19,7 +19,9 @@ ERROR_COUNT:  0
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 
 ### 本唤醒流水
-[22:14→22:22] R1600 incr_eval轮:CPU/MEM自检PASS(load27/224·MEM avail1.3TB·无失控·无单进程>8000%CPU·S1训练非本线)→git pull(up to date)→scan_backlog genuine=2(cline django-17087 patchlen=1639 finalized 22:05·matplotlib-20676 patchlen=2313 finalized 22:18·其余7 cline+deepseek-26291=FALSE正例已eval于rerun dir)→写incr_eval_R1600.py(2 cline items→rerun_R1600 dir)→incr_eval R1600(django-17087 RESOLVED·matplotlib-20676 FAILED·1/2 resolved)+regen_eval_summaries(cline n=469 resolved=338 failed=122 infra=0 no_patch=9)+report regen(17110B·cline338)→3路predict alive(cline rerun 28/58 matplotlib-24149·codex predict django-12209·deepseek predict seaborn-3069)→未完成指令:有(cline rerun+3路predict)⇒WAITING=0.
+[22:57→23:04] R1601 incr_eval轮:CPU/MEM自检PASS(load25/224·MEM avail1.3TB·无失控·无单进程>8000%CPU·S1训练非本线)→git pull(up to date)→scan_backlog=12 items→genuine=2(cline matplotlib-24026 patchlen=1649+matplotlib-24149 patchlen=1298·其余10=FALSE正例已eval于rerun dirs R1592/R1597/R1600/R1599)→R1601 eval running(rerun_R1601 dir·matplotlib-24026 RESOLVED→cline 338→339·matplotlib-24149 still evaluating etimes=831s/1800s timeout)+regen_eval_summaries(cline WROTE n=473 resolved=339 failed=122 infra=2 no_patch=10·deepseek WROTE n=231 resolved=184)+report regen(17110B·cline339)→3路predict alive(cline 473/500 pydata-xarray-6721·codex 488/500 django-12273·deepseek 231/500 seaborn-3187)→未完成指令:有(cline rerun+3路predict)⇒WAITING=0.
+
+> 📦 R1600 流水(22:14→22:22,incr_eval轮:cline django-17087 RESOLVED 337→338+matplotlib-20676 FAILED+report regen)已归档 → daily-memories-harness/2026-11-04.md。结论：cline 338。需要时再读。
 
 > 📦 R1599 流水(22:06→22:09,incr_eval轮:deepseek matplotlib-26466 FAILED+report regen)已归档 → daily-memories-harness/2026-11-04.md。结论：deepseek 184不变。需要时再读。
 
