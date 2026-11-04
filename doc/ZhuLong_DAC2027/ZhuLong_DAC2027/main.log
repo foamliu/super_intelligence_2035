@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.10.14)  4 NOV 2026 10:31
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.10.14)  4 NOV 2026 10:59
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1205,19 +1205,6 @@ n-Grounded LLM
  []
 
 (./DAC2027/1_intro.tex
-LaTeX Font Info:    Trying to load font information for T1+zi4 on input line 7.
-
-
-(/usr/share/texlive/texmf-dist/tex/latex/inconsolata/t1zi4.fd
-File: t1zi4.fd 2018/01/14 T1/zi4 (Inconsolata)
-)
-LaTeX Font Info:    Font shape `T1/zi4/m/n' will be
-(Font)              scaled to size 9.0pt on input line 7.
-Package microtype Info: Loading generic protrusion settings for font family
-(microtype)             `zi4' (encoding: T1).
-(microtype)             For optimal results, create family-specific settings.
-(microtype)             See the microtype manual for details.
-
 Underfull \hbox (badness 1043) in paragraph at lines 7--10
 []\T1/LinuxLibertineT-TLF/m/n/9 We present \T1/LinuxLibertineT-TLF/b/n/9 Zhu-Lo
 ng\T1/LinuxLibertineT-TLF/m/n/9 , an execution-grounded LLM cod-ing
@@ -1229,13 +1216,13 @@ Underfull \hbox (badness 1655) in paragraph at lines 7--10
  MCP tools
  []
 
-
-Underfull \hbox (badness 1546) in paragraph at lines 7--10
-\T1/LinuxLibertineT-TLF/m/n/9 and sand-box execution---close a generate--execut
-e--refine loop
+) (./DAC2027/2_background.tex
+Underfull \hbox (badness 1173) in paragraph at lines 10--12
+\T1/LinuxLibertineT-TLF/m/n/9 ex-ists in the dig-i-tal flow (ChatEDA [[]], MCP4
+EDA [[]], Au-
  []
 
-) (./DAC2027/2_background.tex
+
 Underfull \hbox (badness 1910) in paragraph at lines 10--12
 \T1/LinuxLibertineT-TLF/m/n/9 against the live lay-out, schematic, or wave-form
  data-base of
@@ -1248,8 +1235,8 @@ f-dist/fonts/enc/dvips/libertine/lbtn_25tcsq.enc}{/usr/share/texlive/texmf-dist
 {/usr/share/texlive/texmf-dist/fonts/enc/dvips/libertine/lbtn_nh77jq.enc}{/usr/
 share/texlive/texmf-dist/fonts/enc/dvips/libertine/lbtn_7grukw.enc}{/usr/share/
 texlive/texmf-dist/fonts/enc/dvips/libertine/lbtn_oexx6f.enc}{/usr/share/texliv
-e/texmf-dist/fonts/enc/dvips/libertine/lbtn_naooyc.enc}{/usr/share/texlive/texm
-f-dist/fonts/enc/dvips/inconsolata/i4-t1-4.enc}]) (./DAC2027/3_design.tex
+e/texmf-dist/fonts/enc/dvips/libertine/lbtn_naooyc.enc}]) (./DAC2027/3_design.t
+ex
 Underfull \hbox (badness 1331) in paragraph at lines 13--1
 []\T1/LinuxLibertineT-TLF/b/n/9 Our ap-proach. \T1/LinuxLibertineT-TLF/m/n/9 Zh
 u-Long closes the loop from gen-er-a-tion
@@ -1284,15 +1271,26 @@ Underfull \hbox (badness 2181) in paragraph at lines 7--9
 
 pdfTeX warning: pdflatex (file ./figures/zhulong_arch.pdf): PDF inclusion: foun
 d PDF version <1.7>, but at most version <1.5> allowed
-<figures/zhulong_arch.pdf, id=153, 963.35912pt x 449.5194pt>
+<figures/zhulong_arch.pdf, id=157, 963.35912pt x 449.5194pt>
 File: figures/zhulong_arch.pdf Graphic file (type pdf)
 <use figures/zhulong_arch.pdf>
 Package pdftex.def Info: figures/zhulong_arch.pdf  used on input line 12.
 (pdftex.def)             Requested size: 506.295pt x 236.24814pt.
 LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/b/it' will be
 (Font)              scaled to size 9.0pt on input line 13.
+LaTeX Font Info:    Trying to load font information for T1+zi4 on input line 13
+.
+(/usr/share/texlive/texmf-dist/tex/latex/inconsolata/t1zi4.fd
+File: t1zi4.fd 2018/01/14 T1/zi4 (Inconsolata)
+)
 LaTeX Font Info:    Font shape `T1/zi4/b/n' will be
 (Font)              scaled to size 9.0pt on input line 13.
+Package microtype Info: Loading generic protrusion settings for font family
+(microtype)             `zi4' (encoding: T1).
+(microtype)             For optimal results, create family-specific settings.
+(microtype)             See the microtype manual for details.
+LaTeX Font Info:    Font shape `T1/zi4/m/n' will be
+(Font)              scaled to size 9.0pt on input line 22.
 
 Underfull \hbox (badness 3492) in paragraph at lines 22--24
 \T1/LinuxLibertineT-TLF/m/n/9 APIs by se-man-tic sim-i-lar-ity (BGE-M3 em-bed-d
@@ -1323,17 +1321,17 @@ Underfull \hbox (badness 1308) in paragraph at lines 34--1
 -ta-tion, iden-ti-fies
  []
 
-LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/m/n' will be
-(Font)              scaled to size 9.0pt on input line 33.
-LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/m/n' will be
-(Font)              scaled to size 7.0pt on input line 33.
-[2.2]
 LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/n' will be
 (Font)              scaled to size 7.3pt on input line 33.
 LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/n' will be
 (Font)              scaled to size 5.5pt on input line 33.
- [3.3{/usr/share/texlive/texmf-dist/fonts/enc/dvips/libertine/lbtn_ki75ao.enc} 
-<./figures/zhulong_arch.pdf>]) (./DAC2027/5_bench.tex
+LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/m/n' will be
+(Font)              scaled to size 9.0pt on input line 41.
+LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/m/n' will be
+(Font)              scaled to size 7.0pt on input line 41.
+[2.2{/usr/share/texlive/texmf-dist/fonts/enc/dvips/inconsolata/i4-t1-4.enc}]
+[3.3{/usr/share/texlive/texmf-dist/fonts/enc/dvips/libertine/lbtn_ki75ao.enc} <
+./figures/zhulong_arch.pdf>]) (./DAC2027/5_bench.tex
 Underfull \hbox (badness 4779) in paragraph at lines 68--1
 \T1/LinuxLibertineT-TLF/m/n/9 Every execution-grounded har-ness al-ready has a 
 generate--
@@ -1382,10 +1380,10 @@ LaTeX Font Info:    Font shape `TS1/LinuxLibertineT-TLF/m/n' will be
 LaTeX Font Info:    Font shape `TS1/LinuxLibertineT-TLF/m/n' will be
 (Font)              scaled to size 6.0pt on input line 32.
  [4.4]
-Underfull \hbox (badness 1852) in paragraph at lines 51--53
-\T1/LinuxLibertineT-TLF/m/n/9 to the full sys-tem, re-mov-ing ex-e-cu-tion cost
-s $\OT1/LinuxLibertineT-TLF/m/n/9 8\OML/nxlmi/m/it/9 :\OT1/LinuxLibertineT-TLF/
-m/n/9 3$ \T1/LinuxLibertineT-TLF/m/n/9 pp pooled,
+Underfull \hbox (badness 2393) in paragraph at lines 51--53
+\T1/LinuxLibertineT-TLF/m/n/9 in-ter-vals on the pooled Pass@1 ($\OML/nxlmi/m/i
+t/9 n[]\OT1/LinuxLibertineT-TLF/m/n/9 2245$\T1/LinuxLibertineT-TLF/m/n/9 ; Ta-b
+le []3[]) give the
  []
 
 
@@ -1398,12 +1396,32 @@ n/9 ^^@\OT1/LinuxLibertineT-TLF/m/n/9 1\OML/nxlmi/m/it/9 :\OT1/LinuxLibertineT-
 TLF/m/n/9 2$ \T1/LinuxLibertineT-TLF/m/n/9 pp
  []
 
+
+Underfull \hbox (badness 5331) in paragraph at lines 51--53
+\LMS/ntxsy/m/n/9 »^^@\OT1/LinuxLibertineT-TLF/m/n/9 3\OML/nxlmi/m/it/9 :\OT1/Li
+nuxLibertineT-TLF/m/n/9 6\OML/nxlmi/m/it/9 ; \OT1/LinuxLibertineT-TLF/m/n/9 6\O
+ML/nxlmi/m/it/9 :\OT1/LinuxLibertineT-TLF/m/n/9 0\LMS/ntxsy/m/n/9 ¼$ \T1/LinuxL
+ibertineT-TLF/m/n/9 strad-dle 0, con-sis-tent with their com-ple-men-tary
+ []
+
 LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/m/it' will be
 (Font)              scaled to size 9.0pt on input line 57.
+
+Underfull \hbox (badness 1454) in paragraph at lines 57--59
+ \T1/LinuxBiolinumT-TLF/m/it/9 6.2.1 S1: Ob-ser-va-tion fi-delity (RQ1).[] \T1/
+LinuxLibertineT-TLF/m/n/9 Prin-ci-ple 2 pre-dicts that
+ []
+
+
+Underfull \hbox (badness 1642) in paragraph at lines 57--59
+\T1/LinuxLibertineT-TLF/m/n/9 and \T1/zi4/m/n/9 get_db \T1/LinuxLibertineT-TLF/
+m/n/9 probing---recovering the API sur-face but not its
+ []
+
 [5.5]
-Underfull \hbox (badness 1024) in paragraph at lines 106--108
-\T1/LinuxLibertineT-TLF/m/n/9 Com-po-nent mag-ni-tudes are toolchain-specific--
--execution buys
+Underfull \hbox (badness 3240) in paragraph at lines 106--108
+\T1/LinuxLibertineT-TLF/m/n/9 Com-po-nent mag-ni-tudes are toolchain-specific, 
+track-ing each
  []
 
 
@@ -1442,28 +1460,22 @@ Underfull \hbox (badness 1596) in paragraph at lines 121--1
 ts an empty
  []
 
-[6.6]) (./DAC2027/8_conclusion.tex
-Underfull \hbox (badness 10000) in paragraph at lines 7--1
+) (./DAC2027/8_conclusion.tex
+Underfull \hbox (badness 4940) in paragraph at lines 7--1
 []\T1/LinuxLibertineT-TLF/m/n/9 Three lim-i-ta-tions. Base-LLM per-for-mance va
-ries widely
+ries widely---
  []
 
 
-Underfull \hbox (badness 1584) in paragraph at lines 7--1
-\T1/LinuxLibertineT-TLF/m/n/9 (53.2%--76.9% pooled)---consistent with the frame
--work (the $\LMS/ntxsy/m/n/9 K$
+Underfull \hbox (badness 4872) in paragraph at lines 7--1
+\T1/LinuxLibertineT-TLF/m/n/9 self-exploration re-gres-sion fits SKILL's smalle
+r API sur-face.
  []
 
 
-Underfull \hbox (badness 1325) in paragraph at lines 7--1
-\T1/LinuxLibertineT-TLF/m/n/9 axis moves L1--L3)---and the bench-mark size lim-
-its power to
- []
-
-
-Underfull \hbox (badness 1490) in paragraph at lines 7--1
-\T1/LinuxLibertineT-TLF/m/n/9 rather than head-line. Per-slice dis-per-sions ca
-n be large (e.g.,
+Underfull \hbox (badness 10000) in paragraph at lines 7--1
+\T1/LinuxLibertineT-TLF/m/n/9 func-tional equivalence---script-level cor-rect-n
+ess is nec-es-sary
  []
 
 )
@@ -1472,13 +1484,7 @@ Underfull \hbox (badness 1173) in paragraph at lines 4--184
 s why: the
  []
 
-
-Underfull \hbox (badness 10000) in paragraph at lines 4--184
-\T1/LinuxLibertineT-TLF/m/n/9 and long-chain flow-orchestration benchmarking---
-ZhuLong
- []
-
-[7.7
+[6.6] [7.7
 
 ] (./main.bbl
 Underfull \hbox (badness 10000) in paragraph at lines 56--66
@@ -1533,7 +1539,7 @@ Here is how much of TeX's memory you used:
  42523 multiletter control sequences out of 15000+600000
  721844 words of font info for 180 fonts, out of 8000000 for 9000
  474 hyphenation exceptions out of 8191
- 90i,13n,131p,1660b,576s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 90i,12n,131p,1660b,576s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/share/texlive/texmf-dist/fonts/type1/public/inconsolata/Inconsolata-zi4
 b.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/inconsolata/Inconsolata
 -zi4r.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/newtx/LibertineMath
@@ -1551,10 +1557,10 @@ exlive/texmf-dist/fonts/type1/public/amsfonts/symbols/msam10.pfb></usr/share/te
 xlive/texmf-dist/fonts/type1/public/newtx/txexs.pfb></usr/share/texlive/texmf-d
 ist/fonts/type1/public/newtx/txmiaX.pfb></usr/share/texlive/texmf-dist/fonts/ty
 pe1/public/newtx/txsys.pfb>
-Output written on main.pdf (8 pages, 881474 bytes).
+Output written on main.pdf (8 pages, 878673 bytes).
 PDF statistics:
- 428 PDF objects out of 1000 (max. 8388607)
- 352 compressed objects within 4 object streams
+ 429 PDF objects out of 1000 (max. 8388607)
+ 353 compressed objects within 4 object streams
  69 named destinations out of 1000 (max. 500000)
  17622 words of extra memory for PDF output out of 20736 (max. 10000000)
 
