@@ -5,13 +5,13 @@ WAITING: 0
 ## 📊 进度快照
 
 ```
-PHASE:        R1569 cline适配器修复轮:OMP_NUM_THREADS=8致cline(bun)静默退出根因定位+3fix+58题rerun启动
-已完成:       H-B✅·Gate7/7·TB报告✅·pilot20✅·R984-R988恒0调试✅·R989 incr_eval全链✅·R997硬约束修复✅·R998-R1567 incr_eval链+内存/CPU自检+体积归档✅·R1567 cline trace归因分析✅·R1568 incr_eval 3backlog✅·R1569 cline适配器3fix✅
-当前动作:     R1569:CPU/MEM自检PASS→运维令11-04 13:5x(按trace报告修复cline适配器)→根因定位:OMP_NUM_THREADS=8导致bun runtime静默退出(rc=0,~2.5s,0 bytes stdout,3/3复现)→Fix#1:CLINE_BIN改用.bun/bin/cline(TypeScript版)+gw_proxy env→Fix#2:_run跳过OMP thread limits for node/bun harnesses(cline/opencode/codex/claude)→Fix#3:run_single.py加stdout passthrough+predict_one加silent-exit retry→58 empty-patch predictions删除+cline_rerun_ids.txt写入→re-run启动(PID2838120,58题cline-patched predict)→smoke test确认:修前2.7s silent exit→修后87s+仍在running✅→2路predict alive(codex488·deepseek215)·未完成指令:有(58题rerun+2路predict)⇒WAITING=0.
-下一步:       ①58题cline rerun完成后eval新predictions ②更新full500报告cline数字(修前326→修后新值) ③2路predict alive(codex488/500·deepseek215/500) ④predict全完成后final full500报告 ⑤永久硬约束:禁止commit结果JSON ⑥TASK≤32KB
-阻塞:         无(58题rerun running·2路predict alive progressing·codex488·deepseek215).
+PHASE:        R1570 incr_eval轮:CPU/MEM自检PASS+deepseek incr_eval+2 RESOLVED+cline rerun 1/58进行中+2路predict alive
+已完成:       H-B✅·Gate7/7·TB报告✅·pilot20✅·R984-R988恒0调试✅·R989 incr_eval全链✅·R997硬约束修复✅·R998-R1567 incr_eval链+内存/CPU自检+体积归档✅·R1567 cline trace归因分析✅·R1568 incr_eval 3backlog✅·R1569 cline适配器3fix✅·R1570 deepseek incr_eval+2✅
+当前动作:     R1570:CPU/MEM自检PASS(harness进程全低CPU/RSS,load25由pretrain训练驱动)→scan backlog:codex 0(488/488全eval)·deepseek 2新(matplotlib-23314/23412有patch)→incr_eval deepseek:首次rc=1因dataset_name用错(用了HF名而非本地enriched_500.json→KeyError:image)→修正为绝对路径enriched_500.json→重跑rc=0→matplotlib-23314 RESOLVED·matplotlib-23412 RESOLVED→deepseek resolved 171→173 n=216→cline rerun PID2838120仍在[1/58](astropy-13398,~22min,大仓正常)·codex predict 488/500·deepseek predict 216/500·未完成指令:有(58题rerun进行中+2路predict alive)⇒WAITING=0.
+下一步:       ①58题cline rerun完成后eval新predictions ②更新full500报告cline数字(修前326→修后新值,分列修复前/后) ③2路predict alive(codex488/500·deepseek216/500) ④predict全完成后final full500报告 ⑤永久硬约束:禁止commit结果JSON ⑥TASK≤32KB
+阻塞:         无(58题rerun running [1/58]·2路predict alive·codex488·deepseek216).
 ERROR_COUNT:  0
-  📦 体积：TASK=37481B(36.6KB,>32KB,3活跃块不可归档,<40KB红线OK) / MEMORY=32269B(31.5KB,≤32KB✅)
+  📦 体积：TASK=38954B(38.0KB,>32KB,3活跃块不可归档,<40KB红线OK) / MEMORY=31833B(31.1KB,≤32KB✅)
 ```
 
 > 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
@@ -19,7 +19,8 @@ ERROR_COUNT:  0
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 
 ### 本唤醒流水
-[14:30→14:50] R1569 cline适配器修复轮:CPU/MEM自检PASS→运维令11-04 13:5x(按trace报告修复cline适配器+补跑受影响题)→读trace报告可改进点清单→尝试Fix#1 gw_proxy(发现globalState.json已配9090)→尝试Fix#2 stdout透传(发现cline stdout为空)→**根因定位**:smoke test发现cline通过_run()调用时2.7s静默退出(0 bytes stdout),但直接shell调用正常→逐变量排除:OMP_NUM_THREADS=8导致bun runtime静默退出(3/3复现,Python subprocess无OMP=正常timeout running)→**Fix#2(真正修复)**:_run()对node/bun harnesses(cline/opencode/codex/claude)跳过OMP/BLAS thread limits→Fix#1:CLINE_BIN改用.bun/bin/cline(TypeScript版,非ELF cline-checkpoint-off)+gw_proxy env→Fix#3:run_single.py加stdout passthrough+run_verified_full.py predict_one加silent-exit retry(rc=0+patch=0+wall<10s→重跑1次)→58 empty-patch predictions删除+cline_rerun_ids.txt写入(36 silent+22 crash+3 quota=58)→re-run启动(PID2838120,58题cline-patched predict)→smoke test确认修复:修前2.7s silent exit→修后87s+仍在running✅→2路predict alive(codex488·deepseek215)·未完成指令:有(58题rerun+2路predict)⇒WAITING=0.
+[15:00→15:10] R1570 incr_eval轮:CPU/MEM自检PASS(harness进程全低CPU/RSS·load25由pretrain训练PID4179175驱动非本线)→scan backlog:codex=0(488/488全eval'd)·deepseek=2新patch(matplotlib-23314·matplotlib-23412)→incr_eval deepseek首次rc=1(KeyError:image,根因=dataset_name用了HF名princeton-nlp/SWE-bench_Verified而非本地enriched_500.json绝对路径)→修正后重跑rc=0→**matplotlib-23314 RESOLVED·matplotlib-23412 RESOLVED**→deepseek resolved 171→173 n=216→7路eval汇总:cline326/500·codex282/488·opencode401/500·pi333/475·claude-code273/433·hermes184/314·deepseek173/216→cline rerun PID2838120仍在[1/58](astropy-13398,~22min大仓正常)·codex predict 488/500·deepseek predict 216/500·未完成指令:有(58题rerun进行中+2路predict alive)⇒WAITING=0.
+> 📦 R1569 流水(14:30→14:50,cline适配器修复轮:OMP_NUM_THREADS=8致bun静默退出根因+3fix+58题rerun启动)已归档 → daily-memories-harness/2026-11-04.md。结论：cline适配器3fix(OMP跳过+CLINE_BIN改.bun/bin+stdout透传+silent-exit retry)·58题rerun启动·smoke test修复确认。需要时再读。
 > 📦 R1568 流水(13:46→13:50,incr_eval轮:CPU/MEM自检PASS+regen codex/deepseek WROTE+incr_eval 3backlog→codex+2·deepseek+1 RESOLVED)已归档 → daily-memories-harness/2026-11-04.md。结论：codex+2·deepseek+1 RESOLVED·2路predict alive。需要时再读。
 > 📦 R1567 流水(13:25→13:41,cline trace归因分析:运维令11-04 13:1x→cline326 vs opencode401(-15pp)→3类根因(静默退出35题/超时18题/补丁质量116题McNemar极显著)→report_harness_cline_trace_analysis_zh.html(24667B,commit a2c331c79))已归档 → daily-memories-harness/2026-11-04.md。结论：cline trace归因分析已交付·2路predict alive。需要时再读。
 > 📦 R1566 流水(13:09,incr_eval轮:CPU/MEM自检PASS+regen codex WROTE(483→486)+scan_backlog=2→incr_eval codex astropy-7336 FAILED+astropy-7606 FAILED+scan_backlog=1→incr_eval codex astropy-7671 RESOLVED,eval 1966→1967,2路predict alive codex486·deepseek213)已归档 → daily-memories-harness/2026-11-04.md。结论：codex+1 RESOLVED·2路predict alive。需要时再读。
