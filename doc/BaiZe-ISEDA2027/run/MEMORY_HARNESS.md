@@ -1,17 +1,17 @@
 # MEMORY_HARNESS.md — BaiZe Harness 研究线 · 运行时状态
 
-WAITING: 0
+WAITING: 1
 
 ## 📊 进度快照
 
 ```
-PHASE:        R1632 quiet监控轮:CPU/MEM自检PASS+scan_backlog=0(2路predict在跑均未落盘)+report regen UNCHANGED(cline356)+归档13:1x块→ARCHIVE·cline rerun 1/58 left·deepseek predict alive(248/500)
-已完成:       H-B✅·Gate7/7·TB报告✅·pilot20✅·R984-R988恒0调试✅·R989 incr_eval全链✅·R997硬约束修复✅·R1567 cline trace归因分析✅(13:1x块已归档)·R1569 cline适配器修复✅·R1611-R1631 incr_eval渐进✅·R1631 incr_eval+修复交付commit·R1632 quiet监控+13:1x归档
-当前动作:     R1632:CPU/MEM自检PASS(load21.9/224~10%busy·MEM avail1315GB·本线cline bun6.9%/deepseek1.3%·无单进程>8000%CPU·无需kill)→scan_backlog=0(2路predict在跑均未落盘:cline sympy-22456 rerun[58/58]·deepseek xarray-4966)→report regen UNCHANGED(cline356/499=71.5%修复后·deepseek196/248)→归档13:1x块(TASK→ARCHIVE+1行指针)·未完成指令:有(cline rerun 1/58 left)⇒WAITING=0.
-下一步:       ①cline rerun [58/58] sympy-22456 在跑→落盘后incr_eval→regen final report(修复后终值356或357/500) ②deepseek predict alive(248/500·xarray-4966在跑) ③永久硬约束:禁止commit结果JSON ④MEMORY略超32KB软限→下轮trim旧流水指针到≤32KB
-阻塞:         无·cline rerun 1题 left(sympy-22456在跑,~15min,timeout1800s)·deepseek predict alive.
+PHASE:        R1633 cline rerun交付轮:CPU/MEM自检PASS+cline rerun 58/58 DONE(sympy-22456 no_patch)+report regen终值356/500=71.3%修复后·deepseek predict alive(248/500)
+已完成:       H-B✅·Gate7/7·TB报告✅·pilot20✅·R984-R988恒0调试✅·R989 incr_eval全链✅·R997硬约束修复✅·R1567 cline trace归因✅·R1569 cline适配器修复✅·R1611-R1631 incr_eval渐进✅·R1631 cline修复交付✅·R1633 cline rerun 58/58终交付✅(report 356/500=71.3%)
+当前动作:     R1633:CPU/MEM自检PASS(load25/224~11%·MEM avail1316GB·无单进程>8000%CPU·无需kill)→cline rerun 58/58 DONE(最后一题sympy-22456 05:14落盘no_patch 125B)→cline eval no_patch+1(12→13,n=500)→backlog scan=0全7路→report regen终值cline356/500=71.3%修复后(修复前基线326/500=65.2%,+30)·deepseek predict alive(248/500,xarray-6461在跑)·未完成指令:无(13:5x已交付)⇒WAITING=1.
+下一步:       ①deepseek predict alive(248/500)→新预测落盘后incr_eval→regen report ②full500指令(10-28)deepseek尚在跑(464/500 progress),其余6路500/500已交付 ③永久硬约束:禁止commit结果JSON ④下次唤醒CPU/MEM自检+deepseek backlog eval
+阻塞:         无·deepseek predict alive(248/500·xarray-6461在跑,timeout1800s)·cline rerun已全部完成.
 ERROR_COUNT:  0
-  📦 体积：TASK=37659B(36.8KB,归档13:1x后·<40KB红线OK) / MEMORY≈33KB(略超32KB软限·<40KB红线OK·下轮trim旧流水指针)·本轮归档2481B→ARCHIVE_OPERATOR_HARNESS.md
+  📦 体积：TASK=37659B(36.8KB,<40KB红线OK) / MEMORY≈31.5KB(trim R1553-R1564→1指针后·<32KB软限OK)·本轮归档0B(仅MEMORY内trim)
 
 ```
 
@@ -20,7 +20,8 @@ ERROR_COUNT:  0
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 
 ### 本唤醒流水
-[05:01] R1632 quiet监控轮:CPU/MEM自检PASS(load21.9/224~10%busy·MEM avail1315GB·本线cline bun6.9%/deepseek1.3%·无单进程>8000%CPU·无需kill)→scan_backlog=0(2路predict在跑均未落盘:cline sympy-22456 rerun[58/58]·deepseek xarray-4966)→report regen UNCHANGED(cline356/499=71.5%修复后·deepseek196/248)→归档13:1x块(TASK→ARCHIVE+1行指针)·未完成指令:有(cline rerun 1/58 left)⇒WAITING=0.
+[05:10] R1633 cline rerun交付轮:CPU/MEM自检PASS(load25/224·MEM avail1316GB·无>8000%CPU)→cline rerun 58/58 DONE(sympy-22456 05:14落盘no_patch 125B,无cline run_single进程)→eval_cline no_patch+sympy-22456(12→13,n=500)→backlog scan=0全7路→report regen终值cline356/500=71.3%修复后(修复前326/500=65.2%,+30,+6.1pp)·deepseek predict alive(248/500,xarray-6461)·13:5x指令已全交付⇒WAITING=1.
+> 📦 R1632 流水(05:01,quiet监控轮:scan_backlog=0+report UNCHANGED+归档13:1x块→ARCHIVE)已归档 → daily-memories-harness/2026-11-05.md。结论：cline rerun 1/58 left·归档13:1x。需要时再读。
 > 📦 R1631 流水(04:49,修复交付轮:cline sympy-20801 RESOLVED 355→356·deepseek xarray-4695 RESOLVED 195→196·cline sympy-21596 FAILED·report 修复后356/498=71.5% +30·harness 修复:commit)已归档 → daily-memories-harness/2026-11-05.md。结论：cline适配器修复交付·rerun57/58。需要时再读。
 > 📦 R1630 流水(04:31,incr_eval轮:cline sympy-20438 FAILED 355不变+report regen)已归档 → daily-memories-harness/2026-11-05.md。结论：cline355·2路predict alive。需要时再读。
 > 📦 R1629 流水(04:20,incr_eval轮:cline sympy-19783 RESOLVED 354→355+report regen)已归档 → daily-memories-harness/2026-11-05.md。结论：cline355·2路predict alive。需要时再读。
@@ -112,12 +113,7 @@ ERROR_COUNT:  0
 > 📦 R1564 流水(12:51,incr_eval:deepseek matplotlib-22719 RESOLVED,eval 1964)已归档 → daily-memories-harness/2026-11-04.md。结论：deepseek+1 RESOLVED·2路predict alive。需要时再读。
 > 📦 R1563 流水(12:45,quiet监控轮:CPU/MEM自检PASS+regen all7 unchanged+scan_backlog=0,eval 1963持平,2路predict alive codex480·deepseek212)已归档 → daily-memories-harness/2026-11-04.md。结论：quiet轮·2路predict alive。需要时再读。
 > 📦 R1562 流水(12:35,quiet监控轮:CPU/MEM自检PASS+regen all7 unchanged+scan_backlog=0,eval 1963持平,2路predict alive codex480·deepseek212)已归档 → daily-memories-harness/2026-11-04.md。结论：quiet轮·2路predict alive。需要时再读。
-> 📦 R1561 流水(12:25,incr_eval轮:CPU/MEM自检PASS+regen codex WROTE(479→480)+scan_backlog=1→incr_eval codex astropy-14539 RESOLVED,eval 1962→1963)已归档 → daily-memories-harness/2026-11-04.md。结论：codex+1 RESOLVED·2路predict alive。需要时再读。
-> 📦 R1560 流水(12:14,incr_eval轮:CPU/MEM自检PASS+regen codex/deepseek WROTE+incr_eval codex astropy-14508 RESOLVED·deepseek matplotlib-20859 FAILED,eval 1961→1962)已归档 → daily-memories-harness/2026-11-04.md。结论：codex+1 resolved·deepseek+1 failed·2路predict alive。需要时再读。
-> 📦 R1557-R1556 流水(11:41~11:46,2轮quiet:CPU/MEM自检PASS+regen all7 unchanged+scan_backlog=0,eval 1961持平,2路predict alive deepseek moved 20826→20859)已归档 → daily-memories-harness/2026-11-04.md。结论：quiet轮·codex477·deepseek211·2路predict alive。需要时再读。
-> 📦 R1555 流水(11:28,incr_eval轮:CPU/MEM自检PASS+regen codex WROTE(475→477)+incr_eval 2codex backlog(14309 RESOLVED+14365 FAILED),eval 1960→1961)已归档 → daily-memories-harness/2026-11-04.md。结论：codex+1 resolved·2路predict alive。需要时再读。
-> 📦 R1553-R1554 流水(11:05~11:18,2轮incr_eval quiet:CPU/MEM自检PASS+regen codex WROTE(473→475)+scan_backlog=0,eval 1960持平,2路predict alive)已归档 → daily-memories-harness/2026-11-04.md。结论：quiet轮·codex475·deepseek211·2路predict alive。需要时再读。
-> 📦 R1553-R1557 流水(11:05~11:46,5轮incr_eval/quiet:codex+2 resolved·deepseek+1 failed·scan_backlog=0·eval 1960~1961,2路predict alive)已合并归档 → daily-memories-harness/2026-11-04.md。结论：codex渐进resolved·2路predict alive。需要时再读。
+> 📦 R1553-R1564 流水(11:05~12:51,12轮incr_eval/quiet:codex渐进resolved·deepseek渐进resolved·2路predict alive)已合并归档 → daily-memories-harness/2026-11-04.md。结论：codex473→480·deepseek211→213·2路predict alive。需要时再读。
 > 📦 R1525-R1527 流水(06:48~07:13,3轮quiet/incr_eval:deepseek+1 RESOLVED+1 FAILED·scan_backlog=0·eval 1944~1945,2路predict alive)已合并归档 → daily-memories-harness/2026-11-04.md。结论：deepseek渐进·2路predict alive。需要时再读。
 > 📦 R1523-R1524 流水(06:43~06:48,2轮quiet:CPU/MEM自检PASS+regen all7 unchanged+scan_backlog=0,eval 1944 unchanged,2路predict alive)已合并归档 → daily-memories-harness/2026-11-04.md。结论：quiet轮·2路predict alive。需要时再读。
 > 📦 R1522 流水(06:37,incr_eval轮:CPU/MEM自检PASS+regen deepseek WROTE+scan_backlog=1→incr_eval deepseek django-16801 RESOLVED,eval 1944)已归档 → daily-memories-harness/2026-11-04.md。结论：deepseek+1 RESOLVED·2路predict alive。需要时再读。
