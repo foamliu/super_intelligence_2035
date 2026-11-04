@@ -10,12 +10,12 @@ WAITING: 0（shard A 轮 63：**完成 EDA-Eval-DesignFlow-DrcDocConvert-001（e
 （轮 50–57 已归档至 `MEMORY_A_archive.md` 归档批次 56（2026-11-04）；轮 43–49 见归档批次 55；轮 33–42 见归档批次 50。）
 
 ## 顶部快照
-- **PHASE**: shard A 轮 63（DrcDocConvert-001 落地完成, DEBT=0）· covered=70 / target=1369 (mc≥30) = 5.1% · domain: digital:22 · eda_other:15 · pnr_signoff:21 · verification:12
+- **PHASE**: shard A 轮 63（DrcDocConvert-001 + SimMakefileVCS-001 双落地完成, DEBT=0）· covered=71 / target=1369 (mc≥30) = 5.2% · domain: digital:23 · eda_other:15 · pnr_signoff:21 · verification:12
 - 🎯 通过率: 最近20条无新增已跑 case（pi/cline 实跑 pending）；B 档目标 20–30%
-- 📊 trace 覆盖率：covered=70 / target=1369 = 5.1%（fresh 纯数字候选稀缺；可用候选多为 calibre-doc/Q&A/debugging 型，本轮用 doc-中文化 + 可复用转换器 reframe 落地一条 eda_other L1）
+- 📊 trace 覆盖率：covered=71 / target=1369 = 5.2%（fresh 纯数字候选稀缺；可用候选多为 calibre-doc/Q&A/debugging 型；本轮双落地：DrcDocConvert-001 eda_other L1（doc-中文化+可复用转换器 reframe）+ SimMakefileVCS-001 digital L2（vcs R-2020.12 真跑, Makefile iverilog→VCS/FSDB/verdi slim））
 - 📦 体积：TASK≈17KB / MEMORY_A≈7KB
 - DEBT: 0；BLOCKER: ① fresh 纯数字候选稀缺——daily log tool markers 缺 vcs/verdi/dc_shell/formality/primethe（运维待修），summary.tsv tools 列亦无；本轮改走 netlist-heavy（synthesis+netlist 关键字 mc≥20）筛出真实数字网表任务；② 沙盒 .75 HAS vcs(/apps/synopsys/SRB/vcs/R-2020.12/bin/vcs)+dc_shell+primetime+pt_shell，MISSING verdi/formality/verilint/uvs/vps；③ 真实设计文件常 permission-denied → 多走 B 档；④ /nasdata 不在 .75 挂载、本机不可直连 .75 → 文件过坝走 eda_flow read_file（text 返 verbatim，zip 走 base64 或本地按 ref 重建）
-- 🧾 断言: 今日 1/1 达标（DrcDocConvert-001：k_rationale=11=k_check=11 ✓，存量断言清单进度 22/30）
+- 🧾 断言: 今日 2/2 达标（DrcDocConvert-001：k=11 ✓ / SimMakefileVCS-001：k_rationale=14=k_check=14 ✓，存量断言清单进度 23/30）
 
 ## 迁移说明
 - 轮 33-42 已归档至 `MEMORY_A_archive.md`（归档批次 50，2026-11-04）。
