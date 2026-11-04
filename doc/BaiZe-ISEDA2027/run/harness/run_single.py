@@ -21,16 +21,26 @@ def reset_workdir(workdir: Path, base_commit: str):
 
 
 def run_cline_patched(instance, workdir, timeout):
-    """Run cline with --data-dir + -P openai (independent cline_harness_data)."""
+    """Run cline with --data-dir + -P openai (independent cline_harness_data).
+
+    Fix #1 (2026-11-04 per trace analysis): use the original TypeScript cline
+    binary (.bun/bin/cline) instead of the compiled cline-checkpoint-off ELF
+    binary (.local/bin/cline).  The compiled binary has a bug where it silently
+    exits (rc=0, ~2s, 0 bytes stdout) on certain prompts — root cause of 36/500
+    silent-exit failures.  Also explicitly route through gw_proxy (127.0.0.1:9090).
+    """
     import types
     from run_harness import CLINE_BIN, UNIFIED_MODEL, ClineDriver
     driver = ClineDriver()
     data_dir = "/nas_train/app.e0031982/harness_work/cline_harness_data"
     def run_patched(self, instance, workdir, timeout=3600):
         cmd = [CLINE_BIN, "-c", str(workdir), "--data-dir", data_dir,
-               "-P", "openai", "-m", UNIFIED_MODEL, "-k", self.api_key,
+               "-P", "openai", "-m", UNIFIED_MODEL, "-k", DUMMY_KEY,
                "--auto-approve", "true", "--json", instance["problem_statement"]]
-        r = _run(cmd, workdir, timeout)
+        r = _run(cmd, workdir, timeout, env={
+            "OPENAI_API_KEY": DUMMY_KEY,
+            "OPENAI_BASE_URL": "http://127.0.0.1:9090/v1",
+        })
         r.harness = self.name
         r.model_patch = git_patch(workdir) if r.returncode == 0 else ""
         return r
@@ -78,6 +88,12 @@ def main():
 
     print(f"== harness={res.harness} rc={res.returncode} "
           f"timed_out={res.timed_out} wall={res.wall_s:.1f}s ==")
+    # Fix #2 (2026-11-04 per trace analysis): print stdout tail so that cline's
+    # --json error output (API errors, startup crashes) is visible to predict_one's
+    # blocked/forbidden detection.  Previously only stderr was printed, so cline's
+    # stdout (where --json errors go) was silently swallowed.
+    if res.stdout:
+        print(f"[stdout tail] ...{res.stdout[-400:]}")
     if res.stderr:
         print(f"[stderr tail] ...{res.stderr[-400:]}")
 

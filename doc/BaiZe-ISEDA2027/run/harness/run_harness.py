@@ -47,7 +47,16 @@ DUMMY_KEY = "dummy-key-for-proxy"
 # Configurable gw_proxy ports (2026-10-14: for glm53 parallel run on separate ports)
 GW_PROXY_PORT = os.environ.get("GW_PROXY_PORT", "9090")
 GW_DSH_PORT = os.environ.get("GW_DSH_PORT", "9091")
+# Fix #1 (2026-11-04 per trace analysis): prefer the TypeScript source cline
+# (`.bun/bin/cline` → @cline/cli/src/index.ts) over the compiled
+# `cline-checkpoint-off` ELF binary (`.local/bin/cline`).  The compiled
+# binary has a bug where it silently exits (rc=0, ~2s, 0 bytes stdout) on
+# certain prompts — consistently reproduced 3/3 with django__django-12262's
+# problem_statement.  The TypeScript version works correctly.  This was the
+# root cause of 36/500 silent-exit failures in the cline predict run.
 CLINE_BIN = shutil.which("cline") or "/home/app.e0031982/.bun/bin/cline"
+if CLINE_BIN == "/home/app.e0031982/.local/bin/cline" and os.path.exists("/home/app.e0031982/.bun/bin/cline"):
+    CLINE_BIN = "/home/app.e0031982/.bun/bin/cline"
 CLINE_SECRETS = Path.home() / ".cline" / "data" / "secrets.json"
 
 
@@ -98,11 +107,21 @@ def _run(cmd: list[str], cwd: Path, timeout: int, env: dict | None = None) -> Dr
     # (incident: pytest test_gradient_boosting.py hit 18557% CPU = 186 cores,
     #  load 233/224, threatening S1 training).  Only set if not already
     #  explicitly in env (don't override caller's deliberate settings).
-    for _tk in ("OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS", "MKL_NUM_THREADS",
-                "NUMEXPR_NUM_THREADS", "VECLIB_MAXIMUM_THREADS",
-                "JOBLIB_CPU_COUNT"):
-        if _tk not in e:
-            e[_tk] = "8"
+    #
+    # ⚠️ Fix #2 (2026-11-04 per trace analysis): SKIP thread limits for
+    # bun/node-based harnesses (cline, opencode, codex, claude-code).
+    # OMP_NUM_THREADS=8 causes the bun runtime to silently exit (rc=0, ~2s,
+    # 0 bytes stdout) — root cause of 36/500 cline silent-exit failures.
+    # These harnesses don't use OpenMP/BLAS, so thread limits are unnecessary.
+    _is_node_harness = any(
+        str(cmd[0]).endswith(x) for x in ("cline", "opencode", "codex", "claude")
+    ) if cmd else False
+    if not _is_node_harness:
+        for _tk in ("OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS", "MKL_NUM_THREADS",
+                    "NUMEXPR_NUM_THREADS", "VECLIB_MAXIMUM_THREADS",
+                    "JOBLIB_CPU_COUNT"):
+            if _tk not in e:
+                e[_tk] = "8"
     if env:
         for k, v in env.items():
             if v is None:
@@ -176,7 +195,14 @@ class ClineDriver:
             "--json",
             instance["problem_statement"],
         ]
-        r = _run(cmd, workdir, timeout)
+        # Fix #1 (2026-11-04 per trace analysis): route through local gw_proxy
+        # (127.0.0.1:9090) like opencode/codex, instead of directly hitting
+        # agi-gateway.  gw_proxy injects the real gateway key and can add retry.
+        # The env OPENAI_BASE_URL overrides globalState.json's openAiBaseUrl.
+        r = _run(cmd, workdir, timeout, env={
+            "OPENAI_API_KEY": DUMMY_KEY,
+            "OPENAI_BASE_URL": f"http://127.0.0.1:{GW_PROXY_PORT}/v1",
+        })
         r.harness = self.name
         r.model_patch = git_patch(workdir) if r.returncode == 0 else ""
         return r

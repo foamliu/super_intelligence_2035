@@ -182,10 +182,46 @@ def predict_one(harness: str, inst: dict, workdir: Path) -> dict:
                 patch_len = len(preds[0].get("model_patch", ""))
         except Exception:
             pass
+
+    # Fix #3 (2026-11-04 per trace analysis): retry on silent exit.
+    # cline CLI can exit rc=0 in ~1-2s with empty patch when it hits an
+    # API error or startup crash it swallows.  Re-running once often succeeds
+    # because gw_proxy re-establishes the connection.  Only retry when:
+    #   rc == 0  (not a crash/timeout)
+    #   patch_len == 0  (no patch produced)
+    #   wall < 10  (silent exit, not a long run that simply failed)
+    #   not timed_out  (don't retry actual timeouts)
+    retried = False
+    if rc == 0 and patch_len == 0 and wall < 10 and not timed_out:
+        log(f"  -> silent exit (rc=0, patch=0, wall={wall:.1f}s), retrying once...")
+        retried = True
+        if pred_out.exists():
+            try:
+                pred_out.unlink()
+            except OSError:
+                pass
+        t0r = time.time()
+        try:
+            out, err, rc = run(cmd, workdir, timeout=TIMEOUT_RUN + 120,
+                               with_proxy=False)
+        except subprocess.TimeoutExpired:
+            out, err, rc = f"[agent TIMEOUT after {TIMEOUT_RUN + 120}s]", "", -1
+            timed_out = True
+        wall = time.time() - t0r
+        patch_len = 0
+        if pred_out.exists():
+            try:
+                preds = json.loads(pred_out.read_text())
+                if preds:
+                    patch_len = len(preds[0].get("model_patch", ""))
+            except Exception:
+                pass
+
     blocked = ("quota" in out.lower() or "429" in out or "forbidden" in out.lower())
     return {"instance_id": iid, "harness": harness, "returncode": rc,
             "wall_s": round(wall, 1), "model_patch_len": patch_len,
             "quota_blocked": blocked, "timeout": timed_out,
+            "retried": retried,
             "stdout_tail": out[-400:], "stderr_tail": err[-400:] if err else "",
             "predictions_file": str(pred_out)}
 
