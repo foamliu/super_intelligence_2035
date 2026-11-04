@@ -119,3 +119,5 @@
 1791941227075_le1s7	jason17w	hfeg0pnd002	310	verification	case	EDA-Eval-DesignFlow-VpsRegrErrorEngineer-001	2026-11-04 15:21	deepread r59: VPS/UVS regression error-engineering (jason17w); 742 msgs/2.84MB large-trace deepread-only; A-faithful cand #591 (error-engineer 3 svp + 2 noerror for AI closed-loop demo); L2 feasible via vcs/vsim (sandbox HAS vcs+vsim+dc_shell+primetime, MISSING verdi/formality/uvs/vps); DEBT:1 synthesize next round -> EDA-Eval-DesignFlow-VpsRegrErrorEngineer-001
 1793361216165_nqgxe	hbpeng	hfeg0pin004	460	eda_other	case	EDA-Eval-DesignFlow-RunsetVer-001	2026-11-04 16:07	
 1791963281932_4a852.messages.json	e0039602	hfeg0plg85	661	digital	case	EDA-Eval-DesignFlow-NetCellMap-001	2026-11-04 16:50	
+1792983438277_cwhbi	xxchen	hfeg0plg53	37	eda_other	case	EDA-Eval-DesignFlow-DrcDocConvert-001	2026-11-04 18:22	
+1792742776753_6yrpu.messages.json	lorikx	hfeg0pkn005	40	digital	case	EDA-Eval-DesignFlow-SimMakefileVCS-001	2026-11-04 18:23	deepread: sim Makefile iverilog->VCS/FSDB/verdi slim (lorikx); A-faithful turn0; L2 via vcs R-2020.12 (VCD path, vcs_wrap strips DUMP_FSDB)
