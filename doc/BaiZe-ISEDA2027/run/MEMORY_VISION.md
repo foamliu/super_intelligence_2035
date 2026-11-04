@@ -2,6 +2,8 @@
 
 WAITING: 1
 
+> 🆕 **【空唤醒 · wake #565 · 2026-11-04 14:01】** 无新运维令。用户在终端粘贴 BAIZE_VISION_TASK.md 全文并选择「以 vision agent 身份执行收尾铁律」。git fetch→origin/main 0ahead/0behind（已同步，HEAD=8167254dc data-prep auto-commit 13:59；origin 新提交均来自 data/designflow/harness 等线，无 vision 新令）。所有运维令标[已完成]/[已归档]。📦 体积：TASK=27230B / MEMORY=18560B（均≤32KB✓；🆕条目≈14，新增#565后≈15 在~20 软指引内，无需归档）。进程 baize_vision_loop.sh PID 669545 alive（etimes≈535k）；cline in PATH（/home/app.e0031982/.bun/bin/cline）✓。工作副本改动均为别线文件（BAIZE_PRETRAIN_2B_TASK.md 修改 + ZhuLong benchmark report 修改 + 多个别线未跟踪脚本），vision 文件无在途改动，未触碰别线。写心跳+日流水+commit+push（一律 `git commit -m '...' -- <明确文件路径>`，吸取#562裸commit卷入别线文件教训）。**未完成指令：无** ⇒ **WAITING: 1**。
+
 > 🆕 **【空唤醒 · wake #564 · 2026-11-04 13:28】** 无新运维令。用户在终端粘贴 BAIZE_VISION_TASK.md 全文并选择「以 vision agent 身份执行收尾铁律」。git fetch→origin/main 0ahead/0behind（已同步，HEAD=3e488337e zhulong 13:27；origin 新提交均来自 zhulong 等线，无 vision 新令）。所有运维令标[已完成]/[已归档]。📦 体积：TASK=27230B / MEMORY=17610B（均≤32KB✓；🆕条目≈13，新增#564后≈14 在~20 软指引内，无需归档）。进程 baize_vision_loop.sh PID 669545 alive（etimes≈533k）；cline in PATH（/home/app.e0031982/.bun/bin/cline）✓。工作副本改动均为别线文件（ZhuLong benchmark report 修改 + 多个别线未跟踪脚本），vision 文件无在途改动，未触碰别线。写心跳+日流水+commit+push（一律 `git commit -m '...' -- <明确文件路径>`，吸取#562裸commit卷入别线文件教训）。**未完成指令：无** ⇒ **WAITING: 1**。
 
 > 🆕 **【空唤醒 · wake #563 · 2026-11-04 12:48】** 无新运维令。用户在终端粘贴 BAIZE_VISION_TASK.md 全文并选择「以 vision agent 身份执行收尾铁律」。git fetch→origin/main 0ahead/0behind（已同步，HEAD=2ab985f09 zhulong 12:45；origin 新提交均来自 zhulong/harness/data 等线，无 vision 新令）。所有运维令标[已完成]/[已归档]。📦 体积：TASK=27230B / MEMORY=归档后≈17KB（均≤32KB✓；空唤醒条目19，本轮滚动归档7条旧空唤醒#552~#558→daily-memories-vision/2026-11-04.md，归档后≈13条）。进程 baize_vision_loop.sh PID 669545 alive（etimes≈531k）；cline in PATH（/home/app.e0031982/.bun/bin/cline）✓。工作副本改动均为别线文件（ZhuLong benchmark report + 多个别线未跟踪脚本），vision 文件无在途改动，未触碰别线。写心跳+日流水+commit+push（本次一律 git commit -- <明确路径>，吸取#562裸commit卷入别线文件教训）。**未完成指令：无** ⇒ **WAITING: 1**。
@@ -74,4 +76,4 @@ WAITING: 1
 | 当前动作 | 空唤醒·心跳维护·等待新运维令 |
 | 下一步 | 等待运维新令（vision 文件无在途改动） |
 | 阻塞 | 无 |
-| 更新 | **2026-11-04 13:28 (wake #564)**: 空唤醒·无新令·心跳维护·git 0ahead/0behind(HEAD=3e488337e zhulong 13:27)·体积TASK27KB/MEMORY17KB均≤32KB·🆕条目14在软指引内 |
+| 更新 | **2026-11-04 14:01 (wake #565)**: 空唤醒·无新令·心跳维护·git 0ahead/0behind(HEAD=8167254dc data 13:59)·体积TASK27KB/MEMORY18.6KB均≤32KB·🆕条目15在软指引内 |
