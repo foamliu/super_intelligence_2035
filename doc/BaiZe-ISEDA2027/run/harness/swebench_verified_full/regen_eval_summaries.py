@@ -92,25 +92,42 @@ def regen(harness: str) -> dict | None:
     resolved, failed, infra, no_patch = [], [], [], []
     evaluated_ids = set()
 
-    # Phase 1: scan report.json files from docker eval
-    if run_dir.exists():
-        model_dir = run_dir / model
+    # Phase 1: scan report.json files from docker eval across ALL run dirs
+    # (main `verified_full_<h>` + any `verified_full_<h>_rerun_RXXXX`), taking
+    # the NEWEST report.json per instance.
+    # R1597 fix: previously only the main run dir was scanned, so items that
+    # were eval'd in a rerun dir (e.g. cline rerun_R1592/R1594) had no
+    # report.json in the main dir and were misclassified as `infra` (via
+    # Phase 2's "has real patch but no eval" rule) even when the rerun
+    # report.json showed a clean resolved=False/failed result.  This violated
+    # 运维令 10-28 铁律 3 (infra must be单列, not mixed with model failures).
+    newest = {}  # iid -> (mtime, report_path)
+    run_dirs = sorted(EVAL_LOG_ROOT.glob(f"verified_full_{harness}*"))
+    for run_d in run_dirs:
+        if not run_d.is_dir():
+            continue
+        cands = [p for p in run_d.iterdir() if p.is_dir() and p.name != "run.json"]
+        if not cands:
+            continue
+        model_dir = run_d / model
         if not model_dir.exists():
-            cands = [p for p in run_dir.iterdir() if p.is_dir() and p.name != "run.json"]
-            model_dir = cands[0] if cands else None
-        if model_dir is not None:
-            for iid_dir in sorted(model_dir.iterdir()):
-                if not iid_dir.is_dir():
-                    continue
-                iid = iid_dir.name
-                rj = iid_dir / "report.json"
-                cls = classify_one(rj, iid)
-                {"resolved": resolved, "failed": failed, "infra": infra}[cls].append(iid)
-                evaluated_ids.add(iid)
-        else:
-            print(f"  {harness}: no model dir under {run_dir}")
-    else:
-        print(f"  {harness}: no run dir {run_dir}")
+            model_dir = cands[0]
+        for iid_dir in sorted(model_dir.iterdir()):
+            if not iid_dir.is_dir():
+                continue
+            iid = iid_dir.name
+            rj = iid_dir / "report.json"
+            if not rj.exists():
+                continue
+            mt = rj.stat().st_mtime
+            if iid not in newest or mt > newest[iid][0]:
+                newest[iid] = (mt, rj)
+    for iid, (_mt, rj) in sorted(newest.items()):
+        cls = classify_one(rj, iid)
+        {"resolved": resolved, "failed": failed, "infra": infra}[cls].append(iid)
+        evaluated_ids.add(iid)
+    print(f"  {harness}: scanned {len(run_dirs)} run dir(s), "
+          f"{len(newest)} instances with report.json")
 
     # Phase 2: scan prediction files for no-patch items (R1434)
     for pf in sorted(PRED_DIR.glob(f"{harness}__*.json")):
