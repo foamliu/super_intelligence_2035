@@ -25253,3 +25253,121 @@ c825caae9 11-04 19:09 harness R1587: quiet监控轮 CPU/MEM PASS scan_backlog=0 
 
 === DONE 240 ===
 ```
+
+---
+
+## RUN_ID 241 · 2026-11-04 20:01:19 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 241 | pretrain loop forensics (read-only) | $(date '+%F %T') | host=$(hostname) ==="
+echo
+echo "[1] pretrain loop 日志尾部（最近 30 行）"
+tail -30 /tmp/baize_pretrain_loop.log 2>/dev/null | cut -c1-240
+echo
+echo "[2] loop 进程与其子进程"
+LOOP=$(pgrep -f 'baize_pretrain_loop\.sh' | head -1)
+echo "loop_pid=${LOOP:-none}"
+if [ -n "${LOOP:-}" ]; then
+  ps -o pid,ppid,etimes,pcpu,rss,args --ppid "$LOOP" --no-headers 2>/dev/null | cut -c1-180 | head -10
+  echo "--- grandchildren ---"
+  for p in $(pgrep -P "$LOOP" 2>/dev/null); do
+    ps -o pid,ppid,etimes,pcpu,args --ppid "$p" --no-headers 2>/dev/null | cut -c1-160 | head -5
+  done
+fi
+echo
+echo "[3] 本线 cline / 调试子进程（截断 160 字符）"
+ps -eo pid,etimes,pcpu,rss,args --sort=-etimes --no-headers 2>/dev/null | grep -E 'cline|gdb|convert_hf_to_gguf|llama-cli' | grep -v -E 'grep -E|RUN_ID 241' | cut -c1-160 | head -8
+echo
+echo "[4] 最近 20 分钟内被写过的 baize 日志"
+find /tmp -maxdepth 1 -name 'baize_*.log*' -mmin -20 -printf '%TY-%Tm-%Td %TH:%TM %10s %p\n' 2>/dev/null | sort | tail -12
+echo
+echo "[5] 本线最近提交（MEMORY/llamacpp 视角）"
+cd /nas_train/app.e0031982/code/super_intelligence_2035 2>/dev/null && git log -4 --pretty='%h %ad %s' --date=format:'%m-%d %H:%M' -- doc/BaiZe-ISEDA2027/run/MEMORY_PRETRAIN_2B.md doc/BaiZe-ISEDA2027/llamacpp.txt | cut -c1-160
+echo
+echo "[6] 残留 llama-server（只读，不 kill）"
+echo "count=$(pgrep -fc 'llama-server' 2>/dev/null || echo 0)"
+pgrep -af 'llama-server' 2>/dev/null | cut -c1-120 | head -10
+echo
+echo "=== DONE 241 ==="
+```
+
+**输出**
+```
+=== RUN_ID 241 | pretrain loop forensics (read-only) | 2026-11-04 20:01:19 | host=whag0pgpuap29 ===
+
+[1] pretrain loop 日志尾部（最近 30 行）
+我明白了！在 `llama.cpp` 的 `build_mamba2_layer` 中，`conv1d` 操作依次应用了 `ggml_ssm_conv`、`ggml_add` (bias) 和 `ggml_silu`。
+
+但关键点在于：在 `llama.cpp` 中，`conv` 偏置（bias）是**在** `silu` **之前**相加的，这与 `HF` 的做法一致。
+
+现在我需要检查 `dt` 的处理逻辑。在 `llama.cpp` 中，`dt` 是由 `n_head` 个元素的视图（view）构成的（第 201-202 行）。接着在第 251 行：
+```c
+dt = ggml_add(ctx0, ggml_cont(ctx0, dt), model.layers[il].ssm_dt_b);
+```
+
+然后，`softplus` 是在 `ggml_ssm_scan` **内部**应用的。查看 `ops.cpp` 第 10077 行：
+```c
+const float dt_soft_plus = ggml_compute_softplus_f32(dt[h]);
+```
+
+因此，`softplus` 是在 `ssm_scan` 内部应用于 `dt` 的，而 `dt` 已经加上了 `dt_bias`。这一点与 `HF` 一致。
+
+现在，关键的问题是：`llama.cpp` 是否应用了 `dt_clamp(min=dt_min)`？让我检查一下：
+[36m[run_commands][0m grep -n 'dt_min\|clamp\|time_step_min\|dt_floor\|mamba_dt' /nas_train/app.e0031982/code/llama.cpp/ggml/src/ggml-cpu/o...
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / glm-5.2): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)
+      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)
+      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / glm-5.2): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)
+      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)
+      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)
+
+   [90m⎿ [0m[2m3439:            const float y = std::clamp(src1_p[k], -limit, limit); 3506: ... (+1 more)[0m
+重大发现！llama.cpp 并未应用 `dt_clamp(min=dt_min)` 限制。不过，我需要先检查 HF 在其 forward 路径中究竟做了什么。让我来核实一下：
+
+[2] loop 进程与其子进程
+loop_pid=3165004
+3165013 3165004  557477  0.0  3716 bash /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_pretrain_loop.sh
+--- grandchildren ---
+4079560 3165013   21344 23.0 cline --data-dir /nas_train/app.e0031982/.cline_pretrain -c /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA202
+
+[3] 本线 cline / 调试子进程（截断 160 字符）
+2751345 2688205 22.5 3914816 /home/app.e0031982/.npm/_npx/672d321ee4ba2150/node_modules/cline/bin/.cline --cline-hub-daemon --cwd /nas_train/app.e0031982/code/s
+4079560   21344 23.0 519404 cline --data-dir /nas_train/app.e0031982/.cline_pretrain -c /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027
+2838119   18902  0.0  3528 bash -c python3 run_verified_full.py predict --harness cline-patched --ids-file cline_rerun_ids.txt >> /tmp/cline_rerun_58.log 2>&1
+2838120   18902  0.0 33112 python3 run_verified_full.py predict --harness cline-patched --ids-file cline_rerun_ids.txt
+2698442    1686  0.0 21956 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python3 /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/ru
+2698559    1686  5.6 430704 bun /home/app.e0031982/.bun/bin/cline -c /dev/shm/harness_verified_full/workdirs/cline-patched/django_django --data-dir /nas_train/a
+4164742     476  8.8 547212 cline -c /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run --auto-approve true -m glm-5.2 -k 02_088EE9051
+
+[4] 最近 20 分钟内被写过的 baize 日志
+2026-11-04 20:01    1060054 /tmp/baize_s1_baize2b_worker.log
+2026-11-04 20:01   37223628 /tmp/baize_pretrain_loop.log
+2026-11-04 20:01     611410 /tmp/baize_s1_baize2b_master.log
+2026-11-04 20:01   63086964 /tmp/baize_harness_loop.log
+
+[5] 本线最近提交（MEMORY/llamacpp 视角）
+eca8b7f49 11-04 13:49 pretrain eval: logits 逐 token 对齐定案根因=映射/计算错误(非精度累积), llamacpp.txt §6+§7 更新
+e60c026b0 11-04 13:07 pretrain #1355: llama.cpp=FAIL(精度不可用) 5/5 eval DONE(2/5有效) 报告更正根因=C++ Mamba2计算
+55b9dfd5e 11-04 12:35 pretrain #1353: llama.cpp per-token pilot=FAIL(Δacc -37pp sciq), 打通logprobs卡点但根因=Duplicated key+BPE boundary+topN截断, �
+28e0a7ba5 11-04 11:51 pretrain #1352: 监控轮 iter_50000_f32 90%在跑ETA~13:00 .12两evals DONE均NaN S1 ckpt@78000健康
+
+[6] 残留 llama-server（只读，不 kill）
+count=11
+750002 /nas_train/app.e0031982/code/llama.cpp/build/bin/llama-server -m /tmp/baize_f32.gguf --port 31111 -t 8 -c 2048 --
+774085 /nas_train/app.e0031982/code/llama.cpp/build/bin/llama-server -m /tmp/baize_10k_f16.gguf --port 3017 -t 4 -c 2048
+1251557 /nas_train/app.e0031982/code/llama.cpp/build/bin/llama-server -m /tmp/baize_f16.gguf --port 31234 -t 4 -c 2048 -
+1369107 /nas_train/app.e0031982/code/llama.cpp/build/bin/llama-server -m /tmp/baize_10k_f16.gguf --port 39912 -t 4 -c 20
+1786252 /nas_train/app.e0031982/code/llama.cpp/build/bin/llama-server -m /tmp/baize_f16.gguf --port 30001 -t 8 -c 2048 -
+2245899 /nas_train/app.e0031982/code/llama.cpp/build/bin/llama-server -m /tmp/baize_iter10000_f16.gguf --port 4517 -t 8 
+2355215 /nas_train/app.e0031982/code/llama.cpp/build/bin/llama-server -m /tmp/baize_f16.gguf --port 31137 -t 8 -c 512 --
+2735738 /nas_train/app.e0031982/code/llama.cpp/build/bin/llama-server -m /tmp/baize_f16.gguf --port 39998 --host 0.0.0.0
+2825164 /nas_train/app.e0031982/code/llama.cpp/build/bin/llama-server -m /tmp/baize_f16.gguf --port 39999 -t 4 -c 2048 -
+3413718 /nas_train/app.e0031982/code/llama.cpp/build/bin/llama-server -m /tmp/baize_f16.gguf --port 3007 -t 8 -c 2048 --
+
+=== DONE 241 ===
+```
