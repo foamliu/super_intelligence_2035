@@ -1,4 +1,27 @@
 # BAIZE_DATA_TASK.md
+### 🚀 运维令 · 2026-11-04 09:4x（**web search 调研强化复杂推理 + 代码能力的 SFT / Code-SFT 数据集**）· 用户直令 · 最高优先
+
+> 用户原话（2026-11-04 09:4x）：「请 data 调研能够强化 LLM 复杂推理和代码能力的 SFT 和 Code-SFT 数据集，写成中文 HTML 报告。」
+
+**交付物**：`doc/BaiZe-ISEDA2027/reports/report_data_reasoning_code_sft_survey_zh.html`（中文、单文件自包含、**0 `script`/0 外链/0 CDN**、标签配平、**≥25KB**）+ 生成器 `data/gen_reasoning_code_sft_survey_report.py`（幂等）+ commit `data survey:`。
+
+#### ① 调研方法（硬性，同 10-31 令口径）
+- **真去 hf.co 检索并打开数据集页**（web search + fetch，可用 cimi_search/cimi_fetch）；每条给 **repo id + 可点开路由**，禁止凭记忆。
+- 每候选核实：**repo id · 体量(字节/样本) · 语言 · license · 字段结构 · 更新时间 · gated**；核不到写「未核到」，禁编造。
+- 与我们盘上已有源（`run/data/DATA_MAPPING.md`）**不重复推荐**，可在「已覆盖」节列出。
+
+#### ② 类别分层（每类给 3-5 候选，尽量含体量 + license）
+1. **复杂推理 SFT**：数学（GSM/MATH/奥赛类）、逻辑/符号推理、长链 CoT（长思考轨迹）、科学推理。给「是否有可验证奖励信号」（答案匹配/程序验证）。
+2. **代码 SFT（Code-SFT）**：代码合成、代码修复（bug-fix）、代码推理、指令跟随代码、多文件仓库级。给「奖励信号」（单测/diff/执行）与「与 SWE-bench Verified · Terminal-Bench 的污染风险」（单独一节，复用 13-gram 指纹黑名单）。
+
+#### ③ 报告结构（7 节，缺一不可）
+TL;DR（两类 TOP-3 + 一句话理由 + 预计体量）→ 检索方法与口径 → A 类主表（repo/体量/语言/license/gated/奖励信号）→ B 类主表（同）→ 污染与去重（vs 12 源 + vs 两个目标基准）→ 下载方案（建议下哪几个/体量/落盘 `/nas_inference`/`hf download` 命令/预计磁盘与 ETA）→ 诚实条款（未核到字段/代理指标/license 风险）。
+
+#### ④ 红线
+- 🚫 **只调研 + 写报告，不下载**；不占 GPU、不挤 S1 与正在跑的 A 类下载（nice、低并发）。
+- 🚫 不编造 repo id/体量/license；gated 单列；与 SWE-bench·TB 污染风险必须显式标注。
+- 报告 ≥25KB、0 script、0 外链；commit `data survey:`；心跳写 `未完成指令：有` ⇒ `WAITING: 0` 直到报告交付。
+
 ### 🚀 运维令 · 2026-11-04 09:2x（**批准下载长上下文(A类)数据 · 落盘 /nas_inference**）· 用户直令 · 最高优先
 
 > 用户批准（2026-11-04 09:2x）：批准下载「长上下文」数据集，落盘 `/nas_inference/app.e0031982/datasets/`（覆盖报告 §6 里的 `/nas_env` 老路径）。
