@@ -176,9 +176,9 @@ GGUF 元数据实测：time_step_rank=64 (=n_head), group_count=8,
 -------|------|-------------|---------|------|-------
 A. group 展开 | repeat(tile) vs repeat_interleave；g=h/(nh/ng) | ops.cpp:10175 `g=h/(nh/ng)`；mamba-base.cpp:245-248 B/C view_4d(d_state,n_group)；HF nemotron_h modeling:275-276 `B.repeat_interleave(nh//ng,dim=2)` | llama.cpp: g=h//8=repeat_interleave 语义；HF 同。B/C 从 xBC=[x(4096),B(1024),C(1024)] 按 {d_state=128,n_group=8} 切片。两者一致。 | PASS（语义一致） | 无
 B. conv1d+silu | conv→+bias→silu 顺序；d_inner+2*ng*ds=6144 | mamba-base.cpp:185 reshape{d_conv-1=3, 6144};:232 ggml_ssm_conv;:235 +ssm_conv1d_b;:237 ggml_silu；HF:causal_conv1d_fn(activation="silu") | silu 对整个 xBC(6144) 生效，与 HF 一致；conv_dim=4096+2*8*128=6144 ✓；split [x,B,C]=[4096,1024,1024] 与 HF torch.split([4096,1024,1024]) 一致。in_proj 布局 [z(4096),xBC(6144),dt(64)]，dt offset=2*4096+2*8*128=10240=4096+6144 ✓。 | PASS | 无
-C. dt 投影+softplus+clamp | softplus 后是否 clamp(min/max) | ops.cpp:10174 `softplus(dt[h])` 无 clamp；mamba-base.cpp:251 dt+=ssm_dt_b；HF nemotron_h:381 `time_step_limit=(config.time_step_min,inf)=(0.001,inf)`；:272 `dt=clamp(softplus(dt),min=0.001,max=inf)` | ⚠️ 差异：HF 在 softplus 后 clamp dt≥0.001（来自 mamba_dt_min=0.001），llama.cpp 无任何 clamp。dt_bias 存储为 inv_softplus(init)（converter 原样存），llama.cpp softplus(dt_proj+dt_bias) 与 HF 一致。仅 clamp 缺失。 | FAIL（有差异） | 影响评估：clamp min=0.001 仅当 softplus(dt_proj+bias)<0.001 即 dt_proj+bias<-6.9 时生效，对多数 head 影响 small；但 early-training(iter10k) dt_proj 可能未收敛，需动态统计受影响 head 比例。max=inf 不限（两者都不限上界）。
+C. dt 投影+softplus+clamp | softplus 后是否 clamp(min/max) | ops.cpp:10174 `softplus(dt[h])` 无 clamp；mamba-base.cpp:251 dt+=ssm_dt_b；HF nemotron_h:381 `time_step_limit=(config.time_step_min,inf)=(0.001,inf)`；:272 `dt=clamp(softplus(dt),min=0.001,max=inf)` | ⚠️ 差异：HF 在 softplus 后 clamp dt≥0.001（来自 mamba_dt_min=0.001），llama.cpp 无任何 clamp。dt_bias 存储为 inv_softplus(init)（converter 原样存），llama.cpp softplus(dt_proj+dt_bias) 与 HF 一致。仅 clamp 缺失。 | FAIL（有差异） | 影响评估：clamp min=0.001 仅当 softplus(dt_proj+bias)<0.001 即 dt_proj+bias<-6.9 时生效，对多数 head 影响 small；但 early-training(iter10k) dt_proj 可能未收敛，需动态统计受影响 head 比例。max=inf 不限（两者都不限上界）。【动态统计 2026-11-05 实测】首层(layer0) 1-token"Hello" float32：64 head 中仅 1 head(1.56%) softplus(dt+bias)=0.000811<0.001 被 HF clamp→0.001；softplus_min=0.000811/max=0.1745/mean=0.0247。⇒ C 影响极小(1/64 head，相对+23%于该单 head)，不足以解释 3.6 nats 偏差，C 非主因。
 D. RMSNormGated | eps=1e-5、reshape/ne 顺序 | mamba-base.cpp:292 reshape{d_inner/ng=512,ng=8}→:293 `if(ssm_norm_eps>0)`→:294 ggml_rms_norm(ssm_norm_eps) / else :296 build_norm(LLM_NORM_RMS)→f_norm_rms_eps；HF:409 Zaba2RMSNormGated(group_size=4096//8=512, eps=config.layer_norm_epsilon=1e-5) | PASS。eps 链全验证：① GGUF 实测(Reader) `nemotron_h.attention.layer_norm_epsilon`=1e-05(存在)，`attention.layer_norm_rms_epsilon`=ABSENT，`ssm.norm_epsilon`=ABSENT(nemotron converter 未调 add_ssm_norm_epsilon，仅 metis.py 调)；② nemotron-h.cpp:18 读 f_norm_eps=1e-05，:19-20 RMS key 缺失→fallback f_norm_rms_eps=f_norm_eps=1e-05；③ llama-hparams.h:212 ssm_norm_eps 默认0.0→mamba-base.cpp:296 else→build_norm(LLM_NORM_RMS)→llama-graph.cpp:1791 ggml_rms_norm(f_norm_rms_eps)=1e-05；④ HF eps=config.layer_norm_epsilon=1e-05。→ 两端 eps=1e-5 一致。结构(分组512)亦一致。注：llama.cpp 经 f_norm_rms_eps fallback 取得 eps，非专用 ssm key，但数值等价。 | PASS | 完成。dt/B/C norm(mamba-base.cpp:100-102) 同样用 f_norm_rms_eps=1e-5，HF 同 config.layer_norm_epsilon，一致。
-E. 逐层 hidden dump | 首个偏差层定位 | 需运行时 1-token 逐层 dump HF vs llama.cpp hidden states | 未做（需写 dump 脚本 + 运行） | 待验 | 下一步：写 dump 脚本，1-token 逐层对比，找首个偏差层
+E. 逐层 hidden dump | 首个偏差层定位 | HF 侧已完成：脚本 /tmp/baize_e_dtstat_hfdump.py，1-token"Hello" float32 CPU(p6_tf5 transformers5.17 PyTorch ref)，monkeypatch mamba2_chunk_scan 捕首层 dt，56 层 forward hook 捕 hidden→/tmp/baize_e_hf_hidden_ref.npz | 【部分完成】① C 动态影响已量化：首层 64 head 仅 1(1.56%) 被 clamp(softplus=0.000811→0.001)，不足以解释 3.6 nats ⇒ C 非主因；② HF ref 已落盘：/tmp/baize_e_hf_hidden_ref.npz(56 层 hidden)+/tmp/baize_e_dtstat_hfdump.json；③ HF argmax="," logprob=-0.7802 与 #1356 报告 HF -0.78 一致(路径校验 PASS)；④ llama.cpp 侧逐层 hidden 需源码 patch(C++ 无内置 dump)，待续。 | 进行中（C 影响已排除为主因；HF ref 已存；llama.cpp 侧待 patch） | 下一步：llama.cpp 源码加层间 hidden dump(patch nemotron-h.cpp/mamba-base.cpp)→重编→1-token 对比 HF ref→定位首偏差层；或直接比对首层 Mamba2 输出。
 
 附：A_log 转换核查（额外发现，2026-11-05）
 - 密集(dense)路径（BaiZe 用此）：mamba.py:86 `data_torch = -torch.exp(data_torch)` → A=-exp(A_log) ✓ 正确
@@ -187,8 +187,8 @@ E. 逐层 hidden dump | 首个偏差层定位 | 需运行时 1-token 逐层 dump
   `yield from ModelBase.modify_tensors(self, data_torch, name, bid)` 传 `data_torch`（原始 A_log）
   而非 `reshaped_data`（转换后）→ ⚠️ 存储了未转换的 A_log（Bug，但不影响 dense BaiZe，可报告上游）
 
-小结（2026-11-05 05:0x 更新）：A/B/D PASS，C FAIL（dt clamp 缺失，影响待量化），E 待运行时。
-已发现 1 个确认差异(C，dt clamp) + 1 个 MoE 路径 bug(附)。A/B/D 均一致 ⇒ 3.6 nats 偏差最可能由 C(dt clamp) 或 E 将揭示的其它计算差异造成。下一步：E 逐层 dump（先量化 C 对首层 dt 的影响：统计 softplus(dt)<0.001 的 head 比例；再 HF 逐层 hidden dump 找首偏差层）。
+小结（2026-11-05 05:1x 更新）：A/B/D PASS，C FAIL（dt clamp 缺失，但动态实测影响极小：1/64 head 被clamp，C 非主因），E 进行中（HF ref 已落盘 56 层 hidden + dt 统计；llama.cpp 侧待源码 patch）。
+已发现 1 个确认差异(C，dt clamp，影响小) + 1 个 MoE 路径 bug(附)。A/B/D 一致 + C 影响小 ⇒ 3.6 nats 偏差根因更可能在 SSM scan 计算(ssm_scan_f32)或 A_log/discretize/conv1d-state 等 E 将逐层揭示的环节。下一步：llama.cpp 加 hidden dump 对比 HF ref，定位首偏差层。
 
 七、残留清理报告（2026-11-05 · 按 11-04 22:1x 令 ②）
 ----------------------------------------------------
@@ -222,11 +222,11 @@ llama-server 清理（按 PID 逐个 kill，非 pkill）：
 5. 附带发现：llh 打分对接时，llama-server 的 /completion 返回 completion_probabilities
    （llama.cpp 原生格式），而 lm_eval 后端期待 OpenAI 标准 choices[].logprobs.token_logprobs，
    需用 --model gguf 或加 shim 转换；这是工程问题，不影响上述精度裁决。
-6. 逐环节定位进展（2026-11-05，详见 §六-B 检查点表）：
-   - A(group 展开)=PASS, B(conv1d+silu)=PASS, C(dt clamp)=FAIL(HF clamp dt≥0.001，llama.cpp 无)
-   - D(RMSNorm eps)=待验, E(逐层 dump)=待运行时
-   - 确认差异：C(dt clamp 缺失，影响待量化)；额外发现 MoE 路径 A_log 转换 bug(不影响 dense BaiZe)
-   - 3.6 nats 偏差尚未由 A/B/C 完全解释，需 D+E 继续收口
+6. 逐环节定位进展（2026-11-05 05:1x，详见 §六-B 检查点表）：
+   - A(group 展开)=PASS, B(conv1d+silu)=PASS, C(dt clamp)=FAIL(HF clamp dt≥0.001，llama.cpp 无；但动态实测仅 1/64 head 受影响，C 非主因)
+   - D(RMSNorm eps)=PASS(两端均 1e-5，llama.cpp 经 f_norm_rms_eps fallback), E(逐层 dump)=进行中(HF ref 56 层已落盘 /tmp/baize_e_hf_hidden_ref.npz；llama.cpp 侧待源码 patch)
+   - 确认差异：C(dt clamp 缺失，影响小)；额外发现 MoE 路径 A_log 转换 bug(不影响 dense BaiZe)
+   - 3.6 nats 偏差：A/B/D 一致 + C 影响小 ⇒ 根因更可能在 SSM scan 计算/ssm_scan_f32 或逐层将揭示的环节，待 E 收口
    - 残留已清理：llama-server 11→1，GGUF 34G→13G（详见 §七）
 
 备注（数据来源）：
