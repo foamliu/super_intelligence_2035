@@ -2,6 +2,8 @@
 
 WAITING: 1
 
+> 🆕 **【空唤醒 · wake #564 · 2026-11-04 13:28】** 无新运维令。用户在终端粘贴 BAIZE_VISION_TASK.md 全文并选择「以 vision agent 身份执行收尾铁律」。git fetch→origin/main 0ahead/0behind（已同步，HEAD=3e488337e zhulong 13:27；origin 新提交均来自 zhulong 等线，无 vision 新令）。所有运维令标[已完成]/[已归档]。📦 体积：TASK=27230B / MEMORY=17610B（均≤32KB✓；🆕条目≈13，新增#564后≈14 在~20 软指引内，无需归档）。进程 baize_vision_loop.sh PID 669545 alive（etimes≈533k）；cline in PATH（/home/app.e0031982/.bun/bin/cline）✓。工作副本改动均为别线文件（ZhuLong benchmark report 修改 + 多个别线未跟踪脚本），vision 文件无在途改动，未触碰别线。写心跳+日流水+commit+push（一律 `git commit -m '...' -- <明确文件路径>`，吸取#562裸commit卷入别线文件教训）。**未完成指令：无** ⇒ **WAITING: 1**。
+
 > 🆕 **【空唤醒 · wake #563 · 2026-11-04 12:48】** 无新运维令。用户在终端粘贴 BAIZE_VISION_TASK.md 全文并选择「以 vision agent 身份执行收尾铁律」。git fetch→origin/main 0ahead/0behind（已同步，HEAD=2ab985f09 zhulong 12:45；origin 新提交均来自 zhulong/harness/data 等线，无 vision 新令）。所有运维令标[已完成]/[已归档]。📦 体积：TASK=27230B / MEMORY=归档后≈17KB（均≤32KB✓；空唤醒条目19，本轮滚动归档7条旧空唤醒#552~#558→daily-memories-vision/2026-11-04.md，归档后≈13条）。进程 baize_vision_loop.sh PID 669545 alive（etimes≈531k）；cline in PATH（/home/app.e0031982/.bun/bin/cline）✓。工作副本改动均为别线文件（ZhuLong benchmark report + 多个别线未跟踪脚本），vision 文件无在途改动，未触碰别线。写心跳+日流水+commit+push（本次一律 git commit -- <明确路径>，吸取#562裸commit卷入别线文件教训）。**未完成指令：无** ⇒ **WAITING: 1**。
 
 > 🆕 **【空唤醒 · wake #562 · 2026-11-04 11:40】** 无新运维令。用户在终端粘贴 BAIZE_VISION_TASK.md 全文并选择「以 vision agent 身份执行收尾铁律」。git fetch→origin/main **ahead 1 / behind 0**（ahead=43a6fd6d2 data #1177 数据线在途提交，非 vision；behind-1 为 stale remote-tracking refs，fetch 后校正为 0；HEAD=43a6fd6d2 11:39；origin 新提交均来自 data/zhulong/designflow 等线，无 vision 新令）。所有运维令标[已完成]/[已归档]。📦 体积：TASK=27230B / MEMORY=21281B（均≤32KB✓；🆕条目19，新增#562后=20 达~20 软指引上限，下轮如再增需滚动归档）。进程 baize_vision_loop.sh PID 669545 alive（etimes≈528k）；cline in PATH（/home/app.e0031982/.bun/bin/cline）✓。工作副本改动均为别线文件（pretrain cpu_eval report/ZhuLong report + 多个别线未跟踪脚本），vision 文件无在途改动，未触碰别线。写心跳+日流水+commit+push。⚠️ **本轮回顾**：裸 `git commit` 未带文件路径⇒误将 pretrain 线已 stage 的 4 文件（MEMORY_PRETRAIN_2B.md / daily-memories/2026-11-04.md / gen_cpu_eval_8sets_report.py / report_pretrain_cpu_eval_8sets_zh.html）卷入 vision #562 提交（3318061ba）。内容无误但归属混入。**教训**：今后一律 `git commit -m '...' -- <明确文件路径>`，禁用裸 `git commit`。**未完成指令：无** ⇒ **WAITING: 1**。
@@ -72,4 +74,4 @@ WAITING: 1
 | 当前动作 | 空唤醒·心跳维护·等待新运维令 |
 | 下一步 | 等待运维新令（vision 文件无在途改动） |
 | 阻塞 | 无 |
-| 更新 | **2026-11-04 11:40 (wake #562)**: 空唤醒·无新令·心跳维护·git ahead1(数据线)/behind0·fetch校正stale refs。📦 体积：TASK=27230B / MEMORY=21281B（均≤32KB✓·🆕条目20达软指引上限） |
+| 更新 | **2026-11-04 13:28 (wake #564)**: 空唤醒·无新令·心跳维护·git 0ahead/0behind(HEAD=3e488337e zhulong 13:27)·体积TASK27KB/MEMORY17KB均≤32KB·🆕条目14在软指引内 |
