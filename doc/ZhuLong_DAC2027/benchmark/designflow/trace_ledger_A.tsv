@@ -114,11 +114,10 @@
 1793002542135_ijm3f	wei9liu	NA	35	digital	parked		2026-11-04 10:48	analog/mixed or pruned-file (fefaj=NanoSpice SPICE Q&A analog; vke2w/18ry4/fg7ey=.messages.json pruned/missing; ijm3f=ADE/AMS analog per r51)
 1793067588685_cpv3d	taodu	hfeg0pfn012	2257	verification	case	EDA-Eval-DesignFlow-ConnFileNetChk-001	2026-11-04 11:58	
 1790219837415_uh82d.messages.json	johnl	hfeg0pfn119	41	digital	case	EDA-Eval-DesignFlow-HierDcSynth-001	2026-11-04 12:30	
-1790650962650_7bg20	fxian	hfeg0pkn002	131	digital	deepread		2026-11-04 12:52	RTL addr_to_rowcol_v5 -> DRVQA stdcell gate netlist (R_BADEC_ADDR2ROWCOL_DRVQA.v) + pyAether schematic-gen; L2 digital; deepread r57, DEBT=1 synthesize next round
-7bg20					case	EDA-Eval-DesignFlow-DrvqaGateNetlist-001	2026-11-04 13:21	
 1791941227075_le1s7	jason17w	hfeg0pnd002	310	verification	case	EDA-Eval-DesignFlow-VpsRegrErrorEngineer-001	2026-11-04 15:21	deepread r59: VPS/UVS regression error-engineering (jason17w); 742 msgs/2.84MB large-trace deepread-only; A-faithful cand #591 (error-engineer 3 svp + 2 noerror for AI closed-loop demo); L2 feasible via vcs/vsim (sandbox HAS vcs+vsim+dc_shell+primetime, MISSING verdi/formality/uvs/vps); DEBT:1 synthesize next round -> EDA-Eval-DesignFlow-VpsRegrErrorEngineer-001
 1793361216165_nqgxe	hbpeng	hfeg0pin004	460	eda_other	case	EDA-Eval-DesignFlow-RunsetVer-001	2026-11-04 16:07	
 1791963281932_4a852.messages.json	e0039602	hfeg0plg85	661	digital	case	EDA-Eval-DesignFlow-NetCellMap-001	2026-11-04 16:50	
 1792983438277_cwhbi	xxchen	hfeg0plg53	37	eda_other	case	EDA-Eval-DesignFlow-DrcDocConvert-001	2026-11-04 18:22	
 1792742776753_6yrpu.messages.json	lorikx	hfeg0pkn005	40	digital	case	EDA-Eval-DesignFlow-SimMakefileVCS-001	2026-11-04 18:23	deepread: sim Makefile iverilog->VCS/FSDB/verdi slim (lorikx); A-faithful turn0; L2 via vcs R-2020.12 (VCD path, vcs_wrap strips DUMP_FSDB)
 1793091129423_vxorx.messages.json	e0046913	hfeg0pkn003	64	verification	case	EDA-Eval-DesignFlow-FmRtl2RtlFlow-001	2026-11-04 19:03	
+1790650962650_7bg20.messages.json	fxian	hfeg0pkn002	131	digital	case	EDA-Eval-DesignFlow-DrvqaGateNetlist-001	2026-11-04 19:57	
