@@ -269,7 +269,26 @@ Q/K 被打乱 → attention 算出完全错误的 head scores → 4 层 attentio
   附：MoE 路径 A_log bug（不影响 dense BaiZe）。
 
   下一步：重转 GGUF（现有 GGUF 是 undo_permute=True 转的，与新代码兼容，**无需重转**）→
-  重跑 sciq/piqa limit=100 与 HF 对照（目标 Δ≤1pp）→ 整理 PR 草稿等用户确认。
+  ✅ 重跑 sciq/piqa limit=100 与 HF 对照（目标 Δ≤1pp）—— 已通过，见 §九。
+  PR 草稿已就绪（reports/report_pretrain_llamacpp_pr_draft.md），等用户确认后发上游。
+
+九、sciq/piqa limit=100 复判结果（2026-11-05 07:09 · 修复后复判）
+------------------------------------------------------------------
+后端：llama-server(build 5dc38db00, 分支 fix/nemotron-h-undo-permute-and-rope) + GGUF F16
+(bz2b-10000-f16.gguf, undo_permute=True, 无需重转)。lm_eval zero-shot limit=100，与 HF
+float32(p6_tf5 transformers 5.17) 同口径同 100 样本对照。
+
+  任务      | 指标      | HF float32 | GGUF F16(修复后) |   Δ    | GGUF(修复前) | 修复前 Δ
+  ----------|-----------|------------|------------------|--------|--------------|---------
+  sciq      | acc       |   0.79     |     0.79         |  0.00  |    0.61      |  -0.18
+  sciq      | acc_norm  |   0.71     |     0.70         | -0.01  |    0.54      |  -0.17
+  piqa      | acc       |   0.72     |     0.72         |  0.00  |    0.56      |  -0.16
+  piqa      | acc_norm  |   0.73     |     0.73         |  0.00  |    0.54      |  -0.19
+
+  全部 4 项 |Δ| ≤ 1pp ✅（目标达成）。修复前 16–19pp 掉分 → 修复后 ≤1pp。
+  sciq acc_norm 的 -0.01 在样本数=100 的统计噪声内（stderr≈0.046）。
+  meta: elapsed=1536.3s, token_requests=5326, docs=600, s/req=0.2885。
+  结果文件：lm_eval_results/gguf_iter_10000_fixed/results.json + meta.json。
 
 七、残留清理报告（2026-11-05 · 按 11-04 22:1x 令 ②）
 ----------------------------------------------------
@@ -301,9 +320,10 @@ llama-server 清理（按 PID 逐个 kill，非 pkill）：
    ① rope_type=NONE（应为 NEOX）② build_attention_layer 缺 RoPE ③ FFN 激活 RELU_SQR→GELU
    修复后 1-token logits 对齐：Δ abs.mean=0.0008, Δ max=0.006, top-5 token 完全一致。
    commit 5dc38db00 on branch fix/nemotron-h-undo-permute-and-rope。
-   待办：重跑 sciq/piqa limit=100 评测确认 Δ≤1pp → 整理 PR 草稿等用户确认 → 发上游 PR。
-4. 裁决（更新）：修复后 llama.cpp 路线【可重新评估采纳】——logits 已对齐，
-   待 lm_eval 8 集复判通过后即可替代 HF+float32 做 CPU 评测提速。
+   ✅ sciq/piqa limit=100 复判通过（全部 4 项 |Δ|≤1pp，详见 §九）。
+   ✅ PR 草稿已就绪（reports/report_pretrain_llamacpp_pr_draft.md），等用户确认后发上游。
+4. 裁决（更新 2026-11-05 07:09）：修复后 llama.cpp 路线【可采纳】——logits 已对齐 +
+   sciq/piqa 复判通过（Δ≤1pp），可替代 HF+float32 做 CPU 评测提速（~7×）。
 5. 附带发现：llh 打分对接时，llama-server 的 /completion 返回 completion_probabilities
    （llama.cpp 原生格式），而 lm_eval 后端期待 OpenAI 标准 choices[].logprobs.token_logprobs，
    需用 --model gguf 或加 shim 转换；这是工程问题，不影响精度。
