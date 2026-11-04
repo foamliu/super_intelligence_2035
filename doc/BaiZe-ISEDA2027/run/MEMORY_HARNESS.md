@@ -5,13 +5,13 @@ WAITING: 0
 ## 📊 进度快照
 
 ```
-PHASE:        R1544 incr_eval轮(quiet):CPU/MEM自检PASS+regen all7 unchanged+scan_backlog=0
-已完成:       H-B✅·Gate7/7·TB报告✅·pilot20✅·R984-R988恒0调试✅·R989 incr_eval全链✅·R997硬约束修复✅·R998-R1543 incr_eval链+内存/CPU自检+体积归档✅·R1544 incr_eval轮✅
-当前动作:     R1544:CPU自检PASS(运维令11-02:load35.28/224≈16%busy,%Cpu13.3%,无本线>8000%CPU,2 predict procs API-bound codex0.3%·deepseek3.1%)+内存自检PASS(运维令10-30:MemAvailable~1.3Ti,无本线RSS>50GB)·regen all7 unchanged(codex472 unchanged新pred=no_patch·deepseek211 unchanged)·scan_backlog=0(无待eval)·eval TOTAL resolved=1960(cline326·opencode401·pi333·claude-code273·codex274·hermes184·deepseek169,与R1543持平)·predict counts:cline-patched500·opencode500·pi475·claude-code433·codex472·hermes314·deepseek211·2路predict alive(codex472 working astropy-13977·deepseek211 working matplotlib-14623,均API-bound)·硬约束全PASS(pred0tracked✅·eval0tracked✅·docker0running✅,git JSON=500 instance input only)·无kill·无失控·未完成指令:有(2路predict仍跑)⇒WAITING=0.
+PHASE:        R1545 incr_eval轮(quiet):CPU/MEM自检PASS+regen all7 unchanged+scan_backlog=0
+已完成:       H-B✅·Gate7/7·TB报告✅·pilot20✅·R984-R988恒0调试✅·R989 incr_eval全链✅·R997硬约束修复✅·R998-R1544 incr_eval链+内存/CPU自检+体积归档✅·R1545 incr_eval轮✅
+当前动作:     R1545:CPU自检PASS(运维令11-02:load30.88/224≈14%busy,无本线>8000%CPU,2 predict procs API-bound codex0.3%·deepseek2.4%)+内存自检PASS(运维令10-30:MemAvailable~1.34Ti,无本线RSS>50GB)·regen all7 unchanged·scan_backlog=0(无待eval)·eval TOTAL resolved=1960(cline326·opencode401·pi333·claude-code273·codex274·hermes184·deepseek169,与R1544持平)·predict counts:cline-patched500·opencode500·pi475·claude-code433·codex472·hermes314·deepseek211·2路predict alive(codex472 working astropy-13977·deepseek211 working matplotlib-14623,均API-bound)·硬约束全PASS(pred0tracked✅·eval0tracked✅·docker0running✅,git JSON=500 instance input only)·无kill·无失控·未完成指令:有(2路predict仍跑)⇒WAITING=0.
 下一步:       ①2路predict alive(codex472/500·deepseek211/500) ②每轮run regen_eval_summaries.py+scan_backlog.py ③backlog有final-patch items→incr_eval(OMP_NUM_THREADS=8,max_workers=1,sg docker) ④predict全完成后final full500报告(7路总表+Wilson CI+McNemar 7×7+no_patch单列) ⑤infra单列(铁律④) ⑥永久硬约束:禁止commit结果JSON ⑦TASK=34.9KB·MEMORY≤32KB
-阻塞:         无(2路predict alive progressing·codex472·deepseek211·load35.28/224健康·backlog=0).
+阻塞:         无(2路predict alive progressing·codex472·deepseek211·load30.88/224健康·backlog=0).
 ERROR_COUNT:  0
-  📦 体积：TASK=35757B(34.9KB,>32KB,3活跃块不可归档,<40KB红线OK) / MEMORY=32302B(31.5KB,≤32KB✅)
+  📦 体积：TASK=35757B(34.9KB,>32KB,3活跃块不可归档,<40KB红线OK) / MEMORY=32394B(31.6KB,≤32KB✅)
 ```
 
 > 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
@@ -19,7 +19,8 @@ ERROR_COUNT:  0
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 
 ### 本唤醒流水
-[09:50] R1544 incr_eval轮(quiet): CPU自检PASS(运维令11-02:load35.28/224≈16%busy,%Cpu13.3%,无本线>8000%CPU,2 predict procs API-bound codex0.3%·deepseek3.1%)+内存自检PASS(运维令10-30:MemAvailable~1.3Ti,无本线RSS>50GB)·regen all7 unchanged(codex472 unchanged新pred=no_patch·deepseek211 unchanged)·scan_backlog=0(无待eval)·eval TOTAL resolved=1960(与R1543持平)·predict counts:codex472·deepseek211·2路predict alive(codex astropy-13977·deepseek matplotlib-14623,API-bound)·硬约束全PASS(pred0tracked✅·eval0tracked✅·docker0running✅,git JSON=500 instance input only)·无kill·无失控·未完成指令:有(2路predict仍跑)⇒WAITING=0.
+[09:57] R1545 incr_eval轮(quiet): CPU自检PASS(运维令11-02:load30.88/224≈14%busy,无本线>8000%CPU,2 predict procs API-bound codex0.3%·deepseek2.4%)+内存自检PASS(运维令10-30:MemAvailable~1.34Ti,无本线RSS>50GB)·regen all7 unchanged·scan_backlog=0(无待eval)·eval TOTAL resolved=1960(与R1544持平)·predict counts:codex472·deepseek211·2路predict alive(codex astropy-13977·deepseek matplotlib-14623,API-bound)·硬约束全PASS(pred0tracked✅·eval0tracked✅·docker0running✅,git JSON=500 instance input only)·无kill·无失控·未完成指令:有(2路predict仍跑)⇒WAITING=0.
+> 📦 R1544 流水(09:50,incr_eval轮quiet:CPU/MEM自检PASS+regen all7 unchanged+scan_backlog=0,eval 1960持平)已归档 → daily-memories-harness/2026-11-04.md。结论：quiet轮·2路predict alive。需要时再读。
 > 📦 R1543 流水(09:41,incr_eval轮:CPU/MEM自检PASS+regen codex WROTE(n471→472,+1 no_patch)+incr_eval deepseek matplotlib-13989 RESOLVED,eval 1959→1960)已归档 → daily-memories-harness/2026-11-04.md。结论：deepseek+1 RESOLVED·2路predict alive。需要时再读。
 > 📦 R1542 流水(09:24,incr_eval轮:CPU/MEM自检PASS+regen deepseek WROTE(n207→211)+incr_eval 3backlog:django-17087+django-7530+django-9296 all RESOLVED,eval 1956→1959)已归档 → daily-memories-harness/2026-11-04.md。结论：deepseek+3 RESOLVED·2路predict alive。需要时再读。
 > 📦 R1541 流水(09:16,incr_eval轮:CPU/MEM自检PASS+regen codex/deepseek WROTE+incr_eval 2backlog:codex+deepseek both RESOLVED,eval 1954→1956)已归档 → daily-memories-harness/2026-11-04.md。结论：codex+deepseek各1 RESOLVED·2路predict alive。需要时再读。
@@ -129,9 +130,7 @@ ERROR_COUNT:  0
 
 > 📦 R1460 流水(21:04,incr_eval轮:CPU/MEM自检PASS+regen hermes WROTE+scan_backlog=1→0,hermes sphinx-7889 RESOLVED,eval 2794/1888)已归档 → daily-memories-harness/2026-11-03.md。结论：hermes+1 RESOLVED·3路predict alive。需要时再读。
 
-> 📦 R1459 流水(20:51,incr_eval轮:CPU/MEM自检PASS+regen deepseek+hermes WROTE+scan_backlog=1→0→1→0,deepseek django-15741 RESOLVED+hermes sphinx-7757 RESOLVED,eval 2793/1887)已归档 → daily-memories-harness/2026-11-03.md。结论：deepseek+1·hermes+1 ALL RESOLVED·3路predict alive。需要时再读。
 
-> 📦 R1458 流水(20:44,incr_eval轮:CPU/MEM自检PASS+regen codex+hermes+deepseek WROTE+scan_backlog=1→0→1→0,codex sympy-17139 RESOLVED+deepseek django-15732 FAILED,eval 2791/1885)已归档 → daily-memories-harness/2026-11-03.md。结论：codex+1 RESOLVED·deepseek+1 FAILED·3路predict alive。需要时再读。
 
 > 📦 R1457 流水(20:29,incr_eval轮:CPU/MEM自检PASS+regen codex+deepseek WROTE+scan_backlog=3→0,codex sympy-16792+16886 BOTH RESOLVED+deepseek django-15731 RESOLVED,eval 2788/1884)已归档 → daily-memories-harness/2026-11-03.md。结论：codex+2·deepseek+1 ALL RESOLVED·3路predict alive。需要时再读。
 
