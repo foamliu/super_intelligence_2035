@@ -93,3 +93,4 @@ djml8					case	EDA-Eval-DesignFlow-PFDdeadZone-001	2026-11-02 17:47
 1790241654352_5kcuw	ghyang	hfeg0pkn003	41	spice_sim	case	EDA-Eval-DesignFlow-StimLoopComplianceFix-001	2026-11-04 18:33	B档 synthesized L2 spice_sim k=15 .75 FineSim -spice ref PASS 15/15 + 6neg FAIL distinct + 3fake FAIL
 1792134251943_q9r9s	lanxinz	hfeg0pkn001	97	spice_sim	case	EDA-Eval-DesignFlow-FineSimTbAuditFix-001	2026-11-04 20:32	
 1792120107352_t1b5d	wnyu	hfeg0pgn021	48	characterization	case	EDA-Eval-DesignFlow-CpIcpChar-001	2026-11-04 21:23	
+1791954407908_szdav.messages.json	jiangbaol	hfeg0pkn002	55	characterization	claimed		2026-11-04 21:48	
