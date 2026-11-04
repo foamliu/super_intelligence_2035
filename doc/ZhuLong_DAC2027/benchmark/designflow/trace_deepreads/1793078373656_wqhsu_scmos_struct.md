@@ -49,3 +49,14 @@
 - **降采样**：真实 1891 cell → A ~26 cell（10 seeds + 5 struct-direct + 3 struct-transitive + 8 non-scmos），结构性质（名匹配 seeds / 层级闭包 / direct vs transitive / non-scmos 排除）全保留。
 - hidden B = 不同 cell 名 / 不同计数 / 不同图结构 / 不同基准 cell，杀硬编码。
 - 交付 = 通用 `find_scmos.py <library_dir> <out_json>`，seeds = 名匹配 /scmos/i，闭包 = 传递性祖先；check 跑 B 验 B 计数。
+
+## 合成交付决策（r107 落地）
+
+- **档位**：B-档 synthesized L1-boundary（离线 fixture 库树探索器，stdlib-only，确定性）。
+  - A-档 faithful 不可行：真实 gold 依赖 live `sch.oa`（OpenAccess 二进制，在 /proj/ddgoa/V0 内网）+ live pyAether 沙盒（trace 中沙盒连接被拒 10.129.8.235:50640），无法打包进交付件 → 解禁为 B-档。
+- **fixture 表征**：每个 cell = 一个子目录，内含 `schematic.cdl`（简化 CDL：`.SUBCKT`/`X` 子 cell 引用/`M` 器件/`.ENDS`，含注释与续行）+ 可选 `views` 文件（每行一个视图名）。X 的 master=子 cell（图边），M 的 model=器件（ntn/ptn/ntn_m/vcc/vss/vbn/vbp/vdd2h/inv，非 cell、不延展闭包）——这正是判别力来源。
+- **gold 算法** `scmos_struct_id.py`：解析 cdl → 提取子 cell/器件 → name 种子(scmos 大小写不敏感) → 建 cell→child 图(仅库内 cell) → 传递性闭包 → 按优先级分类 name_seed > structural_direct(直接引用种子) > structural_transitive(深度≥2 才碰到种子) > non_scmos；crossprobe_ready = SCMOS 族 ∩ {schematic+layout 双视图}。
+- **资产 A**（忠实，27 cell）：保留真实命名族与结构——2 个基准 cell(SCmosDataDPCtrlNew_DDGOA_add→SCmosDataDPCtrl+SCmosDataPad；SCmosConTopVdd2h→SCmosConTopVdd2hBuf+SCmosConVdd2h)、12 name 种子(含 SCmosCaUnit 仅 schematic 视图、SCmosLeafInv 仅器件的命名叶)、5 structural-direct(AbusChanMidPrc/Act42Nn3NBa/BufLeft/BGCasShare/CACWrGen_DDGOA)、3 structural-transitive(BistOsc/BkShareEccLogic_DDGOA/SysWrapper)、4 器件-only 普通反相器(BTI_inv/PM_inv/NandA/InvBuf，判别力 guard)、3 引用非 scmos 子 cell 的 non_scmos(DigiBlock/AddrDec/ClkTree)。
+- **hidden B**（不同命名/计数/图，25 cell）：SCmosCoreTop_DDGOA_add/SCmosClkTopVdd2h 基准、11 种子(SCmosBiasRef 仅 schematic)、5 direct(DataPathA/CtrlBlkB/ClkGater/PwrMgmt/LatchWrapper)、3 trans(SysTop/ChipCtrl/GlobalClk)、4 器件-only(InvA/InvB/NorA/MuxA)、2 非 scmos 子 cell(LogicBlock/PreDec)。A↔B 计数(27/25、12/11 种子、19/18 crossprobe)不同 → 杀硬编码。
+- **check.py 16 条断言 a-p**(k=16)：a zip+py_compile / b CLI B exit0+JSON+13 必需键 / c cells_total / d name_seed / e structural_direct(击穿 name-only) / f structural_transitive(击穿 depth-1-only) / g 器件-only 非命名 cell 必为 non_scmos(击穿 flat-token，trace 核心判别力) / h SysTop 必为 transitive 非 direct(深度正确) / i graph children 排除器件 / j 命名种子保持命名 + non_scmos 闭包无种子 / k 命名优先于 direct(SCmosClkDivider) / l 确定性 3×md5 / m A↔B 交叉 guard + 忠实基准 cell 在 A 的 name_seed / n non_scmos_count / o crossprobe_ready + 仅 schematic 种子排除 / p 命名叶(仅器件)仍为 name_seed。
+- 自验：ref PASS 16/16 + 3 negative(naive_name_only/flat_token/crippled_no_transitive)全 FAIL + §4.9 三假(empty_shell/print_expected 硬编码 B/core_deleted)全 FAIL ✓。
