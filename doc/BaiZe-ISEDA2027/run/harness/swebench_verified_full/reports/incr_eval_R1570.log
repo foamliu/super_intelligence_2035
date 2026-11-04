@@ -1,0 +1,8 @@
+[incr-eval 15:01:23] === incr_eval for deepseek-harness: ['matplotlib__matplotlib-23314', 'matplotlib__matplotlib-23412'] ===
+[incr-eval 15:01:23] merged 209/216 predictions -> predictions/predictions_deepseek-harness.json
+[incr-eval 15:01:23] EVAL deepseek-harness on 2 instances: ['matplotlib__matplotlib-23314', 'matplotlib__matplotlib-23412']
+[incr-eval 15:02:17] eval finished rc=1; log -> logs/eval_incr_verified_full_deepseek-harness_1793775737.log
+[incr-eval 15:02:17] matplotlib__matplotlib-23314: INFRA (no report.json)
+[incr-eval 15:02:17] matplotlib__matplotlib-23412: INFRA (no report.json)
+[incr-eval 15:02:17] updated reports/eval_deepseek-harness.json: resolved=171 failed=36 infra=2 no_patch=7 n=216
+[incr-eval 15:02:17] === incr_eval DONE (96s) ===
