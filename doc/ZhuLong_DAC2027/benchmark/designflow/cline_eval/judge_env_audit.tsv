@@ -4,7 +4,7 @@ AutoPR-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct f
 CTLEAether-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
 EDA-Eval-DesignFlow-ABMatchPlacementCheck-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
 EDA-Eval-DesignFlow-APRRoutePrecondDiag-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
-EDA-Eval-DesignFlow-AprLogAudit-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
+EDA-Eval-DesignFlow-AprLogAudit-001	SAFE	r80-fix applied: _resolve_a_dir/_resolve_b_dir(workdir) workdir->HERE->ASSETS->top-level fallback; A logs (inv_fp/inv_route) and hidden B now resolve to $JUDGE root and $JUDGE/hidden respectively; judge-dir PASS verified; 5 negatives NEG_RC=0 (target conditions c3/l3/d/h/f unchanged); jsonl test synced 8052->10059B; k=23==23 GATE PASS
 EDA-Eval-DesignFlow-AprSetupAudit-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
 EDA-Eval-DesignFlow-AprStampFix-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
 EDA-Eval-DesignFlow-AutoCellClassify-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
