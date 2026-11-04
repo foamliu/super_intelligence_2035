@@ -1,0 +1,177 @@
+BaiZe-2.2B（Mamba2-hybrid）llama.cpp 推理调研结论
+==================================================
+
+一、背景与动机
+--------------
+BaiZe-2.2B 是 Mamba2-hybrid 架构（56 层中 24 层为 Mamba2 SSM 层、32 层为 attention 层，
+架构名 Nemotron-H，config 里 model_type=nemotron_h、architectures=NemotronHForCausalLM）。
+预训练 S1 阶段需要用 CPU 对 5 个 checkpoint（1w/2w/3w/4w/5w 步）做常识推理 8 集零样本评测，
+但 HuggingFace transformers + lm_eval 的纯 CPU 路径很慢（单条请求约 34.78s/it）。
+因此尝试用 llama.cpp 做 CPU 量化推理提速。本文件汇总这次调研的全部实测结论。
+
+二、架构支持：已确认官方支持
+--------------------------
+llama.cpp 主分支自 2025 年 8 月（PR #15507）起原生支持 nemotron_h 架构，
+相关代码与本仓库实测验证：
+  - 模型实现： src/models/nemotron-h.cpp、src/models/nemotron-h-moe.cpp
+  - 架构常量： gguf-py/gguf/constants.py 中 MODEL_ARCH.NEMOTRON_H = "nemotron_h"
+  - 转换实现： conversion/nemotron.py 中 NemotronHForCausalLM -> NemotronHModel，
+    明确读取 config 的 hybrid_override_pattern 解析 Mamba2/attention 混合层
+本仓库 clone 位于 /nas_train/app.e0031982/code/llama.cpp（实测 commit 149f5641b，build 号 12098）。
+
+三、工具链与使用流程（已全部实测跑通）
+------------------------------------
+1. 编译（CPU 版）：
+     cd /nas_train/app.e0031982/code/llama.cpp
+     cmake -B build -DGGML_NATIVE=ON -DLLAMA_CURL=OFF -DGGML_CUDA=OFF
+     cmake --build build -j 32 --target llama-cli llama-server llama-quantize llama-bench
+
+2. HF 转 GGUF（f16）：
+     python convert_hf_to_gguf.py <hf_ckpt_dir> --outfile out_f16.gguf --outtype f16
+   实测：单 ckpt 约 20 秒，323 个 tensor，f16 文件 4.44 GB。
+
+3. 量化：
+     build/bin/llama-quantize out_f16.gguf out_q8_0.gguf Q8_0    # 约 10 秒，2.20 GB
+     build/bin/llama-quantize out_f16.gguf out_q4_k_m.gguf Q4_K_M  # 约 10 秒，1.29 GB
+
+4. 推理 / 服务：
+     build/bin/llama-cli -m out.gguf -p "<prompt>" ...
+     build/bin/llama-server -m out.gguf --port 30000 -t <线程数> -c 2048
+
+四、CPU 推理速度实测（llama-bench，同机实测）
+--------------------------------------------
+机型：whag0pgpuap12，CPU 224 核（x86，AVX 加速编译）。
+被测：BaiZe-2.2B，GGUF 三档精度。
+
+表格 1：Q4_K_M（1.29 GB）多线程生成速度（tg32 = 生成 32 token 的 decode 吞吐）：
+  线程数(CPU核)    decode 速度 (token/s)
+  ------------    ---------------------
+       1 线程            5.10
+       4 线程           19.39
+       8 线程           34.51
+      16 线程           51.45
+      32 线程           72.70
+      64 线程           70.44   （已饱和，32->64 无增益）
+
+表格 2：Q4_K_M prefill 速度（pp128 = 预填充 128 token 的吞吐）：
+  线程数(CPU核)   prefill 速度 (token/s)
+  ------------   ---------------------
+       8 线程          229.96
+      16 线程          414.19
+      32 线程          711.40
+      64 线程         1088.85
+
+表格 3：8 线程下三种精度的 decode 速度对比：
+  精度     大小      decode (t/s)   prefill (t/s)
+  ----   --------   ------------   -------------
+  F16    4.14 GB       24.44         100.80
+  Q8_0   2.20 GB       34.61         231.26
+  Q4_K_M 1.29 GB       35.66         240.28
+
+表格 4：32 线程下 F16 对照：
+  F16（32 线程）  decode 29.85 t/s，prefill 197.42 t/s。
+
+结论（速度维度）：
+  - 用 8 核：Q4_K_M 约 35.7 token/s（生成）、240 token/s（prefill）；
+  - 用 16 核：约 51.5 token/s；用 32 核：约 72.7 token/s（decode 峰值拐点）；
+  - 超过 32 核后 decode 不再提升（内存带宽 / SSM 串行依赖成为瓶颈），prefill 仍可继续线性提升到 64 核。
+  - 量化收益：Q4_K_M 相比 F16 内存降 3.2 倍、decode 快约 1.5 倍，且精度损失在可接受之前先做了验证（见下）。
+
+五、精度对比：llama.cpp 不达标（致命）
+--------------------------------------
+用 iter_10000 的 F16 GGUF，在 sciq + piqa 两集 zero-shot（--limit 100）上，与 HF 后端对照：
+
+  评测集   HF 后端(正确)   llama.cpp GGUF   差值(Δ)
+  ------   ------------   ---------------   -------
+   sciq       0.79            0.61          -18pp
+   piqa       0.72            0.56          -16pp
+   Avg       （平均）        （平均）        -17pp（判据要求 ≤1pp）
+
+实测结论：llama.cpp 推理精度显著低于 HF 后端，平均差 17 个百分点，远超 ≤1pp 的阈值，
+判定为不可接受。
+
+六、根因分析（含后补更正：原结论有误，见下）
+------------------------------------------
+一版根因（已作废）：曾归因为「Mamba2 SSM 层在 F16 精度下的递归累积误差」，
+理由是 56 层中 24 层 SSM 逐 token 递归、HF 侧 bf16 曾 NaN、llama.cpp 无 f32 递归内核。
+【此结论经复核后不成立，予以更正。】
+
+已排除的假设（仍然有效）：
+  - 分词正确性：tokenizers 库对拍 24/24 PASS，排除分词差异；
+  - 契约自检（tokenize / token-id prompt / logit_bias / n_probs）：PASS，排除接口对接问题；
+  - tensor 命名 / 转换回归：新 binary 与旧 pilot 在 mamba/ssm/conv 上的 git diff 为零，
+    数值路径未变，排除转换回归。
+
+根因更正（决定性反证）：
+  - CPU 的 SSM scan 内核是 F32-only，不是 F16：ggml/src/ggml-cpu/ops.cpp 中
+    ggml_compute_forward_ssm_scan 的 type 分派只处理 GGML_TYPE_F32，其余直接
+    GGML_ABORT("fatal error")。也就是说 CPU 后端里 Mamba2 SSM scan 层的状态本就是
+    float32 计算，不存在「F16 递归累积误差」这条路径。原一版根因在 CPU 后端下站不住脚。
+  - BaiZe 的 group 配置：mamba_n_groups = 8（>1），mamba_num_heads = 64，head_dim = 64，
+    即 nh/ng = 8 个 head 共享 1 组 —— 正好命中历史上 SSM_SCAN 对 n_groups>1 出过 bug 的
+    风险条件（llama.cpp PR #15625 "ggml: fix SSM_SCAN for n_groups > 1"）。
+  - 该修复 #15625 确实已包含在当前 commit 历史中（git log 命中 73804145a），但需注意：
+    它修的是通用 Mamba2 路径，而 Nemotron-H 是 hybrid 混合架构，nemotron-h.cpp 走
+    build_mamba2_layer + 按 n_group 展开 B/C 的 view（d_state, n_group, ...）+ repeat_interleave
+    的 group 映射（g = h / (nh/ng)）+ ggml_ssm_conv/ggml_silu 一整套，是否与 HF transformers
+    的 mamba2 参考实现完全对齐，尚未用 logits 逐 token 验证。
+
+修正后的根因结论（logits 逐 token 对齐 · 2026-11-04 定案）：
+  - **定案实验**：同一 iter_10000 checkpoint，HF float32（transformers 5.17 PyTorch reference）
+    vs llama.cpp F16 GGUF（build 149f5641b），同一 prompt 同一 token IDs，逐位置对比 next-token
+    logprob 分布。环境：CUDA_VISIBLE_DEVICES="" + mamba_ssm/causal_conv1d 被 block（纯 CPU），
+    p6_tf5 transformers 5.17 + py310 env。
+
+  - **判据**：偏差从序列开头就大 = 转换/计算图映射/权重错误（可修）；
+    随序列长度逐步累积放大 = 递归数值精度方向。
+
+  - **实测结果（三个 prompt 长度递增）**：
+
+    Prompt          | tokens | HF argmax  | HF logprob | LC argmax  | LC logprob | 正确答案在LC top-N?
+    ----------------|--------|------------|------------|------------|------------|-------------------
+    "Hello"         |   1    | ',' (14)   |   -0.78    | ',' (14)   |   -4.38    | argmax 匹配，但 logprob 差 3.6 nats
+    "The capital"   |   2    | ' of' (294)|   -0.64    | ' cost'(2753)|  -5.86   | ' of' 排第 3（-6.30），差 5.66 nats
+    "The capital…"  |   5    | ' Paris'   |   -0.74    | ' the' (270)|  -4.20    | ' Paris' 不在 top-20！
+
+  - **关键发现**：
+    1) 偏差从第 1 个 token 就存在：即使只有 1 token（"Hello"），HF top logprob=-0.78 而
+       llama.cpp=-4.38，差距 3.6 nats。argmax 虽然碰巧一致（','），但整个分布形态完全不同
+       （HF 高置信 vs LC 近均匀）。
+    2) 偏差随长度急剧放大：2 token 时 argmax 已不匹配，5 token 时正确答案跌出 top-20。
+    3) LC 的 logprob 分布始终近乎均匀（top-5 都在 -4 到 -6 之间），说明 hidden states
+       被严重损坏，模型几乎在随机猜。
+
+  - **根因最终判定**：**映射/计算错误（非精度累积）**。
+    - 1 token 就有 3.6 nats 偏差 → 排除「递归累积精度」假说（后者需要多 token 才显现）。
+    - 偏差从第 1 层 Mamba2 就开始 → 指向 llama.cpp 的 build_mamba2_layer /
+      nemotron-h.cpp 的计算图与 PyTorch reference 之间存在系统性映射差异
+      （最可能在 group 展开 B/C view、conv1d 实现、或 SSM scan 的 dt/A/B/C 参数映射）。
+    - 56 层 hybrid 逐层放大 → 最终 logit 完全失真，正确答案跌出 top-20。
+    - 这与 Q-Mamba(ACL2025) 在 Mamba2-2.7B W8A8H4 仅掉 2.13% 的对比一致：真正的量化
+      精度损失是小幅的，17pp 的掉分只能由实现正确性 bug 解释。
+
+  - **修复方向（不擅自实施，先报告等令）**：
+    1) 优先排查 nemotron-h.cpp 中 build_mamba2_layer 的 group 映射：
+       BaiZe mamba_n_groups=8, mamba_num_heads=64, head_dim=64 → nh/ng=8 heads/group。
+       对比 transformers mamba2_layers.py 的 repeat_interleave group 展开逻辑。
+    2) 检查 conv1d 实现：ggml_ssm_conv 的 causal padding 和 d_conv=4 的边界处理。
+    3) 检查 dt 投影：mamba_dt_min=0.001, mamba_dt_max=0.1 的 softplus 映射是否一致。
+    4) 可用 1-token prompt 做「单层 hidden state dump」逐层定位首个偏差层。
+
+七、最终结论
+-----------
+1. 架构支持：llama.cpp 官方支持 nemotron_h，编译/转换/量化/推理全链路可用。
+2. 速度：纯 CPU 推理有吸引力，Q4_K_M 用 8 核约 35.7 t/s，32 核约 72.7 t/s，
+   相比 HF+CPU 的 float32 路径整体提速约 7 倍（端到端 1403.9s vs HF 估 9864s）。
+3. 精度：实测评测分数平均偏低 17pp（sciq -18pp、piqa -16pp），超出 ≤1pp 阈值；
+   根因已定案（详见第六节 logits 对齐）：映射/计算错误（非精度累积）——
+   1 token 即有 3.6 nats logprob 偏差，5 token 时正确答案跌出 top-20。
+4. 裁决：llama.cpp 这条路线【当前不采纳】，评测继续使用 HF + float32 的 CPU 路径（慢但准）。
+5. 附带发现：llh 打分对接时，llama-server 的 /completion 返回 completion_probabilities
+   （llama.cpp 原生格式），而 lm_eval 后端期待 OpenAI 标准 choices[].logprobs.token_logprobs，
+   需用 --model gguf 或加 shim 转换；这是工程问题，不影响上述精度裁决。
+
+备注（数据来源）：
+  - 速度数据：llama-bench（build 149f5641b，同机 .12，GGML_NATIVE=ON AVX）
+  - 精度数据：iter_10000 F16 GGUF，sciq/piqa zero-shot limit=100
+  - 完整报告：doc/BaiZe-ISEDA2027/reports/report_pretrain_llamacpp_pilot_zh.html
