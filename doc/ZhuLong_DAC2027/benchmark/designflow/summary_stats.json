@@ -22,9 +22,25 @@
   "prev_sessions": 24085,
   "sessions": 24085,
   "source": "/home/t0002965/log/ssh_eda_search_20261028_174426/summary.tsv (10/28 scan, recounted 11/03 via eda_flow)",
-  "target_mc": 100,
+  "target_mc": 30,
   "updated_at": "2026-11-04 01:35",
   "users_mc100": 182,
   "users_mc300": 60,
-  "users_total": 384
+  "users_total": 384,
+  "mc30": 1369,
+  "users_mc30": 284,
+  "prefilter": {
+    "model": "Qwen3.5-0.8B Q8_0 (llama.cpp @ 127.0.0.1:8086)",
+    "total": 1369,
+    "rule_accept": 1272,
+    "llm_calls": 97,
+    "llm_accept": 31,
+    "llm_uncertain": 66,
+    "llm_reject": 0,
+    "final_accept": 1303,
+    "final_uncertain": 66,
+    "final_reject": 0,
+    "elapsed_sec": 107,
+    "note": "mc>=30 候选池质量高, 93% 规则秒判, 7% 0.8B 复核; 0 reject 说明 mc>=30 几乎全是真 EDA"
+  }
 }
