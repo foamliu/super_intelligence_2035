@@ -189,3 +189,4 @@
 1792995911596_8h2g9.messages.json	jiashengz	hfeg0plg92	362	layout_virtuoso	case	EDA-Eval-DesignFlow-SchWireRebuildGen-001	2026-11-04 13:53	
 1790213910009_nw4v8	e0041123	hfeg0plg104	120	layout_aether	parked		2026-11-04 14:18	session failed: pyAether/PyQt5 sip API v12.0-12.6 vs v12.8 env-mismatch loop, 99 msgs all failed at import pyAether, NO accepted deliverable produced; no gold for case synthesis (red line #1)
 1787625155049_ovo6z	e0014566	hfeg0pkn001	285	layout_virtuoso	case	EDA-Eval-DesignFlow-RsCalcChkPtGen-001	2026-11-04 15:05	
+1789540996998_8qjr2	xinqiaoz	hfeg0plg76	325	physical_verify	case	EDA-Eval-DesignFlow-DrcPairWaiveClassify-001	2026-11-04 15:56	re-claimed: file exists at nested path sessions/<sid>/<sid>.messages.json (1.2MB); earlier GONE was flat-path mistake
