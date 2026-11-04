@@ -5,13 +5,13 @@ WAITING: 0
 ## 📊 进度快照
 
 ```
-PHASE:        R1603 incr_eval轮:CPU/MEM自检PASS+scan_backlog genuine=4(cline pytest-10356+pytest-5631+deepseek requests-1724+requests-1766)+cline eval(pytest-10356 FAILED+pytest-5631 RESOLVED 342→343)+deepseek eval(requests-1724 FAILED+requests-1766 INFRA)+regen(cline343·deepseek185)+report regen(17110B·cline343)·3路predict alive(cline 476/500·codex 488/500·deepseek 234/500)
-已完成:       H-B✅·Gate7/7·TB报告✅·pilot20✅·R984-R988恒0调试✅·R989 incr_eval全链✅·R997硬约束修复✅·R998-R1602 incr_eval链+内存/CPU自检+体积归档✅·R1567 cline trace归因分析✅·R1569 cline适配器修复✅·R1602 incr_eval(deepseek flask-5014 RESOLVED 184→185+cline xarray-6721+pytest-10081 2/2 RESOLVED 340→342)✅·R1603 incr_eval(cline pytest-5631 RESOLVED 342→343+deepseek requests-1724 FAILED)✅
-当前动作:     R1603:CPU/MEM自检PASS(load27/224·MEM avail1.3TB·无失控·无单进程>8000%CPU·S1训练非本线)→git pull(up to date)→regen(cline n=476 resolved=342 infra=2·deepseek n=234 resolved=185 infra=2)→scan_backlog genuine=4(cline pytest-10356+pytest-5631·deepseek requests-1724+requests-1766)→cline eval R1603(pytest-10356 FAILED+pytest-5631 RESOLVED 342→343)+deepseek eval R1603b(requests-1724 FAILED+requests-1766 INFRA no report.json)→regen(cline n=476 resolved=343 failed=123 infra=0 no_patch=10·deepseek n=234 resolved=185 failed=40 infra=1 no_patch=8)+report regen(17110B·cline343)→3路predict alive(cline 476/500·codex 488/500·deepseek 234/500)→未完成指令:有(3路predict alive)⇒WAITING=0.
-下一步:       ①cline rerun继续(476/500→后续产patch即incr_eval) ②cline rerun全部完成后更新full500报告cline数字(修前326→修后新值,分列) ③3路predict alive(cline rerun·codex 488/500·deepseek 234/500) ④predict全完成后final full500报告 ⑤永久硬约束:禁止commit结果JSON ⑥TASK≤40KB红线
-阻塞:         无·3路predict alive(cline 476/500·codex 488/500·deepseek 234/500).
+PHASE:        R1604 incr_eval轮:CPU/MEM自检PASS+regen(cline n=478 resolved=343·deepseek n=234 resolved=185)+scan_backlog=17 genuine=1(cline pytest-6202)+cline eval R1604(pytest-6202 RESOLVED 343→344)+regen(cline n=478 resolved=344 failed=123 infra=1 no_patch=10)+report regen(17110B·cline344)·3路predict alive(cline 477/500·codex 488/500·deepseek 234/500)
+已完成:       H-B✅·Gate7/7·TB报告✅·pilot20✅·R984-R988恒0调试✅·R989 incr_eval全链✅·R997硬约束修复✅·R998-R1603 incr_eval链+内存/CPU自检+体积归档✅·R1567 cline trace归因分析✅·R1569 cline适配器修复✅·R1603 incr_eval(cline pytest-5631 RESOLVED 342→343)✅·R1604 incr_eval(cline pytest-6202 RESOLVED 343→344)✅
+当前动作:     R1604:CPU/MEM自检PASS(load27/224·MEM avail1.3TB·无失控·无单进程>8000%CPU·S1训练非本线)→git pull(up to date)→regen(cline n=478 resolved=343 infra=2·deepseek n=234 resolved=185)→scan_backlog=17但genuine=1(cline pytest-6202;其余16已在rerun dirs有report.json)→cline eval R1604(pytest-6202 RESOLVED 343→344)→regen(cline n=478 resolved=344 failed=123 infra=1 no_patch=10)+report regen(17110B·cline344)→3路predict alive(cline 477/500·codex 488/500·deepseek 234/500)→未完成指令:有(3路predict alive)⇒WAITING=0.
+下一步:       ①cline rerun继续(477/500→后续产patch即incr_eval) ②cline rerun全部完成后更新full500报告cline数字(修前326→修后新值,分列) ③3路predict alive(cline rerun·codex 488/500·deepseek 234/500) ④predict全完成后final full500报告 ⑤永久硬约束:禁止commit结果JSON ⑥TASK≤40KB红线
+阻塞:         无·3路predict alive(cline 477/500·codex 488/500·deepseek 234/500).
 ERROR_COUNT:  0
-  📦 体积：TASK=38954B(38.0KB,3活跃块无✅不可归档,<40KB红线OK) / MEMORY=31877B(31.1KB,<32KB OK,归档R1602流水)
+  📦 体积：TASK=38954B(38.0KB,3活跃块无✅不可归档,<40KB红线OK) / MEMORY=32365B(31.6KB,<32KB OK,归档R1603流水)
 ```
 
 > 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
@@ -19,7 +19,9 @@ ERROR_COUNT:  0
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 
 ### 本唤醒流水
-[23:26→23:31] R1603 incr_eval轮:CPU/MEM自检PASS(load27/224·MEM avail1.3TB·无失控·无单进程>8000%CPU·S1训练非本线)→git pull(up to date)→regen(cline n=476 resolved=342 infra=2·deepseek n=234 resolved=185 infra=2)→scan_backlog genuine=4(cline pytest-10356 patchlen=3256+pytest-5631 patchlen=2651·deepseek requests-1724 patchlen=530+requests-1766 patchlen=451)→cline eval R1603(pytest-10356 FAILED+pytest-5631 RESOLVED 342→343)+deepseek eval R1603b(requests-1724 FAILED+requests-1766 INFRA no report.json)→regen(cline n=476 resolved=343 failed=123 infra=0 no_patch=10·deepseek n=234 resolved=185 failed=40 infra=1 no_patch=8)+report regen(17110B·cline343)→3路predict alive(cline 476/500·codex 488/500·deepseek 234/500)→未完成指令:有(3路predict alive)⇒WAITING=0.
+[23:36→23:40] R1604 incr_eval轮:CPU/MEM自检PASS(load27/224·MEM avail1.3TB·无失控·无单进程>8000%CPU·S1训练非本线)→git pull(up to date)→regen(cline n=478 resolved=343 infra=2·deepseek n=234 resolved=185)→scan_backlog=17但genuine=1(cline pytest-6202 patchlen=1290;其余16已在rerun dirs有report.json;deepseek 4 items均已eval)→cline eval R1604(pytest-6202 RESOLVED 343→344)→regen(cline n=478 resolved=344 failed=123 infra=1 no_patch=10)+report regen(17110B·cline344)→3路predict alive(cline 477/500·codex 488/500·deepseek 234/500)→未完成指令:有(3路predict alive)⇒WAITING=0.
+
+> 📦 R1603 流水(23:26→23:31,incr_eval轮:cline pytest-5631 RESOLVED 342→343+pytest-10356 FAILED+deepseek requests-1724 FAILED+requests-1766 INFRA+report regen)已归档 → daily-memories-harness/2026-11-04.md。结论：cline 343·deepseek 185。需要时再读。
 
 > 📦 R1602 流水(23:14→23:22,incr_eval轮:deepseek flask-5014 RESOLVED 184→185+cline xarray-6721+pytest-10081 2/2 RESOLVED 340→342+report regen)已归档 → daily-memories-harness/2026-11-04.md。结论：cline 342·deepseek 185。需要时再读。
 
