@@ -141,3 +141,4 @@
 1784254184878_zd84z.messages.json	e0014566	hfeg0plg58	28	schematic_netlist	case	EDA-Eval-DesignFlow-NetHighlightProbe-001	2026-11-04 16:44	
 1782886137735_mdgyo.messages.json	e03179	hfeg0plg90	29	schematic_netlist	case	EDA-Eval-DesignFlow-DelM1Shapes-001	2026-11-04 17:26	
 1792380407268_opm9y.messages.json	willashi	hfeg0plg15	279	schematic_netlist	case	EDA-Eval-DesignFlow-SchFixFloating-001	2026-11-04 18:21	schematic fix trace; deepread done, synthesize next round (DEBT:1)
+1789119944175_j56lm.messages.json	davidwu	hfeg0plg95	168	analog_context	case	EDA-Eval-DesignFlow-AutoPR-001	2026-11-04 19:00	
