@@ -18,7 +18,7 @@ EDA-Eval-DesignFlow-CTLESpec-001	BROKEN	../../assets-or-hidden from __file__, no
 EDA-Eval-DesignFlow-CTLEtranChar-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
 EDA-Eval-DesignFlow-ClkBufTran-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
 EDA-Eval-DesignFlow-ConnFileNetChk-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
-EDA-Eval-DesignFlow-CoreTimingSig-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
+EDA-Eval-DesignFlow-CoreTimingSig-001	SAFE	r81 fixed: added _resolve_b_manifest/_resolve_a_manifest workdir/HERE/ASSETS/top-level-hidden fallback (r80 AprLogAudit template); judge-dir ref PASS + 5 neg NEG_RC=0 (c/g/d/g/l) + jsonl test synced 7886->9775B + k_rationale=k_check=14>=8 GATE PASS
 EDA-Eval-DesignFlow-DLLCtrlParse-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
 EDA-Eval-DesignFlow-DRCDeckSyncPlan-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
 EDA-Eval-DesignFlow-DRCDeckWinClean-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
