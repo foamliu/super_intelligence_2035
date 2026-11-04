@@ -59,3 +59,31 @@
 [monitor 15:44:28] Still waiting: 2 containers up (1052s elapsed): ['sweb.eval.matplotlib__matplotlib-23476.verified_full_deepseek-harness', 'sweb.eval.matplotlib__matplotlib-24026.verified_full_deepseek-harness']
 [monitor 15:44:58] Still waiting: 2 containers up (1082s elapsed): ['sweb.eval.matplotlib__matplotlib-23476.verified_full_deepseek-harness', 'sweb.eval.matplotlib__matplotlib-24026.verified_full_deepseek-harness']
 [monitor 15:45:29] Still waiting: 2 containers up (1112s elapsed): ['sweb.eval.matplotlib__matplotlib-23476.verified_full_deepseek-harness', 'sweb.eval.matplotlib__matplotlib-24026.verified_full_deepseek-harness']
+[monitor 15:45:59] Still waiting: 2 containers up (1142s elapsed): ['sweb.eval.matplotlib__matplotlib-23476.verified_full_deepseek-harness', 'sweb.eval.matplotlib__matplotlib-24026.verified_full_deepseek-harness']
+[monitor 15:46:29] Still waiting: 2 containers up (1172s elapsed): ['sweb.eval.matplotlib__matplotlib-23476.verified_full_deepseek-harness', 'sweb.eval.matplotlib__matplotlib-24026.verified_full_deepseek-harness']
+[monitor 15:46:59] Still waiting: 2 containers up (1202s elapsed): ['sweb.eval.matplotlib__matplotlib-23476.verified_full_deepseek-harness', 'sweb.eval.matplotlib__matplotlib-24026.verified_full_deepseek-harness']
+[monitor 15:47:29] Still waiting: 2 containers up (1232s elapsed): ['sweb.eval.matplotlib__matplotlib-23476.verified_full_deepseek-harness', 'sweb.eval.matplotlib__matplotlib-24026.verified_full_deepseek-harness']
+[monitor 15:47:59] Still waiting: 2 containers up (1262s elapsed): ['sweb.eval.matplotlib__matplotlib-23476.verified_full_deepseek-harness', 'sweb.eval.matplotlib__matplotlib-24026.verified_full_deepseek-harness']
+[monitor 15:48:29] Still waiting: 2 containers up (1292s elapsed): ['sweb.eval.matplotlib__matplotlib-23476.verified_full_deepseek-harness', 'sweb.eval.matplotlib__matplotlib-24026.verified_full_deepseek-harness']
+[monitor 15:48:59] Still waiting: 2 containers up (1322s elapsed): ['sweb.eval.matplotlib__matplotlib-23476.verified_full_deepseek-harness', 'sweb.eval.matplotlib__matplotlib-24026.verified_full_deepseek-harness']
+[monitor 15:49:29] Still waiting: 2 containers up (1352s elapsed): ['sweb.eval.matplotlib__matplotlib-23476.verified_full_deepseek-harness', 'sweb.eval.matplotlib__matplotlib-24026.verified_full_deepseek-harness']
+[monitor 15:49:59] Still waiting: 2 containers up (1382s elapsed): ['sweb.eval.matplotlib__matplotlib-23476.verified_full_deepseek-harness', 'sweb.eval.matplotlib__matplotlib-24026.verified_full_deepseek-harness']
+[monitor 15:50:29] Still waiting: 2 containers up (1412s elapsed): ['sweb.eval.matplotlib__matplotlib-23476.verified_full_deepseek-harness', 'sweb.eval.matplotlib__matplotlib-24026.verified_full_deepseek-harness']
+[monitor 15:50:59] Still waiting: 2 containers up (1442s elapsed): ['sweb.eval.matplotlib__matplotlib-23476.verified_full_deepseek-harness', 'sweb.eval.matplotlib__matplotlib-24026.verified_full_deepseek-harness']
+[monitor 15:51:29] Still waiting: 2 containers up (1472s elapsed): ['sweb.eval.matplotlib__matplotlib-23476.verified_full_deepseek-harness', 'sweb.eval.matplotlib__matplotlib-24026.verified_full_deepseek-harness']
+[monitor 15:51:59] Still waiting: 2 containers up (1503s elapsed): ['sweb.eval.matplotlib__matplotlib-23476.verified_full_deepseek-harness', 'sweb.eval.matplotlib__matplotlib-24026.verified_full_deepseek-harness']
+[monitor 15:52:29] Still waiting: 2 containers up (1533s elapsed): ['sweb.eval.matplotlib__matplotlib-23476.verified_full_deepseek-harness', 'sweb.eval.matplotlib__matplotlib-24026.verified_full_deepseek-harness']
+[monitor 15:52:59] Still waiting: 2 containers up (1563s elapsed): ['sweb.eval.matplotlib__matplotlib-23476.verified_full_deepseek-harness', 'sweb.eval.matplotlib__matplotlib-24026.verified_full_deepseek-harness']
+[monitor 15:53:29] Still waiting: 2 containers up (1593s elapsed): ['sweb.eval.matplotlib__matplotlib-23476.verified_full_deepseek-harness', 'sweb.eval.matplotlib__matplotlib-24026.verified_full_deepseek-harness']
+[monitor 15:54:00] Still waiting: 2 containers up (1623s elapsed): ['sweb.eval.matplotlib__matplotlib-23476.verified_full_deepseek-harness', 'sweb.eval.matplotlib__matplotlib-24026.verified_full_deepseek-harness']
+[monitor 15:54:30] Still waiting: 2 containers up (1653s elapsed): ['sweb.eval.matplotlib__matplotlib-23476.verified_full_deepseek-harness', 'sweb.eval.matplotlib__matplotlib-24026.verified_full_deepseek-harness']
+[monitor 15:55:00] Still waiting: 2 containers up (1683s elapsed): ['sweb.eval.matplotlib__matplotlib-23476.verified_full_deepseek-harness', 'sweb.eval.matplotlib__matplotlib-24026.verified_full_deepseek-harness']
+[monitor 15:55:30] Still waiting: 2 containers up (1713s elapsed): ['sweb.eval.matplotlib__matplotlib-23476.verified_full_deepseek-harness', 'sweb.eval.matplotlib__matplotlib-24026.verified_full_deepseek-harness']
+[monitor 15:56:00] Still waiting: 2 containers up (1743s elapsed): ['sweb.eval.matplotlib__matplotlib-23476.verified_full_deepseek-harness', 'sweb.eval.matplotlib__matplotlib-24026.verified_full_deepseek-harness']
+[monitor 15:56:30] Still waiting: 2 containers up (1773s elapsed): ['sweb.eval.matplotlib__matplotlib-23476.verified_full_deepseek-harness', 'sweb.eval.matplotlib__matplotlib-24026.verified_full_deepseek-harness']
+[monitor 15:57:00] === Parsing eval results ===
+[monitor 15:57:00] BEFORE: resolved=173 failed=36 infra=0 no_patch=7 n=216
+[monitor 15:57:00] matplotlib__matplotlib-23476: INFRA (no report.json)
+[monitor 15:57:00] matplotlib__matplotlib-24026: INFRA (no report.json)
+[monitor 15:57:00] AFTER: resolved=173 failed=36 infra=2 no_patch=7 n=218
+[monitor 15:57:00] === DONE ===
