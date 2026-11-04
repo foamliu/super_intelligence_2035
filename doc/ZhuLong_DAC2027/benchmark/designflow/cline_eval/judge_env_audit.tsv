@@ -46,7 +46,7 @@ EDA-Eval-DesignFlow-FloatPinToTop-001	SAFE	r93 _resolve_b_path(workdir,sub) adde
 EDA-Eval-DesignFlow-GdsRectGen-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
 EDA-Eval-DesignFlow-GenSPv2-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
 EDA-Eval-DesignFlow-GmidLut-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
-EDA-Eval-DesignFlow-HierDcSynth-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
+EDA-Eval-DesignFlow-HierDcSynth-001	SAFE	r94 _resolve_a_spec/_resolve_b_spec fallback (workdir->HERE->ASSETS, abspath for cwd=tmp candidate); judge-dir ref PASS; 5 neg FAIL; k=19
 EDA-Eval-DesignFlow-HierNtkSearch-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
 EDA-Eval-DesignFlow-InnovusAudit-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
 EDA-Eval-DesignFlow-InnovusDbAudit-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
