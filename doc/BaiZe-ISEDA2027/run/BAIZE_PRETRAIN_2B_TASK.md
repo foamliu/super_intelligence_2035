@@ -31,6 +31,26 @@
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### [运维令] 2026-11-04 14:0x（**继续调试：定位 llama.cpp 映射 bug 的具体环节，修复并贡献 PR**）· 用户直令 · 最高优先
+
+> 用户原话（2026-11-04）：「安排 pretrain 继续调试，争取解决这个问题，给 llama.cpp 贡献 PR。」（friend 复核：定案已到「错误类型=映射/计算错误」，但「具体哪个环节」尚未收口，需逐层定位。）
+
+**① 背景（已定案的部分）**：logits 1-token 即偏 3.6 nats（`"Hello"` 后 HF top -0.78 vs llama.cpp -4.38），已排除「F16 递归累积精度」，锁定为「映射/计算错误」。裁决「当前不采纳」不变。**本轮要做的 = 把「映射错误」收口到「具体哪一步」，修复之，并产出可提交上游的 PR。**
+
+**② 排查优先级（friend 提供的历史 bug 先例，运维已验，按此顺序）**：
+1. **group 展开语义（最高嫌疑）**：HF Mamba2 早期用 `torch.repeat`（tile 模式 `[W,X,Y,Z,W,X,Y,Z,...]`）是 bug，正确语义是 `repeat_interleave`（`[W,W,W,W,X,X,X,X,...]`）；Nemotron-H 的 Mamba2 mixer 有过对应 `repeat→repeat_interleave` 修复。BaiZe `n_groups=8`。对照 `ggml/src/ggml-cpu/ops.cpp` 的 `ssm_scan_f32` 里 `g = h / (nh/ng)`（repeat_interleave 语义）是否正确、以及 `src/models/mamba-base.cpp` 的 `build_mamba2_layer` 里 B/C 的 `view_4d(..., d_state, n_group, ...)` 是否与 reference 一致。
+2. **conv1d 维度**：llama.cpp Nemotron-H 早期有 conv 维度 bug（`ggml_ssm_conv` 断言的 `ne[1]=17728` vs 期望 `d_inner=12288`，PR #15572 相关；后 fix 用实际值 12288）。核对当前 `build_mamba2_layer` 里 `conv` 的 reshape 与 `d_inner + 2*n_group*d_state` 展开是否正确，BaiZe 实际 d_inner=4096、d_state=128、n_group=8 ⇒ `2*8*128=2048`，`d_inner+2048=6144`，需对照 reference 该维度。
+3. **dt 投影 / softplus 映射**：`mamba_dt_min=0.001, mamba_dt_max=0.1` 的 softplus 对称映射是否与 HF 一致（`ggml_compute_softplus_f32` + `expf(dt_soft_plus * A[h])`）。
+4. **逐层 dump 定位首个偏差层**（friend 最有效手段）：1-token prompt，逐层 dump hidden state，找出「第一层 Mamba2 之后即偏」还是「第 1 层一致、后续放大」→ 前者锁 `build_mamba2_layer`，后者查层间传递/attention 路径。
+
+**③ 修复与 PR**：
+- 定位到具体 bug 后：改 `src/models/mamba-base.cpp` / `ggml/src/ggml-cpu/ops.cpp`（或 nemotron-h.cpp），重编译 → 重跑 1-token logits 对齐（目标 |Δ|→0），再重跑 sciq/piqa limit=100 与 HF 对照（目标 Δ≤1pp）。
+- **PR**：修复确认后，按 llama.cpp 贡献规范整理 commit + PR 描述（背景：Mamba2-hybrid n_groups=8 / 现象 1-token logit 偏差 3.6 nats / 根因 / 修复 / 前后 logits+lm_eval 对照），提交到 `/nas_train/app.e0031982/code/llama.cpp` 的 fork/branch（🚫 直接 push master）；落地前先报告 PR 草稿等用户确认再发。
+
+**④ 交付**：① 定位结论（具体是哪个环节 + 证据：首偏差层/逐层 logit 对照）② 修复 diff + 重编后 1-token 对齐结果 + sciq/piqa 复判 Δ ③ PR 草稿（等确认）④ 更新 `llamacpp.txt` §6：标题「定案」改为「定案（错误类型）」，补「具体环节已定位为 X」，§7 裁决同步。
+
+**⑤ 纪律**：🚫 不碰 GPU（`CUDA_VISIBLE_DEVICES=""`）；🚫 不影响 S1（`-t 8`、`nice -n 19`、两机 CPU ≤80%）；🚫 禁止 `pkill python`/宽泛 kill；不碰 vision/data/harness；commit `pretrain eval:`；心跳写 `未完成指令：有` ⇒ `WAITING: 0` 直到交付。
+
 ### [运维令] 2026-11-04 13:2x（**llama.cpp 掉点根因定案：做 logits 逐 token 对齐（friend 建议 + 运维已验 commit 事实）**）· 用户直令 · 最高优先
 
 > 用户原话（2026-11-04）：pretrain 的 llama.cpp 根因「F16 递归累积误差」被质疑，需做 logits 对齐定案。
