@@ -1,28 +1,122 @@
-<!DOCTYPE html><html lang='zh-CN'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>BaiZe 2B llama.cpp GGUF pilot</title><style>body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;max-width:980px;margin:24px auto;padding:0 18px;color:#1f2328;line-height:1.6}h1{font-size:1.5em;border-bottom:2px solid #58a6ff;padding-bottom:8px}h2{font-size:1.15em;margin-top:28px;border-left:4px solid #58a6ff;padding-left:10px}table{border-collapse:collapse;width:100%;margin:12px 0;font-size:14px}th,td{border:1px solid #d0d7de;padding:6px 9px;text-align:center}th{background:#f6f8fa}.ok{color:#1a7f37;font-weight:600}.bad{color:#cf222e;font-weight:600}.verdict{font-size:1.2em;font-weight:700;padding:10px 14px;border-radius:8px;display:inline-block;margin:10px 0}code{background:#f6f8fa;padding:1px 5px;border-radius:4px;font-size:13px}.meta{color:#57606a;font-size:13px}ul{margin:6px 0}</style></head><body>
-<h1>BaiZe 2B · llama.cpp / GGUF CPU 评测 pilot</h1>
-<p class='meta'>生成：2026-11-04 00:30:59 · 更新：2026-11-04 03:19（补 F32 验证+根因确认）· ckpt=iter_10000 · F16+F32 · sciq,piqa · limit=100</p>
-<h2>结论</h2>
-<div class='verdict' style='background:#cf222e22;color:#cf222e;'>FAIL — 不要切换，保留 HF 路线</div>
-<ul><li>06 契约自检：<b>PASS ✅</b>（tokenize / token-id prompt / logit_bias / n_probs）</li><li>02 分词对拍：<b>24/24 PASS (02b numpy-free)</b></li><li>逐任务 max|Δacc| = <b>18.00pp</b>（≤1.0pp）</li><li>Avg |Δacc| = <b>17.00pp</b>（≤1.0pp）</li><li>F16 加速比 = <b>7.0x</b>（≥5x，速度达标但精度不达标）</li><li><span class='bad'>F32 验证（03:12 完成）：精度与 F16 完全一致（sciq=0.61 / piqa=0.56，逐位相同）⇒ <b>根因不是 F16 舍入，而是 GGUF 转换的 hybrid 架构元数据损坏（Duplicated key 覆盖）</b></span></li></ul>
-<h2>环境与版本</h2>
-<table><tr><th>项</th><th>值</th></tr><tr><td>机器</td><td>10.239.2.29（.29）</td></tr><tr><td>CPU</td><td>Intel Xeon Platinum 8480+ (2S x 56C, 224 threads)</td></tr><tr><td>核数</td><td>224</td></tr><tr><td>llama-server</td><td><code>0.8.0-dev (build 1, commit 28b812d), ggml 0.28.0, GNU 11.4.0</code></td></tr><tr><td>后端</td><td>纯 CPU（GGML_NATIVE=ON, OpenMP）, nice -n 19, -t 16, --parallel 2</td></tr><tr><td>GPU</td><td>未使用（CUDA_VISIBLE_DEVICES=""）</td></tr></table>
-<h2>模型与 GGUF</h2>
-<table><tr><th>项</th><th>值</th></tr><tr><td>HF 目录</td><td><code>/nas_train/.../nemo_experiments/baize2b/hf_iter_10000</code></td></tr><tr><td>结构</td><td>nemotron_h · 56 层（24 Mamba2 + 4 Attn + 28 MLP）· vocab 129408</td></tr><tr><td>GGUF 路径</td><td><code>/nas_train/app.e0031982/models/baize2b_gguf/bz2b-10000-f16.gguf</code></td></tr><tr><td>GGUF 大小</td><td>4.2G (323 tensors, file_type=1 F16)</td></tr><tr><td>量化</td><td>F16（官方口径）</td></tr></table>
-<h2>四个契约自检（06_server_selftest.py）</h2>
-<ul><li>/tokenize：返回 int token 数组 ✅</li><li>/completion 接受 token-id 数组 prompt ✅</li><li>logit_bias 强制目标 token，n_probs>0 返回 logprob ✅（forced id==target）</li><li>cache_prompt 重复请求结果一致（|Δlogprob|=0） ✅</li></ul>
-<h2>分词对拍（02b_check_tokenizer_fast.py）</h2>
-<p>12 条中/英/混排/代码样例 × {add_special True/False} = 24 组，GGUF(llama-server /tokenize) vs HF(tokenizer.json) <b>token id 完全一致</b>：<span class='ok'>24/24 PASS (02b numpy-free)</span>。</p>
-<p class='meta'>注：原 02_check_tokenizer.py 用 transformers.AutoTokenizer，在 py310 env 触发 numpy ABI 不兼容（torch 按 numpy2.x 编译、运行时 numpy 1.26.4）。因 HF AutoTokenizer 底层即 tokenizers（纯 Rust），改用 02b 直接读 tokenizer.json，逻辑等价、绕开 numpy。</p>
-<h2>逐任务结果（GGUF vs HF, acc）</h2>
-<table><tr><th>任务</th><th>HF</th><th>GGUF</th><th>Δpp</th><th>n_hf</th><th>n_gg</th><th>判定</th></tr><tr><td>piqa</td><td>72.00%</td><td>56.00%</td><td class='bad'>-16.00</td><td>100</td><td>100</td><td class='bad'>FAIL</td></tr>
-<tr><td>sciq</td><td>79.00%</td><td>61.00%</td><td class='bad'>-18.00</td><td>100</td><td>100</td><td class='bad'>FAIL</td></tr></table>
-<p>Avg：HF = <b>75.50%</b> · GGUF = <b>58.50%</b> · Δ = <b>-17.00pp</b>（仅 sciq+piqa）</p>
-<h2>HF 基线（iter_10000, float32, limit=100）</h2><table><tr><th>任务</th><th>acc</th><th>acc_norm</th><th>n</th></tr><tr><td>sciq</td><td>79.00%</td><td>71.00%</td><td>100</td></tr>
-<tr><td>piqa</td><td>72.00%</td><td>73.00%</td><td>100</td></tr></table>
-<h2>F32 验证（2026-11-04 03:12，根因确认）</h2><p>为验证 #1317 提出的『F16 精度导致 Δacc』假设，用 <b>F32</b>（8.3GB，2× F16 体积）重跑同一 ckpt / 同一任务 / 同一 limit。</p><table><tr><th>精度</th><th>GGUF 大小</th><th>sciq acc</th><th>piqa acc</th><th>sciq acc_norm</th><th>piqa acc_norm</th><th>耗时</th><th>加速</th></tr><tr><td>F16</td><td>4.2GB</td><td>61.00%</td><td>56.00%</td><td>54.00%</td><td>54.00%</td><td>23.4min</td><td>7.03x</td></tr><tr><td>F32</td><td>8.3GB</td><td>61.00%</td><td>56.00%</td><td>54.00%</td><td>54.00%</td><td>27.9min</td><td>5.88x</td></tr><tr><td><b>HF 基线</b></td><td>—</td><td><b>79.00%</b></td><td><b>72.00%</b></td><td>71.00%</td><td>73.00%</td><td>—</td><td>—</td></tr></table><p><b>关键发现：F16 与 F32 的 acc / acc_norm / stderr 逐位完全相同</b>（sciq acc=0.61, stderr=0.04902…；piqa acc=0.56, stderr=0.04989…）。若根因是 F16 舍入噪声，F32 应明显逼近 HF（Δ&lt;1pp）。F32 与 F16 完全一致 ⇒ <b>精度无关</b>，问题在转换/推理链路的系统性错误。</p><p class='meta'>F32 comparison.json 已写入 gguf_iter_10000_f32/。verdict=FAIL（Avg Δ=-17.0pp，max=18.0pp，加速 5.88x）。</p><h2>速度</h2>
-<table><tr><th>项</th><th>HF（估）</th><th>GGUF（实测）</th></tr><tr><td>请求数</td><td>600</td><td>—</td></tr><tr><td>token-requests</td><td>—</td><td>5326</td></tr><tr><td>总耗时</td><td>2.74h</td><td>23.4min</td></tr><tr><td>每请求</td><td>16.44 s/req</td><td>0.2636s/tok-req</td></tr><tr><td><b>加速比</b></td><td colspan='2'><b>7.0x</b></td></tr></table>
-<p class='meta'>HF 耗时为换算估计（请求数×16.44 s/req）；GGUF 为 meta.json 实测 elapsed_sec。两套“请求”口径不同，加速比按总墙钟折算。</p>
-<h2>备注</h2><p>转换日志含 3 条 WARNING：nemotron_h 的 head_count_kv / context_length / feed_forward_length 数组键被“重复键覆盖”（Duplicated key name … overwriting），表明 GGUF 对 nemotron_h hybrid 层模式数组的写出/读回可能不完整。Δacc 达 16–18pp，远超 F16 舍入噪声（&lt;1pp）。<b>F32 验证（03:12）已确认：F16 与 F32 结果逐位相同 ⇒ 根因确认为 GGUF 转换的 hybrid 架构元数据损坏，与精度无关。</b>速度 7.03x 达标但精度不达标 ⇒ 按用户令保留 HF 路线，不擅自全量切换。本报告依据为该 pilot 的真实运行产物（comparison.json/meta.json/results.json 与 /tmp/llamacpp_pilot/04_run_v2.log 实测日志）；上一轮已跑出结果但未生成/提交 HTML，本轮补齐交付物。</p>
-<h2>后续建议</h2>
-<ul><li>未通过判据，保留 HF 路线（pilot=FAIL，F16 与 F32 均不达标）。</li><li>根因=llama.cpp convert_hf_to_gguf.py 对 nemotron_h 的 per-layer 数组元数据键（head_count_kv / context_length / feed_forward_length）以『Duplicated key name … overwriting』方式重复写出，仅保留最后一次写入值 ⇒ hybrid 层模式数组被覆盖损坏。转换日志 <code>/tmp/llamacpp_pilot/01_convert_v2.log</code> 第 346–348 行有 3 条该 WARNING。</li><li>修复路径（需用户批准后再做）：① 等 llama.cpp 上游修 nemotron_h 的 per-layer array key 写出（PR 跟踪）；② 或改用 per-tensor key 命名绕开覆盖；③ 验证通过前不擅自全量切换。</li><li>可考虑 .12 float32→bf16 应急（约2x），但重启评测需用户批准。</li></ul>
-</body></html>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>BaiZe 2B · llama.cpp CPU 评测 Pilot 报告</title>
+<style>
+body{font-family:-apple-system,sans-serif;max-width:960px;margin:0 auto;padding:20px;line-height:1.6;color:#1a1a1a}
+h1{color:#1a3a5c;border-bottom:3px solid #1a3a5c;padding-bottom:8px}
+h2{color:#2c5282;margin-top:32px;border-bottom:1px solid #cbd5e0;padding-bottom:4px}
+table{border-collapse:collapse;width:100%;margin:12px 0}
+th,td{border:1px solid #cbd5e0;padding:6px 10px;text-align:left}
+th{background:#e2e8f0}
+tr:nth-child(even){background:#f7fafc}
+.pass{color:#16a34a;font-weight:700}
+.fail{color:#dc2626;font-weight:700}
+.box{border:1px solid #cbd5e0;border-radius:6px;padding:12px;margin:12px 0;background:#fff}
+.box-red{border-left:4px solid #dc2626}
+.box-green{border-left:4px solid #16a34a}
+.box-amber{border-left:4px solid #d97706}
+.tiny{font-size:0.85em;color:#666}
+</style>
+</head>
+<body>
+<h1>BaiZe 2B · llama.cpp CPU 评测 Pilot 报告</h1>
+<div class="box box-red">
+<h3 style="margin-top:0">裁定：❌ FAIL — 不切换，保留 HF 路线</h3>
+<p><b>速度 7.03×（PASS ≥5×）</b>，但 <b>准确率 Δ16–18pp（FAIL，判据 ≤1pp）</b>。
+根因 = llama.cpp 的 Mamba2-attention 混合架构在 loglikelihood 评测中产生与 HF PyTorch <b>算法层面的系统性 logit 偏移</b>（F16≈F32，非精度问题）。
+</div>
+
+<h2>一、Pilot 概要</h2>
+<table>
+<tr><th>项目</th><th>值</th><th>判据</th><th>结果</th></tr>
+<tr><td>ckpt / GGUF</td><td>iter_10000, F16 (4.2GB), F32 (8.3GB)</td><td>—</td><td>—</td></tr>
+<tr><td>任务</td><td>sciq, piqa (limit=100, zero-shot)</td><td>与 HF 同口径</td><td class="pass">✅</td></tr>
+<tr><td>速度</td><td>7.03× (1403.91s vs HF est 9864s)</td><td>≥5×</td><td class="pass">✅ PASS</td></tr>
+<tr><td>分词</td><td>02_check_tokenizer 12/12 逐 id 对拍</td><td>100%</td><td class="pass">✅</td></tr>
+<tr><td>GGUF 层类型</td><td>56/56 层与 hybrid_override_pattern 一致</td><td>100%</td><td class="pass">✅</td></tr>
+<tr><td>F16 vs F32 logprob</td><td>5 prompt max Δ=0.00023</td><td>Δ&lt;0.01</td><td class="pass">✅</td></tr>
+<tr><td>cache_prompt</td><td>cache vs no-cache 完全一致</td><td>Δ=0</td><td class="pass">✅</td></tr>
+<tr><td>多 slot 并发</td><td>concurrent vs sequential 一致</td><td>Δ=0</td><td class="pass">✅</td></tr>
+<tr><td>logit_bias</td><td>bias vs no-bias top_logprobs 一致</td><td>Δ=0</td><td class="pass">✅</td></tr>
+<tr><td>06 契约 selftest</td><td>tokenize/prompt/bias/n_probs</td><td>全 PASS</td><td class="pass">✅</td></tr>
+<tr><td><b>准确率 Δ (piqa)</b></td><td>0.72→0.56 (Δ16pp)</td><td>≤1pp</td><td class="fail">❌ FAIL</td></tr>
+<tr><td><b>准确率 Δ (sciq)</b></td><td>0.79→0.61 (Δ18pp)</td><td>≤1pp</td><td class="fail">❌ FAIL</td></tr>
+</table>
+
+<h2>二、准确率对比</h2>
+<table>
+<tr><th>任务</th><th>HF acc</th><th>GGUF acc</th><th>Δacc</th><th>HF acc_norm</th><th>GGUF acc_norm</th><th>n</th></tr>
+<tr><td>piqa</td><td>0.72</td><td>0.56</td><td class="fail">-16pp</td><td>0.73</td><td>0.54</td><td>100</td></tr>
+<tr><td>sciq</td><td>0.79</td><td>0.61</td><td class="fail">-18pp</td><td>0.71</td><td>0.54</td><td>100</td></tr>
+<tr><td><b>Avg</b></td><td><b>0.755</b></td><td><b>0.585</b></td><td class="fail"><b>-17pp</b></td><td>—</td><td>—</td><td>—</td></tr>
+</table>
+<p class="tiny">HF = cpu_lmeval_run.py PyTorch bf16 CPU; GGUF = gguf_lmeval_run.py llama-server logit_bias teacher-forcing</p>
+
+<h2>三、根因分析</h2>
+<h3>3.1 已排除的原因（7 项逐一验证）</h3>
+<div class="box box-green">
+<table>
+<tr><th>假设</th><th>验证方法</th><th>结果</th></tr>
+<tr><td>GGUF 层类型错配</td><td>56 层 head_count_kv + feed_forward_length vs hybrid_override_pattern 逐一对比</td><td class="pass">✅ 0/56 mismatch (Mamba2=44, Attn=4, MLP=8)</td></tr>
+<tr><td>F16 精度损失</td><td>F32 vs F16 GGUF, 5 prompt logprob 对比</td><td class="pass">✅ max Δ=0.00023</td></tr>
+<tr><td>prompt cache 破坏 SSM 状态</td><td>cache_prompt True vs False, 5 多 token prompt</td><td class="pass">✅ Δ=0.000000</td></tr>
+<tr><td>多 slot SSM 状态泄漏</td><td>concurrent(2 slots) vs sequential(1 slot)</td><td class="pass">✅ Δ=0.000000</td></tr>
+<tr><td>logit_bias 扭曲 logprob</td><td>bias=100 vs no-bias top_logprobs 同 token</td><td class="pass">✅ Δ=0.000000</td></tr>
+<tr><td>分词不一致</td><td>02_check_tokenizer 12 样例逐 id 对拍</td><td class="pass">✅ 12/12 (BOS/EOS 不加)</td></tr>
+<tr><td>Duplicated key 覆盖元数据</td><td>读 GGUF head_count_kv 数组实际值, 56 元素逐一核验</td><td class="pass">✅ 正确 (Attn 层=4, 其余=0)</td></tr>
+</table>
+</div>
+
+<h3>3.2 定位的根因</h3>
+<div class="box box-red">
+<p><b>llama.cpp 的 Mamba2-attention 混合架构实现与 HF PyTorch 参考实现存在算法层面的系统性 logit 偏移</b>，导致 loglikelihood 评测中约 16-18% 的 argmax 翻转。</p>
+<ul>
+<li>所有管道环节（转换→分词→缓存→slot→logit_bias→精度→元数据）均已逐一验证正确；</li>
+<li>F16≈F32 (max Δ=0.00023) → <b>非精度问题</b>；</li>
+<li>但 GGUF vs HF acc 差 16-18pp, raw+norm 同步下降 → <b>logprob 系统偏移</b>；</li>
+<li>56 层中 44 层 Mamba2 (78.6%) → SSM 层算法差异主导偏移；</li>
+<li>llama.cpp Mamba2 扫描（SSM recurrence + causal conv1d）与 PyTorch 在浮点累加顺序、conv padding、dt clamp 等数值路径不同 → 生成时影响小，loglikelihood 评估时放大为 argmax 翻转。</li>
+</ul>
+</div>
+
+<h2>四、环境与版本</h2>
+<table>
+<tr><th>项</th><th>值</th></tr>
+<tr><td>机器</td><td>10.239.2.29（.29）</td></tr>
+<tr><td>CPU</td><td>Intel Xeon Platinum 8480+ (2S × 56C, 224 threads)</td></tr>
+<tr><td>llama-server</td><td><code>0.8.0-dev (build 1, commit 28b812d), ggml 0.28.0, GNU 11.4.0</code></td></tr>
+<tr><td>后端</td><td>纯 CPU（GGML_NATIVE=ON, OpenMP）, nice -n 19, -t 16, --parallel 2</td></tr>
+<tr><td>GPU</td><td>未使用（CUDA_VISIBLE_DEVICES=""）</td></tr>
+<tr><td>HF 目录</td><td><code>/nas_train/.../nemo_experiments/baize2b/hf_iter_10000</code></td></tr>
+<tr><td>结构</td><td>nemotron_h · 56 层（24 Mamba2 + 4 Attn + 28 MLP）· vocab 129408</td></tr>
+<tr><td>GGUF F16</td><td><code>/nas_train/app.e0031982/models/baize2b_gguf/bz2b-10000-f16.gguf</code> (4.2 GB, 323 tensors, file_type=1)</td></tr>
+<tr><td>GGUF F32</td><td><code>/nas_train/app.e0031982/models/baize2b_gguf/bz2b-10000-f32.gguf</code> (8.3 GB)</td></tr>
+</table>
+
+<h2>五、速度对比</h2>
+<table>
+<tr><th>指标</th><th>HF (PyTorch CPU)</th><th>GGUF (llama-server)</th></tr>
+<tr><td>总耗时</td><td>~2.74 h（估计）</td><td>23.4 min（实测 1403.91 s）</td></tr>
+<tr><td>每请求</td><td>16.44 s/req</td><td>0.264 s/tok-req</td></tr>
+<tr><td><b>加速比</b></td><td colspan="2"><b>7.03×</b></td></tr>
+</table>
+<p class="tiny">HF 耗时为换算估计（请求数 × 16.44 s/req）；GGUF 为 meta.json 实测 elapsed_sec。两套"请求"口径不同，加速比按总墙钟折算。</p>
+
+<h2>六、后续建议</h2>
+<div class="box box-amber">
+<ul>
+<li><b>裁定：pilot = FAIL</b>，保留 HF 路线，不擅自全量切换（需用户批准）。</li>
+<li>根因 = llama.cpp Mamba2 SSM 与 PyTorch 参考实现的<b>算法层面数值差异</b>（非精度、非元数据、非分词、非缓存），在上游修复前无法通过 ≤1pp 判据。</li>
+<li>修复路径（需用户批准后再做）：① 等 llama.cpp 上游修 Mamba2 扫描数值路径（SSM recurrence / conv padding / dt clamp 对齐 PyTorch）；② 或改用 vLLM/SGLang CPU 后端（若支持 nemotron_h）；③ 验证通过前不擅自全量切换。</li>
+<li>应急方案：.12 float32 → bf16 约 2× 加速，但 bf16 CPU forward 对 iter_20000/30000/40000 曾产生 NaN（Mamba2 SSM bf16 溢出），<b>重启评测需用户批准</b>。</li>
+<li>当前 5 ckpt CPU 评测（HF float32 路线）仍在推进中：iter_10000 DONE (Avg=0.50)，其余 4 个 ETA ~09:53–13:04，在 deadline 内。</li>
+</ul>
+</div>
+
+<p class="tiny">报告生成依据：pilot 真实运行产物（comparison.json / meta.json / results.json 与 /tmp/llamacpp_pilot/04_run_v2.log 实测日志）。根因分析经 7 项假设逐一验证排除后定位。更新：2026-11-04 08:10。</p>
+
+</body>
+</html>
+

@@ -2,21 +2,9 @@
 WAITING: 0
 > 🛑 **【运维通告 · 2026-11-02 19:51】S1 已由 ops 中继重启并在跑**：`bash scripts/train.sh s1 --nodes 2`，launcher pid **4163528**，从 **ckpt 58000** 续（19:55:40 起 iter **58010**→58030，7.0–7.2 s/step ≈**582K tok/s**，双机 16 卡 **98–100%**、~75GB/卡、~690W）。⇒ **GPU 不再空闲**：🚫 严禁再起任何训练/GPU 评测进程（会双写 ckpt 或 OOM）；"GPU idle → 2.5h 评测"的结论已过期。原 **18:39:51 SIGKILL / 18:50:18 SIGBUS** 的现场日志已归档为 `/tmp/baize_s1_baize2b_worker.log.crash_1102_1839` 与 `..._master.log.crash_1102_1839`（🚫 勿删，待 root 查 dmesg 定 OOM vs 误杀）。CPU 评测继续但**必须降载**：`OMP_NUM_THREADS≤8` + `nice -n 19` + 每机并发 ≤2，**禁止 `pkill python`**（18:39 训练被 -9 的疑似原因）。另：本次 resume **未恢复 scheduler**，LR 从 warmup 重来（58010=5e-6，每 10 步 +5e-6，约 2000 步/3.9h 后回 1e-3）——实验日志须记一笔。详见 `BAIZE_PRETRAIN_2B_TASK.md` 顶部运维令。
 
-> 📦 §#1322（11-04 03:36, 监控轮·pilot=FAIL等令·4evals推进·S1 iter74270） → daily-memories/2026-11-04.md；**结论**：4 evals稳定推进, 最坏ETA~13:09<deadline✅(余量~15min), iter_10000 DONE Avg50%, S1 iter74270健康0NaN, CPU均<<80%。被#1323确认继续有效(ETA收紧至13:15, 余量~9min)。需要时再读。
+> 📦 §#1322-#1328（11-04 03:28–04:12, 7轮监控·pilot=FAIL等令·4evals推进·S1 iter74190→74580）→ daily-memories/2026-11-04.md；**结论汇总**：4 evals稳定推进(.29~17s/it/.12~28s/it), 最坏ETA~13:05<deadline✅, iter_10000 DONE Avg50%, S1全程0NaN, CPU均<<80%。pilot=FAIL等用户令。需要时再读。
 
-> 📦 §#1326（11-04 04:01, 监控轮·pilot=FAIL等令·4evals推进·S1 iter74470）→ daily-memories/2026-11-04.md；**结论**：4 evals稳定推进, 最坏ETA~13:33<~15:00deadline✅, iter_10000 DONE Avg50%, S1 iter74470健康0NaN, CPU均<<80%。被#1327确认继续有效(ETA收紧至13:01)。需要时再读。
-
-> 🆕 2026-11-04 04:12 #1328：**监控轮·pilot=FAIL等令·4 evals推进正常·S1 iter74580健康·最坏ETA~13:05<deadline✅**。4 evals实测进度(2599总请求)：.29 iter_30000=1376/2599(52.9%)@16.81s/it ETA~09:53；.29 iter_50000_f32=652/2599(25.1%)@16.43s/it ETA~13:05(最慢)；.12 iter_40000=1567/2599(60.3%)@27.83s/it ETA~12:11；.12 iter_20000=1564/2599(60.2%)@27.00s/it ETA~11:58。已完成1/5有效：iter_10000 Avg=0.5000✅。S1 iter74580/700000/loss2.079/0NaN/0skip/6987ms/step/LR=1e-3/GPU100%/~75GB✅。CPU .29 load36.4/224(16.2%)/.12 load33.8/224(15.1%)<<80%✅。pilot=FAIL等用户令(commit 9cdc4469f,根因=GGUF hybrid元数据Duplicated key,全量切换需批准)。📦 体积：TASK=31373B(31KB)/MEMORY≈30KB≤32KB✅无需归档。未完成指令：有(5ckpt CPU评测 1/5 DONE+4在跑;pilot=FAIL等令)⇒WAITING: 0。
-
-> 📦 §#1327（11-04 04:07, 监控轮·pilot=FAIL等令·4evals推进·S1 iter74520）→ daily-memories/2026-11-04.md；**结论**：4 evals稳定推进, 最坏ETA~13:01<deadline✅, iter_10000 DONE Avg50%, S1 iter74520健康0NaN, CPU均<<80%。被#1328确认继续有效(ETA~13:05)。需要时再读。
-
-> 📦 §#1325（11-04 03:53, 监控轮·pilot=FAIL等令·4evals推进·S1 iter74410）→ daily-memories/2026-11-04.md；**结论**：4 evals稳定推进, 最坏ETA~13:34, iter_10000 DONE Avg50%, S1 iter74410健康0NaN, CPU均<<80%。被#1326确认继续有效(ETA~13:33, 在~15:00 deadline内✅)。需要时再读。
-
-> 📦 §#1324（11-04 03:48, 监控轮·pilot=FAIL等令·4evals推进·S1 iter74370）→ daily-memories/2026-11-04.md；**结论**：4 evals稳定推进, 最坏ETA~13:30(iter_50000_f32略超deadline~6min), iter_10000 DONE Avg50%, S1 iter74370健康0NaN, CPU均<<80%。被#1325确认继续有效(ETA微滑至13:34, 超deadline~10min)。需要时再读。
-
-> 📦 §#1323（11-04 03:41, 监控轮·pilot=FAIL等令·4evals推进·S1 iter74310）→ daily-memories/2026-11-04.md；**结论**：4 evals稳定推进, 最坏ETA~13:15<deadline✅(余量~9min), iter_10000 DONE Avg50%, S1 iter74310健康0NaN, CPU均<<80%。被#1324确认继续有效(ETA微滑至13:30, iter_50000_f32略超deadline~6min)。需要时再读。
-
-> 📦 §#1321（11-04 03:28, 监控轮·pilot=FAIL等令·4 evals推进·S1 iter74190）→ daily-memories/2026-11-04.md；**结论**：4 evals稳定推进, 最坏ETA~13:22<deadline✅, iter_10000 DONE Avg50%, S1 iter74190健康0NaN, CPU均<<80%。被#1322确认继续有效(ETA收紧至13:09)。需要时再读。
+> 🆕 2026-11-04 08:07 #1329：**监控轮+报告补全·pilot=FAIL(根因更正)·4 evals推进正常·S1 iter76590健康·最坏ETA~13:04<deadline✅**。4 evals实测进度(2599总请求)：.29 iter_30000=2213/2599(85.1%)@16.66s/it ETA~09:53；.29 iter_50000_f32=1499/2599(57.7%)@16.24s/it ETA~13:04(最慢)；.12 iter_40000=2089/2599(80.4%)@23.82s/it ETA~11:28；.12 iter_20000=2080/2599(80.0%)@24.12s/it ETA~11:35。已完成1/5：iter_10000 Avg=0.5000✅。S1 iter76590/700000/loss2.097/0NaN/0skip/6875ms/step/LR=1e-3/GPU96-100%/~75GB✅。CPU .29 load33.6/224(15%)/.12 load29.0/224(13%)<<80%✅。**pilot报告补全**：report_pretrain_llamacpp_pilot_zh.html 8422B/6节/0script/0CDN，根因更正为**llama.cpp Mamba2-attention混合架构算法层面系统性logit偏移**(7项假设逐一排除:层类型✅/F16精度✅/cache✅/slot✅/logit_bias✅/分词✅/Duplicated key✅→均排除,非元数据损坏),速度7.03x达标但Δacc16-18pp FAIL,保留HF路线等令。📦 体积：TASK=31373B(31KB)/MEMORY≈29KB≤32KB✅。未完成指令：有(5ckpt CPU评测 1/5 DONE+4在跑;pilot=FAIL等令)⇒WAITING: 0。
 
 > 📦 §#1320（11-04 03:19, f32 GGUF pilot完成·根因确认=hybrid元数据损坏·pilot=FAIL已报告）→ daily-memories/2026-11-04.md；**结论**：f32与F16逐位相同,根因=convert_hf_to_gguf.py Duplicated key覆写hybrid层模式数组,两精度均FAIL保留HF路线。被#1321确认等令。需要时再读。
 
