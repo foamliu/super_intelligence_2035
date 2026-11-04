@@ -48,7 +48,7 @@ EDA-Eval-DesignFlow-GenSPv2-001	BROKEN	../../assets-or-hidden from __file__, no 
 EDA-Eval-DesignFlow-GmidLut-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
 EDA-Eval-DesignFlow-HierDcSynth-001	SAFE	r94 _resolve_a_spec/_resolve_b_spec fallback (workdir->HERE->ASSETS, abspath for cwd=tmp candidate); judge-dir ref PASS; 5 neg FAIL; k=19
 EDA-Eval-DesignFlow-HierNtkSearch-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
-EDA-Eval-DesignFlow-InnovusAudit-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
+EDA-Eval-DesignFlow-InnovusAudit-001	SAFE	r95 _resolve_b_dir(workdir) fallback chain workdir/hidden->HERE/hidden->ASSETS_HIDDEN->TOP_HIDDEN + abspath; judge-dir + repo layout both PASS; 5 neg + §4.9 all FAIL (NEG_RC=0) hitting b/c/d; k=14 gate PASS
 EDA-Eval-DesignFlow-InnovusDbAudit-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
 EDA-Eval-DesignFlow-InnovusViaCutDiag-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
 EDA-Eval-DesignFlow-InstCurrentMeasGen-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
