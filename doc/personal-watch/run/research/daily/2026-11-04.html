@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>论文推荐日报 · 2026-11-04（早报 · 3/5）· research 线</title>
+<title>论文推荐日报 · 2026-11-04（晚报 · 5/5 收口）· research 线</title>
 <style>
   :root { --primary:#0b3d6e; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700; --bad:#cf222e;
           --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
@@ -52,14 +52,17 @@
 </head>
 <body>
 <header class="hero">
-  <h1>论文推荐日报 · 2026-11-04 <span class="badge b-am">早报 · 3/5</span></h1>
-  <div class="sub">每日 5 篇推荐论文（早 3 / 晚 2）· <b>今日进度 3 / 5（待 18:00 晚报补 2 篇）</b> · 早 3 篇按<b>「借鉴」</b>口径（数据墙下的多轮预训练 / MoE 训练省显存 / 优化器与微调的取舍），三篇分属<b>数据与缩放 / 训练系统 / 优化器</b>，刻意避免同质。</div>
+  <h1>论文推荐日报 · 2026-11-04 <span class="badge b-pm">晚报 · 5/5 收口</span></h1>
+  <div class="sub">每日 5 篇推荐论文（早 3 / 晚 2）· <b>今日进度 3 / 5 → 5 / 5 ✅</b> · 早 3 篇按<b>「借鉴」</b>口径（数据墙下的多轮预训练 / MoE 训练省显存 / 优化器与微调的取舍），三篇分属<b>数据与缩放 / 训练系统 / 优化器</b>，刻意避免同质；晚 2 篇按<b>「科普」</b>口径（AI 在暴雨警报里说「今天很平静」/ AI 数据中心给电网当「调峰电源」），两篇都带<b>反直觉结论 + 可核验数字</b>，刻意避开与早 3 同主题。</div>
   <div class="meta">
-    <span>📅 日期：2026-11-04（CST 本地日，<b>周三</b>；本轮 = UTC 2026-11-03T22:00）</span>
-    <span>🏷 标识：早报（AM · 3 / 5）</span>
+    <span>📅 日期：2026-11-04（CST 本地日，<b>周三</b>；本轮 = UTC 2026-11-04T10:00）</span>
+    <span>🏷 标识：晚报（PM · 5 / 5）</span>
     <span>🎯 数据源：arXiv（export.arxiv.org API + 官方 <code>id_list</code> 复核）</span>
-    <span>🕒 生成：2026-11-04 06:0x CST</span>
+    <span>🕒 生成：2026-11-04 06:0x CST（AM）→ <b>18:0x CST 优化（PM）</b></span>
   </div>
+  <div class="progress">📈 <b>今日进度：5 / 5 ✅</b> —— 早 3 篇 <span class="badge b-jz">借鉴</span>（<b>多轮缩放</b>：10–100M 唯一 FineWeb token 上最优约 <b>9–14 轮</b>后验证损失回升，<b>4 模型集成</b>在匹配算力下比 2× 宽单模型低 <b>0.16 nats</b>，并给出「集成规模随算力增长 ≥ 单成员训练时长」的分配律；<b>Sonar-MoE</b>：反向中按整批专家张量更新并释放梯度，峰值显存 <b>−19%–22%</b>（OLMoE <b>55.6→43.6 GB</b>）、步时 <b>−17%–23%</b>、吞吐 <b>+20.2%–30.4%</b>；<b>Muon vs AdamW</b>：大数据预算下 AdamW 微调后反超，交叉点随模型增大左移（30M：<b>320 TPR</b> → 600M：<b>10 TPR</b>））。<br>🆕 <b>晚 2 篇 <span class="badge b-kp">科普</span></b>（<b>本日科普 TOP-1</b>）<b>「假安慰」</b>：警报生效时，看不到警报数据的 AI 助手有 <b>37.7%</b> 的概率告诉你「目前平静」；<b>让它「主动声明自己看不到警报」反而更糟（44.9%）</b>；<b>数据中心调峰</b>：不推迟任何请求，只把「换个小模型也无所谓」的查询挪过去，10,000 张 H100 上就能削 <b>1.19 MW（16%）</b>，<b>约 10 秒</b>到位。<br>ℹ️ <b>批次</b>：AM 为 <code>2026-11-02</code>（未刷新）→ <b>PM 已刷新到 <code>2026-11-03</code></b>（<code>cat:cs.CL</code> <code>totalResults</code> <b>124,521 → 124,606</b>、最新 <code>2026-11-03T18:59:52Z</code>（<code>2611.05376v1</code>）、cs.CL 区间 <b>304 → 384</b>、全库同区间 <b>4,570 → 6,246</b>、广度 <b>642,318 → 642,920</b>；4 条独立复核 <b>4/4</b> <code>200</code>、<code>attempts=1</code>）。<b>美东 11-03 20:00 ET = 本地 11-04 09:00</b> 的新批如约到达，本轮候选池 <b>325 条</b>（与 <code>SEEN</code> <b>0 条重复</b>）。</div>
+  <div class="disc">⚠️ <b>免责</b>：本页所有条目均为「<b>推荐 / 待读线索</b>」，<b>非结论</b>；摘要基于 arXiv 官方标题 + 摘要 + 论文 PDF 正文核对（部分表格/章节），<b>未逐篇精读全篇</b>。不得据以声称「已验证 / 可复现收益 / SOTA 已证」。数字均<b>作者自报</b>，本线未复现。</div>
+</header>
   <div class="progress">📈 <b>今日进度：3 / 5</b> —— 早 3 篇 <span class="badge b-jz">借鉴</span>（<b>多轮缩放</b>：10–100M 唯一 FineWeb token 上最优约 <b>9–14 轮</b>后验证损失回升，<b>4 模型集成</b>在匹配算力下比 2× 宽单模型低 <b>0.16 nats</b>，并给出「集成规模随算力增长 ≥ 单成员训练时长」的分配律；<b>Sonar-MoE</b>：反向中按整批专家张量更新并释放梯度，峰值显存 <b>−19%–22%</b>（OLMoE <b>55.6→43.6 GB</b>）、步时 <b>−17%–23%</b>、吞吐 <b>+20.2%–30.4%</b>；<b>Muon vs AdamW</b>：大数据预算下 AdamW 微调后反超，交叉点随模型增大左移（30M：<b>320 TPR</b> → 600M：<b>10 TPR</b>））。<br>ℹ️ <b>批次</b>：仍为 <code>2026-11-02</code>（<code>cat:cs.CL</code> 探针 <code>totalResults=124,521</code>、最新 <code>2026-11-02T18:57:36Z</code>（<code>2611.03634v1</code>）、cs.CL 区间 <b>304</b>、全库同区间 <b>4,570</b>、广度 <b>642,318</b> —— <b>与 11-03 PM 逐项相同</b>；4 条独立复核 <b>4/4</b> <code>200</code>）。本地 <b>11-04 周三 06:00 = 美东 11-03 周二 17:00</b>，下一批公告在 <b>美东 11-03 20:00 ET = 本地 11-04 09:00</b>，<b>晚于本轮约 3 小时</b> ⇒ 未刷新符合日历。故早 3 篇取自 PM 轮已建好的 <b>337 条</b> 11-02 批次候选池（与 <code>SEEN</code> <b>0 条重复</b>；PM 已用 2 条，本轮从剩余里选 3 条；附录 A/B）。</div>
   <div class="disc">⚠️ <b>免责</b>：本页所有条目均为「<b>推荐 / 待读线索</b>」，<b>非结论</b>；摘要基于 arXiv 官方标题 + 摘要 + 论文 PDF 正文核对（部分表格/章节），<b>未逐篇精读全篇</b>。不得据以声称「已验证 / 可复现收益 / SOTA 已证」。数字均<b>作者自报</b>，本线未复现。</div>
 </header>
@@ -75,6 +78,11 @@
   <b>取证路径</b>：本轮<b>未重复</b> R1′ 分源探针（<code>arxiv_fetch.py --probe</code>）；HF / RSS 状态<b>沿用 r129</b>（HF <code>daily_papers</code> ❌ <code>[Errno 101]</code>；RSS <code>cs.LG</code> 偶发 <code>ConnectionResetError(104)</code>），<b>仅作发现、不作本轮证据</b>。选文证据全部来自：① 4 条批次复核（<code>raw/2026-11-04-am-verify-r131.txt</code>，4/4 <code>200</code> + <code>application/atom+xml; charset=utf-8</code>）；② 官方 <code>id_list</code> 复核（<code>raw/2026-11-04-am-idlist-r131.xml</code>，5/5 命中，含 PM 的 2 篇；本轮 3 篇 <code>published</code> 前缀 <code>2026-11-02</code> 断言通过）；③ 候选池来自 PM 轮 <code>raw/2026-11-03-pm-candidates-r130.json</code>（5 条单分类查询 5/5 <code>200</code>）。<br>
   <b>时效</b>：三篇 <code>published</code> 均为 <b>2026-11-02</b>（≈<b>27.5h / 27.6h / 27.1h</b>），<b>均在 72h 窗口内</b>，<b>未放宽窗口、未拿超窗条目凑数</b>。<br>
   <b>去重</b>：337 条候选与 <code>SEEN.md</code> 逐 ID 比对 <b>0 条重复</b>；PM 已收录 2 条（<code>2611.03330</code> / <code>2611.03600</code>）；本轮 3 条均不在 <code>SEEN</code>，且与近 7 天日报无重复。
+</div>
+
+<div class="ok-box">
+  <b>晚报取数说明（诚实口径 · PM）</b>：本轮唤醒于 <b>本地 2026-11-04 18:00（CST，周三）</b> = <b>UTC 2026-11-04T10:00</b>。<b>取证路径</b>：① 4 条批次复核 <code>raw/2026-11-04-pm-verify-r132.txt</code>（4/4 <code>200</code>、<code>attempts=1</code>、<code>application/atom+xml; charset=utf-8</code>）⇒ <b>批次已刷新到 <code>2026-11-03</code></b>；② 5 条单分类查询合并去重得 <b>325 条</b>新候选（<code>published ≥ 2026-11-03</code>、与 <code>SEEN</code> <b>0 重复</b>，<code>raw/2026-11-04-pm-candidates-r132.json</code>）；③ 官方 <code>id_list</code> 复核（<code>raw/2026-11-04-pm-idlist-r132a.xml</code>，<b>2/2 命中</b>，<code>published</code> 前缀 <code>2026-11-03</code> 断言通过）。<br>
+  <b>时效</b>：两篇均为 <code>2026-11-03</code> 提交（≈<b>16.0h / 17.7h</b>），<b>远在 72h 窗口内</b>。<b>去重</b>：两篇均不在 <code>SEEN.md</code>，也不在近 7 天日报。<b>未做的事（如实）</b>：本轮<b>未</b>重跑 R1′ 分源探针（HF / RSS 状态沿用 r129 的 FAIL 记录），<b>不作选文证据</b>，也不据此写「无新增」。
 </div>
 
 <div class="card">
@@ -137,10 +145,53 @@
 </div>
 
 
+<h2 class="sec">晚报 2 篇 · 科普口径（18:00 轮）</h2>
+
+<div class="card">
+  <h3><span class="no">4</span>False Reassurance in LLM Severe-Weather Guidance: A Replayable Evaluation Against Real NWS Alerts</h3>
+  <div class="row"><div class="k">中文一句话</div><div class="v">警报已经发布了，AI 却说「今天很平静」—— 作者把这种现象叫<b>「假安慰」（false reassurance）</b>，并做成<b>可重放、可计数</b>的指标：把 2026-10-19~10-23 实时抓取的真实美国国家气象局（NWS）警报<b>冻结</b>成 <b>117 个案例</b>（69 个<b>有警报</b> / 32 个<b>无警报</b>对照 / 16 个非美国地点），用<b>同一条</b> Claude 天气助手管线的 <b>5 种条件</b>重放（温度 0、输出上限 500 token）：<b>完整生产管线 0.0%</b>（0/66）、<b>只给警报数据 + 中性提示 0.0%</b>（0/69）、<b>「失明」中性提示 37.7%</b>（26/69）、<b>失明 + 被要求「主动声明自己看不到实时警报」44.9%</b>（31/69）—— 全部是<b>隐式</b>（没有一条直接否认警报存在），而<b>「提醒它说实话」这一步不但没用，数字上还更差</b>（配对 McNemar：给真警报 p&lt;0.0001；加披露指令 p=0.40）。更反直觉的是：<b>自动正则指标方向完全相反</b>（漏掉 57 个真案例里的 53 个）⇒ 作者弃用，改全量手工标注。<b>只有数据也不够</b>：中性提示下 <b>87.5%</b> 的无警报对照被「拉响警报」，生产提示为 0%。</div></div>
+  <div class="row"><div class="k">原题</div><div class="v"><span class="orig">False Reassurance in LLM Severe-Weather Guidance: A Replayable Evaluation Against Real NWS Alerts</span></div></div>
+  <div class="row"><div class="k">作者 / 机构</div><div class="v">Kadharmoideen Fadurudeen（<b>1 位</b>；<b>Independent Researcher</b>；论文自述源于 2026 年亚利桑那州图森一次<b>真实山洪警报（Flash Flood Warning）</b>期间的实测：基线助手在 NWS 已发<b>两条</b>警报时，回答「当前没有任何生效警报」）</div></div>
+  <div class="row"><div class="k">日期</div><div class="v">首次提交 <b>2026-11-03</b>（<code>published=2026-11-03T18:04:53Z</code>；无 v2）· 距本轮唤醒 <b>≈16.0h</b>（<b>在 72h 窗口内</b>）· PDF 实测 <b>7 页</b> / <b>33,667</b> 字符（去空白）· 数据集与代码：Zenodo DOI <code>10.5281/zenodo.23901549</code></div></div>
+  <div class="row"><div class="k">分类 / 标签</div><div class="v"><code>cs.HC</code> · <span class="badge b-kp">科普</span> · <b>本日科普 TOP-1</b> · 关键词：LLM 安全 / 安全关键建议 / 假安慰 / 可重放评测 / 工具访问 / 严重天气</div></div>
+  <div class="row"><div class="k">链接</div><div class="v"><a href="https://arxiv.org/abs/2611.05290">https://arxiv.org/abs/2611.05290</a>（PDF 已落地：<code>research/pdf/2026-11-04/2611.05290.pdf</code>，227,046 B，校验见附录 C）</div></div>
+  <div class="reason"><b>推荐理由（科普 · 大众看点 + 传播力）</b>
+    <ol>
+      <li><b>钩子一句话就成立</b>：「洪水警报正在响，AI 告诉你今天适合出门」—— 每个人都在手机里听过语音助手的天气建议，这个场景无需任何背景知识。</li>
+      <li><b>结论反直觉、且是对「常识解法」的打脸</b>：直觉上「让 AI 承认自己看不到警报」应该能防住这类错误；实测 <b>37.7% → 44.9%</b>（更差，虽不显著）。这类「好心提示反而帮倒忙」的结论天然有讨论度。</li>
+      <li><b>有可拍的画面</b>：一张真实 NWS 警报地图 + 旁边 AI 的「一切正常」气泡；再叠一个「我确实看不到实时警报」的免责声明，气泡依旧说「平静」—— 视觉冲突极强。</li>
+      <li><b>方法本身也能讲</b>：「把警报<b>冻结</b>下来重放」很好懂（NWS 只提供<b>当前生效</b>警报，不录下来就永远无法复原），顺带教会观众「为什么这类评测必须可重放」。</li>
+      <li><b>还带两条工程坑</b>：① 把 NWS「测试警报（status=Test）」当真警报用（作者早期数据集里整整一个「海啸」家族 10/10 全是测试件）；② 复杂案例撞 <b>500 token</b> 输出上限。都是「做产品的会心一笑」的细节。</li>
+      <li><b>边界（必须写清）</b>：① <b>试点规模</b>：单管线、<b>单模型家族</b>（Claude Sonnet 4.6 via Amazon Bedrock）、单季节（2026-10-19~10-23），作者反复强调不可读成模型排名；② 假安慰标注由<b>单一评审者（作者本人）</b>手工完成，七类方案是<b>先做二分类之后</b>才定的（作者已披露）；③ 采集机在 96.6 小时里睡了 <b>74.2 小时（77%）</b>，短命的洪水/龙卷警报最可能漏采 ⇒ 数据集<b>偏向长时警报</b>，事后无法修复；④ 最终案例集<b>不含 Extreme 级别</b>警报，最严重档位未测；⑤ 无警报对照的「拉响警报」是规则判定（严重度字段），不是人工标注。</li>
+    </ol>
+    <b>科普口径动作</b>：<b>已选为本日《论文两分钟》TOP-1</b> → 分镜脚本 <code>research/video/SCENES/11_04.html</code>（5 镜 / 120s）；<b>读原文</b>看 §III 系统（四步管线 + 两处设计细节）、§IV 数据（77% 休眠缺口）、§V 五条件、§VI 表 2/表 3、§VIII 局限。
+  </div>
+</div>
+
+<div class="card">
+  <h3><span class="no">5</span>Creating Power Flexibility in Datacenters via Query Routing</h3>
+  <div class="row"><div class="k">中文一句话</div><div class="v">电网吃紧时，数据中心能不能<b>少用一点电、但不推迟任何请求</b>？作者说能：把「<b>换大模型还是小模型都无所谓</b>」的查询<b>动态改派</b>到小模型实例，功率立刻下降。做法是先用查询到达率 + 序列长度分布，推出<b>平均 token 迭代时间 / 请求驻留时间 / 服务容量 / 功率</b>的解析模型（H100 上 <b>R²&gt;0.99</b>），再用它算出<b>可行路由区间</b>与对应功率灵活性（预测误差约 <b>2.8% MAPE</b>，跨 4 种 GPU 平台、1B–70B 模型）。在 <b>10,000 张 H100</b> 的数据中心（大/小实例 <b>3:1</b> = Llama-3.1-70B 四卡张量并行 + Mistral-24B 单卡）上跑一周 <b>Azure 真实聊天 trace</b>（平均输入 1630 / 输出 105 token）：基线设施功率 <b>6–9.1 MW</b>（均值 7.3 MW）；<b>50%</b> 查询可路由 ⇒ 削 <b>0.6 MW</b>，<b>100%</b> 可路由 ⇒ 削 <b>1.19 MW = 均值功率的 16%</b>；四小时削峰事件合计少用 <b>2.4 / 4.8 MWh</b>，且<b>约 10 秒</b>就达到目标降幅的 90%。</div></div>
+  <div class="row"><div class="k">原题</div><div class="v"><span class="orig">Creating Power Flexibility in Datacenters via Query Routing</span></div></div>
+  <div class="row"><div class="k">作者 / 机构</div><div class="v">Shivam Patel · Bingqing Chen · Jared Fernandez · Guannan Qu · Gauri Joshi（<b>5 位</b>；<b>Carnegie Mellon University</b>）</div></div>
+  <div class="row"><div class="k">日期</div><div class="v">首次提交 <b>2026-11-03</b>（<code>published=2026-11-03T16:22:48Z</code>；无 v2）· 距本轮唤醒 <b>≈17.7h</b>（<b>在 72h 窗口内</b>）· PDF 实测 <b>21 页</b> / <b>72,865</b> 字符（去空白）</div></div>
+  <div class="row"><div class="k">分类 / 标签</div><div class="v"><code>cs.AI</code> · <span class="badge b-kp">科普</span> · 关键词：数据中心 / 功率灵活性 / 查询路由 / LLM 服务 / 电网互动 / 能效</div></div>
+  <div class="row"><div class="k">链接</div><div class="v"><a href="https://arxiv.org/abs/2611.05148">https://arxiv.org/abs/2611.05148</a>（PDF 已落地：<code>research/pdf/2026-11-04/2611.05148.pdf</code>，1,181,021 B，校验见附录 C）</div></div>
+  <div class="reason"><b>推荐理由（科普 · 大众看点 + 传播力）</b>
+    <ol>
+      <li><b>踩在热点上</b>：「AI 数据中心太耗电、拖垮电网」是当下最有大众关注度的技术话题之一；这篇给的不是「少用 AI」，而是「<b>让 AI 集群像储能电站一样帮电网调峰</b>」，叙事方向讨喜且不反智。</li>
+      <li><b>数字具体到能上屏</b>：10,000 张 H100 / 6–9.1 MW / 削 1.19 MW（16%）/ 2.4–4.8 MWh / 约 10 秒 —— 全是可画成图表的硬数字。</li>
+      <li><b>机制一句话讲得清</b>：「能答的题让小模型答，不问用户意见，也不推迟」—— 这就是「灵活负载」；观众能立刻理解为什么「响应快 ≠ 一定要大模型」。</li>
+      <li><b>有对比画面</b>：左屏电网负荷曲线尖峰，右屏数据中心把一批查询「换道」到小模型池，功率曲线跟着下沉；再配一个 10 秒计时器。</li>
+      <li><b>边界（必须写清）</b>：① <b>以模拟为主</b>：10,000 H100 是模拟部署 + trace 回放 + 实测功率模型，<b>不是真实电网联动试验</b>；② 设施功耗用「每 GPU 额外 300 W + PUE 1.2」近似，未覆盖制冷建模差异；③ 「可路由查询占比」是按 0→100% <b>扫描假设</b>，真实业务里有多少查询「换模型也无所谓」<b>未被验证</b>；④ 只考虑「<b>不推迟请求</b>」这一类灵活性，未与「延迟调度 / 空间迁移」联合优化；⑤ 大/小模型固定为 Llama-3.1-70B 与 Mistral-24B 两档，<b>质量差异对用户体验的影响不在本文测量范围</b>（作者按「查询对模型不敏感」的前提处理）；⑥ 数字作者自报、本线未复现。</li>
+    </ol>
+    <b>科普口径动作</b>：<b>读原文</b>（§2 解析模型、§3 路由可行性、§4.1 万卡设定与 4 小时削峰、§4.2 一周 trace 结果）；<b>不选为 TOP-1 的原因</b>：机制清楚但画面偏「曲线 + 柱状图」，情绪钩子弱于「警报里的假安慰」，故列为备选；两篇均已在当日 5/5 内。
+  </div>
+</div>
+
 <h2 class="sec">附录 A · 检索式与命中数（可核验）</h2>
-<p>证据文件：<code>research/raw/2026-11-03-pm-candidates-r130.json</code>（<code>queries</code> 段，5 条<b>单分类</b>查询<b>全部</b> <code>status=200</code> / <code>application/atom+xml; charset=utf-8</code>；请求间隔 ≥3.2s）。</p>
+<p><b>AM（06:00）</b>证据文件：<code>research/raw/2026-11-03-pm-candidates-r130.json</code>（<code>queries</code> 段，5 条<b>单分类</b>查询<b>全部</b> <code>status=200</code> / <code>application/atom+xml; charset=utf-8</code>；请求间隔 ≥3.2s）。</p>
 <table>
-  <tr><th>#</th><th>检索式</th><th>totalResults</th><th>取回条目</th><th>耗时</th></tr>
+  <tr><th>#</th><th>AM 检索式</th><th>totalResults</th><th>取回条目</th><th>耗时</th></tr>
   <tr><td>1</td><td><code>cat:cs.CL</code>（<code>sortBy=submittedDate&amp;sortOrder=descending</code>）</td><td>124,521</td><td>100</td><td>11.46s</td></tr>
   <tr><td>2</td><td><code>cat:cs.CV</code></td><td>212,033</td><td>100</td><td>5.90s</td></tr>
   <tr><td>3</td><td><code>cat:cs.LG</code></td><td>297,039</td><td>100</td><td>9.00s</td></tr>
@@ -148,39 +199,69 @@
   <tr><td>5</td><td><code>cat:cs.SE</code></td><td>30,737</td><td>100</td><td>5.74s</td></tr>
   <tr><td colspan="2"><b>合并去重后</b>（<code>published ≥ 2026-11-02</code>）</td><td colspan="3"><b>337 条</b>（与 <code>SEEN.md</code> 比对：<b>0 条重复</b>）</td></tr>
 </table>
-<p><b>批次复核（本轮 06:00 实测）</b>（<code>raw/2026-11-04-am-verify-r131.txt</code> / <code>.json</code>，4 条查询、间隔 ≥3.5s、<b>4/4 <code>200</code></b>）：① <code>sortBy=lastUpdatedDate</code>（cs.CL）最新 <code>2026-11-02T18:57:36Z</code>（<code>2611.03634v1</code>）、<code>totalResults=124,521</code>；② <code>cat:cs.CL AND submittedDate:[202610300000 TO 202611042359]</code> → <b>304</b>；③ 全库同区间 → <b>4,570</b>；④ 广度 5 分类 → <b>642,318</b>。四项<b>与 11-03 PM（18:00）逐项相同</b> ⇒ <b>批次未刷新</b>，仍为 <code>2026-11-02</code>；下一批 = 美东 11-03 20:00 ET = 本地 11-04 09:00。</p>
-<p class="note">⚠️ <b>本轮不重复 R1′ 分源探针</b>：HF / RSS 的失败状态沿用 r129 的实测（HF <code>[Errno 101]</code>、RSS <code>cs.LG</code> <code>ConnectionResetError(104)</code>），<b>只作发现、不作选文证据</b>；也没有把「HF/RSS 不可用」写成「无新增」。另：本机到 arXiv 的部分 Fastly 边缘 IP 在本轮出现超时（<code>151.101.3.42</code> 不可达），补跑下载与 API 复核改用可达 IP（<code>151.101.67.42</code>）并如实记录在 <code>raw/r131_pdf2.log</code> 与 <code>raw/2026-11-04-am-verify-r131.txt</code>。</p>
+<p><b>PM（18:00）</b>证据文件：<code>research/raw/2026-11-04-pm-candidates-r132.json</code>（5 条单分类查询 <b>5/5</b> <code>status=200</code> / <code>application/atom+xml; charset=utf-8</code>；间隔 ≥3.2s）。</p>
+<table>
+  <tr><th>#</th><th>PM 检索式</th><th>totalResults</th><th>取回条目</th><th>耗时</th></tr>
+  <tr><td>1</td><td><code>cat:cs.CL</code></td><td>124,606</td><td>100</td><td>3.15s</td></tr>
+  <tr><td>2</td><td><code>cat:cs.CV</code></td><td>212,193</td><td>100</td><td>19.30s</td></tr>
+  <tr><td>3</td><td><code>cat:cs.LG</code></td><td>297,291</td><td>100</td><td>3.60s</td></tr>
+  <tr><td>4</td><td><code>cat:cs.AI</code></td><td>211,047</td><td>100</td><td>3.15s</td></tr>
+  <tr><td>5</td><td><code>cat:cs.SE</code></td><td>30,767</td><td>100</td><td>3.57s</td></tr>
+  <tr><td colspan="2"><b>合并去重后</b>（<code>published ≥ 2026-11-03</code>）</td><td colspan="3"><b>325 条</b>（与 <code>SEEN.md</code> 比对：<b>0 条重复</b>；AM 已用 3 条已不在其中）</td></tr>
+</table>
+<p><b>批次复核（PM 18:00 实测）</b>（<code>raw/2026-11-04-pm-verify-r132.txt</code>，4 条查询、间隔 ≥3.2s、<b>4/4 <code>200</code></b>、全部 <code>attempts=1</code>）：① <code>sortBy=lastUpdatedDate</code>（cs.CL）最新 <code>2026-11-03T18:59:52Z</code>（<code>2611.05376v1</code>）、<code>totalResults=124,606</code>；② <code>cat:cs.CL AND submittedDate:[202611010000 TO 202611042359]</code> → <b>384</b>；③ 全库同区间 → <b>6,246</b>；④ 广度 5 分类 → <b>642,920</b>。<b>对照 AM</b>：124,521 → 124,606、304 → 384、4,570 → 6,246、642,318 → 642,920 ⇒ <b>批次已刷新到 <code>2026-11-03</code></b>，符合「美东 11-03 20:00 ET = 本地 11-04 09:00 公告」的日历预期。</p>
+<p class="note">⚠️ <b>本轮不重复 R1′ 分源探针</b>：HF / RSS 的失败状态沿用 r129 的实测（HF <code>[Errno 101]</code>、RSS <code>cs.LG</code> <code>ConnectionResetError(104)</code>），<b>只作发现、不作选文证据</b>；也没有把「HF/RSS 不可用」写成「无新增」。另：AM 轮 <code>151.101.3.42</code> 边缘 IP 超时，本线固定改用可达 IP <code>151.101.67.42</code>（PM 两篇 PDF 下载即用该 IP，8 段 / 6 段全部一次到位）。</p>
 
 <h2 class="sec">附录 B · 去重、选文与时效（诚实口径）</h2>
 <table>
   <tr><th>指标</th><th>值</th><th>说明</th></tr>
-  <tr><td>候选池</td><td><b>337</b></td><td>PM 轮 5 分类各 100 条合并去重、<code>published ≥ 2026-11-02</code>（与 <code>SEEN</code> 0 重复）</td></tr>
-  <tr><td>PM 已收录</td><td><b>2</b></td><td><code>2611.03330</code> / <code>2611.03600</code>（11-03 晚报科普）</td></tr>
-  <tr><td>本轮入选</td><td><b>3</b></td><td><code>2611.03590</code> / <code>2611.03577</code> / <code>2611.03633</code>（官方 <code>id_list</code> 5/5 命中，3 篇 <code>published</code> 前缀 <code>2026-11-02</code> 断言通过）</td></tr>
-  <tr><td>时效</td><td>≈<b>27.5h / 27.6h / 27.1h</b></td><td>均 &lt; 72h，<b>在窗口内</b>；非放宽窗口</td></tr>
-  <tr><td>与近 7 天日报比对</td><td><b>无重复</b></td><td>三个 ID 在 <code>research/daily/2026-10-28 ~ 2026-11-03</code> 中均未出现（<code>grep</code> 核对）</td></tr>
+  <tr><td>AM 候选池</td><td><b>337</b></td><td>PM 轮 5 分类各 100 条合并去重、<code>published ≥ 2026-11-02</code>（与 <code>SEEN</code> 0 重复）</td></tr>
+  <tr><td>PM 候选池</td><td><b>325</b></td><td>5 分类各 100 条合并去重、<code>published ≥ 2026-11-03</code>（与 <code>SEEN</code> 0 重复）</td></tr>
+  <tr><td>前序已收录</td><td><b>2</b></td><td><code>2611.03330</code> / <code>2611.03600</code>（11-03 晚报科普）</td></tr>
+  <tr><td>AM 入选</td><td><b>3</b></td><td><code>2611.03590</code> / <code>2611.03577</code> / <code>2611.03633</code>（官方 <code>id_list</code> 5/5 命中，<code>published</code> 前缀 <code>2026-11-02</code> 断言通过）</td></tr>
+  <tr><td>PM 入选</td><td><b>2</b></td><td><code>2611.05290</code> / <code>2611.05148</code>（官方 <code>id_list</code> 2/2 命中，<code>published</code> 前缀 <code>2026-11-03</code> 断言通过；证据 <code>raw/2026-11-04-pm-idlist-r132a.xml</code>，HTTP 200 / 5,592 B / 2.42s）</td></tr>
+  <tr><td>时效</td><td>AM ≈<b>27.5h / 27.6h / 27.1h</b><br>PM ≈<b>16.0h / 17.7h</b></td><td>五篇均 &lt; 72h，<b>在窗口内</b>；非放宽窗口、无周末例外</td></tr>
+  <tr><td>与近 7 天日报比对</td><td><b>无重复</b></td><td>五个 ID 在 <code>research/daily/2026-10-28 ~ 2026-11-03</code> 中均未出现（<code>grep</code> 核对）</td></tr>
 </table>
-<p><b>选文理由</b>：337 条里按「借鉴」口径先按<b>与 BaiZe 的层次</b>分组，再在每组里取<b>数字最硬、局限写得最清楚</b>的一篇 —— <b>数据与缩放层</b>选多轮预训练缩放理论（决定「epochs vs 集成 vs 更宽」的预算分配）、<b>训练系统层</b>选 Sonar-MoE（不改数学、只改梯度释放时机，省 19%–22% 峰值显存）、<b>优化器层</b>选 Muon/AdamW 的微调反转（直接关系「预训练选谁」）。刻意<b>不选同质工作</b>：同日 <code>2611.03627</code>「Not All Reasoning Generalizes」与 <code>2611.03625</code> FADE 都属 RLVR 训练策略，本轮只留备选；<code>2611.02368</code>「Beyond Accuracy: How Quantization Affects Coding Agents」与 ZhuLong 相关，留作后续。</p>
+<p><b>AM 选文理由</b>：337 条里按「借鉴」口径先按<b>与 BaiZe 的层次</b>分组，再在每组里取<b>数字最硬、局限写得最清楚</b>的一篇 —— <b>数据与缩放层</b>选多轮预训练缩放理论（决定「epochs vs 集成 vs 更宽」的预算分配）、<b>训练系统层</b>选 Sonar-MoE（不改数学、只改梯度释放时机，省 19%–22% 峰值显存）、<b>优化器层</b>选 Muon/AdamW 的微调反转（直接关系「预训练选谁」）。刻意<b>不选同质工作</b>：同日 <code>2611.03627</code>「Not All Reasoning Generalizes」与 <code>2611.03625</code> FADE 都属 RLVR 训练策略，本轮只留备选；<code>2611.02368</code>「Beyond Accuracy: How Quantization Affects Coding Agents」与 ZhuLong 相关，留作后续。</p>
+<p><b>PM 选文理由</b>：325 条里按「科普」口径筛「<b>有生活钩子 + 反直觉结论 + 数字能上屏</b>」，只留两条且<b>主题互不重叠</b>：① <code>2611.05290</code> 属「<b>AI 说错话会要命</b>」（安全 / 天气 / 语音助手），钩子最强；② <code>2611.05148</code> 属「<b>AI 太耗电怎么救</b>」（能耗 / 电网），是当下最热的技术—社会交叉话题。<b>被放弃的强候选</b>（记录在案、不作本轮入选）：<code>2611.05287</code>「Knowingly Wrong」（教模型它自己都不信的无害假话 ⇒ 数学域 misaligned 回答从 <b>4%</b> 升到 <b>60%+</b>）、<code>2611.05306</code>「You don't need long context」（后段 token 成本可高至 <b>7×</b>，频繁压缩上下文几乎不掉点）、<code>2611.04215</code>「Tokenizer Myths」（三个分词器神话，含 BPB 可比性反例）、<code>2611.04968</code>「Who is the Pronoun Pro?」（'they' 单复数消歧：最强 LLM <b>94.5%</b> vs 73 人多数票 <b>86.2%</b>）。放弃原因统一是<b>生活钩子强度或视觉可拍性略弱于已选两篇</b>，不是质量问题；四条均满足 §0.1 入账判据，可随时补位。</p>
 
-<h2 class="sec">附录 C · PDF 落地与校验（3 / 3）</h2>
+<h2 class="sec">附录 C · PDF 落地与校验（5 / 5）</h2>
 <table>
   <tr><th>arXiv ID</th><th>字节</th><th>页数</th><th>去空白字符</th><th>sha256（前 16 位）</th><th>备注</th></tr>
-  <tr><td><code>2611.03590</code></td><td>14,226,635</td><td>84</td><td>142,757</td><td><code>797b33d1510eb41b</code></td><td>6 段 Range 下载，全部一次到位</td></tr>
-  <tr><td><code>2611.03577</code></td><td>582,285</td><td>11</td><td>40,387</td><td><code>a3fe089df3fcec81</code></td><td>8 段 Range 下载，全部一次到位</td></tr>
-  <tr><td><code>2611.03633</code></td><td>1,575,060</td><td>49</td><td>113,463</td><td><code>90267d40a016bc3c</code></td><td>8 段 Range 下载，全部一次到位</td></tr>
+  <tr><td><code>2611.03590</code></td><td>14,226,635</td><td>84</td><td>142,757</td><td><code>797b33d1510eb41b</code></td><td>AM · 6 段 Range，全部一次到位</td></tr>
+  <tr><td><code>2611.03577</code></td><td>582,285</td><td>11</td><td>40,387</td><td><code>a3fe089df3fcec81</code></td><td>AM · 8 段 Range，全部一次到位</td></tr>
+  <tr><td><code>2611.03633</code></td><td>1,575,060</td><td>49</td><td>113,463</td><td><code>90267d40a016bc3c</code></td><td>AM · 8 段 Range，全部一次到位</td></tr>
+  <tr><td><code>2611.05290</code></td><td>227,046</td><td>7</td><td>33,667</td><td><code>afbfe64b409ed461</code></td><td>PM · 8 段 Range，全部一次到位</td></tr>
+  <tr><td><code>2611.05148</code></td><td>1,181,021</td><td>21</td><td>72,865</td><td><code>499167d4127e8726</code></td><td>PM · 6 段 Range，全部一次到位</td></tr>
 </table>
-<p class="note">⚠️ <b>如实记录（不写成「端到端校验通过」）</b>：① 三篇 <code>sha256</code> 与 CDN <code>etag</code> <b>均不一致</b>（如 <code>2611.03633</code> 的 <code>etag="sha256:fc9ecb4f…"</code> 与本地 <code>90267d40…</code> 不同）⇒ 完整性证据取<b>结构校验（<code>%PDF-</code> 头 + <code>%%EOF</code> 尾 + <code>pdfinfo</code> 可解析 + <code>pdftotext</code> 字符数 &gt; 2,000）+ 字节数 == <code>Content-Range</code> total</b>，<b>不声称哈希一致</b>；② 本轮三篇合计 <b>16,383,980 B ≈ 15.63 MiB</b>（18:00 轮再补 2 篇后须复核 20 MB 附件上限，必要时分包或只附链接）；③ PDF 在 <code>research/pdf/2026-11-04/</code>（<code>.gitignore</code> 已排除）⇒ <b>不入 git</b>；④ 下载期间 <code>151.101.3.42</code> 边缘 IP 超时，改用 <code>151.101.67.42</code> 后 8 段一次到位（证据 <code>/tmp/r131_pdf2.log</code>、脚本 <code>raw/pdf_range_resume_r131.py</code>）。</p>
+<p class="note">⚠️ <b>如实记录（不写成「端到端校验通过」）</b>：① 五篇 <code>sha256</code> 与 CDN <code>etag</code> <b>均不一致</b>（例如 <code>2611.05148</code> 的 <code>etag="sha256:ebd79a63…"</code> 与本地 <code>499167d4…</code> 不同）⇒ 完整性证据取<b>结构校验（<code>%PDF-</code> 头 + <code>%%EOF</code> 尾 + <code>pdfinfo</code> 可解析 + <code>pdftotext</code> 字符数 &gt; 2,000）+ 字节数 == <code>Content-Range</code> total</b>，<b>不声称哈希一致</b>；② 当日五篇合计 <b>17,792,047 B ≈ 16.97 MiB ≤ 20 MB</b> ⇒ 日报邮件<b>单封直发，未分包</b>；③ PDF 在 <code>research/pdf/2026-11-04/</code>（<code>.gitignore</code> 已排除）⇒ <b>不入 git</b>；④ 下载统一走可达边缘 IP <code>151.101.67.42</code>（<code>151.101.3.42</code> 超时），脚本 <code>raw/pdf_range_resume_r132.py</code>，日志 <code>/tmp/pdf_r132_1.log</code>。</p>
 
-<h2 class="sec">附录 D · 台账与今日待办</h2>
+<h2 class="sec">附录 D · 台账与今日收口</h2>
 <ul>
-  <li><b>台账（AM 落盘后）</b>：<code>SEEN.md</code> <b>5,623 行</b>（11-03 PM +2、本轮 +3 后；本轮 3 条已含在内）⇒ 累计 <b>收录 299 / 候选 4,558 / 候选（RSS 补充）507</b>（状态行合计 <b>5,364</b>）；<code>papers.jsonl</code> <b>299</b>（元数据全部取自官方 <code>id_list</code> XML；本轮 3 条 <code>first_seen=2026-11-04</code>）。</li>
-  <li><b>落盘脚本</b>：<code>raw/update_r131.py</code>（幂等断言：五 ID 原先不在 SEEN、追加后各 1 行、<code>papers.jsonl</code> 恰 +5、<code>published</code> 前缀匹配）· <code>raw/pdf_range_resume_r131.py</code>（固定可达 IP + 分段 Range + 逐段续传 + 结构校验）· 批次复核脚本 <code>/tmp/verify_r131b.py</code>（4 条查询，结果已落 <code>raw/2026-11-04-am-verify-r131.txt / .json</code>）。</li>
-  <li><b>今日 18:00（PM，周三）待办</b>：① 复验批次（应能看到美东 11-03 20:00 ET 公告的新批）；② 补 <b>2 篇「科普」</b>（不与早 3 重复，优先从本轮 337 条候选池剩余条目挑）→ 日报 <b>5/5 收口</b> + <code>晚报变更说明（AM → PM）</code>；③ <b>科普 TOP-1</b> 分镜 → <code>video/SCENES/11_04.html</code> + <code>SCENES/index.html</code>；④ 当日论文日报邮件（<code>paul.liu@cxmt.com</code>，PDF 合计按 20 MB 上限决定是否分包）。</li>
+  <li><b>台账（PM 落盘后）</b>：<code>SEEN.md</code> <b>5,625 行</b>（11-03 PM +2、11-04 AM +3、PM +2）⇒ 累计 <b>收录 301 / 候选 4,558 / 候选（RSS 补充）507</b>；<code>papers.jsonl</code> <b>301</b>（元数据全部取自官方 <code>id_list</code> XML；PM 2 条 <code>first_seen=2026-11-04</code>）。</li>
+  <li><b>落盘脚本</b>：<code>raw/update_r132.py</code>（幂等断言：两 ID 原先不在 SEEN、追加后各 1 行、<code>papers.jsonl</code> 恰 +2、<code>published</code> 前缀 <code>2026-11-03</code> 匹配）· <code>raw/pdf_range_resume_r132.py</code> · <code>raw/verify_r132.py</code> · <code>raw/candidates_r132.py</code> · <code>raw/idlist_r132.py</code>。</li>
+  <li><b>今日收口状态</b>：<b>5 / 5 ✅</b>（AM 3 借鉴 + PM 2 科普）· 分镜 <code>video/SCENES/11_04.html</code>（TOP-1 = <code>2611.05290</code>）+ <code>SCENES/index.html</code> · 日报邮件（5 个 PDF / 合计 <b>≈16.97 MiB</b> ⇒ 单封）。</li>
   <li><b>口径纪律</b>：早报 3 篇全按「<b>借鉴</b>」选（与 BaiZe / ZhuLong 在研工作的相关性），晚报 2 篇全按「<b>科普</b>」选（大众看得懂 + 有传播力），<b>两口径不混用</b>，同一 arXiv ID 全天只出现一次；「推荐」≠「结论」；<code>SOTA / 首次 / 突破</code> 一律不写（引用作者原话时加「作者称」）；所有数字可回查 PDF 与官方 Atom 元数据。</li>
 </ul>
 
+<h2 class="sec">附录 E · 晚报变更说明（AM → PM）</h2>
+<table>
+  <tr><th>#</th><th>改了什么</th><th>为什么</th></tr>
+  <tr><td>1</td><td>标题 / 页头：<b>早报 · 3/5</b> → <b>晚报 · 5/5 收口</b>；进度改为 <code>3 / 5 → 5 / 5 ✅</code></td><td>18:00 轮补齐第 4/5 篇，当日额度收口（P0 第 4 批硬要求「当天合计 5 篇」）。</td></tr>
+  <tr><td>2</td><td>新增<b>第 4 篇</b> <code>2611.05290</code> <i>False Reassurance in LLM Severe-Weather Guidance</i>（<span class="badge b-kp">科普</span> · <b>本日科普 TOP-1</b>）</td><td>生活钩子最强（暴雨警报 vs「今天很平静」）、结论反直觉（披露盲区 <b>37.7% → 44.9%</b>）、画面可拍；已据此出分镜。</td></tr>
+  <tr><td>3</td><td>新增<b>第 5 篇</b> <code>2611.05148</code> <i>Creating Power Flexibility in Datacenters via Query Routing</i>（<span class="badge b-kp">科普</span>）</td><td>与第 4 篇主题不重叠（能耗 / 电网 vs 安全 / 天气），且是当前最热的技术—社会议题；补足「科普」口径多样性。</td></tr>
+  <tr><td>4</td><td>页头批次行：<b>「批次 2026-11-02（未刷新）」→「PM 已刷新到 2026-11-03」</b>，并贴出四项对照数字</td><td>PM 复验 <b>4/4 200</b>：124,521→124,606 / 304→384 / 4,570→6,246 / 642,318→642,920。AM 的「未刷新」在当时正确，PM 必须更新为最新事实。</td></tr>
+  <tr><td>5</td><td>附录 A：新增 <b>PM 5 条检索式表 + PM 批次复核段</b>；AM 表保留并标注「AM」</td><td>两轮证据都要可核验，不能只留最后一次。</td></tr>
+  <tr><td>6</td><td>附录 B：候选池拆成 <b>AM 337 / PM 325</b>；新增「PM 入选」行与 <b>PM 选文理由</b>（含 4 条被放弃的强候选及原因）</td><td>「宁少勿凑」要把「为什么是这两篇 / 为什么不是那四篇」写清楚，便于复核。</td></tr>
+  <tr><td>7</td><td>附录 C：PDF 校验 <b>3/3 → 5/5</b>；补 <code>2611.05290</code>（7 页 / 227,046 B）、<code>2611.05148</code>（21 页 / 1,181,021 B）；合计改 <b>17,792,047 B ≈ 16.97 MiB</b> 并给出「单封直发」结论</td><td>附件上限（20 MB）必须按当日五篇合计复算，不能沿用 AM 的三篇合计。</td></tr>
+  <tr><td>8</td><td>附录 D：台账 <b>299 → 301</b>；「18:00 待办」改为「今日收口状态」；脚本清单补 r132 五件</td><td>待办已全部执行完，须改写成既成事实 + 可回查脚本名。</td></tr>
+  <tr><td>9</td><td>页脚：<b>「早报（AM · 3/5）… 18:00 轮将补齐」</b> → <b>「晚报（PM · 5/5 收口）」</b></td><td>避免页面自述与内容矛盾。</td></tr>
+  <tr><td>10</td><td>AM 正文<b>未删改任何数字或结论</b>（仅页头 / 附录更新）</td><td>AM 三篇的论证与边界在 PM 复核后仍成立；不做「事后美化」。</td></tr>
+</table>
+
 <footer>
-  <p>research 线 · 每日论文推荐（早 3 / 晚 2）｜ 本页为 <b>2026-11-04 早报（AM · 3/5）</b>，18:00 轮将补齐第 4/5 篇并追加「晚报变更说明（AM → PM）」｜ 索引：<a href="index.html">daily/index.html</a></p>
+  <p>research 线 · 每日论文推荐（早 3 / 晚 2）｜ 本页为 <b>2026-11-04 晚报（PM · 5/5 收口）</b>，含 AM 3 篇「借鉴」+ PM 2 篇「科普」｜ 索引：<a href="index.html">daily/index.html</a></p>
   <p>数据源：arXiv（<code>export.arxiv.org/api/query</code> + 官方 <code>id_list</code>）｜ 自包含单文件、内联 CSS、零外链、零脚本、离线可开 ｜ 免责：推荐 = 待读线索，非结论；数字均作者自报、本线未复现。</p>
 </footer>
 </div>

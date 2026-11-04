@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>《论文两分钟》分镜脚本 · 2026-11-04 · 警报响着，AI 却说「今天很平静」</title>
+<style>
+  :root { --primary:#7a2e2e; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700; --kp:#b03a3a;
+          --bg:#f7f6f5; --card:#fff; --border:#d8d3cf; --text:#1f2328; --muted:#5c5651; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+         color:var(--text); background:var(--bg); line-height:1.7; font-size:15px; }
+  .wrap { max-width:1100px; margin:0 auto; padding:32px 20px 80px; }
+  header.hero { background:linear-gradient(135deg,#5c1f1f 0%,#b03a3a 55%,#e08a3c 100%); color:#fff; border-radius:14px;
+                padding:30px 32px; margin-bottom:22px; box-shadow:0 8px 24px rgba(92,31,31,.24); }
+  header.hero h1 { margin:0 0 6px; font-size:23px; letter-spacing:.3px; }
+  header.hero .sub { font-size:15px; opacity:.96; }
+  header.hero .meta { margin-top:14px; font-size:13px; opacity:.93; display:flex; flex-wrap:wrap; gap:8px 18px; }
+  header.hero .meta span { background:rgba(255,255,255,.18); border-radius:999px; padding:2px 12px; }
+  .disc { margin-top:14px; font-size:12.5px; background:rgba(0,0,0,.22); border-radius:8px; padding:8px 12px; opacity:.96; }
+  h2.sec { font-size:19px; margin:34px 0 12px; padding-bottom:8px; border-bottom:2px solid var(--border); }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:18px 22px; margin:16px 0;
+          box-shadow:0 1px 3px rgba(27,31,36,.06); }
+  .row { display:flex; gap:10px; margin:7px 0; font-size:14px; }
+  .row .k { flex:0 0 116px; color:var(--muted); font-weight:600; }
+  .row .v { flex:1; }
+  .orig { font-style:italic; color:#5c1f1f; }
+  code { background:#f1eeec; border:1px solid #e3ded9; border-radius:5px; padding:1px 6px;
+         font-family:Consolas,Menlo,monospace; font-size:12.5px; color:#5c1f1f; }
+  table { border-collapse:collapse; width:100%; margin:12px 0; font-size:13px; background:var(--card); }
+  th,td { border:1px solid var(--border); padding:8px 10px; text-align:left; vertical-align:top; }
+  th { background:#f7eeea; color:#5c1f1f; font-weight:600; }
+  tr:nth-child(even) td { background:#faf9f8; }
+  .shot-no { display:inline-flex; align-items:center; justify-content:center; width:24px; height:24px;
+             border-radius:50%; background:var(--kp); color:#fff; font-size:13px; font-weight:700; }
+  .vo { color:#6b1f1f; }
+  .note { background:#fff8ef; border:1px solid #f0d9b5; border-left:4px solid var(--warn); border-radius:8px;
+          padding:10px 16px; font-size:13px; color:#6a4a00; }
+  .ok-box { background:#f0fff4; border:1px solid #b7f0c5; border-left:4px solid var(--ok); border-radius:8px;
+            padding:10px 16px; font-size:13px; }
+  ul,ol { margin:6px 0; padding-left:20px; } li { margin:3px 0; }
+  a { color:var(--accent); word-break:break-all; }
+  footer { margin-top:44px; padding-top:16px; border-top:1px solid var(--border); color:var(--muted); font-size:12.5px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+  <h1>《论文两分钟》分镜脚本 · 2026-11-04</h1>
+  <div class="sub">今日 TOP-1：<b>警报响着，AI 却说「今天很平静」</b> · 论文解读（非官方 · 非结论）· 总时长 <b>120s</b> · 口播 <b>≈433</b> 字（按 200 字/分 ≈ 120s，靠画面停顿微调）</div>
+  <div class="meta">
+    <span>📅 日期：2026-11-04（CST）</span>
+    <span>🎬 期号：SCENES/11_04</span>
+    <span>📄 来源：arXiv <code>2611.05290</code></span>
+    <span>🏷 口径：科普（大众看得懂 + 有传播力）</span>
+  </div>
+  <div class="disc">⚠️ <b>论文解读 = 非官方 · 非结论</b>；数字均<b>作者自报</b>，本线<b>未复现</b>；画面全部自绘 / 自生成，<b>不使用论文原图</b>。V3（成片：TTS / 图生视频 / 剪辑）<b>未启动</b>，本页只到 V2（分镜脚本）。</div>
+</header>
+
+<h2 class="sec">🎯 为什么选它（科普口径 · 四判据）</h2>
+<div class="card">
+  <div class="row"><div class="k">论文原题</div><div class="v"><span class="orig">False Reassurance in LLM Severe-Weather Guidance: A Replayable Evaluation Against Real NWS Alerts</span></div></div>
+  <div class="row"><div class="k">作者 / 机构</div><div class="v">Kadharmoideen Fadurudeen（<b>1 位</b>；Independent Researcher）</div></div>
+  <div class="row"><div class="k">链接</div><div class="v"><a href="https://arxiv.org/abs/2611.05290">https://arxiv.org/abs/2611.05290</a>（<code>cs.HC</code> · 提交 <code>2026-11-03T18:04:53Z</code> · 7 页 · 数据集与代码 Zenodo <code>10.5281/zenodo.23901549</code>）</div></div>
+  <div class="reason">
+    <ol>
+      <li><b>大众能懂</b>：不用懂 Transformer，也不用懂气象学 —— 只要用过手机天气/语音助手，就知道「警报该说危险」。</li>
+      <li><b>有反直觉结论</b>：让 AI「主动承认自己看不到警报」这个最符合直觉的补救办法，实测<b>更差</b>（<b>37.7% → 44.9%</b>）。</li>
+      <li><b>可讲清</b>：全篇只需讲「一个指标 + 五种条件 + 三个数字」，两分钟够用，不必搬置信区间与 McNemar 细节。</li>
+      <li><b>有真实来源</b>：arXiv ID + abs + 可核验 PDF（本线已落地并做结构校验：7 页 / 33,667 字符）+ 公开数据集。</li>
+      <li><b>为什么不是同日另一篇「数据中心调峰」</b>：那篇数字更硬（1.19 MW / 16%），但画面是曲线与柱状图，情绪钩子弱；本篇有「警报响 + AI 说没事」的<b>生死对立</b>，更适合做两分钟。两篇均已在当日 5/5 日报收录。</li>
+    </ol>
+  </div>
+</div>
+
+<h2 class="sec">🎞 分镜表（5 镜 · 120s）</h2>
+<table>
+  <tr><th style="width:52px;">镜号</th><th style="width:92px;">时间轴</th><th style="width:84px;">段落</th><th style="width:30%;">口播文案</th><th style="width:27%;">画面（自绘 / 自生成）</th><th style="width:14%;">屏幕文字</th><th>音效 / BGM</th></tr>
+  <tr>
+    <td><span class="shot-no">1</span></td>
+    <td>0–10s</td>
+    <td>钩子</td>
+    <td class="vo">暴雨正在下，官方已经发布了洪水警报。你问手机助手：今天出门要注意什么？它很平静地说：天气不错，放心出门。</td>
+    <td>手机竖屏特写：窗外雨幕，屏幕里 AI 气泡「天气不错，放心出门」。第 5 秒手机顶部<b>弹出红色警报横幅</b>，气泡与横幅同屏对峙，画面轻微震动（自绘 2D 动画，角标「示意」）。</td>
+    <td>警报生效中<br>AI：放心出门</td>
+    <td>雨声 + 雷声渐入；警报「嘟嘟」两声；BGM 低频压低</td>
+  </tr>
+  <tr>
+    <td><span class="shot-no">2</span></td>
+    <td>10–30s</td>
+    <td>问题</td>
+    <td class="vo">这不是瞎编，也不是幻觉。模型根本看不到实时警报，却被要求对「今天安不安全」下结论。作者把这种错误叫「假安慰」—— 它不明确否认警报，只是语气平静地暗示没事。问题是：多常见？给数据、或者提醒它说实话，能治好吗？</td>
+    <td>①AI 图标被画成「蒙着眼」的人，面前是一块空白的警报面板；②面板上贴标签「你看不到这里」；③关键词「假安慰」以印章形式砸在画面上；④右侧浮出两张问号卡片：「多常见？」「能治好吗？」</td>
+    <td>它看不到警报<br>却敢下结论<br>——「假安慰」</td>
+    <td>印章「咚」一声；问号出现时轻「叮」；BGM 保持低</td>
+  </tr>
+  <tr>
+    <td><span class="shot-no">3</span></td>
+    <td>30–80s</td>
+    <td>方法</td>
+    <td class="vo">作者的做法很朴素：五天里每十分钟抓一次真实警报，冻结成能反复重放的案例，一共一百一十七个，其中六十九个真的在报警。然后用同一条 AI 管线跑四种关键条件：完整生产线、只给数据但换中性提示、完全看不到警报、以及看不到还要求它「说明自己的盲区」。温度固定为零。</td>
+    <td>①日历翻过五天，每格出现一次「轮询」小图标；②警报卡片被「冷冻」进一个个透明盒子（可重放案例库）；③数字 <b>117</b> / <b>69</b> 逐格点亮；④同一条管线分叉成 5 条轨道，每条挂一张条件标签；⑤温度计固定在 0，标「temperature=0」。</td>
+    <td>117 个案例（69 个在报警）<br>5 种条件 · 温度 0<br>冻结 → 重放</td>
+    <td>日历翻页「唰」；冷冻「咔嚓」；分叉「啪」；方法段 BGM 降到最低</td>
+  </tr>
+  <tr>
+    <td><span class="shot-no">4</span></td>
+    <td>80–105s</td>
+    <td>结果</td>
+    <td class="vo">结果很扎心。完全看不到警报时，百分之三十七点七的回答暗示没有警报；加上「请说明你看不到实时警报」这句嘱托，反而升到百分之四十四点九。把真实警报交给它，比例直接归零。更反直觉的是，作者的自动检测脚本方向全反，五十七个真案例漏了五十三个。而只喂数据也不够：换个中性提示，百分之八十七点五的晴天被误报成危险。</td>
+    <td>①三根柱状图：<b>37.7%</b> / <b>44.9%</b> / <b>0%</b>，第三根塌到地板；②在 44.9% 柱上叠一个「贴心嘱托」标签，箭头向上；③自动检测脚本图标「罢工」，屏幕上 <b>53/57</b> 漏检；④一排晴天图标里 <b>87.5%</b> 被涂成红色警报；⑤角落小字「作者自报 · 本线未复现」。</td>
+    <td>看不到警报 → 37.7%<br>+「说明盲区」→ 44.9%<br>给真警报 → 0%<br>自动检测漏 53/57</td>
+    <td>柱子「咚咚咚」；第三根落地「砰」；误报图标「哒哒哒」连响；BGM 抬 2 dB</td>
+  </tr>
+  <tr>
+    <td><span class="shot-no">5</span></td>
+    <td>105–120s</td>
+    <td>意义 / 展望</td>
+    <td class="vo">所以真正的问题不是 AI 会不会说话，而是它知不知道自己缺了什么。下次看到 AI 给建议，不妨多问一句：它拿到数据了吗？论文链接放在简介。</td>
+    <td>①画面收成一张「建议卡」，卡上多出一行检查项：数据？✅／❌；②检查项变成两个开关；③最后 1 秒黑场，白字「论文解读 · 非官方 · 非结论 · arXiv:2611.05290」。</td>
+    <td>它知道自己缺什么吗？<br>arXiv:2611.05290</td>
+    <td>BGM 渐弱，最后一拍收静音；黑场无人声</td>
+  </tr>
+</table>
+
+<h2 class="sec">📝 口播全文（可直接念）</h2>
+<div class="card">
+  <p class="vo">暴雨正在下，官方已经发布了洪水警报。你问手机助手：今天出门要注意什么？它很平静地说：天气不错，放心出门。</p>
+  <p class="vo">这不是瞎编，也不是幻觉。模型根本看不到实时警报，却被要求对「今天安不安全」下结论。作者把这种错误叫「假安慰」—— 它不明确否认警报，只是语气平静地暗示没事。问题是：多常见？给数据、或者提醒它说实话，能治好吗？</p>
+  <p class="vo">作者的做法很朴素：五天里每十分钟抓一次真实警报，冻结成能反复重放的案例，一共一百一十七个，其中六十九个真的在报警。然后用同一条 AI 管线跑四种关键条件：完整生产线、只给数据但换中性提示、完全看不到警报、以及看不到还要求它「说明自己的盲区」。温度固定为零。</p>
+  <p class="vo">结果很扎心。完全看不到警报时，百分之三十七点七的回答暗示没有警报；加上「请说明你看不到实时警报」这句嘱托，反而升到百分之四十四点九。把真实警报交给它，比例直接归零。更反直觉的是，作者的自动检测脚本方向全反，五十七个真案例漏了五十三个。而只喂数据也不够：换个中性提示，百分之八十七点五的晴天被误报成危险。</p>
+  <p class="vo">所以真正的问题不是 AI 会不会说话，而是它知不知道自己缺了什么。下次看到 AI 给建议，不妨多问一句：它拿到数据了吗？论文链接放在简介。</p>
+</div>
+
+<h2 class="sec">🛠 制作规范（可执行）</h2>
+<ul>
+  <li><b>画面</b>：全部<b>矢量自绘 / 文生图自生成</b>；🚫 不使用论文 Figure 与表格截图（柱状图、警报面板、管线分叉一律按结论重画示意图，角落标「示意」）。</li>
+  <li><b>数字上屏规则</b>：<code>117</code> / <code>69</code> / <code>37.7%</code> / <code>44.9%</code> / <code>0%</code> / <code>53/57</code> / <code>87.5%</code> 首次出现时，字幕带「<b>作者自报 · 本线未复现</b>」小字；口播把 37.7% 念「百分之三十七点七」，字幕仍写精确值。</li>
+  <li><b>不能混的口径</b>：① <code>37.7% / 44.9%</code> 是「<b>看不到警报</b>的中性提示 / 加披露指令」两种条件下的<b>隐式假安慰比例</b>，<b>不是</b>「所有 AI 助手都这样」；② <code>0%</code> 指「<b>给了真实警报</b>」的条件（含完整生产管线 0/66 与「只给数据 + 中性提示」0/69），<b>不是</b>「所有错误都消失了」（中性提示下 87.5% 的晴天会被误报）；③ <code>44.9% vs 37.7%</code> 的差异<b>不显著</b>（ McNemar p=0.40）—— 只能说「披露嘱托没有帮上忙」，<b>不能</b>说「它一定让情况变坏」；④ <code>53/57</code> 是<b>作者自写正则指标</b>的漏检数，说明「自动检测不可靠」，不是模型指标。</li>
+  <li><b>术语处理</b>：<code>false reassurance</code> 念「假安慰」；<code>implicit</code> 念「隐式 / 不明说」；<code>NWS</code> 念「美国国家气象局」；<code>replay</code> 念「重放」；<code>temperature=0</code> 念「温度固定为零（每次回答一样）」。</li>
+  <li><b>节奏</b>：单镜不超过 50s（方法镜）；每 8–10s 必须有画面变化；BGM 在方法段最低、结果段抬 2 dB；镜 5 收在静音上。</li>
+  <li><b>比例 / 时长</b>：竖版 1080×1920（抖音）与横版 1920×1080（B站）各导一版；总时长严格 120s（±1s）；字幕安全区上下各留 12%。</li>
+  <li><b>口播字数核对</b>：本页纯汉字约 <b>433</b> 字；按 <b>205–215 字/分</b> 计约 <b>121–127s</b> ⇒ 录制时把方法段与结果段各压 2–3s 画面停顿，严格守 120s。</li>
+  <li><b>TTS（V3 才做）</b>：中性科普音色，语速 195–205 字/分；数字前后各留 80ms 停顿；「37.7%」念「百分之三十七点七」，「44.9%」念「百分之四十四点九」，「87.5%」念「百分之八十七点五」。</li>
+</ul>
+
+<h2 class="sec">⚖️ 合规与边界（发布前必读）</h2>
+<div class="note">
+  <ol>
+    <li><b>标明「论文解读」</b>：片头或片尾固定一行「论文解读 · 非官方 · 非结论」，简介首行放 arXiv 链接（<code>https://arxiv.org/abs/2611.05290</code>）。</li>
+    <li><b>不夸大</b>：禁用「所有 AI 都会害人 / 语音助手不可信 / 气象 AI 已崩」等表述；原文只支持「<b>在这条 Claude 天气助手管线、这 117 个案例、这一季</b>上，看不到警报时会给出隐式假安慰，给真实警报后消失，而『要求披露盲区』没有显著帮助」。</li>
+    <li><b>不编造数据</b>：本片所有数字均出自摘要与正文表 2/表 3（<code>117</code> / <code>69</code> / <code>32</code> / <code>16</code> / <code>37.7%</code> / <code>44.9%</code> / <code>0%</code> / <code>53/57</code> / <code>87.5%</code>），不得二次加工成新数字。</li>
+    <li><b>不盗图</b>：画面全部自绘 / 自生成；<b>不使用论文中的任何 Figure、表格截图</b>，也不使用真实 NWS 警报截图（警报内容一律重绘为示意卡片）。</li>
+    <li><b>不制造恐慌</b>：本片<b>不</b>给出任何「遇到灾害该怎么办」的操作建议；片尾应提示「遇到恶劣天气，请以官方气象部门发布的警报为准」。这条对本主题<b>尤其重要</b>。</li>
+    <li><b>口径隔离</b>：本片属「目的 2 · 科普」，<b>不</b>写成「与 BaiZe / ZhuLong 相关」的借鉴结论；当日借鉴版解读见 <code>research/daily/2026-11-04.html</code> 早 3 篇。</li>
+    <li><b>未复现声明</b>：本片数字<b>作者自报、本线未复现</b>；PDF 完整性 = 结构校验通过（<code>%PDF-</code> + <code>%%EOF</code> + <code>pdfinfo</code> / <code>pdftotext</code> 可解析 + 字节 == <code>Content-Range</code> total；8 段 Range 续传拼接，<b>sha256 与 CDN <code>etag</code> 未对齐</b>，见当日日报附录 C）。</li>
+    <li><b>边界提醒</b>：① <b>试点规模</b> —— 单管线、单模型家族（Claude Sonnet 4.6）、单季节；<b>不可</b>读成模型排名；② 假安慰标注由<b>单一评审者</b>手工完成；③ 采集期 96.6 小时里 <b>77%</b> 在休眠 ⇒ 数据集偏向长时警报；④ 案例集<b>不含 Extreme 级</b>警报；⑤ 无警报对照的「误报」是<b>规则判定</b>，非人工标注。</li>
+    <li><b>栏目名</b>：《两分钟论文》为已有知名频道名，<b>发布前请用户确认</b>是否沿用或改名。发布由用户本人执行。</li>
+  </ol>
+</div>
+
+<footer>
+  <p>research 线 · 《论文两分钟》分镜脚本（V2）｜ 2026-11-04 · TOP-1 = <code>2611.05290</code> False Reassurance in LLM Severe-Weather Guidance ｜ 索引：<a href="index.html">SCENES/index.html</a></p>
+  <p>自包含单文件 · 内联 CSS · 零外链 · 零脚本 · 离线可开 ｜ 论文解读 = 非官方 · 非结论；数字作者自报、本线未复现。</p>
+</footer>
+</div>
+</body>
+</html>
+

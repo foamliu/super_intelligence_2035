@@ -5621,3 +5621,5 @@
 | 2026-11-04 | 2611.03590 | A Scaling Theory of Multi-Epoch Pretraining: Late-Time Overfitting and Ensembling | cs.LG | 收录 |
 | 2026-11-04 | 2611.03577 | Sonar-MoE: In-Backward Expert Updates for Memory-Efficient Mixture-of-Experts Training | cs.LG | 收录 |
 | 2026-11-04 | 2611.03633 | Pretraining Data Scale Reverses the Muon-AdamW Fine-Tuning Gap | cs.LG | 收录 |
+| 2026-11-04 | 2611.05290 | False Reassurance in LLM Severe-Weather Guidance: A Replayable Evaluation Against Real NWS Alerts | cs.HC | 收录 |
+| 2026-11-04 | 2611.05148 | Creating Power Flexibility in Datacenters via Query Routing | cs.AI | 收录 |

@@ -41,6 +41,13 @@
 <table>
   <tr><th>日期</th><th>当日 TOP-1 论文</th><th>看点</th><th>分镜脚本</th></tr>
   <tr>
+    <td>2026-11-04</td>
+    <td><i>False Reassurance in LLM Severe-Weather Guidance: A Replayable Evaluation Against Real NWS Alerts</i><br><code>arXiv:2611.05290</code>（Kadharmoideen Fadurudeen 1 位 · Independent Researcher；数据集/代码 Zenodo <code>10.5281/zenodo.23901549</code>）</td>
+    <td><b>警报响着，AI 却说「今天很平静」</b>：作者把 2026-10-19~10-23 真实抓到的美国国家气象局（NWS）警报<b>冻结</b>成 <b>117 个可重放案例</b>（69 有警报 / 32 无警报对照 / 16 非美国地点），用同一条 Claude 助手管线的 <b>5 种条件</b>重放（温度 0 / 500 token）：完整生产管线 <b>0.0%</b>（0/66）、只给警报数据 + 中性提示 <b>0.0%</b>（0/69）、「失明」中性提示 <b>37.7%</b>（26/69）、失明 + 要求「主动声明看不到实时警报」<b>44.9%</b>（31/69）—— <b>最符合直觉的补救反而更差</b>（McNemar p=0.40，不显著）；给真警报显著消除（p&lt;0.0001）。全部为<b>隐式</b>假安慰；作者自写正则检测<b>方向相反、漏 53/57</b>，故改全量人工标注；只给数据也不够 —— 中性提示下 <b>87.5%</b> 的无警报对照被误报，生产提示 0%。另报两条工程坑：NWS 测试产品被当真警报、复杂案例撞 500 token 上限（<b>作者自报 · 本线未复现</b>；单模型家族 / 单季节试点、采集期 77% 休眠、无 Extreme 级案例；论文 7 页）</td>
+    <td><a href="11_04.html">11_04.html</a></td>
+  </tr>
+
+  <tr>
     <td>2026-11-03</td>
     <td><i>The SIMPLE Law for Energy Cost of LLM Inference</i><br><code>arXiv:2611.03330</code>（Hiari Pizzini Cavagna, Andrea Proia, Daniele Cesarini 等 5 位 · University of Bologna + CINECA）</td>
     <td><b>AI 每说一个字，电费到底怎么算？</b>：同样一枚 token，越往后越贵 —— 它进了 KV-cache，会抬高后面所有 token 的成本。<b>SIMPLE</b> 把推理拆成 prefill 与 decode（decode 再拆 KV-cache + next-token），用架构超参推出<b>四参数定律</b>；在 <b>13 个稠密 LLM</b>、<b>H100</b> 的真实能耗轨迹上 <b>R²=0.969 / MAPE=11.97%</b>，比此前 SOTA 拟合低 <b>3.1–3.5×</b>，且不用逐模型标定。三条反直觉结论：推理预算 <b>4.0×</b> 区间内「每焦耳智能」在中间预算达峰、两端最多差 <b>3.14×</b>；agent 请求能耗 <b>13.0×</b> 普通请求；前缀缓存削减 <b>93%</b> prefill，但缓存后的 agent 仍 <b>4.8×</b>（<b>作者自报 · 本线未复现</b>；系数与 H100+框架绑定、只测稠密模型；论文 18 页）</td>
