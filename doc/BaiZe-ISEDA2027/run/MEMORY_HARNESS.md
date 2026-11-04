@@ -5,13 +5,13 @@ WAITING: 0
 ## 📊 进度快照
 
 ```
-PHASE:        R1586 incr_eval轮:CPU/MEM自检PASS+regen全7路+scan_backlog=1(cline django-14787)→incr_eval R1586 cline django-14787 RESOLVED(332→333,n454→455)→report regen(17109B)·cline rerun[15/58 running django-15098]·3路predict alive(cline rerun·codex·deepseek223)
-已完成:       H-B✅·Gate7/7·TB报告✅·pilot20✅·R984-R988恒0调试✅·R989 incr_eval全链✅·R997硬约束修复✅·R998-R1585 incr_eval链+内存/CPU自检+体积归档✅·R1567 cline trace归因分析✅·R1586 incr_eval轮(cline django-14787 RESOLVED,332→333)✅
-当前动作:     R1586:CPU/MEM自检PASS(load23.92/224由pretrain驱动非本线·MEM avail1.3TB·无失控·无本线失控进程)→git pull→regen全7路(cline452·codex359·deepseek216·opencode497·pi463·claude-code358·hermes230)→scan_backlog=1(cline django-14787 patchlen=1615)→incr_eval R1586(cline django-14787 RESOLVED,332→333,n454→455)→report regen(17109B):cline333/455(73.2%)·codex283/488·deepseek178/223·opencode401/500·pi333/475·claude-code273/433·hermes184/314→cline rerun[15/58 running django-15098]·3路predict alive→未完成指令:有(cline rerun 43题未完成+3路predict alive)⇒WAITING=0.
+PHASE:        R1587 quiet监控轮:CPU/MEM自检PASS+regen全7路+scan_backlog=0→report regen(17109B unchanged)·cline rerun[15/58 running django-15098]·3路predict alive(cline rerun·codex·deepseek223)
+已完成:       H-B✅·Gate7/7·TB报告✅·pilot20✅·R984-R988恒0调试✅·R989 incr_eval全链✅·R997硬约束修复✅·R998-R1586 incr_eval链+内存/CPU自检+体积归档✅·R1567 cline trace归因分析✅·R1586 incr_eval轮(cline django-14787 RESOLVED,332→333)✅·R1587 quiet监控轮(backlog=0)✅
+当前动作:     R1587:CPU/MEM自检PASS(load25.21/224由pretrain驱动非本线·MEM avail1.3TB·无失控·无本线失控进程)→git pull→regen全7路(cline452·codex359·deepseek216·opencode497·pi463·claude-code358·hermes230)→scan_backlog=0→report regen(17109B unchanged):cline333/455(73.2%)·codex283/488·deepseek178/223·opencode401/500·pi333/475·claude-code273/433·hermes184/314→cline rerun[15/58 running django-15098]·3路predict alive→未完成指令:有(cline rerun 43题未完成+3路predict alive)⇒WAITING=0.
 下一步:       ①cline rerun继续([15/58]running django-15098→后续产patch即incr_eval) ②cline rerun全部完成后更新full500报告cline数字(修前326→修后新值,分列修复前/后) ③3路predict alive(cline rerun·codex·deepseek223/500) ④predict全完成后final full500报告 ⑤永久硬约束:禁止commit结果JSON ⑥TASK≤40KB红线
 阻塞:         无·cline rerun[15/58]running·3路predict alive(cline rerun·codex·deepseek223).
 ERROR_COUNT:  0
-  📦 体积：TASK=38954B(38.0KB,>32KB,3活跃块不可归档,<40KB红线OK) / MEMORY=32469B(31.7KB,≤32KB✅)（归档0条）
+  📦 体积：TASK=38954B(38.0KB,>32KB,3活跃块不可归档,<40KB红线OK) / MEMORY=~32KB（归档1条R1586→daily-memories-harness/2026-11-04.md）
 ```
 
 > 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
@@ -19,7 +19,8 @@ ERROR_COUNT:  0
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 
 ### 本唤醒流水
-[18:55→18:59] R1586 incr_eval轮:CPU/MEM自检PASS(load23.92/224由pretrain驱动·MEM avail1.3TB·无失控·无本线失控进程)→git pull→regen全7路merge_predictions(cline452·codex359·deepseek216·opencode497·pi463·claude-code358·hermes230)→scan_backlog=1(cline django-14787 patchlen=1615)→incr_eval R1586(cline django-14787 RESOLVED,332→333,n454→455)→report regen(17109B):cline333/455(73.2%)·codex283/488·deepseek178/223·opencode401/500·pi333/475·claude-code273/433·hermes184/314→cline rerun[15/58 running django-15098]·3路predict alive→未完成指令:有(cline rerun 43题+3路predict alive)⇒WAITING=0.
+[19:03→19:05] R1587 quiet监控轮:CPU/MEM自检PASS(load25.21/224由pretrain驱动·MEM avail1.3TB·无失控·无本线失控进程)→git pull→regen全7路merge_predictions(cline452·codex359·deepseek216·opencode497·pi463·claude-code358·hermes230)→scan_backlog=0→report regen(17109B unchanged):cline333/455(73.2%)·codex283/488·deepseek178/223·opencode401/500·pi333/475·claude-code273/433·hermes184/314→cline rerun[15/58 running django-15098]·3路predict alive→未完成指令:有(cline rerun 43题+3路predict alive)⇒WAITING=0.
+> 📦 R1586 流水(18:55→18:59,incr_eval轮:CPU/MEM PASS+scan_backlog=1→cline django-14787 RESOLVED 332→333+report regen·cline rerun[15/58])已归档 → daily-memories-harness/2026-11-04.md。结论：cline django-14787 RESOLVED·333/455·rerun[15/58]继续。需要时再读。
 > 📦 R1585 流水(18:47→18:51,incr_eval轮:CPU/MEM PASS+scan_backlog=1→cline django-14725 FAILED 332不变+report regen·cline rerun[15/58])已归档 → daily-memories-harness/2026-11-04.md。结论：cline django-14725 FAILED·332不变·rerun[15/58]继续。需要时再读。
 > 📦 R1584 流水(18:31→18:39,incr_eval轮:CPU/MEM PASS+scan_backlog=1→cline django-14631 RESOLVED 331→332+report regen·PUSH FAIL由loop兜底)已归档 → daily-memories-harness/2026-11-04.md。结论：cline+1 RESOLVED django-14631·332/453·R1584 push FAIL由loop兜底成功。需要时再读。
 > 📦 R1583 流水(18:10→18:28,incr_eval轮:CPU/MEM PASS+scan_backlog=3→codex+1·deepseek+2全RESOLVED+report regen·PUSH FAIL已由loop兜底)已归档 → daily-memories-harness/2026-11-04.md。结论：codex282→283·deepseek176→178·R1583 push FAIL由loop兜底成功。需要时再读。
@@ -46,14 +47,9 @@ ERROR_COUNT:  0
 > 📦 R1557-R1556 流水(11:41~11:46,2轮quiet:CPU/MEM自检PASS+regen all7 unchanged+scan_backlog=0,eval 1961持平,2路predict alive deepseek moved 20826→20859)已归档 → daily-memories-harness/2026-11-04.md。结论：quiet轮·codex477·deepseek211·2路predict alive。需要时再读。
 > 📦 R1555 流水(11:28,incr_eval轮:CPU/MEM自检PASS+regen codex WROTE(475→477)+incr_eval 2codex backlog(14309 RESOLVED+14365 FAILED),eval 1960→1961)已归档 → daily-memories-harness/2026-11-04.md。结论：codex+1 resolved·2路predict alive。需要时再读。
 > 📦 R1553-R1554 流水(11:05~11:18,2轮incr_eval quiet:CPU/MEM自检PASS+regen codex WROTE(473→475)+scan_backlog=0,eval 1960持平,2路predict alive)已归档 → daily-memories-harness/2026-11-04.md。结论：quiet轮·codex475·deepseek211·2路predict alive。需要时再读。
-
 > 📦 R1553-R1557 流水(11:05~11:46,5轮incr_eval/quiet:codex+2 resolved·deepseek+1 failed·scan_backlog=0·eval 1960~1961,2路predict alive)已合并归档 → daily-memories-harness/2026-11-04.md。结论：codex渐进resolved·2路predict alive。需要时再读。
-> 📦 R1527 流水(07:13,incr_eval轮:CPU/MEM自检PASS+regen deepseek WROTE(n202,+1 patch)+incr_eval deepseek django-16877 FAILED,eval 1945 unchanged)已归档 → daily-memories-harness/2026-11-04.md。结论：deepseek+1 FAILED·2路predict alive。需要时再读。
-> 📦 R1526 流水(07:04,incr_eval轮:CPU/MEM自检PASS+regen deepseek WROTE(n201,resolved159→160)+incr_eval deepseek django-16819 RESOLVED,eval 1944→1945)已归档 → daily-memories-harness/2026-11-04.md。结论：deepseek+1 RESOLVED·2路predict alive。需要时再读。
-> 📦 R1525 流水(07:05,quiet监控轮:CPU/MEM自检PASS+regen codex WROTE(n461,+1 no_patch)+scan_backlog=0,eval 1944 unchanged)已归档 → daily-memories-harness/2026-11-04.md。结论：2路predict alive,backlog=0。需要时再读。
-> 📦 R1524 流水(06:48,quiet监控轮:CPU/MEM自检PASS+regen全7路UNCHANGED+scan_backlog=0,eval 1944 unchanged,2路predict alive)已归档 → daily-memories-harness/2026-11-04.md。结论：2路predict alive,backlog=0。需要时再读。
-> 📦 R1523 流水(06:43,quiet监控轮:CPU/MEM自检PASS+regen全7路UNCHANGED+scan_backlog=0,eval 1944 unchanged,2路predict alive)已归档 → daily-memories-harness/2026-11-04.md。结论：2路predict alive,backlog=0。需要时再读。
-> 📦 R1522 流水(06:37,incr_eval轮:CPU/MEM自检PASS+regen deepseek WROTE+scan_backlog=1→incr_eval 1item deepseek django-16801 RESOLVED,eval 1944)已归档 → daily-memories-harness/2026-11-04.md。结论：2路predict alive,backlog=0。需要时再读。
+> 📦 R1525-R1527 流水(06:48~07:13,3轮quiet/incr_eval:deepseek+1 RESOLVED+1 FAILED·scan_backlog=0·eval 1944~1945,2路predict alive)已合并归档 → daily-memories-harness/2026-11-04.md。结论：deepseek渐进·2路predict alive。需要时再读。
+> 📦 R1523-R1524 流水(06:43~06:48,2轮quiet:CPU/MEM自检PASS+regen all7 unchanged+scan_backlog=0,eval 1944 unchanged,2路predict alive)已合并归档 → daily-memories-harness/2026-11-04.md。结论：quiet轮·2路predict alive。需要时再读。
 > 📦 R1522 流水(06:37,incr_eval轮:CPU/MEM自检PASS+regen deepseek WROTE+scan_backlog=1→incr_eval deepseek django-16801 RESOLVED,eval 1944)已归档 → daily-memories-harness/2026-11-04.md。结论：deepseek+1 RESOLVED·2路predict alive。需要时再读。
 > 📦 R1521 流水(06:29,incr_eval轮:CPU/MEM自检PASS+regen codex/deepseek WROTE+scan_backlog=4→incr_eval 4items 3 RESOLVED+1 FAILED,eval 1943)已归档 → daily-memories-harness/2026-11-04.md。结论：2路predict alive,backlog=0。需要时再读。
 > 📦 R1520 流水(06:13,quiet监控轮:CPU/MEM自检PASS+regen全UNCHANGED+scan_backlog=0,eval 1940 unchanged)已归档 → daily-memories-harness/2026-11-04.md。结论：2路predict alive,backlog=0。需要时再读。
