@@ -1,3 +1,46 @@
+## 归档 2026-11-04 第五批（由 BAIZE_PRETRAIN_2B_TASK.md 搬入，原文未改）
+
+### [运维令] 2026-11-04 13:2x（**llama.cpp 掉点根因定案：做 logits 逐 token 对齐（friend 建议 + 运维已验 commit 事实）**）· 用户直令 · 最高优先
+
+> 用户原话（2026-11-04）：pretrain 的 llama.cpp 根因「F16 递归累积误差」被质疑，需做 logits 对齐定案。
+
+**① 背景与已验事实（运维已 git 查证，pretrain 直接采信，勿重复）**：
+- 原根因「Mamba2 SSM 在 F16 下递归累积误差」**已证伪**：CPU 后端 `ggml/src/ggml-cpu/ops.cpp` 的 `ggml_compute_forward_ssm_scan` 只处理 `GGML_TYPE_F32`，非 F32 直接 `GGML_ABORT`——CPU 上 SSM scan 本就是 float32 计算，不存在 F16 递归路径。
+- BaiZe `mamba_n_groups=8`（>1），命中了 llama.cpp 历史 `SSM_SCAN n_groups>1` 的 bug 风险区。但该修复 `#15625`（commit `73804145a`）**已确认是当前 build `149f5641b` 的祖先（已含）**；另有 6 个 mamba 修复（426090367/a130532ae/1692f9e50/960d628f4/1274fbee9/43e1cbd6c）也已 `git merge-base --is-ancestor` 验证全含。⇒ **不能简单归因"就是 group bug"**。
+- 参照：Q-Mamba(ACL2025) 在 Mamba2-2.7B W8A8H4 量化下零样本只掉 2.13% ⇒ 17pp 掉点不是"量化精度"能解释的，指向实现正确性问题。
+
+**② 本轮必做（logits 逐 token 对齐，定案根因）**：
+1. **短序列先比**：同一 prompt（16~32 token）+ 同一输入 token ids，分别取 `llama.cpp(GGUF)` 与 `HF float32` 的逐 token logits。
+   - 判据：**偏差从序列开头就大** = 转换/计算图映射/权重错误；**随序列长度逐步累积放大** = 递归数值精度方向。前者指向实现 bug（可修），后者才是精度缺陷。
+2. **取 logits 的三条路**（任选，别硬陷 C API segfault）：① llama-server 的 `/completion` + `logprobs`（拿 `token_logprobs`/`completion_probabilities`，间接比较）；② 写最小 libllama 程序 `llama_decode` + `llama_get_logits_ith`（注意 head 前后已验证能加载 GGUF 并正确读出 56 层/group_count=8，卡在 decode segfault，需查 batch/seq_id 初始化）；③ 对比 `top-k 概率分布` 或 `argmax`（最粗但快）。
+3. **分层定位**：若短序列已偏，进一步用纯 attention 层 vs 纯 SSM 层的中间 hidden 对比，区分 attention 路径 / SSM 路径 / hybrid 调度。
+4. **顺带核对**：`nemotron-h.cpp` 在此 commit 之后到当前 HEAD 是否还有后续修复未包含（`git log --oneline 149f5641b..HEAD -- src/models/nemotron-h.cpp src/models/mamba-base.cpp`）。
+
+**③ 交付**：① logits 对齐结论（"序列开头即偏" vs "随长度累积"）② 根因最终判定（映射错误/实现 bug/精度缺陷，给出证据）③ 更新 `doc/BaiZe-ISEDA2027/llamacpp.txt` 的第六节根因 ④ 若定位到可修 bug，给出修复建议与预期收益，**但不擅自重编译全量切换**（先报告等令）。
+
+**④ 纪律**：🚫 不碰 GPU（`CUDA_VISIBLE_DEVICES=""`）；🚫 不影响 S1（`-t 8`、`nice -n 19`、两机 CPU ≤80%）；🚫 禁止 `pkill python`/宽泛 kill（18:39 事故红线）；不碰 vision/data/harness；commit `pretrain eval:`；心跳写 `未完成指令：有` ⇒ `WAITING: 0` 直到交付。
+
+### [运维令] 2026-11-04 09:3x（**CPU 评测改用 llama.cpp 提速——已预研验证，只需打通 llh 打分格式**）· 用户直令 · 最高优先
+
+> 用户原话（2026-11-04）：「llama.cpp 这条路，请 pretrain 再试试，代码已 clone 到 /nas_train/app.e0031982/code/llama.cpp，架构已支持。」
+
+**① 运维已预研验证（pretrain 直接复用，不用重做）**：
+- **编译已就绪**：`/nas_train/app.e0031982/code/llama.cpp/build/bin/{llama-cli,llama-server,llama-quantize,llama-bench}`（master build 149f5641b，CPU 版，`-DGGML_NATIVE=ON`）。
+- **架构确认支持**：`conversion/nemotron.py:423 NemotronHForCausalLM → NemotronHModel`（`MODEL_ARCH.NEMOTRON_H`），解析 `hybrid_override_pattern` 的 Mamba2/attention 混合层。
+- **转 GGUF 已通**：`python convert_hf_to_gguf.py <hf_iter_*> --outfile out.gguf --outtype f16`（f16 20s、323 tensor、4.44GB）；量化 `llama-quantize f16.gguf out.gguf Q4_K_M`（1.29GB）。
+- **CPU 推理实测（8 线程）**：f16 24.4 / Q8_0 34.6 / Q4_K_M **35.7 token/s**（内存仅 1.29GB）；**比 HF+CPU 的 transformers float32 路径快且省内存**。
+- **唯一卡点（要 pretrain 打通）**：llama-server 的 `/completion` 返回 `completion_probabilities`（llama.cpp 原生格式），而 lm_eval 后端（`local-completions`/`gguf`）期待 OpenAI 标准 `choices[].logprobs.token_logprobs` → 现报 `KeyError: 'token_logprobs'`，llh 打分失败。
+
+**② 本轮必做**：
+1. **打通 llh 打分**：起 `llama-server -m <q4_k_m.gguf> --port 3000X -t 8 -c 2048`（`CUDA_VISIBLE_DEVICES=""`），三选一把 `/completion` 响应转换成 lm_eval 能吃的 `token_logprobs`：① 用 `--model gguf`（`lm_eval/models/gguf.py` 已内置，走 `/v1/completions` 标准格式，优先试）；② 检查 llama-server 是否有参数让它输出 OpenAI 标准 logprobs；③ 兜底写个轻量 shim 把 `completion_probabilities` 转成 `token_logprobs`。
+2. **端到端测速 1 个 ckpt**：llama.cpp(Q4_K_M) + lm_eval 跑 arc_easy（或先 `--limit 100`），对比 HF 的 34.78s/it，报**实测提速倍数 + 单 ckpt 8 集 ETA**。
+3. **确认快就全量 5 ckpt**（10000/20000/30000/40000/50000）：转 GGUF→量化→lm_eval 8 集，结果落 `nemo_experiments/baize2b/lm_eval_results/`。
+
+**③ 交付**：① llama.cpp vs HF 端到端速度对照表（t/s、每 ckpt 8 集耗时、提速倍数）② 5×8 集汇总（Avg+逐集，与 P-6 起点 0.4395 对照）③ `reports/report_pretrain_cpu_eval_8sets_zh.html` 更新含 llama.cpp 加速结论。
+
+**④ 纪律**：🚫 不碰 GPU（`CUDA_VISIBLE_DEVICES=""`）；🚫 不影响 S1（`-t 8`、`nice -n 19`、两机 CPU ≤80%）；🚫 禁止 `pkill python`/宽泛 kill（18:39 事故红线），清 server 只 `kill <具体PID>`；不碰 vision/data/harness；commit `pretrain eval:`；心跳写 `未完成指令：有` ⇒ `WAITING: 0` 直到报告交付。
+
+
 ## 归档 2026-10-31（由 BAIZE_PRETRAIN_2B_TASK.md 搬入，原文未改）
 
 ### 🚨 2026-10-30 22:2x 运维直令：写「1M 长上下文 + 95% 大海捞针」技术报告 · 最高优先
