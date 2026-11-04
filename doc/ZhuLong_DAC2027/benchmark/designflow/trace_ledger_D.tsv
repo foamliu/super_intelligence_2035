@@ -151,3 +151,4 @@
 1791458509461_eypbp	joeyl	hfeg0plg74	18	waveform	case	EDA-Eval-DesignFlow-PwlConvert-001	2026-11-04 23:37	D250 PwlConvert-001 waveform 14asserts
 1789019984423_xkg53.messages.json	sophiaw	hfeg0plg09	26	analog_context	case	EDA-Eval-DesignFlow-FinesimAutoRun-001	2026-11-05 00:25	D251 FinesimAutoRun-001 analog_context 14asserts
 1792375390057_aq0vc.messages.json	tongni	hfeg0plg63	1004	schematic_netlist	case	EDA-Eval-DesignFlow-SpStimGen-001	2026-11-05 00:51	
+1789031505860_dntvx	rongjiez	hfeg0plg98	163	analog_context	case	EDA-Eval-DesignFlow-SweepCfgParse-001	2026-11-05 01:20	
