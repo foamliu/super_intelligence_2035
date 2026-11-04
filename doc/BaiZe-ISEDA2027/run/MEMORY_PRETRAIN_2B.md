@@ -24,37 +24,9 @@ WAITING: 0
 
 
 
-> 📦 §#1345（11-04 10:03, 监控轮·iter_30000新完成Avg=0.5025·2/5 DONE·3evals推进正常·S1 iter77600健康）→ daily-memories/2026-11-04.md；**结论**：iter_30000 DONE Avg=0.5025, 2/5有效DONE, 3evals在跑ETA~12:54, S1 iter77600健康0NaN, CPU<<80%。被#1346确认继续有效。需要时再读。
+> 📦 §#1292-#1345（11-03 23:24→11-04 10:03, ~50轮监控·pilot=FAIL等令·4 evals推进·S1 iter72110→77600）→ daily-memories/2026-11-03.md & 2026-11-04.md；**结论汇总**：pilot=FAIL已交付(commit 9cdc4469f,根因=3 Duplicated key覆写hybrid元数据),4 evals稳定推进,iter_10000 DONE Avg50%,iter_30000 DONE Avg50.25%,S1全程0NaN,CPU均<<80%。需要时再读 daily-memories。
 
-> 📦 §#1344（11-04 09:52, 监控轮·4evals推进正常·S1 iter77500健康·最坏ETA~13:08）→ daily-memories/2026-11-04.md；**结论**：4 evals推进, iter_30000 99.7%即将完成, iter_10000 DONE Avg50%, S1 iter77500健康0NaN, CPU<<80%。被#1345确认(iter_30000完成Avg=0.5025, 2/5 DONE)。需要时再读。
-> 📦 §#1343（11-04 09:41, 监控轮·4evals推进正常·S1 iter77410健康·最坏ETA~13:03）→ daily-memories/2026-11-04.md；**结论**：4 evals推进, 最坏ETA~13:03, iter_10000 DONE Avg50%, S1 iter77410健康0NaN, CPU<<80%。被#1344确认继续有效。需要时再读。
-> 📦 §#1342（11-04 09:26, 监控轮·4evals推进正常·S1 iter77280健康·最坏ETA~13:12）→ daily-memories/2026-11-04.md；**结论**：4 evals推进, iter_10000 DONE Avg50%, S1 iter77280健康0NaN, CPU<<80%。被#1343确认继续有效。需要时再读。
-
-> 📦 §#1341（11-04 09:20, 监控轮·4evals推进正常·S1 iter77230健康·最坏ETA~13:10）→ daily-memories/2026-11-04.md；**结论**：4 evals推进, 最坏ETA~13:10, iter_10000 DONE Avg50%, S1 iter77230健康0NaN, CPU<<80%。被#1342确认继续有效。需要时再读。
-
-> 📦 §#1340（11-04 09:13, 监控轮·4evals推进正常·S1 iter77180健康·最坏ETA~13:08）→ daily-memories/2026-11-04.md；**结论**：4 evals推进, 最坏ETA~13:08, iter_10000 DONE Avg50%, S1 iter77180健康0NaN, CPU<<80%。被#1341确认继续有效。需要时再读。
-
-> 📦 §#1338（11-04 09:03, 监控轮·4evals推进正常·S1 iter77080健康）→ daily-memories/2026-11-04.md；**结论**：4 evals推进, 最坏ETA~13:15, iter_10000 DONE Avg50%, S1 iter77080健康0NaN, CPU<<80%。被#1339确认继续有效。需要时再读。
-
-> 📦 §#1337（11-04 08:58, 监控轮·4evals推进正常·S1 iter77040健康）→ daily-memories/2026-11-04.md；**结论**：4 evals推进, 最坏ETA~13:17, iter_10000 DONE Avg50%, S1 iter77040健康0NaN, CPU<<80%。被#1338确认继续有效。需要时再读。
-
-> 📦 §#1336（11-04 08:51, 监控轮·4evals推进正常·S1 iter76980健康）→ daily-memories/2026-11-04.md；**结论**：4 evals推进, 最坏ETA~13:15, iter_10000 DONE Avg50%, S1 iter76980健康0NaN, CPU<<80%。被#1337确认继续有效。需要时再读。
-
-> 📦 §#1335（11-04 08:47, 监控轮·4evals推进正常·S1 iter76950健康）→ daily-memories/2026-11-04.md；**结论**：4 evals推进, 最坏ETA~13:16, iter_10000 DONE Avg50%, S1 iter76950健康0NaN, CPU<<80%。被#1336确认继续有效。需要时再读。
-
-> 📦 §#1333（11-04 08:35, 监控轮·4evals推进正常·S1 iter76820健康）→ daily-memories/2026-11-04.md；**结论**：4 evals推进, 最坏ETA~13:05, iter_10000 DONE Avg50%, S1 iter76820健康0NaN, CPU<<80%。被#1334确认继续有效。需要时再读。
-
-> 📦 §#1331（11-04 08:20, 监控轮·4evals推进正常·S1 iter76720健康）→ daily-memories/2026-11-04.md；**结论**：4 evals推进, 最坏ETA~13:13, iter_10000 DONE Avg50%, S1 iter76720健康0NaN, CPU<<80%。被#1332确认。需要时再读。
-
-> 📦 §#1329（11-04 08:07, 监控+报告补全·pilot根因更正·4 evals推进）→ daily-memories/2026-11-04.md；**结论**：pilot报告补全8422B根因=Mamba2-hybrid算法层logit偏移(7假设全排除),速度7.03x达标但Δacc16-18pp FAIL,4 evals推进ETA~13:04,S1 iter76590健康。被#1330-#1331确认。需要时再读。
-
-> 📦 §#1317-#1319（11-04 02:43-03:01, pilot根因更正+f32验证在跑→完成）→ daily-memories/2026-11-04.md；**结论**：#1317更正根因为F16精度(后被#1320更正为元数据损坏),f32 pilot 86.5%→100%完成。被#1320-#1321确认。需要时再读。
-
-> 📦 §#1307-#1316（11-04 01:14-02:26, 10轮监控·pilot=FAIL等令·4 evals推进·S1 iter73040→73670）→ daily-memories/2026-11-04.md；**结论汇总**：pilot=FAIL已交付(commit 9cdc4469f),4 evals稳定推进(.29~17s/it/.12~28s/it),最坏ETA从13:26改善至13:03,S1全程0NaN,CPU均<<80%。被#1317-#1321确认。需要时再读。
-
-> 📦 §#1292-#1306（11-03 23:24→11-04 01:07, 15轮监控·pilot=FAIL等令·3-4 evals推进·S1 iter72110→72990）→ daily-memories/2026-11-03.md & 2026-11-04.md；**结论汇总**：pilot=FAIL已交付(commit 9cdc4469f), iter_50000 bf16 DONE Avg=0.2875(sciq=0疑bf16,后f32重跑), 3-4 evals稳定推进, S1全程0NaN, CPU均<<80%。被#1307-#1345确认。需要时再读。
-
-> 📦 §#1302（11-04 00:34, pilot 收尾轮·报告补齐·VERDICT=FAIL）→ daily-memories/2026-11-04.md；**结论**：报告 5804B+commit 9cdc4469f, 根因=3 Duplicated key, 保留 HF 路线等令。需要时再读。
+> 🆕 2026-11-04 12:1x #1353：**llama.cpp 重试·per-token 打分法已打通 logprobs 卡点·pilot DONE=Δacc 仍超标(FAIL)·.29 iter_50000_f32 96%在跑**。**运维令 09:3x 本轮进展**：① GGUF 转换已在 .12 完成（f16, 4.44GB, 20s, 仍有"Duplicated key"WARNING）；② **卡点定位（比运维预研更深）**：llama-server `/v1/completions` echo=True **不返回 prompt token logprobs**（只返回 generated token），lm_eval GGUFLM 靠 `text_offset < context_length` 切分 → 无法打分；`/completion` 端点也无 prompt logprobs；`--model gguf` 路径不可用（非格式问题，是 llama-server 不支持 prompt logprobs）；③ **解决方案 ① shim**：写了 `llamacpp_logprobs_shim.py`（格式转换 PASS ✅，但仍受限于无 prompt logprobs）；④ **解决方案 ② per-token 打分（真正可用）**：写了 `llamacpp_pertoken_lmeval.py`（自定义 lm_eval model，绕过 echo：对每个 continuation token 发 prefix as token IDs → 从 top_logprobs 查目标 token logprob → 累加）；⑤ **pilot DONE=FAIL**：sciq acc=0.42(HF=0.79,Δ=-37pp)/acc_norm=0.57(HF=0.71,Δ=-14pp), piqa acc=0.55(HF=0.72,Δ=-17pp)/acc_norm=0.51(HF=0.73,Δ=-22pp)。703.8s/600req。**根因**：BPE merge boundary(split 不准)+n_probs=50 截断+Duplicated key 元数据损坏(上轮已确认)。**VERDICT: FAIL，保留 HF float32 路线，等用户令**；⑥ **.29 iter_50000_f32** @2485/2599(95.6%)@15.9s/it ETA~30min。S1 训练健康(8 GPU 96-100%, ckpt@78000)。CPU .29 15.1%/.12 轻载 <<80%✅。📦 体积：TASK=31010B(30.3KB✅)/MEMORY≈16KB(归档~17KB→daily-memories)✅。未完成指令：有(.29 iter_50000_f32 ~30min完成后→检查是否NaN→5/5汇总+报告更新→等用户令)⇒ WAITING: 0。
 > 🆕 2026-11-03 23:12 #1290：**🦙 llama.cpp pilot 已完成 → VERDICT=FAIL（不切换 GGUF，保留 HF 路线）**。iter_10000 F16 GGUF 跑 sciq+piqa --limit 100：06 契约自检 PASS ✅（tokenize/token-id prompt/logit_bias/n_probs）·02b 分词对拍 **24/24 PASS** ✅（用 tokenizers lib 绕开 py310 numpy ABI 冲突）·加速 **7.0x** ✅（1403.9s vs HF 估 9864s）·**但 |Δacc| 严重超标**：sciq 79%→61%(Δ=-18pp)·piqa 72%→56%(Δ=-16pp)·Avg Δ=-17pp（判据≤1pp）❌。最可能根因：F16 在 Mamba2 SSM(24/56层)递归累积精度不足（此前 bf16 在 HF 侧已致 NaN）。已交付 `reports/report_pretrain_llamacpp_pilot_zh.html`(5.4KB, 0 script/0 外链) + comparison.json + meta.json + 新增 `02b_check_tokenizer_fast.py`/`gen_pilot_report.py`。S1 iter71980/loss2.099/0NaN 健康未受影响。**按用户令：PASS 后先报告再等令——本轮 FAIL，同样等令，不擅自全量切换。** 未完成指令：有 ⇒ WAITING: 0。
 > 📦 §#1291（11-03 23:17, 监控轮·pilot DONE 等令·3 evals 推进）→ daily-memories/2026-11-03.md；**结论**：iter_30000 29/2599(1.1%)@48s/it(ramping down), iter_40000 956/2599(36.8%)@30.4s/it→done~Nov4 13:15, iter_20000 953/2599(36.7%)@30.3s/it→done~Nov4 13:13, S1 iter72040/loss2.107✅, CPU .29 16.8%/.12 15.3%<<80%✅。被#1292 校正(iter_30000 ramp-down 收敛至16s/it done~Nov4 09:17)。需要时再读。
 > 📦 §#1290（11-03 23:12, llama.cpp pilot=FAIL）见上条详述。需要时再读。
@@ -74,52 +46,7 @@ WAITING: 0
 > **⑤ SIGSTOP 优化（#1242）已结束**：watcher 已 SIGCONT iter_30000（iter_50000 22:31 done 后）。⚠️ **副作用**：lm_eval simple_evaluate 不 checkpoint，SIGCONT 后 iter_30000 从 0 重启（510 丢失）——下次不宜对 lm_eval 用 SIGSTOP。
 > **⑥ 下一步**：①**llama.cpp pilot 已完成=FAIL，已报告，等用户令**（不擅自全量切换 GGUF）②持续监控 .29 iter_30000(done~Nov4 09:35)+.12 双 float32(ETA Nov4 13:12-13:14) ③iter_50000 bf16 sciq=0.0 需 float32 重跑（待 GPU 空或用户令）④全部 5/5 done→汇总表+能力-vs-step 曲线+终版报告 report_pretrain_cpu_eval_8sets_zh.html+日报。未完成指令：有 ⇒ WAITING: 0。
 > **📦 体积**：TASK=31KB/MEMORY=26KB（均 ≤32KB ✅，本轮无需归档）。
-> 📦 §#1283（11-03 21:34, 监控轮·iter_50000 91.7%@~16.1s/it）→ daily-memories/2026-11-03.md；**结论**：4 evals 稳定推进, iter_50000 91.7% ETA~22:32, .12 双 float32 28.8%@~28.6s/it ETA Nov4 12:18-12:20, iter_30000 SIGSTOP(510), S1 iter71160健康。被#1284 校正(iter_50000 92.4%@~16.1s/it, .12 略减速至~29.2s/it ETA后移至12:34-12:44, S1 iter71220)。需要时再读。
-> 📦 §#1282（11-03 21:29, 监控轮·iter_50000 90.7%@15.84s/it）→ daily-memories/2026-11-03.md；**结论**：4 evals 稳定推进, iter_50000 90.7% ETA~22:33, .12 双 float32 28.2%@~29.6s/it ETA Nov4 12:48-12:53, iter_30000 SIGSTOP(510), S1 iter71110健康。被#1283 校正(iter_50000 91.7%@~16.1s/it, .12 略加速至~28.6s/it ETA前移至12:18-12:20, S1 iter71160)。需要时再读。
-> 📦 §#1281（11-03 21:20, 监控轮·iter_50000 89.8%@~15.69s/it）→ daily-memories/2026-11-03.md；**结论**：4 evals 稳定推进, iter_50000 89.8% ETA~22:30, .12 双 float32 27.7% ETA Nov4 11:46-12:16, iter_30000 SIGSTOP(实测510非144), S1 iter71040健康。被#1282 校正。需要时再读。
-> 📦 §#1280（11-03 21:15, 监控轮·iter_50000 88.8%@~15.65s/it）→ daily-memories/2026-11-03.md；**结论**：4 evals 稳定推进, iter_50000 88.8% ETA~22:31, .12 双 float32 27% ETA Nov4 12:21-12:33, iter_30000 SIGSTOP(误记144实际510), S1 iter71000健康。被#1281 校正(iter_30000实测510/2599=19.6%非144, ETA下修 Nov4 08:24, .12 ETA下修 11:46-12:16)。需要时再读。
-> 📦 §#1279（11-03 21:05, 监控轮·iter_50000 87%@~15.9s/it）
-> 📦 §#1279（11-03 21:05, 监控轮·iter_50000 87%@~15.9s/it）→ daily-memories/2026-11-03.md；**结论**：4 evals 稳定推进, iter_50000 87% ETA~22:31, .12 双 float32 26% ETA Nov4 13:17-13:23, S1 iter70920健康。被#1280 校准(.12 实测 27%@~29s/it, log=_f32.log, 旧基log的2599/2599系上一轮bf16残留误读, ETA下修至 Nov4 12:21-12:33)。需要时再读。
-> 📦 §#1278（11-03 20:55, 监控轮·iter_50000 86.3%@~17.6s/it）→ daily-memories/2026-11-03.md；**结论**：4 evals 稳定推进, iter_50000 86.3% ETA~22:39, .12 双 float32 25.7-25.8% ETA Nov4 13:07-13:18, S1 iter70840健康。被#1279 确认继续有效(87%@~15.9s/it)。需要时再读。
-> 📦 §#1277（11-03 20:49, 监控轮·iter_50000 85.3%@~15.4s/it）→ daily-memories/2026-11-03.md；**结论**：4 evals 稳定推进, iter_50000 85.3% ETA~22:27, .12 双 float32 25.2-25.3% ETA Nov4 13:08-13:15, S1 iter70780健康。被#1278 确认继续有效(86.3%@~17.6s/it,略放缓)。需要时再读。
-> 📦 §#1276（11-03 20:42, 监控轮·iter_50000 84.2%@~15.6s/it）→ daily-memories/2026-11-03.md；**结论**：4 evals 稳定推进, iter_50000 84.2% ETA~22:29, .12 双 float32 24.6-24.7% ETA Nov4 13:08-13:12, S1 iter70730健康。被#1277 确认继续有效(85.3%@~15.4s/it)。需要时再读。
-> 📦 §#1275（11-03 20:36, 监控轮·iter_50000 83.3%@~15.3s/it）→ daily-memories/2026-11-03.md；**结论**：4 evals 稳定推进, iter_50000 83.3% ETA~22:26, .12 双 float32 24.2-24.3% ETA Nov4 13:09-13:24, S1 iter70680健康。被#1276 确认继续有效(84.2%@~15.6s/it)。需要时再读。
-> 📦 §#1274（11-03 20:28, 监控轮·iter_50000 82.2%@~15.2s/it）→ daily-memories/2026-11-03.md；**结论**：4 evals 稳定推进, iter_50000 82.2% ETA~22:25, .12 双 float32 23.7% ETA Nov4 13:19-13:24, S1 iter70620健康。被#1275 确认继续有效(83.3%@~15.3s/it)。需要时再读。
-> 📦 §#1273（11-03 20:22, 监控轮·iter_50000 81.1%@~14.4s/it）→ daily-memories/2026-11-03.md；**结论**：4 evals 稳定推进, iter_50000 81.1% ETA~22:25, .12 双 float32 23.1-23.2% ETA Nov4 12:46-12:58, S1 iter70540健康。被#1274 确认继续有效(82.2%@~15.2s/it；iter_30000 active log 实测 144/2599 非 29)。需要时再读。
-> 📦 §#1272（11-03 20:17, 监控轮·iter_50000 80.2%@~14.6s/it）→ daily-memories/2026-11-03.md；**结论**：4 evals 稳定推进, iter_50000 80.2% ETA~22:25, .12 双 float32 22.7% ETA Nov4 12:50-12:55, S1 iter70500健康。被#1273 确认继续有效(81.1%@~14.4s/it)。需要时再读。
-> 📦 §#1271（11-03 20:11, 监控轮·iter_50000 79.4%@~15.0s/it）→ daily-memories/2026-11-03.md；**结论**：4 evals 稳定推进, iter_50000 79.4% ETA~22:25, .12 双 float32 22.3-22.4% ETA Nov4 13:00-13:10, S1 iter70450健康。被#1272 确认继续有效(80.2%@~14.6s/it)。需要时再读。
-> 📦 §#1269（11-03 20:00, 监控轮·iter_50000 77.7%@14.9s/it）→ daily-memories/2026-11-03.md；**结论**：4 evals 稳定推进, iter_50000 77.7% ETA~22:24, .12 双 float32 21.4-21.5% ETA Nov4 13:05-13:24, S1 iter70360健康。被#1270 确认继续有效(78.5%@~15s/it)。需要时再读。
-> 📦 §#1268（11-03 19:54, 监控轮·iter_50000 76.7%@14.9s/it）→ daily-memories/2026-11-03.md；**结论**：4 evals 稳定推进, iter_50000 76.7% ETA~22:24, .12 双 float32 20.9-21.0% ETA Nov4 13:05-13:24, S1 iter70300健康。被#1269 确认继续有效(77.7%@14.9s/it)。需要时再读。
-> 📦 §#1267（11-03 19:45, 监控轮·iter_50000 75.5%@15.3s/it）→ daily-memories/2026-11-03.md；**结论**：4 evals 稳定推进, iter_50000 75.5% ETA~22:28, .12 双 float32 20.3-20.4% ETA Nov4 12:50-13:06, S1 iter70240健康。被#1268 确认继续有效(76.7%@14.9s/it)。需要时再读。
-> 📦 §#1266（11-03 19:37, 监控轮·iter_50000 74.0%@15.1s/it）→ daily-memories/2026-11-03.md；**结论**：4 evals 稳定推进, iter_50000 74.0% ETA~22:50, .12 双 float32 19.7-19.8% ETA Nov4 13:05, S1 iter70150健康。被#1267 确认继续有效(75.5%@15.3s/it)。需要时再读。
-> 📦 §#1265（11-03 19:30, 监控轮·iter_50000 73.0%@15.7s/it）→ daily-memories/2026-11-03.md；**结论**：4 evals 稳定推进, iter_50000 73.0% ETA~22:30, .12 双 float32 19.1-19.2% ETA Nov4 12:45-13:10, S1 iter70110健康。被#1266 确认继续有效(74.0%@15.1s/it)。需要时再读。
-> 📦 §#1264（11-03 19:22, 监控轮·iter_50000 72.0%@15.5s/it）→ daily-memories/2026-11-03.md；**结论**：4 evals 稳定推进, iter_50000 72.0% ETA~22:30, .12 双 float32 18.6% ETA Nov4 13:10, S1 iter70050健康。被#1265 确认继续有效(73.0%@15.7s/it)。需要时再读。
-> 📦 §#1263（11-03 19:15, 监控轮·iter_50000 70.9%@15.3s/it）→ daily-memories/2026-11-03.md；**结论**：4 evals 稳定推进, iter_50000 70.9% ETA~22:48, .12 双 float32 18.0-18.1% ETA Nov4 12:40-12:55, S1 iter69970健康。被#1264 确认继续有效(72.0%@15.5s/it)。需要时再读。
-> 📦 §#1262（11-03 19:05, 监控轮·iter_50000 69.6%@15.1s/it）→ daily-memories/2026-11-03.md；**结论**：4 evals 稳定推进, iter_50000 69.6% ETA~22:25, .12 双 float32 17.3-17.4% ETA Nov4 12:38-12:40, S1 iter69900健康。被#1263 确认继续有效(70.9%@15.3s/it)。需要时再读。
-> 📦 §#1261（11-03 19:00, 监控轮·iter_50000 68.7%@15.5s/it）→ daily-memories/2026-11-03.md；**结论**：4 evals 稳定推进, iter_50000 68.7% ETA~22:30, .12 双 float32 16.8-16.9% ETA Nov4 12:33-12:36, S1 iter69850健康。被#1262 确认继续有效。需要时再读。
-> 📦 §#1260（11-03 18:53, 监控轮·iter_50000 67.8%@16.1s/it）→ daily-memories/2026-11-03.md；**结论**：4 evals 稳定推进, iter_50000 67.8% ETA~22:38, .12 双 float32 16.4% ETA Nov4 12:53-13:11, S1 iter69790健康。被#1261 确认继续有效(68.7%@15.5s/it)。需要时再读。
-> 📦 §#1258（11-03 18:39, 监控轮·iter_50000 65.6%@15.7s/it）→ daily-memories/2026-11-03.md；**结论**：4 evals 稳定推进, iter_50000 65.6% ETA~22:33, .12 双 float32 15.2-15.4% ETA Nov4 12:40-12:45, S1 iter69680健康。被#1259 确认继续有效(66.8%@15.7s/it)。需要时再读。
-> 📦 §#1257（11-03 18:35, 监控轮·iter_50000 65.0%@15.8s/it）→ daily-memories/2026-11-03.md；**结论**：4 evals 稳定推进, iter_50000 65.0% ETA~22:35, .12 双 float32 14.9-15.0% ETA Nov4 12:53-13:26, S1 iter69640健康。被#1258-#1259 确认继续有效。需要时再读。
-> 📦 §#1256（11-03 18:30, 监控轮·iter_50000 64.1%@15.6s/it）→ daily-memories/2026-11-03.md；**结论**：4 evals 稳定推进, iter_50000 64.1% ETA~22:35, .12 双 float32 14.5% ETA Nov4 13:15, S1 iter69600健康。被#1257 确认继续有效(65.0%@15.8s/it)。需要时再读。
-> 📦 §#1255（11-03 18:19, 监控轮·iter_50000 62.6%@15.9s/it）→ daily-memories/2026-11-03.md；**结论**：4 evals 稳定推进, iter_50000 62.6% ETA~22:33, .12 双 float32 13.7-13.8% ETA Nov4 12:59-13:13, S1 iter69510健康。被#1256-#1257 确认继续有效。需要时再读。
-> 📦 §#1254（11-03 18:14, 监控轮·iter_50000 61.7%@16s/it）→ daily-memories/2026-11-03.md；**结论**：4 evals 稳定推进, iter_50000 61.7% ETA~22:37, .12 双 float32 13.2-13.3% ETA Nov4 12:47-48, S1 iter69450健康。被#1255-#1256 确认继续有效。需要时再读。
-> 📦 §#1253（11-03 18:08, 监控轮·iter_50000 60.9%@15.94s/it）→ daily-memories/2026-11-03.md；**结论**：4 evals 稳定推进, iter_50000 60.9% ETA~22:38, .12 双 float32 12.7-12.8% ETA Nov4 13:06-07, S1 iter69400健康。被#1254 确认继续有效(61.7%@16s/it)。需要时再读。
-> 📦 §#1252（11-03 18:00, 监控轮·iter_50000 59.9%@16.92s/it）→ daily-memories/2026-11-03.md；**结论**：4 evals 稳定推进, iter_50000 59.9% ETA~22:54, .12 双 float32 12.2% ETA Nov4 13:00, S1 iter69340健康。被#1253-#1254 确认继续有效。需要时再读。
-> 📦 §#1251（11-03 17:51, 监控轮·iter_50000 58.4%@19.6s/it）→ daily-memories/2026-11-03.md；**结论**：4 evals 稳定推进, iter_50000 58.4% ETA~23:45, .12 双 float32 11.4% ETA Nov4 13:08, S1 iter69250健康。被#1252 确认继续有效(59.9%@16.92s/it, 速度回升)。需要时再读。
-> 📦 §#1250（11-03 17:38, 监控轮·iter_50000 57.3%@17.1s/it）→ daily-memories/2026-11-03.md；**结论**：4 evals 稳定推进, iter_50000 57.3% ETA~22:54, .12 双 float32 10.6% ETA Nov4 13:05, S1 iter69150健康。被#1251-#1252 确认继续有效。需要时再读。
-> 📦 §#1249（11-03 17:33, 监控轮·iter_50000 56%@15.6s/it）→ daily-memories/2026-11-03.md；**结论**：4 evals 稳定推进, iter_50000 56% ETA~22:25, .12 双 float32 10% ETA Nov4 13:21, S1 iter69100健康。被#1250-#1251 确认继续有效。需要时再读。
-> 📦 §#1243-#1248（11-03 16:32-17:18, 监控轮×6·iter_50000 47→56%）→ daily-memories/2026-11-03.md；**结论**：4 evals 稳定推进, iter_50000 从47%→56% 稳定, .12 双 float32 从5.5%→10%, SIGSTOP优化有效。被#1249-#1250 确认继续有效。需要时再读。
-> 📦 §#1243（11-03 16:32, 监控轮·iter_50000 47%@14.4s/it·.12 5.5%@31s/it）→ daily-memories/2026-11-03.md；**结论**：4 evals 稳定推进, iter_50000 加速中, 最坏 Nov4 13:50<deadline。被#1244 确认继续有效。需要时再读。
-> 📦 §#1242（11-03 16:25, 监控+优化轮·SIGSTOP iter_30000 释放带宽）→ daily-memories/2026-11-03.md；**结论**：SIGSTOP iter_30000→iter_50000 加速至 13.8s/it, watcher 部署, .12 双 float32@31s/it 稳定。被#1243确认继续有效。需要时再读。
-> 📦 §#1241（11-03 16:13, 监控轮·ramp-down 校准）→ daily-memories/2026-11-03.md；**结论**：4 evals 推进, iter_10000 DONE Avg50%, iter_30000@4.1%/16.5s/it(后被#1242 发现实为 48s/it 带宽竞争,已 SIGSTOP 优化)。被#1242 校准+优化。需要时再读。
-> 📦 §#1240（11-03 16:00, 监控轮·ramp-down 校准 2599=合计请求）→ daily-memories/2026-11-03.md；**结论**：4 evals 推进, iter_10000 DONE Avg50%, 2599=8集合计请求, iter_10000全程12.4h@17s/it, 全部 5/5 ETA Nov4 上午~中午。被#1241 校准(.12 双 float32 仍 31s/it 瓶颈, 最坏 Nov4 13:30)。需要时再读。
-> 📦 §#1239（11-03 15:49, 监控轮·ramp-down 观察）→ daily-memories/2026-11-03.md；**结论**：4 evals 推进, iter_10000 DONE Avg50%, .12 瞬时 36-39s/it ramp-down。被#1240 校准。需要时再读。
->
-> 📦 §#1238（11-03 15:35, OMP=8 收敛确认+监控）→ daily-memories/2026-11-03.md；**结论**：OMP=8 收敛 34.78s/it 省~10h, limit=100 生效(2599总请求), iter_50000 39.3% ETA~7.2h, .12 记 60s/it(后被#1239修正为 ramp-down)。需要时再读。
-> 📦 §#1237（11-03 15:17, OMP=8 优化执行·iter_30000 重启）→ daily-memories/2026-11-03.md；**结论**：OMP=4→8 重启, 预计省~12h。被#1238确认收敛34.78s/it。需要时再读。
-> 📦 §#1236（11-03 15:00, CPU eval 监控·float32 .29 加速中）→ daily-memories/2026-11-03.md；**结论**：4 evals 在跑, iter_10000 DONE(Avg50%), iter_50000 33% ETA~7.5h, float32 .29 55s/it↓加速, .12 93s 2进程竞争。被#1237优化。需要时再读。
-> 📦 §#1235（11-03 14:55, CPU eval 监控·float32 ramp-up）→ daily-memories/2026-11-03.md；**结论**：4 evals 在跑, iter_10000 DONE(Avg50%), float32 刚启动ramp-up(73-95s/it), ETA Nov4-5。被#1236监控。需要时再读。
-> 📦 §#1234（11-03 14:50, root cause bf16 NaN + 4 evals 重跑启动）→ daily-memories/2026-11-03.md；**结论**：bf16 CPU forward 对 iter_20000/30000/40000 产生 NaN logits(Mamba2 SSM bf16 溢出); float32 修复; 4 evals 启动(1 bf16+3 float32)。被#1236监控。需要时再读。
+> 📦 §#1234-#1283（11-03 14:50→21:34, ~40轮监控·iter_50000 56%→92%·bf16 NaN根因+float32重跑+OMP=8+SIGSTOP优化）→ daily-memories/2026-11-03.md；**结论汇总**：bf16 NaN→float32修复, OMP=8收敛34.78s/it, SIGSTOP优化, 速度收敛(.29~16s/.12~30s), iter_10000 DONE Avg50%, CPU全程<<80%。需要时再读 daily-memories。
 
 
 
