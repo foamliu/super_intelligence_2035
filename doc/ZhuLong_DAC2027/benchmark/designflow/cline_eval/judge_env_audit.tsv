@@ -28,7 +28,7 @@ EDA-Eval-DesignFlow-DRCPatPlacePlan-001	BROKEN	../../assets-or-hidden from __fil
 EDA-Eval-DesignFlow-DRCPatPlan-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
 EDA-Eval-DesignFlow-DRCTimeStats-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
 EDA-Eval-DesignFlow-DRConnTiming-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
-EDA-Eval-DesignFlow-DcDontuseGen-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
+EDA-Eval-DesignFlow-DcDontuseGen-001	SAFE	r91 fixed: +_resolve_a_lib/_resolve_a_allow/_resolve_b_lib/_resolve_b_allow(workdir) fallback (markers lib_A.lib/allow_A.txt A; lib_B.lib/allow_B.txt B in hidden/); abspath returns for cwd=tmp candidate subprocess (rule ⑨); check() uses a_lib/a_allow/b_lib/b_allow for oracle+cond(c)(j)(o) subprocess; judge-dir ref PASS verified; 5 neg NEG_RC=0 (all hit e, unchanged); jsonl test synced 13481->15819B; k=15==15 GATE PASS
 EDA-Eval-DesignFlow-DcUpfDiag-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
 EDA-Eval-DesignFlow-DdgoaDeviceAudit-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
 EDA-Eval-DesignFlow-DeckIncludeResolve-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
