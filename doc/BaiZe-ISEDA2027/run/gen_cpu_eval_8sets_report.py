@@ -236,7 +236,7 @@ def build_html(data, now_str, gguf_runs=None):
     h.append("<tr><td>模型</td><td>BaiZe 2B（Mamba2-hybrid，FP8 训练 → HF float32 推理）</td></tr>")
     h.append("<tr><td>检查点</td><td>iter_10000 / 20000 / 30000 / 40000 / 50000（5 档）</td></tr>")
     h.append("<tr><td>评测设备</td><td>纯 CPU（<code>device=cpu, dtype=float32</code>，OMP_NUM_THREADS=8, nice=19）——GPU 全被 S1 训练占用</td></tr>")
-    h.append("<tr><td>dtype 说明</td><td>bfloat16 在 Mamba2 SSM 层触发 NaN（sciq=0.0），改用 <strong>float32</strong> 后 NaN 消除，结果可信</td></tr>")
+    h.append("<tr><td>dtype 说明</td><td>有效 ckpt（iter_10000/30000）用 <strong>float32</strong> 评测结果正常；退化 ckpt（iter_20000/40000/50000）float32 仍退化，<strong>非 dtype 问题</strong>（详见 §⑥ 2026-11-05 调查结论）</td></tr>")
     h.append("<tr><td>8 个任务集</td><td>ARC-Challenge / ARC-Easy / BoolQ / HellaSwag / OpenBookQA / PIQA / SciQ / Winogrande（zero-shot，与 P-6 同口径）</td></tr>")
     h.append(f"<tr><td>样本量</td><td>每任务 limit=100（共 2599 条 loglikelihood 请求/ckpt/集）</td></tr>")
     h.append(f"<tr><td>每步 token</td><td>GBS=256 × seq=16384 = {TOK_PER_STEP/1e6:.2f}M tok/step</td></tr>")
@@ -307,17 +307,20 @@ def build_html(data, now_str, gguf_runs=None):
         h.append("<li>逐任务看，SciQ / PIQA / Winogrande / BoolQ 在 10k 步即已超过随机基线较多，说明常识推理能力在训练早期快速涌现；ARC-Challenge / OpenBookQA 偏难，随步数增长仍有上升空间。")
         n_nan = n_total - n_done
         if n_nan > 0:
-            h.append(f"<li><strong>⚠️ NaN 检查点（{n_nan}/5）</strong>：iter_20000 / iter_40000 / iter_50000 的 sciq acc=0.0 且 stderr=0.0，"
-                     "说明 Mamba2 SSM 层输出 NaN → logit 全 NaN → 所有答案等概率。"
-                     "float32 重跑仍 NaN → <strong>NaN 在 checkpoint 权重本身</strong>（非 dtype 问题），"
-                     "推测为 FP8 训练中间歇性溢出导致部分步数的权重含 NaN。"
-                     "iter_10000 / iter_30000 权重正常 → 训练过程间歇性出现 NaN 步。")
+            h.append(f"<li><strong>⚠️ 退化检查点（{n_nan}/5）</strong>：iter_20000 / iter_40000 / iter_50000 的 sciq acc=0.0 且 stderr=0.0，"
+                     "三者在 8 个任务上逐集分数<strong>完全相同</strong>（Avg=28.75%），但 results.json MD5 各不同（确认为独立 eval 运行）。"
+                     "<strong>2026-11-05 调查结论：此前「NaN 在 checkpoint 权重本身」的诊断已被推翻</strong>——"
+                     "① 逐张量扫描（120 SSM + 30 非 SSM 张量/ckpt）：5 个 ckpt 权重<strong>全部无 NaN/Inf</strong>；"
+                     "② 前向传播实测（p6_tf5 + mamba_ssm/causal_conv1d blocked → PyTorch reference）：4 个 ckpt logits <strong>全部有效</strong>（NaN=0, Inf=0, range 正常）；"
+                     "③ 权重统计（A_log/dt_bias/D/conv1d）正常无极端值；④ 5 个 config.json MD5 完全相同。"
+                     "<strong>根因不在模型权重或前向传播，而在 eval 过程</strong>（lm_eval loglikelihood 计算或 tie-breaking 行为），具体环节待进一步排查。"
+                     "iter_10000 / iter_30000 产出正常结果（Avg~50%），说明评测链路本身可工作。")
         h.append("</ul>")
     else:
         h.append("<p>暂无已完成检查点，待评测结束后刷新本报告。</p>")
     h.append("</div>")
     h.append("<div class='card'><h2>⑦ 诚实条款与限制</h2><ul>")
-    h.append("<li>本评测为<strong>纯 CPU + float32</strong>，使用 reference 实现（causal_conv1d / mamba_ssm 未装优化内核），速度远慢于 GPU，但数值结果可信。bfloat16 在 Mamba2 SSM 层触发 NaN（sciq=0.0），已改用 float32。</li>")
+    h.append("<li>本评测为<strong>纯 CPU</strong>，使用 reference 实现（causal_conv1d / mamba_ssm 未装优化内核，blocked → PyTorch fallback），速度远慢于 GPU。有效检查点（iter_10000/30000）用 float32 评测；退化检查点（iter_20000/40000/50000）float32 仍退化，<strong>非 dtype 问题</strong>（见 §⑥ 调查结论）。</li>")
     h.append("<li>每任务 <code>limit=100</code>（非全量），样本量较小，acc_stderr 约 ±4.5–5.0%，故逐集分数的绝对值有统计波动，<strong>Avg 趋势比单集绝对值更可信</strong>。</li>")
     h.append("<li>Xmodel-2 / Phi-1.5 参照线为公开报告值，评测口径可能与我方不完全一致，仅作量级参照。</li>")
     h.append("<li>S1 训练于 2026-11-02 19:51 从 ckpt 58000 resume，scheduler 未恢复（LR 从 warmup 重来），iter_10000–50000 均为 <strong>resume 前</strong>保存的检查点，不受 resume 影响。</li>")

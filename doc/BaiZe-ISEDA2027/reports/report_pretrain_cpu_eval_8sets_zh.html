@@ -12,12 +12,12 @@ tr.ref td{background:#f1f5f9;color:#475569;font-size:12px}span.an{color:#64748b;
 .foot{margin-top:40px;padding-top:12px;border-top:1px solid #e2e8f0;color:#64748b;font-size:12px}code{background:#f1f5f9;padding:1px 5px;border-radius:3px;font-size:12px}
 </style></head><body>
 <h1>BaiZe 2B（Mamba2-hybrid）CPU 评测 · 5 检查点 x 8 常识推理集</h1>
-<p>生成时间：2026-11-04 13:05　|　<span class="badge ok">5/5 ckpt 已完成（2/5 有效）</span></p>
+<p>生成时间：2026-11-05 07:39:35　|　<span class="badge run">3/5 ckpt 已完成</span></p>
 <div class='card'><h2>① 评测配置</h2><table><tr><th>项目</th><th>值</th></tr>
 <tr><td>模型</td><td>BaiZe 2B（Mamba2-hybrid，FP8 训练 → HF float32 推理）</td></tr>
 <tr><td>检查点</td><td>iter_10000 / 20000 / 30000 / 40000 / 50000（5 档）</td></tr>
 <tr><td>评测设备</td><td>纯 CPU（<code>device=cpu, dtype=float32</code>，OMP_NUM_THREADS=8, nice=19）——GPU 全被 S1 训练占用</td></tr>
-<tr><td>dtype 说明</td><td>bfloat16 在 Mamba2 SSM 层触发 NaN（sciq=0.0），改用 <strong>float32</strong> 后 NaN 消除，结果可信</td></tr>
+<tr><td>dtype 说明</td><td>有效 ckpt（iter_10000/30000）用 <strong>float32</strong> 评测结果正常；退化 ckpt（iter_20000/40000/50000）float32 仍退化，<strong>非 dtype 问题</strong>（详见 §⑥ 2026-11-05 调查结论）</td></tr>
 <tr><td>8 个任务集</td><td>ARC-Challenge / ARC-Easy / BoolQ / HellaSwag / OpenBookQA / PIQA / SciQ / Winogrande（zero-shot，与 P-6 同口径）</td></tr>
 <tr><td>样本量</td><td>每任务 limit=100（共 2599 条 loglikelihood 请求/ckpt/集）</td></tr>
 <tr><td>每步 token</td><td>GBS=256 × seq=16384 = 4.19M tok/step</td></tr>
@@ -27,10 +27,10 @@ tr.ref td{background:#f1f5f9;color:#475569;font-size:12px}span.an{color:#64748b;
 <table>
 <tr><th>检查点</th><th>ARC-C</th><th>ARC-E</th><th>BoolQ</th><th>HellaSwag</th><th>OpenBookQA</th><th>PIQA</th><th>SciQ</th><th>Winogrande</th><th>Avg</th></tr>
 <tr><td class="ck">iter_10000</td><td>29<span class="an">/26</span></td><td>49<span class="an">/47</span></td><td>61</td><td>36<span class="an">/45</span></td><td>20<span class="an">/35</span></td><td>72<span class="an">/73</span></td><td>79<span class="an">/71</span></td><td>54</td><td class="avg">50.00%</td></tr>
-<tr><td class="ck">iter_20000</td><td>23<span class="an">/—</span></td><td>26</td><td>30</td><td>23<span class="an">/—</span></td><td>32<span class="an">/—</span></td><td>46<span class="an">/46</span></td><td style='color:#dc2626'>0<span class="an">/0</span></td><td>50</td><td class="avg" style='color:#dc2626'>28.75% ⚠</td></tr>
+<tr><td class="ck">iter_20000</td><td colspan="10" class="pend">评测进行中…</td></tr>
 <tr><td class="ck">iter_30000</td><td>26<span class="an">/26</span></td><td>57<span class="an">/57</span></td><td>47</td><td>37<span class="an">/44</span></td><td>21<span class="an">/37</span></td><td>69<span class="an">/72</span></td><td>83<span class="an">/81</span></td><td>62</td><td class="avg">50.25%</td></tr>
-<tr><td class="ck">iter_40000</td><td>23<span class="an">/—</span></td><td>26</td><td>30</td><td>23<span class="an">/—</span></td><td>32<span class="an">/—</span></td><td>46<span class="an">/46</span></td><td style='color:#dc2626'>0<span class="an">/0</span></td><td>50</td><td class="avg" style='color:#dc2626'>28.75% ⚠</td></tr>
-<tr><td class="ck">iter_50000</td><td>23<span class="an">/23</span></td><td>26<span class="an">/26</span></td><td>30</td><td>23<span class="an">/23</span></td><td>32<span class="an">/32</span></td><td>46<span class="an">/46</span></td><td style='color:#dc2626'>0<span class="an">/0</span></td><td>50</td><td class="avg" style='color:#dc2626'>28.75% ⚠</td></tr>
+<tr><td class="ck">iter_40000</td><td colspan="10" class="pend">评测进行中…</td></tr>
+<tr><td class="ck">iter_50000</td><td>23<span class="an">/23</span></td><td>26<span class="an">/26</span></td><td>30</td><td>23<span class="an">/23</span></td><td>32<span class="an">/32</span></td><td>46<span class="an">/46</span></td><td>0<span class="an">/0</span></td><td>50</td><td class="avg">28.75%</td></tr>
 <tr><td colspan="10" style="background:#eef2f7;font-weight:600;text-align:left">参照线</td></tr>
 <tr class="ref"><td>BaiZe P-6 (655M, 20k)</td><td>23.8</td><td>41.4</td><td>58.8</td><td>39.9</td><td>28.2</td><td>64.0</td><td>67.3</td><td>49.9</td><td class="avg">44.0%</td></tr>
 <tr class="ref"><td>Xmodel-2 s1/10K (39.3B tok)</td><td colspan="8" class="na">逐集未列</td><td class="avg">46.7%</td></tr>
@@ -42,15 +42,15 @@ tr.ref td{background:#f1f5f9;color:#475569;font-size:12px}span.an{color:#64748b;
 <div class='card'><h2>③ 能力 vs 训练步数（Avg 曲线）</h2><svg xmlns="http://www.w3.org/2000/svg" width="860" height="460" style="font-family:monospace;border:1px solid #e2e8f0">
 <rect width="860" height="460" fill="white"/>
 <line x1="64" y1="406.0" x2="710" y2="406.0" stroke="#eef2f7" stroke-width="1"/>
-<text x="58" y="410.0" text-anchor="end" font-size="10" fill="#64748b">42%</text>
+<text x="58" y="410.0" text-anchor="end" font-size="10" fill="#64748b">24%</text>
 <line x1="64" y1="313.5" x2="710" y2="313.5" stroke="#eef2f7" stroke-width="1"/>
-<text x="58" y="317.5" text-anchor="end" font-size="10" fill="#64748b">45%</text>
+<text x="58" y="317.5" text-anchor="end" font-size="10" fill="#64748b">32%</text>
 <line x1="64" y1="221.0" x2="710" y2="221.0" stroke="#eef2f7" stroke-width="1"/>
-<text x="58" y="225.0" text-anchor="end" font-size="10" fill="#64748b">47%</text>
+<text x="58" y="225.0" text-anchor="end" font-size="10" fill="#64748b">40%</text>
 <line x1="64" y1="128.5" x2="710" y2="128.5" stroke="#eef2f7" stroke-width="1"/>
-<text x="58" y="132.5" text-anchor="end" font-size="10" fill="#64748b">50%</text>
+<text x="58" y="132.5" text-anchor="end" font-size="10" fill="#64748b">47%</text>
 <line x1="64" y1="36.0" x2="710" y2="36.0" stroke="#eef2f7" stroke-width="1"/>
-<text x="58" y="40.0" text-anchor="end" font-size="10" fill="#64748b">52%</text>
+<text x="58" y="40.0" text-anchor="end" font-size="10" fill="#64748b">55%</text>
 <line x1="108.6" y1="406" x2="108.6" y2="410" stroke="#64748b" stroke-width="1"/>
 <text x="108.6" y="424" text-anchor="middle" font-size="10" fill="#64748b">10k</text>
 <line x1="247.8" y1="406" x2="247.8" y2="410" stroke="#64748b" stroke-width="1"/>
@@ -66,36 +66,38 @@ tr.ref td{background:#f1f5f9;color:#475569;font-size:12px}span.an{color:#64748b;
 <text x="430" y="450" text-anchor="middle" font-size="12" fill="#334155">训练步数</text>
 <text x="16" y="230" text-anchor="middle" font-size="12" fill="#334155" transform="rotate(-90 16 230)">Avg Acc</text>
 <text x="430" y="22" text-anchor="middle" font-size="13" fill="#1e293b" font-weight="bold">常识推理 Avg vs 训练步数</text>
-<path d="M108.6 118.5 L387.0 109.6" fill="none" stroke="#2563eb" stroke-width="2.5"/>
-<circle cx="108.6" cy="118.5" r="4" fill="#2563eb"/>
-<text x="108.6" y="110.5" text-anchor="middle" font-size="9" fill="#2563eb">50.0%</text>
-<circle cx="387.0" cy="109.6" r="4" fill="#2563eb"/>
-<text x="387.0" y="101.6" text-anchor="middle" font-size="9" fill="#2563eb">50.2%</text>
+<path d="M108.6 92.7 L387.0 89.6 L665.4 353.1" fill="none" stroke="#2563eb" stroke-width="2.5"/>
+<circle cx="108.6" cy="92.7" r="4" fill="#2563eb"/>
+<text x="108.6" y="84.7" text-anchor="middle" font-size="9" fill="#2563eb">50.0%</text>
+<circle cx="387.0" cy="89.6" r="4" fill="#2563eb"/>
+<text x="387.0" y="81.6" text-anchor="middle" font-size="9" fill="#2563eb">50.2%</text>
+<circle cx="665.4" cy="353.1" r="4" fill="#2563eb"/>
+<text x="665.4" y="345.1" text-anchor="middle" font-size="9" fill="#2563eb">28.7%</text>
 <rect x="718" y="40" width="12" height="12" fill="#2563eb"/>
 <text x="734" y="50" font-size="10" fill="#334155">BaiZe 2B (Mamba2-hybrid)</text>
-<path d="M108.6 238.1 L247.8 151.7 L387.0 132.8 L526.2 107.4" fill="none" stroke="#16a34a" stroke-width="2.5"/>
-<circle cx="108.6" cy="238.1" r="4" fill="#16a34a"/>
-<text x="108.6" y="230.1" text-anchor="middle" font-size="9" fill="#16a34a">46.7%</text>
-<circle cx="247.8" cy="151.7" r="4" fill="#16a34a"/>
-<text x="247.8" y="143.7" text-anchor="middle" font-size="9" fill="#16a34a">49.1%</text>
-<circle cx="387.0" cy="132.8" r="4" fill="#16a34a"/>
-<text x="387.0" y="124.8" text-anchor="middle" font-size="9" fill="#16a34a">49.6%</text>
-<circle cx="526.2" cy="107.4" r="4" fill="#16a34a"/>
-<text x="526.2" y="99.4" text-anchor="middle" font-size="9" fill="#16a34a">50.3%</text>
+<path d="M108.6 133.7 L247.8 104.1 L387.0 97.6 L526.2 88.9" fill="none" stroke="#16a34a" stroke-width="2.5"/>
+<circle cx="108.6" cy="133.7" r="4" fill="#16a34a"/>
+<text x="108.6" y="125.7" text-anchor="middle" font-size="9" fill="#16a34a">46.7%</text>
+<circle cx="247.8" cy="104.1" r="4" fill="#16a34a"/>
+<text x="247.8" y="96.1" text-anchor="middle" font-size="9" fill="#16a34a">49.1%</text>
+<circle cx="387.0" cy="97.6" r="4" fill="#16a34a"/>
+<text x="387.0" y="89.6" text-anchor="middle" font-size="9" fill="#16a34a">49.6%</text>
+<circle cx="526.2" cy="88.9" r="4" fill="#16a34a"/>
+<text x="526.2" y="80.9" text-anchor="middle" font-size="9" fill="#16a34a">50.3%</text>
 <rect x="718" y="56" width="12" height="12" fill="#16a34a"/>
 <text x="734" y="66" font-size="10" fill="#334155">Xmodel-2 s1 (1.2B)</text>
-<line x1="64.0" y1="118.5" x2="710.0" y2="118.5" stroke="#dc2626" stroke-width="2" stroke-dasharray="6 4"/>
-<circle cx="108.6" cy="118.5" r="4" fill="#dc2626"/>
-<text x="108.6" y="110.5" text-anchor="middle" font-size="9" fill="#dc2626">50.0%</text>
-<circle cx="665.4" cy="118.5" r="4" fill="#dc2626"/>
-<text x="665.4" y="110.5" text-anchor="middle" font-size="9" fill="#dc2626">50.0%</text>
+<line x1="64.0" y1="92.7" x2="710.0" y2="92.7" stroke="#dc2626" stroke-width="2" stroke-dasharray="6 4"/>
+<circle cx="108.6" cy="92.7" r="4" fill="#dc2626"/>
+<text x="108.6" y="84.7" text-anchor="middle" font-size="9" fill="#dc2626">50.0%</text>
+<circle cx="665.4" cy="92.7" r="4" fill="#dc2626"/>
+<text x="665.4" y="84.7" text-anchor="middle" font-size="9" fill="#dc2626">50.0%</text>
 <rect x="718" y="72" width="12" height="12" fill="#dc2626"/>
 <text x="734" y="82" font-size="10" fill="#334155">Phi-1.5 (1.3B)</text>
-<line x1="64.0" y1="334.6" x2="710.0" y2="334.6" stroke="#9333ea" stroke-width="2" stroke-dasharray="6 4"/>
-<circle cx="108.6" cy="334.6" r="4" fill="#9333ea"/>
-<text x="108.6" y="326.6" text-anchor="middle" font-size="9" fill="#9333ea">44.0%</text>
-<circle cx="665.4" cy="334.6" r="4" fill="#9333ea"/>
-<text x="665.4" y="326.6" text-anchor="middle" font-size="9" fill="#9333ea">44.0%</text>
+<line x1="64.0" y1="166.8" x2="710.0" y2="166.8" stroke="#9333ea" stroke-width="2" stroke-dasharray="6 4"/>
+<circle cx="108.6" cy="166.8" r="4" fill="#9333ea"/>
+<text x="108.6" y="158.8" text-anchor="middle" font-size="9" fill="#9333ea">44.0%</text>
+<circle cx="665.4" cy="166.8" r="4" fill="#9333ea"/>
+<text x="665.4" y="158.8" text-anchor="middle" font-size="9" fill="#9333ea">44.0%</text>
 <rect x="718" y="88" width="12" height="12" fill="#9333ea"/>
 <text x="734" y="98" font-size="10" fill="#334155">BaiZe P-6 (655M, 20k)</text>
 </svg></div>
@@ -103,7 +105,7 @@ tr.ref td{background:#f1f5f9;color:#475569;font-size:12px}span.an{color:#64748b;
 <div><h3>ARC-C</h3><svg xmlns="http://www.w3.org/2000/svg" width="420" height="240" style="font-family:monospace;border:1px solid #e2e8f0">
 <rect width="420" height="240" fill="white"/>
 <line x1="64" y1="186.0" x2="270" y2="186.0" stroke="#eef2f7" stroke-width="1"/>
-<text x="58" y="190.0" text-anchor="end" font-size="10" fill="#64748b">22%</text>
+<text x="58" y="190.0" text-anchor="end" font-size="10" fill="#64748b">21%</text>
 <line x1="64" y1="148.5" x2="270" y2="148.5" stroke="#eef2f7" stroke-width="1"/>
 <text x="58" y="152.5" text-anchor="end" font-size="10" fill="#64748b">24%</text>
 <line x1="64" y1="111.0" x2="270" y2="111.0" stroke="#eef2f7" stroke-width="1"/>
@@ -127,33 +129,35 @@ tr.ref td{background:#f1f5f9;color:#475569;font-size:12px}span.an{color:#64748b;
 <text x="210" y="230" text-anchor="middle" font-size="12" fill="#334155">训练步数</text>
 <text x="16" y="120" text-anchor="middle" font-size="12" fill="#334155" transform="rotate(-90 16 120)">Avg Acc</text>
 <text x="210" y="22" text-anchor="middle" font-size="13" fill="#1e293b" font-weight="bold">ARC-C</text>
-<path d="M78.2 68.6 L167.0 117.6" fill="none" stroke="#2563eb" stroke-width="2.5"/>
-<circle cx="78.2" cy="68.6" r="4" fill="#2563eb"/>
-<text x="78.2" y="60.6" text-anchor="middle" font-size="9" fill="#2563eb">29.0%</text>
-<circle cx="167.0" cy="117.6" r="4" fill="#2563eb"/>
-<text x="167.0" y="109.6" text-anchor="middle" font-size="9" fill="#2563eb">26.0%</text>
+<path d="M78.2 66.0 L167.0 111.0 L255.8 156.0" fill="none" stroke="#2563eb" stroke-width="2.5"/>
+<circle cx="78.2" cy="66.0" r="4" fill="#2563eb"/>
+<text x="78.2" y="58.0" text-anchor="middle" font-size="9" fill="#2563eb">29.0%</text>
+<circle cx="167.0" cy="111.0" r="4" fill="#2563eb"/>
+<text x="167.0" y="103.0" text-anchor="middle" font-size="9" fill="#2563eb">26.0%</text>
+<circle cx="255.8" cy="156.0" r="4" fill="#2563eb"/>
+<text x="255.8" y="148.0" text-anchor="middle" font-size="9" fill="#2563eb">23.0%</text>
 <rect x="278" y="40" width="12" height="12" fill="#2563eb"/>
 <text x="294" y="50" font-size="10" fill="#334155">BaiZe</text>
-<line x1="64.0" y1="153.4" x2="270.0" y2="153.4" stroke="#9333ea" stroke-width="2" stroke-dasharray="6 4"/>
-<circle cx="78.2" cy="153.4" r="4" fill="#9333ea"/>
-<text x="78.2" y="145.4" text-anchor="middle" font-size="9" fill="#9333ea">23.8%</text>
-<circle cx="255.8" cy="153.4" r="4" fill="#9333ea"/>
-<text x="255.8" y="145.4" text-anchor="middle" font-size="9" fill="#9333ea">23.8%</text>
+<line x1="64.0" y1="143.9" x2="270.0" y2="143.9" stroke="#9333ea" stroke-width="2" stroke-dasharray="6 4"/>
+<circle cx="78.2" cy="143.9" r="4" fill="#9333ea"/>
+<text x="78.2" y="135.9" text-anchor="middle" font-size="9" fill="#9333ea">23.8%</text>
+<circle cx="255.8" cy="143.9" r="4" fill="#9333ea"/>
+<text x="255.8" y="135.9" text-anchor="middle" font-size="9" fill="#9333ea">23.8%</text>
 <rect x="278" y="56" width="12" height="12" fill="#9333ea"/>
 <text x="294" y="66" font-size="10" fill="#334155">P-6 ref</text>
 </svg></div>
 <div><h3>ARC-E</h3><svg xmlns="http://www.w3.org/2000/svg" width="420" height="240" style="font-family:monospace;border:1px solid #e2e8f0">
 <rect width="420" height="240" fill="white"/>
 <line x1="64" y1="186.0" x2="270" y2="186.0" stroke="#eef2f7" stroke-width="1"/>
-<text x="58" y="190.0" text-anchor="end" font-size="10" fill="#64748b">38%</text>
+<text x="58" y="190.0" text-anchor="end" font-size="10" fill="#64748b">20%</text>
 <line x1="64" y1="148.5" x2="270" y2="148.5" stroke="#eef2f7" stroke-width="1"/>
-<text x="58" y="152.5" text-anchor="end" font-size="10" fill="#64748b">44%</text>
+<text x="58" y="152.5" text-anchor="end" font-size="10" fill="#64748b">31%</text>
 <line x1="64" y1="111.0" x2="270" y2="111.0" stroke="#eef2f7" stroke-width="1"/>
-<text x="58" y="115.0" text-anchor="end" font-size="10" fill="#64748b">49%</text>
+<text x="58" y="115.0" text-anchor="end" font-size="10" fill="#64748b">41%</text>
 <line x1="64" y1="73.5" x2="270" y2="73.5" stroke="#eef2f7" stroke-width="1"/>
-<text x="58" y="77.5" text-anchor="end" font-size="10" fill="#64748b">55%</text>
+<text x="58" y="77.5" text-anchor="end" font-size="10" fill="#64748b">52%</text>
 <line x1="64" y1="36.0" x2="270" y2="36.0" stroke="#eef2f7" stroke-width="1"/>
-<text x="58" y="40.0" text-anchor="end" font-size="10" fill="#64748b">60%</text>
+<text x="58" y="40.0" text-anchor="end" font-size="10" fill="#64748b">63%</text>
 <line x1="78.2" y1="186" x2="78.2" y2="190" stroke="#64748b" stroke-width="1"/>
 <text x="78.2" y="204" text-anchor="middle" font-size="10" fill="#64748b">10k</text>
 <line x1="122.6" y1="186" x2="122.6" y2="190" stroke="#64748b" stroke-width="1"/>
@@ -169,33 +173,35 @@ tr.ref td{background:#f1f5f9;color:#475569;font-size:12px}span.an{color:#64748b;
 <text x="210" y="230" text-anchor="middle" font-size="12" fill="#334155">训练步数</text>
 <text x="16" y="120" text-anchor="middle" font-size="12" fill="#334155" transform="rotate(-90 16 120)">Avg Acc</text>
 <text x="210" y="22" text-anchor="middle" font-size="13" fill="#1e293b" font-weight="bold">ARC-E</text>
-<path d="M78.2 112.3 L167.0 57.4" fill="none" stroke="#2563eb" stroke-width="2.5"/>
-<circle cx="78.2" cy="112.3" r="4" fill="#2563eb"/>
-<text x="78.2" y="104.3" text-anchor="middle" font-size="9" fill="#2563eb">49.0%</text>
+<path d="M78.2 85.1 L167.0 57.4 L255.8 164.6" fill="none" stroke="#2563eb" stroke-width="2.5"/>
+<circle cx="78.2" cy="85.1" r="4" fill="#2563eb"/>
+<text x="78.2" y="77.1" text-anchor="middle" font-size="9" fill="#2563eb">49.0%</text>
 <circle cx="167.0" cy="57.4" r="4" fill="#2563eb"/>
 <text x="167.0" y="49.4" text-anchor="middle" font-size="9" fill="#2563eb">57.0%</text>
+<circle cx="255.8" cy="164.6" r="4" fill="#2563eb"/>
+<text x="255.8" y="156.6" text-anchor="middle" font-size="9" fill="#2563eb">26.0%</text>
 <rect x="278" y="40" width="12" height="12" fill="#2563eb"/>
 <text x="294" y="50" font-size="10" fill="#334155">BaiZe</text>
-<line x1="64.0" y1="164.6" x2="270.0" y2="164.6" stroke="#9333ea" stroke-width="2" stroke-dasharray="6 4"/>
-<circle cx="78.2" cy="164.6" r="4" fill="#9333ea"/>
-<text x="78.2" y="156.6" text-anchor="middle" font-size="9" fill="#9333ea">41.4%</text>
-<circle cx="255.8" cy="164.6" r="4" fill="#9333ea"/>
-<text x="255.8" y="156.6" text-anchor="middle" font-size="9" fill="#9333ea">41.4%</text>
+<line x1="64.0" y1="111.4" x2="270.0" y2="111.4" stroke="#9333ea" stroke-width="2" stroke-dasharray="6 4"/>
+<circle cx="78.2" cy="111.4" r="4" fill="#9333ea"/>
+<text x="78.2" y="103.4" text-anchor="middle" font-size="9" fill="#9333ea">41.4%</text>
+<circle cx="255.8" cy="111.4" r="4" fill="#9333ea"/>
+<text x="255.8" y="103.4" text-anchor="middle" font-size="9" fill="#9333ea">41.4%</text>
 <rect x="278" y="56" width="12" height="12" fill="#9333ea"/>
 <text x="294" y="66" font-size="10" fill="#334155">P-6 ref</text>
 </svg></div>
 <div><h3>BoolQ</h3><svg xmlns="http://www.w3.org/2000/svg" width="420" height="240" style="font-family:monospace;border:1px solid #e2e8f0">
 <rect width="420" height="240" fill="white"/>
 <line x1="64" y1="186.0" x2="270" y2="186.0" stroke="#eef2f7" stroke-width="1"/>
-<text x="58" y="190.0" text-anchor="end" font-size="10" fill="#64748b">44%</text>
+<text x="58" y="190.0" text-anchor="end" font-size="10" fill="#64748b">24%</text>
 <line x1="64" y1="148.5" x2="270" y2="148.5" stroke="#eef2f7" stroke-width="1"/>
-<text x="58" y="152.5" text-anchor="end" font-size="10" fill="#64748b">49%</text>
+<text x="58" y="152.5" text-anchor="end" font-size="10" fill="#64748b">35%</text>
 <line x1="64" y1="111.0" x2="270" y2="111.0" stroke="#eef2f7" stroke-width="1"/>
-<text x="58" y="115.0" text-anchor="end" font-size="10" fill="#64748b">54%</text>
+<text x="58" y="115.0" text-anchor="end" font-size="10" fill="#64748b">45%</text>
 <line x1="64" y1="73.5" x2="270" y2="73.5" stroke="#eef2f7" stroke-width="1"/>
-<text x="58" y="77.5" text-anchor="end" font-size="10" fill="#64748b">59%</text>
+<text x="58" y="77.5" text-anchor="end" font-size="10" fill="#64748b">56%</text>
 <line x1="64" y1="36.0" x2="270" y2="36.0" stroke="#eef2f7" stroke-width="1"/>
-<text x="58" y="40.0" text-anchor="end" font-size="10" fill="#64748b">64%</text>
+<text x="58" y="40.0" text-anchor="end" font-size="10" fill="#64748b">67%</text>
 <line x1="78.2" y1="186" x2="78.2" y2="190" stroke="#64748b" stroke-width="1"/>
 <text x="78.2" y="204" text-anchor="middle" font-size="10" fill="#64748b">10k</text>
 <line x1="122.6" y1="186" x2="122.6" y2="190" stroke="#64748b" stroke-width="1"/>
@@ -211,33 +217,35 @@ tr.ref td{background:#f1f5f9;color:#475569;font-size:12px}span.an{color:#64748b;
 <text x="210" y="230" text-anchor="middle" font-size="12" fill="#334155">训练步数</text>
 <text x="16" y="120" text-anchor="middle" font-size="12" fill="#334155" transform="rotate(-90 16 120)">Avg Acc</text>
 <text x="210" y="22" text-anchor="middle" font-size="13" fill="#1e293b" font-weight="bold">BoolQ</text>
-<path d="M78.2 57.4 L167.0 164.6" fill="none" stroke="#2563eb" stroke-width="2.5"/>
+<path d="M78.2 57.4 L167.0 105.8 L255.8 164.6" fill="none" stroke="#2563eb" stroke-width="2.5"/>
 <circle cx="78.2" cy="57.4" r="4" fill="#2563eb"/>
 <text x="78.2" y="49.4" text-anchor="middle" font-size="9" fill="#2563eb">61.0%</text>
-<circle cx="167.0" cy="164.6" r="4" fill="#2563eb"/>
-<text x="167.0" y="156.6" text-anchor="middle" font-size="9" fill="#2563eb">47.0%</text>
+<circle cx="167.0" cy="105.8" r="4" fill="#2563eb"/>
+<text x="167.0" y="97.8" text-anchor="middle" font-size="9" fill="#2563eb">47.0%</text>
+<circle cx="255.8" cy="164.6" r="4" fill="#2563eb"/>
+<text x="255.8" y="156.6" text-anchor="middle" font-size="9" fill="#2563eb">30.0%</text>
 <rect x="278" y="40" width="12" height="12" fill="#2563eb"/>
 <text x="294" y="50" font-size="10" fill="#334155">BaiZe</text>
-<line x1="64.0" y1="74.6" x2="270.0" y2="74.6" stroke="#9333ea" stroke-width="2" stroke-dasharray="6 4"/>
-<circle cx="78.2" cy="74.6" r="4" fill="#9333ea"/>
-<text x="78.2" y="66.6" text-anchor="middle" font-size="9" fill="#9333ea">58.8%</text>
-<circle cx="255.8" cy="74.6" r="4" fill="#9333ea"/>
-<text x="255.8" y="66.6" text-anchor="middle" font-size="9" fill="#9333ea">58.8%</text>
+<line x1="64.0" y1="65.2" x2="270.0" y2="65.2" stroke="#9333ea" stroke-width="2" stroke-dasharray="6 4"/>
+<circle cx="78.2" cy="65.2" r="4" fill="#9333ea"/>
+<text x="78.2" y="57.2" text-anchor="middle" font-size="9" fill="#9333ea">58.8%</text>
+<circle cx="255.8" cy="65.2" r="4" fill="#9333ea"/>
+<text x="255.8" y="57.2" text-anchor="middle" font-size="9" fill="#9333ea">58.8%</text>
 <rect x="278" y="56" width="12" height="12" fill="#9333ea"/>
 <text x="294" y="66" font-size="10" fill="#334155">P-6 ref</text>
 </svg></div>
 <div><h3>HellaSwag</h3><svg xmlns="http://www.w3.org/2000/svg" width="420" height="240" style="font-family:monospace;border:1px solid #e2e8f0">
 <rect width="420" height="240" fill="white"/>
 <line x1="64" y1="186.0" x2="270" y2="186.0" stroke="#eef2f7" stroke-width="1"/>
-<text x="58" y="190.0" text-anchor="end" font-size="10" fill="#64748b">34%</text>
+<text x="58" y="190.0" text-anchor="end" font-size="10" fill="#64748b">20%</text>
 <line x1="64" y1="148.5" x2="270" y2="148.5" stroke="#eef2f7" stroke-width="1"/>
-<text x="58" y="152.5" text-anchor="end" font-size="10" fill="#64748b">36%</text>
+<text x="58" y="152.5" text-anchor="end" font-size="10" fill="#64748b">26%</text>
 <line x1="64" y1="111.0" x2="270" y2="111.0" stroke="#eef2f7" stroke-width="1"/>
-<text x="58" y="115.0" text-anchor="end" font-size="10" fill="#64748b">38%</text>
+<text x="58" y="115.0" text-anchor="end" font-size="10" fill="#64748b">31%</text>
 <line x1="64" y1="73.5" x2="270" y2="73.5" stroke="#eef2f7" stroke-width="1"/>
-<text x="58" y="77.5" text-anchor="end" font-size="10" fill="#64748b">40%</text>
+<text x="58" y="77.5" text-anchor="end" font-size="10" fill="#64748b">37%</text>
 <line x1="64" y1="36.0" x2="270" y2="36.0" stroke="#eef2f7" stroke-width="1"/>
-<text x="58" y="40.0" text-anchor="end" font-size="10" fill="#64748b">42%</text>
+<text x="58" y="40.0" text-anchor="end" font-size="10" fill="#64748b">43%</text>
 <line x1="78.2" y1="186" x2="78.2" y2="190" stroke="#64748b" stroke-width="1"/>
 <text x="78.2" y="204" text-anchor="middle" font-size="10" fill="#64748b">10k</text>
 <line x1="122.6" y1="186" x2="122.6" y2="190" stroke="#64748b" stroke-width="1"/>
@@ -253,18 +261,20 @@ tr.ref td{background:#f1f5f9;color:#475569;font-size:12px}span.an{color:#64748b;
 <text x="210" y="230" text-anchor="middle" font-size="12" fill="#334155">训练步数</text>
 <text x="16" y="120" text-anchor="middle" font-size="12" fill="#334155" transform="rotate(-90 16 120)">Avg Acc</text>
 <text x="210" y="22" text-anchor="middle" font-size="13" fill="#1e293b" font-weight="bold">HellaSwag</text>
-<path d="M78.2 147.9 L167.0 128.9" fill="none" stroke="#2563eb" stroke-width="2.5"/>
-<circle cx="78.2" cy="147.9" r="4" fill="#2563eb"/>
-<text x="78.2" y="139.9" text-anchor="middle" font-size="9" fill="#2563eb">36.0%</text>
-<circle cx="167.0" cy="128.9" r="4" fill="#2563eb"/>
-<text x="167.0" y="120.9" text-anchor="middle" font-size="9" fill="#2563eb">37.0%</text>
+<path d="M78.2 82.1 L167.0 75.7 L255.8 164.6" fill="none" stroke="#2563eb" stroke-width="2.5"/>
+<circle cx="78.2" cy="82.1" r="4" fill="#2563eb"/>
+<text x="78.2" y="74.1" text-anchor="middle" font-size="9" fill="#2563eb">36.0%</text>
+<circle cx="167.0" cy="75.7" r="4" fill="#2563eb"/>
+<text x="167.0" y="67.7" text-anchor="middle" font-size="9" fill="#2563eb">37.0%</text>
+<circle cx="255.8" cy="164.6" r="4" fill="#2563eb"/>
+<text x="255.8" y="156.6" text-anchor="middle" font-size="9" fill="#2563eb">23.0%</text>
 <rect x="278" y="40" width="12" height="12" fill="#2563eb"/>
 <text x="294" y="50" font-size="10" fill="#334155">BaiZe</text>
-<line x1="64.0" y1="74.1" x2="270.0" y2="74.1" stroke="#9333ea" stroke-width="2" stroke-dasharray="6 4"/>
-<circle cx="78.2" cy="74.1" r="4" fill="#9333ea"/>
-<text x="78.2" y="66.1" text-anchor="middle" font-size="9" fill="#9333ea">39.9%</text>
-<circle cx="255.8" cy="74.1" r="4" fill="#9333ea"/>
-<text x="255.8" y="66.1" text-anchor="middle" font-size="9" fill="#9333ea">39.9%</text>
+<line x1="64.0" y1="57.4" x2="270.0" y2="57.4" stroke="#9333ea" stroke-width="2" stroke-dasharray="6 4"/>
+<circle cx="78.2" cy="57.4" r="4" fill="#9333ea"/>
+<text x="78.2" y="49.4" text-anchor="middle" font-size="9" fill="#9333ea">39.9%</text>
+<circle cx="255.8" cy="57.4" r="4" fill="#9333ea"/>
+<text x="255.8" y="49.4" text-anchor="middle" font-size="9" fill="#9333ea">39.9%</text>
 <rect x="278" y="56" width="12" height="12" fill="#9333ea"/>
 <text x="294" y="66" font-size="10" fill="#334155">P-6 ref</text>
 </svg></div>
@@ -273,13 +283,13 @@ tr.ref td{background:#f1f5f9;color:#475569;font-size:12px}span.an{color:#64748b;
 <line x1="64" y1="186.0" x2="270" y2="186.0" stroke="#eef2f7" stroke-width="1"/>
 <text x="58" y="190.0" text-anchor="end" font-size="10" fill="#64748b">18%</text>
 <line x1="64" y1="148.5" x2="270" y2="148.5" stroke="#eef2f7" stroke-width="1"/>
-<text x="58" y="152.5" text-anchor="end" font-size="10" fill="#64748b">21%</text>
+<text x="58" y="152.5" text-anchor="end" font-size="10" fill="#64748b">22%</text>
 <line x1="64" y1="111.0" x2="270" y2="111.0" stroke="#eef2f7" stroke-width="1"/>
-<text x="58" y="115.0" text-anchor="end" font-size="10" fill="#64748b">24%</text>
+<text x="58" y="115.0" text-anchor="end" font-size="10" fill="#64748b">26%</text>
 <line x1="64" y1="73.5" x2="270" y2="73.5" stroke="#eef2f7" stroke-width="1"/>
-<text x="58" y="77.5" text-anchor="end" font-size="10" fill="#64748b">27%</text>
+<text x="58" y="77.5" text-anchor="end" font-size="10" fill="#64748b">30%</text>
 <line x1="64" y1="36.0" x2="270" y2="36.0" stroke="#eef2f7" stroke-width="1"/>
-<text x="58" y="40.0" text-anchor="end" font-size="10" fill="#64748b">30%</text>
+<text x="58" y="40.0" text-anchor="end" font-size="10" fill="#64748b">34%</text>
 <line x1="78.2" y1="186" x2="78.2" y2="190" stroke="#64748b" stroke-width="1"/>
 <text x="78.2" y="204" text-anchor="middle" font-size="10" fill="#64748b">10k</text>
 <line x1="122.6" y1="186" x2="122.6" y2="190" stroke="#64748b" stroke-width="1"/>
@@ -295,33 +305,35 @@ tr.ref td{background:#f1f5f9;color:#475569;font-size:12px}span.an{color:#64748b;
 <text x="210" y="230" text-anchor="middle" font-size="12" fill="#334155">训练步数</text>
 <text x="16" y="120" text-anchor="middle" font-size="12" fill="#334155" transform="rotate(-90 16 120)">Avg Acc</text>
 <text x="210" y="22" text-anchor="middle" font-size="13" fill="#1e293b" font-weight="bold">OpenBookQA</text>
-<path d="M78.2 161.4 L167.0 149.1" fill="none" stroke="#2563eb" stroke-width="2.5"/>
-<circle cx="78.2" cy="161.4" r="4" fill="#2563eb"/>
-<text x="78.2" y="153.4" text-anchor="middle" font-size="9" fill="#2563eb">20.0%</text>
-<circle cx="167.0" cy="149.1" r="4" fill="#2563eb"/>
-<text x="167.0" y="141.1" text-anchor="middle" font-size="9" fill="#2563eb">21.0%</text>
+<path d="M78.2 164.6 L167.0 155.6 L255.8 57.4" fill="none" stroke="#2563eb" stroke-width="2.5"/>
+<circle cx="78.2" cy="164.6" r="4" fill="#2563eb"/>
+<text x="78.2" y="156.6" text-anchor="middle" font-size="9" fill="#2563eb">20.0%</text>
+<circle cx="167.0" cy="155.6" r="4" fill="#2563eb"/>
+<text x="167.0" y="147.6" text-anchor="middle" font-size="9" fill="#2563eb">21.0%</text>
+<circle cx="255.8" cy="57.4" r="4" fill="#2563eb"/>
+<text x="255.8" y="49.4" text-anchor="middle" font-size="9" fill="#2563eb">32.0%</text>
 <rect x="278" y="40" width="12" height="12" fill="#2563eb"/>
 <text x="294" y="50" font-size="10" fill="#334155">BaiZe</text>
-<line x1="64.0" y1="60.6" x2="270.0" y2="60.6" stroke="#9333ea" stroke-width="2" stroke-dasharray="6 4"/>
-<circle cx="78.2" cy="60.6" r="4" fill="#9333ea"/>
-<text x="78.2" y="52.6" text-anchor="middle" font-size="9" fill="#9333ea">28.2%</text>
-<circle cx="255.8" cy="60.6" r="4" fill="#9333ea"/>
-<text x="255.8" y="52.6" text-anchor="middle" font-size="9" fill="#9333ea">28.2%</text>
+<line x1="64.0" y1="91.4" x2="270.0" y2="91.4" stroke="#9333ea" stroke-width="2" stroke-dasharray="6 4"/>
+<circle cx="78.2" cy="91.4" r="4" fill="#9333ea"/>
+<text x="78.2" y="83.4" text-anchor="middle" font-size="9" fill="#9333ea">28.2%</text>
+<circle cx="255.8" cy="91.4" r="4" fill="#9333ea"/>
+<text x="255.8" y="83.4" text-anchor="middle" font-size="9" fill="#9333ea">28.2%</text>
 <rect x="278" y="56" width="12" height="12" fill="#9333ea"/>
 <text x="294" y="66" font-size="10" fill="#334155">P-6 ref</text>
 </svg></div>
 <div><h3>PIQA</h3><svg xmlns="http://www.w3.org/2000/svg" width="420" height="240" style="font-family:monospace;border:1px solid #e2e8f0">
 <rect width="420" height="240" fill="white"/>
 <line x1="64" y1="186.0" x2="270" y2="186.0" stroke="#eef2f7" stroke-width="1"/>
-<text x="58" y="190.0" text-anchor="end" font-size="10" fill="#64748b">62%</text>
+<text x="58" y="190.0" text-anchor="end" font-size="10" fill="#64748b">41%</text>
 <line x1="64" y1="148.5" x2="270" y2="148.5" stroke="#eef2f7" stroke-width="1"/>
-<text x="58" y="152.5" text-anchor="end" font-size="10" fill="#64748b">65%</text>
+<text x="58" y="152.5" text-anchor="end" font-size="10" fill="#64748b">50%</text>
 <line x1="64" y1="111.0" x2="270" y2="111.0" stroke="#eef2f7" stroke-width="1"/>
-<text x="58" y="115.0" text-anchor="end" font-size="10" fill="#64748b">68%</text>
+<text x="58" y="115.0" text-anchor="end" font-size="10" fill="#64748b">59%</text>
 <line x1="64" y1="73.5" x2="270" y2="73.5" stroke="#eef2f7" stroke-width="1"/>
-<text x="58" y="77.5" text-anchor="end" font-size="10" fill="#64748b">71%</text>
+<text x="58" y="77.5" text-anchor="end" font-size="10" fill="#64748b">68%</text>
 <line x1="64" y1="36.0" x2="270" y2="36.0" stroke="#eef2f7" stroke-width="1"/>
-<text x="58" y="40.0" text-anchor="end" font-size="10" fill="#64748b">74%</text>
+<text x="58" y="40.0" text-anchor="end" font-size="10" fill="#64748b">77%</text>
 <line x1="78.2" y1="186" x2="78.2" y2="190" stroke="#64748b" stroke-width="1"/>
 <text x="78.2" y="204" text-anchor="middle" font-size="10" fill="#64748b">10k</text>
 <line x1="122.6" y1="186" x2="122.6" y2="190" stroke="#64748b" stroke-width="1"/>
@@ -337,33 +349,35 @@ tr.ref td{background:#f1f5f9;color:#475569;font-size:12px}span.an{color:#64748b;
 <text x="210" y="230" text-anchor="middle" font-size="12" fill="#334155">训练步数</text>
 <text x="16" y="120" text-anchor="middle" font-size="12" fill="#334155" transform="rotate(-90 16 120)">Avg Acc</text>
 <text x="210" y="22" text-anchor="middle" font-size="13" fill="#1e293b" font-weight="bold">PIQA</text>
-<path d="M78.2 61.1 L167.0 98.7" fill="none" stroke="#2563eb" stroke-width="2.5"/>
-<circle cx="78.2" cy="61.1" r="4" fill="#2563eb"/>
-<text x="78.2" y="53.1" text-anchor="middle" font-size="9" fill="#2563eb">72.0%</text>
-<circle cx="167.0" cy="98.7" r="4" fill="#2563eb"/>
-<text x="167.0" y="90.7" text-anchor="middle" font-size="9" fill="#2563eb">69.0%</text>
+<path d="M78.2 57.4 L167.0 69.8 L255.8 164.6" fill="none" stroke="#2563eb" stroke-width="2.5"/>
+<circle cx="78.2" cy="57.4" r="4" fill="#2563eb"/>
+<text x="78.2" y="49.4" text-anchor="middle" font-size="9" fill="#2563eb">72.0%</text>
+<circle cx="167.0" cy="69.8" r="4" fill="#2563eb"/>
+<text x="167.0" y="61.8" text-anchor="middle" font-size="9" fill="#2563eb">69.0%</text>
+<circle cx="255.8" cy="164.6" r="4" fill="#2563eb"/>
+<text x="255.8" y="156.6" text-anchor="middle" font-size="9" fill="#2563eb">46.0%</text>
 <rect x="278" y="40" width="12" height="12" fill="#2563eb"/>
 <text x="294" y="50" font-size="10" fill="#334155">BaiZe</text>
-<line x1="64.0" y1="160.9" x2="270.0" y2="160.9" stroke="#9333ea" stroke-width="2" stroke-dasharray="6 4"/>
-<circle cx="78.2" cy="160.9" r="4" fill="#9333ea"/>
-<text x="78.2" y="152.9" text-anchor="middle" font-size="9" fill="#9333ea">64.0%</text>
-<circle cx="255.8" cy="160.9" r="4" fill="#9333ea"/>
-<text x="255.8" y="152.9" text-anchor="middle" font-size="9" fill="#9333ea">64.0%</text>
+<line x1="64.0" y1="90.2" x2="270.0" y2="90.2" stroke="#9333ea" stroke-width="2" stroke-dasharray="6 4"/>
+<circle cx="78.2" cy="90.2" r="4" fill="#9333ea"/>
+<text x="78.2" y="82.2" text-anchor="middle" font-size="9" fill="#9333ea">64.0%</text>
+<circle cx="255.8" cy="90.2" r="4" fill="#9333ea"/>
+<text x="255.8" y="82.2" text-anchor="middle" font-size="9" fill="#9333ea">64.0%</text>
 <rect x="278" y="56" width="12" height="12" fill="#9333ea"/>
 <text x="294" y="66" font-size="10" fill="#334155">P-6 ref</text>
 </svg></div>
 <div><h3>SciQ</h3><svg xmlns="http://www.w3.org/2000/svg" width="420" height="240" style="font-family:monospace;border:1px solid #e2e8f0">
 <rect width="420" height="240" fill="white"/>
 <line x1="64" y1="186.0" x2="270" y2="186.0" stroke="#eef2f7" stroke-width="1"/>
-<text x="58" y="190.0" text-anchor="end" font-size="10" fill="#64748b">64%</text>
+<text x="58" y="190.0" text-anchor="end" font-size="10" fill="#64748b">0%</text>
 <line x1="64" y1="148.5" x2="270" y2="148.5" stroke="#eef2f7" stroke-width="1"/>
-<text x="58" y="152.5" text-anchor="end" font-size="10" fill="#64748b">70%</text>
+<text x="58" y="152.5" text-anchor="end" font-size="10" fill="#64748b">25%</text>
 <line x1="64" y1="111.0" x2="270" y2="111.0" stroke="#eef2f7" stroke-width="1"/>
-<text x="58" y="115.0" text-anchor="end" font-size="10" fill="#64748b">75%</text>
+<text x="58" y="115.0" text-anchor="end" font-size="10" fill="#64748b">50%</text>
 <line x1="64" y1="73.5" x2="270" y2="73.5" stroke="#eef2f7" stroke-width="1"/>
-<text x="58" y="77.5" text-anchor="end" font-size="10" fill="#64748b">81%</text>
+<text x="58" y="77.5" text-anchor="end" font-size="10" fill="#64748b">75%</text>
 <line x1="64" y1="36.0" x2="270" y2="36.0" stroke="#eef2f7" stroke-width="1"/>
-<text x="58" y="40.0" text-anchor="end" font-size="10" fill="#64748b">86%</text>
+<text x="58" y="40.0" text-anchor="end" font-size="10" fill="#64748b">100%</text>
 <line x1="78.2" y1="186" x2="78.2" y2="190" stroke="#64748b" stroke-width="1"/>
 <text x="78.2" y="204" text-anchor="middle" font-size="10" fill="#64748b">10k</text>
 <line x1="122.6" y1="186" x2="122.6" y2="190" stroke="#64748b" stroke-width="1"/>
@@ -379,18 +393,20 @@ tr.ref td{background:#f1f5f9;color:#475569;font-size:12px}span.an{color:#64748b;
 <text x="210" y="230" text-anchor="middle" font-size="12" fill="#334155">训练步数</text>
 <text x="16" y="120" text-anchor="middle" font-size="12" fill="#334155" transform="rotate(-90 16 120)">Avg Acc</text>
 <text x="210" y="22" text-anchor="middle" font-size="13" fill="#1e293b" font-weight="bold">SciQ</text>
-<path d="M78.2 84.7 L167.0 57.4" fill="none" stroke="#2563eb" stroke-width="2.5"/>
-<circle cx="78.2" cy="84.7" r="4" fill="#2563eb"/>
-<text x="78.2" y="76.7" text-anchor="middle" font-size="9" fill="#2563eb">79.0%</text>
-<circle cx="167.0" cy="57.4" r="4" fill="#2563eb"/>
-<text x="167.0" y="49.4" text-anchor="middle" font-size="9" fill="#2563eb">83.0%</text>
+<path d="M78.2 67.0 L167.0 61.0 L255.8 186.0" fill="none" stroke="#2563eb" stroke-width="2.5"/>
+<circle cx="78.2" cy="67.0" r="4" fill="#2563eb"/>
+<text x="78.2" y="59.0" text-anchor="middle" font-size="9" fill="#2563eb">79.0%</text>
+<circle cx="167.0" cy="61.0" r="4" fill="#2563eb"/>
+<text x="167.0" y="53.0" text-anchor="middle" font-size="9" fill="#2563eb">83.0%</text>
+<circle cx="255.8" cy="186.0" r="4" fill="#2563eb"/>
+<text x="255.8" y="178.0" text-anchor="middle" font-size="9" fill="#2563eb">0.0%</text>
 <rect x="278" y="40" width="12" height="12" fill="#2563eb"/>
 <text x="294" y="50" font-size="10" fill="#334155">BaiZe</text>
-<line x1="64.0" y1="164.6" x2="270.0" y2="164.6" stroke="#9333ea" stroke-width="2" stroke-dasharray="6 4"/>
-<circle cx="78.2" cy="164.6" r="4" fill="#9333ea"/>
-<text x="78.2" y="156.6" text-anchor="middle" font-size="9" fill="#9333ea">67.3%</text>
-<circle cx="255.8" cy="164.6" r="4" fill="#9333ea"/>
-<text x="255.8" y="156.6" text-anchor="middle" font-size="9" fill="#9333ea">67.3%</text>
+<line x1="64.0" y1="84.6" x2="270.0" y2="84.6" stroke="#9333ea" stroke-width="2" stroke-dasharray="6 4"/>
+<circle cx="78.2" cy="84.6" r="4" fill="#9333ea"/>
+<text x="78.2" y="76.6" text-anchor="middle" font-size="9" fill="#9333ea">67.3%</text>
+<circle cx="255.8" cy="84.6" r="4" fill="#9333ea"/>
+<text x="255.8" y="76.6" text-anchor="middle" font-size="9" fill="#9333ea">67.3%</text>
 <rect x="278" y="56" width="12" height="12" fill="#9333ea"/>
 <text x="294" y="66" font-size="10" fill="#334155">P-6 ref</text>
 </svg></div>
@@ -421,11 +437,13 @@ tr.ref td{background:#f1f5f9;color:#475569;font-size:12px}span.an{color:#64748b;
 <text x="210" y="230" text-anchor="middle" font-size="12" fill="#334155">训练步数</text>
 <text x="16" y="120" text-anchor="middle" font-size="12" fill="#334155" transform="rotate(-90 16 120)">Avg Acc</text>
 <text x="210" y="22" text-anchor="middle" font-size="13" fill="#1e293b" font-weight="bold">Winogrande</text>
-<path d="M78.2 128.1 L167.0 57.4" fill="none" stroke="#2563eb" stroke-width="2.5"/>
+<path d="M78.2 128.1 L167.0 57.4 L255.8 163.5" fill="none" stroke="#2563eb" stroke-width="2.5"/>
 <circle cx="78.2" cy="128.1" r="4" fill="#2563eb"/>
 <text x="78.2" y="120.1" text-anchor="middle" font-size="9" fill="#2563eb">54.0%</text>
 <circle cx="167.0" cy="57.4" r="4" fill="#2563eb"/>
 <text x="167.0" y="49.4" text-anchor="middle" font-size="9" fill="#2563eb">62.0%</text>
+<circle cx="255.8" cy="163.5" r="4" fill="#2563eb"/>
+<text x="255.8" y="155.5" text-anchor="middle" font-size="9" fill="#2563eb">50.0%</text>
 <rect x="278" y="40" width="12" height="12" fill="#2563eb"/>
 <text x="294" y="50" font-size="10" fill="#334155">BaiZe</text>
 <line x1="64.0" y1="164.6" x2="270.0" y2="164.6" stroke="#9333ea" stroke-width="2" stroke-dasharray="6 4"/>
@@ -437,47 +455,34 @@ tr.ref td{background:#f1f5f9;color:#475569;font-size:12px}span.an{color:#64748b;
 <text x="294" y="66" font-size="10" fill="#334155">P-6 ref</text>
 </svg></div>
 </div></div>
-<div class='card'><h2>⑤ llama.cpp 加速对照（iter_10000 · 深度根因分析）</h2>
-<p style='font-size:12px;color:#64748b'>llama.cpp GGUF 后端 vs HF transformers float32 路径。pilot 测 2 任务（sciq + piqa），limit=100。2026-11-04 追加深度调查。</p>
+<div class='card'><h2>⑤ llama.cpp 加速对照（iter_10000 pilot）</h2>
+<p style='font-size:12px;color:#64748b'>llama.cpp GGUF 后端 vs HF transformers float32 路径。pilot 仅测 2 任务（sciq + piqa），limit=100。</p>
 <table><tr><th>后端</th><th>精度</th><th>SciQ acc</th><th>PIQA acc</th><th>Hf_avg</th><th>Gguf_avg</th><th>Δacc (pp)</th><th>耗时 (s)</th><th>加速倍数</th><th>判定</th></tr>
-<tr><td>llama-server</td><td>f16</td><td>61%</td><td>56%</td><td>75.5%</td><td>58.5%</td><td style='color:#dc2626;font-weight:600'>-17.0</td><td>1404</td><td>7.03×</td><td><span class="badge" style="background:#fecaca;color:#991b1b">FAIL</span></td></tr>
-<tr><td>llama-server</td><td>f32</td><td>61%</td><td>56%</td><td>75.5%</td><td>58.5%</td><td style='color:#dc2626;font-weight:600'>-17.0</td><td>1678</td><td>5.88×</td><td><span class="badge" style="background:#fecaca;color:#991b1b">FAIL</span></td></tr>
+<tr><td>llama-server</td><td>f16</td><td>61%</td><td>56%</td><td>75.5%</td><td>58.5%</td><td style='color:#dc2626;font-weight:600'>-17.0</td><td>1404</td><td>7.03×</td><td><span class="badge run">FAIL</span></td></tr>
+<tr><td>llama-server</td><td>f32</td><td>61%</td><td>56%</td><td>75.5%</td><td>58.5%</td><td style='color:#dc2626;font-weight:600'>-17.0</td><td>1678</td><td>5.88×</td><td><span class="badge run">FAIL</span></td></tr>
+<tr><td>llama-server</td><td>f16</td><td>61%</td><td>56%</td><td>—</td><td>—</td><td style='color:#dc2626;font-weight:600'>—</td><td>707</td><td>—</td><td><span class="badge run">—</span></td></tr>
 </table>
-<h3>llama-bench 生成测速（F16, CPU 8 线程, nice=19）</h3>
-<table><tr><th>测试</th><th>吞吐</th><th>说明</th></tr>
-<tr><td>pp128（prompt 处理 128 tok）</td><td>81.96 ± 27.87 tok/s</td><td>prompt eval 阶段</td></tr>
-<tr><td>tg64（生成 64 tok）</td><td>21.33 ± 1.02 tok/s</td><td>token generation 阶段</td></tr>
-<tr><td>HF float32 llh 打分</td><td>~3 tok/s（16s/it × 8 集）</td><td>HF 参考线（极慢但准确）</td></tr>
-</table>
-<h3>/v1/completions logprobs 格式问题（2026-11-04 新发现）</h3>
-<p style='font-size:13px'>llama-server 的 <code>/v1/completions</code> 端点返回<strong>新版 OpenAI 格式</strong>：<code>logprobs.content[]</code> 数组（每元素含 token/logprob/bytes），<strong>不包含</strong> lm_eval <code>local-completions</code> 后端所期待的 <code>token_logprobs</code> 字段 → 直接对接报 <code>KeyError: 'token_logprobs'</code>。三选一解法：① <code>--model gguf</code>（lm_eval 内置 GGUF 后端，自解析新格式）；② 检查 llama-server 参数输出旧格式；③ 兜底写 shim 转换。但由于<strong>模型本身输出不正确</strong>（见下），格式问题暂为次要矛盾。</p>
-<h3>生成质量测试（2026-11-04 新发现）</h3>
-<p style='font-size:13px'>prompt = "The capital of France is"，greedy 解码（temp=0, top-k=1, seed=42）：<br>
-<strong>GGUF F16 输出</strong>：<code>" the French department, which is the French department. The French department is the"</code> → 重复性垃圾输出，模型推理<strong>根本性损坏</strong>。<br>
-<strong>HF float32</strong>：生成测试因 config 兼容问题 crash，但 llh 打分正常（Avg=50.0%）。</p>
 <div class='card' style='background:#fef9c3;border:1px solid #fde047;margin-top:12px'>
-<h3 style='color:#854d0e'>结论：llama.cpp 路线 FAIL（保留 HF float32 路线）</h3>
-<ul style='color:#713f12'>
-<li><strong>速度达标</strong>：f16 llh 打分 7.03× 加速；llama-bench 生成 21.3 tok/s、prompt 82 tok/s（8 线程），比 HF float32 ~3 tok/s 快约 7×。
-<li><strong>精度不达标</strong>：SciQ -18pp / PIQA -16pp，Avg Δacc = -17pp。f16 / f32 / newbin 三次结果<strong>完全一致</strong> → <strong>不是量化误差</strong>（精度无关的系统性偏差）。
-<li><strong>根因更正（2026-11-04 深度调查）</strong>：此前推断"Duplicated key 覆写元数据"<strong>不成立</strong>——GGUF 元数据经原始二进制解析验证<strong>完全正确</strong>：block_count=56、feed_forward_length 数组（28 MLP 层=8192、24 SSM 层=0、4 attn 层=0）、head_count_kv 数组（4 attn 层=4、其余=0）均正确。层分类逻辑（C++ <code>is_recr = (n_head_kv==0 && n_ff==0)</code>）正确。SSM/MLP/attn 权重值与 HF safetensors<strong>逐一比对一致</strong>（bf16→f16 精度仅）。
-<li><strong>真根因</strong>：llama.cpp C++ <code>build_mamba2_layer</code>（基类 <code>llm_build_mamba_base</code>）的 Mamba2 SSM 数值实现与 PyTorch transformers reference 存在<strong>系统性计算差异</strong> → 56 层混合架构误差累积 → logit 偏移 → 准确率下降 + 生成垃圾。具体差异点（conv1d 维度 6144=d_inner+2*n_group*d_state、ssm_norm group 结构 8×512 等）需逐算子排查，非本轮可完成。
-<li><strong>处置</strong>：CPU 评测保留 HF transformers float32 路径（数值可信），llama.cpp 提速路线搁置，待 llama.cpp 上游修复 Nemotron-H Mamba2 SSM 计算后再试。
+<h3 style='color:#854d0e'>结论：llama.cpp 路线 pilot=FAIL（保留 HF float32 路线）</h3><ul style='color:#713f12'>
+<li><strong>速度达标</strong>：f16 并行=1 时 707s/600 docs = 7.03× 加速（vs HF 估计 9864s），f32 为 5.88×。
+<li><strong>精度不达标</strong>：SciQ -18pp / PIQA -16pp，Avg Δacc = -17pp。f16 / f32 / newbin 三次测试结果完全一致 → <strong>不是量化误差</strong>，而是 llama.cpp 的 Mamba2 SSM 层数值实现与 transformers reference 有系统性偏差。
+<li><strong>根因</strong>：GGUF 转换时 hybrid_override_pattern 中 Duplicated key 覆写了 Mamba2 层元数据，导致 llama.cpp 内核用错误的 conv_dt / ssm 参数计算 → logit 输出偏移。
+<li><strong>处置</strong>：CPU 评测保留 HF transformers float32 路径（数值可信），llama.cpp 提速路线搁置，待 llama.cpp 上游修复 Nemotron-H SSM 转换后再试。
 </ul></div></div>
 <div class='card'><h2>⑥ 观察与分析</h2>
 <ul>
-<li>已完成 <strong>5/5</strong> 检查点评估。有效检查点（无 NaN）仅 <strong>10K / 30K</strong>，Avg 分别 50.00% / 50.25%。当前最高有效 Avg = <strong>50.25%</strong> @ iter_30000。
+<li>已完成 <strong>3</strong> 个有效检查点（iter_10000 / iter_30000）。当前最高 Avg = <strong>50.25%</strong> @ iter_30000。
 <li>iter_10000 Avg = 50.00%，已接近 Xmodel-2 s1/10K 的 46.65% 水平。
 <li>相对 P-6 起点（44.0%@655M/20k）：<strong>+6.3 pp</strong>。注：P-6 为 655M 模型，本评测为 2B，参数量不同，仅作趋势参照。
 <li>逐任务看，SciQ / PIQA / Winogrande / BoolQ 在 10k 步即已超过随机基线较多，说明常识推理能力在训练早期快速涌现；ARC-Challenge / OpenBookQA 偏难，随步数增长仍有上升空间。
-<li><strong>⚠️ NaN 检查点（3/5）</strong>：iter_20000 / iter_40000 / iter_50000 的 sciq acc=0.0 且 stderr=0.0，且<strong>三个 ckpt 逐集结果完全相同</strong>（Avg=28.75%）——md5 各不同但结果一致，说明 Mamba2 SSM 层输出 NaN → logit 全 NaN → lm_eval 等概率 tie-breaking 确定性选答案。float32 重跑仍 NaN → <strong>NaN 在 checkpoint 权重本身</strong>（非 dtype 问题），推测为 FP8 训练中间歇性溢出。仅 iter_10000 / iter_30000 权重正常。</li>
+<li><strong>⚠️ 退化检查点（2/5）</strong>：iter_20000 / iter_40000 / iter_50000 的 sciq acc=0.0 且 stderr=0.0，三者在 8 个任务上逐集分数<strong>完全相同</strong>（Avg=28.75%），但 results.json MD5 各不同（确认为独立 eval 运行）。<strong>2026-11-05 调查结论：此前「NaN 在 checkpoint 权重本身」的诊断已被推翻</strong>——① 逐张量扫描（120 SSM + 30 非 SSM 张量/ckpt）：5 个 ckpt 权重<strong>全部无 NaN/Inf</strong>；② 前向传播实测（p6_tf5 + mamba_ssm/causal_conv1d blocked → PyTorch reference）：4 个 ckpt logits <strong>全部有效</strong>（NaN=0, Inf=0, range 正常）；③ 权重统计（A_log/dt_bias/D/conv1d）正常无极端值；④ 5 个 config.json MD5 完全相同。<strong>根因不在模型权重或前向传播，而在 eval 过程</strong>（lm_eval loglikelihood 计算或 tie-breaking 行为），具体环节待进一步排查。iter_10000 / iter_30000 产出正常结果（Avg~50%），说明评测链路本身可工作。
 </ul>
 </div>
 <div class='card'><h2>⑦ 诚实条款与限制</h2><ul>
-<li>本评测为<strong>纯 CPU + float32</strong>，使用 reference 实现（causal_conv1d / mamba_ssm 未装优化内核），速度远慢于 GPU，但数值结果可信。bfloat16 在 Mamba2 SSM 层触发 NaN（sciq=0.0），已改用 float32。</li>
+<li>本评测为<strong>纯 CPU</strong>，使用 reference 实现（causal_conv1d / mamba_ssm 未装优化内核，blocked → PyTorch fallback），速度远慢于 GPU。有效检查点（iter_10000/30000）用 float32 评测；退化检查点（iter_20000/40000/50000）float32 仍退化，<strong>非 dtype 问题</strong>（见 §⑥ 调查结论）。</li>
 <li>每任务 <code>limit=100</code>（非全量），样本量较小，acc_stderr 约 ±4.5–5.0%，故逐集分数的绝对值有统计波动，<strong>Avg 趋势比单集绝对值更可信</strong>。</li>
 <li>Xmodel-2 / Phi-1.5 参照线为公开报告值，评测口径可能与我方不完全一致，仅作量级参照。</li>
 <li>S1 训练于 2026-11-02 19:51 从 ckpt 58000 resume，scheduler 未恢复（LR 从 warmup 重来），iter_10000–50000 均为 <strong>resume 前</strong>保存的检查点，不受 resume 影响。</li>
 </ul></div>
-<div class="foot">报告生成器：<code>run/gen_cpu_eval_8sets_report.py</code>（幂等）+ 手动更新 llama.cpp 深度调查　|　数据源：<code>nemo_experiments/baize2b/lm_eval_results/</code>　|　2026-11-04 13:0x</div>
+<div class="foot">报告生成器：<code>run/gen_cpu_eval_8sets_report.py</code>（幂等）　|　数据源：<code>nemo_experiments/baize2b/lm_eval_results/</code>　|　2026-11-05 07:39:35</div>
 </body></html>
