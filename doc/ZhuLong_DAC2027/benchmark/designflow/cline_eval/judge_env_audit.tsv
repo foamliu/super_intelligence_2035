@@ -10,7 +10,7 @@ EDA-Eval-DesignFlow-AprStampFix-001	SAFE	_resolve_a_dir/_resolve_b_dir fallback 
 EDA-Eval-DesignFlow-AutoCellClassify-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
 EDA-Eval-DesignFlow-AutoCellFlowValidate-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
 EDA-Eval-DesignFlow-AutoCellKitMap-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
-EDA-Eval-DesignFlow-AutoCellTclFlow-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
+EDA-Eval-DesignFlow-AutoCellTclFlow-001	SAFE	resolve_a_spec/b_spec/skeleton added r89 (markers: inputs/spec_planar.json, hidden/inputs/spec_finfet.json, skeleton/run.tcl); abspath for cwd=tmp subprocess (r88 pitfall 9); repo+judge-dir ref PASS, 5 neg + 3 fakes FAIL, k=20 GATE PASS
 EDA-Eval-DesignFlow-AutoViaGen-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
 EDA-Eval-DesignFlow-AutoViaLayoutMerge-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
 EDA-Eval-DesignFlow-CTLESchGenAudit-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
