@@ -3831,3 +3831,13 @@ ufw_en_l3(qa) 0.18 / ufw_zh 0.04 / Math-L3 0.04 / Code-L3 0.02 / UltraData-SFT-2
 
 **交付**：commit `85ea67b4d`（pretrain paper: P0/P1×6/P2全部落地, 0_abstract+1_intro+2_related+5_posttrain+9_conclusion刷新, 编译0-error/6页）。报告 `report_pretrain_paper_edit_zh.html`。心跳 #999/#1000。
 
+### [已完成] 🚨 用户令 · 2026-11-03 22:0x（**llama.cpp 加速 CPU 评测 · pilot**）· 用户直令
+
+> 立即执行 `run/PRETRAIN_LLAMACPP_ORDER.md`（以该文件全文为准）。
+> 一句话：在 **.29** 编译 CPU 版 llama.cpp → `hf_iter_10000` 转 F16 GGUF → 跑 `sciq,piqa --limit 100` → `05_compare_with_hf.py` 判定。
+> 硬约束：不碰 GPU/S1；`nice 19` + `-t 16`；**不 kill / 不重启现有 3 个 HF 评测**；结果 JSON 不入库。
+> 交付：`reports/report_pretrain_llamacpp_pilot_zh.html` + MEMORY 顶部 + commit `pretrain llamacpp:`；**PASS 后先报告再等令，不要擅自全量切换**。
+> 判据：06 契约 PASS、02 分词 100% 一致、|Δacc|<=1pp、加速>=5x。工具已入库（`2906b2b3c`）。
+
+**交付**：pilot=**FAIL**。commit `9cdc4469f`（pretrain llamacpp: pilot报告）+ `0d1b0567e`（报告补全 8422B）。报告 `reports/report_pretrain_llamacpp_pilot_zh.html`（8422B）。执行过程：.29 编译 CPU 版 llama.cpp → hf_iter_10000 转 F16 GGUF（后补 f32 验证）→ 06 契约自检 + 02 分词对拍 + gguf_lmeval 评测 → 05_compare_with_hf 判定。根因=convert_hf_to_gguf.py Duplicated key 覆写 hybrid 层模式数组（Mamba2-hybrid 元数据损坏），F16/f32 逐位相同；速度 7.03x 达标但 Δacc 16-18pp FAIL（分词 100% 一致、06 契约 PASS，问题在 GGUF 权重映射而非分词/服务）。**保留 HF float32 路线**，等用户令决定是否全量切换。心跳 #1302/#1320/#1329。
+

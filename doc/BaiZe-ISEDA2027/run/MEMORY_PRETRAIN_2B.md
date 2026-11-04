@@ -6,7 +6,9 @@ WAITING: 0
 
 > 📦 §#1332（11-04 08:28, 监控轮·4evals推进正常·S1 iter76780健康）→ daily-memories/2026-11-04.md；**结论**：4 evals推进, 最坏ETA~13:20, iter_10000 DONE Avg50%, S1 iter76780健康0NaN, CPU<<80%。被#1333确认继续有效。需要时再读。
 
-> 🆕 2026-11-04 08:35 #1333：**监控轮·4evals推进正常·S1 iter76820健康·最坏ETA~13:05<deadline✅**。4 evals实测进度(2599总请求)：.29 iter_30000=2308/2599(88.8%)@16.14s/it ETA~09:50；.29 iter_50000_f32=1595/2599(61.4%)@16.40s/it ETA~13:05(最慢)；.12 iter_40000=2156/2599(82.9%)@24.02s/it ETA~11:30；.12 iter_20000=2147/2599(82.6%)@23.57s/it ETA~11:30。已完成1/5有效：iter_10000 Avg=0.5000✅(iter_50000 bf16 results.json存在但sciq=0.0=NaN无效,待f32重跑覆盖)。S1 iter76820/700000/loss2.087/0NaN/0skip/6938ms/step/LR=1e-3/GPU~87%/~75GB✅。CPU .29 load37.6/224(17%)/.12 load29.8/224(13%)<<80%✅。pilot=FAIL已报告等令(commit 0d1b0567e)。📦 体积：TASK=31373B(31KB)/MEMORY=29538B(29KB)≤32KB✅。未完成指令：有(5ckpt CPU评测 1/5有效DONE+4在跑;pilot=FAIL等令)⇒WAITING: 0。
+> 🆕 2026-11-04 08:42 #1334：**监控轮+归档pilot块·4evals推进正常·S1 iter76880健康·最坏ETA~13:15<deadline✅**。4 evals实测进度(2599总请求)：.29 iter_30000=2329/2599(90%)@17.10s/it ETA~09:56；.29 iter_50000_f32=1617/2599(62%)@16.86s/it ETA~13:15(最慢)；.12 iter_40000=2170/2599(83%)@24.08s/it ETA~11:32；.12 iter_20000=2162/2599(83%)@23.71s/it ETA~11:32。已完成1/5有效：iter_10000 Avg=0.5000✅。S1 iter76880/700000/loss2.090/0NaN/0skip/6971ms/step/LR=1e-3/GPU97-100%/~75GB✅(.12 torchrun node_rank0 alive,GPU100%/75GB)。CPU .29 load37/224(17%)/.12 load30/224(13%)<<80%✅。pilot块已归档到ARCHIVE_OPERATOR_PRETRAIN.md(pilot=FAIL等用户令)。📦 体积：TASK=~30.8KB/MEMORY=~30KB≤32KB✅。未完成指令：有(5ckpt CPU评测 1/5有效DONE+4在跑;pilot=FAIL等令)⇒WAITING: 0。
+
+> 📦 §#1333（11-04 08:35, 监控轮·4evals推进正常·S1 iter76820健康）→ daily-memories/2026-11-04.md；**结论**：4 evals推进, 最坏ETA~13:05, iter_10000 DONE Avg50%, S1 iter76820健康0NaN, CPU<<80%。被#1334确认继续有效。需要时再读。
 
 > 📦 §#1331（11-04 08:20, 监控轮·4evals推进正常·S1 iter76720健康）→ daily-memories/2026-11-04.md；**结论**：4 evals推进, 最坏ETA~13:13, iter_10000 DONE Avg50%, S1 iter76720健康0NaN, CPU<<80%。被#1332确认。需要时再读。
 

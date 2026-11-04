@@ -1,12 +1,6 @@
 # BAIZE_PRETRAIN_2B_TASK.md
 
-### 🚨 用户令 · 2026-11-03 22:0x（**llama.cpp 加速 CPU 评测 · pilot**）· 用户直令 ·【新·待执行】
-
-> 立即执行 `run/PRETRAIN_LLAMACPP_ORDER.md`（以该文件全文为准）。
-> 一句话：在 **.29** 编译 CPU 版 llama.cpp → `hf_iter_10000` 转 F16 GGUF → 跑 `sciq,piqa --limit 100` → `05_compare_with_hf.py` 判定。
-> 硬约束：不碰 GPU/S1；`nice 19` + `-t 16`；**不 kill / 不重启现有 3 个 HF 评测**；结果 JSON 不入库。
-> 交付：`reports/report_pretrain_llamacpp_pilot_zh.html` + MEMORY 顶部 + commit `pretrain llamacpp:`；**PASS 后先报告再等令，不要擅自全量切换**。
-> 判据：06 契约 PASS、02 分词 100% 一致、|Δacc|<=1pp、加速>=5x。工具已入库（`2906b2b3c`）。
+> 📦 §用户令 2026-11-03 22:0x（llama.cpp pilot）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：✅已执行 pilot=FAIL(commit 9cdc4469f/0d1b0567e, 报告report_pretrain_llamacpp_pilot_zh.html 8422B)，根因=GGUF转换Duplicated key覆写hybrid元数据, 速度7.03x达标但Δacc16-18pp, 保留HF float32路线等用户令。需要时再读。
 
 ### [运维令] 2026-11-02 19:51（**S1 已被运维经 ops 中继重启 → 禁止重复启动；CPU 评测必须降载**）· 运维直令 · 最高优先
 
