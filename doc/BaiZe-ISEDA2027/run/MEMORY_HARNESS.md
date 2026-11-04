@@ -5,13 +5,13 @@ WAITING: 0
 ## 📊 进度快照
 
 ```
-PHASE:        R1621 incr_eval轮:CPU/MEM自检PASS(load25.46/224~11%busy·avail1301GB·无失控)+incr_eval_R1620 cline batch DONE(11/18 RESOLVED+7 FAILED→eval_cline resolved=352/failed=128/no_patch=11/n=491)+incr_eval_R1620 deepseek batch running(8题)+regen report(17110B)+scan_backlog=11(8=R1620 deepseek in-progress+3 new:codex django-13033/13089+deepseek xarray-3993)→incr_eval_R1621.py launched(codex 2+deepseek 1,run_id _R1621 suffix防碰撞)·cline rerun 50/58·3路predict alive
-已完成:       H-B✅·Gate7/7·TB报告✅·pilot20✅·R984-R988恒0调试✅·R989 incr_eval全链✅·R997硬约束修复✅·R1567 cline trace归因分析✅·R1569 cline适配器修复✅·R1611-R1620 incr_eval渐进✅·R1620 incr_eval cline batch DONE(11/18 resolved)·R1621 incr_eval 3 new backlog launched
-当前动作:     R1621:CPU/MEM自检PASS→incr_eval_R1620 cline batch DONE(11/18 RESOLVED→eval_cline resolved=352)→incr_eval_R1621 DONE(codex +2 RESOLVED django-13033/13089→290·deepseek +1 RESOLVED xarray-3993→190)→regen report(17110B cline352/codex290/deepseek190)→incr_eval_R1620 deepseek batch still running(8题·requests-2317 in Docker)→体积自检PASS→未完成指令:有(R1620 deepseek running+cline rerun 50/58+3路predict alive)⇒WAITING=0.
-下一步:       ①R1620 deepseek batch完成后eval_deepseek update+regen ②R1621 codex+deepseek完成后update+regen ③cline rerun 51-58→eval新产patch ④3路predict alive(cline 491/500·codex 497/500·deepseek 242/500) ⑤predict全完成后final full500报告 ⑥永久硬约束:禁止commit结果JSON ⑦TASK≤40KB红线·MEMORY≤32KB
-阻塞:         无·incr_eval_R1620 deepseek batch running(8题)·incr_eval_R1621 running(3题)·cline rerun 50/58·3路predict alive.
+PHASE:        R1622 incr_eval轮:CPU/MEM自检PASS(load26.27/224~12%busy·top=S1 pretrain 144%非本线·无失控)+incr_eval_R1620 DONE(cline 11/18 RESOLVED→352·deepseek 2/8 RESOLVED→191)+incr_eval_R1621 DONE(codex +2→291·deepseek +1→190→后被R1620覆盖为191)+incr_eval_R1622 DONE(cline sympy-14248 no_patch→n=492·codex django-13109 RESOLVED→291)+report regen(17110B)+scan_backlog=0+cline rerun 51/58·3路predict alive
+已完成:       H-B✅·Gate7/7·TB报告✅·pilot20✅·R984-R988恒0调试✅·R989 incr_eval全链✅·R997硬约束修复✅·R1567 cline trace归因分析✅·R1569 cline适配器修复✅·R1611-R1622 incr_eval渐进✅·R1622 incr_eval 2 backlog DONE(cline no_patch+codex RESOLVED)
+当前动作:     R1622:CPU/MEM自检PASS→incr_eval_R1620+R1621 both DONE(deepseek 191)→scan_backlog=2(cline sympy-14248 no_patch+codex django-13109 patch=2959B)→incr_eval_R1622.py created+run:cline sympy-14248→no_patch(n=492 no_patch=12)·codex django-13109→RESOLVED(resolved=291 n=498)→report regen(17110B)→scan_backlog=0→体积自检PASS(TASK38.0KB<40KB·MEMORY30.7KB<32KB)→未完成指令:有(cline rerun 51/58+3路predict alive)⇒WAITING=0.
+下一步:       ①cline rerun 51-58→eval新产patch ②3路predict alive(cline 492/500·codex 498/500·deepseek 242/500) ③deepseek predict完成→final eval ④predict全完成后final full500报告 ⑤永久硬约束:禁止commit结果JSON ⑥TASK≤40KB红线·MEMORY≤32KB
+阻塞:         无·cline rerun 51/58·3路predict alive(cline/codex/deepseek).
 ERROR_COUNT:  0
-  📦 体积：TASK=38954B(38.0KB,3活跃块无✅不可归档,<40KB红线OK) / MEMORY=~31KB(<32KB OK)·本轮无需归档
+  📦 体积：TASK=38954B(38.0KB,3活跃块无✅不可归档,<40KB红线OK) / MEMORY=31474B(30.7KB,<32KB OK)·本轮无需归档
 ```
 
 > 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
@@ -19,7 +19,8 @@ ERROR_COUNT:  0
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 
 ### 本唤醒流水
-[02:52→02:58] R1621 incr_eval轮:CPU/MEM自检PASS(load25.46/224~11%busy·MEM avail1301GB·top=S1 pretrain 144%非本线·无失控·2 Docker eval containers·无需kill)→incr_eval_R1620 cline batch DONE at 02:54(11/18 RESOLVED:django-16429/16527/17087·matplotlib-24026/24149·pytest-5631/6202/7205/7236/7432/8399·sklearn-25102 + 7 FAILED:astropy-7336·django-11087/14725/15098·matplotlib-20676·pytest-10356)→eval_cline-patched.json updated(resolved=352 failed=128 no_patch=11 n=491)→regen report(17110B)→scan_backlog=11(8=R1620 deepseek in-progress+3 new:codex django-13033/13089+deepseek xarray-3993)→incr_eval_R1621.py created+launched(setsid后台·max_workers=1·codex run_id=verified_full_codex·deepseek run_id=_R1621 suffix防碰撞·PID1469449·running)→incr_eval_R1620 deepseek batch still running(8题·matplotlib-26466 in Docker)→predictions:cline491·codex497·deepseek242→体积自检PASS(TASK38.0KB<40KB·MEMORY~31KB<32KB无需归档)→未完成指令:有(R1620 deepseek running+R1621 running+cline rerun 50/58+3路predict alive)⇒WAITING=0.
+[03:05→03:12] R1622 incr_eval轮:CPU/MEM自检PASS(load26.27/224~12%busy·top=S1 pretrain 144%非本线·无失控·无Docker eval失控·无需kill)→incr_eval_R1620 DONE at 03:05(deepseek 2/8 RESOLVED:matplotlib-26291+xarray-3677→resolved=191)+incr_eval_R1621 DONE at 03:01(codex +2 RESOLVED django-13033/13089→290·deepseek +1→190)→scan_backlog=2(cline sympy-14248 no_patch+codex django-13109 patch=2959B)→incr_eval_R1622.py created+run:cline sympy-14248→NO_PATCH(eval_cline n=492 no_patch=12)·codex django-13109→RESOLVED(eval_codex resolved=291 n=498)→report regen(17110B)→scan_backlog=0→predictions:cline492·codex498·deepseek242→体积自检PASS(TASK38.0KB<40KB·MEMORY30.7KB<32KB无需归档)→未完成指令:有(cline rerun 51/58+3路predict alive)⇒WAITING=0.
+> 📦 R1621 流水(02:52,incr_eval轮:CPU/MEM自检PASS+R1620 cline batch DONE+R1621 launched)已归档 → daily-memories-harness/2026-11-05.md。结论：cline352·codex290·deepseek190·3路predict alive。需要时再读。
 > 📦 R1620 流水(02:42,incr_eval轮:CPU/MEM自检PASS+3 fixes复核+scan_backlog=26→incr_eval_R1620 launched 18cline+8deepseek)已归档 → daily-memories-harness/2026-11-05.md。结论：cline batch 11/18 resolved·deepseek batch running·3路predict alive。需要时再读。
 > 📦 R1619 流水(02:23,incr_eval 4题全RESOLVED+report regen)已归档 → daily-memories-harness/2026-11-05.md。结论：cline352·codex288·deepseek189·3路predict alive。需要时再读。
 
