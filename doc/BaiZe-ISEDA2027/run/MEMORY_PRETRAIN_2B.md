@@ -4,7 +4,9 @@ WAITING: 0
 
 > 📦 §#1322-#1328（11-04 03:28–04:12, 7轮监控·pilot=FAIL等令·4evals推进·S1 iter74190→74580）→ daily-memories/2026-11-04.md；**结论汇总**：4 evals稳定推进(.29~17s/it/.12~28s/it), 最坏ETA~13:05<deadline✅, iter_10000 DONE Avg50%, S1全程0NaN, CPU均<<80%。pilot=FAIL等用户令。需要时再读。
 
-> 🆕 2026-11-04 08:20 #1331：**监控轮·4evals推进正常·S1 iter76720健康·最坏ETA~13:13<deadline✅**。4 evals实测进度(2599总请求)：.29 iter_30000=2258/2599(86.9%)@17.3s/it ETA~09:58；.29 iter_50000_f32=1545/2599(59.4%)@16.7s/it ETA~13:13(最慢)；.12 iter_40000=2121/2599(81.6%)@24.0s/it ETA~11:31；.12 iter_20000=2112/2599(81.3%)@24.0s/it ETA~11:35。已完成1/5：iter_10000 Avg=0.5000(arc_c.29/arc_e.49/boolq.61/hella.36/obqa.20/piqa.72/sciq.79/wgrande.54)✅。S1 iter76720/700000/loss2.089/0NaN/0skip/6893ms/step/LR=1e-3/GPU91-98%/~75GB✅。CPU .29 load38.4/224(17%)/.12 load29.3/224(13%)<<80%✅。pilot=FAIL已报告等令(commit 0d1b0567e)。📦 体积：TASK=31373B(31KB)/MEMORY≈30KB≤32KB✅。未完成指令：有(5ckpt CPU评测 1/5 DONE+4在跑;pilot=FAIL等令)⇒WAITING: 0。
+> 🆕 2026-11-04 08:28 #1332：**监控轮·4evals推进正常·S1 iter76780健康·最坏ETA~13:20<deadline✅**。4 evals实测进度(2599总请求)：.29 iter_30000=2284/2599(87.9%)@~17s/it ETA~10:00；.29 iter_50000_f32=1571/2599(60.4%)@~17s/it ETA~13:20(最慢)；.12 iter_40000=2141/2599(82.4%)@~24s/it ETA~11:00；.12 iter_20000=2132/2599(82.0%)@~24s/it ETA~11:05。已完成1/5：iter_10000 Avg=0.5000(arc_c.29/arc_e.49/boolq.61/hella.36/obqa.20/piqa.72/sciq.79/wgrande.54)✅。S1 iter76780/700000/loss2.104/0NaN/0skip/6950ms/step/LR=1e-3/GPU~98%/~75GB✅。CPU .29 load36.6/224(16%)/.12 load31.6/224(14%)<<80%✅。pilot=FAIL已报告等令(commit 0d1b0567e)。📦 体积：TASK=31373B(31KB)/MEMORY≈29KB≤32KB✅。未完成指令：有(5ckpt CPU评测 1/5 DONE+4在跑;pilot=FAIL等令)⇒WAITING: 0。
+
+> 📦 §#1331（11-04 08:20, 监控轮·4evals推进正常·S1 iter76720健康）→ daily-memories/2026-11-04.md；**结论**：4 evals推进, 最坏ETA~13:13, iter_10000 DONE Avg50%, S1 iter76720健康0NaN, CPU<<80%。被#1332确认。需要时再读。
 
 > 📦 §#1329（11-04 08:07, 监控+报告补全·pilot根因更正·4 evals推进）→ daily-memories/2026-11-04.md；**结论**：pilot报告补全8422B根因=Mamba2-hybrid算法层logit偏移(7假设全排除),速度7.03x达标但Δacc16-18pp FAIL,4 evals推进ETA~13:04,S1 iter76590健康。被#1330-#1331确认。需要时再读。
 
