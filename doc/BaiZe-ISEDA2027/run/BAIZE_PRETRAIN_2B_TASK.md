@@ -2,17 +2,7 @@
 
 > 📦 §用户令 2026-11-03 22:0x（llama.cpp pilot）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：✅已执行 pilot=FAIL(commit 9cdc4469f/0d1b0567e, 报告report_pretrain_llamacpp_pilot_zh.html 8422B)，根因=GGUF转换Duplicated key覆写hybrid元数据, 速度7.03x达标但Δacc16-18pp, 保留HF float32路线等用户令。需要时再读。
 
-### [运维令] 2026-11-02 19:51（**S1 已被运维经 ops 中继重启 → 禁止重复启动；CPU 评测必须降载**）· 运维直令 · 最高优先
-
-**① 事故（已核实）**：S1 在 **18:39:51** 被 **SIGKILL**（rank8/.29 pid 1428155）→ 其余 rank 卡在 NCCL 集合（`Watchdog caught collective operation timeout, SeqNum=2109238`）→ **18:50:18** rank1/.12 报 **SIGBUS** → torchrun `ChildFailedError` 整组退出。最后正常步 **58110**（18:39:03）。GPU 空置 18:39 → 19:51（约 72 分钟）。
-
-**② 处置（已完成，勿重做）**：19:51:12 用 `cd /nas_train/app.e0031982/code/baize-llm && setsid nohup bash scripts/train.sh s1 --nodes 2 > /tmp/baize_s1_baize2b_worker.log 2>&1 &` 从 **ckpt 58000** 续跑（launcher pid 4163528）。实测：`.29` 8 卡 **100% util**、`NCCL INFO Connected all trees`、`load-checkpoint (3414ms)`。**⇒ 训练已恢复，🚫 严禁再起第二个训练进程（会双写 ckpt）。** 判活请直接看 `/tmp/baize_s1_baize2b_worker.log` 的 `iteration N/700000` 行。
-
-**③ 证据保全**：崩溃现场日志已重命名为 `/tmp/baize_s1_baize2b_worker.log.crash_1102_1839`、`/tmp/baize_s1_baize2b_master.log.crash_1102_1839`（🚫 勿删，用于定 OOM vs 误杀）。
-
-**④ CPU 评测（11:1x 令）继续，但硬性降载**：`OMP_NUM_THREADS≤8`、`nice -n 19`、每机并发 ≤2 进程、`device=cpu` 不变；**🚫 禁止 `pkill python`/宽泛 kill**（18:39 训练被 -9 的疑似原因之一）；`sciq/acc=0.0000` 说明解码/loglikelihood 配置还没通，**先修通再全量**，不要直接跑 5×8。
-
-**⑤ 心跳必须写明**：S1 已重启（launcher pid / 起始 iter 58110）、`.29` 与 `.12` 各自 CPU% 实测值、`未完成指令：有`。
+> 📦 §运维令 2026-11-02 19:51（S1 重启事故+CPU降载）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md「归档 2026-11-04 第四批」节；**结论**：✅ S1 18:39 SIGKILL 后 19:51 从 ckpt58000 续跑恢复，训练在跑；CPU降载纪律(OMP≤8/nice19/禁pkill)已并入 11-02 11:1x 与 11-04 09:3x 令。需要时再读。
 
 > 📦 §运维令 2026-10-31 18:2x（paper-slim 压 ch4 约 1750 字符 → 6 页）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md「归档 2026-10-31 第三批」节；**结论**：✅ 4_llm_pretrain.tex 15398→11960B（省 22.3%），6 页（正文 p1-p5 + refs p6），ERR=0/UNDEF=0/Overfull=0，commit 2fef637c8，报告 report_pretrain_paper_slim_zh.html 9.9KB。需要时再读。
 
@@ -91,21 +81,7 @@
 
 **⑤ ⚠️ 机器分工（2026-11-02 用户补令 · 硬性）**：本轮 5 ckpt 的 export + CPU 评测**可以用 `.12` + `.29` 两机 CPU**（此前 `.29` 的 harness 失控评测已被 kill，CPU 已恢复正常）。硬约束：**两机各自的整机 CPU 利用率都 ≤80%**——用 `taskset`/`OMP_NUM_THREADS` 限单进程线程、`nice` 降权、控制跨 ckpt 并行度，实测并在心跳报 `.12`/`.29` 各自 CPU%。export 与评测文件走 NFS 共享路径（`/nas_train`、`/nas_user`），两机同盘，结果互通。
 
-### [运维令] 2026-10-28 17:0x（**预训练项目目录定位：脚本&文档落在 `/nas_train/app.e0031982/code/baize-llm/baize-llm`，后续训练从此启动**）· 用户直令 · 最高优先
-
-### [运维令] 2026-10-28 17:0x（**预训练项目目录定位：脚本&文档落在 `/nas_train/app.e0031982/code/baize-llm/baize-llm`，后续训练从此启动**）· 用户直令 · 最高优先
-
-> 用户原话（2026-10-28 17:0x）：「安排 pretrain 往项目目录 /nas_train/app.e0031982/code/baize-llm/baize-llm 写脚本&文档。后续训练从项目目录启动。」
-
-**① 项目目录定位（运维已核现状）**：`/nas_train/app.e0031982/code/baize-llm/baize-llm` 当前是 symlink → `super_intelligence_2035/code/baize-llm`（已含 `configs/`/`scripts/`/`docs/`/`README.md` 14.3KB）。外层 `/nas_train/app.e0031982/code/baize-llm/` 是独立 git 仓库（README 仅 582B、另有 symlink）。
-
-**② 要求**：脚本（`train.sh`/`pre_blend.py`/`gen_blend.py`/`check_rope.py`/`check_longctx_data.py`/`activate_preblend.sh` 等）与文档**全部落在该项目目录并 git 提交**；`README.md` 补全到「从零按 README 即可在项目目录启动训练」的程度（目录结构 / 启动命令 / 三阶段 S→S2→Decay 口径 / 配置说明 / 依赖环境）。
-
-**③ 后续训练启动口径（硬性）**：一律 `bash /nas_train/app.e0031982/code/baize-llm/baize-llm/scripts/train.sh <stage>` 启动；🚫 不再从 `run/` 散落脚本启动。`common.env` 的 `BAIZE_TRAIN_CODE` 与启动文档与此路径对齐。
-
-**④ 优先级**：不打断主线——先续跑 en_v1_4 pre-blend 剩余 s012-s015 → activate → 起 S（双机 16 卡 GBS256）；本令的「脚本&文档落项目目录」可在起 S 后的空档补齐。
-
-commit `pretrain 项目:`。
+> 📦 §运维令 2026-10-28 17:0x（预训练项目目录定位）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md「归档 2026-11-04 第四批」节；**结论**：✅ 脚本&文档落 baize-llm/baize-llm，commit e1c6be4 pushed 28 files；启动口径 `bash .../baize-llm/scripts/train.sh <stage>` 仍有效。需要时再读。
 
 > 📦 §运维令 2026-10-28 11:5x（blend 逻辑中文 HTML 报告）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：报告已交付 `reports/report_pretrain_blend_logic_zh.html`（11KB, commit aa6d3eddf），澄清训练时不会串行出不同源（索引层交错）。需要时再读。
 
