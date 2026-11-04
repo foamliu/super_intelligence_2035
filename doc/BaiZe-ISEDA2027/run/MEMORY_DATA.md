@@ -18,18 +18,19 @@ WAITING: 1
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        ✅运维令13:2x#1 B类下载12/12全部落地(78.73GiB/0inc)+DATA_MAPPING.md F节已写 + 13:2x#2 RL报告✅已交付 → 全部活跃令完成 → WAITING=1
-已完成:       ✅85M;✅10-31长上下文+agentic报告;✅09:4x推理+代码SFT报告(77772B);✅09:2x长上下文10/10落地(249.48GiB);✅13:2x#2 RL+数学+agentic RL调研报告已交付(37946B);✅13:2x#1 B类下载12/12全部落地(84,538,865,583B/78.73GiB/582files/0inc)+DATA_MAPPING.md F节已写+校验
-当前动作:     唤醒1188(2026-11-04 14:40):例行空唤醒巡检→①git synced(0ahead/0behind);②6项活跃令全DONE复核(85M✓/10-31报告115KB✓/09:4x报告77KB✓/09:2x A类10/10✓/13:2x#2 RL报告37KB✓/13:2x#1 B类12/12✓);③df:/nas_inference 17T/38%(29T可用);④体积自检TASK33.8KB/MEMORY30.2KB均≤40KB无需归档;⑤无新令→WAITING=1
+PHASE:        ✅全部6项活跃运维令DONE(85M+10-31报告+09:4x报告+09:2x A类10/10+13:2x#2 RL报告+13:2x#1 B类12/12) → WAITING=1待新令
+已完成:       ✅85M;✅10-31长上下文+agentic报告;✅09:4x推理+代码SFT报告(77772B);✅09:2x长上下文10/10落地(249.48GiB);✅13:2x#2 RL+数学+agentic RL调研报告已交付(37946B);✅13:2x#1 B类下载12/12全部落地(78.73GiB/0inc)+DATA_MAPPING.md F节已写+校验
+当前动作:     唤醒1189(2026-11-04 15:0x):例行空唤醒巡检→①git synced(0ahead/0behind);②6项活跃令全DONE复核(85M✓/10-31报告115KB✓/09:4x报告77KB✓/09:2x A类10/10✓/13:2x#2 RL报告37KB✓/13:2x#1 B类12/12✓/0inc);③df:/nas_inference 17T/38%(29T可用);④体积自检TASK33.8KB/MEMORY30.7KB均≤40KB无需归档;⑤无新令→WAITING=1
 下一步:       待运维派新令;若需分词agentic源→先定分词口径(jsonl/parquet非mcore);ia03/terminal-bench纳入去污染黑名单(与SWE-bench Verified同闸)
-阻塞:         无(B类下载已全部完成;RL报告已交付;无活跃指令)
+阻塞:         无(全部活跃令已完成;无活跃指令)
 ERROR_COUNT:  11
-未完成指令:   无(13:2x#1 B类下载12/12完成+mapping已写;13:2x#2 RL报告已交付)→WAITING=1
+未完成指令:   无(全部6项活跃令DONE)→WAITING=1
 ```
 
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。
 
 ## 📋 本唤醒流水
+> [11-04 15:0x] 唤醒1189：例行空唤醒巡检→①git fetch+synced(##main...origin/main,0ahead/0behind,data线clean);②6项活跃令全DONE复核：85M✓+10-31报告(115558B✓)+09:4x报告(77772B✓)+09:2x A类10/10(249.48GiB✓)+13:2x#2 RL报告(37946B✓)+13:2x#1 B类12/12(0inc✓);③B类实测:SWE-bench 4.2G+nvidia 64G+nebius 234M+zhangdw 2.2G+tuandunghcmut 517M+open-thoughts 19G+microsoft 11G+mshojaei77 49M+ia03 40M=0 incomplete✓;④df:/nas_inference 17T/38%(29T可用);⑤体积自检TASK=33.8KB/MEMORY=30.7KB均≤40KB无需归档;⑥无新运维令(任务书最后更新11-04 13:26,已全执行)→WAITING保持1(长睡待令)
 > [11-04 14:40] 唤醒1188：例行空唤醒巡检→①git synced(##main...origin/main,0ahead/0behind);②6项活跃令全DONE复核：85M✓+10-31报告(115558B✓)+09:4x报告(77772B✓)+09:2x A类10/10(249.48GiB✓)+13:2x#2 RL报告(37946B✓)+13:2x#1 B类12/12(78.73GiB✓);③df:/nas_inference 17T/38%(29T可用);④体积自检TASK=33.8KB/MEMORY=30.2KB均≤40KB无需归档;⑤无新运维令→WAITING保持1(长睡待令)
 > [11-04 14:16] 唤醒1187：B类下载收尾→①master日志确认12/12全OK：SWE-smith(0.25G)+Nemotron-Terminal(7.63G)+SWE-rebench(0.22G)+to-tool-call(2.19G)+toolbench-v1(0.50G)+AgentTrove(18.20G)+Orchard(10.20G)+Nemotron-Cascade-RL-SWE(29.17G)+Nemotron-Cascade-SFT-SWE(6.30G)+SWE-smith-trajectories(3.93G)+terminal-cmd-exec-sft(0.04G)+terminal-bench(0.03G)，末源ia03/terminal-bench 14:16完，master进程PID841983已exit；②du-sb+find实测12源=582files/84,538,865,583B(78.73GiB)/0incomplete；③DATA_MAPPING.md新增F节(B类agentic下载登记,12源表+合计核对式+校验注,ia03/terminal-bench标注评测集禁入训练)；④df:/nas_inference 17T/38%(29T可用,78.73G小占比)；⑤WAITING置回1(全部活跃令完成:13:2x#1下载12/12+mapping✓,13:2x#2 RL报告✓,09:4x报告✓,09:2x A类10/10✓)
 > [11-04 14:11] 唤醒1186：B类下载进度监控+RL报告复核→①RL报告report_data_rl_math_survey_zh.html复核PASS(37946B≥25KB✓/0<script>✓/HTMLParser errors=0✓/47 href全huggingface.co无外链✓)；②B类下载status.tsv=7/12 OK(39.24GiB/0inc)，Nemotron-Cascade-RL-SWE下载中(PID2708081 alive)：5文件中3已完(.gitattributes/README.md/train_16k.jsonl)，train_24k(8.1G)+train_32k(8.5G)仍.incomplete(du=22G含17G cache)；③df:/nas_inference 17T/38%(29T可用)，足够容纳余下~50G；④余4源排队(Nemotron-Cascade-SFT-SWE/SWE-smith-trajectories/terminal-cmd-exec-sft/terminal-bench)，download_bclass_datasets.sh串行自动续下；⑤git synced(##main...origin/main)，心跳WAITING=0(下载未完成)
