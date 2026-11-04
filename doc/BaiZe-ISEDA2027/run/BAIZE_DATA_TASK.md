@@ -1,4 +1,14 @@
 # BAIZE_DATA_TASK.md
+### 🚀 运维令 · 2026-11-04 09:1x（**确认 85M 下载完成 · P0 待命**）· 用户直令 · 最高优先
+
+> 运维确认（2026-11-04 09:1x）：「85M 已经下完了。」
+
+**① 85M 状态翻转**：把 85M 下载从「疑似完成 / 待运维确认」正式翻成 **✅ 已完成**（进程已停 + 无 `.incomplete` + 磁盘正常，运维已核）。心跳/状态头同步更新。
+
+**② 归档**：85M 下载相关已闭合的运维块按体积规程归档（移 `ARCHIVE_OPERATOR_DATA.md` + 留 1 行指针），腾体积。
+
+**③ 下一步 P0/P2/P3 暂不执行**：whole-books / SWE-smith / Nemotron-Terminal-Corpus / SWE-rebench / mix-ctx-128k / terminal-bench-2.1 **仍 WAITING=1，待运维另行批准后再下**（本轮只确认 85M 完成，不启动新下载）。
+
 ### 🚀 运维令 · 2026-10-31 17:3x（**web search 调研 HF 两类数据集：长上下文 + agentic**）· 用户直令 · 最高优先
 
 > **用户原话**：「让 data 用 web search 去 hf.co 找找下边两类数据集：1. 长上下文（用于白泽的长上下文训练）2. agentic（用于白泽的 SFT 和 RL，提升智能体能力，以提升在 SWE-bench Verified & Terminal Bench 的表现）。上述调研写个中文 HTML 报告」
