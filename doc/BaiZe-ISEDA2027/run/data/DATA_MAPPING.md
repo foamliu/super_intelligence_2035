@@ -217,3 +217,36 @@
 > 后续动作（待运维批准）：① pg19 数据体补齐（找 parquet 镜像或 `load_dataset` 脚本拉取）；② 长上下文源分词入 `tokenized/` 镜像（oellm pilot-v1 已分词可直接用）；③ 分词后回写 A 节、本节状态翻「已分词」。
 > 🚫 token 不得写入本表/日报/任何 commit（运维令 09:2x ③）。
 
+---
+
+## F. B 类 agentic 数据下载（运维令 2026-11-04 13:2x · 未分词 · 落盘 `/nas_inference`）
+
+> 运维令 2026-11-04 13:2x（用户直令 · 最高优先）：放行 B 类 agentic 数据下载，落盘 `/nas_inference/app.e0031982/datasets/<repo原名>/`。
+> **本节为下载登记（未分词）**：12 源全部 `status=OK`、`incomplete=0`，下载于 2026-11-04 14:16 全部落地（master 日志 `==== bclass download start 20261104_133804 ====`，末源 `ia03/terminal-bench` 完成于 14:16）。
+> 数据源（durable）：`/tmp/data_download_bclass_status.tsv`（12 行，幂等可复现）+ master 日志 `/tmp/data_download_bclass_master.log`。字节/文件数来自 `du -sb` + `find -type f | wc -l` 实测（.12 全部公开 non-gated，无 gated 源）。
+> ⚠️ `ia03/terminal-bench` 为**评测集本体**（运维令标注「评测集仅去污染」）——**不得入训练集**，仅用于建黑名单/去污染校验，与 EDA-Eval 红线同口径。
+> ⚠️ 巨大项 `AlienKevin/SWE-ZERO-12M-trajectories`(111G) 按运维令②**不默认下**，选择性下或后置（盘上 `AlienKevin/` 目录为旧残留，非本轮产物）。
+
+| # | repo_id | 落盘路径 | 主机 | 文件数 | 字节(B) | GiB | gated | incomplete | 备注 |
+|:---|:---|:---|:---|---:|---:|---:|:---|---:|:---|
+| 1 | `SWE-bench/SWE-smith` | `/nas_inference/app.e0031982/datasets/SWE-bench/SWE-smith` | .12 | 40 | 277,797,639 | 0.25 | no | 0 | SWE-smith 修复轨迹（MIT） |
+| 2 | `nvidia/Nemotron-Terminal-Corpus` | `/nas_inference/app.e0031982/datasets/nvidia/Nemotron-Terminal-Corpus` | .12 | 94 | 8,198,886,139 | 7.63 | no | 0 | 终端命令语料（CC BY 4.0） |
+| 3 | `nebius/SWE-rebench` | `/nas_inference/app.e0031982/datasets/nebius/SWE-rebench` | .12 | 16 | 245,202,838 | 0.22 | no | 0 | SWE-rebench |
+| 4 | `zhangdw/to-tool-call-datasets` | `/nas_inference/app.e0031982/datasets/zhangdw/to-tool-call-datasets` | .12 | 37 | 2,354,026,701 | 2.19 | no | 0 | 工具调用 SFT |
+| 5 | `tuandunghcmut/toolbench-v1` | `/nas_inference/app.e0031982/datasets/tuandunghcmut/toolbench-v1` | .12 | 40 | 540,918,767 | 0.50 | no | 0 | ToolBench-v1（Apache-2.0） |
+| 6 | `open-thoughts/AgentTrove` | `/nas_inference/app.e0031982/datasets/open-thoughts/AgentTrove` | .12 | 121 | 19,552,408,650 | 18.20 | no | 0 | Agent 多轮轨迹 |
+| 7 | `microsoft/Orchard` | `/nas_inference/app.e0031982/datasets/microsoft/Orchard` | .12 | 73 | 10,962,177,581 | 10.20 | no | 0 | Orchard（MIT） |
+| 8 | `nvidia/Nemotron-Cascade-RL-SWE` | `/nas_inference/app.e0031982/datasets/nvidia/Nemotron-Cascade-RL-SWE` | .12 | 16 | 31,322,695,342 | 29.17 | no | 0 | SWE RL cascade（可验证奖励） |
+| 9 | `nvidia/Nemotron-Cascade-SFT-SWE` | `/nas_inference/app.e0031982/datasets/nvidia/Nemotron-Cascade-SFT-SWE` | .12 | 16 | 6,768,363,884 | 6.30 | no | 0 | SWE SFT cascade（CC BY 4.0） |
+| 10 | `SWE-bench/SWE-smith-trajectories` | `/nas_inference/app.e0031982/datasets/SWE-bench/SWE-smith-trajectories` | .12 | 103 | 4,223,886,972 | 3.93 | no | 0 | SWE-smith 轨迹（parquet） |
+| 11 | `mshojaei77/terminal-command-execution-sft` | `/nas_inference/app.e0031982/datasets/mshojaei77/terminal-command-execution-sft` | .12 | 13 | 51,198,163 | 0.04 | no | 0 | 终端命令执行 SFT |
+| 12 | `ia03/terminal-bench` | `/nas_inference/app.e0031982/datasets/ia03/terminal-bench` | .12 | 13 | 41,302,907 | 0.03 | no | 0 | ⚠️ 评测集本体，仅去污染，禁入训练 |
+| **合计** | **12 源** | | | **582** | **84,538,865,583** | **78.73** | | **0** | 全部公开 non-gated；含 1 评测集（terminal-bench） |
+
+核对式：`sum(文件)=582`；`sum(字节)=84,538,865,583`（≈ 78.73 GiB / 78.73 GB）；`sum(incomplete)=0`；最大源 = Nemotron-Cascade-RL-SWE(29.17 GiB)。
+
+> 落盘校验：每源 `du -sb` + `find -type f | wc -l` + `find -name '*.incomplete' | wc -l = 0` 三项核对（2026-11-04 14:16，.12）。master 日志 `/tmp/data_download_bclass_master.log` 记录全部 12 源 `status=OK`、`attempts=1`、`incomplete=0`。
+> 下载纪律（运维令④）：`setsid` 后台 + `/tmp/data_download_*.log`；`nice`、`--max-workers 4` 限并发；走代理 `HTTPS_PROXY=http://172.19.92.25:13128`；断点续传（hf download 原生支持）。
+> 后续动作（待运维批准）：① agentic 源分词入 `tokenized/` 镜像（需先定分词口径，部分为 jsonl/parquet 非 mcore 格式）；② `ia03/terminal-bench` 纳入去污染黑名单（与 SWE-bench Verified / Terminal Bench 同闸）；③ 分词后回写 A 节、本节状态翻「已分词」。
+> 🚫 token 不得写入本表/日报/任何 commit（运维令 13:2x ③）。
+
