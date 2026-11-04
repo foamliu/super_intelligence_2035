@@ -1,6 +1,6 @@
 # MEMORY_DATA.md — BaiZe 正式训练数据准备 · 运行时状态
 
-WAITING: 1
+WAITING: 0
 
 > ⚠️ **`WAITING` 只认本文件顶部这一行**（`baize_data_loop.sh` 用 `^WAITING:[[:space:]]*1` 匹配）。
 > **不要在正文/流水里再写任何以 `WAITING:` 开头的行**——否则会误触发 30 分钟长睡。
@@ -18,18 +18,19 @@ WAITING: 1
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        🟢运维令10-31 web search调研HF长上下文+agentic数据集.报告v6已交付+已commit+push
-已完成:       ✅A.LC+Agentic调研报告v6(report_data_lc_agentic_survey_zh.html 115558B/47table/0script/19+18候选/80 HF链接/36unique)+生成器(gen_lc_agentic_survey_report.py 幂等);✅B.v6新增3个HF核实数据集(SWE-smith-trajectories/MIT/HTTP200 + harborframework/terminal-bench-2.1/Apache-2.0/HTTP200 + ghostcc3/mix-context-post-training-128k/MIT/HTTP200);✅C.85M下载持续运行;✅D.报告全量验证(7节/0script/0CDN/0外链/幂等OK/47table平衡/0未闭合标签)
-当前动作:     唤醒1169(2026-11-04 09:54):运维令10-31交付物健康巡检全PASS→①report=115558B(112.8KB≥25KB✓)/0<script>/0CDN/0非HF外链/47<table>=47</table>平衡✓/7节sec1-7齐/36unique HF数据集链接;②generator重跑产出逐字节一致(幂等✓,cmp /tmp/report_before.html identical);③git fetch synced(0 ahead/0 behind origin/main,data线clean✓,report+generator均在commit ab6f89572已push);④85M下载:PID1252810 ALIVE(hf download mvp-lab/LLaVA-OneVision-1.5-Mid-Training-85M,ppid=1100874)✓—注:前数轮心跳误报"无进程",本轮pgrep实测有进程,下载仍在运行;⑤df:/nas_train179T/87%(29T可用),/nas_env8.3T/84%(1.7T可用);⑥MEMORY=40373B>40KB→归档唤醒1117-1160心跳(44轮)到daily-memories-data/2026-11-04.md→MEMORY=15296B;⑦TASK=27958B(27.3KB)→任务已交付,心跳WAITING=1
-下一步:       下轮唤醒:①确认85M下载是否已完成(无进程+0 incomplete=疑似完成,待运维核实);②待运维批准后执行下载(P0:whole-books+SWE-smith+Nemotron-Terminal-Corpus+SWE-rebench;P2:SWE-smith-trajectories;P3:mix-ctx-128k/terminal-bench-2.1)
-阻塞:         无
+PHASE:        🟢运维令11-04 09:2x 下载长上下文(A类)数据到/nas_inference(~250GiB,9源,后台进行中)+09:1x 85M确认完成
+已完成:       ✅85M下载正式翻转✅已完成(进程已停+0 .incomplete+运维09:1x已核);✅运维令10-31调研报告v6已交付;✅长上下文下载脚本download_longctx_datasets.sh已写+已启动(setsid后台,PID3129416,日志/tmp/data_download_lc_20261104_101957.log)
+当前动作:     唤醒1170(2026-11-04 10:20):运维令09:2x执行中→①9源HF核实(8公开gated=False+caskcsg/NExtLong原id 401私有→改用公开变体NExtLong-128K-dataset;oellm pilot-v1精确id=birgermoell/oellm-longctx-tokenized-natural-128k-256k-pilot-v1);②脚本download_longctx_datasets.sh写入run/data/(落盘/nas_inference/app.e0031982/datasets/<org>/<name>/,nice -n10,hf_transfer=0,max-workers4,断点续传,3次重试);③已setsid后台启动,首源ysngkil/whole-books下载中(6%/256M);④85M:进程0+.incomplete0→正式✅已完成;⑤WAITING=0(下载在跑,未完成指令=有)
+下一步:       下轮唤醒:①监控下载进度(tail /tmp/data_download_lc_*.log + du -sh 各源);②全部落地后校验(0 .incomplete+文件数+字节),按镜像下载路径写DATA_MAPPING.md;③落地后WAITING置回1
+阻塞:         无(下载后台进行中,不占GPU,限并发≤4)
 ERROR_COUNT:  11
-未完成指令:   无(调研报告v6已交付+验证完成)
+未完成指令:   有(长上下文9源下载进行中,待全部落地)
 ```
 
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。
 
 ## 📋 本唤醒流水
+> [11-04 10:20] 唤醒1170：运维令09:2x(下载长上下文A类~250GiB)+09:1x(85M确认完成)→①85M核实:进程0+find .incomplete=0→正式翻转✅已完成;②9源HF核实(dataset_info):ysngkil/whole-books·princeton-nlp/prolong-data-512K·openbmb/InfLLM-V2-data-5B·self-long/RULER-llama3-1M·THUDM/LongAlign-10k·deepmind/pg19·ghostcc3/mix-context-post-training-128k·birgermoell/oellm-longctx-tokenized-natural-128k-256k-pilot-v1 均 gated=False公开✓;caskcsg/NExtLong原id 401私有→改用公开变体caskcsg/NExtLong-128K-dataset(gated=False,209files,64K/512K变体另存待定);③写脚本run/data/download_longctx_datasets.sh(落盘/nas_inference/app.e0031982/datasets/<org>/<name>/,nice -n10,hf_transfer=0,max-workers4,断点续传,3次重试,状态写/tmp/data_download_lc_status.tsv);④setsid后台启动PID3129416,首源ysngkil/whole-books下载中(6%/256M,日志/tmp/data_download_lc_20261104_101957.log);⑤WAITING置0(下载在跑,未完成指令=有);⑥待落地后校验+写DATA_MAPPING.md
 > [11-04 09:54] 唤醒1169：运维令10-31交付物健康巡检全PASS→①report=115558B(112.8KB≥25KB✓)/0<script>/0CDN/0非HF外链/47<table>=47</table>平衡✓/7节sec1-7齐/36unique HF数据集链接;②generator重跑产出逐字节一致(幂等✓,cmp /tmp/report_before.html identical);③git fetch synced(0 ahead/0 behind origin/main,data线clean✓,report+generator均在commit ab6f89572已push);④85M下载:PID1252810 ALIVE(hf download mvp-lab/LLaVA-OneVision-1.5-Mid-Training-85M)✓—前数轮心跳误报"无进程",本轮pgrep实测有进程,下载仍在运行;⑤df:/nas_train179T/87%(29T可用),/nas_env8.3T/84%(1.7T可用);⑥MEMORY=40373B>40KB→归档唤醒1117-1160心跳(44轮)到daily-memories-data/2026-11-04.md→MEMORY=15296B;⑦TASK=27958B(27.3KB)→任务已交付,心跳WAITING=1
 > [11-04 08:58] 唤醒1168：运维令10-31交付物健康巡检全PASS→①report=115558B(=91300chars,≥25KB✓)/0<script>/0CDN/47<table平衡✓/7节sec1-7齐/50「未核到」/14gated✓;②generator generate_html()=91300chars与文件逐字一致(matches file?True)+--check-idempotent OK(91300chars两次相同✓);③git fetch synced(##main...origin/main无ahead/behind,data线clean✓,report+generator均在commit ab6f89572已push);④85M下载:无hf download进程→疑似已完成待运维确认;⑤df:/nas_train179T/87%(29T可用),/nas_env8.3T/84%(1.7T可用);⑥TASK=27958B/MEMORY≈38KB(均<40KB无需归档)→任务已交付,心跳WAITING=1
 > [11-04 08:21] 唤醒1167：运维令10-31交付物健康巡检全PASS→①report=115558B(112.8KB≥25KB✓)/0<script>/0CDN/0非HF外链(80HF链接全huggingface.co)/47<table>=47</table>平衡✓/HTMLParser errors=0 unclosed=0 stack=EMPTY✓/7节sec1-7齐/49「未核到」/14gated/Chinese✓;②generator --check-idempotent OK(91300B逐字节不变✓);③git fetch origin synced(##main...origin/main无ahead/behind,data线clean✓,report+generator均在commit ab6f89572已push);④85M下载:无hf download进程→疑似已完成待运维确认;⑤TASK=27958B(27.3KB)/MEMORY≈38KB(均<40KB无需归档)→任务已交付,心跳WAITING=1
