@@ -1,8 +1,8 @@
 \section{Discussion}
 \label{sec:discussion}
 
-Section~\ref{sec:grounding-theory} elevates the error analysis of Section~\ref{sec:error-analysis} to a structural principle. Full observation is both more accurate and cheaper than binary feedback here (Section~\ref{sec:omega-fidelity}).
-% §4 的理论刻画把错误分析从经验观察提升为结构原则。在本设定中，全观测比二值反馈既更准又更省（§6.2）。
+Section~\ref{sec:grounding-theory} elevates the error analysis of Section~\ref{sec:error-analysis} to a structural principle.
+% §4 的理论刻画把错误分析从经验观察提升为结构原则。
 
 Three limitations. Base-LLM performance varies widely---consistent with the framework (the $\mathcal{K}$ axis moves L1--L3)---and the benchmark size limits power to certify small effects, so the self-exploration gain and the binary-over-none read-back rung are complementary rather than headline. Per-slice dispersions can be large, so slice-level comparisons need care, and the SKILL self-exploration regression fits SKILL's smaller API surface. Pass@1 certifies only the effects its assertions check, not full functional equivalence---script-level correctness is necessary but not sufficient for end-to-end correctness, and it does not certify that the produced design passes LVS or DRC, a gap this benchmark does not close. The system is deployed in production EDA flows; deployment metrics are not disclosed here.
 % 三个局限。（一）不同基座 LLM 表现差异显著——这本身与框架一致，因 K 轴正是移动 L1–L3 的因素——且评测集规模限制检验小效应的统计功效，故自探索增益与回读轴二值对无回读档作互补收益而非头条；自探索另需每 API 一次性预计算成本，交互桥单线程限制并发。（二）消融配置切片离散度可能很大，切片级比较需谨慎；SKILL 自探索回归机制推测：SKILL API 面较小，离线自探索事实多与检索冗余，挤占任务相关证据。（三）Pass@1 基于断言，只证明断言所检查的效果，非完全功能等价——脚本层正确是端到端正确的必要非充分条件，且不保证产出的设计通过 LVS/DRC，这是本基准不覆盖的鸿沟。系统已在生产 EDA 流程部署，部署指标此处不予披露。
