@@ -134,3 +134,4 @@
 1793091608908_lzt3e.messages.json	e0023936	hfhds201	159	waveform	parked		2026-11-04 12:37	waveview cursor task: trace is run_code bridge debugging saga, sx_add_cursor never succeeded, no accepted gold; U#1 doc-query too thin
 1786535933950_lj2gw.messages.json	e0014566	hfeg0plg58	393	analog_context	case	EDA-Eval-DesignFlow-RsCalcLabelAdd-001	2026-11-04 12:48	rscalc RTEXT/RNODE label add, U#0 clean 提需求
 1792323159551_toezr	xxchen	hfeg0plg53	318	schematic_netlist	case	EDA-Eval-DesignFlow-GdsBump2-001	2026-11-04 13:20	
+1791956738036_ruk0m	jinyuli	hfeg0plg91	29	waveform	case	EDA-Eval-DesignFlow-ClkOscStim-001	2026-11-04 14:05	
