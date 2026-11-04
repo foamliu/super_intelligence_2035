@@ -42,7 +42,7 @@ EDA-Eval-DesignFlow-DutySkewAvg-001	BROKEN	../../assets-or-hidden from __file__,
 EDA-Eval-DesignFlow-ERCBootPlan-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
 EDA-Eval-DesignFlow-FeintFlowAudit-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
 EDA-Eval-DesignFlow-FlatNet-001	SAFE	r78 fixed: added _resolve_a_input/_resolve_b_input(workdir) fallback (workdir/hidden -> HERE/hidden -> ASSETS/hidden -> top-level hidden/<id>); judge-dir PASS verified; 5 negatives NEG_RC=0; jsonl test synced 10202->11936B; k=14==14 GATE PASS
-EDA-Eval-DesignFlow-FloatPinToTop-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
+EDA-Eval-DesignFlow-FloatPinToTop-001	SAFE	r93 _resolve_b_path(workdir,sub) added: 3 hidden-B paths (cfg_b/sch_b/lay_b) now resolve <workdir>/hidden/<sub>/<name> -> HERE/hidden -> ASSETS/hidden -> top-level hidden/<id>; abspath return. judge-dir ref PASS / 6 neg NEG_RC=0 / §4.9 三假全 FAIL / k=14 GATE PASS / roundtrip OK
 EDA-Eval-DesignFlow-GdsRectGen-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
 EDA-Eval-DesignFlow-GenSPv2-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
 EDA-Eval-DesignFlow-GmidLut-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
