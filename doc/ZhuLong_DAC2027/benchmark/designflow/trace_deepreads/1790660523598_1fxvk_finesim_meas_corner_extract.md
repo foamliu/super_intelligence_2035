@@ -4,7 +4,7 @@
 - **domain**: spice_sim
 - **shard**: B
 - **深读日期**: 2026-11-05
-- **状态**: deepread 完成，未合成，DEBT:1（下轮第一件事合成 case）
+- **状态**: 已合成 case EDA-Eval-DesignFlow-MeasExtractCornerTrace-001（2026-11-05，spice_sim，B档 synthesized，L2 真跑 FineSim -spice，k=15，DEBT:0 清零；1fxvk ledger claimed→case）
 
 ## 真实流（用户意图逐字）
 
