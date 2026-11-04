@@ -65,3 +65,32 @@
 2. 跨窗口流式解码须 partial-row carry + 时间列复位检测迭代边界，不能按平均步长跳转（会漂移）。
 3. **"全 error" 根因可能是 DUT 未工作而非 measure 文件错**——候选必须区分（B trap 烤入）。
 4. 静态区大量 0.0 f64 会被误读为 t=0 锚点 → 须连续 4 行时间严格递增才算真锚点。
+
+## 2026-11-04 13:2x–13:4x .75 HSPICE .tr0 二进制格式实测标定（本轮合成尝试，DEBT 顺延）
+
+**HSPICE V-2023.12-SP1-1 post=1 .tr0 二进制格式（实测确认）**：
+- 文件 = Fortran unformatted 顺序记录（每条记录前后各 4 字节长度 marker，值相等）。
+- rec0 (4B) = int32 version = **49**
+- rec1 (392B) = ASCII header：前 4 字符 = `nvars`（如 "0005"=5 = time + 4 sigs），其后 title + date + Copyright padding
+- **无独立名字表记录** —— 信号名只在 .lis `.print` 表头（`time voltage voltage...` + 下一行 `n1 n2 n3 n4`）。候选须 parse .lis 拿列名 → name-agnostic。
+- rec2 (4B) = int32 = **下一条数据块的 float 计数**（如 2049），**不是** per-row 维度！
+- rec3 (data) = 2049×4 = 8196 字节数据
+- rec4 (4B) = 下一条数据块 float 计数（2025）
+- rec5 (data) = 8100 字节 … 交替 [count(4B)][data] 对
+- **per-row 维度 = 2 + (nvars-1)**（f64 time = 2 slots + nsigs×f32）= 6（4 sigs 时），row_bytes = 24
+- **关键坑（partial-row carry）**：每条数据块 float 数 **不是** row_dim 的整数倍（2049 = 6×341 + 3，余 3 floats = 12 字节 = 半行 [time f64 + 1 sig f32]）。下一条数据块续上剩下 3 sigs。**必须把所有 data 块 body 拼接（跳过 4B count 记录），再 floor(len/row_bytes) 提行**。按块 floor 解码会每块漏半行 + 下一块首行把 3 个 signal f32 误读为 f64 time → 时间非单调（出现 0.052s 垃圾值）。拼接后时间单调 0→10ns ✓。
+- 数据行布局：`[time f64 LE @0][sigs f32 LE @8]`
+
+**.75 端到端验证（reparse2.py 拼接版）**：
+- A (5-stage odd ring + .ic v(n1)=0/n2=1.2/n3=0/n4=1.2/n5=0, post=1, .tran 5p 10n)：.tr0=165KB, nvars=5, row_dim=6, total_rows=6841, 时间单调 0→1e-8 ✓, clkp4 摆幅 -0.0014→1.12V, **但仅 2 条 rising edge @1.79ns/1.86ns（66ps 间隔）后衰减** → ring 起振后阻尼，DUT sizing 需调（robust 振荡，目标 ≥30 edges）。
+- B (4-stage even ring + .ic, post=1, .tran 5p 8n)：.tr0=1288B, total_rows=27, clkb 静态 1.228e-8→1.229e-8（~12uV 抖动，不过 0.55 vthr）, **n_edges=0** ✓ dead-clock trap 工作。
+- 列名 parse：A `['time','n1','n3','n5','clkp4']`, B `['time','phse1','phse2','phse4','clkb']` → name-agnostic lookup 工作。
+
+**HSPICE 坑**：
+1. level=1 `.model` **不可 gamma=0.0**（强制 nsub=0 → `**error** nsub <= ni` abort，不产 .tr0）。须 `nsub=1e16 u0=600 tpg=1`（gamma 由 nsub 派生）。
+2. 环振 **必须 .ic** 打破对称（无 .ic → DC 解到 meta-stable 平衡点，tran 不起振，.tr0=1288B 静态）。
+3. `.tran 5p 10n 0 5p` 第 4 参数 < tstop → HSPICE 警告并忽略 tmax（无害，仍产 .tr0）。
+4. write_file MCP 对 JSON-looking content 反序列化 → cfg.json 须 run_commands heredoc 推。
+5. candidate run_hspice 须 abspath(netlist) + abspath(out_dir) + cwd=out_abs（相对路径 cwd 错位 → rc=1 不产 .tr0）。
+
+**本轮交付状态**：未进 jsonl、未 mark case。已完成：格式逆向（拼接版 parser 验证）、A/B 网表（nsub+.ic 修正）、cfg_A/B、prompt/task_brief、ref.py（tr0_jitter_remeas_ref.py，含拼接 parser + name-agnostic .lis 列名 lookup + edge/TIE/RMS/PP + no_edges 检测 + tr0_meta）。**DEBT 顺延 DEBT:1**。下轮第一件事：(1) 调 A DUT 使 robust 振荡（建议 3-stage odd ring + 大 W + 减 clkp4 负载 cl=2f + .ic 全错相，目标 ≥30 edges / period 稳定）→ 重跑 reparse2 确认；(2) 合成 check.py 14 条 a-n（judge 独立 reparse .tr0 比对，详见深读笔记 §≥8 条设计）；(3) 6 negatives + selftest；(4) reference_submit.zip + 追加 EDA-Eval-DesignFlow_B.jsonl + mark case。
