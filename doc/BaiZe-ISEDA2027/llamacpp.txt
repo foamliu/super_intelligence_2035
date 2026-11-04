@@ -187,8 +187,57 @@ E. 逐层 hidden dump | 首个偏差层定位 | HF 侧已完成：脚本 /tmp/ba
   `yield from ModelBase.modify_tensors(self, data_torch, name, bid)` 传 `data_torch`（原始 A_log）
   而非 `reshaped_data`（转换后）→ ⚠️ 存储了未转换的 A_log（Bug，但不影响 dense BaiZe，可报告上游）
 
-小结（2026-11-05 05:1x 更新）：A/B/D PASS，C FAIL（dt clamp 缺失，但动态实测影响极小：1/64 head 被clamp，C 非主因），E 进行中（HF ref 已落盘 56 层 hidden + dt 统计；llama.cpp 侧待源码 patch）。
-已发现 1 个确认差异(C，dt clamp，影响小) + 1 个 MoE 路径 bug(附)。A/B/D 一致 + C 影响小 ⇒ 3.6 nats 偏差根因更可能在 SSM scan 计算(ssm_scan_f32)或 A_log/discretize/conv1d-state 等 E 将逐层揭示的环节。下一步：llama.cpp 加 hidden dump 对比 HF ref，定位首偏差层。
+★★★ 根因已定位（2026-11-05 06:0x）★★★
+根因 = **Q/K 投影权重在 GGUF 转换时被 permute 损坏**（attention 层，非 Mamba2 层）。
+
+发现路径：checkpoint A–D 全查 Mamba2 层(mamba-base.cpp/ops.cpp)均为 PASS，故转向「全权重逐张量对照」。
+脚本 /tmp/baize_e_all_weights.py 对比 f32 GGUF vs HF float32 全部 layer 权重，发现：
+  - attn_q.weight:  max_diff=0.150390  **DIFF!**（4124902/4194304 元素不同，相关系数仅 0.016）
+  - attn_k.weight:  max_diff=0.151367  **DIFF!**
+  - attn_v.weight:  max_diff=0.0       OK ✓
+  - attn_output.weight: max_diff=0.0   OK ✓
+  - 所有 Mamba2 权重(ssm_in/conv1d/A/D/norm/out): max_diff=0.0  OK ✓
+  - MLP(ffn_up/ffn_down)、embeddings、output_norm、lm_head: max_diff=0.0  OK ✓
+⇒ 唯一损坏的 = attention 的 Q 和 K。
+
+根因链：
+  1. NemotronHModel 继承 GraniteHybridModel（conversion/granite.py:440）
+  2. GraniteHybridModel.undo_permute = True
+  3. conversion/llama.py:261-265 `if self.undo_permute:` → 对 q_proj/k_proj 调 LlamaModel.permute()
+  4. permute()（llama.py:177-182）：reshape(n_head, 2, hd//2, n_embd).swapaxes(1,2).reshape()
+     将 HF 的「interleaved RoPE 布局」行重排为 GGML 的「half-rotation 布局」
+  5. 但 Nemotron-H 的 RoPE 实现**不需要**这种 permute（HF transformers 直接用原始权重）
+     ⇒ permute 把权重行的顺序打乱，且 permute 非 self-inverse → 不可逆损坏
+
+验证（逆 permute 完全恢复）：
+  - Q：手动逆映射 GGUF row h*128+b*2+a → HF row h*128+a*64+b（n_head=16, hd=128）
+    → max_diff=0.000000  **完美恢复**
+  - K：同法（n_kv_head=4）→ max_diff=0.000000  **完美恢复**
+  - V/output 不受影响（undo_permute 只碰 q_proj/k_proj）→ 证实只有 Q/K 被 permute
+
+为什么 3.6 nats：BaiZe 56 层中 4 层是 attention（hybrid_override_pattern 含 4 个 '*'），
+Q/K 被打乱 → attention 算出完全错误的 head scores → 4 层 attention 的残差输出全错
+→ 级联放大 → 1-token 即偏 3.6 nats。Mamba2 层本身计算正确（A-D PASS 印证）。
+
+修复方案：
+  - 方案 A（最干净）：在 NemotronHModel 类中覆写 `undo_permute = False`
+    （conversion/nemotron.py NemotronHModel 内加一行）
+  - 方案 B：在 GraniteHybridModel 层面改 undo_permute=False（影响范围更大，需验证 Granite 模型）
+  - 推荐 A：只影响 NemotronH，不碰 Granite；改完重转 GGUF → 重跑 1-token logits 对齐
+  - 预期：修复后 1-token |Δ|→0，sciq/piqa Δ≤1pp
+
+附：permute 非 self-inverse 的数学证明
+  permute 映射：row h*128+a*64+b → h*128+b*2+a（a∈{0,1}, b∈0..63）
+  再 permute 一次：row h*128+b*2+a → 需重新分解为 a'*64+b'
+    a'=floor((b*2+a)/64), b'=(b*2+a)%64
+    仅当 b*2+a < 64 即 b≤31 且 a=0 时 a'=0,b'=b*2（≠原始 b）→ 不恢复
+  ⇒ permute 不是对合(involution)，应用一次即不可逆损坏。
+
+小结（2026-11-05 06:0x 更新）：A/B/D PASS，C FAIL（dt clamp 缺失，影响小），E 完成——
+**根因 = Q/K 权重被 undo_permute 损坏**（非 SSM scan，非 Mamba2 任何环节）。
+已发现 2 个 bug：① Q/K permute（主因，3.6 nats 根因）② dt clamp 缺失（次要，C）
++ 1 个 MoE 路径 A_log bug（附，不影响 dense BaiZe）。
+下一步：实施修复方案 A（NemotronHModel.undo_permute=False）→ 重转 GGUF → 重跑 logits 对齐。
 
 七、残留清理报告（2026-11-05 · 按 11-04 22:1x 令 ②）
 ----------------------------------------------------
@@ -222,11 +271,12 @@ llama-server 清理（按 PID 逐个 kill，非 pkill）：
 5. 附带发现：llh 打分对接时，llama-server 的 /completion 返回 completion_probabilities
    （llama.cpp 原生格式），而 lm_eval 后端期待 OpenAI 标准 choices[].logprobs.token_logprobs，
    需用 --model gguf 或加 shim 转换；这是工程问题，不影响上述精度裁决。
-6. 逐环节定位进展（2026-11-05 05:1x，详见 §六-B 检查点表）：
-   - A(group 展开)=PASS, B(conv1d+silu)=PASS, C(dt clamp)=FAIL(HF clamp dt≥0.001，llama.cpp 无；但动态实测仅 1/64 head 受影响，C 非主因)
-   - D(RMSNorm eps)=PASS(两端均 1e-5，llama.cpp 经 f_norm_rms_eps fallback), E(逐层 dump)=进行中(HF ref 56 层已落盘 /tmp/baize_e_hf_hidden_ref.npz；llama.cpp 侧待源码 patch)
-   - 确认差异：C(dt clamp 缺失，影响小)；额外发现 MoE 路径 A_log 转换 bug(不影响 dense BaiZe)
-   - 3.6 nats 偏差：A/B/D 一致 + C 影响小 ⇒ 根因更可能在 SSM scan 计算/ssm_scan_f32 或逐层将揭示的环节，待 E 收口
+6. 逐环节定位进展（2026-11-05 06:0x，详见 §六-B 检查点表）：
+   - ★ 根因已定位：Q/K 投影权重被 undo_permute 损坏（granite.py:440 undo_permute=True → llama.py:261-265 permute q/k）
+   - A(group)=PASS, B(conv1d)=PASS, C(dt clamp)=FAIL(影响小), D(RMSNorm)=PASS, E(全权重对照)=★ 定位根因
+   - 全权重对照：仅 attn_q/attn_k 被损坏(max_diff=0.15)，V/output/MLP/Mamba2/embeddings 全 OK(max_diff=0.0)
+   - 逆 permute 完美恢复 Q/K(max_diff=0.0) → 证实 permute 是唯一损坏来源
+   - 修复方案：NemotronHModel 覆写 undo_permute=False → 重转 GGUF → 预期 1-token |Δ|→0
    - 残留已清理：llama-server 11→1，GGUF 34G→13G（详见 §七）
 
 备注（数据来源）：
