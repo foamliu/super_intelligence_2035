@@ -158,7 +158,59 @@ llama.cpp 主分支自 2025 年 8 月（PR #15507）起原生支持 nemotron_h �
     3) 检查 dt 投影：mamba_dt_min=0.001, mamba_dt_max=0.1 的 softplus 映射是否一致。
     4) 可用 1-token prompt 做「单层 hidden state dump」逐层定位首个偏差层。
 
-七、最终结论
+六-B、逐环节定位检查点表（2026-11-05 静态对照分析 · 按 11-04 22:1x 令）
+--------------------------------------------------------------------
+将 14:0x 定位拆为 5 个检查点（A–E），每完成一项即落盘。
+静态分析 = 对照 llama.cpp 源码(commit 149f5641b) vs HF transformers 5.17
+(p6_tf5) NemotronHForCausalLM / Mamba2 参考实现。动态验证(E)待运行时 dump。
+
+BaiZe 配置(config.json 实测)：
+  hidden_size=2048, mamba_expand=2 → d_inner=4096
+  mamba_num_heads=64, mamba_head_dim=64, mamba_n_groups=8
+  mamba_d_state(ssm_state_size)=128, mamba_d_conv=4
+  mamba_dt_min=0.001, mamba_dt_max=0.1, use_mamba_kernels=false, eps=1e-5
+GGUF 元数据实测：time_step_rank=64 (=n_head), group_count=8,
+  inner_size=4096, state_size=128, conv_kernel=4 → ssm_dt_rank=64, head_dim=4096/64=64 ✓
+
+检查点 | 假设 | 命令/文件行号 | 实测结果 | 判定 | 下一步
+-------|------|-------------|---------|------|-------
+A. group 展开 | repeat(tile) vs repeat_interleave；g=h/(nh/ng) | ops.cpp:10175 `g=h/(nh/ng)`；mamba-base.cpp:245-248 B/C view_4d(d_state,n_group)；HF nemotron_h modeling:275-276 `B.repeat_interleave(nh//ng,dim=2)` | llama.cpp: g=h//8=repeat_interleave 语义；HF 同。B/C 从 xBC=[x(4096),B(1024),C(1024)] 按 {d_state=128,n_group=8} 切片。两者一致。 | PASS（语义一致） | 无
+B. conv1d+silu | conv→+bias→silu 顺序；d_inner+2*ng*ds=6144 | mamba-base.cpp:185 reshape{d_conv-1=3, 6144};:232 ggml_ssm_conv;:235 +ssm_conv1d_b;:237 ggml_silu；HF:causal_conv1d_fn(activation="silu") | silu 对整个 xBC(6144) 生效，与 HF 一致；conv_dim=4096+2*8*128=6144 ✓；split [x,B,C]=[4096,1024,1024] 与 HF torch.split([4096,1024,1024]) 一致。in_proj 布局 [z(4096),xBC(6144),dt(64)]，dt offset=2*4096+2*8*128=10240=4096+6144 ✓。 | PASS | 无
+C. dt 投影+softplus+clamp | softplus 后是否 clamp(min/max) | ops.cpp:10174 `softplus(dt[h])` 无 clamp；mamba-base.cpp:251 dt+=ssm_dt_b；HF nemotron_h:381 `time_step_limit=(config.time_step_min,inf)=(0.001,inf)`；:272 `dt=clamp(softplus(dt),min=0.001,max=inf)` | ⚠️ 差异：HF 在 softplus 后 clamp dt≥0.001（来自 mamba_dt_min=0.001），llama.cpp 无任何 clamp。dt_bias 存储为 inv_softplus(init)（converter 原样存），llama.cpp softplus(dt_proj+dt_bias) 与 HF 一致。仅 clamp 缺失。 | FAIL（有差异） | 影响评估：clamp min=0.001 仅当 softplus(dt_proj+bias)<0.001 即 dt_proj+bias<-6.9 时生效，对多数 head 影响 small；但 early-training(iter10k) dt_proj 可能未收敛，需动态统计受影响 head 比例。max=inf 不限（两者都不限上界）。
+D. RMSNormGated | eps=1e-5、reshape/ne 顺序 | mamba-base.cpp:292 reshape{d_inner/ng=512, ng=8};:294 ggml_rms_norm(ssm_norm_eps)→每组 512 元素；HF:409 RMSNorm(group_size=4096//8=512, eps=1e-5) | 结构一致：分组 RMS norm，每组 512 元素。ssm_norm_eps 需确认=1e-5（GGUF 未查到 ssm.norm_epsilon 字段，converter 是否 add_ssm_norm_epsilon 待验）。 | 待验（结构 PASS，eps 待确认） | 查 converter add_ssm_norm_epsilon 调用 + GGUF ssm_norm_eps 值
+E. 逐层 hidden dump | 首个偏差层定位 | 需运行时 1-token 逐层 dump HF vs llama.cpp hidden states | 未做（需写 dump 脚本 + 运行） | 待验 | 下一步：写 dump 脚本，1-token 逐层对比，找首个偏差层
+
+附：A_log 转换核查（额外发现，2026-11-05）
+- 密集(dense)路径（BaiZe 用此）：mamba.py:86 `data_torch = -torch.exp(data_torch)` → A=-exp(A_log) ✓ 正确
+  → GGUF ssm_a 为负值；llama.cpp ssm_scan 直接用 A：dA=exp(dt*A)，A<0→dA<1（衰减）✓
+- MoE 路径（nemotron.py:707-710）：计算了 transformed_data=-exp(A_log) 但第 710 行
+  `yield from ModelBase.modify_tensors(self, data_torch, name, bid)` 传 `data_torch`（原始 A_log）
+  而非 `reshaped_data`（转换后）→ ⚠️ 存储了未转换的 A_log（Bug，但不影响 dense BaiZe，可报告上游）
+
+小结（2026-11-05）：A/B PASS，C FAIL（dt clamp 缺失，影响待量化），D 待验(eps)，E 待运行时。
+已发现 1 个确认差异(C) + 1 个 MoE 路径 bug(附)。3.6 nats 偏差尚未由 A/B/C 完全解释 → 需 D(eps 确认) + E(逐层 dump) 继续收口。
+
+七、残留清理报告（2026-11-05 · 按 11-04 22:1x 令 ②）
+----------------------------------------------------
+清理前：llama-server 进程 11 个；/tmp/baize_*.gguf 7 个共 34G（/tmp 用量 69%）
+清理后：llama-server 进程 1 个；/tmp/baize_*.gguf 2 个共 13G（/tmp 用量 43%）
+
+GGUF 去重（md5sum 实测，7 文件仅 2 个唯一）：
+  f16 md5=b0f50ac604917161632f1d02fd116e50 — 5 份完全相同(10k_f16/debug_f16/f16/iter10000_f16/test_f16)
+  f32 md5=db2c5f368671e4444dc0250fe025c420 — 2 份完全相同(f32/iter10000_f32)
+  保留：baize_iter10000_f16.gguf(4.44G) + baize_iter10000_f32.gguf(8.89G)
+  删除：baize_10k_f16 / baize_debug_f16 / baize_f16 / baize_test_f16 / baize_f32（5 份重复）
+  释放：~21G（34G→13G，/tmp 69%→43%）
+
+llama-server 清理（按 PID 逐个 kill，非 pkill）：
+  保留：PID 2333776（最新, port 3929, hf_iter_10000/out_f16.gguf, 11-05 04:06 启动）
+  kill：1874697/2245899/2355215/2735738/2825164/3138821/3413718（7 个, 11-04 14:46–19:28 启动旧进程）
+  方式：kill <PID>（graceful SIGTERM），10s 后确认全部退出，无需 SIGKILL
+  清理后 pgrep -fc llama-server = 1（仅保留进程）
+
+未删（按要求保留）：/nas_train/.../models/ 下正式 GGUF、hf_iter_* 目录、ckpt 目录
+
+八、最终结论（2026-11-05 更新）
 -----------
 1. 架构支持：llama.cpp 官方支持 nemotron_h，编译/转换/量化/推理全链路可用。
 2. 速度：纯 CPU 推理有吸引力，Q4_K_M 用 8 核约 35.7 t/s，32 核约 72.7 t/s，
@@ -170,6 +222,12 @@ llama.cpp 主分支自 2025 年 8 月（PR #15507）起原生支持 nemotron_h �
 5. 附带发现：llh 打分对接时，llama-server 的 /completion 返回 completion_probabilities
    （llama.cpp 原生格式），而 lm_eval 后端期待 OpenAI 标准 choices[].logprobs.token_logprobs，
    需用 --model gguf 或加 shim 转换；这是工程问题，不影响上述精度裁决。
+6. 逐环节定位进展（2026-11-05，详见 §六-B 检查点表）：
+   - A(group 展开)=PASS, B(conv1d+silu)=PASS, C(dt clamp)=FAIL(HF clamp dt≥0.001，llama.cpp 无)
+   - D(RMSNorm eps)=待验, E(逐层 dump)=待运行时
+   - 确认差异：C(dt clamp 缺失，影响待量化)；额外发现 MoE 路径 A_log 转换 bug(不影响 dense BaiZe)
+   - 3.6 nats 偏差尚未由 A/B/C 完全解释，需 D+E 继续收口
+   - 残留已清理：llama-server 11→1，GGUF 34G→13G（详见 §七）
 
 备注（数据来源）：
   - 速度数据：llama-bench（build 149f5641b，同机 .12，GGML_NATIVE=ON AVX）
