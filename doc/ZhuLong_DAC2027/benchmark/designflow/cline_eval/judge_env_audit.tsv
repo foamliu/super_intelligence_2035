@@ -54,7 +54,7 @@ EDA-Eval-DesignFlow-InnovusViaCutDiag-001	BROKEN	../../assets-or-hidden from __f
 EDA-Eval-DesignFlow-InstCurrentMeasGen-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
 EDA-Eval-DesignFlow-LVSDiag-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
 EDA-Eval-DesignFlow-LabelApiPolDiag-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
-EDA-Eval-DesignFlow-LibToParm-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
+EDA-Eval-DesignFlow-LibToParm-001	SAFE	r96 _resolve_file/_resolve_b_lib fallback (workdir->HERE->ASSETS->TOP_HIDDEN) + abspath (rule ⑨, candidate cwd=tmp receives --lib/--map); judge-dir ref PASS verified
 EDA-Eval-DesignFlow-LvsDeckCmp-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
 EDA-Eval-DesignFlow-MVValueCmp-001	BROKEN	../../assets-or-hidden from __file__, no workdir/HERE-direct fallback
 EDA-Eval-DesignFlow-NetCellMap-001	SAFE	r78-fix applied: _resolve_simlib/_resolve_b_netlist(workdir) workdir->HERE->ASSETS->top-level fallback; cond j SIMLIB now resolves to $JUDGE/simlib_base.sv
