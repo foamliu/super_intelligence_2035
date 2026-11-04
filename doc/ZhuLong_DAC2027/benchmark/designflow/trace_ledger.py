@@ -89,9 +89,9 @@ def load_stats():
 
 
 def target_of(stats):
-    """分母 = 候选池规模（默认 match_count>=100，可用 stats.target_mc 覆盖）"""
-    mc = int(stats.get("target_mc", 100))
-    for k in ("mc%d" % mc, "mc300", "sessions"):
+    """分母 = 候选池规模（默认 match_count>=30，可用 stats.target_mc 覆盖）"""
+    mc = int(stats.get("target_mc", 30))
+    for k in ("mc%d" % mc, "mc30", "mc100", "mc300", "sessions"):
         if stats.get(k):
             return int(stats[k]), mc
     return int(stats.get("sessions", 0) or 0), mc
@@ -206,7 +206,7 @@ def cmd_next(args):
     used = [r["session_file"].replace(".messages.json", "")
             for r in load() if r["session_file"]]
     st = load_stats()
-    mc = int(st.get("target_mc", 300))
+    mc = int(st.get("target_mc", 30))
     pat = "|".join(used) if used else "__none__"
     # shard tools 过滤（$7 = tools 列）
     tool_filter = ""
@@ -215,9 +215,21 @@ def cmd_next(args):
         tool_filter = " && $7 ~ /%s/" % tools_re
     print("# 1) 在 .75 上跑（经 eda_flow run_commands）取候选，已排除台账里的 session%s：" % ("，按 shard %s tools 过滤" % _shard if _shard else ""))
     print("# (sub(/\\.messages\\.json$/,\"\",$4) 规范化后做 anchor 匹配)")
+    print("# 候选池 mc>=%d (11/04 从 mc>=100 降到 mc>=30 + 0.8B 预筛)" % mc)
     print("awk -F'\\t' 'NR>1 && $5+0>=%d {sub(/\\.messages\\.json$/,\"\",$4); $4 !~ /^(%s)$/%s {print $5\"\\t\"$4\"\\t\"$3\"\\t\"$2\"\\t\"$7}' "
           "/home/t0002965/log/ssh_eda_search_20261028_174426/summary.tsv | sort -rn | head -%d"
           % (mc, pat, tool_filter, args.n))
+    # 预筛提示
+    pre = load_prefilter() if args.prefiltered else {}
+    if args.prefiltered:
+        rejects = [sf for sf, r in pre.items() if r.get("verdict") == "reject"]
+        print("# 1.5) --prefiltered: 已排除 %d 个 prefilter reject" % len(rejects))
+        if rejects:
+            print("#   rejects: %s" % " ".join(s[:20] for s in rejects[:5]))
+    else:
+        print("# 1.5) 可选: 对候选跑 0.8B 预筛 (trace_prefilter.py), 过滤非 EDA session")
+        print("#   python3 designflow/trace_prefilter.py batch --summary <candidates.tsv> --min-mc %d --limit %d" % (mc, args.n))
+        print("#   python3 designflow/trace_ledger.py%s prefilter --apply" % (" --shard %s" % _shard if _shard else ""))
     print("# 2) 选第一条，落台账：")
     print("python3 designflow/trace_ledger.py%s claim --session <session_file> --user <user> "
           "--host <host> --match <match_count> [--domain <domain>]"
@@ -279,6 +291,109 @@ def cmd_seed(args):
     return 0
 
 
+PREFILTER_RESULTS = os.path.join(HERE, "prefilter_results.jsonl")
+
+
+def load_prefilter():
+    """读 prefilter_results.jsonl, 返回 {session_file: verdict_dict}"""
+    out = {}
+    if not os.path.exists(PREFILTER_RESULTS):
+        return out
+    with open(PREFILTER_RESULTS, encoding="utf-8") as f:
+        for line in f:
+            if not line.strip():
+                continue
+            try:
+                r = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            sf = r.get("session") or r.get("session_file")
+            if sf:
+                out[sf] = r
+    return out
+
+
+def cmd_prefilter(args):
+    """批量跑 0.8B 预筛 + 把 verdict 写回台账 note 列
+
+    用法:
+      # 用已有 prefilter_results.jsonl 更新台账 (不重跑 0.8B)
+      python3 trace_ledger.py prefilter --apply
+
+      # 对 candidates.tsv 跑预筛 + 写台账
+      python3 trace_ledger.py prefilter --candidates candidates_mc30.tsv --apply
+    """
+    import subprocess
+    if args.candidates:
+        # 跑 trace_prefilter.py
+        cmd = ["python3", os.path.join(HERE, "trace_prefilter.py"), "batch",
+               "--summary", args.candidates,
+               "--min-mc", str(args.min_mc),
+               "--output", PREFILTER_RESULTS]
+        if args.limit:
+            cmd += ["--limit", str(args.limit)]
+        print("running: %s" % " ".join(cmd))
+        rc = subprocess.call(cmd)
+        if rc != 0:
+            print("prefilter failed (rc=%d)" % rc)
+            return rc
+    if not os.path.exists(PREFILTER_RESULTS):
+        print("no prefilter_results.jsonl; run with --candidates first")
+        return 1
+    results = load_prefilter()
+    print("prefilter results: %d sessions" % len(results))
+    # 统计
+    from collections import Counter
+    verdicts = Counter(r.get("verdict") for r in results.values())
+    print("  verdicts: %s" % dict(verdicts))
+    if not args.apply:
+        print("(dry-run; --apply 写入台账)")
+        return 0
+    # 写回台账: reject → status=parked, note=prefilter_reject
+    #          accept/uncertain → note=prefilter_<verdict> (不改变 status)
+    n_reject = n_label = 0
+    rows = load()
+    have = {r["session_file"]: r for r in rows}
+    for sf, r in results.items():
+        v = r.get("verdict", "uncertain")
+        # 规范化 session_file 形式 (台账可能存 bare 或带后缀)
+        keys = [sf, sf + ".messages.json"]
+        # 也试 strip 后缀
+        if sf.endswith(".messages.json"):
+            keys.append(sf.replace(".messages.json", ""))
+        matched = None
+        for k in keys:
+            if k in have:
+                matched = k
+                break
+        if matched:
+            row = have[matched]
+        else:
+            # 新建一行 (不 claim, 只记 prefilter 结果)
+            row = {c: "" for c in COLS}
+            row["session_file"] = sf
+            row["status"] = "parked" if v == "reject" else ""
+            row["match_count"] = str(r.get("mc", ""))
+            row["user"] = r.get("user", "")
+            rows.append(row)
+            have[sf] = row
+        note = "prefilter_%s conf=%.2f" % (v, float(r.get("confidence", 0)))
+        if v == "reject":
+            row["status"] = "parked"
+            row["note"] = note + " | " + str(r.get("reason", ""))[:80]
+            n_reject += 1
+        else:
+            # 不覆盖已有 case/seeded 的 note
+            if row["status"] not in COVERED:
+                row["note"] = note
+            n_label += 1
+        row["updated_at"] = _now()
+    save(rows)
+    print("applied: %d reject→parked, %d labeled (accept/uncertain); ledger total=%d"
+          % (n_reject, n_label, len(rows)))
+    return 0
+
+
 def cmd_refresh(args):
     try:
         new = json.loads(args.json)
@@ -306,6 +421,8 @@ def main():
     p.add_argument("--html", action="store_true")
     p = sub.add_parser("next")
     p.add_argument("--n", type=int, default=5)
+    p.add_argument("--prefiltered", action="store_true",
+                   help="读 prefilter_results.jsonl, 提示排除 reject 的 session")
     p = sub.add_parser("claim")
     p.add_argument("--session", required=True)
     p.add_argument("--user", default="")
@@ -322,11 +439,17 @@ def main():
     p.add_argument("--json", required=True)
     p = sub.add_parser("seed")
     p.add_argument("--jsonl", required=True)
+    p = sub.add_parser("prefilter")
+    p.add_argument("--candidates", help="candidates TSV (跑 trace_prefilter.py)")
+    p.add_argument("--min-mc", type=int, default=30)
+    p.add_argument("--limit", type=int, default=0)
+    p.add_argument("--apply", action="store_true", help="写回台账 (默认 dry-run)")
     a = ap.parse_args()
     if a.shard:
         _set_shard(a.shard)
     return {"stats": cmd_stats, "next": cmd_next, "claim": cmd_claim,
-            "mark": cmd_mark, "refresh": cmd_refresh, "seed": cmd_seed}[a.cmd](a) or 0
+            "mark": cmd_mark, "refresh": cmd_refresh, "seed": cmd_seed,
+            "prefilter": cmd_prefilter}[a.cmd](a) or 0
 
 
 if __name__ == "__main__":
