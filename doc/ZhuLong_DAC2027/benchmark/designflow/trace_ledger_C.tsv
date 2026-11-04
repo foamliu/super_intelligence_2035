@@ -183,3 +183,4 @@
 1791960706202_66ut5	haifengf	hfeg0pkn002	301	layout_virtuoso	parked		2026-11-04 10:26	analog/sim optimization (FineSim+invCSx1 delay/pwr), not layout; belongs to schematic/sim shard
 1783601272909_2gkvu	e0014566	hfeg0pkn001	295	layout_virtuoso	case	EDA-Eval-DesignFlow-PowerFillMergeGen-001	2026-11-04 10:48	
 1789895888597_x1ulx	xinqiaoz	hfeg0plg76	330	physical_verify	case	EDA-Eval-DesignFlow-DrcPatCheckAudit-001	2026-11-04 11:22	
+1792302557875_myvdg	xinqiaoz	hfeg0pkn004	326	physical_verify	case	EDA-Eval-DesignFlow-DummyGeoVerify-001	2026-11-04 11:54	
