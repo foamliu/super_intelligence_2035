@@ -256,12 +256,20 @@ PY
     done
     # 复制隐藏 B 输入进 judge dir（check.py 的 cross-input guard 需要 workdir/hidden/）。
     # hidden/ 不进 SUT workdir（防泄题），但判分器在独立 judge dir 里需要它。
-    # 两个可能位置：assets/<id>/hidden/ 或 reference/<id>/hidden/（按 case 而定）。
-    if [ -d "$ASSETS_SRC/hidden" ]; then
-      cp -r "$ASSETS_SRC/hidden" "$JUDGE/hidden" 2>/dev/null || true
-    elif [ -d "$REF_DIR/hidden" ]; then
-      cp -r "$REF_DIR/hidden" "$JUDGE/hidden" 2>/dev/null || true
-    fi
+    # judge-env bug 修复（r77 audit）：hidden B 可能存在于三个位置之一（按 case 而定），
+    # 全部尝试并合并进 $JUDGE/hidden/，避免 run_one.sh 漏拷导致 FileNotFoundError 假 FAIL：
+    #   1. assets/<id>/hidden/      （标准位置，多数 case）
+    #   2. reference/<id>/hidden/   （少数 case 把 hidden 放在 reference 侧）
+    #   3. benchmarks/.../hidden/<id>/  （顶层共享 hidden/，LibArcExtract/StarRCFlow 等 7 case）
+    # 用 cp -r <src>/. 合并（不覆盖已有文件），三源都缺则 $JUDGE/hidden 不存在 →
+    # check.py 须自行 _resolve 回退到 repo 路径（见各 case check.py 的 _resolve_*）。
+    mkdir -p "$JUDGE/hidden"
+    TOPLEVEL_HIDDEN=$BENCH/benchmarks/EDA-Eval-DesignFlow/hidden/$TASK_ID
+    for hsrc in "$ASSETS_SRC/hidden" "$REF_DIR/hidden" "$TOPLEVEL_HIDDEN"; do
+      if [ -d "$hsrc" ]; then
+        cp -r "$hsrc/." "$JUDGE/hidden/" 2>/dev/null || true
+      fi
+    done
     cd "$JUDGE"
     JUDGE_OUT=$(python3 - <<'PY'
 import importlib.util, sys, os, json
