@@ -71,3 +71,4 @@ djml8					case	EDA-Eval-DesignFlow-PFDdeadZone-001	2026-11-02 17:47
 1791017602459_fwgyy.messages.json	zjqiao	hfhds206	221	spice_sim	case	EDA-Eval-DesignFlow-FineSimWorkflowRunner-001	2026-11-04 11:19	B-synthesized L2 FineSim workflow runner; 14-cond check.py self-verified on .75 (REF PASS 14/14, 6 negs FAIL, 3-fake OK); DEBT cleared
 1792373325953_z6mt7	tongni	hfeg0pkn002	83	spice_sim	case	EDA-Eval-DesignFlow-PVTvarSpecJudge-001	2026-11-04 12:05	
 1792629073040_7s8l3	curryxu	hfeg0plg99	79	spice_sim	case	EDA-Eval-DesignFlow-SizingSensDiag-001	2026-11-04 12:57	
+1791772987381_dckp0	joeyl	hfeg0pkn004	69	characterization	claimed		2026-11-04 13:11	
