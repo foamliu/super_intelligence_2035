@@ -1,0 +1,8 @@
+[incr-eval 15:39:47] === incr_eval for cline-patched: ['astropy__astropy-7336', 'astropy__astropy-7671'] ===
+[incr-eval 15:39:47] merged 444/445 predictions -> predictions/predictions_cline-patched.json
+[incr-eval 15:39:47] EVAL cline-patched on 2 instances: ['astropy__astropy-7336', 'astropy__astropy-7671']
+[incr-eval 15:40:15] eval finished rc=0; log -> logs/eval_incr_verified_full_cline-patched_1793778015.log
+[incr-eval 15:40:15] astropy__astropy-7336: FAILED
+[incr-eval 15:40:15] astropy__astropy-7671: RESOLVED
+[incr-eval 15:40:15] updated reports/eval_cline-patched.json: resolved=327 failed=117 infra=0 no_patch=56 n=500
+[incr-eval 15:40:15] === incr_eval DONE (28s) ===
