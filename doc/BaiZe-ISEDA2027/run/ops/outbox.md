@@ -25082,3 +25082,174 @@ echo "=== DONE 239 ==="
     .29 顶层 html 数=6
 === DONE 239 ===
 ```
+
+---
+
+## RUN_ID 240 · 2026-11-04 19:11:03 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 240 | pretrain health probe (read-only) | $(date '+%F %T') | host=$(hostname) ==="
+echo
+echo "[0] load / mem"
+uptime
+free -g | head -3
+echo
+echo "[1] top CPU 进程（排除 cline/bun，截断 180 字符）"
+ps -eo pid,etimes,pcpu,rss,args --sort=-pcpu --no-headers 2>/dev/null | grep -v -E 'cline|bun' | head -12 | cut -c1-180
+echo
+echo "[2] S1 训练：专用进程 + 日志心跳"
+pgrep -af 'pretrain_launcher|baize_s1_baize2b|train\.sh s1' 2>/dev/null | grep -v -E 'cline|bun' | cut -c1-160 | head -12
+for f in /tmp/baize_s1_baize2b_worker.log /tmp/baize_s1_baize2b_master.log; do
+  if [ -f "$f" ]; then
+    echo "--- $f | mtime=$(stat -c '%y' "$f") | size=$(stat -c '%s' "$f")"
+    grep -aE 'iteration [0-9]+/' "$f" | tail -2
+    tail -4 "$f" | cut -c1-200
+  else
+    echo "--- $f 不存在"
+  fi
+done
+echo
+echo "[3] GPU 实况（只读，不分配）"
+nvidia-smi --query-gpu=index,utilization.gpu,memory.used,memory.total,power.draw,temperature.gpu --format=csv,noheader 2>&1 | head -10
+echo
+echo "[4] pretrain loop / CPU 评测 / llama.cpp 调试痕迹"
+ps -eo pid,etimes,pcpu,args --sort=-pcpu --no-headers 2>/dev/null | grep -E 'baize_pretrain_loop|cpu_lmeval|gguf_lmeval|llama-server|llama-cli|convert_hf|gdb' | grep -v -E 'cline|bun' | cut -c1-180 | head -12
+echo
+echo "[5] /tmp 下 baize_* 日志最新 10 个（看活跃度）"
+ls -lt --time-style='+%m-%d %H:%M' /tmp/baize_*.log 2>/dev/null | head -10
+echo
+echo "[6] 评测结果 / ckpt 目录最新条目"
+ls -lt --time-style='+%m-%d %H:%M' /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/lm_eval_results 2>/dev/null | head -8
+ls -lt --time-style='+%m-%d %H:%M' /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b 2>/dev/null | head -8
+echo
+echo "[7] 远端 .12 快查（只读，12s 超时）"
+timeout 12 ssh -o BatchMode=yes -o StrictHostKeyChecking=no -o ConnectTimeout=5 10.239.2.12 'echo "host=$(hostname)"; uptime; ps -eo pid,etimes,pcpu,args --sort=-pcpu --no-headers | grep -E "torchrun|cpu_lmeval|baize_pretrain_loop" | grep -v -E "cline|bun" | cut -c1-150 | head -6' 2>&1 | head -20 || echo "  [.12] ssh 失败或超时"
+echo
+echo "[8] 仓库 / 本线记忆文件状态"
+cd /nas_train/app.e0031982/code/super_intelligence_2035 2>/dev/null && {
+  echo "HEAD=$(git rev-parse --short HEAD) branch=$(git rev-parse --abbrev-ref HEAD)"
+  git log -3 --pretty='%h %ad %s' --date=format:'%m-%d %H:%M' -- doc/BaiZe-ISEDA2027/run
+  stat -c '%y %n' doc/BaiZe-ISEDA2027/run/MEMORY_PRETRAIN_2B.md doc/BaiZe-ISEDA2027/run/llamacpp.txt 2>/dev/null
+}
+echo
+echo "=== DONE 240 ==="
+```
+
+**输出**
+```
+=== RUN_ID 240 | pretrain health probe (read-only) | 2026-11-04 19:11:03 | host=whag0pgpuap29 ===
+
+[0] load / mem
+ 19:11:03 up 278 days,  6:00, 16 users,  load average: 22.91, 23.70, 23.94
+               total        used        free      shared  buff/cache   available
+Mem:            2015         587          79         104        1348        1313
+Swap:              7           5           2
+
+[1] top CPU 进程（排除 cline/bun，截断 180 字符）
+4179175  170372  144 21681644 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name baize2b --dir /nas_train/app.e0031982/code/BaiZe
+4179180  170372  142 21810860 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name baize2b --dir /nas_train/app.e0031982/code/BaiZe
+4179185  170372  142 21681904 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name baize2b --dir /nas_train/app.e0031982/code/BaiZe
+4179174  170372  142 21721604 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name baize2b --dir /nas_train/app.e0031982/code/BaiZe
+4179177  170372  142 21913096 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name baize2b --dir /nas_train/app.e0031982/code/BaiZe
+4179182  170372  142 21816004 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name baize2b --dir /nas_train/app.e0031982/code/BaiZe
+4179179  170372  141 21721452 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name baize2b --dir /nas_train/app.e0031982/code/BaiZe
+4179183  170372  141 21682908 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name baize2b --dir /nas_train/app.e0031982/code/BaiZe
+ 326358  440376 13.0 48628 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python3.10 /nas_train/app.e0031982/miniforge3/envs/py310/bin/nvitop
+ 146304  170245  9.8 40482916 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name baize2b --dir /nas_train/app.e0031982/code/BaiZe
+ 146324  170245  9.8 41551032 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name baize2b --dir /nas_train/app.e0031982/code/BaiZe
+ 146332  170245  9.8 41495884 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name baize2b --dir /nas_train/app.e0031982/code/BaiZe
+
+[2] S1 训练：专用进程 + 日志心跳
+146283 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name baize2b --dir /nas_train/app.e0031982/code/BaiZe-IS
+146284 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name baize2b --dir /nas_train/app.e0031982/code/BaiZe-IS
+146285 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name baize2b --dir /nas_train/app.e0031982/code/BaiZe-IS
+146286 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name baize2b --dir /nas_train/app.e0031982/code/BaiZe-IS
+146287 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name baize2b --dir /nas_train/app.e0031982/code/BaiZe-IS
+146288 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name baize2b --dir /nas_train/app.e0031982/code/BaiZe-IS
+146289 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name baize2b --dir /nas_train/app.e0031982/code/BaiZe-IS
+146290 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name baize2b --dir /nas_train/app.e0031982/code/BaiZe-IS
+146291 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name baize2b --dir /nas_train/app.e0031982/code/BaiZe-IS
+146292 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name baize2b --dir /nas_train/app.e0031982/code/BaiZe-IS
+146293 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name baize2b --dir /nas_train/app.e0031982/code/BaiZe-IS
+146294 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name baize2b --dir /nas_train/app.e0031982/code/BaiZe-IS
+--- /tmp/baize_s1_baize2b_worker.log | mtime=2026-11-04 19:10:12.997048225 +0800 | size=1046238
+ [2026-11-04 19:06:45] iteration    82290/  700000 | consumed samples:     21066240 | elapsed time per iteration (ms): 6873.7 | learning rate: 1.000000E-03 | global batch size:   256 | lm loss: 2.0882
+ [2026-11-04 19:07:53] iteration    82300/  700000 | consumed samples:     21068800 | elapsed time per iteration (ms): 6872.5 | learning rate: 1.000000E-03 | global batch size:   256 | lm loss: 2.0908
+ [2026-11-04 19:09:04] iteration    82310/  700000 | consumed samples:     21071360 | elapsed time per iteration (ms): 7030.3 | learning rate: 1.000000E-03 | global batch size:   256 | lm loss: 2.0852
+ [2026-11-04 19:10:13] iteration    82320/  700000 | consumed samples:     21073920 | elapsed time per iteration (ms): 6876.4 | learning rate: 1.000000E-03 | global batch size:   256 | lm loss: 2.0872
+--- /tmp/baize_s1_baize2b_master.log | mtime=2026-11-04 19:10:12.997048225 +0800 | size=609078
+Step Time : 6.87s GPU utilization: 1054.9TFLOP/s/GPU
+Step Time : 6.87s GPU utilization: 1055.1TFLOP/s/GPU
+Step Time : 7.03s GPU utilization: 1031.5TFLOP/s/GPU
+Step Time : 6.88s GPU utilization: 1054.5TFLOP/s/GPU
+
+[3] GPU 实况（只读，不分配）
+0, 100 %, 74939 MiB, 81559 MiB, 681.96 W, 57
+1, 100 %, 74961 MiB, 81559 MiB, 680.40 W, 61
+2, 97 %, 74841 MiB, 81559 MiB, 684.04 W, 57
+3, 100 %, 75161 MiB, 81559 MiB, 686.13 W, 64
+4, 97 %, 75141 MiB, 81559 MiB, 682.20 W, 59
+5, 100 %, 74961 MiB, 81559 MiB, 689.86 W, 63
+6, 100 %, 75221 MiB, 81559 MiB, 689.79 W, 58
+7, 100 %, 74961 MiB, 81559 MiB, 683.17 W, 63
+
+[4] pretrain loop / CPU 评测 / llama.cpp 调试痕迹
+ 750002     286  1.9 /nas_train/app.e0031982/code/llama.cpp/build/bin/llama-server -m /tmp/baize_f32.gguf --port 31111 -t 8 -c 2048 --host 127.0.0.1
+1786252    2895  0.4 /nas_train/app.e0031982/code/llama.cpp/build/bin/llama-server -m /tmp/baize_f16.gguf --port 30001 -t 8 -c 2048 --log-disable
+2245899    2523  0.3 /nas_train/app.e0031982/code/llama.cpp/build/bin/llama-server -m /tmp/baize_iter10000_f16.gguf --port 4517 -t 8 -c 2048 --host 127.0.0.1
+2735738    2113  0.2 /nas_train/app.e0031982/code/llama.cpp/build/bin/llama-server -m /tmp/baize_f16.gguf --port 39998 --host 0.0.0.0 -t 8 -c 2048
+3413718   11963  0.1 /nas_train/app.e0031982/code/llama.cpp/build/bin/llama-server -m /tmp/baize_f16.gguf --port 3007 -t 8 -c 2048 --host 127.0.0.1
+ 774085   10676  0.0 /nas_train/app.e0031982/code/llama.cpp/build/bin/llama-server -m /tmp/baize_10k_f16.gguf --port 3017 -t 4 -c 2048
+1099153       0  0.0 grep -E baize_pretrain_loop|cpu_lmeval|gguf_lmeval|llama-server|llama-cli|convert_hf|gdb
+1369107   13648  0.0 /nas_train/app.e0031982/code/llama.cpp/build/bin/llama-server -m /tmp/baize_10k_f16.gguf --port 39912 -t 4 -c 2048
+2825164   15902  0.0 /nas_train/app.e0031982/code/llama.cpp/build/bin/llama-server -m /tmp/baize_f16.gguf --port 39999 -t 4 -c 2048 --host 127.0.0.1 -lv 5
+3165004  554462  0.0 bash -c cd /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run && setsid bash -lc "exec bash /nas_train/app.e0031982/code/super_intell
+3165013  554462  0.0 bash /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_pretrain_loop.sh
+
+[5] /tmp 下 baize_* 日志最新 10 个（看活跃度）
+-rw-r----- 1 app.e0031982 app.adm 62757173 11-04 19:11 /tmp/baize_harness_loop.log
+-rw-r----- 1 app.e0031982 app.adm 36784558 11-04 19:11 /tmp/baize_pretrain_loop.log
+-rw-r----- 1 app.e0031982 app.adm   609078 11-04 19:10 /tmp/baize_s1_baize2b_master.log
+-rw-r----- 1 app.e0031982 app.adm  1046238 11-04 19:10 /tmp/baize_s1_baize2b_worker.log
+-rw-r----- 1 app.e0031982 app.adm   267186 11-04 13:03 /tmp/baize_cpu_eval_50000_f32_omp8.log
+-rw-r----- 1 app.e0031982 app.adm   268016 11-04 09:55 /tmp/baize_cpu_eval_30000_f32_omp8_v2.log
+-rw-r--r-- 1 app.e0031982 app.adm     1593 11-03 22:50 /tmp/baize_llamacpp_pilot_10000.log
+-rw-r--r-- 1 app.e0031982 app.adm      787 11-03 22:32 /tmp/baize_eval_watcher_30000.log
+-rw-r----- 1 app.e0031982 app.adm   266080 11-03 22:31 /tmp/baize_cpu_eval_50000.log
+-rw-r----- 1 app.e0031982 app.adm     5935 11-03 15:15 /tmp/baize_cpu_eval_30000_f32_omp8.log
+
+[6] 评测结果 / ckpt 目录最新条目
+total 40
+drwxr-x--- 2 app.e0031982 app.adm 4096 11-04 13:03 hf_iter_50000_f32
+drwxr-xr-x 2 app.e0031982 app.adm 4096 11-04 12:23 gguf_iter_10000_pertoken
+drwxr-xr-x 2 app.e0031982 app.adm 4096 11-04 11:39 hf_iter_20000
+drwxr-xr-x 2 app.e0031982 app.adm 4096 11-04 11:29 hf_iter_40000
+drwxr-x--- 2 app.e0031982 app.adm 4096 11-04 10:34 gguf_iter_10000_newbin
+drwxr-x--- 2 app.e0031982 app.adm 4096 11-04 09:55 hf_iter_30000
+drwxr-x--- 2 app.e0031982 app.adm 4096 11-04 03:19 gguf_iter_10000_f32
+total 44
+drwxr-xr-x 43 app.e0031982 app.adm 8192 11-04 18:33 checkpoints
+drwxr-x--- 12 app.e0031982 app.adm 4096 11-04 12:11 lm_eval_results
+drwxr-x---  2 app.e0031982 app.adm 4096 11-02 19:54 tb_logs
+drwxr-x---  2 app.e0031982 app.adm 4096 11-02 17:34 hf_iter_50000
+drwxr-x---  2 app.e0031982 app.adm 4096 11-02 15:01 hf_iter_40000
+drwxr-x---  2 app.e0031982 app.adm 4096 11-02 13:44 hf_iter_30000
+drwxr-x---  2 app.e0031982 app.adm 4096 11-02 13:33 hf_iter_20000
+
+[7] 远端 .12 快查（只读，12s 超时）
+host=whag0pgpuap12
+ 19:11:05 up 278 days,  3:53,  4 users,  load average: 25.49, 24.54, 24.06
+2612442  170386  0.1 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python /nas_train/app.e0031982/miniforge3/envs/py310/bin/torchrun --nnodes=2 --
+4141075       0  0.0 grep -E torchrun|cpu_lmeval|baize_pretrain_loop
+
+[8] 仓库 / 本线记忆文件状态
+HEAD=8137d400c branch=main
+8137d400c 11-04 19:10 harness R1587: MEMORY心跳+daily log+report regen(quiet轮 backlog=0 cline333/455 rerun[15/58])
+c825caae9 11-04 19:09 harness R1587: quiet监控轮 CPU/MEM PASS scan_backlog=0 report regen 17109B unchanged cline333/455 cline rerun[15/58] 3路predict alive
+1bc1a3521 11-04 19:10 ops: RUN_ID 240 pretrain 健康巡检（.29 中继只读：S1/loop/CPU eval/llama.cpp）
+2026-11-04 13:47:50.792062235 +0800 doc/BaiZe-ISEDA2027/run/MEMORY_PRETRAIN_2B.md
+
+=== DONE 240 ===
+```
