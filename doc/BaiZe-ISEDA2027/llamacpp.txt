@@ -177,7 +177,7 @@ GGUF 元数据实测：time_step_rank=64 (=n_head), group_count=8,
 A. group 展开 | repeat(tile) vs repeat_interleave；g=h/(nh/ng) | ops.cpp:10175 `g=h/(nh/ng)`；mamba-base.cpp:245-248 B/C view_4d(d_state,n_group)；HF nemotron_h modeling:275-276 `B.repeat_interleave(nh//ng,dim=2)` | llama.cpp: g=h//8=repeat_interleave 语义；HF 同。B/C 从 xBC=[x(4096),B(1024),C(1024)] 按 {d_state=128,n_group=8} 切片。两者一致。 | PASS（语义一致） | 无
 B. conv1d+silu | conv→+bias→silu 顺序；d_inner+2*ng*ds=6144 | mamba-base.cpp:185 reshape{d_conv-1=3, 6144};:232 ggml_ssm_conv;:235 +ssm_conv1d_b;:237 ggml_silu；HF:causal_conv1d_fn(activation="silu") | silu 对整个 xBC(6144) 生效，与 HF 一致；conv_dim=4096+2*8*128=6144 ✓；split [x,B,C]=[4096,1024,1024] 与 HF torch.split([4096,1024,1024]) 一致。in_proj 布局 [z(4096),xBC(6144),dt(64)]，dt offset=2*4096+2*8*128=10240=4096+6144 ✓。 | PASS | 无
 C. dt 投影+softplus+clamp | softplus 后是否 clamp(min/max) | ops.cpp:10174 `softplus(dt[h])` 无 clamp；mamba-base.cpp:251 dt+=ssm_dt_b；HF nemotron_h:381 `time_step_limit=(config.time_step_min,inf)=(0.001,inf)`；:272 `dt=clamp(softplus(dt),min=0.001,max=inf)` | ⚠️ 差异：HF 在 softplus 后 clamp dt≥0.001（来自 mamba_dt_min=0.001），llama.cpp 无任何 clamp。dt_bias 存储为 inv_softplus(init)（converter 原样存），llama.cpp softplus(dt_proj+dt_bias) 与 HF 一致。仅 clamp 缺失。 | FAIL（有差异） | 影响评估：clamp min=0.001 仅当 softplus(dt_proj+bias)<0.001 即 dt_proj+bias<-6.9 时生效，对多数 head 影响 small；但 early-training(iter10k) dt_proj 可能未收敛，需动态统计受影响 head 比例。max=inf 不限（两者都不限上界）。
-D. RMSNormGated | eps=1e-5、reshape/ne 顺序 | mamba-base.cpp:292 reshape{d_inner/ng=512, ng=8};:294 ggml_rms_norm(ssm_norm_eps)→每组 512 元素；HF:409 RMSNorm(group_size=4096//8=512, eps=1e-5) | 结构一致：分组 RMS norm，每组 512 元素。ssm_norm_eps 需确认=1e-5（GGUF 未查到 ssm.norm_epsilon 字段，converter 是否 add_ssm_norm_epsilon 待验）。 | 待验（结构 PASS，eps 待确认） | 查 converter add_ssm_norm_epsilon 调用 + GGUF ssm_norm_eps 值
+D. RMSNormGated | eps=1e-5、reshape/ne 顺序 | mamba-base.cpp:292 reshape{d_inner/ng=512,ng=8}→:293 `if(ssm_norm_eps>0)`→:294 ggml_rms_norm(ssm_norm_eps) / else :296 build_norm(LLM_NORM_RMS)→f_norm_rms_eps；HF:409 Zaba2RMSNormGated(group_size=4096//8=512, eps=config.layer_norm_epsilon=1e-5) | PASS。eps 链全验证：① GGUF 实测(Reader) `nemotron_h.attention.layer_norm_epsilon`=1e-05(存在)，`attention.layer_norm_rms_epsilon`=ABSENT，`ssm.norm_epsilon`=ABSENT(nemotron converter 未调 add_ssm_norm_epsilon，仅 metis.py 调)；② nemotron-h.cpp:18 读 f_norm_eps=1e-05，:19-20 RMS key 缺失→fallback f_norm_rms_eps=f_norm_eps=1e-05；③ llama-hparams.h:212 ssm_norm_eps 默认0.0→mamba-base.cpp:296 else→build_norm(LLM_NORM_RMS)→llama-graph.cpp:1791 ggml_rms_norm(f_norm_rms_eps)=1e-05；④ HF eps=config.layer_norm_epsilon=1e-05。→ 两端 eps=1e-5 一致。结构(分组512)亦一致。注：llama.cpp 经 f_norm_rms_eps fallback 取得 eps，非专用 ssm key，但数值等价。 | PASS | 完成。dt/B/C norm(mamba-base.cpp:100-102) 同样用 f_norm_rms_eps=1e-5，HF 同 config.layer_norm_epsilon，一致。
 E. 逐层 hidden dump | 首个偏差层定位 | 需运行时 1-token 逐层 dump HF vs llama.cpp hidden states | 未做（需写 dump 脚本 + 运行） | 待验 | 下一步：写 dump 脚本，1-token 逐层对比，找首个偏差层
 
 附：A_log 转换核查（额外发现，2026-11-05）
@@ -187,8 +187,8 @@ E. 逐层 hidden dump | 首个偏差层定位 | 需运行时 1-token 逐层 dump
   `yield from ModelBase.modify_tensors(self, data_torch, name, bid)` 传 `data_torch`（原始 A_log）
   而非 `reshaped_data`（转换后）→ ⚠️ 存储了未转换的 A_log（Bug，但不影响 dense BaiZe，可报告上游）
 
-小结（2026-11-05）：A/B PASS，C FAIL（dt clamp 缺失，影响待量化），D 待验(eps)，E 待运行时。
-已发现 1 个确认差异(C) + 1 个 MoE 路径 bug(附)。3.6 nats 偏差尚未由 A/B/C 完全解释 → 需 D(eps 确认) + E(逐层 dump) 继续收口。
+小结（2026-11-05 05:0x 更新）：A/B/D PASS，C FAIL（dt clamp 缺失，影响待量化），E 待运行时。
+已发现 1 个确认差异(C，dt clamp) + 1 个 MoE 路径 bug(附)。A/B/D 均一致 ⇒ 3.6 nats 偏差最可能由 C(dt clamp) 或 E 将揭示的其它计算差异造成。下一步：E 逐层 dump（先量化 C 对首层 dt 的影响：统计 softplus(dt)<0.001 的 head 比例；再 HF 逐层 hidden dump 找首偏差层）。
 
 七、残留清理报告（2026-11-05 · 按 11-04 22:1x 令 ②）
 ----------------------------------------------------
