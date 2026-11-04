@@ -1,8 +1,8 @@
-WAITING: 0 (本轮本实例**候选 scouting + 深读 r4p2e + FineSim MC .md0 格式逆向实测**，**未交付 case**，DEBT:1，下轮第一件事 = 合成 McRonMismatch-001。详见流水首行。)Flow_B.jsonl + mark case → 清 DEBT:1。深读笔记已追加格式实测章节。另：并发 shard B 实例本轮已交付 SizingSensDiag-001（case 58，jsonl B 61 行，详见流水）。)
+WAITING: 0 (本轮本实例**交付 EDA-Eval-DesignFlow-McRonMismatch-001**（characterization, B档 synthesized, L2 真跑 FineSim -spice, k=14，DEBT:1 清零）：FineSim MC .md0 汇总行陷阱提取器。详见流水首行。)
 
-（上轮交付 EDA-Eval-DesignFlow-PVTvarSpecJudge-001（characterization, B档 synthesized, L2, k=14）：trace z6mt7（tongri @ hfeg0pkn002, mc=83, 121 msgs）—— PVT 多 corner 变化量 SPEC 合规判定器（hspice .alter 多 temp×工艺 → .mtN measure → variation=max-min → spec.json limit → PASS/FAIL + per-temp + root-cause）。.75 ref 跑 B 15 corner FAIL + 重跑 A 9 corner PASS，14 条 a-n 全 PASS，6 neg 互异。jsonl B 60 行。case 57。）
+（上轮交付 EDA-Eval-DesignFlow-McRonMismatch-001（characterization, B档 synthesized, L2, k=14）：trace r4p2e（clarawu @ hfeg0pkn001, mc=56, 277 msgs）—— FineSim Monte Carlo .md0 → 6σ/std Ron mismatch 提取器（汇总行陷阱：std 汇总行 measure 值=std 本身~1.3e4 混入数据~5e5 → std 爆炸 5× → mismatch 13%→60%）。A=NMOS 二极管连接 Ron（monte=50, rpu_a/rpd_a, divisor=550000），B=PMOS 二极管连接 Ron（monte=40, ronp_b/rond_b, divisor=600000）。.75 ref 跑 negative_selftest：ref PASS 14/14 + 6 neg 全 FAIL 互异 + §4.9 三假 FAIL。jsonl B 63 行。case 60。）
 
-- 📊 trace 覆盖率：59/1369 = 4.3%（covered=59 / target=1369, mc≥30）；已动 92：case 59 · deepread 3 · parked 29 · claimed 1
+- 📊 trace 覆盖率：60/1369 = 4.4%（covered=60 / target=1369, mc≥30）；已动 92：case 60 · deepread 2 · parked 29 · claimed 1
 
 SHARD: B (spice_char)
 DOMAINS: characterization, spice_sim
@@ -10,9 +10,9 @@ DOMAINS: characterization, spice_sim
 - **PHASE**: shard B 在跑 case。负责 domain: characterization, spice_sim
 - 每轮做 1 条 case：trace_ledger.py --shard B next → claim → 深读 → 合成 → 自验 → 追加 EDA-Eval-DesignFlow_B.jsonl → 日报
 - ⚠️ 已 case 清单：d7cbo(GmidLut)/2enpk(NmosAgeChar)/2tuxj(CTLEtranChar)/zr9dt(VihTripTune)/68gc9(SiOutDiag)/vdeyi(LvlshftBsubDiag)/i5ae7(SAoptPwrDly)/uqv1k(PorCapSweep)/cjcn7(SaNPsimDiag)/4ati4(LvPmosVgVs)/xv1ip(TxRonSize)/g48nq(InvTripDelay)/7ycbz(DutySkewAvg)/7rsed(DivSelDuty)/cllpy(BistOscRccReorder)/b86q7(Vcc2scActDeckGen)/gnmu0(ButterflyCurve)/j8vf6(NetlistTranDeck)/... 。ymjs5 parked(Solido 非便携)。ca3hh/gn11a parked(false positive)。**n91pk 已 case（CtleAcChar-001）**。**gvm3g 已 case（FineSimModelScopeFix-001）**。**hk622 已 case（FineSimNoRefCktFix-001）**。6dx8f parked(SpiceAgent CTLE schematic gen 非 spice_sim)。**6tiy7 已 case（DffSetupHoldChar-001，DFF setup/hold/tCQ 时间表征，characterization synthesized B-档 L2 真跑 HSPICE，k=14；DEBT:2 本轮清零——路径 A：去 Cclkb + robust W + sub-ps 细扫 + tH=0 改源码审查 trap）**。。**l7aol 已 case（NetlistLintHsp-001，~100MB SPICE 网表流式 lint + HSPICE elaboration 权威，spice_sim synthesized B-档 L2 真跑 HSPICE，k=27）**。**uky6c 已 case（FineSimDcConvFix-001，FineSim DC 不收敛诊断+修复器：检测日志 non-converg→替换弱 dcalg=1/gmin=0/itl1=5 为 dcalg=4 伪瞬态+gmin+itl1+name-agnostic .nodeset→重跑验证收敛，spice_sim synthesized B-档 L2 真跑 FineSim -spice，k=14；DEBT:1 清零——FineSim license 恢复后用 Schmitt(dcalg=1 gmin=0 itl1=5)稳定复现 DC not converged，dcalg=4+nodeset 修复收敛）**。**dckp0 已 case（Tr0JitterRemeas-001，HSPICE post=1 二进制 .tr0 jitter 重测+死时钟检测，characterization synthesized B-档 L2 真跑 HSPICE，k=14；DEBT:1 清零——A 改 5-stage odd ring+电源调制+clkp 直抽节点+c=2f→37 edges 真实 jitter；B 4-stage even dead-clock trap no_edges=true；binary parser 拼接版；6 neg+selftest 一把过）**。
-- 📊 trace 覆盖率：54/696 = 7.8%（covered=54 / target=696, mc≥100）；已动 92：case 54 · deepread 3 · parked 29 · in-progress 0
+- 📊 trace 覆盖率：55/696 = 7.9%（covered=55 / target=696, mc≥100）；已动 92：case 60 · deepread 2 · parked 29 · in-progress 0
 - 🎯 通过率: 0/0（未实跑 cline SUT；本轮已合成 case 待 SUT 实跑）
-- 🧾 断言: k_rationale=k_check=14 ✓（Tr0JitterRemeas-001，①-⑭ 与 check.py (a)-(n) 一一对应；上轮交付）
+- 🧾 断言: k_rationale=k_check=14 ✓（McRonMismatch-001，①-⑭ 与 check.py (a)-(n) 一一对应；本轮交付）
 - 🔁 DEBT:1（r4p2e McRonMismatch-001 已深读 + L2 可行性验证，下轮第一件事合成交付：DUT 调 + A/B + 候选 + check.py 14 + 6 neg + selftest + jsonl + mark case）
 - 📦 体积：MEMORY_B≈slim / TASK 17KB
 - ⛔ 阻塞：无（.75 /proj/train NAS 可用；FineSim license OK primesim(2) 15:10；FineSim MC `.dc X X 1 sweep monte=N` ~3s 产 .md0 含 avg/std/min/max 汇总行；HSPICE .mc 不可用——PrimeSim HSPICE V-2023.12 忽略 .mc 且 .ms0 无汇总行，MC mismatch 陷阱必须 FineSim -spice）
