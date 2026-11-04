@@ -1,0 +1,13 @@
+[incr-eval 19:43:31] === incr_eval R1590 start ===
+[incr-eval 19:43:31] merged 455 predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/predictions_cline-patched.json
+[incr-eval 19:43:31]   BACKLOG cline                django__django-15277                               patchlen=686
+[incr-eval 19:43:31] merged 360 predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/predictions_codex.json
+[incr-eval 19:43:31] merged 218 predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/predictions_deepseek-harness.json
+[incr-eval 19:43:31] merged 497 predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/predictions_opencode.json
+[incr-eval 19:43:31] merged 463 predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/predictions_pi.json
+[incr-eval 19:43:31] merged 358 predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/predictions_claude-code.json
+[incr-eval 19:43:31] merged 230 predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/predictions_hermes.json
+[incr-eval 19:43:31] backlog scan: 1 items total -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/reports/backlog_scan_R1590.json
+[incr-eval 19:43:31] === incr_eval for cline: ['django__django-15277'] ===
+[incr-eval 19:43:31] merged 455 predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/predictions_cline-patched.json
+[incr-eval 19:43:31] EVAL cline on 1 instances (workers=4)
