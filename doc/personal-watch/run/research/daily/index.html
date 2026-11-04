@@ -39,6 +39,14 @@
 <table>
   <tr><th>日期</th><th>标识</th><th>篇数</th><th>日报</th><th>备注</th></tr>
   <tr>
+    <td>2026-11-05</td>
+    <td>早报（AM · 3/5）</td>
+    <td>3 / 5</td>
+    <td><a href="2026-11-05.html">2026-11-05.html</a></td>
+    <td><b>☀️ 早报 3 篇「借鉴」</b>（AM · 06:2x CST，周四；按<b>训练阶段分层</b>选文）= <code>2611.05234</code> <b>ARLoop</b>（looped transformer 改用<b>注意力残差</b>，且<b>只需滑动窗口</b>深度注意力；140M R=3 PPL 16.59→16.03、370M 12.28→12.17；<b>1.2B / 0.5T token / R=3</b> 在 8 个评测上全部超过 <b>Huginn-3.5B</b>、与 Qwen3.5-2B 有竞争力；全开放模型+代码；OSU + Saarland；26 页）/ <code>2611.05304</code> <b>LoopVQ</b>（looped 模型 KV cache 沿 loop 轴冗余 ⇒ <b>亚 1 bit 向量量化</b>；0.5 bit 下 Ouro-1.4B GSM8K <b>75.82</b> vs TaSQ 57.32 / CQ 46.78（BF16 78.77）、MATH500 <b>69.40</b> vs 38.80 / 17.80；SGLang 里 32K decode 延迟近乎减半、吞吐最高 <b>4.3×/6.1×</b>；首尔大学；17 页）/ <code>2611.05266</code> <b>Targeted Guidance</b>（只在失败轮做 on-policy 自蒸馏 + 逐准则 RL 奖励；7 项风格准则 0.00–0.70 → <b>0.55–0.99</b> 而 <b>pass-rate 0.33 持平</b>；熵尖峰=崩溃前兆、KL 加到 thinking token 可消振荡；Cursor Research + UC Berkeley；14 页）。<b>批次：本轮未刷新（仍 <code>2026-11-03</code>）</b> —— 总 <b>124,606</b>、最新 2026-11-03T18:59:52Z、广度 <b>642,920</b>，三项与 r132 PM 逐项相同；本地 06:00 = 美东 11-04 17:00 ET，下一批公告 = 美东 11-04 20:00 ET = 本地 11-05 09:00（晚约 3h）⇒ 符合日历。取数：单分类 5 条 ×100 条（5/5 <code>200</code>）合并 <b>325</b> 条 → 与 SEEN 重复 2 ⇒ <b>323 条候选池</b> + 官方 <code>id_list</code> 3/3。PDF <b>3/3</b>（26/17/14 页；合计 <b>3,823,917 B ≈ 3.65 MiB</b>）；台账 收录 <b>304</b> / 候选 <b>4,558</b>（+RSS 507）、<code>papers.jsonl</code> <b>304</b></td>
+  </tr>
+
+  <tr>
     <td>2026-11-04</td>
     <td>晚报（PM · 5/5 收口）</td>
     <td>5 / 5</td>
@@ -266,7 +274,7 @@
 </table>
 
 <footer>
-  research 线 · <code>research/daily/index.html</code> ｜ 最近更新：2026-11-04 18:0x CST（<b>2026-11-04 晚报 · 5/5 收口</b>：补 2 篇「科普」= <code>2611.05290</code> 假安慰（本日科普 TOP-1）/ <code>2611.05148</code> 数据中心调峰；批次已刷新到 <code>2026-11-03</code>；分镜 <code>SCENES/11_04.html</code>）｜ 上一版：2026-11-04 06:0x CST（<b>2026-11-04 早报 · 3/5</b>：3 篇「借鉴」= <code>2611.03590</code> 多轮预训练缩放 / <code>2611.03577</code> Sonar-MoE / <code>2611.03633</code> Muon vs AdamW；批次未刷新（仍 <code>2026-11-02</code>）；同时<b>补跑收口 11-03 晚报 5/5</b>（+2 科普 SIMPLE / Four Bridges、分镜、日报邮件）｜ 上一版：2026-11-03 18:1x 起（中断后 11-04 06:00 补跑）<b>2026-11-03 早报 · 3/5</b>：3 篇「借鉴」= <code>2610.42147</code> <b>LSA</b> 隐空间层次稀疏注意力 / <code>2610.41359</code> <b>LEAP</b> 推理调度长度预测 / <code>2610.41177</code> <b>TraceSpec</b> agent 投机解码；<b>本轮公告批次未刷新（仍 <code>2026-10-30</code>）</b> ⇒ 早 3 取自单分类 5 查询合并 293 / 去重 291 条候选池；台账 收录 <b>294</b> / 候选 <b>4,558</b>（+RSS 507）｜ 上一版：2026-11-02 18:1x CST 晚报 5/5 收口）
+  research 线 · <code>research/daily/index.html</code> ｜ 最近更新：2026-11-05 06:2x CST（<b>2026-11-05 早报 · 3/5</b>：3 篇「借鉴」按训练阶段分层 = <code>2611.05234</code> ARLoop（attention residuals 用到循环深度；1.2B/0.5T token 在 8 项评测超过 Huginn-3.5B）/ <code>2611.05304</code> LoopVQ（looped KV cache 亚 1 bit 向量量化；SGLang 32K decode 延迟近乎减半、吞吐 4.3×/6.1×）/ <code>2611.05266</code> Targeted Guidance（只在失败轮自蒸馏 + 逐准则 RL；7 准则 0.55–0.99 且 pass-rate 持平）；本轮<b>批次未刷新</b>（仍 <code>2026-11-03</code>，与 r132 PM 三项逐项相同，符合日历）；候选池 323 条、PDF 3/3 = 3,823,917 B ≈ 3.65 MiB）｜ 上一版：2026-11-04 18:0x CST（<b>2026-11-04 晚报 · 5/5 收口</b>：补 2 篇「科普」= <code>2611.05290</code> 假安慰（本日科普 TOP-1）/ <code>2611.05148</code> 数据中心调峰；批次已刷新到 <code>2026-11-03</code>；分镜 <code>SCENES/11_04.html</code>）｜ 上一版：2026-11-04 06:0x CST（<b>2026-11-04 早报 · 3/5</b>：3 篇「借鉴」= <code>2611.03590</code> 多轮预训练缩放 / <code>2611.03577</code> Sonar-MoE / <code>2611.03633</code> Muon vs AdamW；批次未刷新（仍 <code>2026-11-02</code>）；同时<b>补跑收口 11-03 晚报 5/5</b>：+2 科普 SIMPLE / Four Bridges、分镜、日报邮件）
 </footer>
 </div>
 </body>

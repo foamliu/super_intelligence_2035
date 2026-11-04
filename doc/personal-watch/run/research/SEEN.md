@@ -5623,3 +5623,6 @@
 | 2026-11-04 | 2611.03633 | Pretraining Data Scale Reverses the Muon-AdamW Fine-Tuning Gap | cs.LG | 收录 |
 | 2026-11-04 | 2611.05290 | False Reassurance in LLM Severe-Weather Guidance: A Replayable Evaluation Against Real NWS Alerts | cs.HC | 收录 |
 | 2026-11-04 | 2611.05148 | Creating Power Flexibility in Datacenters via Query Routing | cs.AI | 收录 |
+| 2026-11-05 | 2611.05234 | ARLoop: Fully-Open Pre-trained Looped Transformers with Attention Residuals | cs.CL | 收录 |
+| 2026-11-05 | 2611.05304 | LoopVQ: Sub 1-bit KV Cache Quantization for Looped Transformers | cs.LG | 收录 |
+| 2026-11-05 | 2611.05266 | Stabilizing On-Policy Targeted Guidance in Agentic Reinforcement Learning | cs.LG | 收录 |
