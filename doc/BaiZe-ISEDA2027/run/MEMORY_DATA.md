@@ -18,9 +18,9 @@ WAITING: 0
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        🟢运维令11-04 09:2x 下载长上下文(A类)数据到/nas_inference(~286GiB,10源,双机后台进行中)+09:1x 85M确认完成
-已完成:       ✅85M下载正式翻转✅已完成;✅运维令10-31调研报告v6已交付;✅9源公开下载脚本download_longctx_datasets.sh已启动(.12,PID3129416);✅gated源yuyijiong/LongData-Corpus下载脚本download_longctx_gated.sh已写+已在.29启动(PID1074631,token认证✓)
-当前动作:     唤醒1171(2026-11-04 10:31):运维令09:2x继续→①发现脚本缺第10源(gated yuyijiong/LongData-Corpus 36G);②SSH到.29验证:real token在.29(hf_vnKV...,37B)✓,/nas_inference已mount✓,hf命令在共享NFS路径✓;③写download_longctx_gated.sh→SSH .29 setsid后台启动PID1074631,token认证成功,78 files fetching(RedPajamaBook/Arxiv)✓;④.12 9源下载继续:ysngkil/whole-books 47%(23/49,13G);⑤NExtLong原id 401私有已复核→NExtLong-128K-dataset(gated=False)替换正确;⑥WAITING=0(双机下载在跑)
+PHASE:        🟢运维令11-04 09:4x 推理+代码SFT调研报告已交付+09:2x 长上下文下载进行中
+已完成:       ✅85M下载正式翻转✅已完成;✅运维令10-31长上下文+agentic调研报告v6已交付;✅9源公开下载脚本download_longctx_datasets.sh已启动(.12,PID3129416);✅gated源yuyijiong/LongData-Corpus下载脚本download_longctx_gated.sh已写+已在.29启动(PID1074631,token认证✓);✅运维令09:4x推理+代码SFT调研报告已交付(report_data_reasoning_code_sft_survey_zh.html,77772B/75.9KB,0 script/0外链,7节齐全,幂等✓)
+当前动作:     唤醒1172(2026-11-04):运维令09:4x→①HF API检索30+轮覆盖数学推理/长链CoT/科学推理/逻辑推理/竞赛编程/代码合成/代码修复/代码推理/仓库级SWE;②A类18个候选(含gsm8k/open-r1-math/deepscaler/numina/open-thoughts/code-contests等)+B类11个候选(含OpenCodeInstruct/OpenCodeReasoning/commitpackft/SWE-smith/SWE-Gym/mbpp等)+2个评测集参照;③报告7节(TL;DR/方法/A表/B表/污染去重/下载方案/诚实条款);④幂等✓/0 script✓/0外链✓/标签配平✓/75.9KB✓;⑤生成器gen_reasoning_code_sft_survey_report.py
 下一步:       下轮唤醒:①监控双机下载(.12:tail /tmp/data_download_lc_*.log + .29:ssh tail /tmp/data_download_lc_gated_*.log);②全部落地后校验(0 .incomplete+文件数+字节);③按镜像下载路径写DATA_MAPPING.md;④落地后WAITING置回1
 阻塞:         无(双机下载后台进行中,不占GPU,限并发≤4)
 ERROR_COUNT:  11
