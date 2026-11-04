@@ -5,13 +5,13 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        R1633 cline rerun交付轮:CPU/MEM自检PASS+cline rerun 58/58 DONE(sympy-22456 no_patch)+report regen终值356/500=71.3%修复后·deepseek predict alive(248/500)
-已完成:       H-B✅·Gate7/7·TB报告✅·pilot20✅·R984-R988恒0调试✅·R989 incr_eval全链✅·R997硬约束修复✅·R1567 cline trace归因✅·R1569 cline适配器修复✅·R1611-R1631 incr_eval渐进✅·R1631 cline修复交付✅·R1633 cline rerun 58/58终交付✅(report 356/500=71.3%)
-当前动作:     R1633:CPU/MEM自检PASS(load25/224~11%·MEM avail1316GB·无单进程>8000%CPU·无需kill)→cline rerun 58/58 DONE(最后一题sympy-22456 05:14落盘no_patch 125B)→cline eval no_patch+1(12→13,n=500)→backlog scan=0全7路→report regen终值cline356/500=71.3%修复后(修复前基线326/500=65.2%,+30)·deepseek predict alive(248/500,xarray-6461在跑)·未完成指令:无(13:5x已交付)⇒WAITING=1.
-下一步:       ①deepseek predict alive(248/500)→新预测落盘后incr_eval→regen report ②full500指令(10-28)deepseek尚在跑(464/500 progress),其余6路500/500已交付 ③永久硬约束:禁止commit结果JSON ④下次唤醒CPU/MEM自检+deepseek backlog eval
-阻塞:         无·deepseek predict alive(248/500·xarray-6461在跑,timeout1800s)·cline rerun已全部完成.
+PHASE:        R1634 13:5x复核+归档闭环轮:验证13:5x已交付(代码+报告+commit三方一致)→归档13:5x块→TASK+ARCHIVE·CPU/MEM自检PASS·deepseek predict alive(250/500)
+已完成:       H-B✅·Gate7/7·TB报告✅·pilot20✅·R984-R988恒0调试✅·R989 incr_eval全链✅·R997硬约束修复✅·R1567 cline trace归因✅·R1569 cline适配器修复✅·R1611-R1631 incr_eval渐进✅·R1631 cline修复交付✅·R1633 cline rerun 58/58终交付✅(report 356/500=71.3%)·R1634 13:5x复核+归档闭环✅
+当前动作:     R1634:用户令复核13:5x→git log+代码核验(run_harness.py:198-204 gw_proxy路由/run_single.py:91-97 stdout透传/run_harness.py:113-120 OMP剥离+silent-exit retry)三fix均在✅·report 17133B cline356/500=71.3%修复后✅·commit 34c930e48(harness 修复:)✅→CPU/MEM自检PASS(load23.6/224~11%·MEM avail1378GB·topCPU=pretrain143%非本线·无>8000%CPU·无需kill)→归档13:5x块(TASK 16行→1指针·原文搬入ARCHIVE +2574B)·deepseek predict alive(250/500,xarray-6599在跑)·未完成指令:无(13:5x已交付+归档)⇒WAITING=1.
+下一步:       ①deepseek predict alive(250/500)→新预测落盘后incr_eval→regen report ②full500指令(10-28)deepseek尚在跑(464/500 attempted),其余6路500/500已交付 ③永久硬约束:禁止commit结果JSON ④下次唤醒CPU/MEM自检+deepseek backlog eval
+阻塞:         无·deepseek predict alive(250/500·xarray-6599在跑,timeout1800s)·cline rerun已全部完成+13:5x已归档.
 ERROR_COUNT:  0
-  📦 体积：TASK=37659B(36.8KB,<40KB红线OK) / MEMORY≈31.5KB(trim R1553-R1564→1指针后·<32KB软限OK)·本轮归档0B(仅MEMORY内trim)
+  📦 体积：TASK=36821B(35.9KB,<40KB红线OK·13:5x块已归档) / MEMORY≈31.8KB(<32KB软限OK)·本轮归档2574B→ARCHIVE_OPERATOR_HARNESS.md(13:5x块原文)
 
 ```
 
@@ -20,6 +20,7 @@ ERROR_COUNT:  0
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 
 ### 本唤醒流水
+[05:59] R1634 13:5x复核+归档闭环轮:用户令复核13:5x→git log(83a0be7e9/29df7ba7f/34c930e48)+代码(run_harness.py:198-204 gw_proxy9090/run_single.py:91-97 stdout透传/run_harness.py:113-120 OMP剥离+CLINE_BIN.bun)三方一致✅→report 17133B cline356/500=71.3%修复后(基线326,+30)✅→CPU/MEM自检PASS(load23.6/224~11%·MEM avail1378GB·topCPU=pretrain143%非本线不碰·无>8000%CPU)→归档13:5x块(TASK 37659→36821B·原文+✅R1633结论搬入ARCHIVE 159318→161892B)·deepseek predict alive(250/500,xarray-6599)·13:5x已交付+归档⇒WAITING=1.
 [05:10] R1633 cline rerun交付轮:CPU/MEM自检PASS(load25/224·MEM avail1316GB·无>8000%CPU)→cline rerun 58/58 DONE(sympy-22456 05:14落盘no_patch 125B,无cline run_single进程)→eval_cline no_patch+sympy-22456(12→13,n=500)→backlog scan=0全7路→report regen终值cline356/500=71.3%修复后(修复前326/500=65.2%,+30,+6.1pp)·deepseek predict alive(248/500,xarray-6461)·13:5x指令已全交付⇒WAITING=1.
 > 📦 R1632 流水(05:01,quiet监控轮:scan_backlog=0+report UNCHANGED+归档13:1x块→ARCHIVE)已归档 → daily-memories-harness/2026-11-05.md。结论：cline rerun 1/58 left·归档13:1x。需要时再读。
 > 📦 R1631 流水(04:49,修复交付轮:cline sympy-20801 RESOLVED 355→356·deepseek xarray-4695 RESOLVED 195→196·cline sympy-21596 FAILED·report 修复后356/498=71.5% +30·harness 修复:commit)已归档 → daily-memories-harness/2026-11-05.md。结论：cline适配器修复交付·rerun57/58。需要时再读。

@@ -1617,3 +1617,23 @@ git rm --cached 'doc/BaiZe-ISEDA2027/run/harness/**/*verified_full_*.json'
 **④ 纪律**：不打断 predict/eval；不碰别的线；心跳写 `未完成指令：有` ⇒ `WAITING: 0`。
 
 **✅ R1567 执行结论（2026-11-04）**：cline trace 归因分析已交付。cline 326/500=65.2% vs opencode 401/500=80.2%（−15pp）vs pi 333/475=70.1%（−5pp）。3 类根因：①静默退出 35 题（rc=0 & patch=0 & wall<10s，OMP_NUM_THREADS 致 bun 退出）②超时卡死 18 题（AgentTimeout 1800s）③补丁质量 116 题（产 patch 但 resolve 失败）。cline vs opencode McNemar 配对检验极显著。可改进点清单（低风险 3 件：cline 路由 gw_proxy / run_single stdout 透传 / predict_one silent-exit 重试）已交付，并由 13:5x 运维令承接修复。报告 report_harness_cline_trace_analysis_zh.html（24667B，commit a2c331c79）。
+
+---
+
+### 🚀 运维令 · 2026-11-04 13:5x（按 cline trace 报告修复适配器 + 补跑受影响题）· 用户直令 · 最高优先  【2026-11-05 R1634 从 BAIZE_HARNESS_TASK.md 原文搬迁归档】
+
+> 用户批准（2026-11-04 13:5x）：「让 harness 按报告修复 cline 适配器。」
+
+**① 按 `report_harness_cline_trace_analysis_zh.html` 第五节「可改进点清单」执行，低风险三件先做**：
+1. **cline 路由 gw_proxy**（≈+27 题）：改 ClineDriver base URL → `http://127.0.0.1:9090/v1`（同 opencode），🚫 不再直连 agi-gateway。
+2. **run_single.py 透传 cline stdout**：`:79-82` 加 `if res.stdout: print("[stdout tail]", res.stdout[-400:])`，让 predict_one 的「静默退出/blocked」检测生效。
+3. **predict_one 加重试**：`rc=0 且 patch_len=0 且 wall<10s` → 重跑 1 次（或 gw_proxy 层加重试）。
+4. （中风险，可后置）减少超时卡死：timeout 1800→900s + 上下文 80% 强制收敛。
+
+**② 修复后补跑受影响题**：至少 **no-patch 的 53 题**（静默退出 35 + 超时卡死 18）+ 产 patch 但因超时/静默退出的失败题，重新 predict → eval（不重复 eval 已有 resolved）。
+
+**③ 交付**：更新 full500 报告里 cline 数字（修复前 326/500=65.2% → 修复后新值），并标注「修复后」与「主跑」分列；commit `harness 修复:`。
+
+**④ 纪律**：不打断 codex/deepseek 2 路 predict；只动 cline 适配器；心跳 `未完成指令：有` ⇒ `WAITING: 0` 直到补跑交付。
+
+**✅ R1633 执行结论（2026-11-05）**：cline 适配器修复 + 补跑全部交付。3 项低风险修复落地（commit 29df7ba7f R1569）：①cline 路由 gw_proxy（run_harness.py:198-204 OPENAI_BASE_URL=http://127.0.0.1:9090/v1，同 opencode）②run_single.py:91-97 stdout 透传（`[stdout tail] ...{res.stdout[-400:]}`）③silent-exit 重试 + 根因 OMP_NUM_THREADS 致 bun 静默退出（run_harness.py:113-120 剥离 OMP/OPENBLAS/MKL 线程变量 + CLINE_BIN→/home/app.e0031982/.bun/bin/cline）。④可后置项（timeout 1800→900 + 上下文 80% 收敛）未做（指令标注「可后置」）。补跑：cline rerun 58/58 全部完成（静默退出 35 + 超时卡死 18 + 余量）。报告：report_harness_swebench_verified_full500_zh.html（17133B）cline 修复后 356/500=71.3%（修复前基线 326/500=65.2%，+30，+6.1pp），修复后/主跑分列。commit 34c930e48（前缀 `harness 修复:`）。deepseek/codex predict 未被打断✅。R1634 复核：代码+报告+commit 三方一致。

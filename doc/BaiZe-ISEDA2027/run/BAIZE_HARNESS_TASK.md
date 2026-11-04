@@ -32,21 +32,7 @@
 
 > 📦 §运维令·2026-10-28 12:0x（TB 7way 报告质量整改 · 逐条回应 5 问）已归档 → run/ARCHIVE_OPERATOR_HARNESS.md；**结论**：5 问已逐条回应并交付（commit `33782ab93`）——①分母改回89官方口径(87题子集作附注,2题mteb缺镜像被启动器过滤)②三路0%精确stack(hermes exit127/claude-code docker exec超时/deepseek pip缺失)③codex 429=34条无退避重试(调用层缺陷)④基线对照(kimi公开57.3-66.7% vs cline48.3%,归因接入层损耗+超时)⑤复跑合表(hermes25/89·claude-code20/89入主表双列). 产 `tb_qa_rectification_20261028.md`+修订版报告. 需要时再读。
 
-### 🚀 运维令 · 2026-11-04 13:5x（**按 cline trace 报告修复适配器 + 补跑受影响题**）· 用户直令 · 最高优先
-
-> 用户批准（2026-11-04 13:5x）：「让 harness 按报告修复 cline 适配器。」
-
-**① 按 `report_harness_cline_trace_analysis_zh.html` 第五节「可改进点清单」执行，低风险三件先做**：
-1. **cline 路由 gw_proxy**（≈+27 题）：改 ClineDriver base URL → `http://127.0.0.1:9090/v1`（同 opencode），🚫 不再直连 agi-gateway。
-2. **run_single.py 透传 cline stdout**：`:79-82` 加 `if res.stdout: print("[stdout tail]", res.stdout[-400:])`，让 predict_one 的「静默退出/blocked」检测生效。
-3. **predict_one 加重试**：`rc=0 且 patch_len=0 且 wall<10s` → 重跑 1 次（或 gw_proxy 层加重试）。
-4. （中风险，可后置）减少超时卡死：timeout 1800→900s + 上下文 80% 强制收敛。
-
-**② 修复后补跑受影响题**：至少 **no-patch 的 53 题**（静默退出 35 + 超时卡死 18）+ 产 patch 但因超时/静默退出的失败题，重新 predict → eval（不重复 eval 已有 resolved）。
-
-**③ 交付**：更新 full500 报告里 cline 数字（修复前 326/500=65.2% → 修复后新值），并标注「修复后」与「主跑」分列；commit `harness 修复:`。
-
-**④ 纪律**：不打断 codex/deepseek 2 路 predict；只动 cline 适配器；心跳 `未完成指令：有` ⇒ `WAITING: 0` 直到补跑交付。
+> 📦 §运维令·2026-11-04 13:5x（按 cline trace 报告修复适配器 + 补跑受影响题）**✅ 已完成 R1633** → run/ARCHIVE_OPERATOR_HARNESS.md；**结论**：cline 适配器 3 fix(R1569 commit 29df7ba7f:gw_proxy路由9090 run_harness.py:198-204 + stdout透传 run_single.py:91-97 + silent-exit retry + OMP_NUM_THREADS剥离 run_harness.py:113-120 + CLINE_BIN→.bun/bin)→rerun 58/58→report cline 356/500=71.3%修复后(基线326/500=65.2%,+30,+6.1pp)·commit 34c930e48(harness 修复:)·④可后置项(timeout1800→900)未做(指令标「可后置」)·deepseek/codex predict未被打断✅. 需要时再读。
 
 > 📦 §运维令·2026-11-04 13:1x（看 trace 排查 cline 表现相对差）**✅ 已完成 R1567** → run/ARCHIVE_OPERATOR_HARNESS.md；**结论**：cline 326 vs opencode 401(−15pp)·3类根因(静默退出35/超时卡死18/补丁质量116，McNemar极显著)·可改进点清单已交付 report_harness_cline_trace_analysis_zh.html(24667B,commit a2c331c79)·低风险3件已由13:5x令承接修复。需要时再读。
 
