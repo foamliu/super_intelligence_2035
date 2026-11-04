@@ -131,3 +131,5 @@
 1792983877054_kkfsf.messages.json	jcgu	hfeg0pin003	242	schematic_netlist	case	EDA-Eval-DesignFlow-CellCrtVw-001	2026-11-04 10:51	
 1789612268376_pjxhr.messages.json	miccao	hfeg0plg37	340	schematic_netlist	case	EDA-Eval-DesignFlow-AutoCellFlow-001	2026-11-04 11:35	
 1789454597897_ak41b.messages.json	pjli	hfeg0plg06	251	schematic_netlist	case	EDA-Eval-DesignFlow-StdcellTrace-001	2026-11-04 12:23	trace_signal.py stdcell bottom-up trace, U#1 clean 提需求
+1793091608908_lzt3e.messages.json	e0023936	hfhds201	159	waveform	parked		2026-11-04 12:37	waveview cursor task: trace is run_code bridge debugging saga, sx_add_cursor never succeeded, no accepted gold; U#1 doc-query too thin
+1786535933950_lj2gw.messages.json	e0014566	hfeg0plg58	393	analog_context	case	EDA-Eval-DesignFlow-RsCalcLabelAdd-001	2026-11-04 12:48	rscalc RTEXT/RNODE label add, U#0 clean 提需求
