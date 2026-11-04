@@ -98,3 +98,4 @@
 1793583471152_fbuip	alan3zh	hfeg0pkn001	108	pnr_signoff	parked		2026-11-04 07:07	duplicate of 97tse AprSetupAudit-001: same user轮0 verbatim 'get basic configuration info from test_chip_power.md then correct setups in ./APR'; 36 msgs retry of same task
 1793584882491_ggmdz	alan3zh	hfeg0pkn001	108	pnr_signoff	parked		2026-11-04 07:07	duplicate of 97tse AprSetupAudit-001: identical user轮0 to fbuip/97tse; 36 msgs retry
 1792376325408_9eh38	e0046686	hfeg0plg80	874	verification	case	EDA-Eval-DesignFlow-LibToParm-001	2026-11-04 07:54	
+1792136569651_4a8f9	chengk	hfeg0plg74	826	digital	case	EDA-Eval-DesignFlow-PortCatch-001	2026-11-04 08:20	
