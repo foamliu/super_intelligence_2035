@@ -5,13 +5,13 @@ WAITING: 0
 ## 📊 进度快照
 
 ```
-PHASE:        R1595 incr_eval轮:CPU/MEM自检PASS+killed 3 orphaned deepseek eval containers(R1594)+codex eval(django-11820 FAILED)+deepseek eval(25775/26113 2/2 RESOLVED→deepseek 179→181)+report regen(17109B)+cline rerun[21/58 running django-16263]·3路predict alive
-已完成:       H-B✅·Gate7/7·TB报告✅·pilot20✅·R984-R988恒0调试✅·R989 incr_eval全链✅·R997硬约束修复✅·R998-R1594 incr_eval链+内存/CPU自检+体积归档✅·R1567 cline trace归因分析✅·R1569 cline适配器修复✅·R1595 incr_eval轮(codex+1 FAILED·deepseek+2 RESOLVED→181·report regen)✅
-当前动作:     R1595:CPU/MEM自检PASS(load24/224·MEM avail1294GB·无失控)→git pull(up to date)→scan_backlog(3项:codex 1 patch+deepseek 2 patch)→killed 3 orphaned deepseek R1594 eval containers(25287/25775/26113,parent proc已退出,eval scripts完成但未收集)→codex eval(django-11820 FAILED·run_id=verified_full_codex_R1595→copied report.json to main dir)→deepseek eval(25775/26113 2/2 RESOLVED·run_id=verified_full_deepseek-harness_R1595b→copied report.json to main dir·deepseek 179→181)→regen+report regen(17109B·cline335/codex284/deepseek181/hermes184/opencode401/pi333/claude-code273)→cline rerun[21/58 running django-16263]·3路predict alive(cline rerun·codex 488/500·deepseek 227/500)→未完成指令:有(cline rerun 37题+3路predict)⇒WAITING=0.
-下一步:       ①cline rerun继续[21/58]→后续产patch即incr_eval(需用新run_id强制re-eval,旧run_id会skip) ②cline rerun全部完成后更新full500报告cline数字(修前326→修后新值,分列修复前/后) ③3路predict alive(cline rerun·codex 488/500·deepseek 227/500) ④predict全完成后final full500报告 ⑤永久硬约束:禁止commit结果JSON ⑥TASK≤40KB红线
-阻塞:         无·cline rerun[21/58]running django-16263·3路predict alive(cline rerun·codex·deepseek227).
+PHASE:        R1596 quiet监控轮:CPU/MEM自检PASS+scan_backlog=0(全3路无新patch需eval)·cline rerun[21/58 running django-16263 715s]·3路predict alive(cline·codex·deepseek)·报告已up-to-date(修前326/修后335分列)
+已完成:       H-B✅·Gate7/7·TB报告✅·pilot20✅·R984-R988恒0调试✅·R989 incr_eval全链✅·R997硬约束修复✅·R998-R1595 incr_eval链+内存/CPU自检+体积归档✅·R1567 cline trace归因分析✅·R1569 cline适配器修复✅·R1595 incr_eval轮(codex+1 FAILED·deepseek+2 RESOLVED→181·report regen)✅·R1596 quiet监控轮(全backlog=0)✅
+当前动作:     R1596:CPU/MEM自检PASS(load25/224·MEM avail1293GB·无失控)→git pull(up to date)→scan_backlog=0(cline/codex/deepseek全无新patch需eval·codex django-11885 no_patch·cline rerun 13 patched全已eval:9 RESOLVED+4 INFRA)→3路predict alive(cline rerun 715s django-16263·codex 389s django-11964·deepseek 813s matplotlib-26291)→报告已up-to-date(17109B·修前326/修后335分列)→未完成指令:有(cline rerun 37题+3路predict)⇒WAITING=0.
+下一步:       ①cline rerun继续[21/58]→后续产patch即incr_eval(需用新run_id强制re-eval) ②cline rerun全部完成后更新full500报告cline数字(修前326→修后新值,分列修复前/后) ③3路predict alive(cline rerun·codex 488/500·deepseek 227/500) ④predict全完成后final full500报告 ⑤永久硬约束:禁止commit结果JSON ⑥TASK≤40KB红线
+阻塞:         无·cline rerun[21/58]running django-16263·3路predict alive(cline·codex·deepseek227).
 ERROR_COUNT:  0
-  📦 体积：TASK=38954B(38.0KB,>32KB,3活跃块不可归档,<40KB红线OK) / MEMORY=32445B(31.7KB,<32KB OK)
+  📦 体积：TASK=38954B(38.0KB,>32KB,3活跃块不可归档,<40KB红线OK) / MEMORY=32617B(31.9KB,<32KB OK)
 ```
 
 > 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
@@ -19,7 +19,9 @@ ERROR_COUNT:  0
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 
 ### 本唤醒流水
-[20:53→21:08] R1595 incr_eval轮:CPU/MEM自检PASS(load24/224·MEM avail1294GB·无失控)→git pull(up to date)→scan_backlog(3项:codex 1 patch django-11820+deepseek 2 patch 25775/26113)→killed 3 orphaned deepseek R1594 eval containers(25287/25775/26113,parent proc已退出,eval scripts完成但结果未收集)→codex eval(django-11820 FAILED,run_id=verified_full_codex_R1595,24s,→copied report.json to main verified_full_codex dir)→deepseek eval(25775/26113 2/2 RESOLVED,run_id=verified_full_deepseek-harness_R1595b,~22min,→copied report.json to main verified_full_deepseek-harness dir·deepseek 179→181)→regen_eval_summaries(codex WROTE n=488 resolved=284 failed=78·deepseek WROTE n=227 resolved=181 failed=38 infra=1)→report regen(17109B·cline335/codex284/deepseek181/hermes184/opencode401/pi333/claude-code273)→cline rerun[21/58 running django-16263]·3路predict alive(cline rerun·codex 488/500·deepseek 227/500)→未完成指令:有(cline rerun 37题+3路predict)⇒WAITING=0.
+[21:08→21:12] R1596 quiet监控轮:CPU/MEM自检PASS(load25/224·MEM avail1293GB·无失控·pretrain 144%是S1非本线)→git pull(up to date)→scan_backlog=0(cline/codex/deepseek全无新patch需eval·codex新django-11885=no_patch·cline rerun 13 patched全已eval:9 RESOLVED+4 INFRA→cline 326→335+9)→3路predict alive(cline rerun 715s django-16263·codex 389s django-11964·deepseek 813s matplotlib-26291·CPU全<10%)→报告已up-to-date(17109B·修前326/修后335分列)→未完成指令:有(cline rerun 37题+3路predict)⇒WAITING=0.
+
+> 📦 R1595 流水(20:53→21:08,incr_eval轮:CPU/MEM PASS+killed 3 orphaned deepseek R1594 eval containers+codex eval django-11820 FAILED+deepseek eval 25775/26113 2/2 RESOLVED 179→181+report regen+cline rerun[21/58])已归档 → daily-memories-harness/2026-11-04.md。结论：codex 284不变·deepseek+2→181·cline 335。需要时再读。
 
 > 📦 R1594 流水(20:38→20:50,incr_eval轮:CPU/MEM PASS+killed 2 orphaned deepseek eval containers+cline incr_eval 2 FAILED+deepseek 3-item eval running+report regen+cline rerun[20/58])已归档 → daily-memories-harness/2026-11-04.md。结论：cline 335不变·deepseek eval running(orphaned,本轮清理)。需要时再读。
 
