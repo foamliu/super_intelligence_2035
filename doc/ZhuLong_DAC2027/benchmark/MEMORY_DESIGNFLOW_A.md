@@ -4,12 +4,12 @@ WAITING_ARCHIVE: 轮 64：**完成 EDA-Eval-DesignFlow-FmRtl2RtlFlow-001（verif
 （轮 63 DrcDocConvert-001 / 轮 63b SimMakefileVCS-001 / 轮 62 NetCellMap-001 / 轮 61 RunsetVer-001 / 轮 60 VpsRegrErrorEngineer-001 落地见归档批次 57；轮 50–57 已归档至 `MEMORY_A_archive.md` 归档批次 56（2026-11-04）；轮 43–49 见归档批次 55；轮 33–42 见归档批次 50。）
 
 ## 顶部快照
-- **PHASE**: shard A 轮 65（DrvqaGateNetlist-001 落地完成, DEBT=0）· covered=71 / target=1369 (mc≥30) = 5.2% · domain: digital:23 · eda_other:15 · pnr_signoff:21 · verification:13
+- **PHASE**: shard A 轮 66（**深读 5u8d5 oversize, DEBT=1**；上轮 65 DrvqaGateNetlist-001 已落地）· covered=71 / target=1369 (mc≥30) = 5.2% · domain: digital:23 · eda_other:15 · pnr_signoff:21 · verification:13
 - 🎯 通过率: 最近20条无新增已跑 case（pi/cline 实跑 pending）；B 档目标 20–30%
-- 📊 trace 覆盖率：covered=71 / target=1369 = 5.2%（fresh 纯数字候选仍稀缺；本轮从 synopsys-heavy 候选中选出真 formality rtl2rtl 验证任务，verification 域 +1）
+- 📊 trace 覆盖率：covered=71 / target=1369 = 5.2%（fresh 纯数字候选仍稀缺；本轮选 eda_other pyAether layout 候选 5u8d5，2.1MB/427msgs 超 2MB 阈值 → 按 oversize 例外只深读，下轮交付 FloatPinToTop-001）
 - 📦 体积：TASK≈17KB / MEMORY_A≈9KB
-- DEBT: 0；BLOCKER: ① fresh 纯数字候选稀缺——daily log tool markers 缺 vcs/verdi/dc_shell/formality/primethe（运维待修），summary.tsv tools 列亦无；本轮改走 synopsys-heavy 关键字筛出真数字/验证任务；② 沙盒 .75 HAS vcs(/apps/synopsys/SRB/vcs/R-2020.12/bin/vcs)+dc_shell+primetime+pt_shell，MISSING verdi/formality/verilint/uvs/vps → formality 类 L2 以 vcs elaboration 为代理；③ 真实设计文件常 permission-denied → 多走 B 档；④ /nasdata 不在 .75 挂载、本机不可直连 .75 → 文件过坝走 eda_flow read_file（text 返 verbatim，zip 走 base64 或本地按 ref 重建）
-- 🧾 断言: 今日 1/1 达标（DrvqaGateNetlist-001：k_rationale=16=k_check=16 ✓，存量断言清单进度 24/30）
+- DEBT: 1（oversize deepread 5u8d5 未合成，下轮第一件事交付 EDA-Eval-DesignFlow-FloatPinToTop-001）；BLOCKER: ① fresh 纯数字候选稀缺——summary.tsv tools 列缺 vcs/verdi/dc_shell/formality/primetime，改走 keywords 列 synopsys/innovus/floorplan/netlist 筛；② **全局查重必跨 4 shard jsonl**（本轮差点重选 enbl7——已被 shard D 用作 SimlibIndex-001，幸 grep 全 jsonl 拦下；shard A 台账 alone 不足）；③ 沙盒 .75 HAS vcs+dc_shell+primetime+pt_shell，MISSING verdi/formality/verilint/uvs/vps/voltus → power 类 L2 须换 primetime/innovus MCP 代理；④ /nasdata 不在 .75 挂载、本机不可直连 .75 → 文件过坝走 eda_flow read_file/write_file(text) 或本地 base64+run_commands base64 -d
+- 🧾 断言: 今日 0/0 达标（本轮 oversize 只深读未合成 case，无断言闸门；存量断言清单进度 24/30 不变）
 
 ## 迁移说明
 - 轮 33-42 已归档至 `MEMORY_A_archive.md`（归档批次 50，2026-11-04）。
@@ -17,5 +17,5 @@ WAITING_ARCHIVE: 轮 64：**完成 EDA-Eval-DesignFlow-FmRtl2RtlFlow-001（verif
 - 轮 50–57 已归档至 `MEMORY_A_archive.md`（归档批次 56，2026-11-04）。
 - 本 MEMORY 为 shard A 独立文件；旧轮次流水见 MEMORY_A_archive.md（轮 24-27 cline+hook 重跑等）
 
-## 下一轮第一件事（DEBT=0）
-DEBT 已清零。下轮按 `python3 designflow/trace_ledger.py --shard A next --n 5` 选新 trace → claim → 深读 → 合成新 case。**选料前必查重**：`grep <候选 case_id> EDA-Eval-DesignFlow_A.jsonl` + `git log -- benchmarks/EDA-Eval-DesignFlow/assets/<候选 case_id 路径>`，避免重复合成（轮60 教训）。优先覆盖 domain 尚无 case 的纯数字/verification 候选。
+## 下一轮第一件事（DEBT=1 oversize deepread）
+**下轮必须先交付 case（🚫 禁止连续两轮只深读）**：按已写深读笔记 `designflow/trace_deepreads/1791852620999_5u8d5_floatPinToTop.md` 合成 `EDA-Eval-DesignFlow-FloatPinToTop-001`（eda_other, L2 via pyAether/aether MCP, B档）。assets A = ref_scripts/cxmt_autoPR_floorPlanPin_current.py + 合成小自含 schematic/layout JSON（top+bottom inst+net 映射）；hidden B 换 cell/net/pin-layer/inst 数量；reference = cxmt_floatAllPinToTop_ref.py(纯ASCII) + check.py(14 条件 a-n，subprocess 真跑 pyAether) + 5 negatives（含 fake_print_expected 击穿 / naive_ascii_violation 加载崩 / naive_hardcode_a B 上全错）。台账 5u8d5 已 claim(eda_other)，合成后 mark case。交付后清 DEBT=0。**选料前必查重**：跨 4 shard jsonl `grep` 全局查（enbl7 教训）。

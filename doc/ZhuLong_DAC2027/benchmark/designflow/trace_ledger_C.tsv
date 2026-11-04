@@ -196,3 +196,5 @@
 1792998659148_31lou	claire1l	hfeg0plg49	90	pg_layout	case	EDA-Eval-DesignFlow-InnovusViaCutDiag-001	2026-11-04 18:12	
 1792742027783_8ky45.messages.json	e0047434	hfeg0pnd002	211	physical_verify	case	EDA-Eval-DesignFlow-AutoCellExtEngineCfg-001	2026-11-04 18:53	
 1785747744541_ks4xp	e0014566	hfeg0pkn001	253	layout_virtuoso	case	EDA-Eval-DesignFlow-RsCalcAgentGen-001	2026-11-04 19:42	
+1787285566134_xwncx	e0014566	hfeg0pkn001	269	layout_virtuoso	parked		2026-11-04 20:01	dup of RTextChkPlan-001/RsCalcChkPtGen-001 (same rtext-checkpoint-designer skill)
+1790238584900_vajed	xinqiaoz	hfeg0pkn004	307	physical_verify	case	EDA-Eval-DesignFlow-DrcPatQaDiag-001	2026-11-04 20:18	
