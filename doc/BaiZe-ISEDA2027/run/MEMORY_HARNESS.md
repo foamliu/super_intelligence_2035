@@ -5,13 +5,13 @@ WAITING: 0
 ## 📊 进度快照
 
 ```
-PHASE:        R1546 incr_eval轮(quiet):CPU/MEM自检PASS+regen all7 unchanged+scan_backlog=0
-已完成:       H-B✅·Gate7/7·TB报告✅·pilot20✅·R984-R988恒0调试✅·R989 incr_eval全链✅·R997硬约束修复✅·R998-R1545 incr_eval链+内存/CPU自检+体积归档✅·R1546 incr_eval轮✅
-当前动作:     R1546:CPU自检PASS(运维令11-02:load32.46/224≈14.5%busy,无本线>8000%CPU,2 predict procs API-bound codex0.0%·deepseek0.6%)+内存自检PASS(运维令10-30:MemAvailable~1.34Ti,无本线RSS>50GB·codex33GB·deepseek30GB)·regen all7 unchanged·scan_backlog=0(无待eval)·eval TOTAL resolved=1960(cline326·opencode401·pi333·claude-code273·codex274·hermes184·deepseek169,与R1545持平)·predict counts:cline-patched500·opencode500·pi475·claude-code433·codex472·hermes314·deepseek211·2路predict alive(codex472 working astropy-13977·deepseek211 working matplotlib-20488,均API-bound)·硬约束全PASS(pred0tracked✅·eval0tracked✅·docker0running✅,git JSON=500 instance input only)·无kill·无失控·未完成指令:有(2路predict仍跑)⇒WAITING=0.
-下一步:       ①2路predict alive(codex472/500·deepseek211/500) ②每轮run regen_eval_summaries.py+scan_backlog.py ③backlog有final-patch items→incr_eval(OMP_NUM_THREADS=8,max_workers=1,sg docker) ④predict全完成后final full500报告(7路总表+Wilson CI+McNemar 7×7+no_patch单列) ⑤infra单列(铁律④) ⑥永久硬约束:禁止commit结果JSON ⑦TASK=34.9KB·MEMORY≤32KB
-阻塞:         无(2路predict alive progressing·codex472·deepseek211·load32.46/224健康·backlog=0).
+PHASE:        R1547 incr_eval轮(quiet):CPU/MEM自检PASS+regen codex WROTE(n472→473,no_patch)+scan_backlog=0
+已完成:       H-B✅·Gate7/7·TB报告✅·pilot20✅·R984-R988恒0调试✅·R989 incr_eval全链✅·R997硬约束修复✅·R998-R1546 incr_eval链+内存/CPU自检+体积归档✅·R1547 incr_eval轮✅
+当前动作:     R1547:CPU自检PASS(运维令11-02:load29.57/224≈13.2%busy,无本线>8000%CPU,2 predict procs API-bound codex0.0%·deepseek0.0%)+内存自检PASS(运维令10-30:MemAvailable~1.34Ti,无本线RSS>50GB·codex33GB·deepseek30GB)·regen codex WROTE(n472→473,+1 no_patch,resolved274不变)其余6路unchanged·scan_backlog=0(无待eval)·eval TOTAL resolved=1960(cline326·opencode401·pi333·claude-code273·codex274·hermes184·deepseek169,与R1546持平)·predict counts:cline-patched500·opencode500·pi475·claude-code433·codex473·hermes314·deepseek211·2路predict alive(codex473 working·deepseek211 working,均API-bound)·硬约束全PASS(pred0tracked✅·eval0tracked✅·docker0running✅,git JSON=500 instance input only)·无kill·无失控·未完成指令:有(2路predict仍跑)⇒WAITING=0.
+下一步:       ①2路predict alive(codex473/500·deepseek211/500) ②每轮run regen_eval_summaries.py+scan_backlog.py ③backlog有final-patch items→incr_eval(OMP_NUM_THREADS=8,max_workers=1,sg docker) ④predict全完成后final full500报告(7路总表+Wilson CI+McNemar 7×7+no_patch单列) ⑤infra单列(铁律④) ⑥永久硬约束:禁止commit结果JSON ⑦TASK=34.9KB·MEMORY≤32KB
+阻塞:         无(2路predict alive progressing·codex473·deepseek211·load29.57/224健康·backlog=0).
 ERROR_COUNT:  0
-  📦 体积：TASK=35757B(34.9KB,>32KB,3活跃块不可归档,<40KB红线OK) / MEMORY=31834B(31.1KB,≤32KB✅)
+  📦 体积：TASK=35757B(34.9KB,>32KB,3活跃块不可归档,<40KB红线OK) / MEMORY≈32KB(31.1KB,≤32KB✅)
 ```
 
 > 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
@@ -19,7 +19,8 @@ ERROR_COUNT:  0
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 
 ### 本唤醒流水
-[10:04] R1546 incr_eval轮(quiet): CPU自检PASS(运维令11-02:load32.46/224≈14.5%busy,无本线>8000%CPU,2 predict procs API-bound codex0.0%·deepseek0.6%)+内存自检PASS(运维令10-30:MemAvailable~1.34Ti,无本线RSS>50GB·codex33GB·deepseek30GB)·regen all7 unchanged·scan_backlog=0(无待eval)·eval TOTAL resolved=1960(与R1545持平)·predict counts:codex472·deepseek211·2路predict alive(codex astropy-13977·deepseek matplotlib-20488,API-bound)·硬约束全PASS(pred0tracked✅·eval0tracked✅·docker0running✅,git JSON=500 instance input only)·无kill·无失控·未完成指令:有(2路predict仍跑)⇒WAITING=0.
+[10:09] R1547 incr_eval轮(quiet): CPU自检PASS(运维令11-02:load29.57/224≈13.2%busy,无本线>8000%CPU,2 predict procs API-bound codex0.0%·deepseek0.0%)+内存自检PASS(运维令10-30:MemAvailable~1.34Ti,无本线RSS>50GB·codex33GB·deepseek30GB)·regen codex WROTE(n472→473,+1 no_patch,resolved274不变)其余6路unchanged·scan_backlog=0·eval TOTAL resolved=1960(持平)·predict counts:codex473·deepseek211·2路predict alive(API-bound)·硬约束全PASS(pred0tracked✅·eval0tracked✅·docker0running✅,git JSON=500 instance input only)·无kill·无失控·未完成指令:有(2路predict仍跑)⇒WAITING=0.
+> 📦 R1546 流水(10:04,incr_eval轮quiet:CPU/MEM自检PASS+regen all7 unchanged+scan_backlog=0,eval 1960持平,2路predict alive)已归档 → daily-memories-harness/2026-11-04.md。结论：quiet轮·codex472·deepseek211·2路predict alive。需要时再读。
 > 📦 R1545 流水(09:57,incr_eval轮quiet:CPU/MEM自检PASS+regen all7 unchanged+scan_backlog=0,eval 1960持平)已归档 → daily-memories-harness/2026-11-04.md。结论：quiet轮·2路predict alive。需要时再读。
 > 📦 R1544 流水(09:50,incr_eval轮quiet:CPU/MEM自检PASS+regen all7 unchanged+scan_backlog=0,eval 1960持平)已归档 → daily-memories-harness/2026-11-04.md。结论：quiet轮·2路predict alive。需要时再读。
 > 📦 R1543 流水(09:41,incr_eval轮:CPU/MEM自检PASS+regen codex WROTE(n471→472,+1 no_patch)+incr_eval deepseek matplotlib-13989 RESOLVED,eval 1959→1960)已归档 → daily-memories-harness/2026-11-04.md。结论：deepseek+1 RESOLVED·2路predict alive。需要时再读。
