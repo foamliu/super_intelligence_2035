@@ -41,6 +41,26 @@
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### [运维令] 2026-11-04 09:3x（**CPU 评测改用 llama.cpp 提速——已预研验证，只需打通 llh 打分格式**）· 用户直令 · 最高优先
+
+> 用户原话（2026-11-04）：「llama.cpp 这条路，请 pretrain 再试试，代码已 clone 到 /nas_train/app.e0031982/code/llama.cpp，架构已支持。」
+
+**① 运维已预研验证（pretrain 直接复用，不用重做）**：
+- **编译已就绪**：`/nas_train/app.e0031982/code/llama.cpp/build/bin/{llama-cli,llama-server,llama-quantize,llama-bench}`（master build 149f5641b，CPU 版，`-DGGML_NATIVE=ON`）。
+- **架构确认支持**：`conversion/nemotron.py:423 NemotronHForCausalLM → NemotronHModel`（`MODEL_ARCH.NEMOTRON_H`），解析 `hybrid_override_pattern` 的 Mamba2/attention 混合层。
+- **转 GGUF 已通**：`python convert_hf_to_gguf.py <hf_iter_*> --outfile out.gguf --outtype f16`（f16 20s、323 tensor、4.44GB）；量化 `llama-quantize f16.gguf out.gguf Q4_K_M`（1.29GB）。
+- **CPU 推理实测（8 线程）**：f16 24.4 / Q8_0 34.6 / Q4_K_M **35.7 token/s**（内存仅 1.29GB）；**比 HF+CPU 的 transformers float32 路径快且省内存**。
+- **唯一卡点（要 pretrain 打通）**：llama-server 的 `/completion` 返回 `completion_probabilities`（llama.cpp 原生格式），而 lm_eval 后端（`local-completions`/`gguf`）期待 OpenAI 标准 `choices[].logprobs.token_logprobs` → 现报 `KeyError: 'token_logprobs'`，llh 打分失败。
+
+**② 本轮必做**：
+1. **打通 llh 打分**：起 `llama-server -m <q4_k_m.gguf> --port 3000X -t 8 -c 2048`（`CUDA_VISIBLE_DEVICES=""`），三选一把 `/completion` 响应转换成 lm_eval 能吃的 `token_logprobs`：① 用 `--model gguf`（`lm_eval/models/gguf.py` 已内置，走 `/v1/completions` 标准格式，优先试）；② 检查 llama-server 是否有参数让它输出 OpenAI 标准 logprobs；③ 兜底写个轻量 shim 把 `completion_probabilities` 转成 `token_logprobs`。
+2. **端到端测速 1 个 ckpt**：llama.cpp(Q4_K_M) + lm_eval 跑 arc_easy（或先 `--limit 100`），对比 HF 的 34.78s/it，报**实测提速倍数 + 单 ckpt 8 集 ETA**。
+3. **确认快就全量 5 ckpt**（10000/20000/30000/40000/50000）：转 GGUF→量化→lm_eval 8 集，结果落 `nemo_experiments/baize2b/lm_eval_results/`。
+
+**③ 交付**：① llama.cpp vs HF 端到端速度对照表（t/s、每 ckpt 8 集耗时、提速倍数）② 5×8 集汇总（Avg+逐集，与 P-6 起点 0.4395 对照）③ `reports/report_pretrain_cpu_eval_8sets_zh.html` 更新含 llama.cpp 加速结论。
+
+**④ 纪律**：🚫 不碰 GPU（`CUDA_VISIBLE_DEVICES=""`）；🚫 不影响 S1（`-t 8`、`nice -n 19`、两机 CPU ≤80%）；🚫 禁止 `pkill python`/宽泛 kill（18:39 事故红线），清 server 只 `kill <具体PID>`；不碰 vision/data/harness；commit `pretrain eval:`；心跳写 `未完成指令：有` ⇒ `WAITING: 0` 直到报告交付。
+
 > 📦 §运维令 2026-10-29 14:1x（整理并提交 baize-llm 独立仓库）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：✅ commit e1c6be4 pushed to origin/master，28 files（README 19.6KB + configs/9 + scripts/18 + docs/2 + .gitignore），symlink 已删除+纳入 .gitignore，ls-remote 匹配。需要时再读。
 
 ### [运维令] 2026-11-02 11:1x（**CPU 评测 5 个 checkpoint 的常识推理 8 集（1w–5w 步），先估 ETA**）· 用户直令 · 最高优先
