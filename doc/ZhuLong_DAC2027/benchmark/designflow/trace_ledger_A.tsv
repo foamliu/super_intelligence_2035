@@ -115,3 +115,4 @@
 1793067588685_cpv3d	taodu	hfeg0pfn012	2257	verification	case	EDA-Eval-DesignFlow-ConnFileNetChk-001	2026-11-04 11:58	
 1790219837415_uh82d.messages.json	johnl	hfeg0pfn119	41	digital	case	EDA-Eval-DesignFlow-HierDcSynth-001	2026-11-04 12:30	
 1790650962650_7bg20	fxian	hfeg0pkn002	131	digital	deepread		2026-11-04 12:52	RTL addr_to_rowcol_v5 -> DRVQA stdcell gate netlist (R_BADEC_ADDR2ROWCOL_DRVQA.v) + pyAether schematic-gen; L2 digital; deepread r57, DEBT=1 synthesize next round
+7bg20					case	EDA-Eval-DesignFlow-DrvqaGateNetlist-001	2026-11-04 13:21	
