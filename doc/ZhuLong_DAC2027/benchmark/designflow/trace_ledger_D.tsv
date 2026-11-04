@@ -158,3 +158,14 @@
 1791966728738_ad3nu.messages.json	zxtu	hfeg0plg99	113	waveform	parked		2026-11-05 01:55	warning-analysis Q&A: 'analyze warnings in finesim ...si.out report'; pure analysis, no runnable deliverable; U#2 '你在干什么' suggests stall
 1791457560417_636qr.messages.json	rongjiez	hfeg0plg98	112	analog_context	parked		2026-11-05 01:55	doc/PPT task: user describes runModelQA_new.pl 7 refactoring innovations and asks 'organize PPT content'; documentation not code
 1789371142448_mw3vr.messages.json	sophiaw	hfeg0plg49	115	analog_context	parked		2026-11-05 01:55	overlaps FinesimAutoRun-001(#251): AnasimPro SPICE全流程 sim submission; U#0 is 1500-char workflow-spec paste, U#1/U#2 real asks; not fresh vs #251
+1791944071628_pwhqb	jason17w	hfeg0pnd002	300	analog_context	parked		2026-11-05 02:32	skill-creator vps-cli task (shard A eda_other), not D-domain
+1791942913378_xm22u	jason17w	hfeg0pnd002	300	analog_context	parked		2026-11-05 02:32	skill-creator vps-cli task (shard A eda_other), not D-domain
+1791940907353_xh3mj	jason17w	hfeg0pnd002	300	analog_context	parked		2026-11-05 02:32	skill-creator vps-cli task (shard A eda_other), not D-domain
+1791797325736_lc81i	jason17w	hfeg0pnd002	300	analog_context	parked		2026-11-05 02:32	skill-creator vps-cli task (shard A eda_other), not D-domain
+1791940740396_atgt9	jason17w	hfeg0pnd002	300	analog_context	parked		2026-11-05 02:32	skill-creator vps-cli task (shard A eda_other), not D-domain
+1791512939497_0aw4j	jason17w	hfeg0pnd002	265	analog_context	parked		2026-11-05 02:32	mid-conv VPS/uvs regression submit (digital verif), not D-domain
+1792979644454_hgqho	e02141	hfeg0plg56	280	analog_context	parked		2026-11-05 02:32	sentaurus TCAD deck study/summarize doc-task, no runnable deliverable
+1791528127580_l1u7n	e02141	hfeg0plg56	280	analog_context	parked		2026-11-05 02:32	sentaurus TCAD deck study/summarize doc-task, no runnable deliverable
+1792827081154_d810y	jackjia	hfeg0plg95	274	schematic_netlist	parked		2026-11-05 02:32	Aether flight-line how-to Q&A, no runnable deliverable
+1789551540622_zpvgj	miccao	hfeg0plg92	258	schematic_netlist	parked		2026-11-05 02:32	mid-conv compressed context, U#0=assistant text no clean demand round
+1785745498995_8c5jw	t0002638	hfeg0plg49	289	analog_context	parked		2026-11-05 02:32	Q&A: can-you-call pyAether screenshot API, no runnable deliverable
