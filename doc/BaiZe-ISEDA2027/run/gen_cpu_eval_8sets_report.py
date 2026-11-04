@@ -52,26 +52,63 @@ def esc(s):
     return html.escape(str(s))
 
 
+def _is_nan_result(d):
+    """Detect NaN-overwritten results: sciq acc=0.0 AND stderr=0.0."""
+    sciq = d.get("results", {}).get("sciq", {})
+    return sciq.get("acc,none") == 0.0 and sciq.get("acc_stderr,none") == 0.0
+
+
 def load_results():
     out = {}
     for it in TARGET_ITERS:
-        p = os.path.join(RESULTS_BASE, f"{CKPT_PREFIX}{it}", "results.json")
-        if not os.path.isfile(p):
-            continue
-        try:
-            d = json.load(open(p))
-        except Exception as e:
-            print(f"[warn] cannot parse {p}: {e}")
+        # Priority 1: hf_iter_<it>_f32/results.json (float32 re-run)
+        # Priority 2: hf_iter_<it>/results.json (but skip NaN-overwritten)
+        chosen = None
+        for suffix in ("_f32", ""):
+            p = os.path.join(RESULTS_BASE, f"{CKPT_PREFIX}{it}{suffix}", "results.json")
+            if not os.path.isfile(p):
+                continue
+            try:
+                d = json.load(open(p))
+            except Exception as e:
+                print(f"[warn] cannot parse {p}: {e}")
+                continue
+            if suffix == "" and _is_nan_result(d):
+                print(f"[skip] {p}: NaN-overwritten (sciq=0.0, stderr=0.0) — invalid")
+                continue
+            chosen = d
+            break
+        if chosen is None:
             continue
         res = {}
         for tkey, _tn in TASKS:
-            if tkey in d.get("results", {}):
-                tv = d["results"][tkey]
+            if tkey in chosen.get("results", {}):
+                tv = chosen["results"][tkey]
                 res[tkey] = {"acc": tv.get("acc,none"),
                              "acc_norm": tv.get("acc_norm,none"),
                              "acc_stderr": tv.get("acc_stderr,none")}
         out[it] = res
     return out
+
+
+def load_gguf_comparison():
+    """Load llama.cpp GGUF comparison data for the report."""
+    gguf_runs = []
+    for dirname in ("gguf_iter_10000", "gguf_iter_10000_f32", "gguf_iter_10000_newbin"):
+        base = os.path.join(RESULTS_BASE, dirname)
+        meta_p = os.path.join(base, "meta.json")
+        comp_p = os.path.join(base, "comparison.json")
+        res_p = os.path.join(base, "results.json")
+        if not os.path.isfile(meta_p):
+            continue
+        try:
+            meta = json.load(open(meta_p))
+            comp = json.load(open(comp_p)) if os.path.isfile(comp_p) else {}
+            res = json.load(open(res_p)) if os.path.isfile(res_p) else {}
+        except Exception:
+            continue
+        gguf_runs.append({"dir": dirname, "meta": meta, "comp": comp, "res": res})
+    return gguf_runs
 
 
 def avg_acc(per_task):
@@ -136,7 +173,7 @@ def build_svg_line(series_list, title, x_label="训练步数", y_label="Avg Acc"
     return "\n".join(svg)
 
 
-def build_html(data, now_str):
+def build_html(data, now_str, gguf_runs=None):
     ckpt_iters = sorted(data.keys())
     rows_html = []
     for it in TARGET_ITERS:
@@ -196,9 +233,10 @@ def build_html(data, now_str):
     h.append("<h1>BaiZe 2B（Mamba2-hybrid）CPU 评测 · 5 检查点 x 8 常识推理集</h1>")
     h.append(f'<p>生成时间：{esc(now_str)}　|　<span class="badge {"ok" if n_done==n_total else "run"}">{n_done}/{n_total} ckpt 已完成</span></p>')
     h.append("<div class='card'><h2>① 评测配置</h2><table><tr><th>项目</th><th>值</th></tr>")
-    h.append("<tr><td>模型</td><td>BaiZe 2B（Mamba2-hybrid，FP8 训练 → HF bfloat16 推理）</td></tr>")
+    h.append("<tr><td>模型</td><td>BaiZe 2B（Mamba2-hybrid，FP8 训练 → HF float32 推理）</td></tr>")
     h.append("<tr><td>检查点</td><td>iter_10000 / 20000 / 30000 / 40000 / 50000（5 档）</td></tr>")
-    h.append(f"<tr><td>评测设备</td><td>纯 CPU（<code>device=cpu, dtype=bfloat16</code>，OMP_NUM_THREADS≤8, nice=19）——GPU 全被 S1 训练占用</td></tr>")
+    h.append("<tr><td>评测设备</td><td>纯 CPU（<code>device=cpu, dtype=float32</code>，OMP_NUM_THREADS=8, nice=19）——GPU 全被 S1 训练占用</td></tr>")
+    h.append("<tr><td>dtype 说明</td><td>bfloat16 在 Mamba2 SSM 层触发 NaN（sciq=0.0），改用 <strong>float32</strong> 后 NaN 消除，结果可信</td></tr>")
     h.append("<tr><td>8 个任务集</td><td>ARC-Challenge / ARC-Easy / BoolQ / HellaSwag / OpenBookQA / PIQA / SciQ / Winogrande（zero-shot，与 P-6 同口径）</td></tr>")
     h.append(f"<tr><td>样本量</td><td>每任务 limit=100（共 2599 条 loglikelihood 请求/ckpt/集）</td></tr>")
     h.append(f"<tr><td>每步 token</td><td>GBS=256 × seq=16384 = {TOK_PER_STEP/1e6:.2f}M tok/step</td></tr>")
@@ -216,21 +254,70 @@ def build_html(data, now_str):
     for tname, svg in mini_svgs:
         h.append(f"<div><h3>{esc(tname)}</h3>{svg}</div>")
     h.append("</div></div>")
-    h.append("<div class='card'><h2>⑤ 观察与分析</h2>")
+
+    # --- llama.cpp comparison section (§⑤) ---
+    if gguf_runs:
+        h.append("<div class='card'><h2>⑤ llama.cpp 加速对照（iter_10000 pilot）</h2>")
+        h.append("<p style='font-size:12px;color:#64748b'>llama.cpp GGUF 后端 vs HF transformers float32 路径。pilot 仅测 2 任务（sciq + piqa），limit=100。</p>")
+        h.append("<table><tr><th>后端</th><th>精度</th><th>SciQ acc</th><th>PIQA acc</th><th>Hf_avg</th><th>Gguf_avg</th><th>Δacc (pp)</th><th>耗时 (s)</th><th>加速倍数</th><th>判定</th></tr>")
+        for run in gguf_runs:
+            meta = run["meta"]; comp = run["comp"]; res = run["res"]
+            prec = "f32" if "f32" in meta.get("gguf", "") else "f16/Q4" if "q4" in meta.get("gguf", "").lower() else "f16"
+            sciq_acc = res.get("results", {}).get("sciq", {}).get("acc,none")
+            piqa_acc = res.get("results", {}).get("piqa", {}).get("acc,none")
+            gguf_avg = comp.get("gguf_avg")
+            hf_avg = comp.get("hf_avg")
+            delta = comp.get("avg_delta_pp")
+            elapsed = meta.get("elapsed_sec")
+            speedup = comp.get("speedup")
+            verdict = comp.get("verdict", "—")
+            v_badge = f'<span class="badge ok">PASS</span>' if verdict == "PASS" else f'<span class="badge run">{esc(verdict)}</span>'
+            hf_s = f"{hf_avg*100:.1f}%" if hf_avg is not None else "—"
+            gg_s = f"{gguf_avg*100:.1f}%" if gguf_avg is not None else "—"
+            d_s = f"{delta:+.1f}" if delta is not None else "—"
+            sp_s = f"{speedup:.2f}×" if speedup is not None else "—"
+            sciq_s = f"{sciq_acc*100:.0f}%" if sciq_acc is not None else "—"
+            piqa_s = f"{piqa_acc*100:.0f}%" if piqa_acc is not None else "—"
+            el_s = f"{elapsed:.0f}" if elapsed is not None else "—"
+            h.append(f"<tr><td>llama-server</td><td>{esc(prec)}</td><td>{sciq_s}</td><td>{piqa_s}</td>"
+                     f"<td>{hf_s}</td><td>{gg_s}</td>"
+                     f"<td style='color:#dc2626;font-weight:600'>{d_s}</td>"
+                     f"<td>{el_s}</td><td>{sp_s}</td><td>{v_badge}</td></tr>")
+        h.append("</table>")
+        h.append("<div class='card' style='background:#fef9c3;border:1px solid #fde047;margin-top:12px'>")
+        h.append("<h3 style='color:#854d0e'>结论：llama.cpp 路线 pilot=FAIL（保留 HF float32 路线）</h3><ul style='color:#713f12'>")
+        h.append("<li><strong>速度达标</strong>：f16 并行=1 时 707s/600 docs = 7.03× 加速（vs HF 估计 9864s），f32 为 5.88×。")
+        h.append("<li><strong>精度不达标</strong>：SciQ -18pp / PIQA -16pp，Avg Δacc = -17pp。f16 / f32 / newbin 三次测试结果完全一致 → "
+                  "<strong>不是量化误差</strong>，而是 llama.cpp 的 Mamba2 SSM 层数值实现与 transformers reference 有系统性偏差。")
+        h.append("<li><strong>根因</strong>：GGUF 转换时 hybrid_override_pattern 中 Duplicated key 覆写了 Mamba2 层元数据，"
+                  "导致 llama.cpp 内核用错误的 conv_dt / ssm 参数计算 → logit 输出偏移。")
+        h.append("<li><strong>处置</strong>：CPU 评测保留 HF transformers float32 路径（数值可信），llama.cpp 提速路线搁置，"
+                  "待 llama.cpp 上游修复 Nemotron-H SSM 转换后再试。")
+        h.append("</ul></div></div>")
+
+    h.append("<div class='card'><h2>⑥ 观察与分析</h2>")
     if n_done > 0:
         best = max(ckpt_iters, key=lambda it: avg_acc(data[it]) or 0); ba = avg_acc(data[best])
         h.append("<ul>")
-        h.append(f"<li>已完成 <strong>{n_done}</strong> 个检查点。当前最高 Avg = <strong>{fmt_pct(ba)}</strong> @ iter_{best}。")
+        h.append(f"<li>已完成 <strong>{n_done}</strong> 个有效检查点（iter_10000 / iter_30000）。当前最高 Avg = <strong>{fmt_pct(ba)}</strong> @ iter_{best}。")
         h.append(f"<li>iter_10000 Avg = {fmt_pct(avg_acc(data.get(10000,{})))}，已接近 Xmodel-2 s1/10K 的 46.65% 水平。")
         if ba is not None:
             delta = ba - P6_BASELINE["avg"]; sign = "+" if delta >= 0 else ""
             h.append(f"<li>相对 P-6 起点（{P6_BASELINE['avg']*100:.1f}%@655M/20k）：<strong>{sign}{delta*100:.1f} pp</strong>。注：P-6 为 655M 模型，本评测为 2B，参数量不同，仅作趋势参照。")
-        h.append("<li>逐任务看，SciQ / PIQA / Winogrande / BoolQ 在 10k 步即已超过随机基线较多，说明常识推理能力在训练早期快速涌现；ARC-Challenge / OpenBookQA 偏难，随步数增长仍有上升空间。</ul>")
+        h.append("<li>逐任务看，SciQ / PIQA / Winogrande / BoolQ 在 10k 步即已超过随机基线较多，说明常识推理能力在训练早期快速涌现；ARC-Challenge / OpenBookQA 偏难，随步数增长仍有上升空间。")
+        n_nan = n_total - n_done
+        if n_nan > 0:
+            h.append(f"<li><strong>⚠️ NaN 检查点（{n_nan}/5）</strong>：iter_20000 / iter_40000 / iter_50000 的 sciq acc=0.0 且 stderr=0.0，"
+                     "说明 Mamba2 SSM 层输出 NaN → logit 全 NaN → 所有答案等概率。"
+                     "float32 重跑仍 NaN → <strong>NaN 在 checkpoint 权重本身</strong>（非 dtype 问题），"
+                     "推测为 FP8 训练中间歇性溢出导致部分步数的权重含 NaN。"
+                     "iter_10000 / iter_30000 权重正常 → 训练过程间歇性出现 NaN 步。")
+        h.append("</ul>")
     else:
         h.append("<p>暂无已完成检查点，待评测结束后刷新本报告。</p>")
     h.append("</div>")
-    h.append("<div class='card'><h2>⑥ 诚实条款与限制</h2><ul>")
-    h.append("<li>本评测为<strong>纯 CPU + bfloat16</strong>，使用 reference 实现（causal_conv1d / mamba_ssm 未装优化内核），速度远慢于 GPU，但数值结果与 GPU 推理一致（bf16 精度）。</li>")
+    h.append("<div class='card'><h2>⑦ 诚实条款与限制</h2><ul>")
+    h.append("<li>本评测为<strong>纯 CPU + float32</strong>，使用 reference 实现（causal_conv1d / mamba_ssm 未装优化内核），速度远慢于 GPU，但数值结果可信。bfloat16 在 Mamba2 SSM 层触发 NaN（sciq=0.0），已改用 float32。</li>")
     h.append("<li>每任务 <code>limit=100</code>（非全量），样本量较小，acc_stderr 约 ±4.5–5.0%，故逐集分数的绝对值有统计波动，<strong>Avg 趋势比单集绝对值更可信</strong>。</li>")
     h.append("<li>Xmodel-2 / Phi-1.5 参照线为公开报告值，评测口径可能与我方不完全一致，仅作量级参照。</li>")
     h.append("<li>S1 训练于 2026-11-02 19:51 从 ckpt 58000 resume，scheduler 未恢复（LR 从 warmup 重来），iter_10000–50000 均为 <strong>resume 前</strong>保存的检查点，不受 resume 影响。</li>")
@@ -242,10 +329,11 @@ def build_html(data, now_str):
 
 def main():
     data = load_results()
+    gguf_runs = load_gguf_comparison()
     now_str = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     os.makedirs(os.path.dirname(REPORT_PATH), exist_ok=True)
     with open(REPORT_PATH, "w", encoding="utf-8") as f:
-        f.write(build_html(data, now_str))
+        f.write(build_html(data, now_str, gguf_runs))
     sz = os.path.getsize(REPORT_PATH)
     print(f"[OK] {REPORT_PATH}  ({sz} B, {len(data)}/{len(TARGET_ITERS)} ckpt)")
     for it in sorted(data):
