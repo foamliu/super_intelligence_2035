@@ -9,7 +9,7 @@ PHASE:        R1581 监控轮:CPU/MEM自检PASS+scan_backlog=1(cline django-1212
 已完成:       H-B✅·Gate7/7·TB报告✅·pilot20✅·R984-R988恒0调试✅·R989 incr_eval全链✅·R997硬约束修复✅·R998-R1567 incr_eval链+内存/CPU自检+体积归档✅·R1567 cline trace归因分析✅·R1568-R1580 incr_eval链+监控轮✅·R1581 监控轮(scan_backlog=1→incr_eval cline django-12125 RESOLVED→0)✅
 当前动作:     R1581:CPU/MEM自检PASS(harness进程全低CPU/RSS·load26/224由pretrain驱动非本线·MEM avail1323GB·无失控)→scan_backlog=1(cline django-12125 patchlen=13272→incr_eval R1581 launched 17:49)→incr_eval DONE 17:50:cline django-12125 RESOLVED(329→330)→scan_backlog=0→全7路eval汇总:cline330/449·codex282/488·deepseek174/215·opencode401/500·pi333/475·claude-code273/433·hermes184/314→cline rerun[10/58]django-12262 silent-exit retry fix#3生效·3路predict alive(cline rerun·codex·deepseek428/500)→未完成指令:有(cline rerun+2路predict alive)⇒WAITING=0.
 下一步:       ①cline rerun继续([10/58]running→后续产patch即incr_eval) ②cline rerun全部完成后更新full500报告cline数字(修前326→修后新值,分列修复前/后) ③2路predict alive(codex·deepseek428/500) ④predict全完成后final full500报告 ⑤永久硬约束:禁止commit结果JSON ⑥TASK≤40KB红线
-阻塞:         无(cline rerun [10/58] running·2路predict alive·codex·deepseek428).
+阻塞:         push失败(GitHub 500 Internal Server Error·commit1ad5d2361待推·下一轮唤醒首事补推)·cline rerun[10/58]running·2路predict alive(codex·deepseek428).
 ERROR_COUNT:  0
   📦 体积：TASK=38954B(38.0KB,>32KB,3活跃块不可归档,<40KB红线OK) / MEMORY=32432B(31.7KB,本轮R1580流水归档平衡,≤32KB✅)
 ```
