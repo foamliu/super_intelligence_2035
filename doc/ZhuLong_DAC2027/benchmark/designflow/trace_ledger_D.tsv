@@ -178,3 +178,17 @@
 1793261282500_4fq1p.messages.json	t0002224	hfeg0pkn002	2310	schematic_netlist	parked		2026-11-05 03:04	doc task: same as bsjfb (intro project)
 1792560382811_jjrak.messages.json	e0032163	hfeg0pkn003	2130	analog_context	parked		2026-11-05 03:04	doc task: '详解电路原理画框架图列出模块作用', no runnable deliverable
 1793338010547_r06g9.messages.json	clarawu	hfeg0pkn002	2089	waveform	parked		2026-11-05 03:04	analysis+conditional-fix: '检查单调性,如果不单调就优化电路'; marginal/vague deliverable
+1793607437978_fzngm.messages.json	yazhuok	hfeg0pkn002	972	schematic_netlist	case	EDA-Eval-DesignFlow-NetRcPathDiff-001	2026-11-05 03:49	
+1792829965577_rser7.messages.json					parked		2026-11-05 03:49	root-cause: 'parasitics反标率低是什么原因' + SDF分析 = Q&A
+1793587429686_gxlr2.messages.json					parked		2026-11-05 03:49	skill install how-to: '帮忙装一下这个skill' + '能实现哪些功能/SOP' = Q&A
+1793706326923_qiqs7.messages.archive.json					parked		2026-11-05 03:49	wrong shard: innovus power-analysis/Redhawk (PP/PTPX), not D domain
+1793069992209_s9rzg.messages.archive.json					parked		2026-11-05 03:49	root-cause+doc: ERC丢失vdll power '分析原因' + '总结marker流程/整理markdown' = analysis/doc
+1793607563005_abdkv.messages.json					parked		2026-11-05 03:49	analysis+doc: SRAMAutoSim generate netlist slow, '排查原因+给修改计划+形成文档' = analysis/doc not produce
+1793176175395_5i5wz.messages.json					parked		2026-11-05 03:49	vam-agent skill: prof分析+cell选择+Verilog-A建模, multi-turn interactive, U#0=skill scaffold
+1793763926139_g7b4c.messages.json					parked		2026-11-05 03:49	root-cause+design-Q&A: '为什么扫mp5尺寸电流差这么多' + '尾电流管尺寸要多少' = Q&A
+1792724728950_9z6bd.messages.json					parked		2026-11-05 03:49	root-cause debug: 'netlist没有奇数ary' + '不要改东西,定位问题输出给我' = analysis-only
+1793177580229_11fst.messages.archive.json					parked		2026-11-05 03:49	analysis+how-to: SRAM SNM/RNM/WNM vs Vstep + '如何把butterfly图输出到workspace' Q&A
+1793101460874_7bqzr.messages.json					parked		2026-11-05 03:49	Q&A/inspection: spf报错/runall定时/pin对应/log是不是msaq后仿 = multi Q&A
+1793600748187_dq8bz.messages.json					parked		2026-11-05 03:49	multi-turn LVS exploration: 'run LVS + show report' across DIV_3bit/blcnand2PFx4; deliverable=report not script, multi-cell
+1793792759786_ujw1y.messages.json					parked		2026-11-05 03:49	doc+analysis: '总结电路' + '查看仿真结果给优化建议'
+1793328354943_p7jfx.messages.json					parked		2026-11-05 03:49	skill scaffold (sim-sp-gen) + '提交仿真/还是没跑出来' = skill-use, U#0=skill_instructions boilerplate
