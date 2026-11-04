@@ -102,3 +102,13 @@
 1793618961003_q11i6.messages.json	e0046913	hfeg0pkn003	874	digital	case	EDA-Eval-DesignFlow-StaFlowScaffold-001	2026-11-04 09:27	
 1793674800055_2xkge	e0046913	hfeg0pkn003	89	digital	case	EDA-Eval-DesignFlow-CombSdcGen-001	2026-11-04 10:05	
 1789895218929_1xhgy	miccao	hfeg0plg37	370	eda_other	case	EDA-Eval-DesignFlow-AutoCellTclFlow-001	2026-11-04 10:09	
+1793324309763_tzth7	e0045144	hfeg0pkn004	23	digital	deepread		2026-11-04 10:53	DC dont_use 脚本生成 A档 faithful→B档 synthesized (real lib permission-denied); deepread note trace_deepreads/tzth7_dc_dontuse_script.md; next round synthesize DcDontuseGen-001
+1793620820813_7qn0b	e0045128	hfeg0pkn005	84	verification	parked		2026-11-04 10:48	DFT env 梳理 task; real /rundata files permission-denied (not e0045128 identity); read_files tool_results empty in trace; L1-ish static parse; B档 only w/ synthesized bundle — defer
+1793587958955_0yyhj	e0046913	hfeg0pkn003	89	digital	parked		2026-11-04 10:48	USER#1='解读README/.md/LICENSE并说明.md格式'=doc-explanation Q&A, not design_flow; e0046913已有2xkge/q11i6两case
+1792118902296_4efo6	e0039102	hfeg0pkn002	567	digital	parked		2026-11-04 10:48	USER#1='帮我看下run_vsim_uvs_vps.pl文件框架'=perl-script code-comprehension Q&A, not design_flow
+1791870002859_kvv66	e0045128	hfeg0plg78	22	digital	parked		2026-11-04 10:48	pure concept Q&A (recovery-time/wireload-model/WLM原理), no artifact, not design_flow
+1793616198613_fefaj	shaoyou	NA	102	digital	parked		2026-11-04 10:48	analog/mixed or pruned-file (fefaj=NanoSpice SPICE Q&A analog; vke2w/18ry4/fg7ey=.messages.json pruned/missing; ijm3f=ADE/AMS analog per r51)
+1792495095612_vke2w	pdong	NA	691	digital	parked		2026-11-04 10:48	analog/mixed or pruned-file (fefaj=NanoSpice SPICE Q&A analog; vke2w/18ry4/fg7ey=.messages.json pruned/missing; ijm3f=ADE/AMS analog per r51)
+1793151946022_18ry4	hbpeng	NA	11	digital	parked		2026-11-04 10:48	analog/mixed or pruned-file (fefaj=NanoSpice SPICE Q&A analog; vke2w/18ry4/fg7ey=.messages.json pruned/missing; ijm3f=ADE/AMS analog per r51)
+1789697789283_fg7ey	t0002596	NA	13	digital	parked		2026-11-04 10:48	analog/mixed or pruned-file (fefaj=NanoSpice SPICE Q&A analog; vke2w/18ry4/fg7ey=.messages.json pruned/missing; ijm3f=ADE/AMS analog per r51)
+1793002542135_ijm3f	wei9liu	NA	35	digital	parked		2026-11-04 10:48	analog/mixed or pruned-file (fefaj=NanoSpice SPICE Q&A analog; vke2w/18ry4/fg7ey=.messages.json pruned/missing; ijm3f=ADE/AMS analog per r51)
