@@ -5,13 +5,13 @@ WAITING: 0
 ## 📊 进度快照
 
 ```
-PHASE:        R1581 监控轮:CPU/MEM自检PASS+scan_backlog=1(cline django-12125 patchlen=13272→incr_eval R1581 RESOLVED 329→330)+scan_backlog=0+全7路eval汇总+cline rerun[10/58]django-12262 silent-exit retry fix#3生效·3路predict alive(cline rerun·codex·deepseek428)·cline330/449
-已完成:       H-B✅·Gate7/7·TB报告✅·pilot20✅·R984-R988恒0调试✅·R989 incr_eval全链✅·R997硬约束修复✅·R998-R1567 incr_eval链+内存/CPU自检+体积归档✅·R1567 cline trace归因分析✅·R1568-R1580 incr_eval链+监控轮✅·R1581 监控轮(scan_backlog=1→incr_eval cline django-12125 RESOLVED→0)✅
-当前动作:     R1581:CPU/MEM自检PASS(harness进程全低CPU/RSS·load26/224由pretrain驱动非本线·MEM avail1323GB·无失控)→scan_backlog=1(cline django-12125 patchlen=13272→incr_eval R1581 launched 17:49)→incr_eval DONE 17:50:cline django-12125 RESOLVED(329→330)→scan_backlog=0→全7路eval汇总:cline330/449·codex282/488·deepseek174/215·opencode401/500·pi333/475·claude-code273/433·hermes184/314→cline rerun[10/58]django-12262 silent-exit retry fix#3生效·3路predict alive(cline rerun·codex·deepseek428/500)→未完成指令:有(cline rerun+2路predict alive)⇒WAITING=0.
-下一步:       ①cline rerun继续([10/58]running→后续产patch即incr_eval) ②cline rerun全部完成后更新full500报告cline数字(修前326→修后新值,分列修复前/后) ③2路predict alive(codex·deepseek428/500) ④predict全完成后final full500报告 ⑤永久硬约束:禁止commit结果JSON ⑥TASK≤40KB红线
-阻塞:         无(push成功·commit1ad5d2361已在origin/main·GitHub500仅响应层错误数据已传)·cline rerun[10/58]running·2路predict alive(codex·deepseek428).
+PHASE:        R1582 incr_eval轮:CPU/MEM自检PASS+scan_backlog=1(cline django-12262 patchlen=5298=Fix#3 retry救援→incr_eval R1582 RESOLVED 330→331)+scan_backlog=0+全7路eval汇总+report regen(331)+cline rerun[10/58 done·11/58 running django-12663]·3路predict alive(cline rerun·codex·deepseek428)·cline331/451
+已完成:       H-B✅·Gate7/7·TB报告✅·pilot20✅·R984-R988恒0调试✅·R989 incr_eval全链✅·R997硬约束修复✅·R998-R1567 incr_eval链+内存/CPU自检+体积归档✅·R1567 cline trace归因分析✅·R1568-R1581 incr_eval链+监控轮✅·R1582 incr_eval轮(scan_backlog=1→incr_eval cline django-12262 RESOLVED→0+report regen)✅
+当前动作:     R1582:CPU/MEM自检PASS(load23.7/224由pretrain驱动非本线·MEM avail1.3TB·无失控·cline hub daemon22%cpu/4.6GB正常)→验证3fix全在代码(run_single.py:42 gw_proxy+run_single.py:95-96 stdout透传+run_verified_full.py:194-197 silent-exit retry)→scan_backlog=1(cline django-12262 patchlen=5298=Fix#3 retry救援case)→incr_eval R1582 launched 18:05→DONE 18:06:cline django-12262 RESOLVED(330→331)→scan_backlog=0→全7路eval汇总:cline331/451(73.6%)·codex282/488(57.8%)·deepseek174/215(80.9%)·opencode401/500(80.2%)·pi333/475(70.1%)·claude-code273/433(63.1%)·hermes184/314(58.6%)→report regen(17107B,cline331)→cline rerun[10/58 done·11/58 running django-12663]·3路predict alive(cline rerun·codex·deepseek428/500)→未完成指令:有(cline rerun 48题未完成+2路predict alive)⇒WAITING=0.
+下一步:       ①cline rerun继续([11/58]running django-12663→后续产patch即incr_eval) ②cline rerun全部完成后更新full500报告cline数字(修前326→修后新值,分列修复前/后) ③2路predict alive(codex·deepseek428/500) ④predict全完成后final full500报告 ⑤永久硬约束:禁止commit结果JSON ⑥TASK≤40KB红线
+阻塞:         无·cline rerun[11/58]running·2路predict alive(codex·deepseek428).
 ERROR_COUNT:  0
-  📦 体积：TASK=38954B(38.0KB,>32KB,3活跃块不可归档,<40KB红线OK) / MEMORY=32432B(31.7KB,本轮R1580流水归档平衡,≤32KB✅)
+  📦 体积：TASK=38954B(38.0KB,>32KB,3活跃块不可归档,<40KB红线OK) / MEMORY=32523B(31.7KB,≤32KB✅)
 ```
 
 > 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
@@ -19,7 +19,9 @@ ERROR_COUNT:  0
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 
 ### 本唤醒流水
-[17:46→17:51] R1581 监控轮:CPU/MEM自检PASS(load26/224由pretrain驱动非本线·MEM avail1323GB·无失控)→scan_backlog=1(cline django-12125 patchlen=13272→incr_eval R1581 launched 17:49)→incr_eval DONE 17:50:cline django-12125 RESOLVED(329→330)→scan_backlog=0→全7路eval汇总:cline330/449(73.5%)·codex282/488(57.8%)·deepseek174/215(80.9%)·opencode401/500(80.2%)·pi333/475(70.1%)·claude-code273/433(63.1%)·hermes184/314(58.6%)→cline rerun[10/58]django-12262 silent-exit retry fix#3生效(2.9s rc=0 patch=0→retry)·3路predict alive(cline rerun·codex·deepseek428/500)→未完成指令:有⇒WAITING=0.
+[18:02→18:06] R1582 incr_eval轮:CPU/MEM自检PASS(load23.7/224由pretrain驱动非本线·MEM avail1.3TB·无失控)→验证3fix全在代码(run_single.py:42 gw_proxy+run_single.py:95-96 stdout透传+run_verified_full.py:194-197 silent-exit retry)→scan_backlog=1(cline django-12262 patchlen=5298=Fix#3 retry救援case)→incr_eval R1582 launched 18:05→DONE 18:06:cline django-12262 RESOLVED(330→331)→scan_backlog=0→全7路eval汇总:cline331/451(73.6%)·codex282/488(57.8%)·deepseek174/215(80.9%)·opencode401/500(80.2%)·pi333/475(70.1%)·claude-code273/433(63.1%)·hermes184/314(58.6%)→report regen(17107B,cline331)→cline rerun[10/58 done·11/58 running django-12663]·3路predict alive→未完成指令:有(cline rerun 48题未完成+2路predict alive)⇒WAITING=0.
+> 📦 R1581 流水(17:46→17:51,监控轮:CPU/MEM PASS+scan_backlog=1→incr_eval cline django-12125 RESOLVED 329→330+全7路eval汇总+cline rerun[10/58]django-12262 silent-exit retry fix#3生效)已归档 → daily-memories-harness/2026-11-04.md。结论：cline+1 RESOLVED(329→330)·Fix#3 retry首次实战生效(django-12262 2.9s silent exit→retry→5298B patch)。需要时再读。
+
 > 📦 R1580 流水(17:25→17:38,监控轮:CPU/MEM PASS+scan_backlog=1→incr_eval deepseek matplotlib-24637 RESOLVED 173→174+全7路eval汇总+cline rerun[9/58])已归档 → daily-memories-harness/2026-11-04.md。结论：deepseek+1 RESOLVED·cline rerun 9/58·修前326→修后329。需要时再读。
 > 📦 R1579-R1577 流水(17:05~17:20,3轮监控轮:CPU/MEM PASS+scan_backlog=0+全7路eval汇总+cline rerun推进)已归档 → daily-memories-harness/2026-11-04.md。结论：监控轮正常·cline rerun 9/58·修前326→修后329=+3。需要时再读。
 > 📦 R1576 流水(16:38→16:49,incr_eval轮:cline django-11276+11551双RESOLVED 327→329·deepseek 3backlog 1FAILED+2INFRA)已归档 → daily-memories-harness/2026-11-04.md。结论：cline +2 RESOLVED(328→329)·deepseek infra+2。需要时再读。
