@@ -1,6 +1,6 @@
 # MEMORY_DATA.md — BaiZe 正式训练数据准备 · 运行时状态
 
-WAITING: 1
+WAITING: 0
 
 > ⚠️ **`WAITING` 只认本文件顶部这一行**（`baize_data_loop.sh` 用 `^WAITING:[[:space:]]*1` 匹配）。
 > **不要在正文/流水里再写任何以 `WAITING:` 开头的行**——否则会误触发 30 分钟长睡。
@@ -18,13 +18,13 @@ WAITING: 1
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        🟢运维令11-04 09:4x报告已交付✅ + 09:2x长上下文10/10源全部落地✅(下载FINISH 12:46) → 全部活跃令完成,WAITING置回1
-已完成:       ✅85M下载正式翻转✅已完成;✅运维令10-31长上下文+agentic调研报告v6已交付;✅运维令09:4x推理+代码SFT调研报告已交付(report_data_reasoning_code_sft_survey_zh.html,77772B/75.9KB,0 script/0外链,7节齐全,幂等✓,commit 1aa9adee8已push);✅运维令09:2x长上下文10/10源全部落地(.12公开9源+.29 gated 1源,合计12283files/267,857,178,451B=249.48GiB,0 incomplete,launch日志FINISH 12:46:07);✅DATA_MAPPING.md新增E节长上下文下载登记(10源逐条du -sb实测,durable TSV=longctx_download_status_20261104.tsv)
-当前动作:     唤醒1183(2026-11-04 12:55):09:2x下载收尾确认→launch日志====longctx download FINISH 12:46:07====,10/10源全OK/0inc(mix-ctx-128k✅34.85GiB/690files/0inc,最后一源已落地,无hf进程残留);DATA_MAPPING.md新增E节(10源主表+合计249.48GiB+核对式+pg19/oellm注意事项)+durable TSV longctx_download_status_20261104.tsv;09:4x报告复核PASS(77772B/0script/标签配平/幂等✓,前轮已验证);WAITING置回1(全部活跃令完成);TASK=30.6KB/MEMORY=26.7KB(均<40KB无需归档)
-下一步:       下轮唤醒(待运维新指令):①pg19数据体补齐(找parquet镜像或load_dataset脚本拉取,待运维批准);②长上下文源分词入tokenized/镜像(oellm pilot-v1已分词可直接用);③分词后回写DATA_MAPPING.md A节、E节状态翻「已分词」;④无活跃下载/调研任务,静默巡检即可
-阻塞:         无(全部活跃令已完成,无下载在跑,不占GPU;pg19数据体为后续动作待运维批准,非阻塞)
+PHASE:        🟡运维令13:2x#1 B类下载5/12完成(进行中) + 13:2x#2 RL+数学调研报告✅已交付 → WAITING=0(下载未完成)
+已完成:       ✅85M;✅10-31长上下文+agentic报告;✅09:4x推理+代码SFT报告(77772B);✅09:2x长上下文10/10落地(249.48GiB);✅13:2x#2 RL+数学+agentic RL调研报告已交付(report_data_rl_math_survey_zh.html,37946B/37.1KB,0 script/0外链,7节齐全,幂等✓,20公开+14个401,实测字节数,commit data survey:);✅13:2x#1 B类下载5/12落地(SWE-smith✅0.26G+Nemotron-Terminal✅7.64G+SWE-rebench✅0.23G+to-tool-call✅2.19G+toolbench-v1✅0.50G=合计10.82GiB/0inc,AgentTrove🟡下载中)
+当前动作:     唤醒1184(2026-11-04 13:50):运维令13:2x双令执行→①#2 RL调研报告:HF API+Tree API经代理实测20个公开数据集(OpenR1-Math-220k 11.78G/OpenMathReasoning 46.12G/OpenCodeReasoning 9.06G/OpenMathInstruct-2 11.76G等)+14个401→gen_rl_math_survey_report.py(幂等506行)→report_data_rl_math_survey_zh.html(37946B/37.1KB/0script/标签配平✓/7节sec1-7齐/MD5幂等✓);②#1 B类下载:download_bclass_datasets.sh(setsid后台/nice-n10/max-workers4/HF_HUB_ENABLE_HF_TRANSFER=0/proxy)→5/12 OK(0inc),AgentTrove(P2)下载中,余6源排队;③hf_api_fetch.py自建脚本(HF API批量请求)
+下一步:       下轮唤醒:①监控B类下载剩余7源(AgentTrove/Orchard/Nemotron-Cascade-RL-SWE/Nemotron-Cascade-SFT-SWE/SWE-smith-trajectories/terminal-cmd-exec-sft/terminal-bench)→全部落地后写DATA_MAPPING.md F节+校验;②下载完成后commit data 下载:;③WAITING置回1
+阻塞:         无(B类下载后台进行中不占GPU,RL报告已交付;剩余下载源均为公开non-gated)
 ERROR_COUNT:  11
-未完成指令:   无(09:4x报告✅+09:2x下载10/10✅+09:1x 85M✅+10-31报告✅全部完成;pg19数据体为后续待批事项非活跃指令)
+未完成指令:   有(13:2x#1 B类下载5/12完成,7源下载中→WAITING=0)
 ```
 
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。
