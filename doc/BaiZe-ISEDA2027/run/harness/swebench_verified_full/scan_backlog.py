@@ -24,11 +24,20 @@ for h in harnesses:
         patch = d.get('model_patch', '') or d.get('patch', '')
         if not patch or patch.strip() == '':
             continue  # empty patch, skip
-        # check if eval report exists
+        # check if eval report exists — dual-path (swebench v5.0.2 writes to
+        # logs/evaluation/{run_id}/, older full evals wrote to logs/run_evaluation/{run_id}/)
         found = False
-        for ed in glob.glob(f'{eval_base}/verified_full_{h}/*/{inst_id}/report.json'):
-            found = True
-            break
+        for base in ('logs/evaluation', 'logs/run_evaluation'):
+            for ed in glob.glob(f'{base}/verified_full_{h}*/{h}-kimi-k2.6-cloud/{inst_id}/report.json'):
+                found = True
+                break
+            # also match model_dir variants (e.g. cline-kimi-k2.6-cloud)
+            if not found:
+                for ed in glob.glob(f'{base}/verified_full_{h}*/*/{inst_id}/report.json'):
+                    found = True
+                    break
+            if found:
+                break
         if not found:
             backlog.append((h, inst_id, len(patch)))
 

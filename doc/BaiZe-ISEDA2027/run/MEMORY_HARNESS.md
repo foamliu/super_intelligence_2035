@@ -5,13 +5,13 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        R1641 incr_eval轮:CPU/MEM自检PASS→backlog_scan=1(deepseek pylint-6903)→docker eval→pylint-6903 RESOLVED(deepseek 200→201)→修正parse路径bug(logs/evaluation fallback)→report regen(17135B)→backlog=0全7路✅·deepseek predict alive(260/500文件,480/500 attempted)
-已完成:       H-B✅·Gate7/7·TB报告✅·pilot20✅·R984-R988恒0调试✅·R989 incr_eval全链✅·R997硬约束修复✅·R1567 cline trace归因✅·R1569 cline适配器修复✅·R1633 cline rerun 58/58终交付✅(356/500=71.3%)·R1634 13:5x复核+归档✅·R1635-R1641 deepseek incr_eval渐进✅(196→201,backlog=0)
-当前动作:     R1641:CPU/MEM自检PASS(load28/224~13%·avail1298GB·无>8000%CPU·top=cline hub23%·无需kill·docker prune回收287MB)→backlog_scan=1(deepseek pylint-6903 plen2935)→incr_eval docker eval(pylint-6903)→首次parse误判INFRA(logs/run_evaluation路径缺,实际report在logs/evaluation/)→修正eval_json(pylint-6903 infra→resolved)→deepseek 200→201(+1)→patch incr_eval脚本双路径fallback→report regen(17135B,10:56)→backlog复扫=0全7路→deepseek predict alive(260/500文件,480/500 attempted,pylint-7277在跑since~10:46)·未完成指令:无⇒WAITING=1.
-下一步:       ①deepseek predict alive(260/500文件,480/500 attempted·pylint-7277在跑)→新预测落盘后incr_eval→regen report ②full500指令(10-28)deepseek尚在跑(20题未attempted),其余6路已交付 ③永久硬约束:禁止commit结果JSON ④下次唤醒CPU/MEM自检+deepseek backlog eval
-阻塞:         无·deepseek predict alive(260/500文件,480/500 attempted·pylint-7277在跑)·backlog=0全7路.
+PHASE:        R1642 incr_eval轮:CPU/MEM自检PASS→fix scan_backlog双路径(logs/evaluation+logs/run_evaluation)→backlog_scan=2(deepseek pylint-7277+pytest-10051)→incr_eval:pylint-7277 RESOLVED(201→202)+pytest-10051 FAILED→report regen(17137B)→backlog=0全7路✅·deepseek predict alive(261/500文件,pytest-10081在跑)
+已完成:       H-B✅·Gate7/7·TB报告✅·pilot20✅·R984-R988恒0调试✅·R989 incr_eval全链✅·R997硬约束修复✅·R1567 cline trace归因✅·R1569 cline适配器修复✅·R1633 cline rerun 58/58终交付✅(356/500=71.3%)·R1634 13:5x复核+归档✅·R1635-R1642 deepseek incr_eval渐进✅(196→202,backlog=0)
+当前动作:     R1642:CPU/MEM自检PASS(load29/224~13%·avail1298GB·无>8000%CPU·top=llama 467%S1训练·无需kill)→fix scan_backlog.py双路径(pylint-6903 false-positive消除)→backlog_scan=2(deepseek pylint-7277 plen2228+pytest-10051 plen435)→incr_eval_R1642 setsid docker eval:pylint-7277 RESOLVED(54s,deepseek 201→202)+pytest-10051 FAILED(29s,failed 53→54 no_patch 6→5)→report regen(17137B)→backlog复扫=0全7路→deepseek predict alive(261/500文件,pytest-10081在跑)·未完成指令:无⇒WAITING=1.
+下一步:       ①deepseek predict alive(261/500文件,pytest-10081在跑)→新预测落盘后incr_eval→regen report ②full500指令(10-28)deepseek尚在跑(~19题未attempted),其余6路已交付 ③永久硬约束:禁止commit结果JSON ④下次唤醒CPU/MEM自检+deepseek backlog eval
+阻塞:         无·deepseek predict alive(261/500文件,pytest-10081在跑)·backlog=0全7路.
 ERROR_COUNT:  0
-  📦 体积：TASK=36821B(35.9KB,<40KB红线OK) / MEMORY≈31.4KB(<32KB软限OK)·本轮归档R1640流水→daily
+  📦 体积：TASK=36821B(35.9KB,<40KB红线OK) / MEMORY≈31.9KB(<32KB软限OK)·本轮归档R1641流水→daily
 
 ```
 
@@ -20,7 +20,8 @@ ERROR_COUNT:  0
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 
 ### 本唤醒流水
-[10:56] R1641 incr_eval轮:CPU/MEM自检PASS(load28/224~13%·avail1298GB·无>8000%CPU·top=cline hub23%·docker prune回收287MB)→backlog_scan=1(deepseek pylint-6903 plen2935)→incr_eval docker eval(pylint-6903)→parse误判INFRA(logs/run_evaluation无report,实际在logs/evaluation/)→修正eval_json(pylint-6903 infra→resolved)→deepseek 200→201(+1 RESOLVED)→patch incr_eval脚本双路径fallback→report regen(17135B,10:56)→backlog复扫=0全7路→deepseek predict alive(260/500文件,480/500 attempted,pylint-7277在跑)·未完成指令:无⇒WAITING=1.
+[11:50] R1642 incr_eval轮:CPU/MEM自检PASS(load29/224~13%·avail1298GB·无>8000%CPU·top=llama 467%S1训练·无需kill)→fix scan_backlog.py双路径(logs/evaluation+logs/run_evaluation,pylint-6903 false-positive消除)→backlog_scan=2(deepseek pylint-7277 plen2228+pytest-10051 plen435)→incr_eval_R1642 setsid docker eval:pylint-7277 RESOLVED(54s,deepseek 201→202)+incr_eval_R1642b pytest-10051 FAILED(29s,failed 53→54 no_patch 6→5)→report regen(17137B)→backlog复扫=0全7路→deepseek predict alive(261/500文件,pytest-10081在跑)·未完成指令:无⇒WAITING=1.
+> 📦 R1641 流水(10:56,incr_eval轮:pylint-6903 RESOLVED 200→201+fix parse路径bug双路径fallback+report regen)已归档 → daily-memories-harness/2026-11-05.md。结论：deepseek+1 RESOLVED·backlog=0。需要时再读。
 > 📦 R1640 流水(10:09,incr_eval轮:2backlog 2/2 FAILED 200不变+report regen)已归档 → daily-memories-harness/2026-11-05.md。结论：deepseek 200不变·backlog=0。需要时再读。
 > 📦 R1639 流水(09:27,quiet监控轮:CPU/MEM自检PASS+backlog=0+report UNCHANGED+deepseek 258/500)已归档 → daily-memories-harness/2026-11-05.md。结论：deepseek 200不变·backlog=0。需要时再读。
 > 📦 R1638 流水(08:45,incr_eval轮:4backlog 3 FAILED+1复扫FAILED 200不变+report regen)已归档 → daily-memories-harness/2026-11-05.md。结论：deepseek 200不变·backlog=0。需要时再读。
@@ -30,9 +31,7 @@ ERROR_COUNT:  0
 > 📦 R1634 流水(05:59,13:5x复核+归档闭环轮:验证13:5x三方一致+归档13:5x块)已归档 → daily-memories-harness/2026-11-05.md。结论：13:5x已交付+归档·deepseek predict alive。需要时再读。
 > 📦 R1633 流水(05:10,cline rerun 58/58终交付轮:cline356/500=71.3%修复后·+6.1pp·13:5x全交付)已归档 → daily-memories-harness/2026-11-05.md。结论：cline rerun终交付·deepseek 248/500。需要时再读。
 > 📦 R1632 流水(05:01,quiet监控轮:scan_backlog=0+report UNCHANGED+归档13:1x块→ARCHIVE)已归档 → daily-memories-harness/2026-11-05.md。结论：cline rerun 1/58 left·归档13:1x。需要时再读。
-> 📦 R1631 流水(04:49,修复交付轮:cline sympy-20801 RESOLVED 355→356·deepseek xarray-4695 RESOLVED 195→196·cline sympy-21596 FAILED·report 修复后356/498=71.5% +30·harness 修复:commit)已归档 → daily-memories-harness/2026-11-05.md。结论：cline适配器修复交付·rerun57/58。需要时再读。
-> 📦 R1630 流水(04:31,incr_eval轮:cline sympy-20438 FAILED 355不变+report regen)已归档 → daily-memories-harness/2026-11-05.md。结论：cline355·2路predict alive。需要时再读。
-> 📦 R1629 流水(04:20,incr_eval轮:cline sympy-19783 RESOLVED 354→355+report regen)已归档 → daily-memories-harness/2026-11-05.md。结论：cline355·2路predict alive。需要时再读。
+
 > 📦 R1628 流水(04:13,incr_eval轮:2backlog(cline sympy-19040 RESOLVED 354·deepseek xarray-4687 FAILED)+report regen)已归档 → daily-memories-harness/2026-11-05.md。结论：cline354·deepseek195·3路predict alive。需要时再读。
 > 📦 R1627 流水(04:01,quiet监控轮:regen all7全UNCHANGED·scan_backlog=0·report regen·3路predict alive)已归档 → daily-memories-harness/2026-11-05.md。结论：cline353·codex291·deepseek195·3路predict alive。需要时再读。
 > 📦 R1626 流水(03:54,quiet监控轮:regen all7 deepseek WROTE·scan_backlog=0·report regen·3路predict alive)已归档 → daily-memories-harness/2026-11-05.md。结论：cline353·deepseek195·3路predict alive。需要时再读。
