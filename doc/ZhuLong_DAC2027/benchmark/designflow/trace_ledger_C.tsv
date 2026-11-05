@@ -286,3 +286,6 @@
 1792827081154_d810y	jackjia	hfeg0plg78	274	layout_virtuoso	parked		2026-11-06 06:29	mixed schematic/waveform-sim Q&A (finesim/primesim/wv FSDB/verdi), not physical_layout domain; tools matched but content is sim+waveform viewing
 1792206946923_goqly	xinqiaoz	hfeg0pkn004	244	physical_verify	case	EDA-Eval-DesignFlow-DummyBorderRcaGen-001	2026-11-06 06:45	
 1783419740690_q3ks5	e0014566	hfeg0pkn001	190	physical_verify	case	EDA-Eval-DesignFlow-VcoChainFixGen-001	2026-11-06 07:11	
+1792042618272_wl9i4	xingx	hfeg0pkn002	290	pg_layout	parked		2026-11-06 07:34	netlist/verilog compile-opt (digital sim), not physical_layout; wrong shard
+1791523473684_8xpyo	t0002962	hfeg0pkn003	124	layout_aether	parked		2026-11-06 07:41	policy/perm struggle, script never executed; poor gold; r159 pivot to ezvmp
+1792651442338_ezvmp	laryu	hfeg0plg76	49	physical_verify	case	EDA-Eval-DesignFlow-SvrfRuleExplain-001	2026-11-06 07:50	
