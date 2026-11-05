@@ -2,6 +2,9 @@
 
 WAITING: 1
 
+> 🆕 **【空唤醒 · wake #608 · 2026-11-05 17:09】** 无新运维令。用户在终端粘贴 BAIZE_VISION_TASK.md 全文并选择「以 vision agent 身份执行收尾铁律」。git fetch→origin/main 0ahead/0behind（已同步，HEAD=f052c0c39 designflow 17:08；origin 新提交 16:38~17:08 均来自 designflow/pretrain/data 等线，无 vision 新令；自 #607 16:38 起无 vision 新令）。所有运维令标[已完成]/[已归档]。📦 体积：TASK=27230B / MEMORY=27601B（均≤32KB✓；🆕条目19+新增#608=20，贴~20 软指引上限，暂不滚动归档）。进程 baize_vision_loop.sh PID 669545 alive（etimes≈634k）；cline in PATH（/home/app.e0031982/.bun/bin/cline）✓。工作副本改动均为别线文件（BaiZe-ISEDA2027 .tex 4件 + ZhuLong benchmark report/MEMORY + 多个别线未跟踪脚本/目录如 ocr_samples/1049/3147/5245/7343/9441 + cjk_test.* + baize_p8_*.sh + debug_*.py），vision 文件无在途改动，未触碰别线。写心跳+日流水+commit+push（一律 `git commit -m '...' -- <明确文件路径>`，吸取#562裸commit卷入别线文件教训）。**未完成指令：无** ⇒ **WAITING: 1**。
+
+
 > 🆕 **【空唤醒 · wake #607 · 2026-11-05 16:35】** 无新运维令。用户在终端粘贴 BAIZE_VISION_TASK.md 全文并选择「以 vision agent 身份执行收尾铁律」。git fetch→origin/main 0ahead/0behind（已同步，HEAD=452d2b445 designflow 16:33；origin 新提交 16:32~16:33 均来自 designflow 等线，无 vision 新令；自 #606 15:58 起无 vision 新令）。所有运维令标[已完成]/[已归档]。📦 体积：TASK=27230B / MEMORY=26419B（均≤32KB✓；🆕条目18+新增#607=19，在~20 软指引内，无需滚动归档）。进程 baize_vision_loop.sh PID 669545 alive（etimes≈631k）；cline in PATH（/home/app.e0031982/.bun/bin/cline）✓。工作副本改动均为别线文件（MEMORY_DATA.md/MEMORY_PRETRAIN_2B.md/daily-memories-data/daily-memories + ZhuLong benchmark report + 多个别线未跟踪脚本/目录如 ocr_samples/1049/3147/5245/7343/9441 + cjk_test.* + baize_p8_*.sh），vision 文件无在途改动，未触碰别线。写心跳+日流水+commit+push（一律 `git commit -m '...' -- <明确文件路径>`，吸取#562裸commit卷入别线文件教训）。**未完成指令：无** ⇒ **WAITING: 1**。
 
 
@@ -106,4 +109,4 @@ WAITING: 1
 | 当前动作 | 空唤醒·心跳维护·等待新运维令 |
 | 下一步 | 等待运维新令（vision 文件无在途改动） |
 | 阻塞 | 无 |
-| 更新 | **2026-11-05 14:19 (wake #604)**: 空唤醒·无新令·心跳维护·git 0ahead/0behind(HEAD=79ad059c5 pretrain 14:15)·体积TASK27KB/MEMORY≈28.6KB均≤32KB·🆕条目5·WAITING=1 |
+| 更新 | **2026-11-05 17:09 (wake #608)**: 空唤醒·无新令·心跳维护·git 0ahead/0behind(HEAD=f052c0c39 designflow 17:08)·体积TASK27.2KB/MEMORY≈27.6KB均≤32KB·🆕条目20·WAITING=1 |
