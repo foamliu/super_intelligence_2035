@@ -31,6 +31,28 @@
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### [运维令] 2026-11-05 09:0x（**llama.cpp 评测全部 checkpoint 常识推理 8 集 + 能力曲线 + 700k 预测 + 中文 HTML 报告**）· 用户直令 · 最高优先
+
+> 用户原话（2026-11-05）：「请 pretrain 用 llama.cpp 评测所有检查点（尝试推理 8 集），编写表格，绘制随着训练常识推理能力上升曲线，预测 700k 训练完时常识推理水平，输出中文 HTML 报告。」
+
+**① 背景与前置（已就绪，直接复用）**：
+- llama.cpp 修复分支 `fix/nemotron-h-undo-permute-and-rope`（build 5dc38db00，含 RoPE+FFN 修复，logits 已对齐 Δmax=0.006；编译产物 `build/bin/llama-server` 在位）。
+- **8 集常识推理**（zero-shot，与 P-6 同口径）：`arc_challenge,arc_easy,boolq,hellaswag,openbookqa,piqa,sciq,winogrande`。
+- HF 导出已就绪：`nemo_experiments/baize2b/hf_iter_{10000,20000,30000,40000,50000}`（另 2000/18000 可选）。
+- 已知坑（如实处理，勿掩盖）：iter_20000/40000/50000 之前 HF 侧 sciq=0 判为 **checkpoint 权重含 NaN**（FP8 间歇溢出，非评测后端问题）；llama.cpp 修复后重评需复核这三个 ckpt 是否仍退化，退化则单列并归因「ckpt NaN」而非模型能力。
+
+**② 本轮必做**：
+1. **转 GGUF + 量化**：5 个 ckpt（10000/20000/30000/40000/50000）`hf_iter_*` → GGUF（Q4_K_M 或 Q8_0，未修复的 fp16 亦可，速度足够）。用已修复分支重编译的 `llama-quantize`。
+2. **8 集评测**：`llama-server`（build 5dc38db00，`-t 8`）起服 → lm_eval `--model gguf` / `local-completions`（优先走已打通的 llh 打分路径）逐 ckpt 跑 8 集 zero-shot。若某集 limit 需控时长，可用 `--limit 100` 并注记（与 HF 同口径可比即可）。
+3. **出表格**：5 ckpt × 8 集分数 + Avg（逐集 + 均值），标注各 ckpt 的 iter / 已训 token（iter×4.194M token）。
+4. **能力-vs-step 曲线**：x=iter（log），y=8 集 Avg（+可选逐集细线），叠加 P-6 起点 0.4395@20k/655M 与 Xmodel-2/Phi-1.5 等参照线。
+5. **700k 预测**：对 Avg 拟合幂律 `acc=a-b·N^{-c}` 或对数 `acc=a+b·log10(N)`，报 R²，外推 700k 步（=2.94T token）时的常识 avg，报告外推不确定度（仅 5 点、且处于陡升段，误差大须明示）。
+6. **中文 HTML 报告**：`reports/report_pretrain_llamacpp_scaling_zh.html`（0 script/0 外链，含表格+曲线+700k 预测+结论）。
+
+**③ 交付**：① 5×8 集汇总表 ② 能力-vs-step 曲线（svg 内联）③ 700k 外推结论 + R² + 不确定度 ④ 报告 + 生成器脚本 ⑤ 数据落盘 `nemo_experiments/baize2b/lm_eval_results/gguf_*/`。
+
+**④ 纪律**：🚫 不碰 GPU（`CUDA_VISIBLE_DEVICES=""`）；🚫 不影响 S1（`-t 8`、`nice -n 19`、两机 CPU ≤80%）；🚫 禁止 `pkill python`/宽泛 kill；不碰 vision/data/harness；commit `pretrain eval:`；心跳写 `未完成指令：有` ⇒ `WAITING: 0` 直到报告交付。
+
 ### [运维令] 2026-11-04 22:1x（**llama.cpp 调试「每环节必须落盘」+ 清理残留**）· 用户直令 · 最高优先
 
 > 用户原话（2026-11-04 22:1x）：「给 pretrain 下『每环节必须落盘 + 清理残留』的指令。」
