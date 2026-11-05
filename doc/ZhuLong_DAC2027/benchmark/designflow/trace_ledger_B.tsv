@@ -137,3 +137,7 @@ ztoza					parked		2026-11-05 02:24	scout_1105: false-positive/non-spice/explain-
 1791956581291_28kiv					parked		2026-11-05 11:34	trivial file open inputpin.sp + copy to copy.sp, not spice char
 1792031615605_mf0l3					parked		2026-11-05 11:34	sim status monitor (check if exited) + PVT corner list expansion (text gen), not char
 1793244287787_11tjs	stephens	hfeg0pkn002	139	spice_sim	case	EDA-Eval-DesignFlow-VmMhlAlterStats-001	2026-11-05 12:02	
+9ryp9.messages.json	haoyut	hfeg0plg49	286	spice_sim	parked		2026-11-05 12:30	netlist/pyAether dominant (netlist:598,schematic:207,pyAether:174,hspice:15) — netlist+virtuoso work like parked 82ybr, not clean spice_char; haoyut user profile = PIM/netlist not spice
+j4pvk.messages.json	crystalh	hfeg0plg96	272	characterization	parked		2026-11-05 12:30	user prompt=分析RdLatencyCmd cell功能 (cell-function read/explain, schematic:1072 dominant, spectre:26 incidental) — 纯read/explain非sim交付, not spice_char
+4n3ry.messages.json	e04201	hfeg0plg18	263	spice_sim	parked		2026-11-05 12:30	netlist:812+schematic:586 dominant, spectre:1 hspice:1 — netlist/schematic build, near-zero spice, not spice_char
+vbxlf.messages.json	jason17w	hfeg0pnd002	262	spice_sim	parked		2026-11-05 12:30	netlist:948 hspice:8 — netlist-generation task, hspice incidental (deck gen not sim/char), not spice_char
