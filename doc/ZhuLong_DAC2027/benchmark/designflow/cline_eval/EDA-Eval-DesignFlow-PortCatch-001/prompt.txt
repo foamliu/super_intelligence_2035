@@ -1,0 +1,30 @@
+从网表中的一个实例化层级结构，抓取该实例的所有端口和连接的连线，并通过连线关系得到这个实例的输入/输出端口链接到的其它实例。
+
+用户原话（逐字，A 档 faithful，trace 1792136569651_4a8f9 / chengk @ hfeg0plg74，用户轮 #0）：
+「参考路径 /home/chengk/work/code/wv_trig/port_catch/code/ 下的代码，希望实现以下功能，输入网表中的一个实例化的层级结构，能够用 cck 的 api 实现抓取这个实例化的所有端口和连接的连线，通过连线关系得到这个实例的输入和输出端口链接到的实例，示例网表的位置在 /home/chengk/work/code/wv_trig/port_catch/data/nand2_CPSel.netlist」
+
+== 任务背景 ==
+现场工程师在做波形触发（wv_trig）调试时，需要给定一个 SPICE/CDL 网表 + 一个实例的层级路径，快速看清这个实例「连了哪些线、每根线另一头接的是哪个实例的哪个端口」。原工程用 Cadence cck Tcl API（cckSearchInst / cckGetInstTerminalNode / cckGetSubcktPortNames 等）实现；本任务要求用纯 Python（标准库）实现一个等价的「网表实例端口-连线-邻居抓取器」，不依赖 cck / 任何 EDA 工具 license。
+
+== 交付物 ==
+`outputs/submit.zip`，内含两件：
+1. `port_catch.py` —— 通用 CDL/SPICE 网表实例端口连通性抓取器，纯标准库实现，命令行接口：
+   `python3 port_catch.py <netlist> <inst_fullpath> [-o out.json]`
+   行为：
+   - 解析网表里的 `.SUBCKT <name> <ports...>` 定义、`*.PININFO port:I/O/B` 端口方向、`X<name> nets... / <master>` 子电路实例、`M<name> drain gate source bulk model` MOS 实例、`R/C/V/I <name> n1 n2 ...` 两端器件；忽略 `*` 注释行、`.include`/`.lib` 等非拓扑指令（注意 CDL 习惯把 `.PININFO` 写成 `*.PININFO`，需识别这种星号前缀的点指令）。
+   - 按层级路径 `<top>.<inst>.<inst>...` 定位目标实例（必须是子电路实例 X*，不是 MOS/RC 原件）。
+   - 输出该实例主（master）子电路的端口清单：每个端口给出
+        · `name`       端口名
+        · `direction`  由 `.PININFO` 声明的方向（I->input / O->output / B->bidir）
+        · `net`        该端口在父层级实际连接的连线名（按实例行的位置对应到 master 端口）
+        · `neighbors`  在同一父层级里、连到同一根 net 的**其它**实例（排除目标自身），每条给 `{inst, terminal, master}`（terminal = 邻居实例的哪个端口/端子接到这根 net；MOS 用 D/G/S/B，两端器件用 P/N，子电路实例用其 master 端口名）。
+   - 输出 JSON 到 `-o` 指定文件（或 stdout），结构：
+        `{"instance": <fullpath>, "master": <master_subckt>, "ports": [{name, direction, net, neighbors:[{inst,terminal,master}]...}]...}`
+   - 程序必须是通用的：不得硬编码任何具体网表里的 cell/实例/连线名。
+2. `report_A.json` —— 用你的 `port_catch.py` 对可见 A 网表 `nand2_CPSel_A.netlist`、目标实例 `nand2_CPSel.XI1` 跑出的结果。
+
+== 可见输入 (A) ==
+- `assets/EDA-Eval-DesignFlow-PortCatch-001/nand2_CPSel_A.netlist`：CDL 网表，含 nand2LV（4 个 MOS）与 nand2_CPSel（2 个 nand2LV 实例 XI1/XI0）两个子电路。目标实例 = `nand2_CPSel.XI1`。
+
+== 验收（判分在判分器独立环境跑，不进你的 workdir）==
+判分器会用你的 `port_catch.py` 在可见 A 网表和一个**结构完全不同的隐藏 B 网表**上各跑一次，检查：端口清单/方向/连线映射/邻居实例是否正确（与独立 oracle 对账），且 B 的结果必须与 A 不同（跨输入守卫，防硬编码）。具体 k 条断言见 metadata.test_rationale。

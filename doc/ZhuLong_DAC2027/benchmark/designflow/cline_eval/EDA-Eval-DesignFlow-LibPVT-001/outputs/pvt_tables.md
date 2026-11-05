@@ -1,0 +1,92 @@
+# PVT Corners Report
+
+Evidence parsed from `folders.txt`, `filelist.txt` and `sample_lib_tt_header.txt`.
+
+## Summary
+
+- Technology: `FSP51H204L6`
+- Library groups (folders): 12
+- Total .lib files: 36
+- Channel widths: 4 (W25, W30, W35, W40)
+- Threshold-voltage variants: 3 (LVT, SVT, ULVT)
+- PVT corners: 3
+
+## PVT corners (Process / Voltage / Temperature)
+
+| Corner | Process | Voltage (V) | Temperature (C) |
+| ------ | ------- | ----------- | --------------- |
+| ff | Fast-Fast | 0.825 | 0 |
+| tt | Typical-Typical | 0.750 | 85 |
+| ss | Slow-Slow | 0.675 | 125 |
+
+## Typical-corner operating conditions (from Liberty header)
+
+| Field | Value |
+| ----- | ----- |
+| library | `FSP51H204L6W25T6LVT_CCS_tt` |
+| corner | tt |
+| nom_process | 1.0 |
+| nom_voltage (V) | 0.75 |
+| nom_temperature (C) | 85.0 |
+| operating_conditions | `TT_0p75V_85C` |
+| process | 1.0 |
+| voltage (V) | 0.75 |
+| temperature (C) | 85.0 |
+
+## Folder x corner matrix (each folder carries all 3 corners)
+
+| # | Folder | Width | VT | ff | tt | ss |
+| - | ------ | ----- | -- | -- | -- | -- |
+| 1 | FSP51H204L6W25T6LVT | W25 | LVT | 0.825V / 0C | 0.750V / 85C | 0.675V / 125C |
+| 2 | FSP51H204L6W25T6SVT | W25 | SVT | 0.825V / 0C | 0.750V / 85C | 0.675V / 125C |
+| 3 | FSP51H204L6W25T6ULVT | W25 | ULVT | 0.825V / 0C | 0.750V / 85C | 0.675V / 125C |
+| 4 | FSP51H204L6W30T6LVT | W30 | LVT | 0.825V / 0C | 0.750V / 85C | 0.675V / 125C |
+| 5 | FSP51H204L6W30T6SVT | W30 | SVT | 0.825V / 0C | 0.750V / 85C | 0.675V / 125C |
+| 6 | FSP51H204L6W30T6ULVT | W30 | ULVT | 0.825V / 0C | 0.750V / 85C | 0.675V / 125C |
+| 7 | FSP51H204L6W35T6LVT | W35 | LVT | 0.825V / 0C | 0.750V / 85C | 0.675V / 125C |
+| 8 | FSP51H204L6W35T6SVT | W35 | SVT | 0.825V / 0C | 0.750V / 85C | 0.675V / 125C |
+| 9 | FSP51H204L6W35T6ULVT | W35 | ULVT | 0.825V / 0C | 0.750V / 85C | 0.675V / 125C |
+| 10 | FSP51H204L6W40T6LVT | W40 | LVT | 0.825V / 0C | 0.750V / 85C | 0.675V / 125C |
+| 11 | FSP51H204L6W40T6SVT | W40 | SVT | 0.825V / 0C | 0.750V / 85C | 0.675V / 125C |
+| 12 | FSP51H204L6W40T6ULVT | W40 | ULVT | 0.825V / 0C | 0.750V / 85C | 0.675V / 125C |
+
+## Detailed .lib file list
+
+| Folder | Width | VT | Corner | Voltage (V) | Temperature (C) | File |
+| ------ | ----- | -- | ------ | ----------- | --------------- | ---- |
+| FSP51H204L6W25T6LVT | W25 | LVT | ff | 0.825 | 0 | FSP51H204L6W25T6LVT_CCS_ff_v0p825_0c.lib |
+| FSP51H204L6W25T6LVT | W25 | LVT | tt | 0.750 | 85 | FSP51H204L6W25T6LVT_CCS_tt_v0p75_85c.lib |
+| FSP51H204L6W25T6LVT | W25 | LVT | ss | 0.675 | 125 | FSP51H204L6W25T6LVT_CCS_ss_v0p675_125c.lib |
+| FSP51H204L6W25T6SVT | W25 | SVT | ff | 0.825 | 0 | FSP51H204L6W25T6SVT_CCS_ff_v0p825_0c.lib |
+| FSP51H204L6W25T6SVT | W25 | SVT | tt | 0.750 | 85 | FSP51H204L6W25T6SVT_CCS_tt_v0p75_85c.lib |
+| FSP51H204L6W25T6SVT | W25 | SVT | ss | 0.675 | 125 | FSP51H204L6W25T6SVT_CCS_ss_v0p675_125c.lib |
+| FSP51H204L6W25T6ULVT | W25 | ULVT | ff | 0.825 | 0 | FSP51H204L6W25T6ULVT_CCS_ff_v0p825_0c.lib |
+| FSP51H204L6W25T6ULVT | W25 | ULVT | tt | 0.750 | 85 | FSP51H204L6W25T6ULVT_CCS_tt_v0p75_85c.lib |
+| FSP51H204L6W25T6ULVT | W25 | ULVT | ss | 0.675 | 125 | FSP51H204L6W25T6ULVT_CCS_ss_v0p675_125c.lib |
+| FSP51H204L6W30T6LVT | W30 | LVT | ff | 0.825 | 0 | FSP51H204L6W30T6LVT_CCS_ff_v0p825_0c.lib |
+| FSP51H204L6W30T6LVT | W30 | LVT | tt | 0.750 | 85 | FSP51H204L6W30T6LVT_CCS_tt_v0p75_85c.lib |
+| FSP51H204L6W30T6LVT | W30 | LVT | ss | 0.675 | 125 | FSP51H204L6W30T6LVT_CCS_ss_v0p675_125c.lib |
+| FSP51H204L6W30T6SVT | W30 | SVT | ff | 0.825 | 0 | FSP51H204L6W30T6SVT_CCS_ff_v0p825_0c.lib |
+| FSP51H204L6W30T6SVT | W30 | SVT | tt | 0.750 | 85 | FSP51H204L6W30T6SVT_CCS_tt_v0p75_85c.lib |
+| FSP51H204L6W30T6SVT | W30 | SVT | ss | 0.675 | 125 | FSP51H204L6W30T6SVT_CCS_ss_v0p675_125c.lib |
+| FSP51H204L6W30T6ULVT | W30 | ULVT | ff | 0.825 | 0 | FSP51H204L6W30T6ULVT_CCS_ff_v0p825_0c.lib |
+| FSP51H204L6W30T6ULVT | W30 | ULVT | tt | 0.750 | 85 | FSP51H204L6W30T6ULVT_CCS_tt_v0p75_85c.lib |
+| FSP51H204L6W30T6ULVT | W30 | ULVT | ss | 0.675 | 125 | FSP51H204L6W30T6ULVT_CCS_ss_v0p675_125c.lib |
+| FSP51H204L6W35T6LVT | W35 | LVT | ff | 0.825 | 0 | FSP51H204L6W35T6LVT_CCS_ff_v0p825_0c.lib |
+| FSP51H204L6W35T6LVT | W35 | LVT | tt | 0.750 | 85 | FSP51H204L6W35T6LVT_CCS_tt_v0p75_85c.lib |
+| FSP51H204L6W35T6LVT | W35 | LVT | ss | 0.675 | 125 | FSP51H204L6W35T6LVT_CCS_ss_v0p675_125c.lib |
+| FSP51H204L6W35T6SVT | W35 | SVT | ff | 0.825 | 0 | FSP51H204L6W35T6SVT_CCS_ff_v0p825_0c.lib |
+| FSP51H204L6W35T6SVT | W35 | SVT | tt | 0.750 | 85 | FSP51H204L6W35T6SVT_CCS_tt_v0p75_85c.lib |
+| FSP51H204L6W35T6SVT | W35 | SVT | ss | 0.675 | 125 | FSP51H204L6W35T6SVT_CCS_ss_v0p675_125c.lib |
+| FSP51H204L6W35T6ULVT | W35 | ULVT | ff | 0.825 | 0 | FSP51H204L6W35T6ULVT_CCS_ff_v0p825_0c.lib |
+| FSP51H204L6W35T6ULVT | W35 | ULVT | tt | 0.750 | 85 | FSP51H204L6W35T6ULVT_CCS_tt_v0p75_85c.lib |
+| FSP51H204L6W35T6ULVT | W35 | ULVT | ss | 0.675 | 125 | FSP51H204L6W35T6ULVT_CCS_ss_v0p675_125c.lib |
+| FSP51H204L6W40T6LVT | W40 | LVT | ff | 0.825 | 0 | FSP51H204L6W40T6LVT_CCS_ff_v0p825_0c.lib |
+| FSP51H204L6W40T6LVT | W40 | LVT | tt | 0.750 | 85 | FSP51H204L6W40T6LVT_CCS_tt_v0p75_85c.lib |
+| FSP51H204L6W40T6LVT | W40 | LVT | ss | 0.675 | 125 | FSP51H204L6W40T6LVT_CCS_ss_v0p675_125c.lib |
+| FSP51H204L6W40T6SVT | W40 | SVT | ff | 0.825 | 0 | FSP51H204L6W40T6SVT_CCS_ff_v0p825_0c.lib |
+| FSP51H204L6W40T6SVT | W40 | SVT | tt | 0.750 | 85 | FSP51H204L6W40T6SVT_CCS_tt_v0p75_85c.lib |
+| FSP51H204L6W40T6SVT | W40 | SVT | ss | 0.675 | 125 | FSP51H204L6W40T6SVT_CCS_ss_v0p675_125c.lib |
+| FSP51H204L6W40T6ULVT | W40 | ULVT | ff | 0.825 | 0 | FSP51H204L6W40T6ULVT_CCS_ff_v0p825_0c.lib |
+| FSP51H204L6W40T6ULVT | W40 | ULVT | tt | 0.750 | 85 | FSP51H204L6W40T6ULVT_CCS_tt_v0p75_85c.lib |
+| FSP51H204L6W40T6ULVT | W40 | ULVT | ss | 0.675 | 125 | FSP51H204L6W40T6ULVT_CCS_ss_v0p675_125c.lib |

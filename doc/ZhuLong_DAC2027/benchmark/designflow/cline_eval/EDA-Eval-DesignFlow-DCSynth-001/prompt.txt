@@ -1,0 +1,3 @@
+/home/johnl/spiceTdc/primelib_char_T_IsmTop/dc_addr_to_region/rtl/addr_to_rowcol_region.v  请编写约束文件 综合脚本 使用本地库进行综合
+
+注意要保留层次进行综合

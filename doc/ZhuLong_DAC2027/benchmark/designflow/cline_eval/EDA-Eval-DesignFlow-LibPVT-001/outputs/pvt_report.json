@@ -1,0 +1,413 @@
+{
+  "technology": "FSP51H204L6",
+  "evidence_files": {
+    "folders": "folders.txt",
+    "filelist": "filelist.txt",
+    "sample_lib_tt_header": "sample_lib_tt_header.txt"
+  },
+  "widths": [
+    "W25",
+    "W30",
+    "W35",
+    "W40"
+  ],
+  "threshold_variants": [
+    "LVT",
+    "SVT",
+    "ULVT"
+  ],
+  "corners": [
+    {
+      "corner": "ff",
+      "process": "Fast-Fast",
+      "voltage_v": 0.825,
+      "temperature_c": 0
+    },
+    {
+      "corner": "tt",
+      "process": "Typical-Typical",
+      "voltage_v": 0.75,
+      "temperature_c": 85
+    },
+    {
+      "corner": "ss",
+      "process": "Slow-Slow",
+      "voltage_v": 0.675,
+      "temperature_c": 125
+    }
+  ],
+  "nominal_header": {
+    "library_name": "FSP51H204L6W25T6LVT_CCS_tt",
+    "corner": "tt",
+    "nom_process": 1.0,
+    "nom_voltage": 0.75,
+    "nom_temperature": 85.0,
+    "operating_conditions": {
+      "name": "TT_0p75V_85C",
+      "process": 1.0,
+      "voltage": 0.75,
+      "temperature": 85.0
+    }
+  },
+  "libraries": [
+{
+      "folder": "FSP51H204L6W25T6LVT",
+      "technology": "FSP51H204L6",
+      "width": "W25",
+      "vt": "LVT",
+      "corner_libs": [
+        {
+          "file": "FSP51H204L6W25T6LVT_CCS_ff_v0p825_0c.lib",
+          "corner": "ff",
+          "process": "Fast-Fast",
+          "voltage_v": 0.825,
+          "temperature_c": 0
+        },
+        {
+          "file": "FSP51H204L6W25T6LVT_CCS_tt_v0p75_85c.lib",
+          "corner": "tt",
+          "process": "Typical-Typical",
+          "voltage_v": 0.75,
+          "temperature_c": 85
+        },
+        {
+          "file": "FSP51H204L6W25T6LVT_CCS_ss_v0p675_125c.lib",
+          "corner": "ss",
+          "process": "Slow-Slow",
+          "voltage_v": 0.675,
+          "temperature_c": 125
+        }
+      ]
+    },
+    {
+      "folder": "FSP51H204L6W25T6SVT",
+      "technology": "FSP51H204L6",
+      "width": "W25",
+      "vt": "SVT",
+      "corner_libs": [
+        {
+          "file": "FSP51H204L6W25T6SVT_CCS_ff_v0p825_0c.lib",
+          "corner": "ff",
+          "process": "Fast-Fast",
+          "voltage_v": 0.825,
+          "temperature_c": 0
+        },
+        {
+          "file": "FSP51H204L6W25T6SVT_CCS_tt_v0p75_85c.lib",
+          "corner": "tt",
+          "process": "Typical-Typical",
+          "voltage_v": 0.75,
+          "temperature_c": 85
+        },
+        {
+          "file": "FSP51H204L6W25T6SVT_CCS_ss_v0p675_125c.lib",
+          "corner": "ss",
+          "process": "Slow-Slow",
+          "voltage_v": 0.675,
+          "temperature_c": 125
+        }
+      ]
+    },
+    {
+      "folder": "FSP51H204L6W25T6ULVT",
+      "technology": "FSP51H204L6",
+      "width": "W25",
+      "vt": "ULVT",
+      "corner_libs": [
+        {
+          "file": "FSP51H204L6W25T6ULVT_CCS_ff_v0p825_0c.lib",
+          "corner": "ff",
+          "process": "Fast-Fast",
+          "voltage_v": 0.825,
+          "temperature_c": 0
+        },
+        {
+          "file": "FSP51H204L6W25T6ULVT_CCS_tt_v0p75_85c.lib",
+          "corner": "tt",
+          "process": "Typical-Typical",
+          "voltage_v": 0.75,
+          "temperature_c": 85
+        },
+        {
+          "file": "FSP51H204L6W25T6ULVT_CCS_ss_v0p675_125c.lib",
+          "corner": "ss",
+          "process": "Slow-Slow",
+          "voltage_v": 0.675,
+          "temperature_c": 125
+        }
+      ]
+    },
+    {
+      "folder": "FSP51H204L6W30T6LVT",
+      "technology": "FSP51H204L6",
+      "width": "W30",
+      "vt": "LVT",
+      "corner_libs": [
+        {
+          "file": "FSP51H204L6W30T6LVT_CCS_ff_v0p825_0c.lib",
+          "corner": "ff",
+          "process": "Fast-Fast",
+          "voltage_v": 0.825,
+          "temperature_c": 0
+        },
+        {
+          "file": "FSP51H204L6W30T6LVT_CCS_tt_v0p75_85c.lib",
+          "corner": "tt",
+          "process": "Typical-Typical",
+          "voltage_v": 0.75,
+          "temperature_c": 85
+        },
+        {
+          "file": "FSP51H204L6W30T6LVT_CCS_ss_v0p675_125c.lib",
+          "corner": "ss",
+          "process": "Slow-Slow",
+          "voltage_v": 0.675,
+          "temperature_c": 125
+        }
+      ]
+    },
+    {
+      "folder": "FSP51H204L6W30T6SVT",
+      "technology": "FSP51H204L6",
+      "width": "W30",
+      "vt": "SVT",
+      "corner_libs": [
+        {
+          "file": "FSP51H204L6W30T6SVT_CCS_ff_v0p825_0c.lib",
+          "corner": "ff",
+          "process": "Fast-Fast",
+          "voltage_v": 0.825,
+          "temperature_c": 0
+        },
+        {
+          "file": "FSP51H204L6W30T6SVT_CCS_tt_v0p75_85c.lib",
+          "corner": "tt",
+          "process": "Typical-Typical",
+          "voltage_v": 0.75,
+          "temperature_c": 85
+        },
+        {
+          "file": "FSP51H204L6W30T6SVT_CCS_ss_v0p675_125c.lib",
+          "corner": "ss",
+          "process": "Slow-Slow",
+          "voltage_v": 0.675,
+          "temperature_c": 125
+        }
+      ]
+    },
+    {
+      "folder": "FSP51H204L6W30T6ULVT",
+      "technology": "FSP51H204L6",
+      "width": "W30",
+      "vt": "ULVT",
+      "corner_libs": [
+        {
+          "file": "FSP51H204L6W30T6ULVT_CCS_ff_v0p825_0c.lib",
+          "corner": "ff",
+          "process": "Fast-Fast",
+          "voltage_v": 0.825,
+          "temperature_c": 0
+        },
+        {
+          "file": "FSP51H204L6W30T6ULVT_CCS_tt_v0p75_85c.lib",
+          "corner": "tt",
+          "process": "Typical-Typical",
+          "voltage_v": 0.75,
+          "temperature_c": 85
+        },
+        {
+          "file": "FSP51H204L6W30T6ULVT_CCS_ss_v0p675_125c.lib",
+          "corner": "ss",
+          "process": "Slow-Slow",
+          "voltage_v": 0.675,
+          "temperature_c": 125
+        }
+      ]
+    },
+{
+      "folder": "FSP51H204L6W35T6LVT",
+      "technology": "FSP51H204L6",
+      "width": "W35",
+      "vt": "LVT",
+      "corner_libs": [
+        {
+          "file": "FSP51H204L6W35T6LVT_CCS_ff_v0p825_0c.lib",
+          "corner": "ff",
+          "process": "Fast-Fast",
+          "voltage_v": 0.825,
+          "temperature_c": 0
+        },
+        {
+          "file": "FSP51H204L6W35T6LVT_CCS_tt_v0p75_85c.lib",
+          "corner": "tt",
+          "process": "Typical-Typical",
+          "voltage_v": 0.75,
+          "temperature_c": 85
+        },
+        {
+          "file": "FSP51H204L6W35T6LVT_CCS_ss_v0p675_125c.lib",
+          "corner": "ss",
+          "process": "Slow-Slow",
+          "voltage_v": 0.675,
+          "temperature_c": 125
+        }
+      ]
+    },
+    {
+      "folder": "FSP51H204L6W35T6SVT",
+      "technology": "FSP51H204L6",
+      "width": "W35",
+      "vt": "SVT",
+      "corner_libs": [
+        {
+          "file": "FSP51H204L6W35T6SVT_CCS_ff_v0p825_0c.lib",
+          "corner": "ff",
+          "process": "Fast-Fast",
+          "voltage_v": 0.825,
+          "temperature_c": 0
+        },
+        {
+          "file": "FSP51H204L6W35T6SVT_CCS_tt_v0p75_85c.lib",
+          "corner": "tt",
+          "process": "Typical-Typical",
+          "voltage_v": 0.75,
+          "temperature_c": 85
+        },
+        {
+          "file": "FSP51H204L6W35T6SVT_CCS_ss_v0p675_125c.lib",
+          "corner": "ss",
+          "process": "Slow-Slow",
+          "voltage_v": 0.675,
+          "temperature_c": 125
+        }
+      ]
+    },
+    {
+      "folder": "FSP51H204L6W35T6ULVT",
+      "technology": "FSP51H204L6",
+      "width": "W35",
+      "vt": "ULVT",
+      "corner_libs": [
+        {
+          "file": "FSP51H204L6W35T6ULVT_CCS_ff_v0p825_0c.lib",
+          "corner": "ff",
+          "process": "Fast-Fast",
+          "voltage_v": 0.825,
+          "temperature_c": 0
+        },
+        {
+          "file": "FSP51H204L6W35T6ULVT_CCS_tt_v0p75_85c.lib",
+          "corner": "tt",
+          "process": "Typical-Typical",
+          "voltage_v": 0.75,
+          "temperature_c": 85
+        },
+        {
+          "file": "FSP51H204L6W35T6ULVT_CCS_ss_v0p675_125c.lib",
+          "corner": "ss",
+          "process": "Slow-Slow",
+          "voltage_v": 0.675,
+          "temperature_c": 125
+        }
+      ]
+    },
+    {
+      "folder": "FSP51H204L6W40T6LVT",
+      "technology": "FSP51H204L6",
+      "width": "W40",
+      "vt": "LVT",
+      "corner_libs": [
+        {
+          "file": "FSP51H204L6W40T6LVT_CCS_ff_v0p825_0c.lib",
+          "corner": "ff",
+          "process": "Fast-Fast",
+          "voltage_v": 0.825,
+          "temperature_c": 0
+        },
+        {
+          "file": "FSP51H204L6W40T6LVT_CCS_tt_v0p75_85c.lib",
+          "corner": "tt",
+          "process": "Typical-Typical",
+          "voltage_v": 0.75,
+          "temperature_c": 85
+        },
+        {
+          "file": "FSP51H204L6W40T6LVT_CCS_ss_v0p675_125c.lib",
+          "corner": "ss",
+          "process": "Slow-Slow",
+          "voltage_v": 0.675,
+          "temperature_c": 125
+        }
+      ]
+    },
+    {
+      "folder": "FSP51H204L6W40T6SVT",
+      "technology": "FSP51H204L6",
+      "width": "W40",
+      "vt": "SVT",
+      "corner_libs": [
+        {
+          "file": "FSP51H204L6W40T6SVT_CCS_ff_v0p825_0c.lib",
+          "corner": "ff",
+          "process": "Fast-Fast",
+          "voltage_v": 0.825,
+          "temperature_c": 0
+        },
+        {
+          "file": "FSP51H204L6W40T6SVT_CCS_tt_v0p75_85c.lib",
+          "corner": "tt",
+          "process": "Typical-Typical",
+          "voltage_v": 0.75,
+          "temperature_c": 85
+        },
+        {
+          "file": "FSP51H204L6W40T6SVT_CCS_ss_v0p675_125c.lib",
+          "corner": "ss",
+          "process": "Slow-Slow",
+          "voltage_v": 0.675,
+          "temperature_c": 125
+        }
+      ]
+    },
+    {
+      "folder": "FSP51H204L6W40T6ULVT",
+      "technology": "FSP51H204L6",
+      "width": "W40",
+      "vt": "ULVT",
+      "corner_libs": [
+        {
+          "file": "FSP51H204L6W40T6ULVT_CCS_ff_v0p825_0c.lib",
+          "corner": "ff",
+          "process": "Fast-Fast",
+          "voltage_v": 0.825,
+          "temperature_c": 0
+        },
+        {
+          "file": "FSP51H204L6W40T6ULVT_CCS_tt_v0p75_85c.lib",
+          "corner": "tt",
+          "process": "Typical-Typical",
+          "voltage_v": 0.75,
+          "temperature_c": 85
+        },
+        {
+          "file": "FSP51H204L6W40T6ULVT_CCS_ss_v0p675_125c.lib",
+          "corner": "ss",
+          "process": "Slow-Slow",
+          "voltage_v": 0.675,
+          "temperature_c": 125
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "num_folders": 12,
+    "num_libraries": 36,
+    "num_widths": 4,
+    "num_threshold_variants": 3,
+    "num_pvt_corners": 3
+  },
+  "validation": {
+    "folders_have_three_corners": true,
+    "lib_count_matches_folders": true
+  }
+}

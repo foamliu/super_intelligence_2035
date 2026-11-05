@@ -1,0 +1,2 @@
+/home/pdk/hbpeng/code/scriptDevelop/tools/version/RunsetVersionFinder.py
+特殊处理：针对文件夹 /apps/imctf/runset/calibre/td/LDDB/，版本文件夹取 /apps/imctf/runset/calibre/td/LDDB/*/data 的一级子文件夹

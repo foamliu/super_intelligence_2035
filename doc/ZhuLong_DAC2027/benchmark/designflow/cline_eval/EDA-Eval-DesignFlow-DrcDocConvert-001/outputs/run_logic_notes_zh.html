@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DRC Connect QA 工具 —— 运行逻辑与检查方法</title>
+<style>
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+        "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
+        "Noto Sans CJK SC", "Helvetica Neue", Arial, sans-serif;
+    line-height: 1.75;
+    color: #24292f;
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 24px 36px 80px;
+    background: #ffffff;
+}
+h1, h2, h3, h4, h5, h6 {
+    color: #16324f;
+    margin: 1.7em 0 0.55em;
+    line-height: 1.3;
+    font-weight: 600;
+}
+h1 { font-size: 2em; border-bottom: 1px solid #eaecef; padding-bottom: 0.3em; }
+h2 { font-size: 1.5em; border-bottom: 1px solid #eaecef; padding-bottom: 0.3em; }
+h3 { font-size: 1.25em; }
+h4 { font-size: 1.05em; }
+h5, h6 { font-size: 1em; }
+p { margin: 0 0 16px; }
+a { color: #0969da; text-decoration: none; }
+a:hover { text-decoration: underline; }
+code {
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    background: rgba(27, 31, 35, 0.06);
+    border-radius: 3px;
+    padding: 0.15em 0.35em;
+    font-size: 0.9em;
+}
+pre {
+    background: #f6f8fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 6px;
+    padding: 14px 16px;
+    overflow: auto;
+    line-height: 1.45;
+    margin: 0 0 16px;
+}
+pre code { background: transparent; padding: 0; font-size: 0.88em; }
+blockquote {
+    margin: 0 0 16px;
+    padding: 0 1em;
+    color: #57606a;
+    border-left: 4px solid #d0d7de;
+}
+ul, ol { margin: 0 0 16px; padding-left: 2em; }
+li { margin: 0.25em 0; }
+li > ul, li > ol { margin: 0.3em 0; }
+li p { margin: 0.3em 0; }
+hr { border: none; border-top: 2px solid #eaecef; margin: 24px 0; }
+table { border-collapse: collapse; margin: 0 0 16px; }
+th, td { border: 1px solid #d0d7de; padding: 6px 13px; }
+th { background: #f6f8fa; }
+strong { font-weight: 600; }
+</style>
+</head>
+<body>
+<h1>DRC Connect QA 工具 —— 运行逻辑与检查方法</h1><p>分析过的文件（仅阅读，未执行任何操作）：</p><ul><li>connectivity/run.py       主脚本，537 行，python3.7，依赖 gdspy + calibre</li><li>connectivity/config       顶层配置模板（ruleType = LVS）</li><li>connectivity/ERC/config    ERC 变体</li><li>connectivity/LVS/config    LVS 变体</li><li>connectivity/LPE/config    LPE 变体</li></ul><h2>1. 目的</h2><p>针对真实 Calibre 规则文件（LVS / ERC / LPE）中 CONNECT 部分的 QA 校验工具。</p><p>该工具构建一个充满连接模式（patterns）的合成 GDS，这些模式的答案是已知的（KNOWN），然后用真实规则文件在其上运行两次 calibre，提取每个 marker 图形的网络 ID（net id），最后过滤结果，只保留错误的答案（WRONG answers）。</p><ul><li>sameNet 单元：每个模式有两个 marker，它们必须落在同一条网络上。残留的结果 = 缺失的连接（OPEN，断路）。典型原因是某个 purpose 变体（CMP / SL / MATCH / CLOSE）没有被规则文件 CONNECT 进它所在的 layer net。</li><li>diffNet 单元：每个模式有两个 marker，它们必须保持在不同的网络上。残留的结果 = 多余的连接（SHORT，短路）。典型原因是 CONNECT 语句或 layer 定义过于宽泛。</li></ul><p>处理后的 RDB 文件为空，表示该规则文件通过了本次 QA。</p><h2>2. 调用方式与配置</h2><pre><code>python run.py &lt;config_file&gt;      # 恰好一个参数</code></pre><p>配置文件是 Python 代码；run.py 会 exec() 它（第 451-456 行）。</p><pre><code>rulePath       生成的 connect.drc 所 include 的真实规则文件
+ruleType       LVS / ERC / ANT。仅在 ANT 特例中用于 are_layers_connected
+               （使用距离 2 而不是 1）
+topCell        生成的 GDS 的名称，也是输出 RDB 的后缀
+connectivity   栈图（stack graph）。3 项：[lower, via, upper]；2 项：
+               直接连接。方向很重要：边只会从 edge[0] 开始被跟随。
+conn_layers    每个 layer 的 purpose 列表。第一项 = 主 drawing purpose，
+               其余的是变体，各自获得一个 probe。
+bottomLayer    路径枚举的起始节点，例如 [PG] 或 [PG, AT4]
+connectOPC011  原样写入的 calibre 行，将 marker 层与真实导电层关联起来，
+               例如 CONNECT OPC011 PGnet
+precision      对 gdspy 和 RDB 头而言每微米的 dbu 数（4000）
+markLayer      marker 所在的 GDS 层（10000，映射为 OPC011）</code></pre><h2>3. 阶段 1 —— 构建测试 GDS（connectivityCheck.gds）</h2><p>find_all_paths（第 48 行）是对 connectivity 图做的一次递归 DFS，从每个 bottomLayer 条目出发（getPaths，第 77 行）。via 层会保留在路径中。死路（dead ends）会终止一条路径。LVS 配置示例：</p><pre><code>PG -&gt; PC2 -&gt; M0C -&gt; PCU -&gt; M0U -&gt; CT -&gt; M1 -&gt; V1 -&gt; M2 -&gt; ... -&gt; M8 -&gt; HSV -&gt; HSP</code></pre><p>会创建两个单元：sameNet（cell1）和 diffNet（cell2）。genTotal 为每个 path/layer/purpose 摆放一列模式；genPattern 绘制两列栈，并在 markLayer 10000 上放置 marker。marker 始终与栈的底层重叠，因此每个 marker 都会通过配置中的 CONNECT OPC011 行继承它所属栈的网络。</p><h2>4. 阶段 2 —— 生成 connect.drc 并运行 calibre 两次</h2><p>create_connect_file（第 415 行）写出 connect.drc：</p><pre><code>#! tvf
+tvf::VERBATIM {
+    DRC RESULTS DATABASE  "AAAAA.drc.results"  ASCII
+    LAYOUT PATH    "./&lt;topCell&gt;.gds"
+    LAYOUT PRIMARY "diffNet"
+    include "&lt;rulePath&gt;"
+    LAYER OPC011 10000
+    &lt;connectOPC011 lines verbatim&gt;
+    drc select check test
+    test{
+        opcid = DFM PROPERTY OPC011 [netidnum = NETID(OPC011,1)]
+        DFM RDB opcid "diffNet.rdb"
+    }
+}</code></pre><p>NETID(OPC011,1) 会对每个 marker 图形报告：在应用 CONNECT 语句之后，该 marker 所属网络的 ID。</p><p>update_connect_file（第 365 行）原地修补 connect.drc：把 DFM RDB opcid 行改成目标 rdb 文件名；把 LAYOUT PRIMARY 行改成 sameNet 或 diffNet（被测单元）。</p><p>运行流程（第 526-529 行）：</p><pre><code>update_connect_file("sameNet.rdb")  然后  calibre -drc -hier -turbo connect.drc
+update_connect_file("diffNet.rdb")  然后  calibre -drc -hier -turbo connect.drc</code></pre><p>风险：os.system 的返回码从未被检查，因此 calibre 二进制缺失或规则文件损坏时会静默失败。</p><h2>5. 阶段 3 —— RDB 后处理（最终的判定）</h2><p>main（第 388 行）+ process_net_file（第 198 行）重写原始的 calibre RDB。脚本统计每个 netidnum 值被多少个 group 携带，然后丢弃所有 netidnum 计数等于 target_count 的 group：</p><pre><code>文件名包含 same -&gt; target_count = 2  （丢弃正确的成对结果）
+文件名包含 diff -&gt; target_count = 1  （丢弃正确的单个结果）</code></pre><p>最终存活下来的正是错误的答案：</p><pre><code>sameNet_&lt;topCell&gt;.rdb ：marker 位于不同网络 -&gt; OPEN（断路）嫌疑
+diffNet_&lt;topCell&gt;.rdb ：marker 位于同一网络 -&gt; SHORT（短路）嫌疑</code></pre><p>清理（第 537 行）：rm -rf AAAAA* diffNet.rdb sameNet.rdb 会删除原始 RDB 和 AAAAA 结果/摘要；处理后的 RDB 和 GDS 会保留。</p><h2>6. 输出以及如何判定它们</h2><p>每个运行目录（已在 ERC/ 中确认）：</p><pre><code>connectivityCheck.gds        生成的模式
+connect.drc                  生成的规则文件，停留在 diffNet 状态
+sameNet_&lt;topCell&gt;.rdb        OPEN 嫌疑；仅有表头 = 通过
+diffNet_&lt;topCell&gt;.rdb        SHORT 嫌疑；仅有表头 = 通过
+AAAAA.drc.results / summary  被清理步骤删除</code></pre><p>历史上 ERC 的输出印证了该流程：两个处理后的 RDB 都只包含 5 行表头（calibre 曾报告 716 和 3634 个原始结果，全部被过滤掉），因此那次运行没有发现错误答案。一个空的 RDB 意味着“配置范围内通过”，而不是“CONNECT 部分是正确无误的”。</p><h2>7. 怪癖与风险</h2><ol><li>对配置执行 exec()：配置是任意 Python 代码。</li><li>calibre 失败是静默的（从未检查 os.system 的状态）。</li><li>bad2 模式只生成一次，硬编码为路径索引 i == 1。</li><li>模式坐标单位是微米；precision 为 4000 意味着 GDS 中 dbu 为 0.25 nm，RDB 头中为每微米 4000 dbu。</li></ol><h2>8. 结论</h2><p>该工具是对配置中声明的栈路径进行的一次针对性一致性采样。在其作用范围内，它能够可靠地捕获缺失的 purpose 连接和多余的跨层 CONNECT，而历史上的 ERC / LVS / LPE 运行都干净通过。但规则文件实际连接的内容远多于配置所声明的，因此一个空的 RDB 只意味着“配置范围内通过”，而不是“CONNECT 部分是正确无误的”。</p>
+</body>
+</html>

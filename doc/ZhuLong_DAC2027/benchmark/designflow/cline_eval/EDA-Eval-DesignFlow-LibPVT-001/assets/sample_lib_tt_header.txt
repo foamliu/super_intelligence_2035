@@ -1,0 +1,22 @@
+library (FSP51H204L6W25T6LVT_CCS_tt) {
+  /* File: FSP51H204L6W25T6LVT_CCS_tt_v0p75_85c.lib
+   *  Release: timing_power_noise/CCS/FS204
+   *  Corner: tt (Typical-Typical)
+   */
+  delay_model : table_lookup;
+  time_unit : "1ns";
+  voltage_unit : "1V";
+  current_unit : "1mA";
+  pulling_resistance_unit : "1kohm";
+  leakage_power_unit : "1pW";
+  capacitive_load_unit (1,pf);
+  nom_process : 1 ;
+  nom_voltage : 0.75 ;
+  nom_temperature : 85 ;
+  operating_conditions("TT_0p75V_85C") {
+    process : 1 ;
+    voltage : 0.75 ;
+    temperature : 85 ;
+  }
+  /* ... cells omitted ... */
+}
