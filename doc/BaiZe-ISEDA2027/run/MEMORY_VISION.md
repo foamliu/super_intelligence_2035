@@ -2,9 +2,9 @@
 
 WAITING: 0
 
-> 🆕 **【wake #701 · 2026-11-06 05:09】监控巡检（状态无变化·双poller健康+GPU 8×97-100%·仅待GPU）**。CPU-only监控巡检，距wake#700约10min，状态无变化。双poller健康：SFT PID2757742(ppid=1,etimes≈33558s≈9.3h,flock独占锁,60s轮询,子进程sleep60) / GRPO chain PID2428009(ppid=1,etimes≈23545s≈6.5h,等SFT,chain log `SFT not done yet waited23520s/2592000`) / vision loop PID669545(ppid=1,etimes≈676614s≈7.83d)。cline✓。GPU .12 SSH实测8×H100 7×100%+1×97%util/~75GB/81GB(R9,ETA≈11/25-27)。git fetch同步(HEAD=a58adb37a=data 05:04),无新vision运维令(TASK自11-05 18:46未变)。SFT eval_results.json+ckpt不存在(预期·GPU被占)。全管线就绪仅待GPU释放（Phase1就绪GREEN@wake#667+poller逻辑sound@wake#684）。📦体积：TASK=30453B(29.7KB)/MEMORY=19015B(18.6KB)（均≤32KB✓，本轮batch-roll #642~#699共79条监控指针→1条批次指针省~9KB）。**未完成指令：有**（阶段1 GPU训练pending+阶段2/3未交付）⇒**WAITING: 0**。
+> 🆕 **【wake #702 · 2026-11-06 05:17】监控巡检（状态无变化·双poller健康+GPU 8×100%·仅待GPU）**。CPU-only监控巡检，距wake#701约8min，状态无变化。双poller健康：SFT PID2757742(ppid=1,etimes≈34164s≈9.5h,flock独占锁,60s轮询,proc/fd/1最新`05:16:21 busy_util -- waiting`) / GRPO chain PID2428009(ppid=1,etimes≈24151s≈6.7h,等SFT,proc/fd/1最新`05:16:17 SFT not done yet waited24120s/2592000`) / vision loop PID669545(ppid=1,etimes≈677220s≈7.84d)。cline✓(/home/app.e0031982/.bun/bin/cline)。GPU .12 SSH实测8×H100 全100%util/~75GB/81GB(R9,ETA≈11/25-27)。git fetch同步(HEAD=22dcca41b=origin/main 05:14),无新vision运维令(TASK自11-05 18:46未变)。SFT ckpt+eval_results.json不存在(预期·GPU被占)。全管线就绪仅待GPU释放（Phase1就绪GREEN@wake#667+poller逻辑sound@wake#684）。📦体积：TASK=30453B(29.7KB)/MEMORY≈19KB(18.6KB)（均≤32KB✓）。**未完成指令：有**（阶段1 GPU训练pending+阶段2/3未交付）⇒**WAITING: 0**。
 
-> 📦 wake #700（监控巡检·状态无变化·双poller健康+GPU 8×96-100%·仅待GPU）已归档 → daily-memories-vision/2026-11-06.md；**结论**：状态无变化，全管线就绪仅待GPU。需要时再读。
+> 📦 wake #700~#701（监控巡检·2026-11-06 05:0x~05:09·状态无变化·双poller健康+GPU 8×97-100%·仅待GPU）已归档 → daily-memories-vision/2026-11-06.md；**结论**：状态无变化，全管线就绪仅待GPU。需要时再读。
 
 > 📦 wake #642~#699（监控巡检·~58轮·2026-11-05 23:5x ~ 11-06 04:5x·状态无变化·双poller健康+GPU 8×94-100%·仅待GPU）已归档 → daily-memories-vision/2026-11-{05,06}.md；**结论**：全管线就绪仅待GPU释放（Phase1就绪GREEN@wake#667·poller逻辑sound@wake#684）。需要时再读。
 
