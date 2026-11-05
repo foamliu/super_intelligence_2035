@@ -715,7 +715,7 @@
 1791511922122_hwbr5					parked		2026-11-05 17:00	terse FSDB extraction request, ambiguous deliverable, not clean produce
 1789624328007_44lwy					parked		2026-11-05 17:00	skill-creator autocell-tcl-flow, not D-domain produce
 1793082623350_otonl	e0022089	hfeg0pkn004	1793082623350	waveform	parked		2026-11-05 17:29	analysis Q&A (find DEJOA LFGating + explain gating), not a produce-task; mis-mapped from jumbled peek
-1793015903005_10hvg	jkxu	hfeg0pkn003	1793015903005	waveform	claimed		2026-11-05 17:33	
+1793015903005_10hvg	jkxu	hfeg0pkn003	1793015903005	waveform	case	EDA-Eval-DesignFlow-HierSvwfConvert-001	2026-11-05 17:52	
 1793103631631_17m64					parked		2026-11-05 17:33	dup of 10hvg (same user jkxu/same prompt/same trace), dedup
 1793705943594_wwbs3					parked		2026-11-05 17:33	root-cause debug (gen_block_wrapper dataclasses error), user gives error
 1793771550244_nlf6u					parked		2026-11-05 17:33	root-cause debug (SRAM_tailor detect_prep error), user gives error+fix direction
