@@ -178,4 +178,4 @@ vbxlf.messages.json	jason17w	hfeg0pnd002	262	spice_sim	parked		2026-11-05 12:30	
 1793879856361_1281g.messages.json	hairuizh	hfeg0pkn002	366	spice_sim	claimed		2026-11-06 05:37	
 1793879856361_1281g					case	EDA-Eval-DesignFlow-PlatInvsThick-001	2026-11-06 06:14	
 1793328354943_p7jfx.messages.json	tongni	hfeg0pkn001	481	spice_sim	parked		2026-11-06 06:36	file deleted by active user tongni between 11-05 scan and 11-06 06:25; session ephemeral
-1792119838262_chbpp	wnyu	hfeg0pkn004	629	spice_sim	deepread		2026-11-06 06:52	A-faithful need IDX17 (Vtune->4ph 6GHz ring VCO, sim, KVCO); deepread 1792119838262_chbpp_vco_kvco.md; portable level-1 ring-VCO blocked on HSPICE oscillation (latches/-2.74V) -> DEBT:1 case synth next round
+1792119838262_chbpp	wnyu	hfeg0pkn004	629	spice_sim	case	EDA-Eval-DesignFlow-VcoKvcoChar-001	2026-11-06 07:20	A-faithful need IDX17 (Vtune->4ph 6GHz ring VCO, sim, KVCO); deepread 1792119838262_chbpp_vco_kvco.md; portable level-1 ring-VCO blocked on HSPICE oscillation (latches/-2.74V) -> DEBT:1 case synth next round
