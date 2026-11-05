@@ -24,11 +24,4 @@ A staged budget-constrained search (S1--S5) with a reduced-horizon proxy protoco
 % 中文：分阶段、受预算约束的搜索（S1--S5）配合缩短视野的代理协议确定预训练配方。
 On a 449-task EDA-scripting benchmark spanning three languages and four commercial runtimes, we ask whether it matches deployed Flash masters at comparable accuracy while materially reducing per-subtask cost, and what an on-premise subagent must co-locate with the model.
 
-\item \textbf{Multimodal grounding for visual EDA artifacts.}
-Layout, schematic, and waveform views carry much of the correctness signal in custom and analog design, yet a text-only subagent cannot observe them.
-% 中文：面向视觉 EDA 产物的多模态 grounding。版图、原理图与波形视图承载定制与模拟设计中大量的正确性信号，而纯文本子智能体无法直接观测。
-BaiZe pairs its language core with a from-scratch vision encoder and tests whether a 196-token-per-image budget suffices for such detail-dense views.
-% 中文：BaiZe 将语言内核与从零训练的视觉编码器配对，检验每图 196 token 的预算是否足以应对这类细节密集的视图。
-The encoder reaches $68.2\%$ linear-probe on an internal protocol, yet the MLLM stage averages $26.1\%$ over 11 benchmarks: encoder-quality gains do not transfer downstream at the $224$-px single-tile setting.
-% 中文：编码器在内部协议上线性探测达 $68.2\%$，但 MLLM 阶段在 11 个基准上平均 $26.1\%$：编码器质量的增益在 224 像素单块设定下未迁移到下游。
 \end{itemize}

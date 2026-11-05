@@ -1,8 +1,8 @@
 ﻿\section{Architecture and Pipeline Overview}\label{sec:overview}
 
-BaiZe is an end-to-end multimodal agentic system assembled in five stages: (i) from-scratch pre-training of a hybrid language backbone, (ii) post-training of that backbone (instruction tuning and reinforcement learning to strengthen agentic capability), (iii) pre-training of a custom vision encoder, (iv) alignment of the two into a multimodal large language model, and (v) semiconductor-domain adaptation via reinforcement learning.
-% 中文：BaiZe 是一个由五个阶段组装而成的端到端多模态智能体系统：(i) 从零预训练混合语言骨干；(ii) 对该骨干做后训练（指令微调与强化学习以增强智能体能力）；(iii) 预训练自研视觉编码器；(iv) 将两者对齐为多模态大语言模型；(v) 通过强化学习完成半导体领域适配。
-This section fixes the shared scaffolding---the two backbones, the overall pipeline, and the global training environment---before each stage is detailed in its own section.
+BaiZe is an agentic system assembled in two stages: (i) from-scratch pre-training of a hybrid language backbone, and (ii) post-training of that backbone (instruction tuning and reinforcement learning to strengthen agentic capability).
+% 中文：BaiZe 是一个由两个阶段组装而成的智能体系统：(i) 从零预训练混合语言骨干；(ii) 对该骨干做后训练（指令微调与强化学习以增强智能体能力）。
+This section fixes the shared scaffolding---the backbone, the overall pipeline, and the global training environment---before each stage is detailed in its own section.
 % 中文：本节先固定各部分共享的脚手架——两个骨干网络、整体流水线与全局训练环境——随后各阶段再在各自章节中详述。
 
 \subsection{Language Backbone}\label{sec:arch}
@@ -46,19 +46,15 @@ Parameters & $\approx$2.22B \\
 \end{tabular}
 \end{table}
 
-\subsection{Vision Encoder}\label{sec:backbone-enc}
-The vision encoder is pre-trained from scratch in stage~(iii) and is selected from iso-parameter candidates at the $500$--$600$\,M scale; Section~\ref{sec:vision} reports the comparison and its outcome.
-% 中文：视觉编码器。视觉编码器在第 (iii) 阶段从零预训练，是在 $500$–$600$M 参数量级的同参数候选模型中选出的；第 \ref{sec:vision} 节报告该对比及其结果。
-
 \subsection{Pipeline and Global Environment}\label{sec:pipeline}
-Table~\ref{tab:pipeline} summarises the five-stage pipeline.
+Table~\ref{tab:pipeline} summarises the two-stage pipeline.
 % 中文：流水线与全局环境。表 \ref{tab:pipeline} 汇总了五阶段流水线。
 Stage~(i) production training runs on two $8\times$NVIDIA H100 nodes ($16$~GPUs; CUDA~12.8, PyTorch~2.8.0, Python~3.10); other stages use a single $8\times$H100 node. Fused kernels, selective activation recomputation, and cross-entropy loss fusion are enabled where applicable, with $\texttt{tensor\_model\_parallel\_size}=1$; Stage~(i) trains in FP8 tensorwise at the main sequence length, reverting to BF16 at shorter lengths.
 % 中文：第 (i) 阶段生产训练运行在两个 $8\times$NVIDIA H100 节点上（$16$ 张 GPU；CUDA 12.8、PyTorch 2.8.0、Python 3.10）；其他阶段使用单 $8\times$H100 节点。在适用处启用融合核、选择性激活重计算与交叉熵损失融合，$\texttt{tensor\_model\_parallel\_size}=1$；第 (i) 阶段在主序列长度上以 FP8 tensorwise 训练，更短序列时回退至 BF16。
 
 \begin{table}[t]
 \centering
-\caption{BaiZe five-stage pipeline overview.}
+\caption{BaiZe two-stage pipeline overview.}
 \label{tab:pipeline}
 \begin{tabular}{llll}
 \toprule
@@ -66,9 +62,6 @@ Stage~(i) production training runs on two $8\times$NVIDIA H100 nodes ($16$~GPUs;
 \midrule
 (i) & LM pre-training & in progress & \ref{sec:llm-pretrain} \\
 (ii) & Post-training (SFT, RLVR) & design & \ref{sec:llm-posttrain} \\
-(iii) & Vision encoder & complete & \ref{sec:vision} \\
-(iv) & MLLM alignment & in progress & \ref{sec:mllm} \\
-(v) & Domain adapt.\ (RLHF) & design & \ref{sec:domain} \\
 \bottomrule
 \end{tabular}
 \end{table}
