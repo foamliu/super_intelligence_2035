@@ -339,6 +339,15 @@ PY
         cp -r "$hsrc/." "$JUDGE/hidden/" 2>/dev/null || true
       fi
     done
+    # r121 judge-env fix：复制 check.py 在 REF_DIR 内引用的判分侧 fixture 数据目录
+    # （fixture_A/ fixture_B/ 等）。若干 case 的 check.py 用 HERE/fixture_A 解析候选
+    # 真跑所需的输入数据；run_one.sh 独立 judge dir 不复制 → FileNotFoundError 假 FAIL
+    # （BLOCKER ⑤ 同类）。仅复制 reference/<id>/ 下名为 fixture_* 的目录（白名单）。
+    for fdir in "$REF_DIR"/fixture_*; do
+      [ -d "$fdir" ] || continue
+      b=$(basename "$fdir")
+      [ -d "$JUDGE/$b" ] || cp -r "$fdir" "$JUDGE/$b" 2>/dev/null || true
+    done
     cd "$JUDGE"
     JUDGE_OUT=$(python3 - <<'PY'
 import importlib.util, sys, os, json
