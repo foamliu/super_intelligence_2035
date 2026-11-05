@@ -21,6 +21,14 @@
 
 \newcommand{\llm}{BaiZe\xspace}
 
+% ============================================================
+% BaiZe-ISEDA2027 — BaiZe LLM 主线（多模态已迁到 BaiZe-NeurIPS2027）
+% 阶段：pretrain(WSD) -> 长上下文 -> SFT -> RL -> 评测
+%       （常识推理 + 复杂推理 + Agentic + 大海捞针 + EDA 脚本）
+% TODO(内容重写)：0_abstract / 1_intro / 3_architecture（含 Vision Encoder
+%                 subsection 需移除）/ 9_conclusion 需按 LLM 主线重写。
+% ============================================================
+
 % ---- Author information: ISEDA submission requires NO author information, so the
 % author block is left empty for review. Uncomment the block below for the camera-ready.
 \title{BaiZe: Cost-Efficient Scripting and Waveform Perception for EDA Workflow Orchestration}
@@ -41,9 +49,7 @@
 \input{ISEDA2027/3_architecture}
 \input{ISEDA2027/4_llm_pretrain}
 \input{ISEDA2027/5_llm_posttrain}
-\input{ISEDA2027/6_vision_encoder}
-\input{ISEDA2027/7_mllm}
-\input{ISEDA2027/8_domain_rl}
+% 多模态章节(6_vision_encoder / 7_mllm / 8_domain_rl)已迁移至 BaiZe-NeurIPS2027
 \input{ISEDA2027/9_conclusion}
 
 % References start on a fresh page (user request 2026-10-31)
