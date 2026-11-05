@@ -265,3 +265,16 @@
 1790760787103_0rlp4	e0014566	hfeg0pkn001	51	physical_verify	case	EDA-Eval-DesignFlow-SvrfHandbookPaginate-001	2026-11-06 01:45	
 1792983877054_kkfsf	jcgu	hfeg0pin003	242	layout_aether	case	EDA-Eval-DesignFlow-SchDigitalAnalogClassify-001	2026-11-06 02:25	
 1789646643559_kqelc.messages.json	hbpeng	hfeg0pkn005	130	layout_aether	case	EDA-Eval-DesignFlow-PcellFinder-001	2026-11-06 03:07	
+1792491091764_qk0vo	pdong	hfeg0plg98	49	pg_layout	parked		2026-11-06 03:30	env-debug: how to launch innovus(module/bsub/libssl) non-design
+1791443950843_b7y8t	shaoyou	hfeg0pkn004	107	layout_aether	parked		2026-11-06 03:30	schematic net highlight net7 = schematic domain + overlaps eda-highlight-by-name-pattern skill
+1792380407268_opm9y	willashi	hfeg0plg55	279	layout_virtuoso	parked		2026-11-06 03:30	schematic fix + spectre pre-sim debug = schematic/sim domain
+1792375022144_ekpd7	xinqiaoz	hfeg0pkn004	308	physical_verify	parked		2026-11-06 03:30	handoff DummyConfigCheck; overlaps DummyCfgCheck-001 bzxqd
+1790585092055_a1jb6	xinqiaoz	hfeg0pkn004	265	physical_verify	parked		2026-11-06 03:30	handoff drc_pattern + comm-help 新人话术; overlaps DrcPatCheck/Handover
+1782886485849_iryie	e03179	hfeg0pkn002	198	layout_aether	parked		2026-11-06 03:30	canned launcher 启动业务场景模拟电路生成+infra-debug non-seed
+1793161602607_0i3r5	my7li	hfeg0pkn004	178	layout_aether	parked		2026-11-06 03:30	env-bootstrap pyAether PYTHONHOME/libemyVCell debug no deliverable; overlaps AetherEnvBootstrap-001
+1792982671736_ja990	e0045291	hfeg0plg80	203	layout_aether	parked		2026-11-06 03:30	token-burning 消耗400K read-only non-design
+1793091608908_lzt3e	e0023936	hfhds201	159	layout_aether	parked		2026-11-06 03:30	MCP API-doc exploration 查询pyAether/tcl接口 meta/how-to non-seed
+1790230469843_kzlkh	lizwen	hfeg0pkn002	143	physical_verify	parked		2026-11-06 03:30	DRC Testpattern Generator skill def; overlaps 6+ DRC-pat cases
+1792455460383_h0hmj	xinqiaoz	hfeg0pkn004	276	physical_verify	parked		2026-11-06 03:30	handoff DummyConfigCheck calibreDummy.rule; overlaps DummyCfgCheck-001
+1793167439759_tkpln	xinqiaoz	hfeg0pkn004	276	physical_verify	parked		2026-11-06 03:30	Dummy 知识库清理审计/git-commit repo maintenance non-EDA
+1789904184223_i5slk	yiz	hfeg0plg101	152	physical_verify	parked		2026-11-06 03:30	finesim-fsdb-reader skill adapter ncsim.trn = waveform/sim shard D
