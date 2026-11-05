@@ -166,3 +166,5 @@ vbxlf.messages.json	jason17w	hfeg0pnd002	262	spice_sim	parked		2026-11-05 12:30	
 1793187913089_e6xdf.messages.json	e0030760	hfeg0pkn004	185	spice_sim	case	EDA-Eval-DesignFlow-PUvddSweep-001	2026-11-05 22:12	
 1793792373749_l5r0u.messages.json	elianaz	hfeg0pkn002	218	spice_sim	case	EDA-Eval-DesignFlow-IoBufParamTune-001	2026-11-05 23:06	
 1793679618975_i1zyw	e0030760	hfeg0pkn004	158	spice_sim	case	EDA-Eval-DesignFlow-NetlistMisModCompare-001	2026-11-05 23:37	
+1792373325953_z6mt7.messages.json	tongni	hfeg0pkn001	83	spice_sim	case	EDA-Eval-DesignFlow-Vcc2scVarJudge-001	2026-11-06 00:25	re-claimed: only clean A-档 with complete golden result in fresh pool; distinct deliverable (parse .mt0 + SPEC judge) from B-档 Vcc2scPVTvar-001 (run hspice); different trace/tier/domain
+1793868970979_6nte7.messages.json	kaixuanx	hfeg0pkn002	35	spice_sim	parked		2026-11-06 00:16	trace incomplete: ends at clarifying ask_question, no accepted golden power result; unsuitable for A-档
