@@ -302,11 +302,13 @@ else
     done
     # 兜底：把 REF_DIR 内所有 .py / .json 兄弟文件复制（除 check.py 已复制 / negative 目录），
     # 覆盖未来新增的 grading-side helper，避免再漏。
-    for f in "$REF_DIR"/*.py "$REF_DIR"/*.json; do
+    for f in "$REF_DIR"/*.py "$REF_DIR"/*.json "$REF_DIR"/*.tar.gz "$REF_DIR"/*.tgz "$REF_DIR"/*.zip; do
       [ -f "$f" ] || continue
       b=$(basename "$f")
       [ "$b" = "check.py" ] && continue
       [ "$b" = "negative_selftest.py" ] && continue
+      # reference_submit.zip 是答案，不进 judge dir（候选已是 submit.zip）
+      [ "$b" = "reference_submit.zip" ] && continue
       [ -f "$JUDGE/$b" ] || cp "$f" "$JUDGE/" 2>/dev/null || true
     done
     # 把合法 A 附件也复制进 judge dir（保留子目录结构，r80 修复）
