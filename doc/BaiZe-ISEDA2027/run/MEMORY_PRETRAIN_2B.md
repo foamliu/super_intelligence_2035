@@ -1,30 +1,10 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 1
 > 🛑 **【运维通告 · 2026-11-02 19:51】S1 已由 ops 中继重启并在跑**：`bash scripts/train.sh s1 --nodes 2`，launcher pid **4163528**，从 **ckpt 58000** 续（19:55:40 起 iter **58010**→58030，7.0–7.2 s/step ≈**582K tok/s**，双机 16 卡 **98–100%**、~75GB/卡、~690W）。⇒ **GPU 不再空闲**：🚫 严禁再起任何训练/GPU 评测进程；CPU 评测必须降载：`OMP_NUM_THREADS≤8` + `nice -n 19`，**禁止 `pkill python`**。
+> 2026-11-06 07:13 #1491: 归档轮·运维令11-05 18:2x整块verbatim搬入ARCHIVE_OPERATOR_PRETRAIN.md「归档2026-11-06第一批」(417979→422730B,+4751B)·TASK原位留1行📦指针(30304→26443B)·无新令/无未完成指令·git clean(##main...origin/main无ahead/behind,HEAD=9fd5e0176含pretrain watcher commit 173c848a8)·未碰他线在途文件·📦体积:TASK=25.8KB✓/MEMORY=27.4KB✓(归档≈4.75KB→ARCHIVE;已滚动早期monitor指针#1476-#1488至daily-memories,留#1489指针)·未完成指令:无⇒WAITING:1。
+
 > 2026-11-06 06:46 #1490: ✅运维令11-05 18:2x完成·10/10 ckpt全交付·100k Avg(harness)=57.75%/raw=54.75%·10点harness Avg 51.50→52.00→53.00→55.12→54.25→54.25→56.00→57.00→57.88→57.75%·700k对数拟合62.8%/R²=0.860(vs5点60.16%/R²=0.792,9点62.4%/R²=0.837,数据点翻倍结论强化;幂律发散pred161%退化)·v2报告report_pretrain_llamacpp_scaling_60k_100k_zh.html(21087B,10×8表+曲线+重拟合)幂等PASS(byte-identical重跑)·watcher(baize_100k_report_watcher.sh)自治交付:06:45发现results.json→regen 10/10报告→commit 173c848a8→push a2bce50d3..173c848a8 result=0→ALL DONE 06:45:40·gen_llamacpp_scaling_report.py TARGET_ITERS=10动态len·gguf_iter_{10k..100k}_fixed_8set/results.json 10/10全在(各22780-22810B,无NaN,100k=22808B)·双管线watcher已退出·TASK[已完成]标记已加·git clean(HEAD=173c848a8,no ahead/behind)·📦体积:TASK≈30.3KB✓/MEMORY≈31.1KB✓·未完成指令:无⇒WAITING:1。
 > 📦 §#1489（11-06 06:35, 监控轮·100k eval进行中·9/9完好）→ daily-memories/2026-11-06.md；**结论**：9/9完好,100k MISSING(eval~52min),ETA~06:44-06:46,双管线自治。被#1490收口(10/10交付)。需要时再读。
-
-> 2026-11-06 06:35 #1489: 监控轮·100k eval进行中(~52min/ETA~06:44-06:46~10min)·9/9完好·100k MISSING(eval未完)。llama-server PID214074(etimes3127s≈52min,ppid=3543961,port8090)health=ok(slot0 idle id_task=34427,slot1 processing id_task=34826)+gguf_lmeval PID226190(etimes3116s,ppid=3543961)活。gguf_iter_100000_fixed_8set/空(results.json写于8集全完成后)。前ckpt eval耗时~61-63min,100k GGUF done@05:43→eval started~05:43→ETA~06:44-06:46。双管线自治健康:eval管线PID3543961(etimes42243s≈11.7h,ppid=1)+watcher PID3410832(etimes3962s≈1.1h,ppid=1,poll#30@06:27 not yet,sleep120)。旧watcher PID2702412未见(可能已退出,新watcher接管)。9/9 results.json各22808-22810B全有效(10k-90k)。v2报告20707B(9/10,mtime06:13)。watcher将自动regen 10/10+commit+push。git clean(no ahead/behind,HEAD=625cb7d9c)。📦体积:TASK=29561B(28.9KB✓)/MEMORY=30810B(30.1KB✓)。未完成指令:有(100k eval进行中,双管线自治)⇒WAITING:0。
-> 📦 §#1488（11-06 06:31, 监控轮·100k eval进行中·9/9完好）→ daily-memories/2026-11-06.md；**结论**：9/9完好,100k MISSING(eval~48min),双管线自治,ETA~06:44-06:46。被#1489接续。需要时再读。
-> 📦 §#1487（11-06 06:26, 监控轮·100k eval进行中·9/9完好）→ daily-memories/2026-11-06.md；**结论**：9/9完好,100k MISSING(eval进行中~43min),双管线自治,ETA~06:44。被#1488接续。需要时再读。
-> 📦 §#1486（11-06 06:17, 监控轮·100k eval进行中·9/9完好）→ daily-memories/2026-11-06.md；**结论**：9/9完好,100k MISSING,双管线自治,ETA~06:42。被#1487接续。需要时再读。
-> 📦 §#1485（11-06 06:13, 监控轮·100k eval进行中·9/9完好）→ daily-memories/2026-11-06.md；**结论**：9/9 Avg=51.50..57.88%(harness口径),100k MISSING,gen idempotent PASS,双管线自治。被#1486接续。需要时再读。
-> 📦 §#1482（11-06 05:50, 监控轮·100k eval启动·9/9核实）→ daily-memories/2026-11-06.md；**结论**：9/9 Avg精确重解析,v2报告9/10 commit 38d504917,700k pred 62.4%/R²=0.837,双管线自治。被#1485接续。需要时再读。
-
-> 📦 §#1484（11-06 06:03, 监控轮·100k eval进行中·9/9精确核实）→ daily-memories/2026-11-06.md；**结论**：9/9 Avg=49.88..54.62%(raw acc口径),100k MISSING,gen TARGET_ITERS=10动态,双管线自治。被#1485接续。需要时再读。
-
-
-> 📦 §#1481（11-06 05:46, 监控轮·100k eval已启动）→ daily-memories/2026-11-06.md；**结论**：GGUF bz2b-100000-f16.gguf(4.4G)于05:43生成,llama-server port8090 health=ok,8集eval进行中,管线+watcher双自治健康,100k results.json ETA~06:44。被#1484接续。需要时再读。
-
-> 📦 §#1479（11-06 05:34, 监控轮·9/9完好100k MISSING）→ daily-memories/2026-11-06.md；**结论**：9/9 Avg=49.88..54.62%,100k MISSING(预期),管线+watcher双自治,100k ckpt ETA~05:38。被#1480接续。需要时再读。
-> 📦 §#1480（11-06 05:39, 监控轮·100k ckpt已保存）→ daily-memories/2026-11-06.md；**结论**：100k ckpt(iter_0100000)mtime05:38:58已保存,管线下轮poll将启动HF导出→GGUF→eval,100k eval ETA~07:03。被#1481接续。需要时再读。
-
-
-> 📦 §#1478（11-06 05:30, 监控轮·新建watcher·100k ckpt ETA）→ daily-memories/2026-11-06.md；**结论**：旧watcher PID2702412已死→新建PID3410832,管线PID3543961活,100k ckpt ETA~05:39,9/9 Avg旧值(后被#1482精确校正为49.88..54.62%),v2报告9/10 commit 38d504917。被#1483接续。需要时再读。
-
-> 📦 §#1477（11-06 05:21, 监控轮·双管线自治100k pending）→ daily-memories/2026-11-06.md；**结论**：双管线自治健康,100k pending,无干预,状态与#1476一致无漂移,100k ckpt ETA~05:40。被#1479接续。需要时再读。
-
-> 2026-11-06 05:15 #1476: 监控轮·双管线自治健康,100k pending,无干预,状态与#1475一致无漂移。旧管线PID3543961(etimes~37800s≈10.5h,ppid=1,log末行poll#36@04:52,子进程sleep600)+watcher PID2702412(etimes~10500s≈2.9h,ppid=1,log末行START@05:08,子进程sleep300)均活。9/9 results.json完好(gguf_iter_{10k..90k}_fixed_8set,各22808-22810B),100k MISSING(预期)。HF导出10k-90k全在,hf_iter_100000未出。训练.29 GPU0-1=100%/~75GB/temp53-62℃健康,pretrain_launcher PID146283活(etimes~293020s≈81.4h),latest ckpt iter_0098000(save-interval2000)→当前iter~99795(delta~12270s/7s),100k(iter_0100000)ckpt ETA~05:39(+205it×7s≈24min),results.json ETA~07:00(+HF导出~15min+eval~61min)。v2报告20707B(9/10)已commit(38d504917)。📦体积:TASK=29561B(28.9KB✓)/MEMORY≈26.3KB✓。未完成指令:有(100k pending,双管线自治轮询)⇒WAITING:0。
 
 > 2026-11-06 05:09 #1475: 监控轮·双管线自治健康,100k pending,无干预,状态与#1474一致无漂移。旧管线PID3543961(etimes~37100s≈10.3h,ppid=1,log末行poll#36@04:52,子进程sleep600)+watcher PID2702412(etimes~9870s≈2.7h,ppid=1,log末行poll#32@05:00,子进程sleep300)均活。9/9 results.json完好(gguf_iter_{10k..90k}_fixed_8set,各22780-22810B),100k MISSING(预期)。HF导出10k-90k全在,hf_iter_100000未出。训练.29 GPU0-1=100%/~75GB/temp57-63℃健康,pretrain_launcher PID146283活(etimes~292400s≈81.2h),latest ckpt iter_0098000(mtime 01:45:31)→当前iter~99744(delta12209s/7s),100k(iter_0100000)ckpt ETA~05:39(+256it×7s≈30min),results.json ETA~07:00(+HF导出~15min+eval~61min)。本轮误以为双管线已死→新建2个冗余脚本→发现旧管线仍活→立即kill冗余避免port 8090冲突。v2报告20707B(9/10)已commit(38d504917)。📦体积:TASK=29561B(28.9KB✓)/MEMORY≈25.6KB✓。未完成指令:有(100k pending,双管线自治轮询)⇒WAITING:0。
 
