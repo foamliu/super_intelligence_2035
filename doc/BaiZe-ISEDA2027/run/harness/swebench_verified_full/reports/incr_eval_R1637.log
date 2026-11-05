@@ -1,0 +1,7 @@
+[incr-eval 08:08:13] === incr_eval for deepseek-harness: ['pydata__xarray-7233'] ===
+[incr-eval 08:08:13] merged 247/500 predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/predictions_deepseek-harness.json
+[incr-eval 08:08:13] EVAL deepseek-harness on 1 instances: ['pydata__xarray-7233']
+[incr-eval 08:08:17]   eval finished rc=0; log -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/logs/eval_incr_verified_full_deepseek-harness_1793837293.log
+[incr-eval 08:08:17]   pydata__xarray-7233: RESOLVED
+[incr-eval 08:08:17] updated /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/reports/eval_deepseek-harness.json: resolved=200 failed=47 infra=0
+[incr-eval 08:08:17] === incr_eval DONE ===
