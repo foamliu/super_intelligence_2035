@@ -1,12 +1,15 @@
 WAITING: 0
 SHARD: C (physical_layout)
 DOMAINS: layout_aether, layout_virtuoso, pg_layout, physical_verify
-round: 137
-📊 trace 覆盖率：135/1369=9.9%（r137 已交付 SWBProjCreate-001 layout_aether；ledger 253:case 135·parked 118·claimed 0；r137 parked zpb6g 无任务）
-🎯 通过率: shard C 累计 135 case 已落 jsonl（pi/cline 实跑数见 cline_eval_status.jsonl，B 档目标 20–30%）
-🧾 断言: k_rationale=k_check ✓（135/135 达标，rewrite_queue 已清；r137 SWBProjCreate k=14）
-📦 体积：TASK≈17KB / MEMORY_C≈23KB（<32KB ✓）
-🛠 DEBT: 0（r137 已交付 SWBProjCreate-001）
+round: 138
+📊 trace 覆盖率：136/1369=9.9%（r138 已交付 DrcPatternReportComposer-001 physical_verify；ledger 255:case 136·parked 119·claimed 0；r138 parked qv6pl waveview 域误配）
+🎯 通过率: shard C 累计 136 case 已落 jsonl（pi/cline 实跑数见 cline_eval_status.jsonl，B 档目标 20–30%）
+🧾 断言: k_rationale=k_check ✓（136/136 达标，rewrite_queue 已清；r138 DrcPatternReportComposer k=14）
+📦 体积：TASK≈17KB / MEMORY_C≈24KB（<32KB ✓）
+🛠 DEBT: 0（r138 已交付 DrcPatternReportComposer-001）
+
+
+- **轮(138) 已交付 EDA-Eval-DesignFlow-DrcPatternReportComposer-001（physical_verify, B-档 synthesized, L1）✓** —— trace=1789959794365_pet0x（xinqiaoz @ hfeg0pkn004, mc=310, 219 msgs/640KB, agent cline lead）。真实场景：PDK QA Pattern DRC 系统 `DrcPatternCheck.py` 维护会话；用户 msg23 诊断「legacy bad-only cell（无 good cell 配对）报告显示 Good Existing=-1」，agent 给出完整因果链（getTargetCellPair legacy fallback 返回 (legacyCell,None) → good 侧 second calibre 未跑 → ruleResults 无 good 键 → report 段 goodExisting 保持初值 -1）；msg45 用户令「改成 0，无需区分，bad-only 没 good cell 是预期，请改代码，先备份到 .tmp」。合成 B 档：SUT 写 `drc_pattern_report.py`（CLI `<run.json>`，解析 calibre second-check drc.summary 文本 `^RULECHECK\s+(\S+)\s+\.+\s+TOTAL Result Count = (\d+)\s+\(\d+\)$`，CHECK1=existing/CHECK2=waive原始/CHECK3=incomplete原始，对每 rule 算 good_existing(初值0=修正)/bad_missing/incomplete + 三态判定 fail/waive/pass/error，stdout JSON {design,rows,summary}）。gold=solution.py。**判分**：check.py 在 3 隐藏 B(B1 混合 bad-only+成对+waive+error/B2 跨输入守卫全成对不同名验不含 A rule 名/B3 边界 bad-only 缺 CHECK2/3→incomplete=-1 + 成对 good_summary 缺 CHECK1 行→good_existing=-1 与 bad-only 0 区分)上 subprocess 真跑 SUT。**14 条断言**①-⑭(k=14,a-n)：①(a)zip+py_compile ②(b)无参exit1 ③(c)不存在文件exit1 ④(d)坏JSON exit1 ⑤(e)B1 exit0+合法JSON+rows数对 ⑥(f)bad-only good_existing==0(修正非-1) ⑦(g)成对 good_existing==good CHECK1 ⑧(h)bad_missing==bad CHECK1 ⑨(i)三态status全对 ⑩(j)summary计数全对 ⑪(k)B2跨输入守卫good_existing对+无A名泄漏 ⑫(l)B3边界 incomplete=-1/缺CHECK1→-1/无bad_summary→bad_missing=-1 ⑬(m)确定性B1两次逐字节一致 ⑭(n)退化空rules+缺rule字段exit1。自验：ref PASS 14/14 + negative_selftest 4负全FAIL(empty→e/print→k/always_pass→h+i+j/no_default_fix→f 复现原bug-1) + §4.9三假全FAIL(空壳→e/只print→k/删核心→h+i+j)；test字段md5==磁盘check.py(a71cb9348e76178d7c826187022f65fd). k_rationale=k_check=14>=8 GATE PASS. physical_verify域+1. r138 选料先误选 qv6pl(adaml mc=324, kw含aether/virtuoso/calibre但实际是 waveview FSDB reader skill 开发→域误配)已 parked 改选 pet0x(calibre:182+pdk:808+.gds:66 真实 PV). trace_deepreads/sid_1789959794365_pet0x_drc_pattern_report.md。
 
 
 - **轮(137) 已交付 EDA-Eval-DesignFlow-SWBProjCreate-001（layout_aether, B-档 synthesized, L2）✓** —— trace=1790128216866_kbs81（e02141 @ hfeg0pkn002, mc=96, 141 msgs/718KB）。真实任务（USER msg60 原文）`帮我创建一个名为try0923的新 SWB 项目，路径是 /home/e02141/devops/，添加 sprocess、sdevice 和 svisual 三个工具，sprocess 上添加参数 Lg（扫描 0.15、0.25、0.35）和 NWell（扫描 1e17、5e17），然后保存。`；agent 先配 swb-python-api(msg0) 再用 swbpy2 API 写 create_try0923.py(Deck→getGtree→AddTool×3→AddParam×2→save→finalize)。合成 B 档：SUT 写参数化 gpythonsh 脚本(从 JSON config 读项目配置, CLI sys.argv[1])。gold=参考解 solution.py。**判分创新**：check.py 注入 mock swbpy2(记录 AddTool/AddParam/Deck/save/finalize 调用到 CALL_LOG) → 在 3 个隐藏 B(B1 nmos_eval 3工具3参数/B2 tfet_flow 4工具含sinspect 2参数/B3 minimal_run 2工具1单值参数)上真跑 SUT 脚本 → 断言 API 调用序列 + 跨输入守卫(验不含 A 硬编码) + 确定性(B1 两次 call_log 一致)。**14 条断言**①-⑬(k=14,a-n)：①(a)zip+py_compile ②(b)无参exit1(带mock) ③(c)不存在配置exit1 ④(d)坏JSON exit1 ⑤(e)B1 exit0+实验数16 ⑥(f)B1 Deck路径对 ⑦(g)B1 AddTool 3次按序 ⑧(h)B1 AddParam 3次全对 ⑨(i)save调用 ⑩(j)finalize调用 ⑪(k)getGtree调用 ⑫(l)B2 4工具+sinspect+实验数12 ⑬(m)B3边界2工具1参数+实验数1 ⑭(n)确定性B1两次call_log一致。自验：ref PASS 14/14+negative_selftest 5/5全FAIL(empty→a/print→a/hardcode→b/no_save→e/reversed→g)+§4.9三假全FAIL(空壳→a/只print→a/删核心→g)；test字段md5==磁盘check.py(51b5522803f2958258e24ae2d3f1c09c). k_rationale=k_check=14>=8 GATE PASS. layout_aether域+1(31→32). parked zpb6g(slash命令无任务). trace_deepreads/sid_1790128216866_kbs81_swb_proj_create.md。
