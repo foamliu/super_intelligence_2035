@@ -28,7 +28,7 @@ RESULTS_BASE = os.environ.get(
 CKPT_DIR_FMT = os.environ.get("BAIZE_CKPT_DIR_FMT", "gguf_iter_{it}_fixed_8set")
 REPORT_PATH = os.environ.get(
     "BAIZE_REPORT_PATH",
-    os.path.join(PROJECT_ROOT, "reports", "report_pretrain_llamacpp_scaling_zh.html"),
+    os.path.join(PROJECT_ROOT, "reports", "report_pretrain_llamacpp_scaling_60k_100k_zh.html"),
 )
 
 TASKS = [
@@ -53,7 +53,7 @@ def task_harness_metric(tkey, tv):
     return tv.get("acc")
 
 
-TARGET_ITERS = [10000, 20000, 30000, 40000, 50000]
+TARGET_ITERS = [10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000, 100000]
 TOK_PER_STEP = 256 * 16384
 TARGET_700K = 700000
 TARGET_700K_TOK = TARGET_700K * TOK_PER_STEP  # ~2.936T
@@ -252,7 +252,7 @@ def build_capability_svg(data, best_fit):
         py = sy(gy)
         svg.append(f'<line x1="{ml}" y1="{py:.1f}" x2="{W-mr}" y2="{py:.1f}" stroke="#e2e8f0" stroke-width="1"/>')
         svg.append(f'<text x="{ml-6}" y="{py+3:.1f}" font-size="10" fill="#64748b" text-anchor="end">{gy*100:.0f}%</text>')
-    for xv in [10000, 20000, 30000, 40000, 50000, 100000, 200000, 500000, 700000]:
+    for xv in [10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000, 100000, 200000, 500000, 700000]:
         if x_min <= xv <= x_max * 1.05:
             px = sx(xv)
             svg.append(f'<line x1="{px:.1f}" y1="{mt}" x2="{px:.1f}" y2="{H-mb}" stroke="#e2e8f0" stroke-width="1"/>')
@@ -345,12 +345,12 @@ def build_html(data, now_str):
     iters_done = sorted(data)
     h = []
     h.append("<!DOCTYPE html><html lang='zh-CN'><head><meta charset='UTF-8'>")
-    h.append("<title>BaiZe-2B llama.cpp 常识推理能力曲线与 700k 预测</title>")
+    h.append("<title>BaiZe-2B llama.cpp 常识推理 10 点能力曲线（10k–100k）与 700k 预测</title>")
     h.append(f"<style>{CSS}</style></head><body>")
-    h.append("<h1>BaiZe-2B llama.cpp 全 checkpoint 常识推理评测 · 能力曲线与 700k 预测</h1>")
+    h.append("<h1>BaiZe-2B llama.cpp 全 checkpoint 常识推理评测 · 10 点能力曲线（10k–100k）与 700k 预测</h1>")
     h.append(f"<p class='small'>生成时间：{esc(now_str)}　|　后端：llama.cpp 修复分支 "
              f"<code>fix/nemotron-h-undo-permute-and-rope</code>（build 5dc38db00）　|　"
-             f"已完成 {n_done}/5 ckpt　|　8 集 zero-shot <code>limit=100</code></p>")
+             f"已完成 {n_done}/{len(TARGET_ITERS)} ckpt　|　8 集 zero-shot <code>limit=100</code></p>")
     h.append("<div class='card'><h2>① 评测配置</h2><table>")
     h.append("<tr><th>项目</th><th>说明</th></tr>")
     h.append("<tr><td>模型</td><td>BaiZe-2B（Mamba2-hybrid，2.22B 参数）</td></tr>")
@@ -358,8 +358,8 @@ def build_html(data, now_str):
              "<code>-t 8</code> / <code>nice 19</code> / <code>OMP_NUM_THREADS=8</code></td></tr>")
     h.append("<tr><td>8 个任务集</td><td>ARC-Challenge / ARC-Easy / BoolQ / HellaSwag / "
              "OpenBookQA / PIQA / SciQ / Winogrande（zero-shot，与 P-6 同口径）</td></tr>")
-    h.append(f"<tr><td>检查点</td><td>iter_{{10000,20000,30000,40000,50000}}（token/step={TOK_PER_STEP:,}，"
-             f"即 {fmt_tok(10000*TOK_PER_STEP)} ~ {fmt_tok(50000*TOK_PER_STEP)}）</td></tr>")
+    h.append(f"<tr><td>检查点</td><td>iter_{{{','.join(str(i) for i in TARGET_ITERS)}}}（token/step={TOK_PER_STEP:,}，"
+             f"即 {fmt_tok(TARGET_ITERS[0]*TOK_PER_STEP)} ~ {fmt_tok(TARGET_ITERS[-1]*TOK_PER_STEP)}）</td></tr>")
     h.append("<tr><td>参照线</td><td>P-6 起点 0.4395@655M/20k；Xmodel-2 s1 (1.2B)；Phi-1.5 (1.3B)</td></tr>")
     h.append("<tr><td>每任务样本</td><td><code>limit=100</code>（非全量），acc_stderr ≈ ±4.5%，"
              "逐集绝对值有统计波动，<strong>Avg 趋势比单集绝对值更可信</strong></td></tr>")
@@ -371,19 +371,39 @@ def build_html(data, now_str):
         avgs = [(it, avg_acc(data[it])) for it in iters_done]
         best_it, best_avg = max(avgs, key=lambda p: p[1])
         first_it, first_avg = avgs[0]
-        h.append(f"<li>已完成 <strong>{n_done}/5</strong> 个检查点（{', '.join(f'iter_{it}' for it in iters_done)}）。</li>")
+        h.append(f"<li>已完成 <strong>{n_done}/{len(TARGET_ITERS)}</strong> 个检查点（{', '.join(f'iter_{it}' for it in iters_done)}）。</li>")
         if n_done >= 2:
             h.append(f"<li>常识推理 Avg 从 iter_{first_it} 的 <strong>{fmt_pct(first_avg)}</strong> "
                      f"到 iter_{best_it} 的 <strong>{fmt_pct(best_avg)}</strong>。</li>")
         h.append(f"<li>相对 P-6 起点（{P6_BASELINE['avg']*100:.1f}%@655M/20k）：当前最高 "
                  f"<strong>{(best_avg-P6_BASELINE['avg'])*100:+.1f} pp</strong>（注：P-6 为 655M，"
                  f"本评测为 2B，参数量不同，仅作趋势参照）。</li>")
+        # 50k→60k slope change (decay 前后拐点)
+        if 50000 in data and 60000 in data:
+            a50 = avg_acc(data[50000]); a60 = avg_acc(data[60000])
+            if a50 is not None and a60 is not None:
+                delta = (a60 - a50) * 100
+                if 40000 in data:
+                    a40 = avg_acc(data[40000])
+                    slope_before = (a50 - a40) * 100 if a40 is not None else None
+                else:
+                    slope_before = None
+                slope_str = f"（50k 前 10k 段斜率 {slope_before:+.2f} pp → 50k 后 {delta:+.2f} pp）" if slope_before is not None else ""
+                if delta > 0.5:
+                    verdict = "继续上升"
+                elif delta < -0.5:
+                    verdict = "出现回落"
+                else:
+                    verdict = "趋于平台"
+                h.append(f"<li><strong>50k→60k 拐点分析</strong>：Avg {a50*100:.2f}% → {a60*100:.2f}%"
+                         f"（Δ={delta:+.2f} pp），{verdict}{slope_str}。"
+                         "S1 于 iter_58000 resume，此拐点可反映 resume 前后训练连续性影响。</li>")
         h.append("<li><strong>llama.cpp 修复后恢复退化 ckpt</strong>：HF 侧（PyTorch CPU float32）"
                  "iter_20000/40000/50000 因 Mamba2 SSM 数值不稳定 logits 全 NaN → sciq=0.0 退化；"
-                 "llama.cpp C++ SSM scan 数值稳定，<strong>5 个 ckpt 全部可正常出分</strong>，"
+                 "llama.cpp C++ SSM scan 数值稳定，<strong>所有已评测 ckpt 全部可正常出分</strong>，"
                  "本报告即为修复后真实能力曲线。</li>")
     h.append("</ul></div>")
-    h.append("<div class='card'><h2>③ 5 ckpt × 8 集汇总表（acc / acc_norm）</h2>")
+    h.append(f"<div class='card'><h2>③ {len(TARGET_ITERS)} ckpt × 8 集汇总表（acc / acc_norm）</h2>")
     if n_done == 0:
         h.append("<p class='small'>暂无已完成检查点，待评测结束后刷新。</p>")
     else:
@@ -394,7 +414,7 @@ def build_html(data, now_str):
         for it in TARGET_ITERS:
             if it not in data:
                 h.append(f"<tr><td>iter_{it}</td><td>{fmt_tok(it*TOK_PER_STEP)}</td>"
-                         f"<td colspan='10' class='na'>评测中…</td></tr>")
+                         f"<td colspan='{len(TASKS)+2}' class='na'>评测中…</td></tr>")
                 continue
             ck = data[it]
             a = avg_acc(ck); ar = avg_raw_acc(ck)
@@ -408,7 +428,7 @@ def build_html(data, now_str):
                 else:
                     h.append("<td class='na'>—</td>")
             h.append(f"<td class='avg'>{fmt_pct(a)}</td><td class='avg'>{fmt_pct(ar)}</td></tr>")
-        h.append('<tr><td colspan="11" style="background:#eef2f7;font-weight:600;text-align:left">参照线</td></tr>')
+        h.append(f"<tr><td colspan='{len(TASKS)+4}' style='background:#eef2f7;font-weight:600;text-align:left'>参照线</td></tr>")
         h.append(f"<tr class='ref'><td>BaiZe P-6 (655M,20k)</td><td>655M tok</td>"
                  f"<td colspan='8' class='na'>逐集见 P-6 报告</td>"
                  f"<td class='avg'>{P6_BASELINE['avg']*100:.1f}%</td><td class='avg'>{P6_BASELINE['avg_raw']*100:.1f}%</td></tr>")
@@ -459,15 +479,16 @@ def build_html(data, now_str):
                      f"公式：<code>{esc(best_fit['formula'])}</code>。</div>")
         h.append("<div class='warn'><strong>⚠️ 外推不确定度（务必明示）</strong>："
                  "<ul>"
-                 f"<li>拟合仅基于 <strong>{len(steps_for_fit)} 个点</strong>，且全部位于 10k–50k 的"
-                 f"<strong>陡升段</strong>，700k 距最末点 <strong>{TARGET_700K//max(steps_for_fit)}× 外推</strong>，"
+                 f"<li>拟合仅基于 <strong>{len(steps_for_fit)} 个点</strong>，覆盖 iter "
+                 f"{steps_for_fit[0]}–{steps_for_fit[-1]}，700k 距最末点 "
+                 f"<strong>{TARGET_700K//max(steps_for_fit)}× 外推</strong>，"
                  "误差可能很大。</li>"
                  "<li>两种拟合（对数=无上界单调增；幂律=逼近渐近上界 a）假设不同，"
                  "二者 700k 预测值的差距即体现模型选择的不确定度。</li>"
                  f"<li>RMSE ≈ {best_fit['rmse']:.4f}（{best_fit['rmse']*100:.2f} pp）为拟合段内残差，"
                  "<strong>外推误差通常远大于此</strong>。</li>"
                  "<li>每任务 <code>limit=100</code>（样本量小，逐集 ±4.5%），Avg 本身带统计噪声。</li>"
-                 "<li>结论应理解为<strong>量级估计</strong>，非精确预测；需更多检查点（如 100k/200k）收窄区间。</li>"
+                 "<li>结论应理解为<strong>量级估计</strong>，非精确预测；需更多检查点（如 200k/500k）收窄区间。</li>"
                  "</ul></div>")
     h.append("</div>")
     h.append("<div class='card'><h2>⑥ llama.cpp vs HF（PyTorch CPU）后端对比</h2><ul>")
@@ -476,19 +497,19 @@ def build_html(data, now_str):
              "仅 iter_10000（Avg 50.0%）/ iter_30000（Avg 50.25%）有效。</li>")
     h.append("<li><strong>llama.cpp 侧（C++ SSM scan，修复后）</strong>：1-token logits 与 HF 对齐 "
              "（Δmax=0.006），sciq/piqa limit=100 复判 Δ≤1pp；C++ SSM 数值稳定，"
-             "<strong>5 个 ckpt 全部可正常出分</strong>。</li>")
-    h.append("<li><strong>结论</strong>：本报告（llama.cpp）给出真实的 5 点能力曲线，"
+             f"<strong>全部 {len(data)} 个 ckpt 可正常出分</strong>。</li>")
+    h.append(f"<li><strong>结论</strong>：本报告（llama.cpp）给出真实的 {len(data)} 点能力曲线，"
              "克服了 HF CPU 侧的 NaN 退化问题；NaN 为 PyTorch reference 实现的数值问题，"
-             "非 ckpt 权重问题（逐张量扫描 5 ckpt 全无 NaN/Inf）。</li>")
+             f"非 ckpt 权重问题（逐张量扫描 ckpt 全无 NaN/Inf）。</li>")
     h.append("</ul></div>")
     h.append("<div class='card'><h2>⑦ 诚实条款与限制</h2><ul>")
     h.append("<li>本评测为<strong>纯 CPU</strong>，llama.cpp 后端，<code>limit=100</code>，样本量较小，"
              "逐集 acc_stderr ≈ ±4.5%，<strong>Avg 趋势比单集绝对值更可信</strong>。</li>")
-    h.append("<li>700k 预测为<strong>外推</strong>，仅基于 5 点且处于陡升段，"
+    h.append(f"<li>700k 预测为<strong>外推</strong>，仅基于 {len(steps_for_fit)} 点，"
              "<strong>误差大，仅作量级估计</strong>（见 §⑤ 不确定度）。</li>")
     h.append("<li>Xmodel-2 / Phi-1.5 参照线为公开报告值，评测口径可能与我方不完全一致，仅作量级参照。</li>")
-    h.append("<li>S1 训练于 2026-11-02 19:51 从 ckpt 58000 resume，iter_10000–50000 均为 "
-             "<strong>resume 前</strong>保存的检查点，不受 resume 影响。</li>")
+    h.append(f"<li>S1 训练于 2026-11-02 19:51 从 ckpt 58000 resume，iter_10000–50000 均为 "
+             "<strong>resume 前</strong>保存的检查点，不受 resume 影响；iter_60000+ 为 resume 后检查点。</li>")
     h.append("<li>全程 <code>CUDA_VISIBLE_DEVICES=\"\"</code>，未碰 GPU/S1，CPU load ≪80%。</li>")
     h.append("</ul></div>")
     h.append(f"<div class='foot'>报告生成器：<code>run/gen_llamacpp_scaling_report.py</code>（幂等，可随评测进度反复刷新）"
@@ -498,9 +519,22 @@ def build_html(data, now_str):
     return "\n".join(h)
 
 
+def _data_timestamp(data):
+    """Deterministic timestamp from data: max mtime of results.json files.
+    Ensures idempotent output (same data -> same report byte-for-byte)."""
+    mtimes = []
+    for it in data:
+        dpath = os.path.join(RESULTS_BASE, CKPT_DIR_FMT.format(it=it), "results.json")
+        if os.path.isfile(dpath):
+            mtimes.append(os.path.getmtime(dpath))
+    if not mtimes:
+        return "（待评测数据就绪后刷新）"
+    return datetime.datetime.fromtimestamp(max(mtimes)).strftime("%Y-%m-%d %H:%M:%S")
+
+
 def main():
     data = load_results()
-    now_str = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    now_str = _data_timestamp(data)
     os.makedirs(os.path.dirname(REPORT_PATH), exist_ok=True)
     with open(REPORT_PATH, "w", encoding="utf-8") as f:
         f.write(build_html(data, now_str))

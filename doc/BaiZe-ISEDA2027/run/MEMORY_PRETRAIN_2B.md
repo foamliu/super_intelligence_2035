@@ -1,63 +1,13 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 0
 > 🛑 **【运维通告 · 2026-11-02 19:51】S1 已由 ops 中继重启并在跑**：`bash scripts/train.sh s1 --nodes 2`，launcher pid **4163528**，从 **ckpt 58000** 续（19:55:40 起 iter **58010**→58030，7.0–7.2 s/step ≈**582K tok/s**，双机 16 卡 **98–100%**、~75GB/卡、~690W）。⇒ **GPU 不再空闲**：🚫 严禁再起任何训练/GPU 评测进程；CPU 评测必须降载：`OMP_NUM_THREADS≤8` + `nice -n 19`，**禁止 `pkill python`**。
-> 2026-11-05 18:21 #1408: ★ 例行空唤醒巡检·无新令·全绿。S1双机16卡全健康(.29 8卡97-100%/~75GB/~690W + .12 8卡95-100%/~75GB,torchrun alive PID4163745 master_addr=.12 node_rank=0)。⚠️pgrep -f llama-server误报4=cline自身cmdline含TASK文本→改pgrep -x验证exit=1=真无残留;GGUF du空=已清。git up to date(无pretrain待提交,他线在途文件未碰,未用git add -A)。📦 体积:TASK=25645B(25.0KB✓)/MEMORY=30776B(30.1KB✓)。未完成指令:**无**⇒ WAITING: 1。
+> 2026-11-05 18:52 #1409: ★ 运维令 11-05 18:2x·**60k–100k 评测启动**。HF导出60k/70k/80k完成(各4.2GB safetensors)，config.json修复(mamba_dt_limit字段致GGUF转换失败→移除)；60k GGUF转换DONE(bz2b-60000-f16.gguf 4.2GB)，llama-server@8090运行中，60k eval进行中。90k NeMo ckpt在位(iter_0090000)，100k未出(训练~94k)。生成器已改造:TARGET_ITERS扩10点/动态计数/幂等时间戳/50k→60k拐点分析/v2报告路径。v2报告5/10ckpt(18974B/0script/0外链)已生成。管线脚本/tmp/baize_eval_60k_100k_pipeline.sh后台运行。📦 体积:TASK=29561B(28.9KB✓)/MEMORY=31292B(30.6KB✓)。未完成指令:**有**(60k-100k评测+报告v2)⇒ WAITING: 0。
 
-> 2026-11-05 18:02 #1407: ★ 例行空唤醒巡检·无新令·全绿。运维令11-05 09:0x仍✅已交付(报告+生成器+5/5 results.json在位)。S1健康(.29 8卡96-100%/~75GB/~684W训练中,torchrun alive)、无残留eval/watch进程、git up to date(无pretrain待提交,他线在途文件未碰)。📦 体积:TASK=25645B(25.0KB✓)/MEMORY≈32400B(31.6KB✓)。未完成指令:**无**⇒ WAITING: 1。
-> 2026-11-05 17:40 #1406: ★ 空唤醒巡检·运维令 11-05 09:0x 已✅交付·本轮归档收口。复核交付物全在位,已将运维令块原文归档→ARCHIVE(413927→417979B),TASK留1行✅指针(27955→25645B)。📦 体积:TASK=25645B(25.0KB✓)/MEMORY=31377B(30.6KB✓)。未完成指令:**无**⇒ WAITING: 1。
-> 2026-11-05 16:39 #1403: ★ 运维令 11-05 09:0x·**✅ 全部完成·5/5 ckpt 终版报告已交付**。iter_50000 eval DONE(harness Avg=54.25%); 终版报告 report_pretrain_llamacpp_scaling_zh.html 17777B@16:38(5/5 ckpt,6节,0 script/0外链)。能力曲线:Avg 51.50%(10k)→52.00%(20k)→53.00%(30k)→55.12%(40k)→54.25%(50k);700k外推60.16%(R²=0.792)。commit b8669b0de+bd812d0c0。未完成指令:**无**⇒ WAITING: 1。
-> 📦 §#1402/#1405/#1404（11-05 16:31-17:18, 监控轮+空唤醒巡检·4/5 DONE→5/5 DONE收口）→ daily-memories/2026-11-05.md；**结论**：被#1403/#1406收口。需要时再读。
-> 2026-11-05 16:39 #1403: ★ 运维令 11-05 09:0x·**✅ 全部完成·5/5 ckpt 终版报告已交付**。iter_50000 eval DONE(results.json 22805B@16:37, harness Avg=54.25%); done marker /tmp/baize_report_final_done.marker@16:38:18 出现; watcher 已退出(无残留 eval/watch 进程)。终版报告 report_pretrain_llamacpp_scaling_zh.html 17777B@16:38(5/5 ckpt,6节全:①配置②关键发现③5×8汇总表④能力-vs-step曲线SVG内联⑤700k预测 log拟合R²=0.792→60.16%+不确定度明示⑥llama.cpp vs HF后端对比),0 `<script>`/0外链(仅SVG namespace),208行。5/5 results.json 全落盘 gguf_iter_{10000..50000}_fixed_8set/(22.78-22.81KB each @ /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/lm_eval_results/)。生成器 gen_llamacpp_scaling_report.py 514行(已commit@#1396)。能力曲线:Avg 51.50%(10k)→52.00%(20k)→53.00%(30k)→55.12%(40k)→54.25%(50k);sciq 全恢复非NaN(0.79/0.82/0.83/0.80/0.77)→NaN系HF/bf16路径非ckpt权重。CUDA_VISIBLE_DEVICES=""全程;nice19;未碰GPU/S1/vision/data/harness。git:up to date。📦 体积:TASK=27955B(27.3KB✓)/MEMORY≈29KB(✓)。未完成指令:**无**(运维令已交付+commit)⇒ WAITING: 1。
-> 📦 §#1402（11-05 16:31, 监控轮·4/5 DONE·iter_50000仍在跑~67min/ETA~16:39·watcher就绪）→ daily-memories/2026-11-05.md；**结论**：4/5 DONE, iter_50000 eval alive ETA~16:39, watcher就绪, 生成器已复核PASS。被#1403收口(5/5 DONE 报告已交付@16:38)。需要时再读。
-> 📦 §#1401（11-05 16:24, 监控轮·4/5 DONE·iter_50000仍在跑~59.5min·watcher就绪待5/5自动出终版报告）→ daily-memories/2026-11-05.md；**结论**：4/5 DONE, iter_50000 eval alive ETA~16:39, watcher就绪, 生成器已复核PASS。被#1402校正(iter_50000~67min@16:31, /metrics总~570K tokens较#1401+48K)。需要时再读。
-> 📦 §#1400（11-05 16:09, 监控轮·4/5 DONE·iter_50000仍在跑~45min·生成器全路径已复核PASS）→ daily-memories/2026-11-05.md；**结论**：4/5 DONE, iter_50000 eval alive ETA~16:25, watcher就绪, 生成器全路径复核PASS。被#1401校正(iter_50000~59.5min@16:24, ETA上修~16:39按74min/ckpt, S1 GPU0-3全100%)。需要时再读。
-> 📦 §#1399（11-05 16:04, 监控轮·4/5 DONE·iter_50000 64.3%·ETA~16:25）→ daily-memories/2026-11-05.md；**结论**：4/5 DONE, iter_50000 64.3%@16:04 ETA~16:25, 4 results.json verified, watcher+生成器就绪。被#1400校正(iter_50000仍在跑@16:09, 生成器全路径已复核)。需要时再读。
-> 📦 §#1398（11-05 15:55, 监控轮·4/5 DONE·iter_50000~40%·归档3块TASK→27.3KB✓）→ daily-memories/2026-11-05.md；**结论**：4/5 DONE, iter_50000~40%ETA~16:38, 归档11-04 22:1x+14:0x+11-02 11:1x三块TASK→27.3KB✓, PR#31703确认已提交。被#1399校正(iter_50000 64.3%@16:04, ETA上修~16:25)。需要时再读。
-> 📦 §#1397（11-05 15:39, 监控轮·4/5 DONE·iter_50000~20%·ETA~16:38）→ daily-memories/2026-11-05.md；**结论**：4/5 DONE harness Avg=51.50/52.00/53.00/55.12%, iter_50000已起ETA~16:38, watcher就绪, sciq恢复确认非NaN。被#1398校正(归档3块TASK→27.3KB✓, iter_50000~40%@15:55, PR#31703确认已提交)。需要时再读。
-> 📦 §#1396（11-05 15:31, 监控轮·4/5 DONE·iter_50000评测进行中·生成器dry-run OK）→ daily-memories/2026-11-05.md；**结论**：4/5 DONE harness Avg=51.50/52.00/53.00/55.12%,iter_50000已起(PID1157255),生成器dry-run exit=0/17401B,watcher就绪。被#1397校正。需要时再读。
-> 📦 §#1395（11-05 15:18, 监控轮·3/5 DONE·iter_40000进行中·ETA~16:40）→ daily-memories/2026-11-05.md；**结论**：3/5 DONE,iter_40000 id_task31143活跃ETA~15:25,生成器已复核,watcher就绪。被#1396校正(4/5 DONE iter_40000 harness Avg=55.12%,iter_50000已起,生成器dry-run exit=0)。需要时再读。
-> 📦 §#1394（11-05 15:07, 监控轮·3/5 DONE·iter_40000 ~79%·ETA~16:37）→ daily-memories/2026-11-05.md；**结论**：3/5 DONE iter_40000~79%@15:06,全完成ETA~16:37,watcher就绪。被#1395校正。需要时再读。
-
-> 📦 §#1393（11-05 15:00, 监控轮·3/5 DONE·iter_40000 ~68%·ETA~16:37）→ daily-memories/2026-11-05.md；**结论**：3/5 DONE iter_40000~68%@15:00,ETA done~15:23,全完成~16:37,watcher就绪。被#1394校正(iter_40000~79%@15:06)。需要时再读。
-> 📦 §#1391（11-05 14:38, 监控轮·3/5 DONE·iter_40000 ~39%·ETA~16:37）→ daily-memories/2026-11-05.md；**结论**：3/5 DONE iter_40000~39%@14:38,每ckpt~74min,全完成ETA~16:37,报告生成器就绪需手动跑。被#1392接续(部署watcher自动跑生成器,无需手动)。需要时再读。
-> 📦 §#1390（11-05 14:31, 监控轮·3/5 DONE·iter_40000 ~37%·ETA~16:20）→ daily-memories/2026-11-05.md；**结论**：3/5 DONE iter_40000~37%@14:31。被#1391校正(iter_40000~39%@14:38,每ckpt~74min,全完成ETA~16:37)。需要时再读。
-> 📦 §#1389（11-05 14:20, 监控轮·3/5 DONE·iter_40000 ~22%·ETA~16:00-16:38）→ daily-memories/2026-11-05.md；**结论**：3/5 DONE,iter_40000~22%@14:20。被#1390校正(iter_40000~37%@14:31,ETA~16:20)。需要时再读。
-> 📦 §#1388（11-05 14:10, 监控轮·3/5 DONE·iter_40000刚起·ETA全完成~16:38）→ daily-memories/2026-11-05.md；**结论**：3/5 DONE iter_30000@14:09,iter_40000已起,ETA~16:38。被#1389校正(iter_40000~22%@14:20,ETA~16:00-16:38)。需要时再读。
-> 📦 §#1387（11-05 13:55, 监控轮·2/5 DONE·iter_30000 86%·ETA全完成~16:25）→ daily-memories/2026-11-05.md；**结论**：管线健康ETA~16:25。被#1388校正(3/5 DONE@14:09,iter_40000已起,ETA~16:38)。需要时再读。
-> 📦 §#1380-#1386（11-05 13:0x–13:49, 7轮监控·iter_30000 5min→86%·ETA收敛）→ daily-memories/2026-11-05.md；**结论汇总**：管线全程健康,iter_30000 推进中,ETA从~16:40逐轮收敛。被#1388校正(3/5 DONE@14:09)。需要时再读。
-
-> 📦 §#1378（11-05 12:4x, 监控轮·iter_20000 98%·ETA~16:25）→ daily-memories/2026-11-05.md；**结论**：管线健康,iter_20000 98%。被#1379 校正(iter_20000 DONE@12:53 Avg=52.00%, iter_30000已启动, ETA~16:35)。需要时再读。
-
-
-> 📦 §#1374（11-05 11:5x, 监控轮·iter_20000 47%·ETA~16:00）→ daily-memories/2026-11-05.md；**结论**：管线健康ETA~16:00。被#1375/#1376 校正(iter_20000 72%@12:13, ETA全完成~16:20)。需要时再读。
-
-> 📦 §#1377（11-05 12:2x, 监控轮·iter_20000 84%·ETA~16:20）→ daily-memories/2026-11-05.md；**结论**：管线健康,iter_20000 84%@12:2x。被#1378 校正(iter_20000 98%@12:42, ETA~16:25)。需要时再读。
-
-> 📦 §#1375（11-05 12:0x, 监控轮·iter_20000 55%·ETA~16:15）→ daily-memories/2026-11-05.md；**结论**：管线健康ETA~16:15。被#1376/#1378 校正。需要时再读。
-> 📦 §#1376（11-05 12:1x, 监控轮·iter_20000 72%·ETA~16:20）→ daily-memories/2026-11-05.md；**结论**：管线健康ETA~16:20,GGUF全5就绪。被#1378 校正(98%@12:42)。需要时再读。
-
-
-> 📦 §#1373（11-05 11:4x, iter_10000 DONE·生成器口径bug已修）→ daily-memories/2026-11-05.md「归档 2026-11-05」节；**结论**：iter_10000完成@11:40(74min)harness Avg51.50%=HF对齐✅;生成器改harness口径+P6基线修正,报告12932B验证✅;ETA 74min/ckpt→全完成~16:30。被#1377校正~16:20。需要时再读。
-
-> 📦 §#1372（11-05 11:2x, 监控轮·iter_10000 91%·ETA~15:13）→ daily-memories/2026-11-05.md；**结论**：管线健康ETA~15:13。被#1373校正为74min/ckpt,ETA~16:30。需要时再读。
-
-> 📦 §#1371（11-05 11:1x, 监控轮·iter_10000 86%）→ daily-memories/2026-11-05.md；**结论**：管线健康,ETA~14:45。被#1373修正为74min/ckpt,ETA~16:30。需要时再读。
-> 📦 §#1370（11-05 11:0x, 监控轮·iter_10000 77%·生成器复验PASS）→ daily-memories/2026-11-05.md；**结论**：ETA上修~15:00。被#1373修正为~16:30。需要时再读。
-> 📦 §#1369（11-05 10:5x, 监控轮·iter_10000 60%·f-string bug已修）→ daily-memories/2026-11-05.md；**结论**：L440 f前缀已补,占位HTML验证PASS。需要时再读。
-
-> 📦 §#1368（11-05 10:4x, 监控轮·管线50%·脚本对齐验）→ daily-memories/2026-11-05.md；**结论**：管线+生成器对齐PASS, ETA~13:50, CPU13%≪80%。被#1370修正ETA~15:00。需要时再读。
-> 📦 §#1367（11-05 10:3x, 监控轮·管线健康·生成器复验）→ daily-memories/2026-11-05.md；**结论**：管线健康iter_10000推进中, 0/5产物, 生成器5614B占位✅。需要时再读。
-
-> 📦 §#1366（11-05 10:2x, 管线并行度优化实测+ETA修正~40min/ckpt）→ daily-memories/2026-11-05.md；**结论**：parallel=4不提速(内存带宽bound), ETA~13:50全完成, f16精度最优保留。需要时再读。
-
-> 📦 §#1365（11-05 10:0x, 报告生成器就绪+管线监控）→ daily-memories/2026-11-05.md；**结论**：生成器（491行,纯标准库,幂等）验证PASS,0/5待管线。需要时再读。
-
-> 📦 §#1364（11-05 09:4x, llama.cpp全ckpt评测启动·修复恢复退化ckpt）→ daily-memories/2026-11-05.md「归档 2026-11-05」节；**结论**：5 ckpt全转GGUF f16(~28s/ckpt);冒烟iter_20000修复后sciq=0.82→NaN是PyTorch CPU float32 SSM不稳定非权重问题;全量管线PID1694987启动。被v2管线PID502077取代。需要时再读。
-
-> 📦 §#1360（11-05 08:0x, llama.cpp 3-bug fix）→ daily-memories/2026-11-05.md；**结论**：✅ 3 bugs fixed（rope_type NONE→NEOX / build_attention_layer 缺 ggml_rope_ext / FFN RELU_SQR→GELU），commit 5dc38db00@fix/nemotron-h-undo-permute-and-rope，1-token Δmax=0.006（600×改善），undo_permute=True 正确，PR 草稿就绪等用户确认。需要时再读。
-> 📦 §#1361（11-05 07:0x, sciq/piqa 复判 + PR 草稿）→ daily-memories/2026-11-05.md；**结论**：✅ 修复后 GGUF F16 sciq/piqa limit=100 全 4 项 |Δ|≤1pp（sciq 0.79→0.79/piqa 0.72→0.72），PR 草稿 reports/report_pretrain_llamacpp_pr_draft.md 就绪等用户确认发上游。需要时再读。
-
-> 📦 §#1362（11-05 07:3x, CPU eval退化调查·推翻NaN在权重）→ daily-memories/2026-11-05.md「归档 2026-11-05」节；**结论**：逐张量扫描5 ckpt权重全无NaN/Inf;2-token前向logits有效。⚠️被#1363推翻(2 token太短,17+ token才触发NaN)。需要时再读。
+> 2026-11-05 18:02 #1407: 例行空唤醒巡检·全绿·S1健康·运维令09:0x已交付。→ daily-memories/2026-11-05.md。被#1409接续。
+> 2026-11-05 16:39 #1403: 运维令09:0x·✅5/5 ckpt终版报告交付(report_pretrain_llamacpp_scaling_zh.html 17777B, Avg 51.50→52.00→53.00→55.12→54.25%, 700k外推60.16% R²=0.792, commit b8669b0de+bd812d0c0)。→ daily-memories/2026-11-05.md。被#1409接续(60k-100k继续)。
+> 📦 §#1396-#1408（11-05 10:3x–18:21, 11-05 09:0x 5ckpt评测全过程监控轮）→ daily-memories/2026-11-05.md；**结论**：5/5 DONE报告交付,全程管线健康,每ckpt~74min。被#1409接续(扩到10点)。需要时再读。
+> 📦 §#1367-#1395（11-05 10:3x–15:18, 5ckpt评测前期监控轮）→ daily-memories/2026-11-05.md；**结论**：管线全程健康,iter_10000@11:40→50000@16:37,生成器口径bug已修。被#1396+收口。需要时再读。
+> 📦 §#1360-#1366（11-05 08:0x–10:2x, llama.cpp 3-bug fix+管线启动）→ daily-memories/2026-11-05.md；**结论**：3 bugs fixed(rope_type/build_attention_layer/FFN),commit 5dc38db00,1-token Δmax=0.006,管线启动。需要时再读。
 
 > 📦 §#1363（11-05 09:0x, CPU eval退化根因·SSM数值不稳定）→ daily-memories/2026-11-05.md「归档 2026-11-05」节；**结论**：退化ckpt 17+ token时logits全NaN;根因=Mamba2 SSM数值不稳定(PyTorch reference CPU float32);退化eval为NaN伪影非真实能力。被#1360 llama.cpp C++ SSM修复(5 ckpt全可出分)取代。需要时再读。
 
