@@ -114,3 +114,19 @@ ztoza					parked		2026-11-05 02:24	scout_1105: false-positive/non-spice/explain-
 1790143934595_0nar3	qifanli	hfeg0plg101	41	spice_sim	case	EDA-Eval-DesignFlow-PulseStimTbGen-001	2026-11-05 08:18	
 1793102773959_okq91.messages.json	easont	hfhds211	650	spice_sim	parked		2026-11-05 09:30	overlaps shard D NetlistDCE-001 (same easont TempHalfWL DDGOA session 1793102773959_okq91); case TempThreshChar-001 removed from B jsonl 2026-11-05 (cross-shard trace dup with D)
 1793101460874_7bqzr	rongtaoy	hfeg0pkn001	220	spice_sim	case	EDA-Eval-DesignFlow-PostsimPortAudit-001	2026-11-05 10:01	
+1793087996513_u78sz	hengbow	hfeg0pgn045	407	characterization	parked		2026-11-05 10:29	verdi waveform-viewer env question, non-spice
+1792488619552_mt7ua	johnl	hfeg0pfn119	679	characterization	parked		2026-11-05 10:29	innovus PNR layout, non-spice_char
+1793067588685_cpv3d	taodu	hfeg0pfn012	356	spice_sim	parked		2026-11-05 10:29	CROSS-SHARD DUP: ConnFileNetChk-001 already exists in shard A and D (same trace cpv3d/taodu)
+1791966358446_82iou	fxian	hfeg0pkn002	606	characterization	parked		2026-11-05 10:29	Aether schematic GUI lookup app, non-spice
+1791958525711_f1fik	chengleiy	hfeg0pkn001	504	characterization	parked		2026-11-05 10:29	script comprehension (read all my scripts), non-spice
+1792487689184_4ybw1	yan1zh	hfeg0plg65	495	characterization	parked		2026-11-05 10:29	schematic sch.oa access, non-spice
+1788830861723_dnvv4	miccao	hfeg0plg37	458	characterization	parked		2026-11-05 10:29	skill install how-to, non-spice
+1792744168464_n1k2a	e0045291	hfeg0plg80	451	characterization	parked		2026-11-05 10:29	token-burn exercise (no edit), non-spice
+1791362457881_awgyg	hbpeng	hfeg0pkn005	445	characterization	parked		2026-11-05 10:29	Excel EM-file parse to classes, non-spice
+1791171109524_llns7	yohannw	hfeg0pkn003	442	characterization	parked		2026-11-05 10:29	rsCalc auto-res/via/power-fill layout flow, non-spice
+1789350621467_fymcr	miccao	hfeg0plg37	407	characterization	parked		2026-11-05 10:29	autocell GDS gen from netlist, layout non-spice
+1786541065533_cgqd1	e0014566	hfeg0pkn001	772	characterization	parked		2026-11-05 10:29	rsCalc resistance/RTEXT-RNODE layout, non-spice
+1792297746172_kyref	vincelu	hfeg0plg55	476	characterization	parked		2026-11-05 10:29	std-cell library add-cells/inst automation + emy2netlist, non-sim
+1793017339067_jhdvn	t0002805	hfeg0pgn145	492	characterization	parked		2026-11-05 10:29	circuit analysis (schematic+netlist explanation), no sim
+1792563683776_pwep8	jianhaiq	hfeg0pkn004	517	characterization	parked		2026-11-05 10:29	PG_check.py CDL/GDS power-ground net check (netlist-DB), non-spice-sim
+1793078405436_t0aom	easont	hfhds207	650	spice_sim	claimed		2026-11-05 10:29	FineSim post-sim fsdb+netlist analysis + netlist optimization/iteration + diff report; deepread shard B 2026-11-05
