@@ -799,3 +799,27 @@ b4dlx					parked		2026-11-05 22:49	slash-command /anasimpro-gui-start非自然pr
 1550c					parked		2026-11-05 22:49	OP3置位root-cause Q&A
 ymjs5					parked		2026-11-05 22:49	resume任务premise-missing需prior state
 wl9i4					parked		2026-11-05 22:49	交互shell驱动+Q&A n752大
+1790841917726_hgfso.messages.json	wenwenl	10.129.8.112	59	waveform	case	EDA-Eval-DesignFlow-Wr4thCkMeas-001	2026-11-05 23:22	
+1791611768210_xnqkp.messages.json					parked		2026-11-05 23:23	crash CSV data-analysis report (non-EDA produce, data analytics)
+1792998643161_19e3k.messages.json					parked		2026-11-05 23:23	[skill-creator] slash-command/skill-creation
+1789629651143_l5349.messages.json					parked		2026-11-05 23:23	root-cause debugging '看下问题出在哪里' (诊断非produce)
+1790057439320_dc4bw.messages.json					parked		2026-11-05 23:23	DRC testpattern generator w/ full user spec (L2 layout, 非 shard-D core)
+1790078216880_4g0i9.messages.json					parked		2026-11-05 23:23	'NW*产生pattern' premise-missing (continuation of dc4bw)
+1791795346613_15rw7.messages.json					parked		2026-11-05 23:23	'启用aether的skill' slash-command/skill-loading
+1789973143978_7glsf.messages.json					parked		2026-11-05 23:23	'你找到已经打开的aether吗' Q&A/探活
+1791523535284_pibrs.messages.json					parked		2026-11-05 23:23	'check your policy' meta/policy-check
+1789890004925_idt7t.messages.json					parked		2026-11-05 23:23	'读取...三个文件' Q&A/analysis
+1792129303041_i252z.messages.json					parked		2026-11-05 23:23	'如何做' how-to Q&A (非 clean produce)
+1792214696328_c5y74.messages.json					parked		2026-11-05 23:23	skill_instructions slash-command
+1789867185527_85sjy.messages.json					parked		2026-11-05 23:23	'获取当前设计的信息' Q&A/analysis
+1793167986392_7bqnr.messages.json					parked		2026-11-05 23:23	'你可以启动aether吗' Q&A
+1790055158073_sutmr.messages.json					parked		2026-11-05 23:23	'检查一下我打的aether' operation/Q&A
+1792648046400_toak9.messages.json					parked		2026-11-05 23:23	'整理下电路功能' analysis/Q&A
+1791528074428_bfjaz.messages.json					parked		2026-11-05 23:23	'run run_approved_command' slash-command/policy
+1790213910009_nw4v8.messages.json					parked		2026-11-05 23:23	[drc-pattern] slash-command
+1791686047150_w4uy2.messages.json					parked		2026-11-05 23:23	[skill-creator] vps skills slash-command
+1787625078133_9ryp9.messages.json					parked		2026-11-05 23:23	NOFILE (session 不可读)
+1792378687851_j8vf6.messages.json					parked		2026-11-05 23:23	skill_instructions slash-command
+1789097271183_hsrb5.messages.json					parked		2026-11-05 23:23	yaether-automatic-place-route slash-command
+1792995911596_8h2g9.messages.json					parked		2026-11-05 23:23	mid-conv context summary + error root-cause (premise-missing)
+1791957567341_a5l6y.messages.json					parked		2026-11-05 23:23	'你现在是桥接在dscqa项目吗' Q&A
