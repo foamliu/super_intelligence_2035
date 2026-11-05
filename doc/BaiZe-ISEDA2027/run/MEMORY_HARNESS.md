@@ -5,13 +5,13 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        R1639 quiet监控轮:CPU/MEM自检PASS→backlog_scan=0全7路→deepseek 258/500不变(pylint-6386在跑)→report UNCHANGED✅·deepseek predict alive(258/500)
-已完成:       H-B✅·Gate7/7·TB报告✅·pilot20✅·R984-R988恒0调试✅·R989 incr_eval全链✅·R997硬约束修复✅·R1567 cline trace归因✅·R1569 cline适配器修复✅·R1633 cline rerun 58/58终交付✅(356/500=71.3%)·R1634 13:5x复核+归档✅·R1635-R1638 deepseek incr_eval渐进✅(196→200,backlog=0)
-当前动作:     R1639:CPU/MEM自检PASS(load27/224~12%·avail1301GB·无>8000%CPU·top CPU=pretrain143%非本线·无需kill)→backlog_scan=0全7路(deepseek preds258 patch252 eval258 backlog0)→无新预测需eval→report UNCHANGED(17133B,08:51)→deepseek predict alive(258/500,pylint-6386在跑since08:42,timeout1800s)·未完成指令:无⇒WAITING=1.
-下一步:       ①deepseek predict alive(258/500·pylint-6386在跑)→新预测落盘后incr_eval→regen report ②full500指令(10-28)deepseek尚在跑(258/500预测),其余6路已交付 ③永久硬约束:禁止commit结果JSON ④下次唤醒CPU/MEM自检+deepseek backlog eval
-阻塞:         无·deepseek predict alive(258/500·pylint-6386在跑,timeout1800s)·backlog=0全7路.
+PHASE:        R1640 incr_eval轮:CPU/MEM自检PASS→backlog_scan=2(deepseek pylint-4970/6386)→incr_eval 2/2 FAILED deepseek 200不变→report regen(17135B)→backlog=0全7路✅·deepseek predict alive(259/500)
+已完成:       H-B✅·Gate7/7·TB报告✅·pilot20✅·R984-R988恒0调试✅·R989 incr_eval全链✅·R997硬约束修复✅·R1567 cline trace归因✅·R1569 cline适配器修复✅·R1633 cline rerun 58/58终交付✅(356/500=71.3%)·R1634 13:5x复核+归档✅·R1635-R1640 deepseek incr_eval渐进✅(196→200,backlog=0)
+当前动作:     R1640:CPU/MEM自检PASS(load28/224~13%·avail1332GB·无>8000%CPU·top=cline hub23%非失控·无需kill)→backlog_scan=2(deepseek pylint-4970 plen2395+pylint-6386 plen1144)→incr_eval_R1640 2/2 FAILED(docker cached,4s)→deepseek 200/253不变→report regen(17135B,10:09)→backlog复扫=0全7路→deepseek predict alive(259/500,pylint-6903在跑since10:01,timeout1800s)·未完成指令:无⇒WAITING=1.
+下一步:       ①deepseek predict alive(259/500·pylint-6903在跑)→新预测落盘后incr_eval→regen report ②full500指令(10-28)deepseek尚在跑(259/500预测),其余6路已交付 ③永久硬约束:禁止commit结果JSON ④下次唤醒CPU/MEM自检+deepseek backlog eval
+阻塞:         无·deepseek predict alive(259/500·pylint-6903在跑,timeout1800s)·backlog=0全7路.
 ERROR_COUNT:  0
-  📦 体积：TASK=36821B(35.9KB,<40KB红线OK) / MEMORY=32057B(31.3KB,<32KB软限OK)·本轮归档R1633流水→daily
+  📦 体积：TASK=36821B(35.9KB,<40KB红线OK) / MEMORY=31658B(30.9KB,<32KB软限OK)·本轮归档R1639流水→daily
 
 ```
 
@@ -20,7 +20,8 @@ ERROR_COUNT:  0
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 
 ### 本唤醒流水
-[09:27] R1639 quiet监控轮:CPU/MEM自检PASS(load27/224~12%·avail1301GB·无>8000%CPU·top CPU=pretrain143%非本线·无需kill)→backlog_scan=0全7路(deepseek preds258 patch252 eval258 backlog0)→无新预测需eval→report UNCHANGED(17133B,08:51)→deepseek predict alive(258/500,pylint-6386在跑since08:42,timeout1800s)·未完成指令:无⇒WAITING=1.
+[10:09] R1640 incr_eval轮:CPU/MEM自检PASS(load28/224~13%·avail1332GB·无>8000%CPU·top=cline hub23%/4GB非失控·无需kill)→backlog_scan=2(deepseek pylint-4970 plen2395+pylint-6386 plen1144,新预测落盘09:19/09:30)→incr_eval_R1640 2/2 FAILED(docker镜像cached,4s完成)→deepseek resolved=200不变(failed51→53,no_patch7→6,n251→259)→report regen(17135B,10:09)→backlog复扫=0全7路→deepseek predict alive(259/500,pylint-6903在跑since10:01,timeout1800s)·未完成指令:无⇒WAITING=1.
+> 📦 R1639 流水(09:27,quiet监控轮:CPU/MEM自检PASS+backlog=0+report UNCHANGED+deepseek 258/500)已归档 → daily-memories-harness/2026-11-05.md。结论：deepseek 200不变·backlog=0。需要时再读。
 > 📦 R1638 流水(08:45,incr_eval轮:4backlog 3 FAILED+1复扫FAILED 200不变+report regen)已归档 → daily-memories-harness/2026-11-05.md。结论：deepseek 200不变·backlog=0。需要时再读。
 > 📦 R1637 流水(08:08,incr_eval轮:1backlog 1/1 RESOLVED 199→200+report regen)已归档 → daily-memories-harness/2026-11-05.md。结论：deepseek+1 RESOLVED·backlog=0。需要时再读。
 > 📦 R1636 流水(07:30,incr_eval轮:2backlog 2/2 FAILED 199不变+report regen)已归档 → daily-memories-harness/2026-11-05.md。结论：deepseek 199不变·2 FAILED。需要时再读。
