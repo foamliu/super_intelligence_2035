@@ -1,0 +1,6 @@
+=== GRPO smoke test (CPU-only, no model) ===
+  Oracle rollouts: 6 ok, 0 fail
+  Rewards: ['-0.500', '-0.500', '0.360', '-0.500', '1.360', '0.360']
+  Advantages: ['-0.873', '-0.873', '0.385', '-0.873', '1.848', '0.385']
+  grpo_loss dummy: -1.0025 (OK)
+=== Smoke test: PASS ===

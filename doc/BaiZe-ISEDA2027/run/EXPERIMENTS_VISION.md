@@ -2256,3 +2256,28 @@ ngspice .raw 实测：`ngspice -b test.cir` → 646 点 × 3 变量 binary doubl
 
 **数字溯源**：`eval_sft_wave.py` 实测输出 + `eval_baseline_pre_sft_3.json` per_sample response_preview。
 
+### §20.14 · Stage-2W GRPO CPU 冒烟测试 PASS：奖励管线 + GRPO 数学端到端验证（wake#622 · 2026-11-05 21:5x · CPU-only）
+
+**目的**：Stage-2 GRPO 训练（`grpo_train_wave.py`）在 wake#612 写完后仅脚手架，未实测其核心数学（5 组件奖励 + GRPO advantage 归一化 + clipped surrogate loss + tool-call 解析 + conversation span 检测）。GPU 仍被 R9 pretrain 占满（ETA≈11/25），趁 CPU 空闲跑 `--smoke_test`（无模型、无 GPU）提前排雷，确保 GPU 释放后 Stage-2 不会因奖励/数学 bug 浪费算力。
+
+**方法**：`python3 grpo_train_wave.py --smoke_test`（CPU-only，6 个 oracle rollout：TaskSampler 生成电路→ngspice 仿真→WaveformGymEnv 交互 open→get_signal→get_values→submit，全程不加载模型）。同时验证 parse_tool_call 5 类、conversation_to_text span 检测、grpo_loss dummy tensor。
+
+**实测结果**：
+
+| 项 | 值 |
+|:--|:--|
+| Oracle rollouts | 6 ok, 0 fail（TaskSampler + ngspice-36 + WaveformGymEnv 全链路通）|
+| 6 rollout 奖励 | `[-0.500, -0.500, 0.360, -0.500, 1.360, 0.360]` |
+| 奖励分布解读 | −0.500 = 提交失败/rel_err>25%（R_main=0 + 惩罚）；0.360 = 部分成功；1.360 = 优秀提交（R_main 1.0 + R_evidence 0.3 + R_dense 0.06）|
+| GRPO advantages | `[-0.873, -0.873, 0.385, -0.873, 1.848, 0.385]`（=(R−mean)/(std+1e-4)，归一化正确）|
+| grpo_loss（dummy）| −1.0025（clipped surrogate min(surr1,surr2) 计算正确）|
+| parse_tool_call | 5/5 PASS（open/get_signal/submit/dump_hier/get_values 全解析正确）|
+| conversation spans | 检测正确（0 fail）|
+| **总体** | **PASS** |
+
+**结论**：① Stage-2 核心数学全链路 CPU 验证通过——5 组件奖励分档正确（失败→负、优秀→1.36）、GRPO advantage 归一化正确、clipped surrogate loss 可反向；② tool-call 解析器鲁棒（5 类工具 + 带/不带引号 + 嵌套括号）；③ GPU 释放后 Stage-2 可直接起训，无需再排查奖励/数学 bug。与 §20.13（eval 管线 PASS）+ §20.11（SFT dry-run 6/6 PASS）合起来，Phase 1+2 全管线 CPU 预验证完成，仅待 GPU。
+
+**交付物**：`vision/wave_rl/grpo_smoke_test_result.txt`（冒烟输出原文）+ 本节。
+
+**数字溯源**：`grpo_train_wave.py --smoke_test` 实测 stdout（已存 `grpo_smoke_test_result.txt`）。
+

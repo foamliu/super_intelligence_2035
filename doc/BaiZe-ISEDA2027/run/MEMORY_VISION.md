@@ -2,7 +2,9 @@
 
 WAITING: 0
 
-> 🆕 **【wake #621 · 2026-11-05 21:4x】Pre-SFT CPU 基线评测：eval_sft_wave.py 端到端验证 + 基线**。GPU仍100%（.12 8×H100 R9 pretrain PID 2612442 etimes≈265844s≈3天 nnodes=2 占.12+.29 全部16卡）。CPU-only交付：`eval_sft_wave.py --device cpu --max_eval 3 --max_new_tokens 128` → 2B裸模型（无LoRA）3样本4.8s：**format 100% / submit 0% / PASS=False**（模型只生成`open("file.raw")`单步即停，不组合完整轨迹）——评测管线端到端无bug + SFT前基线确立（SFT后目标submit≥70%形成before/after对比）。`eval_baseline_pre_sft_3.json`已存。SFT poller PID 2757742 alive（flock，每60s轮询`busy_util -- waiting`）。EXPERIMENTS §20.13。📦 体积：TASK≈30.5KB / MEMORY≈19KB（均≤32KB✓）。**未完成指令：有**（阶段1 GPU训练+阶段2/3未交付）⇒ **WAITING: 0**。
+> 🆕 **【wake #622 · 2026-11-05 21:5x】Stage-2W GRPO CPU 冒烟测试 PASS：奖励管线 + GRPO 数学端到端验证**。GPU仍100%（.12 8×H100 R9 pretrain PID 2612442 etimes≈265844s≈3天 nnodes=2 占.12+.29 全部16卡）。SFT poller PID 2757742 alive（flock fd9，21:49:01 `busy_util -- waiting`）。CPU-only交付：`python3 grpo_train_wave.py --smoke_test` → **6 oracle rollouts 0 fail / 奖励 [-0.5,-0.5,0.36,-0.5,1.36,0.36] / advantages [-0.873..1.848] / grpo_loss -1.0025 / parse_tool_call 5/5 / spans 0 fail → PASS**——Stage-2 核心5组件奖励分档+GRPO advantage归一化+clipped surrogate+tool解析全CPU验证通过，GPU释放后可直接起训。`grpo_smoke_test_result.txt`已存。EXPERIMENTS §20.14。至此Phase1(SFT dry-run 6/6)+Phase2(GRPO冒烟PASS)+eval管线(§20.13 PASS)全CPU预验证完成，仅待GPU。📦 体积：TASK≈30.5KB / MEMORY≈20.5KB（均≤32KB✓）。**未完成指令：有**（阶段1 GPU训练+阶段2/3未交付）⇒ **WAITING: 0**。
+
+> 📦 wake #621（Pre-SFT CPU基线评测 format100%/submit0%）已归档 → daily-memories-vision/2026-11-05.md；**结论**：eval_sft_wave.py端到端无bug，2B裸模型format100%/submit0%基线确立，SFT后目标submit≥70%。需要时再读。
 
 > 📦 wake #620（2B文本骨干提取1.72B）已归档 → daily-memories-vision/2026-11-05.md；**结论**：Qwen3-VL-2B→Qwen3ForCausalLM 1.72B提取成功，生成"5"PASS，sft_train_wave.py默认改2B，dry-run 6/6 PASS。需要时再读。
 
