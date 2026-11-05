@@ -965,3 +965,21 @@ wl9i4					parked		2026-11-05 22:49	交互shell驱动+Q&A n752大
 1792669757550_90kyw					parked		2026-11-06 04:12	layout(add label in cellview)非shard-D domain
 1790149326842_pv8bt					parked		2026-11-06 04:12	skill-loading AnaWeave Group Layout(U#0=skill_instructions)+layout domain
 1793152046799_8qdnu					parked		2026-11-06 04:12	Q&A(这个pattern有错误吗)
+1790840542058_430uk	mike	hfeg0plg003	105	analog_context	case	EDA-Eval-DesignFlow-CosimStimFolderGen-001	2026-11-06 04:50	
+1792205222298_cx74r					parked		2026-11-06 04:51	0 real user turns (all tool results)
+1789972559943_a2an2					parked		2026-11-06 04:51	mid-conv (继续 x3, no produce task)
+1792639240504_dnwbb					parked		2026-11-06 04:51	root-cause analysis (why timing_log summary fewer + fix)
+1788747331056_d4q6x					parked		2026-11-06 04:51	Q&A/launch (DRC/LVS scenario launch, check running DRC)
+1792044214783_zwqbl					parked		2026-11-06 04:51	skill-loading (read ota.md skill + 执行)
+1792715873441_paeho					parked		2026-11-06 04:51	NOFILE on .75 ssh peek
+1789002970569_56oac					parked		2026-11-06 04:51	too-simple single-step cell copy (L2, weak for 8+ conditions)
+1789103472893_wnf7b					parked		2026-11-06 04:51	layout P&R (yaether-auto-place-route, not shard D core)
+1791449922001_ykrto					parked		2026-11-06 04:51	root-cause (sim no output) + skill optimization (run-regression)
+1791537680196_nmt8f					parked		2026-11-06 04:51	Q&A about how netlist parser works (24 user turns all questions)
+1792562147898_ygrxp					parked		2026-11-06 04:51	alternate produce candidate (parallelize run_sweep); deferred — chose 430uk this round
+1791947327747_o52y0					parked		2026-11-06 04:51	duplicate of #294 CellExpandGen task (same user e0039602 same netlist-cell-expand request)
+1789992563556_mwc6s					parked		2026-11-06 04:51	Q&A + root-cause (pim sim ldreq not high, analyze netlist module)
+1791446512697_3s3zx					parked		2026-11-06 04:51	how-to (how to change tran 10ps to 500ps in matrixrun script)
+1792487039292_qr1lv					parked		2026-11-06 04:51	NOFILE on .75 ssh peek
+1792489295926_gavk7					parked		2026-11-06 04:51	analysis Q&A (DTM/NTDM binary diff between issue files)
+1791981349807_8p3tb					parked		2026-11-06 04:51	alternate produce candidate (generate LDO circuit from specs); deferred — open-ended design, hard to check offline
