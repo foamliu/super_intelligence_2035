@@ -1986,3 +1986,40 @@ ngspice .raw 实测：`ngspice -b test.cir` → 646 点 × 3 变量 binary doubl
 - 本节
 
 **诚实条款**：所有电路参数由 ngspice 实际仿真生成，GT 由 .raw 实测量测（非参数推导），无伪造数字。验证 30/30 ALL_PASS。
+
+### 20.6 SFT 训练脚本就绪（wake#611 · 2026-11-05 18:5x · CPU-only 准备）
+
+**背景**：GPU 全占（8×H100 100% R9），训练无法启动。本轮 CPU-only 准备训练脚本，使 GPU 一旦空闲即可立即启动。
+
+**交付物**：
+- `vision/wave_rl/sft_train_wave.py`（501 行）—— Stage-1W SFT 训练脚本
+- `vision/wave_rl/run_sft_wave.sh` —— 启动脚本（自动等待 GPU 空闲后启动）
+
+**模型选择**：
+- 任务书指定「2B MLLM」→ 自然候选 Qwen3-VL-2B-Instruct，但其架构 `qwen3_vl` **不被 transformers 4.56.1 支持**（`KeyError: 'qwen3_vl'`）
+- 升级 transformers 有风险破坏现有 MLLM 训练基础设施（ArmE-R2 stage1/1.5/2）
+- **决定**：默认使用 Qwen3-4B-Instruct-2507（`qwen3`，已被全线验证），LoRA r=64/α128（与 Stage-1.5/2 一致）。`--model_path` 可参数化，后续升级 transformers 后可切换 Qwen3-VL-2B
+
+**训练配置**：
+| 项 | 值 |
+|:--|:--|
+| 模型 | Qwen3-4B-Instruct-2507（可切换） |
+| LoRA | r=64, α=128, dropout=0.05, target=q/k/v/o/gate/up/down_proj |
+| LR | 1e-5 → 1e-7（cosine, warmup 0.01） |
+| Steps | 2000（≈3.16 epoch, 5064 traj / GBS=8 ≈ 633 steps/epoch） |
+| GBS | 8, MBS=1 |
+| Seq len | 2048 |
+| 数据 | sft_pilot_5000.jsonl（5064 条，train=4864 / eval_holdout=200） |
+| Loss masking | 仅 assistant content tokens（tool/system/user 全 mask） |
+| 对话格式 | 手动格式化 `<|im_start|>role\n...<|im_end|>\n`（jinja2 3.0.3 不支持 apply_chat_template） |
+| tool 角色 | 转为 user + `[Observation]...[/Observation]` 包裹 |
+
+**预注册验收判据**（Phase 1 step 3）：held-out 上格式正确率 ≥90% + submit 成功率 ≥70%
+
+**CPU 冒烟测试**（4/4 PASS）：
+1. `conversation_to_text` 正确识别 assistant spans（2 spans for 2-turn conversation）
+2. `WaveSFTDataset` 加载 5064 条，sample 0 有 37 个 unmasked labels（仅 assistant token）
+3. `collate_fn` 正确 padding（3×362 tensor）
+4. train/eval split：4864 + 200 = 5064
+
+**GPU 状态**：.12 8×H100 全 100% util（R9 占用）→ 训练待 GPU 空闲。`run_sft_wave.sh` 会自动轮询等待 GPU < 10% util 后启动。

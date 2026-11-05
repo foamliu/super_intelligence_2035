@@ -2,14 +2,13 @@
 
 WAITING: 0
 
+> 🆕 **【wake #611 · 2026-11-05 18:5x】波形 RL 阶段 1 SFT 训练脚本就绪（CPU-only 准备）**。执行 §运维令·2026-11-05 17:5x 阶段 1。GPU 全占（8×H100 100% R9）→ CPU-only 准备训练脚本。交付：`vision/wave_rl/sft_train_wave.py`（501行）+ `vision/wave_rl/run_sft_wave.sh`（自动等待 GPU 空闲后启动）。模型：任务书指定「2B MLLM」→ Qwen3-VL-2B-Instruct 架构 `qwen3_vl` **不被 transformers 4.56.1 支持**（KeyError）→ 默认用 Qwen3-4B-Instruct-2507（`--model_path` 可参数化切换）。配置：LoRA r=64/α128, LR 1e-5→1e-7 cosine, GBS=8, 2000步（≈3.16 epoch）, seq_len=2048, train=4864/eval_holdout=200。对话格式手动 `<|im_start|>role\n...<|im_end|>\n`（jinja2 3.0.3 不支持 apply_chat_template），tool 角色→user+[Observation]包裹，loss 仅 assistant tokens。CPU 冒烟 4/4 PASS（formatting/dataset/collate/split）。EXPERIMENTS §20.6。**归档**：MEMORY 31327B→归档#607+#608空唤醒→daily-memories。📦 体积：TASK=30.5KB / MEMORY≈30KB（均≤32KB✓）。**GPU 阻塞**：.12 8×H100 全 100% util（R9）→ 训练待 GPU 空闲，run_sft_wave.sh 自动轮询。**未完成指令：有**（阶段 1 GPU 训练 + 阶段 2/3 未交付）⇒ **WAITING: 0**。
+
 > 🆕 **【wake #610 · 2026-11-05 18:44】波形 RL 阶段 1 数据 pipeline 已交付（CPU-only）**。执行 §运维令·2026-11-05 17:5x 阶段 1。Phase 0 YELLOW（ngspice 备选 GREEN）⇒ 数据 pipeline 可开始。交付：`vision/wave_rl/gen_sft_trajectories.py`（294行，复用 waveview_gym 电路生成器+量测函数+新增差分对）→ 5 批 seed=20261105..09 CPU-only on .12 nice -n 10 → **5064 条 SFT 轨迹**（normal 4027 / error_recovery 1037=20.5% / 5 电路 rc/rc_pulse/inverter/rl/diffpair 各~1000 / 4 量测 period/amplitude/rise_time/duty_cycle 各~1250）→ `sft_pilot_5000.jsonl` 10.1MB + stats.json。验证 30/30 format_ok+measure_ok ALL_PASS。轨迹格式=多轮对话 system→user→assistant(open/get_signal/get_values/submit)→tool(observation)，error_recovery 含 wrong name→dump_hier→retry。GT 由 .raw 实测量测（非参数推导）。**归档**：TASK 33348B→30453B（归档 10-30 波形报告块+10-28 OCR裁定块→ARCHIVE，省 2895B）。**GPU 阻塞**：.12 8×H100 全 100% util（R9 占用）→ SFT 训练 ~4 GPU·h 待 GPU 空闲/其它主机。**未完成指令：有**（阶段 1 GPU 训练 + 阶段 2/3 未交付）⇒ **WAITING: 0**。
 
 > 🆕 **【wake #609 · 2026-11-05 18:2x】波形 RL 阶段 0 可行性解锁·已交付🟡YELLOW**。执行 §运维令·2026-11-05 17:5x。Phase 0 步骤：① 定位 WaveView 主机→.75（wv@/apps/synopsys/SRB/wv/T-2022.06-SP1/bin/wv + demo FSDB /apps/synopsys/verdi/Verdi_M-2017.03-SP2-9/demo/mixed/mixed.fsdb 240 信号·烛龙 benchmark 实测 CHECK_PASS），但本机 .12→.75 SSH 不可达（port 22/2222 超时）→ 需运维协调；② 4 待核项实测：① vcd2fsdb 无/verilator 无→RED，ngspice .raw+Python 解析器→备选 GREEN；② sx_export_image 需 .75→RED，备选 matplotlib；③ 崩溃阈值需 .75→RED，保守 MAX_WV=3；④ license 并发需 .75→RED，保守=1（ngspice 无 license 限制）；③ Gym 冒烟 3/3 PASS（ngspice 4 类电路→.raw→Python 解析→7 动作 A1-A7→周期量测 rel_err<0.01%→reward=1.36）。交付：reports/report_vision_wave_rl_phase0_feasibility_zh.html(13568B) + vision/wave_rl/waveview_gym.py(280行) + EXPERIMENTS_VISION.md §19。判定 YELLOW：备选路径(ngspice)可进阶段 1 SFT，WaveView API 路径需运维协调 .75。**未完成指令：有**（阶段 1/2/3 未交付）⇒ **WAITING: 0**。
 
-> 🆕 **【空唤醒 · wake #608 · 2026-11-05 17:09】** 无新运维令。用户在终端粘贴 BAIZE_VISION_TASK.md 全文并选择「以 vision agent 身份执行收尾铁律」。git fetch→origin/main 0ahead/0behind（已同步，HEAD=f052c0c39 designflow 17:08；origin 新提交 16:38~17:08 均来自 designflow/pretrain/data 等线，无 vision 新令；自 #607 16:38 起无 vision 新令）。所有运维令标[已完成]/[已归档]。📦 体积：TASK=27230B / MEMORY=27601B（均≤32KB✓；🆕条目19+新增#608=20，贴~20 软指引上限，暂不滚动归档）。进程 baize_vision_loop.sh PID 669545 alive（etimes≈634k）；cline in PATH（/home/app.e0031982/.bun/bin/cline）✓。工作副本改动均为别线文件（BaiZe-ISEDA2027 .tex 4件 + ZhuLong benchmark report/MEMORY + 多个别线未跟踪脚本/目录如 ocr_samples/1049/3147/5245/7343/9441 + cjk_test.* + baize_p8_*.sh + debug_*.py），vision 文件无在途改动，未触碰别线。写心跳+日流水+commit+push（一律 `git commit -m '...' -- <明确文件路径>`，吸取#562裸commit卷入别线文件教训）。**未完成指令：无** ⇒ **WAITING: 1**。
-
-
-> 🆕 **【空唤醒 · wake #607 · 2026-11-05 16:35】** 无新运维令。用户在终端粘贴 BAIZE_VISION_TASK.md 全文并选择「以 vision agent 身份执行收尾铁律」。git fetch→origin/main 0ahead/0behind（已同步，HEAD=452d2b445 designflow 16:33；origin 新提交 16:32~16:33 均来自 designflow 等线，无 vision 新令；自 #606 15:58 起无 vision 新令）。所有运维令标[已完成]/[已归档]。📦 体积：TASK=27230B / MEMORY=26419B（均≤32KB✓；🆕条目18+新增#607=19，在~20 软指引内，无需滚动归档）。进程 baize_vision_loop.sh PID 669545 alive（etimes≈631k）；cline in PATH（/home/app.e0031982/.bun/bin/cline）✓。工作副本改动均为别线文件（MEMORY_DATA.md/MEMORY_PRETRAIN_2B.md/daily-memories-data/daily-memories + ZhuLong benchmark report + 多个别线未跟踪脚本/目录如 ocr_samples/1049/3147/5245/7343/9441 + cjk_test.* + baize_p8_*.sh），vision 文件无在途改动，未触碰别线。写心跳+日流水+commit+push（一律 `git commit -m '...' -- <明确文件路径>`，吸取#562裸commit卷入别线文件教训）。**未完成指令：无** ⇒ **WAITING: 1**。
+> 📦 wake #607~#608 空唤醒流水（2条，2026-11-05 16:35~17:09）已归档 → daily-memories-vision/2026-11-05.md。需要时再读。
 
 
 > 🆕 **【空唤醒 · wake #606 · 2026-11-05 15:58】** 无新运维令。用户在终端粘贴 BAIZE_VISION_TASK.md 全文并选择「以 vision agent 身份执行收尾铁律」。git fetch→origin/main 0ahead/0behind（已同步，HEAD=f7ab9d456 harness 15:57；origin 新提交 14:56~15:57 均来自 harness/designflow/data/zhulong/pretrain/paper 等线，无 vision 新令；自 #605 14:53 起无 vision 新令）。所有运维令标[已完成]/[已归档]。📦 体积：TASK=27230B / MEMORY=30934B→滚动归档5条旧空唤醒#584~#588→daily-memories-vision/2026-11-05.md，归档后MEMORY≈25KB（🆕条目17+新增#606=18，在~20 软指引内）。进程 baize_vision_loop.sh PID 669545 alive（etimes≈629k）；cline in PATH（/home/app.e0031982/.bun/bin/cline）✓。工作副本改动均为别线文件（pretrain MEMORY/ARCHIVE/TASK + ZhuLong benchmark report + 多个别线未跟踪脚本/目录如 ocr_samples/1049/3147/5245/7343/9441 + cjk_test.*），vision 文件无在途改动，未触碰别线。写心跳+日流水+commit+push（一律 `git commit -m '...' -- <明确文件路径>`，吸取#562裸commit卷入别线文件教训）。**未完成指令：无** ⇒ **WAITING: 1**。
@@ -107,10 +106,10 @@ WAITING: 0
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | 🟡 **波形 RL 阶段 0 已交付（YELLOW）+ 阶段 1 数据 pipeline 已交付（wake#610）**。5064 条 SFT 轨迹已生成验证 ALL_PASS。阶段 1 GPU 训练 + 阶段 2/3 未交付。**WAITING: 0** |
+| PHASE | 🟡 **波形 RL 阶段 0 已交付（YELLOW）+ 阶段 1 数据 pipeline+SFT 训练脚本就绪（wake#610+#611）**。5064 条 SFT 轨迹+训练脚本已就绪。阶段 1 GPU 训练 + 阶段 2/3 未交付。**WAITING: 0** |
 | WAITING | 0 |
-| 已完成 | 波形RL阶段1数据pipeline(wake#610) · 波形RL阶段0(wake#609) · 论文改稿(wake#437~#442) · 波形RL计划书(wake#435) · 波形报告(wake#424) · OCR合成10M(wake#275) · ArmE-R2/ArmD-R2 全链路 |
-| 当前动作 | 阶段 1 数据 pipeline 完成·等待 GPU 空闲做 SFT 训练 |
-| 下一步 | 阶段 1 SFT 训练（~4 GPU·h，需 GPU 空闲/其它主机避让 R9）+ 运维协调 .75 WaveView 访问 |
+| 已完成 | 波形RL阶段1SFT脚本(wake#611) · 波形RL阶段1数据pipeline(wake#610) · 波形RL阶段0(wake#609) · 论文改稿(wake#437~#442) · 波形RL计划书(wake#435) · 波形报告(wake#424) · OCR合成10M(wake#275) · ArmE-R2/ArmD-R2 全链路 |
+| 当前动作 | SFT 训练脚本就绪·等待 GPU 空闲启动训练（run_sft_wave.sh 自动轮询） |
+| 下一步 | 阶段 1 SFT 训练（~4 GPU·h，GPU 空闲后自动启动）→ 达标后进阶段 2 GRPO + 运维协调 .75 WaveView 访问 |
 | 阻塞 | .12 GPU 全占（8×H100 100% R9）· .75 SSH 不可达（需运维协调 MCP 通道） |
-| 更新 | **2026-11-05 18:44 (wake #610)**: 阶段1数据pipeline交付5064轨迹ALL_PASS·归档TASK33348→30453B·GPU全占待调度·体积TASK30.5KB/MEMORY≈31KB·WAITING=0 |
+| 更新 | **2026-11-05 18:5x (wake #611)**: SFT训练脚本就绪501行+launch脚本·CPU冒烟4/4PASS·模型Qwen3-4B(2B VL不支持)·GPU全占待调度·体积TASK30.5KB/MEMORY≈30KB·WAITING=0 |
