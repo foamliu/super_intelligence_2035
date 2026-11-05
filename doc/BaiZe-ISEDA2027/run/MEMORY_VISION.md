@@ -2,7 +2,9 @@
 
 WAITING: 0
 
-> 🆕 **【wake #628 · 2026-11-05 22:48】监控巡检：双poller健康+GPU仍100%+pretrain iter~96000·状态无变化·仅待GPU**。GPU仍100%（.12 8×H100 97-100% util / ~75GB/81GB mem），pretrain mamba2 baize2b PID 2612442(torchrun node_rank=0) etimes≈269832s≈3.1天，iter~96000/700000(13.7%)，HF ckpt `hf_iter_90000` 在位，ETA≈11/25-27。本轮**CPU-only监控巡检**（距wake#627仅4min，状态无变化）：① **SFT poller PID 2757742 健康**：alive(ppid=1, etimes≈10868s≈3.0h)，最新`[22:48:20] busy_util -- waiting`；② **GRPO chain PID 2428009 健康**：alive(ppid=1, etimes≈855s)，最新`[22:48:16] SFT not done yet (waited 840s/2592000)`；③ GPU .12 8卡全 97-100% util / ~75GB mem（R9 pretrain 占满）。结论：**全管线就绪+双poller健康+零新CPU工作**，仅待GPU释放（ETA≈11/25-27），poller将自动启动SFT→GRPO全链。📦 体积：TASK=30.5KB / MEMORY≈23.0KB（均≤32KB✓）。**未完成指令：有**（阶段1 GPU训练+阶段2/3未交付）⇒ **WAITING: 0**。
+> 🆕 **【wake #629 · 2026-11-05 22:54】监控巡检：双poller健康+GPU仍100%+pretrain iter~96000·HF ckpt hf_iter_90000在位·状态无变化·仅待GPU**。GPU仍100%（.12 8×H100 97-100% util / ~75GB/81GB mem），pretrain mamba2 baize2b PID 2612442(torchrun nnodes=2 node_rank=0) etimes≈270252s≈3.1天，iter~96000/700000(13.7%)，HF ckpt `hf_iter_90000` 在位（下一存档点92000），ETA≈11/25-27。本轮**CPU-only监控巡检**（距wake#628仅6min，状态无变化）：① **SFT poller PID 2757742 健康**：alive(ppid=1, etimes≈11189s≈3.1h)，busy_util waiting；② **GRPO chain PID 2428009 健康**：alive(ppid=1, etimes≈1176s≈20min)，SFT not done yet；③ GPU .12 8卡全 97-100% util / ~75GB mem（R9 pretrain 占满）。结论：**全管线就绪+双poller健康+零新CPU工作**，仅待GPU释放（ETA≈11/25-27），poller将自动启动SFT→GRPO全链。📦 体积：TASK=30.5KB / MEMORY=22.7KB（均≤32KB✓）。**未完成指令：有**（阶段1 GPU训练+阶段2/3未交付）⇒ **WAITING: 0**。
+
+> 📦 wake #628（监控巡检双poller健康+GPU仍100%）已归档 → daily-memories-vision/2026-11-05.md；**结论**：状态无变化，全管线就绪仅待GPU。需要时再读。
 
 > 📦 wake #627（监控巡检双poller健康+数据完整性复核）已归档 → daily-memories-vision/2026-11-05.md；**结论**：全管线CPU预验证完成+双poller健康+数据/模型/eval集完整，仅待GPU。需要时再读。
 
