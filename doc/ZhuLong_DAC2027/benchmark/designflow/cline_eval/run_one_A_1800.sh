@@ -36,10 +36,17 @@ STATUS_JSONL=$SUPER/doc/ZhuLong_DAC2027/benchmark/designflow/cline_eval_status.j
 JUDGE=/tmp/judge_$TASK_ID
 
 CLINE=~/.local/bin/cline
-CLINE_TIMEOUT=1800   # 秒，单 case 上限（40min；覆盖正常 PASS 最慢 ~3700s 略不足，但 1h 卡死不迁就）
+CLINE_TIMEOUT=1800   # 秒，单 case 上限（30min；覆盖正常 PASS 多在 ~1300s 内）
+# 🚨 r120 harness bug 修复：cline 自带 `--timeout` 在 v3.0.51 不可靠
+#   （r118 QualibTimingFix-001 设 1800s 实际跑了 2283s 才被外层 session 超时杀掉）。
+#   → 用 coreutils `timeout -s KILL` 在 OS 层硬杀，确保不超时。
+#   timeout 触发 → exit 137 (128+SIGKILL)，记 cline_exit=137 + reason 标 TIMEOUT。
+STALLED_KILL=780   # 秒，cline 连续 ~13min 无新 tool_call 主动 KILL（r120 first-step 铁律）
 TS=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 DUR=""           # 跑 cline 后填
 CLINE_EXIT=""    # 跑 cline 后填
+TIMEOUT_HIT=0    # 1 = OS timeout 触发；0 = 正常退出
+STALL_HIT=0      # 1 = stalled-killer 触发；0 = 否
 
 log(){ echo "[run_one] $*"; }
 err(){ echo "[run_one][ERROR] $*" >&2; }
@@ -186,15 +193,60 @@ IMPORTANT tool usage rules (the built-in run_commands/bash/shell tools will NOT 
   cd "$WORKDIR"
   START=$(date +%s)
   set +e
-  "$CLINE" -c "$WORKDIR" -P openai -m "$MODEL" \
+  # r120 修复：cline `--timeout` v3.0.51 不可靠（r118 跑 2283s 才被外层杀）。
+  # 方案：cline 直接作为 `timeout -s KILL` 的子进程前台跑（OS 层硬兜底）；
+  # 同时启动 stalled-killer 后台 watcher：监控 cline_session.jsonl 文件大小，
+  # 若连续 $STALLED_KILL 秒无增长 → kill cline pid（防 thrash 卡死）。
+  CLINE_PIDFILE=$WORKDIR/.cline.pid
+  STALL_LOG=$WORKDIR/.stall_killer.log
+  rm -f "$WORKDIR/.stall_hit"
+  # 后台 stalled-killer
+  (
+    last_grow_ts=$START
+    last_seen_size=0
+    while true; do
+      sleep 30
+      [ -f "$CLINE_PIDFILE" ] || break
+      pid=$(cat "$CLINE_PIDFILE" 2>/dev/null) || break
+      kill -0 "$pid" 2>/dev/null || break
+      now=$(date +%s)
+      sz=$(stat -c%s "$WORKDIR/cline_session.jsonl" 2>/dev/null || echo 0)
+      if [ "$sz" != "$last_seen_size" ]; then
+        last_grow_ts=$now
+        last_seen_size=$sz
+      fi
+      idle=$((now - last_grow_ts))
+      if [ "$idle" -ge "$STALLED_KILL" ]; then
+        echo "[stall-killer] no output growth ${idle}s >= ${STALLED_KILL}s → KILL cline pid $pid" >> "$STALL_LOG"
+        kill -9 "$pid" 2>/dev/null || true
+        echo "STALL_HIT=1" > "$WORKDIR/.stall_hit"
+        break
+      fi
+    done
+  ) &
+  STALLER_PID=$!
+  # cline 直接前台跑，`timeout -s KILL` 为其父进程，到点必杀
+  timeout -s KILL "$CLINE_TIMEOUT" \
+      "$CLINE" -c "$WORKDIR" -P openai -m "$MODEL" \
       --auto-approve true --json --thinking "$THINKING" \
       --timeout "$CLINE_TIMEOUT" \
-      "$CLI_PROMPT" > "$WORKDIR/cline_session.jsonl" 2> "$WORKDIR/cline_stderr.log"
+      "$CLI_PROMPT" > "$WORKDIR/cline_session.jsonl" 2> "$WORKDIR/cline_stderr.log" &
+  CLINE_PID=$!
+  echo "$CLINE_PID" > "$CLINE_PIDFILE"
+  wait "$CLINE_PID"
   CLINE_EXIT=$?
+  rm -f "$CLINE_PIDFILE"
+  kill "$STALLER_PID" 2>/dev/null || true
+  wait "$STALLER_PID" 2>/dev/null || true
+  [ -f "$WORKDIR/.stall_hit" ] && STALL_HIT=1 || STALL_HIT=0
+  # 137 = SIGKILL by OS timeout；若 stall-killer 先杀则 cline 也以 137 退出，靠 STALL_HIT 区分
+  if [ "$CLINE_EXIT" -eq 137 ] && [ "$STALL_HIT" = "0" ]; then
+    TIMEOUT_HIT=1
+  fi
   set -e
   END=$(date +%s)
   DUR=$((END-START))
-  log "   cline exit=$CLINE_EXIT dur=${DUR}s"
+  log "   cline exit=$CLINE_EXIT dur=${DUR}s timeout_hit=$TIMEOUT_HIT stall_hit=$STALL_HIT"
 fi
 
 # ---- 3b. harness 打包 outputs/ -> submit.zip（防泄题关键：cline 不能跑本地 shell
@@ -323,11 +375,18 @@ PY
   fi
 fi
 
+# r120：把 timeout/stall 信号并入 reason（判分侧不会感知 OS kill，需显式标注）
+if [ "$TIMEOUT_HIT" = "1" ]; then
+  REASON="${REASON} | [HARNESS] OS timeout -s KILL hit @ ${CLINE_TIMEOUT}s (cline --timeout unreliable)"
+elif [ "$STALL_HIT" = "1" ]; then
+  REASON="${REASON} | [HARNESS] stalled-killer hit @ ${STALLED_KILL}s-no-activity (cline thrash)"
+fi
+
 # ---- 5. 记 status jsonl ----
 log "5. 记 $STATUS_JSONL"
-python3 - "$TASK_ID" "$TS" "$MODEL" "$THINKING" "$DUR" "$CLINE_EXIT" "$VERDICT" "$REASON" "$STATUS_JSONL" <<'PY'
+python3 - "$TASK_ID" "$TS" "$MODEL" "$THINKING" "$DUR" "$CLINE_EXIT" "$VERDICT" "$REASON" "$STATUS_JSONL" "$TIMEOUT_HIT" "$STALL_HIT" <<'PY'
 import json, sys, os
-task_id, ts, model, thinking, dur, cexit, verdict, reason, out = sys.argv[1:10]
+task_id, ts, model, thinking, dur, cexit, verdict, reason, out, to_hit, st_hit = sys.argv[1:12]
 rec = {
     "ts": ts,
     "task_id": task_id,
@@ -341,6 +400,8 @@ rec = {
     "reason": reason,
     "hook": "PreToolUse",
     "scope": os.path.expanduser("~/.cline/hooks/hook_scope.txt"),
+    "os_timeout_hit": int(to_hit),
+    "stalled_kill_hit": int(st_hit),
 }
 with open(out, 'a') as f:
     f.write(json.dumps(rec, ensure_ascii=False) + '\n')
