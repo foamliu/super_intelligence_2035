@@ -150,9 +150,19 @@ for a in case.get('attachments', []):
     if rel in forbidden or rel.split('/')[0] in forbidden: continue
     def _copy(src_path, rel_):
         dst = os.path.join(workdir, 'assets', rel_)
-        os.makedirs(os.path.dirname(dst), exist_ok=True)
-        shutil.copy(src_path, dst)
-        copied.append(rel_)
+        # r142 fix BLOCKER ⑤ 变体：附件可能整目录（references/ inputs/ assets/ A/
+        #   fixtures/ 等）。旧 shutil.copy 仅处理文件 → 目录附件报 IsADirectoryError
+        #   → cline workdir 缺输入 → 假 FAIL（AutoCellTclFlow/CombSdcGen 实证）。
+        #   目录用 copytree（保留子目录结构 + symlinks），文件照旧 copy。
+        if os.path.isdir(src_path):
+            if os.path.exists(dst):
+                shutil.rmtree(dst)
+            shutil.copytree(src_path, dst, symlinks=True)
+            copied.append(rel_ + '/')
+        else:
+            os.makedirs(os.path.dirname(dst), exist_ok=True)
+            shutil.copy(src_path, dst)
+            copied.append(rel_)
     sp = os.path.join(assets_src, rel)
     if os.path.exists(sp):
         _copy(sp, rel)
@@ -344,9 +354,16 @@ for line in open(jl):
         break
 PY
 ); do
+      # r142 fix BLOCKER ⑤ 变体：judge-dir 也要处理目录型附件（references/
+      #   inputs/ assets/ A/ 等），否则 check.py 需依赖 _resolve 回退到 repo
+      #   路径。优先 -f（文件），回退 -d（目录，cp -r 保子目录）。
       if [ -f "$ASSETS_SRC/$a" ]; then
         mkdir -p "$JUDGE/$(dirname "$a")"
         cp "$ASSETS_SRC/$a" "$JUDGE/$a" 2>/dev/null || true
+      elif [ -d "$ASSETS_SRC/$a" ]; then
+        mkdir -p "$JUDGE/$(dirname "$a")"
+        rm -rf "$JUDGE/$a"
+        cp -r "$ASSETS_SRC/$a" "$JUDGE/$a" 2>/dev/null || true
       fi
     done
     # 复制隐藏 B 输入进 judge dir（check.py 的 cross-input guard 需要 workdir/hidden/）。
