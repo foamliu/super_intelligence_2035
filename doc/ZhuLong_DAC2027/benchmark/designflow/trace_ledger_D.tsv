@@ -787,3 +787,15 @@
 1792216132193_sqmhv.messages.json					parked		2026-11-05 22:00	peeked #282 unfit
 1789566405693_wz59k.messages.json					parked		2026-11-05 22:00	peeked #282 unfit
 1793081107300_z1qdm.messages.json					parked		2026-11-05 22:00	peeked #282 unfit
+1789611712575_5tdum	mike	10.129.32.80	80	schematic_netlist	case	EDA-Eval-DesignFlow-SiInpTokenStrip-001	2026-11-05 22:49	
+1fxvk					parked		2026-11-05 22:49	Q&A/forensics 取证目录树非produce
+flxzl					parked		2026-11-05 22:49	vam-agent cell建模推荐分析非clean produce
+ohuot					parked		2026-11-05 22:49	CXSA/LSA电路Q&A分析
+3cxb2					parked		2026-11-05 22:49	网表diff/编译时间分析+格雷码Q&A
+um5we					parked		2026-11-05 22:49	vecgen seed共享(digital pattern非shardD core)+n361大
+f10db					parked		2026-11-05 22:49	xa.log对比/版本转换Q&A分析
+2gmli					parked		2026-11-05 22:49	DOE设计premise-missing需U#34电路上下文
+b4dlx					parked		2026-11-05 22:49	slash-command /anasimpro-gui-start非自然produce
+1550c					parked		2026-11-05 22:49	OP3置位root-cause Q&A
+ymjs5					parked		2026-11-05 22:49	resume任务premise-missing需prior state
+wl9i4					parked		2026-11-05 22:49	交互shell驱动+Q&A n752大
