@@ -1,0 +1,35 @@
+* Synthesized CDL fixture A - faithful to trace 748ox (johnl T_IsmTop PEX RCC body-map fix).
+* Top subckt T_IsmTop has OPEN vbn!/vbp! ports (declared but not driven internally).
+* Exactly one buffer instance (XI37) wrongly ties its body pins to the open vbn!/vbp!
+* ports instead of vss!/vcc!.  All other buffers correctly tie body to vss!/vcc!.
+* The child block T_IsmCntClkGen has a LOCAL vbn/vbp port that is fed vss!/vcc! by
+* T_IsmTop (XIcnt), so its internal buffers are NOT a bug.
+
+.SUBCKT bufLx1 A Y vbn vbp vcc vss
+Mp1 Y A vcc vbp pch W=1u L=1u
+Mn1 Y A vss vbn nch W=1u L=1u
+.ENDS bufLx1
+
+.SUBCKT bufLx4 A Y vbn vbp vcc vss
+Xb0 A n1 vbn vbp vcc vss / bufLx1
+Xb1 n1 Y vbn vbp vcc vss / bufLx1
+.ENDS bufLx4
+
+.SUBCKT invLx1 A Y vbn vbp vcc vss
+Mp1 Y A vcc vbp pch W=1u L=1u
+Mn1 Y A vss vbn nch W=1u L=1u
+.ENDS invLx1
+
+.SUBCKT T_IsmCntClkGen ClkIn ClkOut vbn vbp vcc vss
+Xi0 ClkIn n0 vbn vbp vcc vss / invLx1
+Xi1 n0 ClkOut vbn vbp vcc vss / invLx1
+Xbuf n0 ClkBuf vbn vbp vcc vss / bufLx4
+.ENDS T_IsmCntClkGen
+
+.SUBCKT T_IsmTop IsmClk IsmOut vbn! vbp! vcc! vss!
+XI324 JudgeN<7> JudgeN_buff7 vss! vcc! vcc! vss! / bufLx4
+XI325 JudgeN<9> JudgeN_buff9 vss! vcc! vcc! vss! / bufLx4
+XI37 JudgeN<8> JudgeN_buff vss! vcc! vcc! vss! / bufLx4
+XIcnt IsmClk CntClk vss! vcc! vcc! vss! / T_IsmCntClkGen
+XiTop IsmOut nTop vss! vcc! vcc! vss! / invLx1
+.ENDS T_IsmTop
