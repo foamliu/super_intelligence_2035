@@ -2168,3 +2168,33 @@ ngspice .raw 实测：`ngspice -b test.cir` → 646 点 × 3 变量 binary doubl
 
 **数字溯源**：ngspice 实测 + Python 量测 + 3 批次生成日志（0 fail/1500 ok）。
 
+### §20.11 · CPU 端到端 dry-run 验证 + nsteps 修正 + pretrain ETA（wake#619 · 2026-11-05 21:1x · CPU-only）
+
+**目的**：GPU 释放前用 CPU 验证完整 SFT 数据管线（加载→tokenize→loss mask→collate），确保 GPU 窗口打开后训练零浪费。
+
+**nsteps 修正**：`sft_train_wave.py` `--nsteps` default 从 2000 改为 **3000**（匹配 §20.10 推荐的 2.66 epoch / 2-3 epoch 目标区间）。`run_sft_wave.sh` 不传 `--nsteps`，此前会用 2000（1.77 epoch）——修正后自动用 3000。
+
+**CPU dry-run 测试**（`wave_rl/_dryrun_test.py`，6/6 PASS，无模型加载/无 GPU）：
+
+| # | 测试项 | 结果 |
+|:--|:--|:--|
+| 1 | Tokenizer 加载（Qwen3-4B-Instruct-2507） | ✓ vocab=151643, pad=eos=`<\|im_end\|>` |
+| 2 | `conversation_to_text` 5 条轨迹 | ✓ 10-14 turns, 1347-1682 chars, 4-6 assistant_spans, span 边界校验通过 |
+| 3 | Tokenization + loss masking | ✓ 349 tokens → 37 labelled (10.6%)，assistant span 正确映射 |
+| 4 | `collate_fn` padding | ✓ [4, 362] tensors, 155 non-(-100) labels, attention_mask 正确 |
+| 5 | `WaveSFTDataset` 加载全量 | ✓ 9013 trajectories loaded |
+| 6 | error_recovery 轨迹存在性 | ✓ 1789/9013 = 19.8%（含错误恢复轨迹）|
+
+**结论**：SFT 数据管线端到端正确，GPU 释放后 poller 自动启动训练时不会因数据/格式 bug 浪费 GPU 时间。
+
+**Pretrain R9 进度**（阻塞源）：
+- 当前 iteration: **94000 / 700000**（13.4%）
+- 已运行: ~263482s ≈ 3.05 天
+- 速率: ~30800 iter/天
+- ETA 剩余: ~(700000−94000)/30800 ≈ **19.7 天**（≈ 11/25 前后释放 GPU）
+- SFT poller: PID 2757742, flock 独占锁, 每 60s 轮询, 日志持续 `busy_util -- waiting`
+
+**交付物**：`vision/wave_rl/_dryrun_test.py`（CPU dry-run 测试脚本）+ `sft_train_wave.py` nsteps 修正 + 本节。
+
+**数字溯源**：`_dryrun_test.py` 实测输出（6/6 PASS）+ `latest_checkpointed_iteration.txt`=94000 + `sft_poll_*.log` tail。
+

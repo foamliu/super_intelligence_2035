@@ -84,7 +84,7 @@ def parse_args():
     p.add_argument('--output_dir', type=str, default=OUTPUT_DIR)
     p.add_argument('--lr', type=float, default=1e-5)
     p.add_argument('--min_lr', type=float, default=1e-7)
-    p.add_argument('--nsteps', type=int, default=2000)
+    p.add_argument('--nsteps', type=int, default=3000)
     p.add_argument('--gbs', type=int, default=8)
     p.add_argument('--mbs', type=int, default=1)
     p.add_argument('--warmup_frac', type=float, default=0.01)

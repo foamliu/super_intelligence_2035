@@ -25472,3 +25472,174 @@ e60c026b0 11-04 13:07 pretrain #1355: llama.cpp=FAIL(精度不可用) 5/5 eval D
 
 === DONE 242 ===
 ```
+
+---
+
+## RUN_ID 243 · 2026-11-05 21:13:02 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 243 | pretrain alive probe (read-only) | $(date '+%F %T') | host=$(hostname) ==="
+echo
+echo "[1] 关键进程一览（pretrain / eval / cline）"
+ps -eo pid,ppid,etimes,pcpu,rss,args --no-headers 2>/dev/null \
+  | grep -E 'baize_pretrain_loop|baize_eval_60k_100k|train\.sh|torchrun|llama-server|gguf_lmeval|cline' \
+  | grep -v grep | cut -c1-200 | head -20
+echo
+echo "[2] pretrain loop"
+LOOP=$(pgrep -f 'baize_pretrain_loop\.sh' | head -1)
+echo "loop_pid=${LOOP:-none}"
+if [ -n "${LOOP:-}" ]; then
+  ps -o pid,etimes,pcpu,rss,args --no-headers -p "$LOOP" 2>/dev/null | cut -c1-160
+  echo "--- children ---"
+  ps -o pid,etimes,pcpu,rss,args --no-headers --ppid "$LOOP" 2>/dev/null | cut -c1-160 | head -8
+fi
+echo
+echo "[3] cline 会话（pretrain data-dir）"
+CL=$(ps -eo pid,etimes,pcpu,rss,args --no-headers 2>/dev/null \
+     | grep -F 'data-dir /nas_train/app.e0031982/.cline_pretrain' | grep -v grep | awk '{print $1}' | head -1)
+echo "cline_pid=${CL:-none}"
+[ -n "${CL:-}" ] && ps -o pid,etimes,pcpu,rss --no-headers -p "$CL" 2>/dev/null
+echo
+echo "[4] S1 训练"
+pgrep -af 'train\.sh s1' 2>/dev/null | head -3 | cut -c1-160
+grep -aE 'iteration +[0-9]+/' /tmp/baize_s1_baize2b_worker.log 2>/dev/null | tail -2 | cut -c1-200
+stat -c 'worker.log mtime=%y size=%s' /tmp/baize_s1_baize2b_worker.log 2>/dev/null
+nvidia-smi --query-gpu=index,utilization.gpu,memory.used --format=csv,noheader 2>&1 | head -8
+echo
+echo "[5] 60k-100k 评测管线"
+PIPE=$(pgrep -f 'baize_eval_60k_100k_pipeline' | head -1)
+echo "pipeline_pid=${PIPE:-none}"
+pgrep -af 'llama-server' 2>/dev/null | head -3 | cut -c1-160
+pgrep -af 'gguf_lmeval_run\.py' 2>/dev/null | head -3 | cut -c1-160
+echo "--- /tmp 日志 mtime（判活）---"
+ls -l --time-style='+%m-%d %H:%M' /tmp/baize_eval_60k_100k*.log /tmp/baize_server_*.log /tmp/baize_pretrain_loop.log 2>/dev/null | tail -8
+echo "--- 最新 server 日志尾 6 行 ---"
+ls -t /tmp/baize_server_*.log 2>/dev/null | head -1 | xargs -r tail -6 2>/dev/null | cut -c1-180
+echo
+echo "[6] results.json 落盘（>=60k）"
+R=/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/lm_eval_results
+for it in 60000 70000 80000 90000 100000; do
+  f=$R/gguf_iter_${it}_fixed_8set/results.json
+  if [ -f "$f" ]; then stat -c "iter_$it results.json mtime=%y size=%s" "$f"; else echo "iter_$it results.json MISSING"; fi
+done
+echo
+echo "[7] GGUF / HF ckpt 最新"
+ls -1dt /nas_train/app.e0031982/models/baize2b_gguf/*.gguf 2>/dev/null | head -8 | while read -r g; do ls -l --time-style='+%m-%d %H:%M' "$g" | awk '{print $5, $6, $7, $8}'; done
+ls -1d /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/hf_iter_* 2>/dev/null | sort -V | tail -3
+echo
+echo "[8] .29 克隆内 pretrain 线最近提交"
+cd /nas_train/app.e0031982/code/super_intelligence_2035 2>/dev/null && {
+  git log -3 --pretty='%h %ad %s' --date=format:'%m-%d %H:%M' -- doc/BaiZe-ISEDA2027/run/MEMORY_PRETRAIN_2B.md | cut -c1-160
+  echo "clone_HEAD=$(git rev-parse --short HEAD)"
+}
+echo
+echo "[9] pretrain loop 日志尾 10 行"
+tail -10 /tmp/baize_pretrain_loop.log 2>/dev/null | cut -c1-200
+echo
+echo "=== DONE 243 ==="
+```
+
+**输出**
+```
+=== RUN_ID 243 | pretrain alive probe (read-only) | 2026-11-05 21:13:02 | host=whag0pgpuap29 ===
+
+[1] 关键进程一览（pretrain / eval / cline）
+  79673 3543961     903  473 16753584 /nas_train/app.e0031982/code/llama.cpp/build/bin/llama-server -m /nas_train/app.e0031982/models/baize2b_gguf/bz2b-80000-f16.gguf -t 8 -tb 8 -c 4096 --parallel 2 -
+  90802 3543961     893  4.4 992004 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/pretrain_cpu_eval_gguf/gguf_lm
+  90806 3543961     893  0.0  1020 tee -a /tmp/baize_eval_60k_100k.log
+2751345       1 2778907 22.9 4758520 /home/app.e0031982/.npm/_npx/672d321ee4ba2150/node_modules/cline/bin/.cline --cline-hub-daemon --cwd /nas_train/app.e0031982/code/super_intelligence_2035 --host 12
+3165013 3165004  648180  0.0  3684 bash /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_pretrain_loop.sh
+3543961       1    8492  0.0  3652 bash /tmp/baize_eval_60k_100k_pipeline.sh
+3640274 3165013    4920 99.6 454300 cline --data-dir /nas_train/app.e0031982/.cline_pretrain -c /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run --auto-approve true -m glm-
+4163528       1  264106  0.0  3756 bash scripts/train.sh s1 --nodes 2
+4163745 4163528  264103  0.0  8976 ssh -n -o StrictHostKeyChecking=no -o ServerAliveInterval=30 -o BatchMode=yes 10.239.2.12 ulimit -n 65536 && cd /nas_train/app.e0031982/code/BaiZe-ISEDA2027 && expor
+4177347 4163528  264093  0.1 288480 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python /nas_train/app.e0031982/miniforge3/envs/py310/bin/torchrun --nnodes=2 --node_rank=1 --nproc_per_node=8 --ma
+
+[2] pretrain loop
+loop_pid=3165004
+3165004  648181  0.0  1368 bash -c cd /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run && setsid bash -lc "exec bash /nas_train/app.
+--- children ---
+3165013  648181  0.0  3684 bash /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_pretrain_loop.sh
+
+[3] cline 会话（pretrain data-dir）
+cline_pid=3640274
+3640274    4921 99.6 454300
+
+[4] S1 训练
+4163528 bash scripts/train.sh s1 --nodes 2
+ [2026-11-05 21:10:53] iteration    95650/  700000 | consumed samples:     24486400 | elapsed time per iteration (ms): 7034.9 | learning rate: 1.000000E-03 | global batch size:   256 | lm loss: 2.0691
+ [2026-11-05 21:12:03] iteration    95660/  700000 | consumed samples:     24488960 | elapsed time per iteration (ms): 7019.8 | learning rate: 1.000000E-03 | global batch size:   256 | lm loss: 2.0669
+worker.log mtime=2026-11-05 21:12:03.254580401 +0800 size=1465918
+0, 100 %, 74939 MiB
+1, 100 %, 74961 MiB
+2, 100 %, 74841 MiB
+3, 96 %, 75161 MiB
+4, 97 %, 75141 MiB
+5, 100 %, 74961 MiB
+6, 97 %, 75221 MiB
+7, 97 %, 74961 MiB
+
+[5] 60k-100k 评测管线
+pipeline_pid=3543961
+79673 /nas_train/app.e0031982/code/llama.cpp/build/bin/llama-server -m /nas_train/app.e0031982/models/baize2b_gguf/bz2b-80000-f16.gguf -t 8 -tb 8 -c 4096 --para
+3640274 cline --data-dir /nas_train/app.e0031982/.cline_pretrain -c /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run --auto-approve 
+90802 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/pretrain_cpu_eval_gg
+--- /tmp 日志 mtime（判活）---
+-rw-r----- 1 app.e0031982 app.adm 15969785 11-05 11:40 /tmp/baize_server_10000.log
+-rw-r----- 1 app.e0031982 app.adm 15970265 11-05 12:55 /tmp/baize_server_20000.log
+-rw-r----- 1 app.e0031982 app.adm 15969948 11-05 14:09 /tmp/baize_server_30000.log
+-rw-r----- 1 app.e0031982 app.adm 15970880 11-05 15:24 /tmp/baize_server_40000.log
+-rw-r----- 1 app.e0031982 app.adm 15972802 11-05 16:37 /tmp/baize_server_50000.log
+-rw-r----- 1 app.e0031982 app.adm 15936410 11-05 19:56 /tmp/baize_server_60000.log
+-rw-r----- 1 app.e0031982 app.adm 15935368 11-05 20:57 /tmp/baize_server_70000.log
+-rw-r----- 1 app.e0031982 app.adm  4652791 11-05 21:13 /tmp/baize_server_80000.log
+--- 最新 server 日志尾 6 行 ---
+15.05.002.978 I slot print_timing: id  0 | task 11592 |       total time =     206.10 ms /    10 tokens
+15.05.002.979 I slot print_timing: id  0 | task 11592 |    graphs reused =       1462
+15.05.002.980 I slot print_timing: id  0 | task 11592 |   graph reallocs =          0    /     0        (same size) / (changed size)
+15.05.003.000 I slot      release: id  0 | task 11592 | stop processing: n_tokens = 29, truncated = 0
+15.05.003.013 I slot get_availabl: id  0 | task -1 | selected slot by id (0)
+15.05.003.045 I slot launch_slot_: id  0 | task 11595 | processing task, is_child = 0
+
+[6] results.json 落盘（>=60k）
+iter_60000 results.json mtime=2026-11-05 19:56:02.991137710 +0800 size=22810
+iter_70000 results.json mtime=2026-11-05 20:57:24.761965730 +0800 size=22808
+iter_80000 results.json MISSING
+iter_90000 results.json MISSING
+iter_100000 results.json MISSING
+
+[7] GGUF / HF ckpt 最新
+4447713248 11-05 20:57 /nas_train/app.e0031982/models/baize2b_gguf/bz2b-80000-f16.gguf
+4447713248 11-05 19:56 /nas_train/app.e0031982/models/baize2b_gguf/bz2b-70000-f16.gguf
+4447713248 11-05 18:51 /nas_train/app.e0031982/models/baize2b_gguf/bz2b-60000-f16.gguf
+4447713248 11-05 09:36 /nas_train/app.e0031982/models/baize2b_gguf/bz2b-50000-f16.gguf
+4447713248 11-05 09:35 /nas_train/app.e0031982/models/baize2b_gguf/bz2b-40000-f16.gguf
+4447713248 11-05 09:35 /nas_train/app.e0031982/models/baize2b_gguf/bz2b-30000-f16.gguf
+4447713248 11-05 09:31 /nas_train/app.e0031982/models/baize2b_gguf/bz2b-20000-f16.gguf
+4447713248 11-03 22:42 /nas_train/app.e0031982/models/baize2b_gguf/bz2b-10000-f16.gguf
+/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/hf_iter_70000
+/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/hf_iter_80000
+/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/hf_iter_90000
+
+[8] .29 克隆内 pretrain 线最近提交
+420f0abeb 11-05 19:49 pretrain #1418: 监控轮·ckpt盘点(60k/70k/80k/90k HF全在,100k训练94k)+管线自治健康(60k eval 86% ETA20:03)+报告生成器幂
+574f19a16 11-05 19:43 pretrain #1417: 监控轮·60k eval~78%·管线自治健康·无新results不刷新v2报告·WAITING:0
+64b9cbcd6 11-05 19:37 pretrain #1416: 监控轮·60k eval进行中(task28652/ETA~20:00),管线自治健康,生成器幂等PASS
+clone_HEAD=a17d3c046
+
+[9] pretrain loop 日志尾 10 行
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / glm-5.2): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)
+      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)
+      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)
+
+   [90m⎿ [0m[2mpiqa/name: piqa   piqa/alias: piqa   piqa/sample_len: 100.0000   piqa/acc,non... (+3 more)[0m
+[36m[search_codebase][0m baize_eval_pipeline.*\.sh, for.*iter.*in.*60000|TARGET_ITERS|gguf_lmeval_run
+   [90m⎿ [0m[32mok[0m
+[36m[run_commands][0m ls -la --time-style=long-iso /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/ | grep -E 'iter_|...
+   [90m⎿ [0m[2mdrwxr-x---   2 app.e0031982 app.adm  4096 2026-11-04 23:49 hf_iter_10000 drwx...[0m
+
+=== DONE 243 ===
+```
