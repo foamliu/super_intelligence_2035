@@ -1,4 +1,4 @@
-1788172501150_w4x70	haoyut	hfeg0pkn003		analog_context	case	EDA-Eval-DesignFlow-Analog-001	2026-10-30 21:42	seeded
+1788172501150_w4x70	haoyut	hfeg0pkn003		analog_context	parked	EDA-Eval-DesignFlow-Analog-001	2026-11-05 20:55	wrong-domain: cvps+netlist spef anti-annotation analysis (pnr_signoff/RC, not shard D); n=1181 too large
 1792371248997_fa3cd	e0039602	hfeg0plg85	73	waveform	case	EDA-Eval-DesignFlow-Waveform-001	2026-10-30 23:21	
 1791611498731_wg5u2.messages.json	zjqiao	hfhds211	728	analog_context	case	EDA-Eval-DesignFlow-LibCell-001	2026-10-31 01:30	
 1793147699495_as67p.messages.json	easont	hfhds211	786	waveform	case	EDA-Eval-DesignFlow-WaveView-002	2026-10-31 02:18	
@@ -744,3 +744,32 @@
 1785738164906_rqpb4.messages.json					parked		2026-11-05 20:35	infra: U#0=MCP service setup/multimodal workflow planning
 1792143054616_zr9dt.messages.json					parked		2026-11-05 20:35	iterative-opt: U#0=size-tune MP for vih flip-point (needs real sim, hard to judge offline)
 1792458165900_biua8.messages.json					parked		2026-11-05 20:35	skill-flow: U#0=read post_pdn SKILL.md then start flow (skill-scaffold heavy)
+1792372786960_4ujp9	tongni	10.129.33.245	155	analog_context	parked		2026-11-05 20:55	COLLISION: same trace already covered by shard B EDA-Eval-DesignFlow-Vcc2scPVTvar-001 (tongni 4ujp9, L2 hspice run, characterization). My L1 .ms0-parse variant would be near-duplicate. Abandon.
+1790241764551_4n3ry					parked		2026-11-05 20:55	meta-Q&A: U#0='how to get you to analyze a circuit' (how-to question, not produce-task)
+1791795204650_viv7y					parked		2026-11-05 20:55	wrong-domain: GDS+CDL+LVS layout generation (physical_verify/layout, not shard D)
+1788853586047_k45c2					parked		2026-11-05 20:55	slash-command: U#0='/scenario' (scenario launch, not produce-task)
+1793072434830_97mj2					parked		2026-11-05 20:55	NOFILE: session messages.json not found at expected path
+1792719518003_wkulx					parked		2026-11-05 20:55	aether-bindkey-config: U#0=change schematic wheel-zoom keybinding (tool-customization, not shard D produce)
+1792131744105_g48nq					parked		2026-11-05 20:55	skill-creator: U#0=explicit /skill-creator to make spice_tb_stimulus skill (skill-scaffold)
+1789090752430_4xt0p					parked		2026-11-05 20:55	scenario-launch: U#0='启动业务场景: 模拟电路优化·二次执行' (skill-flow)
+1791424827517_ca3hh					parked		2026-11-05 20:55	code-comprehension: U#0='parse DSIM codeDSIM/dsim_block' (C++/Qt source parsing, not shard D)
+1790069538028_bjube					parked		2026-11-05 20:55	skill-scaffold: U#0=paste full DRC Testpattern Generator skill spec (infra)
+1792559768471_mc7z1					parked		2026-11-05 20:55	exploratory+live-aether: U#0='can you make tools? trace top->port, sync update schematic/symbol' (vague, sync-update needs live pyAether, not offline-gradeable)
+1791858774096_1hq6h					parked		2026-11-05 20:55	debug: U#0=paste runscript path + LSF error 'smallslot dedicated/Request aborted' (user gave root-cause, A-faithful forbidden)
+1787821853675_z72bi					parked		2026-11-05 20:55	skill-creator: U#0=/skill-creator make finesim/presim/nanospice sim skill (skill-scaffold)
+1791525861730_k613u					parked		2026-11-05 20:55	policy-debug: U#0='check policy validity + run add_m1_rect.py' (infra/policy)
+1791786838927_a15un					parked		2026-11-05 21:00	Q&A: U#0='which test cases pass/fail and why' (analysis, not produce-task)
+1791524764107_rdrlk					parked		2026-11-05 21:00	infra: U#0='check policy validity + run add_m1_rect.py' (policy-debug)
+1791981291929_4oo3i					parked		2026-11-05 21:00	garbage-open: U#0='heelo/nhello' typos + mid-conv attach sim_log_compare.py (not clean produce-task)
+1793006622937_6kot7					parked		2026-11-05 21:00	doc-study: U#0='study calbr_mp_useref.pdf + feedback study note' (doc/report, not shard D produce)
+1791862539977_nwwkg					parked		2026-11-05 21:00	doc-report: U#0='summarize aether APIs+DB patterns to PDF' (doc/report, not shard D produce)
+1791876404012_d7cbo					parked		2026-11-05 21:00	Q&A-first: U#0='can these I-V data build Gm/id LUT?' (yes/no question first, then produce; ws2bi cleaner)
+1790849679042_bjkmi					parked		2026-11-05 21:00	debug: U#0='why does gen_stimulus_ltf always produce PSD0->DQ543 regardless of -d DQSEH' (root-cause question)
+1789967394999_11h3i					parked		2026-11-05 21:00	layout-aether: U#0='complete floorplan placement via aeAutoPlacementFromDesign' (live pyAether, layout domain not shard D)
+1790061417120_p2n1r					parked		2026-11-05 21:00	skill-flow: U#0=[autocell-tcl-flow-generator] explicit skill command
+1789994991166_v80cd					parked		2026-11-05 21:00	skill-scaffold: U#0=paste full PyAether auto-Place-Route Skill spec
+1790238584900_vajed					parked		2026-11-05 21:00	skill-flow: U#0=[issue-handler] explicit skill command
+1793103982380_vdwab					parked		2026-11-05 21:00	skill-flow: U#0=[sim-sp-gen] explicit skill command
+1791852261815_1pxm7					parked		2026-11-05 21:00	code-search: U#0='find location of Enable_TM task/function' (Q&A)
+1789017399621_cmsbu					parked		2026-11-05 21:00	infra: U#0='is sandbox server connected?' (meta question)
+1791523486486_ws2bi	irene1li	10.129.2.13	155	waveform	claimed		2026-11-05 21:00	
