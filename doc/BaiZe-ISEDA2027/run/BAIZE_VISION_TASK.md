@@ -39,6 +39,47 @@
 > 📁 **报告目录纪律（2026-10-28 用户直令 · 全局常驻 · 覆盖一切旧报告路径）**：所有 HTML/中文报告**一律产出在 `doc/BaiZe-ISEDA2027/reports/`**。🚫 **禁止产出到 `run/reports/` 或项目根 `reports/`**（生成器输出路径必须指向项目级 reports；run/reports 历史文件不得再新增）。
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
+### §运维令·2026-11-05 17:5x（执行波形 RL 计划：Stage-1W SFT 冷启动 → Stage-2W GRPO · 分阶段）· 用户直令 · 最高优先
+
+> **用户令**：「vision：执行 2026-10-31 波形 RL 计划书（`reports/report_vision_wave_rl_plan_zh.html`），让 2B MLLM 通过与 WaveView 交互学会看懂波形图。分阶段，先解锁待核项再训练。」
+>
+> **背景**：计划书已交付（59241B/12节），含环境/奖励/数据/训练/评测/成本全路线，但标注「本轮零实验·本机无 FSDB/无 license」+ 4 个「待核」项。本令把计划书从「方案」推进为「执行」，按风险分 4 阶段，**每阶段产出交付物并 commit 后再进下一阶段**。
+
+> **🔴 阶段 0 · 可行性解锁（无 GPU · 必须先做 · 解锁 4 个「待核」）**
+> 目的：在动任何 GPU / 训练前，确认 WaveView+FSDB+license 可用性并跑通最小闭环。
+> 1. **定位 WaveView 主机**：确认哪台机器有 `wv` + Synopsys license + FSDB（候选：`.75` 沙盒 / ZhuLong benchmark 主机 `10.129.32.75` / 其它）。在 `MEMORY_VISION.md` 记录：主机 IP、license 串（6 server？）、可用 demo FSDB 路径（`mixed/mixed.fsdb`·`power/cpf_demo/demo.fsdb`·`hwsw_debug/multi_core/design.fsdb`·`dumper/modelsim_link_third_party/sample.fsdb`）是否真实在位。**若全不可得 ⇒ 阶段 0 即判 RED，写报告上报，不进阶段 1**（不得伪造可用性）。
+> 2. **解锁 4 个待核项**（在沙盒实测，逐项记实测命令+返回）：
+>    - ① FSDB 转换工具链：ngspice `.raw` / Verilator VCD → FSDB 是否有开源路径（vcd2fsdb 需 Synopsys？）；**备选**：直接用 `.raw`/VCD + Python 解析器代替 wv（保留 RL 环境框架但失去 API 兼容）——明确走哪条。
+>    - ② `sx_export_image` 类截图导出 API 是否存在；若不存在 ⇒ 截图改为 episode 开始时外部预处理一次性截取。
+>    - ③ `sx_open_sim_file_read` 是否计入「≥5 次 crash」阈值（决定单 episode wv 预算 = 3 还是 4）。
+>    - ④ license 并发上限（决定 RL 并行 episode 数）。
+> 3. **Gym wrapper 冒烟测试**：用 `vision/wave_rl/` 下新建 `waveview_gym.py`，包 `wv -ace_no_gui` 为确定性 Gym 环境（7 类受控 Tcl 动作 A1–A7，每 episode fresh wv 进程，单 episode wv 调用 ≤3）。在 `mixed.fsdb` 上跑 1 个 episode（open→get_signal(clock)→get_values→submit 周期），验证 observation/action/reward/terminate 全链路通。
+> 4. **交付物**：`reports/report_vision_wave_rl_phase0_feasibility_zh.html`（中文 HTML/单文件/无外链）+ `vision/wave_rl/waveview_gym.py`（冒烟可跑）+ `EXPERIMENTS_VISION.md` 新增 §19「波形 RL 阶段 0」。**判据**：4 待核项各有实测结论（GREEN/RED/备选）+ Gym 冒烟 episode 跑通 OR 明确判 RED 上报。
+
+> **🟠 阶段 1 · Stage-1W SFT 冷启动（gated on 阶段 0 GREEN · 2B MLLM · ~4 GPU·h pilot）**
+> 1. **合成数据 pipeline**：ngspice（SPICE tran：RC/RL/反相器/差分对，参数随机化）+ Verilator（数字时序：分频器/FIFO/状态机）→ FSDB（或备选 .raw/VCD+Python）→ 自动生成「open→get_signal→get_values→submit」完整轨迹 + GT（周期/幅度/上升沿/下降沿/延迟）。**pilot 5000 轨迹**（含错误恢复轨迹：信号不存在→dump_hier→换名重试；FineSim 裸名 vs Verilog top.sig；时间窗空→换信号）。
+> 2. **SFT 训练**：2B MLLM，LR 1e-5（LoRA r=64）或 5e-6（全量），GBS=128，~2000–3000 步（2–3 epoch）。**GPU 调度**：避开 vision R9（`10.239.2.12` 在跑）——确认用哪台 GPU 主机（.12 空闲窗口 or 别的 host），写进心跳。
+> 3. **验收判据（预注册）**：held-out 合成数据上 **格式正确率 ≥90% + submit 成功率 ≥70%**。不达标 ⇒ 调数据/轨迹再训，不进阶段 2。
+> 4. **交付物**：SFT checkpoint + `reports/report_vision_wave_rl_phase1_sft_zh.html` + `EXPERIMENTS_VISION.md` §20。
+
+> **🟢 阶段 2 · Stage-2W GRPO 强化（gated on 阶段 1 达标 · ~12 GPU·h full）**
+> 1. **RL 训练**：GRPO（无 value 网络，2B 省显存），奖励 = R_main（数值相对误差分档：≤1%→1.0 / ≤5%→0.7 / ≤10%→0.4 / ≤25%→0.1 / >25%→0）+ R_evidence(0.3) + R_dense(0.2) + R_anti(防 hack，直输 GT −2.0) + R_budget(0.1)。双盲抽检：每 100 episode 插 5 个隐藏 FSDB 题，>20% 差距=过拟合信号。
+> 2. **评测**：WaveQA-RL ≥300 题（数值/多选/开放）+ 双参照线（纯看图 2B / Oracle Tcl 上限）+ **回归护栏**（MMStar/MMBench 掉幅 ≤1pp）。
+> 3. **交付物**：RL checkpoint + WaveQA-RL 评测结果 + `reports/report_vision_wave_rl_phase2_rl_zh.html` + `EXPERIMENTS_VISION.md` §21。
+
+> **🟣 阶段 3 · 全量扩展（可选 · gated on 阶段 2 GREEN · 用户另行批）**：合成 20000 + 真实 2000（Oracle Tcl 回放 698 机 368 命中）+ 派生 8000 = 30000 题，~12 GPU·h + ~16 CPU·h / ~4 天。**需用户再批预算**，本令不自动进。
+
+> **铁律与约束**：
+> - 🚫 不伪造任何评测数字 / API key / license；所有「待核」项必须实测，不得臆断 GREEN。
+> - 🚫 不杀健康训练：阶段 1/2 的 GPU 调度必须避让 vision R9（`10.239.2.12`）；重 I/O 避让 `10.239.2.12`/`10.239.2.29`。
+> - WaveView 合规：沙盒隔离、只读打开（`sx_open_sim_file_read`）、不写回设计库、受控 Tcl 子集、license 不超并发；真实 FSDB 用前确认脱敏/授权。
+> - 每阶段产出交付物并 commit（`vision wave-rl-pN:` 前缀）+ push 后再进下一阶段；阶段 0 若判 RED 立即上报，不得硬推进。
+> - 数字全溯源计划书 `report_vision_wave_rl_plan_zh.html` §1–§9 + 附录 A 实测踩坑；成本 ETA 标「估算」。
+> - 体积：`MEMORY_VISION.md`/`BAIZE_VISION_TASK.md` 各 ≤32KB，超限自滚。
+
+> **完成标记**：阶段 0 交付后标 `✅ 阶段0已交付`；阶段 1/2/3 各自标各自阶段。**任一阶段未交付 ⇒ `WAITING: 0`（不睡）**。
+
+
 
 ### [已完成] §运维令·2026-10-28 17:3x（OCR 合成数据 10M 质量偏差裁定：接受现状）· 用户直令 · ✅ 已完成（wake#330 2026-10-28 18:0x）
 
