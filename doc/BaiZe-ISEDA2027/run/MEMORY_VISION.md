@@ -2,9 +2,9 @@
 
 WAITING: 0
 
-> 🆕 **【wake #717 · 2026-11-06 06:38】监控巡检·状态无变化·双poller健康·GPU仍满载·仅待GPU**。无新运维令。git fetch→origin/main 0ahead/0behind(HEAD=934da2d62 designflow#298 06:38)。**GPU实测**：.12 8×H100 96-100%util/~75GB(R9 pretrain+pretrain 100k eval)+.29 8×H100 97-100%util/~75GB(mamba2 baize2b)全占,ETA≈11/25-27。.10/.11/.20/.22/.24 SSH Permission denied(无key)。**双poller健康**：SFT PID2757742(ppid=1,etimes≈39067~10.8h,60s poll)+GRPO chain PID2428009(ppid=1,etimes≈29054~8h,120s poll)。sft_output/+eval_results.json不存在(预期·GPU被占)。GRPO smoke test PASS(6 oracle rollouts/rewards+advantages OK)。Phase1 CPU侧100%就绪,唯一阻塞=GPU。📦体积：TASK=30453B(29.7KB)/MEMORY=21.6KB（均≤32KB✓）。**未完成指令：有**（阶段1 GPU训练pending+阶段2/3未交付）⇒**WAITING: 0**。
+> 🆕 **【wake #718 · 2026-11-06 06:43】监控巡检·状态无变化·双poller健康·GPU仍满载·仅待GPU**。无新运维令。git fetch→origin/main 0ahead/0behind(已同步,HEAD=3e1d88c96 vision wake#717 06:40)。**GPU实测**：.12 8×H100 96-100%util/~75GB(R9 pretrain+100k eval)+.29 8×H100 96-100%util/~75GB(mamba2 baize2b)全占,ETA≈11/25-27。**双poller健康**：SFT PID2757742(ppid=1,etimes≈39365~10.9h,60s poll)+GRPO chain PID2428009(ppid=1,etimes≈29352~8.1h,120s poll)。sft_output/+eval_results.json不存在(预期·GPU被占)。Phase1 CPU侧100%就绪,唯一阻塞=GPU。📦体积：TASK=30453B(29.7KB)/MEMORY=21.8KB（均≤32KB✓）。**未完成指令：有**（阶段1 GPU训练pending+阶段2/3未交付）⇒**WAITING: 0**。
 
-> 📦 wake #716（监控巡检·2026-11-06 06:34·状态无变化·双poller健康·GPU仍满载·仅待GPU）已归档 → daily-memories-vision/2026-11-06.md；**结论**：状态无变化，全管线就绪仅待GPU。需要时再读。
+> 📦 wake #716~#717（监控巡检·2026-11-06 06:34~06:38·状态无变化·双poller健康·GPU仍满载·仅待GPU）已归档 → daily-memories-vision/2026-11-06.md；**结论**：状态无变化，全管线就绪仅待GPU。需要时再读。
 
 > 📦 wake #715（监控巡检·2026-11-06 06:28·状态无变化·双poller健康·GPU仍满载·仅待GPU）已归档 → daily-memories-vision/2026-11-06.md；**结论**：状态无变化，全管线就绪仅待GPU。需要时再读。
 
