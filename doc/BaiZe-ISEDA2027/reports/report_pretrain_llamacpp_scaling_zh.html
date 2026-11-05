@@ -22,7 +22,7 @@ code{background:#f1f5f9;padding:1px 5px;border-radius:3px;font-size:12px}
 .foot{margin-top:30px;padding-top:12px;border-top:1px solid #e2e8f0;font-size:11px;color:#94a3b8;text-align:center}
 </style></head><body>
 <h1>BaiZe-2B llama.cpp 全 checkpoint 常识推理评测 · 能力曲线与 700k 预测</h1>
-<p class='small'>生成时间：2026-11-05 10:59:03　|　后端：llama.cpp 修复分支 <code>fix/nemotron-h-undo-permute-and-rope</code>（build 5dc38db00）　|　已完成 0/5 ckpt　|　8 集 zero-shot <code>limit=100</code></p>
+<p class='small'>生成时间：2026-11-05 11:46:01　|　后端：llama.cpp 修复分支 <code>fix/nemotron-h-undo-permute-and-rope</code>（build 5dc38db00）　|　已完成 1/5 ckpt　|　8 集 zero-shot <code>limit=100</code></p>
 <div class='card'><h2>① 评测配置</h2><table>
 <tr><th>项目</th><th>说明</th></tr>
 <tr><td>模型</td><td>BaiZe-2B（Mamba2-hybrid，2.22B 参数）</td></tr>
@@ -33,13 +33,102 @@ code{background:#f1f5f9;padding:1px 5px;border-radius:3px;font-size:12px}
 <tr><td>每任务样本</td><td><code>limit=100</code>（非全量），acc_stderr ≈ ±4.5%，逐集绝对值有统计波动，<strong>Avg 趋势比单集绝对值更可信</strong></td></tr>
 </table></div>
 <div class='card'><h2>② 关键发现</h2><ul>
-<li>评测管线仍在运行中，尚未有完成的检查点。本报告将在评测结束后刷新。</li>
+<li>已完成 <strong>1/5</strong> 个检查点（iter_10000）。</li>
+<li>相对 P-6 起点（44.0%@655M/20k）：当前最高 <strong>+7.6 pp</strong>（注：P-6 为 655M，本评测为 2B，参数量不同，仅作趋势参照）。</li>
+<li><strong>llama.cpp 修复后恢复退化 ckpt</strong>：HF 侧（PyTorch CPU float32）iter_20000/40000/50000 因 Mamba2 SSM 数值不稳定 logits 全 NaN → sciq=0.0 退化；llama.cpp C++ SSM scan 数值稳定，<strong>5 个 ckpt 全部可正常出分</strong>，本报告即为修复后真实能力曲线。</li>
 </ul></div>
 <div class='card'><h2>③ 5 ckpt × 8 集汇总表（acc / acc_norm）</h2>
-<p class='small'>暂无已完成检查点，待评测结束后刷新。</p>
+<table><tr><th>iter</th><th>已训 token</th>
+<th>ARC-C<br><span class='small'>acc/norm</span></th>
+<th>ARC-E<br><span class='small'>acc/norm</span></th>
+<th>BoolQ<br><span class='small'>acc/norm</span></th>
+<th>HellaSwag<br><span class='small'>acc/norm</span></th>
+<th>OpenBookQA<br><span class='small'>acc/norm</span></th>
+<th>PIQA<br><span class='small'>acc/norm</span></th>
+<th>SciQ<br><span class='small'>acc/norm</span></th>
+<th>Winogrande<br><span class='small'>acc/norm</span></th>
+<th class='avg'>Avg<br>(harness)</th><th class='avg'>Avg<br>(raw acc)</th></tr>
+<tr><td><strong>iter_10000</strong></td><td>41.94B</td>
+<td>27.0 / 26.0</td>
+<td>49.0 / 47.0</td>
+<td>62.0 / —</td>
+<td>35.0 / 45.0</td>
+<td>21.0 / 35.0</td>
+<td>72.0 / 73.0</td>
+<td>79.0 / 70.0</td>
+<td>54.0 / —</td>
+<td class='avg'>51.50%</td><td class='avg'>49.88%</td></tr>
+<tr><td>iter_20000</td><td>83.89B</td><td colspan='10' class='na'>评测中…</td></tr>
+<tr><td>iter_30000</td><td>125.83B</td><td colspan='10' class='na'>评测中…</td></tr>
+<tr><td>iter_40000</td><td>167.77B</td><td colspan='10' class='na'>评测中…</td></tr>
+<tr><td>iter_50000</td><td>209.72B</td><td colspan='10' class='na'>评测中…</td></tr>
+<tr><td colspan="11" style="background:#eef2f7;font-weight:600;text-align:left">参照线</td></tr>
+<tr class='ref'><td>BaiZe P-6 (655M,20k)</td><td>655M tok</td><td colspan='8' class='na'>逐集见 P-6 报告</td><td class='avg'>44.0%</td><td class='avg'>43.1%</td></tr>
+<tr class='ref'><td>Xmodel-2 s1/10K (39.3B tok)</td><td>41.9B</td><td colspan='8' class='na'>逐集未列</td><td class='avg'>46.7%</td><td>—</td></tr>
+<tr class='ref'><td>Xmodel-2 s1/20K (78.6B tok)</td><td>83.9B</td><td colspan='8' class='na'>逐集未列</td><td class='avg'>49.1%</td><td>—</td></tr>
+<tr class='ref'><td>Xmodel-2 s1/30K (117.9B tok)</td><td>125.8B</td><td colspan='8' class='na'>逐集未列</td><td class='avg'>49.6%</td><td>—</td></tr>
+<tr class='ref'><td>Xmodel-2 s1/40K (157.2B tok)</td><td>167.8B</td><td colspan='8' class='na'>逐集未列</td><td class='avg'>50.3%</td><td>—</td></tr>
+<tr class='ref'><td>Phi-1.5 (1.3B, ~300B tok)</td><td>~300B</td><td colspan='8' class='na'>逐集未列</td><td class='avg'>50%</td><td>—</td></tr>
+</table>
+<p class='small'>注：每格「acc / acc_norm」（百分比）。Avg(harness)=与 P-6 同口径（ARC-C/E/HellaSwag/OBQA/PIQA/SciQ 取 acc_norm，BoolQ/Winogrande 取 acc）；Avg(raw acc)=8 集全取 acc。<code>limit=100</code> 下 acc_stderr ≈ ±4.5%。</p>
 </div>
 <div class='card'><h2>④ 能力-vs-step 曲线</h2>
-<div class='chart'><p style='color:#64748b;text-align:center'>（暂无已完成检查点，曲线待评测结束后刷新）</p></div>
+<div class='chart'><svg xmlns="http://www.w3.org/2000/svg" width="900" height="560" style="font-family:monospace;background:#fff">
+<rect width="900" height="560" fill="white"/>
+<line x1="70" y1="500.0" x2="750" y2="500.0" stroke="#e2e8f0" stroke-width="1"/>
+<text x="64" y="503.0" font-size="10" fill="#64748b" text-anchor="end">43%</text>
+<line x1="70" y1="408.0" x2="750" y2="408.0" stroke="#e2e8f0" stroke-width="1"/>
+<text x="64" y="411.0" font-size="10" fill="#64748b" text-anchor="end">45%</text>
+<line x1="70" y1="316.0" x2="750" y2="316.0" stroke="#e2e8f0" stroke-width="1"/>
+<text x="64" y="319.0" font-size="10" fill="#64748b" text-anchor="end">47%</text>
+<line x1="70" y1="224.0" x2="750" y2="224.0" stroke="#e2e8f0" stroke-width="1"/>
+<text x="64" y="227.0" font-size="10" fill="#64748b" text-anchor="end">49%</text>
+<line x1="70" y1="132.0" x2="750" y2="132.0" stroke="#e2e8f0" stroke-width="1"/>
+<text x="64" y="135.0" font-size="10" fill="#64748b" text-anchor="end">51%</text>
+<line x1="70" y1="40.0" x2="750" y2="40.0" stroke="#e2e8f0" stroke-width="1"/>
+<text x="64" y="43.0" font-size="10" fill="#64748b" text-anchor="end">53%</text>
+<line x1="116.9" y1="40" x2="116.9" y2="500" stroke="#e2e8f0" stroke-width="1"/>
+<text x="116.9" y="516" font-size="10" fill="#64748b" text-anchor="middle">10k</text>
+<line x1="212.5" y1="40" x2="212.5" y2="500" stroke="#e2e8f0" stroke-width="1"/>
+<text x="212.5" y="516" font-size="10" fill="#64748b" text-anchor="middle">20k</text>
+<line x1="268.5" y1="40" x2="268.5" y2="500" stroke="#e2e8f0" stroke-width="1"/>
+<text x="268.5" y="516" font-size="10" fill="#64748b" text-anchor="middle">30k</text>
+<line x1="308.2" y1="40" x2="308.2" y2="500" stroke="#e2e8f0" stroke-width="1"/>
+<text x="308.2" y="516" font-size="10" fill="#64748b" text-anchor="middle">40k</text>
+<line x1="339.0" y1="40" x2="339.0" y2="500" stroke="#e2e8f0" stroke-width="1"/>
+<text x="339.0" y="516" font-size="10" fill="#64748b" text-anchor="middle">50k</text>
+<line x1="434.6" y1="40" x2="434.6" y2="500" stroke="#e2e8f0" stroke-width="1"/>
+<text x="434.6" y="516" font-size="10" fill="#64748b" text-anchor="middle">100k</text>
+<line x1="530.2" y1="40" x2="530.2" y2="500" stroke="#e2e8f0" stroke-width="1"/>
+<text x="530.2" y="516" font-size="10" fill="#64748b" text-anchor="middle">200k</text>
+<line x1="656.7" y1="40" x2="656.7" y2="500" stroke="#e2e8f0" stroke-width="1"/>
+<text x="656.7" y="516" font-size="10" fill="#64748b" text-anchor="middle">500k</text>
+<line x1="703.1" y1="40" x2="703.1" y2="500" stroke="#e2e8f0" stroke-width="1"/>
+<text x="703.1" y="516" font-size="10" fill="#64748b" text-anchor="middle">700k</text>
+<line x1="70" y1="40" x2="70" y2="500" stroke="#334155" stroke-width="1.5"/>
+<line x1="70" y1="500" x2="750" y2="500" stroke="#334155" stroke-width="1.5"/>
+<text x="410" y="542" font-size="11" fill="#334155" text-anchor="middle">训练步数 iter（对数轴）</text>
+<text x="18" y="270" font-size="11" fill="#334155" text-anchor="middle" transform="rotate(-90 18 270)">8 集常识推理 Avg (harness口径)</text>
+<circle cx="116.9" cy="100.9" r="4" fill="#1d4ed8"/>
+<line x1="70" y1="439.1" x2="750" y2="439.1" stroke="#16a34a" stroke-width="1.2" stroke-dasharray="3,3"/>
+<line x1="70" y1="168.1" x2="750" y2="168.1" stroke="#9333ea" stroke-width="1.2" stroke-dasharray="3,3"/>
+<circle cx="116.9" cy="318.2" r="3.5" fill="#ea580c"/>
+<circle cx="212.5" cy="209.7" r="3.5" fill="#ea580c"/>
+<circle cx="268.5" cy="186.0" r="3.5" fill="#ea580c"/>
+<circle cx="308.2" cy="154.2" r="3.5" fill="#ea580c"/>
+<line x1="758" y1="54" x2="774" y2="54" stroke="#1d4ed8" stroke-width="2"/>
+<text x="778" y="57" font-size="9" fill="#334155">BaiZe-2B Avg（llama.cpp 修复后）</text>
+<line x1="758" y1="70" x2="774" y2="70" stroke="#dc2626" stroke-width="1.5" stroke-dasharray="3,3"/>
+<text x="778" y="73" font-size="9" fill="#334155">拟合外推</text>
+<circle cx="766" cy="86" r="3.5" fill="#ea580c"/>
+<text x="778" y="89" font-size="9" fill="#334155">Xmodel-2 s1 (1.2B)</text>
+<line x1="758" y1="102" x2="774" y2="102" stroke="#16a34a" stroke-width="1.5" stroke-dasharray="3,3"/>
+<text x="778" y="105" font-size="9" fill="#334155">P-6 起点 (44.0%)</text>
+<line x1="758" y1="118" x2="774" y2="118" stroke="#9333ea" stroke-width="1.5" stroke-dasharray="3,3"/>
+<text x="778" y="121" font-size="9" fill="#334155">Phi-1.5 (50%)</text>
+<line x1="758" y1="134" x2="774" y2="134" stroke="#94a3b8" stroke-width="2"/>
+<text x="778" y="137" font-size="9" fill="#334155">逐集细线</text>
+</svg></div>
 <p class='small' style='text-align:center'>图1：8 集 Avg acc vs 训练步数（对数轴）。蓝粗线=BaiZe-2B Avg，灰细线=逐集，橙点=Xmodel-2 s1，绿/紫虚线=P-6/Phi-1.5 参照，红虚线=拟合外推，红点=700k 预测。</p>
 </div>
 <div class='card'><h2>⑤ 700k 步（≈2.94T token）常识推理水平预测</h2>
@@ -57,5 +146,5 @@ code{background:#f1f5f9;padding:1px 5px;border-radius:3px;font-size:12px}
 <li>S1 训练于 2026-11-02 19:51 从 ckpt 58000 resume，iter_10000–50000 均为 <strong>resume 前</strong>保存的检查点，不受 resume 影响。</li>
 <li>全程 <code>CUDA_VISIBLE_DEVICES=""</code>，未碰 GPU/S1，CPU load ≪80%。</li>
 </ul></div>
-<div class='foot'>报告生成器：<code>run/gen_llamacpp_scaling_report.py</code>（幂等，可随评测进度反复刷新）　|　数据源：<code>nemo_experiments/baize2b/lm_eval_results/gguf_iter_*_fixed_8set/</code>　|　2026-11-05 10:59:03</div>
+<div class='foot'>报告生成器：<code>run/gen_llamacpp_scaling_report.py</code>（幂等，可随评测进度反复刷新）　|　数据源：<code>nemo_experiments/baize2b/lm_eval_results/gguf_iter_*_fixed_8set/</code>　|　2026-11-05 11:46:01</div>
 </body></html>

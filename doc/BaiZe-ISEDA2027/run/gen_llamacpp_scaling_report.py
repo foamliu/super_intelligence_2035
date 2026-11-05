@@ -38,15 +38,33 @@ TASKS = [
 ]
 TASK_KEYS = [t[0] for t in TASKS]
 
+# harness-standard 口径（与 P-6 0.4395 / Xmodel-2 Table 2 同口径）：
+#   ARC-Challenge/ARC-Easy/HellaSwag/OpenBookQA/PIQA/SciQ 取 acc_norm，
+#   BoolQ/Winogrande 取 acc（lm_eval 不产出 acc_norm）。
+NORM_TASKS = {"arc_challenge", "arc_easy", "hellaswag", "openbookqa", "piqa", "sciq"}
+
+
+def task_harness_metric(tkey, tv):
+    """返回该任务 harness-standard 口径分数；acc_norm 缺失则回退 acc。"""
+    if tkey in NORM_TASKS:
+        v = tv.get("acc_norm")
+        if v is not None:
+            return v
+    return tv.get("acc")
+
+
 TARGET_ITERS = [10000, 20000, 30000, 40000, 50000]
 TOK_PER_STEP = 256 * 16384
 TARGET_700K = 700000
 TARGET_700K_TOK = TARGET_700K * TOK_PER_STEP  # ~2.936T
 
-P6_BASELINE = {"label": "BaiZe P-6 (655M, 20k)", "step": 20000, "avg": 0.4395,
-    "per_task": {"arc_challenge": 0.2381, "arc_easy": 0.4137, "boolq": 0.5875,
-                 "hellaswag": 0.3988, "openbookqa": 0.282, "piqa": 0.6404,
-                 "sciq": 0.673, "winogrande": 0.4988}}
+P6_BASELINE = {"label": "BaiZe P-6 (655M, 20k)", "step": 20000,
+    "avg": 0.4395, "avg_raw": 0.4308,
+    "per_task": {"arc_challenge": 0.2594, "arc_easy": 0.4196, "boolq": 0.6141,
+                 "hellaswag": 0.2924, "openbookqa": 0.3120, "piqa": 0.5860,
+                 "sciq": 0.5160, "winogrande": 0.5170}}
+# 口径：harness-standard Avg=0.4395（ARC-C/E/HellaSwag/OBQA/PIQA/SciQ 取 acc_norm，
+#       BoolQ/Winogrande 取 acc）；raw acc Avg=0.4308。来源 P-6 全量评测（daily 2026-10-02）。
 
 XMODEL2_REF = [
     {"label": "Xmodel-2 s1/10K (39.3B tok)", "step": 10000, "avg": 0.4665},
@@ -107,12 +125,15 @@ def load_results():
 
 
 def avg_acc(ckpt_res):
-    vals = [v["acc"] for v in ckpt_res.values() if v.get("acc") is not None]
+    """harness-standard Avg（与 P-6 0.4395 同口径）：6 集取 acc_norm + BoolQ/Winogrande 取 acc。"""
+    vals = [task_harness_metric(k, v) for k, v in ckpt_res.items()
+            if task_harness_metric(k, v) is not None]
     return sum(vals) / len(vals) if vals else None
 
 
-def avg_acc_norm(ckpt_res):
-    vals = [v["acc_norm"] for v in ckpt_res.values() if v.get("acc_norm") is not None]
+def avg_raw_acc(ckpt_res):
+    """raw acc Avg（8 集全取 acc,none），与 P-6 raw avg 0.4308 同口径，仅作对照。"""
+    vals = [v["acc"] for v in ckpt_res.values() if v.get("acc") is not None]
     return sum(vals) / len(vals) if vals else None
 
 
@@ -240,10 +261,11 @@ def build_capability_svg(data, best_fit):
     svg.append(f'<line x1="{ml}" y1="{mt}" x2="{ml}" y2="{H-mb}" stroke="#334155" stroke-width="1.5"/>')
     svg.append(f'<line x1="{ml}" y1="{H-mb}" x2="{W-mr}" y2="{H-mb}" stroke="#334155" stroke-width="1.5"/>')
     svg.append(f'<text x="{ml+pw/2:.0f}" y="{H-18}" font-size="11" fill="#334155" text-anchor="middle">训练步数 iter（对数轴）</text>')
-    svg.append(f'<text x="18" y="{mt+ph/2:.0f}" font-size="11" fill="#334155" text-anchor="middle" transform="rotate(-90 18 {mt+ph/2:.0f})">8 集常识推理 Avg acc</text>')
+    svg.append(f'<text x="18" y="{mt+ph/2:.0f}" font-size="11" fill="#334155" text-anchor="middle" transform="rotate(-90 18 {mt+ph/2:.0f})">8 集常识推理 Avg (harness口径)</text>')
     colors = ["#94a3b8", "#a3b8c8", "#b8a3c8", "#c8a3b8", "#a3c8b8", "#c8b8a3", "#b8c8a3", "#c8a3c8"]
     for idx, (tkey, tname) in enumerate(TASKS):
-        pts = [(it, data[it][tkey]["acc"]) for it in sorted(data) if tkey in data[it] and data[it][tkey]["acc"] is not None]
+        pts = [(it, task_harness_metric(tkey, data[it][tkey])) for it in sorted(data)
+               if tkey in data[it] and task_harness_metric(tkey, data[it][tkey]) is not None]
         if len(pts) >= 2:
             pl = " ".join(f"{sx(x):.1f},{sy(y):.1f}" for x, y in pts)
             svg.append(f'<polyline points="{pl}" fill="none" stroke="{colors[idx]}" stroke-width="1" opacity="0.55"/>')
@@ -368,14 +390,14 @@ def build_html(data, now_str):
         h.append("<table><tr><th>iter</th><th>已训 token</th>")
         for _, tn in TASKS:
             h.append(f"<th>{tn}<br><span class='small'>acc/norm</span></th>")
-        h.append("<th class='avg'>Avg acc</th><th class='avg'>Avg acc_norm</th></tr>")
+        h.append("<th class='avg'>Avg<br>(harness)</th><th class='avg'>Avg<br>(raw acc)</th></tr>")
         for it in TARGET_ITERS:
             if it not in data:
                 h.append(f"<tr><td>iter_{it}</td><td>{fmt_tok(it*TOK_PER_STEP)}</td>"
                          f"<td colspan='10' class='na'>评测中…</td></tr>")
                 continue
             ck = data[it]
-            a = avg_acc(ck); an = avg_acc_norm(ck)
+            a = avg_acc(ck); ar = avg_raw_acc(ck)
             h.append(f"<tr><td><strong>iter_{it}</strong></td><td>{fmt_tok(it*TOK_PER_STEP)}</td>")
             for tkey, _ in TASKS:
                 v = ck.get(tkey)
@@ -385,11 +407,11 @@ def build_html(data, now_str):
                     h.append(f"<td>{acc*100:.1f} / {anm_s}</td>")
                 else:
                     h.append("<td class='na'>—</td>")
-            h.append(f"<td class='avg'>{fmt_pct(a)}</td><td class='avg'>{fmt_pct(an)}</td></tr>")
+            h.append(f"<td class='avg'>{fmt_pct(a)}</td><td class='avg'>{fmt_pct(ar)}</td></tr>")
         h.append('<tr><td colspan="11" style="background:#eef2f7;font-weight:600;text-align:left">参照线</td></tr>')
         h.append(f"<tr class='ref'><td>BaiZe P-6 (655M,20k)</td><td>655M tok</td>"
                  f"<td colspan='8' class='na'>逐集见 P-6 报告</td>"
-                 f"<td class='avg'>{P6_BASELINE['avg']*100:.1f}%</td><td>—</td></tr>")
+                 f"<td class='avg'>{P6_BASELINE['avg']*100:.1f}%</td><td class='avg'>{P6_BASELINE['avg_raw']*100:.1f}%</td></tr>")
         for ref in XMODEL2_REF:
             h.append(f"<tr class='ref'><td>{esc(ref['label'])}</td><td>{ref['step']*TOK_PER_STEP/1e9:.1f}B</td>"
                      f"<td colspan='8' class='na'>逐集未列</td>"
@@ -398,8 +420,9 @@ def build_html(data, now_str):
                  f"<td colspan='8' class='na'>逐集未列</td>"
                  f"<td class='avg'>{PHI15_REF['avg']*100:.0f}%</td><td>—</td></tr>")
         h.append("</table>")
-        h.append("<p class='small'>注：每格「acc / acc_norm」（百分比）。BoolQ / Winogrande 只有 acc（无 acc_norm），"
-                 "故 norm 列显示「—」。<code>limit=100</code> 下 acc_stderr ≈ ±4.5%。</p>")
+        h.append("<p class='small'>注：每格「acc / acc_norm」（百分比）。Avg(harness)=与 P-6 同口径"
+                 "（ARC-C/E/HellaSwag/OBQA/PIQA/SciQ 取 acc_norm，BoolQ/Winogrande 取 acc）；"
+                 "Avg(raw acc)=8 集全取 acc。<code>limit=100</code> 下 acc_stderr ≈ ±4.5%。</p>")
     h.append("</div>")
     h.append("<div class='card'><h2>④ 能力-vs-step 曲线</h2>")
     steps_for_fit = sorted(data)
