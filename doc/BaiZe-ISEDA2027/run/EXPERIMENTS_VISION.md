@@ -2230,3 +2230,29 @@ ngspice .raw 实测：`ngspice -b test.cir` → 646 点 × 3 变量 binary doubl
 
 **数字溯源**：`extract_qwen3vl_2b_text.py --verify` 实测输出 + `_dryrun_test.py` 6/6 PASS + safetensors key 计数（310/315）+ `config.json` text_config 字段。
 
+### §20.13 · Pre-SFT CPU 基线评测：eval_sft_wave.py 端到端验证 + 基线（wake#621 · 2026-11-05 21:4x · CPU-only）
+
+**目的**：在 GPU 被 R9 pretrain 占满（ETA≈11/25）期间，用 CPU 跑 `eval_sft_wave.py` 的最小基线（3 样本），验证评测管线端到端无 bug，并记录 SFT 前基线供 Phase 1 报告对比。
+
+**方法**：`eval_sft_wave.py --model_path <2B提取路径> --eval_file sft_holdout_500.jsonl --device cpu --max_eval 3 --max_new_tokens 128 --output eval_baseline_pre_sft_3.json --verbose`。OMP_NUM_THREADS=8（避免干扰 R9 数据加载）。无 LoRA adapter（评估裸 2B 文本骨干）。
+
+**实测结果**：
+
+| 项 | 值 |
+|:--|:--|
+| 模型加载 | Qwen3ForCausalLM 1.72B ✓（CPU float32, ~7GB RAM, 1.2TB 可用无压力）|
+| 评测耗时 | 3 样本 4.8s（CPU 128 tokens/sample）|
+| Format correctness | **100%**（3/3 含 `open(` 等工具模式）|
+| Submit success rate | **0%**（0/3 含 `submit(type, 数值)`）|
+| Numerical acc (rel<1%) | 0% |
+| Numerical acc (rel<5%) | 0% |
+| PASS | False（预期——SFT 前基线）|
+
+**模型行为**（response_preview）：3 样本均只生成 `open("inv.raw")` / `open("lctank.raw")` / `open("ringosc.raw")`（单步 open 后即停止），不继续 `get_signal → get_values → submit`。系统提示含工具格式示例 → format correctness 高；但模型不会组合完整测量轨迹 → submit 0%。
+
+**结论**：① 评测管线端到端通过（加载/分词/生成/解析/JSON 输出全链路无 bug）；② SFT 前基线确立：format 100% / submit 0%——SFT 后目标 submit ≥70%，形成清晰的 before/after 对比；③ CPU 推理 2B 模型可行（4.8s/3样本），GPU 释放后全量 582 样本评测预计 ~15 min。
+
+**交付物**：`vision/wave_rl/eval_baseline_pre_sft_3.json`（基线结果）+ 本节。
+
+**数字溯源**：`eval_sft_wave.py` 实测输出 + `eval_baseline_pre_sft_3.json` per_sample response_preview。
+
