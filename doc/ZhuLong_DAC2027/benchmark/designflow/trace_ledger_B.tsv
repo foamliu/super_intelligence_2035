@@ -128,7 +128,7 @@ ztoza					parked		2026-11-05 02:24	scout_1105: false-positive/non-spice/explain-
 1793017339067_jhdvn	t0002805	hfeg0pgn145	492	characterization	parked		2026-11-05 10:29	circuit analysis (schematic+netlist explanation), no sim
 1792563683776_pwep8	jianhaiq	hfeg0pkn004	517	characterization	parked		2026-11-05 10:29	PG_check.py CDL/GDS power-ground net check (netlist-DB), non-spice-sim
 1793078405436_t0aom	easont	hfhds207	650	spice_sim	case	EDA-Eval-DesignFlow-PostsimToggleDiag-001	2026-11-05 11:21	FineSim post-sim fsdb+netlist analysis + netlist optimization/iteration + diff report; deepread shard B 2026-11-05
-1790576052982_qc0nn					parked		2026-11-05 11:34	file-merge/diff tool for spice config dirs (param.inc/tcl/csv), not spice sim
+1790576052982_qc0nn	chengk	hfeg0pgn022	26	spice_sim	case	EDA-Eval-DesignFlow-SpiceCfgDirMerge-001	2026-11-05 14:42	park-reframe: spice config dir tree merge tool (shdc+apps->merged) with specific-file diff report + iddsim hspice.sim.template keep-apps policy + non-specific backup + temp-file skip + whitespace-normalized diff; B-档 synthesized, L1, k=15
 1789019984423_xkg53					parked		2026-11-05 11:34	vague 'auto-run finesim sim' (3 terse user inputs, path cut at /home/), overlaps FineSimWorkflow
 1792637805938_w2p04					parked		2026-11-05 11:34	git repo setup for hspice BIST osc char folder (track changes, ignore fsdb), not spice sim
 1791966728738_ad3nu					parked		2026-11-05 11:34	finesim si.out warning analysis (log forensics of existing report), not sim/char
