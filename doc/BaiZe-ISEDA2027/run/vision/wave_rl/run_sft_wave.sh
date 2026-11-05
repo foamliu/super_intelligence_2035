@@ -17,6 +17,19 @@
 
 set -euo pipefail
 
+# ── flock guard (wake#613): prevent duplicate pollers from double-launching ──
+#  Multiple wake cycles kept re-launching this script; when GPU frees, every
+#  running copy would fire torchrun on the same 8 GPUs → OOM crash of R9.
+#  The exclusive lock ensures only ONE instance polls/launches at a time.
+LOCK_FILE="/nas_train/app.e0031982/datasets/baize-vision/out/wave_sft_stage1w/run_sft_wave.lock"
+mkdir -p "$(dirname "$LOCK_FILE")"
+exec 9>"$LOCK_FILE"
+if ! flock -n 9; then
+  echo "[$(date +%H:%M:%S)] Another run_sft_wave.sh instance holds the lock ($LOCK_FILE). Exiting to avoid duplicate launch." >&2
+  exit 0
+fi
+echo "[$(date +%H:%M:%S)] Acquired exclusive lock (fd 9 → $LOCK_FILE)." | tee -a "$(dirname "$LOCK_FILE")/sft_poll_guard.log"
+
 N_GPUS="${1:-8}"
 CONSECUTIVE_IDLE=3
 IDLE_POLL_INTERVAL=60
