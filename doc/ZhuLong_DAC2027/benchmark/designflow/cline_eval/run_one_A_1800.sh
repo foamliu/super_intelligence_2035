@@ -389,6 +389,14 @@ try:
     elif isinstance(r, dict):
         ok = bool(r.get('pass') or r.get('ok') or r.get('passed'))
         print(json.dumps({'verdict':'PASS' if ok else 'FAIL','detail':str(r)}))
+    elif isinstance(r, tuple) and r:
+        # r128 harness bug 修复：若干 check.py 返回 (ok_bool, results_list) 元组。
+        # 旧逻辑落到 else 分支按「非空 tuple = truthy → PASS」判定 → 把 (False,[...])
+        # 误判为 PASS（WLMMultibit-001 实证：9 条件 fail 却记 PASS）。改为取首元素 bool。
+        ok = bool(r[0])
+        failed = [x[0] for x in r[1] if isinstance(x, tuple) and len(x) >= 2 and not x[1]] if len(r) > 1 else []
+        detail = 'ok=%s failed_conds=%s :: %s' % (ok, failed, str(r)[:200])
+        print(json.dumps({'verdict':'PASS' if ok else 'FAIL','detail':detail}))
     else:
         # 其它真值（非空 str/list 等）按真值判定
         print(json.dumps({'verdict':'PASS' if r else 'FAIL','detail':str(r)}))
