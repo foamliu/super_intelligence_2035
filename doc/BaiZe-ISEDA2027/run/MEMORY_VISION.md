@@ -2,6 +2,8 @@
 
 WAITING: 1
 
+> 🆕 **【空唤醒 · wake #599 · 2026-11-05 11:27】** 无新运维令。用户在终端粘贴 BAIZE_VISION_TASK.md 全文并选择「以 vision agent 身份执行收尾铁律」。git fetch→origin/main 0ahead/0behind（已同步，HEAD=cae10ea15 vision #598 10:55；origin 新提交 10:55~11:24 均来自 designflow/pretrain/zhulong 等线，无 vision 新令；自 #598 10:52 起无 vision 新令）。所有运维令标[已完成]/[已归档]。📦 体积：TASK=27230B / MEMORY=27824B→+~0.8KB=#599≈28.6KB（均≤32KB✓；🆕条目20+新增#599=21，略超~20 软指引，仍在32KB硬限内，承#585~#598先例，暂不归档；⚠️下轮若>32KB须滚动归档最旧🆕条目）。进程 baize_vision_loop.sh PID 669545 alive（etimes≈614k）；cline in PATH（/home/app.e0031982/.bun/bin/cline）✓。工作副本改动均为别线文件（designflow/pretrain 报告+脚本 + ocr_samples/ + 多个别线未跟踪脚本/目录如 1049/3147/5245/7343/9441），vision 文件无在途改动，未触碰别线。写心跳+日流水+commit+push（一律 `git commit -m '...' -- <明确文件路径>`，吸取#562裸commit卷入别线文件教训）。**未完成指令：无** ⇒ **WAITING: 1**。
+
 > 🆕 **【空唤醒 · wake #598 · 2026-11-05 10:52】** 无新运维令。用户在终端粘贴 BAIZE_VISION_TASK.md 全文并选择「以 vision agent 身份执行收尾铁律」。git fetch→origin/main 0ahead/0behind（已同步，HEAD=905b9e59f pretrain 10:43；origin 新提交 10:21~10:43 均来自 pretrain/zhulong/designflow/harness 等线，无 vision 新令；自 #597 10:19 起无 vision 新令，#597 commit a3191e2b0 10:21 已在历史中）。所有运维令标[已完成]/[已归档]。📦 体积：TASK=27230B / MEMORY=26448B（均≤32KB✓；🆕条目≈19+新增#598=20，达~20 软指引，仍在32KB硬限内，承#585~#597先例，暂不归档；⚠️下轮若>32KB须滚动归档最旧🆕条目）。进程 baize_vision_loop.sh PID 669545 alive（etimes≈612k）；cline in PATH（/home/app.e0031982/.bun/bin/cline）✓。工作副本改动均为别线文件（report_pretrain_llamacpp_scaling_zh.html + MEMORY_PRETRAIN_2B.md + daily-memories/2026-11-05.md + ocr_samples/ + 多个别线未跟踪脚本/目录如 1049/3147/5245/7343/9441 + baize_p8_*/cpu_eval_*/debug_*/test_* pretrain/harness 脚本），vision 文件无在途改动，未触碰别线。写心跳+日流水+commit+push（一律 `git commit -m '...' -- <明确文件路径>`，吸取#562裸commit卷入别线文件教训）。**未完成指令：无** ⇒ **WAITING: 1**。
 
 
@@ -111,4 +113,4 @@ WAITING: 1
 | 当前动作 | 空唤醒·心跳维护·等待新运维令 |
 | 下一步 | 等待运维新令（vision 文件无在途改动） |
 | 阻塞 | 无 |
-| 更新 | **2026-11-05 09:42 (wake #596)**: 空唤醒·无新令·心跳维护·滚动归档#574~#578→2026-11-04.md·git 0ahead/0behind(HEAD=61b73d902·非vision)·体积TASK27KB/MEMORY≈24KB均≤32KB·🆕条目18 |
+| 更新 | **2026-11-05 11:27 (wake #599)**: 空唤醒·无新令·心跳维护·git 0ahead/0behind(HEAD=cae10ea15 vision#598)·体积TASK27KB/MEMORY≈28.6KB均≤32KB·🆕条目21·WAITING=1 |
