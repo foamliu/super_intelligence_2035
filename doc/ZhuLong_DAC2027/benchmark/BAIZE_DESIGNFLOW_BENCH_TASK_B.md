@@ -1,4 +1,23 @@
 # BAIZE_DESIGNFLOW_BENCH_TASK.md — 设计流 Benchmark 任务书（2026-10-30 重构版）
+### 🚨 2026-11-05 19:2x 运维令：**「池枯竭」结论作废 · 自行经 `.75` 的 `run_commands` 重扫 698 机刷新 trace 源** · 用户直令 · 最高优先
+
+> 用户原话（2026-11-05 19:1x）：「让 designflow B 自己通过 .75 的 run_commands 去刷新 trace 来源，这几天肯定又有新的trace写入 698 台机器了。」
+
+**① 裁定**：18:4x–18:54 的「shard B spice_char real trace 池枯竭」结论**作废**——它只基于 **10-28 的旧快照**（`.75:/home/t0002965/log/ssh_eda_search_20261028_174426/summary.tsv`），不代表现状。🚫 不许再以「pool exhausted」结案、也不许靠它维持 `WAITING: 1`。
+
+**② 本轮必做（同一轮内做完，不许只交计划）**
+1. 经 `eda_flow` MCP（`http://127.0.0.1:18891/mcp`）调 **`.75`（`hfhds201` / `10.129.32.75`）的 `run_commands`**，**重扫 698 台机的 cline trace 目录**，产出**新快照**（如 `/home/t0002965/log/ssh_eda_search_20261105_HHMMSS/` + `summary.tsv`，列同旧表 `ip host user session_file match_count keywords tools`）。沿用旧口径：分批 5–10 台/次防超时；只读 `find`/`ls`/`cat`/`head -c`/`grep`/`awk`/`python3`。
+2. **优先时间窗 ≥ 2026-10-28** 的 session 文件（新写入优先）；旧 84 条保留作历史，**新增命中单列**。
+3. 用 spice 主导过滤重建候选（spice 工具计数 / 总工具计数 ≥35% 且 spice≥10），产出：扫描台数 / 命中 session 数 / 新增 proper 条数 / 候选清单（`user·host·session_file·match_count`），落 `designflow/` 并 commit。
+4. **立刻用新候选交付 1 条 case**（A 档 trace-faithful，`metadata.trace_source` 必填，k≥8 断言，判分器不入 workdir），走既有 casemaking 流程。
+5. 只有**确实 0 新增**（须给证据链：扫描命令 + 时间窗 + 遍历台数 + 命中数 + 与旧 `summary.tsv` 的 diff）才允许报「本轮无可做 case」并置 `WAITING: 1`；否则 **`WAITING: 0`** 继续往下做。
+
+**③ 判据**：本轮结束必须给出 ① 新 `summary.tsv` 路径 + 行数 ② 旧 vs 新 diff（新增 session / 新增 proper）③ 至少 1 条新候选的 case 交付（或 0 新增的完整证据链）。
+
+**④ 纪律**：对 698 机**只读**（🚫 写/删/`tee`/`>`）；分批扫描防超时；不碰 A/C/D shard；commit `designflow shard B #…`；心跳写 `未完成指令：有` ⇒ `WAITING: 0`。
+
+**⑤ 体积（先做，别拖）**：`MEMORY_DESIGNFLOW_B.md` 现 **40,413B，已越 40KB 红线**（规则 §1.6：≤32KB / 红线 40KB）⇒ 本轮**先把已闭合流水原文滚进 `ARCHIVE_OPERATOR_DESIGNFLOW.md`**（保留状态头 + 最近 ≥20 条流水 + 1 行指针），压到 **≤32KB** 后再开工；TASK 28.6KB 尚在软限内。
+
 ### 🚨 2026-11-02 运维令：被测换 cline + PreToolUse 防泄题 hook · 用户直令 · 最高优先
 
 > **背景**：pi 有 bash/read/write 工具，能任意读 cwd 里所有文件。benchmark agent 在 `.pi_debug/<case>/` 里放了 `_reference_check.py`（= check.py 判分器），pi 直接 `import _reference_check` 跑了它——**判分标准（答案）直接放在考生面前**。这是通过率偏高的主因，不是模型强。

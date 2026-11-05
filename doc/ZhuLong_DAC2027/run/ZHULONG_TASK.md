@@ -1,5 +1,22 @@
 # ZHULONG_TASK.md — ZhuLong（DAC2027）EDA 消融评测 · 合并任务书
 
+### 🚨 用户裁定 · 2026-11-05 19:2x（**P0「双盲违规」不成立 —— 论文早已是匿名状态 · 立即闭合**）· 用户直令 · 最高优先
+
+> 用户原话（2026-11-05 19:1x）：「zhulong P0：早已是匿名状态了」
+
+**① 裁定**：撤销长期挂起的「P0 双盲违规仍 OPEN」，**不再等 RUN_ID 143**。运维本地核验（2026-11-05 19:1x，`doc/ZhuLong_DAC2027/ZhuLong_DAC2027/`）：
+- `main.tex:1` = `\documentclass[anonymous, sigconf]{acmart}` → anonymous 模式生效（acmart 打印 “Anonymous Author(s)”，且第 54 行注释明确「双盲投稿跳过作者网格改造」）；
+- `reference.bib` / `software.bib` 无 `CXMT` / `ChangXin` / `长鑫` 等机构串；无本团队自引（无 `zhulong`/`ZhuLong` 条目）；`liu2025layoutcopilot` / `liu2026agentic` 系**第三方** Liu 姓作者，不构成身份泄露；
+- 全部 `.tex` 无 `acknowledg` / `\thanks{}` / `funded` / `grant` 字串。
+
+**② 本轮必做（15 分钟内，写成 1 条心跳）**
+1. 把 `MEMORY_ZHULONG.md` 里的 P0 条目改写为 **`CLOSED（2026-11-05 19:2x 用户裁定：早已匿名）`**，并删掉「待运维 RUN_ID 143」表述；§⑧ 跟踪同步改为已闭合。
+2. 复核上面 3 条证据仍成立（若 bib 近期有新条目，再扫一次 `CXMT|ChangXin|长鑫|zhulong`），结论 1 行写进心跳。
+3. ops inbox 若再出现关于 P0 / RUN_ID 143 的只读回执，只记「已知，已闭合」，不据此恢复阻塞。
+4. 若**确实**发现新的可识别信息（作者 / 单位 / 致谢 / 第一人称自引）→ 只做匿名化修正并重编译（`pdflatex×1 + bibtex + pdflatex×2`，ERR=0 / UNDEF=0，页数不变），**不重跑评测**。
+
+**③ 完成标记**：P0 标 CLOSED 且心跳含证据 ⇒ `WAITING: 1`（恢复空巡检）；若发现需改动且未改完 ⇒ `WAITING: 0`。
+
 
 ### 🚨 用户令 · 2026-11-03 21:0x（**本机安装 llama.cpp + 下载 Qwen/Qwen3.5-0.8B（hf-mirror）· 供后续数据分析**）· 用户直令 · ✅ 已完成 → archive §归档 batch 16
 
