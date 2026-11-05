@@ -666,3 +666,8 @@
 1792486906670_jeop1.messages.json					parked		2026-11-05 13:52	peek_D271 unfit
 1793255317872_gwph0.messages.json					parked		2026-11-05 13:52	peek_D271 unfit
 1793756918657_hujdg.messages.json					parked		2026-11-05 13:52	peek_D271 unfit
+1790057385284_xpsbw	t0002470	hfeg0plg79	356	analog_context	parked		2026-11-05 14:23	skill-loading task (load ddr5-coverage-analysis-skill); not a produce-task
+1789959794365_pet0x	xinqiaoz	hfeg0plg76	310	schematic_netlist	parked		2026-11-05 14:23	handoff-resume task (needs prior HANDOFF doc context); premise-missing, not single-turn produce
+1791897088355_b460k	jason17w	hfeg0pnd002	297	schematic_netlist	parked		2026-11-05 14:23	VPS CLI / verilogrun regression ops + skill-creator; non-D-domain (digital verif ops), no clean netlist/schematic produce-task
+1785821933914_r0a7b	t0002638	hfeg0plg49	277	analog_context	parked		2026-11-05 14:23	pyAether connection debug (judge if Hello printable + diagnose); debug/diagnostic not produce-task
+1792378797897_0gv3z	thomas1w	hfeg0plg98	249	schematic_netlist	parked		2026-11-05 14:23	netlist structure Q&A/analysis (read+explain mbist/mppr/data path); no produce-task
