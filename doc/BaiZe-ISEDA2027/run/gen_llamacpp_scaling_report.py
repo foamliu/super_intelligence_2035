@@ -437,7 +437,7 @@ def build_html(data, now_str):
         h.append("<div class='warn'><strong>⚠️ 外推不确定度（务必明示）</strong>："
                  "<ul>"
                  f"<li>拟合仅基于 <strong>{len(steps_for_fit)} 个点</strong>，且全部位于 10k–50k 的"
-                 "<strong>陡升段</strong>，700k 距最末点 <strong>{TARGET_700K//max(steps_for_fit)}× 外推</strong>，"
+                 f"<strong>陡升段</strong>，700k 距最末点 <strong>{TARGET_700K//max(steps_for_fit)}× 外推</strong>，"
                  "误差可能很大。</li>"
                  "<li>两种拟合（对数=无上界单调增；幂律=逼近渐近上界 a）假设不同，"
                  "二者 700k 预测值的差距即体现模型选择的不确定度。</li>"
