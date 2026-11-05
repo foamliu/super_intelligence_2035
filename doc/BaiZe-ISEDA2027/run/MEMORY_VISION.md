@@ -2,6 +2,8 @@
 
 WAITING: 0
 
+> 🆕 **【wake #616 · 2026-11-05 20:1x】维护唤醒·状态无变化·GPU仍100%·poller健康**。nvidia-smi 8×H100 全100%/~75GB（pretrain PIDs 2626131-38）。SFT poller PID 2757742(ppid=1) 健康：/tmp/wave_sft_poller_relaunch.log 每60s `busy_util -- waiting`（最新20:13:31），flock 持有。git 0ahead/0behind，origin 无vision新令。体积 TASK=30453B/MEMORY≈32KB 均≤32KB✓。无新增可执行工作（阶段1 GPU阻塞由poller自动处理，阶段2/3 gated）。**未完成指令：有**（阶段1 GPU训练+阶段2/3未交付，本轮无CPU可推进项）⇒ **WAITING: 0**。
+
 > 🆕 **【wake #615 · 2026-11-05 20:0x】维护唤醒·GPU仍100%阻塞·poller健康确认**。本机=`.12`(whag0pgpuap12)，nvidia-smi 8×H100 全 100%/~75GB（pretrain mamba2 baize2b PID 2612442 etimes≈260171s≈3天）。SFT poller PID 2757742(ppid=1) **健康**：poll log 每60s `busy_util -- waiting`（最新20:07:29），flock 独占锁持有（fuser 确认无重复），guard log 19:47 获锁。无SFT产出（训练未启动）。git 0ahead/0behind（已同步，最后vision提交=本人20:04 wake#614），origin 无vision新令。所有CPU可做工作已交付（阶段0报告+5064轨迹+SFT/GRPO/eval三脚本+oracle 300题mean=1.000）。**无新增可执行工作**——阶段1纯GPU阻塞由poller自动处理，阶段2/3下游gated。📦 体积：TASK=30453B / MEMORY=30963B（均≤32KB✓，本轮无需归档）。**未完成指令：有**（阶段1 GPU训练 + 阶段2/3未交付，但本轮无CPU可推进项）⇒ **WAITING: 0**。
 
 
