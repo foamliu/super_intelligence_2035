@@ -60,7 +60,6 @@
 1784623431472_gvm3g	e0014566	hfeg0plg58	554	spice_sim	case	EDA-Eval-DesignFlow-FineSimModelScopeFix-001	2026-11-04 02:43	
 1790490487765_6dx8f	cwei	hfeahpc504	328	spice_sim	parked		2026-11-04 03:02	prompt=SpiceAgent CTLE schematic gen in Aether (pyAether), 实为 schematic/layout 生成非 spice_sim/characterization；hspice 命中来自 skill 描述非任务
 1791963948520_hk622	rongtaoy	hfeg0pkn001	257	spice_sim	case	EDA-Eval-DesignFlow-FineSimNoRefCktFix-001	2026-11-04 03:26	
-1792386804961_6tiy7	kaixuanx	hfeg0pkn001	250	characterization	deepread		2026-11-04 03:52	DFF setup/hold char; deepread done; synthesis DEBT next round
 1792386804961_6tiy7.messages.json					case	EDA-Eval-DesignFlow-DffSetupHoldChar-001	2026-11-04 05:11	
 1790563683904_l7aol.messages.json	jason17w	hfeg0pnd002	288	spice_sim	case	EDA-Eval-DesignFlow-NetlistLintHsp-001	2026-11-04 06:09	domain mismatch: trace=netlist syntax checker (L1 python parse), NetlistChk-001 already built in shard D (schematic_netlist); not spice_char L2
 1792042085695_uky6c.messages.json	t0002441	hfhds201	136	spice_sim	case	EDA-Eval-DesignFlow-FineSimDcConvFix-001	2026-11-04 07:13	FineSim DC nonconv Q&A; deepread done; synthesis DEBT next round (FineSim license outage on .75 blocks GT; HSPICE port needs reliable nonconv trigger)
@@ -92,7 +91,6 @@
 1790241654352_5kcuw	ghyang	hfeg0pkn003	41	spice_sim	case	EDA-Eval-DesignFlow-StimLoopComplianceFix-001	2026-11-04 18:33	B档 synthesized L2 spice_sim k=15 .75 FineSim -spice ref PASS 15/15 + 6neg FAIL distinct + 3fake FAIL
 1792134251943_q9r9s	lanxinz	hfeg0pkn001	97	spice_sim	case	EDA-Eval-DesignFlow-FineSimTbAuditFix-001	2026-11-04 20:32	
 1792120107352_t1b5d	wnyu	hfeg0pgn021	48	characterization	case	EDA-Eval-DesignFlow-CpIcpChar-001	2026-11-04 21:23	
-1791954407908_szdav.messages.json	jiangbaol	hfeg0pkn002	55	characterization	deepread		2026-11-04 21:52	
 1791954407908_szdav					case	EDA-Eval-DesignFlow-SlicerSizingOpt-001	2026-11-04 22:59	
 1793065824220_rigwz	e0024852	hfeg0pkn004	72	spice_sim	case	EDA-Eval-DesignFlow-McFailModeDiag-001	2026-11-04 23:50	
 1790841917726_hgfso.messages.json	wenwenl	hfeg0plg74	59	spice_sim	case	EDA-Eval-DesignFlow-CmdEdgeMeasGen-001	2026-11-05 00:37	
@@ -130,3 +128,11 @@ ztoza					parked		2026-11-05 02:24	scout_1105: false-positive/non-spice/explain-
 1793017339067_jhdvn	t0002805	hfeg0pgn145	492	characterization	parked		2026-11-05 10:29	circuit analysis (schematic+netlist explanation), no sim
 1792563683776_pwep8	jianhaiq	hfeg0pkn004	517	characterization	parked		2026-11-05 10:29	PG_check.py CDL/GDS power-ground net check (netlist-DB), non-spice-sim
 1793078405436_t0aom	easont	hfhds207	650	spice_sim	case	EDA-Eval-DesignFlow-PostsimToggleDiag-001	2026-11-05 11:21	FineSim post-sim fsdb+netlist analysis + netlist optimization/iteration + diff report; deepread shard B 2026-11-05
+1790576052982_qc0nn					parked		2026-11-05 11:34	file-merge/diff tool for spice config dirs (param.inc/tcl/csv), not spice sim
+1789019984423_xkg53					parked		2026-11-05 11:34	vague 'auto-run finesim sim' (3 terse user inputs, path cut at /home/), overlaps FineSimWorkflow
+1792637805938_w2p04					parked		2026-11-05 11:34	git repo setup for hspice BIST osc char folder (track changes, ignore fsdb), not spice sim
+1791966728738_ad3nu					parked		2026-11-05 11:34	finesim si.out warning analysis (log forensics of existing report), not sim/char
+1792375032414_3yoit					parked		2026-11-05 11:34	analyze spice_tb_stimulus skill directory (code/skill comprehension), not sim
+1791448973775_f8g40					parked		2026-11-05 11:34	compare runModelQA.pl vs refactored _new.pl, summarize multi-simulator innovations (code review), not sim
+1791956581291_28kiv					parked		2026-11-05 11:34	trivial file open inputpin.sp + copy to copy.sp, not spice char
+1792031615605_mf0l3					parked		2026-11-05 11:34	sim status monitor (check if exited) + PVT corner list expansion (text gen), not char
