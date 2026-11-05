@@ -2,9 +2,9 @@
 
 WAITING: 0
 
-> 🆕 **【wake #707 · 2026-11-06 05:39】监控巡检（状态无变化·双poller健康+GPU 8×96-100%·仅待GPU）**。CPU-only监控巡检，距wake#706约5min。本机=10.239.2.12，nvidia-smi实测8×H100 97-100%util/~75GB/81GB(R9 pretrain)。.29 SSH实测8×H100 96-100%util/~75GB(pretrain mamba2 baize2b)。**两台GPU主机全占，无可用GPU**。双poller健康：SFT launcher PID2757742(ppid=1,etimes≈35476s≈9.9h,fd/1→/tmp/wave_sft_poller_relaunch.log最新`05:38:28 busy_util -- waiting`,子进程sleep60) / GRPO chain PID2428009(ppid=1,etimes≈25463s≈7.1h,fd/1→/tmp/grpo_wave_chain.log最新`05:38:17 SFT not done yet waited25440s/2592000`,子进程sleep120) / vision loop PID669545(ppid=1,etimes≈678523s≈7.85d)。cline✓。git fetch同步(0ahead/0behind,HEAD=13664e1e8)，无新vision运维令(TASK自11-05 18:44未变)。SFT ckpt+eval_results.json不存在(预期·GPU被占)。全管线就绪仅待GPU释放（Phase1就绪GREEN@wake#667+poller逻辑sound@wake#684）。📦体积：TASK=30453B(29.7KB)/MEMORY=19656B(19.2KB)(均≤32KB✓)。**未完成指令：有**（阶段1 GPU训练pending+阶段2/3未交付）⇒**WAITING: 0**。
+> 🆕 **【wake #708 · 2026-11-06 05:43】监控巡检（状态无变化·双poller健康+GPU 8×97-100%·仅待GPU）**。CPU-only监控巡检，距wake#707约4min。本机=10.239.2.12，nvidia-smi实测8×H100 97-100%util/~75GB/81GB(R9 pretrain)。.29 SSH实测8×H100 97-100%util/~75GB(pretrain mamba2 baize2b)。**两台GPU主机全占，无可用GPU**。双poller健康：SFT launcher PID2757742(ppid=1,etimes≈35760s≈9.9h,fd/1→/tmp/wave_sft_poller_relaunch.log最新`05:42:29 busy_util -- waiting`,子进程sleep60) / GRPO chain PID2428009(ppid=1,etimes≈25747s≈7.2h,fd/1→/tmp/grpo_wave_chain.log最新`05:42:17 SFT not done yet waited25680s/2592000`,子进程sleep120) / vision loop PID669545(ppid=1,etimes≈678835s≈7.85d)。cline✓。git fetch同步(0ahead/0behind,HEAD=e67c82ce4)，无新vision运维令(TASK自11-05 18:44未变)。SFT ckpt+eval_results.json不存在(预期·GPU被占)。全管线就绪仅待GPU释放（Phase1就绪GREEN@wake#667+poller逻辑sound@wake#684）。📦体积：TASK=30453B(29.7KB)/MEMORY=19671B(19.2KB)(均≤32KB✓)。**未完成指令：有**（阶段1 GPU训练pending+阶段2/3未交付）⇒**WAITING: 0**。
 
-> 📦 wake #704~#706（监控巡检·2026-11-06 05:26~05:34·状态无变化·双poller健康+GPU 8×95-100%·仅待GPU）已归档 → daily-memories-vision/2026-11-06.md；**结论**：状态无变化，全管线就绪仅待GPU。需要时再读。
+> 📦 wake #704~#707（监控巡检·2026-11-06 05:26~05:39·状态无变化·双poller健康+GPU 8×95-100%·仅待GPU）已归档 → daily-memories-vision/2026-11-06.md；**结论**：状态无变化，全管线就绪仅待GPU。需要时再读。
 
 > 📦 wake #702~#703（监控巡检·2026-11-06 05:17~05:21·状态无变化·双poller健康+GPU 8×90-100%·仅待GPU）已归档 → daily-memories-vision/2026-11-06.md；**结论**：状态无变化，全管线就绪仅待GPU。需要时再读。
 
