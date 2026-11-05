@@ -9,8 +9,7 @@
 1793174925139_f0vya.messages.json	e0030760	hfeg0plg74	410	spice_sim	case	EDA-Eval-DesignFlow-SramSNM-001	2026-11-02 16:05	SramSNM-001 synthesized (spice_sim L2): 6T SRAM butterfly SNM harness; .75 selftest PASS (ref 14/14, 3 negs FAIL, §4.9 trio FAIL); appended to EDA-Eval-DesignFlow_B.jsonl line 12
 1785810906841_m2vah.messages.json	e0014566	hfeg0plg58	975	characterization	case	EDA-Eval-DesignFlow-RsCalcAutoVia-001	2026-11-02 15:58	
 1792495939340_13fwy.messages.json	thqu	hfeg0plg99	211	spice_sim	case	EDA-Eval-DesignFlow-StimPWL-001	2026-11-02 16:54	
-1792742447012_djml8.messages.json	wnyu	hfeg0plg06	401	spice_sim	deepread		2026-11-02 16:25	
-djml8					case	EDA-Eval-DesignFlow-PFDdeadZone-001	2026-11-02 17:47	
+1792742447012_djml8.messages.json	wnyu	hfeg0plg06	401	spice_sim	case	EDA-Eval-DesignFlow-PFDdeadZone-001	2026-11-02 17:47	merged deepread+case rows 2026-11-05; anchor normalized (was 2 rows: deepread full-anchor + case short-anchor djml8); k_rationale=k_check=13 patched into jsonl metadata
 1792400027384_ahjnv.messages.json	zhukaic	hfeahpc503	397	spice_sim	case	EDA-Eval-DesignFlow-OpampACSpec-001	2026-11-02 18:40	
 1787903140887_314mt	sophiaw	hfeg0plg49	378	spice_sim	case	EDA-Eval-DesignFlow-InvPVTchar-001	2026-11-02 19:22	
 1792831256137_6qt0a	harrywu	hfeg0pkn002	319	spice_sim	case	EDA-Eval-DesignFlow-DelayChainEdgeMeas-001	2026-11-02 20:11	
@@ -113,3 +112,4 @@ ztoza					parked		2026-11-05 02:24	scout_1105: false-positive/non-spice/explain-
 1793095651315_qb1ua	e0023936	hfeg0plg52	103	characterization	case	EDA-Eval-DesignFlow-WvFmFreqExtract-001	2026-11-05 06:24	
 1792478336435_qe1n4	t0002801	hfeg0plg99	212	characterization	case	EDA-Eval-DesignFlow-StdLibCharTmpl-001	2026-11-05 07:41	
 1790143934595_0nar3	qifanli	hfeg0plg101	41	spice_sim	case	EDA-Eval-DesignFlow-PulseStimTbGen-001	2026-11-05 08:18	
+1793102773959_okq91.messages.json	easont	hfhds211	650	spice_sim	parked		2026-11-05 09:30	overlaps shard D NetlistDCE-001 (same easont TempHalfWL DDGOA session 1793102773959_okq91); case TempThreshChar-001 removed from B jsonl 2026-11-05 (cross-shard trace dup with D)
