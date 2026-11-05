@@ -160,5 +160,5 @@ vbxlf.messages.json	jason17w	hfeg0pnd002	262	spice_sim	parked		2026-11-05 12:30	
 1791967805126_c084j	caozhang	hfeg0pgn103	111	spice_sim	parked		2026-11-05 18:34	scout_1105: async FIFO RTL+VCS digital; not spice_char
 1791797079020_pqeal	e0039122	hfeg0pkn003	75	characterization	parked		2026-11-05 18:34	scout_1105: MPQA code-comprehension + result-file explanation; result files deleted; weak A-faithful; not clean spice_char
 1792070760620_nnnxe	e0024852	hfeg0pkn004	38	spice_sim	parked		2026-11-05 18:34	scout_1105: SRAM compiler log forensics, 1 terse turn; thin, overlaps log-analysis family
-1793338010547_r06g9.messages.json	clarawu	hfeg0pkn004	461	spice_sim	claimed		2026-11-05 19:31	
+1793338010547_r06g9.messages.json	clarawu	hfeg0pkn004	461	spice_sim	case	EDA-Eval-DesignFlow-RonMonoDiag-001	2026-11-05 20:41	
 1793692877234_xlzwr	ronghu	hfeg0pkn005		characterization	case	EDA-Eval-DesignFlow-CharRemovalAbort-001	2026-11-05 20:05	ffrqN_Rfreshtokenx2 removal-arc hspice abort root-cause diagnosis
