@@ -154,3 +154,4 @@ vbxlf.messages.json	jason17w	hfeg0pnd002	262	spice_sim	parked		2026-11-05 12:30	
 1787728805982_txlfl.messages.json					parked		2026-11-05 13:00	virtuoso/cellview/dbGet schematic task (e0014566), hspice:5/spectre:1 incidental; not spice_char
 1786016997085_60584.messages.json					parked		2026-11-05 13:00	virtuoso/cellview/calibre schematic/layout task (e0014566), hspice:2 incidental; not spice_char
 1791420858846_g3ud6.messages.json					parked		2026-11-05 13:01	gm/id automated sizing program (t0002801): A-faithful turn #0 '想做自动化sizing电路的程序用gm/id方法'; trace=code-building gmid_engine.py toolkit (mostly editor/list_allowed), not clean sim deliverable; distinct sub-skill=gm/id-based sizing search but OVERLAPS GmidLut-001 (LUT extraction); revisit only if sizing-automation case explicitly wanted (claim by session to unpark)
+1790580241881_fbdaa	joeyl	hfeg0plg74	10	spice_sim	case	EDA-Eval-DesignFlow-PowerNoiseInject-001	2026-11-05 13:23	
