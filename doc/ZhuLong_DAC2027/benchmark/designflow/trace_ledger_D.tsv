@@ -462,3 +462,49 @@
 1793069935567_8rlbn.messages.json	xinqiaoz	hfeg0pkn002	141		parked		2026-11-05 09:38	peek266 unfit
 1793263440367_n7dqy.messages.json	zhililu	hfeg0pkn001	150		parked		2026-11-05 09:38	NOFILE peek266
 1793174901308_gb4mi	thqu	hfeg0plg49	122	waveform	case	EDA-Eval-DesignFlow-SxWaveAvgSum-001	2026-11-05 10:12	
+1792216997704_pt63j.messages.json	jinsongl	hfeg0pkn005	48	schematic_netlist	case	EDA-Eval-DesignFlow-CellPrefixExtract-001	2026-11-05 11:02	
+1793064917593_tpnqx.messages.archive.json					parked		2026-11-05 11:04	vague read-circuit Q&A
+1793344639876_ig5hm.messages.archive.json					parked		2026-11-05 11:04	L2 circuit-opt needs finesim, hard self-verify
+1793668468329_3qaax.messages.archive.json					parked		2026-11-05 11:04	ops root-cause (slow script)
+1792827698500_ggjcv.messages.json					parked		2026-11-05 11:04	capability Q (xrun?)
+1792992278510_lku2o.messages.json					parked		2026-11-05 11:04	capability Q (你会做什么)
+1793596522277_e4fk8.messages.json					parked		2026-11-05 11:04	generic mkdir+readme, not EDA
+1793148911640_w0f1v.messages.json					parked		2026-11-05 11:04	env/capability Q (virtuoso sandbox perms)
+1793268873755_cwq7f.messages.json					parked		2026-11-05 11:04	sentaurus deck study/summarize doc
+1793341757885_9e4kf.messages.json					parked		2026-11-05 11:04	L2 finesim duty run, hard self-verify
+1793620540146_45v2b.messages.json					parked		2026-11-05 11:04	mid-conv (U0=tool_result)
+1792981479658_jh3kb.messages.json					parked		2026-11-05 11:04	vague pasted cell list
+1793348049504_xoqyd.messages.json					parked		2026-11-05 11:04	too short (can)
+1793356890947_umhrd.messages.json					parked		2026-11-05 11:04	U0=policy JSON mid-conv
+1793776902021_xvnac.messages.json					parked		2026-11-05 11:04	SVRF rule paste, vague
+1792206185688_apqyh.messages.json					parked		2026-11-05 11:04	root-cause debug (path name wrong)
+1792654061990_9jn2q.messages.json					parked		2026-11-05 11:04	code-mod needs runERC script asset
+1792485755725_ni00j.messages.json					parked		2026-11-05 11:04	vague (learn netlist)
+1792207956030_8anm0.messages.json					parked		2026-11-05 11:04	root-cause (finesim sim error)
+1793610468498_n5ba7.messages.json					parked		2026-11-05 11:04	L2 live Aether pin rename
+1792215542031_4wohp.messages.json					parked		2026-11-05 11:04	vague log->HTML report
+1792720477548_dh5u8.messages.json					parked		2026-11-05 11:04	root-cause (calibre SPF error)
+1792573764082_ujzgu.messages.json					parked		2026-11-05 11:04	Q&A explain (ecc timing)
+1792666922956_7b5i4.messages.json					parked		2026-11-05 11:04	U0=bash script paste mid-conv
+1793264956869_hxfhy.messages.json					parked		2026-11-05 11:04	Q&A how-to (redefine Vth in .sp)
+1793760381512_3nyuc.messages.json					parked		2026-11-05 11:04	skill scaffold
+1792733394521_26h7a.messages.archive.json					parked		2026-11-05 11:04	empty-read (zhililu stale archive)
+1792636346682_ipre5.messages.json					parked		2026-11-05 11:04	empty-read (stale archive)
+1793017826309_9umav.messages.archive.json					parked		2026-11-05 11:04	empty-read (stale archive)
+1792563529955_5fjwc.messages.json					parked		2026-11-05 11:04	NOFILE (colinxu hfeg0plg16 wrong host)
+1792496413587_zrc4b.messages.json					parked		2026-11-05 11:04	ssh-err timeout
+1793068512022_39kt1.messages.json					parked		2026-11-05 11:04	ssh-err timeout
+1793261255178_1wvdl.messages.json					parked		2026-11-05 11:04	ssh-err timeout
+1793268918911_brnqb.messages.json					parked		2026-11-05 11:04	ssh-err timeout
+1793243219348_tfqit.messages.json					parked		2026-11-05 11:04	ssh-err timeout
+1793084699921_dyvlr.messages.json					parked		2026-11-05 11:04	NOFILE (colinxu wrong host)
+1792479901910_013or.messages.json					parked		2026-11-05 11:04	NOFILE
+1793243709280_fkmwl.messages.json					parked		2026-11-05 11:04	NOFILE
+1793167618126_45bec.messages.json					parked		2026-11-05 11:04	ssh-err timeout
+1793100700946_yzifo.messages.json					parked		2026-11-05 11:04	NOFILE (colinxu wrong host)
+1792670912119_pcn3b.messages.json					parked		2026-11-05 11:04	NOFILE (colinxu wrong host)
+1793600081315_ns5cm.messages.json					parked		2026-11-05 11:04	ssh-err timeout
+1793608238791_s4my6.messages.json					parked		2026-11-05 11:04	ssh-err timeout
+1792463051213_e2nuq.messages.json					parked		2026-11-05 11:04	ssh-err timeout
+1792746040013_oelx8.messages.json					parked		2026-11-05 11:04	ssh-err timeout
+1793779842973_mz6s8.messages.json					parked		2026-11-05 11:04	ssh-err timeout
