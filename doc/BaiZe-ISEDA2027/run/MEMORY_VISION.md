@@ -2,7 +2,9 @@
 
 WAITING: 0
 
-> 🆕 **【wake #711 · 2026-11-06 05:59】Stage-1 SFT 就绪审计+CPU侧de-risk（全管线PASS·仅待GPU）**。接手波形RL阶段1推进。Phase0=YELLOW(ngspice备选GREEN)可进阶段1。本轮CPU侧de-risk全过：①2B模型在位(model.safetensors 3.44GB+config/tokenizer/chat_template)②SFT数据9013条/7类均衡(rc/rc_pulse/rl/inverter/diffpair/ring_osc/lc_tank ~1100-1400各)③holdout 582条④4脚本syntax OK(sft_train_wave/eval_sft_wave/grpo_train_wave/waveqa_eval)⑤超参验真:lr=1e-5/lora_r=64/alpha=128/nsteps=3000=2.66epoch(GBS=8非task写的128——task的GBS=128与"2-3epoch"自相矛盾,agent正确优先epoch约束)⑥端到端gating一致:sft→eval_results.json(pass=format≥90%AND submit≥70%)→GRPO chain读pass→若false退出→若true找ckpt→GPU-wait→GRPO→WaveQA-RL 300题。GPU:.12 8×H100 97-100%/~75GB(R9)+.29 8×H100 96-100%/~75GB(mamba2 baize2b)全占,ETA≈11/25-27。双poller健康:SFT PID2757742(ppid=1,~10.2h,60s poll `busy_util--waiting`)+GRPO chain PID2428009(ppid=1,~7.4h,120s poll `SFT not done yet`)。git同步(0ahead/0behind,HEAD=675fd9c5f)。📦体积：TASK=30453B(29.7KB)/MEMORY=19.7KB(均≤32KB✓)。**未完成指令：有**（阶段1 GPU训练pending+阶段2/3未交付）⇒**WAITING: 0**。
+> 🆕 **【wake #712 · 2026-11-06 06:13】监控巡检·状态无变化·双poller健康·GPU仍满载·仅待GPU**。Stage0=✅已交付(Phase0=YELLOW,ngspice备选GREEN)。Stage1 CPU侧de-risk全过,2B模型/SFT数据9013条/4脚本/gating链全PASS。双poller健康:SFT PID2757742(ppid=1,etimes≈37500~10.4h,60s poll,最后06:12:40 `busy_util--waiting`)+GRPO chain PID2428009(ppid=1,etimes≈27500~7.6h,120s poll,最后06:12:17 `SFT not done yet (waited 27480s/2592000)`)。eval_results.json未生成(SFT未跑)。GPU:.12 8×H100 94-100%/~75GB(R9)+.29 8×H100 96-100%/~75GB(mamba2 baize2b)全占,ETA≈11/25-27。git同步(0ahead/0behind,HEAD=cc016d7ea harness R1669)。📦体积：TASK=30453B(29.7KB)/MEMORY=20555B(20.1KB)（均≤32KB✓）。**未完成指令：有**（阶段1 GPU训练pending+阶段2/3未交付）⇒**WAITING: 0**。
+
+> 📦 wake #711（Stage-1 SFT就绪审计+CPU侧de-risk·全管线PASS·仅待GPU·2026-11-06 05:59）已归档 → daily-memories-vision/2026-11-06.md；**结论**：CPU侧de-risk全过（2B模型/SFT数据/4脚本/超参/gating链），双poller健康，仅待GPU。需要时再读。
 
 > 📦 wake #710（监控巡检·2026-11-06 05:52·状态无变化·双poller健康+GPU 8×97-100%·仅待GPU）已归档 → daily-memories-vision/2026-11-06.md；**结论**：状态无变化，全管线就绪仅待GPU。需要时再读。
 
