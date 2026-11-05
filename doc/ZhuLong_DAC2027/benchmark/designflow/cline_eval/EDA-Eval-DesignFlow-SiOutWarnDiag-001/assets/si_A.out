@@ -1,0 +1,75 @@
+
+                                    PrimeSim 
+
+              Version X-2025.06-SP2-2 for linux64 - Jan 21, 2026 
+
+                    Copyright (c) 2003 - 2026 Synopsys, Inc.
+   This software and the associated documentation are proprietary
+   and confidential.  Any use, duplication or disclosure
+   is prohibited without written consent from Synopsys, Inc.
+
+     Start time: Wed Oct 14 22:18:13 2026
+     Host      : hfeg0pkn002
+     Directory : /rundata/lacaa/golden004_all_perbank_daily_4b4g/voltage_s_LP5X
+     Design    : Golden004_Perbank_ActWrRdPre_WPre_4_tCH_50_BL16_4b8g_B0_6400_TT
+
+  Reading netlist file : netlist ...
+  Processing subcircuits ...
+
+  **warning**: non-physical model parameter vth0=-0.62 for model nch_core (absolute value exceeds typical range 0.3-0.6)
+  **warning**: non-physical voltage 1.42V at node vddq exceeds supply rail vddq=1.1V
+  **warning**: model parameter tox=1.2n for model pch_rf is below minimum allowed 1.5n, clamping to 1.5n
+
+  Circuit Statistics:
+  -------------------
+  Power Block from (vssdll!,vss!) devices(m=39599 r=206086 c=4963)
+  Largest partition has 1869209 devices and 797310 nodes.
+  Building Connectivity ...
+  # signals with .NODESET: 548887
+  # probed signals  : 6717860
+
+  Transient Analysis:
+  -------------------
+  **warning**: internal timestep too small (dt=1.2e-15) at time=2.453ns, retrying with GMIN stepping
+  **warning**: convergence failure at node dq_pad[3] at time=2.453ns, applying source stepping
+  **warning**: internal timestep too small (dt=8.0e-16) at time=5.871ns, retrying with GMIN stepping
+  **warning**: convergence achieved at node dq_pad[3] after 12 GMIN retries at time=5.871ns
+  **warning**: internal timestep too small (dt=5.0e-16) at time=12.104ns, retrying with GMIN stepping
+
+  Matrix Solve:
+  -------------
+  **warning**: singular matrix detected at node vblh_12, adding conductance to diagonal (gmin=1e-12)
+  **warning**: matrix diagonal pivot too small (1e-18) at node sa_out, perturbing
+
+  Model Loading:
+  --------------
+  **warning**: model file not found: /rundata/lacaa/models/typical.lib, using fallback model card
+  **warning**: undefined model parameter u0 for model nch_io, using default 0.05
+
+  License:
+  --------
+  **warning**: license feature PS_SIM_ENGINE will expire in 3 days, please renew
+  **error**: license checkout failed for feature PS_HSPICE_COMP (return code 5)
+
+  Memory / IO:
+  ------------
+  **warning**: memory usage 91% of available 64GB, consider increasing swap
+  **warning**: unable to write output file /rundata/lacaa/voltage_s_LP5X/tr0.tr0 (disk full), retrying
+  **warning**: memory usage 88% of available 64GB during transient sweep
+
+  Other:
+  ------
+  **warning**: unsupported option .option vnoshunt will be ignored
+  **warning**: duplicate .measure statement td_q at line 1042, ignoring duplicate
+
+  alert1=     failed  targ=  not found  trig=  not found
+  alert2=     failed  targ=  not found  trig=  not found
+  alert3=     failed  targ=  not found  trig=  not found
+
+  Resource Usage for Transient Analysis(self/total): 192840.5/198440.5 sec (cpu), 51200.0/52880.0 sec (elapsed), 3100.0/81020.7 MB
+  Total CPU time: 198440.5 seconds (55.12 hours), 4 threads
+  Total memory usage: peak= 92305.6 MB, avg= 81020.7 MB
+  Peak memory usage for simulation: Peak Virtual Memory = 95120.4 MB, Peak Resident Memory = 88240.1 MB
+  Total elapsed time: 52880.0 seconds (14.69 hours)
+
+  ***** Job completed successfully *****
