@@ -5,13 +5,13 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        R1667 命名合规修复+归档轮:CPU/MEM自检PASS(load32.8/224~15%·无>8000%CPU·无>50GB RSS·无需kill·本线topCPU=cline-hub-daemon23%·他线pretrain不碰)→发现full500报告3处cline-patched违规→修生成器line227/462/463→regen 16900B·0处cline-patched·Wilson/McNemar保留→commit df5e63287→full500块⑤命名合规达标→归档full500块原文→ARCHIVE(TASK 36821→31461B≤32KB)→未完成指令:无⇒WAITING=1
-已完成:       H-B✅·Gate7/7·TB报告✅·pilot20✅·R984-R988恒0调试✅·R989 incr_eval全链✅·R997硬约束修复✅·R1567 cline trace归因✅·R1569 cline适配器修复✅·R1633 cline rerun 58/58终交付✅(356/500=71.3%)·R1634 13:5x复核+归档✅·R1635-R1649 deepseek incr_eval渐进✅(196→212,backlog=0)·R1650-R1665 quiet监控✅·full500全7路predict+eval 100%完成✅·R1662 full500复核可复现✅·R1666 quiet监控复核✅·R1667 命名合规修复+full500归档✅
-当前动作:     R1667 命名合规修复+归档轮:CPU/MEM自检PASS(load32.8/224~15%·无>8000%CPU·无>50GB RSS·无需kill)→发现full500报告3处cline-patched违规(生成器line227/462/463)→修复→regen 16900B·0处cline-patched→commit df5e63287→full500块⑤命名合规达标→归档full500块原文→ARCHIVE_OPERATOR_HARNESS.md(TASK 36821→31461B≤32KB)→全7路100%确认(opencode401/cline356/pi333/codex291/claude-code273/deepseek212/hermes184)→硬约束③PASS→未完成指令:无⇒WAITING=1
-下一步:       ①full500全7路100%完成+命名合规已修复+full500块已归档(TASK≤32KB) ②永久硬约束:禁止commit结果JSON ③下次唤醒CPU/MEM自检+backlog复扫(预期=0) ④TASK=31461B(30.7KB,≤32KB达标)·MEMORY≈32KB
-阻塞:         无·全7路predict+eval 100%完成·backlog=0·命名合规已修复·full500块已归档·TASK≤32KB.
+PHASE:        R1668 quiet监控轮:CPU/MEM自检PASS(load31.5/224~14%·无>8000%CPU·无>50GB RSS·无需kill·本线topCPU=opencode6.8%·他线pretrain S1训练143%/21GB不碰)→全7路eval JSON在位(reports/eval_*.json×7)·report在位16900B·0处cline-patched·硬约束③PASS(tracked result JSON=0·524=dataset instances+config)·designflow线(Yang Liu)近commit经git log --name-only复核未触碰run/harness与reports·未完成指令:无⇒WAITING=1
+已完成:       H-B✅·Gate7/7·TB报告✅·pilot20✅·R984-R988恒0调试✅·R989 incr_eval全链✅·R997硬约束修复✅·R1567 cline trace归因✅·R1569 cline适配器修复✅·R1633 cline rerun 58/58终交付✅(356/500=71.3%)·R1634 13:5x复核+归档✅·R1635-R1649 deepseek incr_eval渐进✅(196→212,backlog=0)·R1650-R1667 quiet监控✅·full500全7路predict+eval 100%完成✅·R1662 full500复核可复现✅·R1667 命名合规修复+full500归档✅·R1668 quiet监控复核✅
+当前动作:     R1668 quiet监控轮:CPU/MEM自检PASS(load31.5/224~14%·无>8000%CPU·无>50GB RSS·无需kill·他线pretrain S1不碰)→全7路eval JSON在位×7·报告16900B·0处cline-patched·硬约束③PASS(result JSON=0)·designflow线(Yang Liu)近commit未触碰run/harness与reports·TASK无designflow指令→未完成指令:无⇒WAITING=1
+下一步:       ①full500全7路100%完成+命名合规已修复+full500块已归档(TASK≤32KB) ②永久硬约束:禁止commit结果JSON ③下次唤醒CPU/MEM自检+backlog复扫(预期=0) ④TASK=31461B(30.7KB,≤32KB达标)·MEMORY≈32KB ⑤designflow线为独立活动(非本任务书指令),若有新指令运维会写入任务书
+阻塞:         无·全7路predict+eval 100%完成·backlog=0·命名合规已修复·full500块已归档·TASK≤32KB·designflow线未触碰本线交付物.
 ERROR_COUNT:  0
-  📦 体积：TASK=31461B(30.7KB,≤32KB达标,本轮归档full500块5360B→ARCHIVE_OPERATOR_HARNESS.md) / MEMORY=32201B(31.4KB,≤32KB达标)
+  📦 体积：TASK=31461B(30.7KB,≤32KB达标) / MEMORY=32723B(31.0KB,≤32KB达标,本轮无归档)
 ```
 
 > 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
@@ -19,9 +19,11 @@ ERROR_COUNT:  0
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 
 ### 本唤醒流水
-[04:54] R1667 命名合规修复+归档轮:CPU/MEM自检PASS(load32.8/224~15%·无>8000%CPU·无>50GB RSS·无需kill·本线topCPU=cline-hub-daemon23%·他线pretrain不碰)→发现full500报告3处cline-patched违规(生成器line227"不写cline-patched"/line462"eval_cline-patched.json"/line463"不写cline-patched")→修生成器3行→regen report 16900B·grep 0处cline-patched·Wilson(2)+McNemar(1)+置信区间(2)+配对检验(1)指标保留·0个<script>→commit df5e63287→full500块⑤命名合规达标→归档full500块原文(64行)→ARCHIVE_OPERATOR_HARNESS.md(1639→1707行)·TASK留1行指针(36821→31461B≤32KB)→全7路100%确认不变→硬约束③PASS→未完成指令:无⇒WAITING=1.
+[05:32] R1668 quiet监控轮:CPU/MEM自检PASS(load31.5/224~14%·无单进程>8000%CPU·无>50GB RSS·无需kill·本线topCPU=opencode6.8%/cline-hub-daemon23%·他线pretrain S1训练143%/21GB不碰)→全7路eval JSON在位(swebench_verified_full/reports/eval_{cline,codex,claude-code,opencode,pi,hermes,deepseek-harness}.json×7)·full500报告在位16900B·grep cline-patched=0(合规)·硬约束③PASS(git ls-files result JSON=0·524 tracked=dataset instances+config非结果)→designflow线观察:近commit(29734fba3/52468abd6/3044f5b8f等,Yang Liu author,05:10-05:24)经`git log --name-only -- run/harness reports`复核=空(未触碰本线交付物)·TASK grep designflow=exit1(无指令)→designflow为运维独立活动(用harness代码跑EDA shard),非本任务书指令·未完成指令:无⇒WAITING=1.
 
-[04:13] R1666 quiet监控轮:CPU/MEM自检PASS(load28.5/224~13%·无>8000%CPU·无>50GB RSS·无需kill·本线topCPU=cline-hub-daemon23%·他线pretrain训练144%/31GB不碰)→无active eval/predict(仅gw_proxy daemon存活0.1%CPU)→scan_backlog=0(pred=eval n全匹配)→全7路100%确认(eval_*.json:opencode401/cline356/pi333/codex291/claude-code273/deepseek212/hermes184·同R1662)→report在位(16952B)→硬约束③PASS(tracked524json·0结果JSON committed·predictions/eval JSON=0)→未完成指令:无(full500块待运维✅归档)⇒WAITING=1.
+> 📦 R1667 流水(04:54,命名合规修复+归档轮:full500报告3处cline-patched→0·commit df5e63287·full500块归档TASK 36821→31461B≤32KB)已归档 → daily-memories-harness/2026-11-06.md。结论：命名合规达标·full500块已归档。需要时再读。
+
+> 📦 R1666 流水(04:13,quiet监控轮:CPU/MEM自检PASS+backlog=0+全7路100%确认·opencode401/cline356/pi333/codex291/claude-code273/deepseek212/hermes184)已归档 → daily-memories-harness/2026-11-06.md。结论：quiet轮正常·全7路100%完成。需要时再读。
 
 > 📦 R1665 流水(03:36,quiet监控轮:CPU/MEM自检PASS+backlog=0+全7路100%完成)已归档 → daily-memories-harness/2026-11-06.md。结论：quiet轮正常·全7路100%完成。需要时再读。
 > 📦 R1664 流水(02:59,quiet监控轮:CPU/MEM自检PASS+backlog=0+全7路100%完成)已归档 → daily-memories-harness/2026-11-06.md。结论：quiet轮正常·全7路100%完成。需要时再读。
