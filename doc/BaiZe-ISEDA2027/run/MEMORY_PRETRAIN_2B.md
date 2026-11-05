@@ -2,6 +2,9 @@
 WAITING: 0
 > 🛑 **【运维通告 · 2026-11-02 19:51】S1 已由 ops 中继重启并在跑**：`bash scripts/train.sh s1 --nodes 2`，launcher pid **4163528**，从 **ckpt 58000** 续（19:55:40 起 iter **58010**→58030，7.0–7.2 s/step ≈**582K tok/s**，双机 16 卡 **98–100%**、~75GB/卡、~690W）。⇒ **GPU 不再空闲**：🚫 严禁再起任何训练/GPU 评测进程；CPU 评测必须降载：`OMP_NUM_THREADS≤8` + `nice -n 19`，**禁止 `pkill python`**。
 
+> 2026-11-05 11:2x #1372: ★ 运维令 11-05 09:0x 监控轮·**管线健康 iter_10000~91%·ETA 全完成~15:13**。① 管线 PID502077(~59min)健康，server PID502744(iter_10000 f16, port8090, ~392%CPU≈5核), eval PID508868活跃。② **进度**：server metrics prompt_tokens_total=94403/cached=429776/n_decode=14141(vs #1371: 89337→+5066)；est总~104K→94403/104K≈91%；速率~340 tok/min→iter_10000 剩~9.6K tok≈28min→完成~11:53。③ **ETA 全完成**：iter_10000~11:53 + 4ckpt×~50min=~200min→**全完成~15:13**(24h内✅)。0/5 results.json(8集全完才写)。④ 资源：CPU load~12%≪80%；S1健康在跑；CUDA_VISIBLE_DEVICES=""全程；-t16/nice19/OMP8；未碰GPU/S1/vision/data/harness。⑤ 下一步：管线完成后重跑 gen_llamacpp_scaling_report.py→终版 report_pretrain_llamacpp_scaling_zh.html。📦 体积：TASK=38.5KB(>32KB,<40KB软区·无已闭合可归档)/MEMORY≈31.5KB✅。未完成指令：**有**（管线在跑+终版报告待交付）⇒ WAITING: 0。
+
+
 > 2026-11-05 11:1x #1371: ★ 运维令 11-05 09:0x 监控轮·**管线健康 iter_10000~86%·ETA 全完成~14:45**。① 管线 PID502077(~52min)健康，server PID502744(iter_10000 f16, port8090, ~416%CPU≈5核), eval PID508868活跃(state=S)。② **进度**：server task#27028, prompt_tokens_total=89337(vs #1370: 80478→+8859)；est总~104K→89337/104K≈86%；速率~70-90 tok/s→iter_10000 剩~15K tok≈3min→完成~11:22。③ **ETA 全完成**：iter_10000~11:22 + 4ckpt×~50min=~200min→**全完成~14:45**(24h内✅, 略早于#1370估~15:00)。0/5 results.json(8集全完才写)。④ 资源：CPU load 25.8/224≈12%≪80%；S1 PID146283(228k etimes≈63h)健康在跑；CUDA_VISIBLE_DEVICES=""全程；-t16/nice19/OMP8；未碰GPU/S1/vision/data/harness。⑤ 下一步：管线完成后重跑 gen_llamacpp_scaling_report.py→终版 report_pretrain_llamacpp_scaling_zh.html。📦 体积：TASK=37.6KB(>32KB,<40KB软区·无已闭合可归档)/MEMORY≈29.7KB✅(无需滚动)。未完成指令：**有**（管线在跑+终版报告待交付）⇒ WAITING: 0。
 
 
