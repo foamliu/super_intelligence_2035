@@ -865,3 +865,23 @@ wl9i4					parked		2026-11-05 22:49	交互shell驱动+Q&A n752大
 1792397227578_q4d8h					parked		2026-11-06 01:42	peek289-unfit
 1790063252332_arlzu					parked		2026-11-06 01:42	peek289-unfit
 1791941567855_ajr06					parked		2026-11-06 01:42	peek289-unfit
+1792722208192_uqv1k.messages.json	karlwang	hfeg0plg58	113	analog_context	case	EDA-Eval-DesignFlow-PorCapSweepGen-001	2026-11-06 02:15	
+1789883685054_srrre.messages.json					parked		2026-11-06 02:01	skill-loading: AutoCell TCL Flow Generator slash-command, not produce-task
+1785556613011_1al18.messages.json					parked		2026-11-06 02:01	skill-scenario: 启动业务场景 模拟电路生成, not produce
+1792980364535_fyknj.messages.json					parked		2026-11-06 02:01	analysis: read project explain what it does, Q&A not produce
+1791877271220_1fnn2.messages.json					parked		2026-11-06 02:01	mid-conv Context summary + analysis compare TPC/rsv2/con3, not fresh produce
+1791615357921_izmw3.messages.json					parked		2026-11-06 02:01	analysis: 分析脚本浮pin到顶层 Q&A, not produce
+1792566529232_ybrna.messages.json					parked		2026-11-06 02:01	feature-add on existing netlist_change project, premise-missing (needs existing run/ruleprompt scripts)
+1792564968145_q16oz.messages.json					parked		2026-11-06 02:01	waveform merge 4->1 image but agent stuck searching for iwave files (never found), no accepted deliverable; pyAether sandbox refused
+1791784530809_sr0ca.messages.json					parked		2026-11-06 02:01	Q&A: asking gen_wtm_write_data function behavior, not produce
+1792552343391_748ox.messages.json					parked		2026-11-06 02:01	user gave root-cause (buffer没map vbn/vbp) + fix (改cdl) + complete RCC, not A-faithful per rule-2
+1792564023249_i4laj.messages.json					parked		2026-11-06 02:01	inspection query: 检测TESTPIN存在, thin one-shot check not produce-deliverable
+1789714793666_iqotq.messages.json					parked		2026-11-06 02:01	Q&A: 工作路径 + only IO points root-cause, not produce
+1788501825087_b20n2.messages.json					parked		2026-11-06 02:01	software-eng: C++ mainwindow.cpp GUI + aether_launch_dsim skill integration, not shard-D core
+1792042184377_b1xgb.messages.json					parked		2026-11-06 02:01	analysis: compare IDD csv data find optimization, not produce
+1785910754851_j98ua.messages.json					parked		2026-11-06 02:01	skill-scenario: 启动场景 模拟电路优化, not produce
+1791811755077_txxmi.messages.json					parked		2026-11-06 02:01	skill-loading: anasim slash-command, not produce
+1792041709940_x5fd4.messages.json					parked		2026-11-06 02:01	root-cause/debug: fix aether subcircuit pins/ports mismatch sim error, not produce
+1792489769571_ch2cw.messages.json					parked		2026-11-06 02:01	wrong-domain: Innovus digital backend audit, not analog_context/schematic_netlist/waveform
+1789908324813_f0jns.messages.json					parked		2026-11-06 02:01	Q&A: how-to select stdcell vth + linkecc mimic, not produce
+1791892714340_0b3ir.messages.json					parked		2026-11-06 02:01	file-open/mid-conv: just a .sp path then editor rejection, not fresh produce
