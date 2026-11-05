@@ -671,3 +671,11 @@
 1791897088355_b460k	jason17w	hfeg0pnd002	297	schematic_netlist	parked		2026-11-05 14:23	VPS CLI / verilogrun regression ops + skill-creator; non-D-domain (digital verif ops), no clean netlist/schematic produce-task
 1785821933914_r0a7b	t0002638	hfeg0plg49	277	analog_context	parked		2026-11-05 14:23	pyAether connection debug (judge if Hello printable + diagnose); debug/diagnostic not produce-task
 1792378797897_0gv3z	thomas1w	hfeg0plg98	249	schematic_netlist	parked		2026-11-05 14:23	netlist structure Q&A/analysis (read+explain mbist/mppr/data path); no produce-task
+1793600858808_la00c	e0029308	hfeg0pkn001	5367	schematic_netlist	claimed		2026-11-05 15:01	
+1789984306992_4vmtg	bin1y	hfeg0pkn002	8574	schematic_netlist	parked		2026-11-05 15:01	netlist/LVS/HCELL analysis+debug Q&A (vsim_aether script line-range analysis, cci_lvs.log WARNING root-cause, spf.cvps HCELL behavior); not a single-turn produce-task
+1793260065712_n78nn	t0003117	hfeg0pkn005	4669	schematic_netlist	parked		2026-11-05 15:01	skill-loading task (invoke netlist_extract skill in skills_v0.2); not a produce-task
+1793338010547_r06g9	clarawu	hfeg0pkn004	4143	analog_context	parked		2026-11-05 15:01	RON curve monotonicity check + circuit optimization (open-ended modify-circuit task, iterative L2/L3); not single-turn produce
+1792135941514_8n60f	adaml	hfeg0pnd001	3566	analog_context	parked		2026-11-05 15:01	TSPC spice stimulus gen + setup/hold/tCLK2Q extraction + bisection + transistor sizing optimization (broad multi-turn L2/L3 sim+optimization); not single-turn produce
+1793669959152_3123n	lvyy	hfeg0pkn002	3554	analog_context	parked		2026-11-05 15:01	CML circuit sizing Q&A (why sweeping mp5 size changes current; what W/L range for 100uA); analysis+tuning not produce-task
+1793763989902_37j9u	lvyy	hfeg0pkn002	3373	analog_context	parked		2026-11-05 15:01	duplicate of 3123n (same lvyy CML circuit sizing Q&A); analysis not produce-task
+1793792759786_ujw1y	qiang3xu	hfeg0pkn005	2921	analog_context	parked		2026-11-05 15:01	summarize PRBS_TM circuit + review sim results/give optimization suggestions; analysis/advice not produce-task
