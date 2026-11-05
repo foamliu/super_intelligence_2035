@@ -885,3 +885,23 @@ wl9i4					parked		2026-11-05 22:49	交互shell驱动+Q&A n752大
 1792489769571_ch2cw.messages.json					parked		2026-11-06 02:01	wrong-domain: Innovus digital backend audit, not analog_context/schematic_netlist/waveform
 1789908324813_f0jns.messages.json					parked		2026-11-06 02:01	Q&A: how-to select stdcell vth + linkecc mimic, not produce
 1791892714340_0b3ir.messages.json					parked		2026-11-06 02:01	file-open/mid-conv: just a .sp path then editor rejection, not fresh produce
+1790254821572_n6kul	pjli	172.16.8.13	70	schematic_netlist	case	EDA-Eval-DesignFlow-LatDffRsHierExtract-001	2026-11-06 02:42	
+1791958847728_7ycbz					parked		2026-11-06 02:44	dup duty/skew avg measurement (3 dup sessions 7ycbz/4khqb/jesvi same U#0), not selected
+1791855758340_4khqb					parked		2026-11-06 02:44	dup duty/skew (see 7ycbz), not selected
+1791867861982_jesvi					parked		2026-11-06 02:44	dup duty/skew (see 7ycbz), not selected
+1787549214610_0muo8					parked		2026-11-06 02:44	skill-scenario (启动业务场景 仿真与验证), not a produce-task
+1792478336435_qe1n4					parked		2026-11-06 02:44	qualib TCL template gen for STD check - borderline domain (qualib not shard-D core), not selected
+1792573684287_demod					parked		2026-11-06 02:44	ssh host key verification failed (NOFILE), unreachable
+1790229492123_m7hxu					parked		2026-11-06 02:44	clean A-faithful produce (design double-tail slicer 2.9GHz) L2 schematic-gen, kept-note for future; not selected this round
+1788144579422_5cz37					parked		2026-11-06 02:44	layout autovia/powerfill cell removal - wrong domain (layout not shard-D core)
+1792045605929_rp1xk					parked		2026-11-06 02:44	Q&A (hspice .option for sensitive param sweep), no deliverable
+1792063193685_1vto1					parked		2026-11-06 02:44	Q&A/inspection (who are you / current schematic), no produce-task
+1792120107352_t1b5d					parked		2026-11-06 02:44	context-summary continuation + user-gave-fix (减cascode级数), violates A-faithful rule
+1789870142807_4shph					parked		2026-11-06 02:44	software-eng (update totem_sc_signal_em Python GUI package), not EDA design flow
+1789090803347_bg5ws					parked		2026-11-06 02:44	skill-scenario (启动业务场景 DRC/LVS), not a produce-task
+1793069627641_n6ago					parked		2026-11-06 02:44	NOFILE (session file not found on host)
+1790319450652_i4pp3					parked		2026-11-06 02:44	analysis (帮我分析 ddr6_model dir) + mid-conv edits, not a clean produce-task
+1792400031626_1b13k					parked		2026-11-06 02:44	Q&A (how does waveview open stimulus.list), no deliverable
+1789699671032_sk6cg					parked		2026-11-06 02:44	DRC log analysis report (calibre_drc2.log), wrong domain (DRC not shard-D core) + analysis
+1793005134920_8bp0f					parked		2026-11-06 02:44	skill-scenario (vam-agent cosim cell recommend), not a produce-task
+1792387368762_qw7ae					parked		2026-11-06 02:44	skill-scenario (tran-sim-gen skill invoked), not a clean A-faithful task
