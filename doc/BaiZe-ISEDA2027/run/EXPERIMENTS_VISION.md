@@ -2310,3 +2310,38 @@ ngspice .raw 实测：`ngspice -b test.cir` → 646 点 × 3 变量 binary doubl
 
 **数字溯源**：`eval_sft_wave.py --device cpu` 实测 stdout（`/tmp/eval_baseline_30_v2.log`）+ JSON 输出 `eval_baseline_pre_sft_30.json`。成本：28.3s CPU（224 核 / OMP_NUM_THREADS=32）。
 
+### §20.16 · GRPO 2B 模型路径修复 + 检查点扫描修复 + GRPO 链式启动器（wake#624 · 2026-11-05 22:1x · CPU-only）
+
+**目的**：Phase 1→Phase 2 自动化衔接 + 修复两个会阻断 GPU 训练的 bug。
+
+**发现的 bug**：
+
+| # | 文件 | bug | 后果 | 修复 |
+|:--|:--|:--|:--|:--|
+| 1 | `grpo_train_wave.py` LLM_PATH | 默认 4B（`Qwen3-4B-Instruct-2507`），但 SFT 在 §20.12 改用 2B 文本骨干 | 2B LoRA adapter 加载到 4B 模型 → shape mismatch / 垃圾输出 | LLM_PATH 改为 2B 文本骨干路径（`qwen3vl_2b_text_extracted`），保留 4B fallback 常量 |
+| 2 | `grpo_train_wave.py` 检查点扫描 | 硬编码扫描 `step2000`/`final`，但 SFT 保存为 `step{total_steps}`（默认 `step3000`） | GRPO 找不到 SFT adapter → 用 fresh LoRA（丢失 SFT 成果） | 改为 `glob.glob(step*)` + 按步号降序排列，取最高步号含 `adapter_config.json` 的子目录 |
+| 3 | `waveqa_eval.py` --model_path 默认 | 同 bug 1，默认 4B | GRPO 后评测加载 4B + 2B adapter → 失败 | 默认改为 2B 文本骨干路径 |
+
+**新增交付物**：`vision/wave_rl/run_grpo_wave.sh`（链式启动器，237 行）——自动化 Phase 1→Phase 2 全链路：
+
+| 步骤 | 动作 | 判据/守卫 |
+|:--|:--|:--|
+| 1 | 等待 SFT 完成（`eval_results.json` 出现） | 120s 轮询，24h 超时 |
+| 2 | 检查 SFT 验收 | `eval_results.json` 的 `pass` 字段 = true（format≥90% AND submit≥70%） |
+| 3 | 找最新 SFT checkpoint | `step{N}/` 含 `adapter_config.json`，按步号降序取最高 |
+| 4 | 安全 GPU 等待 | util<10% AND mem<5000MiB，3×连续@60s（同 `run_sft_wave.sh`） |
+| 5 | 启动 GRPO 训练 | `torchrun --nproc_per_node=8 grpo_train_wave.py --sft_ckpt_dir <latest> --model_path <2B>` |
+| 6 | WaveQA-RL 评测 | 找最新 GRPO checkpoint → `waveqa_eval.py --ckpt_dir <latest> --n_questions 300` |
+
+安全设计：独立 flock（`wave_grpo_stage2w/run_grpo_wave.lock`，与 SFT poller 的锁隔离）；SFT 未通过验收 → 不启动 GRPO（遵循任务书门控）；GPU 等待双条件防 checkpoint 暂停误判。
+
+**验证**：
+- `bash -n run_grpo_wave.sh` → SYNTAX OK
+- `python3 -c "import ast; ast.parse(...)"` → GRPO + waveqa PY SYNTAX OK
+- `grpo_train_wave.py --smoke_test` → PASS（6 oracle rollouts / rewards / advantages / grpo_loss 全正常）
+- `waveqa_eval.py --oracle --n_questions 10` → PASS（mean=1.000）
+
+**当前状态**：GPU 仍 100%（.12+.29 双节点 R9 pretrain，16×H100，ETA≈11/25）。SFT poller（PID 2757742，flock）后台运行。`run_grpo_wave.sh` 已就绪但**未启动**（需 SFT 先完成；可在 SFT 启动后用 `setsid bash run_grpo_wave.sh 8` 后台启动，或等下次唤醒启动）。
+
+**数字溯源**：实测命令输出（smoke test PASS / oracle 10 题 mean=1.000 / bash -n SYNTAX OK）。无 GPU 实验（全 CPU 验证）。
+

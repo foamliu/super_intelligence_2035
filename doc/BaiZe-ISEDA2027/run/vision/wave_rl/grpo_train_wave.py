@@ -46,7 +46,12 @@ from gen_sft_trajectories import (  # noqa: E402
 if "diffpair" not in _CIRCUIT_GENS:
     _CIRCUIT_GENS["diffpair"] = _gen_diffpair
 
-LLM_PATH = "/nas_train/app.e0031982/models/Qwen/Qwen3-4B-Instruct-2507"
+# wake#624 fix: must match SFT's 2B text backbone (LoRA adapter shape must agree).
+#   SFT trains LoRA on the 2B text backbone (extract_qwen3vl_2b_text.py output).
+#   Loading a 2B-trained adapter into the 4B model would shape-mismatch / garbage.
+LLM_PATH_2B = "/nas_train/app.e0031982/datasets/baize-vision/out/wave_sft_stage1w/qwen3vl_2b_text_extracted"
+LLM_PATH_4B_FALLBACK = "/nas_train/app.e0031982/models/Qwen/Qwen3-4B-Instruct-2507"
+LLM_PATH = LLM_PATH_2B
 SFT_CKPT_DIR = "/nas_train/app.e0031982/datasets/baize-vision/out/wave_sft_stage1w"
 OUTPUT_DIR = "/nas_train/app.e0031982/datasets/baize-vision/out/wave_grpo_stage2w"
 
@@ -59,9 +64,12 @@ TOOL_WRAPPER_OPEN, TOOL_WRAPPER_CLOSE = "[Observation]", "[/Observation]"
 def parse_args():
     import argparse
     p = argparse.ArgumentParser(description="Stage-2W GRPO for Wave RL")
-    p.add_argument('--model_path', type=str, default=LLM_PATH)
+    p.add_argument('--model_path', type=str, default=LLM_PATH,
+                   help="Base LLM path (default: 2B text backbone extracted from "
+                        "Qwen3-VL-2B; use LLM_PATH_4B_FALLBACK for 4B if needed).")
     p.add_argument('--sft_ckpt_dir', type=str, default=SFT_CKPT_DIR,
-                   help="SFT checkpoint dir (LoRA adapter) to start from.")
+                   help="SFT output dir; will scan for latest step{N}/ with "
+                        "adapter_config.json (wake#624 fix).")
     p.add_argument('--output_dir', type=str, default=OUTPUT_DIR)
     p.add_argument('--lora_r', type=int, default=64)
     p.add_argument('--lora_alpha', type=int, default=128)
@@ -385,10 +393,21 @@ def build_model(args, device, dtype):
         lora_dropout=args.lora_dropout,
         target_modules=["q_proj", "k_proj", "v_proj", "o_proj",
                         "gate_proj", "up_proj", "down_proj"])
+    # wake#624 fix: SFT saves final checkpoint as step{total_steps} (e.g. step3000),
+    #   NOT step2000/final.  Scan for the *highest-numbered* step dir with an
+    #   adapter_config.json, falling back to the root dir or "final".
     sft_dir = args.sft_ckpt_dir
     sft_adapter = None
-    for sub in [sft_dir, os.path.join(sft_dir, "step2000"),
-                os.path.join(sft_dir, "final")]:
+    import glob as _glob
+    _step_dirs = []
+    for _d in _glob.glob(os.path.join(sft_dir, "step*")):
+        _num = os.path.basename(_d).replace("step", "")
+        if _num.isdigit():
+            _step_dirs.append((int(_num), _d))
+    _step_dirs.sort(key=lambda x: x[0], reverse=True)  # highest step first
+    _candidates = ([_d for _, _d in _step_dirs] +
+                   [sft_dir, os.path.join(sft_dir, "final")])
+    for sub in _candidates:
         if os.path.isdir(sub) and os.path.exists(os.path.join(sub, "adapter_config.json")):
             sft_adapter = sub
             break

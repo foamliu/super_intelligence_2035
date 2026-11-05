@@ -42,7 +42,8 @@ def parse_args():
     p = argparse.ArgumentParser(description="WaveQA-RL evaluation")
     p.add_argument('--ckpt_dir', type=str, default=None)
     p.add_argument('--model_path', type=str,
-                   default="/nas_train/app.e0031982/models/Qwen/Qwen3-4B-Instruct-2507")
+                   default="/nas_train/app.e0031982/datasets/baize-vision/out/wave_sft_stage1w/qwen3vl_2b_text_extracted",
+                   help="Base LLM (wake#624: default 2B text backbone, was 4B).")
     p.add_argument('--n_questions', type=int, default=300)
     p.add_argument('--seed', type=int, default=20261112)
     p.add_argument('--oracle', action='store_true',
