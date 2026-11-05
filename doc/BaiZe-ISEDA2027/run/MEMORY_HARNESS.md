@@ -5,13 +5,13 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        R1663 quiet监控轮:CPU/MEM自检PASS(load27.6/224~12%·无>8000%CPU·无>50GB RSS·无需kill·本线topCPU=cline-hub-daemon23%·他线pretrain训练144%/22GB不碰)→无active eval/predict进程→scan_backlog=0→全7路100%确认(eval_*.json独立复核一致:opencode401/cline356/pi333/codex291/claude-code273/deepseek212/hermes184)→report在位(16952B)→硬约束③复核(tracked524json=520instance定义+4旧pilot·0结果JSON入库)→未完成指令:无(agent工作完成·full500块待运维标✅归档)⇒WAITING=1
-已完成:       H-B✅·Gate7/7·TB报告✅·pilot20✅·R984-R988恒0调试✅·R989 incr_eval全链✅·R997硬约束修复✅·R1567 cline trace归因✅·R1569 cline适配器修复✅·R1633 cline rerun 58/58终交付✅(356/500=71.3%)·R1634 13:5x复核+归档✅·R1635-R1649 deepseek incr_eval渐进✅(196→212,backlog=0)·R1650-R1661 quiet监控✅·full500全7路predict+eval 100%完成✅·R1662 full500复核可复现✅·R1663 quiet监控复核✅
-当前动作:     R1663 quiet监控轮:CPU/MEM自检PASS(load27.6/224~12%·无>8000%CPU·无>50GB RSS·无需kill·本线topCPU=cline-hub23%·他线pretrain144%/22GB不碰)→无active eval/predict进程→scan_backlog=0→全7路100%确认(eval_*.json复核:opencode401/cline356/pi333/codex291/claude-code273/deepseek212/hermes184)→report在位(16952B)→硬约束③PASS(tracked524json=520定义+4pilot·0结果JSON)→未完成指令:无(full500块待运维✅归档)⇒WAITING=1
-下一步:       ①full500全7路已100%完成+R1663复核稳定(opencode401/cline356/pi333/codex291/claude-code273/deepseek212/hermes184)→report已交付(16952B,④指标齐全) ②永久硬约束:禁止commit结果JSON ③下次唤醒CPU/MEM自检+backlog复扫(预期=0) ④TASK=36821B(35.9KB)>32KB软限但<40KB红线·full500块待运维标✅后归档(归档纪律#1:无✅不许归档·最高优先覆盖收尾铁律)·MEMORY≈32KB
-阻塞:         无·全7路predict+eval 100%完成·backlog=0·R1663复核稳定通过.
+PHASE:        R1664 quiet监控轮:CPU/MEM自检PASS(load26.6/224~12%·86.8%idle·无>8000%CPU·无>50GB RSS·无需kill·本线topCPU=cline-hub-daemon23%·他线pretrain训练144%/22GB不碰)→无active eval/predict→scan_backlog=0→全7路100%确认(eval_*.json复核:opencode401/cline356/pi333/codex291/claude-code273/deepseek212/hermes184)→report在位(16952B)→硬约束③PASS(tracked522json·0结果JSON)→未完成指令:无(full500块待运维标✅归档)⇒WAITING=1
+已完成:       H-B✅·Gate7/7·TB报告✅·pilot20✅·R984-R988恒0调试✅·R989 incr_eval全链✅·R997硬约束修复✅·R1567 cline trace归因✅·R1569 cline适配器修复✅·R1633 cline rerun 58/58终交付✅(356/500=71.3%)·R1634 13:5x复核+归档✅·R1635-R1649 deepseek incr_eval渐进✅(196→212,backlog=0)·R1650-R1663 quiet监控✅·full500全7路predict+eval 100%完成✅·R1662 full500复核可复现✅·R1664 quiet监控复核✅
+当前动作:     R1664 quiet监控轮:CPU/MEM自检PASS(load26.6/224~12%·86.8%idle·无>8000%CPU·无>50GB RSS·无需kill·本线topCPU=cline-hub23%·他线pretrain144%/22GB不碰)→无active eval/predict→scan_backlog=0→全7路100%确认(eval_*.json复核:opencode401/cline356/pi333/codex291/claude-code273/deepseek212/hermes184)→report在位(16952B)→硬约束③PASS(tracked522json·0结果JSON)→未完成指令:无(full500块待运维✅归档)⇒WAITING=1
+下一步:       ①full500全7路已100%完成+R1664复核稳定(opencode401/cline356/pi333/codex291/claude-code273/deepseek212/hermes184)→report已交付(16952B,④指标齐全) ②永久硬约束:禁止commit结果JSON ③下次唤醒CPU/MEM自检+backlog复扫(预期=0) ④TASK=36821B(35.9KB)>32KB软限但<40KB红线·full500块待运维标✅后归档(归档纪律#1)·MEMORY≈32KB
+阻塞:         无·全7路predict+eval 100%完成·backlog=0·R1664复核稳定通过.
 ERROR_COUNT:  0
-  📦 体积：TASK=36821B(35.9KB,<40KB红线OK,full500块待运维标✅方可归档·归档纪律#1覆盖收尾铁律) / MEMORY=32819B(32.0KB,≤32KB达标,<40KB红线OK,本轮归档~0.7KB→daily-memories-2026-11-06)
+  📦 体积：TASK=36821B(35.9KB,<40KB红线OK,full500块待运维标✅方可归档) / MEMORY=~32770B(32.0KB,≤32KB达标,本轮归档R1663→daily-memories-2026-11-06)
 
 ```
 
@@ -20,8 +20,9 @@ ERROR_COUNT:  0
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 
 ### 本唤醒流水
-[02:17] R1663 quiet监控轮:CPU/MEM自检PASS(load27.6/224~12%·无>8000%CPU·无>50GB RSS·无需kill·本线topCPU=cline-hub-daemon23%·他线pretrain训练144%/22GB不碰)→无active eval/predict→scan_backlog=0→全7路100%确认(eval_*.json复核:opencode401/cline356/pi333/codex291/claude-code273/deepseek212/hermes184·同R1662)→report在位(16952B)→硬约束③PASS(tracked524json=520定义+4pilot·0结果JSON)→未完成指令:无(full500块待运维✅归档)⇒WAITING=1.
+[02:59] R1664 quiet监控轮:CPU/MEM自检PASS(load26.6/224~12%·86.8%idle·无>8000%CPU·无>50GB RSS·无需kill·本线topCPU=cline-hub-daemon23%·他线pretrain训练144%/22GB不碰)→无active eval/predict→scan_backlog=0→全7路100%确认(eval_*.json复核:opencode401/cline356/pi333/codex291/claude-code273/deepseek212/hermes184·同R1662)→report在位(16952B)→硬约束③PASS(tracked522json·0结果JSON)→未完成指令:无(full500块待运维✅归档)⇒WAITING=1.
 
+> 📦 R1663 流水(02:17,quiet监控轮:CPU/MEM自检PASS+backlog=0+全7路100%完成)已归档 → daily-memories-harness/2026-11-06.md。结论：quiet轮正常·全7路100%完成。需要时再读。
 > 📦 R1662 流水(01:27,quiet监控轮:CPU/MEM自检PASS+report regen 16952B+backlog=0+全7路100%完成)已归档 → daily-memories-harness/2026-11-06.md。结论：quiet轮正常·全7路100%完成。需要时再读。
 > 📦 R1661 流水(00:41,quiet监控轮:CPU/MEM自检PASS+report regen 16952B+backlog=0+全7路100%完成)已归档 → daily-memories-harness/2026-11-06.md。结论：quiet轮正常·全7路100%完成。需要时再读。
 > 📦 R1660 流水(00:02,quiet监控轮:CPU/MEM自检PASS+report在位+backlog=0+全7路100%完成)已归档 → daily-memories-harness/2026-11-06.md。结论：quiet轮正常·全7路100%完成。需要时再读。
