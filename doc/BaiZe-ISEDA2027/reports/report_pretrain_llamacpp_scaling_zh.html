@@ -22,7 +22,7 @@ code{background:#f1f5f9;padding:1px 5px;border-radius:3px;font-size:12px}
 .foot{margin-top:30px;padding-top:12px;border-top:1px solid #e2e8f0;font-size:11px;color:#94a3b8;text-align:center}
 </style></head><body>
 <h1>BaiZe-2B llama.cpp 全 checkpoint 常识推理评测 · 能力曲线与 700k 预测</h1>
-<p class='small'>生成时间：2026-11-05 13:49:20　|　后端：llama.cpp 修复分支 <code>fix/nemotron-h-undo-permute-and-rope</code>（build 5dc38db00）　|　已完成 2/5 ckpt　|　8 集 zero-shot <code>limit=100</code></p>
+<p class='small'>生成时间：2026-11-05 14:10:45　|　后端：llama.cpp 修复分支 <code>fix/nemotron-h-undo-permute-and-rope</code>（build 5dc38db00）　|　已完成 3/5 ckpt　|　8 集 zero-shot <code>limit=100</code></p>
 <div class='card'><h2>① 评测配置</h2><table>
 <tr><th>项目</th><th>说明</th></tr>
 <tr><td>模型</td><td>BaiZe-2B（Mamba2-hybrid，2.22B 参数）</td></tr>
@@ -33,9 +33,9 @@ code{background:#f1f5f9;padding:1px 5px;border-radius:3px;font-size:12px}
 <tr><td>每任务样本</td><td><code>limit=100</code>（非全量），acc_stderr ≈ ±4.5%，逐集绝对值有统计波动，<strong>Avg 趋势比单集绝对值更可信</strong></td></tr>
 </table></div>
 <div class='card'><h2>② 关键发现</h2><ul>
-<li>已完成 <strong>2/5</strong> 个检查点（iter_10000, iter_20000）。</li>
-<li>常识推理 Avg 从 iter_10000 的 <strong>51.50%</strong> 到 iter_20000 的 <strong>52.00%</strong>。</li>
-<li>相对 P-6 起点（44.0%@655M/20k）：当前最高 <strong>+8.1 pp</strong>（注：P-6 为 655M，本评测为 2B，参数量不同，仅作趋势参照）。</li>
+<li>已完成 <strong>3/5</strong> 个检查点（iter_10000, iter_20000, iter_30000）。</li>
+<li>常识推理 Avg 从 iter_10000 的 <strong>51.50%</strong> 到 iter_30000 的 <strong>53.00%</strong>。</li>
+<li>相对 P-6 起点（44.0%@655M/20k）：当前最高 <strong>+9.0 pp</strong>（注：P-6 为 655M，本评测为 2B，参数量不同，仅作趋势参照）。</li>
 <li><strong>llama.cpp 修复后恢复退化 ckpt</strong>：HF 侧（PyTorch CPU float32）iter_20000/40000/50000 因 Mamba2 SSM 数值不稳定 logits 全 NaN → sciq=0.0 退化；llama.cpp C++ SSM scan 数值稳定，<strong>5 个 ckpt 全部可正常出分</strong>，本报告即为修复后真实能力曲线。</li>
 </ul></div>
 <div class='card'><h2>③ 5 ckpt × 8 集汇总表（acc / acc_norm）</h2>
@@ -69,7 +69,16 @@ code{background:#f1f5f9;padding:1px 5px;border-radius:3px;font-size:12px}
 <td>82.0 / 74.0</td>
 <td>57.0 / —</td>
 <td class='avg'>52.00%</td><td class='avg'>50.37%</td></tr>
-<tr><td>iter_30000</td><td>125.83B</td><td colspan='10' class='na'>评测中…</td></tr>
+<tr><td><strong>iter_30000</strong></td><td>125.83B</td>
+<td>27.0 / 26.0</td>
+<td>54.0 / 58.0</td>
+<td>47.0 / —</td>
+<td>38.0 / 44.0</td>
+<td>21.0 / 37.0</td>
+<td>69.0 / 72.0</td>
+<td>83.0 / 80.0</td>
+<td>60.0 / —</td>
+<td class='avg'>53.00%</td><td class='avg'>49.88%</td></tr>
 <tr><td>iter_40000</td><td>167.77B</td><td colspan='10' class='na'>评测中…</td></tr>
 <tr><td>iter_50000</td><td>209.72B</td><td colspan='10' class='na'>评测中…</td></tr>
 <tr><td colspan="11" style="background:#eef2f7;font-weight:600;text-align:left">参照线</td></tr>
@@ -90,13 +99,13 @@ code{background:#f1f5f9;padding:1px 5px;border-radius:3px;font-size:12px}
 <line x1="70" y1="408.0" x2="750" y2="408.0" stroke="#e2e8f0" stroke-width="1"/>
 <text x="64" y="411.0" font-size="10" fill="#64748b" text-anchor="end">45%</text>
 <line x1="70" y1="316.0" x2="750" y2="316.0" stroke="#e2e8f0" stroke-width="1"/>
-<text x="64" y="319.0" font-size="10" fill="#64748b" text-anchor="end">48%</text>
+<text x="64" y="319.0" font-size="10" fill="#64748b" text-anchor="end">49%</text>
 <line x1="70" y1="224.0" x2="750" y2="224.0" stroke="#e2e8f0" stroke-width="1"/>
-<text x="64" y="227.0" font-size="10" fill="#64748b" text-anchor="end">51%</text>
+<text x="64" y="227.0" font-size="10" fill="#64748b" text-anchor="end">52%</text>
 <line x1="70" y1="132.0" x2="750" y2="132.0" stroke="#e2e8f0" stroke-width="1"/>
-<text x="64" y="135.0" font-size="10" fill="#64748b" text-anchor="end">54%</text>
+<text x="64" y="135.0" font-size="10" fill="#64748b" text-anchor="end">56%</text>
 <line x1="70" y1="40.0" x2="750" y2="40.0" stroke="#e2e8f0" stroke-width="1"/>
-<text x="64" y="43.0" font-size="10" fill="#64748b" text-anchor="end">56%</text>
+<text x="64" y="43.0" font-size="10" fill="#64748b" text-anchor="end">59%</text>
 <line x1="116.9" y1="40" x2="116.9" y2="500" stroke="#e2e8f0" stroke-width="1"/>
 <text x="116.9" y="516" font-size="10" fill="#64748b" text-anchor="middle">10k</text>
 <line x1="212.5" y1="40" x2="212.5" y2="500" stroke="#e2e8f0" stroke-width="1"/>
@@ -119,30 +128,31 @@ code{background:#f1f5f9;padding:1px 5px;border-radius:3px;font-size:12px}
 <line x1="70" y1="500" x2="750" y2="500" stroke="#334155" stroke-width="1.5"/>
 <text x="410" y="542" font-size="11" fill="#334155" text-anchor="middle">训练步数 iter（对数轴）</text>
 <text x="18" y="270" font-size="11" fill="#334155" text-anchor="middle" transform="rotate(-90 18 270)">8 集常识推理 Avg (harness口径)</text>
-<polyline points="116.9,1011.1 212.5,915.5" fill="none" stroke="#94a3b8" stroke-width="1" opacity="0.55"/>
-<polyline points="116.9,341.9 212.5,87.0" fill="none" stroke="#a3b8c8" stroke-width="1" opacity="0.55"/>
-<polyline points="116.9,-136.0 212.5,55.1" fill="none" stroke="#b8a3c8" stroke-width="1" opacity="0.55"/>
-<polyline points="116.9,405.7 212.5,405.7" fill="none" stroke="#c8a3b8" stroke-width="1" opacity="0.55"/>
-<polyline points="116.9,724.3 212.5,819.9" fill="none" stroke="#a3c8b8" stroke-width="1" opacity="0.55"/>
-<polyline points="116.9,-486.6 212.5,-327.2" fill="none" stroke="#c8b8a3" stroke-width="1" opacity="0.55"/>
-<polyline points="116.9,-391.0 212.5,-518.4" fill="none" stroke="#b8c8a3" stroke-width="1" opacity="0.55"/>
-<polyline points="116.9,118.9 212.5,23.3" fill="none" stroke="#c8a3c8" stroke-width="1" opacity="0.55"/>
-<polyline points="116.9,198.5 212.5,182.6" fill="none" stroke="#1d4ed8" stroke-width="2.5"/>
-<circle cx="116.9" cy="198.5" r="4" fill="#1d4ed8"/>
-<circle cx="212.5" cy="182.6" r="4" fill="#1d4ed8"/>
-<polyline points="116.9,198.5 127.5,196.8 138.1,195.0 148.8,193.2 159.4,191.5 170.0,189.7 180.6,187.9 191.2,186.2 201.8,184.4 212.5,182.6 223.1,180.8 233.7,179.1 244.3,177.3 254.9,175.5 265.6,173.8 276.2,172.0 286.8,170.2 297.4,168.5 308.0,166.7 318.7,164.9 329.3,163.2 339.9,161.4 350.5,159.6 361.1,157.8 371.8,156.1 382.4,154.3 393.0,152.5 403.6,150.8 414.2,149.0 424.8,147.2 435.5,145.5 446.1,143.7 456.7,141.9 467.3,140.2 477.9,138.4 488.6,136.6 499.2,134.9 509.8,133.1 520.4,131.3 531.0,129.5 541.7,127.8 552.3,126.0 562.9,124.2 573.5,122.5 584.1,120.7 594.8,118.9 605.4,117.2 616.0,115.4 626.6,113.6 637.2,111.9 647.9,110.1 658.5,108.3 669.1,106.5 679.7,104.8 690.3,103.0 700.9,101.2" fill="none" stroke="#dc2626" stroke-width="1.8" stroke-dasharray="6,4"/>
+<polyline points="116.9,908.0 212.5,829.6 268.5,908.0" fill="none" stroke="#94a3b8" stroke-width="1" opacity="0.55"/>
+<polyline points="116.9,359.4 212.5,150.5 268.5,72.1" fill="none" stroke="#a3b8c8" stroke-width="1" opacity="0.55"/>
+<polyline points="116.9,-32.4 212.5,124.4 268.5,359.4" fill="none" stroke="#b8a3c8" stroke-width="1" opacity="0.55"/>
+<polyline points="116.9,411.7 212.5,411.7 268.5,437.8" fill="none" stroke="#c8a3b8" stroke-width="1" opacity="0.55"/>
+<polyline points="116.9,672.9 212.5,751.3 268.5,620.7" fill="none" stroke="#a3c8b8" stroke-width="1" opacity="0.55"/>
+<polyline points="116.9,-319.7 212.5,-189.1 268.5,-293.6" fill="none" stroke="#c8b8a3" stroke-width="1" opacity="0.55"/>
+<polyline points="116.9,-241.3 212.5,-345.8 268.5,-502.5" fill="none" stroke="#b8c8a3" stroke-width="1" opacity="0.55"/>
+<polyline points="116.9,176.6 212.5,98.2 268.5,19.9" fill="none" stroke="#c8a3c8" stroke-width="1" opacity="0.55"/>
+<polyline points="116.9,241.9 212.5,228.8 268.5,202.7" fill="none" stroke="#1d4ed8" stroke-width="2.5"/>
+<circle cx="116.9" cy="241.9" r="4" fill="#1d4ed8"/>
+<circle cx="212.5" cy="228.8" r="4" fill="#1d4ed8"/>
+<circle cx="268.5" cy="202.7" r="4" fill="#1d4ed8"/>
+<polyline points="116.9,244.7 127.5,242.1 138.1,239.5 148.8,236.9 159.4,234.3 170.0,231.7 180.6,229.1 191.2,226.5 201.8,223.9 212.5,221.3 223.1,218.7 233.7,216.0 244.3,213.4 254.9,210.8 265.6,208.2 276.2,205.6 286.8,203.0 297.4,200.4 308.0,197.8 318.7,195.2 329.3,192.6 339.9,190.0 350.5,187.4 361.1,184.8 371.8,182.2 382.4,179.6 393.0,177.0 403.6,174.4 414.2,171.8 424.8,169.2 435.5,166.5 446.1,163.9 456.7,161.3 467.3,158.7 477.9,156.1 488.6,153.5 499.2,150.9 509.8,148.3 520.4,145.7 531.0,143.1 541.7,140.5 552.3,137.9 562.9,135.3 573.5,132.7 584.1,130.1 594.8,127.5 605.4,124.9 616.0,122.3 626.6,119.6 637.2,117.0 647.9,114.4 658.5,111.8 669.1,109.2 679.7,106.6 690.3,104.0 700.9,101.4" fill="none" stroke="#dc2626" stroke-width="1.8" stroke-dasharray="6,4"/>
 <circle cx="703.1" cy="100.9" r="5" fill="#dc2626" stroke="white" stroke-width="1.5"/>
-<text x="697.1" y="92.9" font-size="10" fill="#dc2626" text-anchor="end">700k 预测 54.6%</text>
+<text x="697.1" y="92.9" font-size="10" fill="#dc2626" text-anchor="end">700k 预测 56.9%</text>
 <line x1="70" y1="439.1" x2="750" y2="439.1" stroke="#16a34a" stroke-width="1.2" stroke-dasharray="3,3"/>
-<line x1="70" y1="246.3" x2="750" y2="246.3" stroke="#9333ea" stroke-width="1.2" stroke-dasharray="3,3"/>
-<circle cx="116.9" cy="353.1" r="3.5" fill="#ea580c"/>
-<circle cx="212.5" cy="276.0" r="3.5" fill="#ea580c"/>
-<circle cx="268.5" cy="259.1" r="3.5" fill="#ea580c"/>
-<circle cx="308.2" cy="236.5" r="3.5" fill="#ea580c"/>
+<line x1="70" y1="281.1" x2="750" y2="281.1" stroke="#9333ea" stroke-width="1.2" stroke-dasharray="3,3"/>
+<circle cx="116.9" cy="368.6" r="3.5" fill="#ea580c"/>
+<circle cx="212.5" cy="305.4" r="3.5" fill="#ea580c"/>
+<circle cx="268.5" cy="291.5" r="3.5" fill="#ea580c"/>
+<circle cx="308.2" cy="273.0" r="3.5" fill="#ea580c"/>
 <line x1="758" y1="54" x2="774" y2="54" stroke="#1d4ed8" stroke-width="2"/>
 <text x="778" y="57" font-size="9" fill="#334155">BaiZe-2B Avg（llama.cpp 修复后）</text>
 <line x1="758" y1="70" x2="774" y2="70" stroke="#dc2626" stroke-width="1.5" stroke-dasharray="3,3"/>
-<text x="778" y="73" font-size="9" fill="#334155">拟合外推（log, R²=1.000)</text>
+<text x="778" y="73" font-size="9" fill="#334155">拟合外推（log, R²=0.889)</text>
 <circle cx="766" cy="86" r="3.5" fill="#ea580c"/>
 <text x="778" y="89" font-size="9" fill="#334155">Xmodel-2 s1 (1.2B)</text>
 <line x1="758" y1="102" x2="774" y2="102" stroke="#16a34a" stroke-width="1.5" stroke-dasharray="3,3"/>
@@ -155,13 +165,13 @@ code{background:#f1f5f9;padding:1px 5px;border-radius:3px;font-size:12px}
 <p class='small' style='text-align:center'>图1：8 集 Avg acc vs 训练步数（对数轴）。蓝粗线=BaiZe-2B Avg，灰细线=逐集，橙点=Xmodel-2 s1，绿/紫虚线=P-6/Phi-1.5 参照，红虚线=拟合外推，红点=700k 预测。</p>
 </div>
 <div class='card'><h2>⑤ 700k 步（≈2.94T token）常识推理水平预测</h2>
-<p>对 2 个完成点（iter 10000, 20000）的 8 集 Avg 做两种拟合，取 R² 更高者为预测：</p>
+<p>对 3 个完成点（iter 10000, 20000, 30000）的 8 集 Avg 做两种拟合，取 R² 更高者为预测：</p>
 <table><tr><th>拟合形式</th><th>公式</th><th>R²</th><th>RMSE</th><th>700k 预测 Avg</th></tr>
-<tr><td>log ★</td><td><code>acc = 0.4486 + 0.0166·log10(step)</code></td><td>1.0000</td><td>0.0000</td><td class='avg'>54.56%</td></tr>
-<tr><td>power</td><td><code>acc = 0.6618 - -0.2326·step^{-0.050}</code></td><td>1.0000</td><td>0.2886</td><td class='avg'>78.05%</td></tr>
+<tr><td>log ★</td><td><code>acc = 0.3946 + 0.0298·log10(step)</code></td><td>0.8887</td><td>0.0021</td><td class='avg'>56.90%</td></tr>
+<tr><td>power</td><td><code>acc = 0.7793 - -0.4206·step^{-0.050}</code></td><td>0.8841</td><td>0.5155</td><td class='avg'>99.39%</td></tr>
 </table>
-<div class='note'><strong>预测结论</strong>：取 log 拟合 （R²=1.000），700k 步（≈2.94T token）时 8 集常识推理 Avg 预测为 <strong>54.56%</strong>。公式：<code>acc = 0.4486 + 0.0166·log10(step)</code>。</div>
-<div class='warn'><strong>⚠️ 外推不确定度（务必明示）</strong>：<ul><li>拟合仅基于 <strong>2 个点</strong>，且全部位于 10k–50k 的<strong>陡升段</strong>，700k 距最末点 <strong>35× 外推</strong>，误差可能很大。</li><li>两种拟合（对数=无上界单调增；幂律=逼近渐近上界 a）假设不同，二者 700k 预测值的差距即体现模型选择的不确定度。</li><li>RMSE ≈ 0.0000（0.00 pp）为拟合段内残差，<strong>外推误差通常远大于此</strong>。</li><li>每任务 <code>limit=100</code>（样本量小，逐集 ±4.5%），Avg 本身带统计噪声。</li><li>结论应理解为<strong>量级估计</strong>，非精确预测；需更多检查点（如 100k/200k）收窄区间。</li></ul></div>
+<div class='note'><strong>预测结论</strong>：取 log 拟合 （R²=0.889），700k 步（≈2.94T token）时 8 集常识推理 Avg 预测为 <strong>56.90%</strong>。公式：<code>acc = 0.3946 + 0.0298·log10(step)</code>。</div>
+<div class='warn'><strong>⚠️ 外推不确定度（务必明示）</strong>：<ul><li>拟合仅基于 <strong>3 个点</strong>，且全部位于 10k–50k 的<strong>陡升段</strong>，700k 距最末点 <strong>23× 外推</strong>，误差可能很大。</li><li>两种拟合（对数=无上界单调增；幂律=逼近渐近上界 a）假设不同，二者 700k 预测值的差距即体现模型选择的不确定度。</li><li>RMSE ≈ 0.0021（0.21 pp）为拟合段内残差，<strong>外推误差通常远大于此</strong>。</li><li>每任务 <code>limit=100</code>（样本量小，逐集 ±4.5%），Avg 本身带统计噪声。</li><li>结论应理解为<strong>量级估计</strong>，非精确预测；需更多检查点（如 100k/200k）收窄区间。</li></ul></div>
 </div>
 <div class='card'><h2>⑥ llama.cpp vs HF（PyTorch CPU）后端对比</h2><ul>
 <li><strong>HF 侧（PyTorch CPU float32）</strong>：iter_20000 / 40000 / 50000 因 Mamba2 SSM 数值不稳定（≥17 token 序列 logits 全 NaN）→ sciq=0.0 退化，仅 iter_10000（Avg 50.0%）/ iter_30000（Avg 50.25%）有效。</li>
@@ -175,5 +185,5 @@ code{background:#f1f5f9;padding:1px 5px;border-radius:3px;font-size:12px}
 <li>S1 训练于 2026-11-02 19:51 从 ckpt 58000 resume，iter_10000–50000 均为 <strong>resume 前</strong>保存的检查点，不受 resume 影响。</li>
 <li>全程 <code>CUDA_VISIBLE_DEVICES=""</code>，未碰 GPU/S1，CPU load ≪80%。</li>
 </ul></div>
-<div class='foot'>报告生成器：<code>run/gen_llamacpp_scaling_report.py</code>（幂等，可随评测进度反复刷新）　|　数据源：<code>nemo_experiments/baize2b/lm_eval_results/gguf_iter_*_fixed_8set/</code>　|　2026-11-05 13:49:20</div>
+<div class='foot'>报告生成器：<code>run/gen_llamacpp_scaling_report.py</code>（幂等，可随评测进度反复刷新）　|　数据源：<code>nemo_experiments/baize2b/lm_eval_results/gguf_iter_*_fixed_8set/</code>　|　2026-11-05 14:10:45</div>
 </body></html>
