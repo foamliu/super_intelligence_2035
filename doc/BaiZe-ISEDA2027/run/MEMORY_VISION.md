@@ -2,9 +2,9 @@
 
 WAITING: 0
 
-> 🆕 **【wake #632 · 2026-11-05 23:07】监控巡检：双poller健康+GPU仍100%+pretrain iter~96000·状态无变化·仅待GPU**。GPU仍100%（.12 8×H100 73-100% util / ~75GB/81GB mem），pretrain mamba2 baize2b PID 2612442(torchrun nnodes=2 node_rank=0) etimes≈270953s≈3.13天，iter~96000/700000(13.7%)，HF ckpt `hf_iter_90000` 在位（下一存档点92000），ETA≈11/25-27。本轮**CPU-only监控巡检**（距wake#631仅5min，状态无变化）：① **SFT poller PID 2757742 健康**：alive(ppid=1, etimes≈11975s≈3.3h)，每60s `busy_util -- waiting`（最后23:07:26，poll log `sft_poll_20261105_194723.log` 6899B 持续更新）；② **GRPO chain PID 2428009 健康**：alive(ppid=1, etimes≈1962s≈33min)，每120s `SFT not done yet (waited 1920s/2592000)`（最后23:06:16）；③ GPU .12 8卡全 73-100% util / ~75GB mem（R9 pretrain 占满）。结论：**全管线就绪+双poller健康+零新CPU工作**，仅待GPU释放（ETA≈11/25-27），poller将自动启动SFT→GRPO全链。📦 体积：TASK=30.5KB / MEMORY=22.6KB（均≤32KB✓）。**未完成指令：有**（阶段1 GPU训练+阶段2/3未交付）⇒ **WAITING: 0**。
+> 🆕 **【wake #633 · 2026-11-05 23:11】监控巡检：双poller健康+GPU仍100%+pretrain iter~96000·状态无变化·仅待GPU**。GPU仍100%（.12 8×H100 R9 pretrain PID 2612442 torchrun nnodes=2 etimes≈271184s≈3.14天 iter~96000/700000(13.7%) ETA≈11/25-27）。本轮**CPU-only监控巡检**（距wake#632仅4min，状态无变化）：① **SFT poller PID 2757742 健康**：alive(ppid=1, etimes≈12220s≈3.4h)，每60s `busy_util -- waiting`（最后23:11:28，`/tmp/wave_sft_poller_relaunch.log` 7159B 持续更新）；② **GRPO chain PID 2428009 健康**：alive(ppid=1, etimes≈2207s≈37min)，每120s `SFT not done yet (waited 2160s/2592000)`（最后23:10:16，`/tmp/grpo_wave_chain.log` 1692B）；③ vision loop PID 669545 alive(etimes≈655276s≈7.5天)；cline in PATH✓。git fetch→origin/main=本线HEAD a0c7c4794(23:09)，无新运维令。结论：**全管线就绪+双poller健康+零新CPU工作**，仅待GPU释放（ETA≈11/25-27），poller将自动启动SFT→GRPO全链。📦 体积：TASK=30.5KB / MEMORY=22.6KB（均≤32KB✓）。**未完成指令：有**（阶段1 GPU训练+阶段2/3未交付）⇒ **WAITING: 0**。
 
-> 📦 wake #631（监控巡检双poller健康+GPU仍100%）已归档 → daily-memories-vision/2026-11-05.md；**结论**：状态无变化，全管线就绪仅待GPU。需要时再读。
+> 📦 wake #632（监控巡检双poller健康+GPU仍100%）已归档 → daily-memories-vision/2026-11-05.md；**结论**：状态无变化，全管线就绪仅待GPU。需要时再读。
 
 > 📦 wake #630（监控巡检双poller健康+GPU仍100%）已归档 → daily-memories-vision/2026-11-05.md；**结论**：状态无变化，全管线就绪仅待GPU。需要时再读。
 
