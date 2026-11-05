@@ -280,4 +280,4 @@
 1789904184223_i5slk	yiz	hfeg0plg101	152	physical_verify	parked		2026-11-06 03:30	finesim-fsdb-reader skill adapter ncsim.trn = waveform/sim shard D
 1783650805189_y20nc	e0014566	hfeg0plg98	201	layout_virtuoso	case	EDA-Eval-DesignFlow-LayCvPreserveAudit-001	2026-11-06 03:58	
 1791882714073_ibu64	yzwang	hfeg0pkn001	113	layout_virtuoso	case	EDA-Eval-DesignFlow-PcellBasexEncloseAudit-001	2026-11-06 04:29	
-1792493511731_624js	johnl	hfeg0pfn119	80	pg_layout	claimed		2026-11-06 04:46	
+1792493511731_624js	johnl	hfeg0pfn119	80	pg_layout	case	EDA-Eval-DesignFlow-Nand3LefDeriveAudit-001	2026-11-06 04:55	
