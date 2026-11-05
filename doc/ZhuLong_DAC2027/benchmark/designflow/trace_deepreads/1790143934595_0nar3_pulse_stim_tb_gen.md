@@ -1,6 +1,6 @@
 # trace deepread — 0nar3 (PulseStimTbGen-001)
 
-- **trace**: `1790143934595_0nar3.messages.json` (qiong1w @ hfeg0plg101, mc=41, 36 msgs, 305KB)
+- **trace**: `1790143934595_0nar3.messages.json` (qifanli @ hfeg0plg101, mc=41, 36 msgs, 305KB)
 - **keywords**: netlist:104; spectre:60; aether:18; schematic:16; pdk:11; hspice:5; pyaether:4
 - **session**: zhulong/zl agent (`agent: lead`), agent-policy-engine enforcing (writableRoot=/home/qifanli/.cline/scripts/data)
 
