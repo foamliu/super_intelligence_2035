@@ -131,8 +131,13 @@ copied = []
 _prefix = f'assets/{task_id}/'
 for a in case.get('attachments', []):
     # attachments 可能是 list[str]（如 'assets/<id>/<sub>/<name>'）或 list[dict]
+    # dict 可能含 'source'(全路径) / 'path'(全路径,有时带子目录) / 'name'(裸文件名).
+    # 修复 r123：此前仅读 source/name → 当附件放在 assets/<id>/<sub>/ 子目录时
+    #   （如 itf/01.itf），name=basename 丢了 <sub>/，workdir 拿不到输入文件 →
+    #   cline 空转 1800s 假 FAIL（ItfCompare-001 实证）。现在优先读 path/source 全路径
+    #   以保留子目录结构，name 仅作 basename 回退。
     if isinstance(a, dict):
-        src = a.get('source') or a.get('name') or ''
+        src = a.get('source') or a.get('path') or a.get('name') or ''
         name = a.get('name') or (os.path.basename(src) if src else '')
     else:
         src = str(a) if a is not None else ''
@@ -152,10 +157,21 @@ for a in case.get('attachments', []):
     if os.path.exists(sp):
         _copy(sp, rel)
     else:
-        # 回退：按裸 name（旧 case 无子目录）
+        # 回退 1：按裸 name（旧 case 无子目录）
         alt = os.path.join(assets_src, name)
         if os.path.exists(alt) and os.path.basename(alt) not in forbidden:
             _copy(alt, name)
+        else:
+            # 回退 2：path 字段可能是 assets/<id>/<sub>/<name> 但磁盘上 flat；
+            #   或 dict 只给了 name + path 指向别处。递归找 basename 匹配。
+            hit = None
+            for root, _, files in os.walk(assets_src):
+                if name in files and os.path.basename(root) not in forbidden:
+                    hit = os.path.join(root, name); break
+            if hit:
+                # 保留 assets_src 内的相对子目录（若 path 给了 <sub>/）
+                sub = rel if '/' in rel else name
+                _copy(hit, sub)
 # 防御：扫描 workdir 确认无泄漏
 leak = []
 for root, _, files in os.walk(workdir):
@@ -305,7 +321,7 @@ for line in open(jl):
         forbidden={'_check.py','check.py','_reference_check.py','reference_submit.zip','reference','negative','hidden','hidden_manifest.json'}
         for a in d.get('attachments',[]):
             if isinstance(a, dict):
-                s=a.get('source') or a.get('name') or ''
+                s=a.get('source') or a.get('path') or a.get('name') or ''
                 n=a.get('name') or (os.path.basename(s) if s else '')
             else:
                 s=str(a) if a is not None else ''
