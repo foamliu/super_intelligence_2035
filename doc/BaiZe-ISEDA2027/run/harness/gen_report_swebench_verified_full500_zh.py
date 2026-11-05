@@ -224,7 +224,7 @@ def head(now, any_eval, all_predict):
 <div class="meta">生成时间：{now} · 任务令：2026-10-28 07:1x（用户直令：跑完整的 SWE-bench Verified）<br>
 模型：kimi-k2.6-cloud（统一骨干）· 评测集：princeton-nlp/SWE-bench_Verified 全量 500 题<br>
 评测脚本：官方 swebench v5.0.2 docker harness（<code>sg docker</code>，max_workers 8–12，timeout 1800s/题）<br>
-命名规程：正文一律写 <code>cline</code>（不写 cline-patched）· 报告目录：doc/BaiZe-ISEDA2027/reports/</div>
+命名规程：正文一律写 <code>cline</code> · 报告目录：doc/BaiZe-ISEDA2027/reports/</div>
 {banner}"""
 
 
@@ -459,8 +459,8 @@ R1569 修复（commit {base["fix_commit"]}）：① <b>CLINE_BIN 改用 <code>.b
 <td class="l">补跑 {rerun_total} 题后累计 eval 值；{rerun_status}，rerun 全部完成后此列为终值</td></tr>
 </table>
 <p class="ev">注：「修复后」列随 rerun + incr_eval 进行而上升；rerun 全部完成 + eval 后重新运行本生成器即得终值。
-修复前基线 = 固定历史快照常量（eval_cline-patched.json 已被 incr_eval 原地更新，无法从数据文件回溯）。
-命名规程：正文一律写 cline（不写 cline-patched）。</p></div>"""
+修复前基线 = 固定历史快照常量（cline eval 数据文件已被 incr_eval 原地更新，无法从数据文件回溯）。
+命名规程：正文一律写 cline。</p></div>"""
 
 
 def build():
