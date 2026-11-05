@@ -1,0 +1,15 @@
+[run_one] 1. 部署 PreToolUse hook
+[run_one]    scope += /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/benchmark/designflow/cline_eval (multi-shard safe)
+[run_one] 2. 建 workdir: /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/benchmark/designflow/cline_eval/EDA-Eval-DesignFlow-SweepMeasFix-001
+[run_one]    SKIP_RUN=1 且 workdir 已存在 → 保留 workdir（用于复判已存 submit.zip），仅重建 assets/prompt/brief
+   task_brief.md: copied from assets (case-specific deliverable manifest)
+   attachments copied: ['prompt.txt', 'task_brief.md', 'summarize_meas.sh', 'submit_ismosc_corner_meas.sh', 'meas_result_by_corner_1021/corner0/IsmOscTestSweep_s0.mt0', 'meas_result_by_corner_1021/corner0/IsmOscTestSweep_s1.mt0', 'meas_result_by_corner_1021/corner0/IsmOscTestSweep_s2.mt0', 'meas_result_by_corner_1021/corner0/IsmOscTestSweep_s3.mt0', 'meas_result_by_corner_1021/corner0/IsmOscTestSweep_s4.mt0', 'meas_result_by_corner_1021/corner0/IsmOscTestSweep_s5.mt0', 'meas_result_by_corner_1021/corner0/IsmOscTestSweep_s6.mt0', 'meas_result_by_corner_1021/corner0/IsmOscTestSweep_s7.mt0', 'superon_sweep_20261021_133105/fsdb_index.txt']
+   workdir clean (no check.py/reference/hidden)
+[run_one]    workdir leak 自检通过
+[run_one] 3. SKIP_RUN=1，跳过 cline 执行
+[run_one] 4. 独立判分: /tmp/judge_EDA-Eval-DesignFlow-SweepMeasFix-001
+[run_one]    verdict=PASS  detail=SweepMeasFix-001 PASS 16/16 conditions
+[run_one] 5. 记 /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/benchmark/designflow/cline_eval_status.jsonl
+   recorded: {"ts": "2026-11-05T09:47:22Z", "task_id": "EDA-Eval-DesignFlow-SweepMeasFix-001", "harness": "cline", "cline_version": "3.0.51", "model": "deepseek-v4-pro-cloud", "thinking": "medium", "dur_sec": null, "cline_exit": null, "verdict": "PASS", "reason": "SweepMeasFix-001 PASS 16/16 conditions", "hook": "PreToolUse", "scope": "/home/app.e0031982/.cline/hooks/hook_scope.txt", "os_timeout_hit": 0, "stalled_kill_hit": 0}
+[run_one] DONE  verdict=PASS  (EDA-Eval-DesignFlow-SweepMeasFix-001)
+PASS

@@ -1,0 +1,1 @@
+ERROR: Error OPEN1 - problem with access, file type, or file open of file: calibreSTIcmp.rule.

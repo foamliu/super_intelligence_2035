@@ -1,0 +1,9 @@
+corner,sample,pass_flag,last_pls_pre0,status
+corner0,s0,1.000000e+00,1.500000e+00,PASS
+corner0,s1,1.000000e+00,1.480000e+00,PASS
+corner0,s2,1.000000e+00,1.460000e+00,PASS
+corner0,s3,1.000000e+00,1.440000e+00,PASS
+corner0,s4,1.000000e+00,1.420000e+00,PASS
+corner0,s5,1.000000e+00,1.400000e+00,PASS
+corner0,s6,1.000000e+00,1.380000e+00,PASS
+corner0,s7,0.000000e+00,failed,FAIL

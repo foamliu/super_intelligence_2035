@@ -1,0 +1,18 @@
+// calibreSTIcmp_A.rule  —  STI CMP DRC deck (cxmtG5_CIP / decqa), fixture
+// NOTE: no LAYOUT PRECISION statement present (root cause of OPEN1)
+LAYOUT path LP4TOP.gds
+LAYOUT system gdsii
+LAYOUT primary LP4TOP
+
+// ----- DRC rule blocks (abridged fixture) -----
+DRC CHECK {
+  STI_CMP_WIDTH {
+    @ STI CMP minimum width
+    external STI < 0.12
+  }
+  STI_CMP_SPACING {
+    @ STI CMP minimum spacing
+    internal STI < 0.14
+  }
+}
+INCLUDE "/apps/imctf/runset/calibre/cxmtG5_CIP/current/common/calibre.layer"

@@ -1,0 +1,36 @@
+# test_chip_power.upf -- UPF 3.0 power intent for hl22_porting_test_chip_v1
+# (faithful reconstruction, 48 lines)
+upf_version 3.0
+
+# supply ports / nets
+create_supply_port VDD
+create_supply_port VSS
+create_supply_port VDD_PM
+create_supply_net  VDD -domain pm_top
+create_supply_net  VSS -domain pm_top
+create_supply_net  VDD_PM -domain pm_top
+connect_supply_net pm_top.VDD    -ports VDD
+connect_supply_net pm_top.VSS    -ports VSS
+connect_supply_net pm_top.VDD_PM -ports VDD_PM
+
+# power domains
+set_domain_supply_net ss_aon -primary_power_net VDD    -primary_ground_net VSS
+set_domain_supply_net ss_pm  -primary_power_net VDD_PM -primary_ground_net VSS
+create_power_domain pd_aon -include_scope -elements {.}
+create_power_domain pd_pm  -elements TOPPMBLK_Blk4129/PM_VDDI_Inst
+
+# (no isolation / level-shifter / retention strategies -- both domains 0.72V)
+
+# port states
+add_port_state VDD    -state {on  0.72}
+add_port_state VSS    -state {on  0.0}
+add_port_state VDD_PM -state {on  0.72}
+add_port_state VDD    -state {off -}
+
+# (dormant bug: comma-separated port list -- UPF/Tcl requires space-separated)
+#set_port_attributes -ports {ClearFreqDiv, SelByFreq0, ModeSel0, ModeSel1, CtrlEn} \
+#                    -attribute EXPLICIT_CONNECTION -value false
+
+# power state table
+create_pst pst_top -supplies {VDD VSS VDD_PM}
+add_pst_state pst_top -state OnAll -supply_test {VDD VSS VDD_PM}

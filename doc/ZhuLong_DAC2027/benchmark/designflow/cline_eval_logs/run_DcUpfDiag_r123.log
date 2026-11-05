@@ -1,0 +1,8 @@
+[run_one] 1. 部署 PreToolUse hook
+[run_one]    scope += /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/benchmark/designflow/cline_eval (multi-shard safe)
+[run_one] 2. 建 workdir: /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/benchmark/designflow/cline_eval/EDA-Eval-DesignFlow-DcUpfDiag-001
+   task_brief.md: generic template (no case-specific brief in assets/)
+   attachments copied: ['dc.log', 'dc.tcl', 'dc.upf', 'dc_setup_filenames.tcl', 'postsyn_head.v', 'rtl_top.v', 'sim.upf', 'snps_upf.log', 'test_chip_power.upf']
+   workdir clean (no check.py/reference/hidden)
+[run_one]    workdir leak 自检通过
+[run_one] 3. 跑 cline (model=deepseek-v4-pro-cloud thinking=medium timeout=1800s)

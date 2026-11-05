@@ -1,0 +1,10 @@
+# sim.upf -- simulation-only UPF (28 lines)
+upf_version 3.0
+create_supply_port VDD
+create_supply_port VSS
+create_supply_net VDD -domain sim_top
+create_supply_net VSS -domain sim_top
+set_domain_supply_net ss_sim -primary_power_net VDD -primary_ground_net VSS
+create_power_domain pd_sim -elements {.}
+add_port_state VDD -state {on 0.72}
+add_port_state VSS -state {on 0.0}

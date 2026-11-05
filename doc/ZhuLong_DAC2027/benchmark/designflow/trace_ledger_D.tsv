@@ -730,7 +730,7 @@
 1792386812545_n2isr					parked		2026-11-05 17:33	netlist->sim.sp produce but repetitive with #275 RasTbFinesimGen (same pattern); schematic_netlist over-represented
 1793757463114_zd8iu					parked		2026-11-05 17:33	root-cause debug (bsub num1/num2 calc error), user gives error
 1793586031652_f2xzx.messages.json	ryanren	hfeg0plg49	438	analog_context	case	EDA-Eval-DesignFlow-CircWfReport-001	2026-11-05 18:33	
-1793519984879_0gd9e.messages.json	e0023936	hfeg0pkn004	129	schematic_netlist	claimed		2026-11-05 18:44	
+1793519984879_0gd9e.messages.json	e0023936	hfeg0pkn004	129	schematic_netlist	case	EDA-Eval-DesignFlow-MosParamStat-001	2026-11-05 20:06	
 1793519984879_0gd9e					case	EDA-Eval-DesignFlow-MosParamStat-001	2026-11-05 19:13	
-1789975805926_42jk5.messages.json	t0002470	10.129.2.13	363	analog_context	claimed		2026-11-05 19:45	
+1789975805926_42jk5.messages.json	t0002470	10.129.2.13	363	analog_context	case	EDA-Eval-DesignFlow-VrefcsMrrSeq-001	2026-11-05 20:06	
 1789975805926_42jk5					case	EDA-Eval-DesignFlow-VrefcsMrrSeq-001	2026-11-05 19:56	

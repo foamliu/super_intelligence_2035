@@ -1,0 +1,46 @@
+# dc_2026-10-30-20.08.51.log -- Design Compiler run log (excerpt, 768L)
+# ELABORATE / LINK
+Current design is 'hl22_porting_test_chip_v1'.
+Linking ...
+Linking complete.
+# UPF LOAD
+set_app_options -name upf.enable_golden_upf -value true
+Loading UPF file ./upf/test_chip_power.upf ...
+End loading UPF file.
+# MULTI-VOLTAGE CHECK
+check_mv_design -verbose
+Information: UPF-405 Primary supply VDD/VSS assumed for 13 ports. (UPF-405)
+Information: UPF-464 0 repeater cells inserted. (UPF-464)
+Information: UPF-214 0 isolation cells inserted. (UPF-214)
+Information: MV-238 0 level shifters inserted. (MV-238)
+Information: MV-239 0 retention cells inserted. (MV-239)
+check_mv_design: No Errors/Warnings Found.
+check_mv_design: No Errors/Warnings Found.
+check_mv_design: No Errors/Warnings Found.
+check_mv_design: No Errors/Warnings Found.
+check_mv_design: No Errors/Warnings Found.
+check_mv_design: No Errors/Warnings Found.
+check_mv_design: No Errors/Warnings Found.
+check_mv_design: No Errors/Warnings Found.
+check_mv_design: No Errors/Warnings Found.
+check_mv_design: No Errors/Warnings Found.
+check_mv_design: No Errors/Warnings Found.
+check_mv_design: No Errors/Warnings Found.
+check_mv_design: No Errors/Warnings Found.
+check_mv_design: No Errors/Warnings Found.
+check_mv_design: No Errors/Warnings Found.
+check_mv_design: No Errors/Warnings Found.
+# COMPILE
+compile_ultra -no_autoungroup -gate_clock
+Beginning Assignment-Pass.
+Beginning Optimization-Pass.
+Optimization complete.
+# WRITE
+write -format verilog -hierarchy -output ./synth/results/dc_2026-10-30-20.08.51/hl22_porting_test_chip_v1_postsyn.v
+# SAVE_UPF (supplemental => only deltas vs golden UPF)
+save_upf -supplemental -include_supply_exceptions ./synth/results/dc_2026-10-30-20.08.51/hl22_porting_test_chip_v1_dc.upf
+# REPORTS
+report_area   > ./synth/reports/dc_2026-10-30-20.08.51/hl22_porting_test_chip_v1.area.rpt
+report_timing > ./synth/reports/dc_2026-10-30-20.08.51/hl22_porting_test_chip_v1.timing.rpt
+report_power  > ./synth/reports/dc_2026-10-30-20.08.51/hl22_porting_test_chip_v1.power.rpt
+exit

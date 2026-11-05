@@ -1,0 +1,6 @@
+# .PG_DUMMY_for_Logic.config_A  —  fixture (cxmtG5_CIP)
+process = cxmtG5_CIP
+libName = ella_train
+topCell = AF_FsMrgNEnCount
+projName = decqa
+precision = 10000
