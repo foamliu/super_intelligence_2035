@@ -36,7 +36,7 @@ STATUS_JSONL=$SUPER/doc/ZhuLong_DAC2027/benchmark/designflow/cline_eval_status.j
 JUDGE=/tmp/judge_$TASK_ID
 
 CLINE=~/.local/bin/cline
-CLINE_TIMEOUT=1800   # 秒，单 case 上限（30min；覆盖正常 PASS 多在 ~1300s 内）
+CLINE_TIMEOUT="${CLINE_TIMEOUT:-1800}"   # 秒，单 case 上限（默认30min；可经 env 缩短以适配 shard 轮预算。覆盖正常 PASS 多在 ~1300s 内）
 # 🚨 r120 harness bug 修复：cline 自带 `--timeout` 在 v3.0.51 不可靠
 #   （r118 QualibTimingFix-001 设 1800s 实际跑了 2283s 才被外层 session 超时杀掉）。
 #   → 用 coreutils `timeout -s KILL` 在 OS 层硬杀，确保不超时。
