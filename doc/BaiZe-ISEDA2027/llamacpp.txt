@@ -333,6 +333,27 @@ llama-server 清理（按 PID 逐个 kill，非 pkill）：
    - undo_permute=True 是正确的（NORM-rope layout 供 NEOX RoPE 使用），无需改
    - 残留已清理：llama-server 11→0（旧 server 已 kill），GGUF 34G→13G（详见 §七）
 
+九、上游 PR 已提交（2026-11-05）
+--------------------------------
+PR 已正式提交到 llama.cpp 上游：
+
+  - PR URL   : https://github.com/ggml-org/llama.cpp/pull/31703
+  - 标题     : nemotron-h: fix RoPE and FFN activation for correct logits
+  - head     : foamliu:fix/nemotron-h-undo-permute-and-rope → base: master
+  - commit   : 5dc38db00（3 文件 +25/-7：src/llama-model.cpp / src/models/models.h / src/models/nemotron-h.cpp）
+  - fork     : foamliu/llama.cpp（ggml-org/llama.cpp 的 fork，凭 repo scope PAT 创建）
+
+  提交路径：fork ggml-org/llama.cpp → push 修复分支 → GitHub API 创建 PR。
+  PR 正文含：背景（BaiZe-2.2B Mamba2-hybrid，1-token 偏差 3.6 nats）、三 bug 逐条、
+  undo_permute 澄清、验证表（1-token Δ abs.mean 0.0008 / Δ max 0.006 / top-5 一致、
+  4-token top-10 一致、sciq+piqa 复判 4 项 |Δ|≤1pp）、文件清单、已知限制
+  （dt clamp 未修、MoE A_log 路径 bug 另报）。
+
+  后续待办：
+  - 跟进 CI / 维护者 review（可能要求补测试，或对 nemotron_h_moe 路径同样验证）。
+  - 两个 follow-up 单独立 PR：① dt clamp（softplus 后未 clamp ≥0.001，实测仅 1/64 head 影响）
+    ② conversion/nemotron.py MoE 路径 A_log 未取 -exp（不影响 dense BaiZe）。
+
 备注（数据来源）：
   - 速度数据：llama-bench（build 149f5641b，同机 .12，GGML_NATIVE=ON AVX）
   - 精度数据：iter_10000 F16 GGUF，sciq/piqa zero-shot limit=100
