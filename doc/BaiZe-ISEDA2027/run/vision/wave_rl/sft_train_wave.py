@@ -11,15 +11,18 @@ comes in Phase 2 RL.  Phase 1 focuses on learning the tool-use conversation
 pattern and measurement submission format.
 
 Model choice:
-  The operator task (S-yunweiling 2026-11-05) specifies a "2B MLLM".  The natural
-candidate is Qwen3-VL-2B-Instruct, but its architecture (qwen3_vl) is NOT
-recognized by transformers 4.56.1 in the current environment.  Upgrading
-transformers risks breaking the existing MLLM training infrastructure
-(stage1/1.5/2 for ArmE-R2 etc.).  Therefore we default to the proven
-Qwen3-4B-Instruct-2507 (model_type qwen3, already used by all BaiZe MLLM
-arms) with LoRA r=64 -- the same LoRA config used throughout the project.
-  The --model_path arg allows swapping to Qwen3-VL-2B once transformers is
-upgraded.
+  The operator task (2026-11-05) specifies a **2B MLLM**.  The natural candidate
+is Qwen3-VL-2B-Instruct, but its architecture (qwen3_vl) is NOT recognized by
+transformers 4.56.1.  Rather than upgrading transformers (which risks breaking
+the existing MLLM training infra for ArmE-R2), we extract the VL model's TEXT
+BACKBONE as a standalone Qwen3ForCausalLM (see extract_qwen3vl_2b_text.py).
+The text backbone is a plain Qwen3 decoder (1.72 B params, 28 layers,
+hidden=2048) that loads with transformers 4.56.1 -- no upgrade needed.  The
+LoRA adapter trained here will transfer to the full Qwen3-VL-2B in Phase 2
+(same text-backbone weights) once transformers is upgraded for multimodal RL.
+RoPE: the VL backbone uses mRoPE, but tf 4.56.1 falls back to standard RoPE;
+empirically coherent for short text-only SFT (verified generation test).
+Fallback: --model_path can point to Qwen3-4B-Instruct-2507 if needed.
 
 Hyperparameters (operator instruction 2026-11-05 Phase 1):
   - LoRA: rank=64, alpha=128, dropout=0.05 (same as Stage-1.5/2)
@@ -57,7 +60,11 @@ from peft import LoraConfig, get_peft_model, TaskType
 # ---------------------------------------------------------------------------
 # Configuration
 # ---------------------------------------------------------------------------
-LLM_PATH = "/nas_train/app.e0031982/models/Qwen/Qwen3-4B-Instruct-2507"
+# 2B text backbone extracted from Qwen3-VL-2B-Instruct (see extract_qwen3vl_2b_text.py).
+# Aligns with the task's "2B MLLM" spec; LoRA adapter transfers to Phase 2 VL model.
+LLM_PATH_2B = "/nas_train/app.e0031982/datasets/baize-vision/out/wave_sft_stage1w/qwen3vl_2b_text_extracted"
+LLM_PATH_4B_FALLBACK = "/nas_train/app.e0031982/models/Qwen/Qwen3-4B-Instruct-2507"
+LLM_PATH = LLM_PATH_2B
 DATA_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                          "sft_pilot_balanced.jsonl")
 OUTPUT_DIR = "/nas_train/app.e0031982/datasets/baize-vision/out/wave_sft_stage1w"
@@ -78,8 +85,9 @@ def parse_args():
     p = argparse.ArgumentParser(
         description="Stage-1W SFT for Wave RL (text-only tool-use)")
     p.add_argument('--model_path', type=str, default=LLM_PATH,
-                   help="HF model path (default: Qwen3-4B-Instruct-2507). "
-                        "Qwen3-VL-2B-Instruct requires transformers upgrade.")
+                   help="HF model path (default: 2B text backbone extracted "
+                        "from Qwen3-VL-2B-Instruct). Fallback: "
+                        "Qwen3-4B-Instruct-2507 (LLM_PATH_4B_FALLBACK).")
     p.add_argument('--data_file', type=str, default=DATA_FILE)
     p.add_argument('--output_dir', type=str, default=OUTPUT_DIR)
     p.add_argument('--lr', type=float, default=1e-5)

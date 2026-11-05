@@ -2198,3 +2198,35 @@ ngspice .raw 实测：`ngspice -b test.cir` → 646 点 × 3 变量 binary doubl
 
 **数字溯源**：`_dryrun_test.py` 实测输出（6/6 PASS）+ `latest_checkpointed_iteration.txt`=94000 + `sft_poll_*.log` tail。
 
+### §20.12 · 2B 文本骨干提取：Qwen3-VL-2B → 独立 Qwen3ForCausalLM（wake#620 · 2026-11-05 21:2x · CPU-only）
+
+**问题**：运维令指定「2B MLLM」，但 Qwen3-VL-2B-Instruct 的架构 `qwen3_vl` 不被 transformers 4.56.1 识别（`AutoConfig.from_pretrained` → `ValueError: does not recognize this architecture`）。此前（wake#611）退而用 Qwen3-4B-Instruct-2507——但 4B 的 LoRA adapter **无法迁移到 Phase 2 的 2B 模型**（尺寸不同），造成管线断裂。
+
+**发现**：Qwen3-VL-2B 的 `config.json` 含 `text_config`（`model_type=qwen3_vl_text`），其架构 = 标准 Qwen3 解码器（hidden=2048, layers=28, heads=16, kv_heads=8, tie_emb=True）。safetensors 内 625 个 tensor 分两组：`model.language_model.*`（310, 文本骨干）vs `model.visual.*`（315, 视觉塔）——可干净剥离。
+
+**方法**（`vision/wave_rl/extract_qwen3vl_2b_text.py`）：
+1. 取 `text_config`，remap `model_type→qwen3`、`architectures→["Qwen3ForCausalLM"]`、`rope_scaling→None`（丢弃 mRoPE section [24,20,20]，tf 4.56.1 本就忽略它，回退标准 RoPE）；
+2. 从 `model.safetensors` 提取 `model.language_model.*` 的 310 个 tensor，strip 前缀 → `model.safetensors`；
+3. 复制 tokenizer 5 文件（同 Qwen3 词表）；
+4. `--verify` 加载 + 生成测试。
+
+**实测结果**：
+
+| 项 | 值 |
+|:--|:--|
+| 加载模型类 | `Qwen3ForCausalLM` ✓ |
+| 参数量 | **1.72 B** |
+| 生成测试 | "What is 2+3?" → **"5"** ✓（标准 RoPE 下文本生成正常）|
+| 文本 tensor | 310（剥离 315 视觉 tensor）|
+| 提取产物路径 | `.../wave_sft_stage1w/qwen3vl_2b_text_extracted/`（3.3 GB）|
+
+**管线连贯性**：Phase 1 SFT 在 2B 文本骨干上训练 LoRA adapter → Phase 2 升级 transformers 后加载完整 Qwen3-VL-2B，将同一 LoRA adapter 载入其文本组件（同架构同权重）→ GRPO 多模态 RL。消除了 4B→2B 断裂。
+
+**RoPE 风险评估**：VL 骨干用 mRoPE，提取后用标准 RoPE（mrope_section 被忽略）。对于纯文本短序列 SFT（轨迹 ~350-1700 tokens），标准 RoPE 与 mRoPE 在一维位置下行为相近；LoRA 微调可适配位置编码差异。生成测试通过（"5"）证实模型未退化。
+
+**SFT 脚本更新**：`sft_train_wave.py` 默认 `LLM_PATH` 从 4B 改为 2B 提取路径；`LLM_PATH_4B_FALLBACK` 保留 4B 作为备选。poller（PID 2757742）使用脚本默认值 → GPU 释放后自动用 2B 训练。`_dryrun_test.py` 同步改用 2B tokenizer，6/6 PASS。
+
+**交付物**：`vision/wave_rl/extract_qwen3vl_2b_text.py`（提取脚本，--verify 通过）+ `sft_train_wave.py` 默认模型改 2B + `_dryrun_test.py` 同步 + 提取产物 `qwen3vl_2b_text_extracted/` + 本节。
+
+**数字溯源**：`extract_qwen3vl_2b_text.py --verify` 实测输出 + `_dryrun_test.py` 6/6 PASS + safetensors key 计数（310/315）+ `config.json` text_config 字段。
+

@@ -2,7 +2,9 @@
 
 WAITING: 0
 
-> 🆕 **【wake #619 · 2026-11-05 21:1x】CPU 端到端 dry-run 验证 6/6 PASS + nsteps 修正 + pretrain ETA**。GPU仍100%（.12+.29 16卡全占 R9 pretrain iter 94000/700000=13.4% ETA≈19.7天）。CPU-only交付：① `wave_rl/_dryrun_test.py` 新建——6/6 PASS（tokenizer/conversation_to_text/tokenization+loss_mask/collate_fn/WaveSFTDataset 9013条/error_recovery 1789条19.8%），验证完整SFT数据管线无bug；② `sft_train_wave.py` `--nsteps` default 2000→**3000**（匹配§20.10推荐2.66 epoch/2-3ep目标，run_sft_wave.sh不传参将自动用3000）；③ EXPERIMENTS §20.11。SFT poller PID 2757742 alive（flock独占锁，60s轮询，日志busy_util--waiting）。📦 体积：TASK=30.5KB / MEMORY=17.5KB（归档11条空唤醒#589~#599→daily-memories，均≤32KB✓）。**未完成指令：有**（阶段1 GPU训练+阶段2/3未交付）⇒ **WAITING: 0**。
+> 🆕 **【wake #620 · 2026-11-05 21:2x】2B 文本骨干提取：Qwen3-VL-2B → 独立 Qwen3ForCausalLM（1.72B）· 消除 4B→2B 管线断裂**。GPU仍100%（.12 8×H100 R9 pretrain iter 94000/700000 ETA≈19.7天）。CPU-only交付：① `wave_rl/extract_qwen3vl_2b_text.py` 新建——从 Qwen3-VL-2B-Instruct 剥离文本骨干（310 tensor / 跳过315视觉tensor），remap config qwen3_vl→qwen3，rope_scaling=None（弃mRoPE），`--verify` 加载 Qwen3ForCausalLM **1.72B** + 生成测试 "What is 2+3?"→"5" PASS；② `sft_train_wave.py` 默认 LLM_PATH 4B→**2B提取路径**（`LLM_PATH_4B_FALLBACK` 保留4B备选）——Phase 1 LoRA 可迁移到 Phase 2 VL 模型（同架构同权重）；③ `_dryrun_test.py` 同步改用2B tokenizer，6/6 PASS（9013条/1789 error_recovery）；④ EXPERIMENTS §20.12。SFT poller PID 2757742 alive（flock，日志busy_util--waiting），GPU释放后自动用2B训练。📦 体积：TASK≈30.5KB / MEMORY≈18.5KB（均≤32KB✓）。**未完成指令：有**（阶段1 GPU训练+阶段2/3未交付）⇒ **WAITING: 0**。
+
+> 📦 wake #619（CPU dry-run 6/6 PASS + nsteps 3000）已归档 → daily-memories-vision/2026-11-05.md；**结论**：SFT数据管线端到端验证无bug，nsteps=3000。需要时再读。
 
 > 📦 wake #617（数据扩充+独立评测脚本+CPU端到端验证）已归档 → daily-memories-vision/2026-11-05.md；**结论**：新增2类电路→sft_pilot_7500.jsonl 7513条 + eval_sft_wave.py 260行 + sft_holdout_500.jsonl 582条 + CPU验证7/7 PASS。需要时再读。
 
@@ -94,10 +96,10 @@ WAITING: 0
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | 🟡 **波形 RL 阶段0交付(YELLOW) + 阶段1 SFT脚本+数据就绪(9013条均衡) + 阶段2 GRPO+评测脚手架就绪 + WaveQA-RL oracle ceiling 300题验证(wake#614) + CPU dry-run 6/6 PASS(wake#619)**。SFT数据管线端到端验证无bug，nsteps=3000(2.66ep)。**唯一** SFT poller(PID 2757742, flock) 后台运行等GPU空闲。阶段1 GPU训练 + 阶段2/3未交付。**WAITING: 0** |
+| PHASE | 🟡 **波形 RL 阶段0交付(YELLOW) + 阶段1 SFT脚本+数据就绪(9013条均衡) + 阶段2 GRPO+评测脚手架就绪 + WaveQA-RL oracle ceiling 300题验证(wake#614) + CPU dry-run 6/6 PASS(wake#619) + 2B文本骨干提取1.72B(wake#620)**。SFT默认模型从4B改为2B文本骨干（消除管线断裂）。**唯一** SFT poller(PID 2757742, flock) 后台运行等GPU空闲。阶段1 GPU训练 + 阶段2/3未交付。**WAITING: 0** |
 | WAITING | 0 |
-| 已完成 | CPU dry-run 6/6 PASS(wake#619) · 数据集均衡化9013条(wake#618) · WaveQA-RL oracle ceiling 300题(wake#614) · 重复poller清理+flock守卫(wake#613) · 波形RL阶段2GRPO+评测脚手架(wake#612) · 波形RL阶段1SFT脚本(wake#611) · 波形RL阶段1数据pipeline(wake#610) · 波形RL阶段0(wake#609) · 论文改稿(wake#437~#442) · 波形RL计划书(wake#435) · 波形报告(wake#424) · OCR合成10M(wake#275) · ArmE-R2/ArmD-R2 全链路 |
-| 当前动作 | **唯一** SFT poller(PID 2757742, flock守卫) 后台运行等GPU空闲·CPU dry-run验证通过·数据集已均衡(9013条/7类)·WaveQA-RL oracle ceiling已验证(300题mean=1.000)·GRPO+评测待SFT checkpoint |
+| 已完成 | 2B文本骨干提取1.72B(wake#620) · CPU dry-run 6/6 PASS(wake#619) · 数据集均衡化9013条(wake#618) · WaveQA-RL oracle ceiling 300题(wake#614) · 重复poller清理+flock守卫(wake#613) · 波形RL阶段2GRPO+评测脚手架(wake#612) · 波形RL阶段1SFT脚本(wake#611) · 波形RL阶段1数据pipeline(wake#610) · 波形RL阶段0(wake#609) · 论文改稿(wake#437~#442) · 波形RL计划书(wake#435) · 波形报告(wake#424) · OCR合成10M(wake#275) · ArmE-R2/ArmD-R2 全链路 |
+| 当前动作 | **唯一** SFT poller(PID 2757742, flock守卫) 后台运行等GPU空闲·SFT默认模型已改为2B文本骨干(1.72B)·CPU dry-run 6/6 PASS·数据集已均衡(9013条/7类)·WaveQA-RL oracle ceiling已验证(300题mean=1.000)·GRPO+评测待SFT checkpoint |
 | 下一步 | 阶段1 SFT训练（~4 GPU·h，GPU空闲后poller自动启动，3000 steps≈2.66 epoch）→ 达标后进阶段2 GRPO（~12 GPU·h）+ WaveQA-RL评测 + 运维协调.75 WaveView |
 | 阻塞 | .12+.29 GPU全占（16×H100 100%，2节点pretrain mamba2 baize2b PID 2612442 iter 94000/700000 ETA≈19.7天≈11/25）· .75 SSH不可达（需运维协调MCP通道） |
-| 更新 | **2026-11-05 21:1x (wake #619)**: CPU dry-run 6/6 PASS + nsteps 2000→3000 + pretrain ETA≈19.7天·归档11条空唤醒·体积TASK30.5KB/MEMORY17.5KB·WAITING=0 |
+| 更新 | **2026-11-05 21:2x (wake #620)**: 2B文本骨干提取(Qwen3-VL-2B→Qwen3ForCausalLM 1.72B, 生成"5"PASS) + sft_train_wave.py默认4B→2B + dry-run 6/6 PASS + EXPERIMENTS §20.12·GPU仍100% ETA≈19.7天·体积TASK30.5KB/MEMORY18.5KB·WAITING=0 |

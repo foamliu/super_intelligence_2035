@@ -15,7 +15,7 @@ from sft_train_wave import (
 )
 from transformers import AutoTokenizer
 
-LLM_PATH = "/nas_train/app.e0031982/models/Qwen/Qwen3-4B-Instruct-2507"
+LLM_PATH = "/nas_train/app.e0031982/datasets/baize-vision/out/wave_sft_stage1w/qwen3vl_2b_text_extracted"
 DATA_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                          "sft_pilot_balanced.jsonl")
 
