@@ -5,7 +5,7 @@ round: 133
 📊 trace 覆盖率：131/1369=9.6%（r133 交付 AutoViaPwrFillRemove-001；ledger 248:case 131·parked 117·claimed 0；layout_virtuoso 29）
 🎯 通过率: shard C 累计 131 case 已落 jsonl（pi/cline 实跑数见 cline_eval_status.jsonl，B 档目标 20–30%）
 🧾 断言: k_rationale=k_check ✓（131/131 达标，rewrite_queue 已清；r133 AutoViaPwrFillRemove k=16）
-📦 体积：TASK≈17KB / MEMORY_C≈27KB（<32KB ✓，r131 已归档至批次 134）
+📦 体积：TASK≈17KB / MEMORY_C≈31KB（<32KB ✓，r131 已归档至批次 134）
 🛠 DEBT: 0（r133 按时交付 AutoViaPwrFillRemove-001）
 
 
