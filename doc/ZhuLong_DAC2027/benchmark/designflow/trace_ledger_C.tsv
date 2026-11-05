@@ -253,4 +253,4 @@
 1790128216866_kbs81.messages.json	e02141	hfeg0pkn002	96	layout_aether	case	EDA-Eval-DesignFlow-SWBProjCreate-001	2026-11-05 19:05	
 1792215882223_qv6pl	adaml	hfeg0pkn001	324	layout_aether	parked		2026-11-05 19:17	wrong domain: waveview/fsdb spice_sim skill dev, not layout/physical_verify
 1789959794365_pet0x					case	EDA-Eval-DesignFlow-DrcPatternReportComposer-001	2026-11-05 19:33	
-1786066403760_tgnc6	e0014566	hfeg0pkn001	251	pg_layout	claimed		2026-11-05 20:02	
+1786066403760_tgnc6	e0014566	hfeg0pkn001	251	pg_layout	case	EDA-Eval-DesignFlow-RsRedFlowOrchestrator-001	2026-11-05 20:21	

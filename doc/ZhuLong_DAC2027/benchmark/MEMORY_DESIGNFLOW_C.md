@@ -1,12 +1,12 @@
 WAITING: 0
 SHARD: C (physical_layout)
 DOMAINS: layout_aether, layout_virtuoso, pg_layout, physical_verify
-round: 138
-📊 trace 覆盖率：136/1369=9.9%（r138 已交付 DrcPatternReportComposer-001 physical_verify；ledger 255:case 136·parked 119·claimed 0；r138 parked qv6pl waveview 域误配）
-🎯 通过率: shard C 累计 136 case 已落 jsonl（pi/cline 实跑数见 cline_eval_status.jsonl，B 档目标 20–30%）
-🧾 断言: k_rationale=k_check ✓（136/136 达标，rewrite_queue 已清；r138 DrcPatternReportComposer k=14）
-📦 体积：TASK≈17KB / MEMORY_C≈24KB（<32KB ✓）
-🛠 DEBT: 0（r138 已交付 DrcPatternReportComposer-001）
+round: 139
+📊 trace 覆盖率：137/1369=10.0%（r139 已交付 RsRedFlowOrchestrator-001 pg_layout；ledger 256:case 137·parked 119·claimed 0）
+🎯 通过率: shard C 累计 137 case 已落 jsonl（pi/cline 实跑数见 cline_eval_status.jsonl，B 档目标 20–30%）
+🧾 断言: k_rationale=k_check ✓（137/137 达标，rewrite_queue 已清；r139 RsRedFlowOrchestrator k=14）
+📦 体积：TASK≈17KB / MEMORY_C≈25KB（<32KB ✓）
+🛠 DEBT: 0（r139 已交付 RsRedFlowOrchestrator-001；pg_layout 域 20→21 仍偏少，下轮继续优先 pg_layout/layout_virtuoso 非 xinqiaoz trace）
 
 
 - **轮(138) 已交付 EDA-Eval-DesignFlow-DrcPatternReportComposer-001（physical_verify, B-档 synthesized, L1）✓** —— trace=1789959794365_pet0x（xinqiaoz @ hfeg0pkn004, mc=310, 219 msgs/640KB, agent cline lead）。真实场景：PDK QA Pattern DRC 系统 `DrcPatternCheck.py` 维护会话；用户 msg23 诊断「legacy bad-only cell（无 good cell 配对）报告显示 Good Existing=-1」，agent 给出完整因果链（getTargetCellPair legacy fallback 返回 (legacyCell,None) → good 侧 second calibre 未跑 → ruleResults 无 good 键 → report 段 goodExisting 保持初值 -1）；msg45 用户令「改成 0，无需区分，bad-only 没 good cell 是预期，请改代码，先备份到 .tmp」。合成 B 档：SUT 写 `drc_pattern_report.py`（CLI `<run.json>`，解析 calibre second-check drc.summary 文本 `^RULECHECK\s+(\S+)\s+\.+\s+TOTAL Result Count = (\d+)\s+\(\d+\)$`，CHECK1=existing/CHECK2=waive原始/CHECK3=incomplete原始，对每 rule 算 good_existing(初值0=修正)/bad_missing/incomplete + 三态判定 fail/waive/pass/error，stdout JSON {design,rows,summary}）。gold=solution.py。**判分**：check.py 在 3 隐藏 B(B1 混合 bad-only+成对+waive+error/B2 跨输入守卫全成对不同名验不含 A rule 名/B3 边界 bad-only 缺 CHECK2/3→incomplete=-1 + 成对 good_summary 缺 CHECK1 行→good_existing=-1 与 bad-only 0 区分)上 subprocess 真跑 SUT。**14 条断言**①-⑭(k=14,a-n)：①(a)zip+py_compile ②(b)无参exit1 ③(c)不存在文件exit1 ④(d)坏JSON exit1 ⑤(e)B1 exit0+合法JSON+rows数对 ⑥(f)bad-only good_existing==0(修正非-1) ⑦(g)成对 good_existing==good CHECK1 ⑧(h)bad_missing==bad CHECK1 ⑨(i)三态status全对 ⑩(j)summary计数全对 ⑪(k)B2跨输入守卫good_existing对+无A名泄漏 ⑫(l)B3边界 incomplete=-1/缺CHECK1→-1/无bad_summary→bad_missing=-1 ⑬(m)确定性B1两次逐字节一致 ⑭(n)退化空rules+缺rule字段exit1。自验：ref PASS 14/14 + negative_selftest 4负全FAIL(empty→e/print→k/always_pass→h+i+j/no_default_fix→f 复现原bug-1) + §4.9三假全FAIL(空壳→e/只print→k/删核心→h+i+j)；test字段md5==磁盘check.py(a71cb9348e76178d7c826187022f65fd). k_rationale=k_check=14>=8 GATE PASS. physical_verify域+1. r138 选料先误选 qv6pl(adaml mc=324, kw含aether/virtuoso/calibre但实际是 waveview FSDB reader skill 开发→域误配)已 parked 改选 pet0x(calibre:182+pdk:808+.gds:66 真实 PV). trace_deepreads/sid_1789959794365_pet0x_drc_pattern_report.md。
