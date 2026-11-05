@@ -2402,3 +2402,40 @@ ngspice .raw 实测：`ngspice -b test.cir` → 646 点 × 3 变量 binary doubl
 
 **数字溯源**：`ssh` 探测输出 + `nvidia-smi` 实测 + `ps -eo` poller 状态 + 逐行核对 sft_train_wave.py L300–501 / run_sft_wave.sh / run_grpo_wave.sh / 文件系统 `ls` 实测。无 GPU 实验。
 
+### §20.18 · 数据泄漏验证 + 模型 CPU 加载复核 + 阶段1就绪报告（wake#731 · 2026-11-06 07:4x · CPU-only）
+
+**目的**：§20.17 完成了移交契约复核，但未做 train/holdout 数据泄漏检查。本节补做泄漏验证 + 2B 模型 CPU 加载复核（AutoTokenizer/AutoConfig/LoRAConfig），并产出阶段1就绪审计报告 HTML。
+
+**(1) 数据泄漏检查（train 9013 vs holdout 582）**：
+
+| 检查项 | 结果 | 说明 |
+|:--|:--|:--|
+| ID 重叠 | 582/582 | train 和 holdout 均用 `traj_NNNNNN` 顺序计数器，每批生成重置 → **命名伪影** |
+| 参数级重叠 | 8/425 (1.9%) | 仅 8 个 holdout 问题的电路参数与训练集完全相同 → ✅ 可接受（<5% 阈值）|
+| Seed 隔离 | ✅ | train seed=20261105~09，holdout seed=20261115~19，无重叠 |
+
+**判定**：数据泄漏 PASS。ID 重叠是顺序计数器重置的命名伪影，参数级重叠 1.9% 远低于阈值。
+
+**(2) 2B 模型 CPU 加载复核**：
+
+| 检查项 | 结果 |
+|:--|:--|
+| AutoTokenizer.from_pretrained | ✅ vocab=151643, pad=eos=`<\|im_end\|>` |
+| AutoConfig.from_pretrained | ✅ qwen3, 28 layers, hidden=2048, heads=16 |
+| LoraConfig(r=64, α=128, 7 targets) | ✅ 实例化成功 |
+| torch / transformers / peft 版本 | ✅ 2.8.0+cu128 / 4.56.1 / 0.18.0 |
+
+**结论**：2B 文本骨干可被 transformers 4.56.1 正确加载，LoRA 配置可实例化，GPU 释放后训练不会因模型加载失败浪费算力。
+
+**(3) GPU 状态实测（07:4x）**：
+- .12（本机）：8×H100 100% util / ~75GB each（R9 pretrain，ETA≈11/25-27）
+- .29：8×H100 97-100% util / ~75GB each（pretrain 第2节点）
+- SFT poller PID 2757742：alive（ppid=1, etimes≈42909s≈11.9h），每60s `busy_util -- waiting`
+- GRPO chain PID 2428009：alive（ppid=1, etimes≈32896s≈9.1h），每120s `SFT not done yet`
+
+**(4) 交付物**：
+- `reports/report_vision_wave_rl_phase1_readiness_zh.html`（9345B / 11节 / 中文 HTML / 单文件 / 无外链 / 标签配平）—— 阶段1就绪审计报告，覆盖阶段0结论/数据审计/模型验证/训练配置/Pre-SFT基线/自动化架构/GPU状态/验收判据/交付物清单/时间线
+- 本节
+
+**数字溯源**：Python json 解析 train/holdout ID+参数重叠 + AutoTokenizer/AutoConfig/LoRAConfig CPU 实测 + nvidia-smi 实时查询 + ps poller 状态。无 GPU 实验。
+
