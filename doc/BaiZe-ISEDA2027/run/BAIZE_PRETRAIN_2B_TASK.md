@@ -53,56 +53,12 @@
 
 **④ 纪律**：🚫 不碰 GPU（`CUDA_VISIBLE_DEVICES=""`）；🚫 不影响 S1（`-t 8`、`nice -n 19`、两机 CPU ≤80%）；🚫 禁止 `pkill python`/宽泛 kill；不碰 vision/data/harness；commit `pretrain eval:`；心跳写 `未完成指令：有` ⇒ `WAITING: 0` 直到报告交付。
 
-### [运维令] 2026-11-04 22:1x（**llama.cpp 调试「每环节必须落盘」+ 清理残留**）· 用户直令 · 最高优先
-
-> 用户原话（2026-11-04 22:1x）：「给 pretrain 下『每环节必须落盘 + 清理残留』的指令。」
-> 触发事实（运维 22:00 中继实测）：14:05–21:43 有一个 cline 会话连续跑 **5.9h**，`llama.cpp` 工作区 **零改动、零提交**；21:43 新会话又从 RMSNorm/eps 重新查起。⇒ 本轮先解决「工作不可见 / 重复劳动」，再继续 14:0x 的定位与 PR。
-
-**① 每环节必须落盘（硬性，违反即视为未完成）**
-把 14:0x 的定位拆成 5 个检查点，**每完成一个就必须落盘 + commit**，不许攒到最后：
-- A. group 展开语义（`repeat` vs `repeat_interleave`，n_groups=8；`ssm_scan_f32` 的 `g=h/(nh/ng)`、B/C 的 `view_4d`）
-- B. conv1d 维度与顺序（`conv→+bias→silu`；d_inner=4096 / d_state=128 / n_group=8 ⇒ 6144）
-- C. dt 投影 + softplus + **dt_clamp(min/max)**（已发现 llama.cpp 可能未 clamp，优先收口）
-- D. RMSNormGated（eps=1e-5、`mamba-base.cpp:292` 的 reshape/ne 顺序）
-- E. 逐层 hidden dump，定位首个偏差层
-
-每个检查点写入 `doc/BaiZe-ISEDA2027/llamacpp.txt` §6 的表格（一行一项）：
-`检查点 | 假设 | 命令/文件行号 | 实测结果 | 判定(PASS/FAIL/待验) | 下一步`
-- **commit 前缀 `pretrain llamacpp-probe:`**，只 `git add` 明确文件（`llamacpp.txt` + MEMORY + daily）。
-- **单会话超过 90 分钟仍无 commit ⇒ 先停下，把当前发现落盘并 commit，再继续**；会话被截断前必须至少留下一条检查点记录。
-- 每个新唤醒**先读 `llamacpp.txt` §6 表格**：已判定 PASS/FAIL 的检查点不许重跑，只做「待验」项。
-
-**② 清理残留（只清本项目、只按 PID）**
-- 先盘点：`ps -eo pid,lstart,etimes,pcpu,rss,args | grep llama-server`，记下 PID/端口/模型/启动时间。
-- **保留当前正在用的 1 个**（若有），其余全部 `kill <PID>`；10 秒后仍在的再 `kill -9 <PID>`。🚫 禁止 `pkill` / `pkill -f` / 按名字批量杀（18:39 红线）。
-- GGUF 去重：对 `/tmp/baize_*.gguf` 计算 `md5sum` + 大小，**只删除与保留副本完全相同的重复文件**；至少保留 `/tmp/baize_iter10000_f16.gguf` 与 f32 各一份；🚫 不删 `/nas_train/.../models/` 下的正式 GGUF、不删 `hf_iter_*` / ckpt。
-- 清理前后各记一次：`pgrep -fc llama-server`、`du -ch /tmp/baize_*.gguf | tail -1`、`df -h /tmp`，写进 MEMORY。
-- 清理只做一次；完成后在 `llamacpp.txt` §7 记「残留已清」+ 保留清单。
-
-**③ 交付与纪律**
-- 交付：① `llamacpp.txt` §6 检查点表（A–E 至少 3 项有结论）② 清理报告（前后计数 / 释放空间 / 保留清单）③ MEMORY 顶部 1 条状态 + 当日 daily ④ 若已定位 bug，按 14:0x 令给修复 diff + PR 草稿（先报告等确认）。
-- 纪律不变：`CUDA_VISIBLE_DEVICES=""`；`-t 8`、`nice -n 19`、CPU ≤80%；🚫 不碰 GPU/S1、不碰其他线；结果 JSON 不入库；心跳写 `未完成指令：有` ⇒ `WAITING: 0`。
+> 📦 §运维令 2026-11-04 22:1x（llama.cpp 调试每环节落盘 + 清理残留）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md「归档 2026-11-05 第六批」节；**结论**：✅ A-E 检查点全有结论(A/B/D=PASS, C=FAIL dt-clamp 影响小 1/64 head), 残留已清(llama-server 11→0, GGUF 34G→13G), 根因已定位。需要时再读。
 
 
-### [运维令] 2026-11-04 14:0x（**继续调试：定位 llama.cpp 映射 bug 的具体环节，修复并贡献 PR**）· 用户直令 · 最高优先
 
-> 用户原话（2026-11-04）：「安排 pretrain 继续调试，争取解决这个问题，给 llama.cpp 贡献 PR。」（friend 复核：定案已到「错误类型=映射/计算错误」，但「具体哪个环节」尚未收口，需逐层定位。）
+> 📦 §运维令 2026-11-04 14:0x（定位 llama.cpp 映射 bug + 修复 + PR）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md「归档 2026-11-05 第六批」节；**结论**：✅ 根因=GGUF converter 全权重逐张量对照发现混合架构权重错位→级联放大 3.6 nats; Mamba2 层 A/B/D PASS; 修复后 logits Δmax=0.006; PR #31703 已提交 https://github.com/ggml-org/llama.cpp/pull/31703; dt-clamp follow-up 待单独 PR。需要时再读。
 
-**① 背景（已定案的部分）**：logits 1-token 即偏 3.6 nats（`"Hello"` 后 HF top -0.78 vs llama.cpp -4.38），已排除「F16 递归累积精度」，锁定为「映射/计算错误」。裁决「当前不采纳」不变。**本轮要做的 = 把「映射错误」收口到「具体哪一步」，修复之，并产出可提交上游的 PR。**
-
-**② 排查优先级（friend 提供的历史 bug 先例，运维已验，按此顺序）**：
-1. **group 展开语义（最高嫌疑）**：HF Mamba2 早期用 `torch.repeat`（tile 模式 `[W,X,Y,Z,W,X,Y,Z,...]`）是 bug，正确语义是 `repeat_interleave`（`[W,W,W,W,X,X,X,X,...]`）；Nemotron-H 的 Mamba2 mixer 有过对应 `repeat→repeat_interleave` 修复。BaiZe `n_groups=8`。对照 `ggml/src/ggml-cpu/ops.cpp` 的 `ssm_scan_f32` 里 `g = h / (nh/ng)`（repeat_interleave 语义）是否正确、以及 `src/models/mamba-base.cpp` 的 `build_mamba2_layer` 里 B/C 的 `view_4d(..., d_state, n_group, ...)` 是否与 reference 一致。
-2. **conv1d 维度**：llama.cpp Nemotron-H 早期有 conv 维度 bug（`ggml_ssm_conv` 断言的 `ne[1]=17728` vs 期望 `d_inner=12288`，PR #15572 相关；后 fix 用实际值 12288）。核对当前 `build_mamba2_layer` 里 `conv` 的 reshape 与 `d_inner + 2*n_group*d_state` 展开是否正确，BaiZe 实际 d_inner=4096、d_state=128、n_group=8 ⇒ `2*8*128=2048`，`d_inner+2048=6144`，需对照 reference 该维度。
-3. **dt 投影 / softplus 映射**：`mamba_dt_min=0.001, mamba_dt_max=0.1` 的 softplus 对称映射是否与 HF 一致（`ggml_compute_softplus_f32` + `expf(dt_soft_plus * A[h])`）。
-4. **逐层 dump 定位首个偏差层**（friend 最有效手段）：1-token prompt，逐层 dump hidden state，找出「第一层 Mamba2 之后即偏」还是「第 1 层一致、后续放大」→ 前者锁 `build_mamba2_layer`，后者查层间传递/attention 路径。
-
-**③ 修复与 PR**：
-- 定位到具体 bug 后：改 `src/models/mamba-base.cpp` / `ggml/src/ggml-cpu/ops.cpp`（或 nemotron-h.cpp），重编译 → 重跑 1-token logits 对齐（目标 |Δ|→0），再重跑 sciq/piqa limit=100 与 HF 对照（目标 Δ≤1pp）。
-- **PR**：修复确认后，按 llama.cpp 贡献规范整理 commit + PR 描述（背景：Mamba2-hybrid n_groups=8 / 现象 1-token logit 偏差 3.6 nats / 根因 / 修复 / 前后 logits+lm_eval 对照），提交到 `/nas_train/app.e0031982/code/llama.cpp` 的 fork/branch（🚫 直接 push master）；落地前先报告 PR 草稿等用户确认再发。
-
-**④ 交付**：① 定位结论（具体是哪个环节 + 证据：首偏差层/逐层 logit 对照）② 修复 diff + 重编后 1-token 对齐结果 + sciq/piqa 复判 Δ ③ PR 草稿（等确认）④ 更新 `llamacpp.txt` §6：标题「定案」改为「定案（错误类型）」，补「具体环节已定位为 X」，§7 裁决同步。
-
-**⑤ 纪律**：🚫 不碰 GPU（`CUDA_VISIBLE_DEVICES=""`）；🚫 不影响 S1（`-t 8`、`nice -n 19`、两机 CPU ≤80%）；🚫 禁止 `pkill python`/宽泛 kill；不碰 vision/data/harness；commit `pretrain eval:`；心跳写 `未完成指令：有` ⇒ `WAITING: 0` 直到交付。
 
 > 📦 §运维令 2026-11-04 13:2x（logits 逐 token 对齐定案）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md「归档 2026-11-04 第五批」节；**结论**：✅ 1-token 即偏 3.6 nats，定案=映射/计算错误（非精度累积），llamacpp.txt §6+§7 已更新，commit eca8b7f49。需要时再读。
 
@@ -110,33 +66,8 @@
 
 > 📦 §运维令 2026-10-29 14:1x（整理并提交 baize-llm 独立仓库）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：✅ commit e1c6be4 pushed to origin/master，28 files（README 19.6KB + configs/9 + scripts/18 + docs/2 + .gitignore），symlink 已删除+纳入 .gitignore，ls-remote 匹配。需要时再读。
 
-### [运维令] 2026-11-02 11:1x（**CPU 评测 5 个 checkpoint 的常识推理 8 集（1w–5w 步），先估 ETA**）· 用户直令 · 最高优先
+> 📦 §运维令 2026-11-02 11:1x（CPU 评测 5 ckpt 8 集）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md「归档 2026-11-05 第六批」节；**结论**：✅ 5/5 CPU HF float32 eval 完成, 报告 report_pretrain_cpu_eval_8sets_zh.html(44KB)已交付, 被 11-05 llama.cpp 修复管线取代。需要时再读。
 
-> 🧭 **运维提示（2026-11-02 16:0x）——CPU 冒烟卡点的根因已定位，别再在 dtype/device_map 上绕**：
-> export 已完成（`hf_iter_10000/18000/20000/30000/40000` 都在，safetensors 完整），**卡点在 HF 模型加载报错**：`p6_tf5` 的新版 transformers（含 `nemotron_h`）要求 `mamba_dt_limit`（→HF 侧 `time_step_limit`）是 **tuple**，但 `export_hf.sh` 生成的 `config.json` 里写成了 **JSON list** `["mamba_dt_limit": [0.0, "inf"]]`，触发 `huggingface_hub` strict 校验：`expected a tuple, got list`。
-> **修法（很小）**：改 `config.json`（或 `/nas_train/app.e0031982/code/BaiZe-ISEDA2027/convert_mcore_to_hf.py` 的 config 写出逻辑），把 `mamba_dt_limit` 写成 HF 能接受的形态——最简单是**直接删掉 `config.json` 里这个字段**让它用默认（`time_step_limit=inf`），或改为 `[0.0, null]`/对应 tuple；改完重新 `python -c "from transformers import NemotronHForCausalLM; ..."` 在 CPU 加载验证 PASS 再继续。注意 vllm env 的 transformers 4.57 不认 nemotron_h，必须用 py310 + `PYTHONPATH=p6_tf5` 前置。修正后可跳过重复 export，直接在此 config 上冒烟测速 → 报 ETA。
-
-> 用户原话（2026-11-02 11:1x）：「先用 CPU 评测 5 个检查点：1w–5w 步各一个。需要先估 ETA（多少时间，多少 CPU 核等）。」
-
-**① 现状（运维已核）**：
-- **GPU 全满**：`.12`+`.29` 各 8 卡 100% util、~75GB/卡，全被 S1 占用；**评测必须纯 CPU，🚫 不许碰 GPU**。
-- **checkpoint 齐备**：`nemo_experiments/baize2b/checkpoints/` 下 `iter_0010000/0020000/0030000/0040000/0050000` 均存在（5000 步一档，save_interval=2000，故 10000/20000/30000/40000/50000 全有）。
-- **HF 导出脚本就绪**：`baize-llm/scripts/export_hf.sh <iter>`（mcore distcp → HF safetensors，CPU 操作，产出 `hf_iter_<iter>/`）。已有 `hf_iter_18000`（4.4GB）作样例。
-- **评测链已通（历史 P-6）**：环境 = `PYTHONPATH=/nas_train/app.e0031982/code/BaiZe-ISEDA2027/p6_tf5`（transformers 5.17 含 NemotronHForCausalLM）+ `vllm` env 的 lm_eval 0.4.13；脚本 `run/baize_p6_lmeval.sh`（`--model hf` + `dtype=bfloat16`）。⚠️ 原脚本**走 GPU**，CPU 评测需改 `device=cpu`。
-- **8 集**（Aligned Xmodel-2 Table 2，zero-shot，与 P-6 同口径）：`arc_challenge,arc_easy,boolq,hellaswag,openbookqa,piqa,sciq,winogrande`（同一 Avg）。
-- **CPU 资源**：两机各 224 核。
-
-**② 本轮必做（先估 ETA 再全量，不许跳过）**：
-1. **export 5 个 ckpt**：`for it in 10000 20000 30000 40000 50000; do bash baize-llm/scripts/export_hf.sh $it; done`。记**单个 export 实测耗时**（`export_hf.sh` 内 `check_rope.py` 若加载模型，务必 `device=cpu`/`CUDA_VISIBLE_DEVICES=""`，别抢 GPU）。
-2. **CPU 冒烟 + 测速**：改 `baize_p6_lmeval.sh` 为 `device=cpu`（`--model_args "pretrained=...,dtype=bfloat16,device=cpu"`），先 `--limit 8` 冒烟（8 任务 × 8 样本）确认 CPU 跑通+出分，再测**单集全量 CPU 耗时**（hellaswag ~40k 样本、arc_easy ~5.7k 等大头）→ 反推「8 集全量 / 5 ckpt」的总耗时。
-3. **报 ETA（先回报，不直接全量）**：给 ① 5×export 耗时 ② 单集 CPU 全量耗时 ③ 8集×5ckpt 总墙钟 ④ 推荐 CPU 核数/并行度（每 ckpt 用多少核、8 集是否多进程并行） ⑤ 是否 24h 内可完成。写进 `MEMORY_PRETRAIN_2B.md` 心跳回报。
-4. **ETA 确认后全量评测**：5 ckpt × 8 集 CPU 评测，结果落 `nemo_experiments/baize2b/lm_eval_results/`。
-
-**③ 交付**：① 5×8 集汇总表（Avg + 逐集）+ 对照 P-6 起点 0.4395@20k/655M + Xmodel-2/Phi-1.5 参照线；② 能力-vs-step 曲线数据（1w~5w 五点）；③ `reports/report_pretrain_cpu_eval_8sets_zh.html`（中文 HTML，0 script/0 外链）；④ 日报。
-
-**④ 纪律**：🚫 不碰 GPU（`device=cpu` 硬性、必要时 `CUDA_VISIBLE_DEVICES=""`）；🚫 不影响 S1（CPU eval 线程数别挤训练进程，可 nice）；不碰 vision/data/harness；commit `pretrain eval:`；心跳写 `未完成指令：有` ⇒ `WAITING: 0` 直到报告交付。
-
-**⑤ ⚠️ 机器分工（2026-11-02 用户补令 · 硬性）**：本轮 5 ckpt 的 export + CPU 评测**可以用 `.12` + `.29` 两机 CPU**（此前 `.29` 的 harness 失控评测已被 kill，CPU 已恢复正常）。硬约束：**两机各自的整机 CPU 利用率都 ≤80%**——用 `taskset`/`OMP_NUM_THREADS` 限单进程线程、`nice` 降权、控制跨 ckpt 并行度，实测并在心跳报 `.12`/`.29` 各自 CPU%。export 与评测文件走 NFS 共享路径（`/nas_train`、`/nas_user`），两机同盘，结果互通。
 
 > 📦 §运维令 2026-10-28 17:0x（预训练项目目录定位）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md「归档 2026-11-04 第四批」节；**结论**：✅ 脚本&文档落 baize-llm/baize-llm，commit e1c6be4 pushed 28 files；启动口径 `bash .../baize-llm/scripts/train.sh <stage>` 仍有效。需要时再读。
 
