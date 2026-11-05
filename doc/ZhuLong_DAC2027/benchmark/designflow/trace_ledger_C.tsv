@@ -245,3 +245,4 @@
 1791944224191_6i6lk	jason17w	hfeg0pnd002	328	physical_verify	parked		2026-11-05 14:52	VPS verilog regression orchestration (run_approved_command/editor), not physical_layout; keyword netlist+virtuoso was verilogrun not layout
 1786071213100_05wcx	e0014566	hfeg0pkn001	245	layout_virtuoso	case	EDA-Eval-DesignFlow-PGTierTunerDecision-001	2026-11-05 15:11	
 1789624027491_t45kv.messages.json	zhigangw	hfeg0pkn002	53	pg_layout	case	EDA-Eval-DesignFlow-PRStartMethodSelect-001	2026-11-05 15:56	
+1787728805982_txlfl	e0014566	hfeg0plg58	241	layout_virtuoso	case	EDA-Eval-DesignFlow-AutoViaPwrFillRemove-001	2026-11-05 16:41	
