@@ -31,7 +31,9 @@
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
-### 🚀 运维令 · 2026-11-05 18:2x（**继续评测 60k–100k 五个检查点**：10 点常识曲线 + 700k 重拟合 + 报告 v2）· 用户直令 · 最高优先
+### [已完成] 🚀 运维令 · 2026-11-05 18:2x（**继续评测 60k–100k 五个检查点**：10 点常识曲线 + 700k 重拟合 + 报告 v2）· 用户直令 · 最高优先
+
+> ✅ 10点已交付（#1490 2026-11-06 06:46）：10/10 ckpt(10k–100k)全评测，100k Avg(harness)=57.75%/raw=54.75%；10点 harness Avg 51.50→52.00→53.00→55.12→54.25→54.25→56.00→57.00→57.88→57.75%；700k 对数拟合 62.8%/R²=0.860（vs 5点 60.16%/R²=0.792，数据点翻倍结论强化；幂律发散 pred 161% 退化）；v2 报告 `report_pretrain_llamacpp_scaling_60k_100k_zh.html`(21087B，10×8表+曲线+重拟合)幂等 PASS(byte-identical)；`gen_llamacpp_scaling_report.py` TARGET_ITERS=10 动态；watcher 自治 commit 173c848a8 已 push；`gguf_iter_{10k..100k}_fixed_8set/results.json` 10/10 全在(各22780–22810B，无NaN)。→ 待下次唤醒归档到 ARCHIVE_OPERATOR_PRETRAIN.md。
 
 > 用户原话（2026-11-05 18:1x）：「pretrain：继续评测 6w-10w 5个检查点（10w还没出，但当你完成9w时，应该已经出了）」
 
