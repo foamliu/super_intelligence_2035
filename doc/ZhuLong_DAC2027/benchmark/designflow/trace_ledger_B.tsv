@@ -141,3 +141,16 @@ ztoza					parked		2026-11-05 02:24	scout_1105: false-positive/non-spice/explain-
 j4pvk.messages.json	crystalh	hfeg0plg96	272	characterization	parked		2026-11-05 12:30	user prompt=分析RdLatencyCmd cell功能 (cell-function read/explain, schematic:1072 dominant, spectre:26 incidental) — 纯read/explain非sim交付, not spice_char
 4n3ry.messages.json	e04201	hfeg0plg18	263	spice_sim	parked		2026-11-05 12:30	netlist:812+schematic:586 dominant, spectre:1 hspice:1 — netlist/schematic build, near-zero spice, not spice_char
 vbxlf.messages.json	jason17w	hfeg0pnd002	262	spice_sim	parked		2026-11-05 12:30	netlist:948 hspice:8 — netlist-generation task, hspice incidental (deck gen not sim/char), not spice_char
+1792137927597_f4kc0.messages.json					parked		2026-11-05 13:00	verilog ncsim.trn waveform reading (jackliu), hspice:60 incidental; not spice_char
+1790143121157_8zsrr.messages.json					parked		2026-11-05 13:00	verilog regression run (run_normal_x16 with uvs), hspice:56 incidental; not spice_char
+1791463574990_um5we.messages.json					parked		2026-11-05 13:00	verilog ddr6 vecgen pattern-seed sharing (xuebaok), hspice:12 incidental; not spice_char
+1789976011359_06htj.messages.json					parked		2026-11-05 13:00	logic_cosim path/env-setup (mike), hspice:15/calibre:16 incidental; not spice_char
+1789867185527_85sjy.messages.json					parked		2026-11-05 13:00	pyAether get-current-design env (steveny), pyAether:314 dominant, hspice:1 incidental; not spice_char
+1790150039431_ojny6.messages.json					parked		2026-11-05 13:00	env-check/demo scaffolding (sagequan), netlist:103/hspice:6 incidental; not clean spice_char
+1792552457905_b4dlx.messages.json					parked		2026-11-05 13:00	anasimpro GUI-start (zjqiao), netlist:479/hspice:5 incidental; not spice_char
+1790501128558_cd4qp.messages.json					parked		2026-11-05 13:00	SpiceAgent skill env-init/schematic-gen (cwei), schematic:201 dominant; same profile as parked 6dx8f, not char
+1791944811866_cv0pc.messages.json					parked		2026-11-05 13:00	calibre DRC log analysis (miccao), calibre:462 dominant, hspice:2 incidental; belongs physical_verify not spice_char
+1786066403760_tgnc6.messages.json					parked		2026-11-05 13:00	virtuoso/calibre/cellview/schematic layout task (e0014566), hspice:1 incidental; not spice_char
+1787728805982_txlfl.messages.json					parked		2026-11-05 13:00	virtuoso/cellview/dbGet schematic task (e0014566), hspice:5/spectre:1 incidental; not spice_char
+1786016997085_60584.messages.json					parked		2026-11-05 13:00	virtuoso/cellview/calibre schematic/layout task (e0014566), hspice:2 incidental; not spice_char
+1791420858846_g3ud6.messages.json					parked		2026-11-05 13:01	gm/id automated sizing program (t0002801): A-faithful turn #0 '想做自动化sizing电路的程序用gm/id方法'; trace=code-building gmid_engine.py toolkit (mostly editor/list_allowed), not clean sim deliverable; distinct sub-skill=gm/id-based sizing search but OVERLAPS GmidLut-001 (LUT extraction); revisit only if sizing-automation case explicitly wanted (claim by session to unpark)
