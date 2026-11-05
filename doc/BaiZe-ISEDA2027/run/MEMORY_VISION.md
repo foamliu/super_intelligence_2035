@@ -2,6 +2,8 @@
 
 WAITING: 0
 
+> 🆕 **【wake #609 · 2026-11-05 18:2x】波形 RL 阶段 0 可行性解锁·已交付🟡YELLOW**。执行 §运维令·2026-11-05 17:5x。Phase 0 步骤：① 定位 WaveView 主机→.75（wv@/apps/synopsys/SRB/wv/T-2022.06-SP1/bin/wv + demo FSDB /apps/synopsys/verdi/Verdi_M-2017.03-SP2-9/demo/mixed/mixed.fsdb 240 信号·烛龙 benchmark 实测 CHECK_PASS），但本机 .12→.75 SSH 不可达（port 22/2222 超时）→ 需运维协调；② 4 待核项实测：① vcd2fsdb 无/verilator 无→RED，ngspice .raw+Python 解析器→备选 GREEN；② sx_export_image 需 .75→RED，备选 matplotlib；③ 崩溃阈值需 .75→RED，保守 MAX_WV=3；④ license 并发需 .75→RED，保守=1（ngspice 无 license 限制）；③ Gym 冒烟 3/3 PASS（ngspice 4 类电路→.raw→Python 解析→7 动作 A1-A7→周期量测 rel_err<0.01%→reward=1.36）。交付：reports/report_vision_wave_rl_phase0_feasibility_zh.html(13568B) + vision/wave_rl/waveview_gym.py(280行) + EXPERIMENTS_VISION.md §19。判定 YELLOW：备选路径(ngspice)可进阶段 1 SFT，WaveView API 路径需运维协调 .75。**未完成指令：有**（阶段 1/2/3 未交付）⇒ **WAITING: 0**。
+
 > 🆕 **【空唤醒 · wake #608 · 2026-11-05 17:09】** 无新运维令。用户在终端粘贴 BAIZE_VISION_TASK.md 全文并选择「以 vision agent 身份执行收尾铁律」。git fetch→origin/main 0ahead/0behind（已同步，HEAD=f052c0c39 designflow 17:08；origin 新提交 16:38~17:08 均来自 designflow/pretrain/data 等线，无 vision 新令；自 #607 16:38 起无 vision 新令）。所有运维令标[已完成]/[已归档]。📦 体积：TASK=27230B / MEMORY=27601B（均≤32KB✓；🆕条目19+新增#608=20，贴~20 软指引上限，暂不滚动归档）。进程 baize_vision_loop.sh PID 669545 alive（etimes≈634k）；cline in PATH（/home/app.e0031982/.bun/bin/cline）✓。工作副本改动均为别线文件（BaiZe-ISEDA2027 .tex 4件 + ZhuLong benchmark report/MEMORY + 多个别线未跟踪脚本/目录如 ocr_samples/1049/3147/5245/7343/9441 + cjk_test.* + baize_p8_*.sh + debug_*.py），vision 文件无在途改动，未触碰别线。写心跳+日流水+commit+push（一律 `git commit -m '...' -- <明确文件路径>`，吸取#562裸commit卷入别线文件教训）。**未完成指令：无** ⇒ **WAITING: 1**。
 
 
@@ -103,10 +105,10 @@ WAITING: 0
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | ✅ **论文改稿全部完成（wake#437~#442）**。6_vision_encoder.tex(18行)/7_mllm.tex/0_abstract.tex/1_intro.tex 均已改。6页/ERR=0/UNDEF=0。所有运维令标[已完成]。任务书体积归档完成（35KB→27KB）。**WAITING: 1**（空唤醒，无未完成指令） |
-| WAITING | 1 |
-| 已完成 | 论文改稿(wake#437~#442) · 波形RL计划书(wake#435) · 波形报告(wake#424) · OCR合成10M(wake#275) · ArmE-R2/ArmD-R2 全链路 |
-| 当前动作 | 空唤醒·心跳维护·等待新运维令 |
-| 下一步 | 等待运维新令（vision 文件无在途改动） |
-| 阻塞 | 无 |
-| 更新 | **2026-11-05 17:09 (wake #608)**: 空唤醒·无新令·心跳维护·git 0ahead/0behind(HEAD=f052c0c39 designflow 17:08)·体积TASK27.2KB/MEMORY≈27.6KB均≤32KB·🆕条目20·WAITING=1 |
+| PHASE | 🟡 **波形 RL 阶段 0 已交付（wake#609 YELLOW）**。.75 WaveView 已定位但 SSH 不可达；备选 ngspice .raw+Python 冒烟 3/3 PASS。阶段 1/2/3 未交付。**WAITING: 0** |
+| WAITING | 0 |
+| 已完成 | 波形RL阶段0(wake#609) · 论文改稿(wake#437~#442) · 波形RL计划书(wake#435) · 波形报告(wake#424) · OCR合成10M(wake#275) · ArmE-R2/ArmD-R2 全链路 |
+| 当前动作 | 阶段 0 交付完成·等待阶段 1 GPU 调度确认 |
+| 下一步 | 阶段 1 SFT：合成数据 pipeline（CPU-only 可开始）+ GPU 调度（避让 R9）+ 运维协调 .75 访问 |
+| 阻塞 | .75 SSH 不可达（需运维协调）· GPU 调度待确认（避让 R9） |
+| 更新 | **2026-11-05 18:2x (wake #609)**: 波形RL阶段0交付🟡YELLOW·Gym冒烟3/3PASS·备选ngspice路径GREEN·WaveView路径RED需运维·体积TASK33.3KB/MEMORY≈30KB·WAITING=0 |

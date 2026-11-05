@@ -1866,3 +1866,54 @@ Stage-2 step3500 checkpoint，每卡一个 benchmark（batch_size=32，8 卡并�
 
 **诚实条款**：所有数字均为本项目实测（STATS/VALIDATION/index/日志），可溯源；无外部模型/榜单数字被引用。数据仅用于训练，不替换/扩充评测集。
 
+
+
+## §19 波形 RL 阶段 0：可行性解锁（2026-11-05 wake#609）
+
+**运维令**：§运维令·2026-11-05 17:5x（执行波形 RL 计划·阶段 0 可行性解锁）
+
+**目的**：在动 GPU 前，确认 WaveView+FSDB+license 可用性并跑通最小闭环。
+
+### 19.1 WaveView 主机定位
+
+| 机器 | IP | 可达性 | wv | FSDB | 来源 |
+|:--|:--|:--|:--|:--|:--|
+| 本机 | 10.239.2.12 | 本地 | 无 | 无 | `which wv`=空 |
+| 烛龙 benchmark | 10.129.32.75 | ping 3.75ms / SSH 22+2222 超时 | 有 | 有 | 烛龙 benchmark 实测 |
+| 集群 .10/.11/.22/.24 | 10.239.2.* | SSH Permission denied | — | — | 无 key |
+
+.75 WaveView 确认（来源：`doc/ZhuLong_DAC2027/benchmark/.pi_debug/EDA-Eval-DesignFlow-Wave-005/`）：
+- wv 路径：`/apps/synopsys/SRB/wv/T-2022.06-SP1/bin/wv`
+- Demo FSDB：`/apps/synopsys/verdi/Verdi_M-2017.03-SP2-9/demo/mixed/mixed.fsdb`（240 信号 / 128 bus / 1 top scope）
+- API 实测：sx_open_sim_file_read / sx_signal / sx_first_wave / sx_next_wave / sx_get_name / sx_close_sim_file 全 PASS
+- 访问方式：烛龙通过 eda_flow MCP（非 SSH），benchmark 在 .75 本地运行（工作目录 /nasdata/...）
+- **本机→.75 SSH 不可达**（端口 22/2222 超时），需运维协调
+
+### 19.2 四个待核项
+
+| 待核项 | 本机实测 | 判定 | 备选 |
+|:--|:--|:--|:--|
+| ① FSDB 转换工具链 | vcd2fsdb 无 / verilator 无 / ngspice 有 ✅ | RED（FSDB）/ GREEN（备选） | ngspice .raw + Python 解析器 |
+| ② sx_export_image | 需 .75 不可达 | RED | matplotlib 渲染 .raw→PNG |
+| ③ 崩溃阈值 | 需 .75 不可达 | RED | 保守 MAX_WV=3；ngspice 无崩溃 |
+| ④ license 并发 | 需 .75 不可达 | RED | 保守=1；ngspice 无 license 限制 |
+
+ngspice .raw 实测：`ngspice -b test.cir` → 646 点 × 3 变量 binary double .raw → Python `struct.unpack` → numpy (646,3) ✅
+
+### 19.3 Gym 冒烟测试
+
+`vision/wave_rl/waveview_gym.py`（280 行）：ngspice 4 类电路（RC/RC-pulse/inverter/RL）+ Python .raw 解析 + 7 动作（A1-A7）+ 复合奖励。
+
+| Episode | 电路 | GT 周期 | 提交值 | 相对误差 | 奖励 | 判定 |
+|:--|:--|:--|:--|:--|:--|:--|
+| 0 | RC | 6.4127e-6 | 6.4130e-6 | 5.3e-5 (0.005%) | 1.36 | PASS |
+| 1 | inverter | 4.3569e-6 | 4.3570e-6 | 3.4e-5 (0.003%) | 1.36 | PASS |
+| 2 | inverter | 4.8767e-6 | 4.8770e-6 | 5.4e-5 (0.005%) | 1.36 | PASS |
+
+**3/3 PASS**。轨迹：open(1wv)→get_signal(1wv)→get_values(1wv)→submit→reward=1.36（R_main=1.0+R_ev=0.3+R_bud=0.03+R_den=0.03）。
+
+### 19.4 判定
+
+**🟡 YELLOW**：RL 环境框架可用（备选路径 ngspice .raw），可进阶段 1 SFT。WaveView API 兼容路径需运维协调 .75 访问。
+
+**交付物**：`reports/report_vision_wave_rl_phase0_feasibility_zh.html`（13568B）+ `vision/wave_rl/waveview_gym.py`（冒烟可跑）+ 本节。
