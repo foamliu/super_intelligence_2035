@@ -283,3 +283,5 @@
 1792493511731_624js	johnl	hfeg0pfn119	80	pg_layout	case	EDA-Eval-DesignFlow-Nand3LefDeriveAudit-001	2026-11-06 04:55	
 1792985372628_41ki8	xxchen	hfeg0pkn005	146	physical_verify	case	EDA-Eval-DesignFlow-DrcConnScriptAudit-001	2026-11-06 05:27	
 1792565482572_2gmli.messages.json	thqu	hfeg0plg99	231	layout_virtuoso	case	EDA-Eval-DesignFlow-TaperChainDoeGen-001	2026-11-06 06:17	
+1792827081154_d810y	jackjia	hfeg0plg78	274	layout_virtuoso	parked		2026-11-06 06:29	mixed schematic/waveform-sim Q&A (finesim/primesim/wv FSDB/verdi), not physical_layout domain; tools matched but content is sim+waveform viewing
+1792206946923_goqly	xinqiaoz	hfeg0pkn004	244	physical_verify	case	EDA-Eval-DesignFlow-DummyBorderRcaGen-001	2026-11-06 06:45	
