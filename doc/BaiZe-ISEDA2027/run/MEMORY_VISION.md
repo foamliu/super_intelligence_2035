@@ -36,7 +36,9 @@ WAITING: 0
 
 > 📦 wake #687（监控巡检·状态无变化·双poller健康+GPU 8×94-100%·仅待GPU）已归档 → daily-memories-vision/2026-11-06.md；**结论**：状态无变化，全管线就绪仅待GPU。需要时再读。
 
-> 🆕 **【wake #688 · 2026-11-06 03:55】监控巡检（状态无变化·双poller健康+GPU 8×96-100%·仅待GPU）**。CPU-only监控巡检，距wake#687约4min，状态无变化。双poller健康：SFT poller PID2757742(ppid=1,etimes≈29240s≈8.1h,bash run_sft_wave.sh 8,flock独占锁,60s轮询) / GRPO chain PID2428009(ppid=1,etimes≈19227s≈5.3h,bash run_grpo_wave.sh 8,等SFT eval_results.json) / vision loop PID669545(ppid=1,etimes≈672296s≈7.77d)。cline in PATH(/home/app.e0031982/.bun/bin/cline)✓。GPU .12 8×H100 实测96-100%util/~75GB each(pretrain R9,ETA≈11/25-27)。git fetch后0ahead/0behind同步(HEAD=origin=65d6db3be pretrain#1465),无新vision运维令(TASK自11-05 18:44未变)。SFT eval_results.json+checkpoint均不存在(预期·GPU被占)。2B骨干+数据9013轨迹+GRPO smoke PASS+WaveQA oracle 300题全在位。归档#687→daily。全管线就绪仅待GPU释放（Phase1就绪GREEN@wake#667+poller逻辑sound@wake#684）。📦体积：TASK≈29.7KB/MEMORY≈29.3KB（均≤32KB✓，归档1条后）。**未完成指令：有**（阶段1 GPU训练pending+阶段2/3未交付）⇒**WAITING: 0**。
+> 📦 wake #688（监控巡检·状态无变化·双poller健康+GPU 8×96-100%·仅待GPU）已归档 → daily-memories-vision/2026-11-06.md；**结论**：状态无变化，全管线就绪仅待GPU。需要时再读。
+>
+> 🆕 **【wake #689 · 2026-11-06 04:00】监控巡检（状态无变化·双poller健康+GPU 8×97-100%·仅待GPU）**。CPU-only监控巡检，距wake#688约5min，状态无变化。双poller健康：SFT PID2757742(ppid=1,etimes≈29506s≈8.2h,flock独占锁,60s轮询) / GRPO chain PID2428009(ppid=1,etimes≈19493s≈5.4h,等SFT eval_results.json) / vision loop PID669545(ppid=1,etimes≈672562s≈7.78d)。cline✓。GPU .12 SSH实测8×H100 97-100%util/~75GB(R9,ETA≈11/25-27)。git fetch后0ahead/0behind同步(HEAD=2d1cd72c6 designflow#293),无新vision运维令(TASK自11-05 18:44未变)。SFT eval_results.json+ckpt不存在(预期·GPU被占)。全管线就绪仅待GPU释放（Phase1就绪GREEN@wake#667+poller逻辑sound@wake#684）。📦体积：TASK≈29.7KB/MEMORY≈29.5KB（均≤32KB✓）。**未完成指令：有**（阶段1 GPU训练pending+阶段2/3未交付）⇒**WAITING: 0**。
 
 > 📦 wake #681（监控巡检·状态无变化·双poller健康+GPU 8×100%·仅待GPU）已归档 → daily-memories-vision/2026-11-06.md；**结论**：状态无变化，全管线就绪仅待GPU。需要时再读。
 
