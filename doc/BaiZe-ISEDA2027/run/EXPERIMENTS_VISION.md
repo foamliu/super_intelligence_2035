@@ -2345,3 +2345,60 @@ ngspice .raw 实测：`ngspice -b test.cir` → 646 点 × 3 变量 binary doubl
 
 **数字溯源**：实测命令输出（smoke test PASS / oracle 10 题 mean=1.000 / bash -n SYNTAX OK）。无 GPU 实验（全 CPU 验证）。
 
+### §20.17 · 预启动就绪审计 + 集群 GPU 主机探测 + SFT→GRPO 移交契约独立复核（2026-11-06 00:1x · CPU-only · 用户直令执行阶段 1）
+
+**目的**：用户直令「执行阶段 1 Stage-1W SFT 冷启动」。阶段 1 的 CPU 准备已在 wake#609–#624 全部完成（§20.1–§20.16），唯一剩余 = GPU 训练。本节回答任务书阶段 1 的两个待决项：①「确认用哪台 GPU 主机（.12 空闲窗口 or 别的 host）」；② 独立复核 SFT→GRPO 自动衔接链的移交契约，确保 ~20 天 GPU 等待窗口结束后 auto-launch 不会因路径/字段 bug 浪费 GPU。
+
+**(1) 集群 GPU 主机探测（任务书「确认用哪台 GPU 主机」的直接回答）**：
+
+| 主机 | SSH 可达 | GPU 状态 | 结论 |
+|:--|:--|:--|:--|
+| `.12`（本机 whag0pgpuap12） | ✓（本机） | 8×H100 90–100% util / ~75GB each | R9 pretrain 占满，ETA≈11/25–27 |
+| `.29`（10.239.2.29） | ✓（SSH key） | 8×H100 96–100% util / ~75GB each | R9 pretrain 第 2 节点，同上 |
+| `.10/.11/.13/.14/.15/.16/.17/.18/.19/.20` | ✗ `Permission denied (publickey,password)` | 不可探测 | 本账号无 SSH 凭据，不可用 |
+
+**探测命令**：`ssh -o ConnectTimeout=4 -o BatchMode=yes <host> 'nvidia-smi ...'` × 10 主机。`/etc/hosts` 列出 whag0pgpuap10–15+，但仅 .12（本机）+ .29（有 key）可达。
+
+**结论**：**本账号可用的 GPU 主机仅 .12 与 .29，两者均被 R9 pretrain（mamba2 baize2b，nnodes=2，16 卡）100% 占用**。无备用 GPU 主机。阶段 1 SFT 必须等 R9 结束（ETA≈11/25–27）后在 .12 上执行——SFT poller（run_sft_wave.sh）已在 .12 后台轮询，GPU 释放后自动启动。🚫 不杀健康训练（铁律），故不抢占。
+
+**(2) SFT→GRPO 移交契约独立复核（确保 auto-launch 不失败）**：
+
+逐文件逐行核对三个脚本间的数据契约：
+
+| 契约 | SFT 端（sft_train_wave.py） | GRPO 端（run_grpo_wave.sh） | 一致性 |
+|:--|:--|:--|:--|
+| 检查点目录格式 | `save_checkpoint` → `step{N}/`（L303），`save_pretrained` 写 `adapter_config.json` | Step 3: `glob(step*)` + 按步号降序取最高含 `adapter_config.json` | ✅ 一致 |
+| 最终检查点步号 | `step{total_steps}` = `step3000`（L484，default nsteps=3000） | 扫描最高步号 → 命中 step3000 | ✅ 一致（§20.16 bug#2 已修） |
+| eval_results.json 字段 | L492–501 写 `pass`/`format_correctness`/`submit_success_rate`/`eval_samples`/`step` | Step 2: 读 `d.get('pass',False)` + `format_correctness` + `submit_success_rate` | ✅ 一致 |
+| 模型路径 | `LLM_PATH_2B` = `qwen3vl_2b_text_extracted`（L65–67） | `--model_path "$LLM_2B"` 同路径 | ✅ 一致（§20.16 bug#1/#3 已修） |
+| 2B 模型在位 | `qwen3vl_2b_text_extracted/` 存在：config.json `model_type=qwen3`/`architectures=[Qwen3ForCausalLM]`/hidden=2048/28层，model.safetensors 3.4GB | 同路径加载 | ✅ 在位 |
+| SFT 数据 | `sft_pilot_balanced.jsonl` 9013 条（L68–69 default） | —（SFT 内部用） | ✅ 在位 |
+| eval holdout | `sft_holdout_500.jsonl` 582 条 | —（SFT 内部用） | ✅ 在位 |
+| GPU 等待守卫 | run_sft_wave.sh: util<10% AND mem<5000MiB ×3 连续@60s + flock 独占 | run_grpo_wave.sh: 同守卫 + 独立 flock | ✅ 一致（防 checkpoint 暂停误判 + 防双 launch OOM） |
+
+**复核结论**：SFT→eval→GRPO→WaveQA-RL 全链移交契约**全部一致**，§20.16 修复的 3 个 bug 均已在代码中落实。GPU 释放后 auto-launch 链不会因路径/字段/步号/模型不匹配而失败。
+
+**(3) 双 poller 健康确认（00:1x 实测）**：
+- SFT poller PID 2757742：alive（ppid=1，etimes≈15908s≈4.4h），flock 持锁，每 60s `busy_util -- waiting`（最后 00:11:45，`/tmp/wave_sft_poller_relaunch.log`）✅
+- GRPO chain PID 2428009：alive（ppid=1，etimes≈5895s≈98min），flock 持锁，每 120s `SFT not done yet (waited 5880s/2592000)`（最后 00:12:16，`/tmp/grpo_wave_chain.log`）✅
+- vision loop PID 669545：alive（etimes≈658964s≈7.6 天）✅
+
+**(4) 阶段 1 完成度评估**：
+
+| 阶段 1 子项 | 状态 | 证据 |
+|:--|:--|:--|
+| 合成数据 pipeline（ngspice 7 类电路 + GT + 错误恢复轨迹） | ✅ 完成 | §20.1–§20.10，9013 条均衡 |
+| SFT 训练脚本（2B LoRA r=64, LR 1e-5, nsteps=3000≈2.66ep） | ✅ 完成 | §20.6/§20.11/§20.12，CPU dry-run 6/6 PASS |
+| 独立评测脚本 + pre-SFT 基线 | ✅ 完成 | §20.13/§20.15，format 100%/submit 0% |
+| GRPO 脚手架 + CPU 冒烟 | ✅ 完成 | §20.7/§20.14/§20.16 |
+| WaveQA-RL oracle ceiling 300 题 | ✅ 完成 | §20.8，mean=1.000 |
+| 链式 auto-launcher（SFT poller + GRPO chain） | ✅ 运行中 | §20.16 + 本节实测健康 |
+| 移交契约一致性 | ✅ 复核通过 | 本节 (2) |
+| GPU 主机确认 | ✅ 仅 .12 可用，ETA≈11/25–27 | 本节 (1) |
+| **GPU SFT 训练** | ⏳ **阻塞** | .12+.29 100% 占用，无备用主机 |
+| SFT checkpoint + 最终报告 + §20 收尾 | ⏳ 待 GPU 训练后 | — |
+
+**结论**：阶段 1 的全部 CPU 准备工作（数据/脚本/评测/基线/auto-launch/移交契约）**100% 完成并通过独立复核**。唯一阻塞 = GPU（.12+.29 被 R9 pretrain 占满，ETA≈11/25–27，无备用主机）。auto-launch 链已就绪且健康，GPU 释放后将自动执行 SFT(3000 步≈4 GPU·h)→eval→(达标则)GRPO(500 步≈12 GPU·h)→WaveQA-RL(300 题)全链。本节为 GPU-free 交付，无伪造数字。
+
+**数字溯源**：`ssh` 探测输出 + `nvidia-smi` 实测 + `ps -eo` poller 状态 + 逐行核对 sft_train_wave.py L300–501 / run_sft_wave.sh / run_grpo_wave.sh / 文件系统 `ls` 实测。无 GPU 实验。
+
