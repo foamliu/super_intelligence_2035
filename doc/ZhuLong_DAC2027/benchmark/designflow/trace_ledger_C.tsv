@@ -246,5 +246,6 @@
 1786071213100_05wcx	e0014566	hfeg0pkn001	245	layout_virtuoso	case	EDA-Eval-DesignFlow-PGTierTunerDecision-001	2026-11-05 15:11	
 1789624027491_t45kv.messages.json	zhigangw	hfeg0pkn002	53	pg_layout	case	EDA-Eval-DesignFlow-PRStartMethodSelect-001	2026-11-05 15:56	
 1787728805982_txlfl	e0014566	hfeg0plg58	241	layout_virtuoso	case	EDA-Eval-DesignFlow-AutoViaPwrFillRemove-001	2026-11-05 16:41	
-1787884599302_xoriz.messages.json	e0014566	hfeg0pkn001	158	layout_virtuoso	claimed		2026-11-05 17:11	
+1787884599302_xoriz.messages.json	e0014566	hfeg0pkn001	158	layout_virtuoso	case	EDA-Eval-DesignFlow-RsCalcFlowReporter-001	2026-11-05 18:05	
 1787884599302_xoriz					case	EDA-Eval-DesignFlow-RsCalcFlowReporter-001	2026-11-05 17:56	
+1789630394053_3dekw.messages.json	zhigangw	hfeg0pkn002	80	pg_layout	case	EDA-Eval-DesignFlow-DigitalDesignFlowSampleGen-001	2026-11-05 18:27	
