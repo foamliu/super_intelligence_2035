@@ -236,3 +236,4 @@
 1793006622937_6kot7	weizhao	hfeg0pkn004	43	physical_verify	case	EDA-Eval-DesignFlow-SVRFDeckCatalog-001	2026-11-05 10:31	reassessed: fresh-user weizhao calibre/SVRF domain anchor; fresh-user L2 pool exhausted (ve67l=v wrong-domain cosim, v59v8/d810y/f6x1i/314mt/aq0vc all sim/TCAD/utility). SVRF deck comprehension parser = orthogonal to existing SVRF-gen case, fills physical_verify coverage gap
 1789887279405_ve67l	mike	hfhds206	279	pg_layout	parked		2026-11-05 10:12	wrong domain: cosim/VCS/spike RISC-V build flow, not physical_layout (innovus/voltus keywords were env context only)
 1789984748372_xx7by	davidwu	hfeg0pjn200	228	layout_aether	case	EDA-Eval-DesignFlow-PlacePersistAudit-001	2026-11-05 11:21	
+1789892820566_17cgk	xinqiaoz	hfeg0pkn004	321	physical_verify	case	EDA-Eval-DesignFlow-DrcWaiveDeckGen-001	2026-11-05 11:49	
