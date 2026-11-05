@@ -195,7 +195,7 @@
 1793337530823_x6taw.messages.json					case	EDA-Eval-DesignFlow-RonMismatchMd0-001	2026-11-05 05:11	prior #258 delivery (clarawu RON mismatch .md0); ledger mark completed this round
 1792984126962_nquh2.messages.json	reedchen	hfeg0pkn004	708	analog_context	case	EDA-Eval-DesignFlow-MosSizeDoeGen-001	2026-11-05 05:06	V5 mos_size DOE grid + run script
 1793327414642_81adx.messages.json					parked		2026-11-05 05:06	dup RonMismatchMd0-001 (clarawu same .md0)
-1793324917372_6iuo6.messages.archive.json					parked		2026-11-05 05:06	mid-conv one-click shell script (depends on prior collect_batches code)
+1793324917372_6iuo6.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
 1793675854261_vclt8.messages.json					parked		2026-11-05 05:06	root-cause: RON 单调性不对+尺寸归一 (clarawu)
 1793151811279_nrep6.messages.json					parked		2026-11-05 05:06	continuation: check 网表对比 (thqu)
 1793609804560_mr6sa.messages.json					parked		2026-11-05 05:06	dup of vclt8 (clarawu same demand)
@@ -247,7 +247,7 @@
 1793172979841_8tchb.messages.json					parked		2026-11-05 05:53	cosim debug+measure folder optimize vague
 1793669661941_b7u1n.messages.json					parked		2026-11-05 05:53	who are you + analyze schematic Q&A
 1792651442338_ezvmp.messages.json					parked		2026-11-05 05:53	SVRF rule explain + vim config doc
-1793544152898_p8z88.messages.json					parked		2026-11-05 05:53	code reorg+doc+agent-prompt doc task
+1793544152898_p8z88.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
 1793610069180_jq7tt.messages.json					parked		2026-11-05 05:53	dspf usage error Q&A
 1793607379592_t4gfl.messages.json					parked		2026-11-05 05:53	SVRF calibre DRC rule authoring (shard C)
 1793235306731_whek4.messages.json					parked		2026-11-05 05:53	ERC tmux script feature tweaks (shard C-ish, refs existing)
@@ -272,7 +272,7 @@
 1793682926396_lt3nh.messages.json					parked		2026-11-05 06:49	D262-peek-unfit
 1792985372628_41ki8.messages.json					parked		2026-11-05 06:49	D262-peek-unfit
 1793614615410_y612r.messages.json					parked		2026-11-05 06:49	D262-peek-unfit
-1793255895022_wag72.messages.json					parked		2026-11-05 06:49	D262-peek-unfit
+1793255895022_wag72.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
 1792995921248_xjwso.messages.json					parked		2026-11-05 06:49	D262-peek-unfit
 1793083455289_1ujhs.messages.json					parked		2026-11-05 06:49	D262-peek-unfit
 1793237171921_aus5p.messages.json					parked		2026-11-05 06:49	D262-peek-unfit
@@ -301,3 +301,74 @@
 1793773107836_90vlt.messages.json					parked		2026-11-05 06:49	D262-peek-unfit
 1793351374740_3xkcq.messages.json					parked		2026-11-05 06:49	D262-peek-unfit
 1793668052150_wp5jq.messages.json	curryxu	hfeg0pkn001	243	waveform	case	EDA-Eval-DesignFlow-FifoTbStimGen-001	2026-11-05 07:49	
+1793668594900_amius.messages.json	pdsong	hfeg0pkn004	272	schematic_netlist	case	EDA-Eval-DesignFlow-CpmNetlistToSymbol-001	2026-11-05 08:08	
+1793690977457_sakf0.messages.json					parked		2026-11-05 08:09	D263-peek: root-cause TOOL_DIR fix request
+1793769280754_huszl.messages.json					parked		2026-11-05 08:09	D263-peek: circuit analysis (分析下这个电路)
+1793796263556_7ntn6.messages.json					parked		2026-11-05 08:09	D263-peek: dir-scaffold planning (先告诉我计划)
+1792394721361_yxz9c.messages.json					parked		2026-11-05 08:09	D263-peek: no classifiable produce-task user turn
+1793790637246_aafag.messages.json					parked		2026-11-05 08:09	D263-peek: boilerplate (innouvs)
+1792986549258_5vo44.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1792986549258_5vo44.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1793242571158_hfv5q.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1793242571158_hfv5q.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1792579190180_tgumy.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1792579190180_tgumy.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1793347000576_ygv3b.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1793347000576_ygv3b.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1793777902964_ah9my.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1793777902964_ah9my.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1792204531769_gg2j6.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1792204531769_gg2j6.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1793192893935_poa8g.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1793192893935_poa8g.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1792398649832_4tgr1.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1792398649832_4tgr1.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1793693546137_weulf.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1793693546137_weulf.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1792995418878_a5drw.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1792995418878_a5drw.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1793255895022_wag72.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1793603150610_nr884.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1793603150610_nr884.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1792397054964_fz05e.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1792397054964_fz05e.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1792746486510_lrvvt.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1792746486510_lrvvt.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1792375022144_ekpd7.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1792375022144_ekpd7.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1792415342141_bzxqd.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1792415342141_bzxqd.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1792398316632_497nv.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1792398316632_497nv.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1792415356917_krylb.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1792415356917_krylb.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1793266625005_uaas3.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1793266625005_uaas3.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1793324917372_6iuo6.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1792477456219_fy4mv.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1792477456219_fy4mv.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1793328605482_xpue4.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1793328605482_xpue4.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1793274153419_2q4mg.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1793274153419_2q4mg.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1792488300771_369rv.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1792488300771_369rv.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1793524103398_9x1l1.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1793524103398_9x1l1.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1792739133486_74dww.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1792739133486_74dww.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1793598473250_bdrcq.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1793598473250_bdrcq.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1793277409017_nw0fr.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1793277409017_nw0fr.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1792204147117_hsrib.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1792204147117_hsrib.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1793792906023_dcksk.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1793792906023_dcksk.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1792466309526_pnd3n.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1792466309526_pnd3n.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1793263942286_u8rjq.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1793263942286_u8rjq.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1793544152898_p8z88.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1792744504374_xpor0.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1792744504374_xpor0.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
