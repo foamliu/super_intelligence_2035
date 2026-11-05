@@ -47,6 +47,16 @@ R4 & R3 $+$ API-legality term \\
 \end{tabular}
 \end{table}
 
+\subsection{Deployment: The Anima Protocol and Local Self-Correction}\label{sec:anima}
+
+Deployed as an Artifact Spirit (\qi), BaiZe is driven not by free-form prose but by a semi-structured \emph{anima} directive that carries an action, a target object, and a constraint---e.g.\ \texttt{\{action:\ route, target:\ net\_clk, constraint:\ minimize\_crosstalk\}}.
+% 中文：作为「器灵」（Artifact Spirit）部署时，BaiZe 并非由自由文本驱动，而是由一条半结构化的 \emph{anima} 指令驱动——该指令携带动作、目标对象与约束，例如 \texttt{\{action: route, target: net\_clk, constraint: minimize\_crosstalk\}}。
+A deterministic directive removes the ambiguity of free-form commands, so script generation is conditioned on a narrow, tool-specific intent rather than on the whole session---this is what keeps the spirit small and its per-subtask cost low.
+% 中文：确定性指令消除了自由文本命令的歧义，使脚本生成只依赖狭窄的、工具专属的意图，而非整个会话——这正是「器灵」能保持小巧、且每子任务成本低廉的原因。
+
+The spirit then runs a closed self-correction loop entirely on the client: it emits a script, executes it silently in the local tool sandbox, and, on failure, feeds the traceback back to itself to re-write until the script runs---without consulting the master.
+% 中文：随后，「器灵」在客户端上运行一个完全封闭的自纠错闭环：它生成脚本，在本地工具沙盒中静默执行，失败时把 traceback 喂回给自己重写，直到脚本跑通——全程无需打扰 master。
+
 \subsection{Evaluation Protocol}\label{sec:posttrain-eval}
 
 We track four capability milestones through Stage~(ii): \textbf{M1} tool-call legality (syntactically valid PyAether calls, no hallucinated symbols); \textbf{M2} single-task pass (Pass@1 on EDA-Eval-PyAether); \textbf{M3} multi-turn refinement (recovery from execution failures with up to 3 rounds); \textbf{M4} full-benchmark accuracy.

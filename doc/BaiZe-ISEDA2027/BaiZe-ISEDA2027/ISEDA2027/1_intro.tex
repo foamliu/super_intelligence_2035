@@ -8,11 +8,15 @@ The binding constraint is therefore cost, dominated by two terms: every subtask 
 % 中文：因此当前约束是成本，由两项主导：每个路由到 master 的子任务都消耗随流程规模增长的 token 与 serving 预算；且由于智能体会话会累积上下文，服务成本由随会话增长的内存而非提示词吞吐驱动。
 A small, locally served subagent caps the cost of every subtask it takes over by pricing it at a local 2.2B model rather than at a Flash master.
 % 中文：本地部署的小型子智能体把所接管的每个子任务按本地 22 亿参数模型而非 Flash master 计价，从而为成本设上界。
+This is the metaphor of the \emph{Artifact Spirit} (\qi): the master stays in the cloud to hold the user's intent and long-horizon plan, while every EDA tool is paired with its own small, local spirit that translates intent into tool-native scripts and operates the tool.
+% 中文：这就是「器灵」（Artifact Spirit）的隐喻：master 留在云端把握用户意图与长程规划，而每一个 EDA 工具都配有自己的小型本地灵体，把意图翻译成工具原生脚本并操作该工具。
+Privacy compounds the cost argument: netlists, GDSII layouts, and design rules are trade secrets that may not leave the premises, so for on-site subtasks the choice is between a small local model and no model at all.
+% 中文：隐私进一步强化了成本论证：网表、GDSII 版图与设计规则是商业机密，不得离开本地，因此对本地子任务而言，选择只能是「小型本地模型」或「根本没有模型」。
 Building such a model \emph{from scratch} as a production subagent, however, remains an under-documented engineering problem.
 
 \paragraph{Contributions.}
-We present BaiZe, a $\approx$2.2B-parameter hybrid (state-space + attention) agentic model built from scratch to serve as a cost-efficient EDA subagent beneath a deployed Flash master.
-% 中文：我们提出 BaiZe——一个约 22 亿参数的混合（状态空间+注意力）智能体模型，从零构建，作为已部署 Flash master 之下具备成本效益的 EDA 子智能体。
+We present BaiZe, a $\approx$2.2B-parameter hybrid (state-space + attention) agentic model built from scratch to serve as the \emph{Artifact Spirit} (\qi) beneath a deployed Flash master.
+% 中文：我们提出 BaiZe——一个约 22 亿参数的混合（状态空间+注意力）智能体模型，从零构建，作为已部署 Flash master 之下的「器灵」（Artifact Spirit）。
 
 \begin{itemize}
 \item \textbf{A cost-efficient EDA subagent.}
