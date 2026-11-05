@@ -112,3 +112,4 @@ ztoza					parked		2026-11-05 02:24	scout_1105: false-positive/non-spice/explain-
 1792460814763_xq6n1.messages.json	yanghao	hfeg0pkn002	58	characterization	case	EDA-Eval-DesignFlow-NocalOffsetDeck-001	2026-11-05 03:36	
 1793095651315_qb1ua	e0023936	hfeg0plg52	103	characterization	case	EDA-Eval-DesignFlow-WvFmFreqExtract-001	2026-11-05 06:24	
 1792478336435_qe1n4	t0002801	hfeg0plg99	212	characterization	case	EDA-Eval-DesignFlow-StdLibCharTmpl-001	2026-11-05 07:41	
+1790143934595_0nar3	qifanli	hfeg0plg101	41	spice_sim	case	EDA-Eval-DesignFlow-PulseStimTbGen-001	2026-11-05 08:18	
