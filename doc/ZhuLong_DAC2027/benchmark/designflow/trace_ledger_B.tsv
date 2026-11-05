@@ -113,3 +113,4 @@ ztoza					parked		2026-11-05 02:24	scout_1105: false-positive/non-spice/explain-
 1792478336435_qe1n4	t0002801	hfeg0plg99	212	characterization	case	EDA-Eval-DesignFlow-StdLibCharTmpl-001	2026-11-05 07:41	
 1790143934595_0nar3	qifanli	hfeg0plg101	41	spice_sim	case	EDA-Eval-DesignFlow-PulseStimTbGen-001	2026-11-05 08:18	
 1793102773959_okq91.messages.json	easont	hfhds211	650	spice_sim	parked		2026-11-05 09:30	overlaps shard D NetlistDCE-001 (same easont TempHalfWL DDGOA session 1793102773959_okq91); case TempThreshChar-001 removed from B jsonl 2026-11-05 (cross-shard trace dup with D)
+1793101460874_7bqzr	rongtaoy	hfeg0pkn001	220	spice_sim	case	EDA-Eval-DesignFlow-PostsimPortAudit-001	2026-11-05 10:01	
