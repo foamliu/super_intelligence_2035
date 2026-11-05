@@ -2,7 +2,9 @@
 
 WAITING: 0
 
-> 🆕 **【wake #704 · 2026-11-06 05:26】监控巡检（状态无变化·双poller健康+GPU 8×97-100%·仅待GPU）**。CPU-only监控巡检，距wake#703约5min。本机=10.239.2.12(whag0pgpuap12)，nvidia-smi实测8×H100 97-100%util/~75GB/81GB(R9 pretrain)。.29 SSH实测8×H100 97-100%util/~75GB(pretrain mamba2 baize2b,ETA≈11/25-27,iter~96k/700k=13.7%)。**两台GPU主机全占，无可用GPU**。双poller健康：SFT PID2757742(ppid=1,etimes≈34666s≈9.6h,flock独占锁,60s轮询,fd/1最新`05:24:24 busy_util -- waiting`) / GRPO chain PID2428009(ppid=1,etimes≈24653s≈6.8h,等SFT,fd/1最新`05:24:17 SFT not done yet waited24600s/2592000`) / vision loop PID669545(ppid=1,etimes≈677722s≈7.84d)。cline✓。git fetch同步(0ahead/0behind)，无新vision运维令(TASK自11-05 18:44未变)。SFT ckpt+eval_results.json不存在(预期·GPU被占)。全管线就绪仅待GPU释放（Phase1就绪GREEN@wake#667+poller逻辑sound@wake#684）。📦体积：TASK=30453B(29.7KB)/MEMORY≈19KB(均≤32KB✓)。**未完成指令：有**（阶段1 GPU训练pending+阶段2/3未交付）⇒**WAITING: 0**。
+> 🆕 **【wake #705 · 2026-11-06 05:30】监控巡检（状态无变化·双poller健康+GPU 8×97-100%·仅待GPU）**。CPU-only监控巡检，距wake#704约4min。本机=10.239.2.12，nvidia-smi实测8×H100 97-100%util/~75GB/81GB(R9 pretrain)。.29 SSH实测8×H100 94-100%util/~75GB(pretrain mamba2 baize2b)。**两台GPU主机全占，无可用GPU**。双poller健康：SFT PID2757742(ppid=1,etimes≈34988s≈9.7h,flock独占锁,60s轮询,fd/1最新`05:30:25 busy_util -- waiting`) / GRPO chain PID2428009(ppid=1,etimes≈24975s≈6.9h,等SFT,fd/1最新`05:30:17 SFT not done yet waited24960s/2592000`) / vision loop PID669545(ppid=1,etimes≈678044s≈7.85d)。cline✓。git fetch同步(0ahead/0behind,HEAD=778b45aac)，无新vision运维令(TASK自11-05 18:44未变)。SFT ckpt+eval_results.json不存在(预期·GPU被占)。全管线就绪仅待GPU释放（Phase1就绪GREEN@wake#667+poller逻辑sound@wake#684）。📦体积：TASK=30453B(29.7KB)/MEMORY≈19KB(均≤32KB✓)。**未完成指令：有**（阶段1 GPU训练pending+阶段2/3未交付）⇒**WAITING: 0**。
+
+> 📦 wake #704（监控巡检·2026-11-06 05:26·状态无变化·双poller健康+GPU 8×97-100%·仅待GPU）已归档 → daily-memories-vision/2026-11-06.md；**结论**：状态无变化，全管线就绪仅待GPU。需要时再读。
 
 > 📦 wake #702~#703（监控巡检·2026-11-06 05:17~05:21·状态无变化·双poller健康+GPU 8×90-100%·仅待GPU）已归档 → daily-memories-vision/2026-11-06.md；**结论**：状态无变化，全管线就绪仅待GPU。需要时再读。
 
