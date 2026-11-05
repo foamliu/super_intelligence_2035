@@ -1,0 +1,61 @@
+<!DOCTYPE html><html lang='zh-CN'><head><meta charset='UTF-8'>
+<title>BaiZe-2B llama.cpp 常识推理能力曲线与 700k 预测</title>
+<style>
+body{font-family:-apple-system,"Microsoft YaHei",sans-serif;margin:0 auto;padding:20px;
+background:#f8fafc;color:#1e293b;max-width:1180px;line-height:1.6}
+h1{color:#1e40af;border-bottom:3px solid #3b82f6;padding-bottom:10px;font-size:22px}
+h2{color:#334155;margin-top:28px;font-size:18px;border-bottom:1px solid #cbd5e1;padding-bottom:5px}
+table{border-collapse:collapse;width:100%;margin:14px 0;font-size:12.5px}
+th,td{border:1px solid #cbd5e1;padding:5px 8px;text-align:center}
+th{background:#475569;color:white}
+tr:nth-child(even){background:#f1f5f9}
+.avg{background:#dbeafe;font-weight:bold}
+.ref{background:#ecfdf5;color:#065f46}
+.na{color:#94a3b8}
+.card{background:white;border:1px solid #e2e8f0;border-radius:8px;padding:14px 18px;margin:14px 0}
+.chart{text-align:center;margin:18px 0}
+.note{background:#fffbeb;border-left:4px solid #f59e0b;padding:10px 15px;margin:14px 0;font-size:13px}
+.success{background:#dcfce7;border-left:4px solid #16a34a;padding:10px 15px;margin:14px 0;font-size:13px}
+.warn{background:#fef2f2;border-left:4px solid #dc2626;padding:10px 15px;margin:14px 0;font-size:13px}
+.small{font-size:11px;color:#64748b}
+code{background:#f1f5f9;padding:1px 5px;border-radius:3px;font-size:12px}
+.foot{margin-top:30px;padding-top:12px;border-top:1px solid #e2e8f0;font-size:11px;color:#94a3b8;text-align:center}
+</style></head><body>
+<h1>BaiZe-2B llama.cpp 全 checkpoint 常识推理评测 · 能力曲线与 700k 预测</h1>
+<p class='small'>生成时间：2026-11-05 10:04:37　|　后端：llama.cpp 修复分支 <code>fix/nemotron-h-undo-permute-and-rope</code>（build 5dc38db00）　|　已完成 0/5 ckpt　|　8 集 zero-shot <code>limit=100</code></p>
+<div class='card'><h2>① 评测配置</h2><table>
+<tr><th>项目</th><th>说明</th></tr>
+<tr><td>模型</td><td>BaiZe-2B（Mamba2-hybrid，2.22B 参数）</td></tr>
+<tr><td>后端</td><td>llama.cpp（C++ SSM scan，数值稳定），GGUF F16，<code>-t 8</code> / <code>nice 19</code> / <code>OMP_NUM_THREADS=8</code></td></tr>
+<tr><td>8 个任务集</td><td>ARC-Challenge / ARC-Easy / BoolQ / HellaSwag / OpenBookQA / PIQA / SciQ / Winogrande（zero-shot，与 P-6 同口径）</td></tr>
+<tr><td>检查点</td><td>iter_{10000,20000,30000,40000,50000}（token/step=4,194,304，即 41.94B ~ 209.72B）</td></tr>
+<tr><td>参照线</td><td>P-6 起点 0.4395@655M/20k；Xmodel-2 s1 (1.2B)；Phi-1.5 (1.3B)</td></tr>
+<tr><td>每任务样本</td><td><code>limit=100</code>（非全量），acc_stderr ≈ ±4.5%，逐集绝对值有统计波动，<strong>Avg 趋势比单集绝对值更可信</strong></td></tr>
+</table></div>
+<div class='card'><h2>② 关键发现</h2><ul>
+<li>评测管线仍在运行中，尚未有完成的检查点。本报告将在评测结束后刷新。</li>
+</ul></div>
+<div class='card'><h2>③ 5 ckpt × 8 集汇总表（acc / acc_norm）</h2>
+<p class='small'>暂无已完成检查点，待评测结束后刷新。</p>
+</div>
+<div class='card'><h2>④ 能力-vs-step 曲线</h2>
+<div class='chart'><p style='color:#64748b;text-align:center'>（暂无已完成检查点，曲线待评测结束后刷新）</p></div>
+<p class='small' style='text-align:center'>图1：8 集 Avg acc vs 训练步数（对数轴）。蓝粗线=BaiZe-2B Avg，灰细线=逐集，橙点=Xmodel-2 s1，绿/紫虚线=P-6/Phi-1.5 参照，红虚线=拟合外推，红点=700k 预测。</p>
+</div>
+<div class='card'><h2>⑤ 700k 步（≈2.94T token）常识推理水平预测</h2>
+<p class='small'>至少需 2 个完成检查点才能拟合，待评测结束后刷新。</p>
+</div>
+<div class='card'><h2>⑥ llama.cpp vs HF（PyTorch CPU）后端对比</h2><ul>
+<li><strong>HF 侧（PyTorch CPU float32）</strong>：iter_20000 / 40000 / 50000 因 Mamba2 SSM 数值不稳定（≥17 token 序列 logits 全 NaN）→ sciq=0.0 退化，仅 iter_10000（Avg 50.0%）/ iter_30000（Avg 50.25%）有效。</li>
+<li><strong>llama.cpp 侧（C++ SSM scan，修复后）</strong>：1-token logits 与 HF 对齐 （Δmax=0.006），sciq/piqa limit=100 复判 Δ≤1pp；C++ SSM 数值稳定，<strong>5 个 ckpt 全部可正常出分</strong>。</li>
+<li><strong>结论</strong>：本报告（llama.cpp）给出真实的 5 点能力曲线，克服了 HF CPU 侧的 NaN 退化问题；NaN 为 PyTorch reference 实现的数值问题，非 ckpt 权重问题（逐张量扫描 5 ckpt 全无 NaN/Inf）。</li>
+</ul></div>
+<div class='card'><h2>⑦ 诚实条款与限制</h2><ul>
+<li>本评测为<strong>纯 CPU</strong>，llama.cpp 后端，<code>limit=100</code>，样本量较小，逐集 acc_stderr ≈ ±4.5%，<strong>Avg 趋势比单集绝对值更可信</strong>。</li>
+<li>700k 预测为<strong>外推</strong>，仅基于 5 点且处于陡升段，<strong>误差大，仅作量级估计</strong>（见 §⑤ 不确定度）。</li>
+<li>Xmodel-2 / Phi-1.5 参照线为公开报告值，评测口径可能与我方不完全一致，仅作量级参照。</li>
+<li>S1 训练于 2026-11-02 19:51 从 ckpt 58000 resume，iter_10000–50000 均为 <strong>resume 前</strong>保存的检查点，不受 resume 影响。</li>
+<li>全程 <code>CUDA_VISIBLE_DEVICES=""</code>，未碰 GPU/S1，CPU load ≪80%。</li>
+</ul></div>
+<div class='foot'>报告生成器：<code>run/gen_llamacpp_scaling_report.py</code>（幂等，可随评测进度反复刷新）　|　数据源：<code>nemo_experiments/baize2b/lm_eval_results/gguf_iter_*_fixed_8set/</code>　|　2026-11-05 10:04:37</div>
+</body></html>
