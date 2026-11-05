@@ -1917,3 +1917,72 @@ ngspice .raw 实测：`ngspice -b test.cir` → 646 点 × 3 变量 binary doubl
 **🟡 YELLOW**：RL 环境框架可用（备选路径 ngspice .raw），可进阶段 1 SFT。WaveView API 兼容路径需运维协调 .75 访问。
 
 **交付物**：`reports/report_vision_wave_rl_phase0_feasibility_zh.html`（13568B）+ `vision/wave_rl/waveview_gym.py`（冒烟可跑）+ 本节。
+
+
+## §20 波形 RL 阶段 1：Stage-1W SFT 合成数据 pipeline（2026-11-05 wake#610）
+
+**运维令**：§运维令·2026-11-05 17:5x · 阶段 1（gated on 阶段 0 — Phase 0 YELLOW，ngspice 备选路径 GREEN，Phase 0 报告结论"可进阶段 1 SFT"）
+
+**目的**：生成 pilot 5000 条 SFT 轨迹，教 2B MLLM 通过工具调用（open→get_signal→get_values→submit）"看懂"波形图。CPU-only，不占 GPU。
+
+### 20.1 数据 pipeline 设计
+
+**脚本**：`vision/wave_rl/gen_sft_trajectories.py`（294 行）。复用 `waveview_gym.py` 的电路生成器 + ngspice 运行器 + .raw 解析器 + 量测函数；新增差分对（diffpair）电路生成器（计划书要求 RC/RL/反相器/差分对）。
+
+**电路类型**（5 类，ngspice SPICE tran，参数随机化）：
+| 电路 | 信号 | 随机参数 | GT 量 |
+|:--|:--|:--|:--|
+| RC | v(in), v(out) | R, C, V_hi, period | period, amplitude, τ=RC, rise_time |
+| RC-pulse | v(in), v(out) | R, C, V_hi, period, duty | period, amplitude, duty_cycle |
+| Inverter | v(in), v(out) | V_dd, Wn, period | period, amplitude, V_dd |
+| RL | v(in), v(out), i(l1) | R, L, V_hi, period | period, amplitude, τ=L/R |
+| Diffpair | v(in_p/n), v(out_p/n) | V_dd, Iss, Wn, period, Vin_diff | period, amplitude, tail_current |
+
+**量测目标**（4 类）：period / amplitude / rise_time / duty_cycle。Oracle 从 .raw 实测（非参数推导），确保 SFT teacher 与模型推理时看到的数据一致。
+
+**轨迹格式**：多轮对话（JSONL，每行 1 条）：
+- `system`：任务描述 + 可用动作（open/get_signal/get_values/dump_hier/submit）
+- `user`：指令（"Open file X and measure the Y of signal Z"）
+- `assistant`：动作调用
+- `tool`：观测结果（信号数/采样数/类型/时间范围）
+- `assistant`：submit(type, value)
+- `tool`：提交结果（相对误差）
+
+**轨迹类型**：
+- `normal`（79.5%）：clean path open→get_signal→get_values→submit
+- `error_recovery`（20.5%）：wrong signal name→signal_not_found→dump_hier→find correct→get_signal→get_values→submit（计划书要求的错误恢复轨迹）
+
+### 20.2 生成结果
+
+5 批（seed=20261105..20261109，n=1200×4+400），CPU-only on .12（nice -n 10，不占 GPU）：
+
+| 指标 | 值 |
+|:--|:--|
+| 总轨迹数 | **5064** |
+| normal | 4027 (79.5%) |
+| error_recovery | 1037 (20.5%) |
+| by_circuit | rc=983, rc_pulse=977, inverter=1056, rl=1013, diffpair=1035 |
+| by_target | period=1139, amplitude=1320, rise_time=1333, duty_cycle=1272 |
+| 输出大小 | 10.1 MB (10,557,067 B) |
+| 吞吐率 | ~55 traj/s（ngspice subprocess） |
+| 总耗时 | ~90s（5 批 × ~18s） |
+
+### 20.3 验证
+
+30 条随机抽样验证：
+- **format_ok = 30/30**（每条含 system+user+assistant submit）
+- **measure_ok = 30/30**（submitted_value 与 oracle gt_value 相对误差 < 1e-6）
+- **ALL_PASS = True**
+
+### 20.4 GPU 状态与 SFT 训练阻塞
+
+.12 上 8×H100 全部 100% util / ~75GB used（vision R9 训练占用）→ **Phase 1 SFT 训练（~4 GPU·h pilot）需等 GPU 空闲窗口或其它主机**。数据 pipeline 已就绪（CPU-only 完成），训练部分待 GPU 调度。
+
+### 20.5 交付物
+
+- `vision/wave_rl/gen_sft_trajectories.py`（294 行，可重放，固定 seed）
+- `vision/wave_rl/sft_pilot_5000.jsonl`（5064 条轨迹，10.1MB）
+- `vision/wave_rl/sft_pilot_5000_stats.json`（汇总统计）
+- 本节
+
+**诚实条款**：所有电路参数由 ngspice 实际仿真生成，GT 由 .raw 实测量测（非参数推导），无伪造数字。验证 30/30 ALL_PASS。

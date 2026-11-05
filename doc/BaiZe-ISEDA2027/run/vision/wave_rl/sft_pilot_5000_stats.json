@@ -1,0 +1,38 @@
+{
+  "total": 5064,
+  "by_type": {
+    "normal": 4027,
+    "error_recovery": 1037
+  },
+  "by_circuit": {
+    "rc_pulse": 977,
+    "diffpair": 1035,
+    "inverter": 1056,
+    "rc": 983,
+    "rl": 1013
+  },
+  "by_target": {
+    "amplitude": 1320,
+    "period": 1139,
+    "duty_cycle": 1272,
+    "rise_time": 1333
+  },
+  "error_ratio_pct": 20.5,
+  "output_bytes": 10557067,
+  "output_mb": 10.1,
+  "circuit_types": [
+    "rc",
+    "rc_pulse",
+    "inverter",
+    "rl",
+    "diffpair"
+  ],
+  "measure_targets": [
+    "period",
+    "amplitude",
+    "rise_time",
+    "duty_cycle"
+  ],
+  "validation": "30/30 format_ok + 30/30 measure_ok = ALL_PASS",
+  "note": "5 batches seed=20261105..20261109, n=1200x4+400, ngspice CPU-only on .12"
+}
