@@ -7,11 +7,11 @@ WAITING: 1
 ```
 PHASE:        R1662 quiet监控轮:CPU/MEM自检PASS(load24.4/224~11%·无>8000%CPU·无>50GB RSS·无需kill·本线topCPU=cline-hub-daemon22.9%·他线pretrain训练144%/21GB不碰)→无active eval/predict进程→scan_backlog=0→全7路100%确认(eval_*.json独立复核一致)→report regen可复现(16952B·committed md5 617e671a==regen·git diff仅'生成时间'戳·数据逐字节稳定)→硬约束③复核(tracked524json=520instance定义+4旧pilot·0结果JSON入库)→未完成指令:无(agent工作完成·full500块待运维标✅归档)⇒WAITING=1
 已完成:       H-B✅·Gate7/7·TB报告✅·pilot20✅·R984-R988恒0调试✅·R989 incr_eval全链✅·R997硬约束修复✅·R1567 cline trace归因✅·R1569 cline适配器修复✅·R1633 cline rerun 58/58终交付✅(356/500=71.3%)·R1634 13:5x复核+归档✅·R1635-R1649 deepseek incr_eval渐进✅(196→212,backlog=0)·R1650-R1661 quiet监控✅·full500全7路predict+eval 100%完成✅·R1662 full500复核可复现✅
-当前动作:     R1662:CPU/MEM自检PASS(load24.4/224~11%·无>8000%CPU·无>50GB RSS·无需kill·本线topCPU=cline-hub-daemon22.9%/4.5GB·他线pretrain训练144%/21GB不碰)→无active eval/predict进程(run_harness/run_single/incr_eval/pytest/run_verified_full均无)→scan_backlog.py=0→全7路100%确认(eval_*.json独立复核:opencode401/cline356/pi333/codex291/claude-code273/deepseek212/hermes184)→report regen可复现(gen_report重跑16952B·committed md5 617e671a==regen md5·git diff仅'生成时间'00:43→01:25·数据稳定)→硬约束③复核(git ls-files tracked524json=520instance定义+4旧pilot·0结果JSON入库)→未完成指令:无(agent工作完成·full500块待运维✅归档)⇒WAITING=1
+当前动作:     R1662 quiet监控轮:CPU/MEM自检PASS(load24.4/224~11%·无>8000%CPU·无>50GB RSS·无需kill·本线topCPU=cline-hub22.9%·他线pretrain144%/21GB不碰)→无active eval/predict进程→scan_backlog=0→全7路100%确认(eval_*.json复核:opencode401/cline356/pi333/codex291/claude-code273/deepseek212/hermes184)→report可复现(regen16952B·diff仅生成时间戳·数据稳定)→硬约束③PASS(tracked524json=520定义+4pilot·0结果JSON)→未完成指令:无(full500块待运维✅归档)⇒WAITING=1
 下一步:       ①full500全7路已100%完成+R1662复核可复现(opencode401/cline356/pi333/codex291/claude-code273/deepseek212/hermes184)→report已交付(16952B,④指标齐全) ②永久硬约束:禁止commit结果JSON ③下次唤醒CPU/MEM自检+backlog复扫(预期=0) ④TASK=36821B(35.9KB)>32KB软限但<40KB红线·full500块待运维标✅后归档(归档纪律#1:无✅不许归档·最高优先覆盖收尾铁律)·MEMORY≈32KB
 阻塞:         无·全7路predict+eval 100%完成·backlog=0·R1662复核可复现通过.
 ERROR_COUNT:  0
-  📦 体积：TASK=36821B(35.9KB,<40KB红线OK,full500块待运维标✅方可归档·归档纪律#1覆盖收尾铁律) / MEMORY≈32400B(31.6KB,≤32KB达标,<40KB红线OK,本轮归档0B)
+  📦 体积：TASK=36821B(35.9KB,<40KB红线OK,full500块待运维标✅方可归档·归档纪律#1覆盖收尾铁律) / MEMORY=32665B(31.9KB,≤32KB达标,<40KB红线OK,本轮归档0B)
 
 ```
 
