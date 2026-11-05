@@ -1,4 +1,4 @@
-WAITING: 1（真外部阻塞：shard B spice_char real trace 池枯竭，详见 18:54 流水；待运维裁定：扩池口径 / 接受 exhaustion / 切其他任务）
+WAITING: 0（运维令 19:2x：旧「池枯竭」结论作废；改为自行经 `.75` 的 `run_commands` 重扫 698 机刷新 trace 源，见 TASK 顶部新块）
 
 ## 当前基线（每轮只更新这一行，不堆历史）
 `84 条 proper（spice_sim:61 · characterization:18）· 已跑 cline_eval 见 cline_eval_status.jsonl · test_rationale 断言清单 84/84（k_rationale=k_check≥8 全过）· 目标通过率（B 档）20–30% · ⚠️ real trace 池枯竭（7+ 轮 scouting 结论）`
