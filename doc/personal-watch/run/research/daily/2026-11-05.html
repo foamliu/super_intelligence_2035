@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>论文推荐日报 · 2026-11-05（早报 · 3/5）· research 线</title>
+<title>论文推荐日报 · 2026-11-05（晚报 · 5/5）· research 线</title>
 <style>
   :root { --primary:#0b3d6e; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700; --bad:#cf222e;
           --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
@@ -53,13 +53,14 @@
 <body>
 <div class="wrap">
 <header class="hero">
-  <h1>论文推荐日报 · 2026-11-05 <span class="badge b-am">早报 · 3/5</span></h1>
-  <div class="sub">每日 5 篇推荐论文（早 3 / 晚 2）· <b>今日进度 0 / 5 → 3 / 5</b>（晚报 2 篇于 <b>18:00</b> 时窗补齐）</div>
+  <h1>论文推荐日报 · 2026-11-05 <span class="badge b-pm">晚报 · 5/5</span></h1>
+  <div class="sub">每日 5 篇推荐论文（早 3 / 晚 2）· <b>今日进度 0 / 5 → 3 / 5 → 5 / 5</b>（早报 3 篇「借鉴」06:00 已交付；晚报 2 篇「科普」18:00 补齐）</div>
   <div class="meta">
     <span>📅 2026-11-05（周四）</span>
     <span>🕕 生成 06:2x CST（早报）</span>
+    <span>🕕 优化 18:1x CST（晚报）</span>
     <span>📚 数据源 arXiv（export.arxiv.org）· 官方 API</span>
-    <span>🏷 本篇口径：<b>借鉴</b>（与 BaiZe / ZhuLong 在研工作的相关性）</span>
+    <span>🏷 早报口径：<b>借鉴</b> ｜ 晚报口径：<b>科普</b>（大众能懂 + 传播力）</span>
   </div>
   <div class="disc">⚠️ 免责：本页为 <b>论文解读 / 待读线索</b>，<b>非结论、非官方</b>；所有数字均为<b>作者自报</b>，本线<b>未复现</b>；原题照抄不改写。</div>
 </header>
@@ -123,6 +124,48 @@
     <b>建议动作</b>：<b>读原文</b>（§4 算法与 gating、§5.1 单准则 tool-format 实验、§5.4 熵与振荡归因）+ <b>试跑（低风险）</b>：在自有 agentic harness 上先选 <b>1 个</b>可二值判定的准则（如「回答必须含变更说明」），固定蒸馏权重、开 thinking-token KL，观察 pass-rate 是否持平。
   </div>
 </div>
+<h2 class="sec">🌙 晚报 · 2 篇「科普」<span class="badge b-kp">科普</span></h2>
+<p style="font-size:13.5px;color:#59636e;margin:0 0 8px;">晚报口径 = <b>大众能不能懂 + 有没有传播力</b>（可以与本线在研工作无关；本篇与 BaiZe / ZhuLong 的关系只作为附注，不作为入选理由）。两篇都满足「一眼能看懂问题 / 结论反直觉 / 有画面可画」：<b>④ AI 画图数不清十以上的数</b> → <b>⑤ AI 玩吃豆人到底卡在哪一步</b>。两篇均为 <code>2026-11-04</code> 批次（本轮新刷新的公告批），在 72h 窗口内。</p>
+<div class="card">
+  <h3><span class="no">4</span>Same Layout, Different Count: What Number Words Do Past Ten in Text-to-Image Models</h3>
+  <div class="row"><div class="k">中文一句话</div><div class="v">让文生图模型画「十二个」和「二十五个」同一种东西、<b>只改提示词里的数字、其他全不动（同一物体 + 同一份起始噪声）</b>，画面布局几乎不变，而数量变得<b>跟换一个随机种子差不多、且方向不定</b>。作者用「同噪声」协议在 <b>5 个开源模型</b>（SDXL / SD3.5-M / FLUX.1-dev / FLUX.2 [klein] base 4B / Qwen-Image 20B）上逐个量「数字词的有效范围」：<b>十出头就守不住</b>（SD3.5-M、FLUX.1-dev 在十几之后不再跟随，SD3.5-M 的中位数量不管要求多少都停在 <b>4.5–8.5</b>；FLUX.1-dev 到「三十」反而缩到 1–2 个），FLUX.2 [klein] 与 Qwen-Image 能<b>松散地跟到 25</b>。反过来，把数量以<b>噪点网格</b>直接「画」进起始 latent（而不是只写在提示词里），人眼在 <b>59%</b> 的生成图里数出想要的个数，而只写在提示词里只有 <b>4%</b>。</div></div>
+  <div class="row"><div class="k">原题</div><div class="v"><span class="orig">Same Layout, Different Count: What Number Words Do Past Ten in Text-to-Image Models</span></div></div>
+  <div class="row"><div class="k">作者 / 机构</div><div class="v">Liang Yue · Eric A. Vance（<b>2 位</b>；据 PDF 首页：<b>University of Colorado Boulder</b>）<br>📦 论文承诺公开 <b>3,088</b> 张生成图的人工计数数据（本轮未见仓库链接）</div></div>
+  <div class="row"><div class="k">日期</div><div class="v">首次提交 <b>2026-11-04</b>（<code>published=2026-11-04T17:57:53Z</code>；<code>updated</code> 同日，无 v2）· 距本轮唤醒 <b>≈24.0h</b>（<b>在 72h 窗口内</b>）· PDF 实测 <b>43 页</b> / <b>183,509</b> 字符（去空白）</div></div>
+  <div class="row"><div class="k">分类 / 标签</div><div class="v"><code>cs.CV</code> · <span class="badge b-kp">科普</span> · 关键词：文生图 / 计数失败 / 起始噪声 / 数量词 / 同噪声对照 / 评测指标</div></div>
+  <div class="row"><div class="k">链接</div><div class="v"><a href="https://arxiv.org/abs/2611.06840">https://arxiv.org/abs/2611.06840</a>（PDF 已落地：<code>research/pdf/2026-11-05/2611.06840.pdf</code>，10,170,708 B，校验见附录 C）</div></div>
+  <div class="reason"><b>推荐理由（科普 · 大众看点与传播力）</b>
+    <ol>
+      <li><b>人人有的体验，被量化了</b>：「让 AI 画 20 个杯子，它画不出 20 个」是公开吐槽；本文不靠模型自评，而是找<b>没看过提示词的人</b>去数 <b>3,088</b> 张生成图，把「十以上崩」变成一个可复现的实验。</li>
+      <li><b>反直觉且好讲</b>：固定同一份起始噪声、只把「十二」改成「二十五」，<b>布局留着、数量随便变</b>；更妙的是只重画「比图像的八分之一更细」的那部分噪声，就既保住布局、又把数量挪动了「换新数字」的 <b>2/3（0.69 倍）</b> —— 一条两分钟视频能讲清的因果链。</li>
+      <li><b>结论可迁移到日常使用</b>：想要数量准，别只在提示词里写数字，<b>把数量当成构图信息给进去</b>（59% vs 4%）。这是普通人立刻能试的操作。</li>
+      <li><b>连评测方法一起纠错（有科普深度）</b>：超过十个之后，「精确匹配率」几乎分不开「大致跟随」与「完全忽略」（SD3.5-M 精确率 <b>4%</b>，「松散跟随」的模型 5–7%），相对误差甚至更偏爱固定猜 <b>16</b> ⇒ 必须用同噪声对照才能分辨。这条对大众也有教育意义：<b>看指标会被骗</b>。</li>
+      <li><b>边界（必须写清）</b>：① 只测 5 个开源模型，<b>未测闭源模型</b>（作者只引用他人结论说闭源同样很少精确）；② 计数用人工 + 检测器（SAM 3 等三种）交叉，物体类型限定在受控集合；③ 结论是「十以上数量词作用变弱/无方向」，<b>不等于</b>「模型完全没有计数能力」；④ 数字作者自报、本线未复现；⑤ 43 页含大量附录，公开数据以论文承诺为准。</li>
+    </ol>
+    <b>建议动作</b>：<b>读原文</b>（§4 同噪声协议、§5 细尺度噪声重画、§7 评测指标的可分性）+ 作为 <b>《论文两分钟》当期 TOP-1</b>（见 <code>research/video/SCENES/11_05.html</code>）。<br>
+    <span style="color:#59636e;">附注（与在研工作的弱相关，<b>不作为入选理由</b>）：它示范了「固定输入、一次只改一个变量」的对照范式，以及「指标会掩盖真实行为」的教训 —— 这两点对任何做评测的人都有用。</span>
+  </div>
+</div>
+<div class="card">
+  <h3><span class="no">5</span>Where It Breaks: Diagnosing Perception, Memory, and Decision Failures of a Vision-Language Agent in Pac-Man</h3>
+  <div class="row"><div class="k">中文一句话</div><div class="v">训练一个只会「上下左右」四个动作的<b>吃豆人 agent</b>（基座 <b>Qwen3.5-9B</b>），作者不满足于「一个漂亮分数」，而是把<b>「看屏幕」与「选动作」拆开查</b>：在主实验里把图像转录移出决策接口（改用文本棋盘），<b>8 个固定留出迷宫 × 每格 96 局</b>的通关从优化前 <b>0/96</b> 提到选定 checkpoint 的 <b>77/96</b>（论文另一处口径写作 <b>0% → 80.2%</b>，带三条命）；但完整轨迹并不单调 —— 最高 <b>78/96</b>（@335），最后一次完整校验（@425）回落到 <b>60/96</b>。感知侧则发现：<b>静态截图读得很准</b>的 agent，在实际交互中仍会误读；另一条 ASCII 策略线在<b>继续优化后反而掉分</b>，回放里出现「明明有出口却选了立即致命的动作」。</div></div>
+  <div class="row"><div class="k">原题</div><div class="v"><span class="orig">Where It Breaks: Diagnosing Perception, Memory, and Decision Failures of a Vision-Language Agent in Pac-Man</span></div></div>
+  <div class="row"><div class="k">作者 / 机构</div><div class="v">Xinglu Wang · Edward Wang · Yong Zhang · Zhenan Fan（<b>4 位</b>；<b>PDF 未标注机构</b>，本线不代填）</div></div>
+  <div class="row"><div class="k">日期</div><div class="v">首次提交 <b>2026-11-04</b>（<code>published=2026-11-04T16:04:57Z</code>；<code>updated</code> 同日，无 v2）· 距本轮唤醒 <b>≈26.0h</b>（<b>在 72h 窗口内</b>）· PDF 实测 <b>35 页</b> / <b>159,515</b> 字符（去空白）</div></div>
+  <div class="row"><div class="k">分类 / 标签</div><div class="v"><code>cs.LG</code> · <span class="badge b-kp">科普</span> · 关键词：VLM agent / 吃豆人 / 后训练诊断 / 感知-决策分解 / 评测陷阱 / 长程控制</div></div>
+  <div class="row"><div class="k">链接</div><div class="v"><a href="https://arxiv.org/abs/2611.06704">https://arxiv.org/abs/2611.06704</a>（PDF 已落地：<code>research/pdf/2026-11-05/2611.06704.pdf</code>，717,133 B，校验见附录 C）</div></div>
+  <div class="reason"><b>推荐理由（科普 · 大众看点与传播力）</b>
+    <ol>
+      <li><b>画面自带</b>：吃豆人是最广为人知的游戏画面之一，四方向动作人人都懂；「AI 为什么玩不好」比「新 SOTA」更容易让路人停下来看。</li>
+      <li><b>反直觉结论（本期最强钩子）</b>：分数最好的 checkpoint <b>不是最后那个</b> —— 最高 <b>78/96</b>（@335），最后一次完整校验（@425）却是 <b>60/96</b>。「训练越久越好」的默认直觉在这里不成立。</li>
+      <li><b>拆解方式可复述</b>：把「读屏」与「决策」分离 —— 感知用 <b>RGB 截图 + 结构化盘面判读</b>，决策用 <b>纯文本棋盘</b>，各自单独验；于是能说出「不是看不清，而是不会选 / 或选错」。</li>
+      <li><b>对普通观众的迁移价值</b>：它给出的三条检查（<b>在用中评测感知 · 区分训练成功与整局验证 · 别只看一个选定分数</b>）可以平移到任何「AI 能不能真干活」的讨论，也顺手解释了很多 demo「演示很好、上线就崩」的现象。</li>
+      <li><b>边界（必须写清）</b>：① 单一模型家族（Qwen3.5-9B）、单一游戏（吃豆人）、留出集仅 <b>8 个固定迷宫</b>；② 主实验用<b>文本棋盘</b>，作者自己强调<b>该结果不等于图像策略的效果</b>；③ 论文明确<b>不给出 RL 失败的单一原因</b>（prompt 兼容性、观测条件、起始分布、学习目标需要分开测）；④ 属「开发记录式」经验研究，非受控大样本对照；⑤ 机构未标注、数字作者自报、本线未复现。</li>
+    </ol>
+    <b>建议动作</b>：<b>读原文</b>（§3 观测条件与三组证据、§5 平台期与回落、附录 M 的逐次计数）。<br>
+    <span style="color:#59636e;">附注（与在研工作的弱相关，<b>不作为入选理由</b>）：「训练胜率 ≠ 整局可用」「感知要在用中评测」对 agent harness 类评测有借鉴意义 —— 仅作线索登记，本轮<b>未</b>改动 <code>TAKEAWAYS.md</code>。</span>
+  </div>
+</div>
 <h2 class="sec">附录 A · 本轮检索式与命中数（可核验）</h2>
 <div class="note">
   <b>批次探针（AM · 4 条查询，间隔 ≥3.2s，`4/4` `status=200` + `application/atom+xml; charset=utf-8`，全部 <code>attempts=1</code>）</b>：证据文件 <code>research/raw/2026-11-05-am-verify-r133.txt</code>（脚本 <code>raw/verify_r133.py</code>）。
@@ -138,6 +181,20 @@
   <b>结论（如实登记）</b>：本轮 <b>公告批次未刷新</b>，仍为 <code>2026-11-03</code>（<code>totalResults=124,606</code>、最新 <code>2026-11-03T18:59:52Z</code>、广度 <b>642,920</b>，三项与 r132 PM <b>逐项一致</b>）。<br>
   <b>时点解释（非故障）</b>：本地 <b>2026-11-05 06:00 CST</b> = 美东 <b>2026-11-04 17:00 EST</b>；arXiv 下一批公告 = 美东 <b>11-04 20:00 ET</b> = 本地 <b>11-05 09:00</b>，<b>晚于本轮约 3h</b> ⇒ 未刷新符合日历。本轮<b>未</b>把「未刷新」写成「无新增」。
 </div>
+<div class="note">
+  <b>批次探针（PM · 4 条查询，间隔 ≥6–20s，`4/4` `status=200` + `application/atom+xml; charset=utf-8`，均 <code>attempts=1</code>）</b>：证据文件 <code>research/raw/2026-11-05-pm-verify-r134.txt</code>（脚本 <code>raw/verify_r134.py</code>）。
+</div>
+<table>
+  <tr><th>#</th><th>检索式</th><th>totalResults</th><th>最新 published</th><th>耗时</th><th>判读</th></tr>
+  <tr><td>①</td><td><code>cat:cs.CL</code>（lastUpdatedDate ↓）</td><td><b>124,696</b>（AM 124,606）</td><td><code>2026-11-04T18:58:23Z</code>（<code>2611.06914v1</code>）</td><td>1.06s</td><td><b>新批已刷新</b></td></tr>
+  <tr><td>②</td><td><code>cat:cs.CL AND submittedDate:[202611020000 TO 202611062359]</code></td><td><b>249</b>（AM 237）</td><td><code>2026-11-04T18:58:23Z</code></td><td>1.21s</td><td>区间内出现 11-04 条目</td></tr>
+  <tr><td>③</td><td><code>submittedDate:[202611020000 TO 202611062359]</code>（全库，不加分类）</td><td><b>4,479</b>（AM 3,946）</td><td><code>2026-11-04T18:59:59Z</code></td><td>1.16s</td><td>全库同步前移</td></tr>
+  <tr><td>④</td><td>广度 sweep：<code>cat:cs.CL OR cat:cs.CV OR cat:cs.SE OR cat:cs.AI OR cat:cs.LG</code></td><td><b>643,448</b>（AM 642,920）</td><td><code>2026-11-04T18:59:56Z</code>（<code>2611.06918v1</code>）</td><td>1.49s</td><td>+528，与 ① 一致</td></tr>
+</table>
+<div class="ok-box">
+  <b>结论（如实登记）</b>：<b>公告批次已刷新</b> —— 最新条目从 AM 的 <code>2026-11-03T18:59:52Z</code> 前移到 <b><code>2026-11-04T18:58:23Z</code></b>，四项计数全部单调上升，与「美东 11-04 20:00 ET 公告 = 本地 11-05 09:00」的日历完全吻合。<br>
+  ⚠️ 过程如实登记：本轮首跑探针时第 ④ 条遇 <code>HTTP 429</code>（同日多次查询触发 arXiv 限速），脚本按「单条失败不中断」重写后<b>间隔加大到 6–20s 重跑成功</b>；<b>没有</b>把 429 当成「无新增」。
+</div>
 
 <h2 class="sec">附录 B · 取数、去重与选文</h2>
 <p style="font-size:13.5px;"><b>取数</b>（<code>raw/candidates_r133.py</code> → <code>raw/2026-11-05-am-candidates-r133.json</code>）：单分类 5 条查询、各 100 条、间隔 ≥3.2s，<b>5/5 <code>200</code></b> —— <code>cs.CL</code> 124,606 / <code>cs.CV</code> 212,193 / <code>cs.LG</code> 297,291 / <code>cs.AI</code> 211,047 / <code>cs.SE</code> 30,767；合并去重后 <code>published ≥ 2026-11-03</code> 共 <b>325</b> 条，其中与 <code>SEEN.md</code> 重复 <b>2</b> 条（r132 晚报两篇 <code>2611.05290</code> / <code>2611.05148</code>）⇒ <b>候选池 323 条（0 条重复）</b>。<br>
@@ -151,25 +208,49 @@
 <p style="font-size:13.5px;"><b>本轮<b>未选</b>但满足入账判据的强候选</b>（如实登记，可随时补位）：<code>2611.05313</code> <b>MDSKILL</b>（12 位；技能记忆三视图蒸馏 + OPSD；ALFWorld <b>+7.1%</b>、WebShop <b>+8.1%</b>）· <code>2611.05345</code> <b>Adversarial Speculative Reasoning</b>（8 位；把投机解码当「上下文精度分配器」，长程 agent 端到端成功率提升且不改目标模型分布）· <code>2611.05275</code> <b>Route Anything</b>（7 位；25 基准 / 452 候选 / <b>374,401</b> 次评分；per-input oracle 比最佳固定候选 <b>+5.4</b> 点、学到的 router <b>+0.3</b> 点）· <code>2611.05306</code> <b>You don't need long context</b>（12 位；r132 附录 B 已登记过同一篇，本轮仍满足判据但未重复占用名额）。<br>
 <b>放弃理由</b>：前三篇与「训练 → 推理 → 后训练」三段正好一一对应，且都能给出可直接量的数字；上述四条要么与已选三篇层级重叠，要么更偏「科普/观点」（留给晚报或后续轮次）。</p>
 
-<h2 class="sec">附录 C · PDF 落地与校验（3/3）</h2>
+<p style="font-size:13.5px;"><b>【PM】取数</b>（<code>raw/candidates_r134.py</code> → <code>raw/2026-11-05-pm-candidates-r134.json</code>）：单分类 5 条查询、各 100 条、间隔 ≥3.2s，<b>5/5 <code>200</code></b> —— <code>cs.CL</code> 124,696 / <code>cs.CV</code> 212,341 / <code>cs.LG</code> 297,505 / <code>cs.AI</code> 211,264 / <code>cs.SE</code> 30,809；合并去重后 <code>published ≥ 2026-11-04</code> 共 <b>310</b> 条，<b>与 <code>SEEN.md</code> 重复 0 条</b> ⇒ <b>候选池 310 条</b>（新批已刷新，故与 AM 的 323 条完全不重叠）。<br>
+<b>权威复核</b>：官方 <code>id_list</code> <b>2/2</b> 命中（<code>raw/2026-11-05-pm-idlist-r134a.xml</code>，HTTP <b>200</b> / <b>5,164 B</b> / <b>2.96s</b>），两篇 <code>published</code> 前缀 <code>2026-11-04</code> 断言通过。</p>
+<table>
+  <tr><th>#</th><th>arXiv ID</th><th>科普四问（大众能懂 / 传播力 / 可讲清 / 真实来源）</th><th>时效（距本轮）</th><th>为什么选它（一句话）</th></tr>
+  <tr><td>4</td><td><code>2611.06840</code></td><td>✅ 人人吐槽「AI 画不对手指数/杯子数」 / ✅ 反直觉 + 可演示 / ✅ 同噪声对照一条线讲完 / ✅ arXiv + 3,088 张人工计数</td><td>≈24.0h ✅</td><td>把「十以上数不清」量化，并给出「把数量画成构图」这个反直觉解法（59% vs 4%）</td></tr>
+  <tr><td>5</td><td><code>2611.06704</code></td><td>✅ 吃豆人画面 / ✅ 「训得越久反而更差」 / ✅ 感知 vs 决策二分 / ✅ arXiv + 逐次校验计数</td><td>≈26.0h ✅</td><td>用最直观的游戏把「训练胜率 ≠ 整局可用」讲清楚，顺带给出三条后训练检查</td></tr>
+</table>
+<p style="font-size:13.5px;"><b>本轮<b>未选</b>但满足入账判据的强候选（PM 池，如实登记）</b>：<code>2611.05803</code> <b>PinyinBench</b>（3 位；中文汉字声母/韵母/声调知识的行为评测 + 逐层探针 + 激活引导；17 个模型，前沿模型同音字判定 90%+，但<b>只差声调时掉到 72%</b>；对中文受众传播力强，<b>本轮排第 3 顺位</b>）· <code>2611.06806</code> <b>Measuring Risk, Not Harm</b>（6 位；把「心理伤害风险因子」做成可检测的 8 类行为，47,062 条合成回复 / 373,873 条标签，级联在人工标注上 macro P 0.86 / R 0.76 / F1 0.79，WildChat 上把 judge 调用降 97.1%）· <code>2611.05954</code> <b>Robots in the City</b>（5 位；首尔街景 18 张图 + 500 个合成 persona 的 MLLM 打分 vs 25 位真人：都偏好「没有机器人」的街景，夜间更接受机器人）· <code>2611.06876</code> <b>SpecCompact</b>（agent 上下文压缩 + 槽位并行语义投机验证）。<br>
+<b>放弃理由</b>：晚报只要 2 篇，按「画面感 + 一眼能懂 + 可演示」排序，画图数数（④）与吃豆人（⑤）明显更适合两分钟视频；PinyinBench 内容质量同样够格，<b>留给下一轮（可作中文受众向选题）</b>。</p>
+
+<h2 class="sec">附录 C · PDF 落地与校验（5/5）</h2>
 <table>
   <tr><th>arXiv ID</th><th>字节</th><th>页数</th><th>字符（去空白）</th><th>结构校验</th><th>sha256 vs CDN etag</th></tr>
   <tr><td><code>2611.05234</code></td><td>1,542,092</td><td>26</td><td>75,631</td><td>✅ <code>%PDF-</code> 头 + 尾部 <code>%%EOF</code> + 字节 == <code>Content-Range</code> total</td><td>不一致（etag <code>sha256:4ec76fb6…</code> vs 本地 <code>beee4136…</code>）⇒ <b>不声称哈希一致</b></td></tr>
   <tr><td><code>2611.05304</code></td><td>645,661</td><td>17</td><td>56,486</td><td>✅ 同上</td><td>etag 为 base64 口径（<code>CNDEh5227ZcDEAI=</code>）⇒ 不可比</td></tr>
   <tr><td><code>2611.05266</code></td><td>1,636,164</td><td>14</td><td>42,812</td><td>✅ 同上</td><td>不一致（etag <code>sha256:eb2cd435…</code> vs 本地 <code>a4f5816e…</code>）⇒ <b>不声称哈希一致</b></td></tr>
+  <tr><td><code>2611.06840</code></td><td>10,170,708</td><td>43</td><td>183,509</td><td>✅ 同上（<b>⚠️ 单文件 &gt; 5 MB</b> ⇒ 不入 git）</td><td>不一致（etag <code>sha256:6c99d412…</code> vs 本地 <code>9109e20e…</code>）⇒ <b>不声称哈希一致</b></td></tr>
+  <tr><td><code>2611.06704</code></td><td>717,133</td><td>35</td><td>159,515</td><td>✅ 同上</td><td>etag 为 base64 口径（<code>CKebxYXw75cDEAI=</code>）⇒ 不可比</td></tr>
 </table>
-<p style="font-size:13.5px;">落地路径 <code>research/pdf/2026-11-05/</code>（<b>不入 git</b>：<code>.gitignore</code> 排除 <code>pdf/</code> 与 <code>*.pdf</code>）；三篇合计 <b>3,823,917 B ≈ 3.65 MiB</b>。下载用 <code>raw/pdf_range_resume_r133.py</code>（8 段 Range + 断点续传，固定边缘 IP <code>151.101.67.42</code>）。</p>
+<p style="font-size:13.5px;">落地路径 <code>research/pdf/2026-11-05/</code>（<b>不入 git</b>：<code>.gitignore</code> 排除 <code>pdf/</code> 与 <code>*.pdf</code>）；早报三篇合计 <b>3,823,917 B ≈ 3.65 MiB</b>，晚报两篇合计 <b>10,887,841 B ≈ 10.38 MiB</b>，<b>五篇合计 14,711,758 B ≈ 14.03 MiB</b>（单封邮件 &lt; 20 MB，无需分包）。下载用 <code>raw/pdf_range_resume_r133.py</code> / <code>raw/pdf_range_resume_r134.py</code>（8 段 Range + 断点续传，固定边缘 IP <code>151.101.67.42</code>）。</p>
 
 <h2 class="sec">附录 D · 台账与 18:00 待办</h2>
 <ul style="font-size:13.5px;">
-  <li><b>台账</b>：<code>SEEN.md</code> 追加 3 行「收录」（幂等脚本 <code>raw/update_r133.py</code>）+ <code>papers.jsonl</code> 追加 3 行；<code>INDEX.md</code> 与 <code>daily/index.html</code> 各加 1 行。</li>
-  <li><b>18:00（PM）待办</b>：① 复验批次（应能看到美东 11-04 20:00 ET = 本地 11-05 09:00 的新批）；② 补 2 篇「科普」→ <b>5/5</b>；③ 当日 5 篇 PDF 收齐；④ 《论文两分钟》分镜 <code>research/video/SCENES/11_05.html</code>（TOP-1 用<b>科普</b>口径，从当日 5 篇中挑）；⑤ 日报邮件（第 24 封）发 <code>paul.liu@cxmt.com</code>。</li>
+  <li><b>台账（AM）</b>：<code>SEEN.md</code> 追加 3 行「收录」（幂等脚本 <code>raw/update_r133.py</code>）+ <code>papers.jsonl</code> 追加 3 行；<code>INDEX.md</code> 与 <code>daily/index.html</code> 各加 1 行。</li>
+  <li><b>台账（PM）</b>：<code>raw/update_r134.py</code> 追加 2 行 ⇒ <code>SEEN.md</code> <b>5,630 行</b>（收录 <b>306</b> / 候选 <b>4,558</b>）、<code>papers.jsonl</code> <b>306</b> 行；幂等断言（每 ID 恰好 1 行、<code>published</code> 前缀 <code>2026-11-04</code>）全过。</li>
+  <li><b>18:00（PM）待办 · 完成情况</b>：① 复验批次 ✅ <b>已刷新</b>（见附录 A · PM 表）；② 补 2 篇「科普」→ <b>5/5</b> ✅；③ 当日 5 篇 PDF 收齐 ✅（<b>14,711,758 B</b>，见附录 C）；④ 《论文两分钟》分镜 <code>research/video/SCENES/11_05.html</code> ✅（TOP-1 = <code>2611.06840</code>，<b>科普</b>口径）；⑤ 日报邮件（第 24 封）发 <code>paul.liu@cxmt.com</code> ✅（5 篇 PDF 单封，见 <code>research/mail/发送记录.md</code>）。</li>
   <li><b>口径护栏</b>：本页只写「推荐 / 待读」，<b>不写</b>「已验证结论 / 可复现收益 / SOTA 已证」；一切数字均为<b>作者自报</b>。</li>
 </ul>
 
+<h2 class="sec">晚报变更说明（AM → PM）</h2>
+<div class="note">
+  <b>改动 1 · 进度与页头</b>：标题 <code>早报 · 3/5</code> → <code>晚报 · 5/5</code>，进度写全 <code>0/5 → 3/5 → 5/5</code>；meta 增加「优化 18:1x CST（晚报）」与两条口径（早报 <b>借鉴</b> / 晚报 <b>科普</b>）。<b>为什么</b>：任务书要求 18:00 轮把当天两轮写进同一文件，读者须一眼看出哪 3 篇是借鉴、哪 2 篇是科普。<br>
+  <b>改动 2 · 新增「🌙 晚报 · 2 篇「科普」」两卡（#4 / #5）</b>：<code>2611.06840</code>（文生图数不清十以上）与 <code>2611.06704</code>（吃豆人 VLM 诊断）。<b>为什么</b>：04:00 批已刷新，产生 310 条新候选；按科普四问（大众能懂 / 传播力 / 可讲清 / 真实来源）从高到低取前 2 名，两篇都自带画面与反直觉结论。<br>
+  <b>改动 3 · 附录 A 增补 PM 探针表</b>：四项计数均比 AM 上升（124,606 → <b>124,696</b>；237 → <b>249</b>；3,946 → <b>4,479</b>；642,920 → <b>643,448</b>），并如实登记首跑第 ④ 条 <code>HTTP 429</code>、加大间隔重跑成功的经过。<b>为什么</b>：AM 轮结论是「批次未刷新」，若不写明刷新证据与 429 事故，读者会误以为 AM 结论有误或本线把限速当「无新增」。<br>
+  <b>改动 4 · 附录 B 增补 PM 取数与选文</b>：310 条候选（重复 0）、<code>id_list</code> 2/2 复核、科普四问打分表、3 条未选强候选（含 <code>2611.05803</code> PinyinBench 排第 3 顺位）。<b>为什么</b>：保留可核验链条与「为什么不是它」，便于事后补位。<br>
+  <b>改动 5 · 附录 C 扩到 5/5</b>：新增两行校验（43 页 / 35 页），合计 <b>14,711,758 B ≈ 14.03 MiB</b>，并标出 <code>2611.06840</code> <b>&gt; 5 MB ⇒ 不入 git</b>。<b>为什么</b>：体积红线要求逐文件登记；同时说明邮件附件总量 &lt; 20 MB、无需分包。<br>
+  <b>改动 6 · 附录 D 与页脚</b>：台账数字更新为 SEEN 5,630 行 / 收录 306 / papers 306，待办逐条打勾，页脚改为「晚报 · 5/5」。<b>为什么</b>：待办项必须闭环可查，避免下一轮重复劳动。<br>
+  <b>未改动（保持 AM 原文）</b>：早报 3 篇的正文与数字、AM 探针表与 AM 取数段落 <b>一字未改</b>（只在其后追加 PM 内容），以便对照两轮的真实差异。
+</div>
+
 <footer>
-  research 线 · 论文推荐日报 <b>2026-11-05（早报 · 3/5）</b> · 生成时间 <b>2026-11-05 06:2x CST</b> · 数据源 <b>arXiv 官方 API</b>（<code>export.arxiv.org</code>）<br>
-  第一百三十三轮（r133）· 选文口径 <b>借鉴</b> · 自包含单文件（内联 CSS · 零外链 · 离线可开）· 推荐 = <b>待读线索，非结论</b>
+  research 线 · 论文推荐日报 <b>2026-11-05（晚报 · 5/5）</b> · 生成 <b>2026-11-05 06:2x CST</b>（AM 3 篇）· 优化 <b>2026-11-05 18:1x CST</b>（PM 2 篇）· 数据源 <b>arXiv 官方 API</b>（<code>export.arxiv.org</code>）<br>
+  第一百三十四轮（r134）· 选文口径 <b>借鉴</b>（AM 3）+ <b>科普</b>（PM 2）· 自包含单文件（内联 CSS · 零外链 · 离线可开）· 推荐 = <b>待读线索，非结论</b>
 </footer>
 </div>
 </body>

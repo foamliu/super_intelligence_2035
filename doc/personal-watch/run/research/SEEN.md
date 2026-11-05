@@ -5626,3 +5626,5 @@
 | 2026-11-05 | 2611.05234 | ARLoop: Fully-Open Pre-trained Looped Transformers with Attention Residuals | cs.CL | 收录 |
 | 2026-11-05 | 2611.05304 | LoopVQ: Sub 1-bit KV Cache Quantization for Looped Transformers | cs.LG | 收录 |
 | 2026-11-05 | 2611.05266 | Stabilizing On-Policy Targeted Guidance in Agentic Reinforcement Learning | cs.LG | 收录 |
+| 2026-11-05 | 2611.06840 | Same Layout, Different Count: What Number Words Do Past Ten in Text-to-Image Models | cs.CV | 收录 |
+| 2026-11-05 | 2611.06704 | Where It Breaks: Diagnosing Perception, Memory, and Decision Failures of a Vision-Language Agent in Pac-Man | cs.LG | 收录 |

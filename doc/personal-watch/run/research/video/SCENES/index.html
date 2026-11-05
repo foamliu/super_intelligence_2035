@@ -41,6 +41,13 @@
 <table>
   <tr><th>日期</th><th>当日 TOP-1 论文</th><th>看点</th><th>分镜脚本</th></tr>
   <tr>
+    <td>2026-11-05</td>
+    <td><i>Same Layout, Different Count: What Number Words Do Past Ten in Text-to-Image Models</i><br><code>arXiv:2611.06840</code>（Liang Yue · Eric A. Vance，2 位 · University of Colorado Boulder；<code>cs.CV</code> · 43 页）</td>
+    <td><b>让 AI 画 25 只猫，它给你 8 只</b>：固定物体与起始噪声、一次只改一个变量，用「同噪声」协议测 <b>5 个开源文生图模型</b>（SDXL / SD3.5-Medium / FLUX.1-dev / FLUX.2 [klein] base 4B / Qwen-Image 20B），并请<b>没见过提示词的人</b>盲数 <b>3,088 张</b>生成图。十以内都听话，十以外各模型有「有效范围」：SD3.5-M 中位数量恒在 <b>4.5–8.5</b>（不管要多少）、FLUX.1-dev 到 30 反而缩到 <b>1–2 个</b>，FLUX.2 [klein] / Qwen-Image 勉强跟到 <b>25</b>。只重画比图像八分之一更细的噪声，布局不变而数量挪动 <b>0.69×</b>（≈ 换新数字的 2/3）；把数量以噪点网格画进起始 latent，人眼在 <b>59%</b> 图里数对（只写提示词 <b>4%</b>）。评测坑：过十后精确率分不开「松散跟随」与「完全忽略」（4% vs 5–7%），相对误差甚至偏爱固定猜 <b>16</b>。只测开源、未测闭源；计数靠人工 + 检测器（<b>作者自报 · 本线未复现</b>）</td>
+    <td><a href="11_05.html">11_05.html</a></td>
+  </tr>
+
+  <tr>
     <td>2026-11-04</td>
     <td><i>False Reassurance in LLM Severe-Weather Guidance: A Replayable Evaluation Against Real NWS Alerts</i><br><code>arXiv:2611.05290</code>（Kadharmoideen Fadurudeen 1 位 · Independent Researcher；数据集/代码 Zenodo <code>10.5281/zenodo.23901549</code>）</td>
     <td><b>警报响着，AI 却说「今天很平静」</b>：作者把 2026-10-19~10-23 真实抓到的美国国家气象局（NWS）警报<b>冻结</b>成 <b>117 个可重放案例</b>（69 有警报 / 32 无警报对照 / 16 非美国地点），用同一条 Claude 助手管线的 <b>5 种条件</b>重放（温度 0 / 500 token）：完整生产管线 <b>0.0%</b>（0/66）、只给警报数据 + 中性提示 <b>0.0%</b>（0/69）、「失明」中性提示 <b>37.7%</b>（26/69）、失明 + 要求「主动声明看不到实时警报」<b>44.9%</b>（31/69）—— <b>最符合直觉的补救反而更差</b>（McNemar p=0.40，不显著）；给真警报显著消除（p&lt;0.0001）。全部为<b>隐式</b>假安慰；作者自写正则检测<b>方向相反、漏 53/57</b>，故改全量人工标注；只给数据也不够 —— 中性提示下 <b>87.5%</b> 的无警报对照被误报，生产提示 0%。另报两条工程坑：NWS 测试产品被当真警报、复杂案例撞 500 token 上限（<b>作者自报 · 本线未复现</b>；单模型家族 / 单季节试点、采集期 77% 休眠、无 Extreme 级案例；论文 7 页）</td>
@@ -195,7 +202,7 @@
 </table>
 
 <footer>
-  research 线 · <code>research/video/SCENES/index.html</code> ｜ 最近更新：2026-11-03（补跑轮）CST（新增 <code>11_03.html</code> · TOP-1 = The SIMPLE Law for Energy Cost of LLM Inference / <code>arXiv:2611.03330</code> · 5 镜 / 120s / 口播 377 汉字（200 字/分 ≈ 113s）；上一版 <code>11_02.html</code> · <code>arXiv:2610.42002</code>）<br>
+  research 线 · <code>research/video/SCENES/index.html</code> ｜ 最近更新：2026-11-05 18:1x CST（新增 <code>11_05.html</code> · TOP-1 = Same Layout, Different Count / <code>arXiv:2611.06840</code> · 5 镜 / 120s / 口播 413 汉字（205–215 字/分 ≈ 115–121s）；上一版 <code>11_04.html</code> · <code>arXiv:2611.05290</code>）<br>
 </footer>
 </div>
 </body>
