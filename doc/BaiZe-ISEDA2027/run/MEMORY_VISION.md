@@ -30,7 +30,9 @@ WAITING: 0
 
 > 📦 wake #684（监控巡检+自治链poller逻辑审计sound+GPU 8×100%·仅待GPU）已归档 → daily-memories-vision/2026-11-06.md；**结论**：poller逻辑审计sound，全管线就绪仅待GPU。需要时再读。
 
-> 🆕 **【wake #685 · 2026-11-06 03:42】监控巡检（状态无变化·双poller健康+GPU 8×97-100%·仅待GPU）**。CPU-only监控巡检，距wake#684约5min，状态无变化。双poller健康：SFT poller PID2757742(ppid=1,etimes≈28485s≈7.9h,bash run_sft_wave.sh 8,flock独占锁,60s轮询) / GRPO chain PID2428009(ppid=1,etimes≈18472s≈5.1h,bash run_grpo_wave.sh 8,等SFT eval_results.json) / vision loop PID669545(ppid=1,etimes≈671541s≈7.77d)。cline in PATH(/home/app.e0031982/.bun/bin/cline)✓。GPU .12 8×H100 实测 6×100%+2×97%util/~75GB each(pretrain R9,ETA≈11/25-27)。git fetch后0ahead/0behind同步(HEAD=origin=f6dd0c895),无新vision运维令(TASK自11-05 18:44未变)。SFT eval_results.json+checkpoint均不存在(预期·GPU被占)。2B骨干+数据9013轨迹+GRPO smoke PASS+WaveQA oracle 300题全在位。归档#684→daily。全管线就绪仅待GPU释放（Phase1就绪GREEN@wake#667+poller逻辑sound@wake#684）。📦体积：TASK≈30.5KB/MEMORY≈29.5KB（均≤32KB✓，归档1条后）。**未完成指令：有**（阶段1 GPU训练pending+阶段2/3未交付）⇒**WAITING: 0**。
+> 📦 wake #685（监控巡检·状态无变化·双poller健康+GPU 8×97-100%·仅待GPU）已归档 → daily-memories-vision/2026-11-06.md；**结论**：状态无变化，全管线就绪仅待GPU。需要时再读。
+
+> 🆕 **【wake #686 · 2026-11-06 03:47】监控巡检（状态无变化·双poller健康+GPU 8×100%·仅待GPU）**。CPU-only监控巡检，距wake#685约5min，状态无变化。双poller健康：SFT poller PID2757742(ppid=1,etimes≈28762s≈8.0h,bash run_sft_wave.sh 8,flock独占锁,60s轮询) / GRPO chain PID2428009(ppid=1,etimes≈18749s≈5.2h,bash run_grpo_wave.sh 8,等SFT eval_results.json) / vision loop PID669545(ppid=1,etimes≈671818s≈7.77d)。cline in PATH(/home/app.e0031982/.bun/bin/cline)✓。GPU .12 8×H100 实测全100%util/~75GB each(pretrain R9,ETA≈11/25-27)。git fetch后0ahead/0behind同步(HEAD=origin=d99fadeea pretrain#1464),无新vision运维令(TASK自11-05 18:44未变)。SFT eval_results.json+checkpoint均不存在(预期·GPU被占)。2B骨干+数据9013轨迹+GRPO smoke PASS+WaveQA oracle 300题全在位。归档#685→daily。全管线就绪仅待GPU释放（Phase1就绪GREEN@wake#667+poller逻辑sound@wake#684）。📦体积：TASK≈30.5KB/MEMORY≈29.0KB（均≤32KB✓，归档1条后）。**未完成指令：有**（阶段1 GPU训练pending+阶段2/3未交付）⇒**WAITING: 0**。
 
 > 📦 wake #681（监控巡检·状态无变化·双poller健康+GPU 8×100%·仅待GPU）已归档 → daily-memories-vision/2026-11-06.md；**结论**：状态无变化，全管线就绪仅待GPU。需要时再读。
 
