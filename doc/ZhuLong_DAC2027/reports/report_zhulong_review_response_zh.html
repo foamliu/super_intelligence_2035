@@ -51,6 +51,9 @@
 
 <h2>0. 总览：本次改稿已完成与未完成</h2>
 <div class="summary-box">
+  <p style="border-left:3px solid #2a7;margin:0 0 8px;padding:2px 8px;background:#eafaea"><b>追加更新 · 2026-11-05（wake#611）：</b>原列于"本轮新增/待改"的三项 P0 摘要/可复现编辑已全部落地——<b>①</b> 摘要已加入受控回读阶梯（<i>no read-back → binary → full observation, LLM fixed</i>）<b>7.1pp pooled</b>（二值档 +1.2pp）与系统级观测轴 <b>57.2pp</b> 的分列表述（<code>0_abstract.tex</code>）；<b>②</b> §5 Evaluation Protocol 已以脚注形式补入 <b>Release and reproducibility</b> 声明（释出 schema/断言/harness/匿名 trace + 厂商授权访问限制，<code>5_bench.tex</code>）；<b>③</b> 摘要"Bayesian argument bounds"措辞此前的框架化（"grounding-gap framework positing …"）确认在版。注意：本函起草时的 57.4pp/13.5pp/3.3pp 为旧口径，正文经重评后现行数字为 <b>57.2pp 系统级 / 7.1pp 受控回读 / 1.2pp 二值档</b>（pooled N′=69.8 → B=71.0 → F=76.9；纯 LLM 19.7 → Full 76.9），摘要已用现行数字。为保持 6 页正文上限，同步从 §6 移除三处与表 <code>tab:cost</code>/<code>tab:main-ablation</code> 冗余的散文句（回读轴 cost 佐证句、自探索 cost 句、回读轴结尾句）与一处错误分析示例（SKILL-008）。编译：pdflatex×1+bibtex+pdflatex×2，<b>7 页（正文 6 + refs 1）</b>、0 undefined、Overfull=1（既有 1.527pt vbox，非本表）、Underfull=40（基线 36，+4 minor hbox）。</p>
+</div>
+<div class="summary-box">
   <b>已在 LaTeX 落实</b>（评审前或本轮已修）：
   <ul>
     <li><span class="ok">✓</span> §4.2 引理已降级为 <b>Claim</b>，显式声明"作为实验可检验的预测而非此处推导的定理"（<code>4_grounding.tex:56</code>）。</li>
