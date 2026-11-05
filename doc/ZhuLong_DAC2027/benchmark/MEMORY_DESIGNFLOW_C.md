@@ -1,13 +1,15 @@
 WAITING: 0
 SHARD: C (physical_layout)
 DOMAINS: layout_aether, layout_virtuoso, pg_layout, physical_verify
-round: 155
-📊 trace 覆盖率：151/8598=1.8%（r155 交付 DrcConnScriptAudit-001 physical_verify；ledger 285:case 151·parked 133·claimed 0；mc30 池 8598/mc100 4615/mc300 1001）
-🎯 通过率: shard C 累计 151 case 已落 ledger（jsonl 150 行；pi/cline 实跑数见 cline_eval_status.jsonl，B 档目标 20–30%）
-🧾 断言: k_rationale=k_check ✓（151/151 达标；r155 新增 DrcConnScriptAudit-001 k=14/14 a–n）
-📦 体积：TASK≈17KB / MEMORY_C≈31KB（<32KB ✓，r155 归档 r154 到 MEMORY_C_archive 批次155）
-🛠 DEBT: 0（r154 已清零，r155 正常交付 1 case）
+round: 156
+📊 trace 覆盖率：152/8598=1.8%（r156 交付 TaperChainDoeGen-001 layout_virtuoso；ledger 285:case 152·parked 133·claimed 0；mc30 池 8598/mc100 4615/mc300 1001）
+🎯 通过率: shard C 累计 152 case 已落 ledger（jsonl 151 行；pi/cline 实跑数见 cline_eval_status.jsonl，B 档目标 20–30%）
+🧾 断言: k_rationale=k_check ✓（152/152 达标；r156 新增 TaperChainDoeGen-001 k=14/14 a–n）
+📦 体积：TASK≈17KB / MEMORY_C≈31KB（<32KB ✓）
+🛠 DEBT: 0（r155 已清零，r156 正常交付 1 case）
 
+
+- **轮(156) 已交付 EDA-Eval-DesignFlow-TaperChainDoeGen-001（layout_virtuoso, B-档 faithful-seed-B-synthesized, L1-boundary）✓** —— trace=1792565482572_2gmli（thqu @ hfeg0plg99, mc=231, 245 msgs/cwd ddgoa_cmos_work; tool-use 含 virtuoso/cellview/calibre/pyAether; thqu fresh-user 本 shard 首次出现）。真实任务 R0 读 test_Idd_XDec_7Section_qyh schematic; R1/R2/R3(纯意图 A-档合格 seed) 优化 R_Ra210Rpt_G4C 锥形驱动器最佳驱动比例、设计几组不同 DOE 方便对比、约束级数固定 4 级; R15 明确四级 nand2GSx1_XDec→invGSx4→invGSx8→invGSx16; R7 做自动优化 agent 要思路不执行; R18/19 solido MC 仿真 yield。assistant 产出电路结构分析(8 路×4 级缓冲链, REF 扇出 4×→4×→4× 总驱动 64×)+DOE 枚举(4 级固定 wn 严格单调递增)+扇出/增益/延迟/PDP 指标+自动优化 Agent 架构(GP+EI+可视化), 声明无仿真权限只做 Python 脚手架。本 case 取正交子主题(4 级锥形缓冲链 DOE 尺寸枚举+指标+抽样, 与既有 RsCalc/SchHierDescent/DrcConn 系列正交): 给 spec.json(链名/级数/first_cell/NAND+inv 单元库含 wn/ref_chain)写 taper_chain_doe.py 做「枚举全部合法单调链+逐链指标+DOE 抽样」——CLI <spec> [--doe N] [--enum] -o <dir>, 第 0 级固定 NAND first_cell, 1-3 级从 inv 选 wn 严格递增, 算 fanout_ratios/total_gain/geom_mean/est_delay/est_pdp, DOE 按总增益均匀跨度抽 min(N,ds) 含 REF 无重复, 输出 report.json(chain_name/stages/first_stage_logic/first_cell/design_space_size/ref_chain/ref_metrics/mode/doe/all_chains)+design_matrix.csv, stdout 一行 JSON 摘要, --help/-h exit0, 缺参 exit2, 全部现读现算不硬编码。A(R_Ra210Rpt_G4C, 6 inv wn>0.30→ds=20, REF nand2GSx1/invGSx4/invGSx8/invGSx16 fanout 4/4/4)给 SUT; 隐藏 B1(异库 ClkBuf_G3D, 7 inv wn>0.40→ds=35, REF nand2A/invC/invE/invG fanout 2.5/4/4)/B2(小库 4 inv→ds=4)/B3(malformed JSON)。判分 14 条独立条件(a–n): ①(a)zip+py_compile ②(b)--help/-h/无参 ③(c)B1 --enum exit0+写 report+csv ④(d)B1 顶层 10 键 ⑤(e)B1 design_space_size==独立重算 35 ⑥(f)B1 ref fanout len3 全>0/total_gain>1/ref 在 all_chains ⑦(g)B1 --doe 8 抽样==8 无重复均来自 all_chains ⑧(h)B1 DOE 含 REF ⑨(i)跨输入守卫 B1 无 A 专属 token(nand2GSx1/invGSx4/invGSx8/invGSx16/R_Ra210Rpt_G4C) ⑩(j)确定性 B1 两跑 stdout+md5 一致 ⑪(k)反 naive B1 ref fanout==B1 实际宽度(2.5/4/4 非 A 的 4/4/4) ⑫(l)单调性 B1 all_chains wn 严格递增 ⑬(m)B3 malformed exit 非零+stderr+不写 report ⑭(n)B1 CSV 表头+行数==35。gold=taper_chain_doe_ref.py。**自验(本地离线)**: REF check() PASS 14/14; negative_selftest NEG_RC=5(5 fakes 全 FAIL: fake_empty→b.2 / fake_print_expected→b.2 / fake_core_deleted→c / naive_always_pass→c / naive_hardcode_a→e[ds=20≠35]); §4.9 三假(empty/print-expected/core-deleted)全 FAIL ✓; test==disk check.py md5 对账 OK(d5fef548)。jsonl 追加 EDA-Eval-DesignFlow_C.jsonl(line 151)。k_rationale=k_check=14(a-n)>=8 GATE ✓。ledger mark 2gmli→case, covered 151→152, layout_virtuoso +1。leakage 隔离 OK(assets 仅 A: prompt/brief/spec.json; B1/B2/B3 在 hidden/ 不进 SUT 沙箱)。选料: r156 走台账 claim 2gmli(thqu fresh-user, virtuoso+cellview schematic 上下文, 锥形缓冲链 DOE 主题无重复); 候选排查 11 条(6qt0a/lond8 spice&synthesis 偏域, d810y 散问 Q&A, 9lnqe/g2n5n/k1qtw/d013n/p5laa/rmlwy/5w70e/goqly 均 xinqiaoz PDK_QA sync/DUMMY 已覆盖主题, 06htj synopsys 偏域, 60584 RScalc 已覆盖, 8lf0t 模型对比 meta 任务)→ 2gmli 最干净 A-档 seed 且主题正交。deepread 见 designflow/trace_deepreads/sid_1792565482572_2gmli_taper_chain_doe.md。
 
 - 轮(154) 已归档→ designflow/MEMORY_C_archive.md（Nand3LefDeriveAudit-001, pg_layout；归档批次 155；详细见归档）
 
