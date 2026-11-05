@@ -65,7 +65,7 @@ djml8					case	EDA-Eval-DesignFlow-PFDdeadZone-001	2026-11-02 17:47
 1792386804961_6tiy7.messages.json					case	EDA-Eval-DesignFlow-DffSetupHoldChar-001	2026-11-04 05:11	
 1790563683904_l7aol.messages.json	jason17w	hfeg0pnd002	288	spice_sim	case	EDA-Eval-DesignFlow-NetlistLintHsp-001	2026-11-04 06:09	domain mismatch: trace=netlist syntax checker (L1 python parse), NetlistChk-001 already built in shard D (schematic_netlist); not spice_char L2
 1792042085695_uky6c.messages.json	t0002441	hfhds201	136	spice_sim	case	EDA-Eval-DesignFlow-FineSimDcConvFix-001	2026-11-04 07:13	FineSim DC nonconv Q&A; deepread done; synthesis DEBT next round (FineSim license outage on .75 blocks GT; HSPICE port needs reliable nonconv trigger)
-1789693148853_0tfi2.messages.json	qiong1w	hfeg0pkn003	146	characterization	claimed		2026-11-04 07:45	
+1789693148853_0tfi2.messages.json	qiong1w	hfeg0pkn003	146	characterization	case	EDA-Eval-DesignFlow-ThoxVthExtract-001	2026-11-05 08:36	
 1789693148853_0tfi2					case	EDA-Eval-DesignFlow-ThoxVthExtract-001	2026-11-04 08:39	
 1792459158095_dfaqe	e0045488	hfeg0pkn002	211	characterization	case	EDA-Eval-DesignFlow-RcurrDirClassify-001	2026-11-04 09:43	
 1791017602459_fwgyy.messages.json	zjqiao	hfhds206	221	spice_sim	case	EDA-Eval-DesignFlow-FineSimWorkflowRunner-001	2026-11-04 11:19	B-synthesized L2 FineSim workflow runner; 14-cond check.py self-verified on .75 (REF PASS 14/14, 6 negs FAIL, 3-fake OK); DEBT cleared
