@@ -22,7 +22,7 @@ code{background:#edf2f7;padding:1px 5px;border-radius:3px;font-size:.82rem}
 .foot{color:#999;font-size:.78rem;margin-top:40px;border-top:1px solid #e2e8f0;padding-top:12px}
 </style></head><body>
 <h1>SWE-bench Verified · 全量 500 题横评报告</h1>
-<div class="meta">生成时间：2026-11-05 17:23 · 任务令：2026-10-28 07:1x（用户直令：跑完整的 SWE-bench Verified）<br>
+<div class="meta">生成时间：2026-11-06 00:01 · 任务令：2026-10-28 07:1x（用户直令：跑完整的 SWE-bench Verified）<br>
 模型：kimi-k2.6-cloud（统一骨干）· 评测集：princeton-nlp/SWE-bench_Verified 全量 500 题<br>
 评测脚本：官方 swebench v5.0.2 docker harness（<code>sg docker</code>，max_workers 8–12，timeout 1800s/题）<br>
 命名规程：正文一律写 <code>cline</code>（不写 cline-patched）· 报告目录：doc/BaiZe-ISEDA2027/reports/</div>
@@ -99,7 +99,7 @@ python3 -c "import json,glob,os; [print(os.path.basename(f), json.load(open(f))[
 python3 run_verified_full.py eval --harness &lt;h&gt; --ids-file full_500_ids_&lt;h&gt;.txt<br><br>
 # 生成报告（predict-only 也可运行；eval 完成后重运行得完整报告）<br>
 python3 gen_report_swebench_verified_full500_zh.py</p></div>
-<div class="foot">报告生成器：harness/gen_report_swebench_verified_full500_zh.py · 数据目录：harness/swebench_verified_full/ · 生成时间：2026-11-05 17:23<br>
+<div class="foot">报告生成器：harness/gen_report_swebench_verified_full500_zh.py · 数据目录：harness/swebench_verified_full/ · 生成时间：2026-11-06 00:01<br>
 溯源：reports/progress_*.json（predict 逐题）· reports/eval_*.json（eval 汇总）· predictions/（逐题 patch）· full_500_ids_*.txt（500 题清单）<br>
 铁律遵守：评测口径不变 · infra 单列 · 闸门不过不硬跑 · 结果 JSON 不入仓库（永久硬约束）</div>
 </body></html>
