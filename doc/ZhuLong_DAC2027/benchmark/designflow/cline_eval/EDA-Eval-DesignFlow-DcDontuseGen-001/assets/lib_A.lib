@@ -1,0 +1,363 @@
+library (DBCP51H180L6W25T5_BASE_LVT_tt_typical_v0p75_85c_ccs) {
+  delay_model : table_lookup;
+  time_unit : "1ns";
+  voltage_unit : "1V";
+  current_unit : "1mA";
+  capacitance_unit : "1pf";
+  noise_margin_low("0.4 * VDD");
+  noise_margin_high("0.4 * VDD");
+  lu_table_template(TRANS) {
+    variable_1 : input_net_transition;
+    index_1("0.01 0.05 0.1 0.2 0.4");
+  }
+  cell (XORX1) {
+    area : 2.0;
+    pg_pin(VDD) { voltage_name : VDD; pg_type : primary_power; }
+    pg_pin(VSS) { voltage_name : VSS; pg_type : primary_ground; }
+    pin(Z) { direction : output; function : "(A^B)"; }
+    pin(A) { direction : input; }
+    pin(B) { direction : input; }
+  }
+  cell (NANDX1) {
+    area : 3.0;
+    pg_pin(VDD) { voltage_name : VDD; pg_type : primary_power; }
+    pg_pin(VSS) { voltage_name : VSS; pg_type : primary_ground; }
+    pin(Z) { direction : output; function : "!(A&B)"; }
+    pin(A) { direction : input; }
+    pin(B) { direction : input; }
+  }
+  cell (NANDX2) {
+    area : 3.0;
+    pg_pin(VDD) { voltage_name : VDD; pg_type : primary_power; }
+    pg_pin(VSS) { voltage_name : VSS; pg_type : primary_ground; }
+    pin(Z) { direction : output; function : "!(A&B)"; }
+    pin(A) { direction : input; }
+    pin(B) { direction : input; }
+  }
+  cell (NORX1) {
+    area : 2.0;
+    pg_pin(VDD) { voltage_name : VDD; pg_type : primary_power; }
+    pg_pin(VSS) { voltage_name : VSS; pg_type : primary_ground; }
+    pin(Z) { direction : output; function : "!(A|B)"; }
+    pin(A) { direction : input; }
+    pin(B) { direction : input; }
+  }
+  cell (NORX2) {
+    area : 2.0;
+    pg_pin(VDD) { voltage_name : VDD; pg_type : primary_power; }
+    pg_pin(VSS) { voltage_name : VSS; pg_type : primary_ground; }
+    pin(Z) { direction : output; function : "!(A|B)"; }
+    pin(A) { direction : input; }
+    pin(B) { direction : input; }
+  }
+  cell (INVX1) {
+    area : 2.0;
+    pg_pin(VDD) { voltage_name : VDD; pg_type : primary_power; }
+    pg_pin(VSS) { voltage_name : VSS; pg_type : primary_ground; }
+    pin(Z) { direction : output; function : "!(A)"; }
+    pin(A) { direction : input; }
+  }
+  cell (INVX2) {
+    area : 2.0;
+    pg_pin(VDD) { voltage_name : VDD; pg_type : primary_power; }
+    pg_pin(VSS) { voltage_name : VSS; pg_type : primary_ground; }
+    pin(Z) { direction : output; function : "!(A)"; }
+    pin(A) { direction : input; }
+  }
+  cell (INVX16) {
+    area : 3.0;
+    pg_pin(VDD) { voltage_name : VDD; pg_type : primary_power; }
+    pg_pin(VSS) { voltage_name : VSS; pg_type : primary_ground; }
+    pin(Z) { direction : output; function : "!(A)"; }
+    pin(A) { direction : input; }
+  }
+  cell (BUFX1) {
+    area : 2.0;
+    pg_pin(VDD) { voltage_name : VDD; pg_type : primary_power; }
+    pg_pin(VSS) { voltage_name : VSS; pg_type : primary_ground; }
+    pin(Z) { direction : output; function : "(A)"; }
+    pin(A) { direction : input; }
+  }
+  cell (BUFX3) {
+    area : 2.0;
+    pg_pin(VDD) { voltage_name : VDD; pg_type : primary_power; }
+    pg_pin(VSS) { voltage_name : VSS; pg_type : primary_ground; }
+    pin(Z) { direction : output; function : "(A)"; }
+    pin(A) { direction : input; }
+  }
+  cell (BUFX8) {
+    area : 2.0;
+    pg_pin(VDD) { voltage_name : VDD; pg_type : primary_power; }
+    pg_pin(VSS) { voltage_name : VSS; pg_type : primary_ground; }
+    pin(Z) { direction : output; function : "(A)"; }
+    pin(A) { direction : input; }
+  }
+  cell (BUFX128) {
+    area : 4.0;
+    pg_pin(VDD) { voltage_name : VDD; pg_type : primary_power; }
+    pg_pin(VSS) { voltage_name : VSS; pg_type : primary_ground; }
+    pin(Z) { direction : output; function : "(A)"; }
+    pin(A) { direction : input; }
+  }
+  cell (TIEHX1) {
+    area : 3.0;
+    pg_pin(VDD) { voltage_name : VDD; pg_type : primary_power; }
+    pg_pin(VSS) { voltage_name : VSS; pg_type : primary_ground; }
+    pin(Z) { direction : output; function : "1'b1"; }
+  }
+  cell (TIELX1) {
+    area : 3.0;
+    pg_pin(VDD) { voltage_name : VDD; pg_type : primary_power; }
+    pg_pin(VSS) { voltage_name : VSS; pg_type : primary_ground; }
+    pin(ZN) { direction : output; function : "1'b0"; }
+  }
+  cell (ICGX1) {
+    area : 2.0;
+    pg_pin(VDD) { voltage_name : VDD; pg_type : primary_power; }
+    pg_pin(VSS) { voltage_name : VSS; pg_type : primary_ground; }
+    pin(CK) { direction : input; clock : true; }
+    pin(EN) { direction : input; }
+    pin(CKG) { direction : output; clock : true; }
+  }
+  cell (DFFX1) {
+    area : 2.0;
+    pg_pin(VDD) { voltage_name : VDD; pg_type : primary_power; }
+    pg_pin(VSS) { voltage_name : VSS; pg_type : primary_ground; }
+    pin(CK) { direction : input; clock : true; }
+    pin(D) { direction : input; }
+    pin(Q) { direction : output; function : "D"; }
+  }
+  cell (LATX1) {
+    area : 2.0;
+    pg_pin(VDD) { voltage_name : VDD; pg_type : primary_power; }
+    pg_pin(VSS) { voltage_name : VSS; pg_type : primary_ground; }
+    pin(EN) { direction : input; }
+    pin(D) { direction : input; }
+    pin(Q) { direction : output; }
+  }
+  cell (MUXX1) {
+    area : 2.0;
+    pg_pin(VDD) { voltage_name : VDD; pg_type : primary_power; }
+    pg_pin(VSS) { voltage_name : VSS; pg_type : primary_ground; }
+    pin(S) { direction : input; }
+    pin(A) { direction : input; }
+    pin(B) { direction : input; }
+    pin(Z) { direction : output; function : "(S?B:A)"; }
+  }
+  cell (DELAYX1) {
+    area : 4.0;
+    pg_pin(VDD) { voltage_name : VDD; pg_type : primary_power; }
+    pg_pin(VSS) { voltage_name : VSS; pg_type : primary_ground; }
+    pin(A) { direction : input; }
+    pin(Z) { direction : output; function : "(A)"; }
+  }
+  cell (XORX2) {
+    area : 2.0;
+    pg_pin(VDD) { voltage_name : VDD; pg_type : primary_power; }
+    pg_pin(VSS) { voltage_name : VSS; pg_type : primary_ground; }
+    pin(Z) { direction : output; function : "(A^B)"; }
+    pin(A) { direction : input; }
+    pin(B) { direction : input; }
+  }
+  cell (XORX3) {
+    area : 2.0;
+    pg_pin(VDD) { voltage_name : VDD; pg_type : primary_power; }
+    pg_pin(VSS) { voltage_name : VSS; pg_type : primary_ground; }
+    pin(Z) { direction : output; function : "(A^B)"; }
+    pin(A) { direction : input; }
+    pin(B) { direction : input; }
+  }
+  cell (NANDX3) {
+    area : 3.0;
+    pg_pin(VDD) { voltage_name : VDD; pg_type : primary_power; }
+    pg_pin(VSS) { voltage_name : VSS; pg_type : primary_ground; }
+    pin(Z) { direction : output; function : "!(A&B)"; }
+    pin(A) { direction : input; }
+    pin(B) { direction : input; }
+  }
+  cell (NANDX4) {
+    area : 3.0;
+    pg_pin(VDD) { voltage_name : VDD; pg_type : primary_power; }
+    pg_pin(VSS) { voltage_name : VSS; pg_type : primary_ground; }
+    pin(Z) { direction : output; function : "!(A&B)"; }
+    pin(A) { direction : input; }
+    pin(B) { direction : input; }
+  }
+  cell (NORX3) {
+    area : 2.0;
+    pg_pin(VDD) { voltage_name : VDD; pg_type : primary_power; }
+    pg_pin(VSS) { voltage_name : VSS; pg_type : primary_ground; }
+    pin(Z) { direction : output; function : "!(A|B)"; }
+    pin(A) { direction : input; }
+    pin(B) { direction : input; }
+  }
+  cell (NORX4) {
+    area : 2.0;
+    pg_pin(VDD) { voltage_name : VDD; pg_type : primary_power; }
+    pg_pin(VSS) { voltage_name : VSS; pg_type : primary_ground; }
+    pin(Z) { direction : output; function : "!(A|B)"; }
+    pin(A) { direction : input; }
+    pin(B) { direction : input; }
+  }
+  cell (INVX3) {
+    area : 2.0;
+    pg_pin(VDD) { voltage_name : VDD; pg_type : primary_power; }
+    pg_pin(VSS) { voltage_name : VSS; pg_type : primary_ground; }
+    pin(Z) { direction : output; function : "!(A)"; }
+    pin(A) { direction : input; }
+  }
+  cell (INVX4) {
+    area : 2.0;
+    pg_pin(VDD) { voltage_name : VDD; pg_type : primary_power; }
+    pg_pin(VSS) { voltage_name : VSS; pg_type : primary_ground; }
+    pin(Z) { direction : output; function : "!(A)"; }
+    pin(A) { direction : input; }
+  }
+  cell (BUFX2) {
+    area : 2.0;
+    pg_pin(VDD) { voltage_name : VDD; pg_type : primary_power; }
+    pg_pin(VSS) { voltage_name : VSS; pg_type : primary_ground; }
+    pin(Z) { direction : output; function : "(A)"; }
+    pin(A) { direction : input; }
+  }
+  cell (BUFX4) {
+    area : 2.0;
+    pg_pin(VDD) { voltage_name : VDD; pg_type : primary_power; }
+    pg_pin(VSS) { voltage_name : VSS; pg_type : primary_ground; }
+    pin(Z) { direction : output; function : "(A)"; }
+    pin(A) { direction : input; }
+  }
+  cell (ICGX2) {
+    area : 2.0;
+    pg_pin(VDD) { voltage_name : VDD; pg_type : primary_power; }
+    pg_pin(VSS) { voltage_name : VSS; pg_type : primary_ground; }
+    pin(CK) { direction : input; clock : true; }
+    pin(EN) { direction : input; }
+    pin(CKG) { direction : output; clock : true; }
+  }
+  cell (DFFX2) {
+    area : 2.0;
+    pg_pin(VDD) { voltage_name : VDD; pg_type : primary_power; }
+    pg_pin(VSS) { voltage_name : VSS; pg_type : primary_ground; }
+    pin(CK) { direction : input; clock : true; }
+    pin(D) { direction : input; }
+    pin(Q) { direction : output; function : "D"; }
+  }
+  cell (DFFX4) {
+    area : 2.0;
+    pg_pin(VDD) { voltage_name : VDD; pg_type : primary_power; }
+    pg_pin(VSS) { voltage_name : VSS; pg_type : primary_ground; }
+    pin(CK) { direction : input; clock : true; }
+    pin(D) { direction : input; }
+    pin(Q) { direction : output; function : "D"; }
+  }
+  cell (LATX2) {
+    area : 2.0;
+    pg_pin(VDD) { voltage_name : VDD; pg_type : primary_power; }
+    pg_pin(VSS) { voltage_name : VSS; pg_type : primary_ground; }
+    pin(EN) { direction : input; }
+    pin(D) { direction : input; }
+    pin(Q) { direction : output; }
+  }
+  cell (MUXX2) {
+    area : 2.0;
+    pg_pin(VDD) { voltage_name : VDD; pg_type : primary_power; }
+    pg_pin(VSS) { voltage_name : VSS; pg_type : primary_ground; }
+    pin(S) { direction : input; }
+    pin(A) { direction : input; }
+    pin(B) { direction : input; }
+    pin(Z) { direction : output; function : "(S?B:A)"; }
+  }
+  cell (MUXX4) {
+    area : 2.0;
+    pg_pin(VDD) { voltage_name : VDD; pg_type : primary_power; }
+    pg_pin(VSS) { voltage_name : VSS; pg_type : primary_ground; }
+    pin(S) { direction : input; }
+    pin(A) { direction : input; }
+    pin(B) { direction : input; }
+    pin(Z) { direction : output; function : "(S?B:A)"; }
+  }
+  cell (DELAYX2) {
+    area : 4.0;
+    pg_pin(VDD) { voltage_name : VDD; pg_type : primary_power; }
+    pg_pin(VSS) { voltage_name : VSS; pg_type : primary_ground; }
+    pin(A) { direction : input; }
+    pin(Z) { direction : output; function : "(A)"; }
+  }
+  cell (ANDX1) {
+    area : 2.0;
+    pg_pin(VDD) { voltage_name : VDD; pg_type : primary_power; }
+    pg_pin(VSS) { voltage_name : VSS; pg_type : primary_ground; }
+    pin(Z) { direction : output; function : "(A&B)"; }
+    pin(A) { direction : input; }
+    pin(B) { direction : input; }
+  }
+  cell (ANDX2) {
+    area : 2.0;
+    pg_pin(VDD) { voltage_name : VDD; pg_type : primary_power; }
+    pg_pin(VSS) { voltage_name : VSS; pg_type : primary_ground; }
+    pin(Z) { direction : output; function : "(A&B)"; }
+    pin(A) { direction : input; }
+    pin(B) { direction : input; }
+  }
+  cell (ORX1) {
+    area : 6.0;
+    pg_pin(VDD) { voltage_name : VDD; pg_type : primary_power; }
+    pg_pin(VSS) { voltage_name : VSS; pg_type : primary_ground; }
+    pin(Z) { direction : output; function : "(A|B)"; }
+    pin(A) { direction : input; }
+    pin(B) { direction : input; }
+  }
+  cell (ORX2) {
+    area : 6.0;
+    pg_pin(VDD) { voltage_name : VDD; pg_type : primary_power; }
+    pg_pin(VSS) { voltage_name : VSS; pg_type : primary_ground; }
+    pin(Z) { direction : output; function : "(A|B)"; }
+    pin(A) { direction : input; }
+    pin(B) { direction : input; }
+  }
+  cell (AOI21X1) {
+    area : 4.0;
+    pg_pin(VDD) { voltage_name : VDD; pg_type : primary_power; }
+    pg_pin(VSS) { voltage_name : VSS; pg_type : primary_ground; }
+    pin(ZN) { direction : output; function : "!((A&B)|C)"; }
+    pin(A) { direction : input; }
+    pin(B) { direction : input; }
+    pin(C) { direction : input; }
+  }
+  cell (OAI21X1) {
+    area : 4.0;
+    pg_pin(VDD) { voltage_name : VDD; pg_type : primary_power; }
+    pg_pin(VSS) { voltage_name : VSS; pg_type : primary_ground; }
+    pin(ZN) { direction : output; function : "!((A|B)&C)"; }
+    pin(A) { direction : input; }
+    pin(B) { direction : input; }
+    pin(C) { direction : input; }
+  }
+  cell (FILLX1) {
+    area : 3.0;
+    pg_pin(VDD) { voltage_name : VDD; pg_type : primary_power; }
+    pg_pin(VSS) { voltage_name : VSS; pg_type : primary_ground; }
+    pin(Z) { direction : output; function : "(A)"; }
+    pin(A) { direction : input; }
+  }
+  cell (ANTENNAX1) {
+    area : 6.0;
+    pg_pin(VDD) { voltage_name : VDD; pg_type : primary_power; }
+    pg_pin(VSS) { voltage_name : VSS; pg_type : primary_ground; }
+    pin(Z) { direction : output; function : "(A)"; }
+    pin(A) { direction : input; }
+  }
+  cell (TIEZX1) {
+    area : 3.0;
+    pg_pin(VDD) { voltage_name : VDD; pg_type : primary_power; }
+    pg_pin(VSS) { voltage_name : VSS; pg_type : primary_ground; }
+    pin(Z) { direction : output; function : "1'bz"; }
+  }
+  cell (BOUNDARYNCORNER) {
+    area : 2.0;
+    pg_pin(VDD) { voltage_name : VDD; pg_type : primary_power; }
+    pg_pin(VSS) { voltage_name : VSS; pg_type : primary_ground; }
+    pin(TIE) { direction : output; function : "1'b1"; }
+  }
+}
