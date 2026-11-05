@@ -59,7 +59,7 @@ from peft import LoraConfig, get_peft_model, TaskType
 # ---------------------------------------------------------------------------
 LLM_PATH = "/nas_train/app.e0031982/models/Qwen/Qwen3-4B-Instruct-2507"
 DATA_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                         "sft_pilot_5000.jsonl")
+                         "sft_pilot_7500.jsonl")
 OUTPUT_DIR = "/nas_train/app.e0031982/datasets/baize-vision/out/wave_sft_stage1w"
 
 # Qwen3 chat-format special tokens (same for Qwen3-4B and Qwen3-VL-2B)

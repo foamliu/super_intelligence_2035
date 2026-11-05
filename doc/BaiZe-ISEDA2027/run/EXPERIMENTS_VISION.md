@@ -2073,3 +2073,62 @@ ngspice .raw 实测：`ngspice -b test.cir` → 646 点 × 3 变量 binary doubl
 
 **GPU 状态**：.12+.29 双节点 pretrain（PID 2612442, etimes≈259493s≈3天）占全部 16×H100 100%。SFT poller（PID 2757742, flock）后台轮询 `busy_util -- waiting`，GPU 空闲后自动启动 SFT 训练。
 
+
+### §20.9 · 数据扩充 + 独立评测脚本 + CPU 端到端验证（wake#615 · 2026-11-05 20:3x · CPU-only）
+
+**背景**：GPU 全占（8×H100 100%，R9 pretrain etimes≈262038s≈3天，预计还需~16天），本轮 CPU-only 推进数据多样性与评测脚手架，使 GPU 一旦空闲即可立即训练 + 评测。
+
+**交付物**：
+
+1. **新增 2 类数字/振荡电路**（`gen_sft_trajectories.py` +90 行）：
+   - `ring_osc`（环形振荡器）：ngspice 行为级反相器 + RC 延迟构建 3/5 级环路，产生满幅方波（0-Vdd，duty≈50%），可测 period/duty_cycle/rise_time。CMOS 晶体管级模型在 ngspice 中不振荡（DC 锁定），改用行为级比较器 `B1 n 0 V={Vdd*(v(prev)<thresh)}` + RC 延迟。
+   - `lc_tank`（LC 谐振腔）：脉冲激励 LC 回路 + 阻尼电阻，产生衰减正弦波（Q=5~50），可测 period（谐振频率）/amplitude。实测 LC tank（L=10µH, C=100nF, R=100Ω, Q=10）period=6.2µs, amplitude=0.94V。
+   - 两类电路均通过 ngspice 仿真 + waveview_gym 量测验证（ring_osc: 0-4.548V/duty=50.2%/transitions=241; lc_tank: period=6.2µs/amplitude=0.937V）。
+
+2. **扩充训练数据**：`sft_pilot_7500.jsonl`（7513 条轨迹，7 类电路 × 4 量测目标）：
+   | 电路类型 | 轨迹数 |
+   |:--|--:|
+   | rc | 1336 |
+   | rc_pulse | 1302 |
+   | inverter | 1404 |
+   | rl | 1388 |
+   | diffpair | 1377 |
+   | ring_osc 🆕 | 336 |
+   | lc_tank 🆕 | 370 |
+   | **Total** | **7513** |
+   - 原 5 类电路各~1300-1400 条，新增 2 类各~340-370 条（较少但足够覆盖）。
+   - error_recovery 轨迹占 ~20%（wrong signal name → dump_hier → retry）。
+
+3. **独立评测脚本**（`vision/wave_rl/eval_sft_wave.py`，260 行）：
+   - 加载 base LLM + LoRA adapter（PeftModel merge_and_unload），greedy 生成。
+   - 评测 4 个指标：format_correctness（含工具调用模式）、submit_success_rate（含 submit(type, number)）、numerical_accuracy_lt1pct、numerical_accuracy_lt5pct。
+   - 预注册验收判据：format ≥90% + submit ≥70%（与 Phase 1 step 3 一致）。
+   - 支持 CPU/GPU，`--max_eval` 控制评测规模，输出 JSON 含 per-sample 详情。
+   - 从 `sft_holdout_500.jsonl`（582 条轨迹）加载 held-out 数据。
+
+4. **Held-out 评测集**（`vision/wave_rl/sft_holdout_500.jsonl`，582 条）：
+   - 7 类电路 × 4 量测目标 × normal/error_recovery 混合。
+   - 与训练数据使用不同 seed（20261115-19），无重叠。
+
+**CPU 端到端验证**（7/7 PASS）：
+1. `eval_sft_wave.py` 导入无错误 ✅
+2. `conversation_to_text` 正确识别 assistant spans（2 spans）✅
+3. `WaveSFTDataset` 加载 582 条 held-out ✅
+4. loss masking：39/354 tokens unmasked，解码为 assistant content ✅
+5. `collate_fn` 正确 padding ✅
+6. train/eval split 正确 ✅
+7. 新电路 ring_osc/lc_tank 各 8+ 条在 60 条测试批次中通过 ngspice + 量测验证 ✅
+
+**数据生成吞吐**：~38-41 traj/s（CPU, ngspice），1500 条轨迹 ≈ 40s。
+
+**训练配置更新**：
+| 项 | 原值 | 新值 |
+|:--|:--|:--|
+| 数据 | sft_pilot_5000.jsonl (5064) | sft_pilot_7500.jsonl (7513) |
+| Steps | 2000 (≈3.16 epoch) | 2000 (≈2.13 epoch) 或调至 3000 (≈3.19 epoch) |
+| 电路类型 | 5 | 7 (新增 ring_osc, lc_tank) |
+
+**下一步**：GPU 空闲后 `run_sft_wave.sh` 自动启动 SFT 训练 → 训练完用 `eval_sft_wave.py` 评测 held-out → 达标则进 Phase 2 GRPO。当前 GPU 全占（R9 pretrain 预计还需~16天），SFT poller 后台轮询。
+
+**数字溯源**：ngspice 实测输出 + Python 量测 + CPU 验证 7/7 PASS。成本 ETA：SFT ~4 GPU·h（plan §Stage-1W），需 GPU 空闲。
+

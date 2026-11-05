@@ -2,9 +2,11 @@
 
 WAITING: 0
 
-> 🆕 **【wake #616 · 2026-11-05 20:1x】维护唤醒·状态无变化·GPU仍100%·poller健康**。nvidia-smi 8×H100 全100%/~75GB（pretrain PIDs 2626131-38）。SFT poller PID 2757742(ppid=1) 健康：/tmp/wave_sft_poller_relaunch.log 每60s `busy_util -- waiting`（最新20:13:31），flock 持有。git 0ahead/0behind，origin 无vision新令。体积 TASK=30453B/MEMORY≈32KB 均≤32KB✓。无新增可执行工作（阶段1 GPU阻塞由poller自动处理，阶段2/3 gated）。**未完成指令：有**（阶段1 GPU训练+阶段2/3未交付，本轮无CPU可推进项）⇒ **WAITING: 0**。
+> 🆕 **【wake #617 · 2026-11-05 20:3x】数据扩充+独立评测脚本+CPU端到端验证**。GPU仍100%（R9 pretrain etimes≈262038s≈3天）。CPU-only交付：① `gen_sft_trajectories.py` +90行新增2类电路（ring_osc环形振荡器行为级+RC延迟满幅方波 / lc_tank LC谐振腔衰减正弦波 Q=5~50），ngspice+量测验证通过；② `sft_pilot_7500.jsonl`（7513条/7类电路×4量测）；③ `eval_sft_wave.py`（260行独立评测，format/submit/numerical_acc四指标，预注册判据format≥90%+submit≥70%）；④ `sft_holdout_500.jsonl`（582条held-out，不同seed无重叠）；⑤ CPU端到端验证7/7 PASS（import+format+tokenize+loss mask+collate+split+新电路验证）。`sft_train_wave.py` 默认数据更新为 sft_pilot_7500.jsonl。EXPERIMENTS §20.9。📦 体积：TASK≈30.5KB / MEMORY≈31.5KB（归档2条旧空唤醒后）。**未完成指令：有**（阶段1 GPU训练+阶段2/3未交付）⇒ **WAITING: 0**。
 
-> 🆕 **【wake #615 · 2026-11-05 20:0x】维护唤醒·GPU仍100%阻塞·poller健康确认**。本机=`.12`(whag0pgpuap12)，nvidia-smi 8×H100 全 100%/~75GB（pretrain mamba2 baize2b PID 2612442 etimes≈260171s≈3天）。SFT poller PID 2757742(ppid=1) **健康**：poll log 每60s `busy_util -- waiting`（最新20:07:29），flock 独占锁持有（fuser 确认无重复），guard log 19:47 获锁。无SFT产出（训练未启动）。git 0ahead/0behind（已同步，最后vision提交=本人20:04 wake#614），origin 无vision新令。所有CPU可做工作已交付（阶段0报告+5064轨迹+SFT/GRPO/eval三脚本+oracle 300题mean=1.000）。**无新增可执行工作**——阶段1纯GPU阻塞由poller自动处理，阶段2/3下游gated。📦 体积：TASK=30453B / MEMORY=30963B（均≤32KB✓，本轮无需归档）。**未完成指令：有**（阶段1 GPU训练 + 阶段2/3未交付，但本轮无CPU可推进项）⇒ **WAITING: 0**。
+> 📦 wake #616（维护唤醒·GPU仍100%·poller健康）已归档 → daily-memories-vision/2026-11-05.md；**结论**：GPU 8×H100 100% R9 pretrain，SFT poller PID 2757742健康轮询，git同步，体积均≤32KB✓。需要时再读。
+
+> 📦 wake #615（维护唤醒·GPU仍100%·poller健康）已归档 → daily-memories-vision/2026-11-05.md；**结论**：同#616，无新增工作。需要时再读。
 
 
 > 🆕 **【wake #614 · 2026-11-05 19:5x】WaveQA-RL oracle ceiling 300题验证 + GPU阻塞确认（2节点pretrain）**。GPU仍100%（.12+.29 双节点 `pretrain_launcher.py --arch mamba2 --name baize2b` PID 2612442 etimes≈259493s≈3天 占全部16卡）。SFT poller(PID 2757742, flock) alive 轮询 `busy_util -- waiting`。CPU-only交付：`waveqa_eval.py --oracle --n_questions 300 --seed 20261112` → **300题全 mean=1.000**（numerical 109 / multi_choice 94 / open_ended 97），输出 `waveqa_oracle_300.json`(45.7KB)——验证eval pipeline大规模可用 + 提供Phase 2「Oracle Tcl 上限」参照线。归档：MEMORY wake#610+#611→daily-memories（省~2KB）。📦 体积：TASK≈30.5KB / MEMORY≈31KB（归档后）。**未完成指令：有**（阶段1 GPU训练 + 阶段2/3未交付）⇒ **WAITING: 0**。
@@ -22,10 +24,9 @@ WAITING: 0
 > 📦 wake #607~#608 空唤醒流水（2条，2026-11-05 16:35~17:09）已归档 → daily-memories-vision/2026-11-05.md。需要时再读。
 
 
-> 🆕 **【空唤醒 · wake #606 · 2026-11-05 15:58】** 无新运维令。用户在终端粘贴 BAIZE_VISION_TASK.md 全文并选择「以 vision agent 身份执行收尾铁律」。git fetch→origin/main 0ahead/0behind（已同步，HEAD=f7ab9d456 harness 15:57；origin 新提交 14:56~15:57 均来自 harness/designflow/data/zhulong/pretrain/paper 等线，无 vision 新令；自 #605 14:53 起无 vision 新令）。所有运维令标[已完成]/[已归档]。📦 体积：TASK=27230B / MEMORY=30934B→滚动归档5条旧空唤醒#584~#588→daily-memories-vision/2026-11-05.md，归档后MEMORY≈25KB（🆕条目17+新增#606=18，在~20 软指引内）。进程 baize_vision_loop.sh PID 669545 alive（etimes≈629k）；cline in PATH（/home/app.e0031982/.bun/bin/cline）✓。工作副本改动均为别线文件（pretrain MEMORY/ARCHIVE/TASK + ZhuLong benchmark report + 多个别线未跟踪脚本/目录如 ocr_samples/1049/3147/5245/7343/9441 + cjk_test.*），vision 文件无在途改动，未触碰别线。写心跳+日流水+commit+push（一律 `git commit -m '...' -- <明确文件路径>`，吸取#562裸commit卷入别线文件教训）。**未完成指令：无** ⇒ **WAITING: 1**。
+> 📦 wake #606（空唤醒 2026-11-05 15:58）已归档 → daily-memories-vision/2026-11-05.md；**结论**：无新令，git同步，体积归档后MEMORY≈25KB。需要时再读。
 
-
-> 🆕 **【空唤醒 · wake #605 · 2026-11-05 14:53】** 无新运维令。用户在终端粘贴 BAIZE_VISION_TASK.md 全文并选择「以 vision agent 身份执行收尾铁律」。git fetch→origin/main 0ahead/0behind（已同步，HEAD=2f567a3a1 pretrain 14:46；origin 新提交 14:32~14:46 均来自 pretrain/designflow/zhulong 等线，无 vision 新令；自 #604 14:19 起无 vision 新令）。所有运维令标[已完成]/[已归档]。📦 体积：TASK=27230B / MEMORY=29793B（均≤32KB✓；🆕条目5+新增#605=6，在~20 软指引内，无需滚动归档）。进程 baize_vision_loop.sh PID 669545 alive（etimes≈625k）；cline in PATH（/home/app.e0031982/.bun/bin/cline）✓。工作副本改动均为别线文件（pretrain eval 脚本/报告 + designflow shard 脚本/报告 + zhulong + ocr_samples/ + 多个别线未跟踪脚本/目录如 1049/3147/5245/7343/9441），vision 文件无在途改动，未触碰别线。写心跳+日流水+commit+push（一律 `git commit -m '...' -- <明确文件路径>`，吸取#562裸commit卷入别线文件教训）。**未完成指令：无** ⇒ **WAITING: 1**。
+> 📦 wake #605（空唤醒 2026-11-05 14:53）已归档 → daily-memories-vision/2026-11-05.md；**结论**：无新令，git同步，体积均≤32KB✓。需要时再读。
 
 
 > 🆕 **【空唤醒 · wake #604 · 2026-11-05 14:19】** 无新运维令。用户在终端粘贴 BAIZE_VISION_TASK.md 全文并选择「以 vision agent 身份执行收尾铁律」。git fetch→origin/main 0ahead/0behind（已同步，HEAD=79ad059c5 pretrain 14:15；origin 新提交 13:48~14:15 均来自 pretrain/designflow/data/zhulong 等线，无 vision 新令；自 #603 13:48 起无 vision 新令）。所有运维令标[已完成]/[已归档]。📦 体积：TASK=27230B / MEMORY=28644B（均≤32KB✓；🆕条目4+新增#604=5，在~20 软指引内，无需滚动归档）。进程 baize_vision_loop.sh PID 669545 alive（etimes≈623k）；cline in PATH（/home/app.e0031982/.bun/bin/cline）✓。工作副本改动均为别线文件（pretrain eval 脚本/报告 + designflow shard 脚本/报告 + data 巡检 + ocr_samples/ + 多个别线未跟踪脚本/目录如 1049/3147/5245/7343/9441），vision 文件无在途改动，未触碰别线。写心跳+日流水+commit+push（一律 `git commit -m '...' -- <明确文件路径>`，吸取#562裸commit卷入别线文件教训）。**未完成指令：无** ⇒ **WAITING: 1**。

@@ -61,6 +61,98 @@ def _gen_diffpair(rng, wd):
 
 _CIRCUIT_GENS["diffpair"] = _gen_diffpair
 
+# ---------------------------------------------------------------------------
+# 2. Digital circuit generators (ngspice behavioral — no Verilator needed)
+# ---------------------------------------------------------------------------
+
+def _gen_ring_osc(rng, wd):
+    """3-stage ring oscillator using behavioral comparators + RC delay.
+
+    Produces a full rail-to-rail oscillating digital waveform.
+    Period ≈ 2 * n_stages * R * C.
+    """
+    Vdd = float(rng.uniform(3, 5))
+    R_val = float(rng.uniform(500, 3000))
+    C_val = float(rng.uniform(0.5e-12, 3e-12))
+    n_stages = int(rng.choice([3, 5]))
+    rp = os.path.join(wd, "ringosc.raw")
+    thresh = Vdd / 2.0
+    # Build stages: each stage = behavioral inverter + RC delay
+    # The behavioral comparator: V = Vdd if v(input) < thresh else 0
+    lines = ["RINGOSC", f"Vdd vdd 0 {Vdd}"]
+    sig_vars = []
+    prev = "out"
+    for i in range(n_stages):
+        out_node = "out" if i == n_stages - 1 else f"d{i}"
+        n_node = f"n{i}"  # behavioral source always drives intermediate node
+        expr = f"{Vdd}*(v({prev}) < {thresh})"
+        lines.append(f"B{i+1} {n_node} 0 V={{{expr}}}")
+        lines.append(f"R{i+1} {n_node} {out_node} {R_val:.4e}")
+        lines.append(f"C{i+1} {out_node} 0 {C_val:.4e}")
+        sig_vars.append(f"v({out_node})")
+        prev = out_node
+    # Initial conditions to break symmetry
+    ic_parts = ["v(out)=0"]
+    for i in range(n_stages - 1):
+        ic_parts.append(f"v(d{i})={Vdd if i % 2 == 0 else 0}")
+    lines.append(f".ic {' '.join(ic_parts)}")
+    period_est = 2 * n_stages * R_val * C_val
+    tstep = period_est / 200
+    tstop = period_est * 40
+    lines.append(f".tran {tstep:.3e} {tstop:.3e}")
+    lines.append(".control")
+    lines.append("run")
+    lines.append(f"write {rp} {' '.join(sig_vars)}")
+    lines.append("quit")
+    lines.append(".endc")
+    lines.append(".end")
+    nl = "\n".join(lines) + "\n"
+    gt = {"vdd": Vdd, "n_stages": n_stages, "R": R_val, "C": C_val}
+    params = {"Vdd": Vdd, "R": R_val, "C": C_val, "n_stages": n_stages}
+    return CircuitSpec("ring_osc", nl, rp,
+        ["time"] + sig_vars, gt, params)
+
+
+def _gen_lc_tank(rng, wd):
+    """LC tank circuit with pulse excitation — damped oscillation.
+
+    Produces a decaying sinusoidal waveform with measurable period
+    (natural resonant frequency) and amplitude.
+    """
+    L_val = float(rng.uniform(1e-6, 100e-6))
+    C_val = float(rng.uniform(1e-9, 100e-9))
+    # Q factor: R = Q * sqrt(L/C).  Q in [5, 50] for visible oscillation.
+    Q = float(rng.uniform(5, 50))
+    import math
+    R_val = Q * math.sqrt(L_val / C_val)
+    Vpulse = float(rng.uniform(1, 5))
+    rp = os.path.join(wd, "lctank.raw")
+    # Resonant frequency
+    f0 = 1.0 / (2 * math.pi * math.sqrt(L_val * C_val))
+    period0 = 1.0 / f0
+    # Pulse: short kick to excite the tank
+    pw = period0 * 0.5
+    per = period0 * 10
+    tstop = period0 * 50
+    tstep = period0 / 100
+    nl = (
+        f"LCTANK\n"
+        f"Vin in 0 PULSE(0 {Vpulse} 0 {tstep*5:.3e} {tstep*5:.3e} {pw:.3e} {per:.3e})\n"
+        f"L1 in out {L_val:.4e}\n"
+        f"C1 out 0 {C_val:.4e}\n"
+        f"R1 out 0 {R_val:.4e}\n"
+        f".tran {tstep:.3e} {tstop:.3e}\n"
+        f".control\nrun\nwrite {rp} v(in) v(out)\nquit\n.endc\n.end\n"
+    )
+    gt = {"L": L_val, "C": C_val, "R": R_val, "Q": Q, "f0": f0}
+    params = {"L": L_val, "C": C_val, "R": R_val, "Q": Q, "Vpulse": Vpulse}
+    return CircuitSpec("lc_tank", nl, rp,
+        ["time", "v(in)", "v(out)"], gt, params)
+
+
+_CIRCUIT_GENS["ring_osc"] = _gen_ring_osc
+_CIRCUIT_GENS["lc_tank"] = _gen_lc_tank
+
 MEASURE_TARGETS = ["period", "amplitude", "rise_time", "duty_cycle"]
 
 def _pick_signal(spec, target):
