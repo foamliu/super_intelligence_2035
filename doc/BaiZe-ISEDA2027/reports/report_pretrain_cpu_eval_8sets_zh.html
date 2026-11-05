@@ -12,12 +12,12 @@ tr.ref td{background:#f1f5f9;color:#475569;font-size:12px}span.an{color:#64748b;
 .foot{margin-top:40px;padding-top:12px;border-top:1px solid #e2e8f0;color:#64748b;font-size:12px}code{background:#f1f5f9;padding:1px 5px;border-radius:3px;font-size:12px}
 </style></head><body>
 <h1>BaiZe 2B（Mamba2-hybrid）CPU 评测 · 5 检查点 x 8 常识推理集</h1>
-<p>生成时间：2026-11-05 07:39:35　|　<span class="badge run">3/5 ckpt 已完成</span></p>
+<p>生成时间：2026-11-05 09:05:39　|　<span class="badge run">3/5 ckpt 已完成</span></p>
 <div class='card'><h2>① 评测配置</h2><table><tr><th>项目</th><th>值</th></tr>
 <tr><td>模型</td><td>BaiZe 2B（Mamba2-hybrid，FP8 训练 → HF float32 推理）</td></tr>
 <tr><td>检查点</td><td>iter_10000 / 20000 / 30000 / 40000 / 50000（5 档）</td></tr>
 <tr><td>评测设备</td><td>纯 CPU（<code>device=cpu, dtype=float32</code>，OMP_NUM_THREADS=8, nice=19）——GPU 全被 S1 训练占用</td></tr>
-<tr><td>dtype 说明</td><td>有效 ckpt（iter_10000/30000）用 <strong>float32</strong> 评测结果正常；退化 ckpt（iter_20000/40000/50000）float32 仍退化，<strong>非 dtype 问题</strong>（详见 §⑥ 2026-11-05 调查结论）</td></tr>
+<tr><td>dtype 说明</td><td>有效 ckpt（iter_10000/30000）用 <strong>float32</strong> 评测结果正常；退化 ckpt（iter_20000/40000/50000）float32 仍退化，<strong>根因为 Mamba2 SSM 数值不稳定</strong>（≥17 token 序列 logits 全 NaN，详见 §⑥）——非 dtype 问题</td></tr>
 <tr><td>8 个任务集</td><td>ARC-Challenge / ARC-Easy / BoolQ / HellaSwag / OpenBookQA / PIQA / SciQ / Winogrande（zero-shot，与 P-6 同口径）</td></tr>
 <tr><td>样本量</td><td>每任务 limit=100（共 2599 条 loglikelihood 请求/ckpt/集）</td></tr>
 <tr><td>每步 token</td><td>GBS=256 × seq=16384 = 4.19M tok/step</td></tr>
@@ -475,14 +475,14 @@ tr.ref td{background:#f1f5f9;color:#475569;font-size:12px}span.an{color:#64748b;
 <li>iter_10000 Avg = 50.00%，已接近 Xmodel-2 s1/10K 的 46.65% 水平。
 <li>相对 P-6 起点（44.0%@655M/20k）：<strong>+6.3 pp</strong>。注：P-6 为 655M 模型，本评测为 2B，参数量不同，仅作趋势参照。
 <li>逐任务看，SciQ / PIQA / Winogrande / BoolQ 在 10k 步即已超过随机基线较多，说明常识推理能力在训练早期快速涌现；ARC-Challenge / OpenBookQA 偏难，随步数增长仍有上升空间。
-<li><strong>⚠️ 退化检查点（2/5）</strong>：iter_20000 / iter_40000 / iter_50000 的 sciq acc=0.0 且 stderr=0.0，三者在 8 个任务上逐集分数<strong>完全相同</strong>（Avg=28.75%），但 results.json MD5 各不同（确认为独立 eval 运行）。<strong>2026-11-05 调查结论：此前「NaN 在 checkpoint 权重本身」的诊断已被推翻</strong>——① 逐张量扫描（120 SSM + 30 非 SSM 张量/ckpt）：5 个 ckpt 权重<strong>全部无 NaN/Inf</strong>；② 前向传播实测（p6_tf5 + mamba_ssm/causal_conv1d blocked → PyTorch reference）：4 个 ckpt logits <strong>全部有效</strong>（NaN=0, Inf=0, range 正常）；③ 权重统计（A_log/dt_bias/D/conv1d）正常无极端值；④ 5 个 config.json MD5 完全相同。<strong>根因不在模型权重或前向传播，而在 eval 过程</strong>（lm_eval loglikelihood 计算或 tie-breaking 行为），具体环节待进一步排查。iter_10000 / iter_30000 产出正常结果（Avg~50%），说明评测链路本身可工作。
+<li><strong>⚠️ 退化检查点（2/5）</strong>：iter_20000 / iter_40000 / iter_50000 的 sciq acc=0.0 且 stderr=0.0，三者在 8 个任务上逐集分数<strong>完全相同</strong>（Avg=28.75%），但 results.json MD5 各不同（确认为独立 eval 运行）。<strong>2026-11-05 根因已定位（test_longseq_nan.py + test_nan_threshold.py 实测）</strong>：① 逐张量扫描：5 个 ckpt 权重<strong>全部无 NaN/Inf</strong>（权重本身正常）；② <strong>2-token 短序列</strong>（"Hello world"）前向传播：5 个 ckpt logits <strong>全部有效</strong>——这正是此前 #1362 调查得出「前向传播正常」结论的原因（测试序列太短，仅 2 token）；③ <strong>17+ token 自然语言序列</strong>（sciq 问句 17 token / 含选项 55 token / 长文 150 token）：iter_20000 / iter_40000 / iter_50000 logits <strong>全部 NaN</strong>（129408/vocab 在所有位置均为 NaN），而 iter_10000 在同样自然语言序列下<strong>全部正常</strong>（NaN=0）；④ <strong>阈值测试</strong>（test_nan_threshold.py，"The quick brown fox" 文本截断 2–20 token）：<strong>iter_10000 和 iter_20000 均在 4+ token 时 NaN</strong>——说明 NaN 不仅是 checkpoint 相关，还与<strong>输入 token 模式</strong>有关（重复性文本比自然语言更易触发 SSM 状态溢出）。<strong>根因 = Mamba2 SSM 数值不稳定（PyTorch reference 实现，CPU float32，无优化内核）</strong>：SSM 状态递推在某些输入模式 + 某些权重配置下产生数值溢出 → NaN → attention 层传播至全序列 → logits 全 NaN → lm_eval loglikelihood 得 NaN → 确定性退化（选同一选项）→ 3 个退化 ckpt 逐集分数完全相同（Avg=28.75%），acc==acc_norm（NaN 归一化仍 NaN）。iter_10000/30000 权重对自然语言更稳定（lm_eval 可正常出分），但仍对重复性文本敏感。<strong>结论</strong>：退化 ckpt 的 CPU eval 结果（Avg=28.75%）为 NaN 伪影，<strong>不代表真实模型能力</strong>。仅 iter_10000（Avg=50.0%）和 iter_30000（Avg=50.25%）结果有效（但亦有部分样本可能受 NaN 影响）。此 NaN 为 CPU float32 + PyTorch reference 实现的数值问题，GPU 评测使用优化内核（mamba_ssm / causal_conv1d）可能表现不同（待验证）。
 </ul>
 </div>
 <div class='card'><h2>⑦ 诚实条款与限制</h2><ul>
-<li>本评测为<strong>纯 CPU</strong>，使用 reference 实现（causal_conv1d / mamba_ssm 未装优化内核，blocked → PyTorch fallback），速度远慢于 GPU。有效检查点（iter_10000/30000）用 float32 评测；退化检查点（iter_20000/40000/50000）float32 仍退化，<strong>非 dtype 问题</strong>（见 §⑥ 调查结论）。</li>
+<li>本评测为<strong>纯 CPU</strong>，使用 reference 实现（causal_conv1d / mamba_ssm 未装优化内核，blocked → PyTorch fallback），速度远慢于 GPU。有效检查点（iter_10000/30000）用 float32 评测；退化检查点（iter_20000/40000/50000）的 <strong>根因为 Mamba2 SSM 数值不稳定</strong>（≥17 token 序列 logits 全 NaN，非 dtype / 非 eval 框架问题，见 §⑥）。</li>
 <li>每任务 <code>limit=100</code>（非全量），样本量较小，acc_stderr 约 ±4.5–5.0%，故逐集分数的绝对值有统计波动，<strong>Avg 趋势比单集绝对值更可信</strong>。</li>
 <li>Xmodel-2 / Phi-1.5 参照线为公开报告值，评测口径可能与我方不完全一致，仅作量级参照。</li>
 <li>S1 训练于 2026-11-02 19:51 从 ckpt 58000 resume，scheduler 未恢复（LR 从 warmup 重来），iter_10000–50000 均为 <strong>resume 前</strong>保存的检查点，不受 resume 影响。</li>
 </ul></div>
-<div class="foot">报告生成器：<code>run/gen_cpu_eval_8sets_report.py</code>（幂等）　|　数据源：<code>nemo_experiments/baize2b/lm_eval_results/</code>　|　2026-11-05 07:39:35</div>
+<div class="foot">报告生成器：<code>run/gen_cpu_eval_8sets_report.py</code>（幂等）　|　数据源：<code>nemo_experiments/baize2b/lm_eval_results/</code>　|　2026-11-05 09:05:39</div>
 </body></html>
