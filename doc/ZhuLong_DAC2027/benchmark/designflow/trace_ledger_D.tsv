@@ -773,3 +773,17 @@
 1791852261815_1pxm7					parked		2026-11-05 21:00	code-search: U#0='find location of Enable_TM task/function' (Q&A)
 1789017399621_cmsbu					parked		2026-11-05 21:00	infra: U#0='is sandbox server connected?' (meta question)
 1791523486486_ws2bi	irene1li	10.129.2.13	155	waveform	case	EDA-Eval-DesignFlow-MeasTrtfSkewGen-001	2026-11-05 21:34	
+1789645120364_2n1bs.messages.json	zjqiao	10.129.32.80	75	schematic_netlist	parked		2026-11-05 21:46	duplicate of CompressNetlist-001 (mi210): same task (specify netlist -> edit Run_Compress_Netlist Netlist= param -> run). 9 unfit peeked parked too: aq5lg/b86q7/0suhi/qrmvt/xx7by/z0xkh/s9rzg/5u8d5/sqmhv/wz59k
+1791796775106_b1w28.messages.json	tongfanl	10.129.35.69	143	schematic_netlist	case	EDA-Eval-DesignFlow-PsdDqMap-001	2026-11-05 22:00	
+1789979923847_aq5lg.messages.json					parked		2026-11-05 22:00	peeked #282 unfit
+1790063869978_wotp5.messages.json					parked		2026-11-05 22:00	peeked #282 unfit
+1792394413650_b86q7.messages.json					parked		2026-11-05 22:00	peeked #282 unfit
+1793165088136_0suhi.messages.json					parked		2026-11-05 22:00	peeked #282 unfit
+1790235335073_qrmvt.messages.json					parked		2026-11-05 22:00	peeked #282 unfit
+1789984748372_xx7by.messages.json					parked		2026-11-05 22:00	peeked #282 unfit
+1789549776610_z0xkh.messages.json					parked		2026-11-05 22:00	peeked #282 unfit
+1793069992209_s9rzg.messages.json					parked		2026-11-05 22:00	peeked #282 unfit
+1791852620999_5u8d5.messages.json					parked		2026-11-05 22:00	peeked #282 unfit
+1792216132193_sqmhv.messages.json					parked		2026-11-05 22:00	peeked #282 unfit
+1789566405693_wz59k.messages.json					parked		2026-11-05 22:00	peeked #282 unfit
+1793081107300_z1qdm.messages.json					parked		2026-11-05 22:00	peeked #282 unfit
