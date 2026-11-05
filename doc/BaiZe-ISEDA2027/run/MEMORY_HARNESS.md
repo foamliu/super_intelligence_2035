@@ -5,13 +5,13 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        R1655 quiet监控轮:CPU/MEM自检PASS(load29/224~12.9%·docker ps空·无>8000%CPU·无>50GB RSS·无需kill)→report在位(16952B)→未完成指令:无⇒WAITING=1
-已完成:       H-B✅·Gate7/7·TB报告✅·pilot20✅·R984-R988恒0调试✅·R989 incr_eval全链✅·R997硬约束修复✅·R1567 cline trace归因✅·R1569 cline适配器修复✅·R1633 cline rerun 58/58终交付✅(356/500=71.3%)·R1634 13:5x复核+归档✅·R1635-R1649 deepseek incr_eval渐进✅(196→212,backlog=0)·R1650-R1654 quiet监控✅·full500全7路predict+eval 100%完成✅
-当前动作:     R1655:CPU/MEM自检PASS(load29/224~12.9%·docker ps空·无>8000%CPU·无>50GB RSS·cline-hub-daemon22.9%/4.2GB·opencode6.9%/1.3GB·gw_proxy0.1%均<阈值·无需kill·topCPU为他线pretrain(llama-server356%/pretrain_launcher143%)不碰)→report在位(16952B,Nov5 17:23)→无active eval进程(run_harness/run_single/incr_eval/pytest均无)→未完成指令:无⇒WAITING=1.
+PHASE:        R1656 quiet监控轮:CPU/MEM自检PASS(load29/224~12.9%·docker ps空·无>8000%CPU·无>50GB RSS·无需kill)→report在位(16952B)→未完成指令:无⇒WAITING=1
+已完成:       H-B✅·Gate7/7·TB报告✅·pilot20✅·R984-R988恒0调试✅·R989 incr_eval全链✅·R997硬约束修复✅·R1567 cline trace归因✅·R1569 cline适配器修复✅·R1633 cline rerun 58/58终交付✅(356/500=71.3%)·R1634 13:5x复核+归档✅·R1635-R1649 deepseek incr_eval渐进✅(196→212,backlog=0)·R1650-R1655 quiet监控✅·full500全7路predict+eval 100%完成✅
+当前动作:     R1656:CPU/MEM自检PASS(load29/224~12.9%·docker ps空·无>8000%CPU·无>50GB RSS·cline-hub-daemon22.9%/4.0GB·opencode6.9%/1.3GB·gw_proxy0.1%均<阈值·无需kill·topCPU为他线pretrain(llama-server445%/pretrain_launcher143%)不碰)→report在位(16952B,Nov5 17:23)→无active eval进程(run_harness/run_single/incr_eval/pytest均无)→未完成指令:无⇒WAITING=1.
 下一步:       ①full500全7路已100%完成(opencode401/cline356/pi333/codex291/claude-code273/deepseek212/hermes184)→report已交付(16952B,④指标齐全) ②永久硬约束:禁止commit结果JSON ③下次唤醒CPU/MEM自检+backlog复扫(预期=0) ④TASK=36821B(35.9KB)>32KB软限但<40KB红线·full500块待运维标✅后归档(纪律#1:无✅标记不许归档)
 阻塞:         无·全7路predict+eval 100%完成·backlog=0.
 ERROR_COUNT:  0
-  📦 体积：TASK=36821B(35.9KB,<40KB红线OK,full500块待运维标✅方可归档) / MEMORY=~33KB(<40KB红线OK)
+  📦 体积：TASK=36821B(35.9KB,<40KB红线OK,full500块待运维标✅方可归档) / MEMORY=33212B(32.4KB,<40KB红线OK)
 
 ```
 
@@ -20,6 +20,7 @@ ERROR_COUNT:  0
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 
 ### 本唤醒流水
+[21:36] R1656 quiet监控轮:CPU/MEM自检PASS(load29/224~12.9%·docker ps空·无>8000%CPU·无>50GB RSS·cline-hub-daemon22.9%/4.0GB·opencode6.9%/1.3GB·gw_proxy0.1%均<阈值·无需kill·topCPU为他线pretrain(llama-server445%/pretrain_launcher143%)不碰)→无active eval进程(run_harness/run_single/incr_eval/pytest均无)→report在位(16952B,Nov5 17:23,路径reports/report_harness_swebench_verified_full500_zh.html)→未完成指令:无⇒WAITING=1.
 [21:02] R1655 quiet监控轮:CPU/MEM自检PASS(load29/224~12.9%·docker ps空·无>8000%CPU·无>50GB RSS·cline-hub-daemon22.9%/4.2GB·opencode6.9%/1.3GB·gw_proxy0.1%均<阈值·无需kill·topCPU为他线pretrain不碰)→无active eval进程(run_harness/run_single/incr_eval/pytest均无)→report在位(16952B,Nov5 17:23)→未完成指令:无⇒WAITING=1.
 > 📦 R1654 流水(20:25,quiet监控轮:CPU/MEM自检PASS+report在位+backlog=0+全7路100%完成)已归档 → daily-memories-harness/2026-11-05.md。结论：quiet轮正常·全7路100%完成。需要时再读。
 > 📦 R1653 流水(19:50,quiet监控轮:CPU/MEM自检PASS+report在位+backlog=0+全7路100%完成)已归档 → daily-memories-harness/2026-11-05.md。结论：quiet轮正常·全7路100%完成。需要时再读。
