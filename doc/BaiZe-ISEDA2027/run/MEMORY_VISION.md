@@ -2,9 +2,9 @@
 
 WAITING: 0
 
-> 🆕 **【wake #652 · 2026-11-06 00:54】监控巡检：双poller健康+GPU 8×97-100%+状态无变化·仅待GPU**。本轮CPU-only监控巡检（00:54，距wake#651仅4min，状态无变化）：① SFT poller PID 2757742 健康：alive(ppid=1, etimes≈18363s≈5.1h, `run_sft_wave.sh 8`)，每60s `busy_util -- waiting`（最00:54:00）；② GRPO chain PID 2428009 健康：alive(ppid=1, etimes≈8350s≈2.3h, `run_grpo_wave.sh 8`)，每120s `SFT not done yet (waited 8280s/2592000)`（最00:52:16）；③ vision loop PID 669545 alive（etimes≈661419s≈7.66天）；cline in PATH✓。GPU .12 8×H100 97-100% util / ~75GB each（pretrain mamba2 baize2b ETA≈11/25-27）。git fetch→origin/main 同步(0ahead/0behind)，无新vision运维令（TASK.md自18:46未变）。结论：全管线就绪+双poller健康+零新CPU工作，仅待GPU释放。📦 体积：TASK=30453B(30.5KB) / MEMORY=26142B(26.1KB)（均≤32KB✓）。**未完成指令：有**（阶段1 GPU训练+阶段2/3未交付）⇒ **WAITING: 0**。
+> 🆕 **【wake #653 · 2026-11-06 00:58】监控巡检：双poller健康+GPU 8×97-100%+状态无变化·仅待GPU**。本轮CPU-only监控巡检（00:58，距wake#652仅4min，状态无变化）：① SFT poller PID 2757742 健康：alive(ppid=1, etimes≈18628s≈5.2h, `run_sft_wave.sh 8`)，每60s `busy_util -- waiting`（最00:58:01）；② GRPO chain PID 2428009 健康：alive(ppid=1, etimes≈8615s≈2.4h, `run_grpo_wave.sh 8`)，每120s `SFT not done yet (waited 8640s/2592000)`（最00:58:16）；③ vision loop PID 669545 alive（etimes≈661684s≈7.66天）；cline in PATH✓。GPU .12 8×H100 97-100% util / ~75GB each（pretrain mamba2 baize2b ETA≈11/25-27）。git fetch→origin/main 同步(0ahead/0behind)，无新vision运维令（TASK.md自18:46未变）。结论：全管线就绪+双poller健康+零新CPU工作，仅待GPU释放。📦 体积：TASK=30453B(30.5KB) / MEMORY=26365B(26.1KB)（均≤32KB✓）。**未完成指令：有**（阶段1 GPU训练+阶段2/3未交付）⇒ **WAITING: 0**。
 
-> 📦 wake #651（监控巡检双poller健康+GPU 8×100%+状态无变化）已归档 → daily-memories-vision/2026-11-06.md；**结论**：状态无变化，全管线就绪仅待GPU。需要时再读。
+> 📦 wake #651~#652（监控巡检双poller健康+GPU 8×97-100%+状态无变化）已归档 → daily-memories-vision/2026-11-06.md；**结论**：状态无变化，全管线就绪仅待GPU。需要时再读。
 
 > 📦 wake #650（监控巡检双poller健康+GPU 8×100%+状态无变化）已归档 → daily-memories-vision/2026-11-06.md；**结论**：状态无变化，全管线就绪仅待GPU。需要时再读。
 
