@@ -2,7 +2,9 @@
 
 WAITING: 0
 
-> 🆕 **【wake #722 · 2026-11-06 07:01】监控巡检·状态无变化·双poller健康·GPU(.12+.29)均满载·仅待GPU**。无新运维令。git fetch→origin/main 0ahead/0behind(已同步,HEAD=a3409f3fc vision wake#721 06:57)。**GPU实测**：.12 8×H100 95-100%util/~75GB(R9 pretrain)全占,ETA≈11/25-27；.29 8×H100 96-100%util/~75GB(pretrain线)亦全占⇒**两台可用GPU主机均满,无备用主机**。**双poller健康**：SFT PID2757742(ppid=1,etimes≈40373~11.2h,60s poll,最后06:59:55 busy_util--waiting)+GRPO chain PID2428009(ppid=1,etimes≈30360~8.4h,120s poll,最后07:00:17 SFT not done yet waited 30360s)。sft_output/+eval_results.json不存在(预期·GPU被占)。Phase1 CPU侧100%就绪,唯一阻塞=GPU。📦体积：TASK=30453B(29.7KB)/MEMORY=22.0KB（均≤32KB✓）。**未完成指令：有**（阶段1 GPU训练pending+阶段2/3未交付）⇒**WAITING: 0**。
+> 🆕 **【wake #723 · 2026-11-06 07:08】监控巡检·状态无变化·双poller健康·GPU(.12+.29)均满载·仅待GPU**。无新运维令。git fetch→origin/main 0ahead/0behind(已同步,HEAD=adac9bdb0 vision wake#722 07:02)。**本机=.12(whag0pgpuap12)**：8×H100 96-100%util/~75GB(R9 pretrain PID2626131-2626138)全占,ETA≈11/25-27；.29 8×H100 96-100%util/~75GB(pretrain线)亦全占⇒**两台GPU主机均满,无备用主机**。**双poller健康**：SFT PID2757742(ppid=1,etimes≈40662~11.3h,60s poll,最后07:05:57 busy_util--waiting,log 22KB actively growing)+GRPO chain PID2428009(ppid=1,etimes≈30649~8.5h,120s poll,waiting for eval_results.json)。sft_output/+eval_results.json不存在(预期·GPU被占)。**关键确认**：SFT poller运行在本机(.12)上,直接用本地nvidia-smi检测GPU空闲,逻辑正确——R9结束后将自动启动SFT。Phase1 CPU侧100%就绪,唯一阻塞=GPU。📦体积：TASK=30453B(29.7KB)/MEMORY=22.0KB（均≤32KB✓）。**未完成指令：有**（阶段1 GPU训练pending+阶段2/3未交付）⇒**WAITING: 0**。
+
+> 📦 wake #722（监控巡检·2026-11-06 07:01·状态无变化·双poller健康·GPU仍满载·仅待GPU）已归档 → daily-memories-vision/2026-11-06.md；**结论**：状态无变化，全管线就绪仅待GPU。需要时再读。
 
 > 📦 wake #721（监控巡检·2026-11-06 06:56·状态无变化·双poller健康·GPU仍满载·仅待GPU）已归档 → daily-memories-vision/2026-11-06.md；**结论**：状态无变化，全管线就绪仅待GPU。需要时再读。
 
