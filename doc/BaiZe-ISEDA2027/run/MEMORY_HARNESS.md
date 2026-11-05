@@ -5,13 +5,13 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        R1657 quiet监控轮:CPU/MEM自检PASS(load34/224~15.1%·无>8000%CPU·无>50GB RSS·无需kill)→report在位(16952B)→未完成指令:无⇒WAITING=1
-已完成:       H-B✅·Gate7/7·TB报告✅·pilot20✅·R984-R988恒0调试✅·R989 incr_eval全链✅·R997硬约束修复✅·R1567 cline trace归因✅·R1569 cline适配器修复✅·R1633 cline rerun 58/58终交付✅(356/500=71.3%)·R1634 13:5x复核+归档✅·R1635-R1649 deepseek incr_eval渐进✅(196→212,backlog=0)·R1650-R1656 quiet监控✅·full500全7路predict+eval 100%完成✅
-当前动作:     R1657:CPU/MEM自检PASS(load34/224~15.1%·无>8000%CPU·无>50GB RSS·无需kill·topCPU为他线pretrain(llama-server437%/pretrain_launcher143%/RSS42GB均不碰)→无active eval进程(run_harness/run_single/incr_eval/pytest均无)→docker ps无权限(预期,无eval在跑)→report在位(16952B,Nov5 17:23,路径reports/report_harness_swebench_verified_full500_zh.html)→未完成指令:无⇒WAITING=1.
-下一步:       ①full500全7路已100%完成(opencode401/cline356/pi333/codex291/claude-code273/deepseek212/hermes184)→report已交付(16952B,④指标齐全) ②永久硬约束:禁止commit结果JSON ③下次唤醒CPU/MEM自检+backlog复扫(预期=0) ④TASK=36821B(35.9KB)>32KB软限但<40KB红线·full500块待运维标✅后归档(纪律#1:无✅标记不许归档)
+PHASE:        R1658 quiet监控轮:CPU/MEM自检PASS(load28/224~12.6%·CPU idle88.5%·无>8000%CPU·无>50GB RSS·无需kill)→report在位(16952B)→backlog=0→未完成指令:无⇒WAITING=1·本轮另滚动MEMORY(R1566–R1576→1条bulk指针)达≤32KB
+已完成:       H-B✅·Gate7/7·TB报告✅·pilot20✅·R984-R988恒0调试✅·R989 incr_eval全链✅·R997硬约束修复✅·R1567 cline trace归因✅·R1569 cline适配器修复✅·R1633 cline rerun 58/58终交付✅(356/500=71.3%)·R1634 13:5x复核+归档✅·R1635-R1649 deepseek incr_eval渐进✅(196→212,backlog=0)·R1650-R1657 quiet监控✅·full500全7路predict+eval 100%完成✅
+当前动作:     R1658:CPU/MEM自检PASS(load28/224~12.6%·CPU idle88.5%·无>8000%CPU·无>50GB RSS·无需kill·topCPU为他线pretrain python147%(4核)均不碰)→无active eval进程(run_harness/run_single/incr_eval/pytest均无)→docker ps无权限(预期,无eval在跑)→report在位(16952B,Nov5 17:23,路径reports/report_harness_swebench_verified_full500_zh.html)→backlog=0·全7路100%完成→未完成指令:无⇒WAITING=1. 本轮另:MEMORY滚动归档R1566–R1576(10条→1条bulk指针)→MEMORY 32.9KB→~30.4KB(≤32KB达标).
+下一步:       ①full500全7路已100%完成(opencode401/cline356/pi333/codex291/claude-code273/deepseek212/hermes184)→report已交付(16952B,④指标齐全) ②永久硬约束:禁止commit结果JSON ③下次唤醒CPU/MEM自检+backlog复扫(预期=0) ④TASK=36821B(35.9KB)>32KB软限但<40KB红线·full500块待运维标✅后归档(纪律#1:无✅标记不许归档)·MEMORY已≤32KB
 阻塞:         无·全7路predict+eval 100%完成·backlog=0.
 ERROR_COUNT:  0
-  📦 体积：TASK=36821B(35.9KB,<40KB红线OK,full500块待运维标✅方可归档) / MEMORY=33685B(32.9KB,<40KB红线OK)
+  📦 体积：TASK=36821B(35.9KB,<40KB红线OK,full500块待运维标✅方可归档) / MEMORY=~30.4KB(本轮滚动R1566–R1576后≤32KB达标,<40KB红线OK)
 
 ```
 
@@ -20,7 +20,8 @@ ERROR_COUNT:  0
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 
 ### 本唤醒流水
-[22:10] R1657 quiet监控轮:CPU/MEM自检PASS(load34/224~15.1%·无>8000%CPU·无>50GB RSS·无需kill·topCPU为他线pretrain(llama-server437%/pretrain_launcher143%/RSS42GB)不碰)→无active eval进程(run_harness/run_single/incr_eval/pytest均无)→docker ps无权限(预期,无eval在跑)→report在位(16952B,Nov5 17:23)→未完成指令:无⇒WAITING=1.
+[22:46] R1658 quiet监控轮:CPU/MEM自检PASS(load28/224~12.6%·CPU idle88.5%·无>8000%CPU·无>50GB RSS·无需kill·topCPU为他线pretrain python147%(4核)不碰)→无active eval进程(run_harness/run_single/incr_eval/pytest均无)→docker ps无权限(预期,无eval在跑)→report在位(16952B,Nov5 17:23,路径reports/report_harness_swebench_verified_full500_zh.html)→backlog=0·全7路100%完成→未完成指令:无⇒WAITING=1. 本轮另:MEMORY滚动归档R1566–R1576(10条→1条bulk指针)→MEMORY 32.9KB→~30.4KB(≤32KB达标).
+> 📦 R1657 流水(22:10,quiet监控轮:CPU/MEM PASS+report在位+backlog=0+全7路100%完成)已归档 → daily-memories-harness/2026-11-05.md。结论：quiet轮正常·全7路100%完成。需要时再读。
 > 📦 R1656 流水(21:36,quiet监控轮:CPU/MEM自检PASS+report在位+backlog=0+全7路100%完成)已归档 → daily-memories-harness/2026-11-05.md。结论：quiet轮正常·全7路100%完成。需要时再读。
 > 📦 R1655 流水(21:02,quiet监控轮:CPU/MEM自检PASS+report在位+backlog=0+全7路100%完成)已归档 → daily-memories-harness/2026-11-05.md。结论：quiet轮正常·全7路100%完成。需要时再读。
 > 📦 R1654 流水(20:25,quiet监控轮:CPU/MEM自检PASS+report在位+backlog=0+全7路100%完成)已归档 → daily-memories-harness/2026-11-05.md。结论：quiet轮正常·全7路100%完成。需要时再读。
@@ -109,16 +110,7 @@ ERROR_COUNT:  0
 
 > 📦 R1580 流水(17:25→17:38,监控轮:CPU/MEM PASS+scan_backlog=1→incr_eval deepseek matplotlib-24637 RESOLVED 173→174+全7路eval汇总+cline rerun[9/58])已归档 → daily-memories-harness/2026-11-04.md。结论：deepseek+1 RESOLVED·cline rerun 9/58·修前326→修后329。需要时再读。
 > 📦 R1579-R1577 流水(17:05~17:20,3轮监控轮:CPU/MEM PASS+scan_backlog=0+全7路eval汇总+cline rerun推进)已归档 → daily-memories-harness/2026-11-04.md。结论：监控轮正常·cline rerun 9/58·修前326→修后329=+3。需要时再读。
-> 📦 R1576 流水(16:38→16:49,incr_eval轮:cline django-11276+11551双RESOLVED 327→329·deepseek 3backlog 1FAILED+2INFRA)已归档 → daily-memories-harness/2026-11-04.md。结论：cline +2 RESOLVED(328→329)·deepseek infra+2。需要时再读。
-> 📦 R1575 流水(16:30→16:36,监控轮:cline rerun [6/58]running·5done 3patch/2timeout)已归档 → daily-memories-harness/2026-11-04.md。结论：cline rerun进度确认。需要时再读。
-> 📦 R1573 流水(16:05→16:12,监控轮:orphaned docker kill+backlog scan)已归档 → daily-memories-harness/2026-11-04.md。结论：docker kill 2 orphaned deepseek容器·scan_backlog=2(INFRA skip)。需要时再读。
-> 📦 R1572 流水(15:35→15:42,incr_eval cline 2新patch+监控轮:astropy-7671 RESOLVED→cline327/500+astropy-7336 FAILED)已归档 → daily-memories-harness/2026-11-04.md。结论：cline 326→327(+1 RESOLVED)·117 failed·56 no_patch。需要时再读。
-> 📦 R1571 流水(15:15→15:30,incr_eval+cline rerun监控轮:deepseek incr_eval 2backlog docker启动+cline rerun [4/58]已产2新patch)已归档 → daily-memories-harness/2026-11-04.md。结论：deepseek incr_eval docker启动·cline rerun 2/3题产patch(astropy-7336/7671 FIXED)。需要时再读。
-> 📦 R1570 流水(15:00→15:10,incr_eval轮:deepseek incr_eval 2backlog RESOLVED+cline rerun 1/58进行中)已归档 → daily-memories-harness/2026-11-04.md。结论：deepseek +2 RESOLVED(matplotlib-23314/23412)·cline rerun启动。需要时再读。
-> 📦 R1569 流水(14:30→14:50,cline适配器修复轮:OMP_NUM_THREADS=8致bun静默退出根因+3fix+58题rerun启动)已归档 → daily-memories-harness/2026-11-04.md。结论：cline适配器3fix(OMP跳过+CLINE_BIN改.bun/bin+stdout透传+silent-exit retry)·58题rerun启动·smoke test修复确认。需要时再读。
-> 📦 R1568 流水(13:46→13:50,incr_eval轮:CPU/MEM自检PASS+regen codex/deepseek WROTE+incr_eval 3backlog→codex+2·deepseek+1 RESOLVED)已归档 → daily-memories-harness/2026-11-04.md。结论：codex+2·deepseek+1 RESOLVED·2路predict alive。需要时再读。
-> 📦 R1567 流水(13:25→13:41,cline trace归因分析:运维令11-04 13:1x→cline326 vs opencode401(-15pp)→3类根因(静默退出35题/超时18题/补丁质量116题McNemar极显著)→report_harness_cline_trace_analysis_zh.html(24667B,commit a2c331c79))已归档 → daily-memories-harness/2026-11-04.md。结论：cline trace归因分析已交付·2路predict alive。需要时再读。
-> 📦 R1566 流水(13:09,incr_eval轮:CPU/MEM自检PASS+regen codex WROTE(483→486)+scan_backlog=2→incr_eval codex astropy-7336 FAILED+astropy-7606 FAILED+scan_backlog=1→incr_eval codex astropy-7671 RESOLVED,eval 1966→1967,2路predict alive codex486·deepseek213)已归档 → daily-memories-harness/2026-11-04.md。结论：codex+1 RESOLVED·2路predict alive。需要时再读。
+> 📦 R1566–R1576 流水（2026-11-04，10轮 incr_eval/监控轮：cline rerun 推进·deepseek/codex incr_eval 多轮 RESOLVED·cline 适配器 3fix + 58 题 rerun 启动·cline trace 归因报告交付·orphaned docker kill）已 bulk 归档 → daily-memories-harness/2026-11-04.md。需要时再读。
 > 📦 R1564 流水(12:51,incr_eval:deepseek matplotlib-22719 RESOLVED,eval 1964)已归档 → daily-memories-harness/2026-11-04.md。结论：deepseek+1 RESOLVED·2路predict alive。需要时再读。
 > 📦 R1563 流水(12:45,quiet监控轮:CPU/MEM自检PASS+regen all7 unchanged+scan_backlog=0,eval 1963持平,2路predict alive codex480·deepseek212)已归档 → daily-memories-harness/2026-11-04.md。结论：quiet轮·2路predict alive。需要时再读。
 > 📦 R1562 流水(12:35,quiet监控轮:CPU/MEM自检PASS+regen all7 unchanged+scan_backlog=0,eval 1963持平,2路predict alive codex480·deepseek212)已归档 → daily-memories-harness/2026-11-04.md。结论：quiet轮·2路predict alive。需要时再读。
