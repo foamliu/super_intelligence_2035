@@ -998,3 +998,15 @@ wl9i4					parked		2026-11-05 22:49	交互shell驱动+Q&A n752大
 1793846988442_zhq3r					parked		2026-11-06 05:30	meta/how-to Q&A (how to input circuit module)
 1793786422300_ki14d					parked		2026-11-06 05:30	wrong domain: layout FPA density check (physical_verify/layout)
 1792837595656_ymjs5					parked		2026-11-06 05:30	premise-missing: resume prior delay-cell sigma optimization task
+1793867708362_0t51l					case	EDA-Eval-DesignFlow-SpiceldViewChg-001	2026-11-06 05:58	
+1792460814763_xq6n1					parked		2026-11-06 05:58	NOFILE on .75 ssh peek
+1793151117545_04s08					parked		2026-11-06 05:58	NOFILE on .75 ssh peek
+1788865825735_kbtio					parked		2026-11-06 05:58	skill-creator slash-command launch (meta/skill setup, not produce task)
+1793101648065_ioa1s					parked		2026-11-06 05:58	skill-creator slash-command launch (meta/skill setup, not produce task)
+1793849491055_xnnyg					parked		2026-11-06 05:58	Q&A + root-cause debug (duplicated subckt error / probe slicer_out / hspice option), not clean produce
+1793849641832_97ksq					parked		2026-11-06 05:58	Q&A + root-cause debug (duplicated subckt error / probe slicer_out / hspice option), not clean produce
+1790245155745_i5ae7					parked		2026-11-06 05:58	open-ended multi-objective analog sizing optimization (功耗534uA+delay最小), needs live Aether+FineSim+real circuit, hard to check offline deterministically
+1789694125792_hxgnj					parked		2026-11-06 05:58	Q&A (explain current module purpose), not produce
+1790572773219_t5osd					parked		2026-11-06 05:58	Gaussian power-noise PWL generator (spice_sim/stimulus, not shard-D core); overlaps existing PowerNoiseInject-001 (same user joeyl); deferred
+1793865966161_rkdu8					parked		2026-11-06 05:58	duplicate of 0t51l (same user yuankong, same mmsim.ini/netlist schematic-view task, fewer msgs)
+1793004342339_tvmwg					parked		2026-11-06 05:58	analysis Q&A (which cell to pick for tCS/WR_Time measurement), not produce
