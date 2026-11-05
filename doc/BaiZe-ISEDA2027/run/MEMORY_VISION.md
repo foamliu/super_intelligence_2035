@@ -2,6 +2,8 @@
 
 WAITING: 1
 
+> 🆕 **【空唤醒 · wake #604 · 2026-11-05 14:19】** 无新运维令。用户在终端粘贴 BAIZE_VISION_TASK.md 全文并选择「以 vision agent 身份执行收尾铁律」。git fetch→origin/main 0ahead/0behind（已同步，HEAD=79ad059c5 pretrain 14:15；origin 新提交 13:48~14:15 均来自 pretrain/designflow/data/zhulong 等线，无 vision 新令；自 #603 13:48 起无 vision 新令）。所有运维令标[已完成]/[已归档]。📦 体积：TASK=27230B / MEMORY=28644B（均≤32KB✓；🆕条目4+新增#604=5，在~20 软指引内，无需滚动归档）。进程 baize_vision_loop.sh PID 669545 alive（etimes≈623k）；cline in PATH（/home/app.e0031982/.bun/bin/cline）✓。工作副本改动均为别线文件（pretrain eval 脚本/报告 + designflow shard 脚本/报告 + data 巡检 + ocr_samples/ + 多个别线未跟踪脚本/目录如 1049/3147/5245/7343/9441），vision 文件无在途改动，未触碰别线。写心跳+日流水+commit+push（一律 `git commit -m '...' -- <明确文件路径>`，吸取#562裸commit卷入别线文件教训）。**未完成指令：无** ⇒ **WAITING: 1**。
+
 > 🆕 **【空唤醒 · wake #603 · 2026-11-05 13:47】** 无新运维令。用户在终端粘贴 BAIZE_VISION_TASK.md 全文并选择「以 vision agent 身份执行收尾铁律」。git fetch→origin/main 0ahead/0behind（已同步，HEAD=16307ca58 pretrain 13:43；origin 新提交 13:25~13:43 均来自 designflow/pretrain/data/zhulong 等线，无 vision 新令；自 #602 13:07 起无 vision 新令）。所有运维令标[已完成]/[已归档]。📦 体积：TASK=27230B / MEMORY=27516B（均≤32KB✓；🆕条目5+新增#603=6，在~20 软指引内）。进程 baize_vision_loop.sh PID 669545 alive（etimes≈621k）；cline in PATH（/home/app.e0031982/.bun/bin/cline）✓。工作副本改动均为别线文件（pretrain eval 脚本/报告 + designflow shard 脚本/报告 + data 巡检 + ocr_samples/ + 多个别线未跟踪脚本/目录如 1049/3147/5245/7343/9441），vision 文件无在途改动，未触碰别线。写心跳+日流水+commit+push（一律 `git commit -m '...' -- <明确文件路径>`，吸取#562裸commit卷入别线文件教训）。**未完成指令：无** ⇒ **WAITING: 1**。
 
 > 🆕 **【空唤醒 · wake #602 · 2026-11-05 13:07】** 无新运维令。用户在终端粘贴 BAIZE_VISION_TASK.md 全文并选择「以 vision agent 身份执行收尾铁律」。git fetch→origin/main 本地落后1（origin HEAD=72b42bdef designflow 13:07；origin 新提交 13:02~13:07 均来自 designflow/pretrain 等线，无 vision 新令；自 #601 12:34 起无 vision 新令），将先 git pull --rebase --autostash 再提交。所有运维令标[已完成]/[已归档]。📦 体积：TASK=27230B / MEMORY=31524B（31.6KB，逼近32KB）→本轮滚动归档5条旧空唤醒#579~#583→daily-memories-vision/2026-11-{04,05}.md，归档后🆕条目23-5+新增#602=19，在~20 软指引内，MEMORY≈26KB ≤32KB✓。进程 baize_vision_loop.sh PID 669545 alive（etimes≈619k）；cline in PATH（/home/app.e0031982/.bun/bin/cline）✓。工作副本改动均为别线文件（designflow shard 脚本/报告 + pretrain eval 报告 + ocr_samples/ + 多个别线未跟踪脚本/目录如 1049/3147/5245/7343/9441），vision 文件无在途改动，未触碰别线。写心跳+日流水+commit+push（一律 `git commit -m '...' -- <明确文件路径>`，吸取#562裸commit卷入别线文件教训）。**未完成指令：无** ⇒ **WAITING: 1**。
@@ -108,4 +110,4 @@ WAITING: 1
 | 当前动作 | 空唤醒·心跳维护·等待新运维令 |
 | 下一步 | 等待运维新令（vision 文件无在途改动） |
 | 阻塞 | 无 |
-| 更新 | **2026-11-05 13:47 (wake #603)**: 空唤醒·无新令·心跳维护·git 0ahead/0behind(HEAD=16307ca58 pretrain 13:43)·体积TASK27KB/MEMORY≈27.5KB均≤32KB·🆕条目6·WAITING=1 |
+| 更新 | **2026-11-05 14:19 (wake #604)**: 空唤醒·无新令·心跳维护·git 0ahead/0behind(HEAD=79ad059c5 pretrain 14:15)·体积TASK27KB/MEMORY≈28.6KB均≤32KB·🆕条目5·WAITING=1 |
