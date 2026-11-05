@@ -135,7 +135,7 @@ ztoza					parked		2026-11-05 02:24	scout_1105: false-positive/non-spice/explain-
 1792375032414_3yoit					parked		2026-11-05 11:34	analyze spice_tb_stimulus skill directory (code/skill comprehension), not sim
 1791448973775_f8g40					parked		2026-11-05 11:34	compare runModelQA.pl vs refactored _new.pl, summarize multi-simulator innovations (code review), not sim
 1791956581291_28kiv					parked		2026-11-05 11:34	trivial file open inputpin.sp + copy to copy.sp, not spice char
-1792031615605_mf0l3					parked		2026-11-05 11:34	sim status monitor (check if exited) + PVT corner list expansion (text gen), not char
+1792031615605_mf0l3	xinweif	hfhds207	15	spice_sim	case	EDA-Eval-DesignFlow-SimStatusMonitor-001	2026-11-05 14:18	L1 补牙 reframe of parked mf0l3; FineSim MatrixRun batch dir status monitor (RUNNING/COMPLETED_SUCCESS/COMPLETED_ERROR/STALLED); k=15; ref 15/15 PASS; 5 neg distinct FAIL {c,n,g,f,h}; §4.9 three fakes {c,n,g}
 1793244287787_11tjs	stephens	hfeg0pkn002	139	spice_sim	case	EDA-Eval-DesignFlow-VmMhlAlterStats-001	2026-11-05 12:02	
 9ryp9.messages.json	haoyut	hfeg0plg49	286	spice_sim	parked		2026-11-05 12:30	netlist/pyAether dominant (netlist:598,schematic:207,pyAether:174,hspice:15) — netlist+virtuoso work like parked 82ybr, not clean spice_char; haoyut user profile = PIM/netlist not spice
 j4pvk.messages.json	crystalh	hfeg0plg96	272	characterization	parked		2026-11-05 12:30	user prompt=分析RdLatencyCmd cell功能 (cell-function read/explain, schematic:1072 dominant, spectre:26 incidental) — 纯read/explain非sim交付, not spice_char

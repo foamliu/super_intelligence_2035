@@ -206,3 +206,10 @@
 **物理验证**：trip≈vref(0.5)，随 idfe 平移；spread=idfe_range/gm，gm∝√(Itail·W/L) → wn28/wn23 控 spread、wp10/wp3+wnb 控绝对 trip。center-vs-spread 耦合优化结构成立(可独立调控) → case 难度结构 OK。
 
 **结论**：本轮 0 交付(zr9dt 仍 claimed/in-progress, DEBT:1)，🚫 未落 jsonl/未计通过率。下轮第一件事=继续 zr9dt 交付(不 next 新 trace)。深读+完整 case 计划存 designflow/trace_deepreads/1792143054616_zr9dt_vih_trip_tune.md。
+
+## EXP-54 (2026-11-05 shard B 轮): summary.tsv keyword 列语义 — targeted sub-skill keyword scout 不可行
+- **发现**：`/home/t0002965/log/ssh_eda_search_20261028_174426/summary.tsv` 的 keyword 列($6) = **文件扩展名/工具命中计数**（如 `.cdl:1105;netlist:12;hspice:27;synopsys:19`），**不是用户意图关键词**；tools 列($7) = 命中工具名+lang 标记。原扫描词表只索引文件类型扩展名 + 工具名（hspice/finesim/spectre/calibre/synopsys/cadence/virtuoso/aether/pyaether...），**不索引子技能术语**。
+- **后果**：按已识别子技能缺口（noise / fft / thd / distortion / eye / pole-zero / s-parameter / harmonic / snr / sndr / sfdr / onoise / inoise / power-integration）在 summary.tsv 上搜 → **0 候选**（这些词不在扫描词表里）。⇒ **targeted sub-skill keyword scouting via summary.tsv 结构上不可能**。
+- **唯一可行路径**：要找特定子技能的 real trace，只能 ssh peek 逐条 messages.json 读 user 首轮原话（成本高，无法批量预筛）。
+- **对 scouting 策略影响**：summary.tsv 只能按「spice 工具命中」(hspice/finesim/spectre) + mc 阈值过滤，不能按子技能过滤；shard B 跨全 mc 段(≥30/30-260/15-29/10-14) 4 轮 spice-keyword scouting 已穷尽，干净 distinct spice_char real trace 池 = 枯竭。后续若要补 noise/THD/FFT/eye/PZ 等真子技能缺口 case，需运维放行「无 real trace 的合成 L2」(红线 #1 例外) 或接受 L1 补牙 park-reframe（本 SimStatusMonitor-001 路径）。
+- **本轮交付**：EDA-Eval-DesignFlow-SimStatusMonitor-001（mf0l3 park→case，L1 补牙，k=15，ref 15/15 PASS，5 neg distinct FAIL）。ledger case 77→78.
