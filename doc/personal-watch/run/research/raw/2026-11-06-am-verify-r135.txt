@@ -1,0 +1,34 @@
+    attempts=1
+--- ① lastUpdatedDate cs.CL
+    url=https://export.arxiv.org/api/query?search_query=cat%3Acs.CL&start=0&max_results=5&sortBy=lastUpdatedDate&sortOrder=descending
+    status=200 ct=application/atom+xml; charset=utf-8 total=124696 n_entries=5 1.14s
+    2611.06914v1 2026-11-04T18:58:23Z 2026-11-04T18:58:23Z cs.MA A Framework for Context Enrichment and Selective Robustness in LLM Soc
+    2606.11552v3 2026-06-10T01:21:56Z 2026-11-04T18:51:59Z cs.CL Teaching Diffusion to Speculate Left-to-Right
+    2506.10912v5 2025-06-12T17:25:53Z 2026-11-04T18:36:42Z cs.AI Breaking Bad Molecules: Are MLLMs Ready for Structure-Level Molecular 
+    2611.06876v1 2026-11-04T18:34:41Z 2026-11-04T18:34:41Z cs.CL SpecCompact: Accelerating LLM Agent Context Compaction with Slot-Paral
+    2610.12235v2 2026-10-08T16:18:54Z 2026-11-04T18:22:26Z cs.CL Language Models as AI Research World Models
+    attempts=1
+--- ② submittedDate 20261102-20261106 (cs.CL)
+    url=https://export.arxiv.org/api/query?search_query=cat%3Acs.CL+AND+submittedDate%3A%5B202611020000+TO+202611062359%5D&start=0&max_results=8&sortBy=submittedDate&sortOrder=descending
+    status=200 ct=application/atom+xml; charset=utf-8 total=249 n_entries=8 0.77s
+    2611.06914v1 2026-11-04T18:58:23Z 2026-11-04T18:58:23Z cs.MA A Framework for Context Enrichment and Selective Robustness in LLM Soc
+    2611.06876v1 2026-11-04T18:34:41Z 2026-11-04T18:34:41Z cs.CL SpecCompact: Accelerating LLM Agent Context Compaction with Slot-Paral
+    2611.06859v1 2026-11-04T18:15:08Z 2026-11-04T18:15:08Z cs.CL Balancing hierarchical representation and quantization: A performance 
+    2611.06856v1 2026-11-04T18:11:56Z 2026-11-04T18:11:56Z cs.CV LongBanana: An Expert-Verified Benchmark for Long-Context Multi-Refere
+    2611.06848v1 2026-11-04T18:05:17Z 2026-11-04T18:05:17Z cs.CL Persona Perspectives: Adopting Viewpoints Reorganizes Representations 
+    attempts=1
+--- ③ submittedDate 20261102-20261106 (全库，不加分类)
+    url=https://export.arxiv.org/api/query?search_query=submittedDate%3A%5B202611020000+TO+202611062359%5D&start=0&max_results=8&sortBy=submittedDate&sortOrder=descending
+    status=200 ct=application/atom+xml; charset=utf-8 total=4479 n_entries=8 0.76s
+    2611.06918v1 2026-11-04T18:59:58Z 2026-11-04T18:59:58Z cs.CV From Pixels to Actions - Towards Native Vision-Language-Action Policie
+    2611.06917v1 2026-11-04T18:59:48Z 2026-11-04T18:59:48Z quant-ph Using topology to reveal all mutually unbiased bases in dimension six
+    2611.06916v1 2026-11-04T18:59:07Z 2026-11-04T18:59:07Z astro-ph.GA ReveaLLAGN 3: Revealing the Infrared Spectral Energy Distributions of 
+    2611.06915v1 2026-11-04T18:59:05Z 2026-11-04T18:59:05Z astro-ph.EP Preparing for the Gaia DR4 Epochalypse: Simulated Epoch Astrometry for
+    2611.06914v1 2026-11-04T18:58:23Z 2026-11-04T18:58:23Z cs.MA A Framework for Context Enrichment and Selective Robustness in LLM Soc
+    attempts=1
+--- ④ 广度 sweep 5 分类
+    url=https://export.arxiv.org/api/query?search_query=cat%3Acs.CL+OR+cat%3Acs.CV+OR+cat%3Acs.SE+OR+cat%3Acs.AI+OR+cat%3Acs.LG&start=0&max_results=3&sortBy=submittedDate&sortOrder=descending
+    status=200 ct=application/atom+xml; charset=utf-8 total=643448 n_entries=3 0.76s
+    2611.06918v1 2026-11-04T18:59:58Z 2026-11-04T18:59:58Z cs.CV From Pixels to Actions - Towards Native Vision-Language-Action Policie
+    2611.06914v1 2026-11-04T18:58:23Z 2026-11-04T18:58:23Z cs.MA A Framework for Context Enrichment and Selective Robustness in LLM Soc
+    2611.06912v1 2026-11-04T18:57:47Z 2026-11-04T18:57:47Z physics.flu-dyn FlowReconBench: Accuracy, calibration and cost of learned and classica

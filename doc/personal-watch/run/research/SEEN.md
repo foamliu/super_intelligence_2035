@@ -5628,3 +5628,6 @@
 | 2026-11-05 | 2611.05266 | Stabilizing On-Policy Targeted Guidance in Agentic Reinforcement Learning | cs.LG | 收录 |
 | 2026-11-05 | 2611.06840 | Same Layout, Different Count: What Number Words Do Past Ten in Text-to-Image Models | cs.CV | 收录 |
 | 2026-11-05 | 2611.06704 | Where It Breaks: Diagnosing Perception, Memory, and Decision Failures of a Vision-Language Agent in Pac-Man | cs.LG | 收录 |
+| 2026-11-06 | 2611.06133 | Accelerating Long-Context Decoding in Large-Scale Hybrid LLMs Without Retraining | cs.CL | 收录 |
+| 2026-11-06 | 2611.06147 | SafeStart: Mitigating the Overlooked Safety Cost of Active Expert Reduction in MoE LLM Serving | cs.AI | 收录 |
+| 2026-11-06 | 2611.06828 | Systolic Linear Attention: Co-Designing Tile-Grouped Gated Delta Attention for TPUs | cs.LG | 收录 |

@@ -1,0 +1,156 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<feed xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/" xmlns:arxiv="http://arxiv.org/schemas/atom" xmlns="http://www.w3.org/2005/Atom">
+  <id>https://arxiv.org/api/E04plYx34b8HL7c6yxtGYv0HSWs</id>
+  <title>arXiv Query: search_query=&amp;id_list=2611.06133,2611.06147,2611.06828,2611.06513,2611.06841&amp;start=0&amp;max_results=5</title>
+  <updated>2026-11-05T22:02:39Z</updated>
+  <link href="https://arxiv.org/api/query?search_query=&amp;start=0&amp;max_results=5&amp;id_list=2611.06133,2611.06147,2611.06828,2611.06513,2611.06841" type="application/atom+xml"/>
+  <opensearch:itemsPerPage>5</opensearch:itemsPerPage>
+  <opensearch:totalResults>5</opensearch:totalResults>
+  <opensearch:startIndex>0</opensearch:startIndex>
+  <entry>
+    <id>http://arxiv.org/abs/2611.06147v1</id>
+    <title>SafeStart: Mitigating the Overlooked Safety Cost of Active Expert Reduction in MoE LLM Serving</title>
+    <updated>2026-11-04T08:31:01Z</updated>
+    <link href="https://arxiv.org/abs/2611.06147v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2611.06147v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Mixture-of-Experts (MoE) language models send each token through a few of many expert subnetworks. Serving methods make these models faster by running even fewer experts per token, and they are validated on accuracy benchmarks. We show that these methods can weaken the model's refusal of harmful requests, and we introduce SafeStart, which largely restores refusal while keeping most of the speedup. In vLLM on one RTX A6000, keeping about two thirds of the selected experts speeds up offline decoding by 15 to 28% at batch size 8. We find that, at this setting, under a jailbreak that tells the model not to refuse, the share of harmful requests that the model answers rises by 18.4 percentage points on Qwen1.5-MoE, 9.5 on OLMoE, and 6.6 on DeepSeek-V2-Lite, the three of nine models where it rises significantly, while MMLU accuracy drops by less than two points. We discover that most of this increase arises while the model processes the prompt and generates its first few tokens. SafeStart therefore runs all experts for the prompt and the first eight generated tokens, and the reduced set of experts afterwards, through a fused kernel in vLLM. With experts removed, SafeStart keeps at least 85% of the offline decode speedup at batch sizes 8 and 32 and brings the change under this jailbreak to between -2.1 and +1.3 points for three expert-reduction methods on these three models. On 889 held-out requests, in an analysis fixed before generation, truncation raises harmful compliance by 5.8 to 21.4 points, and SafeStart leaves a rise of 0.6 to 2.6 points, non-inferior to the original model on two of the three models. Our results show that faster MoE serving need not cost safety: a serving system can keep most of the gain from running fewer experts by running all of them at the start of each response, and it should test refusal, not only accuracy, before it enables such a method.</summary>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-11-04T08:31:01Z</published>
+    <arxiv:comment>40 pages, 13 figures, 41 tables</arxiv:comment>
+    <arxiv:primary_category term="cs.AI"/>
+    <author>
+      <name>Erfan Baghaei Potraghloo</name>
+    </author>
+    <author>
+      <name>Saeid Shokoufa</name>
+    </author>
+    <author>
+      <name>Seyedarmin Azizi</name>
+    </author>
+    <author>
+      <name>Arya Fayyazi</name>
+    </author>
+    <author>
+      <name>Souvik Kundu</name>
+    </author>
+    <author>
+      <name>Mehdi Kamal</name>
+    </author>
+    <author>
+      <name>Massoud Pedram</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2611.06828v1</id>
+    <title>Systolic Linear Attention: Co-Designing Tile-Grouped Gated Delta Attention for TPUs</title>
+    <updated>2026-11-04T17:42:58Z</updated>
+    <link href="https://arxiv.org/abs/2611.06828v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2611.06828v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Gated-delta linear attention layers such as Gated DeltaNet (GDN), Kimi Delta Attention (KDA), and GDN-2 are tuned for GPUs, where small tensor-core tiles and fast vector registers make per-channel decay rescaling and sequential in-block solves cheap. On Google TPUs, which concentrate compute in wide $256 \times 256$ systolic matrix units backed by a slower vector unit, porting these layers directly leaves half of each matrix tile empty and bottlenecks on vector operations. We present \textbf{Systolic Linear Attention (SLA)}, which reshapes gated delta attention around the matrix unit by widening keys to $256$ with grouped value heads, grouping decay gates into four $64$-channel tiles, and computing the chunk solve entirely with block matrix products in a single fused kernel. On TPU v7x, a full \texttt{SLA-R4} layer runs $1.6\times$--$2.5\times$ faster than the open-source Tokamax KDA kernel ($1.4\times$--$2.4\times$ with exact chunk inversion), driven primarily by head sharing and kernel fusion. Across a $2{,}048$-chip TPU v7x pre-training study of sparse Mixture-of-Experts (MoE) models from $6.5\text{B}$ to $63.1\text{B}$ parameters, SLA trains $11\%$--$24\%$ faster than KDA at similar perplexity, and reaches slightly lower perplexity than KDA in smaller matched-seed runs.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-11-04T17:42:58Z</published>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Gagik Amirkhanyan</name>
+    </author>
+    <author>
+      <name>Nuojin Cheng</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2611.06841v1</id>
+    <title>ServerBench: How can your coding agents design specialized LLM serving systems?</title>
+    <updated>2026-11-04T17:59:07Z</updated>
+    <link href="https://arxiv.org/abs/2611.06841v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2611.06841v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Large language model (LLM) coding agents develop software through experimentation, offering an opportunity to design the serving systems supporting their own operation. Effective serving requires coordinating implementation and operating decisions under session dependencies, latency constraints, and correctness requirements. We introduce ServerBench, a benchmark for agentic design of complete, specialized LLM serving systems. Agents experiment against a common objective, dollars per dollar: latency-qualified token value per dollar of GPU cost. Stateful replay preserves session dependencies, and independent verification checks the submitted system. Across 11 coding-agent models and three deployments, Claude Sonnet 5.5 achieves 2.97 dollars per dollar on Gemma E4B, $4.87\times$ the vLLM reference; 22 of 33 runs yield verified systems, and 13 exceed the strongest baseline. Our analysis identifies three findings: high-value designs coordinate capacity improvements with load selection; agents interpret performance feedback through workload-relevant experiments; and reliable delivery requires verification of the execution paths introduced by optimization. Overall, ServerBench supports systematic study of how agents translate service objectives and feedback into effective, verified serving systems for given task specifications.</summary>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-11-04T17:59:07Z</published>
+    <arxiv:primary_category term="cs.AI"/>
+    <author>
+      <name>Xinrui Zhong</name>
+    </author>
+    <author>
+      <name>Zhiming Wang</name>
+    </author>
+    <author>
+      <name>Yongqi Liu</name>
+    </author>
+    <author>
+      <name>Zhaohui Wang</name>
+    </author>
+    <author>
+      <name>Shanglin Yang</name>
+    </author>
+    <author>
+      <name>Zikun Li</name>
+    </author>
+    <author>
+      <name>Zhuoming Chen</name>
+    </author>
+    <author>
+      <name>Beidi Chen</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2611.06133v1</id>
+    <title>Accelerating Long-Context Decoding in Large-Scale Hybrid LLMs Without Retraining</title>
+    <updated>2026-11-04T08:18:38Z</updated>
+    <link href="https://arxiv.org/abs/2611.06133v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2611.06133v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>The full-attention layers of large language models (LLMs) make every generated token more expensive than the previous one, slowing models down on long-context tasks. Hybrid models reduce this cost by replacing most full-attention layers with linear-attention layers, but the first still dominate decoding at long contexts. We accelerate these remaining layers without any training or weight changes using combined sparse attention: each layer attends to a sliding window of recent tokens, a pinned prefix, and a fixed budget of most relevant tokens in the context. The window size and budget are found on a per-layer basis using a multi-objective search algorithm. Across six hybrid models from three families, from 4B to 397B parameters, the selected configurations preserve their baseline model's accuracy on 21 long-context datasets. Decoding 64k/256k tokens becomes up to 1.26x/2.22x faster on Qwen3.5-4B, 1.20x/2.23x on Qwen3.5-122B-A10B, and 1.16x/2.06x on Ornith-1.0-397B.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.PF" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-11-04T08:18:38Z</published>
+    <arxiv:comment>19 pages (main body: 10 pages, references: 3 pages, appendix: 6 pages), 8 figures, 6 tables</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>João Eduardo Batista</name>
+    </author>
+    <author>
+      <name>Emil Vatai</name>
+    </author>
+    <author>
+      <name>Mohamed Wahib</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2611.06513v1</id>
+    <title>HELIX: HEterogeneous LLM Inference with FleXible and Fine-Grained Partitioning</title>
+    <updated>2026-11-04T13:40:34Z</updated>
+    <link href="https://arxiv.org/abs/2611.06513v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2611.06513v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>LLM inference is inherently heterogeneous, with performance bottlenecks shifting throughout inference phases down to individual operators. This has motivated heterogeneous serving systems that disaggregate execution across specialized accelerators, typically through fixed partitions such as prefill/decode or attention/FFN. However, these approaches commit to a partitioning strategy in advance, limiting their ability to adapt to different workloads and model architectures while forcing emerging accelerators into predefined roles. We present HELIX, a vLLM-based software stack that discovers, compiles and dispatches workload-aware partitions across heterogeneous accelerators at the operator granularity. At engine initialization, HELIX automatically determines hardware-specific operator placements that minimize execution latency, accounting for profiled execution costs, communication overheads, device capabilities, and memory constraints. It combines dynamic programming, piecewise compilation, and heterogeneous subgraph dispatch, enabling accelerators with partial operator coverage to participate in LLM inference without predefined model partitions. HELIX provides an open-source unified framework for exploring, evaluating, and integrating heterogeneous accelerators for LLM inference, lowering the barrier to emerging hardware by exposing them as subgraph executors. In systems combining H100 and B200 GPUs with emerging accelerators, HELIX resolves LLM partitions that multi-query decoding latency by up to 3$\times$ for dense and sparse transformer models and up to 3.5$\times$ for hybrid state-space models, relative to standard attention-FFN disaggregation.</summary>
+    <category term="cs.SE" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-11-04T13:40:34Z</published>
+    <arxiv:primary_category term="cs.SE"/>
+    <author>
+      <name>Victoria Clerico</name>
+    </author>
+    <author>
+      <name>William Simon</name>
+    </author>
+    <author>
+      <name>Corey Liam Lammie</name>
+    </author>
+    <author>
+      <name>Orhun Görkem</name>
+    </author>
+    <author>
+      <name>Athanasios Vasilopoulos</name>
+    </author>
+    <author>
+      <name>Hsinyu Tsai</name>
+    </author>
+    <author>
+      <name>Jeronimo Castrillon</name>
+    </author>
+    <author>
+      <name>Abu Sebastian</name>
+    </author>
+    <author>
+      <name>Hadjer Benmeziane</name>
+    </author>
+  </entry>
+</feed>
