@@ -734,3 +734,13 @@
 1793519984879_0gd9e					case	EDA-Eval-DesignFlow-MosParamStat-001	2026-11-05 19:13	
 1789975805926_42jk5.messages.json	t0002470	10.129.2.13	363	analog_context	case	EDA-Eval-DesignFlow-VrefcsMrrSeq-001	2026-11-05 20:06	
 1789975805926_42jk5					case	EDA-Eval-DesignFlow-VrefcsMrrSeq-001	2026-11-05 19:56	
+1792136569651_4a8f9.messages.json	chengk	10.129.35.121	130	schematic_netlist	case	EDA-Eval-DesignFlow-PortCatchInst-001	2026-11-05 20:34	
+1789545344007_xchvr.messages.json					parked		2026-11-05 20:35	debug: U#0=Calibre OPEN1 error report root-cause
+1791795024899_lp74k.messages.json					parked		2026-11-05 20:35	skill-load: U#0=启动aether skill
+1792653194974_s2f9d.messages.json					parked		2026-11-05 20:35	debug: U#0=user gives TOOL_DIR error root-cause (A档禁)
+1792386804961_6tiy7.messages.json					parked		2026-11-05 20:35	mid-conv: U#0=Context summary tool_calls not clean produce
+1790236124444_8orer.messages.json					parked		2026-11-05 20:35	skill-load: U#0=skilldev
+1789561002781_mqop7.messages.json					parked		2026-11-05 20:35	doc-edit: U#0=cwd switch, then LVS log analysis doc editing
+1785738164906_rqpb4.messages.json					parked		2026-11-05 20:35	infra: U#0=MCP service setup/multimodal workflow planning
+1792143054616_zr9dt.messages.json					parked		2026-11-05 20:35	iterative-opt: U#0=size-tune MP for vih flip-point (needs real sim, hard to judge offline)
+1792458165900_biua8.messages.json					parked		2026-11-05 20:35	skill-flow: U#0=read post_pdn SKILL.md then start flow (skill-scaffold heavy)
