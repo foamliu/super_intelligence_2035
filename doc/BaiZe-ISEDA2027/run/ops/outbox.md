@@ -25798,3 +25798,106 @@ clone_HEAD=9c40072cf behind=0
 
 === DONE 244 ===
 ```
+
+---
+
+## RUN_ID 245 · 2026-11-05 22:48:21 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 245 | kill wedged pretrain cline | $(date '+%F %T') | host=$(hostname) ==="
+echo
+echo "[1] 定位目标（只认 .cline_pretrain data-dir）"
+CL=$(ps -eo pid,etimes,pcpu,rss,args --no-headers 2>/dev/null \
+     | grep -F 'data-dir /nas_train/app.e0031982/.cline_pretrain' | grep -v grep | awk '{print $1}' | head -1)
+echo "target_cline_pid=${CL:-none}"
+if [ -z "${CL:-}" ]; then
+  echo "NOT_FOUND: 目标已不在（可能已自行退出）——不执行 kill"
+else
+  ps -o pid,etimes,pcpu,rss,nlwp,args --no-headers -p "$CL" 2>/dev/null | cut -c1-220
+  echo "--- TERM ---"
+  kill -TERM "$CL" 2>&1 || echo "TERM_FAILED(rc=$?)"
+  sleep 4
+  if kill -0 "$CL" 2>/dev/null; then
+    echo "still alive after TERM -> KILL"
+    kill -KILL "$CL" 2>&1 || echo "KILL_FAILED(rc=$?)"
+    sleep 3
+  fi
+  if kill -0 "$CL" 2>/dev/null; then echo "RESULT=STILL_ALIVE"; else echo "RESULT=KILLED_OK"; fi
+fi
+echo
+echo "[2] 复核：cline_pretrain 是否已无残留"
+pgrep -af 'data-dir /nas_train/app.e0031982/.cline_pretrain' 2>/dev/null | cut -c1-180 || echo "(none)"
+echo
+echo "[3] 护栏：loop / pipeline / llama-server / torchrun 必须仍在"
+echo "loop:";     pgrep -af 'baize_pretrain_loop\.sh' 2>/dev/null | head -2 | cut -c1-120
+echo "pipeline:"; pgrep -af 'baize_eval_60k_100k_pipeline' 2>/dev/null | head -1 | cut -c1-120
+echo "server:";   pgrep -af 'llama-server' 2>/dev/null | head -2 | cut -c1-150
+echo "train:";    pgrep -af 'scripts/train\.sh s1' 2>/dev/null | head -1 | cut -c1-120
+echo
+echo "[4] 杀掉后 10 s：loop 是否已继续（会提交/或重开会话）"
+sleep 10
+tail -12 /tmp/baize_pretrain_loop.log 2>/dev/null | cut -c1-180
+echo "--- cline_pretrain now ---"
+pgrep -af 'data-dir /nas_train/app.e0031982/.cline_pretrain' 2>/dev/null | cut -c1-120 || echo "(none: 等 loop 下一轮唤醒)"
+echo
+echo "[5] 当前评测进度快照（确认 kill 未影响落盘）"
+R=/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/lm_eval_results
+for it in 60000 70000 80000 90000; do
+  f=$R/gguf_iter_${it}_fixed_8set/results.json
+  if [ -f "$f" ]; then stat -c "iter_$it results.json mtime=%y" "$f"; else echo "iter_$it results.json MISSING"; fi
+done
+pgrep -af 'llama-server' 2>/dev/null | head -1 | grep -o 'bz2b-[0-9]*-f16.gguf' || true
+echo
+echo "=== DONE 245 ==="
+```
+
+**输出**
+```
+=== RUN_ID 245 | kill wedged pretrain cline | 2026-11-05 22:48:21 | host=whag0pgpuap29 ===
+
+[1] 定位目标（只认 .cline_pretrain data-dir）
+target_cline_pid=3640274
+3640274   10639  100 454300  97 cline --data-dir /nas_train/app.e0031982/.cline_pretrain -c /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run --auto-approve true -m glm-5.2 -k 02_088EE9051AAE4B
+--- TERM ---
+still alive after TERM -> KILL
+RESULT=KILLED_OK
+
+[2] 复核：cline_pretrain 是否已无残留
+
+[3] 护栏：loop / pipeline / llama-server / torchrun 必须仍在
+loop:
+3165004 bash -c cd /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run && setsid bash -lc "exec
+3165013 bash /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_pretrain_loop.sh
+pipeline:
+3543961 bash /tmp/baize_eval_60k_100k_pipeline.sh
+server:
+443329 /nas_train/app.e0031982/code/llama.cpp/build/bin/llama-server -m /nas_train/app.e0031982/models/baize2b_gguf/bz2b-90000-f16.gguf -t 8 -tb 8 -c 
+train:
+4163528 bash scripts/train.sh s1 --nodes 2
+
+[4] 杀掉后 10 s：loop 是否已继续（会提交/或重开会话）
+[36m[search_codebase][0m baize_eval_pipeline.*\.sh, for.*iter.*in.*60000|TARGET_ITERS|gguf_lmeval_run
+   [90m⎿ [0m[32mok[0m
+[36m[run_commands][0m ls -la --time-style=long-iso /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/ | grep -E 'iter_|...
+   [90m⎿ [0m[2mdrwxr-x---   2 app.e0031982 app.adm  4096 2026-11-04 23:49 hf_iter_10000 drwx...[0m
+/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_pretrain_loop.sh: line 125: 3640274 Killed                  env -u http_proxy -u https_proxy -u H
+[loop] 2026-11-05 22:48:25 cline returned (exit 0), checking git push ...
+[push] 2026-11-05 22:48:25 push interval reached, syncing ...
+[push] committed.
+To https://github.com/foamliu/super_intelligence_2035.git
+   dff332edf..7c822fff2  main -> main
+[push] push OK.
+[loop] 2026-11-05 22:48:29 WAITING=0（无阻塞）→ sleep 60s
+--- cline_pretrain now ---
+
+[5] 当前评测进度快照（确认 kill 未影响落盘）
+iter_60000 results.json mtime=2026-11-05 19:56:02.991137710 +0800
+iter_70000 results.json mtime=2026-11-05 20:57:24.761965730 +0800
+iter_80000 results.json mtime=2026-11-05 22:00:54.508296320 +0800
+iter_90000 results.json MISSING
+bz2b-90000-f16.gguf
+
+=== DONE 245 ===
+```
