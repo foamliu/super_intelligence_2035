@@ -905,3 +905,23 @@ wl9i4					parked		2026-11-05 22:49	交互shell驱动+Q&A n752大
 1789699671032_sk6cg					parked		2026-11-06 02:44	DRC log analysis report (calibre_drc2.log), wrong domain (DRC not shard-D core) + analysis
 1793005134920_8bp0f					parked		2026-11-06 02:44	skill-scenario (vam-agent cosim cell recommend), not a produce-task
 1792387368762_qw7ae					parked		2026-11-06 02:44	skill-scenario (tran-sim-gen skill invoked), not a clean A-faithful task
+1789895350779_hoh52	e0039602	10.129.8.136	64	waveform	case	EDA-Eval-DesignFlow-WvFsdbReaderV2Gen-001	2026-11-06 03:22	
+1790500569237_451ou					parked		2026-11-06 03:23	skill-scenario: SpiceAgent skill prompt load, not a clean produce-task
+1789717410805_n5r98					parked		2026-11-06 03:23	skill-scenario: AutoCell TCL flow generator slash-command; wrong domain (layout/pnr)
+1792134251943_q9r9s					parked		2026-11-06 03:23	conditional produce (regenerate testbench IF syntax errors) needs real .sp; root-cause-leaning, deferred
+1788699263327_huf68					parked		2026-11-06 03:23	analysis/explain task (@runModelQA.pl perl code walkthrough), not produce; wrong domain
+1791969171304_w3eav					parked		2026-11-06 03:23	U#0 how-to Q&A (bash args) + U#1 si.out warning analysis; not clean produce-task
+1789717909559_1v3yt					parked		2026-11-06 03:23	skill-scenario: AutoCell TCL flow generator slash-command; wrong domain
+1789731915060_hfm2o					parked		2026-11-06 03:23	layout placement (aeAutoPlacementFromDesign floorplan); wrong domain for shard D
+1790042849968_vzne3					parked		2026-11-06 03:23	skill-scenario: AutoCell TCL flow generator slash-command; wrong domain
+1792373056714_2enpk					parked		2026-11-06 03:23	U#0/Q&A (accessible dirs, sim dir location) + aging sim analysis; not clean produce-task
+1785896968029_vo4gm					parked		2026-11-06 03:23	root-cause debug (optimize flow error diagnosis); user gives error symptom, not clean produce
+1789353120542_c21e8					parked		2026-11-06 03:23	Qt C++ config refactor (configloader/config.json); wrong domain (software, not EDA shard D)
+1789544452184_6pzrm					parked		2026-11-06 03:23	dup of c21e8 Qt C++ config refactor; wrong domain
+1789544515891_af6a0					parked		2026-11-06 03:23	dup of c21e8 Qt C++ config refactor; wrong domain
+1789544518757_at2ga					parked		2026-11-06 03:23	dup of c21e8 Qt C++ config refactor; wrong domain
+1792570696255_obhqj					parked		2026-11-06 03:23	U#0 sp file line-by-line analysis + U#1 token-balance Q&A; not clean produce-task
+1790150039431_ojny6					parked		2026-11-06 03:23	skill-scenario: simdiag-cli remote HTTP diagnosis skill prompt; not a clean produce-task
+1790145346740_n1crk					parked		2026-11-06 03:23	skill-scenario: AutoCell TCL flow generator slash-command; wrong domain
+1789465514819_9f0ra					parked		2026-11-06 03:23	vague trigger (启动业务场景:仿真与验证) -> env overview Q&A; not a produce-task
+1789555682011_6j4hl					parked		2026-11-06 03:23	mid-conv: user pastes RunTrace signal edge trace-back output to continue debug; not a clean U#0 produce-task proposal
