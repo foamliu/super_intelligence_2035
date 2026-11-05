@@ -2023,3 +2023,31 @@ ngspice .raw 实测：`ngspice -b test.cir` → 646 点 × 3 变量 binary doubl
 4. train/eval split：4864 + 200 = 5064
 
 **GPU 状态**：.12 8×H100 全 100% util（R9 占用）→ 训练待 GPU 空闲。`run_sft_wave.sh` 会自动轮询等待 GPU < 10% util 后启动。
+
+
+### §20.7 · Stage-2W GRPO + WaveQA-RL 评测脚手架 + 安全 GPU 轮询启动（wake#612 · 2026-11-05 19:3x）
+
+**交付物**：
+
+1. `vision/wave_rl/grpo_train_wave.py`（~660行）—— Stage-2W GRPO 强化训练：
+   - **算法**：GRPO（无 value 网络，省显存）。每 prompt 采样 G rollouts，advantage = (R_i − mean) / (std+eps)，clipped surrogate loss。不依赖 trl.GRPOTrainer（vllm/_C.abi3 ABI mismatch），自包含 HF generate() rollout + 手写 log-prob 计算。
+   - **奖励**：复用 WaveformGymEnv.compute_reward —— R_main(≤1%→1.0/≤5%→0.7/≤10%→0.4/≤25%→0.1/>25%→0) + R_evidence(0.3) + R_dense(0.02/ok-action, cap 0.2) + R_budget(0.1) + R_anti(-2.0 无 open 直输)。
+   - **模型**：Qwen3-4B-Instruct-2507 + LoRA r=64（同 SFT），从 SFT checkpoint 加载 adapter 作为起始策略。LR 1e-6（低于 SFT 1e-5），cosine schedule。
+   - **vision gap（文档化限制）**：计划书目标=2B VLM 看波形截图，但 transformers 4.56.1 不支持 qwen3_vl → 用 text-only Qwen3-4B。get_values observation 含数值摘要(min/max/mean/std/n)使文本模型可从统计量估计测量值。真视觉测量待 transformers 升级。
+   - **CPU smoke test**：6/6 oracle rollouts PASS，parse_tool_call 5/5，conversation_to_text spans OK，grpo_loss dummy=−1.0025。
+
+2. `vision/wave_rl/waveqa_eval.py`（~200行）—— WaveQA-RL 评测：
+   - 3 类题型：numerical（数值相对误差分档）/ multi_choice（信号类型 digital/analog）/ open_ended（自由文本测周期）。
+   - `--oracle` 模式 = 完美策略上限参照线；`--ckpt_dir` = 模型策略评测。
+   - 回归护栏 stub：MMStar/MMBench drop ≤1pp 阈值记录（实际 bench 需 lm-eval GPU 跑）。
+   - **oracle 测试**：30 题（10 numerical + 7 multi_choice + 13 open_ended），mean=1.000（ceiling PASS）。
+
+3. `vision/wave_rl/run_sft_wave.sh` —— **修复 2 个 bug + 安全 GPU 等待**：
+   - 修复 `$$SCRIPT_DIR` / `$$BUSY`（PID 转义 bug → 变量丢失，`VISION_DIR` 错误=/bin）。
+   - 安全等待逻辑：要求 **util <10% AND mem <5000MiB** 双条件（防止 checkpoint 暂停期 util 暂降但 VRAM 仍占时抢 GPU OOM），且需 **3 次连续空闲**（60s 间隔）才启动。修复 awk `END` block 在 `exit` 后仍执行的 bug（加 `idle` flag）+ `pipefail`+SIGPIPE 杀脚本 bug（`gpu_is_idle` 内局部 `set +o pipefail`）。
+   - 已启动后台 poller（nohup, PID 2089447），每 60s 轮询 GPU，当前 `[19:38:12] busy_util -- waiting`（8×H100 100% R9 占用）。R9 结束后自动启动 SFT。
+
+**数字溯源**：smoke test 实测输出 + oracle eval JSON `/tmp/waveqa_oracle_test.json`。成本 ETA：GRPO ~12 GPU·h（plan §Stage-2W），需 SFT 先达标。
+
+**GPU 调度**：避让 vision R9（.12 8×H100 100%）。SFT poller 自动等待 GPU 空闲。阶段 1 SFT ~4 GPU·h，阶段 2 GRPO ~12 GPU·h，均在 R9 结束后串行执行。
+
