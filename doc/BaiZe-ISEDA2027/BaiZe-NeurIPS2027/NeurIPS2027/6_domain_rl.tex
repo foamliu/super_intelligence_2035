@@ -11,13 +11,9 @@ We collect pairwise judgements from in-house design reviews over the stage-(ii) 
 Because preference data is far scarcer than the verifiable signal of the text-only stage~\cite{baiZe-llm}, we initialise from the stage-(ii) checkpoint and constrain the update rather than training the objective from the pre-trained model.
 % 中文：由于偏好数据远比纯文本阶段 \cite{baiZe-llm} 的可验证信号稀缺，我们从第 (ii) 阶段的检查点初始化并约束参数更新，而不是从预训练模型直接训练该目标。
 
-\paragraph{Why a small model.}
-The rationale for a $\approx$2.2B core is strongest here, and it is a constraint rather than a preference.
-% 中文：为何要用小模型。约 22 亿参数内核的理由在这里最为充分，而且它是约束而非偏好。
-Proprietary layouts and proprietary preference data cannot leave the premises, so the choice is not between a large hosted model and a small local one---it is between a small local model and no model at all.
-% 中文：专有版图与专有偏好数据不能离开本地，因此真正的选择并非「大模型托管」与「小模型本地部署」之间，而是「小模型本地部署」与「根本没有模型」之间。
-Serving cost then dominates, and the frozen BaiZe backbone~\cite{baiZe-llm} is built for exactly this regime.
-% 中文：此时服务成本成为主导，而冻结的 BaiZe 骨干 \cite{baiZe-llm} 正是为此场景而设计。
+\paragraph{Why keep it small and local.}
+Proprietary layouts and preference data cannot leave the premises, so the domain adaptation must run on the same on-premise BaiZe core~\cite{baiZe-llm} rather than a hosted model; this is the deployment constraint that every stage of the multimodal pipeline inherits.
+% 中文：为何要保持小模型与本地部署。专有版图与偏好数据不能离开本地，因此领域适配必须运行在同一个本地 BaiZe 内核 \cite{baiZe-llm} 上，而非托管模型；这也是多模态流水线每个阶段共同继承的部署约束。
 
 \paragraph{Evaluation.}
 We evaluate on held-out review items using expert agreement, and report the result beside the execution-based numbers of the text-only stage~\cite{baiZe-llm} so that verifiable and preference-based adaptation can be compared on the same system rather than in separate accounts.

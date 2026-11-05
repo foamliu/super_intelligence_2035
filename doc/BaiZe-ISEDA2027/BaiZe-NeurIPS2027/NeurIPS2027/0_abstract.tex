@@ -2,8 +2,8 @@
 Agentic assistants for electronic design automation (EDA) are already deployed in-house, but a correctness-critical slice of the flow---custom and analog design---resists them, because much of the correctness signal lives in \emph{visual} artifacts: layout, schematic, and waveform views that a text-only model cannot observe.
 % 中文：面向电子设计自动化（EDA）的智能体助手已在公司内部署，但流程中与正确性紧密相关的一部分——定制与模拟设计——却难以用纯文本模型覆盖，因为大量正确性信号存在于版图、原理图与波形视图等视觉产物中，而这些是纯文本模型无法观测的。
 
-We present the multimodal extension of \textbf{BaiZe}, a cost-efficient EDA agent built on the BaiZe language model~\cite{baiZe-llm}: a vision encoder pre-trained from scratch, aligned to the language backbone through a lightweight projector, and adapted to the semiconductor domain via reinforcement learning.
-% 中文：我们提出 \textbf{BaiZe} 的多模态扩展——一个构建在 BaiZe 语言模型 \cite{baiZe-llm} 之上的高性价比 EDA 智能体：从零预训练一个视觉编码器，通过轻量投影层将其对齐到语言骨干，再通过强化学习适配到半导体领域。
+We present the multimodal extension of \textbf{BaiZe}, an EDA agent built on the BaiZe language model~\cite{baiZe-llm}: a vision encoder pre-trained from scratch, aligned to the language backbone through a lightweight projector, and adapted to the semiconductor domain via reinforcement learning.
+% 中文：我们提出 \textbf{BaiZe} 的多模态扩展——一个构建在 BaiZe 语言模型 \cite{baiZe-llm} 之上的 EDA 智能体：从零预训练一个视觉编码器，通过轻量投影层将其对齐到语言骨干，再通过强化学习适配到半导体领域。
 
 A larger ViT-L/14 encoder reaches $68.2\%$ linear-probe on an internal protocol ($+3.9$\,pp over ViT-B/16), yet the aligned MLLM averages only $26.1\%$ over 11 multimodal benchmarks, indistinguishable from the smaller tower: encoder-quality gains do not transfer downstream at the $224$-px single-tile setting.
 % 中文：更大的 ViT-L/14 编码器在内部协议上线性探测达 $68.2\%$（比 ViT-B/16 高 $+3.9$\,pp），但对齐后的 MLLM 在 11 个多模态基准上仅平均 $26.1\%$，与小塔不可分辨：编码器质量的增益在 224 像素单块设定下未迁移到下游。

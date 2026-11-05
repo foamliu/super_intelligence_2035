@@ -8,7 +8,7 @@ A subagent that can only read scripts and logs is blind to the very object it is
 % 中文：一个只能读取脚本与日志的子智能体，对其正在设计的对象本身是盲的，必须依赖工程师把几何信息翻译成文本——这一瓶颈随设计规模增长。
 
 \paragraph{Contributions.}
-We build the multimodal core of \textbf{BaiZe}---a cost-efficient EDA agent---on top of the BaiZe language backbone~\cite{baiZe-llm}, and ask a single question: \emph{can a from-scratch vision encoder make such a small model see the visual EDA artifacts that carry the correctness signal?}
+We build the multimodal core of \textbf{BaiZe}---an EDA agent---on top of the BaiZe language backbone~\cite{baiZe-llm}, and ask a single question: \emph{can a from-scratch vision encoder make such a small model see the visual EDA artifacts that carry the correctness signal?}
 % 中文：我们把 \textbf{BaiZe}——一个高性价比 EDA 智能体——的多模态内核构建在 BaiZe 语言骨干 \cite{baiZe-llm} 之上，并回答一个核心问题：\emph{一个从零训练的视觉编码器，能否让这样一个小模型「看见」承载正确性信号的视觉 EDA 产物？}
 
 \begin{itemize}
@@ -18,7 +18,7 @@ BaiZe pre-trains its own vision encoder rather than reusing an off-the-shelf one
 A ViT-L/14 tower reaches $68.2\%$ linear-probe on an internal protocol, $+3.9$\,pp above ViT-B/16, at a $196$-token-per-image budget.
 % 中文：ViT-L/14 塔在内部协议上线性探测达 $68.2\%$，比 ViT-B/16 高 $+3.9$\,pp，且每图仅 196 token 预算。
 
-\item \textbf{Cost-bounded multimodal alignment.}
+\item \textbf{Token-bounded multimodal alignment.}
 BaiZe connects the encoder to the frozen language backbone through a lightweight projector, following the staged curriculum of open multimodal assistants, and asks whether a $196$-token-per-image budget suffices for detail-dense layout and schematic views.
 % 中文：成本受限的多模态对齐。BaiZe 通过轻量投影层把编码器连接到冻结的语言骨干，沿用开放多模态助手的分阶段课程，并检验每图 196 token 的预算是否足以应对细节密集的版图与原理图视图。
 We show that encoder-quality gains do \emph{not} transfer downstream: the larger tower averages $26.1\%$ over 11 benchmarks, indistinguishable from the smaller one, and we localise the gap to the $224$-px single-tile setting and the alignment architecture.
