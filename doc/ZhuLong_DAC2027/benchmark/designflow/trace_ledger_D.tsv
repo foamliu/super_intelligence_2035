@@ -714,3 +714,18 @@
 1789536167863_upag1					parked		2026-11-05 17:00	vsim perl script explanation Q&A, not produce
 1791511922122_hwbr5					parked		2026-11-05 17:00	terse FSDB extraction request, ambiguous deliverable, not clean produce
 1789624328007_44lwy					parked		2026-11-05 17:00	skill-creator autocell-tcl-flow, not D-domain produce
+1793082623350_otonl	e0022089	hfeg0pkn004	1793082623350	waveform	parked		2026-11-05 17:29	analysis Q&A (find DEJOA LFGating + explain gating), not a produce-task; mis-mapped from jumbled peek
+1793015903005_10hvg	jkxu	hfeg0pkn003	1793015903005	waveform	claimed		2026-11-05 17:33	
+1793103631631_17m64					parked		2026-11-05 17:33	dup of 10hvg (same user jkxu/same prompt/same trace), dedup
+1793705943594_wwbs3					parked		2026-11-05 17:33	root-cause debug (gen_block_wrapper dataclasses error), user gives error
+1793771550244_nlf6u					parked		2026-11-05 17:33	root-cause debug (SRAM_tailor detect_prep error), user gives error+fix direction
+1793172489126_z6yjh					parked		2026-11-05 17:33	skill-loading (vam-agent)+prof analysis, not produce-task
+1793165449835_3gpox					parked		2026-11-05 17:33	skill-loading (vam-agent), not produce-task
+1793687763129_30a1n					parked		2026-11-05 17:33	skill-loading (group-gen-sdl)+skill-editing, not D-domain produce
+1793363087693_d0ild					parked		2026-11-05 17:33	analysis (find all SCMOS circuits by structure, fuzzy similarity judgment, needs Aether DB)
+1792480534403_xgfip					parked		2026-11-05 17:33	continuation/handoff (resolve_dummyqa run_all_cases.sh), not produce-task
+1792398584707_qqoq2					parked		2026-11-05 17:33	premise-missing (complete task per TASK_LIB_TO_SDF.md doc, depends on doc context)
+1793000520129_g37na					parked		2026-11-05 17:33	continuation/handoff+Q&A (density deck RDB vs PRINT), not produce-task
+1792658568180_h04be					parked		2026-11-05 17:33	Q&A (explain CdeDly4RmRd circuit function), not produce-task
+1792386812545_n2isr					parked		2026-11-05 17:33	netlist->sim.sp produce but repetitive with #275 RasTbFinesimGen (same pattern); schematic_netlist over-represented
+1793757463114_zd8iu					parked		2026-11-05 17:33	root-cause debug (bsub num1/num2 calc error), user gives error
