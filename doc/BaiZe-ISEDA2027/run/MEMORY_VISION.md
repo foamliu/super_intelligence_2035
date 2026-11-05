@@ -6,7 +6,9 @@ WAITING: 0
 
 > 📦 wake #668（监控巡检·状态无变化·双poller健康+GPU 8×94-100%·仅待GPU）已归档 → daily-memories-vision/2026-11-06.md；**结论**：状态无变化，全管线就绪仅待GPU。需要时再读。
 
-> 🆕 **【wake #669 · 2026-11-06 02:19】监控巡检：状态无变化·双poller健康+GPU 8×97-100%·仅待GPU**。本轮CPU-only监控巡检（02:19，距wake#668约5min，状态无变化）：① SFT poller PID2757742健康(ppid=1,6.5h,busy_util等待)/GRPO chain PID2428009健康(ppid=1,3.75h,等SFT,waited13500s/2592000)/vision loop PID669545(7.71d)/ops_relay PID1032513(ppid=1)；cline in PATH(/home/app.e0031982/.bun/bin/cline)✓。GPU .12 8×H100 实测97-100%util/~75GB each(pretrain R9,ETA≈11/25-27)。git fetch→0ahead/0behind,无新vision运维令(TASK自11-05未变,origin HEAD=5c7309765 pretrain)。工作副本改动均别线文件(cjk_test/ocr_samples/别线脚本),vision无在途改动,未触碰别线。结论：全管线就绪仅待GPU释放（SFT poller+GRPO chain 双自治等待中）。📦体积：TASK=30.5KB/MEMORY≈29.0KB（归档#667→daily,均≤32KB✓）。**未完成指令：有**（阶段1 GPU训练pending+阶段2/3未交付）⇒**WAITING: 0**。
+> 📦 wake #669（监控巡检·状态无变化·双poller健康+GPU 8×97-100%·仅待GPU）已归档 → daily-memories-vision/2026-11-06.md；**结论**：状态无变化，全管线就绪仅待GPU。需要时再读。
+
+> 🆕 **【wake #670 · 2026-11-06 02:25】监控巡检：状态无变化·双poller健康+GPU 8×95-100%·仅待GPU**。本轮CPU-only监控巡检（02:25，距wake#669约6min，状态无变化）：① SFT poller PID2757742健康(ppid=1,6.6h,busy_util等待,最新轮询02:24:28)/GRPO chain PID2428009健康(ppid=1,3.83h,等SFT,waited13800s/2592000)/vision loop PID669545(7.71d)；cline in PATH(/home/app.e0031982/.bun/bin/cline)✓。GPU .12 8×H100 实测95-100%util/~75GB each(pretrain R9,ETA≈11/25-27)。git fetch→0ahead/0behind,无新vision运维令(TASK自11-05未变)。SFT eval_results.json不存在(预期·GPU被占)。工作副本改动均别线文件(MEMORY_HARNESS/daily-harness/cjk_test/ocr_samples/别线脚本),vision无在途改动,未触碰别线。结论：全管线就绪仅待GPU释放（SFT poller+GRPO chain 双自治等待中,Phase1就绪审计GREEN@wake#667）。📦体积：TASK=30.5KB/MEMORY≈29.0KB（均≤32KB✓,本轮0归档）。**未完成指令：有**（阶段1 GPU训练pending+阶段2/3未交付）⇒**WAITING: 0**。
 
 > 📦 wake #666（监控巡检双poller健康+GPU 8×93-100%+状态无变化）已归档 → daily-memories-vision/2026-11-06.md；**结论**：状态无变化，全管线就绪仅待GPU。需要时再读。
 
