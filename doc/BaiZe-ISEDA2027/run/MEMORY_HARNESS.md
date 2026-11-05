@@ -5,13 +5,13 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        R1660 quiet监控轮:CPU/MEM自检PASS(load24.78/224~11%·无>8000%CPU·无>50GB RSS·无需kill)→无active eval/predict进程→scan_backlog=0→全7路100%确认→report regen确认(16952B,md5稳定)→硬约束③复核(predictions/eval_*.json均gitignored·tracked524json=520instance定义+4旧pilot·无结果JSON入库)→未完成指令:无⇒WAITING=1
-已完成:       H-B✅·Gate7/7·TB报告✅·pilot20✅·R984-R988恒0调试✅·R989 incr_eval全链✅·R997硬约束修复✅·R1567 cline trace归因✅·R1569 cline适配器修复✅·R1633 cline rerun 58/58终交付✅(356/500=71.3%)·R1634 13:5x复核+归档✅·R1635-R1649 deepseek incr_eval渐进✅(196→212,backlog=0)·R1650-R1658 quiet监控✅·full500全7路predict+eval 100%完成✅
-当前动作:     R1660:CPU/MEM自检PASS(load24.78/224~11%·无>8000%CPU·无>50GB RSS·无需kill·本线topCPU=cline-hub-daemon22.9%/4.5GB+opencode6.9%/1.3GB均<阈值·他线pretrain训练144%/21GB不碰)→无active eval/predict进程(run_harness/run_single/incr_eval/pytest/run_verified_full均无)→scan_backlog.py=0→全7路100%确认(opencode401/cline356/pi333/codex291/claude-code273/deepseek212/hermes184·eval_*.json权威tally复核)→report regen确认(16952B,Nov5 17:23,md5 a84ef519·gen_report重跑size不变)→硬约束③复核(predictions/+eval_*.json均gitignored·git ls-files tracked524json=520instance定义(输入)+4旧pilot·无结果JSON入库)→未完成指令:无⇒WAITING=1
+PHASE:        R1661 quiet监控轮:CPU/MEM自检PASS(load26.02/224~11.6%·无>8000%CPU·无>50GB RSS·无需kill)→无active eval/predict进程→scan_backlog=0→全7路100%确认→report regen确认(16952B,md5稳定)→硬约束③复核(predictions/eval_*.json均gitignored·tracked524json=520instance定义+4旧pilot·无结果JSON入库)→未完成指令:无⇒WAITING=1
+已完成:       H-B✅·Gate7/7·TB报告✅·pilot20✅·R984-R988恒0调试✅·R989 incr_eval全链✅·R997硬约束修复✅·R1567 cline trace归因✅·R1569 cline适配器修复✅·R1633 cline rerun 58/58终交付✅(356/500=71.3%)·R1634 13:5x复核+归档✅·R1635-R1649 deepseek incr_eval渐进✅(196→212,backlog=0)·R1650-R1660 quiet监控✅·full500全7路predict+eval 100%完成✅
+当前动作:     R1661:CPU/MEM自检PASS(load26.02/224~11.6%·无>8000%CPU·无>50GB RSS·无需kill·本线topCPU=cline-hub-daemon22.9%/4.5GB+opencode6.9%/1.3GB均<阈值·他线pretrain训练144%/21GB不碰)→无active eval/predict进程(run_harness/run_single/incr_eval/pytest/run_verified_full均无)→scan_backlog.py=0→全7路100%确认(opencode401/cline356/pi333/codex291/claude-code273/deepseek212/hermes184·gen_report重跑tally复核)→report regen确认(16952B,md5 a6376a6c·size不变)→硬约束③复核(predictions/+eval_*.json均gitignored·git ls-files tracked524json=520instance定义(输入)+4旧pilot·无结果JSON入库)→未完成指令:无⇒WAITING=1
 下一步:       ①full500全7路已100%完成(opencode401/cline356/pi333/codex291/claude-code273/deepseek212/hermes184)→report已交付(16952B,④指标齐全) ②永久硬约束:禁止commit结果JSON ③下次唤醒CPU/MEM自检+backlog复扫(预期=0) ④TASK=36821B(35.9KB)>32KB软限但<40KB红线·full500块待运维标✅后归档(归档纪律#1:无✅不许归档·该纪律最高优先覆盖收尾铁律)·MEMORY已≤32KB
 阻塞:         无·全7路predict+eval 100%完成·backlog=0·deepseek predict已收尾.
 ERROR_COUNT:  0
-  📦 体积：TASK=36821B(35.9KB,<40KB红线OK,full500块待运维标✅方可归档·归档纪律#1覆盖收尾铁律) / MEMORY=32674B(31.9KB,≤32KB达标,<40KB红线OK)
+  📦 体积：TASK=36821B(35.9KB,<40KB红线OK,full500块待运维标✅方可归档·归档纪律#1覆盖收尾铁律) / MEMORY=32680B(31.9KB,≤32KB达标,<40KB红线OK)
 
 ```
 
@@ -20,7 +20,8 @@ ERROR_COUNT:  0
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 
 ### 本唤醒流水
-[00:02] R1660 quiet监控轮:CPU/MEM自检PASS(load24.78/224~11%·无>8000%CPU·无>50GB RSS·无需kill·本线topCPU=cline-hub-daemon22.9%/4.5GB+opencode6.9%/1.3GB均<阈值·他线pretrain训练144%/21GB不碰)→无active eval/predict(run_harness/run_single/incr_eval/pytest/run_verified_full均无)→scan_backlog.py=0→全7路100%确认(opencode401/cline356/pi333/codex291/claude-code273/deepseek212/hermes184·eval_*.json权威tally复核)→report regen确认(16952B,md5 a84ef519稳定)→硬约束③复核(predictions/+eval_*.json均gitignored·tracked524json=520instance定义+4旧pilot·无结果JSON入库)→未完成指令:无⇒WAITING=1.
+[00:41] R1661 quiet监控轮:CPU/MEM自检PASS(load26.02/224~11.6%·无>8000%CPU·无>50GB RSS·无需kill·本线topCPU=cline-hub-daemon22.9%/4.5GB+opencode6.9%/1.3GB均<阈值·他线pretrain训练144%/21GB不碰)→无active eval/predict(run_harness/run_single/incr_eval/pytest/run_verified_full均无)→scan_backlog.py=0→全7路100%确认(opencode401/cline356/pi333/codex291/claude-code273/deepseek212/hermes184·gen_report重跑tally复核)→report regen确认(16952B,md5 a6376a6c·size不变)→硬约束③复核(predictions/+eval_*.json均gitignored·tracked524json=520instance定义+4旧pilot·无结果JSON入库)→未完成指令:无⇒WAITING=1.
+> 📦 R1660 流水(00:02,quiet监控轮:CPU/MEM自检PASS+report在位+backlog=0+全7路100%完成)已归档 → daily-memories-harness/2026-11-06.md。结论：quiet轮正常·全7路100%完成。需要时再读。
 > 📦 R1659 流水(23:21,quiet监控轮:CPU/MEM自检PASS+report在位+backlog=0+全7路100%完成)已归档 → daily-memories-harness/2026-11-05.md。结论：quiet轮正常·全7路100%完成。需要时再读。
 > 📦 R1658 流水(22:46,quiet监控轮:CPU/MEM自检PASS+report在位+backlog=0+全7路100%完成+MEMORY滚动R1566–R1576达≤32KB)已归档 → daily-memories-harness/2026-11-05.md。结论：quiet轮正常·全7路100%完成。需要时再读。
 > 📦 R1657 流水(22:10,quiet监控轮:CPU/MEM PASS+report在位+backlog=0+全7路100%完成)已归档 → daily-memories-harness/2026-11-05.md。结论：quiet轮正常·全7路100%完成。需要时再读。
@@ -28,8 +29,6 @@ ERROR_COUNT:  0
 > 📦 R1655 流水(21:02,quiet监控轮:CPU/MEM自检PASS+report在位+backlog=0+全7路100%完成)已归档 → daily-memories-harness/2026-11-05.md。结论：quiet轮正常·全7路100%完成。需要时再读。
 > 📦 R1654 流水(20:25,quiet监控轮:CPU/MEM自检PASS+report在位+backlog=0+全7路100%完成)已归档 → daily-memories-harness/2026-11-05.md。结论：quiet轮正常·全7路100%完成。需要时再读。
 > 📦 R1653 流水(19:50,quiet监控轮:CPU/MEM自检PASS+report在位+backlog=0+全7路100%完成)已归档 → daily-memories-harness/2026-11-05.md。结论：quiet轮正常·全7路100%完成。需要时再读。
-> 📦 R1652 流水(19:16,quiet监控轮:CPU/MEM自检PASS+report在位+backlog=0+全7路100%完成)已归档 → daily-memories-harness/2026-11-05.md。结论：quiet轮正常·全7路100%完成。需要时再读。
-> 📦 R1651 流水(18:37,quiet监控轮:CPU/MEM自检PASS+report④复核grep齐全+backlog=0+全7路100%完成)已归档 → daily-memories-harness/2026-11-05.md。结论：quiet轮正常·report④指标齐全·全7路100%完成。需要时再读。
 > 📦 R1650 流水(18:02,quiet监控轮:CPU/MEM自检PASS+backlog=0+report UNCHANGED+全7路100%完成)已归档 → daily-memories-harness/2026-11-05.md。结论：quiet轮正常·全7路100%完成。需要时再读。
 > 📦 R1649 流水(17:23,incr_eval轮:pytest-8399 RESOLVED 211→212+report regen)已归档 → daily-memories-harness/2026-11-05.md。结论：deepseek+1 RESOLVED·backlog=0·全7路100%完成。需要时再读。
 > 📦 R1648 流水(16:38,incr_eval轮:4backlog 3RESOLVED+1FAILED 208→211+report regen)已归档 → daily-memories-harness/2026-11-05.md。结论：deepseek 208→211·backlog=0。需要时再读。
