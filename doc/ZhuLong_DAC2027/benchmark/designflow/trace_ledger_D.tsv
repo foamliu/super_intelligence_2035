@@ -1025,3 +1025,48 @@ wl9i4					parked		2026-11-05 22:49	交互shell驱动+Q&A n752大
 1792136824277_g5bbp					parked		2026-11-06 06:33	root-cause debug (why inh_vintlp goes x on Read), 1-turn analysis (user gave the symptom = root-cause turn)
 1793677026220_gm1z2					parked		2026-11-06 06:33	multi-step PWL net-name remap + voltage scaling, /proj dependent, premise-dependent multi-turn refinement
 1793584116177_ox6r3	e0047722	10.129.2.13	166	waveform	case	EDA-Eval-DesignFlow-SineZeroCrossFreqPeak-001	2026-11-06 07:01	
+1789629437578_7rzyf			parked		2026-11-06 07:20	LVS seed-promotion root-cause debug/analysis (not produce)		
+1791790886127_58vqx			parked		2026-11-06 07:20	handoff skill: PDK QA Dummy module testing, premise-dependent multi-turn		
+1788162599553_9fg5t			parked		2026-11-06 07:20	Q&A: check autovia/powerfill instances deleted (layout analysis, wrong domain)		
+1786967377211_bf4yc			parked		2026-11-06 07:20	layout RsCalc/AutoVia/PowerFill flow (wrong domain: physical/layout)		
+1791444783469_mwoue			parked		2026-11-06 07:20	DRC deck modify per analysis report (wrong domain: physical_verify)		
+1790130179096_bmhid			parked		2026-11-06 07:20	no clean user produce turn (U#0 is tool result); drc-pattern skill setup		
+1787137440904_wyrs2			parked		2026-11-06 07:20	layout RsCalc/AutoVia/PowerFill flow (wrong domain: physical/layout)		
+1789960398048_ajqj4			parked		2026-11-06 07:20	U#0 is tool result (read argusDRC.rule), no clean user produce		
+1785502291442_6mdxh			parked		2026-11-06 07:20	AutoVia layout flow (wrong domain: physical/layout)		
+1792679003281_z44lk			parked		2026-11-06 07:20	handoff skill resume QA-23 DRC work, premise-dependent		
+1788743635326_keqfx			parked		2026-11-06 07:20	log analysis Q&A (which step takes longest), not produce		
+1788772817371_ppl5a			parked		2026-11-06 07:20	open-ended digital RTL MCU design+sim until pass+show waveform, premise-missing (needs README+live simvision)		
+1786592143567_5jmnc			parked		2026-11-06 07:20	layout RsCalc/AutoVia/PowerFill flow (wrong domain: physical/layout)		
+1791362457881_awgyg			parked		2026-11-06 07:20	PDK QA EMIR xls parse to Python classes (wrong domain: pdk_qa/tooling, not analog/netlist/waveform)		
+1791805925563_jbqzl			parked		2026-11-06 07:20	handoff skill resume Dummy QA testing, premise-dependent		
+1791786651124_tw1rj			parked		2026-11-06 07:40	Q&A: explain RH_POINTER_Pre signal purpose (analysis, not produce)		
+1793189369078_y8881			parked		2026-11-06 07:40	sandbox-setup Q&A + aether import test (not produce)		
+1793589961728_ipz9f			parked		2026-11-06 07:40	NOFILE: messages.json not found on host		
+1792573019238_vh3pa			parked		2026-11-06 07:40	Q&A: explain RWAbusBnkGapLeft sch.oa model purpose (analysis)		
+1793241802885_n8yh0			parked		2026-11-06 07:40	no clean user produce turn (policy-engine setup); aether session		
+1793864789160_j5z4v			parked		2026-11-06 07:40	count cm1 testmode from CMLeft hierarchy (needs live Aether traverse, /proj dependent)		
+1793078900879_hugc8			parked		2026-11-06 07:40	no clean user produce turn (policy-engine/skill setup)		
+1793362298127_7evgb			parked		2026-11-06 07:40	premise-missing: refers to prior 'SCMOS circuit you found' (Q&A output path)		
+1793791874358_a7erh			parked		2026-11-06 07:40	how-to Q&A: how to simulate circuit		
+1793000891226_a5ckq			parked		2026-11-06 07:40	NOFILE: messages.json not found on host		
+1793085712063_i8spy			parked		2026-11-06 07:40	analysis: compare CDL dir vs ccs.lib find missing (lib_qa domain, /proj dependent, not shard-D core)		
+1792742025551_0nbah			parked		2026-11-06 07:40	continuation note (pairwise intersection logic fix), premise-missing multi-turn		
+1788353164910_sxtgo			parked		2026-11-06 07:40	C++ app dev (SRAMAutoSim mainwindow.cpp JobMonitor), wrong domain		
+1793069585233_vi5wa			parked		2026-11-06 07:40	Q&A: read/understand project, no modification (analysis)		
+1793683774977_oesiu			parked		2026-11-06 07:40	no clean user produce turn (policy-engine setup); aether		
+1793156638580_g0r5u			parked		2026-11-06 07:40	NOFILE: messages.json not found on host		
+1789536669640_98xca			parked		2026-11-06 07:40	U#0 'hello?' not a real task		
+1792139184556_3ugoq			parked		2026-11-06 07:40	Q&A setup: read project, will ask questions later		
+1790125842195_i3f6p			parked		2026-11-06 07:40	analysis Q&A about sim env file relationships + .trn waveform + rhr_skip trigger		
+1793241187624_fx0qe			parked		2026-11-06 07:40	launch aether GUI (-adv&), live-window dependent		
+1792042020288_fpb59			parked		2026-11-06 07:40	analysis Q&A: ttsc_args.py EM results incomplete		
+1788941364124_2lp7f			parked		2026-11-06 07:40	skill-scaffold: 'launch business scenario: sim & verify'		
+1791813446865_vw7dp			parked		2026-11-06 07:40	modify circuit add pin to topcell (needs live Aether edit, L2-live)		
+1792394008610_lyj3f			parked		2026-11-06 07:40	Q&A: read netlist analyze circuit + simplify + mosfet size + mobility questions		
+1793063319201_fnt28			parked		2026-11-06 07:40	skill-creator meta (writing skill files), not a produce task		
+1791797986803_5037q			parked		2026-11-06 07:40	aether-tool-qa skill Q&A: stretch path-line no-merge		
+1793783668558_b6rfa			parked		2026-11-06 07:40	Q&A: 'circuit I don't understand, analyze netlist for me' (analysis, /proj dependent)		
+1793754312649_cmmqn			parked		2026-11-06 07:40	Q&A: ZQCAL during OSC + osc internal check (aether-tool-qa)		
+1793363756811_iy9oc			parked		2026-11-06 07:40	analysis Q&A: verify WTM004_block_check.v lines achieve CRC-error goal (verilog analysis)		
+1793759635878_p53dt	rongtaoy	10.129.2.10	223	schematic_netlist	claimed		2026-11-06 07:33	
