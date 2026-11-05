@@ -2,7 +2,9 @@
 
 WAITING: 0
 
-> 🆕 **【wake #617 · 2026-11-05 20:3x】数据扩充+独立评测脚本+CPU端到端验证**。GPU仍100%（R9 pretrain etimes≈262038s≈3天）。CPU-only交付：① `gen_sft_trajectories.py` +90行新增2类电路（ring_osc环形振荡器行为级+RC延迟满幅方波 / lc_tank LC谐振腔衰减正弦波 Q=5~50），ngspice+量测验证通过；② `sft_pilot_7500.jsonl`（7513条/7类电路×4量测）；③ `eval_sft_wave.py`（260行独立评测，format/submit/numerical_acc四指标，预注册判据format≥90%+submit≥70%）；④ `sft_holdout_500.jsonl`（582条held-out，不同seed无重叠）；⑤ CPU端到端验证7/7 PASS（import+format+tokenize+loss mask+collate+split+新电路验证）。`sft_train_wave.py` 默认数据更新为 sft_pilot_7500.jsonl。EXPERIMENTS §20.9。📦 体积：TASK≈30.5KB / MEMORY≈31.5KB（归档2条旧空唤醒后）。**未完成指令：有**（阶段1 GPU训练+阶段2/3未交付）⇒ **WAITING: 0**。
+> 🆕 **【wake #618 · 2026-11-05 20:5x】数据集均衡化：sft_pilot_balanced.jsonl 9013条**。GPU仍100%（.12+.29 双节点16卡全占 R9 pretrain）。CPU-only交付：① `gen_sft_trajectories.py` 新增 `--circuit_types` 过滤参数 + 修复相对路径 makedirs bug；② 3批次补充生成 ring_osc+lc_tank 专用轨迹（seed 20261106/07/08 各500条→1500 ok 0 fail）；③ 合并 `sft_pilot_balanced.jsonl`（9013条/17.9MB/7类均衡：ring_osc 336→1106 / lc_tank 370→1100，其余5类不变~1300-1400）；④ `sft_train_wave.py` DATA_FILE 更新指向 balanced + steps/epoch 更新（1127 steps/epoch, 3000 steps≈2.66 epoch）；⑤ `conversation_to_text` 冒烟4/4 PASS。EXPERIMENTS §20.10。📦 体积：TASK=30.5KB / MEMORY≈30.4KB（均≤32KB✓）。**未完成指令：有**（阶段1 GPU训练+阶段2/3未交付）⇒ **WAITING: 0**。
+
+> 📦 wake #617（数据扩充+独立评测脚本+CPU端到端验证）已归档 → daily-memories-vision/2026-11-05.md；**结论**：新增2类电路→sft_pilot_7500.jsonl 7513条 + eval_sft_wave.py 260行 + sft_holdout_500.jsonl 582条 + CPU验证7/7 PASS。需要时再读。
 
 > 📦 wake #616（维护唤醒·GPU仍100%·poller健康）已归档 → daily-memories-vision/2026-11-05.md；**结论**：GPU 8×H100 100% R9 pretrain，SFT poller PID 2757742健康轮询，git同步，体积均≤32KB✓。需要时再读。
 
@@ -118,10 +120,10 @@ WAITING: 0
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | 🟡 **波形 RL 阶段0交付(YELLOW) + 阶段1 SFT脚本+数据就绪 + 阶段2 GRPO+评测脚手架就绪 + WaveQA-RL oracle ceiling 300题验证(wake#614)**。5064 SFT轨迹 + SFT/GRPO/eval三脚本 + oracle 300题 mean=1.000。**唯一** SFT poller(PID 2757742, flock, wake#615确认健康) 后台运行等GPU空闲。阶段1 GPU训练 + 阶段2/3未交付。**WAITING: 0** |
+| PHASE | 🟡 **波形 RL 阶段0交付(YELLOW) + 阶段1 SFT脚本+数据就绪(9013条均衡) + 阶段2 GRPO+评测脚手架就绪 + WaveQA-RL oracle ceiling 300题验证(wake#614)**。9013 SFT轨迹(7类均衡) + SFT/GRPO/eval三脚本 + oracle 300题 mean=1.000。**唯一** SFT poller(PID 2757742, flock) 后台运行等GPU空闲。阶段1 GPU训练 + 阶段2/3未交付。**WAITING: 0** |
 | WAITING | 0 |
-| 已完成 | WaveQA-RL oracle ceiling 300题(wake#614) · 重复poller清理+flock守卫(wake#613) · 波形RL阶段2GRPO+评测脚手架(wake#612) · 波形RL阶段1SFT脚本(wake#611) · 波形RL阶段1数据pipeline(wake#610) · 波形RL阶段0(wake#609) · 论文改稿(wake#437~#442) · 波形RL计划书(wake#435) · 波形报告(wake#424) · OCR合成10M(wake#275) · ArmE-R2/ArmD-R2 全链路 |
-| 当前动作 | **唯一** SFT poller(PID 2757742, flock守卫) 后台运行等GPU空闲·WaveQA-RL oracle ceiling已验证(300题mean=1.000)·GRPO+评测待SFT checkpoint |
-| 下一步 | 阶段1 SFT训练（~4 GPU·h，GPU空闲后poller自动启动）→ 达标后进阶段2 GRPO（~12 GPU·h）+ WaveQA-RL评测 + 运维协调.75 WaveView |
+| 已完成 | 数据集均衡化9013条(wake#618) · WaveQA-RL oracle ceiling 300题(wake#614) · 重复poller清理+flock守卫(wake#613) · 波形RL阶段2GRPO+评测脚手架(wake#612) · 波形RL阶段1SFT脚本(wake#611) · 波形RL阶段1数据pipeline(wake#610) · 波形RL阶段0(wake#609) · 论文改稿(wake#437~#442) · 波形RL计划书(wake#435) · 波形报告(wake#424) · OCR合成10M(wake#275) · ArmE-R2/ArmD-R2 全链路 |
+| 当前动作 | **唯一** SFT poller(PID 2757742, flock守卫) 后台运行等GPU空闲·数据集已均衡(9013条/7类)·WaveQA-RL oracle ceiling已验证(300题mean=1.000)·GRPO+评测待SFT checkpoint |
+| 下一步 | 阶段1 SFT训练（~4 GPU·h，GPU空闲后poller自动启动，3000 steps≈2.66 epoch）→ 达标后进阶段2 GRPO（~12 GPU·h）+ WaveQA-RL评测 + 运维协调.75 WaveView |
 | 阻塞 | .12+.29 GPU全占（16×H100 100%，2节点pretrain mamba2 baize2b PID 2612442 ~3天）· .75 SSH不可达（需运维协调MCP通道） |
-| 更新 | **2026-11-05 19:5x (wake #614)**: WaveQA-RL oracle 300题验证mean=1.000·GPU仍100%(2节点pretrain)·归档wake#610+#611→daily·体积TASK30.5KB/MEMORY≈31KB·WAITING=0 |
+| 更新 | **2026-11-05 20:5x (wake #618)**: 数据集均衡化ring_osc336→1106/lc_tank370→1100→sft_pilot_balanced.jsonl 9013条·GPU仍100%·体积TASK30.5KB/MEMORY30.4KB·WAITING=0 |

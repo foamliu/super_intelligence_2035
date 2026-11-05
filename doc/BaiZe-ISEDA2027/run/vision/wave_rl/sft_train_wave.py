@@ -24,9 +24,9 @@ upgraded.
 Hyperparameters (operator instruction 2026-11-05 Phase 1):
   - LoRA: rank=64, alpha=128, dropout=0.05 (same as Stage-1.5/2)
   - LR: 1e-5 (LoRA), cosine decay -> 1e-7, warmup 0.01
-  - GBS=8, MBS=1 (5064 trajectories / GBS=8 ~= 633 steps/epoch;
-    2000 steps ~= 3.16 epochs, within the "~2000-3000 steps / 2-3 epoch" target)
-  - Data: sft_pilot_5000.jsonl (5064 trajectories, 10.1 MB)
+  - GBS=8, MBS=1 (9013 trajectories / GBS=8 ~= 1127 steps/epoch;
+    2000 steps ~= 1.77 epochs, 3000 steps ~= 2.66 epochs — within "~2000-3000 steps / 2-3 epoch")
+  - Data: sft_pilot_balanced.jsonl (9013 trajectories, 17.9 MB, 7 circuit types balanced)
 
 Pre-registered acceptance criteria (Phase 1 step 3):
   - Format correctness >= 90% on held-out synthetic data
@@ -59,7 +59,7 @@ from peft import LoraConfig, get_peft_model, TaskType
 # ---------------------------------------------------------------------------
 LLM_PATH = "/nas_train/app.e0031982/models/Qwen/Qwen3-4B-Instruct-2507"
 DATA_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                         "sft_pilot_7500.jsonl")
+                         "sft_pilot_balanced.jsonl")
 OUTPUT_DIR = "/nas_train/app.e0031982/datasets/baize-vision/out/wave_sft_stage1w"
 
 # Qwen3 chat-format special tokens (same for Qwen3-4B and Qwen3-VL-2B)

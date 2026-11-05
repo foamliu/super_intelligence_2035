@@ -2132,3 +2132,39 @@ ngspice .raw 实测：`ngspice -b test.cir` → 646 点 × 3 变量 binary doubl
 
 **数字溯源**：ngspice 实测输出 + Python 量测 + CPU 验证 7/7 PASS。成本 ETA：SFT ~4 GPU·h（plan §Stage-1W），需 GPU 空闲。
 
+### §20.10 · 数据集均衡化：sft_pilot_balanced.jsonl 9013 条（wake#618 · 2026-11-05 21:0x · CPU-only）
+
+**问题**：§20.9 的 `sft_pilot_7500.jsonl`（7513 条）中 ring_osc（336）和 lc_tank（370）明显低于其它 5 类（~1300-1400），因新增 2 类仅在补充批次中生成。
+
+**修复**：
+1. `gen_sft_trajectories.py` 新增 `--circuit_types` 过滤参数（可指定子集生成）+ 修复相对路径 `os.makedirs('')` bug。
+2. 用 3 个不同 seed（20261106/07/08）各生成 500 条 ring_osc+lc_tank 专用轨迹 → 1500 条补充（ring_osc 770 / lc_tank 730，0 fail）。
+3. 合并为 `sft_pilot_balanced.jsonl`（9013 条 / 17.9 MB），ID 重编号避免冲突。
+
+**均衡后分布**：
+| 电路类型 | 条数 | 之前 |
+|:--|--:|--:|
+| inverter | 1404 | 1404 |
+| rl | 1388 | 1388 |
+| diffpair | 1377 | 1377 |
+| rc | 1336 | 1336 |
+| rc_pulse | 1302 | 1302 |
+| ring_osc | **1106** | 336 |
+| lc_tank | **1100** | 370 |
+| **Total** | **9013** | 7513 |
+
+- error_recovery 占 19.8%（1789/9013），measure targets 均匀分布（amplitude 2299/period 2035/duty_cycle 2310/rise_time 2369）。
+- `conversation_to_text` 冒烟测试 4/4 PASS（正常轨迹 10 turns/4 asst_spans，错误恢复 14 turns/6 asst_spans）。
+
+**训练配置更新**：
+| 项 | §20.9 值 | 本节值 |
+|:--|:--|:--|
+| 数据 | sft_pilot_7500.jsonl (7513) | **sft_pilot_balanced.jsonl (9013)** |
+| Steps/epoch | ~633 (GBS=8) | ~1127 (GBS=8) |
+| 2000 steps ≈ | 3.16 epoch | 1.77 epoch |
+| 3000 steps ≈ | 4.74 epoch | 2.66 epoch（推荐，在 2-3 epoch 目标内）|
+
+`sft_train_wave.py` DATA_FILE 已更新指向 `sft_pilot_balanced.jsonl`。
+
+**数字溯源**：ngspice 实测 + Python 量测 + 3 批次生成日志（0 fail/1500 ok）。
+

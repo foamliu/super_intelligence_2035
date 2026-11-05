@@ -261,11 +261,18 @@ def build_error_recovery_trajectory(spec, raw_parsed, target, traj_id):
             "submitted_value": float(gt_val), "gt_value": float(gt_val),
             "rel_err": 0.0, "pass": True, "conversation": conv}
 
-def generate_dataset(n_trajectories, seed, output_path, workdir, error_ratio=0.2, verbose=False):
+def generate_dataset(n_trajectories, seed, output_path, workdir, error_ratio=0.2, verbose=False, circuit_types_filter=None):
     rng = random.Random(seed)
     np_rng = np.random.default_rng(seed)
     os.makedirs(workdir, exist_ok=True)
-    circuit_types = list(_CIRCUIT_GENS.keys())
+    all_types = list(_CIRCUIT_GENS.keys())
+    if circuit_types_filter:
+        circuit_types = [ct.strip() for ct in circuit_types_filter.split(",") if ct.strip() in all_types]
+        if not circuit_types:
+            print(f"ERROR: no valid circuit types in filter '{circuit_types_filter}'. Available: {all_types}")
+            sys.exit(1)
+    else:
+        circuit_types = all_types
     results = []
     stats = {"total": 0, "ok": 0, "fail": 0, "by_type": {}, "by_circuit": {},
              "by_target": {}, "ngspice_fail": 0, "measure_skip": 0}
@@ -304,7 +311,9 @@ def generate_dataset(n_trajectories, seed, output_path, workdir, error_ratio=0.2
                 if os.path.exists(ep_wd): shutil.rmtree(ep_wd, ignore_errors=True)
             except Exception: pass
         stats["total"] = i + 1
-    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+    out_dir = os.path.dirname(output_path)
+    if out_dir:
+        os.makedirs(out_dir, exist_ok=True)
     with open(output_path, "w", encoding="utf-8") as f:
         for traj in results:
             f.write(json.dumps(traj, ensure_ascii=False, default=str) + "\n")
@@ -338,6 +347,8 @@ def main():
     p.add_argument("--output", type=str, default=None)
     p.add_argument("--workdir", type=str, default=None)
     p.add_argument("--error_ratio", type=float, default=0.2)
+    p.add_argument("--circuit_types", type=str, default=None,
+                   help="Comma-separated circuit types to generate (default: all). e.g. 'ring_osc,lc_tank'")
     p.add_argument("--validate", action="store_true")
     p.add_argument("--verbose", action="store_true")
     args = p.parse_args()
@@ -353,7 +364,7 @@ def main():
     print(f"  circuit_types  = {list(_CIRCUIT_GENS.keys())}")
     print(f"  measure_targets= {MEASURE_TARGETS}")
     t0 = time.time()
-    stats, results = generate_dataset(args.n, args.seed, output, workdir, error_ratio=args.error_ratio, verbose=args.verbose)
+    stats, results = generate_dataset(args.n, args.seed, output, workdir, error_ratio=args.error_ratio, verbose=args.verbose, circuit_types_filter=args.circuit_types)
     elapsed = time.time() - t0
     stats["elapsed_s"] = round(elapsed, 2)
     print(f"\n=== Generation complete ({elapsed:.1f}s) ===")
