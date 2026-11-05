@@ -1,0 +1,79 @@
+{
+  "stages": {
+    "fp": {
+      "status": "passed",
+      "top": "hl22_porting_test_chip_v1",
+      "warn_total": 112,
+      "error_total": 13,
+      "warn_codes": {
+        "EMS-27": 2,
+        "IMPDB-1280": 15,
+        "IMPDBTCL-204": 16,
+        "IMPEXT-2766": 8,
+        "IMPEXT-2773": 1,
+        "IMPEXT-2776": 7,
+        "IMPFP-10137": 15,
+        "IMPFP-325": 1,
+        "IMPFP-3961": 6,
+        "IMPFP-4026": 2,
+        "IMPFP-9996": 15,
+        "IMPLF-200": 1,
+        "IMPPP-354": 4,
+        "TA-976": 1,
+        "TCLCMD-1013": 1,
+        "TCLCMD-1142": 1,
+        "TCLCMD-1461": 1,
+        "TECHLIB-302": 15
+      },
+      "error_codes": {
+        "DMMMC-271": 3,
+        "IMPDBTCL-206": 6,
+        "IMPTCM-48": 4
+      },
+      "power_routing": {
+        "mentioned": true,
+        "nets": [
+          "VDD",
+          "VDD_PM",
+          "VSS"
+        ],
+        "imsr_1253": true
+      }
+    },
+    "route": {
+      "status": "passed",
+      "top": "hl22_porting_test_chip_v1",
+      "warn_total": 63,
+      "error_total": 6,
+      "warn_codes": {
+        "IMPEXT-2766": 8,
+        "IMPEXT-2773": 1,
+        "IMPEXT-2776": 7,
+        "IMPEXT-3530": 5,
+        "IMPEXT-6197": 5,
+        "IMPFP-3961": 6,
+        "IMPLF-200": 1,
+        "IMPOGDS-1167": 1,
+        "IMPOPT-3195": 2,
+        "IMPOPT-7329": 1,
+        "IMPSP-9025": 2,
+        "IMPTCM-19": 1,
+        "IMPVFG-198": 1,
+        "IMPVFG-257": 1,
+        "SDF-808": 1,
+        "TA-146": 1,
+        "TCLCMD-513": 4,
+        "TECHLIB-302": 15
+      },
+      "error_codes": {
+        "IMPCCOPT-2004": 2,
+        "TCLCMD-917": 4
+      },
+      "power_routing": {
+        "mentioned": false,
+        "nets": [],
+        "imsr_1253": false
+      }
+    }
+  }
+}

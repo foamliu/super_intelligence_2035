@@ -1,0 +1,45 @@
+你在 CXMT 内网 EDA 集群上为数字后端工程师 alan3zh 维护 test_chip_v1 的 Innovus APR 流程。
+该流程通过 LSF 跑两段 Innovus：floorplan（`inv_fp.log`）与 route（`inv_route.log`），
+每段日志含大量 `**WARN: (CODE):` / `**ERROR: (CODE):` 消息、`INFO:  INNOVUS (FP|PR) (DONE|FAILED) : <top>` 阶段标记、
+`globalNetConnect <net>` 电源网络连接行、以及 `Begin power routing`/`IMPSR-1253` 等电源布线信息行
+（例如 PM 带电源网 VDD_PM 触发 IMPSR-1253 告警，是 floorplan 阶段需重点核查的项）。
+
+现在需要你编写一个**通用** Innovus APR 流程日志审计器 `audit_apr.py`，能对任意一个存放 APR 日志的目录做审计，
+快速判断每段流程是否通过、出现了哪些告警/错误码及其次数、电源布线段是否提及关键告警，
+并产出结构化 JSON 报告，供后续日报与跨 run 对比。
+
+## 交付
+`outputs/submit.zip`，内含两个文件：
+1. `audit_apr.py` —— 通用审计器，命令行接口 `python3 audit_apr.py <log_dir> [-o out.json]`，
+   不带 `-o` 时把 JSON 打印到 stdout，带 `-o` 时写入文件并同时打印。
+2. `audit_A.json` —— 对附件中可见的 A 目录（`inv_fp.log` + `inv_route.log`）跑一次审计得到的 JSON 报告。
+
+## 输入目录约定
+审计目录下：`inv_fp.log` 对应 `fp` 阶段，`inv_route.log` 对应 `route` 阶段。文件缺失时该阶段按 missing 处理。
+脚本必须**通用**：只能依据目录内容解析，不得硬编码任何特定设计名、网名或告警码计数。
+
+## JSON schema（必须严格遵守，键名与结构如下）
+{
+  "stages": {
+    "fp": {
+      "status": "passed" | "failed" | "unknown" | "missing",   // 命中 INNOVUS FP DONE->passed；命中 INNOVUS FP FAILED->failed；否则 unknown
+      "top": "<DONE/FAILED 标记行尾的设计名>" 或 null,           // 来自 `INNOVUS (FP|PR) (DONE|FAILED) : <top>`
+      "warn_total": <int>,                                      // = sum(warn_codes 值)
+      "error_total": <int>,                                     // = sum(error_codes 值)
+      "warn_codes": {"<CODE>": <次数>, ...},                    // 统计 `**WARN: (CODE):` 行
+      "error_codes": {"<CODE>": <次数>, ...},                   // 统计 `**ERROR: (CODE):` 行
+      "power_routing": {
+        "mentioned": <bool>,        // 任一行含 "power routing"（大小写不敏感）
+        "nets": ["<net>", ...],     // 从 `globalNetConnect <net>` 行提取的去重排序网名
+        "imsr_1253": <bool>         // 任一行含 "IMPSR-1253"
+      }
+    },
+    "route": { /* 同 fp 的字段，power_routing 同样适用 */ }
+  }
+}
+
+## 附件
+- `inv_fp.log`：A 的 floorplan 日志（真实，来自 alan3zh 的 test_chip_v1 APR 流程，HL22 工艺，含 VDD_PM/IMPSR-1253）
+- `inv_route.log`：A 的 route 日志（真实，同流程）
+
+请只交付上述两个文件，不要交付其它内容。
