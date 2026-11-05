@@ -2,7 +2,8 @@
 
 WAITING: 0
 
-> 🆕 **【wake #637 · 2026-11-05 23:33】监控巡检：双poller健康+GPU仍100%+状态无变化·仅待GPU**。本轮CPU-only监控巡检（距wake#636仅4min，状态无变化）：① SFT poller PID 2757742 健康：alive(ppid=1, etimes≈13568s≈3.77h)，每60s `busy_util -- waiting`（最后23:32:33，`/tmp/wave_sft_poller_relaunch.log` 7863B 持续更新）；② GRPO chain PID 2428009 健康：alive(ppid=1, etimes≈3555s≈59min)，每120s `SFT not done yet (waited 3480s/2592000)`（最后23:32:16，`/tmp/grpo_wave_chain.log` 2286B）；③ vision loop PID 669545 alive(etimes≈656606s≈7.6天)；cline in PATH✓。git fetch→origin/main 同步(0ahead/0behind)，无新vision运维令。结论：全管线就绪+双poller健康+零新CPU工作，仅待GPU释放，poller将自动启动SFT→GRPO全链。📦 体积：TASK=30.5KB / MEMORY=25.1KB（均≤32KB✓）。**未完成指令：有**（阶段1 GPU训练+阶段2/3未交付）⇒ **WAITING: 0**。
+> 🆕 **【wake #638 · 2026-11-05 23:39】监控巡检：双poller健康+GPU仍100%+状态无变化·仅待GPU**。本轮CPU-only监控巡检（距wake#637仅6min，状态无变化）：① SFT poller PID 2757742 健康：alive(ppid=1, etimes≈13918s≈3.86h)，每60s `busy_util -- waiting`（最后23:38:35，`/tmp/wave_sft_poller_relaunch.log` 持续更新）；② GRPO chain PID 2428009 健康：alive(ppid=1, etimes≈3905s≈65min)，每120s `SFT not done yet (waited 3840s/2592000)`（最后23:38:16，`/tmp/grpo_wave_chain.log` 2286B）；③ vision loop PID 669545 alive；cline in PATH✓。git fetch→origin/main 同步(0ahead/0behind)，无新vision运维令。结论：全管线就绪+双poller健康+零新CPU工作，仅待GPU释放，poller将自动启动SFT→GRPO全链。📦 体积：TASK=30.5KB / MEMORY=24.0KB（均≤32KB✓）。**未完成指令：有**（阶段1 GPU训练+阶段2/3未交付）⇒ **WAITING: 0**。
+> 📦 wake #637（监控巡检双poller健康+GPU仍100%）已归档 → daily-memories-vision/2026-11-05.md；**结论**：状态无变化，全管线就绪仅待GPU。需要时再读。
 > 📦 wake #636（监控巡检双poller健康+GPU仍100%）已归档 → daily-memories-vision/2026-11-05.md；**结论**：状态无变化，全管线就绪仅待GPU。需要时再读。
 > 📦 wake #635（监控巡检双poller健康+GPU仍100%+pretrain iter_0096000）已归档 → daily-memories-vision/2026-11-05.md；**结论**：状态无变化，全管线就绪仅待GPU。需要时再读。
 > 📦 wake #634（监控巡检双poller健康+GPU仍100%）已归档 → daily-memories-vision/2026-11-05.md；**结论**：状态无变化，全管线就绪仅待GPU。需要时再读。
