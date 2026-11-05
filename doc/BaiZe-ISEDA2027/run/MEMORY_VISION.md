@@ -2,13 +2,15 @@
 
 WAITING: 0
 
+> 🆕 **【wake #614 · 2026-11-05 19:5x】WaveQA-RL oracle ceiling 300题验证 + GPU阻塞确认（2节点pretrain）**。GPU仍100%（.12+.29 双节点 `pretrain_launcher.py --arch mamba2 --name baize2b` PID 2612442 etimes≈259493s≈3天 占全部16卡）。SFT poller(PID 2757742, flock) alive 轮询 `busy_util -- waiting`。CPU-only交付：`waveqa_eval.py --oracle --n_questions 300 --seed 20261112` → **300题全 mean=1.000**（numerical 109 / multi_choice 94 / open_ended 97），输出 `waveqa_oracle_300.json`(45.7KB)——验证eval pipeline大规模可用 + 提供Phase 2「Oracle Tcl 上限」参照线。归档：MEMORY wake#610+#611→daily-memories（省~2KB）。📦 体积：TASK≈30.5KB / MEMORY≈31KB（归档后）。**未完成指令：有**（阶段1 GPU训练 + 阶段2/3未交付）⇒ **WAITING: 0**。
+
 > 🆕 **【wake #613 · 2026-11-05 19:4x】重复 poller 清理 + flock 防重入守卫**。巡检发现 `run_sft_wave.sh` 被启动 **11 次**（19:34–19:38，4 分钟内），**2 个 poller 存活**（PID 2048235+2089447，均 ppid=1），GPU 释放后**双 torchrun 抢同 8 GPU → OOM R9 风险**。处置：① kill 两个 poller；② `run_sft_wave.sh` 加 `flock -n` 独占锁（fd 9→`run_sft_wave.lock`，持锁失败即 exit 0）——实测第 2 次启动被正确拦截 `[19:48] Another instance holds the lock. Exiting.`；③ `setsid` 重启**唯一** poller（PID 2757742，ppid=1，193736→194723 poll log `busy_util -- waiting`）。GPU 仍 8×H100 100%（R9），SFT 训练继续等待。📦 体积：TASK=30.5KB / MEMORY≈32.0KB（均≤32KB✓，MEMORY 贴上限）。**未完成指令：有**（阶段 1 GPU 训练 + 阶段 2/3 未交付）⇒ **WAITING: 0**。
 
 > 🆕 **【wake #612 · 2026-11-05 19:3x】波形 RL 阶段 2 GRPO 脚手架 + WaveQA-RL 评测 + 安全 GPU 轮询启动**。执行 §运维令·2026-11-05 17:5x 阶段 2 基础工作（CPU-only，GPU 全占待 SFT 先跑）。交付 3 件：① `vision/wave_rl/grpo_train_wave.py`（~660行）—— GRPO 无 value 网络，G rollouts/prompt，advantage=(R−mean)/(std+eps)，clipped surrogate；复用 WaveformGymEnv 5 组件奖励（R_main 分档 1.0/0.7/0.4/0.1/0 + R_evidence 0.3 + R_dense 0.2cap + R_budget 0.1 + R_anti -2.0）；从 SFT checkpoint 加载 LoRA adapter；不依赖 trl.GRPOTrainer（vllm ABI mismatch）自包含 HF generate rollout；CPU smoke 6/6 PASS。② `vision/wave_rl/waveqa_eval.py`（~200行）—— 3 类题 numerical/multi_choice/open_ended + oracle 上限 + 回归护栏 stub；oracle 30题 mean=1.000 PASS。③ `run_sft_wave.sh` 修 2 bug（`$$` PID 转义 + awk END/pipefail SIGPIPE）+ 安全等待（util<10% AND mem<5000MiB 双条件 ×3 连续），后台 poller PID 2089447 运行中 `[19:38] busy_util -- waiting`。EXPERIMENTS §20.7。📦 体积：TASK=30.5KB / MEMORY≈30.5KB（均≤32KB✓）。**未完成指令：有**（阶段 1 GPU 训练待 GPU 空闲 + 阶段 2/3 未交付）⇒ **WAITING: 0**。
 
-> 🆕 **【wake #611 · 2026-11-05 18:5x】波形 RL 阶段 1 SFT 训练脚本就绪（CPU-only 准备）**。执行 §运维令·2026-11-05 17:5x 阶段 1。GPU 全占（8×H100 100% R9）→ CPU-only 准备训练脚本。交付：`vision/wave_rl/sft_train_wave.py`（501行）+ `vision/wave_rl/run_sft_wave.sh`（自动等待 GPU 空闲后启动）。模型：任务书指定「2B MLLM」→ Qwen3-VL-2B-Instruct 架构 `qwen3_vl` **不被 transformers 4.56.1 支持**（KeyError）→ 默认用 Qwen3-4B-Instruct-2507（`--model_path` 可参数化切换）。配置：LoRA r=64/α128, LR 1e-5→1e-7 cosine, GBS=8, 2000步（≈3.16 epoch）, seq_len=2048, train=4864/eval_holdout=200。对话格式手动 `<|im_start|>role\n...<|im_end|>\n`（jinja2 3.0.3 不支持 apply_chat_template），tool 角色→user+[Observation]包裹，loss 仅 assistant tokens。CPU 冒烟 4/4 PASS（formatting/dataset/collate/split）。EXPERIMENTS §20.6。**归档**：MEMORY 31327B→归档#607+#608空唤醒→daily-memories。📦 体积：TASK=30.5KB / MEMORY≈30KB（均≤32KB✓）。**GPU 阻塞**：.12 8×H100 全 100% util（R9）→ 训练待 GPU 空闲，run_sft_wave.sh 自动轮询。**未完成指令：有**（阶段 1 GPU 训练 + 阶段 2/3 未交付）⇒ **WAITING: 0**。
+> 📦 wake #611（波形RL阶段1 SFT训练脚本就绪）已归档 → daily-memories-vision/2026-11-05.md；**结论**：sft_train_wave.py(501行)+run_sft_wave.sh 就绪，Qwen3-4B LoRA r=64, CPU冒烟4/4 PASS。需要时再读。
 
-> 🆕 **【wake #610 · 2026-11-05 18:44】波形 RL 阶段 1 数据 pipeline 已交付（CPU-only）**。执行 §运维令·2026-11-05 17:5x 阶段 1。Phase 0 YELLOW（ngspice 备选 GREEN）⇒ 数据 pipeline 可开始。交付：`vision/wave_rl/gen_sft_trajectories.py`（294行，复用 waveview_gym 电路生成器+量测函数+新增差分对）→ 5 批 seed=20261105..09 CPU-only on .12 nice -n 10 → **5064 条 SFT 轨迹**（normal 4027 / error_recovery 1037=20.5% / 5 电路 rc/rc_pulse/inverter/rl/diffpair 各~1000 / 4 量测 period/amplitude/rise_time/duty_cycle 各~1250）→ `sft_pilot_5000.jsonl` 10.1MB + stats.json。验证 30/30 format_ok+measure_ok ALL_PASS。轨迹格式=多轮对话 system→user→assistant(open/get_signal/get_values/submit)→tool(observation)，error_recovery 含 wrong name→dump_hier→retry。GT 由 .raw 实测量测（非参数推导）。**归档**：TASK 33348B→30453B（归档 10-30 波形报告块+10-28 OCR裁定块→ARCHIVE，省 2895B）。**GPU 阻塞**：.12 8×H100 全 100% util（R9 占用）→ SFT 训练 ~4 GPU·h 待 GPU 空闲/其它主机。**未完成指令：有**（阶段 1 GPU 训练 + 阶段 2/3 未交付）⇒ **WAITING: 0**。
+> 📦 wake #610（波形RL阶段1数据pipeline 5064轨迹）已归档 → daily-memories-vision/2026-11-05.md；**结论**：gen_sft_trajectories.py→5064 SFT轨迹(normal 4027/err_recovery 1037), sft_pilot_5000.jsonl 10.1MB, 验证30/30 ALL_PASS。需要时再读。
 
 > 📦 wake #609（波形 RL 阶段 0 可行性·YELLOW）已归档 → daily-memories-vision/2026-11-05.md；**结论**：.75 WaveView SSH 不可达→RED，ngspice 备选 GREEN，Gym 冒烟 3/3 PASS，判 YELLOW 可进阶段 1。需要时再读。
 
@@ -110,10 +112,10 @@ WAITING: 0
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | 🟡 **波形 RL 阶段 0 交付(YELLOW) + 阶段 1 SFT 脚本+数据就绪(wake#610+#611) + 阶段 2 GRPO+评测脚手架就绪(wake#612) + 重复 poller 清理+flock 防重入(wake#613)**。5064 SFT 轨迹 + SFT/GRPO/eval 三脚本就绪。**唯一** SFT poller(PID 2757742) 后台运行等 GPU 空闲。阶段 1 GPU 训练 + 阶段 2/3 未交付。**WAITING: 0** |
+| PHASE | 🟡 **波形 RL 阶段0交付(YELLOW) + 阶段1 SFT脚本+数据就绪 + 阶段2 GRPO+评测脚手架就绪 + WaveQA-RL oracle ceiling 300题验证(wake#614)**。5064 SFT轨迹 + SFT/GRPO/eval三脚本 + oracle 300题 mean=1.000。**唯一** SFT poller(PID 2757742) 后台运行等GPU空闲。阶段1 GPU训练 + 阶段2/3未交付。**WAITING: 0** |
 | WAITING | 0 |
-| 已完成 | 重复poller清理+flock守卫(wake#613) · 波形RL阶段2GRPO+评测脚手架(wake#612) · 波形RL阶段1SFT脚本(wake#611) · 波形RL阶段1数据pipeline(wake#610) · 波形RL阶段0(wake#609) · 论文改稿(wake#437~#442) · 波形RL计划书(wake#435) · 波形报告(wake#424) · OCR合成10M(wake#275) · ArmE-R2/ArmD-R2 全链路 |
-| 当前动作 | **唯一** SFT poller(PID 2757742, flock 守卫) 后台运行等 GPU 空闲·GRPO+评测脚手架已就绪待 SFT checkpoint |
-| 下一步 | 阶段 1 SFT 训练（~4 GPU·h，GPU 空闲后 poller 自动启动）→ 达标后进阶段 2 GRPO（~12 GPU·h）+ WaveQA-RL 评测 + 运维协调 .75 WaveView |
-| 阻塞 | .12 GPU 全占（8×H100 100% R9）· .75 SSH 不可达（需运维协调 MCP 通道） |
-| 更新 | **2026-11-05 19:4x (wake #613)**: 清理重复poller+flock防重入守卫·实测第2次启动被拦截·唯一poller 2757742运行中·GPU仍100%·体积TASK30.5KB/MEMORY≈32KB·WAITING=0 |
+| 已完成 | WaveQA-RL oracle ceiling 300题(wake#614) · 重复poller清理+flock守卫(wake#613) · 波形RL阶段2GRPO+评测脚手架(wake#612) · 波形RL阶段1SFT脚本(wake#611) · 波形RL阶段1数据pipeline(wake#610) · 波形RL阶段0(wake#609) · 论文改稿(wake#437~#442) · 波形RL计划书(wake#435) · 波形报告(wake#424) · OCR合成10M(wake#275) · ArmE-R2/ArmD-R2 全链路 |
+| 当前动作 | **唯一** SFT poller(PID 2757742, flock守卫) 后台运行等GPU空闲·WaveQA-RL oracle ceiling已验证(300题mean=1.000)·GRPO+评测待SFT checkpoint |
+| 下一步 | 阶段1 SFT训练（~4 GPU·h，GPU空闲后poller自动启动）→ 达标后进阶段2 GRPO（~12 GPU·h）+ WaveQA-RL评测 + 运维协调.75 WaveView |
+| 阻塞 | .12+.29 GPU全占（16×H100 100%，2节点pretrain mamba2 baize2b PID 2612442 ~3天）· .75 SSH不可达（需运维协调MCP通道） |
+| 更新 | **2026-11-05 19:5x (wake #614)**: WaveQA-RL oracle 300题验证mean=1.000·GPU仍100%(2节点pretrain)·归档wake#610+#611→daily·体积TASK30.5KB/MEMORY≈31KB·WAITING=0 |

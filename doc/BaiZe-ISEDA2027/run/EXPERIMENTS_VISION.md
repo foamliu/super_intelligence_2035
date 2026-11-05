@@ -2051,3 +2051,25 @@ ngspice .raw 实测：`ngspice -b test.cir` → 646 点 × 3 变量 binary doubl
 
 **GPU 调度**：避让 vision R9（.12 8×H100 100%）。SFT poller 自动等待 GPU 空闲。阶段 1 SFT ~4 GPU·h，阶段 2 GRPO ~12 GPU·h，均在 R9 结束后串行执行。
 
+
+### §20.8 · WaveQA-RL Oracle Ceiling 验证（300题）（wake#614 · 2026-11-05 19:5x）
+
+**目的**：验证 Phase 2 评测 pipeline 在 300 题规模下可正常运行，并获取「Oracle Tcl 上限」参照线（计划书 §Stage-2W step 2 双参照线之一）。
+
+**方法**：`waveqa_eval.py --oracle --n_questions 300 --seed 20261112`，CPU-only（ngspice .raw + Python 解析），nice -n 10 避让训练。Oracle 策略直接从 ngspice .raw 实测量测值作为提交值（完美策略）。
+
+**结果**：
+
+| 题型 | n | mean_score | ≤5% pass | ≤1% pass |
+|:--|--:|:--:|:--:|:--:|
+| numerical | 109 | 1.000 | 100.0% | 100.0% |
+| multi_choice | 94 | 1.000 | 100.0% | 100.0% |
+| open_ended | 97 | 1.000 | 100.0% | 100.0% |
+| **Overall** | **300** | **1.000** | **100.0%** | **100.0%** |
+
+**结论**：Oracle ceiling = 1.000（完美），符合预期（oracle 直接用 GT 值提交）。300 题生成 + 评测全链路无故障，pipeline 大规模可用。题型分布均衡（109/94/97），5 类电路×4 量测目标覆盖完整。输出 `vision/wave_rl/waveqa_oracle_300.json`（45.7KB）。
+
+**意义**：此为 Phase 2 模型评测的上限参照线。SFT/GRPO 训练后模型评测分数将与 1.000 oracle ceiling 对比，gap = 模型能力提升空间。另一参照线（纯看图 2B）待 Phase 2 时补充。
+
+**GPU 状态**：.12+.29 双节点 pretrain（PID 2612442, etimes≈259493s≈3天）占全部 16×H100 100%。SFT poller（PID 2757742, flock）后台轮询 `busy_util -- waiting`，GPU 空闲后自动启动 SFT 训练。
+
