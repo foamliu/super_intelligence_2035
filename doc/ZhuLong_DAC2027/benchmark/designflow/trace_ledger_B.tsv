@@ -78,7 +78,7 @@
 1792487039292_qr1lv.messages.json	yanghao	hfeg0pkn002	98	spice_sim	parked		2026-11-04 14:58	session-gone-on-host
 1793070977652_ypqx7.messages.json	yanghao	hfeg0pkn002	47	spice_sim	parked		2026-11-04 14:58	session-gone-on-host
 1793072434830_97mj2.messages.json	chentong	hfeg0plg77	156	spice_sim	parked		2026-11-04 14:58	session-gone-on-host
-1792118523831_f10db.messages.json	e0024852	hfeg0pkn004	68	spice_sim	parked		2026-11-04 15:01	FineSim-xa.log-compare-read/explain偏薄
+1792118523831_f10db.messages.json	e0024852	hfeg0pkn004	68	spice_sim	case	EDA-Eval-DesignFlow-XaLogCompare-001	2026-11-05 16:24	FineSim-xa.log-compare-read/explain偏薄
 1785896968029_vo4gm.messages.json	e0025768	hfeg0pkn001	83	spice_sim	parked		2026-11-04 15:01	lvlshft-optimize-workflow-bsub/LD_PRELOAD-debug环境调试非char
 1785907092176_vdeyi.messages.json	e0025768	hfeg0pkn001	65	spice_sim	parked		2026-11-04 15:01	dup-of-LvlshftBsubDiag-case(same-user-skill)
 1789904184223_i5slk.messages.json	yiz	hfeg0plg101	152	spice_sim	parked		2026-11-04 15:01	finesim-fsdb-reader-适配ncsim.trn数字波形非spice_char
