@@ -131,7 +131,6 @@ ztoza					parked		2026-11-05 02:24	scout_1105: false-positive/non-spice/explain-
 1790576052982_qc0nn	chengk	hfeg0pgn022	26	spice_sim	case	EDA-Eval-DesignFlow-SpiceCfgDirMerge-001	2026-11-05 14:42	park-reframe: spice config dir tree merge tool (shdc+apps->merged) with specific-file diff report + iddsim hspice.sim.template keep-apps policy + non-specific backup + temp-file skip + whitespace-normalized diff; B-档 synthesized, L1, k=15
 1789019984423_xkg53					parked		2026-11-05 11:34	vague 'auto-run finesim sim' (3 terse user inputs, path cut at /home/), overlaps FineSimWorkflow
 1792637805938_w2p04					parked		2026-11-05 11:34	git repo setup for hspice BIST osc char folder (track changes, ignore fsdb), not spice sim
-1791966728738_ad3nu					parked		2026-11-05 11:34	finesim si.out warning analysis (log forensics of existing report), not sim/char
 1792375032414_3yoit					parked		2026-11-05 11:34	analyze spice_tb_stimulus skill directory (code/skill comprehension), not sim
 1791448973775_f8g40					parked		2026-11-05 11:34	compare runModelQA.pl vs refactored _new.pl, summarize multi-simulator innovations (code review), not sim
 1791956581291_28kiv					parked		2026-11-05 11:34	trivial file open inputpin.sp + copy to copy.sp, not spice char
@@ -155,3 +154,4 @@ vbxlf.messages.json	jason17w	hfeg0pnd002	262	spice_sim	parked		2026-11-05 12:30	
 1786016997085_60584.messages.json					parked		2026-11-05 13:00	virtuoso/cellview/calibre schematic/layout task (e0014566), hspice:2 incidental; not spice_char
 1791420858846_g3ud6.messages.json					case	EDA-Eval-DesignFlow-GmidSizingSearch-001	2026-11-05 15:42	park-reframe->case: GmidSizingSearch-001 (spice_sim, faithful A-track U[0], L1 portable reframe). gm/id LUT-based sizing search (consumer of LUT, distinct from GmidLut-001 LUT extraction). 48-row NMOS LUT A + hidden PMOS B (shuffled cols + vth_est decoy); 15 conds (a-o); ref 15/15 PASS; 6 neg ALL-FAIL distinct{a,g,i,j,n}; §4.9 trio{a,j,i}=3; NEG_RC=0; k=15 GATE PASS; jsonl line 80 test byte-synced (md5 1317e12e)
 1790580241881_fbdaa	joeyl	hfeg0plg74	10	spice_sim	case	EDA-Eval-DesignFlow-PowerNoiseInject-001	2026-11-05 13:23	
+1791966728738_ad3nu.messages.json	zxtu	hfeg0pkn002	19	spice_sim	case	EDA-Eval-DesignFlow-SiOutWarnDiag-001	2026-11-05 18:10	
