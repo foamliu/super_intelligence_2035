@@ -300,7 +300,7 @@
 1792201903562_gh1ex.messages.json					parked		2026-11-05 06:49	D262-peek-unfit
 1793773107836_90vlt.messages.json					parked		2026-11-05 06:49	D262-peek-unfit
 1793351374740_3xkcq.messages.json					parked		2026-11-05 06:49	D262-peek-unfit
-1793668052150_wp5jq.messages.json	curryxu	hfeg0pkn001	243	waveform	case	EDA-Eval-DesignFlow-FifoTbStimGen-001	2026-11-05 07:49	
+1793668052150_wp5jq.messages.json	curryxu	hfeg0pkn001	243	waveform	parked	EDA-Eval-DesignFlow-FifoTbStimGen-001	2026-11-05 08:52	DUP of #263 FifoTbStimGen
 1793668594900_amius.messages.json	pdsong	hfeg0pkn004	272	schematic_netlist	case	EDA-Eval-DesignFlow-CpmNetlistToSymbol-001	2026-11-05 08:08	
 1793690977457_sakf0.messages.json					parked		2026-11-05 08:09	D263-peek: root-cause TOOL_DIR fix request
 1793769280754_huszl.messages.json					parked		2026-11-05 08:09	D263-peek: circuit analysis (分析下这个电路)
@@ -372,3 +372,45 @@
 1793544152898_p8z88.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
 1792744504374_xpor0.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
 1792744504374_xpor0.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1793790756982_bjazn	gallopc	hfeg0pkn005	203	waveform	case	EDA-Eval-DesignFlow-FinesimMcConvert-001	2026-11-05 08:51	
+1792932765534_ufm37.messages.json					parked		2026-11-05 08:52	Q&A how-to: layout link schematic
+1792416455213_fxkr4.messages.archive.json					parked		2026-11-05 08:52	mid-conv HANDOFF continuation
+1792831214995_e8acx.messages.json					parked		2026-11-05 08:52	no real produce U#0
+1793084506490_ytldc.messages.json					parked		2026-11-05 08:52	RTL rewrite from Verilog (borderline, not shard-D netlist)
+1793082564833_dhqmb.messages.json					parked		2026-11-05 08:52	planning-first ('先构建计划和我确认')
+1792564977442_qjm2i.messages.json					parked		2026-11-05 08:52	calibre deck Q&A (shard C)
+1793321710783_8wqta.messages.json					parked		2026-11-05 08:52	capability Q&A 'can you modify cell'
+1793690069825_hf9ve.messages.json					parked		2026-11-05 08:52	DUP of #263 FifoTbStimGen
+1793690145277_z7n9b.messages.json					parked		2026-11-05 08:52	DUP of #263 FifoTbStimGen
+1793328202373_l4lnd.messages.json					parked		2026-11-05 08:52	doc Q&A 'read doc and answer'
+1793348866759_jj0x7.messages.json					parked		2026-11-05 08:52	netlist power-extract (considered, chose bjazn instead)
+1793004582104_1gz86.messages.json					parked		2026-11-05 08:52	analysis 'which cell to pick' Q&A
+1793180092850_scaqk.messages.json					parked		2026-11-05 08:52	Dummy QA setup (shard C calibre)
+1793346955766_iz8r1.messages.json					parked		2026-11-05 08:52	Q&A 'aether load local script'
+1793353206916_oj58x.messages.json					parked		2026-11-05 08:52	dup of iz8r1
+1793346704557_4j4es.messages.json					parked		2026-11-05 08:52	ERC marker mid-conv rewrite (root-cause given)
+1793784554206_v23sb.messages.json					parked		2026-11-05 08:52	genReleaseNote exploration (not shard D)
+1793599207907_i0izd.messages.json					parked		2026-11-05 08:52	skill-scaffold pinyin
+1793161126345_sls03.messages.json					parked		2026-11-05 08:52	boilerplate 'confirm project'
+1792548643848_5331g.messages.json					parked		2026-11-05 08:52	Aether add-pin interactive (too simple for 8 conds)
+1792479341771_hacfk.messages.json					parked		2026-11-05 08:52	primesim how-to Q&A
+1793598804317_2swgt.messages.json					parked		2026-11-05 08:52	skill-scaffold ai-skill-optimizer
+1792650376340_qgvp1.messages.json					parked		2026-11-05 08:52	setup Q&A 'start aether in home'
+1792980238183_sh05n.messages.json					parked		2026-11-05 08:52	how-to Q&A 'batch pin'
+1793324531319_9o809.messages.json					parked		2026-11-05 08:52	exploration 'analyze script mechanism'
+1793605922073_ets0m.messages.json					parked		2026-11-05 08:52	skill-scaffold 'identify m0'
+1792371906656_jyoob.messages.json					parked		2026-11-05 08:52	boilerplate 'open virtuoso'
+1793079368160_1mfc0.messages.json					parked		2026-11-05 08:52	netlist comparison Q&A
+1793667682319_64ztm.messages.json					parked		2026-11-05 08:52	planning-first QA pattern 'ask me before design'
+1792561232056_n8mtn.messages.json					parked		2026-11-05 08:52	Aether add-pin (too simple)
+1793760693424_2kkcq.messages.archive.json					parked		2026-11-05 08:52	ERC marker mid-conv continuation
+1793706971126_rsu2w.messages.json					parked		2026-11-05 08:52	stdcell web app mid-conv continuation
+1792837504776_sx4h2.messages.json					parked		2026-11-05 08:52	analysis+FSDB sim (L2 hard to verify offline)
+1792544257107_ui4d7.messages.json					parked		2026-11-05 08:52	root-cause debug net53 (user gives symptom)
+1793237820834_ihw8c.messages.json					parked		2026-11-05 08:52	script bug root-cause report
+1793774943418_sih3i.messages.json					parked		2026-11-05 08:52	dup of v23sb genReleaseNote
+1793069381553_sy1se.messages.archive.json					parked		2026-11-05 08:52	skip_via_connect mid-conv continuation
+1793340943310_2r0by.messages.json					parked		2026-11-05 08:52	no real produce U#0
+1793151796079_y2h4b.messages.json					parked		2026-11-05 08:52	LPDDR5 DCA/DCM Q&A
+1792564935844_vjaj6.messages.json					parked		2026-11-05 08:52	calibre copy-connect Q&A
+1793000252239_9jz8x.messages.archive.json					parked		2026-11-05 08:52	mid-conv code review continuation
