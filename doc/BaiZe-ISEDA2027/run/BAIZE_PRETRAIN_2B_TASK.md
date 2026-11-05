@@ -31,6 +31,30 @@
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### 🚀 运维令 · 2026-11-05 18:2x（**继续评测 60k–100k 五个检查点**：10 点常识曲线 + 700k 重拟合 + 报告 v2）· 用户直令 · 最高优先
+
+> 用户原话（2026-11-05 18:1x）：「pretrain：继续评测 6w-10w 5个检查点（10w还没出，但当你完成9w时，应该已经出了）」
+
+**① 背景与前置（全部复用，勿重造）**
+- 上一轮 10k–50k 已交付：`reports/report_pretrain_llamacpp_scaling_zh.html`（17,777B / 6 节，5×8 表 + 曲线 + 700k 外推 60.16% / R²=0.792），生成器 `run/gen_llamacpp_scaling_report.py`（514 行），results 在 `nemo_experiments/baize2b/lm_eval_results/gguf_iter_{10000..50000}_fixed_8set/`。
+- 管线：`run/pretrain_cpu_eval_gguf/04_run_one_ckpt.sh <iter> --limit 100 --threads <n>`（转 GGUF → 起 llama-server → 分词对拍 → 8 集 → 收服）。llama.cpp 修复分支 `fix/nemotron-h-undo-permute-and-rope`（build 5dc38db00）已就位，**勿换 binary**。
+- 8 集口径不变：`arc_challenge, arc_easy, boolq, hellaswag, openbookqa, piqa, sciq, winogrande`（zero-shot，`--limit 100`，F16）。
+
+**② 本轮必做（按顺序）**
+1. **盘点 ckpt（先做，30 分钟内出结论）**：列 `nemo_experiments/baize2b/hf_iter_{60000,70000,80000,90000,100000}` 与 S1 ckpt 实际在位情况；缺 HF 导出的按既有 `01_convert_hf_to_gguf.sh` 上游口径从 NeMo ckpt 导出。把「在位清单 + 每个 ckpt 的 mtime」写进心跳。
+2. **逐个评测 60k → 70k → 80k → 90k**：每个 ckpt 一完成立即落 `lm_eval_results/gguf_iter_<it>_fixed_8set/{results.json,meta.json}`，并在 `MEMORY_PRETRAIN_2B.md` 记 1 行（iter + 8 集 Avg），防上下文丢失。单 ckpt 参考 ~74 min。
+3. **等 100k**：预计 90k 跑完时已导出（S1 约 500 iter/h）。每 10–15 min 查一次 `hf_iter_100000`，出现即评。**若 90k 完成后 100k 仍未出**：先交付 60k–90k 版本并显式标 `100k pending`，`WAITING: 0` 继续每 10 min 轮询，出齐后补评并刷新报告；🚫 不许用预测值冒充实测。
+4. **10 点汇总表**：iter 10k–100k × 8 集 + Avg + 已训 token（iter×4.194M）。旧 5 点原样保留，口径必须一致（同 binary / 同 limit / 同 F16）。
+5. **曲线升级**：x=iter(log) 10 点 Avg 粗线 + 逐集细线；标出 50k→60k 的斜率变化（decay 前后是否出现拐点）。
+6. **700k 预测重拟合**：用 10 点重拟合对数 `acc=a+b·log10(N)` 与幂律 `a-b·N^-c`，报 R²、两模型差异、外推 700k 值与不确定度；与上一轮 60.16% 对照，说明数据点翻倍后结论是否改变。
+7. **报告 v2**：新建 `reports/report_pretrain_llamacpp_scaling_60k_100k_zh.html`（中文、0 `<script>`/0 外链，含 10×8 表 + 曲线 + 重拟合 + llama.cpp vs HF 后端说明 + 诚实条款），**旧报告保留不动**。生成器改造：`TARGET_ITERS` 扩到 10 个，正文里硬编码的「5 个检查点」「n/5」改为 `len(TARGET_ITERS)` 动态值，并保证旧 5 点缺失时能降级运行。
+
+**③ 交付**：① 10×8 汇总表 ② 10 点能力曲线（SVG 内联）③ 700k 重拟合 + R² + 不确定度 + 与上轮对照 ④ v2 报告 + 改造后生成器（幂等，两次运行输出逐字节相同）⑤ `gguf_iter_{60000..100000}_fixed_8set/` results.json 全在。
+
+**④ 纪律**：`CUDA_VISIBLE_DEVICES=""` 全程、`nice -n 19`、线程数取空闲核但**两机 CPU ≤80%**；🚫 不碰 GPU / S1 训练 / vision / data / harness；🚫 禁止 `pkill python` 或宽泛 kill（只 kill 自己的 llama-server 端口）；结果 JSON 按硬约束**不入库**（`.gitignore` 已覆盖）；commit `pretrain eval:`；心跳写 `未完成指令：有` ⇒ `WAITING: 0`，直到 v2 报告交付。
+
+> **完成标记**：10/10 ckpt 全出 ⇒ 标 `✅ 10点已交付`；100k 未出时只能标 `⏳ 60–90k 已交付 / 100k pending`，且 `WAITING: 0`。
+
 ### [已完成] 🚨 2026-11-05 09:0x 运维直令：llama.cpp 评测全部 checkpoint 8 集 + 能力曲线 + 700k 预测 · ✅ 已完成（#1403 2026-11-05 16:38 交付 `reports/report_pretrain_llamacpp_scaling_zh.html` 17777B/6节，5/5 ckpt Avg 51.50%→52.00%→53.00%→55.12%→54.25%，700k 对数拟合 R²=0.792→外推 60.16%（不确定度明示），sciq 全恢复非NaN 证实非ckpt权重问题，生成器 gen_llamacpp_scaling_report.py 514行，5/5 results.json 落盘 gguf_iter_*_fixed_8set/；commit b8669b0de+bd812d0c0）→ 原文归档到 `run/ARCHIVE_OPERATOR_PRETRAIN.md`「归档 2026-11-05 第七批」节。需要时再读。
 
 > 📦 §运维令 2026-11-04 22:1x（llama.cpp 调试每环节落盘 + 清理残留）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md「归档 2026-11-05 第六批」节；**结论**：✅ A-E 检查点全有结论(A/B/D=PASS, C=FAIL dt-clamp 影响小 1/64 head), 残留已清(llama-server 11→0, GGUF 34G→13G), 根因已定位。需要时再读。

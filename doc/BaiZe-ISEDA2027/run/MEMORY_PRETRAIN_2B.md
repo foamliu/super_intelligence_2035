@@ -1,5 +1,5 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
-WAITING: 1
+WAITING: 0
 > 🛑 **【运维通告 · 2026-11-02 19:51】S1 已由 ops 中继重启并在跑**：`bash scripts/train.sh s1 --nodes 2`，launcher pid **4163528**，从 **ckpt 58000** 续（19:55:40 起 iter **58010**→58030，7.0–7.2 s/step ≈**582K tok/s**，双机 16 卡 **98–100%**、~75GB/卡、~690W）。⇒ **GPU 不再空闲**：🚫 严禁再起任何训练/GPU 评测进程；CPU 评测必须降载：`OMP_NUM_THREADS≤8` + `nice -n 19`，**禁止 `pkill python`**。
 > 2026-11-05 18:02 #1407: ★ 例行空唤醒巡检·无新令·全绿。运维令11-05 09:0x仍✅已交付(报告+生成器+5/5 results.json在位)。S1健康(.29 8卡96-100%/~75GB/~684W训练中,torchrun alive)、无残留eval/watch进程、git up to date(无pretrain待提交,他线在途文件未碰)。📦 体积:TASK=25645B(25.0KB✓)/MEMORY≈32400B(31.6KB✓)。未完成指令:**无**⇒ WAITING: 1。
 > 2026-11-05 17:40 #1406: ★ 空唤醒巡检·运维令 11-05 09:0x 已✅交付·本轮归档收口。复核交付物全在位,已将运维令块原文归档→ARCHIVE(413927→417979B),TASK留1行✅指针(27955→25645B)。📦 体积:TASK=25645B(25.0KB✓)/MEMORY=31377B(30.6KB✓)。未完成指令:**无**⇒ WAITING: 1。
