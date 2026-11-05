@@ -25643,3 +25643,158 @@ DeprecationWarning: AI SDK Warning (openai-compatible.chat / glm-5.2): Deprecate
 
 === DONE 243 ===
 ```
+
+---
+
+## RUN_ID 244 · 2026-11-05 22:09:19 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 244 | pretrain 80k & session-loop probe (read-only) | $(date '+%F %T') | host=$(hostname) ==="
+echo
+echo "[1] 机器负载 / 核数"
+nproc; uptime
+echo
+echo "[2] cline 会话（pretrain）"
+CL=$(ps -eo pid,etimes,pcpu,rss,args --no-headers 2>/dev/null | grep -F 'data-dir /nas_train/app.e0031982/.cline_pretrain' | grep -v grep | awk '{print $1}' | head -1)
+echo "cline_pid=${CL:-none}"
+[ -n "${CL:-}" ] && ps -o pid,etimes,pcpu,pmem,rss,nlwp --no-headers -p "$CL" 2>/dev/null
+[ -n "${CL:-}" ] && echo "--- children ---" && ps -o pid,etimes,pcpu,args --no-headers --ppid "$CL" 2>/dev/null | cut -c1-160 | head -6
+echo
+echo "[3] loop 日志：最近 30 行 + 工具调用计数（判是否绕圈）"
+tail -30 /tmp/baize_pretrain_loop.log 2>/dev/null | cut -c1-180
+echo "--- 近 2000 行内工具调用计数 ---"
+tail -2000 /tmp/baize_pretrain_loop.log 2>/dev/null | grep -c 'search_codebase' | sed 's/^/search_codebase=/'
+tail -2000 /tmp/baize_pretrain_loop.log 2>/dev/null | grep -c 'run_commands' | sed 's/^/run_commands=/'
+tail -2000 /tmp/baize_pretrain_loop.log 2>/dev/null | grep -c 'read_files' | sed 's/^/read_files=/'
+echo
+echo "[4] 评测管线 / 当前 server"
+PIPE=$(pgrep -f 'baize_eval_60k_100k_pipeline' | head -1); echo "pipeline_pid=${PIPE:-none}"
+[ -n "${PIPE:-}" ] && ps -o pid,etimes,pcpu,args --no-headers -p "$PIPE" | cut -c1-160
+pgrep -af 'llama-server' 2>/dev/null | head -2 | cut -c1-220
+echo "--- eval 日志尾 8 行 ---"
+tail -8 /tmp/baize_eval_60k_100k.log 2>/dev/null | cut -c1-180
+echo
+echo "[5] results.json 落盘 + 60k/70k 逐项分数"
+R=/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/lm_eval_results
+for it in 60000 70000 80000 90000; do
+  f=$R/gguf_iter_${it}_fixed_8set/results.json
+  if [ -f "$f" ]; then stat -c "iter_$it results.json mtime=%y size=%s" "$f"; else echo "iter_$it results.json MISSING"; fi
+done
+/nas_train/app.e0031982/miniforge3/envs/py310/bin/python - <<'PY' 2>/dev/null || echo "(python parse skipped)"
+import json, os
+R="/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/lm_eval_results"
+TASKS=["arc_challenge","arc_easy","boolq","hellaswag","openbookqa","piqa","sciq","winogrande"]
+for it in (60000,70000,80000):
+    p=os.path.join(R,f"gguf_iter_{it}_fixed_8set","results.json")
+    if not os.path.exists(p): print(f"iter_{it}: MISSING"); continue
+    d=json.load(open(p)).get("results",{})
+    vals=[]
+    for t in TASKS:
+        v=d.get(t,{})
+        a=v.get("acc,none", v.get("acc", None))
+        if a is None:
+            a=v.get("acc_norm,none", v.get("acc_norm", None))
+        vals.append((t,a))
+    ok=[a for _,a in vals if isinstance(a,(int,float))]
+    avg=sum(ok)/len(ok) if ok else float("nan")
+    print(f"iter_{it}: " + " ".join(f"{t}={a*100:.1f}" if isinstance(a,(int,float)) else f"{t}=NA" for t,a in vals) + f" | AVG={avg*100:.2f}")
+PY
+echo
+echo "[6] S1 训练最新 iter"
+grep -aE 'iteration +[0-9]+/' /tmp/baize_s1_baize2b_worker.log 2>/dev/null | tail -2 | cut -c1-200
+echo
+echo "[7] .29 克隆内 pretrain 线最近提交 / HEAD"
+cd /nas_train/app.e0031982/code/super_intelligence_2035 2>/dev/null && {
+  git log -2 --pretty='%h %ad %s' --date=format:'%m-%d %H:%M' -- doc/BaiZe-ISEDA2027/run/MEMORY_PRETRAIN_2B.md | cut -c1-140
+  echo "clone_HEAD=$(git rev-parse --short HEAD) behind=$(git rev-list --count HEAD..origin/main 2>/dev/null)"
+}
+echo
+echo "=== DONE 244 ==="
+```
+
+**输出**
+```
+=== RUN_ID 244 | pretrain 80k & session-loop probe (read-only) | 2026-11-05 22:09:19 | host=whag0pgpuap29 ===
+
+[1] 机器负载 / 核数
+224
+ 22:09:19 up 279 days,  8:58, 16 users,  load average: 30.36, 30.09, 30.14
+
+[2] cline 会话（pretrain）
+cline_pid=3640274
+3640274    8297 99.9  0.0 454300  97
+--- children ---
+
+[3] loop 日志：最近 30 行 + 工具调用计数（判是否绕圈）
+[0m[2m- GG[0m[2mUF: 10[0m[2mk-60k[0m[2m done (6 files[0m[2m), 70[0m[2mk/80[0m[2mk/90k[0m[2m pending[0m[2m
+- results.json[0m[2m: 5/[0m[2m10 done (10[0m[2mk-50k[0m[2m), 60k[0m[2m eval IN[0m[2m PROGRESS (pipeline[0m[2m PID[0m[2m 35439[0m[2m61 running[0m[2m, llama-serve
+-[0m[2m The[0m[2m 60k eval[0m[2m server[0m[2m log is at[0m[2m 14.6[0m[2mMB out[0m[2m of ~[0m[2m16MB[0m[2m (the[0m[2m completed[0m[2m ones are ~15[0m[2m.97[
+-[0m[2m The report[0m[2m generator already has TARGET[0m[2m_ITERS=[[0m[2m100[0m[2m00..100[0m[2m000] and[0m[2m REPORT_PATH pointing[0m[2m to the v[0m[2m2 report[0
+
+The[0m[2m pipeline is running autonom[0m[2mously. The [0m[2m60k eval is[0m[2m nearly complete[0m[2m ([0m[2mserver log 14[0m[2m.69[0m[2mMB vs[0m[2m ~15[0m[2m.97M
+
+Let me check[0m[2m:
+1. The[0m[2m pipeline[0m[2m driver[0m[2m script (to[0m[2m see[0m[2m if it auto[0m[2m-adv[0m[2mances to 70[0m[2mk/80k[0m[2m/90k)
+[0m[2m2. How[0m[2m close 60k[0m[2m is to finishing[0m[2m
+3[0m[2m. Check[0m[2m [0m[2m100k training[0m[2m progress[0m[2m on[0m[2m .29
+
+Let[0m[2m me look[0m[2m at the pipeline log[0m[2m and the pipeline[0m[2m driver.[0m
+The pipeline is running 60k eval (~92% done based on server log size). Let me check the pipeline driver script to see if it auto-advances to 70k/80k/90k, and check 60k progress + 1
+[36m[run_commands][0m cat /tmp/baize_eval_pipeline_v2.log 2>/dev/null | tail -40; wc -l /tmp/baize_server_60000.log; tail -5 /tmp/baize_ser...
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / glm-5.2): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)
+      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)
+      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / glm-5.2): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)
+      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)
+      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)
+
+   [90m⎿ [0m[2mpiqa/name: piqa   piqa/alias: piqa   piqa/sample_len: 100.0000   piqa/acc,non... (+3 more)[0m
+[36m[search_codebase][0m baize_eval_pipeline.*\.sh, for.*iter.*in.*60000|TARGET_ITERS|gguf_lmeval_run
+   [90m⎿ [0m[32mok[0m
+[36m[run_commands][0m ls -la --time-style=long-iso /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/ | grep -E 'iter_|...
+   [90m⎿ [0m[2mdrwxr-x---   2 app.e0031982 app.adm  4096 2026-11-04 23:49 hf_iter_10000 drwx...[0m
+--- 近 2000 行内工具调用计数 ---
+search_codebase=1
+run_commands=45
+read_files=9
+
+[4] 评测管线 / 当前 server
+pipeline_pid=3543961
+3543961   11869  0.0 bash /tmp/baize_eval_60k_100k_pipeline.sh
+443329 /nas_train/app.e0031982/code/llama.cpp/build/bin/llama-server -m /nas_train/app.e0031982/models/baize2b_gguf/bz2b-90000-f16.gguf -t 8 -tb 8 -c 4096 --parallel 2 --host 127.0.0.1 --port 8090 --no-warmup --metrics -
+3640274 cline --data-dir /nas_train/app.e0031982/.cline_pretrain -c /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run --auto-approve true -m glm-5.2 -k 02_088EE9051AAE4BF0ABFC7130331BF697_c2759
+--- eval 日志尾 8 行 ---
+Writing:   0%|          | 0.00/4.44G [00:00<?, ?byte/s]Writing:  12%|█▏        | 530M/4.44G [00:01<00:12, 315Mbyte/s]Writing:  13%|█▎        | 572M/4.44G [00:01<00:13, 2
+INFO:hf-to-gguf:Model successfully exported to /nas_train/app.e0031982/models/baize2b_gguf/bz2b-90000-f16.gguf
+-rw-r----- 1 app.e0031982 app.adm 4.2G Nov  5 22:01 /nas_train/app.e0031982/models/baize2b_gguf/bz2b-90000-f16.gguf
+[convert] 冒烟：llama-tokenize
+0.00.657.635 W llama_context: n_ctx_seq (512) > n_ctx_train (0) -- possible training context overflow
+[671, 6102, 294, 8760, 344]
+[convert] DONE: /nas_train/app.e0031982/models/baize2b_gguf/bz2b-90000-f16.gguf
+[pipeline] === eval iter_90000 ===
+
+[5] results.json 落盘 + 60k/70k 逐项分数
+iter_60000 results.json mtime=2026-11-05 19:56:02.991137710 +0800 size=22810
+iter_70000 results.json mtime=2026-11-05 20:57:24.761965730 +0800 size=22808
+iter_80000 results.json mtime=2026-11-05 22:00:54.508296320 +0800 size=22810
+iter_90000 results.json MISSING
+iter_60000: arc_challenge=31.0 arc_easy=58.0 boolq=58.0 hellaswag=39.0 openbookqa=22.0 piqa=69.0 sciq=80.0 winogrande=47.0 | AVG=50.50
+iter_70000: arc_challenge=29.0 arc_easy=58.0 boolq=68.0 hellaswag=40.0 openbookqa=21.0 piqa=73.0 sciq=84.0 winogrande=51.0 | AVG=53.00
+iter_80000: arc_challenge=36.0 arc_easy=56.0 boolq=66.0 hellaswag=41.0 openbookqa=22.0 piqa=70.0 sciq=84.0 winogrande=59.0 | AVG=54.25
+
+[6] S1 训练最新 iter
+ [2026-11-05 22:07:04] iteration    96130/  700000 | consumed samples:     24609280 | elapsed time per iteration (ms): 6954.8 | learning rate: 1.000000E-03 | global batch size:   256 | lm loss: 2.0725
+ [2026-11-05 22:08:15] iteration    96140/  700000 | consumed samples:     24611840 | elapsed time per iteration (ms): 7094.7 | learning rate: 1.000000E-03 | global batch size:   256 | lm loss: 2.0761
+
+[7] .29 克隆内 pretrain 线最近提交 / HEAD
+420f0abeb 11-05 19:49 pretrain #1418: 监控轮·ckpt盘点(60k/70k/80k/90k HF全在,100k训练94k)+管线自治健康(60k eval 86% ETA20:03
+574f19a16 11-05 19:43 pretrain #1417: 监控轮·60k eval~78%·管线自治健康·无新results不刷新v2报告·WAITING:0
+clone_HEAD=9c40072cf behind=0
+
+=== DONE 244 ===
+```
