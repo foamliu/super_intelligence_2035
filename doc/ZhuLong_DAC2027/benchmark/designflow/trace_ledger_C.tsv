@@ -242,3 +242,5 @@
 1789874220542_wiait	xinqiaoz	hfeg0plg76	321	physical_verify	parked		2026-11-05 13:32	duplicates existing DrcLegacyFallback-001 (i4c8d) - same xinqiaoz DRC pattern legacy-fallback topic
 1792415342141_bzxqd	xinqiaoz	hfeg0plg76	308	physical_verify	case	EDA-Eval-DesignFlow-DummyCfgCheck-001	2026-11-05 13:44	
 1786534284539_1o5rd	e0014566	hfeg0plg58	128	layout_virtuoso	case	EDA-Eval-DesignFlow-LayoutEditDiag-001	2026-11-05 14:31	
+1791944224191_6i6lk	jason17w	hfeg0pnd002	328	physical_verify	parked		2026-11-05 14:52	VPS verilog regression orchestration (run_approved_command/editor), not physical_layout; keyword netlist+virtuoso was verilogrun not layout
+1786071213100_05wcx	e0014566	hfeg0pkn001	245	layout_virtuoso	case	EDA-Eval-DesignFlow-PGTierTunerDecision-001	2026-11-05 15:11	
