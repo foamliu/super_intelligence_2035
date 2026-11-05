@@ -2,7 +2,9 @@
 
 WAITING: 0
 
-> 🆕 **【wake #719 · 2026-11-06 06:48】监控巡检·状态无变化·双poller健康·GPU仍满载·仅待GPU**。无新运维令。git fetch→origin/main 0ahead/0behind(已同步,HEAD=173c848a8 pretrain eval 06:45)。**GPU实测**：.12 8×H100 100%util/~75GB(R9 pretrain)全占,ETA≈11/25-27。**双poller健康**：SFT PID2757742(ppid=1,etimes≈39588~11h,60s poll,最后06:47:50 busy_util--waiting)+GRPO chain PID2428009(ppid=1,etimes≈29576~8.2h,120s poll,最后06:46:17 SFT not done yet)。sft_output/+eval_results.json不存在(预期·GPU被占)。Phase1 CPU侧100%就绪,唯一阻塞=GPU。📦体积：TASK=30453B(29.7KB)/MEMORY=21.2KB（均≤32KB✓）。**未完成指令：有**（阶段1 GPU训练pending+阶段2/3未交付）⇒**WAITING: 0**。
+> 🆕 **【wake #720 · 2026-11-06 06:52】监控巡检·状态无变化·双poller健康·GPU仍满载·仅待GPU**。无新运维令。git fetch→origin/main 0ahead/0behind(已同步,HEAD=d2b506814 vision auto-commit 06:50)。**GPU实测**：.12 8×H100 96-100%util/~75GB(R9 pretrain)全占,ETA≈11/25-27。**双poller健康**：SFT PID2757742(ppid=1,etimes≈39900~11h,60s poll,最后06:51:52 busy_util--waiting)+GRPO chain PID2428009(ppid=1,etimes≈29880~8.3h,120s poll,最后06:52:17 SFT not done yet)。sft_output/+eval_results.json不存在(预期·GPU被占)。Phase1 CPU侧100%就绪,唯一阻塞=GPU。📦体积：TASK=30453B(29.7KB)/MEMORY=21.8KB（均≤32KB✓）。**未完成指令：有**（阶段1 GPU训练pending+阶段2/3未交付）⇒**WAITING: 0**。
+
+> 📦 wake #719（监控巡检·2026-11-06 06:48·状态无变化·双poller健康·GPU仍满载·仅待GPU）已归档 → daily-memories-vision/2026-11-06.md；**结论**：状态无变化，全管线就绪仅待GPU。需要时再读。
 
 > 📦 wake #718（监控巡检·2026-11-06 06:43·状态无变化·双poller健康·GPU仍满载·仅待GPU）已归档 → daily-memories-vision/2026-11-06.md；**结论**：状态无变化，全管线就绪仅待GPU。需要时再读。
 
