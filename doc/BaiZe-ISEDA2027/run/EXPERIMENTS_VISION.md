@@ -2281,3 +2281,32 @@ ngspice .raw 实测：`ngspice -b test.cir` → 646 点 × 3 变量 binary doubl
 
 **数字溯源**：`grpo_train_wave.py --smoke_test` 实测 stdout（已存 `grpo_smoke_test_result.txt`）。
 
+### §20.15 · Pre-SFT 基线评测扩展：30 样本 × 7 电路类型（wake#623 · 2026-11-05 22:0x · CPU-only）
+
+**目的**：§20.13 仅用 3 样本验证 eval 管线，样本量不足以确认基线鲁棒性。本节扩展至 30 样本，覆盖全部 7 类电路 + 4 类量测目标，建立更可靠的 pre-SFT 统计基线，供 Phase 1 报告对比。
+
+**方法**：`eval_sft_wave.py --device cpu --max_eval 30 --max_new_tokens 256 --verbose`，模型 = 2B 文本骨干（§20.12 提取的 `qwen3vl_2b_text_extracted`，无 LoRA adapter），eval 文件 = `sft_holdout_500.jsonl` 前 30 条。
+
+**结果**（28.3s，30/30 完成）：
+
+| 指标 | 值 | 预注册目标 |
+|:--|:--|:--|
+| Format correctness | **100.0%** (30/30) | ≥90% |
+| Submit success rate | **0.0%** (0/30) | ≥70% |
+| Numerical acc (rel<1%) | 0.0% | — |
+| Numerical acc (rel<5%) | 0.0% | — |
+| PASS | False | — |
+
+**电路类型分布**：inverter(7) / lc_tank(6) / ring_osc(5) / diffpair(5) / rc_pulse(4) / rl(2) / rc(1)——7 类全覆盖。量测目标：period / amplitude / rise_time / duty_cycle 全覆盖。
+
+**分析**：
+- **Format 100%**：2B 文本骨干在所有 30 个 prompt 上均生成了含 `open(`/`get_signal(`/`get_values(`/`dump_hier(`/`submit(` 之一的响应（valid tool pattern），说明模型从 system prompt 的格式描述中学会了工具调用语法——但仅限于格式模仿，无实质量测。
+- **Submit 0%**：30/30 均未生成 `submit(type, numeric_value)` 格式——模型不会完成完整的多步 tool-use 链（open→get_signal→get_values→submit），这正是 SFT 冷启动需要教的核心能力。
+- **与 §20.13（3 样本）一致**：3→30 样本结果完全一致（format 100% / submit 0%），确认 §20.13 基线非小样本偶然。
+
+**意义**：此为 SFT 训练前的可靠基线。Phase 1 SFT 后目标 = format ≥90%（已达标，SFT 应保持）+ submit ≥70%（当前 0%，需 SFT 教会完整 tool-use 链）。submit 0%→70% 的跃升 = SFT 的核心学习目标。
+
+**交付物**：`vision/wave_rl/eval_baseline_pre_sft_30.json`（30 样本完整结果 + per_sample）+ 本节。
+
+**数字溯源**：`eval_sft_wave.py --device cpu` 实测 stdout（`/tmp/eval_baseline_30_v2.log`）+ JSON 输出 `eval_baseline_pre_sft_30.json`。成本：28.3s CPU（224 核 / OMP_NUM_THREADS=32）。
+
