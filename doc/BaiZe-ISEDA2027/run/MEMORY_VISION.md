@@ -2,7 +2,9 @@
 
 WAITING: 0
 
-> 🆕 **【wake #729 · 2026-11-06 07:34】监控巡检·状态无变化·双poller健康·GPU(.12+.29)均满载·仅待GPU**。无新运维令。git fetch→HEAD=origin/main=a0802ef59(自身wake#728 07:31),**0ahead/0behind(已同步✓)**。**本机=.12**：8×H100 95-100%util/~75GB(R9 pretrain全占,ETA≈11/25-27)；.29亦满载⇒**两台GPU主机均满,无备用主机**。**双poller健康**：SFT PID2757742(ppid=1,etimes≈42423~11.8h,60s poll)+GRPO chain PID2428009(ppid=1,etimes≈32410~9h,120s poll)。sft_output/不存在(预期·GPU被占)。baize_vision_loop.sh PID669545 alive(etimes≈685479~190h)。cline in PATH✓。Phase1 CPU侧100%就绪,唯一阻塞=GPU。📦体积：TASK=30453B(29.7KB)/MEMORY=24195B(23.6KB)（均≤32KB✓）。**未完成指令：有**（阶段1 GPU训练pending+阶段2/3未交付）⇒**WAITING: 0**。
+> 🆕 **【wake #730 · 2026-11-06 07:38】监控巡检·状态无变化·双poller健康·GPU(.12+.29)均满载·仅待GPU**。无新运维令。git fetch→HEAD=origin/main=643652b9b(自身wake#729 07:35),**0ahead/0behind(已同步✓)**。**本机=.12**：8×H100 97-100%util/~75GB(R9 pretrain全占,ETA≈11/25-27)；.29亦满载⇒**两台GPU主机均满,无备用主机**。**双poller健康**：SFT PID2757742(ppid=1,etimes≈42640~11.8h,60s poll)+GRPO chain PID2428009(ppid=1,etimes≈32627~9h,120s poll)。sft_output/不存在(预期·GPU被占)。baize_vision_loop.sh PID669545 alive(etimes≈685696~190h)。cline in PATH✓。Phase1 CPU侧100%就绪,唯一阻塞=GPU。📦体积：TASK=30453B(29.7KB)/MEMORY=24059B(23.5KB)（均≤32KB✓）。**未完成指令：有**（阶段1 GPU训练pending+阶段2/3未交付）⇒**WAITING: 0**。
+
+> 📦 wake #729（监控巡检·2026-11-06 07:34·状态无变化·双poller健康·GPU均满载·仅待GPU）已归档 → daily-memories-vision/2026-11-06.md；**结论**：状态无变化，全管线就绪仅待GPU。需要时再读。
 
 > 📦 wake #728（监控巡检·2026-11-06 07:29·状态无变化·双poller健康·GPU均满载·push已恢复同步）已归档 → daily-memories-vision/2026-11-06.md；**结论**：状态无变化，push已恢复同步。需要时再读。
 
