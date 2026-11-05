@@ -707,3 +707,10 @@
 1793260588783_5b9po					parked		2026-11-05 16:23	peek275 unfit (Q&A/continuation/analysis/skill-loading/agent-scaffold/debug)
 1792215728595_u7a72					parked		2026-11-05 16:23	peek275 unfit (Q&A/continuation/analysis/skill-loading/agent-scaffold/debug)
 1793589408208_roznq					parked		2026-11-05 16:23	peek275 unfit (Q&A/continuation/analysis/skill-loading/agent-scaffold/debug)
+1793679618975_i1zyw	e0030760	hfeg0pkn002	1000	analog_context	case	EDA-Eval-DesignFlow-BitcellMcSpGen-001	2026-11-05 17:18	
+1793673912018_j4pvk					parked		2026-11-05 17:00	skill-creator vps-cli, not D-domain produce
+1791791874710_8wvr6					parked		2026-11-05 17:00	skill-creator vps-cli dup, not D-domain produce
+1792043028504_5szsv					parked		2026-11-05 17:00	netlist-diff analysis Q&A (analyze differences), not produce
+1789536167863_upag1					parked		2026-11-05 17:00	vsim perl script explanation Q&A, not produce
+1791511922122_hwbr5					parked		2026-11-05 17:00	terse FSDB extraction request, ambiguous deliverable, not clean produce
+1789624328007_44lwy					parked		2026-11-05 17:00	skill-creator autocell-tcl-flow, not D-domain produce
