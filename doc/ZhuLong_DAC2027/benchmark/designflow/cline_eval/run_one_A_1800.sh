@@ -259,7 +259,15 @@ IMPORTANT tool usage rules (the built-in run_commands/bash/shell tools will NOT 
   if [ "$CLINE_EXIT" -eq 137 ] && [ "$STALL_HIT" = "0" ]; then
     TIMEOUT_HIT=1
   fi
-  set -e
+  # r133 fix (r132 harness bug): do NOT re-enable `set -e` here. With -e on, a
+  # non-zero return anywhere in steps 3b/4 (e.g. `find` on a missing dir under
+  # pipefail, or a guarded `cp` that hits `|| true` but a preceding command in
+  # the same pipeline fails) aborts the script BEFORE the status-write step 5 →
+  # cline_eval_status.jsonl never gets a record for OS-timeout/empty-outputs
+  # FAILs, forcing manual补记 every time. Status write is the critical last
+  # step and must always run; keep -e off (top-level `set -uo pipefail` still
+  # guards unbound vars).
+  set +e
   END=$(date +%s)
   DUR=$((END-START))
   log "   cline exit=$CLINE_EXIT dur=${DUR}s timeout_hit=$TIMEOUT_HIT stall_hit=$STALL_HIT"
