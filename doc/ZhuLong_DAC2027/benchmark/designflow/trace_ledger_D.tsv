@@ -1010,3 +1010,17 @@ wl9i4					parked		2026-11-05 22:49	交互shell驱动+Q&A n752大
 1790572773219_t5osd					parked		2026-11-06 05:58	Gaussian power-noise PWL generator (spice_sim/stimulus, not shard-D core); overlaps existing PowerNoiseInject-001 (same user joeyl); deferred
 1793865966161_rkdu8					parked		2026-11-06 05:58	duplicate of 0t51l (same user yuankong, same mmsim.ini/netlist schematic-view task, fewer msgs)
 1793004342339_tvmwg					parked		2026-11-06 05:58	analysis Q&A (which cell to pick for tCS/WR_Time measurement), not produce
+1790143934595_0nar3	qifanli	10.129.8.233	41	schematic_netlist	case	EDA-Eval-DesignFlow-InvPulseStimTb-001	2026-11-06 06:33	
+1793857029039_ybagc					parked		2026-11-06 06:33	premise-missing: DSPF parasitic C extraction, /rundata netlist + mid-conv dependent on prior analysis state
+1793243641918_xcuds					parked		2026-11-06 06:33	skill-creator/meta: sim-sp-gen skill editing (measure/SPEC naming), not a clean produce-task
+1793870063634_h15ge					parked		2026-11-06 06:33	open-ended analog sizing (feedback time<60ps + I_total min, iterate MOS params via live finesim), /rundata, L2-live
+1792636294858_tzf35					parked		2026-11-06 06:33	list cells in /proj Virtuoso paths + organize pins, premise-dependent (each turn builds on prior), needs live Virtuoso
+1792378406572_w35il					parked		2026-11-06 06:33	only 1 user turn (verilog module msax512_fbcc paste, no explicit goal stated), ambiguous/truncated
+1788513689914_ayl62					parked		2026-11-06 06:33	U#1 select 10 corners into tck_clk_10corner.sp + run finesim in /rundata, L2-run-sim + /rundata dependent; rest meta/policy Q&A
+1793178408819_r4p2e					parked		2026-11-06 06:33	MC .md0 RON mismatch analysis, /proj dependent, mid-conv multi-turn refinement (csv/column/format)
+1793775630003_zq47k					parked		2026-11-06 06:33	waveview GUI plot/display/open in current window, live-window dependent (not offline-checkable)
+1792399464748_u052a					parked		2026-11-06 06:33	read/interpret files + explain folders, Q&A/analysis (not produce)
+1791463574990_um5we					parked		2026-11-06 06:33	run_compress seed-sharing analysis + find-files script, /proj dependent, analysis/debug
+1791792142076_m5mka					parked		2026-11-06 06:33	DQSELH/DQSEL_LH/SK1P6 Q&A + write-task PSD mapping table, analysis/Q&A (not produce)
+1792136824277_g5bbp					parked		2026-11-06 06:33	root-cause debug (why inh_vintlp goes x on Read), 1-turn analysis (user gave the symptom = root-cause turn)
+1793677026220_gm1z2					parked		2026-11-06 06:33	multi-step PWL net-name remap + voltage scaling, /proj dependent, premise-dependent multi-turn refinement
