@@ -925,3 +925,43 @@ wl9i4					parked		2026-11-05 22:49	交互shell驱动+Q&A n752大
 1790145346740_n1crk					parked		2026-11-06 03:23	skill-scenario: AutoCell TCL flow generator slash-command; wrong domain
 1789465514819_9f0ra					parked		2026-11-06 03:23	vague trigger (启动业务场景:仿真与验证) -> env overview Q&A; not a produce-task
 1789555682011_6j4hl					parked		2026-11-06 03:23	mid-conv: user pastes RunTrace signal edge trace-back output to continue debug; not a clean U#0 produce-task proposal
+1791954901303_1epl2	e0039602	10.129.8.136	95	schematic_netlist	case	EDA-Eval-DesignFlow-CellExpandGen-001	2026-11-06 04:11	
+1790751104057_raf93					parked		2026-11-06 04:12	skill-loading run-regression(U#0=skill_instructions)
+1791974592283_86fuo					parked		2026-11-06 04:12	how-to Q&A(怎么实现自动抽网表,无具体asset)
+1789710078047_rmlwl					parked		2026-11-06 04:12	trivial U#0(当前工作路径是什么)+doc-gen PDN
+1793017242561_zdwid					parked		2026-11-06 04:12	Q&A(svrf2pvrs工具能读吗)+root-cause debug DRC domain
+1791595952949_6c3cw					parked		2026-11-06 04:12	skill-loading netlist-timing-analyzer(U#0=skill_instructions)
+1792748499142_mbb60					parked		2026-11-06 04:12	skill-loading waveview-fsdb-readerV2-2(U#0=skill_instructions)+root-cause
+1790647247167_hoq7e					parked		2026-11-06 04:12	root-cause debug(DC不收敛,用户给假设'会不会是选项')
+1790063606033_0erlw					parked		2026-11-06 04:12	skill-loading run-regression(U#0=skill_instructions)
+1792137927597_f4kc0					parked		2026-11-06 04:12	Q&A(你能读波形吗)+代码分析Q&A
+1792040981126_o5xjq					parked		2026-11-06 04:12	skill-loading eda_agent(U#0=skill_instructions)
+1793012967002_19y5l					parked		2026-11-06 04:12	Q&A(文件什么意思)+how-to(probe电流)
+1789693148853_0tfi2					parked		2026-11-06 04:12	gibberish U#0(zl -cli)+premise-heavy PDK
+1790076032381_j7a18					parked		2026-11-06 04:12	root-cause debug(诊断原因一致不符预期)
+1789536024808_tbi28					parked		2026-11-06 04:12	how-to Q&A(virtuoso滚轮缩放)
+1793155079677_gnmu0					parked		2026-11-06 04:12	trivial(nihai/open hspice)
+1793070915218_ppdrt					parked		2026-11-06 04:12	analysis Q&A(哪些cell可加速)+skill-tagged vam-agent
+1788746263950_bxdtw					parked		2026-11-06 04:12	scenario launcher(启动业务场景DRC/LVS)+DRC domain
+1792143047821_67dfc					parked		2026-11-06 04:12	doc-summary produce(readme)weak for check+off-domain
+1791875313313_ztoza					parked		2026-11-06 04:12	Q&A(可以使用发邮件功能吗)
+1792045829835_j93p1					parked		2026-11-06 04:12	Q&A→debug(trn转vcd,工具GLIBC失败)
+1790141680626_3z1qr					parked		2026-11-06 04:12	skill-tagged run-regression run_normal_x16
+1792629073040_7s8l3					parked		2026-11-06 04:12	analysis(哪些管子尺寸可调整)非produce
+1793065824220_rigwz					parked		2026-11-06 04:12	Q&A(solido software usage)
+1790128993113_iiqrs					parked		2026-11-06 04:12	trivial(今天是几号)
+1792574756685_lond8					parked		2026-11-06 04:12	synthesis/lint(dc_shell icc2)非shard-D domain
+1790166621537_hcxal					parked		2026-11-06 04:12	skill-tagged run-regression run_step2_2
+1792373325953_z6mt7					parked		2026-11-06 04:12	run-sim task(给bsub命令丢仿真)非produce
+1790666323151_m4x8j					parked		2026-11-06 04:12	how-to Q&A(DM左侧trace net)
+1789890052851_vjzax					parked		2026-11-06 04:12	command-args dump(sge characterization)非clean produce
+1792483903326_cllpy					parked		2026-11-06 04:12	root-cause debug(跑失败看原因+用户给假设)
+1792070760620_nnnxe					parked		2026-11-06 04:12	Q&A/look-at-log(you can see .log)
+1791352552252_n58zu					parked		2026-11-06 04:12	Qt C++ GUI modify(表格)非shard-D domain
+1791980431476_gsmj2					parked		2026-11-06 04:12	analysis-report produce(功能分析报告)weak for check-暂缓
+1793167357683_q2er4					parked		2026-11-06 04:12	Q&A(确认目录文件,解析工程运行方式)
+1783390430562_hc3p6					parked		2026-11-06 04:12	gibberish short(/lvlshft Vint2vdleqarya)
+1792028938485_crzzv					parked		2026-11-06 04:12	Q&A(你是什么模型)
+1792669757550_90kyw					parked		2026-11-06 04:12	layout(add label in cellview)非shard-D domain
+1790149326842_pv8bt					parked		2026-11-06 04:12	skill-loading AnaWeave Group Layout(U#0=skill_instructions)+layout domain
+1793152046799_8qdnu					parked		2026-11-06 04:12	Q&A(这个pattern有错误吗)
