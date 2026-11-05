@@ -1,15 +1,13 @@
 ﻿\section{Conclusion}
 
-We presented BaiZe, an end-to-end multimodal agentic system: a $\approx$2.2B-parameter hybrid (state-space + attention) language model built from scratch, post-trained for agentic capability, paired with a custom vision encoder, aligned into a multimodal model, and adapted to the semiconductor domain.
-% 中文：我们提出了 BaiZe，一个端到端多模态智能体系统：一个约 22 亿参数的混合（状态空间+注意力）语言模型，从零构建、为智能体能力做后训练，配以自研视觉编码器，对齐为多模态模型，并适配到半导体领域。
-Through a controlled from-scratch comparison, we selected a sequential Mamba2-hybrid backbone over a dense transformer for its lower loss-per-parameter and substantially faster inference, then applied a staged, budget-constrained hyper-parameter search (S1--S5) on the final backbone.
-% 中文：通过受控的从零对比，我们因顺序式 Mamba2 混合骨干具有更低的「每参数损失」与显著更快的推理而选择它、而非稠密 Transformer，随后在最终骨干上执行分阶段的、受预算约束的超参搜索（S1--S5）。
-Stages~(ii) to~(v) are specified here as a protocol and evaluated on a common execution-based benchmark~\cite{liu2026zhulong}; their measurements are reported as \textbf{[TBD]}.
-% 中文：第 (ii) 至 (v) 阶段在此作为协议给出，并在共同的基于执行的基准 \cite{liu2026zhulong} 上评测；其测量结果以 \textbf{[TBD]} 表示（待填）。
-The complete recipe and a single reproducible command encapsulate the entire construction under the NVIDIA NeMo recipe.
-% 中文：完整配方与单条可复现命令，将整个构建过程封装在 NVIDIA NeMo 配方之下。
+We built the multimodal core of BaiZe on the frozen BaiZe language backbone~\cite{baiZe-llm}: a vision encoder pre-trained from scratch, aligned to the backbone through a lightweight projector, and adapted to the semiconductor domain via preference-based reinforcement learning.
+% 中文：我们在冻结的 BaiZe 语言骨干 \cite{baiZe-llm} 之上构建了 BaiZe 的多模态内核：从零预训练的视觉编码器，经轻量投影层对齐到骨干，再通过基于偏好的强化学习适配到半导体领域。
 
-The immediate next step is agentic fine-tuning with the \texttt{UltraData-SFT-Agent} corpus toward a deployable agent core for EDA and embedded applications.
-% 中文：下一步工作是使用 \texttt{UltraData-SFT-Agent} 语料进行智能体微调，目标是得到可用于 EDA 与嵌入式应用的可部署智能体内核。
-We hope this blueprint lowers the barrier for cost-bounded teams building their own efficient agentic SLMs from scratch.
-% 中文：我们希望这份蓝图能降低受成本约束的团队从零构建自有高效智能体 SLM 的门槛。
+Through a controlled encoder comparison, we found that a larger ViT-L/14 tower ($68.2\%$ linear-probe, $+3.9$\,pp over ViT-B/16) does \emph{not} translate its advantage downstream: the aligned MLLM averages $26.1\%$ over 11 benchmarks, indistinguishable from the smaller tower. We attribute the gap to the $224$-px single-tile setting and the alignment architecture rather than to tower capacity.
+% 中文：通过受控的编码器对比，我们发现更大的 ViT-L/14 塔（线性探测 $68.2\%$，比 ViT-B/16 高 $+3.9$\,pp）并未把优势迁移到下游：对齐后的 MLLM 在 11 个基准上平均 $26.1\%$，与小塔不可分辨。我们把这一落差归因于 224 像素单块设定与对齐架构，而非塔容量。
+
+Stages~(ii) and~(iii) are specified here as protocols with pre-specified criteria, evaluated across 12 general multimodal benchmarks, 4 domain benchmarks, and the multimodal subset of an EDA flow benchmark; their measurements are reported as \textbf{[TBD]}.
+% 中文：第 (ii) 与 (iii) 阶段在此作为协议给出，配有事先写定的评估准则，在 12 个通用多模态基准、4 个领域基准与 EDA 流程基准的多模态子集上评测；其测量结果以 \textbf{[TBD]} 表示（待填）。
+
+The immediate next step is closing the encoder-to-downstream transfer gap---through higher-resolution multi-tile input and domain-specific alignment---toward a deployable multimodal core for visual EDA tasks.
+% 中文：下一步工作是弥合「编码器到下游」的迁移落差——通过更高分辨率的多块输入与领域专项对齐——目标是得到一个可用于视觉 EDA 任务的可部署多模态内核。

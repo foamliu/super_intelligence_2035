@@ -1,17 +1,17 @@
 ﻿\section{MLLM Alignment}\label{sec:mllm}
 
-Stage~(iv) connects the vision encoder (Section~\ref{sec:vision}) to the language backbone via a lightweight projector, following the staged curriculum of open multimodal assistants; layout and schematic views account for $70.2\%$ of benchmark tasks~\cite{liu2026zhulong}, so a multimodal core shares the same execution-based protocol as the text-only stage.
-% 中文：第 (iv) 阶段通过一个轻量投影层把视觉编码器（第 \ref{sec:vision} 节）接到语言骨干网络上，沿用开放多模态助手的分阶段课程；版图与原理图视图占评测基准任务的 $70.2\%~\cite{liu2026zhulong}$，因此多模态内核可与纯文本阶段共享同一基于执行的协议。
+Stage~(ii) connects the vision encoder (Section~\ref{sec:vision}) to the language backbone via a lightweight projector, following the staged curriculum of open multimodal assistants; layout and schematic views account for $70.2\%$ of benchmark tasks~\cite{liu2026zhulong}, so a multimodal core shares the same execution-based protocol as the text-only stage~\cite{baiZe-llm}.
+% 中文：第 (ii) 阶段通过一个轻量投影层把视觉编码器（第 \ref{sec:vision} 节）接到语言骨干网络上，沿用开放多模态助手的分阶段课程；版图与原理图视图占评测基准任务的 $70.2\%~\cite{liu2026zhulong}$，因此多模态内核可与纯文本阶段 \cite{baiZe-llm} 共享同一基于执行的协议。
 
 \paragraph{Tasks and curriculum.}
 Three task families each admit objective ground truth: (i) \emph{image$\to$script} (rendered view $\to$ PyAether/SKILL script, self-labelled by execution); (ii) \emph{script$\to$image} (predict geometry, self-labelled); (iii) \emph{layout VQA} (attribute questions, expert-labelled).
 % 中文：任务与课程。三类任务各具客观标准答案：(i) \emph{图$\to$脚本}（渲染视图→PyAether/SKILL 脚本，执行自标注）；(ii) \emph{脚本$\to$图}（预测几何，执行自标注）；(iii) \emph{版图 VQA}（属性问题，专家标注）。
-The first family shares the assertion sandbox of stage~(ii), giving a common metric.
-% 中文：第一类与第 (ii) 阶段共享断言沙盒，提供统一度量。
+The first family shares the assertion sandbox of the text-only stage~\cite{baiZe-llm}, giving a common metric.
+% 中文：第一类与纯文本阶段 \cite{baiZe-llm} 共享断言沙盒，提供统一度量。
 We run stage-1 projector pre-training on captions, stage-1.5 mid-training on the three families, and stage-2 instruction tuning on the full mixture; ablations vary the projector type, tower freezing, and visual-token count.
 % 中文：我们先用说明文字做 stage-1 投影层预训练，再用三类任务做 stage-1.5 中期训练，最后在全量混合上做 stage-2 指令微调；消融变量为投影层类型、塔冻结与否与视觉 token 数。
-The $224/16$ setting ($196$ tokens/image) is retained; whether it transfers to detail-dense line drawings is what stage~(iv) tests.
-% 中文：$224/16$（每图 196 token）设定被保留；其能否迁移到细节密集线稿正是第 (iv) 阶段所检验的。
+The $224/16$ setting ($196$ tokens/image) is retained; whether it transfers to detail-dense line drawings is what stage~(ii) tests.
+% 中文：$224/16$（每图 196 token）设定被保留；其能否迁移到细节密集线稿正是第 (ii) 阶段所检验的。
 
 \paragraph{Downstream results.}
 Table~\ref{tab:mllm-bench} reports the Stage-2 step-3500 checkpoint on 12 lmms-eval benchmarks for ViT-L/14 ($304$M) and ViT-B/16 ($86$M).
