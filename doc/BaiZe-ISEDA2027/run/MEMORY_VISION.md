@@ -1,10 +1,12 @@
 # MEMORY_VISION.md — BaiZe Stage(iii) 视觉编码器预训练 · 运行时状态
 
-WAITING: 0
+WAITING: 1
+
+> 🆕 **【wake #845 · 2026-11-07 04:43】例行监控轮·诊断在跑。** git in-sync(main=origin/main,无新令)·体积 TASK28.7KB/MEMORY24.3KB(均≤32KB✓,0归档)。诊断PID3966038健康(etimes366s,8/100prompt,~45s/prompt,ETA≈05:50)·早期数据:std=0=6/8(75%),duty_cycle/rise_time 100% std=0(全-0.500 floor),amplitude偶有std>0——与wake#838结论一致,G=8未改变根因。GPU 8×H100 95-100%满载(pretrain S1,ETA≈12/25)·GPU-wait chain PID1365749健康(~12.2h)·loop PID669545健康(~8.8d)。零可执行动作(诊断批处理在跑+GPU阻塞+2项待用户批)。**决策:WAITING=1(sleep 30min)**——诊断为批处理(~70min剩余),60s轮询浪费token;30min后诊断应到~50/100,下轮查进度或收结果。未完成指令:有(阶段2未交付+诊断在跑+2项待批)但均非本轮可执行→WAITING=1。**
 
 > 🆕 **【wake #844 · 2026-11-07 04:35】用户触发·以 vision agent 身份唤醒核对状态并决策阶段2。git in-sync(main=origin/main,HEAD harness 04:29)·体积 TASK28.7KB/MEMORY22.5KB(均≤32KB✓,0归档)。**核对**：阶段0✅(wake#609 WaveView/FSDB解锁+Gym冒烟)·阶段1✅(wake#802 FIXED eval 格式100%/submit100%→验收PASS;数值rel<1%=14%/rel<5%=21%留GRPO)·阶段2 CPU pilot✅(wake#827-835 post-GRPO6.2%<post-SFT9.2%未提升)·advantage诊断✅(wake#838 PARTIAL/std=0=78.7%根因=5档离散奖励+9.2%base)。**决策：阶段2 full GPU GRPO 现不推进**——阻塞①GPU满载(8×H100 96-100% pretrain,ETA≈12/25,wait-chain PID1365749正确轮询无需手启)②方法论决定性:奖励仍离散(grpo_train_wave.py L9-10未连续化)→G=8对rise_time(100%全错)/duty_cycle(91%全错)无效,现配置跑full≈浪费12GPU·h。**本轮动作**：启动预注册PARTIAL分支group_size4→8重诊断(PID3966038,ppid=1,CPU-only,OMP16/nice19,100×8=800rollout,time_budget5400s,日志/tmp/diag_advantage_gs8.log,~75-90min,写自有report+summary)——审批前最终证据。**待用户批**：①奖励连续化R_main→exp(-rel_err/τ)(设计变更需重预注册判据)②rise_time/duty_cycle补SFT数据(能力缺口非GRPO可解)。GPU-wait chain未动·pretrain未碰。**未完成指令：有**(阶段2未交付+诊断在跑+2项待批)⇒**WAITING:0**(loop 60s监控诊断+等用户批)。**
 
-> 🆕 **【wake #843 · 2026-11-07 03:56】例行空唤醒巡检（运维侧手动触发）。** git fetch in-sync(无新令·main=origin/main)·loop健康(vision PID669545 ppid=1 ~8.8d)·GPU-wait chain PID1365749 健康(~11.5h,run_grpo_wave.sh 8,等GPU)·GPU 8×H100 95-100%/~75GB(满载 pretrain S1,无GPU给vision Stage-2,ETA≈12/25)·ops_relay_v2 PID1032513健康(~13.4d)·全交付态确认(Stage0/1✅+advantage诊断✅,Stage2待GPU/Stage3待用户批)·零可执行动作·零异常。📦体积:TASK≈28.7KB/MEMORY≈22.5KB(均≤32KB✓,本轮0归档)。**未完成指令:无**⇒**WAITING: 1**。
+> 📦 wake #843（例行空唤醒巡检·2026-11-07 03:56）已归档 → daily-memories-vision/2026-11-07.md；**结论**：无新令·loop/GPU-wait chain健康·GPU满载待释放·全交付态·零异常。需要时再读。
 
 > 📦 wake #842（例行空唤醒巡检·2026-11-07 03:23）已归档 → daily-memories-vision/2026-11-07.md；**结论**：无新令·loop/GPU-wait chain健康·GPU满载待释放·全交付态·零异常。需要时再读。
 
