@@ -5,11 +5,11 @@ WAITING: 0
 ## 📊 进度快照
 
 ```
-PHASE:        R1722 glm53重测:SWE-bench predict 224files/3500(7/7 alive,progress:her65/op52/cline29/ds26/cc22/pi21/codex9)·TB4全量66×7 Batch1运行中(cline+codex,task2 batched-eval-parity,~44min)·TB4=66tasks
-已完成:       H-B✅·Gate7/7·TB报告✅·full500全7路predict+eval 100%完成✅·R1685 cline低分归因✅·R1694-R1721 glm53重测启动+proxy修复+TB4镜像(132/132✅)+TB4 smoke 7/7跑通✅+pip-bootstrap修复✅+TB4全量66×7启动(cline+codex Batch1,task1 done)
-当前动作:     R1722 监控轮:CPU/MEM自检PASS(load47.72/224≈21%busy·最高本线进程<1核·mem1228G avail·无单进程>80核)·SWE-bench predict 224files/3500(6.4%):hermes65·opencode52·cline29·deepseek26·claude-code22·pi21·codex9·7/7 alive(etimes~4.4-5.0h)·gw200✅·gw_proxy 9092+9093 alive·硬约束③PASS(0 tracked result JSON)·TB4全量Batch1 cline+codex(task1 atrx-vep-crispr done,task2 batched-eval-parity running~44min,harbor alive)·disk:/data 5.8T avail
-下一步:       ①监控TB4全量66×7进度(Batch1 cline+codex→Batch2 hermes+opencode→Batch3 claude-code+deepseek→Batch4 pi) ②监控SWE-bench predict(224/3500,按100/300/500汇报) ③每路predict完即eval ④两基准全交付后写报告report_harness_glm53_7way_swebench_tb_zh.html
-阻塞:         无·⚠️codex极慢(9/500,quota exhausted)·TB4全量预估~38h
+PHASE:        R1723 glm53重测:SWE-bench predict 354/3500(7/7 alive,progress:ds115/her70/op56/cline56/pi25/cc22/codex10)·TB4全量66×7 Batch1运行中(cline+codex,task2 batched-eval-parity,~51min)·TB4=66tasks
+已完成:       H-B✅·Gate7/7·TB报告✅·full500全7路predict+eval 100%完成✅·R1685 cline低分归因✅·R1694-R1722 glm53重测启动+proxy修复+TB4镜像(132/132✅)+TB4 smoke 7/7跑通✅+pip-bootstrap修复✅+TB4全量66×7启动(cline+codex Batch1,task1 done,task2 running)
+当前动作:     R1723 监控轮:CPU/MEM自检PASS(load49.42/224≈22%busy·最高本线进程<1核·mem1.2Ti avail·无单进程>80核)·SWE-bench predict 354/3500(10.1%):ds115·her70·op56·cline56·pi25·cc22·codex10·7/7 alive(etimes~4.6-5.1h)·gw200✅·gw_proxy 9092+9093 alive·硬约束③PASS(0 tracked result JSON)·TB4全量Batch1 cline+codex(task1 done,task2 batched-eval-parity running~51min,harbor alive)·disk:/data 5.8T avail
+下一步:       ①监控TB4全量66×7进度(Batch1 cline+codex→Batch2 hermes+opencode→Batch3 claude-code+deepseek→Batch4 pi) ②监控SWE-bench predict(354/3500,按100/300/500汇报) ③每路predict完即eval ④两基准全交付后写报告report_harness_glm53_7way_swebench_tb_zh.html
+阻塞:         无·⚠️codex极慢(10/500)·deepseek no_patch率高(95/115)·TB4全量预估~38h
 ERROR_COUNT:  0
   📦 体积：TASK=32074B(31.3KB) / MEMORY=~32800B(32.0KB)(≤32KB达标)
 ```
@@ -19,7 +19,7 @@ ERROR_COUNT:  0
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 
 ### 本唤醒流水
-> [05:05] R1721 监控轮:CPU/MEM PASS(load51.80/224≈23%·mem1227G avail·无>80核)·gw curl=200✅·7/7 predict alive(221files/3500:her63/op52/cl29/ds25/cc22/pi21/cod9,etimes~4.3-4.9h,+7files since R1720)·TB4 Batch1 cline+codex task1 done(passed=null)task2 batched-eval-parity running~36min harbor alive·硬约束③PASS(0 tracked)·disk/data 5.8T·未完成指令:有⇒WAITING:0
+> [05:12] R1723 监控轮:CPU/MEM PASS(load49.42/224≈22%·mem1.2Ti avail·无>80核)·gw curl=200✅·7/7 predict alive(354/3500:ds115/her70/op56/cline56/pi25/cc22/codex10,etimes~4.6-5.1h,+130 since R1722)·TB4 Batch1 cline+codex task1 done task2 batched-eval-parity running~51min harbor alive·硬约束③PASS(0 tracked)·disk/data 5.8T·未完成指令:有(glm53重测SWE-bench+TB4 7路)⇒WAITING:0
 > [05:02] R1722 监控轮:CPU/MEM PASS(load47.72/224≈21%·mem1228G avail·无>80核)·gw curl=200✅·7/7 predict alive(224files/3500:her65/op52/cl29/ds26/cc22/pi21/cod9,etimes~4.4-5.0h,+3files since R1721)·TB4 Batch1 cline+codex task1 done task2 batched-eval-parity running~44min harbor alive·硬约束③PASS(0 tracked)·disk/data 5.8T·未完成指令:有(glm53重测SWE-bench+TB4 7路)⇒WAITING:0
 > 📦 R1685 流水(17:32,cline低分系统归因轮)已归档 → daily-memories-harness/2026-11-06.md。结论：R1569修复后差距以能力差为主(50/58=86%)。需要时再读。
 
