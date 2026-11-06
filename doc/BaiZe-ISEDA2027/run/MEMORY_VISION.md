@@ -2,7 +2,9 @@
 
 WAITING: 1
 
-> 🆕 **【wake #835 · 2026-11-06 20:27】CPU GRPO Phase2 全链路交付✅ P0-P3 全DONE·任务标✅已交付。** ①post-GRPO eval(PID1504591)于20:26完成→waveqa_post_grpo_50.json落盘(50题overall_mean=0.062)⇒4个eval JSON全齐(Oracle300=1.000/pre-SFT50=0.0/post-SFT50=0.092/post-GRPO50=0.062) ②gen_phase2_cpu_report.py运行成功→reports/report_vision_wave_rl_phase2_cpu_zh.html(14860B/§1-§9/无外链无script/三点对照+CPU vs GPU成本表+缩水说明) ③**诚实结论**:Post-GRPO(6.2%)<Post-SFT(9.2%)未提升略回退——50步CPU pilot(lr=1e-6/loss≈0/open_ended 19.4%→11.7%回退/numerical 5.5%→5.0%持平);跑通全链路是工程可行性,能力提升待GPU(更大lr/更多步数/bf16并行);**不把「CPU跑通」写成「能力提升」** ④EXPERIMENTS§21已写(含回归护栏MMStar/MMBench需GPU留待补充+成本100min CPU零GPU·h) ⑤BAIZE_VISION_TASK.md 11-06 18:5x令标✅已交付 ⑥GPU-wait chain PID1365749保留不动(ETA≈12/25自动接上)·阶段3可选需用户另批 ⑦零异常·不碰pretrain·nice -n 19。📦体积:TASK≈31.8KB/MEMORY≈22.5KB(均≤32KB✓,本轮0归档)。**未完成指令:无**(CPU任务P0-P3全交付,阶段3需用户另批,GPU chain后台自管)⇒**WAITING: 1**。
+> 🆕 **【wake #836 · 2026-11-06 21:38】例行空唤醒巡检·无新令·全交付态确认。** ①GPU-wait chain PID1365749 alive(ppid=1真守护进程,etimes≈18610s/5.2h),子进程`sleep 60`正常polling,GPU释放后自动接上(ETA≈12/25)②GPU 8×H100 95-100% util~75GB,pretrain torchrun占满(.12 node_rank=0),🚫不杀健康训练 ③11-06 18:5x CPU令✅已交付(wake#835 P0-P3全DONE,4 eval JSON全齐+报告+EXPERIMENTS§21)④wave_rl 产物全在位(grpo_train_wave.py/run_p2_eval_chain.sh/waveqa_eval.py/gen_phase2_cpu_report.py+SFT/GRPO ckpt+4 eval JSON)⑤git无vision在途改动(工作区??全为他线/未跟踪文件,不碰)⑥零异常·nice -n 19。📦体积:TASK=31764B(31.0KB)/MEMORY=21846B(21.3KB)(均≤32KB✓,本轮0归档)。**未完成指令:无**(CPU任务全交付,阶段3需用户另批,GPU chain后台自管)⇒**WAITING: 1**。
+
+> 📦 wake #835（CPU GRPO Phase2全链路交付·2026-11-06 20:27）已归档 → daily-memories-vision/2026-11-06.md；**结论**：P0-P3全DONE·4 eval JSON全齐(Oracle1.000/pre-SFT0.0/post-SFT0.092/post-GRPO0.062)·报告+EXPERIMENTS§21·任务标✅已交付·Post-GRPO未提升(诚实记录)。需要时再读。
 
 > 📦 wake #834（CPU GRPO Phase2·2026-11-06 20:15）已归档 → daily-memories-vision/2026-11-06.md；**结论**：P1 pilot 50/50 DONE·P2 eval chain运行中·报告生成器就绪。需要时再读。
 
