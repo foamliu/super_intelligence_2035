@@ -5,13 +5,13 @@ WAITING: 0
 ## 📊 进度快照
 
 ```
-PHASE:        R1716 glm53重测:SWE-bench full500×7路predict 194/3500(7/7 alive)·TB4 smoke 7/7✅(hermes rerun2=AgentTimeout,适配器全跑通)·TB4全量66×7已启动(Batch1 cline+codex)·TB4=66tasks
-已完成:       H-B✅·Gate7/7·TB报告✅·full500全7路predict+eval 100%完成✅·R1685 cline低分归因✅·R1694-R1715 glm53重测启动+proxy修复+TB4镜像(132/132✅)+TB4 smoke 7/7跑通✅+pip-bootstrap修复✅·R1716 TB4全量66×7启动(cline+codex Batch1)+launch_tb4_glm53_full.sh创建
-当前动作:     R1716 监控+TB4全量启动轮:CPU/MEM自检PASS(pretrain143%=1.4核非本线·TB4容器2个Up·mem666G/1.2T avail)·SWE-bench predict 194/3500(5.5%):cline26·opencode44·hermes53·dsh23·pi20·claude-code20·codex8·7/7 alive·TB4 smoke 7/7完成:hermes rerun2=AgentTimeout(适配器OK)·deepseek=RuntimeError max-tokens(适配器OK)·gateway探针200✅·TB4全量launch_tb4_glm53_full.sh启动:Batch1 cline-patched+codex并行(atrx-vep-crispr)·2 Docker容器Up·/tmp/tb4_glm53_full.log
-下一步:       ①监控TB4全量66×7进度(Batch1 cline+codex→Batch2 hermes+opencode→Batch3 claude-code+deepseek→Batch4 pi) ②监控SWE-bench predict(194/3500,按100/300/500汇报) ③每路predict完即eval ④两基准全交付后写报告report_harness_glm53_7way_swebench_tb_zh.html
-阻塞:         无·⚠️codex极慢(8/500)·TB4全量预估~38h(7路×66×2并行)
+PHASE:        R1717 glm53重测:SWE-bench predict 202files/3500(7/7 alive,progress done:ds115/her55/cline51/op48/pi21/cc21/codex8)·TB4全量66×7 Batch1运行中(cline+codex,atrx-vep-crispr)·TB4=66tasks
+已完成:       H-B✅·Gate7/7·TB报告✅·full500全7路predict+eval 100%完成✅·R1685 cline低分归因✅·R1694-R1716 glm53重测启动+proxy修复+TB4镜像(132/132✅)+TB4 smoke 7/7跑通✅+pip-bootstrap修复✅+TB4全量66×7启动(cline+codex Batch1)
+当前动作:     R1717 监控轮:CPU/MEM自检PASS(load46/224·最高harness进程68%=deepseek SDK·pretrain143%=1.4核非本线·mem1.2T avail)·SWE-bench predict 202files/3500:hermes56·opencode47·cline27·deepseek23·claude-code21·pi20·codex8·非空patch健康(opencode42/47,hermes39/56)·7/7 run_verified_full alive(~4h)·gateway gw_proxy 9092+9093 HTTP200✅·硬约束③PASS(0 tracked result JSON)·TB4全量Batch1 cline+codex运行(atrx-vep-crispr,刚启动6min)·glm53预测独立目录predictions_glm53/(kimi基线predictions/未污染)
+下一步:       ①监控TB4全量66×7进度(Batch1 cline+codex→Batch2 hermes+opencode→Batch3 claude-code+deepseek→Batch4 pi) ②监控SWE-bench predict(202/3500,按100/300/500汇报) ③每路predict完即eval ④两基准全交付后写报告report_harness_glm53_7way_swebench_tb_zh.html
+阻塞:         无·⚠️codex极慢(8/500,1非空patch)·TB4全量预估~38h(7路×66×2并行)
 ERROR_COUNT:  0
-  📦 体积：TASK=32074B(31.3KB) / MEMORY=31685B(30.9KB)(≤32KB达标)
+  📦 体积：TASK=32074B(31.3KB) / MEMORY=31.7KB(≤32KB达标)
 ```
 
 > 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
@@ -37,7 +37,8 @@ ERROR_COUNT:  0
 > 📦 R1713 流水(03:30,监控轮:predict 135/3500·TB4 smoke 7/7 done:hermes/deepseek=pip-fail BROKEN)已归档 → daily-memories-harness/2026-11-07.md。结论：7路 alive,hermes+deepseek TB4适配器需修pip。需要时再读。
 > 📦 R1714 流水(04:00,TB4适配器pip-bootstrap修复)已归档 → daily-memories-harness/2026-11-07.md。结论：_base.py加_ensure_pip修复,hermes/deepseek pip bootstrap跑通。需要时再读。
 > 📦 R1715 流水(04:08,TB4 pip-fix验证+7/7 smoke跑通)已归档 → daily-memories-harness/2026-11-07.md。结论：7/7适配器TB4跑通(5首轮Pass+hermes/deepseek pip-fix后跑通)。需要时再读。
-[04:18] R1716 监控+TB4全量启动轮:CPU/MEM自检PASS(pretrain143%=1.4核非本线·最高harness进程64%=deepseek SDK·mem666G/1.2T avail·load正常)·SWE-bench predict 194/3500(5.5%):cline26·opencode44·hermes53·dsh23·pi20·claude-code20·codex8·7/7 run_verified_full alive·TB4 smoke 7/7完成确认:hermes rerun2=AgentTimeout(适配器OK,非bootstrap故障)·deepseek=RuntimeError max-tokens(适配器OK)·gateway探针3路全HTTP200✅(agi-gateway+9092+9093)·创建launch_tb4_glm53_full.sh(7路×66tasks,2并行Batch,--n-concurrent 1,TB_AGENT_TIMEOUT=1800,--agent-timeout-multiplier 0.1)·TB4全量启动:sg docker -c bash launch_tb4_glm53_full.sh → Batch1 cline-patched+codex并行(task=atrx-vep-crispr)·2 Docker容器Up·/tmp/tb4_glm53_full.log有输出·disk:/data 5.8T avail·未完成指令:有(glm53重测SWE-bench predict+TB4全量进行中)⇒WAITING:0
+> 📦 R1716 流水(04:18,监控+TB4全量启动轮)已归档 → daily-memories-harness/2026-11-07.md。结论：TB4全量66×7 Batch1启动+SWE-bench predict 194/3500+7/7 alive。需要时再读。
+[04:25] R1717 监控轮:CPU/MEM自检PASS(load46/224≈21%busy·最高harness进程68%=deepseek SDK·pretrain143%=1.4核非本线·mem 1.2T avail·无单进程>80核)·SWE-bench predict 202files/3500(5.8%):hermes56·opencode47·cline27·deepseek23·claude-code21·pi20·codex8·非空patch:opencode42/hermes39/cline20/deepseek14/cc14/pi11/codex1·7/7 run_verified_full alive(PID etimes 13780~15767s≈4h)·glm53预测独立predictions_glm53/(kimi基线predictions/未污染)·gateway gw_proxy 9092+9093 HTTP200✅·硬约束③PASS(0 tracked result JSON)·TB4全量Batch1 cline+codex运行中(atrx-vep-crispr,04:18启动,刚6min,66tasks/harness)·disk:/data 5.8T avail·未完成指令:有(glm53重测SWE-bench predict+TB4全量进行中)⇒WAITING:0
 
 
 
