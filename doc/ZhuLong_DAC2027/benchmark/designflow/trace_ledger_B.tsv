@@ -227,3 +227,18 @@ vbxlf.messages.json	jason17w	hfeg0pnd002	262	spice_sim	parked		2026-11-05 12:30	
 1793677026220_gm1z2	hairuizh	hfeg0pkn002	193	spice_sim	case	EDA-Eval-DesignFlow-PwlStimTransform-001	2026-11-06 17:23	
 1793691610698_fqs53	jianilu	hfeg0pkn004	46	spice_sim	case	EDA-Eval-DesignFlow-IfElsePairFix-001	2026-11-06 18:26	
 1793870063634_h15ge	cynthiaz	hfeg0pkn005	0	spice_sim	case	EDA-Eval-DesignFlow-SlicerFbTimeOpt-001	2026-11-06 20:56	
+1793969040205_8yrag	mingyu1l	hfeg0pkn002	0	characterization	deepread		2026-11-06 21:20	claimed+deepread, DEBT:1 synth next round
+1793866732639_cr42l					parked		2026-11-06 21:20	consulting: k库流程 explanation (johnl)
+1793932600947_c5gwq					parked		2026-11-06 21:20	digital: DC synthesis script migration non-spice (johnl)
+1793969287953_187i0					parked		2026-11-06 21:20	consulting: which synthesis version (johnl)
+1793956931048_y1tu4					parked		2026-11-06 21:20	handoff resume context summary (xinqiaoz)
+1793968405868_bw3m7					parked		2026-11-06 21:20	handoff resume context summary (xinqiaoz)
+1793967403860_ojko8					parked		2026-11-06 21:20	trivial: waveform recognition question (huifangg)
+1793963596117_aftvk					parked		2026-11-06 21:20	layout shardC: netlist file path (jieran)
+1793948987582_oylx6					parked		2026-11-06 21:20	DRC shardC resume: DNW_ENC bad pattern fix (xxchen)
+1793967043660_sbaad					parked		2026-11-06 21:20	digital: verilog signal name search (zmzhang)
+1793872363785_ty6oq					parked		2026-11-06 21:20	consulting: pcell script organization (chengleiy)
+1793879392010_hyalb					parked		2026-11-06 21:20	LVS shardC: license timeout diagnosis (chengleiy)
+1793943237527_wojbr					parked		2026-11-06 21:20	consulting: TASK_REV_CALI_BACKEND execute (e0046686)
+1793965015681_q3lrp					parked		2026-11-06 21:20	digital shardA: verilog signal search (graywang)
+1793966362470_otc01					parked		2026-11-06 21:20	consulting: device type exploration (xiwang)
