@@ -2522,3 +2522,74 @@ loss 从 1.47（step 1）→ 0.64（step 100）快速收敛。
 
 **数字溯源**：CPU 实测 timing + `sft_cpu_train.log` 实时输出。无 GPU 实验。无伪造数字。
 
+### §20.20 · ✅ 阶段1 SFT 训练完成 + FIXED eval PASS + GRPO chain 自动重启（wake#802 · 2026-11-06 16:24 · CPU-only）
+
+**背景**：§20.19 启动的 CPU SFT 训练（PID 2882778）于 16:22 完成 step 3000/3000。训练进程内存中仍是旧版 evaluate_format_and_submit（wake#790 修复在盘但无法热注入），故训练自带的 final eval 写出的 eval_results.json 为 flawed（submit=0%）。已部署的 post-SFT eval 包装器（PID 4104838, wake#791）自动检测 eval_results.json → 备份 flawed → 跑 FIXED eval_sft_wave.py 覆盖 → 判 pass/fail → pass 则重启 GRPO chain。
+
+**训练最终状态**：
+
+| 项 | 值 |
+|:--|:--|
+| 完成步数 | 3000/3000（微 batch = 375 优化器步 = 0.34 epoch）|
+| 最终 loss | 0.2600（step 3000）|
+| loss 轨迹 | 1.47(step1) → 0.64(step100) → 0.34(step1000) → 0.33(step2000) → 0.26(step3000) |
+| 总耗时 | 8800.6s ≈ 2.4h（CPU, 64 threads, 0.35 step/s）|
+| checkpoint | step1000 / step2000 / step3000（各 LoRA 279MB adapter_model.safetensors）|
+| cleanup | OSError `.nfs*` silly-rename（NFS 已知问题，非训练失败，ckpt 完好）|
+| pretrain 干扰 | 零（.12 GPU 全程 96-100% util 不变）|
+
+**Flawed eval**（训练进程内存旧版，max_eval=50, CPU, 16:23）：
+
+| 指标 | 值 | 说明 |
+|:--|:--|:--|
+| Format correctness | 100.0% | 达标（模型在第1个 assistant turn 生成有效工具调用）|
+| Submit success rate | 0.0% | **已知 bug**：旧版只在第1个 turn 找 submit()，但 submit() 在第4个 turn |
+| PASS | false | flawed，已被包装器备份为 `eval_results_flawed_training_20261106_162426.json` |
+
+**FIXED eval**（eval_sft_wave.py wake#790 修复版, max_eval=100, CPU, 216.1s, 16:28）：
+
+| 指标 | 值 | 预注册目标 | 判定 |
+|:--|:--|:--|:--|
+| Format correctness | **100.0%** (100/100) | ≥90% | ✅ PASS |
+| Submit success rate | **100.0%** (100/100) | ≥70% | ✅ PASS |
+| Numerical acc (rel<1%) | 14.0% | — | SFT 冷启动预期偏低，GRPO 阶段提升 |
+| Numerical acc (rel<5%) | 21.0% | — | 同上 |
+| Mean rel error | 11.434 | — | 受 outlier 影响（lc_tank amplitude 偏差大）|
+| Median rel error | 0.226 | — | 中位数远优于均值，多数样本接近 GT |
+| **PASS** | **True** | fmt≥90% AND submit≥70% | ✅ **阶段1验收通过** |
+
+**Before/After 对比**（Pre-SFT 基线 §20.15 vs Post-SFT FIXED eval）：
+
+| 指标 | Pre-SFT (30样本) | Post-SFT (100样本) | Δ |
+|:--|:--|:--|:--|
+| Format correctness | 100.0% | 100.0% | 维持（SFT 不破坏格式）|
+| Submit success rate | **0.0%** | **100.0%** | **+100pp**（SFT 核心学习目标达成）|
+| Numerical acc (rel<1%) | 0.0% | 14.0% | +14pp |
+| Numerical acc (rel<5%) | 0.0% | 21.0% | +21pp |
+
+**分析**：
+- **Submit 0%→100%**：SFT 成功教会 2B 模型完成完整多步 tool-use 链（open→get_signal→get_values→submit）。Pre-SFT 模型只生成 `open()` 即停止；Post-SFT 模型在正确的 turn 生成 `submit(type, numeric_value)`。这是 SFT 冷启动的核心目标，已完全达成。
+- **Format 维持 100%**：SFT 未破坏预存在的格式能力（system prompt 提供的工具调用语法）。
+- **Numerical accuracy 14%/21%**：SFT 教会了 tool-use 链的**结构**，但数值精度仍低——模型学会了"提交一个数字"但尚未学会"提交**正确**的数字"。这正是 Stage-2W GRPO 的任务：通过 R_main 数值相对误差分档奖励（≤1%→1.0 / ≤5%→0.7 / ≤10%→0.4 / ≤25%→0.1 / >25%→0）驱动模型提升测量精度。
+- **Median rel error 0.226**：半数样本的相对误差 <22.6%，说明模型对部分电路类型（如 inverter period: rel_err=0.06%, diffpair duty_cycle: rel_err=0.00004%）已接近 oracle；但 lc_tank amplitude（rel_err 23-54%）和 ring_osc rise_time（rel_err 56-99%）是主要 outlier 来源。
+
+**GRPO chain 自动重启**：
+- 包装器 Step 5 检测 FIXED eval pass=true → `setsid bash run_grpo_wave.sh 8`（PID 1365749, ppid=1）
+- GRPO chain 确认 SFT PASSED → 找到 step3000 checkpoint → 进入 GPU-wait 轮询（`busy_util -- waiting`，60s 间隔，guard: util<10% AND mem<5000MiB, 3x consecutive）
+- GPU 释放 ETA≈12/24（pretrain baize2b iter≈103912/700k）
+- GRPO 训练配置：2B + LoRA r=64 + step3000 adapter，GRPO（无 value 网络），5 组件奖励（R_main + R_evidence + R_dense + R_anti + R_budget），双盲抽检每 100 episode 插 5 个隐藏 FSDB 题
+
+**交付物**：
+- `vision/wave_rl/sft_train_wave.py`（CPU 训练脚本，含 wake#790 eval 修复）✅
+- `vision/wave_rl/eval_sft_wave.py`（FIXED 独立评测脚本）✅
+- `vision/wave_rl/run_post_sft_eval.sh`（post-SFT 自动 eval 包装器）✅
+- SFT checkpoint: `step3000/`（adapter_model.safetensors 279MB）✅
+- FIXED eval 结果: `eval_results.json`（100 样本, pass=true）✅
+- `reports/report_vision_wave_rl_phase1_sft_zh.html`（阶段1 SFT 报告）✅
+- 本节 ✅
+
+**数字溯源**：`sft_cpu_train.log`（训练日志）+ `eval_results.json`（FIXED eval, 100 样本 per_sample）+ `post_sft_eval.log`（包装器全链路日志）+ `eval_results_flawed_training_20261106_162426.json`（flawed 备份）。无 GPU 实验（CPU-only 训练）。无伪造数字。
+
+**成本**：CPU 训练 2.4h（64 threads, 零 GPU）+ CPU eval 3.6min（100 样本）= 总计 ~2.5h CPU。原计划 ~4 GPU·h pilot，实际用 CPU 绕过 GPU 阻塞完成。GRPO 训练仍需 GPU（ETA≈12/24）。
+
+

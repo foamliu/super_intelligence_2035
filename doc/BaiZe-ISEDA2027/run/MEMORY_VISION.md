@@ -2,7 +2,7 @@
 
 WAITING: 0
 
-> 🆕 **【wake #802 · 2026-11-06 16:24】✅CPU SFT训练完成(step3000/loss0.26/ckpt已存)+flawed eval完成(format100%/submit0%已知bug)+包装器自动启动FIXED eval进行中。**训练PID2882778已于~16:22完成step3000/3000(loss0.2600,checkpoint存step3000/adapter_model.safetensors 279MB)。flawed final eval(max_eval=50,CPU)于16:23写eval_results.json:**format=100%(达标!),submit=0%(已知bug:旧版只在第1个assistant turn找submit(),但submit()在第4个turn)**。post-SFT eval包装器(PID4104838)自动触发:检测到eval_results.json→备份flawed→正在跑FIXED eval_sft_wave.py(CPU,max_eval=100,step3000 ckpt,adapter已merge,100轨迹已load)→预计~15-25min(~16:40-16:50出结果)。**若fixed eval pass(fmt≥90%+submit≥70%)→包装器自动setsid重启GRPO chain(GPU-wait,ETA≈12/24);若fail→下轮wake重启SFT nsteps=24000**。GPU仍全占(pretrain ETA≈12/24)。训练进程已退出(cleanup时OSError .nfs* silly-rename,非训练失败,ckpt完好)。📦体积:TASK=30.5KB/MEMORY≈14KB(均≤32KB✓,本轮0归档)。**未完成指令:有**(阶段1 fixed eval进行中+阶段2/3未交付)⇒**WAITING: 0**。
+> 🆕 **【wake #802 · 2026-11-06 16:30】✅✅阶段1 SFT验收通过！format=100%+submit=100% PASS·GRPO chain已自动重启(待GPU)。**CPU SFT训练完成step3000/loss0.26(2.4h/零GPU)。FIXED eval(100样本,216s CPU):**format=100%(≥90%✅)+submit=100%(≥70%✅)+numerical_lt1%=14%+lt5%=21%+PASS=true**。Pre-SFT基线:submit=0%→Post-SFT:submit=100%(+100pp,SFT核心目标达成)。flawed eval(submit=0%已知bug)已备份,FIXED eval覆盖。包装器(PID4104838)自动全链路:检测→备份→FIXED eval→pass→setsid重启GRPO chain(PID1365749,GPU-wait,ETA≈12/24)。交付物:SFT ckpt step3000+eval_results.json+报告`report_vision_wave_rl_phase1_sft_zh.html`(15.4KB/9节)+EXPERIMENTS§20.20。📦体积:TASK≈30.5KB/MEMORY≈14KB(均≤32KB✓,本轮0归档)。**未完成指令:有**(阶段2 GRPO待GPU+阶段3未交付)⇒**WAITING: 0**。
 
 > 📦 wake #801（监控巡检·2026-11-06 16:14）已归档 → daily-memories-vision/2026-11-06.md；**结论**：CPU SFT step2825/3000 loss0.32 ETA~8min·包装器正确等待·训练健康·WAITING=0。需要时再读。
 
@@ -102,10 +102,10 @@ WAITING: 0
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | 🟠 **波形 RL 阶段0交付(YELLOW) + 阶段1 SFT CPU训练已完成(step3000/loss0.26/ckpt已存step3000) + FIXED eval进行中(包装器PID4104838自动触发,CPU,max_eval=100,step3000 ckpt)**。flawed eval已出:format=100%(达标!)/submit=0%(已知bug,已备份)。FIXED eval预计~16:40-16:50出结果。若pass→包装器自动重启GRPO chain(待GPU,ETA≈12/24);若fail→重启SFT nsteps=24000。GPU全占(pretrain ETA≈12/24)。阶段2/3未交付。**WAITING: 0** |
+| PHASE | 🟢 **波形 RL 阶段0交付(YELLOW) + 阶段1 SFT已交付PASS(format100%/submit100%) + GRPO chain已重启待GPU(PID1365749,GPU-wait,ETA≈12/24)**。FIXED eval 100样本:format=100%/submit=100%/num_lt1%=14%/num_lt5%=21%/PASS=true。Pre-SFT submit=0%→Post-SFT submit=100%(+100pp)。GPU全占(pretrain ETA≈12/24)。阶段2 GRPO待GPU,阶段3未交付。**WAITING: 0** |
 | WAITING | 0 |
-| 已完成 | 阶段1 SFT CPU训练完成step3000(wake#802) · 阶段1 SFT CPU训练启动(wake#785) · CPU端到端训练循环验证7/7 PASS(wake#741) · 数据泄漏验证+阶段1就绪报告HTML(wake#731) · 全管线就绪审计(wake#714) · GRPO链式启动器修复+启动(wake#626) · GRPO CPU冒烟测试PASS(wake#622) · 2B文本骨干提取1.72B(wake#620) · 数据集均衡化9013条(wake#618) · WaveQA-RL oracle 300题(wake#614) · 波形RL阶段0 YELLOW(wake#609) · 论文改稿(wake#437~#442) · 波形RL计划书(wake#435) · OCR合成10M(wake#275) · ArmE-R2/ArmD-R2 全链路 |
-| 当前动作 | **FIXED eval进行中**：训练已完成(step3000/loss0.2600/ckpt step3000 saved)。flawed eval已写eval_results.json(format100%/submit0%,已知bug,已备份)。包装器PID4104838正在跑FIXED eval_sft_wave.py(CPU,max_eval=100,step3000 ckpt,adapter merged,100轨迹已load,生成中)。 |
-| 下一步 | 等FIXED eval完成(~16:40-16:50)→读eval_results.json+post_sft_eval.log确认结果。若pass(fmt≥90%+submit≥70%)→包装器已自动重启GRPO chain(待GPU,ETA≈12/24)→阶段1交付,写报告+EXPERIMENTS§20。若fail→重启SFT nsteps=24000(仍CPU)。下轮wake首要:检查post_sft_eval.log Step5结论。 |
-| 阻塞 | .12+.29 GPU全占（8×H100 96-100% util / ~75GB，pretrain baize2b ETA≈12/24-25）→ 阶段1 SFT已用CPU完成·阶段2 GRPO仍需GPU（ETA≈12/24,GRPO chain由包装器在eval pass后重启,自带安全GPU-wait）·.17+.75 SSH不可达 |
-| 更新 | **2026-11-06 16:24 (wake #802)**: ✅CPU SFT训练完成step3000/loss0.26/ckpt已存·flawed eval完成(format100%/submit0%已知bug)·包装器自动启动FIXED eval(CPU,max_eval=100,进行中,ETA~16:40-16:50)·GPU全占(pretrain ETA≈12/24)·体积TASK=30.5KB/MEMORY≈14KB✓·WAITING=0 |
+| 已完成 | 阶段1 SFT验收PASS(wake#802) · 阶段1 SFT CPU训练完成step3000(wake#802) · 阶段1 SFT CPU训练启动(wake#785) · CPU端到端训练循环验证7/7 PASS(wake#741) · 数据泄漏验证+阶段1就绪报告HTML(wake#731) · 全管线就绪审计(wake#714) · GRPO链式启动器修复+启动(wake#626) · GRPO CPU冒烟测试PASS(wake#622) · 2B文本骨干提取1.72B(wake#620) · 数据集均衡化9013条(wake#618) · WaveQA-RL oracle 300题(wake#614) · 波形RL阶段0 YELLOW(wake#609) · 论文改稿(wake#437~#442) · 波形RL计划书(wake#435) · OCR合成10M(wake#275) · ArmE-R2/ArmD-R2 全链路 |
+| 当前动作 | **阶段1已交付，GRPO chain等待GPU**：SFT训练完成step3000/loss0.26/ckpt已存。FIXED eval PASS(format100%/submit100%)。报告+EXPERIMENTS§20.20已交付。GRPO chain PID1365749 alive(GPU-wait轮询,60s间隔,guard:util<10%+mem<5000MiB,3x consecutive)。 |
+| 下一步 | 等GPU释放(ETA≈12/24)→GRPO chain自动启动阶段2训练(~12 GPU·h)→WaveQA-RL评测+回归护栏→阶段2报告+EXPERIMENTS§21。若GPU释放后GRPO训练crash→排查。下轮wake检查GRPO chain日志+GPU状态。 |
+| 阻塞 | .12+.29 GPU全占（8×H100 96-100% util / ~75GB，pretrain baize2b ETA≈12/24-25）→ 阶段2 GRPO需GPU（GRPO chain PID1365749自带GPU-wait,释放后自动起训）·.17+.75 SSH不可达 |
+| 更新 | **2026-11-06 16:30 (wake #802)**: ✅✅阶段1 SFT验收PASS(format100%/submit100%)·GRPO chain已自动重启(PID1365749,GPU-wait)·报告+EXPERIMENTS§20.20已交付·GPU全占(pretrain ETA≈12/24)·体积TASK≈30.5KB/MEMORY≈14KB✓·WAITING=0 |

@@ -25,7 +25,7 @@
 > 📁 **报告目录纪律（2026-10-28 用户直令 · 全局常驻 · 覆盖一切旧报告路径）**：所有 HTML/中文报告**一律产出在 `doc/BaiZe-ISEDA2027/reports/`**。🚫 **禁止产出到 `run/reports/` 或项目根 `reports/`**（生成器输出路径必须指向项目级 reports；run/reports 历史文件不得再新增）。
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
-### §运维令·2026-11-05 17:5x（执行波形 RL 计划：Stage-1W SFT 冷启动 → Stage-2W GRPO · 分阶段）· 用户直令 · 最高优先 · ✅ 阶段0已交付
+### §运维令·2026-11-05 17:5x（执行波形 RL 计划：Stage-1W SFT 冷启动 → Stage-2W GRPO · 分阶段）· 用户直令 · 最高优先 · ✅ 阶段0已交付 · ✅ 阶段1已交付
 
 > **用户令**：「vision：执行 2026-10-31 波形 RL 计划书（`reports/report_vision_wave_rl_plan_zh.html`），让 2B MLLM 通过与 WaveView 交互学会看懂波形图。分阶段，先解锁待核项再训练。」
 >
