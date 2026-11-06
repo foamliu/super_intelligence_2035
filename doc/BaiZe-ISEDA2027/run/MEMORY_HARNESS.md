@@ -5,13 +5,13 @@ WAITING: 0
 ## 📊 进度快照
 
 ```
-PHASE:        R1724 glm53重测:SWE-bench predict 245files/3500(7/7 alive:her71/op58/cline31/pi26/ds27/cc22/codex10)·TB4全量66×7 Batch1运行中(cline+codex,task2 batched-eval-parity running~61min)·TB4=66tasks
-已完成:       H-B✅·Gate7/7·TB报告✅·full500全7路predict+eval 100%完成✅·R1685 cline低分归因✅·R1694-R1723 glm53重测启动+proxy修复+TB4镜像(132/132✅)+TB4 smoke 7/7跑通✅+pip-bootstrap修复✅+TB4全量66×7启动(cline+codex Batch1,task1 errored timeout,task2 running)
-当前动作:     R1724 监控轮:CPU/MEM自检PASS(load50.56/224≈22.6%busy·最高本线进程<1核·mem1223G avail·无单进程>80核)·SWE-bench predict 245files/3500(7.0%):her71·op58·cline31·pi26·ds27·cc22·codex10·7/7 alive(etimes 99~19037s)·gw200✅·gw_proxy 9092+9093 alive·硬约束③PASS(0 tracked result JSON)·TB4全量Batch1 cline+codex(task1 atrx-vep-crispr errored timeout 1800s,task2 batched-eval-parity running~61min,harbor alive PID2212836/2212837)·⚠️codex quota exhausted·deepseek quota exhausted·disk:/data 5.8T avail
-下一步:       ①监控TB4全量66×7进度(Batch1 cline+codex→Batch2 hermes+opencode→Batch3 claude-code+deepseek→Batch4 pi) ②监控SWE-bench predict(245/3500,按100/300/500汇报) ③每路predict完即eval ④两基准全交付后写报告report_harness_glm53_7way_swebench_tb_zh.html
-阻塞:         无·⚠️codex极慢(10/500,quota exhausted)·deepseek quota exhausted·TB4 task1 timeout(atrx-vep-crispr 1800s)·TB4全量预估~38h
+PHASE:        R1725 glm53重测:SWE-bench predict 247files/3500(7/7 alive:her71/op59/cline31/pi26/ds27/cc23/codex10)·TB4全量66×7 Batch1运行中(cline task3 biped-contact-dynamics·codex task4 bun-sourcemap-leak)·TB4=66tasks
+已完成:       H-B✅·Gate7/7·TB报告✅·full500全7路predict+eval 100%完成✅·R1685 cline低分归因✅·R1694-R1724 glm53重测启动+proxy修复+TB4镜像(132/132✅)+TB4 smoke 7/7跑通✅+pip-bootstrap修复✅+TB4全量66×7启动(cline+codex Batch1,cline2/66 codex3/66 done)
+当前动作:     R1725 监控轮:CPU/MEM自检PASS(load49.51/224≈22.1%busy·最高本线find进程~55%·mem1223G avail·无单进程>80核)·SWE-bench predict 247files/3500(7.1%):her71·op59·cline31·pi26·ds27·cc23·codex10·7/7 alive(etimes~17400-19400s≈4.8-5.4h)·gw200✅·gw_proxy 9092+9093 alive·硬约束③PASS(0 tracked result JSON)·TB4全量Batch1 cline+codex(cline2/66:atrx-vep-crispr+batched-eval-parity both timed out 1800s→failed,biped-contact-dynamics running;codex3/66:atrx+batched-eval+biped done,bun-sourcemap-leak running;harbor alive PID2212836/2212837 etimes3958s)·codexTB4config.toml model="kimi-k2.6-cloud"verified非bug(--model flag overrides with glm-5.3-flash via TB_MODEL)·disk:/data 5.8T avail
+下一步:       ①监控TB4全量66×7进度(Batch1 cline+codex→Batch2 hermes+opencode→Batch3 claude-code+deepseek→Batch4 pi) ②监控SWE-bench predict(247/3500,按100/300/500汇报) ③每路predict完即eval ④两基准全交付后写报告report_harness_glm53_7way_swebench_tb_zh.html
+阻塞:         无·⚠️codex极慢(10/500)·deepseek慢(27/500)·TB4 cline两task timeout(1800s)·TB4全量预估~38h
 ERROR_COUNT:  0
-  📦 体积：TASK=32074B(31.3KB) / MEMORY=~31.5KB(归档~600B→daily 11-07)
+  📦 体积：TASK=32074B(31.3KB) / MEMORY=30382B(29.7KB)
 ```
 
 > 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
@@ -19,6 +19,7 @@ ERROR_COUNT:  0
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 
 ### 本唤醒流水
+> [05:24] R1725 监控轮:CPU/MEM PASS(load49.51/224≈22.1%·mem1223G avail·无>80核·最高本线find进程~55%<8000%)·gw curl=200✅·7/7 predict alive(247files/3500:her71/op59/cline31/pi26/ds27/cc23/codex10,etimes~17400-19400s≈4.8-5.4h)·TB4 Batch1 cline2/66(atrx-vep-crispr+batched-eval-parity both timed out 1800s→failed·biped-contact-dynamics running) codex3/66(atrx+batched-eval+biped done·bun-sourcemap-leak running) harbor alive(etimes3958s)·codexTB4config.toml model="kimi-k2.6-cloud"verified非bug(--model overrides→glm-5.3-flash)·硬约束③PASS(0 tracked)·disk/data 5.8T·未完成指令:有(glm53重测SWE-bench+TB4 7路)⇒WAITING:0
 > [05:19] R1724 监控轮:CPU/MEM PASS(load50.56/224≈22.6%·mem1223G avail·无>80核)·gw curl=200✅·7/7 predict alive(245files/3500:her71/op58/cline31/pi26/ds27/cc22/codex10,etimes 99~19037s)·TB4 Batch1 cline+codex task1 atrx-vep-crispr errored(timeout 1800s both) task2 batched-eval-parity running~61min harbor alive·⚠️codex+deepseek quota exhausted·硬约束③PASS(0 tracked)·disk/data 5.8T·未完成指令:有(glm53重测SWE-bench+TB4 7路)⇒WAITING:0
 > 📦 R1722-R1723 流水已归档 → daily-memories-harness/2026-11-07.md。结论：7路 alive,进度稳定。需要时再读。
 > 📦 R1685 流水(17:32,cline低分系统归因轮)已归档 → daily-memories-harness/2026-11-06.md。结论：R1569修复后差距以能力差为主(50/58=86%)。需要时再读。
