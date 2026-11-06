@@ -49,19 +49,65 @@
 
 ## §Data 数据盘点（P1）
 
-| ID | 名称 | 路径 | 字节 | token | 状态 | 备注 |
-|:--|:--|:--|:--|:--|:--|:--|
-| P1-a | UltraData-SFT-2605 | （见 DATA_MAPPING.md L11） | 75.9G(dL) / 319G | 20.97B | ✅ 已分词镜像 | 通用指令集 |
-| P1-b | UltraData-SFT-Agent-2609 | （见 DATA_MAPPING.md L12） | 23.9G(dL) / 51G | [待核] | ✅ 已分词 | agentic 指令集 |
-| P1-c | B 类 agentic（4+ 集） | `/nas_inference/app.e0031982/datasets/` | [待盘] | 未分词 | ⏳ 已下载 | AgentTrove 等 |
-| P1-d | PyAether 领域语料 | [待调研：eda_fastmcp API 知识库] | [待盘] | — | ⚠️ 待确认 | 退火+SFT 合成 |
-| P1-e | 污染隔离规则 | — | — | — | ⚠️ 待定稿 | 158 任务禁入 |
+| ID | 名称 | 路径（.17 可达性） | 下载字节 | 分词镜像字节 | tokens | 状态 | 备注 |
+|:--|:--|:--|:--|:--|:--|:--|:--|
+| P1-a | UltraData-SFT-2605 | `…/baize-data/tokenized/UltraData-SFT-2605`（.17 不可达，引自 DATA_MAPPING §A#11） | 318.99 GB | 75.87 GB（94 .bin/.idx/.json） | 18.89 B | ✅ 镜像完整（2026-10-27 校验） | 通用指令集；⚠️ 任务书旧记 20.97B tok，以 DATA_MAPPING 单一事实源 18.89B 为准 |
+| P1-b | UltraData-SFT-Agent-2609 | `…/baize-data/tokenized/UltraData-SFT-Agent-2609`（.17 不可达，引自 DATA_MAPPING §A#12） | 54.22 GB | 23.89 GB（13 .bin/.idx/.json） | 5.97 B | ✅ 镜像完整（2026-10-27 校验） | agentic 指令集；任务书"50 shard"为下载侧，分词侧=13 |
+| P1-c | B 类 agentic（AgentTrove/Nemotron-Cascade-SFT-SWE/terminal-cmd-sft 等） | `/nas_inference/app.e0031982/datasets/`（.17 未挂载 /nas_inference） | 待盘 | 未分词 | — | ⏳ 已下载未分词（DATA_MAPPING §F） | 待 .29/.12 盘点或挂载 |
+| P1-d | PyAether 领域语料（API 参考/EDA 工具文档/HDL 源码） | `eda_fastmcp` API 知识库（.17 不可达，`/nas_data/.../code/eda_fastmcp` 不存在） | 待盘 | — | — | ⚠️ 待确认来源 | 退火+SFT 合成；待 eda_fastmcp 可达后调研 |
+| P1-e | 158 任务污染隔离规则 + 闸门脚本 | `run/baize_posttrain_contamination_gate.sh`（复用 `run/data_pipeline/check_contamination.py` + blacklist） | — | — | — | ✅ 已定稿（本轮 wake2） | 红线；规则+脚本见 §P1-e |
+
+---
+
+## §P1-e 污染隔离规则 + 闸门脚本（红线 · 2026-11-06 wake2 · 零 GPU · 已定稿）
+
+> 🚨 红线（总纲 §5.1）：EDA-Eval-PyAether 的 158 任务（prompt + entry_point + canonical_solution + test 断言，及改写版）**绝对不能进任何训练集**。
+> 本节定稿「按 API 名 / 函数签名做隔离」的规则 + 可执行闸门脚本，**在任何 PyAether 训练对合成之前**就位。
+
+### 规则（复用并扩展 data 线 `CONTAMINATION_CHECK.md` v0.3 机制）
+
+| 内容 | 可否入训练集 |
+|:---|:---|
+| PyAether / SKILL 的 **API 参考文档**（函数签名 / 参数说明 / 示例） | ✅ 允许（任务的"来源材料"，可作退火+SFT 合成源） |
+| 评测任务的 **prompt / entry_point / canonical_solution / test 断言** | ❌ 禁止 |
+| 上述任务内容的 **改写 / paraphrasing 版** | ❌ 禁止（改写不洗白） |
+
+- **指纹方法（可复现）**：NFKC 归一化 → 小写 → 非 Unicode `\w` 折叠为单空格 → 去空格 → 字符级 **13-gram**（shingle）；短文本（<13 字符）走 **8-gram 兜底**；哈希用确定性 **FNV-1a 64-bit**；溯源用 **MinHash(k=128)**；entry_point 另存 **sha256** 二次校验。
+- **命中判定**：13-gram 重合率 ≥ **0.80** ⇒ 污染；短 8-gram 兜底重合数 ≥ **1** ⇒ 污染。
+- **黑名单**：6 个评测快照并集 **536 任务**（含 `v20260311` 的 **158** + 148/46/Updated102/TEST/cuhk），产物在 `run/data_pipeline/blacklist/`（meta.json 2.1MB / ngram_hashes.txt 3.3MB / short_ngram_hashes.txt / entry_points.sha256）。data 线已用它累计扫描 **220,000 docs 全 0 命中**（预训练语料清洁留证）。
+
+### post-train 专用扩展（合成训练对的投料前闸门）
+
+1. **SFT 合成对**（`sft_pyaether_synth`，从 API 文档合成）：投料前必须过闸；任何与 158 任务指纹重合的合成对一律剔除。
+2. **RL 合成任务**（`rl_pyaether_synth_tasks.jsonl`）：同闸，🚫 禁用 158 评测题原题（含改写）。
+3. **退火领域语料**（`pyAether_api_anneal`）：API 参考文档本身允许入退火，但投料前过闸以防混入评测内容。
+4. **反作弊关联**（总纲 §5.2）：闸门与 `PreToolUse` anti-cheat 一致——评测题内容既不进训练，也不进 reward 参考。
+
+### 闸门脚本：`run/baize_posttrain_contamination_gate.sh`
+
+- **复用** `run/data_pipeline/check_contamination.py`（扫描）+ `build_blacklist.py`（重建黑名单）+ 既有 blacklist，**不重写指纹逻辑**（保证与预训练同闸、口径一致）。
+- **输入**：`--sft-synth <j>` / `--rl-synth <j>` / `--anneal-corpus <dir|j>` / `--input <j>`（可多组）；`--blacklist-dir` / `--ngram` / `--threshold` / `--out`。
+- **模式**：`--dry-run`（仅打印配方，exit 0，不扫描）；`--build-blacklist --eval-jsonl <j>...`（从评测 jsonl 并集重建黑名单）；默认（真跑）逐输入扫描，解析 `命中（污染）文档数：N`，N>0 ⇒ **exit 2 阻断训练**，N=0 ⇒ exit 0 放行；checker/黑名单缺失 ⇒ **exit 3 fail-safe**。
+- **验证（2026-11-06 wake2，本节点 .17，不真跑）**：
+  - `bash -n` → **OK**
+  - `--dry-run`（无输入）→ rc=0；`--dry-run --sft-synth ... --rl-synth ... --anneal-corpus ...`（3 标签输入）→ rc=0，正确列出将扫描项
+  - `--build-blacklist --dry-run --eval-jsonl <v20260311.jsonl>` → rc=0，打印重建配方
+  - `build_blacklist.py --help` 确认 CLI（`--eval-jsonl`/`--out-dir`/`--ngram`/`--short-ngram`/`--minhash-k`）与脚本调用一致
+  - ⚠️ 真跑前置（黑名单 meta.json + checker 在位）在 dry-run 之后；本节点 `/nas_train` 挂载于 `/nas_data` 且仅 git 工作副本可达，故真跑待训练机（.29/.12）或 eda_fastmcp 挂载后执行。
+
+### 何时真跑（待数据/ckpt 就绪）
+
+- 合成任何 PyAether 训练对之后、投料之前（P3 退火/SFT/RL 起跑前各一次）。
+- 黑名单已就绪（`run/data_pipeline/blacklist/` 在 git 工作副本内，全节点可见）；评测 jsonl 在 `eda_fastmcp` 可达后可用 `--build-blacklist` 刷新（若评测集更新）。
 
 ---
 
 ## §PyAether-corpus 领域语料调研（P1-d）
 
-[待 P1 执行后填写]
+> **状态（2026-11-06 wake2）**：⚠️ **阻塞** —— `eda_fastmcp`（API 知识库 / 158-case 数据集 / driver / scorer）在本节点 .17 不可达（`/nas_data/app.e0031982/code/eda_fastmcp` 不存在，本节点仅挂载 git 工作副本）。
+> 待 eda_fastmcp 可达后调研：API 知识库能否导出纯文本 / 体量 / 格式 → 组装「领域退火语料」（来源/配比/预估 token）。当前**不编造**任何语料数字。
+> 已知可复用来源线索（待 eda_fastmcp 可达核实）：`pyAether_API_Docstring` / `emyDesign` / `sklangref`（CONTAMINATION_CHECK.md §5 来源对照曾扫这 3 个 API 参考文件，0 命中 ⇒ 属"来源材料"，允许入训练）。
+
 
 ---
 
@@ -73,6 +119,7 @@
 | `baize_posttrain_sft.sh` | SFT 配方骨架（context-len/ft-mode/tool-traces/data-mix 消融开关） | ✅ 已写 · `bash -n` PASS · `--dry-run` rc=0 |
 | `baize_posttrain_rl_grpo.sh` | RLVR+GRPO 配方骨架（4 臂奖励 R1–R4 开关 + 沙盒并发） | ✅ 已写 · `bash -n` PASS · `--dry-run` rc=0 |
 | `baize_posttrain_eval.sh` | EDA-Eval-PyAether 评测骨架（5-run/reshuffle/fresh-context/2500s/-p 8 -n） | ✅ 已写 · `bash -n` PASS · `--dry-run` rc=0 |
+| `baize_posttrain_contamination_gate.sh` | 污染隔离闸门（红线 P1-e，复用 check_contamination.py + blacklist，投料前阻断） | ✅ 已写（wake2）· `bash -n` PASS · `--dry-run` rc=0 · `--build-blacklist --dry-run` rc=0 |
 
 ### 验证输出（2026-11-06 唤醒1 · `bash -n` + `--dry-run`，不真跑）
 

@@ -7,12 +7,12 @@ WAITING: 0
 
 ## 进度快照
 
-- PHASE: posttrain-wake1（2026-11-06 首次唤醒；P3-prep 4 脚本骨架已交付；P0 数据源不可达已记录）
-- 已完成: P3预备✅ 4 脚本骨架（anneal/sft/rl_grpo/eval）bash -n PASS + --dry-run rc=0；P0 数据源可达性诊断✅（字段缺失：本节点无 eda_code_eval/eda_fastmcp/训练数据BASE，已记 D1–D6 口径待数据到位提取）
-- 当前动作: 收尾提交 wake1；P0/P1 数据源在本节点不可达（NFS 仅 /nas_data，无 /nas_train/eda_fastmcp/eda_code_eval）
-- 下一步: 下次唤醒先复查数据可达性；仍不可达→做 P1-e 污染隔离规则草案 + P2 方案书初稿（纯设计零 GPU，不依赖缺失数据）；数据可达→补 P0 D1–D6 + report_posttrain_diagnose_d1d6_zh.html
-- 阻塞: P0/P1 数据源（eda_code_eval final_report.json / eda_fastmcp / 训练数据BASE）在本节点不可达，待运维挂载或提供路径；正式训练阻塞 pretrain S1 ckpt（ETA≈2026-12-25）
-- 未完成指令: 有（P0/P1 待数据；P1-e/P2 可做设计；P3 骨架已交付但占位待 P2 填实）⇒ WAITING=0
+- PHASE: posttrain-wake2（2026-11-06；P1-e 污染隔离闸门已定稿交付；P0/P1-c/P1-d 仍阻塞于数据不可达）
+- 已完成: P3预备✅ 4 脚本骨架（anneal/sft/rl_grpo/eval，wake1）；P1-e✅ 污染隔离规则+闸门脚本 `baize_posttrain_contamination_gate.sh`（复用 data 线 check_contamination.py + 536 任务黑名单，bash -n PASS + dry-run rc=0，wake2）；P0 数据源可达性诊断✅（字段缺失，本节点无 eda_code_eval/eda_fastmcp/训练数据/数据镜像）
+- 当前动作: 收尾提交 wake2（P1-e 闸门 + EXPERIMENTS §Data/§P1-e/§PyAether-corpus/§Scripts 更新）
+- 下一步: 下次唤醒做 **P2 三步训练方案书** `reports/report_posttrain_plan_zh.html`（纯设计零 GPU，不依赖缺失数据：领域退火/SFT/RL 4 臂/评测/成功阶梯 M1–M4/预注册阈值/时间线/风险，≥15KB）；数据可达后再补 P0 D1–D6 + P1-c/P1-d 实盘
+- 阻塞: P0（eda_code_eval final_report.json）/P1-c（/nas_inference 未挂载 .17）/P1-d（eda_fastmcp 不可达）数据源在本节点不可达，待运维挂载或提供路径；正式训练阻塞 pretrain S1 ckpt（ETA≈2026-12-25）
+- 未完成指令: 有（P2 方案书待做；P0/P1-c/P1-d 待数据）⇒ WAITING=0
 
 ## 关键事实（常驻）
 
@@ -36,3 +36,4 @@ WAITING: 0
 ## 本唤醒流水
 
 [14:00] wake1：恢复状态→查 P0 数据源（~/eda_code_eval、/nas_data/.../eda_code_eval、/nas_data/.../eda_fastmcp、训练数据BASE 全 MISSING；final_report.json 0 命中）→ P0 D1–D6 字段缺失（数据源不可达，已记口径，🚫 不编造、不产出空 HTML）→ 转做 P3-prep：写 4 脚本骨架（anneal/sft/rl_grpo/eval，参照 baize_p8_train.sh + baize_xmodel25_decay_v2.sh 结构，含 --dry-run 配方打印）→ bash -n 4/4 PASS + --dry-run 4/4 rc=0 → 写入 EXPERIMENTS §D(阻塞) + §Scripts(验证输出) → 体积自检+提交。
+[14:30] wake2：git fetch/pull（需显式设 https_proxy=http://172.19.92.25:13128，非交互 shell 无 .bashrc 代理；清 14:13 陈旧 index.lock 后 fast-forward 到 8599eae7c）→ 复查数据可达性：eda_code_eval/eda_fastmcp//nas_inference/数据镜像(/nas_data/.../datasets) 本节点仍全 MISSING → 按 MEMORY 应急做 **P1-e**：读 CONTAMINATION_CHECK.md v0.3（data 线已建 536 任务黑名单 + check_contamination.py，220K docs 0 命中）→ 写 `baize_posttrain_contamination_gate.sh`（复用 check_contamination.py，逐输入扫描解析"命中（污染）文档数：N"，N>0 exit 2 阻断 / N=0 exit 0 / 缺件 exit 3 fail-safe；--dry-run + --build-blacklist）→ bash -n OK + dry-run(0/3输入/build) rc=0 → EXPERIMENTS §Data(P1-a/b 引 DATA_MAPPING 实值 18.89B/5.97B tok、P1-c/d 阻塞、P1-e✅) + §P1-e(规则+脚本+验证) + §PyAether-corpus(阻塞) + §Scripts(+gate 行) → 体积自检+提交。
