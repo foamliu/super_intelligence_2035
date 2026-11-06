@@ -2,7 +2,9 @@
 
 WAITING: 1
 
-> 🆕 **【wake #836 · 2026-11-06 21:38】例行空唤醒巡检·无新令·全交付态确认。** ①GPU-wait chain PID1365749 alive(ppid=1真守护进程,etimes≈18610s/5.2h),子进程`sleep 60`正常polling,GPU释放后自动接上(ETA≈12/25)②GPU 8×H100 95-100% util~75GB,pretrain torchrun占满(.12 node_rank=0),🚫不杀健康训练 ③11-06 18:5x CPU令✅已交付(wake#835 P0-P3全DONE,4 eval JSON全齐+报告+EXPERIMENTS§21)④wave_rl 产物全在位(grpo_train_wave.py/run_p2_eval_chain.sh/waveqa_eval.py/gen_phase2_cpu_report.py+SFT/GRPO ckpt+4 eval JSON)⑤git无vision在途改动(工作区??全为他线/未跟踪文件,不碰)⑥零异常·nice -n 19。📦体积:TASK=31764B(31.0KB)/MEMORY=21846B(21.3KB)(均≤32KB✓,本轮0归档)。**未完成指令:无**(CPU任务全交付,阶段3需用户另批,GPU chain后台自管)⇒**WAITING: 1**。
+> 🆕 **【wake #837 · 2026-11-06 22:11】例行空唤醒巡检·无新令·全交付态确认。** ①git pull无vision任务书变更(最后改动=20:33 vision自身commit)②GPU-wait chain PID1365749 alive(ppid=1真守护进程,etimes≈20589s/5.7h),子进程PID1155182 `sleep 60`正常polling,GPU释放后自动接上(ETA≈12/25)③GPU 8×H100 100% util~75GB,pretrain S1占满(.12),🚫不杀健康训练④11-06 18:5x CPU令✅已交付⑤wave_rl 产物全在位(report14860B+5 eval JSON+SFT/GRPO ckpt+生成器脚本)⑥git无vision在途改动(工作区??全为他线/未跟踪文件,不碰)⑦零异常·nice -n 19。📦体积:TASK=31764B(31.0KB)/MEMORY≈22.0KB(均≤32KB✓,本轮0归档)。**未完成指令:无**(CPU任务全交付,阶段3需用户另批,GPU chain后台自管)⇒**WAITING: 1**。
+
+> 📦 wake #836（例行空唤醒巡检·2026-11-06 21:38）已归档 → daily-memories-vision/2026-11-06.md；**结论**：无新令·GPU-wait chain健康·全交付态确认·零异常。需要时再读。
 
 > 📦 wake #835（CPU GRPO Phase2全链路交付·2026-11-06 20:27）已归档 → daily-memories-vision/2026-11-06.md；**结论**：P0-P3全DONE·4 eval JSON全齐(Oracle1.000/pre-SFT0.0/post-SFT0.092/post-GRPO0.062)·报告+EXPERIMENTS§21·任务标✅已交付·Post-GRPO未提升(诚实记录)。需要时再读。
 
