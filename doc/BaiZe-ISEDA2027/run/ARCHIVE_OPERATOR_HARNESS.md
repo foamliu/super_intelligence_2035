@@ -1705,3 +1705,25 @@ git rm --cached 'doc/BaiZe-ISEDA2027/run/harness/**/*verified_full_*.json'
 > 📦 **已归档合集（2026-10-25 ~ 10-27，原文全在 `run/ARCHIVE_OPERATOR_HARNESS.md`）**：① 10-27 08:3x TB 横评报告 + SWE-bench 20 条试点 → 两报告已交付（`report_harness_terminalbench_7way_final_zh.html` / `report_harness_swebench_verified_pilot20_zh.html`）；② 10-26 08:2x 最近工作报告 → R516 终版交付；③ 10-25 17:5x hermes/claude-code 复跑 89 + codex 高 err 排查 → 已完成；④ 10-25 08:2x 适配器修复（claude/hermes/deepseek 0%）→ R492-R497 已交付，但 **claude-code/deepseek 在 TB 仍 0%**，故本令 ② 要求先过闸门。
 
 
+
+### 🚀 运维令 · 2026-11-06 17:1x（**基于 full500 完整结果，系统归因 cline 为何显著低于 opencode**）· 用户直令 · 最高优先
+
+> **✅ 已完成 R1685**（2026-11-06 17:3x）→ 归档自 BAIZE_HARNESS_TASK.md。
+> **结论**：基于 full500 完整数据逐实例配对拆解——final cline 356/500(71.2%) vs opencode 401/500(80.2%)，差距集(opencode解·cline未解)58题·净差45题；归因：补丁质量/能力 50(86%)·静默退出/超时(harness适配) 7(12%)·infra 1(2%)；McNemar精确双侧 p=6.27e-08(极显著)·OR=4.46；根因=修复后差距以「能力差(产了patch但不完整/不正确)」为主，接入损耗已大幅压缩(R1569修复前静默退出35+超时18→修复后仅7)。报告 report_harness_cline_lowscore_analysis_zh.html(32968B,0script/0外链/自包含)·生成器 gen_report_cline_lowscore_analysis_zh.py。commit harness 分析:。**③永久硬约束**(结果JSON不入库)继续生效。需要时再读。
+
+> 用户原话（2026-11-06）：「安排 harness 调查一下 SWE-bench Verified 评测中为啥 cline 分数这么低。」
+
+**① 背景（评测已收官，用完整数据）**：全 7 路 full500 predict+eval 已 100% 完成。最终 resolved（有效分母 486 档口径）：**cline 350** vs **opencode 401**、pi 333、codex 285、claude-code 273、deepseek 187、hermes 184 —— cline 为**第二高**，但与榜首 opencode 仍差 ~51 题（约 −10pp）。
+
+**② 注意（勿重复旧结论）**：R1567 已做过一次归因（cline **326** 阶段、3 类根因 = 静默退出/超时卡死/补丁质量，McNemar 极显著），且 R1569 适配器修复 + R1633 rerun 58/58 后已把 cline 抬到 **356/500=71.3%**（比 326 时 +30）。本轮要回答的是**修复后仍存在的差距**：final cline 350 vs opencode 401 的差，究竟是本体能力差、还是 harness/适配/上下文/工具链仍有削弱。
+
+**③ 本轮必做（基于 final 数据，逐实例级）**：
+1. **逐实例配对拆解**：取 cline 与 opencode 的 per-instance 结果（`predictions/` + `eval` json），列出「opencode resolved 但 cline failed/no-patch」的实例集合（约 51 题），逐题看 cline 的 patch 内容与失败日志。
+2. **归因分类**：把 51 题差归入——① cline 产了 patch 但测试不过（补丁质量/能力）② 静默退出/超时（harness 适配）③ no-patch（上下文/工具链没走通）④ infra（fetch 超时等，不计能力）。与 opencode 同题的行为对照。
+3. **量化 + 显著性**：McNemar 配对检验（cline vs opencode，500 题配对），报 p 值；拆各类占比。
+4. **根因陈述 + 可改进点**：区分「能力差（模型/底座 kimi-k2.6 在 cline harness 下表现）」vs「接入损耗（cline 适配层/上下文组织/工具授予/超时设置）」，给可落地的改进清单（如限时/工具集/上下文切分），标注置信度。
+5. **中文 HTML 报告**：`reports/report_harness_cline_lowscore_analysis_zh.html`（0 script/0 外链，含逐实例表 + 归因饼图 + McNemar + 结论），生成器落 `run/harness/`。
+
+**④ 交付**：① 51 题差的逐类归因表 ② McNemar p 值 ③ cline 低分根因结论（能力 vs 接入损耗，量化）④ 报告 + 生成器 ⑤ commit `harness 分析:`。
+
+**⑤ 纪律**：🚫 结果 JSON 不入库（§永久硬约束）；CPU/内存自检照常（本线进程不许 >80 核 / 整机 >80%）；不碰 vision/pretrain/data；心跳写 `未完成指令：有` ⇒ `WAITING: 0` 直到报告交付。
