@@ -5,11 +5,11 @@ WAITING: 0
 ## 📊 进度快照
 
 ```
-PHASE:        R1706 glm53重测监控轮:SWE-bench Verified full500×glm-5.3-flash×7路 predict运行中(7/7 alive,85 pred files/3500,59 patched)·TB 4.0=66tasks,P0核实PASS,85/132 images(单pull,已杀冗余副本)·硬约束③PASS
-已完成:       H-B✅·Gate7/7·TB报告✅·full500全7路predict+eval 100%完成✅·R1685 cline低分归因✅·R1694 glm53重测启动✅·R1695 proxy 429+400修复✅·R1696 硬约束③修复+TB4镜像拉取启动✅·R1697-R1705 监控轮✅·R1706 杀冗余TB4 pull副本+85files/59patch✅
-当前动作:     R1706 监控:7路predict运行中·prediction files=85(ground truth按文件计数):cline17·opencode20·pi7·codex4·claude-code7·hermes20·dsh10·patches=59:cline14·opencode19·pi2·codex1·claude-code4·hermes13·dsh6·⚠️codex quota_blocked=3·pi quota_blocked=1·TB4 pull=85/132(前轮误判old pull died→实则alive,已杀冗余副本554463,保留原3294268)·gw_proxy 9092+9093 HTTP200✅·gateway 200✅
-下一步:       ①监控7路predict进度(85接近100段,按100/300/500三段汇报) ②每路predict完即eval ③TB4镜像拉取完(85/132,ETA~30min)→7路smoke→全量66×7 ④写报告report_harness_glm53_7way_swebench_tb_zh.html
-阻塞:         无·7路predict运行中·TB4镜像单pull中(85/132)·⚠️codex quota_blocked多·pi patch率低(2/7) 待观察
+PHASE:        R1707 glm53重测监控轮:SWE-bench Verified full500×glm-5.3-flash×7路 predict运行中(7/7 alive,89 pred files/3500,62 patched,69.7%patch率)·TB 4.0=66tasks,P0核实PASS,115/132 images pull中(0 FAIL,ETA~10min)·硬约束③PASS
+已完成:       H-B✅·Gate7/7·TB报告✅·full500全7路predict+eval 100%完成✅·R1685 cline低分归因✅·R1694-R1706 glm53重测启动+proxy修复+硬约束③修复+TB4镜像拉取+监控轮✅
+当前动作:     R1707 监控:7路predict运行中·prediction files=89:cline17·opencode20·pi7·codex4·claude-code8·hermes23·dsh10·patches=62:cline14·opencode19·pi2·codex1·claude-code4·hermes16·dsh6(69.7%)·⚠️pi patch率低(2/7)+30min timeout·codex log buffered实际在task5(astropy-13453)·TB4 pull=115/132(0 FAIL,单pull PID3294268 alive)·gw_proxy 9092+9093 HTTP200✅·gateway 200✅
+下一步:       ①监控7路predict进度(89接近100段,按100/300/500三段汇报) ②每路predict完即eval ③TB4镜像拉取完(115/132,ETA~10min)→7路smoke→全量66×7 ④写报告report_harness_glm53_7way_swebench_tb_zh.html
+阻塞:         无·7路predict运行中·TB4镜像单pull中(115/132)·⚠️pi patch率低(2/7)+timeout·codex quota_blocked待观察
 ERROR_COUNT:  0
   📦 体积：TASK=32074B(31.3KB) / MEMORY≈30KB(≤32KB达标,无需归档)
 ```
@@ -29,7 +29,8 @@ ERROR_COUNT:  0
 > 📦 R1700 流水(01:17,监控轮:193done/3500·32patches·TB4 32/132)已归档 → daily-memories-harness/2026-11-07.md。结论：7路 alive,进度稳定。需要时再读。
 > 📦 R1701-R1703 流水(01:28~01:45,3轮监控:CPU/MEM PASS+7/7 alive+硬约束③PASS,注:报的"208done"是orchestrator attempted计数非prediction files)已归档 → daily-memories-harness/2026-11-07.md。结论：7路稳定推进,TB4镜像55→64/132。需要时再读。
 > 📦 R1704 流水(01:55,监控轮:75files/52patch·TB4 64/132)已归档 → daily-memories-harness/2026-11-07.md。结论：7路 alive,进度稳定。需要时再读。
-[02:12] R1706 glm53重测监控轮:CPU/MEM自检PASS(load39.7/224~18%busy·top=pretrain143%非本线·无harness>8000%CPU·无>50GB RSS·MEM avail1242G)→gw_proxy 9092+9093 HTTP200✅·gateway 200✅→7/7 alive(cline65472·opencode502256·pi2990544·codex597957·claude-code3776945·hermes718202·dsh173435)→prediction files=85(ground truth按文件计数):cline17·opencode20·pi7·codex4·claude-code7·hermes20·dsh10·patches=59:cline14·opencode19·pi2·codex1·claude-code4·hermes13·dsh6·⚠️codex quota_blocked=3·pi quota_blocked=1(progress JSON done数被resume膨胀,dsh=115实为旧session残留,文件计数85才是真值)→**TB4 pull=85/132**:前轮误判old pull(3294268)died→实则alive(etimes5074s)·两pull竟拉同一image(ontology-kg-querying-verifier)→**已杀冗余副本554463树**(kill 554463/554481/554494)·保留原3294268单pull·TB4 dataset=66tasks/132images·disk:/data5.9T free·/351G free→硬约束③PASS(glm53 JSON tracked=0)·体积:TASK32074B(31.3KB)/MEMORY~30KB(≤32KB无需归档)·未完成指令:有(glm53重测)⇒WAITING=0.
+> 📦 R1706 流水(02:12,监控轮:85files/59patch·TB4 85/132·杀冗余TB4 pull副本554463)已归档 → daily-memories-harness/2026-11-07.md。结论：7路 alive,进度稳定。需要时再读。
+[02:24] R1707 glm53重测监控轮:CPU/MEM自检PASS(load43.1/224~19%busy·top=pretrain163%非本线·无harness>8000%CPU·无>50GB RSS·MEM avail1269G)→gw_proxy 9092+9093 HTTP200✅·gateway 200✅→7/7 alive(cline3991932·opencode4004319·pi4005476·codex2247963·claude-code2248351·hermes2258290·dsh2261465)→prediction files=89:cline17·opencode20·pi7·codex4·claude-code8·hermes23·dsh10·patches=62:cline14·opencode19·pi2·codex1·claude-code4·hermes16·dsh6(69.7%)·⚠️pi patch率低(2/7)+30min timeout(task3 astropy-13236)·codex log buffered实际在task5(astropy-13453,subproc PID597960 alive)→TB4 pull=115/132(0 FAIL,单pull PID3294268 etimes5640s alive)·TB4 dataset=66tasks·disk:/data5.9T free/351G free→硬约束③PASS(glm53 JSON tracked=0)·体积:TASK32074B(31.3KB)/MEMORY~30KB·未完成指令:有(glm53重测)⇒WAITING=0.
 
 
 
