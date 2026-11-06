@@ -2,7 +2,9 @@
 
 WAITING: 0
 
-> 🆕 **【wake #765 · 2026-11-06 11:54】监控巡检·状态无变化·双poller健康·GPU满载·仅待GPU。SFT poller PID2757742(etimes≈57866s≈16.1h,ppid=1)alive✓ poll log /tmp/wave_sft_poller_relaunch.log latest [11:52:25]busy_util--waiting；GRPO chain PID2466702(etimes≈13467s≈3.7h,ppid=1)alive✓ chain log /tmp/grpo_wave_restart2.log latest [11:51:22]waited 13440s/7776000=90天；eval_results.json未出现(SFT未启动,GPU忙)；GPU .12 8×H100满载(96-100%util/~75GB) pretrain baize2b torchrun PID2612442(etimes≈316949s≈3.7天,--nnodes=2 --nproc_per_node=8) iter~103200/700k(14.7%) 速率~7.0s/iter latest ckpt iter_0102000@09:32 next iter_0104000 ETA~13:25 全程ETA≈12/24-25。cline in PATH✓。📦体积:TASK=30453B(29.7KB)/MEMORY=9399B(9.2KB)(均≤32KB✓,无需归档)。**未完成指令:有**(阶段1 GPU训练pending·外部阻塞不可加速/不杀健康训练)⇒**WAITING: 0**。
+> 🆕 **【wake #766 · 2026-11-06 11:58】监控巡检·状态无变化·双poller健康·GPU满载·仅待GPU。SFT poller PID2757742(etimes≈58262s≈16.2h,ppid=1)alive✓ poll log /tmp/wave_sft_poller_relaunch.log latest [11:57:26]busy_util--waiting；GRPO chain log /tmp/grpo_wave_restart2.log latest [11:57:22]waited 13800s/7776000=90天；eval_results.json未出现(SFT未启动,GPU忙)；GPU .12 8×H100满载(94-100%util/~75GB) pretrain baize2b torchrun PID2612442(etimes≈317227s≈3.67天,--nnodes=2 --nproc_per_node=8) iter~103200/700k(14.7%) 速率~7.0s/iter latest ckpt iter_0102000@09:32 next iter_0104000 ETA~13:25 全程ETA≈12/24-25。cline in PATH✓。📦体积:TASK=30453B(29.7KB)/MEMORY=9710B(9.5KB)(均≤32KB✓,无需归档)。**未完成指令:有**(阶段1 GPU训练pending·外部阻塞不可加速/不杀健康训练)⇒**WAITING: 0**。
+
+> 📦 wake #765（监控巡检·2026-11-06 11:54）已归档 → daily-memories-vision/2026-11-06.md；**结论**：状态无变化，双poller健康，GPU满载仅待GPU。需要时再读。
 
 > 📦 wake #764（监控巡检·2026-11-06 11:47）已归档 → daily-memories-vision/2026-11-06.md；**结论**：状态无变化，双poller健康，GPU满载仅待GPU。需要时再读。
 
@@ -76,4 +78,4 @@ WAITING: 0
 | 当前动作 | **双**poller后台运行等GPU空闲：SFT poller(PID 2757742, flock, etimes≈57866s≈16.1h, 扠60s `busy_util -- waiting`) + GRPO chain(PID 2466702, flock, etimes≈13467s≈3.7h, SFT_WAIT_MAX=90天, 扠120s `SFT not done yet`)·仅待GPU释放 |
 | 下一步 | 阶段1 SFT训练（~4 GPU·h，GPU空闲后SFT poller自动启动，3000 steps≈2.66 epoch）→ eval_results.json → GRPO chain自动验收 → 阶段2 GRPO（~12 GPU·h）+ WaveQA-RL评测 |
 | 阻塞 | .12+.29 GPU全占（16×H100 96-100% util / ~75GB，pretrain mamba2 baize2b torchrun PID 2612442 iter~103200/700k(14.7%) 速率~7.0s/iter ETA≈12/24-25）· .75 SSH不可达（需运维协调MCP通道） |
-| 更新 | **2026-11-06 11:54 (wake #765)**: 监控巡检·状态无变化·双poller健康·GPU .12 8×H100满载 pretrain baize2b torchrun PID2612442 iter~103200/700k ETA≈12/24-25·git同步·WAITING=0 |
+| 更新 | **2026-11-06 11:58 (wake #766)**: 监控巡检·状态无变化·双poller健康·GPU .12 8×H100满载 pretrain baize2b torchrun PID2612442 iter~103200/700k ETA≈12/24-25·git同步·WAITING=0 |
