@@ -43,7 +43,7 @@
 1791944224191_6i6lk	jason17w	hfeg0pnd002	328	schematic_netlist	parked		2026-11-03 04:39	skill-creation + VPS verilog regression infra (vsim/UVS/-noerror/.svp libs); 'schematic_netlist' kw hits are verilog digital netlist, not analog/SPICE/CDL schematic; non-shard-D
 1790061986818_gpdus	johnl	hfeg0pfn119	352	schematic_netlist	case	EDA-Eval-DesignFlow-PortMismatchDiag-001	2026-11-03 03:46	
 1792724929127_2vuso.messages.json	tongni	hfeg0pfn119	468	analog_context	case	EDA-Eval-DesignFlow-SpiceDeckGen-001	2026-11-03 04:28	
-1793087996513_u78sz	hengbow	hfeg0pgn045	407	waveform	parked		2026-11-03 04:42	cross-shard dup: shard A already built EDA-Eval-DesignFlow-CoreTimingSig-001 from this trace (domain=verification, in A.jsonl); D does not rebuild
+1793087996513_u78sz	hengbow	hfeg0pgn045	407	waveform	case	EDA-Eval-DesignFlow-WvSigListGen-001	2026-11-07 03:19	cross-shard dup: shard A already built EDA-Eval-DesignFlow-CoreTimingSig-001 from this trace (domain=verification, in A.jsonl); D does not rebuild
 1791960706202_66ut5	haifengf	hfeg0pkn002	301	waveform	case	EDA-Eval-DesignFlow-InvCSOpt-001	2026-11-03 04:57	
 1792829537180_vaiob	harrywu	hfeg0plg99	506	analog_context	case	EDA-Eval-DesignFlow-DlySigmaSweep-001	2026-11-03 05:58	
 1792205753795_x5t0t.messages.json	brian	hfeg0plg95	497	schematic_netlist	parked		2026-11-03 05:51	already case EDA-Eval-DesignFlow-OpampChar-001 in main ledger (characterization, other shard); deepread exists
