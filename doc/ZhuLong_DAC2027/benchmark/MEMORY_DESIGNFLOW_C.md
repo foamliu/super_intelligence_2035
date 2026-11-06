@@ -1,14 +1,14 @@
 WAITING: 0
 SHARD: C (physical_layout)
 DOMAINS: layout_aether, layout_virtuoso, pg_layout, physical_verify
-round: 194
-📊 trace 覆盖率：190/1511=12.6%（r194 交付 PgFlowConfigMerge-001 pg_layout；ledger 329:case 190·parked 139·claimed 0；jsonl C 189 行；mc30 池 target 1511；layout_aether 45·layout_virtuoso 44·pg_layout 29·physical_verify 69）
-🎯 通过率: shard C 累计 189 case 已落 jsonl（pi/cline 实跑数见 cline_eval_status.jsonl，B 档目标 20–30%）
-🧾 断言: k_rationale=k_check ✓（189/189 达标；r194 新增 15 条 ①–⑮ a–o）
+round: 195
+📊 trace 覆盖率：191/1511=12.7%（r195 交付 AutoViaDeGui-001 layout_virtuoso；ledger 330:case 191·parked 139·claimed 0；jsonl C 190 行；mc30 池 target 1511；layout_aether 45·layout_virtuoso 45·pg_layout 29·physical_verify 69）
+🎯 通过率: shard C 累计 190 case 已落 jsonl（pi/cline 实跑数见 cline_eval_status.jsonl，B 档目标 20–30%）
+🧾 断言: k_rationale=k_check ✓（190/190 达标；r195 新增 15 条 ①–⑮ a–o）
 📦 体积：TASK≈70KB / MEMORY_C≈33KB
-🛠 DEBT: 0（r194 新交付无新债；r190-r193 已归档批次 194 降体积）
+🛠 DEBT: 0（r195 新交付无新债）
 
-- **轮(194) 已交付 EDA-Eval-DesignFlow-PgFlowConfigMerge-001（pg_layout, A-档 faithful, L1-boundary）✓** —— trace=1785493621914_3qqg5（e0014566 @ hfeg0pkn005, mc=132, 150 msgs/647KB; 用户要求合并 rscalc/autovia/powerfill 三个 skill 的配置文件，构建 rscalc→autovia→powerfill→verify 迭代降阻工作流）. **选料**: r194 从 e0014566 pg_layout 候选池选 3qqg5(pg_layout 28→29 次低覆盖域, 单轮纯 intent 4 件事: 分析 3 skill + 合并配置 rscalc 优先 + 构建降阻迭代工作流 + 写 prompt_flow.md, L1-boundary=Python key_map 生成器离线可验). DISTINCT from r190 PgRundirDefault(runDir 默认值) + r191 PgCellClassify(cell 名称分类) + r162 PwrFlowCfgGen(已归档). **用户原话逐字**: msg#0`好了，这下你文件夹里面的东西多了。接下来需要你帮忙干这样的几件事：1）分析下这里面提供的这三个skill 2) 把这三个skill的配置文件合并成一个，如果有相同输入的，以 rscalc.config 里面的为准，即处理 rscalc的输入版图。3）rscalc 是计算电阻的，其余两个工具是优化版图的。我们希望你构建出这样的一个工作流，计算版图的电阻，然后调用另外两个版图优化工具，优化版图，降低电阻。把电阻尽可能的降低。最后得到这样的一个相比原来版图电阻值明显降低的一个新的版图。4）把上述得到的流程写进 prompt_flow.md, 便于复用。` **真实产物**: assistant 深读 3 SKILL.md + 3 工具配置, 分析出 3 工具键名差异(project/projName, viewName/viewType, pwrNets/pwrnets/powerName, runDir/workDir), 产出统一配置 layout_rscalc_flow.config(174 行, 62 参数, 去重 workDir/project/viewName/pwrNets, target_reduction_pct=30/max_iterations=3) + gen_tool_configs.py(235 行, 3 个 KEY_MAP 映射统一名→工具名, 生成 5 个配置含管道覆盖 powerfill libName=autovia 输出, verify libName=powerfill 输出, runDir 从 workDir 派生) + prompt_flow.md(304 行 4 步迭代流程文档). L1-boundary: 候选=gen_tool_configs.py + layout_rscalc_flow.config 在 submit.zip; check.py 静态审计 KEY_MAP 结构 + 统一配置去重 + 动态运行生成器验证 5 输出 + 管道覆盖 + runDir 派生 + flow_control + 反硬编码 B(不同值的隐藏统一配置). A(可见 3 工具配置 rscalc.config/run_autovia_config.il/run_powerfill_config.il); 隐藏 B(layout_rscalc_flow_B.config: process=smic28B_uniq, lib=mylibB_uniq, cell=cellB_uniq, target=55, max_iter=7, 不同的 autovia/powerfill 输出名, 反硬编码+反泄题). 判分 **15 条 ①–⑮ a–o**: (a)zip+py_compile (b)≥3 KEY_MAP 常量 (c)AUTOVIA project→projName (d)AUTOVIA viewName→viewType (e)pwrNets 三路映射 (f)5 输出文件 (g)rscalc 统一名 (h)autovia 映射名 (i)powerfill 管道覆盖+映射名 (j)verify 管道覆盖 (k)runDir 派生 (l)flow_control 匹配 (m)统一配置去重 (n)反硬编码 B (o)反泄题. k_check=15=k_rationale, ref PASS, 4 negatives FAIL[b,f,i,n] distinct, §4.9 三假全 FAIL.
+- **轮(195) 已交付 EDA-Eval-DesignFlow-AutoViaDeGui-001（layout_virtuoso, A-档 faithful, L1-boundary）✓** —— trace=1783324072633_qidc2（e0014566 @ hfeg0pkn005, mc=82, 179 msgs/546KB; 用户要求把 GUI 版 AutoVia 脚本 IMCleAutoVia.il 去 GUI 化, 配置文件输入, run_code 调用）. **选料**: r195 从 shard C 候选池按 layout-domain 关键词排序选 qidc2(mc=82, calibre:38+virtuoso:7+cellview:14, drc 关键词 732 命中最高, e0014566 真实 AutoVia 工艺师, layout_virtuoso 44→45 平衡覆盖). DISTINCT from r192 FloatingPinGen(ellawu layout_virtuoso 浮动 pin) + r189 DeleteM1Shapes(e03179 layout_virtuoso 删 M1). **用户原话逐字**: msg#61`IMCleAutoVia.il 这个工具本身就是GUI的，比较不太适合整理成agent skill的形式。请你将这个脚本去GUI化，把其中需要通过GUI输入的参数，改成配置文件输入的方式。整个的流程就是先读取配置文件，得到重要的配置信息。然后将这个配置信息，写入到去GUI化的il脚本里，然后通过run_code工具，调用这个去GUI化的脚本执行。` **真实产物**: assistant 读 IMCleAutoVia.il(2035 行 Leozhao GUI 脚本, hiCreateAppForm 表单), 产出 run_autovia_nogui.il(600+ 行去 GUI: IMCleGetTimeString 抽取+RunAutoViaNoGui 无参入口+load config+unless 校验 5 必填+case(process) 14 deck 选择+via 选择串 strcat+strmout GDS→calibre -drc→sed INSERT_V→stream in→dbCreateInst→dbSave→FastXOR) + run_autovia_config.il(1995B 62 参数+27 via flag) + read_open_layout.il(6287B 连版图辅助) + run_autovia_agent.il(1150B 编排器). msg#131 加载成功, msg#141+ sandbox Unknown SKILL error 环境问题但脚本结构完整. L1-boundary: 候选=去 GUI 脚本 .il+配置 .il 在 submit.zip; check.py 静态分析(无 GUI 调用/无参入口/load 配置/校验 5 必填/via 选择串 strcat/抽取日期 helper/核心 db+calibre 操作/runDir 处理/pwrnets 解析)+subprocess 括号平衡+subprocess 反硬编码探针+反 stub. A(可见 IMCleAutoVia.il+run_autovia_config.il); 隐藏 B(run_autovia_config_B.il: process=hl22_uniqB/lib=libB_uniq/cell=cellB_uniq/projName=projB_uniq/pwrnets="vddB! vssB!"/viaV2+V4+V5+RDV+V1A+T2V1+T8V3+RV+VIA3+Vy2+Vr2=t 余 nil, 反硬编码+反泄题). 判分 **15 条 ①–⑮ a–o**: (a)zip 合法含 .il (b)无 GUI 调用 (c)无参入口 procedure (d)load 配置 (e)校验 5 必填参数 (f)via 选择串 strcat (g)抽取日期 helper (h)核心 db+calibre 操作 (i)B 字段全异 (j)括号平衡 subprocess (k)runDir 处理 (l)pwrnets 解析 (m)入口无 form 参数 (n)反硬编码 subprocess (o)反 stub >=3 核心操作. k_check=15=k_rationale, ref PASS, 3 negatives FAIL[a,b,d distinct], §4.9 三假全 FAIL[a,a,h].
 
 - **轮(193) 已归档→ designflow/MEMORY_C_archive.md（EDA-Eval-DesignFlow-SchPinAnalyze-001, layout_aether, A-档 faithful, L1, k=14/14；归档批次 194；1793524556149_f86ll（sinanz）
 
@@ -52,7 +52,6 @@ round: 194
 
 - **轮(169) 已归档→ designflow/MEMORY_C_archive.md（ConvexEnclosePcellGen-001, layout_virtuoso, B-synthesized, L1, k=26/26 a–z；归档批次 173；trace wyuzh xxchen hfeg0pkn002 mc435；SKILL pcell convex-corner-enclose 几何抽取器 cve_geom.py）**
 
-
 - 轮(168) 已归档详情→designflow/MEMORY_C_archive.md（PwrFillAgentGen-001, pg_layout, B-synthesized, L1, k=12/12 a–l；归档批次 171；trace vfz3r e0014566 hfeg0pkn005 mc205）
 - 轮(167) 已归档详情→designflow/trace_deepreads/（LvsDeepReportAnalyzer-001, physical_verify, B-档 synthesized, L1, k=17/17 a–q, 清 r166 DEBT; trace ld0p8 ziyuny hfeg0pkn002 mc477; 通用 LVS 深度报告分析器 lvs_debug_report.py 解析 lvs.log/.lvs.rep/.shorts/hcells→JSON+md; A=Ary seed-promo B=MemCol_256x64 3 P-G 短路; r166 5j455 碰撞 shard B 已 cede parked）
 
@@ -79,7 +78,6 @@ round: 194
 - 轮(154) 已归档→ designflow/MEMORY_C_archive.md（Nand3LefDeriveAudit-001, pg_layout；归档批次 155；详细见归档）
 
 - 轮(155) 已归档→ designflow/MEMORY_C_archive.md（DrcConnScriptAudit-001, physical_verify；归档批次 157；详细见归档）
-
 
 - 轮(153) 已归档→ designflow/MEMORY_C_archive.md（EDA-Eval-DesignFlow-PcellBasexEncloseAudit-001, layout_virtuoso；归档批次 154；详细见归档）
 
@@ -111,9 +109,7 @@ round: 194
 
 - **轮(139) 已归档→ designflow/MEMORY_C_archive.md（EDA-Eval-DesignFlow-RsRedFlowOrchestrator-001, pg_layout；归档批次 142；详细见归档）**
 
-
 - **轮(138) 已归档→ designflow/MEMORY_C_archive.md（EDA-Eval-DesignFlow-DrcPatternReportComposer-001, physical_verify, B-档 synthesized, L1；归档批次 139；详细见归档）**
-
 
 - **轮(137) 已归档→ designflow/MEMORY_C_archive.md（EDA-Eval-DesignFlow-SWBProjCreate-001, layout_aether, B-档 synthesized, L2；归档批次 139；详细见归档）**
 
@@ -162,7 +158,6 @@ round: 194
 
 - 轮(116a) 已归档→ designflow/MEMORY_C_archive.md（EDA-Eval-DesignFlow-ErcBatchReasonFlow-001, physical_verify；归档批次 118；详细见归档）
 
-
 - 轮(115) 已归档→ designflow/MEMORY_C_archive.md（调研轮·候选池 physical_layout 真 seed 稀缺；归档批次 118；详细见归档）
 
 - 轮(114) 已归档→ designflow/MEMORY_C_archive.md（EDA-Eval-DesignFlow-ViaFillSvrfGen-001, physical_verify；归档批次 114b；详细见归档）
@@ -183,9 +178,7 @@ round: 194
 
 - 轮(106) 已归档→ designflow/MEMORY_C_archive.md（EDA-Eval-DesignFlow-PdkRunsetExplorer-001, physical_verify；归档批次 107；详细见归档）
 
-
 - 轮(105) 已归档→ designflow/MEMORY_C_archive.md（EDA-Eval-DesignFlow-DrcPyEnvDiag-001, physical_verify；归档批次 107；详细见归档）
-
 
 - 轮(104) 已归档→ designflow/MEMORY_C_archive.md（EDA-Eval-DesignFlow-ErcReconLicDiag-001, physical_verify；归档批次 108；详细见归档）
 
@@ -220,7 +213,6 @@ round: 194
 - **轮(87) 已归档→ designflow/MEMORY_C_archive.md（归档批次 95；详细见归档）
 
 - **轮(86) 已归档→ designflow/MEMORY_C_archive.md（EDA-Eval-DesignFlow-DRCReportIpAudit-001，physical_verify；归档批次 88；详细见归档）
-
 
 - **轮(85) 已归档→ designflow/MEMORY_C_archive.md（EDA-Eval-DesignFlow-RsCalcShortDiag-001，layout_virtuoso；归档批次 87；详细见归档）
 
