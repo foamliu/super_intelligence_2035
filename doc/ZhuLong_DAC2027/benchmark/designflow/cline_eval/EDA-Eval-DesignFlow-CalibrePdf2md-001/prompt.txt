@@ -1,0 +1,551 @@
+# Calibre DRC 文档 → Skill.md 构建执行指南
+
+> 用途：将本文件作为任务说明交给大模型，指导其从 Calibre User Handbook PDF 出发，逐步生成一份可准确理解 DRC 逻辑关键词的 SKILL.md，并配合 RAG 实现高精度 rule 解析。
+>
+> 执行原则：每个 Phase 完成后必须先验证产物，确认无误后再进入下一 Phase。不得跳步，不得凭模型记忆补充 Calibre 语法。
+
+---
+
+## 0. 最终目标与交付物
+
+最终需要交付：
+
+1. `calibre_handbook.md`：保留页码、章节层级、代码块、表格的 Calibre 手册 Markdown。
+2. `keyword_cards/*.json`：每个 DRC 逻辑关键词一份结构化 JSON 知识卡。
+3. `skills/calibre-drc-logic/SKILL.md`：符合 Anthropic Skill 规范的主技能文件。
+4. `skills/calibre-drc-logic/references/*.md`：按类别拆分的参考页。
+5. `rag/`：可检索 Calibre 原文的 RAG 管道配置与索引。
+6. `eval/`：至少 50 条评测题与评测结果。
+7. `build_report.md`：记录每阶段执行情况、人工校验结果和遗留问题。
+
+核心原则：
+
+- SKILL.md 负责"压缩和导航"。
+- RAG 负责"原文证据"。
+- 评测负责"防止幻觉"。
+- 微调只在必要时进行。
+
+---
+
+## 1. 总体架构
+
+采用三层架构：
+
+### 第一层：SKILL.md
+存放压缩后的准确知识：
+- 关键词分类
+- 语法签名
+- 操作数类型
+- 返回类型
+- 几何语义
+- 真值表 / 集合关系
+- 边界条件
+- 常见误用
+- 示例 rule
+- 来源页码
+
+### 第二层：原文 RAG
+SKILL.md 不可能覆盖所有细节。回答时让模型检索 Calibre 手册原文，尤其是：
+- 关键词定义章节
+- 语法章节
+- 示例章节
+- 版本更新说明
+- 限制和注意事项
+
+### 第三层：few-shot / 微调
+如果要求极高准确率，再用手册生成 QA 对和 rule 解析样本，做 LoRA/SFT。通常 `SKILL.md + RAG + 好的提示词` 已能快速达到可用水平。
+
+---
+
+## 2. 工具与资源总览
+
+> 使用时请自行核实链接与可用性。
+
+| 资源 | 类型 | 用途 | 地址 |
+|---|---|---|---|
+| pdf2md (MikeWuPing) | GitHub 工具 | PDF→Markdown，表格保留 / 水印去除 / 页眉过滤 | github.com/MikeWuPing/pdf2md |
+| pdf2wiki | GitHub 工具 | 技术书籍→分章 Markdown，MinerU 双 pass | github.com/Sevthered/pdf2wiki |
+| Skill Seekers | PyPI / GitHub | 文档→AI Skill 自动转换，冲突检测 | github.com/yusufkaraaslan/Skill_Seekers |
+| doc2skill | GitHub 工具 | 文档→Agent Skill，三阶段工作流 | github.com/Odonno/doc2skill |
+| SKILL.md 规范 | Anthropic 文档 | SKILL.md 格式标准 | mintlify.wiki/anthropics/skills/spec/skill-format |
+| RAG-EDA | 论文+代码 | EDA 文档 QA 定制 RAG 框架 + ORD-QA 基准 | github.com/lesliepy99/RAG-EDA |
+| ANYTHING2SKILL | 论文 | 异质知识→可执行技能，技能树先验抽取 | arxiv 2606.09316 |
+| CORPUS2SKILL | 论文+代码 | 文档语料→层级化技能目录，导航式检索 | arxiv 2604.14572 |
+| EvoDRC | 论文 | 自进化 Agentic DRC 修复框架 | arxiv 2607.20019 |
+| DRC-Aid | 论文 | LLM Agent 自动 DRC 违规修复 | arxiv 2607.22761 |
+| HybridFind | GitHub 工具 | BM25 + 向量混合检索，RRF 融合 | github.com/MukundaKatta/HybridFind |
+
+---
+
+## 3. Phase 0：PDF → 结构化 Markdown
+
+### 3.1 目标
+将 Calibre PDF 转换为保留语义结构的 Markdown，作为后续知识提取的唯一数据源。
+
+### 3.2 检测 PDF 类型
+
+Calibre User Handbook 通常为原生数字 PDF。用以下命令快速确认：
+
+```bash
+pdftotext -f 1 -l 3 calibre_handbook.pdf - | head -50
+```
+
+- 若输出大量可读文本 → 原生数字 PDF，直接进入 3.3。
+- 若输出为空或乱码 → 扫描版 PDF，需先 OCR。
+
+### 3.3 选择转换工具
+
+#### 方案 A（推荐）：pdf2wiki + MinerU 双 pass 流水线
+
+pdf2wiki 专为技术书籍设计，输出分章、保留页码的 LLM-ready Markdown：
+
+```bash
+git clone https://github.com/Sevthered/pdf2wiki.git
+cd pdf2wiki
+python pdf2wiki.py --input calibre_handbook.pdf --output ./md_output --split-chapters
+```
+
+#### 方案 B：pdf2md (MikeWuPing) 三步流水线
+
+适合需要去除水印和处理页眉页脚的场景。该工具支持 XObject 嵌入型和内容流文本型两种水印形态的自动去除，基于频率分析识别跨页重复的页眉页脚，并用三路表格检测策略保留表格结构：
+
+```bash
+pip install pikepdf PyMuPDF pdfplumber
+python remove_watermark.py
+python convert_hybrid.py
+```
+
+### 3.4 输出要求
+
+转换后必须验证以下要素：
+
+| 检查项 | 要求 | 验证方法 |
+|---|---|---|
+| 页码保留 | 每页标注原始页码 | 搜索 `page` 或 `p.` 标记 |
+| 章节层级 | H1/H2/H3 对应原文章节 | 检查 Markdown 标题结构 |
+| 代码块 | SVRF 语法用 ``` 包裹 | 搜索 ` ```svrf ` |
+| 表格 | 转为 Markdown 表格 | 检查 ` \| ` 分隔符 |
+| 关键词完整性 | AND/OR/NOT/XOR/INTERACT/INSIDE 等均在文档中 | grep 搜索关键词 |
+
+---
+
+## 4. Phase 1：按关键词抽取结构化知识卡
+
+### 4.1 目标
+从 Markdown 中按 DRC 逻辑关键词切块，为每个关键词生成统一的 JSON 知识卡。
+
+### 4.2 关键词清单
+
+先从 Markdown 中提取所有逻辑关键词。将关键词分为四类：
+
+```markdown
+## 布尔逻辑类
+AND, OR, NOT, XOR, NAND, NOR
+
+## 空间关系类
+INTERACT, INSIDE, OUTSIDE, ENCLOSURE, OVERLAP, COINCIDENT,
+TOUCH, WITHIN, DISTANCE, SEPARATION
+
+## 形态学操作类
+SIZE, GROW, SHRINK, HOLES, RECTANGLE, EXTENT
+
+## 选择过滤类
+SELECT, FILTER, HOLES, OUTSIDE, INSIDE
+```
+
+> 注意：具体关键词列表必须从 Calibre 手册原文中提取，不得凭模型记忆补充。
+
+### 4.3 切块策略
+
+不要按固定 token 切分。按关键词边界切块，每个 chunk 包含该关键词的完整定义段落、语法说明、示例代码和注意事项。固定尺寸切分会破坏技术手册的语义完整性。
+
+为每个 chunk 附加 metadata：
+
+```yaml
+keyword: AND
+category: boolean_operation
+calibre_version: 2024.x
+source_chapter: "SVRF Reference"
+source_page: 123
+section_title: "Layer Operations"
+```
+
+### 4.4 JSON Schema
+
+```json
+{
+  "keyword": "AND",
+  "aliases": [],
+  "category": "boolean_operation",
+  "syntax": ["layer1 AND layer2"],
+  "operands": ["layer", "layer"],
+  "returns": "layer",
+  "semantics": "只依据原文总结的准确含义",
+  "truth_table": "如适用",
+  "geometry": "几何上如何运算",
+  "edge_cases": [
+    "空集",
+    "全平面",
+    "边接触是否算重叠",
+    "是否要求同类型 layer"
+  ],
+  "examples": [
+    {
+      "code": "示例 rule",
+      "explain": "解释"
+    }
+  ],
+  "misuse": ["常见误用"],
+  "related": ["OR", "NOT", "XOR"],
+  "source": {
+    "chapter": "章节",
+    "page": "页码",
+    "excerpt": "原文摘录"
+  },
+  "confidence": "high/medium/low"
+}
+```
+
+### 4.5 知识卡抽取 Prompt
+
+对每个关键词，用以下 Prompt 让大模型抽取知识卡：
+
+```text
+你是 EDA DRC 文档工程师。请只依据我提供的 Calibre 手册片段，为关键词 {keyword} 生成知识卡。
+
+要求：
+1. 输出 JSON，不要输出 Markdown。
+2. 字段定义：
+   - keyword: 关键词名称
+   - aliases: 别名/同义词
+   - category: 布尔逻辑/空间关系/形态学操作/选择过滤
+   - syntax: 语法签名
+   - operands: 操作数类型列表
+   - returns: 返回类型
+   - semantics: 精确语义（必须附原文摘录和页码）
+   - truth_table: 真值表（如适用）
+   - geometry: 几何层面的运算解释
+   - edge_cases: 边界条件（空集、全平面、边接触、同类型要求等）
+   - examples: SVRF 代码示例及解释
+   - misuse: 常见误用
+   - related: 相关关键词
+   - source: {chapter, page, excerpt}
+   - confidence: high/medium/low
+3. 每个语义必须附原文摘录和页码。
+4. 如果原文没有说明，填 unknown，不得猜测。
+5. 区分布尔逻辑、空间关系、选择过滤、形态学操作四类。
+6. 如果同一关键词在不同版本含义不同，分别列出。
+7. 特别关注：接触/重叠/包含/边接触的边界条件。
+```
+
+### 4.6 自动化工具参考
+
+如果手动抽取工作量大，可用 Skill Seekers 自动完成部分流程。该工具支持 18 种源类型，能自动检测不同来源间的知识冲突：
+
+```bash
+pip install skill-seekers
+skill-seekers create ./calibre_handbook.md --format json
+```
+
+### 4.7 输出验证
+
+抽取完成后，人工抽查 20%～30% 的知识卡，重点检查：
+
+- 操作数类型是否正确
+- 返回类型是否正确
+- 边界条件是否覆盖
+- 原文摘录是否准确
+
+---
+
+## 5. Phase 2：合并为 SKILL.md
+
+### 5.1 目标
+将所有知识卡合并为一份符合 Anthropic 规范的 SKILL.md。
+
+### 5.2 SKILL.md 文件结构
+
+```text
+skills/calibre-drc-logic/
+├── SKILL.md              # 主文件，<500 行
+├── references/           # 按需加载的参考页
+│   ├── boolean-operations.md
+│   ├── spatial-relations.md
+│   ├── morphological-ops.md
+│   └── filter-selection.md
+└── scripts/              # 可选：验证脚本
+```
+
+渐进式披露原则：SKILL.md 本身保持精简（<500 行），详细参考材料放在 `references/` 中按需加载。Agent 启动时只看到 metadata（约 100 token），匹配到技能后才加载 SKILL.md 正文，需要时才读取 references 文件。
+
+### 5.3 YAML Frontmatter
+
+```yaml
+---
+name: calibre-drc-logic
+description: Use when parsing Calibre SVRF/DRC rules that involve
+  logical operators (AND, OR, NOT, XOR), spatial relations
+  (INTERACT, INSIDE, OUTSIDE, ENCLOSURE, OVERLAP), or
+  filter/selection keywords. Provides accurate semantics,
+  operand types, return types, edge cases, and source page
+  references from the Calibre User Handbook.
+---
+```
+
+description 字段的关键规则：
+
+- 只描述触发条件，不要总结技能流程。
+- 以 "Use when..." 开头，聚焦触发场景。
+- 描述应包含具体关键词、场景和错误消息。
+- 最大 1024 字符。
+- 用第三人称书写。
+
+### 5.4 SKILL.md 正文模板
+
+```markdown
+# Calibre DRC Logic Keywords
+
+## Overview
+本技能帮助准确理解 Calibre SVRF 中的逻辑关键词和空间关系关键词。
+每个关键词解释可追溯到 Calibre User Handbook 的具体章节和页码。
+
+## 使用原则
+- 只依据本 skill 和检索到的 Calibre 原文回答
+- 不确定时输出"需查手册"，不得猜测
+- 区分四类关键词：布尔逻辑、空间关系、形态学操作、选择过滤
+
+## 关键词索引
+| 关键词 | 类别 | 一句话含义 | 来源 |
+|---|---|---|---|
+| AND | 布尔逻辑 | ... | p.123 |
+| INTERACT | 空间关系 | ... | p.200 |
+| ... | ... | ... | ... |
+
+## 详细参考
+- 布尔逻辑操作：`references/boolean-operations.md`
+- 空间关系：`references/spatial-relations.md`
+- 形态学操作：`references/morphological-ops.md`
+- 选择过滤：`references/filter-selection.md`
+
+## Rule 解析流程
+1. 识别命令、变量、层名、括号结构
+2. 展开层定义
+3. 构建表达式 AST
+4. 对每个操作符查本 skill 关键词卡
+5. 做类型检查：操作数是否合法、返回类型是什么
+6. 用自然语言解释
+7. 给出几何伪代码
+8. 标注不确定项，并引用原文页码
+
+## 输出模板
+- 涉及关键词：
+- 操作数类型：
+- 返回类型：
+- 几何语义：
+- 等价表达式：
+- 边界条件：
+- 来源：
+```
+
+### 5.5 references/ 参考页模板
+
+每个参考页聚焦一类关键词，最大 500 行：
+
+```markdown
+# Boolean Operations
+
+## AND
+- 类别：布尔层运算
+- 语法：`layer1 AND layer2`
+- 操作数：layer, layer
+- 返回：layer
+- 语义：[原文摘录]
+- 几何解释：[解释]
+- 边界条件：
+  - 空集处理：...
+  - 边接触是否算重叠：...
+- 示例：
+  ```svrf
+  ...
+  ```
+- 常见误用：...
+- 来源：第 X 章，p.123
+
+## OR
+...
+```
+
+### 5.6 Skill 写作核心原则
+
+来自 Anthropic 官方规范：
+
+1. 解释"为什么"，不仅是"做什么"。现代 AI Agent 能从理解原因中获益。
+2. 使用祈使句。
+3. 包含示例。
+4. 明确引用捆绑资源，说明何时以及如何使用参考文件。
+5. 宁可多个窄技能，不要一个巨型技能。
+6. SKILL.md body 控制在 5000 token / 500 行以内。
+
+---
+
+## 6. Phase 3：RAG 检索增强
+
+### 6.1 目标
+SKILL.md 负责"压缩和导航"，RAG 负责提供原文证据。让模型回答时先查 Skill，再检索原文。
+
+### 6.2 EDA 领域专用 RAG 方案
+
+CUHK 的 RAG-EDA 论文提出了专为 EDA 工具文档 QA 设计的定制 RAG 框架，包含三项领域特定技术：
+
+1. 对比学习微调文本嵌入模型，适配 EDA 术语。
+2. 从专有 LLM 蒸馏的 Reranker，精细过滤检索结果。
+3. 用高质量领域语料微调的生成 LLM。
+
+ORD-QA 基准和训练数据集已开源：https://github.com/lesliepy99/RAG-EDA
+
+### 6.3 RAG 管道架构
+
+离线索引阶段：
+
+```text
+PDF 解析为结构化 Markdown
+→ 按关键词 metadata 增强分块
+→ 嵌入
+→ 存入向量数据库
+```
+
+在线推理阶段：
+
+```text
+用户查询嵌入
+→ 混合检索 + 重排序候选段落
+→ 传给生成模型
+→ 输出带引用来源的回答
+```
+
+### 6.4 混合检索策略
+
+对于 DRC 关键词这种需要精确匹配 + 语义理解的场景，必须使用混合检索：
+
+- 向量检索：理解语义，如"AND 和 INTERACT 的区别"。
+- BM25 / 关键词检索：精确匹配 `AND`、`INTERACT`、`INSIDE` 等关键词。
+- Metadata filter：按 Calibre 版本、章节、关键词类型过滤。
+- RRF 融合：用 Reciprocal Rank Fusion 合并两路检索结果。
+
+开源实现参考：HybridFind（BM25 + 向量 + RRF + metadata filtering）。
+
+### 6.5 检索增强 Prompt
+
+在 System Prompt 中强制以下流程：
+
+```text
+回答 DRC 相关问题时，按以下步骤执行：
+1. 从 SKILL.md 关键词索引中查找涉及的关键词
+2. 用关键词检索 Calibre 原文，获取原文证据
+3. 如果 SKILL.md 和原文不一致，以原文为准
+4. 输出解释并引用原文页码
+5. 如果原文未覆盖，输出"需查手册"，不得猜测
+```
+
+### 6.6 导航式检索（进阶）
+
+CORPUS2SKILL 论文提出了"导航式"替代方案：将文档语料离线蒸馏为层级化技能目录，Agent 在服务时从鸟瞰视图逐级深入，在分支无产出时回退。在单领域、有可恢复主题分类的语料上，导航式优于单次检索和层级检索。Calibre 手册具有清晰的章节结构，适合用这种方式组织。
+
+---
+
+## 7. Phase 4：评测与迭代
+
+### 7.1 目标
+建立评测集，验证 Skill + RAG 的输出准确性，持续迭代。
+
+### 7.2 评测集构建
+
+从 Calibre 手册中生成 50～200 条评测题，覆盖以下维度：
+
+| 维度 | 示例问题 | 预期答案来源 |
+|---|---|---|
+| 定义准确性 | AND 与 INTERACT 的区别？ | SKILL.md + 原文 |
+| 语法准确性 | INSIDE 的操作数和返回类型？ | SKILL.md |
+| 边界条件 | 边接触是否算 OVERLAP？ | 原文 |
+| 等价性 | A AND B 与 B AND A 是否等价？ | SKILL.md |
+| 版本差异 | 某版本是否支持某关键词？ | 原文 |
+| Rule 解析 | 给定 rule，涉及哪些关键词和几何结果？ | 综合 |
+
+参考 EDA-Corpus 提供的 196 条 QA 对基准和 ORD-QA 基准。
+
+### 7.3 评测方法
+
+用 LLM-as-a-judge 对每条回答打分，重点关注：
+
+- 操作数类型是否正确
+- 返回类型是否正确
+- 边界条件是否覆盖
+- 是否引用了原文页码
+- 是否产生了幻觉（编造原文不存在的内容）
+
+### 7.4 迭代循环
+
+```text
+1. 人工抽查 20%～30% 的知识卡，重点校对边界条件
+2. 用评测集跑 Skill + RAG，记录错误
+3. 分析错误模式：
+   - Skill.md 描述不准确 → 修正 Skill.md
+   - 检索遗漏原文 → 调整分块或检索策略
+   - 模型理解偏差 → 增加 few-shot 示例
+4. 针对性修正
+5. 重复
+```
+
+### 7.5 进阶：微调（可选）
+
+如果 Skill + RAG 仍不够准确，用手册生成 QA 对和 rule 解析样本，做 LoRA/SFT。EvoDRC 论文验证了技能演化框架在 DRC 修复中的有效性。AST-guided SVRF 方法也验证了用 AST 嵌入 + RAG 增强 SVRF 代码合成的可行性。
+
+注意：Calibre 手册通常受版权和保密限制。不要上传到公共模型，建议本地部署或企业版。
+
+---
+
+## 8. 执行检查清单
+
+完成全部 Phase 后，逐项确认：
+
+- [ ] PDF 已转换为保留页码和章节结构的 Markdown
+- [ ] 所有 DRC 逻辑关键词已从 Markdown 中提取
+- [ ] 每个关键词有完整的 JSON 知识卡（含原文摘录和页码）
+- [ ] 知识卡已合并为符合规范的 SKILL.md（<500 行）
+- [ ] references/ 目录按类别组织参考页
+- [ ] description 字段以 "Use when..." 开头，聚焦触发场景
+- [ ] RAG 管道已搭建，支持混合检索 + metadata filter
+- [ ] 评测集至少 50 条，覆盖 6 个维度
+- [ ] 人工抽查 20%～30% 知识卡，边界条件已验证
+- [ ] 错误分析已完成，针对性修正已应用
+
+---
+
+## 9. 给大模型的执行指令
+
+将本文件交给大模型时，附加以下指令：
+
+```text
+请严格按照本指南的 Phase 0 → Phase 1 → Phase 2 → Phase 3 → Phase 4 顺序执行。
+
+每完成一个 Phase：
+1. 输出该阶段产物清单。
+2. 说明哪些内容来自 Calibre 手册原文，哪些是结构整理。
+3. 标注需要人工校验的条目。
+4. 等待确认后再进入下一 Phase。
+
+禁止事项：
+- 不得凭模型记忆补充 Calibre 语法。
+- 不得跳过原文引用和页码。
+- 不得把不同 Calibre 版本的关键词含义混在一起。
+- 不得在未确认原文的情况下输出 high confidence。
+```
+
+---
+
+## 10. 一句话总结
+
+Skill.md 负责压缩和导航，RAG 负责原文证据，评测负责防止幻觉。用 pdf2wiki 或 pdf2md 处理文档，用统一 JSON Schema 抽取知识卡，用 Anthropic 规范写 SKILL.md，用 RAG-EDA 的思路搭检索，用评测集持续迭代。
+
+
+请参考这份md ，帮我把 ：/apps/mentor/calibre/2020.1_36/aoi_cal_2020.1_36.18/docs/pdfdocs/svrf_ur.pdf  这份文档转化成skill

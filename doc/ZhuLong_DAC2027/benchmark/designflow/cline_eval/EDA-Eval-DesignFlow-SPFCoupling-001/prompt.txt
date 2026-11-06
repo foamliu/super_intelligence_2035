@@ -1,0 +1,21 @@
+你好，现在我想让你帮助我去处理一部分数据，转化为排版规律的csv文件或excel文件，这部分是通过SPF工具抽出来的signal之间的coupling数据，每个空白行后的第一行都是这个信号的总coupling,之后是该signal和其他signal之间的coupling,最后一行则是该信号和power之间的coupling，请你牢记上述描述，并在后续拿到对应文件后和我再次确认上述表述。此外，这部分数据是记录在基础的文本文件中的。除了上述表述外，还有什么是你想在正式处理数据之前想了解的？
+
+我先回答你最关心的4和5。关于4，你说的是正确的，通过空格分隔：主要信号、空格、耦合对象、空格、耦合数值。耦合数值是通过科学计数法实现的。关于5，主要是通过字段特征，譬如第一行通常都没有耦合对象，所以很容易甄别出是总的coupling，最后一行的耦合对象通常是"0"，所以是和power的耦合；另外两个信号的相互coupling通常只会出现一次，譬如在A的所有coupling下有A和B的coupling数值，那么在B的所有coupling中就不会显示B和A的coupling了，但是计算B的总coupling的时候还是会算上这个的，所以第一行的数据是可信的。另外我在回答下你提到的问题2和3. 文件开头确实存在这些非数据行，请注意甄别并忽略这些。关于空白行的定义似乎不大清晰，我觉得还是就这下列例子给你讲解会更清晰一些：
+*|NET cn09bla<34> 0.000852709PF
+C209_1 cn09bla<34> cn09bla<24> 1.0195e-18
+C209_2 cn09bla<34> cn09blb<24> 3.32513e-18
+C209_3 cn09bla<34> cn09bla<22> 1.31728e-17
+C209_4 cn09bla<34> cn09blb<22> 3.33772e-18
+C209_5 cn09bla<34> cn09blb<36> 2.40033e-17
+Cg209_6 cn09bla<34> 0 4.73601e-16
+*|NET cn09bla<32> 0.000954092PF
+C211_1 cn09bla<32> Yio3b<0> 1.41043e-18
+C211_2 cn09bla<32> cn09blb<22> 3.66896e-18
+C211_3 cn09bla<32> cn09bla<20> 1.46671e-17
+C211_4 cn09bla<32> cn09blb<20> 3.114e-18
+C211_5 cn09bla<32> cn09bla<34> 1.43259e-18
+C211_6 cn09bla<32> cn09blb<34> 1.55346e-17
+Cg211_7 cn09bla<32> 0 4.01551e-16
+上面就是一组正常的数据，请你就这组例子快速熟悉你接下来要处理的数据形式
+
+OK，现在我给你这个文件的绝对路径：msaq_E_sample.spf_CC（在工作目录下），我希望你能先给我总结出一个关于SABL的coupling汇总（文件中对应信号的大致形式为：*|NET XI_msax256_cp10.XI_CXSA_1x4_0<39>.Sa_BLb<0>），按照SABL的顺序，给我一份CSV文件。文件列的排布如下：行数计数、CP数（如XI_msax256_cp10，注意，XI_msax196_pracL和XI_msax196_pracR按顺序在CP07以后）、SA排序（如XI_CXSA_1x4_0<39>，排序就是39）、Sa_BLa（如Sa_BLa<0>）、该Sa_BLa和PreEq0的coupling、该Sa_BLa和bl的coupling（如cn09bla<34>，有多个请累加求和）、该Sa_BLa和IO的coupling、该Sa_BLa和ION的coupling、该Sa_BLa和Cslin的coupling(有多个请累加求和)、该Sa_BLa和非同名的Sa_BL的coupling（如ccp10.XI_CXSA_1x4_0<39>.Sa_BLa<0>和XI_msax256_cp10.XI_CXSA_1x4_0<39>.Sa_BLb<2>，有多个请累加求和）、该Sa_BLa和power的coupling、该Sa_BLa总的coupling、Sa_BLb（如Sa_BLb<0>，注意此处应该和前面同行Sa_BLa同前缀）、该Sa_BLb和PreEq0的coupling、该Sa_BLb和bl的coupling（如cn09blb<34>，有多个请累加求和）、该Sa_BLb和IO的coupling、该Sa_BLb和ION的coupling、该Sa_BLb和Cslin的coupling(有多个请累加求和)、该Sa_BLb和非同名的Sa_BL的coupling（如ccp10.XI_CXSA_1x4_0<39>.Sa_BLb<0>和XI_msax256_cp10.XI_CXSA_1x4_0<39>.Sa_BLb<2>，有多个请累加求和）、该Sa_BLb和power的coupling、该Sa_BLb总的coupling. 最后空一列，然后放前面对应同组的Sa_BLa和同名的Sa_BLb的coupling。你现在可以进行了，生成脚本或最终文件后及时通知我

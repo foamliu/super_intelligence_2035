@@ -1,0 +1,8 @@
+# cell_constraints_template.txt
+# Cell constraints for AutoCell standard-cell generation
+#
+# Format: CELL <name> <width> <height> <type>
+
+CELL invx1 0.6 1.2 stdcell
+CELL nand2x1 0.9 1.2 stdcell
+CELL nor2x1 0.9 1.2 stdcell

@@ -1,0 +1,375 @@
+Warning: AI SDK Warning System: To turn off warning logging, set the AI_SDK_LOG_WARNINGS global to false.
+      at SX (/$bunfs/root/chunk-mbnfmz12.js:24:45839)
+      at uZ (/$bunfs/root/chunk-mbnfmz12.js:24:46025)
+      at transform (/$bunfs/root/chunk-mbnfmz12.js:42:42571)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / deepseek-v4-pro-cloud): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at SX (/$bunfs/root/chunk-mbnfmz12.js:24:45839)
+      at uZ (/$bunfs/root/chunk-mbnfmz12.js:24:46138)
+      at transform (/$bunfs/root/chunk-mbnfmz12.js:42:42571)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / deepseek-v4-pro-cloud): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at SX (/$bunfs/root/chunk-mbnfmz12.js:24:45839)
+      at uZ (/$bunfs/root/chunk-mbnfmz12.js:24:46138)
+      at transform (/$bunfs/root/chunk-mbnfmz12.js:42:42571)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / deepseek-v4-pro-cloud): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at SX (/$bunfs/root/chunk-mbnfmz12.js:24:45839)
+      at uZ (/$bunfs/root/chunk-mbnfmz12.js:24:46138)
+      at transform (/$bunfs/root/chunk-mbnfmz12.js:42:42571)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / deepseek-v4-pro-cloud): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at SX (/$bunfs/root/chunk-mbnfmz12.js:24:45839)
+      at uZ (/$bunfs/root/chunk-mbnfmz12.js:24:46138)
+      at transform (/$bunfs/root/chunk-mbnfmz12.js:42:42571)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / deepseek-v4-pro-cloud): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at SX (/$bunfs/root/chunk-mbnfmz12.js:24:45839)
+      at uZ (/$bunfs/root/chunk-mbnfmz12.js:24:46138)
+      at transform (/$bunfs/root/chunk-mbnfmz12.js:42:42571)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / deepseek-v4-pro-cloud): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at SX (/$bunfs/root/chunk-mbnfmz12.js:24:45839)
+      at uZ (/$bunfs/root/chunk-mbnfmz12.js:24:46138)
+      at transform (/$bunfs/root/chunk-mbnfmz12.js:42:42571)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / deepseek-v4-pro-cloud): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at SX (/$bunfs/root/chunk-mbnfmz12.js:24:45839)
+      at uZ (/$bunfs/root/chunk-mbnfmz12.js:24:46138)
+      at transform (/$bunfs/root/chunk-mbnfmz12.js:42:42571)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / deepseek-v4-pro-cloud): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at SX (/$bunfs/root/chunk-mbnfmz12.js:24:45839)
+      at uZ (/$bunfs/root/chunk-mbnfmz12.js:24:46138)
+      at transform (/$bunfs/root/chunk-mbnfmz12.js:42:42571)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / deepseek-v4-pro-cloud): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at SX (/$bunfs/root/chunk-mbnfmz12.js:24:45839)
+      at uZ (/$bunfs/root/chunk-mbnfmz12.js:24:46138)
+      at transform (/$bunfs/root/chunk-mbnfmz12.js:42:42571)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / deepseek-v4-pro-cloud): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at SX (/$bunfs/root/chunk-mbnfmz12.js:24:45839)
+      at uZ (/$bunfs/root/chunk-mbnfmz12.js:24:46138)
+      at transform (/$bunfs/root/chunk-mbnfmz12.js:42:42571)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / deepseek-v4-pro-cloud): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at SX (/$bunfs/root/chunk-mbnfmz12.js:24:45839)
+      at uZ (/$bunfs/root/chunk-mbnfmz12.js:24:46138)
+      at transform (/$bunfs/root/chunk-mbnfmz12.js:42:42571)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / deepseek-v4-pro-cloud): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at SX (/$bunfs/root/chunk-mbnfmz12.js:24:45839)
+      at uZ (/$bunfs/root/chunk-mbnfmz12.js:24:46138)
+      at transform (/$bunfs/root/chunk-mbnfmz12.js:42:42571)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / deepseek-v4-pro-cloud): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at SX (/$bunfs/root/chunk-mbnfmz12.js:24:45839)
+      at uZ (/$bunfs/root/chunk-mbnfmz12.js:24:46138)
+      at transform (/$bunfs/root/chunk-mbnfmz12.js:42:42571)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / deepseek-v4-pro-cloud): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at SX (/$bunfs/root/chunk-mbnfmz12.js:24:45839)
+      at uZ (/$bunfs/root/chunk-mbnfmz12.js:24:46138)
+      at transform (/$bunfs/root/chunk-mbnfmz12.js:42:42571)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / deepseek-v4-pro-cloud): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at SX (/$bunfs/root/chunk-mbnfmz12.js:24:45839)
+      at uZ (/$bunfs/root/chunk-mbnfmz12.js:24:46138)
+      at transform (/$bunfs/root/chunk-mbnfmz12.js:42:42571)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / deepseek-v4-pro-cloud): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at SX (/$bunfs/root/chunk-mbnfmz12.js:24:45839)
+      at uZ (/$bunfs/root/chunk-mbnfmz12.js:24:46138)
+      at transform (/$bunfs/root/chunk-mbnfmz12.js:42:42571)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / deepseek-v4-pro-cloud): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at SX (/$bunfs/root/chunk-mbnfmz12.js:24:45839)
+      at uZ (/$bunfs/root/chunk-mbnfmz12.js:24:46138)
+      at transform (/$bunfs/root/chunk-mbnfmz12.js:42:42571)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / deepseek-v4-pro-cloud): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at SX (/$bunfs/root/chunk-mbnfmz12.js:24:45839)
+      at uZ (/$bunfs/root/chunk-mbnfmz12.js:24:46138)
+      at transform (/$bunfs/root/chunk-mbnfmz12.js:42:42571)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / deepseek-v4-pro-cloud): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at SX (/$bunfs/root/chunk-mbnfmz12.js:24:45839)
+      at uZ (/$bunfs/root/chunk-mbnfmz12.js:24:46138)
+      at transform (/$bunfs/root/chunk-mbnfmz12.js:42:42571)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / deepseek-v4-pro-cloud): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at SX (/$bunfs/root/chunk-mbnfmz12.js:24:45839)
+      at uZ (/$bunfs/root/chunk-mbnfmz12.js:24:46138)
+      at transform (/$bunfs/root/chunk-mbnfmz12.js:42:42571)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / deepseek-v4-pro-cloud): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at SX (/$bunfs/root/chunk-mbnfmz12.js:24:45839)
+      at uZ (/$bunfs/root/chunk-mbnfmz12.js:24:46138)
+      at transform (/$bunfs/root/chunk-mbnfmz12.js:42:42571)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / deepseek-v4-pro-cloud): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at SX (/$bunfs/root/chunk-mbnfmz12.js:24:45839)
+      at uZ (/$bunfs/root/chunk-mbnfmz12.js:24:46138)
+      at transform (/$bunfs/root/chunk-mbnfmz12.js:42:42571)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / deepseek-v4-pro-cloud): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at SX (/$bunfs/root/chunk-mbnfmz12.js:24:45839)
+      at uZ (/$bunfs/root/chunk-mbnfmz12.js:24:46138)
+      at transform (/$bunfs/root/chunk-mbnfmz12.js:42:42571)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / deepseek-v4-pro-cloud): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at SX (/$bunfs/root/chunk-mbnfmz12.js:24:45839)
+      at uZ (/$bunfs/root/chunk-mbnfmz12.js:24:46138)
+      at transform (/$bunfs/root/chunk-mbnfmz12.js:42:42571)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / deepseek-v4-pro-cloud): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at SX (/$bunfs/root/chunk-mbnfmz12.js:24:45839)
+      at uZ (/$bunfs/root/chunk-mbnfmz12.js:24:46138)
+      at transform (/$bunfs/root/chunk-mbnfmz12.js:42:42571)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / deepseek-v4-pro-cloud): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at SX (/$bunfs/root/chunk-mbnfmz12.js:24:45839)
+      at uZ (/$bunfs/root/chunk-mbnfmz12.js:24:46138)
+      at transform (/$bunfs/root/chunk-mbnfmz12.js:42:42571)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / deepseek-v4-pro-cloud): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at SX (/$bunfs/root/chunk-mbnfmz12.js:24:45839)
+      at uZ (/$bunfs/root/chunk-mbnfmz12.js:24:46138)
+      at transform (/$bunfs/root/chunk-mbnfmz12.js:42:42571)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / deepseek-v4-pro-cloud): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at SX (/$bunfs/root/chunk-mbnfmz12.js:24:45839)
+      at uZ (/$bunfs/root/chunk-mbnfmz12.js:24:46138)
+      at transform (/$bunfs/root/chunk-mbnfmz12.js:42:42571)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / deepseek-v4-pro-cloud): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at SX (/$bunfs/root/chunk-mbnfmz12.js:24:45839)
+      at uZ (/$bunfs/root/chunk-mbnfmz12.js:24:46138)
+      at transform (/$bunfs/root/chunk-mbnfmz12.js:42:42571)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / deepseek-v4-pro-cloud): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at SX (/$bunfs/root/chunk-mbnfmz12.js:24:45839)
+      at uZ (/$bunfs/root/chunk-mbnfmz12.js:24:46138)
+      at transform (/$bunfs/root/chunk-mbnfmz12.js:42:42571)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / deepseek-v4-pro-cloud): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at SX (/$bunfs/root/chunk-mbnfmz12.js:24:45839)
+      at uZ (/$bunfs/root/chunk-mbnfmz12.js:24:46138)
+      at transform (/$bunfs/root/chunk-mbnfmz12.js:42:42571)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / deepseek-v4-pro-cloud): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at SX (/$bunfs/root/chunk-mbnfmz12.js:24:45839)
+      at uZ (/$bunfs/root/chunk-mbnfmz12.js:24:46138)
+      at transform (/$bunfs/root/chunk-mbnfmz12.js:42:42571)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / deepseek-v4-pro-cloud): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at SX (/$bunfs/root/chunk-mbnfmz12.js:24:45839)
+      at uZ (/$bunfs/root/chunk-mbnfmz12.js:24:46138)
+      at transform (/$bunfs/root/chunk-mbnfmz12.js:42:42571)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / deepseek-v4-pro-cloud): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at SX (/$bunfs/root/chunk-mbnfmz12.js:24:45839)
+      at uZ (/$bunfs/root/chunk-mbnfmz12.js:24:46138)
+      at transform (/$bunfs/root/chunk-mbnfmz12.js:42:42571)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / deepseek-v4-pro-cloud): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at SX (/$bunfs/root/chunk-mbnfmz12.js:24:45839)
+      at uZ (/$bunfs/root/chunk-mbnfmz12.js:24:46138)
+      at transform (/$bunfs/root/chunk-mbnfmz12.js:42:42571)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / deepseek-v4-pro-cloud): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at SX (/$bunfs/root/chunk-mbnfmz12.js:24:45839)
+      at uZ (/$bunfs/root/chunk-mbnfmz12.js:24:46138)
+      at transform (/$bunfs/root/chunk-mbnfmz12.js:42:42571)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / deepseek-v4-pro-cloud): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at SX (/$bunfs/root/chunk-mbnfmz12.js:24:45839)
+      at uZ (/$bunfs/root/chunk-mbnfmz12.js:24:46138)
+      at transform (/$bunfs/root/chunk-mbnfmz12.js:42:42571)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / deepseek-v4-pro-cloud): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at SX (/$bunfs/root/chunk-mbnfmz12.js:24:45839)
+      at uZ (/$bunfs/root/chunk-mbnfmz12.js:24:46138)
+      at transform (/$bunfs/root/chunk-mbnfmz12.js:42:42571)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / deepseek-v4-pro-cloud): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at SX (/$bunfs/root/chunk-mbnfmz12.js:24:45839)
+      at uZ (/$bunfs/root/chunk-mbnfmz12.js:24:46138)
+      at transform (/$bunfs/root/chunk-mbnfmz12.js:42:42571)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / deepseek-v4-pro-cloud): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at SX (/$bunfs/root/chunk-mbnfmz12.js:24:45839)
+      at uZ (/$bunfs/root/chunk-mbnfmz12.js:24:46138)
+      at transform (/$bunfs/root/chunk-mbnfmz12.js:42:42571)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / deepseek-v4-pro-cloud): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at SX (/$bunfs/root/chunk-mbnfmz12.js:24:45839)
+      at uZ (/$bunfs/root/chunk-mbnfmz12.js:24:46138)
+      at transform (/$bunfs/root/chunk-mbnfmz12.js:42:42571)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / deepseek-v4-pro-cloud): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at SX (/$bunfs/root/chunk-mbnfmz12.js:24:45839)
+      at uZ (/$bunfs/root/chunk-mbnfmz12.js:24:46138)
+      at transform (/$bunfs/root/chunk-mbnfmz12.js:42:42571)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / deepseek-v4-pro-cloud): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at SX (/$bunfs/root/chunk-mbnfmz12.js:24:45839)
+      at uZ (/$bunfs/root/chunk-mbnfmz12.js:24:46138)
+      at transform (/$bunfs/root/chunk-mbnfmz12.js:42:42571)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / deepseek-v4-pro-cloud): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at SX (/$bunfs/root/chunk-mbnfmz12.js:24:45839)
+      at uZ (/$bunfs/root/chunk-mbnfmz12.js:24:46138)
+      at transform (/$bunfs/root/chunk-mbnfmz12.js:42:42571)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / deepseek-v4-pro-cloud): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at SX (/$bunfs/root/chunk-mbnfmz12.js:24:45839)
+      at uZ (/$bunfs/root/chunk-mbnfmz12.js:24:46138)
+      at transform (/$bunfs/root/chunk-mbnfmz12.js:42:42571)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / deepseek-v4-pro-cloud): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at SX (/$bunfs/root/chunk-mbnfmz12.js:24:45839)
+      at uZ (/$bunfs/root/chunk-mbnfmz12.js:24:46138)
+      at transform (/$bunfs/root/chunk-mbnfmz12.js:42:42571)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / deepseek-v4-pro-cloud): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at SX (/$bunfs/root/chunk-mbnfmz12.js:24:45839)
+      at uZ (/$bunfs/root/chunk-mbnfmz12.js:24:46138)
+      at transform (/$bunfs/root/chunk-mbnfmz12.js:42:42571)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / deepseek-v4-pro-cloud): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at SX (/$bunfs/root/chunk-mbnfmz12.js:24:45839)
+      at uZ (/$bunfs/root/chunk-mbnfmz12.js:24:46138)
+      at transform (/$bunfs/root/chunk-mbnfmz12.js:42:42571)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / deepseek-v4-pro-cloud): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at SX (/$bunfs/root/chunk-mbnfmz12.js:24:45839)
+      at uZ (/$bunfs/root/chunk-mbnfmz12.js:24:46138)
+      at transform (/$bunfs/root/chunk-mbnfmz12.js:42:42571)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / deepseek-v4-pro-cloud): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at SX (/$bunfs/root/chunk-mbnfmz12.js:24:45839)
+      at uZ (/$bunfs/root/chunk-mbnfmz12.js:24:46138)
+      at transform (/$bunfs/root/chunk-mbnfmz12.js:42:42571)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / deepseek-v4-pro-cloud): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at SX (/$bunfs/root/chunk-mbnfmz12.js:24:45839)
+      at uZ (/$bunfs/root/chunk-mbnfmz12.js:24:46138)
+      at transform (/$bunfs/root/chunk-mbnfmz12.js:42:42571)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / deepseek-v4-pro-cloud): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at SX (/$bunfs/root/chunk-mbnfmz12.js:24:45839)
+      at uZ (/$bunfs/root/chunk-mbnfmz12.js:24:46138)
+      at transform (/$bunfs/root/chunk-mbnfmz12.js:42:42571)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / deepseek-v4-pro-cloud): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at SX (/$bunfs/root/chunk-mbnfmz12.js:24:45839)
+      at uZ (/$bunfs/root/chunk-mbnfmz12.js:24:46138)
+      at transform (/$bunfs/root/chunk-mbnfmz12.js:42:42571)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / deepseek-v4-pro-cloud): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at SX (/$bunfs/root/chunk-mbnfmz12.js:24:45839)
+      at uZ (/$bunfs/root/chunk-mbnfmz12.js:24:46138)
+      at transform (/$bunfs/root/chunk-mbnfmz12.js:42:42571)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / deepseek-v4-pro-cloud): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at SX (/$bunfs/root/chunk-mbnfmz12.js:24:45839)
+      at uZ (/$bunfs/root/chunk-mbnfmz12.js:24:46138)
+      at transform (/$bunfs/root/chunk-mbnfmz12.js:42:42571)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / deepseek-v4-pro-cloud): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at SX (/$bunfs/root/chunk-mbnfmz12.js:24:45839)
+      at uZ (/$bunfs/root/chunk-mbnfmz12.js:24:46138)
+      at transform (/$bunfs/root/chunk-mbnfmz12.js:42:42571)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / deepseek-v4-pro-cloud): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at SX (/$bunfs/root/chunk-mbnfmz12.js:24:45839)
+      at uZ (/$bunfs/root/chunk-mbnfmz12.js:24:46138)
+      at transform (/$bunfs/root/chunk-mbnfmz12.js:42:42571)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / deepseek-v4-pro-cloud): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at SX (/$bunfs/root/chunk-mbnfmz12.js:24:45839)
+      at uZ (/$bunfs/root/chunk-mbnfmz12.js:24:46138)
+      at transform (/$bunfs/root/chunk-mbnfmz12.js:42:42571)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / deepseek-v4-pro-cloud): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at SX (/$bunfs/root/chunk-mbnfmz12.js:24:45839)
+      at uZ (/$bunfs/root/chunk-mbnfmz12.js:24:46138)
+      at transform (/$bunfs/root/chunk-mbnfmz12.js:42:42571)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / deepseek-v4-pro-cloud): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at SX (/$bunfs/root/chunk-mbnfmz12.js:24:45839)
+      at uZ (/$bunfs/root/chunk-mbnfmz12.js:24:46138)
+      at transform (/$bunfs/root/chunk-mbnfmz12.js:42:42571)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / deepseek-v4-pro-cloud): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at SX (/$bunfs/root/chunk-mbnfmz12.js:24:45839)
+      at uZ (/$bunfs/root/chunk-mbnfmz12.js:24:46138)
+      at transform (/$bunfs/root/chunk-mbnfmz12.js:42:42571)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / deepseek-v4-pro-cloud): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at SX (/$bunfs/root/chunk-mbnfmz12.js:24:45839)
+      at uZ (/$bunfs/root/chunk-mbnfmz12.js:24:46138)
+      at transform (/$bunfs/root/chunk-mbnfmz12.js:42:42571)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / deepseek-v4-pro-cloud): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at SX (/$bunfs/root/chunk-mbnfmz12.js:24:45839)
+      at uZ (/$bunfs/root/chunk-mbnfmz12.js:24:46138)
+      at transform (/$bunfs/root/chunk-mbnfmz12.js:42:42571)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / deepseek-v4-pro-cloud): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at SX (/$bunfs/root/chunk-mbnfmz12.js:24:45839)
+      at uZ (/$bunfs/root/chunk-mbnfmz12.js:24:46138)
+      at transform (/$bunfs/root/chunk-mbnfmz12.js:42:42571)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / deepseek-v4-pro-cloud): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at SX (/$bunfs/root/chunk-mbnfmz12.js:24:45839)
+      at uZ (/$bunfs/root/chunk-mbnfmz12.js:24:46138)
+      at transform (/$bunfs/root/chunk-mbnfmz12.js:42:42571)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / deepseek-v4-pro-cloud): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at SX (/$bunfs/root/chunk-mbnfmz12.js:24:45839)
+      at uZ (/$bunfs/root/chunk-mbnfmz12.js:24:46138)
+      at transform (/$bunfs/root/chunk-mbnfmz12.js:42:42571)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / deepseek-v4-pro-cloud): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at SX (/$bunfs/root/chunk-mbnfmz12.js:24:45839)
+      at uZ (/$bunfs/root/chunk-mbnfmz12.js:24:46138)
+      at transform (/$bunfs/root/chunk-mbnfmz12.js:42:42571)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / deepseek-v4-pro-cloud): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at SX (/$bunfs/root/chunk-mbnfmz12.js:24:45839)
+      at uZ (/$bunfs/root/chunk-mbnfmz12.js:24:46138)
+      at transform (/$bunfs/root/chunk-mbnfmz12.js:42:42571)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / deepseek-v4-pro-cloud): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at SX (/$bunfs/root/chunk-mbnfmz12.js:24:45839)
+      at uZ (/$bunfs/root/chunk-mbnfmz12.js:24:46138)
+      at transform (/$bunfs/root/chunk-mbnfmz12.js:42:42571)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / deepseek-v4-pro-cloud): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at SX (/$bunfs/root/chunk-mbnfmz12.js:24:45839)
+      at uZ (/$bunfs/root/chunk-mbnfmz12.js:24:46138)
+      at transform (/$bunfs/root/chunk-mbnfmz12.js:42:42571)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / deepseek-v4-pro-cloud): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at SX (/$bunfs/root/chunk-mbnfmz12.js:24:45839)
+      at uZ (/$bunfs/root/chunk-mbnfmz12.js:24:46138)
+      at transform (/$bunfs/root/chunk-mbnfmz12.js:42:42571)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / deepseek-v4-pro-cloud): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at SX (/$bunfs/root/chunk-mbnfmz12.js:24:45839)
+      at uZ (/$bunfs/root/chunk-mbnfmz12.js:24:46138)
+      at transform (/$bunfs/root/chunk-mbnfmz12.js:42:42571)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / deepseek-v4-pro-cloud): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at SX (/$bunfs/root/chunk-mbnfmz12.js:24:45839)
+      at uZ (/$bunfs/root/chunk-mbnfmz12.js:24:46138)
+      at transform (/$bunfs/root/chunk-mbnfmz12.js:42:42571)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / deepseek-v4-pro-cloud): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at SX (/$bunfs/root/chunk-mbnfmz12.js:24:45839)
+      at uZ (/$bunfs/root/chunk-mbnfmz12.js:24:46138)
+      at transform (/$bunfs/root/chunk-mbnfmz12.js:42:42571)
+

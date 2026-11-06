@@ -1,0 +1,23 @@
+在 /proj/drcoa/V0/ver/pex/johnl/T_IsmTop 工程做 StarRCXT RCC（寄生 RC）抽取时失败了，
+报错说 "I37 底层没map vbn 到vss vbp 到vcc"，需要改 CDL。
+
+背景：顶层单元 T_IsmTop 把体偏置（body-bias）网 vbn!/vbp! 作为端口引出；buf 族
+子电路 bufLx4 / bufLx16 的签名都是 `A Y vbn! vbp! vcc! vss!`。其中实例 XI37
+（bufLx4）的体偏置 bulk 端仍接在顶层的 vbn!/vbp! 上，没有映射到真实电源/地
+vss!/vcc!，导致 StarRCXT RCC 抽取因 body-bias 网悬空而失败。其余 buf 族实例
+（如 XI378）已正确接到 vss!/vcc!。
+
+请产出 3 个交付件（打包成 outputs/submit.zip）：
+1. fix_cdl.py —— 通用的 CDL 体偏置修复器，命令行
+   `fix_cdl.py <in.cdl> <out.cdl> <out.diff>`：按子电路名 `bufLx*` + 体偏置端
+   接在 `vbn!`/`vbp!` 上这一结构特征定位问题实例，把它的 vbn!->vss! 、
+   vbp!->vcc!（仅改这两端，信号端 A/Y 与 vcc!/vss! 不动），其余所有行原样保留，
+   输出修复后的 CDL 与 unified diff。必须通用，不得硬编码实例名 XI37 或单元名
+   bufLx4（判分会用另一个工程 B 跑你的 fix_cdl.py，B 的顶层/实例名/单元名/网名
+   都不同）。幂等；无 bufLx* 实例时 exit 2。
+2. T_IsmTop_fixed.cdl —— 对给定的可见 CDL（T_IsmTop.cdl）跑你的 fix_cdl.py 后
+   的修复结果。
+3. fix.diff —— 上述修复的 unified diff。
+
+可见的 A 工程上下文见 ctx_A.txt、待修 CDL 见 T_IsmTop.cdl（仅作开发参考；判分
+只用隐藏的 B 工程）。

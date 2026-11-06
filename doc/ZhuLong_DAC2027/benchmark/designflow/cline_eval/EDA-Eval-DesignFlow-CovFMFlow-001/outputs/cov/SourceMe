@@ -1,0 +1,12 @@
+#!/bin/bash
+#==============================================================
+# CFREQ_CTRL VCS 代码覆盖率检查流程环境
+# 用法: source SourceMe
+#==============================================================
+module purge
+module load vcs/vcs_mx/2023.12-SP2
+
+export DESIGN=cfreq_ctrl
+export USE_LSF=${USE_LSF:-0}
+
+echo "[SourceMe] VCS env loaded: vcs -> $(command -v vcs 2>/dev/null || echo 'use module lsf')"

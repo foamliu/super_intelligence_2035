@@ -1,0 +1,867 @@
+1788172501150_w4x70	haoyut	hfeg0pkn003		analog_context	parked	EDA-Eval-DesignFlow-Analog-001	2026-11-05 20:55	wrong-domain: cvps+netlist spef anti-annotation analysis (pnr_signoff/RC, not shard D); n=1181 too large
+1792371248997_fa3cd	e0039602	hfeg0plg85	73	waveform	case	EDA-Eval-DesignFlow-Waveform-001	2026-10-30 23:21	
+1791611498731_wg5u2.messages.json	zjqiao	hfhds211	728	analog_context	case	EDA-Eval-DesignFlow-LibCell-001	2026-10-31 01:30	
+1793147699495_as67p.messages.json	easont	hfhds211	786	waveform	case	EDA-Eval-DesignFlow-WaveView-002	2026-10-31 02:18	
+1792715254915_8z5a8					case	EDA-Eval-DesignFlow-DummyDeck-001	2026-10-31 09:23	
+1791526272387_1i0em.messages.json	rongtaoy	hfeg0pkn001	574	schematic_netlist	case	EDA-Eval-DesignFlow-SubcktExtract-001	2026-10-31 09:43	
+1790563683904_l7aol.messages.json	jason17w	hfeg0pnd002	288	schematic_netlist	case	EDA-Eval-DesignFlow-NetlistChk-001	2026-10-31 11:58	
+1789454632664_t1xjg.messages.json					case	EDA-Eval-DesignFlow-SkillToAether-001	2026-11-02 15:26	
+1786541065533_cgqd1.messages.json	e0014566	hfeg0plg58	772	schematic_netlist	parked		2026-11-02 16:02	layout-rscalc RTEXT/RNODE placement; overlaps LayoutVirtuoso-001 (shard C) + RsCalcFlow-001 (analog_context); not a fresh D-domain slot
+1787742497412_aneeo					case	EDA-Eval-DesignFlow-ResReport-001	2026-11-02 15:59	
+1785810906841_m2vah					case	EDA-Eval-DesignFlow-RsCalcFlow-001	2026-11-02 15:59	
+1787798131361_82ybr					case	EDA-Eval-DesignFlow-Backannot-001	2026-11-02 15:59	
+1792297573507_9knot					case	EDA-Eval-DesignFlow-Characterization-001	2026-11-02 15:59	
+1791966358446_82iou					case	EDA-Eval-DesignFlow-HierDescend-001	2026-11-02 15:59	
+1792376698189_1nsgi					case	EDA-Eval-DesignFlow-Schematic-001	2026-11-02 15:59	
+1792573537545_enbl7					case	EDA-Eval-DesignFlow-SimlibIndex-001	2026-11-02 15:59	
+1793078405436_t0aom					case	EDA-Eval-DesignFlow-TempSelInfer-001	2026-11-02 15:59	
+1791963281932_4a852.messages.json	e0039602	hfeg0plg85	661	schematic_netlist	case	EDA-Eval-DesignFlow-CellMap-001	2026-11-02 16:37	
+1789370647360_ukkn7.messages.json	e0031668	hfeg0plg91	1478	schematic_netlist	parked		2026-11-02 16:44	duplicate of SkillToAether-001 (t1xjg): same user e0031668, same ERC_AI_CHECK step3+ SKILL->pyAether rewrite task
+1790487462826_wb03t.messages.json	cwei	hfeg0plg93	691	analog_context	case	EDA-Eval-DesignFlow-CTLEAether-001	2026-11-02 16:58	
+1788770994295_x4b0p.messages.json	xinqiaoz	hfeg0plg76	1367	schematic_netlist	parked		2026-11-02 17:12	PDK QA Calibre DRC migration multi-phase software-eng; netlist/skill match marginal (count 2); not analog_context/schematic_netlist/waveform; belongs to physical_verify shard
+1790142100320_n91pk.messages.json	alenxu	hfeg0plg94	755	schematic_netlist	case	EDA-Eval-DesignFlow-CTLEAcMetric-001	2026-11-02 17:37	
+1793102773959_okq91.messages.json	easont	hfeg0pfn119	650	schematic_netlist	case	EDA-Eval-DesignFlow-TempThreshChar-001	2026-11-02 21:56	
+1785725739513_r7ah0	t0002638	hfeg0plg49	685	schematic_netlist	parked		2026-11-02 18:35	MCP/pyAether backend infra setup, not a design task (aether:1455/pyaether:323 dominant; netlist/schematic/waveform signal low)
+1789951973902_p3107					case	EDA-Eval-DesignFlow-WvEdgeTiming-001	2026-11-02 19:07	
+1792297746172_kyref	vincelu	hfeg0plg55	476	schematic_netlist	case	EDA-Eval-DesignFlow-InstCdlConsist-001	2026-11-02 19:45	
+1793070934364_gtyj5	easont	hfeg0plg58	590	waveform	case	EDA-Eval-DesignFlow-TempSelWaveform-001	2026-11-02 20:23	
+1792215882223_qv6pl.messages.json	adaml	hfeg0pkn001	324	waveform	case	EDA-Eval-DesignFlow-ToggleTrTf-001	2026-11-02 20:53	
+1793001881089_dek1i	easont	hfhds207	590	schematic_netlist	case	EDA-Eval-DesignFlow-NetlistCmp-001	2026-11-02 21:32	
+1792551272867_jnf1q	jasonxu	hfeg0plg93	470	schematic_netlist	parked	EDA-Eval-DesignFlow-ReadsigAddrTbl-001	2026-11-02 23:11	dup of shard B e28df9a EDA-Eval-DesignFlow-ReadsigAddrTbl-001 (same trace jnf1q/jasonxu, committed by shard B first); reverted D.jsonl append
+1792031875998_68gc9.messages.json					case	EDA-Eval-DesignFlow-SiOutDiag-001	2026-11-02 22:56	
+1793067588685_cpv3d.messages.json	taodu	hfeg0plg87	356	schematic_netlist	case	EDA-Eval-DesignFlow-ConnFileNetChk-001	2026-11-02 23:43	
+1792583307053_mrwvg	jasonxu	hfeg0plg93	469	analog_context	case	EDA-Eval-DesignFlow-ReadsigCM-001	2026-11-03 00:12	
+1790584795049_ij4uu.messages.json	e04201	hfeg0pkn004	323	schematic_netlist	case	EDA-Eval-DesignFlow-DLLCtrlParse-001	2026-11-03 00:53	
+1791941227075_le1s7	jason17w	hfeg0pnd002	506	schematic_netlist	case	EDA-Eval-DesignFlow-VerilogrunMod-001	2026-11-03 01:26	
+1785846039627_itvhk					parked		2026-11-03 01:26	layout-RsCalc (virtuoso+calibre), non-shard-D
+1792488619552_mt7ua					parked		2026-11-03 01:26	P&R-innovus, non-shard-D
+1790064242187_1dh6s	e0031668	hfeg0pkn003	389	schematic_netlist	case	EDA-Eval-DesignFlow-ErcSetupGen-001	2026-11-03 02:01	
+1793017339067_jhdvn	t0002805	hfeg0pgn145	492	schematic_netlist	case	EDA-Eval-DesignFlow-MBistAnalyze-001	2026-11-03 02:44	
+1792834214357_qky0j	keviny	hfeg0plg57	324	schematic_netlist	case	EDA-Eval-DesignFlow-RasNetlistAnalyze-001	2026-11-03 03:12	
+1789895218929_1xhgy	miccao	hfeg0plg37	370	schematic_netlist	parked		2026-11-03 03:23	AutoCell TCL flow generator (layers/viadefs/rules/place/route) = PDK/layout, non-shard-D
+1792977240005_1mvxt	yohannw	hfeg0pkn003	565	schematic_netlist	parked		2026-11-03 03:26	IP-packaging+LVS production flow (43KB dev_CXMT_Aether_ip_package.py, real Aether aether.rc lib-substitution, 39 interactive debug turns) too entangled for clean self-verifying case
+1791944224191_6i6lk	jason17w	hfeg0pnd002	328	schematic_netlist	parked		2026-11-03 04:39	skill-creation + VPS verilog regression infra (vsim/UVS/-noerror/.svp libs); 'schematic_netlist' kw hits are verilog digital netlist, not analog/SPICE/CDL schematic; non-shard-D
+1790061986818_gpdus	johnl	hfeg0pfn119	352	schematic_netlist	case	EDA-Eval-DesignFlow-PortMismatchDiag-001	2026-11-03 03:46	
+1792724929127_2vuso.messages.json	tongni	hfeg0pfn119	468	analog_context	case	EDA-Eval-DesignFlow-SpiceDeckGen-001	2026-11-03 04:28	
+1793087996513_u78sz	hengbow	hfeg0pgn045	407	waveform	parked		2026-11-03 04:42	cross-shard dup: shard A already built EDA-Eval-DesignFlow-CoreTimingSig-001 from this trace (domain=verification, in A.jsonl); D does not rebuild
+1791960706202_66ut5	haifengf	hfeg0pkn002	301	waveform	case	EDA-Eval-DesignFlow-InvCSOpt-001	2026-11-03 04:57	
+1792829537180_vaiob	harrywu	hfeg0plg99	506	analog_context	case	EDA-Eval-DesignFlow-DlySigmaSweep-001	2026-11-03 05:58	
+1792205753795_x5t0t.messages.json	brian	hfeg0plg95	497	schematic_netlist	parked		2026-11-03 05:51	already case EDA-Eval-DesignFlow-OpampChar-001 in main ledger (characterization, other shard); deepread exists
+1788764026073_8hdj3.messages.json	ziyuny	hfeg0pnd002	305	analog_context	parked		2026-11-03 05:58	deepread: infra/skill-creation heavy (aether LD_PRELOAD fix + open npn symbol + create SKILL.md for '模拟电路优化·二次执行'); no real netlist/sim/optimization output; weak design_flow material
+1792744168464_n1k2a.messages.json	e0045291	hfeg0plg80	451	schematic_netlist	parked		2026-11-03 05:58	deepread: user asks agent to consume 280k tokens by reading docs/files; not a design task; kw counts inflated by reading pyAether API docs
+1791958054953_qrb1b.messages.json	yan1zh	hfeg0plg65	314	analog_context	parked		2026-11-03 06:01	deepread: schematic->layout task (test_ZY/AG_VtscRef_IPD) but assistant spent whole session on Aether env setup (LD_PRELOAD/libstdc++/TCL_LIBRARY/OA_PLUGIN_PATH), got aetherTclsh working but never generated layout; no accepted deliverable; weak for case
+1788830861723_dnvv4.messages.json	miccao	hfeg0plg37	458	schematic_netlist	case	EDA-Eval-DesignFlow-BufPFFlatGen-001	2026-11-03 06:23	
+1785735994579_tckme	e0014566	hfeg0pkn001	654	schematic_netlist	parked		2026-11-03 07:04	physical layout/powerfill (dbCreateRect:230/schematic:1) not shard D analog/schematic_netlist/waveform
+1784623431472_gvm3g	e0014566	hfeg0pkn001	554	schematic_netlist	case	EDA-Eval-DesignFlow-PwrIremCfgFix-001	2026-11-03 07:23	
+1792742447012_djml8	wnyu	hfeg0pgn021	401	analog_context	parked		2026-11-03 08:17	cross-shard dup: already delivered as EDA-Eval-DesignFlow-PFDdeadZone-001 in shard B (spice_sim, not shard-D domain)
+1786504317615_fkprl.messages.json	e0014566	hfeg0plg58	633	schematic_netlist	parked		2026-11-03 08:43	cross-shard dup: shard B already parked fkprl 2026-10-31 as layout_virtuoso (RTEXT/RNODE dup w/ LayoutVirtuoso-001)
+1792463960005_7frw8.messages.json					parked		2026-11-03 08:33	aether check&save infra debug (non-design)
+1789350621467_fymcr.messages.json					parked		2026-11-03 08:33	autocell pcell.tcl gen + skill-creation (physical+skill, non-D)
+1789954294975_4chsl.messages.json					parked		2026-11-03 08:33	verilog/SystemVerilog netlist analysis (digital, non-D analog)
+1793155371052_v59v8.messages.json					parked		2026-11-03 08:33	python UI script for cdslck lock files (non-EDA design)
+1793005343621_45gjq.messages.json					parked		2026-11-03 08:33	pdk/techfile infra (non-D)
+1785498914896_8du7m.messages.json					parked		2026-11-03 08:33	physical layout virtuoso/gds/calibre (non-D)
+1786615396051_enh4y.messages.json					parked		2026-11-03 08:33	physical layout virtuoso/gds (non-D)
+1785994889000_x5tcq.messages.json					parked		2026-11-03 08:33	physical layout virtuoso/gds/dbcreaterect (non-D)
+1792055923522_tqmu1.messages.json					parked		2026-11-03 08:33	cross-shard dup: same cynthiaz StrongARM comparator as nbl0h->StrongARMComp-001 (shard B)
+1791786108086_vumhg.messages.json	e03179	hfeg0plg90	251	analog_context	case	EDA-Eval-DesignFlow-IOCABufModel-001	2026-11-03 09:21	IOCABufModel-001 delivered (analog_context L2): Verilog-AMS behavioral model builder for IO comparator cell; 16 cond a-p; ref PASS + 5 negs FAIL(e/k/l/n/m) + 3 fakes FAIL(a/n/g); appended D.jsonl (40->41 unique). Concurrent pid 986141 had parked this trace (loop dup-spawn) but THIS process (pid 1134208) performed the canonical build+append.
+1791526217197_87257.messages.json	t0002962	hfeg0plg90	460	schematic_netlist	parked		2026-11-03 09:37	file cleaned from disk since 2026-10-28 scan (absent on hfeg0pkn003 + hfeg0plg90); stale snapshot
+1792380576403_uumms	e0029308	hfeg0pkn001	343	schematic_netlist	case	EDA-Eval-DesignFlow-CellVerilogExtract-001	2026-11-03 10:10	
+1788577896116_33zw1.messages.json					case	EDA-Eval-DesignFlow-NetPathHL-001	2026-11-03 10:44	
+1792831256137_6qt0a	harrywu	hfeg0pkn002	319	schematic_netlist	parked	cross-shard dup = shard B EDA-Eval-DesignFlow-DelayChainEdgeMeas-001 (spice_sim)	2026-11-03 10:54	
+1790490487765_6dx8f	cwei	hfeahpc504	328	schematic_netlist	parked		2026-11-03 11:26	overlaps CTLEAether-001 (same user cwei/lib spice_agent_test/topology CTLE; golden conn table = CTLEAether-001 gen_ctle_A.py public asset -> cross-case answer leakage per §4.8)
+1791958525711_f1fik	chengleiy	hfeg0pkn001	504	schematic_netlist	parked	PDK/LVS-QA infra (read-all-scripts comprehension), not D design-flow	2026-11-03 11:08	
+1792487689184_4ybw1	yan1zh	hfeg0plg65	495	schematic_netlist	parked	layout-from-schematic + LVS (shard C territory), OA binary, pyAether sandbox refused	2026-11-03 11:08	
+1792570431387_vdqlw	ypzheng	hfeg0pkn003	335	analog_context	parked	Aether tool-QA skill creation (infra), not design-flow	2026-11-03 11:08	
+1789092579396_tgs17	miccao	hfeg0plg37	378	schematic_netlist	parked	autocell pcell/GDS-from-CDL flow (layout/pdk, shard C territory)	2026-11-03 11:08	
+1787569992152_uml8e	e0024597	hfeg0pkn005	342	schematic_netlist	parked	ERC batch-run (physical_verify, shard C territory)	2026-11-03 11:08	
+1788932125428_zqelb	ziyuny	hfeg0pnd002	378	schematic_netlist	parked	DRC/LVS startup + layout delete/cleanup ops (shard C)	2026-11-03 11:08	
+1791425782404_rn6pm	yohannw	hfeg0pkn003	322	analog_context	parked	SKILL source-code analysis/documentation (tooling infra, not design-flow)	2026-11-03 11:08	
+1787897609476_ooyxi	sophiaw	hfeg0plg09	394	analog_context	parked	cross-shard dup = B PVTalterChar-001 (spice_sim)	2026-11-03 11:08	
+1792400027384_ahjnv	zhukaic	hfeahpc503	397	analog_context	parked	cross-shard dup = B OpampACSpec-001 (spice_sim)	2026-11-03 11:08	
+1793093197648_x2w2z	yueliu	hfeahpc501	303	waveform	parked	cross-shard dup = B AlterDeckSplit-001 (spice_sim)	2026-11-03 11:08	
+1787903140887_314mt	sophiaw	hfeg0plg09	378	analog_context	parked	cross-shard dup = B InvPVTchar-001 (spice_sim)	2026-11-03 11:08	
+1792660810859_l0qrf	xiwang	hfeg0pkn003	299	schematic_netlist	case	EDA-Eval-DesignFlow-DevUsageExtract-001	2026-11-03 11:50	
+1792215355014_rcx51	boblv	hfeg0pgn145	345	schematic_netlist	case	EDA-Eval-DesignFlow-VwlpDetectMDrive-001	2026-11-03 12:23	
+1792056947936_36yj3.messages.json	thomas1w	hfeg0pkn005	347	schematic_netlist	case	EDA-Eval-DesignFlow-NetlistStructDF-001	2026-11-03 12:56	
+1792389346933_uiykd	t0002470	hfeg0pkn004	379	analog_context	case	EDA-Eval-DesignFlow-DDR5CmdSeqFind-001	2026-11-03 14:36	
+1791963948520_hk622.messages.json	rongtaoy	hfeg0plg99	257	schematic_netlist	case	EDA-Eval-DesignFlow-SPFNetlistCompare-001	2026-11-03 15:03	
+1792139236507_7jzqb.messages.json	reedchen	hfeg0plg93	200	waveform	case	EDA-Eval-DesignFlow-FineSimTskew-001	2026-11-03 15:46	
+1793078373656_wqhsu.messages.json	xiwang	hfeg0pkn003	289	schematic_netlist	case	EDA-Eval-DesignFlow-ScmosStructFind-001	2026-11-03 16:27	
+1789983785169_qqvzo.messages.json	e0031668	hfeg0pkn003	206	schematic_netlist	parked		2026-11-03 17:14	duplicate task of ErcSetupGen-001 (same user e0031668, same ERC ercSetup.tcl task; delivered from 1dh6s mc389)
+1789526951493_wa1uw.messages.json					parked		2026-11-03 17:18	multi-turn teaching session (6-5ys/5csl hierarchy Q&A), no clean single deliverable DoD
+1790658262664_zjzz8.messages.json					parked		2026-11-03 17:18	vam-agent IO_CABufCore VAMS modeling; sim license-killed, model correctness fuzzy/subjective, no objective check
+1793021121702_24h7g.messages.json					parked		2026-11-03 17:18	FAILURE trace - agent overwrote user circuit with schCreateNoteLabel on blank cellview; user requested recovery, not golden answer
+1792394864015_10qhm.messages.json					parked		2026-11-03 17:18	build DDR5 SPICE circuit learning assistant system; infra/system-build, no single verifiable deliverable
+1787570565957_i41yw.messages.json					parked		2026-11-03 17:18	ERC_AI_CHECK batch run_all.sh over drcpa_rules; infra/batch-scripting, depends on real ERC rules
+1792649635599_u0ke5.messages.json					parked		2026-11-03 17:18	vam-agent which-cell-can-optimize-sim-speed; pure analysis/recommendation, no artifact deliverable
+1792216766099_x89ek.messages.json	reedchen	hfeg0pkn004	163	waveform	case	EDA-Eval-DesignFlow-GenSPv2-001	2026-11-03 17:46	
+1791860277898_nbl0h.messages.json	cynthiaz	hfeg0plg52	547	analog_context	case	EDA-Eval-DesignFlow-StrongARM-001	2026-11-03 18:18	
+1791509106344_8zuer.messages.json	adaml	hfeg0pkn001	240	schematic_netlist	case	EDA-Eval-DesignFlow-DQTXStim-001	2026-11-03 18:46	
+1792411915181_j8f3i.messages.json	yutongy	hfeg0pgn021	221	schematic_netlist	case	EDA-Eval-DesignFlow-SpfstdBtn-001	2026-11-03 19:37	
+1789993978842_q63ux.messages.json					parked		2026-11-03 19:37	sandbox down whole session, agent never produced accepted deliverable; trn_reader.py pre-existed from prior session -- no A-faithful golden
+1789895043170_g02a8.messages.json					case	EDA-Eval-DesignFlow-NetlistSVSDiff-001	2026-11-03 20:21	
+1792647062263_i5u61	jcgu	hfeg0pin003	229	schematic_netlist	case	EDA-Eval-DesignFlow-HierNtkSearch-001	2026-11-03 21:01	
+1792495939340_13fwy	thqu	hfeg0plg99	211	waveform	case	EDA-Eval-DesignFlow-WvStimExtract-001	2026-11-03 21:37	
+1791945714433_kja6z	ryanren	hfeahpc504	193	analog_context	parked		2026-11-03 22:04	charge pump design; trace ends mid-debug (U#223 agent stuck on dbCrtInst view), no clean user acceptance -> not A-faithful gold
+1788932274598_bdc16	pjli	hfeg0plg06	159	schematic_netlist	case	EDA-Eval-DesignFlow-NetSigTrace-001	2026-11-03 22:18	
+1792201142166_8g8rx.messages.json	jessegao	hfeg0pkn005	195	analog_context	case	EDA-Eval-DesignFlow-LDOGen-001	2026-11-03 23:10	
+1791602435253_66tx9	ynbai	hfhds206	160	schematic_netlist	parked		2026-11-03 23:31	duplicate task of EDA-Eval-DesignFlow-LibCellList-001 (shard C, zjqiao wg5u2 mc728): same lib_cell.list generation task, ynbai prompt is word-for-word identical to zjqiao
+1791965857356_a7j5y	haooy	hfeg0pkn004	182	analog_context	case	EDA-Eval-DesignFlow-ROGen-001	2026-11-03 23:32	
+1793095651315_qb1ua.messages.json	e0023936	hfhds201	103	waveform	case	EDA-Eval-DesignFlow-FMFreqVsT-001	2026-11-04 00:18	
+1791616524666_rgno0.messages.json	e03179	hfeg0pkn002	179	analog_context	case	EDA-Eval-DesignFlow-VAMSGen-001	2026-11-04 00:55	
+1792134701239_u5fy6	reedchen	hfeg0pkn004	174	waveform	case	EDA-Eval-DesignFlow-TskewCalc-001	2026-11-04 01:37	
+1792466303393_peuft	zxtu	hfeg0pkn002	167	schematic_netlist	case	EDA-Eval-DesignFlow-LatchFFExtract-001	2026-11-04 02:10	
+1792030871333_xq4ge	e0039602	hfeg0plg85	248	schematic_netlist	case	EDA-Eval-DesignFlow-NetlistSvPair-001	2026-11-04 03:00	
+1793174925139_f0vya.messages.json	e0030760	hfeg0plg74	410	analog_context	case	EDA-Eval-DesignFlow-SRAM6TSweep-001	2026-11-04 03:30	
+1792561000352_mdxo8.messages.json	kaixuanx	hfeg0pkn001	149	waveform	case	EDA-Eval-DesignFlow-PwrCornerSweep-001	2026-11-04 04:02	
+1791868151380_2zbgo.messages.json	cliu	hfeg0plg17	162	schematic_netlist	parked		2026-11-04 04:02	dup of NetlistSvPair-001 (#219): same module IO_rsnand21nand31_DL_ACT_MERGE_READ + same drcoa netlist/simlib_base.sv
+1791973035805_dodbm.messages.json	deniss	hfeg0plg87	179	analog_context	parked		2026-11-04 04:02	GUI interactive Aether schematic editing (open vir / modify I31 module to X16 type / change cell name) - no clean single verifiable deliverable
+1791526663956_p64wo.messages.json	tongfanl	hfeg0plg53	291	waveform	case	EDA-Eval-DesignFlow-MrrEnopsDelay-001	2026-11-04 04:45	
+1792487428780_fux29.messages.json	e0029308	hfeg0pkn001	212	schematic_netlist	case	EDA-Eval-DesignFlow-VfunctionalSplit-001	2026-11-04 05:15	
+1792993372322_f6x1i	e02141	hfeg0pkn002	519	schematic_netlist	parked		2026-11-04 05:34	TCAD sentaurus deck (sdevice/sprocess/svisual/SWB), KW netlist matched TCAD not circuit, not D-domain
+1787625155049_ovo6z	e0014566	hfeg0pkn001	285	analog_context	case	EDA-Eval-DesignFlow-RsCalcChk-001	2026-11-04 05:53	
+1789544872347_mi210.messages.json	zjqiao	hfhds206	119	schematic_netlist	case	EDA-Eval-DesignFlow-CompressNetlist-001	2026-11-04 06:48	
+1789644585939_3e35z	zjqiao	hfhds206	118	schematic_netlist	parked		2026-11-04 07:27	dup of existing CompressNetlist-001 (mi210, same Run_Compress_Netlist task)
+1791017602459_fwgyy	zjqiao	hfhds206	145	schematic_netlist	case	EDA-Eval-DesignFlow-FineSimWorkflow-001	2026-11-04 07:38	
+1791975257511_5donb	wzj	hfeg0plg72	129	schematic_netlist	case	EDA-Eval-DesignFlow-PinFromNet-001	2026-11-04 08:06	
+1793172510005_qa5p9	reedchen	hfeg0plg93	197	analog_context	case	EDA-Eval-DesignFlow-DominoPVTsweep-001	2026-11-04 09:13	
+1792562522433_6kbdj.messages.json	colinxu	hfeg0plg81	269	schematic_netlist	case	EDA-Eval-DesignFlow-SchPinAdd-001	2026-11-04 09:46	
+1792563683776_pwep8.messages.json	jianhaiq	hfeg0plg88	517	schematic_netlist	case	EDA-Eval-DesignFlow-PGcheckTcl-001	2026-11-04 10:08	
+1792983877054_kkfsf.messages.json	jcgu	hfeg0pin003	242	schematic_netlist	case	EDA-Eval-DesignFlow-CellCrtVw-001	2026-11-04 10:51	
+1789612268376_pjxhr.messages.json	miccao	hfeg0plg37	340	schematic_netlist	case	EDA-Eval-DesignFlow-AutoCellFlow-001	2026-11-04 11:35	
+1789454597897_ak41b.messages.json	pjli	hfeg0plg06	251	schematic_netlist	case	EDA-Eval-DesignFlow-StdcellTrace-001	2026-11-04 12:23	trace_signal.py stdcell bottom-up trace, U#1 clean 提需求
+1793091608908_lzt3e.messages.json	e0023936	hfhds201	159	waveform	parked		2026-11-04 12:37	waveview cursor task: trace is run_code bridge debugging saga, sx_add_cursor never succeeded, no accepted gold; U#1 doc-query too thin
+1786535933950_lj2gw.messages.json	e0014566	hfeg0plg58	393	analog_context	case	EDA-Eval-DesignFlow-RsCalcLabelAdd-001	2026-11-04 12:48	rscalc RTEXT/RNODE label add, U#0 clean 提需求
+1792323159551_toezr	xxchen	hfeg0plg53	318	schematic_netlist	case	EDA-Eval-DesignFlow-GdsBump2-001	2026-11-04 13:20	
+1791956738036_ruk0m	jinyuli	hfeg0plg91	29	waveform	case	EDA-Eval-DesignFlow-ClkOscStim-001	2026-11-04 14:05	
+1793082430174_aihrj.messages.json	amberh	hfeg0plg98	28	schematic_netlist	parked		2026-11-04 14:34	Q&A how-to-highlight-nets, no generation deliverable, no accepted gold
+1792552823708_o8ivt.messages.json	yutongy	hfeg0plg53	28	schematic_netlist	case	EDA-Eval-DesignFlow-StdcellListXtract-001	2026-11-04 15:00	
+1793167500635_mn59z.messages.json	e03179	hfeg0pkn002	28	schematic_netlist	case	EDA-Eval-DesignFlow-ProfCellReco-001	2026-11-04 16:26	
+1784254184878_zd84z.messages.json	e0014566	hfeg0plg58	28	schematic_netlist	case	EDA-Eval-DesignFlow-NetHighlightProbe-001	2026-11-04 16:44	
+1782886137735_mdgyo.messages.json	e03179	hfeg0plg90	29	schematic_netlist	case	EDA-Eval-DesignFlow-DelM1Shapes-001	2026-11-04 17:26	
+1792380407268_opm9y.messages.json	willashi	hfeg0plg15	279	schematic_netlist	case	EDA-Eval-DesignFlow-SchFixFloating-001	2026-11-04 18:21	schematic fix trace; deepread done, synthesize next round (DEBT:1)
+1789119944175_j56lm.messages.json	davidwu	hfeg0plg95	168	analog_context	case	EDA-Eval-DesignFlow-AutoPR-001	2026-11-04 19:00	
+1793176752981_ikfrw.messages.json	joeyl	hfeg0plg74	14	waveform	case	EDA-Eval-DesignFlow-WaveCmosAvg45-001	2026-11-04 19:50	
+1792976136186_31iga	gokuguo	hfeg0plg85	29	schematic_netlist	case	EDA-Eval-DesignFlow-LvsDeckCmp-001	2026-11-04 20:20	
+1791946488468_0ewj2.messages.json	jiangbaol	hfeg0plg99	29	analog_context	case	EDA-Eval-DesignFlow-SaSweepOpt-001	2026-11-04 20:47	
+1793177016543_3jb3i.messages.json	t0002616	hfeg0plg101	27	analog_context	case	EDA-Eval-DesignFlow-Tcs0PatAnalyze-001	2026-11-04 21:20	
+1789881196637_7fcir.messages.json	rongjiez	hfeg0plg98	16	waveform	case	EDA-Eval-DesignFlow-OpenWaveFmt-001	2026-11-04 22:12	
+1793007249160_s96je.messages.json	xukaibin	hfeg0plg49	28	schematic_netlist	case	EDA-Eval-DesignFlow-HierSpiceMosCount-001	2026-11-04 23:00	D249 HierSpiceMosCount-001 schematic_netlist 13asserts
+1791458509461_eypbp	joeyl	hfeg0plg74	18	waveform	case	EDA-Eval-DesignFlow-PwlConvert-001	2026-11-04 23:37	D250 PwlConvert-001 waveform 14asserts
+1789019984423_xkg53.messages.json	sophiaw	hfeg0plg09	26	analog_context	case	EDA-Eval-DesignFlow-FinesimAutoRun-001	2026-11-05 00:25	D251 FinesimAutoRun-001 analog_context 14asserts
+1792375390057_aq0vc.messages.json	tongni	hfeg0plg63	1004	schematic_netlist	case	EDA-Eval-DesignFlow-SpStimGen-001	2026-11-05 00:51	
+1789031505860_dntvx	rongjiez	hfeg0plg98	163	analog_context	case	EDA-Eval-DesignFlow-SweepCfgParse-001	2026-11-05 01:20	
+1789713289092_h01fd.messages.json	shanliny	hfeg0plg53	132	schematic_netlist	parked		2026-11-05 01:55	analysis-debug: user asks 'tell me where 1prf.py concat logic went wrong' per lvs.rep; agent produced PROSE diagnosis of 3 bugs (no runnable deliverable); A-faithful gold=prose, cannot satisfy §4.2 subprocess structural check; assets 6.5MB
+1792638255819_9pho0.messages.json	t0002801	hfeg0plg99	478	schematic_netlist	parked		2026-11-05 01:55	learning/Q&A: 'find digital LDO in drgqx project + explain how it works/what type'; user intent=学习 not produce-tool; no runnable deliverable from trace
+1789717866261_vhb6i.messages.json	rongjiez	hfeg0plg98	133	schematic_netlist	parked		2026-11-05 01:55	root-cause Q&A: 'why pyaether port of skill cxmt_getLatchFFCellList much slower than skill'; user points at perf problem=指出根因 flavor; analysis not production
+1791966728738_ad3nu.messages.json	zxtu	hfeg0plg99	113	waveform	parked		2026-11-05 01:55	warning-analysis Q&A: 'analyze warnings in finesim ...si.out report'; pure analysis, no runnable deliverable; U#2 '你在干什么' suggests stall
+1791457560417_636qr.messages.json	rongjiez	hfeg0plg98	112	analog_context	parked		2026-11-05 01:55	doc/PPT task: user describes runModelQA_new.pl 7 refactoring innovations and asks 'organize PPT content'; documentation not code
+1789371142448_mw3vr.messages.json	sophiaw	hfeg0plg49	115	analog_context	parked		2026-11-05 01:55	overlaps FinesimAutoRun-001(#251): AnasimPro SPICE全流程 sim submission; U#0 is 1500-char workflow-spec paste, U#1/U#2 real asks; not fresh vs #251
+1791944071628_pwhqb	jason17w	hfeg0pnd002	300	analog_context	parked		2026-11-05 02:32	skill-creator vps-cli task (shard A eda_other), not D-domain
+1791942913378_xm22u	jason17w	hfeg0pnd002	300	analog_context	parked		2026-11-05 02:32	skill-creator vps-cli task (shard A eda_other), not D-domain
+1791940907353_xh3mj	jason17w	hfeg0pnd002	300	analog_context	parked		2026-11-05 02:32	skill-creator vps-cli task (shard A eda_other), not D-domain
+1791797325736_lc81i	jason17w	hfeg0pnd002	300	analog_context	parked		2026-11-05 02:32	skill-creator vps-cli task (shard A eda_other), not D-domain
+1791940740396_atgt9	jason17w	hfeg0pnd002	300	analog_context	parked		2026-11-05 02:32	skill-creator vps-cli task (shard A eda_other), not D-domain
+1791512939497_0aw4j	jason17w	hfeg0pnd002	265	analog_context	parked		2026-11-05 02:32	mid-conv VPS/uvs regression submit (digital verif), not D-domain
+1792979644454_hgqho	e02141	hfeg0plg56	280	analog_context	parked		2026-11-05 02:32	sentaurus TCAD deck study/summarize doc-task, no runnable deliverable
+1791528127580_l1u7n	e02141	hfeg0plg56	280	analog_context	parked		2026-11-05 02:32	sentaurus TCAD deck study/summarize doc-task, no runnable deliverable
+1792827081154_d810y	jackjia	hfeg0plg95	274	schematic_netlist	parked		2026-11-05 02:32	Aether flight-line how-to Q&A, no runnable deliverable
+1789551540622_zpvgj	miccao	hfeg0plg92	258	schematic_netlist	parked		2026-11-05 02:32	mid-conv compressed context, U#0=assistant text no clean demand round
+1785745498995_8c5jw	t0002638	hfeg0plg49	289	analog_context	parked		2026-11-05 02:32	Q&A: can-you-call pyAether screenshot API, no runnable deliverable
+1792133845232_k7jwl.messages.json	reedchen	hfeg0plg93	2945	waveform	parked		2026-11-05 03:04	dup of existing case FineSimTskew-001/TskewCalc-001 (same user/csv/demand)
+1792111569663_31mbl.messages.json	reedchen	hfeg0plg93	2683	waveform	parked		2026-11-05 03:04	dup of existing Tskew cases (same user/csv/demand)
+1792110817534_r8bsl.messages.json	reedchen	hfeg0plg93	2580	waveform	parked		2026-11-05 03:04	dup of existing Tskew cases
+1792061280952_b7vkp.messages.json	reedchen	hfeg0plg93	2568	waveform	parked		2026-11-05 03:04	dup of existing Tskew cases
+1793260065712_n78nn.messages.json	t0003117	hfeg0pkn005	3906	schematic_netlist	parked		2026-11-05 03:04	multi-turn skill invocation; CIW bridge refused; no runnable deliverable (prose manual steps)
+1793238266404_bsjfb.messages.json	t0002224	hfeg0pkn002	2310	schematic_netlist	parked		2026-11-05 03:04	doc task: '介绍目录项目' + '看仿真案例', no produce-tool intent
+1793261282500_4fq1p.messages.json	t0002224	hfeg0pkn002	2310	schematic_netlist	parked		2026-11-05 03:04	doc task: same as bsjfb (intro project)
+1792560382811_jjrak.messages.json	e0032163	hfeg0pkn003	2130	analog_context	parked		2026-11-05 03:04	doc task: '详解电路原理画框架图列出模块作用', no runnable deliverable
+1793338010547_r06g9.messages.json	clarawu	hfeg0pkn002	2089	waveform	parked		2026-11-05 03:04	analysis+conditional-fix: '检查单调性,如果不单调就优化电路'; marginal/vague deliverable
+1793607437978_fzngm.messages.json	yazhuok	hfeg0pkn002	972	schematic_netlist	case	EDA-Eval-DesignFlow-NetRcPathDiff-001	2026-11-05 03:49	
+1792829965577_rser7.messages.json					parked		2026-11-05 03:49	root-cause: 'parasitics反标率低是什么原因' + SDF分析 = Q&A
+1793587429686_gxlr2.messages.json					parked		2026-11-05 03:49	skill install how-to: '帮忙装一下这个skill' + '能实现哪些功能/SOP' = Q&A
+1793706326923_qiqs7.messages.archive.json					parked		2026-11-05 03:49	wrong shard: innovus power-analysis/Redhawk (PP/PTPX), not D domain
+1793069992209_s9rzg.messages.archive.json					parked		2026-11-05 03:49	root-cause+doc: ERC丢失vdll power '分析原因' + '总结marker流程/整理markdown' = analysis/doc
+1793607563005_abdkv.messages.json					parked		2026-11-05 03:49	analysis+doc: SRAMAutoSim generate netlist slow, '排查原因+给修改计划+形成文档' = analysis/doc not produce
+1793176175395_5i5wz.messages.json					parked		2026-11-05 03:49	vam-agent skill: prof分析+cell选择+Verilog-A建模, multi-turn interactive, U#0=skill scaffold
+1793763926139_g7b4c.messages.json					parked		2026-11-05 03:49	root-cause+design-Q&A: '为什么扫mp5尺寸电流差这么多' + '尾电流管尺寸要多少' = Q&A
+1792724728950_9z6bd.messages.json					parked		2026-11-05 03:49	root-cause debug: 'netlist没有奇数ary' + '不要改东西,定位问题输出给我' = analysis-only
+1793177580229_11fst.messages.archive.json					parked		2026-11-05 03:49	analysis+how-to: SRAM SNM/RNM/WNM vs Vstep + '如何把butterfly图输出到workspace' Q&A
+1793101460874_7bqzr.messages.json					parked		2026-11-05 03:49	Q&A/inspection: spf报错/runall定时/pin对应/log是不是msaq后仿 = multi Q&A
+1793600748187_dq8bz.messages.json					parked		2026-11-05 03:49	multi-turn LVS exploration: 'run LVS + show report' across DIV_3bit/blcnand2PFx4; deliverable=report not script, multi-cell
+1793792759786_ujw1y.messages.json					parked		2026-11-05 03:49	doc+analysis: '总结电路' + '查看仿真结果给优化建议'
+1793328354943_p7jfx.messages.json					parked		2026-11-05 03:49	skill scaffold (sim-sp-gen) + '提交仿真/还是没跑出来' = skill-use, U#0=skill_instructions boilerplate
+1793337530823_x6taw.messages.json					case	EDA-Eval-DesignFlow-RonMismatchMd0-001	2026-11-05 05:11	prior #258 delivery (clarawu RON mismatch .md0); ledger mark completed this round
+1792984126962_nquh2.messages.json	reedchen	hfeg0pkn004	708	analog_context	case	EDA-Eval-DesignFlow-MosSizeDoeGen-001	2026-11-05 05:06	V5 mos_size DOE grid + run script
+1793327414642_81adx.messages.json					parked		2026-11-05 05:06	dup RonMismatchMd0-001 (clarawu same .md0)
+1793324917372_6iuo6.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1793675854261_vclt8.messages.json					parked		2026-11-05 05:06	root-cause: RON 单调性不对+尺寸归一 (clarawu)
+1793151811279_nrep6.messages.json					parked		2026-11-05 05:06	continuation: check 网表对比 (thqu)
+1793609804560_mr6sa.messages.json					parked		2026-11-05 05:06	dup of vclt8 (clarawu same demand)
+1792374200380_qvh54.messages.json					parked		2026-11-05 05:06	doc: 总结 autosim_script 为 readme (e0046686)
+1792394341749_wapy4.messages.archive.json					parked		2026-11-05 05:06	n=2 context summary only (reedchen)
+1793341440302_sqm07.messages.json					parked		2026-11-05 05:06	too short: 仿真跑完了 (tongni)
+1793180163422_wz7gy.messages.json					parked		2026-11-05 05:06	vam-agent skill: prof 分析哪些cell建模 (e03179)
+1792544094676_mntzu.messages.json					parked		2026-11-05 05:06	root-cause: nanospice SIGTERM 报错 (caozhang)
+1792389512614_7z9re.messages.json					parked		2026-11-05 05:06	root-cause: LPE/CCI-LVS fail (williang)
+1793322259360_bisir.messages.json					parked		2026-11-05 05:06	context/Q&A: spiceIn_auto.il + where is skill (sierraw)
+1793178507081_di3u4.messages.json					parked		2026-11-05 05:06	dup vam-agent prof 分析 (e03179)
+1792547194816_zsj47.messages.archive.json					parked		2026-11-05 05:06	mid-conv: stimulus 纠错 (reedchen)
+1793602325758_bp9uf.messages.json					parked		2026-11-05 05:06	root-cause: TOOL_DIR wrong / detect error (e0024852)
+1793684384632_6dmno.messages.json					parked		2026-11-05 05:06	run skill: 执行 SKILLS.md (t0003117)
+1793681040407_u0mwh.messages.json					parked		2026-11-05 05:06	analyze netlist structure doc (t0002614)
+1793065763835_y6liq.messages.json					parked		2026-11-05 05:06	dup of u0mwh (t0002614)
+1793184099494_v6u6m.messages.json					parked		2026-11-05 05:06	root-cause: DSPF output/branch + sp command not found (e0024852)
+1793596868413_1comp.messages.json					parked		2026-11-05 05:06	doc: 解析 ZQ Cal 结构 生成 HTML (e0045369)
+1793187913089_e6xdf.messages.json					parked		2026-11-05 05:06	mid-conv: 多输出 VDD 点 + butterfly (e0030760)
+1793585029552_gcziu.messages.json					parked		2026-11-05 05:06	Q&A: how to write instance for siliconsmart (jhhu)
+1792743458736_fdnle.messages.json					parked		2026-11-05 05:53	analysis+report+pdf doc task
+1792220242064_duzjh.messages.json					parked		2026-11-05 05:06	skill creation: zigzag 分析 skill (jinsongl)
+1793264248842_ezukw.messages.json					parked		2026-11-05 05:06	Q&A: license error / detect vdd_parameter (e0024852)
+1792204349915_1g0xs.messages.json					parked		2026-11-05 05:06	mid-conv: check_hierarchy 脚本报错 root-cause (xinweif)
+1792572179617_nvnc3.messages.json					parked		2026-11-05 05:06	Q&A/analysis: schematic 层级快捷键 + RWECC 分析 (e0022089)
+1793102574043_2h9t1.messages.json					parked		2026-11-05 05:06	run skill: finesim-power-analysis 统计功耗 (kaixuanx)
+1793174026493_571i6.messages.json					parked		2026-11-05 05:06	dup vam-agent prof 分析 (e03179)
+1792394012677_5gxno.messages.json					parked		2026-11-05 05:06	Q&A: 我现在打开的是什么cell + 打pin (colinxu)
+1793184645122_t1epq.messages.json					parked		2026-11-05 05:06	vague: 我先查看最小电路设计图 (e0030760)
+1792658984406_7j9b9.messages.json					parked		2026-11-05 05:06	root-cause: datapath 报错 debug (nevinrao)
+1793614737757_3y3vq.messages.json					parked		2026-11-05 05:06	pyAether rename net practice (interactive L2, defer)
+1792560658830_jvnvb.messages.json	jinsongl	hfeg0pkn005	618	schematic_netlist	case	EDA-Eval-DesignFlow-NetlistCxiFilter-001	2026-11-05 05:53	
+1792401516469_mnmse.messages.json					parked		2026-11-05 05:53	skill-def oa-snapshot-diff not D
+1793237557021_twq9b.messages.json					parked		2026-11-05 05:53	open schematic viewer UI launch
+1793181927011_dr0ax.messages.json					parked		2026-11-05 05:53	vam-agent modeling multi-turn
+1793266803039_g89xb.messages.json					parked		2026-11-05 05:53	sim-sp-gen skill run
+1792635480911_nqj3w.messages.json					parked		2026-11-05 05:53	waveform validate vague refs existing script
+1793608841437_53e2m.messages.json					parked		2026-11-05 05:53	root-cause analysis U0 + stim gen refs existing sp
+1793343432760_iqvz3.messages.json					parked		2026-11-05 05:53	verilog mbist ppr analysis digital
+1792548283238_of6ff.messages.json					parked		2026-11-05 05:53	analyze sim status analysis
+1793596317022_34b72.messages.json					parked		2026-11-05 05:53	package/web size-select tooling
+1793176301340_bme92.messages.json					parked		2026-11-05 05:53	netlist viewer feature dev vague
+1792902413837_3p5vl.messages.json					parked		2026-11-05 05:53	verilog package var analysis digital
+1793326498040_6ftap.messages.json					parked		2026-11-05 05:53	finesim sim submit+sizing iter L2 multi-turn
+1793322017989_op0br.messages.json					parked		2026-11-05 05:53	dup of RonMismatchMd0-001 same clarawu md0
+1793237499232_nph58.messages.json					parked		2026-11-05 05:53	xrun automsie perf analysis digital
+1793775672932_5j455.messages.json					parked		2026-11-05 05:53	DRC QA run+report L2
+1793353212592_38quf.messages.json					parked		2026-11-05 05:53	aether script autoload config setup
+1793172979841_8tchb.messages.json					parked		2026-11-05 05:53	cosim debug+measure folder optimize vague
+1793669661941_b7u1n.messages.json					parked		2026-11-05 05:53	who are you + analyze schematic Q&A
+1792651442338_ezvmp.messages.json					parked		2026-11-05 05:53	SVRF rule explain + vim config doc
+1793544152898_p8z88.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1793610069180_jq7tt.messages.json					parked		2026-11-05 05:53	dspf usage error Q&A
+1793607379592_t4gfl.messages.json					parked		2026-11-05 05:53	SVRF calibre DRC rule authoring (shard C)
+1793235306731_whek4.messages.json					parked		2026-11-05 05:53	ERC tmux script feature tweaks (shard C-ish, refs existing)
+1792223700738_pebvu.messages.json					parked		2026-11-05 05:53	auto stdcell too short/vague
+1793610358025_ailry.messages.json					parked		2026-11-05 05:53	NOFILE on host (stale mapping)
+1793584942223_nrkph.messages.json					parked		2026-11-05 05:53	L2 PrimeTime/Redhawk power-analysis scripts
+1793244287787_11tjs	stephens	hfeg0pkn002	139	waveform	case	EDA-Eval-DesignFlow-VmMhlAlterStats-001	2026-11-05 06:13	
+1793347412273_nq8l2.messages.json	zjqiao	hfeg0pkn002	362	schematic_netlist	case	EDA-Eval-DesignFlow-HcellNetlistCheck-001	2026-11-05 06:49	
+1793793264370_yr754.messages.json					parked		2026-11-05 06:49	D262-peek-unfit
+1792390745145_31s8i.messages.json					parked		2026-11-05 06:49	D262-peek-unfit
+1793272965134_mirbg.messages.json					parked		2026-11-05 06:49	D262-peek-unfit
+1793339467927_x2uaz.messages.json					parked		2026-11-05 06:49	D262-peek-unfit
+1793588208103_uo4ma.messages.json					parked		2026-11-05 06:49	D262-peek-unfit
+1793784075345_99pcm.messages.json					parked		2026-11-05 06:49	D262-peek-unfit
+1793233072993_vmvz6.messages.json					parked		2026-11-05 06:49	D262-peek-unfit
+1793167439759_tkpln.messages.json					parked		2026-11-05 06:49	D262-peek-unfit
+1792750940096_i9qdi.messages.json					parked		2026-11-05 06:49	D262-peek-unfit
+1792202007838_ms1ia.messages.json					parked		2026-11-05 06:49	D262-peek-unfit
+1792206946923_goqly.messages.json					parked		2026-11-05 06:49	D262-peek-unfit
+1792573053073_cg9ru.messages.json					parked		2026-11-05 06:49	D262-peek-unfit
+1793008044258_1c7rr.messages.json					parked		2026-11-05 06:49	D262-peek-unfit
+1793682926396_lt3nh.messages.json					parked		2026-11-05 06:49	D262-peek-unfit
+1792985372628_41ki8.messages.json					parked		2026-11-05 06:49	D262-peek-unfit
+1793614615410_y612r.messages.json					parked		2026-11-05 06:49	D262-peek-unfit
+1793255895022_wag72.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1792995921248_xjwso.messages.json					parked		2026-11-05 06:49	D262-peek-unfit
+1793083455289_1ujhs.messages.json					parked		2026-11-05 06:49	D262-peek-unfit
+1793237171921_aus5p.messages.json					parked		2026-11-05 06:49	D262-peek-unfit
+1793623698314_n7w6c.messages.json					parked		2026-11-05 06:49	D262-peek-unfit
+1793760446684_bbei1.messages.json					parked		2026-11-05 06:49	D262-peek-unfit
+1793696115600_i3fk2.messages.json					parked		2026-11-05 06:49	D262-peek-unfit
+1793501977670_k1af0.messages.json					parked		2026-11-05 06:49	D262-peek-unfit
+1793670219522_sdtpg.messages.json					parked		2026-11-05 06:49	D262-peek-unfit
+1793161602607_0i3r5.messages.json					parked		2026-11-05 06:49	D262-peek-unfit
+1793272819713_jo5q8.messages.json					parked		2026-11-05 06:49	D262-peek-unfit
+1792395640746_nce9i.messages.json					parked		2026-11-05 06:49	D262-peek-unfit
+1792455460383_h0hmj.messages.json					parked		2026-11-05 06:49	D262-peek-unfit
+1793583394153_wnpwu.messages.json					parked		2026-11-05 06:49	D262-peek-unfit
+1792371850786_ahp76.messages.json					parked		2026-11-05 06:49	D262-peek-unfit
+1793255447731_givdz.messages.json					parked		2026-11-05 06:49	D262-peek-unfit
+1792202627785_pj7un.messages.json					parked		2026-11-05 06:49	D262-peek-unfit
+1793089704959_am99r.messages.json					parked		2026-11-05 06:49	D262-peek-unfit
+1792500415268_9h3be.messages.json					parked		2026-11-05 06:49	D262-peek-unfit
+1793270732926_ebmf3.messages.json					parked		2026-11-05 06:49	D262-peek-unfit
+1792652163775_i6fn6.messages.json					parked		2026-11-05 06:49	D262-peek-unfit
+1793792646971_qvpvg.messages.json					parked		2026-11-05 06:49	D262-peek-unfit
+1793240378933_kck7n.messages.json					parked		2026-11-05 06:49	D262-peek-unfit
+1792416455213_fxkr4.messages.json					parked		2026-11-05 06:49	D262-peek-unfit
+1792721615766_ws2ac.messages.json					parked		2026-11-05 06:49	D262-peek-unfit
+1792201903562_gh1ex.messages.json					parked		2026-11-05 06:49	D262-peek-unfit
+1793773107836_90vlt.messages.json					parked		2026-11-05 06:49	D262-peek-unfit
+1793351374740_3xkcq.messages.json					parked		2026-11-05 06:49	D262-peek-unfit
+1793668052150_wp5jq.messages.json	curryxu	hfeg0pkn001	243	waveform	parked	EDA-Eval-DesignFlow-FifoTbStimGen-001	2026-11-05 08:52	DUP of #263 FifoTbStimGen
+1793668594900_amius.messages.json	pdsong	hfeg0pkn004	272	schematic_netlist	case	EDA-Eval-DesignFlow-CpmNetlistToSymbol-001	2026-11-05 08:08	
+1793690977457_sakf0.messages.json					parked		2026-11-05 08:09	D263-peek: root-cause TOOL_DIR fix request
+1793769280754_huszl.messages.json					parked		2026-11-05 08:09	D263-peek: circuit analysis (分析下这个电路)
+1793796263556_7ntn6.messages.json					parked		2026-11-05 08:09	D263-peek: dir-scaffold planning (先告诉我计划)
+1792394721361_yxz9c.messages.json					parked		2026-11-05 08:09	D263-peek: no classifiable produce-task user turn
+1793790637246_aafag.messages.json					parked		2026-11-05 08:09	D263-peek: boilerplate (innouvs)
+1792986549258_5vo44.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1792986549258_5vo44.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1793242571158_hfv5q.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1793242571158_hfv5q.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1792579190180_tgumy.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1792579190180_tgumy.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1793347000576_ygv3b.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1793347000576_ygv3b.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1793777902964_ah9my.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1793777902964_ah9my.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1792204531769_gg2j6.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1792204531769_gg2j6.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1793192893935_poa8g.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1793192893935_poa8g.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1792398649832_4tgr1.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1792398649832_4tgr1.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1793693546137_weulf.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1793693546137_weulf.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1792995418878_a5drw.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1792995418878_a5drw.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1793255895022_wag72.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1793603150610_nr884.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1793603150610_nr884.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1792397054964_fz05e.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1792397054964_fz05e.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1792746486510_lrvvt.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1792746486510_lrvvt.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1792375022144_ekpd7.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1792375022144_ekpd7.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1792415342141_bzxqd.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1792415342141_bzxqd.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1792398316632_497nv.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1792398316632_497nv.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1792415356917_krylb.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1792415356917_krylb.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1793266625005_uaas3.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1793266625005_uaas3.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1793324917372_6iuo6.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1792477456219_fy4mv.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1792477456219_fy4mv.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1793328605482_xpue4.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1793328605482_xpue4.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1793274153419_2q4mg.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1793274153419_2q4mg.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1792488300771_369rv.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1792488300771_369rv.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1793524103398_9x1l1.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1793524103398_9x1l1.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1792739133486_74dww.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1792739133486_74dww.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1793598473250_bdrcq.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1793598473250_bdrcq.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1793277409017_nw0fr.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1793277409017_nw0fr.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1792204147117_hsrib.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1792204147117_hsrib.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1793792906023_dcksk.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1793792906023_dcksk.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1792466309526_pnd3n.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1792466309526_pnd3n.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1793263942286_u8rjq.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1793263942286_u8rjq.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1793544152898_p8z88.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1792744504374_xpor0.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1792744504374_xpor0.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1793790756982_bjazn	gallopc	hfeg0pkn005	203	waveform	case	EDA-Eval-DesignFlow-FinesimMcConvert-001	2026-11-05 08:51	
+1792932765534_ufm37.messages.json					parked		2026-11-05 08:52	Q&A how-to: layout link schematic
+1792416455213_fxkr4.messages.archive.json					parked		2026-11-05 08:52	mid-conv HANDOFF continuation
+1792831214995_e8acx.messages.json					parked		2026-11-05 08:52	no real produce U#0
+1793084506490_ytldc.messages.json					parked		2026-11-05 08:52	RTL rewrite from Verilog (borderline, not shard-D netlist)
+1793082564833_dhqmb.messages.json					parked		2026-11-05 08:52	planning-first ('先构建计划和我确认')
+1792564977442_qjm2i.messages.json					parked		2026-11-05 08:52	calibre deck Q&A (shard C)
+1793321710783_8wqta.messages.json					parked		2026-11-05 08:52	capability Q&A 'can you modify cell'
+1793690069825_hf9ve.messages.json					parked		2026-11-05 08:52	DUP of #263 FifoTbStimGen
+1793690145277_z7n9b.messages.json					parked		2026-11-05 08:52	DUP of #263 FifoTbStimGen
+1793328202373_l4lnd.messages.json					parked		2026-11-05 08:52	doc Q&A 'read doc and answer'
+1793348866759_jj0x7.messages.json					parked		2026-11-05 08:52	netlist power-extract (considered, chose bjazn instead)
+1793004582104_1gz86.messages.json					parked		2026-11-05 08:52	analysis 'which cell to pick' Q&A
+1793180092850_scaqk.messages.json					parked		2026-11-05 08:52	Dummy QA setup (shard C calibre)
+1793346955766_iz8r1.messages.json					parked		2026-11-05 08:52	Q&A 'aether load local script'
+1793353206916_oj58x.messages.json					parked		2026-11-05 08:52	dup of iz8r1
+1793346704557_4j4es.messages.json					parked		2026-11-05 08:52	ERC marker mid-conv rewrite (root-cause given)
+1793784554206_v23sb.messages.json					parked		2026-11-05 08:52	genReleaseNote exploration (not shard D)
+1793599207907_i0izd.messages.json					parked		2026-11-05 08:52	skill-scaffold pinyin
+1793161126345_sls03.messages.json					parked		2026-11-05 08:52	boilerplate 'confirm project'
+1792548643848_5331g.messages.json					parked		2026-11-05 08:52	Aether add-pin interactive (too simple for 8 conds)
+1792479341771_hacfk.messages.json					parked		2026-11-05 08:52	primesim how-to Q&A
+1793598804317_2swgt.messages.json					parked		2026-11-05 08:52	skill-scaffold ai-skill-optimizer
+1792650376340_qgvp1.messages.json					parked		2026-11-05 08:52	setup Q&A 'start aether in home'
+1792980238183_sh05n.messages.json					parked		2026-11-05 08:52	how-to Q&A 'batch pin'
+1793324531319_9o809.messages.json					parked		2026-11-05 08:52	exploration 'analyze script mechanism'
+1793605922073_ets0m.messages.json					parked		2026-11-05 08:52	skill-scaffold 'identify m0'
+1792371906656_jyoob.messages.json					parked		2026-11-05 08:52	boilerplate 'open virtuoso'
+1793079368160_1mfc0.messages.json					parked		2026-11-05 08:52	netlist comparison Q&A
+1793667682319_64ztm.messages.json					parked		2026-11-05 08:52	planning-first QA pattern 'ask me before design'
+1792561232056_n8mtn.messages.json					parked		2026-11-05 08:52	Aether add-pin (too simple)
+1793760693424_2kkcq.messages.archive.json					parked		2026-11-05 08:52	ERC marker mid-conv continuation
+1793706971126_rsu2w.messages.json					parked		2026-11-05 08:52	stdcell web app mid-conv continuation
+1792837504776_sx4h2.messages.json					parked		2026-11-05 08:52	analysis+FSDB sim (L2 hard to verify offline)
+1792544257107_ui4d7.messages.json					parked		2026-11-05 08:52	root-cause debug net53 (user gives symptom)
+1793237820834_ihw8c.messages.json					parked		2026-11-05 08:52	script bug root-cause report
+1793774943418_sih3i.messages.json					parked		2026-11-05 08:52	dup of v23sb genReleaseNote
+1793069381553_sy1se.messages.archive.json					parked		2026-11-05 08:52	skip_via_connect mid-conv continuation
+1793340943310_2r0by.messages.json					parked		2026-11-05 08:52	no real produce U#0
+1793151796079_y2h4b.messages.json					parked		2026-11-05 08:52	LPDDR5 DCA/DCM Q&A
+1792564935844_vjaj6.messages.json					parked		2026-11-05 08:52	calibre copy-connect Q&A
+1793000252239_9jz8x.messages.archive.json					parked		2026-11-05 08:52	mid-conv code review continuation
+1793260738350_ziy0b.messages.json	xuebaok	hfhds201	182	waveform	case	EDA-Eval-DesignFlow-VsimCleanupDisable-001	2026-11-05 09:32	
+1793597907364_y7uwr.messages.json					parked		2026-11-05 09:33	NOFILE peek266
+1793670518248_ap4dl.messages.archive.json	e0029495	hfeg0pkn004	188		parked		2026-11-05 09:38	peek266 unfit
+1792553096922_6huq4.messages.json	colinxu	hfeg0plg16	185		parked		2026-11-05 09:38	peek266 unfit
+1792218941317_0vaaz.messages.json	deniss	hfeg0plg49	184		parked		2026-11-05 09:38	peek266 unfit
+1793756085396_bam0b.messages.json	jiangbaol	hfeg0pkn002	182		parked		2026-11-05 09:38	peek266 unfit
+1793791169909_2ka5p.messages.json	e0030760	hfeg0pkn005	182		parked		2026-11-05 09:38	peek266 unfit
+1793079745856_epy3m.messages.archive.json	t0002470	hfeg0plg100	180		parked		2026-11-05 09:38	peek266 unfit
+1792751124319_vhpuv.messages.json	houweip	hfeg0plg97	179		parked		2026-11-05 09:38	peek266 unfit
+1793792893744_ioiiw.messages.json	liwan	hfeg0pkn002	179		parked		2026-11-05 09:38	peek266 unfit
+1792983551249_sapdz.messages.json	chili	hfeg0plg07	175		parked		2026-11-05 09:38	peek266 unfit
+1792379743340_2y77m.messages.json	tongni	hfeg0pkn001	175		parked		2026-11-05 09:38	peek266 unfit
+1792648697134_ruwro.messages.json	e03179	hfeg0pkn002	174		parked		2026-11-05 09:38	peek266 unfit
+1792991994268_hoaji.messages.json	xinqiaoz	hfeg0pkn002	173		parked		2026-11-05 09:38	peek266 unfit
+1793795168288_gxh4m.messages.json	xinqiaoz	hfeg0pkn002	170		parked		2026-11-05 09:38	peek266 unfit
+1793154955266_qw049.messages.json	yixiaow	hfeg0pkn002	170		parked		2026-11-05 09:38	peek266 unfit
+1793266716067_bw8qq.messages.json	tongni	hfeg0pkn001	170		parked		2026-11-05 09:38	peek266 unfit
+1792495916551_7rde8.messages.json	alanji	hfeg0plg49	169		parked		2026-11-05 09:38	peek266 unfit
+1793088988568_84qb3.messages.json	xxchen	hfeg0pkn004	167		parked		2026-11-05 09:38	peek266 unfit
+1792486961623_bm8t8.messages.json	johnl	hfeg0pkn005	167		parked		2026-11-05 09:38	peek266 unfit
+1793331582944_19yde.messages.json	e0016195	hfeg0plg20	166		parked		2026-11-05 09:38	peek266 unfit
+1792637805938_w2p04.messages.json	johnl	hfeg0pkn005	166		parked		2026-11-05 09:38	peek266 unfit
+1792465723345_e3jba.messages.json	hengbow	hfeg0plg49	165		parked		2026-11-05 09:38	peek266 unfit
+1792465293272_z8c3d.messages.json	hengbow	hfeg0plg49	165		parked		2026-11-05 09:38	peek266 unfit
+1793608708021_60zrx.messages.json	jhhu	hfeg0pkn004	165		parked		2026-11-05 09:38	peek266 unfit
+1792982671736_ja990.messages.json	e0045291	hfeg0pkn005	163		parked		2026-11-05 09:38	peek266 unfit
+1793782818272_2bsgc.messages.json	reedchen	hfeg0pkn004	162		parked		2026-11-05 09:38	peek266 unfit
+1793755992968_1ip4z.messages.json	reedchen	hfeg0pkn004	162		parked		2026-11-05 09:38	peek266 unfit
+1793261920300_asbhn.messages.json	han1li	hfeg0plg17	161		parked		2026-11-05 09:38	peek266 unfit
+1793707420467_xqeql.messages.json	kaixuanx	hfeg0pkn001	161		parked		2026-11-05 09:38	peek266 unfit
+1792459158095_dfaqe.messages.archive.json	e0045488	hfeg0pkn004	161		parked		2026-11-05 09:38	peek266 unfit
+1793620518562_smto6.messages.json	e0047434	hfeg0pkn002	161		parked		2026-11-05 09:38	peek266 unfit
+1792391213118_h7sz7.messages.json	thqu	hfeg0plg49	160		parked		2026-11-05 09:38	peek266 unfit
+1793706466164_i4nud.messages.json	jcgu	hfeg0pkn004	159		parked		2026-11-05 09:38	peek266 unfit
+1793692406403_lcg3v.messages.json	ronghu	hfeg0pkn005	159		parked		2026-11-05 09:38	peek266 unfit
+1793068910909_katzn.messages.json	reedchen	hfeg0pkn004	159		parked		2026-11-05 09:38	peek266 unfit
+1792563327292_besij.messages.json	clarawu	hfeg0pkn004	157		parked		2026-11-05 09:38	peek266 unfit
+1793674727236_necxj.messages.json	e0024852	hfeg0pkn005	152		parked		2026-11-05 09:38	peek266 unfit
+1792305693099_miy2j.messages.json	xinqiaoz	hfeg0pkn002	152		parked		2026-11-05 09:38	peek266 unfit
+1793786351814_mmmtz.messages.json	e0046913	hfeg0pkn005	149		parked		2026-11-05 09:38	peek266 unfit
+1793002657891_l36g5.messages.json	wei9liu	hfeg0plg15	146		parked		2026-11-05 09:38	peek266 unfit
+1793685353350_ydezg.messages.json	leozhao	hfeg0pkn001	146		parked		2026-11-05 09:38	peek266 unfit
+1792291111625_6m150.messages.json	e0032163	hfeg0pkn003	145		parked		2026-11-05 09:38	peek266 unfit
+1792204264887_zdzqa.messages.json	e0032163	hfeg0pkn003	145		parked		2026-11-05 09:38	peek266 unfit
+1792573855361_rbllu.messages.json	clarawu	hfeg0pkn004	142		parked		2026-11-05 09:38	peek266 unfit
+1793069935567_8rlbn.messages.json	xinqiaoz	hfeg0pkn002	141		parked		2026-11-05 09:38	peek266 unfit
+1793263440367_n7dqy.messages.json	zhililu	hfeg0pkn001	150		parked		2026-11-05 09:38	NOFILE peek266
+1793174901308_gb4mi	thqu	hfeg0plg49	122	waveform	case	EDA-Eval-DesignFlow-SxWaveAvgSum-001	2026-11-05 10:12	
+1792216997704_pt63j.messages.json	jinsongl	hfeg0pkn005	48	schematic_netlist	case	EDA-Eval-DesignFlow-CellPrefixExtract-001	2026-11-05 11:02	
+1793064917593_tpnqx.messages.archive.json					parked		2026-11-05 11:04	vague read-circuit Q&A
+1793344639876_ig5hm.messages.archive.json					parked		2026-11-05 11:04	L2 circuit-opt needs finesim, hard self-verify
+1793668468329_3qaax.messages.archive.json					parked		2026-11-05 11:04	ops root-cause (slow script)
+1792827698500_ggjcv.messages.json					parked		2026-11-05 11:04	capability Q (xrun?)
+1792992278510_lku2o.messages.json					parked		2026-11-05 11:04	capability Q (你会做什么)
+1793596522277_e4fk8.messages.json					parked		2026-11-05 11:04	generic mkdir+readme, not EDA
+1793148911640_w0f1v.messages.json					parked		2026-11-05 11:04	env/capability Q (virtuoso sandbox perms)
+1793268873755_cwq7f.messages.json					parked		2026-11-05 11:04	sentaurus deck study/summarize doc
+1793341757885_9e4kf.messages.json					parked		2026-11-05 11:04	L2 finesim duty run, hard self-verify
+1793620540146_45v2b.messages.json					parked		2026-11-05 11:04	mid-conv (U0=tool_result)
+1792981479658_jh3kb.messages.json					parked		2026-11-05 11:04	vague pasted cell list
+1793348049504_xoqyd.messages.json					parked		2026-11-05 11:04	too short (can)
+1793356890947_umhrd.messages.json					parked		2026-11-05 11:04	U0=policy JSON mid-conv
+1793776902021_xvnac.messages.json					parked		2026-11-05 11:04	SVRF rule paste, vague
+1792206185688_apqyh.messages.json					parked		2026-11-05 11:04	root-cause debug (path name wrong)
+1792654061990_9jn2q.messages.json					parked		2026-11-05 11:04	code-mod needs runERC script asset
+1792485755725_ni00j.messages.json					parked		2026-11-05 11:04	vague (learn netlist)
+1792207956030_8anm0.messages.json					parked		2026-11-05 11:04	root-cause (finesim sim error)
+1793610468498_n5ba7.messages.json					parked		2026-11-05 11:04	L2 live Aether pin rename
+1792215542031_4wohp.messages.json					parked		2026-11-05 11:04	vague log->HTML report
+1792720477548_dh5u8.messages.json					parked		2026-11-05 11:04	root-cause (calibre SPF error)
+1792573764082_ujzgu.messages.json					parked		2026-11-05 11:04	Q&A explain (ecc timing)
+1792666922956_7b5i4.messages.json					parked		2026-11-05 11:04	U0=bash script paste mid-conv
+1793264956869_hxfhy.messages.json					parked		2026-11-05 11:04	Q&A how-to (redefine Vth in .sp)
+1793760381512_3nyuc.messages.json					parked		2026-11-05 11:04	skill scaffold
+1792733394521_26h7a.messages.archive.json					parked		2026-11-05 11:04	empty-read (zhililu stale archive)
+1792636346682_ipre5.messages.json					parked		2026-11-05 11:04	empty-read (stale archive)
+1793017826309_9umav.messages.archive.json					parked		2026-11-05 11:04	empty-read (stale archive)
+1792563529955_5fjwc.messages.json					parked		2026-11-05 11:04	NOFILE (colinxu hfeg0plg16 wrong host)
+1792496413587_zrc4b.messages.json					parked		2026-11-05 11:04	ssh-err timeout
+1793068512022_39kt1.messages.json					parked		2026-11-05 11:04	ssh-err timeout
+1793261255178_1wvdl.messages.json					parked		2026-11-05 11:04	ssh-err timeout
+1793268918911_brnqb.messages.json					parked		2026-11-05 11:04	ssh-err timeout
+1793243219348_tfqit.messages.json					parked		2026-11-05 11:04	ssh-err timeout
+1793084699921_dyvlr.messages.json					parked		2026-11-05 11:04	NOFILE (colinxu wrong host)
+1792479901910_013or.messages.json					parked		2026-11-05 11:04	NOFILE
+1793243709280_fkmwl.messages.json					parked		2026-11-05 11:04	NOFILE
+1793167618126_45bec.messages.json					parked		2026-11-05 11:04	ssh-err timeout
+1793100700946_yzifo.messages.json					parked		2026-11-05 11:04	NOFILE (colinxu wrong host)
+1792670912119_pcn3b.messages.json					parked		2026-11-05 11:04	NOFILE (colinxu wrong host)
+1793600081315_ns5cm.messages.json					parked		2026-11-05 11:04	ssh-err timeout
+1793608238791_s4my6.messages.json					parked		2026-11-05 11:04	ssh-err timeout
+1792463051213_e2nuq.messages.json					parked		2026-11-05 11:04	ssh-err timeout
+1792746040013_oelx8.messages.json					parked		2026-11-05 11:04	ssh-err timeout
+1793779842973_mz6s8.messages.json					parked		2026-11-05 11:04	ssh-err timeout
+1793273304598_nunyc.messages.json	reneeg	hfeg0plg08	66	waveform	case	EDA-Eval-DesignFlow-SxProbeGen-001	2026-11-05 12:02	
+1792501065385_ja20d					parked		2026-11-05 12:03	peek_D269_unfit
+1792629711974_8efq4					parked		2026-11-05 12:03	peek_D269_unfit
+1792216386930_g8qih					parked		2026-11-05 12:03	peek_D269_unfit
+1792216018113_bzbji					parked		2026-11-05 12:03	peek_D269_unfit
+1793162953967_tm91z					parked		2026-11-05 12:03	peek_D269_unfit
+1792482810625_zcfb6					parked		2026-11-05 12:03	peek_D269_unfit
+1793790199273_ge424					parked		2026-11-05 12:03	peek_D269_unfit
+1793177542020_kztcq					parked		2026-11-05 12:03	peek_D269_unfit
+1792407785808_nb80w					parked		2026-11-05 12:03	peek_D269_unfit
+1793175924548_ui76t					parked		2026-11-05 12:03	peek_D269_unfit
+1793093482443_38unc					parked		2026-11-05 12:03	peek_D269_unfit
+1792495880044_f919n					parked		2026-11-05 12:03	peek_D269_unfit
+1793667622298_rh3ek					parked		2026-11-05 12:03	peek_D269_unfit
+1793240332278_86t8o					parked		2026-11-05 12:03	peek_D269_unfit
+1792223574603_4naql					parked		2026-11-05 12:03	peek_D269_unfit
+1793277537589_ext1v					parked		2026-11-05 12:03	peek_D269_unfit
+1792407986403_wu2yr					parked		2026-11-05 12:03	peek_D269_unfit
+1792207059389_k9myh					parked		2026-11-05 12:03	peek_D269_unfit
+1793688752516_jd1wq					parked		2026-11-05 12:03	peek_D269_unfit
+1792738292906_icpw2					parked		2026-11-05 12:03	peek_D269_unfit
+1792454255647_rimy9					parked		2026-11-05 12:03	peek_D269_unfit
+1792375032414_3yoit					parked		2026-11-05 12:03	peek_D269_unfit
+1793173598818_1yxo6					parked		2026-11-05 12:03	peek_D269_unfit
+1793237369877_39md2					parked		2026-11-05 12:03	peek_D269_unfit
+1793256100397_bw3rz					parked		2026-11-05 12:03	peek_D269_unfit
+1793066092312_njso7					parked		2026-11-05 12:03	peek_D269_unfit
+1792998560854_bjy3l					parked		2026-11-05 12:03	peek_D269_unfit
+1793236691083_hw0pd					parked		2026-11-05 12:03	peek_D269_unfit
+1793666893047_bz56k					parked		2026-11-05 12:03	peek_D269_unfit
+1793237859898_6f4b9					parked		2026-11-05 12:03	peek_D269_unfit
+1792223529078_95tq3					parked		2026-11-05 12:03	peek_D269_unfit
+1792721663678_dfw5h					parked		2026-11-05 12:03	peek_D269_unfit
+1792724739145_khqwc					parked		2026-11-05 12:03	peek_D269_unfit
+1793234564408_sv0ru					parked		2026-11-05 12:03	peek_D269_unfit
+1793237742049_1vu54					parked		2026-11-05 12:03	peek_D269_unfit
+1792739557369_7v5sh					parked		2026-11-05 12:03	peek_D269_unfit
+1793237682606_7drip					parked		2026-11-05 12:03	peek_D269_unfit
+1792213641135_2buym					parked		2026-11-05 12:03	peek_D269_unfit
+1793698265018_v1cgf					parked		2026-11-05 12:03	peek_D269_unfit
+1793356935781_jqx69					parked		2026-11-05 12:03	peek_D269_unfit
+1792462522341_1gwq9					parked		2026-11-05 12:03	peek_D269_unfit
+1792549409878_s97z0					parked		2026-11-05 12:03	peek_D269_unfit
+1792720294619_qpgvn					parked		2026-11-05 12:03	peek_D269_unfit
+1792486625190_jtcvf					parked		2026-11-05 12:03	peek_D269_unfit
+1793006362279_0zrzc					parked		2026-11-05 12:03	peek_D269_unfit
+1793253175918_yeyve					parked		2026-11-05 12:03	peek_D269_unfit
+1793254473946_hjok0					parked		2026-11-05 12:03	peek_D269_unfit
+1793788141910_igrr4					parked		2026-11-05 12:03	peek_D269_unfit
+1793772458676_tzbss					parked		2026-11-05 12:03	peek_D269_unfit
+1792203098166_zp3rn					parked		2026-11-05 12:03	peek_D269_unfit
+1793758047628_xyaxc					parked		2026-11-05 12:03	peek_D269_unfit
+1793095792921_pr0tt					parked		2026-11-05 12:03	peek_D269_unfit
+1792459627652_qjjzh					parked		2026-11-05 12:03	peek_D269_unfit
+1793100521993_datrd					parked		2026-11-05 12:03	peek_D269_unfit
+1793174136126_dfv2z.messages.json	clarawu	hfeg0pkn004	58	waveform	case	EDA-Eval-DesignFlow-RonMismatchExtract-001	2026-11-05 13:01	
+1792393823402_cuedk.messages.json					parked		2026-11-05 13:01	peek_D270 unfit (Q&A/doc/root-cause/mid-conv/skill-scaffold/NOFILE/boilerplate)
+1793370534751_zju83.messages.json					parked		2026-11-05 13:01	peek_D270 unfit (Q&A/doc/root-cause/mid-conv/skill-scaffold/NOFILE/boilerplate)
+1793671393550_1mndt.messages.json					parked		2026-11-05 13:01	peek_D270 unfit (Q&A/doc/root-cause/mid-conv/skill-scaffold/NOFILE/boilerplate)
+1792561489218_n9f3h.messages.json					parked		2026-11-05 13:01	peek_D270 unfit (Q&A/doc/root-cause/mid-conv/skill-scaffold/NOFILE/boilerplate)
+1793015068991_s8p63.messages.json					parked		2026-11-05 13:01	peek_D270 unfit (Q&A/doc/root-cause/mid-conv/skill-scaffold/NOFILE/boilerplate)
+1793083352570_495zw.messages.json					parked		2026-11-05 13:01	peek_D270 unfit (Q&A/doc/root-cause/mid-conv/skill-scaffold/NOFILE/boilerplate)
+1793243724633_9qqvp.messages.json					parked		2026-11-05 13:01	peek_D270 unfit (Q&A/doc/root-cause/mid-conv/skill-scaffold/NOFILE/boilerplate)
+1792476910654_1m39e.messages.json					parked		2026-11-05 13:01	peek_D270 unfit (Q&A/doc/root-cause/mid-conv/skill-scaffold/NOFILE/boilerplate)
+1792586088133_1jaky.messages.json					parked		2026-11-05 13:01	peek_D270 unfit (Q&A/doc/root-cause/mid-conv/skill-scaffold/NOFILE/boilerplate)
+1793701178536_zba0a.messages.archive.json					parked		2026-11-05 13:01	peek_D270 unfit (Q&A/doc/root-cause/mid-conv/skill-scaffold/NOFILE/boilerplate)
+1793701178536_zba0a.messages.json					parked		2026-11-05 13:01	peek_D270 unfit (Q&A/doc/root-cause/mid-conv/skill-scaffold/NOFILE/boilerplate)
+1792214154541_x6a6g.messages.json					parked		2026-11-05 13:01	peek_D270 unfit (Q&A/doc/root-cause/mid-conv/skill-scaffold/NOFILE/boilerplate)
+1792391609614_eznro.messages.json					parked		2026-11-05 13:01	peek_D270 unfit (Q&A/doc/root-cause/mid-conv/skill-scaffold/NOFILE/boilerplate)
+1792392121305_3vpy1.messages.json					parked		2026-11-05 13:01	peek_D270 unfit (Q&A/doc/root-cause/mid-conv/skill-scaffold/NOFILE/boilerplate)
+1792630397654_fyfm9.messages.json					parked		2026-11-05 13:01	peek_D270 unfit (Q&A/doc/root-cause/mid-conv/skill-scaffold/NOFILE/boilerplate)
+1793016668331_gm17v.messages.json					parked		2026-11-05 13:01	peek_D270 unfit (Q&A/doc/root-cause/mid-conv/skill-scaffold/NOFILE/boilerplate)
+1793069381553_sy1se.messages.json					parked		2026-11-05 13:01	peek_D270 unfit (Q&A/doc/root-cause/mid-conv/skill-scaffold/NOFILE/boilerplate)
+1793685645025_x0ib4.messages.json					parked		2026-11-05 13:01	peek_D270 unfit (Q&A/doc/root-cause/mid-conv/skill-scaffold/NOFILE/boilerplate)
+1792494760058_95hv8.messages.json					parked		2026-11-05 13:01	peek_D270 unfit (Q&A/doc/root-cause/mid-conv/skill-scaffold/NOFILE/boilerplate)
+1793776312518_deayg.messages.json					parked		2026-11-05 13:01	peek_D270 unfit (Q&A/doc/root-cause/mid-conv/skill-scaffold/NOFILE/boilerplate)
+1792996253917_9txq4.messages.json					parked		2026-11-05 13:01	peek_D270 unfit (Q&A/doc/root-cause/mid-conv/skill-scaffold/NOFILE/boilerplate)
+1792998006884_ta4w3.messages.json					parked		2026-11-05 13:01	peek_D270 unfit (Q&A/doc/root-cause/mid-conv/skill-scaffold/NOFILE/boilerplate)
+1792551270043_d3opd.messages.json					parked		2026-11-05 13:01	peek_D270 unfit (Q&A/doc/root-cause/mid-conv/skill-scaffold/NOFILE/boilerplate)
+1793178284228_y3h0j.messages.archive.json					parked		2026-11-05 13:01	peek_D270 unfit (Q&A/doc/root-cause/mid-conv/skill-scaffold/NOFILE/boilerplate)
+1793241530970_pbokx.messages.json					parked		2026-11-05 13:01	peek_D270 unfit (Q&A/doc/root-cause/mid-conv/skill-scaffold/NOFILE/boilerplate)
+1793323487985_ukhbj.messages.json					parked		2026-11-05 13:01	peek_D270 unfit (Q&A/doc/root-cause/mid-conv/skill-scaffold/NOFILE/boilerplate)
+1792490112659_zhp1c.messages.json					parked		2026-11-05 13:01	peek_D270 unfit (Q&A/doc/root-cause/mid-conv/skill-scaffold/NOFILE/boilerplate)
+1792551384573_8n4w9.messages.json					parked		2026-11-05 13:01	peek_D270 unfit (Q&A/doc/root-cause/mid-conv/skill-scaffold/NOFILE/boilerplate)
+1793002153721_g34gw.messages.json					parked		2026-11-05 13:01	peek_D270 unfit (Q&A/doc/root-cause/mid-conv/skill-scaffold/NOFILE/boilerplate)
+1793698265018_v1cgf.json					parked		2026-11-05 13:01	peek_D270 unfit (Q&A/doc/root-cause/mid-conv/skill-scaffold/NOFILE/boilerplate)
+1792630583637_kjibr.messages.json					parked		2026-11-05 13:01	peek_D270 unfit (Q&A/doc/root-cause/mid-conv/skill-scaffold/NOFILE/boilerplate)
+1792993730194_cyua2.messages.json					parked		2026-11-05 13:01	peek_D270 unfit (Q&A/doc/root-cause/mid-conv/skill-scaffold/NOFILE/boilerplate)
+1793251326263_gesut.messages.json					parked		2026-11-05 13:01	peek_D270 unfit (Q&A/doc/root-cause/mid-conv/skill-scaffold/NOFILE/boilerplate)
+1793602560932_3wt7w.messages.archive.json					parked		2026-11-05 13:01	peek_D270 unfit (Q&A/doc/root-cause/mid-conv/skill-scaffold/NOFILE/boilerplate)
+1792371083070_3ncyu.messages.json					parked		2026-11-05 13:01	peek_D270 unfit (Q&A/doc/root-cause/mid-conv/skill-scaffold/NOFILE/boilerplate)
+1792462491236_ccaea.messages.json					parked		2026-11-05 13:01	peek_D270 unfit (Q&A/doc/root-cause/mid-conv/skill-scaffold/NOFILE/boilerplate)
+1792565745731_zzwo4.messages.json					parked		2026-11-05 13:01	peek_D270 unfit (Q&A/doc/root-cause/mid-conv/skill-scaffold/NOFILE/boilerplate)
+1792736578345_75l0w.messages.json					parked		2026-11-05 13:01	peek_D270 unfit (Q&A/doc/root-cause/mid-conv/skill-scaffold/NOFILE/boilerplate)
+1792761048382_vtpfh.messages.json					parked		2026-11-05 13:01	peek_D270 unfit (Q&A/doc/root-cause/mid-conv/skill-scaffold/NOFILE/boilerplate)
+1793000252239_9jz8x.messages.json					parked		2026-11-05 13:01	peek_D270 unfit (Q&A/doc/root-cause/mid-conv/skill-scaffold/NOFILE/boilerplate)
+1793002485489_j9ycq.messages.json					parked		2026-11-05 13:01	peek_D270 unfit (Q&A/doc/root-cause/mid-conv/skill-scaffold/NOFILE/boilerplate)
+1793088244027_l09bt.messages.json					parked		2026-11-05 13:01	peek_D270 unfit (Q&A/doc/root-cause/mid-conv/skill-scaffold/NOFILE/boilerplate)
+1792387698171_5p3r3.messages.json					parked		2026-11-05 13:01	peek_D270 unfit (Q&A/doc/root-cause/mid-conv/skill-scaffold/NOFILE/boilerplate)
+1793328354943_p7jfx.json					parked		2026-11-05 13:01	peek_D270 unfit (Q&A/doc/root-cause/mid-conv/skill-scaffold/NOFILE/boilerplate)
+1792223787830_fniub.messages.json					parked		2026-11-05 13:01	peek_D270 unfit (Q&A/doc/root-cause/mid-conv/skill-scaffold/NOFILE/boilerplate)
+1792393082920_qggt4.messages.json					parked		2026-11-05 13:01	peek_D270 unfit (Q&A/doc/root-cause/mid-conv/skill-scaffold/NOFILE/boilerplate)
+1792498093542_s4vp5.messages.json					parked		2026-11-05 13:01	peek_D270 unfit (Q&A/doc/root-cause/mid-conv/skill-scaffold/NOFILE/boilerplate)
+1793012120155_plwnn.messages.json					parked		2026-11-05 13:01	peek_D270 unfit (Q&A/doc/root-cause/mid-conv/skill-scaffold/NOFILE/boilerplate)
+1793782993086_d1yda.messages.json					parked		2026-11-05 13:01	peek_D270 unfit (Q&A/doc/root-cause/mid-conv/skill-scaffold/NOFILE/boilerplate)
+1793263826690_n4bf4.messages.json					parked		2026-11-05 13:01	peek_D270 unfit (Q&A/doc/root-cause/mid-conv/skill-scaffold/NOFILE/boilerplate)
+1793252591105_fy1dp.messages.json	yifansun	hfeg0pkn001	40	waveform	case	EDA-Eval-DesignFlow-PlsInStimGen-001	2026-11-05 13:52	
+1793234226913_xtse5.messages.json					parked		2026-11-05 13:52	peek_D271 unfit
+1793322661521_d3ytc.messages.json					parked		2026-11-05 13:52	peek_D271 unfit
+1793347339807_a3qxh.messages.json					parked		2026-11-05 13:52	peek_D271 unfit
+1793583505644_866fc.messages.json					parked		2026-11-05 13:52	peek_D271 unfit
+1792486206382_46lox.messages.json					parked		2026-11-05 13:52	peek_D271 unfit
+1793251459054_e5dft.messages.json					parked		2026-11-05 13:52	peek_D271 unfit
+1793257968522_mp3us.json					parked		2026-11-05 13:52	peek_D271 unfit
+1793263942286_u8rjq.json					parked		2026-11-05 13:52	peek_D271 unfit
+1793266716067_bw8qq.json					parked		2026-11-05 13:52	peek_D271 unfit
+1793326532932_fxfox.json					parked		2026-11-05 13:52	peek_D271 unfit
+1792392549576_r4qo7.messages.json					parked		2026-11-05 13:52	peek_D271 unfit
+1793345677736_rwtxc.messages.json					parked		2026-11-05 13:52	peek_D271 unfit
+1793794507428_dus4q.messages.json					parked		2026-11-05 13:52	peek_D271 unfit
+1792636143957_eedv5.messages.json					parked		2026-11-05 13:52	peek_D271 unfit
+1792843726821_uiqz1.messages.json					parked		2026-11-05 13:52	peek_D271 unfit
+1793263785862_7yjuj.messages.json					parked		2026-11-05 13:52	peek_D271 unfit
+1793328214813_qd6db.messages.json					parked		2026-11-05 13:52	peek_D271 unfit
+1793684231151_ne32u.messages.json					parked		2026-11-05 13:52	peek_D271 unfit
+1793795209038_ru6mx.messages.json					parked		2026-11-05 13:52	peek_D271 unfit
+1792206777721_1hcod.messages.json					parked		2026-11-05 13:52	peek_D271 unfit
+1792214122334_ft8c3.messages.json					parked		2026-11-05 13:52	peek_D271 unfit
+1793342209748_bjd2c.messages.json					parked		2026-11-05 13:52	peek_D271 unfit
+1793673896066_wjwc4.messages.json					parked		2026-11-05 13:52	peek_D271 unfit
+1793773263765_8rjc4.messages.json					parked		2026-11-05 13:52	peek_D271 unfit
+1793790579965_4ncj8.messages.json					parked		2026-11-05 13:52	peek_D271 unfit
+1792212685175_648r9.messages.json					parked		2026-11-05 13:52	peek_D271 unfit
+1793156103129_hwjhq.messages.json					parked		2026-11-05 13:52	peek_D271 unfit
+1793341820971_f5ser.messages.json					parked		2026-11-05 13:52	peek_D271 unfit
+1793356935781_jqx69.json					parked		2026-11-05 13:52	peek_D271 unfit
+1793598804317_2swgt.json					parked		2026-11-05 13:52	peek_D271 unfit
+1793672454901_bg39v.messages.json					parked		2026-11-05 13:52	peek_D271 unfit
+1793686357167_wlw3b.messages.json					parked		2026-11-05 13:52	peek_D271 unfit
+1792375467654_hs5zf.messages.json					parked		2026-11-05 13:52	peek_D271 unfit
+1793164270857_4k2vo.messages.json					parked		2026-11-05 13:52	peek_D271 unfit
+1792379734870_9vzo0.messages.json					parked		2026-11-05 13:52	peek_D271 unfit
+1792981654672_q9bnb.messages.json					parked		2026-11-05 13:52	peek_D271 unfit
+1793181609220_r08ob.messages.json					parked		2026-11-05 13:52	peek_D271 unfit
+1793615408814_pbb0c.messages.json					parked		2026-11-05 13:52	peek_D271 unfit
+1793779762537_rhw9h.messages.json					parked		2026-11-05 13:52	peek_D271 unfit
+1792201122841_ncfk9.messages.json					parked		2026-11-05 13:52	peek_D271 unfit
+1792841497181_wbge3.messages.json					parked		2026-11-05 13:52	peek_D271 unfit
+1792841597198_8xefu.messages.json					parked		2026-11-05 13:52	peek_D271 unfit
+1793790024968_wug8q.messages.json					parked		2026-11-05 13:52	peek_D271 unfit
+1793603972875_oqcdk.messages.json					parked		2026-11-05 13:52	peek_D271 unfit
+1793706997814_76s1n.messages.json					parked		2026-11-05 13:52	peek_D271 unfit
+1793707646524_71h8j.messages.json					parked		2026-11-05 13:52	peek_D271 unfit
+1793779762537_rhw9h.json					parked		2026-11-05 13:52	peek_D271 unfit
+1792395829083_9hc11.messages.json					parked		2026-11-05 13:52	peek_D271 unfit
+1792486906670_jeop1.messages.json					parked		2026-11-05 13:52	peek_D271 unfit
+1793255317872_gwph0.messages.json					parked		2026-11-05 13:52	peek_D271 unfit
+1793756918657_hujdg.messages.json					parked		2026-11-05 13:52	peek_D271 unfit
+1790057385284_xpsbw	t0002470	hfeg0plg79	356	analog_context	parked		2026-11-05 14:23	skill-loading task (load ddr5-coverage-analysis-skill); not a produce-task
+1789959794365_pet0x	xinqiaoz	hfeg0plg76	310	schematic_netlist	parked		2026-11-05 14:23	handoff-resume task (needs prior HANDOFF doc context); premise-missing, not single-turn produce
+1791897088355_b460k	jason17w	hfeg0pnd002	297	schematic_netlist	parked		2026-11-05 14:23	VPS CLI / verilogrun regression ops + skill-creator; non-D-domain (digital verif ops), no clean netlist/schematic produce-task
+1785821933914_r0a7b	t0002638	hfeg0plg49	277	analog_context	parked		2026-11-05 14:23	pyAether connection debug (judge if Hello printable + diagnose); debug/diagnostic not produce-task
+1792378797897_0gv3z	thomas1w	hfeg0plg98	249	schematic_netlist	parked		2026-11-05 14:23	netlist structure Q&A/analysis (read+explain mbist/mppr/data path); no produce-task
+1793600858808_la00c	e0029308	hfeg0pkn001	5367	schematic_netlist	parked		2026-11-05 15:14	dup of VfunctionalSplit-001 (same user e0029308/host hfeg0pkn001/prompt/task; AmsFuncSplit-001 NOT built to avoid benchmark padding)
+1789984306992_4vmtg	bin1y	hfeg0pkn002	8574	schematic_netlist	parked		2026-11-05 15:01	netlist/LVS/HCELL analysis+debug Q&A (vsim_aether script line-range analysis, cci_lvs.log WARNING root-cause, spf.cvps HCELL behavior); not a single-turn produce-task
+1793260065712_n78nn	t0003117	hfeg0pkn005	4669	schematic_netlist	parked		2026-11-05 15:01	skill-loading task (invoke netlist_extract skill in skills_v0.2); not a produce-task
+1793338010547_r06g9	clarawu	hfeg0pkn004	4143	analog_context	parked		2026-11-05 15:01	RON curve monotonicity check + circuit optimization (open-ended modify-circuit task, iterative L2/L3); not single-turn produce
+1792135941514_8n60f	adaml	hfeg0pnd001	3566	analog_context	parked		2026-11-05 15:01	TSPC spice stimulus gen + setup/hold/tCLK2Q extraction + bisection + transistor sizing optimization (broad multi-turn L2/L3 sim+optimization); not single-turn produce
+1793669959152_3123n	lvyy	hfeg0pkn002	3554	analog_context	parked		2026-11-05 15:01	CML circuit sizing Q&A (why sweeping mp5 size changes current; what W/L range for 100uA); analysis+tuning not produce-task
+1793763989902_37j9u	lvyy	hfeg0pkn002	3373	analog_context	parked		2026-11-05 15:01	duplicate of 3123n (same lvyy CML circuit sizing Q&A); analysis not produce-task
+1793792759786_ujw1y	qiang3xu	hfeg0pkn005	2921	analog_context	parked		2026-11-05 15:01	summarize PRBS_TM circuit + review sim results/give optimization suggestions; analysis/advice not produce-task
+1789545001824_x0t2m	ethanw	hfhds201	2068	schematic_netlist	case	EDA-Eval-DesignFlow-LatchListMatch-001	2026-11-05 15:46	
+1793260410545_zh4v9					parked		2026-11-05 15:31	peek274 unfit (Q&A/continuation/ops/NO_USER_MSG)
+1793669867866_iby9j					parked		2026-11-05 15:31	peek274 unfit (Q&A/continuation/ops/NO_USER_MSG)
+1793763944405_7qatl					parked		2026-11-05 15:31	peek274 unfit (Q&A/continuation/ops/NO_USER_MSG)
+1793763970829_iq1bu					parked		2026-11-05 15:31	peek274 unfit (Q&A/continuation/ops/NO_USER_MSG)
+1792133910648_645nk					parked		2026-11-05 15:31	peek274 unfit (Q&A/continuation/ops/NO_USER_MSG)
+1793760774987_u7mv3					parked		2026-11-05 15:31	peek274 unfit (Q&A/continuation/ops/NO_USER_MSG)
+1793345773037_65daa					parked		2026-11-05 15:31	peek274 unfit (Q&A/continuation/ops/NO_USER_MSG)
+1793668301608_71ttn					parked		2026-11-05 15:31	peek274 unfit (Q&A/continuation/ops/NO_USER_MSG)
+1792119838262_chbpp					parked		2026-11-05 15:31	peek274 unfit (Q&A/continuation/ops/NO_USER_MSG)
+1789955009504_qfa5g					parked		2026-11-05 15:31	peek274 unfit (Q&A/continuation/ops/NO_USER_MSG)
+1790575149766_y8vwx					parked		2026-11-05 15:31	peek274 unfit (Q&A/continuation/ops/NO_USER_MSG)
+1793794350956_fi203					parked		2026-11-05 15:31	peek274 unfit (Q&A/continuation/ops/NO_USER_MSG)
+1793260818025_aw9d7	dsgao	hfeg0pkn001	740	schematic_netlist	case	EDA-Eval-DesignFlow-RasTbFinesimGen-001	2026-11-05 16:23	
+1793191074113_6vcuk					parked		2026-11-05 16:23	peek275 unfit (Q&A/continuation/analysis/skill-loading/agent-scaffold/debug)
+1793243267055_5hjg7					parked		2026-11-05 16:23	peek275 unfit (Q&A/continuation/analysis/skill-loading/agent-scaffold/debug)
+1793187039315_agw7c					parked		2026-11-05 16:23	peek275 unfit (Q&A/continuation/analysis/skill-loading/agent-scaffold/debug)
+1793020930731_tqcuj					parked		2026-11-05 16:23	peek275 unfit (Q&A/continuation/analysis/skill-loading/agent-scaffold/debug)
+1793602194596_xu6g0					parked		2026-11-05 16:23	peek275 unfit (Q&A/continuation/analysis/skill-loading/agent-scaffold/debug)
+1793524556149_f86ll					parked		2026-11-05 16:23	peek275 unfit (Q&A/continuation/analysis/skill-loading/agent-scaffold/debug)
+1793179628980_6gjer					parked		2026-11-05 16:23	peek275 unfit (Q&A/continuation/analysis/skill-loading/agent-scaffold/debug)
+1793169999292_cjd00					parked		2026-11-05 16:23	peek275 unfit (Q&A/continuation/analysis/skill-loading/agent-scaffold/debug)
+1793168336382_q9snf					parked		2026-11-05 16:23	peek275 unfit (Q&A/continuation/analysis/skill-loading/agent-scaffold/debug)
+1793080793153_16izn					parked		2026-11-05 16:23	peek275 unfit (Q&A/continuation/analysis/skill-loading/agent-scaffold/debug)
+1793163547647_tlmcy					parked		2026-11-05 16:23	peek275 unfit (Q&A/continuation/analysis/skill-loading/agent-scaffold/debug)
+1793260588783_5b9po					parked		2026-11-05 16:23	peek275 unfit (Q&A/continuation/analysis/skill-loading/agent-scaffold/debug)
+1792215728595_u7a72					parked		2026-11-05 16:23	peek275 unfit (Q&A/continuation/analysis/skill-loading/agent-scaffold/debug)
+1793589408208_roznq					parked		2026-11-05 16:23	peek275 unfit (Q&A/continuation/analysis/skill-loading/agent-scaffold/debug)
+1793679618975_i1zyw	e0030760	hfeg0pkn002	1000	analog_context	case	EDA-Eval-DesignFlow-BitcellMcSpGen-001	2026-11-05 17:18	
+1793673912018_j4pvk					parked		2026-11-05 17:00	skill-creator vps-cli, not D-domain produce
+1791791874710_8wvr6					parked		2026-11-05 17:00	skill-creator vps-cli dup, not D-domain produce
+1792043028504_5szsv					parked		2026-11-05 17:00	netlist-diff analysis Q&A (analyze differences), not produce
+1789536167863_upag1					parked		2026-11-05 17:00	vsim perl script explanation Q&A, not produce
+1791511922122_hwbr5					parked		2026-11-05 17:00	terse FSDB extraction request, ambiguous deliverable, not clean produce
+1789624328007_44lwy					parked		2026-11-05 17:00	skill-creator autocell-tcl-flow, not D-domain produce
+1793082623350_otonl	e0022089	hfeg0pkn004	1793082623350	waveform	parked		2026-11-05 17:29	analysis Q&A (find DEJOA LFGating + explain gating), not a produce-task; mis-mapped from jumbled peek
+1793015903005_10hvg	jkxu	hfeg0pkn003	1793015903005	waveform	case	EDA-Eval-DesignFlow-HierSvwfConvert-001	2026-11-05 17:52	
+1793103631631_17m64					parked		2026-11-05 17:33	dup of 10hvg (same user jkxu/same prompt/same trace), dedup
+1793705943594_wwbs3					parked		2026-11-05 17:33	root-cause debug (gen_block_wrapper dataclasses error), user gives error
+1793771550244_nlf6u					parked		2026-11-05 17:33	root-cause debug (SRAM_tailor detect_prep error), user gives error+fix direction
+1793172489126_z6yjh					parked		2026-11-05 17:33	skill-loading (vam-agent)+prof analysis, not produce-task
+1793165449835_3gpox					parked		2026-11-05 17:33	skill-loading (vam-agent), not produce-task
+1793687763129_30a1n					parked		2026-11-05 17:33	skill-loading (group-gen-sdl)+skill-editing, not D-domain produce
+1793363087693_d0ild					parked		2026-11-05 17:33	analysis (find all SCMOS circuits by structure, fuzzy similarity judgment, needs Aether DB)
+1792480534403_xgfip					parked		2026-11-05 17:33	continuation/handoff (resolve_dummyqa run_all_cases.sh), not produce-task
+1792398584707_qqoq2					parked		2026-11-05 17:33	premise-missing (complete task per TASK_LIB_TO_SDF.md doc, depends on doc context)
+1793000520129_g37na					parked		2026-11-05 17:33	continuation/handoff+Q&A (density deck RDB vs PRINT), not produce-task
+1792658568180_h04be					parked		2026-11-05 17:33	Q&A (explain CdeDly4RmRd circuit function), not produce-task
+1792386812545_n2isr					parked		2026-11-05 17:33	netlist->sim.sp produce but repetitive with #275 RasTbFinesimGen (same pattern); schematic_netlist over-represented
+1793757463114_zd8iu					parked		2026-11-05 17:33	root-cause debug (bsub num1/num2 calc error), user gives error
+1793586031652_f2xzx.messages.json	ryanren	hfeg0plg49	438	analog_context	case	EDA-Eval-DesignFlow-CircWfReport-001	2026-11-05 18:33	
+1793519984879_0gd9e.messages.json	e0023936	hfeg0pkn004	129	schematic_netlist	case	EDA-Eval-DesignFlow-MosParamStat-001	2026-11-05 20:06	
+1793519984879_0gd9e					case	EDA-Eval-DesignFlow-MosParamStat-001	2026-11-05 19:13	
+1789975805926_42jk5.messages.json	t0002470	10.129.2.13	363	analog_context	case	EDA-Eval-DesignFlow-VrefcsMrrSeq-001	2026-11-05 20:06	
+1789975805926_42jk5					case	EDA-Eval-DesignFlow-VrefcsMrrSeq-001	2026-11-05 19:56	
+1792136569651_4a8f9.messages.json	chengk	10.129.35.121	130	schematic_netlist	case	EDA-Eval-DesignFlow-PortCatchInst-001	2026-11-05 20:34	
+1789545344007_xchvr.messages.json					parked		2026-11-05 20:35	debug: U#0=Calibre OPEN1 error report root-cause
+1791795024899_lp74k.messages.json					parked		2026-11-05 20:35	skill-load: U#0=启动aether skill
+1792653194974_s2f9d.messages.json					parked		2026-11-05 20:35	debug: U#0=user gives TOOL_DIR error root-cause (A档禁)
+1792386804961_6tiy7.messages.json					parked		2026-11-05 20:35	mid-conv: U#0=Context summary tool_calls not clean produce
+1790236124444_8orer.messages.json					parked		2026-11-05 20:35	skill-load: U#0=skilldev
+1789561002781_mqop7.messages.json					parked		2026-11-05 20:35	doc-edit: U#0=cwd switch, then LVS log analysis doc editing
+1785738164906_rqpb4.messages.json					parked		2026-11-05 20:35	infra: U#0=MCP service setup/multimodal workflow planning
+1792143054616_zr9dt.messages.json					parked		2026-11-05 20:35	iterative-opt: U#0=size-tune MP for vih flip-point (needs real sim, hard to judge offline)
+1792458165900_biua8.messages.json					parked		2026-11-05 20:35	skill-flow: U#0=read post_pdn SKILL.md then start flow (skill-scaffold heavy)
+1792372786960_4ujp9	tongni	10.129.33.245	155	analog_context	parked		2026-11-05 20:55	COLLISION: same trace already covered by shard B EDA-Eval-DesignFlow-Vcc2scPVTvar-001 (tongni 4ujp9, L2 hspice run, characterization). My L1 .ms0-parse variant would be near-duplicate. Abandon.
+1790241764551_4n3ry					parked		2026-11-05 20:55	meta-Q&A: U#0='how to get you to analyze a circuit' (how-to question, not produce-task)
+1791795204650_viv7y					parked		2026-11-05 20:55	wrong-domain: GDS+CDL+LVS layout generation (physical_verify/layout, not shard D)
+1788853586047_k45c2					parked		2026-11-05 20:55	slash-command: U#0='/scenario' (scenario launch, not produce-task)
+1793072434830_97mj2					parked		2026-11-05 20:55	NOFILE: session messages.json not found at expected path
+1792719518003_wkulx					parked		2026-11-05 20:55	aether-bindkey-config: U#0=change schematic wheel-zoom keybinding (tool-customization, not shard D produce)
+1792131744105_g48nq					parked		2026-11-05 20:55	skill-creator: U#0=explicit /skill-creator to make spice_tb_stimulus skill (skill-scaffold)
+1789090752430_4xt0p					parked		2026-11-05 20:55	scenario-launch: U#0='启动业务场景: 模拟电路优化·二次执行' (skill-flow)
+1791424827517_ca3hh					parked		2026-11-05 20:55	code-comprehension: U#0='parse DSIM codeDSIM/dsim_block' (C++/Qt source parsing, not shard D)
+1790069538028_bjube					parked		2026-11-05 20:55	skill-scaffold: U#0=paste full DRC Testpattern Generator skill spec (infra)
+1792559768471_mc7z1					parked		2026-11-05 20:55	exploratory+live-aether: U#0='can you make tools? trace top->port, sync update schematic/symbol' (vague, sync-update needs live pyAether, not offline-gradeable)
+1791858774096_1hq6h					parked		2026-11-05 20:55	debug: U#0=paste runscript path + LSF error 'smallslot dedicated/Request aborted' (user gave root-cause, A-faithful forbidden)
+1787821853675_z72bi					parked		2026-11-05 20:55	skill-creator: U#0=/skill-creator make finesim/presim/nanospice sim skill (skill-scaffold)
+1791525861730_k613u					parked		2026-11-05 20:55	policy-debug: U#0='check policy validity + run add_m1_rect.py' (infra/policy)
+1791786838927_a15un					parked		2026-11-05 21:00	Q&A: U#0='which test cases pass/fail and why' (analysis, not produce-task)
+1791524764107_rdrlk					parked		2026-11-05 21:00	infra: U#0='check policy validity + run add_m1_rect.py' (policy-debug)
+1791981291929_4oo3i					parked		2026-11-05 21:00	garbage-open: U#0='heelo/nhello' typos + mid-conv attach sim_log_compare.py (not clean produce-task)
+1793006622937_6kot7					parked		2026-11-05 21:00	doc-study: U#0='study calbr_mp_useref.pdf + feedback study note' (doc/report, not shard D produce)
+1791862539977_nwwkg					parked		2026-11-05 21:00	doc-report: U#0='summarize aether APIs+DB patterns to PDF' (doc/report, not shard D produce)
+1791876404012_d7cbo					parked		2026-11-05 21:00	Q&A-first: U#0='can these I-V data build Gm/id LUT?' (yes/no question first, then produce; ws2bi cleaner)
+1790849679042_bjkmi					parked		2026-11-05 21:00	debug: U#0='why does gen_stimulus_ltf always produce PSD0->DQ543 regardless of -d DQSEH' (root-cause question)
+1789967394999_11h3i					parked		2026-11-05 21:00	layout-aether: U#0='complete floorplan placement via aeAutoPlacementFromDesign' (live pyAether, layout domain not shard D)
+1790061417120_p2n1r					parked		2026-11-05 21:00	skill-flow: U#0=[autocell-tcl-flow-generator] explicit skill command
+1789994991166_v80cd					parked		2026-11-05 21:00	skill-scaffold: U#0=paste full PyAether auto-Place-Route Skill spec
+1790238584900_vajed					parked		2026-11-05 21:00	skill-flow: U#0=[issue-handler] explicit skill command
+1793103982380_vdwab					parked		2026-11-05 21:00	skill-flow: U#0=[sim-sp-gen] explicit skill command
+1791852261815_1pxm7					parked		2026-11-05 21:00	code-search: U#0='find location of Enable_TM task/function' (Q&A)
+1789017399621_cmsbu					parked		2026-11-05 21:00	infra: U#0='is sandbox server connected?' (meta question)
+1791523486486_ws2bi	irene1li	10.129.2.13	155	waveform	case	EDA-Eval-DesignFlow-MeasTrtfSkewGen-001	2026-11-05 21:34	
+1789645120364_2n1bs.messages.json	zjqiao	10.129.32.80	75	schematic_netlist	parked		2026-11-05 21:46	duplicate of CompressNetlist-001 (mi210): same task (specify netlist -> edit Run_Compress_Netlist Netlist= param -> run). 9 unfit peeked parked too: aq5lg/b86q7/0suhi/qrmvt/xx7by/z0xkh/s9rzg/5u8d5/sqmhv/wz59k
+1791796775106_b1w28.messages.json	tongfanl	10.129.35.69	143	schematic_netlist	case	EDA-Eval-DesignFlow-PsdDqMap-001	2026-11-05 22:00	
+1789979923847_aq5lg.messages.json					parked		2026-11-05 22:00	peeked #282 unfit
+1790063869978_wotp5.messages.json					parked		2026-11-05 22:00	peeked #282 unfit
+1792394413650_b86q7.messages.json					parked		2026-11-05 22:00	peeked #282 unfit
+1793165088136_0suhi.messages.json					parked		2026-11-05 22:00	peeked #282 unfit
+1790235335073_qrmvt.messages.json					parked		2026-11-05 22:00	peeked #282 unfit
+1789984748372_xx7by.messages.json					parked		2026-11-05 22:00	peeked #282 unfit
+1789549776610_z0xkh.messages.json					parked		2026-11-05 22:00	peeked #282 unfit
+1793069992209_s9rzg.messages.json					parked		2026-11-05 22:00	peeked #282 unfit
+1791852620999_5u8d5.messages.json					parked		2026-11-05 22:00	peeked #282 unfit
+1792216132193_sqmhv.messages.json					parked		2026-11-05 22:00	peeked #282 unfit
+1789566405693_wz59k.messages.json					parked		2026-11-05 22:00	peeked #282 unfit
+1793081107300_z1qdm.messages.json					parked		2026-11-05 22:00	peeked #282 unfit
+1789611712575_5tdum	mike	10.129.32.80	80	schematic_netlist	case	EDA-Eval-DesignFlow-SiInpTokenStrip-001	2026-11-05 22:49	
+1fxvk					parked		2026-11-05 22:49	Q&A/forensics 取证目录树非produce
+flxzl					parked		2026-11-05 22:49	vam-agent cell建模推荐分析非clean produce
+ohuot					parked		2026-11-05 22:49	CXSA/LSA电路Q&A分析
+3cxb2					parked		2026-11-05 22:49	网表diff/编译时间分析+格雷码Q&A
+um5we					parked		2026-11-05 22:49	vecgen seed共享(digital pattern非shardD core)+n361大
+f10db					parked		2026-11-05 22:49	xa.log对比/版本转换Q&A分析
+2gmli					parked		2026-11-05 22:49	DOE设计premise-missing需U#34电路上下文
+b4dlx					parked		2026-11-05 22:49	slash-command /anasimpro-gui-start非自然produce
+1550c					parked		2026-11-05 22:49	OP3置位root-cause Q&A
+ymjs5					parked		2026-11-05 22:49	resume任务premise-missing需prior state
+wl9i4					parked		2026-11-05 22:49	交互shell驱动+Q&A n752大
+1790841917726_hgfso.messages.json	wenwenl	10.129.8.112	59	waveform	case	EDA-Eval-DesignFlow-Wr4thCkMeas-001	2026-11-05 23:22	
+1791611768210_xnqkp.messages.json					parked		2026-11-05 23:23	crash CSV data-analysis report (non-EDA produce, data analytics)
+1792998643161_19e3k.messages.json					parked		2026-11-05 23:23	[skill-creator] slash-command/skill-creation
+1789629651143_l5349.messages.json					parked		2026-11-05 23:23	root-cause debugging '看下问题出在哪里' (诊断非produce)
+1790057439320_dc4bw.messages.json					parked		2026-11-05 23:23	DRC testpattern generator w/ full user spec (L2 layout, 非 shard-D core)
+1790078216880_4g0i9.messages.json					parked		2026-11-05 23:23	'NW*产生pattern' premise-missing (continuation of dc4bw)
+1791795346613_15rw7.messages.json					parked		2026-11-05 23:23	'启用aether的skill' slash-command/skill-loading
+1789973143978_7glsf.messages.json					parked		2026-11-05 23:23	'你找到已经打开的aether吗' Q&A/探活
+1791523535284_pibrs.messages.json					parked		2026-11-05 23:23	'check your policy' meta/policy-check
+1789890004925_idt7t.messages.json					parked		2026-11-05 23:23	'读取...三个文件' Q&A/analysis
+1792129303041_i252z.messages.json					parked		2026-11-05 23:23	'如何做' how-to Q&A (非 clean produce)
+1792214696328_c5y74.messages.json					parked		2026-11-05 23:23	skill_instructions slash-command
+1789867185527_85sjy.messages.json					parked		2026-11-05 23:23	'获取当前设计的信息' Q&A/analysis
+1793167986392_7bqnr.messages.json					parked		2026-11-05 23:23	'你可以启动aether吗' Q&A
+1790055158073_sutmr.messages.json					parked		2026-11-05 23:23	'检查一下我打的aether' operation/Q&A
+1792648046400_toak9.messages.json					parked		2026-11-05 23:23	'整理下电路功能' analysis/Q&A
+1791528074428_bfjaz.messages.json					parked		2026-11-05 23:23	'run run_approved_command' slash-command/policy
+1790213910009_nw4v8.messages.json					parked		2026-11-05 23:23	[drc-pattern] slash-command
+1791686047150_w4uy2.messages.json					parked		2026-11-05 23:23	[skill-creator] vps skills slash-command
+1787625078133_9ryp9.messages.json					parked		2026-11-05 23:23	NOFILE (session 不可读)
+1792378687851_j8vf6.messages.json					parked		2026-11-05 23:23	skill_instructions slash-command
+1789097271183_hsrb5.messages.json					parked		2026-11-05 23:23	yaether-automatic-place-route slash-command
+1792995911596_8h2g9.messages.json					parked		2026-11-05 23:23	mid-conv context summary + error root-cause (premise-missing)
+1791957567341_a5l6y.messages.json					parked		2026-11-05 23:23	'你现在是桥接在dscqa项目吗' Q&A
+1790322819042_8sxsc	wenwenl	10.129.8.112	76	waveform	case	EDA-Eval-DesignFlow-Wr2dqEdgeMeas-001	2026-11-06 00:04	B-grade synthesized FineSim measure-script generator: write->DQ first fall/rise edge interval; A=wr/101/_0/6DQ/VDD*0.29, B=rd/011/_1/4DQ/VDD*0.5; 15 conds a-o; ref PASS 15/15; 8 negs all FAIL (incl. 4.9 fakes empty/print_expected/ref_core_deleted)
+1792720528359_2tuxj	kaixuanx	10.129.2.10	91	analog_context	case	EDA-Eval-DesignFlow-CtleTranGen-001	2026-11-06 00:36	
+1788427145336_tk1gr					parked		2026-11-06 00:37	peek D287 unfit (Q&A/debug/slash-cmd/near-dup/non-shard)
+1792040769570_i5ubq					parked		2026-11-06 00:37	peek D287 unfit (Q&A/debug/slash-cmd/near-dup/non-shard)
+1792669320980_7rsed					parked		2026-11-06 00:37	peek D287 unfit (Q&A/debug/slash-cmd/near-dup/non-shard)
+1791600745476_4v4nf					parked		2026-11-06 00:37	peek D287 unfit (Q&A/debug/slash-cmd/near-dup/non-shard)
+1789904184223_i5slk					parked		2026-11-06 00:37	peek D287 unfit (Q&A/debug/slash-cmd/near-dup/non-shard)
+1792742027783_8ky45					parked		2026-11-06 00:37	peek D287 unfit (Q&A/debug/slash-cmd/near-dup/non-shard)
+1791532266418_dxgec					parked		2026-11-06 00:37	peek D287 unfit (Q&A/debug/slash-cmd/near-dup/non-shard)
+1790746206047_of9q6					parked		2026-11-06 00:37	peek D287 unfit (Q&A/debug/slash-cmd/near-dup/non-shard)
+1788946494214_rp39a					parked		2026-11-06 00:37	peek D287 unfit (Q&A/debug/slash-cmd/near-dup/non-shard)
+1790998236503_95kx2					parked		2026-11-06 00:37	peek D287 unfit (Q&A/debug/slash-cmd/near-dup/non-shard)
+1792130844059_4ati4					parked		2026-11-06 00:37	peek D287 unfit (Q&A/debug/slash-cmd/near-dup/non-shard)
+1792386615426_npf2k					parked		2026-11-06 00:37	peek D287 unfit (Q&A/debug/slash-cmd/near-dup/non-shard)
+1789957143798_t3fux					parked		2026-11-06 00:37	peek D287 unfit (Q&A/debug/slash-cmd/near-dup/non-shard)
+1788591418561_g9e41					parked		2026-11-06 00:37	peek D287 unfit (Q&A/debug/slash-cmd/near-dup/non-shard)
+1791944859506_awleu					parked		2026-11-06 00:37	peek D287 unfit (Q&A/debug/slash-cmd/near-dup/non-shard)
+1792041484111_bqgpm					parked		2026-11-06 00:37	peek D287 unfit (Q&A/debug/slash-cmd/near-dup/non-shard)
+1792381321660_vklwe					parked		2026-11-06 00:37	peek D287 unfit (Q&A/debug/slash-cmd/near-dup/non-shard)
+1789019739644_ay9gd					parked		2026-11-06 00:37	peek D287 unfit (Q&A/debug/slash-cmd/near-dup/non-shard)
+1789886501804_9hngx					parked		2026-11-06 00:37	peek D287 unfit (Q&A/debug/slash-cmd/near-dup/non-shard)
+1793080421176_bk9mv					parked		2026-11-06 00:37	peek D287 unfit (Q&A/debug/slash-cmd/near-dup/non-shard)
+1792647604577_xv1ip	alenxu	10.129.2.12	186	analog_context	case	EDA-Eval-DesignFlow-ChPulseRespGen-001	2026-11-06 01:06	
+1792978836622_054zc	zhukaic	10.129.33.26	271	waveform	case	EDA-Eval-DesignFlow-WvAcReportGen-001	2026-11-06 01:41	
+1792978836622_pfubi					parked		2026-11-06 01:41	peek289-unfit
+1792978836622_alyjf					parked		2026-11-06 01:41	peek289-unfit
+1792978836622_o3hc3					parked		2026-11-06 01:41	peek289-unfit
+1792978836622_3tnys					parked		2026-11-06 01:41	peek289-unfit
+1792978836622_9sjuh					parked		2026-11-06 01:41	peek289-unfit
+1792978836622_8ylkn					parked		2026-11-06 01:41	peek289-unfit
+1792978836622_n2lhr					parked		2026-11-06 01:41	peek289-unfit
+1792978836622_dmydd					parked		2026-11-06 01:41	peek289-unfit
+1792978836622_oi7n5					parked		2026-11-06 01:41	peek289-unfit
+1792978836622_vb4si					parked		2026-11-06 01:41	peek289-unfit
+1792978836622_xziha					parked		2026-11-06 01:41	peek289-unfit
+1792978836622_07zbx					parked		2026-11-06 01:41	peek289-unfit
+1792978836622_po4s1					parked		2026-11-06 01:41	peek289-unfit
+1792978836622_vop7x					parked		2026-11-06 01:41	peek289-unfit
+1792978836622_odkbl					parked		2026-11-06 01:41	peek289-unfit
+1792978836622_q4d8h					parked		2026-11-06 01:41	peek289-unfit
+1792978836622_arlzu					parked		2026-11-06 01:41	peek289-unfit
+1792978836622_ajr06					parked		2026-11-06 01:41	peek289-unfit

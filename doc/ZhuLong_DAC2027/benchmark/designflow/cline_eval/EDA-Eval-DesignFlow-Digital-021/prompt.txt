@@ -1,0 +1,15 @@
+编写一个脚本 extract_neg_slack.py，解析 PrimeTime 时序报告并提取所有 Slack < 0 的路径，生成新报告。
+
+脚本契约:
+  python3 extract_neg_slack.py <输入报告> <输出报告>
+输入是附件 pt_reg2out.tarpt（PrimeTime report_timing 纯文本，含若干条路径，每条路径由
+'Path N: ...' 起始，含 Endpoint/Beginpoint/Path Groups/Analysis View 及 9 个时序数值）。
+
+要求:
+1. 解析所有路径，提取 Slack Time < 0 的路径。
+2. 每条违反路径在 <输出报告> 中写入: Path 编号、状态(VIOLATED...)、Endpoint、Beginpoint、
+   Path Groups、Analysis View，以及 Other End Arrival Time / External Delay / Phase Shift /
+   CPPR Adjustment / Uncertainty / Required Time / Arrival Time / Slack Time 的数值。
+3. 脚本结束前向 stdout 打印一行统计(供判分), 格式须包含 TOKEN=value:
+   TOTAL=<总路径数> NEG=<Slack<0 路径数> WORST_SLACK=<最差slack> WORST_ENDPOINT=<最差slack的endpoint>
+4. 将 extract_neg_slack.py 与 neg_slack.rpt(对附件 pt_reg2out.tarpt 的运行结果) 打包为 outputs/submit.zip。

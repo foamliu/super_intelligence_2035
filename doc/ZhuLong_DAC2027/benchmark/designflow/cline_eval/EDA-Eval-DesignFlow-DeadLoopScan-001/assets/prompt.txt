@@ -1,0 +1,1 @@
+cd /proj/ddgoa/V0/simdir/verilog/xingx/verilog.lpddr5.ddgoa.test/proj_common_files/. don't modify any files in it. check if there is any dead loop in  global_dldo_bind.sv

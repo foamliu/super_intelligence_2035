@@ -1,0 +1,1 @@
+/rundata/drcoa/V0/simdir/finesim/workdir/johnl/simulation/drcoa_digital_T_IsmTop_schematic_ALPS    这个目录 我的run_sweep脚本的内容  现在是几个corner在一个任务太慢了  一个corner一个任务  做必要修改，并行的跑  修改后与原来的对比检查

@@ -1,0 +1,59 @@
+total 52
+drwxrwxr-x 12 lorikx hfdes 4096 Oct 22 14:23 .
+drwxr-xr-x 61 lorikx hfdes 8192 Nov  2 17:25 ..
+drwxrwxr-x  4 lorikx hfdes 4096 Oct 19 20:27 cov
+drwxrwxr-x  6 lorikx hfdes 4096 Oct 19 20:27 fm
+drwxrwxr-x  5 lorikx hfdes 4096 Oct 19 19:13 lint
+drwxrwxr-x  4 lorikx hfdes 4096 Oct 22 14:23 ref_syn_prj
+drwxrwxr-x  2 lorikx hfdes 4096 Oct 21 14:39 rtl
+drwxrwxr-x  2 lorikx hfdes 4096 Oct 26 17:14 rtl_synth
+drwxrwxr-x  3 lorikx hfdes 4096 Aug 27 14:21 run
+drwxrwxr-x  2 lorikx hfdes 4096 Oct 23 11:20 scripts
+drwxrwxr-x  6 lorikx hfdes 4096 Oct 28 19:52 sim
+drwxrwxr-x  7 lorikx hfdes 4096 Oct 22 14:32 syn
+---
+cfreq_ctrl.v
+---
+Makefile
+csrc
+filelist.f
+filelist_synth.f
+novas.conf
+novas.rc
+novas_dump.log
+signal.rc
+sim_check_model.log
+sim_check_synth.log
+simv
+simv.daidir
+simv_synth
+simv_synth.daidir
+tb_cfreq_ctrl.v
+tb_cfreq_ctrl_synth.v
+ucli.key
+vco_fb_model.v
+verdiLog
+verdi_config_file
+waves.fsdb
+waves_synth.fsdb
+---
+//####################################################
+// Description
+//####################################################
+// Revision History
+//  -v1.0  Lorik Xiao  2026-10-19
+//      Initial version
+//  -v1.1  Lorik Xiao  2026-10-23
+//      WINDOW_LEN/THRESHOLD 改为 10bit 输入端口; 删除稳定复验(STABLE_CNT);
+//      START_SETTLE 改 10bit; CAP_SETTLE/GATE_SYNC_DLY 改 4bit
+//####################################################
+
+// ============================================================================
+// cfreq_ctrl.v
+// VCO 自动校准模块 (Synthesizable RTL, Verilog-2001)
+//
+// 功能: 固定 Vctrl=1/2 VDD, 通过单向递增电容阵列码将 VCO 输出校准到 ~10GHz
+//       (FBCLK≈25MHz)。采用门控窗法在 REFCLK 域生成使能窗, 用 FBCLK 作计数
+//       时钟在窗内统计脉冲数, 窗关闭后 REFCLK 域读值判定。
+//
+// 本文件为可综合版本。基于 behavior model (../rtl/cfreq_ctrl.v) 改造,

@@ -1,0 +1,69 @@
+Path 1: VIOLATED Late External Delay Assertion
+  Endpoint:   test_so[25]                                      (^) checked with leading edge of 'clk_cmd_dft'
+  Beginpoint: u_PuTopDft/u_ex_intmac/pdtr_reg_10__48__0__15_/Q (v) triggered by leading edge of 'clk_dft'
+  Path Groups: {reg2out}
+  Analysis View: shift_ss_m40c_cworst_T
+  Other End Arrival Time          1.000
+  - External Delay                5.750
+  + Phase Shift                   8.000
+  + CPPR Adjustment               0.000
+  - Uncertainty                   0.100
+  = Required Time                 3.150
+  - Arrival Time                  5.107
+  = Slack Time                   -1.957
+
+Path 2: VIOLATED Late External Delay Assertion
+  Endpoint:   test_so[35]                                      (^) checked with leading edge of 'clk_cmd_dft'
+  Beginpoint: u_PuTopDft/u_ex_intmac/pdtr_reg_10__48__0__15_/Q (v) triggered by leading edge of 'clk_dft'
+  Path Groups: {reg2out}
+  Analysis View: shift_ss_m40c_cworst_T
+  Other End Arrival Time          1.000
+  - External Delay                5.750
+  + Phase Shift                   8.000
+  + CPPR Adjustment               0.000
+  - Uncertainty                   0.100
+  = Required Time                 3.150
+  - Arrival Time                  4.524
+  = Slack Time                   -1.374
+
+Path 3: VIOLATED Late External Delay Assertion
+  Endpoint:   rdata[3]                                         (^) checked with leading edge of 'clk_cmd'
+  Beginpoint: u_PuTopDft/u_std_intmac/acc_reg_3__/Q            (v) triggered by leading edge of 'clk'
+  Path Groups: {reg2out}
+  Analysis View: shift_ss_m40c_cworst_T
+  Other End Arrival Time          0.800
+  - External Delay                4.200
+  + Phase Shift                   6.000
+  + CPPR Adjustment               0.000
+  - Uncertainty                   0.080
+  = Required Time                 2.520
+  - Arrival Time                  3.402
+  = Slack Time                   -0.882
+
+Path 4: VIOLATED Late External Delay Assertion
+  Endpoint:   dq[0]                                            (^) checked with leading edge of 'clk_cmd'
+  Beginpoint: u_PuTopDft/u_ex_intmac/oreg_reg_290__175_172_/Q  (v) triggered by leading edge of 'clk'
+  Path Groups: {reg2out}
+  Analysis View: func_tt_25c_cworst_T
+  Other End Arrival Time          0.700
+  - External Delay                3.500
+  + Phase Shift                   5.000
+  + CPPR Adjustment               0.000
+  - Uncertainty                   0.050
+  = Required Time                 2.150
+  - Arrival Time                  2.667
+  = Slack Time                   -0.517
+
+Path 5: VIOLATED Late External Delay Assertion
+  Endpoint:   phy_cmd[2]                                       (^) checked with leading edge of 'clk_cmd'
+  Beginpoint: u_PuTopDft/u_control/cmd_reg_2_/Q                (v) triggered by leading edge of 'clk'
+  Path Groups: {output}
+  Analysis View: func_tt_25c_cworst_T
+  Other End Arrival Time          0.600
+  - External Delay                2.900
+  + Phase Shift                   4.000
+  + CPPR Adjustment               0.000
+  - Uncertainty                   0.040
+  = Required Time                 1.660
+  - Arrival Time                  1.676
+  = Slack Time                   -0.016

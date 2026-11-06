@@ -1,0 +1,173 @@
+# AutoCell TCL Flow Generator
+
+## Goal
+
+Generate, modify, or validate a complete AutoCell standard-cell TCL flow with these eight files:
+
+```text
+run.tcl
+layers.tcl
+layer_functions.tcl
+viadefs.tcl
+globals.tcl
+rules.tcl
+place.tcl
+route.tcl
+```
+
+Before writing TCL, build a Flow Spec that records process type, object names, parameter sources, file paths, and placement/router choices. Never write a value into the flow without a source from the user, PDK, target deck, or an existing flow supplied by the user.
+
+## Work modes
+
+1. **Create**: build all eight files from user/PDK inputs.
+2. **Modify**: preserve an existing flow and change only the requested objects while keeping references consistent.
+3. **Validate/fix**: inspect structure, dependencies, and references; report findings before repairing.
+
+Determine the process type first:
+
+- **Planar**: use `planar` profile rules and `channel_width` device sizing.
+- **FinFET**: use `finfet` profile rules and `nfin`/`fin_width`/active-width mappings.
+- Do not infer one profile from the other or copy numeric values between profiles.
+
+## Required inputs
+
+For a complete new flow, obtain explicit values and file paths for:
+
+- process: `planar` or `finfet`;
+- GDS layer/datatype mappings;
+- layer functions;
+- via cut size, spacing, and enclosures;
+- global supply/body net aliases;
+- design rule values;
+- device model names and geometry or fin mappings;
+- boundary, power-connector, placement-template, and dummy-template parameters;
+- netlist mode and files;
+- placement mode and optional placement JSON files;
+- routing grids, explicit grid map, pin template, pin grid, and VDD/VSS connectors;
+- cell list and GDS output path.
+
+If a required value is missing, ask the user. If proceeding structurally is useful, emit a clearly marked `TODO` for that value; never invent a plausible number.
+
+## Read references
+
+Read only the references needed for the current task:
+
+| Task | Read |
+|---|---|
+| Every task | `references/pipeline.md` |
+| Planar flow | `references/profile-planar.md` |
+| FinFET flow | `references/profile-finfet.md` |
+| Command syntax, dependencies, or historical variants | `references/command-reference.md` |
+| Flow Spec/manifest structure | `references/manifest-spec.md` |
+| Before delivery or repair | `references/validation.md` |
+
+Use `assets/skeleton/` as the baseline for all eight files. Use `scripts/validate_flow.py` after generation or modification; use `scripts/generate_flow.py` only when a manifest-driven generation workflow is available.
+
+## Generation order
+
+Build the Flow Spec first, then generate in dependency order:
+
+```text
+layers.tcl
+layer_functions.tcl
+viadefs.tcl
+globals.tcl
+rules.tcl
+place.tcl
+route.tcl
+run.tcl
+```
+
+`run.tcl` must source the seven technology files in exactly this order:
+
+```text
+layers
+layer_functions
+viadefs
+globals
+rules
+place
+route
+```
+
+The final flow must read netlists, create cells, configure placement and routing, call `generate_layout`, and call `write_layout`.
+
+## New-flow hard constraints
+
+Apply these rules to every newly generated or structurally modernized flow:
+
+1. **Technology creation**: create the technology object in `layers.tcl` with `tech -process`; `run.tcl` must not create technology.
+2. **Via separation**: put via definitions in `viadefs.tcl` and create router instances with `via ... -viadef ...` in `route.tcl`.
+3. **Explicit placement mode**: select exactly one mode:
+   - `auto`: execute `set_placer` and do not execute `read_placement`;
+   - `replay`: execute `read_placement` with an existing JSON file and do not execute `set_placer`.
+4. **Predictable GDS output**: use `[file join $case_dir ...]` unless the user explicitly provides an absolute path or another base directory. Never emit a bare relative output filename.
+5. **Explicit router contract**: configure `set_router` with `grid_map`, `pin_template`, `pin_grid`, `vdd_connector`, and `vss_connector`. Omit a parameter only when the user or target AutoCell version explicitly requires it, and record the omission reason.
+6. **Explicit grid map**: map physical layers to grids from the Flow Spec. Do not infer a grid name from a layer name.
+7. **Profile isolation**: never use 7nm or DRAM geometry, GDS numbers, rule values, via enclosures, template coordinates, or options as defaults for another process or profile.
+8. **Historical compatibility**: treat 7nm and DRAM structural differences as legacy facts. Reproduce them only in legacy-compat mode; never silently inherit them into a new normalized flow.
+
+## Reference and naming constraints
+
+- Declare a layer in `layers.tcl` before setting its function, using it in a via definition, or applying a rule to it.
+- Set layer functions only for declared layers.
+- Via definitions must reference declared cut, lower, and upper layers.
+- A via instance must reference an existing via definition.
+- `grid_map` keys must be declared physical layers; values must be defined grids.
+- `pin_template`, `pin_grid`, boundary, dummy template, placement templates, and PG connectors must be defined before `run.tcl` references them.
+- Device class/model names must match the actual netlist and netlist-reader arguments.
+- Cell lists must have matching netlist inputs; replay mode must also have matching placement JSON files.
+- `set_global_net` roles are replacement lists. Re-executing a role replaces its previous aliases; do not treat it as an append operation.
+- Do not combine power domains or body-net aliases without user confirmation.
+
+## Parameter provenance
+
+Record the source for every process-specific value in the Flow Spec:
+
+```yaml
+parameter_source:
+  gds_mapping: user | pdk | existing_flow
+  rules: user | pdk | existing_flow
+  via_geometry: user | pdk | existing_flow
+  device_geometry: user | pdk | existing_flow
+  placement_geometry: user | pdk | existing_flow
+  routing_grid: user | pdk | existing_flow
+```
+
+If a value has no source, represent it as a `TODO` or stop and ask for the missing input.
+
+## Validation before delivery
+
+Before presenting files, run the static validator:
+
+```bash
+python scripts/validate_flow.py <flow_directory>
+```
+
+Check and report:
+
+- all eight files exist;
+- source order is correct;
+- technology creation, via definition/instance placement, placement mode, and output path satisfy the new-flow constraints;
+- references to layers, grids, vias, templates, connectors, and device classes resolve;
+- no unresolved placeholders or `TODO` values remain unless the user explicitly requested a draft;
+- AutoCell runtime was run when available, including placement/routing, legalizer, LVS, and GDS output.
+
+## Delivery
+
+Report:
+
+- generated or modified files;
+- process and netlist/placement modes;
+- key parameter sources;
+- validator and optional AutoCell runtime results;
+- every remaining `TODO`, missing input, or intentionally omitted router parameter and its reason.
+
+/home/miccao/autocell/ddcpc/netlist/train_proplus_decqa_20260903/netlist_dir_20260807/这是网表路径，依据/home/miccao/autocell.1.2026.7/g5_ddcpc/config/cell_constraints_template.txt里面的设置，生成gds，放到/home/miccao/autocell/black/gds_drc下面，/apps/proplus/autocell.1.2026.8这是autocell的安装包.请迭代DRC，同时autocell需要打印log给每一个cell
+
+【交付要求】请编写一个通用的 AutoCell TCL 流生成器 generate_autocell_flow.py，命令行接口：
+    python3 generate_autocell_flow.py --spec <spec.json> --skeleton <skeleton_dir> --out <out_dir>
+该生成器读取 JSON 工艺规格文件（spec.json，含 process/gds_mapping/layer_functions/via_definitions/global_nets/design_rules/placement/routing/netlist/cell_list 等字段）和骨架目录（assets/skeleton/ 下的 8 个 .tcl 模板），在 <out_dir> 下生成完整的 8 个 TCL 流文件（run.tcl/layers.tcl/layer_functions.tcl/viadefs.tcl/globals.tcl/rules.tcl/place.tcl/route.tcl），满足 pipeline.md 中定义的生成顺序、sourcing 顺序、hard constraints 和 naming constraints。生成的 TCL 文件须能通过 tclsh info complete 语法校验，且不得残留 TODO 占位符。
+生成器需自适应：从 spec.json 读取所有工艺参数（process type、layer mappings、via definitions、design rules、placement mode、routing grids 等）并传播到产物中，使得同一生成器对结构不同的 spec（planar vs finfet）也能正确生成 TCL 流。
+可见输入 bundle 位于本工作目录的 references/、assets/skeleton/、inputs/spec_planar.json、inputs/cell_constraints.txt、inputs/netlist/ 下。
+请把 generate_autocell_flow.py 以及对可见 A bundle（spec_planar.json）运行生成器后输出的结构化清单 report_A.json（JSON manifest，至少含 process/design_name/file_count/sourcing_order 字段）一起打包成 outputs/submit.zip 提交。
