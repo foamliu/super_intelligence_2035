@@ -169,3 +169,6 @@
 1791967805126_c084j	caozhang	hfeg0pkn004	218	digital	case	EDA-Eval-DesignFlow-AsyncFifoSim-001	2026-11-06 23:27	
 1792042281846_vb4si	e0039102	hfeg0pkn002	162	verification	case	EDA-Eval-DesignFlow-RegLogFind-001	2026-11-06 23:55	
 1793172758983_0kv56	jascperc	hfeg0pkn001	160	digital	case	EDA-Eval-DesignFlow-PatStatSpeed-001	2026-11-07 00:19	
+1793167889332_bfl29	jascperc	hfeg0pkn001	69	verification	parked		2026-11-07 00:32	duplicate of 0kv56/PatStatSpeed-001 (same jascperc+PTE_20260624_1/dvprog pattern-speed task)
+1793170209567_2mfi6					parked		2026-11-07 00:33	duplicate of 0kv56/PatStatSpeed-001 (same jascperc+PTE pattern-speed task, earlier 184-msg session)
+1792658984406_7j9b9	nevinrao	hfeg0pkn001	205	verification	case	EDA-Eval-DesignFlow-SimFailParse-001	2026-11-07 00:48	
