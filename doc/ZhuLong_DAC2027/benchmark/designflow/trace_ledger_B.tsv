@@ -194,7 +194,7 @@ vbxlf.messages.json	jason17w	hfeg0pnd002	262	spice_sim	parked		2026-11-05 12:30	
 1793263942286_u8rjq					parked		2026-11-06 12:49	sim-sp-gen skill-writing meta; not spice need (1106 scout)
 1793757463114_zd8iu					parked		2026-11-06 12:49	bash bsub script fix; user gave root cause num1/num2; non-A-档 + bash not spice_char (1106 scout)
 1793792759786_ujw1y					parked		2026-11-06 12:49	summarize circuit + view sim/optimization advice; analysis not production (1106 scout)
-1791946488468_0ewj2.messages.json	jiangbaol	hfeg0pkn003	29	spice_sim	claimed		2026-11-06 13:27	
+1791946488468_0ewj2.messages.json	jiangbaol	hfeg0pkn003	29	spice_sim	case	EDA-Eval-DesignFlow-SlicerSizeOpt-001	2026-11-06 15:29	
 1793692406403_lcg3v.messages.json	ronghu	hfeg0pkn005	27	spice_sim	parked		2026-11-06 13:31	char_paste_inst
 1792981479658_jh3kb.messages.json	ronghu	hfeg0pkn005	18	spice_sim	parked		2026-11-06 13:31	cell_list_no_need
 1791449736348_g3nt6.messages.json	rongjiez	hfeg0pkn005	22	spice_sim	parked		2026-11-06 13:31	code_analysis
@@ -223,3 +223,4 @@ vbxlf.messages.json	jason17w	hfeg0pnd002	262	spice_sim	parked		2026-11-05 12:30	
 1793257968522_mp3us.messages.json	tongni	hfeg0pkn001	164	spice_sim	parked		2026-11-06 13:31	vcc2sc_dup
 1793600748187_dq8bz.messages.json	adaml	hfeg0pkn002	621	spice_sim	parked		2026-11-06 13:31	no_user_text
 1791946488468_0ewj2					case	EDA-Eval-DesignFlow-SlicerSizeOpt-001	2026-11-06 14:47	
+1793934576448_kk5tf	dsgao	hfeg0pkn001	52	spice_sim	claimed		2026-11-06 15:30	

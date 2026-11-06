@@ -40,5 +40,5 @@ The remaining slices are built so cross-language scores are comparable. \textbf{
 
 \subsection{Evaluation Protocol}
 
-A task passes if the generated code executes in its target runtime sandbox without errors and all assertions hold; the primary metric is Pass@1 \cite{chen2021evaluating}, reported as mean $\pm$ s.d.\ over five independent runs (reshuffled task orderings, fresh agent contexts), per slice and pooled over all 449 tasks.\footnote{\textbf{Release and reproducibility.} We release the schema, prompts, signatures, and assertions for all 449 tasks, the harness with its PreToolUse hook and five ablation configurations, and anonymized re-scoreable traces. The 449-task set derives from non-redistributable vendor documentation, and the live commercial runtimes require authorized vendor access---a licensing limit, not an algorithmic one; assertion design is described in Section~\ref{sec:benchmark-slices}.}
-% 评测协议：代码在目标运行时沙盒无错执行且所有断言通过即 pass；主指标 Pass@1，5 次独立运行均值±标准差，分切片与 449 合并。脚注=释放与可复现声明（评审意见#3 P0）：释出全 449 任务 schema/提示/签名/断言、harness+PreToolUse hook+5 消融配置、匿名可重评 trace；449 任务源自不可再分发厂商文档；活商业运行时需授权访问——许可限制而非算法限制；断言设计见 §5.3。（公开 PyAether 子集正与厂商协商，待用户拍板后补具体任务数。）
+A task passes if the generated code executes in its target runtime sandbox without errors and all assertions hold; the primary metric is Pass@1 \cite{chen2021evaluating}, reported as mean $\pm$ s.d.\ over five independent runs (reshuffled task orderings, fresh agent contexts), per slice and pooled over all 449 tasks.
+% 评测协议：代码在目标运行时沙盒无错执行且所有断言通过即 pass；主指标 Pass@1，5 次独立运行均值±标准差，分切片与 449 合并。

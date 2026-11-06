@@ -3,7 +3,7 @@
 %% article.
 \begin{abstract}
     Design engineers lose the most time orchestrating flows and patching the gaps
-    where closed EDA tools refuse to interoperate. We present an
+    where closed EDA tools refuse to interoperate. We present \textbf{ZhuLong}, an
     execution-grounded LLM agent for PyAether, SKILL, and Tcl that closes a
     generate--execute--refine loop over unified MCP tools (API retrieval,
     documentation, sandbox execution) and is already deployed in production EDA
@@ -11,18 +11,15 @@
     correctness is bottlenecked by \emph{observation fidelity} at the L4
     (situated) layer, which model scale alone cannot reach. On
     \textbf{EDA-Scripting-Bench} (449 tasks, three languages, four
-    commercial runtimes), our system reaches \textbf{76.9\%} pooled Pass@1 versus
-    \textbf{19.7\%} (pure LLM): the controlled read-back ladder (no read-back
-    $\to$ binary $\to$ full observation, LLM fixed) spans $7.1$~pp pooled (binary
-    adds $1.2$~pp), while the system-level observation axis (pure LLM $\to$ full
-    system) spans $57.2$~pp with the model fixed, exceeding the $23.7$~pp
-    backbone range with the harness fixed---two axes answering different
-    questions; observation is under-invested with measurable, graded returns.
+    commercial runtimes), ZhuLong reaches \textbf{76.5\%} pooled Pass@1 versus
+    \textbf{19.7\%} (pure LLM): the system-level observation axis spans
+    $56.8$~pp with the model fixed, exceeding the $23.3$~pp backbone range with
+    the harness fixed---two axes answering different questions; observation is an under-invested axis whose returns are measurable and graded.
 \end{abstract}
-% 设计工程师最耗时的是编排 flow、补上封闭 EDA 工具之间无法互通的断链。我们提出一个面向 PyAether、SKILL、Tcl 的执行接地 agent，
+% 设计工程师最耗时的是编排 flow、补上封闭 EDA 工具之间无法互通的断链。我们提出 ZhuLong：面向 PyAether、SKILL、Tcl 的执行接地 agent，
 % 经统一 MCP 工具（API 检索 / 文档 / 沙盒执行）闭环"生成–执行–修正"，且已部署于量产 EDA flow；以 grounding-gap 框架提出 EDA 脚本正确性在 L4（情境）层
 % 受观测保真度瓶颈约束，而模型规模无法触及该层。在 EDA-Scripting-Bench（449 任务、三语言、
-% 四商业运行时）上，本系统达 76.9% 合并 Pass@1（vs 纯 LLM 19.7%）：受控回读阶梯（无回读→二值→全观测，固定 LLM）合并跨度 7.1pp（二值 +1.2pp），
-% 而系统级观测轴（纯 LLM→全系统）固定模型时跨度 57.2pp，超过固定 harness 时 23.7pp 的 backbone 跨度——两轴回答不同问题，观测是被低估、回报可测且分级的轴。
+% 四商业运行时）上，ZhuLong 达 76.5% 合并 Pass@1（vs 纯 LLM 19.7%）：固定模型时系统级观测轴跨度 56.8pp，超过固定 harness 时 23.3pp 的 backbone
+% 跨度——两轴回答不同问题，观测是回报可测、被低估的轴。
 
 \keywords{LLM Agents for EDA, EDA Scripting, Code Generation, Execution Grounding, Benchmarking}
