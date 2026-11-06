@@ -1077,3 +1077,4 @@ wl9i4					parked		2026-11-05 22:49	交互shell驱动+Q&A n752大
 1793062149793_u8ovn.messages.json	t0002616	10.129.2.13	126	schematic_netlist	case	EDA-Eval-DesignFlow-FarthestCellPick-001	2026-11-06 11:31	
 1792480641023_m6l6p	alenxu	10.129.2.12	82	analog_context	case	EDA-Eval-DesignFlow-OpCornerSummary-001	2026-11-06 12:07	
 1791960719119_2w4ol	e0039602	10.129.8.136	74	schematic_netlist	case	EDA-Eval-DesignFlow-CellRewriteSimlib-001	2026-11-06 12:38	
+1792046093287_3yv6w	qi3wang	10.129.32.83	60	schematic_netlist	case	EDA-Eval-DesignFlow-NetlistGate2Verilog-001	2026-11-06 13:11	
