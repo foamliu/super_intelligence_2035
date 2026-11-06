@@ -1149,3 +1149,8 @@ wl9i4					parked		2026-11-05 22:49	交互shell驱动+Q&A n752大
 1791528100632_yiohr					parked		2026-11-07 05:08	weak netlist 7
 1791526867236_ckiw9					parked		2026-11-07 05:08	weak netlist 7 dup yiohr
 1792142998625_n1njg	jessegao	hfeg0plg14	137	analog_context	case	EDA-Eval-DesignFlow-LdoCircuitReport-001	2026-11-07 05:13	#336 deliver; bookkeeping backfilled #338
+1793869755608_ho5p2.messages.json	jiangbaol	hfeg0pkn003	138	analog_context	case	EDA-Eval-DesignFlow-SpiceMeasGen-001	2026-11-07 06:14	#339 deliver; ho5p2 mc138 .measure-gen facet B-grade synthesized L1
+1793582130511_ju0g4.messages.json					parked		2026-11-07 06:15	#339 peek: waveview:588 dominant, sine zero-cross dup of SineZeroCrossFreqPeak-001, weak
+1793877524011_cu3nb.messages.json					parked		2026-11-07 06:15	#339 peek: schematic:719;netlist:504;lvs:264, no portable produce facet, weak
+1793869480489_7kote.messages.json					parked		2026-11-07 06:15	#339 peek: analog:580;schematic:428;cellview:158, live-cellview weak
+1782886485849_iryie.messages.json					parked		2026-11-07 06:15	#339 peek: analog:263;aether:244;virtuoso:175;pyaether:124, live virtuoso/pyaether weak
