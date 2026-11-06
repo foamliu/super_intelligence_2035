@@ -1,5 +1,62 @@
 # ZHULONG_TASK.md — ZhuLong（DAC2027）EDA 消融评测 · 合并任务书
 
+### 🔴 用户令 · 2026-11-07 08:3x（**两轴消融：cline `--thinking` 档位 × 思维链语言** · 测试集 **EDA-Eval-PyAether 158** · 中文 HTML 报告须含**分数 + 成本**（墙钟/token））· 用户直令 · 最高优先 · ⚠️ 未完成
+
+> **用户原话**：「安排 zhulong agent 做如下消融实验：测试集 EDA-Eval-PyAether（158）。1. 变化 cline 的 thinking 参数：None、Low、Medium等。2. 变化 cline 思维链使用的语言：中文、英文、西班牙文、法文、俄文等，可以通过修改任务提示实现，比如：'请使用XX语言思考'。实验后生成中文 HTML 报告。包含对比表格，不光含不同变体的分数，还应包含成本，比如墙钟、token 等。」
+
+**口径（不可改）**：测试集 = **EDA-Eval-PyAether 158 题**（`EDA-Scripting-Bench 449` 的 PyAether 子集；🚫 不跑 SKILL/Tcl）· harness = `cline` 3.0.51（🚫 不改版本）· 基座 = 当前主基座（见 `MEMORY_ZHULONG.md` 顶部，当前 `glm-5.2`），**两轴内必须恒定**，否则效应被基座差异污染，报告首行写明实际基座 · 协议 = Pass@1 单次无 retry `-p 8 -n`（与既有消融同口径）· 环境 = `BASE_DIR=/nasdata/app.e0031982/code/eda_fastmcp`，启动 `setsid bash scripts/run_cline_script.sh -p 8 -n > /tmp/ABL_<TAG>_r<N>.log 2>&1 < /dev/null &`，结束判据 `pgrep -f '^bash scripts/run_cline_script'` 无输出，打分 `$BASE_DIR/venv/bin/python scripts/run_eval.py --latest 1` · 每变体 **3 轮**（成本允许则 5 轮与既有臂对齐，报告写实际 n）。
+
+#### 1. 两轴设计 —— ⚠️ **一次只变一个轴，不做笛卡尔积**
+
+> 5 档 × 5 语言 × 3 轮 × 158 题 ≈ 上万次推理，成本不可控。设计 = **基线 + 单轴扫描**：先固定语言=英，扫完 thinking；再固定 thinking=medium，扫语言。若要交互项只补 2~3 个关键格（如 low×中文、high×中文）。
+
+**轴 A · thinking 档位**（`--thinking <level>`）：`A0 none`（若 cline 不接受 `none` 则**不传该 flag**）→ `A1 low` → `A2 medium`（=既有基线）→ `A3 high`（+ 若 `cline --help` 有第 4 档一并测）。
+> **P0（≤15min，先做）**：`cline --help | grep -i thinking` 查**真实枚举**，🚫 不许臆造档位名。`none` 若不被接受，用「不传 flag」代表并在报告**明确标注口径差异**。
+
+**轴 B · 思维链语言**（改 prompt 末尾追加一行，不动 harness）：基线 thinking 固定 `medium`。
+| 变体 | 注入后缀 |
+|:--|:--|
+| `B1 en` | `Think in English.` |
+| `B2 zh` | `请使用中文思考。` |
+| `B3 es` | `Piensa en español.` |
+| `B4 fr` | `Réfléchis en français.` |
+| `B5 ru` | `Думай по-русски.` |
+| （可选）`B6` 对照 | 不加任何语言指令（原样 prompt）= 真实基线 |
+
+> **注入实现**：在送进 cline 的 prompt **末尾追加**语言指令（不删改原题）。建议给 `run_cline_script.sh` 加 `LANG_HINT` 环境变量透传。
+> **⚠️ 必须核验**：①日志可见后缀确实进了 prompt ②**抽 3~5 条 trace 核对思维链真的换了语言**。未生效 ⇒ 停下修注入，🚫 别把无效变体跑满 3 轮；确属未生效则标注「该变体未生效」而非当有效数据。
+
+#### 2. 成本指标（用户明确要求，缺一不可 · 口径照抄 `PLAN_RETEST_READBACK_COST.md` §4）
+
+每变体每轮必报，最终给 `mean ± std`：**Pass@1(%)**（通过/158）· **墙钟·单题均值(s)**（逐题 Step3→Step6，**非** batch 总时长）· **Batch 墙钟(h)**（真实 elapsed）· **Token prompt/completion/reasoning/total**（从 cline session `~/.cline/data/**` 或 trace 聚合，给逐题均值 + 总消耗）· **Token/题**（total/158，横向比贵贱）· **¥（可选）**（有公开单价才换算，🚫 不许编造价）· **Timeout 数**（命中 2500s）· **Converged(%)** · **Gen-fail 数**。
+> 判据沿用既有十三：`timeout ≤10`、`0 infra`、`0 exec_err`；Pass@1 任何值有效，**不因低分重跑**。
+> **reasoning token 必须单独抽**（thinking 档位直接决定它，是解释「高分是否靠堆思考」的关键）。
+
+#### 3. Trace 保留（硬前置 —— 上次 `(N')` 成本就因 trace 被清而丢失）
+
+每轮结束、清理前：`DEST=/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/<TAG>/<batch>`；`cp -a "$OUT/<batch>" "$DEST"/`（`OUT=.../EDA-Eval-Framework/output_evaluation`），cline session 一并复制。验收：trace 文件数 ≥158（与题一一对应），`du -sh` 记进报告；**不删、不 `git add`**。
+
+#### 4. 执行顺序
+
+1. **P0**：查 thinking 枚举 + 记录基线档；`pgrep` 确认无在跑评测（有则等，🚫 不打断）。
+2. **P1 冒烟**：`A0/A2` 各跑 8 题子集（不支持子集则跳过）→ 确认 `--thinking` 真生效（trace 里 reasoning 长度差异）+ 成本抽取脚本跑通。
+3. **P2 轴 A 全量**：`A0→A1→A2→A3` 逐档 3 轮，**串行**，每轮即打分 + 落 trace。
+4. **P3 轴 B 全量**：固定 `medium`，`B1→B2→B3→B4→B5` 逐语言 3 轮，**每语言先抽 3 条 trace 核对语言真切换**。
+5. **P4 报告**。
+
+#### 5. 交付物
+
+- `doc/ZhuLong_DAC2027/reports/report_zhulong_ablation_thinking_language_zh.html` —— **中文单文件自包含，0 script 0 外链**（本线 10-24 常驻规程），必含：①**轴 A 对比表** 变体×{Pass@1, 墙钟/题, Batch 墙钟, prompt/completion/reasoning/total tok, ¥, timeout, converged, gen-fail}，全 `mean±std` ②**轴 B 对比表**（同结构）③**成本-分数象限图**（找性价比最优 / 堆 token 无收益者）④**口径校验节**（thinking 是否真生效 trace 证据 + 各语言是否真切换 trace 原文片段 + `none` 实际实现）⑤**失败归因**（infra/timeout/gen-fail/能力，**infra 单列**）⑥**结论**（边际收益、是否值得改生产配置）。
+- 生成器 `run/gen_report_zhulong_ablation_think_lang_zh.py` + 原始数据 `run/ablation_think_lang_results.json`（逐题分数+成本）+ `MEMORY_ZHULONG.md` 心跳 + `daily-memories/` 流水；完成后本行改 `✅ 已交付`。
+
+#### 6. 护栏
+
+🚫 一次只变一轴（两轴同变 ⇒ 效应不可归因）· 🚫 不改 cline 版本/主基座/题面语义（语言指令只追加末尾）· 🚫 不因低分重跑、不用 legacy 数字冒充、不插补缺失轮次 · 🚫 不删 trace，结果 JSON/trace 不入 git · 🚫 不打断其他线（pretrain S1 / vision / data / harness）与在跑评测 · 报告 infra 与能力**分栏**，无效变体必须标注而非丢弃。
+
+> **完成标记**：中文 HTML 报告交付（两表 + 成本列 + 口径校验）⇒ 改 `✅ 已交付`；任一轴未跑完 ⇒ `WAITING: 0`。
+
+---
+
 ### 🚨 用户裁定 · 2026-11-05 19:2x（**P0「双盲违规」不成立 —— 论文早已是匿名状态 · 立即闭合**）· 用户直令 · 最高优先
 
 > 用户原话（2026-11-05 19:1x）：「zhulong P0：早已是匿名状态了」
@@ -18,16 +75,9 @@
 **③ 完成标记**：P0 标 CLOSED 且心跳含证据 ⇒ `WAITING: 1`（恢复空巡检）；若发现需改动且未改完 ⇒ `WAITING: 0`。
 
 
-### 🚨 用户令 · 2026-11-03 21:0x（**本机安装 llama.cpp + 下载 Qwen/Qwen3.5-0.8B（hf-mirror）· 供后续数据分析**）· 用户直令 · ✅ 已完成 → archive §归档 batch 16
+### 📦 已闭合（batch 15/16，原文见 `ZHULONG_TASK_ARCHIVE.md`）
 
-> 闭合：llama.cpp v0.8.0-dev commit `28b812d`（CPU·无 GPU）编译成功（llama-cli/server/quantize 三件齐）+ Qwen3.5-0.8B（qwen3_5 多模态）经 ModelScope 回退下载全（14 文件 1.7G·无 incomplete）+ GGUF 转换意外成功（f16 1.55G / Q8_0 833M）+ **两条冒烟均过**（llama.cpp Q8_0 90.9 tok/s · transformers float32 0.3 tok/s）+ 报告 `reports/report_zhulong_llamacpp_qwen08b_zh.html`(21.8KB·0 外链) + commit `8e6c18978`/`9a4b0504a`（`zhulong env:`）。原文（§0–§5 + 硬约束 + 一键脚本说明）移至 `run/ZHULONG_TASK_ARCHIVE.md` §归档 batch 16。
-
-> 均已闭合，原文（1-line 指针）移至 `run/ZHULONG_TASK_ARCHIVE.md` §归档 batch 15。需要时再读。
->
-> - 🚨 2026-11-02 21:3x **Tab-3 美观改进中文 HTML——找→入库→执行** ✅ 已完成 → archive §batch 15。HTML=`doc/ZhuLong_DAC2027/Tab3_改进建议.html`(14956B)·入库 commit `ae88d8416`·beautify 落地 `DAC2027/6_exp.tex`(commits `dfef74ee7`/`82f5287aa`)·④⑤②③⑦ DONE / ⑥ SKIP·数字逐字节未改·pdflatex×2+bibtex ERR=0/UNDEF=0·8 pages·Overfull=1(既有 1.527pt vbox·非本表)。
-> - 🚨 2026-10-30 22:2x **zhulong-full 配 kimi-k2.6 跑 5-run** ✅ 已完成 → archive §batch 15。5/5 = **85.0±2.5%** [84.8,81.6,88.6,85.4,84.8]·vs cline 86.8±1.6% Δ−1.8pp·vs B.kimi-cline 77.0±1.6% Δ+8.0pp·报告 §6 已更新。
-> - 🔴 2026-10-29 21:5x **论文审阅（参考文献+逻辑链+数字↔措辞）** ✅ 已完成 → archive §batch 15。报告 `doc/BaiZe-ISEDA2027/reports/report_zhulong_paper_detail_audit_zh.html`(92.8KB)·P0=1/P1=3/P2=11·§⑧ 跟踪至 c8a4edfe8（P0 双盲违规仍 OPEN·页数 8/9·建议完整重审另下令）。
-> - 🟠 2026-10-26 08:1x **作废 224219 + 修复 worker 配置源 + 重启 loop + 重跑 zhulong×glm-5.3-flash×full 5-run**（已被 10-27 令覆盖）→ archive §batch 15。配套 4 个 📦 指针（10-28 14:4x r2 收口 69.0±2.3% / 10-28 11:0x 换端口 / 10-28 10:3x 重跑 r2 / 10-27 09:0x maxTokens 8192→16384 修正）一并搬入。
+> 🚨 11-03 21:0x llama.cpp + Qwen3.5-0.8B 安装（smoke 双过）✅ · 11-02 21:3x Tab-3 美观改进（`Tab3_改进建议.html` 已入库，`6_exp.tex` 已落地）✅ · 10-30 22:2x zhulong-full×kimi-k2.6 5-run（**85.0±2.5%**，vs cline 86.8±1.6% Δ−1.8pp）✅ · 10-29 21:5x 论文审阅（92.8KB 报告，P0=1/P1=3/P2=11）✅ · 10-26 08:1x 作废 224219+重跑 glm53-full（已被 10-27 令覆盖）。详情见 archive §batch 15/16。
 
 
 ### 📕 改稿任务令 · 2026-10-25 00:0x（**按外部评审意见改论文（含 57.4pp 归因硬伤）**）· 用户直令 · 与 5-run 并行 ·【保留·与 10-26 令并行】
