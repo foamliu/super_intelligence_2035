@@ -5,13 +5,13 @@ WAITING: 0
 ## 📊 进度快照
 
 ```
-PHASE:        R1718 glm53重测:SWE-bench predict 207files/3500(7/7 alive,progress:her57/op49/cline28/ds23/cc21/pi21/codex8)·TB4全量66×7 Batch1运行中(cline+codex,5results each/66)·TB4=66tasks
-已完成:       H-B✅·Gate7/7·TB报告✅·full500全7路predict+eval 100%完成✅·R1685 cline低分归因✅·R1694-R1717 glm53重测启动+proxy修复+TB4镜像(132/132✅)+TB4 smoke 7/7跑通✅+pip-bootstrap修复✅+TB4全量66×7启动(cline+codex Batch1)
-当前动作:     R1718 监控轮:CPU/MEM自检PASS(load50/224≈22%busy·最高harness进程137%=opencode=1.4核·pretrain143%=非本线·mem 1226G avail·harness RSS 2.9GB·无单进程>80核)·SWE-bench predict 207files/3500(5.9%):hermes57·opencode49·cline28·deepseek23·claude-code21·pi21·codex8·207/207非空patch(100%patch健康)·7/7 run_verified_full alive(etimes~4-4.5h)·gateway gw_proxy 9092+9093 HTTP200✅·硬约束③PASS(0 tracked result JSON)·TB4全量Batch1 cline+codex运行(5results each/66,04:18启动14min)·glm53预测独立predictions_glm53/(kimi基线predictions/未污染)
-下一步:       ①监控TB4全量66×7进度(Batch1 cline+codex→Batch2 hermes+opencode→Batch3 claude-code+deepseek→Batch4 pi) ②监控SWE-bench predict(207/3500,按100/300/500汇报) ③每路predict完即eval ④两基准全交付后写报告report_harness_glm53_7way_swebench_tb_zh.html
-阻塞:         无·⚠️codex极慢(8/500)·TB4全量预估~38h(7路×66×2并行)
+PHASE:        R1719 glm53重测:SWE-bench predict 213files/3500(7/7 alive,progress:her58/op51/cline29/ds24/cc21/pi21/codex9)·TB4全量66×7 Batch1运行中(cline+codex,1running/65pending each)·TB4=66tasks
+已完成:       H-B✅·Gate7/7·TB报告✅·full500全7路predict+eval 100%完成✅·R1685 cline低分归因✅·R1694-R1718 glm53重测启动+proxy修复+TB4镜像(132/132✅)+TB4 smoke 7/7跑通✅+pip-bootstrap修复✅+TB4全量66×7启动(cline+codex Batch1)
+当前动作:     R1719 监控轮:CPU/MEM自检PASS(load48/224≈21%busy·最高harness进程28%=opencode≈0.6核·mem 1228G avail·无单进程>80核)·SWE-bench predict 213files/3500(6.1%):hermes58·opencode51·cline29·deepseek24·claude-code21·pi21·codex9·7/7 alive(etimes~4-4.6h)·gw_proxy 9092+9093 alive·硬约束③PASS(0 tracked result JSON)·TB4全量Batch1 cline+codex(atrx-vep-crispr 1running/65pending,04:18启动21min,harbor alive)·disk:/data 5.8T avail
+下一步:       ①监控TB4全量66×7进度(Batch1 cline+codex→Batch2 hermes+opencode→Batch3 claude-code+deepseek→Batch4 pi) ②监控SWE-bench predict(213/3500,按100/300/500汇报) ③每路predict完即eval ④两基准全交付后写报告report_harness_glm53_7way_swebench_tb_zh.html
+阻塞:         无·⚠️codex极慢(9/500)·claude-code/deepseek/opencode有quota exhausted重试·TB4全量预估~38h
 ERROR_COUNT:  0
-  📦 体积：TASK=32074B(31.3KB) / MEMORY=31.8KB(≤32KB达标)
+  📦 体积：TASK=32074B(31.3KB) / MEMORY=32.0KB(≤32KB达标)
 ```
 
 > 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
@@ -39,7 +39,8 @@ ERROR_COUNT:  0
 > 📦 R1715 流水(04:08,TB4 pip-fix验证+7/7 smoke跑通)已归档 → daily-memories-harness/2026-11-07.md。结论：7/7适配器TB4跑通(5首轮Pass+hermes/deepseek pip-fix后跑通)。需要时再读。
 > 📦 R1716 流水(04:18,监控+TB4全量启动轮)已归档 → daily-memories-harness/2026-11-07.md。结论：TB4全量66×7 Batch1启动+SWE-bench predict 194/3500+7/7 alive。需要时再读。
 > 📦 R1717 流水(04:25,监控轮:202files/3500+TB4 Batch1刚启动6min)已归档 → daily-memories-harness/2026-11-07.md。结论：7/7 alive,进度稳定。需要时再读。
-[04:33] R1718 监控轮:CPU/MEM自检PASS(load50/224≈22%busy·最高harness进程137%=opencode=1.4核·pretrain143%=非本线S1训练·mem 1226G avail·harness总RSS 2.9GB·无单进程>80核·无>50GB RSS)·SWE-bench predict 207files/3500(5.9%):hermes57·opencode49·cline28·deepseek23·claude-code21·pi21·codex8·207/207非空patch(100%patch健康)·7/7 run_verified_full alive(etimes 14270~16257s≈4-4.5h)·gw_proxy 9092(PID2058948)+9093(PID2058952)alive etimes~14435s·gateway curl探针HTTP200✅·gw_proxy 9092+9093 HTTP200✅·硬约束③PASS(0 tracked result JSON)·TB4全量Batch1 cline+codex运行(5results each/66,04:18启动14min,harbor run alive PID2212836/2212837)·disk:/data 5.8T avail(18%used)·/ 352G avail·未完成指令:有(glm53重测SWE-bench predict+TB4全量进行中)⇒WAITING:0
+> 📦 R1718 流水(04:33,监控轮:SWE-bench 207/3500+TB4 Batch1 14min)已归档 → daily-memories-harness/2026-11-07.md。结论：7/7 alive,进度稳定。需要时再读。
+[04:39] R1719 监控轮:CPU/MEM自检PASS(load48/224≈21%busy·最高harness进程28%=opencode≈0.6核·pretrain=非本线·mem 1228G avail·无单进程>80核)·SWE-bench predict 213files/3500(6.1%):hermes58·opencode51·cline29·deepseek24·claude-code21·pi21·codex9·7/7 alive(etimes 14639~16651s≈4-4.6h)·gw_proxy 9092(PID2058948)+9093(PID2058952)alive·硬约束③PASS(0 tracked result JSON)·TB4全量Batch1 cline+codex(atrx-vep-crispr 1running/65pending each,04:18启动21min,harbor alive PID2212836/2212837)·quota重试:claude-code/deepseek/opencode有quota exhausted retry(网关限速正常退避)·disk:/data 5.8T avail·未完成指令:有⇒WAITING:0
 
 
 
