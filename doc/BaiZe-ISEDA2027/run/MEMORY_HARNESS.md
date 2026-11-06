@@ -5,13 +5,13 @@ WAITING: 0
 ## 📊 进度快照
 
 ```
-PHASE:        R1705 glm53重测监控轮(TB4 pull重启):SWE-bench Verified full500×glm-5.3-flash×7路 predict运行中(7/7 alive,81 pred files/3500,57 patched=70%patch率)·TB 4.0=66tasks,P0核实PASS,70/132 images(前轮pull died→已重启PID554463从71/132恢复)·硬约束③PASS
-已完成:       H-B✅·Gate7/7·TB报告✅·full500全7路predict+eval 100%完成✅·R1685 cline低分归因✅·R1694 glm53重测启动✅·R1695 proxy 429+400修复✅·R1696 硬约束③修复+TB4镜像拉取启动✅·R1697-R1704 监控轮✅·R1705 TB4 pull重启+81files/57patch✅
-当前动作:     R1705 监控:7路predict运行中·prediction files=81 done,57 patched(70%):cline17/14·opencode20/19·pi6/2·codex3/1·claude-code7/4·hermes18/11·dsh10/6·TB4 pull前轮died@70/132→已重启PID554463从71/132恢复(SKIP 70已存在→pull 71-132)·gw_proxy 9092+9093 HTTP200✅
-下一步:       ①监控7路predict进度(按prediction files计数,100/300/500三段汇报,当前81接近100段) ②每路predict完即eval ③TB4镜像拉取完(70/132,ETA~40min)→7路smoke→全量66×7 ④写报告report_harness_glm53_7way_swebench_tb_zh.html
-阻塞:         无·7路predict运行中·TB4镜像后台拉取中(已重启)·⚠️codex quota-blocked多·pi patch率低(2/6) 待观察
+PHASE:        R1706 glm53重测监控轮:SWE-bench Verified full500×glm-5.3-flash×7路 predict运行中(7/7 alive,85 pred files/3500,59 patched)·TB 4.0=66tasks,P0核实PASS,85/132 images(单pull,已杀冗余副本)·硬约束③PASS
+已完成:       H-B✅·Gate7/7·TB报告✅·full500全7路predict+eval 100%完成✅·R1685 cline低分归因✅·R1694 glm53重测启动✅·R1695 proxy 429+400修复✅·R1696 硬约束③修复+TB4镜像拉取启动✅·R1697-R1705 监控轮✅·R1706 杀冗余TB4 pull副本+85files/59patch✅
+当前动作:     R1706 监控:7路predict运行中·prediction files=85(ground truth按文件计数):cline17·opencode20·pi7·codex4·claude-code7·hermes20·dsh10·patches=59:cline14·opencode19·pi2·codex1·claude-code4·hermes13·dsh6·⚠️codex quota_blocked=3·pi quota_blocked=1·TB4 pull=85/132(前轮误判old pull died→实则alive,已杀冗余副本554463,保留原3294268)·gw_proxy 9092+9093 HTTP200✅·gateway 200✅
+下一步:       ①监控7路predict进度(85接近100段,按100/300/500三段汇报) ②每路predict完即eval ③TB4镜像拉取完(85/132,ETA~30min)→7路smoke→全量66×7 ④写报告report_harness_glm53_7way_swebench_tb_zh.html
+阻塞:         无·7路predict运行中·TB4镜像单pull中(85/132)·⚠️codex quota_blocked多·pi patch率低(2/7) 待观察
 ERROR_COUNT:  0
-  📦 体积：TASK=32074B(31.3KB) / MEMORY≈29.9KB(≤32KB达标,无需归档)
+  📦 体积：TASK=32074B(31.3KB) / MEMORY≈30KB(≤32KB达标,无需归档)
 ```
 
 > 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
@@ -29,7 +29,8 @@ ERROR_COUNT:  0
 > 📦 R1700 流水(01:17,监控轮:193done/3500·32patches·TB4 32/132)已归档 → daily-memories-harness/2026-11-07.md。结论：7路 alive,进度稳定。需要时再读。
 > 📦 R1701-R1703 流水(01:28~01:45,3轮监控:CPU/MEM PASS+7/7 alive+硬约束③PASS,注:报的"208done"是orchestrator attempted计数非prediction files)已归档 → daily-memories-harness/2026-11-07.md。结论：7路稳定推进,TB4镜像55→64/132。需要时再读。
 > 📦 R1704 流水(01:55,监控轮:75files/52patch·TB4 64/132)已归档 → daily-memories-harness/2026-11-07.md。结论：7路 alive,进度稳定。需要时再读。
-[02:15] R1705 glm53重测监控轮(TB4 pull重启):CPU/MEM自检PASS(load40.31/224核~18%busy·top=pretrain143%非本线·无harness>8000%CPU·无>50GB RSS·MEM avail1241G)→gateway /v1 HTTP401(fake token=endpoint alive,0.016s)·gw_proxy 9092+9093 HTTP200✅→7/7 alive(cline3991932·opencode4004319·pi4005476 etimes~7360s + codex2247963·claude-code2248351·hermes2258290·dsh2261465 etimes~5380s)→prediction files=81 done,57 patched(70%):cline17/14·opencode20/19·pi6/2·codex3/1·claude-code7/4·hermes18/11·dsh10/6(JSON结构=[{instance_id,model_name_or_path,model_patch}],patch在d[0]['model_patch'])→**TB4 pull died@70/132**(前轮PID3294268 gone,log止于[71/132]pulling无DONE)→**已重启**PID554463 via `sg docker -c bash _pull_tb4_images.sh`,SKIP70已存在→从71/132恢复pull·TB4 dataset=66tasks(~/terminal-bench-4.0/)·docker需`sg docker -c`非sudo→disk:/data5.9T free·/351G free→硬约束③PASS(glm53 JSON tracked=0)·体积:TASK32074B(31.3KB)/MEMORY29880B(29.2KB,≤32KB无需归档)·未完成指令:有(glm53重测)⇒WAITING=0.
+[02:12] R1706 glm53重测监控轮:CPU/MEM自检PASS(load39.7/224~18%busy·top=pretrain143%非本线·无harness>8000%CPU·无>50GB RSS·MEM avail1242G)→gw_proxy 9092+9093 HTTP200✅·gateway 200✅→7/7 alive(cline65472·opencode502256·pi2990544·codex597957·claude-code3776945·hermes718202·dsh173435)→prediction files=85(ground truth按文件计数):cline17·opencode20·pi7·codex4·claude-code7·hermes20·dsh10·patches=59:cline14·opencode19·pi2·codex1·claude-code4·hermes13·dsh6·⚠️codex quota_blocked=3·pi quota_blocked=1(progress JSON done数被resume膨胀,dsh=115实为旧session残留,文件计数85才是真值)→**TB4 pull=85/132**:前轮误判old pull(3294268)died→实则alive(etimes5074s)·两pull竟拉同一image(ontology-kg-querying-verifier)→**已杀冗余副本554463树**(kill 554463/554481/554494)·保留原3294268单pull·TB4 dataset=66tasks/132images·disk:/data5.9T free·/351G free→硬约束③PASS(glm53 JSON tracked=0)·体积:TASK32074B(31.3KB)/MEMORY~30KB(≤32KB无需归档)·未完成指令:有(glm53重测)⇒WAITING=0.
+
 
 
 > 📦 R1699 流水(01:14,监控轮:30done/3500·TB4 30/132)已归档 → daily-memories-harness/2026-11-07.md。结论：7路 alive,进度稳定。需要时再读。
