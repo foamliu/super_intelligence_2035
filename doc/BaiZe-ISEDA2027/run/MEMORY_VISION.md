@@ -2,9 +2,9 @@
 
 WAITING: 0
 
-> 🆕 **【wake #743 · 2026-11-06 09:23】监控巡检·状态无变化·双poller健康·GPU满载·仅待GPU。SFT poller PID2757742(etimes≈48951s≈13.6h)alive轮询busy_util waiting（09:23:39 latest）✓；GRPO poller PID2466702(etimes≈4552s≈1.26h)alive等待SFT eval_results.json(4560s/7776000s)✓；pretrain baize2b torchrun PID2612442 running latest ckpt iter_0100000(100k/700k ETA≈12/24-25)；GPU .12 8×100%全占。vision loop PID669545 alive✓；cline in PATH✓。git 0ahead/0behind已同步。📦体积：TASK=30453B(29.7KB)/MEMORY=27086B(26.5KB)（均≤32KB✓）。**未完成指令：有**（阶段1 GPU训练pending,阻塞方=pretrain baize2b ETA≈12/24-25）⇒**WAITING: 0**。
+> 🆕 **【wake #744 · 2026-11-06 09:27】监控巡检·状态无变化·双poller健康·GPU满载·仅待GPU。SFT poller PID2757742(etimes≈49196s≈13.7h)alive轮询busy_util waiting（09:27:41 latest）✓；GRPO poller PID2466702(etimes≈4797s≈1.33h)alive等待SFT eval_results.json(4800s/7776000s)✓；pretrain baize2b torchrun PID2612442 running latest ckpt iter_0100000(100k/700k ETA≈12/24-25)；GPU .12 8×100%全占。vision loop PID669545 alive✓；cline in PATH✓。git 0ahead/0behind已同步。📦体积：TASK=30453B(29.7KB)/MEMORY=27216B(26.6KB)（均≤32KB✓）。**未完成指令：有**（阶段1 GPU训练pending,阻塞方=pretrain baize2b ETA≈12/24-25）⇒**WAITING: 0**。
 
-> 📦 wake #742（监控巡检·2026-11-06 09:18）已归档 → daily-memories-vision/2026-11-06.md；**结论**：状态无变化，双poller健康，GPU 8×100%满载仅待GPU。需要时再读。
+> 📦 wake #743（监控巡检·2026-11-06 09:23）已归档 → daily-memories-vision/2026-11-06.md；**结论**：状态无变化，双poller健康，GPU 8×100%满载仅待GPU。需要时再读。
 
 > 📦 wake #741（CPU端到端训练循环验证PASS·2026-11-06 09:0x）已归档 → daily-memories-vision/2026-11-06.md；**结论**：_cpu_train_validate.py 7/7 ALL PASS（loss单调下降/LoRA 69.7M/ckpt save+reload/生成合法），Phase1 CPU侧100%验证完成仅待GPU。需要时再读。
 
@@ -201,7 +201,7 @@ WAITING: 0
 | PHASE | 🟡 **波形 RL 阶段0交付(YELLOW) + 阶段1 SFT脚本+数据就绪(9013条均衡) + 阶段2 GRPO+评测脚手架就绪 + 全管线CPU预验证完成(含训练循环验证§20.19) + 双poller健康(SFT PID 2757742 + GRPO chain PID 2466702)**。全管线CPU预验证+就绪审计+链修复+数据完整性复核+CPU训练循环验证完成。**双**poller后台运行等GPU空闲：SFT poller(PID 2757742, flock, 每60s poll) + GRPO chain launcher(PID 2466702, flock, SFT_WAIT_MAX=90天, 每120s poll)。GPU释放后全链自动：SFT起训→eval_results.json→GRPO chain验收→GRPO起训→WaveQA-RL评测。阶段1 GPU训练 + 阶段2/3未交付。**WAITING: 0** |
 | WAITING | 0 |
 | 已完成 | CPU端到端训练循环验证7/7 PASS(wake#741) · 数据泄漏验证+模型CPU加载复核+阶段1就绪报告HTML(wake#731) · 监控巡检双poller健康(wake#630) · 数据完整性复核(wake#627) · GRPO链式启动器缺失修复+超时修复+启动(wake#626) · 全管线就绪审计(wake#625) · GRPO 2B路径修复+链式启动器(wake#624) · Pre-SFT基线评测30样本(wake#623) · GRPO CPU冒烟测试PASS(wake#622) · 2B文本骨干提取1.72B(wake#620) · CPU dry-run 6/6 PASS(wake#619) · 数据集均衡化9013条(wake#618) · WaveQA-RL oracle ceiling 300题(wake#614) · 波形RL阶段0(wake#609) · 论文改稿(wake#437~#442) · 波形RL计划书(wake#435) · OCR合成10M(wake#275) · ArmE-R2/ArmD-R2 全链路 |
-| 当前动作 | **双**poller后台运行等GPU空闲：SFT poller(PID 2757742, flock, etimes≈44774s≈12.4h, 每60s `busy_util -- waiting`) + GRPO chain(PID 2466702, flock, etimes≈275s, SFT_WAIT_MAX=90天, 每120s `SFT not done yet` 90天超时已确认)·2B模型/SFT数据/eval集完整性已复核(wake#714)·仅待GPU释放 |
+| 当前动作 | **双**poller后台运行等GPU空闲：SFT poller(PID 2757742, flock, etimes≈49196s≈13.7h, 每60s `busy_util -- waiting`) + GRPO chain(PID 2466702, flock, etimes≈4797s≈1.33h, SFT_WAIT_MAX=90天, 每120s `SFT not done yet` 90天超时已确认)·2B模型/SFT数据/eval集完整性已复核(wake#714)·仅待GPU释放 |
 | 下一步 | 阶段1 SFT训练（~4 GPU·h，GPU空闲后SFT poller自动启动，3000 steps≈2.66 epoch）→ eval_results.json → GRPO chain自动验收 → 阶段2 GRPO（~12 GPU·h）+ WaveQA-RL评测 + 运维协调.75 WaveView |
-| 阻塞 | .12+.29 GPU全占（16×H100 100% util / ~75GB，pretrain mamba2 baize2b PID 2612442 etimes≈303734s≈3.5天 iter_100000/700000(14.3%) 速率~3.9s/iter ETA≈12/3）· .75 SSH不可达（需运维协调MCP通道） |
-| 更新 | **2026-11-06 09:0x (wake #741)**: CPU端到端训练循环验证7/7 PASS(loss 1.46→0.91, checkpoint save+reload OK, 生成`open(rcp.raw)`)·EXPERIMENTS §20.19新增·双poller健康(SFT PID2757742 + GRPO PID2466702)·GPU .12 8×100% pretrain iter_100000/700k ETA≈12/24-25·WAITING=0 |
+| 阻塞 | .12+.29 GPU全占（16×H100 100% util / ~75GB，pretrain mamba2 baize2b PID 2612442 etimes≈308160s≈3.6天 iter_100000/700000(14.3%) 速率~7.0s/iter ETA≈12/24-25）· .75 SSH不可达（需运维协调MCP通道） |
+| 更新 | **2026-11-06 09:27 (wake #744)**: 监控巡检·状态无变化·双poller健康(SFT PID2757742 etimes≈49196s + GRPO PID2466702 etimes≈4797s)·GPU .12 8×100% pretrain iter_100000/700k ETA≈12/24-25·git同步·WAITING=0 |
