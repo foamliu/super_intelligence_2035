@@ -5,13 +5,13 @@ WAITING: 0
 ## 📊 进度快照
 
 ```
-PHASE:        R1704 glm53重测监控轮(校正计数):SWE-bench Verified full500×glm-5.3-flash×7路 predict运行中(7/7 alive,75 pred files/3500,52 patched=69%patch率)·TB 4.0=66tasks,P0核实PASS,64/132 images pulled(pull alive)·硬约束③PASS
-已完成:       H-B✅·Gate7/7·TB报告✅·full500全7路predict+eval 100%完成✅·R1685 cline低分归因✅·R1694 glm53重测启动✅·R1695 proxy 429+400修复✅·R1696 硬约束③修复+TB4镜像拉取启动✅·R1697-R1703 监控轮✅·R1704 校正计数(75files/52patch)✅
-当前动作:     R1704 监控(校正):7路predict运行中·实际prediction files=75 done,52 patched(cline16/13·opencode18/17·pi6/2·codex3/1·claude-code7/4·hermes16/10·dsh9/5)·注:前几轮报的"208done"是orchestrator内部attempted计数(含errored/timeout/quota未产出文件的~133任务),authoritative=prediction files=75·TB4 64/132 images(sg docker可见,pull alive PID3294268)·gw_proxy 9092+9093 HTTP200✅
-下一步:       ①监控7路predict进度(按prediction files计数,100/300/500三段汇报) ②每路predict完即eval ③TB4镜像拉取完(64/132,ETA~50min)→7路smoke→全量66×7 ④写报告report_harness_glm53_7way_swebench_tb_zh.html
-阻塞:         无·7路predict运行中·TB4镜像后台拉取中·⚠️codex quota-blocked多·deepseek no_patch率高 待观察
+PHASE:        R1705 glm53重测监控轮(TB4 pull重启):SWE-bench Verified full500×glm-5.3-flash×7路 predict运行中(7/7 alive,81 pred files/3500,57 patched=70%patch率)·TB 4.0=66tasks,P0核实PASS,70/132 images(前轮pull died→已重启PID554463从71/132恢复)·硬约束③PASS
+已完成:       H-B✅·Gate7/7·TB报告✅·full500全7路predict+eval 100%完成✅·R1685 cline低分归因✅·R1694 glm53重测启动✅·R1695 proxy 429+400修复✅·R1696 硬约束③修复+TB4镜像拉取启动✅·R1697-R1704 监控轮✅·R1705 TB4 pull重启+81files/57patch✅
+当前动作:     R1705 监控:7路predict运行中·prediction files=81 done,57 patched(70%):cline17/14·opencode20/19·pi6/2·codex3/1·claude-code7/4·hermes18/11·dsh10/6·TB4 pull前轮died@70/132→已重启PID554463从71/132恢复(SKIP 70已存在→pull 71-132)·gw_proxy 9092+9093 HTTP200✅
+下一步:       ①监控7路predict进度(按prediction files计数,100/300/500三段汇报,当前81接近100段) ②每路predict完即eval ③TB4镜像拉取完(70/132,ETA~40min)→7路smoke→全量66×7 ④写报告report_harness_glm53_7way_swebench_tb_zh.html
+阻塞:         无·7路predict运行中·TB4镜像后台拉取中(已重启)·⚠️codex quota-blocked多·pi patch率低(2/6) 待观察
 ERROR_COUNT:  0
-  📦 体积：TASK=32074B(31.3KB) / MEMORY≈30KB(归档R1701-R1703→daily,≤32KB达标)
+  📦 体积：TASK=32074B(31.3KB) / MEMORY≈29.9KB(≤32KB达标,无需归档)
 ```
 
 > 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
@@ -28,7 +28,8 @@ ERROR_COUNT:  0
 
 > 📦 R1700 流水(01:17,监控轮:193done/3500·32patches·TB4 32/132)已归档 → daily-memories-harness/2026-11-07.md。结论：7路 alive,进度稳定。需要时再读。
 > 📦 R1701-R1703 流水(01:28~01:45,3轮监控:CPU/MEM PASS+7/7 alive+硬约束③PASS,注:报的"208done"是orchestrator attempted计数非prediction files)已归档 → daily-memories-harness/2026-11-07.md。结论：7路稳定推进,TB4镜像55→64/132。需要时再读。
-[01:55] R1704 glm53重测监控轮(校正计数):CPU/MEM自检PASS(load37.45/224核~16%busy·top=pretrain143%非本线·无harness>8000%CPU·无>50GB RSS)→gateway /v1 HTTP200(0.035s)·gw_proxy 9092+9093 HTTP200✅→7/7 alive(cline3991932·opencode4004319·pi4005476 etimes~6731s + codex2247963·claude-code2248351·hermes2258290·dsh2261465 etimes~4753s)→**校正**:authoritative=prediction files=75 done,52 patched(patch率69%):cline16/13·opencode18/17·pi6/2·codex3/1·claude-code7/4·hermes16/10·dsh9/5(前几轮"208done"=orchestrator attempted含~133 errored/timeout/quota未产出文件)→TB4 64/132 images(sg docker可见,pull alive PID3294268,ETA~50min)·dataset=66tasks→disk:/data5.9T free·/351G free→硬约束③PASS(glm53 JSON tracked=0·predictions_glm53 gitignored✅)·体积:TASK32074B/MEMORY≈30KB(归档R1701-R1703→daily)·未完成指令:有(glm53重测)⇒WAITING=0.
+> 📦 R1704 流水(01:55,监控轮:75files/52patch·TB4 64/132)已归档 → daily-memories-harness/2026-11-07.md。结论：7路 alive,进度稳定。需要时再读。
+[02:15] R1705 glm53重测监控轮(TB4 pull重启):CPU/MEM自检PASS(load40.31/224核~18%busy·top=pretrain143%非本线·无harness>8000%CPU·无>50GB RSS·MEM avail1241G)→gateway /v1 HTTP401(fake token=endpoint alive,0.016s)·gw_proxy 9092+9093 HTTP200✅→7/7 alive(cline3991932·opencode4004319·pi4005476 etimes~7360s + codex2247963·claude-code2248351·hermes2258290·dsh2261465 etimes~5380s)→prediction files=81 done,57 patched(70%):cline17/14·opencode20/19·pi6/2·codex3/1·claude-code7/4·hermes18/11·dsh10/6(JSON结构=[{instance_id,model_name_or_path,model_patch}],patch在d[0]['model_patch'])→**TB4 pull died@70/132**(前轮PID3294268 gone,log止于[71/132]pulling无DONE)→**已重启**PID554463 via `sg docker -c bash _pull_tb4_images.sh`,SKIP70已存在→从71/132恢复pull·TB4 dataset=66tasks(~/terminal-bench-4.0/)·docker需`sg docker -c`非sudo→disk:/data5.9T free·/351G free→硬约束③PASS(glm53 JSON tracked=0)·体积:TASK32074B(31.3KB)/MEMORY29880B(29.2KB,≤32KB无需归档)·未完成指令:有(glm53重测)⇒WAITING=0.
 
 
 > 📦 R1699 流水(01:14,监控轮:30done/3500·TB4 30/132)已归档 → daily-memories-harness/2026-11-07.md。结论：7路 alive,进度稳定。需要时再读。
