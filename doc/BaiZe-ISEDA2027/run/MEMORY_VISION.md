@@ -2,7 +2,9 @@
 
 WAITING: 0
 
-> 🆕 **【wake #732 · 2026-11-06 08:04】🔴关键修正：R9已于10/2完成(step108000/108000,saved vision.pt)——此前wake#642-731记的"R9 ETA≈11/25-27"系误判。实际GPU阻塞方=pretrain线baize2b S1(dual-node torchrun --nnodes=2 .12master+.29,--arch mamba2 --train-iters 700000,iter~101143/700000≈14.4%,~7s/it,latest ckpt=100000,剩余~599k iter×7s≈48天,ETA≈12/25)。本轮处置：①修run_grpo_wave.sh SFT_WAIT_MAX 2592000→7776000(30天→90天,防pretrain跑完前GRPO chain超时);②kill旧GRPO chain PID2428009+重启→新PID2466702(flock guard安全,poller无GPU占用,新SFT_WAIT_MAX=7776000/90天生效);③SFT poller PID2757742 healthy(无超时,持续busy_util--waiting)。git fetch→HEAD=4a228f526(pretrain 07:55),0ahead/0behind✓。📦体积：TASK=30453B(29.7KB)/MEMORY=~25KB（均≤32KB✓）。**未完成指令：有**（阶段1 GPU训练pending,阻塞方=pretrain S1 ETA≈12/25,非R9）⇒**WAITING: 0**。
+> 🆕 **【wake #733 · 2026-11-06 08:14】监控巡检：状态无变化·双poller健康·GPU(.12)8×100%满载·仅待GPU。实测确认：①SFT poller PID2757742 etimes≈44774s(~12.4h) `busy_util -- waiting`每60s✓；②GRPO chain PID2466702 新log `grpo_chain_20261106_080722.log` 确认 `waited 360s/7776000`(**90天超时已生效**✓)；③pretrain baize2b PID2612442 iter_100000/700000(14.3%),ckpt间速率精测~3.9s/iter(iter_90000@Nov5 18:49→iter_100000@Nov6 05:38=10.82h/10k iter),剩余600k×3.9s≈649h,**ETA≈12/3**(较wake#732估的12/25更精确);④git pull→HEAD=8e4065fb3,0ahead/0behind✓。📦体积：TASK=30453B(29.7KB)/MEMORY=25192B(24.6KB)（均≤32KB✓,无需归档）。**未完成指令：有**（阶段1 GPU训练pending,阻塞方=pretrain S1 ETA≈12/3）⇒**WAITING: 0**。
+
+> 📦 wake #732（R9已完成修正+GRPO超时扩展+重启·2026-11-06 08:04）已归档 → daily-memories-vision/2026-11-06.md；**结论**：修正R9已于10/2完成,实际GPU阻塞=pretrain S1;GRPO chain SFT_WAIT_MAX 30→90天+重启PID2466702。需要时再读。
 
 > 📦 wake #731（阶段1就绪审计+数据泄漏验证+就绪报告HTML·2026-11-06 07:4x）已归档 → daily-memories-vision/2026-11-06.md；**结论**：CPU侧100%就绪(泄漏PASS/模型加载PASS/报告HTML交付)，但"R9 ETA≈11/25-27"系误判(wake#732已修正：R9 10/2已完成,实际阻塞方=pretrain S1)。需要时再读。
 
@@ -181,7 +183,7 @@ WAITING: 0
 | PHASE | 🟡 **波形 RL 阶段0交付(YELLOW) + 阶段1 SFT脚本+数据就绪(9013条均衡) + 阶段2 GRPO+评测脚手架就绪 + 全管线CPU预验证完成 + 双poller健康(wake#630: SFT PID 2757742 + GRPO chain PID 2428009)**。全管线CPU预验证+就绪审计+链修复+数据完整性复核完成。**双**poller后台运行等GPU空闲：SFT poller(PID 2757742, flock, 每60s poll) + GRPO chain launcher(PID 2428009, flock, SFT_WAIT_MAX=30天, 每120s poll)。GPU释放后全链自动：SFT起训→eval_results.json→GRPO chain验收→GRPO起训→WaveQA-RL评测。阶段1 GPU训练 + 阶段2/3未交付。**WAITING: 0** |
 | WAITING | 0 |
 | 已完成 | 数据泄漏验证+模型CPU加载复核+阶段1就绪报告HTML(wake#731) · 监控巡检双poller健康(wake#630) · 数据完整性复核(wake#627) · GRPO链式启动器缺失修复+超时修复+启动(wake#626) · 全管线就绪审计(wake#625) · GRPO 2B路径修复+链式启动器(wake#624) · Pre-SFT基线评测30样本(wake#623) · GRPO CPU冒烟测试PASS(wake#622) · 2B文本骨干提取1.72B(wake#620) · CPU dry-run 6/6 PASS(wake#619) · 数据集均衡化9013条(wake#618) · WaveQA-RL oracle ceiling 300题(wake#614) · 波形RL阶段0(wake#609) · 论文改稿(wake#437~#442) · 波形RL计划书(wake#435) · OCR合成10M(wake#275) · ArmE-R2/ArmD-R2 全链路 |
-| 当前动作 | **双**poller后台运行等GPU空闲：SFT poller(PID 2757742, flock, etimes≈39588s≈11h, 每60s `busy_util -- waiting`) + GRPO chain(PID 2428009, flock, etimes≈29576s≈8.2h, SFT_WAIT_MAX=30天, 每120s `SFT not done yet`)·2B模型/SFT数据/eval集完整性已复核(wake#714)·仅待GPU释放 |
+| 当前动作 | **双**poller后台运行等GPU空闲：SFT poller(PID 2757742, flock, etimes≈44774s≈12.4h, 每60s `busy_util -- waiting`) + GRPO chain(PID 2466702, flock, etimes≈275s, SFT_WAIT_MAX=90天, 每120s `SFT not done yet` 90天超时已确认)·2B模型/SFT数据/eval集完整性已复核(wake#714)·仅待GPU释放 |
 | 下一步 | 阶段1 SFT训练（~4 GPU·h，GPU空闲后SFT poller自动启动，3000 steps≈2.66 epoch）→ eval_results.json → GRPO chain自动验收 → 阶段2 GRPO（~12 GPU·h）+ WaveQA-RL评测 + 运维协调.75 WaveView |
-| 阻塞 | .12+.29 GPU全占（16×H100 96-100% util / ~75GB，pretrain mamba2 baize2b PID 2612442 etimes≈270389s≈3.1天 iter~96000/700000(13.7%) ETA≈11/25-27）· .75 SSH不可达（需运维协调MCP通道） |
-| 更新 | **2026-11-06 07:46 (wake #731)**: 阶段1就绪审计·数据泄漏验证PASS(参数级重叠1.9%)·2B模型CPU加载复核PASS(AutoTokenizer/AutoConfig/LoRAConfig)·产出report_vision_wave_rl_phase1_readiness_zh.html(9345B/11节)·EXPERIMENTS §20.18·双poller健康(SFT PID2757742 ~11.9h + GRPO chain PID2428009 ~9.1h)·GPU .12 8×100% ETA≈11/25-27·git HEAD=6502214a8·体积TASK29.7KB/MEMORY~25KB·WAITING=0 |
+| 阻塞 | .12+.29 GPU全占（16×H100 100% util / ~75GB，pretrain mamba2 baize2b PID 2612442 etimes≈303734s≈3.5天 iter_100000/700000(14.3%) 速率~3.9s/iter ETA≈12/3）· .75 SSH不可达（需运维协调MCP通道） |
+| 更新 | **2026-11-06 08:14 (wake #733)**: 监控巡检·状态无变化·双poller健康(SFT PID2757742 ~12.4h + GRPO chain PID2466702 90天超时确认)·GPU .12 8×100% pretrain iter_100000/700k ETA≈12/3·git HEAD=8e4065fb3 0a/0b✓·体积TASK29.7KB/MEMORY24.6KB·WAITING=0 |
