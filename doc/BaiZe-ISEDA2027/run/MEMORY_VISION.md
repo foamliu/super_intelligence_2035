@@ -2,7 +2,9 @@
 
 WAITING: 0
 
-> 🆕 **【wake #809 · 2026-11-06 17:22】📊 监控巡检·GRPO chain健康(GPU-wait 53polls全busy)·无变化·等GPU。**GRPO chain PID1365749 alive(ppid=1,etimes3266s≈54min)·child=sleep1124278(GPU-wait轮询中,60s间隔)·chain log(/tmp/grpo_chain_relaunch.log):74行,16:28→17:22连续busy_util·GPU 8×H100 90-100%util~75GB(pretrain仍在跑,ETA≈12/24)·零新发现·Phase 2管线CPU侧全验证PASS零bug(wake#803)·chain将在GPU释放后自动起训。📦体积:TASK=30.5KB/MEMORY=15.2KB(均≤32KB✓,本轮0归档)。**未完成指令:有**(阶段2 GRPO待GPU+阶段3未交付)⇒**WAITING: 0**。
+> 🆕 **【wake #810 · 2026-11-06 17:27】📊 监控巡检·GRPO chain健康(GPU-wait 59polls全busy)·无变化·等GPU。**GRPO chain PID1365749 alive(ppid=1,etimes3548s≈59min)·chain log(/tmp/grpo_chain_relaunch.log):79行,16:28→17:26连续busy_util/busy_mem·GPU 8×H100 100%util~75GB(pretrain baize2b mamba2仍在跑,etimes336973s≈3.9天,ETA≈12/24)·零新发现·Phase 2管线CPU侧全验证PASS零bug(wake#803)·chain将在GPU释放后自动起训。📦体积:TASK=30.5KB/MEMORY=15.2KB(均≤32KB✓,本轮0归档)。**未完成指令:有**(阶段2 GRPO待GPU+阶段3未交付)⇒**WAITING: 0**。
+
+> 📦 wake #809（监控巡检·2026-11-06 17:22）已归档 → daily-memories-vision/2026-11-06.md；**结论**：GRPO chain健康(GPU-wait 53polls全busy)·GPU 8×H100 90-100%·零新发现·WAITING=0。需要时再读。
 
 > 📦 wake #808（监控巡检·2026-11-06 17:18）已归档 → daily-memories-vision/2026-11-06.md；**结论**：GRPO chain健康(GPU-wait 49polls全busy)·GPU 8×H100 97-100%·零新发现·WAITING=0。需要时再读。
 
