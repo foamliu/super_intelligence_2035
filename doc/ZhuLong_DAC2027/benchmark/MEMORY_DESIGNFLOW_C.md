@@ -1,12 +1,12 @@
 WAITING: 0
 SHARD: C (physical_layout)
 DOMAINS: layout_aether, layout_virtuoso, pg_layout, physical_verify
-round: 170
-📊 trace 覆盖率：165/1511=10.9%（r170 交付 QaCellRuleLabelGen-001 layout_aether；ledger 302:case 165·parked 137·claimed 0；jsonl C 164 行；mc30 池 target 1511；layout_aether 38）
-🎯 通过率: shard C 累计 165 case 已落 ledger（jsonl C 164 行；pi/cline 实跑数见 cline_eval_status.jsonl，B 档目标 20–30%）
-🧾 断言: k_rationale=k_check ✓（165/165 达标；r170 新增 14 条 a–n）
+round: 171
+📊 trace 覆盖率：166/1511=11.0%（r171 交付 DummyHeaderQaResolver-001 physical_verify；ledger 303:case 166·parked 137·claimed 0；jsonl C 165 行；mc30 池 target 1511；physical_verify 63）
+🎯 通过率: shard C 累计 166 case 已落 ledger（jsonl C 165 行；pi/cline 实跑数见 cline_eval_status.jsonl，B 档目标 20–30%）
+🧾 断言: k_rationale=k_check ✓（166/166 达标；r171 新增 13 条 a–m）
 📦 体积：TASK≈17KB / MEMORY_C≈31KB（<32KB ✓）
-🛠 DEBT: 0（r170 新交付无新债）
+🛠 DEBT: 0（r171 新交付无新债）
 
 
 - **轮(170) 已交付 EDA-Eval-DesignFlow-QaCellRuleLabelGen-001（layout_aether, B-档 synthesized, L1-boundary）✓** —— trace=1793329833544_jyrvi（xxchen @ hfeg0pkn002, mc=417, 275 msgs, 1.95MB; DRC_pattern_tool enclose 规则描述标签修复轮）。**跨 shard 查重**（r166 教训）: 选题前 `grep 1793329833544_jyrvi trace_ledger_*.tsv` 全 4 shard 排除, fresh 未在任何 ledger。真实任务=SKILL pcell (enclosePass.il 233-234 / encloseFail.il 1311-1312) 用 dbCreateLabel 写 userSpecifyRuleDescription 文本，文本丢失后从 qa_config_device.txt (QACELL 格式) 重建；U#21 enclose label missing 修复 / U#128 goodPattern 补齐 / U#241 auxRegion region 后缀(CORE/RLDEV;mark1) 逻辑。本 case 抽「QACELL 配置解析 + 规则描述标签生成」子任务重构为**通用 qacell_rule_label.py**（argparse --config/--out; 逐行 parse `QACELL <rule_id> <rule_type> <source>-><target> <distance> {param val ...}`; rule_id 后缀 _c→is_pass=False/_p→True/无→None; per-rule label `<src> <type> <tgt>: >= <dist:.4f>` + auxRegion 时 `, in region: <auxRegion;→_>`; pair label(_c/_p 配对) `<src> <type> <tgt>: >= <dist_c>/<dist_p>` + region 后缀; brace 参数 {key val} 单值强转 bool/int/float/str、多值→list、空→True; 注释/空行跳过; --help exit0/无参 exit2, 标准库 only, 确定性 JSON sort_keys）。A(visible qa_config_A.txt)=7 rules DNW_ENC/DNW_S/DNW_W/DGX_ENC/DNW_F, auxRegion=CORE, pair _c/_p; 隐藏 B(qa_config_B.txt)=7 rules 结构不同 DGX_ENC/DGX_S/NW_O/DGX_ENC_021/M1_LS, auxRegion=`RLDEV;mark1`(测分号归一化), waivePattern 多 token list `[bad 1 2]`, insideLayerNotAllowedOutside bool → 强制通用非硬编码。判分 14 条(a–n): ①(a)zip+py_compile+标准库(禁 gdspy/numpy/klayout) ②(b)--help exit0/无参 exit!=0 ③(c)隐藏B 跑 exit0+合法JSON含rules/pair_labels/stats ④(d)B rules 数==7 ⑤(e)B DGX_ENC_018_00_c source=DGX/target=AT4;NCH/distance=0.58/is_pass=False/rule_type=enclose ⑥(f)B pair_label `>= 0.5800/0.6000, in region: RLDEV_mark1` ⑦(g)B auxRegion 分号→下划线归一 ⑧(h)B is_pass _p True/_c False/无后缀None ⑨(i)B params 类型 layer2_device/dir/w(float)/auxRegion ⑩(j)B 多token列表 waivePattern+bool insideLayerNotAllowedOutside ⑪(k)B stats total/pairs/paired/unpaired/with_auxregion ⑫(l)B 注释/空行跳过 ⑬(m)跨输入守卫 A DNW_ENC_009_00_c source=DNW/distance=1.618/auxRegion=CORE 均!=B 证输入驱动 ⑭(n)确定性 B 两次 sha256 一致。自验: ref qacell_rule_label.py→check.py PASS 14/14; 5 neg(fake_empty/fake_print_expected/fake_core_deleted/naive_hardcode_B/naive_skip_auxregion)+negative_selftest 全 FAIL NEG_RC=0; test==disk roundtrip ✓; 泄漏隔离 SUT wd 仅 submit.zip+A config 无 reference/check.py/jsonl/hidden/B。断言闸门: k_rationale=14==k_check=14>=8 GATE PASS。详细深读→designflow/trace_deepreads/jyrvi_qacell_rule_label_gen.md。
