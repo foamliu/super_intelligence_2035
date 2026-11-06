@@ -2,7 +2,9 @@
 
 WAITING: 0
 
-> 🆕 **【wake #799 · 2026-11-06 16:05】📊监控巡检·训练健康·step2650/3000·ETA~17min·包装器正确等待。**训练PID2882778 alive(etimes7604s≈127min,ppid=1,2 dataloader子进程2894887/2894951),step2650/3000,loss0.3078,0.35step/s,ETA16.8min(~16:22完成)。step1000+step2000 ckpt已存(LoRA 278MB)。**in-training eval@step2000: format=100% submit=0% — 已知bug**(运行进程内存=旧flawed eval代码;gating eval=包装器在训练结束后跑的独立修复版eval_sft_wave.py)。**修复版eval已复核正确**(wake#790)。post-SFT eval包装器PID4104838 alive(ppid=1,30s轮询,waited3180s≈53min)正确等待——日志`[16:04:16] training still running (waited 3180s)`确认健康。eval_results.json尚不存在(训练未到step3000)。GPU全占(8×H100 90-100%util/~75GB,pretrain ETA≈12/24),CPU SFT无GPU冲突。GRPO chain未运行(killed,待eval pass后由包装器setsid重启,自带安全GPU-wait)。📦体积:TASK=30.5KB/MEMORY=13.0KB(均≤32KB✓,本轮0归档)。**未完成指令:有**(阶段1 SFT训练进行中+eval待包装器自动触发)⇒**WAITING: 0**。
+> 🆕 **【wake #800 · 2026-11-06 16:10】📊监控巡检·训练健康·step2750/3000·ETA~12min·包装器正确等待。**训练PID2882778 alive(etimes7995s≈133min,ppid=1,2 dataloader子进程2894887/2894951),step2750/3000,loss0.3326,0.35step/s,ETA12.0min(~16:22完成)。step1000+step2000 ckpt已存(LoRA 278MB)。post-SFT eval包装器PID4104838 alive(ppid=1,30s轮询,waited3570s≈59.5min)正确等待——日志`[16:10:46] training still running (waited 3570s)`确认健康。eval_results.json尚不存在(训练未到step3000)。GPU全占(8×H100 96-100%util/~75GB,pretrain ETA≈12/24),CPU SFT无GPU冲突。GRPO chain未运行(killed,待eval pass后由包装器setsid重启,自带安全GPU-wait)。📦体积:TASK=30.5KB/MEMORY=13.0KB(均≤32KB✓,本轮0归档)。**未完成指令:有**(阶段1 SFT训练进行中+eval待包装器自动触发)⇒**WAITING: 0**。
+
+> 📦 wake #799（监控巡检·2026-11-06 16:05）已归档 → daily-memories-vision/2026-11-06.md；**结论**：CPU SFT step2650/3000 loss0.31 ETA~17min·包装器正确等待(waited3180s)·训练健康·WAITING=0。需要时再读。
 
 > 📦 wake #798（监控巡检·2026-11-06 15:57）已归档 → daily-memories-vision/2026-11-06.md；**结论**：CPU SFT step2475/3000 loss0.25 ETA~25min·包装器正确等待(waited2700s)·eval修复版已复核正确·训练健康·WAITING=0。需要时再读。
 
