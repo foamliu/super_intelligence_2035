@@ -187,3 +187,10 @@ vbxlf.messages.json	jason17w	hfeg0pnd002	262	spice_sim	parked		2026-11-05 12:30	
 1793932002608_suauw					case	EDA-Eval-DesignFlow-SlicerDmMeasAdd-001	2026-11-06 11:00	
 1793935018992_a75vy	dsgao	hfeg0pkn002	100	spice_sim	case	EDA-Eval-DesignFlow-GrDecPwrVerifTb-001	2026-11-06 11:50	
 1793937421846_ip3nr	berylwu	hfeg0pkn002	245614	spice_sim	case	EDA-Eval-DesignFlow-MinpulseRewriteRun-001	2026-11-06 12:19	
+1793184645122_t1epq					parked		2026-11-06 12:49	lacaa 6T SRAM view circuit diagram; 1 user input; exploration not production (1106 scout)
+1793598804317_2swgt					parked		2026-11-06 12:49	skill-optimizer meta; not spice need (1106 scout)
+1793348049504_xoqyd					parked		2026-11-06 12:49	read FSDB/explain + inspect .ic; analysis not production (1106 scout)
+1789451741660_7uwtz					parked		2026-11-06 12:49	scenario trigger 仿真与验证; demo not real need (1106 scout)
+1793263942286_u8rjq					parked		2026-11-06 12:49	sim-sp-gen skill-writing meta; not spice need (1106 scout)
+1793757463114_zd8iu					parked		2026-11-06 12:49	bash bsub script fix; user gave root cause num1/num2; non-A-档 + bash not spice_char (1106 scout)
+1793792759786_ujw1y					parked		2026-11-06 12:49	summarize circuit + view sim/optimization advice; analysis not production (1106 scout)
