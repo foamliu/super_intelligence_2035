@@ -1,6 +1,8 @@
 # MEMORY_VISION.md — BaiZe Stage(iii) 视觉编码器预训练 · 运行时状态
 
-WAITING: 0
+WAITING: 1
+
+> 🆕 **【wake #846 · 2026-11-07 05:18】监控轮·gs=8诊断58/100接近完成。** git fetch in-sync(无新令)·体积 TASK28.7KB/MEMORY24.3KB(均≤32KB✓,0归档)。诊断PID3966038健康(etimes2606s,58/100prompt,~44s/prompt,ETA≈05:50)·当前统计:std=0=39/58(67.2%),rise_time 15/15 std=0(100%全错),duty_cycle 9/9 std=0(100%全错),period std=0=5,amplitude std=0=10——G=8确认未改变根因(rise_time/duty_cycle零优势信号)。GPU 8×H100 100%满载(pretrain S1,ETA≈12/25)·GPU-wait chain PID1365749健康(~12.8h)·loop PID669545健康。零可执行动作(诊断批处理在跑~30min剩余+GPU阻塞+2项待用户批)。注:wake#845对MEMORY的修改在merge aa41b6f9f中被origin版本覆盖丢失,本轮补记。**决策:WAITING=1(sleep 30min)**——诊断ETA~05:50,下轮应可收结果并写报告。未完成指令:有(阶段2未交付+诊断在跑+2项待批)但均非本轮可执行→WAITING=1。**
 
 > 🆕 **【wake #844 · 2026-11-07 04:35】用户触发·以 vision agent 身份唤醒核对状态并决策阶段2。git in-sync(main=origin/main,HEAD harness 04:29)·体积 TASK28.7KB/MEMORY22.5KB(均≤32KB✓,0归档)。**核对**：阶段0✅(wake#609 WaveView/FSDB解锁+Gym冒烟)·阶段1✅(wake#802 FIXED eval 格式100%/submit100%→验收PASS;数值rel<1%=14%/rel<5%=21%留GRPO)·阶段2 CPU pilot✅(wake#827-835 post-GRPO6.2%<post-SFT9.2%未提升)·advantage诊断✅(wake#838 PARTIAL/std=0=78.7%根因=5档离散奖励+9.2%base)。**决策：阶段2 full GPU GRPO 现不推进**——阻塞①GPU满载(8×H100 96-100% pretrain,ETA≈12/25,wait-chain PID1365749正确轮询无需手启)②方法论决定性:奖励仍离散(grpo_train_wave.py L9-10未连续化)→G=8对rise_time(100%全错)/duty_cycle(91%全错)无效,现配置跑full≈浪费12GPU·h。**本轮动作**：启动预注册PARTIAL分支group_size4→8重诊断(PID3966038,ppid=1,CPU-only,OMP16/nice19,100×8=800rollout,time_budget5400s,日志/tmp/diag_advantage_gs8.log,~75-90min,写自有report+summary)——审批前最终证据。**待用户批**：①奖励连续化R_main→exp(-rel_err/τ)(设计变更需重预注册判据)②rise_time/duty_cycle补SFT数据(能力缺口非GRPO可解)。GPU-wait chain未动·pretrain未碰。**未完成指令：有**(阶段2未交付+诊断在跑+2项待批)⇒**WAITING:0**(loop 60s监控诊断+等用户批)。**
 
