@@ -26,7 +26,7 @@
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
-### 🟡 §用户令·2026-11-06 21:3x（GRPO 为何空转：先做 advantage 方差诊断，**不训练**）· 用户直令 · 最高优先 · ⚠️ 未完成
+### ✅ §用户令·2026-11-06 21:3x（GRPO 为何空转：先做 advantage 方差诊断，**不训练**）· 用户直令 · 最高优先 · ✅ 已交付
 
 > **用户令**：「好的 选A 听你的」——即选「advantage 方差诊断」方案。
 >
@@ -45,6 +45,8 @@
 > **护栏**：🚫 **本令禁止启动任何训练/GRPO/评测重跑**（不占 GPU、不改 ckpt、不写 ckpt）；🚫 不碰 pretrain（`.29`/`.12` 满载）；CPU `OMP_NUM_THREADS≤16` + `nice -n 19`；GPU-wait chain PID1365749 **不动**；🚫 不伪造数字（若 200 题跑不完，缩到 100 并如实标注）；每步 commit（`vision wave-rl-diag:` 前缀）+ push。
 >
 > **完成标记**：交付后本行标题改 `✅ 已交付`；未交付 ⇒ `WAITING: 0`。
+>
+> **✅ 交付摘要（wake #838 · 2026-11-06 23:4x）**：诊断脚本 `diag_advantage_variance.py`（CPU-only，复用 `rollout_episode`+`WaveformGymEnv` 奖励，不改口径）跑 94 prompt×4 rollout（受 40min 时限，未达 100 已如实标注，结论不受影响）。**判定 PARTIAL**：std=0 组 78.7%（<80% NO-SIGNAL 门槛）、std>0 组 21.3%（<30% PARAM-ISSUE 门槛）、全 0 组 0%（失败得 −0.5 非 0）。**关键发现**：假设"全 0 组"在本离散分档奖励下不成立——真正无信号机制是"全同档"（74 组 4 条 rollout 落同一奖励档⇒advantage=0）。按测量目标差异化：rise_time 100% std=0 全错（能力缺口，需补 SFT）、period 31.8% std=0（GRPO 信号最足，68% 有方差）、amplitude 87.5% 近饱和、duty_cycle 90.9% 近 NO-SIGNAL。建议：①group_size 4→8 验证 ②按目标差异化（rise_time/duty_cycle 补 SFT、period 即可上 GRPO）③奖励连续化（需用户批）。交付物：报告 HTML 14643B/10节 + JSONL + 汇总 JSON + EXPERIMENTS §21.1。零 GPU/未训练/未碰 pretrain/GPU-wait chain 未动。
 
 
 > 📦 §用户令·2026-11-06 18:5x（vision 先上 CPU）**✅ 已交付**（wake#827-#835：P0 冒烟 5 步 365s（73s/步）、P1 50 步 ~2min/步、4 个 eval JSON、报告 15058B、EXPERIMENTS §21；结论 post-GRPO 6.2% < post-SFT 9.2% 未提升）→ 全文见 `run/ARCHIVE_OPERATOR_VISION.md`。

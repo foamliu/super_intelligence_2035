@@ -2,9 +2,9 @@
 
 WAITING: 1
 
-> 🆕 **【wake #837 · 2026-11-06 22:11】例行空唤醒巡检·无新令·全交付态确认。** ①git pull无vision任务书变更(最后改动=20:33 vision自身commit)②GPU-wait chain PID1365749 alive(ppid=1真守护进程,etimes≈20589s/5.7h),子进程PID1155182 `sleep 60`正常polling,GPU释放后自动接上(ETA≈12/25)③GPU 8×H100 100% util~75GB,pretrain S1占满(.12),🚫不杀健康训练④11-06 18:5x CPU令✅已交付⑤wave_rl 产物全在位(report14860B+5 eval JSON+SFT/GRPO ckpt+生成器脚本)⑥git无vision在途改动(工作区??全为他线/未跟踪文件,不碰)⑦零异常·nice -n 19。📦体积:TASK=31764B(31.0KB)/MEMORY≈22.0KB(均≤32KB✓,本轮0归档)。**未完成指令:无**(CPU任务全交付,阶段3需用户另批,GPU chain后台自管)⇒**WAITING: 1**。
+> 🆕 **【wake #838 · 2026-11-06 23:5x】advantage 方差诊断交付。** 用户令·21:3x 选 A（不训练）。前序 wake 已建 `diag_advantage_variance.py`（复用 `rollout_episode`+`WaveformGymEnv` 奖励，不改口径）跑 94 prompt×4 rollout（35.1min CPU，受 40min 时限未达 100，已如实标注）。**判定 PARTIAL**：std=0=78.7%（<80% NO-SIGNAL）、std>0=21.3%（<30% PARAM-ISSUE）、全0=0%（失败得−0.5非0）。**关键发现**：假设"全0组"在离散分档奖励下不成立，真正无信号="全同档"（74组advantage=0）；按目标：rise_time 100% std=0 全错(能力缺口)、period 31.8% std=0(GRPO信号最足)、amplitude 87.5%近饱和、duty_cycle 90.9%近NO-SIGNAL。建议 group_size→8+按目标差异化+奖励连续化(需批)。本轮补齐 EXPERIMENTS §21.1 + 标✅已交付 + commit+push。GPU-wait chain PID1365749 未动(健康,GPU释放自动接上,ETA≈12/25)。GPU 8×H100 满载(pretrain S1)。📦体积:TASK≈32.0KB/MEMORY≈22.5KB(均≤32KB✓,本轮0归档)。**未完成指令:无**(诊断已交付,阶段2待GPU,阶段3需用户批)⇒**WAITING: 1**。
 
-> 📦 wake #836（例行空唤醒巡检·2026-11-06 21:38）已归档 → daily-memories-vision/2026-11-06.md；**结论**：无新令·GPU-wait chain健康·全交付态确认·零异常。需要时再读。
+> 📦 wake #837（例行空唤醒巡检·2026-11-06 22:11）已归档 → daily-memories-vision/2026-11-06.md；**结论**：无新令·GPU-wait chain健康·全交付态确认·零异常。需要时再读。
 
 > 📦 wake #835（CPU GRPO Phase2全链路交付·2026-11-06 20:27）已归档 → daily-memories-vision/2026-11-06.md；**结论**：P0-P3全DONE·4 eval JSON全齐(Oracle1.000/pre-SFT0.0/post-SFT0.092/post-GRPO0.062)·报告+EXPERIMENTS§21·任务标✅已交付·Post-GRPO未提升(诚实记录)。需要时再读。
 
@@ -170,10 +170,10 @@ WAITING: 1
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | 🟢 **波形 RL 阶段0交付(YELLOW) + 阶段1 SFT已交付PASS(format100%/submit100%) + Phase 2管线CPU预验证全PASS(零bug) + GRPO chain健康待GPU(PID1365749,GPU-wait,ETA≈12/24)**。wake#803预验证:GRPO smoke PASS/WaveQA-RL oracle PASS/2B模型config OK/LoRA adapter OK/4脚本AST OK/chain log正确。GPU全占(pretrain ETA≈12/24)。阶段2 GRPO待GPU,阶段3未交付。**WAITING: 0** |
-| WAITING | 0 |
-| 已完成 | 阶段1 SFT验收PASS(wake#802) · 阶段1 SFT CPU训练完成step3000(wake#802) · 阶段1 SFT CPU训练启动(wake#785) · CPU端到端训练循环验证7/7 PASS(wake#741) · 数据泄漏验证+阶段1就绪报告HTML(wake#731) · 全管线就绪审计(wake#714) · GRPO链式启动器修复+启动(wake#626) · GRPO CPU冒烟测试PASS(wake#622) · 2B文本骨干提取1.72B(wake#620) · 数据集均衡化9013条(wake#618) · WaveQA-RL oracle 300题(wake#614) · 波形RL阶段0 YELLOW(wake#609) · 论文改稿(wake#437~#442) · 波形RL计划书(wake#435) · OCR合成10M(wake#275) · ArmE-R2/ArmD-R2 全链路 |
-| 当前动作 | **Phase 2管线预验证完成(wake#803)，GRPO chain等待GPU**：CPU侧全验证PASS(GRPO smoke/WaveQA-RL oracle/2B模型config/LoRA adapter/4脚本AST)。GRPO chain PID1365749 alive(GPU-wait轮询,60s间隔,guard:util<10%+mem<5000MiB,3x consecutive)。chain log确认:SFT eval detected→acceptance passed→step3000 ckpt found→GPU-wait。 |
-| 下一步 | 等GPU释放(ETA≈12/24)→GRPO chain自动启动阶段2训练(~12 GPU·h,torchrun 8GPU,2B model+step3000 LoRA)→WaveQA-RL 300题评测+回归护栏→阶段2报告+EXPERIMENTS§21。若GPU释放后GRPO训练crash→排查。下轮wake检查GRPO chain日志+GPU状态。 |
+| PHASE | 🟢 **波形 RL 阶段0(YELLOW)+阶段1 SFT已交付PASS+Phase2 CPU pilot全链路PASS(post-GRPO 6.2%<post-SFT 9.2%诚实记录)+advantage方差诊断已交付(判定PARTIAL,§21.1)。GRPO chain健康待GPU(PID1365749,GPU-wait,ETA≈12/25)**。阶段2 GRPO待GPU,阶段3未交付。**WAITING: 1** |
+| WAITING | 1 |
+| 已完成 | advantage方差诊断(wake#838,判定PARTIAL) · 阶段1 SFT验收PASS(wake#802) · 阶段1 SFT CPU训练完成step3000(wake#802) · CPU端到端训练循环验证7/7 PASS(wake#741) · 数据泄漏验证+阶段1就绪报告HTML(wake#731) · 全管线就绪审计(wake#714) · GRPO链式启动器修复+启动(wake#626) · GRPO CPU冒烟测试PASS(wake#622) · 2B文本骨干提取1.72B(wake#620) · 数据集均衡化9013条(wake#618) · WaveQA-RL oracle 300题(wake#614) · 波形RL阶段0 YELLOW(wake#609) · 论文改稿(wake#437~#442) · 波形RL计划书(wake#435) · OCR合成10M(wake#275) · ArmE-R2/ArmD-R2 全链路 |
+| 当前动作 | **advantage方差诊断已交付(wake#838)**：判定PARTIAL(std=0=78.7%/std>0=21.3%/全0=0%)，关键发现=离散分档奖励下"全同档"才是无信号根因(非"全0")，按目标差异化(rise_time能力缺口/period信号足)。GRPO chain PID1365749 alive(GPU-wait轮询,GPU释放自动接上,ETA≈12/25)。 |
+| 下一步 | ①用户决策：是否做 group_size→8 验证 + 是否采纳按目标差异化策略(rise_time/duty_cycle补SFT、period先上GRPO) + 奖励连续化(需批) ②等GPU释放(ETA≈12/25)→GRPO chain自动启动阶段2训练(~12 GPU·h)→WaveQA-RL评测+回归护栏→阶段2报告。下轮wake检查GRPO chain日志+GPU状态+有无新令。 |
 | 阻塞 | .12+.29 GPU全占（8×H100 96-100% util / ~75GB，pretrain baize2b ETA≈12/24-25）→ 阶段2 GRPO需GPU（GRPO chain PID1365749自带GPU-wait,释放后自动起训）·.17+.75 SSH不可达 |
-| 更新 | **2026-11-06 18:3x (wake #822)**: ✅预飞行验证巡检·GRPO auto-launch全路径核验PASS(SFT eval pass/step3000 ckpt/2B骨干/WaveQA-RL300/chain健康/script args)·GPU 8×H100 91-100%(pretrain PID2612442 etimes≈94.6h ETA≈12/24)·零GPU可执行动作·体积TASK=29.8KB/MEMORY=18.3KB✓·WAITING=0 |
+| 更新 | **2026-11-06 23:5x (wake #838)**: ✅advantage方差诊断交付·判定PARTIAL(std=0=78.7%/std>0=21.3%/全0=0%)·关键发现离散奖励"全同档"=无信号根因·按目标差异化(rise_time能力缺口/period信号足)·EXPERIMENTS§21.1+报告HTML14643B+JSONL+汇总JSON·任务标✅已交付·GPU 8×H100满载·GPU-wait chain未动·体积TASK≈32.0KB/MEMORY≈22.5KB✓·WAITING=1 |
