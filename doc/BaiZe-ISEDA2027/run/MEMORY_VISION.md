@@ -2,7 +2,9 @@
 
 WAITING: 1
 
-> 🆕 **【wake #839 · 2026-11-07 01:04】例行空唤醒巡检。** git in-sync(无新令)·loop健康(vision PID669545/data PID669542 均 ppid=1·cline会话 PID1119334)·GPU-wait chain PID1365749 健康(8.6h,等GPU)·GPU 8×H100 93-100%/~75GB(满载 pretrain S1,无GPU给vision Stage-2,ETA≈12/25)·全交付态确认(Stage0/1✅+advantage诊断✅,Stage2待GPU/Stage3待用户批)·零可执行动作·零异常。📦体积:TASK≈28.7KB/MEMORY≈22.3KB(均≤32KB✓,本轮0归档)。**未完成指令:无**⇒**WAITING: 1**。
+> 🆕 **【wake #840 · 2026-11-07 02:10】例行空唤醒巡检。** git in-sync(无新令)·loop健康(vision PID669545/data PID669542 均 ppid=1·cline会话 PID1698426 ppid=669545)·GPU-wait chain PID1365749 健康(9.7h,等GPU)·GPU 8×H100 96-100%/~75GB(满载 pretrain S1,无GPU给vision Stage-2,ETA≈12/25)·全交付态确认(Stage0/1✅+advantage诊断✅,Stage2待GPU/Stage3待用户批)·零可执行动作·零异常。📦体积:TASK≈28.7KB/MEMORY≈21.9KB(均≤32KB✓,本轮0归档)。**未完成指令:无**⇒**WAITING: 1**。
+
+> 📦 wake #839（例行空唤醒巡检·2026-11-07 01:04）已归档 → daily-memories-vision/2026-11-07.md；**结论**：无新令·loop/GPU-wait chain健康·GPU满载待释放·全交付态·零异常。需要时再读。
 
 > 📦 wake #838（advantage方差诊断交付·2026-11-06 23:5x）已归档 → daily-memories-vision/2026-11-06.md；**结论**：PARTIAL/std=0=78.7%/全同档=无信号根因,建议group_size→8+奖励连续化(需批)。需要时再读。
 
@@ -178,4 +180,4 @@ WAITING: 1
 | 当前动作 | **advantage方差诊断已交付(wake#838)**：判定PARTIAL(std=0=78.7%/std>0=21.3%/全0=0%)，关键发现=离散分档奖励下"全同档"才是无信号根因(非"全0")，按目标差异化(rise_time能力缺口/period信号足)。GRPO chain PID1365749 alive(GPU-wait轮询,GPU释放自动接上,ETA≈12/25)。 |
 | 下一步 | ①用户决策：是否做 group_size→8 验证 + 是否采纳按目标差异化策略(rise_time/duty_cycle补SFT、period先上GRPO) + 奖励连续化(需批) ②等GPU释放(ETA≈12/25)→GRPO chain自动启动阶段2训练(~12 GPU·h)→WaveQA-RL评测+回归护栏→阶段2报告。下轮wake检查GRPO chain日志+GPU状态+有无新令。 |
 | 阻塞 | .12+.29 GPU全占（8×H100 96-100% util / ~75GB，pretrain baize2b ETA≈12/24-25）→ 阶段2 GRPO需GPU（GRPO chain PID1365749自带GPU-wait,释放后自动起训）·.17+.75 SSH不可达 |
-| 更新 | **2026-11-06 23:5x (wake #838)**: ✅advantage方差诊断交付·判定PARTIAL(std=0=78.7%/std>0=21.3%/全0=0%)·关键发现离散奖励"全同档"=无信号根因·按目标差异化(rise_time能力缺口/period信号足)·EXPERIMENTS§21.1+报告HTML14643B+JSONL+汇总JSON·任务标✅已交付·GPU 8×H100满载·GPU-wait chain未动·体积TASK≈32.0KB/MEMORY≈22.5KB✓·WAITING=1 |
+| 更新 | **2026-11-07 02:10 (wake #840)**: 例行空唤醒巡检·无新令·loop/GPU-wait chain健康(PID1365749 etimes≈9.7h)·GPU 8×H100 96-100%满载·全交付态确认(Stage0/1✅+advantage诊断✅)·零可执行动作·体积TASK≈28.7KB/MEMORY≈21.9KB✓·WAITING=1 |
