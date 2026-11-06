@@ -1093,3 +1093,4 @@ wl9i4					parked		2026-11-05 22:49	交互shell驱动+Q&A n752大
 1792549549929_j0t84	zhukaic	10.129.33.26	87	analog_context	case	EDA-Eval-DesignFlow-OtaSimReport-001	2026-11-06 22:39	
 1792137924614_tadah.messages.json	jackliu	10.129.32.83	87	schematic_netlist	case	EDA-Eval-DesignFlow-NetlistFightX-001	2026-11-06 23:13	
 1792112534739_ujxtn	gracew	10.129.2.13	59	schematic_netlist	case	EDA-Eval-DesignFlow-PatternParamAudit-001	2026-11-06 23:41	
+1792063718906_u8kbk.messages.json	devonma	10.129.32.84	66	analog_context	case	EDA-Eval-DesignFlow-SpfTriggerMonitor-001	2026-11-07 00:05	
