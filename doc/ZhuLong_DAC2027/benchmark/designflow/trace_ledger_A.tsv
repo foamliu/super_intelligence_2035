@@ -135,3 +135,10 @@
 1792981676632_bxnc8	zhengc	hfeg0plg66	28	eda_other	parked		2026-11-05 01:31	pure capabilities Q&A (6 msgs, user 你能做什么), no real task/deliverable; mc28 from keyword noise in assistant capabilities listing
 1790126403703_fj73q	e02141	hfeg0pkn002	55	digital	parked		2026-11-05 16:46	TCAD/Sentaurus swb-python-api env config task; L1-only (eda_flow MCP has no Sentaurus backend, can't真跑); §5 new cases must be L2/L3; eda_other already 14 cases
 1792739133486_74dww					parked		2026-11-05 16:52	multi-question env-troubleshooting Q&A (autocell doc / GDS viewer / klayout env / how-to-run-virtuoso); NO single clean deliverable — final accepted output is a diagnostic report (msg108: which Virtuoso version works + recommend Aether); check.py for a prose report would devolve to substring-matching → violates §4.3 (independent conditions, not substring-only); not design_flow material
+1792056947936_36yj3	thomas1w		347	verification	parked		2026-11-06 09:11	surveyed r148: kw-mention only, analog/netlist session, unfit shard-A L2
+1788591418561_g9e41	haoyut		152	verification	parked		2026-11-06 09:11	surveyed r148: kw-mention only, analog/netlist session, unfit shard-A L2
+1792205134941_5hbdw	hengbow		144	pnr_signoff	parked		2026-11-06 09:11	surveyed r148: kw-mention only, analog/netlist session, unfit shard-A L2
+1792829965577_rser7	jkxu		98	verification	parked		2026-11-06 09:11	surveyed r148: kw-mention only, analog/netlist session, unfit shard-A L2
+1792568990736_5c450	han1li		56	verification	parked		2026-11-06 09:11	surveyed r148: kw-mention only, analog/netlist session, unfit shard-A L2
+1791973347667_tx5s5	e04201		46	verification	parked		2026-11-06 09:11	surveyed r148: kw-mention only, analog/netlist session, unfit shard-A L2
+1788772817371_ppl5a	harrys		30	digital	parked		2026-11-06 09:11	surveyed r148: kw-mention only, analog/netlist session, unfit shard-A L2
