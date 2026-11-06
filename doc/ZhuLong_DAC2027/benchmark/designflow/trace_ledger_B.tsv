@@ -175,7 +175,7 @@ vbxlf.messages.json	jason17w	hfeg0pnd002	262	spice_sim	parked		2026-11-05 12:30	
 1793344639876_ig5hm.messages.json	jiangbaol	hfeg0pkn003	3	spice_sim	case	EDA-Eval-DesignFlow-CmpStg1CapAdd-001	2026-11-06 03:36	
 1793670518248_ap4dl.messages.archive.json	e0029495	hfeg0pkn002	1	spice_sim	case	EDA-Eval-DesignFlow-CdlBulkSanitize-001	2026-11-06 05:01	
 1793886971551_nekpi.messages.json	yifansun	hfeg0pkn001	743	spice_sim	case	EDA-Eval-DesignFlow-LvLvioSweep-001	2026-11-06 05:00	
-1793879856361_1281g.messages.json	hairuizh	hfeg0pkn002	366	spice_sim	claimed		2026-11-06 05:37	
+1793879856361_1281g.messages.json	hairuizh	hfeg0pkn002	366	spice_sim	case	EDA-Eval-DesignFlow-PlatInvsThick-001	2026-11-06 13:30	
 1793879856361_1281g					case	EDA-Eval-DesignFlow-PlatInvsThick-001	2026-11-06 06:14	
 1793328354943_p7jfx.messages.json	tongni	hfeg0pkn001	481	spice_sim	parked		2026-11-06 06:36	file deleted by active user tongni between 11-05 scan and 11-06 06:25; session ephemeral
 1792119838262_chbpp	wnyu	hfeg0pkn004	629	spice_sim	case	EDA-Eval-DesignFlow-VcoKvcoChar-001	2026-11-06 07:20	A-faithful need IDX17 (Vtune->4ph 6GHz ring VCO, sim, KVCO); deepread 1792119838262_chbpp_vco_kvco.md; portable level-1 ring-VCO blocked on HSPICE oscillation (latches/-2.74V) -> DEBT:1 case synth next round
@@ -183,7 +183,7 @@ vbxlf.messages.json	jason17w	hfeg0pnd002	262	spice_sim	parked		2026-11-05 12:30	
 1793270732926_ebmf3.messages.json	chapinc	hfeg0pkn002	97	spice_sim	case	EDA-Eval-DesignFlow-BatchBsubHspice-001	2026-11-06 08:38	
 1793777902964_ah9my.messages.json	e0024852	hfeg0pkn002	213	spice_sim	case	EDA-Eval-DesignFlow-LisMeasExtract-001	2026-11-06 09:12	
 1793707646524_71h8j.messages.json					case	EDA-Eval-DesignFlow-SramIreadGen-001	2026-11-06 09:56	
-1793932002608_suauw.messages.json	jiangbaol	hfeg0pkn002	113	spice_sim	claimed		2026-11-06 10:36	
+1793932002608_suauw.messages.json	jiangbaol	hfeg0pkn002	113	spice_sim	case	EDA-Eval-DesignFlow-SlicerDmMeasAdd-001	2026-11-06 13:30	
 1793932002608_suauw					case	EDA-Eval-DesignFlow-SlicerDmMeasAdd-001	2026-11-06 11:00	
 1793935018992_a75vy	dsgao	hfeg0pkn002	100	spice_sim	case	EDA-Eval-DesignFlow-GrDecPwrVerifTb-001	2026-11-06 11:50	
 1793937421846_ip3nr	berylwu	hfeg0pkn002	245614	spice_sim	case	EDA-Eval-DesignFlow-MinpulseRewriteRun-001	2026-11-06 12:19	
@@ -194,3 +194,31 @@ vbxlf.messages.json	jason17w	hfeg0pnd002	262	spice_sim	parked		2026-11-05 12:30	
 1793263942286_u8rjq					parked		2026-11-06 12:49	sim-sp-gen skill-writing meta; not spice need (1106 scout)
 1793757463114_zd8iu					parked		2026-11-06 12:49	bash bsub script fix; user gave root cause num1/num2; non-A-档 + bash not spice_char (1106 scout)
 1793792759786_ujw1y					parked		2026-11-06 12:49	summarize circuit + view sim/optimization advice; analysis not production (1106 scout)
+1791946488468_0ewj2.messages.json	jiangbaol	hfeg0pkn003	29	spice_sim	claimed		2026-11-06 13:27	
+1793692406403_lcg3v.messages.json	ronghu	hfeg0pkn005	27	spice_sim	parked		2026-11-06 13:31	char_paste_inst
+1792981479658_jh3kb.messages.json	ronghu	hfeg0pkn005	18	spice_sim	parked		2026-11-06 13:31	cell_list_no_need
+1791449736348_g3nt6.messages.json	rongjiez	hfeg0pkn005	22	spice_sim	parked		2026-11-06 13:31	code_analysis
+1793370534751_zju83.messages.json	yh1yang	hfeg0pkn002	24	spice_sim	parked		2026-11-06 13:31	noise_00
+1793864695856_1el4z.messages.json	mwxi	hfhds228	19	spice_sim	parked		2026-11-06 13:31	file_not_found
+1793181609220_r08ob.messages.json	e0018590	hfeg0pkn005	24	spice_sim	parked		2026-11-06 13:31	perm_denied_diag
+1792841597198_8xefu.messages.json	congyi	hfhds201	15	spice_sim	parked		2026-11-06 13:31	lsf_sched_check
+1793347339807_a3qxh.messages.json	e0024852	hfeg0pkn002	23	spice_sim	parked		2026-11-06 13:31	howto_find_log
+1793356935781_jqx69.messages.json	adaml	hfeg0pkn002	17	spice_sim	parked		2026-11-06 13:31	no_user_text
+1793266716067_bw8qq.messages.json	tongni	hfeg0pkn001	22	spice_sim	parked		2026-11-06 13:31	no_user_text
+1793774598225_ydt6x.messages.json	kaixuanx	hfeg0pkn002	18	spice_sim	parked		2026-11-06 13:31	cleanup_py_sh
+1791513539900_7bxtm.messages.json	adaml	hfeg0pkn002	21	spice_sim	parked		2026-11-06 13:31	gvim_encoding_howto
+1793669959152_3123n.messages.json	lvyy	hfeg0pkn004	576	spice_sim	parked		2026-11-06 13:31	why_current_diff_diag
+1793763989902_37j9u.messages.json	lvyy	hfeg0pkn004	516	spice_sim	parked		2026-11-06 13:31	dup_of_3123n_diag
+1793260410545_zh4v9.messages.json	lvyy	hfeg0pkn004	488	spice_sim	parked		2026-11-06 13:31	dup_of_3123n_diag
+1793669867866_iby9j.messages.json	lvyy	hfeg0pkn004	576	spice_sim	parked		2026-11-06 13:31	dup_of_3123n_diag
+1793353212592_38quf.messages.json	gurmanli	hfeg0pkn005	597	spice_sim	parked		2026-11-06 13:31	aether_load_howto
+1793524556149_f86ll.messages.json	sinanz	hfeg0pkn005	655	spice_sim	parked		2026-11-06 13:31	analyze_circuit_func
+1793001881089_dek1i.messages.json	easont	hfeg0pkn004	592	spice_sim	parked		2026-11-06 13:31	read_fsdb
+1793585625884_wohc2.messages.json	dsgao	hfeg0pkn001	104	spice_sim	parked		2026-11-06 13:31	verdi_diag
+1791447139857_poxvz.messages.json	johnl	hfeg0pkn001	87	spice_sim	parked		2026-11-06 13:31	run_dc_fail_diag
+1793856196029_7at4j.messages.json	lvyy	hfeg0pkn004	69	spice_sim	parked		2026-11-06 13:31	why_no_folder_diag
+1792042544705_d1cg3.messages.json	t0002441	hfhds201	103	spice_sim	parked		2026-11-06 13:31	finesim_dc_nonconv_howto
+1791962616204_7j1bw.messages.json	caozhang	hfeg0pkn004	218	spice_sim	parked		2026-11-06 13:31	async_fifo_rtl
+1793326532932_fxfox.messages.json	tongni	hfeg0pkn001	209	spice_sim	parked		2026-11-06 13:31	rtl_python_dup
+1793257968522_mp3us.messages.json	tongni	hfeg0pkn001	164	spice_sim	parked		2026-11-06 13:31	vcc2sc_dup
+1793600748187_dq8bz.messages.json	adaml	hfeg0pkn002	621	spice_sim	parked		2026-11-06 13:31	no_user_text
