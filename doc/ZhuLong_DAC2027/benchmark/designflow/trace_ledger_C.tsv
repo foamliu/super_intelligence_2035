@@ -294,3 +294,4 @@
 1785757804161_buv7m	e0014566	hfeg0pkn001	182	pg_layout	case	EDA-Eval-DesignFlow-PwrFlowCfgGen-001	2026-11-06 09:42	
 1786697763231_9rnwg	e0014566	hfeg0pkn001	178	pg_layout	case	EDA-Eval-DesignFlow-RscalcChkptGen-001	2026-11-06 10:45	dup of RsCalcChkPtGen-001 (ovo6z, same user e0014566): U#1 near-identical RTEXT+copyLayout+checkPoints-50 task; no differentiated sub-task warrants new case
 1785392800976_bu1r7	e0014566	hfeg0pkn001	255	layout_virtuoso	case	EDA-Eval-DesignFlow-SkillFlowAnalyzer-001	2026-11-06 11:20	
+1789629437578_7rzyf	ziyuny	hfeg0pnd002	831	physical_verify	case	EDA-Eval-DesignFlow-LvsSeedPromoDetect-001	2026-11-06 11:45	
