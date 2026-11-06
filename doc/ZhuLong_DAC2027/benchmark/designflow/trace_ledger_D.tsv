@@ -103,7 +103,7 @@
 1789895043170_g02a8.messages.json					case	EDA-Eval-DesignFlow-NetlistSVSDiff-001	2026-11-03 20:21	
 1792647062263_i5u61	jcgu	hfeg0pin003	229	schematic_netlist	case	EDA-Eval-DesignFlow-HierNtkSearch-001	2026-11-03 21:01	
 1792495939340_13fwy	thqu	hfeg0plg99	211	waveform	case	EDA-Eval-DesignFlow-WvStimExtract-001	2026-11-03 21:37	
-1791945714433_kja6z	ryanren	hfeahpc504	193	analog_context	parked		2026-11-03 22:04	charge pump design; trace ends mid-debug (U#223 agent stuck on dbCrtInst view), no clean user acceptance -> not A-faithful gold
+1791945714433_kja6z	ryanren	hfeahpc504	193	analog_context	case	EDA-Eval-DesignFlow-CpumpDeckGen-001	2026-11-07 01:59	charge pump design; trace ends mid-debug (U#223 agent stuck on dbCrtInst view), no clean user acceptance -> not A-faithful gold
 1788932274598_bdc16	pjli	hfeg0plg06	159	schematic_netlist	case	EDA-Eval-DesignFlow-NetSigTrace-001	2026-11-03 22:18	
 1792201142166_8g8rx.messages.json	jessegao	hfeg0pkn005	195	analog_context	case	EDA-Eval-DesignFlow-LDOGen-001	2026-11-03 23:10	
 1791602435253_66tx9	ynbai	hfhds206	160	schematic_netlist	parked		2026-11-03 23:31	duplicate task of EDA-Eval-DesignFlow-LibCellList-001 (shard C, zjqiao wg5u2 mc728): same lib_cell.list generation task, ynbai prompt is word-for-word identical to zjqiao
