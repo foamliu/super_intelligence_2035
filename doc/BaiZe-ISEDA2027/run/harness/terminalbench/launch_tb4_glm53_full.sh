@@ -4,7 +4,8 @@
 # Uses gw_proxy 9092 (chat) + 9093 (dsh) from launch_glm53_full500.sh.
 # Smoke confirmed all 7 adapters work on TB4 (pip bootstrap fixed for hermes/deepseek).
 # Concurrency: 2 harnesses in parallel, each --n-concurrent 1 (2 Docker containers max).
-# Agent timeout: 1800s (30min) per task via TB_AGENT_TIMEOUT env.
+# Agent timeout: 3600s (1h) per task via TB_AGENT_TIMEOUT env (was 1800s=30min, too short — all tasks errored).
+# --agent-timeout-multiplier removed: let adapter use TB_AGENT_TIMEOUT directly (opts.timeout=None → fallback).
 # Usage: sg docker -c "bash launch_tb4_glm53_full.sh" > /tmp/tb4_glm53_full.log 2>&1 &
 set -euo pipefail
 
@@ -25,7 +26,7 @@ export TB_BASE_URL="${GLM53_BASE}"
 export TB_GW_PROXY_URL="http://127.0.0.1:9092/v1"
 export TB_GW_PROXY_BASE="http://127.0.0.1:9092"
 export TB_GW_DSH_URL="http://127.0.0.1:9093/v1"
-export TB_AGENT_TIMEOUT=1800
+export TB_AGENT_TIMEOUT=3600
 export PYTHONPATH="${HARNESS_DIR}:${PYTHONPATH:-}"
 export PATH="${HOME}/.bun/bin:${HOME}/.local/bin:${PATH}"
 unset http_proxy https_proxy HTTP_PROXY HTTPS_PROXY 2>/dev/null || true
@@ -60,7 +61,6 @@ run_harness() {
         -p "${TB4_DATASET}" \
         --agent "${agent_path}" \
         -k 1 --n-concurrent 1 \
-        --agent-timeout-multiplier 0.1 \
         --extra-docker-compose "${TB_OVERLAY}" \
         --jobs-dir "${JOBS_DIR}/${harness}" \
         2>&1 | tee "${TRACES_DIR}/tb4_glm53_full_${harness}.log" || {
