@@ -2,7 +2,9 @@
 
 WAITING: 0
 
-> 🆕 **【wake #802 · 2026-11-06 16:30】✅✅阶段1 SFT验收通过！format=100%+submit=100% PASS·GRPO chain已自动重启(待GPU)。**CPU SFT训练完成step3000/loss0.26(2.4h/零GPU)。FIXED eval(100样本,216s CPU):**format=100%(≥90%✅)+submit=100%(≥70%✅)+numerical_lt1%=14%+lt5%=21%+PASS=true**。Pre-SFT基线:submit=0%→Post-SFT:submit=100%(+100pp,SFT核心目标达成)。flawed eval(submit=0%已知bug)已备份,FIXED eval覆盖。包装器(PID4104838)自动全链路:检测→备份→FIXED eval→pass→setsid重启GRPO chain(PID1365749,GPU-wait,ETA≈12/24)。交付物:SFT ckpt step3000+eval_results.json+报告`report_vision_wave_rl_phase1_sft_zh.html`(15.4KB/9节)+EXPERIMENTS§20.20。📦体积:TASK≈30.5KB/MEMORY≈14KB(均≤32KB✓,本轮0归档)。**未完成指令:有**(阶段2 GRPO待GPU+阶段3未交付)⇒**WAITING: 0**。
+> 🆕 **【wake #803 · 2026-11-06 16:47】✅Phase 2管线CPU侧预验证全部PASS·GRPO chain健康(GPU-wait)·零bug·就绪等GPU。**本轮做Phase 2预验证（GPU释放前抢查bug，避免浪费GPU窗口）：①GRPO smoke test PASS(6 oracle rollouts/0 fail/rewards[-0.5,-0.5,0.36,-0.5,1.36,0.36]/advantages/grpo_loss=-1.0025全正确)；②WaveQA-RL oracle eval PASS(10题/oracle=100%/3类型全覆盖)；③2B模型config验证OK(qwen3/hidden=2048/28层/3.4GB safetensors)；④SFT LoRA adapter验证OK(r=64/alpha=128/7 target modules[k,q,v,o,gate,up,down]_proj)；⑤4脚本AST parse全OK(grpo_train_wave/waveqa_eval/sft_train_wave/eval_sft_wave)；⑥GRPO chain log确认正确状态:SFT eval detected✅/acceptance passed(format100%/submit100%)✅/step3000 ckpt found✅/GPU-wait polling(util<10%+mem<5000MiB/3x@60s)✅。**结论:Phase 2管线零bug,GPU释放(~12/24)后chain自动起训**。GPU:8×H100 100% util(pretrain ETA≈12/24)。📦体积:TASK=30.5KB/MEMORY=14.2KB(均≤32KB✓,本轮0归档)。**未完成指令:有**(阶段2 GRPO待GPU+阶段3未交付)⇒**WAITING: 0**。
+
+> 📦 wake #802（阶段1 SFT验收PASS·2026-11-06 16:30）已归档 → daily-memories-vision/2026-11-06.md；**结论**：✅✅SFT验收PASS(format100%/submit100%)·GRPO chain自动重启(PID1365749,GPU-wait)·报告+EXPERIMENTS§20.20已交付。需要时再读。
 
 > 📦 wake #801（监控巡检·2026-11-06 16:14）已归档 → daily-memories-vision/2026-11-06.md；**结论**：CPU SFT step2825/3000 loss0.32 ETA~8min·包装器正确等待·训练健康·WAITING=0。需要时再读。
 
@@ -102,10 +104,10 @@ WAITING: 0
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | 🟢 **波形 RL 阶段0交付(YELLOW) + 阶段1 SFT已交付PASS(format100%/submit100%) + GRPO chain已重启待GPU(PID1365749,GPU-wait,ETA≈12/24)**。FIXED eval 100样本:format=100%/submit=100%/num_lt1%=14%/num_lt5%=21%/PASS=true。Pre-SFT submit=0%→Post-SFT submit=100%(+100pp)。GPU全占(pretrain ETA≈12/24)。阶段2 GRPO待GPU,阶段3未交付。**WAITING: 0** |
+| PHASE | 🟢 **波形 RL 阶段0交付(YELLOW) + 阶段1 SFT已交付PASS(format100%/submit100%) + Phase 2管线CPU预验证全PASS(零bug) + GRPO chain健康待GPU(PID1365749,GPU-wait,ETA≈12/24)**。wake#803预验证:GRPO smoke PASS/WaveQA-RL oracle PASS/2B模型config OK/LoRA adapter OK/4脚本AST OK/chain log正确。GPU全占(pretrain ETA≈12/24)。阶段2 GRPO待GPU,阶段3未交付。**WAITING: 0** |
 | WAITING | 0 |
 | 已完成 | 阶段1 SFT验收PASS(wake#802) · 阶段1 SFT CPU训练完成step3000(wake#802) · 阶段1 SFT CPU训练启动(wake#785) · CPU端到端训练循环验证7/7 PASS(wake#741) · 数据泄漏验证+阶段1就绪报告HTML(wake#731) · 全管线就绪审计(wake#714) · GRPO链式启动器修复+启动(wake#626) · GRPO CPU冒烟测试PASS(wake#622) · 2B文本骨干提取1.72B(wake#620) · 数据集均衡化9013条(wake#618) · WaveQA-RL oracle 300题(wake#614) · 波形RL阶段0 YELLOW(wake#609) · 论文改稿(wake#437~#442) · 波形RL计划书(wake#435) · OCR合成10M(wake#275) · ArmE-R2/ArmD-R2 全链路 |
-| 当前动作 | **阶段1已交付，GRPO chain等待GPU**：SFT训练完成step3000/loss0.26/ckpt已存。FIXED eval PASS(format100%/submit100%)。报告+EXPERIMENTS§20.20已交付。GRPO chain PID1365749 alive(GPU-wait轮询,60s间隔,guard:util<10%+mem<5000MiB,3x consecutive)。 |
-| 下一步 | 等GPU释放(ETA≈12/24)→GRPO chain自动启动阶段2训练(~12 GPU·h)→WaveQA-RL评测+回归护栏→阶段2报告+EXPERIMENTS§21。若GPU释放后GRPO训练crash→排查。下轮wake检查GRPO chain日志+GPU状态。 |
+| 当前动作 | **Phase 2管线预验证完成(wake#803)，GRPO chain等待GPU**：CPU侧全验证PASS(GRPO smoke/WaveQA-RL oracle/2B模型config/LoRA adapter/4脚本AST)。GRPO chain PID1365749 alive(GPU-wait轮询,60s间隔,guard:util<10%+mem<5000MiB,3x consecutive)。chain log确认:SFT eval detected→acceptance passed→step3000 ckpt found→GPU-wait。 |
+| 下一步 | 等GPU释放(ETA≈12/24)→GRPO chain自动启动阶段2训练(~12 GPU·h,torchrun 8GPU,2B model+step3000 LoRA)→WaveQA-RL 300题评测+回归护栏→阶段2报告+EXPERIMENTS§21。若GPU释放后GRPO训练crash→排查。下轮wake检查GRPO chain日志+GPU状态。 |
 | 阻塞 | .12+.29 GPU全占（8×H100 96-100% util / ~75GB，pretrain baize2b ETA≈12/24-25）→ 阶段2 GRPO需GPU（GRPO chain PID1365749自带GPU-wait,释放后自动起训）·.17+.75 SSH不可达 |
-| 更新 | **2026-11-06 16:30 (wake #802)**: ✅✅阶段1 SFT验收PASS(format100%/submit100%)·GRPO chain已自动重启(PID1365749,GPU-wait)·报告+EXPERIMENTS§20.20已交付·GPU全占(pretrain ETA≈12/24)·体积TASK≈30.5KB/MEMORY≈14KB✓·WAITING=0 |
+| 更新 | **2026-11-06 16:47 (wake #803)**: ✅Phase 2管线CPU侧预验证全PASS(GRPO smoke/WaveQA-RL oracle/2B config/LoRA adapter/4脚本AST/chain log正确)·零bug·GRPO chain PID1365749健康(GPU-wait)·GPU全占(pretrain ETA≈12/24)·体积TASK=30.5KB/MEMORY=14.2KB✓·WAITING=0 |
