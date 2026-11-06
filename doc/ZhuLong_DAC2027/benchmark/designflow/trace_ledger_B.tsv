@@ -284,3 +284,16 @@ vbxlf.messages.json	jason17w	hfeg0pnd002	262	spice_sim	parked		2026-11-05 12:30	
 1793684231151_ne32u	scout	scout	0	characterization	parked		2026-11-07 04:40	adaml@hfeg0pkn002 skill-authoring-meta
 1789441210558_p8wm1	scout	scout	0	characterization	parked		2026-11-07 04:40	shaoyou@hfeg0pkn003 trivial-GUI-launch-anasim
 1791358972656_8fe71	scout	scout	0	characterization	parked		2026-11-07 04:40	thomasz@hfeg0pkn002 explain-script-consulting
+1793174136126_dfv2z					parked		2026-11-07 05:02	dup-McRonMismatch-001(clarawu RON .md0 6*std/230 mismatch same task as r4p2e)
+1793089887669_4c5ws					parked		2026-11-07 05:02	sysadmin-consulting(png/bcompare/apps-lowpower-not-spice)
+1790126403703_fj73q					parked		2026-11-07 05:02	env-setup(swb-python-api-config)
+1793583143890_zt2xq					parked		2026-11-07 05:02	consulting(analyze-shmoo-perl-tcl-script)
+1793611337286_9pm1x					parked		2026-11-07 05:02	consulting(same-as-zt2xq-debug-prints)
+1790573877427_0qyc2					parked		2026-11-07 05:02	SpiceAgent-skill-session-run-sim-trivial
+1788412903933_suh90					parked		2026-11-07 05:02	trivial-file-ops(delete-copy-bashrc-CDS.log)
+1792559583345_n36p3					parked		2026-11-07 05:02	rootcause(duplicated-subckt-error+probe-why)
+1793950315023_15w22					parked		2026-11-07 05:02	rootcause(resume-of-n36p3-same)
+1789367633495_9uwcw					parked		2026-11-07 05:02	rootcause(make-cfg-error-timing-violation-VCS-digital)
+1790044729030_4v3b5					parked		2026-11-07 05:02	rootcause(why-Q-recovers-40750ps-fsdb)
+1793244399565_uacot					parked		2026-11-07 05:02	non-portable-waveform-extract(huge-PrimeSim-raw+stress-calc)
+1792634655271_f5mgg					parked		2026-11-07 05:02	trivial-consulting(你能做什么/DPMux电路看不懂/报错意思)
