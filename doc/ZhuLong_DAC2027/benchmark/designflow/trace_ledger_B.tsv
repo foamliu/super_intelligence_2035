@@ -297,3 +297,6 @@ vbxlf.messages.json	jason17w	hfeg0pnd002	262	spice_sim	parked		2026-11-05 12:30	
 1790044729030_4v3b5					parked		2026-11-07 05:02	rootcause(why-Q-recovers-40750ps-fsdb)
 1793244399565_uacot					parked		2026-11-07 05:02	non-portable-waveform-extract(huge-PrimeSim-raw+stress-calc)
 1792634655271_f5mgg					parked		2026-11-07 05:02	trivial-consulting(你能做什么/DPMux电路看不懂/报错意思)
+1793756918657_hujdg					parked		2026-11-07 05:29	disk-usage-scanner-falsepositive(mwxi V5-find-concurrent-scan pure-python/sysadmin, same profile as 7nm1g/1el4z; spice markers incidental)
+1793706971126_rsu2w					parked		2026-11-07 05:29	stdcell-web-app-dev-falsepositive(chapinc W/L-selection web app port 5876, dup of parked 5ue0u/34b72; hspice under hood not clean spice_char)
+1793861928338_3ijo2					parked		2026-11-07 05:29	dup-of-rsu2w-stdcell-web-app(chapinc identical messages as rsu2w, same stdcell sizing web app)

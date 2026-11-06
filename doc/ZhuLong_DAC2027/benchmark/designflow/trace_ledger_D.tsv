@@ -1131,7 +1131,7 @@ wl9i4					parked		2026-11-05 22:49	交互shell驱动+Q&A n752大
 1791947113001_be1i0	jie23z	10.129.2.11	84	schematic_netlist	parked		2026-11-07 04:09	Q&A: LVS DECK 分析/stdcell 命名/layout 布尔运算, not produce
 1788861941268_1giox	e0014566	10.129.2.10	80	schematic_netlist	parked		2026-11-07 04:09	L2 live: pyAether 识别+去除 layout autovia/powerfill cell (dup of a9ta2/wsi93), not portable
 1790230482027_7lp3l					case	EDA-Eval-DesignFlow-FineSimDataParse-001	2026-11-07 04:09	
-1793865643606_3b73c	m1wang	hfeg0pkn002	251	schematic_netlist	claimed		2026-11-07 05:07	
+1793865643606_3b73c	m1wang	hfeg0pkn002	251	schematic_netlist	case	EDA-Eval-DesignFlow-MbistCellFind-001	2026-11-07 05:32	#338 deliver MbistCellFind-001 (schematic_netlist B-grade synthesized L1, 16 cond a-p)
 1793261933061_z7stj					parked		2026-11-07 05:07	coretiming debug/analysis live fsdb not produce
 1792461218411_hojhc					parked		2026-11-07 05:07	verilog sim-speed debug digital not D-domain
 1793781389038_g6wy0					parked		2026-11-07 05:07	skill-driven sim verification live DUT not portable
