@@ -1,6 +1,6 @@
 # BAIZE_HARNESS_TASK.md
 
-> 📦 §运维令·2026-10-30 22:2x（把恒为0分的harness调试跑通·用户直令）**✅ 已完成 R988** → run/ARCHIVE_OPERATOR_HARNESS.md；**结论**：7路归因表全列(attribution.md)·hermes根因=PYTHONPATH中毒→修复(run_harness.py:486-491)→verify5b 4/5 resolved(80%)✅·deepseek根因=网关SSE非标字段+超时patch丢弃bug→修复(gw_proxy_dsh.py+run_harness.py:398)→verify5b 3/5 resolved(60%)✅·报告report_harness_zero_score_zh.html(18008B,commit1c1890d83)·结果JSON未commit✅. R997-R998复核确认. 需要时再读。
+> 📦 §运维令·2026-10-30 22:2x（把恒为 0 分的 harness 调试跑通）**✅ R988** → `run/ARCHIVE_OPERATOR_HARNESS.md`；hermes 根因=PYTHONPATH 中毒、deepseek 根因=网关 SSE 非标字段+超时 patch 丢弃，均已修复（verify5b 4/5、3/5）。
 
 
 
@@ -24,19 +24,42 @@
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区，自上而下找第一条「未完成」的指令执行
 
-> 📦 §运维令·2026-10-28 19:1x（评测结果 JSON 一律不上传仓库）已归档 → run/ARCHIVE_OPERATOR_HARNESS.md；**运维 20:0x 复核：R580 的「已交付」不成立**——实际只 untrack 17 个 JSON，`git ls-files .../run/harness/**/*.json` 仍 **1,925** ⇒ 按下条补令继续执行。**③永久硬约束**（每轮 predict/eval 后禁止 commit 结果 JSON）仍生效。需要时再读。
+### 🔴 §用户令·2026-11-06 22:4x（glm-5.3-flash 重测：SWE-bench Verified + Terminal Bench 4.0 × 7 路）· 用户直令 · 最高优先 · ⚠️ 未完成
 
-> 📦 §补令·2026-10-28 20:0x（R580 复核未通过：结果 JSON 仍被跟踪）**✅ 已完成 R584** → run/ARCHIVE_OPERATOR_HARNESS.md；**结论**：根因=R580 `.gitignore` 全用 `harness/**/`（`**` 需≥1层，不匹配顶层）→15个顶层评测结果JSON仍被跟踪(权威ls-files=204,非白名单17)。R584:`git rm --cached` 15个顶层结果JSON(本地保留)+`.gitignore`加顶层模式加固。复核通过:权威`git ls-files -- .../run/harness/ | grep '\.json$'`=189(≤200)·非白名单=0·predictions/jobs/oracle/logs=0。**③永久硬约束**(每轮predict/eval后禁止commit结果JSON)继续生效。需要时再读。
+> **用户原话**：「harness：用 glm-5.3-flash 重新测试 (SWE-bench Verified + Terminal Bench 4.0) x7」
+>
+> **口径（不可改）**：backbone 统一 **glm-5.3-flash**（gateway `http://agi-gateway.cxmt.com/v1`，key 用 `launch_glm53_7x300.sh` 里的 `GLM53_KEY`；开跑前先 curl 探针确认 HTTP 200，非 200 不许开跑）；7 路 = cline / codex / opencode / claude-code / pi / hermes / deepseek-harness；**两个基准都要跑满 7 路**。
+>
+> **基准 A · SWE-bench Verified（500 题，非 Lite）**
+> - 复用既有 full500 链路（`run/harness/swebench_verified_full/run_verified_full.py` + `jobs_*/`），只把模型注入切到 glm53：cline 直连 gateway；codex / opencode / claude-code / pi / hermes 走 gw_proxy **9092**；deepseek-harness 走 gw_proxy_dsh **9093**（**照抄** `launch_glm53_7x300.sh` 的 Step1–Step2 配置块，不要重新发明）。
+> - 7 路**限并发/串行**（沿用 chain 脚本的 CPU 护栏），每路跑完即 eval；进度按 **100 / 300 / 500** 三段汇报。
+> - 结果落 `swebench_verified_full/reports/eval_glm53_<harness>_*.json`；🚫 结果 JSON 不入库（硬约束③）。
+>
+> **基准 B · Terminal Bench 4.0（⚠️ 先核实，不许假设）**
+> - 现状：本机装的是 **terminal-bench@2.0**（harbor `uv tool install harbor`，`~/terminal-bench` 89 题）。**4.0 是否可得尚未验证**。
+> - **P0 核实（≤30 min，先做）**：① 查 harbor / terminal-bench 是否已有 4.0 dataset（`harbor datasets list`、官方 repo tag、`terminal-bench@4.0`）；② 能拉到就统计任务数 + 列 task 清单 + 用 `_pull_all_tb_images.sh` 拉镜像（Docker Hub 匿名限速 100 manifest/h，务必分批）；③ 用 **7×1 smoke**（每路 1 题）确认 7 个适配器在 4.0 上能跑通（4.0 若有 API/目录变更，适配器改动落 `run/harness/terminalbench/agents/`）。
+> - **判定**：核实 PASS ⇒ 跑 **7 路全量**（分母以 4.0 官方题数为准并写明）；核实 **RED**（拿不到 dataset / 镜像拉不动 / 适配器不兼容且改不动）⇒ **如实上报 RED**，并**仍交付 2.0 × 7 路 × glm-5.3-flash 全量结果**作为可对照基线，报告里**必须显著标注「版本=2.0」**，🚫 不得把 2.0 写成 4.0。
+>
+> **交付物**：`reports/report_harness_glm53_7way_swebench_tb_zh.html`（中文单文件、0 script 0 外链；含 ①7×SWE-bench Verified 矩阵 ②7×TB 矩阵 ③与 kimi-k2.6-cloud 历史结果同口径对照 ④TB 版本核实结论与分母口径 ⑤失败归因，infra 单列）+ 生成器脚本 + 本线记录（`MEMORY_HARNESS.md` 心跳 + `run/harness/` 下的进度日志）。
+>
+> **护栏**：CPU 单进程 >80 核立杀（eval 题重跑）、内存同 10-30/11-02 令；🚫 结果 JSON 入库；报告里写 `cline` 不写 `cline-patched`；每路跑完即 commit（`harness glm53:` 前缀）；TASK/MEMORY ≤32KB。
+>
+> **完成标记**：两基准 7 路全交付后本行改 `✅ 已交付`；未交付 ⇒ `WAITING: 0`。
+
+
+> 📦 §运维令·2026-10-28 19:1x（评测结果 JSON 不上传仓库）已归档 → ARCHIVE；当时 R580 复核不成立（仍被跟踪 1,925 个 JSON），由 10-28 20:0x 补令收尾；**③ 永久硬约束仍生效**。
+
+> 📦 §补令·2026-10-28 20:0x（结果 JSON 仍被跟踪）**✅ R584** → ARCHIVE；根因=`.gitignore` 用 `harness/**/` 不匹配顶层 → `git rm --cached` 15 个；**③ 永久硬约束（禁 commit 结果 JSON）继续生效**。
 
 
 
-> 📦 §运维令·2026-10-28 12:0x（TB 7way 报告质量整改 · 逐条回应 5 问）已归档 → run/ARCHIVE_OPERATOR_HARNESS.md；**结论**：5 问已逐条回应并交付（commit `33782ab93`）——①分母改回89官方口径(87题子集作附注,2题mteb缺镜像被启动器过滤)②三路0%精确stack(hermes exit127/claude-code docker exec超时/deepseek pip缺失)③codex 429=34条无退避重试(调用层缺陷)④基线对照(kimi公开57.3-66.7% vs cline48.3%,归因接入层损耗+超时)⑤复跑合表(hermes25/89·claude-code20/89入主表双列). 产 `tb_qa_rectification_20261028.md`+修订版报告. 需要时再读。
+> 📦 §运维令·2026-10-28 12:0x（TB 7way 报告质量整改 5 问）**已归档** → ARCHIVE；89 官方分母、三路 0% 精确 stack、codex 429=34 条无退避、基线对照（kimi 57.3-66.7% vs cline 48.3%）。
 
-> 📦 §运维令·2026-11-04 13:5x（按 cline trace 报告修复适配器 + 补跑受影响题）**✅ 已完成 R1633** → run/ARCHIVE_OPERATOR_HARNESS.md；**结论**：cline 适配器 3 fix(R1569 commit 29df7ba7f:gw_proxy路由9090 run_harness.py:198-204 + stdout透传 run_single.py:91-97 + silent-exit retry + OMP_NUM_THREADS剥离 run_harness.py:113-120 + CLINE_BIN→.bun/bin)→rerun 58/58→report cline 356/500=71.3%修复后(基线326/500=65.2%,+30,+6.1pp)·commit 34c930e48(harness 修复:)·④可后置项(timeout1800→900)未做(指令标「可后置」)·deepseek/codex predict未被打断✅. 需要时再读。
+> 📦 §运维令·2026-11-04 13:5x（按 cline trace 修适配器+补跑）**✅ R1633** → ARCHIVE；3 个 fix + rerun 58/58 → cline **356/500=71.3%**（基线 326/500，+6.1pp）。
 
-> 📦 §运维令·2026-11-04 13:1x（看 trace 排查 cline 表现相对差）**✅ 已完成 R1567** → run/ARCHIVE_OPERATOR_HARNESS.md；**结论**：cline 326 vs opencode 401(−15pp)·3类根因(静默退出35/超时卡死18/补丁质量116，McNemar极显著)·可改进点清单已交付 report_harness_cline_trace_analysis_zh.html(24667B,commit a2c331c79)·低风险3件已由13:5x令承接修复。需要时再读。
+> 📦 §运维令·2026-11-04 13:1x（看 trace 排查 cline 表现相对差）**✅ R1567** → ARCHIVE；cline 326 vs opencode 401（−15pp），3 类根因（静默退出35/超时卡死18/补丁质量116）。
 
-> 📦 §运维令·2026-11-06 17:1x（基于 full500 完整结果，系统归因 cline 为何显著低于 opencode）**✅ 已完成 R1685** → run/ARCHIVE_OPERATOR_HARNESS.md；**结论**：final cline 356/500(71.2%) vs opencode 401/500(80.2%)·差距集58题·归因 补丁质量/能力50(86%)+静默退出/超时7(12%)+infra1·McNemar p=6.27e-08极显著·根因=修复后差距以能力差(产了patch但不完整/不正确)为主·报告report_harness_cline_lowscore_analysis_zh.html(32968B)+生成器gen_report_cline_lowscore_analysis_zh.py·commit harness 分析:. 需要时再读。
+> 📦 §运维令·2026-11-06 17:1x（cline 为何低于 opencode）**✅ R1685** → ARCHIVE；**cline 356/500(71.2%) vs opencode 401/500(80.2%)**，差距 58 题中 50=能力差(86%)，McNemar p=6.27e-08。
 
 ### 🚀 运维令 · 2026-11-02 11:2x（**自检同时盯 CPU：本线评测进程 CPU 不许失控，容器内失控用 sudo/docker kill**）· 用户直令 · 最高优先
 
@@ -70,9 +93,9 @@
 
 **⑤ loop 已改（运维改好了，无需你动）**：`SLEEP_WAIT`/`PUSH_INTERVAL` 30→15min。
 
-> 📦 §运维令·2026-10-28 07:1x（SWE-bench Verified 全量 500 题）**✅ 已完成** → run/ARCHIVE_OPERATOR_HARNESS.md；**结论**：全7路predict+eval 100%完成(cline356/opencode401/pi333/codex291/claude-code273/deepseek212/hermes184)·报告report_harness_swebench_verified_full500_zh.html(16900B,含Wilson CI+McNemar+0处cline-patched)·生成器gen_report_swebench_verified_full500_zh.py·命名合规已修复(commit df5e63287)。需要时再读。
+> 📦 §运维令·2026-10-28 07:1x（SWE-bench Verified 全量 500 题）**✅ 已完成** → ARCHIVE；7 路全量完成：**cline356 / opencode401 / pi333 / codex291 / claude-code273 / deepseek212 / hermes184**。
 > 📄 **报告格式常驻规程（2026-10-24 用户令）**：**所有报告一律用中文 HTML**（单文件自包含、无外链/CDN），除非用户另行指定；🚫 不用 `.md` / `.pdf` / 纯文本顶替。
-### 📦 §运维指令·2026-10-24 16:3x（TB 7 并发 + 后台下载 SWE-bench Verified 容器）**已闭合**（R480 已交付体积估算、下载脚本与后台启动）→ 原文归档 → `run/ARCHIVE_OPERATOR_HARNESS.md`。**结论**：SWE-bench Verified=500 题非 Lite；去重后 ~30–60GB（sum raw ~575GB）；Docker Root Dir /data 6.3T free 够；分批 50 + 断点续跑 + 进度文件 `harness/swebench_verified_pull_progress.txt`；实测瓶颈=**Docker Hub 匿名限速 100 manifest/h（共享 IP）**，~20/h，0 failed。需要时再读。
+### 📦 §运维指令·2026-10-24 16:3x（TB 7 并发 + 下载 SWE-bench Verified 容器）**已闭合** → ARCHIVE；Verified=**500 题（非 Lite）**，镜像 ~30-60GB，瓶颈=Docker Hub 匿名限速。
 
 > ⚠️ 本文件为指令文件，agent 只读（禁止修改）。⚠️ 唯一例外（2026-10-06）：按「📉 体积维护规程」，agent 可把「已闭合」的运维块/旧正文【原文】搬入 `run/ARCHIVE_OPERATOR_HARNESS.md`（只搬迁、留 1 行指针；不新增/不改写任何指令）。
 ### 📦 §补充令·2026-10-24 09:2x（92.25 代理配 dockerd）已归档 → run/ARCHIVE_OPERATOR_HARNESS.md；**结论**：daemon.json proxies 已配 172.19.92.25:13128，docker pull 实测成功，89 张 TB 镜像已补齐。需要时再读。
