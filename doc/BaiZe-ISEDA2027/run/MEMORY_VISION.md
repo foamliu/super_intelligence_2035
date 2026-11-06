@@ -2,7 +2,9 @@
 
 WAITING: 0
 
-> 🆕 **【wake #741 · 2026-11-06 09:0x】CPU端到端训练循环验证PASS·Phase1全管线CPU侧100%验证完成·仅待GPU。新建`_cpu_train_validate.py`(213行)，在CPU上用真实2B模型(bfloat16)跑3步训练(forward+backward+optimizer)+检查点保存/重载+1次生成：①loss单调下降1.46→1.04→0.91✓；②LoRA 69.7M trainable(r=64,α=128)✓；③checkpoint 294.9MB save+reload OK✓；④生成输出`open(rcp.raw)`合法tool-call格式✓。7/7 ALL PASS。EXPERIMENTS §20.19新增。双poller健康(SFT PID2757742 + GRPO PID2466702)。GPU .12 8×100% pretrain iter_100000/700k ETA≈12/24-25。📦体积：TASK≈30.5KB/MEMORY≈26.8KB（均≤32KB✓）。**未完成指令：有**（阶段1 GPU训练pending,阻塞方=pretrain baize2b ETA≈12/24-25）⇒**WAITING: 0**。
+> 🆕 **【wake #742 · 2026-11-06 09:18】监控巡检·状态无变化·双poller健康·GPU 8×100%满载·仅待GPU。SFT poller PID2757742(etimes≈48583s≈13.5h)alive轮询busy_util waiting✓；GRPO poller PID2466702(etimes≈4184s≈1.16h)alive等待SFT eval_results.json(4080s/7776000s)✓；pretrain baize2b torchrun PID2612442(dual-node nnodes=2)running，latest ckpt iter_0100000(100k/700k，ETA≈12/24-25)；GPU .12 8×100%/~75GB per GPU全占。vision loop PID669545 alive✓；cline in PATH✓。git 0ahead/0behind已同步，工作副本改动均为别线文件未触碰。📦体积：TASK=30453B(29.7KB)/MEMORY=26805B(26.2KB)（均≤32KB✓）。**未完成指令：有**（阶段1 GPU训练pending,阻塞方=pretrain baize2b ETA≈12/24-25）⇒**WAITING: 0**。
+
+> 📦 wake #741（CPU端到端训练循环验证PASS·2026-11-06 09:0x）已归档 → daily-memories-vision/2026-11-06.md；**结论**：_cpu_train_validate.py 7/7 ALL PASS（loss单调下降/LoRA 69.7M/ckpt save+reload/生成合法），Phase1 CPU侧100%验证完成仅待GPU。需要时再读。
 
 > 📦 wake #740（监控巡检·2026-11-06 08:54）已归档 → daily-memories-vision/2026-11-06.md；**结论**：状态无变化，双poller健康，GPU 8×100%满载仅待GPU。需要时再读。
 
