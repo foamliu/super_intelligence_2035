@@ -1,0 +1,7 @@
+[verified-full 00:01:12] [1/500] PREDICT hermes on astropy__astropy-12907
+[verified-full 00:01:56]   -> quota-blocked (patch=0B wall=44.1s)
+[verified-full 00:01:56] [2/500] PREDICT hermes on astropy__astropy-13033
+[verified-full 00:02:09]   -> quota-blocked (patch=0B wall=13.1s)
+[verified-full 00:02:09] [3/500] PREDICT hermes on astropy__astropy-13236
+[verified-full 00:07:14]   -> no-patch (patch=0B wall=304.4s)
+[verified-full 00:07:14] [4/500] PREDICT hermes on astropy__astropy-13398

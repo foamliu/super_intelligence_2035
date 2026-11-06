@@ -1,0 +1,5 @@
+[verified-full 00:01:20] [1/500] PREDICT pi on astropy__astropy-12907
+[verified-full 00:02:01]   -> quota-blocked (patch=0B wall=41.3s)
+[verified-full 00:02:01] [2/500] PREDICT pi on astropy__astropy-13033
+[verified-full 00:06:05]   -> patch-produced (patch=2226B wall=244.0s)
+[verified-full 00:06:05] [3/500] PREDICT pi on astropy__astropy-13236
