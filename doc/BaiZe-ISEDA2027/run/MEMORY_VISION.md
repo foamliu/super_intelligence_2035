@@ -2,7 +2,9 @@
 
 WAITING: 1
 
-> 🆕 **【wake #842 · 2026-11-07 03:23】例行空唤醒巡检。** git fetch in-sync(无新令)·loop健康(vision PID669545 ppid=1 ~8.8d)·GPU-wait chain PID1365749 健康(~11h,run_grpo_wave.sh 8,等GPU)·GPU 8×H100 96-100%/~75GB(满载 pretrain S1,无GPU给vision Stage-2,ETA≈12/25)·ops_relay_v2 PID1032513健康(~13.3d)·全交付态确认(Stage0/1✅+advantage诊断✅,Stage2待GPU/Stage3待用户批)·零可执行动作·零异常。📦体积:TASK≈28.7KB/MEMORY≈22.1KB(均≤32KB✓,本轮0归档)。**未完成指令:无**⇒**WAITING: 1**。
+> 🆕 **【wake #843 · 2026-11-07 03:56】例行空唤醒巡检（运维侧手动触发）。** git fetch in-sync(无新令·main=origin/main)·loop健康(vision PID669545 ppid=1 ~8.8d)·GPU-wait chain PID1365749 健康(~11.5h,run_grpo_wave.sh 8,等GPU)·GPU 8×H100 95-100%/~75GB(满载 pretrain S1,无GPU给vision Stage-2,ETA≈12/25)·ops_relay_v2 PID1032513健康(~13.4d)·全交付态确认(Stage0/1✅+advantage诊断✅,Stage2待GPU/Stage3待用户批)·零可执行动作·零异常。📦体积:TASK≈28.7KB/MEMORY≈22.5KB(均≤32KB✓,本轮0归档)。**未完成指令:无**⇒**WAITING: 1**。
+
+> 📦 wake #842（例行空唤醒巡检·2026-11-07 03:23）已归档 → daily-memories-vision/2026-11-07.md；**结论**：无新令·loop/GPU-wait chain健康·GPU满载待释放·全交付态·零异常。需要时再读。
 
 > 📦 wake #841（例行空唤醒巡检·2026-11-07 02:49）已归档 → daily-memories-vision/2026-11-07.md；**结论**：无新令·loop/GPU-wait chain健康·GPU满载待释放·全交付态·零异常。需要时再读。
 
@@ -184,4 +186,4 @@ WAITING: 1
 | 当前动作 | **advantage方差诊断已交付(wake#838)**：判定PARTIAL(std=0=78.7%/std>0=21.3%/全0=0%)，关键发现=离散分档奖励下"全同档"才是无信号根因(非"全0")，按目标差异化(rise_time能力缺口/period信号足)。GRPO chain PID1365749 alive(GPU-wait轮询,GPU释放自动接上,ETA≈12/25)。 |
 | 下一步 | ①用户决策：是否做 group_size→8 验证 + 是否采纳按目标差异化策略(rise_time/duty_cycle补SFT、period先上GRPO) + 奖励连续化(需批) ②等GPU释放(ETA≈12/25)→GRPO chain自动启动阶段2训练(~12 GPU·h)→WaveQA-RL评测+回归护栏→阶段2报告。下轮wake检查GRPO chain日志+GPU状态+有无新令。 |
 | 阻塞 | .12+.29 GPU全占（8×H100 96-100% util / ~75GB，pretrain baize2b ETA≈12/24-25）→ 阶段2 GRPO需GPU（GRPO chain PID1365749自带GPU-wait,释放后自动起训）·.17+.75 SSH不可达 |
-| 更新 | **2026-11-07 02:10 (wake #840)**: 例行空唤醒巡检·无新令·loop/GPU-wait chain健康(PID1365749 etimes≈9.7h)·GPU 8×H100 96-100%满载·全交付态确认(Stage0/1✅+advantage诊断✅)·零可执行动作·体积TASK≈28.7KB/MEMORY≈21.9KB✓·WAITING=1 |
+| 更新 | **2026-11-07 03:56 (wake #843)**: 例行空唤醒巡检(运维侧手动触发)·无新令·loop/GPU-wait chain健康(PID1365749 etimes≈11.5h)·ops_relay_v2健康·GPU 8×H100 95-100%满载·全交付态确认(Stage0/1✅+advantage诊断✅)·零可执行动作·体积TASK≈28.7KB/MEMORY≈22.5KB✓·WAITING=1 |
