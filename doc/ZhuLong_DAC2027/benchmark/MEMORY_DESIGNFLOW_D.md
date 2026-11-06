@@ -2,7 +2,7 @@ WAITING: 0
 SHARD: D (netlist_wave)
 DOMAINS: analog_context, schematic_netlist, waveform
 
-- **PHASE**: shard D 运行中。已交付 143 条 case（D.jsonl 143 行）；台账 case-mark 142 + 890 parked = 1032 已动过。**本轮 #305 = SpStimLoopAudit-001（schematic_netlist, A-faithful, B-grade synthesized, L1, 16 条件 a-p）已交付；DEBT 0**（5kcuw 兑现）。上轮 #304 = SimReportPvtSummary-001（analog_context, 15 条件 a-o）；#303 = WaveMaxFind-001（waveform, 15 条件 a-o）。**fresh pool：复用 scored_D304_pool.tsv(797)；本轮 peek rank 45-100 共 49 候选，唯一 clean A-faithful produce-task = 5kcuw**（ju0g4 因 dup SineZeroCrossFreqPeak-001 parked；下轮续 peek rank 101+，scored pool 仍剩 ~697 未 peek）。
+- **PHASE**: shard D 运行中。已交付 144 条 case（D.jsonl 144 行）；台账 case-mark 143 + 890 parked = 1033 已动过。**本轮 #306 = FarthestCellPick-001（schematic_netlist, A-faithful, B-grade synthesized, L1, 14 条件 a-n）已交付；DEBT 0**（u8ovn 兑现）。上轮 #305 = SpStimLoopAudit-001（schematic_netlist, 16 条件 a-p）；#304 = SimReportPvtSummary-001（analog_context, 15 条件 a-o）。**fresh pool：fresh_D306_pool.tsv(262 fresh, 从 fresh_D286 563 滤 4-shard 台账 1308 anchor 得)；本轮 peek rank 1-40 共 40 候选，唯一 clean A-faithful produce-task = u8ovn**(t0002616@10.129.2.13 mc126, schematic_netlist, U#0「分析 tCS/WR_Time 选哪个 cell」+ U#1「选最远 cell 如何判断」)。其余多为 skill-creator/Q&A/how-to/live-Aether-dep/wrong-domain(DRC log/TCAD/数字前端)/NOFILE。下轮续 peek rank 41+，fresh_D306 仍剩 ~222 未 peek。
 
 - (归档批次 63) 历史 #268 CellPrefixExtract-001 选料流水已搬 MEMORY_D_archive.md
 - 每轮做 1 条 case：trace_ledger.py --shard D next → claim → 深读 → 合成 → 自验 → 追加 EDA-Eval-DesignFlow_D.jsonl → 日报
