@@ -7,9 +7,9 @@ WAITING: 1
 
 ## 进度快照
 
-- PHASE: posttrain-wake17（2026-11-06 22:5x；后训练数据调研报告交付 + 硬盘体检）
+- PHASE: posttrain-wake18（2026-11-06 23:4x；wake17 push 补推成功 + 交付物复核）
 - 已完成: P3预备✅ 5脚本(wake1/2)；P1-e✅ 污染隔离(wake2)；P1-a/b✅ 数据盘点(wake2)；P2✅ 方案书(wake3)；P0✅ D1–D6 DeepSeek侧(wake4→14)；P1-d✅ PyAether语料(wake4)；P1✅ HTML报告(wake6)；wake9✅ 诊断脚本；wake13✅ vLLM 0.33.0；wake14✅ D1–D6完整化；wake15✅ 工作树恢复；wake16✅ CPU模型验证；**wake17✅ 后训练数据调研HTML报告(44.9KB/10节)+§E+硬盘体检**
-- 当前动作: wake17 收到新运维令(§用户令·22:5x 后训练数据web search调研+硬盘体检)→ 探通proxy→7组关键词CIMI检索(退火/SFT agentic/RLVR难度/工具恢复/DeepSeek GRPO/AgentTrove/Qwen3)→ 产出`reports/report_posttrain_stage_data_survey_zh.html`(44.9KB,10节,0script,0外链)→ EXPERIMENTS新增§E→ 硬盘体检(/  386G可用84%,/nas_data 20T可用85%,/nas_inference未挂载)→ 清理候选清单(Qwen3.5-2B 4.3G等,不擅自删)→ 体积自检+提交
+- 当前动作: wake18 唤醒→ git status `ahead 2`（wake17 push 超时遗留）→ `git pull --rebase --autostash` 成功（replay 2 commits on top of origin/main）→ `git push` 成功（de447da7e..ad0b1f49a）→ 复核交付物：报告 44894B/10节/grep script+外链=0 ✅，EXPERIMENTS §E 完整 ✅ → git status clean（`## main...origin/main`）→ 体积自检+提交心跳
 - 下一步: 本节点零GPU可达项**已全完成**(P0/P1/P2/P3预备/数据调研/CPU验证全✅)。剩余阻塞：①P0 36%侧等GPU(2026-11-09)或运维拷轨迹；②P1-c等/nas_inference挂载；③正式训练P3阻塞pretrain ckpt(ETA≈2026-12-25)
 - 阻塞: P0-36%侧等GPU/P1-c等挂载/P3等pretrain ckpt——均阻塞于外部依赖，本节点无更多零GPU项可做
 - 未完成指令: 有（P0-36%侧需GPU/P1-c需挂载/P3需pretrain ckpt，均阻塞外部依赖。§用户令·22:5x调研已✅交付）⇒ WAITING=1
@@ -62,4 +62,6 @@ WAITING: 1
 [22:3x] wake16：git status 干净（`## main...origin/main`，无新运维令，last commit=f17c43bb7 wake15）→ 健康复查：7 脚本 bash -n 全 PASS + vLLM 0.33.0 import OK + 3 报告在位（37KB/30KB/38KB）→ **🎉 CPU 模型加载验证 PASS**：`~/code/vllm_venv/bin/python` 用 `transformers.AutoModelForCausalLM` 从 `/tmp/models/MiniCPM5-2B/` 加载成功（LlamaForCausalLM 2.52B params，bfloat16，381 weights <30s），tokenizer vocab=130072 max_len=131072，生成 20 tok 输出连贯 → 证实模型+venv+torch 全链路可用，GPU 释放后可直接 `vllm serve` → 复查阻塞：~/eda_code_eval 仍 MISSING + /nas_inference 仍不存在 + 8×A40 全被 SGLang 占用（44-45GB/卡 0%util，与前 15 轮一致无变化）→ EDA-Eval-Framework 13 runs 全 DeepSeek code-gen（无 MiniCPM5）→ 体积自检+提交。📦 体积：TASK=20.8KB / MEMORY=24.0KB / EXPERIMENTS=30.5KB（均 ≤32KB ✅，无需归档）。
 
 [22:5x] wake17：收到新运维令 §用户令·2026-11-06 22:5x（后训练各阶段训练数据 web search 调研 + 本机硬盘体检，最高优先）→ 探通 proxy（curl -I https://www.google.com HTTP/2 200）→ 7 组关键词 CIMI search（退火数据/SFT agentic 轨迹/RLVR 难度筛选/工具调用错误恢复/DeepSeek GRPO/AgentTrove Nemotron/Qwen3 annealing）→ 每组获取 3-5 条结果，含 Llama3/DeepSeek-V3/Qwen3 技术报告、AgentTrove(170万轨迹)/SWE-smith(5万实例)/Trajectory2Gym(仅10%含错误恢复)/sGPO(pass@8 profiling 3×效率)/arXiv 2605.28388(难度非单调) → 产出 `reports/report_posttrain_stage_data_survey_zh.html`（44.9KB，10 节，0 script，0 外链，自包含：摘要/退火/SFT/RL/差距表/M1-M4建议/硬盘体检/检索词/引用/D1-D6附录）→ EXPERIMENTS_POSTTRAIN.md 新增 §E（核心发现表+差距表+3周优先2项+硬盘体检摘要）→ 硬盘体检：/ 386G可用(84%)、/nas_data 20T可用(85%)、/nas_inference未挂载、docker不可用、关键目录/tmp/models 9.0G+vllm_venv 9.4G+eda_fastmcp 1.9G → 退火+SFT+RL 总需求约200-300GB，存储不是瓶颈 → 清理候选(Qwen3.5-2B 4.3G/langfuse 266M/signoz 181M，不擅自删) → 核心结论：①PyAether SFT轨迹合成(约50-100K条)回收约20pp ②RLVR pass@8难度筛选打磨约5-10pp → 体积自检+提交 `posttrain survey:` → commit 4058c2f5d → **push 超时**[同 wake12/wake14 网络问题，重试 3 次均 timeout]，loop auto-commit 兜底；下一轮唤醒第一件事补推。📦 体积：TASK=24.2KB / MEMORY=25.0KB / EXPERIMENTS=32.7KB（均 ≤32KB ✅，无需归档）。
+
+[23:4x] wake18：唤醒→ git status `ahead 2`（wake17 的 2 commits 未推）→ 设 proxy → `git pull --rebase --autostash origin main` 成功（origin 有新 commit de447da7e，replay `posttrain survey:` 2 commits on top）→ `git push origin main` **成功**（de447da7e..ad0b1f49a）→ git status clean（`## main...origin/main`）→ 复核交付物：`report_posttrain_stage_data_survey_zh.html` 44894B/10 节/grep `<script|iframe|src=http|href=http`=0 ✅，EXPERIMENTS §E 含核心发现表+差距表+3周优先+硬盘体检 ✅ → 本节点零 GPU 可达项全完成，剩余阻塞项无变化 → 体积自检+提交心跳。📦 体积：TASK=24.2KB / MEMORY=25.1KB / EXPERIMENTS=32.7KB（均 ≤32KB ✅，无需归档）。
 
