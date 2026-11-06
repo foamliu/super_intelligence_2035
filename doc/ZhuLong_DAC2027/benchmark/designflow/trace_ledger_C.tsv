@@ -322,3 +322,4 @@
 1786587864281_hvynl	e0014566	hfeg0pkn005	162	pg_layout	case	EDA-Eval-DesignFlow-RscalcStaleDbobjFix-001	2026-11-07 03:25	
 1792133910648_645nk	wnyu	hfeg0pkn004	1	spice_sim	parked		2026-11-07 03:32	concurrent rescan deepread concluded no clean A-faithful gold product (div3_model never ran successfully per trace msg57/61/65; active session pivoted to L2 FineSim netlist debug dep 148MB non-portable; A-task<->deliverable mismatch)
 1782819017195_e2a19	e03179	hfeg0pkn002	63	layout_virtuoso	case		2026-11-07 04:01	EDA-Eval-DesignFlow-DeleteM1Shapes-001: layout_virtuoso L1-boundary, SKILL delete M1 shapes + count + outfile; gold from trace editor new_text idx=50; 12 conds (a-l), 3 negatives (empty_shell/print_expected/core_deleted) all FAIL; ref PASS
+1786014142309_pgaur	e0014566	hfeg0pkn005	129	pg_layout	case	EDA-Eval-DesignFlow-PgRundirDefault-001	2026-11-07 04:29	
