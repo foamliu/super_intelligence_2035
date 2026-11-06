@@ -2,7 +2,9 @@
 
 WAITING: 0
 
-> 🆕 **【wake #819 · 2026-11-06 18:11】📊 监控巡检·GRPO chain健康(GPU-wait 102polls全busy)·无变化·等GPU。**GRPO chain PID1365749 alive(bash run_grpo_wave.sh 8,16:28起,etimes≈6132s/102.2min)·chain log(/tmp/grpo_chain_relaunch.log):102 busy_util polls,16:28→18:09连续busy_util·GPU 8×H100 94-100%util~75GB(pretrain torchrun PID2612442仍在跑,2-node16GPU,etimes≈339583s/94.3h,latest ckpt=iter_0106000@17:20,rate≈514it/h,ETA≈12/24)·零新发现·Phase 2管线CPU侧全验证PASS零bug(wake#803)·SFT ckpt step3000 LoRA adapter+eval_results(format100%/submit100%/pass=true/num_acc_lt1pct=14%)已核验在位·grpo_smoke PASS·chain Step1-3已完成(eval detected→acceptance passed→step3000 ckpt found)→Step4 GPU-wait轮询中·chain将在GPU释放后自动起训(Step5 GRPO 8GPU torchrun→Step6 WaveQA-RL 300题)。📦体积:TASK=30.5KB/MEMORY=17.7KB(均≤32KB✓,本轮0归档)。**未完成指令:有**(阶段2 GRPO待GPU+阶段3未交付)⇒**WAITING: 0**。
+> 🆕 **【wake #820 · 2026-11-06 18:16】📊 监控巡检·GRPO chain健康(GPU-wait 107polls全busy)·无变化·等GPU。**GRPO chain PID1365749 alive(ppid=1真守护,bash run_grpo_wave.sh 8,16:28起,etimes≈6553s/109min)·chain log(/tmp/grpo_chain_relaunch.log):107 busy_util polls,16:28→18:15连续busy_util·GPU 8×H100 100%util~75GB(全部=pretrain torchrun PID2612442的8个本地worker PID2626131-2626138,node_rank=0 master在.12)·pretrain baize2b mamba2 2-node16GPU etimes≈339973s/94.4h,--train-iters700000,iter~106k/700k,rate≈514it/h,ETA≈12/24·vision R9未在跑(GPU被pretrain占用)·零新发现·Phase2管线CPU侧全验证PASS零bug(wake#803)·SFT ckpt step3000+eval_results(format100%/submit100%)已核验在位·grpo_smoke PASS·chain Step1-3已完成→Step4 GPU-wait轮询中·GPU释放后自动起训(Step5 GRPO→Step6 WaveQA-RL 300题)。📦体积:TASK=29.8KB(30477B)/MEMORY=17.8KB(18215B)(均≤32KB✓,本轮0归档)。**未完成指令:有**(阶段2 GRPO待GPU+阶段3未交付)⇒**WAITING: 0**。
+
+> 📦 wake #819（监控巡检·2026-11-06 18:11）已归档 → daily-memories-vision/2026-11-06.md；**结论**：GRPO chain健康(GPU-wait 102polls全busy)·GPU 8×H100 94-100%·零新发现·WAITING=0。需要时再读。
 
 > 📦 wake #818（监控巡检·2026-11-06 18:06）已归档 → daily-memories-vision/2026-11-06.md；**结论**：GRPO chain健康(GPU-wait 98polls全busy)·GPU 8×H100 100%·零新发现·WAITING=0。需要时再读。
 
