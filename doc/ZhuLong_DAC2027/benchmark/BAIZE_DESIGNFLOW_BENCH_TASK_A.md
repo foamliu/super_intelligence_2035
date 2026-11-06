@@ -1,4 +1,40 @@
 # BAIZE_DESIGNFLOW_BENCH_TASK.md — 设计流 Benchmark 任务书（2026-10-30 重构版）
+### 🚨 2026-11-06 运维令：shard A 双重职责 · 管理任务 + 放宽候选池 · 用户直令 · 最高优先
+
+> **背景**：shard A 候选池枯竭（旧扫描 mc≥30 + 旧过滤词仅 53 session，台账已动 142 条，78 case + 66 parked）。11/05 新扫描上线（mc30=1511, +514 新 session）。用户直令：① shard A 承担每日管理任务（更新用户/trace 总数 + 给各线补充新增 trace）；② 放宽过滤词 + 降 mc≥15 + 用 daily scan log 补充。
+
+**一、shard A 新增管理任务（每轮开工前先做，5 分钟搞定）**
+
+1. **跑 scansync**：`python3 designflow/trace_ledger.py --shard A scansync` 输出 ready-to-run 命令块，经 `eda_flow run_commands` 在 .75 上执行，拿到最新扫描的各口径数字（scan_dir / mc30 / users / 各 shard 候选池 / 新增 session 数）。
+2. **更新 summary_stats.json**：用 `trace_ledger.py refresh --json '{...}'` 把最新数字写回（scan_path / mc30 / users_mc30 / shard_mc / scansync 子对象）。**这是全 4 shard 共享的配置文件**，shard A 负责维护，其他 shard 读它。
+3. **报告各 shard 新增候选**：在 MEMORY_DESIGNFLOW_A.md 里写一段「今日新增 trace」：`shard_A_new=92 shard_B_new=200 shard_C_new=247 shard_D_new=383`（来自 scansync 输出），让其他 shard agent 看到自己的新增候选规模。
+4. **检查 daily scan log**：`ls -t /home/t0002965/log/eda_trace_*.log | head -1` 看今日扫描日志行数，记录到 MEMORY。如果今日日志显著缩水（<100 行），说明扫描脚本可能挂了，在 MEMORY 里标 ⚠️。
+
+**二、shard A 候选池放宽（已落地，trace_ledger.py 已改）**
+
+- **过滤词放宽**：从 `verdi|vcs|dc_shell|...|pt_shell` 扩到 `+synthesis|synopsys|tcl|verilog|systemverilog|rtl|sdc|vivado|yosys|openroad`（数字前端泛词）
+- **mc 阈值降到 15**：`SHARD_MC={"A":15, "B":30, "C":30, "D":30}`，可被 summary_stats.json.shard_mc 覆盖
+- **扫描源切到 11/05**：`scan_path` 从旧扫描 (10/28) 切到新扫描 (11/05)，候选池 53→216（3x）
+- **效果**：shard A 候选池从 53 扩到 216，新增 92 个旧扫描没有的 session，够再跑 1-2 周
+
+**三、管理任务优先级**
+
+- 候选池充足时（next 有 ≥5 个 fresh 候选）：优先出 case，管理任务每 5 轮做一次
+- 候选池快空时（next <3 个 fresh）：先跑 scansync + 更新 summary_stats.json，再继续出 case
+- 候选池空时：只做管理任务 + 从 daily scan log 手动捞候选（见下）
+
+**四、从 daily scan log 手动捞候选（候选池空时的兜底）**
+
+```bash
+# 在 .75 上跑（经 eda_flow run_commands），找今日扫描日志里命中 shard A 过滤词的 session
+TODAY=$(date +%Y%m%d)
+grep -E 'verdi|vcs|dc_shell|verilint|formality|innovus|primetime|design_compiler|rc|pt_shell|synthesis|synopsys|tcl|verilog|systemverilog|rtl|sdc|vivado|yosys|openroad' /home/t0002965/log/eda_trace_$TODAY.log | head -20
+# 每行格式: ip\thost:/full/session/path\truntime_or_tool_markers
+# 挑 mc 看起来高的 session，手动 claim + deepread
+```
+
+---
+
 ### 🚨 2026-11-02 运维令：被测换 cline + PreToolUse 防泄题 hook · 用户直令 · 最高优先
 
 > **背景**：pi 有 bash/read/write 工具，能任意读 cwd 里所有文件。benchmark agent 在 `.pi_debug/<case>/` 里放了 `_reference_check.py`（= check.py 判分器），pi 直接 `import _reference_check` 跑了它——**判分标准（答案）直接放在考生面前**。这是通过率偏高的主因，不是模型强。
@@ -283,19 +319,32 @@ git commit -m "designflow #<轮次>: <一句话>" && git push origin master
 
 ## 🔀 SHARD 配置（本 shard 专用 · 覆盖主 TASK 中的通用描述）
 
-**你是 shard A（digital_front）**。只负责以下 domain：digital, eda_other, pnr_signoff, verification
+**你是 shard A（digital_front + 管理员）**。负责以下 domain：digital, eda_other, pnr_signoff, verification。**额外承担全 4 shard 的每日 scansync 管理任务**（见顶部 11/06 运维令）。
 
 ### 你的文件（不要碰别的 shard 的文件）
 - **jsonl**：`benchmarks/EDA-Eval-DesignFlow/EDA-Eval-DesignFlow_A.jsonl`（只往这个文件追加 case）
 - **台账**：`designflow/trace_ledger_A.tsv`（通过 `trace_ledger.py --shard A` 自动使用）
-- **心跳**：`MEMORY_DESIGNFLOW_A.md`（只写这个文件）
+- **心跳**：`MEMORY_DESIGNFLOW_A.md`（只写这个文件，含每日 scansync 报告）
 - **日记忆**：`daily-memories-designflow/daily_A_*.md`
+- **全 shard 共享配置**（shard A 负责维护，其他 shard 只读）：`designflow/summary_stats.json`
 
-### 选 trace 命令（带 shard 过滤）
+### 选 trace 命令（带 shard 过滤，11/06 已放宽）
 ```bash
+# 候选池已扩到 mc>=15 + 放宽过滤词 (+synthesis/synopsys/tcl/verilog/rtl/sdc/vivado/yosys/openroad)
+# 扫描源已切到 11/05 新扫描 (summary_stats.json.scan_path)
 python3 designflow/trace_ledger.py --shard A next --n 5
 python3 designflow/trace_ledger.py --shard A claim --session <s> --user <u> --host <h> --match <m> --domain <d>
 python3 designflow/trace_ledger.py --shard A mark --session <s> --status case --case-id <id>
+```
+
+### 管理任务命令（每轮开工前先做，5 分钟）
+```bash
+# 1. 跑 scansync 拿最新扫描口径 (输出 ready-to-run 命令块)
+python3 designflow/trace_ledger.py --shard A scansync
+# 2. 经 eda_flow run_commands 在 .75 上执行 scansync 输出的命令
+# 3. 用拿到的数字更新 summary_stats.json:
+python3 designflow/trace_ledger.py refresh --json '{"scan_path":"<最新>","mc30":NNN,"users_mc30":NNN,"shard_mc":{"A":15,"B":30,"C":30,"D":30},"scansync":{...},"updated_at":"<now>"}'
+# 4. 在 MEMORY_DESIGNFLOW_A.md 写今日新增 trace 报告
 ```
 
 ### 合并
@@ -303,11 +352,13 @@ python3 designflow/trace_ledger.py --shard A mark --session <s> --status case --
 - 你的 case 只追加到 `EDA-Eval-DesignFlow_A.jsonl`
 - merge 脚本每 30 分钟自动合并 4 片 → 主 jsonl + regen 日报
 
-### 收尾提交（只提交自己 shard 的文件）
+### 收尾提交（只提交自己 shard 的文件 + 全 shard 共享的 summary_stats.json）
 ```bash
 cd /nasdata/app.e0031982/code/super_intelligence_2035 && git fetch origin && git pull --rebase --autostash origin main
 git add -- doc/ZhuLong_DAC2027/benchmark/MEMORY_DESIGNFLOW_A.md \
            doc/ZhuLong_DAC2027/benchmark/designflow/trace_ledger_A.tsv \
+           doc/ZhuLong_DAC2027/benchmark/designflow/summary_stats.json \
+           doc/ZhuLong_DAC2027/benchmark/designflow/trace_ledger.py \
            doc/ZhuLong_DAC2027/benchmark/designflow/trace_deepreads \
            doc/ZhuLong_DAC2027/benchmark/daily-memories-designflow/daily_A_*
 git commit -m "designflow shard A #<轮次>: <一句话>" && git push origin main

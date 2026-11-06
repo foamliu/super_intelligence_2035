@@ -25,8 +25,11 @@ STATS = os.path.join(HERE, "summary_stats.json")
 # summary.tsv 列: ip host user session_file match_count keywords tools
 # tools 列（$7）做 domain 代理过滤（不完美，agent 可 peek-and-skip）
 SHARD_DOMAINS = {
+    # shard A 11/06 放宽: 加 synthesis/synopsys/tcl/verilog/systemverilog/rtl/synthesis/sdc
+    # (数字前端工程师少用 cline, 旧过滤词只命中 53 session, 放宽后 11/05 新扫描命中 187)
     "A": ("digital|verification|pnr_signoff|eda_other",
-          "verdi|vcs|dc_shell|verilint|formality|innovus|primetime|design_compiler|rc|pt_shell"),
+          "verdi|vcs|dc_shell|verilint|formality|innovus|primetime|design_compiler|rc|pt_shell"
+          "|synthesis|synopsys|tcl|verilog|systemverilog|rtl|sdc|vivado|yosys|openroad"),
     "B": ("spice_sim|characterization",
           "hspice|finesim|siliconsmart|spectre|ngspice|simulator|spice|custom_sim"),
     "C": ("physical_verify|layout_virtuoso|layout_aether|pg_layout",
@@ -34,6 +37,9 @@ SHARD_DOMAINS = {
     "D": ("schematic_netlist|waveform|analog_context",
           "waveview|cosmos|skill|netlist|spiros|spectrum|analog|schematic"),
 }
+# per-shard mc 阈值 (shard A 候选稀缺, 降到 15; 其他保持 30)
+# 可被 summary_stats.json 的 shard_mc 字段覆盖
+SHARD_MC = {"A": 15, "B": 30, "C": 30, "D": 30}
 
 # 运行时由 --shard 设定
 _shard = None
@@ -206,7 +212,16 @@ def cmd_next(args):
     used = [r["session_file"].replace(".messages.json", "")
             for r in load() if r["session_file"]]
     st = load_stats()
-    mc = int(st.get("target_mc", 30))
+    # per-shard mc 阈值: SHARD_MC → summary_stats.json.shard_mc → target_mc → 30
+    shard_mc_cfg = st.get("shard_mc", {}) if isinstance(st.get("shard_mc"), dict) else {}
+    if _shard and _shard in SHARD_MC:
+        mc = int(shard_mc_cfg.get(_shard, SHARD_MC[_shard]))
+    else:
+        mc = int(st.get("target_mc", 30))
+    # 扫描路径: 优先 summary_stats.json.scan_path, 否则用 .75 上最新扫描目录
+    scan_tsv = st.get("scan_path", "")
+    if not scan_tsv:
+        scan_tsv = "/home/t0002965/log/ssh_eda_search_20261105_192825/summary.tsv"
     pat = "|".join(used) if used else "__none__"
     # shard tools 过滤（$7 = tools 列）
     tool_filter = ""
@@ -215,10 +230,11 @@ def cmd_next(args):
         tool_filter = " && $7 ~ /%s/" % tools_re
     print("# 1) 在 .75 上跑（经 eda_flow run_commands）取候选，已排除台账里的 session%s：" % ("，按 shard %s tools 过滤" % _shard if _shard else ""))
     print("# (sub(/\\.messages\\.json$/,\"\",$4) 规范化后做 anchor 匹配)")
-    print("# 候选池 mc>=%d (11/04 从 mc>=100 降到 mc>=30 + 0.8B 预筛)" % mc)
+    print("# 候选池 mc>=%d%s (11/06: shard A 放宽过滤词+降到 mc>=15; 其他 shard 保持 mc>=30)" % (mc, " [shard %s 专属阈值]" % _shard if _shard and _shard in SHARD_MC and mc != 30 else ""))
+    print("# 扫描源: %s" % scan_tsv)
     print("awk -F'\\t' 'NR>1 && $5+0>=%d {sub(/\\.messages\\.json$/,\"\",$4); $4 !~ /^(%s)$/%s {print $5\"\\t\"$4\"\\t\"$3\"\\t\"$2\"\\t\"$7}' "
-          "/home/t0002965/log/ssh_eda_search_20261028_174426/summary.tsv | sort -rn | head -%d"
-          % (mc, pat, tool_filter, args.n))
+          "%s | sort -rn | head -%d"
+          % (mc, pat, tool_filter, scan_tsv, args.n))
     # 预筛提示
     pre = load_prefilter() if args.prefiltered else {}
     if args.prefiltered:
@@ -411,6 +427,50 @@ def cmd_refresh(args):
     return 0
 
 
+def cmd_scansync(args):
+    """管理任务: 在 .75 上找最新扫描目录, 统计各口径, 输出 ready-to-run 命令块.
+    shard A 用这个做每日巡检: 更新 summary_stats.json + 报告各 shard 候选池规模 + 新增 trace."""
+    st = load_stats()
+    old_scan = st.get("scan_path", "/home/t0002965/log/ssh_eda_search_20261028_174426/summary.tsv")
+    print("# === scansync: 在 .75 上跑 (经 eda_flow run_commands) ===")
+    print("# 1) 找最新扫描目录 (按时间排序)")
+    print("ls -dt /home/t0002965/log/ssh_eda_search_*/ 2>/dev/null | head -1")
+    print("# 2) 用最新扫描统计各口径 (假设最新目录是 $SCAN_DIR):")
+    print("#    SCAN_DIR=$(ls -dt /home/t0002965/log/ssh_eda_search_*/ | head -1)")
+    print("#    SUMMARY=$SCAN_DIR/summary.tsv")
+    print("echo \"scan_dir: $SCAN_DIR\"")
+    print("echo \"total_rows: $(tail -n +2 $SUMMARY | wc -l)\"")
+    print("echo \"dedup_sessions: $(tail -n +2 $SUMMARY | awk -F'\\t' '{print $4}' | sort -u | wc -l)\"")
+    print("echo \"dedup_users: $(tail -n +2 $SUMMARY | awk -F'\\t' '{print $3}' | sort -u | wc -l)\"")
+    print("echo \"dedup_hosts: $(tail -n +2 $SUMMARY | awk -F'\\t' '{print $2}' | sort -u | wc -l)\"")
+    print("echo \"mc30: $(tail -n +2 $SUMMARY | awk -F'\\t' '$5+0>=30 {print $4}' | sort -u | wc -l)\"")
+    print("echo \"mc100: $(tail -n +2 $SUMMARY | awk -F'\\t' '$5+0>=100 {print $4}' | sort -u | wc -l)\"")
+    print("echo \"users_mc30: $(tail -n +2 $SUMMARY | awk -F'\\t' '$5+0>=30 {print $3}' | sort -u | wc -l)\"")
+    print("# 3) 各 shard 候选池规模 (用当前过滤词 + mc 阈值):")
+    for sid in sorted(SHARD_DOMAINS):
+        tools_re = SHARD_DOMAINS[sid][1]
+        mc = SHARD_MC.get(sid, 30)
+        print("echo \"shard_%s_pool_mc%d: $(tail -n +2 $SUMMARY | awk -F'\\t' '$5+0>=%d && $7 ~ /%s/ {print $4}' | sort -u | wc -l)\""
+              % (sid, mc, mc, tools_re))
+    print("# 4) 新增 session (旧扫描没有的):")
+    print("echo \"new_sessions: $(comm -13 <(tail -n +2 %s | awk -F'\\t' '$5+0>=30{print $4}' | sort -u) <(tail -n +2 $SUMMARY | awk -F'\\t' '$5+0>=30{print $4}' | sort -u) | wc -l)\""
+          % old_scan)
+    print("# 5) 各 shard 的新增候选 (旧扫描没有的):")
+    for sid in sorted(SHARD_DOMAINS):
+        tools_re = SHARD_DOMAINS[sid][1]
+        mc = SHARD_MC.get(sid, 30)
+        print("echo \"shard_%s_new: $(comm -13 <(tail -n +2 %s | awk -F'\\t' '$5+0>=%d && $7 ~ /%s/{print $4}' | sort -u) <(tail -n +2 $SUMMARY | awk -F'\\t' '$5+0>=%d && $7 ~ /%s/{print $4}' | sort -u) | wc -l)\""
+              % (sid, old_scan, mc, tools_re, mc, tools_re))
+    print("# 6) 更新 summary_stats.json (把上面的数字填进去):")
+    print("#    python3 designflow/trace_ledger.py refresh --json '{\"scan_path\":\"$SCAN_DIR/summary.tsv\",\"mc30\":NNN,...}'")
+    print("# 7) daily scan log 增量 (今日新增 trace):")
+    print("TODAY=$(date +%%Y%%m%%d)")
+    print("echo \"today_log: /home/t0002965/log/eda_trace_$TODAY.log\"")
+    print("echo \"today_sessions: $(grep -c '^10\\.' /home/t0002965/log/eda_trace_$TODAY.log 2>/dev/null)\"")
+    print("# 旧扫描: %s" % old_scan)
+    return 0
+
+
 def main():
     ap = argparse.ArgumentParser(description="trace ledger + coverage progress")
     ap.add_argument("--shard", default=None, choices=sorted(SHARD_DOMAINS.keys()),
@@ -439,6 +499,8 @@ def main():
     p.add_argument("--json", required=True)
     p = sub.add_parser("seed")
     p.add_argument("--jsonl", required=True)
+    p = sub.add_parser("scansync",
+                       help="管理任务: 输出 .75 上最新扫描的统计命令块 (shard A 每日巡检用)")
     p = sub.add_parser("prefilter")
     p.add_argument("--candidates", help="candidates TSV (跑 trace_prefilter.py)")
     p.add_argument("--min-mc", type=int, default=30)
@@ -449,7 +511,7 @@ def main():
         _set_shard(a.shard)
     return {"stats": cmd_stats, "next": cmd_next, "claim": cmd_claim,
             "mark": cmd_mark, "refresh": cmd_refresh, "seed": cmd_seed,
-            "prefilter": cmd_prefilter}[a.cmd](a) or 0
+            "scansync": cmd_scansync, "prefilter": cmd_prefilter}[a.cmd](a) or 0
 
 
 if __name__ == "__main__":
