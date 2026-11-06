@@ -2,7 +2,9 @@
 
 WAITING: 0
 
-> 🆕 **【wake #787 · 2026-11-06 14:17】📊监控巡检·CPU SFT健康运行中·step450/3000 loss0.37 ETA~121min。训练PID2882778 alive(.12,~49核/13.7GB,nice-n10),step450/3000,loss1.25→0.37单调下降,0.35step/s,ETA~121min(~16:18完成)。**无eval结果yet(首个@step1000,~14:44,~27min后);无ckpt保存yet(save_steps=1000)。GRPO chain PID2466702 alive(waited22200s/7776000≈6.2h/90day,120s轮询eval_results.json),GPU全占(8×H100 96-100% pretrain ETA≈12/24)⇒即便SFT通过,GRPO仍待GPU。**决策**:pilot健康运行,无需干预;eval只查格式(tool-call+submit带数字)不查正确性⇒step1000极可能通过;nsteps=3000=375优化器步=0.34epoch(非计划书预期2-3epoch),若eval不过再重启nsteps=24000。pretrain零干扰(GPU仍96-100%)。📦体积:TASK=30.5KB/MEMORY=9.8KB(均≤32KB✓)。**未完成指令:有**(阶段1 SFT训练进行中,待eval@step1000/3000)⇒**WAITING: 0**。
+> 🆕 **【wake #788 · 2026-11-06 14:27】📊监控巡检·CPU SFT健康运行中·step625/3000 loss0.38 ETA~112min。训练PID2882778 alive(.12,~53核/13.7GB,nice-n10,1824s),step625/3000,loss1.25→0.38(已稳定在0.33-0.38平台),0.35step/s,ETA~112min(~16:19完成)。**无eval结果yet(首个@step1000,~14:45,~18min后);无ckpt保存yet(save_steps=1000)。GRPO chain PID2466702 alive(waited22810s/7776000≈6.3h/90day,120s轮询eval_results.json,"busy_util--waiting"),GPU全占(8×H100 100% util/~75GB pretrain ETA≈12/24)⇒即便SFT通过,GRPO仍待GPU。**决策**:pilot健康运行,无需干预;loss已plateau在0.33-0.38(SFT正常);eval只查格式(tool-call+submit带数字)不查正确性⇒step1000极可能通过;nsteps=3000=375优化器步=0.34epoch,若eval不过再重启nsteps=24000。pretrain零干扰(GPU仍100%)。📦体积:TASK=30.5KB/MEMORY=10.0KB(均≤32KB✓)。**未完成指令:有**(阶段1 SFT训练进行中,待eval@step1000/3000)⇒**WAITING: 0**。
+
+> 📦 wake #787（监控巡检·2026-11-06 14:17）已归档 → daily-memories-vision/2026-11-06.md；**结论**：CPU SFT step450/3000 loss0.37 ETA~121min·无eval yet·GRPO chain alive待GPU·pretrain零干扰。需要时再读。
 
 > 📦 wake #786（监控巡检·2026-11-06 14:12）已归档 → daily-memories-vision/2026-11-06.md；**结论**：CPU SFT step300/3000 loss0.38 ETA~127min·eval只查格式⇒0.34epoch极可能通过·GRPO chain alive待GPU·pretrain零干扰。需要时再读。
 
@@ -74,10 +76,10 @@ WAITING: 0
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | 🟠 **波形 RL 阶段0交付(YELLOW) + 阶段1 SFT CPU训练进行中(PID2882778,step450/3000,loss0.37,ETA~121min~16:18) + 阶段2 GRPO+评测脚手架就绪(GRPO chain PID2466702等eval_results.json)**。eval只查格式不查正确性⇒step1000极可能通过。GPU全占(pretrain ETA≈12/24)但SFT用CPU绕过;GRPO仍需GPU。阶段2/3未交付。**WAITING: 0** |
+| PHASE | 🟠 **波形 RL 阶段0交付(YELLOW) + 阶段1 SFT CPU训练进行中(PID2882778,step625/3000,loss0.38,ETA~112min~16:19) + 阶段2 GRPO+评测脚手架就绪(GRPO chain PID2466702等eval_results.json)**。loss已稳定在0.33-0.38平台(SFT正常)。eval只查格式不查正确性⇒step1000极可能通过。GPU全占(pretrain ETA≈12/24)但SFT用CPU绕过;GRPO仍需GPU。阶段2/3未交付。**WAITING: 0** |
 | WAITING | 0 |
 | 已完成 | 阶段1 SFT CPU训练启动(wake#785) · CPU端到端训练循环验证7/7 PASS(wake#741) · 数据泄漏验证+阶段1就绪报告HTML(wake#731) · 全管线就绪审计(wake#714) · GRPO链式启动器修复+启动(wake#626) · GRPO CPU冒烟测试PASS(wake#622) · 2B文本骨干提取1.72B(wake#620) · 数据集均衡化9013条(wake#618) · WaveQA-RL oracle 300题(wake#614) · 波形RL阶段0 YELLOW(wake#609) · 论文改稿(wake#437~#442) · 波形RL计划书(wake#435) · OCR合成10M(wake#275) · ArmE-R2/ArmD-R2 全链路 |
-| 当前动作 | **CPU SFT训练进行中**：PID2882778(.12,49核/13.7GB,nice-n10),step450/3000,loss1.25→0.37,0.35step/s,ETA~121min·eval@step1000(~14:44)/2000/3000·eval只查格式(tool-call模式+submit带数字)不查数值正确性·GRPO chain PID2466702等eval_results.json |
+| 当前动作 | **CPU SFT训练进行中**：PID2882778(.12,53核/13.7GB,nice-n10,1824s),step625/3000,loss1.25→0.38(plateau 0.33-0.38),0.35step/s,ETA~112min·eval@step1000(~14:45)/2000/3000·eval只查格式(tool-call模式+submit带数字)不查数值正确性·GRPO chain PID2466702等eval_results.json |
 | 下一步 | 等 CPU SFT eval结果(首个@step1000~14:44) → 若pass(fmt≥90%+submit≥70%)→阶段1交付(ckpt+报告+§20)→GRPO chain自动启动阶段2(待GPU) → 若fail→重启nsteps=24000(3000优化器步=2.66epoch,~21h) |
 | 阻塞 | .12+.29 GPU全占（16×H100 96-100% util / ~75GB，pretrain baize2b ETA≈12/24-25）→ 阶段1 SFT已用CPU绕过·阶段2 GRPO仍需GPU（ETA≈12/24）·.17+.75 SSH不可达 |
-| 更新 | **2026-11-06 14:17 (wake #787)**: 📊监控巡检·CPU SFT step450/3000 loss0.37 ETA~121min·无eval yet(首个@step1000~14:44)·GRPO chain alive待GPU·pretrain零干扰·WAITING=0 |
+| 更新 | **2026-11-06 14:27 (wake #788)**: 📊监控巡检·CPU SFT step625/3000 loss0.38(plateau) ETA~112min·无eval yet(首个@step1000~14:45)·GRPO chain alive待GPU·pretrain零干扰·WAITING=0 |
