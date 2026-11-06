@@ -2,7 +2,9 @@
 
 WAITING: 0
 
-> 🆕 **【wake #831 · 2026-11-06 19:52】CPU GRPO Phase2监控·P1 step32/50健康ETA~20:15·P2 chain正确等待(waited2280s)·报告preview OK·全链路无异常零错误。** ①P1 pilot PID527890 step32/50,loss~0,reward[-0.5~0.86],submit100%,lr~3.3e-7,无OOM/NaN,step25 ckpt已存 ②P2 eval chain PID762520正确等待training_log.json(waited2280s=38min) ③pre-SFT eval DONE(overall_mean=0.0,50题)/Oracle 300题DONE(mean=1.000)/SFT step3000 ckpt✅(279MB LoRA)/2B extracted模型✅(3.4GB) ④报告生成器preview run OK(8698B,idempotent,缺post-SFT/post-GRPO数据标pending) ⑤EXPERIMENTS§21待P2 eval完再写 ⑥GPU-wait chain PID1365749保留不动 ⑦系统:load39/76GB free/1118GB avail/224核/无swap。**下轮唤醒**:检查training_log.json(P1完~20:15)→P2 chain自动跑post-SFT+post-GRPO eval(各50题CPU,估~50min)→全齐则运行gen_phase2_cpu_report.py→写EXPERIMENTS§21→commit+push→标✅已交付。📦体积:TASK=31.7KB/MEMORY≈20KB(均≤32KB✓,本轮0归档)。**未完成指令:有**(P1训练中/P2 eval待/P3报告待)⇒**WAITING: 0**。
+> 🆕 **【wake #832 · 2026-11-06 20:03】CPU GRPO Phase2监控·P1 step40/50健康ETA~20:05·P2 chain正确等待(waited3000s)·全链路无异常零错误。** ①P1 pilot PID527890 step40/50,loss~0,reward[-0.5~1.36],submit100%,lr~1.3e-7,无OOM/NaN,step25 ckpt已存,~73s/step ②P2 eval chain PID762520正确等待training_log.json(waited3000s=50min) ③pre-SFT eval DONE(overall_mean=0.0,50题,pred=null=基线2B无法解析波形答案,符合预期)/Oracle 300题DONE(mean=1.000,完美Tcl上限)/SFT step3000 ckpt✅(279MB LoRA)/2B extracted模型✅(3.4GB) ④报告生成器gen_phase2_cpu_report.py就绪(idempotent,缺post-SFT/post-GRPO数据标pending) ⑤EXPERIMENTS§21待P2 eval完再写 ⑥GPU-wait chain PID1365749保留不动 ⑦系统:load38/73GB free/1119GB avail/224核/无swap·GPU4卡97-100%(pretrain占用非本线)。**下轮唤醒**:P1完(~20:05)→training_log.json出现→P2 chain自动跑post-SFT eval(50题CPU~25min)+post-GRPO eval(50题CPU~25min)→全齐(~21:00)则运行gen_phase2_cpu_report.py→写EXPERIMENTS§21→commit+push→标✅已交付。📦体积:TASK=31.7KB/MEMORY≈20KB(均≤32KB✓,本轮0归档)。**未完成指令:有**(P1训练中/P2 eval待/P3报告待)⇒**WAITING: 0**。
+
+> 📦 wake #831（CPU GRPO Phase2监控·2026-11-06 19:52）已归档 → daily-memories-vision/2026-11-06.md；**结论**：P1 step32/50健康·P2 chain正确等待·报告preview OK·零错误。需要时再读。
 
 > 📦 wake #830（CPU GRPO Phase2监控·2026-11-06 19:46）已归档 → daily-memories-vision/2026-11-06.md；**结论**：P1 step28/50健康·P2前置验证全PASS·报告preview OK·零错误。需要时再读。
 
