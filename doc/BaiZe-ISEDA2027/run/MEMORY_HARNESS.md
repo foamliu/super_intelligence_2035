@@ -5,13 +5,13 @@ WAITING: 0
 ## 📊 进度快照
 
 ```
-PHASE:        R1731 TB4 codex fix+rerun·SWE-bench predict 305/3500(8.7% 7/7 alive)·TB4 cline running+codex rerun(fix applied)
-已完成:       H-B✅·Gate7/7·TB报告✅·full500全7路predict+eval 100%完成✅·R1685 cline低分归因✅·R1694-R1730 glm53重测启动+proxy修复+TB4镜像+TB4 smoke 7/7✅+TB4 timeout fix(3600s)+setsid restart·R1731 TB4 codex根因诊断+修复(stale config→TB_MODEL+chat API)
-当前动作:     R1731 诊断+修复TB4 codex适配器(codex.py L108-126:stale "kimi-k2.6-cloud"+wire_api="responses"→TB_MODEL(glm-5.3-flash)+"chat")·kill旧codex harbor(11 errored,0 done)·errored结果移codex_errored_R1731_stale_config·rerun codex TB4 with fix(PID3469493,running fin-saccr-rwa task in Docker)·SWE-bench 305/3500:her80/op73/cc36/cline36/pi35/ds33/codex12·7/7 alive·TB4 cline-patched 仍在跑1st task(24min)·CPU/MEM PASS(load56/224·max harness 23%)·gw_proxy 9092+9093=200✅·disk /data 5.8TB✅·硬约束③PASS·体积PASS(31.3/30.3KB)
-下一步:       ①监控codex TB4 rerun是否产出reward(验证fix生效) ②监控SWE-bench predict(305/3500,按100/300/500汇报) ③TB4剩余5路(hermes/opencode/claude-code/deepseek/pi)待launch脚本Batch2-4 ④每路predict完即eval ⑤两基准全交付后写报告report_harness_glm53_7way_swebench_tb_zh.html
-阻塞:         无·codex SWE-bench 1/12 patches(low but early,astropy instances hard,host config correct)
+PHASE:        R1732 TB4全7路已启动(7/7 harbor alive)·SWE-bench predict 321/3500(9.2% 7/7 alive)·两基准7路全在跑
+已完成:       H-B✅·Gate7/7·TB报告✅·full500全7路predict+eval 100%完成✅·R1685 cline低分归因✅·R1694-R1731 glm53重测启动+proxy修复+TB4镜像+TB4 smoke 7/7✅+TB4 timeout fix(3600s)+codex stale config fix+rerun·R1732 TB4 Batch2-4全启动(hermes/opencode/claude-code/deepseek/pi)→7/7 TB4 harbor alive
+当前动作:     R1732 监控轮+TB4全7路启动:①自检CPU/MEM PASS(load52/224·max harness 12.7%·无>8000%·无>50GB·MEM 1.2T avail) ②disk体检 /data 5.8T·/ 352G✅ ③gw_proxy 9092+9093+gateway=200✅ ④SWE-bench 321/3500(9.2%):her82/op74/cc42/cl38/pi36/ds34/co15·7/7 alive ⑤TB4:codex rerun进度好(~15 tasks)·cline-patched仍在task1(35min,atrx-vep-crispr超难) ⑥创建launch_tb4_glm53_batch2/3/4.sh并setsid+sg docker启动→TB4全7路harbor alive(cline/codex/hermes/opencode/claude-code/deepseek/pi)·8 Docker容器·load稳定52 ⑦hermes/opencode适配器核验:均用TB_MODEL动态注入,无codex式stale config✅
+下一步:       ①监控TB4全7路(各66 tasks,3600s timeout,按完成进度汇报) ②监控SWE-bench predict(321/3500,按100/300/500汇报) ③每路predict完即eval ④TB4每路完即统计reward ⑤两基准全7路交付后写报告report_harness_glm53_7way_swebench_tb_zh.html
+阻塞:         无·codex SWE-bench 15/500 patches(low but early,astropy instances hard)
 ERROR_COUNT:  0
-  📦 体积：TASK=32074B(31.3KB) / MEMORY=31019B(30.3KB)(本轮未归档)
+  📦 体积：TASK=32074B(31.3KB) / MEMORY=31516B(30.8KB)(本轮未归档)
 ```
 
 > 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
@@ -19,6 +19,7 @@ ERROR_COUNT:  0
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 
 ### 本唤醒流水
+> [06:39] R1732 TB4全7路启动+监控:①自检CPU/MEM PASS(load52/224·max harness 12.7%·无>8000%·无>50GB·MEM 670G/2T·avail 1.2T) ②disk体检 df -h /data=5.8T avail(18%)/=352G avail(4%)✅ ③gw_proxy 9092+9093+gateway=200✅ ④SWE-bench predict 321/3500(9.2%):her82/op74/cc42/cl38/pi36/ds34/co15·7/7 run_single alive ⑤TB4现状:codex rerun(R1731 fix)进度好~15tasks·cline-patched仍在task1 atrx-vep-crispr(35min,超难bio task)·hermes/opencode errored(R1727 timeout1800)·claude-code/deepseek/pi未启动 ⑥核验hermes.py(L40 TB_MODEL动态)/opencode.py(L59 f"gw/{tb_model}")均无codex式stale config✅ ⑦创建launch_tb4_glm53_batch2.sh(hermes+opencode)+batch3.sh(claude-code+deepseek)+batch4.sh(pi)·setsid+sg docker启动 ⑧结果:TB4全7路harbor alive(cline/codex/hermes/opencode/claude-code/deepseek/pi)·8 Docker容器·load稳定52·top CPU 9%·硬约束③PASS·体积PASS(31.3/30.8KB)·未完成指令:有(glm53重测进行中)⇒WAITING:0
 > [06:27] R1731 TB4 codex根因诊断+修复+rerun:①自检CPU/MEM PASS(load56/224·max harness 23%·无>8000%·无>50GB)·gw_proxy 9092+9093=200✅ ②SWE-bench 305/3500(8.7%):her80/op73/cc36/cline36/pi35/ds33/codex12·7/7 alive·patch:op63/her51/cc18/cline23/ds22/pi16/codex1 ③TB4 codex系统性故障(11/11 errored,exit=1)→读trial.log根因=适配器codex.py L114-125在容器内写config.toml用stale model="kimi-k2.6-cloud"+wire_api="responses"(应为TB_MODEL+chat) ④修复codex.py:model→f'{TB_MODEL}',wire_api→"chat",provider→"gw_proxy"·py_compile✅ ⑤kill旧codex harbor(1665919)·errored移codex_errored_R1731_stale_config ⑥rerun codex TB4(PID3469493,setsid+sg docker)·验证:codex exec --model glm-5.3-flash 在Docker容器内运行(fin-saccr-rwa task)✅ ⑦cline-patched TB4 unaffected(24min,仍在1st task)·disk /data 5.8TB·硬约束③PASS·体积PASS·未完成指令:有(glm53重测)⇒WAITING:0
 > 📦 R1730 流水已归档 → daily-memories-harness/2026-11-07.md。结论：监控轮,SWE-bench 289/3500,TB4 codex 3 errored(exit=1),首报codex问题。需要时再读。
 > 📦 R1729 流水已归档 → daily-memories-harness/2026-11-07.md。结论：TB4 orphan-fix(setsid detach)+restart,SWE-bench 287/3500。需要时再读。
