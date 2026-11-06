@@ -213,6 +213,8 @@
 | `baize_posttrain_rl_grpo.sh` | RLVR+GRPO 配方骨架（4 臂奖励 R1–R4 开关 + 沙盒并发） | ✅ 已写 · `bash -n` PASS · `--dry-run` rc=0 |
 | `baize_posttrain_eval.sh` | EDA-Eval-PyAether 评测骨架（5-run/reshuffle/fresh-context/2500s/-p 8 -n） | ✅ 已写 · `bash -n` PASS · `--dry-run` rc=0 |
 | `baize_posttrain_contamination_gate.sh` | 污染隔离闸门（红线 P1-e，复用 check_contamination.py + blacklist，投料前阻断） | ✅ 已写（wake2）· `bash -n` PASS · `--dry-run` rc=0 · `--build-blacklist --dry-run` rc=0 |
+| `baize_posttrain_minicpm5_diag.sh` | MiniCPM5-2B 诊断评测启动脚本（vLLM serve→cline auth→评测→D1–D6 提取，--quick 10 任务/--full 158×5-run） | ✅ 已写（wake9）· `bash -n` PASS · `--dry-run --quick/--full` rc=0 |
+| `pt_p0_minicpm5_extract.py` | MiniCPM5-2B D1–D6 提取脚本（从 ~/eda_code_eval/ 轨迹提取，跨 run aggregate mean±std） | ✅ 已写（wake9）· `python ast` PASS · `--dry-run` rc=0 |
 
 ### 验证输出（2026-11-06 唤醒1 · `bash -n` + `--dry-run`，不真跑）
 
@@ -227,6 +229,21 @@
   `mode=DRY-RUN · resume=sft/step_final · reward_arm=R4 · group16 · sandbox_concurrency=16 · max_turns=3 timeout=2500s · LR1e-6 KL0.04 · anti-cheat=enabled · entrypoint=grpo_train.py+reward_compute.py(占位)`
 - **eval**（`--dry-run --backbone baize-rl --endpoint http://127.0.0.1:8000/v1` → rc=0）：
   `backbone=baize-rl · 158 tasks · Pass@1 · n_runs=5(reshuffle/fresh_context) · timeout=2500s · -p 8 -n · driver=eda_fastmcp/scripts/run_cline_script.sh · scorer=run_eval.py · cline auth openai endpoint`
+- **minicpm5_diag**（`--dry-run --quick` → rc=0）：
+  `mode=quick(quick-diagnostic) · model=/tmp/models/MiniCPM5-2B · served=minicpm5-2b · port=8866 · venv=~/code/vllm_venv · 10 tasks · n_runs=1 · timeout=2500s · -p 8 -n`
+- **minicpm5_diag**（`--dry-run --full` → rc=0）：
+  `mode=full(full-diagnostic) · 158 tasks · n_runs=5 · timeout=2500s · 冻结协议 158/Pass@1/2500s/单trace/5-run/-p 8 -n`
+- **minicpm5_extract**（`--dry-run` → rc=0）：
+  `eval_dir=~/eda_code_eval · dataset=158 tasks · run_dirs found=0（~/eda_code_eval 尚不存在，评测后自动创建）`
+
+### MiniCPM5-2B 模型发现（2026-11-06 wake9）
+
+> **新发现**：MiniCPM5-2B 模型已下载到本节点 `/tmp/models/MiniCPM5-2B/`（4.7GB，2026-11-06 17:14）。
+> - 架构：LlamaForCausalLM，42 层，hidden=2048，vocab=130560，bfloat16，max_position=131072
+> - 文件：`model-00000-of-00001.safetensors`（5033557096 bytes）+ `config.json` + `chat_template.jinja`
+> - GPU 现状：8×A40 全被 SGLang Qwen3.8-27B（TP4）占用（44-45/46GB），无空闲
+> - vLLM 不可装：系统 Python 3.8 权限拒，venv(3.13) 无 torch，SGLang `/opt/sglang/` root 不可访问
+> - **行动计划**：GPU 释放后（预计 2026-11-09 分配 4×A40）→ `bash baize_posttrain_minicpm5_diag.sh --quick` → 获取 D1/D2/D6 预诊 → 补全 P0 36% 侧
 
 > ⚠️ 占位项（待 P2 方案书定稿 + 框架确认后填实）：
 > - 退火领域语料 `pyAether_api_anneal`（待 P1-d 调研 + data 线分词）；SFT 的 `sft_pyaether_synth`（待合成）；RL 的 `rl_pyaether_synth_tasks.jsonl`（待合成，⚠️ 禁用 158 评测题）。
