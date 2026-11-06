@@ -18,9 +18,9 @@
 \midrule
 Pure LLM & 19.7$\pm$1.4 & 14.3$\pm$2.1 & 33.2$\pm$2.3 & 10.1$\pm$1.1 & 183$\pm$9 & --- & 3.6$\pm$0.1 & 72$\pm$2 & 6.3$\pm$0.7 \\
 RAG (retr.+self-expl., no sandbox) & 68.6$\pm$1.6 & 71.1$\pm$4.6 & 52.2$\pm$1.9 & 84.6$\pm$1.9 & 226$\pm$9 & --- & 16.9$\pm$0.7 & 272$\pm$8 & 8.6$\pm$0.3 \\
-ZhuLong w/o Retrieval & 66.2$\pm$4.2 & 73.4$\pm$7.3 & 45.2$\pm$9.4 & 82.2$\pm$2.3 & 981$\pm$151 & 22.6$\pm$2.8 & 26.3$\pm$3.1 & 658$\pm$133 & 11.7$\pm$2.8 \\
-ZhuLong w/o Self-Expl. & 74.5$\pm$1.8 & 77.0$\pm$4.1 & \textbf{61.5$\pm$0.7} & 86.7$\pm$3.0 & 645$\pm$132 & 12.6$\pm$1.4 & 29.5$\pm$2.9 & 722$\pm$116 & 11.5$\pm$2.3 \\
-\textbf{ZhuLong} (Full) & \textbf{76.9$\pm$2.3} & \textbf{82.5$\pm$2.0} & 60.3$\pm$6.7 & \textbf{89.9$\pm$2.0} & 464$\pm$57 & 10.6$\pm$0.7 & 26.3$\pm$1.4 & 710$\pm$21 & 12.0$\pm$0.7 \\
+Full w/o Retrieval & 66.2$\pm$4.2 & 73.4$\pm$7.3 & 45.2$\pm$9.4 & 82.2$\pm$2.3 & 981$\pm$151 & 22.6$\pm$2.8 & 26.3$\pm$3.1 & 658$\pm$133 & 11.7$\pm$2.8 \\
+Full w/o Self-Expl. & 74.5$\pm$1.8 & 77.0$\pm$4.1 & \textbf{61.5$\pm$0.7} & 86.7$\pm$3.0 & 645$\pm$132 & 12.6$\pm$1.4 & 29.5$\pm$2.9 & 722$\pm$116 & 11.5$\pm$2.3 \\
+\textbf{Full} & \textbf{76.9$\pm$2.3} & \textbf{82.5$\pm$2.0} & 60.3$\pm$6.7 & \textbf{89.9$\pm$2.0} & 464$\pm$57 & 10.6$\pm$0.7 & 26.3$\pm$1.4 & 710$\pm$21 & 12.0$\pm$0.7 \\
 \midrule
 \multicolumn{10}{@{}l}{\emph{Read-back axis (retrieval + effector fixed, only what} run\_code \emph{returns varies)}}\\
 (N$'$) No read-back (prior only) & 69.8$\pm$2.2 & 73.4$\pm$2.1 & 50.7$\pm$4.9 & 87.9$\pm$1.7 & 253$\pm$5 & 1.1$\pm$0.0 & 16.6$\pm$0.9 & 278$\pm$12 & 4.0$\pm$0.1 \\
@@ -42,8 +42,8 @@ ZhuLong w/o Self-Expl. & 74.5$\pm$1.8 & 77.0$\pm$4.1 & \textbf{61.5$\pm$0.7} & 8
 \textbf{Benchmark and protocol.} We evaluate on \textbf{EDA-Scripting-Bench} (449 tasks, Section~\ref{sec:benchmark}) using \textbf{Pass@1}: one trace per task (the agent may iterate within it via $\Phi$ but is never restarted), a 2500-second timeout, and a \texttt{PreToolUse} hook that enforces a tool whitelist, blocks shell/code-search tools, and confines file access to a fresh directory---identical in every configuration. Each configuration runs five times (reshuffled order, fresh contexts), reported as mean $\pm$ s.d. Task cases derive from non-redistributable vendor documentation (unlikely in public pretraining), and no third-party agent can run these runtimes without the MCP bridge, so baselines are tool-registration ablations of the same harness---enabling single-variable attribution.
 % 评测集与协议。EDA-Scripting-Bench 449 任务，Pass@1。单 trace（可经 Φ 内迭代不跨 trace 重启），2500s 超时；PreToolUse hook 强制白名单、屏蔽 shell/代码搜索、文件限新工作目录——所有配置一致。每配置 5 次（重排/全新上下文）均值±标准差。任务源自不可再分发厂商文档；无 MCP 桥第三方无法执行，故基线为同框架工具注册消融——使单变量归因成为可能。
 
-\textbf{Configurations.} We isolate components by tool registration (a disabled tool is unregistered and invisible; the agent policy is held fixed), giving five configurations (Table~\ref{tab:main-ablation}): \emph{Pure LLM} (no retrieval, sandbox, or self-exploration), \emph{RAG} (retrieval + self-exploration, no sandbox; $=$ w/o-Sandbox), \emph{w/o Self-Expl.} (retrieval + sandbox), \emph{w/o Retrieval} (sandbox + self-exploration), and \emph{ZhuLong (Full)} (all three on). S1 probes the observation axes at their extremes; S2 bounds $\Phi$. All main experiments use DeepSeek-V4-Pro as the backbone; S3 evaluates five additional backbones under the identical harness.
-% 配置：通过工具注册隔离组件（禁用工具注销不可见，策略固定）。五配置：Pure LLM、RAG（与 w/o-Sandbox 合一）、w/o Self-Expl.、w/o Retrieval、ZhuLong Full。S1 探观测轴极端；S2 给 Φ 加界。主实验用 DeepSeek-V4-Pro；S3 另评 5 backbone。
+\textbf{Configurations.} We isolate components by tool registration (a disabled tool is unregistered and invisible; the agent policy is held fixed), giving five configurations (Table~\ref{tab:main-ablation}): \emph{Pure LLM} (no retrieval, sandbox, or self-exploration), \emph{RAG} (retrieval + self-exploration, no sandbox; $=$ w/o-Sandbox), \emph{w/o Self-Expl.} (retrieval + sandbox), \emph{w/o Retrieval} (sandbox + self-exploration), and \emph{Full} (all three on). S1 probes the observation axes at their extremes; S2 bounds $\Phi$. All main experiments use DeepSeek-V4-Pro as the backbone; S3 evaluates five additional backbones under the identical harness.
+% 配置：通过工具注册隔离组件（禁用工具注销不可见，策略固定）。五配置：Pure LLM、RAG（与 w/o-Sandbox 合一）、w/o Self-Expl.、w/o Retrieval、Full。S1 探观测轴极端；S2 给 Φ 加界。主实验用 DeepSeek-V4-Pro；S3 另评 5 backbone。
 
 \subsection{Results and Ablations}
 \label{sec:exp-results}
@@ -74,7 +74,7 @@ Principle 3 requires actions to reach the design through a causal interface and 
 
 \begin{table}[!t]
 \centering
-\caption{Impact of LLM backbone (ZhuLong, full harness).}
+\caption{Impact of LLM backbone (full system, full harness).}
 \label{tab:llm-comparison}
 \scriptsize
 \renewcommand{\arraystretch}{0.76}
@@ -109,14 +109,14 @@ The four slices share one schema, assertion criterion, and harness, so S1--S2 re
 \subsection{Error Analysis}
 \label{sec:error-analysis}
 
-ZhuLong passes 82.5\% on PyAether, 60.3\% on SKILL, 88.6\% on WaveView, and 91.6\% on Innovus (Table~\ref{tab:main-ablation}). We split each slice's misses into a \emph{generation-stage} failure (no executable candidate returned) and an \emph{evaluation-stage} failure (a candidate returned but no pass). The generation/evaluation split is 29/109 on PyAether, 31/281 on SKILL, 1/43 on WaveView, and 1/23 on Innovus.
-% 错误分析。ZhuLong 在 PyAether 过 82.5%、SKILL 60.3%、WaveView 88.6%、Innovus 91.6%（表~\ref{tab:main-ablation}）。失败分两阶段：生成阶段失败（轮次在产出任何可执行候选前结束）与评测阶段失败（产出候选但未通过）。生成/评测切分：PyAether 29/109、SKILL 31/281、WaveView 1/43、Innovus 1/23。下面剖析评测阶段失败。
+Our system passes 82.5\% on PyAether, 60.3\% on SKILL, 88.6\% on WaveView, and 91.6\% on Innovus (Table~\ref{tab:main-ablation}). We split each slice's misses into a \emph{generation-stage} failure (no executable candidate returned) and an \emph{evaluation-stage} failure (a candidate returned but no pass). The generation/evaluation split is 29/109 on PyAether, 31/281 on SKILL, 1/43 on WaveView, and 1/23 on Innovus.
+% 错误分析。本系统在 PyAether 过 82.5%、SKILL 60.3%、WaveView 88.6%、Innovus 91.6%（表~\ref{tab:main-ablation}）。失败分两阶段：生成阶段失败（轮次在产出任何可执行候选前结束）与评测阶段失败（产出候选但未通过）。生成/评测切分：PyAether 29/109、SKILL 31/281、WaveView 1/43、Innovus 1/23。下面剖析评测阶段失败。
 
 The failures reduce to two missing ingredients, neither a matter of raw model capability: domain knowledge the prior would need to produce a candidate (L3), and a contract in the live design that $\Omega$ cannot see (L4). Generation-stage failures are predominantly L3; the four evaluation-stage patterns below are predominantly L4---constraints documented nowhere yet decisive, visible only through $\Omega$.
 % 失败归结为两个缺失要素，均非模型原始能力问题：产出候选所需的领域知识（L3），与实时设计中 Ω 看不见的契约（L4）。生成阶段失败以 L3 为主；下方四类评测阶段模式以 L4 为主——文档从未记录却决定成败、仅能通过 Ω 观测的契约。
 
-Across all four slices, the evaluation-stage failures that admit a clean attribution fall into four recurring patterns---all on solvable tasks ZhuLong misreads through an underspecified or invisible contract: \textbf{(i) Wrong internal API or contract}, a plausible but incorrect long-tail API or field literal rejected only at execution; \textbf{(ii) Unauthorized defensive guards}, a self-added validation or failure path that rejects input the specification never excluded; \textbf{(iii) Underspecified boundary and representation semantics}, an ambiguity the prompt leaves open that is resolved on the wrong side, flipping the verdict across runs; and \textbf{(iv) Host language and context contracts}, a type-template, headless-context, or canonical-form convention violated so the candidate dies before judging.
-% 跨四切片，可干净归因的评测阶段失败落在四类反复出现的模式，均为可解任务（语料跨模型或轮次通过率非零，而非不可能通过的基准）上 ZhuLong 误读欠定或不可见的契约：(i) 内部 API 或契约错误——貌似合理但错误的长尾 API、名称或字段字面量存留到执行才被拒绝；(ii) 未经授权的防御守卫——自行添加的校验或失败路径拒绝了规范从未排除的输入；(iii) 欠定的边界与表示语义——提示留空的歧义被解析到错误一侧，使裁决跨轮翻转；(iv) 宿主语言与上下文契约——违反类型模板、无头上下文或规范形约定，候选在判题前即死亡。
+Across all four slices, the evaluation-stage failures that admit a clean attribution fall into four recurring patterns---all on solvable tasks the agent misreads through an underspecified or invisible contract: \textbf{(i) Wrong internal API or contract}, a plausible but incorrect long-tail API or field literal rejected only at execution; \textbf{(ii) Unauthorized defensive guards}, a self-added validation or failure path that rejects input the specification never excluded; \textbf{(iii) Underspecified boundary and representation semantics}, an ambiguity the prompt leaves open that is resolved on the wrong side, flipping the verdict across runs; and \textbf{(iv) Host language and context contracts}, a type-template, headless-context, or canonical-form convention violated so the candidate dies before judging.
+% 跨四切片，可干净归因的评测阶段失败落在四类反复出现的模式，均为可解任务（语料跨模型或轮次通过率非零，而非不可能通过的基准）上本系统误读欠定或不可见的契约：(i) 内部 API 或契约错误——貌似合理但错误的长尾 API、名称或字段字面量存留到执行才被拒绝；(ii) 未经授权的防御守卫——自行添加的校验或失败路径拒绝了规范从未排除的输入；(iii) 欠定的边界与表示语义——提示留空的歧义被解析到错误一侧，使裁决跨轮翻转；(iv) 宿主语言与上下文契约——违反类型模板、无头上下文或规范形约定，候选在判题前即死亡。
 
 Concretely, these patterns surface as constraints documented nowhere and only weakly exposed by execution: PyAether-068 builds the cartoon-box highlight through the plausible-but-wrong \texttt{aeAddHighLightRect} where the oracle requires \texttt{GuCartBox(emyBoxF(...))}; WaveView-037 returns \texttt{N/A} on a single-rising-edge waveform and SKILL-037 rejects an empty hierarchy path---guards the specification never granted; and Innovus-057 over-filters through an extra \texttt{.use=="signal"} predicate to report 1869 weight-2 nets against the oracle's 1872.
 % 四类模式的具体落点（均为文档未记、执行仅弱暴露的契约）：PyAether-068 用貌似合理但错误的 aeAddHighLightRect 构造 cartoon box 高亮，而判据要求 GuCartBox(emyBoxF(...))；WaveView-037 在仅单升沿的波形上返回 N/A、SKILL-037 拒绝空路径——规格从未授权的守卫；Innovus-057 多加 .use=="signal" 谓词过滤，报 1869 条 weight-2 net 而判据要 1872。（SKILL-008 示例移除以回 6 页正文；4 类模式定义见上文 (i)-(iv)。）
