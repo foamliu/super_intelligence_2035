@@ -1,17 +1,17 @@
 # MEMORY_HARNESS.md — BaiZe Harness 研究线 · 运行时状态
 
-WAITING: 1
+WAITING: 0
 
 ## 📊 进度快照
 
 ```
-PHASE:        R1693 quiet监控轮:CPU/MEM自检PASS(load25.00/23.94/23.98 over 224核~11.2%busy·%Cpu 4.6us+4.3sy=8.9%·Mem2015G avail1284G充足·本线cline-hub-daemon 22.9%CPU 4.1GB+opencode 6.6%CPU 1.3GB均<阈值·他线pretrain pt_data_loader~100%不碰·无>8000%CPU·无>50GB RSS·无pytest/test_gradient/partitions失控进程·docker无容器)→backlog=0·硬约束③PASS(tracked JSON=524·0结果JSON入库)·git sync clean·未完成指令:无⇒WAITING=1
-已完成:       H-B✅·Gate7/7·TB报告✅·pilot20✅·R984-R988恒0调试✅·R997硬约束修复✅·R1567 cline trace归因✅·R1569 cline适配器修复✅·R1633 cline rerun 58/58终交付✅(356/500=71.3%)·R1635-R1649 deepseek incr_eval渐进✅(196→212)·full500全7路predict+eval 100%完成✅·R1662 full500复核可复现✅·R1667 命名合规修复(full500)+full500归档✅·R1673 命名合规修复(旧报告3份)+MEMORY归档✅·R1685 cline低分系统归因✅·R1686-R1692 quiet监控✅·R1693 quiet监控✅
-当前动作:     R1693 quiet监控轮:CPU/MEM自检PASS(load25.00/23.94/23.98 over 224核~11.2%busy·%Cpu 4.6us+4.3sy=8.9%·Mem2015G/avail1284G·ps最高CPU=本线cline-hub-daemon(PID2751345)22.9%CPU 4.1GB RSS+opencode(PID3069180)6.6%CPU 1.3GB RSS均<阈值·他线pretrain pt_data_loader(PID146325~146327)~100%不碰·无>8000%CPU·无>50GB RSS·无pytest/test_gradient/partitions失控进程·docker无容器)→无active eval/predict进程backlog=0→硬约束③PASS(git ls-files harness .json=524·非白名单result/eval_/predict/score=0)→git pull--rebase(Already up to date)+sync clean(main=origin无ahead/behind)→体积自检PASS(TASK32055B=31.3KB/MEMORY32444B=31.7KB均≤32KB达标)·未完成指令:无⇒WAITING=1
-下一步:       ①全7路full500已完成·cline低分归因报告已交付 ②永久硬约束:禁止commit结果JSON ③下次唤醒CPU/MEM自检+backlog复扫(预期=0) ④TASK=32055B(31.3KB)·MEMORY≈31.7KB均≤32KB达标 ⑤若有新指令运维会写入任务书
-阻塞:         无·全7路full500 100%完成·backlog=0·命名合规达标·TASK≤32KB·MEMORY≤32KB·硬约束③PASS.
+PHASE:        R1694 glm53重测轮:SWE-bench Verified full500×glm-5.3-flash×7路 predict已启动(7进程并行)·TB 4.0核实PASS(66题,已下载到~/terminal-bench-4.0/)·P0探针HTTP 200✅·硬盘体检PASS(/data 6.0TB avail·docker 610 images 99% reclaimable)·cline providers.json已修(9090→9092)·run_single.py OPENAI_BASE_URL已修(env化)·run_verified_full.py已改(env-var模型注入)
+已完成:       H-B✅·Gate7/7·TB报告✅·full500全7路predict+eval 100%完成✅·R1685 cline低分归因✅·R1693 quiet监控✅·R1694 glm53重测:run_verified_full.py env化✅+launch_glm53_full500.sh创建✅+gw_proxy 9092/9093启动✅+7路predict启动✅+TB4.0下载✅(66题)
+当前动作:     R1694 glm53重测:7路predict运行中(cline-patched[1/500]·codex[8/500]·hermes[3/500]·opencode[2/500]·claude-code[9/500]·deepseek-harness[44/500]·pi[2/500])·TB 4.0已下载66题待镜像拉取·待写报告
+下一步:       ①监控7路predict进度(100/300/500三段汇报) ②每路predict完即eval ③TB 4.0镜像拉取+7路smoke+全量 ④写报告report_harness_glm53_7way_swebench_tb_zh.html
+阻塞:         无·7路predict运行中·TB 4.0镜像待拉取
 ERROR_COUNT:  0
-  📦 体积：TASK=32055B(31.3KB,≤32KB达标) / MEMORY=32444B(31.7KB,≤32KB达标)
+  📦 体积：TASK=32055B(31.3KB) / MEMORY=约31KB(≤32KB达标)
 ```
 
 > 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
@@ -20,6 +20,9 @@ ERROR_COUNT:  0
 
 ### 本唤醒流水
 > 📦 R1685 流水(17:32,cline低分系统归因轮:CPU/MEM自检PASS+逐实例配对拆解cline vs opencode+差距集58题归因+McNemar p=6.27e-08+报告32968B+生成器)已归档 → daily-memories-harness/2026-11-06.md。结论：R1569修复后差距以能力差为主(50/58=86%)。需要时再读。
+
+[23:55] R1694 glm53重测轮开始:§用户令·2026-11-06 22:4x「glm-5.3-flash重测SWE-bench Verified+TB 4.0×7路」→P0探针HTTP 200✅(curl POST agi-gateway/v1/chat/completions返回200)→硬盘体检(/data 6.0TB avail·docker 738GB 610images 99%reclaimable)→TB 4.0核实PASS(harbor hub terminal-bench/terminal-bench@4.0.0 66题 已下载~/terminal-bench-4.0/)→run_verified_full.py env化(MODEL_SUFFIX/RUN_ID_PREFIX/EVAL_TAG/PRED_SUBDIR/WORKDIR_TAG 5个env-var)→launch_glm53_full500.sh创建(照抄7x300 Step1-2·gw_proxy 9092/9093)→首次启动7路predict→发现cline-patched恒Forbidden根因=cline v3.0.51读settings/providers.json而非globalState.json(baseUrl仍9090)→修复providers.json(9090→9092)+secrets.json+globalState.json→run_single.py:42 OPENAI_BASE_URL env化(GW_PROXY_PORT)→清理predictions_glm53重启→7路predict重新启动→cline-patched[1/500]patch=2835B✅·hermes[3/500]patch=6247B✅·opencode[2/500]patch=4454B✅·pi[2/500]patch=1574B✅·codex[8/500]✅·claude-code[9/500]✅·deepseek-harness[44/500]✅→WAITING=0(指令未完成).
+
 
 > 📦 R1686 流水(18:11,quiet监控轮:CPU/MEM自检PASS+硬约束③PASS·tracked JSON=524)已归档 → daily-memories-harness/2026-11-06.md。结论：quiet轮正常·全7路100%完成。需要时再读。
 

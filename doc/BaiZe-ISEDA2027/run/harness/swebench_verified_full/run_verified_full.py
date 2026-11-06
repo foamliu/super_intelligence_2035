@@ -24,11 +24,17 @@ HARNESS_DIR = HERE.parent
 RUN_SINGLE = HARNESS_DIR / "run_single.py"
 ENRICHED = HERE / "enriched_500.json"
 IDS_FILE = HERE / "verified_500_ids.txt"
-PRED_DIR = HERE / "predictions"
+# Env-var overrides for multi-model support (backward-compatible defaults).
+MODEL_SUFFIX = os.environ.get("MODEL_SUFFIX", "kimi-k2.6-cloud")
+RUN_ID_PREFIX = os.environ.get("RUN_ID_PREFIX", "verified_full")
+EVAL_TAG = os.environ.get("EVAL_TAG", "")          # e.g. "glm53_" → eval_glm53_<h>.json
+PRED_SUBDIR = os.environ.get("PRED_SUBDIR", "predictions")
+WORKDIR_TAG = os.environ.get("WORKDIR_TAG", "")     # e.g. "_glm53" → separate workdirs
+PRED_DIR = HERE / PRED_SUBDIR
 REPORT_DIR = HERE / "reports"
 LOG_DIR = HERE / "logs"
 INSTANCE_DIR = HERE / "instances"
-WORKDIRS = Path("/dev/shm/harness_verified_full/workdirs")
+WORKDIRS = Path(f"/dev/shm/harness_verified_full{WORKDIR_TAG}/workdirs")
 PROXY = "http://172.19.92.25:13128"
 TIMEOUT_RUN = 1800
 TIMEOUT_EVAL = 1800
@@ -165,7 +171,7 @@ def predict_one(harness: str, inst: dict, workdir: Path) -> dict:
            "--instance-json", str(inst_json), "--workdir", str(workdir),
            "--base-commit", bc, "--timeout", str(TIMEOUT_RUN),
            "--out-predictions", str(pred_out),
-           "--model-name", f"{disp(harness)}-kimi-k2.6-cloud"]
+           "--model-name", f"{disp(harness)}-{MODEL_SUFFIX}"]
     t0 = time.time()
     timed_out = False
     try:
@@ -254,7 +260,7 @@ def write_progress(harness: str, results: list[dict], total: int):
         "last_update": time.strftime("%Y-%m-%d %H:%M:%S"),
         "results": results,
     }
-    (REPORT_DIR / f"progress_{harness}.json").write_text(
+    (REPORT_DIR / f"progress_{EVAL_TAG}{harness}.json").write_text(
         json.dumps(progress, indent=2, ensure_ascii=False))
 
 
@@ -279,7 +285,7 @@ def phase_predict(harness: str, ids: list[str], insts: dict[str, dict]) -> list[
     PRED_DIR.mkdir(parents=True, exist_ok=True)
     REPORT_DIR.mkdir(parents=True, exist_ok=True)
     results = []
-    prog_file = REPORT_DIR / f"progress_{harness}.json"
+    prog_file = REPORT_DIR / f"progress_{EVAL_TAG}{harness}.json"
     if prog_file.exists():
         try:
             old = json.loads(prog_file.read_text())
@@ -320,7 +326,7 @@ def phase_predict(harness: str, ids: list[str], insts: dict[str, dict]) -> list[
             results.append(r)
         write_progress(harness, results, len(ids))
 
-    (REPORT_DIR / f"predict_{harness}.json").write_text(json.dumps(results, indent=2))
+    (REPORT_DIR / f"predict_{EVAL_TAG}{harness}.json").write_text(json.dumps(results, indent=2))
     merge_predictions(harness, ids)
     return results
 
@@ -337,7 +343,7 @@ def phase_eval(harness: str, ids: list[str]) -> dict:
         log(f"no patches to eval for {harness}")
         return {"error": "no patches", "eval_ids": []}
 
-    run_id = f"verified_full_{harness}"
+    run_id = f"{RUN_ID_PREFIX}_{harness}"
     max_workers = int(os.environ.get("EVAL_MAX_WORKERS", "8"))
     cmd = (f"python3 -m swebench.harness.run_evaluation "
            f"--predictions_path {merged} --dataset_name {ENRICHED} --split test "
@@ -355,7 +361,7 @@ def phase_eval(harness: str, ids: list[str]) -> dict:
 
 
 def parse_eval(run_id: str, eval_ids: list[str], harness: str) -> dict:
-    model = f"{disp(harness)}-kimi-k2.6-cloud"
+    model = f"{disp(harness)}-{MODEL_SUFFIX}"
     summary = {"harness": disp(harness), "harness_code": harness, "run_id": run_id,
                "n": len(eval_ids), "resolved": [], "failed": [], "infra_or_quota": []}
     for iid in eval_ids:
@@ -373,7 +379,7 @@ def parse_eval(run_id: str, eval_ids: list[str], harness: str) -> dict:
             (summary["resolved"] if resolved else summary["failed"]).append(iid)
         except Exception as e:
             summary["infra_or_quota"].append(f"{iid}({e})")
-    (REPORT_DIR / f"eval_{harness}.json").write_text(json.dumps(summary, indent=2))
+    (REPORT_DIR / f"eval_{EVAL_TAG}{harness}.json").write_text(json.dumps(summary, indent=2))
     log(f"  resolved={len(summary['resolved'])} failed={len(summary['failed'])} "
         f"infra={len(summary['infra_or_quota'])}")
     return summary
@@ -398,8 +404,8 @@ def main():
     if args.phase in ("eval", "gate", "all"):
         phase_eval(args.harness, ids)
     if args.phase in ("report", "gate"):
-        pred_f = REPORT_DIR / f"predict_{args.harness}.json"
-        ev_f = REPORT_DIR / f"eval_{args.harness}.json"
+        pred_f = REPORT_DIR / f"predict_{EVAL_TAG}{args.harness}.json"
+        ev_f = REPORT_DIR / f"eval_{EVAL_TAG}{args.harness}.json"
         pred = json.loads(pred_f.read_text()) if pred_f.exists() else []
         ev = json.loads(ev_f.read_text()) if ev_f.exists() else {}
         resolved = len(ev.get("resolved", []))

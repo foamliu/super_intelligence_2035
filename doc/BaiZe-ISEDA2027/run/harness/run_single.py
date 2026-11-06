@@ -39,7 +39,7 @@ def run_cline_patched(instance, workdir, timeout):
                "--auto-approve", "true", "--json", instance["problem_statement"]]
         r = _run(cmd, workdir, timeout, env={
             "OPENAI_API_KEY": DUMMY_KEY,
-            "OPENAI_BASE_URL": "http://127.0.0.1:9090/v1",
+            "OPENAI_BASE_URL": f"http://127.0.0.1:{os.environ.get('GW_PROXY_PORT', '9090')}/v1",
         })
         r.harness = self.name
         r.model_patch = git_patch(workdir) if r.returncode == 0 else ""
