@@ -1,0 +1,126 @@
+{
+  "config": {
+    "n_prompts": 3,
+    "group_size": 4,
+    "temperature": 0.8,
+    "max_turns": 8,
+    "max_new_tokens": 48,
+    "seed": 20261112,
+    "model_path": "/nas_train/app.e0031982/datasets/baize-vision/out/wave_sft_stage1w/qwen3vl_2b_text_extracted",
+    "sft_ckpt": "/nas_train/app.e0031982/datasets/baize-vision/out/wave_sft_stage1w/step3000",
+    "device": "cpu",
+    "dtype": "float32",
+    "actual_n_prompts": 3
+  },
+  "overall_reward": {
+    "mean": -0.21333333333333337,
+    "std": 0.40540788788028725,
+    "min": -0.5,
+    "max": 0.36,
+    "pct_zero": "0.0%",
+    "pct_positive": "33.3%",
+    "pct_ge1": "0.0%"
+  },
+  "key_stats": {
+    "n_total": 3,
+    "n_std0": 3,
+    "pct_std0": "100.0%",
+    "n_all_zero": 0,
+    "pct_all_zero": "0.0%",
+    "n_all_same_pos": 1,
+    "pct_all_same_pos": "33.3%",
+    "n_all_same_high": 0,
+    "pct_all_same_high": "0.0%",
+    "n_std_pos": 0,
+    "pct_std_pos": "0.0%",
+    "n_partial_signal": 0,
+    "pct_partial_signal": "0.0%",
+    "overall_submit_rate": "100.0%"
+  },
+  "std_histogram": {
+    "labels": [
+      "=0",
+      "0~.001",
+      ".001~.01",
+      ".01~.05",
+      ".05~.1",
+      ".1~.2",
+      ".2~.5",
+      ".5+"
+    ],
+    "counts": [
+      3,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
+  },
+  "mean_histogram": {
+    "labels": [
+      "<0",
+      "=0",
+      "0~.5",
+      ".5~1",
+      "1~1.5",
+      "1.5+"
+    ],
+    "counts": [
+      2,
+      0,
+      1,
+      0,
+      0,
+      0
+    ]
+  },
+  "by_question_type": {
+    "numerical": {
+      "n": 1,
+      "n_std0": 1,
+      "pct_std0": "100.0%",
+      "n_all_zero": 0,
+      "n_all_same_high": 0,
+      "mean_of_means": -0.5,
+      "mean_of_stds": 0.0,
+      "submit_rate": "100.0%"
+    },
+    "open_ended": {
+      "n": 0
+    },
+    "multi_choice": {
+      "n": 2,
+      "n_std0": 2,
+      "pct_std0": "100.0%",
+      "n_all_zero": 0,
+      "n_all_same_high": 0,
+      "mean_of_means": -0.07,
+      "mean_of_stds": 0.0,
+      "submit_rate": "100.0%"
+    }
+  },
+  "by_measure_target": {
+    "amplitude": {
+      "n": 1,
+      "pct_std0": "100.0%",
+      "n_all_zero": 0,
+      "mean_reward": 0.36,
+      "mean_std": 0.0,
+      "submit_rate": "100.0%"
+    },
+    "duty_cycle": {
+      "n": 2,
+      "pct_std0": "100.0%",
+      "n_all_zero": 0,
+      "mean_reward": -0.5,
+      "mean_std": 0.0,
+      "submit_rate": "100.0%"
+    }
+  },
+  "verdict": "PARTIAL",
+  "verdict_logic": "std=0 groups = 100.0% (threshold 80%); std>0 groups = 0.0% (threshold 30%); all-zero majority among std=0 = False",
+  "wall_seconds": 71.8136100769043
+}
