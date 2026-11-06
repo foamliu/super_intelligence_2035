@@ -157,3 +157,6 @@
 1791964914156_it6n4	e0039102	hfeg0pkn002	134	verification	parked		2026-11-06 19:33	USER#1 find-file-by-logname too thin for >=8 cond A-faithful; USER#3 teach-me no gold deliverable in trace; pivot to a7ied (richer SV fix)
 1792044811256_a7ied	aocao	hfhds223	129	digital	case	EDA-Eval-DesignFlow-AcQueueFix-001	2026-11-06 19:48	
 1790667716325_1f7f1.messages.json	e0039503	hfeg0pkn005	175	digital	case	EDA-Eval-DesignFlow-IrunSimDiagnose-001	2026-11-06 20:17	
+1793775927024_1stc5	shaoyou	hfeg0pkn003	20	verification	parked		2026-11-06 20:42	waveview/fsdb user (signal average), shard D not A; deepread USER[0]=计算信号v(Vb)平均值+fsdb find, innovus:36 keyword=waveview innovus-mention noise
+1793260818025_aw9d7	dsgao	hfhds201	273	verification	parked		2026-11-06 20:42	spice_sim TM testbench for DRAM array (finesim proxd flat transistor netlist 47K, TM config bits tb-driven not structural); same drcpa/dsgao proj as CdlVerilogConv-001 r159b; spice_sim shard C/D not A
+1792042544705_d1cg3	t0002441	hfhds201	103	eda_other	parked		2026-11-06 20:42	finesim DC non-convergence knowledge query (AskEDA/doc search, 1 user turn, no design_flow deliverable); spice_sim knowledge not A
