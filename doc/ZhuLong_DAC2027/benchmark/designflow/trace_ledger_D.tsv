@@ -1131,3 +1131,21 @@ wl9i4					parked		2026-11-05 22:49	交互shell驱动+Q&A n752大
 1791947113001_be1i0	jie23z	10.129.2.11	84	schematic_netlist	parked		2026-11-07 04:09	Q&A: LVS DECK 分析/stdcell 命名/layout 布尔运算, not produce
 1788861941268_1giox	e0014566	10.129.2.10	80	schematic_netlist	parked		2026-11-07 04:09	L2 live: pyAether 识别+去除 layout autovia/powerfill cell (dup of a9ta2/wsi93), not portable
 1790230482027_7lp3l					case	EDA-Eval-DesignFlow-FineSimDataParse-001	2026-11-07 04:09	
+1793865643606_3b73c	m1wang	hfeg0pkn002	251	schematic_netlist	claimed		2026-11-07 05:07	
+1793261933061_z7stj					parked		2026-11-07 05:07	coretiming debug/analysis live fsdb not produce
+1792461218411_hojhc					parked		2026-11-07 05:07	verilog sim-speed debug digital not D-domain
+1793781389038_g6wy0					parked		2026-11-07 05:07	skill-driven sim verification live DUT not portable
+1792736045626_maglj					parked		2026-11-07 05:07	LVS connectivity pattern physical_verify shard C
+1793846426867_874ye					parked		2026-11-07 05:07	corrupt/empty messages.json
+1793427492496_njt15					parked		2026-11-07 05:08	weak pyAether 10 netlist 7
+1789558497514_ogbej					parked		2026-11-07 05:08	calibre dbGet physical_verify shard C
+1789622352136_kkl2q					parked		2026-11-07 05:08	calibre 114 physical_verify shard C
+1792033394584_xd7ut					parked		2026-11-07 05:08	weak netlist 3 hits
+1789367633495_9uwcw					parked		2026-11-07 05:08	calibre hspice synthesis mixed
+1793770158127_wb9zm					parked		2026-11-07 05:08	weak hspice 9
+1793341786030_qhvcj					parked		2026-11-07 05:08	weak pyAether 2 hspice 2
+1789628875183_b48ma					parked		2026-11-07 05:08	weak netlist 11 schematic 3
+1790043582658_2hqpl					parked		2026-11-07 05:08	calibre schematic mixed weak
+1791528100632_yiohr					parked		2026-11-07 05:08	weak netlist 7
+1791526867236_ckiw9					parked		2026-11-07 05:08	weak netlist 7 dup yiohr
+1792142998625_n1njg	jessegao	hfeg0plg14	137	analog_context	case	EDA-Eval-DesignFlow-LdoCircuitReport-001	2026-11-07 05:13	#336 deliver; bookkeeping backfilled #338
