@@ -2,6 +2,8 @@
 WAITING: 1
 > 🛑 **【运维通告 · 2026-11-02 19:51】S1 已由 ops 中继重启并在跑**：`bash scripts/train.sh s1 --nodes 2`，launcher pid **4163528**，从 **ckpt 58000** 续（19:55:40 起 iter **58010**→58030，7.0–7.2 s/step ≈**582K tok/s**，双机 16 卡 **98–100%**、~75GB/卡、~690W）。⇒ **GPU 不再空闲**：🚫 严禁再起任何训练/GPU 评测进程；CPU 评测必须降载：`OMP_NUM_THREADS≤8` + `nice -n 19`，**禁止 `pkill python`**。
 
+> 2026-11-06 15:10 #1514: 例行监控轮·无新运维令·S1健康(worker log活跃 iter104890/700000@15:09:50,loss2.068,6.97-7.15s/it,lr1e-3,0NaN/0skip,grad-norm0.092-0.162稳态,consumed26851840)·GPU.29(0-7:97-100%/~75GB/56-65℃/676-691W)+.12(0-7:97-100%/~75GB/57-67℃/681-691W)全满载,launcher PID146283(etimes328613s≈91.3h)·latest ckpt iter_0104000@~13:26·next ckpt iter_0106000 ETA~17:18(1110it×~7s≈2.2h)·100k eval已于#1490交付(10/10全在,Avg harness 57.75%/raw 54.75%)·eval管线已全退出(.12无llama-server/lm_eval/convert)·ops/inbox仅RUN_ID245(2026-11-05旧令,已执行,非本线待办)·git clean(##main...origin/main无ahead/behind)·未碰他线在途文件·📦体积:TASK=25.8KB✓/MEMORY≈30.2KB✓·未完成指令:无⇒WAITING:1。
+
 > 2026-11-06 14:46 #1513: 例行监控轮·无新运维令·S1健康(worker log活跃 iter104660/700000@14:42:51,loss2.08,6.9-7.1s/it,lr1e-3,0NaN/0skip,grad-norm0.087-0.141(14:41瞬态spike0.799自恢复),consumed26792960)·GPU.29(0-7:95-100%/~75GB/58-65℃/676-697W)+.12(0-7:96-100%/~75GB/57-66℃/676-691W)全满载,launcher PID146283·latest ckpt iter_0104000@13:26·next ckpt iter_0106000 ETA~17:20(1340it×~7s≈2.6h)·100k eval已于#1490交付(10/10全在,Avg harness 57.75%/raw 54.75%)·eval管线已全退出(.12无llama-server/lm_eval/convert)·ops/inbox仅RUN_ID245(2026-11-05旧令,已执行,非本线待办)·git clean(##main...origin/main无ahead/behind)·未碰他线在途文件·📦体积:TASK=25.8KB✓/MEMORY≈29.5KB✓(滚动#1496-#1498至daily-memories)·未完成指令:无⇒WAITING:1。
 
 
