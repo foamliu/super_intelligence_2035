@@ -1,0 +1,315 @@
+{
+  "meta": {
+    "machine": ".17",
+    "dataset": "EDA-Eval-PyAether-v20260311.jsonl (158 tasks)",
+    "scenario_distribution": {
+      "Layout": 64,
+      "Schematic": 47,
+      "Design Management": 24,
+      "Others": 23
+    },
+    "eda_code_eval_exists": false,
+    "note": "~/eda_code_eval/ not on .17 (on .29). MiniCPM5-2B 36% & DeepSeek 94% runs not local. Using zhulong_deepseek_v32 (~70%) as primary. D1/D2/D6 need trace data, marked missing."
+  },
+  "available_runs": [
+    {
+      "dir": "20260320_1616_app.e0030209",
+      "model": "zhulong",
+      "pass_rate": 0.6455696202531646,
+      "n_tasks": 158
+    },
+    {
+      "dir": "20260323_1506_e0030209",
+      "model": "zhulong_deepseek_v32",
+      "pass_rate": 0.689873417721519,
+      "n_tasks": 158
+    },
+    {
+      "dir": "20260329_1815_app.e0030209",
+      "model": "zhulong_deepseek_v32",
+      "pass_rate": 0.5,
+      "n_tasks": 70
+    },
+    {
+      "dir": "20260330_1044_e0030209",
+      "model": "aether_coder_20260327",
+      "pass_rate": 0.1,
+      "n_tasks": 70
+    },
+    {
+      "dir": "20260330_1127_e0030209",
+      "model": "zhulong_deepseek_v32",
+      "pass_rate": 0.7025316455696202,
+      "n_tasks": 158
+    },
+    {
+      "dir": "20260330_1338_e0030209",
+      "model": "zhulong_deepseek_v32",
+      "pass_rate": 0.6772151898734177,
+      "n_tasks": 158
+    },
+    {
+      "dir": "20260413_1711_app.e0030209",
+      "model": "zhulong_deepseek_v32",
+      "pass_rate": 0.6645569620253164,
+      "n_tasks": 158
+    },
+    {
+      "dir": "20260416_1720_app.e0030209",
+      "model": "zhulong_deepseek_v32",
+      "pass_rate": 0.3987341772151899,
+      "n_tasks": 158
+    },
+    {
+      "dir": "20260417_1000_app.e0030209",
+      "model": "zhulong_deepseek_v32",
+      "pass_rate": 0.6645569620253164,
+      "n_tasks": 158
+    },
+    {
+      "dir": "20260417_1416_app.e0030209",
+      "model": "zhulong_deepseek_v32",
+      "pass_rate": 0.6575342465753424,
+      "n_tasks": 146
+    },
+    {
+      "dir": "20260417_1457_app.e0030209",
+      "model": "zhulong_deepseek_v32",
+      "pass_rate": 0.7152777777777778,
+      "n_tasks": 144
+    },
+    {
+      "dir": "20260424_2209_app.e0030209",
+      "model": "zhulong_deepseek_v32",
+      "pass_rate": 0.2608695652173913,
+      "n_tasks": 23
+    }
+  ],
+  "selected_runs": {
+    "best_deepseek": {
+      "dir": "20260330_1127_e0030209",
+      "model": "zhulong_deepseek_v32",
+      "pass_rate": 0.7025316455696202,
+      "n_tasks": 158
+    },
+    "zhulong_baseline": {
+      "dir": "20260320_1616_app.e0030209",
+      "model": "zhulong",
+      "pass_rate": 0.6455696202531646,
+      "n_tasks": 158
+    },
+    "weak_model": {
+      "dir": "20260330_1044_e0030209",
+      "model": "aether_coder_20260327",
+      "pass_rate": 0.1,
+      "n_tasks": 70
+    }
+  },
+  "D1_tool_call_legal_rate": {
+    "status": "字段缺失",
+    "value": null,
+    "reason": "final_report.json 不含工具调用(tool_call)数据。D1 需要从 cline trace (~/eda_code_eval/<batch_id>/trace/) 中提取，使用 eda_fastmcp/scripts/trace_reader.py 的 extract_tool_calls_from_trace()。本机 ~/eda_code_eval/ 目录不存在(在 .29 上)。需要补抓: MiniCPM5-2B 36% 运行的完整 trace 目录。",
+    "eda_code_eval_exists": false
+  },
+  "D2_tool_call_frequency": {
+    "status": "字段缺失",
+    "value": null,
+    "reason": "final_report.json 不含工具调用频次数据。D2 需要从 cline trace 中统计每个任务的工具调用次数。本机 ~/eda_code_eval/ 目录不存在(在 .29 上)。需要补抓: 各模型的完整 trace 目录 + DeepSeek-V4-Pro 对照 trace。",
+    "eda_code_eval_exists": false
+  },
+  "D3_truncation_rate": {
+    "status": "已计算",
+    "total_tasks": 158,
+    "generation_timeout": 7,
+    "generation_failure": 7,
+    "generation_success": 144,
+    "timeout_rate": "4.4%",
+    "failure_rate": "4.4%",
+    "combined_truncation_rate": "8.9%",
+    "task_level_timeout": 8,
+    "task_level_gen_fail": 7,
+    "judgment": "中(5-15%) → 需关注长上下文适配"
+  },
+  "D4_failure_type_breakdown": {
+    "status": "已计算",
+    "total_tasks": 158,
+    "passed": 111,
+    "failed": 47,
+    "pass_rate": "70.3%",
+    "error_type_breakdown": {
+      "AssertionError": 24,
+      "Generation failure": 7,
+      "Generation timeout": 7,
+      "TypeError": 4,
+      "ValueError": 2,
+      "RuntimeError": 2,
+      "Timeout": 1
+    },
+    "assertion_errors": 24,
+    "generation_errors": 14,
+    "execution_errors": 8,
+    "other_errors": 1,
+    "total_errors": 47,
+    "assertion_pct": "51.1%",
+    "generation_pct": "29.8%",
+    "execution_pct": "17.0%",
+    "judgment": "断言失败为主 → RL 价值更大"
+  },
+  "D5_per_scenario_pass_rate": {
+    "Layout": {
+      "total": 64,
+      "passed": 41,
+      "pass_rate": "64.1%"
+    },
+    "Schematic": {
+      "total": 47,
+      "passed": 31,
+      "pass_rate": "66.0%"
+    },
+    "Design Management": {
+      "total": 24,
+      "passed": 20,
+      "pass_rate": "83.3%"
+    },
+    "Others": {
+      "total": 23,
+      "passed": 19,
+      "pass_rate": "82.6%"
+    },
+    "_categories": {
+      "Design Content Creation": {
+        "total": 46,
+        "passed": 23,
+        "pass_rate": "50.0%"
+      },
+      "Geometry Operation & Analysis": {
+        "total": 26,
+        "passed": 22,
+        "pass_rate": "84.6%"
+      },
+      "Design Content Query & Edit": {
+        "total": 25,
+        "passed": 14,
+        "pass_rate": "56.0%"
+      },
+      "Database & Design Management": {
+        "total": 25,
+        "passed": 22,
+        "pass_rate": "88.0%"
+      },
+      "Simulation & Analysis Configuration": {
+        "total": 21,
+        "passed": 18,
+        "pass_rate": "85.7%"
+      },
+      "Utilities": {
+        "total": 15,
+        "passed": 12,
+        "pass_rate": "80.0%"
+      }
+    },
+    "_status": "已计算"
+  },
+  "D6_iteration_rounds": {
+    "status": "字段缺失",
+    "value": null,
+    "reason": "final_report.json 的 num_samples=1 (单 trace 原则), 不含迭代轮数。D6 需要从 cline trace 中统计每任务的 assistant-tool_result 循环次数。本机 ~/eda_code_eval/ 目录不存在(在 .29 上)。需要补抓: MiniCPM5-2B + DeepSeek-V4-Pro 的完整 trace 目录。",
+    "eda_code_eval_exists": false
+  },
+  "baseline_zhulong": {
+    "D3": {
+      "status": "已计算",
+      "total_tasks": 158,
+      "generation_timeout": 28,
+      "generation_failure": 2,
+      "generation_success": 128,
+      "timeout_rate": "17.7%",
+      "failure_rate": "1.3%",
+      "combined_truncation_rate": "19.0%",
+      "task_level_timeout": 28,
+      "task_level_gen_fail": 2,
+      "judgment": "高(>15%) → 长上下文适配是 post-train 前置项"
+    },
+    "D4": {
+      "status": "已计算",
+      "total_tasks": 158,
+      "passed": 102,
+      "failed": 56,
+      "pass_rate": "64.6%",
+      "error_type_breakdown": {
+        "Generation timeout": 28,
+        "AssertionError": 20,
+        "TypeError": 2,
+        "Generation failure": 2,
+        "SyntaxError": 1,
+        "ValueError": 1,
+        "RuntimeError": 1,
+        "NameError": 1
+      },
+      "assertion_errors": 20,
+      "generation_errors": 30,
+      "execution_errors": 6,
+      "other_errors": 0,
+      "total_errors": 56,
+      "assertion_pct": "35.7%",
+      "generation_pct": "53.6%",
+      "execution_pct": "10.7%",
+      "judgment": "执行/生成报错为主 → SFT 领域语料可大幅回收"
+    },
+    "D5": {
+      "Layout": {
+        "total": 64,
+        "passed": 38,
+        "pass_rate": "59.4%"
+      },
+      "Schematic": {
+        "total": 47,
+        "passed": 26,
+        "pass_rate": "55.3%"
+      },
+      "Design Management": {
+        "total": 24,
+        "passed": 18,
+        "pass_rate": "75.0%"
+      },
+      "Others": {
+        "total": 23,
+        "passed": 20,
+        "pass_rate": "87.0%"
+      },
+      "_categories": {
+        "Design Content Creation": {
+          "total": 46,
+          "passed": 19,
+          "pass_rate": "41.3%"
+        },
+        "Geometry Operation & Analysis": {
+          "total": 26,
+          "passed": 20,
+          "pass_rate": "76.9%"
+        },
+        "Design Content Query & Edit": {
+          "total": 25,
+          "passed": 12,
+          "pass_rate": "48.0%"
+        },
+        "Database & Design Management": {
+          "total": 25,
+          "passed": 19,
+          "pass_rate": "76.0%"
+        },
+        "Simulation & Analysis Configuration": {
+          "total": 21,
+          "passed": 19,
+          "pass_rate": "90.5%"
+        },
+        "Utilities": {
+          "total": 15,
+          "passed": 13,
+          "pass_rate": "86.7%"
+        }
+      },
+      "_status": "已计算"
+    }
+  }
+}

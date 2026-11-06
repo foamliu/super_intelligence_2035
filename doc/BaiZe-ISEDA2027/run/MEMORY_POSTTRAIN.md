@@ -7,10 +7,10 @@ WAITING: 1
 
 ## 进度快照
 
-- PHASE: posttrain-wake12（2026-11-06 21:0x；vLLM 安装仍进行中 + 阻塞复查 + 7脚本健康复查，全阻塞项无变化）
+- PHASE: posttrain-wake13（2026-11-06 21:3x；vLLM v0.33.0 安装完成✅ + 阻塞复查无变化 + 诊断脚本/结果提交）
 - 已完成: P3预备✅ 5 脚本骨架（wake1/2）；P1-e✅ 污染隔离闸门（wake2）；P1-a/b✅ 数据盘点（wake2）；P2✅ 三步方案书（wake3）；**P0✅ D1–D6 DeepSeek 侧实测报告（wake4 §1–§11 → wake5 增 §12 → wake7 增 §13 → wake8 增 §14 Harness 消融 36.9KB）**；**P1-d✅ PyAether 语料调研（wake4）**；**P1✅ 数据盘点 HTML 报告（wake6）**；**wake9✅ MiniCPM5-2B 诊断评测启动脚本 + D1–D6 提取脚本**；**wake10✅ 修复 `baize_posttrain_minicpm5_diag.sh` Python 版本 bug + 预创建 vLLM venv + 后台 pip install vllm**
-- 当前动作: wake12 git status 干净（`## main...origin/main`）→ 复查阻塞数据源：~/eda_code_eval 仍 MISSING + /nas_inference 仍未挂载 + 8×A40 全被 SGLang 占用（44-45GB/卡，0% util，与前 11 轮一致无变化）→ **vLLM 安装进度**：PID 348984 仍 alive（etime ~57min），log 315 行，仍在 Collecting 阶段下载 CUDA 依赖（nvidia-curand 59.5MB，site-packages 仅 6 项=尚未安装 vllm 本体）→ vLLM import 测试=ModuleNotFoundError（正常，依赖未下完）→ **7 脚本 bash -n 全 PASS** → MiniCPM5-2B 模型确认在位 → 体积自检 TASK=20.4KB / MEMORY=19.0KB 均 ≤32KB ✅ → 更新心跳+提交
-- 下一步: **下次唤醒先查 /tmp/vllm_install.log + `ps -p 348984`** 确认 vLLM 安装结果 → 若成功则 venv 就绪，GPU 释放后（2026-11-09）可直接 `bash baize_posttrain_minicpm5_diag.sh --quick`（跳过 step1 venv 创建）→ 获取 MiniCPM5-2B D1/D2/D6 → 补全 P0 36% 侧。若安装失败则记录错误，GPU 释放后脚本仍会自动重试。剩余阻塞：① P0 36% 侧（脚本+venv 就绪，等 GPU 2026-11-09 或运维拷轨迹）；② P1-c（/nas_inference 未挂载 .17）；③ 正式训练 P3 阻塞 pretrain S1 ckpt（ETA≈2026-12-25）。
+- 当前动作: wake13 git status 有 2 个未跟踪文件（`posttrain_diag_d1d6.py` + `posttrain_diag_d1d6_results.json`，本 session 产出）→ **vLLM 安装确认完成**：PID 348984 已退出，`/tmp/vllm_install.log` 489 行末尾 `Successfully installed ... vllm-0.33.0`，`~/code/vllm_venv/bin/python3 -c 'import vllm; print(vllm.__version__)'` 输出 `vLLM version: 0.33.0` ✅（venv 9.4GB，torch 2.14.0，Python 3.13.14）→ 复查阻塞数据源：~/eda_code_eval 仍 MISSING + /nas_inference 仍不存在（未挂载）+ 8×A40 全被 SGLang 占用（44-45GB/卡 0%util，与前 12 轮一致无变化）→ **7 脚本 bash -n 全 PASS** + pt_p0_minicpm5_extract.py ast PASS → MiniCPM5-2B 模型确认在位 → 提交 2 个诊断文件 + 更新心跳 → push（含 wake12 失败补推）
+- 下一步: **vLLM venv 已就绪✅** → GPU 释放后（2026-11-09）直接 `bash baize_posttrain_minicpm5_diag.sh --quick`（跳过 step1 venv 创建，直接 serve MiniCPM5-2B）→ 获取 36% 侧 D1/D2/D6 → 补全 P0 全景。剩余阻塞：① P0 36% 侧（脚本+venv 全就绪，仅等 GPU 2026-11-09 或运维拷轨迹 from .29）；② P1-c（/nas_inference 未挂载 .17）；③ 正式训练 P3 阻塞 pretrain S1 ckpt（ETA≈2026-12-25）。
 - 阻塞: P0-36%侧（脚本+venv 就绪等 GPU 2026-11-09 或运维拷轨迹）/P1-c（/nas_inference 未挂载 .17）待运维；正式训练阻塞 pretrain S1 ckpt（ETA≈2026-12-25）
 - 未完成指令: 有（P0-36%侧脚本+venv 就绪但需 GPU 才能跑；P1-c 阻塞于 /nas_inference 未挂载。本节点可达零 GPU 项已全完成含 vLLM venv 预创建）⇒ WAITING=1
 
@@ -24,7 +24,7 @@ WAITING: 1
 - SFT 数据已就绪：UltraData-SFT-2605（319G 下载/75.87GB 分词/18.89B tok，DATA_MAPPING 单一事实源）+ UltraData-SFT-Agent-2609（54.22G 下载/23.89GB 分词/5.97B tok）已分词镜像
 - B 类 agentic 数据已下载未分词（`/nas_inference`：AgentTrove/Nemotron-Cascade-SFT-SWE 等）
 - PyAether 领域语料：✅ **已调研**（wake4）—— `~/code/eda_fastmcp/docs/API_INFO_MERGED_V3.json` 8,463 个 API（api_name/api_type/api_descriptions/category）展平 ≈3.3–4.5M tok；加 func_all_v3/api_summary/skills/prompts ≈4–5M tok 可导出纯文本；chroma_db_*（向量嵌入）不用；退火 domain 主体 + SFT 合成语料（详见 EXPERIMENTS §PyAether-corpus）
-- MiniCPM5-2B 模型：✅ **已下载到 .17** `/tmp/models/MiniCPM5-2B/`（4.7GB，LlamaForCausalLM 42层 2048d，2026-11-06 17:14）→ GPU 释放后可 vLLM serve 跑诊断评测获取 36% 侧轨迹
+- MiniCPM5-2B 模型：✅ **已下载到 .17** `/tmp/models/MiniCPM5-2B/`（4.7GB，LlamaForCausalLM 42层 2048d，2026-11-06 17:14）→ vLLM venv ✅ **已就绪** `~/code/vllm_venv/`（v0.33.0, torch 2.14.0, 9.4GB）→ GPU 释放后可 `vllm serve` 跑诊断评测获取 36% 侧轨迹
 - .17 GPU 现状：8×A40 全被 SGLang Qwen3.8-27B 占用（44-45/46GB），2026-11-09 分配 4 张给 post-train
 - 论文章节：`BaiZe-ISEDA2027/ISEDA2027/5_llm_posttrain.tex`（已写设计，结果=[TBD]）
 
@@ -52,4 +52,6 @@ WAITING: 1
 [20:18] wake11：git status 干净（`## main...origin/main`，wake10 push2.log 失败[github.com:443 timeout]但 loop auto-commit 19:58 push 成功）→ 复查阻塞数据源：~/eda_code_eval 仍 MISSING + /nas_inference 仍未挂载 + 8×A40 全被 SGLang 占用（44-45GB/卡 0%util，与前 10 轮一致无变化）→ **vLLM 安装进度**：PID 348984 仍 alive（etime~35min），log 279 行，正在下载 nvidia-cudnn-cu13 553MB（Collecting 阶段，尚未 Installing）→ **7 脚本 bash -n 全 PASS**（anneal/sft/rl_grpo/eval/contamination_gate/minicpm5_diag/loop）→ MiniCPM5-2B 模型确认在位 `/tmp/models/MiniCPM5-2B/`（4.7GB safetensors）→ 体积自检 TASK=20.4KB / MEMORY=18.2KB 均 ≤32KB ✅ → 更新心跳+提交。📦 体积：TASK=20.4KB / MEMORY=18.2KB（均 ≤32KB ✅，无需归档）。
 
 [21:0x] wake12：git status 干净（`## main...origin/main`）→ 复查阻塞数据源：~/eda_code_eval 仍 MISSING + /nas_inference 仍未挂载 + 8×A40 全被 SGLang 占用（44-45GB/卡 0%util，与前 11 轮一致无变化）→ **vLLM 安装进度**：PID 348984 仍 alive（etime~57min），log 315 行，仍在 Collecting 阶段下载 CUDA 依赖（nvidia-curand 59.5MB 下载中，site-packages 仅 6 项=依赖未齐尚未装 vllm 本体），import vllm=ModuleNotFoundError（正常）→ 磁盘 392G 可用充足 → **7 脚本 bash -n 全 PASS** → MiniCPM5-2B 模型确认在位 → 体积自检 TASK=20.4KB / MEMORY=19.0KB 均 ≤32KB ✅ → commit f70c72185 → **push 失败**[github.com:443 Connection timed out，重试1次仍失败]，loop auto-commit 兜底。📦 体积：TASK=20.4KB / MEMORY=19.0KB（均 ≤32KB ✅，无需归档）。
+
+[21:3x] wake13：git status 有 2 个未跟踪文件（`posttrain_diag_d1d6.py` 12.8KB + `posttrain_diag_d1d6_results.json` 8.7KB，本 session 产出的 D3/D4/D5 诊断脚本+结果）→ **🎉 vLLM 安装确认完成**：PID 348984 已退出，`/tmp/vllm_install.log` 489 行末尾 `Successfully installed ... vllm-0.33.0`，import 测试 `vLLM version: 0.33.0` ✅（venv `~/code/vllm_venv/` 9.4GB，torch 2.14.0，transformers 5.20.2，Python 3.13.14）→ 复查阻塞数据源：~/eda_code_eval 仍 MISSING + /nas_inference 不存在（未挂载）+ 8×A40 全被 SGLang 占用（44-45GB/卡 0%util，与前 12 轮一致无变化）→ **7 脚本 bash -n 全 PASS** + `pt_p0_minicpm5_extract.py` ast PASS → MiniCPM5-2B 模型确认在位 `/tmp/models/MiniCPM5-2B/` → 提交 2 诊断文件 + 更新心跳 → push（含 wake12 失败补推）。📦 体积：TASK=20.8KB / MEMORY=20.2KB / EXPERIMENTS=29.9KB（均 ≤32KB ✅，无需归档）。
 
