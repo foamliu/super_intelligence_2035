@@ -2,9 +2,9 @@
 
 WAITING: 0
 
-> 🆕 **【wake #792 · 2026-11-06 15:19】📊监控巡检·训练健康+包装器正确等待中。CPU SFT step1725/3000 loss0.27 ETA~60min(~16:20)。**训练PID2882778 alive(etimes4916s≈82min,ppid=1),step1725/3000,loss0.2715-0.3134(平台,正常收敛),0.35step/s,ETA60.5min。step1000 ckpt已存(LoRA adapter 279MB safetensors+adapter_config.json),step2000/3000待存。post-SFT eval包装器PID4104838 alive(ppid=1,etimes469s,30s轮询,waited480s)正确等待eval_results.json出现——日志`[15:19:15] training still running (waited 480s)`确认健康轮询。包装器逻辑复核:等eval_results.json出现→备份flawed版→找最新step{N}ckpt→CPU跑修复版eval_sft_wave.py(max_eval=100,OMP_NUM_THREADS=64)覆盖eval_results.json→pass(fmt≥90%+submit≥70%)则setsid重启GRPO chain(run_grpo_wave.sh 8,自带安全GPU-wait)→fail则记录日志待下轮wake。GPU全占(8×H100 90-100%util/~75GB,pretrain ETA≈12/24)。eval_results.json尚不存在(训练未到step3000)。📦体积:TASK=30.5KB/MEMORY=12.4KB(均≤32KB✓,本轮0归档)。**未完成指令:有**(阶段1 SFT训练进行中+eval待包装器自动触发)⇒**WAITING: 0**。
+> 🆕 **【wake #793 · 2026-11-06 15:27】📊监控巡检·训练健康+包装器正确等待中。CPU SFT step1900/3000 loss0.33 ETA~52min(~16:19)。**训练PID2882778 alive(etimes5395s≈90min,ppid=1),step1900/3000,loss0.28-0.34(平台,正常收敛),0.35step/s,ETA52.2min。step1000 ckpt已存(279MB LoRA adapter),step2000 ckpt预计~15:32出现,step3000+eval_results.json预计~16:19。post-SFT eval包装器PID4104838 alive(ppid=1,etimes948s,30s轮询,waited960s)正确等待——日志`[15:27:15] training still running (waited 960s)`确认健康。eval_results.json尚不存在(训练未到step3000)。GPU全占(8×H100 100%util/~75GB,pretrain ETA≈12/24)。GRPO chain未运行(killed,待eval pass后由包装器setsid重启,自带安全GPU-wait)。📦体积:TASK=29.7KB/MEMORY=12.2KB(均≤32KB✓,本轮0归档)。**未完成指令:有**(阶段1 SFT训练进行中+eval待包装器自动触发)⇒**WAITING: 0**。
 
-> 📦 wake #791（部署post-SFT自动eval包装器·2026-11-06 15:12）已归档 → daily-memories-vision/2026-11-06.md；**结论**：创建+启动run_post_sft_eval.sh(PID4104838,setsid,flock):等训练完成→CPU跑修复版eval覆盖flawed eval_results.json→pass则重启GRPO chain。CPU SFT step1575/3000 loss0.30 ETA~68min。需要时再读。
+> 📦 wake #792（监控巡检·2026-11-06 15:19）已归档 → daily-memories-vision/2026-11-06.md；**结论**：CPU SFT step1725/3000 loss0.27 ETA~60min·post-SFT eval包装器正确等待(waited480s)·训练健康·WAITING=0。需要时再读。
 
 > 📦 wake #790（eval设计缺陷修复·2026-11-06 14:55）已归档 → daily-memories-vision/2026-11-06.md；**结论**：发现并修复sft_train_wave.py/eval_sft_wave.py的eval只生成第1个assistant turn找submit()→永远0%的bug(改为第4个submit turn检查),step1000 ckpt 10样本测试4/4通过,kill GRPO chain待重跑eval。wake#791已据此部署自动eval包装器。需要时再读。
 
@@ -84,10 +84,10 @@ WAITING: 0
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | 🟠 **波形 RL 阶段0交付(YELLOW) + 阶段1 SFT CPU训练进行中(PID2882778,step1725/3000,loss0.27,ETA~60min~16:20) · eval设计缺陷已修复(wake#790,在盘)但运行进程内存仍是旧flawed版(无法热注入) · post-SFT自动eval包装器已部署(PID4104838,setsid,待step3000触发:跑修复版eval→覆盖flawed eval_results.json→pass则重启GRPO) · GRPO chain已kill(待eval pass后由包装器重启)**。loss稳定0.25-0.33平台(SFT正常收敛)。GPU全占(pretrain ETA≈12/24)。阶段2/3未交付。**WAITING: 0** |
+| PHASE | 🟠 **波形 RL 阶段0交付(YELLOW) + 阶段1 SFT CPU训练进行中(PID2882778,step1900/3000,loss0.33,ETA~52min~16:19) · eval设计缺陷已修复(wake#790,在盘)但运行进程内存仍是旧flawed版(无法热注入) · post-SFT自动eval包装器已部署(PID4104838,setsid,待step3000触发:跑修复版eval→覆盖flawed eval_results.json→pass则重启GRPO) · GRPO chain已kill(待eval pass后由包装器重启)**。loss稳定0.25-0.34平台(SFT正常收敛)。GPU全占(pretrain ETA≈12/24)。阶段2/3未交付。**WAITING: 0** |
 | WAITING | 0 |
 | 已完成 | 阶段1 SFT CPU训练启动(wake#785) · CPU端到端训练循环验证7/7 PASS(wake#741) · 数据泄漏验证+阶段1就绪报告HTML(wake#731) · 全管线就绪审计(wake#714) · GRPO链式启动器修复+启动(wake#626) · GRPO CPU冒烟测试PASS(wake#622) · 2B文本骨干提取1.72B(wake#620) · 数据集均衡化9013条(wake#618) · WaveQA-RL oracle 300题(wake#614) · 波形RL阶段0 YELLOW(wake#609) · 论文改稿(wake#437~#442) · 波形RL计划书(wake#435) · OCR合成10M(wake#275) · ArmE-R2/ArmD-R2 全链路 |
-| 当前动作 | **CPU SFT训练进行中 + post-SFT eval包装器已部署待触发**：训练PID2882778(.12,64线程),step1725/3000,loss0.27,ETA~60min。**eval修复在盘(wake#790)但运行进程内存=旧flawed版**⇒step3000会写flawed eval_results.json。已部署`run_post_sft_eval.sh`(PID4104838,setsid,flock):等训练完成→备份flawed→CPU跑修复版eval_sft_wave.py(max_eval=100)覆盖eval_results.json→pass则重启GRPO chain。 |
-| 下一步 | 等CPU SFT训练结束(step3000~16:20)→**post-SFT包装器自动触发**:备份flawed eval→CPU跑修复版eval_sft_wave.py覆盖eval_results.json→若pass(fmt≥90%+submit≥70%)→包装器自动重启GRPO chain(待GPU,ETA≈12/24)→若fail→下轮wake重启nsteps=24000。下轮wake检查包装器日志post_sft_eval.log确认eval结果+GRPO是否重启。step2000 ckpt应~15:48出现。 |
+| 当前动作 | **CPU SFT训练进行中 + post-SFT eval包装器已部署待触发**：训练PID2882778(.12,64线程),step1900/3000,loss0.33,ETA~52min。**eval修复在盘(wake#790)但运行进程内存=旧flawed版**⇒step3000会写flawed eval_results.json。已部署`run_post_sft_eval.sh`(PID4104838,setsid,flock):等训练完成→备份flawed→CPU跑修复版eval_sft_wave.py(max_eval=100)覆盖eval_results.json→pass则重启GRPO chain。 |
+| 下一步 | 等CPU SFT训练结束(step3000~16:19)→**post-SFT包装器自动触发**:备份flawed eval→CPU跑修复版eval_sft_wave.py覆盖eval_results.json→若pass(fmt≥90%+submit≥70%)→包装器自动重启GRPO chain(待GPU,ETA≈12/24)→若fail→下轮wake重启nsteps=24000。下轮wake检查包装器日志post_sft_eval.log确认eval结果+GRPO是否重启。step2000 ckpt应~15:32出现。 |
 | 阻塞 | .12+.29 GPU全占（8×H100 94-100% util / ~75GB，pretrain baize2b ETA≈12/24-25）→ 阶段1 SFT已用CPU绕过·阶段2 GRPO仍需GPU（ETA≈12/24,GRPO chain由包装器在eval pass后重启,自带安全GPU-wait）·.17+.75 SSH不可达 |
-| 更新 | **2026-11-06 15:19 (wake #792)**: 📊监控巡检——训练健康(step1725/3000 loss0.27 ETA~60min)+包装器正确等待(waited480s,30s轮询)。包装器逻辑复核OK:eval_results.json出现→备份flawed→CPU跑修复版eval覆盖→pass重启GRPO。step1000 ckpt已存。GPU全占(pretrain ETA≈12/24)。体积TASK=30.5KB/MEMORY=12.4KB✓·WAITING=0 |
+| 更新 | **2026-11-06 15:27 (wake #793)**: 📊监控巡检——训练健康(step1900/3000 loss0.33 ETA~52min)+包装器正确等待(waited960s,30s轮询)。step1000 ckpt已存(279MB),step2000预计~15:32。GPU全占(pretrain ETA≈12/24)。体积TASK=29.7KB/MEMORY=12.2KB✓·WAITING=0 |
