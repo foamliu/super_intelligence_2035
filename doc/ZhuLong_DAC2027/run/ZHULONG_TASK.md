@@ -4,7 +4,18 @@
 
 > **用户原话**：「安排 zhulong agent 做如下消融实验：测试集 EDA-Eval-PyAether（158）。1. 变化 cline 的 thinking 参数：None、Low、Medium等。2. 变化 cline 思维链使用的语言：中文、英文、西班牙文、法文、俄文等，可以通过修改任务提示实现，比如：'请使用XX语言思考'。实验后生成中文 HTML 报告。包含对比表格，不光含不同变体的分数，还应包含成本，比如墙钟、token 等。」
 
-**口径（不可改）**：测试集 = **EDA-Eval-PyAether 158 题**（`EDA-Scripting-Bench 449` 的 PyAether 子集；🚫 不跑 SKILL/Tcl）· harness = `cline` 3.0.51（🚫 不改版本）· 基座 = 当前主基座（见 `MEMORY_ZHULONG.md` 顶部，当前 `glm-5.2`），**两轴内必须恒定**，否则效应被基座差异污染，报告首行写明实际基座 · 协议 = Pass@1 单次无 retry `-p 8 -n`（与既有消融同口径）· 环境 = `BASE_DIR=/nasdata/app.e0031982/code/eda_fastmcp`，启动 `setsid bash scripts/run_cline_script.sh -p 8 -n > /tmp/ABL_<TAG>_r<N>.log 2>&1 < /dev/null &`，结束判据 `pgrep -f '^bash scripts/run_cline_script'` 无输出，打分 `$BASE_DIR/venv/bin/python scripts/run_eval.py --latest 1` · 每变体 **3 轮**（成本允许则 5 轮与既有臂对齐，报告写实际 n）。
+**基座（用户 2026-11-07 明确：GLM-5.3-Flash 或 GLM-5.2，二选一）** —— ⚠️ **两轴实验内必须恒定**（否则 thinking/语言效应被基座差异污染），报告首行写明实际用的哪个。
+
+| 选项 | `-m` | `cline auth`（key 可能过期，**开跑前先 `curl` 探针确认 HTTP 200**）| 既有同臂基线（PyAether 158） |
+|:--|:--|:--|:--|
+| **① GLM-5.3-Flash**（**首选**：额度新、速度稳、与 harness 线现行一致） | `glm-5.3-flash` | `cline auth -p openai -k 02_088EE9051AAE4BF0ABFC7130331BF697_6903b05e-6f2d-4a69-93be-96e2b790053f -b http://agi-gateway.cxmt.com/v1 -m glm-5.3-flash` | `B.glm-5.3-flash` = **86.8 ± 1.6%**（5/5，cline CLI）← **本实验的天然对照锚点** |
+| **② GLM-5.2**（备选：①额度耗尽/不可用时改这个） | `glm-5.2` | `cline auth -p openai -k 02_088EE9051AAE4BF0ABFC7130331BF697_c2759d74-49f1-410a-89ea-2cf188ea2f23 -b http://agi-gateway.cxmt.com/cloud/v1 -m glm-5.2` | `B.glm-5.2` = **83.3 ± 3.1%**（5/5，cline CLI） |
+
+> 🚫 **不用 `deepseek-v4-pro-fp4`**（额度已耗尽）。🚫 两轴之间不得换基座。🚫 若两个 GLM 都探针失败 ⇒ **报 blocker 停工**，不许擅自换第三个模型。
+> 💡 **优先选 ①**：`B.glm-5.3-flash = 86.8±1.6%` 是既有 cline×PyAether 的正式基线，跑出来的 thinking/语言变体能直接与它做 **Δpp + McNemar** 对照；选 ② 也有一致的基线可用。**选哪个都要在报告里把对应基线拉出来做差**，不能只报绝对值。
+
+**其余口径（不可改）**：测试集 = **EDA-Eval-PyAether 158 题**（`EDA-Scripting-Bench 449` 的 PyAether 子集；🚫 不跑 SKILL/Tcl）· harness = `cline` 3.0.51（🚫 不改版本）· 协议 = Pass@1 单次无 retry `-p 8 -n`（与既有消融同口径）· 环境 = `BASE_DIR=/nasdata/app.e0031982/code/eda_fastmcp`，启动 `setsid bash scripts/run_cline_script.sh -p 8 -n > /tmp/ABL_<TAG>_r<N>.log 2>&1 < /dev/null &`，结束判据 `pgrep -f '^bash scripts/run_cline_script'` 无输出，打分 `$BASE_DIR/venv/bin/python scripts/run_eval.py --latest 1` · 每变体 **3 轮**（成本允许则 5 轮与既有臂对齐，报告写实际 n）。
+
 
 #### 1. 两轴设计 —— ⚠️ **一次只变一个轴，不做笛卡尔积**
 
@@ -46,7 +57,7 @@
 
 #### 5. 交付物
 
-- `doc/ZhuLong_DAC2027/reports/report_zhulong_ablation_thinking_language_zh.html` —— **中文单文件自包含，0 script 0 外链**（本线 10-24 常驻规程），必含：①**轴 A 对比表** 变体×{Pass@1, 墙钟/题, Batch 墙钟, prompt/completion/reasoning/total tok, ¥, timeout, converged, gen-fail}，全 `mean±std` ②**轴 B 对比表**（同结构）③**成本-分数象限图**（找性价比最优 / 堆 token 无收益者）④**口径校验节**（thinking 是否真生效 trace 证据 + 各语言是否真切换 trace 原文片段 + `none` 实际实现）⑤**失败归因**（infra/timeout/gen-fail/能力，**infra 单列**）⑥**结论**（边际收益、是否值得改生产配置）。
+- `doc/ZhuLong_DAC2027/reports/report_zhulong_ablation_thinking_language_zh.html` —— **中文单文件自包含，0 script 0 外链**（本线 10-24 常驻规程），必含：①**轴 A 对比表** 变体×{Pass@1, 墙钟/题, Batch 墙钟, prompt/completion/reasoning/total tok, ¥, timeout, converged, gen-fail}，全 `mean±std` ②**轴 B 对比表**（同结构）③**成本-分数象限图**（找性价比最优 / 堆 token 无收益者）④**口径校验节**（thinking 是否真生效 trace 证据 + 各语言是否真切换 trace 原文片段 + `none` 实际实现）⑤**失败归因**（infra/timeout/gen-fail/能力，**infra 单列**）⑥**与既有基线对照**：拉出所选基座的 `B.glm-5.3-flash 86.8±1.6%` 或 `B.glm-5.2 83.3±3.1%`（cline CLI / PyAether 158 / 5-run）做 **Δpp + 配对 McNemar**，逐变体一张小表 ⑦**结论**（边际收益、是否值得改生产配置）。
 - 生成器 `run/gen_report_zhulong_ablation_think_lang_zh.py` + 原始数据 `run/ablation_think_lang_results.json`（逐题分数+成本）+ `MEMORY_ZHULONG.md` 心跳 + `daily-memories/` 流水；完成后本行改 `✅ 已交付`。
 
 #### 6. 护栏
@@ -110,27 +121,9 @@
 > 允许为验证关键点打断正在跑的 5-run（先落盘 + 记 MEMORY + 事后 regrade 补记）。**不得编造任何数字或文献**；凡"待补"必须写明怎么补。
 
 
-### 📦 已归档 batch 13 · 2026-10-27（10-24 全批 + 10-23 22:1x + 10-23 09:4x 等已闭合块原文搬入 ZHULONG_TASK_ARCHIVE.md §归档 batch 13）
+### 📦 已归档 batch 13 · 2026-10-27（原文见 `ZHULONG_TASK_ARCHIVE.md` §归档 batch 13）
 
-> 以下均已闭合/已被取代，1-line 指针，需要时读 archive §归档 batch 13。**当前活跃块 = 上方 🟢 2026-10-26 08:1x 与 📕 2026-10-25 00:0x**。
->
-> - 🩺 2026-10-26 ops 中继修复（已修复·relay PID118463 活·.last_run_id=128=inbox 顶部）→ archive §batch 13
-> - 🔧 2026-10-26 cimi_search/cimi_fetch 挂载（已通过 research MCP server 可用·无需再修）→ archive §batch 13
-> - 📝 2026-10-24 23:0x DAC 标准审稿 + 改稿方案（已交付 `reports/report_zhulong_dac_readiness_review_zh.html` 41.6KB）→ archive §batch 13
-> - 📐 2026-10-24 19:0x 论文排版（commit 3651b322·已闭合）→ archive §batch 13
-> - ✅ 2026-10-24 22:23 配置对齐（maxTokens 16384→8192·已被 10-26 令覆盖）→ archive §batch 13
-> - 🔬 2026-10-24 22:15 已核实事实（RUN_ID 115/117 实测·历史参考）→ archive §batch 13
-> - 🔴 2026-10-24 22:1x 停 cline-full + zhulong 对齐 + 重跑 5-run（已被 10-26 令覆盖）→ archive §batch 13
-> - 📊 2026-10-24 20:2x cline vs zhulong-CLI 差异归因报告（已交付 25.9KB）→ archive §batch 13
-> - 📐 2026-10-24 15:4x 引用修正（Lemma→Claim + delage2010percentile·已执行）→ archive §batch 13
-> - 📄 2026-10-24 16:1x refs 单独起页（已执行·commit 3651b322）→ archive §batch 13
-> - ✅ 2026-10-24 13:0x 执行令（②A+③删附录B+④TikZ 重画·已执行 commit d2d9bb7a）→ archive §batch 13
-> - 🆕 2026-10-23 22:1x cline×deepseek-v4-pro×full 5-run（**部分活跃·pending 用户决策 (b) 引用·r1 batch 2026_1023_231253 已硬切留证·是否起 r2-r5 待裁决**）→ archive §batch 13
-> - 🟢 2026-10-23 09:4x 作废 r1-r3 + 改 full + 重跑 5 轮（已被 10-26 令覆盖·r1-r3 N′ 数据作废留证）→ archive §batch 13
-> - 📦 batch 12 / batch 10 / batch 11 等更早归档指针 → 见 ZHULONG_TASK_ARCHIVE.md 各 §归档 batch N
-
-> 📄 **报告格式常驻规程（2026-10-24 用户令·保留）**：**所有报告一律用中文 HTML**（单文件自包含、无外链/CDN），除非用户另行指定；🚫 不用 `.md` / `.pdf` / 纯文本顶替。
-
+> 以下均已闭合/已被取代，仅留 1 行指针，需要时读 archive：10-26 ops 中继修复（relay PID118463 活，.last_run_id=128）· 10-26 cimi_search/cimi_fetch 挂载（research MCP 可用）· 10-24 23:0x DAC 审稿+改稿方案（41.6KB 报告已交付）· 10-24 19:0x 论文排版（commit 3651b322）· 10-24 22:23 配置对齐（maxTokens 16384→8192，已被 10-26 令覆盖）· 10-24 22:15 已核实事实（RUN_ID 115/117）· 10-24 22:1x 停 cline-full+重跑 5-run（已被 10-26 令覆盖）· 10-24 20:2x cline vs zhulong-CLI 差异归因（25.9KB）· 10-24 15:4x 引用修正（Lemma→Claim）· 10-24 16:1x refs 单独起页 · 10-24 13:0x 执行令（commit d2d9bb7a）· 10-23 22:1x cline×deepseek-v4-pro×full 5-run（**部分活跃·r1 已硬切留证，r2-r5 待裁决**）· 10-23 09:4x 作废 r1-r3+重跑（已被 10-26 覆盖）· batch 10/11/12 更早指针见 archive。
 ### 0. 🎯 当前状态速览（每次唤醒先看这里）
 
 | 项 | 值（**2026-10-04 运维更新**）|
