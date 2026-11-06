@@ -5,13 +5,13 @@ WAITING: 0
 ## 📊 进度快照
 
 ```
-PHASE:        R1729 TB4 orphan-fix(setsid detach)+TB4 full restart R1729·SWE-bench predict 287/3500(7/7 alive)·TB4=66tasks
-已完成:       H-B✅·Gate7/7·TB报告✅·full500全7路predict+eval 100%完成✅·R1685 cline低分归因✅·R1694-R1728 glm53重测启动+proxy修复+TB4镜像+TB4 smoke 7/7✅+TB4 timeout fix(3600s)+TB4 R1728 restart·R1729 TB4 orphan-fix(setsid)+restart
-当前动作:     R1729 TB4 orphan-fix:发现R1728 TB4 harbor已死(Docker容器orphaned,ppid=1 sleep infinity,无harbor进程)根因=sg docker无setsid→cline session结束SIGHUP杀掉→kill orphaned containers→清stale job dirs→重启TB4 full setsid(PID1665897 ppid=1✅ Batch1 cline+codex harbor alive 2 containers up)·SWE-bench predict 287/3500(8.2%):her77/op71/cline32/ds32/pi34/cc30/codex11·7/7 alive·gw_proxy9092+9093 200✅·CPU/MEM PASS(load52/224·mem670G/2015G)·硬约束③PASS(0 tracked JSON)
-下一步:       ①监控TB4全量66×7进度(setsid detached,Batch1 cline+codex→Batch2-4) ②监控SWE-bench predict(287/3500,按100/300/500汇报) ③每路predict完即eval ④两基准全交付后写报告report_harness_glm53_7way_swebench_tb_zh.html
-阻塞:         无·⚠️codex极慢(11/500 SWE-bench)·TB4 Batch1刚重启需观察是否稳定
+PHASE:        R1730 监控轮·SWE-bench predict 289/3500(8.3% 7/7 alive)·TB4 Batch1 cline+codex running(codex 3 errored exit=1)
+已完成:       H-B✅·Gate7/7·TB报告✅·full500全7路predict+eval 100%完成✅·R1685 cline低分归因✅·R1694-R1729 glm53重测启动+proxy修复+TB4镜像+TB4 smoke 7/7✅+TB4 timeout fix(3600s)+TB4 R1728-R1729 orphan-fix+setsid restart
+当前动作:     R1730 监控轮:CPU/MEM PASS(load52/224·harness procs 14-90MB)·SWE-bench predict 289/3500:her77/op71/cline33/ds32/pi34/cc30/codex12·7/7 alive(ppid=1 detached✅)·TB4 Batch1(cline+codex)running:cline 1run/65pending·codex 3errored(exit=1 ~3.5min,model metadata warn)+1run/62pending·gw_proxy9092+9093 200✅·gateway 200✅·disk /data 5.8TB free✅·硬约束③PASS(0 tracked JSON)·体积PASS(31.3/30.2KB)
+下一步:       ①监控TB4 codex errored是否系统性(若持续exit=1需查codex CLI+glm53兼容) ②监控SWE-bench predict(289/3500,按100/300/500汇报) ③每路predict完即eval ④两基准全交付后写报告report_harness_glm53_7way_swebench_tb_zh.html
+阻塞:         无·⚠️codex双线问题(SWE-bench 12/500空patch+TB4 exit=1)待观察是否系统性
 ERROR_COUNT:  0
-  📦 体积：TASK=32074B(31.3KB) / MEMORY=30580B(29.9KB)(本轮未归档)
+  📦 体积：TASK=32074B(31.3KB) / MEMORY=30893B(30.2KB)(本轮未归档)
 ```
 
 > 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
@@ -19,7 +19,8 @@ ERROR_COUNT:  0
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 
 ### 本唤醒流水
-> [06:02] R1729 TB4 orphan-fix+restart:CPU/MEM PASS(load52/224·mem670G/2015G avail1222G)·SWE-bench predict 287/3500(8.2%):her77/op71/cline32/ds32/pi34/cc30/codex11·7/7 alive(orchestrator ppid=1 nohup detached✅)·发现R1728 TB4 harbor已死:2 Docker容器orphaned(ppid=1 sh sleep infinity,无harbor python进程,0 task result.json)根因=launch用"sg docker -c bash...&"无setsid→cline session结束SIGHUP杀harbor·FIX:kill orphaned containers→清stale job dirs→重启TB4 full"setsid sg docker -c bash launch_tb4_glm53_full.sh"(PID1665897 ppid=1✅ harbor alive PID1665919/1665920 2 containers up atrx-vep-crispr)·gw_proxy9092+9093 200✅·硬约束③PASS(0 tracked JSON,predictions_glm53 gitignored)·体积PASS(31.3/29.9KB)·未完成指令:有(glm53重测SWE-bench+TB4 7路)⇒WAITING:0
+> [06:12] R1730 监控轮:CPU/MEM PASS(load52/224·harness procs 14-90MB·pretrain 143%=1.4核非本线)·SWE-bench predict 289/3500(8.3%):her77/op71/cline33/ds32/pi34/cc30/codex12·7/7 alive(ppid=1 detached✅)·file ages:cline211s/codex279s/op387s/cc1286s/pi811s/her1205s/ds2043s(均在1800s timeout内)·codex SWE-bench空patch(12/500中11个model_patch="")·TB4 Batch1(cline+codex)setsid PID1665897 ppid=1✅:cline 1run/65pending·codex 3errored(RuntimeError exit=1 ~3.5min,stdout显示"Model metadata for glm-5.3-flash not found"warn+开始工作+exec command然后exit=1)+1run/62pending·2 Docker containers up(atrx-vep-crispr+biped-contact-dynamics)·gw_proxy9092+9093=200✅·gateway=200✅·disk /data 5.8TB/ 352GB✅·硬约束③PASS(0 tracked JSON)·体积PASS(31.3/30.2KB)·未完成指令:有(glm53重测SWE-bench+TB4 7路)⇒WAITING:0
+> 📦 R1729 流水已归档 → daily-memories-harness/2026-11-07.md。结论：TB4 orphan-fix(setsid detach)+restart,SWE-bench 287/3500。需要时再读。
 > 📦 R1728 流水已归档 → daily-memories-harness/2026-11-07.md。结论：TB4 timeout fix(3600s)+restart,但harbor被SIGHUP杀死。需要时再读。
 > 📦 R1727 流水已归档 → daily-memories-harness/2026-11-07.md。结论：监控轮正常,7路 alive,TB4 Batch1 errored timeout1800s。需要时再读。
 > 📦 R1725 流水已归档 → daily-memories-harness/2026-11-07.md。结论：7路 alive,进度稳定。需要时再读。
