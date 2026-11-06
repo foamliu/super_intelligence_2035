@@ -39,7 +39,7 @@
 
 > **核心结论**：58 pp 差距**主体（估 35–45 pp）为“协议可回收”**——工具频次/合法率(D1/D2)、API 领域知识(D4 执行报错占 74%)、迭代闭环(D6)。对应：SFT 注入工具轨迹+PyAether API 语料（~20–30 pp，M1→M2）；领域退火补 API（~5–10 pp）；RL(GRPO) 打磨“查-写-改”闭环（~5–10 pp，M3）。**剩余 ~10–15 pp 为真实能力差距**（语义推理/复杂多 API），逼近 94%(M4) 需更大量 RL。
 > ⚠️ **未闭合**：MiniCPM5-2B 36% 侧 D1/D2/D6 未实测（轨迹不在本节点）。上述比例为“基于强模型行为外推的假设”，非实测对照。需运维提供 `~/eda_code_eval/<36%_run>/{final_report.json, trace/*/api_conversation_history.json}`。
-> 📦 **交付物**：`reports/report_posttrain_diagnose_d1d6_zh.html`（29.0KB / 13 节 / 0 script / 0 外链 / 自包含，已产出 ✅；wake4 建 §1–§11，wake5 增 §12 跨运行稳定性，wake7 增 §13 多配置对照）。commit 前缀 `posttrain diag:`。
+> 📦 **交付物**：`reports/report_posttrain_diagnose_d1d6_zh.html`（36.9KB / 14 节 / 0 script / 0 外链 / 自包含，已产出 ✅；wake4 建 §1–§11，wake5 增 §12 跨运行稳定性，wake7 增 §13 多配置对照，wake8 增 §14 Harness 消融）。commit 前缀 `posttrain diag:`。
 
 ### 跨运行稳定性（D1–D6 cross-run · 2026-11-06 wake5 · 零 GPU · 实测）
 
@@ -82,6 +82,42 @@
 - **模板 B（真实能力差距, 10%）**：不同弱模型，代码能力不足 → AttributeError/NameError 42%。所有场景退化含 Others（−62pp）。→ 需领域退火+大量 SFT。
 - **综合判读**：MiniCPM5-2B 36% 更可能介于 A 与 B 之间——既有协议问题也有能力问题。post-train 三步走对此两种情况均有覆盖（SFT→退火→RL），进一步支持 §10 核心结论。
 - **旁证**：2026-04-24 运行（23 任务, 26.1%）亦为 Unknown Failure 主导——同模型低分运行均由协议问题导致，未见能力骤降。
+
+### Harness 消融分析：58 pp 差距的"模型能力"与"工具链放大"分解（2026-11-06 wake8 · 零 GPU · 实测）
+
+> **动机**：前序 §1–§13 分别从 DeepSeek 全 harness（94%）与代码生成（~67%）侧诊断 D1–D6。本节首次将二者定量对照，分解 58 pp 为"模型代码生成差距"（退火+SFT 目标）与"工具链放大"（SFT+RL 目标）。
+> 提取脚本：`/tmp/pt_p0_harness_ablation.json`（13 份 final_report.json + 7 份 eval_result JSONL）。
+
+**代码生成 vs 全 Harness 对照**：
+
+| 模式 | Pass@1（158 任务） | 数据来源 | 含义 |
+|:--|:--|:--|:--|
+| 代码生成（无 agent） | **67.4%**（6 次运行 mean ± 2.0pp std，排除 39.9% 异常） | EDA-Eval-Framework 6 份正常 final_report | 单次生成→执行→评分，无 API 查询/迭代 |
+| 全 Harness（agent） | **94.0%** | 任务书锚点 | search_apis→get_api_details→run_code→反馈→修复（Φ≈5 轮） |
+| **Harness 放大** | **+26.6 pp** | — | 工具链贡献 |
+
+**58 pp 定量分解**：
+
+| 层级 | Pass@1 | 差值 | 对应 post-train 步骤 | 里程碑 |
+|:--|:--|:--|:--|:--|
+| MiniCPM5-2B 全 harness（起点） | 36.0% | — | — | 起点 |
+| ↑ 模型代码生成能力差距 | 67.4% | **+31.4 pp** | 退火（补 API）+ SFT（代码模式+工具轨迹） | M1→M2 |
+| ↑ 工具链放大效应 | 94.0% | **+26.6 pp** | SFT（工具轨迹）+ RL/GRPO（闭环打磨） | M2→M3→M4 |
+| **合计** | **94.0%** | **+58.0 pp** | 退火+SFT+RL | M1→M4 |
+
+**Harness 版本演进（eval_result JSONL 分析）**：
+
+| 配置 | 日期 | 任务数 | 平均代码长度 | API/任务 | try/except% | assert% |
+|:--|:--|:--|:--|:--|:--|:--|
+| **无沙盒** | 01-30 | 102 | 3,493 | 2.8 | **82.4%** | **4.9%** |
+| 沙盒 v1 | 01-30 | 102 | 4,423 | 3.1 | 67.6% | 89.2% |
+| 沙盒 v1_5 | 02-11 | 102 | 4,347 | 2.7 | 56.9% | 88.2% |
+
+**关键发现**：① 沙盒引入使代码策略从"防御性单次生成"（82% try/except, 5% assert）转为"迭代式测试驱动"（57% try/except, 88% assert）——**这正是 RL/GRPO 要教小模型的能力**。② API 选取在无沙盒 vs 有沙盒间高度一致（Spearman ρ≈0.95, 172 vs 158 unique APIs）——**沙盒不改变 API 知识库，改变代码组织方式**。含义：退火目标=API 知识注入；SFT+RL 目标=工具使用范式。
+
+**pp 预算分配建议**：退火 3–8pp → SFT(工具) 10–15pp(M1) → SFT(代码) 10–15pp(M2) → RL 8–15pp(M3) → RL(更多) 5–10pp(M4)。
+
+> ⚠️ **假设与局限**：分解假设 MiniCPM5-2B 纯代码生成 ≈ 36%（全 harness 值），即"工具链对小模型放大≈0"。此假设偏保守——若小模型纯代码生成 <36%，则模型能力差距 <31.4pp，回收空间更大。**需运维提供 MiniCPM5-2B 纯代码生成 Pass@1**（EDA-Eval-Framework 无 agent 模式跑一次）。
 
 ---
 
