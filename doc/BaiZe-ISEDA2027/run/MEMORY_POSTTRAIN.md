@@ -7,10 +7,10 @@ WAITING: 1
 
 ## 进度快照
 
-- PHASE: posttrain-wake21（2026-11-07 0x:xx；阻塞项复查 + 交付物完整性复核）
-- 已完成: P3预备✅ 5脚本(wake1/2)；P1-e✅ 污染隔离(wake2)；P1-a/b✅ 数据盘点(wake2)；P2✅ 方案书(wake3)；P0✅ D1–D6 DeepSeek侧(wake4→14)；P1-d✅ PyAether语料(wake4)；P1✅ HTML报告(wake6)；wake9✅ 诊断脚本；wake13✅ vLLM 0.33.0；wake14✅ D1–D6完整化；wake15✅ 工作树恢复；wake16✅ CPU模型验证；wake17✅ 后训练数据调研HTML报告(44.9KB/10节)+§E+硬盘体检；wake18✅ push补推+交付物复核；wake19✅ 阻塞项复查+交付物复核；wake20✅ 阻塞项复查+交付物复核
-- 当前动作: wake21 唤醒→ git fetch(proxy) 成功（origin 77d2056ab→9ca452849c，他线 9 commits 活跃提交）→ `git pull --rebase --autostash` 成功（fast-forward 到 9ca452849c）→ git status clean（`## main...origin/main`）→ 阻塞项复查：~/eda_code_eval 仍 MISSING + /nas_inference 仍未挂载 + /nas_env 仍未挂载 + 8×A40 全被 SGLang 占用(96-99% util, 44-45GB/卡, 2026-11-09 距今~2天) → 交付物完整性复核：4 报告(37KB+30KB+38KB+44.9KB)全在位 + 5 脚本 bash -n 全 PASS + survey grep script/iframe/src=http/href=http=0 ✅ + §E 在位 + MiniCPM5-2B 模型在位 + vLLM venv 在位 → 硬盘: / 386G(84%) /nas_data 20T(85%) 无变化 → 无新运维令(TASK 文件未变，§用户令·22:5x 仍标⚠️未完成但已✅交付) → 体积自检+提交心跳
-- 下一步: 本节点零GPU可达项**已全完成**(P0/P1/P2/P3预备/数据调研/CPU验证全✅)。剩余阻塞：①P0 36%侧等GPU(2026-11-09，距今~2天)或运维拷轨迹；②P1-c等/nas_inference挂载；③正式训练P3阻塞pretrain ckpt(ETA≈2026-12-25)
+- PHASE: posttrain-wake22（2026-11-07 01:12；阻塞项复查 + 交付物完整性复核）
+- 已完成: P3预备✅ 5脚本(wake1/2)；P1-e✅ 污染隔离(wake2)；P1-a/b✅ 数据盘点(wake2)；P2✅ 方案书(wake3)；P0✅ D1–D6 DeepSeek侧(wake4→14)；P1-d✅ PyAether语料(wake4)；P1✅ HTML报告(wake6)；wake17✅ 后训练数据调研HTML报告(44.9KB/10节)+§E+硬盘体检；wake18-21✅ 阻塞项复查+交付物复核(例行巡检)
+- 当前动作: wake22 唤醒→ git fetch(proxy) 成功（origin 5ed73d5ec→e16fa3e80，他线活跃提交）→ `git pull --rebase --autostash` 成功（fast-forward 到 e16fa3e80）→ git status clean（`## main...origin/main`）→ 阻塞项复查：~/eda_code_eval 仍 MISSING + /nas_inference 仍未挂载 + /nas_env 仍未挂载 + 8×A40 全被 SGLang 占用(0% util 44-45GB/卡 idle，2026-11-09 距今~2天) → 交付物完整性复核：4 报告(37KB+30KB+38KB+44.9KB)全在位 + 7 脚本 bash -n 全 PASS + survey grep script/iframe/src=http/href=http=0 ✅ + §E 在位 → 硬盘 / 386G(84%) /nas_data 20T(85%) 无变化 → 无新运维令 → 体积自检+提交心跳
+- 下一步: 本节点零GPU可达项**已全完成**。剩余阻塞：①P0 36%侧等GPU(2026-11-09)或运维拷轨迹；②P1-c等/nas_inference挂载；③正式训练P3阻塞pretrain ckpt(ETA≈2026-12-25)
 - 阻塞: P0-36%侧等GPU/P1-c等挂载/P3等pretrain ckpt——均阻塞于外部依赖，本节点无更多零GPU项可做
 - 未完成指令: 有（P0-36%侧需GPU/P1-c需挂载/P3需pretrain ckpt，均阻塞外部依赖，本节点无法推进。§用户令·22:5x调研已✅交付，待运维标✅）⇒ WAITING=1
 
@@ -69,5 +69,7 @@ WAITING: 1
 
 [00:3x] wake20：唤醒→ git fetch(proxy) 成功（origin 17d5d34e7→b5b39bfb5，他线活跃提交）→ `git pull --rebase --autostash` 成功（fast-forward 到 b5b39bfb5，二次 pull 追赶他线 4 commits）→ git status clean（`## main...origin/main`）→ 阻塞项复查（全无变化）：~/eda_code_eval 仍 MISSING + /nas_inference 仍未挂载 + /nas_env 仍未挂载 + 8×A40 全被 SGLang 占用(94-98% util 44-45GB/卡，2026-11-09 距今~2天) → 交付物完整性复核：4 报告全在位 + 5 脚本 bash -n 全 PASS + survey grep script/iframe/src=http/href=http=0 ✅ + §E 在位 + MiniCPM5-2B 模型在位 → 硬盘 / 386G(84%) /nas_data 20T(85%) 无变化 → 无新运维令 → 体积自检+提交心跳。📦 体积：TASK=24.2KB / MEMORY=27.0KB / EXPERIMENTS=32.7KB（均 ≤32KB ✅，无需归档）。
 
-[0x:xx] wake21：唤醒→ git fetch(proxy) 成功（origin 77d2056ab→9ca452849c，他线 9 commits 活跃提交）→ `git pull --rebase --autostash` 成功（fast-forward 到 9ca452849c）→ git status clean（`## main...origin/main`）→ 阻塞项复查（全无变化）：~/eda_code_eval 仍 MISSING + /nas_inference 仍未挂载 + /nas_env 仍未挂载 + 8×A40 全被 SGLang 占用(96-99% util 44-45GB/卡，2026-11-09 距今~2天) → 交付物完整性复核：4 报告(37KB+30KB+38KB+44.9KB)全在位 + 5 脚本 bash -n 全 PASS + survey grep script/iframe/src=http/href=http=0 ✅ + §E 在位 + MiniCPM5-2B 模型在位 + vLLM venv 在位 → 硬盘 / 386G(84%) /nas_data 20T(85%) 无变化 → 无新运维令(§用户令·22:5x 仍标⚠️未完成但已✅交付，待运维标✅) → 体积自检+提交心跳。📦 体积：TASK=24.2KB / MEMORY=28.6KB / EXPERIMENTS=32.7KB（均 ≤32KB ✅，无需归档）。
+[0x:xx] wake21：唤醒→ git fetch(proxy) 成功（origin 77d2056ab→9ca452849c，他线 9 commits 活跃提交）→ `git pull --rebase --autostash` 成功（fast-forward 到 9ca452849c）→ git status clean → 阻塞项复查（全无变化）+ 交付物完整性复核（全在位）→ 无新运维令 → 体积自检+提交心跳。📦 TASK=24.2KB / MEMORY=28.6KB / EXPERIMENTS=32.7KB。
+
+[01:12] wake22：唤醒→ git fetch(proxy) 成功（origin 5ed73d5ec→e16fa3e80，他线活跃提交）→ `git pull --rebase --autostash` 成功（fast-forward 到 e16fa3e80）→ git status clean（`## main...origin/main`）→ 阻塞项复查：~/eda_code_eval 仍 MISSING + /nas_inference 仍未挂载 + /nas_env 仍未挂载 + 8×A40 SGLang idle(0% util 44-45GB/卡，2026-11-09 距今~2天) → 交付物完整性复核：4 报告(37KB+30KB+38KB+44.9KB)全在位 + 7 脚本 bash -n 全 PASS + survey grep script/iframe/外链=0 ✅ + §E 在位 → 硬盘 / 386G(84%) /nas_data 20T(85%) 无变化 → 无新运维令(§用户令·22:5x 仍标⚠️未完成但已✅交付，待运维标✅) → 本节点零GPU可达项全完成 → 体积自检+提交心跳。📦 体积：TASK=24.2KB / MEMORY=29.0KB / EXPERIMENTS=32.7KB（均 ≤32KB ✅，无需归档）。
 
