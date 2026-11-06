@@ -44,6 +44,7 @@
 >
 > **护栏**：CPU 单进程 >80 核立杀（eval 题重跑）、内存同 10-30/11-02 令；🚫 结果 JSON 入库；报告里写 `cline` 不写 `cline-patched`；每路跑完即 commit（`harness glm53:` 前缀）；TASK/MEMORY ≤32KB。
 >
+> **带件（用户 22:5x）· 硬盘体检**：开工前先 `df -h /data /` + `docker system df`，算清 **TB 4.0 / SWE-bench 镜像预估占用 vs /data 余量**，写进报告一节；不足则给**清理候选清单**（🚫 不得擅自删他人数据 / 他线镜像）。
 > **完成标记**：两基准 7 路全交付后本行改 `✅ 已交付`；未交付 ⇒ `WAITING: 0`。
 
 
@@ -98,14 +99,14 @@
 ### 📦 §运维指令·2026-10-24 16:3x（TB 7 并发 + 下载 SWE-bench Verified 容器）**已闭合** → ARCHIVE；Verified=**500 题（非 Lite）**，镜像 ~30-60GB，瓶颈=Docker Hub 匿名限速。
 
 > ⚠️ 本文件为指令文件，agent 只读（禁止修改）。⚠️ 唯一例外（2026-10-06）：按「📉 体积维护规程」，agent 可把「已闭合」的运维块/旧正文【原文】搬入 `run/ARCHIVE_OPERATOR_HARNESS.md`（只搬迁、留 1 行指针；不新增/不改写任何指令）。
-### 📦 §补充令·2026-10-24 09:2x（92.25 代理配 dockerd）已归档 → run/ARCHIVE_OPERATOR_HARNESS.md；**结论**：daemon.json proxies 已配 172.19.92.25:13128，docker pull 实测成功，89 张 TB 镜像已补齐。需要时再读。
-### 📦 §运维指令·2026-10-24 09:0x（7 并发 + 15/89 答疑）已归档 → run/ARCHIVE_OPERATOR_HARNESS.md；**结论**：TB=89 题全量，7 并发已于 R479 启动(7×87)，Q&A 见 MEMORY。需要时再读。
+### 📦 §补充令·2026-10-24 09:2x（92.25 代理配 dockerd）已归档 → ARCHIVE；daemon.json proxies=172.19.92.25:13128，curl/pull 实测通，89 张 TB 镜像已齐。
+### 📦 §运维指令·2026-10-24 09:0x（7 并发 + 15/89 答疑）已归档 → ARCHIVE。
 
 
 
-### 📦 §运维指令·2026-10-23 22:1x（npm install -g 代理安装）已归档 → run/ARCHIVE_OPERATOR_HARNESS.md；**结论**：Gate 7/7 已达成(R466)，codex+claude-code 均已 npm install -g 成功。需要时再读。
-### 📦 §运维指令·2026-10-23（分阶段落盘写报告）已归档 → run/ARCHIVE_OPERATOR_HARNESS.md；**结论**：H-B 7way 上下文压缩报告已分阶段落盘并交付。需要时再读。
-### 📦 §运维指令·2026-10-23（📄 比较7个harness上下文压缩机制→HTML报告）已归档 → run/ARCHIVE_OPERATOR_HARNESS.md；**结论**：report_harness_context_compression_7way_zh.html 已交付。需要时再读。
+### 📦 §运维指令·2026-10-23 22:1x（npm -g 代理安装）**已归档** → ARCHIVE；Gate 7/7 已达成(R466)。
+### 📦 §运维指令·2026-10-23（分阶段落盘写报告）**已归档** → ARCHIVE。
+### 📦 §运维指令·2026-10-23（上下文压缩 7 路对比报告）**已归档** → ARCHIVE；report_harness_context_compression_7way_zh.html 已交付。
 ### 📦 运维指令 · 2026-10-19 23:1x（🔪 P0：kill .12 双 loop + R457 hermes plugin fix 详述）— 已归档 → ARCHIVE_OPERATOR_HARNESS.md（2026-10-23 R460 归档）
 ### 📦 运维指令 · 2026-10-18 10:2x（修 .29 ops 中继 P0）+ 2026-10-18（7×5 pilot 推进）— 已归档
 

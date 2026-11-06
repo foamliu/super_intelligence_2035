@@ -19,6 +19,26 @@
 > 本区为运维下发指令；agent 只读、不写（除「归档搬迁」这一唯一例外，见下方体积规程）。
 > 新指令置顶；已闭合块按体积规程原文搬入 `run/ARCHIVE_OPERATOR_POSTTRAIN.md`、留 1 行指针。
 
+### 🆕 §用户令·2026-11-06 22:5x（后训练各阶段训练数据调研（web search）+ 本机硬盘体检）· 用户直令 · 最高优先 · ⚠️ 未完成
+
+> **用户原话**：「post-train 有 web search，可以调研一下后训练各阶段所用的数据，写个中文HTML报告。另外看看硬盘的情况。」
+
+> **A · 调研报告（主交付）**：用 **web search**（先显式带 proxy：`export https_proxy=...`，`curl -I https://www.google.com` 探通后再检索）调研「后训练**各阶段**分别该用什么数据」，产出 `reports/report_posttrain_stage_data_survey_zh.html`（中文单文件、0 script、0 外链、≥8 节、≥25KB）。必须覆盖：
+> 1. **领域退火（annealing / decay）**：主流做法（Qwen / DeepSeek / Llama 系的 decay 阶段数据选择）· 高质量/领域/长文配比 · 规模量级（B tokens）· 插在预训练哪个位置 · 判据（val loss / 下游）。
+> 2. **SFT**：①通用指令数据（Tulu-3 / OpenHermes / Infinity-Instruct 等）；②**agentic 轨迹**（SWE-agent trajectories、SWE-smith、Nemotron-Cascade、AgentTrove、OpenCodeReasoning 等）；③**工具调用 / 多轮 / 错误恢复轨迹**（缺信号→重试→修正的完整链）；④**领域数据合成**（强模型 + 执行反馈造轨迹）；⑤格式（messages / tool_calls / observation）、去重与去污染、上下文长度、配比消融。
+> 3. **RL / RLVR**：①可验证任务集（SWE-bench-train、CodeContests、math-verify、Terminal-Bench 类）；②奖励设计（outcome vs reward-model vs process）；③**数据难度筛选**（pass@k 取中间区间，避免全对/全错 ⇒ 直接对应我们 CPU GRPO「advantage=0 无梯度」的问题）；④rollout 预算与课程学习。
+> 4. **对照本项目现状**：把结论映射到已有资产（`UltraData-SFT-2605` 18.89B tok、`UltraData-SFT-Agent-2609` 5.97B tok、PyAether API 语料 ~4–5M tok、EDA-Eval-PyAether 158 题），给**差距表**（每阶段：已有 / 缺什么 / 怎么补 / 预估成本与周期）。
+> 5. **可执行建议**：按 M1(50%)→M4(85%) 阶梯给「最小可用数据配方」，并回答「若只有 3 周训练窗口，先补哪 2 项」。
+> 6. **引用纪律**：每条结论附**来源 URL + 日期**；拿不到原文标「未核实」；🚫 不许编造数字或把博客当论文。
+
+> **B · 硬盘体检（附节交付）**：`df -h`（`/`、`/nas_train`、`/nas_inference`、`/nas_env`、`/tmp`、docker root）+ `docker system df` + `du -sh` 关键目录（`/tmp/models`、`~/code/vllm_venv`、`.../nemo_experiments`、`.../datasets`）；结论要写清**「退火+SFT+RL 数据与权重预计占用 vs 现有余量」**，并给**清理候选清单**（🚫 只列清单，不许擅自删除任何数据）。
+
+> **交付物**：上述 HTML（A 主体 + B 附节）+ `EXPERIMENTS_POSTTRAIN.md` 新增 **§E 后训练数据调研** + 检索关键词清单（便于复核）。
+
+> **护栏**：🚫 不启训练、不占 GPU；web search 只读（只登记「可下载源」，🚫 不发起下载）；数字全可溯源；CPU 降载 `OMP_NUM_THREADS≤8` + `nice -n 19`；commit 前缀 `posttrain survey:`；TASK/MEMORY ≤32KB。
+
+> **完成标记**：报告 + §E 交付后本行改 `✅ 已交付`；未交付 ⇒ `WAITING: 0`。
+
 ### 🆕 2026-11-06 运维直令：建立 post-train 线 · 先做 P0 诊断 + 数据/方案预研（不启训练）
 
 > 这是本线**第一条**指令。post-train 线**新建**，从零起步。
