@@ -5,13 +5,13 @@ WAITING: 0
 ## 📊 进度快照
 
 ```
-PHASE:        R1708 glm53重测监控轮:SWE-bench Verified full500×glm-5.3-flash×7路 predict运行中(7/7 alive,227 done/3500,91 pred files,62 patches,68.1%patch率)·TB 4.0=66tasks,P0核实PASS,119/132 images pulled(0 FAIL,#120 in progress)·硬约束③PASS
-已完成:       H-B✅·Gate7/7·TB报告✅·full500全7路predict+eval 100%完成✅·R1685 cline低分归因✅·R1694-R1707 glm53重测启动+proxy修复+硬约束③修复+TB4镜像拉取+监控轮✅
-当前动作:     R1708 监控:7路predict 227/3500 done·91 pred files:cline18·opencode20·pi7·codex4·claude-code8·hermes23·dsh11·patches=62:cline14·opencode19·pi2·codex1·claude-code4·hermes16·dsh6(68.1%)·⚠️dsh 115done但107 no_patch(93%无补丁,跑太快)·codex 3 quota_blocked·pi 1 quota+patch率低(2/8)·TB4 pull=119/132(#120 in progress,PID alive)·gw_proxy 9092+9093 HTTP200✅·gateway 200✅
-下一步:       ①监控7路predict进度(227/3500,按100/300/500三段汇报) ②每路predict完即eval ③TB4镜像拉取完(119/132,ETA~5min)→7路smoke→全量66×7 ④写报告report_harness_glm53_7way_swebench_tb_zh.html
-阻塞:         无·7路predict运行中·TB4镜像pull中(119/132)·⚠️dsh no_patch率93%·codex 3 quota_blocked·pi patch率低(2/8)
+PHASE:        R1709 glm53重测监控轮:SWE-bench Verified full500×glm-5.3-flash×7路 predict运行中(7/7 alive,235 done/3500,100 pred files,69 patches,69.0%patch率)·TB 4.0=66tasks,P0核实PASS,128/132 images pulled(#128 in progress,ETA~2min)·硬约束③PASS
+已完成:       H-B✅·Gate7/7·TB报告✅·full500全7路predict+eval 100%完成✅·R1685 cline低分归因✅·R1694-R1708 glm53重测启动+proxy修复+硬约束③修复+TB4镜像拉取+监控轮✅
+当前动作:     R1709 监控:7路predict 235/3500 done·100 pred files:cline19·opencode25·pi7·codex5·claude-code10·hermes23·dsh11·patches=69:cline15·opencode23·pi2·codex1·claude-code6·hermes16·dsh6(69.0%)·⚠️dsh 115done但107 no_patch(93%无补丁,无新进展)·codex 7done(极慢)·pi 8done(1800s超时)·TB4 pull=128/132(#128 in progress)·gw_proxy 9092+9093 HTTP200✅·gateway 200✅
+下一步:       ①监控7路predict进度(235/3500,按100/300/500三段汇报) ②每路predict完即eval ③TB4镜像拉取完(128/132,ETA~2min)→7路smoke→全量66×7 ④写报告report_harness_glm53_7way_swebench_tb_zh.html
+阻塞:         无·7路predict运行中·TB4镜像pull中(128/132)·⚠️dsh no_patch率93%(无新进展)·codex极慢(7/500)·pi超时多(2/8 patch)
 ERROR_COUNT:  0
-  📦 体积：TASK=32074B(31.3KB) / MEMORY=30090B(29.4KB)(≤32KB达标,无需归档)
+  📦 体积：TASK=32074B(31.3KB) / MEMORY=30500B(29.8KB)(≤32KB达标,无需归档)
 ```
 
 > 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
@@ -31,7 +31,8 @@ ERROR_COUNT:  0
 > 📦 R1704 流水(01:55,监控轮:75files/52patch·TB4 64/132)已归档 → daily-memories-harness/2026-11-07.md。结论：7路 alive,进度稳定。需要时再读。
 > 📦 R1706 流水(02:12,监控轮:85files/59patch·TB4 85/132·杀冗余TB4 pull副本554463)已归档 → daily-memories-harness/2026-11-07.md。结论：7路 alive,进度稳定。需要时再读。
 > 📦 R1707 流水(02:24,监控轮:89files/62patch·TB4 115/132)已归档 → daily-memories-harness/2026-11-07.md。结论：7路 alive,进度稳定。需要时再读。
-[02:29] R1708 glm53重测监控轮:CPU/MEM自检PASS(load43.72/224~19.5%busy·top=pretrain143%=非本线S1训练·cline15.2%=本线正常·无harness>8000%CPU·无>50GB RSS·MEM avail1240G)→disk:/data5.8T free/351G free→gw_proxy 9092+9093 HTTP200✅·gateway 200✅→7/7 alive(cline3991932·opencode4004319·pi4005476·codex2247963·claude-code2248351·hermes2258290·dsh2261465)→predict进度(progress JSON):cline43/500(patch14,no_patch29)·opencode23/500(patch19,no_patch4)·pi8/500(patch2,no_patch5,quota1)·codex7/500(patch1,no_patch3,quota3)·claude-code8/500(patch4,no_patch4)·hermes23/500(patch16,no_patch7)·dsh115/500(patch6,no_patch107,timeout1,quota1)·合计227/3500 done·91 pred files·62 patches(68.1%patch率)·⚠️dsh跑太快(115done)但107 no_patch(93%无补丁)·codex 3 quota_blocked·pi patch率低(2/8)→TB4 pull=119/132(#120 in progress,PID alive)·TB4 dataset=66tasks→硬约束③PASS(glm53 JSON tracked=8=1script+7logs,无结果JSON)·体积:TASK32074B(31.3KB)/MEMORY30090B(29.4KB)·未完成指令:有(glm53重测)⇒WAITING=0.
+> 📦 R1708 流水(02:29,监控轮:227done/3500·91files/62patch·TB4 119/132)已归档 → daily-memories-harness/2026-11-07.md。结论：7路 alive,进度稳定。需要时再读。
+[02:36] R1709 glm53重测监控轮:CPU/MEM自检PASS(load45.11/224~20%busy·top=pretrain143%=非本线S1训练·opencode63.9%=本线正常·无harness>8000%CPU·无>50GB RSS·MEM avail1239G)→disk:/data5.8T free/351G free→gw_proxy 9092+9093 HTTP200✅·gateway 200✅(real key probe)→7/7 alive(cline3991932·opencode4004319·pi4005476·codex2247963·claude-code2248351·hermes2258290·dsh2261465)→predict进度(progress JSON):cline44/500·opencode28/500·hermes23/500·dsh115/500·claude-code10/500·pi8/500·codex7/500·合计235/3500 done·100 pred files·69 patches(69.0%patch率)·pred files:cline19·opencode25·pi7·codex5·claude-code10·hermes23·dsh11·patches:cline15·opencode23·pi2·codex1·claude-code6·hermes16·dsh6·⚠️dsh 115done无新进展(107 no_patch)·codex极慢(7/500)·pi超时多(2/8)→TB4 pull=128/132(#128 in progress,ETA~2min)·TB4 dataset=66tasks→硬约束③PASS(0 tracked glm53 result JSON)·体积:TASK32074B(31.3KB)/MEMORY30500B(29.8KB)·未完成指令:有(glm53重测)⇒WAITING=0.
 
 
 
