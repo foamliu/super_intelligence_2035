@@ -325,3 +325,5 @@
 1786014142309_pgaur	e0014566	hfeg0pkn005	129	pg_layout	case	EDA-Eval-DesignFlow-PgRundirDefault-001	2026-11-07 04:29	
 1786710801484_wsi93.messages.json	e0014566	hfeg0pkn005	143	pg_layout	case	EDA-Eval-DesignFlow-PgCellClassify-001	2026-11-07 05:12	pg_layout name-classifier (distinct from r185 layout_virtuoso structural-inventory classifier: wsi93 solved by cell-name pattern, a9ta2 solved by per-instance shapes/vias/LPPs)
 1791612883140_2fb2m.messages.json	ellawu	hfeg0pkn005	130	layout_virtuoso	case	EDA-Eval-DesignFlow-FloatingPinGen-001	2026-11-07 05:16	
+1785493621914_3qqg5	e0014566	hfeg0pkn005	132	pg_layout	claimed		2026-11-07 05:43	
+1793524556149_f86ll	sinanz	hfeg0pkn005	655	layout_aether	case	EDA-Eval-DesignFlow-SchPinAnalyze-001	2026-11-07 05:58	
