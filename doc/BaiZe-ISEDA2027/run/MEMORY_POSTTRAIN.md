@@ -7,9 +7,9 @@ WAITING: 1
 
 ## 进度快照
 
-- PHASE: posttrain-wake24（2026-11-07 01:5x；阻塞项复查 + 交付物复核 + 体积归档）
-- 已完成: P3预备✅ 5脚本(wake1/2)；P1-e✅ 污染隔离(wake2)；P1-a/b✅ 数据盘点(wake2)；P2✅ 方案书(wake3)；P0✅ D1–D6 DeepSeek侧(wake4→14)；P1-d✅ PyAether语料(wake4)；P1✅ HTML报告(wake6)；wake17✅ 后训练数据调研HTML报告(44.9KB/10节)+§E+硬盘体检；wake18-23✅ 例行巡检；wake24✅ 归档wake1-4腾体积
-- 当前动作: wake24 唤醒→ git fetch(proxy) 成功（behind 6→清 stale index.lock→pull fast-forward 到 ec1a3644d）→ git status clean → 阻塞项复查：~/eda_code_eval 仍 MISSING + /nas_inference//nas_env 仍未挂载 + 8×A40 SGLang idle(0% util 44-45GB/卡) → 交付物复核：4报告+7脚本全在位+bash -n PASS → 归档 wake1–4 流水（MEMORY 29.8KB→13.5KB）→ 体积自检+提交心跳
+- PHASE: posttrain-wake25（2026-11-07 02:1x；例行巡检·阻塞项复查 + 交付物复核）
+- 已完成: P3预备✅ 5脚本(wake1/2)；P1-e✅ 污染隔离(wake2)；P1-a/b✅ 数据盘点(wake2)；P2✅ 方案书(wake3)；P0✅ D1–D6 DeepSeek侧(wake4→14)；P1-d✅ PyAether语料(wake4)；P1✅ HTML报告(wake6)；wake17✅ 后训练数据调研HTML报告(44.9KB/10节)+§E+硬盘体检；wake18-24✅ 例行巡检；wake24✅ 归档wake1-4腾体积
+- 当前动作: wake25 唤醒→ git fetch(proxy) 成功（behind 9→pull fast-forward 到 0e7d65e64）→ git status clean → TASK文件无新运维令 → 阻塞项复查：~/eda_code_eval 仍 MISSING + /nas_inference//nas_env 仍未挂载 + 8×A40 SGLang idle(0% util 44-45GB/卡, 11-09距今2天) → 交付物复核：4报告(36923B+30479B+38068B+44894B)+7脚本 bash -n PASS + survey 0 script/外链 → 体积自检+提交心跳
 - 下一步: 本节点零GPU可达项**已全完成**。剩余阻塞：①P0 36%侧等GPU(2026-11-09)或运维拷轨迹；②P1-c等/nas_inference挂载；③正式训练P3阻塞pretrain ckpt(ETA≈2026-12-25)
 - 阻塞: P0-36%侧等GPU/P1-c等挂载/P3等pretrain ckpt——均阻塞于外部依赖，本节点无更多零GPU项可做
 - 未完成指令: 有（P0-36%侧需GPU/P1-c需挂载/P3需pretrain ckpt，均阻塞外部依赖，本节点无法推进。§用户令·22:5x调研已✅交付，待运维标✅）⇒ WAITING=1
@@ -68,4 +68,5 @@ WAITING: 1
 [01:3x] wake23：唤醒→ git fetch(proxy) 成功（origin bc56129ff→cf9cecb6b，他线9 commits活跃提交）→ `git pull --rebase --autostash` 成功（fast-forward 到 cf9cecb6b）→ git status clean → 阻塞项复查：~/eda_code_eval 仍 MISSING + /nas_inference//nas_env 仍未挂载 + 8×A40 SGLang idle(0% util 44-45GB/卡，2026-11-09距今~2天) → 交付物完整性复核：4 报告(36923B+30479B+38068B+44894B)全在位 + 5 脚本 bash -n 全 PASS + survey grep script/iframe/外链=0 ✅ + §E 在位 → 硬盘 / 386G(84%) /nas_data 20T(85%) 无变化 → 无新运维令(§用户令·22:5x仍标⚠️未完成但已✅交付，待运维标✅) → 本节点零GPU可达项全完成 → 体积自检+提交心跳。📦 体积：TASK=23.6KB / MEMORY=29.2KB / EXPERIMENTS=32.0KB（均 ≤32KB ✅，无需归档）。
 
 [01:5x] wake24：唤醒→ git fetch(proxy) 成功（origin e3305aa76→33f6131f1，他线活跃提交，behind 6）→ 清 stale index.lock（01:54 创建，2min 前我的 pull 失败残留）→ `git pull --rebase --autostash` 成功（fast-forward 到 ec1a3644d）→ git status clean（`## main...origin/main`）→ 阻塞项复查（全无变化）：~/eda_code_eval 仍 MISSING + /nas_inference//nas_env 仍未挂载 + 8×A40 SGLang idle(0% util 44-45GB/卡，2026-11-09距今~2天) → 交付物完整性复核：4 报告(36923B+30479B+38068B+44894B)全在位 + 7 脚本 bash -n 全 PASS + survey grep script/iframe/外链=0 ✅ + §E 在位 → 硬盘 / 385G(84%) /nas_data 20T(85%) 无变化 → 无新运维令(§用户令·22:5x仍标⚠️未完成但已✅交付，待运维标✅) → **体积归档**：wake1–4 流水归档到 daily-memories-posttrain/2026-11-06.md（MEMORY 29.8KB→13.5KB，保留最近19条流水）→ 体积自检+提交心跳。📦 体积：TASK=23.6KB / MEMORY=13.5KB / EXPERIMENTS=32.0KB（均 ≤32KB ✅）。
+[02:1x] wake25：唤醒→ git fetch(proxy) 成功（464dcddef→0e7d65e64，behind 9，他线活跃提交 pretrain/designflow/harness/data/zhulong）→ `git pull --rebase --autostash` 成功（fast-forward 到 0e7d65e64）→ git status clean（`## main...origin/main`）→ TASK 文件 diff 464dcddef..0e7d65e64 为空（无新运维令）→ 阻塞项复查（全无变化）：~/eda_code_eval 仍 MISSING + /nas_inference//nas_env 仍未挂载 + 8×A40 SGLang idle(0% util 44-45GB/卡, 11-09距今2天) → 交付物完整性复核：4 报告(36923B+30479B+38068B+44894B)全在位 + 7 脚本 bash -n 全 PASS + survey grep script/iframe/外链=0 ✅ + §E 在位 → 硬盘 / 385G(84%) /nas_data 20T(85%) 无变化 → 无新运维令(§用户令·22:5x仍标⚠️未完成但已✅交付，待运维标✅) → 本节点零GPU可达项全完成 → 体积自检+提交心跳。📦 体积：TASK=24.2KB / MEMORY=20.1KB / EXPERIMENTS=32.7KB（均 ≤32KB ✅，无需归档）。
 
