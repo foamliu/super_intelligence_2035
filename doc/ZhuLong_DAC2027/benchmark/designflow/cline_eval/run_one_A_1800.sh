@@ -422,8 +422,22 @@ try:
         failed = [x[0] for x in r[1] if isinstance(x, tuple) and len(x) >= 2 and not x[1]] if len(r) > 1 else []
         detail = 'ok=%s failed_conds=%s :: %s' % (ok, failed, str(r)[:200])
         print(json.dumps({'verdict':'PASS' if ok else 'FAIL','detail':detail}))
+    elif isinstance(r, list):
+        # r146 harness bug 修复：若干 check.py 返回 list[(label, ok_bool, msg), ...]
+        # （如 CovFMFlow-001）。旧 else 分支按「非空 list = truthy → PASS」判定 →
+        # 把 13 条件 fail 的 results list 误判为 PASS。改为：list 元素须为 (label,ok,*)
+        # 元组，verdict = 全部 ok 才 PASS，detail 含 failed_conds 清单。
+        if not r:
+            print(json.dumps({'verdict':'FAIL','detail':'empty results list'}))
+        else:
+            oks = [isinstance(x, tuple) and len(x) >= 2 and bool(x[1]) for x in r]
+            ok = all(oks) and len(oks) == len(r)
+            failed = [x[0] for x in r if isinstance(x, tuple) and len(x) >= 2 and not x[1]]
+            npass = sum(1 for o in oks if o)
+            detail = 'ok=%s npass=%d/%d failed_conds=%s :: %s' % (ok, npass, len(r), failed, str(r)[:200])
+            print(json.dumps({'verdict':'PASS' if ok else 'FAIL','detail':detail}))
     else:
-        # 其它真值（非空 str/list 等）按真值判定
+        # 其它真值（非空 str 等）按真值判定（list 已在上面单独处理）
         print(json.dumps({'verdict':'PASS' if r else 'FAIL','detail':str(r)}))
 except Exception as e:
     print(json.dumps({'verdict':'FAIL','detail':'exception: '+repr(e)}))
