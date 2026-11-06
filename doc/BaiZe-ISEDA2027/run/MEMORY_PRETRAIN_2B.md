@@ -2,6 +2,9 @@
 WAITING: 1
 > 🛑 **【运维通告 · 2026-11-02 19:51】S1 已由 ops 中继重启并在跑**：`bash scripts/train.sh s1 --nodes 2`，launcher pid **4163528**，从 **ckpt 58000** 续（19:55:40 起 iter **58010**→58030，7.0–7.2 s/step ≈**582K tok/s**，双机 16 卡 **98–100%**、~75GB/卡、~690W）。⇒ **GPU 不再空闲**：🚫 严禁再起任何训练/GPU 评测进程；CPU 评测必须降载：`OMP_NUM_THREADS≤8` + `nice -n 19`，**禁止 `pkill python`**。
 
+> 2026-11-06 22:22 #1535: 例行监控轮·无新运维令·S1健康(worker log /tmp/baize_s1_baize2b_worker.log 活跃 iter108570/700000@22:21:32,loss2.060,6.92-7.07s/it,lr1e-3,0NaN/0skip,grad-norm0.087-0.112稳态,consumed27793920)·GPU.29(0-7:96-100%/~75GB/56-64℃/682-697W)全满载,launcher PID4163528(ppid=1,etimes354693s≈98.5h,pgrep确认)+ssh.12(4163745)活·latest ckpt iter_0108000@~21:15·next ckpt iter_0110000 ETA~Nov7 01:10(1430it×~7s≈2.8h)·100k eval已于#1490交付(10/10全在,Avg harness 57.75%/raw 54.75%)·eval管线已全退出(无llama-server/lm_eval/convert,仅cline自身)·ops/inbox仅RUN_ID245(2026-11-05旧令,已执行,非本线待办)·ops_relay_v2 PID2259598(ppid=1,健康)·loop PID3165013在跑·git clean(##main...origin/main无ahead/behind)·未碰他线在途文件·📦体积:TASK=26.4KB✓/MEMORY=30.7KB✓(均低于32KB,无需归档)·未完成指令:无⇒WAITING:1。
+
+
 > 2026-11-06 22:04 #1534: 例行监控轮·无新运维令·S1健康(worker log /tmp/baize_s1_baize2b_worker.log 活跃 iter108410/700000@22:02:54,loss2.059,6.93-7.09s/it,lr1e-3,0NaN/0skip,grad-norm0.085-0.127稳态,consumed27752960)·GPU.29(0-7:48-100%/~75GB/46-58℃/400-660W)全满载,launcher PID4163528(ppid=1,etimes353583s≈98.2h,pgrep确认)+ssh.12(4163745)活·latest ckpt iter_0108000@~21:15·next ckpt iter_0110000 ETA~Nov7 01:10(1590it×~7s≈3.1h)·100k eval已于#1490交付(10/10全在,Avg harness 57.75%/raw 54.75%)·eval管线已全退出(无llama-server/lm_eval/convert,仅cline自身)·ops/inbox仅RUN_ID245(2026-11-05旧令,已执行,非本线待办)·ops_relay_v2 PID2259598(ppid=1,etimes1132167s≈314h,健康)·loop PID3165013在跑·git clean(##main...origin/main无ahead/behind)·未碰他线在途文件·📦体积:TASK=26.4KB✓/MEMORY=29.1KB✓(均低于32KB,无需归档)·未完成指令:无⇒WAITING:1。
 
 
