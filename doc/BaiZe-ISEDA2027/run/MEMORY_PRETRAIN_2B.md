@@ -1,6 +1,9 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 1
 > 🛑 **【运维通告 · 2026-11-02 19:51】S1 已由 ops 中继重启并在跑**：`bash scripts/train.sh s1 --nodes 2`，launcher pid **4163528**，从 **ckpt 58000** 续（19:55:40 起 iter **58010**→58030，7.0–7.2 s/step ≈**582K tok/s**，双机 16 卡 **98–100%**、~75GB/卡、~690W）。⇒ **GPU 不再空闲**：🚫 严禁再起任何训练/GPU 评测进程；CPU 评测必须降载：`OMP_NUM_THREADS≤8` + `nice -n 19`，**禁止 `pkill python`**。
+> 2026-11-06 13:43 #1510: 例行监控轮·无新运维令·S1健康(worker log活跃 iter104150/700000@13:43:23,loss2.061,6.89-7.03s/it,lr1e-3,0NaN/0skip,grad-norm0.091-0.111稳态)·GPU.29(0-7:97-100%/~75GB/58-65℃/679-690W)+.12(0-7:76-100%/~75GB/53-62℃/597-629W)全满载,launcher PID146283 etimes~323359s≈89.8h·latest ckpt iter_0104000@~13:26(新存,前为iter_0102000)·next ckpt iter_0106000 ETA~17:20(1850it×~7s≈3.6h)·100k eval已于#1490交付(10/10全在,Avg harness 57.75%/raw 54.75%)·eval管线已全退出(.12无llama-server/lm_eval/convert)·ops/inbox RUN_ID245属ops中继旧令(2026-11-05,已执行,非本线待办)·git clean(##main...origin/main无ahead/behind)·未碰他线在途文件·📦体积:TASK=25.8KB✓/MEMORY≈29.6KB✓·未完成指令:无⇒WAITING:1。
+
+
 > 2026-11-06 13:22 #1509: 例行监控轮·无新运维令·S1健康(worker log活跃 iter103970/700000@13:22:27,loss2.059,6.94-7.14s/it,lr1e-3,0NaN/0skip,grad-norm0.085-0.132稳态)·GPU.29(0-7:96-100%/~75GB/56-64℃/680-694W)+.12(0-7:96-100%/~75GB/56-65℃/679-698W)全满载,launcher PID146283 etimes~322122s≈89.5h,~1015-1048TFLOP/s/GPU·latest ckpt iter_0102000·next ckpt iter_0104000 ETA~13:26(30it×~7s≈4min)·100k eval已于#1490交付(10/10全在,Avg harness 57.75%/raw 54.75%)·eval管线已全退出(无llama-server/lm_eval)·ops/inbox空(无新令)·git clean(##main...origin/main无ahead/behind)·未碰他线在途文件·📦体积:TASK=25.8KB✓/MEMORY=28.3KB✓·未完成指令:无⇒WAITING:1。
 
 
