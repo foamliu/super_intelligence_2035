@@ -25,6 +25,27 @@
 > 📁 **报告目录纪律（2026-10-28 用户直令 · 全局常驻 · 覆盖一切旧报告路径）**：所有 HTML/中文报告**一律产出在 `doc/BaiZe-ISEDA2027/reports/`**。🚫 **禁止产出到 `run/reports/` 或项目根 `reports/`**（生成器输出路径必须指向项目级 reports；run/reports 历史文件不得再新增）。
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
+
+### 🔴 §用户令·2026-11-06 18:5x（vision：GPU 还要等 2 个月 ⇒ 不等了，先上 CPU）· 用户直令 · 最高优先 · ⚠️ 未完成
+
+> **用户原话**：「vision：不要等GPU了 .12/.29的GPU还需2个月，先试试CPU」
+>
+> **前提改写**：下方 11-05 17:5x 令里「阶段 2 gated on GPU」**作废**。`.29`/`.12` 的 16×H100 被 pretrain S1 占满，**ETA≈2026-12-25（≈2 个月）**，期间 GPU 不可得 ⇒ 本令起**主路径 = CPU**。`run_grpo_wave.sh` 那条 GPU-wait chain（PID1365749）**保留不动、不杀**（GPU 一旦释放自动接上），但**不再作为交付依赖**。
+>
+> **CPU 可行性已预验**（`vision/wave_rl/_cpu_train_validate_result.json`）：LoRA 可训参 69.7M、3 步 12.1s、ckpt 存/载 OK、生成 1.5s ⇒ 2B 模型在 CPU 上「小步数 + LoRA」是可行区间。
+>
+> **执行（按序，每步留实测日志）**：
+> 1. **P0 CPU 冒烟（≤30 min）**：给 `grpo_train_wave.py` 加 `--device cpu`（现写死 `torch.cuda.set_device(local_rank)` + torchrun）；`batch_prompts=1 / group_size=4 / max_turns=8 / max_new_tokens=48 / seq_len=1024`，`--total_steps 5` 跑通「rollout → 奖励 → logprob → 更新」。**实测每步 wall time / RSS 峰值 / CPU 占用**，写进 MEMORY 心跳。
+> 2. **P1 CPU GRPO pilot**：`total_steps=50`（≈200 episodes）、`lr=1e-6`、`save_steps=25`；奖励口径与原令**完全一致**（R_main 分档 + R_evidence + R_dense + R_anti + R_budget，**不得放宽**）。若实测 >12 h ⇒ 减到 25 步或 `group_size=2`，**如实记录缩水配置**，不许声称等同 GPU 版。
+> 3. **P2 CPU 评测**：`waveqa_eval.py` 同样加 CPU 分支；WaveQA-RL 300 题 + 双参照（纯看图 2B / Oracle Tcl 上限）+ 回归护栏（MMStar/MMBench 下降 ≤1pp 或给解释）；给 **pre-SFT / post-SFT / post-GRPO** 三点对照。
+> 4. **P3 交付**：`reports/report_vision_wave_rl_phase2_cpu_zh.html`（中文单文件、无 script 无外链，含 CPU vs GPU 成本/ETA 对照表 + 「缩水说明」）+ `EXPERIMENTS_VISION.md` §21 + ckpt/结果 JSON + 生成器脚本。
+>
+> **判据**：① 冒烟 5 步无 OOM/无 NaN；② 50 步的 loss/奖励曲线有实测点（不许只报终值）；③ 评测数字全可复现且标注「CPU 缩水配置」；④ 若 CPU 实测过慢（>12h/50 步）也算交付，但必须给实测台阶 + 结论（建议仅 CPU 做评测/自检）。
+>
+> **护栏**：🚫 不碰 pretrain（`.29`/`.12` 8 卡满载）；CPU 降载 `OMP_NUM_THREADS≤16` + `nice -n 19`，禁 `pkill python`；🚫 不伪造数字、不把「CPU 跑通」写成「能力提升」；每步 commit（`vision wave-rl-p2cpu:` 前缀）+ push。
+>
+> **完成标记**：P0–P3 全交付后把本行标题改成 `✅ 已交付`；任一未交付 ⇒ `WAITING: 0`。
+
 ### §运维令·2026-11-05 17:5x（执行波形 RL 计划：Stage-1W SFT 冷启动 → Stage-2W GRPO · 分阶段）· 用户直令 · 最高优先 · ✅ 阶段0已交付 · ✅ 阶段1已交付
 
 > **用户令**：「vision：执行 2026-10-31 波形 RL 计划书（`reports/report_vision_wave_rl_plan_zh.html`），让 2B MLLM 通过与 WaveView 交互学会看懂波形图。分阶段，先解锁待核项再训练。」
@@ -69,11 +90,11 @@
 
 > 📦 §运维令·2026-10-28 17:3x（OCR 合成数据 10M 质量偏差裁定：接受现状）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：wake#330 用户裁定 accept-as-is，不重生成/不过滤，10M 数据集可用于预训练/OCR SFT。需要时再读。
 
-### [已归档] §运维令·2026-10-26 08:2x（写最近工作报告 · 中文 HTML）**已完成**（wake#279 交付 `reports/report_vision_recent_work_zh.html` 40423B/5节+7子节/0 script/0外链/标签配平/≥15KB + 生成器 `vision/generate_recent_work_report.py`；覆盖 ArmD-R2/ArmE发散→ArmE-R2(ProtB lp 68.236 vs ArmD-R2 64.34·12集 26.10%不可分辨·传递性)/Stage-2 原版780k/OCR 调研·SFT方案·10M合成数据集(470GB/2000tar·去重2.4486%/泄漏113如实披露)；数字全溯源 EXPERIMENTS §14-§18；commit 847ce67eb）-> 原文归档到 `run/ARCHIVE_OPERATOR_VISION.md`。需要时再读。
+### [已归档] §运维令·2026-10-26 08:2x（写最近工作报告 · 中文 HTML）**已完成**（wake#279 交付 `reports/report_vision_recent_work_zh.html` 40423B/5节/0 script/0 外链）→ 全文见 `run/ARCHIVE_OPERATOR_VISION.md`。
 
-### [已归档] §运维令·2026-10-25 22:4x（生成 1000 万 OCR 图文对，供 vision encoder 预训练）**已完成** （wake#275 全量 DONE ok=9,999,999/fail=0/2000 shard tars+preview_10k.tar/470GB(0.5046TB)/893.6 img/s/3h6m30s · 8 类 cat_counts==plan · 加载器兼容已验真 build_gpic_loader→(16,3,224,224) finite · 报告 `reports/report_vision_ocr_synth10m_zh.html`(15754B/8节/0 script/0外链) + 5 脚本 `vision/ocr_synth/*.py` + EXPERIMENTS §18 + index.jsonl(9.999M) + STATS/VALIDATION/DATASET_CARD/MANIFEST + preview_200.html + preview_10k.tar；wake#276 复核完整性一致）-> 原文归档到 `run/ARCHIVE_OPERATOR_VISION.md`。**两处质量偏差如实记录**：①文本 SHA1 去重 2.4486%>1% 目标（dup_pass=false，留 9,755,141 唯一 / 244,858 多余；合成文本组合空间有限所致）；②泄漏 113 命中（leak_rate=1.16e-5，短串巧合如 0.29→029 非真实泄漏；内联护栏路径错为空操作，真实复检读 OCRBench/DocVQA/ChartQA parquet；InfoVQA parquet 未找到）。**待用户裁定**：接受 / index 过滤补救（留 9,755,141 唯一）/ 扩语料重生成。本轮只造数据不启 encoder 训练（等用户批预算）。需要时再读。
+### [已归档] §运维令·2026-10-25 22:4x（生成 1000 万 OCR 图文对）**已完成**（wake#275：9,999,999 对/2000 shard/470GB；去重 2.4486%、泄漏 113 已如实披露；用户已裁定 accept-as-is）→ 全文见 `run/ARCHIVE_OPERATOR_VISION.md`。
 
-### [已归档] §运维令·2026-10-25 19:5x（路线①细化为执行方案报告）**已完成**（wake#272 交付 `reports/report_vision_ocr_sft_plan_zh.html` 22,706B / 9 节 + 一页纸清单 / 0 script / 0 外链；配比 英30/中20/混排10/文档15/图表10/公式10/低质手写5，SFT=ArmE-R2 stage3500+LoRA r64+LR1e-5+70:30 混 780k，判据 OCRBench >=+2pp）-> 原文归档到 `run/ARCHIVE_OPERATOR_VISION.md`。需要时再读。
+### [已归档] §运维令·2026-10-25 19:5x（路线①细化为执行方案报告）**已完成**（wake#272 交付 report_vision_ocr_sft_plan_zh.html 22,706B/9节）→ 全文见 `run/ARCHIVE_OPERATOR_VISION.md`。
 
 ### [已归档] §运维令·2026-10-25 17:5x（OCR 类评测偏低：web search 调研「合成数据补强 OCR」并写报告）**已完成**（wake#271 交付 `reports/report_vision_ocr_synthdata_zh.html` 29177B/8节/0 script/0外链/标签配平/≥15KB + 生成器 `vision/generate_ocr_synthdata_report.py` + EXPERIMENTS §16；四臂四集实测+7类18法调研；单一建议=路线①低成本合成OCR识别对+专项SFT，判据 OCRBench≥+2pp；commit `vision ocr-report:`）-> 原文归档到 `run/ARCHIVE_OPERATOR_VISION.md`。需要时再读。
 
