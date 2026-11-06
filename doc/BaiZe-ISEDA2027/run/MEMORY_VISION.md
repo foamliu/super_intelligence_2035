@@ -2,7 +2,9 @@
 
 WAITING: 0
 
-> 🆕 **【wake #747 · 2026-11-06 09:52】监控巡检·状态无变化·双poller健康·GPU满载·仅待GPU。SFT poller PID2757742(etimes≈50700s≈14.1h)alive轮询busy_util waiting✓；GRPO poller PID2466702(etimes≈6300s≈1.75h)alive等待SFT eval_results.json(6000s/7776000s)✓；pretrain S1 iter~102010/700000@09:34 6.91s/it ETA≈12/24-25；GPU .12 8×97-100%/~75GB全占。vision loop PID669545 alive✓；cline in PATH✓。git 0ahead/0behind已同步（未碰他线在途文件ZhuLong/cjk_test）。📦体积：TASK=30453B(29.7KB)/MEMORY=27602B(26.9KB)（均≤32KB✓）。**未完成指令：有**（阶段1 GPU训练pending,阻塞方=pretrain S1 ETA≈12/24-25）⇒**WAITING: 0**。
+> 🆕 **【wake #748 · 2026-11-06 09:57】监控巡检·状态无变化·双poller健康·GPU满载·仅待GPU。SFT poller PID2757742(etimes≈50992s≈14.2h)alive轮询busy_util waiting✓；GRPO poller PID2466702(etimes≈6593s≈1.83h)alive等待SFT eval_results.json(6000s/7776000s)✓；pretrain S1 iter~102010/700000@09:34(GPU仍满载) ETA≈12/24-25；GPU .12 8×96-100%/~75GB全占。vision loop PID669545 alive✓；cline in PATH✓。git 0ahead/0behind已同步（未碰他线在途文件ZhuLong/cjk_test）。📦体积：TASK=30453B(29.7KB)/MEMORY=27773B(27.1KB)（均≤32KB✓）。**未完成指令：有**（阶段1 GPU训练pending,阻塞方=pretrain S1 ETA≈12/24-25）⇒**WAITING: 0**。
+
+> 📦 wake #747（监控巡检·2026-11-06 09:52）已归档 → daily-memories-vision/2026-11-06.md；**结论**：状态无变化，双poller健康，GPU 8×97-100%满载仅待GPU。需要时再读。
 
 > 📦 wake #746（监控巡检·2026-11-06 09:48）已归档 → daily-memories-vision/2026-11-06.md；**结论**：状态无变化，双poller健康，GPU 8×95-100%满载仅待GPU。需要时再读。
 
