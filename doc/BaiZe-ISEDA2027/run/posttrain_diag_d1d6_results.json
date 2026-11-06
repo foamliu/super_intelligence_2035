@@ -9,7 +9,8 @@
       "Others": 23
     },
     "eda_code_eval_exists": false,
-    "note": "~/eda_code_eval/ not on .17 (on .29). MiniCPM5-2B 36% & DeepSeek 94% runs not local. Using zhulong_deepseek_v32 (~70%) as primary. D1/D2/D6 need trace data, marked missing."
+    "deepseek_trace_dir_exists": true,
+    "note": "DeepSeek full-harness D1/D2/D6 extracted from local traces (cline_trace_v1_3, 103 tasks). MiniCPM5-2B 36% side needs ~/eda_code_eval/ (on .29), marked missing. D3/D4/D5 from final_report.json (zhulong_deepseek_v32 ~70% code-gen mode)."
   },
   "available_runs": [
     {
@@ -105,17 +106,91 @@
       "n_tasks": 70
     }
   },
+  "deepseek_trace_diagnostics": {
+    "source": "cline_trace_v1_3 (DeepSeek full-harness 2026-02-09, 103 tasks)",
+    "n_trace_dirs": 103,
+    "n_traces_parsed": 103,
+    "total_tool_calls": 1475,
+    "total_tool_results": 1679,
+    "total_assistant_turns": 2335,
+    "D1_legality_proxy": 0.6317,
+    "D1_note": "解析成功 tool_call / assistant 轮次（强度代理，非严格合法率）",
+    "D2_freq_per_task": 14.32,
+    "D2_tool_breakdown": {
+      "search_apis": 573,
+      "run_pyAether_code_tool": 516,
+      "get_api_details": 386
+    },
+    "D3_timeout_tasks": 0,
+    "D3_timeout_ratio": 0.0,
+    "D4_error_breakdown": {
+      "ASSERTION_ERROR": 23,
+      "IMPORT_ERROR": 22,
+      "FILE_NOT_FOUND": 19,
+      "TYPE_ERROR": 10,
+      "ATTRIBUTE_ERROR": 5,
+      "SYNTAX_ERROR": 3,
+      "NAME_ERROR": 3,
+      "UNKNOWN_ERROR": 2,
+      "UNICODE_ERROR": 1
+    },
+    "D4_assertion_err_tasks": 23,
+    "D4_exec_err_tasks": 65,
+    "D6_exec_per_task_mean": 5.01,
+    "D6_exec_per_task_median": 5,
+    "D6_exec_per_task_dist": {
+      "4": 19,
+      "5": 16,
+      "6": 13,
+      "3": 13,
+      "7": 11,
+      "2": 11,
+      "9": 5,
+      "1": 5,
+      "8": 3,
+      "11": 2,
+      "12": 2,
+      "0": 1,
+      "14": 1,
+      "10": 1
+    },
+    "avg_msgs_per_task": 45.6,
+    "avg_tool_calls_per_task": 14.32,
+    "avg_errors_per_task": 0.85
+  },
   "D1_tool_call_legal_rate": {
-    "status": "字段缺失",
-    "value": null,
-    "reason": "final_report.json 不含工具调用(tool_call)数据。D1 需要从 cline trace (~/eda_code_eval/<batch_id>/trace/) 中提取，使用 eda_fastmcp/scripts/trace_reader.py 的 extract_tool_calls_from_trace()。本机 ~/eda_code_eval/ 目录不存在(在 .29 上)。需要补抓: MiniCPM5-2B 36% 运行的完整 trace 目录。",
-    "eda_code_eval_exists": false
+    "deepseek_full_harness": {
+      "status": "已计算（强度代理）",
+      "value": 0.6317,
+      "note": "解析成功 tool_call / assistant 轮次（强度代理，非严格合法率）",
+      "total_tool_calls": 1475,
+      "total_assistant_turns": 2335,
+      "n_traces": 103
+    },
+    "minicpm5_36pct": {
+      "status": "字段缺失",
+      "value": null,
+      "reason": "MiniCPM5-2B 36% 全 harness trace 不在本节点（在 .29 上 ~/eda_code_eval/）。需要补抓: MiniCPM5-2B 36% 运行的完整 trace 目录。",
+      "eda_code_eval_exists": false
+    }
   },
   "D2_tool_call_frequency": {
-    "status": "字段缺失",
-    "value": null,
-    "reason": "final_report.json 不含工具调用频次数据。D2 需要从 cline trace 中统计每个任务的工具调用次数。本机 ~/eda_code_eval/ 目录不存在(在 .29 上)。需要补抓: 各模型的完整 trace 目录 + DeepSeek-V4-Pro 对照 trace。",
-    "eda_code_eval_exists": false
+    "deepseek_full_harness": {
+      "status": "已计算",
+      "value": 14.32,
+      "tool_breakdown": {
+        "search_apis": 573,
+        "run_pyAether_code_tool": 516,
+        "get_api_details": 386
+      },
+      "n_traces": 103
+    },
+    "minicpm5_36pct": {
+      "status": "字段缺失",
+      "value": null,
+      "reason": "MiniCPM5-2B 36% 全 harness trace 不在本节点。需要补抓: MiniCPM5-2B 36% 运行的完整 trace 目录。",
+      "eda_code_eval_exists": false
+    }
   },
   "D3_truncation_rate": {
     "status": "已计算",
@@ -211,10 +286,35 @@
     "_status": "已计算"
   },
   "D6_iteration_rounds": {
-    "status": "字段缺失",
-    "value": null,
-    "reason": "final_report.json 的 num_samples=1 (单 trace 原则), 不含迭代轮数。D6 需要从 cline trace 中统计每任务的 assistant-tool_result 循环次数。本机 ~/eda_code_eval/ 目录不存在(在 .29 上)。需要补抓: MiniCPM5-2B + DeepSeek-V4-Pro 的完整 trace 目录。",
-    "eda_code_eval_exists": false
+    "deepseek_full_harness": {
+      "status": "已计算",
+      "mean": 5.01,
+      "median": 5,
+      "distribution": {
+        "4": 19,
+        "5": 16,
+        "6": 13,
+        "3": 13,
+        "7": 11,
+        "2": 11,
+        "9": 5,
+        "1": 5,
+        "8": 3,
+        "11": 2,
+        "12": 2,
+        "0": 1,
+        "14": 1,
+        "10": 1
+      },
+      "n_traces": 103,
+      "note": "每任务代码执行次数（run_code/run_pyAether_code_tool/probe_pyAether_code）"
+    },
+    "minicpm5_36pct": {
+      "status": "字段缺失",
+      "value": null,
+      "reason": "MiniCPM5-2B 36% 全 harness trace 不在本节点。D6 需要从 cline trace 中统计每任务的 assistant-tool_result 循环次数。需要补抓: MiniCPM5-2B 的完整 trace 目录。",
+      "eda_code_eval_exists": false
+    }
   },
   "baseline_zhulong": {
     "D3": {

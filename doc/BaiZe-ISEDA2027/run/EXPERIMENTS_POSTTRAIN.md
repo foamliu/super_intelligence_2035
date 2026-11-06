@@ -40,6 +40,7 @@
 > **核心结论**：58 pp 差距**主体（估 35–45 pp）为“协议可回收”**——工具频次/合法率(D1/D2)、API 领域知识(D4 执行报错占 74%)、迭代闭环(D6)。对应：SFT 注入工具轨迹+PyAether API 语料（~20–30 pp，M1→M2）；领域退火补 API（~5–10 pp）；RL(GRPO) 打磨“查-写-改”闭环（~5–10 pp，M3）。**剩余 ~10–15 pp 为真实能力差距**（语义推理/复杂多 API），逼近 94%(M4) 需更大量 RL。
 > ⚠️ **未闭合**：MiniCPM5-2B 36% 侧 D1/D2/D6 未实测（轨迹不在本节点）。上述比例为“基于强模型行为外推的假设”，非实测对照。需运维提供 `~/eda_code_eval/<36%_run>/{final_report.json, trace/*/api_conversation_history.json}`。
 > 📦 **交付物**：`reports/report_posttrain_diagnose_d1d6_zh.html`（36.9KB / 14 节 / 0 script / 0 外链 / 自包含，已产出 ✅；wake4 建 §1–§11，wake5 增 §12 跨运行稳定性，wake7 增 §13 多配置对照，wake8 增 §14 Harness 消融）。commit 前缀 `posttrain diag:`。
+> 🔧 **诊断脚本完整化（wake14）**：`posttrain_diag_d1d6.py` 从仅 D3/D4/D5（`final_report.json`）升级为完整 D1–D6 DeepSeek 侧——新增 `extract_deepseek_trace_diagnostics()` 从 `cline_trace_v1_3`（103 tasks）提取 D1/D2/D6（D1=0.6317 D2=14.32 D6=5.01），与 `/tmp/pt_p0_analyze.py`（wake4 临时脚本）结果一致。`posttrain_diag_d1d6_results.json` 10.9KB 含 `deepseek_trace_diagnostics` 全量统计。MiniCPM5-2B 36% 侧仍标「字段缺失」（trace 不在本节点）。
 
 ### 跨运行稳定性（D1–D6 cross-run · 2026-11-06 wake5 · 零 GPU · 实测）
 
