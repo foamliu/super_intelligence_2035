@@ -5,13 +5,13 @@ WAITING: 0
 ## 📊 进度快照
 
 ```
-PHASE:        R1726 glm53重测:SWE-bench predict 255files/3500(7/7 alive:her73/op62/cline31/pi26/ds28/cc25/codex10)·TB4全量66×7 Batch1运行中(cline task3 biped·codex task4 bun-sourcemap)·TB4=66tasks
-已完成:       H-B✅·Gate7/7·TB报告✅·full500全7路predict+eval 100%完成✅·R1685 cline低分归因✅·R1694-R1725 glm53重测启动+proxy修复+TB4镜像(132/132✅)+TB4 smoke 7/7跑通✅+pip-bootstrap修复✅+TB4全量66×7启动(cline+codex Batch1,cline2/66 codex3/66 done all errored)
-当前动作:     R1726 监控轮:CPU/MEM自检PASS(load56.55/224≈25.3%busy·最高本线find进程~46%·mem1221G avail·无单进程>80核)·SWE-bench predict 255files/3500(7.3%):her73·op62·cline31·pi26·ds28·cc25·codex10·7/7 alive·gw200✅·gw_proxy 9092+9093 200✅·硬约束③PASS(0 tracked result JSON)·TB4全量Batch1 cline+codex(cline2/66 errored:atrx+batched timeout1800s·biped running;codex3/66 errored:atrx+batched+biped all done·bun-sourcemap running;harbor alive etimes4361s≈72min)·codex--model flag verified uses TB_MODEL=glm-5.3-flash(line158 codex.py)✅·disk:/data 5.8T avail
-下一步:       ①监控TB4全量66×7进度(Batch1 cline+codex→Batch2 hermes+opencode→Batch3 claude-code+deepseek→Batch4 pi) ②监控SWE-bench predict(255/3500,按100/300/500汇报) ③每路predict完即eval ④两基准全交付后写报告report_harness_glm53_7way_swebench_tb_zh.html
-阻塞:         无·⚠️codex极慢(10/500)·TB4前5task全errored(timeout1800s或artifact missing)·TB4全量预估~38h
+PHASE:        R1727 glm53重测:SWE-bench predict 378files/3500(7/7 alive:ds115/her74/op66/cline57/cc28/pi27/codex11)·TB4全量66×7 Batch1运行中(cline task3 biped running·codex task4 bun-sourcemap running)·TB4=66tasks
+已完成:       H-B✅·Gate7/7·TB报告✅·full500全7路predict+eval 100%完成✅·R1685 cline低分归因✅·R1694-R1726 glm53重测启动+proxy修复+TB4镜像(132/132✅)+TB4 smoke 7/7跑通✅+pip-bootstrap修复✅+TB4全量66×7启动(cline+codex Batch1,cline2/66 codex3/66 done all errored timeout1800s)
+当前动作:     R1727 监控轮:CPU/MEM自检PASS(load49.91/224≈22%busy·最高本线deepseek_sdk37.2%·clineTB4 22.8%·opencode15.6%·无单进程>80核·mem668G used/1223G avail)·SWE-bench predict 378files/3500(10.8%):ds115·her74·op66·cline57·cc28·pi27·codex11·7/7 alive(progress_glm53_*_05:31-05:36 active)·gw200✅·gw_proxy9092+9093 200✅·硬约束③PASS(1 historical .bak2 tracked)·TB4 Batch1 cline:atrx+batched errored(RuntimeError timeout1800s·agent_timeout_multiplier0.1→30min太短)·biped running(trial.log cline setup 05:19)·codex:atrx+batched+biped done errored·bun-sourcemap running·harbor alive(etimes4763s≈79min)·disk:/data 5.8T avail
+下一步:       ①监控TB4全量66×7进度(Batch1 cline+codex→Batch2 hermes+opencode→Batch3 claude-code+deepseek→Batch4 pi) ②监控SWE-bench predict(378/3500,按100/300/500汇报) ③每路predict完即eval ④两基准全交付后写报告report_harness_glm53_7way_swebench_tb_zh.html
+阻塞:         无·⚠️codex极慢(11/500)·TB4 Batch1 前5task全errored(timeout1800s=agent_timeout_multiplier0.1太短)·TB4全量预估~38h
 ERROR_COUNT:  0
-  📦 体积：TASK=32074B(31.3KB) / MEMORY=31178B(30.4KB)
+  📦 体积：TASK=32074B(31.3KB) / MEMORY=~30.4KB(本轮未归档)
 ```
 
 > 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
@@ -19,7 +19,8 @@ ERROR_COUNT:  0
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 
 ### 本唤醒流水
-> [05:33] R1726 监控轮:CPU/MEM PASS(load56.55/224≈25.3%·mem1221G avail·无>80核·最高本线find进程~46%<8000%)·gw curl=200✅·gw_proxy 9092+9093 200✅·7/7 predict alive(255files/3500:her73/op62/cline31/pi26/ds28/cc25/codex10,+8 since R1725)·TB4 Batch1 cline2/66 errored(atrx artifact missing+batched timeout1800s·biped running) codex3/66 errored(atrx+batched+biped all done errored·bun-sourcemap running) harbor alive(etimes4361s≈72min)·codex--model flag verified line158 codex.py uses self._tb_model=TB_MODEL=glm-5.3-flash✅·TB4 errors:timeout1800s(0.1 multiplier) or agent not producing output files·硬约束③PASS(0 tracked)·disk/data 5.8T·未完成指令:有(glm53重测SWE-bench+TB4 7路)⇒WAITING:0
+> [05:40] R1727 监控轮:CPU/MEM PASS(load49.91/224≈22%·mem668G used/1223G avail·无>80核·最高本线deepseek_sdk37.2%<8000%)·gw200✅·gw_proxy9092+9093 200✅·7/7 predict alive(378files/3500(10.8%):ds115/her74/op66/cline57/cc28/pi27/codex11,+123 since R1726)·TB4 Batch1 cline:atrx+batched errored(RuntimeError"Command timed out after 1800 seconds"·agent_timeout_multiplier0.1→30min)·biped running(trial.log cline setup 05:19)·codex:atrx+batched+biped done errored·bun-sourcemap running·harbor alive(etimes4763s≈79min)·hard③PASS(1 historical .bak2)·disk/data 5.8T·未完成指令:有(glm53重测SWE-bench+TB4 7路)⇒WAITING:0
+> 📦 R1726 流水已归档 → daily-memories-harness/2026-11-07.md。结论：监控轮正常,7路 alive,进度稳定。需要时再读。
 > 📦 R1725 流水已归档 → daily-memories-harness/2026-11-07.md。结论：7路 alive,进度稳定。需要时再读。
 > 📦 R1722-R1723 流水已归档 → daily-memories-harness/2026-11-07.md。结论：7路 alive,进度稳定。需要时再读。
 > 📦 R1685 流水(17:32,cline低分系统归因轮)已归档 → daily-memories-harness/2026-11-06.md。结论：R1569修复后差距以能力差为主(50/58=86%)。需要时再读。
