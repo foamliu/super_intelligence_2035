@@ -2,7 +2,9 @@
 
 WAITING: 0
 
-> 🆕 **【wake #822 · 2026-11-06 18:3x】✅ 预飞行验证巡检·GRPO auto-launch全路径核验PASS·零可执行GPU动作·等GPU(ETA≈12/24)。**本轮做比纯监控更深的预飞行核验(确认12/24 GPU窗口不被launch-path bug浪费):①SFT eval_results.json在位 pass=true(format1.0≥0.9✓/submit1.0≥0.7✓/num_acc_lt1%=14%/lt5%=21%/mean_rel_err=11.43)②SFT ckpt step1000/2000/3000全在位含adapter_config.json,chain将取step3000 ③2B文本骨干qwen3vl_2b_text_extracted在位(config.json+model.safetensors3.44GB+tokenizer) ④WaveQA-RL oracle 300题在位(overall_n=300=numerical109+multi_choice94+open_ended97) ⑤GRPO chain PID1365749 alive(ppid=1真守护,etimes≈7277s/121min,16:28起),chain log连续busy_util--waiting轮询健康 ⑥grpo_train_wave.py --model_path/--sft_ckpt_dir由chain显式传入 ⑦GPU8×H100 91-100%util~75GB=pretrain torchrun PID2612442(etimes≈340697s/94.6h,--train-iters700000,iter~106k/700k,ETA≈12/24),vision R9未在跑·铁律禁杀pretrain。**结论:auto-launch链Step1-6全路径就绪,GPU释放后自动SFT-eval→accept→step3000→torchrun GRPO(2B+LoRA r64)→WaveQA-RL300,无latent bug。本轮零GPU可执行动作(被健康pretrain占满),不伪造数字。📦体积:TASK=29.8KB(30477B)/MEMORY≈18.3KB(均≤32KB✓,本轮0归档)。**未完成指令:有**(阶段2 GRPO待GPU+阶段3未交付)⇒**WAITING: 0**。
+> 🆕 **【wake #823 · 2026-11-06 18:36】监控巡检·GRPO chain健康(148polls全busy)·GPU满载等pretrain释放·零可执行动作·WAITING=0。** ①GRPO chain PID1365749 alive(ppid=1真守护,etimes≈7655s/127min) ②chain log 148行,最新18:36:00,连续busy_util--waiting健康 ③GPU 8×H100 100%util ~75GB=pretrain torchrun PID2612442(etimes≈341075s/94.7h,ETA≈12/24),vision R9未在跑·铁律禁杀pretrain ④SFT eval pass=true(format1.0/submit1.0)·ckpt step1000/2000/3000在位·WaveQA-RL oracle 300题在位·auto-launch链全路径就绪。**结论**:状态无变化,本轮零GPU可执行动作(被健康pretrain占满),不伪造数字。📦体积:TASK=30.5KB(30477B)/MEMORY≈18.7KB(均≤32KB✓,本轮0归档)。**未完成指令:有**(阶段2 GRPO待GPU+阶段3未交付)⇒**WAITING: 0**。
+
+> 📦 wake #822（预飞行验证巡检·2026-11-06 18:32）已归档 → daily-memories-vision/2026-11-06.md；**结论**：GRPO auto-launch全路径核验PASS(7项)·零GPU可执行动作·等GPU(ETA≈12/24)·WAITING=0。需要时再读。
 
 > 📦 wake #821（监控巡检·2026-11-06 18:23）已归档 → daily-memories-vision/2026-11-06.md；**结论**：GRPO chain健康(GPU-wait 112polls全busy)·GPU 8×H100 100%·零新发现·WAITING=0。需要时再读。
 
