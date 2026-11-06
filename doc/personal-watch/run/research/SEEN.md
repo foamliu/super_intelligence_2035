@@ -5633,3 +5633,6 @@
 | 2026-11-06 | 2611.06828 | Systolic Linear Attention: Co-Designing Tile-Grouped Gated Delta Attention for TPUs | cs.LG | 收录 |
 | 2026-11-06 | 2611.08294 | ManimCode: Learning Visual Self-Correction for Educational Animation | cs.CV | 收录 |
 | 2026-11-06 | 2611.08314 | Interpretable many-body interaction laws for collective motion from few trajectories | cs.LG | 收录 |
+| 2026-11-07 | 2611.07707 | CAMP: Context-Aware Mapping and Placement for LLMs on 3D-IMC Arrays | cs.AR | 收录 |
+| 2026-11-07 | 2611.08363 | StrataFlux: Memory-Hierarchy-Native Low-Bit LLM Inference | cs.LG | 收录 |
+| 2026-11-07 | 2611.08133 | Beyond K/V Caches: Cross-Model State Handoff in Hybrid Linear-Attention LLMs | cs.CL | 收录 |
