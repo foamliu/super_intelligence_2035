@@ -2,6 +2,6 @@
   {
     "instance_id": "astropy__astropy-12907",
     "model_name_or_path": "codex-glm-5.3-flash",
-    "model_patch": ""
+    "model_patch": "diff --git a/astropy/modeling/separable.py b/astropy/modeling/separable.py\nindex a308e27..45bea36 100644\n--- a/astropy/modeling/separable.py\n+++ b/astropy/modeling/separable.py\n@@ -242,7 +242,7 @@ def _cstack(left, right):\n         cright = _coord_matrix(right, 'right', noutp)\n     else:\n         cright = np.zeros((noutp, right.shape[1]))\n-        cright[-right.shape[0]:, -right.shape[1]:] = 1\n+        cright[-right.shape[0]:, -right.shape[1]:] = right\n \n     return np.hstack([cleft, cright])\n \ndiff --git a/astropy/modeling/tests/test_separable.py b/astropy/modeling/tests/test_separable.py\nindex 8dfe5c8..6a94615 100644\n--- a/astropy/modeling/tests/test_separable.py\n+++ b/astropy/modeling/tests/test_separable.py\n@@ -135,6 +135,15 @@ def test_separable(compound_model, result):\n     assert_allclose(separability_matrix(compound_model), result[1])\n \n \n+def test_separable_nested_compound_model():\n+    cm = models.Linear1D(10) & models.Linear1D(5)\n+    expected = np.array([[True, True, False, False],\n+                         [True, True, False, False],\n+                         [False, False, True, False],\n+                         [False, False, False, True]])\n+    assert_allclose(separability_matrix(models.Pix2Sky_TAN() & cm), expected)\n+\n+\n def test_custom_model_separable():\n     @custom_model\n     def model_a(x):\n"
   }
 ]

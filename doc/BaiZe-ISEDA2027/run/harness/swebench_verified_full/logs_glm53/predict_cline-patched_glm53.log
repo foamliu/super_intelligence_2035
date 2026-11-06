@@ -1,3 +1,5 @@
 [verified-full 00:01:08] [1/500] PREDICT cline on astropy__astropy-12907
 [verified-full 00:06:16]   -> patch-produced (patch=2166B wall=308.1s)
 [verified-full 00:06:16] [2/500] PREDICT cline on astropy__astropy-13033
+[verified-full 00:10:50]   -> patch-produced (patch=3264B wall=274.2s)
+[verified-full 00:10:50] [3/500] PREDICT cline on astropy__astropy-13236

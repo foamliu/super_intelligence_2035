@@ -5,13 +5,13 @@ WAITING: 0
 ## 📊 进度快照
 
 ```
-PHASE:        R1694 glm53重测轮:SWE-bench Verified full500×glm-5.3-flash×7路 predict已启动(7进程并行)·TB 4.0核实PASS(66题,已下载到~/terminal-bench-4.0/)·P0探针HTTP 200✅·硬盘体检PASS(/data 6.0TB avail·docker 610 images 99% reclaimable)·cline providers.json已修(9090→9092)·run_single.py OPENAI_BASE_URL已修(env化)·run_verified_full.py已改(env-var模型注入)
-已完成:       H-B✅·Gate7/7·TB报告✅·full500全7路predict+eval 100%完成✅·R1685 cline低分归因✅·R1693 quiet监控✅·R1694 glm53重测:run_verified_full.py env化✅+launch_glm53_full500.sh创建✅+gw_proxy 9092/9093启动✅+7路predict启动✅+TB4.0下载✅(66题)
-当前动作:     R1694 glm53重测:7路predict运行中(cline-patched[1/500]·codex[8/500]·hermes[3/500]·opencode[2/500]·claude-code[9/500]·deepseek-harness[44/500]·pi[2/500])·TB 4.0已下载66题待镜像拉取·待写报告
+PHASE:        R1695 glm53重测轮:SWE-bench Verified full500×glm-5.3-flash×7路 predict运行中(7进程并行)·4路(codex/claude-code/hermes/deepseek-harness)因429限流+400 Content-Type bug失败→已修复gw_proxy.py(429 retry)+gw_proxy_dsh.py(Content-Type dedup+429 retry)→4路重启后codex首题即出patch(1333B)✅·TB 4.0已下载66题待镜像拉取
+已完成:       H-B✅·Gate7/7·TB报告✅·full500全7路predict+eval 100%完成✅·R1685 cline低分归因✅·R1694 glm53重测启动✅·R1695 proxy 429+400修复✅
+当前动作:     R1695 glm53重测:7路predict运行中(cline-patched[3/500]·opencode[2/500]·pi[3/500]·codex[2/500]·claude-code[1/500]·hermes[1/500]·deepseek-harness[1/500])·proxy修复后4路重启
 下一步:       ①监控7路predict进度(100/300/500三段汇报) ②每路predict完即eval ③TB 4.0镜像拉取+7路smoke+全量 ④写报告report_harness_glm53_7way_swebench_tb_zh.html
 阻塞:         无·7路predict运行中·TB 4.0镜像待拉取
 ERROR_COUNT:  0
-  📦 体积：TASK=32055B(31.3KB) / MEMORY=约31KB(≤32KB达标)
+  📦 体积：TASK=32074B(31.3KB) / MEMORY=约31KB(≤32KB达标)
 ```
 
 > 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
@@ -19,9 +19,9 @@ ERROR_COUNT:  0
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 
 ### 本唤醒流水
-> 📦 R1685 流水(17:32,cline低分系统归因轮:CPU/MEM自检PASS+逐实例配对拆解cline vs opencode+差距集58题归因+McNemar p=6.27e-08+报告32968B+生成器)已归档 → daily-memories-harness/2026-11-06.md。结论：R1569修复后差距以能力差为主(50/58=86%)。需要时再读。
+> 📦 R1685 流水(17:32,cline低分系统归因轮)已归档 → daily-memories-harness/2026-11-06.md。结论：R1569修复后差距以能力差为主(50/58=86%)。需要时再读。
 
-[23:55] R1694 glm53重测轮开始:§用户令·2026-11-06 22:4x「glm-5.3-flash重测SWE-bench Verified+TB 4.0×7路」→P0探针HTTP 200✅(curl POST agi-gateway/v1/chat/completions返回200)→硬盘体检(/data 6.0TB avail·docker 738GB 610images 99%reclaimable)→TB 4.0核实PASS(harbor hub terminal-bench/terminal-bench@4.0.0 66题 已下载~/terminal-bench-4.0/)→run_verified_full.py env化(MODEL_SUFFIX/RUN_ID_PREFIX/EVAL_TAG/PRED_SUBDIR/WORKDIR_TAG 5个env-var)→launch_glm53_full500.sh创建(照抄7x300 Step1-2·gw_proxy 9092/9093)→首次启动7路predict→发现cline-patched恒Forbidden根因=cline v3.0.51读settings/providers.json而非globalState.json(baseUrl仍9090)→修复providers.json(9090→9092)+secrets.json+globalState.json→run_single.py:42 OPENAI_BASE_URL env化(GW_PROXY_PORT)→清理predictions_glm53重启→7路predict重新启动→cline-patched[1/500]patch=2835B✅·hermes[3/500]patch=6247B✅·opencode[2/500]patch=4454B✅·pi[2/500]patch=1574B✅·codex[8/500]✅·claude-code[9/500]✅·deepseek-harness[44/500]✅→WAITING=0(指令未完成).
+[00:34] R1695 glm53重测·proxy修复轮:CPU/MEM自检PASS(load38.69/224核~17%busy·Mem650G/2015G·无>8000%CPU·无>50GB RSS)→发现4路失败根因:①codex/claude-code/hermes=gw_proxy 9092无429 retry→gateway返回429"额度已用完"时harness直接fail→②deepseek-harness=gw_proxy_dsh 9093的_headers()用case-sensitive dict导致Content-Type重复→gateway返回400"Missing Content-Type"→修复gw_proxy.py(3个proxy path加429 retry-with-backoff:解析"请等待N秒"→sleep→重试,最多5次)+gw_proxy_dsh.py(同429 retry+headers改用lowercase key去重Content-Type)→kill旧proxy(1485021/1485025)+重启修复版(9092=2058948/9093=2058952)→curl探针9093 /v1/messages HTTP 200✅(之前400)→kill 4路失败predict(3992289/3998580/4004408/4005263)+保留3路正常(cline-patched/opencode/pi)→重启4路predict(codex=2247963/claude-code=2248351/hermes=2258290/deepseek-harness=2261465)→codex首题即出patch(1333B wall=28.1s)✅确认429修复生效→7路全部运行中·未完成指令:有(glm53重测)⇒WAITING=0.
 
 
 > 📦 R1686 流水(18:11,quiet监控轮:CPU/MEM自检PASS+硬约束③PASS·tracked JSON=524)已归档 → daily-memories-harness/2026-11-06.md。结论：quiet轮正常·全7路100%完成。需要时再读。
