@@ -297,3 +297,4 @@
 1789629437578_7rzyf	ziyuny	hfeg0pnd002	831	physical_verify	case	EDA-Eval-DesignFlow-LvsSeedPromoDetect-001	2026-11-06 11:45	
 1793775672932_5j455	e0047722	hfeg0pkn004	517	physical_verify	parked	EDA-Eval-DesignFlow-DrcQaDiffReport-001	2026-11-06 12:32	dup-of-shardB-DrcQaDiffReport-001 (race: claimed C 12:04, shardB committed same trace/case 12:23)
 1789913077711_ld0p8	ziyuny	hfeg0pkn002	477	physical_verify	case	EDA-Eval-DesignFlow-LvsDeepReportAnalyzer-001	2026-11-06 13:28	
+1783563320123_vfz3r	e0014566	hfeg0pkn005	205	pg_layout	case	EDA-Eval-DesignFlow-PwrFillAgentGen-001	2026-11-06 14:06	
