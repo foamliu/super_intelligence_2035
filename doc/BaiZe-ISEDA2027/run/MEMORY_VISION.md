@@ -2,7 +2,9 @@
 
 WAITING: 1
 
-> 🆕 **【wake #838 · 2026-11-06 23:5x】advantage 方差诊断交付。** 用户令·21:3x 选 A（不训练）。前序 wake 已建 `diag_advantage_variance.py`（复用 `rollout_episode`+`WaveformGymEnv` 奖励，不改口径）跑 94 prompt×4 rollout（35.1min CPU，受 40min 时限未达 100，已如实标注）。**判定 PARTIAL**：std=0=78.7%（<80% NO-SIGNAL）、std>0=21.3%（<30% PARAM-ISSUE）、全0=0%（失败得−0.5非0）。**关键发现**：假设"全0组"在离散分档奖励下不成立，真正无信号="全同档"（74组advantage=0）；按目标：rise_time 100% std=0 全错(能力缺口)、period 31.8% std=0(GRPO信号最足)、amplitude 87.5%近饱和、duty_cycle 90.9%近NO-SIGNAL。建议 group_size→8+按目标差异化+奖励连续化(需批)。本轮补齐 EXPERIMENTS §21.1 + 标✅已交付 + commit+push。GPU-wait chain PID1365749 未动(健康,GPU释放自动接上,ETA≈12/25)。GPU 8×H100 满载(pretrain S1)。📦体积:TASK≈32.0KB/MEMORY≈22.5KB(均≤32KB✓,本轮0归档)。**未完成指令:无**(诊断已交付,阶段2待GPU,阶段3需用户批)⇒**WAITING: 1**。
+> 🆕 **【wake #839 · 2026-11-07 01:04】例行空唤醒巡检。** git in-sync(无新令)·loop健康(vision PID669545/data PID669542 均 ppid=1·cline会话 PID1119334)·GPU-wait chain PID1365749 健康(8.6h,等GPU)·GPU 8×H100 93-100%/~75GB(满载 pretrain S1,无GPU给vision Stage-2,ETA≈12/25)·全交付态确认(Stage0/1✅+advantage诊断✅,Stage2待GPU/Stage3待用户批)·零可执行动作·零异常。📦体积:TASK≈28.7KB/MEMORY≈22.3KB(均≤32KB✓,本轮0归档)。**未完成指令:无**⇒**WAITING: 1**。
+
+> 📦 wake #838（advantage方差诊断交付·2026-11-06 23:5x）已归档 → daily-memories-vision/2026-11-06.md；**结论**：PARTIAL/std=0=78.7%/全同档=无信号根因,建议group_size→8+奖励连续化(需批)。需要时再读。
 
 > 📦 wake #837（例行空唤醒巡检·2026-11-06 22:11）已归档 → daily-memories-vision/2026-11-06.md；**结论**：无新令·GPU-wait chain健康·全交付态确认·零异常。需要时再读。
 
