@@ -23,7 +23,7 @@ code{background:#edf2f7;padding:1px 5px;border-radius:3px;font-size:.82rem}
 <h1>cline trace 归因分析 · SWE-bench Verified 全量 500 题</h1>
 <div class="meta">生成时间：2026-11-04 13:40 · 任务令：2026-11-04 13:1x（用户直令：看 trace 排查 cline 表现相对差的原因）<br>
 数据来源：swebench_verified_full/reports/（progress + eval JSON）+ predictions/ + run_harness.py 源码<br>
-命名规程：正文一律写 <code>cline</code>（不写 cline-patched）· 报告目录：doc/BaiZe-ISEDA2027/reports/</div>
+命名规程：正文一律写 <code>cline</code>（不写其它变体）· 报告目录：doc/BaiZe-ISEDA2027/reports/</div>
 
 <div class="tldr"><h3 style="margin-top:0">TL;DR</h3>
 <p><b>cline 326/500 = 65.2%</b> 排第 3，落后 <b>opencode 401/500 = 80.2%</b>（−15pp）。
@@ -210,8 +210,8 @@ print(f'cline: {len(c)}B / opencode: {len(o)}B')
 <div class="foot">
 报告生成器：run/harness/gen_report_cline_trace_analysis_zh.py<br>
 数据截止：2026-11-04 13:2x（cline eval 500/500，opencode eval 500/500）<br>
-证据文件：run_harness.py:143-182 (ClineDriver) / run_single.py:23-38 (cline-patched runner) /
+证据文件：run_harness.py:143-182 (ClineDriver) / run_single.py:23-38 (cline runner) /
 run_verified_full.py:151-190 (predict_one) / CLINE_IMPROVEMENT_OPPORTUNITIES.md (O1-O5)<br>
-命名合规：正文一律 cline（不写 cline-patched）
+命名合规：正文一律 cline（不写其它变体）
 </div>
 </body></html>

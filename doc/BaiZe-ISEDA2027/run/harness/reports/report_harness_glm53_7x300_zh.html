@@ -47,7 +47,7 @@ code { background: #f1f5f9; padding: 1px 5px; border-radius: 4px; font-size: .85
 glm-5.3-flash 7×300 评测当前已完成 <b>2100/2100</b>（100.0%），
 全部 2100 条已完成。
 其中 7 个 harness 已完成全部 300 条
-（codex、deepseek-harness、hermes、opencode、cline-patched、claude-code、pi）。
+（codex、deepseek-harness、hermes、opencode、cline、claude-code、pi）。
 <br><b>⚠️ 数据完整性说明</b>：2026-10-17 发现 <code>save_results()</code> 数据丢失 bug 再次复发
 （<code>load_results()</code> 在 JSON 解析错误时重命名损坏文件 → <code>save_results()</code> 读到空文件
 → 仅写入当前 harness 条目 → 丢失其他已完成 harness 的数据）。已从损坏文件备份中恢复全部 7 harness 数据
@@ -77,7 +77,7 @@ passrate 瓶颈<b>不能仅靠换同级或略强模型突破</b>；真正约束�
 <tr><td class="l">模型</td><td><code>glm-5.3-flash</code></td><td><code>kimi-k2.6-cloud</code></td></tr>
 <tr><td class="l">Base URL</td><td><code>http://agi-gateway.cxmt.com/v1</code></td><td>内网网关</td></tr>
 <tr><td class="l">数据集</td><td colspan="2">SWE-bench Lite（300 条 instance_id，7 harness × 300 = 2100 条）</td></tr>
-<tr><td class="l">7 harness</td><td colspan="2">codex · deepseek-harness · hermes · opencode · cline-patched · claude-code · pi</td></tr>
+<tr><td class="l">7 harness</td><td colspan="2">codex · deepseek-harness · hermes · opencode · cline · claude-code · pi</td></tr>
 <tr><td class="l">评测口径</td><td colspan="2">resolved = classification == 'resolved'（unshare 沙箱 + 官方 eval，与既有报告一致）</td></tr>
 <tr><td class="l">运行机制</td><td colspan="2">7 路并行（各 harness 串行），<code>--resume</code> 幂等可续，结果独立 JSON</td></tr>
 <tr><td class="l">完成度</td><td><b>2100/2100（100.0%）</b> · 0 待跑</td><td>2100/2100（100%）</td></tr>
@@ -158,7 +158,7 @@ passrate 瓶颈<b>不能仅靠换同级或略强模型突破</b>；真正约束�
       <td><span class="tag tag-done">已完成</span></td>
     </tr>
     <tr>
-      <td class="l">cline-patched <span class="muted">(cline)</span></td>
+      <td class="l">cline</td>
       <td class="num">86/300</td>
       <td class="num">28.7%<br><span class="bar-wrap"><span class="bar bar-g" style="width:29%"></span></span></td>
       <td class="num">86/300</td>
@@ -227,7 +227,7 @@ McNemar 中 <b>b</b> = kimi 解决但 glm53 未解决，<b>c</b> = glm53 解决�
 <tr><td class='l'>pi</td><td class='l'>sympy__sympy-22005</td><td>glm53 解决 / kimi 未解决</td></tr>
 </table>
 <p class="muted" style="font-size:.84rem">7 例翻转 / 2100 配对 = 仅 0.33% 的实例两模型给出不同 resolve 结论。
-codex / deepseek / cline-patched / opencode 四个 harness 在重叠样本上 <b>零翻转</b>。</p>
+codex / deepseek / cline / opencode 四个 harness 在重叠样本上 <b>零翻转</b>。</p>
 
 <h2>④ 关键发现分析</h2>
 <h3>④.1 三个已完成 harness 结果「逐题一致」</h3>
@@ -272,7 +272,7 @@ McNemar p=0.453 不显著。<b>这意味着</b>：</p>
     <tr><td class="l">deepseek-harness</td><td class="num">227</td><td class="num">2</td><td class="num">0</td><td class="num">212</td><td class="num">13</td><td class="num">4</td></tr>
     <tr><td class="l">hermes</td><td class="num">216</td><td class="num">3</td><td class="num">0</td><td class="num">202</td><td class="num">17</td><td class="num">0</td></tr>
     <tr><td class="l">opencode</td><td class="num">211</td><td class="num">2</td><td class="num">0</td><td class="num">211</td><td class="num">2</td><td class="num">0</td></tr>
-    <tr><td class="l">cline-patched</td><td class="num">212</td><td class="num">2</td><td class="num">0</td><td class="num">212</td><td class="num">2</td><td class="num">0</td></tr>
+    <tr><td class="l">cline</td><td class="num">212</td><td class="num">2</td><td class="num">0</td><td class="num">212</td><td class="num">2</td><td class="num">0</td></tr>
     <tr><td class="l">claude-code</td><td class="num">218</td><td class="num">2</td><td class="num">0</td><td class="num">205</td><td class="num">17</td><td class="num">0</td></tr>
     <tr><td class="l">pi</td><td class="num">202</td><td class="num">6</td><td class="num">0</td><td class="num">202</td><td class="num">7</td><td class="num">0</td></tr>
 </table>

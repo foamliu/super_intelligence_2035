@@ -5,13 +5,13 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        R1672 quiet监控轮:CPU/MEM自检PASS(load30.92/224~13.8%·无>8000%CPU·无>50GB RSS·无需kill·本线topCPU=cline-hub-daemon23%/4.9GB·opencode6.8%/1.3GB·他线pretrain S1训练143%/21.8GB+pretrain cline39.7%不碰)→全7路eval JSON在位×7·report在位16900B·命名合规PASS(grep cline-patched full500报告=0命中)·硬约束③PASS(tracked JSON=522=dataset+config·非白名单result=0)·backlog=0(scan_backlog实测)·git clean·未完成指令:无⇒WAITING=1
-已完成:       H-B✅·Gate7/7·TB报告✅·pilot20✅·R984-R988恒0调试✅·R989 incr_eval全链✅·R997硬约束修复✅·R1567 cline trace归因✅·R1569 cline适配器修复✅·R1633 cline rerun 58/58终交付✅(356/500=71.3%)·R1634 13:5x复核+归档✅·R1635-R1649 deepseek incr_eval渐进✅(196→212,backlog=0)·R1650-R1671 quiet监控✅·full500全7路predict+eval 100%完成✅·R1662 full500复核可复现✅·R1667 命名合规修复+full500归档✅·R1672 quiet监控复核✅
-当前动作:     R1672 quiet监控轮:CPU/MEM自检PASS(load30.92/224~13.8%·无单进程>8000%CPU·无>50GB RSS·无需kill·本线topCPU=cline-hub-daemon23%/4.9GB(PID2751345)·opencode6.8%/1.3GB(PID3069180)·他线pretrain S1训练143%/21.8GB(PID4179175)+pretrain cline39.7%(PID3855091)不碰)→全7路eval JSON在位(swebench_verified_full/reports/eval_*.json×7·sizes 8502-14930B)·full500报告16900B·命名合规PASS(grep cline-patched report_harness_swebench_verified_full500_zh.html=0命中)·硬约束③PASS(git ls-files tracked JSON=522=dataset+config·非白名单result=0)·backlog=0(scan_backlog实测Total=0)·git status clean·git fetch up-to-date·未完成指令:无⇒WAITING=1
-下一步:       ①full500全7路100%完成+命名合规已修复+full500块已归档(TASK≤32KB) ②永久硬约束:禁止commit结果JSON ③下次唤醒CPU/MEM自检+backlog复扫(预期=0) ④TASK=31461B(30.7KB,≤32KB达标)·MEMORY=32646B(31.9KB,≤32KB达标) ⑤若有新指令运维会写入任务书
-阻塞:         无·全7路predict+eval 100%完成·backlog=0·命名合规达标·full500块已归档·TASK≤32KB.
+PHASE:        R1673 quiet监控+命名合规修复轮:CPU/MEM自检PASS(load28.97/224~13%·无>8000%CPU·无>50GB RSS·无需kill·本线topCPU=cline-hub-daemon23%/4.0GB·opencode6.8%/1.3GB·他线pretrain S1训练143%/21.8GB不碰·docker无容器)→全7路eval JSON在位×7·report在位16900B·命名合规修复3份旧报告9处cline-patched→cline(正文/表格,代码块真实路径保留)·硬约束③PASS(tracked JSON=524·非白名单result=0)·backlog=0·MEMORY归档R1632-R1649(32927→29893B≤32KB)·git clean·未完成指令:无⇒WAITING=1
+已完成:       H-B✅·Gate7/7·TB报告✅·pilot20✅·R984-R988恒0调试✅·R989 incr_eval全链✅·R997硬约束修复✅·R1567 cline trace归因✅·R1569 cline适配器修复✅·R1633 cline rerun 58/58终交付✅(356/500=71.3%)·R1634 13:5x复核+归档✅·R1635-R1649 deepseek incr_eval渐进✅(196→212,backlog=0)·R1650-R1672 quiet监控✅·full500全7路predict+eval 100%完成✅·R1662 full500复核可复现✅·R1667 命名合规修复(full500)+full500归档✅·R1673 命名合规修复(旧报告3份)+MEMORY归档✅
+当前动作:     R1673 quiet监控+命名合规修复轮:CPU/MEM自检PASS(load28.97/224~13%·无单进程>8000%CPU·无>50GB RSS·无需kill·docker无容器运行·本线topCPU=cline-hub-daemon23%/4.0GB(PID2751345)·opencode6.8%/1.3GB(PID3069180)·他线pretrain S1训练143%/21.8GB(PID4179175)不碰)→全7路eval JSON在位(swebench_verified_full/reports/eval_*.json×7·sizes 8502-14930B)·full500报告16900B·命名合规修复:3份旧报告9处正文/表格cline-patched→cline(context_compression_7way 1处+cline_trace_analysis 3处+glm53_7x300 5处,代码块真实路径eval_cline-patched.json等+adapter_0pass脚注保留)·硬约束③PASS(git ls-files tracked JSON=524=dataset+config·非白名单result=0)·backlog=0·MEMORY归档R1632-R1649 16行→1行bulk(32927→29893B≤32KB)·git status clean·未完成指令:无⇒WAITING=1
+下一步:       ①full500全7路100%完成+命名合规全量达标(旧报告已修复) ②永久硬约束:禁止commit结果JSON ③下次唤醒CPU/MEM自检+backlog复扫(预期=0) ④TASK=31461B(30.7KB,≤32KB达标)·MEMORY=29893B(29.2KB,≤32KB达标) ⑤若有新指令运维会写入任务书
+阻塞:         无·全7路predict+eval 100%完成·backlog=0·命名合规达标(全量报告)·full500块已归档·TASK≤32KB·MEMORY≤32KB.
 ERROR_COUNT:  0
-  📦 体积：TASK=31461B(30.7KB,≤32KB达标) / MEMORY=32646B(31.9KB,≤32KB达标)
+  📦 体积：TASK=31461B(30.7KB,≤32KB达标) / MEMORY=29893B(29.2KB,≤32KB达标)
 ```
 
 > 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
@@ -19,7 +19,9 @@ ERROR_COUNT:  0
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 
 ### 本唤醒流水
-[08:34] R1672 quiet监控轮:CPU/MEM自检PASS(load30.92/224~13.8%·无单进程>8000%CPU·无>50GB RSS·无需kill·本线topCPU=cline-hub-daemon23%/4.9GB(PID2751345)·opencode6.8%/1.3GB(PID3069180)·他线pretrain S1训练143%/21.8GB(PID4179175)+pretrain cline39.7%(PID3855091)不碰)→全7路eval JSON在位(swebench_verified_full/reports/eval_*.json×7·sizes 8502-14930B)·full500报告16900B·命名合规PASS(grep cline-patched report_harness_swebench_verified_full500_zh.html=0命中)·硬约束③PASS(git ls-files tracked JSON=522=dataset+config·非白名单result=0)·backlog=0(scan_backlog实测Total BACKLOG=0)·git status clean·git fetch up-to-date·未完成指令:无⇒WAITING=1.
+[09:09] R1673 quiet监控+命名合规修复轮:CPU/MEM自检PASS(load28.97/224~13%·无单进程>8000%CPU·无>50GB RSS·无需kill·docker无容器·本线topCPU=cline-hub-daemon23%/4.0GB(PID2751345)·opencode6.8%/1.3GB(PID3069180)·他线pretrain S1训练143%/21.8GB(PID4179175)不碰)→全7路eval JSON在位(swebench_verified_full/reports/eval_*.json×7·sizes 8502-14930B)·full500报告16900B·命名合规修复:grep cline-patched发现6份旧报告违规→修复3份9处正文/表格(context_compression_7way 1处line390+cline_trace_analysis 3处lines26/213/215+glm53_7x300 5处lines50/80/161/230/275)→剩余cline-patched仅存在于pilot20<code>eval_cline-patched.json真实路径+cline_trace_analysis代码块真实文件路径+adapter_0pass允许脚注(均exempt)→命名合规全量达标·硬约束③PASS(tracked JSON=524·非白名单result=0)·backlog=0·MEMORY归档R1632-R1649 16行→1行bulk(32927→29893B≤32KB)·git status clean·未完成指令:无⇒WAITING=1.
+
+> 📦 R1672 流水(08:34,quiet监控轮:CPU/MEM自检PASS+全7路100%+硬约束③PASS·tracked JSON=522)已归档 → daily-memories-harness/2026-11-06.md。结论：quiet轮正常·全7路100%完成。需要时再读。
 
 > 📦 R1671 流水(07:56,quiet监控轮:CPU/MEM自检PASS+全7路100%+硬约束③PASS·tracked JSON=524)已归档 → daily-memories-harness/2026-11-06.md。结论：quiet轮正常·全7路100%完成。需要时再读。
 
@@ -36,22 +38,7 @@ ERROR_COUNT:  0
 > 📦 R1659 流水(23:21,quiet监控轮:CPU/MEM自检PASS+report在位+backlog=0+全7路100%完成)已归档 → daily-memories-harness/2026-11-05.md。结论：quiet轮正常·全7路100%完成。需要时再读。
 > 📦 R1658 流水(22:46,quiet监控轮:CPU/MEM自检PASS+report在位+backlog=0+全7路100%完成+MEMORY滚动R1566–R1576达≤32KB)已归档 → daily-memories-harness/2026-11-05.md。结论：quiet轮正常·全7路100%完成。需要时再读。
 > 📦 R1650~R1657 流水（2026-11-05 18:02~22:10，8轮 quiet监控轮：CPU/MEM自检PASS·backlog=0·report在位·全7路100%完成·R1658含MEMORY滚动R1566–R1576）已 bulk 归档 → daily-memories-harness/2026-11-05.md。结论：quiet轮全正常·全7路100%完成。需要时再读。
-> 📦 R1649 流水(17:23,incr_eval轮:pytest-8399 RESOLVED 211→212+report regen)已归档 → daily-memories-harness/2026-11-05.md。结论：deepseek+1 RESOLVED·backlog=0·全7路100%完成。需要时再读。
-> 📦 R1648 流水(16:38,incr_eval轮:4backlog 3RESOLVED+1FAILED 208→211+report regen)已归档 → daily-memories-harness/2026-11-05.md。结论：deepseek 208→211·backlog=0。需要时再读。
-> 📦 R1646 流水(15:04,incr_eval轮:pytest-6197 no_patch+pytest-7205 FAILED 207不变+report regen)已归档 → daily-memories-harness/2026-11-05.md。结论：deepseek 207不变·backlog=0。需要时再读。
-> 📦 R1645 流水(14:28,incr_eval轮:pytest-6202 RESOLVED 206→207+report regen)已归档 → daily-memories-harness/2026-11-05.md。结论：deepseek+1 RESOLVED·backlog=0。需要时再读。
-> 📦 R1644 流水(13:08,incr_eval轮:4backlog 3RESOLVED+1FAILED 203→206+report regen)已归档 → daily-memories-harness/2026-11-05.md。结论：deepseek+3 RESOLVED·backlog=0。需要时再读。
-> 📦 R1643 流水(12:25,incr_eval轮:pytest-10081 RESOLVED 202→203+report regen)已归档 → daily-memories-harness/2026-11-05.md。结论：deepseek+1 RESOLVED·backlog=0。需要时再读。
-> 📦 R1642 流水(11:50,incr_eval轮:pylint-7277 RESOLVED 201→202+pytest-10051 FAILED+report regen)已归档 → daily-memories-harness/2026-11-05.md。结论：deepseek+1 RESOLVED·backlog=0。需要时再读。
-> 📦 R1641 流水(10:56,incr_eval轮:pylint-6903 RESOLVED 200→201+fix parse路径bug双路径fallback+report regen)已归档 → daily-memories-harness/2026-11-05.md。结论：deepseek+1 RESOLVED·backlog=0。需要时再读。
-> 📦 R1640 流水(10:09,incr_eval轮:2backlog 2/2 FAILED 200不变+report regen)已归档 → daily-memories-harness/2026-11-05.md。结论：deepseek 200不变·backlog=0。需要时再读。
-> 📦 R1639 流水(09:27,quiet监控轮:CPU/MEM自检PASS+backlog=0+report UNCHANGED+deepseek 258/500)已归档 → daily-memories-harness/2026-11-05.md。结论：deepseek 200不变·backlog=0。需要时再读。
-> 📦 R1638 流水(08:45,incr_eval轮:4backlog 3 FAILED+1复扫FAILED 200不变+report regen)已归档 → daily-memories-harness/2026-11-05.md。结论：deepseek 200不变·backlog=0。需要时再读。
-> 📦 R1637 流水(08:08,incr_eval轮:1backlog 1/1 RESOLVED 199→200+report regen)已归档 → daily-memories-harness/2026-11-05.md。结论：deepseek+1 RESOLVED·backlog=0。需要时再读。
-> 📦 R1635 流水(06:37,incr_eval轮:3backlog 3/3 RESOLVED 196→199+report regen)已归档 → daily-memories-harness/2026-11-05.md。结论：deepseek+3 RESOLVED·backlog=0。需要时再读。
-> 📦 R1634 流水(05:59,13:5x复核+归档闭环轮:验证13:5x三方一致+归档13:5x块)已归档 → daily-memories-harness/2026-11-05.md。结论：13:5x已交付+归档·deepseek predict alive。需要时再读。
-> 📦 R1633 流水(05:10,cline rerun 58/58终交付轮:cline356/500=71.3%修复后·+6.1pp·13:5x全交付)已归档 → daily-memories-harness/2026-11-05.md。结论：cline rerun终交付·deepseek 248/500。需要时再读。
-> 📦 R1632 流水(05:01,quiet监控轮:scan_backlog=0+report UNCHANGED+归档13:1x块→ARCHIVE)已归档 → daily-memories-harness/2026-11-05.md。结论：cline rerun 1/58 left·归档13:1x。需要时再读。
+> 📦 R1632–R1649 流水（2026-11-05 05:01~17:23，18轮 incr_eval/quiet监控：cline rerun 58/58终交付356/500=71.3%·deepseek渐进196→212·13:5x归档闭环·backlog=0）已 bulk 归档 → daily-memories-harness/2026-11-05.md。结论：cline rerun终交付·deepseek 212/276·全7路100%完成。需要时再读。
 
 > 📦 R1628 流水(04:13,incr_eval轮:2backlog(cline sympy-19040 RESOLVED 354·deepseek xarray-4687 FAILED)+report regen)已归档 → daily-memories-harness/2026-11-05.md。结论：cline354·deepseek195·3路predict alive。需要时再读。
 > 📦 R1627 流水(04:01,quiet监控轮:regen all7全UNCHANGED·scan_backlog=0·report regen·3路predict alive)已归档 → daily-memories-harness/2026-11-05.md。结论：cline353·codex291·deepseek195·3路predict alive。需要时再读。

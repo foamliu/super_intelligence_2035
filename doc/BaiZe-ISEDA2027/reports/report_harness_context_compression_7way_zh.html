@@ -387,7 +387,7 @@
 <h2 id="conclusion" style="font-size:1.5em;border-left:5px solid #4a6cf7;padding-left:14px;margin:36px 0 18px;">7. 结合本项目教训与总结建议</h2>
 <div style="background:#fff3e0;border:1px solid #ffb74d;border-radius:10px;padding:28px 30px;margin-bottom:24px;">
 <h3 style="margin:0 0 16px;color:#e65100;">7.1 本项目教训：cline Auto-compacting 超时问题</h3>
-<p style="margin:0 0 12px;">在 BaiZe 项目的 Terminal-Bench 2.0 横评中，我们使用 cline 作为 harness 之一（<code>cline-patched</code>）。实际评测中多次遇到 <strong>Auto-compacting 超时</strong>：当对话接近 <code>maxInputTokens × 0.9</code> 阈值（<code style="background:#fff;padding:1px 4px;border-radius:3px;font-size:0.88em;">compaction-shared.ts:17</code>）时，agentic 模式触发 LLM 摘要调用，但该调用在 3600s 会话限制内未完成，导致整个 trial 超时失败。</p>
+<p style="margin:0 0 12px;">在 BaiZe 项目的 Terminal-Bench 2.0 横评中，我们使用 cline 作为 harness 之一（<code>cline</code>）。实际评测中多次遇到 <strong>Auto-compacting 超时</strong>：当对话接近 <code>maxInputTokens × 0.9</code> 阈值（<code style="background:#fff;padding:1px 4px;border-radius:3px;font-size:0.88em;">compaction-shared.ts:17</code>）时，agentic 模式触发 LLM 摘要调用，但该调用在 3600s 会话限制内未完成，导致整个 trial 超时失败。</p>
 <p style="margin:0 0 12px;"><strong>根因分析</strong>：cline 的 agentic 压缩需要一次完整的 LLM API 调用生成摘要（<code style="background:#fff;padding:1px 4px;border-radius:3px;font-size:0.88em;">agentic-compaction.ts:57</code> <code>policyIntent: "agentic_summary"</code>）。在 Terminal-Bench 长任务中（多轮工具调用 + 大量代码上下文），待摘要历史很长，摘要调用本身输入 token 量巨大，导致 API 响应缓慢甚至超时。cline <strong>没有</strong> claude-code 的微压缩前置层（先清理工具结果再决定是否需要 LLM），也<strong>没有</strong> hermes-agent 的反抖动断路器。</p>
 <p style="margin:0 0 12px;"><strong>对比其他 harness</strong>：</p>
 <ul style="margin:0 0 12px;padding-left:24px;font-size:0.92em;">
