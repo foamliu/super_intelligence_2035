@@ -2,7 +2,9 @@
 
 WAITING: 0
 
-> 🆕 **【wake #817 · 2026-11-06 18:02】📊 监控巡检·GRPO chain健康(GPU-wait 94polls全busy)·无变化·等GPU。**GRPO chain PID1365749 alive(bash run_grpo_wave.sh 8,16:28起,etimes≈5669s/94min)·chain log(/tmp/grpo_chain_relaunch.log):112行,16:28→18:01连续busy_util·GPU 8×H100 100%util~75GB(pretrain baize2b torchrun PID2612442仍在跑,etimes≈339089s/94h,ETA≈12/24)·零新发现·Phase 2管线CPU侧全验证PASS零bug(wake#803)·SFT ckpt step3000 LoRA adapter+eval_results(format100%/submit100%/pass=true/num_acc_lt1pct=14%)已核验在位·grpo_smoke PASS·chain Step1-3已完成(eval detected→acceptance passed→step3000 ckpt found)→Step4 GPU-wait轮询中·chain将在GPU释放后自动起训(Step5 GRPO 8GPU torchrun→Step6 WaveQA-RL 300题)。📦体积:TASK=30.5KB/MEMORY=17.5KB(均≤32KB✓,本轮0归档)。**未完成指令:有**(阶段2 GRPO待GPU+阶段3未交付)⇒**WAITING: 0**。
+> 🆕 **【wake #818 · 2026-11-06 18:06】📊 监控巡检·GRPO chain健康(GPU-wait 98polls全busy)·无变化·等GPU。**GRPO chain PID1365749 alive(bash run_grpo_wave.sh 8,16:28起,etimes≈5912s/98.5min)·chain log(/tmp/grpo_chain_relaunch.log):118行,16:28→18:05连续busy_util·GPU 8×H100 100%util~75GB(pretrain torchrun PID2612442仍在跑,etimes≈339352s/94.3h,ETA≈12/24)·零新发现·Phase 2管线CPU侧全验证PASS零bug(wake#803)·SFT ckpt step3000 LoRA adapter+eval_results(format100%/submit100%/pass=true/num_acc_lt1pct=14%)已核验在位·grpo_smoke PASS·chain Step1-3已完成(eval detected→acceptance passed→step3000 ckpt found)→Step4 GPU-wait轮询中·chain将在GPU释放后自动起训(Step5 GRPO 8GPU torchrun→Step6 WaveQA-RL 300题)。📦体积:TASK=30.5KB/MEMORY=17.7KB(均≤32KB✓,本轮0归档)。**未完成指令:有**(阶段2 GRPO待GPU+阶段3未交付)⇒**WAITING: 0**。
+
+> 📦 wake #817（监控巡检·2026-11-06 18:02）已归档 → daily-memories-vision/2026-11-06.md；**结论**：GRPO chain健康(GPU-wait 94polls全busy)·GPU 8×H100 100%·零新发现·WAITING=0。需要时再读。
 
 > 📦 wake #816（监控巡检·2026-11-06 17:59）已归档 → daily-memories-vision/2026-11-06.md；**结论**：GRPO chain健康(GPU-wait 90polls全busy)·GPU 8×H100 100%·零新发现·WAITING=0。需要时再读。
 
@@ -138,4 +140,4 @@ WAITING: 0
 | 当前动作 | **Phase 2管线预验证完成(wake#803)，GRPO chain等待GPU**：CPU侧全验证PASS(GRPO smoke/WaveQA-RL oracle/2B模型config/LoRA adapter/4脚本AST)。GRPO chain PID1365749 alive(GPU-wait轮询,60s间隔,guard:util<10%+mem<5000MiB,3x consecutive)。chain log确认:SFT eval detected→acceptance passed→step3000 ckpt found→GPU-wait。 |
 | 下一步 | 等GPU释放(ETA≈12/24)→GRPO chain自动启动阶段2训练(~12 GPU·h,torchrun 8GPU,2B model+step3000 LoRA)→WaveQA-RL 300题评测+回归护栏→阶段2报告+EXPERIMENTS§21。若GPU释放后GRPO训练crash→排查。下轮wake检查GRPO chain日志+GPU状态。 |
 | 阻塞 | .12+.29 GPU全占（8×H100 96-100% util / ~75GB，pretrain baize2b ETA≈12/24-25）→ 阶段2 GRPO需GPU（GRPO chain PID1365749自带GPU-wait,释放后自动起训）·.17+.75 SSH不可达 |
-| 更新 | **2026-11-06 18:02 (wake #817)**: 📊监控巡检·GRPO chain PID1365749健康(GPU-wait 94polls全busy,16:28→18:01,112行log)·GPU 8×H100 100%(pretrain baize2b torchrun PID2612442仍在跑,ETA≈12/24)·零新发现·SFT ckpt step3000+eval_results(format100%/submit100%/pass=true)已核验·Phase 2管线CPU侧全验证PASS零bug·体积TASK=30.5KB/MEMORY=17.5KB✓·WAITING=0 |
+| 更新 | **2026-11-06 18:06 (wake #818)**: 📊监控巡检·GRPO chain PID1365749健康(GPU-wait 98polls全busy,16:28→18:05,118行log)·GPU 8×H100 100%(pretrain torchrun PID2612442仍在跑,etimes≈339352s/94.3h,ETA≈12/24)·零新发现·SFT ckpt step3000+eval_results(format100%/submit100%/pass=true)已核验·Phase 2管线CPU侧全验证PASS零bug·体积TASK=30.5KB/MEMORY=17.7KB✓·WAITING=0 |
