@@ -23,7 +23,7 @@ code { background:#f4f4f4; padding:2px 6px; border-radius:3px; font-size:13px; }
 <body>
 
 <h1>波形 RL Phase 2 CPU 实验报告</h1>
-<p class="meta">生成时间：2026-11-06 19:20 · BaiZe Vision wake#827 · 设备：CPU (224-core, 2TB RAM)<br>
+<p class="meta">生成时间：2026-11-06 19:46 · BaiZe Vision wake#827 · 设备：CPU (224-core, 2TB RAM)<br>
 任务令：§用户令·2026-11-06 18:5x（GPU还要等2个月⇒不等了，先上CPU）</p>
 <div class="note"><strong>背景</strong>：.29/.12的16×H100被pretrain S1占满，ETA≈2026-12-25。用户令：不等GPU，先在CPU上完成Phase 2 GRPO全链路。GPU-wait chain保留不动。</div>
 
@@ -65,7 +65,12 @@ Maximum resident set size (kbytes): 43950648<br>
 <tr class='highlight'><td><strong>Overall</strong></td><td>300</td><td><strong>100.0%</strong></td><td>—</td><td>—</td></tr>
 </table>
 <h3>§4.2 Pre-SFT (纯2B基线, 50题)</h3>
-<p><em>Pre-SFT eval not yet available.</em></p>
+<table class='data'><tr><th>Type</th><th>N</th><th>Mean</th><th>≤5%</th><th>≤1%</th></tr>
+<tr><td>numerical</td><td>20</td><td>0.0%</td><td>0.0%</td><td>0.0%</td></tr>
+<tr><td>multi_choice</td><td>12</td><td>0.0%</td><td>0.0%</td><td>0.0%</td></tr>
+<tr><td>open_ended</td><td>18</td><td>0.0%</td><td>0.0%</td><td>0.0%</td></tr>
+<tr class='highlight'><td><strong>Overall</strong></td><td>50</td><td><strong>0.0%</strong></td><td>—</td><td>—</td></tr>
+</table>
 <h3>§4.3 Post-SFT (step3000, 50题)</h3>
 <p><em>Post-SFT eval not yet available.</em></p>
 <h3>§4.4 Post-GRPO (CPU pilot step50, 50题)</h3>
@@ -74,7 +79,7 @@ Maximum resident set size (kbytes): 43950648<br>
 <table class='data'>
 <tr><th>评测点</th><th>N</th><th>Overall Mean</th><th>≤5% Pass</th><th>≤1% Pass</th><th>说明</th></tr>
 <tr><td>Oracle Tcl 上限</td><td>300</td><td>100.0%</td><td>100.0%</td><td>100.0%</td><td>Oracle策略，理论天花板</td></tr>
-<tr><td>Pre-SFT (纯2B)</td><td>—</td><td>—</td><td>—</td><td>—</td><td>未训练基线，预期submit≈0%</td></tr>
+<tr><td>Pre-SFT (纯2B)</td><td>50</td><td>0.0%</td><td>0.0%</td><td>0.0%</td><td>未训练基线，预期submit≈0%</td></tr>
 <tr><td>Post-SFT</td><td>—</td><td>—</td><td>—</td><td>—</td><td>SFT冷启动后(step3000)</td></tr>
 <tr class='highlight'><td><strong>Post-GRPO(CPU)</strong></td><td>—</td><td><strong>—</strong></td><td><strong>—</strong></td><td><strong>—</strong></td><td>GRPO强化后(CPU pilot step50)</td></tr>
 </table>
