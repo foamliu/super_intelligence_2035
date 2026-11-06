@@ -2,7 +2,9 @@
 
 WAITING: 0
 
-> 🆕 **【wake #825 · 2026-11-06 18:47】监控巡检·GRPO chain健康(170polls全busy)·GPU满载等pretrain释放·零可执行动作·WAITING=0。** ①GRPO chain PID1365749 alive(ppid=1真守护,etimes≈8294s/138min),chain stdout(/tmp/grpo_chain_relaunch.log)最新18:47:03 busy_util--waiting健康 ②pretrain torchrun PID2612442 etimes=341763s/94.9h,2节点(.12+.29)16GPU,ETA≈11/28(~22天) ③GPU 8×H100 91-100%util ~75GB,vision R9未在跑·铁律禁杀pretrain ④SFT eval pass(format1.0/submit1.0,lt1pct=14%/lt5pct=21%)·ckpt step1000/2000/3000均有adapter_config.json在位·WaveQA-RL oracle 300题在位·grpo_train_wave.py/waveqa_eval.py/run_grpo_wave.sh就绪·auto-launch链全路径就绪 ⑤git sync origin(无ahead/behind)。**结论**:状态无变化,本轮零GPU可执行动作(被健康pretrain占满,ETA≈11/28),不伪造数字。📦体积:TASK=30.5KB(30477B)/MEMORY≈19KB(均≤32KB✓,本轮0归档)。**未完成指令:有**(阶段2 GRPO待GPU释放+阶段3未交付)⇒**WAITING: 0**。
+> 🆕 **【wake #826 · 2026-11-06 18:52】监控巡检·GRPO chain健康(176polls全busy)·GPU满载等pretrain释放·零可执行动作·WAITING=0。** ①GRPO chain PID1365749 alive(ppid=1真守护,etimes≈8590s/143min),chain stdout(/tmp/grpo_chain_relaunch.log)最新18:51:04 busy_util--waiting健康 ②pretrain torchrun PID2612442 etimes=342010s/95.0h,2节点(.12+.29)16GPU,ETA≈11/28(~22天) ③GPU 8×H100 100%util ~75GB,vision R9未在跑·铁律禁杀pretrain ④SFT eval pass(format1.0/submit1.0,lt1pct=14%/lt5pct=21%)·ckpt step1000/2000/3000均有adapter_config.json在位(路径/nas_train/app.e0031982/datasets/baize-vision/out/wave_sft_stage1w/step*/)·WaveQA-RL oracle 300题在位·grpo_train_wave.py/waveqa_eval.py/run_grpo_wave.sh就绪·auto-launch链全路径就绪 ⑤git sync origin(无ahead/behind)。**结论**:状态无变化,本轮零GPU可执行动作(被健康pretrain占满,ETA≈11/28),不伪造数字。📦体积:TASK=30.5KB(30477B)/MEMORY≈19.3KB(均≤32KB✓,本轮0归档)。**未完成指令:有**(阶段2 GRPO待GPU释放+阶段3未交付)⇒**WAITING: 0**。
+
+> 📦 wake #825（监控巡检·2026-11-06 18:47）已归档 → daily-memories-vision/2026-11-06.md；**结论**：GRPO chain健康(170polls全busy)·GPU 8×H100 91-100%·零新发现·WAITING=0。需要时再读。
 
 > 📦 wake #824（监控巡检·2026-11-06 18:42）已归档 → daily-memories-vision/2026-11-06.md；**结论**：GRPO chain健康(165polls全busy)·GPU 8×H100 100%·零新发现·WAITING=0。需要时再读。
 
