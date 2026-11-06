@@ -5,13 +5,13 @@ WAITING: 0
 ## 📊 进度快照
 
 ```
-PHASE:        R1695 glm53重测轮:SWE-bench Verified full500×glm-5.3-flash×7路 predict运行中(7进程并行)·4路(codex/claude-code/hermes/deepseek-harness)因429限流+400 Content-Type bug失败→已修复gw_proxy.py(429 retry)+gw_proxy_dsh.py(Content-Type dedup+429 retry)→4路重启后codex首题即出patch(1333B)✅·TB 4.0已下载66题待镜像拉取
-已完成:       H-B✅·Gate7/7·TB报告✅·full500全7路predict+eval 100%完成✅·R1685 cline低分归因✅·R1694 glm53重测启动✅·R1695 proxy 429+400修复✅
-当前动作:     R1695 glm53重测:7路predict运行中(cline-patched[3/500]·opencode[2/500]·pi[3/500]·codex[2/500]·claude-code[1/500]·hermes[1/500]·deepseek-harness[1/500])·proxy修复后4路重启
-下一步:       ①监控7路predict进度(100/300/500三段汇报) ②每路predict完即eval ③TB 4.0镜像拉取+7路smoke+全量 ④写报告report_harness_glm53_7way_swebench_tb_zh.html
-阻塞:         无·7路predict运行中·TB 4.0镜像待拉取
+PHASE:        R1696 glm53重测监控轮:SWE-bench Verified full500×glm-5.3-flash×7路 predict运行中(7/7 orchestrator alive,21/3500 preds)·TB 4.0=66tasks confirmed,132 images pulling in bg·硬约束③修复(17 pred JSON untracked+.gitignore补全)
+已完成:       H-B✅·Gate7/7·TB报告✅·full500全7路predict+eval 100%完成✅·R1685 cline低分归因✅·R1694 glm53重测启动✅·R1695 proxy 429+400修复✅·R1696 硬约束③修复+TB4镜像拉取启动✅
+当前动作:     R1696 监控:7路predict运行中(cline-patched[4/500]·opencode[5/500]·pi[4/500]·codex[1/500]·claude-code[1/500]·hermes[4/500]·deepseek-harness[2/500])·TB4镜像后台拉取中(4/132)·硬约束③已修复(17 JSON untracked)
+下一步:       ①监控7路predict进度(100/300/500三段汇报) ②每路predict完即eval ③TB4镜像拉取完→7路smoke→全量66×7 ④写报告report_harness_glm53_7way_swebench_tb_zh.html
+阻塞:         无·7路predict运行中·TB4镜像后台拉取中
 ERROR_COUNT:  0
-  📦 体积：TASK=32074B(31.3KB) / MEMORY=约31KB(≤32KB达标)
+  📦 体积：TASK=32074B(31.3KB) / MEMORY=约30KB(≤32KB达标)
 ```
 
 > 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
@@ -24,29 +24,9 @@ ERROR_COUNT:  0
 [00:34] R1695 glm53重测·proxy修复轮:CPU/MEM自检PASS(load38.69/224核~17%busy·Mem650G/2015G·无>8000%CPU·无>50GB RSS)→发现4路失败根因:①codex/claude-code/hermes=gw_proxy 9092无429 retry→gateway返回429"额度已用完"时harness直接fail→②deepseek-harness=gw_proxy_dsh 9093的_headers()用case-sensitive dict导致Content-Type重复→gateway返回400"Missing Content-Type"→修复gw_proxy.py(3个proxy path加429 retry-with-backoff:解析"请等待N秒"→sleep→重试,最多5次)+gw_proxy_dsh.py(同429 retry+headers改用lowercase key去重Content-Type)→kill旧proxy(1485021/1485025)+重启修复版(9092=2058948/9093=2058952)→curl探针9093 /v1/messages HTTP 200✅(之前400)→kill 4路失败predict(3992289/3998580/4004408/4005263)+保留3路正常(cline-patched/opencode/pi)→重启4路predict(codex=2247963/claude-code=2248351/hermes=2258290/deepseek-harness=2261465)→codex首题即出patch(1333B wall=28.1s)✅确认429修复生效→7路全部运行中·未完成指令:有(glm53重测)⇒WAITING=0.
 
 
-> 📦 R1686 流水(18:11,quiet监控轮:CPU/MEM自检PASS+硬约束③PASS·tracked JSON=524)已归档 → daily-memories-harness/2026-11-06.md。结论：quiet轮正常·全7路100%完成。需要时再读。
+> 📦 R1682-R1693 流水(2026-11-06 15:02~22:16,~12轮quiet监控轮:CPU/MEM自检均PASS+硬约束③PASS·tracked JSON=524·全7路eval 100%完成)已合并归档 → daily-memories-harness/2026-11-06.md。结论：quiet轮正常。需要时再读。
 
-> 📦 R1687 流水(18:48,quiet监控轮)已归档 → daily-memories-harness/2026-11-06.md。结论：quiet轮正常·全7路100%完成。需要时再读。
-
-> 📦 R1687 流水(18:48,quiet监控轮)已归档 → daily-memories-harness/2026-11-06.md。结论：quiet轮正常·全7路100%完成。需要时再读。
-
-> 📦 R1688 流水(19:21,quiet监控轮:CPU/MEM自检PASS+硬约束③PASS·tracked JSON=524)已归档 → daily-memories-harness/2026-11-06.md。结论：quiet轮正常·全7路100%完成。需要时再读。
-
-> 📦 R1689 流水(19:55,quiet监控轮:CPU/MEM自检PASS+硬约束③PASS·tracked JSON=524)已归档 → daily-memories-harness/2026-11-06.md。结论：quiet轮正常·全7路100%完成。需要时再读。
-
-[22:16] R1693 quiet监控轮:CPU/MEM自检PASS(load25.00/23.94/23.98 over 224核~11.2%busy·%Cpu 4.6us+4.3sy=8.9%·Mem2015G/avail1284G·ps最高CPU=本线cline-hub-daemon(PID2751345)22.9%CPU 4.1GB RSS+opencode(PID3069180)6.6%CPU 1.3GB RSS均<阈值·他线pretrain pt_data_loader(PID146325~146327)~100%不碰·无>8000%CPU·无>50GB RSS·无pytest/test_gradient/partitions失控进程·docker无容器)→无active eval/predict进程backlog=0→硬约束③PASS(git ls-files harness .json=524·非白名单result/eval_/predict/score=0)→git pull--rebase(Already up to date)+sync clean(main=origin无ahead/behind)→体积自检PASS(TASK32055B=31.3KB/MEMORY32444B=31.7KB均≤32KB达标)·未完成指令:无⇒WAITING=1.
-
-> 📦 R1692 流水(21:42,quiet监控轮:CPU/MEM自检PASS+硬约束③PASS·tracked JSON=524)已归档 → daily-memories-harness/2026-11-06.md。结论：quiet轮正常·全7路100%完成。需要时再读。
-
-> 📦 R1691 流水(21:08,quiet监控轮:CPU/MEM自检PASS+硬约束③PASS·tracked JSON=524)已归档 → daily-memories-harness/2026-11-06.md。结论：quiet轮正常·全7路100%完成。需要时再读。
-
-> 📦 R1690 流水(20:31,quiet监控轮:CPU/MEM自检PASS+硬约束③PASS·tracked JSON=524)已归档 → daily-memories-harness/2026-11-06.md。结论：quiet轮正常·全7路100%完成。需要时再读。
-
-> 📦 R1684 流水(16:14,quiet监控轮:CPU/MEM自检PASS+全7路eval JSON在位+硬约束③PASS·tracked JSON=522)已归档 → daily-memories-harness/2026-11-06.md。结论：quiet轮正常·全7路100%完成。需要时再读。
-
-> 📦 R1683 流水(15:37,quiet监控轮:CPU/MEM自检PASS+全7路eval JSON在位+硬约束③PASS·tracked JSON=524)已归档 → daily-memories-harness/2026-11-06.md。结论：quiet轮正常·全7路100%完成。需要时再读。
-
-> 📦 R1682 流水(15:02,quiet监控轮:CPU/MEM自检PASS+全7路eval JSON在位+硬约束③PASS·tracked JSON=524)已归档 → daily-memories-harness/2026-11-06.md。结论：quiet轮正常·全7路100%完成。需要时再读。
+[00:41] R1696 glm53重测监控轮:CPU/MEM自检PASS(load36.74/224核~16%busy·Mem650G/2.0Ti avail1.2Ti·无>8000%CPU·无>50GB RSS·pretrain 143%不碰)→7/7 predict orchestrator alive(cline-patched=3991932/opencode=4004319/pi=4005476 etimes~2400s + codex=2247963/claude-code=2248351/hermes=2258290/deepseek-harness=2261465 etimes~460s post-proxy-fix restart)→2/2 gw_proxy alive(9092=2058948/9093=2058952)→429 retry fix working(gw_proxy=9 retries,dsh=0)→predict progress:cline4/opencode5/pi4/codex1/claude-code1/hermes4/dsh2=21/3500→EVAL_TAG=glm53_ confirmed(no kimi cross-contamination)→deepseek-harness 115 existing results=own first attempt no-patch,is_predicted() correctly re-attempts→TB4.0核实PASS:~/terminal-bench-4.0/=66 tasks(各含task.toml+env+verifier)·132 unique images·docker accessible via sg docker→创建_pull_tb4_images.sh+后台启动(setsid sg docker -c 'bash _pull_tb4_images.sh')→disk:/data 6.0TB free/738GB docker images→硬约束③修复:发现17个predictions_glm53/*.json被tracked→git rm --cached 17个+harness/.gitignore补全(predictions_*/+eval_/predict_/progress_*.json+logs/evaluation/)→verify count=0✅→体积自检:TASK32074B(31.3KB)/MEMORY~30KB均≤32KB·未完成指令:有(glm53重测)⇒WAITING=0.
 
 > 📦 R1681 流水(14:27,quiet监控轮:CPU/MEM自检PASS+全7路eval JSON在位+硬约束③PASS·tracked JSON=522)已归档 → daily-memories-harness/2026-11-06.md。结论：quiet轮正常·全7路100%完成。需要时再读。
 

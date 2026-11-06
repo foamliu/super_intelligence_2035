@@ -1,1 +1,11 @@
 kimi_pilot_results*.json.bak*
+
+# ── 硬约束③: 结果 JSON 不入库（2026-10-28 立，2026-11-07 补全）──────────────
+# 预测输出、评测结果、进度文件一律不入 git（它们是可复现的运行时产物）。
+swebench_verified_full/predictions_*/
+swebench_verified_full/reports/eval_*.json
+swebench_verified_full/reports/predict_*.json
+swebench_verified_full/reports/progress_*.json
+swebench_verified_full/logs/evaluation/
+**/baseline_rewards*.json
+*.nfs*
