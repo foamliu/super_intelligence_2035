@@ -5,13 +5,13 @@ WAITING: 0
 ## 📊 进度快照
 
 ```
-PHASE:        R1700 glm53重测监控轮:SWE-bench Verified full500×glm-5.3-flash×7路 predict运行中(7/7 alive,193done/3500,32 patches)·TB 4.0=66tasks,32/66 images pulled(bg pull running)·硬约束③PASS
-已完成:       H-B✅·Gate7/7·TB报告✅·full500全7路predict+eval 100%完成✅·R1685 cline低分归因✅·R1694 glm53重测启动✅·R1695 proxy 429+400修复✅·R1696 硬约束③修复+TB4镜像拉取启动✅·R1697-R1699 监控轮✅·R1700 监控193done/3500✅
-当前动作:     R1700 监控:7路predict运行中(cline36/9patch·opencode13/10·dsh115/3·hermes8/6·claude-code8/1·codex7/1·pi6/2=193done/3500,32 patches)·TB4镜像32/66·gw_proxy 9092 GET200+9093 POST200·gateway HTTP200
-下一步:       ①监控7路predict进度(100/300/500三段汇报) ②每路predict完即eval ③TB4镜像拉取完→7路smoke→全量66×7 ④写报告report_harness_glm53_7way_swebench_tb_zh.html
-阻塞:         无·7路predict运行中·TB4镜像后台拉取中·⚠️codex quota5/7+deepseek no_patch111/115待观察
+PHASE:        R1701 glm53重测监控轮:SWE-bench Verified full500×glm-5.3-flash×7路 predict运行中(7/7 alive,197done/3500,35 patches)·TB 4.0=66tasks,P0核实PASS(dataset ~/terminal-bench-4.0/ 在位),36/132 images pulled(bg pull running)·硬约束③PASS
+已完成:       H-B✅·Gate7/7·TB报告✅·full500全7路predict+eval 100%完成✅·R1685 cline低分归因✅·R1694 glm53重测启动✅·R1695 proxy 429+400修复✅·R1696 硬约束③修复+TB4镜像拉取启动✅·R1697-R1700 监控轮✅·R1701 监控197done/3500✅
+当前动作:     R1701 监控:7路predict运行中(cline36/9patch·opencode14/11·dsh115/3patch·hermes11/7·claude-code8/2·codex7/1·pi6/2=197done/3500,35 patches)·TB4 P0核实PASS(66tasks,dataset在位,36/132 images)·gw_proxy 9092+9093 HTTP200·gateway HTTP200(1.1s)
+下一步:       ①监控7路predict进度(100/300/500三段汇报,deepseek已过100待首段汇报) ②每路predict完即eval ③TB4镜像拉取完→7路smoke→全量66×7 ④写报告report_harness_glm53_7way_swebench_tb_zh.html
+阻塞:         无·7路predict运行中·TB4镜像后台拉取中·⚠️codex quota5(正在astropy-13236,24min未超时)+deepseek no_patch111/115(已知模式)待观察
 ERROR_COUNT:  0
-  📦 体积：TASK=32074B(31.3KB) / MEMORY=~31KB(≤32KB达标)
+  📦 体积：TASK=32074B(31.3KB) / MEMORY=30561B(29.8KB)(≤32KB达标)
 ```
 
 > 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
@@ -27,6 +27,8 @@ ERROR_COUNT:  0
 > 📦 R1682-R1693 流水(2026-11-06 15:02~22:16,~12轮quiet监控轮:CPU/MEM自检均PASS+硬约束③PASS·tracked JSON=524·全7路eval 100%完成)已合并归档 → daily-memories-harness/2026-11-06.md。结论：quiet轮正常。需要时再读。
 
 [01:17] R1700 glm53重测监控轮:CPU/MEM自检PASS(load37.90/224核~17%busy·Mem650G/2015G·无>8000%CPU·无>50GB RSS·pretrain143%不碰)→gateway HTTP200·gw_proxy 9092 GET200+9093 POST200✅→7/7 predict alive(cline3991932·opencode4004319·pi4005476 etimes~4590s+codex2247963·claude-code2248351·hermes2258290·dsh2261465 etimes~2610s)→progress JSON(authoritative):cline36/500(patch9,no_patch27)·opencode13/500(patch10)·dsh115/500(patch3,no_patch111⚠️)·hermes8/500(patch6)·claude-code8/500(patch1,no_patch7)·codex7/500(patch1,quota5⚠️)·pi6/500(patch2,quota1)=193done/3500·32patches→TB4镜像32/66(pull alive PID1350173)·dataset=66tasks→disk:/data5.9T free·/351G free→硬约束③PASS(glm53 JSON tracked=0·predictions_glm53 gitignored✅)·体积:TASK32074B(31.3KB)/MEMORY~31KB·未完成指令:有(glm53重测)⇒WAITING=0.
+[01:28] R1701 glm53重测监控轮:CPU/MEM自检PASS(load36.75/224核~16%busy·Mem654G/2015G avail1.2Ti·无>8000%CPU(最高pytest277%=2.77核)·无>50GB RSS·pretrain不碰)→gateway HTTP200(1.1s)·gw_proxy 9092+9093 HTTP200✅→7/7 predict orchestrator alive(cline3991932·opencode4004319·pi4005476 etimes~5260s+codex2247963·claude-code2248351·hermes2258290·dsh2261465 etimes~3280s)→progress JSON(authoritative):cline36/500(patch9,no_patch27)·opencode14/500(patch11,no_patch3)·dsh115/500(patch3,no_patch111⚠️)·hermes11/500(patch7)·claude-code8/500(patch2,no_patch6)·codex7/500(patch1,quota5⚠️,正在astropy-13236 24min未超时)·pi6/500(patch2,quota1)=197done/3500·35patches→TB4 P0核实PASS:dataset ~/terminal-bench-4.0/=66tasks✅,132 unique images,36/132 pulled(bg pull PID1947702 alive)→disk:/data5.9T free·/351G free·TB4镜像预估~264GB<<余量→硬约束③PASS(glm53 JSON tracked=0·predictions_glm53 gitignored✅)·体积:TASK32074B(31.3KB)/MEMORY30561B(29.8KB)·未完成指令:有(glm53重测)⇒WAITING=0.
+
 
 [01:14] R1699 glm53重测监控轮:CPU/MEM自检PASS(load33.59/224核~15%busy·Mem653G/2015G avail1242G·无>8000%CPU·无>50GB RSS·pretrain 8.8%不碰)→gateway HTTP200(0.03s)·gw_proxy 9092 GET200+9093 POST200✅→7/7 predict orchestrator alive(cline3991932·opencode4004319·pi4005476 etimes~4200s + codex2247963·claude-code2248351·hermes2258290·dsh2261465 etimes~2220s)→predict进度(38 files/30 real patches):cline10/8·opencode10/10·hermes7/5·pi5/2·dsh3/3·codex2/1·claude-code3/1=30/3500→TB4镜像30/132(↑from 29)·docker pull alive PID577687·dataset=~/terminal-bench-4.0/ 66tasks→disk:/data 6.0T free·/ 351G free·docker 769GB 640images→硬约束③PASS(tracked JSON=0)→体积:TASK32074B(31.3KB)/MEMORY31900B(31.2KB)均≤32KB·未完成指令:有(glm53重测)⇒WAITING=0.
 
