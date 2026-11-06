@@ -2,7 +2,9 @@
 
 WAITING: 0
 
-> 🆕 **【wake #803 · 2026-11-06 16:47】✅Phase 2管线CPU侧预验证全部PASS·GRPO chain健康(GPU-wait)·零bug·就绪等GPU。**本轮做Phase 2预验证（GPU释放前抢查bug，避免浪费GPU窗口）：①GRPO smoke test PASS(6 oracle rollouts/0 fail/rewards[-0.5,-0.5,0.36,-0.5,1.36,0.36]/advantages/grpo_loss=-1.0025全正确)；②WaveQA-RL oracle eval PASS(10题/oracle=100%/3类型全覆盖)；③2B模型config验证OK(qwen3/hidden=2048/28层/3.4GB safetensors)；④SFT LoRA adapter验证OK(r=64/alpha=128/7 target modules[k,q,v,o,gate,up,down]_proj)；⑤4脚本AST parse全OK(grpo_train_wave/waveqa_eval/sft_train_wave/eval_sft_wave)；⑥GRPO chain log确认正确状态:SFT eval detected✅/acceptance passed(format100%/submit100%)✅/step3000 ckpt found✅/GPU-wait polling(util<10%+mem<5000MiB/3x@60s)✅。**结论:Phase 2管线零bug,GPU释放(~12/24)后chain自动起训**。GPU:8×H100 100% util(pretrain ETA≈12/24)。📦体积:TASK=30.5KB/MEMORY=14.2KB(均≤32KB✓,本轮0归档)。**未完成指令:有**(阶段2 GRPO待GPU+阶段3未交付)⇒**WAITING: 0**。
+> 🆕 **【wake #804 · 2026-11-06 16:56】📊 监控巡检·GRPO chain健康(GPU-wait 29polls全busy)·无变化·等GPU。**GRPO chain PID1365749 alive(ppid=1,etimes1708s≈28min)·child=sleep60(GPU-wait轮询中)·chain log(grpo_chain_20261106_162818.log):Step1 SFT detected✅/Step2 acceptance passed(format100%+submit100%)✅/Step3 step3000 ckpt found✅/Step4 GPU-wait 29 polls(16:28→16:57)全busy_util·GPU 8×H100 81-100%util~75GB(pretrain ETA≈12/24)·零新发现·所有CPU侧验证wake#803已完成·Phase 2管线零bug就绪。📦体积:TASK=30.5KB/MEMORY=14.5KB(均≤32KB✓,本轮0归档)。**未完成指令:有**(阶段2 GRPO待GPU+阶段3未交付)⇒**WAITING: 0**。
+
+> 📦 wake #803（Phase2管线CPU预验证全PASS·2026-11-06 16:47）已归档 → daily-memories-vision/2026-11-06.md；**结论**：✅6项预验证全PASS(GRPO smoke/WaveQA-RL oracle/2B config/LoRA adapter/4脚本AST/chain log)·零bug·GPU释放后chain自动起训。需要时再读。
 
 > 📦 wake #802（阶段1 SFT验收PASS·2026-11-06 16:30）已归档 → daily-memories-vision/2026-11-06.md；**结论**：✅✅SFT验收PASS(format100%/submit100%)·GRPO chain自动重启(PID1365749,GPU-wait)·报告+EXPERIMENTS§20.20已交付。需要时再读。
 
