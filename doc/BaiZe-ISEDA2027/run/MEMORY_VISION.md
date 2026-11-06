@@ -2,7 +2,9 @@
 
 WAITING: 0
 
-> 🆕 **【wake #807 · 2026-11-06 17:12】📊 监控巡检·GRPO chain健康(GPU-wait 44polls全busy)·无变化·等GPU。**GRPO chain PID1365749 alive(ppid=1,etimes2586s≈43min)·child=sleep241642(GPU-wait轮询中,60s间隔)·chain log(/tmp/grpo_chain_relaunch.log):63行,16:28→17:10连续busy_util·GPU 8×H100 100%util~75GB(pretrain iter105770/700000@16:53,loss2.057,~7s/it,next ckpt iter_0106000 ETA~17:20)·零新发现·所有CPU侧验证wake#803已完成·Phase 2管线零bug就绪·chain将在GPU释放后自动起训。📦体积:TASK=30.5KB/MEMORY=14.5KB(均≤32KB✓,本轮0归档)。**未完成指令:有**(阶段2 GRPO待GPU+阶段3未交付)⇒**WAITING: 0**。
+> 🆕 **【wake #808 · 2026-11-06 17:18】📊 监控巡检·GRPO chain健康(GPU-wait 49polls全busy)·无变化·等GPU。**GRPO chain PID1365749 alive(ppid=1,etimes2976s≈49min)·child=sleep752790(GPU-wait轮询中,60s间隔)·chain log(/tmp/grpo_chain_relaunch.log):69行,16:28→17:17连续busy_util·GPU 8×H100 97-100%util~75GB(pretrain仍在跑,ETA≈12/24)·零新发现·Phase 2管线CPU侧全验证PASS零bug(wake#803)·chain将在GPU释放后自动起训。📦体积:TASK=30.5KB/MEMORY=14.5KB(均≤32KB✓,本轮0归档)。**未完成指令:有**(阶段2 GRPO待GPU+阶段3未交付)⇒**WAITING: 0**。
+
+> 📦 wake #807（监控巡检·2026-11-06 17:12）已归档 → daily-memories-vision/2026-11-06.md；**结论**：GRPO chain健康(GPU-wait 44polls全busy)·GPU 8×H100 100%·零新发现·WAITING=0。需要时再读。
 
 > 📦 wake #806（监控巡检·2026-11-06 17:08）已归档 → daily-memories-vision/2026-11-06.md；**结论**：GRPO chain健康(GPU-wait 40polls全busy)·GPU 8×H100 96-100%·零新发现·WAITING=0。需要时再读。
 
@@ -118,4 +120,4 @@ WAITING: 0
 | 当前动作 | **Phase 2管线预验证完成(wake#803)，GRPO chain等待GPU**：CPU侧全验证PASS(GRPO smoke/WaveQA-RL oracle/2B模型config/LoRA adapter/4脚本AST)。GRPO chain PID1365749 alive(GPU-wait轮询,60s间隔,guard:util<10%+mem<5000MiB,3x consecutive)。chain log确认:SFT eval detected→acceptance passed→step3000 ckpt found→GPU-wait。 |
 | 下一步 | 等GPU释放(ETA≈12/24)→GRPO chain自动启动阶段2训练(~12 GPU·h,torchrun 8GPU,2B model+step3000 LoRA)→WaveQA-RL 300题评测+回归护栏→阶段2报告+EXPERIMENTS§21。若GPU释放后GRPO训练crash→排查。下轮wake检查GRPO chain日志+GPU状态。 |
 | 阻塞 | .12+.29 GPU全占（8×H100 96-100% util / ~75GB，pretrain baize2b ETA≈12/24-25）→ 阶段2 GRPO需GPU（GRPO chain PID1365749自带GPU-wait,释放后自动起训）·.17+.75 SSH不可达 |
-| 更新 | **2026-11-06 17:12 (wake #807)**: 📊监控巡检·GRPO chain PID1365749健康(GPU-wait 44polls全busy,16:28→17:10,63行log)·GPU 8×H100 100%(pretrain iter105770/700000@16:53,loss2.057,next ckpt iter_0106000 ETA~17:20)·零新发现·Phase 2管线CPU侧全验证PASS零bug·体积TASK=30.5KB/MEMORY=14.5KB✓·WAITING=0 |
+| 更新 | **2026-11-06 17:18 (wake #808)**: 📊监控巡检·GRPO chain PID1365749健康(GPU-wait 49polls全busy,16:28→17:17,69行log)·GPU 8×H100 97-100%(pretrain仍在跑,ETA≈12/24)·零新发现·Phase 2管线CPU侧全验证PASS零bug·体积TASK=30.5KB/MEMORY=14.5KB✓·WAITING=0 |
