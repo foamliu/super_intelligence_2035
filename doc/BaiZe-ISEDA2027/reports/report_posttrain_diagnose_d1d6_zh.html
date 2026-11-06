@@ -22,7 +22,7 @@ nav a{color:#fff;text-decoration:none;margin-right:14px;font-size:13px}
 </style></head><body>
 <h1>BaiZe Stage(ii) Post-Train · P0 诊断报告 D1–D6</h1>
 <div class="small">生成节点：10.252.32.17 (2026-11-06) · 数据来源：本节点 <code>~/code/eda_fastmcp</code> 与 <code>~/code/EDA-Eval-Framework</code>（2026-11-06 新发现可达）· 零 GPU · 自包含 0 脚本 0 外链</div>
-<nav><a href="#sec1">摘要</a><a href="#sec2">数据源</a><a href="#sec3">数据集画像</a><a href="#d1">D1</a><a href="#d2">D2</a><a href="#d3">D3</a><a href="#d4">D4</a><a href="#d5">D5</a><a href="#d6">D6</a><a href="#sec10">结论</a><a href="#sec11">建议</a></nav>
+<nav><a href="#sec1">摘要</a><a href="#sec2">数据源</a><a href="#sec3">数据集画像</a><a href="#d1">D1</a><a href="#d2">D2</a><a href="#d3">D3</a><a href="#d4">D4</a><a href="#d5">D5</a><a href="#d6">D6</a><a href="#sec10">结论</a><a href="#sec11">建议</a><a href="#sec12">跨运行稳定性</a></nav>
 <h2 id="sec1">1. 摘要</h2>
 <div class="callout good"><b>本轮突破</b>：前序唤醒（wake1–3）判定 P0 数据源“本节点不可达”是基于错误路径（<code>/nasdata</code>/<code>/nas_data</code>）。实测发现 <code>~/code/eda_fastmcp</code>（158-case 数据集 + DeepSeek 全 harness 智能体轨迹 + 评分脚本）与 <code>~/code/EDA-Eval-Framework</code>（13 份 <code>final_report.json</code>）<b>均在本节点可达</b>，P0 因此可产出<b>真实数据</b>（非编造）。</div>
 <div class="kpi"><b>63.2%</b><span>D1 工具调用强度(DeepSeek 94%侧)</span></div>
@@ -103,5 +103,24 @@ nav a{color:#fff;text-decoration:none;margin-right:14px;font-size:13px}
 <tr><td>RL(GRPO)</td><td>奖励 R4(API 合法性+工具惩罚)；打磨 Φ(D6)；anti-cheat 防“假迭代”；预算按沙盒并发×墙钟</td><td>~5–10 pp (M3)</td></tr>
 <tr><td>评测</td><td>per-scenario 报告 Schematic/Layout；5-run mean±std；McNemar 配对；先定 M1–M4 后测</td><td>—</td></tr></table>
 <div class="callout note"><b>关键不变量</b>：污染隔离(158 任务禁入训练集，闸门已就绪 ✅)、anti-cheat 全程、5-run mean±std、预注册先定后测。详见 P2 方案书 <code>report_posttrain_plan_zh.html</code>。</div>
-<hr><div class="small">报告生成：2026-11-06 · BaiZe post-train agent wake4 · 数据全部来自本节点实测，无编造 · MiniCPM5 36% 侧标注为待补。<br>原始数据：<code>/tmp/pt_p0_summary.json</code>（同步写入 EXPERIMENTS_POSTTRAIN.md §D）。</div>
+<h2 id="sec12">12. 跨运行稳定性验证（D1–D6 cross-run · wake5 新增）</h2>
+<div class="callout note"><b>动机</b>：上述 D1–D6 均基于单次 DeepSeek 全 harness 运行（<code>cline_trace_v1_3</code>，2026-02-09，103 任务）。为评估这些诊断指标的<b>运行间噪声</b>，本轮（wake5）对本节点可达的<b>第二次</b> DeepSeek 全 harness 运行（<code>cline_trace_v1</code>，2026-01-29~30，103 任务）做同口径提取，计算跨运行差异。这直接检验“单次诊断值是否可靠”以及<b>5-run mean±std 协议的必要性</b>。</div>
+<table><tr><th>指标</th><th>run-A (v1, 01-29)</th><th>run-B (v1_3, 02-09)</th><th>绝对差</th><th>相对差</th><th>稳定性</th></tr>
+<tr><td>D1 工具调用强度代理</td><td>0.6727</td><td>0.6317</td><td>−0.041</td><td>6.1%</td><td>🟢 稳定</td></tr>
+<tr><td>D2 工具调用频次/任务</td><td>20.51</td><td>14.32</td><td>−6.19</td><td>30.2%</td><td>🟠 波动大</td></tr>
+<tr><td>D3 超时比例</td><td>0.0%</td><td>0.0%</td><td>0.0</td><td>0.0%</td><td>🟢 稳定</td></tr>
+<tr><td>D4 执行报错占比</td><td>100%（0 断言）</td><td>73.9%（26% 断言）</td><td>−26.1pp</td><td>26.1%</td><td>🟠 波动大</td></tr>
+<tr><td>D6 平均迭代轮数 Φ</td><td>7.06</td><td>5.01</td><td>−2.05</td><td>29.0%</td><td>🟠 波动大</td></tr>
+<tr><td>D6 中位迭代轮数</td><td>6</td><td>5</td><td>−1</td><td>16.7%</td><td>🟡 中等</td></tr>
+<tr><td>avg 消息数/任务</td><td>61.3</td><td>45.6</td><td>−15.7</td><td>25.6%</td><td>🟠 波动大</td></tr>
+<tr><td>avg 错误数/任务</td><td>0.04</td><td>0.85</td><td>+0.81</td><td>—</td><td>🔴 差异极大</td></tr></table>
+<h3>12.1 判读</h3>
+<ul>
+<li><b>D1 与 D3 跨运行稳定</b>（相对差 &lt;10%）：工具调用强度代理与超时比例是<b>鲁棒指标</b>，单次估计即可信。DeepSeek 在两次运行中均保持 0.63–0.67 的工具调用强度且零超时。</li>
+<li><b>D2 / D4 / D6 跨运行波动 20–30%</b>：工具频次（20.5 vs 14.3）、迭代轮数（7.1 vs 5.0）、错误构成（100% 执行报错 vs 74%/26%）在两次运行间显著变化。→ <b>单次运行的 D2/D4/D6 点估计不可靠</b>，必须多运行取均值。这从诊断侧直接印证了评测协议“5-run mean±std”的必要性（总纲 §5.3 红线）。</li>
+<li><b>错误提取敏感性</b>：run-A 平均仅 0.04 个错误/任务（几乎无错误被标记），run-B 为 0.85/任务。差异可能源于（a）run-A 确实更“干净”（更多任务一次通过），或（b）轨迹格式/提取器版本差异导致 run-A 的错误未被捕获。<b>警示</b>：诊断指标对轨迹解析管线版本敏感，正式 post-train 评测须用<b>冻结的同一版 trace_reader</b>。</li>
+<li><b>对 36% 侧诊断的启示</b>：由于 D2/D4/D6 单次波动可达 30%，MiniCPM5-2B 36% 侧的 D1–D6 也需≥2 次运行才能给出可信对照。若仅有单次轨迹，D1/D3 可信、D2/D4/D6 须标注“单次估计，±30% 噪声”。</li>
+</ul>
+<div class="callout good"><b>对核心结论的影响</b>：跨运行验证<b>不改变</b>第 10 节的核心判断（58 pp 主体为协议可回收），但增加了<b>置信区间</b>——D1/D3 稳定支撑“工具协议/超时非瓶颈”的判断；D2/D6 的波动说明“频次/迭代”指标需多运行收敛，且 DeepSeek 侧的“高频用工具 + 多轮迭代”行为<b>在两次运行中均成立</b>（v1 更高：20.5 次 + 7 轮；v1_3：14.3 次 + 5 轮），方向一致，仅幅度有噪声。</div>
+<hr><div class="small">报告生成：2026-11-06 · BaiZe post-train agent wake4（D1–D6 主报告）+ wake5（§12 跨运行稳定性验证）· 数据全部来自本节点实测，无编造 · MiniCPM5 36% 侧标注为待补。<br>原始数据：<code>/tmp/pt_p0_summary.json</code>（wake4）+ <code>/tmp/pt_p0_crossval.json</code>（wake5 跨运行）· 同步写入 EXPERIMENTS_POSTTRAIN.md §D。</div>
 </body></html>
