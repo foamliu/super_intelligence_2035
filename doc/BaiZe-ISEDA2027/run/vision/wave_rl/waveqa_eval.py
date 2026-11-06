@@ -50,6 +50,9 @@ def parse_args():
                    help="Use oracle (perfect) policy -- ceiling reference.")
     p.add_argument('--output', type=str, default=None)
     p.add_argument('--regression_guard', action='store_true')
+    p.add_argument('--device', type=str, default='auto', choices=['auto', 'cpu', 'cuda'],
+                   help="Force device: 'cpu' for CPU-only even if CUDA is available "
+                        "(wake#827: GPU occupied by pretrain, eval on CPU).")
     return p.parse_args()
 
 
@@ -148,8 +151,13 @@ def evaluate(args):
         import torch
         from transformers import AutoModelForCausalLM, AutoTokenizer
         from peft import PeftModel
-        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-        dtype = torch.bfloat16 if torch.cuda.is_available() else torch.float32
+        # wake#827: honor --device cpu override (GPUs busy w/ pretrain)
+        if args.device == 'cpu':
+            device = torch.device('cpu')
+            dtype = torch.float32
+        else:
+            device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+            dtype = torch.bfloat16 if torch.cuda.is_available() else torch.float32
         llm = AutoModelForCausalLM.from_pretrained(
             args.model_path, torch_dtype=dtype, device_map={'': device},
             trust_remote_code=True)

@@ -92,10 +92,16 @@ def parse_args():
     p.add_argument('--seed', type=int, default=20261105)
     p.add_argument('--smoke_test', action='store_true',
                    help="CPU-only smoke test (no model).")
+    p.add_argument('--device', type=str, default='auto', choices=['auto', 'cpu', 'cuda'],
+                   help="Force device: 'cpu' for CPU-only even if CUDA is available "
+                        "(wake#827: GPU occupied by pretrain, train on CPU).")
     return p.parse_args()
 
 
-def setup_ddp():
+def setup_ddp(force_cpu=False):
+    # wake#827: when --device cpu, skip NCCL/CUDA entirely (GPUs busy w/ pretrain)
+    if force_cpu:
+        return 0, 0, 1
     if 'RANK' in os.environ:
         dist.init_process_group('nccl')
         rank = int(os.environ['RANK'])
@@ -369,7 +375,9 @@ def tokenize_for_logprob(conversation, tokenizer, seq_len=2048):
 def compute_logprobs(model, input_ids, assistant_mask, device, dtype):
     ids = torch.tensor([input_ids], dtype=torch.long, device=device)
     attn = torch.ones_like(ids)
-    with torch.autocast('cuda', dtype=dtype, enabled=torch.cuda.is_available()):
+    # wake#827: use device.type for autocast context (was hardcoded 'cuda')
+    use_autocast = device.type == 'cuda'
+    with torch.autocast(device.type, dtype=dtype, enabled=use_autocast):
         logits = model(input_ids=ids, attention_mask=attn).logits
     log_probs = F.log_softmax(logits[:, :-1, :].float(), dim=-1)
     target_ids = ids[:, 1:]
@@ -502,9 +510,14 @@ def main():
     args = parse_args()
     if args.smoke_test:
         return smoke_test()
-    rank, local_rank, world = setup_ddp()
-    device = torch.device(f'cuda:{local_rank}' if torch.cuda.is_available() else 'cpu')
-    dtype = torch.bfloat16 if torch.cuda.is_available() else torch.float32
+    force_cpu = args.device == 'cpu'
+    rank, local_rank, world = setup_ddp(force_cpu=force_cpu)
+    if force_cpu:
+        device = torch.device('cpu')
+        dtype = torch.float32
+    else:
+        device = torch.device(f'cuda:{local_rank}' if torch.cuda.is_available() else 'cpu')
+        dtype = torch.bfloat16 if torch.cuda.is_available() else torch.float32
     os.makedirs(args.output_dir, exist_ok=True)
     torch.manual_seed(args.seed + rank)
     np.random.seed(args.seed + rank)
@@ -518,7 +531,7 @@ def main():
     print0(f"  B={args.batch_prompts} G={args.group_size} "
           f"steps={args.total_steps} ppo_epochs={args.ppo_epochs}")
     print0(f"  clip={args.clip_eps} beta={args.beta_kl} lr={args.lr}")
-    print0(f"  World: {world} GPU(s)\n")
+    print0(f"  World: {world} device={device} dtype={dtype}\n")
     step, t0 = 0, time.time()
     log_reward, log_count, log_submit = 0.0, 0, 0
     while step < args.total_steps:
