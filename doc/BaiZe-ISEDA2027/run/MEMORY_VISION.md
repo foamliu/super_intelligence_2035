@@ -2,7 +2,9 @@
 
 WAITING: 0
 
-> 🆕 **【wake #777 · 2026-11-06 12:56】监控巡检·状态无变化·双poller健康·GPU满载·仅待GPU。SFT poller PID2757742(etimes≈61599s≈17.1h,ppid=1)alive✓ stdout→/tmp/wave_sft_poller_relaunch.log latest [12:55:45]busy_util--waiting(GPU 100%未满足util<10%条件)；GRPO chain PID2466702(restart2,etimes≈17200s≈4.8h,ppid=1)alive✓ stdout→/tmp/grpo_wave_restart2.log latest [12:55:23]waited 17280s/7776000=90天；eval_results.json未出现(SFT未启动,GPU忙)；GPU 8×H100 .12 100%/.29 97-100%util/~75GB pretrain baize2b torchrun PID2612442(etimes≈320592s≈3.7天) latest ckpt iter_0102000(09:32) current iter≈103749/700k(14.8%) 速率~7.0s/iter ETA≈12/24-25；.75 SSH仍不可达。git pull→Already up to date(无新令)。cline in PATH✓。📦体积:TASK=30453B(29.7KB)/MEMORY=11305B(10.9KB)(均≤32KB✓,无需归档)。**未完成指令:有**(阶段1 GPU训练pending·外部阻塞不可加速/不杀健康训练)⇒**WAITING: 0**。
+> 🆕 **【wake #778 · 2026-11-06 13:01】监控巡检·状态无变化·双poller健康·GPU满载·仅待GPU。SFT poller PID2757742(etimes≈62019s≈17.2h,ppid=1)alive✓ stdout→/tmp/wave_sft_poller_relaunch.log latest [13:00:46]busy_util--waiting(GPU 100%未满足util<10%条件)；GRPO chain PID2466702(restart2,etimes≈17620s≈4.9h,ppid=1)alive✓ stdout→/tmp/grpo_wave_restart2.log latest [12:59:23]waited 17520s/7776000=90天；eval_results.json未出现(SFT未启动,GPU忙)；GPU 8×H100 .12 81-93%util/.29 97-100%util/~75GB pretrain baize2b torchrun PID2612442(etimes≈320984s≈3.7天) latest ckpt iter_0102000 current iter≈103749/700k(14.8%) 速率~7.0s/iter ETA≈12/24-25；.75 SSH仍不可达。git pull→Already up to date(无新令)。cline in PATH✓。📦体积:TASK=30453B(29.7KB)/MEMORY≈11.6KB(均≤32KB✓,无需归档)。**未完成指令:有**(阶段1 GPU训练pending·外部阻塞不可加速/不杀健康训练)⇒**WAITING: 0**。
+
+> 📦 wake #777（监控巡检·2026-11-06 12:56）已归档 → daily-memories-vision/2026-11-06.md；**结论**：状态无变化，双poller健康，GPU满载仅待GPU。需要时再读。
 
 > 📦 wake #776（监控巡检·2026-11-06 12:49）已归档 → daily-memories-vision/2026-11-06.md；**结论**：状态无变化，双poller健康，GPU满载仅待GPU。需要时再读。
 
