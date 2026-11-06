@@ -5631,3 +5631,5 @@
 | 2026-11-06 | 2611.06133 | Accelerating Long-Context Decoding in Large-Scale Hybrid LLMs Without Retraining | cs.CL | 收录 |
 | 2026-11-06 | 2611.06147 | SafeStart: Mitigating the Overlooked Safety Cost of Active Expert Reduction in MoE LLM Serving | cs.AI | 收录 |
 | 2026-11-06 | 2611.06828 | Systolic Linear Attention: Co-Designing Tile-Grouped Gated Delta Attention for TPUs | cs.LG | 收录 |
+| 2026-11-06 | 2611.08294 | ManimCode: Learning Visual Self-Correction for Educational Animation | cs.CV | 收录 |
+| 2026-11-06 | 2611.08314 | Interpretable many-body interaction laws for collective motion from few trajectories | cs.LG | 收录 |

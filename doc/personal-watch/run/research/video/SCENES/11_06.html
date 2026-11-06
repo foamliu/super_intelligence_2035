@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>《论文两分钟》分镜脚本 · 2026-11-06 · 会给自己挑错的 AI 动画师</title>
+<style>
+  :root { --primary:#123a63; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700; --kp:#7c3aed;
+          --bg:#f6f7fb; --card:#fff; --border:#d8dee9; --text:#1f2328; --muted:#556070; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+         color:var(--text); background:var(--bg); line-height:1.7; font-size:15px; }
+  .wrap { max-width:1100px; margin:0 auto; padding:32px 20px 80px; }
+  header.hero { background:linear-gradient(135deg,#1e1b4b 0%,#4c1d95 55%,#7c3aed 100%); color:#fff; border-radius:14px;
+                padding:30px 32px; margin-bottom:22px; box-shadow:0 8px 24px rgba(30,27,75,.24); }
+  header.hero h1 { margin:0 0 6px; font-size:23px; letter-spacing:.3px; }
+  header.hero .sub { font-size:15px; opacity:.96; }
+  header.hero .meta { margin-top:14px; font-size:13px; opacity:.94; display:flex; flex-wrap:wrap; gap:8px 18px; }
+  header.hero .meta span { background:rgba(255,255,255,.18); border-radius:999px; padding:2px 12px; }
+  .disc { margin-top:14px; font-size:12.5px; background:rgba(0,0,0,.22); border-radius:8px; padding:8px 12px; opacity:.96; }
+  h2.sec { font-size:19px; margin:34px 0 12px; padding-bottom:8px; border-bottom:2px solid var(--border); }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:18px 22px; margin:16px 0;
+          box-shadow:0 1px 3px rgba(27,31,36,.06); }
+  .row { display:flex; gap:10px; margin:7px 0; font-size:14px; }
+  .row .k { flex:0 0 116px; color:var(--muted); font-weight:600; }
+  .row .v { flex:1; }
+  .orig { font-style:italic; color:#3b1f7a; }
+  code { background:#eef0f7; border:1px solid #dfe3ee; border-radius:5px; padding:1px 6px;
+         font-family:Consolas,Menlo,monospace; font-size:12.5px; color:#3b1f7a; }
+  table { border-collapse:collapse; width:100%; margin:12px 0; font-size:13px; background:var(--card); }
+  th,td { border:1px solid var(--border); padding:8px 10px; text-align:left; vertical-align:top; }
+  th { background:#efeaff; color:#3b1f7a; font-weight:600; }
+  tr:nth-child(even) td { background:#fafaff; }
+  .shot-no { display:inline-flex; align-items:center; justify-content:center; width:24px; height:24px;
+             border-radius:50%; background:var(--kp); color:#fff; font-size:13px; font-weight:700; }
+  .vo { color:#2c1a52; }
+  .note { background:#fff8ef; border:1px solid #f0d9b5; border-left:4px solid var(--warn); border-radius:8px;
+          padding:10px 16px; font-size:13px; color:#6a4a00; }
+  .ok-box { background:#f0fff4; border:1px solid #b7f0c5; border-left:4px solid var(--ok); border-radius:8px;
+            padding:10px 16px; font-size:13px; }
+  ul,ol { margin:6px 0; padding-left:20px; } li { margin:3px 0; }
+  a { color:var(--accent); word-break:break-all; }
+  footer { margin-top:44px; padding-top:16px; border-top:1px solid var(--border); color:var(--muted); font-size:12.5px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+  <h1>《论文两分钟》分镜脚本 · 2026-11-06</h1>
+  <div class="sub">今日 TOP-1：<b>会给自己挑错的 AI 动画师</b> · 论文解读（非官方 · 非结论）· 总时长 <b>120s</b> · 口播 <b>420</b> 字（脚本实测纯汉字数；按 210–220 字/分 ≈ 114–120s，数字处留停顿）</div>
+  <div class="meta">
+    <span>📅 日期：2026-11-06（CST）</span>
+    <span>🎬 期号：SCENES/11_06</span>
+    <span>📄 来源：arXiv <code>2611.08294</code></span>
+    <span>🏷 口径：科普（大众看得懂 + 有传播力）</span>
+  </div>
+  <div class="disc">
+    ⚠️ 本页是<b>分镜脚本</b>（纸面阶段），不是成片；<b>V3（真正生成视频）未启动</b>（工具链待确认）。<br>
+    所有数字均出自论文摘要 / 正文，<b>作者自报、本线未复现</b>；原题照抄不改写；画面全部自绘 / 自生成，<b>不使用论文原图</b>。
+  </div>
+</header>
+
+<h2 class="sec">🎯 选题说明：为什么从今天 5 篇里挑它</h2>
+<div class="card">
+  <div class="row"><div class="k">论文原题</div><div class="v"><span class="orig">ManimCode: Learning Visual Self-Correction for Educational Animation</span></div></div>
+  <div class="row"><div class="k">作者 / 机构</div><div class="v">Zhengyang Liang · Lizi Liao（<b>2 位</b>；Singapore Management University，新加坡管理大学）</div></div>
+  <div class="row"><div class="k">arXiv</div><div class="v"><a href="https://arxiv.org/abs/2611.08294">https://arxiv.org/abs/2611.08294</a>（<code>cs.CV</code>；首次提交 <b>2026-11-05</b>；PDF 19 页）</div></div>
+  <div class="row"><div class="k">一句话</div><div class="v">让一个 <b>4B</b> 小模型学会「写动画程序 → 渲染 → 看画面挑错 → 改代码」的闭环，渲染成功率从 <b>52.6%</b> 提到 <b>96.6%</b>。</div></div>
+  <div class="row"><div class="k">为什么选它</div><div class="v">
+    <ol>
+      <li><b>大众能懂</b>：讲的就是「AI 做教学动画」—— 观众不需要懂 Manim、不需要懂强化学习，只要看到「文字压在一起 / 图被切掉」就知道哪里错了。</li>
+      <li><b>有传播力</b>：一个 4B 小模型在渲染成功率上超过同场评测的通用大模型（GPT-4o 60.2%），是天然的反差标题；「AI 也要打草稿、也要批注」是可共情的故事。</li>
+      <li><b>可讲清</b>：核心只有三步 —— 录轨迹、分角色学、专练改错；两分钟足够讲完，不必搬全篇。</li>
+      <li><b>有真实来源</b>：arXiv ID + 官方 abs 链接 + 19 页 PDF（本线已落地并校验），所有数字可回查。</li>
+    </ol>
+    <b>同日其它 4 篇为何不做</b>：早报 3 篇（长上下文稀疏注意力 / MoE 削专家安全 / TPU 线性注意力）都偏工程，缺直观画面；晚报另一篇 dACE（鱼群多体交互）视觉也不错，但核心是「指标会骗人」的方法论，做钩子不如「AI 给自己挑错」直接 —— 留作后续期号备选。
+  </div></div>
+</div>
+
+<h2 class="sec">🎬 分镜表（5 镜 / 120s）</h2>
+<table>
+  <tr><th style="width:44px;">镜</th><th style="width:72px;">时间轴</th><th style="width:76px;">段落</th><th>口播文案</th><th>画面（自绘 / 自生成）</th><th style="width:150px;">屏幕文字 / 字幕</th><th style="width:160px;">音效 / BGM</th></tr>
+  <tr>
+    <td><span class="shot-no">1</span></td>
+    <td>0–10s</td>
+    <td>钩子</td>
+    <td class="vo">先看两段动画。第一段，公式和字幕压在一起，图还被切掉一截；第二段，同一个知识点，画面干干净净。做第二段的，是个只有四十亿参数的小模型。</td>
+    <td>①左右分屏：左「坏画面」—— 文字互相重叠、折线图被画框切掉一角（自绘矢量示意）；②右「好画面」—— 同一知识点，元素自动避让；③镜头推向右屏，角落浮出「4B」小标签。</td>
+    <td>同一道题<br>两种画面<br><b>4B 小模型</b></td>
+    <td>开场「啪」一声分屏；坏画面配轻微电流噪声，好画面切干净钢琴单音；BGM 低音量起</td>
+  </tr>
+  <tr>
+    <td><span class="shot-no">2</span></td>
+    <td>10–30s</td>
+    <td>问题</td>
+    <td class="vo">问题在于：能渲染出来，不代表画面对。渲染器只告诉你程序跑通了，不告诉你哪句话挡住了图、哪步缺了解释。人做动画靠的是看一眼、改一行、再看一眼；模型要学的正是这个循环。</td>
+    <td>①一个「渲染成功 ✅」的绿色对勾盖住画面，但画面里文字仍在重叠（反差）；②放大到重叠处，弹出问号；③手绘流程环：写 → 渲染 → 看 → 改，箭头转两圈；④环上标「这就是模型要学的」。</td>
+    <td>渲染成功 ≠ 画面对<br>写 → 渲染 → 看 → 改</td>
+    <td>对勾「叮」但立刻被低频「嗡」压住；流程环每转一格「嗒」；BGM 保持最低</td>
+  </tr>
+  <tr>
+    <td><span class="shot-no">3</span></td>
+    <td>30–80s</td>
+    <td>方法</td>
+    <td class="vo">办法很朴素：把整个过程录下来。大模型反复写程序、看渲染、写批评、再改，攒出两万四千多条经验证的轨迹，报错、批评和修正全都留着。再按角色训练一个四十亿参数的模型：什么时候当作者、审稿人、修理工。最后加一轮强化学习，专练「改错」，处理没见过的毛病。</td>
+    <td>①漏斗：海量「尝试」落入，筛出 <b>24,034</b> 条带轨迹的记录（自绘漏斗 + 计数滚动）；②三条并排工位：「作者 / 审稿 / 修理工」，同一模型切换帽子的动画；③一个「改错」靶盘，RL 箭头反复命中；④角落小字「时间压缩示意」。</td>
+    <td>24,034 条轨迹<br>写 / 审 / 改 三种角色<br>RL 专练改错</td>
+    <td>漏斗「沙沙」；换帽子「噗」三连；靶盘命中「咚」；BGM 在方法段最轻</td>
+  </tr>
+  <tr>
+    <td><span class="shot-no">4</span></td>
+    <td>80–105s</td>
+    <td>结果</td>
+    <td class="vo">结果：两个测试集上，渲染成功率从百分之五十二点六、百分之八十二，提到百分之九十六点六、百分之九十七。接进两个长视频系统后，完整做完的课从一百一十七节里的十九节变成一百零七节；另一套从二百三十九节里的五十三节变成二百三十九节。</td>
+    <td>①两根柱状图：52.6 → 96.6、82.0 → 97.0（自绘，标注「作者自报」）；②两排小方块代表「课」：19/117 灰 → 107/117 亮；53/239 → 239/239 全亮；③数字逐格点亮。</td>
+    <td>52.6% → <b>96.6%</b><br>82.0% → <b>97.0%</b><br>19/117 → <b>107/117</b><br>53/239 → <b>239/239</b></td>
+    <td>柱子「咚」两下；方块点亮「叮叮叮」密集；BGM 抬 2 dB</td>
+  </tr>
+  <tr>
+    <td><span class="shot-no">5</span></td>
+    <td>105–120s</td>
+    <td>意义 / 展望</td>
+    <td class="vo">真正的进步，不是又训了个更大的模型，而是让模型学会看自己的作品，并且改得动。但留一句：质量分主要由自动裁判打，人工盲评只在差距明显时才一致。能自我纠错，不等于懂得讲清楚。论文链接放简介。</td>
+    <td>①镜头拉远：模型站在自己的作品前，用手指着一处重叠（自绘剪影）；②旁边浮出「自动裁判 vs 人眼」天平，差距大时才平衡；③最后 1 秒黑场，白字「论文解读 · 非官方 · 非结论 · arXiv:2611.08294」。</td>
+    <td>会看自己的作品<br>≠ 懂得讲清楚<br>arXiv:2611.08294</td>
+    <td>指针「嗒」；天平轻响；BGM 渐弱，最后一拍收静音</td>
+  </tr>
+</table>
+
+<h2 class="sec">📝 口播全文（可直接念）</h2>
+<div class="card">
+  <p class="vo">先看两段动画。第一段，公式和字幕压在一起，图还被切掉一截；第二段，同一个知识点，画面干干净净。做第二段的，是个只有四十亿参数的小模型。</p>
+  <p class="vo">问题在于：能渲染出来，不代表画面对。渲染器只告诉你程序跑通了，不告诉你哪句话挡住了图、哪步缺了解释。人做动画靠的是看一眼、改一行、再看一眼；模型要学的正是这个循环。</p>
+  <p class="vo">办法很朴素：把整个过程录下来。大模型反复写程序、看渲染、写批评、再改，攒出两万四千多条经验证的轨迹，报错、批评和修正全都留着。再按角色训练一个四十亿参数的模型：什么时候当作者、审稿人、修理工。最后加一轮强化学习，专练「改错」，处理没见过的毛病。</p>
+  <p class="vo">结果：两个测试集上，渲染成功率从百分之五十二点六、百分之八十二，提到百分之九十六点六、百分之九十七。接进两个长视频系统后，完整做完的课从一百一十七节里的十九节变成一百零七节；另一套从二百三十九节里的五十三节变成二百三十九节。</p>
+  <p class="vo">真正的进步，不是又训了个更大的模型，而是让模型学会看自己的作品，并且改得动。但留一句：质量分主要由自动裁判打，人工盲评只在差距明显时才一致。能自我纠错，不等于懂得讲清楚。论文链接放简介。</p>
+</div>
+
+<h2 class="sec">🛠 制作规范（可执行）</h2>
+<ul>
+  <li><b>画面</b>：全部<b>矢量自绘 / 文生图自生成</b>；🚫 不使用论文 Figure、表格截图或作者主页上的示例图（分屏、漏斗、柱状图、方块阵列一律按结论重画示意图，角落标「示意」）。</li>
+  <li><b>数字上屏规则</b>：<code>24,034</code> / <code>52.6%</code> / <code>96.6%</code> / <code>82.0%</code> / <code>97.0%</code> / <code>19/117</code> / <code>107/117</code> / <code>53/239</code> / <code>239/239</code> 首次出现时，字幕带「<b>作者自报 · 本线未复现</b>」小字；口播把百分数念成中文（「百分之五十二点六」），字幕仍写精确值。</li>
+  <li><b>不能混的口径</b>：① <code>52.6%</code> 是<b>未训练的 Qwen3.5-4B 基座 + 同一套迭代渲染循环</b>下的渲染成功率，<b>不是</b>「裸模型零样本」；② <code>96.6%</code> 是 <code>ManimData-test</code>、<code>97.0%</code> 是 <code>ManimBench</code>，两个集合不可混为「平均 97%」；③ <code>19/117 → 107/117</code> 是 <b>Code2Video / MMMC</b>，<code>53/239 → 239/239</code> 是 <b>TheoremExplainAgent / TEB</b>，是「完整产出视频数」而非「质量提升 5 倍」；④ 「超过 GPT-4o」仅指<b>渲染成功率</b>这一项（60.2% vs 96.6%），<b>视频质量分只是接近</b>，不能讲成全面超过。</li>
+  <li><b>术语处理</b>：<code>Manim</code> 念「马尼姆」（或直接说「一个用代码画数学动画的工具」）；<code>render success</code> 念「渲染成功率」；<code>trajectory</code> 念「轨迹」；<code>SFT / RL</code> 分别念「监督微调 / 强化学习」；<code>4B</code> 念「四十亿参数」。</li>
+  <li><b>节奏</b>：方法镜（30–80s）最长 50s，每 8–10s 必须有画面变化；BGM 方法段最低、结果段抬 2 dB；镜 5 收在静音上。</li>
+  <li><b>比例 / 时长</b>：竖版 1080×1920（抖音）与横版 1920×1080（B站）各导一版；总时长严格 120s（±1s）；字幕安全区上下各留 12%。</li>
+  <li><b>口播字数核对</b>：本页口播<b>纯汉字 420 个</b>（脚本实测，含数字读法）；按 <b>210–220 字/分</b> 计约 <b>114–120s</b> ⇒ 结果段（镜 4）在两组数字处各留 1.5s 画面停顿以对齐 120s；若录制超时，优先压缩镜 3 的「中间程序、报错、批评和修正全都留着」，<b>不删</b>任何数字句。</li>
+  <li><b>TTS（V3 才做）</b>：中性科普音色，语速 210–220 字/分；数字前后各留 80ms 停顿；「24,034」念「两万四千零三十四」，「4B」念「四十亿参数」。</li>
+</ul>
+
+<h2 class="sec">⚖️ 合规与边界（发布前必读）</h2>
+<div class="note">
+  <ol>
+    <li><b>标明「论文解读」</b>：片头或片尾固定一行「论文解读 · 非官方 · 非结论」，简介首行放 arXiv 链接（<code>https://arxiv.org/abs/2611.08294</code>）。</li>
+    <li><b>不夸大</b>：禁用「AI 已经会自己做课 / 教育视频要被取代了 / 小模型全面超过大模型」等表述；原文只支持「<b>在这两个测试集、这套渲染—审阅—修改闭环、Manim 这一种动画工具上</b>，一个 4B 模型的渲染成功率显著提高；接进两个既有长视频系统后完整产出数增加」。</li>
+    <li><b>不编造数据</b>：本片所有数字均出自摘要与正文（<code>24,034</code> / <code>52.6%</code> / <code>96.6%</code> / <code>82.0%</code> / <code>97.0%</code> / <code>2.48→2.94</code> / <code>3.00→3.44</code> / <code>19/117→107/117</code> / <code>53/239→239/239</code> / <code>60.2%</code>），不得二次加工成新数字。</li>
+    <li><b>不盗图</b>：画面全部自绘 / 自生成；<b>不使用论文中的任何 Figure、表格截图</b>；生成示意图时也不得直接复制论文示例图或作者主页配图。</li>
+    <li><b>口径提醒</b>：论文的视频质量分由<b>多模态裁判</b>给出，人工盲评只在质量差距 ≥0.5 分时与裁判一致率 79%（差距 &lt;0.25 分时仅 29%）—— 片中讲到「质量提升」时必须带上这句边界，<b>不能</b>只报分数。</li>
+    <li><b>平台规则</b>：发布由用户本人执行；封面标题不得使用「颠覆 / SOTA / 首个」等词（除非同时指出原文出处与限定条件）。</li>
+  </ol>
+</div>
+
+<footer>
+  research 线 · 《论文两分钟》分镜脚本 · <b>2026-11-06（SCENES/11_06）</b> · 数据源 arXiv <code>2611.08294</code> · 生成 <code>2026-11-06 18:1x CST</code><br>
+  论文解读 = 待读线索，非结论；所有数字为作者自报、本线未复现；画面自绘 / 自生成，不使用论文原图。<br>
+  ⚠️ 本页为自包含单文件（内联 CSS · 零外链 · 离线可开）；V3（成片生成）未启动。
+</footer>
+</div>
+</body>
+</html>
+
+
