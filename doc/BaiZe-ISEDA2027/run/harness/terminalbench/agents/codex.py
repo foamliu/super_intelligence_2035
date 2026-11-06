@@ -105,20 +105,25 @@ class CodexTB(TBBaseAgent):
                 raise RuntimeError(f"Codex pre-mounted install failed: {result.stderr}")
             self._version = result.stdout.strip()
 
-            # Write ~/.codex/config.toml so codex 0.164.0 routes through the
-            # local gw_proxy instead of api.openai.com.  Codex 0.164.0 ignores
-            # OPENAI_BASE_URL and only supports wire_api="responses" (chat was
-            # removed).  The gw_proxy translates /v1/responses -> /v1/chat/completions
-            # and injects the real API key.  supports_websockets=false because the
-            # gw_proxy is plain HTTP (no WebSocket).
+            # Write ~/.codex/config.toml so codex routes through the local
+            # gw_proxy instead of api.openai.com.  Pinned codex 0.94.0 supports
+            # wire_api="chat" (the gateway only speaks /v1/chat/completions).
+            # The gw_proxy rewrites role:"developer"->"system" and injects the
+            # real API key.  supports_websockets=false because the gw_proxy is
+            # plain HTTP (no WebSocket).
+            # 2026-11-07 FIX: was model="kimi-k2.6-cloud"+wire_api="responses"
+            # (stale from kimi era + Responses API not needed with 0.94.0) →
+            # codex exited with code 1 on every TB4 task.  Now uses TB_MODEL
+            # (glm-5.3-flash) + wire_api="chat" matching the host config.toml
+            # that works for SWE-bench CodexDriver.
             config_toml = (
-                'model = "kimi-k2.6-cloud"\n'
-                'model_provider = "kimi_gateway"\n'
+                f'model = "{TB_MODEL}"\n'
+                'model_provider = "gw_proxy"\n'
                 "\n"
-                "[model_providers.kimi_gateway]\n"
-                'name = "Kimi Gateway"\n'
+                "[model_providers.gw_proxy]\n"
+                'name = "Local gw_proxy (chat API)"\n'
                 f'base_url = "{TB_GW_PROXY_URL}"\n'
-                'wire_api = "responses"\n'
+                'wire_api = "chat"\n'
                 'env_key = "OPENAI_API_KEY"\n'
                 "requires_openai_auth = false\n"
                 "supports_websockets = false\n"
