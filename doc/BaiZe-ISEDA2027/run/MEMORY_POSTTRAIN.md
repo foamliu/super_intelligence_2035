@@ -7,12 +7,12 @@ WAITING: 0
 
 ## 进度快照
 
-- PHASE: posttrain-init（2026-11-06 新建线，P0 诊断未开始）
-- 已完成: 无（线刚建）
-- 当前动作: 等待首次唤醒执行 P0（§7.0 诊断清单 D1–D6）
-- 下一步: P0 诊断 → P1 数据盘点 → P2 方案书 → P3 脚本骨架
-- 阻塞: 正式训练阻塞于 pretrain S1 收敛 ckpt（ETA≈2026-12-25）；P0/P1/P2/P3预备 零 GPU 可立即做
-- 未完成指令: 有（P0/P1/P2/P3预备 均未完成）⇒ WAITING=0
+- PHASE: posttrain-wake1（2026-11-06 首次唤醒；P3-prep 4 脚本骨架已交付；P0 数据源不可达已记录）
+- 已完成: P3预备✅ 4 脚本骨架（anneal/sft/rl_grpo/eval）bash -n PASS + --dry-run rc=0；P0 数据源可达性诊断✅（字段缺失：本节点无 eda_code_eval/eda_fastmcp/训练数据BASE，已记 D1–D6 口径待数据到位提取）
+- 当前动作: 收尾提交 wake1；P0/P1 数据源在本节点不可达（NFS 仅 /nas_data，无 /nas_train/eda_fastmcp/eda_code_eval）
+- 下一步: 下次唤醒先复查数据可达性；仍不可达→做 P1-e 污染隔离规则草案 + P2 方案书初稿（纯设计零 GPU，不依赖缺失数据）；数据可达→补 P0 D1–D6 + report_posttrain_diagnose_d1d6_zh.html
+- 阻塞: P0/P1 数据源（eda_code_eval final_report.json / eda_fastmcp / 训练数据BASE）在本节点不可达，待运维挂载或提供路径；正式训练阻塞 pretrain S1 ckpt（ETA≈2026-12-25）
+- 未完成指令: 有（P0/P1 待数据；P1-e/P2 可做设计；P3 骨架已交付但占位待 P2 填实）⇒ WAITING=0
 
 ## 关键事实（常驻）
 
@@ -35,4 +35,4 @@ WAITING: 0
 
 ## 本唤醒流水
 
-（首次唤醒尚未发生）
+[14:00] wake1：恢复状态→查 P0 数据源（~/eda_code_eval、/nas_data/.../eda_code_eval、/nas_data/.../eda_fastmcp、训练数据BASE 全 MISSING；final_report.json 0 命中）→ P0 D1–D6 字段缺失（数据源不可达，已记口径，🚫 不编造、不产出空 HTML）→ 转做 P3-prep：写 4 脚本骨架（anneal/sft/rl_grpo/eval，参照 baize_p8_train.sh + baize_xmodel25_decay_v2.sh 结构，含 --dry-run 配方打印）→ bash -n 4/4 PASS + --dry-run 4/4 rc=0 → 写入 EXPERIMENTS §D(阻塞) + §Scripts(验证输出) → 体积自检+提交。
