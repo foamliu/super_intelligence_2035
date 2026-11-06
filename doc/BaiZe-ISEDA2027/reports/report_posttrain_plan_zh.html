@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaiZe Stage (ii) 后训练 · 三步训练方案书</title>
+<style>
+  :root { --primary:#0b3d6e; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700; --bad:#cf222e; --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif; color:var(--text); background:var(--bg); line-height:1.65; font-size:15px; }
+  .wrap { max-width:1000px; margin:0 auto; padding:32px 24px 80px; }
+  header.hero { background:linear-gradient(135deg,#0b3d6e 0%,#1f6feb 100%); color:#fff; border-radius:14px; padding:34px 36px; margin-bottom:26px; box-shadow:0 8px 24px rgba(11,61,110,.18); }
+  header.hero h1 { margin:0 0 8px; font-size:25px; letter-spacing:.3px; }
+  header.hero .sub { font-size:15px; opacity:.92; }
+  header.hero .meta { margin-top:14px; font-size:13px; opacity:.82; display:flex; flex-wrap:wrap; gap:18px; }
+  .verdict { background:#fff; border:1px solid var(--border); border-left:5px solid var(--accent); border-radius:10px; padding:18px 22px; margin-bottom:24px; }
+  h2.sec { font-size:20px; margin:34px 0 14px; padding-bottom:8px; border-bottom:2px solid var(--border); }
+  h2.sec .no { color:var(--accent); margin-right:8px; }
+  h3 { font-size:16px; margin:20px 0 8px; }
+  p { margin:8px 0; }
+  code { background:#eef1f4; border:1px solid #e1e4e8; border-radius:5px; padding:1px 6px; font-family:Consolas,Menlo,monospace; font-size:13px; color:#0b3d6e; }
+  pre { background:#0d1117; color:#e6edf3; border-radius:8px; padding:14px 16px; overflow-x:auto; font-size:12.5px; line-height:1.5; }
+  pre code { background:none; border:none; color:inherit; padding:0; }
+  table { border-collapse:collapse; width:100%; margin:12px 0; font-size:13.5px; background:var(--card); }
+  th,td { border:1px solid var(--border); padding:8px 11px; text-align:left; vertical-align:top; }
+  th { background:#eef3f8; color:var(--primary); font-weight:600; white-space:nowrap; }
+  tr:nth-child(even) td { background:#fafbfc; }
+  .badge { display:inline-block; padding:1px 8px; border-radius:999px; font-size:12px; font-weight:600; white-space:nowrap; }
+  .b-ok { background:#dafbe1; color:var(--ok); } .b-no { background:#ffebe9; color:var(--bad); }
+  .b-warn { background:#fff8c5; color:var(--warn); } .b-info { background:#ddf4ff; color:var(--accent); }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:16px 20px; margin:14px 0; }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  @media(max-width:760px){ .grid2{grid-template-columns:1fr;} }
+  ul,ol { margin:6px 0; padding-left:22px; } li { margin:3px 0; }
+  .kpi-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:14px; margin:16px 0; }
+  .kpi { background:#f0f6ff; border:1px solid #cfe0f5; border-radius:10px; padding:14px 16px; text-align:center; }
+  .kpi .v { font-size:21px; font-weight:700; color:var(--primary); }
+  .kpi .l { font-size:12.5px; color:var(--muted); margin-top:2px; }
+  footer { margin-top:46px; padding-top:18px; border-top:1px solid var(--border); color:var(--muted); font-size:12.5px; }
+  .toc { background:#f6f8fa; border:1px solid var(--border); border-radius:10px; padding:14px 22px; }
+  .toc a { color:var(--accent); text-decoration:none; }
+  .flow { display:flex; flex-wrap:wrap; gap:8px; margin:12px 0; align-items:center; }
+  .flow .step { background:#fff; border:1px solid var(--border); border-radius:8px; padding:8px 14px; font-size:13px; font-weight:600; }
+  .flow .arrow { color:var(--muted); font-weight:700; }
+  .note { background:#fff8ef; border:1px solid #f0d9b5; border-left:4px solid var(--warn); border-radius:8px; padding:10px 16px; font-size:13.5px; color:#6a4a00; }
+  .danger { background:#ffebe9; border:1px solid #ffcec7; border-left:4px solid var(--bad); border-radius:8px; padding:10px 16px; font-size:13.5px; color:#8a1f1f; }
+  .ladder { display:grid; grid-template-columns:repeat(auto-fit,minmax(110px,1fr)); gap:12px; margin:16px 0; }
+  .rung { border-radius:10px; padding:14px 12px; text-align:center; color:#fff; }
+  .rung .pct { font-size:22px; font-weight:800; }
+  .rung .lbl { font-size:12px; opacity:.9; margin-top:4px; }
+  .r0 { background:#59636e; } .r1 { background:#1f6feb; } .r2 { background:#0969da; }
+  .r3 { background:#0b3d6e; } .r4 { background:#1a7f37; }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+  <h1>BaiZe Stage (ii) 后训练 · 三步训练方案书</h1>
+  <div class="sub">领域退火 → SFT → RLVR+GRPO（4 臂奖励）→ EDA-Eval-PyAether 评测 · 预注册成功阶梯 M1–M4</div>
+  <div class="meta">
+    <span>📅 2026-11-06</span>
+    <span>📐 骨架 Mamba2-hybrid 2.22B</span>
+    <span>🎯 158 任务 / Pass@1 / 5-run</span>
+    <span>🖥️ GPU 10.252.32.17 · 8×A40</span>
+    <span>⏱️ 训练窗口 ≈2026-12 下 → 2027-01 中</span>
+  </div>
+</header>
+
+<div class="verdict">
+  <strong>结论先行</strong>：本方案书在 pretrain S1 尚未收敛（ETA≈2026-12-25）时先行定稿，将 Stage~(ii) 拆为
+  <strong>领域退火（§5.1）→ SFT（§5.2）→ RLVR+GRPO 四臂奖励（§5.3）→ 冻结协议评测（§5.5）</strong> 四步，
+  并<strong>预注册成功阶梯 36%→50%→65%→75%→85%+</strong>与判定阈值（点估计 + 配对检验显著性 + 成本比），
+  <strong>先定后测</strong>以避免事后合理化。核心命题——「58 pp 差距里有多少是领域自适应可回收的、代价几何」——
+  无论落在哪一档都成立：落在 M3/M4 即「小模型逼近大 backbone」；落在 M1/M2 即「可回收空间有限」，直接支持
+  ZhuLong「规模非瓶颈」论，两篇互证。本报告为<strong>纯设计（零 GPU）</strong>，正式训练待 pretrain 收敛 ckpt。
+</div>
+
+<nav class="toc">
+  <strong>目录</strong><br>
+  <a href="#s1">1 前提与依赖</a> ·
+  <a href="#s2">2 步骤 0 · 领域退火（Domain Annealing）</a> ·
+  <a href="#s3">3 步骤 1 · 监督微调（SFT）</a> ·
+  <a href="#s4">4 步骤 2 · 强化学习 RLVR+GRPO（4 臂奖励）</a> ·
+  <a href="#s5">5 步骤 3 · 评测协议与 backbone×harness 网格</a> ·
+  <a href="#s6">6 预注册成功阶梯 M1–M4</a> ·
+  <a href="#s7">7 预注册判定阈值（先定后测）</a> ·
+  <a href="#s8">8 时间线与预算</a> ·
+  <a href="#s9">9 风险登记册</a> ·
+  <a href="#s10">10 红线合规检查表</a> ·
+  <a href="#s11">11 附录 · 脚本骨架与数据配比</a>
+</nav>
+
+<h2 class="sec" id="s1"><span class="no">1</span>前提与依赖</h2>
+<p>Stage~(ii) 的三步训练<strong>全部依赖</strong> Stage~(i) 的预训练收敛检查点。当前 pretrain S1 仍在 <code>10.239.2.29</code> 的 8×H100 上运行（iter~101320/700000，loss~2.058，ETA≈2026-12-25）。在 ckpt 就绪前，本线只做<strong>零 GPU 的准备与预研</strong>（P0 诊断 / P1 数据盘点 / P2 本方案书 / P3 脚本骨架），不启动任何训练。</p>
+<div class="kpi-row">
+  <div class="kpi"><div class="v">2.22B</div><div class="l">骨架参数量（Mamba2-hybrid, 56 层, 4 attn）</div></div>
+  <div class="kpi"><div class="v">158</div><div class="l">评测任务数（EDA-Eval-PyAether）</div></div>
+  <div class="kpi"><div class="v">36% → 94%</div><div class="l">锚点区间（MiniCPM5-2B → DeepSeek-V4-Pro）</div></div>
+  <div class="kpi"><div class="v">58 pp</div><div class="l">研究对象：可回收差距</div></div>
+  <div class="kpi"><div class="v">≈3 周</div><div class="l">正式训练窗口（2026-12 下 → 2027-01 中）</div></div>
+</div>
+<h3>数据依赖盘点</h3>
+<table>
+  <tr><th>ID</th><th>数据集</th><th>体量</th><th>状态</th><th>用途</th></tr>
+  <tr><td>P1-a</td><td>UltraData-SFT-2605（通用指令）</td><td>319G 下载 / 75.87G 镜像 / <strong>18.89B tok</strong> / 94 shards</td><td><span class="badge b-ok">✅ 已分词</span></td><td>SFT 通用打底</td></tr>
+  <tr><td>P1-b</td><td>UltraData-SFT-Agent-2609（agentic 指令）</td><td>51G 下载 / 23.89G 镜像 / <strong>5.97B tok</strong> / 13 shards</td><td><span class="badge b-ok">✅ 已分词</span></td><td>SFT agentic 打底</td></tr>
+  <tr><td>P1-c</td><td>B 类 agentic（AgentTrove / Nemotron-Cascade-SFT-SWE / terminal-cmd-sft 等）</td><td>待盘（落 /nas_inference）</td><td><span class="badge b-warn">⏳ 已下载未分词</span></td><td>SFT 补充 agentic 轨迹</td></tr>
+  <tr><td>P1-d</td><td>PyAether 领域语料（API 参考 / EDA 工具文档 / HDL 源码）</td><td>⚠️ 待确认来源</td><td><span class="badge b-warn">⚠️ 待调研</span></td><td>领域退火 + SFT 合成</td></tr>
+  <tr><td>P1-e</td><td>158 任务污染隔离规则 + 闸门脚本</td><td>536 任务黑名单（含 v20260311 的 158）</td><td><span class="badge b-ok">✅ 已定稿</span></td><td>投料前阻断（红线）</td></tr>
+</table>
+<div class="note">
+  <strong>关于 36% 的有效性前提（风险 #0b）</strong>：36%（MiniCPM5-2B）与 94.0%（DeepSeek-V4-Pro）必须在<strong>同分母</strong>下可比——
+  即 Pass@1 一律在<strong>全部 158 任务</strong>上计算，而非「生成成功子集」。若两模型分母不同，58 pp 不可比。
+  本方案在评测阶段（步骤 3）将<strong>统一重算分母</strong>，并在报告里逐条标注口径。
+</div>
+<h2 class="sec" id="s2"><span class="no">2</span>步骤 0 · 领域退火（Domain Annealing）</h2>
+<p>对领域先验<strong>最廉价的杠杆</strong>，是在任何行为层面的微调之前，先用 EDA 文本做继续预训练（论文 §5.1）。BaiZe 当前预训练语料是 Ultra-FineWeb-L3 + code + math，<strong>完全不含 EDA / HDL / PyAether 数据</strong>——「领域模型」这个 claim 完全压在 Stage~(ii) 上。退火直接复用 Stage~(i) 已成熟的 <strong>WSD（warmup–stable–decay）</strong>机制，只改变数据分布，不改架构。</p>
+<h3>2.1 退火语料配比</h3>
+<table>
+  <tr><th>成分</th><th>占比</th><th>来源</th><th>说明</th></tr>
+  <tr><td>PyAether / SKILL API 参考</td><td>30%</td><td>eda_fastmcp API 知识库导出（P1-d，待确认）</td><td>占任务来源 61.4%，领域先验核心</td></tr>
+  <tr><td>通用网页（Ultra-FineWeb-L3）</td><td>50%</td><td>Stage~(i) 既有数据</td><td>防灾难遗忘</td></tr>
+  <tr><td>代码（含 HDL 源码）</td><td>12%</td><td>Stage~(i) 既有 code 语料 + 开源 HDL</td><td>脚本/Verilog 语法先验</td></tr>
+  <tr><td>数学</td><td>8%</td><td>Stage~(i) 既有 math 语料</td><td>推理能力保持</td></tr>
+</table>
+<h3>2.2 超参与调度</h3>
+<table>
+  <tr><th>参数</th><th>值</th><th>依据</th></tr>
+  <tr><td>resume</td><td>pretrain S1 收敛 ckpt（step_700000）</td><td>Stage~(i) 最终 ckpt</td></tr>
+  <tr><td>seq_length</td><td>4096</td><td>与预训练一致（长上下文在 SFT 步处理）</td></tr>
+  <tr><td>总步数</td><td>4000（warmup 200 + stable ~3400 + decay 400）</td><td>短退火，避免过拟合小领域语料</td></tr>
+  <tr><td>LR（stable → decay）</td><td>5e-4 → 1e-5（WSD）</td><td>低于预训练 LR（1e-3），避免破坏已学先验</td></tr>
+  <tr><td>GBS / MBS</td><td>512 / 2</td><td>8×A40 显存约束</td></tr>
+  <tr><td>预估 token</td><td>4000 × 512 × 4096 ≈ 8.4B tok</td><td>≈领域语料 ~2.5B（30%）循环约 3.4 epoch</td></tr>
+</table>
+<h3>2.3 对照组设计（隔离退火贡献）</h3>
+<div class="card">
+  <p>由于退火<strong>只改变数据分布</strong>，我们将其与「仅做 SFT」的对照组比较，以把退火的贡献从随后的行为微调中隔离出来：</p>
+  <ul>
+    <li><strong>Arm A（退火 + SFT）</strong>：pretrain ckpt → 领域退火 → SFT →（→ RL）</li>
+    <li><strong>Arm B（仅 SFT，对照）</strong>：pretrain ckpt → SFT →（→ RL），跳过退火</li>
+  </ul>
+  <p>两臂后续 SFT/RL 配方<strong>完全一致</strong>，差异仅在退火。评测时报告 Δ(退火) = Pass@1(A) − Pass@1(B)。</p>
+</div>
+<div class="note">
+  <strong>退火语料组装的阻塞项</strong>：P1-d（PyAether 领域语料）来源尚未确认——需调研 <code>eda_fastmcp</code> 的 API 知识库能否导出为纯文本。
+  已知可复用来源线索：<code>pyAether_API_Docstring</code> / <code>emyDesign</code> / <code>sklangref</code>（曾被污染检查扫描，0 命中 ⇒ 属「来源材料」，允许入训练）。
+  退火正式起跑前必须：(1) 确认语料体量 ≥2B tok；(2) 经污染闸门 <code>baize_posttrain_contamination_gate.sh</code> 扫描 0 命中。
+</div>
+
+<h2 class="sec" id="s3"><span class="no">3</span>步骤 1 · 监督微调（SFT）</h2>
+<p>SFT 教授部署目标所要求的<strong>「生成—执行—改进」闭环</strong>（论文 §5.2）。语料由 agentic 指令集 + 通用指令集 + PyAether 专属合成材料合并，并消融数据配比、工具轨迹、微调方式与序列长度四个轴。</p>
+<h3>3.1 数据混合消融</h3>
+<table>
+  <tr><th>臂</th><th>配比（agent : general : code : math : PyAether）</th><th>目的</th></tr>
+  <tr><td>SFT-0（基线）</td><td>50 : 30 : 10 : 5 : 5</td><td>agentic 打底，少量领域</td></tr>
+  <tr><td>SFT-1（+领域）</td><td>50 : 30 : 0 : 0 : 20</td><td>提 PyAether 占比，验领域增益</td></tr>
+  <tr><td>SFT-2（+code+math）</td><td>40 : 20 : 20 : 10 : 10</td><td>补代码/数学推理</td></tr>
+  <tr><td>SFT-3（纯 agentic）</td><td>80 : 10 : 5 : 0 : 5</td><td>消融通用语料的必要性</td></tr>
+</table>
+<p>数据来源：P1-b（UltraData-SFT-Agent，5.97B tok）打底 + P1-a（UltraData-SFT-2605，18.89B tok）补通用 + P1-c（B 类 agentic，待分词）补轨迹 + PyAether 合成（从 API 文档合成 instruction→code 对，<strong>禁用 158 评测题</strong>，经污染闸门扫描）。</p>
+<h3>3.2 工具轨迹 vs 纯代码</h3>
+<div class="grid2">
+  <div class="card">
+    <h3>含 CoT + 工具轨迹</h3>
+    <p>SFT 样本包含<strong>交错的工具调用序列</strong>：生成代码 → 执行 → 工具返回 → 根据报错改写。这直接教授 generate–execute–refine 闭环。</p>
+    <p><span class="badge b-info">预期：M1/M3 增益大</span></p>
+  </div>
+  <div class="card">
+    <h3>纯代码（对照）</h3>
+    <p>SFT 样本只有 instruction → final code，<strong>不含中间执行/改写步骤</strong>。验「轨迹」本身的价值。</p>
+    <p><span class="badge b-warn">预期：闭环能力弱</span></p>
+  </div>
+</div>
+<h3>3.3 LoRA vs 全参微调</h3>
+<table>
+  <tr><th>方式</th><th>参数</th><th>显存</th><th>优点</th><th>风险</th></tr>
+  <tr><td>全参 FT</td><td>2.22B 全更新</td><td>高（需 8×A40 全占）</td><td>表达力强，领域注入彻底</td><td>灾难遗忘；成本高</td></tr>
+  <tr><td>LoRA</td><td>r=64, α=128（≈0.5% 参数）</td><td>低（可少卡跑）</td><td>快、省、可回退；便于消融</td><td>深度领域适配可能不足</td></tr>
+</table>
+<p><strong>策略</strong>：先用 LoRA 做快速消融（数据配比 / 轨迹 / 上下文长度），锁定最优配方后<strong>再全参微调一次</strong>作为最终 SFT ckpt 供 RL 起跑。这样消融成本低、最终质量高。</p>
+<h3>3.4 上下文长度（一等消融变量）</h3>
+<div class="danger">
+  <strong>前置硬约束（风险 #3）</strong>：当前 <code>seq_length = 4096</code>，而 agentic 轨迹（代码 + 工具返回 + 多轮 refine）<strong>极易超长</strong>。
+  若不先做长上下文适配，RL rollout 会被截断、奖励信号失真。论文 §5.2 已明确将窗口扩展当作<strong>一等变量</strong>而非固定设定。
+</div>
+<table>
+  <tr><th>上下文</th><th>预期轨迹覆盖</th><th>显存/吞吐</th><th>备注</th></tr>
+  <tr><td>4096</td><td>~60% 轨迹（大量截断）</td><td>基准</td><td>预训练原生长度</td></tr>
+  <tr><td>8192</td><td>~85% 轨迹</td><td>≈1.5× 显存</td><td>需 RoPE/ABF 外推或继续训练</td></tr>
+  <tr><td>16384</td><td>~95% 轨迹</td><td>≈2.5× 显存</td><td>论文 Table 原始窗口；多数 agentic 轨迹可容</td></tr>
+</table>
+<p><strong>适配方式</strong>：Mamba2-hybrid 仅 4/56 层用 attention（24 层 SSM 无位置编码），长上下文外推负担远小于纯 Transformer。Stage~(i) 的 B1 实验已验证 128K–1M 免训练可用（PPL 53–56 稳定无退化）。SFT 阶段可直接在 8192/16384 上训练（attention 层用 ABF 调 RoPE base），或在 SFT 数据里掺入长序列做轻量继续训练。预计 <strong>8192 为性价比甜点</strong>，16384 为上限。</p>
+<h3>3.5 SFT 超参</h3>
+<table>
+  <tr><th>参数</th><th>值</th></tr>
+  <tr><td>resume</td><td>退火 ckpt（Arm A）或 pretrain ckpt（Arm B）</td></tr>
+  <tr><td>LR（cosine → min）</td><td>2e-5 → 1e-6</td></tr>
+  <tr><td>epochs</td><td>2–3（agentic 数据 ~12B tok）</td></tr>
+  <tr><td>GBS / MBS</td><td>128 / 1（长序列时降 MBS）</td></tr>
+  <tr><td>损失 masking</td><td>仅对 assistant 回复计算 loss（prompt mask）</td></tr>
+</table>
+<h2 class="sec" id="s4"><span class="no">4</span>步骤 2 · 强化学习 RLVR+GRPO（4 臂奖励）</h2>
+<p>执行沙盒把正确性转化为<strong>可验证信号</strong>，因此采用无需价值网络的<strong>组相对策略优化（GRPO）</strong>（论文 §5.3）。这是 Stage~(ii) 的核心，也是成本最高的一步。</p>
+<h3>4.1 奖励设计 4 臂（论文 Table\ref{tab:reward}）</h3>
+<table>
+  <tr><th>ID</th><th>奖励</th><th>公式（示意）</th><th>目的</th></tr>
+  <tr><td><strong>R1</strong></td><td>二值 pass/fail</td><td>r = 1 if 全部断言通过 else 0</td><td>最简基线；信号最稀疏</td></tr>
+  <tr><td><strong>R2</strong></td><td>部分分：可执行 + 断言通过率</td><td>r = 0.3·可执行 + 0.7·(通过断言数/总断言数)</td><td>缓解 pass/fail 稀疏性</td></tr>
+  <tr><td><strong>R3</strong></td><td>R2 + 工具调用次数惩罚</td><td>r = R2 − λ·max(0, n_tools − n_ref)</td><td>对齐 harness 成本模型（ZhuLong −22.1% 工具削减）</td></tr>
+  <tr><td><strong>R4</strong></td><td>R3 + API 合法性项</td><td>r = R3 − μ·(虚构 API 调用数 / 总调用数)</td><td>抑制幻觉 API 符号</td></tr>
+</table>
+<p><strong>消融逻辑</strong>：R1→R2 验「部分分能否缓解稀疏」；R2→R3 验「成本对齐是否提升效率」；R3→R4 验「API 合法性约束是否降幻觉」。预期 R4 综合最优，但 R2 可能在纯准确率上不输 R4（成本惩罚略降 Pass@1 换效率）。</p>
+<h3>4.2 GRPO 超参</h3>
+<table>
+  <tr><th>参数</th><th>值</th><th>说明</th></tr>
+  <tr><td>group size</td><td>16</td><td>每 prompt 采样 16 条 rollout，组内相对优势</td></tr>
+  <tr><td>max_turns</td><td>3</td><td>每条 rollout 最多 3 轮 generate–execute–refine（对齐 M3 里程碑）</td></tr>
+  <tr><td>timeout / 任务</td><td>2500s</td><td>与评测协议一致</td></tr>
+  <tr><td>LR</td><td>1e-6</td><td>低于 SFT，稳健更新</td></tr>
+  <tr><td>KL 系数</td><td>0.04</td><td>约束策略不偏离 SFT ckpt 太远</td></tr>
+  <tr><td>sandbox 并发</td><td>16（参数化）</td><td>关键：预算由并发数 × 墙钟决定</td></tr>
+  <tr><td>anti-cheat</td><td><span class="badge b-ok">全程启用</span></td><td>PreToolUse hook，所有臂逐字一致</td></tr>
+</table>
+<h3>4.3 Reward hacking 风险与反作弊</h3>
+<div class="danger">
+  <strong>最大风险（风险 #2）</strong>：奖励由策略<strong>原则上可以直接瞄准</strong>的断言计算而来——模型可能学会「绕过断言」（如硬编码答案、篡改测试代码、伪造通过）而非真正解决问题。
+  <strong>必须</strong>：(1) <code>PreToolUse</code> hook 全程启用且所有实验臂逐字一致；(2) BaiZe RL 挂同一套 anti-cheat；(3) 每个 accuracy 数字旁<strong>单独报告 cheat rate</strong>（被 hook 拦截的作弊尝试比例）。
+  cheat rate > 5% ⇒ 该臂结果作废，需调查并加固 hook 后重跑。
+</div>
+<h3>4.4 预算口径换算（风险 #9）</h3>
+<div class="note">
+  <strong>沙盒时延 bound，不是 GPU bound</strong>：RL 带<strong>沙盒执行</strong>，单次 rollout 超时 2500s，瓶颈是沙盒时延而非 GPU 计算。
+  <strong>不能沿用 GPU-hour 口径</strong>。规划按「<strong>沙盒并发数 × 墙钟</strong>」算：
+  <ul>
+    <li>16 并发 × 2500s/任务 × 158 任务 × 16 group × N 步 ≈ 沙盒墙钟</li>
+    <li>例：158 任务 × 16 rollout × 平均 600s（非全超时）= 1,516,800s ≈ 420h 单并发；16 并发 ≈ <strong>26h/epoch</strong></li>
+    <li>3 epoch ≈ <strong>78h 沙盒墙钟</strong>（≈3.3 天），GPU 侧仅做策略更新，显存占用远小于此</li>
+  </ul>
+  预算按<strong>天</strong>而非 GPU-hour 报告。
+</div>
+<h3>4.5 RL 训练数据</h3>
+<p>RL 的 prompt 来源：<strong>合成 PyAether 任务</strong>（从 API 文档合成 instruction + 断言，<strong>禁用 158 评测题</strong>）。合成规则：(1) 按 API 名/函数签名隔离，确保不与评测集重叠；(2) 经污染闸门扫描 0 命中；(3) 覆盖 4 场景配比（Layout 64 / Schematic 47 / Design Mgmt 24 / Others 23 的比例）。预计合成 ~2000 条 RL prompt。</p>
+
+<h2 class="sec" id="s5"><span class="no">5</span>步骤 3 · 评测协议与 backbone×harness 网格</h2>
+<p>所有变体在 <strong>EDA-Eval-PyAether</strong>（158 个真实 EDA 脚本任务）上评分，遵循基准自身冻结协议（论文 §5.5，README §2）。</p>
+<h3>5.1 冻结评测协议（不得改动）</h3>
+<table>
+  <tr><th>项</th><th>规定</th></tr>
+  <tr><td>基准</td><td>EDA-Eval-PyAether，<strong>158</strong> 任务（NL prompt + 函数签名 + 断言测试代码）</td></tr>
+  <tr><td>指标</td><td>Pass@1 = 通过任务数 / 158 × 100%；另报 Pass^5（5/5 全过）</td></tr>
+  <tr><td>重复</td><td>每配置 <strong>5 次独立运行</strong>，重排顺序 + 全新 context；报 <strong>mean ± std</strong></td></tr>
+  <tr><td>超时</td><td><strong>2500s</strong>/任务</td></tr>
+  <tr><td>单 trace</td><td>一任务一条 trace，trace 内可迭代，<strong>不跨 trace 重启</strong></td></tr>
+  <tr><td>并发</td><td><code>-p 8 -n</code>（8 并发，禁 Memory Bank 注入）</td></tr>
+  <tr><td>反作弊</td><td><code>PreToolUse</code> hook 全程启用，所有臂逐字一致（<strong>冻结变量</strong>）</td></tr>
+  <tr><td>污染</td><td>n-gram 黑名单排除（536 任务，含 158）；只改 backbone，harness 逐字节一致</td></tr>
+</table>
+<h3>5.2 backbone × harness 网格</h3>
+<table>
+  <tr><th>Backbone</th><th>pure LLM</th><th>+RAG</th><th>+Sandbox</th><th>full harness</th><th>cheat rate</th></tr>
+  <tr><td>DeepSeek-V4-Pro</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td><strong>94.0%</strong></td><td>—</td></tr>
+  <tr><td>MiniCPM5-2B</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td><strong>36%</strong></td><td>—</td></tr>
+  <tr><td>BaiZe-base（退火后）</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td></tr>
+  <tr><td>BaiZe-SFT</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td></tr>
+  <tr><td>BaiZe-RL</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td></tr>
+</table>
+<p>三个卖点：<strong>纵向</strong>（退火→SFT→RL 各步增益几个 pp，诚实报告）/ <strong>横向</strong>（同 harness 下 vs DeepSeek 的 Pass@1 与推理成本）/ <strong>补洞</strong>（BaiZe 全篇缺下游指标，这是第一张下游表）。</p>
+<h3>5.3 接入方式（换 backbone 成本 ≈ 0）</h3>
+<p>harness 通过 OpenAI 兼容接口接模型，BaiZe 用 vLLM/SGLang 暴露 endpoint 即可直接评测：</p>
+<pre><code>cline auth -p openai -k &lt;API_KEY&gt; -b &lt;BASE_URL&gt; -m &lt;MODEL_ID&gt;
+cd $BASE_DIR && bash scripts/run_cline_script.sh -p 8 -n   # ≈3h/轮
+python scripts/run_eval.py -g &lt;generated&gt;.jsonl</code></pre>
+<h2 class="sec" id="s6"><span class="no">6</span>预注册成功阶梯 M1–M4</h2>
+<p><strong>先定后测</strong>（README §4 步骤 4）。在开始任何训练之前写下这张表，训练后如实对照，避免事后合理化。</p>
+<div class="ladder">
+  <div class="rung r0"><div class="pct">36%</div><div class="lbl">起点 · MiniCPM5-2B 零适配 · ✅ 已实测</div></div>
+  <div class="rung r1"><div class="pct">50%</div><div class="lbl">M1 · 工具协议修好（D1/D2/D6 改善）· 几近必然</div></div>
+  <div class="rung r2"><div class="pct">65%</div><div class="lbl">M2 · + 领域退火 + SFT · 大概率</div></div>
+  <div class="rung r3"><div class="pct">75%</div><div class="lbl">M3 · + RL · 有望，已是强结果</div></div>
+  <div class="rung r4"><div class="pct">85%+</div><div class="lbl">M4 · 逼近 DeepSeek-V4-Pro · 惊喜级别</div></div>
+</div>
+<table>
+  <tr><th>里程碑</th><th>Pass@1</th><th>含义</th><th>对应步骤</th><th>先验判断</th></tr>
+  <tr><td>起点</td><td>36%</td><td>MiniCPM5-2B，通用模型，零适配</td><td>—</td><td>✅ 已实测</td></tr>
+  <tr><td>M1</td><td>50%</td><td>工具调用协议修好（D1 合法率↑/D2 频次↑/D6 闭环↑）</td><td>SFT（含工具轨迹）</td><td>几近必然（+14 pp）</td></tr>
+  <tr><td>M2</td><td>65%</td><td>+ 领域继续预训练 + SFT</td><td>退火 + SFT</td><td>大概率（+15 pp）</td></tr>
+  <tr><td>M3</td><td>75%</td><td>+ RL（GRPO 4 臂）</td><td>RL</td><td>有望，已是强结果（+10 pp）</td></tr>
+  <tr><td>M4</td><td>85%+</td><td>逼近 DeepSeek-V4-Pro（94%）</td><td>全流程最优</td><td>惊喜级别（+10 pp）</td></tr>
+</table>
+<div class="card">
+  <p><strong>阶梯的意义</strong>：无论落在哪一档，结论都能成立且都值得发表——</p>
+  <ul>
+    <li>落在 <strong>M3/M4</strong>：「小模型 + 领域自适应逼近大模型」，强结果，成本-质量前沿的有力证据。</li>
+    <li>落在 <strong>M1/M2</strong>：「领域自适应的可回收空间有限」，直接支持 ZhuLong「规模非瓶颈」论点，两篇互证。</li>
+  </ul>
+  <p>论文 §5.5 的能力里程碑（M1 工具调用合法性 / M2 单任务通过 / M3 多轮改进 / M4 全基准准确率）与本阶梯 Pass@1 阈值<strong>概念对应</strong>：M1(50%)≈工具协议修复后单任务通过率初阶；M3(75%)≈多轮改进（3 轮闭环）后全基准准确率。</p>
+</div>
+
+<h2 class="sec" id="s7"><span class="no">7</span>预注册判定阈值（先定后测）</h2>
+<p>「差不太多」是模糊主张，易被质疑事后合理化（风险 #5）。必须在训练前定下判定规则（README §9 待确认项）。</p>
+<h3>7.1 点估计阈值</h3>
+<table>
+  <tr><th>声明</th><th>判定条件（先定后测）</th></tr>
+  <tr><td>「BaiZe-RL 优于 MiniCPM5-2B」</td><td>Pass@1(RL) − Pass@1(MiniCPM5) ≥ <strong>10 pp</strong>，5-run mean</td></tr>
+  <tr><td>「领域退火有效」</td><td>Δ(退火) = Pass@1(Arm A) − Pass@1(Arm B) ≥ <strong>3 pp</strong>，5-run mean</td></tr>
+  <tr><td>「RL 增益显著」</td><td>Pass@1(RL) − Pass@1(SFT) ≥ <strong>5 pp</strong>，5-run mean</td></tr>
+  <tr><td>「逼近 DeepSeek」</td><td>Pass@1(RL) ≥ <strong>85%</strong>（M4 档）</td></tr>
+</table>
+<h3>7.2 配对检验（统计显著性）</h3>
+<div class="card">
+  <p>158 任务固定集上两系统比较，<strong>仅比均值不敏感</strong>（binomial SE @ p=0.8, n=158 ≈ 3.2 pp，95% CI ≈ ±6.2 pp）。
+  必须用<strong>配对检验</strong>：</p>
+  <ul>
+    <li><strong>McNemar 检验</strong>：构建 2×2 列联表（两模型在 158 任务上的 pass/fail 配对），检验边际齐性。适用于二值结果配对比较。</li>
+    <li><strong>Paired bootstrap</strong>：对 158 任务做有放回重采样 B=10000 次，计算 Pass@1 差值的经验分布，取 2.5%/97.5% 分位为 95% CI。不依赖正态假设，对小样本更稳健。</li>
+  </ul>
+  <p><strong>判定</strong>：p(McNemar) &lt; 0.05 <strong>且</strong> bootstrap 95% CI 不含 0 ⇒ 差异显著。两者皆满足才声明「显著优于」。</p>
+</div>
+<h3>7.3 成本比</h3>
+<table>
+  <tr><th>指标</th><th>定义</th><th>报告</th></tr>
+  <tr><td>推理成本</td><td>decode tok/s（Mamba2-hybrid 10.3× dense）</td><td>BaiZe vs DeepSeek 的 tok/s 比</td></tr>
+  <tr><td>训练成本</td><td>退火+ SFT+ RL 总墙钟（天）</td><td>绝对值 + vs DeepSeek 训练规模比</td></tr>
+  <tr><td>成本-质量前沿</td><td>Pass@1 / log(参数量) 或 Pass@1 / 推理延迟</td><td>散点图：BaiZe vs MiniCPM5 vs DeepSeek</td></tr>
+</table>
+<p><strong>兜底表述</strong>：若 Pass@1 落在 M1/M2（回收有限），转向<strong>成本-质量前沿</strong>表述——「同推理成本下 BaiZe 的 Pass@1 高于通用模型 X pp」或「同 Pass@1 下 BaiZe 推理成本低 Y×」，仍是有价值的结论。</p>
+
+<h2 class="sec" id="s8"><span class="no">8</span>时间线与预算</h2>
+<div class="flow">
+  <span class="step">pretrain S1 收敛</span><span class="arrow">→</span>
+  <span class="step">领域退火（~1 天）</span><span class="arrow">→</span>
+  <span class="step">SFT 消融（~3 天）</span><span class="arrow">→</span>
+  <span class="step">SFT 全参（~1 天）</span><span class="arrow">→</span>
+  <span class="step">RL 4 臂（~6 天）</span><span class="arrow">→</span>
+  <span class="step">评测 5-run 网格（~5 天）</span><span class="arrow">→</span>
+  <span class="step">论文定稿</span>
+</div>
+<table>
+  <tr><th>阶段</th><th>时间</th><th>墙钟</th><th>GPU</th><th>预算口径</th></tr>
+  <tr><td>P0/P1/P2/P3 预备</td><td>2026-11（当前）</td><td>—</td><td>0（纯 CPU/IO）</td><td>—</td></tr>
+  <tr><td>领域退火</td><td>2026-12 下</td><td>≈1 天</td><td>8×A40</td><td>GPU-bound，~8 GPU·h</td></tr>
+  <tr><td>SFT 消融（LoRA）</td><td>2026-12 下</td><td>≈3 天</td><td>4×A40</td><td>GPU-bound，~24 GPU·h</td></tr>
+  <tr><td>SFT 全参</td><td>2026-12 下</td><td>≈1 天</td><td>8×A40</td><td>GPU-bound，~16 GPU·h</td></tr>
+  <tr><td>RL 4 臂（R1–R4）</td><td>2027-01 上</td><td>≈6 天</td><td>4×A40（策略）+ 沙盒</td><td><strong>沙盒墙钟</strong>（16 并发 × ~78h）</td></tr>
+  <tr><td>评测 5-run 网格</td><td>2027-01 中</td><td>≈5 天</td><td>推理 GPU + 沙盒</td><td>沙盒墙钟（5 run × ~3h × N backbone）</td></tr>
+  <tr><td>论文定稿</td><td>2027-01 下</td><td>—</td><td>—</td><td>—</td></tr>
+</table>
+<p>ISEDA 2027 投稿截止 ≈ <strong>2027-02-01</strong>。总训练+评测窗口 ≈ <strong>3 周</strong>（2026-12 下 → 2027-01 中），不宽松但可行。关键路径：RL（沙盒墙钟最长）→ 评测（5-run × 多 backbone）。</p>
+<h2 class="sec" id="s9"><span class="no">9</span>风险登记册</h2>
+<table>
+  <tr><th>#</th><th>风险</th><th>严重度</th><th>应对（本方案已纳入）</th></tr>
+  <tr><td><strong>0b</strong></td><td>分母漂移：Pass@1 在「生成成功子集」上算 ⇒ 58 pp 不可比</td><td>🔴 最高</td><td>评测阶段统一在<strong>全部 158 任务</strong>上重算分母，逐条标注口径（§1, §5.1）</td></tr>
+  <tr><td><strong>0</strong></td><td>58 pp 可回收性未知（回收有限的可能）</td><td>🟠 中</td><td>成功阶梯分档预注册（§6）；成本-质量前沿表述兜底（§7.3）</td></tr>
+  <tr><td><strong>2</strong></td><td>Reward hacking（绕过断言）</td><td>🔴 高</td><td>anti-cheat 全程开 + 每 臂报 cheat rate > 5% 作废（§4.3）</td></tr>
+  <tr><td><strong>3</strong></td><td>上下文 4096 对 agentic 轨迹过短</td><td>🔴 高</td><td>上下文长度一等消融（4096/8192/16384）；Mamba2-hybrid 4/56 attn 长外推负担小（§3.4）</td></tr>
+  <tr><td><strong>4</strong></td><td>污染（训练集含评测任务）</td><td>🔴 高</td><td>污染闸门 <code>baize_posttrain_contamination_gate.sh</code> 投料前阻断（536 任务黑名单，§10）</td></tr>
+  <tr><td><strong>5</strong></td><td>「差不太多」模糊，事后合理化</td><td>🟠 中</td><td>预注册判定阈值（点估计 + McNemar/bootstrap + 成本比），先定后测（§7）</td></tr>
+  <tr><td><strong>6</strong></td><td>harness 为 70B 调优，低估小模型</td><td>🟠 中</td><td>报两级：冻结 harness（公平）+ 适配 harness（Φ 预算/检索 k 重调），论文写明</td></tr>
+  <tr><td><strong>9</strong></td><td>预算口径错配（GPU-hour vs 沙盒时延）</td><td>🟡 低</td><td>RL 按沙盒并发 × 墙钟规划，按天而非 GPU-hour（§4.4）</td></tr>
+  <tr><td>—</td><td>pretrain ckpt 延期（ETA 滑动）</td><td>🟠 中</td><td>本方案零 GPU 预研先行；脚本骨架就绪，ckpt 一到即可起（P3 预备已交付）</td></tr>
+  <tr><td>—</td><td>PyAether 语料不足（P1-d 待确认）</td><td>🟠 中</td><td>退火/SFT 可先用 API 文档导出 + HDL 源码；语料 &lt;2B tok 则降退火步数或扩 code 占比</td></tr>
+</table>
+
+<h2 class="sec" id="s10"><span class="no">10</span>红线合规检查表</h2>
+<p>以下四条红线<strong>违反则整节作废</strong>（README §5）。每步训练起跑前逐项打勾。</p>
+<table>
+  <tr><th>#</th><th>红线</th><th>合规措施</th><th>检查时机</th><th>状态</th></tr>
+  <tr><td>5.1</td><td>158 任务禁入训练集（污染隔离）</td><td>按 API 名/函数签名隔离；污染闸门 <code>baize_posttrain_contamination_gate.sh</code> 扫描 0 命中才放行</td><td>退火/SFT/RL 每次投料前</td><td><span class="badge b-ok">闸门已就绪</span></td></tr>
+  <tr><td>5.2</td><td>anti-cheat 全程启用 + 报 cheat rate</td><td><code>PreToolUse</code> hook 所有臂逐字一致；RL 挂同一套；每 accuracy 旁报 cheat rate</td><td>RL + 评测全程</td><td><span class="badge b-info">方案已定</span></td></tr>
+  <tr><td>5.3</td><td>口径一致：5-run mean±std + 配对检验</td><td>不得报单次值；158 任务固定集用 McNemar/paired bootstrap</td><td>评测报告</td><td><span class="badge b-info">方案已定</span></td></tr>
+  <tr><td>§2</td><td>评测协议冻结不改</td><td>158 任务 / Pass@1 / 2500s / 单 trace / 5-run / <code>-p 8 -n</code> 不得改动</td><td>评测全程</td><td><span class="badge b-info">方案已定</span></td></tr>
+  <tr><td>§4</td><td>预注册先定后测</td><td>成功阶梯 M1–M4 + 判定阈值在本方案书定稿，训练后如实对照</td><td>训练前定稿（本报告）</td><td><span class="badge b-ok">已定稿</span></td></tr>
+</table>
+
+<h2 class="sec" id="s11"><span class="no">11</span>附录 · 脚本骨架与数据配比</h2>
+<h3>11.1 已交付的脚本骨架（P3 预备，零 GPU，只写不跑）</h3>
+<table>
+  <tr><th>脚本</th><th>用途</th><th>验证</th></tr>
+  <tr><td><code>baize_posttrain_anneal.sh</code></td><td>领域退火（resume pretrain ckpt, WSD, domain blend 30:50:12:8）</td><td><span class="badge b-ok">bash -n PASS · --dry-run rc=0</span></td></tr>
+  <tr><td><code>baize_posttrain_sft.sh</code></td><td>SFT（context-len/ft-mode/tool-traces/data-mix 消融开关）</td><td><span class="badge b-ok">bash -n PASS · --dry-run rc=0</span></td></tr>
+  <tr><td><code>baize_posttrain_rl_grpo.sh</code></td><td>RLVR+GRPO（4 臂奖励 R1–R4 开关 + 沙盒并发 + anti-cheat）</td><td><span class="badge b-ok">bash -n PASS · --dry-run rc=0</span></td></tr>
+  <tr><td><code>baize_posttrain_eval.sh</code></td><td>评测（5-run/reshuffle/fresh-context/2500s/-p 8 -n, OpenAI endpoint）</td><td><span class="badge b-ok">bash -n PASS · --dry-run rc=0</span></td></tr>
+  <tr><td><code>baize_posttrain_contamination_gate.sh</code></td><td>污染闸门（复用 check_contamination.py + 536 任务黑名单）</td><td><span class="badge b-ok">bash -n PASS · --dry-run rc=0</span></td></tr>
+</table>
+<h3>11.2 待填实的占位项</h3>
+<ul>
+  <li><strong>退火领域语料</strong> <code>pyAether_api_anneal</code>：待 P1-d 调研（eda_fastmcp API 知识库导出）+ data 线分词。</li>
+  <li><strong>SFT PyAether 合成</strong> <code>sft_pyaether_synth</code>：待从 API 文档合成 instruction→code 对（禁用 158 题，经污染闸门扫描）。</li>
+  <li><strong>RL 合成任务</strong> <code>rl_pyaether_synth_tasks.jsonl</code>：待合成 ~2000 条 RL prompt（按场景配比，禁用 158 题）。</li>
+  <li><strong>训练入口</strong> <code>sft_launcher.py</code> / <code>grpo_train.py</code> / <code>reward_compute.py</code>：待确认自研 vs TRL/verl/OpenRLHF。</li>
+</ul>
+<div class="note">
+  <strong>当前阻塞项（不阻塞本方案书，但阻塞正式训练）</strong>：
+  (1) pretrain S1 收敛 ckpt（ETA≈2026-12-25）；
+  (2) P0 诊断 D1–D6（<code>eda_code_eval/*/final_report.json</code> 在本节点不可达，待运维挂载或提供路径——D1–D6 决定 SFT 数据配比侧重）；
+  (3) P1-c（B 类 agentic 数据，/nas_inference 未挂载 .17）/ P1-d（PyAether 语料，eda_fastmcp 不可达）。
+  这些在 ckpt 就绪前由运维协调解决，不影响本方案书的定稿与预注册。
+</div>
+
+<footer>
+  <p><strong>BaiZe Stage (ii) 后训练方案书</strong> · 2026-11-06 · posttrain 线 wake3 · 纯设计（零 GPU）<br>
+  对应论文：<code>5_llm_posttrain.tex</code> §5.1–§5.5 · 对应总纲：README §4 Stage(ii) / §5 红线 / §6 风险 / §7.0 诊断<br>
+  脚本骨架：P3 预备已交付（anneal/sft/rl_grpo/eval/contamination_gate，bash -n + dry-run 全 PASS）<br>
+  预注册：成功阶梯 M1–M4 + 判定阈值<strong>先定后测</strong>，本报告即定稿凭证。</p>
+</footer>
+
+</div>
+</body>
+</html>

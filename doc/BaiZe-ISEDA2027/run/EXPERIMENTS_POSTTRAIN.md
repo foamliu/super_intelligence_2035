@@ -142,6 +142,50 @@
 
 ---
 
+## §Plan 三步训练方案书（P2 · 2026-11-06 wake3 · 零 GPU · 已定稿）
+
+> **交付物**：`reports/report_posttrain_plan_zh.html`（38KB，自包含，0 script，0 外链，11 节）。
+> 对应论文 `5_llm_posttrain.tex` §5.1–§5.5；对应总纲 README §4 Stage(ii) / §5 红线 / §6 风险 / §7.0 诊断。
+> commit 前缀 `posttrain plan:`。
+
+### 方案要点摘要
+
+| 步骤 | 名称 | 论文节 | 核心设计 | 依赖 |
+|:--|:--|:--|:--|:--|
+| 0 | 领域退火 | §5.1 | resume pretrain ckpt；WSD 4000 步；blend domain30:web50:code12:math8；LR 5e-4→1e-5；≈8.4B tok | pretrain ckpt + P1-d 语料 |
+| 1 | SFT | §5.2 | 4 臂数据配比消融；CoT+工具轨迹 vs 纯代码；LoRA 消融→全参定稿；上下文 4096/8192/16384 一等变量 | 退火 ckpt + P1-a/b/c + PyAether 合成 |
+| 2 | RLVR+GRPO | §5.3 | 4 臂奖励 R1–R4；group16；max_turns3；KL0.04；沙盒并发16；anti-cheat 全程；预算按沙盒墙钟非 GPU·h | SFT ckpt + 合成 RL 任务 + 沙盒 |
+| 3 | 评测 | §5.5 | backbone×harness 网格；158 任务 Pass@1；5-run mean±std；2500s；-p 8 -n；McNemar/bootstrap | 各阶段 ckpt + vLLM endpoint |
+
+### 预注册成功阶梯（先定后测）
+
+| 里程碑 | Pass@1 | 对应步骤 | 先验 |
+|:--|:--|:--|:--|
+| 起点 | 36% | — | ✅ 已实测 |
+| M1 | 50% | SFT（工具协议） | 几近必然 |
+| M2 | 65% | + 退火 + SFT | 大概率 |
+| M3 | 75% | + RL | 有望 |
+| M4 | 85%+ | 全流程 | 惊喜 |
+
+### 预注册判定阈值
+
+- 点估计：RL vs MiniCPM5 ≥10pp；退火 Δ≥3pp；RL vs SFT ≥5pp；逼近 DeepSeek ≥85%。
+- 配对检验：McNemar p<0.05 **且** paired bootstrap 95% CI 不含 0 ⇒ 显著。
+- 成本比：推理 tok/s 比 + 训练墙钟（天）+ 成本-质量前沿散点。
+- 兜底：若落在 M1/M2，转成本-质量前沿表述。
+
+### 红线合规（每步起跑前打勾）
+
+1. 污染隔离：`baize_posttrain_contamination_gate.sh` 投料前扫描 0 命中（闸门已就绪 ✅）。
+2. anti-cheat：PreToolUse hook 全程逐字一致 + 报 cheat rate（>5% 作废）。
+3. 口径一致：5-run mean±std + McNemar/paired bootstrap。
+4. 评测冻结：158/Pass@1/2500s/单trace/5-run/-p 8 -n 不改。
+5. 预注册：本方案书即定稿凭证，训练后如实对照。
+
+> **阻塞项（不阻塞方案书）**：pretrain ckpt（ETA≈2026-12-25）；P0 D1–D6（数据不可达）；P1-c（/nas_inference 未挂载 .17）；P1-d（eda_fastmcp 不可达）。
+
+---
+
 ## §Anneal 领域退火实验（P3 · 待 pretrain ckpt）
 
 [待训练后填写]
