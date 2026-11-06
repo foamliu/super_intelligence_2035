@@ -315,9 +315,54 @@ def save_checkpoint(llm, tokenizer, output_dir, step, rank=0):
 # ---------------------------------------------------------------------------
 # Evaluation (format correctness + submit success on held-out data)
 # ---------------------------------------------------------------------------
+def _build_prompt_at_turn(conv, turn_idx):
+    """Build prompt text from conversation[0:turn_idx] (everything before the
+    target assistant turn).  Returns prompt_text or None if empty."""
+    prompt_msgs = conv[:turn_idx]
+    if not prompt_msgs:
+        return None
+    prompt_parts = []
+    for msg in prompt_msgs:
+        if msg['role'] == 'tool':
+            wrapped = (f"{TOOL_WRAPPER_OPEN}\n{msg['content']}\n"
+                       f"{TOOL_WRAPPER_CLOSE}")
+            prompt_parts.append(format_turn(ROLE_USER, wrapped))
+        else:
+            prompt_parts.append(format_turn(msg['role'], msg['content']))
+    prompt_text = "".join(prompt_parts)
+    prompt_text += f"{IM_START}{ROLE_ASSISTANT}\n"
+    return prompt_text
+
+
+def _generate_response(llm, tokenizer, prompt_text, device, max_new=256):
+    """Tokenize prompt, generate, return decoded response string."""
+    enc = tokenizer(prompt_text, add_special_tokens=False,
+                    return_tensors='pt', truncation=True, max_length=1800)
+    input_ids = enc['input_ids'].to(device)
+    with torch.no_grad():
+        out = llm.generate(
+            input_ids, max_new_tokens=max_new, do_sample=False,
+            temperature=1.0, pad_token_id=tokenizer.pad_token_id or 0,
+            eos_token_id=tokenizer.eos_token_id)
+    return tokenizer.decode(out[0][input_ids.shape[1]:],
+                            skip_special_tokens=True).strip()
+
+
 def evaluate_format_and_submit(llm, tokenizer, eval_dataset, device, dtype,
                                max_eval=50):
-    """Check if the model generates valid tool-call format and submits."""
+    """Check if the model generates valid tool-call format and submits.
+
+    Evaluates at TWO positions per trajectory (wake#790 fix):
+    - Format check: at the FIRST assistant turn — does the model produce a
+      valid tool call (open/get_signal/get_values/dump_hier/submit)?
+    - Submit check: at the assistant turn whose GT contains 'submit(' — does
+      the model produce submit(type, number)?
+
+    Previously this function only generated at the first assistant turn and
+    checked for submit() there, but submit() is always in the 4th assistant
+    turn, so submit_success_rate was always 0% — a pure eval design flaw,
+    not a training problem.
+    """
     llm.eval()
     format_ok = 0
     submit_ok = 0
@@ -327,37 +372,35 @@ def evaluate_format_and_submit(llm, tokenizer, eval_dataset, device, dtype,
     for i in range(total):
         traj = eval_dataset.samples[i]
         conv = traj['conversation']
-        prompt_msgs = []
-        for msg in conv:
+
+        # --- Format check: first assistant turn ---
+        first_asst_idx = None
+        for idx, msg in enumerate(conv):
             if msg['role'] == 'assistant':
+                first_asst_idx = idx
                 break
-            prompt_msgs.append(msg)
-        if not prompt_msgs:
-            continue
-        prompt_parts = []
-        for msg in prompt_msgs:
-            if msg['role'] == 'tool':
-                wrapped = (f"{TOOL_WRAPPER_OPEN}\n{msg['content']}\n"
-                           f"{TOOL_WRAPPER_CLOSE}")
-                prompt_parts.append(format_turn(ROLE_USER, wrapped))
-            else:
-                prompt_parts.append(format_turn(msg['role'], msg['content']))
-        prompt_text = "".join(prompt_parts)
-        prompt_text += f"{IM_START}{ROLE_ASSISTANT}\n"
-        enc = tokenizer(prompt_text, add_special_tokens=False,
-                        return_tensors='pt', truncation=True, max_length=1800)
-        input_ids = enc['input_ids'].to(device)
-        with torch.no_grad():
-            out = llm.generate(
-                input_ids, max_new_tokens=256, do_sample=False,
-                temperature=1.0, pad_token_id=tokenizer.pad_token_id or 0,
-                eos_token_id=tokenizer.eos_token_id)
-        response = tokenizer.decode(out[0][input_ids.shape[1]:],
-                                    skip_special_tokens=True).strip()
-        if any(p in response for p in valid_tool_patterns):
-            format_ok += 1
-        if 'submit(' in response and re.search(r'submit\s*\([^)]*\d', response):
-            submit_ok += 1
+        if first_asst_idx is not None:
+            prompt_text = _build_prompt_at_turn(conv, first_asst_idx)
+            if prompt_text:
+                response = _generate_response(
+                    llm, tokenizer, prompt_text, device)
+                if any(p in response for p in valid_tool_patterns):
+                    format_ok += 1
+
+        # --- Submit check: assistant turn containing 'submit(' in GT ---
+        submit_turn_idx = None
+        for idx, msg in enumerate(conv):
+            if msg['role'] == 'assistant' and 'submit(' in msg['content']:
+                submit_turn_idx = idx
+                break
+        if submit_turn_idx is not None:
+            prompt_text = _build_prompt_at_turn(conv, submit_turn_idx)
+            if prompt_text:
+                response = _generate_response(
+                    llm, tokenizer, prompt_text, device)
+                if 'submit(' in response and \
+                        re.search(r'submit\s*\([^)]*\d', response):
+                    submit_ok += 1
     llm.train()
     fmt_rate = format_ok / total if total > 0 else 0.0
     sub_rate = submit_ok / total if total > 0 else 0.0

@@ -110,7 +110,11 @@ def load_eval_data(eval_file, max_eval):
 
 
 def build_prompt(conv, tokenizer):
-    """Build prompt text from conversation (everything before first assistant turn)."""
+    """Build prompt text from conversation (everything before first assistant turn).
+
+    Kept for backward compatibility.  See build_prompt_at_turn for the
+    generalized version used by the fixed eval (wake#790).
+    """
     prompt_msgs = []
     for msg in conv:
         if msg['role'] == 'assistant':
@@ -131,6 +135,40 @@ def build_prompt(conv, tokenizer):
     return prompt_text
 
 
+def build_prompt_at_turn(conv, turn_idx):
+    """Build prompt text from conversation[0:turn_idx] — everything BEFORE the
+    assistant turn at index *turn_idx*.  Returns prompt_text or None.
+
+    wake#790 fix: the original build_prompt() only built context up to the
+    FIRST assistant turn, but submit() is in the 4th assistant turn.  This
+    generalized version lets us evaluate at the submit-turn position.
+    """
+    prompt_msgs = conv[:turn_idx]
+    if not prompt_msgs:
+        return None
+    prompt_parts = []
+    for msg in prompt_msgs:
+        if msg['role'] == 'tool':
+            wrapped = (f"{TOOL_WRAPPER_OPEN}\n{msg['content']}\n"
+                       f"{TOOL_WRAPPER_CLOSE}")
+            prompt_parts.append(format_turn(ROLE_USER, wrapped))
+        else:
+            prompt_parts.append(format_turn(msg['role'], msg['content']))
+    prompt_text = "".join(prompt_parts)
+    prompt_text += f"{IM_START}{ROLE_ASSISTANT}\n"
+    return prompt_text
+
+
+def _find_turn_idx(conv, role, content_contains=None):
+    """Find the index of the first turn matching role (and optionally content
+    substring).  Returns int or None."""
+    for idx, msg in enumerate(conv):
+        if msg['role'] == role:
+            if content_contains is None or content_contains in msg.get('content', ''):
+                return idx
+    return None
+
+
 def extract_submit_value(response):
     """Extract submitted measurement value from model response.
 
@@ -147,7 +185,19 @@ def extract_submit_value(response):
 
 
 def evaluate(llm, tokenizer, samples, device, dtype, args):
-    """Run evaluation on all samples. Returns detailed results dict."""
+    """Run evaluation on all samples. Returns detailed results dict.
+
+    wake#790 fix: evaluates at TWO positions per trajectory:
+    - Format check: generate at the FIRST assistant turn → does the response
+      contain a valid tool-call pattern (open/get_signal/get_values/submit)?
+    - Submit check: generate at the assistant turn whose GT contains 'submit('
+      → does the response contain submit(type, number)?  Also extracts the
+      submitted numerical value for relative-error comparison against GT.
+
+    The original version only generated at the first assistant turn and
+    checked for submit() there, but submit() is always in the 4th turn →
+    submit_success_rate was always 0% (pure eval design flaw).
+    """
     results = []
     format_ok = 0
     submit_ok = 0
@@ -156,11 +206,7 @@ def evaluate(llm, tokenizer, samples, device, dtype, args):
     total = 0
     rel_errors = []
 
-    for i, traj in enumerate(samples):
-        prompt_text = build_prompt(traj['conversation'], tokenizer)
-        if prompt_text is None:
-            continue
-        total += 1
+    def _generate(prompt_text):
         enc = tokenizer(prompt_text, add_special_tokens=False,
                         return_tensors='pt', truncation=True,
                         max_length=args.seq_len - args.max_new_tokens)
@@ -171,17 +217,41 @@ def evaluate(llm, tokenizer, samples, device, dtype, args):
                 do_sample=False, temperature=1.0,
                 pad_token_id=tokenizer.pad_token_id or 0,
                 eos_token_id=tokenizer.eos_token_id)
-        response = tokenizer.decode(out[0][input_ids.shape[1]:],
-                                    skip_special_tokens=True).strip()
-        has_format = any(p in response for p in VALID_TOOL_PATTERNS)
+        return tokenizer.decode(out[0][input_ids.shape[1]:],
+                                skip_special_tokens=True).strip()
+
+    for i, traj in enumerate(samples):
+        conv = traj['conversation']
+        total += 1
+
+        # --- Format check: first assistant turn ---
+        first_asst_idx = _find_turn_idx(conv, 'assistant')
+        fmt_response = ""
+        has_format = False
+        if first_asst_idx is not None:
+            prompt_text = build_prompt_at_turn(conv, first_asst_idx)
+            if prompt_text:
+                fmt_response = _generate(prompt_text)
+                has_format = any(p in fmt_response for p in VALID_TOOL_PATTERNS)
         if has_format:
             format_ok += 1
-        has_submit = 'submit(' in response and \
-            bool(re.search(r'submit\s*\([^)]*\d', response))
+
+        # --- Submit check: assistant turn containing 'submit(' in GT ---
+        submit_turn_idx = _find_turn_idx(conv, 'assistant', 'submit(')
+        sub_response = ""
+        has_submit = False
+        if submit_turn_idx is not None:
+            prompt_text = build_prompt_at_turn(conv, submit_turn_idx)
+            if prompt_text:
+                sub_response = _generate(prompt_text)
+                has_submit = 'submit(' in sub_response and \
+                    bool(re.search(r'submit\s*\([^)]*\d', sub_response))
         if has_submit:
             submit_ok += 1
+
+        # --- Numerical accuracy (at submit turn) ---
         gt_val = traj.get('gt_value')
-        _, submit_val = extract_submit_value(response)
+        _, submit_val = extract_submit_value(sub_response)
         rel_err = None
         if submit_val is not None and gt_val is not None and gt_val != 0:
             rel_err = abs(submit_val - gt_val) / abs(gt_val)
@@ -200,7 +270,9 @@ def evaluate(llm, tokenizer, samples, device, dtype, args):
             "measure_target": traj.get('measure_target', ''),
             "format_ok": has_format, "submit_ok": has_submit,
             "submit_value": submit_val, "gt_value": gt_val,
-            "rel_err": rel_err, "response_preview": response[:200],
+            "rel_err": rel_err,
+            "fmt_response_preview": fmt_response[:200],
+            "sub_response_preview": sub_response[:200],
         })
     n = max(1, total)
     return {
