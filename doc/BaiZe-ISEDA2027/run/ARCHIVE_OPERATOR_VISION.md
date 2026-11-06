@@ -2706,3 +2706,27 @@ setsid bash run_armD_r2_openclip.sh > /tmp/armD_r2_openclip_train.log 2>&1 < /de
 > **护栏**：🚫 不碰 pretrain（`.29`/`.12` 8 卡满载）；CPU 降载 `OMP_NUM_THREADS≤16` + `nice -n 19`，禁 `pkill python`；🚫 不伪造数字、不把「CPU 跑通」写成「能力提升」；每步 commit（`vision wave-rl-p2cpu:` 前缀）+ push。
 >
 > **完成标记**：P0–P3 全交付后把本行标题改成 `✅ 已交付`；任一未交付 ⇒ `WAITING: 0`。
+
+---
+
+### ✅ §用户令·2026-11-06 21:3x（GRPO 为何空转：先做 advantage 方差诊断，**不训练**）· 用户直令 · 最高优先 · ✅ 已交付
+
+> **用户令**：「好的 选A 听你的」——即选「advantage 方差诊断」方案。
+>
+> **不要重复劳动**：11-06 18:5x 令已 ✅交付（post-GRPO 6.2% < post-SFT 9.2%，open_ended 19.4%→11.7% 回退、numerical 5.5%→5.0% 持平，P1 50 步 loss≈0）。**假设待验**：在 9.2% 的基座上 group_size=4 时，绝大多数 prompt 的 4 条 rollout 奖励相同（全 0）⇒ 组内归一化 advantage=0 ⇒ 梯度为 0。**本令只做诊断，不训练。**
+>
+> **执行（一次性 · CPU · 总时长 ≤40 min）**：
+> 1. 新建 `vision/wave_rl/diag_advantage_variance.py`：加载 **post-SFT step3000** ckpt（`/nas_train/app.e0031982/datasets/baize-vision/out/wave_sft_stage1w/step3000`）+ `qwen3vl_2b_text_extracted`，对 **200 个 prompt**（取自 `sft_pilot_balanced.jsonl` / `waveqa_oracle_300.json`，固定 seed）各跑 **group_size=4** rollout，**完全复用** `grpo_train_wave.py` 的 rollout 与奖励函数（temperature 0.8 / max_turns 8 / max_new_tokens 48），**不得改写奖励口径**。
+> 2. 每个 prompt 记：`reward[4]`、`std`、`mean`、`submit 成功数`、**题型标签**；落盘 `waveqa_advantage_diag_200.jsonl` + 汇总 JSON。
+> 3. **统计口径（必须分开报）**：① 组内 std=0 的占比；② 其中「全 0 组」vs「全 1 组」各占多少（**意义完全不同**：全 1=已会做、全 0=学不到信号）；③ 按题型（numerical / open_ended / multiple_choice）分组的 std 分布与 mean；④ 有正样本但未采纳（0<mean<1）的组比例。
+> 4. **决策（预注册，不许临时改口径）**：
+>    - **std=0 组 ≥80% 且「全 0 组」占多数** ⇒ 判 **NO-SIGNAL**：先提基座成功率，给 3 条可选项（更多 SFT 步 / 更大 LoRA lr / 扩 SFT 数据）并各标预估成本。
+>    - **std>0 组 ≥30%** ⇒ 判 **PARAM-ISSUE**：是 lr/步数不足，给 GPU 版建议配置（lr 1e-5、500 步、group_size 8、bf16）。
+>    - 中间地带 ⇒ 判 **PARTIAL**：给出「group_size 加到 8」的验证方案。
+> 5. **交付物**：`reports/report_vision_wave_rl_advantage_diag_zh.html`（中文单文件、无外链无 script，含分组统计表 + std 分布图（内联 SVG 或表格）+ 明确判定与下一步建议）+ `diag_advantage_variance.py` + JSONL/汇总 JSON + `EXPERIMENTS_VISION.md §21.1`。
+>
+> **护栏**：🚫 **本令禁止启动任何训练/GRPO/评测重跑**（不占 GPU、不改 ckpt、不写 ckpt）；🚫 不碰 pretrain（`.29`/`.12` 满载）；CPU `OMP_NUM_THREADS≤16` + `nice -n 19`；GPU-wait chain PID1365749 **不动**；🚫 不伪造数字（若 200 题跑不完，缩到 100 并如实标注）；每步 commit（`vision wave-rl-diag:` 前缀）+ push。
+>
+> **完成标记**：交付后本行标题改 `✅ 已交付`；未交付 ⇒ `WAITING: 0`。
+>
+> **✅ 交付摘要（wake #838 · 2026-11-06 23:4x）**：诊断脚本 `diag_advantage_variance.py`（CPU-only，复用 `rollout_episode`+`WaveformGymEnv` 奖励，不改口径）跑 94 prompt×4 rollout（受 40min 时限，未达 100 已如实标注，结论不受影响）。**判定 PARTIAL**：std=0 组 78.7%（<80% NO-SIGNAL 门槛）、std>0 组 21.3%（<30% PARAM-ISSUE 门槛）、全 0 组 0%（失败得 −0.5 非 0）。**关键发现**：假设"全 0 组"在本离散分档奖励下不成立——真正无信号机制是"全同档"（74 组 4 条 rollout 落同一奖励档⇒advantage=0）。按测量目标差异化：rise_time 100% std=0 全错（能力缺口，需补 SFT）、period 31.8% std=0（GRPO 信号最足，68% 有方差）、amplitude 87.5% 近饱和、duty_cycle 90.9% 近 NO-SIGNAL。建议：①group_size 4→8 验证 ②按目标差异化（rise_time/duty_cycle 补 SFT、period 即可上 GRPO）③奖励连续化（需用户批）。交付物：报告 HTML 14643B/10节 + JSONL + 汇总 JSON + EXPERIMENTS §21.1。零 GPU/未训练/未碰 pretrain/GPU-wait chain 未动。
