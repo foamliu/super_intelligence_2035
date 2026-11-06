@@ -1,24 +1,25 @@
 # AGENTS.md — BaiZe 自动化 agent / loop 状态总表
 
-> **用途**：`run/` 下有多个 `*_loop.sh` 与多个 `MEMORY*.md`，但**真正活跃的 agent 只有 3 个**。
+> **用途**：`run/` 下有多个 `*_loop.sh` 与多个 `MEMORY*.md`，但**真正活跃的 agent 只有 5 个**。
 > 本文件是**唯一权威**的"谁在跑"清单，避免数错。
 >
-> 最后更新：2026-10-01
+> 最后更新：2026-11-06
 
 ---
 
-## 1. 活跃 agent（**4 个**）
+## 1. 活跃 agent（**5 个**）
 
-| Agent | loop 脚本 | 任务书 | 状态文件 | 日志目录 | 跑什么 | 状态 |
-|:---|:---|:---|:---|:---|:---|:---|
-| **vision** | `baize_vision_loop.sh` | `BAIZE_VISION_TASK.md` | `MEMORY_VISION.md` | `daily-memories-vision/` | 视觉编码器 R2~R8（已收敛，待运维处置）+ **R9**（训练在 `10.239.2.12`） | ⏹ 收敛/待派 |
-| **pretrain** | `baize_pretrain_loop.sh` | `BAIZE_PRETRAIN_2B_TASK.md` | `MEMORY_PRETRAIN_2B.md` | `daily-memories/` | 预训练 R2 P-1~P-8（训练在 `10.239.2.29`） | ✅ 运行中 |
-| **data** | `baize_data_loop.sh` | `BAIZE_DATA_TASK.md` | `MEMORY_DATA.md` | `daily-memories-data/` | 数据准备 phase0~phase6 + R2/R3 调研 | ✅ 运行中 |
-| **harness** 🆕 | `baize_harness_loop.sh` | `BAIZE_HARNESS_TASK.md` | `MEMORY_HARNESS.md` | `daily-memories-harness/` | **H-A** SWE-bench 横评 · **H-B** harness 源码分析（从 cline 起） | ⬜ 待 ops 启动 |
+| Agent | 机器 | loop 脚本 | 任务书 | 状态文件 | 日志目录 | 跑什么 | 状态 |
+|:---|:--|:---|:---|:---|:---|:---|:---|
+| **pretrain** | `10.239.2.29` | `baize_pretrain_loop.sh` | `BAIZE_PRETRAIN_2B_TASK.md` | `MEMORY_PRETRAIN_2B.md` | `daily-memories/` | 预训练 R2 P-1~P-8（训练在 `.29`） | ✅ 运行中 |
+| **harness** | `10.239.2.29` | `baize_harness_loop.sh` | `BAIZE_HARNESS_TASK.md` | `MEMORY_HARNESS.md` | `daily-memories-harness/` | **H-A** SWE-bench 横评 · **H-B** harness 源码分析（从 cline 起） | ⬜ 待 ops 启动 |
+| **vision** | `10.239.2.12` | `baize_vision_loop.sh` | `BAIZE_VISION_TASK.md` | `MEMORY_VISION.md` | `daily-memories-vision/` | 视觉编码器 R2~R8（已收敛，待运维处置）+ **R9**（训练在 `.12`） | ⏹ 收敛/待派 |
+| **data** | `10.239.2.12` | `baize_data_loop.sh` | `BAIZE_DATA_TASK.md` | `MEMORY_DATA.md` | `daily-memories-data/` | 数据准备 phase0~phase6 + R2/R3 调研 | ✅ 运行中 |
+| **posttrain** 🆕 | `10.252.32.17` | `baize_posttrain_loop.sh` | `BAIZE_POSTTRAIN_TASK.md` | `MEMORY_POSTTRAIN.md` | `daily-memories-posttrain/` | Stage(ii) 领域退火/SFT/RLVR-GRPO + EDA-Eval 评测；**当前零 GPU 预研**（P0 诊断 D1–D6 / P1 数据盘点 / P2 方案书 / P3 脚本骨架），正式训练等 pretrain ckpt（ETA≈2026-12-25） | ⬜ 待 ops 启动 |
 
-> 🆕 **harness 线（2026-10-02 新建）**：与三条 BaiZe 训练线**互不干扰** ——
-> 它**不占 GPU**（源码分析 + SWE-bench 评测），但**可能吃 CPU/磁盘/Docker**，
-> **重 I/O 仍要避让** `10.239.2.12` / `10.239.2.29` 上的训练。
+> 🆕 **posttrain 线（2026-11-06 新建）**：与其它线**互不干扰** ——
+> 当前阶段**不占 GPU**（诊断/盘点/方案/脚本骨架全是 CPU/IO），正式训练待 pretrain 收敛 ckpt。
+> 重 I/O 仍要避让 `10.239.2.29` 上的 pretrain 训练。
 
 ## 2. 已收敛（**2 个，不应再跑**）
 
@@ -28,7 +29,7 @@
 | 2B 架构搜索 | `baize_2b_search_loop.sh` | `BAIZE_2B_ARCH_SEARCH_TASK.md` | `MEMORY_2B.md` | `PHASE=converged` |
 
 > ⚠️ 这两个 loop 的脚本**是 `while true`**，任务收敛后若没 kill 干净会**一直空转烧 token**。
-> 到机器上先确认：`pgrep -af 'baize_.*_loop.sh'` —— 预期只应看到 vision / pretrain / data 三个。
+> 到机器上先确认：`pgrep -af 'baize_.*_loop.sh'` —— 预期只应看到 vision / pretrain / data / harness / posttrain 五个。
 > 若还有旧的两个：`pkill -f baize_search_loop.sh` 和 `pkill -f baize_2b_search_loop.sh`。
 
 ## 3. 已知的脚本级缺陷（**重启 loop 时顺手修**）
@@ -96,8 +97,9 @@ ps -eo pid=,ppid=,etimes=,args= | grep 'ops_relay\.sh' | grep -v grep
 ### (2) `ops/inbox.md` 中继**只执行<u>第一个</u> ```bash 块** —— 见 `ops/inbox.md` 顶部
 下发新命令**必须**把块放到最前面，并把旧块降级为 ```text，否则新命令**永远不会执行**（已踩过一次）。
 
-## 4. 共享资源（**四个 agent 共用**，务必注意）
+## 4. 共享资源（**五个 agent 共用**，务必注意）
 
+> 机器分布见 §1 表「机器」列与 §5「全项目机器分布总表」。`.29`/`.12`/`.17` 跑的是**同一块 NFS 上的同一份工作副本**；`.15`（ZhuLong）独立。
 
 - **共享工作副本**：同一个 NFS 路径 `/nas_train/app.e0031982/code/super_intelligence_2035`
   - **只需一个 agent `git pull`，其余立刻看到**——不要重复 pull
@@ -109,7 +111,21 @@ ps -eo pid=,ppid=,etimes=,args= | grep 'ops_relay\.sh' | grep -v grep
 
 ## 5. 相关但不属于本目录的 agent
 
-- **ZhuLong（DAC 2027）**：`doc/ZhuLong_DAC2027/run/` 下有自己的 loop 与 MEMORY（另一套代码库 `eda_fastmcp`），与本目录无关。
+> 以下属 ZhuLong（DAC 2027）项目，在 `doc/ZhuLong_DAC2027/run/` 下有各自的 loop 与 MEMORY（另一套代码库 `eda_fastmcp`），与 BaiZe 本目录无关。登记于此仅为机器分布对账。
+
+| Agent | 机器 | 项目 |
+|:---|:--|:--|
+| **zhulong** | `10.251.36.15` | ZhuLong DAC 2027 |
+| **designflow** | `10.251.36.15` | ZhuLong DAC 2027（designflow shard） |
+
+### 全项目机器分布总表（BaiZe + ZhuLong）
+
+| 机器 | 上跑的 agent | 备注 |
+|:--|:--|:--|
+| `10.239.2.29` | pretrain · harness | 8×H100；pretrain 占 GPU，harness 不占 GPU |
+| `10.239.2.12` | vision · data | 8×H100；vision 占 GPU，data 多为 CPU/IO |
+| `10.252.32.17` | posttrain | 8×A40（本机）；**2026-11-09（周一）起分配 4 张给 post-train**，当前零 GPU 预研 |
+| `10.251.36.15` | zhulong · designflow | ZhuLong 项目（独立于 BaiZe） |
 
 ## 6. 📉 记忆体量维护（**2026-10-03 运维新增**）
 
