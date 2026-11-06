@@ -328,3 +328,10 @@ vbxlf.messages.json	jason17w	hfeg0pnd002	262	spice_sim	parked		2026-11-05 12:30	
 1792135265303_29j5h					parked		2026-11-07 06:56	trivial bsub execution: user='run this command' bsub python3.7 test.py, not spice design intent (scout 1107 0642)
 1792135333389_bquh9					parked		2026-11-07 06:56	trivial bsub execution: user='bsub -Is -XF -q os8_queue code run this command', not spice design intent (scout 1107 0642)
 1792725321883_z8zli					parked		2026-11-07 06:56	env consulting: anasimpro-gui-start + vscode lib error setup, adaml known consulting user, not spice (scout 1107 0642)
+1793927469652_3l3yx					parked		2026-11-07 07:16	consulting/analysis: sim time diff diagnosis (si.out A vs B, 'reason what'), not generative A-faithful; ynbai hfhds201 39msgs scout 1107 0704
+1793957796515_nwl1p					parked		2026-11-07 07:16	trivial: USER0='hi' 4msgs e0023936 hfhds201 scout 1107 0704
+1793957771319_oau5r					parked		2026-11-07 07:16	trivial: USER0='hi' 2msgs e0023936 hfhds201 scout 1107 0704
+1793881193422_vzoyp					parked		2026-11-07 07:16	not spice design: USER0='fqueue3_dscqa queue machine count' LSF queue query, tongfanl hfhds201 scout 1107 0704
+1793953398904_e5my5					parked		2026-11-07 07:16	wrong shard: USER0=mac4 RTL + logic synthesis (digital, shard A), t0002965 hfhds201 scout 1107 0704
+1793946881286_z34dy					parked		2026-11-07 07:16	trivial: USER0='hello' 218msgs t0002965 hfhds201 scout 1107 0704
+1793929260637_1dk7h					parked		2026-11-07 07:16	trivial: USER0='ni' 2msgs e0023936 hfhds201 scout 1107 0704
