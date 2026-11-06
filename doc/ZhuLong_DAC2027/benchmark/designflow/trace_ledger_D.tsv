@@ -1086,3 +1086,4 @@ wl9i4					parked		2026-11-05 22:49	交互shell驱动+Q&A n752大
 1793093179379_4ne3u.messages.json	e0023936	10.129.32.75	44	waveform	case	EDA-Eval-DesignFlow-FmInstFreq-001	2026-11-06 17:56	
 1790596559451_9p8g2	clwang	10.129.2.14	31	schematic_netlist	case	EDA-Eval-DesignFlow-ToggleCounterBindGen-001	2026-11-06 18:38	
 1789630642152_8b8wk	ghyang	10.129.2.12	69	schematic_netlist	case	EDA-Eval-DesignFlow-MeasStmtExtract-001	2026-11-06 19:50	
+1792735101347_oe94r	jiebings	10.129.2.10	84	schematic_netlist	case	EDA-Eval-DesignFlow-SpfDiffCompare-001	2026-11-06 20:24	
