@@ -2,7 +2,9 @@
 
 WAITING: 0
 
-> 🆕 **【wake #793 · 2026-11-06 15:27】📊监控巡检·训练健康+包装器正确等待中。CPU SFT step1900/3000 loss0.33 ETA~52min(~16:19)。**训练PID2882778 alive(etimes5395s≈90min,ppid=1),step1900/3000,loss0.28-0.34(平台,正常收敛),0.35step/s,ETA52.2min。step1000 ckpt已存(279MB LoRA adapter),step2000 ckpt预计~15:32出现,step3000+eval_results.json预计~16:19。post-SFT eval包装器PID4104838 alive(ppid=1,etimes948s,30s轮询,waited960s)正确等待——日志`[15:27:15] training still running (waited 960s)`确认健康。eval_results.json尚不存在(训练未到step3000)。GPU全占(8×H100 100%util/~75GB,pretrain ETA≈12/24)。GRPO chain未运行(killed,待eval pass后由包装器setsid重启,自带安全GPU-wait)。📦体积:TASK=29.7KB/MEMORY=12.2KB(均≤32KB✓,本轮0归档)。**未完成指令:有**(阶段1 SFT训练进行中+eval待包装器自动触发)⇒**WAITING: 0**。
+> 🆕 **【wake #794 · 2026-11-06 15:33】📊监控巡检·训练健康·step2000 ckpt已存·ETA~47min。**训练PID2882778 alive(etimes5752s≈96min,ppid=1),step2000/3000,loss0.26-0.34(平台,正常收敛),0.35step/s,ETA47.5min(~16:20)。step2000 ckpt已存(Saved checkpoint to .../step2000/)。**in-training eval@step2000: format=100% submit=0% — 已知bug**(运行中进程在wake#790修fix前加载了旧eval代码→只查第1个assistant turn;gating eval=包装器step3000后跑的独立修复版eval_sft_wave.py,非此in-training eval)。post-SFT eval包装器PID4104838 alive(ppid=1,etimes1327s,30s轮询,waited1320s)正确等待——日志`[15:33:15] training still running (waited 1320s)`确认健康。eval_results.json尚不存在(训练未到step3000)。GPU全占(8×H100 100%util/~75GB,pretrain ETA≈12/24),CPU SFT无GPU冲突。GRPO chain未运行(killed,待eval pass后由包装器setsid重启,自带安全GPU-wait)。📦体积:TASK=29.7KB/MEMORY=11.8KB(均≤32KB✓,本轮0归档)。**未完成指令:有**(阶段1 SFT训练进行中+eval待包装器自动触发)⇒**WAITING: 0**。
+
+> 📦 wake #793（监控巡检·2026-11-06 15:27）已归档 → daily-memories-vision/2026-11-06.md；**结论**：CPU SFT step1900/3000 loss0.33 ETA~52min·post-SFT eval包装器正确等待(waited960s)·训练健康·WAITING=0。需要时再读。
 
 > 📦 wake #792（监控巡检·2026-11-06 15:19）已归档 → daily-memories-vision/2026-11-06.md；**结论**：CPU SFT step1725/3000 loss0.27 ETA~60min·post-SFT eval包装器正确等待(waited480s)·训练健康·WAITING=0。需要时再读。
 
