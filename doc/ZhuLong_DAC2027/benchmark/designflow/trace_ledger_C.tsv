@@ -314,3 +314,5 @@
 1790078216880_4g0i9.messages.json	lizwen	hfeg0pkn003	241	physical_verify	case	EDA-Eval-DesignFlow-DrcPatternPlan-001	2026-11-06 23:24	
 1788353323015_rjizk	e0014566	hfeg0pkn005	339	layout_virtuoso	case	EDA-Eval-DesignFlow-RtextChkPlan-001	2026-11-06 23:49	
 1793786422300_ki14d	aristaw	hfeg0plg37	274	layout_aether	case	EDA-Eval-DesignFlow-FpaDensityCheck-001	2026-11-07 00:16	
+1793600748187_dq8bz	adaml	hfeg0pkn002	621	physical_verify	parked		2026-11-07 00:34	no accepted gold product; CDL-export debugging session ended unresolved (Nogui framework partial)
+1793233072993_vmvz6	ellawu	hfeg0pkn005	285	physical_verify	case	EDA-Eval-DesignFlow-ImplantFillDeckGen-001	2026-11-07 00:44	
