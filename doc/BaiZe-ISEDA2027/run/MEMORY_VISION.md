@@ -2,7 +2,9 @@
 
 WAITING: 0
 
-> 🆕 **【wake #753 · 2026-11-06 10:29】监控巡检+体积滚动归档·状态无变化·双poller健康·GPU满载·仅待GPU。SFT poller PID2757742(etimes≈53000s≈14.7h)alive轮询busy_util waiting✓(poll log 887行,latest [10:29:59]busy_util--waiting)；GRPO chain PID2466702(etimes≈8500s≈2.4h)alive等待SFT eval_results.json✓(latest [10:29:22]waited 8520s/7776000)；pretrain S1 PID2612442(etimes≈312000s≈3.6d) iter~102k/700000 ETA≈12/24-25；GPU .12(local,hostname=whag0pgpuap12) 8×96-100%/~75GB(pretrain S1 2-node + app.t0002965 sglang推理服务并存) + .29 8×100%(pretrain S1) 双机全占。vision loop PID669545 alive✓；cline in PATH✓。git pull后0ahead/0behind已同步（未碰他线在途文件）。📦体积：TASK=30453B(29.7KB)/MEMORY≈8KB(本轮滚动归档wake#275~#729约108条旧指针+旧状态表→daily-memories-vision/)(均≤32KB✓)。**未完成指令：有**（阶段1 GPU训练pending,阻塞方=pretrain S1 ETA≈12/24-25·不可加速不杀健康训练）⇒**WAITING: 0**。
+> 🆕 **【wake #754 · 2026-11-06 10:41】监控巡检·状态无变化·双poller健康·GPU满载·仅待GPU。SFT poller PID2757742(etimes≈53628s≈14.9h)alive轮询busy_util waiting✓(poll log 898行,latest [10:42:02]busy_util--waiting)；GRPO chain PID2466702(etimes≈9229s≈2.6h)alive等待SFT eval_results.json✓(latest [10:41:22]waited 9240s/7776000)；eval_results.json尚未出现(SFT未启动)；GPU .12 8×100%/~75GB(pretrain S1 双节点)满载。vision loop PID669545 alive✓；cline in PATH✓。git pull后up-to-date已同步（未碰他线在途文件）。📦体积：TASK=30453B(29.7KB)/MEMORY≈7.8KB(均≤32KB✓)。**未完成指令：有**（阶段1 GPU训练pending,阻塞方=pretrain S1 ETA≈12/24-25·不可加速不杀健康训练）⇒**WAITING: 0**。
+
+> 📦 wake #753（监控巡检+体积滚动归档·2026-11-06 10:29）已归档 → daily-memories-vision/2026-11-06.md；**结论**：状态无变化，双poller健康，GPU满载仅待GPU，MEMORY滚动归档至7.8KB。需要时再读。
 
 > 📦 wake #751（监控巡检·2026-11-06 10:13）已归档 → daily-memories-vision/2026-11-06.md；**结论**：状态无变化，双poller健康，GPU满载仅待GPU。需要时再读。
 
@@ -56,4 +58,4 @@ WAITING: 0
 | 当前动作 | **双**poller后台运行等GPU空闲：SFT poller(PID 2757742, flock, etimes≈53000s≈14.7h, 扠60s `busy_util -- waiting`) + GRPO chain(PID 2466702, flock, etimes≈8500s≈2.4h, SFT_WAIT_MAX=90天, 扠120s `SFT not done yet`)·仅待GPU释放 |
 | 下一步 | 阶段1 SFT训练（~4 GPU·h，GPU空闲后SFT poller自动启动，3000 steps≈2.66 epoch）→ eval_results.json → GRPO chain自动验收 → 阶段2 GRPO（~12 GPU·h）+ WaveQA-RL评测 |
 | 阻塞 | .12+.29 GPU全占（16×H100 96-100% util / ~75GB，pretrain mamba2 baize2b PID 2612442 iter~102k/700k(14.6%) 速率~7.0s/iter ETA≈12/24-25）· .75 SSH不可达（需运维协调MCP通道） |
-| 更新 | **2026-11-06 10:29 (wake #753)**: 监控巡检+体积滚动归档·状态无变化·双poller健康·GPU .12 8×96-100% pretrain iter~102k/700k ETA≈12/24-25·git同步·WAITING=0 |
+| 更新 | **2026-11-06 10:41 (wake #754)**: 监控巡检·状态无变化·双poller健康·GPU .12 8×100% pretrain iter~102k/700k ETA≈12/24-25·git同步·WAITING=0 |
