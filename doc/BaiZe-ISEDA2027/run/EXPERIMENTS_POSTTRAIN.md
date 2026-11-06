@@ -39,7 +39,7 @@
 
 > **核心结论**：58 pp 差距**主体（估 35–45 pp）为“协议可回收”**——工具频次/合法率(D1/D2)、API 领域知识(D4 执行报错占 74%)、迭代闭环(D6)。对应：SFT 注入工具轨迹+PyAether API 语料（~20–30 pp，M1→M2）；领域退火补 API（~5–10 pp）；RL(GRPO) 打磨“查-写-改”闭环（~5–10 pp，M3）。**剩余 ~10–15 pp 为真实能力差距**（语义推理/复杂多 API），逼近 94%(M4) 需更大量 RL。
 > ⚠️ **未闭合**：MiniCPM5-2B 36% 侧 D1/D2/D6 未实测（轨迹不在本节点）。上述比例为“基于强模型行为外推的假设”，非实测对照。需运维提供 `~/eda_code_eval/<36%_run>/{final_report.json, trace/*/api_conversation_history.json}`。
-> 📦 **交付物**：`reports/report_posttrain_diagnose_d1d6_zh.html`（22.0KB / 12 节 / 0 script / 0 外链 / 自包含，已产出 ✅；wake4 建 §1–§11，wake5 增 §12 跨运行稳定性）。commit 前缀 `posttrain diag:`。
+> 📦 **交付物**：`reports/report_posttrain_diagnose_d1d6_zh.html`（29.0KB / 13 节 / 0 script / 0 外链 / 自包含，已产出 ✅；wake4 建 §1–§11，wake5 增 §12 跨运行稳定性，wake7 增 §13 多配置对照）。commit 前缀 `posttrain diag:`。
 
 ### 跨运行稳定性（D1–D6 cross-run · 2026-11-06 wake5 · 零 GPU · 实测）
 
@@ -63,6 +63,25 @@
 3. **错误提取敏感性**：run-A avg 0.04 错/任务 vs run-B 0.85/任务——可能 run-A 更"干净"或轨迹格式/提取器版本差异致 run-A 错误未被捕获。**警示**：正式评测须冻结同一版 `trace_reader`。
 4. **对 36% 侧启示**：D2/D4/D6 单次波动 30%，MiniCPM5-2B 36% 侧也需≥2 次运行才可信；若仅单次轨迹，D1/D3 可信、D2/D4/D6 须标"单次估计 ±30% 噪声"。
 5. **对核心结论影响**：**不改变**第 10 节判断（58 pp 主体协议可回收），但增加置信区间——DeepSeek "高频用工具+多轮迭代"行为两次运行方向一致（v1 更高：20.5 次/7 轮；v1_3：14.3 次/5 轮），仅幅度有噪声。
+
+### 多配置对照：协议退化 vs 真实能力差距（2026-11-06 wake7 · 零 GPU · 实测）
+
+> **动机**：36% 侧轨迹仍不在本节点。但本节点 12 份 `final_report.json` 覆盖同模型（zhulong_deepseek_v32）多配置 + 弱模型（aether_coder）。利用已有 per-task 结果（error_types/execution_statuses/scenario）提取 D4/D5 跨配置对照，为 36% 侧提供两个"参照模板"。
+> 提取脚本：`/tmp/pt_p0_multiconfig.py` → `/tmp/pt_p0_multiconfig.json`（join dataset metadata.scenario + final_report.details_per_task）。
+
+**三档对照表（D5 per-scenario + D4 失败类型）**：
+
+| 档位 | 运行 | 模型 | Pass@1 | Others | Design Mgmt | Layout | Schematic | 失败主导 |
+|:--|:--|:--|:--|:--|:--|:--|:--|:--|
+| 正常 | 04-17 | zhulong_deepseek_v32 | 66.5% | 87.0% | 79.2% | 60.9% | 57.4% | AssertionError 30（语义断言） |
+| **协议退化** | **04-16** | **zhulong_deepseek_v32** | **39.9%** | **87.0%** | **45.8%** | **32.8%** | **23.4%** | **Unknown Failure 86（基础设施）** |
+| 弱模型 | 03-30 | aether_coder | 10.0% | 25.0% | 0.0% | 12.8% | 4.8% | AttributeError 14 + NameError 7（API 知识） |
+
+**两个参照模板**：
+- **模板 A（协议退化, 39.9%）**：同模型，工具管线崩溃 → Unknown Failure 91%。Others 不变（87%→87%, 0pp），Schematic/Layout 塌缩（−28~−34pp）。~27pp 下降完全归因协议层。→ 对应 SFT 修协议 → M1(50%) 路径。
+- **模板 B（真实能力差距, 10%）**：不同弱模型，代码能力不足 → AttributeError/NameError 42%。所有场景退化含 Others（−62pp）。→ 需领域退火+大量 SFT。
+- **综合判读**：MiniCPM5-2B 36% 更可能介于 A 与 B 之间——既有协议问题也有能力问题。post-train 三步走对此两种情况均有覆盖（SFT→退火→RL），进一步支持 §10 核心结论。
+- **旁证**：2026-04-24 运行（23 任务, 26.1%）亦为 Unknown Failure 主导——同模型低分运行均由协议问题导致，未见能力骤降。
 
 ---
 

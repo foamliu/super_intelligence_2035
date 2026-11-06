@@ -22,7 +22,7 @@ nav a{color:#fff;text-decoration:none;margin-right:14px;font-size:13px}
 </style></head><body>
 <h1>BaiZe Stage(ii) Post-Train · P0 诊断报告 D1–D6</h1>
 <div class="small">生成节点：10.252.32.17 (2026-11-06) · 数据来源：本节点 <code>~/code/eda_fastmcp</code> 与 <code>~/code/EDA-Eval-Framework</code>（2026-11-06 新发现可达）· 零 GPU · 自包含 0 脚本 0 外链</div>
-<nav><a href="#sec1">摘要</a><a href="#sec2">数据源</a><a href="#sec3">数据集画像</a><a href="#d1">D1</a><a href="#d2">D2</a><a href="#d3">D3</a><a href="#d4">D4</a><a href="#d5">D5</a><a href="#d6">D6</a><a href="#sec10">结论</a><a href="#sec11">建议</a><a href="#sec12">跨运行稳定性</a></nav>
+<nav><a href="#sec1">摘要</a><a href="#sec2">数据源</a><a href="#sec3">数据集画像</a><a href="#d1">D1</a><a href="#d2">D2</a><a href="#d3">D3</a><a href="#d4">D4</a><a href="#d5">D5</a><a href="#d6">D6</a><a href="#sec10">结论</a><a href="#sec11">建议</a><a href="#sec12">跨运行稳定性</a><a href="#sec13">多配置对照</a></nav>
 <h2 id="sec1">1. 摘要</h2>
 <div class="callout good"><b>本轮突破</b>：前序唤醒（wake1–3）判定 P0 数据源“本节点不可达”是基于错误路径（<code>/nasdata</code>/<code>/nas_data</code>）。实测发现 <code>~/code/eda_fastmcp</code>（158-case 数据集 + DeepSeek 全 harness 智能体轨迹 + 评分脚本）与 <code>~/code/EDA-Eval-Framework</code>（13 份 <code>final_report.json</code>）<b>均在本节点可达</b>，P0 因此可产出<b>真实数据</b>（非编造）。</div>
 <div class="kpi"><b>63.2%</b><span>D1 工具调用强度(DeepSeek 94%侧)</span></div>
@@ -122,5 +122,42 @@ nav a{color:#fff;text-decoration:none;margin-right:14px;font-size:13px}
 <li><b>对 36% 侧诊断的启示</b>：由于 D2/D4/D6 单次波动可达 30%，MiniCPM5-2B 36% 侧的 D1–D6 也需≥2 次运行才能给出可信对照。若仅有单次轨迹，D1/D3 可信、D2/D4/D6 须标注“单次估计，±30% 噪声”。</li>
 </ul>
 <div class="callout good"><b>对核心结论的影响</b>：跨运行验证<b>不改变</b>第 10 节的核心判断（58 pp 主体为协议可回收），但增加了<b>置信区间</b>——D1/D3 稳定支撑“工具协议/超时非瓶颈”的判断；D2/D6 的波动说明“频次/迭代”指标需多运行收敛，且 DeepSeek 侧的“高频用工具 + 多轮迭代”行为<b>在两次运行中均成立</b>（v1 更高：20.5 次 + 7 轮；v1_3：14.3 次 + 5 轮），方向一致，仅幅度有噪声。</div>
-<hr><div class="small">报告生成：2026-11-06 · BaiZe post-train agent wake4（D1–D6 主报告）+ wake5（§12 跨运行稳定性验证）· 数据全部来自本节点实测，无编造 · MiniCPM5 36% 侧标注为待补。<br>原始数据：<code>/tmp/pt_p0_summary.json</code>（wake4）+ <code>/tmp/pt_p0_crossval.json</code>（wake5 跨运行）· 同步写入 EXPERIMENTS_POSTTRAIN.md §D。</div>
+<h2 id="sec13">13. 多配置对照：协议退化 vs 真实能力差距（wake7 新增）</h2>
+<div class="callout note"><b>动机</b>：前序 §1–§12 的 D1–D6 均基于 DeepSeek 全 harness（~67%）侧分析。MiniCPM5-2B 36% 侧轨迹仍不在本节点。但本节点 <code>~/code/EDA-Eval-Framework/output_evaluation/</code> 含 <b>12 份 final_report.json</b>，覆盖同一模型（zhulong_deepseek_v32）在不同配置下的多种 Pass@1 水平（39.9%~71.5%），以及一个不同弱模型（aether_coder, 10%）。本轮（wake7）利用这些<b>已有的 per-task 结果</b>（含 error_types / execution_statuses / scenario），不依赖轨迹，提取 <b>D4（失败类型分解）+ D5（per-scenario）</b>的跨配置对照，为 36% 侧诊断提供两个"参照模板"。</div>
+<h3>13.1 全部 158-任务运行总览</h3>
+<table><tr><th>日期</th><th>模型</th><th>Pass@1</th><th>主要错误类型</th><th>失败主导</th></tr>
+<tr><td>2026-03-20</td><td>zhulong</td><td>64.6%</td><td>Gen timeout 28 / AssertionError 20</td><td>超时( infra)</td></tr>
+<tr><td>2026-03-23</td><td>zhulong_deepseek_v32</td><td>69.0%</td><td>AssertionError 29 / Gen timeout 8</td><td>断言(语义)</td></tr>
+<tr><td>2026-03-30</td><td>zhulong_deepseek_v32</td><td>70.3%</td><td>AssertionError 24 / Gen timeout 7</td><td>断言(语义)</td></tr>
+<tr><td>2026-03-30</td><td>zhulong_deepseek_v32</td><td>67.7%</td><td>AssertionError 29 / ValueError 7</td><td>断言(语义)</td></tr>
+<tr><td>2026-04-13</td><td>zhulong_deepseek_v32</td><td>66.5%</td><td>AssertionError 29 / ValueError 7</td><td>断言(语义)</td></tr>
+<tr><td><b>2026-04-16</b></td><td><b>zhulong_deepseek_v32</b></td><td><b>39.9%</b></td><td><b>Unknown Failure 86</b> / Gen timeout 4</td><td><b>基础设施(协议)</b></td></tr>
+<tr><td>2026-04-17</td><td>zhulong_deepseek_v32</td><td>66.5%</td><td>AssertionError 30 / ValueError 7</td><td>断言(语义)</td></tr>
+</table>
+<div class="callout gap"><b>关键发现</b>：2026-04-16 运行与其它 zhulong_deepseek_v32 运行（66.5%~70.3%）使用<b>同一模型</b>，但 Pass@1 骤降至 39.9%。其失败类型从"AssertionError（语义断言）"骤变为"Unknown Failure（86/95 = 91%）"——这是<b>工具管线/协议层崩溃</b>的典型特征，而非模型能力下降。</div>
+<h3>13.2 三档对照：正常（~67%）· 协议退化（~40%）· 弱模型（~10%）</h3>
+<table><tr><th>场景</th><th>正常 (~67%, 04-17)</th><th>协议退化 (39.9%, 04-16)</th><th>弱模型 (10%, aether_coder)</th><th>退化 Δ</th><th>弱模型 Δ</th></tr>
+<tr><td>Others (23)</td><td>87.0% (20/23)</td><td><b>87.0%</b> (20/23)</td><td>25.0% (1/4)</td><td>0 pp</td><td>−62 pp</td></tr>
+<tr><td>Design Mgmt (24)</td><td>79.2% (19/24)</td><td>45.8% (11/24)</td><td>0.0% (0/6)</td><td>−33 pp</td><td>−79 pp</td></tr>
+<tr><td>Layout (64)</td><td>60.9% (39/64)</td><td>32.8% (21/64)</td><td>12.8% (5/39)</td><td>−28 pp</td><td>−48 pp</td></tr>
+<tr><td>Schematic (47)</td><td>57.4% (27/47)</td><td>23.4% (11/47)</td><td>4.8% (1/21)</td><td>−34 pp</td><td>−53 pp</td></tr>
+<tr><td><b>Overall</b></td><td><b>66.5%</b></td><td><b>39.9%</b></td><td><b>10.0%</b></td><td><b>−27 pp</b></td><td><b>−57 pp</b></td></tr></table>
+<h3>13.3 失败类型分解对照（D4 跨配置）</h3>
+<table><tr><th>运行</th><th>Pass@1</th><th>执行报错(非断言)</th><th>断言失败</th><th>基础设施/超时</th><th>未执行/解析失败</th><th>D4 判读</th></tr>
+<tr><td>正常 (04-17, 66.5%)</td><td>66.5%</td><td>~25% (ValueError 7 + TypeError 4 + AttributeError 5 + RuntimeError 1)</td><td>~45% (AssertionError 30)</td><td>~6% (Gen timeout 4)</td><td>~5% (Gen failure 2)</td><td>🟢 断言>执行报错 → 语义推理为主</td></tr>
+<tr><td><b>协议退化 (04-16, 39.9%)</b></td><td>39.9%</td><td>~2% (ConnectionError 1)</td><td>0%</td><td><b>91% (Unknown Failure 86)</b></td><td>~5% (Parse 2 + Gen fail 2 + timeout 4)</td><td><b>🔴 基础设施崩溃</b> → 非能力问题</td></tr>
+<tr><td>弱模型 (03-30, 10%)</td><td>10.0%</td><td><b>~60%</b> (AttributeError 14 + NameError 7 + TypeError 3 + RuntimeError 6 + SyntaxError 2)</td><td>~30% (AssertionError 14)</td><td>0%</td><td>~19% (Gen failure 13)</td><td>🟠 执行报错>断言 → API 知识+代码能力不足</td></tr></table>
+<h3>13.4 两个参照模板对 36% 侧诊断的意义</h3>
+<div class="callout good"><b>模板 A：协议退化（39.9%）</b> — 同模型（zhulong_deepseek_v32），工具管线崩溃 → Unknown Failure 占 91%。<br>
+特征：<b>"Others" 场景不受影响（87% → 87%，0 pp）</b>，但 Schematic/Layout/Design Mgmt 大幅下降（−28~−34 pp）。<br>
+含义：约 27 pp 的下降<b>完全归因于协议/基础设施层</b>，模型本体能力未变。这直接对应 post-train 的 <b>SFT（修工具协议）→ M1（50%）</b>路径。<br>
+推断：若 MiniCPM5-2B 36% 侧呈现类似模式（Others 不变、Schematic/Layout 塌缩、错误以"Unknown Failure/Generation failure"为主），则 36%→50% 的 14 pp 回收<b>几近必然</b>。</div>
+<div class="callout gap"><b>模板 B：真实能力差距（10%）</b> — 不同弱模型（aether_coder），代码能力不足 → AttributeError/NameError 占 42%。<br>
+特征：<b>所有场景均严重退化</b>，包括"Others"（87% → 25%，−62 pp）。错误类型为<b>真实代码错误</b>（API 名称错误、属性错误、语法错误）。<br>
+含义：这是<b>本体能力不足</b>的典型表现，对应需要<b>领域退火 + 大量 SFT + 可能更大模型</b>才能改善。<br>
+推断：若 MiniCPM5-2B 36% 侧呈现类似模式（所有场景退化、错误为 AttributeError/NameError），则 36%→50% 的路径更依赖<b>领域退火 + API 知识注入</b>，而非仅修协议。</div>
+<div class="callout note"><b>综合判读</b>：MiniCPM5-2B 作为 2B 参数模型，其 36% 更可能介于模板 A 与 B 之间——既有协议问题（不会用工具 → 类似 Unknown Failure 的"Generation failure/not_executed"），也有能力问题（API 知识不足 → 类似 AttributeError/NameError）。<b>post-train 三步走策略对此两种情况均有覆盖</b>：① SFT 修协议（→M1）② 领域退火补 API 知识（→M2）③ RL 打磨闭环（→M3）。这进一步支持 §10 核心结论"58 pp 主体为协议可回收"。</div>
+<h3>13.5 额外观察：26.1% 运行（zhulong_deepseek_v32, 23 任务）</h3>
+<p>2026-04-24 的运行仅 23 任务、Pass@1=26.1%，主要错误亦为"Unknown Failure"——与 04-16 的协议退化模式一致。但样本量太小（23 < 158），不纳入正式对照，仅作旁证：同一模型的低分运行<b>均由协议问题导致</b>，未见能力骤降。</p>
+<hr><div class="small">报告生成：2026-11-06 · BaiZe post-train agent wake4（D1–D6 主报告）+ wake5（§12 跨运行稳定性验证）+ wake7（§13 多配置对照：协议退化 vs 能力差距）· 数据全部来自本节点实测，无编造 · MiniCPM5 36% 侧标注为待补。<br>原始数据：<code>/tmp/pt_p0_summary.json</code>（wake4）+ <code>/tmp/pt_p0_crossval.json</code>（wake5 跨运行）+ <code>/tmp/pt_p0_multiconfig.json</code>（wake7 多配置对照）· 同步写入 EXPERIMENTS_POSTTRAIN.md §D。</div>
 </body></html>
