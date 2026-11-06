@@ -112,6 +112,12 @@ while true; do
         # 🚫 给 cline 剥掉代理环境变量（内网网关不该走外网代理，否则 Forbidden + 静默空转）
         #   只作用于本行：loop 自身/git push 仍保留 proxy（外网仍需代理）。
         # 🔑 额度/鉴权体检 + 自动轮换；全挂 → 跳过本轮（不静默空转）
+        # ⚠️ llm_pick 的 curl 探针也要剥代理 —— agi-gateway.cxmt.com 是内网地址，
+        #    走外网代理(.25)会 503（2026-11-06 .17 本机实测全 503）
+        #    不能用子 shell（llm_pick 设的 LLM_MODEL 等回不来），用 save/restore
+        _sv_http_proxy="${http_proxy:-}"; _sv_https_proxy="${https_proxy:-}"
+        _sv_HTTP_PROXY="${HTTP_PROXY:-}"; _sv_HTTPS_PROXY="${HTTPS_PROXY:-}"
+        unset http_proxy https_proxy HTTP_PROXY HTTPS_PROXY all_proxy ALL_PROXY
         if llm_pick "$LLM_STATE" "$KEYS_TXT"; then
             env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY -u ftp_proxy -u FTP_PROXY \
                 -u OPENAI_API_KEY -u OPENAI_API_URL -u API_TYPE \
@@ -119,6 +125,11 @@ while true; do
         else
             echo "[loop] $(date '+%F %T') !!! 无可用 LLM 候选 → 跳过本轮 cline"
         fi
+        # restore proxy for git push
+        [ -n "$_sv_http_proxy" ] && export http_proxy="$_sv_http_proxy" || unset http_proxy
+        [ -n "$_sv_https_proxy" ] && export https_proxy="$_sv_https_proxy" || unset https_proxy
+        [ -n "$_sv_HTTP_PROXY" ] && export HTTP_PROXY="$_sv_HTTP_PROXY" || unset HTTP_PROXY
+        [ -n "$_sv_HTTPS_PROXY" ] && export HTTPS_PROXY="$_sv_HTTPS_PROXY" || unset HTTPS_PROXY
         echo "[loop] $(date '+%F %T') cline returned (exit $?), checking git sync ..."
     else
         echo "[loop] $(date '+%F %T') TASK_MD missing at $TASK_MD"
