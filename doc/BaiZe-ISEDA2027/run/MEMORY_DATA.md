@@ -20,7 +20,7 @@ WAITING: 1
 ```
 PHASE:        ✅全部6项活跃运维令DONE(85M+10-31报告+09:4x报告+09:2x A类10/10+13:2x#2 RL报告+13:2x#1 B类12/12) → WAITING=1待新令
 已完成:       ✅85M;✅10-31长上下文+agentic报告;✅09:4x推理+代码SFT报告(77772B);✅09:2x长上下文10/10落地(249.48GiB);✅13:2x#2 RL+数学+agentic RL调研报告已交付(37946B);✅13:2x#1 B类下载12/12全部落地(78.73GiB/0inc)+DATA_MAPPING.md F节已写+校验
-当前动作:     唤醒1338(2026-11-06 17:32):例行空唤醒巡检→①git fetch origin(代理)→0ahead/0behind;②git diff origin/main -- BAIZE_DATA_TASK.md=空(无新令);③3报告全在(lc_agentic115558B✓/reasoning_code_sft77772B✓/rl_math37946B✓)+3生成器全在;④无hf download进程;⑤df:/nas_inference17T/38%/nas_train179T/87%/nas_env8.3T/84%;⑥.incomplete=0(排除.cache);⑦体积MEMORY25KB/TASK34KB均≤40KB无需归档;⑧data线clean→更新心跳→commit+push→WAITING=1
+当前动作:     唤醒1339(2026-11-06 17:51):例行空唤醒巡检→①git fetch origin(代理)→0ahead/0behind;②git diff origin/main -- BAIZE_DATA_TASK.md=空(无新令);③3报告全在(lc_agentic115558B✓/reasoning_code_sft77772B✓/rl_math37946B✓)+3生成器全在;④无hf download进程;⑤df:/nas_inference17T/38%/nas_train179T/87%/nas_env8.3T/84%;⑥.incomplete=2(均在.cache内非阻塞);⑦体积MEMORY25KB/TASK34KB均≤40KB无需归档;⑧B类master log确认12/12 OK→更新心跳→commit+push→WAITING=1
 下一步:       待运维派新令;若需分词agentic源→先定分词口径(jsonl/parquet非mcore);ia03/terminal-bench纳入去污染黑名单(与SWE-bench Verified同闸)
 阻塞:         无(全部活跃令已完成;无活跃指令)
 ERROR_COUNT:  11
@@ -30,6 +30,7 @@ ERROR_COUNT:  11
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。
 
 ## 📋 本唤醒流水
+> [11-06 17:51] 唤醒1339：例行空唤醒巡检→①git fetch origin(代理,gc.log+loose objects warning非阻塞)→0ahead/0behind;②git diff origin/main -- BAIZE_DATA_TASK.md=空(无新令);③3报告全在(lc_agentic115558B✓/reasoning_code_sft77772B✓/rl_math37946B✓)+3生成器全在(data/下3py);④无hf download进程;⑤df:/nas_inference17T/38%(29T可用)/nas_train179T/87%(29T可用)/nas_env8.3T/84%(1.7T可用);⑥.incomplete=2(均在.cache/huggingface/download内非阻塞);⑦体积MEMORY25KB/TASK34KB均≤40KB无需归档;⑧B类master log复核12/12全OK(78.73GiB/0inc)→更新心跳→commit+push→WAITING=1继续待命
 > [11-06 17:32] 唤醒1338：例行空唤醒巡检→①git fetch origin(代理,gc.log+loose objects warning非阻塞)→0ahead/0behind;②git diff origin/main -- BAIZE_DATA_TASK.md=空(无新令);③3报告全在(lc_agentic115558B✓/reasoning_code_sft77772B✓/rl_math37946B✓)+3生成器全在(data/下3py);④无hf download进程;⑤df:/nas_inference17T/38%(29T可用)/nas_train179T/87%(29T可用)/nas_env8.3T/84%(1.7T可用);⑥.incomplete=0(排除.cache,仅2个.cache内残留);⑦体积MEMORY25KB/TASK34KB均≤40KB无需归档;⑧data线clean→更新心跳→commit+push→WAITING=1继续待命
 > [11-06 17:14] 唤醒1337：例行空唤醒巡检→①git fetch origin(代理,gc.log+loose objects warning非阻塞)→0ahead/0behind;②git diff origin/main -- BAIZE_DATA_TASK.md=空(无新令);③3报告全在(lc_agentic115558B✓/reasoning_code_sft77772B✓/rl_math37946B✓)+3生成器全在(data/下3py);④无hf download进程;⑤df:/nas_inference17T/38%(29T可用)/nas_train179T/87%(29T可用)/nas_env8.3T/84%(1.7T可用);⑥.incomplete=0(排除.cache);⑦体积MEMORY24KB/TASK33KB均≤40KB无需归档;⑧data线clean→更新心跳→commit+push→WAITING=1继续待命
 > [11-06 16:54] 唤醒1336：例行空唤醒巡检→①git fetch origin(代理,gc.log+loose objects warning非阻塞)→0ahead/0behind;②git diff origin/main -- BAIZE_DATA_TASK.md=空(无新令);③3报告全在(lc_agentic115558B✓/reasoning_code_sft77772B✓/rl_math37946B✓)+3生成器全在(data/下3py);④无hf download进程(pgrep仅cline自身误匹配);⑤df:/nas_inference17T/38%(29T可用)/nas_train179T/87%(29T可用)/nas_env8.3T/84%(1.7T可用);⑥.incomplete=0;⑦体积MEMORY40980B(40.02KB)>40KB→归档唤醒1283-1315(33轮)→daily-memories-data/2026-11-06.md→归档后MEMORY23.7KB/TASK33KB均≤40KB;⑧data线clean→更新心跳→commit+push→WAITING=1继续待命
