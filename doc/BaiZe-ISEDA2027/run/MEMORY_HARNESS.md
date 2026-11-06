@@ -5,13 +5,13 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        R1670 quiet监控轮:CPU/MEM自检PASS(load37.39/224~17%·无>8000%CPU·无>50GB RSS·无需kill·本线topCPU=cline-hub-daemon23%/opencode6.8%·他线pretrain S1训练143%/22GB+llama-server436%/16GB不碰)→全7路eval JSON在位(reports/eval_*.json×7)·report在位16900B·命名合规复核(3文件grep命中=规则声明句+真实文件路径,均合规,正文0违规)·硬约束③PASS(非白名单tracked result JSON=0·524=dataset+config)·backlog=0(scan_backlog实测)·git clean·未完成指令:无⇒WAITING=1
-已完成:       H-B✅·Gate7/7·TB报告✅·pilot20✅·R984-R988恒0调试✅·R989 incr_eval全链✅·R997硬约束修复✅·R1567 cline trace归因✅·R1569 cline适配器修复✅·R1633 cline rerun 58/58终交付✅(356/500=71.3%)·R1634 13:5x复核+归档✅·R1635-R1649 deepseek incr_eval渐进✅(196→212,backlog=0)·R1650-R1669 quiet监控✅·full500全7路predict+eval 100%完成✅·R1662 full500复核可复现✅·R1667 命名合规修复+full500归档✅·R1670 quiet监控复核✅
-当前动作:     R1670 quiet监控轮:CPU/MEM自检PASS(load37.39/224~17%·无>8000%CPU·无>50GB RSS·无需kill·本线topCPU=cline-hub-daemon23%/opencode6.8%·他线pretrain S1训练143%/22GB+llama-server436%/16GB不碰)→全7路eval JSON在位×7·报告16900B·命名合规复核(3文件grep命中=规则声明句+真实文件路径code block,均合规,正文0违规)·硬约束③PASS(非白名单tracked=0/524=dataset+config)·backlog=0(scan_backlog.py实测Total=0)·git status clean·未完成指令:无⇒WAITING=1
-下一步:       ①full500全7路100%完成+命名合规已修复+full500块已归档(TASK≤32KB) ②永久硬约束:禁止commit结果JSON ③下次唤醒CPU/MEM自检+backlog复扫(预期=0) ④TASK=31461B(30.7KB,≤32KB达标)·MEMORY=33103B(31.0KB,≤32KB达标) ⑤若有新指令运维会写入任务书
+PHASE:        R1671 quiet监控轮:CPU/MEM自检PASS(load29.95/224~13%·无>8000%CPU·无>50GB RSS·无需kill·本线topCPU=cline-hub-daemon23%/4GB·opencode6.8%/1.3GB·他线pretrain S1训练143%/36GB+llama-server不碰)→全7路eval JSON在位×7·report在位16900B·命名合规PASS(grep cline-patched full500报告=0命中)·硬约束③PASS(tracked JSON=524=dataset+config·非白名单result=0)·backlog=0(scan_backlog实测)·git clean·未完成指令:无⇒WAITING=1
+已完成:       H-B✅·Gate7/7·TB报告✅·pilot20✅·R984-R988恒0调试✅·R989 incr_eval全链✅·R997硬约束修复✅·R1567 cline trace归因✅·R1569 cline适配器修复✅·R1633 cline rerun 58/58终交付✅(356/500=71.3%)·R1634 13:5x复核+归档✅·R1635-R1649 deepseek incr_eval渐进✅(196→212,backlog=0)·R1650-R1670 quiet监控✅·full500全7路predict+eval 100%完成✅·R1662 full500复核可复现✅·R1667 命名合规修复+full500归档✅·R1671 quiet监控复核✅
+当前动作:     R1671 quiet监控轮:CPU/MEM自检PASS(load29.95/224~13%·无单进程>8000%CPU·无>50GB RSS·无需kill·本线topCPU=cline-hub-daemon23%/4GB(PID2751345)·opencode6.8%/1.3GB(PID3069180)·他线pretrain S1训练143%/36GB(PID4179175)+llama-server不碰)→全7路eval JSON在位(swebench_verified_full/reports/eval_*.json×7·sizes 8502-14930B)·full500报告16900B·命名合规PASS(grep cline-patched report_harness_swebench_verified_full500_zh.html=0命中)·硬约束③PASS(git ls-files tracked JSON=524=dataset+config·非白名单result=0)·backlog=0(scan_backlog.py实测Total=0)·git status clean·git fetch up-to-date·未完成指令:无⇒WAITING=1
+下一步:       ①full500全7路100%完成+命名合规已修复+full500块已归档(TASK≤32KB) ②永久硬约束:禁止commit结果JSON ③下次唤醒CPU/MEM自检+backlog复扫(预期=0) ④TASK=31461B(30.7KB,≤32KB达标)·MEMORY=32646B(31.9KB,≤32KB达标) ⑤若有新指令运维会写入任务书
 阻塞:         无·全7路predict+eval 100%完成·backlog=0·命名合规达标·full500块已归档·TASK≤32KB.
 ERROR_COUNT:  0
-  📦 体积：TASK=31461B(30.7KB,≤32KB达标) / MEMORY≈32740B(31.0KB,≤32KB达标,本轮归档4条指针→daily-memories)
+  📦 体积：TASK=31461B(30.7KB,≤32KB达标) / MEMORY=32646B(31.9KB,≤32KB达标)
 ```
 
 > 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
@@ -19,9 +19,9 @@ ERROR_COUNT:  0
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 
 ### 本唤醒流水
-[06:46] R1670 quiet监控轮:CPU/MEM自检PASS(load37.39/224~17%·无单进程>8000%CPU·无>50GB RSS·无需kill·本线topCPU=cline-hub-daemon23%/4GB(PID2751345)·opencode6.8%/1.3GB(PID3069180)·他线pretrain S1训练143%/22GB(PID4179175)+llama-server436%/16GB(PID214074)不碰)→全7路eval JSON在位(swebench_verified_full/reports/eval_*.json×7)·full500报告16900B·命名合规复核:grep cline-patched命中3文件(trace_analysis=规则声明句+真实文件路径code block·context_compression=1处括号注脚用cline作主名·pilot20=真实文件路径provenance,均合规,正文0违规)·硬约束③PASS(git ls-files非白名单tracked result JSON=0/524=dataset+config)·backlog=0(scan_backlog.py实测Total BACKLOG=0)·git status clean·未完成指令:无⇒WAITING=1.
+[07:56] R1671 quiet监控轮:CPU/MEM自检PASS(load29.95/224~13%·无单进程>8000%CPU·无>50GB RSS·无需kill·本线topCPU=cline-hub-daemon23%/4GB(PID2751345)·opencode6.8%/1.3GB(PID3069180)·他线pretrain S1训练143%/36GB(PID4179175)+llama-server不碰)→全7路eval JSON在位(swebench_verified_full/reports/eval_*.json×7·sizes 8502-14930B)·full500报告16900B·命名合规PASS(grep cline-patched report_harness_swebench_verified_full500_zh.html=0命中)·硬约束③PASS(git ls-files tracked JSON=524=dataset+config·非白名单result=0)·backlog=0(scan_backlog.py实测Total BACKLOG=0)·git status clean·git fetch up-to-date·未完成指令:无⇒WAITING=1.
 
-> 📦 R1669 流水(06:07,quiet监控轮:CPU/MEM自检PASS+全7路100%+硬约束③PASS)已归档 → daily-memories-harness/2026-11-06.md。结论：quiet轮正常·全7路100%完成。需要时再读。
+> 📦 R1670/R1669 流水(06:46/06:07,quiet监控轮:CPU/MEM自检PASS+全7路100%+硬约束③PASS)已归档 → daily-memories-harness/2026-11-06.md。结论：quiet轮正常·全7路100%完成。需要时再读。
 
 > 📦 R1668 流水(05:32,quiet监控轮:CPU/MEM自检PASS+全7路100%确认+硬约束③PASS)已归档 → daily-memories-harness/2026-11-06.md。结论：quiet轮正常·全7路100%完成。需要时再读。
 
