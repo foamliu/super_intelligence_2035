@@ -5,13 +5,13 @@ WAITING: 0
 ## 📊 进度快照
 
 ```
-PHASE:        R1715 glm53重测:SWE-bench full500×7路predict运行中(188/3500,7/7 alive)·TB4 smoke 7/7适配器跑通✅(hermes+deepseek pip-fix确认:rerun2 install OK agent运行中)·TB4=66tasks
-已完成:       H-B✅·Gate7/7·TB报告✅·full500全7路predict+eval 100%完成✅·R1685 cline低分归因✅·R1694-R1714 glm53重测启动+proxy修复+TB4镜像(132/132✅)+TB4 smoke+pip-bootstrap修复(_base.py加--break-system-packages)✅·R1715 TB4 smoke rerun2验证(hermes+deepseek pip-fix确认跑通)
-当前动作:     R1715 监控轮:CPU/MEM自检PASS(sum_cpu161%·rss7.8GB)·SWE-bench predict 188/3500(5.4%):cline26·opencode42·hermes50·dsh23·pi20·claude-code19·codex8·7/7 run_single alive·TB4 smoke:deepseek rerun(03:55)pip-fix✅agent跑到max-tokens(非适配器故障)·hermes rerun2(04:04)pip-fix✅install OK agent运行中·_base.py _ensure_pip修复确认(get-pip.py --break-system-packages)
-下一步:       ①等hermes rerun2完成→确认7/7 smoke无bootstrap异常 ②TB4全量66×7(gw_proxy 9092/9093已alive) ③监控SWE-bench predict(188/3500,按100/300/500汇报) ④每路predict完即eval ⑤写报告report_harness_glm53_7way_swebench_tb_zh.html
-阻塞:         无·⚠️codex极慢(8/500)·pi超时多
+PHASE:        R1716 glm53重测:SWE-bench full500×7路predict 194/3500(7/7 alive)·TB4 smoke 7/7✅(hermes rerun2=AgentTimeout,适配器全跑通)·TB4全量66×7已启动(Batch1 cline+codex)·TB4=66tasks
+已完成:       H-B✅·Gate7/7·TB报告✅·full500全7路predict+eval 100%完成✅·R1685 cline低分归因✅·R1694-R1715 glm53重测启动+proxy修复+TB4镜像(132/132✅)+TB4 smoke 7/7跑通✅+pip-bootstrap修复✅·R1716 TB4全量66×7启动(cline+codex Batch1)+launch_tb4_glm53_full.sh创建
+当前动作:     R1716 监控+TB4全量启动轮:CPU/MEM自检PASS(pretrain143%=1.4核非本线·TB4容器2个Up·mem666G/1.2T avail)·SWE-bench predict 194/3500(5.5%):cline26·opencode44·hermes53·dsh23·pi20·claude-code20·codex8·7/7 alive·TB4 smoke 7/7完成:hermes rerun2=AgentTimeout(适配器OK)·deepseek=RuntimeError max-tokens(适配器OK)·gateway探针200✅·TB4全量launch_tb4_glm53_full.sh启动:Batch1 cline-patched+codex并行(atrx-vep-crispr)·2 Docker容器Up·/tmp/tb4_glm53_full.log
+下一步:       ①监控TB4全量66×7进度(Batch1 cline+codex→Batch2 hermes+opencode→Batch3 claude-code+deepseek→Batch4 pi) ②监控SWE-bench predict(194/3500,按100/300/500汇报) ③每路predict完即eval ④两基准全交付后写报告report_harness_glm53_7way_swebench_tb_zh.html
+阻塞:         无·⚠️codex极慢(8/500)·TB4全量预估~38h(7路×66×2并行)
 ERROR_COUNT:  0
-  📦 体积：TASK=32074B(31.3KB) / MEMORY=30980B(30.3KB)(≤32KB达标)
+  📦 体积：TASK=32074B(31.3KB) / MEMORY=31685B(30.9KB)(≤32KB达标)
 ```
 
 > 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
@@ -35,8 +35,9 @@ ERROR_COUNT:  0
 > 📦 R1709 流水(02:36,监控轮:100files/69patch·TB4 128/132)已归档 → daily-memories-harness/2026-11-07.md。结论：7路 alive,进度稳定。需要时再读。
 > 📦 R1710-R1712 流水(02:52~03:20,3轮监控:predict 117→127 files/3500·TB4 smoke启动+cline/codex运行中)已归档 → daily-memories-harness/2026-11-07.md。结论：7路 alive,进度稳定,TB4 smoke启动。需要时再读。
 > 📦 R1713 流水(03:30,监控轮:predict 135/3500·TB4 smoke 7/7 done:hermes/deepseek=pip-fail BROKEN)已归档 → daily-memories-harness/2026-11-07.md。结论：7路 alive,hermes+deepseek TB4适配器需修pip。需要时再读。
-[04:00] R1714 TB4适配器pip-bootstrap修复:根因=TB4容器`FROM oven/bun:1.2.15-debian`+`apt install python3`无pip module且PEP668 externally-managed→hermes/deepseek `python3 -m pip install`失败(NonZeroAgentExitCodeError 14s)→修法:_base.py加`_ensure_pip()`(probe pip→ensurepip→get-pip.py --break-system-packages via aliyun mirror+MITM proxy,ssl-disable prepend)→hermes.py+deepseek_harness.py调`_ensure_pip`→get-pip.py(2.3MB,bootstrap.pypa.io+ssl-disable)落agents/→hermes smoke重跑:install✅(3 cmds captured:ensurepip→get-pip.py→pip install hermes-agent)→agent running 618s+(vs原14s fail)→deepseek重跑排队中·SWE-bench predict 175/3500(5.0%):cline25·opencode41·hermes46·dsh19·claude-code19·pi18·codex7·CPU/MEM PASS·TB4=66tasks(非89)·未完成指令:有(glm53重测)⇒WAITING:0
-[04:08] R1715 监控+TB4 pip-fix验证轮:CPU/MEM自检PASS(sum_cpu161%≈1.6核·rss7.8GB·load47/87%idle,pretrain S1 pid146283非本线不碰)·SWE-bench predict 188/3500(5.4%):cline26·opencode42·hermes50·dsh23·pi20·claude-code19·codex8·7/7 run_single alive(各自跑django/astropy instance)·gw_proxy9092+9093 alive·TB4 smoke复盘:deepseek rerun(03:55:15)用修复后_base.py(get-pip.py --break-system-packages)→pip bootstrap✅→SDK install✅→agent跑到finish_reason=max-tokens(empty final_response,exit2,RuntimeError)=smoke 576s超时所致非适配器故障→deepseek适配器TB4跑通✅;hermes rerun(03:39:56)在_base.py修复(03:54:54)前启动→用旧命令(无--break-system-packages)→PEP668 fail→新建_rerun_hermes_tb4_R1715.sh(清__pycache__保证用修复后_base.py)→hermes rerun2(04:04:22)pip bootstrap✅→hermes-agent install✅(3 cmds captured无fail)→agent运行中(146s+)→hermes适配器TB4跑通✅·结论:7/7适配器TB4跑通(5个首轮Pass+hermes/deepseek pip-fix后跑通)·df:/data 5.8T avail/docker不可达(本机非docker节点,TB走harbor)·未完成指令:有(glm53重测SWE-bench predict进行中+TB4全量未开跑)⇒WAITING:0
+> 📦 R1714 流水(04:00,TB4适配器pip-bootstrap修复)已归档 → daily-memories-harness/2026-11-07.md。结论：_base.py加_ensure_pip修复,hermes/deepseek pip bootstrap跑通。需要时再读。
+> 📦 R1715 流水(04:08,TB4 pip-fix验证+7/7 smoke跑通)已归档 → daily-memories-harness/2026-11-07.md。结论：7/7适配器TB4跑通(5首轮Pass+hermes/deepseek pip-fix后跑通)。需要时再读。
+[04:18] R1716 监控+TB4全量启动轮:CPU/MEM自检PASS(pretrain143%=1.4核非本线·最高harness进程64%=deepseek SDK·mem666G/1.2T avail·load正常)·SWE-bench predict 194/3500(5.5%):cline26·opencode44·hermes53·dsh23·pi20·claude-code20·codex8·7/7 run_verified_full alive·TB4 smoke 7/7完成确认:hermes rerun2=AgentTimeout(适配器OK,非bootstrap故障)·deepseek=RuntimeError max-tokens(适配器OK)·gateway探针3路全HTTP200✅(agi-gateway+9092+9093)·创建launch_tb4_glm53_full.sh(7路×66tasks,2并行Batch,--n-concurrent 1,TB_AGENT_TIMEOUT=1800,--agent-timeout-multiplier 0.1)·TB4全量启动:sg docker -c bash launch_tb4_glm53_full.sh → Batch1 cline-patched+codex并行(task=atrx-vep-crispr)·2 Docker容器Up·/tmp/tb4_glm53_full.log有输出·disk:/data 5.8T avail·未完成指令:有(glm53重测SWE-bench predict+TB4全量进行中)⇒WAITING:0
 
 
 
