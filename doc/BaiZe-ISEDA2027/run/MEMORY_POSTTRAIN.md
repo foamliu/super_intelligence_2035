@@ -7,12 +7,12 @@ WAITING: 1
 
 ## 进度快照
 
-- PHASE: posttrain-wake3（2026-11-06；P2 三步训练方案书已定稿交付；所有本节点可达的零 GPU 任务全部完成）
-- 已完成: P3预备✅ 5 脚本骨架（anneal/sft/rl_grpo/eval/contamination_gate，wake1/wake2）；P1-e✅ 污染隔离闸门（wake2）；P0 数据源可达性诊断✅（字段缺失，wake1）；P1-a/b✅ 数据盘点（wake2）；**P2✅ 三步训练方案书 `reports/report_posttrain_plan_zh.html`（38KB，11 节，自包含 0 脚本 0 外链，wake3）**
-- 当前动作: wake3 已交付 P2 方案书（领域退火/SFT/RL 4 臂/评测网格/成功阶梯 M1–M4/预注册阈值/时间线/风险/红线合规）+ EXPERIMENTS §Plan → 提交推送
-- 下一步: **所有本节点可达的零 GPU 任务已全部完成**。剩余 P0（D1–D6 提取）/ P1-c（B 类 agentic 盘点）/ P1-d（PyAether 语料调研）阻塞于数据源在本节点 .17 不可达（eda_code_eval / /nas_inference / eda_fastmcp 均未挂载），待运维挂载或提供路径后补做；正式训练（P3）阻塞 pretrain S1 ckpt（ETA≈2026-12-25）。下次唤醒先复查数据可达性，仍不可达则确认无新可做项后置 WAITING 等待。
-- 阻塞: P0（eda_code_eval final_report.json）/P1-c（/nas_inference 未挂载 .17）/P1-d（eda_fastmcp 不可达）数据源在本节点不可达，待运维；正式训练阻塞 pretrain S1 ckpt（ETA≈2026-12-25）
-- 未完成指令: 有（P0/P1-c/P1-d 阻塞于数据不可达，待运维挂载；本轮无可做项）⇒ WAITING=1
+- PHASE: posttrain-wake4（2026-11-06；⚠️→✅ 修正 wake1 路径误判：eda_fastmcp/EDA-Eval-Framework/158-case 数据集在本节点 `~/code/` **全部可达**；P0 D1–D6 DeepSeek 侧实测交付 + P1-d PyAether 语料调研完成）
+- 已完成: P3预备✅ 5 脚本骨架（wake1/2）；P1-e✅ 污染隔离闸门（wake2）；P1-a/b✅ 数据盘点（wake2）；P2✅ 三步方案书（wake3）；**P0✅ D1–D6 DeepSeek 侧实测报告 `reports/report_posttrain_diagnose_d1d6_zh.html`（18.3KB/11 节/0 脚本 0 外链，wake4）**；**P1-d✅ PyAether 语料调研（API 参考 8463 项 ≈4–5M tok 可导出纯文本，wake4）**
+- 当前动作: wake4 发现数据在本节点 `~/code/`（wake1 误查 `/nasdata`/`/nas_data`）→ 用 venv py3.13 跑 trace_reader 提取 DeepSeek 全 harness 103 任务轨迹（D1=0.6317/D2=14.32/D3=0%/D4=执行报错74%vs断言26%/D6=Φ5.01）+ 7 份代码生成 final_report（D5 per-scenario）+ 数据集 metadata（scenario 64/47/24/23）→ 产出诊断报告 + EXPERIMENTS §D/§PyAether-corpus → 提交推送
+- 下一步: **本节点可达零 GPU 任务已全部完成**（P0 DeepSeek 侧/P1-d/P2/P3预备/P1-e/P1-ab 全 done）。剩余：① P0 **MiniCPM5-2B 36% 侧** D1/D2/D6（轨迹在评测机 `~/eda_code_eval/`，不在本节点）→ 待运维拷 `~/eda_code_eval/<36%_run>/{final_report.json,trace/*/}` 来 .17 或挂载该盘；② P1-c（`/nas_inference` 未挂载 .17）→ 待运维挂载或 .29/.12 盘点；③ 正式训练 P3 阻塞 pretrain S1 ckpt（ETA≈2026-12-25）。下次唤醒先复查 ①②数据是否到位，到位即补做 36% 侧 D1–D6 实测对照。
+- 阻塞: P0-36%侧（eda_code_eval 在评测机非 .17）/P1-c（/nas_inference 未挂载 .17）待运维；正式训练阻塞 pretrain S1 ckpt（ETA≈2026-12-25）
+- 未完成指令: 有（P0-36%侧 + P1-c 阻塞于本节点不可达的外部数据，待运维；本节点可达项已全完成）⇒ WAITING=1
 
 ## 关键事实（常驻）
 
@@ -23,7 +23,7 @@ WAITING: 1
 - 成功阶梯（预注册）：36%(起点) → 50%(M1) → 65%(M2) → 75%(M3) → 85%+(M4)
 - SFT 数据已就绪：UltraData-SFT-2605（319G/20.97B tok）+ UltraData-SFT-Agent-2609（51G）已分词镜像
 - B 类 agentic 数据已下载未分词（`/nas_inference`：AgentTrove/Nemotron-Cascade-SFT-SWE 等）
-- PyAether 领域语料：⚠️ 待确认来源（eda_fastmcp API 知识库能否导出纯文本？）
+- PyAether 领域语料：✅ **已调研**（wake4）—— `~/code/eda_fastmcp/docs/API_INFO_MERGED_V3.json` 8,463 个 API（api_name/api_type/api_descriptions/category）展平 ≈3.3–4.5M tok；加 func_all_v3/api_summary/skills/prompts ≈4–5M tok 可导出纯文本；chroma_db_*（向量嵌入）不用；退火 domain 主体 + SFT 合成语料（详见 EXPERIMENTS §PyAether-corpus）
 - 论文章节：`BaiZe-ISEDA2027/ISEDA2027/5_llm_posttrain.tex`（已写设计，结果=[TBD]）
 
 ## 运维问答（常驻）
@@ -39,4 +39,5 @@ WAITING: 1
 [14:30] wake2：git fetch/pull（需显式设 https_proxy=http://172.19.92.25:13128，非交互 shell 无 .bashrc 代理；清 14:13 陈旧 index.lock 后 fast-forward 到 8599eae7c）→ 复查数据可达性：eda_code_eval/eda_fastmcp//nas_inference/数据镜像(/nas_data/.../datasets) 本节点仍全 MISSING → 按 MEMORY 应急做 **P1-e**：读 CONTAMINATION_CHECK.md v0.3（data 线已建 536 任务黑名单 + check_contamination.py，220K docs 0 命中）→ 写 `baize_posttrain_contamination_gate.sh`（复用 check_contamination.py，逐输入扫描解析"命中（污染）文档数：N"，N>0 exit 2 阻断 / N=0 exit 0 / 缺件 exit 3 fail-safe；--dry-run + --build-blacklist）→ bash -n OK + dry-run(0/3输入/build) rc=0 → EXPERIMENTS §Data(P1-a/b 引 DATA_MAPPING 实值 18.89B/5.97B tok、P1-c/d 阻塞、P1-e✅) + §P1-e(规则+脚本+验证) + §PyAether-corpus(阻塞) + §Scripts(+gate 行) → 体积自检+提交。
 [14:48] wake2 收尾（git 同步）：push 被 origin 领先拒绝 → 前台 `git pull --rebase --autostash` 两次撞 30s 工具超时被 kill（残留 stale index.lock[0B] + autostash 致工作区回退到提交前旧版）→ 改用 `setsid` 后台脚本 `/tmp/pt_sync.sh` 跑 pull --rebase --autostash + push：rebase 成功 replay 我的 commit → push `944a201de` 上远端（PULL_RC=0 / PUSH_RC=0）→ `git status` 见工作区 4 文件 M/D（autostash 旧版回灌）→ `git checkout --` 仅本线 4 文件恢复到 HEAD → NFS dir-cache lag 误报 gate 脚本缺失（`sync` 后 `test -f`=FILE_EXISTS 7896B）→ `git status` 干净 `## main...origin/main`。**坑（新增常驻）**：① 非交互 shell 无 .bashrc 代理须显式 `export https_proxy=http://172.19.92.25:13128`；② 慢 NFS+代理使单次 git op >30s 工具超时 ⇒ 须 `setsid` 后台跑 + 轮询日志；③ 被 kill 的 rebase 会留 stale index.lock + autostash 致工作区回退到旧版，恢复后必 `git checkout -- 本线文件` + 验证 `test -f`/`git status`；④ autostash 仅对**本线文件** checkout，绝不碰别线在途文件。
 [15:10] wake3：git fetch+pull（behind 2 → `setsid` 后台 pull --rebase --autostash，PULL_RC=0，fast-forward 到 7738cd214）→ 读论文 `5_llm_posttrain.tex` §5.1–§5.5 + README §2/§3/§4/§5/§6/§7.0 → 写 **P2 三步训练方案书** `reports/report_posttrain_plan_zh.html`（38KB / 409 行 / 11 节：前提依赖 + 领域退火 + SFT + RL 4 臂 + 评测网格 + 成功阶梯 M1–M4 + 预注册阈值 + 时间线 + 风险 + 红线 + 脚本附录；0 script / 0 外链 src / 11 href 全为内部锚点；≥15KB ✅）→ EXPERIMENTS §Plan（方案要点表 + 成功阶梯 + 判定阈值 + 红线合规 + 阻塞项）→ 体积自检（TASK=20.8KB ✅ / MEMORY=5.8KB ✅）→ 提交 `posttrain plan:`。📦 体积：TASK=20.8KB / MEMORY=5.8KB（均 ≤32KB ✅，无需归档）。
+[16:30] wake4：git fetch+pull（setsid 后台 pull --rebase --autostash，fast-forward）→ **⚠️→✅ 修正 wake1 路径误判**：wake1 查 `/nasdata`/`/nas_data/...` 全 MISSING，本轮改查 `~/code/` 发现 **eda_fastmcp（BASE_DIR）+ EDA-Eval-Framework + 158-case 数据集全在本节点可达**（`~/code/eda_fastmcp/pyAether-eval/...` + `~/code/EDA-Eval-Framework/output_evaluation/`13 份 final_report.json + DeepSeek 全 harness 轨迹 `cline_cli_trace/cline_trace_v1_3/`103 任务）→ 系统 python3=3.8 不支持 `str|None`，改用 `~/code/eda_fastmcp/.venv/bin/python`(3.13) 跑 `trace_reader.py` 的 `extract_tool_calls_from_trace`/`extract_tool_results_from_trace`/`classify_error` 提取 → `/tmp/pt_p0_analyze.py` → `/tmp/pt_p0_summary.json` → `/tmp/pt_p0_report.py` 产出 **`reports/report_posttrain_diagnose_d1d6_zh.html`**（18.3KB/11 节/0 script/0 外链/自包含，验证 grep 0 命中）：DeepSeek 全 harness 侧 **D1=0.6317（强度代理）/ D2=14.32 tool/task（search_apis 573/run_code 516/get_api_details 386）/ D3=0% 超时（0/103）/ D4=执行报错74%（import22/file19/type10/attr5/syntax3/name3）vs 断言26% / D6=Φ 均值5.01 中位5（1–14）**；代码生成侧 7 份 final_report + 数据集 metadata 联算 **D5 per-scenario**（Schematic66%<Layout64%<DesignMgmt83%≈Others83%，多轮 mean≈67% std≈2.6pp）+ 数据集画像（scenario 64/47/24/23 与任务书一致；category 分布；techlib_dependency 28%）；**结论：58pp 主体(估35–45pp)为"协议可回收"——工具频次/合法率/API领域知识/迭代闭环，对应 SFT→退火→RL(GRPO)；剩余10–15pp 真实能力差距**。MiniCPM5-2B 36% 侧 D1/D2/D6 **诚实标注"轨迹不在本节点"**（`~/eda_code_eval/` 在评测机非 .17）→ 待运维拷贝。同步 **P1-d PyAether 语料调研**：`docs/API_INFO_MERGED_V3.json` 8,463 个 API 展平 13.36M 字符 ≈3.3–4.5M tok + func_all_v3/api_summary/skills/prompts ≈**4–5M tok 可导出纯文本**（chroma_db_* 向量嵌入不用；CONTAMINATION_CHECK §5 0 命中合规）→ EXPERIMENTS §D（替换"字段缺失"表为实测值）+ §PyAether-corpus（替换"阻塞"为调研表+组装方案）+ §Data P1-d 行改 ✅ → 体积自检 + 提交 `posttrain diag:`。📦 体积待检。
 

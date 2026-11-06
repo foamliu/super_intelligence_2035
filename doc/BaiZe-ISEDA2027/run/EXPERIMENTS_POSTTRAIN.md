@@ -10,40 +10,36 @@
 > 出处：项目总纲 `README.md` §7.0。数据源：`~/eda_code_eval/*/final_report.json` 的 `details_per_task`。
 > 判读：D1/D2/D6 差得离谱 → 58 pp 里很大一部分是「可回收的协议差距」；D4 全是断言失败 → 真实能力差距，须转向成本-质量前沿表述。
 
-### ⚠️ 数据源可达性诊断（2026-11-06 唤醒1 · 零 GPU · 实测）
+### ✅ 数据源可达性（2026-11-06 唤醒4 · 修正 wake1 误判 · 零 GPU · 实测）
 
-> **结论：P0 的 D1–D6 在本节点无法提取——数据源不可达（字段缺失，非编造）。**
->
-> 实测（host=本节点，NFS 仅挂载 `10.251.28.110:/train` → `/nas_data`）：
-> - `~/eda_code_eval/`（即 `/home/app.e0031982/eda_code_eval`）→ **不存在**。
-> - `/nas_data/app.e0031982/eda_code_eval` → **不存在**（README 与 ops/outbox RUN_ID167 记录的 `/nasdata/.../eda_code_eval` 在 .29 上亦为 NO，2026-10-24）。
-> - `/nas_data/app.e0031982/code/eda_fastmcp`（任务书 BASE_DIR，含 158-case 数据集 + run_eval.py + run_cline_script.sh）→ **不存在**（本节点未挂载该目录）。
-> - 全盘浅搜 `final_report.json`（`/nas_data/app.e0031982` maxdepth 5 + `/home`）→ **0 命中**。
-> - 训练数据 BASE `/nas_data/app.e0031982/code/BaiZe-ISEDA2027`（脚本里的 `/nas_train/.../BaiZe-ISEDA2027`）→ **不存在**（本节点仅有 git 工作副本 `super_intelligence_2035`，无训练数据/无 eda_fastmcp）。
->
-> **需要补抓什么（交运维在评测机执行，或挂载后本线再做）**：
-> 1. 把 36% 那次 MiniCPM5-2B 的 `final_report.json`（含 `details_per_task`：每任务 pass/tool_call 序列/截断标志/失败类型/scenario/迭代轮数）拷到本节点或挂载其所在盘；
-> 2. 若有 DeepSeek 94% 的对照运行，同取其 `final_report.json` 做配对 diff；
-> 3. 确认 `eda_fastmcp`（158-case 数据集 + 评分/driver 脚本 + API 知识库）的可达路径，以便 P1-d 调研与 P3 评测脚本真跑。
->
-> D1–D6 的计算口径（待数据到位即按此提取，避免届时再设计）：
-> - D1 合法率 = `count(格式合法 tool_call) / count(总 tool_call)`，跨 158 任务汇总；
-> - D2 频次 = `sum(tool_call 数) / 158`（每任务平均），与 DeepSeek 对照；
-> - D3 截断比例 = `count(超 2500s 或超上下文) / 158`；
-> - D4 失败分解 = 报错(执行异常/Traceback) vs 断言失败(assertion fail) 的计数比；
-> - D5 per-scenario = 按 metadata.scenario 分组（Layout 64 / Schematic 47 / Design Mgmt 24 / Others 23）算通过率；
-> - D6 Φ 分布 = 每任务迭代轮数（生成→执行→改写的闭环次数）的均值/分布，与 DeepSeek 对照。
+> **更正**：wake1 判定“数据源不可达”是基于错误路径（`/nasdata`/`/nas_data/...`）。实测发现本节点 `~/code/` 下数据**全部可达**：
+> - `~/code/eda_fastmcp`（任务书 BASE_DIR）→ ✅ 存在：158-case 数据集（`pyAether-eval/original_dataset/EDA-Eval-PyAether-v20260311.jsonl`）+ 评分 `scripts/run_eval.py` + 驱动 `scripts/run_cline_script.sh` + API 知识库 `kb/` + **DeepSeek 全 harness 智能体轨迹** `pyAether-eval/cline_cli_trace/cline_trace_v1_3/`（103 任务，含 `api_conversation_history.json`/`task_metadata.json`）。
+> - `~/code/EDA-Eval-Framework/output_evaluation/*/final_report.json` → ✅ 13 份（含 `details_per_task`：pass/error_types/generation_statuses/execution_statuses），其中 7 份为 158 任务全量 DeepSeek 代码生成模式（pass 64–70%）。
+> - 仍不可达：`~/eda_code_eval/`（任务书指定的 **MiniCPM5-2B 36% 全 harness** 运行）→ ❌ 不在本节点（在评测机）；`/nas_inference`（B 类 agentic，P1-c）→ ❌ .17 未挂载。
+> - Python：系统 python3=3.8（不支持 `str|None`），用 `~/code/eda_fastmcp/.venv/bin/python`(3.13) 跑 `trace_reader.py` 提取工具调用/错误/迭代。
+> - 提取脚本：`/tmp/pt_p0_analyze.py` → `/tmp/pt_p0_summary.json`（原始数据）。报告生成器 `/tmp/pt_p0_report.py`。
 
-| # | 诊断项 | MiniCPM5-2B (36%) | DeepSeek (94%) 对照 | 判读 |
-|:--|:--|:--|:--|:--|
-| D1 | 工具调用合法率 | **字段缺失：数据源不可达** | 同左 | 待数据到位提取（口径见上） |
-| D2 | 工具调用频次（每任务平均） | **字段缺失：数据源不可达** | 同左 | 待数据到位提取 |
-| D3 | 超上下文/截断比例 | **字段缺失：数据源不可达** | 同左 | 待数据到位提取 |
-| D4 | 失败类型分解（报错 vs 断言失败） | **字段缺失：数据源不可达** | 同左 | 待数据到位提取 |
-| D5 | per-scenario 通过率（Layout/Schematic/DesignMgmt/Others） | **字段缺失：数据源不可达** | 同左 | 待数据到位提取 |
-| D6 | 平均迭代轮数 Φ 分布 | **字段缺失：数据源不可达** | 同左 | 待数据到位提取 |
+### D1–D6 实测值（DeepSeek 侧真实数据 + MiniCPM5 侧诚实标注）
 
-> **对 58 pp 的初步判断（待 D1–D6 实测后修正）**：暂不下结论。一旦数据到位，D1/D2/D6 显著差 → 协议可回收占比高（SFT 优先）；D4 全断言失败 → 真实能力差距（RL 价值更大）。本轮**不产出** `report_posttrain_diagnose_d1d6_zh.html`（无数据，🚫 禁止编造），待数据可达后补。
+> **DeepSeek 全 harness 侧**（`cline_trace_v1_3`，103 任务，2026-02-09，≈94% 同口径智能体模式）由 `trace_reader.py` 的 `extract_tool_calls_from_trace`/`extract_tool_results_from_trace`/`classify_error` 提取。
+> **DeepSeek 代码生成侧**（EDA-Eval-Framework，158 任务，最优轮 70.25%）由 `final_report.json` 的 `details_per_task` + 数据集 `metadata.scenario` 联算。
+
+| # | 诊断项 | MiniCPM5-2B (36%) | DeepSeek 全 harness (94%侧·实测) | DeepSeek 代码生成(对照·实测) | 判读 |
+|:--|:--|:--|:--|:--|:--|
+| D1 | 工具调用合法率 | ❌ 轨迹不在本节点 | **0.6317**（强度代理：解析成功 tool_call/assistant 轮次；非严格合法率） | —（纯生成无工具） | 代理值偏高=工具用得勤；严格合法率待 36% 侧 `--errors` 统计畸形块 |
+| D2 | 工具调用频次（每任务） | ❌ 不在本节点 | **14.32**（search_apis 573 / run_code 516 / get_api_details 386） | — | 强模型“先查 API 再写代码”；若 36% 侧<5 → SFT 可修 |
+| D3 | 超时/截断比例 | ❌ | **0.0%**（0/103 全 harness） | 2.5%(4/158)~17.7%(早期) | 全 harness 超时极低 → 长上下文非当前主瓶颈；轨迹 avg 45.6 消息→SFT ctx≥8192 |
+| D4 | 失败类型分解 | ❌ | **执行报错 74%**（import22/file19/type10/attr5/syntax3/name3）vs **断言 26%**(23) | 代码生成侧以 AssertionError 为主(20–30) | 报错多→API/领域知识问题(SFT 语料优先)；断言少→RL 收益在迭代闭环非纯语义 |
+| D5 | per-scenario 通过率 | ❌ | （全 harness per-task pass 不在本节点） | Schematic 66% < Layout 64% < DesignMgmt 83% ≈ Others 83%（最优轮） | Schematic/Layout 难点(占70%)→SFT 优先补；多轮 mean≈67% std≈2.6pp |
+| D6 | 平均迭代轮数 Φ | ❌ | **均值 5.01 / 中位 5**（1–14，56% 在 3–6 轮） | —（单轮无迭代） | 强模型熟练用“生成→执行→改”闭环；若 36% 侧 Φ≈1–2 → RL(GRPO) 主战场 |
+
+**数据集画像（D5 分母，实测 `metadata`）**：scenario = Layout 64 / Schematic 47 / Design Mgmt 24 / Others 23（与任务书一致）；category = Design Content Creation 46 / Geometry Op 26 / DB & Design Mgmt 25 / Query & Edit 25 / Sim & Analysis 21 / Utilities 15；num_unique_apis 中位≈5（1–41）；lines_of_code 中位≈6（1–14+）；techlib_dependency 113 False / 45 True（28% 需 techlib，难点）。
+
+### 对 58 pp 的初步判断（基于 DeepSeek 侧实测 + 36% 侧外推假设，待 36% 轨迹修正）
+
+> **核心结论**：58 pp 差距**主体（估 35–45 pp）为“协议可回收”**——工具频次/合法率(D1/D2)、API 领域知识(D4 执行报错占 74%)、迭代闭环(D6)。对应：SFT 注入工具轨迹+PyAether API 语料（~20–30 pp，M1→M2）；领域退火补 API（~5–10 pp）；RL(GRPO) 打磨“查-写-改”闭环（~5–10 pp，M3）。**剩余 ~10–15 pp 为真实能力差距**（语义推理/复杂多 API），逼近 94%(M4) 需更大量 RL。
+> ⚠️ **未闭合**：MiniCPM5-2B 36% 侧 D1/D2/D6 未实测（轨迹不在本节点）。上述比例为“基于强模型行为外推的假设”，非实测对照。需运维提供 `~/eda_code_eval/<36%_run>/{final_report.json, trace/*/api_conversation_history.json}`。
+> 📦 **交付物**：`reports/report_posttrain_diagnose_d1d6_zh.html`（18.3KB / 11 节 / 0 script / 0 外链 / 自包含，已产出 ✅）。commit 前缀 `posttrain diag:`。
 
 ---
 
@@ -54,7 +50,7 @@
 | P1-a | UltraData-SFT-2605 | `…/baize-data/tokenized/UltraData-SFT-2605`（.17 不可达，引自 DATA_MAPPING §A#11） | 318.99 GB | 75.87 GB（94 .bin/.idx/.json） | 18.89 B | ✅ 镜像完整（2026-10-27 校验） | 通用指令集；⚠️ 任务书旧记 20.97B tok，以 DATA_MAPPING 单一事实源 18.89B 为准 |
 | P1-b | UltraData-SFT-Agent-2609 | `…/baize-data/tokenized/UltraData-SFT-Agent-2609`（.17 不可达，引自 DATA_MAPPING §A#12） | 54.22 GB | 23.89 GB（13 .bin/.idx/.json） | 5.97 B | ✅ 镜像完整（2026-10-27 校验） | agentic 指令集；任务书"50 shard"为下载侧，分词侧=13 |
 | P1-c | B 类 agentic（AgentTrove/Nemotron-Cascade-SFT-SWE/terminal-cmd-sft 等） | `/nas_inference/app.e0031982/datasets/`（.17 未挂载 /nas_inference） | 待盘 | 未分词 | — | ⏳ 已下载未分词（DATA_MAPPING §F） | 待 .29/.12 盘点或挂载 |
-| P1-d | PyAether 领域语料（API 参考/EDA 工具文档/HDL 源码） | `eda_fastmcp` API 知识库（.17 不可达，`/nas_data/.../code/eda_fastmcp` 不存在） | 待盘 | — | — | ⚠️ 待确认来源 | 退火+SFT 合成；待 eda_fastmcp 可达后调研 |
+| P1-d | PyAether 领域语料（API 参考/EDA 工具文档） | `~/code/eda_fastmcp/docs`+`kb`（✅ wake4 实测可达） | ≈21 MB JSON | 待分词 | **≈4–5 M tok**（API 参考 8463 项为主） | ✅ 已调研（见 §PyAether-corpus） | 退火 domain 主体 + SFT 合成；HDL 源码待补 |
 | P1-e | 158 任务污染隔离规则 + 闸门脚本 | `run/baize_posttrain_contamination_gate.sh`（复用 `run/data_pipeline/check_contamination.py` + blacklist） | — | — | — | ✅ 已定稿（本轮 wake2） | 红线；规则+脚本见 §P1-e |
 
 ---
@@ -104,9 +100,26 @@
 
 ## §PyAether-corpus 领域语料调研（P1-d）
 
-> **状态（2026-11-06 wake2）**：⚠️ **阻塞** —— `eda_fastmcp`（API 知识库 / 158-case 数据集 / driver / scorer）在本节点 .17 不可达（`/nas_data/app.e0031982/code/eda_fastmcp` 不存在，本节点仅挂载 git 工作副本）。
-> 待 eda_fastmcp 可达后调研：API 知识库能否导出纯文本 / 体量 / 格式 → 组装「领域退火语料」（来源/配比/预估 token）。当前**不编造**任何语料数字。
-> 已知可复用来源线索（待 eda_fastmcp 可达核实）：`pyAether_API_Docstring` / `emyDesign` / `sklangref`（CONTAMINATION_CHECK.md §5 来源对照曾扫这 3 个 API 参考文件，0 命中 ⇒ 属"来源材料"，允许入训练）。
+> **状态（2026-11-06 wake4）**：✅ **已调研** —— `eda_fastmcp` 实测在本节点 `~/code/eda_fastmcp` 可达（wake1 路径误判已更正）。API 知识库**可导出纯文本**，体量与格式如下（实测，非编造）：
+>
+> **可导出纯文本科目（均在本节点，JSON→文本易转）**：
+> | 来源 | 路径 | 原始字节 | 展平为纯文本 | 估算 tokens |
+> |:--|:--|--:|--:|--:|
+> | API 参考（核心）| `docs/API_INFO_MERGED_V3.json` | 18.1 MB | 8,463 个 API（api_name/api_type/api_descriptions/category）展平 13.36M 字符 | **≈3.3–4.5 M tok** |
+> | 函数签名 | `docs/func_all_v3.json` | 1.8 MB | 全量函数签名 | ≈0.4–0.6 M tok |
+> | API 摘要 v3 | `kb/api_summary_v3.json` | 532 KB | 摘要列表 | ≈0.1–0.15 M tok |
+> | API 摘要(描述+api) | `kb/api_summary_description_api.json` | 480 KB | — | ≈0.1 M tok |
+> | 技能提示 | `skills/*`（9 个 EDA 技能 dir）| 112 KB | 工具使用策略 | ≈0.03 M tok |
+> | 评测/规则提示 | `prompts/*.md` + `Rules/eda-code-generation.md` | <50 KB | 系统提示 + 代码生成规则 | ≈0.01 M tok |
+> | **合计可导出领域语料** | — | ≈21 MB | — | **≈4–5 M tok** |
+>
+> - **格式**：JSON `{api_name, api_type, api_descriptions, category}` → 展平为 `API: <name> | type: <type> | category: <cat> | <descriptions>` 文本行，可直接喂分词。
+> - **API 分类**：8,463 个 API 中 4,390 无 category（基础/扩展），其余覆盖 Extension/emyDatabase/Qt Extension/Db Commands/Ae Commands 等。
+> - **🚫 不用**：`kb/chroma_db_*`（15M–219M）是向量嵌入（二进制），非源文本；源文本即上述 JSON。
+> - **污染合规**：CONTAMINATION_CHECK.md §5 曾扫 `pyAether_API_Docstring`/`emyDesign`/`sklangref` 3 个 API 参考文件 0 命中 ⇒ 属"来源材料"，允许入训练。本语料为 API 参考（不含 158 任务的 prompt/函数签名/断言），投料前仍经 `baize_posttrain_contamination_gate.sh` 扫描 0 命中。
+>
+> **「领域退火语料」组装方案**：API 参考(4–5M tok) 作 domain 主体 + 通用/web/code/math 混合 → 退火 blend domain30:web50:code12:math8（P2 方案书已定）；退火步数 4000（WSD）→ domain 部分约 0.6–0.8B tok 上样（占总 8.4B 的 ~30%，与 blend 一致）。SFT 合成：用 API 参考 + skills 提示合成"查 API→写代码"轨迹对（⚠️ 禁用 158 评测题）。
+> **待补**：HDL 源码（任务书 P1-d 提及）本节点未见；techlib 文档（28% 任务依赖）需确认是否在 eda_fastmcp docs 内。
 
 
 ---

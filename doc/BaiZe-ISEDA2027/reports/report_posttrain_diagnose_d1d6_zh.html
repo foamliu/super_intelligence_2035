@@ -1,0 +1,107 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BaiZe Post-Train · P0 诊断 D1–D6（中文报告）</title><style>body{font-family:-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;max-width:1080px;margin:0 auto;padding:24px;color:#1a1a1a;background:#fafafa;line-height:1.6}
+h1{color:#0b3d6b;border-bottom:3px solid #0b3d6b;padding-bottom:8px}
+h2{color:#0b3d6b;margin-top:34px;border-left:5px solid #0b3d6b;padding-left:10px}
+h3{color:#155a8a;margin-top:22px}
+table{border-collapse:collapse;width:100%;margin:12px 0;background:#fff}
+th,td{border:1px solid #ccc;padding:7px 10px;text-align:left;font-size:14px}
+th{background:#e8f0f7;color:#0b3d6b}
+tr:nth-child(even){background:#f6f9fc}
+.kpi{display:inline-block;background:#0b3d6b;color:#fff;border-radius:8px;padding:14px 18px;margin:6px 8px 6px 0;min-width:150px}
+.kpi b{font-size:22px;display:block}
+.kpi span{font-size:12px;opacity:.85}
+.callout{background:#fff8e1;border-left:5px solid #f5a623;padding:12px 16px;margin:14px 0;border-radius:4px}
+.good{background:#e8f5e9;border-left-color:#2e7d32}
+.gap{background:#fdecea;border-left-color:#c62828}
+.note{background:#e3f2fd;border-left-color:#1565c0}
+code{background:#eee;padding:1px 5px;border-radius:3px;font-size:13px}
+.small{font-size:12px;color:#666}
+nav{background:#0b3d6b;color:#fff;padding:10px 16px;border-radius:8px;margin-bottom:20px}
+nav a{color:#fff;text-decoration:none;margin-right:14px;font-size:13px}
+.toc{background:#fff;border:1px solid #ddd;padding:14px 20px;border-radius:8px;margin:14px 0}
+</style></head><body>
+<h1>BaiZe Stage(ii) Post-Train · P0 诊断报告 D1–D6</h1>
+<div class="small">生成节点：10.252.32.17 (2026-11-06) · 数据来源：本节点 <code>~/code/eda_fastmcp</code> 与 <code>~/code/EDA-Eval-Framework</code>（2026-11-06 新发现可达）· 零 GPU · 自包含 0 脚本 0 外链</div>
+<nav><a href="#sec1">摘要</a><a href="#sec2">数据源</a><a href="#sec3">数据集画像</a><a href="#d1">D1</a><a href="#d2">D2</a><a href="#d3">D3</a><a href="#d4">D4</a><a href="#d5">D5</a><a href="#d6">D6</a><a href="#sec10">结论</a><a href="#sec11">建议</a></nav>
+<h2 id="sec1">1. 摘要</h2>
+<div class="callout good"><b>本轮突破</b>：前序唤醒（wake1–3）判定 P0 数据源“本节点不可达”是基于错误路径（<code>/nasdata</code>/<code>/nas_data</code>）。实测发现 <code>~/code/eda_fastmcp</code>（158-case 数据集 + DeepSeek 全 harness 智能体轨迹 + 评分脚本）与 <code>~/code/EDA-Eval-Framework</code>（13 份 <code>final_report.json</code>）<b>均在本节点可达</b>，P0 因此可产出<b>真实数据</b>（非编造）。</div>
+<div class="kpi"><b>63.2%</b><span>D1 工具调用强度(DeepSeek 94%侧)</span></div>
+<div class="kpi"><b>14.32</b><span>D2 工具调用频次/任务</span></div>
+<div class="kpi"><b>0.0%</b><span>D3 全harness超时比例</span></div>
+<div class="kpi"><b>73.9%</b><span>D4 执行报错占比(非断言)</span></div>
+<div class="kpi"><b>5.01</b><span>D6 平均迭代轮数 Φ</span></div>
+<div class="kpi"><b>36% → 94%</b><span>待补: MiniCPM5 侧轨迹不在本节点</span></div>
+<p><b>核心判断（初步，待 36% 侧实测修正）</b>：DeepSeek 94% 侧表现出“高频用工具（14.3 次/任务）+ 多轮迭代（Φ≈5）+ 错误以执行报错为主（74%，API/领域知识问题），断言失败仅 26%”。这强烈暗示 58 pp 差距的<b>主体是“协议可回收”部分</b>（工具协议 + API 领域知识 + 迭代闭环，均可由 SFT/退火/RL 改善），而非“纯语义推理硬差距”。支持成功阶梯 M1(50%)“几近必然”的先验。</p>
+<h2 id="sec2">2. 数据源与可达性</h2>
+<table><tr><th>数据源</th><th>路径（本节点 .17）</th><th>内容</th><th>状态</th></tr>
+<tr><td>158-case 数据集</td><td><code>~/code/eda_fastmcp/pyAether-eval/original_dataset/EDA-Eval-PyAether-v20260311.jsonl</code></td><td>158 任务 + metadata(scenario/category/apis)</td><td>✅ 可达</td></tr>
+<tr><td>DeepSeek 全 harness 轨迹</td><td><code>~/code/eda_fastmcp/pyAether-eval/cline_cli_trace/cline_trace_v1_3/</code></td><td>103 任务智能体轨迹(api_conversation_history.json)</td><td>✅ 可达</td></tr>
+<tr><td>评分/驱动脚本</td><td><code>~/code/eda_fastmcp/scripts/run_eval.py / run_cline_script.sh</code></td><td>评测驱动 + 评分</td><td>✅ 可达</td></tr>
+<tr><td>代码生成评测结果</td><td><code>~/code/EDA-Eval-Framework/output_evaluation/*/final_report.json</code></td><td>13 份报告(含 details_per_task)</td><td>✅ 可达</td></tr>
+<tr><td>MiniCPM5-2B 36% 全 harness 轨迹</td><td><code>~/eda_code_eval/*/</code>（任务书指定）</td><td>36% 那次运行的 per-task 轨迹 + 报告</td><td>❌ 不在本节点</td></tr>
+<tr><td>B 类 agentic 数据</td><td><code>/nas_inference/</code></td><td>AgentTrove / Nemotron 等</td><td>❌ .17 未挂载</td></tr>
+</table>
+<div class="callout gap"><b>诚实标注</b>：MiniCPM5-2B 36% 侧的 D1/D2/D6（即“小模型是否不会用工具/不迭代”这一<b>关键协议问题</b>）<b>无法在本节点实测</b>。需要运维把 <code>~/eda_code_eval/&lt;36%运行&gt;/{final_report.json, trace/*/}</code> 从评测机拷到本节点或挂载该盘。报告中对 36% 侧的推断均标注为“基于 DeepSeek 侧外推的假设，待实测”。</div>
+<h2 id="sec3">3. 数据集画像（EDA-Eval-PyAether 158 任务）</h2>
+<p>D5 的分母与任务复杂度画像，全部来自数据集 <code>metadata</code> 字段（实测）。</p>
+<h3>3.1 场景分布（D5 分母）</h3>
+<table><tr><th>场景 scenario</th><th>任务数</th><th>占比</th></tr><tr><td>Layout</td><td>64</td><td>40.5%</td></tr><tr><td>Schematic</td><td>47</td><td>29.7%</td></tr><tr><td>Design Management</td><td>24</td><td>15.2%</td></tr><tr><td>Others</td><td>23</td><td>14.6%</td></tr></table>
+<h3>3.2 类别分布 category</h3>
+<table><tr><th>类别</th><th>任务数</th><th>占比</th></tr><tr><td>Design Content Creation</td><td>46</td><td>29.1%</td></tr><tr><td>Geometry Operation & Analysis</td><td>26</td><td>16.5%</td></tr><tr><td>Database & Design Management</td><td>25</td><td>15.8%</td></tr><tr><td>Design Content Query & Edit</td><td>25</td><td>15.8%</td></tr><tr><td>Simulation & Analysis Configuration</td><td>21</td><td>13.3%</td></tr><tr><td>Utilities</td><td>15</td><td>9.5%</td></tr></table>
+<h3>3.3 任务复杂度画像</h3>
+<ul><li><b>涉及 API 数</b>（num_unique_apis）：中位数≈5，范围 1–41；多数任务(85%)≤10 个 API，少数高 API 任务(41 个)是硬骨头。</li>
+<li><b>参考代码行数</b>（lines_of_code）：中位数≈6，范围 1–14+；以短函数为主。</li>
+<li><b>techlib 依赖</b>：113 任务(72%)无 techlib 依赖，45 任务(28%)需要 → 后者更难，SFT 语料需覆盖 techlib 场景。</li></ul>
+<div class="callout note"><b>对 SFT 数据配比的启示</b>：场景以 Layout(64)/Schematic(47) 为主（合计 70%），合成训练对应优先覆盖这两类 API；28% 的 techlib 任务是难点，需单独配比。</div>
+<h2 id="d1">4. D1 · 工具调用合法率</h2>
+<table><tr><th>口径</th><th>DeepSeek 94% 侧</th><th>MiniCPM5 36% 侧</th></tr>
+<tr><td>合法率代理（解析成功 tool_call / assistant 轮次）</td><td>63.2%</td><td>❌ 轨迹不在本节点</td></tr></table>
+<p class="small">注：此值为“工具调用强度代理”（每 assistant 轮平均发出 0.63 个可解析 tool_call），非严格“格式合法率”。严格合法率需统计“模型尝试发 tool_call 但 XML/JSON 畸形”的次数，提取器仅返回成功解析项 → 本节点数据不足以算严格值，待 36% 侧轨迹到位后用 <code>trace_reader.py --errors</code> 统计畸形块。判读阈值（任务书）：<90% → 协议问题，SFT 可大幅回收。</p>
+<div class="callout note"><b>外推假设（待实测）</b>：若 MiniCPM5-2B 侧合法率显著低于 DeepSeek，则 36%→50%(M1) 的提升空间里相当部分来自“把工具格式用对”，属 SFT 可回收。</div>
+<h2 id="d2">5. D2 · 工具调用频次（每任务平均）</h2>
+<table><tr><th>指标</th><th>DeepSeek 94% 侧（103 任务）</th><th>MiniCPM5 36% 侧</th></tr>
+<tr><td>每任务平均 tool_call 数</td><td><b>14.32</b></td><td>❌ 不在本节点</td></tr>
+<tr><td>总 tool_call 数</td><td>1475</td><td>—</td></tr></table>
+<h3>5.1 工具调用分解</h3>
+<table><tr><th>工具</th><th>调用次数</th><th>占比</th></tr><tr><td><code>search_apis</code></td><td>573</td><td>38.8%</td></tr><tr><td><code>run_pyAether_code_tool</code></td><td>516</td><td>35.0%</td></tr><tr><td><code>get_api_details</code></td><td>386</td><td>26.2%</td></tr></table>
+<p>DeepSeek 侧 <b>14.3 次/任务</b>，三工具均衡：检索(search_apis 573)、详情(get_api_details 386)、执行(run_pyAether_code_tool 516)。检索+详情占 65%，执行占 35% → 强模型“先查 API 再写代码”的范式清晰。</p>
+<div class="callout note"><b>外推假设</b>：若 MiniCPM5 侧频次显著偏低（如 &lt;5 次/任务），说明小模型“纯靠回忆、不用工具” → SFT 注入工具轨迹可修（对应 D2 判读：“显著偏低 → SFT 可修”）。</div>
+<h2 id="d3">6. D3 · 超上下文 / 截断比例</h2>
+<table><tr><th>口径</th><th>DeepSeek 全 harness</th><th>DeepSeek 代码生成(对照)</th></tr>
+<tr><td>超时任务比例</td><td>0.0%（0/103）</td><td>4.4%（7/158，最优轮）~ 17.7%（早期轮）</td></tr></table>
+<p>全 harness 侧 0 超时（沙盒执行 2500s 内完成）；代码生成侧超时从早期 17.7%(28/158) 降到 2.5%(4/158)，说明<b>超时主要是工程/调度问题而非长上下文能力</b>。判读（任务书）：“高 → 长上下文适配是前置项”——本数据显示全 harness 模式超时极低，<b>长上下文适配不是当前主瓶颈</b>，但 agentic 轨迹易超长（avg 45.6 条消息/任务），SFT 上下文长度仍需 ≥8192。</p>
+<h2 id="d4">7. D4 · 失败类型分解（执行报错 vs 断言失败）</h2>
+<h3>7.1 DeepSeek 全 harness 侧（103 任务，错误总数 88）</h3>
+<table><tr><th>错误类型</th><th>次数</th><th>占比</th></tr><tr><td>ASSERTION_ERROR</td><td>23</td><td>26.1%</td></tr><tr><td>IMPORT_ERROR</td><td>22</td><td>25.0%</td></tr><tr><td>FILE_NOT_FOUND</td><td>19</td><td>21.6%</td></tr><tr><td>TYPE_ERROR</td><td>10</td><td>11.4%</td></tr><tr><td>ATTRIBUTE_ERROR</td><td>5</td><td>5.7%</td></tr><tr><td>SYNTAX_ERROR</td><td>3</td><td>3.4%</td></tr><tr><td>NAME_ERROR</td><td>3</td><td>3.4%</td></tr><tr><td>UNKNOWN_ERROR</td><td>2</td><td>2.3%</td></tr><tr><td>UNICODE_ERROR</td><td>1</td><td>1.1%</td></tr></table>
+<div class="kpi"><b>65</b><span>执行报错任务(import/file/type...)</span></div>
+<div class="kpi"><b>23</b><span>断言失败任务(语义问题)</span></div>
+<p>执行报错（IMPORT_ERROR/FILE_NOT_FOUND/TYPE_ERROR 等，API 与领域知识问题）<b>占 74%</b>，断言失败（ASSERTION_ERROR，语义推理问题）仅 26%。按任务书判读：“报错多 → API/领域知识问题（SFT 领域语料）；断言失败多 → 语义推理（RL 价值更大）”。→ <b>当前 SFT 领域语料的收益面 > 纯 RL</b>，但 RL 能打磨“查-写-改”闭环减少 import/type 错。</p>
+<h3>7.2 DeepSeek 代码生成侧（最优轮 70.25%）</h3>
+<p>错误类型以 <b>AssertionError(24)</b> 为主 → 单轮代码生成模式下语义失败更突出（无工具迭代可纠错），进一步说明<b>工具迭代闭环能消化大量执行报错</b>。</p>
+<h2 id="d5">8. D5 · per-scenario 通过率</h2>
+<h3>8.1 DeepSeek 代码生成侧 per-scenario（最优轮 70.2%）</h3>
+<table><tr><th>场景</th><th>任务数</th><th>通过</th><th>通过率</th></tr><tr><td>Layout</td><td>64</td><td>41</td><td>64.1%</td></tr><tr><td>Schematic</td><td>47</td><td>31</td><td>66.0%</td></tr><tr><td>Design Management</td><td>24</td><td>20</td><td>83.3%</td></tr><tr><td>Others</td><td>23</td><td>19</td><td>82.6%</td></tr></table>
+<p>难度排序：<b>Schematic(66%) &lt; Layout(64%) &lt; Design Mgmt(83%) &lt; Others(83%)</b>。Schematic/Layout 是难点（几何/版图操作，API 多、状态复杂）；Others/Design Mgmt 较易（工具/管理类，API 单一）。</p>
+<h3>8.2 全部代码生成运行（多轮，含异常轮）</h3>
+<table><tr><th>运行</th><th>模型</th><th>总通过率</th><th>D3 超时</th><th>per-scenario(简)</th></tr><tr><td>20260320_1</td><td>zhulong</td><td>64.6%</td><td>28 (17.7%)</td><td>Desi75.0%, Layo59.4%, Othe87.0%, Sche55.3%</td></tr><tr><td>20260323_1</td><td>zhulong_deepseek_v32</td><td>69.0%</td><td>8 (5.1%)</td><td>Desi83.3%, Layo64.1%, Othe82.6%, Sche61.7%</td></tr><tr><td>20260330_1</td><td>zhulong_deepseek_v32</td><td>70.2%</td><td>7 (4.4%)</td><td>Desi83.3%, Layo64.1%, Othe82.6%, Sche66.0%</td></tr><tr><td>20260330_1</td><td>zhulong_deepseek_v32</td><td>67.7%</td><td>4 (2.5%)</td><td>Desi79.2%, Layo64.1%, Othe87.0%, Sche57.5%</td></tr><tr><td>20260413_1</td><td>zhulong_deepseek_v32</td><td>66.5%</td><td>4 (2.5%)</td><td>Desi79.2%, Layo60.9%, Othe87.0%, Sche57.5%</td></tr><tr><td>20260416_1</td><td>zhulong_deepseek_v32</td><td>39.9% (异常，排除)</td><td>4 (2.5%)</td><td>Desi45.8%, Layo32.8%, Othe87.0%, Sche23.4%</td></tr><tr><td>20260417_1</td><td>zhulong_deepseek_v32</td><td>66.5%</td><td>4 (2.5%)</td><td>Desi79.2%, Layo60.9%, Othe87.0%, Sche57.5%</td></tr></table>
+<p class="small">注：20260416 轮 pass=39.9% 系“Unknown Failure 86”异常（评分/生成链路故障），非模型真实能力，分析时排除。多轮 mean≈67%，std≈2.6pp（剔除异常轮）。</p>
+<div class="callout note"><b>对 SFT 数据配比</b>：合成训练对应优先补 Schematic/Layout（难点 + 占比大 70%），其 API 轨迹最稀缺；Others/Design Mgmt 已较易，少量即可。</div>
+<h2 id="d6">9. D6 · 平均迭代轮数 Φ 分布</h2>
+<table><tr><th>指标</th><th>DeepSeek 94% 侧</th><th>MiniCPM5 36% 侧</th></tr>
+<tr><td>平均代码执行轮数 Φ</td><td><b>5.01</b></td><td>❌ 不在本节点</td></tr>
+<tr><td>中位数</td><td>5</td><td>—</td></tr></table>
+<h3>9.1 Φ 分布（run_pyAether_code_tool 调用次数/任务）</h3>
+<table><tr><th>执行轮数</th><th>任务数</th><th>占比</th></tr><tr><td>0</td><td>1</td><td>1.0%</td></tr><tr><td>1</td><td>5</td><td>4.9%</td></tr><tr><td>2</td><td>11</td><td>10.7%</td></tr><tr><td>3</td><td>13</td><td>12.6%</td></tr><tr><td>4</td><td>19</td><td>18.4%</td></tr><tr><td>5</td><td>16</td><td>15.5%</td></tr><tr><td>6</td><td>13</td><td>12.6%</td></tr><tr><td>7</td><td>11</td><td>10.7%</td></tr><tr><td>8</td><td>3</td><td>2.9%</td></tr><tr><td>9</td><td>5</td><td>4.9%</td></tr><tr><td>10</td><td>1</td><td>1.0%</td></tr><tr><td>11</td><td>2</td><td>1.9%</td></tr><tr><td>12</td><td>2</td><td>1.9%</td></tr><tr><td>14</td><td>1</td><td>1.0%</td></tr></table>
+<p>DeepSeek 侧 Φ 均值 5.0、中位 5，分布 1–14；多数任务(56%)在 3–6 轮收敛，约 10% 任务需 ≥9 轮（难任务）。这说明强模型<b>熟练使用“生成→执行→看报错→改写”闭环</b>。判读（任务书）：“显著低于 DeepSeek → 模型不会用执行反馈闭环”。→ 若 MiniCPM5 侧 Φ≈1–2（一次性生成不迭代），则 58pp 中相当部分来自“不会用反馈闭环”，<b>这正是 RL(GRPO) 的主战场</b>。</p>
+<h2 id="sec10">10. 结论：58 pp 里多少是“协议可回收”</h2>
+<div class="callout good"><b>初步判断（基于 DeepSeek 94% 侧实测 + 对 36% 侧的合理外推，待 36% 轨迹实测修正）</b>：<br>58 pp 差距的<b>主体（估 35–45 pp）是“协议可回收”部分</b>——工具调用频次/合法率(D1/D2)、API 领域知识(D4 执行报错占 74%)、执行反馈迭代闭环(D6)。这三者分别对应 post-train 三步：<br>① SFT 注入工具轨迹 + PyAether API 语料 → 修 D1/D2/D4-执行报错（回收 ~20–30 pp，对应 M1→M2）；<br>② 领域退火补 API 知识 → 降 import/file 错（回收 ~5–10 pp）；<br>③ RL(GRPO) 打磨“查-写-改”闭环 → 提 Φ、降断言失败（回收 ~5–10 pp，对应 M3）。<br><b>剩余 ~10–15 pp 为“真实能力差距”</b>（语义推理/复杂多 API 任务），逼近 DeepSeek 94%(M4) 需更大量 RL + 可能更大模型。</div>
+<div class="callout gap"><b>未闭合项</b>：MiniCPM5-2B 36% 侧 D1/D2/D6 未实测（轨迹不在本节点）。上述比例是“基于强模型行为外推的假设”。<b>补齐 36% 侧后，本结论将从“假设”升级为“实测对照”</b>。需运维提供：<code>~/eda_code_eval/&lt;36%_run&gt;/{final_report.json, trace/*/api_conversation_history.json}</code>。</div>
+<h2 id="sec11">11. 对 post-train 三步的侧重建议</h2>
+<table><tr><th>步骤</th><th>侧重（基于 D1–D6）</th><th>预期回收</th></tr>
+<tr><td>领域退火</td><td>PyAether API 参考文档（28 类 API）+ EDA 工具文档；配比 domain 30%。目标：降 import/file 错(D4 执行报错 74%)</td><td>~5–10 pp</td></tr>
+<tr><td>SFT</td><td><b>工具轨迹(检索-详情-执行)为核</b>；优先补 Schematic/Layout(难点+70%占比)；上下文 ≥8192(轨迹 avg 45.6 消息)；修 D1/D2</td><td>~20–30 pp (M1→M2)</td></tr>
+<tr><td>RL(GRPO)</td><td>奖励 R4(API 合法性+工具惩罚)；打磨 Φ(D6)；anti-cheat 防“假迭代”；预算按沙盒并发×墙钟</td><td>~5–10 pp (M3)</td></tr>
+<tr><td>评测</td><td>per-scenario 报告 Schematic/Layout；5-run mean±std；McNemar 配对；先定 M1–M4 后测</td><td>—</td></tr></table>
+<div class="callout note"><b>关键不变量</b>：污染隔离(158 任务禁入训练集，闸门已就绪 ✅)、anti-cheat 全程、5-run mean±std、预注册先定后测。详见 P2 方案书 <code>report_posttrain_plan_zh.html</code>。</div>
+<hr><div class="small">报告生成：2026-11-06 · BaiZe post-train agent wake4 · 数据全部来自本节点实测，无编造 · MiniCPM5 36% 侧标注为待补。<br>原始数据：<code>/tmp/pt_p0_summary.json</code>（同步写入 EXPERIMENTS_POSTTRAIN.md §D）。</div>
+</body></html>
