@@ -2,7 +2,9 @@
 
 WAITING: 0
 
-> 🆕 **【wake #763 · 2026-11-06 11:40】监控巡检·状态无变化·双poller健康·GPU满载·仅待GPU。SFT poller PID2757742(etimes≈57180s≈15.9h,ppid=1)alive✓ 活跃poll log(sft_poll_20261105_194723.log)latest [11:40:21]busy_util--waiting；GRPO chain PID2466702(etimes≈12700s≈3.5h,ppid=1)alive✓ chain log latest [11:37:22]waited 12600s/7776000=90天；eval_results.json未出现(SFT未启动,GPU忙)；GPU .12 8×H100满载(96-100%util/~75GB) pretrain baize2b PID2612442 iter~103100/700k(14.7%) 速率~7.0s/iter ETA≈12/24-25。cline in PATH✓。📦体积:TASK=30453B(29.7KB)/MEMORY≈9.1KB(均≤32KB✓,无需归档)。**未完成指令:有**(阶段1 GPU训练pending·外部阻塞不可加速/不杀健康训练)⇒**WAITING: 0**。
+> 🆕 **【wake #764 · 2026-11-06 11:47】监控巡检·状态无变化·双poller健康·GPU满载·仅待GPU。SFT poller PID2757742(etimes≈57463s≈16.0h,ppid=1)alive✓ 活跃poll log(sft_poll_20261105_194723.log)latest [11:45:22]busy_util--waiting；GRPO chain PID2466702(etimes≈13064s≈3.6h,ppid=1)alive✓ chain log latest [11:45:22]waited 13080s/7776000=90天；eval_results.json未出现(SFT未启动,GPU忙)；GPU .12 8×H100满载(100%util/~75GB) pretrain baize2b launcher PID146283 iter~103100/700k(14.7%) 速率~7.0s/iter latest ckpt iter_0102000@09:32 next iter_0104000 ETA~13:25 全程ETA≈12/24-25。cline in PATH✓。📦体积:TASK=30453B(29.7KB)/MEMORY=9130B(8.9KB)(均≤32KB✓,无需归档)。**未完成指令:有**(阶段1 GPU训练pending·外部阻塞不可加速/不杀健康训练)⇒**WAITING: 0**。
+
+> 📦 wake #763（监控巡检·2026-11-06 11:40）已归档 → daily-memories-vision/2026-11-06.md；**结论**：状态无变化，双poller健康，GPU满载仅待GPU。需要时再读。
 
 > 📦 wake #762（监控巡检·2026-11-06 11:32）已归档 → daily-memories-vision/2026-11-06.md；**结论**：状态无变化，双poller健康，GPU满载仅待GPU。需要时再读。
 
@@ -72,4 +74,4 @@ WAITING: 0
 | 当前动作 | **双**poller后台运行等GPU空闲：SFT poller(PID 2757742, flock, etimes≈57180s≈15.9h, 扠60s `busy_util -- waiting`) + GRPO chain(PID 2466702, flock, etimes≈12700s≈3.5h, SFT_WAIT_MAX=90天, 扠120s `SFT not done yet`)·仅待GPU释放 |
 | 下一步 | 阶段1 SFT训练（~4 GPU·h，GPU空闲后SFT poller自动启动，3000 steps≈2.66 epoch）→ eval_results.json → GRPO chain自动验收 → 阶段2 GRPO（~12 GPU·h）+ WaveQA-RL评测 |
 | 阻塞 | .12+.29 GPU全占（16×H100 96-100% util / ~75GB，pretrain mamba2 baize2b PID 2612442 iter~103100/700k(14.7%) 速率~7.0s/iter ETA≈12/24-25）· .75 SSH不可达（需运维协调MCP通道） |
-| 更新 | **2026-11-06 11:40 (wake #763)**: 监控巡检·状态无变化·双poller健康·GPU .12 8×H100满载 pretrain baize2b iter~103100/700k ETA≈12/24-25·git同步·WAITING=0 |
+| 更新 | **2026-11-06 11:47 (wake #764)**: 监控巡检·状态无变化·双poller健康·GPU .12 8×H100满载 pretrain baize2b iter~103100/700k ETA≈12/24-25·git同步·WAITING=0 |
