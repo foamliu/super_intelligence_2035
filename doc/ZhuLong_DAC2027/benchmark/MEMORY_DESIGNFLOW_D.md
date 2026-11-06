@@ -2,7 +2,7 @@ WAITING: 0
 SHARD: D (netlist_wave)
 DOMAINS: analog_context, schematic_netlist, waveform
 
-- **PHASE**: shard D 运行中。已交付 151 条 case（D.jsonl 151 行）；台账 case-mark 150 + 890 parked = 1040 已动过。**本轮 #313 = NetlistSigRename-001 已交付**（fresh_D306 peek rank 166-185 → on45b claim+深读→合成，schematic_netlist, A-faithful, B-grade synthesized, L1, 16 条件 a-p）。fresh_D306 rank 166-185 已 peek（20 候选，仅 on45q 合格），下轮续 peek rank 186+。
+- **PHASE**: shard D 运行中。已交付 151 条 case（D.jsonl 151 行）；台账 case-mark 150 + 890 parked = 1040 已动过。**本轮 #313 = NetlistSigRename-001 已交付**（fresh_D306 peek rank 166-185 → on45q claim+深读→合成，schematic_netlist, A-faithful, B-grade synthesized, L1, 16 条件 a-p）。fresh_D306 rank 166-185 已 peek（20 候选，仅 on45q 合格），下轮续 peek rank 186+。
 
 - (归档批次 63) 历史 #268 CellPrefixExtract-001 选料流水已搬 MEMORY_D_archive.md
 - 每轮做 1 条 case：trace_ledger.py --shard D next → claim → 深读 → 合成 → 自验 → 追加 EDA-Eval-DesignFlow_D.jsonl → 日报
