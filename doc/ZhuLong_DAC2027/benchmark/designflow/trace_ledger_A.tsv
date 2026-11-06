@@ -178,3 +178,6 @@
 1793082695144_reixr	lorikx	hfeg0pkn001	183	digital	case	EDA-Eval-DesignFlow-CrEdgeAlignFix-001	2026-11-07 03:18	
 1793605487158_evxj6	xuluo	hfeg0pkn001	333	verification	case	EDA-Eval-DesignFlow-ParamRecon-001	2026-11-07 03:56	
 1793788141910_igrr4	e0046913	hfeg0pkn003	52	digital	case	EDA-Eval-DesignFlow-DcVarRepl-001	2026-11-07 04:25	
+1793869749395_wn9jo					case	EDA-Eval-DesignFlow-PdkLibLocator-001	2026-11-07 04:56	
+1789545210038_ep9m4	lorikx	hfeg0pkn001	104	verification	case	EDA-Eval-DesignFlow-SpecArcXdriveFix-001	2026-11-07 05:23	
+1789552395398_wt5s2					parked		2026-11-07 05:05	duplicate of ep9m4 (same ts=1789545210651, same USER#0, same 98 msgs)
