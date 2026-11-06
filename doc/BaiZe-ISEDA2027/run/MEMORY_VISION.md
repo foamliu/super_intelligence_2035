@@ -2,7 +2,9 @@
 
 WAITING: 0
 
-> 🆕 **【wake #734 · 2026-11-06 08:25】监控巡检+ETA修正：状态无变化·双poller健康·GPU(.12)8×61-100%满载·仅待GPU。实测确认：①SFT poller PID2757742 etimes≈45400s(~12.6h) `busy_util -- waiting`每60s✓(最新08:19:19)；②GRPO chain PID2466702 etimes≈1100s `grpo_chain_20261106_080722.log`确认 `waited 720s/7776000`(**90天超时生效**✓)；③pretrain baize2b PID2612442 iter_100000/700000(14.3%)，**修正ETA**：iter_90000 filesystem mtime=Nov5 10:09:46→iter_100000 mtime=Nov6 05:38:59=19.49h/10k iter→**~7.0s/iter**(wake#733误用18:49为iter_90000时间戳得3.9s/iter)，剩余600k×7.0s≈1167h⇒**ETA≈12/25**(wake#733的12/3系误算,推迟~3周)；④git pull→HEAD=8f49a03cf,0ahead/0behind✓。📦体积：TASK=30453B(29.7KB)/MEMORY=25205B(24.6KB)（均≤32KB✓,无需归档）。**未完成指令：有**（阶段1 GPU训练pending,阻塞方=pretrain baize2b S1 ETA≈12/25）⇒**WAITING: 0**。
+> 🆕 **【wake #735 · 2026-11-06 08:24】监控巡检：状态无变化·双poller健康·GPU(.12)8×97-100%满载·仅待GPU。实测确认：①SFT poller PID2757742 etimes≈45436s(~12.6h) `run_sft_wave.sh 8`健康✓(child sleep 60 PID3709341 etimes=18s)；②GRPO chain PID2466702 etimes≈1037s(~17min) `run_grpo_wave.sh 8`健康✓(flock guard活跃)；③pretrain baize2b PID2612442 etimes≈304370s(~3.5天) torchrun --train-iters 700000，latest ckpt=`hf_iter_100000`(@Nov6 05:42)，14.3%完成，ETA≈12/25(wake#734修正的~7.0s/iter)；④GPU .12 nvidia-smi：8×97-100% util / ~75GB each；⑤git pull→Already up to date,0ahead/0behind✓。📦体积：TASK=30453B(29.7KB)/MEMORY=25616B(25.0KB)（均≤32KB✓,无需归档）。**未完成指令：有**（阶段1 GPU训练pending,阻塞方=pretrain baize2b S1 ETA≈12/25）⇒**WAITING: 0**。
+
+> 📦 wake #734（监控巡检+ETA修正·2026-11-06 08:25）已归档 → daily-memories-vision/2026-11-06.md；**结论**：双poller健康，ETA修正12/3→12/25（iter_90000时间戳纠偏18:49→10:09:46,~7.0s/iter）。需要时再读。
 
 > 📦 wake #733（监控巡检·2026-11-06 08:14·ETA误算）已归档 → daily-memories-vision/2026-11-06.md；**结论**：双poller健康，但ETA≈12/3系误算（iter_90000时间戳错用18:49,实际mtime=10:09:46），正确ETA≈12/25。需要时再读。
 
