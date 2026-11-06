@@ -318,3 +318,40 @@
 | BaiZe-base | [TBD] | [TBD] | [TBD] | [TBD] | [TBD] |
 | BaiZe-SFT | [TBD] | [TBD] | [TBD] | [TBD] | [TBD] |
 | BaiZe-RL | [TBD] | [TBD] | [TBD] | [TBD] | [TBD] |
+
+---
+
+## §E 后训练数据调研（2026-11-06 wake17 · web search · 零 GPU）
+
+> **交付物**：`reports/report_posttrain_stage_data_survey_zh.html`（44.9KB / 10 节 / 0 script / 0 外链 / 自包含）
+> **检索方式**：CIMI search via proxy 172.19.92.25:13128；7 组关键词，21 条引用。
+
+### 核心发现
+
+| 阶段 | 关键发现 | 来源 | 对 BaiZe 的映射 |
+|:--|:--|:--|:--|
+| 退火 | Llama3 末 10-30% 切高质量数据+LR→1%，+4分；Qwen3 S2 上采样 STEM/code；DeepSeek-V3 14.8T后千步退火 | Llama3/Qwen3/DeepSeek 报告 | PyAether API ~4-5M tok 做 domain 退火；配比 domain30:web50:code12:math8 |
+| SFT | DeepSeek-V3 1.5M多域指令(R1变体生成)；AgentTrove 170万轨迹(4×Nemotron)；SWE-smith 5万实例→40.2%；Trajectory2Gym 仅10%含错误恢复 | 各论文/数据集 | SFT agentic 轨迹是58pp最大可回收项(~20pp) |
+| RL | arXiv2605.28388: 难度非单调，中等最优；sGPO(2606.08854): pass@8 profiling 过滤全对/全错，3×效率 | arXiv 论文 | pass@8 取1/8~7/8区间→解决advantage=0问题 |
+| 奖励 | RLVR二值→process+工具惩罚；GRPO组内比较无需critic | DeepSeek/腾讯云 | R1-R4四臂与前沿一致 |
+
+### 差距表（摘要）
+
+| 阶段 | 已有 | 缺什么 | 怎么补 | 成本 |
+|:--|:--|:--|:--|:--|
+| 退火 | PyAether API ~4-5M tok + WSD | 分词镜像+配比验证 | data线分词+小模型消融 | ~1周/30-50GB |
+| SFT | UltraData 18.89B+5.97B tok(已分词) | PyAether agentic轨迹+错误恢复链 | DeepSeek跑沙盒生成~50-100K条 | ~1-2周/10-20GB |
+| RL | 158题(禁用)+沙盒 | ~2-5K RL任务+难度标注 | 合成+pass@8 profiling | ~1-2周/1-5GB |
+| 评测 | 158题+脚本+vLLM | 各阶段ckpt+5-run | 等pretrain | 等2026-12-25 |
+
+### 3周窗口优先2项
+
+1. **PyAether SFT轨迹合成**(~50-100K条，含工具调用+错误恢复)→回收~20pp(M1→M2)
+2. **RLVR难度筛选**(pass@8中间区间~2-5K题)→打磨~5-10pp(M3)
+
+### 硬盘体检
+
+- `/` 386G可用(84%)，`/nas_data` 20T可用(85%)，`/nas_inference`/`/nas_env` 未挂载.17
+- post-train总需求~200-300GB，存储不是瓶颈
+- 清理候选(不擅自删)：/tmp/models/Qwen3.5-2B(4.3G)、~/code/langfuse(266M)、~/code/signoz(181M)
+- 报告含完整磁盘表+目录占用表+清理候选清单
