@@ -101,9 +101,23 @@ if [ "$EXTRACT_ONLY" = 1 ]; then
 fi
 
 echo "[step1] 检查/创建 vLLM 虚拟环境..."
+# 系统 python3=3.8 不支持 vLLM（需 ≥3.9）；优先用 eda_fastmcp venv 的 python3.13
+PYTHON_FOR_VENV=""
+if [ -x "$EDA_BASE/.venv/bin/python3.13" ]; then
+  PYTHON_FOR_VENV="$EDA_BASE/.venv/bin/python3.13"
+elif command -v python3.10 >/dev/null 2>&1; then
+  PYTHON_FOR_VENV="python3.10"
+elif command -v python3.11 >/dev/null 2>&1; then
+  PYTHON_FOR_VENV="python3.11"
+elif command -v python3.12 >/dev/null 2>&1; then
+  PYTHON_FOR_VENV="python3.12"
+else
+  PYTHON_FOR_VENV="python3"  # fallback（可能=3.8，vLLM 安装会失败）
+fi
+echo "  使用 Python: $PYTHON_FOR_VENV"
 if [ ! -d "$VLLM_VENV" ]; then
   echo "  创建 venv: $VLLM_VENV"
-  python3 -m venv "$VLLM_VENV" || { echo "❌ venv 创建失败"; exit 1; }
+  "$PYTHON_FOR_VENV" -m venv "$VLLM_VENV" || { echo "❌ venv 创建失败"; exit 1; }
   "$VLLM_VENV/bin/pip" install --upgrade pip wheel
   echo "  安装 vLLM（可能需要数分钟）..."
   "$VLLM_VENV/bin/pip" install vllm || { echo "❌ vLLM 安装失败"; exit 1; }
