@@ -2,7 +2,9 @@
 
 WAITING: 0
 
-> 🆕 **【wake #826 · 2026-11-06 18:52】监控巡检·GRPO chain健康(176polls全busy)·GPU满载等pretrain释放·零可执行动作·WAITING=0。** ①GRPO chain PID1365749 alive(ppid=1真守护,etimes≈8590s/143min),chain stdout(/tmp/grpo_chain_relaunch.log)最新18:51:04 busy_util--waiting健康 ②pretrain torchrun PID2612442 etimes=342010s/95.0h,2节点(.12+.29)16GPU,ETA≈11/28(~22天) ③GPU 8×H100 100%util ~75GB,vision R9未在跑·铁律禁杀pretrain ④SFT eval pass(format1.0/submit1.0,lt1pct=14%/lt5pct=21%)·ckpt step1000/2000/3000均有adapter_config.json在位(路径/nas_train/app.e0031982/datasets/baize-vision/out/wave_sft_stage1w/step*/)·WaveQA-RL oracle 300题在位·grpo_train_wave.py/waveqa_eval.py/run_grpo_wave.sh就绪·auto-launch链全路径就绪 ⑤git sync origin(无ahead/behind)。**结论**:状态无变化,本轮零GPU可执行动作(被健康pretrain占满,ETA≈11/28),不伪造数字。📦体积:TASK=30.5KB(30477B)/MEMORY≈19.3KB(均≤32KB✓,本轮0归档)。**未完成指令:有**(阶段2 GRPO待GPU释放+阶段3未交付)⇒**WAITING: 0**。
+> 🆕 **【wake #827 · 2026-11-06 19:10】CPU GRPO Phase2全链路执行中·P0冒烟PASS·P1 pilot 50步训练中(step7/50,ETA~7min)·Oracle eval 300题DONE(100%)·pre-SFT eval 50题运行中·P2 eval chain已部署(等P1完跑post-SFT/post-GRPO)·报告生成器就绪。** ①用户令11-06 18:5x:GPU等2个月⇒不等了先上CPU。`--device cpu`已在grpo_train_wave.py/waveqa_eval.py(wake#827加) ②P0冒烟5步365s无OOM/NaN,RSS峰值44GB,CPU 1389%(14核),EXIT=0,ckpt step5存OK,reward[-0.5,0.735,0.560,1.360,0.535]submit100% ③P1 pilot 50步:lr=1e-6,save_steps=25,log_steps=1(每步loss+reward),step7/50 ETA~7min,loss~0.000 ④Oracle eval DONE:300题(num106/mc85/oe109)mean=1.000全100% ⑤pre-SFT eval(50题,base 2B无LoRA)运行中 ⑥P2 eval chain(run_p2_eval_chain.sh)部署:等P1完→post-SFT eval(50题)→post-GRPO eval(50题) ⑦报告生成器gen_phase2_cpu_report.py就绪(已测通8277B,待eval完再终版) ⑧grpo_train_wave.py加loss日志+training_log.json ⑨GPU-wait chain PID1365749保留不动 ⑩git sync。📦体积:TASK=31.7KB/MEMORY≈20KB(均≤32KB✓)。**未完成指令:有**(P1训练中/P2 eval链中/P3报告待终版/EXPERIMENTS§21待写)⇒**WAITING: 0**。
+
+> 📦 wake #826（监控巡检·2026-11-06 18:52）已归档 → daily-memories-vision/2026-11-06.md；**结论**：GRPO chain健康(176polls全busy)·GPU满载·零可执行动作·WAITING=0。需要时再读。
 
 > 📦 wake #825（监控巡检·2026-11-06 18:47）已归档 → daily-memories-vision/2026-11-06.md；**结论**：GRPO chain健康(170polls全busy)·GPU 8×H100 91-100%·零新发现·WAITING=0。需要时再读。
 

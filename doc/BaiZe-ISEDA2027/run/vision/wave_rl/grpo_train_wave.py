@@ -534,6 +534,7 @@ def main():
     print0(f"  World: {world} device={device} dtype={dtype}\n")
     step, t0 = 0, time.time()
     log_reward, log_count, log_submit = 0.0, 0, 0
+    train_log = []  # wake#827: per-step log for loss/reward curve (P1 requirement)
     while step < args.total_steps:
         all_rollouts, prompts_done = [], 0
         while prompts_done < args.batch_prompts:
@@ -577,6 +578,7 @@ def main():
             continue
         advantages_list = [v[1] for v in valid_rollouts]
         lr_now = args.lr
+        step_loss = 0.0
         for pe in range(args.ppo_epochs):
             new_logprobs_list = []
             for conv, adv, info, rew, iids, amask in valid_rollouts:
@@ -595,11 +597,17 @@ def main():
             for pg in optimizer.param_groups:
                 pg['lr'] = lr_now
             optimizer.step()
+            step_loss = float(loss.detach().cpu().item())
         rewards = [v[3] for v in valid_rollouts]
         submitted = sum(1 for v in valid_rollouts if v[2].get('submitted'))
         log_reward += float(np.mean(rewards))
         log_submit += submitted
         log_count += 1
+        step_wall = time.time() - t0
+        train_log.append({"step": step + 1, "loss": step_loss,
+                          "reward_mean": float(np.mean(rewards)),
+                          "submit_pct": submitted / max(1, len(rewards)) * 100,
+                          "lr": lr_now, "wall_s": step_wall})
         if (step + 1) % args.log_steps == 0 and is_main():
             avg_r = log_reward / max(1, log_count)
             avg_sub = (log_submit / max(1, log_count * args.group_size *
@@ -607,14 +615,26 @@ def main():
             elapsed = time.time() - t0
             sps = (step + 1) / elapsed
             eta = (args.total_steps - step - 1) / max(0.1, sps)
-            print0(f"  step {step+1}/{args.total_steps} | reward {avg_r:.3f} | "
-                   f"submit {avg_sub:.0f}% | lr {lr_now:.2e} | "
+            print0(f"  step {step+1}/{args.total_steps} | loss {step_loss:.4f} | "
+                   f"reward {avg_r:.3f} | submit {avg_sub:.0f}% | lr {lr_now:.2e} | "
                    f"{sps:.2f} step/s | ETA {eta/60:.1f} min")
             log_reward, log_count, log_submit = 0.0, 0, 0
         if (step + 1) % args.save_steps == 0:
             save_checkpoint(llm, tokenizer, args.output_dir, step + 1, rank)
         step += 1
     save_checkpoint(llm, tokenizer, args.output_dir, args.total_steps, rank)
+    # wake#827: save structured training log for loss/reward curve (P1 requirement)
+    if is_main() and train_log:
+        log_path = os.path.join(args.output_dir, "training_log.json")
+        with open(log_path, 'w') as f:
+            json.dump({"config": {"batch_prompts": args.batch_prompts,
+                        "group_size": args.group_size, "total_steps": args.total_steps,
+                        "lr": args.lr, "device": str(device),
+                        "max_turns": args.max_turns, "max_new_tokens": args.max_new_tokens,
+                        "seq_len": args.seq_len, "clip_eps": args.clip_eps},
+                       "steps": train_log,
+                       "total_wall_s": time.time() - t0}, f, indent=2)
+        print0(f"  Training log saved to {log_path}")
     print0(f"\n=== GRPO complete ({time.time()-t0:.1f}s) ===")
     cleanup()
 
