@@ -2745,3 +2745,61 @@ std>0 组 ≥30%                  ⇒ PARAM-ISSUE
 
 **成本**：35.1min CPU，零 GPU·h。
 
+---
+
+## §21.1b GRPO Advantage 方差诊断 · group_size 4→8 复验（CPU-only · 2026-11-07 wake#847 · 预注册 PARTIAL 分支验证）
+
+**背景**：§21.1 判定 PARTIAL，预注册「下一步建议 ①」要求 group_size 4→8 重跑，验证 std>0 占比是否上升、能否跨过 PARAM-ISSUE 门槛（std>0 ≥30%）。wake#844 启动本复验（PID 3966038，CPU-only，OMP16/nice19，100 prompt × 8 rollout = 800 rollout，time_budget 5400s），wake#847 收结果。**仍仅诊断、不训练、不写 ckpt、不占 GPU、不改奖励口径。**
+
+**方法**：与 §21.1 完全相同，唯一变量 = `--group_size 8`（§21.1 为 4）。同样加载 post-SFT step3000 LoRA + `qwen3vl_2b_text_extracted`（eval / CPU fp32 / `is_trainable=False`），复用 `grpo_train_wave.rollout_episode()` + `WaveformGymEnv._compute_reward()`（temp=0.8 / max_turns=8 / max_new_tokens=48）。落盘 `waveqa_advantage_diag_100.jsonl`（100 组逐条）+ `waveqa_advantage_diag_summary.json`（汇总）+ `reports/report_vision_wave_rl_advantage_diag_zh.html`（15244B，覆盖 gs=8 全数据）。
+
+### 核心结果（100 组 × 8 rollout）
+
+| 指标 | §21.1 (gs=4, 94 组) | §21.1b (gs=8, 100 组) | 变化 | 说明 |
+|:--|--:|--:|:--|:--|
+| **std=0 组占比** | 78.7% | **73.0%** | −5.7pp | 8 条采样更易采到边界 → 组内方差略增 |
+| **std>0 组占比** | 21.3% | **27.0%** | +5.7pp | 仍 < 30% 门槛 ⇒ 仍 PARTIAL，未跨入 PARAM-ISSUE |
+| **全 0 组** | 0 (0%) | 0 (0%) | — | 失败=−0.5（非 0），全 0 永不成立 |
+| **全正一致组** | — | 15 (15.0%) | — | 奖励相同且为正 ⇒ 亦无梯度 |
+| **全高分一致** | — | 6 (6.0%) | — | 均 ≥1.0 ⇒ 已完全掌握 |
+| **部分信号组** | — | 23 (23.0%) | — | 0<mean<1 且 std>0 ⇒ 最适合 GRPO |
+| 整体 reward mean | −0.0166 | −0.0084 | — | 接近 0（正负题抵消） |
+| submit 率 | 100% | **100%** | — | 格式 / submit 已稳定 |
+
+### 按测量目标分组（**gs4→gs8 对比 · 最关键**）
+
+| 目标 | n(gs4) | std=0%(gs4) | n(gs8) | std=0%(gs8) | mean(gs8) | std(gs8) | gs4→gs8 诊断 |
+|:--|--:|--:|--:|--:|--:|--:|:--|
+| **rise_time** | 26 | **100.0%** | 26 | **100.0%** | −0.500 | 0.000 | **完全不变**——26/26 八条全 −0.5 ⇒ **零信号**。✅ 与 §21.1 预测一致（"对 rise_time 100% 全错几乎无效，8 条仍全 −0.5"）⇒ **确认能力缺口，需补 SFT 数据** |
+| **duty_cycle** | 22 | 90.9% | 24 | **91.7%** | −0.425 | 0.007 | **几乎不变**（+0.8pp）⇒ 近 NO-SIGNAL。✅ 与预测一致（"对 duty_cycle 几乎无效"）⇒ 同样能力缺口 |
+| **amplitude** | 24 | 87.5% | 27 | **74.1%** | +0.435 | 0.024 | **改善 13.4pp**——gs=8 在边界题上采到更多方差 ⇒ ✅ 与预测一致（"对 amplitude 边界题有效"），但 mean 仍高（+0.43）→ 近饱和，GRPO 边际收益低 |
+| **period** | 22 | 31.8% | 23 | **21.7%** | +0.462 | 0.233 | **改善 10.1pp**——std>0 已达 **78.3%** ⇒ ✅ 与预测一致（"对 period 边界题有效"），**period 现已具备充分 GRPO 训练条件** |
+
+### 判定（预注册口径，未临时改动）
+
+```
+std=0 组 ≥80% AND 全0组占多数  ⇒ NO-SIGNAL
+std>0 组 ≥30%                  ⇒ PARAM-ISSUE
+中间地带                        ⇒ PARTIAL
+```
+实测：std=0=73.0%（< 80%）、std>0=27.0%（< 30%）、all_zero=0 ⇒ **仍判定 PARTIAL**。
+
+> group_size 4→8 把 std>0 从 21.3% 推到 27.0%，方向正确但**未跨过 30% 门槛**。仅靠继续加大 group_size（→16/32）边际收益递减且耗时倍增，**不是决定性手段**。
+
+### 结论（gs=8 复验确认 §21.1 全部预测）
+
+1. **rise_time / duty_cycle = 能力缺口（SFT 问题，非 GRPO 能解）**：gs=8 对这两个目标**完全无效**（rise_time 100% / duty_cycle 91.7% 不变），证实根因 = base policy 在这两类测量上一致全错（全 −0.5），8 条采样无论怎么采都全同 ⇒ advantage=0 ⇒ 零梯度。**必须先补 SFT 数据**把成功率从"一致全错"推到"边界探索"，否则 GRPO 永无信号。**待用户批**（设计变更）。
+2. **period / amplitude = GRPO 可学 / 近饱和**：gs=8 显著改善了 std>0 占比（period 78.3% / amplitude 改善 13.4pp），证实 group_size 加大对"边界探索型"目标有效——但 amplitude mean 仍 +0.43（近饱和，边际收益低），period 才是 GRPO 信号最充足的目标。
+3. **奖励连续化仍待批**：R_main 由 5 档离散改为连续（如 `exp(−rel_err/τ)`）可在同档内制造组内方差，但改变奖励口径需重新预注册判据，**本令不自动执行**。
+4. **Stage-2 full GPU GRPO 现不推进**（维持 wake#844 决策）：① GPU 8×H100 仍满载 pretrain S1（ETA≈12/25）；② 方法论决定性——奖励仍离散（`grpo_train_wave.py` L9-10 未连续化）+ rise_time/duty_cycle 能力缺口未补 ⇒ 现配置跑 full ≈ 浪费 12 GPU·h。待用户批奖励连续化 + rise_time/duty_cycle 补 SFT 数据后，再结合 GPU 释放窗口推进。
+
+**交付物**：
+- `vision/wave_rl/waveqa_advantage_diag_100.jsonl`（100 组逐条，gs=8）✅
+- `vision/wave_rl/waveqa_advantage_diag_summary.json`（汇总 + 判定，gs=8）✅
+- `reports/report_vision_wave_rl_advantage_diag_zh.html`（15244B / 12 节 / 内联 SVG / 无外链无 script / gs=8 全数据）✅
+- 本节 ✅
+
+**数字溯源**：`waveqa_advantage_diag_100.jsonl` + `waveqa_advantage_diag_summary.json` + 报告 HTML。无伪造；CPU float32 / nice19 / OMP16 / 零 GPU / 未碰 pretrain / GPU-wait chain PID1365749 未动。可复现（seed=20261112 + step3000 ckpt + group_size=8 → 相同结果）。
+
+**成本**：74.1min CPU（4443.5s），零 GPU·h。
+

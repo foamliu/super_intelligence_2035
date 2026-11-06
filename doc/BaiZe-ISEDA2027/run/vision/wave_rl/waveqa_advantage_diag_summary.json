@@ -1,7 +1,7 @@
 {
   "config": {
-    "n_prompts": 94,
-    "group_size": 4,
+    "n_prompts": 100,
+    "group_size": 8,
     "temperature": 0.8,
     "max_turns": 8,
     "max_new_tokens": 48,
@@ -10,31 +10,31 @@
     "sft_ckpt": "/nas_train/app.e0031982/datasets/baize-vision/out/wave_sft_stage1w/step3000",
     "device": "cpu",
     "dtype": "float32",
-    "actual_n_prompts": 94
+    "actual_n_prompts": 100
   },
   "overall_reward": {
-    "mean": -0.016595744680851066,
-    "std": 0.6383281907693161,
+    "mean": -0.008424999999999995,
+    "std": 0.6421787285289041,
     "min": -0.5,
     "max": 1.36,
     "pct_zero": "0.0%",
-    "pct_positive": "41.5%",
-    "pct_ge1": "12.0%"
+    "pct_positive": "42.0%",
+    "pct_ge1": "12.4%"
   },
   "key_stats": {
-    "n_total": 94,
-    "n_std0": 74,
-    "pct_std0": "78.7%",
+    "n_total": 100,
+    "n_std0": 73,
+    "pct_std0": "73.0%",
     "n_all_zero": 0,
     "pct_all_zero": "0.0%",
-    "n_all_same_pos": 19,
-    "pct_all_same_pos": "20.2%",
+    "n_all_same_pos": 15,
+    "pct_all_same_pos": "15.0%",
     "n_all_same_high": 6,
-    "pct_all_same_high": "6.4%",
-    "n_std_pos": 20,
-    "pct_std_pos": "21.3%",
-    "n_partial_signal": 16,
-    "pct_partial_signal": "17.0%",
+    "pct_all_same_high": "6.0%",
+    "n_std_pos": 27,
+    "pct_std_pos": "27.0%",
+    "n_partial_signal": 23,
+    "pct_partial_signal": "23.0%",
     "overall_submit_rate": "100.0%"
   },
   "std_histogram": {
@@ -49,12 +49,12 @@
       ".5+"
     ],
     "counts": [
-      74,
+      73,
       0,
       6,
-      2,
-      3,
-      9,
+      1,
+      6,
+      14,
       0,
       0
     ]
@@ -69,69 +69,69 @@
       "1.5+"
     ],
     "counts": [
-      55,
+      58,
       0,
-      23,
-      6,
+      22,
+      10,
       10,
       0
     ]
   },
   "by_question_type": {
     "numerical": {
-      "n": 34,
-      "n_std0": 24,
-      "pct_std0": "70.6%",
+      "n": 36,
+      "n_std0": 26,
+      "pct_std0": "72.2%",
       "n_all_zero": 0,
       "n_all_same_high": 1,
-      "mean_of_means": -0.04044117647058822,
-      "mean_of_stds": 0.06314314786913154,
+      "mean_of_means": -0.05347222222222222,
+      "mean_of_stds": 0.06722468451327408,
       "submit_rate": "100.0%"
     },
     "open_ended": {
-      "n": 34,
-      "n_std0": 27,
-      "pct_std0": "79.4%",
+      "n": 36,
+      "n_std0": 26,
+      "pct_std0": "72.2%",
       "n_all_zero": 0,
       "n_all_same_high": 3,
-      "mean_of_means": -0.006029411764705859,
-      "mean_of_stds": 0.03888263224581959,
+      "mean_of_means": -0.00923611111111108,
+      "mean_of_stds": 0.06643466288891248,
       "submit_rate": "100.0%"
     },
     "multi_choice": {
-      "n": 26,
-      "n_std0": 23,
-      "pct_std0": "88.5%",
+      "n": 28,
+      "n_std0": 21,
+      "pct_std0": "75.0%",
       "n_all_zero": 0,
       "n_all_same_high": 2,
-      "mean_of_means": 0.0007692307692307742,
-      "mean_of_stds": 0.03011587314970075,
+      "mean_of_means": 0.05053571428571429,
+      "mean_of_stds": 0.04880313713773242,
       "submit_rate": "100.0%"
     }
   },
   "by_measure_target": {
     "amplitude": {
-      "n": 24,
-      "pct_std0": "87.5%",
+      "n": 27,
+      "pct_std0": "74.1%",
       "n_all_zero": 0,
-      "mean_reward": 0.4291666666666667,
-      "mean_std": 0.005691772515768496,
+      "mean_reward": 0.43453703703703705,
+      "mean_std": 0.023832392236339844,
       "submit_rate": "100.0%"
     },
     "duty_cycle": {
-      "n": 22,
-      "pct_std0": "90.9%",
+      "n": 24,
+      "pct_std0": "91.7%",
       "n_all_zero": 0,
-      "mean_reward": -0.40477272727272734,
-      "mean_std": 0.02698955349038208,
+      "mean_reward": -0.42468749999999994,
+      "mean_std": 0.007291539254161716,
       "submit_rate": "100.0%"
     },
     "period": {
-      "n": 22,
-      "pct_std0": "31.8%",
+      "n": 23,
+      "pct_std0": "21.7%",
       "n_all_zero": 0,
-      "mean_reward": 0.45659090909090916,
-      "mean_std": 0.16006893221062304,
+      "mean_reward": 0.4616304347826087,
+      "mean_std": 0.2330327310371377,
       "submit_rate": "100.0%"
     },
     "rise_time": {
@@ -144,6 +144,6 @@
     }
   },
   "verdict": "PARTIAL",
-  "verdict_logic": "std=0 groups = 78.7% (threshold 80%); std>0 groups = 21.3% (threshold 30%); all-zero majority among std=0 = False",
-  "wall_seconds": 2108.413925886154
+  "verdict_logic": "std=0 groups = 73.0% (threshold 80%); std>0 groups = 27.0% (threshold 30%); all-zero majority among std=0 = False",
+  "wall_seconds": 4443.4930901527405
 }
