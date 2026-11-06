@@ -2,7 +2,9 @@
 
 WAITING: 0
 
-> 🆕 **【wake #731 · 2026-11-06 07:4x】阶段1就绪审计+数据泄漏验证+模型CPU加载复核+就绪报告HTML**。用户直令「接续执行阶段1 SFT」。本轮新增：① train/holdout数据泄漏检查（ID重叠=命名伪影,参数级重叠8/425=1.9%✅,seed隔离✅）；② 2B模型CPU加载复核（AutoTokenizer✅/AutoConfig✅qwen3-28L-2048h/LoRAConfig✅r64α128）；③ 产出`reports/report_vision_wave_rl_phase1_readiness_zh.html`(9345B/11节/中文/无外链/标签配平)；④ EXPERIMENTS §20.18。git fetch→HEAD=6502214a8(data 07:42),0ahead/0behind✓。**本机=.12**：8×H100 100%/~75GB(R9 ETA≈11/25-27)；.29亦100%。**双poller健康**：SFT PID2757742(ppid=1,~11.9h,60s poll)+GRPO chain PID2428009(ppid=1,~9.1h,120s poll)。Phase1 CPU侧100%就绪,唯一阻塞=GPU。📦体积：TASK=30453B(29.7KB)/MEMORY=~25KB（均≤32KB✓）。**未完成指令：有**（阶段1 GPU训练pending）⇒**WAITING: 0**。
+> 🆕 **【wake #732 · 2026-11-06 08:04】🔴关键修正：R9已于10/2完成(step108000/108000,saved vision.pt)——此前wake#642-731记的"R9 ETA≈11/25-27"系误判。实际GPU阻塞方=pretrain线baize2b S1(dual-node torchrun --nnodes=2 .12master+.29,--arch mamba2 --train-iters 700000,iter~101143/700000≈14.4%,~7s/it,latest ckpt=100000,剩余~599k iter×7s≈48天,ETA≈12/25)。本轮处置：①修run_grpo_wave.sh SFT_WAIT_MAX 2592000→7776000(30天→90天,防pretrain跑完前GRPO chain超时);②kill旧GRPO chain PID2428009+重启→新PID2466702(flock guard安全,poller无GPU占用,新SFT_WAIT_MAX=7776000/90天生效);③SFT poller PID2757742 healthy(无超时,持续busy_util--waiting)。git fetch→HEAD=4a228f526(pretrain 07:55),0ahead/0behind✓。📦体积：TASK=30453B(29.7KB)/MEMORY=~25KB（均≤32KB✓）。**未完成指令：有**（阶段1 GPU训练pending,阻塞方=pretrain S1 ETA≈12/25,非R9）⇒**WAITING: 0**。
+
+> 📦 wake #731（阶段1就绪审计+数据泄漏验证+就绪报告HTML·2026-11-06 07:4x）已归档 → daily-memories-vision/2026-11-06.md；**结论**：CPU侧100%就绪(泄漏PASS/模型加载PASS/报告HTML交付)，但"R9 ETA≈11/25-27"系误判(wake#732已修正：R9 10/2已完成,实际阻塞方=pretrain S1)。需要时再读。
 
 > 📦 wake #730（监控巡检·2026-11-06 07:38·状态无变化·双poller健康·GPU均满载·仅待GPU）已归档 → daily-memories-vision/2026-11-06.md；**结论**：状态无变化，全管线就绪仅待GPU。需要时再读。
 

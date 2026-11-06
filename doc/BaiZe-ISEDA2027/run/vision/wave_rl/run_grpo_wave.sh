@@ -63,7 +63,7 @@ echo "  Started:     $(date)" | tee -a "$CHAIN_LOG"
 echo "" | tee -a "$CHAIN_LOG"
 echo "[Step 1] Waiting for SFT completion (eval_results.json)..." | tee -a "$CHAIN_LOG"
 SFT_WAIT_INTERVAL=120
-SFT_WAIT_MAX=2592000  # 30 days max wait (GPU may be occupied ~20 days by R9 pretrain)
+SFT_WAIT_MAX=7776000  # 90 days max wait (wake#732: R9 done Oct 2; actual blocker=pretrain baize2b S1 dual-node, iter~101k/700k, ETA~Dec 25)
 SFT_WAITED=0
 while true; do
   if [ -f "$SFT_EVAL_JSON" ]; then
