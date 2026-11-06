@@ -2,7 +2,9 @@
 
 WAITING: 0
 
-> 🆕 **【wake #736 · 2026-11-06 08:30】监控巡检：状态无变化·双poller健康·GPU(.12)8×95-100%满载·仅待GPU。实测确认：①SFT poller PID2757742 etimes≈45756s(~12.7h) `run_sft_wave.sh 8`健康✓，poll日志最新`[08:29:23] busy_util -- waiting`；②GRPO chain PID2466702 etimes≈1357s(~22.6min) `run_grpo_wave.sh 8`健康✓，chain日志最新`[08:29:22] SFT not done yet (waited 1320s/7776000)`(90天超时)；③pretrain baize2b PID2612442 etimes≈304720s(~3.5天) torchrun --train-iters 700000，latest ckpt=`iter_0100000`(@Nov6 05:38,prev iter_0098000@01:45→2000iter/3h53m≈7.0s/iter)，100000/700000=14.3%完成，ETA≈12/24-25；④GPU .12 nvidia-smi：8×95-100% util / ~75GB each(满载)；⑤eval_results.json=NO_EVAL_YET(SFT未起)；⑥git pull→Already up to date,0ahead/0behind✓。📦体积：TASK=30453B(29.7KB)/MEMORY=25767B(25.2KB)（均≤32KB✓,无需归档）。**未完成指令：有**（阶段1 GPU训练pending,阻塞方=pretrain baize2b S1 ETA≈12/24-25）⇒**WAITING: 0**。
+> 🆕 **【wake #737 · 2026-11-06 08:35】监控巡检：状态无变化·双poller健康·GPU(.12)8×92-100%满载·仅待GPU。实测确认：①SFT poller PID2757742 etimes≈46000s(~12.8h) `run_sft_wave.sh 8`健康✓，poll日志最新`[08:34:24] busy_util -- waiting`；②GRPO chain PID2466702 etimes≈1592s(~26.5min) `run_grpo_wave.sh 8`健康✓，chain日志`grpo_chain_20261106_080722.log`最新`[08:35:22] SFT not done yet (waited 1680s/7776000)`(90天超时✓)；③pretrain baize2b PID2612442 etimes≈304969s(~3.5天) torchrun --train-iters 700000，latest ckpt=`iter_0100000`(@Nov6 05:38,prev iter_0098000@01:45→2000iter/3h53m≈7.0s/iter)，100000/700000=14.3%完成，ETA≈12/24-25；④GPU .12 nvidia-smi：8×92-100% util / ~75GB each(满载)；⑤eval_results.json=NO_EVAL_YET(SFT未起)；⑥git pull→Already up to date,0ahead/0behind✓。📦体积：TASK=30453B(29.7KB)/MEMORY=26139B(25.5KB)（均≤32KB✓,无需归档）。**未完成指令：有**（阶段1 GPU训练pending,阻塞方=pretrain baize2b S1 ETA≈12/24-25）⇒**WAITING: 0**。
+
+> 📦 wake #736（监控巡检·2026-11-06 08:30）已归档 → daily-memories-vision/2026-11-06.md；**结论**：状态无变化，双poller健康，GPU满载仅待GPU。需要时再读。
 
 > 📦 wake #735（监控巡检·2026-11-06 08:24）已归档 → daily-memories-vision/2026-11-06.md；**结论**：状态无变化，双poller健康，GPU满载仅待GPU。需要时再读。
 
