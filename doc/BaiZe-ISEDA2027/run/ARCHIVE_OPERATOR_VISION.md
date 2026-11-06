@@ -2684,3 +2684,25 @@ setsid bash run_armD_r2_openclip.sh > /tmp/armD_r2_openclip_train.log 2>&1 < /de
 3. `MEMORY_VISION.md` 顶部登记。🚫 不启训练、不占 GPU。
 
 > 📦 体积：本令约 2.0KB，任务书入令后约 38.9KB（**<40KB 红线**）；需瘦身可归档已标 `[已完成]`/`[已归档]` 块，🚫 **不得归档本令**。
+
+## 归档 2026-11-06（由 BAIZE_VISION_TASK.md 搬入，原文未改）
+
+### ✅ §用户令·2026-11-06 18:5x（vision：GPU 还要等 2 个月 ⇒ 不等了，先上 CPU）· 用户直令 · 最高优先 · ✅ 已交付（wake#835·2026-11-06 20:27）
+
+> **用户原话**：「vision：不要等GPU了 .12/.29的GPU还需2个月，先试试CPU」
+>
+> **前提改写**：下方 11-05 17:5x 令里「阶段 2 gated on GPU」**作废**。`.29`/`.12` 的 16×H100 被 pretrain S1 占满，**ETA≈2026-12-25（≈2 个月）**，期间 GPU 不可得 ⇒ 本令起**主路径 = CPU**。`run_grpo_wave.sh` 那条 GPU-wait chain（PID1365749）**保留不动、不杀**（GPU 一旦释放自动接上），但**不再作为交付依赖**。
+>
+> **CPU 可行性已预验**（`vision/wave_rl/_cpu_train_validate_result.json`）：LoRA 可训参 69.7M、3 步 12.1s、ckpt 存/载 OK、生成 1.5s ⇒ 2B 模型在 CPU 上「小步数 + LoRA」是可行区间。
+>
+> **执行（按序，每步留实测日志）**：
+> 1. **P0 CPU 冒烟（≤30 min）**：给 `grpo_train_wave.py` 加 `--device cpu`（现写死 `torch.cuda.set_device(local_rank)` + torchrun）；`batch_prompts=1 / group_size=4 / max_turns=8 / max_new_tokens=48 / seq_len=1024`，`--total_steps 5` 跑通「rollout → 奖励 → logprob → 更新」。**实测每步 wall time / RSS 峰值 / CPU 占用**，写进 MEMORY 心跳。
+> 2. **P1 CPU GRPO pilot**：`total_steps=50`（≈200 episodes）、`lr=1e-6`、`save_steps=25`；奖励口径与原令**完全一致**（R_main 分档 + R_evidence + R_dense + R_anti + R_budget，**不得放宽**）。若实测 >12 h ⇒ 减到 25 步或 `group_size=2`，**如实记录缩水配置**，不许声称等同 GPU 版。
+> 3. **P2 CPU 评测**：`waveqa_eval.py` 同样加 CPU 分支；WaveQA-RL 300 题 + 双参照（纯看图 2B / Oracle Tcl 上限）+ 回归护栏（MMStar/MMBench 下降 ≤1pp 或给解释）；给 **pre-SFT / post-SFT / post-GRPO** 三点对照。
+> 4. **P3 交付**：`reports/report_vision_wave_rl_phase2_cpu_zh.html`（中文单文件、无 script 无外链，含 CPU vs GPU 成本/ETA 对照表 + 「缩水说明」）+ `EXPERIMENTS_VISION.md` §21 + ckpt/结果 JSON + 生成器脚本。
+>
+> **判据**：① 冒烟 5 步无 OOM/无 NaN；② 50 步的 loss/奖励曲线有实测点（不许只报终值）；③ 评测数字全可复现且标注「CPU 缩水配置」；④ 若 CPU 实测过慢（>12h/50 步）也算交付，但必须给实测台阶 + 结论（建议仅 CPU 做评测/自检）。
+>
+> **护栏**：🚫 不碰 pretrain（`.29`/`.12` 8 卡满载）；CPU 降载 `OMP_NUM_THREADS≤16` + `nice -n 19`，禁 `pkill python`；🚫 不伪造数字、不把「CPU 跑通」写成「能力提升」；每步 commit（`vision wave-rl-p2cpu:` 前缀）+ push。
+>
+> **完成标记**：P0–P3 全交付后把本行标题改成 `✅ 已交付`；任一未交付 ⇒ `WAITING: 0`。
