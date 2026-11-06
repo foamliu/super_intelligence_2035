@@ -5,13 +5,13 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        R1685 cline低分系统归因轮:CPU/MEM自检PASS(load25/224~11%busy·本线仅loop daemon 0%CPU·他线pretrain S1 143%不碰)→逐实例配对拆解cline vs opencode(full500 eval JSON)→差距集58题归因:补丁质量/能力50(86%)+静默退出/超时7(12%)+infra1·McNemar p=6.27e-08极显著·报告report_harness_cline_lowscore_analysis_zh.html(32968B,0script/0外链)+生成器gen_report_cline_lowscore_analysis_zh.py·归档11-06指令(TASK→31.3KB)·未完成指令:无⇒WAITING=1
-已完成:       H-B✅·Gate7/7·TB报告✅·pilot20✅·R984-R988恒0调试✅·R989 incr_eval全链✅·R997硬约束修复✅·R1567 cline trace归因✅·R1569 cline适配器修复✅·R1633 cline rerun 58/58终交付✅(356/500=71.3%)·R1634 13:5x复核+归档✅·R1635-R1649 deepseek incr_eval渐进✅(196→212,backlog=0)·R1650-R1683 quiet监控✅·full500全7路predict+eval 100%完成✅·R1662 full500复核可复现✅·R1667 命名合规修复(full500)+full500归档✅·R1673 命名合规修复(旧报告3份)+MEMORY归档✅·R1684 quiet监控✅·R1685 cline低分系统归因✅(报告+生成器+McNemar+逐实例表)
-当前动作:     R1685 cline低分系统归因轮:CPU/MEM自检PASS(load25.13/224~11%busy·本线仅baize_harness_loop.sh daemon 0%CPU 3.8MB RSS·他线pretrain S1 143%不碰·无>8000%CPU·无>50GB RSS·无需kill)→逐实例配对拆解(eval_cline-patched.json resolved=356 vs eval_opencode.json resolved=401·common=500)→差距集(opencode解·cline未解)58题·归因分类:补丁质量/能力50(产了patch测试不过·86%)+静默退出/超时7(6超时墙1800s+1秒级静默2.9s·12%)+infra1(quota)·补丁质量子集 cline patch中位2876B vs opencode3362B·opencode更大30/50·repo dist django27/sympy7/sphinx6·McNemar精确双侧 n01=13 n10=58 disc=71 p=6.27e-08 OR=4.46 极显著→报告report_harness_cline_lowscore_analysis_zh.html(32968B,0script/0外链/自包含,11节:TLDR+背景+方法+McNemar+归因饼图+补丁质量深挖+repo分布+静默退出表+逐实例58题表+结论+改进清单+复现)+生成器gen_report_cline_lowscore_analysis_zh.py·命名合规PASS(正文cline不写cline-patched)·归档11-06指令到ARCHIVE(TASK 34.2KB→31.3KB)·硬约束③PASS(结果JSON不入库)·未完成指令:无⇒WAITING=1
-下一步:       ①cline低分归因报告已交付 ②永久硬约束:禁止commit结果JSON ③下次唤醒CPU/MEM自检+backlog复扫(预期=0) ④TASK=32055B(31.3KB,≤32KB达标)·MEMORY≈30.2KB(≤32KB达标) ⑤若有新指令运维会写入任务书
-阻塞:         无·cline低分归因报告已交付·backlog=0·命名合规达标·TASK≤32KB·MEMORY≤32KB.
+PHASE:        R1686 quiet监控轮:CPU/MEM自检PASS(load25.05/24.31/24.19 over 224核~11%busy·本线cline-hub-daemon 23%CPU 4.1GB+opencode 6.7%CPU 1.3GB均<阈值·他线pretrain S1 143%不碰·无>8000%CPU·无>50GB RSS·无需kill)→backlog=0·硬约束③PASS(tracked JSON=524=500+20实例定义+4配置·0结果JSON入库)·git sync clean·归档R1685流水→daily·未完成指令:无⇒WAITING=1
+已完成:       H-B✅·Gate7/7·TB报告✅·pilot20✅·R984-R988恒0调试✅·R989 incr_eval全链✅·R997硬约束修复✅·R1567 cline trace归因✅·R1569 cline适配器修复✅·R1633 cline rerun 58/58终交付✅(356/500=71.3%)·R1634 13:5x复核+归档✅·R1635-R1649 deepseek incr_eval渐进✅(196→212,backlog=0)·R1650-R1683 quiet监控✅·full500全7路predict+eval 100%完成✅·R1662 full500复核可复现✅·R1667 命名合规修复(full500)+full500归档✅·R1673 命名合规修复(旧报告3份)+MEMORY归档✅·R1684 quiet监控✅·R1685 cline低分系统归因✅(报告+生成器+McNemar+逐实例表)·R1686 quiet监控✅
+当前动作:     R1686 quiet监控轮:CPU/MEM自检PASS(load25.05/24.31/24.19 over 224核~11%busy·ps最高CPU=pretrain S1训练143%(PID4179175他线不碰)·本线cline-hub-daemon(PID2751345)23%CPU 4.1GB RSS+opencode(PID3069180)6.7%CPU 1.3GB RSS均<阈值·无>8000%CPU·无>50GB RSS·无需kill·docker无容器)→无active eval/predict进程backlog=0→硬约束③PASS(git ls-files harness .json=524·eval_/predictions/jobs/oracle/logs=0 tracked·本地eval结果gitignored)→git sync clean(main=origin无ahead/behind)→归档R1685流水到daily-memories-harness/2026-11-06.md(MEMORY 32527B→≤32KB)·未完成指令:无⇒WAITING=1
+下一步:       ①全7路full500已完成·cline低分归因报告已交付 ②永久硬约束:禁止commit结果JSON ③下次唤醒CPU/MEM自检+backlog复扫(预期=0) ④TASK=32055B(31.3KB,≤32KB达标)·MEMORY≤32KB达标 ⑤若有新指令运维会写入任务书
+阻塞:         无·全7路full500 100%完成·backlog=0·命名合规达标·TASK≤32KB·MEMORY≤32KB·硬约束③PASS.
 ERROR_COUNT:  0
-  📦 体积：TASK=32055B(31.3KB,≤32KB达标·本轮归档11-06指令→ARCHIVE) / MEMORY≈30214B(29.5KB,≤32KB达标)
+  📦 体积：TASK=32055B(31.3KB,≤32KB达标) / MEMORY≈31800B(31.1KB,≤32KB达标·本轮归档R1685流水→daily-memories-harness/2026-11-06.md)
 ```
 
 > 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
@@ -19,7 +19,9 @@ ERROR_COUNT:  0
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 
 ### 本唤醒流水
-[17:32] R1685 cline低分系统归因轮(11-06 17:1x用户直令):CPU/MEM自检PASS(load25.13/224~11%busy·本线仅loop daemon 0%CPU 3.8MB RSS·他线pretrain S1 143%不碰·无需kill)→逐实例配对拆解cline vs opencode(eval_cline-patched resolved=356 vs eval_opencode resolved=401·common=500题)→差距集(opencode解·cline未解)58题·归因:补丁质量/能力50(产了patch测试不过·86.2%)+静默退出/超时7(6题命中1800s超时墙rc=1+1题秒级静默退出2.9s rc=0·12.1%)+infra1(quota_blocked·1.7%)·补丁质量子集 cline patch中位2876B vs opencode3362B·opencode patch更大30/50题·cline wall中位481s vs opencode425s·repo dist django27/sympy7/sphinx-doc6/astropy4/sklearn4/matplotlib3·McNemar精确双侧 n01(cline-only)=13 n10(opencode-only)=58 disc=71 p=6.27e-08 OR=4.46 极显著→结论:R1569修复后差距已从「接入损耗为主」转为「能力差为主」(50/58=86%)·报告report_harness_cline_lowscore_analysis_zh.html(32968B·0script/0外链/自包含·11节:TLDR+背景+方法+McNemar+归因饼图SVG+补丁质量深挖+repo分布条形图+静默退出表+逐实例58题表+结论能力vs接入损耗+改进清单6条带置信度+复现性)+生成器gen_report_cline_lowscore_analysis_zh.py(run/harness/)·命名合规PASS(正文cline不写cline-patched·cline-patched仅出现在文件路径/代码标识符)·归档11-06指令到ARCHIVE_OPERATOR_HARNESS.md(TASK 34196B→32055B=31.3KB≤32KB)·硬约束③PASS(结果JSON不入库·仅本地保留供分析)·未完成指令:无⇒WAITING=1.
+> 📦 R1685 流水(17:32,cline低分系统归因轮:CPU/MEM自检PASS+逐实例配对拆解cline vs opencode+差距集58题归因+McNemar p=6.27e-08+报告32968B+生成器)已归档 → daily-memories-harness/2026-11-06.md。结论：R1569修复后差距以能力差为主(50/58=86%)。需要时再读。
+
+[18:11] R1686 quiet监控轮:CPU/MEM自检PASS(load25.05/24.31/24.19 over 224核~11%busy·ps最高CPU=pretrain S1训练143%(PID4179175他线不碰)·本线cline-hub-daemon(PID2751345)23%CPU 4.1GB RSS+opencode(PID3069180)6.7%CPU 1.3GB RSS均<阈值·无>8000%CPU·无>50GB RSS·无需kill·docker无容器)→无active eval/predict进程backlog=0→硬约束③PASS(git ls-files harness .json=524=500+20实例定义+4配置·eval_/predictions/jobs/oracle/logs=0 tracked·本地eval_cline-patched.json等gitignored)→git sync clean(main=origin无ahead/behind)→归档R1685流水到daily-memories-harness/2026-11-06.md(MEMORY 32527B→≤32KB)·未完成指令:无⇒WAITING=1.
 
 > 📦 R1684 流水(16:14,quiet监控轮:CPU/MEM自检PASS+全7路eval JSON在位+硬约束③PASS·tracked JSON=522)已归档 → daily-memories-harness/2026-11-06.md。结论：quiet轮正常·全7路100%完成。需要时再读。
 
