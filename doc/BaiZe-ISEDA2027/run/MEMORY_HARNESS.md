@@ -5,9 +5,9 @@ WAITING: 0
 ## 📊 进度快照
 
 ```
-PHASE:        R1696 glm53重测监控轮:SWE-bench Verified full500×glm-5.3-flash×7路 predict运行中(7/7 orchestrator alive,21/3500 preds)·TB 4.0=66tasks confirmed,132 images pulling in bg·硬约束③修复(17 pred JSON untracked+.gitignore补全)
-已完成:       H-B✅·Gate7/7·TB报告✅·full500全7路predict+eval 100%完成✅·R1685 cline低分归因✅·R1694 glm53重测启动✅·R1695 proxy 429+400修复✅·R1696 硬约束③修复+TB4镜像拉取启动✅
-当前动作:     R1696 监控:7路predict运行中(cline-patched[4/500]·opencode[5/500]·pi[4/500]·codex[1/500]·claude-code[1/500]·hermes[4/500]·deepseek-harness[2/500])·TB4镜像后台拉取中(4/132)·硬约束③已修复(17 JSON untracked)
+PHASE:        R1697 glm53重测监控轮:SWE-bench Verified full500×glm-5.3-flash×7路 predict运行中(7/7 orchestrator alive,24/3500 preds)·TB 4.0=66tasks,16/132 images pulled(bg pull running)·硬约束③PASS
+已完成:       H-B✅·Gate7/7·TB报告✅·full500全7路predict+eval 100%完成✅·R1685 cline低分归因✅·R1694 glm53重测启动✅·R1695 proxy 429+400修复✅·R1696 硬约束③修复+TB4镜像拉取启动✅·R1697 监控轮progress 24/3500✅
+当前动作:     R1697 监控:7路predict运行中(cline-patched[4/500]·opencode[7/500]·pi[4/500]·codex[1/500]·claude-code[1/500]·hermes[5/500]·deepseek-harness[2/500])·TB4镜像后台拉取中(16/132)·gw_proxy 2/2 alive HTTP200
 下一步:       ①监控7路predict进度(100/300/500三段汇报) ②每路predict完即eval ③TB4镜像拉取完→7路smoke→全量66×7 ④写报告report_harness_glm53_7way_swebench_tb_zh.html
 阻塞:         无·7路predict运行中·TB4镜像后台拉取中
 ERROR_COUNT:  0
@@ -25,6 +25,8 @@ ERROR_COUNT:  0
 
 
 > 📦 R1682-R1693 流水(2026-11-06 15:02~22:16,~12轮quiet监控轮:CPU/MEM自检均PASS+硬约束③PASS·tracked JSON=524·全7路eval 100%完成)已合并归档 → daily-memories-harness/2026-11-06.md。结论：quiet轮正常。需要时再读。
+
+[00:56] R1697 glm53重测监控轮:CPU/MEM自检PASS(load34.18/224核~15%busy·Mem651G/2015G avail1246G·无>8000%CPU·无>50GB RSS·pretrain 8.8%不碰)→7/7 predict orchestrator alive(cline-patched=3991932/opencode=4004319/pi=4005476 etimes~3320s + codex=2247963/claude-code=2248351/hermes=2258290/deepseek-harness=2261465 etimes~1340s post-proxy-fix)→2/2 gw_proxy alive(9092=2058948/9093=2058952) HTTP200 both→predict progress:cline4/opencode7/pi4/codex1/claude-code1/hermes5/dsh2=24/3500(+3 since R1696)→TB4镜像拉取:16/132 images present·pull script alive(PID 3294268 etimes528s)·layers downloading→disk:/data 6.0TB free·628 total docker images→硬约束③PASS(tracked JSON=0)→体积自检:TASK32074B(31.3KB)/MEMORY~30KB均≤32KB·未完成指令:有(glm53重测)⇒WAITING=0.
 
 [00:41] R1696 glm53重测监控轮:CPU/MEM自检PASS(load36.74/224核~16%busy·Mem650G/2.0Ti avail1.2Ti·无>8000%CPU·无>50GB RSS·pretrain 143%不碰)→7/7 predict orchestrator alive(cline-patched=3991932/opencode=4004319/pi=4005476 etimes~2400s + codex=2247963/claude-code=2248351/hermes=2258290/deepseek-harness=2261465 etimes~460s post-proxy-fix restart)→2/2 gw_proxy alive(9092=2058948/9093=2058952)→429 retry fix working(gw_proxy=9 retries,dsh=0)→predict progress:cline4/opencode5/pi4/codex1/claude-code1/hermes4/dsh2=21/3500→EVAL_TAG=glm53_ confirmed(no kimi cross-contamination)→deepseek-harness 115 existing results=own first attempt no-patch,is_predicted() correctly re-attempts→TB4.0核实PASS:~/terminal-bench-4.0/=66 tasks(各含task.toml+env+verifier)·132 unique images·docker accessible via sg docker→创建_pull_tb4_images.sh+后台启动(setsid sg docker -c 'bash _pull_tb4_images.sh')→disk:/data 6.0TB free/738GB docker images→硬约束③修复:发现17个predictions_glm53/*.json被tracked→git rm --cached 17个+harness/.gitignore补全(predictions_*/+eval_/predict_/progress_*.json+logs/evaluation/)→verify count=0✅→体积自检:TASK32074B(31.3KB)/MEMORY~30KB均≤32KB·未完成指令:有(glm53重测)⇒WAITING=0.
 
