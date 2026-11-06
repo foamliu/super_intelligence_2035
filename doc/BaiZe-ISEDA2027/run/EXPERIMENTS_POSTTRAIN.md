@@ -76,6 +76,8 @@
 | P1-d | PyAether 领域语料（API 参考/EDA 工具文档） | `~/code/eda_fastmcp/docs`+`kb`（✅ wake4 实测可达） | ≈21 MB JSON | 待分词 | **≈4–5 M tok**（API 参考 8463 项为主） | ✅ 已调研（见 §PyAether-corpus） | 退火 domain 主体 + SFT 合成；HDL 源码待补 |
 | P1-e | 158 任务污染隔离规则 + 闸门脚本 | `run/baize_posttrain_contamination_gate.sh`（复用 `run/data_pipeline/check_contamination.py` + blacklist） | — | — | — | ✅ 已定稿（本轮 wake2） | 红线；规则+脚本见 §P1-e |
 
+> 📦 **P1 交付物 4**：`reports/report_posttrain_data_inventory_zh.html`（30.5KB / 10 节 / 0 script / 0 外链 / 自包含，已产出 ✅ wake6 补产）。覆盖 P1-a~P1-e 全部数据盘点 + PyAether 语料调研 + 污染隔离规则 + 领域退火语料组装方案 + SFT 数据混合建议 + 阻塞项 + 红线合规。commit 前缀 `posttrain data:`。
+
 ---
 
 ## §P1-e 污染隔离规则 + 闸门脚本（红线 · 2026-11-06 wake2 · 零 GPU · 已定稿）
@@ -218,7 +220,7 @@
 4. 评测冻结：158/Pass@1/2500s/单trace/5-run/-p 8 -n 不改。
 5. 预注册：本方案书即定稿凭证，训练后如实对照。
 
-> **阻塞项（不阻塞方案书）**：pretrain ckpt（ETA≈2026-12-25）；P0 D1–D6（数据不可达）；P1-c（/nas_inference 未挂载 .17）；P1-d（eda_fastmcp 不可达）。
+> **阻塞项（不阻塞方案书）**：pretrain ckpt（ETA≈2026-12-25）；P0 D1–D6 MiniCPM5-2B 36%侧（轨迹不在 .17）；P1-c（/nas_inference 未挂载 .17）。~~P1-d（eda_fastmcp 不可达）~~ → ✅ 已解决（wake4 实测可达，4–5M tok 已调研）。
 
 ---
 

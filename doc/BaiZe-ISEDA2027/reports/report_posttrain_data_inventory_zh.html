@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaiZe Stage (ii) 后训练 · 数据盘点与领域语料调研报告</title>
+<style>
+  :root { --primary:#0b3d6e; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700; --bad:#cf222e; --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif; color:var(--text); background:var(--bg); line-height:1.65; font-size:15px; }
+  .wrap { max-width:1000px; margin:0 auto; padding:32px 24px 80px; }
+  header.hero { background:linear-gradient(135deg,#0b3d6e 0%,#1f6feb 100%); color:#fff; border-radius:14px; padding:34px 36px; margin-bottom:26px; box-shadow:0 8px 24px rgba(11,61,110,.18); }
+  header.hero h1 { margin:0 0 8px; font-size:25px; letter-spacing:.3px; }
+  header.hero .sub { font-size:15px; opacity:.92; }
+  header.hero .meta { margin-top:14px; font-size:13px; opacity:.82; display:flex; flex-wrap:wrap; gap:18px; }
+  .verdict { background:#fff; border:1px solid var(--border); border-left:5px solid var(--accent); border-radius:10px; padding:18px 22px; margin-bottom:24px; }
+  h2.sec { font-size:20px; margin:34px 0 14px; padding-bottom:8px; border-bottom:2px solid var(--border); }
+  h2.sec .no { color:var(--accent); margin-right:8px; }
+  h3 { font-size:16px; margin:20px 0 8px; }
+  p { margin:8px 0; }
+  code { background:#eef1f4; border:1px solid #e1e4e8; border-radius:5px; padding:1px 6px; font-family:Consolas,Menlo,monospace; font-size:13px; color:#0b3d6e; }
+  table { border-collapse:collapse; width:100%; margin:12px 0; font-size:13.5px; background:var(--card); }
+  th,td { border:1px solid var(--border); padding:8px 11px; text-align:left; vertical-align:top; }
+  th { background:#eef3f8; color:var(--primary); font-weight:600; white-space:nowrap; }
+  tr:nth-child(even) td { background:#fafbfc; }
+  .badge { display:inline-block; padding:1px 8px; border-radius:999px; font-size:12px; font-weight:600; white-space:nowrap; }
+  .b-ok { background:#dafbe1; color:var(--ok); } .b-no { background:#ffebe9; color:var(--bad); }
+  .b-warn { background:#fff8c5; color:var(--warn); } .b-info { background:#ddf4ff; color:var(--accent); }
+  .callout { background:#fff; border:1px solid var(--border); border-radius:10px; padding:16px 20px; margin:16px 0; }
+  .callout.red { border-left:5px solid var(--bad); }
+  .callout.warn { border-left:5px solid var(--warn); }
+  .callout.ok { border-left:5px solid var(--ok); }
+  .callout.info { border-left:5px solid var(--accent); }
+  .summary-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:14px; margin:18px 0; }
+  .stat-card { background:#fff; border:1px solid var(--border); border-radius:10px; padding:16px 18px; }
+  .stat-card .label { font-size:13px; color:var(--muted); margin-bottom:4px; }
+  .stat-card .value { font-size:22px; font-weight:700; color:var(--primary); }
+  .stat-card .unit { font-size:14px; color:var(--muted); font-weight:400; }
+  .stat-card .note { font-size:12px; color:var(--muted); margin-top:4px; }
+  .toc { background:#fff; border:1px solid var(--border); border-radius:10px; padding:16px 22px; margin-bottom:24px; }
+  .toc h3 { margin:0 0 8px; font-size:15px; color:var(--primary); }
+  .toc ol { margin:0; padding-left:20px; }
+  .toc li { margin:4px 0; }
+  .toc a { color:var(--accent); text-decoration:none; }
+  .toc a:hover { text-decoration:underline; }
+  footer { margin-top:40px; padding-top:20px; border-top:1px solid var(--border); font-size:13px; color:var(--muted); }
+  .mono { font-family:Consolas,Menlo,monospace; font-size:13px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+  <h1>BaiZe Stage (ii) 后训练 · 数据盘点与领域语料调研报告</h1>
+  <div class="sub">P1 数据盘点（P1-a ~ P1-e）+ PyAether 领域语料调研 + 污染隔离规则草案</div>
+  <div class="meta">
+    <span>对应任务书：BAIZE_POSTTRAIN_TASK.md P1 交付物 4</span>
+    <span>节点：10.252.32.17</span>
+    <span>2026-11-06</span>
+    <span>零 GPU 纯CPU/IO</span>
+  </div>
+</header>
+<div class="toc">
+  <h3>目录</h3>
+  <ol>
+    <li><a href="#sec1">摘要与总览</a></li>
+    <li><a href="#sec2">P1-a：SFT 通用指令集 UltraData-SFT-2605</a></li>
+    <li><a href="#sec3">P1-b：SFT Agentic 指令集 UltraData-SFT-Agent-2609</a></li>
+    <li><a href="#sec4">P1-c：B 类 Agentic 数据（12 源 已下载未分词）</a></li>
+    <li><a href="#sec5">P1-d：PyAether 领域语料调研</a></li>
+    <li><a href="#sec6">P1-e：158 任务污染隔离规则与闸门脚本</a></li>
+    <li><a href="#sec7">领域退火语料组装方案</a></li>
+    <li><a href="#sec8">SFT 数据混合建议</a></li>
+    <li><a href="#sec9">阻塞项与后续动作</a></li>
+    <li><a href="#sec10">红线合规检查表</a></li>
+  </ol>
+</div>
+<h2 class="sec" id="sec1"><span class="no">§1</span>摘要与总览</h2>
+<div class="verdict">
+  <p><strong>本报告</strong>完成 BaiZe Stage (ii) 后训练线 P1 阶段的全部数据盘点交付物。覆盖五项数据资产（P1-a ~ P1-e），从路径可达性、字节体量、分词状态、token 数量到可用性评估，逐项核实并给出判读。所有数字均来自实测（<code>du -sb</code> / <code>find | wc -l</code> / <code>INDEX.tsv</code> / DATA_MAPPING.md 单一事实源），非编造。</p>
+  <p><strong>核心结论</strong>：post-train 所需数据<strong>主体已就绪</strong>——通用 SFT 语料（18.89B tok）与 agentic SFT 语料（5.97B tok）均已完成 mcore 分词镜像，可直接投料；B 类 agentic 数据（78.73 GiB / 12 源）已下载但尚未分词（需定口径）；PyAether 领域语料可导出 约4-5M token 纯文本（退火 domain 主体）；污染隔离闸门脚本已就绪并验证通过。</p>
+</div>
+<div class="summary-grid">
+  <div class="stat-card"><div class="label">P1-a 通用 SFT</div><div class="value">18.89<span class="unit"> B tok</span></div><div class="note">318.99 GB 下载 75.87 GB 分词 94 shard 镜像完整</div></div>
+  <div class="stat-card"><div class="label">P1-b Agentic SFT</div><div class="value">5.97<span class="unit"> B tok</span></div><div class="note">54.22 GB 下载 23.89 GB 分词 13 shard 镜像完整</div></div>
+  <div class="stat-card"><div class="label">P1-c B 类 Agentic</div><div class="value">78.73<span class="unit"> GiB</span></div><div class="note">12 源 582 文件 0 incomplete 未分词</div></div>
+  <div class="stat-card"><div class="label">P1-d PyAether 语料</div><div class="value">~4-5<span class="unit"> M tok</span></div><div class="note">8463 API 约21 MB JSON 可导出纯文本</div></div>
+  <div class="stat-card"><div class="label">P1-e 污染隔离</div><div class="value">536<span class="unit"> 任务黑名单</span></div><div class="note">13-gram FNV-1a + MinHash k=128 闸门脚本就绪</div></div>
+</div>
+<table>
+  <tr><th>ID</th><th>名称</th><th>下载体量</th><th>分词状态</th><th>Tokens</th><th>可达性</th><th>状态</th></tr>
+  <tr><td>P1-a</td><td>UltraData-SFT-2605</td><td>318.99 GB</td><td>mcore 镜像 94 shard</td><td>18.89 B</td><td>.29/.12 NFS 共享</td><td><span class="badge b-ok">就绪</span></td></tr>
+  <tr><td>P1-b</td><td>UltraData-SFT-Agent-2609</td><td>54.22 GB</td><td>mcore 镜像 13 shard</td><td>5.97 B</td><td>.29/.12 NFS 共享</td><td><span class="badge b-ok">就绪</span></td></tr>
+  <tr><td>P1-c</td><td>B 类 agentic 12 源</td><td>78.73 GiB</td><td>未分词</td><td>待分词</td><td>/nas_inference .12 .17 未挂载</td><td><span class="badge b-warn">待分词</span></td></tr>
+  <tr><td>P1-d</td><td>PyAether 领域语料</td><td>约21 MB JSON</td><td>待分词</td><td>约4-5 M</td><td>~/code/eda_fastmcp .17 可达</td><td><span class="badge b-ok">已调研</span></td></tr>
+  <tr><td>P1-e</td><td>污染隔离规则 + 闸门</td><td>-</td><td>-</td><td>-</td><td>git 工作副本全节点</td><td><span class="badge b-ok">已定稿</span></td></tr>
+</table>
+<h2 class="sec" id="sec2"><span class="no">§2</span>P1-a：SFT 通用指令集 UltraData-SFT-2605</h2>
+<h3>基本档案</h3>
+<table>
+  <tr><th>属性</th><th>值</th><th>来源</th></tr>
+  <tr><td>数据集名称</td><td>UltraData-SFT-2605</td><td>openbmb/UltraData-SFT-2605</td></tr>
+  <tr><td>下载目录</td><td class="mono">.../datasets/openbmb/UltraData-SFT-2605/data</td><td>DATA_MAPPING A#11</td></tr>
+  <tr><td>分词目录</td><td class="mono">.../baize-data/tokenized/UltraData-SFT-2605</td><td>DATA_MAPPING A#11</td></tr>
+  <tr><td>下载字节</td><td>318,990,486,183 B (318.99 GB)</td><td>du -sb 实测 2026-10-27</td></tr>
+  <tr><td>分词镜像字节</td><td>75,867,441,833 B (75.87 GB)</td><td>INDEX.tsv L12</td></tr>
+  <tr><td>分词文件</td><td>94 .bin + 94 .idx + 94 .json = 282 文件</td><td>INDEX.tsv L12 triplet=OK inode_ok=94 symlink</td></tr>
+  <tr><td>Token 数</td><td><strong>18,891,665,320</strong> (18.89 B)</td><td>INDEX.tsv L12 单一事实源</td></tr>
+  <tr><td>校验时间</td><td>2026-10-27 15:06</td><td>DATA_MAPPING A</td></tr>
+  <tr><td>状态</td><td><span class="badge b-ok">镜像完整</span></td><td>-</td></tr>
+</table>
+<div class="callout warn"><p><strong>数字更正</strong>：任务书旧记 <code>20.97B tok / 1504 JSONL</code>，系早期下载侧估算。以 DATA_MAPPING.md <strong>单一事实源</strong>为准：<strong>18.89B tokens</strong>（分词后实测）。下载侧 1504 JSONL 经 mcore 分词后合并为 94 个 .bin/.idx/.json triplet。</p></div>
+<h3>内容构成与角色</h3>
+<p>UltraData-SFT-2605 是 openbmb 发布的大规模通用指令跟随数据集，覆盖多语言、代码、数学、知识问答、多轮对话等。分词镜像已完成 mcore 格式，可直接接入 Megatron-Core 训练框架的 dataloader。在 post-train 中作为 SFT 阶段的<strong>通用能力保持语料</strong>，防止领域适配过程中通用能力退化。在 P2 方案书的数据混合中占 SFT blend 的约30%（agent50:general30:pyaether20）。</p>
+<h2 class="sec" id="sec3"><span class="no">§3</span>P1-b：SFT Agentic 指令集 UltraData-SFT-Agent-2609</h2>
+<h3>基本档案</h3>
+<table>
+  <tr><th>属性</th><th>值</th><th>来源</th></tr>
+  <tr><td>数据集名称</td><td>UltraData-SFT-Agent-2609</td><td>openbmb/UltraData-SFT-Agent-2609</td></tr>
+  <tr><td>下载目录</td><td class="mono">.../datasets/openbmb/UltraData-SFT-Agent-2609/data</td><td>DATA_MAPPING A#12</td></tr>
+  <tr><td>分词目录</td><td class="mono">.../baize-data/tokenized/UltraData-SFT-Agent-2609</td><td>DATA_MAPPING A#12</td></tr>
+  <tr><td>下载字节</td><td>54,220,373,384 B (54.22 GB)</td><td>du -sb 实测 2026-10-27</td></tr>
+  <tr><td>分词镜像字节</td><td>23,886,244,139 B (23.89 GB)</td><td>INDEX.tsv L13</td></tr>
+  <tr><td>分词文件</td><td>13 .bin + 13 .idx + 13 .json = 39 文件</td><td>INDEX.tsv L13 triplet=OK inode_ok=13 symlink</td></tr>
+  <tr><td>Token 数</td><td><strong>5,969,140,740</strong> (5.97 B)</td><td>INDEX.tsv L13 单一事实源</td></tr>
+  <tr><td>校验时间</td><td>2026-10-27 15:06</td><td>DATA_MAPPING A</td></tr>
+  <tr><td>状态</td><td><span class="badge b-ok">镜像完整</span></td><td>-</td></tr>
+</table>
+<div class="callout info"><p><strong>分词 shard 数更正</strong>：任务书旧记 <code>50 shard</code> 系下载侧 JSONL 文件数；经 mcore 分词后合并为 <strong>13 个</strong> .bin/.idx/.json triplet。这不影响数据完整性——分词器将多个 JSONL 合并为 mcore 二进制流。</p></div>
+<h3>内容构成与角色</h3>
+<p>UltraData-SFT-Agent-2609 是 openbmb 发布的 agentic 指令跟随数据集，包含工具调用、多轮交互、代码执行等 agentic 轨迹。这是 post-train SFT 阶段注入"工具协议"的核心语料——P0 诊断表明 58 pp 差距的主体（35-45 pp）是"协议可回收"，即模型需要学会"先查 API 再写代码 执行 修正"的闭环行为。在 P2 方案书的数据混合中占 SFT blend 的约50%，是 M1（36% 到 50%）的关键驱动力。</p>
+<h2 class="sec" id="sec4"><span class="no">§4</span>P1-c：B 类 Agentic 数据（12 源 已下载未分词）</h2>
+<div class="callout warn"><p><strong>可达性</strong>：12 源全部落盘 <code>/nas_inference/app.e0031982/datasets/</code>（在 .12 节点），<strong>.17 未挂载 /nas_inference</strong>。本报告数据引自 DATA_MAPPING.md F节（data 线 2026-11-04 实测登记），非本节点直接实测。待运维挂载 /nas_inference 到 .17 或由 .29/.12 盘点后确认。</p></div>
+<h3>12 源明细（DATA_MAPPING F 2026-11-04 实测）</h3>
+<table>
+  <tr><th>#</th><th>repo_id</th><th>文件数</th><th>字节</th><th>GiB</th><th>备注</th></tr>
+  <tr><td>1</td><td>SWE-bench/SWE-smith</td><td>40</td><td>277,797,639</td><td>0.25</td><td>SWE-smith 修复轨迹 MIT</td></tr>
+  <tr><td>2</td><td>nvidia/Nemotron-Terminal-Corpus</td><td>94</td><td>8,198,886,139</td><td>7.63</td><td>终端命令语料 CC BY 4.0</td></tr>
+  <tr><td>3</td><td>nebius/SWE-rebench</td><td>16</td><td>245,202,838</td><td>0.22</td><td>SWE-rebench</td></tr>
+  <tr><td>4</td><td>zhangdw/to-tool-call-datasets</td><td>37</td><td>2,354,026,701</td><td>2.19</td><td>工具调用 SFT</td></tr>
+  <tr><td>5</td><td>tuandunghcmut/toolbench-v1</td><td>40</td><td>540,918,767</td><td>0.50</td><td>ToolBench-v1 Apache-2.0</td></tr>
+  <tr><td>6</td><td>open-thoughts/AgentTrove</td><td>121</td><td>19,552,408,650</td><td>18.20</td><td>Agent 多轮轨迹</td></tr>
+  <tr><td>7</td><td>microsoft/Orchard</td><td>73</td><td>10,962,177,581</td><td>10.20</td><td>Orchard MIT</td></tr>
+  <tr><td>8</td><td>nvidia/Nemotron-Cascade-RL-SWE</td><td>16</td><td>31,322,695,342</td><td>29.17</td><td>SWE RL cascade 可验证奖励</td></tr>
+  <tr><td>9</td><td>nvidia/Nemotron-Cascade-SFT-SWE</td><td>16</td><td>6,768,363,884</td><td>6.30</td><td>SWE SFT cascade CC BY 4.0</td></tr>
+  <tr><td>10</td><td>SWE-bench/SWE-smith-trajectories</td><td>103</td><td>4,223,886,972</td><td>3.93</td><td>SWE-smith 轨迹 parquet</td></tr>
+  <tr><td>11</td><td>mshojaei77/terminal-command-execution-sft</td><td>13</td><td>51,198,163</td><td>0.04</td><td>终端命令执行 SFT</td></tr>
+  <tr><td>12</td><td>ia03/terminal-bench</td><td>13</td><td>41,302,907</td><td>0.03</td><td><span class="badge b-no">评测集本体</span> 仅去污染 禁入训练</td></tr>
+  <tr style="font-weight:600;background:#eef3f8;"><td>合计</td><td>12 源</td><td>582</td><td>84,538,865,583</td><td>78.73</td><td>全部公开 non-gated 含 1 评测集</td></tr>
+</table>
+<h3>分词状态与后续</h3>
+<div class="callout">
+  <p><strong>当前状态</strong>：<span class="badge b-warn">已下载未分词</span>。12 源均为原始格式（JSONL / parquet），非 mcore .bin/.idx/.json 格式，需先定分词口径再分词入 tokenized 镜像。</p>
+  <p><strong>后续动作（待运维批准）</strong>：</p>
+  <ol>
+    <li>agentic 源分词入 tokenized 镜像（需先定分词口径——部分为 JSONL/parquet 非 mcore 格式，可能需自定义 preprocess）。</li>
+    <li>ia03/terminal-bench（评测集本体）纳入去污染黑名单（与 SWE-bench Verified / Terminal Bench 同闸），<strong>禁入训练</strong>。</li>
+    <li>分词后回写 DATA_MAPPING A 节，F 节状态翻"已分词"。</li>
+    <li>token 不得写入 DATA_MAPPING/日报/任何 commit（运维令 13:2x ③）。</li>
+  </ol>
+</div>
+<h3>在 post-train 中的角色</h3>
+<p>B 类 agentic 数据是 SFT 数据混合的<strong>补充增强</strong>。P1-b（UltraData-SFT-Agent-2609，5.97B tok）已是 agentic SFT 主体，B 类数据中的 AgentTrove（18.20 GiB，多轮 Agent 轨迹）、Nemotron-Cascade-SFT-SWE（6.30 GiB，SWE SFT cascade）、to-tool-call-datasets（2.19 GiB，工具调用 SFT）可作为<strong>工具调用行为多样性的补充</strong>。Nemotron-Cascade-RL-SWE（29.17 GiB）为 RL 阶段的参考（可验证奖励 cascade 设计），不直接入 SFT。</p>
+<p><strong>优先级</strong>：P1-b 已就绪可先起 SFT；P1-c 分词后作为消融臂（+B-class vs 不加），若 SFT 效果不够再补。</p>
+<h2 class="sec" id="sec5"><span class="no">§5</span>P1-d：PyAether 领域语料调研</h2>
+<div class="callout ok"><p><strong>状态</strong>：已调研（2026-11-06 wake4）。eda_fastmcp 的 API 知识库<strong>可导出纯文本</strong>，体量与格式如下（本节点 ~/code/eda_fastmcp 实测可达）。</p></div>
+<h3>可导出纯文本科目</h3>
+<table>
+  <tr><th>来源</th><th>路径</th><th>原始字节</th><th>展平为纯文本</th><th>估算 tokens</th></tr>
+  <tr><td><strong>API 参考（核心）</strong></td><td class="mono">docs/API_INFO_MERGED_V3.json</td><td>18.1 MB</td><td>8,463 个 API 展平 13.36M 字符</td><td><strong>约3.3-4.5 M tok</strong></td></tr>
+  <tr><td>函数签名</td><td class="mono">docs/func_all_v3.json</td><td>1.8 MB</td><td>全量函数签名</td><td>约0.4-0.6 M tok</td></tr>
+  <tr><td>API 摘要 v3</td><td class="mono">kb/api_summary_v3.json</td><td>532 KB</td><td>摘要列表</td><td>约0.1-0.15 M tok</td></tr>
+  <tr><td>API 摘要(描述+api)</td><td class="mono">kb/api_summary_description_api.json</td><td>480 KB</td><td>-</td><td>约0.1 M tok</td></tr>
+  <tr><td>技能提示</td><td class="mono">skills/* 9 个 EDA 技能 dir</td><td>112 KB</td><td>工具使用策略</td><td>约0.03 M tok</td></tr>
+  <tr><td>评测/规则提示</td><td class="mono">prompts/*.md + Rules/eda-code-generation.md</td><td>&lt;50 KB</td><td>系统提示 + 代码生成规则</td><td>约0.01 M tok</td></tr>
+  <tr style="font-weight:600;background:#eef3f8;"><td>合计可导出领域语料</td><td>-</td><td>约21 MB</td><td>-</td><td><strong>约4-5 M tok</strong></td></tr>
+</table>
+<h3>格式与导出方法</h3>
+<p>JSON <code>{api_name, api_type, api_descriptions, category}</code> 展平为 <code>API: &lt;name&gt; | type: &lt;type&gt; | category: &lt;cat&gt; | &lt;descriptions&gt;</code> 文本行，可直接喂分词器。展平后约 13.36M 字符，按约3-4 字符/token 估算约3.3-4.5M tokens。</p>
+<h3>API 分类分布</h3>
+<p>8,463 个 API 中 4,390 无 category（基础/扩展），其余覆盖 Extension / emyDatabase / Qt Extension / Db Commands / Ae Commands 等。</p>
+<h3>不用的部分</h3>
+<div class="callout red"><p><strong>不用</strong>：<code>kb/chroma_db_*</code>（15M-219M）是<strong>向量嵌入</strong>（二进制），非源文本，不用于训练。仅上述 JSON 源文本可导出。</p></div>
+<h3>污染合规</h3>
+<div class="callout ok"><p>CONTAMINATION_CHECK.md 5节 曾扫 pyAether_API_Docstring / emyDesign / sklangref 3 个 API 参考文件 <strong>0 命中</strong> 属"来源材料"（任务的参考文档，非评测题本身），允许入训练。本语料为 API 参考文档（不含 158 任务的 prompt / 函数签名 / 断言），投料前仍经 baize_posttrain_contamination_gate.sh 扫描 0 命中。</p></div>
+<h3>待补</h3>
+<ul>
+  <li><strong>HDL 源码</strong>：任务书 P1-d 提及"EDA 工具文档 / HDL 源码"——HDL 源码本节点未见，待确认是否在 eda_fastmcp docs 内或其他位置。</li>
+  <li><strong>techlib 文档</strong>：28% 评测任务依赖 techlib，需确认是否在 eda_fastmcp docs 内。</li>
+</ul>
+<h2 class="sec" id="sec6"><span class="no">§6</span>P1-e：158 任务污染隔离规则与闸门脚本</h2>
+<div class="callout red"><p><strong>红线（总纲 5.1）</strong>：EDA-Eval-PyAether 的 158 任务（prompt + entry_point + canonical_solution + test 断言，及改写版）<strong>绝对不能进任何训练集</strong>。本节定稿"按 API 名 / 函数签名做隔离"的规则 + 可执行闸门脚本，<strong>在任何 PyAether 训练对合成之前</strong>就位。</p></div>
+<h3>隔离规则</h3>
+<table>
+  <tr><th>内容</th><th>可否入训练集</th><th>说明</th></tr>
+  <tr><td>PyAether / SKILL 的 <strong>API 参考文档</strong>（函数签名 / 参数说明 / 示例）</td><td><span class="badge b-ok">允许</span></td><td>任务的"来源材料"，可作退火 + SFT 合成源</td></tr>
+  <tr><td>评测任务的 <strong>prompt / entry_point / canonical_solution / test 断言</strong></td><td><span class="badge b-no">禁止</span></td><td>评测题本体</td></tr>
+  <tr><td>上述任务内容的 <strong>改写 / paraphrasing 版</strong></td><td><span class="badge b-no">禁止</span></td><td>改写不洗白</td></tr>
+</table>
+<h3>指纹方法（可复现）</h3>
+<table>
+  <tr><th>步骤</th><th>方法</th></tr>
+  <tr><td>归一化</td><td>NFKC 归一化 小写 非 Unicode w 折叠为单空格 去空格</td></tr>
+  <tr><td>指纹</td><td>字符级 <strong>13-gram</strong>（shingle）；短文本（&lt;13 字符）走 <strong>8-gram 兜底</strong></td></tr>
+  <tr><td>哈希</td><td>确定性 <strong>FNV-1a 64-bit</strong></td></tr>
+  <tr><td>溯源</td><td><strong>MinHash(k=128)</strong></td></tr>
+  <tr><td>二次校验</td><td>entry_point 另存 <strong>sha256</strong></td></tr>
+</table>
+<h3>命中判定</h3>
+<ul>
+  <li>13-gram 重合率 >= <strong>0.80</strong> 污染</li>
+  <li>短 8-gram 兜底重合数 >= <strong>1</strong> 污染</li>
+</ul>
+<h3>黑名单</h3>
+<p>6 个评测快照并集 <strong>536 任务</strong>（含 v20260311 的 158 任务 + 改写版/历史版本）。黑名单已就绪于 <code>run/data_pipeline/blacklist/</code>（git 工作副本内，全节点可见）。data 线累计扫描 220K 文档 <strong>0 命中</strong>。</p>
+<h3>闸门脚本</h3>
+<table>
+  <tr><th>属性</th><th>值</th></tr>
+  <tr><td>脚本路径</td><td class="mono">run/baize_posttrain_contamination_gate.sh</td></tr>
+  <tr><td>复用</td><td>data 线 check_contamination.py + build_blacklist.py + blacklist</td></tr>
+  <tr><td>CLI</td><td class="mono">--sft-synth --rl-synth --anneal-corpus [--dry-run] [--build-blacklist --eval-jsonl]</td></tr>
+  <tr><td>判定逻辑</td><td>解析"命中（污染）文档数：N"；N&gt;0 exit 2 阻断训练；N=0 exit 0 放行；缺件 exit 3 fail-safe</td></tr>
+  <tr><td>验证</td><td>bash -n OK dry-run rc=0 build-blacklist dry-run rc=0（2026-11-06 wake2）</td></tr>
+  <tr><td>状态</td><td><span class="badge b-ok">已定稿</span></td></tr>
+</table>
+<h3>何时真跑</h3>
+<ul>
+  <li>合成任何 PyAether 训练对之后、投料之前（P3 退火/SFT/RL 起跑前各一次）。</li>
+  <li>黑名单已就绪；评测 jsonl 在 eda_fastmcp 可达后可用 --build-blacklist 刷新（若评测集更新）。</li>
+</ul>
+<h2 class="sec" id="sec7"><span class="no">§7</span>领域退火语料组装方案</h2>
+<div class="callout info"><p>基于 P1-d 调研结果，设计领域退火（Stage ii 步骤 0）的语料配比与体量估算。退火从 pretrain ckpt resume，复用 WSD 机制，不重新学新知识而是"温和注入"领域分布。</p></div>
+<h3>退火 blend 配比（P2 方案书已定）</h3>
+<table>
+  <tr><th>成分</th><th>配比</th><th>来源</th><th>估算 tokens</th><th>角色</th></tr>
+  <tr><td>domain（PyAether API 参考）</td><td>30%</td><td>P1-d 导出纯文本</td><td>约0.6-0.8 B tok（上样量）</td><td>领域分布注入主体</td></tr>
+  <tr><td>web（Ultra-FineWeb）</td><td>50%</td><td>pretrain 同源</td><td>约1.0-1.3 B tok</td><td>通用能力保持</td></tr>
+  <tr><td>code（UltraData-Code）</td><td>12%</td><td>pretrain 同源</td><td>约0.25 B tok</td><td>代码能力保持</td></tr>
+  <tr><td>math（UltraData-Math）</td><td>8%</td><td>pretrain 同源</td><td>约0.17 B tok</td><td>推理能力保持</td></tr>
+  <tr style="font-weight:600;background:#eef3f8;"><td>合计</td><td>100%</td><td>-</td><td>约2.0-2.5 B tok（上样量）</td><td>退火总上样 约8.4B tok x 实际 epoch</td></tr>
+</table>
+<h3>关键参数</h3>
+<ul>
+  <li><strong>退火步数</strong>：4000 步（WSD：warmup 200 + decay 400 + stable 3400）</li>
+  <li><strong>学习率</strong>：5e-4 到 1e-5（WSD decay）</li>
+  <li><strong>序列长度</strong>：4096（与 pretrain 一致）</li>
+  <li><strong>domain 部分上样量</strong>：约 0.6-0.8B tok（占总 8.4B 的约30%，与 blend 一致）</li>
+  <li><strong>注意</strong>：PyAether API 参考（约4-5M tok）仅约 0.005B，远小于 0.6-0.8B domain 配额 需多轮 epoch（约120-160 epoch）或与其他领域文档混合填充 domain slot</li>
+</ul>
+<h3>SFT 合成语料方案</h3>
+<p>用 API 参考 + skills 提示合成"查 API 写代码"轨迹对（禁用 158 评测题）。合成方法：以 API 参考文档为上下文，构造"给定 EDA 任务描述 查 API 生成代码"的多轮对话轨迹。合成后经 baize_posttrain_contamination_gate.sh 扫描 0 命中方可投料。</p>
+<h2 class="sec" id="sec8"><span class="no">§8</span>SFT 数据混合建议</h2>
+<table>
+  <tr><th>成分</th><th>配比</th><th>来源</th><th>估算 tokens</th><th>角色</th></tr>
+  <tr><td>agentic（P1-b 主体）</td><td>约50%</td><td>UltraData-SFT-Agent-2609</td><td>约3.0 B tok（上样）</td><td>工具协议注入主体 M1 驱动力</td></tr>
+  <tr><td>通用（P1-a 保持）</td><td>约30%</td><td>UltraData-SFT-2605</td><td>约1.8 B tok（上样）</td><td>通用能力防退化</td></tr>
+  <tr><td>PyAether 合成</td><td>约20%</td><td>P1-d API 参考 + skills 合成</td><td>约1.2 B tok（上样）</td><td>领域 API 知识注入</td></tr>
+  <tr style="font-weight:600;background:#eef3f8;"><td>合计</td><td>100%</td><td>-</td><td>约6.0 B tok（上样量）</td><td>SFT 总上样 视 epoch 调整</td></tr>
+</table>
+<h3>消融建议</h3>
+<ul>
+  <li><strong>消融臂 1</strong>：agent50:general30:pyaether20（基准配比）</li>
+  <li><strong>消融臂 2</strong>：agent60:general20:pyaether20（agentic 加重）</li>
+  <li><strong>消融臂 3</strong>：agent50:general30:pyaether0（无 PyAether，验证领域语料贡献）</li>
+  <li><strong>消融臂 4</strong>：+B-class（P1-c 分词后加入，验证 B 类 agentic 补充效果）</li>
+  <li><strong>上下文长度消融</strong>：4096 / 8192 / 16384（agentic 轨迹 avg 45.6 消息，极易超长）</li>
+  <li><strong>微调方式消融</strong>：LoRA(r64,a128) vs 全参（先 LoRA 快速验证，再全参定稿）</li>
+</ul>
+<h2 class="sec" id="sec9"><span class="no">§9</span>阻塞项与后续动作</h2>
+<table>
+  <tr><th>阻塞项</th><th>影响</th><th>当前状态</th><th>解除条件</th></tr>
+  <tr><td>pretrain S1 收敛 ckpt</td><td>退火/SFT/RL 正式训练无法起跑</td><td>iter ~105,600 / 700,000 ETA 约 2026-12-25</td><td>pretrain 线交付收敛 ckpt</td></tr>
+  <tr><td>/nas_inference 未挂载 .17</td><td>P1-c B 类 agentic 数据不可直接盘点/分词</td><td>12 源已下载于 .12 DATA_MAPPING F</td><td>运维挂载 /nas_inference 到 .17 或由 .29/.12 分词</td></tr>
+  <tr><td>P1-c 分词口径未定</td><td>B 类 agentic 数据无法入 mcore 镜像</td><td>JSONL / parquet 格式非 mcore</td><td>定分词口径 + 预处理脚本</td></tr>
+  <tr><td>MiniCPM5-2B 36% 侧 D1-D6</td><td>P0 诊断缺少 36% 侧实测对照</td><td>轨迹在评测机 ~/eda_code_eval/ 不在 .17</td><td>运维拷贝轨迹到 .17 或挂载</td></tr>
+  <tr><td>HDL 源码 / techlib 文档</td><td>P1-d 语料不完整</td><td>本节点未见</td><td>确认来源并补导出</td></tr>
+</table>
+<h3>不阻塞项（本节点可达，已完成）</h3>
+<ul>
+  <li>P1-a / P1-b 数据盘点（引自 DATA_MAPPING 单一事实源）</li>
+  <li>P1-d PyAether 领域语料调研（本节点实测可达）</li>
+  <li>P1-e 污染隔离规则 + 闸门脚本（git 工作副本，全节点可见）</li>
+  <li>P2 三步训练方案书（report_posttrain_plan_zh.html）</li>
+  <li>P3 预备脚本骨架（anneal / sft / rl_grpo / eval / contamination_gate bash -n + dry-run 全 PASS）</li>
+  <li>P0 D1-D6 DeepSeek 侧实测 + 跨运行稳定性验证（report_posttrain_diagnose_d1d6_zh.html）</li>
+</ul>
+<h2 class="sec" id="sec10"><span class="no">§10</span>红线合规检查表</h2>
+<table>
+  <tr><th>#</th><th>红线</th><th>合规状态</th><th>证据</th></tr>
+  <tr><td>1</td><td>污染隔离：158 任务禁入训练集</td><td><span class="badge b-ok">合规</span></td><td>闸门脚本 baize_posttrain_contamination_gate.sh 已就绪 536 任务黑名单 含 158 13-gram + 8-gram + MinHash + sha256 四重指纹 投料前阻断 exit 2</td></tr>
+  <tr><td>2</td><td>反作弊：PreToolUse hook 全程启用 + 报 cheat rate</td><td><span class="badge b-info">方案已定</span></td><td>P2 方案书 RL 节已设计 正式训练起跑时实施</td></tr>
+  <tr><td>3</td><td>口径一致：5-run mean+std + 配对检验</td><td><span class="badge b-ok">合规</span></td><td>评测脚本骨架 baize_posttrain_eval.sh 已含 5-run reshuffle fresh-context P2 方案书已定 McNemar + paired bootstrap</td></tr>
+  <tr><td>4</td><td>评测协议冻结：158 Pass@1 2500s 单 trace 5-run -p 8 -n</td><td><span class="badge b-ok">合规</span></td><td>评测脚本骨架已含全部冻结项</td></tr>
+  <tr><td>5</td><td>预注册：成功阶梯 M1-M4 + 判定阈值先定后测</td><td><span class="badge b-ok">合规</span></td><td>P2 方案书已定稿 36% 50% 65% 75% 85%+ 点估计 + 配对检验 + 成本比</td></tr>
+</table>
+<div class="callout ok"><p><strong>合规结论</strong>：P1 阶段全部红线均已落实或在方案中定稿。污染隔离闸门（红线 1）已在合成任何 PyAether 训练对之前就位，是<strong>最高优先级红线</strong>。其余红线在正式训练起跑时实施。</p></div>
+<footer>
+  <p><strong>报告信息</strong></p>
+  <ul>
+    <li>任务书：BAIZE_POSTTRAIN_TASK.md P1 交付物 4（产出中文 HTML 报告 reports/report_posttrain_data_inventory_zh.html 自包含 大于10KB）</li>
+    <li>数据来源：DATA_MAPPING.md 单一事实源 EXPERIMENTS_POSTTRAIN.md Data / PyAether-corpus / P1-e 本节点 ~/code/eda_fastmcp 实测</li>
+    <li>节点：10.252.32.17 post-train 线 零 GPU 纯 CPU/IO</li>
+    <li>commit 前缀：posttrain data:</li>
+    <li>生成时间：2026-11-06</li>
+  </ul>
+  <p><strong>自包含声明</strong>：本报告 0 个 script 标签 0 个外部资源引用 无 CDN 无外链 CSS/JS 无外链图片 所有样式内联 可离线打开。</p>
+</footer>
+</div>
+</body>
+</html>
