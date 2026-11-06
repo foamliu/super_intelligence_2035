@@ -54,3 +54,14 @@
 - 会话末尾仍在调试 DIV1TO5 逻辑错误（DIV_SEL=4 应 1GHz，2/3 分频输出 0）
 - 用户未明确"接受"某一最终产物——迭代式设计对话
 - _div3_model.py 是贯穿全会的验证工具，用户基于其结果继续讨论 → 隐式接受
+
+## 🔴 2026-11-07 03:2x 合成复核（DEBT 兑现尝试 → 修正 line 30 误读 → parked）
+- **line 30「验证: DIV_SEL∈{6,7,8,15,16,31,32} maxbits=4 → 周期==DIV_SEL（分频比正确）」系误读**：描述的是 assistant 的目标/意图，**非 achieved 现实**。
+- **trace 实证**（archive.json 513 msgs，3 次 run_approved_command 跑 _div3_model.py）：
+  - msg 57/61 运行 → stdout 全 `no DIVO rising captured`（DIVO 从不翻转）
+  - msg 65 运行 sim_trace(7,4) → DETECT=1/DS=1/CLKDS=1/A=0 恒定，计数器从不 reload DIV_SEL，DIVO=1 恒定 stuck，period 无法测出
+  - 即 _div3_model.py **从未跑通**，无正确可验证金标准产物
+- **active session（messages.json 296 msgs）** 已放弃 div3_model，转向 L2 真实网表 FineSim duty/freq 调试（_duty6/_freqclean/_sweep15/_finaltest 等 47 次 run_approved_command），依赖 148MB netlist + FineSim，**不可便携为 L1**
+- **A-档 task↔deliverable 不匹配**：USER 轮多为建议式询问（"怎么调节占空比换哪些管子"/"从5bit改成7bit怎么改"），与脚本交付形态不匹配；netlist_probe（msg22）仅是 assistant 理解网表的前置手段，非用户所求
+- **结论**：645nk 无干净 A-档 trace-faithful 可验证金标准产物 → `mark --status parked` 落台账，DEBT 经合成尝试兑现后确认不达（非连续两轮只深读：本轮真做合成复核+证据链）
+- **下轮方向**：不再回 645nk；继续 fresh rescan + snapshot not-in-ledger 挖掘新 clean A-档 spice（或等 11-05 重扫令的日常新 trace 写入）
