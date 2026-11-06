@@ -2,7 +2,9 @@
 
 WAITING: 0
 
-> 🆕 **【wake #751 · 2026-11-06 10:13】监控巡检·状态无变化·双poller健康·GPU满载·仅待GPU。SFT poller PID2757742(etimes≈51957s≈14.4h)alive轮询busy_util waiting✓(poll log仅header=7行,GPU持续busy无新条目=正常)；GRPO chain PID2466702(etimes≈7558s≈2.1h)alive等待SFT eval_results.json✓(latest [10:13:22] waited 7560s/7776000)；pretrain S1 iter~102210/700000 ETA≈12/24-25；GPU .12(local,hostname=whag0pgpuap12) 8×96%/~75GB(被app.t0002965 sglang推理服务占用) + .29 8×100%/~75GB(pretrain S1占用) 双机全占。vision loop PID669545 alive✓；cline in PATH✓。git pull后0ahead/0behind已同步（未碰他线在途文件）。📦体积：TASK=30453B(29.7KB)/MEMORY=28439B(27.8KB)（均≤32KB✓）。**未完成指令：有**（阶段1 GPU训练pending,阻塞方=.12他用户sglang+.29 pretrain S1 ETA≈12/24-25·不可加速不杀健康训练）⇒**WAITING: 0**。
+> 🆕 **【wake #752 · 2026-11-06 10:19】监控巡检·状态无变化·双poller健康·GPU满载·仅待GPU。SFT poller PID2757742(etimes≈52418s≈14.6h)alive轮询busy_util waiting✓(poll log 877行,GPU持续busy无新条目=正常)；GRPO chain PID2466702(etimes≈8019s≈2.2h)alive等待SFT eval_results.json✓(latest [10:19:22] waited 7920s/7776000)；pretrain S1 PID2612442(etimes≈311479s≈3.6d) iter~102k/700000 ETA≈12/24-25；GPU .12(local,hostname=whag0pgpuap12) 8×96-100%/~75GB(pretrain S1 2-node + app.t0002965 sglang推理服务并存) + .29 8×100%(pretrain S1) 双机全占。vision loop PID669545 alive✓；cline in PATH✓。git pull后0ahead/0behind已同步（未碰他线在途文件）。📦体积：TASK=30453B(29.7KB)/MEMORY=28795B(27.8KB)（均≤32KB✓）。**未完成指令：有**（阶段1 GPU训练pending,阻塞方=pretrain S1 ETA≈12/24-25·不可加速不杀健康训练）⇒**WAITING: 0**。
+
+> 📦 wake #751（监控巡检·2026-11-06 10:13）已归档 → daily-memories-vision/2026-11-06.md；**结论**：状态无变化，双poller健康，GPU满载仅待GPU。需要时再读。
 
 > 📦 wake #750（监控巡检·2026-11-06 10:07）已归档 → daily-memories-vision/2026-11-06.md；**结论**：状态无变化，双poller健康，GPU满载仅待GPU。需要时再读。
 
