@@ -2,7 +2,9 @@
 
 WAITING: 0
 
-> 🆕 **【wake #762 · 2026-11-06 11:32】监控巡检·状态无变化·双poller健康·GPU满载·仅待GPU。SFT poller PID2757742(etimes≈56562s≈15.7h,ppid=1)alive✓ poll log latest [11:32:18]busy_util--waiting；GRPO chain PID2466702(etimes≈12240s≈3.4h,ppid=1)alive✓ chain log latest [11:31:22]waited 12240s/7776000=90天；eval_results.json未出现(SFT未启动,GPU忙)；阶段0→阶段1准入复核:Phase0整体YELLOW但阶段1 SFT数据管线所用.raw/VCD+Python备选路径=GREEN(见readiness报告"阶段0结论与阶段1准入"节),非整体GREEN准入·已透明记录不伪造；GPU .12 8×H100满载 pretrain S1 PID2612442 iter~102940/700k ETA≈12/24-25。cline in PATH✓。📦体积:TASK=30453B(29.7KB)/MEMORY≈9.0KB(均≤32KB✓,无需归档)。**未完成指令:有**(阶段1 GPU训练pending·外部阻塞不可加速/不杀健康训练)⇒**WAITING: 0**。
+> 🆕 **【wake #763 · 2026-11-06 11:40】监控巡检·状态无变化·双poller健康·GPU满载·仅待GPU。SFT poller PID2757742(etimes≈57180s≈15.9h,ppid=1)alive✓ 活跃poll log(sft_poll_20261105_194723.log)latest [11:40:21]busy_util--waiting；GRPO chain PID2466702(etimes≈12700s≈3.5h,ppid=1)alive✓ chain log latest [11:37:22]waited 12600s/7776000=90天；eval_results.json未出现(SFT未启动,GPU忙)；GPU .12 8×H100满载(96-100%util/~75GB) pretrain baize2b PID2612442 iter~103100/700k(14.7%) 速率~7.0s/iter ETA≈12/24-25。cline in PATH✓。📦体积:TASK=30453B(29.7KB)/MEMORY≈9.1KB(均≤32KB✓,无需归档)。**未完成指令:有**(阶段1 GPU训练pending·外部阻塞不可加速/不杀健康训练)⇒**WAITING: 0**。
+
+> 📦 wake #762（监控巡检·2026-11-06 11:32）已归档 → daily-memories-vision/2026-11-06.md；**结论**：状态无变化，双poller健康，GPU满载仅待GPU。需要时再读。
 
 > 📦 wake #761（监控巡检·2026-11-06 11:24）已归档 → daily-memories-vision/2026-11-06.md；**结论**：状态无变化，双poller健康，GPU满载仅待GPU。需要时再读。
 
@@ -67,7 +69,7 @@ WAITING: 0
 | PHASE | 🟡 **波形 RL 阶段0交付(YELLOW) + 阶段1 SFT脚本+数据就绪(9013条均衡) + 阶段2 GRPO+评测脚手架就绪 + 全管线CPU预验证完成 + 双poller健康(SFT PID 2757742 + GRPO chain PID 2466702)**。GPU释放后全链自动：SFT起训→eval→GRPO chain验收→GRPO起训→WaveQA-RL评测。阶段1 GPU训练 + 阶段2/3未交付。**WAITING: 0** |
 | WAITING | 0 |
 | 已完成 | CPU端到端训练循环验证7/7 PASS(wake#741) · 数据泄漏验证+阶段1就绪报告HTML(wake#731) · 全管线就绪审计(wake#714) · GRPO链式启动器修复+启动(wake#626) · GRPO CPU冒烟测试PASS(wake#622) · 2B文本骨干提取1.72B(wake#620) · 数据集均衡化9013条(wake#618) · WaveQA-RL oracle 300题(wake#614) · 波形RL阶段0 YELLOW(wake#609) · 论文改稿(wake#437~#442) · 波形RL计划书(wake#435) · OCR合成10M(wake#275) · ArmE-R2/ArmD-R2 全链路 |
-| 当前动作 | **双**poller后台运行等GPU空闲：SFT poller(PID 2757742, flock, etimes≈56189s≈15.6h, 扠60s `busy_util -- waiting`) + GRPO chain(PID 2466702, flock, etimes≈11790s≈3.3h, SFT_WAIT_MAX=90天, 扠120s `SFT not done yet`)·仅待GPU释放 |
+| 当前动作 | **双**poller后台运行等GPU空闲：SFT poller(PID 2757742, flock, etimes≈57180s≈15.9h, 扠60s `busy_util -- waiting`) + GRPO chain(PID 2466702, flock, etimes≈12700s≈3.5h, SFT_WAIT_MAX=90天, 扠120s `SFT not done yet`)·仅待GPU释放 |
 | 下一步 | 阶段1 SFT训练（~4 GPU·h，GPU空闲后SFT poller自动启动，3000 steps≈2.66 epoch）→ eval_results.json → GRPO chain自动验收 → 阶段2 GRPO（~12 GPU·h）+ WaveQA-RL评测 |
-| 阻塞 | .12+.29 GPU全占（16×H100 96-100% util / ~75GB，pretrain mamba2 baize2b PID 2612442 iter~102940/700k(14.7%) 速率~7.0s/iter ETA≈12/24-25）· .75 SSH不可达（需运维协调MCP通道） |
-| 更新 | **2026-11-06 11:32 (wake #762)**: 监控巡检·状态无变化·双poller健康·GPU .12 8×H100满载 pretrain S1 iter~102940/700k ETA≈12/24-25·阶段0→阶段1准入(备选GREEN)复核·git同步·WAITING=0 |
+| 阻塞 | .12+.29 GPU全占（16×H100 96-100% util / ~75GB，pretrain mamba2 baize2b PID 2612442 iter~103100/700k(14.7%) 速率~7.0s/iter ETA≈12/24-25）· .75 SSH不可达（需运维协调MCP通道） |
+| 更新 | **2026-11-06 11:40 (wake #763)**: 监控巡检·状态无变化·双poller健康·GPU .12 8×H100满载 pretrain baize2b iter~103100/700k ETA≈12/24-25·git同步·WAITING=0 |
