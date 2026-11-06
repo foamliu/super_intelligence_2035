@@ -325,3 +325,6 @@ vbxlf.messages.json	jason17w	hfeg0pnd002	262	spice_sim	parked		2026-11-05 12:30	
 1793959674227_uybl4					parked		2026-11-07 06:31	trivial: 5msgs/5KB no spice (e0025768) 11-07 rescan
 1793959865181_3pj6u					parked		2026-11-07 06:31	trivial: 4msgs/5KB no spice (e0025768) 11-07 rescan
 1793959981001_og48h					parked		2026-11-07 06:31	trivial: 10msgs/18KB MC1 no spice (e0025768) 11-07 rescan
+1792135265303_29j5h					parked		2026-11-07 06:56	trivial bsub execution: user='run this command' bsub python3.7 test.py, not spice design intent (scout 1107 0642)
+1792135333389_bquh9					parked		2026-11-07 06:56	trivial bsub execution: user='bsub -Is -XF -q os8_queue code run this command', not spice design intent (scout 1107 0642)
+1792725321883_z8zli					parked		2026-11-07 06:56	env consulting: anasimpro-gui-start + vscode lib error setup, adaml known consulting user, not spice (scout 1107 0642)
