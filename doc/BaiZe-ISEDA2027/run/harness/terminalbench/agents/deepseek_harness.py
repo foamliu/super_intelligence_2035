@@ -76,6 +76,11 @@ class DeepseekHarnessTB(TBBaseAgent):
         ``python3 -m pip`` (always present with python3), VERIFY the import
         succeeds, and raise loudly if it does not.
         """
+        # FIX (2026-11-07, R1714): TB 4.0 images ship python3 WITHOUT pip →
+        # ``python3 -m pip install`` raises ``No module named pip``.  Bootstrap
+        # pip first (ensurepip → get-pip.py fallback) before installing the SDK.
+        await self._ensure_pip(environment)
+
         install_res = await self.exec_as_root(
             environment,
             command=(

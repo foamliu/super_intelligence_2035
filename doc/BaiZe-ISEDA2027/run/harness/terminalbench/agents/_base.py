@@ -240,6 +240,78 @@ class TBBaseAgent(BaseInstalledAgent):
             ),
         )
 
+    async def _ensure_pip(self, environment: BaseEnvironment) -> None:
+        """Ensure ``python3 -m pip`` is usable inside the container.
+
+        FIX (2026-11-07, R1714): Terminal-Bench 4.0 task containers ship bare
+        ``python3`` with NO pip module (e.g. ``FROM oven/bun:1.2.15-debian`` +
+        ``apt install python3`` — no python3-pip / python3-venv).  Adapters that
+        install their harness via ``python3 -m pip install`` (hermes,
+        deepseek-harness) raised ``No module named pip`` →
+        ``NonZeroAgentExitCodeError`` (0 trials, 14s).
+
+        This method is a no-op when pip is already available (TB 2.0 images,
+        or any image with python3-pip).  When pip is missing it bootstraps via:
+          1. ``python3 -m ensurepip`` (fast, if the image bundles python3-venv)
+          2. ``get-pip.py`` (uploaded from host, uses the overlay's
+             ``PIP_INDEX_URL`` aliyun mirror through the MITM proxy).  get-pip.py
+             has a prepended ``ssl._create_default_https_context =
+             ssl._create_unverified_context`` so its urllib download survives the
+             proxy's TLS interception (same reason the overlay sets
+             ``npm_config_strict_ssl=false`` / ``curl -k``).
+        """
+        probe = await environment.exec(
+            command="python3 -m pip --version 2>&1 || echo HERMES_PIP_MISSING"
+        )
+        if "HERMES_PIP_MISSING" not in (probe.stdout or ""):
+            return  # pip already present
+
+        # Try ensurepip first (some images bundle it via python3-venv).
+        await self.exec_as_root(
+            environment,
+            command="python3 -m ensurepip --upgrade 2>&1 | tail -3 || true",
+            timeout_sec=120,
+        )
+        recheck = await environment.exec(
+            command="python3 -m pip --version 2>&1 || echo HERMES_PIP_MISSING"
+        )
+        if "HERMES_PIP_MISSING" not in (recheck.stdout or ""):
+            return  # ensurepip worked
+
+        # ensurepip unavailable → bootstrap via get-pip.py (uploaded from host).
+        from pathlib import Path
+        import tempfile
+        getpip_src = Path(__file__).resolve().parent / "get-pip.py"
+        if not getpip_src.exists():
+            raise RuntimeError(
+                f"get-pip.py not found at {getpip_src}; cannot bootstrap "
+                f"pip in pip-less TB4 container"
+            )
+        with tempfile.NamedTemporaryFile(
+            mode="wb", suffix="_get-pip.py", delete=False
+        ) as tf:
+            tf.write(getpip_src.read_bytes())
+            local_getpip = Path(tf.name)
+        await environment.upload_file(local_getpip, "/tmp/get-pip.py")
+        await self.exec_as_root(
+            environment,
+            command=(
+                "python3 /tmp/get-pip.py "
+                "--break-system-packages "
+                "--trusted-host mirrors.aliyun.com 2>&1 | tail -8"
+            ),
+            timeout_sec=300,
+        )
+        final = await environment.exec(
+            command="python3 -m pip --version 2>&1 "
+            "|| echo HERMES_PIP_STILL_MISSING"
+        )
+        if "HERMES_PIP_STILL_MISSING" in (final.stdout or ""):
+            raise RuntimeError(
+                f"Failed to bootstrap pip in TB4 container: "
+                f"{(final.stdout or '')[:300]}"
+            )
+
     async def _install_bun(self, environment: BaseEnvironment) -> None:
         """Install Bun runtime (needed by cline, pi).
 

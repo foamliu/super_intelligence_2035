@@ -85,7 +85,23 @@ class HermesTB(TBBaseAgent):
 
     @override
     async def install(self, environment: BaseEnvironment) -> None:
-        """Install hermes-agent + register the kimi-proxy provider plugin (R457)."""
+        """Install hermes-agent + register the kimi-proxy provider plugin (R457).
+
+        FIX (2026-11-07, R1714): TB 4.0 task containers ship bare ``python3``
+        with NO pip module (e.g. bun-sourcemap-leak: ``FROM oven/bun:1.2.15-debian``
+        + ``apt install python3`` — no python3-pip / python3-venv).  The old
+        ``python3 -m pip install`` raised ``No module named pip`` →
+        ``NonZeroAgentExitCodeError`` (0 trials, 14s).  Fix: bootstrap pip via
+        ``ensurepip`` (fast, if available) or ``get-pip.py`` (uploaded from host,
+        uses the overlay's ``PIP_INDEX_URL`` aliyun mirror through the MITM proxy)
+        BEFORE installing hermes-agent.  get-pip.py has a prepended
+        ``ssl._create_default_https_context = ssl._create_unverified_context``
+        so its urllib download survives the MITM proxy's TLS interception
+        (same reason the overlay sets ``npm_config_strict_ssl=false`` / ``curl -k``).
+        """
+        # 0) Ensure pip is available; bootstrap if the TB4 image lacks it.
+        await self._ensure_pip(environment)
+
         # 1) install hermes-agent.
         # FIX (2026-10-25, R492): the old `pip install ...` flaked on task images
         # where `pip` is not on PATH (36/50 trials → "hermes: command not found",

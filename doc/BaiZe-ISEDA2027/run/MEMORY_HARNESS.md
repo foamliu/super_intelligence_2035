@@ -5,13 +5,13 @@ WAITING: 0
 ## 📊 进度快照
 
 ```
-PHASE:        R1713 glm53重测监控轮:SWE-bench Verified full500×glm-5.3-flash×7路 predict运行中(7/7 alive,135/3500,98 patches,73%patch率)·TB 4.0=66tasks,132/132 images✅,7×1 smoke 4/7 done(cline/codex=timeout WORKS·hermes=pip-fail BROKEN·opencode=WORKS·claude-code running)·硬约束③PASS
-已完成:       H-B✅·Gate7/7·TB报告✅·full500全7路predict+eval 100%完成✅·R1685 cline低分归因✅·R1694-R1712 glm53重测启动+proxy修复+硬约束③修复+TB4镜像拉取(132/132✅)+TB4 smoke启动+监控轮✅
-当前动作:     R1713 监控:7路predict 135/3500(3.9%)·98 patches(73%):cline22/18·opencode31/29·hermes35/27·dsh17/11·claude-code14/8·pi11/4·codex6/1·CPU/MEM PASS(load45/224≈20%·top=pretrain非本线·无>8000%CPU·无>50GB RSS·avail1.2Ti)·gw_proxy 9092+9093 200✅·TB4 smoke 4/7 done:cline-patched=timeout(WORKS)·codex=timeout(WORKS)·hermes=pip-fail(BROKEN:TB4容器无pip)·opencode=0err reward0(WORKS)·claude-code running·硬约束③PASS
-下一步:       ①监控7路predict(135/3500,按100/300/500三段汇报) ②每路predict完即eval ③TB4 smoke余3路(claude-code/deepseek/pi)→修hermes TB4适配器(pip问题)→全量66×7 ④写报告report_harness_glm53_7way_swebench_tb_zh.html
-阻塞:         无·⚠️hermes TB4适配器在TB4容器中pip install失败(容器python3无pip module)需修·codex极慢(6/500)·pi超时多(4/11patch)
+PHASE:        R1714 glm53重测:TB4适配器pip-bootstrap修复✅(hermes+deepseek)·SWE-bench full500×7路predict运行中(175/3500)·TB4=66tasks,smoke 5/7 WORKS(hermes修复后agent运行中)
+已完成:       H-B✅·Gate7/7·TB报告✅·full500全7路predict+eval 100%完成✅·R1685 cline低分归因✅·R1694-R1713 glm53重测启动+proxy修复+TB4镜像(132/132✅)+TB4 smoke(7/7 done)✅·R1714 TB4 pip-bootstrap修复(hermes+deepseek适配器,_base.py加_ensure_pip)✅
+当前动作:     R1714 TB4适配器修复:hermes/deepseek TB4 smoke失败根因=容器python3无pip(PEP668 externally-managed)→_base.py加_ensure_pip(ensurepip→get-pip.py --break-system-packages)→hermes smoke重跑install✅agent运行618s+·deepseek重跑排队中·SWE-bench predict 175/3500(5.0%):cline25·opencode41·hermes46·dsh19·claude-code19·pi18·codex7·CPU/MEM PASS
+下一步:       ①等hermes+deepseek TB4 smoke重跑完成→确认7/7 WORKS ②TB4全量66×7 ③监控SWE-bench predict(175/3500,按100/300/500汇报) ④每路predict完即eval ⑤写报告report_harness_glm53_7way_swebench_tb_zh.html
+阻塞:         无·⚠️codex极慢(7/500)·pi超时多
 ERROR_COUNT:  0
-  📦 体积：TASK=32074B(31.3KB) / MEMORY=~30KB(≤32KB达标,本轮归档R1710-R1712→daily)
+  📦 体积：TASK=32074B(31.3KB) / MEMORY=~30KB(≤32KB达标)
 ```
 
 > 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
@@ -34,7 +34,8 @@ ERROR_COUNT:  0
 > 📦 R1708 流水(02:29,监控轮:227done/3500·91files/62patch·TB4 119/132)已归档 → daily-memories-harness/2026-11-07.md。结论：7路 alive,进度稳定。需要时再读。
 > 📦 R1709 流水(02:36,监控轮:100files/69patch·TB4 128/132)已归档 → daily-memories-harness/2026-11-07.md。结论：7路 alive,进度稳定。需要时再读。
 > 📦 R1710-R1712 流水(02:52~03:20,3轮监控:predict 117→127 files/3500·TB4 smoke启动+cline/codex运行中)已归档 → daily-memories-harness/2026-11-07.md。结论：7路 alive,进度稳定,TB4 smoke启动。需要时再读。
-[03:30] R1713 glm53重测监控轮:gateway HTTP200✅·CPU/MEM PASS(load45.58/224≈20%busy·top=pretrain143%=非本线·无>8000%CPU·无>50GB RSS·avail1.2Ti)→disk:/data5.8T/351G→gw_proxy 9092+9093 200✅→predict:135/3500(3.9%)·98 patches(73%):cline22/18·opencode31/29·hermes35/27·dsh17/11·claude-code14/8·pi11/4·codex6/1·⚠️codex极慢·pi超时多→TB4 smoke 4/7 done:cline-patched=AgentTimeout(WORKS)·codex=AgentTimeout(WORKS)·hermes=NonZeroAgentExitCode(BROKEN:TB4容器`/usr/bin/python3: No module named pip`→pip install hermes-agent失败)·opencode=0err reward0(WORKS)·claude-code RUNNING·dsh+pi pending→硬约束③PASS(0 tracked glm53 result JSON)·体积:TASK32074B(31.3KB)/MEMORY~30KB(≤32KB达标,归档R1710-R1712)·未完成指令:有(glm53重测)⇒WAITING:0
+> 📦 R1713 流水(03:30,监控轮:predict 135/3500·TB4 smoke 7/7 done:hermes/deepseek=pip-fail BROKEN)已归档 → daily-memories-harness/2026-11-07.md。结论：7路 alive,hermes+deepseek TB4适配器需修pip。需要时再读。
+[04:00] R1714 TB4适配器pip-bootstrap修复:根因=TB4容器`FROM oven/bun:1.2.15-debian`+`apt install python3`无pip module且PEP668 externally-managed→hermes/deepseek `python3 -m pip install`失败(NonZeroAgentExitCodeError 14s)→修法:_base.py加`_ensure_pip()`(probe pip→ensurepip→get-pip.py --break-system-packages via aliyun mirror+MITM proxy,ssl-disable prepend)→hermes.py+deepseek_harness.py调`_ensure_pip`→get-pip.py(2.3MB,bootstrap.pypa.io+ssl-disable)落agents/→hermes smoke重跑:install✅(3 cmds captured:ensurepip→get-pip.py→pip install hermes-agent)→agent running 618s+(vs原14s fail)→deepseek重跑排队中·SWE-bench predict 175/3500(5.0%):cline25·opencode41·hermes46·dsh19·claude-code19·pi18·codex7·CPU/MEM PASS·TB4=66tasks(非89)·未完成指令:有(glm53重测)⇒WAITING:0
 
 
 
