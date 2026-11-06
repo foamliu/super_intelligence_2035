@@ -23,7 +23,7 @@ code { background:#f4f4f4; padding:2px 6px; border-radius:3px; font-size:13px; }
 <body>
 
 <h1>波形 RL Phase 2 CPU 实验报告</h1>
-<p class="meta">生成时间：2026-11-06 19:52 · BaiZe Vision wake#827 · 设备：CPU (224-core, 2TB RAM)<br>
+<p class="meta">生成时间：2026-11-06 20:27 · BaiZe Vision wake#827 · 设备：CPU (224-core, 2TB RAM)<br>
 任务令：§用户令·2026-11-06 18:5x（GPU还要等2个月⇒不等了，先上CPU）</p>
 <div class="note"><strong>背景</strong>：.29/.12的16×H100被pretrain S1占满，ETA≈2026-12-25。用户令：不等GPU，先在CPU上完成Phase 2 GRPO全链路。GPU-wait chain保留不动。</div>
 
@@ -54,7 +54,60 @@ Maximum resident set size (kbytes): 43950648<br>
 
 <h2>§3 P1 CPU GRPO Pilot (50步)</h2>
 <p>配置：total_steps=50, lr=1e-6, save_steps=25, log_steps=1。奖励：R_main分档+R_evidence+R_dense+R_anti+R_budget（不得放宽）。</p>
-<p><em>P1 training log not yet available.</em></p>
+<p><strong>Config</strong>: B=1, G=4, steps=50, lr=1e-06, device=cpu, seq_len=1024</p>
+<p><strong>Total wall</strong>: 3895.4s (64.9 min)</p>
+<table class='data'><tr><th>Step</th><th>Loss</th><th>Reward</th><th>Submit%</th><th>LR</th><th>Wall</th></tr>
+<tr><td>1</td><td>0.0000</td><td>-0.5000</td><td>100.0000</td><td>0.0000</td><td>78.5629s</td></tr>
+<tr><td>2</td><td>-0.0005</td><td>0.6600</td><td>100.0000</td><td>0.0000</td><td>151.5424s</td></tr>
+<tr><td>3</td><td>0.0000</td><td>0.5600</td><td>100.0000</td><td>0.0000</td><td>227.7302s</td></tr>
+<tr><td>4</td><td>0.0000</td><td>1.3600</td><td>100.0000</td><td>0.0000</td><td>301.7097s</td></tr>
+<tr><td>5</td><td>-0.0009</td><td>0.6100</td><td>100.0000</td><td>0.0000</td><td>386.0035s</td></tr>
+<tr><td>6</td><td>0.0000</td><td>0.6350</td><td>100.0000</td><td>0.0000</td><td>466.1609s</td></tr>
+<tr><td>7</td><td>0.0000</td><td>-0.5000</td><td>100.0000</td><td>0.0000</td><td>547.2417s</td></tr>
+<tr><td>8</td><td>0.0000</td><td>-0.5000</td><td>100.0000</td><td>0.0000</td><td>626.3770s</td></tr>
+<tr><td>9</td><td>0.0027</td><td>0.3850</td><td>100.0000</td><td>0.0000</td><td>705.5817s</td></tr>
+<tr><td>10</td><td>0.0000</td><td>-0.5000</td><td>100.0000</td><td>0.0000</td><td>787.2458s</td></tr>
+<tr><td>11</td><td>0.0000</td><td>-0.5000</td><td>100.0000</td><td>0.0000</td><td>866.9553s</td></tr>
+<tr><td>12</td><td>0.0000</td><td>-0.5000</td><td>100.0000</td><td>0.0000</td><td>949.6929s</td></tr>
+<tr><td>13</td><td>0.0000</td><td>1.3600</td><td>100.0000</td><td>0.0000</td><td>1024.8812s</td></tr>
+<tr><td>14</td><td>0.0000</td><td>0.3600</td><td>100.0000</td><td>0.0000</td><td>1102.7676s</td></tr>
+<tr><td>15</td><td>0.0000</td><td>-0.5000</td><td>100.0000</td><td>0.0000</td><td>1182.0706s</td></tr>
+<tr><td>16</td><td>0.0000</td><td>-0.5000</td><td>100.0000</td><td>0.0000</td><td>1257.6004s</td></tr>
+<tr><td>17</td><td>0.0000</td><td>-0.5000</td><td>100.0000</td><td>0.0000</td><td>1336.5681s</td></tr>
+<tr><td>18</td><td>0.0000</td><td>-0.5000</td><td>100.0000</td><td>0.0000</td><td>1414.9878s</td></tr>
+<tr><td>19</td><td>-0.0000</td><td>0.3850</td><td>100.0000</td><td>0.0000</td><td>1489.0068s</td></tr>
+<tr><td>20</td><td>0.0000</td><td>-0.5000</td><td>100.0000</td><td>0.0000</td><td>1568.3226s</td></tr>
+<tr><td>21</td><td>0.0000</td><td>0.3600</td><td>100.0000</td><td>0.0000</td><td>1644.3143s</td></tr>
+<tr><td>22</td><td>0.0000</td><td>-0.5000</td><td>100.0000</td><td>0.0000</td><td>1720.6349s</td></tr>
+<tr><td>23</td><td>0.0000</td><td>0.3600</td><td>100.0000</td><td>0.0000</td><td>1800.3770s</td></tr>
+<tr><td>24</td><td>0.0000</td><td>-0.5000</td><td>100.0000</td><td>0.0000</td><td>1878.8075s</td></tr>
+<tr><td>25</td><td>0.0000</td><td>-0.5000</td><td>100.0000</td><td>0.0000</td><td>1958.3575s</td></tr>
+<tr><td>26</td><td>-0.0001</td><td>0.7100</td><td>100.0000</td><td>0.0000</td><td>2035.8778s</td></tr>
+<tr><td>27</td><td>0.0000</td><td>-0.5000</td><td>100.0000</td><td>0.0000</td><td>2114.5527s</td></tr>
+<tr><td>28</td><td>0.0000</td><td>-0.5000</td><td>100.0000</td><td>0.0000</td><td>2191.4732s</td></tr>
+<tr><td>29</td><td>0.0000</td><td>-0.5000</td><td>100.0000</td><td>0.0000</td><td>2272.4581s</td></tr>
+<tr><td>30</td><td>0.0000</td><td>-0.5000</td><td>100.0000</td><td>0.0000</td><td>2352.9460s</td></tr>
+<tr><td>31</td><td>-0.0000</td><td>0.8600</td><td>100.0000</td><td>0.0000</td><td>2426.8182s</td></tr>
+<tr><td>32</td><td>0.0000</td><td>-0.5000</td><td>100.0000</td><td>0.0000</td><td>2504.1288s</td></tr>
+<tr><td>33</td><td>0.0009</td><td>1.0600</td><td>100.0000</td><td>0.0000</td><td>2578.9876s</td></tr>
+<tr><td>34</td><td>0.0000</td><td>0.3600</td><td>100.0000</td><td>0.0000</td><td>2653.5784s</td></tr>
+<tr><td>35</td><td>-0.0005</td><td>0.5600</td><td>100.0000</td><td>0.0000</td><td>2728.1892s</td></tr>
+<tr><td>36</td><td>0.0000</td><td>-0.5000</td><td>100.0000</td><td>0.0000</td><td>2808.2645s</td></tr>
+<tr><td>37</td><td>0.0000</td><td>0.3600</td><td>100.0000</td><td>0.0000</td><td>2887.0244s</td></tr>
+<tr><td>38</td><td>0.0007</td><td>0.6100</td><td>100.0000</td><td>0.0000</td><td>2964.7817s</td></tr>
+<tr><td>39</td><td>0.0000</td><td>-0.5000</td><td>100.0000</td><td>0.0000</td><td>3043.7837s</td></tr>
+<tr><td>40</td><td>0.0000</td><td>1.3600</td><td>100.0000</td><td>0.0000</td><td>3120.7417s</td></tr>
+<tr><td>41</td><td>0.0000</td><td>0.3600</td><td>100.0000</td><td>0.0000</td><td>3196.4845s</td></tr>
+<tr><td>42</td><td>0.0012</td><td>0.8600</td><td>100.0000</td><td>0.0000</td><td>3274.3532s</td></tr>
+<tr><td>43</td><td>0.0000</td><td>0.4600</td><td>100.0000</td><td>0.0000</td><td>3350.2599s</td></tr>
+<tr><td>44</td><td>0.0000</td><td>-0.5000</td><td>100.0000</td><td>0.0000</td><td>3426.7201s</td></tr>
+<tr><td>45</td><td>-0.0000</td><td>0.6100</td><td>100.0000</td><td>0.0000</td><td>3500.1663s</td></tr>
+<tr><td>46</td><td>0.0000</td><td>-0.5000</td><td>100.0000</td><td>0.0000</td><td>3579.0707s</td></tr>
+<tr><td>47</td><td>0.0000</td><td>-0.5000</td><td>100.0000</td><td>0.0000</td><td>3660.7640s</td></tr>
+<tr><td>48</td><td>0.0000</td><td>0.5350</td><td>100.0000</td><td>0.0000</td><td>3738.4719s</td></tr>
+<tr><td>49</td><td>0.0000</td><td>0.4600</td><td>100.0000</td><td>0.0000</td><td>3813.2114s</td></tr>
+<tr><td>50</td><td>0.0004</td><td>1.1100</td><td>100.0000</td><td>0.0000</td><td>3894.3135s</td></tr>
+</table>
 
 <h2>§4 P2 CPU评测</h2>
 <h3>§4.1 Oracle Tcl上限 (300题)</h3>
@@ -72,16 +125,26 @@ Maximum resident set size (kbytes): 43950648<br>
 <tr class='highlight'><td><strong>Overall</strong></td><td>50</td><td><strong>0.0%</strong></td><td>—</td><td>—</td></tr>
 </table>
 <h3>§4.3 Post-SFT (step3000, 50题)</h3>
-<p><em>Post-SFT eval not yet available.</em></p>
+<table class='data'><tr><th>Type</th><th>N</th><th>Mean</th><th>≤5%</th><th>≤1%</th></tr>
+<tr><td>numerical</td><td>20</td><td>5.5%</td><td>5.0%</td><td>5.0%</td></tr>
+<tr><td>multi_choice</td><td>12</td><td>0.0%</td><td>0.0%</td><td>0.0%</td></tr>
+<tr><td>open_ended</td><td>18</td><td>19.4%</td><td>16.7%</td><td>0.0%</td></tr>
+<tr class='highlight'><td><strong>Overall</strong></td><td>50</td><td><strong>9.2%</strong></td><td>—</td><td>—</td></tr>
+</table>
 <h3>§4.4 Post-GRPO (CPU pilot step50, 50题)</h3>
-<p><em>Post-GRPO eval not yet available.</em></p>
+<table class='data'><tr><th>Type</th><th>N</th><th>Mean</th><th>≤5%</th><th>≤1%</th></tr>
+<tr><td>numerical</td><td>20</td><td>5.0%</td><td>0.0%</td><td>0.0%</td></tr>
+<tr><td>multi_choice</td><td>12</td><td>0.0%</td><td>0.0%</td><td>0.0%</td></tr>
+<tr><td>open_ended</td><td>18</td><td>11.7%</td><td>5.6%</td><td>0.0%</td></tr>
+<tr class='highlight'><td><strong>Overall</strong></td><td>50</td><td><strong>6.2%</strong></td><td>—</td><td>—</td></tr>
+</table>
 <h3>§4.5 三点对照汇总</h3>
 <table class='data'>
 <tr><th>评测点</th><th>N</th><th>Overall Mean</th><th>≤5% Pass</th><th>≤1% Pass</th><th>说明</th></tr>
 <tr><td>Oracle Tcl 上限</td><td>300</td><td>100.0%</td><td>100.0%</td><td>100.0%</td><td>Oracle策略，理论天花板</td></tr>
 <tr><td>Pre-SFT (纯2B)</td><td>50</td><td>0.0%</td><td>0.0%</td><td>0.0%</td><td>未训练基线，预期submit≈0%</td></tr>
-<tr><td>Post-SFT</td><td>—</td><td>—</td><td>—</td><td>—</td><td>SFT冷启动后(step3000)</td></tr>
-<tr class='highlight'><td><strong>Post-GRPO(CPU)</strong></td><td>—</td><td><strong>—</strong></td><td><strong>—</strong></td><td><strong>—</strong></td><td>GRPO强化后(CPU pilot step50)</td></tr>
+<tr><td>Post-SFT</td><td>50</td><td>9.2%</td><td>5.0%</td><td>5.0%</td><td>SFT冷启动后(step3000)</td></tr>
+<tr class='highlight'><td><strong>Post-GRPO(CPU)</strong></td><td>50</td><td><strong>6.2%</strong></td><td><strong>0.0%</strong></td><td><strong>0.0%</strong></td><td>GRPO强化后(CPU pilot step50)</td></tr>
 </table>
 <h3>§4.6 回归护栏</h3>
 <div class="note"><strong>MMStar/MMBench</strong>：CPU无法运行lm-eval-harness(需GPU)。GRPO pilot仅50步LoRA r=64，对通用能力影响极小。留待GPU版补充。</div>

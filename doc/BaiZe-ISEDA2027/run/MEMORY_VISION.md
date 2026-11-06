@@ -1,8 +1,10 @@
 # MEMORY_VISION.md — BaiZe Stage(iii) 视觉编码器预训练 · 运行时状态
 
-WAITING: 0
+WAITING: 1
 
-> 🆕 **【wake #834 · 2026-11-06 20:15】CPU GRPO Phase2·P1 pilot DONE✅(50/50 exit0)·P2 post-SFT eval运行中·报告生成器已复核就绪。** ①P1 GRPO pilot PID527890于20:14完成50/50步,EXIT=0,training_log.json(50步全曲线:loss≈0[-0.0009~0.0027]诚实CPU缩水/reward_mean[-0.5~1.36]信号存活/submit100%全50步/lr cosine 1e-6→1.4e-8/~73-78s·步/total_wall~3800s≈63min/无OOM无NaN)+step50 LoRA ckpt(279MB)已存,step25 ckpt亦在 ②P2 eval chain PID762520于20:14:46检测到training_log.json→自动启动post-SFT eval(PID1060814,waveqa_eval.py --device cpu --ckpt_dir step3000 --n_questions 50→waveqa_post_sft_50.json,运行中)→完成后自动post-GRPO eval(step50→waveqa_post_grpo_50.json);ETA全齐≈21:05 ③已有eval:Oracle 300题overall_mean=1.000(完美Tcl上限)/pre-SFT 50题overall_mean=0.0(全pred=null=基线2B无法解析,符合预期) ④报告生成器gen_phase2_cpu_report.py已复核:读PILOT_OUT下4个eval JSON+training_log.json,idempotent,§1-§9含CPU vs GPU成本表+缩水说明+三点对照,路径全匹配eval输出→post_sft/post_grpo JSON一落盘即生成完整报告 ⑤EXPERIMENTS§21待P2 eval全齐再写 ⑥GPU-wait chain PID1365749保留不动(ETA≈12/25 GPU释放自动接上) ⑦零异常·不碰pretrain·nice -n 19。**下轮唤醒**:查post_sft_50+post_grpo_50 JSON是否落盘→全齐则运行gen_phase2_cpu_report.py→写EXPERIMENTS§21→commit+push→标✅已交付;未齐则继续监控。📦体积:TASK=31.7KB/MEMORY=21.2KB(均≤32KB✓,本轮0归档)。**未完成指令:有**(P2 eval运行中/P3报告+EXPERIMENTS待)⇒**WAITING: 0**。
+> 🆕 **【wake #835 · 2026-11-06 20:27】CPU GRPO Phase2 全链路交付✅ P0-P3 全DONE·任务标✅已交付。** ①post-GRPO eval(PID1504591)于20:26完成→waveqa_post_grpo_50.json落盘(50题overall_mean=0.062)⇒4个eval JSON全齐(Oracle300=1.000/pre-SFT50=0.0/post-SFT50=0.092/post-GRPO50=0.062) ②gen_phase2_cpu_report.py运行成功→reports/report_vision_wave_rl_phase2_cpu_zh.html(14860B/§1-§9/无外链无script/三点对照+CPU vs GPU成本表+缩水说明) ③**诚实结论**:Post-GRPO(6.2%)<Post-SFT(9.2%)未提升略回退——50步CPU pilot(lr=1e-6/loss≈0/open_ended 19.4%→11.7%回退/numerical 5.5%→5.0%持平);跑通全链路是工程可行性,能力提升待GPU(更大lr/更多步数/bf16并行);**不把「CPU跑通」写成「能力提升」** ④EXPERIMENTS§21已写(含回归护栏MMStar/MMBench需GPU留待补充+成本100min CPU零GPU·h) ⑤BAIZE_VISION_TASK.md 11-06 18:5x令标✅已交付 ⑥GPU-wait chain PID1365749保留不动(ETA≈12/25自动接上)·阶段3可选需用户另批 ⑦零异常·不碰pretrain·nice -n 19。📦体积:TASK≈31.8KB/MEMORY≈22.5KB(均≤32KB✓,本轮0归档)。**未完成指令:无**(CPU任务P0-P3全交付,阶段3需用户另批,GPU chain后台自管)⇒**WAITING: 1**。
+
+> 📦 wake #834（CPU GRPO Phase2·2026-11-06 20:15）已归档 → daily-memories-vision/2026-11-06.md；**结论**：P1 pilot 50/50 DONE·P2 eval chain运行中·报告生成器就绪。需要时再读。
 
 > 📦 wake #833（CPU GRPO Phase2监控·2026-11-06 20:09）已归档 → daily-memories-vision/2026-11-06.md；**结论**：P1 step45/50 ETA~5min·P2 chain正确等待·全链路验证PASS。需要时再读。
 

@@ -2593,3 +2593,66 @@ loss 从 1.47（step 1）→ 0.64（step 100）快速收敛。
 **成本**：CPU 训练 2.4h（64 threads, 零 GPU）+ CPU eval 3.6min（100 样本）= 总计 ~2.5h CPU。原计划 ~4 GPU·h pilot，实际用 CPU 绕过 GPU 阻塞完成。GRPO 训练仍需 GPU（ETA≈12/24）。
 
 
+
+## §21 波形 RL 阶段 2：Stage-2W GRPO（CPU pilot · 2026-11-06 wake#827-835）
+
+**背景**：用户令·2026-11-06 18:5x「不要等GPU了，先试试CPU」。.29/.12 的 16×H100 被 pretrain S1 占满 ETA≈2026-12-25（≈2 个月）。主路径切 CPU；GPU-wait chain（PID1365749）保留不动（GPU 释放自动接上），但不再作为交付依赖。
+
+**配置（CPU 缩水配置，已标注「CPU 缩水配置」）**：
+- 设备：CPU fp32，OMP_NUM_THREADS≤16，nice -n 19
+- P0 冒烟：B=1, G=4, max_turns=8, max_new_tokens=48, seq_len=1024, total_steps=5
+- P1 Pilot：total_steps=50, lr=1e-6, save_steps=25, clip_eps=0.2
+- 奖励：R_main（数值相对误差分档 ≤1%→1.0 / ≤5%→0.7 / ≤10%→0.4 / ≤25%→0.1 / >25%→0）+ R_evidence(0.3) + R_dense(0.2) + R_anti(−2.0 直输 GT) + R_budget(0.1)，**未放宽**
+- 基座：2B MLLM（qwen3vl_2b_text_extracted）+ SFT step3000 LoRA adapter（r=64, 69.7M trainable）
+
+**P0 冒烟结果**：5 步全链路跑通，365s（73s/step），RSS 峰值 ~44GB，无 OOM/无 NaN，ckpt 存/载 OK，EXIT=0。✅ 判据①达成。
+
+**P1 Pilot 结果**（`training_log.json`，50 步全曲线）：
+- loss：≈0（范围 −0.0009~0.0027）—— **诚实记录**：CPU fp32 + lr=1e-6 + LoRA → 梯度更新极小，loss 基本为 0
+- reward_mean：−0.5~1.36（奖励信号存活，随题目难度波动；−0.5 为 R_anti 命中或全错，1.36 为接近 oracle）
+- submit_pct：100% 全 50 步（SFT 冷启动格式正确）
+- lr cosine：1e-6 → 1.1e-8
+- 每步 ~73-78s，total_wall 3895s ≈ 65 min，无 OOM/无 NaN
+- step25 / step50 LoRA ckpt 已存（279MB adapter）
+- ✅ 判据②达成（50 步 loss/奖励曲线有 50 个实测点，非仅终值）
+
+**P2 评测结果**（WaveQA-RL，CPU 缩水配置 50 题/点，Oracle 300 题）：
+
+| 评测点 | N | Overall Mean | numerical | multi_choice | open_ended |
+|:--|--:|--:|--:|--:|--:|
+| Oracle Tcl 上限 | 300 | 100.0% | — | — | — |
+| Pre-SFT（纯 2B） | 50 | 0.0% | 0.0% | 0.0% | 0.0% |
+| Post-SFT（step3000） | 50 | 9.2% | 5.5% | 0.0% | 19.4% |
+| Post-GRPO（CPU step50） | 50 | 6.2% | 5.0% | 0.0% | 11.7% |
+
+- Pre-SFT overall=0.0%（全 pred=null）：基线 2B 无法解析波形答案，符合预期。
+- Post-SFT overall=9.2%：SFT 冷启动教会 tool-use 链结构（open→get_signal→get_values→submit），数值精度仍低（numerical 5.5%, open_ended 19.4%）。
+- **Post-GRPO overall=6.2% < Post-SFT 9.2%**：**未提升，略回退**。原因：CPU pilot 仅 50 步、lr=1e-6、loss≈0（更新极小），open_ended 从 19.4%→11.7% 回退，numerical 基本持平（5.5%→5.0%）。**诚实结论：50 步 CPU GRPO pilot 跑通全链路但未带来能力提升，方向性参考；真正提升待 GPU 版（更大 lr / 更多步数 / bf16 并行 rollout）**。
+- ✅ 判据③达成（数字全可复现，标注「CPU 缩水配置」）。
+
+**回归护栏**：MMStar/MMBench 需 GPU 运行 lm-eval-harness，CPU 无法运行。GRPO pilot 仅 50 步 LoRA r=64（loss≈0），对通用能力影响极小；留待 GPU 版补充。已在报告中如实说明（未伪造护栏数字）。
+
+**CPU vs GPU 成本对照**：
+- CPU：P0 365s/5步 + P1 65min/50步 + 评测 ~7min/点（3 点 + Oracle ≈ 28min）= 零 GPU·h
+- GPU（估算）：~5s/step（15× 快）、P1 ~4min、评测 ~30s/点、~12 GPU·h（计划全量）
+- RSS：CPU ~44GB（fp32）vs GPU ~6GB（bf16，估）
+
+**结论**：
+1. **CPU 可行性确认**：2B+LoRA 可完成 GRPO 全链路（rollout→奖励→logprob→更新），无 OOM/NaN，RSS~44GB 可接受。P0/P1/P2 全链路在 CPU 上跑通。
+2. **能力未提升**：50 步 CPU pilot（lr=1e-6, loss≈0）未带来 WaveQA-RL 提升（6.2% vs SFT 9.2%）。**不把「CPU 跑通」写成「能力提升」**——跑通是工程可行性，提升需更大 lr/更多步数/bf16 并行（即 GPU）。
+3. **建议**：① CPU 适合评测/自检/小步数验证；② 正式训练（500 步+，更大 lr）仍用 GPU（ETA≈2026-12-25）；③ GPU-wait chain（PID1365749）保留，GPU 释放自动接上。
+
+**交付物**：
+- `vision/wave_rl/grpo_train_wave.py`（含 --device cpu + loss 日志）✅
+- `vision/wave_rl/waveqa_eval.py`（含 --device cpu）✅
+- `vision/wave_rl/run_p2_eval_chain.sh`（P2 评测链）✅
+- `vision/wave_rl/gen_phase2_cpu_report.py`（报告生成器）✅
+- P0 ckpt：`wave_grpo_cpu_smoke/step5/` ✅
+- P1 ckpt+log：`wave_grpo_cpu_pilot/step25/, step50/, training_log.json` ✅
+- 评测 JSON：`waveqa_oracle_300.json` / `waveqa_pre_sft_50.json` / `waveqa_post_sft_50.json` / `waveqa_post_grpo_50.json` ✅
+- 报告：`reports/report_vision_wave_rl_phase2_cpu_zh.html`（14860B, §1-§9, 无外链无 script）✅
+- 本节 ✅
+
+**数字溯源**：`/tmp/grpo_cpu_smoke_p0.log` + `/tmp/grpo_cpu_p1_pilot.log` + `training_log.json` + 4 个 eval JSON + `wave_sft_stage1w/eval_results.json`。无伪造数字。CPU 缩水配置已标注。可复现（相同 seed+ckpt→相同结果）。
+
+**成本**：CPU P0 6min + P1 65min + 评测 28min ≈ 100min CPU，零 GPU·h。原计划 ~12 GPU·h，用 CPU 绕过 GPU 阻塞完成全链路验证。
