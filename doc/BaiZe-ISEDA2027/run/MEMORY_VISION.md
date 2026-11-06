@@ -2,7 +2,9 @@
 
 WAITING: 0
 
-> 🆕 **【wake #744 · 2026-11-06 09:27】监控巡检·状态无变化·双poller健康·GPU满载·仅待GPU。SFT poller PID2757742(etimes≈49196s≈13.7h)alive轮询busy_util waiting（09:27:41 latest）✓；GRPO poller PID2466702(etimes≈4797s≈1.33h)alive等待SFT eval_results.json(4800s/7776000s)✓；pretrain baize2b torchrun PID2612442 running latest ckpt iter_0100000(100k/700k ETA≈12/24-25)；GPU .12 8×100%全占。vision loop PID669545 alive✓；cline in PATH✓。git 0ahead/0behind已同步。📦体积：TASK=30453B(29.7KB)/MEMORY=27216B(26.6KB)（均≤32KB✓）。**未完成指令：有**（阶段1 GPU训练pending,阻塞方=pretrain baize2b ETA≈12/24-25）⇒**WAITING: 0**。
+> 🆕 **【wake #745 · 2026-11-06 09:35】监控巡检·状态无变化·双poller健康·GPU满载·仅待GPU。SFT poller PID2757742(etimes≈49542s≈13.8h)alive轮询busy_util waiting（09:35:44 latest）✓；GRPO poller PID2466702(etimes≈5143s≈1.43h)alive等待SFT eval_results.json(5160s/7776000s)✓；pretrain baize2b torchrun PID2612442(etimes≈308598s≈3.6d)running 2-node(.12+.29) latest iter~102k/700k ETA≈12/24-25；GPU .12 8×93-100%全占。vision loop PID669545 alive✓；cline in PATH✓。git 0ahead/0behind已同步。📦体积：TASK=30453B(29.7KB)/MEMORY=27167B(26.6KB)（均≤32KB✓）。**未完成指令：有**（阶段1 GPU训练pending,阻塞方=pretrain baize2b ETA≈12/24-25）⇒**WAITING: 0**。
+
+> 📦 wake #744（监控巡检·2026-11-06 09:27）已归档 → daily-memories-vision/2026-11-06.md；**结论**：状态无变化，双poller健康，GPU 8×100%满载仅待GPU。需要时再读。
 
 > 📦 wake #743（监控巡检·2026-11-06 09:23）已归档 → daily-memories-vision/2026-11-06.md；**结论**：状态无变化，双poller健康，GPU 8×100%满载仅待GPU。需要时再读。
 
