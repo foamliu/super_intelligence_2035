@@ -1094,7 +1094,7 @@ wl9i4					parked		2026-11-05 22:49	交互shell驱动+Q&A n752大
 1792137924614_tadah.messages.json	jackliu	10.129.32.83	87	schematic_netlist	case	EDA-Eval-DesignFlow-NetlistFightX-001	2026-11-06 23:13	
 1792112534739_ujxtn	gracew	10.129.2.13	59	schematic_netlist	case	EDA-Eval-DesignFlow-PatternParamAudit-001	2026-11-06 23:41	
 1792063718906_u8kbk.messages.json	devonma	10.129.32.84	66	analog_context	case	EDA-Eval-DesignFlow-SpfTriggerMonitor-001	2026-11-07 00:05	
-1792378803577_hpy3y	ruisongs	10.129.33.207	82	schematic_netlist	case	EDA-Eval-DesignFlow-ShortCfgTrace-001	2026-11-07 00:33	
+1792378803577_hpy3y	ruisongs	10.129.33.207	82	schematic_netlist	parked	EDA-Eval-DesignFlow-ShortCfgTrace-001	2026-11-07 07:41	#342 peek: SHORT_CONFIG pattern pass/fail analysis (debug, not produce), DDR verification
 1792140744683_z5ett	jessegao	10.129.2.14	137	analog_context	case	EDA-Eval-DesignFlow-LdoTbGen-001	2026-11-07 01:08	
 1792831256137_6qt0a.messages.json					case	EDA-Eval-DesignFlow-DlyChainTrace-001	2026-11-07 02:30	
 1792400027384_ahjnv.messages.json					case	EDA-Eval-DesignFlow-MillerOpampTopoAudit-001	2026-11-07 02:57	
@@ -1116,14 +1116,14 @@ wl9i4					parked		2026-11-05 22:49	交互shell驱动+Q&A n752大
 1785899794656_0j59o	michael1l	10.129.2.12	143	schematic_netlist	parked		2026-11-07 04:09	empty: only '启动场景，版图规划' 1 turn trigger
 1790131515178_j90k2	e0045291	10.129.8.120	139	schematic_netlist	parked		2026-11-07 04:09	trivial: 'give me an EDA image'/'print hello_world'/'bsub echo test pass'
 1789372380761_xxtqb	sagequan	10.129.32.190	113	analog_context	parked		2026-11-07 04:09	skill dev: simdiag project RELEASE_NOTES/skill-cli/persistence, not analog produce
-1791941283310_41sqh	sagequan	10.129.32.190	115	analog_context	parked		2026-11-07 04:09	Q&A: simdiag-cli skill cli/三层诊断策略/demo, not produce
+1791941283310_41sqh	sagequan	10.129.32.190	115	analog_context	parked		2026-11-07 07:41	#342 peek: simdiag-cli skill doc + 三层诊断策略 consulting, no produce
 1790684140804_vtl11	haoliu	10.129.8.106	135	waveform	parked		2026-11-07 04:09	NO_FILE: session file missing on host
 1792659994477_rw6z4	e0045488	10.129.2.11	134	analog_context	parked		2026-11-07 04:09	NO_FILE: session file missing on host
 1791792661412_ibsuq	lizwen	10.129.2.11	131	schematic_netlist	parked		2026-11-07 04:09	Q&A: aether smash bindkey 查询, not produce
 1786613295407_a9ta2	e0014566	10.129.2.10	131	analog_context	parked		2026-11-07 04:09	L2 live: pyAether 识别+去除 layout autovia/powerfill cell, not portable offline
 1792993323406_1488k	rayfeng	10.129.2.10	133	analog_context	parked		2026-11-07 04:09	L2 live: Sentaurus TCAD MCP 开发+22nfet 仿真验证, not portable offline
 1789470466679_wqxag	shaoyou	10.129.2.13	130	analog_context	parked		2026-11-07 04:09	empty: only '启动业务场景: 模拟电路优化·二次执行' 1 turn trigger
-1788946694927_w5knw	sagequan	10.129.32.190	83	analog_context	parked		2026-11-07 04:09	skill dev: simdiag ClineClient backend + persistence, not analog produce
+1788946694927_w5knw	sagequan	10.129.32.190	83	analog_context	parked		2026-11-07 07:41	#342 peek: simdiag-cli project infra (ClineClient/chromadb/dashboard), no produce
 1792131163281_6sxh5	e0045488	10.129.2.11	82	analog_context	parked		2026-11-07 04:09	Q&A: characterization flow deck 文件解读/leakage_power_0.spi 逐行解释, not produce
 1789636492253_sr1fw	miccao	10.129.32.47	90	analog_context	parked		2026-11-07 04:09	skill: Calibre/Argus DRC Log 拆解报告 skill spec + Q&A (physical_verify, not D produce)
 1792548352155_fxcqv	hongyuy	10.129.8.102	89	schematic_netlist	parked		2026-11-07 04:09	Q&A: PG_R_073_00/PG_S_016_00 DRC rule 解释+修改方法 (physical_verify, not D)
@@ -1133,7 +1133,7 @@ wl9i4					parked		2026-11-05 22:49	交互shell驱动+Q&A n752大
 1790230482027_7lp3l					case	EDA-Eval-DesignFlow-FineSimDataParse-001	2026-11-07 04:09	
 1793865643606_3b73c	m1wang	hfeg0pkn002	251	schematic_netlist	case	EDA-Eval-DesignFlow-MbistCellFind-001	2026-11-07 05:32	#338 deliver MbistCellFind-001 (schematic_netlist B-grade synthesized L1, 16 cond a-p)
 1793261933061_z7stj					parked		2026-11-07 05:07	coretiming debug/analysis live fsdb not produce
-1792461218411_hojhc					parked		2026-11-07 05:07	verilog sim-speed debug digital not D-domain
+1792461218411_hojhc					parked		2026-11-07 07:43	#342 deepread: Verilog sim-speed optimize (map_addr/calc_victim), multi-file pkg/pat/monitor, correctness=runtime net_hammer_count match, non-portable, weak
 1793781389038_g6wy0					parked		2026-11-07 05:07	skill-driven sim verification live DUT not portable
 1792736045626_maglj					parked		2026-11-07 05:07	LVS connectivity pattern physical_verify shard C
 1793846426867_874ye					parked		2026-11-07 05:07	corrupt/empty messages.json
@@ -1156,3 +1156,21 @@ wl9i4					parked		2026-11-05 22:49	交互shell驱动+Q&A n752大
 1782886485849_iryie.messages.json					parked		2026-11-07 06:15	#339 peek: analog:263;aether:244;virtuoso:175;pyaether:124, live virtuoso/pyaether weak
 1792042618272_wl9i4.messages.json	xingx	hfeg0pkn003	404	schematic_netlist	case	EDA-Eval-DesignFlow-NetlistBisectLocalize-001	2026-11-07 06:48	
 1791532940009_ca92c	ziyuny	10.129.32.190	108	analog_context	case	EDA-Eval-DesignFlow-AnalogGroupCfgMergeDummy-001	2026-11-07 07:18	
+1792043637880_ajcab					parked		2026-11-07 07:29	#341 peek: pyaether/schematic/cellview trivial pinyin no produce
+1792063193685_n52mz					parked		2026-11-07 07:29	#341 peek: NO_FILE
+1792291111625_t2hnp					parked		2026-11-07 07:29	#341 peek: skill review consulting no produce
+1792152046799_50mu7					parked		2026-11-07 07:29	#341 peek: skill load consulting no produce
+1792295921248_xyj1z					parked		2026-11-07 07:29	#341 peek: NO_FILE
+1792380576403_iz828					parked		2026-11-07 07:29	#341 peek: aether GUI 跳转按钮 consulting no produce
+1792984126962_u29lu					parked		2026-11-07 07:29	#341 peek: skill load no produce
+1792042544705_d1cg3					parked		2026-11-07 07:41	#342 peek: Finesim DC不收敛 Q&A consulting, no produce
+1790156336826_y2xz6					parked		2026-11-07 07:41	#342 peek: run-regression skill dev/infra (send_f5/firefox), digital/verification, no shard-D produce
+1789634880745_4ys8e					parked		2026-11-07 07:41	#342 peek: DFM SPEC FILL (calibre/.gds), wrong domain physical_verify
+1790065627121_rzitp					parked		2026-11-07 07:41	#342 peek: NO_FILE
+1790137149475_ku6wp					parked		2026-11-07 07:41	#342 peek: 文件怎么用 Q&A consulting, no produce
+1787636335993_qe1va					parked		2026-11-07 07:41	#342 peek: generic 业务场景 trigger 1turn, no specific produce
+1785403392139_acdfh					parked		2026-11-07 07:41	#342 peek: generic 业务场景 + pinyin Q&A, no produce
+1792738969144_h0gyt					parked		2026-11-07 07:41	#342 peek: 教工作流总结成文档 (doc gen from conversation), non-portable
+1791429687866_2igp1					parked		2026-11-07 07:41	#342 peek: Qt C++ mainwindow.cpp/.ui GUI modification, wrong domain (desktop app not EDA)
+1789887336293_97g9m					parked		2026-11-07 07:43	#342 peek: fsdb signal time-range analysis, overlaps WvFsdbReaderV2Gen-001, binary fsdb non-portable, weak
+1789730312848_hpd7c					parked		2026-11-07 07:43	#342 deepread: totem_sc_signal_em tool update (vague 更新成一下版本), multi-file refactor, ambiguous intent, weak
