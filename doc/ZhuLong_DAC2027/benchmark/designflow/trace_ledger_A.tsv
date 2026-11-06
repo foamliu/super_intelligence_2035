@@ -167,3 +167,4 @@
 1789528229737_7f3c4	jcgu	hfeg0pin003	175	pnr_signoff	parked		2026-11-06 21:21	r171 deepread: pyAether layout hierarchy cell-search (pyAether 190/dbGet 111/cellview 62, USER#8 write pyaether script search cell by hierarchy w/ TECHLIB stop). Pure Aether/layout = shard C territory, NOT shard A digital/pnr/verification. Matched shard A filter only via thin synthesis=4. Out-of-shard.
 1793795209038_ru6mx	e0046913	hfeg0pkn003	108	digital	case	EDA-Eval-DesignFlow-UpfGen-001	2026-11-06 22:56	
 1791967805126_c084j	caozhang	hfeg0pkn004	218	digital	case	EDA-Eval-DesignFlow-AsyncFifoSim-001	2026-11-06 23:27	
+1792042281846_vb4si	e0039102	hfeg0pkn002	162	verification	case	EDA-Eval-DesignFlow-RegLogFind-001	2026-11-06 23:55	
