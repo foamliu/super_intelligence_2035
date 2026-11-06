@@ -120,7 +120,8 @@ def setup_ddp():
         torch.cuda.set_device(local)
     else:
         rank, world, local = 0, 1, 0
-        torch.cuda.set_device(0)
+        if torch.cuda.is_available():
+            torch.cuda.set_device(0)
     return rank, world, local
 
 
@@ -369,7 +370,12 @@ def evaluate_format_and_submit(llm, tokenizer, eval_dataset, device, dtype,
 def main():
     args = parse_args()
     rank, world, local = setup_ddp()
-    device = torch.device(f'cuda:{local}')
+    if torch.cuda.is_available():
+        device = torch.device(f'cuda:{local}')
+    else:
+        device = torch.device('cpu')
+        torch.set_num_threads(64)
+        print0("[CPU MODE] CUDA not available — training on CPU with 64 threads.")
     dtype = torch.bfloat16
     os.makedirs(args.output_dir, exist_ok=True)
 

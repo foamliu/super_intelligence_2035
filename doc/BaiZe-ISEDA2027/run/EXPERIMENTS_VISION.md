@@ -2472,3 +2472,53 @@ ngspice .raw 实测：`ngspice -b test.cir` → 646 点 × 3 变量 binary doubl
 
 **数字溯源**：CPU 实测运行输出（`/tmp/cpu_train_validate.log`）+ `_cpu_train_validate_result.json`。无 GPU 实验。无伪造数字。
 
+---
+
+### §20.19 · 🚀 阶段1 SFT CPU 训练启动（wake#785 · 2026-11-06 14:02 · CPU-only）
+
+**背景**：用户令「执行阶段1 SFT」。GPU 全占（.12+.29 16×H100 96-100% util / ~75GB，pretrain baize2b iter≈103912/700k ETA≈12/24-25），.17（8×A40）SSH 不可达（直连+.29跳板均超时）。GPU 空闲等 7 周不现实。
+
+**关键发现 — CPU 训练可行**：
+1. **轨迹超短**：`WaveSFTDataset` 实际 `input_ids` 长度实测 min=343 / p50=355 / p90=429 / max=450 / mean=367 token —— **全部 <512**，seq_len=512 完容纳零截断。label（学习目标）仅 37-56 token/条（工具调用模式，非长文本生成）。
+2. **.12 CPU 资源充裕**：224 核 / load avg 27（~196 核空闲）/ 2015GB RAM（1148GB 空闲）。pretrain 是 GPU-bound（仅 1.5 核 CPU），CPU 训练对其几乎零影响。
+3. **CPU per-step 实测**：seq_len=1024（实际序列 367 token），64 threads，~3-5s/forward+backward。训练脚本实测 GBS=8 → ~0.34 step/s → ETA≈2.4h for 3000 micro-batch steps。
+
+**代码修改**（`vision/wave_rl/sft_train_wave.py`，向后兼容）：
+- `setup_ddp()`：`torch.cuda.set_device(0)` → 包 `if torch.cuda.is_available()`
+- `main()`：`device = torch.device(f'cuda:{local}')` → `if cuda.is_available(): cuda else: cpu + set_num_threads(64)`
+- GPU 模式行为完全不变；CPU 模式自动启用。
+
+**训练配置**：
+| 参数 | 值 |
+|:--|:--|
+| 模型 | `qwen3vl_2b_text_extracted`（1.72B，纯文本骨干） |
+| LoRA | r=64, alpha=128, dropout=0.05, target=q/k/v/o/gate/up/down_proj |
+| 可训练参数 | 69,730,304 (3.89%) |
+| 数据 | 8813 train + 200 eval holdout（`sft_pilot_balanced.jsonl`） |
+| seq_len | 512（零截断） |
+| LR | 1e-5 → 1e-7 (cosine, warmup 0.01) |
+| GBS / MBS | 8 / 1 (accum=8) |
+| nsteps | 3000（微 batch = 375 优化器步 = 0.34 epoch） |
+| save_steps | 1000 |
+| 设备 | CPU（64 threads，nice -n 10） |
+| PID | 2882778（.12，ppid=1，~49 核 / 13.7GB RAM） |
+
+**训练进展**（截至 14:02）：
+```
+step 25/3000  | loss 1.2529 | lr 7.67e-06 | 0.31 step/s | ETA 158.8 min
+step 50/3000  | loss 0.9451 | lr 1.00e-05 | 0.34 step/s | ETA 146.3 min
+step 75/3000  | loss 0.6512 | lr 1.00e-05 | 0.34 step/s | ETA 143.4 min
+step 100/3000 | loss 0.6398 | lr 9.99e-06 | 0.34 step/s | ETA 143.8 min
+```
+loss 从 1.47（step 1）→ 0.64（step 100）快速收敛。
+
+**nsteps 语义说明**：脚本 `nsteps` 计 **微 batch**（`for batch in loader` 内 step++），非优化器步。3000 微 batch / accum=8 = **375 优化器步 = 0.34 epoch**。验收判据是格式/submit 正确率（非 epoch 数），若 0.34 epoch 不达标，将重启 `nsteps=24000`（= 3000 优化器步 = 2.66 epoch，~21h CPU）。
+
+**自动衔接**：eval @ step 1000/2000/3000 → 写 `eval_results.json` → GRPO chain（PID 2466702）检测到后自动启动阶段 2（但 GRPO 需 GPU，仍待 pretrain 释放）。
+
+**pretrain 影响验证**：训练启动后 .12 GPU 仍 96-100% util / ~75GB —— CPU SFT 对 pretrain 零干扰。✅
+
+**交付物**：`sft_train_wave.py` CPU 支持修改 + 训练日志 `sft_cpu_train.log` + 本节。checkpoint + eval 结果待训练完成（ETA≈16:30）。
+
+**数字溯源**：CPU 实测 timing + `sft_cpu_train.log` 实时输出。无 GPU 实验。无伪造数字。
+
