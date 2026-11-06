@@ -259,3 +259,12 @@ vbxlf.messages.json	jason17w	hfeg0pnd002	262	spice_sim	parked		2026-11-05 12:30	
 1793323487985_ukhbj					parked		2026-11-07 01:50	prior-rejected inaccessible host hfeg0pbn15
 1788871441686_fieju					parked		2026-11-07 01:50	prior-rejected low spice(14hspice/22total tiny session)
 1793596317022_34b72.messages.json	chapinc	hfeg0pkn002	14	spice_sim	case	EDA-Eval-DesignFlow-StdcellDeckParamModify-001	2026-11-07 02:26	
+1792133910648_645nk	wnyu	hfeg0pkn004	1	spice_sim	claimed		2026-11-07 03:09	
+1793929759607_7nm1g					parked		2026-11-07 03:10	disk-usage-scanner-falsepositive
+1793865540752_5ue0u					parked		2026-11-07 03:10	stdcell-W-selection-continuation-dup34b72
+1793923081404_s6bse					parked		2026-11-07 03:10	file-management-movedesktop
+1793961380780_eu254					parked		2026-11-07 03:10	file-management-dup-s6bse
+1793931174603_tc4yu					parked		2026-11-07 03:10	rootcause-whyPM11cutoff
+1792135941514_8n60f					parked		2026-11-07 03:10	skill-authoring-meta-SKILL.md
+1792119938594_z6elv					parked		2026-11-07 03:10	trivial-hi
+1792379743340_2y77m					parked		2026-11-07 03:10	skill-invocation-tran-sim-gen
