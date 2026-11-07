@@ -45,7 +45,11 @@ actor_rollout_ref:
   model:
     path: /tmp/models/MiniCPM5-2B
     override_config:
-      attn_implementation: flash_attention_2
+      # 🔴 R34 (2026-11-08): flash_attn not yet installed in verl_cu124_venv.
+      #   Use sdpa (PyTorch native) as default; switch to flash_attention_2 once
+      #   flash_attn package is installed (baize_posttrain_setup_cu124_venv.sh R34).
+      #   Performance difference for 2B model on A40 is ~10-20% training throughput.
+      attn_implementation: sdpa  # fallback: flash_attention_2 (requires flash_attn package)
     enable_gradient_checkpointing: True
     trust_remote_code: True
     use_remove_padding: True

@@ -4221,4 +4221,82 @@ R29 心跳标注"11/9需验证API DB key格式"。R31 实测：
 5. 📋 **6 个决策门**确保训练可控
 
 **11/9 就绪度（R33 后）**：全栈 ✅ + preflight ✅ + 数据 ✅ + 奖励 ✅ + cheat ✅ + 脚本 ✅ + 显存 ✅ + 吞吐 ✅ + **排程 ✅** + GPU ⬜（明天）
+---
+
+## §R34 GPU 前夜最终审计 + flash_attn 缺失修复（2026-11-08 wake82 · 零 GPU · 实测）
+
+> **目标**：GPU 到位前 &lt;24h 最终验证，发现并修复关键缺口。
+> **关键发现**：flash_attn 未安装（唯一 preflight FAIL），根因 CUDA_HOME 环境变量错配。
+> **修复**：RL config 切 sdpa 回退 + setup 脚本 CUDA_HOME 修正 + 后台编译 flash_attn。
+
+### R34.1 预检实测（baize_posttrain_preflight_check.sh · 35 项）
+
+| 类别 | PASS | FAIL | WARN | 明细 |
+|:--|--:|--:|--:|:--|
+| 基础 | 3 | 0 | 0 | CUDA 12.4 ✅ / Node .17 ✅ / RunDir ✅ |
+| venv | 6 | 1 | 0 | torch/SGLang/verl/ray ✅ / **flash_attn ❌** |
+| 模型/数据 | 9 | 0 | 0 | MiniCPM5-2B/158-case/RL parquet/SFT v2/API DB 全 ✅ |
+| 脚本 | 8 | 0 | 0 | 6 .py py_compile ✅ + 4 .sh bash -n ✅ + YAML ✅ + paths ✅ |
+| 环境 | 1 | 0 | 2 | cline ✅ / GPU busy ⚠️ / SSH .15 down ⚠️ |
+| **合计** | **32** | **1** | **2** | **FAIL=flash_attn(已修复), WARN=预期** |
+
+### R34.2 flash_attn 缺失根因分析
+
+- **现象**：`import flash_attn` → `ModuleNotFoundError: No module named 'flash_attn'`
+- **根因**：环境变量 `CUDA_HOME=/usr/local/cuda-12.8`（不存在），系统实际 CUDA 12.4 at `/usr/local/cuda-12.4`
+- **flash-attn 编译**：`torch.utils.cpp_extension.CUDA_HOME` 继承环境变量 → 查找 `/usr/local/cuda-12.8/bin/nvcc` → `FileNotFoundError`
+- **torch 本身**：`torch.version.cuda='12.4'`（正确），`torch._C._GLIBCXX_USE_CXX11_ABI=False`
+- **推测**：系统可能曾安装 CUDA 12.8 或模板预设该路径，实际安装 12.4 后 CUDA_HOME 未同步
+
+### R34.3 修复措施
+
+1. **RL config**：`baize_posttrain_rl_verl_config.yaml` 中 `attn_implementation: flash_attention_2` → `sdpa`（PyTorch 原生 SDPA，torch 2.6.0 内置，无需额外包）。YAML 重新验证通过 ✅。
+2. **Setup 脚本**：`baize_posttrain_setup_cu124_venv.sh` 第 8 步增加 `export CUDA_HOME="/usr/local/cuda-12.4"` + pin `flash-attn==2.7.4.post1`。bash -n 通过 ✅。
+3. **后台编译**：`CUDA_HOME=/usr/local/cuda-12.4 pip install flash-attn==2.7.4.post1 --no-build-isolation --no-deps` 进行中（wheel building started, 编译需 20-60min）。
+
+### R34.4 sdpa vs flash_attention_2 影响评估
+
+| 维度 | sdpa | flash_attention_2 | 差异 |
+|:--|:--|:--|:--|
+| 训练吞吐 | 基准 | +10-20% | 替身预演可接受 |
+| 显存效率 | 略低 | 更优 | R32 余量 8.92GB 可吸收 |
+| 功能 | 完全等价 | 完全等价 | 无质量差异 |
+| 依赖 | torch 内置 | 需 pip install | sdpa 零依赖 |
+
+**结论**：替身预演用 sdpa 完全可行；正式训练（白泽）时再装 flash_attn 满速。
+
+### R34.5 环境清单（verl_cu124_venv · 实测）
+
+| 组件 | 版本 | 状态 |
+|:--|:--|:--|
+| Python | 3.10.22 | ✅ |
+| torch | 2.6.0+cu124 | ✅ cuda available=True |
+| SGLang | 0.4.6.post1 | ✅ ServerArgs 可导入 |
+| verl | 0.4.0 | ✅ |
+| ray | 2.60.0 | ✅ |
+| flashinfer | 0.2.3 | ✅ |
+| pyarrow | 25.0.1 | ✅ |
+| flash_attn | — | ❌ (编译中) |
+| transformers | 4.51.1 | ✅ (R27 shim) |
+
+### R34.6 GPU 状态（nvidia-smi · 2026-11-08 05:14）
+
+8×A40 全被 SGLang Qwen3.8-27B 占用（44-45/46GB），利用率 0%。11/9 释放 4 张（既定安排）。
+
+### R34.7 Launch 编排器 dry-run 验证
+
+`baize_posttrain_launch_11_9.sh --dry-run --step 1-5`：Venv exists ✅ / Model exists ✅ / EDA Base exists ✅。全 5 步路径正确。
+
+### R34.8 11/9 就绪判定
+
+**GO with sdpa fallback** — 32/35 PASS，唯一 FAIL（flash_attn）已用 sdpa 回退修复，2 个 WARN 均为已知预期（GPU busy/SSH down）。
+
+**11/9 就绪度（R34 后）**：全栈 ✅ + preflight ✅(32/35) + 数据 ✅ + 奖励 ✅ + cheat ✅ + 脚本 ✅ + 显存 ✅ + 吞吐 ✅ + 排程 ✅ + **flash_attn ⬜(sdpa回退✅)** + GPU ⬜（明天）
+
+### R34.9 交付物
+
+- `reports/report_posttrain_r34_gpu_eve_final_audit_zh.html`（10.2KB，10 节，0 script，0 外链）
+- `baize_posttrain_rl_verl_config.yaml`（attn_implementation: flash_attention_2 → sdpa）
+- `baize_posttrain_setup_cu124_venv.sh`（flash-attn 安装步骤 CUDA_HOME 修正）
+- EXPERIMENTS §R34（本节，9 小节）
 

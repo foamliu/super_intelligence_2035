@@ -210,8 +210,15 @@ pip install -c /tmp/pt_torch_constraint.txt \
     "tensorboard" "tensordict<=0.6.2" "torchdata" "transformers==4.51.1" "wandb" "packaging>=20.0"
 
 # 8. 安装flash-attn（可选；可能编译失败，不影响主流程）
-echo "⚡ 安装flash-attention 2 (optional)..."
-pip install flash-attn --no-build-isolation 2>&1 || echo "  ⚠️ flash-attn 安装失败，不影响主流程（attn_implementation 可回退到 sdpa）"
+# 🔴 R34 FIX (2026-11-08): CUDA_HOME 环境变量可能指向不存在的 /usr/local/cuda-12.8
+#   （系统实际为 CUDA 12.4 at /usr/local/cuda-12.4）。flash-attn 编译需要正确的 nvcc 路径。
+#   设置 CUDA_HOME 为系统实际 CUDA 路径，避免 FileNotFoundError。
+echo "⚡ 安装flash-attention 2 (optional, R34: CUDA_HOME fix)..."
+export CUDA_HOME="/usr/local/cuda-12.4"
+pip install flash-attn==2.7.4.post1 --no-build-isolation --no-deps 2>&1 || {
+    echo "  ⚠️ flash-attn 安装失败，不影响主流程（RL config 已回退到 attn_implementation: sdpa）"
+    echo "  💡 如需 flash_attention_2，可手动: CUDA_HOME=/usr/local/cuda-12.4 pip install flash-attn --no-build-isolation"
+}
 
 # 7. 验证所有依赖
 echo ""
