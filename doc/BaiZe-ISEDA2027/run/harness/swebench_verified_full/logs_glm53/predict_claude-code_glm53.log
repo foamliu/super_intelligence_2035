@@ -1,3 +1,5 @@
 [verified-full 09:32:03] resume: loaded 120 existing results
 [verified-full 09:32:03] [1/500] astropy__astropy-12907 SKIP (predicted, patch=502B)
 [verified-full 09:32:03] [2/500] PREDICT claude-code on astropy__astropy-13033
+[verified-full 10:02:03]   -> no-patch (patch=0B wall=1800.5s)
+[verified-full 10:02:03] [3/500] PREDICT claude-code on astropy__astropy-13236

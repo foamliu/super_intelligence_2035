@@ -412,6 +412,19 @@ class DeepseekHarnessDriver:
         problem_statement = instance.get("problem_statement", "")
         instance_id = instance.get("instance_id", "unknown")
 
+        # Clean any existing session for this instance_id to avoid "session
+        # already exists" errors on retry/resume (R1739 fix, 2026-11-07).
+        # The SDK stores sessions under dsh_home/sessions/<sanitized-cwd>/<id>/
+        import shutil
+        sessions_root = Path(self._DSH_HOME) / "sessions"
+        if sessions_root.exists():
+            for sess_dir in sessions_root.rglob(instance_id):
+                if sess_dir.is_dir():
+                    try:
+                        shutil.rmtree(sess_dir, ignore_errors=True)
+                    except OSError:
+                        pass
+
         try:
             harness = DeepSeekHarness(
                 provider="deepseek-official",

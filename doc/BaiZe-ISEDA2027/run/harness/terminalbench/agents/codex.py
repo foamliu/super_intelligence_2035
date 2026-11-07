@@ -111,19 +111,19 @@ class CodexTB(TBBaseAgent):
             # The gw_proxy rewrites role:"developer"->"system" and injects the
             # real API key.  supports_websockets=false because the gw_proxy is
             # plain HTTP (no WebSocket).
-            # 2026-11-07 FIX: was model="kimi-k2.6-cloud"+wire_api="responses"
-            # (stale from kimi era + Responses API not needed with 0.94.0) →
-            # codex exited with code 1 on every TB4 task.  Now uses TB_MODEL
-            # (glm-5.3-flash) + wire_api="chat" matching the host config.toml
-            # that works for SWE-bench CodexDriver.
+            # 2026-11-07 FIX: TB4 container has newer codex that rejects
+            # wire_api="chat" ("no longer supported" error).  Reverted to
+            # wire_api="responses" — the gw_proxy at 9092 translates
+            # /v1/responses → /v1/chat/completions (same as SWE-bench
+            # CodexDriver which works fine).
             config_toml = (
                 f'model = "{TB_MODEL}"\n'
                 'model_provider = "gw_proxy"\n'
                 "\n"
                 "[model_providers.gw_proxy]\n"
-                'name = "Local gw_proxy (chat API)"\n'
+                'name = "Local gw_proxy (responses API)"\n'
                 f'base_url = "{TB_GW_PROXY_URL}"\n'
-                'wire_api = "chat"\n'
+                'wire_api = "responses"\n'
                 'env_key = "OPENAI_API_KEY"\n'
                 "requires_openai_auth = false\n"
                 "supports_websockets = false\n"
