@@ -7,12 +7,12 @@ WAITING: 1
 
 ## 进度快照
 
-- PHASE: posttrain-wake69（2026-11-07 R21 11/9启动前全面审计：23文件全量检查→发现5项问题(1 P0+4 P1)→修复4项+标注1项+新建wrapper）
-- 已完成: P3预备✅ 7脚本；P0✅ D1–D6；P1✅ 数据盘点+PyAether语料+污染隔离；P2✅ 方案书；wake45✅ §替身RL预演；wake48-51✅ R1-R2+E1；wake52✅ R5；wake53✅ R6+R7；wake55✅ 11/9启动脚本；wake56-68✅ R8-R20；wake69✅ R21(启动前审计:C1 P0 parser进程隔离→wrapper修复+C2 skeleton标注+C3 YAML路径→修复+C4 R18超参落地→修复+C5 GPU ID→修复+V15-V19验证清单)
-- 当前动作: wake69 R21: 23文件全量审计(bash -n 11脚本✅+ast.parse 9脚本✅+yaml 2✅+parquet 2✅+路径7✅)→源码走读发现C1(parser注册在独立进程→verl训练时未注册→多轮RL完全不工作P0 Showstopper)→新建baize_posttrain_verl_wrapper.py(parser+verl同进程)→修复rl_grpo.sh(调用wrapper+--gpu-ids)→修复YAML(3处run/前缀+4项超参lr3e-6/entropy0.001/ppo_epochs2/kl0.02)→修复launch_11_9.sh(GPU_FLAG传递)→全部验证通过→EXPERIMENTS §R21(7小节)+HTML报告
-- 下一步: R1-R21+E1全部完成→ WAITING=1；11/9 GPU到位后自动起跑: bash baize_posttrain_launch_11_9.sh --step 0-5 --gpu-ids 0,1,2,3；11/9首验19项:V1-V8(R18)+V9-V14(R20)+V15-V19(R21)
-- 阻塞: GPU 2026-11-09既定到位(不再问)；L3等隧道；P3等pretrain ckpt(ETA≈2026-12-25)
-- 未完成指令: 无（R1✅...R21✅E1✅ 全部完成）⇒ WAITING=1
+- PHASE: posttrain-wake70（2026-11-07 R22: 解决R21的L2/L3+发现P0级silent no-op bug→R0 skeleton reward+checkpoint resume+cheat rate报告）
+- 已完成: P3预备✅ 7脚本；P0✅ D1–D6；P1✅ 数据盘点+PyAether语料+污染隔离；P2✅ 方案书；wake45✅ §替身RL预演；wake48-51✅ R1-R2+E1；wake52✅ R5；wake53✅ R6+R7；wake55✅ 11/9启动脚本；wake56-68✅ R8-R20；wake69✅ R21(审计)；wake70✅ R22(R0 skeleton reward+auto-fallback→解决P0空转bug + checkpoint resume→解决L3 + cheat rate tracker+n-gram builder→解决L2 + post-training监控 + V20-V24验证清单)
+- 当前动作: wake70 R22: 发现skeleton模式下R1-R4全0→GRPO无梯度→RL空转(P0 bug)→新增R0 skeleton reward(5组件:syntax/api/entry/structure/test_align, self-test 0.06-1.02)→auto-fallback(arm=R2无沙盒→自动R0)→checkpoint resume(--resume-ckpt+verl原生)→cheat rate tracker(n-gram overlap检测+cheat_rate.json自动生成)→eval n-gram builder(158任务→129,149个8-gram)→post-training监控(checkpoint列表+cheat报告+健康摘要)→全量验证(bash-n✅+ast✅+yaml✅+self-test✅+dry-run✅)→EXPERIMENTS §R22(8小节)+HTML报告
+- 下一步: R1-R22+E1全部完成→ WAITING=1；11/9 GPU到位后自动起跑: bash baize_posttrain_launch_11_9.sh --step 0-5 --gpu-ids 0,1,2,3；11/9首验24项:V1-V8(R18)+V9-V14(R20)+V15-V19(R21)+V20-V24(R22)；11/9首日RL用R0(auto-fallback)→隧道后切R2
+- 阻塞: GPU 2026-11-09既定到位(不再问)；L1 sandbox SSH等隧道；P3等pretrain ckpt(ETA≈2026-12-25)
+- 未完成指令: 无（R1✅...R22✅E1✅ 全部完成）⇒ WAITING=1
 
 ## 关键事实（常驻）
 
@@ -82,4 +82,6 @@ WAITING: 1
 [wake68] R20 verl多轮Tool-Calling Rollout执行架构深度分析: 体积自检(TASK=24.7KB/MEMORY=29KB合规)→git同步(无ahead/behind,R19已push成功)→R20: web调研verl官方文档→发现两条多轮架构路径→分析delta tokenization loss masking→审计verl_config.yaml发现6项问题→修复4项(max_assistant_turns/max_parallel_calls/max_tool_response_length/calc_reward)→新增V9-V14验证清单→EXPERIMENTS §R20(9小节)+HTML报告。📦 体积：TASK=24.7KB / MEMORY≈30KB。本轮新增调研产出：§R20 verl多轮执行架构+6项配置修复+V9-V14。未完成指令：无⇒WAITING=1。⚠️ push超时(ahead 1),下轮补推。
 
 [wake69] R21 11/9启动前全面审计: 体积自检(TASK=24.7KB/MEMORY=31.2KB→归档wake60-64后下降)→git同步(无ahead/behind)→R21: 23文件全量审计(bash -n 11✅+ast.parse 9✅+yaml 2✅+parquet 2✅+路径7✅)→源码走读发现5项问题: C1🔴P0(parser注册在独立进程→verl训练时未注册→多轮RL完全不工作)→新建baize_posttrain_verl_wrapper.py(parser+verl同进程)+修复rl_grpo.sh / C2🟠P1(EDA sandbox skeleton模式→已知限制11/9后实现) / C3🟠P1(YAML 3处路径含多余run/前缀→verl FileNotFoundError)→修复移除前缀 / C4🟠P1(R18超参建议未落地:lr1e-6→3e-6/entropy0→0.001/ppo_epochs1→2/kl0.04→0.02)→修复4项 / C5🟡P1(rl_grpo.sh不支持指定GPU ID→11/9有4卡被占时直接退出)→新增--gpu-ids+CUDA_VISIBLE_DEVICES→修复launch_11_9.sh同步传递→全部验证通过(bash-n✅+ast✅+yaml✅+dry-run✅)→EXPERIMENTS §R21(7小节)+HTML报告(report_posttrain_r21_launch_readiness_audit_zh.html 7KB)+V15-V19验证清单→归档wake60-64到daily-memories。📦 体积：TASK=24.7KB / MEMORY≈28KB（归档4条后）。本轮新增调研产出：§R21 11/9启动前全面审计(23文件→5问题→4修复+1标注)+V15-V19验证清单+新建wrapper+HTML报告。未完成指令：无（R1✅...R21✅E1✅）⇒ WAITING=1。
+
+[wake70] R22 Skeleton R0奖励+Checkpoint Resume+Cheat Rate报告: 体积自检(TASK=24.7KB/MEMORY≈25.8KB合规)→git同步(2 modified files: reward_functions.py+verl_config.yaml, R21遗留)→R22: 发现P0级silent no-op bug(skeleton模式R1-R4全0→GRPO无梯度→RL空转)→新增R0 skeleton reward(5组件:syntax0.1+api0.3+entry0.2+structure0.2+test_align0.2,self-test:good=1.02/syntax_err=0.86/wrong_api=0.66/garbage=0.06)→auto-fallback(arm=R2无沙盒→自动R0,YAML auto_fallback:true)→checkpoint resume(--resume-ckpt+verl原生--trainer.resume_from_checkpoint,解决L3)→cheat rate tracker(6函数:n-gram overlap检测+cheat_rate.json自动生成,解决L2红线§5.2)→eval n-gram builder(158任务→129,149个8-gram,1.58MB)→post-training监控(checkpoint列表+cheat报告+健康摘要)→全量验证(bash-n✅+ast✅+yaml✅+self-test✅+n-gram✅+dry-run✅)→EXPERIMENTS §R22(8小节)+HTML报告(report_posttrain_r22_skeleton_reward_checkpoint_cheatrate_zh.html)+V20-V24验证清单。📦 体积：TASK=24.7KB / MEMORY≈26KB。本轮新增调研产出：§R22 R0 skeleton reward(解决P0空转)+checkpoint resume(解决L3)+cheat rate报告(解决L2)+V20-V24+新建n-gram builder+HTML报告。未完成指令：无（R1✅...R22✅E1✅）⇒ WAITING=1。
 

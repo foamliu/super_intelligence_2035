@@ -132,11 +132,15 @@ reward:
     reward_kwargs:
       arm: R2                    # START with R2 (partial credit), NOT R1 (binary)
       api_database: ~/code/eda_fastmcp/docs/API_INFO_MERGED_V3.json
+      auto_fallback: true        # R22: auto-switch to R0 (skeleton static analysis) when sandbox results absent
   # Arm descriptions (for reference, actual logic in reward_functions.py):
+  # R0 = skeleton static analysis (syntax+API+entry_point+structure+test_align), no sandbox needed
   # R1 = binary pass/fail (too sparse for 2B)
   # R2 = exec_success(0.2) + partial_assert(0.2 each) + full_pass(1.0)
   # R3 = R2 + tool_call_penalty (align with harness cost model)
   # R4 = R3 + API_legality (penalize hallucinated API names)
+  # R22 auto-fallback: when sandbox is unavailable (skeleton mode), auto-switch
+  #   to R0 so GRPO still gets non-zero varied gradient signal.
   assertion_source: task.test
   anti_cheat:
     enabled: true                # Red line §5.2: PreToolUse hook always on
@@ -163,6 +167,9 @@ trainer:
   log_dir: /nas_data/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize_posttrain_rl_grpo/logs
   log_interval: 10
   cheat_rate_interval: 200
+  # R22: Checkpoint resume support (verl native)
+  # resume_from_checkpoint: null  # Set via --resume-ckpt CLI flag for crash recovery
+  # R22: Monitoring & early stopping
   tensorboard: true
   wandb: false                   # .17 has no external network
 

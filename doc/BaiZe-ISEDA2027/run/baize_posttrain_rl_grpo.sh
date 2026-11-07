@@ -42,19 +42,23 @@ REWARD_ARM=R2
 NP=4  # 4×A40 on .17
 
 DRY_RUN=0; SMOKE=0; GPU_IDS=""
+RESUME_CKPT=""  # R22: verl checkpoint resume path (different from --resume which is model path)
+MONITOR=1       # R22: enable monitoring hooks by default
 while [ $# -gt 0 ]; do
   case "$1" in
     --dry-run) DRY_RUN=1 ;; --smoke) SMOKE=1 ;;
     --reward-arm) REWARD_ARM="$2"; shift ;;
     --resume) RESUME_DIR="$2"; shift ;;
+    --resume-ckpt) RESUME_CKPT="$2"; shift ;;  # R22: verl checkpoint dir for crash recovery
     --config) CONFIG_FILE="$2"; shift ;;
     --gpu-ids) GPU_IDS="$2"; shift ;;
+    --no-monitor) MONITOR=0 ;;  # R22: disable monitoring
     *) echo "未知参数: $1" ;;
   esac
   shift
 done
 
-case "$REWARD_ARM" in R1|R2|R3|R4) ;; *) echo "❌ --reward-arm 必须是 R1/R2/R3/R4"; exit 1;; esac
+case "$REWARD_ARM" in R0|R1|R2|R3|R4) ;; *) echo "❌ --reward-arm 必须是 R0/R1/R2/R3/R4"; exit 1;; esac
 
 cat <<EOF
 ===== BaiZe Stage(ii) RLVR+GRPO (verl) — RECIPE @ $(date '+%F %T') =====
@@ -113,6 +117,16 @@ VERL_ARGS=(
     --runtime.n_gpus "$NP"
 )
 
+# R22: Checkpoint resume — verl supports --trainer.resume_from_checkpoint
+if [ -n "$RESUME_CKPT" ]; then
+    if [ -d "$RESUME_CKPT" ]; then
+        VERL_ARGS+=(--trainer.resume_from_checkpoint "$RESUME_CKPT")
+        echo "[rl] R22: Resuming from checkpoint: $RESUME_CKPT"
+    else
+        echo "❌ --resume-ckpt 目录不存在: $RESUME_CKPT"; exit 1
+    fi
+fi
+
 if [ $SMOKE = 1 ]; then
     VERL_ARGS+=(
         --trainer.total_epochs 1
@@ -151,10 +165,46 @@ echo "  rc=${RC}" | tee -a /tmp/baize_posttrain_rl.sum
 echo "  log: $LOG" | tee -a /tmp/baize_posttrain_rl.sum
 echo "===== RL GRPO END @ $(date '+%F %T') rc=${RC} =====" | tee -a /tmp/baize_posttrain_rl.sum
 
-# === Post-training: report cheat rate if available ===
-if [ -f "${OUTPUT_DIR}/cheat_rate.json" ]; then
-    echo "[post] Cheat rate report:" | tee -a /tmp/baize_posttrain_rl.sum
-    cat "${OUTPUT_DIR}/cheat_rate.json" | tee -a /tmp/baize_posttrain_rl.sum
+# === R22: Post-training monitoring ===
+# List checkpoints for resume reference
+echo "===== R22 POST-TRAINING MONITORING @ $(date '+%F %T') =====" | tee -a /tmp/baize_posttrain_rl.sum
+if [ -d "${OUTPUT_DIR}" ]; then
+    echo "[post] Checkpoints in ${OUTPUT_DIR}:" | tee -a /tmp/baize_posttrain_rl.sum
+    find "${OUTPUT_DIR}" -name "*.pt" -o -name "*.safetensors" 2>/dev/null | head -20 | tee -a /tmp/baize_posttrain_rl.sum
+    LATEST_CKPT=$(find "${OUTPUT_DIR}" -type d -name "global_step_*" 2>/dev/null | sort -t_ -k3 -n | tail -1)
+    if [ -n "$LATEST_CKPT" ]; then
+        echo "[post] Latest checkpoint: $LATEST_CKPT" | tee -a /tmp/baize_posttrain_rl.sum
+        echo "[post] To resume: bash baize_posttrain_rl_grpo.sh --reward-arm ${REWARD_ARM} --gpu-ids ${GPU_IDS:-0,1,2,3} --resume-ckpt ${LATEST_CKPT}" | tee -a /tmp/baize_posttrain_rl.sum
+    fi
 fi
+
+# R22: Save cheat rate report (red-line §5.2)
+CHEAT_JSON="${OUTPUT_DIR}/cheat_rate.json"
+if [ -f "$CHEAT_JSON" ]; then
+    echo "[post] Cheat rate report:" | tee -a /tmp/baize_posttrain_rl.sum
+    cat "$CHEAT_JSON" | tee -a /tmp/baize_posttrain_rl.sum
+else
+    # Try to generate it from the reward module
+    "$BAIZE_VENV_PY" -c "
+import sys; sys.path.insert(0, '$SCRIPT_DIR')
+from baize_posttrain_reward_functions import save_cheat_rate_report
+save_cheat_rate_report('$CHEAT_JSON')
+" 2>/dev/null && {
+        echo "[post] Cheat rate report (generated):" | tee -a /tmp/baize_posttrain_rl.sum
+        cat "$CHEAT_JSON" 2>/dev/null | tee -a /tmp/baize_posttrain_rl.sum
+    } || echo "[post] Cheat rate: not yet available (skeleton mode, no rollouts completed)" | tee -a /tmp/baize_posttrain_rl.sum
+fi
+
+# R22: Training health summary
+echo "[post] Training health:" | tee -a /tmp/baize_posttrain_rl.sum
+echo "  exit_code: $RC" | tee -a /tmp/baize_posttrain_rl.sum
+echo "  log_file: $LOG" | tee -a /tmp/baize_posttrain_rl.sum
+echo "  output_dir: $OUTPUT_DIR" | tee -a /tmp/baize_posttrain_rl.sum
+if [ $RC -ne 0 ]; then
+    echo "[post] ⚠️ Non-zero exit code — check $LOG for errors" | tee -a /tmp/baize_posttrain_rl.sum
+    echo "[post] Last 20 lines of log:" | tee -a /tmp/baize_posttrain_rl.sum
+    tail -20 "$LOG" 2>/dev/null | tee -a /tmp/baize_posttrain_rl.sum
+fi
+echo "===== R22 MONITORING END =====" | tee -a /tmp/baize_posttrain_rl.sum
 
 exit $RC

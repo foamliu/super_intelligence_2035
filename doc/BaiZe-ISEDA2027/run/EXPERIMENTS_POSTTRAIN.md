@@ -2961,3 +2961,117 @@ bash baize_posttrain_rl_grpo.sh --dry-run --reward-arm R2 --gpu-ids 0,1,2,3 → 
 
 R21 是 R1-R20 全部调研的**集成验证**——不是新方向，而是把 20 轮调研产出的 23 个文件做端到端审计，发现并修复 5 项问题（1 P0 + 4 P1）。R18 的超参建议（C4）和 R16 的 parser 发现（C1）在 R21 中被验证为**实际未落地**——调研发现了问题但修改未应用到配置文件，R21 补上了这个缺口。
 
+---
+
+## §R22 Skeleton-mode R0 奖励 + Checkpoint Resume + Cheat Rate 报告（2026-11-07 wake70 · 零 GPU · 解决 R21 的 L2/L3 已知限制）
+
+> **任务**：R21 审计发现 6 项已知限制，其中 L2（cheat_rate 无脚本产出）和 L3（无 checkpoint resume 机制）是 11/9 启动的**红线级阻塞项**。本轮解决 L2/L3，并发现并修复一个**P0 级 silent no-op bug**（skeleton 模式下 RL 无学习信号）。
+> **方法**：源码走读 + Python 静态分析 + self-test + web 调研 verl checkpoint 机制 + 实现代码修改 + 全量验证。
+
+### R22.1 🔴 P0 发现：Skeleton 模式下 RL 无学习信号（Silent No-Op）
+
+**问题**：R21 标注 L1 "EDA sandbox SSH 未实现（skeleton）"为 P1 限制，但未意识到**其连锁效应是 P0 级**：
+- 当前 EDA sandbox 是 skeleton 模式（无真实执行），`exec_success` 恒为 False
+- R1-R4 奖励全部依赖 `exec_success`：R1=0.0, R2=0.0（exec_success=0.2 拿不到）, R3/R4 同理
+- **所有 rollout reward = 0.0 → GRPO advantage = 0 → 梯度 = 0 → RL 训练是空转**
+- 最危险失败模式：不报错、不崩溃、日志正常，但模型完全没有学习
+
+**修复**：新增 **R0 skeleton-mode 奖励臂**——纯静态分析，不依赖沙盒执行：
+- `syntax_valid(0.10)` — `ast.parse` 检查语法
+- `api_correct(0.30)` — 正则匹配 `pyScript.<api>()` 是否覆盖任务 APIs
+- `entry_point(0.20)` — 检查是否定义/调用预期函数名
+- `structure(0.20)` — return/import/API overlap 结构检查
+- `test_alignment(0.20)` — 返回类型匹配 test code `isinstance` 断言
+- `format_bonus(0.02)` — 有代码块/工具调用格式时加分
+
+**Auto-fallback**：当 `arm=R2` 但 `extra_info` 无 `exec_success`/`assert_results`/`returncode`，自动切换 R0。11/9 首日即使隧道未就绪，RL 仍有非零学习信号。
+
+**Self-test**（Python 3.8, 零 GPU）：
+```
+r0_good_code      R0_score=1.0200   (全✓)
+r0_syntax_error   R0_score=0.8600   (语法✗ 但其余✓)
+r0_wrong_api      R0_score=0.6600   (API✗)
+r0_garbage        R0_score=0.0600   (几乎全✗)
+```
+→ R0 提供足够梯度差异（0.06–1.02），GRPO advantage 非零。
+
+### R22.2 Checkpoint Resume & Crash Recovery（解决 R21 L3）
+
+**verl 原生支持**（web 调研 CSDN 实操记录 + HuggingFace GRPO campaign）：
+- verl 在 `save_interval` 步自动保存 checkpoint 到 `save_dir/checkpoints/global_step_N/`
+- checkpoint 包含完整 optimizer state + lr scheduler + random seed
+- 恢复命令：`python -m verl.trainer.main_ppo --config ... --trainer.resume_from_checkpoint <path>`
+
+**实现**（`baize_posttrain_rl_grpo.sh`）：
+1. 新增 `--resume-ckpt <path>` CLI 参数（与 `--resume <model_path>` 区分）
+2. 传递 verl 参数 `--trainer.resume_from_checkpoint "$RESUME_CKPT"`
+3. 训练结束后自动扫描 `save_dir` 下 `global_step_*` 目录，打印最新 checkpoint + 恢复命令
+4. YAML 添加注释行 `# resume_from_checkpoint: null  # Set via --resume-ckpt CLI flag`
+
+### R22.3 Cheat Rate 报告实现（解决 R21 L2 · 红线 §5.2）
+
+**1. Eval N-gram 构建器**（`baize_posttrain_build_eval_ngrams.py`）：
+- 从 158 任务 JSONL 提取 test_code + canonical_solution + prompt 代码块
+- 8-gram 字符级集合（normalize: lowercase + strip whitespace）
+- 实测：158 任务 → **129,149 个唯一 8-gram**（1.58MB JSON）
+
+**2. Cheat Rate Tracker**（`baize_posttrain_reward_functions.py`）：
+- 全局单例，在 `compute_score` 每次调用时更新
+- 阈值：n-gram overlap > 5% 且 overlap count > 10 → cheat
+- 每 200 步打印日志；训练结束后自动 `save_cheat_rate_report` 写出 `cheat_rate.json`
+
+**Self-test 验证**：
+```
+high_overlap: is_cheat=True,  ratio=0.9070  ← 抄了 test code
+low_overlap:  is_cheat=False, ratio=0.0282  ← 正常代码
+no_reference: is_cheat=False, ratio=0.0000  ← 无参考集
+```
+
+### R22.4 Post-Training 监控（R22 新增）
+
+`baize_posttrain_rl_grpo.sh` 训练结束后新增：
+1. Checkpoint 列表 + 恢复命令
+2. Cheat rate 报告（优先读文件，不存在则从 module 生成）
+3. 训练健康摘要（exit_code + 非零退出打印最后 20 行日志）
+
+### R22.5 验证结果
+
+| 检查项 | 结果 |
+|:--|:--|
+| `bash -n baize_posttrain_rl_grpo.sh` | ✅ OK |
+| `ast.parse` reward_functions + build_eval_ngrams | ✅ OK |
+| `yaml.safe_load` verl_config | ✅ OK |
+| R0 self-test | ✅ good=1.02/syntax=0.86/wrong=0.66/garbage=0.06 |
+| Cheat rate self-test | ✅ high=0.907→cheat/low=0.028→legit/none=0→skip |
+| Eval n-gram builder | ✅ 158 tasks → 129,149 n-grams |
+| Dry-run R2 + R0 + --resume-ckpt | ✅ All pass |
+
+### R22.6 11/9 新增验证清单（V20-V24）
+
+| # | 验证项 | 通过判据 |
+|:--|:--|:--|
+| V20 | R0 auto-fallback 生效 | 日志含 `R22 auto-fallback: arm=R2 → R0` |
+| V21 | Cheat rate tracker 初始化 | 日志含 `R22 cheat_rate report` |
+| V22 | Checkpoint 自动保存 | `save_dir` 出现 `global_step_N/` |
+| V23 | Resume 命令可用 | `--resume-ckpt` 不报错，verl 日志含 `Resuming from` |
+| V24 | cheat_rate.json 生成 | 文件存在且 `cheat_rate` 为数值 |
+
+### R22.7 修改文件清单
+
+| 文件 | 修改类型 | 内容 |
+|:--|:--|:--|
+| `baize_posttrain_reward_functions.py` | ✏️ 修改 | R0 reward（5 组件）+ auto-fallback + cheat rate tracker（6 函数）|
+| `baize_posttrain_build_eval_ngrams.py` | 🆕 新建 | 158 任务 n-gram 构建器 |
+| `baize_posttrain_rl_grpo.sh` | ✏️ 修改 | `--resume-ckpt` + `--no-monitor` + R0 arm + 监控块 |
+| `baize_posttrain_rl_verl_config.yaml` | ✏️ 修改 | `auto_fallback: true` + R0/resume 注释 |
+
+### R22.8 解决的 R21 限制
+
+| R21 限制 | R22 状态 | 说明 |
+|:--|:--|:--|
+| L1: EDA sandbox SSH 未实现 | ⬜ 未解决（R0 **缓解**） | 隧道建立前 RL 不再空转 |
+| L2: cheat_rate.json 无脚本 | ✅ **已解决** | n-gram builder + tracker + auto-save |
+| L3: 无 checkpoint resume | ✅ **已解决** | `--resume-ckpt` + verl 原生支持 |
+| L4-L6 | ⬜ 未变 | venv 安装时验证 |
+
+**核心贡献**：修复 R21 审计的 3 个阻塞项（L1 缓解 + L2/L3 解决），并发现 R21 未识别的 **P0 级 silent no-op bug**。R0 auto-fallback 确保 11/9 首日即使隧道未就绪 RL 也不空转。
