@@ -24,11 +24,11 @@
   "prev_sessions": 2912,
   "scan_path": "/home/t0002965/log/ssh_eda_search_20261105_192825/summary.tsv",
   "scansync": {
-    "daily_log_20261107_lines": 2916,
+    "daily_log_20261108_lines": 2893,
     "latest_scan": "2026-11-05 19:28:25 (no new scan since)",
     "new_sessions_vs_old": 0,
-    "note": "r211 scansync: numbers identical to r206 (no new scan since 11/05). daily log healthy (2916 lines).",
-    "r211": "2026-11-07",
+    "note": "r216 scansync: numbers identical to r211 (no new scan since 11/05). daily log 20261108 healthy (2893 lines).",
+    "r216": "2026-11-08",
     "shard_A_new": 0,
     "shard_A_pool_mc15": 216,
     "shard_B_new": 0,
@@ -38,7 +38,7 @@
     "shard_D_new": 0,
     "shard_D_pool_mc30": 1168
   },
-  "sessions": 2912,
+  "sessions": 3896,
   "shard_mc": {
     "A": 15,
     "B": 30,
@@ -47,7 +47,7 @@
   },
   "source": "/home/t0002965/log/ssh_eda_search_20261105_192825/summary.tsv (11/05 scan)",
   "target_mc": 30,
-  "updated_at": "2026-11-07 22:49",
+  "updated_at": "2026-11-08 02:21",
   "users_mc100": 182,
   "users_mc30": 224,
   "users_mc300": 60,
