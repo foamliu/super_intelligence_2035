@@ -1,6 +1,7 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 0
-> 🛑 **【运维通告 · 2026-11-02 19:51】S1 已由 ops 中继重启并在跑**：`bash scripts/train.sh s1 --nodes 2`，launcher pid **4163528**，从 **ckpt 58000** 续（19:55:40 起 iter **58010**→58030，7.0–7.2 s/step ≈**582K tok/s**，双机 16 卡 **98–100%**、~75GB/卡、~690W）。⇒ **GPU 不再空闲**：🚫 严禁再起任何训练/GPU 评测进程；CPU 评测必须降载：`OMP_NUM_THREADS≤8` + `nice -n 19`，**禁止 `pkill python`**。
+
+> 2026-11-07 18:26 #1586: 运维令11-07 15:2x继续执行·v4全量GGUF eval已启动(hellaswag分片4 servers+其余7 tasks分4 servers,8 llama-server×16 threads,8进程并行)·v3失败根因=NFS "Stale file handle"杀死bash脚本→v4修复=脚本+Python全复制到/tmp执行·v4新增hellaswag --samples分片(10042 docs→4 shards×2511 docs,消除木桶效应)·所有8 servers已READY(eval PID3912298+,marker epoch=1794047138)·精度回归已PASS(#1585:iter_10000 HF vs GGUF max Δacc=0.02<n=100 stderr 0.045)·gen_eval_speedup_report.py已指向v4路径·报告9382B/0script/0外链·S1健康(GPU 100%/75GB)·📦TASK=28.5KB✓/MEMORY=15.9KB✓·未完成指令:有(v4 eval运行中→完成后填耗时对照+分数→报告最终更新)⇒WAITING:0。
 
 > 2026-11-07 17:24 #1585: 运维令11-07 15:2x继续执行·精度回归结论=PASS(iter_10000 HF vs GGUF 8集逐比对:arc_challenge Δ0.02/arc_easy Δ0/boolq Δ0.01/hellaswag Δ0.01/openbookqa Δ0.01/piqa Δ0/sciq Δ0/winogrande Δ0,max Δacc=0.02<n=100 stderr 0.045→PASS;iter_100000 GGUF trend raw Avg=54.75%单调上升→converter一致性OK)·iter_112000精度回归卡住41%(1075/2599,28min无进度=HTTP挂起,冗余已kill)·全量GGUF eval已启动(PID3418162,4 servers×56 threads,8 tasks并行,hellaswag+openbookqa→server0,arc_challenge+piqa→server1,arc_easy+sciq→server2,boolq+winogrande→server3)·各任务进度@17:24:openbookqa 6%/boolq 1%/sciq 1%/arc_challenge 0%/arc_easy 0%/winogrande 1%/piqa 0%/hellaswag tokenizing 85%·merge_parallel_results.py修复hellaswag单目录处理·报告更新8796B/0script/0外链·S1健康(GPU 100%/75GB)·load130/224·📦TASK=27.8KB✓/MEMORY=14.5KB✓·未完成指令:有(全量eval运行中→完成后填耗时对照+分数→报告最终更新)⇒WAITING:0。
 
