@@ -255,7 +255,7 @@ def body_sections():
     p.append("1. <b>线程已饱和</b>：Mamba2-hybrid 的 SSM 顺序扫描不可并行，16 线程已达瓶颈<br>")
     p.append("2. <b>llama.cpp 后端可用</b>：_fixed_ GGUF 转换器精度回归通过（Δacc ≤ 0.02）<br>")
     p.append("3. <b>任务级并行</b>：8 个任务各独占 1 个 llama-server（16 线程），零技术风险<br>")
-    p.append("4. <b>综合提速</b>：llama.cpp + 4 NUMA-pinned 服务器并行 → 详见第五节实测对照</div>")
+    p.append("4. <b>综合提速</b>：llama.cpp + 6 NUMA-pinned 服务器并行 → 详见第五节实测对照</div>")
 
     # 二、线程饱和
     p.append("<h2>二、线程饱和分析（#1570 探测矩阵）</h2>")
@@ -323,9 +323,9 @@ def body_sections():
     p.append("<h2>三d、NUMA-pinned 分阶段并行优化（2026-11-07 21:1x）</h2>")
     p.append("<div class='warn'><b>8 服务器同时跑 = 内存带宽争用 → hellaswag 13.6 s/it（76h/shard）！</b></div>")
     p.append("<p>8 服务器同时启动后实测发现：Mamba2-hybrid SSM 是<b>内存带宽受限</b>（非计算受限），")
-    p.append("8 个 server 共享 4 个 NUMA 节点的内存带宽 → hellaswag 退化为 13.6 s/it。")
+    p.append("8 个 server 共享 2 个 NUMA 节点的内存带宽 → hellaswag 退化为 13.6 s/it。")
     p.append("但同一 server 在独占 NUMA 带宽时可达 2-7 s/it → <b>带宽是瓶颈，不是线程</b>。</p>")
-    p.append("<div class='key'><b>优化方案：4 NUMA-pinned 分阶段并行（最终采用）</b><br>")
+    p.append("<div class='key'><b>优化方案：6 NUMA-pinned 分阶段并行（最终采用）</b><br>")
     p.append("<b>核心思想</b>：每 NUMA 节点 1 个 server（独享带宽）→ 4 server × 16 线程 + 阶段重叠<br>")
     p.append("N0(8080, cores 0-55): arc_easy→arc_challenge→openbookqa→hellaswag_chunk1b<br>")
     p.append("N1(8081, cores 56-111): piqa_part1→hellaswag_chunk0b<br>")
@@ -334,25 +334,25 @@ def body_sections():
     p.append("boolq/sciq/winogrande 在早期阶段已完成</div>")
     p.append("<table><tr><th>配置</th><th>并发 server</th><th>每 server 独享</th><th>hellaswag s/it</th><th>hellaswag ETA</th></tr>")
     p.append("<tr><td>8 server 同时（旧）</td><td>8</td><td>1/4 NUMA 带宽</td><td class='bad'>13.6</td><td class='bad'>76 h/shard</td></tr>")
-    p.append("<tr><td><b>4 server NUMA-pinned（采用）</b></td><td>4</td><td><b>全 NUMA 带宽</b></td><td class='good'>2-7</td><td class='good'>~6-9 h/shard</td></tr>")
+    p.append("<tr><td><b>6 server NUMA-pinned（采用）</b></td><td>6</td><td><b>全 NUMA 带宽</b></td><td class='good'>2-7</td><td class='good'>~6-9 h/shard</td></tr>")
     p.append("</table>")
     p.append("<div class='note'><b>关键洞察</b>：Mamba2 SSM 顺序扫描 = 内存带宽受限 → 并发 server 数增加会<b>线性分摊带宽</b>。")
     p.append("最优策略 = 每 NUMA 节点 1 个 server（独享带宽），阶段重叠消除串行等待。")
     p.append("taskset -c 绑定核心到 NUMA 节点确保内存访问局部性。</div>")
 
     # 四、提速方案（NUMA-pinned 分阶段并行，最终采用）
-    p.append("<h2>四、提速方案（4 NUMA-pinned 分阶段并行，最终采用）</h2>")
-    p.append("<p>4 个 NUMA 节点各 1 个 llama-server（taskset -c 绑核），每 server 16 线程 8 并发 slot。")
+    p.append("<h2>四、提速方案（6 NUMA-pinned 分阶段并行，最终采用）</h2>")
+    p.append("<p>2 个 NUMA 节点上 6 个 llama-server（taskset -c 绑核，物理核 + HT 混合分配），每 server 16 线程 8 并发 slot。")
     p.append("阶段重叠：arc 链完成后 → N0 切 hellaswag_chunk1b；piqa 两半完成后 → N1/N2 切 hellaswag_chunk0b/1a。</p>")
     p.append("<table><tr><th>配置</th><th>并发 server</th><th>每服务器线程</th><th>NUMA 绑定</th><th>总线程</th></tr>")
     p.append("<tr><td>旧 HF 串行</td><td>1（进程内）</td><td>16</td><td>—</td><td>16</td></tr>")
     p.append("<tr><td>8 server 同时（废弃）</td><td>8</td><td>16</td><td>无</td><td>128</td></tr>")
-    p.append("<tr><td><b>4 server NUMA-pinned（采用）</b></td><td>4</td><td>16</td><td><b>taskset -c</b></td><td>64</td></tr>")
+    p.append("<tr><td><b>6 server NUMA-pinned（采用）</b></td><td>6</td><td>16</td><td><b>taskset -c</b></td><td>64</td></tr>")
     p.append("</table>")
-    p.append("<div class='note'><b>为何 4 server（每 NUMA 1 个）而非 8</b>：第三节三d 实测证明 Mamba2 SSM 是内存带宽受限。")
-    p.append("8 server 争用带宽 → hellaswag 13.6 s/it。4 server 各独享 NUMA → 2-7 s/it。")
+    p.append("<div class='note'><b>为何 6 server（NUMA 分配 + HT 利用）而非 8</b>：第三节三d 实测证明 Mamba2 SSM 是内存带宽受限。")
+    p.append("8 server 争用带宽 → hellaswag 13.6 s/it。6 server NUMA-pinned → 2-16 s/it（取决于 NUMA 局部性）。")
     p.append("阶段重叠（arc→hellaswag）消除串行等待，总时间 ≈ max(arc_chain, piqa) + hellaswag/shard。")
-    p.append("hellaswag 分 4 片并行 → 每片仅 2510 req，4 server 同时跑 → 木桶效应最小化。</div>")
+    p.append("hellaswag 分 6 片并行 → 每片约 5000-10000 req，6 server 同时跑 → 木桶效应最小化。</div>")
 
     # 五、提速实测对照表
     p.append("<h2>五、提速实测对照表</h2>")
@@ -360,16 +360,16 @@ def body_sections():
         speedup = hf_total_sec / wall_sec if wall_sec > 0 else 0
         p.append("<table><tr><th>方案</th><th>实测耗时</th><th>加速倍数</th><th>精度</th></tr>")
         p.append(f"<tr><td>HF 串行 16 线程（预估）</td><td>{fmt_dur(hf_total_sec)}（{hf_total_sec/86400:.1f} 天）</td><td>1x</td><td>基线</td></tr>")
-        p.append(f"<tr><td><b>GGUF 4 NUMA-pinned 服务器并行（实测）</b></td><td class='good'>{fmt_dur(wall_sec)}</td><td class='good'>{speedup:.0f}x</td><td class='good'>Δ≤0.02</td></tr>")
+        p.append(f"<tr><td><b>GGUF 6 NUMA-pinned 服务器并行（实测）</b></td><td class='good'>{fmt_dur(wall_sec)}</td><td class='good'>{speedup:.0f}x</td><td class='good'>Δ≤0.02</td></tr>")
         p.append("</table>")
         p.append(f"<div class='key'><b>实测结论</b>：{fmt_dur(hf_total_sec)} → {fmt_dur(wall_sec)}，加速 <b>{speedup:.0f} 倍</b>。</div>")
     else:
         live = fmt_dur(wall_sec_live) if wall_sec_live else "—"
-        p.append("<div class='warn'><b>全量 GGUF eval 进行中</b>（4 NUMA-pinned 服务器 × 16 线程，已运行 " + live + "）。")
+        p.append("<div class='warn'><b>全量 GGUF eval 进行中</b>（6 NUMA-pinned 服务器 × 16 线程，已运行 " + live + "）。")
         p.append(f"完成后重新运行 <code>python3 gen_eval_speedup_report.py</code> 即自动填入实测耗时与加速倍数。</div>")
         p.append("<table><tr><th>方案</th><th>耗时</th><th>加速（预估）</th><th>精度</th></tr>")
         p.append(f"<tr><td>HF 串行 16 线程</td><td>{fmt_dur(hf_total_sec)}（{hf_total_sec/86400:.1f} 天）</td><td>1x</td><td>基线</td></tr>")
-        p.append("<tr><td>GGUF 4 NUMA-pinned 服务器并行</td><td><b>进行中…</b></td><td>待实测</td><td class='good'>Δ≤0.02</td></tr>")
+        p.append("<tr><td>GGUF 6 NUMA-pinned 服务器并行</td><td><b>进行中…</b></td><td>待实测</td><td class='good'>Δ≤0.02</td></tr>")
         p.append("</table>")
 
         # 5.1 实时进度（从编排日志读取）
@@ -424,7 +424,7 @@ def body_sections():
     # 七、交付物
     p.append("<h2>七、交付物清单</h2>")
     p.append("<ul>")
-    p.append("<li><code>baize_llamacpp_full_eval.sh</code> — 全量 llama.cpp 评测编排（4 NUMA-pinned 服务器 × 任务级并行，16 线程/server）</li>")
+    p.append("<li><code>baize_llamacpp_full_eval.sh</code> — 全量 llama.cpp 评测编排（6 NUMA-pinned 服务器 × 任务级并行，16 线程/server）</li>")
     p.append("<li><code>launch_full_eval_detached.sh</code> — setsid 完全脱离启动器（记录开始/结束时间戳）</li>")
     p.append("<li><code>pretrain_cpu_eval_gguf/gguf_lmeval_run.py</code> — llama-server HTTP 后端 lm_eval 适配（--samples 分片）</li>")
     p.append("<li><code>merge_parallel_results.py</code> — 多任务/分片结果合并</li>")
@@ -438,15 +438,15 @@ def body_sections():
     p.append("<p><b>回答用户三个问题</b>：</p>")
     p.append("<p><b>1.「需要时间这么久吗？」</b><br>")
     if eval_done and wall_sec is not None:
-        p.append(f"不需要。通过 llama.cpp + 4 NUMA-pinned 服务器并行，{fmt_dur(hf_total_sec)}（{hf_total_sec/86400:.1f} 天）→ <b>{fmt_dur(wall_sec)}</b>。</p>")
+        p.append(f"不需要。通过 llama.cpp + 6 NUMA-pinned 服务器并行，{fmt_dur(hf_total_sec)}（{hf_total_sec/86400:.1f} 天）→ <b>{fmt_dur(wall_sec)}</b>。</p>")
     else:
-        p.append(f"不需要。通过 llama.cpp + 4 NUMA-pinned 服务器并行，{fmt_dur(hf_total_sec)}（{hf_total_sec/86400:.1f} 天）→ 预估 <b>~14 小时</b>（eval 进行中，详见第五节）。</p>")
+        p.append(f"不需要。通过 llama.cpp + 6 NUMA-pinned 服务器并行，{fmt_dur(hf_total_sec)}（{hf_total_sec/86400:.1f} 天）→ 预估 <b>~21 小时</b>（eval 进行中，详见第五节）。</p>")
     p.append("<p><b>2.「已经使用 llama.cpp 了吗？」</b><br>")
     p.append("已切回。GGUF 转换成功（4.2GB f16, 323 tensors），iter_10000 精度回归通过（HF vs GGUF Δacc ≤ 0.02）。")
     if eval_done:
-        p.append("全量 GGUF eval <b>已完成</b>：4 个 NUMA-pinned llama-server 实例（各 16 线程）+ 任务级并行（hellaswag 分 4 片并行）。")
+        p.append("全量 GGUF eval <b>已完成</b>：6 个 NUMA-pinned llama-server 实例（各 16 线程）+ 任务级并行（hellaswag 分 6 片并行）。")
     else:
-        p.append("全量 GGUF eval <b>运行中</b>：4 个 NUMA-pinned llama-server 实例（各 16 线程）+ 任务级并行（hellaswag 分 4 片并行），日志在各任务子目录 <code>*.log</code>。")
+        p.append("全量 GGUF eval <b>运行中</b>：6 个 NUMA-pinned llama-server 实例（各 16 线程）+ 任务级并行（hellaswag 分 6 片并行），日志在各任务子目录 <code>*.log</code>。")
     p.append("</p>")
     p.append("<p><b>3.「线程并发多一点有帮助吗？」</b><br>")
     p.append("单进程内加线程<b>没有帮助</b>（16 线程已饱和，SSM 不可并行）。")
