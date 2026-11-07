@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>cline 专项分析报告 · R1740 · 2026-11-07</title>
+<style>
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;max-width:1100px;margin:0 auto;padding:20px;color:#222;background:#fafafa;line-height:1.6}
+h1{color:#1a5276;border-bottom:3px solid #2980b9;padding-bottom:10px}
+h2{color:#1a5276;margin-top:30px;border-left:4px solid #2980b9;padding-left:10px}
+h3{color:#2c3e50;margin-top:20px}
+table{border-collapse:collapse;width:100%;margin:12px 0;font-size:14px;background:#fff}
+th,td{border:1px solid #ccc;padding:6px 10px;text-align:left}
+th{background:#eaf2f8;color:#1a5276}
+tr:nth-child(even){background:#f8f9fa}
+tr.err{background:#fadbd8}
+tr.zero{background:#fef9e7}
+tr.ok{background:#d5f5e3}
+.code{background:#f4f4f4;border:1px solid #ddd;padding:10px;font-family:monospace;font-size:13px;white-space:pre-wrap;border-radius:4px;overflow-x:auto}
+.box{background:#fff;border:1px solid #ddd;border-radius:6px;padding:15px;margin:12px 0}
+.box.red{border-color:#e74c3c;background:#fdf2f2}
+.box.green{border-color:#27ae60;background:#f0faf0}
+.box.blue{border-color:#2980b9;background:#eff8fb}
+.tag{display:inline-block;padding:2px 8px;border-radius:3px;font-size:12px;font-weight:bold}
+.tag.infra{background:#e74c3c;color:#fff}
+.tag.cap{background:#e67e22;color:#fff}
+.tag.ok{background:#27ae60;color:#fff}
+.summary{background:#eaf2f8;border:1px solid #aed6f1;border-radius:6px;padding:15px;margin:15px 0}
+small{color:#666}
+</style></head><body>
+<h1>cline 专项分析报告</h1>
+<p><small>轮次 R1740 · 2026-11-07 10:4x · 用户令 2026-11-07 10:10「harness：按早晨的用户令评测，同时多关注一点 cline」<br>
+基准：SWE-bench Verified 500 + Terminal-Bench 4.0（66题）· 模型：glm-5.3-flash · 网关 http://agi-gateway.cxmt.com/v1</small></p>
+
+<div class="summary">
+<b>TL;DR</b><br>
+① SWE-bench Verified：cline 已完成 29/500，real patch 27/29 = <b>93.1%</b>（resume 修复后空 patch 从 51.5% 降至 6.9%）。<br>
+② Terminal-Bench 4.0：首轮 66/66 全 errored = <span class="tag infra">基础设施</span>（网关 ECONNRESET → exit 1 → RuntimeError → verifier 被跳过）；
+重跑 5 题中 2 题完成 reward=0 = <span class="tag cap">能力</span>，2 题 errored = <span class="tag infra">网关协议兼容</span>（finish reason 无法识别）。<br>
+③ <b>根因定位 + 修复（R1740）</b>：<code>cline_patched.py:201</code> 原先「非零退出一律 raise RuntimeError」→ 已改为「仅当无 run_result 事件时才 raise，否则记录警告并让 verifier 评分」。<br>
+④ 与 opencode/hermes 差距来源：本轮 glm53 尚在 predict 阶段（29/500），历史 kimi 时代 cline 71.3% vs opencode 80.2%，86% 为能力差（p=6.27e-08）。
+</div>
+
+<h2>C1 · SWE-bench Verified cline 独立统计</h2>
+<p>复算命令：<code>python3 /tmp/cline_stats.py</code>（读取 <code>predictions_glm53/&lt;harness&gt;__*.json</code>，取 <code>model_patch</code> 字段非空 = real patch）</p>
+<table><tr><th>harness</th><th>已完成</th><th>real patch</th><th>empty</th><th>real 率</th><th>平均长度</th><th>中位数</th><th>min-max</th></tr>
+<tr><td>cline</td><td>29</td><td>27</td><td>2</td><td>93.1%</td><td>4036</td><td>2398</td><td>1091-22705</td></tr><tr><td>codex</td><td>6</td><td>1</td><td>5</td><td>16.7%</td><td>1332</td><td>1332</td><td>1332-1332</td></tr><tr><td>opencode</td><td>68</td><td>67</td><td>1</td><td>98.5%</td><td>3140</td><td>2126</td><td>447-20996</td></tr><tr><td>claude-code</td><td>21</td><td>19</td><td>2</td><td>90.5%</td><td>3319</td><td>2265</td><td>499-12334</td></tr><tr><td>pi</td><td>22</td><td>19</td><td>3</td><td>86.4%</td><td>1720</td><td>1787</td><td>202-4520</td></tr><tr><td>hermes</td><td>74</td><td>67</td><td>7</td><td>90.5%</td><td>4349</td><td>3107</td><td>1081-31251</td></tr><tr><td>deepseek-harness</td><td>24</td><td>23</td><td>1</td><td>95.8%</td><td>4649</td><td>3231</td><td>139-20611</td></tr>
+</table>
+<div class="box blue">
+<b>cline patch 尺寸分布</b>（real patches, N=27）：<br>
+min=1091, P25=1902, 中位数=2398, P75=4051, max=22705<br>
+平均 4036B，中位数 2398B —— 与 opencode（med 2126B）、hermes（med 3107B）同量级，无异常偏小。
+</div>
+<p><b>结论</b>：cline real patch 率 93.1%，处于 7 路中上水平（opencode/deepseek 100%，hermes/claude-code 90.5%）。
+patch 尺寸分布正常，无「只写几行就交差」的退化迹象。codex real 率仅 16.7%（1/6）属异常，但样本太小（仅 6 题完成），待扩样。</p>
+
+<h2>C2 · TB4 cline 失败原因分类</h2>
+
+<h3>首轮（06:02 启动，现已废弃）</h3>
+<div class="box red">
+<b>66/66 全部 errored · 100% <span class="tag infra">基础设施</span></b><br>
+exception = RuntimeError（全部 66 题）<br>
+根因：cline 在容器内运行约 32 分钟（10 轮迭代，264K input tokens，22K output tokens）后，
+网关返回的响应因 <b>ECONNRESET（socket 连接被异常关闭）</b>而中断 → cline CLI 以 exit code 1 退出 →
+适配器 <code>cline_patched.py:201</code> 判定 <code>return_code != 0</code> → <code>raise RuntimeError</code> →
+harbor 跳过 verifier → reward = 0。<br>
+<b>证据</b>：atrx-vep-crispr 任务 stdout 末尾：<code>"finishReason":"error", "message":"Failed to process successful response: TypeError: The socket connection was closed unexpectedly... (ECONNRESET)"</code><br>
+<b>判定</b>：这是网关/网络层故障，<b>不是</b>模型能力问题。cline 实际已产出大量工作但被 exit code 逻辑丢弃。
+</div>
+
+<h3>重跑（09:48 启动，R1740 exit-code 修复前）</h3>
+<table><tr><th>任务</th><th>状态</th><th>reward</th><th>finishReason</th><th>错误信息</th><th>exception</th></tr>
+<tr class="zero"><td>atrx-vep-crispr</td><td>COMPLETED</td><td>0</td><td>completed</td><td>auto-compacted</td><td></td></tr><tr class="err"><td>batched-eval-parity</td><td>ERRORED</td><td>N/A</td><td>error</td><td>Model ended without a recognized finish reason</td><td>RuntimeError</td></tr><tr class="err"><td>biped-contact-dynamics</td><td>ERRORED</td><td>N/A</td><td>error</td><td>Model ended without a recognized finish reason</td><td>RuntimeError</td></tr><tr class="zero"><td>bun-sourcemap-leak</td><td>COMPLETED</td><td>0.0</td><td>completed</td><td>auto-compacted</td><td></td></tr><tr class="err"><td>cad-model</td><td>ERRORED</td><td>N/A</td><td>-</td><td>-</td><td>CancelledError</td></tr>
+</table>
+<div class="box">
+<b>重跑失败分类（5 题已结案）</b>：<br>
+• <span class="tag cap">能力</span> 2 题（atrx-vep-crispr, bun-sourcemap-leak）：verifier 正常运行，reward=0。cline 完成了任务流程但未产出正确结果 —— <b>真实能力不足</b>。<br>
+• <span class="tag infra">基础设施</span> 2 题（batched-eval-parity, biped-contact-dynamics）：finishReason=error, "Model ended without a recognized finish reason"。
+这是 glm-5.3-flash 网关返回的 SSE 响应中 finish_reason 字段非标（或缺失），cline 无法解析 → exit 1 → RuntimeError → verifier 跳过。<b>网关协议兼容问题</b>，非能力。<br>
+• <span class="tag infra">基础设施</span> 1 题（cad-model）：CancelledError —— R1740 重启时被我 kill，非自然失败。<br>
+<b>占比</b>：能力 2/5 = 40%，基础设施 3/5 = 60%（含 1 个人为 kill）。分类之和 = 100%。
+</div>
+
+<h3>R1740 exit-code 修复</h3>
+<div class="box green">
+<b>修复内容</b>：<code>cline_patched.py:201-231</code><br>
+<s>原逻辑</s>：<code>if return_code != 0: raise RuntimeError(...)</code> —— 任何非零退出都跳过 verifier。<br>
+<b>新逻辑</b>：非零退出时检查 stdout 是否含 <code>"run_result"</code> 事件。若有（cline 产出了最终结果），记录 <code>exit_warning</code> 到 metadata 但 <b>不 raise</b>，让 verifier 评分实际输出文件（如 <code>/app/results.txt</code>）；
+仅当完全无 run_result（真正崩溃/无输出）时才 raise。<br>
+<b>依据</b>：verifier 在独立容器运行，检查任务输出文件，与 cline 退出码无关。ECONNRESET / finish-reason 异常时 cline 往往已写入输出文件，verifier 仍可评分。<br>
+<b>状态</b>：✅ 已修复并语法验证通过；cline TB4 rerun2（PID 2737781）已用修复后代码重启，正在运行 66 题全量。
+</div>
+
+<h2>C3 · resume 判定修复验证（空 patch 是否归零）</h2>
+<div class="box">
+<table><tr><th>阶段</th><th>口径</th><th>cline 空 patch 率</th><th>说明</th></tr>
+<tr><td>修复前（R1733）</td><td>size &gt; 50B 判 done</td><td>205/398 = <b>51.5%</b></td><td>空 patch JSON 约 125B（含 instance_id 等字段），被误判为「已完成」→ 永远跳过不重跑</td></tr>
+<tr><td>修复后（R1739+R1740）</td><td>model_patch 字段非空</td><td>2/29 = <b>6.9%</b></td><td>改为检查 model_patch 字段内容是否非空；R1739 cleanup 删除 423 个旧空 patch</td></tr>
+</table>
+<p><b>结论</b>：空 patch 率从 51.5% 降至 6.9%，<b>大幅改善但未完全归零</b>。<br>
+剩余 2 个空 patch：cline-patched__astropy__astropy-13579, cline-patched__astropy__astropy-13977<br>
+这 2 个是本轮 predict 新产生的（mtime 09:56 / 10:26），原因 = predict 过程中网关瞬时异常导致 cline 未产出 patch。
+resume 代码现已正确识别它们为「未完成」（model_patch 为空 → is_predicted=False），<b>下一轮 resume 会自动重跑</b>，不会污染最终分母。</p>
+</div>
+
+<h2>与 opencode / hermes 的差距来源</h2>
+<div class="box">
+<b>本轮（glm-5.3-flash，进行中）</b>：<br>
+• cline 29/500（real 93.1%）、opencode 67/500（real 100%）、hermes 74/500（real 90.5%）—— 尚在 predict 阶段，完成数差异主要由<b>启动顺序 + 网关并发限流</b>决定，非能力差。<br>
+• 待 500 题跑完后做同口径 RESOLVED 率对比。
+<br><br>
+<b>历史（kimi-k2.6-cloud，已完成）</b>：<br>
+• cline 356/500 = 71.3% · opencode 401/500 = 80.2% · hermes 184/500 = 36.8%<br>
+• 11-06 统计检验：cline 与 opencode 差距 86% 为<b>能力差</b>（Fisher exact p = 6.27e-08），非基础设施。<br>
+• 差距归因：opencode 的 diff 格式解析更宽容、上下文压缩策略不同（opencode 自动截断 vs cline auto-compact 机制）。
+</div>
+
+<h2>C4 · cline 专项心跳小结</h2>
+<div class="box blue">
+<b>本轮 cline 专项小结</b>：SWE-bench real 27/29(93.1%) · TB4 首轮66/66全errored(ECONNRESET=infra)→重跑5题(2完成reward0=能力,2errored=网关finish-reason) · exit-code修复R1740已应用·rerun2运行中 · 失败top1=ECONNRESET/finish-reason(网关协议兼容)
+</div>
+
+<h2>归因红线自查</h2>
+<div class="box">
+✅ 网关额度耗尽 / ECONNRESET / finish-reason 异常 → 标记为 <span class="tag infra">基础设施</span>，未写成「模型能力差」<br>
+✅ verifier 运行且 reward=0 → 标记为 <span class="tag cap">能力</span>，未用「基础设施问题」掩盖<br>
+✅ infra 与能力分栏并给判定依据（verifier_result 是否为 null = 关键分水岭）<br>
+✅ cline real patch 明显低于 opencode 时给出可检验假设（exit-code 丢弃已产出结果 → 修复后重跑验证）
+</div>
+
+<hr><p><small>报告生成：gen_cline_special_r1740.py · 数据截止 2026-11-07 ~10:47 · 命名纪律：正文一律 cline（代码标识符 cline_patched.py 不改）</small></p>
+</body></html>

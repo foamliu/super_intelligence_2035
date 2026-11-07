@@ -198,8 +198,35 @@ class ClinePatched(TBBaseAgent):
             "exit_code": result.return_code,
         }
 
+        # Cline may exit with code 1 on RECOVERABLE gateway/protocol errors
+        # (ECONNRESET, "Model ended without a recognized finish reason") even
+        # after producing substantial work — files written, many tool-call
+        # iterations, and a final ``run_result`` event in stdout.  Previously
+        # ANY non-zero exit raised RuntimeError, which made harbor skip the
+        # verifier entirely => reward 0 regardless of actual output files.
+        # (Trace evidence 2026-11-07: 66/66 TB4 trials errored on exit 1 with
+        #  ECONNRESET / finish-reason; cline had run 10 iterations, 264K
+        #  input tokens, 22K output tokens.)
+        #
+        # Fix: only raise (skip verifier) when cline produced NO run_result
+        # event (genuine crash / no output).  When a run_result exists, log a
+        # warning in metadata and let the verifier grade the actual task
+        # output files (e.g. /app/results.txt) — the verifier runs in a
+        # separate container and is independent of cline's exit code.
         if result.return_code != 0:
-            raise RuntimeError(
-                f"Cline-patched exited with code {result.return_code}: "
-                f"{(result.stderr or '')[:500]}"
+            stdout = result.stdout or ""
+            has_run_result = '"run_result"' in stdout
+            if not has_run_result:
+                raise RuntimeError(
+                    f"Cline-patched exited with code {result.return_code} "
+                    f"with no run_result event: "
+                    f"{(result.stderr or '')[:500]}"
+                )
+            # Agent produced a run_result despite non-zero exit (e.g.
+            # ECONNRESET / unrecognised finish reason from the gateway).
+            # Record a warning but allow the verifier to grade output files.
+            context.metadata["exit_warning"] = (
+                f"Cline exited with code {result.return_code} but produced "
+                f"a run_result; verifier will grade output files. "
+                f"stderr={(result.stderr or '')[:200]}"
             )

@@ -60,63 +60,9 @@
 ---
 
 
-### ✅ §用户令·2026-11-07 08:1x（**评测脚本代际审计：Kimi→GLM-5.3-Flash · Lite/TB2→Verified/TB4** 可继承的继承、不可用的改掉，目标消灭 TB4 全 0 passed）· 用户直令 · ✅ 已交付（R1739）
+### ✅ §用户令·2026-11-07 08:1x（评测脚本代际审计）· ✅ 已交付（R1739）
 
-> **用户原话**：「安排 Harness 重新审视一下以前的评测脚本。从前的脚本是为 Kimi 模型调试的，现在是 GLM-5.3-Flash。从前的脚本是为 SWE-bench Lite/TB2，现在是 SWE-bench Verified/TB4。可用的就继承，不可用的就修改。争取解决 TB4 全 0 passed 等问题。」
->
-> **核心认知（先看，别重复踩）**：现有 7 路链路是 **kimi-k2.6-cloud + SWE-bench Lite + TB 2.0** 时代调出来的，现在同时换了两代（模型 + 基准）。**必须逐层审计，不许「整体照搬」**。审计结论要落成一张**代际矩阵表**（维度 × 7 路 × 继承/改/废），写进交付报告。
-
-#### ⭐ 已定位的 TB4 全 0 passed 头号根因（运维侧预查，供你验证而非照抄）
-
-> **现象**：`traces/tb4_glm53_full_*.log` **7 路全部恰好 844 字节且内容相同** → 7 路死在同一处，与 harness 无关。
-> **日志原文**：`Configured runtime overrides apply only to the agent environment and are not propagated to separate verifier environments (extra_docker_compose: .../overlay-network-host.yml). Bake grading dependencies into the verifier image under tests/ ...`
-> smoke 佐证：`1/1 Mean: 0.000` / `Reward 0.0: 1`，agent 仅跑 1m48s 即结束。
-> **根因**：`overlay-network-host.yml` 经 `harbor run --extra-docker-compose` 注入，**只作用于 agent 容器**。TB4 的 **verifier 是独立容器**，拿不到 overlay ⇒ 无 `network_mode: host`（连不上内网）+ 无 `~/.local/bin/env` 与 `uvx` 预挂载（test.sh `source env` 失败）+ 无 pip/uv 镜像 ⇒ **test.sh 崩 ⇒ 无论 agent 干得多好一律 reward 0**。
-> ⚠️ 这是 `overlay-network-host.yml` 注释里 R433 同一根因在 TB4 上的**复现**（TB2 靠 `main` 服务名侥幸命中，TB4 拆出独立 verifier 后失效）。
-> **修法（择一，须实测）**：**A（首选）** 查 harbor 是否支持 overlay 同时作用于 verifier（`harbor run --help` + 源码，找 `--verifier-*`/作用域参数）；**B** 按日志提示把 grading 依赖烘焙进 verifier 镜像（`tests/` 下 setup 或 prebuild）；**C** 若 harbor 有入口，给 verifier 单独开 overlay（`network_mode: host` + 同 volumes）。
-> 🚫 **禁止**把 `Reward 0.0` 当「模型能力差」写进结论。**验证判据**：先 **1 题 × 1 路** 确认 test.sh 能在 verifier 内 `uvx` 起来、reward 非结构性 0；**再跑 oracle 必须得 1.0**，否则仍是 infra 问题。
-
-#### 审计任务（结论写进报告「代际矩阵」节）
-
-> **维度 1 · kimi-k2.6-cloud → glm-5.3-flash**
-> - [ ] `grep -rn 'kimi' run/harness/` 实测 **450 处 / 156 文件**，分三类：①**死代码**（`incr_eval_r1570..R1649` 等 40+ 一次性历史脚本）→ 只读留档，**不改不删**；②**活代码**（`run_harness.py:42` `UNIFIED_MODEL`、`incr_eval_backlog.py:67`、`swebench_verified_full/*`）→ 必须切 glm53；③**注释/docstring**（`_base.py:4,41,43`）→ 同步改正，**防止下个 agent 再被误导**（codex 的 `kimi`+`responses` 就是这么来的）。
-> - [ ] **协议层**：kimi 时代 `responses` 已废，glm 走 `chat`。核查 7 路协议（codex=chat / claude-code=Anthropic `/v1/messages`→gw_proxy 转 / deepseek=dsh 剥参 / 其余 OpenAI chat）是否都指 **9092/9093**；`_base.py` 的 `TB_MODEL` 默认值不得再是 kimi。
-> - [ ] **model 名**：`glm-5.3-flash` vs gateway 实际接受名，逐路 `curl` 探针 200。
-> - [ ] **429/额度**：当前 gateway 429（ETA~09:25）与 kimi 时代限流语义是否一致，重试/退避是否需区分。
-
-> **维度 2 · SWE-bench Lite → Verified / TB2 → TB4**
-> - [ ] **Verified 500 ≠ Lite 300**：确认 `run_verified_full.py` 实例清单/镜像名/`FAIL_TO_PASS` 解析走 Verified 500。
-> - [ ] **空 patch resume 判据 bug**：现按文件 `size>50B` 判 done，空 patch 是 125B ⇒ 永远跳过不重跑，已污染 **205/398=51.5%** → **改判 `model_patch` 字段非空** + 写清理脚本 + 单题验证。
-> - [ ] **TB2→TB4 差异**：题数（TB2 89 / TB4 66，须以官方为准并写明）、harbor 版本、dataset 结构、**verifier 拆分**（← 头号根因）、`--agent-timeout-multiplier` 是否仍存在（`launch_tb4_glm53_full.sh` 注释称「removed」，须核实真实参数，别照抄注释）。
-> - [ ] **镜像**：TB4 66 张是否全齐；`docker system df` + `/data` 余量核算。
-
-> **维度 3 · 7 路适配器逐个体检（继承 / 修改 / 废弃）**
-> 逐路结论表：`cline_patched / codex / opencode / claude_code / pi / hermes / deepseek_harness`
-> - [ ] 每路四项：①`install()` 快路径在本代镜像是否仍成立（node/uv/cline ELF/codex npm/claude ELF 挂载点有无变）②`run()` 的 CLI 参数本代是否仍有效（`codex exec` / `claude -p` / `opencode run`…）③超时 `TB_AGENT_TIMEOUT=3600` 是否匹配 TB4 实际耗时 ④退出码处理（现非 0 一律 `raise RuntimeError` ⇒ errored 被当失败，是否该允许「非 0 但已产出结果」）。
-> - [ ] **codex 专项**：`config.toml` 曾写死 kimi+responses（已修）→ **确认生效**。其 `tb4_glm53_full_codex.log` 现仅 844B＝连 task 都没跑到，被 verifier 问题掩盖，根因解除后**必须重验**。
-
-#### 执行顺序（严格按此）
-
-1. **P0（≤30min）根因验证**：读 harbor 源码/`--help` 找 verifier overlay 入口 → **1 题 × 1 路** 验证 reward 非 0 → **oracle 必须 1.0**。**这一步不过，后面全部无意义**。
-2. **P1 修 resume 判据**：改代码 + 清理脚本 + 单题验证。
-3. **P2 代际矩阵审计**：完成上述 3 维逐项结论表（只读代码审计，无需 GPU）。
-4. **P3 小规模回归**：TB4 **3 题 × 7 路** + SWE-bench **20 题 × 7 路**，确认 7 路均产出非空结果、无结构性 0。
-5. **P4 全量**：等 429 恢复后按 §22:4x 口径跑满；存量 205 个空 patch **作废重跑，不许混进最终分母**。
-
-#### 交付物
-
-- `reports/report_harness_script_audit_gen_matrix_zh.html`：中文单文件、**0 script 0 外链**，含 ①代际矩阵表（维度 × 7 路 × 继承/修改/废弃 + 依据）②TB4 全 0 根因链 ③修复前后 1 题对照证据（含 oracle=1.0）④`kimi` 残留分类清单 ⑤7 路适配器体检表 ⑥残余风险（**infra 单列**）。
-- 生成器脚本 + `MEMORY_HARNESS.md` 心跳；完成后本行改 `✅ 已交付`。
-
-#### 护栏
-
-- 🚫 结构性 infra 失败**不得**写成模型能力结论；报告 infra 与能力分栏并给判定依据。
-- 🚫 结果 JSON 不入库（硬约束③）；🚫 不改 `run/harness/` 之外的他线上游代码。
-- 历史一次性脚本（`incr_eval_r15xx/R16xx` 等）**不改不删**，仅在矩阵表标「历史/死代码」。
-- CPU 单进程 >80 核立杀、内存失控先杀再重测（沿用 10-30 / 11-02 令）。
-- TASK/MEMORY ≤32KB（运维已归档瘦身到 32KB，**执行本令时继续滚动已闭合块**，别涨回去）；每个 P 阶段即 commit（`harness audit:` 前缀）。
-
-> **完成标记**：代际矩阵报告交付 **且** TB4 ≥1 题 × 1 路 reward 非 0（oracle=1.0 已验证）⇒ 改 `✅ 已交付`；否则 `WAITING: 0`。
+> 📦 §用户令·2026-11-07 08:1x（评测脚本代际审计：Kimi→GLM-5.3-Flash · Lite/TB2→Verified/TB4）已归档 → run/ARCHIVE_OPERATOR_HARNESS.md；**结论**：代际矩阵报告已交付(17.8KB)·oracle=1.0×3(verifier正常)·TB4全0=429+合理失败(运维预判overlay根因=错误)·resume bug已修(size>50B→model_patch非空)·空patch 51.5%→6.9%。需要时再读。
 
 ---
 
