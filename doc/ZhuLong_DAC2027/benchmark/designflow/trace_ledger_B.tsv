@@ -421,3 +421,6 @@ vbxlf.messages.json	jason17w	hfeg0pnd002	262	spice_sim	parked		2026-11-05 12:30	
 1793865966161_rkdu8	yuankong	hfhds201	85	spice_sim	case	EDA-Eval-DesignFlow-NetlistSchemInstLocate-001	2026-11-07 23:00	
 1789699043373_y91i6	ericw	hfhds201	34	characterization	case	EDA-Eval-DesignFlow-CgMeetExactlyMissWalk-001+EDA-Eval-DesignFlow-CgtMeetExactlyFilter-001	2026-11-07 23:55	同 trace 两轮:U#0=CgMeetExactlyMissWalk(meet_exactly未命中清单)+U#1=CgtMeetExactlyFilter(关键词去除过滤表,hidden B+SRE)
 1790042178493_mrmfn	ericw	hfhds201	30	characterization	case	EDA-Eval-DesignFlow-CovBinMetaExtract-001	2026-11-07 23:58	
+1794033409066_h2sri	e0030760	hfeg0pkn004	86	spice_sim	case	EDA-Eval-DesignFlow-SpDeckStructExtract-001	2026-11-08 00:38	
+1793670518248_ap4dl					parked		2026-11-08 00:42	GUI task (tkinter xval_tool), hspice counts from tool processing hspice decks, not real spice sim
+1794037498869_m5mbi					parked		2026-11-08 00:42	disk-scanner V5 optimization (scandir_find concurrency), hspice counts from scanner traversing hspice dirs, not real spice
