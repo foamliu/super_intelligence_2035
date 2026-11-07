@@ -1213,3 +1213,4 @@ sr426.messages.json					parked		2026-11-07 08:07	#343 peek: netlist 122+hspice 6
 us0hd.messages.json					parked		2026-11-07 08:07	#343 peek: netlist 23 thin, not produce
 bw2u5.messages.json					parked		2026-11-07 08:07	#343 peek: netlist 5 only, too thin
 3lvd6.messages.json					parked		2026-11-07 08:07	#343 peek: dup of sr426 (same jackliu netlist/hspice/calibre)
+1793792373749_l5r0u					case	EDA-Eval-DesignFlow-IOBufParamTune-001	2026-11-07 08:47	
