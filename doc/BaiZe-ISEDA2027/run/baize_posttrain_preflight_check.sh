@@ -63,15 +63,22 @@ check "MiniCPM5-2B" "[ -d \"$BAIZE_MODEL_PATH\" ] && [ -f \"$BAIZE_MODEL_PATH/co
 check "eda_fastmcp" "[ -d \"$BAIZE_EDA_BASE\" ] && [ -f \"$BAIZE_EDA_BASE/docs/API_INFO_MERGED_V3.json\" ]"
 check "158-case" "[ -f \"$BAIZE_EDA_BASE/pyAether-eval/original_dataset/EDA-Eval-PyAether-v20260311.jsonl\" ]"
 check "RL parquet" "[ -f \"$BAIZE_RUN_DIR/rl_pyaether_synth_v2.parquet\" ]"
-check "SFT parquet" "[ -f \"$BAIZE_RUN_DIR/sft_pyaether_corpus.parquet\" ]"
-check "SFT JSONL" "[ -f \"$BAIZE_RUN_DIR/sft_pyaether_corpus.jsonl\" ]"
+check "SFT v2 parquet" "[ -f \"$BAIZE_RUN_DIR/sft_pyaether_corpus_v2.parquet\" ]"
+warn_check "SFT v1 parquet (legacy)" "[ -f \"$BAIZE_RUN_DIR/sft_pyaether_corpus.parquet\" ]"
+check "SFT v2 JSONL" "[ -f \"$BAIZE_RUN_DIR/sft_pyaether_corpus_v2.jsonl\" ]"
 check "RL JSONL" "[ -f \"$BAIZE_RUN_DIR/rl_pyaether_synth_v2.jsonl\" ]"
 check "contamination gate" "[ -f \"$BAIZE_RUN_DIR/baize_posttrain_contamination_gate.sh\" ]"
 
+# R31: API DB loadability check (not just file existence)
+check "API DB loadable" "python3 -c \"import json; d=json.load(open('$BAIZE_EDA_BASE/docs/API_INFO_MERGED_V3.json')); assert isinstance(d,dict) and len(d)>8000, f'API count={len(d)}'; exit(0)\""
+
 # 4. Scripts
 check "API profiler py" "python3 -m py_compile \"$BAIZE_RUN_DIR/baize_posttrain_api_profiler.py\""
-check "SFT gen py" "python3 -m py_compile \"$BAIZE_RUN_DIR/baize_posttrain_gen_sft_corpus.py\""
+check "SFT gen v2 py" "python3 -m py_compile \"$BAIZE_RUN_DIR/baize_posttrain_gen_sft_corpus_v2.py\""
+check "SFT gen v1 py" "python3 -m py_compile \"$BAIZE_RUN_DIR/baize_posttrain_gen_sft_corpus.py\""
 check "EDA tool py" "python3 -m py_compile \"$BAIZE_RUN_DIR/baize_posttrain_eda_tool.py\""
+check "reward funcs py" "python3 -m py_compile \"$BAIZE_RUN_DIR/baize_posttrain_reward_functions.py\""
+check "reward validate py" "python3 -m py_compile \"$BAIZE_RUN_DIR/baize_posttrain_reward_validate.py\""
 check "paths.sh" "BAIZE_PATHS_VERBOSE=1 source \"$BAIZE_RUN_DIR/baize_posttrain_paths.sh\""
 check "RL grpo.sh" "bash -n \"$BAIZE_RUN_DIR/baize_posttrain_rl_grpo.sh\""
 check "SFT.sh" "bash -n \"$BAIZE_RUN_DIR/baize_posttrain_sft.sh\""
@@ -90,8 +97,15 @@ GPU_BUSY=$(nvidia-smi --query-gpu=index,memory.used --format=csv,noheader 2>/dev
 echo -n "[GPU idle] ... "
 if [ -z "$GPU_BUSY" ]; then echo "PASS"; PASS=$((PASS+1)); else echo "WARN (GPU $GPU_BUSY busy)"; WARN=$((WARN+1)); fi
 
-# 6. SSH tunnel
-warn_check "SSH .15" "ssh -o ConnectTimeout=5 -o BatchMode=yes 10.251.36.15 echo ok"
+# 6. SSH tunnel (R31: sandbox endpoint — .17→.15 confirmed down in R23/R25)
+#    Fallback: RL config has auto_fallback:true → R0 skeleton mode (no sandbox needed)
+echo -n "[SSH .15 sandbox] ... "
+if ssh -o ConnectTimeout=5 -o BatchMode=yes 10.251.36.15 echo ok 2>/dev/null; then
+    echo "PASS"; PASS=$((PASS+1))
+else
+    echo "WARN (down → R0 skeleton fallback will be used, R23/R25 confirmed)"
+    WARN=$((WARN+1))
+fi
 
 # 7. cline
 echo -n "[cline] ... "

@@ -3931,3 +3931,61 @@ bash baize_posttrain_launch_11_9.sh --step 0-5 --gpu-ids 0,1,2,3
 
 **结论**：R30 修复了 R29 遗留的 cheat detection 测试 bug（n-gram 集合 vs 原始字符串），并产出 11/9 GPU Day 完整执行手册。所有零 GPU 预研工作（P0-P3 预备 + R1-R30）已完成。11/9 GPU 到位后可直接按手册执行 Step 0-5。
 
+---
+
+## §R31 GPU 前夜最终缺口审计 + Preflight 脚本修复（2026-11-08 · 零 GPU · wake79）
+
+> **动机**：R30 执行手册依赖的 `baize_posttrain_preflight_check.sh` 仍有遗留缺陷。R31 在 GPU 到位最后一天做端到端缺口审计。
+
+### R31.1 发现的 3 类缺陷
+
+| # | 缺陷 | 旧检查 | 新检查（R31） | 影响 |
+|:--|:--|:--|:--|:--|
+| 1 | SFT parquet 版本过时 | 检查 v1 (`sft_pyaether_corpus.parquet`) | 检查 v2 (`sft_pyaether_corpus_v2.parquet`) + v1 降为 warn | 旧检查 PASS 但实际应训练用 v2 |
+| 2 | API DB 仅检查目录存在 | `[ -d "$BAIZE_EDA_BASE" ] && [ -f ".../API_INFO_MERGED_V3.json" ]` | `python3 -c "import json; d=json.load(open('...')); assert isinstance(d,dict) and len(d)>8000"` | 文件存在 ≠ 可加载 |
+| 3 | 奖励函数/验证脚本未做编译检查 | 仅检查 3 个 py（api_profiler/sft_gen/eda_tool） | 新增 3 个：reward_functions / reward_validate / gen_sft_corpus_v2 | 语法错误不会被 preflight 发现 |
+
+### R31.2 API DB Key 格式验证（R29 遗留项 → ✅ 已验证）
+
+R29 心跳标注"11/9需验证API DB key格式"。R31 实测：
+
+- API DB 路径：`~/code/eda_fastmcp/docs/API_INFO_MERGED_V3.json` = `/home/app.e0031982/code/eda_fastmcp/docs/API_INFO_MERGED_V3.json`（18MB）
+- 格式：dict，8463 个 key（API 名称），每个 value = `{api_name, api_type, api_descriptions, category}`
+- 奖励函数 `_load_api_database()` 处理逻辑：`api_names = set(data.keys())` → 正确提取 8463 个合法 API 名 ✅
+- R4 臂 API 合法性检查将正确工作（模型生成的 API 名 vs 8463 已知 API 名集合）
+- ⚠️ R29 指出的"25 未知 API × -0.05 = -1.25 → clip 0.0"问题取决于真实 rollout 中模型输出质量，11/9 smoke test 验证
+
+### R31.3 沙盒隧道状态（⚠️ 已知限制）
+
+- RL config `sandbox_endpoint: ssh://tunnel-to-36.15` 是占位符
+- R23/R25 已确认 .17 → 10.251.36.15 SSH 超时（跨网段不通）
+- 降级方案（R22 已实现）：`auto_fallback: true` → R0 skeleton 静态分析奖励（不需沙盒）
+- 11/9 smoke test 将在 R0 模式运行 —— 验证 GRPO 训练链路（非验证 RL 效果）
+- 沙盒替代方案（按优先级）：① 本地 PyAether clone ② 双向隧道 ③ RPC over HTTP
+
+### R31.4 修复验证
+
+| 检查项 | 结果 |
+|:--|:--|
+| `bash -n baize_posttrain_preflight_check.sh` | ✅ SYNTAX OK |
+| `python3 -m py_compile baize_posttrain_reward_functions.py` | ✅ OK |
+| `python3 -m py_compile baize_posttrain_reward_validate.py` | ✅ OK |
+| `python3 -m py_compile baize_posttrain_gen_sft_corpus_v2.py` | ✅ OK |
+| API DB loadable | ✅ 8463 APIs |
+| `sft_pyaether_corpus_v2.parquet` 存在 | ✅ 3.6MB |
+| `sft_pyaether_corpus_v2.jsonl` 存在 | ✅ |
+
+### R31.5 修复后 preflight 检查项（35 项）
+
+- critical: 26 项（含 3 项 R31 新增）
+- warn: 9 项（含 GPU idle / SSH .15 / venv 待创建等预期项）
+- R31 新增检查项：SFT v2 parquet / SFT v2 JSONL / API DB loadable / reward_funcs py_compile / reward_validate py_compile / gen_sft_v2 py_compile
+- R31 修改：SFT v1 parquet 从 critical 降为 warn（legacy）；SSH .15 检查增加降级说明
+
+**交付物**：
+- `baize_posttrain_preflight_check.sh` R31 修复版（bash -n ✅）
+- `reports/report_posttrain_r31_gpu_eve_gap_audit_zh.html`（9.9KB, 8 节, 0 script, 0 外链）
+- EXPERIMENTS §R31（5 小节）
+
+**11/9 就绪度（R31 后）**：全栈 ✅ + 关键路径 ✅ + 数据 ✅ + 奖励函数 ✅ + cheat ✅ + 脚本 ✅ + preflight ✅ + GPU ⬜（明天）
+
