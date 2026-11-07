@@ -1267,3 +1267,4 @@ tjzn5					parked		2026-11-07 12:29	env Q&A + skill-creator usage (#352 peek weak
 1793857741122_genvz	adaml	10.129.2.11	183	schematic_netlist	case	EDA-Eval-DesignFlow-CdlNetlistGen-001	2026-11-07 14:37	
 1793260818025_aw9d7.messages.json	dsgao	hfhds201	273	schematic_netlist	case	EDA-Eval-DesignFlow-SpiceClosureExtract-001	2026-11-07 15:11	
 1791973347667_tx5s5.messages.json	e04201	hfeg0pkn002	46	schematic_netlist	case	EDA-Eval-DesignFlow-TestModeExtract-001	2026-11-07 15:40	
+1792205134941_5hbdw	hengbow	hfeg0pgn045	144	schematic_netlist	case	EDA-Eval-DesignFlow-SaTransistorExtract-001	2026-11-07 16:06	
