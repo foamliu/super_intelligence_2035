@@ -285,7 +285,19 @@ def process_instance_for_harness(instance_id, harness, do_setup=True, do_run=Tru
         pred_file = WORKDIRS / f"predictions_kimi_{harness.replace('-', '_')}_{instance_id}.json"
         ok, hres = run_harness_serial(harness, inst_json, workdir, pred_file)
         if do_eval:
-            has_patch = pred_file.exists() and pred_file.stat().st_size > 50
+            # FIX (2026-11-07): check model_patch field non-empty, not file size.
+            # An empty-patch JSON is ~125B, so the old size>50 check treated it
+            # as "has patch" → eval ran on empty patch → "patch-but-failed" →
+            # skipped on --resume forever.  Now we parse the JSON and verify the
+            # model_patch string is non-empty.
+            has_patch = False
+            if pred_file.exists():
+                try:
+                    _preds = json.loads(pred_file.read_text())
+                    _p = _preds[0] if isinstance(_preds, list) else _preds
+                    has_patch = bool(_p.get("model_patch", "").strip())
+                except Exception:
+                    has_patch = False
             if has_patch:
                 run_id = f"R1_KIMI_{harness.replace('-', '_').upper()}_{instance_id.replace('-', '_')}"
                 print(f"  [EVAL] {harness} on {instance_id} ...")

@@ -1,17 +1,17 @@
 # MEMORY_HARNESS.md — BaiZe Harness 研究线 · 运行时状态
 
-WAITING: 1
+WAITING: 0
 
 ## 📊 进度快照
 
 ```
-PHASE:        R1734 🚨网关429持续(ETA~09:25)·SWE-bench 398/3500(11.4%)·193有效patch/205空patch(51.5%浪费)·TB4全7路0 passed(66题)·codex TB4进程已死
-已完成:       H-B✅·Gate7/7·TB报告✅·full500全7路predict+eval 100%完成✅·R1685 cline低分归因✅·R1694-R1733 glm53重测启动+proxy修复+TB4全7路启动
-当前动作:     R1734 监控轮:①自检CPU/MEM PASS(load54/224·无>8000%·无>50GB·MEM avail 1220G) ②disk /data 5.8T(18%)/ 352G(4%)✅ ③gateway 429(请等待2h21s,ETA~09:25) ④SWE-bench 398/3500(11.4%):her90/op78/cc65/cl46/pi42/ds39/codex38·7/7 alive·空patch(model_patch="")205个(51.5%)·有效193个·8files in 5min ⑤TB4(66题)全7路0 passed:result.json全{}·codex 67results/进程DEAD(RuntimeError+max retries)·cline30/hermes28/opencode5/deepseek5/cc3/pi3 alive ⑥不kill(CPU正常)
-下一步:       ①等待~09:25网关恢复后curl验证HTTP 200 ②删除空patch(model_patch="")让SWE-bench resume重跑 ③重跑codex TB4(进程已死) ④其他TB4路errored trials需rerun ⑤按100/300/500汇报SWE-bench ⑥每路predict完即eval ⑦两基准全7路交付后写报告
-阻塞:         🚨网关Token额度耗尽(HTTP 429,ETA~09:25)·14路harness均受影响·需等额度恢复
+PHASE:        R1735 代际审计P0/P1/P2:TB4根因纠正(运维预判verifier overlay错误→实为agent端失败)+P1 resume bug修复+cleanup脚本就绪·网关429(ETA~09:24)
+已完成:       H-B✅·Gate7/7·TB报告✅·full500✅·R1685 cline低分归因✅·R1694-R1734 glm53重测启动·R1735 TB4根因纠正+P1 fix+cleanup脚本
+当前动作:     R1735 代际审计:①TB4根因=agent端失败非verifier overlay(opencode/pi smoke完成reward=0.0证明verifier正常·TB4 test.sh用pytest不用uvx)②run_serial_kimi.py:288 size>50B→model_patch非空(已修)③cleanup_empty_patches.py就绪(285/479=59%空)④harbor有oracle agent ⑤网关429(ETA~09:24)
+下一步:       ①等~09:24网关恢复→1题×1路验证reward非0→oracle=1.0 ②--delete清理空patch→重跑 ③TB4重跑(全errored) ④P2代际矩阵审计 ⑤P3 3题×7路 ⑥P4全量 ⑦报告
+阻塞:         🚨网关429(ETA~09:24)·P0验证/P3/P4需网关
 ERROR_COUNT:  1
-  📦 体积：TASK=32074B(31.3KB) / MEMORY=~32KB(本轮归档R1732/R1731→1行指针+删旧指针)
+  📦 体积：TASK=32454B(31.7KB) / MEMORY=~30KB(本轮归档R1734/R1733→1行指针)
 ```
 
 > 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
@@ -19,8 +19,9 @@ ERROR_COUNT:  1
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 
 ### 本唤醒流水
-> [07:25] R1734 监控轮:①自检CPU/MEM PASS(load54/224~24%busy·max harness 0.8%·无>8000%·无>50GB·MEM avail 1220G) ②disk /data 5.8T(18%)/ 352G(4%)✅ ③gateway probe=429(请等待2h21s,ETA~09:25) ④SWE-bench 398/3500(11.4%):her90/op78/cc65/cl46/pi42/ds39/codex38·7/7 alive·空patch(model_patch="")205个(51.5%):codex38/38=100%空·cc47/65=72%空·pi26/42=62%空·cline23/46=50%空·her39/90=43%空·ds17/39=44%空·op15/78=19%空·有效193个·8files in 5min ⑤TB4(66题)全7路0 passed:result.json全{}·codex 67results/进程DEAD(RuntimeError+max retries)·cline30/hermes28/opencode5/deepseek5/cc3/pi3 alive ⑥不kill(CPU正常)·WAITING:1(外部阻塞)·未完成指令:有(glm53重测)但外部阻塞⇒WAITING:1
-> [06:51] R1733 🚨网关额度耗尽监控轮:①自检CPU/MEM PASS(load53/224·max harness~1core·无>8000%·无>50GB·MEM 669G/2T avail 1.2T) ②disk /data 5.8T(18%)/ 352G(4%)✅ ③🚨gateway probe 3次全HTTP 429「本次Token额度已用完,请等待2小时38分钟13秒后重试」·gw_proxy 9092+9093本地=200(但转发gateway仍429) ④SWE-bench 336/3500(9.6%):her84/op75/cc46/cl39/ds36/pi37/codex19·7/7 run_single alive·近2.5h 142 pred中87空patch(61%·429导致) ⑤resume逻辑(run_serial_kimi.py:288 size>50B)→空patch(125B)算"done"不重跑→需后续手动删空patch补跑 ⑥TB4 result.json:codex 40done/40err(RuntimeError=503)·cline 7done/7err·hermes 9done/2err·opencode/cc/deepseek/pi各0done(仍在task1,atrx-vep-crispr超难) ⑦codex_rerun_R1731.log确认503=Service Unavailable ⑧不kill(CPU正常·harnesses自动恢复)·设WAITING:1(外部阻塞,15min后复查)·未完成指令:有(glm53重测)但外部阻塞⇒WAITING:1
+> [08:05] R1735 代际审计P0/P1/P2:①自检CPU/MEM PASS(load43/224·无>8000%·无>50GB) ②disk /data 5.8T(18%)/ 352G(4%)✅ ③gateway 429(请等待1h18m,ETA~09:24) ④**TB4根因纠正**:运维预判"verifier overlay不生效"=**错误**→TB4 verifier自带pytest(tests/Dockerfile预装)·test.sh用pytest不用uvx·**证据**:opencode/pi smoke完成reward=0.0(verifier正常·agent没解题)→TB4全0=agent端失败(cline exit code1·gateway 429)·overlay警告仅WARNING非fatal ⑤**P1修复**:run_serial_kimi.py:288 `size>50B`→改为`model_patch`非空·run_verified_full.py:242已正确 ⑥cleanup_empty_patches.py就绪:dry-run=285/479(59%)空patch·codex 98%空 ⑦harbor有oracle/nop agent→可验oracle=1.0 ⑧SWE-bench 479/3500(13.7%):her98/op82/cc90/cl55/pi48/ds43/codex63·7/7 predict alive ⑨kimi残留6759处/156文件 ⑩_base.py docstring仍写kimi(stale)·WAITING:0(未完成指令·网关429外部阻塞)
+> 📦 R1734 流水已归档 → daily-memories-harness/2026-11-07.md。结论：监控轮,SWE-bench 398/3500,TB4全7路0 passed。需要时再读。
+> 📦 R1733 流水已归档 → daily-memories-harness/2026-11-07.md。结论：网关429首报,SWE-bench 336/3500,resume bug(run_serial_kimi.py:288)定位。需要时再读。
 > 📦 R1732 流水已归档 → daily-memories-harness/2026-11-07.md。结论：TB4全7路启动+SWE-bench 321/3500。需要时再读。
 > 📦 R1731 流水已归档 → daily-memories-harness/2026-11-07.md。结论：TB4 codex适配器stale config修复+rerun+SWE-bench 305/3500。需要时再读。
 > 📦 R1730 流水已归档 → daily-memories-harness/2026-11-07.md。结论：监控轮,SWE-bench 289/3500,TB4 codex 3 errored(exit=1),首报codex问题。需要时再读。
