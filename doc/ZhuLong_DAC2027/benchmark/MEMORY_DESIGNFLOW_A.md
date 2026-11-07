@@ -36,13 +36,12 @@ WAITING: 0（shard A 轮 196：scansync r196 到期(scan_path 仍 20261105_19282
 - DEBT: 0（r196 无新 DEBT）；BLOCKER: ① verification 0 命中前提推翻 → verification 走静态分析 L2(r168 IrunSimDiagnose 即是)；**③ 降级(r173, r174 验证生效)**: $6 keyword digital 词频排序后真 dc_shell/synopsys/verilog fresh 存在(ru6mx 已出 case, c084j/qo3pd 待选)，BLOCKER ③ =「排序方法盲点已修正」；⑤ judge-env 隐蔽假 FAIL 源；⑥ check.py 编辑后必须重生成 reference_submit.zip + rebuild negatives + 同步 prompt + 同步 jsonl test 字段；⑩ 朴素子串断言假 FAIL → 数值类必容差/子串断言必剥注释；⑬ canonical-label vs prose 非 ④
 - 🧾 断言: 今日 26 新 case 交付（...前20同前... + **r191 DcSynthAnalyze k=25** + **r192 SimRunDepExtract k=17** + **r193 SpecNotifClassify k=14** + **r194 RedBistFlowRecon k=16** + **r195 SramGrpStructAnalyze k=18** + **r196 DesignListGen k=15**，均 k_rationale=k_check≥8 闸门 PASS）；存量断言清单进度 58/37（r196 +1: DesignListGen k=15 达标；存量 36 全达标，新 case 即时达标）；今日 x/30 达标 = 26；rewrite_queue.tsv 全 done（17 条）；DEBT-2 保留（DeadLoopScan (c) key 别名归一化待未来候选真触达再修）
 
-## 今日 scansync 报告（2026-11-06 r171，运维令 step 1-4）
-- **scansync 到期执行**：r166+5=r171，本轮在 .75 经 eda_flow run_commands 跑 scansync 统计。
-- **数字与 summary_stats.json 完全一致(无需 refresh 更新)**：scan_dir=/home/t0002965/log/ssh_eda_search_20261105_192825(仍最新, 无新扫描)；total_rows=5822 / dedup_sessions=3896 / dedup_users=268 / mc30=1511 / mc100=865 / users_mc30=224；shard_A_pool_mc15=216 / shard_B/C/D_pool_mc30=642/935/1168（与 summary_stats.scansync 一致）。
-- **daily scan log 健康**：/home/t0002965/log/eda_trace_20261106.log = 2899 行（>100 行阈值 ✓，扫描脚本未挂）。
-- **corrected-dedup 复核(本轮发现)**：自写 python 候选排序 strip ".messages.json" 用 [:-13] off-by-one(实际 14 字符) → 真 fresh=110(vs 错算 217), digital-dominant(digi>ana) fresh=0。ledger 自身 awk sub() 一直正确 → 历史 jsonl/台账/case 不受影响, 仅本轮临时 python 受影响。各 shard 新增候选(summary_stats.scansync)不变: A+92 B+200 C+247 D+383。
-- **今日新增 trace**（各 shard 候选，来自 summary_stats.scansync）：shard_A_new=92 shard_B_new=200 shard_C_new=247 shard_D_new=383（11/05 新扫描 vs 旧 10/28 扫描新增 session）。
-- **shard A fresh 候选池**：keyword($6) digital-dominance 排序后剩余 fresh: nr884(thomas1w mc159 已 r194 用)/uiqz1(e0043890 mc212 rtl:1742)/8g8rx(jessegao mc203 pdk/aether)/ytldc(dsgao mc175 backup)。下次 scansync 约 r196。
+## 今日 scansync 报告（2026-11-07 r196，运维令 step 1-4）
+- **scansync 到期执行**：r191+5=r196，本轮在 .75 经 eda_flow run_commands 跑 scansync 统计。
+- **数字与 summary_stats.json 一致(已纠偏)**：scan_dir=/home/t0002965/log/ssh_eda_search_20261105_192825(仍最新, 无新扫描)；total_rows=5822 / dedup_sessions=3896 / dedup_users=268 / mc30=1511 / mc100=865 / mc300=347 / users_mc30=224；shard_A_pool_mc15=216 / shard_B/C/D_pool_mc30=642/935/1168。前次崩溃 r196 在 12:41 误写 sessions=270(=users)/mc30=1369(=旧扫描), 本轮 12:57 refresh 恢复正确 dedup 数。
+- **daily scan log 健康**：/home/t0002965/log/eda_trace_20261107.log = 2916 行（>100 行阈值 ✓，扫描脚本未挂）。
+- **今日新增 trace**（各 shard 候选，来自 summary_stats.scansync）：shard_A_new=0 shard_B_new=0 shard_C_new=0 shard_D_new=0（无新扫描, 11/05 扫描仍是最新）。
+- **shard A fresh 候选池**：sel2.py 严格数字信号词排序(排除 tcl 防 waveview 误报)剩余 fresh ≈184(uiqz1 已 r196 用)。下次 scansync 约 r201。
 
 ## 迁移说明
 - 轮 33-42 已归档至 `MEMORY_A_archive.md`（归档批次 50，2026-11-04）。
