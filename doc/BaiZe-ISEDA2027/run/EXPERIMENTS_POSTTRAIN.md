@@ -2466,3 +2466,131 @@ Total for 12 sequences: 344 MB × 12 = 4.1 GB  ← 实际值
 2. **multi-eos 在 verl 多轮中的行为**：verl agent loop 需正确检测两个 EOS。若只检查 `</s>` (1) 不检查 `<|im_end|>` (130073)，多轮可能卡住。smoke test 观察。
 3. **chat_template + verl need_tools_kwargs 双重注入**：chat_template.jinja 在 `tools` 存在时注入工具定义，verl `need_tools_kwargs: True` 也会注入 → 可能**双重注入**。smoke test 检查 prompt 是否含两份工具定义。
 4. **thinking 模式消耗 response 预算**：MiniCPM5 的 `国防部...国防部` 思考内容消耗 4096 token 预算，可能导致工具调用空间不足。建议 RL 关闭 thinking 模式。
+
+---
+
+## §R18 SGLang Server Tuning + GRPO Hyperparameter Deep Dive + 11/9 Launch Day Runbook（2026-11-07 · wake66 · 零 GPU · web 调研 + 配置审计）
+
+> **目标**：将 R1–R17 的全部发现整合为 11/9 GPU 到位当天可直接执行的调参建议 + 时间预算运行手册。
+> 来源：SGLang 官方超参数调优文档（sglang.org）、GRPO 调参指南（emergentmind.com 2025.12）、CSDN 垂直领域小模型蒸馏（2026.06）、verl v0.7 release blog、GitHub verl MODIFICATION_GUIDE.md。
+
+### R18.1 SGLang 服务器调参（4×A40 48GB · MiniCPM5-2B）
+
+**内存分配（R17 修正后）**：
+
+| 组件 | 大小 | 说明 |
+|:--|:--|:--|
+| 模型权重 (bf16) | 4.7 GB | 2B × 2 bytes |
+| KV cache (12 seqs, 8192 ctx) | 4.1 GB | R17 GQA 修正：42 layers × 2 KV heads × 128 dim × 2 (K+V) × 2 (bf16) = 42 KB/token |
+| 激活值 + CUDA graph | 5–8 GB | SGLang 官方建议保留量 |
+| **推理总计** | ~14–17 GB | gpu_memory_utilization=0.50 → 24GB 中 ~14–17GB 用于推理 |
+| **训练侧（FSDP actor+ref）** | ~20–24 GB | 2B × (权重+梯度+优化器) / 4 GPUs ≈ 6–8GB/GPU，加激活值 |
+| **合计** | ~34–41 GB / 48 GB | 余量 7–14 GB ✅ |
+
+**调参建议**：
+
+| 参数 | 当前值 | 建议值 | 理由 | 来源 |
+|:--|:--|:--|:--|:--|
+| `gpu_memory_utilization` (verl) | 0.50 | **保持 0.50** | co-located safety；R17 修正后 KV cache 仅 4.1GB，0.50 已足够 | SGLang 官方 |
+| `max_num_seqs` | 12 | **smoke:12 → full:24** | R17 KV cache 仅 4.1GB(12 seqs)，24 seqs 仅 8.2GB，余量充足 | R17 + SGLang 官方 |
+| `enforce_eager` | True | **smoke:True → full:False** | eager 禁 CUDA graph 损失 ~30-40% decode 吞吐；smoke 先安全，full 提速 | SGLang 官方 |
+| `schedule_conservativeness` | (默认~1.0) | **0.5** | RL rollout 多为短序列，默认偏保守导致 token usage 低 | SGLang 官方 |
+| `chunked_prefill_size` | (默认8192) | **4096** | 多轮 tool call 累积 prompt 较长，降 chunk 防 prefill OOM | SGLang 官方 |
+| `--stop-token-ids` | (未设) | **1,130073** | 🔴 R17 P0: EOS 多令牌，SGLang 需同时识别 | R17 发现 |
+| `temperature` | (verl默认) | **1.0** | GRPO 推荐 T≈1.0 保证 group 内多样性 | GRPO 调参指南 |
+| `tensor_model_parallel_size` | 1 | **保持 1** | 2B 单卡放下，TP=1 最优 | SGLang 官方 |
+
+**🔴 新发现：diag 脚本 `--tool-call-parser minicpm5` 将失败**
+
+R15 已发现 SGLang pip 发行版（0.5.6.post3）不含 minicpm5 parser。但 `baize_posttrain_minicpm5_diag.sh` 仍使用 `--tool-call-parser minicpm5` —— **11/9 启动 SGLang 独立评测服务时此参数会报错**。
+
+- **RL 训练路径**（verl）：✅ 不受影响（R16 已实现 verl 独立 ToolParser）
+- **独立评测路径**（diag → SGLang → cline）：⚠️ **会失败**
+
+**修复方案**：① 首选：移除 `--tool-call-parser minicpm5`，让 SGLang 返回原始文本（含 XML 标签），cline 自行解析；② 备选：改用 `--tool-call-parser hermes`（SGLang 内置）验证兼容性；③ 最后手段：cherry-pick SGLang main 分支的 minicpm5 parser 代码。
+
+### R18.2 GRPO 超参数深度分析（2B 模型 · 4×A40）
+
+> 来源：Emergent Mind GRPO 调参指南（2025.12）、CSDN 垂直领域小模型蒸馏（2026.06）、DeepSeek-R1 技术报告。
+
+**当前配置 vs 文献推荐对照**：
+
+| 超参数 | 当前值 | 文献推荐 | 评估 | 建议 |
+|:--|:--|:--|:--|:--|
+| `lr` (actor) | 1.0e-6 | 2–5×10⁻⁶ (AdamW) | ⚠️偏低 | smoke 后提到 **3.0e-6**；1e-6 太保守可能导致学习极慢 |
+| `kl_loss_coef` | 0.04 | 0.01–0.04 | ✅上限 | smoke 保持 0.04（防 hacking）；full 可降到 **0.02** |
+| `clip_ratio` | 0.2 | 0.2 (标准) | ✅最优 | 保持 |
+| `group_size` (G) | 8 | 8 (推荐) | ✅最优 | 保持 |
+| `ppo_epochs` | 1 | 1–3 | ✅保守 | smoke 保持 1；full 可试 **2** |
+| `entropy_coeff` | 0.0 | 0.0–0.01 | ⚠️零 | smoke 保持 0.0；full 加 **0.001** 防策略坍缩 |
+| `train_batch_size` | 128 | 4–16 prompts/dev | ✅ | 128/G=8=16 prompts/iter |
+| `filter_groups` | true | — | ✅ | sGPO：丢弃全对/全错组 |
+| `grad_clip` | 1.0 | 1.0 | ✅ | 保持 |
+
+**关键调参逻辑**：
+
+1. **lr 1e-6 → 3e-6**：GRPO lr 通常比 SFT 低 10×。SFT 典型 1e-5~2e-5，GRPO 2-5e-6。当前 1e-6 可能导致 10 iters smoke 看不到 reward 变化（误判「RL 无效」）。
+2. **KL 系数分阶段**：早期 0.04（严格约束防 hacking）→ 中期 0.02（增加探索）→ 后期 0.01（最大化学习信号）。
+3. **entropy_coeff 0.0 → 0.001**：2B 模型在 GRPO 下容易策略坍缩。小 entropy bonus 维持探索多样性。
+4. **ppo_epochs 1 → 2**：单 epoch 样本利用率低。2 epochs 在 PPO clip 机制下安全。
+
+**奖励臂选择策略**：smoke + 早期用 R2（部分分缓解稀疏性）→ 中期 R3（加 tool_call_penalty）→ 后期 R4（加 API_legality）。消融需四臂各跑 200 iters。
+
+### R18.3 11/9 Launch Day Runbook（时间预算）
+
+| 步骤 | 内容 | 预估时间 | Go/No-Go 判据 | 失败回退 |
+|:--|:--|:--|:--|:--|
+| **0** | `setup_cu124_venv.sh --yes` | 15-30 min | `torch.cuda.is_available()=True` + `import sglang,verl,ray` 通过 | 检查 CUDA；flash-attn 失败可跳过 |
+| **1** | `preflight_check.sh` | 2 min | PASS>0, FAIL=0 | 逐项排查 FAIL |
+| **2a** | SGLang serve (quick) | 3-5 min | `curl /v1/models` 返回模型名 | 检查日志；GLIBCXX→LD_PRELOAD |
+| **2b** | Quick eval (10 tasks, 1 run) | 20-40 min | ≥3/10 任务有输出 | 检查 cline auth + tunnel |
+| **2c** | D1-D6 提取 (quick) | 5 min | JSON 生成，D1/D2/D6 非 null | trace_reader.py 兼容性 |
+| **3** | Full eval (158 tasks, 5 runs) | **8-40 h** | Pass@1 ≈ 36% ± 5pp | <20%→检查 prompt；>50%→检查口径 |
+| **4** | Contamination gate | 2 min | 0 命中 | 有命中→**停手** |
+| **5** | RL smoke (10 iters, R2) | 30-60 min | reward mean > 0.1 且非全 0 | 全 0→检查奖励函数；OOM→降 batch |
+| **6** | Full RL (R2, 2000 iters) | **12-24 h** | reward 单调上升 + cheat_rate < 5% | 下降→降 lr；cheat>10%→加 anti-cheat |
+
+**时间预算**：最短路径（quick→smoke）≈1.5h；完整路径（full eval→full RL）≈20-64h。
+**建议**：11/9 先跑 quick 路径（Step 0-2b+5）验证全链路；11/10 起 full eval；11/11+ 起 full RL。
+
+**11/9 首验清单（8 项）**：
+
+| # | 验证项 | 方法 | 预期 | 失败处理 |
+|:--|:--|:--|:--|:--|
+| V1 | CUDA 可用 | `python -c 'import torch;print(torch.cuda.is_available())'` | True | 重装 torch cu124 |
+| V2 | SGLang 启动 | `curl http://127.0.0.1:8866/v1/models` | 返回 minicpm5-2b | 检查日志 |
+| V3 | EOS 停止 | 发送 chat completion | 在 `<\|im_end\|>` 停止 | 加 `--stop-token-ids 130073` |
+| V4 | Tool call 格式 | 发送带 tools 请求 | 含 `<function>` XML | 移除 `--tool-call-parser` |
+| V5 | cline auth | `cline auth -p openai ...` | 成功 | 检查 cline 版本 |
+| V6 | verl import | `python -c 'import verl;import baize_posttrain_minicpm5_parser'` | 无报错 | 检查 PYTHONPATH |
+| V7 | GRPO smoke reward | 检查 smoke 输出 | mean > 0.1 | 检查奖励函数+数据 |
+| V8 | cheat_rate | 检查 cheat_rate.json | < 5% | 加 anti-cheat |
+
+### R18.4 配置修正清单
+
+| 文件 | 改动 | 优先级 | 时机 |
+|:--|:--|:--|:--|
+| `baize_posttrain_minicpm5_diag.sh` | 移除 `--tool-call-parser minicpm5`；加 `--stop-token-ids 1,130073`；加 `--schedule-conservativeness 0.5` | 🔴 P0 | 11/9 启动前 |
+| `baize_posttrain_rl_verl_config.yaml` | 加 `stop_token_ids: [1,130073]`；加 `temperature: 1.0`；加 `schedule_conservativeness: 0.5` | 🔴 P0 | 11/9 启动前 |
+| `baize_posttrain_rl_verl_config.yaml` | `lr: 1.0e-6→3.0e-6`；`entropy_coeff: 0.0→0.001` | 🟡 P1 | smoke 后 |
+| `baize_posttrain_rl_verl_config.yaml` | `max_num_seqs: 12→24`；`enforce_eager: True→False` | 🟢 P2 | full 训练前 |
+| `baize_posttrain_rl_verl_config.yaml` | `kl_loss_coef: 0.04→0.02`；`ppo_epochs: 1→2` | 🟢 P3 | 中期训练 |
+
+### R18.5 残余风险与缓解
+
+1. **SGLang 0.5.6.post3 + MiniCPM5 tokenizer 兼容**：架构支持确定，但 510 added tokens 映射可能有差异。缓解：V2 验证 + 日志检查。
+2. **verl v0.7 server mode 行为变化**：v0.7 移除 SPMD rollout 改 server mode。当前 config 基于 v0.5.x，可能有差异。缓解：`pip show verl` 看版本，对照 v0.7 文档。
+3. **chat_template + need_tools_kwargs 双重注入**（R17.3）：缓解：V4 检查 prompt 是否含两份工具定义。
+4. **thinking 模式消耗 response 预算**（R17.4）：缓解：加 `enable_thinking: false` 或增大 `max_response_length`。
+5. **flash-attn 安装失败**：A40 支持 flash-attn 2 但编译可能失败。缓解：fallback `attn_implementation: sdpa`。
+
+### R18.6 与 R1–R17 的关系
+
+| 既有发现 | R18 贡献 |
+|:--|:--|
+| R11 KV cache 13.8GB → R17 修正 4.1GB | R18 据此建议 max_num_seqs 12→24 |
+| R15 SGLang minicpm5 parser 不可用 | R18 发现 diag 脚本仍引用此 parser，给出修复方案 |
+| R16 verl 独立 ToolParser | R18 确认 RL 路径不受影响，仅独立评测路径需修 |
+| R17 EOS 多令牌 | R18 给出具体 `--stop-token-ids` 参数 |
+| R11 GRPO lr=1e-6 | R18 对照文献建议提到 3e-6 |
+| R12 launch script 6 步 | R18 补充时间预算 + Go/No-Go 判据 + 失败回退 |
