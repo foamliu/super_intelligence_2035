@@ -2,6 +2,20 @@
 
 > 📄 **报告格式常驻规程（2026-10-24 用户令）**：**所有报告一律用中文 HTML**（单文件自包含、无外链/CDN），除非用户另行指定；🚫 不用 `.md` / `.pdf` / 纯文本顶替。适用于**所有线**（pretrain / vision / data / harness / zhulong / news / recruit / research / video）。
 
+## 2026-11-07 19:33 — robot 线模型通道切换（cline 余额耗尽故障）
+
+现象：15:00–19:00 共 5 轮 robot 唤醒全部 ~20s 失败，日志 `error: Insufficient Balance`——cline 默认 provider（`openai-compatible` / `deepseek-v4-pro` / key `sk-0337...`）余额耗尽，与代码无关。
+
+处置：
+1. 实测 `~/.cline/data/settings/providers.json` 里 `deepseek` 条目 key 可用；用户 19:2x 又提供专用 key。
+2. **专用 key 存仓库外** `C:\Users\Administrator\.cline\robot_api_key.txt`（不入库、不写日志）；
+3. `watch_video_loop.ps1` 改为 `-P deepseek -m deepseek-v4-pro -k <读自 KeyFile>`，并保留 `--config/--data-dir`；
+4. 19:33 重启任务并立即跑一轮：cline 进程正常、无 401/402/Insufficient 错误。
+5. 旧 key 余额问题**只影响 robot 线**；其它线（harness 走 agi-gateway 的 GLM、posttrain 走 .17 本地）不受影响。
+
+待办：robot 线的 4 条 HCI 令（11:40 交互定稿 / 11:55 连续对话 / 12:05 在座检测 / 12:20 端侧语音）**尚未开工**，最新交付仍停在 14:06 的 OCR+L1 基线。
+
+
 ## 2026-11-07 12:05 — robot 线：在座检测获批 + 用户画像（8 年级女儿）+ 语音链路选型
 
 用户令：「好的」「隐私不重要 是给我家女儿(8年级)用的」「TTS/ASR 是使用手机本身算力，还是云端？」

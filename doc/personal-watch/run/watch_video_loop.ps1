@@ -21,7 +21,8 @@
 param(
     [int]$IntervalSec = 3600,          # 唤醒间隔（秒）；默认每小时（**对齐整点**）
     [int]$ClineTimeout = 3300,         # 单次 cline 上限（秒）≈ 55 min（留出 git 同步时间）
-    [string]$Model = '',               # 空 ⇒ 用 cline 已配置的默认模型
+    [string]$Model = 'deepseek-v4-pro',  # 2026-11-07: 用户提供新 key；v4-pro 推理更强（视觉实验由项目内 probe_ds_vision.py 单独调）
+    [string]$Provider = 'deepseek',    # cline -P；deepseek 条目 key 实测可用
     [string]$Thinking = 'medium',      # none|low|medium|high|xhigh（空 = provider 默认）
     [switch]$Once,                     # 只跑一轮后退出（调试）
     [switch]$DryRun                    # 不调用 cline（只走日志/心跳/git 同步；用于安全自检）
@@ -173,7 +174,14 @@ while ($true) {
         ) -join [Environment]::NewLine
 
         $baseArgs = @('-c', $PWRepo, '--auto-approve', 'true', '--config', $ClineCfg, '--data-dir', $ClineData, '-t', "$ClineTimeout")
+        if ($Provider) { $baseArgs += @('-P', $Provider) }
         if ($Model)    { $baseArgs += @('-m', $Model) }
+        # 2026-11-07: 专用 key 放仓库外（~/.cline/robot_api_key.txt），避免密钥入库
+        $KeyFile = Join-Path $AdminHome '.cline\robot_api_key.txt'
+        if (Test-Path $KeyFile) {
+            $apiKey = (Get-Content $KeyFile -Raw).Trim()
+            if ($apiKey) { $baseArgs += @('-k', $apiKey) }
+        }
         if ($Thinking) { $baseArgs += @('--thinking', $Thinking) }
         $baseArgs += $prompt
 
