@@ -1,0 +1,1002 @@
+[
+  {
+    "qid": 0,
+    "task": "period",
+    "circuit_type": "rc",
+    "raw_path": "/tmp/v3ev_0000_do9nu4hj/rc.raw",
+    "workdir": "/tmp/v3ev_0000_do9nu4hj",
+    "signal": "v(out)",
+    "gt_value": 1.2089250000000011e-05,
+    "measure_type": "period"
+  },
+  {
+    "qid": 1,
+    "task": "period",
+    "circuit_type": "lc_tank",
+    "raw_path": "/tmp/v3ev_0001_uxjjx27c/lctank.raw",
+    "workdir": "/tmp/v3ev_0001_uxjjx27c",
+    "signal": "v(out)",
+    "gt_value": 9.79900000000109e-06,
+    "measure_type": "period"
+  },
+  {
+    "qid": 2,
+    "task": "period",
+    "circuit_type": "rc",
+    "raw_path": "/tmp/v3ev_0002_qaqhp5la/rc.raw",
+    "workdir": "/tmp/v3ev_0002_qaqhp5la",
+    "signal": "v(out)",
+    "gt_value": 1.19823466642083e-05,
+    "measure_type": "period"
+  },
+  {
+    "qid": 3,
+    "task": "period",
+    "circuit_type": "inverter",
+    "raw_path": "/tmp/v3ev_0003_jze8nnba/inv.raw",
+    "workdir": "/tmp/v3ev_0003_jze8nnba",
+    "signal": "v(out)",
+    "gt_value": 3.072999999999999e-06,
+    "measure_type": "period"
+  },
+  {
+    "qid": 4,
+    "task": "period",
+    "circuit_type": "rl",
+    "raw_path": "/tmp/v3ev_0004_ac21692d/rl.raw",
+    "workdir": "/tmp/v3ev_0004_ac21692d",
+    "signal": "v(out)",
+    "gt_value": 7.660000000000016e-06,
+    "measure_type": "period"
+  },
+  {
+    "qid": 5,
+    "task": "period",
+    "circuit_type": "lc_tank",
+    "raw_path": "/tmp/v3ev_0005_9tqqpjy1/lctank.raw",
+    "workdir": "/tmp/v3ev_0005_9tqqpjy1",
+    "signal": "v(out)",
+    "gt_value": 1.4463199999998862e-05,
+    "measure_type": "period"
+  },
+  {
+    "qid": 6,
+    "task": "period",
+    "circuit_type": "inverter",
+    "raw_path": "/tmp/v3ev_0006_0f7qw3wd/inv.raw",
+    "workdir": "/tmp/v3ev_0006_0f7qw3wd",
+    "signal": "v(out)",
+    "gt_value": 3.2179999999999995e-06,
+    "measure_type": "period"
+  },
+  {
+    "qid": 7,
+    "task": "period",
+    "circuit_type": "rc_pulse",
+    "raw_path": "/tmp/v3ev_0007_tz9uwal3/rcp.raw",
+    "workdir": "/tmp/v3ev_0007_tz9uwal3",
+    "signal": "v(out)",
+    "gt_value": 7.1948270284683045e-06,
+    "measure_type": "period"
+  },
+  {
+    "qid": 8,
+    "task": "period",
+    "circuit_type": "inverter",
+    "raw_path": "/tmp/v3ev_0008_ochn5elc/inv.raw",
+    "workdir": "/tmp/v3ev_0008_ochn5elc",
+    "signal": "v(out)",
+    "gt_value": 3.5520000000000005e-06,
+    "measure_type": "period"
+  },
+  {
+    "qid": 9,
+    "task": "period",
+    "circuit_type": "rc_pulse",
+    "raw_path": "/tmp/v3ev_0009_d2k3wyyk/rcp.raw",
+    "workdir": "/tmp/v3ev_0009_d2k3wyyk",
+    "signal": "v(out)",
+    "gt_value": 5.438877135724582e-06,
+    "measure_type": "period"
+  },
+  {
+    "qid": 10,
+    "task": "period",
+    "circuit_type": "ring_osc",
+    "raw_path": "/tmp/v3ev_0010_2puuud9f/ringosc.raw",
+    "workdir": "/tmp/v3ev_0010_2puuud9f",
+    "signal": "v(out)",
+    "gt_value": 1.0118400000000801e-08,
+    "measure_type": "period"
+  },
+  {
+    "qid": 11,
+    "task": "period",
+    "circuit_type": "lc_tank",
+    "raw_path": "/tmp/v3ev_0011_a_rf69ed/lctank.raw",
+    "workdir": "/tmp/v3ev_0011_a_rf69ed",
+    "signal": "v(out)",
+    "gt_value": 1.4000000000003593e-05,
+    "measure_type": "period"
+  },
+  {
+    "qid": 12,
+    "task": "period",
+    "circuit_type": "rl",
+    "raw_path": "/tmp/v3ev_0012_ue3083rj/rl.raw",
+    "workdir": "/tmp/v3ev_0012_ue3083rj",
+    "signal": "v(out)",
+    "gt_value": 6.905872338326021e-06,
+    "measure_type": "period"
+  },
+  {
+    "qid": 13,
+    "task": "period",
+    "circuit_type": "lc_tank",
+    "raw_path": "/tmp/v3ev_0013_6h0vpkql/lctank.raw",
+    "workdir": "/tmp/v3ev_0013_6h0vpkql",
+    "signal": "v(out)",
+    "gt_value": 5.542879999999013e-06,
+    "measure_type": "period"
+  },
+  {
+    "qid": 14,
+    "task": "period",
+    "circuit_type": "diffpair",
+    "raw_path": "/tmp/v3ev_0014_2enc_51j/diffpair.raw",
+    "workdir": "/tmp/v3ev_0014_2enc_51j",
+    "signal": "v(out_p)",
+    "gt_value": 3.16599999999995e-06,
+    "measure_type": "period"
+  },
+  {
+    "qid": 15,
+    "task": "period",
+    "circuit_type": "rl",
+    "raw_path": "/tmp/v3ev_0015_54phl3iz/rl.raw",
+    "workdir": "/tmp/v3ev_0015_54phl3iz",
+    "signal": "v(out)",
+    "gt_value": 1.886157837827133e-05,
+    "measure_type": "period"
+  },
+  {
+    "qid": 16,
+    "task": "period",
+    "circuit_type": "ring_osc",
+    "raw_path": "/tmp/v3ev_0016_z8cytd62/ringosc.raw",
+    "workdir": "/tmp/v3ev_0016_z8cytd62",
+    "signal": "v(out)",
+    "gt_value": 6.000799999999647e-09,
+    "measure_type": "period"
+  },
+  {
+    "qid": 17,
+    "task": "period",
+    "circuit_type": "inverter",
+    "raw_path": "/tmp/v3ev_0017_38nhtqhj/inv.raw",
+    "workdir": "/tmp/v3ev_0017_38nhtqhj",
+    "signal": "v(out)",
+    "gt_value": 1.9409999999999997e-06,
+    "measure_type": "period"
+  },
+  {
+    "qid": 18,
+    "task": "period",
+    "circuit_type": "inverter",
+    "raw_path": "/tmp/v3ev_0018_4k4kv6xw/inv.raw",
+    "workdir": "/tmp/v3ev_0018_4k4kv6xw",
+    "signal": "v(out)",
+    "gt_value": 3.835e-06,
+    "measure_type": "period"
+  },
+  {
+    "qid": 19,
+    "task": "period",
+    "circuit_type": "diffpair",
+    "raw_path": "/tmp/v3ev_0019_mx2hwz8w/diffpair.raw",
+    "workdir": "/tmp/v3ev_0019_mx2hwz8w",
+    "signal": "v(out_p)",
+    "gt_value": 9.030000000000149e-06,
+    "measure_type": "period"
+  },
+  {
+    "qid": 20,
+    "task": "period",
+    "circuit_type": "rl",
+    "raw_path": "/tmp/v3ev_0020_kn20klm8/rl.raw",
+    "workdir": "/tmp/v3ev_0020_kn20klm8",
+    "signal": "v(out)",
+    "gt_value": 2.4339999999999994e-05,
+    "measure_type": "period"
+  },
+  {
+    "qid": 21,
+    "task": "period",
+    "circuit_type": "diffpair",
+    "raw_path": "/tmp/v3ev_0021_54wtucug/diffpair.raw",
+    "workdir": "/tmp/v3ev_0021_54wtucug",
+    "signal": "v(out_p)",
+    "gt_value": 3.549999999999992e-06,
+    "measure_type": "period"
+  },
+  {
+    "qid": 22,
+    "task": "period",
+    "circuit_type": "rc",
+    "raw_path": "/tmp/v3ev_0022_zxy2s_4c/rc.raw",
+    "workdir": "/tmp/v3ev_0022_zxy2s_4c",
+    "signal": "v(out)",
+    "gt_value": 1.80765e-05,
+    "measure_type": "period"
+  },
+  {
+    "qid": 23,
+    "task": "period",
+    "circuit_type": "ring_osc",
+    "raw_path": "/tmp/v3ev_0023_70f9oznd/ringosc.raw",
+    "workdir": "/tmp/v3ev_0023_70f9oznd",
+    "signal": "v(out)",
+    "gt_value": 2.823360000000616e-09,
+    "measure_type": "period"
+  },
+  {
+    "qid": 24,
+    "task": "period",
+    "circuit_type": "rl",
+    "raw_path": "/tmp/v3ev_0024_8wljnlny/rl.raw",
+    "workdir": "/tmp/v3ev_0024_8wljnlny",
+    "signal": "v(out)",
+    "gt_value": 1.6824999999999996e-05,
+    "measure_type": "period"
+  },
+  {
+    "qid": 25,
+    "task": "period",
+    "circuit_type": "lc_tank",
+    "raw_path": "/tmp/v3ev_0025_gr3gcb28/lctank.raw",
+    "workdir": "/tmp/v3ev_0025_gr3gcb28",
+    "signal": "v(out)",
+    "gt_value": 4.90658000000104e-06,
+    "measure_type": "period"
+  },
+  {
+    "qid": 26,
+    "task": "period",
+    "circuit_type": "diffpair",
+    "raw_path": "/tmp/v3ev_0026_q3d2zvu5/diffpair.raw",
+    "workdir": "/tmp/v3ev_0026_q3d2zvu5",
+    "signal": "v(out_p)",
+    "gt_value": 5.5099999999999515e-06,
+    "measure_type": "period"
+  },
+  {
+    "qid": 27,
+    "task": "period",
+    "circuit_type": "inverter",
+    "raw_path": "/tmp/v3ev_0027_xg8htk1y/inv.raw",
+    "workdir": "/tmp/v3ev_0027_xg8htk1y",
+    "signal": "v(out)",
+    "gt_value": 3.517999999999999e-06,
+    "measure_type": "period"
+  },
+  {
+    "qid": 28,
+    "task": "period",
+    "circuit_type": "inverter",
+    "raw_path": "/tmp/v3ev_0028_c5wz6rmt/inv.raw",
+    "workdir": "/tmp/v3ev_0028_c5wz6rmt",
+    "signal": "v(out)",
+    "gt_value": 2.9060000000000006e-06,
+    "measure_type": "period"
+  },
+  {
+    "qid": 29,
+    "task": "period",
+    "circuit_type": "rc_pulse",
+    "raw_path": "/tmp/v3ev_0029_e56tpdwh/rcp.raw",
+    "workdir": "/tmp/v3ev_0029_e56tpdwh",
+    "signal": "v(out)",
+    "gt_value": 1.0304000000000003e-06,
+    "measure_type": "period"
+  },
+  {
+    "qid": 30,
+    "task": "period",
+    "circuit_type": "inverter",
+    "raw_path": "/tmp/v3ev_0030_s3i0s0rc/inv.raw",
+    "workdir": "/tmp/v3ev_0030_s3i0s0rc",
+    "signal": "v(out)",
+    "gt_value": 1.2990000000000002e-06,
+    "measure_type": "period"
+  },
+  {
+    "qid": 31,
+    "task": "period",
+    "circuit_type": "inverter",
+    "raw_path": "/tmp/v3ev_0031_ro0xme7w/inv.raw",
+    "workdir": "/tmp/v3ev_0031_ro0xme7w",
+    "signal": "v(out)",
+    "gt_value": 2.3639999999999997e-06,
+    "measure_type": "period"
+  },
+  {
+    "qid": 32,
+    "task": "period",
+    "circuit_type": "inverter",
+    "raw_path": "/tmp/v3ev_0032_lc7wbstj/inv.raw",
+    "workdir": "/tmp/v3ev_0032_lc7wbstj",
+    "signal": "v(out)",
+    "gt_value": 1.5840000000000002e-06,
+    "measure_type": "period"
+  },
+  {
+    "qid": 33,
+    "task": "period",
+    "circuit_type": "diffpair",
+    "raw_path": "/tmp/v3ev_0033_4y29xce5/diffpair.raw",
+    "workdir": "/tmp/v3ev_0033_4y29xce5",
+    "signal": "v(out_p)",
+    "gt_value": 4.734000000000017e-06,
+    "measure_type": "period"
+  },
+  {
+    "qid": 34,
+    "task": "period",
+    "circuit_type": "rc",
+    "raw_path": "/tmp/v3ev_0034_f6cww7q4/rc.raw",
+    "workdir": "/tmp/v3ev_0034_f6cww7q4",
+    "signal": "v(out)",
+    "gt_value": 1.140882860385319e-05,
+    "measure_type": "period"
+  },
+  {
+    "qid": 35,
+    "task": "period",
+    "circuit_type": "lc_tank",
+    "raw_path": "/tmp/v3ev_0035_302llga9/lctank.raw",
+    "workdir": "/tmp/v3ev_0035_302llga9",
+    "signal": "v(out)",
+    "gt_value": 2.4019999999999814e-06,
+    "measure_type": "period"
+  },
+  {
+    "qid": 36,
+    "task": "period",
+    "circuit_type": "inverter",
+    "raw_path": "/tmp/v3ev_0036_7bcmwqyu/inv.raw",
+    "workdir": "/tmp/v3ev_0036_7bcmwqyu",
+    "signal": "v(out)",
+    "gt_value": 2.918e-06,
+    "measure_type": "period"
+  },
+  {
+    "qid": 37,
+    "task": "period",
+    "circuit_type": "lc_tank",
+    "raw_path": "/tmp/v3ev_0037_wek6nq0s/lctank.raw",
+    "workdir": "/tmp/v3ev_0037_wek6nq0s",
+    "signal": "v(out)",
+    "gt_value": 6.153999999999535e-06,
+    "measure_type": "period"
+  },
+  {
+    "qid": 38,
+    "task": "period",
+    "circuit_type": "rc_pulse",
+    "raw_path": "/tmp/v3ev_0038_r6e7crou/rcp.raw",
+    "workdir": "/tmp/v3ev_0038_r6e7crou",
+    "signal": "v(out)",
+    "gt_value": 8.871e-06,
+    "measure_type": "period"
+  },
+  {
+    "qid": 39,
+    "task": "period",
+    "circuit_type": "rl",
+    "raw_path": "/tmp/v3ev_0039_730fy3oh/rl.raw",
+    "workdir": "/tmp/v3ev_0039_730fy3oh",
+    "signal": "v(out)",
+    "gt_value": 2.9220000000000015e-05,
+    "measure_type": "period"
+  },
+  {
+    "qid": 40,
+    "task": "period",
+    "circuit_type": "diffpair",
+    "raw_path": "/tmp/v3ev_0040_840at370/diffpair.raw",
+    "workdir": "/tmp/v3ev_0040_840at370",
+    "signal": "v(out_p)",
+    "gt_value": 6.7099999999999205e-06,
+    "measure_type": "period"
+  },
+  {
+    "qid": 41,
+    "task": "period",
+    "circuit_type": "rc",
+    "raw_path": "/tmp/v3ev_0041_tqwnh7m0/rc.raw",
+    "workdir": "/tmp/v3ev_0041_tqwnh7m0",
+    "signal": "v(out)",
+    "gt_value": 1.07019e-05,
+    "measure_type": "period"
+  },
+  {
+    "qid": 42,
+    "task": "period",
+    "circuit_type": "rl",
+    "raw_path": "/tmp/v3ev_0042_d01khpo8/rl.raw",
+    "workdir": "/tmp/v3ev_0042_d01khpo8",
+    "signal": "v(out)",
+    "gt_value": 1.1708036712786682e-05,
+    "measure_type": "period"
+  },
+  {
+    "qid": 43,
+    "task": "period",
+    "circuit_type": "rc",
+    "raw_path": "/tmp/v3ev_0043_4zl7mytj/rc.raw",
+    "workdir": "/tmp/v3ev_0043_4zl7mytj",
+    "signal": "v(out)",
+    "gt_value": 5.298454691967006e-06,
+    "measure_type": "period"
+  },
+  {
+    "qid": 44,
+    "task": "period",
+    "circuit_type": "rc_pulse",
+    "raw_path": "/tmp/v3ev_0044_5aedi_tj/rcp.raw",
+    "workdir": "/tmp/v3ev_0044_5aedi_tj",
+    "signal": "v(out)",
+    "gt_value": 7.643999999999997e-06,
+    "measure_type": "period"
+  },
+  {
+    "qid": 45,
+    "task": "period",
+    "circuit_type": "ring_osc",
+    "raw_path": "/tmp/v3ev_0045_6tinx032/ringosc.raw",
+    "workdir": "/tmp/v3ev_0045_6tinx032",
+    "signal": "v(out)",
+    "gt_value": 5.83775999999892e-09,
+    "measure_type": "period"
+  },
+  {
+    "qid": 46,
+    "task": "period",
+    "circuit_type": "rc_pulse",
+    "raw_path": "/tmp/v3ev_0046_2kxud_86/rcp.raw",
+    "workdir": "/tmp/v3ev_0046_2kxud_86",
+    "signal": "v(out)",
+    "gt_value": 5.452280000000006e-06,
+    "measure_type": "period"
+  },
+  {
+    "qid": 47,
+    "task": "period",
+    "circuit_type": "rc_pulse",
+    "raw_path": "/tmp/v3ev_0047_s7lynplb/rcp.raw",
+    "workdir": "/tmp/v3ev_0047_s7lynplb",
+    "signal": "v(out)",
+    "gt_value": 6.438831523363874e-06,
+    "measure_type": "period"
+  },
+  {
+    "qid": 48,
+    "task": "period",
+    "circuit_type": "lc_tank",
+    "raw_path": "/tmp/v3ev_0048_i9996oky/lctank.raw",
+    "workdir": "/tmp/v3ev_0048_i9996oky",
+    "signal": "v(out)",
+    "gt_value": 1.2450000000000872e-05,
+    "measure_type": "period"
+  },
+  {
+    "qid": 49,
+    "task": "period",
+    "circuit_type": "rc",
+    "raw_path": "/tmp/v3ev_0049_u4r7iu3e/rc.raw",
+    "workdir": "/tmp/v3ev_0049_u4r7iu3e",
+    "signal": "v(out)",
+    "gt_value": 7.0457470836320475e-06,
+    "measure_type": "period"
+  },
+  {
+    "qid": 50,
+    "task": "period",
+    "circuit_type": "rl",
+    "raw_path": "/tmp/v3ev_0050_wwnvn81j/rl.raw",
+    "workdir": "/tmp/v3ev_0050_wwnvn81j",
+    "signal": "v(out)",
+    "gt_value": 2.4899999999999995e-05,
+    "measure_type": "period"
+  },
+  {
+    "qid": 51,
+    "task": "period",
+    "circuit_type": "lc_tank",
+    "raw_path": "/tmp/v3ev_0051_suwsgm5b/lctank.raw",
+    "workdir": "/tmp/v3ev_0051_suwsgm5b",
+    "signal": "v(out)",
+    "gt_value": 3.879060000000073e-06,
+    "measure_type": "period"
+  },
+  {
+    "qid": 52,
+    "task": "period",
+    "circuit_type": "rl",
+    "raw_path": "/tmp/v3ev_0052_1f23zrzb/rl.raw",
+    "workdir": "/tmp/v3ev_0052_1f23zrzb",
+    "signal": "v(out)",
+    "gt_value": 3.906999999999999e-05,
+    "measure_type": "period"
+  },
+  {
+    "qid": 53,
+    "task": "period",
+    "circuit_type": "lc_tank",
+    "raw_path": "/tmp/v3ev_0053_1uc0_scy/lctank.raw",
+    "workdir": "/tmp/v3ev_0053_1uc0_scy",
+    "signal": "v(out)",
+    "gt_value": 6.086340000000006e-06,
+    "measure_type": "period"
+  },
+  {
+    "qid": 54,
+    "task": "period",
+    "circuit_type": "diffpair",
+    "raw_path": "/tmp/v3ev_0054_f9ydbqiv/diffpair.raw",
+    "workdir": "/tmp/v3ev_0054_f9ydbqiv",
+    "signal": "v(out_p)",
+    "gt_value": 7.750000000000053e-06,
+    "measure_type": "period"
+  },
+  {
+    "qid": 55,
+    "task": "period",
+    "circuit_type": "ring_osc",
+    "raw_path": "/tmp/v3ev_0055_kn_6mg3c/ringosc.raw",
+    "workdir": "/tmp/v3ev_0055_kn_6mg3c",
+    "signal": "v(out)",
+    "gt_value": 3.255200000000009e-08,
+    "measure_type": "period"
+  },
+  {
+    "qid": 56,
+    "task": "period",
+    "circuit_type": "rc",
+    "raw_path": "/tmp/v3ev_0056_c7s7f4jl/rc.raw",
+    "workdir": "/tmp/v3ev_0056_c7s7f4jl",
+    "signal": "v(out)",
+    "gt_value": 3.749139999999997e-06,
+    "measure_type": "period"
+  },
+  {
+    "qid": 57,
+    "task": "period",
+    "circuit_type": "inverter",
+    "raw_path": "/tmp/v3ev_0057_td836x3m/inv.raw",
+    "workdir": "/tmp/v3ev_0057_td836x3m",
+    "signal": "v(out)",
+    "gt_value": 2.8209999999999998e-06,
+    "measure_type": "period"
+  },
+  {
+    "qid": 58,
+    "task": "period",
+    "circuit_type": "rl",
+    "raw_path": "/tmp/v3ev_0058_9kj6uz1w/rl.raw",
+    "workdir": "/tmp/v3ev_0058_9kj6uz1w",
+    "signal": "v(out)",
+    "gt_value": 2.6699999999998535e-05,
+    "measure_type": "period"
+  },
+  {
+    "qid": 59,
+    "task": "period",
+    "circuit_type": "ring_osc",
+    "raw_path": "/tmp/v3ev_0059_x6i6yu7d/ringosc.raw",
+    "workdir": "/tmp/v3ev_0059_x6i6yu7d",
+    "signal": "v(out)",
+    "gt_value": 8.745600000001531e-09,
+    "measure_type": "period"
+  },
+  {
+    "qid": 60,
+    "task": "period",
+    "circuit_type": "ring_osc",
+    "raw_path": "/tmp/v3ev_0060_cvo_mtjo/ringosc.raw",
+    "workdir": "/tmp/v3ev_0060_cvo_mtjo",
+    "signal": "v(out)",
+    "gt_value": 2.5420799999997316e-09,
+    "measure_type": "period"
+  },
+  {
+    "qid": 61,
+    "task": "period",
+    "circuit_type": "rc_pulse",
+    "raw_path": "/tmp/v3ev_0061_67nktp3n/rcp.raw",
+    "workdir": "/tmp/v3ev_0061_67nktp3n",
+    "signal": "v(out)",
+    "gt_value": 5.932397083311238e-06,
+    "measure_type": "period"
+  },
+  {
+    "qid": 62,
+    "task": "period",
+    "circuit_type": "lc_tank",
+    "raw_path": "/tmp/v3ev_0062_min5qdsr/lctank.raw",
+    "workdir": "/tmp/v3ev_0062_min5qdsr",
+    "signal": "v(out)",
+    "gt_value": 1.7775999999995176e-05,
+    "measure_type": "period"
+  },
+  {
+    "qid": 63,
+    "task": "period",
+    "circuit_type": "rl",
+    "raw_path": "/tmp/v3ev_0063_f74_pyq6/rl.raw",
+    "workdir": "/tmp/v3ev_0063_f74_pyq6",
+    "signal": "v(out)",
+    "gt_value": 9.000000000000005e-06,
+    "measure_type": "period"
+  },
+  {
+    "qid": 64,
+    "task": "period",
+    "circuit_type": "rc",
+    "raw_path": "/tmp/v3ev_0064_he7tc_x3/rc.raw",
+    "workdir": "/tmp/v3ev_0064_he7tc_x3",
+    "signal": "v(out)",
+    "gt_value": 1.642874999999999e-05,
+    "measure_type": "period"
+  },
+  {
+    "qid": 65,
+    "task": "period",
+    "circuit_type": "lc_tank",
+    "raw_path": "/tmp/v3ev_0065_35fzp2he/lctank.raw",
+    "workdir": "/tmp/v3ev_0065_35fzp2he",
+    "signal": "v(out)",
+    "gt_value": 9.053000000000403e-06,
+    "measure_type": "period"
+  },
+  {
+    "qid": 66,
+    "task": "period",
+    "circuit_type": "diffpair",
+    "raw_path": "/tmp/v3ev_0066_0bn795g4/diffpair.raw",
+    "workdir": "/tmp/v3ev_0066_0bn795g4",
+    "signal": "v(out_p)",
+    "gt_value": 9.463999999999922e-06,
+    "measure_type": "period"
+  },
+  {
+    "qid": 67,
+    "task": "period",
+    "circuit_type": "ring_osc",
+    "raw_path": "/tmp/v3ev_0067_lqakezoj/ringosc.raw",
+    "workdir": "/tmp/v3ev_0067_lqakezoj",
+    "signal": "v(out)",
+    "gt_value": 1.8316799999999425e-08,
+    "measure_type": "period"
+  },
+  {
+    "qid": 68,
+    "task": "period",
+    "circuit_type": "diffpair",
+    "raw_path": "/tmp/v3ev_0068_78ltze55/diffpair.raw",
+    "workdir": "/tmp/v3ev_0068_78ltze55",
+    "signal": "v(out_p)",
+    "gt_value": 2.637999999999972e-06,
+    "measure_type": "period"
+  },
+  {
+    "qid": 69,
+    "task": "period",
+    "circuit_type": "rc_pulse",
+    "raw_path": "/tmp/v3ev_0069_sm1v3gcz/rcp.raw",
+    "workdir": "/tmp/v3ev_0069_sm1v3gcz",
+    "signal": "v(out)",
+    "gt_value": 7.491619999999974e-06,
+    "measure_type": "period"
+  },
+  {
+    "qid": 70,
+    "task": "period",
+    "circuit_type": "rl",
+    "raw_path": "/tmp/v3ev_0070_sqtdnx0m/rl.raw",
+    "workdir": "/tmp/v3ev_0070_sqtdnx0m",
+    "signal": "v(out)",
+    "gt_value": 1.3700000000000016e-05,
+    "measure_type": "period"
+  },
+  {
+    "qid": 71,
+    "task": "period",
+    "circuit_type": "lc_tank",
+    "raw_path": "/tmp/v3ev_0071_io77_n_s/lctank.raw",
+    "workdir": "/tmp/v3ev_0071_io77_n_s",
+    "signal": "v(out)",
+    "gt_value": 1.5300000000002378e-05,
+    "measure_type": "period"
+  },
+  {
+    "qid": 72,
+    "task": "period",
+    "circuit_type": "lc_tank",
+    "raw_path": "/tmp/v3ev_0072_dg4zpqse/lctank.raw",
+    "workdir": "/tmp/v3ev_0072_dg4zpqse",
+    "signal": "v(out)",
+    "gt_value": 1.982200000000023e-06,
+    "measure_type": "period"
+  },
+  {
+    "qid": 73,
+    "task": "period",
+    "circuit_type": "rc_pulse",
+    "raw_path": "/tmp/v3ev_0073_3m7ju49h/rcp.raw",
+    "workdir": "/tmp/v3ev_0073_3m7ju49h",
+    "signal": "v(out)",
+    "gt_value": 5.332330716055587e-06,
+    "measure_type": "period"
+  },
+  {
+    "qid": 74,
+    "task": "period",
+    "circuit_type": "ring_osc",
+    "raw_path": "/tmp/v3ev_0074_axbf029l/ringosc.raw",
+    "workdir": "/tmp/v3ev_0074_axbf029l",
+    "signal": "v(out)",
+    "gt_value": 1.2607399999999805e-08,
+    "measure_type": "period"
+  },
+  {
+    "qid": 75,
+    "task": "period",
+    "circuit_type": "ring_osc",
+    "raw_path": "/tmp/v3ev_0075_3nv4xu3r/ringosc.raw",
+    "workdir": "/tmp/v3ev_0075_3nv4xu3r",
+    "signal": "v(out)",
+    "gt_value": 6.873600000000679e-09,
+    "measure_type": "period"
+  },
+  {
+    "qid": 76,
+    "task": "period",
+    "circuit_type": "lc_tank",
+    "raw_path": "/tmp/v3ev_0076_5ma6_69w/lctank.raw",
+    "workdir": "/tmp/v3ev_0076_5ma6_69w",
+    "signal": "v(out)",
+    "gt_value": 1.2200000000000324e-05,
+    "measure_type": "period"
+  },
+  {
+    "qid": 77,
+    "task": "period",
+    "circuit_type": "rl",
+    "raw_path": "/tmp/v3ev_0077_yrho8fod/rl.raw",
+    "workdir": "/tmp/v3ev_0077_yrho8fod",
+    "signal": "v(out)",
+    "gt_value": 7.956666309931522e-06,
+    "measure_type": "period"
+  },
+  {
+    "qid": 78,
+    "task": "period",
+    "circuit_type": "diffpair",
+    "raw_path": "/tmp/v3ev_0078_z2g8wugw/diffpair.raw",
+    "workdir": "/tmp/v3ev_0078_z2g8wugw",
+    "signal": "v(out_p)",
+    "gt_value": 7.102000000000076e-06,
+    "measure_type": "period"
+  },
+  {
+    "qid": 79,
+    "task": "period",
+    "circuit_type": "rc",
+    "raw_path": "/tmp/v3ev_0079_ym9398xa/rc.raw",
+    "workdir": "/tmp/v3ev_0079_ym9398xa",
+    "signal": "v(out)",
+    "gt_value": 6.411329485293785e-06,
+    "measure_type": "period"
+  },
+  {
+    "qid": 80,
+    "task": "period",
+    "circuit_type": "rc_pulse",
+    "raw_path": "/tmp/v3ev_0080_lj9yuk7v/rcp.raw",
+    "workdir": "/tmp/v3ev_0080_lj9yuk7v",
+    "signal": "v(out)",
+    "gt_value": 7.081999999999977e-06,
+    "measure_type": "period"
+  },
+  {
+    "qid": 81,
+    "task": "period",
+    "circuit_type": "ring_osc",
+    "raw_path": "/tmp/v3ev_0081_p8iakg9h/ringosc.raw",
+    "workdir": "/tmp/v3ev_0081_p8iakg9h",
+    "signal": "v(out)",
+    "gt_value": 1.0319400000001585e-08,
+    "measure_type": "period"
+  },
+  {
+    "qid": 82,
+    "task": "period",
+    "circuit_type": "inverter",
+    "raw_path": "/tmp/v3ev_0082_gvobheb7/inv.raw",
+    "workdir": "/tmp/v3ev_0082_gvobheb7",
+    "signal": "v(out)",
+    "gt_value": 1.0179999999999998e-06,
+    "measure_type": "period"
+  },
+  {
+    "qid": 83,
+    "task": "period",
+    "circuit_type": "inverter",
+    "raw_path": "/tmp/v3ev_0083_nv9zyg35/inv.raw",
+    "workdir": "/tmp/v3ev_0083_nv9zyg35",
+    "signal": "v(out)",
+    "gt_value": 4.427e-06,
+    "measure_type": "period"
+  },
+  {
+    "qid": 84,
+    "task": "period",
+    "circuit_type": "rl",
+    "raw_path": "/tmp/v3ev_0084__czf1jea/rl.raw",
+    "workdir": "/tmp/v3ev_0084__czf1jea",
+    "signal": "v(out)",
+    "gt_value": 3.866999999999999e-05,
+    "measure_type": "period"
+  },
+  {
+    "qid": 85,
+    "task": "period",
+    "circuit_type": "rl",
+    "raw_path": "/tmp/v3ev_0085_pzhqqgox/rl.raw",
+    "workdir": "/tmp/v3ev_0085_pzhqqgox",
+    "signal": "v(out)",
+    "gt_value": 7.632250393090821e-06,
+    "measure_type": "period"
+  },
+  {
+    "qid": 86,
+    "task": "period",
+    "circuit_type": "diffpair",
+    "raw_path": "/tmp/v3ev_0086_tdm4ejoa/diffpair.raw",
+    "workdir": "/tmp/v3ev_0086_tdm4ejoa",
+    "signal": "v(out_p)",
+    "gt_value": 3.7759999999999207e-06,
+    "measure_type": "period"
+  },
+  {
+    "qid": 87,
+    "task": "period",
+    "circuit_type": "rc_pulse",
+    "raw_path": "/tmp/v3ev_0087_ymea1rsq/rcp.raw",
+    "workdir": "/tmp/v3ev_0087_ymea1rsq",
+    "signal": "v(out)",
+    "gt_value": 1.489200000000017e-06,
+    "measure_type": "period"
+  },
+  {
+    "qid": 88,
+    "task": "period",
+    "circuit_type": "inverter",
+    "raw_path": "/tmp/v3ev_0088_kes8pwnl/inv.raw",
+    "workdir": "/tmp/v3ev_0088_kes8pwnl",
+    "signal": "v(out)",
+    "gt_value": 1.8069999999999998e-06,
+    "measure_type": "period"
+  },
+  {
+    "qid": 89,
+    "task": "period",
+    "circuit_type": "inverter",
+    "raw_path": "/tmp/v3ev_0089_fcu4gwct/inv.raw",
+    "workdir": "/tmp/v3ev_0089_fcu4gwct",
+    "signal": "v(out)",
+    "gt_value": 4.104e-06,
+    "measure_type": "period"
+  },
+  {
+    "qid": 90,
+    "task": "period",
+    "circuit_type": "rc_pulse",
+    "raw_path": "/tmp/v3ev_0090_bwlfw4fk/rcp.raw",
+    "workdir": "/tmp/v3ev_0090_bwlfw4fk",
+    "signal": "v(out)",
+    "gt_value": 7.111999999999989e-06,
+    "measure_type": "period"
+  },
+  {
+    "qid": 91,
+    "task": "period",
+    "circuit_type": "rc_pulse",
+    "raw_path": "/tmp/v3ev_0091_plgdvvly/rcp.raw",
+    "workdir": "/tmp/v3ev_0091_plgdvvly",
+    "signal": "v(out)",
+    "gt_value": 5.838999999999996e-06,
+    "measure_type": "period"
+  },
+  {
+    "qid": 92,
+    "task": "period",
+    "circuit_type": "rl",
+    "raw_path": "/tmp/v3ev_0092_dwjzeati/rl.raw",
+    "workdir": "/tmp/v3ev_0092_dwjzeati",
+    "signal": "v(out)",
+    "gt_value": 5.464000000000055e-07,
+    "measure_type": "period"
+  },
+  {
+    "qid": 93,
+    "task": "period",
+    "circuit_type": "rl",
+    "raw_path": "/tmp/v3ev_0093_bzjtfj3m/rl.raw",
+    "workdir": "/tmp/v3ev_0093_bzjtfj3m",
+    "signal": "v(out)",
+    "gt_value": 3.271000000000001e-05,
+    "measure_type": "period"
+  },
+  {
+    "qid": 94,
+    "task": "period",
+    "circuit_type": "rc",
+    "raw_path": "/tmp/v3ev_0094_ax01fim7/rc.raw",
+    "workdir": "/tmp/v3ev_0094_ax01fim7",
+    "signal": "v(out)",
+    "gt_value": 1.0731683390021777e-05,
+    "measure_type": "period"
+  },
+  {
+    "qid": 95,
+    "task": "period",
+    "circuit_type": "diffpair",
+    "raw_path": "/tmp/v3ev_0095_w1i4jkc2/diffpair.raw",
+    "workdir": "/tmp/v3ev_0095_w1i4jkc2",
+    "signal": "v(out_p)",
+    "gt_value": 6.966000000000052e-06,
+    "measure_type": "period"
+  },
+  {
+    "qid": 96,
+    "task": "period",
+    "circuit_type": "lc_tank",
+    "raw_path": "/tmp/v3ev_0096_8o6f3xzz/lctank.raw",
+    "workdir": "/tmp/v3ev_0096_8o6f3xzz",
+    "signal": "v(out)",
+    "gt_value": 1.1489999999998767e-05,
+    "measure_type": "period"
+  },
+  {
+    "qid": 97,
+    "task": "period",
+    "circuit_type": "rc_pulse",
+    "raw_path": "/tmp/v3ev_0097_87tks5v1/rcp.raw",
+    "workdir": "/tmp/v3ev_0097_87tks5v1",
+    "signal": "v(out)",
+    "gt_value": 4.804999999999928e-06,
+    "measure_type": "period"
+  },
+  {
+    "qid": 98,
+    "task": "period",
+    "circuit_type": "inverter",
+    "raw_path": "/tmp/v3ev_0098_1lzobjsx/inv.raw",
+    "workdir": "/tmp/v3ev_0098_1lzobjsx",
+    "signal": "v(out)",
+    "gt_value": 3.2690000000000004e-06,
+    "measure_type": "period"
+  },
+  {
+    "qid": 99,
+    "task": "period",
+    "circuit_type": "rc",
+    "raw_path": "/tmp/v3ev_0099_rjw2opac/rc.raw",
+    "workdir": "/tmp/v3ev_0099_rjw2opac",
+    "signal": "v(out)",
+    "gt_value": 3.0206399999999888e-06,
+    "measure_type": "period"
+  }
+]

@@ -19,7 +19,7 @@ code { background: #f0f0f0; padding: 1px 4px; border-radius: 3px; font-size: 13p
 </head>
 <body>
 <h1>视觉波形 RL · CPU 实验报告 v3</h1>
-<p><strong>生成时间</strong>：2026-11-07 12:55 · <strong>作者</strong>：vision wake#856 · <strong>用户令</strong>：2026-11-07「用 CPU 设计有效 RL，证明显著提升 Qwen3.5-2B 波形理解」</p>
+<p><strong>生成时间</strong>：2026-11-07 13:03 · <strong>作者</strong>：vision wake#856 · <strong>用户令</strong>：2026-11-07「用 CPU 设计有效 RL，证明显著提升 Qwen3.5-2B 波形理解」</p>
 <div class="summary">
 <p><strong>一句话总结</strong>：v1 离散 5 档奖励 → GRPO 负结果(6.2%&lt;9.2%)。v2 连续奖励方向翻转但不显著(n=45,p=0.625)。<strong>v3</strong> 聚焦 period-only(n=100)+增训练量(40步)+增 group_size(8)，旨在获得统计显著的提升。附随机奖励控制(D)验证提升来自奖励设计。</p>
 <p><strong>数据集调研</strong>：HF 上无波形 VQA 评测集，ngspice 合成波形+QA 是正确路线。</p>
