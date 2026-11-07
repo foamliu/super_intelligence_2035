@@ -1,6 +1,8 @@
 WAITING: 0
 
-> 🆕 **【wake #890 · 2026-11-07 18:47】监控轮。** git pull(无新令·research日报vision无对口忽略)。**v3**(GRPO连续奖励):Phase4 D-ctrl训练完(step40/40 avgR=0.658)→**eval 50/100=0.0%**(🚨随机奖励GRPO将模型摧毁至0% vs B-sft 34%!证明GRPO更新机制本身在CPU LoRA上具破坏性,非仅奖励信号问题——D<C=25.0%<B=34.0%,随机奖励比连续奖励更糟→强负结果)。D-ctrl eval即将完成(~4min)→v3全完成ETA~18:52→收results.json+生成报告。**v5**(类型分类):RFT-collect **150/200 Q(450 rollouts,198 correct=44.0%,831s)**·剩~50Q(~5min)→train C+D(3ep各~95min)→eval C+D(~13min)→**v5全完成ETA~20:45**·A-base=16.0%·B-sft=37.0%(+21pp✅)。两实验健康(pcpu v3=2888%/v5=1341%,stat=RNl)。**未完成指令:有**(v3待收尾报告+v5全量待完→最终报告)⇒**WAITING:0**。📦体积:TASK=31KB✓/MEMORY=19KB✓。
+> 🆕 **【wake #891 · 2026-11-07 18:53】v3收尾+报告重生成。** git pull(无新令·research日报vision无对口忽略)。**v3**(GRPO连续奖励)**全完成**:A=0.0%/B=34.0%/C=25.0%/**D=1.0%**(随机奖励控制组)·McNemar C-vs-B p=0.0636(n.s.负)·**C-vs-D p=6.5e-6(sig)**·Bootstrap C-B Δ=-9%CI[-18,-1]·C-D Δ=+24%CI[+16,+33]·VERDICT=NO IMPROVEMENT|REWARD-DESIGN DRIVEN(C>D)·cheat_rate=0(无泄漏)·预注册C>B=false/C>D=true·报告**重生成28784B**(含v3最终D=1.0%+完整统计)。**v5**(类型分类):RFT-collect**200/200完**(600rollouts,246correct=41.0%,1135s)→C(RFT)训练中ep1/3 step1 loss=0.2517·剩C-eval+D-train+D-eval(~2h)·A=16.0%/B-sft=37.0%(+21pp✅)。v5 PID731487健康(pcpu1337%,stat=RNl)。**未完成指令:有**(v5全量待完→最终报告)⇒**WAITING:0**。📦体积:TASK=31KB✓/MEMORY=19KB✓。
+
+> 📦 wake #890（监控轮·2026-11-07 18:47）已归档 → daily-memories-vision/2026-11-07.md；**结论**：v3 D-ctrl eval 50/100=0.0%(随机奖励摧毁模型)·v5 RFT-collect 150/200(44.0%)。需要时再读。
 
 > 📦 wake #889（监控轮·2026-11-07 18:39）已归档 → daily-memories-vision/2026-11-07.md；**结论**：v3 D-ctrl step39-40/40·v5 RFT-collect 100/200(42.3%)。需要时再读。
 
@@ -109,10 +111,10 @@ WAITING: 0
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | 🔴 **波形 RL CPU 阶段2 · v3收尾+v5新方向正信号(B-sft=37%>>A=16%)**：v4(RFT)✅NULL(C=B=34.0%,p=1.0)·v3(GRPO)Phase3 C=25.0%<B=34.0%(负)·Phase4 D-ctrl step35/40收尾中(ETA~19:05)·**v5(类型分类)新方向** SFT DONE(loss0.55→0.28可学✅)·A-base=16.0%·**B-sft=37.0%(B>>A+21pp正信号✅)**·per-class: square0.84/sine0.16/triangle0.24/sawtooth0.24·RFT-collect 50/200(38.0%)待完ETA~20:00·报告生成器已就绪(路径对齐)·3轮无提升已换方向: v2=6.2%<9.2% / v3=25.0%<34.0% / v4=34.0%=34.0%·数据集调研完成·技术栈三步冒烟交付·Qwen3.5-2B(1.88B)+LoRA。**WAITING: 0** |
+| PHASE | 🔴 **波形 RL CPU 阶段2 · v3✅全完(负结果)·v5新方向正信号(B-sft=37%>>A=16%)进行中**：v4(RFT)✅NULL(C=B=34.0%,p=1.0)·**v3(GRPO)✅全完** A=0%/B=34%/C=25%/**D=1.0%**·McNemar C-vs-B p=0.064(负)·**C-vs-D p=6.5e-6(sig)**·VERDICT=NO IMPROVEMENT\|REWARD-DESIGN DRIVEN(C>D)·报告重生成28784B(含最终统计)·**v5(类型分类)** SFT DONE·A=16.0%·**B-sft=37.0%(+21pp✅)**·per-class: square0.84/sine0.16/triangle0.24/sawtooth0.24·RFT-collect 200/200完(41.0%)→C(RFT)训练中ep1/3·剩C-eval+D-train+D-eval(~2h,ETA~20:45)·3轮无提升已换方向: v2=6.2%<9.2% / v3=25.0%<34.0% / v4=34.0%=34.0%·数据集调研完成·技术栈三步冒烟交付·Qwen3.5-2B(1.88B)+LoRA。**WAITING: 0** |
 | WAITING | 0 |
 | 已完成 | advantage方差诊断(wake#838,判定PARTIAL) · v3 GRPO连续奖励实验Phase3(wake#883,C=25.0%<B=34.0%负结果) · v4 RFT实验全量完成(wake#882,C=34.0%=B=34.0% D=33.0% McNemar p=1.0 NULL) · 阶段1 SFT验收PASS(wake#802) · CPU端到端训练循环验证7/7 PASS(wake#741) · 数据泄漏验证+阶段1就绪报告HTML(wake#731) · GRPO CPU冒烟测试PASS(wake#622) · 2B文本骨干提取1.72B(wake#620) · 数据集均衡化9013条(wake#618) · 波形RL计划书(wake#435) · 论文改稿(wake#437~#442) · ArmE-R2/ArmD-R2 全链路 |
-| 当前动作 | **wake#890 监控轮**：v3(GRPO)PID2165712 Phase4 D-ctrl训练完(step40/40)→eval 50/100=**0.0%**(随机奖励摧毁模型,强负结果)·即将完成(ETA~18:52)。v5(类型分类)PID731487：RFT-collect 150/200(44.0%)·剩~50Q+train C+D+eval(ETA~20:45)·A-base=16.0%·B-sft=37.0%(+21pp✅)。两实验健康(pcpu v3=2888%/v5=1341%)。 |
-| 下一步 | ①v3 D-ctrl eval完(~18:52)→收v3 results.json→生成v3最终报告(McNemar/bootstrap/D=0%控制组强负结果) ②v5全量完(~20:45)→收v5 results.json→生成v5报告(混淆矩阵/逐类/RFT vs SFT)→B>A(37%>16%)已证"SFT显著提升波形类型判别能力" ③v3+v5全完→合并最终报告report_vision_cpu_rl_waveform_zh.html+EXPERIMENTS§22+commit ④v5若C≤B→继续换方向(频率比较二分类/异常点定位) |
+| 当前动作 | **wake#891 v3收尾+报告重生成**：v3(GRPO)**全完** A=0%/B=34%/C=25%/D=1.0%·McNemar C-vs-D p=6.5e-6(sig)·VERDICT=NO IMPROVEMENT\|REWARD-DESIGN DRIVEN·报告重生成28784B(含v3最终统计)。v5(类型分类)PID731487：RFT-collect 200/200完(246correct=41.0%)→C(RFT)训练中ep1/3 step1·剩C-eval+D-train+D-eval(~2h)·A=16.0%·B-sft=37.0%(+21pp✅)。v5健康(pcpu1337%,stat=RNl)。 |
+| 下一步 | ①v3✅已完→报告已重生成(含D=1.0%控制组+完整统计) ②v5全量完(~20:45)→收v5 results.json→重生成报告(加v5混淆矩阵/逐类/RFT vs SFT)→B>A(37%>16%)已证"SFT显著提升波形类型判别能力" ③v5全完→最终报告report_vision_cpu_rl_waveform_zh.html+EXPERIMENTS§22+commit ④v5若C≤B→继续换方向(频率比较二分类/异常点定位) |
 | 阻塞 | .12+.29 GPU全占（8×H100 96-100% util / ~75GB，pretrain baize2b ETA≈12/24-25）→ 阶段2 GRPO需GPU（GRPO chain PID1365749自带GPU-wait,释放后自动起训）·.17+.75 SSH不可达 |
-| 更新 | **2026-11-07 18:47 (wake #890)**: 监控轮·git pull无新令·research日报vision无对口·v3 D-ctrl eval 50/100=0.0%(随机奖励GRPO摧毁模型,强负结果)·v5 RFT-collect 150/200(44.0%)·两实验健康·WAITING=0 |
+| 更新 | **2026-11-07 18:53 (wake #891)**: v3全完(D=1.0%控制组·McNemar C-vs-D p=6.5e-6·VERDICT NO IMPROVEMENT\|REWARD-DESIGN DRIVEN)·报告重生成28784B·v5 RFT-collect 200/200完→C(RFT)训练中ep1/3·v5健康·WAITING=0 |
