@@ -1,8 +1,8 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
-WAITING: 1
+WAITING: 0
 > 🛑 **【运维通告 · 2026-11-02 19:51】S1 已由 ops 中继重启并在跑**：`bash scripts/train.sh s1 --nodes 2`，launcher pid **4163528**，从 **ckpt 58000** 续（19:55:40 起 iter **58010**→58030，7.0–7.2 s/step ≈**582K tok/s**，双机 16 卡 **98–100%**、~75GB/卡、~690W）。⇒ **GPU 不再空闲**：🚫 严禁再起任何训练/GPU 评测进程；CPU 评测必须降载：`OMP_NUM_THREADS≤8` + `nice -n 19`，**禁止 `pkill python`**。
 
-> 2026-11-07 08:38 #1566: 例行监控轮·无新运维令·S1健康(worker log /tmp/baize_s1_baize2b_worker.log 活跃 iter113800/700000@08:38:00,loss2.069,6975-7118ms/it(~7.1s),lr1e-3,0NaN/0skip,grad-norm0.085-0.107稳态(113770 spike1.157→113780 0.106自恢复),consumed29132800)·GPU.29(0-7:90-100%/~75GB/55-63℃/667-696W)全满载·GPU.12(0-7:96-100%/~75GB/57-66℃/673-694W)全满载·pretrain_launcher.py PID146283(etimes~391468s≈108.7h)活双机16卡·ssh.12 torchrun PID2612442(node_rank=0,etimes~391631s≈108.8h,活)·latest ckpt iter_0112000·next ckpt iter_0114000 ETA~Nov7 09:02(200it×~7.1s≈24min)·100k eval已于#1490交付(10/10全在,Avg harness 57.75%/raw 54.75%)·eval管线已全退出(无llama-server/lm_eval/convert)·ops/inbox仅RUN_ID245(2026-11-05旧令,已执行,非本线待办)·ops_relay_v2 PID2259598(ppid=1,~1170246s≈13.5d,健康)·loop PID3165013(etimes~775708s≈8.97d,活)·git clean(##main...origin/main无ahead/behind;workspace仅他线在途文件,未碰)·📦TASK=25.8KB✓/MEMORY=31.1KB→归档#1560(1条)→加本条≈31.3KB✓(均低于32KB)·未完成指令:无⇒WAITING:1。
+> 2026-11-07 09:55 #1567: 🔴运维令11-07 09:1x执行中·11w检查点8集全量评测+线程/batch扫描·已转换iter_0112000→hf_iter_112000(NeMo distcp→HF safetensors,2.22B/323 tensors,config.json修复mamba_dt_limit/rope_theta=1e6/max_pos=1048576)·已改baize_cpu_lmeval.sh(暴露--batch_size,OMP上限8→80)·新建baize_cpu_eval_scaling.sh+baize_cpu_probe_matrix.sh+gen_cpu_eval_scaling_report.py·探测矩阵后台运行中(12 configs=4线程×3 batch,limit=5,2任务openbookqa+arc_challenge,基线8线程bs=1~17s/req,40请求~12min,使用~4/8核)·S1健康(iter~113800/700000,GPU全满)·未完成指令:有(11w eval)⇒WAITING:0。
 
 
 

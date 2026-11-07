@@ -24,13 +24,15 @@ shift 2
 TASKS="arc_challenge,arc_easy,boolq,hellaswag,openbookqa,piqa,sciq,winogrande"
 LIMIT=""
 DTYPE="bfloat16"
+BATCH_SIZE=1
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    --limit)  LIMIT="--limit $2"; shift 2 ;;
-    --tasks)  TASKS="$2"; shift 2 ;;
-    --dtype)  DTYPE="$2"; shift 2 ;;
-    *)        echo "Unknown arg: $1"; exit 1 ;;
+    --limit)       LIMIT="--limit $2"; shift 2 ;;
+    --tasks)       TASKS="$2"; shift 2 ;;
+    --dtype)       DTYPE="$2"; shift 2 ;;
+    --batch_size)  BATCH_SIZE="$2"; shift 2 ;;
+    *)             echo "Unknown arg: $1"; exit 1 ;;
   esac
 done
 
@@ -44,14 +46,15 @@ export HF_HOME="/nas_train/app.e0031982/.cache"
 export HF_DATASETS_OFFLINE=1
 export HF_HUB_OFFLINE=1
 export OMP_NUM_THREADS="${OMP_NUM_THREADS:-4}"
-if [[ "${OMP_NUM_THREADS:-4}" -gt 8 ]]; then export OMP_NUM_THREADS=8; fi
-export MKL_NUM_THREADS="${MKL_NUM_THREADS:-4}"
+# 运维令 2026-11-07：线程扫描上限提至 80（原为 8），用于 CPU 推理效率曲线
+if [[ "${OMP_NUM_THREADS:-4}" -gt 80 ]]; then export OMP_NUM_THREADS=80; fi
+export MKL_NUM_THREADS="${MKL_NUM_THREADS:-${OMP_NUM_THREADS}}"
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 echo "============================================================"
 echo "  CPU lm_eval . model=$MODEL"
-echo "  output=$OUT  tasks=$TASKS  limit=${LIMIT:-full}  dtype=$DTYPE"
+echo "  output=$OUT  tasks=$TASKS  limit=${LIMIT:-full}  dtype=$DTYPE  batch_size=$BATCH_SIZE"
 echo "  OMP=$OMP_NUM_THREADS  CUDA_VISIBLE_DEVICES=(empty)"
 echo "============================================================"
 
@@ -61,5 +64,5 @@ exec nice -n 19 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python "$SCRIP
   --tasks "$TASKS" \
   --dtype "$DTYPE" \
   --num_fewshot 0 \
-  --batch_size 1 \
+  --batch_size "$BATCH_SIZE" \
   $LIMIT
