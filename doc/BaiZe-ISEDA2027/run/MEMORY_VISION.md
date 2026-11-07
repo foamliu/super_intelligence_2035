@@ -1,6 +1,8 @@
 WAITING: 0
 
-> 🆕 **【wake #863 · 2026-11-07 15:0x】🔴发现并修复v4严重bug(gt_value错配)→v4重启·v3继续运行。** git pull(rebase OK,无新令)·体积 TASK35.0KB(>32KB按令暂不归档)/MEMORY≈29KB✓。**承接wake#862**：v3(PID2165712)step30/40 avgR=0.398运行中;v4(PID3750214)Phase1 B eval显示acc=10%(应为34%)。**本轮关键发现**：v4 B eval acc=10%≠v3的34%→代码审查定位根因：v4从v3 JSON加载题目(无spec对象)+用重新seed的RNG生成电路→**RNG状态发散**→v4生成不同电路但用v3旧gt_value→**gt错配**→准确率人为降至10%。**修复**：v4 Phase0改为始终调用`build_eval_set_period()`(同seed=990100,确定性重建,与v3完全相同)→sanity check **0 mismatches**✅→kill旧v4→重启PID3181986→B eval 10/100 **acc=30.0%**(与v3的30.0%完全一致✅修复确认)。**v3进度**：step30/40,ETA~21min(Phase3余)+eval。**下一步**：下唤醒检查v3(预计~30min完成)→生成v3最终报告+统计检验+commit;检查v4(预计~2.5h)→若完成生成v4报告+统计+v1→v4对比;更新HTML报告。**未完成指令:有**(v3+v4并行运行中)⇒**WAITING:0**。📦体积:TASK=35.0KB(>32KB按令暂不归档)/MEMORY≈29KB✓。
+> 🆕 **【wake #864 · 2026-11-07 15:2x】监控轮·v3+v4均健康运行中·无新令。** git pull(rebase OK,无新令)·research日报2026-11-07无vision相关条目(忽略)·体积 TASK35.0KB(>32KB按令暂不归档)/MEMORY≈29.6KB✓。**v3**(PID2165712,etimes~9490s≈2.6h):Phase3 step**35/40** avgR=0.033 loss=-0.001175(轨迹-0.5→0.066→0.279→0.321→0.151→-0.043→0.398→0.033,高方差),B(SFT)=34.0%已知✅。**注意**:v3仍有Phase4(控制组D=随机奖励GRPO 40步+eval≈3h)未跑⇒v3总剩余≈3.7h(非~21min)。**v4**(PID3181986,etimes~423s≈7min):Phase1 B eval 40/100 acc=25.0%(进展中,将收敛至~34%),v4总ETA≈2.4h。两脚本SYNTAX OK✅,报告生成器SYNTAX OK✅。**本轮零可执行动作**(两实验后台运行,无可提前做的产出)。**下一步**:下唤醒继续监控→v3完成Phase3后检查是否进Phase4→v3全完成生成最终报告+统计+commit;v4完成生成报告+统计+v1→v4对比;更新HTML报告。**未完成指令:有**(v3+v4并行运行中)⇒**WAITING:0**。📦体积:TASK=35.0KB(>32KB按令暂不归档)/MEMORY≈29.6KB✓。
+
+> 📦 wake #863（v4 gt_value错配bug修复+v4重启·2026-11-07 15:0x）已归档 → daily-memories-vision/2026-11-07.md；**结论**：v4 RNG发散导致gt错配→修复为确定性重建→B eval=30.0%与v3一致✅;v3 step30/40 avgR=0.398。需要时再读。
 
 > 📦 wake #862（v3+v4并行·v4 RFT启动·2026-11-07 14:5x）已归档 → daily-memories-vision/2026-11-07.md；**结论**：v3 step30 avgR=0.398;v4 RFT启动但B eval=10%(发现gt错配bug,wake#863修复)。需要时再读。
 
