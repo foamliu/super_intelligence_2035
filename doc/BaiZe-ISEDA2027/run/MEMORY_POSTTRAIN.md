@@ -57,3 +57,5 @@ WAITING: 1
 
 [wake54] 唤醒→体积自检（TASK=24.7KB / MEMORY=9.1KB，均符合≤32KB要求）→确认所有调研任务R1-R7/E1/P0-P3预备全部完成→未完成指令：无→等待2026-11-09 GPU到位自动执行启动序列。⇒ WAITING=1。
 
+[wake55] 唤醒→新增11/9启动配套自动化脚本：① baize_posttrain_setup_cu124_venv.sh（全自动配置CUDA12.4兼容venv，自动安装torch/verl/vllm/ray等全依赖）② baize_posttrain_preflight_check.sh（18项全链路预飞行检查，覆盖环境/模型/数据/脚本/网络）→ 语法检查全PASS✅+可执行权限已添加✅→ 11/9当天可直接按顺序执行两个脚本完成环境准备→ 体积自检：TASK=24.7KB / MEMORY=9.3KB（均≤32KB合规）→ 本轮新增调研产出：两套自动化启动脚本，简化11/9启动流程。未完成指令：无⇒ WAITING=1。
+
