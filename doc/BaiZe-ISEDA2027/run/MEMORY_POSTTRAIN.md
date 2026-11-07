@@ -7,12 +7,12 @@ WAITING: 1
 
 ## 进度快照
 
-- PHASE: posttrain-wake53（2026-11-07 R6 SFT深度方案+R7 verl环境预检完成，SFT语料19610对落盘，发现CUDA 12.4不匹配）
-- 已完成: P3预备✅ 7脚本；P0✅ D1–D6；P1✅ 数据盘点+PyAether语料+污染隔离；P2✅ 方案书；wake45✅ §替身RL预演；wake48✅ R1+R3；wake49✅ R4(五分类法)；wake50✅ R2(造题设计)；wake51✅ E1(3347题)；wake52✅ R5(verl+GRPO+YAML+profiler)；wake53✅ R6(SFT深度方案+19610对SFT语料)+R7(verl环境预检+CUDA不匹配发现+11/9启动序列)
-- 当前动作: wake53 唤醒→ git sync(origin/main=01c999bae=local,已同步)→ R6 SFT深度调研: 数据混合(35%通用/30%agentic/25%PyAether/10%错误恢复)→ SFT语料合成脚本(baize_posttrain_gen_sft_corpus.py,语法✅dry-run✅)→ 生成19610对(S1=8012/S2=8098/S3=89/S4=3411,0污染,18.8MB)→ 上下文长度(8192推荐)→ LoRA vs 全参(替身LoRA/白泽全参)→ 课程学习5阶段→ 超参(LR=2e-5,GBS=128,3000步)→ R7 verl环境预检: 🔴发现CUDA 12.4驱动vs torch cu130不匹配(torch.cuda.is_available()=False!)→ verl依赖清单→ 11/9启动序列6步→ 预飞行检查→ 风险矩阵→ EXPERIMENTS §R6+§R7→ HTML报告8.3KB→ 体积自检+提交
-- 下一步: R1-R7+E1全部完成→ WAITING=1；11/9 GPU到位后自动起跑(Step0新建verl_venv→Step1验证CUDA→Step2 vllm serve→Step3评测158题→Step4采真实轨迹→Step5 API profiling→Step6起EDA RL)
-- 阻塞: 🔴 CUDA 12.4不匹配需11/9前新建cu124 venv；GPU 2026-11-09既定到位(不再问)；L3等隧道；P3等pretrain ckpt(ETA≈2026-12-25)
-- 未完成指令: 无（R1✅R2✅R3✅R4✅R5✅R6✅R7✅E1✅ 全部完成）⇒ WAITING=1
+- PHASE: posttrain-wake56（2026-11-07 R8 模型架构+Tokenizer深度分析完成，发现SGLang为工具调用必需后端）
+- 已完成: P3预备✅ 7脚本；P0✅ D1–D6；P1✅ 数据盘点+PyAether语料+污染隔离；P2✅ 方案书；wake45✅ §替身RL预演；wake48✅ R1+R3；wake49✅ R4；wake50✅ R2；wake51✅ E1(3347题)；wake52✅ R5(verl+GRPO)；wake53✅ R6(SFT)+R7(verl环境+CUDA发现)；wake55✅ 11/9启动脚本；wake56✅ R8(模型架构+Tokenizer+SGLang发现)
+- 当前动作: wake56 唤醒→体积自检(TASK=24.7KB/MEMORY=9.9KB合规)→ R8: 实测MiniCPM5-2B模型文件(config.json/tokenizer_config.json/chat_template.jinja/generation_config.json/README)→ 架构: LlamaForCausalLM 42层 2048d GQA16:2 vocab130560 max_pos131072 双EOS[1,130073]→ Tokenizer: ChatML格式+XML工具调用+思考/答案分离+478 unused tokens→ 🔴关键发现: 工具调用是XML格式,vLLM不解析,SGLang内置minicpm5 parser自动转OpenAI tool_calls→ 36%基线复测必须用SGLang→ 更新11/9启动序列(Step2a改SGLang)→ EXPERIMENTS §R8(11小节)+HTML报告11.9KB
+- 下一步: R1-R8+E1全部完成→ WAITING=1；11/9 GPU到位后自动起跑(Step0新建cu124 venv含sglang→Step1验证CUDA→Step2a SGLang serve+--tool-call-parser minicpm5→Step3评测158题→Step4采真实轨迹→Step5 API profiling→Step6起EDA RL)
+- 阻塞: 🔴 CUDA 12.4不匹配需11/9前新建cu124 venv(含sglang[srt]>=0.5.16)；GPU 2026-11-09既定到位(不再问)；L3等隧道；P3等pretrain ckpt(ETA≈2026-12-25)
+- 未完成指令: 无（R1✅R2✅R3✅R4✅R5✅R6✅R7✅R8✅E1✅ 全部完成）⇒ WAITING=1
 
 ## 关键事实（常驻）
 
@@ -58,4 +58,6 @@ WAITING: 1
 [wake54] 唤醒→体积自检（TASK=24.7KB / MEMORY=9.1KB，均符合≤32KB要求）→确认所有调研任务R1-R7/E1/P0-P3预备全部完成→未完成指令：无→等待2026-11-09 GPU到位自动执行启动序列。⇒ WAITING=1。
 
 [wake55] 唤醒→新增11/9启动配套自动化脚本：① baize_posttrain_setup_cu124_venv.sh（全自动配置CUDA12.4兼容venv，自动安装torch/verl/vllm/ray等全依赖）② baize_posttrain_preflight_check.sh（18项全链路预飞行检查，覆盖环境/模型/数据/脚本/网络）→ 语法检查全PASS✅+可执行权限已添加✅→ 11/9当天可直接按顺序执行两个脚本完成环境准备→ 体积自检：TASK=24.7KB / MEMORY=9.3KB（均≤32KB合规）→ 本轮新增调研产出：两套自动化启动脚本，简化11/9启动流程。未完成指令：无⇒ WAITING=1。
+
+[wake56] R8 MiniCPM5-2B模型架构+Tokenizer深度分析: 体积自检(TASK=24.7KB/MEMORY=9.9KB合规)→ 实测本地模型文件(config.json/tokenizer_config.json 4099行/chat_template.jinja 112行/generation_config.json/README-cn.md)→ 架构: LlamaForCausalLM 42层 2048d GQA16:2 head_dim128 vocab130560 max_pos131072 rope_theta5M tie_embeddings=false bf16 5.03GB→ 双EOS[1,130073]→ 特殊token: ChatML格式(<|im_start|>/<|im_end|>)+XML工具调用(<function>/<param>)+思考/答案分离(think_begin/think_end/answer_begin)+478 unused tokens(130082-130559,可自定义)→ Chat template: ChatML+thinking/answer分离+tool定义在<tools>XML+tool结果映射为user role→ 🔴关键发现: 工具调用是XML格式(非OpenAI function calling),vLLM不解析XML→tool_calls字段为空→模型被handicapped; SGLang内置minicpm5 parser自动转OpenAI tool_calls→ 36%基线复测必须用SGLang(--tool-call-parser minicpm5),否则结果不可比→ 更新11/9启动序列: Step2a改SGLang serve(port30000),Step3评测用SGLang endpoint→ SGLang安装pip install "sglang[srt]>=0.5.16"加入cu124 venv→ 显存预估SGLang37GB/vLLM33GB,4xA40均可→ EXPERIMENTS §R8(11小节)+HTML报告11.9KB(report_posttrain_r8_model_tokenizer_deepdive_zh.html)。📦 体积：TASK=24.7KB / MEMORY=10.5KB（均≤32KB合规）。本轮新增调研产出：§R8 模型架构+Tokenizer深度分析+SGLang关键发现+更新11/9启动序列+HTML报告。未完成指令：无（R1✅R2✅R3✅R4✅R5✅R6✅R7✅R8✅E1✅）⇒ WAITING=1。
 

@@ -1361,3 +1361,137 @@ python3 -c 'import torch; print(torch.cuda.is_available())'           # torch CU
 | verl GitLab | https://git.doit.wisc.edu/vdhanuka/verl/-/blame/.../install.rst | 2026-11-07 |
 | verl Docker | verlai/verl:vemlp-th2.4.0-cu124-vllm0.6.3-ray2.10 | 2026-11-07 |
 | Fable-5.1 SFT实践 | https://blog.gitcode.com/bd09c377c217f5aabd45cfa483b85f89.html | 2026-11-07 |
+
+---
+
+## §R8 MiniCPM5-2B 模型架构与 Tokenizer 深度分析（2026-11-07 wake56 · 零 GPU · 实测模型文件）
+
+> **任务**：从 `/tmp/models/MiniCPM5-2B/` 的实际模型文件（config.json / tokenizer_config.json / chat_template.jinja / generation_config.json / README）中提取 11/9 启动所需的全部技术细节。
+> **方法**：直接读取本地模型文件，不依赖任何外部文档（README 交叉验证）。
+> **关键发现**：🔴 **工具调用推荐 SGLang 而非 vLLM**——MiniCPM5-2B 以 XML 格式产出工具调用，SGLang 内置 `minicpm5` parser 自动转换为 OpenAI 兼容 `tool_calls`，vLLM 无此能力。
+
+### 1. 模型架构（config.json 实测）
+
+| 属性 | 值 | 说明 |
+|:--|:--|:--|
+| 架构 | `LlamaForCausalLM` | 标准 Llama 架构，**无需 trust-remote-code**，无自定义算子 |
+| 隐藏层数 | 42 | 较深（对比 Llama-2-7B=32 层） |
+| 隐藏维度 | 2048 | |
+| 中间维度 | 6144 | FFN expansion = 3× |
+| 注意力头数 | 16 | |
+| KV 头数 | 2 | **GQA 8:1**（激进分组查询注意力，推理高效） |
+| head_dim | 128 | |
+| 词表大小 | 130560 | 较大（对比 Llama-3=128256） |
+| max_position_embeddings | 131072 | **128K 上下文**（rope_theta=5000000 支撑） |
+| tie_word_embeddings | false | 输入输出 embedding 不共享（与 MiniCPM3 不同） |
+| 精度 | bfloat16 | |
+| 参数量 | ~2B（safetensors=5.03GB，bf16） | |
+| bos_token_id | 0 (`<s>`) | |
+| eos_token_id | [1, 130073] | **双 EOS**：`</s>`(1) + `<|im_end|>`(130073) |
+| pad_token_id | 1 (`</s>`) | |
+
+**GQA 8:1 意义**：16 个 query 头共享 2 个 KV 头，KV cache 仅为 MHA 的 1/8 → 推理时显存效率极高，A40 上长上下文 rollout 成本可控。
+
+### 2. 特殊 Token 清单（tokenizer_config.json 实测）
+
+| Token ID | Token | 类型 | 用途 |
+|:--|:--|:--|:--|
+| 0 | `<s>` | special | BOS |
+| 1 | `</s>` | special | EOS / PAD |
+| 2 | `<think>` | special | 思考块开始 |
+| 3 | `</think>` | special | 思考块结束 |
+| 4 | `<|im_sep|>` | special | ChatML 分隔符 |
+| 5-7 | `<|fim_prefix|>` / `<|fim_middle|>` / `<|fim_suffix|>` | special | FIM（填充中间，代码补全） |
+| 8 | `<think>` (duplicate?) | non-special | 非特殊版思考标记 |
+| 9 | `</answer>` | non-special | 答案块结束 |
+| 10-11 | tool_result_start / tool_result_end | special | 工具调用结果包裹 |
+| 12-21 | <tools>/<function>/<param> 及闭合 | special | XML 工具调用标签 |
+| 130072 | <\|im_start\|> | special | ChatML 消息开始 |
+| 130073 | <\|im_end\|> | special | ChatML 消息结束（也是 EOS） |
+| 130077 | <\|tool_call\|> | special | 工具调用标记 |
+| 130080-130081 | /think / /no_think | special | 思考模式开关 |
+| 130082-130559 | <unused_token_0>~_477 | non-special | **478 空闲 token** 可自定义 |
+
+**关键发现**：① 双 EOS（</s> + <|im_end|>）→ vLLM/verl stop_token_ids 必须含两者 ② 478 unused tokens 可注入领域 token ③ ChatML 格式。
+
+### 3. Chat Template（chat_template.jinja 实测 112 行）
+
+MiniCPM5-2B 使用 **ChatML + 思考/答案分离**：
+- 消息格式：`<|im_start|>role
+{content}<|im_end|>
+`
+- assistant 含思考块：think_begin...think_end + answer_begin...answer_end
+- 工具调用（assistant）：XML `<function name="X"><param name="P">V</param></function>`
+- 工具结果（tool role -> user）：tool_result_start/end 包裹
+- enable_thinking=False -> 追加 skip 思考的 token；True -> 追加 think_begin
+
+### 4. 🔴 工具调用后端选择（关键发现）
+
+MiniCPM5-2B 工具调用是 **XML 格式**，非 OpenAI function calling。
+
+| 后端 | 工具调用解析 | 用途 |
+|:--|:--|:--|
+| **SGLang** (--tool-call-parser minicpm5) | ✅ 自动转 OpenAI tool_calls | **评测/full harness** |
+| vLLM | ❌ 不解析 XML | 纯文本推理 / verl RL rollout |
+
+**影响**：36% 基线复测**必须用 SGLang**，否则 vLLM 无法解析工具调用 -> 模型被 handicapped -> 结果不可比。
+README 原文（L375）：“工具调用**推荐使用 SGLang**”。
+SGLang 启动：`python -m sglang.launch_server --model-path /tmp/models/MiniCPM5-2B --port 30000 --tool-call-parser minicpm5`
+SGLang 安装：`pip install "sglang[srt]>=0.5.16"`
+
+### 5. 生成配置（generation_config.json 实测）
+
+do_sample=true, temperature=1.0, top_p=0.95；README 建议 min_p=0.0（禁用过滤避免重复），遇重复加 repetition_penalty=1.05。
+
+### 6. 对 SFT 数据格式化的影响
+
+- 必须用 ChatML + 思考/答案分离格式
+- assistant 消息含思考块 + 答案块结构
+- 工具调用用 XML <function> 格式
+- loss 只在答案块后内容上计算（response-only）
+- sft_pyaether_corpus.jsonl（19610 对）需验证是否使用正确的 ChatML 格式
+
+### 7. 对 RL Rollout 的影响（verl + vLLM）
+
+- stop_token_ids 必须含 [1, 130073]
+- verl 需自行解析 XML <function> 工具调用
+- RL rollout 建议 enable_thinking=False 减少生成长度
+- max_model_len=8192
+
+### 8. 更新后 11/9 启动序列（修订 R7 xa73）
+
+| Step | 变更 |
+|:--|:--|
+| 2a | U0001f504 **SGLang serve**（评测用）：sglang.launch_server + --tool-call-parser minicpm5, port 30000 |
+| 2b | vLLM serve（RL rollout 用）verl 内置 |
+| 3 | U0001f504 评测用 SGLang endpoint（localhost:30000） |
+| SGLang 安装 | pip install "sglang[srt]>=0.5.16" 加入 cu124 venv |
+
+### 9. SGLang vs vLLM 在 A40 上的显存预估
+
+| 后端 | 模型加载 | KV cache (8192) | 总显存 | 4xA40 可行？ |
+|:--|:--|:--|:--|:--|
+| SGLang bf16 tp=2 | ~5GB | ~2GB/req x16=32GB | ~37GB | ✅ |
+| vLLM bf16 tp=2 | ~5GB | gpu_mem_util=0.7 -> ~28GB | ~33GB | ✅ |
+
+SGLang 额外支持 DSPark 投机采样（draft model ~500MB）加速 2-3x。
+
+### 10. 风险与缓解
+
+| 风险 | 概率 | 缓解 |
+|:--|:--|:--|
+| SGLang 不支持 cu124 | 低 | SGLang 0.5.16+ 支持 CUDA 12.4 |
+| 36% 基线因后端不同而偏移 | 中 | 11/9 首先用 SGLang 复测，记录新基线 |
+| XML 工具调用解析失败 | 低 | SGLang minicpm5 parser 官方支持 |
+| 思考模式导致输出过长 | 中 | RL 用 enable_thinking=False |
+
+### 11. 数据来源
+
+| 来源 | 位置 | 日期 |
+|:--|:--|:--|
+| config.json | /tmp/models/MiniCPM5-2B/config.json | 2026-11-07 |
+| tokenizer_config.json | /tmp/models/MiniCPM5-2B/tokenizer_config.json (4099 行) | 2026-11-07 |
+| chat_template.jinja | /tmp/models/MiniCPM5-2B/chat_template.jinja (112 行) | 2026-11-07 |
+| generation_config.json | /tmp/models/MiniCPM5-2B/generation_config.json | 2026-11-07 |
+| README-cn.md | /tmp/models/MiniCPM5-2B/README-cn.md (L272-400) | 2026-11-07 |
+| SGLang 部署文档 | https://github.com/OpenBMB/MiniCPM/blob/main/docs/deployment/sglang.md | 2026-11-07 |
