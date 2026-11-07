@@ -1,0 +1,73 @@
+S2: model_path=/nas_train/app.e0031982/datasets/baize-vision/out/hf_cache_qwen35/hub/models--Qwen--Qwen3.5-2B/snapshots/15852e8c16360a2fea060d615a32b45270f8a8fc
+S2: config -> /tmp/lf_s2_smoke_out/run.yaml
+S2: starting LLaMA-Factory CPU LoRA train (max_steps=3) ...
+[WARNING|2026-11-07 11:29:10] llamafactory.hparams.parser:148 >> We recommend enable mixed precision training.
+[INFO|2026-11-07 11:29:10] llamafactory.hparams.parser:406 >> Process rank: 0, world size: 1, device: cpu, distributed training: False, compute dtype: None
+[INFO|tokenization_utils_base.py:2021] 2026-11-07 11:29:10,836 >> loading file vocab.json
+[INFO|tokenization_utils_base.py:2021] 2026-11-07 11:29:10,836 >> loading file merges.txt
+[INFO|tokenization_utils_base.py:2021] 2026-11-07 11:29:10,836 >> loading file tokenizer.json
+[INFO|tokenization_utils_base.py:2021] 2026-11-07 11:29:10,836 >> loading file added_tokens.json
+[INFO|tokenization_utils_base.py:2021] 2026-11-07 11:29:10,836 >> loading file special_tokens_map.json
+[INFO|tokenization_utils_base.py:2021] 2026-11-07 11:29:10,836 >> loading file tokenizer_config.json
+[INFO|tokenization_utils_base.py:2021] 2026-11-07 11:29:10,836 >> loading file chat_template.jinja
+[INFO|tokenization_utils_base.py:2299] 2026-11-07 11:29:11,509 >> Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+[INFO|image_processing_base.py:378] 2026-11-07 11:29:11,511 >> loading configuration file /nas_train/app.e0031982/datasets/baize-vision/out/hf_cache_qwen35/hub/models--Qwen--Qwen3.5-2B/snapshots/15852e8c16360a2fea060d615a32b45270f8a8fc/preprocessor_config.json
+[INFO|tokenization_utils_base.py:2021] 2026-11-07 11:29:11,512 >> loading file vocab.json
+[INFO|tokenization_utils_base.py:2021] 2026-11-07 11:29:11,512 >> loading file merges.txt
+[INFO|tokenization_utils_base.py:2021] 2026-11-07 11:29:11,512 >> loading file tokenizer.json
+[INFO|tokenization_utils_base.py:2021] 2026-11-07 11:29:11,512 >> loading file added_tokens.json
+[INFO|tokenization_utils_base.py:2021] 2026-11-07 11:29:11,512 >> loading file special_tokens_map.json
+[INFO|tokenization_utils_base.py:2021] 2026-11-07 11:29:11,512 >> loading file tokenizer_config.json
+[INFO|tokenization_utils_base.py:2021] 2026-11-07 11:29:11,512 >> loading file chat_template.jinja
+[INFO|tokenization_utils_base.py:2299] 2026-11-07 11:29:12,140 >> Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+[INFO|2026-11-07 11:29:12] llamafactory.data.loader:143 >> Loading dataset tiny_wave_sft.json...
+Generating train split: 0 examples [00:00, ? examples/s]Generating train split: 3 examples [00:00, 84.10 examples/s]
+Converting format of dataset:   0%|          | 0/3 [00:00<?, ? examples/s]Converting format of dataset: 100%|██████████| 3/3 [00:00<00:00, 341.68 examples/s]
+Running tokenizer on dataset:   0%|          | 0/3 [00:00<?, ? examples/s]Running tokenizer on dataset: 100%|██████████| 3/3 [00:00<00:00, 107.37 examples/s]
+[INFO|configuration_utils.py:696] 2026-11-07 11:29:18,577 >> loading configuration file /nas_train/app.e0031982/datasets/baize-vision/out/hf_cache_qwen35/hub/models--Qwen--Qwen3.5-2B/snapshots/15852e8c16360a2fea060d615a32b45270f8a8fc/config.json
+training example:
+input_ids:
+[248045, 8678, 198, 2523, 513, 1167, 16451, 11, 3354, 539, 52540, 14388, 13, 1394, 513, 264, 10631, 17313, 13, 248046, 198, 248045, 846, 198, 133653, 122312, 96847, 110257, 1710, 124620, 101697, 100092, 111291, 96743, 100956, 99172, 3709, 96220, 97913, 96382, 96743, 100956, 101733, 111229, 1710, 198, 122312, 98418, 25, 220, 95896, 96743, 11, 220, 96622, 95930, 101733, 345, 283, 220, 16, 13, 15, 68, 12, 21, 220, 98723, 1710, 248046, 198, 248045, 74455, 198, 96382, 95896, 127877, 101733, 95814, 220, 16, 13, 15, 68, 12, 21, 220, 98723, 9616, 96646, 220, 16, 220, 96420, 98723, 46662, 108590, 104135, 220, 16, 13, 15, 68, 21, 34898, 1710, 248046, 198]
+inputs:
+<|im_start|>system
+You are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>
+<|im_start|>user
+你是一个波形分析助手。给定一段电路仿真波形的描述，请回答该波形的周期是多少。
+波形类型: 方波, 测得周期 T = 1.0e-6 秒。<|im_end|>
+<|im_start|>assistant
+该方波的周期为 1.0e-6 秒（即 1 微秒），对应频率 1.0e6 Hz。<|im_end|>
+
+label_ids:
+[-100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, 96382, 95896, 127877, 101733, 95814, 220, 16, 13, 15, 68, 12, 21, 220, 98723, 9616, 96646, 220, 16, 220, 96420, 98723, 46662, 108590, 104135, 220, 16, 13, 15, 68, 21, 34898, 1710, 248046, 198]
+labels:
+该方波的周期为 1.0e-6 秒（即 1 微秒），对应频率 1.0e6 Hz。<|im_end|>
+
+Traceback (most recent call last):
+  File "/nas_train/app.e0031982/miniforge3/envs/qwen35/lib/python3.10/site-packages/transformers/models/auto/configuration_auto.py", line 1170, in from_pretrained
+    config_class = CONFIG_MAPPING[config_dict["model_type"]]
+  File "/nas_train/app.e0031982/miniforge3/envs/qwen35/lib/python3.10/site-packages/transformers/models/auto/configuration_auto.py", line 872, in __getitem__
+    raise KeyError(key)
+KeyError: 'qwen3_5'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/nas_train/app.e0031982/miniforge3/envs/qwen35/bin/llamafactory-cli", line 7, in <module>
+    sys.exit(main())
+  File "/nas_train/app.e0031982/miniforge3/envs/qwen35/lib/python3.10/site-packages/llamafactory/cli.py", line 151, in main
+    COMMAND_MAP[command]()
+  File "/nas_train/app.e0031982/miniforge3/envs/qwen35/lib/python3.10/site-packages/llamafactory/train/tuner.py", line 110, in run_exp
+    _training_function(config={"args": args, "callbacks": callbacks})
+  File "/nas_train/app.e0031982/miniforge3/envs/qwen35/lib/python3.10/site-packages/llamafactory/train/tuner.py", line 72, in _training_function
+    run_sft(model_args, data_args, training_args, finetuning_args, generating_args, callbacks)
+  File "/nas_train/app.e0031982/miniforge3/envs/qwen35/lib/python3.10/site-packages/llamafactory/train/sft/workflow.py", line 52, in run_sft
+    model = load_model(tokenizer, model_args, finetuning_args, training_args.do_train)
+  File "/nas_train/app.e0031982/miniforge3/envs/qwen35/lib/python3.10/site-packages/llamafactory/model/loader.py", line 142, in load_model
+    config = load_config(model_args)
+  File "/nas_train/app.e0031982/miniforge3/envs/qwen35/lib/python3.10/site-packages/llamafactory/model/loader.py", line 130, in load_config
+    return AutoConfig.from_pretrained(model_args.model_name_or_path, **init_kwargs)
+  File "/nas_train/app.e0031982/miniforge3/envs/qwen35/lib/python3.10/site-packages/transformers/models/auto/configuration_auto.py", line 1172, in from_pretrained
+    raise ValueError(
+ValueError: The checkpoint you are trying to load has model type `qwen3_5` but Transformers does not recognize this architecture. This could be because of an issue with the checkpoint, or because your version of Transformers is out of date.
+
+You can update Transformers with the command `pip install --upgrade transformers`. If this does not work, and the checkpoint is very new, then there may not be a release version that supports this model yet. In this case, you can get the most up-to-date code by installing Transformers from source with the command `pip install git+https://github.com/huggingface/transformers.git`

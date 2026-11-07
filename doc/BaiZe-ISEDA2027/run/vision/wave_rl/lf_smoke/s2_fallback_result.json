@@ -1,0 +1,22 @@
+{
+  "stage": "s2_fallback",
+  "ts": "2026-11-07T11:31:48",
+  "versions": {
+    "torch": "2.14.1+cpu",
+    "transformers": "5.20.2",
+    "peft": "0.21.2"
+  },
+  "model_type": "qwen3_5",
+  "architectures": [
+    "Qwen3_5ForConditionalGeneration"
+  ],
+  "load_class": "AutoModelForCausalLM",
+  "load_time_s": 1.8,
+  "n_params": 1881825088,
+  "lora_trainable_params": 737280,
+  "step0_loss": 2.860501527786255,
+  "step1_loss": 2.8341119289398193,
+  "loss_finite": true,
+  "step_time_s": 1.2,
+  "verdict": "FALLBACK_VIABLE"
+}

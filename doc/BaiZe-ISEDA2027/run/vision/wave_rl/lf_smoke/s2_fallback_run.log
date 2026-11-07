@@ -1,0 +1,40 @@
+/nas_train/app.e0031982/miniforge3/envs/qwen35/lib/python3.10/site-packages/huggingface_hub/constants.py:302: FutureWarning: The `HF_HUB_ENABLE_HF_TRANSFER` environment variable is deprecated as 'hf_transfer' is not used anymore. Please use `HF_XET_HIGH_PERFORMANCE` instead to enable high performance transfer with Xet. Visit https://huggingface.co/docs/huggingface_hub/package_reference/environment_variables#hfxethighperformance for more details.
+  warnings.warn(
+[versions] torch=2.14.1+cpu transformers=5.20.2 peft=0.21.2
+[config] model_type=qwen3_5 arch=['Qwen3_5ForConditionalGeneration'] (0.0s)
+[tokenizer] vocab=248044 loaded (0.7s)
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights:   0%|          | 0/320 [00:00<?, ?it/s]Loading weights:   0%|          | 1/320 [00:00<03:06,  1.71it/s]Loading weights:  54%|█████▍    | 173/320 [00:00<00:00, 337.99it/s]Loading weights:  85%|████████▌ | 273/320 [00:00<00:00, 350.89it/s]Loading weights: 100%|██████████| 320/320 [00:01<00:00, 296.65it/s]
+[model] loaded via AutoModelForCausalLM (1.8s)
+[model] params=1.882B
+[lora] trainable=0.74M
+[transformers] `causal_conv1d_fn` is falling back to its reference PyTorch implementation because `causal_conv1d` is not installed. This is correct but much slower; install `causal_conv1d` for the optimized kernel.
+[transformers] `chunk_gated_delta_rule` is falling back to its reference PyTorch implementation because `flash-linear-attention` is not installed. This is correct but much slower; install `flash-linear-attention` for the optimized kernel.
+/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/wave_rl/lf_smoke/s2_fallback_peft.py:82: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /__w/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:820.)
+  loss0 = float(out.loss)
+[step] loss0=2.8605 loss1=2.8341 finite=True (1.2s)
+
+RESULT -> /tmp/qwen35_fallback_smoke.json
+{
+  "stage": "s2_fallback",
+  "ts": "2026-11-07T11:31:48",
+  "versions": {
+    "torch": "2.14.1+cpu",
+    "transformers": "5.20.2",
+    "peft": "0.21.2"
+  },
+  "model_type": "qwen3_5",
+  "architectures": [
+    "Qwen3_5ForConditionalGeneration"
+  ],
+  "load_class": "AutoModelForCausalLM",
+  "load_time_s": 1.8,
+  "n_params": 1881825088,
+  "lora_trainable_params": 737280,
+  "step0_loss": 2.860501527786255,
+  "step1_loss": 2.8341119289398193,
+  "loss_finite": true,
+  "step_time_s": 1.2,
+  "verdict": "FALLBACK_VIABLE"
+}

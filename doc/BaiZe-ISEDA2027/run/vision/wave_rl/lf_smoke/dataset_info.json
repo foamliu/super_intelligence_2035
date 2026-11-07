@@ -1,0 +1,10 @@
+{
+  "tiny_wave_sft": {
+    "file_name": "tiny_wave_sft.json",
+    "columns": {
+      "prompt": "instruction",
+      "query": "input",
+      "response": "output"
+    }
+  }
+}

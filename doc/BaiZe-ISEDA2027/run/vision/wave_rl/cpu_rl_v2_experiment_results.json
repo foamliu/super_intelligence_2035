@@ -1,0 +1,1246 @@
+{
+  "config": {
+    "model_path": "/nas_train/app.e0031982/datasets/baize-vision/out/wave_sft_stage1w/qwen3vl_2b_text_extracted",
+    "sft_ckpt": "/nas_train/app.e0031982/datasets/baize-vision/out/wave_sft_stage1w/step3000",
+    "out_dir": "/nas_train/app.e0031982/datasets/baize-vision/out/cpu_rl_v2",
+    "n_eval": 15,
+    "n_grpo_steps": 15,
+    "group_size": 4,
+    "batch_prompts": 2,
+    "lora_r": 16,
+    "lr": 1e-06,
+    "phase": "all",
+    "seed": 20261107,
+    "skip_control": false,
+    "skip_baseline": true,
+    "max_turns": 5,
+    "max_new_tokens": 24
+  },
+  "stats": {
+    "accuracy": {
+      "A_baseline": 0.0,
+      "B_sft": 0.06666666666666667,
+      "C_grpo_treatment": 0.1111111111111111,
+      "D_grpo_control": 0.044444444444444446
+    },
+    "mcnemar_C_vs_B": {
+      "stat": 4.0,
+      "p": 0.625,
+      "n_discordant": 4
+    },
+    "bootstrap_C_vs_B": {
+      "point_delta": 0.04444444444444444,
+      "ci_lo": -0.04444444444444444,
+      "ci_hi": 0.13333333333333333
+    },
+    "mcnemar_C_vs_A": {
+      "stat": 0.0,
+      "p": 1.0,
+      "n_discordant": 0
+    },
+    "mcnemar_B_vs_A": {
+      "stat": 0.0,
+      "p": 1.0,
+      "n_discordant": 0
+    },
+    "mcnemar_C_vs_D": {
+      "stat": 3.0,
+      "p": 0.25,
+      "n_discordant": 3
+    },
+    "bootstrap_C_vs_D": {
+      "point_delta": 0.06666666666666665,
+      "ci_lo": 0.0,
+      "ci_hi": 0.15555555555555556
+    },
+    "cheat_rate": {
+      "train_seed_range": "20261105-20261105+8000",
+      "eval_seed_range": "990000+",
+      "overlap": 0,
+      "overlap_frac": 0.0,
+      "note": "train and eval use disjoint RNG seed ranges -> no data leakage"
+    },
+    "per_task": {
+      "B": {
+        "period": 0.2,
+        "type_classification": 0.0,
+        "frequency_comparison": 0.0
+      },
+      "C": {
+        "period": 0.3333333333333333,
+        "type_classification": 0.0,
+        "frequency_comparison": 0.0
+      },
+      "D": {
+        "period": 0.13333333333333333,
+        "type_classification": 0.0,
+        "frequency_comparison": 0.0
+      }
+    },
+    "verdict": "TREATMENT NOT SIGNIFICANT | REWARD-DESIGN DRIVEN (C>D)",
+    "pre_registered_judgment": {
+      "C>B>A": true,
+      "C>D_reward_design": true,
+      "C_vs_B_sig": false
+    }
+  },
+  "results": {
+    "A": [],
+    "B": [
+      {
+        "qid": 0,
+        "task": "period",
+        "correct": false,
+        "submitted": 3.97e-06,
+        "gt": 3.346e-06,
+        "submitted_flag": true
+      },
+      {
+        "qid": 1,
+        "task": "period",
+        "correct": false,
+        "submitted": 1.416e-05,
+        "gt": 4.740404149933318e-06,
+        "submitted_flag": true
+      },
+      {
+        "qid": 2,
+        "task": "period",
+        "correct": false,
+        "submitted": 1.8904e-05,
+        "gt": 5.4778936179936956e-06,
+        "submitted_flag": true
+      },
+      {
+        "qid": 3,
+        "task": "period",
+        "correct": true,
+        "submitted": 1.422e-05,
+        "gt": 1.4220000000000003e-05,
+        "submitted_flag": true
+      },
+      {
+        "qid": 4,
+        "task": "period",
+        "correct": false,
+        "submitted": 3.554e-05,
+        "gt": 3.55500000000068e-06,
+        "submitted_flag": true
+      },
+      {
+        "qid": 5,
+        "task": "period",
+        "correct": false,
+        "submitted": 3.284e-05,
+        "gt": 3.285000000000088e-06,
+        "submitted_flag": true
+      },
+      {
+        "qid": 6,
+        "task": "period",
+        "correct": true,
+        "submitted": 7.536e-06,
+        "gt": 7.53700000000006e-06,
+        "submitted_flag": true
+      },
+      {
+        "qid": 7,
+        "task": "period",
+        "correct": false,
+        "submitted": 4.786e-06,
+        "gt": 3.9880000000000015e-06,
+        "submitted_flag": true
+      },
+      {
+        "qid": 8,
+        "task": "period",
+        "correct": true,
+        "submitted": 6.086e-06,
+        "gt": 6.166781760417287e-06,
+        "submitted_flag": true
+      },
+      {
+        "qid": 9,
+        "task": "period",
+        "correct": false,
+        "submitted": 4.219452e-06,
+        "gt": 5.134000000000009e-06,
+        "submitted_flag": true
+      },
+      {
+        "qid": 10,
+        "task": "period",
+        "correct": false,
+        "submitted": 5.616e-06,
+        "gt": 3.282824656962077e-06,
+        "submitted_flag": true
+      },
+      {
+        "qid": 11,
+        "task": "period",
+        "correct": false,
+        "submitted": 6.129e-07,
+        "gt": 7.3545599999996235e-09,
+        "submitted_flag": true
+      },
+      {
+        "qid": 12,
+        "task": "period",
+        "correct": false,
+        "submitted": 9.39e-06,
+        "gt": 1.878e-05,
+        "submitted_flag": true
+      },
+      {
+        "qid": 13,
+        "task": "period",
+        "correct": false,
+        "submitted": 3.43e-05,
+        "gt": 3.4643000000000678e-06,
+        "submitted_flag": true
+      },
+      {
+        "qid": 14,
+        "task": "period",
+        "correct": false,
+        "submitted": 3.58e-06,
+        "gt": 2.9840000000000006e-06,
+        "submitted_flag": true
+      },
+      {
+        "qid": 15,
+        "task": "type_classification",
+        "correct": false,
+        "submitted": null,
+        "gt": "digital",
+        "submitted_flag": true
+      },
+      {
+        "qid": 16,
+        "task": "type_classification",
+        "correct": false,
+        "submitted": null,
+        "gt": "digital",
+        "submitted_flag": true
+      },
+      {
+        "qid": 17,
+        "task": "type_classification",
+        "correct": false,
+        "submitted": null,
+        "gt": "digital",
+        "submitted_flag": true
+      },
+      {
+        "qid": 18,
+        "task": "type_classification",
+        "correct": false,
+        "submitted": null,
+        "gt": "analog",
+        "submitted_flag": true
+      },
+      {
+        "qid": 19,
+        "task": "type_classification",
+        "correct": false,
+        "submitted": null,
+        "gt": "analog",
+        "submitted_flag": true
+      },
+      {
+        "qid": 20,
+        "task": "type_classification",
+        "correct": false,
+        "submitted": null,
+        "gt": "analog",
+        "submitted_flag": true
+      },
+      {
+        "qid": 21,
+        "task": "type_classification",
+        "correct": false,
+        "submitted": null,
+        "gt": "analog",
+        "submitted_flag": true
+      },
+      {
+        "qid": 22,
+        "task": "type_classification",
+        "correct": false,
+        "submitted": null,
+        "gt": "digital",
+        "submitted_flag": true
+      },
+      {
+        "qid": 23,
+        "task": "type_classification",
+        "correct": false,
+        "submitted": null,
+        "gt": "analog",
+        "submitted_flag": true
+      },
+      {
+        "qid": 24,
+        "task": "type_classification",
+        "correct": false,
+        "submitted": null,
+        "gt": "analog",
+        "submitted_flag": true
+      },
+      {
+        "qid": 25,
+        "task": "type_classification",
+        "correct": false,
+        "submitted": null,
+        "gt": "digital",
+        "submitted_flag": true
+      },
+      {
+        "qid": 26,
+        "task": "type_classification",
+        "correct": false,
+        "submitted": null,
+        "gt": "analog",
+        "submitted_flag": true
+      },
+      {
+        "qid": 27,
+        "task": "type_classification",
+        "correct": false,
+        "submitted": null,
+        "gt": "digital",
+        "submitted_flag": true
+      },
+      {
+        "qid": 28,
+        "task": "type_classification",
+        "correct": false,
+        "submitted": null,
+        "gt": "analog",
+        "submitted_flag": true
+      },
+      {
+        "qid": 29,
+        "task": "type_classification",
+        "correct": false,
+        "submitted": null,
+        "gt": "analog",
+        "submitted_flag": true
+      },
+      {
+        "qid": 30,
+        "task": "frequency_comparison",
+        "correct": false,
+        "submitted": null,
+        "gt": "v(out)",
+        "submitted_flag": false
+      },
+      {
+        "qid": 31,
+        "task": "frequency_comparison",
+        "correct": false,
+        "submitted": null,
+        "gt": "v(in_p)",
+        "submitted_flag": false
+      },
+      {
+        "qid": 32,
+        "task": "frequency_comparison",
+        "correct": false,
+        "submitted": null,
+        "gt": "v(in)",
+        "submitted_flag": false
+      },
+      {
+        "qid": 33,
+        "task": "frequency_comparison",
+        "correct": false,
+        "submitted": null,
+        "gt": "v(in_n)",
+        "submitted_flag": false
+      },
+      {
+        "qid": 34,
+        "task": "frequency_comparison",
+        "correct": false,
+        "submitted": null,
+        "gt": "v(in)",
+        "submitted_flag": false
+      },
+      {
+        "qid": 35,
+        "task": "frequency_comparison",
+        "correct": false,
+        "submitted": null,
+        "gt": "v(in)",
+        "submitted_flag": false
+      },
+      {
+        "qid": 36,
+        "task": "frequency_comparison",
+        "correct": false,
+        "submitted": null,
+        "gt": "v(out)",
+        "submitted_flag": false
+      },
+      {
+        "qid": 37,
+        "task": "frequency_comparison",
+        "correct": false,
+        "submitted": null,
+        "gt": "v(out)",
+        "submitted_flag": false
+      },
+      {
+        "qid": 38,
+        "task": "frequency_comparison",
+        "correct": false,
+        "submitted": null,
+        "gt": "v(out)",
+        "submitted_flag": false
+      },
+      {
+        "qid": 39,
+        "task": "frequency_comparison",
+        "correct": false,
+        "submitted": null,
+        "gt": "v(in)",
+        "submitted_flag": false
+      },
+      {
+        "qid": 40,
+        "task": "frequency_comparison",
+        "correct": false,
+        "submitted": null,
+        "gt": "v(out)",
+        "submitted_flag": false
+      },
+      {
+        "qid": 41,
+        "task": "frequency_comparison",
+        "correct": false,
+        "submitted": null,
+        "gt": "v(in)",
+        "submitted_flag": false
+      },
+      {
+        "qid": 42,
+        "task": "frequency_comparison",
+        "correct": false,
+        "submitted": null,
+        "gt": "v(d0)",
+        "submitted_flag": false
+      },
+      {
+        "qid": 43,
+        "task": "frequency_comparison",
+        "correct": false,
+        "submitted": null,
+        "gt": "v(d0)",
+        "submitted_flag": false
+      },
+      {
+        "qid": 44,
+        "task": "frequency_comparison",
+        "correct": false,
+        "submitted": null,
+        "gt": "v(out)",
+        "submitted_flag": false
+      }
+    ],
+    "C": [
+      {
+        "qid": 0,
+        "task": "period",
+        "correct": false,
+        "submitted": 4.016e-06,
+        "gt": 3.346e-06,
+        "submitted_flag": true
+      },
+      {
+        "qid": 1,
+        "task": "period",
+        "correct": false,
+        "submitted": 1.416e-05,
+        "gt": 4.740404149933318e-06,
+        "submitted_flag": true
+      },
+      {
+        "qid": 2,
+        "task": "period",
+        "correct": false,
+        "submitted": 1.8904e-05,
+        "gt": 5.4778936179936956e-06,
+        "submitted_flag": true
+      },
+      {
+        "qid": 3,
+        "task": "period",
+        "correct": true,
+        "submitted": 1.422e-05,
+        "gt": 1.4220000000000003e-05,
+        "submitted_flag": true
+      },
+      {
+        "qid": 4,
+        "task": "period",
+        "correct": false,
+        "submitted": 3.554e-05,
+        "gt": 3.55500000000068e-06,
+        "submitted_flag": true
+      },
+      {
+        "qid": 5,
+        "task": "period",
+        "correct": false,
+        "submitted": 3.284e-05,
+        "gt": 3.285000000000088e-06,
+        "submitted_flag": true
+      },
+      {
+        "qid": 6,
+        "task": "period",
+        "correct": true,
+        "submitted": 7.536e-06,
+        "gt": 7.53700000000006e-06,
+        "submitted_flag": true
+      },
+      {
+        "qid": 7,
+        "task": "period",
+        "correct": false,
+        "submitted": 4.786e-06,
+        "gt": 3.9880000000000015e-06,
+        "submitted_flag": true
+      },
+      {
+        "qid": 8,
+        "task": "period",
+        "correct": false,
+        "submitted": 1.2172e-05,
+        "gt": 6.166781760417287e-06,
+        "submitted_flag": true
+      },
+      {
+        "qid": 9,
+        "task": "period",
+        "correct": true,
+        "submitted": 5.134e-06,
+        "gt": 5.134000000000009e-06,
+        "submitted_flag": true
+      },
+      {
+        "qid": 10,
+        "task": "period",
+        "correct": false,
+        "submitted": 1.1232e-05,
+        "gt": 3.282824656962077e-06,
+        "submitted_flag": true
+      },
+      {
+        "qid": 11,
+        "task": "period",
+        "correct": true,
+        "submitted": 7.258e-09,
+        "gt": 7.3545599999996235e-09,
+        "submitted_flag": true
+      },
+      {
+        "qid": 12,
+        "task": "period",
+        "correct": true,
+        "submitted": 1.878e-05,
+        "gt": 1.878e-05,
+        "submitted_flag": true
+      },
+      {
+        "qid": 13,
+        "task": "period",
+        "correct": false,
+        "submitted": 3.43e-05,
+        "gt": 3.4643000000000678e-06,
+        "submitted_flag": true
+      },
+      {
+        "qid": 14,
+        "task": "period",
+        "correct": false,
+        "submitted": 3.58e-06,
+        "gt": 2.9840000000000006e-06,
+        "submitted_flag": true
+      },
+      {
+        "qid": 15,
+        "task": "type_classification",
+        "correct": false,
+        "submitted": null,
+        "gt": "digital",
+        "submitted_flag": true
+      },
+      {
+        "qid": 16,
+        "task": "type_classification",
+        "correct": false,
+        "submitted": null,
+        "gt": "digital",
+        "submitted_flag": true
+      },
+      {
+        "qid": 17,
+        "task": "type_classification",
+        "correct": false,
+        "submitted": null,
+        "gt": "digital",
+        "submitted_flag": true
+      },
+      {
+        "qid": 18,
+        "task": "type_classification",
+        "correct": false,
+        "submitted": null,
+        "gt": "analog",
+        "submitted_flag": true
+      },
+      {
+        "qid": 19,
+        "task": "type_classification",
+        "correct": false,
+        "submitted": null,
+        "gt": "analog",
+        "submitted_flag": true
+      },
+      {
+        "qid": 20,
+        "task": "type_classification",
+        "correct": false,
+        "submitted": null,
+        "gt": "analog",
+        "submitted_flag": true
+      },
+      {
+        "qid": 21,
+        "task": "type_classification",
+        "correct": false,
+        "submitted": null,
+        "gt": "analog",
+        "submitted_flag": true
+      },
+      {
+        "qid": 22,
+        "task": "type_classification",
+        "correct": false,
+        "submitted": null,
+        "gt": "digital",
+        "submitted_flag": true
+      },
+      {
+        "qid": 23,
+        "task": "type_classification",
+        "correct": false,
+        "submitted": null,
+        "gt": "analog",
+        "submitted_flag": true
+      },
+      {
+        "qid": 24,
+        "task": "type_classification",
+        "correct": false,
+        "submitted": null,
+        "gt": "analog",
+        "submitted_flag": true
+      },
+      {
+        "qid": 25,
+        "task": "type_classification",
+        "correct": false,
+        "submitted": null,
+        "gt": "digital",
+        "submitted_flag": true
+      },
+      {
+        "qid": 26,
+        "task": "type_classification",
+        "correct": false,
+        "submitted": null,
+        "gt": "analog",
+        "submitted_flag": true
+      },
+      {
+        "qid": 27,
+        "task": "type_classification",
+        "correct": false,
+        "submitted": null,
+        "gt": "digital",
+        "submitted_flag": true
+      },
+      {
+        "qid": 28,
+        "task": "type_classification",
+        "correct": false,
+        "submitted": null,
+        "gt": "analog",
+        "submitted_flag": true
+      },
+      {
+        "qid": 29,
+        "task": "type_classification",
+        "correct": false,
+        "submitted": null,
+        "gt": "analog",
+        "submitted_flag": true
+      },
+      {
+        "qid": 30,
+        "task": "frequency_comparison",
+        "correct": false,
+        "submitted": null,
+        "gt": "v(out)",
+        "submitted_flag": false
+      },
+      {
+        "qid": 31,
+        "task": "frequency_comparison",
+        "correct": false,
+        "submitted": null,
+        "gt": "v(in_p)",
+        "submitted_flag": false
+      },
+      {
+        "qid": 32,
+        "task": "frequency_comparison",
+        "correct": false,
+        "submitted": null,
+        "gt": "v(in)",
+        "submitted_flag": false
+      },
+      {
+        "qid": 33,
+        "task": "frequency_comparison",
+        "correct": false,
+        "submitted": null,
+        "gt": "v(in_n)",
+        "submitted_flag": false
+      },
+      {
+        "qid": 34,
+        "task": "frequency_comparison",
+        "correct": false,
+        "submitted": null,
+        "gt": "v(in)",
+        "submitted_flag": false
+      },
+      {
+        "qid": 35,
+        "task": "frequency_comparison",
+        "correct": false,
+        "submitted": null,
+        "gt": "v(in)",
+        "submitted_flag": false
+      },
+      {
+        "qid": 36,
+        "task": "frequency_comparison",
+        "correct": false,
+        "submitted": null,
+        "gt": "v(out)",
+        "submitted_flag": false
+      },
+      {
+        "qid": 37,
+        "task": "frequency_comparison",
+        "correct": false,
+        "submitted": null,
+        "gt": "v(out)",
+        "submitted_flag": false
+      },
+      {
+        "qid": 38,
+        "task": "frequency_comparison",
+        "correct": false,
+        "submitted": null,
+        "gt": "v(out)",
+        "submitted_flag": false
+      },
+      {
+        "qid": 39,
+        "task": "frequency_comparison",
+        "correct": false,
+        "submitted": null,
+        "gt": "v(in)",
+        "submitted_flag": false
+      },
+      {
+        "qid": 40,
+        "task": "frequency_comparison",
+        "correct": false,
+        "submitted": null,
+        "gt": "v(out)",
+        "submitted_flag": false
+      },
+      {
+        "qid": 41,
+        "task": "frequency_comparison",
+        "correct": false,
+        "submitted": null,
+        "gt": "v(in)",
+        "submitted_flag": false
+      },
+      {
+        "qid": 42,
+        "task": "frequency_comparison",
+        "correct": false,
+        "submitted": null,
+        "gt": "v(d0)",
+        "submitted_flag": false
+      },
+      {
+        "qid": 43,
+        "task": "frequency_comparison",
+        "correct": false,
+        "submitted": null,
+        "gt": "v(d0)",
+        "submitted_flag": false
+      },
+      {
+        "qid": 44,
+        "task": "frequency_comparison",
+        "correct": false,
+        "submitted": null,
+        "gt": "v(out)",
+        "submitted_flag": false
+      }
+    ],
+    "D": [
+      {
+        "qid": 0,
+        "task": "period",
+        "correct": false,
+        "submitted": 3.948e-06,
+        "gt": 3.346e-06,
+        "submitted_flag": true
+      },
+      {
+        "qid": 1,
+        "task": "period",
+        "correct": false,
+        "submitted": 1.416e-05,
+        "gt": 4.740404149933318e-06,
+        "submitted_flag": true
+      },
+      {
+        "qid": 2,
+        "task": "period",
+        "correct": false,
+        "submitted": 1.8904e-05,
+        "gt": 5.4778936179936956e-06,
+        "submitted_flag": true
+      },
+      {
+        "qid": 3,
+        "task": "period",
+        "correct": true,
+        "submitted": 1.422e-05,
+        "gt": 1.4220000000000003e-05,
+        "submitted_flag": true
+      },
+      {
+        "qid": 4,
+        "task": "period",
+        "correct": false,
+        "submitted": 3.554e-05,
+        "gt": 3.55500000000068e-06,
+        "submitted_flag": true
+      },
+      {
+        "qid": 5,
+        "task": "period",
+        "correct": false,
+        "submitted": 3.284e-05,
+        "gt": 3.285000000000088e-06,
+        "submitted_flag": true
+      },
+      {
+        "qid": 6,
+        "task": "period",
+        "correct": false,
+        "submitted": 7.536e-05,
+        "gt": 7.53700000000006e-06,
+        "submitted_flag": true
+      },
+      {
+        "qid": 7,
+        "task": "period",
+        "correct": false,
+        "submitted": 4.786e-06,
+        "gt": 3.9880000000000015e-06,
+        "submitted_flag": true
+      },
+      {
+        "qid": 8,
+        "task": "period",
+        "correct": false,
+        "submitted": 1.2173e-05,
+        "gt": 6.166781760417287e-06,
+        "submitted_flag": true
+      },
+      {
+        "qid": 9,
+        "task": "period",
+        "correct": false,
+        "submitted": 4.219452e-06,
+        "gt": 5.134000000000009e-06,
+        "submitted_flag": true
+      },
+      {
+        "qid": 10,
+        "task": "period",
+        "correct": false,
+        "submitted": 5.616e-06,
+        "gt": 3.282824656962077e-06,
+        "submitted_flag": true
+      },
+      {
+        "qid": 11,
+        "task": "period",
+        "correct": false,
+        "submitted": 6.129e-07,
+        "gt": 7.3545599999996235e-09,
+        "submitted_flag": true
+      },
+      {
+        "qid": 12,
+        "task": "period",
+        "correct": true,
+        "submitted": 1.876e-05,
+        "gt": 1.878e-05,
+        "submitted_flag": true
+      },
+      {
+        "qid": 13,
+        "task": "period",
+        "correct": false,
+        "submitted": 3.43e-05,
+        "gt": 3.4643000000000678e-06,
+        "submitted_flag": true
+      },
+      {
+        "qid": 14,
+        "task": "period",
+        "correct": false,
+        "submitted": 3.58e-06,
+        "gt": 2.9840000000000006e-06,
+        "submitted_flag": true
+      },
+      {
+        "qid": 15,
+        "task": "type_classification",
+        "correct": false,
+        "submitted": null,
+        "gt": "digital",
+        "submitted_flag": true
+      },
+      {
+        "qid": 16,
+        "task": "type_classification",
+        "correct": false,
+        "submitted": null,
+        "gt": "digital",
+        "submitted_flag": true
+      },
+      {
+        "qid": 17,
+        "task": "type_classification",
+        "correct": false,
+        "submitted": null,
+        "gt": "digital",
+        "submitted_flag": true
+      },
+      {
+        "qid": 18,
+        "task": "type_classification",
+        "correct": false,
+        "submitted": null,
+        "gt": "analog",
+        "submitted_flag": true
+      },
+      {
+        "qid": 19,
+        "task": "type_classification",
+        "correct": false,
+        "submitted": null,
+        "gt": "analog",
+        "submitted_flag": true
+      },
+      {
+        "qid": 20,
+        "task": "type_classification",
+        "correct": false,
+        "submitted": null,
+        "gt": "analog",
+        "submitted_flag": true
+      },
+      {
+        "qid": 21,
+        "task": "type_classification",
+        "correct": false,
+        "submitted": null,
+        "gt": "analog",
+        "submitted_flag": true
+      },
+      {
+        "qid": 22,
+        "task": "type_classification",
+        "correct": false,
+        "submitted": null,
+        "gt": "digital",
+        "submitted_flag": true
+      },
+      {
+        "qid": 23,
+        "task": "type_classification",
+        "correct": false,
+        "submitted": null,
+        "gt": "analog",
+        "submitted_flag": true
+      },
+      {
+        "qid": 24,
+        "task": "type_classification",
+        "correct": false,
+        "submitted": null,
+        "gt": "analog",
+        "submitted_flag": true
+      },
+      {
+        "qid": 25,
+        "task": "type_classification",
+        "correct": false,
+        "submitted": null,
+        "gt": "digital",
+        "submitted_flag": true
+      },
+      {
+        "qid": 26,
+        "task": "type_classification",
+        "correct": false,
+        "submitted": null,
+        "gt": "analog",
+        "submitted_flag": true
+      },
+      {
+        "qid": 27,
+        "task": "type_classification",
+        "correct": false,
+        "submitted": null,
+        "gt": "digital",
+        "submitted_flag": true
+      },
+      {
+        "qid": 28,
+        "task": "type_classification",
+        "correct": false,
+        "submitted": null,
+        "gt": "analog",
+        "submitted_flag": true
+      },
+      {
+        "qid": 29,
+        "task": "type_classification",
+        "correct": false,
+        "submitted": null,
+        "gt": "analog",
+        "submitted_flag": true
+      },
+      {
+        "qid": 30,
+        "task": "frequency_comparison",
+        "correct": false,
+        "submitted": null,
+        "gt": "v(out)",
+        "submitted_flag": false
+      },
+      {
+        "qid": 31,
+        "task": "frequency_comparison",
+        "correct": false,
+        "submitted": null,
+        "gt": "v(in_p)",
+        "submitted_flag": false
+      },
+      {
+        "qid": 32,
+        "task": "frequency_comparison",
+        "correct": false,
+        "submitted": null,
+        "gt": "v(in)",
+        "submitted_flag": false
+      },
+      {
+        "qid": 33,
+        "task": "frequency_comparison",
+        "correct": false,
+        "submitted": null,
+        "gt": "v(in_n)",
+        "submitted_flag": false
+      },
+      {
+        "qid": 34,
+        "task": "frequency_comparison",
+        "correct": false,
+        "submitted": null,
+        "gt": "v(in)",
+        "submitted_flag": false
+      },
+      {
+        "qid": 35,
+        "task": "frequency_comparison",
+        "correct": false,
+        "submitted": null,
+        "gt": "v(in)",
+        "submitted_flag": false
+      },
+      {
+        "qid": 36,
+        "task": "frequency_comparison",
+        "correct": false,
+        "submitted": null,
+        "gt": "v(out)",
+        "submitted_flag": false
+      },
+      {
+        "qid": 37,
+        "task": "frequency_comparison",
+        "correct": false,
+        "submitted": null,
+        "gt": "v(out)",
+        "submitted_flag": false
+      },
+      {
+        "qid": 38,
+        "task": "frequency_comparison",
+        "correct": false,
+        "submitted": null,
+        "gt": "v(out)",
+        "submitted_flag": false
+      },
+      {
+        "qid": 39,
+        "task": "frequency_comparison",
+        "correct": false,
+        "submitted": null,
+        "gt": "v(in)",
+        "submitted_flag": false
+      },
+      {
+        "qid": 40,
+        "task": "frequency_comparison",
+        "correct": false,
+        "submitted": null,
+        "gt": "v(out)",
+        "submitted_flag": false
+      },
+      {
+        "qid": 41,
+        "task": "frequency_comparison",
+        "correct": false,
+        "submitted": null,
+        "gt": "v(in)",
+        "submitted_flag": false
+      },
+      {
+        "qid": 42,
+        "task": "frequency_comparison",
+        "correct": false,
+        "submitted": null,
+        "gt": "v(d0)",
+        "submitted_flag": false
+      },
+      {
+        "qid": 43,
+        "task": "frequency_comparison",
+        "correct": false,
+        "submitted": null,
+        "gt": "v(d0)",
+        "submitted_flag": false
+      },
+      {
+        "qid": 44,
+        "task": "frequency_comparison",
+        "correct": false,
+        "submitted": null,
+        "gt": "v(out)",
+        "submitted_flag": false
+      }
+    ]
+  },
+  "training": {
+    "C_losses": [
+      -0.0002896934747695923,
+      -0.00027954578399658203,
+      0.0005267290398478508,
+      -0.00022901594638824463,
+      -0.0003123190253973007,
+      -0.00011407583951950073,
+      0.0,
+      0.0003918558359146118,
+      -0.00038849562406539917,
+      0.0,
+      0.0,
+      0.0008501186966896057,
+      -0.0004539787769317627,
+      0.0,
+      0.0
+    ],
+    "C_rewards": [
+      -0.2825,
+      0.47966620126519555,
+      0.3051063188214582,
+      0.20466964846971647,
+      0.20050098619653417,
+      0.18239768782618682,
+      -0.04,
+      0.6399397067804902,
+      0.30478212370452173,
+      0.0,
+      -0.02,
+      -0.055978293080111124,
+      1.1743659770046546,
+      0.0,
+      0.0
+    ],
+    "D_losses": [
+      0.00180758535861969,
+      -0.0034370720386505127,
+      -0.00017892569303512573,
+      0.0008620340377092361,
+      -0.0018319040536880493,
+      0.0006882026791572571,
+      0.0006893277168273926,
+      0.0012478232383728027,
+      -0.0017948001623153687,
+      -8.470099419355392e-05,
+      -0.0002018660306930542,
+      -9.607523679733276e-06,
+      -1.2811273336410522e-05,
+      0.0036374032497406006,
+      -0.00027611851692199707
+    ],
+    "D_rewards": [
+      0.7935976723720573,
+      0.1428202110734876,
+      0.46248176582291023,
+      0.5343177398291372,
+      0.6320536580132268,
+      0.49515940996234153,
+      0.306348347541732,
+      0.4767440257285167,
+      0.47551546695662994,
+      0.5356075948243909,
+      0.48003163024829415,
+      0.7173668704528464,
+      0.04237776376361169,
+      0.7917261116941288,
+      0.32555574021235
+    ]
+  }
+}
