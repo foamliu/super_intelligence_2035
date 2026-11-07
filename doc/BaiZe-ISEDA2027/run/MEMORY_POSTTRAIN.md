@@ -7,12 +7,12 @@ WAITING: 1
 
 ## 进度快照
 
-- PHASE: posttrain-wake44（2026-11-07 08:5x；例行巡检）
-- 已完成: P3预备✅ 7脚本(wake1/2)；P1-e✅ 污染隔离(wake2)；P1-a/b✅ 数据盘点(wake2)；P2✅ 方案书(wake3)；P0✅ D1–D6 DeepSeek侧(wake4→14)；P1-d✅ PyAether语料(wake4)；P1✅ HTML报告(wake6)；wake17✅ 后训练数据调研HTML报告(44.9KB/10节)+§E+硬盘体检；wake40✅ TASK§用户令·22:5x标记✅已交付；wake18-43✅ 例行巡检；wake24✅ 归档wake1-4；wake36✅ 归档wake9-16腾体积
-- 当前动作: wake44 唤醒→ git fetch(proxy) 成功（behind 10）→ git merge --ff-only 成功（fast-forward 到 338984974，他线pretrain/harness/designflow/zhulong活跃提交）→ git status clean（`## main...origin/main`）→ TASK文件diff空(无新运维令) → 交付物复核：4报告(30479B+36923B+38068B+44894B)全在位 + 7脚本 bash -n 全 PASS + §E 在位 → 阻塞项复查（全无变化）：~/eda_code_eval 仍 MISSING + /nas_inference//nas_env 仍未挂载 + 8×A40 SGLang idle(0% util 44-45GB/卡) → 硬盘 / 385G(84%) /nas_data 20T(85%) 无变化 → 无新运维令 → 体积自检+提交心跳
-- 下一步: 本节点零GPU可达项**已全完成**。剩余阻塞：①P0 36%侧等GPU(2026-11-09)或运维拷轨迹；②P1-c等/nas_inference挂载；③正式训练P3阻塞pretrain ckpt(ETA≈2026-12-25)
-- 阻塞: P0-36%侧等GPU/P1-c等挂载/P3等pretrain ckpt——均阻塞于外部依赖，本节点无更多零GPU项可做
-- 未完成指令: 无（§用户令·22:5x已✅已交付并标记；P0-36%侧/P1-c/P3均阻塞外部依赖，非本节点可推进）⇒ WAITING=1
+- PHASE: posttrain-wake45（2026-11-07 09:2x；§用户令·2026-11-07 替身RL预演 交付）
+- 已完成: P3预备✅ 7脚本(wake1/2)；P1-e✅ 污染隔离(wake2)；P1-a/b✅ 数据盘点(wake2)；P2✅ 方案书(wake3)；P0✅ D1–D6 DeepSeek侧(wake4→14)；P1-d✅ PyAether语料(wake4)；P1✅ HTML报告(wake6)；wake17✅ 后训练数据调研HTML报告(44.9KB/10节)+§E+硬盘体检；wake40✅ TASK§用户令·22:5x标记✅已交付；wake18-44✅ 例行巡检；wake24✅ 归档wake1-4；wake36✅ 归档wake9-16腾体积；**wake45✅ §用户令·2026-11-07 替身RL预演：API分级(8463→3276纯函数→3182白名单)+500合成RL任务(280低/150中/70高)+污染闸门0命中+HTML报告(12.7KB/7节)+Tunnel-SOP+SFT数据核实**
+- 当前动作: wake45 唤醒→ git fetch+merge(他线活跃)→ TASK文件有新指令§用户令·2026-11-07→ 读API_INFO_MERGED_V3.json(8463 API)→ L1.1 API分级(纯函数3276/副作用1652/不适用3535)→ 白名单3182(排除158题488API)→ L2 模板化生成500题(280低/150中/70高)→ 污染隔离闸门13-gram扫描500题0命中→ GRPO reward hacking web调研(4失败模式+URL)→ 产出report_posttrain_synth_rl_plan_zh.html(12690B/7节/0 script/0外链)→ EXPERIMENTS新增§SynthRL+§Tunnel-SOP+§SFT-Verify→ SFT数据核实:99.76G=75.87+23.89分词产物,在/nas_train(.29/.12 NFS),.17不可直接访问→ TASK L22标记✅已交付
+- 下一步: 本节点零GPU可达项**已全完成**(含§用户令·2026-11-07)。剩余阻塞：①P0 36%侧等GPU(2026-11-09)或运维拷轨迹；②P1-c等/nas_inference挂载；③正式训练P3阻塞pretrain ckpt(ETA≈2026-12-25)；④L3环境自验证等隧道连通36.15
+- 阻塞: P0-36%侧等GPU/P1-c等挂载/P3等pretrain ckpt/L3等隧道——均阻塞于外部依赖，本节点无更多零GPU项可做
+- 未完成指令: 无（§用户令·2026-11-07已✅已交付并标记；§用户令·22:5x已✅已交付；P0-36%侧/P1-c/P3/L3均阻塞外部依赖，非本节点可推进）⇒ WAITING=1
 
 ## 关键事实（常驻）
 
@@ -75,5 +75,7 @@ WAITING: 1
 [08:1x] wake42：唤醒→ git fetch(proxy) 成功（behind 7）→ git pull --rebase --autostash 成功（fast-forward 到 91530a495，他线designflow/harness/zhulong活跃提交）→ git status clean（`## main...origin/main`）→ TASK文件diff空(无新运维令) → 交付物复核：4报告(30479B+36923B+38068B+44894B)全在位 + 7脚本 bash -n 全 PASS → 阻塞项复查（全无变化）：~/eda_code_eval 仍 MISSING + /nas_inference//nas_env 仍未挂载 + 8×A40 SGLang idle(0% util 44-45GB/卡) → 硬盘 / 385G(84%) /nas_data 20T(85%) 无变化 → 无新运维令(§用户令·22:5x已✅已交付) → 体积自检+提交心跳。📦 体积：TASK=24.2KB / MEMORY=~26KB（均 ≤32KB ✅，无需归档）。
 [08:3x] wake43：唤醒→ git fetch(proxy) 成功（behind 5）→ git pull --rebase --autostash 成功（fast-forward 到 8d8e75139，他线pretrain/harness/designflow活跃提交）→ git status clean（`## main...origin/main`）→ TASK文件diff空(无新运维令) → 交付物复核：4报告(30479B+36923B+38068B+44894B)全在位 + 7脚本(anneal/sft/rl_grpo/eval/contamination_gate/minicpm5_diag/loop) bash -n 全 PASS + §E 在位(2处) + MiniCPM5-2B 4.7G + vLLM venv 9.4G → 阻塞项复查（全无变化）：~/eda_code_eval 仍 MISSING + /nas_inference//nas_env 仍未挂载 + 8×A40 SGLang idle(0% util 44-45GB/卡, 11-09距今2天) → 硬盘 / 385G(84%) /nas_data 20T(85%) 无变化 → 无新运维令(§用户令·22:5x已✅已交付) → 体积自检+提交心跳。📦 体积：TASK=24.2KB / MEMORY=~27KB / EXPERIMENTS=32.7KB（均 ≤32KB ✅，无需归档）。
 [08:51] wake44：唤醒→ git fetch(proxy) 成功（behind 10）→ git merge --ff-only 成功（fast-forward 到 338984974，他线pretrain/harness/designflow/zhulong活跃提交）→ git status clean（`## main...origin/main`）→ TASK文件diff空(无新运维令) → 交付物复核：4报告(30479B+36923B+38068B+44894B)全在位 + 7脚本(anneal/sft/rl_grpo/eval/contamination_gate/minicpm5_diag/loop) bash -n 全 PASS + §E 在位 → 阻塞项复查（全无变化）：~/eda_code_eval 仍 MISSING + /nas_inference//nas_env 仍未挂载 + 8×A40 SGLang idle(0% util 44-45GB/卡, 11-09距今2天) → 硬盘 / 385G(84%) /nas_data 20T(85%) 无变化 → 无新运维令(§用户令·22:5x已✅已交付) → 体积自检+提交心跳。📦 体积：TASK=31.6KB / MEMORY=26.8KB / EXPERIMENTS=32.0KB（均 ≤32KB ✅，无需归档）。
+
+[09:2x] wake45：唤醒→ git fetch+merge(他线活跃,fast-forward)→ TASK文件diff发现新指令§用户令·2026-11-07（替身模型×EDA交互式RL预演,4项交付物）→ 读API_INFO_MERGED_V3.json(8463 API)→ L1.1 API分级:纯函数3276(38.7%)/副作用1652(19.5%)/不适用3535(41.8%)→ 白名单3182条(纯函数-排除158题488API,零交集)→ L2 模板化确定性生成500题(280低单API/150中双API/70高三API)→ 污染隔离闸门:13-gram FNV-1a扫描500题 vs 6评测快照536任务→ **0命中**(exit 0)→ 日志run/contamination_gate_synth_rl.log→ web调研GRPO reward hacking(4失败模式:Qwen2.5-1.5B长度hacking/GRPO冷启动/Model Collapse Nature/难度非单调)+URL→ 产出report_posttrain_synth_rl_plan_zh.html(12690B/7节:API分级/白名单/三档模板含完整样例/可解性预判/R1-R4奖励对比/失败模式+URL/可迁移性分析/0 script/0外链)→ EXPERIMENTS新增§SynthRL(API分级+500题统计+污染闸门)+§Tunnel-SOP(端口映射8360/保活ServerAliveInterval30/并发起步2/5步验证/5种失败排查)+§SFT-Verify(99.76G=75.87+23.89分词产物/.29/.12 NFS可达/.17不可直接访问)→ TASK L22 ⚠️未完成→✅已交付→ 体积自检+提交。📦 体积：TASK=32.4KB / MEMORY≈29KB / EXPERIMENTS≈37KB（TASK/MEMORY ≤32KB ✅；EXPERIMENTS无上限）。
 
 

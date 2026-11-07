@@ -355,3 +355,119 @@
 - post-train总需求~200-300GB，存储不是瓶颈
 - 清理候选(不擅自删)：/tmp/models/Qwen3.5-2B(4.3G)、~/code/langfuse(266M)、~/code/signoz(181M)
 - 报告含完整磁盘表+目录占用表+清理候选清单
+
+---
+
+## §SynthRL 合成RL任务生成（2026-11-07 wake45 · L1.1+L2 · 零GPU）
+
+> **交付物**：`run/rl_pyaether_synth_tasks.jsonl`（500题）+ `reports/report_posttrain_synth_rl_plan_zh.html`（12.7KB）
+
+### API 可出题性分级（L1.1）
+
+| 分类 | 数量 | 占比 | 判读 |
+|:--|--:|--:|:--|
+| 纯函数型 | 3276 | 38.7% | 输入→输出可断言，可出题 |
+| 副作用型 | 1652 | 19.5% | 需快照对比 |
+| 不适用 | 3535 | 41.8% | GUI/属性/类定义 |
+
+- 白名单（纯函数 + 不在158题中）：**3182 条** API
+- 158题使用488个API，白名单与其零交集
+- 覆盖43个域分类（≥3条API可组多API题）
+
+### 合成任务统计（L2）
+
+| 难度 | 模板 | 题量 | API数/题 |
+|:--|:--|--:|--:|
+| 低 | 单API调用 | 280 | 1 |
+| 中 | 双API串联 | 150 | 2 |
+| 高 | 三API约束分析 | 70 | 3 |
+| **合计** | | **500** | |
+
+### 污染隔离闸门
+
+- 扫描文档数：500
+- 命中数：**0**
+- 闸门状态：**通过**（exit 0）
+- 黑名单：6评测快照并集536任务（含v20260311的158）
+- 日志：`run/contamination_gate_synth_rl.log`
+
+---
+
+## §Tunnel-SOP EDA环境隧道SOP（2026-11-07 wake45）
+
+> 用途：post-train（.17）通过双向隧道连通 36.15 的 EDA 执行环境（run_code）。
+> 36.15 的 run_code 四组合：pyAether/aether · skill/virtuoso · tcl/waveview · tcl/innovus。
+
+### 端口映射
+
+```bash
+# .17 → 36.15 正向隧道（post-train 访问 EDA 沙盒）
+ssh -fN -L 8360:127.0.0.1:8360 app.e0031982@10.251.36.15
+# 8360 = 36.15 上 run_code HTTP API 端口（待确认实际端口）
+# 若 36.15 使用 UNIX socket，改用 socat 转发
+```
+
+### 长连接保活
+
+```bash
+# ~/.ssh/config 追加（或命令行 -o）
+Host eda-sandbox
+    HostName 10.251.36.15
+    User app.e0031982
+    ServerAliveInterval 30
+    ServerAliveCountMax 6
+    ExitOnForwardFailure yes
+    ControlMaster auto
+    ControlPath ~/.ssh/cm-%r@%h:%p
+    ControlPersist 10m
+```
+
+### 并发起步值
+
+- 沙盒并发起步：**2**（`SANDBOX_CONCURRENCY=2`，与 `--smoke` 一致）
+- 稳定后逐步加到 4→8→16
+- 每并发占 1 个 EDA license 槽位（36.15 资源有限）
+
+### 5 步逐段验证
+
+| 步骤 | 命令 | 判据 |
+|:--|:--|:--|
+| 1. SSH 连通 | `ssh eda-sandbox echo ok` | 输出 `ok` |
+| 2. 端口转发 | `curl -s http://127.0.0.1:8360/health` | HTTP 200 |
+| 3. run_code 基本调用 | `curl -s -X POST http://127.0.0.1:8360/run_code -d '{"code":"import pyAether; print(pyAether.__version__)"}'` | response 含版本号 |
+| 4. 反馈字段完整性 | 检查返回 JSON 含 `response`/`error_log`/`print_log`/`result` | 4 字段齐全 |
+| 5. 合成题试跑 | 取 1 道低难度题跑参考解 | 执行成功且返回非 None |
+
+### 常见失败模式与排查
+
+| 现象 | 原因 | 排查 |
+|:--|:--|:--|
+| `Connection refused` | 36.15 上 run_code 服务未启动 | `ssh eda-sandbox 'ps aux | grep run_code'` |
+| `Permission denied` | SSH key 未授权 | `ssh-copy-id eda-sandbox` 或联系运维 |
+| 隧道断开后不重连 | 缺少 `ServerAliveInterval` | 加 `-o ServerAliveInterval=30 -o ServerAliveCountMax=6` |
+| `Address already in use` | 8360 端口被占 | 换端口 `-L 8361:...` 或 `lsof -i :8360` 杀旧进程 |
+| run_code 返回 license 错误 | EDA license 槽位满 | 降低并发数；联系运维释放 license |
+
+---
+
+## §SFT-Verify SFT数据可达性核实（2026-11-07 wake45 · 仅核实不下载）
+
+> **任务书要求**：SFT 99.76G 到底在哪台机？`/nas_data` vs `/nas_env` 两处记载矛盾，需现场实测。
+
+### 实测结论
+
+| 数据集 | 下载字节 | 分词字节 | tokens | 状态 | 实际位置 |
+|:--|--:|--:|--:|:--|:--|
+| UltraData-SFT-2605 | 319.0GB | 75.87GB | 18.89B | 镜像完整 | `/nas_train/.../baize-data/tokenized/`（.29/.12 NFS） |
+| UltraData-SFT-Agent-2609 | 54.22GB | 23.89GB | 5.97B | 镜像完整 | 同上 |
+| **合计分词** | | **99.76GB** | **24.86B** | | |
+
+### 矛盾解析
+
+- **"99.76G"** = 75.87 + 23.89 = 分词产物总字节（非下载字节，下载合计 373.2GB）
+- **数据源**：`run/data/DATA_MAPPING.md`（单一事实源，gen_data_mapping_md.py 生成，校验时间 2026-10-27）
+- **`.17` 可达性**：`/nas_train/` 在 .17 上**为空**（仅有目录壳）→ SFT 分词数据**在 .17 不可直接访问**
+- **`/nas_env/` 和 `/nas_inference/`** 在 .17 上**未挂载**（已多次确认）
+- **结论**：SFT 数据在 .29/.12 的共享 NFS 上可达（`/nas_train/app.e0031982/datasets/baize-data/tokenized/`），.17 需通过 NFS 挂载或 scp 获取。B 类 agentic 数据（`/nas_inference`）同样不在 .17。
+
+### ⚠️ 按用户11-07指示：B类agentic下载暂缓，本轮不做
