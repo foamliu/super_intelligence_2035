@@ -375,3 +375,5 @@
 1791941073804_i96df.messages.json	mwxi	hfhds228	61	physical_verify	parked		2026-11-08 06:12	ops session mwxi: identical keyword profile to 6bs3u (calibre:401;skipper:30;pdk:16;drc:15) confirmed ops runset-sync; not physical_verify design; parked without deepread (profile-match inference)
 1785823412281_4ckeg.messages.json	e0014566	hfeg0pkn005	29	layout_virtuoso	parked		2026-11-08 06:13	explanation request session (e0014566, 10 msgs): user asks 'explain autovia and powerfill tools'; assistant reads virtuoso/drc files to explain; no design deliverable, no runnable task; 433 virtuoso/145 drc hits from file-reading not layout work; A-disqualify (explanation, not design_flow)
 1789607429323_ly1qu.messages.json	yzwang	hfeg0pkn001	31	layout_aether	case	EDA-Eval-DesignFlow-PcellPatternGeoDiag-001	2026-11-08 06:28	
+1791792980970_4vv1y	lizwen	hfeg0pkn002	138	layout_aether	parked		2026-11-08 06:44	Q&A how-to 连续copy aether skill, 纯文档推荐无交付物, 同 74dww 类
+1789558497514_ogbej	ellawu	hfeg0pkn002	296	physical_verify	case	EDA-Eval-DesignFlow-ImplantFillDummyLeftoverDiag-001	2026-11-08 07:00	

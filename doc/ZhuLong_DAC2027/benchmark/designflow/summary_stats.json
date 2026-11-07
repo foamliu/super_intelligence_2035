@@ -42,7 +42,7 @@
   "shard_mc": {
     "A": 15,
     "B": 30,
-    "C": 30,
+    "C": 15,
     "D": 30
   },
   "source": "/home/t0002965/log/ssh_eda_search_20261105_192825/summary.tsv (11/05 scan)",
