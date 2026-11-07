@@ -9,6 +9,7 @@
 | 文件 | 作用 |
 |:--|:--|
 | `tutor_agent.py` | 最小闭环：题图/题文 → `llava` OCR 识别 → `qwen3:8b` 分步引导（不泄答案）→ Windows SAPI 出声 |
+| `eval_l1.py` | L1 评测基线：文本路径 3 题 + 对抗探针 + OCR 2 图 → 产出 `eval/l1_baseline.json`（直接给答案率 / OCR 正确率 / 首步时延） |
 
 ## 依赖（本机已具备，零采购 / 零外部账号）
 
@@ -34,6 +35,18 @@ py -3.10 -W ignore tutor_agent.py --image ..\eval\q1_equation.png --speak demo_s
 ```powershell
 py -3.10 -W ignore tutor_agent.py --interactive
 ```
+
+## 跑评测（L1 基线，可重复）
+
+```powershell
+cd D:\Users\Administrator\code\super_intelligence_2035\doc\personal-watch\run\robot\host
+py -3.10 -W ignore eval_l1.py
+```
+
+产出 `eval/l1_baseline.json`，含三组真实数字：
+1. **直接给答案率**（文本路径引导 + 对抗性「直接要答案」探针，必须 0）；
+2. **OCR 正确率**（纯算式 vs 中文+算式混合，诚实量化弱环）；
+3. **首步时延**（qwen3:8b 分步引导）。
 
 ## 教育红线（内置约束，见 `tutor_agent.py` 的 TUTOR_SYSTEM）
 

@@ -14,12 +14,12 @@ WAITING: 0
 ## 📊 进度快照（每次唤醒必须更新）
 
 ```
-PHASE:        L0 设备通路（PC mock 已跑通）→ 等用户 5 条回复做真机化
-已完成:       P0 结论✅（adb/hdc 未装、手机未连）；路线= R3 手机+PC 协同✅；最小 demo 真跑通✅（题图→OCR→分步引导→TTS 出声）
-第2轮复验:    P0 结论复验✅；链路复跑通✅；发现 OCR 最弱一环⚠️（llava 读纯算式对/中文+算式混易错）
-当前动作:     第 2 轮：真实命令复验 P0+demo；定位 OCR 弱环；诚实回写 P0/ROADMAP/host 文档；commit+push(robot:)
-下一步:       收用户 5 条回复 → 复验 hdc/adb → 真机拍照/出声（L0 真机化）；修复 qwen3-vl:32b 404（ollama pull 20GB）；补 100 题库跑 L1
-阻塞:         ⏳ 手机未连本机 + 型号/系统版本未知（需用户回复）；qwen3-vl:32b /api/chat 报 404（OCR 最弱一环的根因）
+PHASE:        L0 设备通路（PC mock 已跑通）→ 等用户 5 条回复做真机化；L1 评测基线已建
+已完成:       P0 结论✅（adb/hdc 未装、手机未连）；路线= R3✅；最小 demo 真跑通✅；L1 评测基线✅（直接给答案率=0）
+第3轮:        新增 host/eval_l1.py 可重复评测；对抗性直接要答案 3/3 拒绝（红线顶得住）；OCR 0.5（纯算式对/混合失败）；qwen3-vl:32b 根因定位=E:\blobs 缺失
+当前动作:     第 3 轮：新增评测基线+真跑出数字；精确定位 qwen3-vl:32b 404 根因；诚实回写 P0/ROADMAP/host/MEMORY；commit+push(robot:)
+下一步:       收用户 5 条回复 → 复验 hdc/adb → 真机拍照/出声（L0 真机化）；ollama pull qwen3-vl:32b（20GB）修 OCR；补 100 题库跑 L1 指标
+阻塞:         ⏳ 手机未连本机 + 型号/系统版本未知（需用户回复）；qwen3-vl:32b 20GB GGUF 缺失（E:\ollama\models\blobs）
 ERROR_COUNT:  0
 ```
 
@@ -75,10 +75,20 @@ ERROR_COUNT:  0
 - 诚实回写 `P0_设备通路.md` §0/§3.1/§5、`ROADMAP.md`、`host/README.md`；定位根因 = `qwen3-vl:32b` 404（manifest 与 blob 脱节）。
 - 更新本文件 + 日流水；commit+push（robot:）。
 
+## 4.2 本唤醒流水（2026-11-07 · 第 3 轮 · 评测基线 + 精确根因）
+
+- 读任务书（11:10 令）+ `robot/README.md`；复验 P0：`adb`/`hdc` 仍未装、`Get-PnpDevice` 无华为/ADB/HDC 设备、`ollama list` 8 模型在位。
+- 新增 `host/eval_l1.py`：可重复跑的 L1 评测基线（文本 3 题 + 对抗性直接要答案探针 + OCR 2 图）→ 产出 `eval/l1_baseline.json`。
+- 🔴 真跑出「直接给答案率 = 0」：正常引导 3/3 不含答案；**明确要答案时 3/3 拒绝**、仍只问思路（红线 1 顶得住）。
+- ⚠️ 真跑出 OCR 正确率 0.5：`llava` 读纯算式 `2x+3=11` ✅；读中文+算式混合 `解方程：2x+3=11` ❌（返回「无法解析图像」）。
+- ✅ 精确定位 `qwen3-vl:32b` 404 根因：真实模型目录 = `E:\ollama\models`，其 manifest 引用的 20GB GGUF blob `sha256-6e41…` 缺失；之前「`D:\ollama\models\blobs` 为空」是误判（`OLLAMA_MODELS` 指 D:，ollama 实际用 E:）。
+- ✅ 最小 demo 复跑：`--image q1_pure.png --speak --answer "4"` → 识别正确 → 引导不含答案 → 产出 1.15MB WAV。
+- 诚实回写 `P0_设备通路.md`（§0/§3.2/§5）、`ROADMAP.md`、`host/README.md`；更新本文件 + 日流水；commit+push（robot:）。
+
 ## 5. 阻塞 / 待办
 
 1. **⏳ 等用户 5 条回复**（P0_设备通路.md §4）：手机型号/系统版本、开 USB 调试、装 adb 或 HDC、确认形态、确认大模型来源。
-2. **🔴 qwen3-vl:32b 404**（OCR 最弱一环的根因，本地可自修）：`ollama pull qwen3-vl:32b`（20GB）或升级 ollama → 换回更强 OCR，再跑 L1 识别准确率。
+2. **🔴 qwen3-vl:32b 20GB GGUF 缺失**（OCR 弱环根因，本地可自修）：真实模型目录 `E:\ollama\models`，其 manifest 引用的 blob `sha256-6e41…` 缺失 → `ollama pull qwen3-vl:32b`（20GB，E: 余 60GB）重拉后改回 `VISION_MODEL`。
 3. 下一轮候选：真机化 L0 / 补 100 题库跑 L1 指标（识别准确率 + 直接给答案率=0）。
 
 ## 6. 运维问答
