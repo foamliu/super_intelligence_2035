@@ -19,25 +19,108 @@
 > 本区为运维下发指令；agent 只读、不写（除「归档搬迁」这一唯一例外，见下方体积规程）。
 > 新指令置顶；已闭合块按体积规程原文搬入 `run/ARCHIVE_OPERATOR_POSTTRAIN.md`、留 1 行指针。
 
-### 🆕 §用户令·2026-11-06 22:5x（后训练各阶段训练数据调研（web search）+ 本机硬盘体检）· 用户直令 · 最高优先 · ✅ 已交付
+### 🔴 §用户令·2026-11-07（**替身模型 × EDA 交互式 RL 预演**：用 MiniCPM5-2B 走通「读文档→自造题→EDA 环境求解→拿反馈→RL」闭环）· 用户直令 · 最高优先 · ⚠️ 未完成
 
-> **用户原话**：「post-train 有 web search，可以调研一下后训练各阶段所用的数据，写个中文HTML报告。另外看看硬盘的情况。」
+> **用户原话（分三句，均 2026-11-07）**：
+> ①「.17 GPU 比较弱只有 4 张 A40。因此只能做跟 EDA 环境有关的强化学习。现在白泽模型还在预训练，我想用 MiniCPM5-2B 或者 Qwen3.5-2B 做替身，先测基线，然后通过跟 EDA 环境的交互做 RL 训练，强化写 PyAether 脚本的能力。」
+> ②「EDA-Eval-PyAether 158 不能用来训练，但是可以通过双向隧道，让 post-train 可以连通 EDA 环境，哪里有 python 等 PyAether 执行环境和 API 文档 API。post-train 可以通过阅读文档，自己生成问题，在 EDA 环境中尝试解决 & 获取反馈的方式提升自己对特定领域的熟悉程度。」
+> ③「把这些信息给 post-train 沟通，让它沿着这个方向，继续深入调研，充分做好准备。」
 
-> **A · 调研报告（主交付）**：用 **web search**（先显式带 proxy：`export https_proxy=...`，`curl -I https://www.google.com` 探通后再检索）调研「后训练**各阶段**分别该用什么数据」，产出 `reports/report_posttrain_stage_data_survey_zh.html`（中文单文件、0 script、0 外链、≥8 节、≥25KB）。必须覆盖：
-> 1. **领域退火（annealing / decay）**：主流做法（Qwen / DeepSeek / Llama 系的 decay 阶段数据选择）· 高质量/领域/长文配比 · 规模量级（B tokens）· 插在预训练哪个位置 · 判据（val loss / 下游）。
-> 2. **SFT**：①通用指令数据（Tulu-3 / OpenHermes / Infinity-Instruct 等）；②**agentic 轨迹**（SWE-agent trajectories、SWE-smith、Nemotron-Cascade、AgentTrove、OpenCodeReasoning 等）；③**工具调用 / 多轮 / 错误恢复轨迹**（缺信号→重试→修正的完整链）；④**领域数据合成**（强模型 + 执行反馈造轨迹）；⑤格式（messages / tool_calls / observation）、去重与去污染、上下文长度、配比消融。
-> 3. **RL / RLVR**：①可验证任务集（SWE-bench-train、CodeContests、math-verify、Terminal-Bench 类）；②奖励设计（outcome vs reward-model vs process）；③**数据难度筛选**（pass@k 取中间区间，避免全对/全错 ⇒ 直接对应我们 CPU GRPO「advantage=0 无梯度」的问题）；④rollout 预算与课程学习。
-> 4. **对照本项目现状**：把结论映射到已有资产（`UltraData-SFT-2605` 18.89B tok、`UltraData-SFT-Agent-2609` 5.97B tok、PyAether API 语料 ~4–5M tok、EDA-Eval-PyAether 158 题），给**差距表**（每阶段：已有 / 缺什么 / 怎么补 / 预估成本与周期）。
-> 5. **可执行建议**：按 M1(50%)→M4(85%) 阶梯给「最小可用数据配方」，并回答「若只有 3 周训练窗口，先补哪 2 项」。
-> 6. **引用纪律**：每条结论附**来源 URL + 日期**；拿不到原文标「未核实」；🚫 不许编造数字或把博客当论文。
+#### 0. 目标定位（**先读这段，决定后面所有判据**）
 
-> **B · 硬盘体检（附节交付）**：`df -h`（`/`、`/nas_train`、`/nas_inference`、`/nas_env`、`/tmp`、docker root）+ `docker system df` + `du -sh` 关键目录（`/tmp/models`、`~/code/vllm_venv`、`.../nemo_experiments`、`.../datasets`）；结论要写清**「退火+SFT+RL 数据与权重预计占用 vs 现有余量」**，并给**清理候选清单**（🚫 只列清单，不许擅自删除任何数据）。
+| 定位 | 内容 | 是否本次目标 |
+|:--|:--|:--|
+| **A** | 验证「与 EDA 环境交互式 RL」**这条方法链路**能否走通 | ✅ **是** |
+| **B** | 用替身预演白泽后训练的**流程**（数据配方/奖励设计/超参），等 pretrain ckpt 直接复用 | ✅ **是** |
+| ❌ | 「用替身模型在 158 题上刷高分」 | 🚫 **不是**，且不允许 |
 
-> **交付物**：上述 HTML（A 主体 + B 附节）+ `EXPERIMENTS_POSTTRAIN.md` 新增 **§E 后训练数据调研** + 检索关键词清单（便于复核）。
+> ⚠️ **报告必须显著标注**：本次 RL 收益**不可迁移**到白泽（2B 通用模型 ≠ 白泽；A40 也训不动大模型）。本次仅验证方法链路 + 沉淀可复用流程。**🚫 不得把替身分数写成白泽的预期成绩。**
 
-> **护栏**：🚫 不启训练、不占 GPU；web search 只读（只登记「可下载源」，🚫 不发起下载）；数字全可溯源；CPU 降载 `OMP_NUM_THREADS≤8` + `nice -n 19`；commit 前缀 `posttrain survey:`；TASK/MEMORY ≤32KB。
+#### 1. 硬约束（违反即作废）
 
-> **完成标记**：报告 + §E 交付后本行改 `✅ 已交付`；未交付 ⇒ `WAITING: 0`。
+- 🚫 **不改任何代码/脚本**：`run/baize_posttrain_*.sh` 一律**只读**（用户 11-07 明确「这些代码都先不动」）。改动需求只写进方案的「待改清单」，不动手。
+- 🚫 **158 题绝不上训练**（含改写版）：投料前必过 `run/baize_posttrain_contamination_gate.sh` 指纹闸门。这是 §P1-e 红线。
+- 🚫 **不下载 A 类**（`/nas_env` 17.67TB 分词镜像）：post-train 用不到。只允许下 B 类 agentic，**上限 100GB**，超限先报。
+- 🚫 **不得以「隧道未通 / 等 GPU」为本令的阻塞理由**：下面 L1/L2 两项**零 GPU、零隧道**，本轮必须推进。
+
+#### 2. ⭐ 你已有的素材（**已实测，不用重新调研**）
+
+| 素材 | 位置 | 规模 | 状态 |
+|:--|:--|:--|:--|
+| **PyAether API 文档** | `~/code/eda_fastmcp/docs` + `kb` | **8463 项 API**，≈21MB JSON，≈4–5M tok | ✅ wake4 实测可达（见 `EXPERIMENTS_POSTTRAIN.md` §PyAether-corpus） |
+| **EDA 执行环境** | 36.15（经双向隧道可达） | `run_code` 四组合：pyAether/aether · skill/virtuoso · tcl/waveview · tcl/innovus | ✅ 现存 |
+| **执行反馈字段** | `run_code` 返回 | `response` / `error_log` / `print_log` / `result` | ✅ **这就是天然 reward 信号源** |
+| **污染隔离闸门** | `run/baize_posttrain_contamination_gate.sh` | — | ✅ 已定稿 |
+| **存量报告** | `reports/report_posttrain_*.html` × 4 | 含 D1–D6、§PyAether-corpus、数据盘点 | ✅ 交付 |
+
+> 💡 **关键认知**：本方案 = **Self-Instruct / Self-Play + 可执行反馈（executable verification）**。EDA 场景的独特优势是**有真实执行器判对错**，不像纯文本任务只能靠 LLM 自评 —— 奖励信号因此是**客观的**。
+
+#### 3. 四层实施（L1/L2 本周做，L3/L4 等隧道+GPU）
+
+**L1 · 素材测绘（🚫 零依赖 —— 本轮必须交付）**
+1. 把 8463 项 API 导出为结构化清单：`api_name / 模块 / 签名 / 参数(type,default) / 返回 / 关联示例`。
+2. **可出题性评估**（核心）：给每项打「可判分」标签 ——
+   - ✅ **纯函数型**（输入→输出可断言，如查询/计算/格式化）
+   - ⚠️ **副作用型**（改数据库/开窗/写文件，判分需快照对比）
+   - ❌ **不适用**（GUI 交互、需要人工确认、强依赖 license 独占）
+3. 产出 **`可出题 API 白名单`**（预期从 8463 筛出数百~上千条），按域分组（pyAether/skill/tcl×3 host）。
+
+**L2 · 题目自动生成（🚫 零依赖 —— 本轮必须交付）**
+1. 基于白名单**模板化造题**（🚫 **不要用 2B 模型自举造题** —— 见下方 §4 陷阱①）。
+2. 三档难度：**单 API 调用**（低）→ **多 API 串联**（中）→ **带约束的查询/分析**（高）。
+3. **每题必须自带可机器判定的验收条件**（例：「返回的 cell 数 == N」「输出 JSON 含键 X 且值 == Y」）——没有验收条件的题**一律丢弃**。
+4. 产出 `rl_pyaether_synth_tasks.jsonl`（目标 **500 题**起步，格式对齐 `EXPERIMENTS_POSTTRAIN.md:159` 约定）。
+5. 🚫 每批生成后必过 contamination gate（对 158 题做 n-gram/指纹比对）。
+
+**L3 · 环境自验证（⏳ 等隧道，周一/二后）**
+- 把 L2 的题丢进 36.15 的 EDA 沙盒，**验证题目本身是否可解**（用参考解或强模型跑一遍）。
+- **解不出来的题必须剔除** —— 否则奖励信号是错的（模型再努力也拿不到 1）。
+- 📌 记住：**造题容易，造「可解的题」难**。这一步的产出（通过率）本身就是质量指标。
+
+**L4 · RL 训练（⏳ 等 GPU 11/10 + 隧道）**
+- 替身基座：**MiniCPM5-2B 优先**（唯一理由是它有 36% 锚点可对照；Qwen3.5-2B 无基线，测出数来无法归因）。
+- 算法 GRPO；**奖励起步用 R2（断言通过率部分分），不要用 R1（二值）** —— 2B 模型在 R1 下大概率大面积 0，无梯度。
+- 冒烟用脚本内置 `--smoke`（`ITERS=10, GROUP_SIZE=4, SANDBOX_CONCURRENCY=2`），稳了再逐步加并发。
+
+#### 4. 必须提前想清的两个陷阱（写进方案，别等踩了再说）
+
+**① 造题的「自举悖论」**
+让 2B 自己造题 ⇒ 要么全是它会做的（学不到东西），要么全是它不会的（全错无梯度）。
+⇒ **对策**：造题阶段用**模板化确定性生成**（可控难度）；难的类别可借 gateway 强模型（glm-5.3-flash）辅助生成题干，但**验收条件必须由模板产生**（不能靠模型自己说「这题对」）。
+
+**② 奖励稀疏性**
+纯 pass/fail 在 2B 上很可能大面积 0。
+⇒ **对策**：用 R2 分层给分（执行成功 0.2 / 部分断言 0.2–0.8 / 全通过 1.0），并在报告里**同时报 cheat rate**（§5.1 anti-cheat 全程生效）。
+
+#### 5. 本周交付物（🚫 零依赖，必须完成）
+
+1. **`reports/report_posttrain_synth_rl_plan_zh.html`**（中文单文件、0 script、0 外链）—— 深度调研报告，必含：
+   ① 8463 API 的可出题性分级统计（纯函数/副作用/不适用，各多少条 + 按域分布）
+   ② 白名单构造方法与结果
+   ③ 三档难度模板设计（含 2–3 个完整样例：题面 + 验收条件 + 期望输出）
+   ④ **可解性预判**（哪些类别预计好判分、哪些有坑）
+   ⑤ 奖励设计对比（R1–R4 在 2B + 稀疏反馈下的取舍，给出推荐与理由）
+   ⑥ 已知失败模式调研（附**来源 URL + 日期**，🚫 不许编造）
+   ⑦ **与白泽的可迁移性分析**（哪些流程可直接复用、哪些依赖模型规模）
+2. **`run/rl_pyaether_synth_tasks.jsonl`** —— ≥500 题，每题自带验收条件，已过 contamination gate（附闸门通过日志）。
+3. **隧道 SOP**（`EXPERIMENTS_POSTTRAIN.md` 新增一节）：端口映射 / 长连接保活（`ServerAliveInterval`）/ 并发起步值 / 5 个逐段验证步骤及判据 / 常见失败模式与排查。
+4. **数据可达性核实**：SFT 99.76G 到底在哪台机（`/nas_data` vs `/nas_env` 两处记载矛盾，需现场实测）；P1-c B 类 agentic 实际状态 + 下载清单（≤100GB）。
+
+#### 6. 护栏
+
+- 🚫 不启训练、不占 GPU（本周全为零 GPU 工作）；CPU 降载 `OMP_NUM_THREADS≤8` + `nice -n 19`。
+- 🚫 不动他人数据；web search 只登记可下载源，不发起下载（下载需另批）。
+- 数字全可溯源；拿不到就标「未核实」。
+- commit 前缀 `posttrain synthrl:`；TASK/MEMORY ≤32KB。
+- **每轮唤醒必须实际推进 L1/L2**，🚫 不许「写心跳 + 置 WAITING:1 睡去」。本令未完成前 `WAITING: 0`。
+
+> **完成标记**：上述 4 项交付物齐全 ⇒ 本行改 `✅ 已交付`；未完成 ⇒ `WAITING: 0`（60s 后继续）。
+
+---
+
+### 📦 §用户令·2026-11-06 22:5x（后训练各阶段数据调研 + 本机硬盘体检）· ✅ 已交付 → 原文见 `ARCHIVE_OPERATOR_POSTTRAIN.md`
+
+> 交付：`reports/report_posttrain_stage_data_survey_zh.html`（45.4KB / 10 节 / 0 script / 0 外链）+ `EXPERIMENTS_POSTTRAIN.md` §E + 硬盘体检附节。**关键结论**：`/` 386G 可用(84%)、`/nas_data` 20T 可用(85%)，后训练全流程预估 200–300GB ⇒ **存储非瓶颈**；可清理候选 ≈4.7G（Qwen3.5-2B 4.3G 用途待确认）；`/nas_inference` 与 `/nas_env` 在 .17 **未挂载**。需要细节再读 archive。
 
 ### 🆕 2026-11-06 运维直令：建立 post-train 线 · 先做 P0 诊断 + 数据/方案预研（不启训练）
 
