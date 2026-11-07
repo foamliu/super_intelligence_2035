@@ -1,6 +1,8 @@
 WAITING: 1
 
-> 🆕 **【wake #897 · 2026-11-08 00:2x】例行巡检·全交付态·零异常。** git pull(已最新·无新令)·research日报2026-11-07已查(wake#893已阅·无更新·2026-11-08期未出·下次06:00)·体积自检TASK=31KB✓/MEMORY=21KB✓(0归档)。**本轮动作**：①确认两条用户令均✅已交付（10:10阶段2放行+09:2x走出干等GPU）·全部交付物在位（报告29903B/EXPERIMENTS§22/v5实验A16%→B37%→C53% p=0.0009）✓。②进程巡检：vision loop PID669545(ppid=1·~9.6天·健康)·GPU-wait chain PID1365749(ppid=1·~31.9h·健康轮询)·无活跃CPU实验·GPU8卡满载96-100%属pretrain baize2b(PID2626131·mamba2·~5.2天)非本线·未碰pretrain✓。③无收敛旧loop空转✓。④主机=10.239.2.12。⑤无新指令·无可执行动作·全交付态维持。**未完成指令:无**。📦体积:TASK=31KB✓/MEMORY=21KB✓(0归档)。
+> 🆕 **【wake #898 · 2026-11-08 01:0x】例行巡检·全交付态·零异常。** git pull(已最新·无新令)·research日报2026-11-07已查(wake#893已阅·vision无直接对口·按令忽略·2026-11-08期未出·下次06:00)·体积自检TASK=31477B(31KB)✓/MEMORY=21KB✓(0归档)。**本轮动作**：①确认两条用户令均✅已交付·全部交付物在位(报告29903B/EXPERIMENTS§22/v5 A16%→B37%→C53% p=0.0009)✓。②进程巡检：vision loop PID669545(ppid=1·~9.7天·健康)·GPU-wait chain PID1365749(ppid=1·~32.5h·健康轮询)·无活跃CPU实验·GPU8卡满载96-100%属pretrain baize2b非本线·未碰pretrain✓。③无收敛旧loop空转✓。④主机=10.239.2.12。⑤无新指令·无可执行动作·全交付态维持。**未完成指令:无**。📦体积:TASK=31KB✓/MEMORY=21KB✓(0归档)。
+
+> 📦 wake #897（例行巡检·全交付态·零异常·2026-11-08 00:2x）已归档 → daily-memories-vision/2026-11-08.md；**结论**：全交付态·loop/GPU-wait chain健康·零异常。需要时再读。
 
 > 📦 wake #896（例行空唤醒巡检·2026-11-07 23:49）已归档 → daily-memories-vision/2026-11-07.md；**结论**：全交付态·loop/GPU-wait chain健康·零异常。需要时再读。
 
@@ -124,7 +126,7 @@ WAITING: 1
 | PHASE | ✅ **波形 RL CPU 阶段2 · v5✅全完(显著提升！)·用户令核心目标达成**：**v5(类型分类)✅全完** **A=16.0%→B(SFT)=37.0%→C(RFT)=53.0%**·D(随机控制)=32.0%·McNemar **C-vs-B p=0.0009(✅)**·Bootstrap C-B **Δ=+16% CI=[+7%,+25%](✅)**·**C-vs-D p=0.0003(✅)**·VERDICT=**TREATMENT SIGNIFICANT\|REWARD-DESIGN DRIVEN**·所有预注册判据全部满足·cheat_rate=0·报告29903B(含v5完整结果)·v4(RFT)✅NULL(C=B=34%,p=1.0)·v3(GRPO)✅全完(C=25%<B=34%负结果)·v2=6.2%<9.2%·**v2-v4连续3轮无提升→v5方向转换(分类+16采样点)→首次显著正结果**·数据集调研完成·技术栈三步冒烟交付·Qwen3.5-2B(1.88B)+LoRA。**WAITING: 1** |
 | WAITING | 1 |
 | 已完成 | **v5波形类型分类全量实验✅(wake#892, A=16%→B=37%→C=53%, p=0.0009显著)** · v4 RFT实验全量完成(wake#882,NULL) · v3 GRPO连续奖励全完(wake#891,负结果) · advantage方差诊断(wake#838,PARTIAL) · 阶段1 SFT验收PASS(wake#802) · CPU端到端训练循环验证7/7 PASS(wake#741) · 数据泄漏验证+就绪报告HTML(wake#731) · GRPO CPU冒烟PASS(wake#622) · 2B文本骨干提取1.72B(wake#620) · 数据集均衡化9013条(wake#618) · 波形RL计划书(wake#435) · 论文改稿(wake#437~#442) · ArmE-R2/ArmD-R2 全链路 |
-| 当前动作 | **wake#893 用户令标✅已交付+收尾巡检**：核对全部交付物在位(报告29903B/EXPERIMENTS§22/v5结果/数据集调研/技术栈冒烟)·**按完成标记将两条用户令(10:10阶段2放行+09:2x走出干等GPU)标为✅已交付**·research日报2026-11-07 vision无直接对口(仅侧向借鉴·低优先·按令忽略)·仅GPU-wait chain PID1365749健康·无活跃CPU实验·未碰pretrain。 |
+| 当前动作 | **wake#898 例行巡检·全交付态·零异常**：git pull无新令·research日报2026-11-07 vision无直接对口(按令忽略)·核对全部交付物在位(报告29903B/EXPERIMENTS§22/v5结果)·vision loop PID669545+GPU-wait chain PID1365749均健康·无活跃CPU实验·GPU8卡满载属pretrain非本线·未碰pretrain·全交付态维持。 |
 | 下一步 | ①v5✅已交付(报告+EXPERIMENTS+commit) ②用户令核心目标"证明显著提升"已达成→标✅已交付 ③可选下一步：扩大v5规模(更多SFT数据/更多RFT轮次)/尝试其他可判定中间任务(频率比较/异常点定位)/迁移到GPU验证规模效应 ④待运维/用户确认是否需要进一步实验或GPU验证 |
 | 阻塞 | .12+.29 GPU全占（8×H100 96-100% util / ~75GB，pretrain baize2b ETA≈12/24-25）→ GPU验证待pretrain释放 ·.17+.75 SSH不可达 |
-| 更新 | **2026-11-07 23:17 (wake #895)**: 例行巡检·git pull无新令·research日报vision无对口忽略·全交付态维持·WAITING=1 |
+| 更新 | **2026-11-08 01:0x (wake #898)**: 例行巡检·git pull无新令·research日报vision无对口忽略·全交付态维持·WAITING=1 |
