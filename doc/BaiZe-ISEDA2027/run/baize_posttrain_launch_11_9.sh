@@ -124,13 +124,13 @@ fi
 # === STEP 5: RL smoke test (10 iters, R2 reward arm) ===
 if [ $STEP_START -le 5 ] && [ $STEP_END -ge 5 ]; then
   run_step 5 "RL smoke test (GRPO R2, 10 iters)" \
-    "bash '$SCRIPT_DIR/baize_posttrain_rl_grpo.sh' --smoke --reward-arm R2" || exit $?
+    "bash '$SCRIPT_DIR/baize_posttrain_rl_grpo.sh' --smoke --reward-arm R2 $GPU_FLAG" || exit $?
 fi
 
 # === STEP 6: Full RL training (R2 reward arm, 2000 iters) ===
 if [ $STEP_START -le 6 ] && [ $STEP_END -ge 6 ]; then
   run_step 6 "Full RL training (GRPO R2, surrogate)" \
-    "bash '$SCRIPT_DIR/baize_posttrain_rl_grpo.sh' --reward-arm R2" || exit $?
+    "bash '$SCRIPT_DIR/baize_posttrain_rl_grpo.sh' --reward-arm R2 $GPU_FLAG" || exit $?
 fi
 
 echo ""
