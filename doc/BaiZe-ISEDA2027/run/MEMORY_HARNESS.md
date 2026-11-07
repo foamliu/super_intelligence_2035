@@ -4,13 +4,13 @@ WAITING: 0
 
 ## 📊 进度快照
 
-PHASE:        R1737 监控轮:gateway额度耗尽(假阳性纠正)·358/552空patch(64%)·TB4全0(hermes57task全0·6路agent相位中)·gateway_probe.sh已建·待~09:21额度恢复后cleanup+重跑
-已完成:       H-B✅·Gate7/7·TB报告✅·full500✅·R1735 P0/P1 fix·R1736 P0/P1/P2+报告交付·R1737 gateway假阳性纠正+probe脚本
-当前动作:     R1737 监控+根因纠正:①CPU/MEM PASS(load36/224·无失控) ②**gateway假阳性纠正**:R1736报"gateway恢复200"=只查了/v1/models;/v1/chat/completions返回"额度已用完,等待22min"→ETA~09:21 ③建gateway_probe.sh(测chat非models) ④SWE-bench 552pred·358空(64%):opencode63real/23empty最佳·codex1/84最差 ⑤codex config.toml已验正确(glm53/chat/9092)·1/84=额度耗尽非config ⑥TB4 7路运行中·hermes57task全0(额度)·6路agent相位 ⑦cleanup dry-run=358/552空 ⑧gw_proxy 9092/9093运行中 ⑨不杀batch(额度恢复自动续)·不删空patch(会重建)
-下一步:       ①~09:21额度恢复→cleanup --delete+重跑空patch ②P3 TB4 3题×7路回归 ③P4全量 ④更新audit报告(gateway probe纠正) ⑤§22:4x口径跑满
-阻塞:         gateway额度耗尽(ETA~09:21)·等待恢复后即可推进P3/P4
+PHASE:        R1738 监控轮:gateway额度恢复中(ETA~09:20·wait=11min)·SWE-bench 566pred/372空(65%)/194real·TB4 290result/hermes60reward全0(能力)·P0/P1/P2✅报告已交付·待gateway恢复→cleanup+P3/P4
+已完成:       H-B✅·Gate7/7·TB报告✅·full500✅·R1735 P0/P1 fix·R1736 P0/P1/P2+报告交付·R1737 gateway假阳性纠正+probe·R1738 监控+cleanup dry-run
+当前动作:     R1738 监控:①CPU/MEM PASS(load44/224·无失控·1.2Ti avail) ②gateway仍额度耗尽(wait=11min18s→ETA~09:20) ③SWE-bench 566pred/cleanup dry-run=372空(65%)/194real(opencode63最佳·codex1最差) ④TB4 290result:hermes60reward全0(能力非infra)·6路errored(429) ⑤P0oracle=1.0×3✅·P1resume fix✅·P2audit报告✅ ⑥verifier=separate mode·test.sh不需uvx/网络(pytest预烘焙)·overlay warning=信息性非根因 ⑦disk 5.8TB avail✅ ⑧TB4+SWE-bench batch alive(自动续)
+下一步:       ①~09:20 gateway恢复→cleanup --delete+重跑372空patch ②P3 TB4 3题×7路回归 ③P4全量 ④§22:4x口径跑满
+阻塞:         gateway额度耗尽(ETA~09:20)·等待恢复后即可推进P3/P4
 ERROR_COUNT:  0
-  📦 体积：TASK=32454B(31.7KB) / MEMORY=32312B(31.5KB)(本轮归档R1736→daily)
+  📦 体积：TASK=32454B(31.7KB) / MEMORY=32264B(31.5KB)(本轮归档R1737→daily)
 ```
 
 > 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
@@ -18,7 +18,8 @@ ERROR_COUNT:  0
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 
 ### 本唤醒流水
-> [08:58] R1737 监控+gateway假阳性纠正:①CPU/MEM PASS(load36/224·无>8000%·无>50GB) ②**gateway假阳性**:/v1/models=200但/v1/chat/completions="额度已用完,等待22min43s"→ETA~09:21·R1736"gateway恢复200"=只查models ③建gateway_probe.sh(测chat非models·exit1=额度耗尽) ④SWE-bench 552pred/358空(64%):real=opencode63/hermes51/cline23/ds22/cc18/pi16/codex1·空=额度耗尽(非能力) ⑤codex config.toml已验正确(glm53/chat/9092)·1/84=额度非config ⑥cline空patch:returncode!=0→model_patch=""(run_single.py:45)·real patch全在00:06-05:06(额度耗尽前) ⑦TB4:hermes57task全0(06:37起=额度期)·6路agent相位中(cline67result/0reward) ⑧cleanup dry-run=358/552空 ⑨gw_proxy9092/9093运行 ⑩不杀batch(额度恢复自动续)·不删空patch(会重建)·WAITING:0(P3/P4未完成)
+> [09:08] R1738 监控轮:①CPU/MEM PASS(load44/224·无失控·1.2Ti avail) ②gateway仍耗尽(wait=11min→ETA~09:20) ③SWE-bench cleanup dry-run=372/566空(65%):opencode63real最佳·codex1最差·194real全在额度耗尽前 ④TB4 290result:hermes60reward全0(pytest真实失败=能力)·6路errored(agent exit1=429) ⑤**关键纠正**:运维预判"overlay不传播→verifier崩"=错误;TB4 test.sh=纯python3 pytest(依赖预烘焙)·不需uvx/网络·overlay warning=信息性;oracle=1.0×3已证verifier正常 ⑥disk 5.8TB avail✅ ⑦batch alive(自动续)·不杀不删 ⑧WAITING:0(P3/P4未完成·gateway阻塞)
+> 📦 R1737 流水(08:58,gateway假阳性纠正+probe)已归档 → daily-memories-harness/2026-11-07.md。结论：gateway /models=200假阳性·chat额度耗尽ETA09:21·建probe脚本。需要时再读。
 > 📦 R1736 流水(08:40,P0/P1/P2+报告交付)已归档 → daily-memories-harness/2026-11-07.md。结论：oracle=1.0×3(verifier正常)·TB4全0=429+合理失败·报告已交付·⚠️gateway"200"=假阳性(见R1737)。需要时再读。
 > 📦 R1735 流水(08:05,P0/P1/P2诊断)已归档 → daily-memories-harness/2026-11-07.md。结论：P1修复+cleanup脚本就绪+网关429。需要时再读。
 > 📦 R1734 流水已归档 → daily-memories-harness/2026-11-07.md。结论：监控轮,SWE-bench 398/3500,TB4全7路0 passed。需要时再读。
