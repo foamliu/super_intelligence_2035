@@ -1,6 +1,8 @@
 WAITING: 1
 
-> 🆕 **【wake #905 · 2026-11-08 05:24】例行巡检·全交付态·零异常。** git pull(Already up to date·无新vision令)·research日报2026-11-08期未出(下次06:00)·2026-11-07期wake#904已查(vision无直接对口·按令忽略)·体积自检TASK=31477B(31KB)✓/MEMORY=23953B(23KB)✓(0归档)。**本轮动作**：①确认两条用户令均✅已交付·全部交付物在位(报告29903B/EXPERIMENTS§22/v5 A16%→B37%→C53% p=0.0009)✓。②进程巡检：vision loop PID669545(ppid=1·etimes=850490s~9.8天·健康)·ops_relay_v2 PID1032513(ppid=1·etimes=1245012s~14.4天·健康)·无活跃CPU实验·GPU8卡100%满载属pretrain baize2b非本线·未碰pretrain✓。③无收敛旧loop空转(baize_search/2b_search均无进程)✓。④主机=10.239.2.12(whag0pgpuap12)。⑤vision文件全clean✓(工作副本未跟踪文件均属他线cjk_test/非本线)。⑥无新指令·无可执行动作·全交付态维持。**未完成指令:无**。📦体积:TASK=31KB✓/MEMORY=23KB✓(0归档)。
+> 🆕 **【wake #906 · 2026-11-08 05:57】例行巡检·全交付态·零异常。** git pull(Already up to date·无新vision令·gc.log有unreachable loose objects警告非关键)·research日报2026-11-08期未出(下次06:00)·2026-11-07期wake#904已查(vision无直接对口·按令忽略)·体积自检TASK=31477B(31KB)✓/MEMORY=24210B(24KB)✓(0归档)。**本轮动作**：①确认两条用户令均✅已交付·全部交付物在位(报告29903B/EXPERIMENTS§22/v5 A16%→B37%→C53% p=0.0009)✓。②进程巡检：vision loop PID669545(ppid=1·etimes=852458s~9.9天·健康)·ops_relay_v2 PID1032513(ppid=1·etimes=1246950s~14.4天·健康)·GPU-wait chain PID1365749(ppid=1·etimes=134946s~37.4h·健康轮询)·无活跃CPU实验·GPU8卡81-96%满载属pretrain baize2b非本线·未碰pretrain✓。③无收敛旧loop空转(baize_search/2b_search均无进程)✓。④主机=10.239.2.12(whag0pgpuap12)。⑤vision文件全clean✓(工作副本未跟踪文件均属他线非本线)。⑥无新指令·无可执行动作·全交付态维持。**未完成指令:无**。📦体积:TASK=31KB✓/MEMORY=24KB✓(0归档)。
+
+> 📦 wake #905（例行巡检·全交付态·零异常·2026-11-08 05:24）已归档 → daily-memories-vision/2026-11-08.md；**结论**：全交付态·loop/ops_relay健康·零异常。需要时再读。
 
 > 📦 wake #904（例行巡检·全交付态·零异常·2026-11-08 04:21）已归档 → daily-memories-vision/2026-11-08.md；**结论**：全交付态·loop/ops_relay健康·零异常。需要时再读。
 
