@@ -33,6 +33,36 @@ export PYTHON="$BASE_DIR/venv/bin/python"   # venv (含 pydantic 等), 否则 ru
 export NO_PROXY="agi-gateway.cxmt.com,10.129.32.75,localhost,127.0.0.1"
 unset http_proxy https_proxy HTTP_PROXY HTTPS_PROXY   # cline 直连内部 gateway
 
+# ---------- quota 探针 (防止额度耗尽时 4min 快速空转级联) ----------
+# 2026-11-07 血泪: 9 轮 back-to-back 4min 全 NA (158/158 fail) 把 rolling ~37min
+# 额度窗口持续打满, orchestrator 把 4min NA 当"完成"立即起下一轮 → 级联。
+# 修复: 每轮 launch 前先 curl 探针, 额度 down 则等待恢复再起跑。
+GLM_KEY="02_088EE9051AAE4BF0ABFC7130331BF697_c2759d74-49f1-410a-89ea-2cf188ea2f23"
+GLM_ENDPOINT="http://agi-gateway.cxmt.com/cloud/v1/chat/completions"
+probe_quota() {
+  local max_waits=48   # 48 × 300s = 4h max wait
+  local w=0
+  while [[ $w -lt $max_waits ]]; do
+    local resp
+    resp=$(curl -s -m 25 --noproxy '*' -X POST "$GLM_ENDPOINT" \
+      -H "Authorization: Bearer $GLM_KEY" \
+      -H "Content-Type: application/json" \
+      -d '{"model":"glm-5.2","messages":[{"role":"user","content":"reply OK"}],"max_tokens":80}' 2>/dev/null)
+    if echo "$resp" | grep -q '"choices"'; then
+      [[ $w -gt 0 ]] && log "  ✅ quota 恢复 (waited ~$((w*5))min)"
+      return 0
+    fi
+    if echo "$resp" | grep -q '额度已用完\|quota\|429\|rate.limit\|RateLimit'; then
+      [[ $((w % 3)) -eq 0 ]] && log "  ⏳ quota exhausted, wait 300s (attempt $((w+1))/$max_waits) before $1"
+    else
+      log "  ⚠️ quota probe 异常响应: ${resp:0:160}"
+    fi
+    sleep 300; w=$((w+1))
+  done
+  log "  ❌ quota 未在 $((max_waits*5))min 内恢复, 放弃等待直接起跑 (可能 NA)"
+  return 0
+}
+
 # ---------- 变体定义 ----------
 # 轴 A: thinking 档位 (LANG_HINT 空)
 THINK_LEVELS=(none low medium high xhigh)
@@ -109,6 +139,9 @@ run_round() {
     log ">>> WAIT $TAG: 有其他评测在跑, 等其结束"
     wait_round_done
   fi
+
+  # quota 探针: 额度耗尽时等待恢复, 避免快速空转级联 (2026-11-07 修复)
+  probe_quota "$TAG"
 
   log ">>> START $TAG  (thinking=$THINK  lang_hint=${HINT:+<set>})"
 
