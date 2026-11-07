@@ -387,3 +387,13 @@ vbxlf.messages.json	jason17w	hfeg0pnd002	262	spice_sim	parked		2026-11-05 12:30	
 1793707420467_xqeql					parked		2026-11-07 19:19	LVS/ERC/hcell physical_verify non-spice
 1789474120804_1vb6o					parked		2026-11-07 19:19	trivial hello/introduce non-spice
 1793666893047_bz56k					parked		2026-11-07 19:19	CDL netlist extraction consulting non-spice
+1792573855361_rbllu	clarawu	hfeg0pkn004	279	spice_sim	case	EDA-Eval-DesignFlow-SubcktInstParamInj-001	2026-11-07 19:52	
+1790166621537_hcxal					parked		2026-11-07 19:52	jason17w@pnd002: [run-regression] run_step2_2 with uvs = DDR/LPDDR Verilog regression skill, 非 spice
+1790150666233_ob8f4					parked		2026-11-07 19:52	jason17w@pnd002: run-regression skill 创建/注册, 非 spice
+1792563327292_besij					parked		2026-11-07 19:52	clarawu@pkn004: 学习DqOutTopM6网表告诉我ODT控制逻辑 = consulting/分析, 非交付
+1792485755725_ni00j					parked		2026-11-07 19:52	clarawu@pkn004: 学习网表+告诉我zqcode线性度 = consulting, 非交付
+1789887279405_ve67l					parked		2026-11-07 19:52	mike@pkn003: 分析目录+执行README第一步 = generic run-script, 非spice交付
+1789470466679_wqxag					parked		2026-11-07 19:52	shaoyou@pkn003: 启动业务场景:模拟电路优化·二次执行 = 模板触发, 非真实需求
+1790575149766_y8vwx					parked		2026-11-07 19:52	alenxu@pkn003: 首轮'2' = 单字符菜单选择, 无意图
+1793668468329_3qaax					parked		2026-11-07 19:52	mwxi@pkn002: Disk_Usage scan_os V5 脚本编辑 = Python disk工具, 非spice(spice匹配假阳性)
+1791961257165_nohd9					parked		2026-11-07 19:52	xinweif@pkn005: '你可以干什么' = trivial greeting
