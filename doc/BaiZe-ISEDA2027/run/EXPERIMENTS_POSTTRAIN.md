@@ -1223,3 +1223,141 @@ runtime:
 | GPU memory sizing | https://www.runpod.io/articles/guides/gpu-memory-sizing-guide-for-llm-inference | 2026-11-07 |
 | GRPO 算法详解 | https://deepwiki.com/lzhxmu/CPPO/2.1-grpo-algorithm | 2026-11-07 |
 | DeepSeekMath GRPO | arXiv:2402.03300 | 引用 |
+
+---
+
+## §R6 SFT 阶段深度方案设计（2026-11-07 wake53 · 零 GPU）
+
+> 填补 P2 方案书 SFT 步骤的可执行细节空白。
+
+### 1. 数据混合策略
+
+| 数据源 | 规模 | 角色 | 占比 | 理由 |
+|:--|:--|:--|:--|:--|
+| UltraData-SFT-2605 | 18.89B tok | 通用能力保持 | 35% | 防领域过拟合 |
+| UltraData-SFT-Agent-2609 | 5.97B tok | 工具调用能力 | 30% | D1/D2 显示工具调用不足 |
+| PyAether SFT 合成语料 | ~19610 对 (~5M tok) | 领域 API 知识 | 25% | D4 显示 74% 执行报错 |
+| 错误恢复 SFT (S4) | ~3411 对 | 自纠错闭环 | 10% | D6 显示迭代不足 |
+
+配比逻辑：通用 35% + agentic 30% = 65% 底座；PyAether 25% + 错误恢复 10% = 35% 领域特化。
+混合策略：按轮次交错（非先通用后领域）；PyAether 语料采样温度=2.0（过采样）；短对 packing，长轨迹不 pack。
+
+### 2. PyAether SFT 语料合成（✅ 已执行）
+
+脚本：`run/baize_posttrain_gen_sft_corpus.py`；产出：`run/sft_pyaether_corpus.jsonl`（19610 对，18.8MB）
+
+| 类型 | 描述 | 数量 | 作用 |
+|:--|:--|--:|:--|
+| S1 doc-to-code | API 文档→调用代码 | 8012 | 教「读文档写代码」 |
+| S2 api-lookup | 任务+4选项→选API | 8098 | 教「选对API」 |
+| S3 multi-api-chain | 多步→API链 | 89 | 教「API串联」 |
+| S4 error-recovery | 错误代码→修正 | 3411 | 教「自纠错」(SYN) |
+| 合计 | | 19610 | 0污染(488评测API全排除) |
+
+S3 偏低(89)：仅 89 类别有≥3 非评测 API；后续可跨类别扩展。
+
+### 3. 上下文长度分析
+
+| 场景 | 平均 tok | 峰值 | 来源 |
+|:--|--:|--:|:--|
+| PyAether SFT 对 | 200-800 | ~2000 | 本次实测 |
+| DeepSeek harness 轨迹 | ~18K | ~50K | D3 实测 |
+| SWE agentic 轨迹 | ~40-50K | ~64K+ | Fable-5.1 调研 |
+
+建议：SFT context_len=8192（覆盖95%+轨迹）；RL 同步 8192。消融：4096 vs 8192(推荐) vs 16384。
+超长轨迹：截断保留尾部（工具结果比 system prompt 重要）。
+
+### 4. LoRA vs 全参
+
+| 维度 | 全参 | LoRA (r=64) |
+|:--|:--|:--|
+| 可训练参数 | 2B (100%) | ~50M (2.5%) |
+| 显存(训练) | ~40GB | ~12GB |
+| 领域注入 | 深度 | 浅层 |
+| 灾难性遗忘 | 高风险 | 低风险 |
+
+建议：替身预演用 LoRA（快速迭代）；白泽正式训练用全参（退火 ckpt 已适应领域）。
+
+### 5. 课程学习
+
+| 阶段 | 步数 | 数据 | 目标 |
+|:--|--:|:--|:--|
+| Warmup | 0-200 | 通用指令 | 适应SFT格式 |
+| Phase1 | 200-800 | +S1(doc-to-code) | API知识注入 |
+| Phase2 | 800-1500 | +S2(api-lookup)+agentic | 工具选择 |
+| Phase3 | 1500-2500 | +S3(chain)+S4(error-recovery) | 闭环自纠错 |
+| Decay | 2500-3000 | 全混合+LR decay | 稳定收敛 |
+
+### 6. SFT 超参
+
+LR=2e-5(全参)/1e-4(LoRA), MinLR=1e-6, WSD, warmup=100, decay=300, total=3000, GBS=128, MBS=1, bf16_mixed, clip=1.0, save=300, loss=response-only。来源：Granite 2B (arXiv:2608.14109) + 标准 SFT 实践。
+
+---
+
+## §R7 verl 环境预检 + 11/9 GPU 启动就绪清单（2026-11-07 wake53 · 零 GPU）
+
+### 1. 🔴 CRITICAL：CUDA 版本不匹配
+
+实测发现：系统 CUDA 驱动=12.4（nvidia-smi/nvcc 确认），vllm_venv torch=2.14.0+cu130（CUDA 13.0）。
+结果：`torch.cuda.is_available()=False`（驱动太旧）。vllm_venv 虽装了 vLLM 0.33.0 但**无法用 GPU**。
+SGLang 占 GPU 的进程用 `/opt/sglang/bin/python3`（root 独立环境），与 vllm_venv 无关。
+
+解决方案（推荐方案1）：
+1. 新建 cu124 venv：`pip install torch==2.4.0 --index-url https://download.pytorch.org/whl/cu124`
+2. 升级驱动到 13.0（需 root，风险高）
+3. Docker 镜像：`verlai/verl:vemlp-th2.4.0-cu124-vllm0.6.3-ray2.10`
+
+### 2. verl 依赖清单
+
+| 依赖 | 当前 | 需要 | 版本 |
+|:--|:--|:--|:--|
+| torch | cu130不兼容 | cu124 | 2.4.0+cu124 |
+| verl | 未装 | pip install | >=0.3.0 |
+| ray | 未装 | pip install | >=2.41.0 |
+| vllm | cu130版 | cu124版 | >=0.8.2 |
+| accelerate | 未装 | pip install | latest |
+| flash-attn | 未装 | pip install | latest |
+
+零 GPU 可预装：新建 venv + torch+cu124 + transformers + accelerate + ray + flash-attn + verl(源码)。
+
+### 3. 11/9 启动序列
+
+Step0(零GPU,11/8): 新建verl_venv, pip install torch==2.4.0+cu124, verl, ray, vllm, transformers, accelerate, flash-attn
+Step1(GPU释放后): 验证 torch.cuda.is_available()=True, device_count=4
+Step2: vllm serve /tmp/models/MiniCPM5-2B --dtype bf16 --tp 2 --gpu-mem-util 0.7 --max-model-len 8192 --port 8000
+Step3: 评测158题(5-run), baize_posttrain_eval.sh endpoint→localhost:8000
+Step4: 采集真实失败轨迹, 替换D1-D6假设
+Step5: API沙盒profiling(补L2的4367 unknown API)
+Step6: 起第一轮EDA RL(verl+baize_posttrain_rl_verl_config.yaml, --smoke起步)
+
+### 4. 预飞行检查
+
+```bash
+# baize_posttrain_preflight.sh
+nvidia-smi --query-gpu=driver_version --format=csv,noheader | head -1  # CUDA驱动
+nvcc --version 2>&1 | grep release                                    # CUDA工具包
+ls /tmp/models/MiniCPM5-2B/*.safetensors                              # 模型
+ls ~/code/eda_fastmcp/docs/API_INFO_MERGED_V3.json                    # API文档
+wc -l sft_pyaether_corpus.jsonl rl_pyaether_synth_v2.jsonl           # SFT+RL数据
+python3 -c 'import torch; print(torch.cuda.is_available())'           # torch CUDA
+```
+
+### 5. 风险与缓解
+
+| 风险 | 概率 | 缓解 |
+|:--|:--|:--|
+| cu124 torch与verl不兼容 | 低 | verl文档明确支持cu124 |
+| vLLM版本冲突 | 中 | 锁定vllm==0.6.3 |
+| flash-attn编译失败 | 中 | A40支持FA2; fallback sdpa |
+| 4×A40显存不足 | 低 | R5已预算92GB/184GB |
+| SSH隧道不稳定 | 中 | R1已设计重试+退避 |
+| SGLang不释放GPU | 中 | 需运维协调 |
+
+### 6. 数据来源
+
+| 来源 | URL | 日期 |
+|:--|:--|:--|
+| verl安装文档 | https://verl.readthedocs.io/en/v0.4.0/start/install.html | 2026-11-07 |
+| verl GitLab | https://git.doit.wisc.edu/vdhanuka/verl/-/blame/.../install.rst | 2026-11-07 |
+| verl Docker | verlai/verl:vemlp-th2.4.0-cu124-vllm0.6.3-ray2.10 | 2026-11-07 |
+| Fable-5.1 SFT实践 | https://blog.gitcode.com/bd09c377c217f5aabd45cfa483b85f89.html | 2026-11-07 |
