@@ -362,7 +362,7 @@ vbxlf.messages.json	jason17w	hfeg0pnd002	262	spice_sim	parked		2026-11-05 12:30	
 1793583394153_wnpwu	dsgao	hfhds201	186	spice_sim	case	EDA-Eval-DesignFlow-TmVerifyTbGen-001	2026-11-07 16:01	
 1793862569889_ezcgh	mike	hfhds201	235	spice_sim	case	EDA-Eval-DesignFlow-CosimRunBlockOpt-001	2026-11-07 16:27	
 1793955284770_l2j22	jiangbaol	hfeg0pkn004	228	spice_sim	case	EDA-Eval-DesignFlow-StrongarmBaselineAnalyze-001	2026-11-07 17:23	
-1793234226913_xtse5	shanliny	hfeg0pkn001	43	spice_sim	claimed		2026-11-07 17:48	
+1793234226913_xtse5	shanliny	hfeg0pkn001	43	spice_sim	case	EDA-Eval-DesignFlow-MeaNetPathDiag-001	2026-11-07 18:10	
 1793953743131_0bf8m					parked		2026-11-07 17:48	strongarm-slicer continuation of l2j22 (dup topic, jiangbaol)
 1793956835876_hx6ep					parked		2026-11-07 17:48	strongarm-slicer continuation of l2j22 (dup topic, jiangbaol)
 1790230482027_7lp3l					parked		2026-11-07 17:48	strongarm-slicer session chain of l2j22 (dup topic, jiangbaol)
