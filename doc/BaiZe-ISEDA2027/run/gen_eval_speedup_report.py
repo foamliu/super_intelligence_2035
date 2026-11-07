@@ -5,8 +5,9 @@
 用法: python3 gen_eval_speedup_report.py
 产出: doc/BaiZe-ISEDA2027/reports/report_pretrain_cpu_eval_speedup_zh.html
 
-自动读取全量 GGUF eval 结果 (gguf_iter_112000_full_v3/results.json) 与
-耗时标记 (/tmp/baize_full_eval_v3.marker)；若 eval 尚未完成则显示「进行中」占位。
+自动读取全量 GGUF eval 结果 (gguf_iter_112000_full_v4/results.json) 与
+耗时标记 (/tmp/baize_full_eval_v4.marker)；若 eval 尚未完成则显示「进行中」占位。
+END 标记缺失时，以 results.json 文件 mtime 作为结束时间戳。
 """
 import json, os, sys, time, html, math, glob
 
@@ -151,9 +152,20 @@ def body_sections():
     n100_100k = read_gguf_n100(100000)
     n100_10k = read_gguf_n100(10000)
 
-    eval_done = full is not None and marker is not None and marker[1] is not None
-    wall_sec = (marker[1] - marker[0]) if (marker and marker[0] and marker[1]) else None
-    if marker and marker[0] and marker[1] is None:
+    # eval_done: results.json exists is the primary signal.
+    # END marker may be missing (v4 script doesn't write it), so fall back to
+    # results.json mtime as the end timestamp.
+    eval_done = full is not None
+    if marker and marker[0] and marker[1] is not None:
+        wall_sec = marker[1] - marker[0]
+    elif marker and marker[0] and full is not None:
+        # END marker missing but results.json exists → use file mtime as end
+        rj_path = os.path.join(FULL_EVAL_DIR, "results.json")
+        end_ts = int(os.path.getmtime(rj_path))
+        wall_sec = end_ts - marker[0]
+    else:
+        wall_sec = None
+    if marker and marker[0] and full is None:
         wall_sec_live = int(time.time()) - marker[0]
     else:
         wall_sec_live = None
@@ -301,7 +313,7 @@ def body_sections():
     if eval_done:
         p.append("全量 GGUF eval <b>已完成</b>：8 个 llama-server 实例（各 16 线程）+ 8 任务并行。")
     else:
-        p.append("全量 GGUF eval <b>运行中</b>：8 个 llama-server 实例（各 16 线程）+ 8 任务并行，日志 <code>/tmp/baize_full_eval_v3.log</code>。")
+        p.append("全量 GGUF eval <b>运行中</b>：8 个 llama-server 实例（各 16 线程）+ 8 任务并行（hellaswag 分 4 片并行），日志在各任务子目录 <code>*.log</code>。")
     p.append("</p>")
     p.append("<p><b>3.「线程并发多一点有帮助吗？」</b><br>")
     p.append("单进程内加线程<b>没有帮助</b>（16 线程已饱和，SSM 不可并行）。")
