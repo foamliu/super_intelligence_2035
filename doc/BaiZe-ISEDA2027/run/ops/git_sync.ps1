@@ -15,6 +15,7 @@
 param(
     [switch]$Status,
     [switch]$Maintenance,
+    [switch]$Refetch,          # 仅在需要把历史 blob 全量补回时使用（很慢，慎用）
     [int]$Retry = 5,
     [string]$Repo = 'D:\Users\Administrator\code\super_intelligence_2035'
 )
@@ -71,6 +72,32 @@ function Invoke-Git([string[]]$GitArgs, [string]$What) {
     return $false
 }
 
+function Prefetch-ChangedBlobs {
+    param([string]$Target = 'origin/main', [int]$TimeoutSec = 180)
+    # 目的：把 merge 时需要懒拉的 blob 一次性批量取回（git cat-file --batch = 单 pack 请求），
+    #       避免 checkout 阶段逐个对象发起 promisor fetch（34KiB/s 下会拖到几分钟）。
+    $files = @(git diff --name-only HEAD $Target 2>$null)
+    if ($files.Count -eq 0) { Write-Log '  [prefetch] 无差异文件'; return }
+    $oids = New-Object System.Collections.Generic.List[string]
+    foreach ($f in $files) {
+        $l = git ls-tree $Target -- $f 2>$null
+        if ($l) { $oids.Add(($l -split '\s+')[2]) }
+    }
+    if ($oids.Count -eq 0) { Write-Log '  [prefetch] 无可解析 oid'; return }
+    Write-Log ("  [prefetch] files={0} blobs={1}" -f $files.Count, $oids.Count)
+    $tmp = Join-Path $env:TEMP ("oids_{0}.txt" -f (Get-Random))
+    [IO.File]::WriteAllLines($tmp, $oids, (New-Object System.Text.UTF8Encoding($false)))
+    $p = Start-Process -FilePath 'cmd' -ArgumentList '/c',("git cat-file --batch < `"$tmp`" > NUL 2>NUL") -PassThru -WindowStyle Hidden
+    if (-not $p.WaitForExit($TimeoutSec * 1000)) {
+        try { $p.Kill() } catch {}
+        Get-Process git, ssh -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
+        Write-Log "  [prefetch] 超时($TimeoutSec s)，剩下的交给 merge 懒拉"
+    } else {
+        Write-Log "  [prefetch] done rc=$($p.ExitCode)"
+    }
+    Remove-Item $tmp -Force -ErrorAction SilentlyContinue
+}
+
 Push-Location -LiteralPath $Repo
 try {
     if ($Status) {
@@ -91,11 +118,15 @@ try {
         Write-Log '===== MAINTENANCE ====='
         Clear-StaleState | Out-Null
         Write-Log '  [1/4] 预取小 blob（blob:limit=200k，一次性，可能较久）...'
-        if (Invoke-Git @('fetch','--refetch','--filter=blob:limit=200k','origin') 'refetch') {
-            & git config remote.origin.partialclonefilter 'blob:limit=200k' | Out-Null
-            Write-Log '  [1/4] 已切为 blob:limit=200k'
+        if ($Refetch) {
+            if (Invoke-Git @('fetch','--refetch','--filter=blob:limit=200k','origin') 'refetch') {
+                & git config remote.origin.partialclonefilter 'blob:limit=200k' | Out-Null
+                Write-Log '  [1/4] 已切为 blob:limit=200k'
+            } else {
+                Write-Log '  [1/4] refetch 失败，保留 blob:none（只是慢，不影响正确性）'
+            }
         } else {
-            Write-Log '  [1/4] refetch 失败，保留 blob:none（只是慢，不影响正确性）'
+            Write-Log '  [1/4] 跳过 refetch（如需补历史 blob 请加 -Refetch）'
         }
         Write-Log '  [2/4] gc --prune=now ...'
         Invoke-Git @('gc','--prune=now','--quiet') 'gc' | Out-Null
@@ -113,7 +144,10 @@ try {
 
     $ab = ((& git rev-list --left-right --count HEAD...origin/main 2>$null) -split "\s+") | Where-Object { $_ -ne '' }
     Write-Log ("  ahead=" + $ab[0] + " behind=" + $ab[1])
-    if ([int]$ab[1] -gt 0) { Invoke-Git @('merge','--no-edit','origin/main') 'merge' | Out-Null }
+    if ([int]$ab[1] -gt 0) {
+        Prefetch-ChangedBlobs -Target 'origin/main'
+        Invoke-Git @('merge','--no-edit','origin/main') 'merge' | Out-Null
+    }
 
     $ab = ((& git rev-list --left-right --count HEAD...origin/main 2>$null) -split "\s+") | Where-Object { $_ -ne '' }
     if ([int]$ab[0] -gt 0) { if (-not (Invoke-Git @('push','origin','main') 'push')) { Write-Log 'push 失败'; exit 1 } }
