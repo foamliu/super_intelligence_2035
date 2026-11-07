@@ -2887,7 +2887,7 @@ std>0 组 ≥30%                  ⇒ PARAM-ISSUE
 
 ---
 
-### §22 CPU RL v5: Waveform Type Classification（2026-11-07 wake#881 · 方向转换 · ⏳运行中）
+### §22 CPU RL v5: Waveform Type Classification（2026-11-07 wake#881→#892 · 方向转换 · ✅完成 — 显著提升）
 
 **背景**：v2(GRPO离散)=6.2%<SFT9.2%·v3(GRPO连续)=25.0%<SFT34.0%·v4(RFT)=34.0%=SFT34.0%→连续3轮无提升，任务书§3节奏"连续3轮无提升必须换方向"触发。
 
@@ -2922,9 +2922,36 @@ std>0 组 ≥30%                  ⇒ PARAM-ISSUE
 - 全链路5阶段（Phase0-5）全部PASS，JSON保存✅
 - 冒烟验证：模型加载✓ SFT训练✓ eval✓ RFT收集✓ RFT训练✓ 统计✓ JSON输出✓
 
-**全量实验**（PID731487,OMP16/nice19,2026-11-07 17:28启动）：
+**全量实验**（PID731487,OMP16/nice19,2026-11-07 17:28启动→~19:10完成）：
 - 400 SFT examples × 3 epochs + 200 RFT questions × 3 rollouts + 100 eval (25/type) + A/B/C/D四条件
-- ETA ~2.5h (~20:00)
-- `cpu_rl_v5/experiment_results.json`（实验完成后生成）⏳
+- 实验总时长 ~1h42m（SFT 48m + A/B eval 6m + RFT-collect 19m + RFT-C train 28m + C/D eval 6m + stats）
 
-**数字溯源**：`cpu_rl_v5_typecls_experiment.py` 实测 stdout (`/tmp/v5_full_experiment.log`) + JSON输出。CPU fp32 / nice19 / OMP16 / 零GPU / 未碰pretrain。可复现(seed=20261107 train / 995100 eval, disjoint)。
+**v5 最终结果**（✅ 所有预注册判据全部满足）：
+- **A (baseline, fresh LoRA)** = **16.0%**（低于4类随机25%——基线模型几乎无法分类）
+- **B (SFT 400ex×3ep)** = **37.0%**（+21pp vs A，McNemar B-vs-A p=0.0018 ✅显著）
+- **C (RFT correct-filter)** = **53.0%**（+16pp vs B，McNemar C-vs-B **p=0.0009** ✅显著）
+- **D (RFT random-filter, 控制)** = **32.0%**（< B=37%，McNemar C-vs-D **p=0.0003** ✅显著）
+- **Bootstrap C-B**: Δ=+16.0% CI=[+7.0%,+25.0%] ✅（CI 排除 0）
+- **Bootstrap C-D**: Δ=+21.0% CI=[+12.0%,+30.0%] ✅
+- **VERDICT**: `TREATMENT SIGNIFICANT | REWARD-DESIGN DRIVEN (C>D)`
+- **cheat rate**: train/eval disjoint RNG seed → overlap=0 → **无数据泄漏** ✓
+
+**B (SFT) 逐类准确率**：sine=16% / square=84% / triangle=24% / sawtooth=24%
+- 模型最容易识别 square（两值突变特征明显），最难识别 sine（易与 triangle/sawtooth 混淆）
+
+**预注册判据核对**：
+| 判据 | 预期 | 实际 | 结果 |
+|:--|:--|:--|:--|
+| B > A | B>25%(随机) | 37.0% vs 16.0% | ✅ |
+| C > B | RFT提升 | 53.0% vs 37.0% | ✅ |
+| C > D | 正确>随机 | 53.0% vs 32.0% | ✅ |
+| McNemar C-vs-B p<0.05 | 显著 | p=0.0009 | ✅ |
+| Bootstrap CI 排除 0 | CI不含0 | [+7%,+25%] | ✅ |
+
+**关键洞察**：
+1. **SFT 显著提升波形类型识别能力**（A=16%→B=37%，+21pp，p=0.0018）——证明 2B LoRA 模型能从 16 个采样点学会区分波形形状。
+2. **RFT 在 SFT 基础上再显著提升**（B=37%→C=53%，+16pp，p=0.0009）——证明 rejection sampling FT 能进一步强化正确答案。collect 成功率 41.0%（246/600 rollouts），比 v4 的 67.1% 低但分类任务本身就是 harder filter。
+3. **控制组 D=32% < B=37% < C=53%**——随机过滤不仅无益反而有害（D<B），正确过滤显著有益（C>B），证明 RFT 的提升来自正确过滤策略而非单纯数据增加。
+4. **方向转换成功**：v2-v4 三轮 period 回归无提升→v5 改为类型分类后首次获得统计显著正结果。根因：分类（输出标签）比回归（输出精确数字）根本性更易 + 16 采样点直接入 prompt 让模型能"看见"波形形状。
+
+**数字溯源**：`cpu_rl_v5_typecls/experiment_results.json`（实测 JSON）+ `/tmp/v5_full_experiment.log`（stdout）。CPU fp32 / nice19 / OMP16 / 零GPU / 未碰pretrain。可复现(seed=20261107 train / 995100 eval, disjoint)。

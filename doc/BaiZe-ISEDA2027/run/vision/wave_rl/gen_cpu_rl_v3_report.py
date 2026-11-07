@@ -290,7 +290,7 @@ def section_rl_design():
 <tr><th>版本</th><th>奖励</th><th>目标</th><th>n_eval</th><th>GRPO步数</th><th>group_size</th><th>结果</th></tr>
 <tr><td>v1 (11-06)</td><td>离散5档</td><td>5目标全上</td><td>30</td><td>50</td><td>4</td><td>❌ C=6.2% &lt; B=9.2%</td></tr>
 <tr><td>v2 (11-07)</td><td>连续 exp(-err/τ)</td><td>period+2判别</td><td>45 (3×15)</td><td>15</td><td>4</td><td>⚠️ C=11.1%&gt;B=6.7% 但 p=0.625 不显著</td></tr>
-<tr><td><strong>v3 (本实验)</strong></td><td><strong>连续 exp(-err/τ)</strong></td><td><strong>仅 period</strong></td><td><strong>100</strong></td><td><strong>40</strong></td><td><strong>8</strong></td><td>进行中</td></tr>
+<tr><td><strong>v3 (本实验)</strong></td><td><strong>连续 exp(-err/τ)</strong></td><td><strong>仅 period</strong></td><td><strong>100</strong></td><td><strong>40</strong></td><td><strong>8</strong></td><td>❌ C=25.0% &lt; B=34.0%（负结果）</td></tr>
 </table>
 <h3>2.2 v3 三项关键改进（预注册 2026-11-07 wake#854）</h3>
 <table border="1" cellpadding="6">
@@ -763,7 +763,7 @@ code {{ background: #f0f0f0; padding: 1px 4px; border-radius: 3px; font-size: 13
 <h1>视觉波形 RL · CPU 实验报告 v3+v4+v5</h1>
 <p><strong>生成时间</strong>：{now} · <strong>作者</strong>：vision wake#856→#886 · <strong>用户令</strong>：2026-11-07「用 CPU 设计有效 RL，证明显著提升 Qwen3.5-2B 波形理解」</p>
 <div class="summary">
-<p><strong>一句话总结</strong>：v1 离散 5 档奖励 → GRPO 负结果(6.2%&lt;9.2%)。v2 连续奖励方向翻转但不显著(n=45,p=0.625)。<strong>v3</strong> 聚焦 period-only(n=100)+40步+gs=8 连续奖励 GRPO → C=25.0%&lt;B=34.0%（负结果）。<strong>v4</strong> 改用 RFT/STaR → C=34.0%=B=34.0%（NULL，无提升）。<strong>v5</strong> 连续 3 轮无提升后换方向：改任务为波形类型分类 + 改输入为 16 采样点直接入 prompt → 进行中。</p>
+<p><strong>一句话总结</strong>：v1 离散 5 档奖励 → GRPO 负结果(6.2%&lt;9.2%)。v2 连续奖励方向翻转但不显著(n=45,p=0.625)。<strong>v3</strong> 聚焦 period-only(n=100)+40步+gs=8 连续奖励 GRPO → C=25.0%&lt;B=34.0%（负结果）。<strong>v4</strong> 改用 RFT/STaR → C=34.0%=B=34.0%（NULL，无提升）。<strong>v5</strong> 连续 3 轮无提升后换方向：改任务为波形类型分类 + 改输入为 16 采样点直接入 prompt → <strong>✅ 显著提升：A=16.0% → B(SFT)=37.0% → C(RFT)=53.0%，McNemar C-vs-B p=0.0009，Bootstrap Δ=+16% CI=[+7%,+25%]，C-vs-D(随机控制)p=0.0003。所有预注册判据全部满足。</strong></p>
 <p><strong>数据集调研</strong>：HF/GitHub/arXiv 三源均无波形 VQA 评测集，ngspice 合成波形+QA 是正确路线。</p>
 <p><strong>技术栈</strong>：LLaMA-Factory 与 Qwen3.5 架构互斥 → 退回 HF+peft 直训（已验证可行，69.7M LoRA）。</p>
 </div>
