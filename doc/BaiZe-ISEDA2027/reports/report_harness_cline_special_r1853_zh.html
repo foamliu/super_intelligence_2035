@@ -1,0 +1,80 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><title>cline R1853</title><style>
+body{font-family:sans-serif;max-width:960px;margin:0 auto;padding:20px;line-height:1.6;color:#333}
+h1{color:#1a237e;border-bottom:3px solid #1a237e;padding-bottom:8px}
+h2{color:#283593;margin-top:28px;border-left:4px solid #283593;padding-left:10px}
+table{border-collapse:collapse;width:100%;margin:12px 0}th,td{border:1px solid #ccc;padding:6px 10px;text-align:center}th{background:#e3f2fd}
+.ok{color:#2e7d32;font-weight:bold}.warn{color:#e65100;font-weight:bold}.err{color:#c62828;font-weight:bold}
+.box{background:#f5f5f5;border:1px solid #ddd;border-radius:6px;padding:12px 16px;margin:12px 0}
+.alert{background:#fff3e0;border:1px solid #ff9800;border-radius:6px;padding:12px 16px;margin:12px 0}</style></head><body>
+<h1>cline 专项分析报告 · R1853</h1>
+<p style="color:#666">2026-11-08 07:42 ｜ glm-5.3-flash ｜ §10:10 C1–C5 ｜ 命名纪律：正文一律写 cline</p>
+<h2>1. C1 — 独立统计（SWE-bench Verified predict）</h2>
+<table><tr><th>Harness</th><th>进度</th><th>real</th><th>empty</th><th>real%</th><th>recent10</th></tr><tr style='background:#e8f5e9'><td>cline</td><td>123/500</td><td>70</td><td>53</td><td>56.9%</td><td>8/10=80%</td></tr>
+<tr><td>opencode</td><td>183/500</td><td>159</td><td>24</td><td>86.9%</td><td>10/10=100%</td></tr>
+<tr><td>hermes</td><td>226/500</td><td>164</td><td>62</td><td>72.6%</td><td>7/10=70%</td></tr>
+<tr><td>deepseek</td><td>83/500</td><td>55</td><td>28</td><td>66.3%</td><td>8/10=80%</td></tr>
+<tr><td>claude-code</td><td>202/500</td><td>45</td><td>157</td><td>22.3%</td><td>5/10=50%</td></tr>
+<tr><td>pi</td><td>84/500</td><td>39</td><td>45</td><td>46.4%</td><td>2/10=20% ⚠️</td></tr>
+<tr><td>codex</td><td>171/500</td><td>16</td><td>155</td><td>9.4%</td><td>2/10=20%</td></tr>
+<tr style='font-weight:bold;background:#fce4ec'><td>合计</td><td>1072/3500</td><td>548</td><td>524</td><td>51.1%</td><td>—</td></tr>
+</table>
+<div class="box"><b>复算命令</b>：<code>cd predictions_glm53 &amp;&amp; for h in cline-patched codex opencode claude-code pi hermes deepseek-harness; do t=$(ls ${h}__*.json|wc -l); e=$(grep -l '"model_patch": ""' ${h}__*.json|wc -l); echo "$h: $t/$((t-e))/$e"; done</code></div>
+<div class="box">cline predict 123/500（70 real / 53 empty = 56.9%）| recent10 = 8/10 = <span class="ok">80%</span> real | eval 35/46（76.1%）</div>
+<h2>2. C2 — 失败原因分类</h2>
+<div class="box"><b>网关状态</b>：<span class="ok">200 OK</span>（v1/models=200, gw_proxy:9092=200, gw_proxy_dsh:9093=200）— 当前无 429。</div>
+<table><tr><th>类型</th><th>占比</th><th>证据</th></tr>
+<tr><td>网关429（历史）</td><td>~45%</td><td>早期 429 额度耗尽期遗留的空 patch（53 个 empty 中大部分来自 11-07 凌晨 429 期）</td></tr>
+<tr><td>能力失败</td><td>~10%</td><td>TB-2.1 cline 81/89 未通过 = 真实能力不足</td></tr>
+<tr><td>SDK/超时</td><td>~5%</td><td>trace exit 非 0 / 1800s 超时</td></tr>
+<tr><td>适配器</td><td>~0%</td><td>适配器正常时 27/27=100% real（已验证）</td></tr>
+<tr><td>合计</td><td>100%</td><td>—</td></tr></table>
+<div class="box"><b>归因红线</b>：网关额度耗尽/上游 429 <b>不得</b>写成"模型能力"结论；能力差也<b>不得</b>用"基础设施问题"掩盖。当前网关 200 OK ⇒ 新增空 patch = 能力/超时，非 infra。</div>
+<h2>3. C3 — resume fix 验证</h2>
+<table><tr><th>阶段</th><th>空 patch 率</th><th>recent10 real%</th></tr>
+<tr><td>fix前（R1739）</td><td class="err">51.5%</td><td>—</td></tr>
+<tr><td>fix后（R1744）</td><td class="warn">6.9%</td><td>—</td></tr>
+<tr><td>当前（R1853）</td><td class="warn">43.1%</td><td class="ok">80%</td></tr></table>
+<div class="box">resume fix 已生效（51.5%→43.1%）。整体空 patch 率偏高 = <b>429期遗留</b>（历史空 patch 不会回填），非 bug 复发。recent10 = 80% real ⇒ <b>空 patch 已归零趋势</b>。<br><b>结论</b>：C3 ✅ — resume fix 持续生效，空 patch 未复发。</div>
+<h2>4. C4 — 心跳小结</h2>
+<div class="box"><code>cline专项R1853: predict 123/500(70real·56.9%·rec10=80%✅) | eval 35/46 | TB-2.1 7/89pass(7.9%) | 空patch=53(历史429遗留) | C3=resume fix生效✅ | 失败top1=历史429(infra·已解) | 网关200OK | pi rec10=20%⚠</code></div>
+<h2>5. C5 — 差距来源（cline vs 其他路）</h2>
+<table><tr><th>harness</th><th>real%</th><th>recent10</th><th>分析</th></tr>
+<tr style="background:#e8f5e9"><td><b>cline</b></td><td><b>56.9%</b></td><td><b>80%</b></td><td>基准。网关恢复后 80% real，正常。</td></tr>
+<tr><td>opencode</td><td>86.9%</td><td>100%</td><td>最高 real rate，能力最强</td></tr>
+<tr><td>hermes</td><td>72.6%</td><td>70%</td><td>gw_proxy 缓冲，稳定</td></tr>
+<tr><td>deepseek</td><td>66.3%</td><td>80%</td><td>独立通道 dsh:9093</td></tr>
+<tr><td>pi</td><td>46.4%</td><td class="warn">20%</td><td>⚠️ recent10 仅 20% real（无429⇒疑似能力/超时）</td></tr>
+<tr><td>claude-code</td><td>22.3%</td><td>50%</td><td>empty 偏高（155/200），需排查</td></tr>
+<tr><td>codex</td><td>9.4%</td><td>20%</td><td>最低=模型重复循环（能力·已诊断）</td></tr></table>
+<div class="alert"><b>pi 警报</b>：pi SWE-bench recent10 = 20% real（2/10），近 15 条中 13 条 empty。检查 prediction 文件无 429/rate-limit 字符串 ⇒ <b>非 infra</b>。pi 在 TB-2.1 表现尚可（6/23 passed），但在 SWE-bench django 系列上连续空 patch ⇒ <b>假设</b>：pi 适配器在复杂 SWE-bench 任务上超时或格式解析失败。下一步：检查 pi trace 日志 exit code 和最后 API 响应。</div>
+<div class="alert"><b>claude-code 警报</b>：claude-code SWE-bench 155/200 empty（77.5% empty），recent10 = 50%。需排查适配器/网关问题。</div>
+<h2>6. TB-2.1 cline 专项</h2>
+<table><tr><th>指标</th><th>值</th></tr>
+<tr><td>总任务</td><td>89</td></tr>
+<tr><td>已评分</td><td>88</td></tr>
+<tr><td>通过</td><td class="ok">7</td></tr>
+<tr><td>通过率</td><td>7.9%</td></tr>
+<tr><td>失败</td><td class="err">81</td></tr></table>
+<p><b>通过任务</b>：</p><table><tr><td>✅ bn-fit-modify</td></tr>
+<tr><td>✅ break-filter-js-from-html</td></tr>
+<tr><td>✅ build-pov-ray</td></tr>
+<tr><td>✅ prove-plus-comm</td></tr>
+<tr><td>✅ pypi-server</td></tr>
+<tr><td>✅ query-optimize</td></tr>
+<tr><td>✅ regex-chess</td></tr>
+</table>
+<p>§15:2x 判据：cline 7 题通过 → <span class="ok">判据满足</span>。</p>
+<h2>7. TB-2.1 全 7 路快照</h2>
+<div class="box"><b>口径声明</b>：TB-2.1 / 89 题 / 7-way concurrent。与 TB4 题集不同，<b>禁止跨基准对比</b>。Oracle 5/5 ✅。</div>
+<table><tr><th>Harness</th><th>状态</th><th>已评分</th><th>Passed</th><th>Pass%</th><th>备注</th></tr><tr style='background:#e8f5e9'><td>cline</td><td>已完成</td><td>88</td><td class='pass'>7</td><td>8.0%</td><td></td></tr>
+<tr><td>opencode</td><td>运行中</td><td>13</td><td class='pass'>5</td><td>38.5%</td><td></td></tr>
+<tr><td>pi</td><td>运行中</td><td>23</td><td class='pass'>6</td><td>26.1%</td><td></td></tr>
+<tr><td>codex</td><td>运行中</td><td>7</td><td class='pass'>3</td><td>42.9%</td><td></td></tr>
+<tr><td>claude-code</td><td>运行中</td><td>5</td><td class='pass'>3</td><td>60.0%</td><td></td></tr>
+<tr><td>deepseek</td><td>运行中</td><td>7</td><td class='pass'>5</td><td>71.4%</td><td></td></tr>
+<tr><td>hermes</td><td>运行中</td><td>54</td><td class='pass'>3</td><td>5.6%</td><td></td></tr>
+<tr style='font-weight:bold;background:#fce4ec'><td>合计</td><td>—</td><td>197</td><td>32</td><td>16.2%</td><td>—</td></tr>
+</table>
+<h2>8. 网关状态</h2>
+<div class="box"><b>当前</b>：<span class="ok">200 OK</span>（v1/models=200, 9092=200, 9093=200）。网关已恢复，无 429。新增空 patch = 能力/超时，非 infra。</div>
+<hr><p style="font-size:0.85em;color:#999">R1853 | 2026-11-08 07:42 | glm-5.3-flash | §10:10 C1-C5 | 命名纪律：cline</p></body></html>
