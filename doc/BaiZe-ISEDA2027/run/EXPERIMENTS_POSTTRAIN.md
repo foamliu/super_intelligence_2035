@@ -1976,3 +1976,134 @@ dry-run 验证通过。
 
 **结论**：当前超参与 DeepSeek-R1 论文对齐，差异有合理解释，无需修改核心超参。
 
+
+## §R13 verl Custom Reward Function Implementation (2026-11-07 wake61)
+
+> **目的**：R1-R12 完成了调研和脚本骨架，但**奖励函数的实际代码**此前不存在——
+> verl YAML config 里 `reward` 节只有概念性描述，没有指向可执行的 Python 函数。
+> R13 调研 verl 的 reward function 接口并实现 4 臂奖励（R1-R4）的可运行代码。
+
+### R13.1 verl Reward Function 架构（web 调研）
+
+**来源**：verl GitHub ARCHITECTURE_MAP.md、Leeroopedia、CSDN verl 示例代码解读、DeepWiki。
+
+verl 的奖励系统由三层组成：
+
+1. **`load_reward_manager(config, tokenizer, num_examine)`**（`verl/trainer/ppo/reward.py`）
+   - 工厂函数：根据 config 构造 `AbstractRewardManager` 实例
+   - 支持两种模式：model-based RM（reward_model 配置）和 rule-based（custom_reward_function）
+   - 加载自定义 reward function（如果配置了 `custom_reward_function`）
+   - 通过 registration 或 importlib 解析 reward manager class
+
+2. **`compute_reward(data: DataProto, reward_fn: AbstractRewardManager)`**
+   - 每个 training step 在 rollout 生成后调用
+   - 返回 `(reward_tensor, extra_info_dict)`，reward_tensor shape = (batch, seq_len)
+
+3. **`AbstractRewardManager`**（基类）/ `NaiveRewardManager`（默认实现）
+   - 遍历 batch，对每个 sample 调用配置的 reward function
+   - 支持自定义 reward function 的标准接口：
+     ```python
+     def compute_score(data_source, solution_str, ground_truth, extra_info=None, **kwargs) -> float
+     ```
+
+**YAML 配置格式**：
+```yaml
+custom_reward_function:
+  path: /path/to/my_reward.py
+  name: compute_score
+  reward_kwargs:
+    arm: R2
+    api_database: ~/code/eda_fastmcp/docs/API_INFO_MERGED_V3.json
+```
+
+### R13.2 Multi-turn Interaction + Sandbox 奖励计算
+
+**来源**：verl DeepWiki Multi-turn Interaction System、CSDN Sandbox Fusion 文章。
+
+- verl 的 `BaseInteraction`（`verl/interactions/base.py`）定义了多轮交互的生命周期
+- 每个 turn 可以独立打分，最终聚合为 trajectory-level reward
+- Sandbox Fusion 返回结构化 JSON：`{stdout, stderr, returncode}`
+- GSM8K toolcall shaping 示例（`examples/sglang_multiturn/gsm8k_toolcall_shaping/`）展示了：
+  - `base_score`（正确性）+ `format_score`（格式奖励）+ `shaping_reward`（工具使用奖励）
+  - 函数签名：`toolcall_shaping_reward(data_source, solution_str, ground_truth, extra_info, *, method, format_score, score, shaping_reward, trigger_substring, **kwargs) -> float`
+
+**对我们的影响**：
+- EDA 任务的多轮交互 = 模型生成代码 → 沙盒执行 → 返回结果 → 模型继续
+- 奖励在 trajectory 终止时计算，使用沙盒执行结果作为 `extra_info`
+- `extra_info` 应包含：`exec_success`、`assert_results`（逐断言 pass/fail）、`tool_results`
+
+### R13.3 奖励函数实现：`baize_posttrain_reward_functions.py`
+
+**文件**：`run/baize_posttrain_reward_functions.py`（301 行，py_compile ✅，自测 ✅）
+
+**4 臂实现**：
+
+| 臂 | 函数 | 逻辑 | 自测结果（full_pass） |
+|:--|:--|:--|:--|
+| R1 | `reward_r1_binary` | exec_success + all asserts pass → 1.0，否则 0.0 | 1.02（1.0+格式奖励0.02） |
+| R2 | `reward_r2_partial` | exec_success=0.2 + 每通过断言+0.2，全通过=1.0 | 1.02 |
+| R3 | `reward_r3_tool_penalty` | R2 + 工具调用惩罚（0次=-0.05，>20次=-0.1，3-15次=+0.05） | 1.02 |
+| R4 | `reward_r4_api_legality` | R3 + API合法性（幻觉API=-0.15/次，未知API=-0.05/次） | 0.97（检测到 get_cell_by_id 不在 16926 API 库中） |
+
+**关键设计决策**：
+1. **R2 为默认臂**：R1 太稀疏（2B 模型大部分 rollout 得 0，GRPO advantage 全 0 无法学习）
+2. **部分分上限 0.99**：避免部分通过得分超过全通过（full_pass=1.0 的唯一性）
+3. **格式奖励 +0.02**：仅当 score > 0 时生效，鼓励产出可执行代码而非空响应
+4. **API 合法性检查**：lazy-load 16926 API 名称（API_INFO_MERGED_V3.json），缓存避免重复 I/O
+5. **工具调用提取**：同时匹配 XML 格式（`<function>name</function>`，MiniCPM5-2B 原生）和 Python 格式（`pyScript.api_name(`）
+6. **Clamp [0, 1.1]**：允许小幅超出 1.0（来自 bonus），但不允许负奖励（避免 reward hacking 向负方向）
+
+### R13.4 自测结果（5 个测试用例 × 4 臂）
+
+```
+full_pass      R1=1.02  R2=1.02  R3=1.02  R4=0.97   ← R4 检测到 unknown API
+partial_pass   R1=0.00  R2=0.42  R3=0.42  R4=0.42   ← R1 太严格，R2 给部分分
+exec_failure   R1=0.00  R2=0.00  R3=0.00  R4=0.00   ← 执行失败全臂归零
+no_tools       R1=0.00  R2=0.00  R3=0.00  R4=0.00   ← 无代码无工具
+xml_tool_calls R1=1.02  R2=1.02  R3=1.02  R4=0.92   ← 2 次 unknown API = -0.10
+```
+
+**判读**：
+- R2 的部分分在 `partial_pass` 场景给出 0.42（exec 0.2 + 1 assert 0.2 + format 0.02），GRPO advantage ≠ 0 → 可学习
+- R4 的 API 合法性检查正确识别 `get_cell_by_id` 不在 API 库中（它是 EDA-Eval 评测题的 API，不应在训练 API 中出现）
+- R1 在 `partial_pass` 给 0.0 → 验证了"R1 太稀疏"的判断
+
+### R13.5 verl YAML 配置更新
+
+`baize_posttrain_rl_verl_config.yaml` 的 `reward` 节已更新：
+- 删除：概念性 `partial_credit` 块（无实际代码支持）
+- 新增：`custom_reward_function.path` + `.name` + `.reward_kwargs`
+- 保留：`anti_cheat` 配置（红线 §5.2）
+- YAML 解析验证通过 ✅
+
+### R13.6 与 Sandbox 的集成路径
+
+```
+verl rollout (SGLang multi-turn)
+  ↓ 模型生成 response (含 XML tool calls)
+EDASandboxTool.execute() (baize_posttrain_eda_tool.py)
+  ↓ SSH 到 .15 沙盒执行
+  ↓ 返回 {exec_success, assert_results, tool_results}
+  ↓ 填入 extra_info
+compute_score(data_source, solution_str, ground_truth, extra_info, arm=R2)
+  → 返回 float reward
+  → verl GRPO 用 reward 计算 advantage → 更新 actor
+```
+
+**当前状态**：`EDASandboxTool.execute()` 仍是骨架（SSH 未实现），但 reward function 已就绪。
+11/9 GPU 到位后，沙盒 SSH 连通即可形成完整闭环。
+
+### R13.7 数据来源
+
+| 来源 | URL |
+|:--|:--|
+| verl ARCHITECTURE_MAP | https://github.com/ankitmaloo/verl/blob/main/ARCHITECTURE_MAP.md |
+| Leeroopedia RewardManager | https://leeroopedia.com/index.php?oldid=19133 |
+| Leeroopedia Toolcall Shaping | https://leeroopedia.com/index.php?oldid=19143 |
+| DeepWiki Multi-turn Interaction | https://deepwiki.com/millix19/promptmii/7-multi-turn-interaction-system |
+| CSDN verl 示例解读 | https://blog.csdn.net/weixin_34945060/article/details/157388948 |
+| CSDN verl 数学助手 | https://blog.csdn.net/weixin_31139479/article/details/157664194 |
+
+**结论**：4 臂奖励函数已实现并自测通过，verl YAML 配置已更新。11/9 GPU 到位后，
+沙盒 SSH 连通 + cu124 venv 安装即可形成完整的 RL 训练闭环。
+

@@ -109,17 +109,21 @@ algorithm:
   eps: 1.0e-8
 
 reward:
-  arm: R2                        # START with R2 (partial credit), NOT R1 (binary)
+  # 🔴 R13: Custom reward function — verl interface via custom_reward_function
+  # The reward function implements 4 arms (R1-R4) in baize_posttrain_reward_functions.py
+  # verl loads it via load_reward_manager() → custom_reward_function.path + .name
+  custom_reward_function:
+    path: run/baize_posttrain_reward_functions.py
+    name: compute_score
+    reward_kwargs:
+      arm: R2                    # START with R2 (partial credit), NOT R1 (binary)
+      api_database: ~/code/eda_fastmcp/docs/API_INFO_MERGED_V3.json
+  # Arm descriptions (for reference, actual logic in reward_functions.py):
   # R1 = binary pass/fail (too sparse for 2B)
   # R2 = exec_success(0.2) + partial_assert(0.2 each) + full_pass(1.0)
   # R3 = R2 + tool_call_penalty (align with harness cost model)
   # R4 = R3 + API_legality (penalize hallucinated API names)
   assertion_source: task.test
-  partial_credit:
-    exec_success: 0.2
-    partial_assert: 0.2
-    full_pass: 1.0
-  api_database: ~/code/eda_fastmcp/docs/API_INFO_MERGED_V3.json
   anti_cheat:
     enabled: true                # Red line §5.2: PreToolUse hook always on
     ngram_blocklist: baize_posttrain_contamination_gate.sh
