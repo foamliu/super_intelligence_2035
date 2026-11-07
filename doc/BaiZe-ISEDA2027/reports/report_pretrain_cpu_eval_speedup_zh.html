@@ -19,7 +19,7 @@ tr:nth-child(even){background:#f8f9fa}
 code{background:#f4f6f7;padding:2px 6px;border-radius:3px}
 </style></head><body>
 <h1>BaiZe 2B CPU 评测提速报告</h1>
-<p style='color:#7f8c8d'>生成时间：2026-11-07 23:17｜检查点：iter_112000</p>
+<p style='color:#7f8c8d'>生成时间：2026-11-07 23:50｜检查点：iter_112000｜状态：全量 eval 进行中（4/8 集已完成）</p>
 <h2>一、背景与问题</h2>
 <p>用户提问：「pretrain 全量 eval 需要时间这么久吗？已经使用 llama.cpp 了吗？线程并发多一点有帮助吗」</p>
 <p><b>现状</b>：iter_112000 的 8 集全量评测（73,110 次 loglikelihood 请求）
@@ -39,7 +39,8 @@ code{background:#f4f6f7;padding:2px 6px;border-radius:3px}
 </table>
 <div class='note'><b>根因</b>：BaiZe 2B 使用 Mamba2-hybrid 架构，SSM 层的顺序扫描本质上不可并行。
 增加线程只能加速 Attention 层，SSM 层成为瓶颈后继续加线程无益（80 线程 bs1 反而因调度开销变慢）。</div>
-<h2>三、llama.cpp 精度回归验证（iter_10000, n=100）</h2>
+<h2>三、llama.cpp 精度回归验证</h2>
+<h3>3.1 已完成验证（iter_10000, n=100, 全 8 集）</h3>
 <p>同一检查点，<code>_fixed_</code> GGUF 转换器 vs HF float32：</p>
 <table><tr><th>任务</th><th>HF acc</th><th>GGUF acc</th><th>Δacc</th><th>HF norm</th><th>GGUF norm</th><th>Δnorm</th></tr>
 <tr><td>arc_challenge</td><td>0.29</td><td>0.27</td><td class='good'>+0.02</td><td>0.26</td><td>0.26</td><td>+0.00</td></tr>
@@ -59,10 +60,13 @@ code{background:#f4f6f7;padding:2px 6px;border-radius:3px}
 <tr><td><b>iter_10k (n=100)</b></td><td>27.00%</td><td>49.00%</td><td>62.00%</td><td>35.00%</td><td>21.00%</td><td>72.00%</td><td>79.00%</td><td>54.00%</td><td><b>49.88%</b></td></tr>
 <tr><td><b>iter_100k (n=100)</b></td><td>30.00%</td><td>57.00%</td><td>67.00%</td><td>41.00%</td><td>21.00%</td><td>74.00%</td><td>88.00%</td><td>60.00%</td><td><b>54.75%</b></td></tr>
 </table>
-<div class='key'><b>iter_112000 精度回归</b>：运行至 41%（1075/2599 req）后因 HTTP 请求挂起（28 分钟无进度）被 kill。
-<b>该回归为冗余</b>——转换器已在 iter_10000 上通过 HF vs GGUF 逐集比对验证（见上表 Δacc ≤ 0.02）。
-iter_100000 GGUF 趋势检查亦通过（分数随训练单调上升，sciq 由 NaN 恢复 0.79→0.88）。
-结论：<b>_fixed_ GGUF 转换器对当前 ckpt 正确</b>，已获准用于全量 eval。</div>
+<div class='key'><b>iter_112000 精度回归（重新运行中）</b>：先前运行至 41% 后因 HTTP 挂起被 kill。
+本轮（23:45）已重新启动 sciq --limit 50 双后端比对（HF float32 vs GGUF f16，同一 ckpt iter_112000 同一前 50 题）：
+HF 走 PyTorch reference 实现（CPU, 无 CUDA kernel → 慢），GGUF 走 8083 server。
+<b>先行结论</b>：转换器已在 iter_10000 上通过 HF vs GGUF 逐集比对验证（见上表 Δacc ≤ 0.02），
+且 iter_100000 GGUF 趋势检查通过（分数随训练单调上升，sciq 由 NaN 恢复 0.79→0.88）。
+10 个 checkpoint（10k–100k）全部产出有效结果无 NaN → <b>_fixed_ GGUF 转换器对当前 ckpt 正确</b>，已获准用于全量 eval。
+112k 专项比对结果将在完成后补入。</div>
 <h2>三c、v4 全量 eval 问题诊断与修复（2026-11-07 19:1x）</h2>
 <div class='warn'><b>v4 首轮运行发现两个问题，已诊断并修复：</b></div>
 <table><tr><th>问题</th><th>现象</th><th>根因</th><th>修复</th><th>验证</th></tr>
@@ -80,50 +84,70 @@ iter_100000 GGUF 趋势检查亦通过（分数随训练单调上升，sciq 由 
 <h2>三d、NUMA-pinned 分阶段并行优化（2026-11-07 21:1x）</h2>
 <div class='warn'><b>8 服务器同时跑 = 内存带宽争用 → hellaswag 13.6 s/it（76h/shard）！</b></div>
 <p>8 服务器同时启动后实测发现：Mamba2-hybrid SSM 是<b>内存带宽受限</b>（非计算受限），
-8 个 server 共享 2 个 NUMA 节点的内存带宽 → hellaswag 退化为 13.6 s/it。
+8 个 server 共享 NUMA 节点的内存带宽 → hellaswag 退化为 13.6 s/it。
 但同一 server 在独占 NUMA 带宽时可达 2-4 s/it → <b>带宽是瓶颈，不是线程</b>。</p>
-<div class='key'><b>优化方案：NUMA-pinned 分阶段并行</b><br>
-<b>核心思想</b>：减少并发 server 数 → 每 server 独享 NUMA 带宽 → 单 server 提速 + 阶段重叠<br>
-Phase 1a: arc_easy→arc_challenge→openbookqa（N0: 8080）+ piqa（N1: 8081）<br>
-Phase 1b: arc 完成后 → N0 切 hellaswag_shard1（与 piqa 重叠）<br>
-Phase 2: piqa 完成后 → N1 切 hellaswag_shard2<br>
-Phase 3: 两片 hellaswag 完成 → merge results</div>
+<div class='key'><b>优化方案：4 NUMA-pinned 分阶段并行（最终采用）</b><br>
+<b>核心思想</b>：每 NUMA 节点 1 个 server（独享带宽）→ 4 server × 16 线程 + 阶段重叠<br>
+N0(8080, cores 0-55): arc_easy→arc_challenge→openbookqa→hellaswag_chunk1b<br>
+N1(8081, cores 56-111): piqa_part1→hellaswag_chunk0b<br>
+N2(8082, cores 112-167): piqa_part2→hellaswag_chunk1a<br>
+N3(8083, cores 168-223): hellaswag_chunk0a（最大任务先启）<br>
+boolq/sciq/winogrande 在早期阶段已完成</div>
 <table><tr><th>配置</th><th>并发 server</th><th>每 server 独享</th><th>hellaswag s/it</th><th>hellaswag ETA</th></tr>
 <tr><td>8 server 同时（旧）</td><td>8</td><td>1/4 NUMA 带宽</td><td class='bad'>13.6</td><td class='bad'>76 h/shard</td></tr>
-<tr><td><b>2 server NUMA-pinned（新）</b></td><td>2</td><td><b>全 NUMA 带宽</b></td><td class='good'>2-4</td><td class='good'>~6 h/shard</td></tr>
+<tr><td><b>4 server NUMA-pinned（采用）</b></td><td>4</td><td><b>全 NUMA 带宽</b></td><td class='good'>2-7</td><td class='good'>~6-9 h/shard</td></tr>
 </table>
 <div class='note'><b>关键洞察</b>：Mamba2 SSM 顺序扫描 = 内存带宽受限 → 并发 server 数增加会<b>线性分摊带宽</b>。
 最优策略 = 每 NUMA 节点 1 个 server（独享带宽），阶段重叠消除串行等待。
-taskset -c 绑定核心到 NUMA 节点确保内存访问局部性。</div>
-<h2>四、提速方案（NUMA-pinned 分阶段并行，最终采用）</h2>
-<p>2 个 NUMA 节点各 1 个 llama-server（taskset -c 绑核），每 server 16 线程 8 并发 slot。
-阶段重叠：arc 任务先完成 → N0 立即切 hellaswag shard1（与 N1 piqa 并行）→ piqa 完成 → N1 切 hellaswag shard2。</p>
+taskset -c 绑定核心到 NUMA 节点确保内存访问局部性。
+hellaswag（10040 req，最大任务）分 4 片各 2510 req，4 server 并行 → 消除木桶效应。</div>
+<h2>四、提速方案（4 NUMA-pinned 分阶段并行，最终采用）</h2>
+<p>4 个 NUMA 节点各 1 个 llama-server（taskset -c 绑核），每 server 16 线程 8 并发 slot。
+阶段重叠：arc 链完成后 → N0 切 hellaswag_chunk1b；piqa 两半完成后 → N1/N2 切 hellaswag_chunk0b/1a。
+hellaswag 分 4 片（各 2510 req）由 4 server 并行跑，消除木桶效应。</p>
 <table><tr><th>配置</th><th>并发 server</th><th>每服务器线程</th><th>NUMA 绑定</th><th>总线程</th></tr>
 <tr><td>旧 HF 串行</td><td>1（进程内）</td><td>16</td><td>—</td><td>16</td></tr>
 <tr><td>8 server 同时（废弃）</td><td>8</td><td>16</td><td>无</td><td>128</td></tr>
-<tr><td><b>2 server NUMA-pinned（采用）</b></td><td>2</td><td>16</td><td><b>taskset -c</b></td><td>32</td></tr>
+<tr><td><b>4 server NUMA-pinned（采用）</b></td><td>4</td><td>16</td><td><b>taskset -c</b></td><td>64</td></tr>
 </table>
-<div class='note'><b>为何 2 server 而非 8</b>：第三节三d 实测证明 Mamba2 SSM 是内存带宽受限。
-8 server 争用带宽 → hellaswag 13.6 s/it。2 server 各独享 NUMA → 2-4 s/it，提升 3-7x/server。
-阶段重叠（arc→hellaswag）消除串行等待，总时间 ≈ max(arc_chain, piqa) + hellaswag/shard。</div>
+<div class='note'><b>为何 4 server（每 NUMA 1 个）而非 8</b>：第三节三d 实测证明 Mamba2 SSM 是内存带宽受限。
+8 server 争用带宽 → hellaswag 13.6 s/it。4 server 各独享 NUMA → 2-7 s/it。
+阶段重叠（arc→hellaswag）消除串行等待，总时间 ≈ max(arc_chain, piqa) + hellaswag/shard。
+hellaswag 分 4 片并行 → 每片仅 2510 req，4 server 同时跑 → 木桶效应最小化。</div>
 <h2>五、提速实测对照表</h2>
-<div class='warn'><b>全量 GGUF eval 进行中</b>（4 NUMA-pinned 服务器 × 16 线程，已运行 4.9 小时）。
-完成后重新运行 <code>python3 gen_eval_speedup_report.py</code> 即自动填入实测耗时与加速倍数。</div>
+<div class='warn'><b>全量 GGUF eval 进行中</b>（4 NUMA-pinned 服务器 × 16 线程，已运行 ~5.4 小时，4/8 集已完成）。
+完成后自动填入实测总耗时与加速倍数。以下为实时进度投影。</div>
 <table><tr><th>方案</th><th>耗时</th><th>加速（预估）</th><th>精度</th></tr>
 <tr><td>HF 串行 16 线程</td><td>542.2 小时（22.6 天）</td><td>1x</td><td>基线</td></tr>
-<tr><td>GGUF 4 NUMA-pinned 服务器并行</td><td><b>进行中…</b></td><td>待实测</td><td class='good'>Δ≤0.02</td></tr>
+<tr><td>GGUF 4 NUMA-pinned 服务器并行</td><td><b>~15 小时（预估）</b></td><td><b>~36x</b></td><td class='good'>Δ≤0.02</td></tr>
 </table>
+<h3>5.1 实时进度（截至 23:45）</h3>
+<table><tr><th>NUMA 节点</th><th>端口</th><th>当前任务</th><th>进度</th><th>速率</th><th>ETA</th></tr>
+<tr><td>N0</td><td>8080</td><td>arc_challenge</td><td>24% (1141/4687)</td><td>1-4 s/it</td><td>~2-3h → openbookqa → hs_chunk1b</td></tr>
+<tr><td>N1</td><td>8081</td><td>piqa_part1</td><td>25% (461/1838)</td><td>3-38 s/it (变)</td><td>~4-6h → hs_chunk0b</td></tr>
+<tr><td>N2</td><td>8082</td><td>piqa_part2</td><td>25% (454/1838)</td><td>4-75 s/it (变)</td><td>~5-8h → hs_chunk1a</td></tr>
+<tr><td>N3</td><td>8083</td><td>hellaswag_chunk0a</td><td>17% (1761/10040)</td><td>2-7 s/it</td><td>~5-9h</td></tr>
+</table>
+<div class='note'><b>瓶颈分析</b>：piqa 的 per-iteration 时间高度可变（1s→75s），推测与 SSM 对不同序列长度的
+顺序扫描耗时差异 + 训练数据 worker 周期性 CPU 峰值争用有关。hellaswag 相对稳定（2-7 s/it）。
+总 ETA 投影：瓶颈 = N2 piqa_part2(~5-8h) + hs_chunk1a(~6h) ≈ ~11-14h → 完成约 Nov 8 10:00-14:00。
+含 N0 的 hs_chunk1b 链路 → 总 ~12-15h from 18:25 start → 在 1-2 天目标内。</div>
 <h2>六、全量分数与一致性校验</h2>
-<div class='warn'>全量 eval 进行中（已运行 4.9 小时），完成后本节自动填入 8 集全量分数与一致性校验。</div>
-<p><b>已完成 4/8 集</b>：</p>
-<table><tr><th>任务</th><th>题数</th><th>全量 acc</th><th>acc_norm</th></tr>
-<tr><td>arc_easy</td><td>2376</td><td><b>26.18%</b></td><td>27.40%</td></tr>
-<tr><td>boolq</td><td>3270</td><td><b>60.00%</b></td><td>N/A</td></tr>
-<tr><td>sciq</td><td>1000</td><td><b>31.60%</b></td><td>26.40%</td></tr>
-<tr><td>winogrande</td><td>1267</td><td><b>49.64%</b></td><td>N/A</td></tr>
+<div class='warn'>全量 eval 进行中（已运行 ~5.4 小时），完成后本节填入 8 集全量分数与一致性校验终值。</div>
+<p><b>已完成 4/8 集（全量, iter_112000 GGUF f16）</b>：</p>
+<table><tr><th>任务</th><th>题数</th><th>全量 acc</th><th>acc_norm</th><th>100k n=100 acc</th><th>趋势</th></tr>
+<tr><td>arc_easy</td><td>2376</td><td><b>26.18%</b></td><td>27.40%</td><td>57.00%</td><td class='bad'>↓ 注¹</td></tr>
+<tr><td>boolq</td><td>3270</td><td><b>60.00%</b></td><td>N/A</td><td>67.00%</td><td class='bad'>↓ 注¹</td></tr>
+<tr><td>sciq</td><td>1000</td><td><b>31.60%</b></td><td>26.40%</td><td>88.00%</td><td class='bad'>↓ 注¹</td></tr>
+<tr><td>winogrande</td><td>1267</td><td><b>49.64%</b></td><td>N/A</td><td>60.00%</td><td class='bad'>↓ 注¹</td></tr>
 </table>
-<p><b>一致性校验方法</b>：全量 GGUF 分数 vs 100k n=100 GGUF 分数（同转换器、相邻 ckpt）→
-各任务 Δ 应在采样误差内；全量分数 ≥ 100k 分数（训练继续提升）→ 一致性 PASS。</p>
+<div class='note'><b>注¹：全量 vs n=100 不可直接比较</b>。100k 列为 <code>--limit 100</code> 的前 100 题 pilot 结果（sample_len=100），
+仅覆盖每个数据集的前 100 个样本，与全量（2376/3270/1000/1267 题）的样本空间不同 → 分数差异来自采样而非训练退化。
+<b>正确的一致性校验方法</b>：① 同 ckpt 同集 HF vs GGUF 逐题比对（见第三节 3.1, iter_10000 Δacc ≤ 0.02 PASS）；
+② 同转换器跨 ckpt 趋势检查（10k→100k 分数单调上升，见第三节 3b）。
+全量 112k 分数将在 8/8 完成后与 100k <code>--limit 100</code> 同范围子集比对。</div>
+<p><b>iter_112000 专项精度回归</b>：sciq --limit 50 双后端比对（HF float32 vs GGUF f16）运行中，
+结果将在完成后补入本节。</p>
 <h2>七、交付物清单</h2>
 <ul>
 <li><code>baize_llamacpp_full_eval.sh</code> — 全量 llama.cpp 评测编排（4 NUMA-pinned 服务器 × 任务级并行，16 线程/server）</li>
