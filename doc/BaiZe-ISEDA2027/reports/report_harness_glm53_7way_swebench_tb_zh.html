@@ -20,13 +20,13 @@ pre{background:#2c3e50;color:#ecf0f1;padding:15px;border-radius:5px;overflow-x:a
 <div class="info">
 <p><strong>模型</strong>：glm-5.3-flash（网关 <code>http://agi-gateway.cxmt.com/v1</code>）</p>
 <p><strong>7 路</strong>：cline / codex / opencode / claude-code / pi / hermes / deepseek</p>
-<p><strong>生成时间</strong>：2026-11-08 00:35（R1814）</p>
-<p><strong>状态</strong>：<span class="warn">⚠️ 中间报告</span> — SWE-bench eval <strong>7/7 全部完成</strong>（deepseek eval 已完成：33/40=82.5%）；SWE-bench predict 7路推进中（网关已恢复 HTTP 200，predict 加速）：cline 65/500, codex 40/500, opencode 123/500, claude-code 68/500, pi 44/500, hermes 143/500, deepseek 47/500；TB-2.1 cline 89/89 DONE(7pass) + codex 已终止(19errored/429) + hermes 运行中(49/89) + 4路待启动
+<p><strong>生成时间</strong>：2026-11-08 00:46（R1804）</p>
+<p><strong>状态</strong>：<span class="warn">⚠️ 中间报告</span> — SWE-bench eval 5/7 完成（hermes 运行中、deepseek 待评）；TB-2.1 cline 1/7 路完成</p>
 </div>
 
-<div class="info">
-<p><strong>网关状态</strong>：00:35 实测网关已恢复 HTTP 200（此前 429 滚动限流已结束）。predict 7 路均在 alive 状态并持续推进。
-<strong>归因红线</strong>：429/403 = infra，不得写成能力差；能力差也不得用 infra 掩盖。</p>
+<div class="critical">
+<p><strong>网关 429 quota 影响</strong>：keyB 多次 429 额度耗尽，阻塞 predict + TB-2.1 后 6 路。22:24 网关恢复（HTTP 200）。
+<strong>归因红线</strong>：429/403 = infra，不得写成能力差。</p>
 </div>
 
 <h2>1. SWE-bench Verified · 7 路 Predict 统计</h2>
@@ -34,12 +34,12 @@ pre{background:#2c3e50;color:#ecf0f1;padding:15px;border-radius:5px;overflow-x:a
 <table>
 <tr><th>#</th><th>Harness</th><th>Predict 总数</th><th>Real Patch</th><th>Empty Patch</th><th>Real Rate</th></tr>
 <tr><td>1</td><td>cline</td><td>65</td><td class='pass'>56</td><td class='fail'>9</td><td>86.2%</td></tr>
-<tr><td>2</td><td>codex</td><td>40</td><td class='pass'>10</td><td class='fail'>30</td><td>25.0%</td></tr>
+<tr><td>2</td><td>codex</td><td>42</td><td class='pass'>11</td><td class='fail'>31</td><td>26.2%</td></tr>
 <tr><td>3</td><td>opencode</td><td>123</td><td class='pass'>118</td><td class='fail'>5</td><td>95.9%</td></tr>
 <tr><td>4</td><td>claude-code</td><td>68</td><td class='pass'>38</td><td class='fail'>30</td><td>55.9%</td></tr>
-<tr><td>5</td><td>pi</td><td>44</td><td class='pass'>34</td><td class='fail'>10</td><td>77.3%</td></tr>
-<tr><td>6</td><td>hermes</td><td>143</td><td class='pass'>132</td><td class='fail'>11</td><td>92.3%</td></tr>
-<tr><td>7</td><td>deepseek-harness</td><td>47</td><td class='pass'>42</td><td class='fail'>5</td><td>89.4%</td></tr>
+<tr><td>5</td><td>pi</td><td>45</td><td class='pass'>35</td><td class='fail'>10</td><td>77.8%</td></tr>
+<tr><td>6</td><td>hermes</td><td>149</td><td class='pass'>136</td><td class='fail'>13</td><td>91.3%</td></tr>
+<tr><td>7</td><td>deepseek-harness</td><td>48</td><td class='pass'>43</td><td class='fail'>5</td><td>89.6%</td></tr>
 </table>
 <div class="note"><p><strong>Empty Patch 归因</strong>：429 额度耗尽 → 空 patch。codex 空 patch 率最高（75.6%），部分为适配器问题。
 <strong>归因红线</strong>：空 patch = infra（429），不得写成能力差。</p></div>
@@ -54,13 +54,13 @@ pre{background:#2c3e50;color:#ecf0f1;padding:15px;border-radius:5px;overflow-x:a
 <tr><td>4</td><td>claude-code</td><td>36</td><td class='pass'>27</td><td class='fail'>9</td><td>0</td><td><strong>75.0%</strong></td><td>✅ 已完成</td></tr>
 <tr><td>5</td><td>pi</td><td>34</td><td class='pass'>26</td><td class='fail'>8</td><td>0</td><td><strong>76.5%</strong></td><td>✅ 已完成</td></tr>
 <tr><td>6</td><td>hermes</td><td>131</td><td class='pass'>124</td><td class='fail'>7</td><td>0</td><td><strong>94.7%</strong></td><td>✅ 已完成</td></tr>
-<tr><td>7</td><td>deepseek-harness</td><td>40</td><td class='pass'>—</td><td class='fail'>—</td><td>—</td><td><strong>—</strong></td><td>⏳ 运行中</td></tr>
+<tr><td>7</td><td>deepseek-harness</td><td>40</td><td class='pass'>33</td><td class='fail'>7</td><td>0</td><td><strong>82.5%</strong></td><td>✅ 已完成</td></tr>
 </table>
 <div class="info"><ul>
 <li>Eval N &lt; Real Patch 数：predict 仍在进行，eval 只覆盖已完成 real patch（按字母序）</li>
-<li><strong>hermes</strong>：131 real patches，eval 已完成（23:30）→ <strong>124/131 = 94.7%</strong>（所有路中最高）</li>
-<li><strong>deepseek</strong>：40 real patches，eval 运行中（23:30 启动，~40×15s≈10min）</li>
-<li>当前 resolved rate 为<strong>中间值</strong>，最终值需等全部 500 题完成后确定</li>
+<li><strong>SWE-bench eval 7/7 全部完成</strong>（R1789）：hermes 124/131=94.7%、deepseek 33/40=82.5% 为最高两路</li>
+<li>当前 resolved rate 为<strong>中间值</strong>（eval N &lt; 500），最终值需等全部 500 题完成后确定</li>
+<li><strong>网关已恢复 HTTP 200</strong>（00:35 确认），429 滚动限流结束，predict 7 路加速推进中</li>
 </ul></div>
 
 <h2>3. 与 kimi-k2.6-cloud 历史结果同口径对照</h2>
@@ -72,8 +72,8 @@ pre{background:#2c3e50;color:#ecf0f1;padding:15px;border-radius:5px;overflow-x:a
 <tr><td>opencode</td><td>401/500 (80.2%)</td><td>80/102 (78.4%)</td><td></td></tr>
 <tr><td>claude-code</td><td>273/500 (54.6%)</td><td>27/36 (75.0%)</td><td></td></tr>
 <tr><td>pi</td><td>333/500 (66.6%)</td><td>26/34 (76.5%)</td><td></td></tr>
-<tr><td>hermes</td><td>184/500 (36.8%)</td><td>124/131 (94.7%)</td><td>⚠️ interim（N&lt;500）</td></tr>
-<tr><td>deepseek-harness</td><td>—/500 (—)</td><td>33/40 (82.5%)</td><td>⚠️ interim</td></tr>
+<tr><td>hermes</td><td>184/500 (36.8%)</td><td>124/131 (94.7%)</td><td></td></tr>
+<tr><td>deepseek-harness</td><td>—/500 (—)</td><td>33/40 (82.5%)</td><td></td></tr>
 </table>
 <div class="note"><p><strong>⚠️ 不可直接比较</strong>：glm-5.3-flash eval 尚未完成全量，待全量完成后方可做同口径对比。</p></div>
 
@@ -92,20 +92,20 @@ pre{background:#2c3e50;color:#ecf0f1;padding:15px;border-radius:5px;overflow-x:a
 </div>
 <table>
 <tr><th>Harness</th><th>完成</th><th>Passed</th><th>Failed</th><th>Remaining</th><th>通过率</th><th>状态</th></tr>
-<tr><td>cline</td><td>89/89</td><td class='pass'>7</td><td class='fail'>82</td><td>0</td><td><strong>7.9%</strong></td><td>✅ 已完成</td></tr>
-<tr><td>codex</td><td>19/89</td><td class='pass'>0</td><td class='fail'>19</td><td>70</td><td><strong>0%</strong></td><td>❌ 已终止(429)</td></tr>
-<tr><td>hermes</td><td>49/89</td><td class='pass'>0</td><td class='fail'>25</td><td>40</td><td><strong>—</strong></td><td>⏳ 运行中(网关已恢复200)</td></tr>
-<tr><td colspan="6"><em>opencode / claude-code / deepseek / pi — 4 路待启动（sequential launcher 等 hermes 完成后依次启动）</em></td><td>⏳ 待启动</td></tr>
+<tr><td>cline</td><td>89/89</td><td class='pass'>7</td><td class='fail'>81</td><td>1</td><td><strong>7.9%</strong></td><td>✅ 已完成</td></tr>
+<tr><td>hermes</td><td>49/89</td><td class='fail'>0</td><td>30</td><td>40</td><td>0.0%</td><td>⏳ 运行中</td></tr>
+<tr><td>codex</td><td>18/89</td><td class='fail'>0</td><td>0</td><td>71</td><td>0.0%</td><td>❌ KILL(429)</td></tr>
+<tr><td colspan="4"><em>opencode / claude-code / deepseek / pi — 4 路待启动（sequential launcher）</em></td><td>89</td><td>—</td><td>⏳ queued</td></tr>
 </table>
 <div class="note"><p><strong>§15:2x 判据</strong>：TB4 全 0 → 切换 TB-2.1 → cline 7 passed → <strong>MET ✅</strong>。详见 <code>report_harness_tb21_7way_zh.html</code></p></div>
 
 <h2>5. 失败归因（infra 单列）</h2>
 <table>
 <tr><th>类型</th><th>描述</th><th>归因</th></tr>
-<tr><td>网关 429</td><td>Token 额度耗尽，阻塞 predict + TB-2.1 后 6 路</td><td class='warn'>infra</td></tr>
+<tr><td>网关 429</td><td>Token 额度耗尽（已恢复 200），曾阻塞 predict + TB-2.1 后续路</td><td class='warn'>infra（已恢复）</td></tr>
 <tr><td>网关 403</td><td>keyA 被拒绝（不影响评测进程）</td><td class='warn'>infra</td></tr>
 <tr><td>TB4 全 0</td><td>66×7=462 trials 0 passed</td><td class='fail'>能力</td></tr>
-<tr><td>TB-2.1 cline 失败</td><td>74/83 题未通过</td><td class='fail'>能力（主体）+ infra（429 期间）</td></tr>
+<tr><td>TB-2.1 cline 失败</td><td>81/89 题未通过</td><td class='fail'>能力（主体）+ infra（429 期间）</td></tr>
 <tr><td>empty patch</td><td>空 patch 未通过 eval</td><td class='warn'>infra（429 为主）</td></tr>
 </table>
 
@@ -118,15 +118,15 @@ pre{background:#2c3e50;color:#ecf0f1;padding:15px;border-radius:5px;overflow-x:a
 
 <h2>7. 后续计划</h2>
 <div class="info"><ol>
-<li>SWE-bench：✅ 全 7 路 eval 已完成（deepseek 33/40=82.5% 为最后一路）；predict 继续推进至 500 题/路</li>
-<li>SWE-bench predict：网关已恢复 200，7 路加速推进至 500 题/路</li>
-<li>TB-2.1：sequential launcher 继续（hermes 49/89 运行中，4 路待启动）</li>
+<li>SWE-bench：predict 7 路加速推进至 500 题（网关已恢复 200），满 500 后重跑 eval 出最终矩阵</li>
+<li>TB-2.1：hermes 运行中（49/89），完成后 sequential launcher 自动启动 opencode/claude-code/deepseek/pi</li>
+<li>codex TB-2.1 需重跑（429 已恢复后重试）</li>
 <li>报告更新：每路完成后增量更新</li>
 </ol></div>
 
 <hr>
 <p style="text-align:center;color:#7f8c8d;font-size:0.9em">
-BaiZe Harness · R1814 · 2026-11-08 00:35<br>
+BaiZe Harness · R1815 · 2026-11-08 00:46<br>
 glm-5.3-flash · SWE-bench Verified 500 + TB-2.1 89 · 7-way · 报告正文一律写 cline
 </p>
 </body></html>
