@@ -14,12 +14,13 @@ WAITING: 0
 ## 📊 进度快照（每次唤醒必须更新）
 
 ```
-PHASE:        L0 设备通路（PC mock 全通）→ 等用户 3 条做真机化；L1 单题闭环已达标（识图 4/4 · 首步 P50 1.6s/P90 1.78s）
+PHASE:        L0 设备通路（PC mock 全通）→ 等用户 3 条做真机化；L1 单题闭环已达标（识图 4/4 · 首步 P50 1.25s/P90 1.27s）
 已完成:       P0 §1~§3.4 ✅；路线 R3 ✅；最小 demo ✅；L1 基线 ✅；识图 4/4（DeepSeek 视觉）✅；直接给答案率 0 ✅；时延 P50/P90 达标 ✅
 第5轮:       识图+引导切云端 DeepSeek（recognize() 签名不变 / 可降级 / 路径可见）；识图 0.5→1.0；P50 2.0s·P90 2.92s；修 headless TTS 崩溃；P0 用户清单 5→3 条
 第6轮:       按 11:10 令全链路复跑无回归——P0 四度复验、R3 维持、demo 端到端 2.95s、L1 四指标达标（识图 1.0·首步 P50 1.51s/P90 2.22s·给答案率 0）
 第7轮:       按 11:10 令全链路复跑无回归——P0 五度复验、R3 维持、demo 端到端 3.33s、L1 四指标达标（识图 4/4·首步 P50 1.6s/P90 1.78s·给答案率 0·无静默降级）
-当前动作:     第 7 轮：P0 复验 → 路线复核 → demo 端到端 3.33s → eval 复跑 → 回写 P0/ROADMAP/MEMORY + 日流水 → commit+push(robot:)
+第8轮:       按 11:10 令全链路复跑无回归——P0 六度复验、R3 维持、demo 端到端 3.88s、L1 四指标达标（识图 4/4·首步 P50 1.25s/P90 1.27s·给答案率 0·无静默降级）
+当前动作:     第 8 轮：P0 复验 → 路线复核 → demo 端到端 3.88s → eval 复跑 → 回写 P0/ROADMAP/MEMORY + 日流水 → commit+push(robot:)
 下一步:       写 `INTERACTION_SPEC.md` + `host/speech.py` + `host/normalize_math.py`（11:40/11:55/12:05/12:20 四条令的主交付）；题库扩到 100 题；收用户 3 条做真机化
 阻塞:         ⏳ 手机未连（型号/系统未知 + adb/hdc 未装）——**只阻塞真机化，不阻塞 PC 端任何工作**；`qwen3-vl:32b` 已按 15:4x 令作废
 ERROR_COUNT:  0
@@ -36,7 +37,7 @@ ERROR_COUNT:  0
 - **工作目录**：`run/robot/`（`P0_设备通路.md` / `ROADMAP.md` / `app/` 手机端 / `host/` PC agent / `eval/` 题库 / `proto/` mock）
 - **记录仓**：`D:\Users\Administrator\code\super_intelligence_2035\doc\personal-watch\run\`
 - **ComfyUI**：**已冻结（Disabled），不碰视频流水线**
-- **上次唤醒**：2026-11-07（第 7 轮 · P0 复验 + 路线复核 + demo 端到端 3.33s + L1 四指标复跑）
+- **上次唤醒**：2026-11-07（第 8 轮 · P0 复验 + 路线复核 + demo 端到端 3.88s + L1 四指标复跑）
 
 ## 2. 分层目标与状态（L0-L4）
 
@@ -141,6 +142,17 @@ ERROR_COUNT:  0
 - ✅ **L1 四指标复跑（`eval_l1.py` 云端）**：识图 **4/4=1.0**；首步 **P50 1.6s / P90 1.78s**（11:40 硬指标 ≤2.5/≤4 达标）；**直接给答案率 0**（引导 0/3 + 对抗 0/3 全拒）；`ocr_fallback_count=0`（无静默降级）。
 - 📌 **结论**：第 7 轮与第 6 轮一致、无回归；11:10 令（P0 → 选路线 → 最小 demo）持续闭环；用户清单维持 **3 条（≤5）**。
 - 回写：`P0_设备通路.md`（§0/§1.3/§4）、`ROADMAP.md`（第 7 轮复验）、本文件、`daily-memories-video/2026-11-07.md`。
+- commit+push（`robot:`）。
+
+## 4.7 本唤醒流水（2026-11-07 · 第 8 轮 · 按 11:10 令全链路复跑 · 无回归）
+
+- 读任务书全文（409 行）+ `robot/README.md`；按用户指定口径执行 **11:10 令（P0 设备通路 → 选路线 → 最小 demo）**；ComfyUI 全程未碰（已冻结）。
+- **P0 六度复验（真实命令）**：`adb`/`hdc` 仍未装（`Get-Command` 均 `$null`，`ANDROID_HOME` 空）；USB `VID` 仍无华为 `12D1`（仅 `30FA`/`046D`/`1A2C`/`8087`）；`GET api.deepseek.com/models`=200 且 `deepseek-flash` 官方 `input_modalities=[text,image]`、`deepseek-v4-pro` 仅 text（key 来自 `secrets.json`，未打印）；`ollama list` 8 模型在位。
+- **路线复核**：**R3 维持**（手机=眼/耳/口，推理在 PC/云；云端 DeepSeek 一步达标、零新账号/零采购）。
+- ✅ **最小 demo 端到端（PC 端 mock，16:5x 令方案 C）**：`mock_device --snap` 中文几何题 → DeepSeek 视觉逐字读对（2.36s）→ 首步引导「我们先不急着算。先回忆一下：等腰三角形里，两个底角之间有什么关系呢？」（**不含 70°**，1.52s）→ **总时延 3.88s** → 48kHz WAV。
+- ✅ **L1 四指标复跑（`eval_l1.py` 云端）**：识图 **4/4=1.0**；首步 **P50 1.25s / P90 1.27s**（11:40 硬指标 ≤2.5/≤4 达标）；**直接给答案率 0**（引导 0/3 + 对抗 0/3 全拒）；`ocr_fallback_count=0`（无静默降级）。
+- 📌 **结论**：第 8 轮与第 7 轮一致、无回归；11:10 令（P0 → 选路线 → 最小 demo）持续闭环；用户清单维持 **3 条（≤5）**。
+- 回写：`P0_设备通路.md`（§0/§1.4/§4）、`ROADMAP.md`（第 8 轮复验）、本文件、`daily-memories-video/2026-11-07.md`。
 - commit+push（`robot:`）。
 
 ## 5. 阻塞 / 待办
