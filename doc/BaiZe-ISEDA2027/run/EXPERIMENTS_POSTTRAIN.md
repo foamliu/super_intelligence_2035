@@ -3846,3 +3846,88 @@ python baize_posttrain_jsonl_to_parquet.py sft \
 
 **结论**：R29 修复了 SFT v2 parquet 缺口（R28.9）并完成了奖励函数的端到端验证。5 个奖励臂的数值行为全部符合设计预期。R4 累积惩罚截断是可接受的设计特性（GRPO filter_groups 处理），但 11/9 需验证 API DB key 格式以避免误判合法 API。
 
+---
+
+## §R30 Cheat Detection N-gram 测试修复 + 11/9 GPU Day 执行手册（2026-11-08 · wake78 · 零 GPU）
+
+> R29 遗留：cheat detection 代码逻辑正确但测试传原始字符串非 n-gram set → 永远 false negative。
+> R30 修复此 bug 并产出 11/9 GPU 到位当天的完整执行手册。
+
+### R30.1 Bug 根因与修复
+
+**Bug**：`baize_posttrain_reward_validate.py` 第 189 行（R29 版）：
+```python
+eval_ng = {"assert result is not None", "import pyAether as pyS", "pyScript.aeSeSaveNetH"}
+```
+这是 3 个**原始字符串**，不是 n-gram 集合。`check_cheat_overlap()` 对 solution 做 `_extract_ngrams(text, 10)` 得到的是 10 字符切片，与这些 29+ 字符的原始字符串做集合交集 → **永远空集** → `is_cheat` 永远 False。
+
+**对比**：`baize_posttrain_reward_functions.py` 自测（第 725-727 行）**正确**地用了 `_extract_ngrams(eval_text, 8)` 构建 n-gram 集合。
+
+**修复**（R30）：
+1. 导入 `_extract_ngrams` from `baize_posttrain_reward_functions`
+2. 用模拟 eval 任务文本（test_code + canonical_solution）构建 8-gram 集合
+3. 测试三例：高重叠（cheat）、低重叠（clean）、无参考（skeleton mode）
+4. ngram_size=8，与生产代码默认值一致
+
+### R30.2 修复后验证结果
+
+```
+Cheat Rate Tracking Test (R30: n-gram set fix)
+  eval_ngrams: 117 unique 8-grams from simulated eval task
+  Cheat sol: is_cheat=True, overlap_ratio=0.9070, count=117    ← 正确检出
+  Clean sol: is_cheat=False, overlap_ratio=0.1111, count=2     ← 正确放行
+  No reference: is_cheat=False                                  ← 正确跳过
+SUMMARY:
+  Cheat detection works: True (cheat=True, clean=False)        ← 全通过
+```
+
+**判读**：
+- cheat solution（复制 eval test code）overlap_ratio=0.907 → 远超 0.05 阈值，且 overlap count=117 > 10 → `is_cheat=True` ✅
+- clean solution（完全不同的代码）overlap_ratio=0.111 → 超阈值但 count=2 < 10 → `is_cheat=False` ✅（双条件防误报）
+- 无参考（skeleton mode）→ `is_cheat=False` ✅
+
+### R30.3 11/9 GPU Day 执行手册
+
+> GPU 到位当天（2026-11-09）的完整执行计划。按时间线组织，含决策点、回退策略、验收标准。
+
+**启动命令**：
+```bash
+bash baize_posttrain_launch_11_9.sh --step 0-5 --gpu-ids 0,1,2,3
+```
+
+| 步骤 | 名称 | 预计耗时 | 依赖 | 验收标准 | 回退策略 |
+|:--|:--|:--|:--|:--|:--|
+| Step 0 | cu124 venv 设置 | 5-15min | 无 | `torch.cuda.is_available()=True` + SGLang launch_server --help ✅ | R27 setup 脚本已验证；若失败重跑 `baize_posttrain_setup_cu124_venv.sh --yes` |
+| Step 1 | Preflight check | 2min | Step 0 | 18 项全 PASS | 检查 `baize_posttrain_preflight_check.sh` 输出逐项排查 |
+| Step 2 | SGLang serve + 36% 基线复测 | 30-60min | Step 1 | 5-run Pass@1 mean ≈ 36% ± 5pp | 若 SGLang serve 失败→检查 GPU 内存释放（`nvidia-smi`）；若基线显著偏离→检查 eval 协议（158 task / 2500s / `-p 8 -n`） |
+| Step 3 | D1-D6 失败轨迹提取 | 10-20min | Step 2 | `final_report.json` 生成 + D1-D6 六项数值提取 | 若轨迹不含 tool_call 字段→标注「字段缺失」不编造 |
+| Step 4 | 污染隔离闸门 | 1min | 无 | `CONTAMINATION OK` + 0 命中 | 闸门失败 = 🛑 红线，**禁止继续 RL** |
+| Step 5 | RL smoke test (10 iters) | 20-40min | Step 4 | loss 下降 + reward > 0 + cheat rate < 5% | 若 reward 全 0→检查 auto_fallback（应切到 R0）；若 OOM→降 GROUP_SIZE 到 4 |
+
+**关键决策点**：
+
+1. **Step 2 后（基线复测）**：若 5-run mean < 31% 或 > 41% → 暂停，排查 eval 协议差异（可能 harness 版本/timeout 不同）
+2. **Step 5 后（smoke test）**：若 10 iter 内 reward 无变化 → 确认 R0 fallback 是否生效（sandbox 未通时 R1-R4 全 0，R0 提供梯度）
+3. **cheat rate**：若 smoke test 中 cheat rate > 5% → 检查 SFT 数据是否混入 eval 任务内容（重跑 contamination gate）
+
+**11/9 不做的事**（护栏）：
+- 🚫 不跑 Step 6（full RL 2000 iters）—— smoke test 通过后再议
+- 🚫 不改 eval 协议（158 task / Pass@1 / 2500s / 5-run / `-p 8 -n` 冻结）
+- 🚫 不把替身分数写成白泽预期成绩
+
+**交付物**（11/9 当天）：
+1. 36% 基线复测报告（5-run mean ± std）
+2. D1-D6 实测值（替换 EXPERIMENTS §D 中的「❌ 不在本节点」标注）
+3. RL smoke test 日志（10 iter loss/reward/cheat rate 曲线）
+4. 更新 EXPERIMENTS_POSTTRAIN.md §D + 新增 §R30-11-9-results 节
+
+### R30.4 11/9 就绪度最终评估（R30 后）
+
+| 检查项 | R29 后 | R30 后 |
+|:--|:--|:--|
+| cheat detection 测试 | ⚠️ 代码正确, 测试用例需修正 | ✅ 修复, is_cheat=True(cheat)/False(clean) 正确 |
+| 11/9 执行手册 | ⬜ 散落在各处 | ✅ 6 步时间线 + 决策点 + 回退策略 |
+| 奖励函数验证 | ✅ 12×5 全通过 | ✅ 不变（cheat detection 补验通过） |
+
+**结论**：R30 修复了 R29 遗留的 cheat detection 测试 bug（n-gram 集合 vs 原始字符串），并产出 11/9 GPU Day 完整执行手册。所有零 GPU 预研工作（P0-P3 预备 + R1-R30）已完成。11/9 GPU 到位后可直接按手册执行 Step 0-5。
+

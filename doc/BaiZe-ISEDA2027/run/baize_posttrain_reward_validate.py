@@ -12,7 +12,7 @@ sys.path.insert(0, script_dir)
 
 from baize_posttrain_reward_functions import (
     compute_score, extract_tool_calls, check_cheat_overlap,
-    get_cheat_rate_report, REWARD_ARMS,
+    get_cheat_rate_report, _extract_ngrams, REWARD_ARMS,
 )
 
 API_DB = os.path.expanduser("~/code/eda_fastmcp/docs/API_INFO_MERGED_V3.json")
@@ -182,19 +182,52 @@ def run_validation():
                                 "r0_score": round(s0,4), "fallback_matches_r0": fb_ok, "forced_is_zero": fz_ok}
     print()
 
-    # Cheat rate test
+    # Cheat rate test — R30 fix: build proper n-gram sets, not raw strings
     print("-" * 70)
-    print("Cheat Rate Tracking Test")
+    print("Cheat Rate Tracking Test (R30: n-gram set fix)")
     print("-" * 70)
-    eval_ng = {"assert result is not None", "import pyAether as pyS", "pyScript.aeSeSaveNetH"}
-    cheat_sol = "assert result is not None\nimport pyAether as pyScript\npyScript.aeSeSaveNetHighlight()"
-    clean_sol = "result = 42\nprint(result)"
-    isc, ovr, ovc = check_cheat_overlap(cheat_sol, eval_ng, ngram_size=10)
-    iscl, _, _ = check_cheat_overlap(clean_sol, eval_ng, ngram_size=10)
+    # Simulate eval task text (test code + canonical solution from 158 tasks)
+    eval_text = (
+        "import pyAether as pyScript\n"
+        "def check(candidate):\n"
+        "    result = candidate()\n"
+        "    assert result is not None\n"
+        "    assert isinstance(result, bool)\n"
+    )
+    eval_ng = _extract_ngrams(eval_text, 8)  # 8-gram, matching production default
+    print(f"  eval_ngrams: {len(eval_ng)} unique 8-grams from simulated eval task")
+
+    # Case 1: model output with high overlap (cheat — copied eval test code)
+    cheat_sol = (
+        "import pyAether as pyScript\n"
+        "def check(candidate):\n"
+        "    result = candidate()\n"
+        "    assert result is not None\n"
+        "    assert isinstance(result, bool)\n"
+        "    return True\n"
+    )
+    isc, ovr, ovc = check_cheat_overlap(cheat_sol, eval_ng, ngram_size=8)
     print(f"  Cheat sol: is_cheat={isc}, overlap_ratio={ovr:.4f}, count={ovc}")
-    print(f"  Clean sol: is_cheat={iscl}")
-    results["cheat_rate"] = {"cheat_is_cheat": isc, "cheat_overlap": round(ovr,4),
-                             "clean_is_cheat": iscl, "report": get_cheat_rate_report()}
+
+    # Case 2: model output with low overlap (legit — different code)
+    clean_sol = "result = 42\nprint(result)"
+    iscl, ovrl, ovlc = check_cheat_overlap(clean_sol, eval_ng, ngram_size=8)
+    print(f"  Clean sol: is_cheat={iscl}, overlap_ratio={ovrl:.4f}, count={ovlc}")
+
+    # Case 3: no eval ngrams (skeleton mode, no reference)
+    isc3, _, _ = check_cheat_overlap(clean_sol, None, ngram_size=8)
+    print(f"  No reference: is_cheat={isc3}")
+
+    results["cheat_rate"] = {
+        "eval_ngram_count": len(eval_ng),
+        "cheat_is_cheat": isc,
+        "cheat_overlap": round(ovr, 4),
+        "cheat_overlap_count": ovc,
+        "clean_is_cheat": iscl,
+        "clean_overlap": round(ovrl, 4),
+        "no_reference_is_cheat": isc3,
+        "report": get_cheat_rate_report(),
+    }
     print()
 
     # Summary
@@ -206,10 +239,11 @@ def run_validation():
     print(f"  Total test cases: {tc_count}")
     print(f"  All 5 arms tested: {all5}")
     print(f"  Auto-fallback works: {fb_ok}")
-    print(f"  Cheat detection works: {isc}")
+    cheat_ok = isc and not iscl  # cheat=True, clean=False
+    print(f"  Cheat detection works: {cheat_ok} (cheat={isc}, clean={iscl})")
     results["summary"] = {"total_cases": tc_count, "all_arms_tested": all5,
                           "auto_fallback_works": fb_ok, "forced_no_sandbox_is_zero": fz_ok,
-                          "cheat_detection_works": isc}
+                          "cheat_detection_works": cheat_ok}
 
     out = "/tmp/pt_r29_reward_validation.json"
     with open(out, "w", encoding="utf-8") as f:
