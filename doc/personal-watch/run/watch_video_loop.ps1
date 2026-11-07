@@ -3,7 +3,7 @@
   personal-watch · **video agent** 自动推进循环（Windows 11 本机 · 无人值守）
 
   干什么：每小时（对齐整点）唤醒一次 → 读 `WATCH_VIDEO_TASK.md`（全文 = prompt）→ 交给 `cline`
-          （工作目录 = 短剧项目仓）→ 两个仓各做一次兜底 git 同步（fetch / pull --rebase --autostash / push）。
+          （工作目录 = 主仓 `robot` 线）→ 主仓做一次兜底 git 同步（fetch / pull --rebase --autostash / push）。
 
   与别的线为何不同：本线跑在 **Windows 本机**（不是 Linux VM），由【计划任务】在**开机后**自动拉起
           （无人登录）⇒ 本脚本把「用户环境」钉回 Administrator（镜像 `ComfyUI` 任务的 SYSTEM 做法），
@@ -46,8 +46,9 @@ $DramaRepo = 'D:\Users\Administrator\code\super_intelligence_2035_short_drama'
 # 本记录仓里**只允许兜底提交**这些（video 线自己的文件）
 $PWAddPaths = @(
     'doc/personal-watch/run/MEMORY_VIDEO.md',
+    'doc/personal-watch/run/MEMORY_VIDEO_ARCHIVE.md',
     'doc/personal-watch/run/daily-memories-video',
-    'doc/personal-watch/run/video'
+    'doc/personal-watch/run/robot'
 )
 
 # ── 2) cline 锚点（绝对路径，SYSTEM 下也稳）────────────────────────────────
@@ -142,7 +143,7 @@ function Sync-Repo {
 Write-Log "===== watch_video_loop started (pid=$PID) ====="
 Write-Log "  runDir     : $RunDir"
 Write-Log "  task book  : $TaskMd"
-Write-Log "  drama repo : $DramaRepo"
+Write-Log "  workdir    : $PWRepo  (robot 线; 项目目录 doc/personal-watch/run/robot)"
 Write-Log "  cline      : $ClineCmd (config=$ClineCfg)"
 Write-Log "  interval   : $IntervalSec s（对齐整点）· cline timeout = $ClineTimeout s"
 Write-Log "  USERPROFILE: $env:USERPROFILE"
@@ -161,16 +162,17 @@ while ($true) {
         #    · 直调 node.exe 仍受 CreateProcess 32767 上限 + PS5.1 引号转义影响
         #  ⇒ 用「**短指针 prompt**」把任务书**绝对路径**交给 cline，agent 自己读全文（更稳，且永远读到最新版）。
         $prompt = (
-            '你在 personal-watch 的 video 线工作（基于 ComfyUI 制作视频）。',
+            '你在 personal-watch 的 robot 线工作（原 video 线已转型：基于华为手机的 AI 家教机器人，调用大模型/智能体辅导初中生功课）。',
             '',
             "【第一步·必做】用工具读取任务书全文（不要凭记忆）：$TaskMd",
-            '读完后严格按其中 §2 的 SOP 执行本轮工作（执行路线见 §1）。',
-            "结束时：更新 $MemoryMd + 追加 daily-memories-video/<date>.md + 两个仓各自 commit+push。",
+            '读完后严格按其中「2026-11-07 11:10」用户令执行本轮工作（P0 设备通路 -> 选路线 -> 最小 demo）。',
+            "工作目录 = 主仓 $PWRepo；项目目录 = doc/personal-watch/run/robot/（先读 README.md）。",
+            "结束时：更新 $MemoryMd + 追加 daily-memories-video/<date>.md + 主仓 commit+push（前缀 robot:）。",
             '',
-            "【本轮提示】ComfyUI = http://127.0.0.1:8188（本机）；主战场仓 = $DramaRepo"
+            "【本轮提示】ComfyUI 已停用、不要碰视频流水线；手机未连上本机时先用 PC 端 mock 跑通，并把需要用户做的事压成 <=5 条。"
         ) -join [Environment]::NewLine
 
-        $baseArgs = @('-c', $DramaRepo, '--auto-approve', 'true', '--config', $ClineCfg, '--data-dir', $ClineData, '-t', "$ClineTimeout")
+        $baseArgs = @('-c', $PWRepo, '--auto-approve', 'true', '--config', $ClineCfg, '--data-dir', $ClineData, '-t', "$ClineTimeout")
         if ($Model)    { $baseArgs += @('-m', $Model) }
         if ($Thinking) { $baseArgs += @('--thinking', $Thinking) }
         $baseArgs += $prompt
@@ -204,9 +206,8 @@ while ($true) {
         $clineRc = 1
     }
 
-    # 兜底 git 同步（本记录仓：只加 video 线文件；短剧仓：agent 自己 commit，loop 只 pull+push）
-    Sync-Repo -Repo $PWRepo    -AddPaths $PWAddPaths -Prefix 'video'
-    Sync-Repo -Repo $DramaRepo -AddPaths @()         -Prefix 'video'
+    # 兜底 git 同步（本记录仓：只加 robot 线文件；短剧仓已停用，不再同步）
+    Sync-Repo -Repo $PWRepo -AddPaths $PWAddPaths -Prefix 'robot'
 
     Touch-Hb
     $dur = [int]((Get-Date) - $roundStart).TotalSeconds
