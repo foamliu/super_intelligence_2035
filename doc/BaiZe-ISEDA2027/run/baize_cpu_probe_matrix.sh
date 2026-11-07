@@ -22,8 +22,8 @@ PROBE_TASKS="openbookqa,arc_challenge"
 
 # 线程扫描档位
 THREAD_LIST="8 16 32 80"
-# batch 扫描档位
-BATCH_LIST="1 4 8"
+# batch 扫描档位（bs=4在CPU上反而更慢，只扫1和2）
+BATCH_LIST="1 2"
 
 echo "========================================"
 echo "  Probe Matrix Start: $(date '+%F %T')"

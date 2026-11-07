@@ -585,3 +585,26 @@ torchrun --nnodes=1 --nproc_per_node=8 --master_addr=127.0.0.1 --master_port=296
 
 > **关键结论**：decay-5000 用官方 `train_decay_fp8_1113.sh`（DP8 + μP + FP8 hybrid + optimizer Muon 0.2 + WSD exponential + warmup 0 + MBS 5 + LR 1.66667e-3），18.1B token / 5000 步后 **CS8=58.97% / CX6=28.02%**：
 > ① 相对起点基线 CS8 仅 **-2.06pp**（61.03%→58.97%）——能力基本保持，未出现 decay v2 的暴跌；② 相对官方 final（32.90%）CX6 差 **-4.88pp**，属小间距（官方 final 训练量大 78×）；③ 相对自写脚本 decay v2 的 **44.97%/6.21% 大幅修复（+14.00/+21.81pp）**，证明根因在于自写脚本缺 μP/LR 口径 + 双移位，而非 decay 概念本身。
+
+## 2026-11-07 10:05 — CPU Eval Thread/Batch Scaling Probe (11w ckpt)
+
+**运维令**: 2026-11-07 09:1x — 11w检查点8集全量评测 + 线程/batch扫描
+
+### 已完成数据点 (limit=5, openbookqa+arc_challenge)
+
+| Config | Threads | Batch | Wall (s) | s/req | Cores used | Peak RSS | Scores |
+|--------|---------|-------|----------|-------|------------|----------|--------|
+| 1 | 8 | 1 | 714 | 17.85 | ~5/8 | 50.3 GB | obqa=0.0/0.2norm, arc=0.2/0.2norm |
+| 2(partial) | 8 | 4 | ~84s/req | 83.8 | ~4.5 | -- | (killed, too slow) |
+
+### Key Finding
+- **bs=4 on CPU is SLOWER per-request** (83.8s vs 17.85s), no batching efficiency gain for Mamba2 sequential scan
+- **8 threads only uses ~5 cores** — PyTorch reference implementation (no mamba_ssm/causal_conv1d) has limited parallelism
+- **Full 8-set eval estimate at baseline**: ~714s × (69650/40) ≈ **~34 hours** (impractical for real-time, needs background run)
+- **Peak RSS ~50 GB** (2B model + PyTorch thread pool overhead) — far below 1213 GB available
+
+### Probe matrix running (limit=3, 8 configs)
+- t=8,16,32,80 × b=1,2
+- Expected total: ~56 min
+- Results: /tmp/baize_probe_results.json
+

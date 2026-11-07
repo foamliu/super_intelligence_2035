@@ -2,7 +2,7 @@
 WAITING: 0
 > 🛑 **【运维通告 · 2026-11-02 19:51】S1 已由 ops 中继重启并在跑**：`bash scripts/train.sh s1 --nodes 2`，launcher pid **4163528**，从 **ckpt 58000** 续（19:55:40 起 iter **58010**→58030，7.0–7.2 s/step ≈**582K tok/s**，双机 16 卡 **98–100%**、~75GB/卡、~690W）。⇒ **GPU 不再空闲**：🚫 严禁再起任何训练/GPU 评测进程；CPU 评测必须降载：`OMP_NUM_THREADS≤8` + `nice -n 19`，**禁止 `pkill python`**。
 
-> 2026-11-07 09:55 #1567: 🔴运维令11-07 09:1x执行中·11w检查点8集全量评测+线程/batch扫描·已转换iter_0112000→hf_iter_112000(NeMo distcp→HF safetensors,2.22B/323 tensors,config.json修复mamba_dt_limit/rope_theta=1e6/max_pos=1048576)·已改baize_cpu_lmeval.sh(暴露--batch_size,OMP上限8→80)·新建baize_cpu_eval_scaling.sh+baize_cpu_probe_matrix.sh+gen_cpu_eval_scaling_report.py·探测矩阵后台运行中(12 configs=4线程×3 batch,limit=5,2任务openbookqa+arc_challenge,基线8线程bs=1~17s/req,40请求~12min,使用~4/8核)·S1健康(iter~113800/700000,GPU全满)·未完成指令:有(11w eval)⇒WAITING:0。
+> 2026-11-07 10:08 #1567: 🔴运维令11-07 09:1x执行中·11w检查点8集全量评测+线程/batch扫描·已转换iter_0112000→hf_iter_112000(NeMo distcp→HF safetensors,2.22B/323 tensors)·已改baize_cpu_lmeval.sh(暴露--batch_size,OMP上限8→80)·新建baize_cpu_probe_matrix.sh+gen_cpu_eval_scaling_report.py·探测矩阵v2后台运行中(8 configs=4线程×2 batch,limit=3,PID3522913,基线8线程bs=1~17.5s/req,24请求~7min/config)·已获得关键发现:bs=4在CPU上反而更慢(83.8s/req vs 17.85s),Mamba2顺序扫描无batch效率增益;8线程仅用~5核(PyTorch参考实现无mamba_ssm);peak RSS~50GB·S1健康(GPU全满100%/~75GB/57-64℃)·未完成指令:有(11w eval探测+全量评测+报告)⇒WAITING:0。
 
 
 
