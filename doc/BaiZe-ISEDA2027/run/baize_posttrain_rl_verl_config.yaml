@@ -7,56 +7,123 @@
 #          This config validates the method chain and produces reusable
 #          pipeline artifacts only.
 #
-# Usage (after verl is installed):
+# 🔴 R9 UPDATE (2026-11-07): Switched from vLLM to SGLang inference backend.
+#   R8 discovered MiniCPM5-2B uses XML-format tool calls that vLLM cannot parse.
+#   SGLang has built-in minicpm5 tool-call parser. verl natively supports SGLang
+#   for multi-turn rollout (actor_rollout_ref.rollout.name: "sglang" + multi_turn: True).
+#   See EXPERIMENTS_POSTTRAIN.md §R9 for full rationale.
+#
+# Usage (after verl[sglang] is installed):
 #   python -m verl.trainer.main_ppo \
 #       --config baize_posttrain_rl_verl_config.yaml \
 #       --reward-arm R2 --smoke
 #
-# See EXPERIMENTS_POSTTRAIN.md §R5 for full design rationale.
+# See EXPERIMENTS_POSTTRAIN.md §R5 (design) and §R9 (SGLang integration) for rationale.
 
-train:
-  policy_trainer:
-    type: fsdp
-    model:
-      path: /tmp/models/MiniCPM5-2B
-      dtype: bfloat16
-    optimizer:
-      type: adamw
+data:
+  tokenizer: /tmp/models/MiniCPM5-2B
+  train_files: run/rl_pyaether_synth_v2.parquet  # 3347 synth tasks (E1 output, parquet for verl)
+  val_files: null
+  train_batch_size: 128          # G=8 × 16 prompts per iter
+  prompt_key: prompt
+  max_prompt_length: 4096
+  max_response_length: 4096      # 8192 total context (R6: covers 95%+ traces)
+  return_raw_chat: True          # Required for async rollout + multi-turn
+  shuffle: True
+  seed: 42
+  filter_overlong_prompts: True
+  truncation: error
+  trust_remote_code: True
+
+actor_rollout_ref:
+  hybrid_engine: True             # Training and inference share same GPUs (3D-HybridEngine)
+
+  model:
+    path: /tmp/models/MiniCPM5-2B
+    override_config:
+      attn_implementation: flash_attention_2
+    enable_gradient_checkpointing: True
+    trust_remote_code: True
+    use_remove_padding: True
+
+  actor:
+    strategy: fsdp
+    ppo_mini_batch_size: 32
+    ppo_micro_batch_size_per_gpu: 4
+    use_dynamic_bsz: True
+    ppo_max_token_len_per_gpu: 16384
+    grad_clip: 1.0
+    clip_ratio: 0.2              # Standard PPO/GRPO clip
+    entropy_coeff: 0.0
+    use_kl_loss: True            # Required for GRPO
+    kl_loss_coef: 0.04           # DeepSeek-R1 KL coefficient
+    kl_loss_type: low_var_kl     # GRPO standard
+    ppo_epochs: 1
+    use_torch_compile: False     # Disabled for A40 (compile overhead > benefit at 2B)
+    optim:
       lr: 1.0e-6
-      weight_decay: 0.0
-    scheduler:
-      type: constant_with_warmup
-      warmup_steps: 50
-    gradient_clip: 1.0
-    save_interval: 200
-    save_dir: /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize_posttrain_rl_grpo
+      lr_warmup_steps: 50
+      lr_scheduler_type: constant
+    fsdp_config:
+      wrap_policy:
+        min_num_params: 0
+      param_offload: False       # 2B fits in 4×A40 without offload
+      optimizer_offload: False
+      fsdp_size: -1
+
+  ref:
+    fsdp_config:
+      param_offload: False
+      log_prob_micro_batch_size_per_gpu: 8
+
+  rollout:
+    name: sglang                 # 🔴 CHANGED from vllm → sglang (R8/R9)
+    mode: async                  # Server-based async rollout (avoids GPU idle during sandbox)
+    multi_turn: True             # 🔴 Enable multi-turn tool calling (SGLang only)
+    temperature: 1.0             # Training: high exploration
+    top_p: 0.95
+    prompt_length: 4096
+    response_length: 4096
+    dtype: bfloat16
+    gpu_memory_utilization: 0.35 # Leave 65% for FSDP training
+    enforce_eager: True          # Disable CUDA graph (co-located safety)
+    tensor_model_parallel_size: 1  # Each A40 gets its own SGLang instance
+    max_num_seqs: 16             # Reduced for co-location
+    # SGLang-specific: tool-call parser for MiniCPM5-2B XML format
+    tool_call_parser: minicpm5   # SGLang built-in parser for MiniCPM5 XML tools
+    # Tool configuration for EDA sandbox
+    tool_kwargs:
+      tools_config_file: run/baize_posttrain_eda_tools.yaml
 
 algorithm:
   name: grpo
-  group_size: 8            # G=8 for 2B model (arXiv:2608.14109 used G=4)
-  clip_epsilon: 0.2        # Standard PPO/GRPO clip
-  kl_coef: 0.04            # DeepSeek-R1 KL coefficient
-  advantage_type: group_norm  # A_i = (R_i - mu) / (sigma + eps)
-  filter_groups: true      # Drop all-correct and all-wrong groups (sGPO)
-  eps: 1.0e-8              # Numerical stability
+  group_size: 8                  # G=8 for 2B model (arXiv:2608.14109 used G=4)
+  advantage_type: group_norm     # A_i = (R_i - mu) / (sigma + eps)
+  filter_groups: true            # Drop all-correct and all-wrong groups (sGPO)
+  eps: 1.0e-8
 
-rollout:
-  engine: vllm
-  co_located: true         # Training and inference share same GPUs
-  tensor_parallel_size: 1  # Each GPU gets its own vLLM instance
-  gpu_memory_utilization: 0.35  # Leave 65% for FSDP training
-  enforce_eager: true      # Disable CUDA graph (co-located safety)
-  max_num_seqs: 16         # Reduced for co-location
-  max_model_len: 8192      # Agentic traces can be long
-  temperature: 1.0         # Training: high exploration
-  top_p: 0.95
-  max_tokens: 2048         # Per-turn generation limit
+reward:
+  arm: R2                        # START with R2 (partial credit), NOT R1 (binary)
+  # R1 = binary pass/fail (too sparse for 2B)
+  # R2 = exec_success(0.2) + partial_assert(0.2 each) + full_pass(1.0)
+  # R3 = R2 + tool_call_penalty (align with harness cost model)
+  # R4 = R3 + API_legality (penalize hallucinated API names)
+  assertion_source: task.test
+  partial_credit:
+    exec_success: 0.2
+    partial_assert: 0.2
+    full_pass: 1.0
+  api_database: ~/code/eda_fastmcp/docs/API_INFO_MERGED_V3.json
+  anti_cheat:
+    enabled: true                # Red line §5.2: PreToolUse hook always on
+    ngram_blocklist: baize_posttrain_contamination_gate.sh
+    report_cheat_rate: true
+    report_interval: 200
 
 agent:
-  name: eda_sandbox_agent  # Custom ToolAgentLoop (to be implemented)
-  max_turns: 3             # Align with DeepSeek Phi=5 median 3-6
-  task_timeout: 2500       # Eval protocol frozen value
-  sandbox_concurrency: 8   # 4 GPUs x 2 concurrent sandbox calls
+  max_turns: 3                   # Align with DeepSeek Phi=5 median 3-6
+  task_timeout: 2500             # Eval protocol frozen value
+  sandbox_concurrency: 8         # 4 GPUs × 2 concurrent sandbox calls
   sandbox_endpoint: ssh://tunnel-to-36.15
   sandbox_hosts:
     - pyAether
@@ -64,46 +131,25 @@ agent:
     - skill_virtuoso
     - tcl_innovus
     - tcl_waveview
-  anti_cheat:
-    enabled: true          # Red line §5.2: PreToolUse hook always on
-    ngram_blocklist: baize_posttrain_contamination_gate.sh
-    report_cheat_rate: true
-    report_interval: 200   # Every save_interval
 
-reward:
-  arm: R2                  # START with R2 (partial credit), NOT R1 (binary)
-  # R1 = binary pass/fail (too sparse for 2B)
-  # R2 = exec_success(0.2) + partial_assert(0.2 each) + full_pass(1.0)
-  # R3 = R2 + tool_call_penalty (align with harness cost model)
-  # R4 = R3 + API_legality (penalize hallucinated API names)
-  assertion_source: task.test  # Use synth task's test field
-  partial_credit:
-    exec_success: 0.2      # Code ran without error
-    partial_assert: 0.2    # Each assertion passed adds 0.2
-    full_pass: 1.0         # All assertions passed
-  api_database: ~/code/eda_fastmcp/docs/API_INFO_MERGED_V3.json  # For R4 legality check
-
-data:
-  train_path: run/rl_pyaether_synth_v2.jsonl  # 3347 synth tasks (E1 output)
-  filter:
-    difficulty: [L3, L4, L5]  # RL focus on medium-hard (1300 tasks)
-    # pass_rate filter applied after E2 pass@8 calibration (GPU required)
-  contamination_check: true   # Red line §5.1
+trainer:
+  total_epochs: 1
+  save_interval: 200
+  save_dir: /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize_posttrain_rl_grpo
+  log_dir: /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize_posttrain_rl_grpo/logs
+  log_interval: 10
+  cheat_rate_interval: 200
+  tensorboard: true
+  wandb: false                   # .17 has no external network
 
 runtime:
-  n_gpus: 4                # 4×A40 on .17
-  ray_address: auto        # Local Ray cluster
+  n_gpus: 4                      # 4×A40 on .17
+  ray_address: auto              # Local Ray cluster
   env:
     PYTORCH_CUDA_ALLOC_CONF: expandable_segments:True
     TORCH_NCCL_ASYNC_ERROR_HANDLING: "1"
     NCCL_TIMEOUT: "1800"
-    OMP_NUM_THREADS: "8"   # CPU load reduction
-  logging:
-    wandb: false           # .17 has no external network
-    tensorboard: true
-    log_dir: /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize_posttrain_rl_grpo/logs
-    log_interval: 10
-    cheat_rate_interval: 200
+    OMP_NUM_THREADS: "8"
 
 # Smoke test overrides (use --smoke flag)
 smoke:
@@ -111,4 +157,5 @@ smoke:
   save_interval: 5
   group_size: 4
   sandbox_concurrency: 2
+  train_batch_size: 16
   output_suffix: _smoke

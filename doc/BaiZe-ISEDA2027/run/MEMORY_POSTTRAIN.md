@@ -7,12 +7,12 @@ WAITING: 1
 
 ## 进度快照
 
-- PHASE: posttrain-wake56（2026-11-07 R8 模型架构+Tokenizer深度分析完成，发现SGLang为工具调用必需后端）
-- 已完成: P3预备✅ 7脚本；P0✅ D1–D6；P1✅ 数据盘点+PyAether语料+污染隔离；P2✅ 方案书；wake45✅ §替身RL预演；wake48✅ R1+R3；wake49✅ R4；wake50✅ R2；wake51✅ E1(3347题)；wake52✅ R5(verl+GRPO)；wake53✅ R6(SFT)+R7(verl环境+CUDA发现)；wake55✅ 11/9启动脚本；wake56✅ R8(模型架构+Tokenizer+SGLang发现)
-- 当前动作: wake56 唤醒→体积自检(TASK=24.7KB/MEMORY=9.9KB合规)→ R8: 实测MiniCPM5-2B模型文件(config.json/tokenizer_config.json/chat_template.jinja/generation_config.json/README)→ 架构: LlamaForCausalLM 42层 2048d GQA16:2 vocab130560 max_pos131072 双EOS[1,130073]→ Tokenizer: ChatML格式+XML工具调用+思考/答案分离+478 unused tokens→ 🔴关键发现: 工具调用是XML格式,vLLM不解析,SGLang内置minicpm5 parser自动转OpenAI tool_calls→ 36%基线复测必须用SGLang→ 更新11/9启动序列(Step2a改SGLang)→ EXPERIMENTS §R8(11小节)+HTML报告11.9KB
-- 下一步: R1-R8+E1全部完成→ WAITING=1；11/9 GPU到位后自动起跑(Step0新建cu124 venv含sglang→Step1验证CUDA→Step2a SGLang serve+--tool-call-parser minicpm5→Step3评测158题→Step4采真实轨迹→Step5 API profiling→Step6起EDA RL)
-- 阻塞: 🔴 CUDA 12.4不匹配需11/9前新建cu124 venv(含sglang[srt]>=0.5.16)；GPU 2026-11-09既定到位(不再问)；L3等隧道；P3等pretrain ckpt(ETA≈2026-12-25)
-- 未完成指令: 无（R1✅R2✅R3✅R4✅R5✅R6✅R7✅R8✅E1✅ 全部完成）⇒ WAITING=1
+- PHASE: posttrain-wake57（2026-11-07 R9 verl+SGLang集成调研完成，解决R5/R8推理后端矛盾）
+- 已完成: P3预备✅ 7脚本；P0✅ D1–D6；P1✅ 数据盘点+PyAether语料+污染隔离；P2✅ 方案书；wake45✅ §替身RL预演；wake48✅ R1+R3；wake49✅ R4；wake50✅ R2；wake51✅ E1(3347题)；wake52✅ R5(verl+GRPO)；wake53✅ R6(SFT)+R7(verl环境+CUDA发现)；wake55✅ 11/9启动脚本；wake56✅ R8(模型架构+Tokenizer+SGLang发现)；wake57✅ R9(verl+SGLang集成+EDA工具骨架)
+- 当前动作: wake57 唤醒→体积自检(TASK=24.7KB/MEMORY=11.6KB合规)→ git同步(ahead3,wake56 push超时→本轮补推成功)→ R9: 发现R5(verl+vLLM)与R8(需SGLang)矛盾→ web调研verl官方文档→ 🔴核心发现: verl原生支持SGLang作为推理后端,且多轮工具调用仅SGLang支持→ 更新verl配置YAML(vllm→sglang+multi_turn+async+tool_call_parser minicpm5)→ 创建EDA沙盒工具骨架(baize_posttrain_eda_tool.py: BaseTool子类+dry-run✅)→ 创建工具配置(baize_posttrain_eda_tools.yaml✅)→ 更新setup脚本(verl→verl[sglang]✅)→ EXPERIMENTS §R9(10小节)+HTML报告7.8KB
+- 下一步: R1-R9+E1全部完成→ WAITING=1；11/9 GPU到位后自动起跑(Step0新建cu124 venv含verl[sglang]→Step1验证CUDA→Step2a SGLang serve+--tool-call-parser minicpm5→Step3评测158题→Step4采真实轨迹→Step5 API profiling→Step6 verl RL with SGLang+multi_turn+async)
+- 阻塞: GPU 2026-11-09既定到位(不再问)；数据集需转parquet+加agent_name字段(零GPU可做)；L3等隧道；P3等pretrain ckpt(ETA≈2026-12-25)
+- 未完成指令: 无（R1✅R2✅R3✅R4✅R5✅R6✅R7✅R8✅R9✅E1✅ 全部完成）⇒ WAITING=1
 
 ## 关键事实（常驻）
 
@@ -26,7 +26,8 @@ WAITING: 1
 - PyAether 领域语料：✅ **已调研**（wake4）—— `~/code/eda_fastmcp/docs/API_INFO_MERGED_V3.json` 8,463 个 API（api_name/api_type/api_descriptions/category）展平 ≈3.3–4.5M tok；加 func_all_v3/api_summary/skills/prompts ≈4–5M tok 可导出纯文本；chroma_db_*（向量嵌入）不用；退火 domain 主体 + SFT 合成语料（详见 EXPERIMENTS §PyAether-corpus）
 - MiniCPM5-2B 模型：✅ **已下载到 .17** `/tmp/models/MiniCPM5-2B/`（4.7GB，LlamaForCausalLM 42层 2048d，2026-11-06 17:14）→ vLLM venv ✅ **已就绪** `~/code/vllm_venv/`（v0.33.0, torch 2.14.0, 9.4GB）→ GPU 释放后可 `vllm serve` 跑诊断评测获取 36% 侧轨迹
 - .17 GPU 现状：8×A40 全被 SGLang Qwen3.8-27B 占用（44-45/46GB），2026-11-09 分配 4 张给 post-train
-- 🔴 **CUDA 不匹配（wake53 发现）**：系统 CUDA 驱动=12.4（nvcc 12.4.131），但 vllm_venv torch=2.14.0+cu130 → `torch.cuda.is_available()=False`。11/9 前必须新建 cu124 兼容 venv（`pip install torch==2.4.0 --index-url https://download.pytorch.org/whl/cu124`）
+- 🔴 **CUDA 不匹配（wake53 发现）**：系统 CUDA 驱动=12.4（nvcc 12.4.131），但 vllm_venv torch=2.14.0+cu130 → `torch.cuda.is_available()=False`。11/9 前必须新建 cu124 兼容 venv（`pip install torch==2.4.0 --index-url https://download.pytorch.org/whl/cu124` + `pip install verl[sglang]`）
+- 🔴 **R9 verl+SGLang 集成（wake57 发现）**：verl 原生支持 SGLang（`pip install verl[sglang]`），多轮工具调用**仅 SGLang** 支持。配置已从 vLLM 切到 SGLang（`rollout.name: sglang` + `multi_turn: True` + `mode: async`）。EDA 沙盒工具骨架 `baize_posttrain_eda_tool.py` 已创建（BaseTool 子类，dry-run✅）
 - SFT 语料：✅ **已生成** `run/sft_pyaether_corpus.jsonl`（19610 对：S1=8012/S2=8098/S3=89/S4=3411，18.8MB，0 污染命中 488 评测 API）
 - 论文章节：`BaiZe-ISEDA2027/ISEDA2027/5_llm_posttrain.tex`（已写设计，结果=[TBD]）
 
@@ -60,4 +61,5 @@ WAITING: 1
 [wake55] 唤醒→新增11/9启动配套自动化脚本：① baize_posttrain_setup_cu124_venv.sh（全自动配置CUDA12.4兼容venv，自动安装torch/verl/vllm/ray等全依赖）② baize_posttrain_preflight_check.sh（18项全链路预飞行检查，覆盖环境/模型/数据/脚本/网络）→ 语法检查全PASS✅+可执行权限已添加✅→ 11/9当天可直接按顺序执行两个脚本完成环境准备→ 体积自检：TASK=24.7KB / MEMORY=9.3KB（均≤32KB合规）→ 本轮新增调研产出：两套自动化启动脚本，简化11/9启动流程。未完成指令：无⇒ WAITING=1。
 
 [wake56] R8 MiniCPM5-2B模型架构+Tokenizer深度分析: 体积自检(TASK=24.7KB/MEMORY=9.9KB合规)→ 实测本地模型文件(config.json/tokenizer_config.json 4099行/chat_template.jinja 112行/generation_config.json/README-cn.md)→ 架构: LlamaForCausalLM 42层 2048d GQA16:2 head_dim128 vocab130560 max_pos131072 rope_theta5M tie_embeddings=false bf16 5.03GB→ 双EOS[1,130073]→ 特殊token: ChatML格式(<|im_start|>/<|im_end|>)+XML工具调用(<function>/<param>)+思考/答案分离(think_begin/think_end/answer_begin)+478 unused tokens(130082-130559,可自定义)→ Chat template: ChatML+thinking/answer分离+tool定义在<tools>XML+tool结果映射为user role→ 🔴关键发现: 工具调用是XML格式(非OpenAI function calling),vLLM不解析XML→tool_calls字段为空→模型被handicapped; SGLang内置minicpm5 parser自动转OpenAI tool_calls→ 36%基线复测必须用SGLang(--tool-call-parser minicpm5),否则结果不可比→ 更新11/9启动序列: Step2a改SGLang serve(port30000),Step3评测用SGLang endpoint→ SGLang安装pip install "sglang[srt]>=0.5.16"加入cu124 venv→ 显存预估SGLang37GB/vLLM33GB,4xA40均可→ EXPERIMENTS §R8(11小节)+HTML报告11.9KB(report_posttrain_r8_model_tokenizer_deepdive_zh.html)。📦 体积：TASK=24.7KB / MEMORY=10.5KB（均≤32KB合规）。本轮新增调研产出：§R8 模型架构+Tokenizer深度分析+SGLang关键发现+更新11/9启动序列+HTML报告。未完成指令：无（R1✅R2✅R3✅R4✅R5✅R6✅R7✅R8✅E1✅）⇒ WAITING=1。⚠️ commit 08fa5fd58 已本地完成但 push 超时(NFS网络慢,同wake51/52模式),ahead 2,下轮唤醒第一件事补推。
+[wake57] R9 verl+SGLang集成调研: 体积自检(TASK=24.7KB/MEMORY=11.6KB合规)→ git同步(ahead3补推成功)→ 发现R5(verl+vLLM)与R8(需SGLang)推理后端矛盾→ web调研verl官方文档(readthedocs.io)→ 🔴核心发现: verl原生支持SGLang作为推理后端(与vLLM并列),多轮工具调用multi_turn仅SGLang支持→ 配置: rollout.name=sglang+multi_turn=True+mode=async+tool_call_parser=minicpm5→ 更新verl配置YAML(vLLM→SGLang格式,对齐verl真实config结构actor_rollout_ref)→ 创建EDA沙盒工具骨架baize_posttrain_eda_tool.py(EDASandboxTool BaseTool子类+compute_r2/r3/r4_reward,dry-run✅)→ 创建工具配置baize_posttrain_eda_tools.yaml(run_eda_code schema,YAML✅)→ 更新setup脚本(verl→verl[sglang],验证包vllm→sglang,bash -n✅)→ 数据集适配需求: JSONL→parquet+agent_name字段(零GPU可做)→ verl异步rollout避免沙盒延迟GPU空转→ delta-based tokenization只优化assistant token→ EXPERIMENTS §R9(10小节)+HTML报告7.8KB。📦 体积：TASK=24.7KB / MEMORY≈13KB（均≤32KB合规）。本轮新增调研产出：§R9 verl+SGLang集成调研+EDA沙盒工具骨架+verl配置更新+setup脚本更新+HTML报告。未完成指令：无（R1✅R2✅R3✅R4✅R5✅R6✅R7✅R8✅R9✅E1✅）⇒ WAITING=1。
 

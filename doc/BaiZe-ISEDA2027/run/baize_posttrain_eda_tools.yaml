@@ -1,0 +1,40 @@
+# baize_posttrain_eda_tools.yaml — EDA sandbox tool config for verl multi-turn rollout
+#
+# R9: verl Tool Agent Loop requires tool configuration YAML.
+# Each tool is implemented as a BaseTool subclass in baize_posttrain_eda_tool.py.
+# The EDA sandbox tool sends code to 36.15 via SSH tunnel and returns execution results.
+#
+# See EXPERIMENTS_POSTTRAIN.md §R9 for design rationale.
+
+tools:
+  - class_name: EDASandboxTool
+    config:
+      type: native
+      sandbox_endpoint: ssh://tunnel-to-36.15
+      sandbox_hosts:
+        - pyAether
+        - aether
+        - skill_virtuoso
+        - tcl_innovus
+        - tcl_waveview
+      max_code_length: 5000
+      timeout: 60
+    tool_schema:
+      name: run_eda_code
+      description: >
+        Execute Python/TCL code in the EDA sandbox (pyAether environment).
+        The tool runs the provided code and returns execution results including
+        response, error_log, print_log, and result fields.
+        Use this to test PyAether API calls and verify code correctness.
+      parameters:
+        type: object
+        properties:
+          code:
+            type: string
+            description: Python code to execute in the EDA sandbox
+          host:
+            type: string
+            description: EDA tool host (pyAether, aether, skill_virtuoso, tcl_innovus, tcl_waveview)
+            default: pyAether
+        required:
+          - code

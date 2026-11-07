@@ -50,12 +50,13 @@ echo "✅ 验证CUDA可用性..."
 python -c 'import torch; print(f"PyTorch版本: {torch.__version__}"); print(f"CUDA版本: {torch.version.cuda}"); print(f"CUDA可用: {torch.cuda.is_available()}"); print(f"GPU数量: {torch.cuda.device_count()}")'
 
 # 6. 安装依赖包
-echo "📦 安装verl、vLLM、ray等依赖..."
-pip install "vllm>=0.33.0" "ray>=2.30.0" "accelerate>=0.28.0" "transformers>=4.39.0" "datasets>=2.18.0" "evaluate>=0.4.1" "pyyaml>=6.0" "numpy>=1.26" "pandas>=2.2" "tqdm>=4.66" "sentencepiece>=0.2.0" "protobuf>=4.25" "grpcio>=1.62" "packaging>=24.0"
+# 🔴 R9 UPDATE: 安装 verl[sglang] 而非 verl[vllm]（R8 发现 MiniCPM5-2B 工具调用需 SGLang）
+echo "📦 安装 SGLang、verl[sglang]、ray等依赖..."
+pip install "sglang[srt]>=0.5.16" "ray>=2.41.0" "accelerate>=0.28.0" "transformers>=4.39.0" "datasets>=2.18.0" "evaluate>=0.4.1" "pyyaml>=6.0" "numpy>=1.26" "pandas>=2.2" "tqdm>=4.66" "sentencepiece>=0.2.0" "protobuf>=4.25" "grpcio>=1.62" "packaging>=24.0" "mlflow>=2.0"
 
-# 安装verl
-echo "🧠 安装verl GRPO框架..."
-pip install verl --extra-index-url https://download.pytorch.org/whl/cu124
+# 安装verl with SGLang backend (R9: verl natively supports SGLang for multi-turn rollout)
+echo "🧠 安装 verl[sglang] GRPO框架..."
+pip install "verl[sglang]" --extra-index-url https://download.pytorch.org/whl/cu124
 
 # 安装flash-attn（可选，用于加速）
 echo "⚡ 安装flash-attention 2..."
@@ -64,7 +65,7 @@ pip install flash-attn --no-build-isolation
 # 7. 验证所有依赖
 echo ""
 echo "=== 依赖验证 ==="
-for pkg in torch vllm ray verl accelerate transformers; do
+for pkg in torch sglang ray verl accelerate transformers; do
     echo -n "$pkg: "
     python -c "import $pkg; print($pkg.__version__)"
 done

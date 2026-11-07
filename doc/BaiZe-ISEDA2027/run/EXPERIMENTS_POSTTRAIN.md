@@ -1495,3 +1495,122 @@ SGLang 额外支持 DSPark 投机采样（draft model ~500MB）加速 2-3x。
 | generation_config.json | /tmp/models/MiniCPM5-2B/generation_config.json | 2026-11-07 |
 | README-cn.md | /tmp/models/MiniCPM5-2B/README-cn.md (L272-400) | 2026-11-07 |
 | SGLang 部署文档 | https://github.com/OpenBMB/MiniCPM/blob/main/docs/deployment/sglang.md | 2026-11-07 |
+
+---
+
+## §R9 verl + SGLang 集成调研：解决 R5/R8 推理后端矛盾（2026-11-07 · 零 GPU · web 调研 + 实测）
+
+> **背景**：R5 选定 verl 作为 RL 框架（默认 vLLM 推理后端），R8 发现 MiniCPM5-2B 工具调用是 XML 格式，vLLM 无法解析，必须用 SGLang（内置 minicpm5 parser）。本节调研 verl 是否支持 SGLang，以及如何配置。
+
+### 1. 核心结论：verl 原生支持 SGLang 作为推理后端
+
+| 维度 | 结论 | 来源 |
+|:--|:--|:--|
+| SGLang 推理后端 | ✅ **原生支持**，与 vLLM 并列为两大推理后端 | verl 官方文档 (verl.readthedocs.io) |
+| 安装方式 | `pip install verl[sglang]`（对应 `verl[vllm]` 用 vLLM） | CSDN 技术博客 + 官方 docs |
+| 多轮工具调用 | ✅ **仅 SGLang 支持** multi-turn rollout（vLLM 不支持） | verl docs: sglang_multiturn/multiturn.html |
+| 配置方式 | `actor_rollout_ref.rollout.name: "sglang"` + `multi_turn: True` | 官方文档原文 |
+| 异步 rollout | `actor_rollout_ref.rollout.mode: async` + `data.return_raw_chat: True` | 官方 Agentic RL 文档 |
+| 自定义工具 | 实现 `verl.tools.base_tool.BaseTool` 子类 + YAML 配置 | 官方 Multi-turn Rollout 文档 |
+
+### 2. verl 多轮 rollout 架构（与 EDA 沙盒的契合点）
+
+verl 的 Agentic RL 架构有三个核心组件：
+
+| 组件 | 角色 | EDA 场景对应 |
+|:--|:--|:--|
+| AgentLoop | Client，实现 Agent 循环 | 模型读 API 文档→写 PyAether 代码→调 run_eda_code |
+| LLMServerClient | 推理网关，提供 token 级 generate 接口 | SGLang server（含 minicpm5 parser） |
+| AsyncServer | Server，连接推理引擎的 DP 组 | 每个 A40 一个 SGLang 实例 |
+
+**关键设计**：Client-Server 间用 **token 级 generate 接口**（非 Chat Completion API），因为 token↔text 转换不可逆，训练阶段必须严格用 LLM 推理产出的 token 计算 advantage。这确保了 EDA 工具返回的文本与 LLM 生成的 token 之间的正确对应关系。
+
+**异步 rollout 的价值**：EDA 沙盒调用有网络延迟（SSH 隧道到 36.15），async 模式让 GPU 在等待沙盒返回时不空转——这对我们的 EDA 交互式 RL 至关重要。
+
+### 3. 配置变更详情（R5 → R9）
+
+| 配置项 | R5（旧） | R9（新） | 理由 |
+|:--|:--|:--|:--|
+| `rollout.name` | `vllm` | `sglang` | R8: SGLang 支持 minicpm5 XML 工具解析 |
+| `rollout.multi_turn` | 无 | `True` | 多轮工具调用（SGLang only） |
+| `rollout.mode` | 无 | `async` | 避免沙盒延迟导致 GPU 空转 |
+| `rollout.tool_call_parser` | 无 | `minicpm5` | SGLang 内置 MiniCPM5 XML parser |
+| `data.return_raw_chat` | 无 | `True` | async rollout 必需 |
+| `actor.use_kl_loss` | 无 | `True` + `kl_loss_coef: 0.04` | GRPO 需要 KL 约束 |
+| 安装 | `pip install verl` | `pip install verl[sglang]` | SGLang 后端依赖 |
+| 验证包 | `vllm` | `sglang` | 验证脚本对应更新 |
+
+### 4. EDA 沙盒工具实现路径（BaseTool 子类）
+
+verl 的 Tool Agent Loop 要求：
+1. 数据集添加 `agent_name` 字段（verl 据此选择 `tool_agent_loop`）
+2. 工具实现 `BaseTool` 子类，提供 `create()`/`execute()`/`release()` 生命周期
+3. 工具配置写入 YAML（`tools_config_file` 指向）
+
+**已创建骨架**：`run/baize_posttrain_eda_tool.py`
+- `EDASandboxTool(BaseTool)`：SSH→36.15 run_code，返回 response/error_log/print_log/result
+- `compute_r2_reward()`：exec_success(0.2) + partial_assert(0.2 each) + full_pass(1.0)
+- `compute_r3_reward()`：R2 + tool_call_penalty
+- `compute_r4_reward()`：R3 + API_legality
+- dry-run 通过✅（skeleton 模式，SSH 执行待 11/9+ 隧道就绪后实现）
+
+**已创建工具配置**：`run/baize_posttrain_eda_tools.yaml`
+- `run_eda_code` 工具 schema：code + host 参数
+- 5 个沙盒 host：pyAether/aether/skill_virtuoso/tcl_innovus/tcl_waveview
+
+### 5. Delta-based Tokenization（verl 多轮训练的 token 对齐）
+
+verl 采用 delta 分词策略确保只有 assistant 生成的 token 进入 loss mask：
+1. 对 `messages[:i]` 应用 chat template（add_generation_prompt=True）
+2. 对 `messages[:i+1]` 应用 chat template（add_generation_prompt=False）
+3. 只 tokenize 两个序列的 **delta**（差值）
+
+这保证工具返回的文本不进入训练 loss——只有模型自己的生成被优化。
+
+### 6. 11/9 启动序列更新（R9 影响）
+
+| 步骤 | R8 版本 | R9 更新 |
+|:--|:--|:--|
+| Step0 | 新建 cu124 venv | 安装 `verl[sglang]` 而非 `verl`（setup 脚本已更新） |
+| Step2a | SGLang serve | 不变（SGLang 仍是推理后端） |
+| Step6 | verl RL 起跑 | 配置已从 vLLM 切到 SGLang + multi_turn + async |
+
+### 7. 风险与缓解
+
+| 风险 | 概率 | 影响 | 缓解 |
+|:--|:--|:--|:--|
+| SGLang + verl 版本兼容性问题 | 中 | RL 无法启动 | 先在 smoke 模式验证（`--smoke`: 10 iters, G=4） |
+| miniCPM5 parser 在 verl 中不可用 | 低 | 工具调用不解析 | verl 文档明确 SGLang 支持 tool_call_parser 透传 |
+| SSH 隧道延迟导致 async rollout 超时 | 中 | 训练中断 | `task_timeout: 2500s` + `sandbox_concurrency: 8` 限流 |
+| 数据集缺 `agent_name` 字段 | 高 | verl 不启用 tool_agent_loop | E1 合成数据需加 `agent_name: tool_agent_loop` 字段 |
+
+### 8. 数据集格式适配需求
+
+verl 要求数据为 **parquet** 格式（非 JSONL），且需要 `agent_name` 字段：
+- 现有 `rl_pyaether_synth_v2.jsonl`（3347 题）需转换为 parquet
+- 每条记录添加 `agent_name: "tool_agent_loop"` 字段
+- 转换脚本待 11/9 GPU 到位后编写（零 GPU 即可做，但非本轮优先）
+
+### 9. 交付物清单
+
+| 文件 | 类型 | 状态 |
+|:--|:--|:--|
+| `baize_posttrain_rl_verl_config.yaml` | 更新（vLLM→SGLang） | ✅ YAML 语法检查通过 |
+| `baize_posttrain_eda_tools.yaml` | 新建 | ✅ YAML 语法检查通过 |
+| `baize_posttrain_eda_tool.py` | 新建（BaseTool 骨架） | ✅ dry-run 通过 |
+| `baize_posttrain_setup_cu124_venv.sh` | 更新（verl→verl[sglang]） | ✅ bash -n 通过 |
+| `reports/report_posttrain_r9_verl_sglang_integration_zh.html` | 新建 | ✅ 本节 HTML 版 |
+| `EXPERIMENTS_POSTTRAIN.md §R9` | 本节 | ✅ |
+
+### 10. 数据来源
+
+| 来源 | URL | 日期 |
+|:--|:--|:--|
+| verl 官方文档首页 | https://verl.readthedocs.io/en/latest/ | 2026-11-07 |
+| verl Agentic RL 文档 | https://verl.readthedocs.io/en/latest/start/agentic_rl.html | 2026-11-07 |
+| verl Multi-turn Rollout | https://verl.readthedocs.io/en/latest/sglang_multiturn/multiturn.html | 2026-11-07 |
+| verl Config Explanation | https://verl.readthedocs.io/en/latest/examples/config.html | 2026-11-07 |
+| verl NPU Advanced Features（确认 SGLang 支持） | https://verl.readthedocs.io/en/latest/ascend_tutorial/en/feature_support/npu_advance_features.html | 2026-11-07 |
+| CSDN verl 训练指南（确认 verl[sglang] 安装） | https://blog.csdn.net/gitblog_00818/article/details/162550189 | 2026-11-07 |
+| verl Agentic RL 全指南（async rollout 架构） | https://www.hqwc.cn/a/1763761.html | 2026-11-07 |
+
