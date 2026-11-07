@@ -10,6 +10,7 @@
 1. 用 **11w 检查点**（`iter_0110000` 或 `iter_0112000`，以盘上实际存在者为准）跑 **8 集**（`arc_challenge, arc_easy, boolq, hellaswag, openbookqa, piqa, sciq, winogrande`）。
 2. **去掉 `--limit 100`**，改**全量题目**。
 3. **扫不同 `OMP_NUM_THREADS`**，看 CPU 推理的吞吐/效率曲线。**基线 = 8 线程**（现有脚本默认值）。⚠️ 机器虽有 224 核但**不许跑满**（见 §③），可扫区间上限 **80 核**。
+4. **扫 `batch_size`**（用户 2026-11-07：「batch_size 的确可以试试」）。现状写死 `1`，需先让 `baize_cpu_lmeval.sh` 把 `--batch_size` 透出去。**与 §①-3 的线程扫描有交互** —— 是「先固定线程扫 batch、再固定最优 batch 扫线程」，还是做小规模二维网格，你自己定；能给出「线程 × batch」的二维热点表最好。
 
 **② 现状核对（运维侧预查，供参考）**
 - 8 集任务名列表在 `run/baize_cpu_lmeval.sh:24`；`--limit` 由 `run/baize_cpu_eval_all.sh` 传入。
@@ -20,7 +21,7 @@
   ```
   **这行会把 >8 的线程数压回 8**，不处理的话扫线程是无效的。是改脚本还是绕过直调 `cpu_lmeval_run.py`，你决定。
 - 全量样本量级：8 集合计 **≈21,465 条**（hellaswag 10042 / boolq 3270 / arc_easy 2376 / piqa 1838 / winogrande 1267 / arc_challenge 1172 / sciq 1000 / openbookqa 500）。**原 `--limit 100` × 8 集只有 800 条 ⇒ 放大 ≈27 倍**，请先按单条实测耗时估总时长，再决定扫几档。
-- `--batch_size 1` 当前写死；**batch_size 与线程数有交互**，是否同时扫由你判断。
+- `--batch_size 1` **当前写死在 `baize_cpu_lmeval.sh:64`**（`cpu_lmeval_run.py:106` 的 argparse 已有 `--batch_size`，且完整透传给 `HFLM(batch_size=...)`，**只是 shell 层没暴露**）。**batch_size 与线程数有交互**，用户 2026-11-07 明确说「batch_size 的确可以试试」⇒ **也要扫**（见 §①-4）。
 
 **③ 风险提示（不是禁令，自己权衡）**
 - **S1 正在跑**（iter ~113800/700000，16 卡）。CPU 评测吃满核心会抢 S1 dataloader 的 CPU，**224 核跑满会让系统直接崩**（用户 2026-11-07 明确警告）。
@@ -29,12 +30,17 @@
 - 用户对本令的定位：「**还是 pretrain 自己做吧，它是两手占着泥的**」——即你最清楚这台机器的实际负载和边界，**保守优先**，宁可少扫两档也不要冒险。
 
 **④ 交付**
-- 每档线程的：`tasks_done` / wall-clock / 每档 8 集各自分数 + Avg / 实测 tokens/s 或 samples/s。
-- **中文 HTML 报告**（`reports/report_pretrain_cpu_eval_thread_scaling_zh.html`，单文件 0 script 0 外链）：含线程数 vs 吞吐/时长的曲线、与 8 线程基线的加速比、以及**分数是否随线程数变化**（应不变，若变了说明有数值问题，须查）。
-- 🚫 不同线程数的**分数**原则上应一致（只是算得快慢）；若出现差异必须查清原因再写结论。
+- 每档 `(线程数, batch_size)` 的：`tasks_done` / wall-clock / 每档 8 集各自分数 + Avg / 实测 samples/s。
+- **中文 HTML 报告**（`reports/report_pretrain_cpu_eval_thread_scaling_zh.html`，单文件 0 script 0 外链）：含
+  ① 线程数 vs 吞吐/时长曲线 + 相对 8 线程基线的加速比
+  ② **batch_size vs 吞吐/内存曲线**
+  ③ 若有二维数据，给「线程 × batch」**吞吐热点表**
+  ④ **分数是否随线程/batch 变化**（应不变，若变了说明有数值问题，须查）
+  ⑤ 内存峰值实测（说明高线程/大 batch 的安全边界在哪）
+- 🚫 不同线程数 / batch_size 的**分数**原则上应一致（只是算得快慢）；若出现差异必须查清原因再写结论。
 - 结果落 `lm_eval_results/`，🚫 结果 JSON 不入库。
 
-> **完成标记**：报告交付 + 至少覆盖 8 线程基线及 ≥2 档更高线程 ⇒ 本行改 `✅ 已交付`；未完成 ⇒ `WAITING: 0`。
+> **完成标记**：报告交付 + 至少覆盖 8 线程基线及 ≥2 档更高线程 + ≥2 档 batch_size ⇒ 本行改 `✅ 已交付`；未完成 ⇒ `WAITING: 0`。
 
 ---
 
