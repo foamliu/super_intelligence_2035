@@ -1105,14 +1105,14 @@ wl9i4					parked		2026-11-05 22:49	交互shell驱动+Q&A n752大
 1785390178118_ewjnc.messages.json	e0014566	10.129.2.10	147	schematic_netlist	parked		2026-11-07 03:40	layout analysis Q&A: hello + ask analyze connected layout path, not produce
 1786710801484_wsi93.messages.json	e0014566	10.129.2.10	143	schematic_netlist	parked		2026-11-07 03:40	L2 live pyAether: identify+remove autovia/powerfill cells in layout, not portable offline
 1791792980970_4vv1y.messages.json	lizwen	10.129.2.11	138	analog_context	parked		2026-11-07 03:40	Q&A how-to: how to continuous-copy in aether skill, not produce
-1791525231478_vbxlf	jason17w	10.129.32.190	262	schematic_netlist	parked		2026-11-07 04:09	skill opt: run-regression skill optimization (changelog/firefox/LSF), not D-domain produce
+1791525231478_vbxlf	jason17w	10.129.32.190	262	schematic_netlist	parked		2026-11-07 09:43	run-regression skill optimization (firefox/LSF/bsub), not D-domain produce
 1793165432787_o5o6p	e0046913	10.129.2.12	184	schematic_netlist	parked		2026-11-07 04:09	Q&A+install: synopsys vc_static dir analysis + UPF VCLP flow setup (license/live), not portable
 1790236401918_27c6f	jason17w	10.129.32.190	166	schematic_netlist	parked		2026-11-07 04:09	skill opt: run-regression skill debug+evaluation, not produce
-1791611132079_5vmvu	ellawu	10.129.2.14	165	analog_context	parked		2026-11-07 04:09	NO_FILE: session file missing on host
-1791967362296_kxqt7	yzwang	10.129.2.10	162	analog_context	parked		2026-11-07 04:09	wrong-domain: DRC rundrc.log rule-time statistics (physical_verify/calibre, not shard D)
+1791611132079_5vmvu	ellawu	10.129.2.14	165	analog_context	parked		2026-11-07 09:43	multi-turn SKILL script edit (cxmt_autoPR_generatePortText.il pin copy), iterative not portable
+1791967362296_kxqt7	yzwang	10.129.2.10	162	analog_context	parked		2026-11-07 09:43	wrong-domain (DRC rundrc.log rule-time stats = physical_verify, shard C)
 1791958893585_o4frj	yzwang	10.129.2.10	161	analog_context	parked		2026-11-07 04:09	wrong-domain: DRC rundrc.log rule-time statistics (physical_verify/calibre, not shard D)
 1790652004587_8zuqr	mike	10.129.32.80	161	schematic_netlist	parked		2026-11-07 04:09	L2 live: logic_cosim build/run (spike gcc cross-compile + ddrArchModel SystemC), not portable offline
-1792738287471_mrlo9	e03179	10.129.2.11	144	schematic_netlist	parked		2026-11-07 04:09	empty: only '继续晚餐' 1 turn
+1792738287471_mrlo9	e03179	10.129.2.11	144	schematic_netlist	parked		2026-11-07 09:43	VAMAgent skill-trigger, only 1 real turn ('继续晚餐'), no natural produce
 1785899794656_0j59o	michael1l	10.129.2.12	143	schematic_netlist	parked		2026-11-07 04:09	empty: only '启动场景，版图规划' 1 turn trigger
 1790131515178_j90k2	e0045291	10.129.8.120	139	schematic_netlist	parked		2026-11-07 04:09	trivial: 'give me an EDA image'/'print hello_world'/'bsub echo test pass'
 1789372380761_xxtqb	sagequan	10.129.32.190	113	analog_context	parked		2026-11-07 04:09	skill dev: simdiag project RELEASE_NOTES/skill-cli/persistence, not analog produce
@@ -1224,3 +1224,9 @@ bw2u5.messages.json					parked		2026-11-07 08:07	#343 peek: netlist 5 only, too 
 1790128938715_nsf5a.messages.json					parked		2026-11-07 09:21	peeked #345, weak/non-D-domain/debug/skill-invoke
 1789975385741_egm8i.messages.json					parked		2026-11-07 09:21	peeked #345, weak/non-D-domain/debug/skill-invoke
 1792067800928_1b60m.messages.json					parked		2026-11-07 09:21	peeked #345, weak/non-D-domain/debug/skill-invoke
+1790149493569_194wf	ziyuny	10.129.32.190	128	schematic_netlist	claimed		2026-11-07 09:43	
+1791783189298_t2hnp					parked		2026-11-07 09:43	dup of NetHighlightProbe-001 (same task: highlight nets starting with 'net' in virtuoso schematic)
+1792135280846_sr426					parked		2026-11-07 09:43	dup of NetlistFightX-001 (same vblh X-fighting debug from netlist)
+1792057192352_iz828					parked		2026-11-07 09:43	weak Q&A (32 RAG search, hierarchy-jump button, no clean produce)
+1789957560618_7kyrv					parked		2026-11-07 09:43	wrong domain (synopsys:1274 ddr6_model SystemC/VCS build debug, not D-domain)
+1790078872955_vpj8o					parked		2026-11-07 09:43	AnaWeave GG execution, overlaps AnalogGroupCfgMergeDummy-001 (cfg domain)
