@@ -2,7 +2,9 @@
 
 WAITING: 1
 
-> 🆕 **【wake #850 · 2026-11-07 07:42】例行空唤醒巡检。** git fetch→pull rebase(无新vision令·main=origin/main,同步ZhuLong变更)·体积 TASK28.7KB/MEMORY25.9KB(均≤32KB✓,0归档)。**健康核对**：loop PID669545(ppid=1,~8.9d)✓·GPU-wait chain PID1365749(ppid=1,~15.2h,run_grpo_wave.sh 8,等GPU)✓·ops_relay_v2 PID1032513(ppid=1,~13.5d)✓·GPU 8×H100 97-100%/~75GB(满载,无GPU给vision Stage-2)·gs=8诊断已完成确认VERDICT=PARTIAL(std0=73%,commit ef768453f)。**全交付态确认**：Stage0✅+Stage1✅+CPU pilot✅(post-GRPO6.2%<post-SFT9.2%诚实)+advantage诊断gs4✅+gs8✅(G加大不解根因)。**零可执行动作·零异常**——Stage2双阻塞:①GPU满载(ETA≈12/25)②方法论待用户批。**待用户批**(gs4+gs8双诊断证据已齐):①奖励连续化R_main→exp(-rel_err/τ)②rise_time/duty_cycle补SFT数据(能力缺口非GRPO可解)。**未完成指令:有**(阶段2未交付+2项待批)但均非本轮可执行(GPU满载+待用户批)⇒**WAITING: 1**(sleep 30min)。📦体积:TASK=28.7KB/MEMORY=25.9KB(均≤32KB✓,本轮0归档)。
+> 🆕 **【wake #851 · 2026-11-07 08:47】用户触发·以 vision agent 身份唤醒核对状态。** git fetch(无新vision令·origin/main=b92bfbb49 data线,vision task文件无新提交)·体积 TASK28.7KB/MEMORY26.4KB(均≤32KB✓,0归档)。**健康核对**：loop PID669545(ppid=1,~9.0d)✓·GPU-wait chain PID1365749(ppid=1,~16.3h,run_grpo_wave.sh 8,等GPU)✓·ops_relay_v2 PID1032513(ppid=1,~13.5d)✓·GPU 8×H100 100%/~75GB(满载,无GPU给vision Stage-2)。**gs=8诊断复核**：VERDICT=PARTIAL(std0=73/100=73.0%,all-zero=0%,std>0=27%)已commit ef768453f·按目标细分:rise_time100%std0(mean=-0.5能力缺口)·duty_cycle91.7%std0(能力缺口)·period21.7%std0(mean=0.462,std=0.233信号足GRPO可行)·amplitude74.1%std0(中等)。**全交付态确认**：Stage0✅+Stage1✅+CPU pilot✅+advantage诊断gs4✅+gs8✅(G=4→8不解根因)。**零可执行动作·零异常**——Stage2双阻塞:①GPU满载(ETA≈12/25)②方法论待用户批。**待用户批**(gs4+gs8双诊断证据已齐):①奖励连续化R_main→exp(-rel_err/τ)(离散5档=无信号根因,需重预注册判据)②rise_time/duty_cycle补SFT数据(能力缺口非GRPO可解)。**未完成指令:有**(阶段2未交付+2项待批)但均非本轮可执行(GPU满载+待用户批)⇒**WAITING: 1**(sleep 30min)。📦体积:TASK=28.7KB/MEMORY=26.4KB(均≤32KB✓,本轮0归档)。
+
+> 📦 wake #850（例行空唤醒巡检·2026-11-07 07:42）已归档 → daily-memories-vision/2026-11-07.md；**结论**：无新令·进程全健康·GPU满载·gs=8诊断PARTIAL已确认·全交付态·零异常。需要时再读。
 
 > 📦 wake #849（例行空唤醒巡检·2026-11-07 07:08）已归档 → daily-memories-vision/2026-11-07.md；**结论**：无新令·gs=8诊断PARTIAL已确认·进程全健康·GPU满载·全交付态·零异常。需要时再读。
 
@@ -198,4 +200,4 @@ WAITING: 1
 | 当前动作 | **advantage方差诊断已交付(wake#838)**：判定PARTIAL(std=0=78.7%/std>0=21.3%/全0=0%)，关键发现=离散分档奖励下"全同档"才是无信号根因(非"全0")，按目标差异化(rise_time能力缺口/period信号足)。GRPO chain PID1365749 alive(GPU-wait轮询,GPU释放自动接上,ETA≈12/25)。 |
 | 下一步 | ①用户决策：是否做 group_size→8 验证 + 是否采纳按目标差异化策略(rise_time/duty_cycle补SFT、period先上GRPO) + 奖励连续化(需批) ②等GPU释放(ETA≈12/25)→GRPO chain自动启动阶段2训练(~12 GPU·h)→WaveQA-RL评测+回归护栏→阶段2报告。下轮wake检查GRPO chain日志+GPU状态+有无新令。 |
 | 阻塞 | .12+.29 GPU全占（8×H100 96-100% util / ~75GB，pretrain baize2b ETA≈12/24-25）→ 阶段2 GRPO需GPU（GRPO chain PID1365749自带GPU-wait,释放后自动起训）·.17+.75 SSH不可达 |
-| 更新 | **2026-11-07 07:08 (wake #849)**: 例行空唤醒巡检·无新令·进程全健康(loop/GPU-wait chain/ops_relay)·GPU 8×H100 100%满载·gs=8诊断PARTIAL已确认(std0=73%)·全交付态确认(Stage0/1✅+CPU pilot✅+advantage诊断gs4/gs8✅)·零可执行动作·体积TASK≈28.7KB/MEMORY≈25.9KB✓·WAITING=1 |
+| 更新 | **2026-11-07 08:47 (wake #851)**: 用户触发唤醒核对状态·无新令·进程全健康(loop/GPU-wait chain/ops_relay)·GPU 8×H100 100%满载·gs=8诊断PARTIAL已复核(std0=73%·rise_time100%/duty_cycle91.7%能力缺口·period21.7%信号足)·全交付态确认(Stage0/1✅+CPU pilot✅+advantage诊断gs4/gs8✅)·零可执行动作·体积TASK≈28.7KB/MEMORY≈26.4KB✓·WAITING=1 |
