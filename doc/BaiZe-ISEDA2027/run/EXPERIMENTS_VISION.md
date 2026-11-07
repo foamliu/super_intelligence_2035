@@ -2847,4 +2847,9 @@ std>0 组 ≥30%                  ⇒ PARAM-ISSUE
 
 **数字溯源**：`cpu_rl_v3_experiment.py` 实测 stdout (`/tmp/v3_full_experiment.log`) + JSON输出。CPU fp32 / nice19 / OMP32 / 零GPU / 未碰pretrain。可复现(seed=20261107 + step3000 ckpt + group_size=8)。
 
-**wake#861 更新**（2026-11-07 14:5x）：v3 Phase3 step25/40，avgR波动轨迹 -0.5→0.066→0.279→0.321→0.151→**-0.043**，loss≈0.000038（近零）→GRPO策略梯度极弱。**预备v4 RFT脚本**（`vision/wave_rl/cpu_rl_v4_rft_experiment.py`，385行，SYNTAX OK）——若v3未达显著性则换方向：GRPO→Rejection Sampling FT(STaR/ReST)。v4设计：收集SFT模型rollout(60circuits×4)→按连续奖励过滤(reward>0.3)→标准CE SFT训练成功轨迹(3epoch/lr1e-5/batch4)。优势：无group baseline(消除std=0根因)、稳定CE梯度(非noisy policy gradient)、解耦收集与训练。预注册判据：C(RFT)>B(SFT=34%)且C>D(随机过滤控制)，McNemar p<0.05+bootstrap CI排除0。v4不改变奖励函数或任务(仅改优化方法)。**v4脚本未启动**(v3正在跑，避免CPU竞争；v3完成后或失败时启动)。
+**wake#861 更新**（2026-11-07 14:5x）：v3 Phase3 step25/40，avgR波动轨迹 -0.5→0.066→0.279→0.321→0.151→**-0.043**，loss≈0.000038（近零）→GRPO策略梯度极弱。**预备v4 RFT脚本**（`vision/wave_rl/cpu_rl_v4_rft_experiment.py`，385行，SYNTAX OK）——若v3未达显著性则换方向：GRPO→Rejection Sampling FT(STaR/ReST)。v4设计：收集SFT模型rollout(60circuits×4)→按连续奖励过滤(reward>0.3)→标准CE SFT训练成功轨迹(3epoch/lr1e-5/batch4)。优势：无group baseline(消除std=0根因)、稳定CE梯度(非noisy policy gradient)、解耦收集与训练。预注册判据：C(RFT)>B(SFT=34%)且C>D(随机过滤控制)，McNemar p<0.05+bootstrap CI排除0。v4不改变奖励函数或任务(仅改优化方法)。
+
+**wake#862 更新**（2026-11-07 14:5x）：**v3 + v4 并行运行**（.12 CPU 224核，v3用32线程/v4用48线程，load~52/224，无争用）。
+- **v3 (GRPO)** PID2165712：step **30/40**，avgR轨迹 -0.5→0.066→0.279→0.321→0.151→-0.043→**0.398**(step30回升!)，ETA~43min(Phase3余)+eval。avgR高方差但非单调下降。
+- **v4 (RFT) 启动** PID3750214：Phase1 B(SFT eval)进行中。**修复v4 bug**：v4引用`EVAL_SEED_BASE_V3`/`TRAIN_SEED_BASE_V3`/`build_eval_set_period`但未定义/导入→添加`from cpu_rl_v3_experiment import build_eval_set_period`+常量定义(990100/20261105)。v4复用v3的100 eval题(same seed→valid matched pairs)。不skip_sft_eval(需B逐题结果做McNemar)。v4流程：B eval→collect 240 rollouts→filter reward>0.3→CE-SFT train C(treatment)+D(random control)→eval→stats。预计~2.5h。
+- **决策理由**：v3是第3轮GRPO(前2轮v1负/v2不显著p=0.625)，avgR高方差+loss近零→GRPO在CPU上信号弱。v4换RFT(无group baseline/稳定CE梯度)是任务书"连续3轮无提升必须换方向"的执行。并行启动因224核仅用~80，不争用。

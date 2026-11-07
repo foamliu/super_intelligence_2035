@@ -41,6 +41,11 @@ from cpu_rl_v2_experiment import (
     build_model, rollout_episode, tokenize_for_logprob,
     mcnemar_test, bootstrap_ci_delta, evaluate_condition, _check_correct,
 )
+from cpu_rl_v3_experiment import build_eval_set_period
+
+# Seed bases (must match v3 so eval questions are identical -> valid matched pairs)
+EVAL_SEED_BASE_V3 = 990100
+TRAIN_SEED_BASE_V3 = 20261105
 
 # ============================================================================
 # 1. SFT LOSS (cross-entropy on assistant tokens)

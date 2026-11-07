@@ -1,6 +1,8 @@
 WAITING: 0
 
-> 🆕 **【wake #861 · 2026-11-07 14:5x】v3实验监控(step25/40)·v4 RFT脚本预备(若v3失败则换方向)。** git pull(无新令)·体积 TASK35.0KB(>32KB按令暂不归档)/MEMORY≈29KB✓。**承接wake#860**：v3实验(PID2165712,etimes~7164s)Phase3 C(GRPO)仍在step25/40——avgR波动轨迹:-0.5→0.066→0.279→0.321→0.151→**-0.043**(step25,ETA~64min余)⏳。**关键观察**:loss≈0.000038(近零)→GRPO策略梯度极弱,avgR从step15峰0.321回落至step25负值⇒**不排除v3也达不到显著性的可能**(v1负/v2不显著/v3=第3轮)。**本轮动作**:①**预备v4 RFT(Rejection Sampling FT)脚本**`cpu_rl_v4_rft_experiment.py`(385行,SYNTAX OK)——**换方向**:GRPO→RFT(STaR/ReST),收集SFT模型rollout→按连续奖励过滤→标准CE SFT训练成功轨迹。优势:无group baseline(消除std=0根因)、稳定CE梯度(非noisy policy gradient)、解耦收集与训练。**预注册判据**:C(RFT)>B(SFT=34%)且C>D(随机过滤控制),McNemar p<0.05+bootstrap CI排除0。**v4不改变奖励函数或任务**(仅改优化方法)⇒判据与v3同口径。②更新v3 partial报告(15526B)。③v4脚本**未启动**(v3正在跑,CPU竞争;v3完成后或v3失败时再启动)。**下一步**:下唤醒检查v3是否完成→若完成→生成最终报告+统计检验+commit;若v3未达显著性→启动v4 RFT(预计~2h:收集60circuits×4rollout~80min+训练3epoch~15min+eval~15min)。**未完成指令:有**(v3实验运行中)⇒**WAITING:0**。📦体积:TASK=35.0KB(>32KB按令暂不归档)/MEMORY≈29KB✓。
+> 🆕 **【wake #862 · 2026-11-07 14:5x】v3+v4并行运行·v4 RFT启动(换方向)·v4 bug修复。** git pull(rebase OK,无新令)·体积 TASK35.0KB(>32KB按令暂不归档)/MEMORY≈29KB✓。**承接wake#861**：v3实验(PID2165712)Phase3 step30/40——avgR回升至0.398(step30,从step25的-0.043反弹),ETA~43min余⏳。**关键决策**:v3是第3轮GRPO(v1负/v2不显著p=0.625),avgR高方差+loss近零→GRPO在CPU信号弱⇒按任务书"连续3轮无提升必须换方向"**启动v4 RFT**。**.12有224核/load~52/v3仅用32线程**⇒v4并行启动不争用。**本轮动作**:①**修复v4 bug**：v4引用`EVAL_SEED_BASE_V3`/`TRAIN_SEED_BASE_V3`/`build_eval_set_period`但未定义/未导入→添加`from cpu_rl_v3_experiment import build_eval_set_period`+常量定义(990100/20261105)。②**启动v4 RFT**(PID3750214,OMP48/nice19)：Phase1 B(SFT eval)进行中,复用v3的100 eval题(same seed→valid matched pairs),不skip_sft_eval(需B逐题结果做McNemar)。v4流程:B eval(~8min)→collect 240 rollouts(~88min)→filter reward>0.3→CE-SFT train C+D(~44min)→eval(~16min)→stats。预计总~2.5h。③EXPERIMENTS§22追加wake#862。**下一步**:下唤醒检查v3(预计~1h完成)→生成v3最终报告+统计;检查v4(预计~2.5h)→若完成生成v4报告+统计+v1→v4对比;更新HTML报告。**未完成指令:有**(v3+v4并行运行中)⇒**WAITING:0**。📦体积:TASK=35.0KB(>32KB按令暂不归档)/MEMORY≈29KB✓。
+
+> 📦 wake #861（v3监控step25+v4脚本预备·2026-11-07 14:5x）已归档 → daily-memories-vision/2026-11-07.md；**结论**：v3 step25 avgR=-0.043(从峰0.321回落),loss近零;v4 RFT脚本预备完成(385行SYNTAX OK)。需要时再读。
 
 > 📦 wake #859（v3实验监控·报告生成器预验证PASS·2026-11-07 14:1x）已归档 → daily-memories-vision/2026-11-07.md；**结论**：avgR step20回落(0.32→0.15)属小group波动,不改运行参数(预注册纪律),报告生成器字段匹配PASS。需要时再读。
 
@@ -206,10 +208,10 @@ WAITING: 0
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | 🟢 **波形 RL CPU 阶段2 推进中**：v2 连续奖励实验已跑(C>B>D 但不显著 p=0.625)·③ 技术栈三步冒烟已交付(LLaMA-Factory+KTransformers 不可行,peft 直训退路已验证)·Qwen3.5-2B(多模态VLM,1.88B)已下载完整+peft CPU 单步 loss 下降验证通过。**下一步=Qwen3.5-2B 多模态+peft 直训扩评测**。**WAITING: 0** |
-| WAITING | 1 |
+| PHASE | 🟢 **波形 RL CPU 阶段2 推进中**：v3(GRPO 40step/gs8/period-only)运行中step30/40·**v4(RFT)并行启动**(换方向:GRPO→Rejection Sampling FT,无group baseline/稳定CE梯度)·数据集调研完成(HF+GitHub+arXiv三源无图像波形VQA集)·技术栈三步冒烟交付(LLaMA-Factory+KTransformers不可行,peft直训退路验证)·Qwen3.5-2B(1.88B)+LoRA 69.7M。**WAITING: 0** |
+| WAITING | 0 |
 | 已完成 | advantage方差诊断(wake#838,判定PARTIAL) · 阶段1 SFT验收PASS(wake#802) · 阶段1 SFT CPU训练完成step3000(wake#802) · CPU端到端训练循环验证7/7 PASS(wake#741) · 数据泄漏验证+阶段1就绪报告HTML(wake#731) · 全管线就绪审计(wake#714) · GRPO链式启动器修复+启动(wake#626) · GRPO CPU冒烟测试PASS(wake#622) · 2B文本骨干提取1.72B(wake#620) · 数据集均衡化9013条(wake#618) · WaveQA-RL oracle 300题(wake#614) · 波形RL阶段0 YELLOW(wake#609) · 论文改稿(wake#437~#442) · 波形RL计划书(wake#435) · OCR合成10M(wake#275) · ArmE-R2/ArmD-R2 全链路 |
-| 当前动作 | **wake#853 完成 ③ 技术栈三步冒烟**：①数据集调研(HF无波形VQA集,wake#852)②连续奖励v2实验(C11.1%>B6.7%>D4.4%,不显著)③LLaMA-Factory 0.9.3强制tf4.52.4与Qwen3.5(qwen3_5)互斥→KeyError;KTransformers(CPU+dense)不适用;退路transformers5.20.2+peft直训Qwen3.5-2B成功(1.88B/loss2.86→2.83)。报告§五已更新。 |
-| 下一步 | ①切换Qwen3.5-2B多模态(可吃波形图)+peft直训重做SFT/GRPO(替代text-only工具交互)②扩评测n_eval=40/task×3run提统计功效③GRPO步数15→50~100④课程学习(type→freq→period)。下轮wake检查loop/GPU状态+有无新令+继续Qwen3.5多模态路径。 |
+| 当前动作 | **wake#862 v3+v4并行运行**：v3(GRPO)PID2165712 step30/40 avgR=0.398(高方差)·v4(RFT)PID3750214 Phase1 B(SFT eval)进行中。修复v4 NameError bug(添加v3常量导入)。v4=Rejection Sampling FT:collect 240 rollouts→filter reward>0.3→CE-SFT train C+D→eval→McNemar/bootstrap。 |
+| 下一步 | ①下唤醒检查v3完成→生成v3最终报告+统计检验+commit ②检查v4完成→生成v4报告+统计+v1→v4方法对比 ③更新HTML报告(report_vision_cpu_rl_waveform_zh.html) ④若v4也不显著→考虑课程学习/多目标/更大collect规模 |
 | 阻塞 | .12+.29 GPU全占（8×H100 96-100% util / ~75GB，pretrain baize2b ETA≈12/24-25）→ 阶段2 GRPO需GPU（GRPO chain PID1365749自带GPU-wait,释放后自动起训）·.17+.75 SSH不可达 |
-| 更新 | **2026-11-07 11:3x (wake #853)**: 执行11-07用户令(阶段2放行+CPU-RL)·完成③技术栈三步冒烟(LLaMA-Factory+KTransformers不可行/peft直训退路验证通过)·Qwen3.5-2B多模态VLM下载完整+CPU单步loss下降验证·报告§五更新·v2实验C>B>D不显著(诚实)·体积TASK34.2KB(>32KB按令暂不归档)/MEMORY≈27KB✓·WAITING=0 |
+| 更新 | **2026-11-07 14:5x (wake #862)**: v3+v4并行启动·v4 RFT换方向(GRPO信号弱)·v4 bug修复(NameError)·EXPERIMENTS§22更新·体积TASK35.0KB(>32KB按令暂不归档)/MEMORY≈29KB✓·WAITING=0 |
