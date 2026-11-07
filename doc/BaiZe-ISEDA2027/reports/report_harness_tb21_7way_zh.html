@@ -25,7 +25,7 @@ pre{background:#2c3e50;color:#ecf0f1;padding:15px;border-radius:5px;overflow-x:a
 <div class="info">
 <p><strong>基准口径声明</strong>：本报告数据为 <strong>TB-2.1 / 89 题 / 7-way concurrent</strong>。
 TB-2.1 与 TB4 <strong>题集不同、不可跨基准比较</strong>。</p>
-<p><strong>模型</strong>：glm-5.3-flash（网关 <code>http://agi-gateway.cxmt.com/v1</code>）｜<strong>生成时间</strong>：2026-11-07 23:58（R1811）</p>
+<p><strong>模型</strong>：glm-5.3-flash（网关 <code>http://agi-gateway.cxmt.com/v1</code>）｜<strong>生成时间</strong>：2026-11-08 00:10（R1812）</p>
 </div>
 
 <div class="critical">
@@ -106,7 +106,7 @@ TB-2.1 cline 路 <strong>7 题 passed</strong>（≥1 题 × ≥1 路 reward 非
 <h3>3.1 网关 429 quota 耗尽（基础设施问题）</h3>
 <div class="critical">
 <p><strong>现象</strong>：glm-5.3-flash 网关 keyB 在评测期间多次返回 HTTP 429「本次 Token 额度已用完」。</p>
-<p><strong>影响</strong>：TB-2.1 cline 路 89/89 完成（7 passed）；codex 路 17/89 全部因 429 失败已终止；hermes 路 22/89 已完成（0 passed，9 errored）；后续 4 路未启动（网关 429 阻塞，ETA ~29min≈00:26）。</p>
+<p><strong>影响</strong>：TB-2.1 cline 路 89/89 完成（7 passed）；codex 路 17/89 全部因 429 失败已终止；hermes 路 32/89 已完成（0 passed，12 errored）；后续 4 路未启动（网关 429 阻塞，ETA ~19min≈00:26）。</p>
 <p><strong>归因红线</strong>：网关额度耗尽 / 429 <strong>不得</strong>写成「模型能力」结论。</p>
 </div>
 <h3>3.2 cline 路 81 题失败归因</h3>
@@ -136,7 +136,7 @@ hermes agent 需在任务容器内 <code>pip install hermes-agent</code>，但�
 <tr><th>维度</th><th>TB4（4.0）</th><th>TB-2.1（2.1）</th></tr>
 <tr><td>题集</td><td>66 题</td><td>89 题</td></tr>
 <tr><td>TB4 结果</td><td>66×7=462 trials，0 passed</td><td>—</td></tr>
-<tr><td>TB-2.1 结果</td><td>—</td><td>cline 7/89 passed (7.9%) · codex 0/17 (429终止) · hermes 0/22 (运行中) · 4路未开始</td></tr>
+<tr><td>TB-2.1 结果</td><td>—</td><td>cline 7/89 passed (7.9%) · codex 0/17 (429终止) · hermes 0/32 (运行中) · 4路未开始</td></tr>
 <tr><td>可比性</td><td colspan="2"><strong>🚫 不可比</strong> — 题集不同，禁止并列对比</td></tr>
 </table>
 <p><strong>TB4 全 0 passed 根因</strong>：经 R1743 诊断，verifier 正常运行（reward=0 非 None），全 0 为<strong>模型能力问题</strong>，非 verifier infra。</p>
@@ -169,7 +169,7 @@ done | sort</code></pre>
 
 <hr>
 <p style="text-align:center;color:#7f8c8d;font-size:0.9em">
-BaiZe Harness 研究线 · R1811 · 2026-11-07 23:58<br>
+BaiZe Harness 研究线 · R1812 · 2026-11-08 00:10<br>
 TB-2.1 / 89 题 / 7-way concurrent · glm-5.3-flash · 报告正文一律写 cline
 </p>
 </body></html>

@@ -20,8 +20,8 @@ pre{background:#2c3e50;color:#ecf0f1;padding:15px;border-radius:5px;overflow-x:a
 <div class="info">
 <p><strong>模型</strong>：glm-5.3-flash（网关 <code>http://agi-gateway.cxmt.com/v1</code>）</p>
 <p><strong>7 路</strong>：cline / codex / opencode / claude-code / pi / hermes / deepseek</p>
-<p><strong>生成时间</strong>：2026-11-07 23:58（R1811）</p>
-<p><strong>状态</strong>：<span class="warn">⚠️ 中间报告</span> — SWE-bench eval 6/7 完成（deepseek eval 运行中）；TB-2.1 cline 89/89完成(7pass) + codex 已终止(429) + hermes 运行中(22/89，9 errored=python3缺失)</p>
+<p><strong>生成时间</strong>：2026-11-08 00:10（R1812）</p>
+<p><strong>状态</strong>：<span class="warn">⚠️ 中间报告</span> — SWE-bench eval <strong>7/7 全部完成</strong>（deepseek eval 已完成：33/40=82.5%）；TB-2.1 cline 89/89完成(7pass) + codex 已终止(429) + hermes 运行中(32/89，12 errored) + 4路待启动(网关429)
 </div>
 
 <div class="critical">
@@ -73,7 +73,7 @@ pre{background:#2c3e50;color:#ecf0f1;padding:15px;border-radius:5px;overflow-x:a
 <tr><td>claude-code</td><td>273/500 (54.6%)</td><td>27/36 (75.0%)</td><td></td></tr>
 <tr><td>pi</td><td>333/500 (66.6%)</td><td>26/34 (76.5%)</td><td></td></tr>
 <tr><td>hermes</td><td>184/500 (36.8%)</td><td>124/131 (94.7%)</td><td>⚠️ interim（N&lt;500）</td></tr>
-<tr><td>deepseek-harness</td><td>—/500 (—)</td><td>—/40 (运行中)</td><td>⚠️ interim</td></tr>
+<tr><td>deepseek-harness</td><td>—/500 (—)</td><td>33/40 (82.5%)</td><td>⚠️ interim</td></tr>
 </table>
 <div class="note"><p><strong>⚠️ 不可直接比较</strong>：glm-5.3-flash eval 尚未完成全量，待全量完成后方可做同口径对比。</p></div>
 
@@ -118,7 +118,7 @@ pre{background:#2c3e50;color:#ecf0f1;padding:15px;border-radius:5px;overflow-x:a
 
 <h2>7. 后续计划</h2>
 <div class="info"><ol>
-<li>SWE-bench：hermes eval 完成 → deepseek eval → 全 7 路 eval 完成后出最终矩阵</li>
+<li>SWE-bench：✅ 全 7 路 eval 已完成（deepseek 33/40=82.5% 为最后一路）；predict 继续推进至 500 题/路</li>
 <li>SWE-bench predict：网关恢复后继续推进至 500 题/路</li>
 <li>TB-2.1：sequential launcher 继续 6 路剩余</li>
 <li>报告更新：每路完成后增量更新</li>
@@ -126,7 +126,7 @@ pre{background:#2c3e50;color:#ecf0f1;padding:15px;border-radius:5px;overflow-x:a
 
 <hr>
 <p style="text-align:center;color:#7f8c8d;font-size:0.9em">
-BaiZe Harness · R1811 · 2026-11-07 23:58<br>
+BaiZe Harness · R1812 · 2026-11-08 00:10<br>
 glm-5.3-flash · SWE-bench Verified 500 + TB-2.1 89 · 7-way · 报告正文一律写 cline
 </p>
 </body></html>
