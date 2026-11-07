@@ -4591,3 +4591,92 @@ fi
 - `reports/report_posttrain_r37_sandbox_connectivity_zh.html`（HTML 报告，6.5KB）
 - EXPERIMENTS §R37（本节，8 小节）
 
+
+---
+
+## §R38 11/9 GPU Day-1 执行手册与发射前一致性审计（2026-11-08 · 零 GPU）
+
+> R38 是 GPU 到位前最后一轮预研：将 R1-R37 的全部研究成果整合为可执行的 Day-1 操作手册，
+> 并对所有脚本/配置做一致性审计，确保 11/9 GPU 释放后能零摩擦起跑。
+
+### R38.1 发射前一致性审计（13 项全 PASS）
+
+审计工具：`bash baize_posttrain_day1_runbook.sh --audit`，审计时间 2026-11-08 07:32。
+
+| # | 审计项 | 期望 | 实测 | 依据 | 结果 |
+|:--|:--|:--|:--|:--|:--|
+| 1 | auto_fallback | true | true | R22: 沙箱不可达时自动回退R0 | ✅ PASS |
+| 2 | attn_implementation | flash_attention_2 | flash_attention_2 | R35: flash_attn 2.7.4.post1已编译 | ✅ PASS |
+| 3 | rollout.name | sglang | sglang | R9: MiniCPM5 XML工具调用需SGLang | ✅ PASS |
+| 4 | multi_turn | True | True | R9: 多轮工具调用必需 | ✅ PASS |
+| 5 | 监控脚本 | 存在 | 存在 | R36: 7种发散检测P1-P7 | ✅ PASS |
+| 6 | 奖励对抗测试 | 存在 | 存在 | R35: 29项对抗测试全PASS | ✅ PASS |
+| 7 | 沙箱客户端 | 存在 | 存在 | R37: 三层回退(HTTP/SSH/R0) | ✅ PASS |
+| 8 | RL parquet | 存在 | 944K(3347条) | R10: verl RLHF格式 | ✅ PASS |
+| 9 | SFT v2 JSONL | 存在 | 21M | R24: 19524对,0污染 | ✅ PASS |
+| 10 | EDA tools YAML | 存在 | 存在 | R15: OpenAI Function格式 | ✅ PASS |
+| 11 | MiniCPM5-2B | 存在 | 4.7G /tmp/models/ | 本机已下载 | ✅ PASS |
+| 12 | cu124 venv | 存在 | 存在 | R25/R34: torch2.6.0+cu124 | ✅ PASS |
+| 13 | flash_attn | 可导入 | 可导入 | R34/R35: 后台编译完成 | ✅ PASS |
+
+**结论**：13/13 PASS, 0 FAIL, 0 WARN。所有脚本/配置/数据/模型/环境均就绪。启动脚本Step 5/6的`--reward-arm R2`配合config的`auto_fallback: true`在沙箱不可达时会自动切换到R0（R22机制），无需修改启动脚本。
+
+### R38.2 就绪度快照（2026-11-08 07:31）
+
+| 项目 | 状态 | 详情 |
+|:--|:--|:--|
+| GPU | ⏳ 等待 11/9 | 8/8 A40 忙（SGLang Qwen3.8-27B 占用），明天释放4张 |
+| 模型 | ✅ | MiniCPM5-2B 4.7G /tmp/models/ |
+| 环境 | ✅ | cu124 venv: torch2.6.0+cu124, sglang/verl/ray/flash_attn全装 |
+| RL数据 | ✅ | rl_pyaether_synth_v2.parquet 944K (3347条) |
+| SFT数据 | ✅ | sft_pyaether_corpus_v2.jsonl 21M (19524对) |
+| API数据库 | ✅ | API_INFO_MERGED_V3.json 18MB (8463 API) |
+| 158题 | ✅ | EDA-Eval-PyAether-v20260311.jsonl |
+| 沙箱 | ⚠️ | ICMP可达但TCP 8664-8669被过滤 → R0自动回退 |
+| 存储 | ✅ | 386G可用(84%) |
+| 监控 | ✅ | baize_posttrain_rl_monitor.py (P1-P7) |
+
+### R38.3 Day-1 时间线（T=0 = GPU释放）
+
+| 时刻 | 任务 | 命令 | 预计时长 |
+|:--|:--|:--|:--|
+| T+0:00 | GPU释放验证 | nvidia-smi | 5min |
+| T+0:15 | 环境验证 | baize_posttrain_setup_cu124_venv.sh --yes | 15-30min |
+| T+0:45 | 预检 | baize_posttrain_preflight_check.sh | 5min |
+| T+1:00 | SGLang+基线评测(快速) | baize_posttrain_minicpm5_diag.sh --quick | 20-30min |
+| T+1:30 | D1-D6快速提取 | --extract-only from quick results | 10min |
+| T+1:40 | 基线评测(全量,后台) | baize_posttrain_minicpm5_diag.sh --full | 15-25h |
+| T+4:00 | 轨迹提取(第一批) | baize_posttrain_minicpm5_diag.sh --extract-only | 15min |
+| T+4:30 | 污染闸门 | baize_posttrain_contamination_gate.sh | 5min |
+| T+5:00 | RL冒烟测试 | baize_posttrain_rl_grpo.sh --smoke --reward-arm R0 | 20-40min |
+| T+6:00 | 全量RL训练 | baize_posttrain_rl_grpo.sh --reward-arm R0 | 11-15天(首日验证50迭) |
+| T+8:00 | Day-1检查点 | 审查基线进度+RL前50迭 | 15min |
+| T+24:00 | Day-1结束 | 提交结果到EXPERIMENTS | 30min |
+
+### R38.4 关键决策树（5种场景）
+
+1. **GPU未释放**: 轮询15min→T+2:00仍未释放→上报运维(不杀进程)
+2. **SGLang启动失败**: 换端口→降mem-fraction→回退vLLM(单轮)
+3. **RL冒烟全零奖励**: 验证R0(std=0.3718)→检查parquet→检查compute_score
+4. **RL OOM**: 减micro_batch(4→2)→减mem_util(0.35→0.25)→减max_resp(4096→2048)
+5. **监控告警(P1-P7)**: 按R36恢复程序处理(KL→减lr, reward→换arm, NaN→重启)
+
+### R38.5 Day-1 成功标准
+
+- ✅ 基线36%复测启动（至少2-3轮完成）
+- ✅ RL训练稳定跑50迭（reward非全零/KL<10/entropy>0.1/cheat rate<5%）
+- ✅ D1-D6实测数据落盘（替换R4假设）
+- ✅ 污染闸门PASS（红线§5.1）
+- ✅ 所有结果commit到EXPERIMENTS_POSTTRAIN.md
+
+**不期望**: Pass@1提升（替身预演不迁移到白泽）。
+
+### R38.6 交付物
+
+- `baize_posttrain_day1_runbook.sh`（254行，--audit/--check/--timeline三模式，bash -n✅，--audit 13/13 PASS✅）
+- `reports/report_posttrain_r38_day1_runbook_zh.html`（14.3KB，10节，0 script，0外链，自包含）
+- EXPERIMENTS §R38（本节，6小节）
+
+### R38.7 R1-R37 → Day-1 对应关系
+
+R1-R4→基线评测+D1-D6; R8-R9→SGLang; R10→Parquet; R11→显存; R12→启动脚本; R13-R14→奖励函数; R15→EDA工具; R18-R21→RL超参; R22→R0回退; R25/R34→CUDA/venv; R33→排程; R35→对抗测试+flash_attn; R36→监控; R37→沙箱回退。全部37轮成果已整合到Day-1执行手册。
