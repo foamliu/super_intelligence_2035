@@ -2107,3 +2107,64 @@ compute_score(data_source, solution_str, ground_truth, extra_info, arm=R2)
 **结论**：4 臂奖励函数已实现并自测通过，verl YAML 配置已更新。11/9 GPU 到位后，
 沙盒 SSH 连通 + cu124 venv 安装即可形成完整的 RL 训练闭环。
 
+
+## §R14 11/9 Launch End-to-End Dry-Run Audit + Critical Bug Remediation (2026-11-07 wake62)
+
+> **目的**：R1-R13 完成了调研和脚本骨架，但从未做过**端到端 dry-run 验证**。
+> R14 运行 `baize_posttrain_launch_11_9.sh --dry-run` + `baize_posttrain_preflight_check.sh`，
+> 发现并修复 **4 个 critical bug**（若不修，11/9 自动启动会卡死或报错）。
+
+### R14.1 发现的 Critical Bug（4 个）
+
+| # | 文件 | Bug | 影响 | 修复 |
+|:--|:--|:--|:--|:--|
+| B1 | `baize_posttrain_setup_cu124_venv.sh` L36 | `python3.10 -m venv` — python3.10 **不在 PATH**（.17 只有 python3.8） | Step 0 venv 创建**立即失败** | R14: 自动检测 Python ≥3.10（miniforge3 py310 → eda_fastmcp .venv → system） |
+| B2 | `baize_posttrain_setup_cu124_venv.sh` L24-25 | `read -r ans` 交互式提示 — 在 launch 脚本自动调用时**永久挂起** | 11/9 启动**卡死无输出** | R14: 新增 `--yes` flag 跳过交互；launch 脚本传 `--yes` |
+| B3 | `baize_posttrain_paths.sh` L23 | `.29/.12` 检测条件用 `BaiZe-ISEDA2027` 而非 `super_intelligence_2035` → 在 .29/.12 上误选 `/nas_data` | 跨节点脚本路径错误（.17 不受影响） | R14: 改为 `super_intelligence_2035` |
+| B4 | `baize_posttrain_launch_11_9.sh` L94 | 调用 setup 脚本**未传 `--yes`** | 与 B2 叠加 → 自动启动卡死 | R14: 加 `--yes` |
+
+### R14.2 修复详情
+
+**B1: Python 自动检测**：.17 仅有 `python3.8`。miniforge3 py310 在 `/nas_data/app.e0031982/miniforge3/envs/py310/bin/python3.10`（3.10.22）；`~/code/eda_fastmcp/.venv/bin/python` 为 3.13.14。修复：脚本顶部添加 Python ≥3.10 自动检测循环，用 `$PYTHON_BIN -m venv` 替代硬编码 `python3.10`。
+
+**B2: 非交互模式**：新增 `--yes`/`-y` flag，venv 已存在时自动删除重建。`baize_posttrain_launch_11_9.sh` Step 0 传 `--yes`。
+
+**B3: 路径检测修正**：`BaiZe-ISEDA2027` → `super_intelligence_2035`（实际 NFS 仓库根路径）。
+
+### R14.3 全量验证结果
+
+**Bash 语法**（11 脚本）：全 OK。**Python AST**（6 脚本，python3.8）：全 OK。
+**YAML**（2 文件）：RL config 8 keys / EDA tools 1 key，均解析通过。
+
+**Preflight Check**：PASS=21, FAIL=1（cu124 venv 待 11/9 创建）, WARN=2（GPU 全忙+SSH .15 未通）。
+
+**Launch Dry-Run**：Step 0-6 全打印正确，`--yes` flag 正确传递，Model/EDA Base 均 exists。
+
+**Reward 自测**：full_pass R1=1.00/R2=1.00/R3=0.95/R4=0.95；partial_pass R1=0.00/R2=0.40/R3=0.35/R4=0.35；exec_fail 全 0。✅
+
+**数据文件**：RL parquet 932K / SFT parquet 2.8M / RL JSONL 5.4M / SFT JSONL 18M — 全 ✅。
+
+**EDA 资产**：158-case ✅ / driver ✅ / run_eval.py ✅ / trace_reader.py ✅ / API KB ✅ / extract script ✅ / model ✅。
+
+### R14.4 11/9 启动就绪最终评估
+
+| 检查项 | 状态 | 备注 |
+|:--|:--|:--|
+| 脚本语法 | ✅ 全通过 | 11 bash + 6 python + 2 YAML |
+| 路径自动检测 | ✅ R14 修正 | .17 `/nas_data`，.29/.12 `/nas_train` |
+| Python ≥3.10 | ✅ R14 新增 | miniforge3 py310 (3.10.22) |
+| 非交互模式 | ✅ R14 新增 | `--yes` flag |
+| cu124 venv | ⬜ 待 11/9 | Step 0 自动创建 |
+| GPU 4×A40 | ⬜ 待 11/9 | 当前 8 卡被 Qwen3.8-27B 占用 |
+| SSH .15 沙盒 | ⬜ 待配置 | L3 隧道（不阻塞 smoke test） |
+| 数据/模型/EDA 资产 | ✅ 全就绪 | RL 3347题 + SFT 19610对 + MiniCPM5-2B |
+| 奖励函数 | ✅ 就绪 | 4 臂 R1-R4 自测通过 |
+| verl YAML | ✅ 就绪 | reward 节指向自定义函数 |
+| Master 编排 | ✅ 就绪 | 7步 + dry-run + --step + --quick |
+
+**结论**：修复 4 个 critical bug 后，11/9 执行 `bash baize_posttrain_launch_11_9.sh --step 0-5` 即可自动完成全链路。SSH .15 仅影响多轮沙盒，不阻塞 smoke test 单轮模式。
+
+### R14.5 脚本规模
+
+19 个文件（11 bash + 6 python + 2 YAML），合计 2,791 行代码。全量 `bash -n` / AST / YAML 验证通过。
+

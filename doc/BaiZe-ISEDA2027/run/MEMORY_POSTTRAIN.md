@@ -7,12 +7,12 @@ WAITING: 1
 
 ## 进度快照
 
-- PHASE: posttrain-wake61（2026-11-07 R13 verl自定义奖励函数实现完成，4臂R1-R4可运行代码+自测通过）
-- 已完成: P3预备✅ 7脚本；P0✅ D1–D6；P1✅ 数据盘点+PyAether语料+污染隔离；P2✅ 方案书；wake45✅ §替身RL预演；wake48✅ R1+R3；wake49✅ R4；wake50✅ R2；wake51✅ E1(3347题)；wake52✅ R5(verl+GRPO)；wake53✅ R6(SFT)+R7(verl环境+CUDA发现)；wake55✅ 11/9启动脚本；wake56✅ R8(模型架构+Tokenizer+SGLang发现)；wake57✅ R9(verl+SGLang集成+EDA工具骨架)；wake58✅ R10(verl数据格式+Parquet转换)；wake59✅ R11(GRPO内存预算+超参校准)；wake60✅ R12(启动就绪审计+GRPO超参对账+master编排脚本)；wake61✅ R13(verl自定义奖励函数4臂实现+自测+YAML配置更新)
-- 当前动作: wake61 唤醒→体积自检(TASK=24.7KB/MEMORY=16.9KB合规)→git同步(已同步)→R13: web调研verl reward function架构(load_reward_manager/compute_reward/AbstractRewardManager+custom_reward_function接口)→实现baize_posttrain_reward_functions.py(301行,4臂R1-R4,py_compile✅,自测5用例×4臂全通过)→更新verl YAML(custom_reward_function.path+.name+.reward_kwargs)→YAML解析✅→EXPERIMENTS §R13(7小节)+HTML报告(report_posttrain_r13_reward_functions_zh.html)
-- 下一步: R1-R13+E1全部完成→ WAITING=1；11/9 GPU到位后自动起跑: bash baize_posttrain_launch_11_9.sh --step 0-6
+- PHASE: posttrain-wake62（2026-11-07 R14 端到端dry-run审计+4个critical bug修复）
+- 已完成: P3预备✅ 7脚本；P0✅ D1–D6；P1✅ 数据盘点+PyAether语料+污染隔离；P2✅ 方案书；wake45✅ §替身RL预演；wake48✅ R1+R3；wake49✅ R4；wake50✅ R2；wake51✅ E1(3347题)；wake52✅ R5(verl+GRPO)；wake53✅ R6(SFT)+R7(verl环境+CUDA发现)；wake55✅ 11/9启动脚本；wake56✅ R8(模型架构+Tokenizer+SGLang发现)；wake57✅ R9(verl+SGLang集成+EDA工具骨架)；wake58✅ R10(verl数据格式+Parquet转换)；wake59✅ R11(GRPO内存预算+超参校准)；wake60✅ R12(启动就绪审计+GRPO超参对账+master编排脚本)；wake61✅ R13(verl自定义奖励函数4臂实现+自测+YAML配置更新)；wake62✅ R14(端到端dry-run审计+4个critical bug修复:python3.10不在PATH→自动检测/交互read挂起→--yes flag/paths.sh路径错误/launch缺--yes)
+- 当前动作: wake62 唤醒→体积自检(TASK=24.7KB/MEMORY=18.9KB合规)→R14: 运行launch --dry-run+preflight check→发现4个critical bug→修复setup_cu124_venv.sh(python自动检测+--yes flag)+paths.sh(路径修正)+launch_11_9.sh(传--yes)→全量验证(11 bash+6 python+2 YAML全通过,preflight PASS=21/FAIL=1/WARN=2,reward自测4臂通过)→EXPERIMENTS §R14(5小节)+HTML报告(report_posttrain_r14_launch_audit_zh.html 5.3KB)
+- 下一步: R1-R14+E1全部完成→ WAITING=1；11/9 GPU到位后自动起跑: bash baize_posttrain_launch_11_9.sh --step 0-5
 - 阻塞: GPU 2026-11-09既定到位(不再问)；L3等隧道；P3等pretrain ckpt(ETA≈2026-12-25)
-- 未完成指令: 无（R1✅...R13✅E1✅ 全部完成）⇒ WAITING=1
+- 未完成指令: 无（R1✅...R14✅E1✅ 全部完成）⇒ WAITING=1
 
 ## 关键事实（常驻）
 
@@ -70,4 +70,6 @@ WAITING: 1
 [wake60] R12 启动就绪审计+GRPO超参对账: 修复6类critical脚本缺陷(/nas_train空目录→baize_posttrain_paths.sh路径自动检测,RL脚本占位→verl入口,诊断脚本vLLM→SGLang+minicpm5,预飞行检查更新,SFT/anneal/eval路径修复,YAML save_dir修复)→创建baize_posttrain_launch_11_9.sh(7步master编排)→DeepSeek-R1 Nature论文GRPO超参对账(lr/KL/clip/G/epochs全部对齐)→14文件全量语法验证通过→EXPERIMENTS §R12(9小节)+HTML报告6.5KB。📦 体积：TASK=24.7KB / MEMORY≈16KB。本轮新增调研产出：§R12 启动就绪审计+6类脚本缺陷修复+GRPO超参对账+master编排脚本+HTML报告。
 
 [wake61] R13 verl自定义奖励函数实现: 体积自检(TASK=24.7KB/MEMORY=16.9KB合规)→git同步(已同步,main=origin/main)→R13: web调研verl reward function架构(ARCHITECTURE_MAP/Leeroopedia/DeepWiki)→确认接口compute_score(data_source,solution_str,ground_truth,extra_info,**kwargs)→float+YAML配置custom_reward_function.path/.name/.reward_kwargs→multi-turn interaction+sandbox集成路径(BaseInteraction+Sandbox Fusion)→GSM8K toolcall shaping示例参考→实现baize_posttrain_reward_functions.py(301行,4臂R1-R4:R1二值/R2部分分/R3工具惩罚/R4 API合法性,API DB lazy-load 16926 API,工具调用XML+Python双格式提取,clamp[0,1.1])→py_compile✅→自测5用例×4臂全通过(full_pass R1=1.02/R2=1.02/R3=1.02/R4=0.97检测unknown API;partial_pass R1=0.00/R2=0.42验证R1太稀疏R2可学习)→更新verl YAML(reward节:删除概念partial_credit→新增custom_reward_function指向reward_functions.py)→YAML解析✅→EXPERIMENTS §R13(7小节)+HTML报告(report_posttrain_r13_reward_functions_zh.html)。📦 体积：TASK=24.7KB / MEMORY≈18KB（均≤32KB合规）。本轮新增调研产出：§R13 verl奖励函数架构调研+4臂reward function可运行代码(301行)+自测5用例×4臂+verl YAML配置更新+HTML报告。未完成指令：无（R1✅...R13✅E1✅）⇒ WAITING=1。
+
+[wake62] R14 端到端dry-run审计+4个critical bug修复: 体积自检(TASK=24.7KB/MEMORY=18.9KB合规)→R14: 运行baize_posttrain_launch_11_9.sh --dry-run(Step 0-6全打印正确)→运行preflight_check.sh(PASS=21/FAIL=1 cu124 venv待创建/WARN=2 GPU全忙+SSH .15未通)→检查python3.10(不在PATH,.17仅python3.8)→发现4个critical bug: B1 setup_cu124_venv.sh用python3.10不在PATH→修复为自动检测Python≥3.10(miniforge3 py310 3.10.22) / B2 setup_cu124_venv.sh交互read挂起→新增--yes flag / B3 paths.sh检测条件BaiZe-ISEDA2027→super_intelligence_2035 / B4 launch_11_9.sh未传--yes→已加→全量验证:11 bash bash -n全OK+6 python AST全OK+2 YAML解析OK+reward自测4臂全正确(full_pass R1=1.00/R2=1.00/R3=0.95/R4=0.95;partial_pass R1=0/R2=0.40)→数据文件全在(RL parquet 932K/SFT parquet 2.8M)→EDA资产全可达(158-case+driver+eval+API KB+model)→19文件2791行全通过→EXPERIMENTS §R14(5小节)+HTML报告(report_posttrain_r14_launch_audit_zh.html 5.3KB)。📦 体积：TASK=24.7KB / MEMORY≈19KB（均≤32KB合规）。本轮新增调研产出：§R14 端到端dry-run审计+4个critical bug修复(python自动检测+--yes flag+路径修正)+全量验证(19文件)+HTML报告。未完成指令：无（R1✅...R14✅E1✅）⇒ WAITING=1。
 

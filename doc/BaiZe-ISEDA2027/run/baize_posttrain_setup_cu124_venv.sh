@@ -1,12 +1,54 @@
 #!/bin/bash
 set -euo pipefail
 
-echo "=== BaiZe Post-Train CUDA 12.4 venv 自动配置脚本 ==="
+# === R14 FIX (2026-11-07): Non-interactive mode + Python auto-detection ===
+#   --yes : Skip interactive prompts (auto-recreate venv if exists)
+#   python3.10 is NOT in PATH on .17; auto-detect from miniforge3/eda_fastmcp .venv
+
+FORCE_YES=0
+while [ $# -gt 0 ]; do
+    case "$1" in
+        --yes|-y) FORCE_YES=1 ;;
+        *) echo "Unknown arg: $1" ;;
+    esac
+    shift
+done
+
+echo "=== BaiZe Post-Train CUDA 12.4 venv 自动配置脚本 (R14 fixed) ==="
 echo "运行时间: $(date)"
+echo "Non-interactive: $([ $FORCE_YES = 1 ] && echo 'YES' || echo 'NO')"
 echo ""
 
 VENV_PATH="$HOME/code/verl_cu124_venv"
 echo "目标venv路径: $VENV_PATH"
+echo ""
+
+# 0. Auto-detect Python >= 3.10 (python3.10 not in PATH on .17)
+echo "🔍 检测可用的 Python >= 3.10..."
+PYTHON_BIN=""
+for candidate in \
+    "/nas_data/app.e0031982/miniforge3/envs/py310/bin/python3.10" \
+    "$HOME/miniforge3/envs/py310/bin/python3.10" \
+    "$HOME/code/eda_fastmcp/.venv/bin/python" \
+    "$(command -v python3.10 2>/dev/null)" \
+    "$(command -v python3.11 2>/dev/null)" \
+    "$(command -v python3.12 2>/dev/null)"; do
+    if [ -n "$candidate" ] && [ -x "$candidate" ]; then
+        PY_VER=$("$candidate" --version 2>&1 | awk '{print $2}')
+        PY_MAJOR=$(echo "$PY_VER" | cut -d. -f1)
+        PY_MINOR=$(echo "$PY_VER" | cut -d. -f2)
+        if [ "$PY_MAJOR" -ge 3 ] 2>/dev/null && [ "$PY_MINOR" -ge 10 ] 2>/dev/null; then
+            PYTHON_BIN="$candidate"
+            echo "✅ 找到 Python $PY_VER: $candidate"
+            break
+        fi
+    fi
+done
+if [ -z "$PYTHON_BIN" ]; then
+    echo "❌ 未找到 Python >= 3.10。请先安装："
+    echo "   conda create -n py310 python=3.10  或  apt install python3.10"
+    exit 1
+fi
 echo ""
 
 # 1. 检查系统CUDA版本
@@ -19,21 +61,26 @@ fi
 echo "✅ 系统CUDA版本 $CUDA_VERSION 符合要求"
 echo ""
 
-# 2. 创建venv
+# 2. 创建venv (R14: non-interactive)
 if [ -d "$VENV_PATH" ]; then
-    echo "⚠️  venv已存在，是否删除重建？(y/N)"
-    read -r ans
-    if [[ "$ans" == "y" || "$ans" == "Y" ]]; then
-        echo "🗑️ 删除旧venv..."
+    if [ $FORCE_YES = 1 ]; then
+        echo "🗑️ --yes 模式：自动删除旧 venv..."
         rm -rf "$VENV_PATH"
     else
-        echo "✅ 保留现有venv，更新依赖..."
+        echo "⚠️  venv已存在，是否删除重建？(y/N)"
+        read -r ans
+        if [[ "$ans" == "y" || "$ans" == "Y" ]]; then
+            echo "🗑️ 删除旧venv..."
+            rm -rf "$VENV_PATH"
+        else
+            echo "✅ 保留现有venv，更新依赖..."
+        fi
     fi
 fi
 
 if [ ! -d "$VENV_PATH" ]; then
-    echo "🐍 创建Python venv..."
-    python3.10 -m venv "$VENV_PATH"
+    echo "🐍 使用 $PYTHON_BIN 创建 venv..."
+    "$PYTHON_BIN" -m venv "$VENV_PATH"
 fi
 
 # 3. 激活venv

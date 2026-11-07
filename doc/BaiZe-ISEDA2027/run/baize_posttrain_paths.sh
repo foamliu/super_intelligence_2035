@@ -20,7 +20,7 @@
 #   BAIZE_EDA_BASE    — eda_fastmcp local clone
 
 # === Auto-detect NFS root ===
-if [ -d "/nas_data/app.e0031982/code/super_intelligence_2035" ] && [ ! -d "/nas_train/app.e0031982/code/BaiZe-ISEDA2027" ]; then
+if [ -d "/nas_data/app.e0031982/code/super_intelligence_2035" ] && [ ! -d "/nas_train/app.e0031982/code/super_intelligence_2035" ]; then
     # .17 node: /nas_data is the real NFS mount
     export NAS_ROOT=/nas_data
 elif [ -d "/nas_train/app.e0031982/code/super_intelligence_2035" ]; then

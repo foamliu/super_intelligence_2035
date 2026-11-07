@@ -91,7 +91,7 @@ DIAG_FLAGS="--full"
 # === STEP 0: Setup cu124 venv ===
 if [ $STEP_START -le 0 ] && [ $STEP_END -ge 0 ]; then
   run_step 0 "Setup CUDA 12.4 venv (torch+sglang+verl)" \
-    "bash '$SCRIPT_DIR/baize_posttrain_setup_cu124_venv.sh'" || exit $?
+    "bash '$SCRIPT_DIR/baize_posttrain_setup_cu124_venv.sh' --yes" || exit $?
 fi
 
 # === STEP 1: Preflight check ===
