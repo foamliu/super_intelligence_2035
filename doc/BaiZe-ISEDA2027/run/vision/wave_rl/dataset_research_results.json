@@ -1,14 +1,24 @@
 {
   "research_date": "2026-11-07",
-  "wake": "#855",
-  "search_scope": "HuggingFace datasets API (via proxy http://172.19.92.25:13128)",
-  "search_queries": [
-    "waveform", "chartqa", "plotqa", "figureqa", "chart+question+answering",
-    "oscilloscope", "signal+classification", "time+series+classification",
-    "eda+circuit", "electronic+circuit", "spice+simulation", "circuit+simulation",
-    "electrical+engineering", "chart+understanding"
+  "wake": "#855 (HF-only) → #860 (expanded: HF API + GitHub API + arXiv API, all via proxy http://172.19.92.25:13128)",
+  "search_scope": "HuggingFace datasets API + GitHub search API + arXiv export API (3 sources, all via proxy)",
+  "search_queries_hf": [
+    "waveform", "oscilloscope", "signal+classification", "chart+question+answering",
+    "rtl+waveform", "vcd", "chartbench", "charthy", "chartx", "plotqa", "figureqa",
+    "chartllm", "chart+vqa", "figure+understanding", "chart+reasoning"
   ],
-  "key_finding": "NO waveform-specific VQA dataset exists on HuggingFace. No oscilloscope screenshots, no SPICE waveform QA, no signal chart understanding datasets were found.",
+  "search_queries_github": [
+    "waveform+visual+question+answering", "oscilloscope+dataset+machine+learning",
+    "chart+understanding+benchmark+VQA", "EDA+waveform+simulation+image+dataset",
+    "WaveformQA", "waveformqa+vcd", "VCD+temporal+reasoning+benchmark",
+    "waveform+benchmark+LLM"
+  ],
+  "search_queries_arxiv": [
+    "chart+visual+question+answering+benchmark", "plot+multimodal+understanding+benchmark",
+    "oscilloscope+deep+learning", "waveform+visual+question+answering",
+    "id_list=2607.20638 (WaveformQA paper)"
+  ],
+  "key_finding": "NO image-based electronic/analog waveform VQA dataset exists on ANY of the three sources (HF / GitHub / arXiv). The closest domain match is WaveformQA (arXiv 2607.20638) but it is TEXT-based (VCD/event-time JSON) over DIGITAL waveforms, not images — usable as related-work + methodology reference, not directly as our image benchmark. No oscilloscope-screenshot QA, no SPICE-analog-waveform image VQA, no signal-chart-understanding image dataset was found. Conclusion (wake#855, HF-only) is now validated and extended across all 3 sources.",
   "closest_analogs": [
     {
       "id": "ahmed-masry/ChartQA",
@@ -41,6 +51,43 @@
       "migration_plan": "Same approach - synthesize waveform figures."
     }
   ],
+  "eda_waveform_specific_NEW_WAKE860": [
+    {
+      "id": "dcummingsTT/waveformqa",
+      "source": "HuggingFace",
+      "downloads": 78,
+      "license": "CC-BY-4.0",
+      "size": "n<1K (13 VCD traces, ~3.3GB raw)",
+      "modality": "TEXT (VCD traces + event-time JSON), NOT images",
+      "paper": "WaveformQA: Benchmarking LLM Temporal Reasoning on Digital Waveforms (arXiv 2607.20638, IEEE ICLAD 2026)",
+      "authors": ["Yichuan Liu", "Daniel Cummings", "Nick Vadlamudi"],
+      "description": "360 questions across 8 difficulty categories evaluating LLM temporal reasoning over DIGITAL waveforms. Traces produced by RTL simulation of 5 open-source RISC-V cores. Questions/GT answers/eval harness live in a GitHub repo (repo NOT located via GitHub search API: 'WaveformQA' search returned only an unrelated 0-star log repo; author dcummingsTT has no public repos visible via API — repo may be private or under a different org). Shows event-time JSON representation improves LLM accuracy vs raw VCD.",
+      "waveform_suitability": "RELATED-WORK ONLY - text-based (VCD/JSON) digital (binary) waveforms, NOT image-based analog waveforms. CANNOT be used directly for our image-based waveform-recognition task. HIGH value as: (1) SOTA related-work citation for our paper, (2) methodology reference (8-category QA template structure + event-time JSON insight), (3) source of waveform-semantics QA templates to adapt to image modality.",
+      "migration_plan": "Adapt WaveformQA's 8-category QA structure (single-signal value, multi-signal correlation, event ordering, etc.) to image modality: render our ngspice analog waveforms as images, ask the same semantic question types but answered from the IMAGE instead of the VCD text. This bridges their text-grounded categories to our vision-grounded task."
+    },
+    {
+      "id": "Eslam79/fatima-fellowship-rtl-waveform-eval",
+      "source": "HuggingFace",
+      "downloads": 110,
+      "license": "未核到 (no cardData license)",
+      "size": "未核到",
+      "modality": "TEXT (RTL/SystemVerilog code + waveform debugging context), NOT images",
+      "description": "Cycle-accurate blindness & synthesizability hallucination evaluation for open-weight code LLMs on hardware RTL, SystemVerilog verification files, and waveforms. Evaluates LLM debugging of hardware description code with waveform context.",
+      "waveform_suitability": "RELATED-WORK ONLY - text/code-based hardware debugging eval, NOT image VQA. Tangential to our analog-waveform image task.",
+      "migration_plan": "None for image task. Useful only as related-work citation on LLM waveform-debugging limitations."
+    },
+    {
+      "id": "mlnomad/imnet1k_oscilloscope_scope_cathode-ray_oscilloscope_CRO",
+      "source": "HuggingFace",
+      "downloads": 2,
+      "license": "未核到 (ImageNet-derived)",
+      "size": "1K<n<10K (~1.3K images, ImageNet 'oscilloscope/CRO' class #664)",
+      "modality": "IMAGE (classification only, single class)",
+      "description": "ImageNet-1k subset filtered to the 'oscilloscope, cathode-ray oscilloscope, CRO' class. Real photos of oscilloscope devices/screens. Features: image + class label (one of ImageNet 1000 classes). NO question answering, NO waveform parameter labels.",
+      "waveform_suitability": "LOW - real oscilloscope SCREENSHOT images exist (~1.3K) but only image-classification labels (is-it-an-oscilloscope), no waveform QA, no parameter (period/amplitude) annotations. Could serve as a tiny real-image pretraining source for 'what does an oscilloscope screen look like', but no QA pairs.",
+      "migration_plan": "Could mine ~1.3K real oscilloscope images as a small real-image supplement to our synthetic ngspice waveforms (domain-gap reduction), but QA pairs must still be synthesized. Marginal value given small size and label-only annotations."
+    }
+  ],
   "eda_related": [
     {
       "id": "SKLP-EDA-LAB/CircuitNet3.0",
@@ -50,6 +97,14 @@
       "waveform_suitability": "NONE - focuses on circuit design artifacts (RTL/netlist/layout), not waveform analysis or visualization."
     }
   ],
+  "chart_vqa_benchmarks_expanded_WAKE860": [
+    {"id": "ahmed-masry/ChartQA", "arxiv": "2203.10244", "license": "GPL-3.0", "size": "10K-100K", "modality": "image+text", "note": "Canonical chart VQA benchmark (bar/line/pie). Transfer-learning candidate for general chart-reading; no electronic waveforms."},
+    {"id": "SincereX/ChartBench", "license": "MIT", "size": "100K<n<1M", "modality": "text/json (gated)", "downloads": 3374, "note": "Chart reasoning benchmark, text modality, gated access. No waveforms."},
+    {"id": "InternScience/ChartX", "arxiv": "2402.12185", "license": "Apache-2.0", "size": "1K<n<10K", "modality": "image+text", "downloads": 2713, "note": "Chart QA + summarization (chemistry/medical/finance). Image modality; no electronic waveforms."},
+    {"id": "achang/plot_qa", "license": "CC", "size": "28.9M QA / 224K plots", "modality": "image+text", "downloads": 2196, "note": "Large plot VQA. Transfer candidate; no waveforms."},
+    {"id": "vikhyatk/figureqa", "size": "100K-1M", "modality": "image+text", "downloads": 883, "note": "Synthetic figure QA. No waveforms."},
+    {"arxiv_only": ["2504.05506 ChartQAPro", "2503.04095 Chart-HQA", "2505.19028 InfoChartQA", "2505.23242 ChartMind", "2603.27064 ChartNet (million-scale)", "2507.11939 PolyChartQA", "2510.04514 ChartAgent"], "note": "Recent chart-VQA papers found via arXiv API; all target data-visualization charts, none electronic waveforms. Listed for related-work coverage."}
+  ],
   "signal_processing_datasets": [
     "mstz/waveform_noise_v1 (52 dl) - noise waveforms, not VQA",
     "SongyangGao/earthquake-waveforms-timeseries (45 dl) - earthquake data, not VQA",
@@ -57,6 +112,10 @@
     "rokaijano/extracel_waveforms (11303 dl) - extracellular waveforms, not VQA",
     "subatomic-telemetry-lab/tpc-raw-waveform-dumps (495 dl) - raw waveform dumps, not VQA"
   ],
-  "conclusion": "No ready-made waveform VQA dataset exists. The current approach of synthesizing waveforms with ngspice and creating tool-interaction QA pairs is the correct approach. ChartQA/PlotQA could be used for pre-training on general chart understanding, but electronic waveform understanding requires domain-specific data synthesis.",
-  "recommendation": "Continue with ngspice-based waveform synthesis. Consider: (1) generating waveform images with matplotlib for multimodal VQA, (2) using ChartQA for pre-training chart understanding, (3) creating a waveform VQA benchmark from ngspice simulations for future work."
+  "conclusion": "No ready-made IMAGE-BASED electronic/analog waveform VQA dataset exists on any of HF/GitHub/arXiv (validated across 3 sources in wake#860, extending wake#855's HF-only result). The single closest DOMAIN match is WaveformQA (arXiv 2607.20638, IEEE ICLAD 2026): 360 questions / 8 categories over DIGITAL waveforms — but it is TEXT-based (VCD/event-time JSON), not images, so it cannot serve as our vision benchmark. ChartQA/PlotQA/FigureQA/ChartBench/ChartX and the recent arXiv chart-VQA papers (ChartQAPro/ChartMind/ChartNet etc.) are all data-visualization charts (bar/line/pie), none electronic waveforms. The current approach of synthesizing analog waveforms with ngspice and creating image-based QA pairs remains the correct and only viable path for an image-grounded waveform-recognition benchmark.",
+  "recommendation": "Continue with ngspice-based analog waveform image synthesis (validated: no off-the-shelf alternative exists). NEW actionable additions from wake#860: (1) Cite WaveformQA (arXiv 2607.20638) as the closest related-work benchmark and adapt its 8-category QA template structure (single-signal value / multi-signal correlation / event ordering) to our image modality — this strengthens our benchmark design and situates it in the literature; (2) adopt WaveformQA's finding that a structured intermediate representation (event-time JSON) helps LLMs — analog: consider whether a structured text hint alongside the image aids our 2B model; (3) ChartQA/ChartX (image+text, permissive licenses) are the best transfer-pretraining candidates for general chart/plot reading before waveform fine-tuning, if a chart-reading warmup is desired; (4) the ~1.3K oscilloscope ImageNet images are a marginal real-image supplement only.",
+  "github_arxiv_notes": {
+    "github_search_outcome": "GitHub search API returned ZERO repositories for waveform-VQA / oscilloscope-dataset-ML / EDA-waveform-image / VCD-temporal-reasoning / waveform-benchmark-LLM. The WaveformQA GitHub repo (referenced by the HF dataset card) was NOT located via API search — author dcummingsTT has no visible public repos; the repo may be private, renamed, or hosted under an institutional org. Marked 未核到 for the repo URL per discipline (no fabrication).",
+    "arxiv_search_outcome": "arXiv API returned rich chart-VQA paper coverage (ChartQA 2203.10244 + 7 newer) and the WaveformQA paper (2607.20638). No arXiv paper found proposing an IMAGE-BASED analog/oscilloscope waveform VQA benchmark — confirming the gap our work fills."
+  }
 }

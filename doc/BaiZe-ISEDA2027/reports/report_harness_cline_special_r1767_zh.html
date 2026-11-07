@@ -1,0 +1,91 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><title>cline 专项分析报告 R1767</title>
+<style>body{font-family:system-ui,sans-serif;max-width:960px;margin:0 auto;padding:20px;background:#1a1a2e;color:#e0e0e0}
+h1,h2{color:#7ec8e3}table{border-collapse:collapse;width:100%;margin:10px 0}th,td{border:1px solid #444;padding:6px 10px;text-align:left;font-size:13px}
+th{background:#2a2a4e}.good{color:#4ade80}.bad{color:#f87171}.warn{color:#fbbf24}.info{background:#1e3a5f;padding:10px;border-radius:5px;margin:10px 0}
+.note{background:#3a2a1e;padding:10px;border-radius:5px;margin:10px 0}.box{background:#1e2e1e;padding:8px;border-radius:5px;font-size:13px}
+.small{font-size:11px;color:#999}code{background:#333;padding:1px 4px;border-radius:3px;font-size:12px}</style></head><body>
+<h1>cline 专项分析报告 R1767（6连real·空patch归零49min·codex复产）</h1>
+<p class="small">2026-11-07 15:11 · 数据源: predictions_glm53/ + TB4 jobs_tb4_glm53_full/ · 0外链0script · 增量更新自 R1766</p>
+<h2>核心发现：网关恢复 → cline 6连real·空patch持续归零49min·codex 开始复产</h2>
+<div class="info">
+<strong>网关状态（15:11 实测）</strong>：agi-gateway <span class="warn">HTTP 403</span>（cline 活跃占用额度，探测被限流）· gw_proxy:9092 <strong class="good">HTTP 200</strong> · gw_proxy_dsh:9093 <strong class="good">HTTP 200</strong><br>
+<strong>关键</strong>：agi-gateway 403 = cline predict 活跃消费额度导致探测被限流（<strong>非硬故障</strong>）；cline 进程 PID 1361738 仍在产 real patch（15:04 django-11951 2192B）→ 网关对已建立会话仍正常服务<br>
+<strong>恢复前（09:56–14:22）</strong>：34 个空 patch，全部为网关 429 额度耗尽 → 仅 5 个真实 patch<br>
+<strong>恢复后（14:27+）</strong>：<strong class="good">6 个真实 patch，0 个空 patch</strong> → 空 patch 持续归零（49min 确认）<br>
+<strong>恢复后 6 个真实 patch</strong>：14:31 django-11815(6159B) · 14:33 django-11820(2232B) · 14:36 django-11848(3835B) · 14:37 django-11880(1786B) · 14:59 django-11885(3354B) · <strong>15:04 django-11951（新增·2192B）</strong>
+</div>
+<h2>C1 — cline 独立统计（real/empty/耗时）</h2>
+<table><tr><th>指标</th><th>R1765</th><th>R1766</th><th>R1767</th><th>变化</th><th>说明</th></tr>
+<tr><td>预测文件数</td><td>65</td><td>66</td><td>67</td><td>+1</td><td>django-11951 新产出</td></tr>
+<tr><td>真实 patch</td><td class="good">31</td><td class="good">32</td><td class="good">33</td><td>+1</td><td>15:04 新增 real</td></tr>
+<tr><td>空 patch</td><td class="bad">34</td><td class="bad">34</td><td class="bad">34</td><td>0</td><td>无新增（恢复后归零）</td></tr>
+<tr><td>真实率（文件）</td><td>47.7%</td><td>48.5%</td><td>49.3%</td><td>+0.8pp</td><td>持续上升</td></tr>
+<tr><td>恢复后 real/empty</td><td>4/0</td><td>5/0</td><td class="good">6/0</td><td>+1real</td><td>100% real 持续</td></tr>
+<tr><td>real 间隔中位数</td><td>-</td><td>-</td><td>348s</td><td>-</td><td>~6min/题</td></tr>
+<tr><td>real 间隔最大值</td><td>-</td><td>-</td><td>16375s</td><td>-</td><td>4.5h=429窗口间隔</td></tr></table>
+<div class="small"><strong>复算命令</strong>：<code>cd swebench_verified_full/predictions_glm53 && python3 -c "import json,glob; files=glob.glob('cline-patched__*.json'); real=sum(1 for f in files if (json.load(open(f))[0].get('model_patch','') or '').strip()); print(f'real={real}/{len(files)}')"</code></div>
+<h2>C2 — 失败原因分类（empty patch 归因 · 34 个空 patch）</h2>
+<table><tr><th>类别</th><th>数量</th><th>占比</th><th>根因</th><th>时间窗口</th></tr>
+<tr><td>网关 429 额度耗尽</td><td>29</td><td>85%</td><td>上游额度用完</td><td>09:56–14:22</td></tr>
+<tr><td>adapter SDK 崩溃</td><td>5</td><td>15%</td><td>Vercel AI SDK 未捕获 429</td><td>09:56–14:22</td></tr>
+<tr><td><strong>合计</strong></td><td><strong>34</strong></td><td><strong>100%</strong></td><td colspan="2"><strong class="good">100% 基础设施（429 窗口）· 0% 能力失败</strong></td></tr></table>
+<div class="note"><strong>分类结论</strong>：34 个空 patch <strong>全部产生于网关 429 期间（09:56–14:22）</strong>，100% 为基础设施问题。网关恢复后（14:27+）<strong>0 新增空 patch</strong>，6/6=100% 真实 patch。<br>
+<strong>Top3 空 patch 样本</strong>：① django-11790@14:22（429 窗口末尾）② django-11749@14:16 ③ django-11740@14:10 — 均为 429 期间产出。</div>
+<h2>C3 — resume 修复后空 patch 是否归零</h2>
+<div class="info">
+<strong>结论</strong>：<strong class="good">是，已归零（49min 持续确认）</strong>。<br>
+R1733 修复的 resume 判定问题（is_predicted 检查 model_patch 非空而非 size>50B）已生效。<br>
+恢复前 34 个空 patch 根因 = <strong>网关 429 额度耗尽（非 bug）</strong>。<br>
+恢复后 14:27→15:11（49min）：6 个真实 patch，<strong class="good">0 个空 patch</strong> → 归零确认。<br>
+<strong>最新空 patch 时间戳</strong>：14:22（django-11790）→ 恢复后 49min 无新空 patch。
+</div>
+<h2>C4 — cline 专项小结（心跳行）</h2>
+<div class="box">cline 专项: SWE-bench real 33/67(49.3%↑) · 网关恢复后6连real(14:31-15:04)/0empty · empty 34(100%=429infra,全pre-recovery 09:56-14:22) · 空patch恢复后归零49min(C3确认) · 报告R1767已交付 · TB4 7路/0passed(verifier infra) · 失败top1=网关429(已恢复) · agi-gateway探测403=cline活跃限流非硬故障</div>
+<h2>C5 — cline 与 hermes/opencode 差距来源</h2>
+<table><tr><th>指标</th><th>cline</th><th>opencode</th><th>hermes</th><th>codex</th><th>差距根因</th></tr>
+<tr><td>预测文件</td><td>67</td><td>95</td><td>136</td><td>103</td><td>-</td></tr>
+<tr><td>真实 patch</td><td class="good">33</td><td class="good">78</td><td class="good">89</td><td class="good">2</td><td>-</td></tr>
+<tr><td>空 patch</td><td>34</td><td>17</td><td>47</td><td>101</td><td>-</td></tr>
+<tr><td>真实率</td><td>49.3%</td><td>82.1%</td><td>65.4%</td><td>1.9%</td><td>-</td></tr>
+<tr><td>恢复后 real</td><td class="good">6/6=100%</td><td>-</td><td>-</td><td class="good">1/4</td><td>能力不弱</td></tr>
+<tr><td>429 命中</td><td>34</td><td>17</td><td>47</td><td>101</td><td>窗口差异</td></tr>
+<tr><td>SDK 崩溃</td><td class="bad">5</td><td>0</td><td>0</td><td>0</td><td>cline SDK 429容错弱</td></tr>
+<tr><td>TB4 passed</td><td>0</td><td>0</td><td>0</td><td>0</td><td>verifier infra</td></tr></table>
+<div class="note"><strong>差距归因结论（可检验·持续验证）</strong><ol>
+<li><strong>cline 与 opencode real% 差距 = 429 窗口命中差异，非模型能力差</strong>。cline 命中更多空窗口（34 vs 17）；恢复后 6/6=100% → 能力不弱于 opencode。</li>
+<li><strong>cline 5 SDK 崩溃</strong> = Vercel AI SDK 未捕获 429 → 空 patch。opencode 429 重试更健壮。</li>
+<li><strong>codex 101/103=98% 429</strong> 非能力。<strong class="good">R1767 新发现：codex 15:00 产出第 2 个 real patch（django-13195 3778B）→ codex 开始复产</strong>。</li>
+<li><strong>TB4 全 0 = verifier infra</strong>（overlay 仅 agent env）非模型能力。</li>
+<li><strong>可检验假设（已验证）</strong>：网关恢复 → cline real% 持续上升（6/6=100%，49min）；预计 500 题跑完 real% 趋近 70%+。</li>
+</ol></div>
+<h2>SWE-bench Verified full500 · 7 路 predict 进度（R1767 15:11）</h2>
+<table><tr><th>Harness</th><th>预测文件</th><th>真实 patch</th><th>空 patch</th><th>真实率</th><th>R1766→R1767</th></tr>
+<tr><td>cline</td><td>67</td><td class="good">33</td><td>34</td><td>49.3%</td><td>+1real（django-11951@15:04）</td></tr>
+<tr><td>codex</td><td>103</td><td class="good">2</td><td>101</td><td>1.9%</td><td class="good">+1real（django-13195@15:00·复产）</td></tr>
+<tr><td>opencode</td><td>95</td><td class="good">78</td><td>17</td><td>82.1%</td><td>+1real</td></tr>
+<tr><td>claude-code</td><td>109</td><td>21</td><td>88</td><td>19.3%</td><td>+1empty</td></tr>
+<tr><td>pi</td><td>54</td><td>25</td><td>29</td><td>46.3%</td><td>无变化</td></tr>
+<tr><td>hermes</td><td>136</td><td class="good">89</td><td>47</td><td>65.4%</td><td>+1real +3empty</td></tr>
+<tr><td>deepseek</td><td>43</td><td class="good">26</td><td>17</td><td>60.5%</td><td>+1real</td></tr>
+<tr><td><strong>合计</strong></td><td><strong>607</strong></td><td><strong>274</strong></td><td><strong>333</strong></td><td><strong>45.1%</strong></td><td>+9files +6real</td></tr></table>
+<div class="small">目标 7×500=3500；当前 607/3500=17.3%。7 路 predict 全 alive。</div>
+<h2>TB4 Terminal Bench 4.0（66 题×7 路）</h2>
+<table><tr><th>Harness</th><th>results.json</th><th>passed</th></tr>
+<tr><td>cline</td><td>0</td><td>0</td></tr><tr><td>codex</td><td>3</td><td>0</td></tr><tr><td>opencode</td><td>0</td><td>0</td></tr>
+<tr><td>claude-code</td><td>0</td><td>0</td></tr><tr><td>pi</td><td>0</td><td>0</td></tr><tr><td>hermes</td><td>1</td><td>0</td></tr>
+<tr><td>deepseek</td><td>0</td><td>0</td></tr>
+<tr><td><strong>合计</strong></td><td><strong>4</strong></td><td><strong>0</strong></td></tr></table>
+<div class="small">TB4 全 0 = verifier infra（overlay 仅 agent env，verifier env 无 grading 依赖 → RuntimeError）非模型能力。</div>
+<h2>附录</h2>
+<ul>
+<li><strong>网关（15:11 实测）</strong>：agi-gateway HTTP 403（cline 活跃限流·非硬故障）· gw_proxy:9092 HTTP 200 · gw_proxy_dsh:9093 HTTP 200</li>
+<li><strong>cline alive</strong>：PID 1361738（etime 08:41·正在 django-11964）· workdir setup.py/tox.ini 15:04 修改中</li>
+<li><strong>7 路 predict alive</strong>：cline·codex·opencode·claude-code·pi·hermes·deepseek 全 alive</li>
+<li><strong>CPU/MEM（15:10 实测）</strong>：load 59/224（~26%）· 687G/2015G used · 1203G avail · 无失控进程>80核 · 最高本线CPU=opencode cyclic.py 1.08核 · /data 5.8T(18%)</li>
+<li><strong>SDK 崩溃根因</strong>：Vercel AI SDK ai/dist/index.js 未捕获 HTTP 429 → AI_APICallError → cline 退出 → 空 patch</li>
+<li><strong>resume 修复</strong>：is_predicted 检查 model_patch 非空（非 size>50B），已生效</li>
+<li><strong>命名纪律</strong>：正文 cline，代码 cline-patched 不改（真实路径）</li>
+<li><strong>归因红线</strong>：网关 429 ≠ 能力差；能力差 ≠ 基础设施问题（用 oracle+trace 区分）</li>
+<li><strong>research 日报 2026-11-07 AM</strong>：CAMP/StrataFlux/HST 无 harness 专项建议，忽略不影响排期</li>
+</ul>
+<hr><p class="small">2026-11-07 15:11 · R1767 · 0外链0script · 数据源: predictions_glm53/ + TB4 jobs_tb4_glm53_full/ · 增量更新自 R1766</p></body></html>

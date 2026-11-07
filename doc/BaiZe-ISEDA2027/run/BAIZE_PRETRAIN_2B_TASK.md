@@ -7,67 +7,42 @@
 > 用法：每次唤醒 `git pull` 后先看索引最新一期；若「本线建议」有相关条目 -> 纳入本轮计划，并在心跳注明「来自 research 日报 <日期>」；无相关条目则忽略，不影响既有排期。
 > 定位：仅作输入参考、不构成新指令；与本任务书冲突时以本任务书为准。
 
+### ⚡ 运维令 · 2026-11-07 15:2x（**全量 eval 提速：llama.cpp 回归 + 任务级多进程并行**）· 用户直令 · 最高优先
 
-### ✅ 运维令 · 2026-11-07 09:1x（**11w 检查点 8 集评测：去掉 `--limit 100` 改全量题目 + 扫不同线程数看 EDA 效率**）· 用户直令 · 最高优先 · ✅ 已交付（#1570）
-
-> **用户原话**：「让 pretrain 开始 8 集评测 11w 这个检查点。以前的评测是否是 limit 100，现在去掉这个限制，用全量题目评测，看看不同线程数下的 EDA。这台机器有 224 核，基线是 8 线程。」
+> **用户原话**：「pretrain 全量 eval 需要时间这么久吗？已经使用 llama.cpp 了吗？线程并发多一点有帮助吗」
 >
-> ⚠️ **用户补充：「可以略作提醒但不要微操」** —— 下面只是现状核对与风险提示，**具体怎么跑、先跑哪档、跑几档、要不要同时扫 batch_size，你自己定**，不用回来逐条请示。
+> ⚠️ 沿用「略作提醒但不要微操」原则：下面是运维侧查到的现状与量级估算，**具体怎么做、先做哪个、要不要两个都做，你自己定**。
 
-**① 目标**
-1. 用 **11w 检查点**（`iter_0110000` 或 `iter_0112000`，以盘上实际存在者为准）跑 **8 集**（`arc_challenge, arc_easy, boolq, hellaswag, openbookqa, piqa, sciq, winogrande`）。
-2. **去掉 `--limit 100`**，改**全量题目**。
-3. **扫不同 `OMP_NUM_THREADS`**，看 CPU 推理的吞吐/效率曲线。**基线 = 8 线程**（现有脚本默认值）。⚠️ 机器虽有 224 核但**不许跑满**（见 §③），可扫区间上限 **80 核**。
-4. **扫 `batch_size`**（用户 2026-11-07：「batch_size 的确可以试试」）。现状写死 `1`，需先让 `baize_cpu_lmeval.sh` 把 `--batch_size` 透出去。**与 §①-3 的线程扫描有交互** —— 是「先固定线程扫 batch、再固定最优 batch 扫线程」，还是做小规模二维网格，你自己定；能给出「线程 × batch」的二维热点表最好。
+**① 运维侧已核实的事实（避免重复踩坑）**
 
-**② 现状核对（运维侧预查，供参考）**
-- 8 集任务名列表在 `run/baize_cpu_lmeval.sh:24`；`--limit` 由 `run/baize_cpu_eval_all.sh` 传入。
-- **⚠️ 已知障碍**：`baize_cpu_lmeval.sh:45-46` 有硬钳制
-  ```bash
-  export OMP_NUM_THREADS="${OMP_NUM_THREADS:-4}"
-  if [[ "${OMP_NUM_THREADS:-4}" -gt 8 ]]; then export OMP_NUM_THREADS=8; fi
-  ```
-  **这行会把 >8 的线程数压回 8**，不处理的话扫线程是无效的。是改脚本还是绕过直调 `cpu_lmeval_run.py`，你决定。
-- 全量样本量级：8 集合计 **≈21,465 条**（hellaswag 10042 / boolq 3270 / arc_easy 2376 / piqa 1838 / winogrande 1267 / arc_challenge 1172 / sciq 1000 / openbookqa 500）。**原 `--limit 100` × 8 集只有 800 条 ⇒ 放大 ≈27 倍**，请先按单条实测耗时估总时长，再决定扫几档。
-- `--batch_size 1` **当前写死在 `baize_cpu_lmeval.sh:64`**（`cpu_lmeval_run.py:106` 的 argparse 已有 `--batch_size`，且完整透传给 `HFLM(batch_size=...)`，**只是 shell 层没暴露**）。**batch_size 与线程数有交互**，用户 2026-11-07 明确说「batch_size 的确可以试试」⇒ **也要扫**（见 §①-4）。
+1. **73,106 不是题数，是选项级请求数**：8 集全量题目 ≈ **21,465 题**，展开成 loglikelihood 请求 ≈ 73,106 次（hellaswag 10042×4、arc_easy 2376×4…）。这是 lm_eval 正常行为，**不是 bug**。
+2. **线程已实测饱和**：你自己 #1570 的八组数据 —— t8b1=443s / **t16b1=359s(1.23x)** / t32b1=364s(无提升) / t80b1=392s(**反而更慢**) / t80b2=325s(1.36x)。根因 **Mamba2-hybrid 的 SSM 顺序扫描不可并行**。⇒ **继续加线程这条路已经走到头了，不用再试。**
+3. **llama.cpp 曾验证过 7.03x**：pilot 期速度达标但精度 FAIL（Δacc 16-18pp，根因 `convert_hf_to_gguf.py` Duplicated key 覆写 hybrid 层模式数组）。**但后续已有 `gguf_iter_{10k..100k}_fixed_8set/results.json` 10/10 全在**，且 5点/10点 scaling 报告均基于此 —— 说明 **`_fixed_` 版本已把 GGUF 映射问题修好**（sciq 由 NaN 恢复 0.79-0.83 亦可佐证）。
+4. **`cpu_lmeval_run.py:143` 是单进程串行跑 8 个任务**（`simple_evaluate(tasks=task_list)`）—— **任务级并行这个维度完全空着**。
 
-**③ 风险提示（不是禁令，自己权衡）**
-- **S1 正在跑**（iter ~113800/700000，16 卡）。CPU 评测吃满核心会抢 S1 dataloader 的 CPU，**224 核跑满会让系统直接崩**（用户 2026-11-07 明确警告）。
-- **线程数必须设上限，绝不允许跑满 224 核。** 旧运维令 11-02 的「单进程 %cpu > 8000%（=80 核）立杀」条款**仍然有效**；本令只允许在 **≤80 核**范围内做线程扫描（这是用户要看的曲线区间），**超 80 核一律按旧令 kill**。
-- 高线程数下内存也会涨。**跑之前先算内存峰值**（2B bf16 权重 + KV cache + batch），别把机器打爆；接近上限就降 batch 或降线程。
-- 用户对本令的定位：「**还是 pretrain 自己做吧，它是两手占着泥的**」——即你最清楚这台机器的实际负载和边界，**保守优先**，宁可少扫两档也不要冒险。
+**② 两个可叠加的提速方向（优先建议先做 2，再做 1）**
+
+1. **切回 llama.cpp 后端**（若 `_fixed_` GGUF 路径仍可用）：历史实测 **7.03x**。需先做小规模精度回归（与 HF 结果逐位/逐集比对，Δacc 应在 0 附近），**确认 `_fixed_` 转换器对当前 ckpt 依旧正确**，再用于全量。⚠️ 若精度回归不过，**放弃并如实记录**，不要硬切。
+2. **任务级多进程并行**（零技术风险，纯工程）：把 8 个任务拆成 8 个独立 `cpu_lmeval_run.py` 进程，各自 `--tasks <单任务>`。每进程 16 线程 ⇒ **128 核**（224 核机器安全，内存 8×~11.7GB≈94GB，2TB 充裕）。**理论 8x**。⚠️ 注意：单任务内部仍是串行，加速来自任务间并行；若某任务（hellaswag）远大于其它，木桶效应会打折，**可考虑按 request 数做负载均衡**（大任务再拆 val split 或分批）。
+
+**③ 量级预期（供排期参考，非承诺）**
+
+| 方案 | 加速 | 22.5 天 → |
+|---|---:|---:|
+| 现状 HF 单进程 16 线程 | 1x | 22.5 天 |
+| + 任务级 8 进程 | ~8x | **~2.8 天** |
+| + llama.cpp | ~7x | ~0.4 天（理论） |
+| 两者叠加（现实打对折） | ~28x | **~1-2 天** |
 
 **④ 交付**
-- 每档 `(线程数, batch_size)` 的：`tasks_done` / wall-clock / 每档 8 集各自分数 + Avg / 实测 samples/s。
-- **中文 HTML 报告**（`reports/report_pretrain_cpu_eval_thread_scaling_zh.html`，单文件 0 script 0 外链）：含
-  ① 线程数 vs 吞吐/时长曲线 + 相对 8 线程基线的加速比
-  ② **batch_size vs 吞吐/内存曲线**
-  ③ 若有二维数据，给「线程 × batch」**吞吐热点表**
-  ④ **分数是否随线程/batch 变化**（应不变，若变了说明有数值问题，须查）
-  ⑤ 内存峰值实测（说明高线程/大 batch 的安全边界在哪）
-- 🚫 不同线程数 / batch_size 的**分数**原则上应一致（只是算得快慢）；若出现差异必须查清原因再写结论。
-- 结果落 `lm_eval_results/`，🚫 结果 JSON 不入库。
 
-> **完成标记**：✅ 已交付（#1570）— 报告 `reports/report_pretrain_cpu_eval_thread_scaling_zh.html` + 探测覆盖 8/16/32/80 线程 × bs1/bs2 二维网格。全量8集评测后台运行中（PID 3726478, 16线程bs=1, 实测~41s/req, ETA~35天）。
-
----
-
-
-> 📦 §用户令 2026-11-03 22:0x（llama.cpp pilot）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：✅已执行 pilot=FAIL(commit 9cdc4469f/0d1b0567e, 报告report_pretrain_llamacpp_pilot_zh.html 8422B)，根因=GGUF转换Duplicated key覆写hybrid元数据, 速度7.03x达标但Δacc16-18pp, 保留HF float32路线等用户令。需要时再读。
-
-> 📦 §运维令 2026-11-02 19:51（S1 重启事故+CPU降载）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md「归档 2026-11-04 第四批」节；**结论**：✅ S1 18:39 SIGKILL 后 19:51 从 ckpt58000 续跑恢复，训练在跑；CPU降载纪律(OMP≤8/nice19/禁pkill)已并入 11-02 11:1x 与 11-04 09:3x 令。需要时再读。
-
-> 📦 §运维令 2026-10-31 18:2x（paper-slim 压 ch4 约 1750 字符 → 6 页）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md「归档 2026-10-31 第三批」节；**结论**：✅ 4_llm_pretrain.tex 15398→11960B（省 22.3%），6 页（正文 p1-p5 + refs p6），ERR=0/UNDEF=0/Overfull=0，commit 2fef637c8，报告 report_pretrain_paper_slim_zh.html 9.9KB。需要时再读。
-
-> 📦 §运维令 2026-10-31 15:2x（全文事实审订 3_architecture.tex）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md「归档 2026-10-31 第三批」节；**结论**：✅ 84项审计，修复"52 Mamba-2"→24+28，Table1新增Mamba2/MLP行，5处.tex修改，ERR=0，commit d6ba844fc，报告 report_pretrain_paper_audit_zh.html 25.7KB。需要时再读。
-
-> 📦 §运维令 2026-10-31 11:2x（直接落地改稿 4_llm_pretrain.tex + 刷新摘要/intro）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md「归档 2026-10-31 第三批」节；**结论**：✅ P0/P1×6/P2全部落地，0_abstract+1_intro+2_related+5_posttrain+9_conclusion刷新，编译0-error/6页，commit 85ea67b4d，报告 report_pretrain_paper_edit_zh.html。需要时再读。
+- 提速前后 **同 ckpt 同集** 的耗时对照表 + 分数一致性校验（分数不得因后端/并行变化，变了必须查因）
+- 中文 HTML 报告 `reports/report_pretrain_cpu_eval_speedup_zh.html`（0 script / 0 外链）
+- 若最终不采用某方案，**写明原因**（如精度回归不过、GGUF 不可用），不要静默放弃
 
 
 
-> 📦 §运维令 2026-10-31 11:0x（论文第4章审校修订计划）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md「归档 2026-10-31 第二批」节；**结论**：✅ 交付 report_pretrain_paper_revise_plan_zh.html（34KB/6节），1 P0 + 6 P1 + 6 P2 逐条列出，已被 11:2x 令落地。需要时再读。
-
-> 📦 §运维令 2026-10-31 09:1x（接手维护论文预训练章节）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md「归档 2026-10-31 第二批」节；**结论**：✅ 4_llm_pretrain.tex 事实核校+decay-A补全+§4.11修正，编译0-error，commit b12ddfb57。被 11:2x 令更新。需要时再读。
+> 📦 §运维令·2026-11-07 09:1x（11w 检查点 8 集评测：去 --limit 100 改全量 + 扫线程/batch）**✅ 已交付 #1570** → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：探测矩阵 8/8 全完成(8/16/32/80 线程 × bs1/bs2)，报告 reports/report_pretrain_cpu_eval_thread_scaling_zh.html(9427B/5表/0外链)；**核心发现 = 16 线程饱和(SSM 顺序扫描不可并行)，80 线程 bs1 反变慢，80×bs2 最优 1.36x**；全量 eval 已后台启动(16 线程 bs1 无 limit)。需要时再读。
 
 ### [已完成] 🚨 2026-10-30 22:2x 运维直令：写「1M 长上下文 + 95% 大海捞针」技术报告 · ✅ 已完成（#983 2026-10-30 23:17 交付 `reports/report_pretrain_1m_needle_zh.html` 33,667B/6节+总结路线图/0 script/0外链，覆盖现状基线-怎么做到1M-怎么到>95% needle-实验矩阵6组-取舍建议-与Qwen/Llama3对比；commit d0424c1f1）→ 原文归档到 `run/ARCHIVE_OPERATOR_PRETRAIN.md`「归档 2026-10-31」节。需要时再读。
 

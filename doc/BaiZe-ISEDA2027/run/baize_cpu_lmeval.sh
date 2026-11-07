@@ -25,6 +25,7 @@ TASKS="arc_challenge,arc_easy,boolq,hellaswag,openbookqa,piqa,sciq,winogrande"
 LIMIT=""
 DTYPE="bfloat16"
 BATCH_SIZE=1
+SAMPLES=""
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -32,6 +33,7 @@ while [[ $# -gt 0 ]]; do
     --tasks)       TASKS="$2"; shift 2 ;;
     --dtype)       DTYPE="$2"; shift 2 ;;
     --batch_size)  BATCH_SIZE="$2"; shift 2 ;;
+    --samples)     SAMPLES="$2"; shift 2 ;;
     *)             echo "Unknown arg: $1"; exit 1 ;;
   esac
 done
@@ -65,4 +67,5 @@ exec nice -n 19 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python "$SCRIP
   --dtype "$DTYPE" \
   --num_fewshot 0 \
   --batch_size "$BATCH_SIZE" \
+  ${SAMPLES:+--samples "$SAMPLES"} \
   $LIMIT

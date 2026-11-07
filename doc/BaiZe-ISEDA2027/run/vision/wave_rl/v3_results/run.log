@@ -1,0 +1,12 @@
+/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+[Phase 0] Rebuilding eval questions (same seed)...
+  Rebuilt 100 period questions
+[Phase 1] Baseline SKIPPED (known ~0% from v2)
+============================================================
+[Phase 2] Condition B: SFT only
+  Loading base LLM: /nas_train/app.e0031982/datasets/baize-vision/out/wave_sft_stage1w/qwen3vl_2b_text_extracted
+`torch_dtype` is deprecated! Use `dtype` instead!
+  Loading SFT adapter: /nas_train/app.e0031982/datasets/baize-vision/out/wave_sft_stage1w/step3000
+  Trainable params: 69.7M
+The following generation flags are not valid and may be ignored: ['temperature', 'top_p']. Set `TRANSFORMERS_VERBOSITY=info` for more details.

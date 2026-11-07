@@ -252,7 +252,13 @@ def main():
     ap.add_argument("--timeout", type=int, default=600)
     ap.add_argument("--gguf", default="", help="可选，仅写入 meta 便于追溯")
     ap.add_argument("--log-samples", action="store_true")
+    ap.add_argument("--samples", default=None, help='JSON string: {"task_name": [doc_idx,...]}')
     args = ap.parse_args()
+
+    samples_dict = None
+    if args.samples:
+        samples_dict = json.loads(args.samples)
+        print(f"[gguf] samples={samples_dict}", file=sys.stderr)
 
     task_list = [t.strip() for t in args.tasks.split(",") if t.strip()]
     os.makedirs(args.output, exist_ok=True)
@@ -274,6 +280,7 @@ def main():
         tasks=task_list,
         num_fewshot=args.num_fewshot,
         limit=args.limit,
+        samples=samples_dict,
         batch_size=args.batch_size,
         log_samples=args.log_samples,
     )

@@ -2839,8 +2839,81 @@ std>0 组 ≥30%                  ⇒ PARAM-ISSUE
 **交付物**：
 - `vision/wave_rl/cpu_rl_v3_experiment.py`（v3实验脚本，period-only）✅
 - `vision/wave_rl/gen_cpu_rl_v3_report.py`（v3报告生成器）✅
-- `vision/wave_rl/dataset_research_results.json`（HF数据集调研结果）✅
+- `vision/wave_rl/dataset_research_results.json`（数据集调研结果：wake#855 HF-only → wake#860 扩展为 HF+GitHub+arXiv 三源）✅
+  - **wake#860 关键新发现**：找到最接近的领域基准 **WaveformQA**（arXiv 2607.20638, IEEE ICLAD 2026, CC-BY-4.0）—— 360题/8类，评估 LLM 对**数字**波形的时序推理，但**基于文本**(VCD/event-time JSON)**而非图像**，不能直接用作我们的视觉基准；高价值作 related-work 引用 + 8类 QA 模板迁移参考。另核到 `Eslam79/fatima-fellowship-rtl-waveform-eval`（RTL/SV 文本调试 eval）与 `mlnomad/...oscilloscope_CRO`（ImageNet 示波器类 ~1.3K 图，仅分类标签）。ChartQA/PlotQA/FigureQA/ChartBench/ChartX + 7篇 arXiv chart-VQA 论文（ChartQAPro/ChartMind/ChartNet 等）均为数据可视化图（柱/线/饼），无电子波形。
+  - **结论**：三个来源均**无**图像基模拟/电子波形 VQA 数据集 ⇒ 继续用 ngspice 合成是唯一可行路径（已验证）。GitHub 仓库 URL 标「未核到」（API 搜索 0 命中，作者无私开 repo，不编造）。
 - `reports/report_vision_cpu_rl_waveform_zh.html`（中文HTML报告，当前partial, 实验完成后自动更新）✅
 - `cpu_rl_v3/experiment_results.json`（完整结果JSON，实验完成后生成）⏳
 
 **数字溯源**：`cpu_rl_v3_experiment.py` 实测 stdout (`/tmp/v3_full_experiment.log`) + JSON输出。CPU fp32 / nice19 / OMP32 / 零GPU / 未碰pretrain。可复现(seed=20261107 + step3000 ckpt + group_size=8)。
+
+**wake#861 更新**（2026-11-07 14:5x）：v3 Phase3 step25/40，avgR波动轨迹 -0.5→0.066→0.279→0.321→0.151→**-0.043**，loss≈0.000038（近零）→GRPO策略梯度极弱。**预备v4 RFT脚本**（`vision/wave_rl/cpu_rl_v4_rft_experiment.py`，385行，SYNTAX OK）——若v3未达显著性则换方向：GRPO→Rejection Sampling FT(STaR/ReST)。v4设计：收集SFT模型rollout(60circuits×4)→按连续奖励过滤(reward>0.3)→标准CE SFT训练成功轨迹(3epoch/lr1e-5/batch4)。优势：无group baseline(消除std=0根因)、稳定CE梯度(非noisy policy gradient)、解耦收集与训练。预注册判据：C(RFT)>B(SFT=34%)且C>D(随机过滤控制)，McNemar p<0.05+bootstrap CI排除0。v4不改变奖励函数或任务(仅改优化方法)。
+
+**wake#862 更新**（2026-11-07 14:5x）：**v3 + v4 并行运行**（.12 CPU 224核，v3用32线程/v4用48线程，load~52/224，无争用）。
+- **v3 (GRPO)** PID2165712：step **30/40**，avgR轨迹 -0.5→0.066→0.279→0.321→0.151→-0.043→**0.398**(step30回升!)，ETA~43min(Phase3余)+eval。avgR高方差但非单调下降。
+- **v4 (RFT) 启动** PID3750214：Phase1 B(SFT eval)进行中。**修复v4 bug**：v4引用`EVAL_SEED_BASE_V3`/`TRAIN_SEED_BASE_V3`/`build_eval_set_period`但未定义/导入→添加`from cpu_rl_v3_experiment import build_eval_set_period`+常量定义(990100/20261105)。v4复用v3的100 eval题(same seed→valid matched pairs)。不skip_sft_eval(需B逐题结果做McNemar)。v4流程：B eval→collect 240 rollouts→filter reward>0.3→CE-SFT train C(treatment)+D(random control)→eval→stats。预计~2.5h。
+- **决策理由**：v3是第3轮GRPO(前2轮v1负/v2不显著p=0.625)，avgR高方差+loss近零→GRPO在CPU上信号弱。v4换RFT(无group baseline/稳定CE梯度)是任务书"连续3轮无提升必须换方向"的执行。并行启动因224核仅用~80，不争用。
+
+**wake#863 更新**（2026-11-07 15:0x）：🔴 **发现并修复 v4 严重 bug（gt_value 错配）→ v4 重启**。
+- **bug 发现**：v4 Phase1 B eval 显示 acc=10%（10/100），但 v3 同题同模型 B=34%。经代码审查定位根因：v4 从 v3 的 `eval_questions.json` 加载题目（JSON 不含 `spec` 对象），然后用 `generate_circuit(rng, wd, ct)` 重新生成电路——但 RNG 状态与 v3 **发散**（v3 的 `build_eval_set_period` 中 rng 同时被 `rng.choice`(选电路类型) 和失败尝试消耗，而 v4 仅被 `generate_circuit` 消耗）→ **v4 生成了不同电路（不同元件值/不同波形）但用 v3 旧 gt_value 判定** → gt 错配 → 准确率人为降低至 10%。
+- **修复**：将 v4 Phase0 改为**始终调用 `build_eval_set_period(n_questions=100)`**（与 v3 同 seed=990100，确定性可复现，生成完全相同的题目），不再从 JSON 加载。增加 sanity check：对比重建题目的 gt_value 与 v3 JSON → **0 mismatches** ✅。
+- **v4 重启**：kill 旧 PID3750214（已跑 10min B eval 全部作废），重启 PID3181986（OMP48/nice19）。Phase0 重建 100 题（0 mismatch ✅）→ Phase1 B eval 10/100 **acc=30.0%**（与 v3 的 30.0% 完全一致 ✅，修复确认）。
+- **v3 进度**：step 30/40，avgR=0.398，ETA~21min(Phase3余)+eval。v3 仍健康运行中。
+- **教训**：跨实验复用 eval 题目时，JSON 序列化丢失 `spec` 对象 + RNG 状态不可从 JSON 恢复 → 必须用确定性函数重建（同 seed），不能从 JSON 部分恢复。
+
+**wake#865 更新**（2026-11-07 15:2x）：🔴 **v4 第二次崩溃（NameError）→ 修复并重启**。
+- **崩溃**：v4 Phase2（rollout 收集）调用 `gen_train_prompt_period(rng)` 但该函数未从 v3 导入 → `NameError`。v4 B eval 已完成（B=34.0%,846s）但结果在内存中丢失。
+- **修复**：①`from cpu_rl_v3_experiment import build_eval_set_period, gen_train_prompt_period` ②增加 B eval 结果磁盘缓存（`b_eval_results.json`），重启可跳过 14min 重跑 ③`setsid` 正确 detach 重启。
+- **v4 重启**：PID3843708（ppid=1,OMP48/nice19），Phase0 重建100题(0 mismatch✅)→Phase1 B eval 重新开始。
+- **v3**：PID2165712 Phase3 step35/40 avgR=0.033，ETA~21min(Phase3余)+Phase4(~3h)+eval。
+- **教训**：跨实验导入需验证所有被调用函数都已导入；长耗时 eval 结果应缓存防 crash 丢失。
+
+**wake#870 更新**（2026-11-07 16:04）：**v3 Phase3 完成 → 第 3 轮 GRPO 负结果确认；v4 Phase2 进展健康**。
+- **v3 (GRPO 连续奖励)** Phase3 C = **25.0%**（100 题逐题 eval, 543s）→ **C < B(34.0%) by 9pp，负结果**。avgR 轨迹：step1=-0.500→step5=0.066→step10=0.279→step15=0.321(峰)→step20=0.151→step25=-0.043→step30=0.398→step35=0.033→step40=0.108；loss 全程≈0（策略梯度极弱，连续化奖励未解决 std=0 根因下的梯度消失）。Phase4 D-ctrl(随机奖励控制) step 1/40 启动，ETA~2.5h→done≈18:30。Phase5 stats 待 Phase4 完成。
+- **v4 (RFT/STaR)** Phase1 B = 34.0%（与 v3 一致✅）；Phase2 collect 40/60 circuits，160 rollouts，103 succ(64.4%)，ETA~18:30-19:00。
+- **结论判断**：v1(离散奖励,post-GRPO 6.2%<post-SFT 9.2%)→v2(15步,p=0.625不显著)→v3(40步连续奖励,C=25%<B=34%)=**连续 3 轮 GRPO 无提升**。v4 RFT 已换方向（无 group baseline→消除 std=0 根因；标准 CE 梯度→稳定）。等 v3 Phase4(控制D)+v4 完成后做最终统计检验+报告。
+
+
+---
+
+### §22 CPU RL v5: Waveform Type Classification（2026-11-07 wake#881 · 方向转换 · ⏳运行中）
+
+**背景**：v2(GRPO离散)=6.2%<SFT9.2%·v3(GRPO连续)=25.0%<SFT34.0%·v4(RFT)=34.0%=SFT34.0%→连续3轮无提升，任务书§3节奏"连续3轮无提升必须换方向"触发。
+
+**根因分析（v2-v4为何失败）**：
+1. **Period回归太难**：要求2B LoRA模型输出精确周期值，SFT天花板≈34%，RL无法突破。
+2. **GRPO std=0**：78.7%的group内所有rollout获得相同奖励→advantage=0→梯度无信号（连续化奖励v3也未解决）。
+3. **RFT只强化已会答案**：v4 collect成功率67.1%但retrain只是重复训练模型已会的34%正确答案→无新信息。
+4. **输入信息不足**：get_values tool-call只返回min/max/mean/std统计量，**不返回实际采样点**→模型无法看到波形形状。
+
+**v5设计（4项修复，预注册2026-11-07）**：
+1. **改任务**：period回归→**波形类型分类**（sine/square/triangle/sawtooth，4类）。分类(输出标签)比回归(输出精确数字)根本性更易。
+2. **改输入**：tool-call summary stats→**16个均匀采样点(t,v)直接进prompt**。模型能"看见"波形形状（sine=平滑振荡、square=两值突变、triangle=线性三角、sawtooth=线性斜坡+突变）。
+3. **保留方法**：RFT（Rejection Sampling FT, STaR/ReST）——v4已验证稳定（标准CE loss，无group baseline，无std=0问题）。分类任务会有更多正确rollout→更多训练信号。
+4. **纯Python波形生成器**：不依赖ngspice，直接程序生成sine/square/triangle/sawtooth（含随机amp/offset/freq/phase/noise），速度快、可控。
+
+**预注册判据**：
+- A(基线,fresh LoRA): ~25%（4类随机概率）
+- B(SFT 400ex×3ep): >50%（形状识别可学）
+- C(RFT correct-filter): >B（更多正确rollout→更多训练信号）
+- D(RFT random-filter 控制): ≤B（随机过滤不帮助）
+- 成功：C>B 且 C>D 且 McNemar p<0.05 且 bootstrap 95%CI on (C-B)排除0
+
+**证伪设计**：4条件×100 eval(25/type)×McNemar/bootstrap CI/cheat-rate(train/eval disjoint seed)。
+
+**脚本**：`vision/wave_rl/cpu_rl_v5_typecls_experiment.py`（594行,29.9KB,SYNTAX OK）。
+
+**冒烟测试结果**（20 SFT/1ep/20 eval,skip_baseline,skip_control）：
+- SFT: 3 steps, loss 0.50→0.70, 6.4M trainable params (LoRA r=16)
+- B(SFT) = 15%（sawtooth 60%, 其余0%——20例太少）
+- RFT collect: 20 rollouts, 1 correct (5%)
+- C(RFT) = 15%（1例RFT训练无效果——预期）
+- 全链路5阶段（Phase0-5）全部PASS，JSON保存✅
+- 冒烟验证：模型加载✓ SFT训练✓ eval✓ RFT收集✓ RFT训练✓ 统计✓ JSON输出✓
+
+**全量实验**（PID731487,OMP16/nice19,2026-11-07 17:28启动）：
+- 400 SFT examples × 3 epochs + 200 RFT questions × 3 rollouts + 100 eval (25/type) + A/B/C/D四条件
+- ETA ~2.5h (~20:00)
+- `cpu_rl_v5/experiment_results.json`（实验完成后生成）⏳
+
+**数字溯源**：`cpu_rl_v5_typecls_experiment.py` 实测 stdout (`/tmp/v5_full_experiment.log`) + JSON输出。CPU fp32 / nice19 / OMP16 / 零GPU / 未碰pretrain。可复现(seed=20261107 train / 995100 eval, disjoint)。

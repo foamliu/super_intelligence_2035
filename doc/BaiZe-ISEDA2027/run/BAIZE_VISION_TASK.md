@@ -7,7 +7,6 @@
 > 用法：每次唤醒 `git pull` 后先看索引最新一期；若「本线建议」有相关条目 -> 纳入本轮计划，并在心跳注明「来自 research 日报 <日期>」；无相关条目则忽略，不影响既有排期。
 > 定位：仅作输入参考、不构成新指令；与本任务书冲突时以本任务书为准。
 
-
 ### 🔴 用户令 · 2026-11-07 10:10（**阶段2 放行：不再等 GPU，在 CPU 上放开试各种 idea**）· 用户直令 · 最高优先 · 未完成
 
 > **用户原话**：「vision 阶段 2：放行，可以基于 CPU 大胆尝试各种 idea。」
@@ -26,6 +25,15 @@
 | 4 | **改任务定义** | 允许改为可判定的中间任务（波形类型判别 / 两波形频率比较 / 异常点定位等），只要对下游有意义 |
 | 5 | **推翻旧 plan** | 允许推翻 `report_vision_wave_rl_plan_zh.html` 的假设与路径 |
 | 6 | **放开 idea** | 允许基于 CPU（.12/.29）大胆试各种 idea（数据合成 / 课程学习 / 过程奖励 / 相对排序奖励 / 蒸馏等），不做"等 GPU"的空转 |
+#### 1b. ⚠️ LLaMA-Factory 现状（2026-11-07 运维侧查证 · 用户指定技术栈）
+
+用户指定栈：**LLaMA-Factory + KTransformers 后端 + LoRA + Qwen3.5-2B**。当前 S2 冒烟**已跑但失败**，证据在 `run/vision/wave_rl/lf_smoke/`：
+
+- `s2_llamafactory_fail.log`：数据加载/tokenize/chat_template **全成功**，卡在 `AutoConfig.from_pretrained` → `KeyError: 'qwen3_5'` → `ValueError: model type qwen3_5 ... Transformers does not recognize`。
+- **根因**：LLaMA-Factory 的依赖约束把 transformers 降到不认 `qwen3_5`（`Qwen3_5ForConditionalGeneration`）的版本；而 `s2_fallback_result.json` 显示 **transformers 5.20.2 可正常加载**（peft 直训 PASS：1.88B 参数 / LoRA 737K / loss 2.8605→2.8341 / 1.2s·step / `FALLBACK_VIABLE`）。
+- **可行修复方向（自行判断，不强制）**：① 独立 venv 内装 `transformers>=5.20` 并 `pip install llamafactory --no-deps`（或 `--no-build-isolation`）再补装其运行依赖；② 找支持 transformers 5.x 的 LLaMA-Factory 新版本；③ 模型侧 `trust_remote_code=True`；④ 若以上均不通，**沿用已验证的 peft 直训**（已在 CPU 跑通），LLaMA-Factory 仅作「工程化包装」目标后置。
+- 🚫 **不许污染现有 `py310` 训练环境**；任何升级都在**独立 venv** 内做，做完记录版本矩阵。
+- KTransformers 角色已查证：官方 **inference + fine-tune 双支持**，v0.7.0 起 **LoRA 支持 AVX512 x86 CPU（含 AMD，不依赖 AMX）**，与 LLaMA-Factory 有官方集成（`ktransformers[sft]` + `sglang-kt`）。
 
 #### 2. 仍然必须守的纪律（不可放宽）
 
@@ -44,7 +52,6 @@
 - **连续 3 轮无提升**：必须换方向，并在心跳里写明换的理由与证据。
 
 ---
-
 
 ### 🔴 用户令 · 2026-11-07 09:2x（**走出「干等 GPU」——用现有 CPU 资源（.12/.29）设计有效 RL，证明显著提升 Qwen3.5-2B 的波形理解**）· 用户直令 · 最高优先 · ⚠️ 未完成
 
@@ -122,21 +129,7 @@
 
 ---
 
-> 📦 §运维令·2026-10-31 16:0x（ViT-L 68.236% + MLLM 26.10% 写进论文 ch6/ch7/摘要/intro）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：wake#441+#442 交付 4 .tex 改稿 commit 1a2e19b2f，6页/ERR=0/UNDEF=0，数字全溯源 armE_r2 JSON + EXPERIMENTS §15.5，MME 用 ArmE-R2 实测值。需要时再读。
-
-> 📦 §运维令·2026-10-31 11:2x（直接重写第6章 6_vision_encoder.tex）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：wake#437+#439 交付 18行/6页/ERR=0/UNDEF=0 + report_vision_paper_edit_zh.html，commit f2ca45de5/e5145dc85。需要时再读。
-
-
-
-> 📦 §运维令·2026-10-31 11:0x（审校第6章出修订计划）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：wake#436 交付 report_vision_paper_revise_plan_zh.html，已被 11:2x 令升级为直接改稿并执行完毕。需要时再读。
-
-
-
-> 📦 §运维令·2026-10-31 08:4x（波形图强化RL计划书）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：wake#435 交付 report_vision_wave_rl_plan_zh.html 59241B/12节，覆盖9个必答问题+WaveView API实测事实引用。需要时再读。
-
-
-
-> 📦 §运维令·2026-10-30 22:2x（写「2B MLLM 看懂波形图」能力与评测报告）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：wake#424 交付 report_vision_waveform_zh.html 45236B/6节/14表，覆盖任务定义/能力拆解/数据/训练/评测/成本ETA。需要时再读。
+> 📦 已归档（2026-10-30~31，ViT-L 68.236% / MLLM 26.10% 写进论文 ch6/ch7、6_vision_encoder.tex 重写、第6章审校修订、波形图强化 RL 计划书、2B MLLM 看懂波形图能力报告）→ run/ARCHIVE_OPERATOR_VISION.md（wake#424/#435/#436/#437/#439）。需要时再读。
 
 > 🧷 **归档与执行纪律（2026-10-25 用户令 · 最高优先 · 覆盖任何其它归档/收尾条文）**
 > 用户原话：「agent 看到任务书 >32k 后要滚动归档，但是它们**在滚动归档时不要碰没有完成的运维指令**，而且在**归档后立即执行运维指令**，而不是立刻睡去等下次唤醒。」
@@ -151,45 +144,17 @@
 
 > 📦 §用户令·2026-11-06 21:3x（advantage 方差诊断）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：wake#838 判定 PARTIAL（std=0=78.7%/全0=0%/全同档=无信号根因），建议 group_size→8+按目标差异化+奖励连续化(需批)。需要时再读。
 
-
 > 📦 §用户令·2026-11-06 18:5x（vision 先上 CPU）**✅ 已交付**（wake#827-#835：P0 冒烟 5 步 365s（73s/步）、P1 50 步 ~2min/步、4 个 eval JSON、报告 15058B、EXPERIMENTS §21；结论 post-GRPO 6.2% < post-SFT 9.2% 未提升）→ 全文见 `run/ARCHIVE_OPERATOR_VISION.md`。
 
 ### 📦 §运维令·2026-11-05 17:5x（执行波形 RL 计划：Stage-1W SFT → Stage-2W GRPO · 分阶段）· ✅ 阶段0+阶段1 已交付 → 原文见 `ARCHIVE_OPERATOR_VISION.md`
 
 > **用户令**：「vision：执行 2026-10-31 波形 RL 计划书（`reports/report_vision_wave_rl_plan_zh.html`），让 2B MLLM 通过与 WaveView 交互学会看懂波形图。分阶段，先解锁待核项再训练。」
 > **交付进展**：阶段0（WaveView/FSDB 解锁 + Gym 冒烟）✅ · 阶段1 SFT 验收 PASS（format 100%/submit 100%）✅ · Phase2 **CPU pilot 全链路 PASS**（诚实负结果 post-GRPO 6.2% < post-SFT 9.2%）✅ · advantage 诊断 gs4/gs8 双轮 ✅（PARTIAL，离散分档是全同档根因）。**阶段2 正式 GRPO 需 GPU —— 已被 2026-11-07 用户令改为「改用 CPU 重新设计」路线，见顶部新令。** 需要细节读 archive / 各阶段报告。
-### [已归档] §运维令·2026-10-26 08:2x（写最近工作报告 · 中文 HTML）**已完成**（wake#279 交付 `reports/report_vision_recent_work_zh.html` 40423B/5节/0 script/0 外链）→ 全文见 `run/ARCHIVE_OPERATOR_VISION.md`。
-
-### [已归档] §运维令·2026-10-25 22:4x（生成 1000 万 OCR 图文对）**已完成**（wake#275：9,999,999 对/2000 shard/470GB；去重 2.4486%、泄漏 113 已如实披露；用户已裁定 accept-as-is）→ 全文见 `run/ARCHIVE_OPERATOR_VISION.md`。
-
-### [已归档] §运维令·2026-10-25 19:5x（路线①细化为执行方案报告）**已完成**（wake#272 交付 report_vision_ocr_sft_plan_zh.html 22,706B/9节）→ 全文见 `run/ARCHIVE_OPERATOR_VISION.md`。
-
-### [已归档] §运维令·2026-10-25 17:5x（OCR 类评测偏低：OCR 合成数据调研）**已完成**（wake#271 交付 report_vision_ocr_synthdata_zh.html 29177B/8节）→ 全文见 `run/ARCHIVE_OPERATOR_VISION.md`。
-
-### [已归档] §运维指令·2026-10-24 16:1x（写「下一步如何提升 ProtB 与 MLLM 成绩」报告）**已完成**（wake#250 交付 `reports/report_vision_next_steps_protb_mllm_zh.html` 21.1KB / 8 节 / 0 script / 0 外链，后续 A3 + B4 已执行）-> 原文归档到 `run/ARCHIVE_OPERATOR_VISION.md`。需要时再读。
-
-> 📄 **报告格式常驻规程（2026-10-24 用户令）**：**所有报告一律用中文 HTML**（单文件自包含、无外链/CDN），除非用户另行指定；🚫 不用 `.md` / `.pdf` / 纯文本顶替。
-
-### [已归档] §运维指令·2026-10-24 10:3x（ArmE-R2 完整实验报告）**已完成**（wake#247 交付 `reports/report_vision_armE_r2_20261024_zh.html` 26,522B / 7 节；wake#267 复核仍在位）-> 原文归档到 `run/ARCHIVE_OPERATOR_VISION.md`。需要时再读。
-
-> **已归档**（2026-10-24 11:43）：ArmE 停止降 LR 重跑 / 启动 ArmE（ViT-L14）/ Stage-2 改原版 780k 三块 —— 原文均在 `run/ARCHIVE_OPERATOR_VISION.md`。
-
-
-### 📦 运维指令 · 2026-10-20 08:2x（**ArmD-R2：LR 1e-3 / min_LR 1e-5 / 数据不变**）· 用户直令 · 最高优先 — 已归档
-
-> **已闭合**（ArmD-R2 全链路 DONE 2026-10-21：①训练✅63400步 / ②ProtB✅lp64.3373·5-NN55.956 / ③MLLM三阶段✅Stage-2原版数据 / ④12集✅avg26.12% / ⑤报告✅）。原文移至 `run/ARCHIVE_OPERATOR_VISION.md`（2026-10-21 归档）。**结论**：ArmD-R2 vs ArmC(LR轴一致,仅data3→6源+epoch4→3) ProtB Δlp+2.005pp/Δ5-NN+1.238pp 双双正向；MLLM下游几乎持平→ProtB→MLLM传递性再次证伪。ArmD-R2 是 ArmE 的对照基线（口径值见上方 ArmE 块口径表）。需要时再读。
-> **已归档**（2026-10-24 11:43）：🔥 运维令 · 2026-10-19 22:5x（**立即启动 ArmD，不要再 idle**）· 用户直令「vision：尽快启动」 — 原文移至 `run/ARCHIVE_OPERATOR_VISION.md`。需要时再读。
-
-
-### 📦 已归档（08:2x）：ArmD 原始块（2026-10-19 21:2x）
-
-> 已被 **08:2x「ArmD-R2」块**取代（LR 2e-3→1e-3，数据不变）。原文移至 `run/ARCHIVE_OPERATOR_VISION.md`。需要时再读。
-
+> 📦 已归档（2026-10-17 ~ 10-26）：ArmA/B/C/D 系列指令 + OCR 三条调研/路线令 + Milestone 报告令 + 08:2x ArmD-R2 整块→ `run/ARCHIVE_OPERATOR_VISION.md`（wake#133/#247/#250/#271/#272/#275/#279 交付）。需要时再读。
 ### 🧹 运维总则 · 2026-10-18（禁令作用域清理）
 - **保留（全局有效）**：不伪造、不泄密、不杀健康训练、不覆盖他线产物、不绕过验证/实名/风控。
 - **降级为局部**：旧块里的“等运维许可 / 不重启 / 暂停 / 不开跑 / 不碰 X”只在**该块任务**内有效；与最新用户令或最新任务块冲突时，**以最新块为准**。
 - **已闭合旧块**不再作为禁令来源；唤醒时按各线体积规程归档到 `ARCHIVE_*`，不要让它继续占用 prompt。
-
 
 ### 📦 运维指令 · 2026-10-18 17:1x（ArmC：min_lr 1e-4→1e-5 + wd 0.1→0.01 · 4 阶段）— 已归档
 
@@ -200,7 +165,6 @@
 > **已闭合**：ArmB 已训完并评测（ProtB 62.093/58.102、MLLM 26.10%），ArmC/ArmD 依次承接。原文移至 `run/ARCHIVE_OPERATOR_VISION.md`。需要时再读。
 
 ### [已归档] §运维令·2026-10-17（ArmA 中文报告 + open_clip×AIMv2-style 兼容性评估）**已完成**（wake#133：数字全溯源 EXPERIMENTS §10，不得写「AIMv2好 9pp」）→ 全文见 `run/ARCHIVE_OPERATOR_VISION.md`。
-
 
 > 📦 2026-10-13 ~ 10-16 历史运维指令指针（~90 条单行摘要）已原文归档 → `run/ARCHIVE_OPERATOR_VISION.md`；需要时再查，不要读进上下文。
 ### 🏆 最佳实践（BEST PRACTICES）— 2026-10-08 锁定 · 如无特殊指定，一律按此执行
@@ -245,9 +209,7 @@
 
 ---
 
-
 > 📦 2026-10-06~08 运维指令（8 条：①论文LaTeX ②全线报告 ③mask-ratio消融 ④GPU12对账 ⑤昨夜汇报 ⑥下一步建议 ⑦AIMv2 AR范式 ⑧队列裁定 ⑨lp协议研究）已归档 → `run/ARCHIVE_OPERATOR_VISION.md`。需要时再读。
-
 
 ### 🧭 运维规程 · 2026-10-06（【agent 归档 MEMORY + 任务书】 —— 由你自己滚，不再由运维代劳）· 常驻
 
@@ -256,7 +218,6 @@
 > 做法 = 只「搬迁」、不改内容：① 已闭合内容（已执行完/已作废的运维块、已完成轮次正文、较早巡检流水）原文搬入 `run/ARCHIVE_OPERATOR_VISION.md` / `run/ARCHIVE_VISION_SPEC_HISTORY.md`（无则新建）/ `daily-memories-vision/<日期>.md`；② 留 1 行指针；🚫 不改小节编号/标题；🚫 不新增/不改写任何指令（本区作者仍是运维）。
 > 护栏：搬前 `git pull --rebase --autostash`；只搬「最新活跃块之下」的已闭合块（保留最上面 1–2 个未完成块）；冲突保留双方；提交用 `vision 归档: …` 前缀。
 > 本轮动作：本任务书现 ≈24KB（在上限内）⇒ 暂时无需归档；一旦 >32KB 即自行滚动（`MEMORY_VISION.md` 已贴 32KB 上限，优先滚它）。
-
 
 ### 🧭 收尾铁律 · 2026-10-06（用户指令 · 每轮唤醒必须执行，不许省）
 
@@ -298,13 +259,11 @@
 
 > 📦 §运维指令（2026-10-05 深夜2 · 两份 HTML 报告）已归档 → run/ARCHIVE_OPERATOR_VISION.md；结论：report_vision_lp_eval.html + report_vision_aimv2_impl.html 已产出并提交。需要时再读。
 
-
 > 📦 §运维指令（2026-10-05 深夜 · R12→3epoch + 方向建议）已归档 → run/ARCHIVE_OPERATOR_VISION.md；结论：3-epoch 续跑 lp=20.27%（35 点 R²=0.94）；VISION_NEXT_DIRECTIONS.md 已交（方向2/3已批，方向4作废）。需要时再读。
 
 > 📦 §运维指令 · 2026-10-05（晚 · 全量 AIMv2 训练 + 论文 §6 改写 + proxy/环境隔离口径）已归档 → run/ARCHIVE_OPERATOR_VISION.md；结论：R12b 训练完成(lp_max=18.81%) + 论文 §6 改写完成 + proxy/env 口径已同步。需要时再读。
 
 ### 1. 📌 全局口径与铁律（一次性质，对所有 R 生效）
-
 
 - 🚫 不许闭门造车：涉及"别人怎么做"（架构/loss/评测/数据）必须去读官方仓库或论文原文（能 clone 就 clone）—— 不得凭二手描述下结论（本线已因此出错一次）。
 - 不重跑已落盘训练；不改 R8/R9/R10 已落盘结论（只在 §2 明确"修正"条目下补限定）。
@@ -328,28 +287,12 @@
 > 📦 §5 背景参考（2026-10-03）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：含 R9/R10 关键事实 + 官方资源核实 + 数据侧硬约束 + 口径提醒。需要时再读。
 > ⚠️ **口径提醒（现行）**：R6/R7 的「正式训练切 GPIC `short`」是另一条线；R9/R10 的 scaling 实际用的是 CC12M+Amshaker —— 报告里必须写清这条区分。
 
-### 📉 体积维护规程（2026-10-03 立 → 2026-10-06 升级为「记忆 + 任务书」双约束，硬性）
+### 📉 体积维护规程（2026-10-06 升级为「记忆 + 任务书」双约束，硬性）
 
-> 理由：`MEMORY_*.md` 与 `BAIZE_<线>_TASK.md` 都每次唤醒被全文读进 prompt（`prompt="$(< "$TASK_MD")"`）⇒ 越大越烧 token。
-> 📊 2026-10-06 实测：本线任务书 `BAIZE_VISION_TASK.md` ≈ 21KB、`MEMORY_VISION.md` ≈ 32KB（已贴上限）。
-- 上限（两者相同）：≤ 32KB；红线 40KB ⇒ 超红线当轮必须先归档才能收尾。
-- 自检：见「收尾铁律」第 0 条（`wc -c` 两文件，数字抄进心跳）。
-- 归档去向（只归档「历史」，🚫 不许归档「活口径」）：
-  ① 已执行完/已作废的运维指令块 → `run/ARCHIVE_OPERATOR_VISION.md`（留下 1 行指针）；
-  ② 被取代的候选表/推导过程（保留现行档 + 实测结果） → `run/ARCHIVE_VISION_SPEC_HISTORY.md`（无则新建）；
-  ③ 已完成轮次原文 → 沿用 `run/vision/ARCHIVE_ROUNDS_2-9.md` 等；
-  ④ 较早的巡检/流水条目（保留最近 ~20 条） → `daily-memories-vision/<条目日期>.md`（原文不改）。
-- 🚫 不许归档：硬规则 / 验收标准 / 现行口径 / `WAITING:` 状态头 / 「运维问答」区。
-- 指针（必须留、只 1 行）：`> 📦 §<标题>（<日期>）已归档 → run/ARCHIVE_….md；**结论**：<一句话>。需要时再读。`
-  🚫 不许改小节编号/标题（别处有交叉引用）。
-- 谁做（2026-10-06 改 · 与 MEMORY 自滚同机制 = agent 自己做）：`MEMORY_*.md` 一直由 agent 自滚，任务书同理 —— 本线 agent 自己把「已闭合」内容原文移入对应归档文件、留 1 行指针。⚠️ 本文件「agent 只读」的唯一例外 = 仅此「搬迁」：原文一字不改、不动小节编号/标题、不新增/不改写任何运维指令（本区作者仍是运维）。并发安全：归档前先 `git pull --rebase --autostash`；只搬「最新活跃块之下」的已闭合块（保留最上面 1–2 个未完成块）；冲突保留双方；提交用 `<线> 归档: …` 前缀。
-- 顶部必须保留：① `WAITING:` 行（仍只出现一次）② 状态头 ③ 最近 ~20 条。
-- 纪律：归档不改变任何结论；`WAITING:` 纪律不变。
-
----
-
-
-
+> 理由：两文件每次唤醒全文进 prompt，越大越烧 token。**上限 ≤ 32KB；红线 40KB**（超红线当轮必须先归档才能收尾）。
+> 归档去向：① 已完成的运维指令块 → `run/ARCHIVE_OPERATOR_VISION.md`（留 1 行指针）；② 被取代的候选表 → `run/ARCHIVE_VISION_SPEC_HISTORY.md`；③ 已完成轮次 → `run/vision/ARCHIVE_ROUNDS_*.md`；④ 巡检流水 → `daily-memories-vision/<日期>.md`（保留最近 ~20 条）。
+> 🚫 **不许归档**：硬规则 / 验收标准 / 现行口径 / `WAITING:` 状态头 / 未完成的运维令（见「归档与执行纪律」）。
+> 指针格式（只 1 行）：`> 📦 §<标题>（<日期>）已归档 → run/ARCHIVE_….md；**结论**：<一句话>。` 🚫 不许改小节编号。归档不改变任何结论。
 
 ---
 

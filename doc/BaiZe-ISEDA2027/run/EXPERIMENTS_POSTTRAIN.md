@@ -1361,3 +1361,810 @@ python3 -c 'import torch; print(torch.cuda.is_available())'           # torch CU
 | verl GitLab | https://git.doit.wisc.edu/vdhanuka/verl/-/blame/.../install.rst | 2026-11-07 |
 | verl Docker | verlai/verl:vemlp-th2.4.0-cu124-vllm0.6.3-ray2.10 | 2026-11-07 |
 | Fable-5.1 SFT实践 | https://blog.gitcode.com/bd09c377c217f5aabd45cfa483b85f89.html | 2026-11-07 |
+
+---
+
+## §R8 MiniCPM5-2B 模型架构与 Tokenizer 深度分析（2026-11-07 wake56 · 零 GPU · 实测模型文件）
+
+> **任务**：从 `/tmp/models/MiniCPM5-2B/` 的实际模型文件（config.json / tokenizer_config.json / chat_template.jinja / generation_config.json / README）中提取 11/9 启动所需的全部技术细节。
+> **方法**：直接读取本地模型文件，不依赖任何外部文档（README 交叉验证）。
+> **关键发现**：🔴 **工具调用推荐 SGLang 而非 vLLM**——MiniCPM5-2B 以 XML 格式产出工具调用，SGLang 内置 `minicpm5` parser 自动转换为 OpenAI 兼容 `tool_calls`，vLLM 无此能力。
+
+### 1. 模型架构（config.json 实测）
+
+| 属性 | 值 | 说明 |
+|:--|:--|:--|
+| 架构 | `LlamaForCausalLM` | 标准 Llama 架构，**无需 trust-remote-code**，无自定义算子 |
+| 隐藏层数 | 42 | 较深（对比 Llama-2-7B=32 层） |
+| 隐藏维度 | 2048 | |
+| 中间维度 | 6144 | FFN expansion = 3× |
+| 注意力头数 | 16 | |
+| KV 头数 | 2 | **GQA 8:1**（激进分组查询注意力，推理高效） |
+| head_dim | 128 | |
+| 词表大小 | 130560 | 较大（对比 Llama-3=128256） |
+| max_position_embeddings | 131072 | **128K 上下文**（rope_theta=5000000 支撑） |
+| tie_word_embeddings | false | 输入输出 embedding 不共享（与 MiniCPM3 不同） |
+| 精度 | bfloat16 | |
+| 参数量 | ~2B（safetensors=5.03GB，bf16） | |
+| bos_token_id | 0 (`<s>`) | |
+| eos_token_id | [1, 130073] | **双 EOS**：`</s>`(1) + `<|im_end|>`(130073) |
+| pad_token_id | 1 (`</s>`) | |
+
+**GQA 8:1 意义**：16 个 query 头共享 2 个 KV 头，KV cache 仅为 MHA 的 1/8 → 推理时显存效率极高，A40 上长上下文 rollout 成本可控。
+
+### 2. 特殊 Token 清单（tokenizer_config.json 实测）
+
+| Token ID | Token | 类型 | 用途 |
+|:--|:--|:--|:--|
+| 0 | `<s>` | special | BOS |
+| 1 | `</s>` | special | EOS / PAD |
+| 2 | `<think>` | special | 思考块开始 |
+| 3 | `</think>` | special | 思考块结束 |
+| 4 | `<|im_sep|>` | special | ChatML 分隔符 |
+| 5-7 | `<|fim_prefix|>` / `<|fim_middle|>` / `<|fim_suffix|>` | special | FIM（填充中间，代码补全） |
+| 8 | `<think>` (duplicate?) | non-special | 非特殊版思考标记 |
+| 9 | `</answer>` | non-special | 答案块结束 |
+| 10-11 | tool_result_start / tool_result_end | special | 工具调用结果包裹 |
+| 12-21 | <tools>/<function>/<param> 及闭合 | special | XML 工具调用标签 |
+| 130072 | <\|im_start\|> | special | ChatML 消息开始 |
+| 130073 | <\|im_end\|> | special | ChatML 消息结束（也是 EOS） |
+| 130077 | <\|tool_call\|> | special | 工具调用标记 |
+| 130080-130081 | /think / /no_think | special | 思考模式开关 |
+| 130082-130559 | <unused_token_0>~_477 | non-special | **478 空闲 token** 可自定义 |
+
+**关键发现**：① 双 EOS（</s> + <|im_end|>）→ vLLM/verl stop_token_ids 必须含两者 ② 478 unused tokens 可注入领域 token ③ ChatML 格式。
+
+### 3. Chat Template（chat_template.jinja 实测 112 行）
+
+MiniCPM5-2B 使用 **ChatML + 思考/答案分离**：
+- 消息格式：`<|im_start|>role
+{content}<|im_end|>
+`
+- assistant 含思考块：think_begin...think_end + answer_begin...answer_end
+- 工具调用（assistant）：XML `<function name="X"><param name="P">V</param></function>`
+- 工具结果（tool role -> user）：tool_result_start/end 包裹
+- enable_thinking=False -> 追加 skip 思考的 token；True -> 追加 think_begin
+
+### 4. 🔴 工具调用后端选择（关键发现）
+
+MiniCPM5-2B 工具调用是 **XML 格式**，非 OpenAI function calling。
+
+| 后端 | 工具调用解析 | 用途 |
+|:--|:--|:--|
+| **SGLang** (--tool-call-parser minicpm5) | ✅ 自动转 OpenAI tool_calls | **评测/full harness** |
+| vLLM | ❌ 不解析 XML | 纯文本推理 / verl RL rollout |
+
+**影响**：36% 基线复测**必须用 SGLang**，否则 vLLM 无法解析工具调用 -> 模型被 handicapped -> 结果不可比。
+README 原文（L375）：“工具调用**推荐使用 SGLang**”。
+SGLang 启动：`python -m sglang.launch_server --model-path /tmp/models/MiniCPM5-2B --port 30000 --tool-call-parser minicpm5`
+SGLang 安装：`pip install "sglang[srt]>=0.5.16"`
+
+### 5. 生成配置（generation_config.json 实测）
+
+do_sample=true, temperature=1.0, top_p=0.95；README 建议 min_p=0.0（禁用过滤避免重复），遇重复加 repetition_penalty=1.05。
+
+### 6. 对 SFT 数据格式化的影响
+
+- 必须用 ChatML + 思考/答案分离格式
+- assistant 消息含思考块 + 答案块结构
+- 工具调用用 XML <function> 格式
+- loss 只在答案块后内容上计算（response-only）
+- sft_pyaether_corpus.jsonl（19610 对）需验证是否使用正确的 ChatML 格式
+
+### 7. 对 RL Rollout 的影响（verl + vLLM）
+
+- stop_token_ids 必须含 [1, 130073]
+- verl 需自行解析 XML <function> 工具调用
+- RL rollout 建议 enable_thinking=False 减少生成长度
+- max_model_len=8192
+
+### 8. 更新后 11/9 启动序列（修订 R7 xa73）
+
+| Step | 变更 |
+|:--|:--|
+| 2a | U0001f504 **SGLang serve**（评测用）：sglang.launch_server + --tool-call-parser minicpm5, port 30000 |
+| 2b | vLLM serve（RL rollout 用）verl 内置 |
+| 3 | U0001f504 评测用 SGLang endpoint（localhost:30000） |
+| SGLang 安装 | pip install "sglang[srt]>=0.5.16" 加入 cu124 venv |
+
+### 9. SGLang vs vLLM 在 A40 上的显存预估
+
+| 后端 | 模型加载 | KV cache (8192) | 总显存 | 4xA40 可行？ |
+|:--|:--|:--|:--|:--|
+| SGLang bf16 tp=2 | ~5GB | ~2GB/req x16=32GB | ~37GB | ✅ |
+| vLLM bf16 tp=2 | ~5GB | gpu_mem_util=0.7 -> ~28GB | ~33GB | ✅ |
+
+SGLang 额外支持 DSPark 投机采样（draft model ~500MB）加速 2-3x。
+
+### 10. 风险与缓解
+
+| 风险 | 概率 | 缓解 |
+|:--|:--|:--|
+| SGLang 不支持 cu124 | 低 | SGLang 0.5.16+ 支持 CUDA 12.4 |
+| 36% 基线因后端不同而偏移 | 中 | 11/9 首先用 SGLang 复测，记录新基线 |
+| XML 工具调用解析失败 | 低 | SGLang minicpm5 parser 官方支持 |
+| 思考模式导致输出过长 | 中 | RL 用 enable_thinking=False |
+
+### 11. 数据来源
+
+| 来源 | 位置 | 日期 |
+|:--|:--|:--|
+| config.json | /tmp/models/MiniCPM5-2B/config.json | 2026-11-07 |
+| tokenizer_config.json | /tmp/models/MiniCPM5-2B/tokenizer_config.json (4099 行) | 2026-11-07 |
+| chat_template.jinja | /tmp/models/MiniCPM5-2B/chat_template.jinja (112 行) | 2026-11-07 |
+| generation_config.json | /tmp/models/MiniCPM5-2B/generation_config.json | 2026-11-07 |
+| README-cn.md | /tmp/models/MiniCPM5-2B/README-cn.md (L272-400) | 2026-11-07 |
+| SGLang 部署文档 | https://github.com/OpenBMB/MiniCPM/blob/main/docs/deployment/sglang.md | 2026-11-07 |
+
+---
+
+## §R9 verl + SGLang 集成调研：解决 R5/R8 推理后端矛盾（2026-11-07 · 零 GPU · web 调研 + 实测）
+
+> **背景**：R5 选定 verl 作为 RL 框架（默认 vLLM 推理后端），R8 发现 MiniCPM5-2B 工具调用是 XML 格式，vLLM 无法解析，必须用 SGLang（内置 minicpm5 parser）。本节调研 verl 是否支持 SGLang，以及如何配置。
+
+### 1. 核心结论：verl 原生支持 SGLang 作为推理后端
+
+| 维度 | 结论 | 来源 |
+|:--|:--|:--|
+| SGLang 推理后端 | ✅ **原生支持**，与 vLLM 并列为两大推理后端 | verl 官方文档 (verl.readthedocs.io) |
+| 安装方式 | `pip install verl[sglang]`（对应 `verl[vllm]` 用 vLLM） | CSDN 技术博客 + 官方 docs |
+| 多轮工具调用 | ✅ **仅 SGLang 支持** multi-turn rollout（vLLM 不支持） | verl docs: sglang_multiturn/multiturn.html |
+| 配置方式 | `actor_rollout_ref.rollout.name: "sglang"` + `multi_turn: True` | 官方文档原文 |
+| 异步 rollout | `actor_rollout_ref.rollout.mode: async` + `data.return_raw_chat: True` | 官方 Agentic RL 文档 |
+| 自定义工具 | 实现 `verl.tools.base_tool.BaseTool` 子类 + YAML 配置 | 官方 Multi-turn Rollout 文档 |
+
+### 2. verl 多轮 rollout 架构（与 EDA 沙盒的契合点）
+
+verl 的 Agentic RL 架构有三个核心组件：
+
+| 组件 | 角色 | EDA 场景对应 |
+|:--|:--|:--|
+| AgentLoop | Client，实现 Agent 循环 | 模型读 API 文档→写 PyAether 代码→调 run_eda_code |
+| LLMServerClient | 推理网关，提供 token 级 generate 接口 | SGLang server（含 minicpm5 parser） |
+| AsyncServer | Server，连接推理引擎的 DP 组 | 每个 A40 一个 SGLang 实例 |
+
+**关键设计**：Client-Server 间用 **token 级 generate 接口**（非 Chat Completion API），因为 token↔text 转换不可逆，训练阶段必须严格用 LLM 推理产出的 token 计算 advantage。这确保了 EDA 工具返回的文本与 LLM 生成的 token 之间的正确对应关系。
+
+**异步 rollout 的价值**：EDA 沙盒调用有网络延迟（SSH 隧道到 36.15），async 模式让 GPU 在等待沙盒返回时不空转——这对我们的 EDA 交互式 RL 至关重要。
+
+### 3. 配置变更详情（R5 → R9）
+
+| 配置项 | R5（旧） | R9（新） | 理由 |
+|:--|:--|:--|:--|
+| `rollout.name` | `vllm` | `sglang` | R8: SGLang 支持 minicpm5 XML 工具解析 |
+| `rollout.multi_turn` | 无 | `True` | 多轮工具调用（SGLang only） |
+| `rollout.mode` | 无 | `async` | 避免沙盒延迟导致 GPU 空转 |
+| `rollout.tool_call_parser` | 无 | `minicpm5` | SGLang 内置 MiniCPM5 XML parser |
+| `data.return_raw_chat` | 无 | `True` | async rollout 必需 |
+| `actor.use_kl_loss` | 无 | `True` + `kl_loss_coef: 0.04` | GRPO 需要 KL 约束 |
+| 安装 | `pip install verl` | `pip install verl[sglang]` | SGLang 后端依赖 |
+| 验证包 | `vllm` | `sglang` | 验证脚本对应更新 |
+
+### 4. EDA 沙盒工具实现路径（BaseTool 子类）
+
+verl 的 Tool Agent Loop 要求：
+1. 数据集添加 `agent_name` 字段（verl 据此选择 `tool_agent_loop`）
+2. 工具实现 `BaseTool` 子类，提供 `create()`/`execute()`/`release()` 生命周期
+3. 工具配置写入 YAML（`tools_config_file` 指向）
+
+**已创建骨架**：`run/baize_posttrain_eda_tool.py`
+- `EDASandboxTool(BaseTool)`：SSH→36.15 run_code，返回 response/error_log/print_log/result
+- `compute_r2_reward()`：exec_success(0.2) + partial_assert(0.2 each) + full_pass(1.0)
+- `compute_r3_reward()`：R2 + tool_call_penalty
+- `compute_r4_reward()`：R3 + API_legality
+- dry-run 通过✅（skeleton 模式，SSH 执行待 11/9+ 隧道就绪后实现）
+
+**已创建工具配置**：`run/baize_posttrain_eda_tools.yaml`
+- `run_eda_code` 工具 schema：code + host 参数
+- 5 个沙盒 host：pyAether/aether/skill_virtuoso/tcl_innovus/tcl_waveview
+
+### 5. Delta-based Tokenization（verl 多轮训练的 token 对齐）
+
+verl 采用 delta 分词策略确保只有 assistant 生成的 token 进入 loss mask：
+1. 对 `messages[:i]` 应用 chat template（add_generation_prompt=True）
+2. 对 `messages[:i+1]` 应用 chat template（add_generation_prompt=False）
+3. 只 tokenize 两个序列的 **delta**（差值）
+
+这保证工具返回的文本不进入训练 loss——只有模型自己的生成被优化。
+
+### 6. 11/9 启动序列更新（R9 影响）
+
+| 步骤 | R8 版本 | R9 更新 |
+|:--|:--|:--|
+| Step0 | 新建 cu124 venv | 安装 `verl[sglang]` 而非 `verl`（setup 脚本已更新） |
+| Step2a | SGLang serve | 不变（SGLang 仍是推理后端） |
+| Step6 | verl RL 起跑 | 配置已从 vLLM 切到 SGLang + multi_turn + async |
+
+### 7. 风险与缓解
+
+| 风险 | 概率 | 影响 | 缓解 |
+|:--|:--|:--|:--|
+| SGLang + verl 版本兼容性问题 | 中 | RL 无法启动 | 先在 smoke 模式验证（`--smoke`: 10 iters, G=4） |
+| miniCPM5 parser 在 verl 中不可用 | 低 | 工具调用不解析 | verl 文档明确 SGLang 支持 tool_call_parser 透传 |
+| SSH 隧道延迟导致 async rollout 超时 | 中 | 训练中断 | `task_timeout: 2500s` + `sandbox_concurrency: 8` 限流 |
+| 数据集缺 `agent_name` 字段 | 高 | verl 不启用 tool_agent_loop | E1 合成数据需加 `agent_name: tool_agent_loop` 字段 |
+
+### 8. 数据集格式适配需求
+
+verl 要求数据为 **parquet** 格式（非 JSONL），且需要 `agent_name` 字段：
+- 现有 `rl_pyaether_synth_v2.jsonl`（3347 题）需转换为 parquet
+- 每条记录添加 `agent_name: "tool_agent_loop"` 字段
+- 转换脚本待 11/9 GPU 到位后编写（零 GPU 即可做，但非本轮优先）
+
+### 9. 交付物清单
+
+| 文件 | 类型 | 状态 |
+|:--|:--|:--|
+| `baize_posttrain_rl_verl_config.yaml` | 更新（vLLM→SGLang） | ✅ YAML 语法检查通过 |
+| `baize_posttrain_eda_tools.yaml` | 新建 | ✅ YAML 语法检查通过 |
+| `baize_posttrain_eda_tool.py` | 新建（BaseTool 骨架） | ✅ dry-run 通过 |
+| `baize_posttrain_setup_cu124_venv.sh` | 更新（verl→verl[sglang]） | ✅ bash -n 通过 |
+| `reports/report_posttrain_r9_verl_sglang_integration_zh.html` | 新建 | ✅ 本节 HTML 版 |
+| `EXPERIMENTS_POSTTRAIN.md §R9` | 本节 | ✅ |
+
+### 10. 数据来源
+
+| 来源 | URL | 日期 |
+|:--|:--|:--|
+| verl 官方文档首页 | https://verl.readthedocs.io/en/latest/ | 2026-11-07 |
+| verl Agentic RL 文档 | https://verl.readthedocs.io/en/latest/start/agentic_rl.html | 2026-11-07 |
+| verl Multi-turn Rollout | https://verl.readthedocs.io/en/latest/sglang_multiturn/multiturn.html | 2026-11-07 |
+| verl Config Explanation | https://verl.readthedocs.io/en/latest/examples/config.html | 2026-11-07 |
+| verl NPU Advanced Features（确认 SGLang 支持） | https://verl.readthedocs.io/en/latest/ascend_tutorial/en/feature_support/npu_advance_features.html | 2026-11-07 |
+| CSDN verl 训练指南（确认 verl[sglang] 安装） | https://blog.csdn.net/gitblog_00818/article/details/162550189 | 2026-11-07 |
+| verl Agentic RL 全指南（async rollout 架构） | https://www.hqwc.cn/a/1763761.html | 2026-11-07 |
+
+
+---
+
+## §R10 verl 数据格式研究 + JSONL→Parquet 转换（2026-11-07 · 零 GPU · 实测）
+
+> **背景**：R9 发现 verl 多轮工具调用需 SGLang 后端，但数据格式（parquet schema、
+> `agent_name`、`return_raw_chat`、`need_tools_kwargs`）尚未落实到可执行层面。
+> 本节解决「数据集需转 parquet + 加 agent_name 字段」这一 R9 遗留项。
+> **检索词**：`verl data format parquet schema`, `verl RLHF dataset columns`,
+> `verl multi-turn tool calling data`, `verl agent_name field`, `SDPO/verl dataset formats`
+
+### 1. verl 数据格式规范（官方文档 + DeepWiki SDPO/verl 源码分析）
+
+> **来源**：DeepWiki `lasgroup/SDPO` §8.1 Dataset Formats（verl fork，源码索引 commit 519a25）
+> + CSDN verl 训练指南 + verl 官方 readthedocs
+
+verl 支持三种数据集格式，全部使用 **Parquet** 文件：
+
+| 数据集类型 | 用途 | 核心类 | 关键字段 |
+|:--|:--|:--|:--|
+| **RLHF Dataset** | PPO/GRPO/DAPO 训练 | `RLHFDataset` | `prompt`（+ 可选 `reward_model`、`agent_name`） |
+| **Multi-turn SFT Dataset** | 多轮对话 SFT | `MultiTurnSFTDataset` | `conversation`（多轮消息列表） |
+| **Reward Model Dataset** | RM 训练 | `RMDataset` | `chosen`/`rejected` 对 |
+
+#### 1.1 RLHF Dataset（GRPO 用）schema
+
+| 列名 | 类型 | 必需 | 说明 |
+|:--|:--|:--|:--|
+| `prompt` | `string` 或 `list[dict]` | ✅ | 当 `return_raw_chat=True` 时为 `list[dict]`（ChatML 消息）；否则为纯文本字符串 |
+| `reward_model` | `dict`（任意结构） | ❌ | 传递给 reward function 的 ground truth（test_code、canonical_solution 等） |
+| `agent_name` | `string` | ❌ | 选择该样本使用哪套工具配置（对应 `tool_kwargs` 中的工具集名） |
+| `images`/`videos` | `list` | ❌ | 多模态字段（本线不涉及） |
+
+**关键配置项**（`data` 块）：
+- `return_raw_chat: True` — 多轮工具调用**必需**；prompt 为 `[{"role":"user","content":"..."}]`
+- `need_tools_kwargs: True` — 自动将工具定义注入 prompt
+- `agent_name_key: agent_name` — 按样本选择工具配置
+- `filter_overlong_prompts: True` — 过滤超长 prompt
+- `truncation: error` — 超长报错而非截断（确保不丢信息）
+
+#### 1.2 Multi-turn SFT Dataset schema
+
+| 列名 | 类型 | 必需 | 说明 |
+|:--|:--|:--|:--|
+| `conversation` | `list[dict]` | ✅ | 完整多轮对话 `[{"role":"system","content":"..."},{"role":"user","content":"..."},{"role":"assistant","content":"..."}]` |
+
+**关键配置项**：
+- `use_conversation_format: true`
+- `prompt_dict_keys: '["conversation"]'` — 从哪个字段提取 prompt
+- `response_dict_keys: '["conversation"]'` — 从哪个字段提取 response（verl 按 eot_id 切分）
+
+### 2. 转换脚本实现
+
+**文件**：`baize_posttrain_jsonl_to_parquet.py`（新建，语法✅，dry-run✅，实际执行✅）
+
+支持两种模式：
+- `rl` — RL synth tasks → verl RLHF parquet（`prompt` + `reward_model` + `agent_name`）
+- `sft` — SFT corpus → verl multi-turn SFT parquet（`conversation` + metadata）
+
+RL 模式 prompt 构造：
+```json
+[{"role": "user", "content": "You are an EDA automation assistant... \n\n<原始 prompt>"}]
+```
+reward_model 构造：
+```json
+{"test_code": "<断言代码>", "canonical_solution": "<标准答案>",
+ "entry_point": "<函数名>", "metadata": "<JSON 字符串>"}
+```
+agent_name = `"eda_sandbox"`（对应 `baize_posttrain_eda_tools.yaml` 中的工具配置）
+
+### 3. 实测转换结果
+
+| 数据集 | 输入 | 输出 | 记录数 | 文件大小 | 验证 |
+|:--|:--|:--|:--|:--|:--|
+| RL synth | `rl_pyaether_synth_v2.jsonl` (3347 行) | `rl_pyaether_synth_v2.parquet` | 3347 | 931.1 KB | ✅ read-back 3347 rows, 3 columns |
+| SFT corpus | `sft_pyaether_corpus.jsonl` (19610 行) | `sft_pyaether_corpus.parquet` | 19610 | 2808.1 KB | ✅ read-back 19610 rows, 5 columns |
+
+**压缩**：snappy（verl 标准）
+**Schema 验证**：pyarrow `Table.from_pylist` + `pq.read_table` 双向验证通过
+
+### 4. verl 配置更新
+
+`baize_posttrain_rl_verl_config.yaml` 的 `data` 块新增：
+- `need_tools_kwargs: True` — 注入工具定义
+- `agent_name_key: agent_name` — 按样本选工具配置
+- `return_raw_chat: True` — 已有（R9），确认必需
+
+### 5. 多轮工具调用数据流（verl SGLang async rollout）
+
+> **来源**：GitCode Awesome-ML-SYS-Tutorial verl Rollout 源码分析
+
+```
+DataLoader → RLHFDataset(prompt=list[dict]) → SGLang Async Rollout
+  ↓
+模型生成 → 解析 tool_call (minicpm5 parser)
+  ↓ PENDING → RUNNING → TOOL_CALLING
+工具执行 (EDASandboxTool.execute)
+  ↓ TOOL_CALLING → RUNNING
+结果追加到对话历史 → 再次生成
+  ↓ (max_turns 次后)
+COMPLETED → calc_reward (R2/R3/R4) → release
+  ↓
+DataProto → Compute Advantage (GRPO group_norm) → FSDP Update
+```
+
+**关键点**：
+- `prompt` 必须是 `list[dict]`（return_raw_chat=True），不是纯字符串
+- 工具调用由 SGLang 的 `tool_call_parser: minicpm5` 自动解析
+- `agent_name` 决定每条样本用哪套工具（支持混合数据集）
+- 奖励函数从 `reward_model` 字段获取 ground truth（test_code/canonical_solution）
+
+### 6. 11/9 启动序列更新
+
+原 R9 Step5（API profiling 后起 RL）现在细化：
+1. `baize_posttrain_setup_cu124_venv.sh` — 创建 cu124 venv + 安装 verl[sglang]
+2. `baize_posttrain_preflight_check.sh` — 18 项预飞行检查
+3. SGLang serve MiniCPM5-2B + `--tool-call-parser minicpm5`
+4. 评测 158 题（复测 36% 基线）
+5. 采集真实失败轨迹（替换 R4 假设）
+6. API profiling（`baize_posttrain_api_profiler.py`）
+7. **数据转换**（NEW）：`baize_posttrain_jsonl_to_parquet.py rl -i ... -o ...`
+8. verl RL with SGLang + multi_turn + async + `rl_pyaether_synth_v2.parquet`
+
+### 7. 交付物清单
+
+| 文件 | 类型 | 状态 |
+|:--|:--|:--|
+| `baize_posttrain_jsonl_to_parquet.py` | 新建 | ✅ 语法 + dry-run + 实际转换通过 |
+| `rl_pyaether_synth_v2.parquet` | 新建 | ✅ 3347 records, 931KB, verl RLHF 格式 |
+| `sft_pyaether_corpus.parquet` | 新建 | ✅ 19610 records, 2.7MB, verl SFT 格式 |
+| `baize_posttrain_rl_verl_config.yaml` | 更新 | ✅ 新增 need_tools_kwargs + agent_name_key |
+| `reports/report_posttrain_r10_data_format_parquet_zh.html` | 新建 | ✅ 本节 HTML 版 |
+| `EXPERIMENTS_POSTTRAIN.md §R10` | 本节 | ✅ |
+
+### 8. 数据来源
+
+| 来源 | URL | 日期 |
+|:--|:--|:--|
+| DeepWiki SDPO/verl Dataset Formats | https://deepwiki.com/lasgroup/SDPO/8.1-dataset-formats | 2026-11-07 |
+| DeepWiki drzero Training Data Format | https://deepwiki.com/facebookresearch/drzero/7.1-training-data-format | 2026-11-07 |
+| CSDN verl 多轮对话 SFT 实战 | https://devpress.csdn.net/v1/article/detail/157315275 | 2026-11-07 |
+| GitCode verl Rollout 源码分析 | https://gitcode.com/gh_mirrors/aw/Awesome-ML-SYS-Tutorial | 2026-11-07 |
+| verl 官方文档 | https://verl.readthedocs.io/en/latest/ | 2026-11-07 |
+
+---
+
+## §R11 GRPO 内存预算与超参校准（4×A40 48GB · 2026-11-07 wake59 · 零 GPU · 文献+计算分析）
+
+> **目的**：R5 配置了 verl GRPO 超参（group_size=8, gpu_memory_utilization=0.35, ppo_micro_batch=4 等），但从未做过针对 4×A40 (48GB) 的显存可行性分析。11/9 GPU 到位后第一轮 RL 若 OOM 会浪费宝贵的 GPU 窗口。本节给出逐项显存计算、KV cache 分析、配置校准、OOM 降级阶梯和 smoke test 验证方案。
+
+### R11.1 硬件基线对照（verl 官方已知配置）
+
+> **来源**：verl 官方 Hardware Resource Needed for RL https://verl.org.cn/en/latest/perf/device_tuning.html
+
+| 模型 | 方法 | 最低资源 | 训练后端 | 推理后端 |
+|:--|:--|:--|:--|:--|
+| Qwen2-3B | GRPO-LoRA | 1×H100 80GB | FSDP | vLLM 0.8.3 |
+| Qwen2-7B | GRPO 全参 | 2×H800 80GB | FSDP | vLLM 0.8.2 |
+| Qwen2-14B | GRPO 全参 | 4×H800 80GB | FSDP | vLLM 0.8.2 |
+| Qwen2-32B | GRPO 全参 | 8×H20 96GB | Megatron | vLLM 0.8.2 |
+
+**推论**：3B LoRA 需 1×H100 80GB → 我们的 **2B 全参** 在 4×A40 48GB（总 192GB）上**绰绰有余**（2.4× 于 1×H100 总显存，且模型更小）。7B 全参需 2×H800 160GB → 2B 全参（≈7B 的 28%）在 192GB 上**远低于饱和点**。**结论**：4×A40 对 2B 全参 GRPO 是**充裕配置**，风险不在"能否放下"，而在"配置是否合理利用了显存"。
+
+### R11.2 MiniCPM5-2B 逐项显存预算（FSDP 4-way · bf16）
+
+> 模型参数来自 R8 实测：LlamaForCausalLM 42层 2048d GQA 16:2 head_dim=128 vocab=130560
+
+**训练态（Actor · FSDP sharded across 4 GPUs）**：
+- 权重（bf16）：2B × 2B / 4 = **1.0 GB**
+- 优化器 Adam（fp32 m+v）：2B × 8B / 4 = **4.0 GB**
+- 梯度（bf16）：2B × 2B / 4 = **1.0 GB**
+- **Actor 小计：6.0 GB**
+
+**参考模型（Ref · FSDP frozen · bf16）**：
+- 权重（frozen）：2B × 2B / 4 = **1.0 GB**
+- **Ref 小计：1.0 GB**
+
+**激活内存（gradient checkpointing · dynamic bsz）**：
+- ppo_micro_batch=4 × 8192 tokens，checkpointing 后峰值 ≈ **3.0 GB**
+
+**CUDA 上下文 + 杂项**：≈ **2.0 GB**
+
+**训练态合计：~12.0 GB/卡**，A40 usable 46GB → **剩余 ~34 GB 给 SGLang**。
+
+### R11.3 多轮工具调用 KV Cache 分析
+
+> **关键**：multi_turn=True + max_turns=3 意味着对话上下文逐轮增长，KV cache 需求远超单轮。
+
+**KV cache 逐 token 开销**：每层 K+V = 2 KV heads × 128 head_dim × 2 (K+V) × 2 bytes = 1024 bytes = 1 KB；42 层 = **42 KB / token**。
+
+**多轮上下文增长模型**：
+
+| 轮次 | 累计 token | KV cache / seq |
+|:--|:--|:--|
+| 初始 prompt | 4096 | 172 MB |
+| Turn 1 (resp+tool) | ~10240 | 430 MB |
+| Turn 2 (resp+tool) | ~16384 | 688 MB |
+| Turn 3 (resp) | ~20480 | 860 MB |
+
+**并发序列 KV cache 总量**：
+- max_num_seqs=16, 3 轮峰值：16 × 860 MB = **13.8 GB**
+- 带 prefix cache（同组 G=8 共享 prompt）：~**12.4 GB**
+
+**🔴 发现**：当前 `gpu_memory_utilization=0.35` 分配 0.35 × 34 = **11.9 GB**，而 3 轮峰值 KV cache 需 **13.8 GB** → **可能 OOM！**
+
+### R11.4 推荐配置变更
+
+| 参数 | 当前 | 推荐 | 理由 |
+|:--|:--|:--|:--|
+| `rollout.gpu_memory_utilization` | 0.35 | **0.50** | 3-turn KV cache 需 13.8GB，0.50→17GB 充裕 |
+| `rollout.max_num_seqs` | 16 | **12** | 降低并发减峰值；12×860MB=10.3GB 更安全 |
+| `actor.entropy_checkpointing` | — | **True** | vocab=130560 的 logits 张量大，优化熵计算内存 |
+| `ref.entropy_from_logits_with_chunking` | — | **True** | 分块计算 logits 熵，降内存峰值 |
+| `multi_turn.tokenization_sanity_check_mode` | — | **strict** | delta tokenization 一致性检查（verl 默认） |
+| 其余参数 | — | **保持** | group_size=8, lr=1e-6, kl=0.04, clip=0.2, TP=1, offload=False 均合理 |
+
+### R11.5 OOM 降级阶梯
+
+如果 11/9 遇到 OOM，按以下顺序降级（每步只改一个参数）：
+
+```
+Level 0 (推荐): gpu_mem=0.50, max_num_seqs=12, micro_batch=4
+  ↓ SGLang OOM → Level 1: gpu_mem=0.45, max_num_seqs=8
+  ↓ SGLang OOM → Level 2: gpu_mem=0.40, max_num_seqs=4, max_turns=2
+  ↓ 训练 OOM   → Level 3: micro_batch=2, max_token_len=8192
+  ↓ 优化器 OOM → Level 4: param_offload=True, optimizer_offload=True, gpu_mem=0.60
+  ↓ 仍 OOM     → Level 5: LoRA r=64, offload=True, gpu_mem=0.70
+```
+
+**判别 OOM 来源**：SGLang OOM → 降 max_num_seqs/gpu_mem；训练 OOM → 降 micro_batch/开 offload；优化器 OOM → 开 optimizer_offload。
+
+### R11.6 Smoke Test 验证方案
+
+11/9 GPU 到位后，**正式 RL 前必须先跑 smoke test**（config 中 `smoke` 块已定义）：
+
+```bash
+python -m verl.trainer.main_ppo \
+    --config baize_posttrain_rl_verl_config.yaml \
+    --reward-arm R2 --smoke
+# 另一终端监控：watch -n 5 'nvidia-smi --query-gpu=index,memory.used,memory.free --format=csv'
+```
+
+**通过判据**：① 10 iters 全完成无 OOM ② 峰值 <44GB/卡 ③ SGLang 无 "KV cache pool is full" ④ 奖励非全零 ⑤ KL∈[0.001,10] ⑥ cheat rate=0。
+
+通过后逐步放大：先 G=4→8，再 batch=16→128，每步 5 iters 确认无 OOM。
+
+### R11.7 11/9 监控清单
+
+| 检查项 | 命令 | 频率 | 告警阈值 |
+|:--|:--|:--|:--|
+| GPU 显存 | `nvidia-smi --query-gpu=memory.used --format=csv,noheader` | 30s | >44GB/卡 |
+| SGLang KV cache | 日志 grep `KV cache` | 每 iter | "pool is full" |
+| 训练 loss | TensorBoard | 10 iter | NaN/持续上升 |
+| KL divergence | 日志 grep `kl` | 10 iter | >10或<0.001 |
+| 奖励分布 | 日志 grep `reward` | 10 iter | 全零/全相同 |
+| Cheat rate | 日志 grep `cheat` | 200 iter | >0 |
+| 沙盒超时率 | 日志 grep `timeout` | 每 iter | >20% |
+| Rollout 吞吐 | 日志 grep `throughput` | 50 iter | <100 tok/s |
+
+### R11.8 多轮 delta tokenization 注意事项
+
+> **来源**：verl 官方多轮 Rollout 文档 https://verl.org.cn/en/latest/sglang_multiturn/multiturn.html
+
+verl 多轮 rollout 使用 **delta-based tokenization**：只对 assistant 新生成 token 计算 loss。关键配置 `multi_turn.tokenization_sanity_check_mode: strict`（默认）每次 rollout 自动验证一致性。
+
+**潜在风险**：MiniCPM5-2B 的双 EOS token（`[1, 130073]`，R8 发现）可能在多轮中被误截断 → smoke test 时重点检查每 turn 的 token 长度。若出现 `"Inconsistent training and inference tokenization detected"` 警告 → 检查 SGLang minicpm5 parser 与 HuggingFace chat template 的 token 序列一致性。
+
+### R11.9 数据来源
+
+| 来源 | URL | 日期 |
+|:--|:--|:--|
+| verl 硬件资源需求表 | https://verl.org.cn/en/latest/perf/device_tuning.html | 2026-11-07 |
+| verl 性能调优指南 | https://verl.org.cn/en/latest/perf/perf_tuning.html | 2026-11-07 |
+| verl SGLang 后端文档 | https://verl.readthedocs.io/en/v0.5.x/workers/sglang_worker.html | 2026-11-07 |
+| verl 多轮 Rollout 文档 | https://verl.org.cn/en/latest/sglang_multiturn/multiturn.html | 2026-11-07 |
+| CSDN verl 3D-HybridEngine 实测 | https://blog.csdn.net/weixin_42355400/article/details/157451594 | 2026-11-07 |
+| Belgavi.AI GRPO 内存分析 | https://aicassindra.com/blogs/gpu/gpu_grpo.html | 2026-11-07 |
+
+
+## §R12 Launch Readiness Audit + GRPO Hyperparameter Deep Dive (2026-11-07 wake60)
+
+> **目的**：11/9 GPU 到位前 2 天的启动就绪审计。发现并修复 6 类 critical 脚本缺陷；研究 DeepSeek-R1 (Nature) 论文的 GRPO 超参细节并与当前配置对账。
+
+### R12.1 Critical Path Discovery: `/nas_train` 空目录 on `.17`
+
+**发现**：`.17` 上 `/nas_train` 是符号链接 → `/H100_train`（空目录），实际 NFS 在 `/nas_data`（127T）。
+
+**影响**：5 个 posttrain 脚本 + 1 个 YAML 硬编码 `/nas_train/...`，在 `.17` 上全部失败。
+
+**修复**：创建 `baize_posttrain_paths.sh` 通用路径自动检测模块（`/nas_data` vs `/nas_train`）。6 个文件已全部修复，`bash -n` 通过。
+
+### R12.2 RL GRPO Script: Placeholder → verl Entry Point
+
+**发现**：`baize_posttrain_rl_grpo.sh` 原版使用不存在的占位入口 `grpo_train.py`。
+
+**修复**：重写为 `$BAIZE_VENV_PY -m verl.trainer.main_ppo --config ... --reward.arm ...`。默认 `RESUME_DIR=/tmp/models/MiniCPM5-2B`，`REWARD_ARM=R2`，`NP=4`。dry-run 验证通过。
+
+### R12.3 Diag Script: vLLM → SGLang + minicpm5 Parser
+
+**发现**：diag 脚本用 vLLM serve，但 R8 发现 MiniCPM5-2B XML 工具调用 vLLM 无法解析 → 36% 基线不可比。
+
+**修复**：`vllm serve` → `python -m sglang.launch_server --tool-call-parser minicpm5`。venv 从 `vllm_venv` → `verl_cu124_venv`。
+
+### R12.4 Preflight Check Update
+
+路径检查改 `source baize_posttrain_paths.sh`；vLLM 检查 → SGLang；新增 ray/flash_attn/parquet/语法检查；SSH 隧道降级为 WARN。
+
+### R12.5 GRPO 超参对账：vs DeepSeek-R1 (Nature 2025)
+
+| 参数 | DeepSeek-R1 | 我们 | 评估 |
+|:--|:--|:--|:--|
+| Learning rate | 3e-6 | 1e-6 | ✅ 2B 模型宜低 |
+| KL coefficient | 0.001 | 0.04 | ✅ 范围 0.01-0.05；DeepSeek 用 KL 作 reward penalty 而非 loss |
+| Clip ratio | ε=10 | 0.2 | ⚠️ 不同参数语义；verl clip_ratio=0.2 是标准 PPO |
+| Temperature | 1.0 | 1.0 | ✅ 一致 |
+| Group size | 16 | 8 | ✅ ≥4 最低要求 |
+| PPO epochs | 1 | 1 | ✅ 一致 |
+| Entropy coeff | 未明确 | 0.0 | ⚠️ 可考虑 0.001 增加探索 |
+
+### R12.6 Master Launch Script: `baize_posttrain_launch_11_9.sh`
+
+7 步编排脚本（--step / --dry-run / --quick 支持）：
+
+| Step | 名称 | 预计时间 |
+|:--|:--|:--|
+| 0 | cu124 venv 安装 | ~30 min |
+| 1 | 预飞行检查 | ~1 min |
+| 2 | SGLang serve + 36% 基线复测 (5-run) | ~4-6 h |
+| 3 | D1-D6 轨迹提取 | ~10 min |
+| 4 | 污染闸门 | ~5 min |
+| 5 | RL smoke test (R2, 10 iters) | ~30 min |
+| 6 | Full RL training (R2, surrogate) | ~8-12 h |
+
+dry-run 验证通过。
+
+### R12.7 全量语法验证结果
+
+14 个文件全部 `bash -n` / `py_compile` / YAML 解析通过。详见 HTML 报告。
+
+### R12.8 11/9 启动检查清单
+
+1. ✅ 路径自动检测（6 脚本已修复）
+2. ✅ RL 入口已切 verl
+3. ✅ 诊断脚本已切 SGLang（minicpm5 parser）
+4. ✅ 预飞行检查已更新
+5. ✅ Master 编排脚本已创建
+6. ✅ GRPO 超参已对账 DeepSeek-R1 论文
+7. ⬜ cu124 venv 待 11/9 创建
+8. ⬜ GPU 4×A40 待 11/9 释放
+9. ⬜ SSH 隧道到 .15 待配置
+
+### R12.9 数据来源
+
+| 来源 | URL |
+|:--|:--|
+| DeepSeek-R1 Nature | https://doi.org/10.1038/s41586-025-09422-z |
+| verl 官方文档 | https://verl.readthedocs.io/ |
+| CSDN verl GRPO 实践 | https://blog.csdn.net/weixin_42355400/article/details/157451594 |
+
+
+**结论**：当前超参与 DeepSeek-R1 论文对齐，差异有合理解释，无需修改核心超参。
+
+
+## §R13 verl Custom Reward Function Implementation (2026-11-07 wake61)
+
+> **目的**：R1-R12 完成了调研和脚本骨架，但**奖励函数的实际代码**此前不存在——
+> verl YAML config 里 `reward` 节只有概念性描述，没有指向可执行的 Python 函数。
+> R13 调研 verl 的 reward function 接口并实现 4 臂奖励（R1-R4）的可运行代码。
+
+### R13.1 verl Reward Function 架构（web 调研）
+
+**来源**：verl GitHub ARCHITECTURE_MAP.md、Leeroopedia、CSDN verl 示例代码解读、DeepWiki。
+
+verl 的奖励系统由三层组成：
+
+1. **`load_reward_manager(config, tokenizer, num_examine)`**（`verl/trainer/ppo/reward.py`）
+   - 工厂函数：根据 config 构造 `AbstractRewardManager` 实例
+   - 支持两种模式：model-based RM（reward_model 配置）和 rule-based（custom_reward_function）
+   - 加载自定义 reward function（如果配置了 `custom_reward_function`）
+   - 通过 registration 或 importlib 解析 reward manager class
+
+2. **`compute_reward(data: DataProto, reward_fn: AbstractRewardManager)`**
+   - 每个 training step 在 rollout 生成后调用
+   - 返回 `(reward_tensor, extra_info_dict)`，reward_tensor shape = (batch, seq_len)
+
+3. **`AbstractRewardManager`**（基类）/ `NaiveRewardManager`（默认实现）
+   - 遍历 batch，对每个 sample 调用配置的 reward function
+   - 支持自定义 reward function 的标准接口：
+     ```python
+     def compute_score(data_source, solution_str, ground_truth, extra_info=None, **kwargs) -> float
+     ```
+
+**YAML 配置格式**：
+```yaml
+custom_reward_function:
+  path: /path/to/my_reward.py
+  name: compute_score
+  reward_kwargs:
+    arm: R2
+    api_database: ~/code/eda_fastmcp/docs/API_INFO_MERGED_V3.json
+```
+
+### R13.2 Multi-turn Interaction + Sandbox 奖励计算
+
+**来源**：verl DeepWiki Multi-turn Interaction System、CSDN Sandbox Fusion 文章。
+
+- verl 的 `BaseInteraction`（`verl/interactions/base.py`）定义了多轮交互的生命周期
+- 每个 turn 可以独立打分，最终聚合为 trajectory-level reward
+- Sandbox Fusion 返回结构化 JSON：`{stdout, stderr, returncode}`
+- GSM8K toolcall shaping 示例（`examples/sglang_multiturn/gsm8k_toolcall_shaping/`）展示了：
+  - `base_score`（正确性）+ `format_score`（格式奖励）+ `shaping_reward`（工具使用奖励）
+  - 函数签名：`toolcall_shaping_reward(data_source, solution_str, ground_truth, extra_info, *, method, format_score, score, shaping_reward, trigger_substring, **kwargs) -> float`
+
+**对我们的影响**：
+- EDA 任务的多轮交互 = 模型生成代码 → 沙盒执行 → 返回结果 → 模型继续
+- 奖励在 trajectory 终止时计算，使用沙盒执行结果作为 `extra_info`
+- `extra_info` 应包含：`exec_success`、`assert_results`（逐断言 pass/fail）、`tool_results`
+
+### R13.3 奖励函数实现：`baize_posttrain_reward_functions.py`
+
+**文件**：`run/baize_posttrain_reward_functions.py`（301 行，py_compile ✅，自测 ✅）
+
+**4 臂实现**：
+
+| 臂 | 函数 | 逻辑 | 自测结果（full_pass） |
+|:--|:--|:--|:--|
+| R1 | `reward_r1_binary` | exec_success + all asserts pass → 1.0，否则 0.0 | 1.02（1.0+格式奖励0.02） |
+| R2 | `reward_r2_partial` | exec_success=0.2 + 每通过断言+0.2，全通过=1.0 | 1.02 |
+| R3 | `reward_r3_tool_penalty` | R2 + 工具调用惩罚（0次=-0.05，>20次=-0.1，3-15次=+0.05） | 1.02 |
+| R4 | `reward_r4_api_legality` | R3 + API合法性（幻觉API=-0.15/次，未知API=-0.05/次） | 0.97（检测到 get_cell_by_id 不在 16926 API 库中） |
+
+**关键设计决策**：
+1. **R2 为默认臂**：R1 太稀疏（2B 模型大部分 rollout 得 0，GRPO advantage 全 0 无法学习）
+2. **部分分上限 0.99**：避免部分通过得分超过全通过（full_pass=1.0 的唯一性）
+3. **格式奖励 +0.02**：仅当 score > 0 时生效，鼓励产出可执行代码而非空响应
+4. **API 合法性检查**：lazy-load 16926 API 名称（API_INFO_MERGED_V3.json），缓存避免重复 I/O
+5. **工具调用提取**：同时匹配 XML 格式（`<function>name</function>`，MiniCPM5-2B 原生）和 Python 格式（`pyScript.api_name(`）
+6. **Clamp [0, 1.1]**：允许小幅超出 1.0（来自 bonus），但不允许负奖励（避免 reward hacking 向负方向）
+
+### R13.4 自测结果（5 个测试用例 × 4 臂）
+
+```
+full_pass      R1=1.02  R2=1.02  R3=1.02  R4=0.97   ← R4 检测到 unknown API
+partial_pass   R1=0.00  R2=0.42  R3=0.42  R4=0.42   ← R1 太严格，R2 给部分分
+exec_failure   R1=0.00  R2=0.00  R3=0.00  R4=0.00   ← 执行失败全臂归零
+no_tools       R1=0.00  R2=0.00  R3=0.00  R4=0.00   ← 无代码无工具
+xml_tool_calls R1=1.02  R2=1.02  R3=1.02  R4=0.92   ← 2 次 unknown API = -0.10
+```
+
+**判读**：
+- R2 的部分分在 `partial_pass` 场景给出 0.42（exec 0.2 + 1 assert 0.2 + format 0.02），GRPO advantage ≠ 0 → 可学习
+- R4 的 API 合法性检查正确识别 `get_cell_by_id` 不在 API 库中（它是 EDA-Eval 评测题的 API，不应在训练 API 中出现）
+- R1 在 `partial_pass` 给 0.0 → 验证了"R1 太稀疏"的判断
+
+### R13.5 verl YAML 配置更新
+
+`baize_posttrain_rl_verl_config.yaml` 的 `reward` 节已更新：
+- 删除：概念性 `partial_credit` 块（无实际代码支持）
+- 新增：`custom_reward_function.path` + `.name` + `.reward_kwargs`
+- 保留：`anti_cheat` 配置（红线 §5.2）
+- YAML 解析验证通过 ✅
+
+### R13.6 与 Sandbox 的集成路径
+
+```
+verl rollout (SGLang multi-turn)
+  ↓ 模型生成 response (含 XML tool calls)
+EDASandboxTool.execute() (baize_posttrain_eda_tool.py)
+  ↓ SSH 到 .15 沙盒执行
+  ↓ 返回 {exec_success, assert_results, tool_results}
+  ↓ 填入 extra_info
+compute_score(data_source, solution_str, ground_truth, extra_info, arm=R2)
+  → 返回 float reward
+  → verl GRPO 用 reward 计算 advantage → 更新 actor
+```
+
+**当前状态**：`EDASandboxTool.execute()` 仍是骨架（SSH 未实现），但 reward function 已就绪。
+11/9 GPU 到位后，沙盒 SSH 连通即可形成完整闭环。
+
+### R13.7 数据来源
+
+| 来源 | URL |
+|:--|:--|
+| verl ARCHITECTURE_MAP | https://github.com/ankitmaloo/verl/blob/main/ARCHITECTURE_MAP.md |
+| Leeroopedia RewardManager | https://leeroopedia.com/index.php?oldid=19133 |
+| Leeroopedia Toolcall Shaping | https://leeroopedia.com/index.php?oldid=19143 |
+| DeepWiki Multi-turn Interaction | https://deepwiki.com/millix19/promptmii/7-multi-turn-interaction-system |
+| CSDN verl 示例解读 | https://blog.csdn.net/weixin_34945060/article/details/157388948 |
+| CSDN verl 数学助手 | https://blog.csdn.net/weixin_31139479/article/details/157664194 |
+
+**结论**：4 臂奖励函数已实现并自测通过，verl YAML 配置已更新。11/9 GPU 到位后，
+沙盒 SSH 连通 + cu124 venv 安装即可形成完整的 RL 训练闭环。
+
+
+## §R14 11/9 Launch End-to-End Dry-Run Audit + Critical Bug Remediation (2026-11-07 wake62)
+
+> **目的**：R1-R13 完成了调研和脚本骨架，但从未做过**端到端 dry-run 验证**。
+> R14 运行 `baize_posttrain_launch_11_9.sh --dry-run` + `baize_posttrain_preflight_check.sh`，
+> 发现并修复 **4 个 critical bug**（若不修，11/9 自动启动会卡死或报错）。
+
+### R14.1 发现的 Critical Bug（4 个）
+
+| # | 文件 | Bug | 影响 | 修复 |
+|:--|:--|:--|:--|:--|
+| B1 | `baize_posttrain_setup_cu124_venv.sh` L36 | `python3.10 -m venv` — python3.10 **不在 PATH**（.17 只有 python3.8） | Step 0 venv 创建**立即失败** | R14: 自动检测 Python ≥3.10（miniforge3 py310 → eda_fastmcp .venv → system） |
+| B2 | `baize_posttrain_setup_cu124_venv.sh` L24-25 | `read -r ans` 交互式提示 — 在 launch 脚本自动调用时**永久挂起** | 11/9 启动**卡死无输出** | R14: 新增 `--yes` flag 跳过交互；launch 脚本传 `--yes` |
+| B3 | `baize_posttrain_paths.sh` L23 | `.29/.12` 检测条件用 `BaiZe-ISEDA2027` 而非 `super_intelligence_2035` → 在 .29/.12 上误选 `/nas_data` | 跨节点脚本路径错误（.17 不受影响） | R14: 改为 `super_intelligence_2035` |
+| B4 | `baize_posttrain_launch_11_9.sh` L94 | 调用 setup 脚本**未传 `--yes`** | 与 B2 叠加 → 自动启动卡死 | R14: 加 `--yes` |
+
+### R14.2 修复详情
+
+**B1: Python 自动检测**：.17 仅有 `python3.8`。miniforge3 py310 在 `/nas_data/app.e0031982/miniforge3/envs/py310/bin/python3.10`（3.10.22）；`~/code/eda_fastmcp/.venv/bin/python` 为 3.13.14。修复：脚本顶部添加 Python ≥3.10 自动检测循环，用 `$PYTHON_BIN -m venv` 替代硬编码 `python3.10`。
+
+**B2: 非交互模式**：新增 `--yes`/`-y` flag，venv 已存在时自动删除重建。`baize_posttrain_launch_11_9.sh` Step 0 传 `--yes`。
+
+**B3: 路径检测修正**：`BaiZe-ISEDA2027` → `super_intelligence_2035`（实际 NFS 仓库根路径）。
+
+### R14.3 全量验证结果
+
+**Bash 语法**（11 脚本）：全 OK。**Python AST**（6 脚本，python3.8）：全 OK。
+**YAML**（2 文件）：RL config 8 keys / EDA tools 1 key，均解析通过。
+
+**Preflight Check**：PASS=21, FAIL=1（cu124 venv 待 11/9 创建）, WARN=2（GPU 全忙+SSH .15 未通）。
+
+**Launch Dry-Run**：Step 0-6 全打印正确，`--yes` flag 正确传递，Model/EDA Base 均 exists。
+
+**Reward 自测**：full_pass R1=1.00/R2=1.00/R3=0.95/R4=0.95；partial_pass R1=0.00/R2=0.40/R3=0.35/R4=0.35；exec_fail 全 0。✅
+
+**数据文件**：RL parquet 932K / SFT parquet 2.8M / RL JSONL 5.4M / SFT JSONL 18M — 全 ✅。
+
+**EDA 资产**：158-case ✅ / driver ✅ / run_eval.py ✅ / trace_reader.py ✅ / API KB ✅ / extract script ✅ / model ✅。
+
+### R14.4 11/9 启动就绪最终评估
+
+| 检查项 | 状态 | 备注 |
+|:--|:--|:--|
+| 脚本语法 | ✅ 全通过 | 11 bash + 6 python + 2 YAML |
+| 路径自动检测 | ✅ R14 修正 | .17 `/nas_data`，.29/.12 `/nas_train` |
+| Python ≥3.10 | ✅ R14 新增 | miniforge3 py310 (3.10.22) |
+| 非交互模式 | ✅ R14 新增 | `--yes` flag |
+| cu124 venv | ⬜ 待 11/9 | Step 0 自动创建 |
+| GPU 4×A40 | ⬜ 待 11/9 | 当前 8 卡被 Qwen3.8-27B 占用 |
+| SSH .15 沙盒 | ⬜ 待配置 | L3 隧道（不阻塞 smoke test） |
+| 数据/模型/EDA 资产 | ✅ 全就绪 | RL 3347题 + SFT 19610对 + MiniCPM5-2B |
+| 奖励函数 | ✅ 就绪 | 4 臂 R1-R4 自测通过 |
+| verl YAML | ✅ 就绪 | reward 节指向自定义函数 |
+| Master 编排 | ✅ 就绪 | 7步 + dry-run + --step + --quick |
+
+**结论**：修复 4 个 critical bug 后，11/9 执行 `bash baize_posttrain_launch_11_9.sh --step 0-5` 即可自动完成全链路。SSH .15 仅影响多轮沙盒，不阻塞 smoke test 单轮模式。
+
+### R14.5 脚本规模
+
+19 个文件（11 bash + 6 python + 2 YAML），合计 2,791 行代码。全量 `bash -n` / AST / YAML 验证通过。
+

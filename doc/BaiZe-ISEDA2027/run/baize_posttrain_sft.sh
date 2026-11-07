@@ -22,10 +22,14 @@
 # ⚠️ 配方骨架：训练入口 sft_launcher.py 为占位（待确认自研 SFT trainer vs TRL/verl 封装）。
 set -uo pipefail
 
-BASE=/nas_train/app.e0031982/code/BaiZe-ISEDA2027
-PY=/nas_train/app.e0031982/miniforge3/envs/py310/bin
+# R12: Auto-detect paths (/nas_train empty on .17, use /nas_data)
+SCRIPT_DIR="$(dirname "$(realpath "${BASH_SOURCE[0]}")")"
+source "$SCRIPT_DIR/baize_posttrain_paths.sh"
+
+BASE="${NAS_ROOT}/app.e0031982/code/BaiZe-ISEDA2027"
+PY="$BAIZE_PY_ENV"
 DATA="$BASE/data"
-RUN_DIR=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
+RUN_DIR="$BAIZE_RUN_DIR"
 OUTPUT_DIR="$BASE/nemo_experiments/baize_posttrain_sft"
 RESUME_DIR="${RESUME_DIR:-$BASE/nemo_experiments/baize_posttrain_anneal/step_final}"
 
@@ -90,7 +94,7 @@ GPU_BUSY=$(nvidia-smi --query-gpu=index,memory.used --format=csv,noheader 2>/dev
 
 [ $SMOKE = 1 ] && { ITERS=20; WARMUP=2; DECAY=5; SAVE_INTERVAL=10; OUTPUT_DIR="${OUTPUT_DIR}_smoke"; }
 
-export HF_HOME=/nas_train/app.e0031982/.cache
+export HF_HOME="${NAS_ROOT}/app.e0031982/.cache"
 export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 export TORCH_NCCL_ASYNC_ERROR_HANDLING=1
 

@@ -24,6 +24,8 @@ REPORT_PATH = os.path.join(
 V1_SFT_ACC = 0.092
 V1_GRPO_ACC = 0.062
 V2_OUT = "/nas_train/app.e0031982/datasets/baize-vision/out/cpu_rl_v2"
+V4_OUT = "/nas_train/app.e0031982/datasets/baize-vision/out/cpu_rl_v4"
+V4_LOG_PATH = "/tmp/v4_rft_experiment.log"
 
 
 def safe_load(path):
@@ -82,6 +84,63 @@ def parse_log_progress():
                 if m2:
                     info["mcnemar_p"] = float(m2.group(1))
                     info["mcnemar_ndisc"] = int(m2.group(2))
+    return info
+
+
+def parse_v4_log_progress():
+    """Parse v4 RFT experiment log (different format from v3 GRPO)."""
+    if not os.path.exists(V4_LOG_PATH):
+        return {}
+    info = {"phases_done": [], "accuracies": {}, "rft_curves": {}, "collection": {}}
+    with open(V4_LOG_PATH) as f:
+        for line in f:
+            line = line.strip()
+            m = re.search(r'\[(Phase \d)\] Condition ([A-Z]):', line)
+            if m:
+                info["current_phase"] = m.group(2)
+            m = re.search(r'SFT accuracy: ([\d.]+)%', line)
+            if m:
+                info["accuracies"]["B_sft"] = float(m.group(1)) / 100
+            m = re.search(r'RFT\(treatment\) accuracy: ([\d.]+)%', line)
+            if m:
+                info["accuracies"]["C_rft"] = float(m.group(1)) / 100
+            m = re.search(r'RFT\(control\) accuracy: ([\d.]+)%', line)
+            if m:
+                info["accuracies"]["D_rft_ctrl"] = float(m.group(1)) / 100
+            m = re.search(r'\[collect\] (\d+)/(\d+) circuits, (\d+) rollouts, (\d+) succ \((\d+)s\)', line)
+            if m:
+                info["collection"] = {
+                    "circuits_done": int(m.group(1)), "circuits_total": int(m.group(2)),
+                    "n_rollouts": int(m.group(3)), "n_successful": int(m.group(4)),
+                    "elapsed_s": int(m.group(5))}
+            m = re.search(r'\[(C-rft|D-rft)\] epoch (\d+)/(\d+) loss=([\d.-]+) \((\d+)s\)', line)
+            if m:
+                label = "C" if "C-rft" in m.group(1) else "D"
+                info["rft_curves"].setdefault(label, []).append(
+                    {"epoch": int(m.group(2)), "total_epochs": int(m.group(3)),
+                     "loss": float(m.group(4)), "elapsed_s": int(m.group(5))})
+            m = re.search(r'Filtered: (\d+)/(\d+) rollouts \(([\d.]+)% success rate\)', line)
+            if m:
+                info["filter_stats"] = {
+                    "n_filtered": int(m.group(1)), "n_total": int(m.group(2)),
+                    "success_rate": float(m.group(3)) / 100}
+            if "VERDICT:" in line:
+                info["verdict"] = line.split("VERDICT:")[1].strip()
+            if "McNemar" in line and "p=" in line:
+                m2 = re.search(r'p=([\d.]+).*n_disc=(\d+)', line)
+                if m2:
+                    if "C vs B" in line:
+                        info["mcnemar_cb_p"] = float(m2.group(1))
+                        info["mcnemar_cb_ndisc"] = int(m2.group(2))
+                    elif "C vs D" in line:
+                        info["mcnemar_cd_p"] = float(m2.group(1))
+                        info["mcnemar_cd_ndisc"] = int(m2.group(2))
+            m = re.search(r'Bootstrap C-B: ([\d.+-]+)% CI=\[([\d.+-]+)%,([\d.+-]+)%\]', line)
+            if m:
+                info["bootstrap_cb"] = {
+                    "point": float(m.group(1)) / 100,
+                    "ci_lo": float(m.group(2)) / 100,
+                    "ci_hi": float(m.group(3)) / 100}
     return info
 
 
@@ -297,16 +356,171 @@ def _exp_rest(rows, cmp_html, results, log_info, training, n_steps, mc_cb, boot_
 """
 
 
+def section_experiment_v4(results_v4, log_info_v4):
+    """v4 RFT (Rejection Sampling FT) experiment section."""
+    stats = results_v4.get("stats", {}) if results_v4 else {}
+    acc = stats.get("accuracy", {})
+    cfg = results_v4.get("config", {}) if results_v4 else {}
+    training = results_v4.get("training", {}) if results_v4 else {}
+    acc_b = acc.get("B_sft", log_info_v4.get("accuracies", {}).get("B_sft"))
+    acc_c = acc.get("C_rft_treatment", log_info_v4.get("accuracies", {}).get("C_rft"))
+    acc_d = acc.get("D_rft_control", log_info_v4.get("accuracies", {}).get("D_rft_ctrl"))
+    mc_cb = stats.get("mcnemar_C_vs_B", {})
+    boot_cb = stats.get("bootstrap_C_vs_B", {})
+    mc_cd = stats.get("mcnemar_C_vs_D", {})
+    verdict = stats.get("verdict", log_info_v4.get("verdict", "实验进行中"))
+    coll = stats.get("collection_stats", log_info_v4.get("collection", {}))
+    filt = log_info_v4.get("filter_stats", {})
+    n_circuits = cfg.get("n_circuits", 60)
+    k_per = cfg.get("k_per_circuit", 4)
+    threshold = cfg.get("reward_threshold", 0.3)
+    n_epochs = cfg.get("n_epochs", 3)
+    rows = ""
+    for label, val, desc in [
+        ("B — SFT only", acc_b, "Stage-1W SFT LoRA (69.7M, step3000)，与 v3 同题同 ckpt"),
+        ("C — SFT + RFT（奖励过滤）", acc_c, f"v4 RFT: {n_circuits}×{k_per} rollout, threshold={threshold}, {n_epochs} epoch CE"),
+        ("D — SFT + RFT（随机过滤控制）", acc_d, "random filter control（同数据量，排除\"任何数据都能提升\"）"),
+    ]:
+        style = "background:#c8e6c9;font-weight:bold;" if (val is not None and val == acc_c and acc_c is not None) else ""
+        rows += f'<tr style="{style}"><td>{label}</td><td>{pct(val, "—")}</td><td>{desc}</td></tr>\n'
+    # Collection stats
+    coll_html = ""
+    if coll:
+        n_total = coll.get("n_total_rollouts", coll.get("n_rollouts", "—"))
+        n_succ = coll.get("n_successful", coll.get("n_successful", "—"))
+        sr = coll.get("success_rate", "—")
+        coll_html = f"""
+<h3>4.7 v4 采样统计</h3>
+<table border="1" cellpadding="6">
+<tr><th>指标</th><th>值</th></tr>
+<tr><td>总 rollout 数</td><td>{n_total}</td></tr>
+<tr><td>成功 rollout（reward &gt; {threshold}）</td><td>{n_succ}</td></tr>
+<tr><td>成功率</td><td>{pct(sr, "—")}</td></tr>
+<tr><td>奖励阈值</td><td>{threshold}</td></tr>
+</table>"""
+    # RFT training curves
+    curve_html = ""
+    curves = log_info_v4.get("rft_curves", {})
+    if not curves and training.get("C_losses"):
+        curves = {"C": [{"epoch": i+1, "loss": l} for i, l in enumerate(training["C_losses"])]}
+        if training.get("D_losses"):
+            curves["D"] = [{"epoch": i+1, "loss": l} for i, l in enumerate(training["D_losses"])]
+    if curves:
+        curve_rows = ""
+        for label in ["C", "D"]:
+            for pt in curves.get(label, []):
+                curve_rows += (f'<tr><td>{label}</td><td>{pt.get("epoch","—")}</td>'
+                               f'<td>{pt.get("loss","—"):.6f}</td></tr>\n')
+        curve_html = f"""
+<h3>4.8 v4 RFT 训练曲线</h3>
+<table border="1" cellpadding="6">
+<tr><th>条件</th><th>Epoch</th><th>Loss</th></tr>
+{curve_rows}</table>"""
+    # Statistics
+    stat_html = ""
+    if mc_cb or boot_cb:
+        stat_html = f"""
+<h3>4.9 v4 统计检验</h3>
+<table border="1" cellpadding="6">
+<tr><th>检验</th><th>统计量</th><th>p 值</th><th>判定</th></tr>
+<tr><td>McNemar C vs B</td><td>n_disc={mc_cb.get("n_discordant","—")}</td><td>{mc_cb.get("p","—")}</td><td>{"✅ 显著" if mc_cb.get("p",1) < 0.05 else "❌ 不显著" if mc_cb else "⏳"}</td></tr>
+<tr><td>Bootstrap C-B</td><td>{pct(boot_cb.get("point_delta"),"—")}</td><td>CI=[{pct(boot_cb.get("ci_lo"),"—")}, {pct(boot_cb.get("ci_hi"),"—")}]</td><td>{"✅ CI下界>0" if boot_cb.get("ci_lo",0) > 0 else "❌ CI含0" if boot_cb else "⏳"}</td></tr>"""
+        if mc_cd:
+            stat_html += f"""
+<tr><td>McNemar C vs D</td><td>n_disc={mc_cd.get("n_discordant","—")}</td><td>{mc_cd.get("p","—")}</td><td>{"✅ C>D 显著" if mc_cd.get("p",1) < 0.05 else "❌"}</td></tr>"""
+        stat_html += "</table>"
+    # Cheat rate
+    cheat_html = ""
+    cheat = stats.get("cheat_rate", {})
+    if cheat:
+        cheat_html = f"""
+<h3>4.10 v4 数据泄漏检查</h3>
+<p><strong>训练种子范围</strong>：{cheat.get("train_seed_range","—")} · <strong>评测种子范围</strong>：{cheat.get("eval_seed_range","—")} · <strong>重叠</strong>：{cheat.get("overlap",0)} ({pct(cheat.get("overlap_frac",0))}) · {esc(cheat.get("note",""))}</p>"""
+    status = "⏳ 进行中" if not results_v4 else ""
+    return f"""
+<h2 id="v4">四-B、v4 实验：Rejection Sampling FT（RFT / STaR）</h2>
+<div class="summary">
+<p><strong>v4 设计动机</strong>：v3 GRPO 在 CPU 上 loss 近零、avgR 波动大（group baseline 导致 std=0 仍未根除）。
+v4 改用 <strong>Rejection Sampling FT</strong>（STaR/ReST 范式）：先用 SFT 模型采样 → 过滤奖励 &gt; {threshold} 的 rollout → 标准 CE 损失训练。
+<strong>核心优势</strong>：无 group baseline → 无 std=0 问题；标准 CE 损失 → 稳定梯度；采集与训练解耦 → 更高效。</p>
+<p><strong>预注册判据</strong>（wake#861，运行前写入）：C(RFT) &gt; B(SFT) 且 C &gt; D(随机控制)，McNemar p&lt;0.05 + bootstrap CI 排除 0。</p>
+</div>
+<h3>4.5 v4 结果汇总</h3>
+<table border="1" cellpadding="6">
+<tr><th>条件</th><th>准确率</th><th>说明</th></tr>
+{rows}</table>
+<p><strong>v4 判定</strong>：{esc(verdict)} {status}</p>
+{coll_html}{curve_html}{stat_html}{cheat_html}
+<h3>4.11 v4 规模与算力标注</h3>
+<p>单台 CPU (224核) · 2B text backbone · {n_circuits}×{k_per}={n_circuits*k_per} rollout 采集 · {n_epochs} epoch RFT · <strong>结论不外推为 GPU 结论</strong>。</p>
+"""
+
+
+def section_combined_comparison(results_v3, log_info_v3, results_v4, log_info_v4):
+    """Combined v1→v2→v3→v4 comparison table."""
+    v3_stats = (results_v3 or {}).get("stats", {}) if results_v3 else {}
+    v3_acc = v3_stats.get("accuracy", {}) if v3_stats else {}
+    v3_acc_b = v3_acc.get("B_sft", log_info_v3.get("accuracies", {}).get("B_sft"))
+    v3_acc_c = v3_acc.get("C_grpo_treatment", log_info_v3.get("accuracies", {}).get("C_grpo"))
+    v3_acc_d = v3_acc.get("D_grpo_control", log_info_v3.get("accuracies", {}).get("D_control"))
+    v3_mc_p = v3_stats.get("mcnemar_C_vs_B", {}).get("p", "⏳")
+    v3_verdict = v3_stats.get("verdict", log_info_v3.get("verdict", "⏳ 进行中"))
+    v4_stats = (results_v4 or {}).get("stats", {}) if results_v4 else {}
+    v4_acc = v4_stats.get("accuracy", {}) if v4_stats else {}
+    v4_acc_b = v4_acc.get("B_sft", log_info_v4.get("accuracies", {}).get("B_sft"))
+    v4_acc_c = v4_acc.get("C_rft_treatment", log_info_v4.get("accuracies", {}).get("C_rft"))
+    v4_acc_d = v4_acc.get("D_rft_control", log_info_v4.get("accuracies", {}).get("D_rft_ctrl"))
+    v4_mc_p = v4_stats.get("mcnemar_C_vs_B", {}).get("p", "⏳")
+    v4_verdict = v4_stats.get("verdict", log_info_v4.get("verdict", "⏳ 进行中"))
+    v2_res = safe_load(os.path.join(V2_OUT, "experiment_results.json"))
+    v2_acc = v2_res.get("stats", {}).get("accuracy", {}) if v2_res else {}
+    v2_p = v2_res.get("stats", {}).get("mcnemar_C_vs_B", {}).get("p", "—") if v2_res else "—"
+    return f"""
+<h2 id="cmp">五、综合对比与总结</h2>
+<h3>5.1 全版本对比（v1 → v2 → v3 → v4）</h3>
+<table border="1" cellpadding="6">
+<tr><th>版本</th><th>方法</th><th>奖励</th><th>B (SFT)</th><th>C (处理)</th><th>D (控制)</th><th>McNemar C-B p</th><th>判定</th></tr>
+<tr><td>v1 (11-06)</td><td>GRPO</td><td>离散5档</td><td>{pct(V1_SFT_ACC)}</td><td>{pct(V1_GRPO_ACC)}</td><td>—</td><td>—</td><td>❌ C&lt;B 负结果</td></tr>
+<tr><td>v2 (11-07)</td><td>GRPO</td><td>连续 exp(-err/τ)</td><td>{pct(v2_acc.get("B_sft"))}</td><td>{pct(v2_acc.get("C_grpo_treatment"))}</td><td>{pct(v2_acc.get("D_grpo_control"))}</td><td>{v2_p}</td><td>⚠️ C&gt;B 但不显著</td></tr>
+<tr style="background:#e8eaf6;"><td><strong>v3 (11-07)</strong></td><td><strong>GRPO</strong></td><td><strong>连续 τ=0.15</strong></td><td>{pct(v3_acc_b)}</td><td>{pct(v3_acc_c)}</td><td>{pct(v3_acc_d)}</td><td>{v3_mc_p}</td><td><strong>{esc(v3_verdict)}</strong></td></tr>
+<tr style="background:#e8f5e9;"><td><strong>v4 (11-07)</strong></td><td><strong>RFT/STaR</strong></td><td><strong>连续+过滤</strong></td><td>{pct(v4_acc_b)}</td><td>{pct(v4_acc_c)}</td><td>{pct(v4_acc_d)}</td><td>{v4_mc_p}</td><td><strong>{esc(v4_verdict)}</strong></td></tr>
+</table>
+<h3>5.2 核心结论</h3>
+<div style="background:#fff3cd;padding:12px;border-radius:6px;margin:12px 0;">
+<p><strong>GRPO 路线（v1/v2/v3）</strong>：CPU 上 GRPO 受限于小 group（std=0 问题持续）、近零 loss、波动 avgR。
+即使连续化奖励（v2/v3）也未扭转颓势 —— v3 C=25.0% &lt; B=34.0%（控制 D 待完成）。</p>
+<p><strong>RFT 路线（v4）</strong>：改用 Rejection Sampling FT 绕过 group baseline 问题。
+<strong>{esc(v4_verdict)}</strong>。若 v4 也未显著提升，则连续 4 轮（v1/v2/v3/v4）负结果，
+说明在 CPU + 2B text-only + 工具交互范式下，RL/RFT 难以显著提升波形读数能力 —— 根因可能是任务定义（读数精度）对 2B 模型过难。</p>
+</div>
+<h3>5.3 诚实边界</h3>
+<ul>
+<li><strong>CPU pilot 结论不外推为 GPU 结论</strong>：CPU 上 step 数/group_size 受算力限制，GPU 阶段需重新验证。</li>
+<li><strong>text-only backbone 局限</strong>：当前用文本工具交互（ngspice），非直接看波形图。多模态版 Qwen3.5-2B 可直接处理图像，是未验证的更高上限。</li>
+<li><strong>负结果同样有价值</strong>：证伪了「CPU 上 GRPO/RFT 能提升波形读数」这一假设，为后续方向选择提供了排除证据。</li>
+</ul>
+"""
+
+
 def main():
     results = safe_load(os.path.join(V3_OUT, "experiment_results.json"))
     log_info = parse_log_progress()
+    results_v4 = safe_load(os.path.join(V4_OUT, "experiment_results.json"))
+    log_info_v4 = parse_v4_log_progress()
     now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+    # Build combined comparison table
+    v4_acc_b = (results_v4 or {}).get("stats", {}).get("accuracy", {}).get("B_sft", log_info_v4.get("accuracies", {}).get("B_sft"))
+    v4_acc_c = (results_v4 or {}).get("stats", {}).get("accuracy", {}).get("C_rft_treatment", log_info_v4.get("accuracies", {}).get("C_rft"))
+    v4_acc_d = (results_v4 or {}).get("stats", {}).get("accuracy", {}).get("D_rft_control", log_info_v4.get("accuracies", {}).get("D_rft_ctrl"))
+    v4_mc_p = (results_v4 or {}).get("stats", {}).get("mcnemar_C_vs_B", {}).get("p", "⏳")
+    v4_verdict = (results_v4 or {}).get("stats", {}).get("verdict", log_info_v4.get("verdict", "⏳ 进行中"))
+    combined_cmp = section_combined_comparison(results, log_info, results_v4, log_info_v4)
     html_doc = f"""<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>视觉波形 RL · CPU 实验报告 v3（2026-11-07）</title>
+<title>视觉波形 RL · CPU 实验报告 v3+v4（2026-11-07）</title>
 <style>
 body {{ font-family: "Microsoft YaHei", "Noto Sans CJK SC", sans-serif; max-width: 1100px; margin: 0 auto; padding: 20px; line-height: 1.7; color: #333; }}
 h1 {{ color: #1a237e; border-bottom: 3px solid #1a237e; padding-bottom: 10px; }}
@@ -321,27 +535,29 @@ code {{ background: #f0f0f0; padding: 1px 4px; border-radius: 3px; font-size: 13
 </style>
 </head>
 <body>
-<h1>视觉波形 RL · CPU 实验报告 v3</h1>
-<p><strong>生成时间</strong>：{now} · <strong>作者</strong>：vision wake#856 · <strong>用户令</strong>：2026-11-07「用 CPU 设计有效 RL，证明显著提升 Qwen3.5-2B 波形理解」</p>
+<h1>视觉波形 RL · CPU 实验报告 v3+v4</h1>
+<p><strong>生成时间</strong>：{now} · <strong>作者</strong>：vision wake#856→#869 · <strong>用户令</strong>：2026-11-07「用 CPU 设计有效 RL，证明显著提升 Qwen3.5-2B 波形理解」</p>
 <div class="summary">
-<p><strong>一句话总结</strong>：v1 离散 5 档奖励 → GRPO 负结果(6.2%&lt;9.2%)。v2 连续奖励方向翻转但不显著(n=45,p=0.625)。<strong>v3</strong> 聚焦 period-only(n=100)+增训练量(40步)+增 group_size(8)，旨在获得统计显著的提升。附随机奖励控制(D)验证提升来自奖励设计。</p>
-<p><strong>数据集调研</strong>：HF 上无波形 VQA 评测集，ngspice 合成波形+QA 是正确路线。</p>
-<p><strong>技术栈</strong>：LLaMA-Factory 与 Qwen3.5 架构互斥 → 退回 HF+peft 直训（已验证可行）。</p>
+<p><strong>一句话总结</strong>：v1 离散 5 档奖励 → GRPO 负结果(6.2%&lt;9.2%)。v2 连续奖励方向翻转但不显著(n=45,p=0.625)。<strong>v3</strong> 聚焦 period-only(n=100)+40步+gs=8 连续奖励 GRPO → C=25.0%&lt;B=34.0%（控制D进行中）。<strong>v4</strong> 改用 RFT/STaR（绕过 group baseline）→ 进行中。</p>
+<p><strong>数据集调研</strong>：HF/GitHub/arXiv 三源均无波形 VQA 评测集，ngspice 合成波形+QA 是正确路线。</p>
+<p><strong>技术栈</strong>：LLaMA-Factory 与 Qwen3.5 架构互斥 → 退回 HF+peft 直训（已验证可行，69.7M LoRA）。</p>
 </div>
 {section_dataset_research()}
 {section_rl_design()}
 {section_tech_stack()}
 {section_experiment(results, log_info)}
-<h2 id="next">五、下一步建议</h2>
+{section_experiment_v4(results_v4, log_info_v4)}
+{combined_cmp}
+<h2 id="next">六、下一步建议</h2>
 <ol>
-<li><strong>若 v3 显著</strong>：扩大到多目标(period+amplitude)，引入课程学习，GPU 阶段验证规模扩展。</li>
-<li><strong>若 v3 仍不显著</strong>：连续 3 轮无提升 → 换方向(纯视觉输入/改任务定义)。</li>
-<li><strong>切换 Qwen3.5-2B 多模态版</strong>：当前 text-only backbone(工具交互)，多模态版可直接处理波形图。</li>
-<li><strong>GPU 训练阶段</strong>：pretrain ckpt(ETA≈12/25)后跑大规模 GRPO，验证 CPU pilot 结论可扩展性。</li>
-<li><strong>诚实边界</strong>：CPU pilot 结论不外推为 GPU 结论；负结果同样有价值。</li>
+<li><strong>若 v4 显著</strong>：扩大 rollout 采集量、引入多目标(period+amplitude)、课程学习，GPU 阶段验证规模扩展。</li>
+<li><strong>若 v4 也不显著（连续 4 轮负结果）</strong>：必须换方向 —— ①改任务定义为可判定中间任务（波形类型判别/频率比较/异常定位）②切换 Qwen3.5-2B 多模态版直接处理波形图 ③增大 SFT 数据量与质量 ④等 GPU 做大规模 GRPO。</li>
+<li><strong>切换 Qwen3.5-2B 多模态版</strong>：当前 text-only backbone(工具交互)，多模态版可直接处理波形图，是未验证的更高上限。</li>
+<li><strong>GPU 训练阶段</strong>：pretrain ckpt(ETA≈12/25)后跑大规模 GRPO/RFT，验证 CPU pilot 结论可扩展性。</li>
+<li><strong>诚实边界</strong>：CPU pilot 结论不外推为 GPU 结论；负结果同样有价值（证伪了「CPU 上 RL/RFT 能提升波形读数」假设）。</li>
 </ol>
 <hr>
-<p style="color:#999;font-size:12px;">本报告由 <code>gen_cpu_rl_v3_report.py</code> 自动生成（wake#856, 2026-11-07）。数据来源：cpu_rl_v3/experiment_results.json + /tmp/v3_full_experiment.log + dataset_research_results.json。单文件自包含，0 script, 0 外链。负结果同样有价值，如实报告。</p>
+<p style="color:#999;font-size:12px;">本报告由 <code>gen_cpu_rl_v3_report.py</code> 自动生成（wake#856→#869, 2026-11-07）。数据来源：cpu_rl_v3/experiment_results.json + cpu_rl_v4/experiment_results.json + /tmp/v3_full_experiment.log + /tmp/v4_rft_experiment.log + dataset_research_results.json。单文件自包含，0 script, 0 外链。负结果同样有价值，如实报告。</p>
 </body>
 </html>"""
     os.makedirs(os.path.dirname(REPORT_PATH), exist_ok=True)
@@ -357,6 +573,15 @@ code {{ background: #f0f0f0; padding: 1px 4px; border-radius: 3px; font-size: 13
     else:
         acc = log_info.get("accuracies", {})
         print(f"  (partial from log) B={pct(acc.get('B_sft'))} C={pct(acc.get('C_grpo'))} D={pct(acc.get('D_control'))}")
+    # v4 info
+    if results_v4 and "stats" in results_v4:
+        s4 = results_v4["stats"]
+        print(f"  v4 Verdict: {s4.get('verdict', 'N/A')}")
+        a4 = s4.get("accuracy", {})
+        print(f"  v4 B={pct(a4.get('B_sft'))} C={pct(a4.get('C_rft_treatment'))} D={pct(a4.get('D_rft_control'))}")
+    else:
+        acc4 = log_info_v4.get("accuracies", {})
+        print(f"  v4 (partial from log) B={pct(acc4.get('B_sft'))} C={pct(acc4.get('C_rft'))} D={pct(acc4.get('D_rft_ctrl'))}")
 
 
 if __name__ == "__main__":

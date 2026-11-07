@@ -24,11 +24,15 @@
 # ⚠️ 配方骨架：超参为占位默认值，待 P2 方案书定稿 + pretrain ckpt 就绪后由运维/本线确认填实。
 set -uo pipefail
 
-# ============ 路径（训练机上的 /nas_train 即本节点的 /nas_data 同一 NFS 导出） ============
-BASE=/nas_train/app.e0031982/code/BaiZe-ISEDA2027
-PY=/nas_train/app.e0031982/miniforge3/envs/py310/bin
+# R12: Auto-detect paths (/nas_train empty on .17, use /nas_data)
+SCRIPT_DIR="$(dirname "$(realpath "${BASH_SOURCE[0]}")")"
+source "$SCRIPT_DIR/baize_posttrain_paths.sh"
+
+# ============ 路径（R12: 自动检测 NAS_ROOT） ============
+BASE="${NAS_ROOT}/app.e0031982/code/BaiZe-ISEDA2027"
+PY="$BAIZE_PY_ENV"
 DATA="$BASE/data"
-RUN_DIR=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
+RUN_DIR="$BAIZE_RUN_DIR"
 OUTPUT_DIR="$BASE/nemo_experiments/baize_posttrain_anneal"
 
 # ============ resume：从 pretrain S1 收敛 ckpt 起 ============
@@ -92,7 +96,7 @@ GPU_BUSY=$(nvidia-smi --query-gpu=index,memory.used --format=csv,noheader 2>/dev
 
 [ $SMOKE = 1 ] && { ITERS=20; WARMUP=2; DECAY=5; SAVE_INTERVAL=10; OUTPUT_DIR="${OUTPUT_DIR}_smoke"; echo "[smoke] ITERS=20"; }
 
-export HF_HOME=/nas_train/app.e0031982/.cache
+export HF_HOME="${NAS_ROOT}/app.e0031982/.cache"
 export HF_ENDPOINT=https://hf-mirror.com
 export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 export http_proxy=http://172.19.92.25:13128

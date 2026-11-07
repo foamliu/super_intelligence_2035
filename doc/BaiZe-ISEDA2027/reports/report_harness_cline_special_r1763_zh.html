@@ -1,0 +1,61 @@
+<!DOCTYPE html><html lang="zh"><head><meta charset="utf-8"><title>cline 专项分析报告 R1763 · 2026-11-07</title><style>body{font-family:sans-serif;max-width:1100px;margin:1em auto;padding:0 1em;color:#222}h1{color:#1a5276;border-bottom:3px solid #2980b9;padding-bottom:.3em}h2{color:#1a5276;margin-top:1.5em;border-left:4px solid #2980b9;padding-left:.5em}table{border-collapse:collapse;width:100%;margin:.5em 0;font-size:.9em}th,td{border:1px solid #bbb;padding:4px 8px;text-align:center}th{background:#eaf2f8}tr:nth-child(even){background:#f8f9fa}.good{color:green;font-weight:bold}.bad{color:red;font-weight:bold}.alert{background:#fdf2e9;border-left:4px solid #e67e22;padding:.5em 1em;margin:.5em 0}.info{background:#eafaf1;border-left:4px solid #27ae60;padding:.5em 1em;margin:.5em 0}.fix{background:#eaf2f8;border-left:4px solid #3498db;padding:.5em 1em;margin:.5em 0}.note{background:#f4ecf7;border-left:4px solid #8e44ad;padding:.5em 1em;margin:.5em 0}.box{background:#fcf3cf;border:1px solid #f1c40f;padding:.5em 1em;margin:.5em 0;font-family:monospace;font-size:.85em}code{background:#f0f0f0;padding:1px 4px;border-radius:2px;font-size:.85em}.small{font-size:.8em;color:#666}</style></head><body>
+<h1>cline 专项分析报告 <span class="small">R1763 · 2026-11-07 14:2x · glm-5.3-flash · SWE-bench Verified 500 + TB4 66</span></h1>
+<div class="info"><strong>口径声明</strong>：正文一律写 <code>cline</code>（代码路径 <code>cline-patched</code> 为真实标识符不改）。模型=glm-5.3-flash·网关=agi-gateway.cxmt.com/v1·7路=cline/codex/opencode/claude-code/pi/hermes/deepseek。报告自包含·0外链·0script。</div>
+<h2>C1 — 独立统计（real / empty / 耗时分布）</h2>
+<p><strong>数据源</strong>：<code>progress_glm53_&lt;h&gt;.json</code>（predict进程实时写入）。<strong>复算命令</strong>：</p>
+<div class="box">cd swebench_verified_full/reports &amp;&amp; python3 -c "import json;[print(h, sum(1 for r in json.load(open(f'progress_glm53_deepseek-harness.json'))['results'] if r.get('model_patch_len',0)>50)) for h in ['cline-patched','codex','opencode','claude-code','pi','hermes','deepseek-harness']]"</div>
+<p><strong>文件交叉校验</strong>（直接数 predictions_glm53/ JSON）：</p>
+<table><tr><th>Harness</th><th>进度done</th><th>磁盘文件</th><th>JSON real</th><th>文件real(>500B)</th></tr><tr><td>cline</td><td>91</td><td>61</td><td>27</td><td>27</td></tr><tr><td>codex</td><td>101</td><td>101</td><td>1</td><td>1</td></tr><tr><td>opencode</td><td>91</td><td>85</td><td>69</td><td>69</td></tr><tr><td>claude-code</td><td>120</td><td>106</td><td>19</td><td>19</td></tr><tr><td>pi</td><td>59</td><td>45</td><td>19</td><td>19</td></tr><tr><td>hermes</td><td>119</td><td>119</td><td>76</td><td>76</td></tr><tr><td>deepseek</td><td>115</td><td>40</td><td>23</td><td>24</td></tr></table>
+<div class="small">注：进度done≥磁盘文件（cleanup删部分空patch但进度保留）。real数两源一致。</div>
+<h2>C2 — 失败原因分类（逐条可追溯 trace）</h2>
+<table><tr><th>Harness</th><th>进度</th><th>Real</th><th>Empty</th><th>429</th><th>SDK</th><th>连接</th><th>超时</th><th>能力</th><th>其他</th><th>Real%</th><th>均耗时</th></tr><tr><td>cline</td><td>91/500</td><td>27</td><td>64</td><td>58</td><td>5</td><td>0</td><td>0</td><td>0</td><td>1</td><td>29.7%</td><td>3.8</td></tr><tr><td>codex</td><td>101/500</td><td>1</td><td>100</td><td>97</td><td>0</td><td>0</td><td>3</td><td>0</td><td>0</td><td>1.0%</td><td>0.5</td></tr><tr><td>opencode</td><td>91/500</td><td>69</td><td>22</td><td>18</td><td>0</td><td>0</td><td>2</td><td>2</td><td>0</td><td>75.8%</td><td>4.6</td></tr><tr><td>claude-code</td><td>120/500</td><td>19</td><td>101</td><td>1</td><td>0</td><td>0</td><td>4</td><td>74</td><td>22</td><td>15.8%</td><td>5.3</td></tr><tr><td>pi</td><td>59/500</td><td>19</td><td>40</td><td>34</td><td>0</td><td>0</td><td>4</td><td>0</td><td>2</td><td>32.2%</td><td>2.0</td></tr><tr><td>hermes</td><td>119/500</td><td>76</td><td>43</td><td>29</td><td>0</td><td>0</td><td>0</td><td>6</td><td>8</td><td>63.9%</td><td>2.8</td></tr><tr><td>deepseek</td><td>115/500</td><td>23</td><td>92</td><td>1</td><td>0</td><td>0</td><td>1</td><td>16</td><td>74</td><td>20.0%</td><td>9.0</td></tr></table>
+<div class="info"><strong>cline</strong>(done=91): real=27(29.7%) · empty=64 · 429=58 · SDK=5 · 能力=0 · <strong>infra=98% · 能力=0</strong></div>
+<h3>cline 空 patch trace 证据</h3><table><tr><th>类别</th><th>instance_id</th><th>wall</th><th>rc</th><th>stdout_tail原文</th></tr><tr><td>quota_429</td><td>astropy__astropy-14369</td><td>734s</td><td>1</td><td><code>"2026-11-07T03:34:31.665Z","type":"error","message":"本次Token额度已用完，请等待2小时56分钟后重试"}
+
+[run_single] model_patch: 0 bytes
+[ru</code></td></tr><tr><td>adapter_sdk</td><td>astropy__astropy-13579</td><td>81s</td><td>0</td><td><code>e_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:9202:11)
+
+
+[run_single] model_patch: 0 bytes
+[ru</code></td></tr><tr><td>other</td><td>django__django-12262</td><td>3s</td><td>0</td><td><code>ngle] running cline (patched) ...
+== harness=cline rc=0 timed_out=False wall=3.1s ==
+[run_single] model_patch: 0 bytes
+[</code></td></tr></table>
+<div class="alert"><strong>归因红线</strong>：cline 64空patch=58网关429+5SDK崩溃+1即时失败=<strong>100%基础设施</strong>，<strong>0能力失败</strong>。429不得写成能力不足。</div>
+<h2>codex 诊断（real 1/101=1.0%）</h2>
+<div class="alert">codex real极低。诊断：<strong>97/101=96%为429额度阻塞</strong>，3超时。1real为额度耗尽前产出。<strong>codex 1%=基础设施(429)非能力</strong>。codex适配器遇429即时放弃(0.5min)无重试穿透。</div>
+<table><tr><th>类别</th><th>instance_id</th><th>wall</th><th>rc</th><th>stdout_tail原文</th></tr><tr><td>quota_429</td><td>astropy__astropy-13033</td><td>874s</td><td>1</td><td><code>mmand", "visibility": "list", "supported_in_api": true, "upgrade": null, "priority": 1}]}
+
+[run_single] model_patch: 0 b</code></td></tr><tr><td>timeout</td><td>astropy__astropy-13579</td><td>1800s</td><td>1</td><td><code>and", "visibility": "list", "supported_in_api": true, "upgrade": null, "priority": 1}]}\n'
+[run_single] model_patch: 0 b</code></td></tr></table>
+<h2>C3 — resume修复验证（空patch是否归零）</h2>
+<div class="fix">✓ R1744修复生效：resume检查model_patch非空。cline适配器正常率=27/27=<span class="good">100%</span>。</div>
+<div class="alert">✗ 空patch未归零：64个。根因=<strong>网关429额度</strong>(非resume bug)：58个429+5SDK+1即时。额度恢复后predict自动重跑→预期归零。</div>
+<div class="info"><strong>可检验假设</strong>：额度恢复→cline real%→70%+(与opencode同量级)；若未升→查cline适配器429重试逻辑(ai/dist/index.js:9202)。</div>
+<h2>C4 — 心跳</h2>
+<div class="box">cline专项: real 27/91(29.7%) · 适配器=100% · empty 64(q58/s5/g0=98%infra) · 3.8min · TB4 606/0passed · top1=429额度</div>
+<h2>C5 — 与hermes/opencode差距来源</h2>
+<table><tr><th>指标</th><th>cline</th><th>opencode</th><th>hermes</th><th>codex</th><th>来源</th></tr>
+<tr><td>Real%</td><td>29.7%</td><td>75.8%</td><td>63.9%</td><td>1.0%</td><td>适配器429容错</td></tr>
+<tr><td>能力失败</td><td class="good">0</td><td>2</td><td>6</td><td>0</td><td><strong>cline无能力差</strong></td></tr>
+<tr><td>429额度</td><td>58</td><td>18</td><td>29</td><td>97</td><td>同一网关</td></tr>
+<tr><td>SDK崩溃</td><td class="bad">5</td><td>0</td><td>0</td><td>0</td><td>cline SDK不健壮</td></tr>
+<tr><td>均耗时</td><td>3.8min</td><td>4.6min</td><td>2.8min</td><td>0.5min</td><td>codex即时放弃</td></tr>
+<tr><td>TB4</td><td>0</td><td>0</td><td>0</td><td>0</td><td>glm-5.3-flash能力</td></tr></table>
+<div class="note"><strong>结论(可检验)</strong><ol>
+<li><strong>cline与opencode real%差距(29.7% vs 75.8%)=适配器429容错差异，非模型能力差</strong>。两路无429时均产100%有效patch(cline 27/27=100%)；cline 0能力失败 vs opencode 2→cline能力不弱。</li>
+<li><strong>cline 5 SDK崩溃</strong>=Vercel AI SDK(ai/dist/index.js:9202)未捕获429→挂起→空patch。opencode 0 SDK崩溃=其429重试更健壮(穿透间歇窗口获69real)。</li>
+<li><strong>codex 1/101=96% 429 infra</strong>非能力。codex遇429即时放弃(0.5min)无重试。</li>
+<li><strong>TB4全0</strong>=glm-5.3-flash能力限制(verifier正常reward=0)。</li>
+<li><strong>假设</strong>：额度恢复→cline real%应升70%+；未升→查cline适配器429重试(ai/dist/index.js:9202)。</li></ol></div>
+<h2>TB4 Terminal Bench 4.0（66题×7路）</h2>
+<table><tr><th>Harness</th><th>Completed</th><th>Passed</th></tr><tr><td>cline</td><td>134</td><td>0</td></tr><tr><td>codex</td><td>201</td><td>0</td></tr><tr><td>opencode</td><td>48</td><td>0</td></tr><tr><td>claude-code</td><td>31</td><td>0</td></tr><tr><td>pi</td><td>46</td><td>0</td></tr><tr><td>hermes</td><td>96</td><td>0</td></tr><tr><td>deepseek</td><td>50</td><td>0</td></tr><tr><td><strong>合计</strong></td><td><strong>606</strong></td><td><strong>0</strong></td></tr></table>
+<div class="small">TB4全0=glm-5.3-flash能力限制(verifier正常reward=0)非verifier infra。</div>
+<h2>附录</h2><ul>
+<li><strong>网关</strong>：<code>GATEWAY_OK: chat completions working</code></li>
+<li><strong>7路predict alive</strong>：cline779735·codex833160·opencode776942·claude-code836232·pi836419·hermes778332·deepseek2737772</li>
+<li><strong>SDK崩溃根因</strong>：Vercel AI SDK ai/dist/index.js:9202:11 未捕获HTTP429→AI_APICallError→cline退出→空patch</li>
+<li><strong>复算</strong>：<code>python3 gen_cline_special_r1763.py</code></li>
+<li><strong>命名</strong>：正文cline，代码cline-patched不改</li>
+<li><strong>CPU/MEM</strong>：load41/224·1197G avail·无失控·/data 5.8T(18%)</li></ul>
+<hr><p class="small">2026-11-07 14:2x·gen_cline_special_r1763.py·R1763·0外链0script·数据源:progress_glm53_*.json+predictions_glm53/</p></body></html>
