@@ -1291,3 +1291,4 @@ tjzn5					parked		2026-11-07 12:29	env Q&A + skill-creator usage (#352 peek weak
 1793868970979_6nte7	kaixuanx	hfeg0pkn002	35	analog_context	case	EDA-Eval-DesignFlow-CtleTranPower-001	2026-11-08 01:43	
 1791611132079_5vmvu.messages.json	ellawu	hfeg0pkn005	165	schematic_netlist	case	EDA-Eval-DesignFlow-PortTextPinPlan-001	2026-11-08 02:16	
 1791423204544_pewjz.messages.json	johnl	hfeg0pkn001	188	waveform	case	EDA-Eval-DesignFlow-FsdbMeasRunGen-001	2026-11-08 04:03	
+1788767030730_6azjv	rongjiez	hfeg0pkn005	74	schematic_netlist	case	EDA-Eval-DesignFlow-ModelQaTbGen-001	2026-11-08 05:08	
