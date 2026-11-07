@@ -19,7 +19,7 @@ tr:nth-child(even){background:#f8f9fa}
 code{background:#f4f6f7;padding:2px 6px;border-radius:3px}
 </style></head><body>
 <h1>BaiZe 2B CPU 评测提速报告</h1>
-<p style='color:#7f8c8d'>生成时间：2026-11-07 19:03｜检查点：iter_112000</p>
+<p style='color:#7f8c8d'>生成时间：2026-11-07 19:23｜检查点：iter_112000</p>
 <h2>一、背景与问题</h2>
 <p>用户提问：「pretrain 全量 eval 需要时间这么久吗？已经使用 llama.cpp 了吗？线程并发多一点有帮助吗」</p>
 <p><b>现状</b>：iter_112000 的 8 集全量评测（73,110 次 loglikelihood 请求）
@@ -63,6 +63,20 @@ code{background:#f4f6f7;padding:2px 6px;border-radius:3px}
 <b>该回归为冗余</b>——转换器已在 iter_10000 上通过 HF vs GGUF 逐集比对验证（见上表 Δacc ≤ 0.02）。
 iter_100000 GGUF 趋势检查亦通过（分数随训练单调上升，sciq 由 NaN 恢复 0.79→0.88）。
 结论：<b>_fixed_ GGUF 转换器对当前 ckpt 正确</b>，已获准用于全量 eval。</div>
+<h2>三c、v4 全量 eval 问题诊断与修复（2026-11-07 19:1x）</h2>
+<div class='warn'><b>v4 首轮运行发现两个问题，已诊断并修复：</b></div>
+<table><tr><th>问题</th><th>现象</th><th>根因</th><th>修复</th><th>验证</th></tr>
+<tr><td><b>logit_bias 崩溃</b></td><td>sciq/piqa 进程 RuntimeError<br><code>目标 token 未被强制：got=3982 want=85</code></td>
+<td>logit_bias=100.0 不足以强制<br>极端 token 对（logit 差>100）</td>
+<td>bias 100→<b>1000</b><br>+ 降级处理（不崩溃，返回 logprob=-100）</td>
+<td class='good'>sciq 重启后正常运行<br>（69/4000 @1.7it/s 无崩溃）</td></tr>
+<tr><td><b>hellaswag 进程挂起</b></td><td>chunk0/1 37 min 无进度<br>进程 State=S 150 线程<br>chunk2/3 ETA 37-48h</td>
+<td>requests 库 timeout=600s<br>仅限连接+字节间隔，非总超时<br>长序列 HTTP 请求永久挂起</td>
+<td>timeout 600→<b>120s</b><br>+ 连接超时 (10,120)<br>+ kill 重启全 4 shards</td>
+<td class='good'>重启后 chunk0-3 全部正常<br>（~2.8s/it vs 旧 4.8-17s/it）</td></tr>
+</table>
+<div class='note'><b>同时修复</b>：arc_easy 也在旧脚本（timeout=600）下挂起（14 min 无进度），
+已 kill 并用修复版脚本重启。boolq/arc_challenge 旧进程正常未受影响。</div>
 <h2>四、提速方案（8 服务器 × 16 线程，推荐）</h2>
 <p>8 个 llama-server 实例（端口 8080–8087），每个 16 线程 8 并发 slot，
 8 个任务各独占 1 个 server → 无资源争用。总线程 128（224 核机器安全），内存 ~40GB（2TB 充裕）。</p>
@@ -73,14 +87,14 @@ iter_100000 GGUF 趋势检查亦通过（分数随训练单调上升，sciq 由 
 <div class='note'><b>为何 16 线程而非 56</b>：第二节探测矩阵证明 16 线程饱和。56 线程会让单 server 因 SSM 顺序扫描的调度开销变慢。
 8 服务器各 16 线程 = 任务级并行（每个 server 独立 SSM 扫描序列）+ 单任务内 16 线程饱和点，两者叠加最优。</div>
 <h2>五、提速实测对照表</h2>
-<div class='warn'><b>全量 GGUF eval 进行中</b>（8 服务器 × 16 线程，已运行 38 分钟）。
+<div class='warn'><b>全量 GGUF eval 进行中</b>（8 服务器 × 16 线程，已运行 58 分钟）。
 完成后重新运行 <code>python3 gen_eval_speedup_report.py</code> 即自动填入实测耗时与加速倍数。</div>
 <table><tr><th>方案</th><th>耗时</th><th>加速（预估）</th><th>精度</th></tr>
 <tr><td>HF 串行 16 线程</td><td>542.2 小时（22.6 天）</td><td>1x</td><td>基线</td></tr>
 <tr><td>GGUF 8 服务器并行</td><td><b>进行中…</b></td><td>待实测</td><td class='good'>Δ≤0.02</td></tr>
 </table>
 <h2>六、全量分数与一致性校验</h2>
-<div class='warn'>全量 eval 进行中（已运行 38 分钟），完成后本节自动填入 8 集全量分数与一致性校验。</div>
+<div class='warn'>全量 eval 进行中（已运行 58 分钟），完成后本节自动填入 8 集全量分数与一致性校验。</div>
 <p><b>一致性校验方法</b>：全量 GGUF 分数 vs 100k n=100 GGUF 分数（同转换器、相邻 ckpt）→
 各任务 Δ 应在采样误差内；全量分数 ≥ 100k 分数（训练继续提升）→ 一致性 PASS。</p>
 <h2>七、交付物清单</h2>
