@@ -74,6 +74,17 @@ def main():
             }
             print(f"  hellaswag MERGED: n={total_samples} acc={wavg_acc:.4f} norm={wavg_norm:.4f}", file=sys.stderr)
 
+    # ── hellaswag single dir (when not split into chunks, e.g. multi-server eval) ──
+    if not hs_chunks:
+        hs_single = os.path.join(out_dir, "hellaswag", "results.json")
+        if os.path.exists(hs_single):
+            with open(hs_single) as f:
+                data = json.load(f)
+            hs = data.get("results", {}).get("hellaswag", {})
+            if hs:
+                merged_results["hellaswag"] = hs
+                print(f"  hellaswag (single): n={hs.get('sample_len',0)} acc={hs.get('acc,none',0):.4f} norm={hs.get('acc_norm,none',0):.4f}", file=sys.stderr)
+
     # ── other tasks (single dir each) ──
     other_tasks = ["arc_challenge", "arc_easy", "boolq", "openbookqa", "piqa", "sciq", "winogrande"]
     for task in other_tasks:

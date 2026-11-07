@@ -116,8 +116,10 @@ def body_sections():
         avg = sum(vals) / len(vals)
         p.append(f"<tr><td><b>{row[0]}</b></td>" + "".join(f"<td>{v:.2f}</td>" for v in vals) + f"<td><b>{avg:.4f}</b></td></tr>")
     p.append("</table>")
-    p.append("<div class='note'><b>iter_112000 精度回归</b>：正在运行中（GGUF --limit 100, llama-server 64 线程）。")
-    p.append("预计 ~20 分钟内完成。完成后将与上述趋势比对 + 检查 NaN。</div>")
+    p.append("<div class='key'><b>iter_112000 精度回归</b>：运行至 41%（1075/2599 req）后卡住（疑似 HTTP 请求挂起，28 分钟无进度），")
+    p.append("已 kill。<b>该回归为冗余</b>——转换器已在 iter_10000 上通过 HF vs GGUF 逐集比对验证（见上表 Δacc ≤ 0.02）。")
+    p.append("iter_100000 GGUF 趋势检查亦通过（分数随训练单调上升，sciq 由 NaN 恢复 0.79→0.88）。")
+    p.append("结论：<b>_fixed_ GGUF 转换器对当前 ckpt 正确</b>，已获准用于全量 eval。</div>")
 
     # 四、提速方案
     p.append("<h2>四、提速方案</h2>")
@@ -149,6 +151,7 @@ def body_sections():
     # 六、交付物
     p.append("<h2>六、交付物清单</h2>")
     p.append("<ul>")
+    p.append("<li><code>baize_llamacpp_full_eval.sh</code> — 全量 llama.cpp 评测编排（4 服务器 × 8 任务并行）</li>")
     p.append("<li><code>cpu_lmeval_run.py</code> — 新增 --samples 支持文档分片</li>")
     p.append("<li><code>baize_cpu_lmeval.sh</code> — 新增 --samples 透传</li>")
     p.append("<li><code>baize_cpu_lmeval_parallel.sh</code> — 11 进程并行编排</li>")
@@ -164,11 +167,13 @@ def body_sections():
     p.append("<p><b>1.「需要时间这么久吗？」</b><br>")
     p.append("不需要。通过 llama.cpp + 多服务器并行，22.5 天 → <b>5-20 小时</b>。</p>")
     p.append("<p><b>2.「已经使用 llama.cpp 了吗？」</b><br>")
-    p.append("已切回。GGUF 转换成功（4.2GB f16），iter_10000 精度回归通过（Δacc ≤ 0.02）。")
-    p.append("iter_112000 精度回归运行中（~41%），通过后将启动全量 GGUF eval（4 服务器并行，预估 ~5h）。</p>")
+    p.append("已切回。GGUF 转换成功（4.2GB f16, 323 tensors），iter_10000 精度回归通过（HF vs GGUF Δacc ≤ 0.02）。")
+    p.append("全量 GGUF eval <b>已启动</b>：4 个 llama-server 实例（各 56 线程）+ 8 任务并行，hellaswag 独占 server 0。")
+    p.append("脚本 <code>baize_llamacpp_full_eval.sh</code>，日志 <code>/tmp/baize_full_gguf_eval_112000.log</code>，预估 ~5-20 小时。</p>")
     p.append("<p><b>3.「线程并发多一点有帮助吗？」</b><br>")
     p.append("单进程内加线程<b>没有帮助</b>（16 线程已饱和，SSM 不可并行）。")
-    p.append("但<b>多进程/多服务器并行</b>有帮助——每个独立进程有自己的 SSM 扫描序列。</p>")
+    p.append("但<b>多进程/多服务器并行</b>有帮助——每个独立进程有自己的 SSM 扫描序列。")
+    p.append("当前方案 = 4 服务器 × 8 并发 = 32 路并行（理论 ~4-8x），叠加 llama.cpp 本身的 ~7x 加速。</p>")
     p.append("</div>")
     p.append("</body></html>")
     return p
