@@ -34,11 +34,23 @@ def main():
     baseline = next((c for c in configs if c["threads"]==8 and c["batch_size"]==1), None)
     bw = baseline["wall_sec"] if baseline else 1
     best = min((c for c in configs if c.get("rc",0)==0), key=lambda c: c["wall_sec"], default=None)
+    # Estimate model load time (constant overhead, amortized once in full eval)
+    # wall = load_est + n_req * k / threads  (assume per-req time ∝ 1/threads)
+    bs1_ok = sorted([c for c in configs if c["batch_size"]==1 and c.get("rc",0)==0], key=lambda c: c["threads"])
+    load_est = 0
+    if len(bs1_ok) >= 2 and bs1_ok[0]["threads"] != bs1_ok[-1]["threads"]:
+        t1, w1 = bs1_ok[0]["threads"], bs1_ok[0]["wall_sec"]
+        t2, w2 = bs1_ok[-1]["threads"], bs1_ok[-1]["wall_sec"]
+        inv_diff = (1.0/t1 - 1.0/t2)
+        if abs(inv_diff) > 1e-9 and n_req > 0:
+            k_const = (w1 - w2) / (n_req * inv_diff)
+            load_est = max(0, w1 - n_req * k_const / t1)
     ts = datetime.now().strftime("%Y-%m-%d %H:%M")
     rows_thr = ""; rows_bat = ""; rows_heat = ""; rows_score = ""
     for c in configs:
         t, b, w = c["threads"], c["batch_size"], c["wall_sec"]
-        sp = bw/w if w>0 else 0; rps = n_req/w if w>0 else 0; fe = w*full_req/n_req if n_req>0 else 0
+        sp = bw/w if w>0 else 0; rps = n_req/w if w>0 else 0
+        fe = load_est + (max(0, w - load_est)) * full_req / n_req if n_req>0 else 0
         bar = f'<div class="bar-container"><div class="bar" style="width:{min(int(sp*100),200)}px"></div></div>'
         if b==1 and c.get("rc",0)==0:
             rows_thr += f"<tr><td>{t}</td><td class='metric'>{fmt_s(w)}</td><td>{sp:.2f}x</td><td>{rps:.2f}</td><td>{fmt_s(fe)}</td><td>{bar}</td></tr>"
@@ -68,7 +80,9 @@ def main():
             rows_score += row + "</tr>"
     else: rows_score = '<tr><td colspan="3">探测仍在运行，暂无分数</td></tr>'
     t_b = best["threads"] if best else "?"; b_b = best["batch_size"] if best else "?"; w_b = best["wall_sec"] if best else 0
-    sp_b = bw/w_b if w_b>0 else 0; fe_base = bw*full_req/n_req if n_req>0 else 0; fe_best = w_b*full_req/n_req if n_req>0 else 0
+    sp_b = bw/w_b if w_b>0 else 0
+    fe_base = load_est + (max(0, bw - load_est)) * full_req / n_req if n_req>0 else 0
+    fe_best = load_est + (max(0, w_b - load_est)) * full_req / n_req if n_req>0 else 0
 
     # Full 8-set scores
     full_scores_html = ""
@@ -93,7 +107,7 @@ def main():
         except Exception as e:
             full_scores_html = f'<h2>❼ 全量8集评测分数</h2><div class="card"><p>读取全量结果失败: {html.escape(str(e))}</p></div>'
     else:
-        full_scores_html = f'<h2>❼ 全量8集评测分数（iter_{ckpt}）</h2><div class="card"><p>全量评测仍在运行中（预估{fmt_s(fe_base)}）。完成后此节将填充实际分数。</p><p><small>全量评测=无limit，8集合计~{full_req:,}个请求，80线程bs=1配置。</small></p></div>'
+        full_scores_html = f'<h2>❼ 全量8集评测分数（iter_{ckpt}）</h2><div class="card"><p>全量评测仍在运行中（预估{fmt_s(fe_best)}，已扣除模型加载{fmt_s(load_est)}仅摊销一次）。完成后此节将填充实际分数。</p><p><small>全量评测=无limit，8集合计~{full_req:,}个请求，80线程bs=1配置。</small></p></div>'
 
     peak_rss_list = [c.get("peak_rss_kb", 0) for c in configs if c.get("peak_rss_kb")]
     peak_rss_max = max(peak_rss_list) if peak_rss_list else 52702936
@@ -107,13 +121,13 @@ def main():
 <div class="summary-box"><h3>核心发现</h3>
 <p><strong>基线</strong>(8线程,bs=1): {fmt_s(bw)} / {n_req}请求 → {n_req/bw:.2f} 请求/秒</p>
 <p><strong>最优配置</strong>: {t_b}线程,bs={b_b} → {fmt_s(w_b)} · 加速 <strong>{sp_b:.2f}x</strong></p>
-<p><strong>全量8集预估时长</strong>: 基线(8线程)<span class="{'bad' if fe_base>86400 else 'warn'}">{fmt_s(fe_base)}</span> · 最优配置<span class="{'good' if fe_best<86400 else 'warn'}">{fmt_s(fe_best)}</span></p>
+<p><strong>全量8集预估时长</strong>（已扣除模型加载{fmt_s(load_est)}仅摊销一次）: 基线(8线程)<span class="{'bad' if fe_base>86400 else 'warn'}">{fmt_s(fe_base)}</span> · 最优配置<span class="{'good' if fe_best<86400 else 'warn'}">{fmt_s(fe_best)}</span></p>
 <p><strong>关键发现</strong>: Mamba2-hybrid 2.22B 在 CPU 上使用 PyTorch 参考实现（无 mamba_ssm/causal_conv1d CUDA 内核），batch_size&gt;1 反而更慢（顺序扫描无 batch 效率），线程数对注意力/MLP 层有有限加速</p>
 <p><strong>内存峰值</strong>: {peak_rss_gb:.1f} GB（远低于 2TB 可用内存）</p></div>
 <h2>① 线程数 vs 吞吐/时长 (bs=1)</h2>
 <div class="card"><p>固定 batch_size=1，扫描 OMP_NUM_THREADS 从基线 8 到上限 80，观察 CPU 推理吞吐变化。</p>
 <table><tr><th>线程数</th><th>Wall-clock</th><th>加速比(vs 8线程)</th><th>请求/秒</th><th>全量8集预估</th><th>加速可视化</th></tr>{rows_thr}</table>
-<p><small>全量预估 = 探测wall × (69650/探测请求数)。8集合计~69,650个loglikelihood请求。</small></p></div>
+<p><small>全量预估 = 模型加载{fmt_s(load_est)} + (探测wall - 加载) × (全量请求/探测请求)。8集合计~{full_req:,}个loglikelihood请求。模型加载在全量评测中仅发生一次，故从探测wall中扣除。</small></p></div>
 <h2>② Batch_size vs 吞吐 (8线程)</h2>
 <div class="card"><p>固定 8 线程，扫描 batch_size。Mamba2 顺序扫描意味着 batch 内各序列独立计算，无并行收益。</p>
 <table><tr><th>batch_size</th><th>Wall-clock</th><th>加速比</th><th>请求/秒</th><th>全量8集预估</th></tr>{rows_bat}</table>
