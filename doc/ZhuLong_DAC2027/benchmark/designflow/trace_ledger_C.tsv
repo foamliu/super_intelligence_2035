@@ -341,3 +341,4 @@
 1791944811866_cv0pc	miccao	hfeg0plg36	300	physical_verify	case	EDA-Eval-DesignFlow-DrcLogHugeCellOverlap-001	2026-11-07 14:43	secondary-subtask-case: EDA-Eval-DesignFlow-ArgusDeckEquivAudit-001 (deck equivalence audit, distinct from hugecell-overlap, same trace cv0pc, not double-counted in coverage)
 1792736045626_maglj	yqlu	hfeg0pkn005	281	layout_aether	case	EDA-Eval-DesignFlow-DupViaPriorityCheck-001	2026-11-07 15:29	
 1790576594987_e7fdl	kenwang	hfeg0pkn004	147	layout_virtuoso	case	EDA-Eval-DesignFlow-QaWidthPatternGen-001	2026-11-07 16:05	
+1793347000576_ygv3b	xinqiaoz	hfeg0pkn002	389	physical_verify	case	EDA-Eval-DesignFlow-DrcUnusedVarClassify-001	2026-11-07 16:44	
