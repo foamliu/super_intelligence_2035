@@ -1,6 +1,9 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 0
 
+> 2026-11-07 22:59 #1606: 运维令11-07 15:2x监控轮·①v4 eval(112k)进度核查@22:59:✅3/8完成=boolq(acc0.60,n3270)+sciq(acc0.316/norm0.264,n1000)+winogrande(acc0.4964,n1267);arc_easy 98%(9289/9501@~1.85it/s,ETA~2min→即将4/8)→arc_challenge→openbookqa→hs_chunk1b(chained N0/8080);piqa_part2 9%(164/1838@~8s/it,ETA~3.8h)on N2/8082→hs_chunk1a;hs_chunk0a 9%(885/10040@~5s/it,ETA~14h)on N3/8083·②orchestration PID882130 alive(2123s),4 servers全alive(8080-8083 health=ok)·③ETA投影:hs各shard~14h(staggered),N2 hs_chunk1a最晚~16:00 Nov8→总~22h from 18:25 start(在1-2天目标内)·④报告regenerated 13075B(3/8 partial,显示"进行中 已运行4.6h")·⑤一致性校验素材已就位:gguf_iter_100000_fixed_8set(limit100,8集)+PR#31703 logitsΔmax=0.006+PRECISION_10K表(已编入gen脚本);HF全量112k基线不存在(22天run已kill让位v4),将以fixed GGUF精度验证+thread-scaling probe分数一致性(#1570)替代·⑥S1健康(.29 GPU全满/75GB)·📦TASK=27.8KB✓/MEMORY=30.5KB✓(归档#1556-#1557指针→daily-memories已存,释放~0.5KB)·未完成指令:有(v4 eval运行中→完成后填耗时+8集分数+一致性校验+报告最终更新)⇒WAITING:0。
+
+
 > 2026-11-07 22:54 #1605: 运维令11-07 15:2x监控轮·①v4 eval(112k)进度核查@22:54:✅3/8完成=boolq(acc0.60,n3270)+sciq(acc0.316/norm0.264,n1000)+winogrande(acc0.4964,n1267);arc_easy 94%(8973/9501@~1.4it/s,ETA~5min)→arc_challenge→openbookqa→hs_chunk1b(chained N0/8080);piqa_p1 ~17%(~310/1838 est@~10s/it,ETA~4h)on N1/8081→hs_chunk0b;piqa_p2 8%(149/1838@~9s/it,ETA~4.2h)on N2/8082→hs_chunk1a;hs_chunk0a 8%(831/10040@~3.4s/it avg,ETA~9h)on N3/8083·②orchestration PID882130 alive(1712s),4 servers全alive(8080-8083)·③ETA投影:bottleneck=N0(arc~2h+hs_chunk1b~8h=~10h)+N2(piqa~4h+hs_chunk1a~8h=~12h)→done~11:00 Nov8(总~17h from 18:25 start,在1-2天目标内)·④报告regenerated 13075B(3/8 partial,显示"进行中 已运行4.5h")·⑤S1健康(.29 GPU 54-100%/75GB/54-63℃/553-610W)·load55/224,mem754/2015GB·📦TASK=27.8KB✓/MEMORY=30.2KB✓·未完成指令:有(v4 eval运行中→完成后填耗时+分数+一致性校验+报告最终更新)⇒WAITING:0。
 
 > 2026-11-07 22:47 #1604: 运维令11-07 15:2x监控轮·①v4 eval(112k)进度核查@22:47:✅3/8完成=boolq(acc0.60,n3270)+sciq(acc0.316/norm0.264,n1000)+winogrande(acc0.4964,n1267);arc_easy 87%(8270/9501@~1.3it/s,ETA~15min)→arc_challenge→openbookqa→hs_chunk1b(chained N0/8080);piqa_p1 8%(146/1838@~9.5s/it avg,ETA~4.5h)on N1/8081→hs_chunk0b;piqa_p2 6%(113/1838@~12.4s/it avg,ETA~6h)on N2/8082→hs_chunk1a;hs_chunk0a 7%(707/10040@~3.4s/it avg,ETA~8.8h)on N3/8083·②orchestration PID882130 alive(1390s),4 servers全alive(8080-8083 health=ok)·③ETA投影:bottleneck=piqa_p2(~6h)+hs_chunk1a(~9h)=~15h from 18:25 start→done~09:30 Nov8(在1-2天目标内)·④报告regenerated 13075B(3/8 partial,显示"进行中 已运行4.4h")·⑤S1健康(.29 GPU 8/8 100%/75GB/54-61℃)·load59.5/224,mem756/2015GB·📦TASK=27.8KB✓/MEMORY=29.3KB✓·未完成指令:有(v4 eval运行中→完成后填耗时+分数+一致性校验+报告最终更新)⇒WAITING:0。
@@ -88,10 +91,7 @@ WAITING: 0
 > 📦 §#1558（11-07 05:52, 监控轮·iter112400/700000）→ daily-memories/2026-11-07.md「归档 #1558-#1559」节；**结论**：S1健康0NaN/0skip,loss2.076,latest ckpt iter_0112000,next iter_0114000 ETA~Nov7 09:05。需要时再读。
 
 
-> 📦 §#1557（11-07 05:29, 监控轮·iter112210/700000）→ daily-memories/2026-11-07.md「归档 #1557」节；**结论**：S1健康0NaN/0skip,loss2.087(含3次grad-norm瞬态spike自恢复),latest ckpt iter_0112000,next iter_0114000 ETA~Nov7 09:05。被#1560确认延续。需要时再读。
 
-
-> 📦 §#1556（11-07 05:12, 监控轮·iter112050/700000）→ daily-memories/2026-11-07.md「归档 #1556」节；**结论**：S1健康0NaN/0skip,loss2.068,latest ckpt iter_0112000(新),next iter_0114000 ETA~Nov7 09:00。被#1557确认延续。需要时再读。
 
 > 📦 §#1043–#1555（11-01→11-07, S1健康监控iter41950→111880 + CPU eval 5ckpt + llama.cpp pilot + 100k eval交付, 共~500轮）→ daily-memories/2026-11-{01..07}.md & run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论汇总**：S1训练全程健康0NaN/0skip, loss~2.05–2.16稳态, ckpt iter_38000→116000, 100k eval已交付(10/10,Avg harness 57.75%), llama.cpp pilot=FAIL(保留HF float32), CPU eval thread scaling报告已交付. 需要时再读 daily-memories。
 
