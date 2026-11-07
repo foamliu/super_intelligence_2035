@@ -1,4 +1,68 @@
 # BAIZE_VISION_TASK.md
+
+### 🔴 用户令 · 2026-11-07 09:2x（**走出「干等 GPU」——用现有 CPU 资源（.12/.29）设计有效 RL，证明显著提升 Qwen3.5-2B 的波形理解**）· 用户直令 · 最高优先 · ⚠️ 未完成
+
+> **用户原话**：「鼓励 Vision 用 CPU 做后续的探索，走出高 ROI 的新路来；**不要干等 GPU**。千方百计证明经过精心设计的 RL 后，MLLM 在波形识别方面有显著提升。请它自行调研 hf.co 等网站，看有没有波形评测的现成数据集。就是争取在现有资源（.12/.29 的 CPU），设计有效的 RL 方案，应用在 Qwen3.5-2B 上，证明显著提升它看懂波形图的能力。」
+
+#### 0. 这条令的核心意图（先读懂）
+
+| | 内容 |
+|:--|:--|
+| **🚫 不要做的** | 「等 GPU 释放（ETA 12/25）→ 跑原计划 Stage-2 → 写报告」。**这条老路已经走不通**，见 §1。 |
+| **✅ 要做的** | 用 **.12/.29 的 CPU** 这个现有资源，**重新设计**一条能出结果、能证明显著提升的 RL 路径。 |
+| **成功判据** | 让 **Qwen3.5-2B** 在波形理解上**显著提升**（要有对照、有统计、能证伪）。 |
+
+> 💡 **「鼓励」不是空话**：允许你**推翻**之前 plan（`report_vision_wave_rl_plan_zh.html`）里的假设与路径，允许更换基座（Qwen3.5-2B 是用户指定）、允许重新定义任务与奖励。**只要能证明提升，方法你自己定。**
+
+#### 1. 必须先正视的既有事实（别重复踩）
+
+- **CPU 上已经跑过一轮 GRPO**（wake#827-835，`--smoke`→pilot 50 step）：结果 **post-GRPO 6.2% < post-SFT 9.2%**（诚实负结果，已记录在案）。⇒ **不是「没 CPU 所以跑不了」，而是「按原方案跑 CPU 也没效果」。**
+- **advantage 方差诊断已做两轮**（gs4：std=0 占 78.7%；gs8：73%，仅降 5.7pp）：根因 = **离散分档奖励导致「全同档 = 无信号」**，而非「全 0」。
+- 按目标拆：**rise_time 100% 全错**（能力缺口，G 加大无效）、**duty_cycle 91.7% 全错**、**period 仅 21.7%**（信号足，可上 GRPO）。
+- 结论：**原奖励设计是主要瓶颈**，不是算力。所以「等 GPU」并不能解决问题 —— 这也正是用户说「不要干等 GPU」的原因。
+
+#### 2. 要你做的事（四块，可并行）
+
+**① 调研现成数据集（用户明确要求）**
+- 自行到 **hf.co / GitHub / arXiv** 检索**波形/信号图/时序图 VQA 评测集**，例如方向：plot/chart 理解（ChartQA、PlotQA、FigureQA）、示波器/波形图、时序图 QA、EDA 波形截图。**有现成的就别自己造。**
+- 每个候选给：`repo id / 体量 / license / gated / 字段结构 / 是否含波形类 / 可用性`。拿不到写「未核到」，🚫 不许编造。
+- 明确回答：**能否直接用于我们「波形识别」任务？** 若不能，能否**迁移**（改造成波形语境）？
+
+**② 重新设计奖励与任务（核心，这是高 ROI 的地方）**
+- 针对 §1 的根因，**重新设计奖励**，方向自选，例如：**连续化**（`exp(-rel_err/τ)` 替代离散分档）、**分目标差异化**（period 先上、rise_time 补 SFT/不做 RL）、**过程奖励**、**相对排序奖励**。
+- **任务定义也可改**：如果「读数」太难，可以改成**可判定的中间任务**（如「判断波形类型」「比较两波形哪个频率高」「指出异常点」），只要能证明能力提升且对下游有意义。
+- ⚠️ **必须重新预注册判据**（改奖励=改目标函数，判据要跟着变；🚫 不许看到结果再调判据）。
+
+**③ 用 Qwen3.5-2B 落地（用户指定基座）**
+- 基座换成 **Qwen3.5-2B**（用户明确），说明与之前基座的差异与理由。
+- **CPU 上能跑多大规模就做多大**：LoRA/小参数量微调、小 step 数、小 batch，**先证明方向有效，再谈规模**。
+- 若判断「CPU 上 Qwen3.5-2B 训练不可行」，**如实说明并给替代方案**（如：只用 CPU 做数据/评测/推理，训练等 GPU；或改用更小可训模块），🚫 不要硬扛也不要不做。
+
+**④ 严格的证伪设计（用户要的是「证明显著提升」）**
+- 必须有 **before/after 对照** + **统计检验**（McNemar / bootstrap CI）+ **控制组**（如空转 RL、随机奖励）。
+- **必须报 cheat rate / 数据泄漏检查**（波形图若来自同一 FSDB，极易泄漏）。
+- 🚫 **不许**只说「提升了」而不给基线与显著性；🚫 **不许**把 infra 问题算成能力提升。
+
+#### 3. 护栏
+
+- 🚫 **不碰 GPU**（.12/.29 的 H100 全给 S1 训练）；CPU 使用降载 `nice -n 19`、控线程数，**别把机器打爆**（同 pretrain 令：224 核跑满会崩，设上限）。
+- 🚫 不打断 S1 训练与他线进程。
+- WaveView/FSDB 合规沿用既有约束（沙盒隔离、只读、license 并发不超）。
+- 🚫 不编造数据集/论文/数字；拿不到标「未核到」。
+- commit 前缀 `vision cpu-rl:`；TASK/MEMORY ≤32KB。
+
+#### 4. 交付
+
+- **调研**：现成波形/图 VQA 数据集清单（含可用性判断 + 迁移方案）。
+- **方案**：新 RL 设计文档（奖励 + 任务 + 预注册判据 + 为什么这次能work 而上次不行）。
+- **实验**：CPU 上的 before/after 结果表 + 显著性 + cheat rate。
+- **中文 HTML 报告**（`reports/report_vision_cpu_rl_waveform_zh.html`，单文件 0 script 0 外链）：必须诚实报告结果 —— **若仍无显著提升，也要写清「为什么」和「下一步该怎么做」**，负结果同样有价值。
+
+> **完成标记**：数据集调研 + 新 RL 方案 + CPU 实验（含对照与显著性）交付 ⇒ 本行改 `✅ 已交付`；未完成 ⇒ `WAITING: 0`。
+> ⚠️ **不要为了「已交付」而挑软指标**：宁可交付一个诚实的「这方向 CPU 上做不到，需要 X」，也不要粉饰成「显著提升」。
+
+---
+
 > 📦 §运维令·2026-10-31 16:0x（ViT-L 68.236% + MLLM 26.10% 写进论文 ch6/ch7/摘要/intro）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：wake#441+#442 交付 4 .tex 改稿 commit 1a2e19b2f，6页/ERR=0/UNDEF=0，数字全溯源 armE_r2 JSON + EXPERIMENTS §15.5，MME 用 ArmE-R2 实测值。需要时再读。
 
 > 📦 §运维令·2026-10-31 11:2x（直接重写第6章 6_vision_encoder.tex）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：wake#437+#439 交付 18行/6页/ERR=0/UNDEF=0 + report_vision_paper_edit_zh.html，commit f2ca45de5/e5145dc85。需要时再读。
@@ -31,50 +95,10 @@
 
 > 📦 §用户令·2026-11-06 18:5x（vision 先上 CPU）**✅ 已交付**（wake#827-#835：P0 冒烟 5 步 365s（73s/步）、P1 50 步 ~2min/步、4 个 eval JSON、报告 15058B、EXPERIMENTS §21；结论 post-GRPO 6.2% < post-SFT 9.2% 未提升）→ 全文见 `run/ARCHIVE_OPERATOR_VISION.md`。
 
-### §运维令·2026-11-05 17:5x（执行波形 RL 计划：Stage-1W SFT 冷启动 → Stage-2W GRPO · 分阶段）· 用户直令 · 最高优先 · ✅ 阶段0已交付 · ✅ 阶段1已交付
+### 📦 §运维令·2026-11-05 17:5x（执行波形 RL 计划：Stage-1W SFT → Stage-2W GRPO · 分阶段）· ✅ 阶段0+阶段1 已交付 → 原文见 `ARCHIVE_OPERATOR_VISION.md`
 
 > **用户令**：「vision：执行 2026-10-31 波形 RL 计划书（`reports/report_vision_wave_rl_plan_zh.html`），让 2B MLLM 通过与 WaveView 交互学会看懂波形图。分阶段，先解锁待核项再训练。」
->
-> **背景**：计划书已交付（59241B/12节），含环境/奖励/数据/训练/评测/成本全路线，但标注「本轮零实验·本机无 FSDB/无 license」+ 4 个「待核」项。本令把计划书从「方案」推进为「执行」，按风险分 4 阶段，**每阶段产出交付物并 commit 后再进下一阶段**。
-
-> **🔴 阶段 0 · 可行性解锁（无 GPU · 必须先做 · 解锁 4 个「待核」）**
-> 目的：在动任何 GPU / 训练前，确认 WaveView+FSDB+license 可用性并跑通最小闭环。
-> 1. **定位 WaveView 主机**：确认哪台机器有 `wv` + Synopsys license + FSDB（候选：`.75` 沙盒 / ZhuLong benchmark 主机 `10.129.32.75` / 其它）。在 `MEMORY_VISION.md` 记录：主机 IP、license 串（6 server？）、可用 demo FSDB 路径（`mixed/mixed.fsdb`·`power/cpf_demo/demo.fsdb`·`hwsw_debug/multi_core/design.fsdb`·`dumper/modelsim_link_third_party/sample.fsdb`）是否真实在位。**若全不可得 ⇒ 阶段 0 即判 RED，写报告上报，不进阶段 1**（不得伪造可用性）。
-> 2. **解锁 4 个待核项**（在沙盒实测，逐项记实测命令+返回）：
->    - ① FSDB 转换工具链：ngspice `.raw` / Verilator VCD → FSDB 是否有开源路径（vcd2fsdb 需 Synopsys？）；**备选**：直接用 `.raw`/VCD + Python 解析器代替 wv（保留 RL 环境框架但失去 API 兼容）——明确走哪条。
->    - ② `sx_export_image` 类截图导出 API 是否存在；若不存在 ⇒ 截图改为 episode 开始时外部预处理一次性截取。
->    - ③ `sx_open_sim_file_read` 是否计入「≥5 次 crash」阈值（决定单 episode wv 预算 = 3 还是 4）。
->    - ④ license 并发上限（决定 RL 并行 episode 数）。
-> 3. **Gym wrapper 冒烟测试**：用 `vision/wave_rl/` 下新建 `waveview_gym.py`，包 `wv -ace_no_gui` 为确定性 Gym 环境（7 类受控 Tcl 动作 A1–A7，每 episode fresh wv 进程，单 episode wv 调用 ≤3）。在 `mixed.fsdb` 上跑 1 个 episode（open→get_signal(clock)→get_values→submit 周期），验证 observation/action/reward/terminate 全链路通。
-> 4. **交付物**：`reports/report_vision_wave_rl_phase0_feasibility_zh.html`（中文 HTML/单文件/无外链）+ `vision/wave_rl/waveview_gym.py`（冒烟可跑）+ `EXPERIMENTS_VISION.md` 新增 §19「波形 RL 阶段 0」。**判据**：4 待核项各有实测结论（GREEN/RED/备选）+ Gym 冒烟 episode 跑通 OR 明确判 RED 上报。
-
-> **🟠 阶段 1 · Stage-1W SFT 冷启动（gated on 阶段 0 GREEN · 2B MLLM · ~4 GPU·h pilot）**
-> 1. **合成数据 pipeline**：ngspice（SPICE tran：RC/RL/反相器/差分对，参数随机化）+ Verilator（数字时序：分频器/FIFO/状态机）→ FSDB（或备选 .raw/VCD+Python）→ 自动生成「open→get_signal→get_values→submit」完整轨迹 + GT（周期/幅度/上升沿/下降沿/延迟）。**pilot 5000 轨迹**（含错误恢复轨迹：信号不存在→dump_hier→换名重试；FineSim 裸名 vs Verilog top.sig；时间窗空→换信号）。
-> 2. **SFT 训练**：2B MLLM，LR 1e-5（LoRA r=64）或 5e-6（全量），GBS=128，~2000–3000 步（2–3 epoch）。**GPU 调度**：避开 vision R9（`10.239.2.12` 在跑）——确认用哪台 GPU 主机（.12 空闲窗口 or 别的 host），写进心跳。
-> 3. **验收判据（预注册）**：held-out 合成数据上 **格式正确率 ≥90% + submit 成功率 ≥70%**。不达标 ⇒ 调数据/轨迹再训，不进阶段 2。
-> 4. **交付物**：SFT checkpoint + `reports/report_vision_wave_rl_phase1_sft_zh.html` + `EXPERIMENTS_VISION.md` §20。
-
-> **🟢 阶段 2 · Stage-2W GRPO 强化（gated on 阶段 1 达标 · ~12 GPU·h full）**
-> 1. **RL 训练**：GRPO（无 value 网络，2B 省显存），奖励 = R_main（数值相对误差分档：≤1%→1.0 / ≤5%→0.7 / ≤10%→0.4 / ≤25%→0.1 / >25%→0）+ R_evidence(0.3) + R_dense(0.2) + R_anti(防 hack，直输 GT −2.0) + R_budget(0.1)。双盲抽检：每 100 episode 插 5 个隐藏 FSDB 题，>20% 差距=过拟合信号。
-> 2. **评测**：WaveQA-RL ≥300 题（数值/多选/开放）+ 双参照线（纯看图 2B / Oracle Tcl 上限）+ **回归护栏**（MMStar/MMBench 掉幅 ≤1pp）。
-> 3. **交付物**：RL checkpoint + WaveQA-RL 评测结果 + `reports/report_vision_wave_rl_phase2_rl_zh.html` + `EXPERIMENTS_VISION.md` §21。
-
-> **🟣 阶段 3 · 全量扩展（可选 · gated on 阶段 2 GREEN · 用户另行批）**：合成 20000 + 真实 2000（Oracle Tcl 回放 698 机 368 命中）+ 派生 8000 = 30000 题，~12 GPU·h + ~16 CPU·h / ~4 天。**需用户再批预算**，本令不自动进。
-
-> **铁律与约束**：
-> - 🚫 不伪造任何评测数字 / API key / license；所有「待核」项必须实测，不得臆断 GREEN。
-> - 🚫 不杀健康训练：阶段 1/2 的 GPU 调度必须避让 vision R9（`10.239.2.12`）；重 I/O 避让 `10.239.2.12`/`10.239.2.29`。
-> - WaveView 合规：沙盒隔离、只读打开（`sx_open_sim_file_read`）、不写回设计库、受控 Tcl 子集、license 不超并发；真实 FSDB 用前确认脱敏/授权。
-> - 每阶段产出交付物并 commit（`vision wave-rl-pN:` 前缀）+ push 后再进下一阶段；阶段 0 若判 RED 立即上报，不得硬推进。
-> - 数字全溯源计划书 `report_vision_wave_rl_plan_zh.html` §1–§9 + 附录 A 实测踩坑；成本 ETA 标「估算」。
-> - 体积：`MEMORY_VISION.md`/`BAIZE_VISION_TASK.md` 各 ≤32KB，超限自滚。
-
-> **完成标记**：阶段 0 交付后标 `✅ 阶段0已交付`；阶段 1/2/3 各自标各自阶段。**任一阶段未交付 ⇒ `WAITING: 0`（不睡）**。
-
-
-
-> 📦 §运维令·2026-10-28 17:3x（OCR 合成数据 10M 质量偏差裁定：接受现状）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：wake#330 用户裁定 accept-as-is，不重生成/不过滤，10M 数据集可用于预训练/OCR SFT。需要时再读。
-
+> **交付进展**：阶段0（WaveView/FSDB 解锁 + Gym 冒烟）✅ · 阶段1 SFT 验收 PASS（format 100%/submit 100%）✅ · Phase2 **CPU pilot 全链路 PASS**（诚实负结果 post-GRPO 6.2% < post-SFT 9.2%）✅ · advantage 诊断 gs4/gs8 双轮 ✅（PARTIAL，离散分档是全同档根因）。**阶段2 正式 GRPO 需 GPU —— 已被 2026-11-07 用户令改为「改用 CPU 重新设计」路线，见顶部新令。** 需要细节读 archive / 各阶段报告。
 ### [已归档] §运维令·2026-10-26 08:2x（写最近工作报告 · 中文 HTML）**已完成**（wake#279 交付 `reports/report_vision_recent_work_zh.html` 40423B/5节/0 script/0 外链）→ 全文见 `run/ARCHIVE_OPERATOR_VISION.md`。
 
 ### [已归档] §运维令·2026-10-25 22:4x（生成 1000 万 OCR 图文对）**已完成**（wake#275：9,999,999 对/2000 shard/470GB；去重 2.4486%、泄漏 113 已如实披露；用户已裁定 accept-as-is）→ 全文见 `run/ARCHIVE_OPERATOR_VISION.md`。
