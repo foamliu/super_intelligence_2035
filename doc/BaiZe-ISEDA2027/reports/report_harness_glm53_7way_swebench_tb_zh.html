@@ -20,7 +20,7 @@ pre{background:#2c3e50;color:#ecf0f1;padding:15px;border-radius:5px;overflow-x:a
 <div class="info">
 <p><strong>模型</strong>：glm-5.3-flash（网关 <code>http://agi-gateway.cxmt.com/v1</code>）</p>
 <p><strong>7 路</strong>：cline / codex / opencode / claude-code / pi / hermes / deepseek</p>
-<p><strong>生成时间</strong>：2026-11-08 00:56（R1816）</p>
+<p><strong>生成时间</strong>：2026-11-08 01:06（R1816）</p>
 <p><strong>状态</strong>：<span class="warn">⚠️ 中间报告</span> — SWE-bench eval 5/7 完成（hermes 运行中、deepseek 待评）；TB-2.1 cline 1/7 路完成</p>
 </div>
 
@@ -33,11 +33,11 @@ pre{background:#2c3e50;color:#ecf0f1;padding:15px;border-radius:5px;overflow-x:a
 <p><strong>数据集</strong>：SWE-bench Verified 500 题（非 Lite）。Predict 仍在运行中。</p>
 <table>
 <tr><th>#</th><th>Harness</th><th>Predict 总数</th><th>Real Patch</th><th>Empty Patch</th><th>Real Rate</th></tr>
-<tr><td>1</td><td>cline</td><td>67</td><td class='pass'>58</td><td class='fail'>9</td><td>86.6%</td></tr>
-<tr><td>2</td><td>codex</td><td>42</td><td class='pass'>11</td><td class='fail'>31</td><td>26.2%</td></tr>
-<tr><td>3</td><td>opencode</td><td>123</td><td class='pass'>118</td><td class='fail'>5</td><td>95.9%</td></tr>
-<tr><td>4</td><td>claude-code</td><td>68</td><td class='pass'>38</td><td class='fail'>30</td><td>55.9%</td></tr>
-<tr><td>5</td><td>pi</td><td>45</td><td class='pass'>35</td><td class='fail'>10</td><td>77.8%</td></tr>
+<tr><td>1</td><td>cline</td><td>69</td><td class='pass'>60</td><td class='fail'>9</td><td>87.0%</td></tr>
+<tr><td>2</td><td>codex</td><td>43</td><td class='pass'>12</td><td class='fail'>31</td><td>27.9%</td></tr>
+<tr><td>3</td><td>opencode</td><td>129</td><td class='pass'>124</td><td class='fail'>5</td><td>96.1%</td></tr>
+<tr><td>4</td><td>claude-code</td><td>69</td><td class='pass'>38</td><td class='fail'>31</td><td>55.1%</td></tr>
+<tr><td>5</td><td>pi</td><td>47</td><td class='pass'>35</td><td class='fail'>12</td><td>74.5%</td></tr>
 <tr><td>6</td><td>hermes</td><td>150</td><td class='pass'>137</td><td class='fail'>13</td><td>91.3%</td></tr>
 <tr><td>7</td><td>deepseek-harness</td><td>48</td><td class='pass'>43</td><td class='fail'>5</td><td>89.6%</td></tr>
 </table>
@@ -93,7 +93,7 @@ pre{background:#2c3e50;color:#ecf0f1;padding:15px;border-radius:5px;overflow-x:a
 <table>
 <tr><th>Harness</th><th>完成</th><th>Passed</th><th>Failed</th><th>Remaining</th><th>通过率</th><th>状态</th></tr>
 <tr><td>cline</td><td>89/89</td><td class='pass'>7</td><td class='fail'>81</td><td>1</td><td><strong>7.9%</strong></td><td>✅ 已完成</td></tr>
-<tr><td>hermes</td><td>49/89</td><td class='fail'>0</td><td>30</td><td>40</td><td>0.0%</td><td>⏳ 运行中</td></tr>
+<tr><td>hermes</td><td>62/89</td><td class='pass'>3</td><td>33</td><td>27</td><td>4.8%</td><td>⏳ 运行中</td></tr>
 <tr><td>codex</td><td>18/89</td><td class='fail'>0</td><td>0</td><td>71</td><td>0.0%</td><td>❌ KILL(429)</td></tr>
 <tr><td colspan="4"><em>opencode / claude-code / deepseek / pi — 4 路待启动（sequential launcher）</em></td><td>89</td><td>—</td><td>⏳ queued</td></tr>
 </table>
@@ -119,14 +119,14 @@ pre{background:#2c3e50;color:#ecf0f1;padding:15px;border-radius:5px;overflow-x:a
 <h2>7. 后续计划</h2>
 <div class="info"><ol>
 <li>SWE-bench：predict 7 路加速推进至 500 题（网关已恢复 200），满 500 后重跑 eval 出最终矩阵</li>
-<li>TB-2.1：hermes 运行中（33/89 已验证，2 passed），完成后 sequential launcher 自动启动 opencode/claude-code/deepseek/pi</li>
+<li>TB-2.1：hermes 运行中（62/89 已验证，3 passed），完成后 sequential launcher 自动启动 opencode/claude-code/deepseek/pi</li>
 <li>codex TB-2.1 需重跑（429 已恢复后重试）</li>
 <li>报告更新：每路完成后增量更新</li>
 </ol></div>
 
 <hr>
 <p style="text-align:center;color:#7f8c8d;font-size:0.9em">
-BaiZe Harness · R1816 · 2026-11-08 00:56<br>
+BaiZe Harness · R1817 · 2026-11-08 01:06<br>
 glm-5.3-flash · SWE-bench Verified 500 + TB-2.1 89 · 7-way · 报告正文一律写 cline
 </p>
 </body></html>
