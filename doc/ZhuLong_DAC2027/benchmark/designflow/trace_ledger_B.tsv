@@ -425,3 +425,6 @@ vbxlf.messages.json	jason17w	hfeg0pnd002	262	spice_sim	parked		2026-11-05 12:30	
 1793670518248_ap4dl					parked		2026-11-08 00:42	GUI task (tkinter xval_tool), hspice counts from tool processing hspice decks, not real spice sim
 1794037498869_m5mbi					parked		2026-11-08 00:42	disk-scanner V5 optimization (scandir_find concurrency), hspice counts from scanner traversing hspice dirs, not real spice
 1791620953988_2spf5.messages.json	tongfanl	hfhds201	33	spice_sim	case	EDA-Eval-DesignFlow-WtmStructReview-001	2026-11-08 01:19	
+1793842420935_0kgye.messages.json	tongfanl	hfhds201	60	spice_sim	case	EDA-Eval-DesignFlow-PoststressTbAudit-001	2026-11-08 01:48	
+1792738969144_h0gyt.messages.json					parked		2026-11-08 01:48	meta/workflow teaching (教你我的工作流总结成文档), not spice_sim task; spice tokens from DDR6 env-check incidental
+1792049437355_nxrk2.messages.json					parked		2026-11-08 01:48	Finesim DC nonconv Q&A prose (原因及解决方案有哪些), overlaps uky6c FineSimDcConvFix-001; not a deliverable-producing task
