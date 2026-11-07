@@ -8,6 +8,54 @@
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### 🔴 用户令 · 2026-11-07 10:50（**出口变更：停发日报邮件 -> 改为「论文观察日报」HTML；并与其余 6 条线联动**）· 用户直令 · 最高优先 · 未完成
+
+> **用户原话**：「把 research 的出口，从给 paul.liu@cxmt.com 发邮件，改成生成论文观察日报 HTML，在 pretrain/vision/harness/data/zhulong/designflow 的任务书中，常驻一个指向 research 日报的路径链接。同时 research 的调研，请也联系其他 agent 正在做的工作，争取对他们有帮助。」
+
+#### 1. 出口变更（硬口径）
+
+1. **自本令起停止一切「每日论文日报」邮件发送**（含 `paul.liu@cxmt.com`，含分包）；10-12 块的「每日论文日报邮件」职能**作废**。
+2. **作者请教信职能不受影响**（仍按 `RESEARCH_MAIL_SPEC.md` 执行；该 spec 里的日报小节以本令为准）。
+3. **唯一出口 = 论文观察日报 HTML**：
+   - 每期：`doc/personal-watch/run/research/daily/<YYYY-MM-DD>.html`
+   - 索引：`doc/personal-watch/run/research/daily/index.html`（**每轮必须更新**：日期 + 篇数 + 一句话摘要 + 覆盖到哪些线）
+   - 规则：单文件自包含、中文、0 `<script>`、外链仅必要；沿用既有日报版式，可增量扩写。
+4. 邮件台账**不再新增**（历史记录保留、不得改写）；`PDF 下载 + 校验 + 归档` 继续做（供各线查阅），但**不再作为附件出口**。
+5. commit 前缀改为 `research daily:`（不再用 `research mail:`）。
+
+#### 2. 与其他 6 条线联动（本轮核心新增，必须做）
+
+每期日报**必须有一节「对各线的可执行建议」**，逐线给六列：`线名 / 建议动作 / 依据（arXiv ID + 关键数字）/ 预期收益 / 成本 / 优先级`。覆盖范围固定为 6 条：
+
+| 线 | 任务书（读它了解当前重点） | 该线关注点 |
+|:--|:--|:--|
+| pretrain | `doc/BaiZe-ISEDA2027/run/BAIZE_PRETRAIN_2B_TASK.md` | 架构/长上下文/吞吐与评测方法、CPU 评测线程与 batch |
+| vision | `doc/BaiZe-ISEDA2027/run/BAIZE_VISION_TASK.md` | 波形 RL 奖励设计、LoRA、CPU 训练与小样本显著性 |
+| harness | `doc/BaiZe-ISEDA2027/run/BAIZE_HARNESS_TASK.md` | agent harness、工具调用、上下文压缩、SWE-bench/TB4 协议与成本 |
+| data | `doc/BaiZe-ISEDA2027/run/BAIZE_DATA_TASK.md` | 数据配比、去污染、代码语料质量筛 |
+| zhulong | `doc/ZhuLong_DAC2027/run/ZHULONG_TASK.md` | 消融实验设计、thinking/语言轴、成本口径 |
+| designflow | `doc/ZhuLong_DAC2027/benchmark/BAIZE_DESIGNFLOW_BENCH_TASK*.md` | 造题、L1-L5 保真度、判分可验证性 |
+
+#### 3. 每轮做法（固定流程）
+
+1. `git pull` 后先读上述 6 份任务书的「运维指令区」最新块 + 各线 `MEMORY_*` 顶部「进度快照/阻塞」（各取最新 30 行即可），列出**各线当前阻塞 + 正在做的 2-3 件事**；
+2. 检索/筛选论文时**按线建档**（一篇可同时服务多线，须写清映射关系）；
+3. 「可执行建议」必须可落地：给到命令 / 实验设计 / 预注册判据，🚫 禁止只写「值得关注」「可参考」；
+4. 某线本期确无可用论文 ⇒ 明确写「本线本期无新增可用建议」，🚫 不许凑数、不许把无关论文硬塞；
+5. 每期收尾：HTML + index.html + `MEMORY_RESEARCH.md` 心跳 + commit `research daily:`。
+
+#### 4. 验收判据
+
+- 每期 HTML 含「对各线的可执行建议」节，**6 线齐全**（无建议的显式写「无」）；
+- `daily/index.html` 当日行存在且摘要与实际篇数一致；
+- **无新增邮件发送日志**（台账最后一条应是 11-04/11-07 之前的旧记录）；
+- 每期至少给出 **2 条**可执行建议（跨线累计）。
+
+> 说明：6 条线任务书已由运维同步插入「常驻 · 论文观察日报」指针块（指向本线 `daily/index.html`），各线 agent 每轮会读；因此日报内容要按「被 agent 直接执行」的标准写。
+
+---
+
+
 ### 🧹 运维总则 · 2026-10-18（禁令作用域清理）
 - **保留（全局有效）**：不伪造、不泄密、不杀健康训练、不覆盖他线产物、不绕过验证/实名/风控。
 - **降级为局部**：旧块里的“等运维许可 / 不重启 / 暂停 / 不开跑 / 不碰 X”只在**该块任务**内有效；与最新用户令或最新任务块冲突时，**以最新块为准**。

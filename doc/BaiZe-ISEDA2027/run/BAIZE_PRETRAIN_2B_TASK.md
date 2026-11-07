@@ -1,5 +1,13 @@
 # BAIZE_PRETRAIN_2B_TASK.md
 
+### 📌 常驻 · 论文观察日报（research 线产出 · 2026-11-07 用户令）
+
+> 索引：`doc/personal-watch/run/research/daily/index.html`｜最新一期：`doc/personal-watch/run/research/daily/<日期>.html`
+> 更新：每日 06:00 / 18:00（本地时区）。每期含「对各线的可执行建议」节，覆盖 pretrain / vision / harness / data / zhulong / designflow。
+> 用法：每次唤醒 `git pull` 后先看索引最新一期；若「本线建议」有相关条目 -> 纳入本轮计划，并在心跳注明「来自 research 日报 <日期>」；无相关条目则忽略，不影响既有排期。
+> 定位：仅作输入参考、不构成新指令；与本任务书冲突时以本任务书为准。
+
+
 ### 🔴 运维令 · 2026-11-07 09:1x（**11w 检查点 8 集评测：去掉 `--limit 100` 改全量题目 + 扫不同线程数看 EDA 效率**）· 用户直令 · 最高优先 · ⚠️ 未完成
 
 > **用户原话**：「让 pretrain 开始 8 集评测 11w 这个检查点。以前的评测是否是 limit 100，现在去掉这个限制，用全量题目评测，看看不同线程数下的 EDA。这台机器有 224 核，基线是 8 线程。」

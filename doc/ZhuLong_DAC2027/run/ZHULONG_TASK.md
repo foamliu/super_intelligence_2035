@@ -1,5 +1,13 @@
 # ZHULONG_TASK.md — ZhuLong（DAC2027）EDA 消融评测 · 合并任务书
 
+### 📌 常驻 · 论文观察日报（research 线产出 · 2026-11-07 用户令）
+
+> 索引：`doc/personal-watch/run/research/daily/index.html`｜最新一期：`doc/personal-watch/run/research/daily/<日期>.html`
+> 更新：每日 06:00 / 18:00（本地时区）。每期含「对各线的可执行建议」节，覆盖 pretrain / vision / harness / data / zhulong / designflow。
+> 用法：每次唤醒 `git pull` 后先看索引最新一期；若「本线建议」有相关条目 -> 纳入本轮计划，并在心跳注明「来自 research 日报 <日期>」；无相关条目则忽略，不影响既有排期。
+> 定位：仅作输入参考、不构成新指令；与本任务书冲突时以本任务书为准（本线消融实验的基座/题量/协议口径不受其影响）。
+
+
 ### 🔴 用户令 · 2026-11-07 08:3x（**两轴消融：cline `--thinking` 档位 × 思维链语言** · 测试集 **EDA-Eval-PyAether 158** · 中文 HTML 报告须含**分数 + 成本**（墙钟/token））· 用户直令 · 最高优先 · ⚠️ 未完成
 
 > **用户原话**：「安排 zhulong agent 做如下消融实验：测试集 EDA-Eval-PyAether（158）。1. 变化 cline 的 thinking 参数：None、Low、Medium等。2. 变化 cline 思维链使用的语言：中文、英文、西班牙文、法文、俄文等，可以通过修改任务提示实现，比如：'请使用XX语言思考'。实验后生成中文 HTML 报告。包含对比表格，不光含不同变体的分数，还应包含成本，比如墙钟、token 等。」

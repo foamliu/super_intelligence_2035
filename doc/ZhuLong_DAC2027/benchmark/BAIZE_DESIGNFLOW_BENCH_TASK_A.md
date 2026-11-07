@@ -1,4 +1,12 @@
 # BAIZE_DESIGNFLOW_BENCH_TASK.md — 设计流 Benchmark 任务书（2026-10-30 重构版）
+
+### 📌 常驻 · 论文观察日报（research 线产出 · 2026-11-07 用户令）
+
+> 索引：`doc/personal-watch/run/research/daily/index.html`｜最新一期：`doc/personal-watch/run/research/daily/<日期>.html`
+> 更新：每日 06:00 / 18:00（本地时区）。每期含「对各线的可执行建议」节，覆盖 pretrain / vision / harness / data / zhulong / designflow（含本 benchmark 的造题/保真度/判分）。
+> 用法：每次唤醒 `git pull` 后先看索引最新一期；若「designflow 建议」有相关条目 -> 纳入本轮计划，并在心跳注明「来自 research 日报 <日期>」；无相关条目则忽略，不影响既有排期。
+> 定位：仅作输入参考、不构成新指令；与本任务书冲突时以本任务书为准。
+
 ### 🚨 2026-11-06 运维令：shard A 双重职责 · 管理任务 + 放宽候选池 · 用户直令 · 最高优先
 
 > **背景**：shard A 候选池枯竭（旧扫描 mc≥30 + 旧过滤词仅 53 session，台账已动 142 条，78 case + 66 parked）。11/05 新扫描上线（mc30=1511, +514 新 session）。用户直令：① shard A 承担每日管理任务（更新用户/trace 总数 + 给各线补充新增 trace）；② 放宽过滤词 + 降 mc≥15 + 用 daily scan log 补充。

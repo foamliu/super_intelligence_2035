@@ -2,6 +2,21 @@
 
 > 📄 **报告格式常驻规程（2026-10-24 用户令）**：**所有报告一律用中文 HTML**（单文件自包含、无外链/CDN），除非用户另行指定；🚫 不用 `.md` / `.pdf` / 纯文本顶替。适用于**所有线**（pretrain / vision / data / harness / zhulong / news / recruit / research / video）。
 
+## 2026-11-07 10:50 — research 出口改为日报 HTML + 6 条线常驻指针
+
+用户令：「把 research 的出口，从给 paul.liu@cxmt.com 发邮件，改成生成论文观察日报 HTML；在 pretrain/vision/harness/data/zhulong/designflow 的任务书中常驻一个指向 research 日报的路径链接；同时 research 的调研也联系其他 agent 正在做的工作，争取对他们有帮助。」
+
+落地（已提交）：
+
+1. **research 侧**：`doc/personal-watch/run/WATCH_RESEARCH_TASK.md` 顶部新增用户令块 —— 停止一切日报邮件（含分包；`RESEARCH_MAIL_SPEC` 的日报小节作废，**作者请教信不受影响**）；唯一出口 = `doc/personal-watch/run/research/daily/<YYYY-MM-DD>.html` + `daily/index.html`（每轮更新）；PDF 仍下载校验归档但不作附件；commit 前缀改 `research daily:`。
+2. **跨线联动（新增硬要求）**：每期日报必须含「对各线的可执行建议」节，6 线齐全（pretrain / vision / harness / data / zhulong / designflow），每条给 `建议动作 / 依据(arXiv ID + 关键数字) / 预期收益 / 成本 / 优先级`；每轮先读 6 份任务书最新块 + 各线 MEMORY 顶部快照再选题；无建议的线必须显式写「无」，禁止凑数。
+3. **6 条线常驻指针**（各任务书第 2 行「📌 常驻 · 论文观察日报」块）：指向 `doc/personal-watch/run/research/daily/index.html`，说明每日 06:00/18:00 刷新、看到本线相关条目就纳入本轮计划并注明来源、冲突时以本任务书为准。写入的 9 个文件：
+   - `run/BAIZE_PRETRAIN_2B_TASK.md`、`run/BAIZE_VISION_TASK.md`、`run/BAIZE_HARNESS_TASK.md`、`run/BAIZE_DATA_TASK.md`
+   - `doc/ZhuLong_DAC2027/run/ZHULONG_TASK.md`
+   - `doc/ZhuLong_DAC2027/benchmark/BAIZE_DESIGNFLOW_BENCH_TASK.md` + `_A/_B/_C/_D.md`（四 shard 各一本）
+4. **未列入**：posttrain 任务书（用户本次未点名）——如需一并加指针，说一声即可。
+
+
 ## 2026-11-07 10:10 — 用户四条决策（运维已写入各线任务书顶部）
 
 用户看完进展汇报后一次性给 4 条决定，已分别落成任务书顶部的「用户直令 · 最高优先」块：
