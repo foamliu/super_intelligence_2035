@@ -341,3 +341,7 @@ vbxlf.messages.json	jason17w	hfeg0pnd002	262	spice_sim	parked		2026-11-05 12:30	
 1791768325372_g13dw	dandans	hfhds201	16	spice_sim	parked		2026-11-07 07:58	incomplete trace: USER0='修改aging代码 step1/step2仿真分目录' + attached matrixrun perl; 7/16 tool_result errors Agent Policy blocked, assistant never produced edit, last msg='Let me read the full file...' still exploring
 1793867708362_0t51l	tzuo	hfhds201	58	spice_sim	case	EDA-Eval-DesignFlow-NetlistViewSpiceldSwap-001	2026-11-07 08:34	
 1792395143753_ai203	yuankong	hfhds201	14	spice_sim	case	EDA-Eval-DesignFlow-BmatrixRerunGen-001	2026-11-07 09:11	
+1793260818025_aw9d7	dsgao	hfhds201	273	spice_sim	case	EDA-Eval-DesignFlow-TscodecompTbVerify-001	2026-11-07 09:46	
+1792841497181_wbge3					parked		2026-11-07 09:46	LSF monitoring not spice
+1791446512697_3s3zx					parked		2026-11-07 09:46	incomplete: assistant asked question, session terminated, no resolution
+1789544872347_mi210					parked		2026-11-07 09:46	DUP of SetNetlistParam-001 (same Run_Compress_Netlist)
