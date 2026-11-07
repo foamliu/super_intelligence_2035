@@ -1,6 +1,8 @@
 WAITING: 1
 
-> 🆕 **【wake #894 · 2026-11-07 22:44】例行巡检·全交付态·零异常。** git pull(已最新·无新令)·research日报2026-11-07已查(wake#893已阅·无更新·vision无直接对口·按令忽略)·体积自检TASK=31KB✓/MEMORY=20KB✓(0归档)。**本轮动作**：①确认两条用户令均✅已交付（10:10阶段2放行+09:2x走出干等GPU）·全部交付物在位（报告29903B/EXPERIMENTS§22/v5实验A16%→B37%→C53% p=0.0009）✓。②进程巡检：vision loop PID669545(ppid=1·健康)·GPU-wait chain PID1365749(ppid=1·etimes~30h·健康轮询)·无活跃CPU实验·GPU8卡满载属pretrain非本线·未碰pretrain✓。③无新指令·无可执行动作·全交付态维持。**未完成指令:无**。📦体积:TASK=31KB✓/MEMORY=20KB✓(0归档)。
+> 🆕 **【wake #895 · 2026-11-07 23:17】例行巡检·全交付态·零异常。** git pull(已最新·无新令)·research日报2026-11-07已查(wake#893已阅·无更新·vision无直接对口·按令忽略)·体积自检TASK=31KB✓/MEMORY=20KB✓(0归档)。**本轮动作**：①确认两条用户令均✅已交付（10:10阶段2放行+09:2x走出干等GPU）·全部交付物在位（报告29903B/EXPERIMENTS§22/v5实验A16%→B37%→C53% p=0.0009）✓。②进程巡检：vision loop PID669545(ppid=1·etimes~9.6天·健康)·GPU-wait chain PID1365749(ppid=1·etimes~30.8h·健康轮询·sleep60子进程PID1893002)·无活跃CPU实验·GPU8卡满载100%属pretrain非本线·未碰pretrain✓。③无新指令·无可执行动作·全交付态维持。**未完成指令:无**。📦体积:TASK=31KB✓/MEMORY=20KB✓(0归档)。
+
+> 📦 wake #894（例行空唤醒巡检·2026-11-07 22:44）已归档 → daily-memories-vision/2026-11-07.md；**结论**：全交付态·loop/GPU-wait chain健康·零异常。需要时再读。
 
 > 🆕 **【wake #893 · 2026-11-07 22:0x】用户令标✅已交付+收尾巡检。** git pull(已最新·无新令)·research日报2026-11-07查阅(vision无直接对口论文·仅侧向借鉴Scientist World评测范式·低优先·按令忽略不影响排期)·体积自检TASK=31KB✓/MEMORY=19KB✓(0归档)。**本轮动作**：①核对全部交付物在位——报告HTML 29903B(`reports/report_vision_cpu_rl_waveform_zh.html`)✓·EXPERIMENTS§22(v5完整结果)✓·数据集调研JSON✓·技术栈冒烟S2 FALLBACK_VIABLE✓·v5实验结果(A16%→B37%→C53%·McNemar p=0.0009·Bootstrap CI=[+7,+25]·cheat_rate=0)✓。②**按完成标记将两条用户令(10:10阶段2放行+09:2x走出干等GPU)标为✅已交付**——09:2x完成标记明确授权"交付⇒本行改✅已交付"·10:10为09:2x的授权补充(6项已授权变更全部尝试v2-v5·v5获统计显著正结果)。③进程巡检：仅GPU-wait chain PID1365749(ppid=1·etimes~30h·健康轮询)·无活跃CPU实验·未碰pretrain。**未完成指令:无**(两条用户令均✅已交付)。📦体积:TASK=31KB✓/MEMORY=19KB✓(0归档)。
 
@@ -121,4 +123,4 @@ WAITING: 1
 | 当前动作 | **wake#893 用户令标✅已交付+收尾巡检**：核对全部交付物在位(报告29903B/EXPERIMENTS§22/v5结果/数据集调研/技术栈冒烟)·**按完成标记将两条用户令(10:10阶段2放行+09:2x走出干等GPU)标为✅已交付**·research日报2026-11-07 vision无直接对口(仅侧向借鉴·低优先·按令忽略)·仅GPU-wait chain PID1365749健康·无活跃CPU实验·未碰pretrain。 |
 | 下一步 | ①v5✅已交付(报告+EXPERIMENTS+commit) ②用户令核心目标"证明显著提升"已达成→标✅已交付 ③可选下一步：扩大v5规模(更多SFT数据/更多RFT轮次)/尝试其他可判定中间任务(频率比较/异常点定位)/迁移到GPU验证规模效应 ④待运维/用户确认是否需要进一步实验或GPU验证 |
 | 阻塞 | .12+.29 GPU全占（8×H100 96-100% util / ~75GB，pretrain baize2b ETA≈12/24-25）→ GPU验证待pretrain释放 ·.17+.75 SSH不可达 |
-| 更新 | **2026-11-07 22:0x (wake #893)**: 两条用户令(10:10+09:2x)标✅已交付·全部交付物核对在位·research日报vision无对口忽略·仅GPU-wait chain健康·WAITING=1(全交付) |
+| 更新 | **2026-11-07 23:17 (wake #895)**: 例行巡检·git pull无新令·research日报vision无对口忽略·全交付态维持·WAITING=1 |
