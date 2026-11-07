@@ -994,7 +994,7 @@ wl9i4					parked		2026-11-05 22:49	交互shell驱动+Q&A n752大
 1793245121084_56j3w					parked		2026-11-06 05:30	meta Q&A (who are you) + analyze waveform purpose
 1793858875143_wzws0					parked		2026-11-06 05:30	no clean produce task (policy-engine errors, skill setup)
 1792552457905_b4dlx					parked		2026-11-06 05:30	slash-command launch (/anasimpro-gui-start)
-1793866097938_fl4rh					parked		2026-11-06 05:30	deferred: mid-conv multi-turn Perl FSM block spec (open-ended)
+1793866097938_fl4rh					case	EDA-Eval-DesignFlow-VerilogDriveFsmBlock-001	2026-11-08 07:11	reactivated: re-peek reveals clean single-deliverable produce (VerilogDriveFsmBlock.pl); parked-judgment revised
 1793846988442_zhq3r					parked		2026-11-06 05:30	meta/how-to Q&A (how to input circuit module)
 1793786422300_ki14d					parked		2026-11-06 05:30	wrong domain: layout FPA density check (physical_verify/layout)
 1792837595656_ymjs5					parked		2026-11-06 05:30	premise-missing: resume prior delay-cell sigma optimization task
