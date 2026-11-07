@@ -1,9 +1,5 @@
-[verified-full 00:01:20] [1/500] PREDICT pi on astropy__astropy-12907
-[verified-full 00:02:01]   -> quota-blocked (patch=0B wall=41.3s)
-[verified-full 00:02:01] [2/500] PREDICT pi on astropy__astropy-13033
-[verified-full 00:06:05]   -> patch-produced (patch=2226B wall=244.0s)
-[verified-full 00:06:05] [3/500] PREDICT pi on astropy__astropy-13236
-[verified-full 00:36:09]   -> no-patch (patch=0B wall=1800.4s)
-[verified-full 00:36:09] [4/500] PREDICT pi on astropy__astropy-13398
-[verified-full 00:38:09]   -> no-patch (patch=0B wall=116.8s)
-[verified-full 00:38:09] [5/500] PREDICT pi on astropy__astropy-13453
+[verified-full 09:32:05] resume: loaded 59 existing results
+[verified-full 09:32:05] [1/500] PREDICT pi on astropy__astropy-12907
+[verified-full 09:33:56]   -> patch-produced (patch=2604B wall=111.1s)
+[verified-full 09:33:56] [2/500] astropy__astropy-13033 SKIP (predicted, patch=2226B)
+[verified-full 09:33:56] [3/500] PREDICT pi on astropy__astropy-13236

@@ -20,7 +20,7 @@
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区，自上而下找第一条「未完成」的指令执行
 
-### 🔴 §用户令·2026-11-07 08:1x（**评测脚本代际审计：Kimi→GLM-5.3-Flash · Lite/TB2→Verified/TB4** 可继承的继承、不可用的改掉，目标消灭 TB4 全 0 passed）· 用户直令 · 最高优先 · ⚠️ 未完成
+### ✅ §用户令·2026-11-07 08:1x（**评测脚本代际审计：Kimi→GLM-5.3-Flash · Lite/TB2→Verified/TB4** 可继承的继承、不可用的改掉，目标消灭 TB4 全 0 passed）· 用户直令 · ✅ 已交付（R1739）
 
 > **用户原话**：「安排 Harness 重新审视一下以前的评测脚本。从前的脚本是为 Kimi 模型调试的，现在是 GLM-5.3-Flash。从前的脚本是为 SWE-bench Lite/TB2，现在是 SWE-bench Verified/TB4。可用的就继承，不可用的就修改。争取解决 TB4 全 0 passed 等问题。」
 >

@@ -4,13 +4,13 @@ WAITING: 0
 
 ## 📊 进度快照
 
-PHASE:        R1738 监控轮:gateway额度恢复中(ETA~09:20·wait=11min)·SWE-bench 566pred/372空(65%)/194real·TB4 290result/hermes60reward全0(能力)·P0/P1/P2✅报告已交付·待gateway恢复→cleanup+P3/P4
-已完成:       H-B✅·Gate7/7·TB报告✅·full500✅·R1735 P0/P1 fix·R1736 P0/P1/P2+报告交付·R1737 gateway假阳性纠正+probe·R1738 监控+cleanup dry-run
-当前动作:     R1738 监控:①CPU/MEM PASS(load44/224·无失控·1.2Ti avail) ②gateway仍额度耗尽(wait=11min18s→ETA~09:20) ③SWE-bench 566pred/cleanup dry-run=372空(65%)/194real(opencode63最佳·codex1最差) ④TB4 290result:hermes60reward全0(能力非infra)·6路errored(429) ⑤P0oracle=1.0×3✅·P1resume fix✅·P2audit报告✅ ⑥verifier=separate mode·test.sh不需uvx/网络(pytest预烘焙)·overlay warning=信息性非根因 ⑦disk 5.8TB avail✅ ⑧TB4+SWE-bench batch alive(自动续)
-下一步:       ①~09:20 gateway恢复→cleanup --delete+重跑372空patch ②P3 TB4 3题×7路回归 ③P4全量 ④§22:4x口径跑满
-阻塞:         gateway额度耗尽(ETA~09:20)·等待恢复后即可推进P3/P4
+PHASE:        R1739 predict重启(固定resume代码)·6/7路运行中·gateway恢复OK·SWE-bench 195real patch(6路)·deepseek-harness已kill(gw_proxy_dsh异常)·TB4 6路harbor alive·§08:1x审计✅已交付
+已完成:       H-B✅·Gate7/7·TB报告✅·full500✅·R1735 P0/P1 fix·R1736 P0/P1/P2+报告交付·R1737 gateway假阳性纠正+probe·R1738 监控+cleanup dry-run·R1739 cleanup423空patch+predict重启6/7路+§08:1x✅
+当前动作:     R1739:①CPU/MEM PASS(load70/224·无失控) ②killed 7旧predict(429空转+旧resume代码)→gateway立即恢复GATEWAY_OK ③cleanup --delete=423空patch删除(392+31) ④restart predict batch1-3=7路(固定resume代码:is_predicted检查model_patch非空) ⑤6/7工作正常(opencode63real/hermes52real/cline23real/codex1real/claude18real/pi16real) ⑥deepseek-harness 1.1s空patch=异常已kill(gw_proxy_dsh 9093问题待查) ⑦TB4 6路harbor alive ⑧gateway 13并发OK ⑨§08:1x审计报告已交付+oracle=1.0×3✅→标✅已交付
+下一步:       ①查deepseek-harness gw_proxy_dsh问题→修复重启 ②监控6路predict进度(目标500/路) ③TB4 batches完成后汇总 ④§22:4x两基准7路全交付
+阻塞:         deepseek-harness gw_proxy_dsh 9093异常(1.1s空patch)·待诊断修复
 ERROR_COUNT:  0
-  📦 体积：TASK=32454B(31.7KB) / MEMORY=32264B(31.5KB)(本轮归档R1737→daily)
+  📦 体积：TASK=~32KB / MEMORY=~31KB(本轮归档R1738→daily)
 ```
 
 > 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
@@ -18,7 +18,8 @@ ERROR_COUNT:  0
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 
 ### 本唤醒流水
-> [09:08] R1738 监控轮:①CPU/MEM PASS(load44/224·无失控·1.2Ti avail) ②gateway仍耗尽(wait=11min→ETA~09:20) ③SWE-bench cleanup dry-run=372/566空(65%):opencode63real最佳·codex1最差·194real全在额度耗尽前 ④TB4 290result:hermes60reward全0(pytest真实失败=能力)·6路errored(agent exit1=429) ⑤**关键纠正**:运维预判"overlay不传播→verifier崩"=错误;TB4 test.sh=纯python3 pytest(依赖预烘焙)·不需uvx/网络·overlay warning=信息性;oracle=1.0×3已证verifier正常 ⑥disk 5.8TB avail✅ ⑦batch alive(自动续)·不杀不删 ⑧WAITING:0(P3/P4未完成·gateway阻塞)
+> [09:33] R1739 predict重启:①CPU/MEM PASS(load70/224·1.2Ti avail) ②killed 7旧predict(429空转+旧resume代码:is_predicted用size>50B而非model_patch)→gateway立即恢复GATEWAY_OK(13并发→9并发→恢复) ③cleanup --delete×2=423空patch删除(392+31) ④restart predict batch1(opencode/hermes/cline)+batch2(codex/claude-code/pi)+batch3(deepseek)=7路 ⑤固定resume代码确认生效:SKIP real patch(500B/3058B/...),PREDICT deleted-empty任务 ⑥6/7工作正常(opencode task3/hermes task6/cline task3/codex task2/claude task2/pi task1) ⑦deepseek-harness 1.1s空patch=异常(gw_proxy_dsh 9093问题)→已kill待查 ⑧TB4 6路harbor alive·gateway 13并发OK ⑨§08:1x审计报告已交付+oracle=1.0×3✅→标✅已交付 ⑩未完成指令:有(§22:4x)⇒WAITING:0
+> 📦 R1738 流水(09:08,监控轮)已归档 → daily-memories-harness/2026-11-07.md。结论：gateway耗尽ETA09:20·cleanup dry-run=372空·TB4 hermes60reward全0=能力·运维预判overlay根因=错误。需要时再读。
 > 📦 R1737 流水(08:58,gateway假阳性纠正+probe)已归档 → daily-memories-harness/2026-11-07.md。结论：gateway /models=200假阳性·chat额度耗尽ETA09:21·建probe脚本。需要时再读。
 > 📦 R1736 流水(08:40,P0/P1/P2+报告交付)已归档 → daily-memories-harness/2026-11-07.md。结论：oracle=1.0×3(verifier正常)·TB4全0=429+合理失败·报告已交付·⚠️gateway"200"=假阳性(见R1737)。需要时再读。
 > 📦 R1735 流水(08:05,P0/P1/P2诊断)已归档 → daily-memories-harness/2026-11-07.md。结论：P1修复+cleanup脚本就绪+网关429。需要时再读。

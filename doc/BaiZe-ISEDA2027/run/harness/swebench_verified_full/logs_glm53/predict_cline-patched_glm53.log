@@ -1,5 +1,4 @@
-[verified-full 00:01:08] [1/500] PREDICT cline on astropy__astropy-12907
-[verified-full 00:06:16]   -> patch-produced (patch=2166B wall=308.1s)
-[verified-full 00:06:16] [2/500] PREDICT cline on astropy__astropy-13033
-[verified-full 00:10:50]   -> patch-produced (patch=3264B wall=274.2s)
-[verified-full 00:10:50] [3/500] PREDICT cline on astropy__astropy-13236
+[verified-full 09:31:25] resume: loaded 91 existing results
+[verified-full 09:31:25] [1/500] astropy__astropy-12907 SKIP (predicted, patch=2166B)
+[verified-full 09:31:25] [2/500] astropy__astropy-13033 SKIP (predicted, patch=3264B)
+[verified-full 09:31:25] [3/500] PREDICT cline on astropy__astropy-13236

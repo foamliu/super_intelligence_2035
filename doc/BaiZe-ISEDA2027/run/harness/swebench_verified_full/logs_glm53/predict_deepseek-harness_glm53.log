@@ -1,2 +1,86 @@
-[verified-full 00:34:15] resume: loaded 115 existing results
-[verified-full 00:34:15] [1/500] PREDICT deepseek-harness on astropy__astropy-12907
+[verified-full 09:32:15] resume: loaded 115 existing results
+[verified-full 09:32:15] [1/500] astropy__astropy-12907 SKIP (predicted, patch=2501B)
+[verified-full 09:32:15] [2/500] astropy__astropy-13033 SKIP (predicted, patch=7073B)
+[verified-full 09:32:15] [3/500] astropy__astropy-13236 SKIP (predicted, patch=5339B)
+[verified-full 09:32:15] [4/500] PREDICT deepseek-harness on astropy__astropy-13398
+[verified-full 09:32:16]   -> no-patch (patch=0B wall=1.3s)
+[verified-full 09:32:16] [5/500] PREDICT deepseek-harness on astropy__astropy-13453
+[verified-full 09:32:17]   -> no-patch (patch=0B wall=1.1s)
+[verified-full 09:32:17] [6/500] PREDICT deepseek-harness on astropy__astropy-13579
+[verified-full 09:32:18]   -> no-patch (patch=0B wall=1.0s)
+[verified-full 09:32:18] [7/500] astropy__astropy-13977 SKIP (predicted, patch=11024B)
+[verified-full 09:32:18] [8/500] PREDICT deepseek-harness on astropy__astropy-14096
+[verified-full 09:32:20]   -> no-patch (patch=0B wall=1.3s)
+[verified-full 09:32:20] [9/500] PREDICT deepseek-harness on astropy__astropy-14182
+[verified-full 09:32:21]   -> no-patch (patch=0B wall=1.0s)
+[verified-full 09:32:21] [10/500] astropy__astropy-14309 SKIP (predicted, patch=4093B)
+[verified-full 09:32:21] [11/500] astropy__astropy-14365 SKIP (predicted, patch=3494B)
+[verified-full 09:32:21] [12/500] PREDICT deepseek-harness on astropy__astropy-14369
+[verified-full 09:32:22]   -> no-patch (patch=0B wall=1.1s)
+[verified-full 09:32:22] [13/500] astropy__astropy-14508 SKIP (predicted, patch=3256B)
+[verified-full 09:32:22] [14/500] astropy__astropy-14539 SKIP (predicted, patch=140B)
+[verified-full 09:32:22] [15/500] PREDICT deepseek-harness on astropy__astropy-14598
+[verified-full 09:32:23]   -> no-patch (patch=0B wall=1.0s)
+[verified-full 09:32:23] [16/500] astropy__astropy-14995 SKIP (predicted, patch=2909B)
+[verified-full 09:32:23] [17/500] astropy__astropy-7166 SKIP (predicted, patch=1900B)
+[verified-full 09:32:23] [18/500] astropy__astropy-7336 SKIP (predicted, patch=20612B)
+[verified-full 09:32:23] [19/500] astropy__astropy-7606 SKIP (predicted, patch=1308B)
+[verified-full 09:32:23] [20/500] astropy__astropy-7671 SKIP (predicted, patch=1581B)
+[verified-full 09:32:23] [21/500] PREDICT deepseek-harness on astropy__astropy-8707
+[verified-full 09:32:25]   -> no-patch (patch=0B wall=1.1s)
+[verified-full 09:32:25] [22/500] PREDICT deepseek-harness on astropy__astropy-8872
+[verified-full 09:32:26]   -> no-patch (patch=0B wall=1.0s)
+[verified-full 09:32:26] [23/500] django__django-10097 SKIP (predicted, patch=2235B)
+[verified-full 09:32:26] [24/500] PREDICT deepseek-harness on django__django-10554
+[verified-full 09:32:27]   -> no-patch (patch=0B wall=1.3s)
+[verified-full 09:32:27] [25/500] PREDICT deepseek-harness on django__django-10880
+[verified-full 09:32:29]   -> no-patch (patch=0B wall=1.2s)
+[verified-full 09:32:29] [26/500] PREDICT deepseek-harness on django__django-10914
+[verified-full 09:32:30]   -> no-patch (patch=0B wall=1.2s)
+[verified-full 09:32:30] [27/500] django__django-10973 SKIP (predicted, patch=7215B)
+[verified-full 09:32:30] [28/500] django__django-10999 SKIP (predicted, patch=582B)
+[verified-full 09:32:30] [29/500] django__django-11066 SKIP (predicted, patch=4329B)
+[verified-full 09:32:30] [30/500] django__django-11087 SKIP (predicted, patch=3232B)
+[verified-full 09:32:30] [31/500] django__django-11095 SKIP (predicted, patch=4352B)
+[verified-full 09:32:30] [32/500] django__django-11099 SKIP (predicted, patch=2286B)
+[verified-full 09:32:30] [33/500] django__django-11119 SKIP (predicted, patch=1560B)
+[verified-full 09:32:30] [34/500] django__django-11133 SKIP (predicted, patch=1881B)
+[verified-full 09:32:30] [35/500] PREDICT deepseek-harness on django__django-11138
+[verified-full 09:32:32]   -> no-patch (patch=0B wall=1.3s)
+[verified-full 09:32:32] [36/500] PREDICT deepseek-harness on django__django-11141
+[verified-full 09:32:33]   -> no-patch (patch=0B wall=1.3s)
+[verified-full 09:32:33] [37/500] PREDICT deepseek-harness on django__django-11149
+[verified-full 09:32:34]   -> no-patch (patch=0B wall=1.0s)
+[verified-full 09:32:34] [38/500] PREDICT deepseek-harness on django__django-11163
+[verified-full 09:32:35]   -> no-patch (patch=0B wall=1.1s)
+[verified-full 09:32:35] [39/500] PREDICT deepseek-harness on django__django-11179
+[verified-full 09:32:37]   -> no-patch (patch=0B wall=1.0s)
+[verified-full 09:32:37] [40/500] PREDICT deepseek-harness on django__django-11206
+[verified-full 09:32:38]   -> no-patch (patch=0B wall=1.1s)
+[verified-full 09:32:38] [41/500] PREDICT deepseek-harness on django__django-11211
+[verified-full 09:32:39]   -> no-patch (patch=0B wall=1.1s)
+[verified-full 09:32:39] [42/500] PREDICT deepseek-harness on django__django-11239
+[verified-full 09:32:40]   -> no-patch (patch=0B wall=1.1s)
+[verified-full 09:32:40] [43/500] PREDICT deepseek-harness on django__django-11265
+[verified-full 09:32:41]   -> no-patch (patch=0B wall=1.3s)
+[verified-full 09:32:41] [44/500] PREDICT deepseek-harness on django__django-11276
+[verified-full 09:32:43]   -> no-patch (patch=0B wall=1.1s)
+[verified-full 09:32:43] [45/500] PREDICT deepseek-harness on django__django-11292
+[verified-full 09:32:44]   -> no-patch (patch=0B wall=1.1s)
+[verified-full 09:32:44] [46/500] PREDICT deepseek-harness on django__django-11299
+[verified-full 09:32:45]   -> no-patch (patch=0B wall=1.0s)
+[verified-full 09:32:45] [47/500] PREDICT deepseek-harness on django__django-11333
+[verified-full 09:32:46]   -> no-patch (patch=0B wall=1.2s)
+[verified-full 09:32:46] [48/500] PREDICT deepseek-harness on django__django-11400
+[verified-full 09:32:47]   -> no-patch (patch=0B wall=1.3s)
+[verified-full 09:32:47] [49/500] PREDICT deepseek-harness on django__django-11433
+[verified-full 09:32:49]   -> no-patch (patch=0B wall=1.1s)
+[verified-full 09:32:49] [50/500] PREDICT deepseek-harness on django__django-11451
+[verified-full 09:32:50]   -> no-patch (patch=0B wall=1.1s)
+[verified-full 09:32:50] [51/500] PREDICT deepseek-harness on django__django-11477
+[verified-full 09:32:51]   -> no-patch (patch=0B wall=1.1s)
+[verified-full 09:32:51] [52/500] PREDICT deepseek-harness on django__django-11490
+[verified-full 09:32:52]   -> no-patch (patch=0B wall=1.1s)
+[verified-full 09:32:52] [53/500] PREDICT deepseek-harness on django__django-11532
+[verified-full 09:32:54]   -> no-patch (patch=0B wall=1.2s)
+[verified-full 09:32:54] [54/500] PREDICT deepseek-harness on django__django-11551

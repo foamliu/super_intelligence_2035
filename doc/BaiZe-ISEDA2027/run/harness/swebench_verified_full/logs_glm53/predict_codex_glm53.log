@@ -1,4 +1,3 @@
-[verified-full 00:34:06] resume: loaded 7 existing results
-[verified-full 00:34:06] [1/500] PREDICT codex on astropy__astropy-12907
-[verified-full 00:34:34]   -> patch-produced (patch=1333B wall=28.1s)
-[verified-full 00:34:34] [2/500] PREDICT codex on astropy__astropy-13033
+[verified-full 09:32:01] resume: loaded 95 existing results
+[verified-full 09:32:01] [1/500] astropy__astropy-12907 SKIP (predicted, patch=1333B)
+[verified-full 09:32:01] [2/500] PREDICT codex on astropy__astropy-13033

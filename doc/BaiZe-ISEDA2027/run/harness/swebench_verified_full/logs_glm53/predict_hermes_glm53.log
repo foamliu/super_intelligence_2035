@@ -1,2 +1,7 @@
-[verified-full 00:34:12] resume: loaded 4 existing results
-[verified-full 00:34:12] [1/500] PREDICT hermes on astropy__astropy-12907
+[verified-full 09:31:23] resume: loaded 111 existing results
+[verified-full 09:31:23] [1/500] astropy__astropy-12907 SKIP (predicted, patch=2357B)
+[verified-full 09:31:23] [2/500] astropy__astropy-13033 SKIP (predicted, patch=2451B)
+[verified-full 09:31:23] [3/500] astropy__astropy-13236 SKIP (predicted, patch=6247B)
+[verified-full 09:31:23] [4/500] astropy__astropy-13398 SKIP (predicted, patch=31254B)
+[verified-full 09:31:23] [5/500] astropy__astropy-13453 SKIP (predicted, patch=2246B)
+[verified-full 09:31:23] [6/500] PREDICT hermes on astropy__astropy-13579
