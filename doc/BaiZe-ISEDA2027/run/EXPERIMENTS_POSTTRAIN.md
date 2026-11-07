@@ -1614,3 +1614,147 @@ verl 要求数据为 **parquet** 格式（非 JSONL），且需要 `agent_name` 
 | CSDN verl 训练指南（确认 verl[sglang] 安装） | https://blog.csdn.net/gitblog_00818/article/details/162550189 | 2026-11-07 |
 | verl Agentic RL 全指南（async rollout 架构） | https://www.hqwc.cn/a/1763761.html | 2026-11-07 |
 
+
+---
+
+## §R10 verl 数据格式研究 + JSONL→Parquet 转换（2026-11-07 · 零 GPU · 实测）
+
+> **背景**：R9 发现 verl 多轮工具调用需 SGLang 后端，但数据格式（parquet schema、
+> `agent_name`、`return_raw_chat`、`need_tools_kwargs`）尚未落实到可执行层面。
+> 本节解决「数据集需转 parquet + 加 agent_name 字段」这一 R9 遗留项。
+> **检索词**：`verl data format parquet schema`, `verl RLHF dataset columns`,
+> `verl multi-turn tool calling data`, `verl agent_name field`, `SDPO/verl dataset formats`
+
+### 1. verl 数据格式规范（官方文档 + DeepWiki SDPO/verl 源码分析）
+
+> **来源**：DeepWiki `lasgroup/SDPO` §8.1 Dataset Formats（verl fork，源码索引 commit 519a25）
+> + CSDN verl 训练指南 + verl 官方 readthedocs
+
+verl 支持三种数据集格式，全部使用 **Parquet** 文件：
+
+| 数据集类型 | 用途 | 核心类 | 关键字段 |
+|:--|:--|:--|:--|
+| **RLHF Dataset** | PPO/GRPO/DAPO 训练 | `RLHFDataset` | `prompt`（+ 可选 `reward_model`、`agent_name`） |
+| **Multi-turn SFT Dataset** | 多轮对话 SFT | `MultiTurnSFTDataset` | `conversation`（多轮消息列表） |
+| **Reward Model Dataset** | RM 训练 | `RMDataset` | `chosen`/`rejected` 对 |
+
+#### 1.1 RLHF Dataset（GRPO 用）schema
+
+| 列名 | 类型 | 必需 | 说明 |
+|:--|:--|:--|:--|
+| `prompt` | `string` 或 `list[dict]` | ✅ | 当 `return_raw_chat=True` 时为 `list[dict]`（ChatML 消息）；否则为纯文本字符串 |
+| `reward_model` | `dict`（任意结构） | ❌ | 传递给 reward function 的 ground truth（test_code、canonical_solution 等） |
+| `agent_name` | `string` | ❌ | 选择该样本使用哪套工具配置（对应 `tool_kwargs` 中的工具集名） |
+| `images`/`videos` | `list` | ❌ | 多模态字段（本线不涉及） |
+
+**关键配置项**（`data` 块）：
+- `return_raw_chat: True` — 多轮工具调用**必需**；prompt 为 `[{"role":"user","content":"..."}]`
+- `need_tools_kwargs: True` — 自动将工具定义注入 prompt
+- `agent_name_key: agent_name` — 按样本选择工具配置
+- `filter_overlong_prompts: True` — 过滤超长 prompt
+- `truncation: error` — 超长报错而非截断（确保不丢信息）
+
+#### 1.2 Multi-turn SFT Dataset schema
+
+| 列名 | 类型 | 必需 | 说明 |
+|:--|:--|:--|:--|
+| `conversation` | `list[dict]` | ✅ | 完整多轮对话 `[{"role":"system","content":"..."},{"role":"user","content":"..."},{"role":"assistant","content":"..."}]` |
+
+**关键配置项**：
+- `use_conversation_format: true`
+- `prompt_dict_keys: '["conversation"]'` — 从哪个字段提取 prompt
+- `response_dict_keys: '["conversation"]'` — 从哪个字段提取 response（verl 按 eot_id 切分）
+
+### 2. 转换脚本实现
+
+**文件**：`baize_posttrain_jsonl_to_parquet.py`（新建，语法✅，dry-run✅，实际执行✅）
+
+支持两种模式：
+- `rl` — RL synth tasks → verl RLHF parquet（`prompt` + `reward_model` + `agent_name`）
+- `sft` — SFT corpus → verl multi-turn SFT parquet（`conversation` + metadata）
+
+RL 模式 prompt 构造：
+```json
+[{"role": "user", "content": "You are an EDA automation assistant... \n\n<原始 prompt>"}]
+```
+reward_model 构造：
+```json
+{"test_code": "<断言代码>", "canonical_solution": "<标准答案>",
+ "entry_point": "<函数名>", "metadata": "<JSON 字符串>"}
+```
+agent_name = `"eda_sandbox"`（对应 `baize_posttrain_eda_tools.yaml` 中的工具配置）
+
+### 3. 实测转换结果
+
+| 数据集 | 输入 | 输出 | 记录数 | 文件大小 | 验证 |
+|:--|:--|:--|:--|:--|:--|
+| RL synth | `rl_pyaether_synth_v2.jsonl` (3347 行) | `rl_pyaether_synth_v2.parquet` | 3347 | 931.1 KB | ✅ read-back 3347 rows, 3 columns |
+| SFT corpus | `sft_pyaether_corpus.jsonl` (19610 行) | `sft_pyaether_corpus.parquet` | 19610 | 2808.1 KB | ✅ read-back 19610 rows, 5 columns |
+
+**压缩**：snappy（verl 标准）
+**Schema 验证**：pyarrow `Table.from_pylist` + `pq.read_table` 双向验证通过
+
+### 4. verl 配置更新
+
+`baize_posttrain_rl_verl_config.yaml` 的 `data` 块新增：
+- `need_tools_kwargs: True` — 注入工具定义
+- `agent_name_key: agent_name` — 按样本选工具配置
+- `return_raw_chat: True` — 已有（R9），确认必需
+
+### 5. 多轮工具调用数据流（verl SGLang async rollout）
+
+> **来源**：GitCode Awesome-ML-SYS-Tutorial verl Rollout 源码分析
+
+```
+DataLoader → RLHFDataset(prompt=list[dict]) → SGLang Async Rollout
+  ↓
+模型生成 → 解析 tool_call (minicpm5 parser)
+  ↓ PENDING → RUNNING → TOOL_CALLING
+工具执行 (EDASandboxTool.execute)
+  ↓ TOOL_CALLING → RUNNING
+结果追加到对话历史 → 再次生成
+  ↓ (max_turns 次后)
+COMPLETED → calc_reward (R2/R3/R4) → release
+  ↓
+DataProto → Compute Advantage (GRPO group_norm) → FSDP Update
+```
+
+**关键点**：
+- `prompt` 必须是 `list[dict]`（return_raw_chat=True），不是纯字符串
+- 工具调用由 SGLang 的 `tool_call_parser: minicpm5` 自动解析
+- `agent_name` 决定每条样本用哪套工具（支持混合数据集）
+- 奖励函数从 `reward_model` 字段获取 ground truth（test_code/canonical_solution）
+
+### 6. 11/9 启动序列更新
+
+原 R9 Step5（API profiling 后起 RL）现在细化：
+1. `baize_posttrain_setup_cu124_venv.sh` — 创建 cu124 venv + 安装 verl[sglang]
+2. `baize_posttrain_preflight_check.sh` — 18 项预飞行检查
+3. SGLang serve MiniCPM5-2B + `--tool-call-parser minicpm5`
+4. 评测 158 题（复测 36% 基线）
+5. 采集真实失败轨迹（替换 R4 假设）
+6. API profiling（`baize_posttrain_api_profiler.py`）
+7. **数据转换**（NEW）：`baize_posttrain_jsonl_to_parquet.py rl -i ... -o ...`
+8. verl RL with SGLang + multi_turn + async + `rl_pyaether_synth_v2.parquet`
+
+### 7. 交付物清单
+
+| 文件 | 类型 | 状态 |
+|:--|:--|:--|
+| `baize_posttrain_jsonl_to_parquet.py` | 新建 | ✅ 语法 + dry-run + 实际转换通过 |
+| `rl_pyaether_synth_v2.parquet` | 新建 | ✅ 3347 records, 931KB, verl RLHF 格式 |
+| `sft_pyaether_corpus.parquet` | 新建 | ✅ 19610 records, 2.7MB, verl SFT 格式 |
+| `baize_posttrain_rl_verl_config.yaml` | 更新 | ✅ 新增 need_tools_kwargs + agent_name_key |
+| `reports/report_posttrain_r10_data_format_parquet_zh.html` | 新建 | ✅ 本节 HTML 版 |
+| `EXPERIMENTS_POSTTRAIN.md §R10` | 本节 | ✅ |
+
+### 8. 数据来源
+
+| 来源 | URL | 日期 |
+|:--|:--|:--|
+| DeepWiki SDPO/verl Dataset Formats | https://deepwiki.com/lasgroup/SDPO/8.1-dataset-formats | 2026-11-07 |
+| DeepWiki drzero Training Data Format | https://deepwiki.com/facebookresearch/drzero/7.1-training-data-format | 2026-11-07 |
+| CSDN verl 多轮对话 SFT 实战 | https://devpress.csdn.net/v1/article/detail/157315275 | 2026-11-07 |
+| GitCode verl Rollout 源码分析 | https://gitcode.com/gh_mirrors/aw/Awesome-ML-SYS-Tutorial | 2026-11-07 |
+| verl 官方文档 | https://verl.readthedocs.io/en/latest/ | 2026-11-07 |
+

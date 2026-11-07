@@ -7,12 +7,12 @@ WAITING: 1
 
 ## 进度快照
 
-- PHASE: posttrain-wake57（2026-11-07 R9 verl+SGLang集成调研完成，解决R5/R8推理后端矛盾）
-- 已完成: P3预备✅ 7脚本；P0✅ D1–D6；P1✅ 数据盘点+PyAether语料+污染隔离；P2✅ 方案书；wake45✅ §替身RL预演；wake48✅ R1+R3；wake49✅ R4；wake50✅ R2；wake51✅ E1(3347题)；wake52✅ R5(verl+GRPO)；wake53✅ R6(SFT)+R7(verl环境+CUDA发现)；wake55✅ 11/9启动脚本；wake56✅ R8(模型架构+Tokenizer+SGLang发现)；wake57✅ R9(verl+SGLang集成+EDA工具骨架)
-- 当前动作: wake57 唤醒→体积自检(TASK=24.7KB/MEMORY=11.6KB合规)→ git同步(ahead3,wake56 push超时→本轮补推成功)→ R9: 发现R5(verl+vLLM)与R8(需SGLang)矛盾→ web调研verl官方文档→ 🔴核心发现: verl原生支持SGLang作为推理后端,且多轮工具调用仅SGLang支持→ 更新verl配置YAML(vllm→sglang+multi_turn+async+tool_call_parser minicpm5)→ 创建EDA沙盒工具骨架(baize_posttrain_eda_tool.py: BaseTool子类+dry-run✅)→ 创建工具配置(baize_posttrain_eda_tools.yaml✅)→ 更新setup脚本(verl→verl[sglang]✅)→ EXPERIMENTS §R9(10小节)+HTML报告7.8KB
-- 下一步: R1-R9+E1全部完成→ WAITING=1；11/9 GPU到位后自动起跑(Step0新建cu124 venv含verl[sglang]→Step1验证CUDA→Step2a SGLang serve+--tool-call-parser minicpm5→Step3评测158题→Step4采真实轨迹→Step5 API profiling→Step6 verl RL with SGLang+multi_turn+async)
-- 阻塞: GPU 2026-11-09既定到位(不再问)；数据集需转parquet+加agent_name字段(零GPU可做)；L3等隧道；P3等pretrain ckpt(ETA≈2026-12-25)
-- 未完成指令: 无（R1✅R2✅R3✅R4✅R5✅R6✅R7✅R8✅R9✅E1✅ 全部完成）⇒ WAITING=1
+- PHASE: posttrain-wake58（2026-11-07 R10 verl数据格式研究+JSONL→Parquet转换完成，R9遗留项闭合）
+- 已完成: P3预备✅ 7脚本；P0✅ D1–D6；P1✅ 数据盘点+PyAether语料+污染隔离；P2✅ 方案书；wake45✅ §替身RL预演；wake48✅ R1+R3；wake49✅ R4；wake50✅ R2；wake51✅ E1(3347题)；wake52✅ R5(verl+GRPO)；wake53✅ R6(SFT)+R7(verl环境+CUDA发现)；wake55✅ 11/9启动脚本；wake56✅ R8(模型架构+Tokenizer+SGLang发现)；wake57✅ R9(verl+SGLang集成+EDA工具骨架)；wake58✅ R10(verl数据格式+Parquet转换)
+- 当前动作: wake58 唤醒→体积自检(TASK=24.7KB/MEMORY=13.4KB合规)→ git同步(已同步,main=origin/main)→ R10: 研究verl官方文档+DeepWiki SDPO/verl源码→ 确认RLHF Dataset schema(prompt=list[dict]+reward_model+agent_name)→ 创建转换脚本baize_posttrain_jsonl_to_parquet.py(语法✅dry-run✅)→ 安装pyarrow(uv venv /tmp/pt_parquet_venv)→ 实际转换RL(3347→931KB parquet✅)+SFT(19610→2.7MB parquet✅)双向验证通过→ 更新verl配置(+need_tools_kwargs+agent_name_key)→ EXPERIMENTS §R10(8小节)+HTML报告6.4KB
+- 下一步: R1-R10+E1全部完成→ WAITING=1；11/9 GPU到位后自动起跑(Step0 venv→Step1 preflight→Step2a SGLang serve→Step3评测158题→Step4采轨迹→Step5 API profiling→Step6 数据已就绪parquet✅→Step7 verl RL)
+- 阻塞: GPU 2026-11-09既定到位(不再问)；L3等隧道；P3等pretrain ckpt(ETA≈2026-12-25)
+- 未完成指令: 无（R1✅R2✅R3✅R4✅R5✅R6✅R7✅R8✅R9✅R10✅E1✅ 全部完成）⇒ WAITING=1
 
 ## 关键事实（常驻）
 
@@ -29,6 +29,7 @@ WAITING: 1
 - 🔴 **CUDA 不匹配（wake53 发现）**：系统 CUDA 驱动=12.4（nvcc 12.4.131），但 vllm_venv torch=2.14.0+cu130 → `torch.cuda.is_available()=False`。11/9 前必须新建 cu124 兼容 venv（`pip install torch==2.4.0 --index-url https://download.pytorch.org/whl/cu124` + `pip install verl[sglang]`）
 - 🔴 **R9 verl+SGLang 集成（wake57 发现）**：verl 原生支持 SGLang（`pip install verl[sglang]`），多轮工具调用**仅 SGLang** 支持。配置已从 vLLM 切到 SGLang（`rollout.name: sglang` + `multi_turn: True` + `mode: async`）。EDA 沙盒工具骨架 `baize_posttrain_eda_tool.py` 已创建（BaseTool 子类，dry-run✅）
 - SFT 语料：✅ **已生成** `run/sft_pyaether_corpus.jsonl`（19610 对：S1=8012/S2=8098/S3=89/S4=3411，18.8MB，0 污染命中 488 评测 API）
+- RL/SFT Parquet：✅ **已转换**（R10）`run/rl_pyaether_synth_v2.parquet`（3347 records, 931KB, verl RLHF 格式: prompt+reward_model+agent_name）+ `run/sft_pyaether_corpus.parquet`（19610 records, 2.7MB, verl SFT 格式: conversation+metadata）
 - 论文章节：`BaiZe-ISEDA2027/ISEDA2027/5_llm_posttrain.tex`（已写设计，结果=[TBD]）
 
 ## 运维问答（常驻）
@@ -62,4 +63,5 @@ WAITING: 1
 
 [wake56] R8 MiniCPM5-2B模型架构+Tokenizer深度分析: 体积自检(TASK=24.7KB/MEMORY=9.9KB合规)→ 实测本地模型文件(config.json/tokenizer_config.json 4099行/chat_template.jinja 112行/generation_config.json/README-cn.md)→ 架构: LlamaForCausalLM 42层 2048d GQA16:2 head_dim128 vocab130560 max_pos131072 rope_theta5M tie_embeddings=false bf16 5.03GB→ 双EOS[1,130073]→ 特殊token: ChatML格式(<|im_start|>/<|im_end|>)+XML工具调用(<function>/<param>)+思考/答案分离(think_begin/think_end/answer_begin)+478 unused tokens(130082-130559,可自定义)→ Chat template: ChatML+thinking/answer分离+tool定义在<tools>XML+tool结果映射为user role→ 🔴关键发现: 工具调用是XML格式(非OpenAI function calling),vLLM不解析XML→tool_calls字段为空→模型被handicapped; SGLang内置minicpm5 parser自动转OpenAI tool_calls→ 36%基线复测必须用SGLang(--tool-call-parser minicpm5),否则结果不可比→ 更新11/9启动序列: Step2a改SGLang serve(port30000),Step3评测用SGLang endpoint→ SGLang安装pip install "sglang[srt]>=0.5.16"加入cu124 venv→ 显存预估SGLang37GB/vLLM33GB,4xA40均可→ EXPERIMENTS §R8(11小节)+HTML报告11.9KB(report_posttrain_r8_model_tokenizer_deepdive_zh.html)。📦 体积：TASK=24.7KB / MEMORY=10.5KB（均≤32KB合规）。本轮新增调研产出：§R8 模型架构+Tokenizer深度分析+SGLang关键发现+更新11/9启动序列+HTML报告。未完成指令：无（R1✅R2✅R3✅R4✅R5✅R6✅R7✅R8✅E1✅）⇒ WAITING=1。⚠️ commit 08fa5fd58 已本地完成但 push 超时(NFS网络慢,同wake51/52模式),ahead 2,下轮唤醒第一件事补推。
 [wake57] R9 verl+SGLang集成调研: 体积自检(TASK=24.7KB/MEMORY=11.6KB合规)→ git同步(ahead3补推成功)→ 发现R5(verl+vLLM)与R8(需SGLang)推理后端矛盾→ web调研verl官方文档(readthedocs.io)→ 🔴核心发现: verl原生支持SGLang作为推理后端(与vLLM并列),多轮工具调用multi_turn仅SGLang支持→ 配置: rollout.name=sglang+multi_turn=True+mode=async+tool_call_parser=minicpm5→ 更新verl配置YAML(vLLM→SGLang格式,对齐verl真实config结构actor_rollout_ref)→ 创建EDA沙盒工具骨架baize_posttrain_eda_tool.py(EDASandboxTool BaseTool子类+compute_r2/r3/r4_reward,dry-run✅)→ 创建工具配置baize_posttrain_eda_tools.yaml(run_eda_code schema,YAML✅)→ 更新setup脚本(verl→verl[sglang],验证包vllm→sglang,bash -n✅)→ 数据集适配需求: JSONL→parquet+agent_name字段(零GPU可做)→ verl异步rollout避免沙盒延迟GPU空转→ delta-based tokenization只优化assistant token→ EXPERIMENTS §R9(10小节)+HTML报告7.8KB。📦 体积：TASK=24.7KB / MEMORY≈13KB（均≤32KB合规）。本轮新增调研产出：§R9 verl+SGLang集成调研+EDA沙盒工具骨架+verl配置更新+setup脚本更新+HTML报告。未完成指令：无（R1✅R2✅R3✅R4✅R5✅R6✅R7✅R8✅R9✅E1✅）⇒ WAITING=1。⚠️ commit d467b223d 已本地完成但 push 超时(NFS网络慢),ahead 4,下轮唤醒第一件事补推。
+[wake58] R10 verl数据格式研究+JSONL→Parquet转换: 体积自检(TASK=24.7KB/MEMORY=13.4KB合规)→ git同步(已同步,main=origin/main)→ 研究verl官方文档+DeepWiki SDPO/verl源码→ 确认RLHF Dataset schema(prompt=list[dict]当return_raw_chat=True+reward_model dict+agent_name str)+Multi-turn SFT schema(conversation list[dict])→ 创建转换脚本baize_posttrain_jsonl_to_parquet.py(rl/sft两模式,语法✅dry-run✅)→ uv venv安装pyarrow(pandas/pyarrow 26.0.1)→ 实际转换: RL 3347题→rl_pyaether_synth_v2.parquet(931KB,snappy,3列prompt+reward_model+agent_name,双向验证✅)+SFT 19610对→sft_pyaether_corpus.parquet(2.7MB,5列conversation+pair_id+type+api_used+contamination_check,双向验证✅)→ 更新verl配置(+need_tools_kwargs:True+agent_name_key:agent_name)→ R9遗留项「数据集需转parquet+加agent_name字段」闭合✅→ EXPERIMENTS §R10(8小节)+HTML报告6.4KB(report_posttrain_r10_data_format_parquet_zh.html)。📦 体积：TASK=24.7KB / MEMORY≈15KB（均≤32KB合规）。本轮新增调研产出：§R10 verl数据格式规范研究+Parquet转换脚本+3347题RL parquet+19610对SFT parquet+verl配置更新+HTML报告。未完成指令：无（R1✅R2✅R3✅R4✅R5✅R6✅R7✅R8✅R9✅R10✅E1✅）⇒ WAITING=1。
 

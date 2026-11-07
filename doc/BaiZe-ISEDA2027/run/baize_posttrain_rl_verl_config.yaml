@@ -22,13 +22,15 @@
 
 data:
   tokenizer: /tmp/models/MiniCPM5-2B
-  train_files: run/rl_pyaether_synth_v2.parquet  # 3347 synth tasks (E1 output, parquet for verl)
+  train_files: run/rl_pyaether_synth_v2.parquet  # ✅ R10: 3347 tasks, 931KB, verl RLHF parquet
   val_files: null
   train_batch_size: 128          # G=8 × 16 prompts per iter
   prompt_key: prompt
   max_prompt_length: 4096
   max_response_length: 4096      # 8192 total context (R6: covers 95%+ traces)
-  return_raw_chat: True          # Required for async rollout + multi-turn
+  return_raw_chat: True          # Required for async rollout + multi-turn (R10)
+  need_tools_kwargs: True        # 🔴 R10: inject tool definitions into prompt
+  agent_name_key: agent_name     # 🔴 R10: per-sample tool config selector
   shuffle: True
   seed: 42
   filter_overlong_prompts: True
