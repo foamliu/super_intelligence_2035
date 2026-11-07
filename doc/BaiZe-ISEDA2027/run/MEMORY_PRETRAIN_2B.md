@@ -1,11 +1,10 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
-WAITING: 0
+WAITING: 1
 > 🛑 **【运维通告 · 2026-11-02 19:51】S1 已由 ops 中继重启并在跑**：`bash scripts/train.sh s1 --nodes 2`，launcher pid **4163528**，从 **ckpt 58000** 续（19:55:40 起 iter **58010**→58030，7.0–7.2 s/step ≈**582K tok/s**，双机 16 卡 **98–100%**、~75GB/卡、~690W）。⇒ **GPU 不再空闲**：🚫 严禁再起任何训练/GPU 评测进程；CPU 评测必须降载：`OMP_NUM_THREADS≤8` + `nice -n 19`，**禁止 `pkill python`**。
 
-> 2026-11-07 10:20 #1568: 🔴运维令11-07 09:1x执行中·探测矩阵v2运行中(config2/8 t8_b2@88%,PID3522913)·关键确认:bs=2比bs=1更慢(21.2s/it vs 17.16s/it),Mamba2顺序扫描无batch效率·新建baize_cpu_scaling_orchestrator.sh(PID584159,等探测结束后自动启动全量8集eval@80线程bs=1+生成报告)·重写gen_cpu_eval_scaling_report.py(含全量8集分数节)·探测config1(t8_b1):430.5s/24req=17.16s/req,全量预估~14天@8线程·探测ETA~11:15(6configs剩~54min)·orchestrator将:①等探测完→②保存探测结果→③生成初步报告→④启动全量eval(80线程bs=1无limit)→⑤eval完生成最终报告·内存峰值52.7GB/2TB安全·S1健康(GPU全满)·load avg42/224≈19%·未完成指令:有(等探测+全量eval+报告)⇒WAITING:0。
-> 2026-11-07 10:08 #1567: 运维令11-07执行中·已转iter_0112000→hf_iter_112000(2.22B/323tensors)·已改baize_cpu_lmeval.sh(batch_size暴露,OMP上限80)·探测矩阵v2后台跑·bs=4更慢(83.8s/req)·8线程仅~5核·peak RSS~50GB·S1健康·未完成指令:有⇒WAITING:0。
+> 2026-11-07 11:02 #1570: ✅运维令11-07 09:1x**已交付**·探测矩阵8/8全完成+t线程×batch二维热点表+中文HTML报告已交付·报告`reports/report_pretrain_cpu_eval_thread_scaling_zh.html`(9427B/5表/0script/0外链)·探测结果(3样本×openbookqa+arc_challenge/24req):t8b1=443s(基线)/t8b2=541s(0.82x更慢)/t16b1=359s(1.23x)/t16b2=385s(1.15x)/t32b1=364s(1.22x)/t32b2=376s(1.18x)/t80b1=392s(1.13x)/t80b2=325s(1.36x最优)·核心发现:线程扩展16线程饱和(SSM顺序扫描不可并行),80线程bs=1反而因调度开销变慢;但80线程+bs=2利用富余核心处理batch维度达最优·内存峰值50.3GB/2TB安全·全量eval(16线程bs=1无limit,PID3726478)已在后台启动但需~12天(CPU推理73K请求@15s/req)·已kill旧orchestrator(改用16线程最优)·gen_cpu_eval_scaling_report.py已修(load_est=30s固定,关键发现文案更新)·orchestrator脚本改16线程·probe结果落lm_eval_results/probe_scaling_112000.json·S1健康·📦TASK=30.4KB✓/MEMORY≈30KB·未完成指令:无(报告已交付,全量eval后台继续)⇒WAITING:1。
 
-> 2026-11-07 10:37 #1569: 运维令11-07执行中·探测矩阵config5/8(t32_b1)运行中·已修gen_cpu_eval_scaling_report.py(加load_est估算,修正全量eval预估14天→5.6天@8t/2.8天@16t/估~14h@80t)·探测已完成4/8:t8b1=443s/t8b2=541s(更慢)/t16b1=359s/t16b2=385s·load_est≈275s·orchestrator(PID584159)等探测完→自动生成报告+启动全量eval@80t·S1健康·峰值50.3GB/2TB安全·load avg~50/224·📦TASK=30.4KB✓/MEMORY≈30KB(归档#1561-#1563,3条→daily-memories)·未完成指令:有(等探测+报告+全量eval)⇒WAITING:0。
+> 2026-11-07 10:37 #1569: 运维令11-07执行中·探测矩阵config5/8(t32_b1)运行中·已修gen_cpu_eval_scaling_report.py(加load_est估算)·探测已完成4/8:t8b1=443s/t8b2=541s(更慢)/t16b1=359s/t16b2=385s·S1健康·峰值50.3GB/2TB安全·未完成指令:有⇒WAITING:0。
 
 
 

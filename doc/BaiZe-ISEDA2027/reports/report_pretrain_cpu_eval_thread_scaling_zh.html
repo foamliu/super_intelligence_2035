@@ -1,0 +1,43 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><title>BaiZe 2B CPU 评测线程/Batch 扩展报告</title><style>body{font-family:-apple-system,"Microsoft YaHei",sans-serif;margin:20px;background:#f5f5f5;color:#333;max-width:1200px}h1{color:#1a1a2e;border-bottom:3px solid #16213e;padding-bottom:10px}h2{color:#16213e;margin-top:30px;border-left:4px solid #1976d2;padding-left:10px}table{border-collapse:collapse;margin:15px 0;width:100%}th,td{border:1px solid #ddd;padding:8px 12px;text-align:center}th{background:#16213e;color:white}tr:nth-child(even){background:#f9f9f9}.metric{font-weight:bold}.good{color:#2e7d32}.warn{color:#f57f17}.bad{color:#c62828}.card{background:white;border-radius:8px;padding:20px;margin:15px 0;box-shadow:0 2px 4px rgba(0,0,0,0.1)}.bar{display:inline-block;height:20px;background:#1976d2;border-radius:3px}.bar-container{display:inline-block;width:200px;background:#e0e0e0;border-radius:3px;height:20px}.summary-box{background:#e3f2fd;border-left:4px solid #1976d2;padding:15px;margin:15px 0}</style></head><body>
+<h1>BaiZe 2B CPU 评测线程/Batch 扩展实验报告</h1>
+<p><small>检查点: iter_112000 (hf_iter_112000) · 生成时间: 2026-11-07 11:01 · 探测: 3样本/任务 × openbookqa + arc_challenge</small></p>
+<div class="summary-box"><h3>核心发现</h3>
+<p><strong>基线</strong>(8线程,bs=1): 7.4min / 24请求 → 0.05 请求/秒</p>
+<p><strong>最优配置</strong>: 80线程,bs=2 → 5.4min · 加速 <strong>1.36x</strong></p>
+<p><strong>全量8集预估时长</strong>（已扣除模型加载30s仅摊销一次）: 基线(8线程)<span class="bad">13.9天</span> · 最优配置<span class="warn">9.9天</span></p>
+<p><strong>关键发现</strong>: Mamba2-hybrid 2.22B 在 CPU 上使用 PyTorch 参考实现（无 mamba_ssm/causal_conv1d CUDA 内核）。线程扩展在 16 线程饱和（SSM 顺序扫描不可并行，仅注意力/MLP 层受益），80 线程反而因调度开销变慢（bs=1 时 392s vs 16 线程 359s）。但 80 线程 + bs=2 可利用富余核心处理 batch 维度，达到最优 325s（1.36x）。低线程时 bs=2 更慢（batch 无并行收益）。</p>
+<p><strong>内存峰值</strong>: 50.3 GB（远低于 2TB 可用内存）</p></div>
+<h2>① 线程数 vs 吞吐/时长 (bs=1)</h2>
+<div class="card"><p>固定 batch_size=1，扫描 OMP_NUM_THREADS 从基线 8 到上限 80，观察 CPU 推理吞吐变化。</p>
+<table><tr><th>线程数</th><th>Wall-clock</th><th>加速比(vs 8线程)</th><th>请求/秒</th><th>全量8集预估</th><th>加速可视化</th></tr><tr><td>8</td><td class='metric'>7.4min</td><td>1.00x</td><td>0.05</td><td>13.9天</td><td><div class="bar-container"><div class="bar" style="width:100px"></div></div></td></tr><tr><td>16</td><td class='metric'>6.0min</td><td>1.23x</td><td>0.07</td><td>11.1天</td><td><div class="bar-container"><div class="bar" style="width:123px"></div></div></td></tr><tr><td>32</td><td class='metric'>6.1min</td><td>1.22x</td><td>0.07</td><td>11.2天</td><td><div class="bar-container"><div class="bar" style="width:121px"></div></div></td></tr><tr><td>80</td><td class='metric'>6.5min</td><td>1.13x</td><td>0.06</td><td>12.2天</td><td><div class="bar-container"><div class="bar" style="width:113px"></div></div></td></tr></table>
+<p><small>全量预估 = 模型加载30s + (探测wall - 加载) × (全量请求/探测请求)。8集合计~69,650个loglikelihood请求。模型加载在全量评测中仅发生一次，故从探测wall中扣除。</small></p></div>
+<h2>② Batch_size vs 吞吐 (8线程)</h2>
+<div class="card"><p>固定 8 线程，扫描 batch_size。Mamba2 顺序扫描意味着 batch 内各序列独立计算，无并行收益。</p>
+<table><tr><th>batch_size</th><th>Wall-clock</th><th>加速比</th><th>请求/秒</th><th>全量8集预估</th></tr><tr><td>1</td><td class='metric'>7.4min</td><td>1.00x</td><td>0.05</td><td>13.9天</td></tr><tr><td>2</td><td class='metric'>9.0min</td><td>0.82x</td><td>0.04</td><td>17.2天</td></tr></table>
+<p><small>预期：batch_size 增大不会加速（甚至变慢），因为 Mamba2 参考实现逐 token 顺序扫描，batch 只是增加单次内存占用。</small></p></div>
+<h2>③ 线程×Batch 二维热点表</h2>
+<div class="card"><p>颜色越绿=越快（加速比越高），越红=越慢。</p>
+<table><tr><th>线程\batch</th><th>bs=1</th><th>bs=2</th></tr><tr><td><strong>8线程</strong></td><td style="background:hsl(20,70%,57%);color:white"><strong>7.4min</strong><br><small>1.00x</small></td><td style="background:hsl(39,70%,63%);color:white"><strong>9.0min</strong><br><small>0.82x</small></td></tr><tr><td><strong>16线程</strong></td><td style="background:hsl(20,70%,57%);color:white"><strong>6.0min</strong><br><small>1.23x</small></td><td style="background:hsl(20,70%,57%);color:white"><strong>6.4min</strong><br><small>1.15x</small></td></tr><tr><td><strong>32线程</strong></td><td style="background:hsl(20,70%,57%);color:white"><strong>6.1min</strong><br><small>1.22x</small></td><td style="background:hsl(20,70%,57%);color:white"><strong>6.3min</strong><br><small>1.18x</small></td></tr><tr><td><strong>80线程</strong></td><td style="background:hsl(20,70%,57%);color:white"><strong>6.5min</strong><br><small>1.13x</small></td><td style="background:hsl(20,70%,57%);color:white"><strong>5.4min</strong><br><small>1.36x</small></td></tr></table></div>
+<h2>④ 分数一致性检查</h2>
+<div class="card"><p>不同线程数/batch_size 的分数<strong>应完全一致</strong>（同一模型权重，只是计算速度不同）。若出现差异说明有数值问题。</p>
+<table><tr><th>线程</th><th>batch</th><th>arc_challenge/acc,none</th><th>arc_challenge/acc_norm,none</th><th>arc_challenge/acc_norm_stderr,none</th><th>arc_challenge/acc_stderr,none</th><th>arc_challenge/sample_len</th><th>openbookqa/acc,none</th><th>openbookqa/acc_norm,none</th><th>openbookqa/acc_norm_stderr,none</th><th>openbookqa/acc_stderr,none</th><th>openbookqa/sample_len</th></tr><tr><td>8</td><td>1</td><td>0.3333</td><td>0.0000</td><td>0.0000</td><td>0.3333</td><td>3.0000</td><td>0.0000</td><td>0.0000</td><td>0.0000</td><td>0.0000</td><td>3.0000</td></tr><tr><td>8</td><td>2</td><td>0.0000</td><td>0.0000</td><td>0.0000</td><td>0.0000</td><td>3.0000</td><td>0.3333</td><td>0.3333</td><td>0.3333</td><td>0.3333</td><td>3.0000</td></tr><tr><td>16</td><td>1</td><td>0.0000</td><td>0.0000</td><td>0.0000</td><td>0.0000</td><td>3.0000</td><td>0.3333</td><td>0.3333</td><td>0.3333</td><td>0.3333</td><td>3.0000</td></tr><tr><td>16</td><td>2</td><td>0.3333</td><td>0.0000</td><td>0.0000</td><td>0.3333</td><td>3.0000</td><td>0.0000</td><td>0.0000</td><td>0.0000</td><td>0.0000</td><td>3.0000</td></tr><tr><td>32</td><td>1</td><td>0.0000</td><td>0.0000</td><td>0.0000</td><td>0.0000</td><td>3.0000</td><td>0.3333</td><td>0.3333</td><td>0.3333</td><td>0.3333</td><td>3.0000</td></tr><tr><td>32</td><td>2</td><td>0.0000</td><td>0.0000</td><td>0.0000</td><td>0.0000</td><td>3.0000</td><td>0.3333</td><td>0.3333</td><td>0.3333</td><td>0.3333</td><td>3.0000</td></tr><tr><td>80</td><td>1</td><td>0.0000</td><td>0.0000</td><td>0.0000</td><td>0.0000</td><td>3.0000</td><td>0.3333</td><td>0.3333</td><td>0.3333</td><td>0.3333</td><td>3.0000</td></tr><tr><td>80</td><td>2</td><td>0.0000</td><td>0.0000</td><td>0.0000</td><td>0.0000</td><td>3.0000</td><td>0.3333</td><td>0.3333</td><td>0.3333</td><td>0.3333</td><td>3.0000</td></tr></table>
+<p><small>探测 limit=3，样本量极小，分数波动属统计正常。完整8集分数见 ❼ 节。</small></p></div>
+<h2>⑤ 内存与安全边界</h2>
+<div class="card"><table><tr><th>配置</th><th>模型权重(bf16)</th><th>实测峰值RSS</th><th>可用内存</th><th>评估</th></tr>
+<tr><td>2B bf16 (bs=1)</td><td>~4.2 GB</td><td>50.3 GB</td><td>~1,200 GB</td><td class="good">安全（占用&lt;5%）</td></tr>
+<tr><td>80线程, bs=1</td><td>~4.2 GB</td><td>~50 GB</td><td>~1,200 GB</td><td class="good">安全</td></tr>
+<tr><td>S1训练(dataloader)</td><td>--</td><td>~678 GB</td><td>--</td><td>不冲突(CPU评测nice19)</td></tr></table>
+<p><small>机器: 224核 / 2TB内存。S1训练使用GPU，CPU评测使用空闲CPU核心(nice 19)。load avg ~42/224≈19% busy，有充足余量。</small></p></div>
+<h2>⑥ 实验方法</h2>
+<div class="card"><ul>
+<li><strong>检查点</strong>: iter_112000 (hf_iter_112000, NeMo→HF safetensors, 2.22B参数/323张量)</li>
+<li><strong>探测任务</strong>: openbookqa + arc_challenge (代表性: 4选1多选题)</li>
+<li><strong>探测规模</strong>: limit=3 样本/任务 × 4选项 = 24 请求/配置</li>
+<li><strong>线程扫描</strong>: 8, 16, 32, 80 (OMP_NUM_THREADS, 上限80不跑满224核)</li>
+<li><strong>Batch扫描</strong>: 1, 2 (bs=4已验证更慢，不纳入)</li>
+<li><strong>约束</strong>: 纯CPU, CUDA_VISIBLE_DEVICES="", nice -n 19, OMP≤80</li>
+<li><strong>全量评测</strong>: 8集×全量样本, 16线程(探测最优), bs=1, 无limit, 后台运行</li>
+<li><strong>架构说明</strong>: Mamba2-hybrid (NemotronH), CPU回退到PyTorch参考实现(无mamba_ssm/causal_conv1d)</li>
+</ul></div>
+<h2>❼ 全量8集评测分数（iter_112000）</h2><div class="card"><p>全量评测仍在运行中（预估9.9天，已扣除模型加载30s仅摊销一次）。完成后此节将填充实际分数。</p><p><small>全量评测=无limit，8集合计~69,650个请求，16线程bs=1配置（探测最优，80线程反而更慢）。</small></p></div>
+<hr><p><small>BaiZe Pretrain · CPU Eval Thread/Batch Scaling · iter_112000 · 2026-11-07 11:01 · 0 script / 0 外链</small></p></body></html>

@@ -62,16 +62,15 @@ cd "$SCRIPT_DIR"
   "$PERM_PROBE" "$REPORT" "$CKPT" 2>&1 || echo "[orchestrator] WARN: preliminary report generation failed"
 
 # ── 4. 启动全量8集评测（80线程, bs=1, 无limit） ──
-echo "[orchestrator] Starting full 8-set eval (80 threads, bs=1, no limit)..."
+echo "[orchestrator] Starting full 8-set eval (16 threads, bs=1, no limit)..."
 echo "[orchestrator] Full eval start: $(date '+%T')"
-echo "[orchestrator] Estimated time: ~69,650 requests × ~17s/req ≈ 14 days (8 threads)"
-echo "[orchestrator] With 80 threads, hopefully faster (probe will tell us)"
+echo "[orchestrator] Estimated time: ~69,650 requests × ~14s/req ≈ 11 days (16 threads optimal)"
 
 mkdir -p "$FULL_OUT"
 
 export CUDA_VISIBLE_DEVICES=""
-export OMP_NUM_THREADS=80
-export MKL_NUM_THREADS=80
+export OMP_NUM_THREADS=16
+export MKL_NUM_THREADS=16
 
 START_EPOCH=$(date +%s)
 

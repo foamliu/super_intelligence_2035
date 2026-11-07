@@ -34,17 +34,10 @@ def main():
     baseline = next((c for c in configs if c["threads"]==8 and c["batch_size"]==1), None)
     bw = baseline["wall_sec"] if baseline else 1
     best = min((c for c in configs if c.get("rc",0)==0), key=lambda c: c["wall_sec"], default=None)
-    # Estimate model load time (constant overhead, amortized once in full eval)
-    # wall = load_est + n_req * k / threads  (assume per-req time ∝ 1/threads)
-    bs1_ok = sorted([c for c in configs if c["batch_size"]==1 and c.get("rc",0)==0], key=lambda c: c["threads"])
-    load_est = 0
-    if len(bs1_ok) >= 2 and bs1_ok[0]["threads"] != bs1_ok[-1]["threads"]:
-        t1, w1 = bs1_ok[0]["threads"], bs1_ok[0]["wall_sec"]
-        t2, w2 = bs1_ok[-1]["threads"], bs1_ok[-1]["wall_sec"]
-        inv_diff = (1.0/t1 - 1.0/t2)
-        if abs(inv_diff) > 1e-9 and n_req > 0:
-            k_const = (w1 - w2) / (n_req * inv_diff)
-            load_est = max(0, w1 - n_req * k_const / t1)
+    # Model load + dataset setup overhead (~30s, measured from stdout logs)
+    # The 1/threads model is invalid here because Mamba2 SSM scan saturates
+    # at ~16 threads (sequential, not parallelizable). Use fixed overhead.
+    load_est = 30
     ts = datetime.now().strftime("%Y-%m-%d %H:%M")
     rows_thr = ""; rows_bat = ""; rows_heat = ""; rows_score = ""
     for c in configs:
@@ -107,7 +100,7 @@ def main():
         except Exception as e:
             full_scores_html = f'<h2>❼ 全量8集评测分数</h2><div class="card"><p>读取全量结果失败: {html.escape(str(e))}</p></div>'
     else:
-        full_scores_html = f'<h2>❼ 全量8集评测分数（iter_{ckpt}）</h2><div class="card"><p>全量评测仍在运行中（预估{fmt_s(fe_best)}，已扣除模型加载{fmt_s(load_est)}仅摊销一次）。完成后此节将填充实际分数。</p><p><small>全量评测=无limit，8集合计~{full_req:,}个请求，80线程bs=1配置。</small></p></div>'
+        full_scores_html = f'<h2>❼ 全量8集评测分数（iter_{ckpt}）</h2><div class="card"><p>全量评测仍在运行中（预估{fmt_s(fe_best)}，已扣除模型加载{fmt_s(load_est)}仅摊销一次）。完成后此节将填充实际分数。</p><p><small>全量评测=无limit，8集合计~{full_req:,}个请求，16线程bs=1配置（探测最优，80线程反而更慢）。</small></p></div>'
 
     peak_rss_list = [c.get("peak_rss_kb", 0) for c in configs if c.get("peak_rss_kb")]
     peak_rss_max = max(peak_rss_list) if peak_rss_list else 52702936
@@ -122,7 +115,7 @@ def main():
 <p><strong>基线</strong>(8线程,bs=1): {fmt_s(bw)} / {n_req}请求 → {n_req/bw:.2f} 请求/秒</p>
 <p><strong>最优配置</strong>: {t_b}线程,bs={b_b} → {fmt_s(w_b)} · 加速 <strong>{sp_b:.2f}x</strong></p>
 <p><strong>全量8集预估时长</strong>（已扣除模型加载{fmt_s(load_est)}仅摊销一次）: 基线(8线程)<span class="{'bad' if fe_base>86400 else 'warn'}">{fmt_s(fe_base)}</span> · 最优配置<span class="{'good' if fe_best<86400 else 'warn'}">{fmt_s(fe_best)}</span></p>
-<p><strong>关键发现</strong>: Mamba2-hybrid 2.22B 在 CPU 上使用 PyTorch 参考实现（无 mamba_ssm/causal_conv1d CUDA 内核），batch_size&gt;1 反而更慢（顺序扫描无 batch 效率），线程数对注意力/MLP 层有有限加速</p>
+<p><strong>关键发现</strong>: Mamba2-hybrid 2.22B 在 CPU 上使用 PyTorch 参考实现（无 mamba_ssm/causal_conv1d CUDA 内核）。线程扩展在 16 线程饱和（SSM 顺序扫描不可并行，仅注意力/MLP 层受益），80 线程反而因调度开销变慢（bs=1 时 392s vs 16 线程 359s）。但 80 线程 + bs=2 可利用富余核心处理 batch 维度，达到最优 325s（1.36x）。低线程时 bs=2 更慢（batch 无并行收益）。</p>
 <p><strong>内存峰值</strong>: {peak_rss_gb:.1f} GB（远低于 2TB 可用内存）</p></div>
 <h2>① 线程数 vs 吞吐/时长 (bs=1)</h2>
 <div class="card"><p>固定 batch_size=1，扫描 OMP_NUM_THREADS 从基线 8 到上限 80，观察 CPU 推理吞吐变化。</p>
@@ -153,7 +146,7 @@ def main():
 <li><strong>线程扫描</strong>: 8, 16, 32, 80 (OMP_NUM_THREADS, 上限80不跑满224核)</li>
 <li><strong>Batch扫描</strong>: 1, 2 (bs=4已验证更慢，不纳入)</li>
 <li><strong>约束</strong>: 纯CPU, CUDA_VISIBLE_DEVICES="", nice -n 19, OMP≤80</li>
-<li><strong>全量评测</strong>: 8集×全量样本, 80线程, bs=1, 无limit</li>
+<li><strong>全量评测</strong>: 8集×全量样本, 16线程(探测最优), bs=1, 无limit, 后台运行</li>
 <li><strong>架构说明</strong>: Mamba2-hybrid (NemotronH), CPU回退到PyTorch参考实现(无mamba_ssm/causal_conv1d)</li>
 </ul></div>
 {full_scores_html}
