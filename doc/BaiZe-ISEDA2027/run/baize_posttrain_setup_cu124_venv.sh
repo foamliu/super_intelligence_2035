@@ -97,15 +97,24 @@ echo "✅ 验证CUDA可用性..."
 python -c 'import torch; print(f"PyTorch版本: {torch.__version__}"); print(f"CUDA版本: {torch.version.cuda}"); print(f"CUDA可用: {torch.cuda.is_available()}"); print(f"GPU数量: {torch.cuda.device_count()}")'
 
 # 6. 安装依赖包
+# 🔴 R25 FIX (2026-11-07): SGLang's deps pull torch==2.9.1 (generic PyPI) which
+#   breaks CUDA 12.4 compat. Use constraints file to pin torch at 2.4.0+cu124.
+#   See EXPERIMENTS_POSTTRAIN.md §R25 for full analysis.
+echo "📋 创建 torch 约束文件（防止 SGLang 升级 torch）..."
+CONSTRAINT_FILE="/tmp/torch_constraint_$$.txt"
+echo "torch==2.4.0" > "$CONSTRAINT_FILE"
+echo "torchvision==0.19.0" >> "$CONSTRAINT_FILE"
+echo "torchaudio==2.4.0" >> "$CONSTRAINT_FILE"
+
 # 🔴 R16 UPDATE: SGLang's minicpm5 parser is NOT needed!
 #   verl has its OWN ToolParser layer (verl/experimental/agent_loop/tool_parser.py)
 #   that parses tool calls from model output text. We register a custom "minicpm5"
 #   parser via baize_posttrain_minicpm5_parser.py. SGLang just generates text.
 #   Therefore: pip release SGLang is sufficient (no main branch, no CUDA 13.x).
 #   See EXPERIMENTS_POSTTRAIN.md §R16 for full analysis.
-echo "📦 安装 SGLang (pip release — verl ToolParser handles tool calls)..."
-pip install "sglang[srt]==0.5.6.post3" 2>&1 || pip install "sglang[srt]>=0.4.0"
-echo "  ✅ SGLang pip 发行版安装完成 (verl ToolParser 处理工具解析)"
+echo "📦 安装 SGLang (pip release — verl ToolParser handles tool calls, torch pinned)..."
+pip install "sglang[srt]==0.5.6.post3" -c "$CONSTRAINT_FILE" 2>&1 || pip install "sglang[srt]>=0.4.0" -c "$CONSTRAINT_FILE"
+echo "  ✅ SGLang pip 发行版安装完成 (verl ToolParser 处理工具解析, torch 仍为 2.4.0+cu124)"
 
 # Verify SGLang basic import (tool parser check no longer needed — R16)
 echo "🔍 验证 SGLang 基本导入..."
@@ -115,7 +124,7 @@ pip install "ray>=2.41.0" "accelerate>=0.28.0" "transformers>=4.39.0" "datasets>
 
 # 安装verl with SGLang backend (R9: verl natively supports SGLang for multi-turn rollout)
 echo "🧠 安装 verl[sglang] GRPO框架..."
-pip install "verl[sglang]" --extra-index-url https://download.pytorch.org/whl/cu124
+pip install "verl[sglang]" --extra-index-url https://download.pytorch.org/whl/cu124 -c "$CONSTRAINT_FILE"
 
 # 安装flash-attn（可选，用于加速）
 echo "⚡ 安装flash-attention 2..."
@@ -128,6 +137,14 @@ for pkg in torch sglang ray verl accelerate transformers; do
     echo -n "$pkg: "
     python -c "import $pkg; print($pkg.__version__)"
 done
+
+# R25: Verify torch CUDA compat not broken by SGLang/verl install
+echo ""
+echo "🔍 R25 验证 torch CUDA 兼容性..."
+python -c 'import torch; assert torch.version.cuda == "12.4", f"CUDA mismatch: {torch.version.cuda}"; assert torch.cuda.is_available(), "CUDA not available"; print(f"✅ torch={torch.__version__}, CUDA={torch.version.cuda}, available={torch.cuda.is_available()}")'
+
+# Cleanup constraint file
+rm -f "$CONSTRAINT_FILE"
 
 echo ""
 echo "🎉 CUDA 12.4 venv 配置完成！"

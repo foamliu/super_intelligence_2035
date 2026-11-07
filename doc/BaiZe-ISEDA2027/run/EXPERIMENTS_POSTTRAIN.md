@@ -3293,3 +3293,133 @@ v2 high（emyDesign）：`pyScript.aeAddDesignMapping(schematic=pyScript.dbNewCV
 | baize_posttrain_gen_sft_corpus_v2.py | 新建 | v2 SFT 语料生成器(359行) |
 | sft_pyaether_corpus_v2.jsonl | 新建 | v2 SFT 语料(19524对,21.8MB,64% has-args) |
 | baize_posttrain_contam_check_v2.py | 新建 | v2 污染快速检查 |
+
+---
+
+## §R25 11/9 Launch Readiness Deep-Dive: cu124 venv + verl Config Fix + pyAether Feasibility (2026-11-07 wake73 · zero GPU)
+
+> **任务**：11/9 GPU 到位前 2 天，对启动链做端到端深度验证，修复发现的配置缺陷。
+> **来源**：verl 官方文档 verl.readthedocs.io §1.1.6 Multi-Turn 配置；pyAether 安装可行性实测；cu124 venv 实际创建。
+
+### R25.1 cu124 venv 创建（P0 阻塞项 → 进行中）
+
+**背景**：wake53 发现旧 vllm_venv 的 torch=2.14.0+cu130 与系统 CUDA 12.4 不兼容 → `torch.cuda.is_available()=False`。这是 11/9 启动的 P0 阻塞项。
+
+**执行**：
+- Python 3.10.22 检测到（`/nas_data/app.e0031982/miniforge3/envs/py310/bin/python3.10`）
+- nvcc 12.4.131 确认（`/usr/local/cuda-12.4/bin/nvcc`）
+- venv 已创建：`~/code/verl_cu124_venv/`（Python 3.10.22）
+- torch 2.4.0+cu124 下载中（797MB whl + nvidia-cudnn 664MB + nvidia-cublas 363MB + 其他 CUDA deps，总约 2GB）
+- 后续安装：SGLang 0.5.6+、verl[sglang]、ray、accelerate、transformers 等
+- **状态**：后台运行中（PID 1239293），预计 15-30 分钟完成
+
+**验证计划**（安装完成后）：
+```bash
+source ~/code/verl_cu124_venv/bin/activate
+python -c 'import torch; print(f"CUDA: {torch.cuda.is_available()}, version: {torch.version.cuda}")'
+python -c 'import sglang; print(f"SGLang: {sglang.__version__}")'
+python -c 'import verl; print(f"verl: {verl.__version__}")'
+```
+
+### R25.2 verl 配置 P1 级 Bug 修复：multi_turn 结构错误
+
+**发现**：通过 verl 官方参数文档（verl.readthedocs.io §1.1.6 Multi-Turn 配置）发现配置结构错误。
+
+**官方 API**（参数引用）：
+```
+actor_rollout_ref.rollout.multi_turn.enable          (default: false)
+actor_rollout_ref.rollout.multi_turn.max_assistant_turns  (default: null)
+```
+
+**旧配置（错误）**：
+```yaml
+multi_turn: True              # boolean — verl 不读取后续 multi_turn_config
+multi_turn_config:            # ← 此 key 不在 verl API 中！
+  max_assistant_turns: 3
+  format: minicpm5
+  ...
+```
+
+**修复后（正确）**：
+```yaml
+multi_turn:
+  enable: true
+  max_assistant_turns: 3
+  format: minicpm5
+  max_parallel_calls: 1
+  max_tool_response_length: 2048
+  tool_response_truncate_side: end
+  tokenization_sanity_check_mode: strict
+```
+
+**影响**：旧配置下，`max_assistant_turns=3` 和其他多轮参数**从未被 verl 读取** → 多轮 RL 的轮数控制完全失效（使用默认值 null = 无限制或框架默认）。这是 R20 添加的参数，但由于 key 路径错误一直无效。R21 审计未发现此问题（因为 YAML 语法正确，只是 key 不被 verl 识别）。
+
+**验证**：`yaml.safe_load()` 通过 ✅。待 verl 安装后用 `python -m verl.trainer.main_ppo --config <file> --dry-run` 验证参数被正确解析。
+
+**来源**：verl readthedocs §1.1.6（https://verl.readthedocs.io/en/latest/ascend_tutorial/zh/dev_guide/model_dev/parameter_and_metrics.html）；verl Multi-turn Rollout Support 文档。
+
+### R25.3 pyAether 本地安装可行性（确认不可行）
+
+**测试**：
+- `pip show pyAether` → 不存在
+- `~/code/eda_fastmcp/.venv/bin/python -c 'import pyAether'` → ModuleNotFoundError
+- `find ~/code/eda_fastmcp -name 'pyAether'` → 未找到
+- `eda_fastmcp/pyproject.toml` → 依赖列表无 pyAether（它是 EDA 工具，不是 Python 包）
+
+**结论**：pyAether 是商业 EDA 工具（Aether EDA 环境），不可 pip 安装。R23 发现的 SSH .17→36.15 超时问题仍然存在。**R0 skeleton reward auto-fallback（R22）是 11/9 RL 首日的唯一可用 reward**。
+
+**沙盒路线图更新**：
+1. 11/9 首日：R0 auto-fallback（无需沙盒）
+2. 11/9 第一事：请求运维建立 .17↔36.15 SSH 隧道（方案 A）或在评测机部署 sandbox server（方案 B）
+3. 隧道就绪后：切换到 R2/R3/R4 reward arm
+4. 长期：在 .17 安装 Aether EDA 环境（需许可，非短期）
+
+### R25.4 Launch Dry-Run 验证
+
+执行 `baize_posttrain_launch_11_9.sh --dry-run --step 0-6 --gpu-ids 0,1,2,3`：
+
+| Step | 名称 | 路径/状态 | 验证 |
+|:--|:--|:--|:--|
+| 0 | cu124 venv setup | `~/code/verl_cu124_venv` | ✅ 进行中 |
+| 1 | Preflight check | `baize_posttrain_preflight_check.sh` | ✅ 存在 |
+| 2 | SGLang serve + 36% baseline | `baize_posttrain_minicpm5_diag.sh --full` | ✅ 存在 |
+| 3 | D1-D6 trajectory extraction | `baize_posttrain_minicpm5_diag.sh --extract-only` | ✅ 存在 |
+| 4 | Contamination gate | `baize_posttrain_contamination_gate.sh` | ✅ 存在 |
+| 5 | RL smoke test (10 iters) | `baize_posttrain_rl_grpo.sh --smoke --reward-arm R2` | ✅ 存在 |
+| 6 | Full RL training | `baize_posttrain_rl_grpo.sh --reward-arm R2` | ✅ 存在 |
+
+**所有路径正确**：NAS_ROOT=/nas_data（.17 正确），Model=/tmp/models/MiniCPM5-2B（存在），EDA Base=~/code/eda_fastmcp（存在），Venv=进行中。
+
+### R25.5 verl 配置其他验证项
+
+| 配置项 | 我们的值 | 官方文档 | 状态 |
+|:--|:--|:--|:--|
+| `rollout.name` | sglang | "sglang" (推荐多轮) | ✅ |
+| `rollout.multi_turn` | object{enable:true,...} | object{enable,max_assistant_turns,...} | ✅ (R25 修复) |
+| `rollout.tool_kwargs.tools_config_file` | baize_posttrain_eda_tools.yaml | `<path_to_tool_yaml_file>` | ✅ |
+| `data.return_raw_chat` | True | True (多轮必需) | ✅ |
+| `data.need_tools_kwargs` | True | True (注入工具定义) | ✅ |
+| `rollout.gpu_memory_utilization` | 0.50 | — (自定义) | ✅ R11 校准 |
+| `rollout.enforce_eager` | True | — (co-located 安全) | ✅ |
+| `algorithm.name` | grpo | grpo | ✅ |
+| `algorithm.group_size` | 8 | — (2B 推荐 4-8) | ✅ |
+| `algorithm.filter_groups` | true | sGPO 丢弃全对/全错 | ✅ |
+
+### R25.6 修改文件清单
+
+| 文件 | 修改 | 说明 |
+|:--|:--|:--|
+| `baize_posttrain_rl_verl_config.yaml` | 🔴 P1 修复 | multi_turn_config → multi_turn 对象（13 行替换） |
+| `baize_posttrain_rl_verl_config.yaml.bak.r25` | 🆕 新建 | 修复前备份 |
+
+### R25.7 11/9 启动就绪度评估（R25 后更新）
+
+| 项目 | R21 审计后 | R25 后 | 变化 |
+|:--|:--|:--|:--|
+| cu124 venv | ⬜ 未创建 | 🔄 创建中（torch 下载） | P0 阻塞正在解除 |
+| verl config multi_turn | ⚠️ multi_turn_config 无效 | ✅ 修复为 multi_turn 对象 | P1 bug 修复 |
+| pyAether 沙盒 | ⬜ SSH 不通 | ⬜ 确认不可本地安装 | 无变化，R0 fallback 必要 |
+| 所有脚本路径 | ✅ | ✅ | 无变化 |
+| Launch dry-run | ✅ | ✅ | 无变化 |
+| 污染隔离 | ✅ | ✅ | 无变化 |
+| 反作弊 | ✅ | ✅ | 无变化 |
