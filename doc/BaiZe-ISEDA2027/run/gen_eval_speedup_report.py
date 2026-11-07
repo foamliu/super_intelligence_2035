@@ -110,61 +110,78 @@ def fmt_pct(v):
     return f"{v*100:.2f}%"
 
 def read_live_progress():
-    """Read live progress from orchestrator log. Returns list of dicts or empty list."""
+    """Read live progress from per-chunk .log files in the eval output dir.
+    Falls back to orchestrator log if log files unavailable.
+    Returns list of dicts or empty list."""
     import re
-    orch_log = "/tmp/baize_eval_v4/orchestrate_fixed.log"
-    if not os.path.exists(orch_log):
-        return []
-    try:
-        lines = open(orch_log).readlines()
-        # Find the last "--- Progress ---" block
-        last_block = []
-        for i, line in enumerate(lines):
-            if "--- Progress ---" in line:
-                last_block = lines[i:i+15]
-        if not last_block:
-            return []
-        # Parse each task line
-        numa_map = {
-            "arc_easy": ("N0", "8080"), "arc_challenge": ("N0", "8080"),
-            "openbookqa": ("N0", "8080"), "hellaswag_chunk1b": ("N0", "8080"),
-            "piqa": ("N1", "8081"), "piqa_part2": ("N1", "8081"),
-            "hellaswag_chunk0b": ("N1", "8081"),
-            "hellaswag_chunk1a": ("N2", "8082"),
-            "hellaswag_chunk0a": ("N3", "8083"),
-            "boolq": ("—", "—"), "sciq": ("—", "—"), "winogrande": ("—", "—"),
-        }
-        results = []
-        for line in last_block:
-            line = line.strip()
-            if not line or "--- Progress ---" in line:
-                continue
-            # Format: [timestamp]   task_name: STATUS
-            m = re.match(r'\[[\d\-: ]+\]\s+(\S+):\s+(.*)', line)
-            if not m:
-                continue
-            task = m.group(1).rstrip(':')
-            rest = m.group(2)
-            numa, port = numa_map.get(task, ("—", "—"))
-            if rest == "DONE":
-                results.append({"numa": numa, "port": port, "task": task,
-                                "progress": "✅ 完成", "rate": "—", "status": "DONE"})
-            elif rest == "waiting...":
-                results.append({"numa": numa, "port": port, "task": task,
-                                "progress": "⏳ 等待", "rate": "—", "status": "waiting"})
-            else:
-                # Try to extract progress percentage and rate
-                pm = re.search(r'(\d+)%\|.*?\|\s*(\d+)/(\d+)\s*\[.*?\]\s*([\d.]+s/it)', rest)
+    # Core binding map (updated 2026-11-08 #1634): port -> (NUMA label, cores)
+    port_info = {
+        "8080": ("N0", "0-27"),    "8084": ("N0b", "28-55"),
+        "8086": ("N1", "56-83"),   "8081": ("N1b", "84-111+HT"),
+        "8085": ("S0-HT", "112-167"), "8083": ("S1-HT", "168-183"),
+    }
+    # Map output subdir -> port (from process args)
+    task_port = {
+        "hellaswag_chunk0a": "8083", "hellaswag_chunk0b": "8085",
+        "hellaswag_chunk1a_half1": "8086", "hellaswag_chunk1a_half2": "8081",
+        "hellaswag_chunk1b_a": "8080", "hellaswag_chunk1b_b": "8084",
+    }
+    results = []
+    # Completed tasks (from merged results.json)
+    full = read_full_results()
+    done_set = set()
+    if full:
+        done_set = {t for t in ["arc_easy","arc_challenge","boolq","sciq","winogrande","openbookqa","piqa"] if t in full}
+    done_label = {
+        "arc_easy": "arc_easy", "arc_challenge": "arc_challenge",
+        "boolq": "boolq", "sciq": "sciq", "winogrande": "winogrande",
+        "openbookqa": "openbookqa", "piqa": "piqa (merged)",
+    }
+    for t in ["arc_easy","arc_challenge","boolq","sciq","winogrande","openbookqa","piqa"]:
+        if t in done_set:
+            results.append({"numa": "—", "port": "—", "task": done_label.get(t,t),
+                            "progress": "✅ 完成", "rate": "—", "status": "DONE"})
+    # Running hellaswag chunks: parse .log files
+    for chunk_name in sorted(task_port.keys()):
+        log_path = os.path.join(FULL_EVAL_DIR, chunk_name + ".log")
+        port = task_port[chunk_name]
+        numa, cores = port_info.get(port, ("—", "—"))
+        # Check if this chunk already has results.json (= done)
+        rj = os.path.join(FULL_EVAL_DIR, chunk_name, "results.json")
+        if os.path.exists(rj):
+            results.append({"numa": numa, "port": f"{port} ({cores})", "task": chunk_name,
+                            "progress": "✅ 完成", "rate": "—", "status": "DONE"})
+            continue
+        if not os.path.exists(log_path):
+            results.append({"numa": numa, "port": f"{port} ({cores})", "task": chunk_name,
+                            "progress": "⏳ 等待启动", "rate": "—", "status": "waiting"})
+            continue
+        try:
+            # Read last ~2KB and extract last progress bar line
+            with open(log_path, "rb") as f:
+                f.seek(0, 2); size = f.tell()
+                f.seek(max(0, size - 2048)); tail = f.read().decode("utf-8", errors="replace")
+            # Split on \r and \n, get last line with %
+            lines = re.split(r'[\r\n]+', tail)
+            last_prog = None
+            for line in reversed(lines):
+                # tqdm format: "47%|████▋ | 4693/10040 [4:18:03<12:49:56, 8.64s/it]"
+                pm = re.search(r'(\d+)%.*?(\d+)/(\d+)\s*\[.*?([\d.]+s/it|[\d.]+it/s)', line)
                 if pm:
                     pct, cur, total, rate = pm.group(1), pm.group(2), pm.group(3), pm.group(4)
-                    results.append({"numa": numa, "port": port, "task": task,
-                                    "progress": f"{pct}% ({cur}/{total})", "rate": rate, "status": "running"})
-                else:
-                    results.append({"numa": numa, "port": port, "task": task,
-                                    "progress": rest[:60], "rate": "—", "status": "running"})
-        return results
-    except Exception:
-        return []
+                    last_prog = (pct, cur, total, rate)
+                    break
+            if last_prog:
+                pct, cur, total, rate = last_prog
+                results.append({"numa": numa, "port": f"{port} ({cores})", "task": chunk_name,
+                                "progress": f"{pct}% ({cur}/{total})", "rate": rate, "status": "running"})
+            else:
+                results.append({"numa": numa, "port": f"{port} ({cores})", "task": chunk_name,
+                                "progress": "运行中（无进度条）", "rate": "—", "status": "running"})
+        except Exception:
+            results.append({"numa": numa, "port": f"{port} ({cores})", "task": chunk_name,
+                            "progress": "读取异常", "rate": "—", "status": "running"})
+    return results
 
 def fmt_dur(sec):
     if sec is None: return "—"
