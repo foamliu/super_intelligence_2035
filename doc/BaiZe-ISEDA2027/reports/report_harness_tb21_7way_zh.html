@@ -25,7 +25,7 @@ pre{background:#2c3e50;color:#ecf0f1;padding:15px;border-radius:5px;overflow-x:a
 <div class="info">
 <p><strong>基准口径声明</strong>：本报告数据为 <strong>TB-2.1 / 89 题 / 7-way concurrent</strong>。
 TB-2.1 与 TB4 <strong>题集不同、不可跨基准比较</strong>。</p>
-<p><strong>模型</strong>：glm-5.3-flash（网关 <code>http://agi-gateway.cxmt.com/v1</code>）｜<strong>生成时间</strong>：2026-11-08 00:22（R1813）</p>
+<p><strong>模型</strong>：glm-5.3-flash（网关 <code>http://agi-gateway.cxmt.com/v1</code>）｜<strong>生成时间</strong>：2026-11-08 00:35（R1814）</p>
 </div>
 
 <div class="critical">
@@ -50,13 +50,13 @@ TB-2.1 cline 路 <strong>7 题 passed</strong>（≥1 题 × ≥1 路 reward 非
 <h2>2. TB-2.1 · 7 路状态总览</h2>
 <div class="note">
 <p><strong>运行模式</strong>：sequential launcher（<code>launch_tb21_glm53_7way.sh</code>），7 路按序执行。
-网关 429 为<strong>滚动限流</strong>（非硬阻断）：每次额度耗尽后约 5 分钟自动重置，评测进程在重置窗口内持续推进。00:22 实测：直连网关返回「本次Token额度已用完，请等待5分钟15秒后重试」（HTTP 429）。</p>
+网关已于 00:35 恢复 HTTP 200（此前 429 滚动限流已结束），评测进程加速推进中。</p>
 </div>
 <table>
 <tr><th>#</th><th>Harness</th><th>状态</th><th>Passed</th><th>Failed</th><th>Remaining</th><th>通过率</th></tr>
 <tr><td>1</td><td>cline</td><td><span class='tag tag-done'>已完成</span> 89/89</td><td class='pass'>7</td><td class='fail'>82</td><td>0</td><td>7.9%</td></tr>
 <tr><td>2</td><td>codex</td><td><span class='tag tag-pending'>已终止</span> 19/89 (429)</td><td class='pass'>0</td><td class='fail'>19</td><td>72</td><td>0%</td></tr>
-<tr><td>3</td><td>hermes</td><td><span class='tag tag-running'>运行中</span> 44/89</td><td class='pass'>0</td><td class='fail'>25</td><td>45</td><td>—</td></tr>
+<tr><td>3</td><td>hermes</td><td><span class='tag tag-running'>运行中</span> 49/89</td><td class='pass'>0</td><td class='fail'>25</td><td>40</td><td>—</td></tr>
 <tr><td>4</td><td>opencode</td><td><span class='tag tag-pending'>未开始</span> 未开始</td><td class='pass'>0</td><td class='fail'>0</td><td>89</td><td>—</td></tr>
 <tr><td>5</td><td>claude-code</td><td><span class='tag tag-pending'>未开始</span> 未开始</td><td class='pass'>0</td><td class='fail'>0</td><td>89</td><td>—</td></tr>
 <tr><td>6</td><td>deepseek</td><td><span class='tag tag-pending'>未开始</span> 未开始</td><td class='pass'>0</td><td class='fail'>0</td><td>89</td><td>—</td></tr>
@@ -106,7 +106,7 @@ TB-2.1 cline 路 <strong>7 题 passed</strong>（≥1 题 × ≥1 路 reward 非
 <h3>3.1 网关 429 quota 耗尽（基础设施问题）</h3>
 <div class="critical">
 <p><strong>现象</strong>：glm-5.3-flash 网关 keyB 在评测期间多次返回 HTTP 429「本次 Token 额度已用完」。</p>
-<p><strong>影响</strong>：TB-2.1 cline 路 89/89 完成（7 passed）；codex 路 19/89 全部因 429 失败已终止（0 reward）；hermes 路 44/89 已完成（25 rewarded，0 passed，19 errored = 429+python3缺失）；后续 4 路未启动（sequential launcher 等待 hermes 完成后依次启动）。</p>
+<p><strong>影响</strong>：TB-2.1 cline 路 89/89 完成（7 passed）；codex 路 19/89 全部因 429 失败已终止（0 reward）；hermes 路 49/89 已完成（25 rewarded，0 passed，19 errored = 429+python3缺失）；后续 4 路未启动（sequential launcher 等待 hermes 完成后依次启动）。网关已恢复 200。</p>
 <p><strong>归因红线</strong>：网关额度耗尽 / 429 <strong>不得</strong>写成「模型能力」结论。</p>
 </div>
 <h3>3.2 cline 路 81 题失败归因</h3>
@@ -153,7 +153,7 @@ hermes agent 需在任务容器内 <code>pip install hermes-agent</code>，但�
 
 <h2>6. 后续计划</h2>
 <div class="info"><ol>
-<li>网关 429 滚动恢复中（~5min/周期）：hermes 路继续推进至 89/89；剩余 4 路依次启动</li>
+<li>网关已恢复 200：hermes 路继续推进至 89/89；剩余 4 路依次启动</li>
 <li>codex 路 17/89 全部因 429 失败 → 429 恢复后可重跑（归因=infra 非能力）</li>
 <li>7 路全量完成后报告标注「7-way complete」</li>
 </ol></div>
@@ -169,7 +169,7 @@ done | sort</code></pre>
 
 <hr>
 <p style="text-align:center;color:#7f8c8d;font-size:0.9em">
-BaiZe Harness 研究线 · R1813 · 2026-11-08 00:22<br>
+BaiZe Harness 研究线 · R1814 · 2026-11-08 00:35<br>
 TB-2.1 / 89 题 / 7-way concurrent · glm-5.3-flash · 报告正文一律写 cline
 </p>
 </body></html>
