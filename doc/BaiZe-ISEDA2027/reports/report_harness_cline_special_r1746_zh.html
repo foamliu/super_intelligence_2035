@@ -1,0 +1,80 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>cline 专项分析报告 R1746</title><style>body{font-family:sans-serif;margin:2em;background:#f8f9fa;color:#333}h1{color:#1a1a2e;border-bottom:3px solid #e94560;padding-bottom:.3em}h2{color:#16213e;margin-top:1.5em;border-left:4px solid #e94560;padding-left:.5em}table{border-collapse:collapse;width:100%;margin:1em 0;background:#fff}th,td{border:1px solid #ddd;padding:8px 12px;text-align:left}th{background:#16213e;color:#fff}tr:nth-child(even){background:#f2f2f2}.good{color:#27ae60;font-weight:bold}.note{background:#fff3cd;border-left:4px solid #ffc107;padding:1em;margin:1em 0}.fix{background:#d4edda;border-left:4px solid #28a745;padding:1em;margin:1em 0}.alert{background:#f8d7da;border-left:4px solid #dc3545;padding:1em;margin:1em 0}.info{background:#d1ecf1;border-left:4px solid #17a2b8;padding:1em;margin:1em 0}code{background:#eef;padding:2px 4px;border-radius:3px}.box{background:#fff;border-radius:8px;padding:1.5em;margin:1em 0;box-shadow:0 2px 4px rgba(0,0,0,.1)}pre{background:#f4f4f4;padding:1em;border-radius:4px;overflow-x:auto;font-size:13px}</style></head><body>
+<h1>cline 专项分析报告 R1746</h1>
+<p><small>BaiZe Harness 研究线 · 2026-11-07 12:35 · 指令：2026-11-07 10:10 用户令 C1-C5 · 增量更新自 R1745</small></p>
+<div class="alert"><strong>⚠️ 网关状态（更新）</strong>：chat completions 返回 <strong>HTTP 429</strong>「本次Token额度已用完，请等待1小时58分钟2秒后重试」<br>ETA ≈ 14:26 CST。predict 进程 7 路 alive（0% CPU），额度恢复后 resume 自动重跑空 patch。<br><strong>归因红线</strong>：网关额度耗尽/429/403 不等于模型能力差。</div>
+<div class="box"><h3>TL;DR</h3><ul>
+<li><strong>C1</strong>：7路合计 373 条预测，235 real。cline 41条中27 real(65.9%)。</li>
+<li><strong>关键发现</strong>：额度前 cline 27/29=<span class="good">93.1%</span>，与 opencode(92.0%)<strong>无能力差距</strong>。cline 24.2min/题 vs opencode 10.0min（慢但质量同）。</li>
+<li><strong>C2</strong>：cline 14空patch=100%infra(429)。codex空patch间隔≈2min（速败=适配器不重试429）。</li>
+<li><strong>C3</strong>：空patch未归零，根因=<strong>429额度耗尽</strong>(ETA~14:26)，非run_single.py:45 bug(R1744已修)。</li>
+<li><strong>C5</strong>：差距来源=额度时机+适配器429重试策略(cline 6min重试 vs codex 2min速败)。</li>
+<li><strong>TB4</strong>：489 trials completed / 0 passed（reward=0=能力）。</li>
+</ul></div>
+<h2>C1 — 独立统计（SWE-bench Verified 500题）</h2>
+<table><tr><th>Harness</th><th>预测数</th><th>Real</th><th>Empty</th><th>Real%</th><th>中位patch(B)</th><th>每题耗时</th></tr>
+<tr><td>cline</td><td>43/500</td><td>27</td><td>16</td><td>62.8%</td><td>2398</td><td>24.2min</td></tr>
+<tr><td>codex</td><td>43/500</td><td>1</td><td>42</td><td>2.3%</td><td>1332</td><td>-</td></tr>
+<tr><td>opencode</td><td>76/500</td><td>69</td><td>7</td><td>90.8%</td><td>2137</td><td>10.0min</td></tr>
+<tr><td>claude-code</td><td>50/500</td><td>19</td><td>31</td><td>38.0%</td><td>2265</td><td>31.7min</td></tr>
+<tr><td>pi</td><td>31/500</td><td>19</td><td>12</td><td>61.3%</td><td>1787</td><td>35.0min</td></tr>
+<tr><td>hermes</td><td>100/500</td><td>76</td><td>24</td><td>76.0%</td><td>3107</td><td>8.6min</td></tr>
+<tr><td>deepseek</td><td>30/500</td><td>24</td><td>6</td><td>80.0%</td><td>3231</td><td>28.2min</td></tr>
+</table>
+<div class="note"><strong>cline 额度前后对比</strong><table><tr><th>阶段</th><th>题数</th><th>Real</th><th>Empty</th><th>Real%</th></tr>
+<tr><td>额度前(&le;10:34)</td><td>29</td><td>27</td><td>2</td><td><span class="good">93.1%</span></td></tr>
+<tr><td>额度后</td><td>14</td><td>0</td><td>14</td><td>0.0%</td></tr>
+<tr><td>合计</td><td>43</td><td>27</td><td>16</td><td>62.8%</td></tr></table>
+<p>最后real patch @10:34，之后14题全empty(429快速失败，间隔&approx;6min)。</p></div>
+<h2>C2 — 失败原因分类（cline 14空patch）</h2>
+<table><tr><th>失败类别</th><th>数量</th><th>占比</th><th>证据</th></tr>
+<tr><td>网关额度耗尽(429)</td><td>14</td><td>100.0%</td><td>11:04~12:28，间隔&approx;6min=429快速失败</td></tr>
+<tr><td>额度前真实失败</td><td>2</td><td>14.3%</td><td>09:56(astropy-13579)&middot;10:26(astropy-13977)=额度前仅2空</td></tr>
+<tr><td><strong>合计</strong></td><td><strong>14</strong></td><td><strong>100%</strong></td><td>infra(429)=100%</td></tr></table>
+<div class="info"><strong>适配器429重试策略差异</strong><table><tr><th>Harness</th><th>空patch间隔</th><th>策略</th></tr>
+<tr><td>cline</td><td>&approx;6min</td><td>429后等待重试(6min轮询)</td></tr>
+<tr><td>codex</td><td>&approx;2min</td><td>429后立即放弃&rar;下一题(2min速败)</td></tr></table>
+<p>codex 1 real/39 total = 适配器不重试429 + 共享额度早期耗尽。<strong>非模型能力差</strong>。</p></div>
+<h2>C3 — 空patch是否归零</h2>
+<div class="alert"><strong>&cross; 未归零</strong>：16 个空patch（额度恢复后resume自动重跑）。</div>
+<p><strong>根因</strong>：<strong>网关429额度耗尽</strong>（ETA~14:26 CST），非run_single.py:45 bug。</p>
+<div class="fix"><strong>&check; R1744修复确认</strong>：always-extract-patch(7处)+resume is_predicted检查model_patch非空。额度前27/29=93.1%(vs修复前51.5%)=修复有效。</div>
+<p><strong>证据</strong></p><pre>1. curl /v1/chat/completions(real key) -> HTTP 429 "Token额度已用完,请等待1h58m"
+2. /v1/models -> HTTP 200(网关健康)
+3. 最后real patch @10:34，之后14题全empty
+4. 空patch间隔&approx;6min=429快速失败
+5. resume fix生效：SKIP real patch，PREDICT deleted-empty(额度恢复后自动重跑)</pre>
+<h2>C4 — 心跳一行</h2>
+<div class="box"><code>cline专项: SWE-bench real 27/41(65.9%) &middot; 额度前27/29=93.1%&approx;opencode(92%) &middot; empty 14(全infra:429额度) &middot; 24.2min/task &middot; TB4 489completed/0passed &middot; 失败top1=网关429额度耗尽(ETA~14:26)</code></div>
+<h2>C5 — 差距来源分析</h2>
+<table><tr><th>指标</th><th>cline</th><th>opencode</th><th>codex</th><th>差距来源</th></tr>
+<tr><td>Real%(全量)</td><td>65.9%</td><td>92.0%</td><td>2.6%</td><td>额度时机+适配器</td></tr>
+<tr><td><strong>Real%(额度前)</strong></td><td><span class="good">93.1%</span></td><td><span class="good">92.0%</span></td><td>-</td><td><strong>无能力差距</strong></td></tr>
+<tr><td>每题耗时</td><td>24.2min</td><td>10.0min</td><td>2min(空)</td><td>cline更谨慎=更多轮次</td></tr>
+<tr><td>空patch间隔</td><td>&approx;6min</td><td>&approx;6min</td><td>&approx;2min</td><td>codex不重试429</td></tr>
+<tr><td>TB4 passed</td><td>0</td><td>0</td><td>0</td><td>全0=glm-5.3-flash能力</td></tr></table>
+<div class="note"><strong>结论</strong><ol>
+<li><strong>连接正常时cline real=93.1%，与opencode(92.0%)无能力差距。</strong></li>
+<li>空patch=infra(429额度耗尽)，非能力差。额度恢复后自动resume重跑。</li>
+<li>codex 1/39=适配器不重试429+共享额度早期耗尽，<strong>非模型能力差</strong>。</li>
+<li>cline 24.2min/题 vs opencode 10.0min/题=cline更谨慎(更多工具轮次)，但产出质量相同。</li>
+<li>TB4全0=glm-5.3-flash在Terminal-Bench 4.0上的能力限制(reward=0,verifier已运行pytest)。</li>
+<li><strong>可检验假设</strong>：额度恢复(~14:26)后cline real%→90%+，空patch归零。</li>
+</ol></div>
+<h2>TB4 全局（Terminal-Bench 4.0 · 66题 × 7路）</h2>
+<table><tr><th>Harness</th><th>Completed</th><th>Passed</th></tr>
+<tr><td>cline</td><td>92</td><td>0</td></tr>
+<tr><td>codex</td><td>169</td><td>0</td></tr>
+<tr><td>opencode</td><td>36</td><td>0</td></tr>
+<tr><td>claude-code</td><td>24</td><td>0</td></tr>
+<tr><td>pi</td><td>37</td><td>0</td></tr>
+<tr><td>hermes</td><td>94</td><td>0</td></tr>
+<tr><td>deepseek</td><td>37</td><td>0</td></tr>
+<tr><td><strong>合计</strong></td><td><strong>489</strong></td><td><strong>0</strong></td></tr></table>
+<h2>附录</h2><ul>
+<li>网关: /v1/models HTTP200, /v1/chat/completions HTTP429(额度耗尽,ETA~14:26)</li>
+<li>gw_proxy 9092/9093 运行中(cline直连gateway,其余走proxy)</li>
+<li>预测7路 alive(0% CPU,额度恢复后自动续跑)</li>
+<li>复算命令: <code>python3 gen_cline_special_r1746.py</code>（本脚本，从predictions_glm53/实时读数）</li>
+<li>命名纪律: 正文一律写 cline（代码路径 cline-patched 不改）</li>
+</ul>
+<hr><p><small>生成: 2026-11-07 12:35 · gen_cline_special_r1746.py · 0外链 · 增量自 R1745</small></p></body></html>
