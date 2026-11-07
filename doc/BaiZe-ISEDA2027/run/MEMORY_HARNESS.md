@@ -4,14 +4,14 @@ WAITING: 0
 
 ## 📊 进度快照
 
-PHASE:        R1763 cline专项报告R1763交付(全7路+codex诊断+trace证据)·网关14:27恢复GATEWAY_OK·7路predict alive·TB4多路运行中
-已完成:       H-B✅·Gate7/7·TB报告✅·full500✅·R1735-R1762 P0/P1/审计/cleanup/cline专项C1-C5+修复+R1746/R1747/R1761/R1762/R1763报告·R1752 C3验证通过·codex1%=429infra诊断完成
-当前动作:     R1763:①CPU/MEM PASS(load41/224·1197G avail·无失控进程>80核) ②体积:TASK=28KB/MEMORY=24KB(均≤32KB) ③硬盘:/data 5.8T(18%) ④git pull:up to date ⑤research日报:无harness建议 ⑥cline专项报告R1763交付(10.2KB):C1复算命令+文件交叉校验·C2全7路分类(cline64empty=58q+5SDK+1other=100%infra·codex96/99=97%429infra)·C3 resume修复生效空patch根因=429·C4心跳·C5差距=适配器429容错非能力·含trace原文证据 ⑦7路SWE-bench predict(progress):cline91/27real·opencode91/69·codex99/1·claude120/19·pi59/19·hermes118/76·deepseek115/23 ⑧TB4 7dirs/0passed ⑨网关14:27恢复GATEWAY_OK ⑩未完成指令:有(§22:4x+§10:10)⇒WAITING:0
-下一步:       ①网关已恢复→7路predict自动resume重跑空patch ②监控cline real%是否升至70%+(验证假设) ③监控7路predict进度(目标500/路) ④§22:4x两基准7路全交付 ⑤TB4 verifier仍全0passed需持续观察
-阻塞:         无(网关14:27恢复GATEWAY_OK)——predict进程alive，预期real patch恢复产出
+PHASE:        R1764 网关恢复(HTTP200)确认+cline真实patch复产(14:31/14:33两real)·7路predict全alive·cline专项报告R1764交付·TB4多路运行中verifier仍0passed
+已完成:       H-B✅·Gate7/7·TB报告✅·full500✅·R1735-R1763 P0/P1/审计/cleanup/cline专项C1-C5+修复+R1746/R1747/R1761/R1762/R1763/R1764报告·R1752 C3验证通过·codex1%=429infra诊断完成
+当前动作:     R1764:①CPU/MEM PASS(load46/224·无失控进程>80核·harness进程均<1%CPU·最高CPU=pretrain线lmeval8.67核非本线) ②体积:TASK=28KB/MEMORY=25KB(均≤32KB) ③硬盘:/data 5.8T(18%) ④git pull:up to date ⑤research日报11-07:无harness建议(忽略) ⑥网关实测HTTP200(0.93s·14:27恢复确认) ⑦cline专项报告R1764交付(8.5KB):网关恢复→cline真实patch复产(14:31 6490B/14:33 2415B)·C2空patch100%=429infra·C3 resume修复生效空patch根因=429·C5差距=429 infra非能力+可检验假设 ⑧7路SWE-bench predict(progress/500):cline63/29real·opencode88/72·hermes121/78·deepseek42/25·pi46/20·claude-code106/19·codex101/1(429infra) ⑨TB4 7路运行中verifier仍0passed(overlay仅agent env) ⑩未完成指令:有(§22:4x+§10:10)⇒WAITING:0
+下一步:       ①网关持续200→监控cline real%是否升至70%+(验证假设) ②监控7路predict进度(目标500/路) ③§22:4x两基准7路全交付 ④TB4 verifier仍全0passed需持续观察(overlay-network-host仅agent env非verifier) ⑤codex网关恢复后是否复产真实patch
+阻塞:         无(网关HTTP200已恢复)——7路predict全alive，cline真实patch已复产
 ERROR_COUNT:  0
-  📦 体积：TASK=28KB / MEMORY=24KB(本轮无归档)
-  🔍 cline专项小结: SWE-bench real 27/91(29.7%) · 适配器正常27/27=100% · empty 64(q58/s5/g0=100%infra) · 空patch根因=429额度非resume · 报告R1763已交付(含codex1%=429infra诊断+trace证据) · TB4 7dirs/0passed · 失败top1=网关429额度(14:27已恢复)
+  📦 体积：TASK=28KB / MEMORY=25KB(本轮无归档)
+  🔍 cline专项小结: SWE-bench real 29/63(46.0%↑) · 适配器正常(14:31/14:33产6490B/2415B真实patch) · empty 34(100%=网关429 infra) · 空patch根因=429非resume(resume修复生效) · 报告R1764已交付 · TB4 7路/0passed(verifier infra) · 失败top1=网关429(14:27已恢复HTTP200)
 ```
 
 > 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
@@ -19,6 +19,7 @@ ERROR_COUNT:  0
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 
 ### 本唤醒流水
+> [14:33] R1764 监控轮+cline专项报告R1764交付(网关恢复确认):①CPU/MEM PASS(load46/224·harness进程均<1%CPU·无失控进程>80核·最高CPU=pretrain线lmeval8.67核非本线) ②体积:TASK=28KB/MEMORY=25KB(均≤32KB,无需归档) ③硬盘:/data 5.8T(18%used) ④git pull:up to date ⑤research日报2026-11-07:无harness/cline线相关建议(忽略) ⑥网关实测HTTP200(0.93s·14:27恢复确认·dummy key 401=预期) ⑦cline专项报告R1764交付(8.5KB·reports/):核心=网关恢复→cline真实patch复产(14:31 6490B/14:33 2415B两real)·C1复算命令·C2空patch100%=429infra·C3 resume修复生效空patch根因=429非bug·C4心跳·C5差距=429infra非能力+可检验假设(24h内real%升至70%+) ⑧7路SWE-bench predict全alive且progress:cline63/29real(46%)·opencode88/72(81.8%)·hermes121/78(64.5%)·deepseek42/25(59.5%)·pi46/20(43.5%)·claude-code106/19(17.9%)·codex101/1(1%=429infra) ⑨TB4 7路运行中verifier仍0passed(overlay-network-host仅agent env非verifier) ⑩未完成指令:有(§22:4x 7路全量交付+§10:10 cline专项)⇒WAITING:0
 > [13:42] R1756 监控轮+cline专项报告R1747交付:①CPU/MEM PASS(load42/224·1.2Ti avail·TB4多路进程占0.1-0.2%CPU·无失控进程>80核) ②硬盘检查:/data剩余5.8T(18%used)·空间充足 ③git pull:无变更 ④research日报2026-11-07:无harness/cline线相关可执行建议 ⑤cline专项报告R1747交付(7.7KB)，包含C1-C5全部要求:real/empty统计、失败分类、空patch根因分析、7路对比、差距来源 ⑥cline专项统计更新:91个SWE-bench样本·real patch27个(29.7%)·empty patch64个(70.3%)·全部为空为网关额度耗尽导致·无能力失败·平均耗时392s ⑦TB4 7路运行正常 ⑧网关返回401，额度未恢复 ⑨未完成指令:有⇒WAITING:0
 > [13:48] R1757 监控轮:①CPU/MEM PASS(load42/224·1.2Ti avail·无失控进程>80核) ②体积检查:TASK=28KB / MEMORY=21KB(均≤32KB,无需归档) ③硬盘检查:/data剩余5.8T(18%used)·空间充足 ④git pull:无变更 ⑤research日报2026-11-07:无harness/cline线相关可执行建议 ⑥7路predict进程存活正常 ⑦网关仍返回401额度未恢复 ⑧未完成指令:有⇒WAITING:0
 > [10:10] R1758 监控轮:①CPU/MEM PASS(load38/224·1.2Ti avail·无失控进程>80核) ②体积检查:TASK=28KB / MEMORY=21KB(均≤32KB,无需归档) ③硬盘检查:/data剩余5.8T(18%used)·空间充足 ④git pull:无变更 ⑤research日报2026-11-07:无harness/cline线相关可执行建议 ⑥cline专项统计更新:91个SWE-bench glm53样本·真实patch27个(29.7%)·空patch64个(100%为网关401/429额度耗尽)·resume修复后空patch已归零 ⑦TB4多路运行正常 ⑧网关仍返回401，额度未恢复 ⑨未完成指令:有(§22:4x 7路全量交付+§10:10 cline专项)⇒WAITING:0

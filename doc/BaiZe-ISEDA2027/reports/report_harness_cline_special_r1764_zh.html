@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<title>cline 专项报告 R1764 — 网关恢复后 cline 真实 patch 复产确认</title>
+<style>
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;max-width:1100px;margin:24px auto;padding:0 20px;color:#222;line-height:1.6}
+h1{font-size:1.5em;border-bottom:2px solid #2563eb;padding-bottom:8px}
+h2{font-size:1.2em;margin-top:28px;color:#1e3a8a}
+table{border-collapse:collapse;width:100%;margin:12px 0;font-size:0.92em}
+th,td{border:1px solid #cbd5e1;padding:6px 9px;text-align:center}
+th{background:#eff6ff;font-weight:600}
+.ok{color:#16a34a;font-weight:700}.warn{color:#d97706;font-weight:700}.bad{color:#dc2626;font-weight:700}
+code{background:#f1f5f9;padding:1px 5px;border-radius:3px;font-size:0.88em}
+.note{background:#fefce8;border-left:4px solid #ca8a04;padding:10px 14px;margin:12px 0}
+.recov{background:#f0fdf4;border-left:4px solid #16a34a;padding:10px 14px;margin:12px 0}
+.infra{background:#fef2f2;border-left:4px solid #dc2626;padding:10px 14px;margin:12px 0}
+small{color:#64748b}
+</style></head><body>
+<h1>cline 专项报告 · R1764（增量更新 · 2026-11-07 14:33）</h1>
+<p><small>归属线：harness（BAIZE_HARNESS_TASK）｜报告目录：<code>reports/</code>｜单文件自包含、0 外链、0 script｜命名纪律：正文一律写 <code>cline</code>，代码路径中的 <code>cline_patched</code> 为真实标识符不改。</small></p>
+<div class="recov">
+<b>本轮核心结论：网关已恢复（HTTP 200）→ cline 真实 patch 复产。</b><br>
+14:27 网关从 401/429 恢复为 <b>HTTP 200</b>（实测 curl 0.93s 返回正常 completion）。
+cline 在 14:31、14:33 连续产出两个真实 patch（6490B、2415B），与网关恢复时间点吻合 ——
+<b>空 patch 的根因是网关额度耗尽（infra），不是 resume 判定 bug，也不是能力问题</b>。
+R1733 的 resume 修复（<code>is_predicted</code> 检查 <code>model_patch</code> 非空）持续生效：真实 patch 被正确保留、空 patch 被正确重跑。
+</div>
+<h2>C1 · cline 独立统计（real / empty / 进度）</h2>
+<p>复算命令（可从 prediction JSON 复算）：</p>
+<pre><code>cd doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full
+python3 -c "
+import json,glob
+f=glob.glob('predictions_glm53/cline-patched__*.json')
+real=[x for x in f if (lambda d:(d[0] if isinstance(d,list) else d).get('model_patch','').strip())(json.load(open(x)))]
+print(f'files={len(f)} real={len(real)} empty={len(f)-len(real)}')
+"</code></pre>
+<table>
+<tr><th>指标</th><th>R1763（14:26）</th><th>R1764（14:33）</th><th>变化</th></tr>
+<tr><th>prediction 文件数</th><td>91</td><td>63</td><td class="warn">−28（cleanup 删空 patch 待重跑）</td></tr>
+<tr><th>真实 patch</th><td>27</td><td>29</td><td class="ok">+2（14:31/14:33 新产）</td></tr>
+<tr><th>空 patch</th><td>64</td><td>34</td><td class="ok">−30（cleanup + 重跑填充）</td></tr>
+<tr><th>real %</th><td>29.7%</td><td>46.0%</td><td class="ok">+16.3pp</td></tr>
+</table>
+<p><small>注：文件数下降是<b>预期行为</b>——R1739 的 cleanup_empty_patches.py --delete 删除了 423 个空 patch 以便重跑；网关恢复后这些被删的空位会重新产出真实 patch，real % 会持续上升。分母会先降后升，最终收敛到 500。</small></p>
+<h2>C2 · cline 失败原因分类（34 个空 patch）</h2>
+<table>
+<tr><th>类别</th><th>数量</th><th>占比</th><th>证据</th></tr>
+<tr><th>网关额度 429/401（infra）</th><td>34</td><td>100%</td><td>125B 空文件，mtime 集中在 13:52–14:22（网关 401 时段）</td></tr>
+<tr><th>适配器故障</th><td>0</td><td>0%</td><td>14:31/14:33 适配器正常产出 6490B/2415B 真实 patch</td></tr>
+<tr><th>上游 5xx</th><td>0</td><td>0%</td><td>—</td></tr>
+<tr><th>能力（真实做错）</th><td>0</td><td>0%</td><td>空 patch ≠ 能力失败；能力差需 eval pass/fail 判定（待 eval）</td></tr>
+<tr><th>超时</th><td>0</td><td>0%</td><td>—</td></tr>
+<tr><th>格式不可解析</th><td>0</td><td>0%</td><td>—</td></tr>
+<tr><th>环境依赖</th><td>0</td><td>0%</td><td>—</td></tr>
+</table>
+<p><b>分类占比之和 = 100%</b>。Top1 失败 = 网关额度耗尽（已恢复）。</p>
+<div class="note"><b>归因红线遵守</b>：网关 429 已如实归为 infra，<b>未</b>写成"模型能力"结论；能力差需 eval pass/fail 区分，本轮尚无 eval 数据，不掩盖、不臆断。</div>
+<h2>C3 · resume 修复后空 patch 是否归零</h2>
+<table>
+<tr><th>检查项</th><th>结果</th></tr>
+<tr><th>R1733 resume 修复</th><td class="ok">生效（is_predicted 检查 model_patch 非空）</td></tr>
+<tr><th>空 patch 是否归零</th><td class="warn">未归零（34 个），但根因 = 网关 429（infra），非 resume bug</td></tr>
+<tr><th>网关恢复后预测</th><td class="ok">已开始复产（14:31/14:33 两个真实 patch）；预期空 patch 持续下降</td></tr>
+</table>
+<p><b>根因证据</b>：34 个空 patch 文件均为 125B、mtime 集中在 13:52–14:22（网关返回 401 的时段）；网关 14:27 恢复后，14:31/14:33 立即产出真实 patch（6490B/2415B）—— 时间因果链清晰。</p>
+<h2>7 路 SWE-bench Verified glm53 进度矩阵（14:33）</h2>
+<table>
+<tr><th>路</th><th>文件数 /500</th><th>real</th><th>empty</th><th>real%</th><th>predict 进程</th></tr>
+<tr><th>cline</th><td>63</td><td>29</td><td>34</td><td>46.0%</td><td class="ok">alive（django-11848，39s）</td></tr>
+<tr><th>opencode</th><td>88</td><td>72</td><td>16</td><td>81.8%</td><td class="ok">alive（django-12754，255s）</td></tr>
+<tr><th>hermes</th><td>121</td><td>78</td><td>43</td><td>64.5%</td><td class="ok">alive（django-13569，194s）</td></tr>
+<tr><th>deepseek</th><td>42</td><td>25</td><td>17</td><td>59.5%</td><td class="ok">alive（django-11276，294s）</td></tr>
+<tr><th>pi</th><td>46</td><td>20</td><td>26</td><td>43.5%</td><td class="ok">alive（django-11333，40s）</td></tr>
+<tr><th>claude-code</th><td>106</td><td>19</td><td>87</td><td>17.9%</td><td class="ok">alive（django-13315，509s）</td></tr>
+<tr><th>codex</th><td>101</td><td>1</td><td>100</td><td class="bad">1.0%</td><td class="ok">alive（django-13158，564s）</td></tr>
+</table>
+<div class="infra">
+<b>codex 1.0% 诊断（infra，非能力）</b>：codex 101 文件中 100 个为空 patch。codex 走 gw_proxy 9092 转发，其适配器对网关 429 的容错最弱——网关额度耗尽期间 codex 几乎全部空转。网关恢复后 codex 仍在跑 django-13158（564s），需观察后续是否复产。<b>归因红线</b>：codex 低分 = 429 infra，<b>未</b>写成能力结论。
+</div>
+<h2>C5 · cline 与 hermes/opencode 的差距来源</h2>
+<table>
+<tr><th>对比</th><th>real%</th><th>差距来源</th><th>可检验假设</th></tr>
+<tr><th>opencode vs cline</th><td>81.8% vs 46.0%</td><td>① 网关 429 对 cline 影响更大（cline 直连 gateway，429 直接致空 patch；opencode 走 gw_proxy 9092 有重试缓冲）② cline 分母含大量待重跑空位</td><td>网关持续 200 后，cline real% 应持续上升趋近 opencode；若仍显著低 → 评估适配器重试策略差异</td></tr>
+<tr><th>hermes vs cline</th><td>64.5% vs 46.0%</td><td>同上（hermes 走 gw_proxy 9092）</td><td>同上</td></tr>
+</table>
+<p><b>下一步实验</b>：网关持续 200 后，监控 cline real% 变化曲线。若 24h 内 cline real% 升至 70%+ → 假设成立（差距主因 = 429 infra）；若仍 &lt;50% → 检查 cline 适配器对 429 的重试/退避策略 vs opencode/hermes。</p>
+<h2>自检与护栏</h2>
+<table>
+<tr><th>项</th><th>状态</th></tr>
+<tr><th>CPU（单进程 &gt;80 核则 kill）</th><td class="ok">PASS（load 46/224，harness 进程均 &lt;1% CPU；最高 CPU 为 pretrain 线 lmeval=8.67 核，非本线）</td></tr>
+<tr><th>内存</th><td class="ok">PASS（无失控进程）</td></tr>
+<tr><th>硬盘 /data</th><td class="ok">5.8T avail（18% used）</td></tr>
+<tr><th>网关</th><td class="ok">HTTP 200（14:27 恢复）</td></tr>
+<tr><th>TASK/MEMORY 体积</th><td class="ok">28KB / 25KB（均 ≤32KB）</td></tr>
+<tr><th>命名纪律</th><td class="ok">正文写 cline，未出现 cline-patched 变体</td></tr>
+<tr><th>结果 JSON 入库</th><td class="ok">未入库</td></tr>
+</table>
+<p><small>报告生成：2026-11-07 14:33｜harness 线 R1764｜上一版 R1763（14:26）｜数据可由本报告所附复算命令重现。</small></p>
+</body></html>
