@@ -1213,7 +1213,7 @@ sr426.messages.json					parked		2026-11-07 08:07	#343 peek: netlist 122+hspice 6
 us0hd.messages.json					parked		2026-11-07 08:07	#343 peek: netlist 23 thin, not produce
 bw2u5.messages.json					parked		2026-11-07 08:07	#343 peek: netlist 5 only, too thin
 3lvd6.messages.json					parked		2026-11-07 08:07	#343 peek: dup of sr426 (same jackliu netlist/hspice/calibre)
-1793792373749_l5r0u					case	EDA-Eval-DesignFlow-IOBufParamTune-001	2026-11-07 08:47	
+1793792373749_l5r0u					case	EDA-Eval-DesignFlow-IOBufTune-001	2026-11-07 18:40	
 1789524301977_lp4xw.messages.json	clarawang	hfeg0pgn045	77	analog_context	case	EDA-Eval-DesignFlow-FineSimDeckReport-001	2026-11-07 09:21	
 1786586471140_pepxy.messages.json					parked		2026-11-07 09:21	peeked #345, weak/non-D-domain/debug/skill-invoke
 1786705250400_92ykp.messages.json					parked		2026-11-07 09:21	peeked #345, weak/non-D-domain/debug/skill-invoke
@@ -1270,4 +1270,4 @@ tjzn5					parked		2026-11-07 12:29	env Q&A + skill-creator usage (#352 peek weak
 1792205134941_5hbdw	hengbow	hfeg0pgn045	144	schematic_netlist	case	EDA-Eval-DesignFlow-SaTransistorExtract-001	2026-11-07 16:06	
 1790219126172_4qpyk	yanxvwei	10.129.32.85	141	waveform	case	EDA-Eval-DesignFlow-ShiftIntervalReport-001	2026-11-07 16:31	
 1790127432240_oh3te.messages.json	miccao	10.129.32.47	202	schematic_netlist	case	EDA-Eval-DesignFlow-AutocellPlaceGen-001	2026-11-07 16:58	
-1792668123134_0oeb7	colinxu	10.129.2.18	124	schematic_netlist	claimed		2026-11-07 18:27	
+1792668123134_0oeb7	colinxu	10.129.2.18	124	schematic_netlist	case	EDA-Eval-DesignFlow-DelApiProbePlan-001	2026-11-07 18:37	
