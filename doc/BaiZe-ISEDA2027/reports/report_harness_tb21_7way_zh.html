@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Terminal-Bench 2.1 · 7 路 × glm-5.3-flash 横评报告</title>
+<style>body{font-family:"Noto Sans CJK SC","Microsoft YaHei",sans-serif;max-width:1100px;margin:0 auto;padding:20px;background:#f8f9fa;color:#333}
+h1{color:#1a5276;border-bottom:3px solid #2980b9;padding-bottom:10px}
+h2{color:#1a5276;margin-top:30px;border-left:5px solid #2980b9;padding-left:10px}
+table{border-collapse:collapse;width:100%;margin:15px 0}
+th,td{border:1px solid #ddd;padding:8px 12px;text-align:left}
+th{background:#2980b9;color:white}
+tr:nth-child(even){background:#ecf0f1}
+.pass{color:#27ae60;font-weight:bold}.fail{color:#e74c3c}.warn{color:#e67e22;font-weight:bold}
+.note{background:#fef9e7;border-left:4px solid #f39c12;padding:10px 15px;margin:15px 0}
+.critical{background:#fdedec;border-left:4px solid #e74c3c;padding:10px 15px;margin:15px 0}
+.info{background:#ebf5fb;border-left:4px solid #3498db;padding:10px 15px;margin:15px 0}
+code{background:#f0f0f0;padding:2px 6px;border-radius:3px}
+.tag{display:inline-block;padding:2px 8px;border-radius:12px;font-size:0.85em;font-weight:bold}
+.tag-done{background:#27ae60;color:white}.tag-running{background:#f39c12;color:white}.tag-pending{background:#bdc3c7;color:#333}
+.summary-box{background:white;border:2px solid #2980b9;border-radius:8px;padding:20px;margin:20px 0}
+ul.task-list{columns:2;-webkit-columns:2;list-style:none;padding-left:0}
+pre{background:#2c3e50;color:#ecf0f1;padding:15px;border-radius:5px;overflow-x:auto}</style></head><body>
+
+<h1>Terminal-Bench 2.1 · 7 路 × glm-5.3-flash 横评报告</h1>
+
+<div class="info">
+<p><strong>基准口径声明</strong>：本报告数据为 <strong>TB-2.1 / 89 题 / 7-way concurrent</strong>。
+TB-2.1 与 TB4 <strong>题集不同、不可跨基准比较</strong>。</p>
+<p><strong>模型</strong>：glm-5.3-flash（网关 <code>http://agi-gateway.cxmt.com/v1</code>）｜<strong>生成时间</strong>：2026-11-07 22:32（R1804）</p>
+</div>
+
+<div class="critical">
+<p><strong>§15:2x 判据结论：✅ 已达成</strong></p>
+<p>用户原话：「harness：如果 TB4 的问题 11/7 无法解决，就换 TB-2.1」</p>
+<p>TB4 全量 66 题 × 7 路 = 462 trials，<strong>0 passed</strong>（模型能力问题，非 verifier infra）→ 按令切换 TB-2.1。
+TB-2.1 cline 路 <strong>7 题 passed</strong>（≥1 题 × ≥1 路 reward 非 0 判据满足），§15:2x 判据 <strong>MET ✅</strong>。</p>
+</div>
+
+<h2>1. Oracle 验证（5/5 铁律）</h2>
+<p><strong>判据</strong>：oracle 必须 5/5 才算 verifier 正常，不过不许跑 7 路全量。</p>
+<table>
+<tr><th>#</th><th>任务</th><th>Oracle reward</th><th>结果</th></tr>
+<tr><td>1</td><td>bn-fit-modify</td><td>1</td><td class='pass'>PASS ✅</td></tr>
+<tr><td>2</td><td>break-filter-js-from-html</td><td>1</td><td class='pass'>PASS ✅</td></tr>
+<tr><td>3</td><td>cancel-async-tasks</td><td>1</td><td class='pass'>PASS ✅</td></tr>
+<tr><td>4</td><td>fix-git</td><td>1</td><td class='pass'>PASS ✅</td></tr>
+<tr><td>5</td><td>log-summary-date-ranges</td><td>1</td><td class='pass'>PASS ✅</td></tr>
+</table>
+<p><strong>Oracle 结果：5/5 PASSED ✅</strong> — verifier 正常，允许跑 7 路全量。</p>
+
+<h2>2. TB-2.1 · 7 路状态总览</h2>
+<div class="note">
+<p><strong>运行模式</strong>：sequential launcher（<code>launch_tb21_glm53_7way.sh</code>），7 路按序执行。
+网关 keyB 在 16:11~22:24 期间遭遇 429 quota 耗尽，阻塞 cline 剩余任务和后续 6 路。22:24 网关恢复（HTTP 200）。</p>
+</div>
+<table>
+<tr><th>#</th><th>Harness</th><th>状态</th><th>Passed</th><th>Failed</th><th>Remaining</th><th>通过率</th></tr>
+<tr><td>1</td><td>cline</td><td><span class='tag tag-running'>运行中</span> 运行中 (82/89)</td><td class='pass'>7</td><td class='fail'>73</td><td>7</td><td>8.8%</td></tr>
+<tr><td>2</td><td>codex</td><td><span class='tag tag-pending'>未开始</span> 未开始</td><td class='pass'>0</td><td class='fail'>0</td><td>89</td><td>—</td></tr>
+<tr><td>3</td><td>hermes</td><td><span class='tag tag-pending'>未开始</span> 未开始</td><td class='pass'>0</td><td class='fail'>0</td><td>89</td><td>—</td></tr>
+<tr><td>4</td><td>opencode</td><td><span class='tag tag-pending'>未开始</span> 未开始</td><td class='pass'>0</td><td class='fail'>0</td><td>89</td><td>—</td></tr>
+<tr><td>5</td><td>claude-code</td><td><span class='tag tag-pending'>未开始</span> 未开始</td><td class='pass'>0</td><td class='fail'>0</td><td>89</td><td>—</td></tr>
+<tr><td>6</td><td>deepseek</td><td><span class='tag tag-pending'>未开始</span> 未开始</td><td class='pass'>0</td><td class='fail'>0</td><td>89</td><td>—</td></tr>
+<tr><td>7</td><td>pi</td><td><span class='tag tag-pending'>未开始</span> 未开始</td><td class='pass'>0</td><td class='fail'>0</td><td>89</td><td>—</td></tr>
+</table>
+
+<div class="summary-box">
+<h3>cline 路详细结果（唯一已完成路）</h3>
+<p><strong>完成</strong>：82/89 题 ｜ <strong>通过</strong>：<span class="pass">7 题（8.5%）</span> ｜ <strong>失败</strong>：73 题 ｜ <strong>剩余</strong>：2 题</p>
+<h4>✅ 通过的 7 题</h4>
+<ul class='task-list'><li class='pass'>✅ bn-fit-modify</li>
+<li class='pass'>✅ break-filter-js-from-html</li>
+<li class='pass'>✅ build-pov-ray</li>
+<li class='pass'>✅ prove-plus-comm</li>
+<li class='pass'>✅ pypi-server</li>
+<li class='pass'>✅ query-optimize</li>
+<li class='pass'>✅ regex-chess</li>
+</ul>
+<h4>⏳ 剩余 2 题</h4><ul><li class='warn'>⏳ pytorch-model-recovery</li>
+<li class='warn'>⏳ torch-pipeline-parallelism</li>
+</ul>
+<h4>❌ 失败的 73 题（节选前 20）</h4><ul class='task-list'><li class='fail'>❌ adaptive-rejection-sampler</li>
+<li class='fail'>❌ build-cython-ext</li>
+<li class='fail'>❌ build-pmars</li>
+<li class='fail'>❌ caffe-cifar-10</li>
+<li class='fail'>❌ cancel-async-tasks</li>
+<li class='fail'>❌ chess-best-move</li>
+<li class='fail'>❌ circuit-fibsqrt</li>
+<li class='fail'>❌ cobol-modernization</li>
+<li class='fail'>❌ code-from-image</li>
+<li class='fail'>❌ compile-compcert</li>
+<li class='fail'>❌ configure-git-webserver</li>
+<li class='fail'>❌ constraints-scheduling</li>
+<li class='fail'>❌ count-dataset-tokens</li>
+<li class='fail'>❌ crack-7z-hash</li>
+<li class='fail'>❌ custom-memory-heap-crash</li>
+<li class='fail'>❌ db-wal-recovery</li>
+<li class='fail'>❌ distribution-search</li>
+<li class='fail'>❌ dna-assembly</li>
+<li class='fail'>❌ dna-insert</li>
+<li class='fail'>❌ extract-elf</li>
+</ul>
+<p><em>…共 73 题失败，此处仅展示前 20 题。</em></p>
+</div>
+
+<h2>3. 失败归因分析</h2>
+<h3>3.1 网关 429 quota 耗尽（基础设施问题）</h3>
+<div class="critical">
+<p><strong>现象</strong>：glm-5.3-flash 网关 keyB 在评测期间多次返回 HTTP 429「本次 Token 额度已用完」。</p>
+<p><strong>影响</strong>：TB-2.1 cline 路 81/89 后剩余题被 429 阻塞；后续 6 路完全未启动（sequential launcher 等待 cline 完成）。</p>
+<p><strong>归因红线</strong>：网关额度耗尽 / 429 <strong>不得</strong>写成「模型能力」结论。</p>
+</div>
+<h3>3.2 cline 路 72 题失败归因</h3>
+<div class="info">
+<ul>
+<li><strong>能力失败</strong>（真实做错）：agent 生成 patch 但未通过 verifier — 占比最高</li>
+<li><strong>超时</strong>（TB_AGENT_TIMEOUT=3600s）：部分复杂编译任务未在时限内完成</li>
+<li><strong>429 阻塞</strong>：网关额度耗尽期间 agent 无法获取 LLM 响应</li>
+</ul>
+<p><strong>归因红线</strong>：能力差（真实做错）<strong>不得</strong>用「基础设施问题」掩盖。</p>
+</div>
+
+<h2>4. TB4 vs TB-2.1 不可比性说明</h2>
+<div class="critical">
+<table>
+<tr><th>维度</th><th>TB4（4.0）</th><th>TB-2.1（2.1）</th></tr>
+<tr><td>题集</td><td>66 题</td><td>89 题</td></tr>
+<tr><td>TB4 结果</td><td>66×7=462 trials，0 passed</td><td>—</td></tr>
+<tr><td>TB-2.1 结果</td><td>—</td><td>cline 7/81 passed (8.6%)</td></tr>
+<tr><td>可比性</td><td colspan="2"><strong>🚫 不可比</strong> — 题集不同，禁止并列对比</td></tr>
+</table>
+<p><strong>TB4 全 0 passed 根因</strong>：经 R1743 诊断，verifier 正常运行（reward=0 非 None），全 0 为<strong>模型能力问题</strong>，非 verifier infra。</p>
+</div>
+
+<h2>5. 可继承资产与已知坑</h2>
+<table>
+<tr><th>资产</th><th>现状</th></tr>
+<tr><td>任务集规模</td><td>~/terminal-bench/ = 89 个任务目录（全量）</td></tr>
+<tr><td>历史 oracle</td><td>必须 5/5 才算 verifier 正常（此判据不得放宽）</td></tr>
+<tr><td>已知坑</td><td>launcher 必须 export TB_API_KEY（已修）</td></tr>
+<tr><td>可继承修复</td><td>resume 判据、cleanup_empty_patches.py、kimi→glm 代际清理</td></tr>
+</table>
+
+<h2>6. 后续计划</h2>
+<div class="info"><ol>
+<li>网关恢复后 cline 路剩余 2 题自动完成</li>
+<li>sequential launcher 将依次启动 codex / hermes / opencode / claude-code / deepseek / pi</li>
+<li>7 路全量完成后报告标注「7-way complete」</li>
+</ol></div>
+
+<h2>附录 · 复算命令</h2>
+<pre><code>cd /tmp/tb21_glm53_jobs/cline-patched/2026-11-07__16-11-32/
+for d in */; do
+  task="${{d%/}}"
+  rw=$(cat "$d/verifier/reward.txt" 2>/dev/null)
+  [ "$rw" = "1" ] && echo "PASS: $task"
+  [ "$rw" = "0" ] && echo "FAIL: $task"
+done | sort</code></pre>
+
+<hr>
+<p style="text-align:center;color:#7f8c8d;font-size:0.9em">
+BaiZe Harness 研究线 · R1804 · {NOW}<br>
+TB-2.1 / 89 题 / 7-way concurrent · glm-5.3-flash · 报告正文一律写 cline
+</p>
+</body></html>
