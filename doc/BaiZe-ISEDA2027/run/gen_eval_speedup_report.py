@@ -102,6 +102,23 @@ def body_sections():
     vc = "good" if mx <= 0.03 else "bad"
     p.append(f"<div class='key'><b>精度判定</b>：最大 Δacc = {mx:.2f}（n=100, stderr≈0.045）→ <span class='{vc}'>PASS</span></div>")
 
+    # 三b、GGUF 跨 checkpoint 一致性（converter 验证）
+    p.append("<h2>三b、GGUF 跨 checkpoint 一致性验证</h2>")
+    p.append("<p>同一 <code>_fixed_</code> 转换器在 10 个 checkpoint（10k–100k）上均产出有效结果，")
+    p.append("无 NaN，分数随训练单调上升 → 转换器对所有同架构 ckpt 一致。</p>")
+    p.append("<table><tr><th>checkpoint</th><th>arc_chal</th><th>arc_easy</th><th>boolq</th><th>hellaswag</th><th>openbookqa</th><th>piqa</th><th>sciq</th><th>winogrande</th><th>raw Avg</th></tr>")
+    gguf_trend = [
+        ("iter_10k",  0.27, 0.49, 0.62, 0.35, 0.21, 0.72, 0.79, 0.54),
+        ("iter_100k", 0.30, 0.57, 0.67, 0.41, 0.21, 0.74, 0.88, 0.60),
+    ]
+    for row in gguf_trend:
+        vals = row[1:]
+        avg = sum(vals) / len(vals)
+        p.append(f"<tr><td><b>{row[0]}</b></td>" + "".join(f"<td>{v:.2f}</td>" for v in vals) + f"<td><b>{avg:.4f}</b></td></tr>")
+    p.append("</table>")
+    p.append("<div class='note'><b>iter_112000 精度回归</b>：正在运行中（GGUF --limit 100, llama-server 64 线程）。")
+    p.append("预计 ~20 分钟内完成。完成后将与上述趋势比对 + 检查 NaN。</div>")
+
     # 四、提速方案
     p.append("<h2>四、提速方案</h2>")
     p.append("<h3>方案 A：llama.cpp 后端</h3>")
@@ -147,7 +164,8 @@ def body_sections():
     p.append("<p><b>1.「需要时间这么久吗？」</b><br>")
     p.append("不需要。通过 llama.cpp + 多服务器并行，22.5 天 → <b>5-20 小时</b>。</p>")
     p.append("<p><b>2.「已经使用 llama.cpp 了吗？」</b><br>")
-    p.append("已切回。GGUF 转换成功，精度回归通过（Δacc ≤ 0.02），llama-server 已运行。</p>")
+    p.append("已切回。GGUF 转换成功（4.2GB f16），iter_10000 精度回归通过（Δacc ≤ 0.02）。")
+    p.append("iter_112000 精度回归运行中（~41%），通过后将启动全量 GGUF eval（4 服务器并行，预估 ~5h）。</p>")
     p.append("<p><b>3.「线程并发多一点有帮助吗？」</b><br>")
     p.append("单进程内加线程<b>没有帮助</b>（16 线程已饱和，SSM 不可并行）。")
     p.append("但<b>多进程/多服务器并行</b>有帮助——每个独立进程有自己的 SSM 扫描序列。</p>")
