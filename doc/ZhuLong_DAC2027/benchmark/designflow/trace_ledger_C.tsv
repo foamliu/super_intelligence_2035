@@ -337,3 +337,4 @@
 1793769280754_huszl	leozhao	hfeg0plg36	350	layout_aether	case	EDA-Eval-DesignFlow-CentroidPlaceAudit-001	2026-11-07 11:04	
 1791851758041_0d17g	xxchen	hfeg0pkn002	393	layout_aether	case	EDA-Eval-DesignFlow-AntPatternConfigAudit-001	2026-11-07 12:04	
 1791941540422_1tao4	xxchen	hfeg0pkn002	294	physical_verify	case	EDA-Eval-DesignFlow-MaxAreaRatioSidewallSolver-001	2026-11-07 12:23	
+1792057192352_iz828	shuoran	hfeg0pkn005	116	layout_aether	case	EDA-Eval-DesignFlow-HierJumpToolbarGen-001	2026-11-07 12:45	domain-corrected-r204: was layout_virtuoso at claim, task is Aether/pyAether GUI toolbar customization (user "在aether中添加按钮", APIs ae.geCreateAction/geCreateToolbar/aeOpenDesign) -> layout_aether
