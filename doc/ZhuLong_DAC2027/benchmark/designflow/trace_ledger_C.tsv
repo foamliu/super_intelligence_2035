@@ -360,3 +360,4 @@
 1789622204418_k1qtw	xinqiaoz	hfeg0pkn002	352	physical_verify	parked		2026-11-08 00:53	PDK_QA sync_to_stable commit sync workflow; same pdkQaSystem codebase; dev/sync not standalone deliverable; pool saturation
 1791965422114_8lf0t	xinqiaoz	hfeg0pkn002	334	physical_verify	parked		2026-11-08 00:53	xinqiaoz PDK_QA calibre session; same pdkQaSystem codebase; pool saturation
 1793581640305_t2r9f	xinqiaoz	hfeg0pkn002	457	physical_verify	parked		2026-11-08 00:53	xinqiaoz PDK_QA calibre session (13 calibre uses); same pdkQaSystem codebase; pool saturation
+1790393143429_ok2y7	kenwang	hfeg0pkn004	140	layout_virtuoso	case	EDA-Eval-DesignFlow-DrcQaWidthTypeGeom-001	2026-11-08 01:50	
