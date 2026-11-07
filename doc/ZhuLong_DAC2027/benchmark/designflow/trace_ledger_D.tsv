@@ -1174,3 +1174,42 @@ wl9i4					parked		2026-11-05 22:49	交互shell驱动+Q&A n752大
 1791429687866_2igp1					parked		2026-11-07 07:41	#342 peek: Qt C++ mainwindow.cpp/.ui GUI modification, wrong domain (desktop app not EDA)
 1789887336293_97g9m					parked		2026-11-07 07:43	#342 peek: fsdb signal time-range analysis, overlaps WvFsdbReaderV2Gen-001, binary fsdb non-portable, weak
 1789730312848_hpd7c					parked		2026-11-07 07:43	#342 deepread: totem_sc_signal_em tool update (vague 更新成一下版本), multi-file refactor, ambiguous intent, weak
+1793792373749_l5r0u.messages.json	elianaz	hfeg0pkn002	218	analog_context	claimed		2026-11-07 08:05	
+56jqu.messages.json					parked		2026-11-07 08:07	#343 peek: weak/non-produce
+1fgo2.messages.json					parked		2026-11-07 08:07	#343 peek: weak/non-produce
+31lou.messages.json					parked		2026-11-07 08:07	#343 peek: innovus-dominant IO regression workflow (digital verif ops), not D produce
+iih6g.messages.json					parked		2026-11-07 08:07	#343 peek: pyAether layout dbCreatePath (aether GUI skill), not D produce
+wp528.messages.json					parked		2026-11-07 08:07	#343 peek: calibre-dominant + pyAether (physical_verify/aether), not D produce
+wvhcg.messages.json					parked		2026-11-07 08:07	#343 peek: innovus+schematic mixed (PnR), not clean D produce
+7bg20.messages.json					parked		2026-11-07 08:07	#343 peek: synthesis-dominant (digital logic synth), not D
+uks8u.messages.json					parked		2026-11-07 08:07	#343 peek: pyAether+calibre small (aether GUI), not D produce
+l5r0u.messages.json					parked		2026-11-07 08:07	#343 peek: CLAIMED #343 A-faithful IO buffer param tune (analog_context)
+c084j.messages.json					parked		2026-11-07 08:07	#343 peek: hspice 38 small, caozhang dup of 7j1bw
+7j1bw.messages.json					parked		2026-11-07 08:07	#343 peek: hspice 38 small, dup of c084j
+t8yss.messages.json					parked		2026-11-07 08:07	#343 peek: synthesis+netlist (digital logic synth), not D
+rl62o.messages.json					parked		2026-11-07 08:07	#343 peek: netlist 13 only, too thin
+gf2ud.messages.json					parked		2026-11-07 08:07	#343 peek: netlist 2 only, too thin
+hd2s5.messages.json					parked		2026-11-07 08:07	#343 peek: netlist 169 only no hspice, thin
+d7v3k.messages.json					parked		2026-11-07 08:07	#343 peek: pyAether+dbGet+cellview (aether GUI schematic browse), not produce
+ytxf3.messages.json					parked		2026-11-07 08:07	#343 peek: calibre-dominant (physical_verify), not D
+2m2ja.messages.json					parked		2026-11-07 08:07	#343 peek: schematic+pyAether+dbCreateInst (aether layout create), not portable D produce
+wk3wd.messages.json					parked		2026-11-07 08:07	#343 peek: netlist 13 only, too thin
+2xkge.messages.json					parked		2026-11-07 08:07	#343 peek: synthesis+netlist (digital synth), not D
+gqt57.messages.json					parked		2026-11-07 08:07	#343 peek: pyAether 2 only, too thin
+xt45f.messages.json					parked		2026-11-07 08:07	#343 peek: innovus-dominant (PnR), not D
+pewjz.messages.json					parked		2026-11-07 08:07	#343 peek: netlist 14 thin, not produce
+lq00u.messages.json					parked		2026-11-07 08:07	#343 peek: netlist 72 small, not clear produce
+b9bop.messages.json					parked		2026-11-07 08:07	#343 peek: pyAether+innovus (aether layout + PnR), not portable D
+genvz.messages.json					parked		2026-11-07 08:07	#343 peek: netlist+schematic+calibre mixed (LVS/physical_verify), not clean D produce
+5m5ut.messages.json					parked		2026-11-07 08:07	#343 peek: calibre-dominant (physical_verify), not D
+o04f1.messages.json					parked		2026-11-07 08:07	#343 peek: virtuoso+skill (aether GUI layout), not D produce
+794ce.messages.json					parked		2026-11-07 08:07	#343 peek: calibre-dominant (physical_verify), not D
+uiap3.messages.json					parked		2026-11-07 08:07	#343 peek: netlist 126 + synthesis 6 (digital netlist ops), not D produce
+1f7f1.messages.json					parked		2026-11-07 08:07	#343 peek: netlist 185 only no hspice, thin Q&A
+7f3c4.messages.json					parked		2026-11-07 08:07	#343 peek: pyAether+dbGet+cellview (aether GUI), not D produce
+wp6o1.messages.json					parked		2026-11-07 08:07	#343 peek: calibre-dominant (physical_verify), not D
+92cla.messages.json					parked		2026-11-07 08:07	#343 peek: calibre-dominant (physical_verify), not D
+sr426.messages.json					parked		2026-11-07 08:07	#343 peek: netlist 122+hspice 60+calibre 30 (mixed, calibre heavy), borderline
+us0hd.messages.json					parked		2026-11-07 08:07	#343 peek: netlist 23 thin, not produce
+bw2u5.messages.json					parked		2026-11-07 08:07	#343 peek: netlist 5 only, too thin
+3lvd6.messages.json					parked		2026-11-07 08:07	#343 peek: dup of sr426 (same jackliu netlist/hspice/calibre)
