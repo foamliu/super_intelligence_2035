@@ -2,6 +2,9 @@
 WAITING: 1
 > 🛑 **【运维通告 · 2026-11-02 19:51】S1 已由 ops 中继重启并在跑**：`bash scripts/train.sh s1 --nodes 2`，launcher pid **4163528**，从 **ckpt 58000** 续（19:55:40 起 iter **58010**→58030，7.0–7.2 s/step ≈**582K tok/s**，双机 16 卡 **98–100%**、~75GB/卡、~690W）。⇒ **GPU 不再空闲**：🚫 严禁再起任何训练/GPU 评测进程；CPU 评测必须降载：`OMP_NUM_THREADS≤8` + `nice -n 19`，**禁止 `pkill python`**。
 
+> 2026-11-07 15:12 #1580: 例行监控轮·无新运维令·S1健康(iter117080/700000@15:12,7.26-7.42s/it,~980-998TFLOP/s/GPU,GPU.29全满载95-100%/~75GB/~685W/54-63℃)·ckpt iter_0116000在盘(checkpoints/),HF导出110k/112k在盘,next iter_0118000 ETA~17:00·全量eval后台继续(PID3726478,538/73106req@4h11m,~26.7s/req稳定,868%CPU≈8.7核,10.4GB RSS,nice19,不抢S1,ETA~22天)·内存690GB/2015GB(1200GB可用)充裕·load48.9/224核·ops/inbox无新令(RUN_ID245旧令已执行)·research日报11-07无pretrain建议·git up-to-date·📦TASK=31.2KB✓/MEMORY=11.3KB✓·未完成指令:无⇒WAITING:1。
+
+
 > 2026-11-07 14:50 #1579: 例行监控轮·无新运维令·S1健康(GPU.29全满载94-100%/~75GB/~690W/55-65℃@14:49 nvidia-smi确认;SSH.29后续超时疑似瞬态负载,非S1问题)·ckpt iter_0116000在盘(同#1578,下一iter_0118000 ETA~17:00)·全量eval后台继续(PID3726478,487/73106req@3h49m,~26.8s/req稳定,868%CPU≈8.7核,11.7GB RSS,nice19,不抢S1,ETA~22.5天)·内存692GB/2015GB充裕·load47/224核·ops/inbox无新令(RUN_ID245旧令已执行)·research日报11-07无pretrain建议·⚠️L2日志尾部见error traceback但系另一实验(step2370/5611/loss0.94≠S1)非S1,S1 GPU仍94-100%·git up-to-date·📦TASK=31.2KB✓/MEMORY=11.3KB✓·未完成指令:无⇒WAITING:1。
 
 
