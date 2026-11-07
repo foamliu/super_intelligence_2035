@@ -2860,3 +2860,10 @@ std>0 组 ≥30%                  ⇒ PARAM-ISSUE
 - **v4 重启**：kill 旧 PID3750214（已跑 10min B eval 全部作废），重启 PID3181986（OMP48/nice19）。Phase0 重建 100 题（0 mismatch ✅）→ Phase1 B eval 10/100 **acc=30.0%**（与 v3 的 30.0% 完全一致 ✅，修复确认）。
 - **v3 进度**：step 30/40，avgR=0.398，ETA~21min(Phase3余)+eval。v3 仍健康运行中。
 - **教训**：跨实验复用 eval 题目时，JSON 序列化丢失 `spec` 对象 + RNG 状态不可从 JSON 恢复 → 必须用确定性函数重建（同 seed），不能从 JSON 部分恢复。
+
+**wake#865 更新**（2026-11-07 15:2x）：🔴 **v4 第二次崩溃（NameError）→ 修复并重启**。
+- **崩溃**：v4 Phase2（rollout 收集）调用 `gen_train_prompt_period(rng)` 但该函数未从 v3 导入 → `NameError`。v4 B eval 已完成（B=34.0%,846s）但结果在内存中丢失。
+- **修复**：①`from cpu_rl_v3_experiment import build_eval_set_period, gen_train_prompt_period` ②增加 B eval 结果磁盘缓存（`b_eval_results.json`），重启可跳过 14min 重跑 ③`setsid` 正确 detach 重启。
+- **v4 重启**：PID3843708（ppid=1,OMP48/nice19），Phase0 重建100题(0 mismatch✅)→Phase1 B eval 重新开始。
+- **v3**：PID2165712 Phase3 step35/40 avgR=0.033，ETA~21min(Phase3余)+Phase4(~3h)+eval。
+- **教训**：跨实验导入需验证所有被调用函数都已导入；长耗时 eval 结果应缓存防 crash 丢失。

@@ -41,7 +41,7 @@ from cpu_rl_v2_experiment import (
     build_model, rollout_episode, tokenize_for_logprob,
     mcnemar_test, bootstrap_ci_delta, evaluate_condition, _check_correct,
 )
-from cpu_rl_v3_experiment import build_eval_set_period
+from cpu_rl_v3_experiment import build_eval_set_period, gen_train_prompt_period
 
 # Seed bases (must match v3 so eval questions are identical -> valid matched pairs)
 EVAL_SEED_BASE_V3 = 990100
@@ -227,17 +227,32 @@ def main():
         tokenizer.pad_token = tokenizer.eos_token
 
     # ---- Phase 1: SFT baseline (B) ----
+    # Cache B eval results to disk so we don't re-run the 14-min eval on restart
+    b_cache_path = os.path.join(args.out_dir, "b_eval_results.json")
     res_b, acc_b = [], 0.0
     if not args.skip_sft_eval:
-        print("=" * 60, flush=True)
-        print("[Phase 1] Condition B: SFT only (baseline)", flush=True)
-        model_b = build_model(args.model_path, device, dtype, args.lora_r, args.lora_r*2, args.sft_ckpt)
-        model_b.eval()
-        res_b = evaluate_condition(model_b, tokenizer, questions, device, dtype, "B-sft",
-                                   max_turns=args.max_turns, max_new_tokens=args.max_new_tokens)
-        acc_b = sum(r["correct"] for r in res_b) / len(res_b)
-        print(f"  SFT accuracy: {acc_b:.1%}", flush=True)
-        del model_b
+        if os.path.exists(b_cache_path):
+            print("=" * 60, flush=True)
+            print("[Phase 1] Condition B: SFT only (baseline) - LOADED FROM CACHE", flush=True)
+            with open(b_cache_path) as f:
+                cached = json.load(f)
+            res_b = cached["res_b"]
+            acc_b = cached["acc_b"]
+            print(f"  SFT accuracy (cached): {acc_b:.1%}", flush=True)
+        else:
+            print("=" * 60, flush=True)
+            print("[Phase 1] Condition B: SFT only (baseline)", flush=True)
+            model_b = build_model(args.model_path, device, dtype, args.lora_r, args.lora_r*2, args.sft_ckpt)
+            model_b.eval()
+            res_b = evaluate_condition(model_b, tokenizer, questions, device, dtype, "B-sft",
+                                       max_turns=args.max_turns, max_new_tokens=args.max_new_tokens)
+            acc_b = sum(r["correct"] for r in res_b) / len(res_b)
+            print(f"  SFT accuracy: {acc_b:.1%}", flush=True)
+            # Cache results for restart resilience
+            with open(b_cache_path, 'w') as f:
+                json.dump({"res_b": res_b, "acc_b": acc_b}, f, indent=2, default=str)
+            print(f"  B eval results cached -> {b_cache_path}", flush=True)
+            del model_b
     else:
         print("\n[Phase 1] SFT eval SKIPPED - reusing v3 B=34.0%", flush=True)
         acc_b = 0.34
