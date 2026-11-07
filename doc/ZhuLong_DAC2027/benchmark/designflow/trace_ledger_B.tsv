@@ -420,3 +420,4 @@ vbxlf.messages.json	jason17w	hfeg0pnd002	262	spice_sim	parked		2026-11-05 12:30	
 1789644585939_3e35z	zjqiao	hfhds201	48	spice_sim	case	EDA-Eval-DesignFlow-CompressNetlist-001	2026-11-07 21:45	
 1793865966161_rkdu8	yuankong	hfhds201	85	spice_sim	case	EDA-Eval-DesignFlow-NetlistSchemInstLocate-001	2026-11-07 23:00	
 1789699043373_y91i6	ericw	hfhds201	34	characterization	case	EDA-Eval-DesignFlow-CgMeetExactlyMissWalk-001+EDA-Eval-DesignFlow-CgtMeetExactlyFilter-001	2026-11-07 23:55	同 trace 两轮:U#0=CgMeetExactlyMissWalk(meet_exactly未命中清单)+U#1=CgtMeetExactlyFilter(关键词去除过滤表,hidden B+SRE)
+1790042178493_mrmfn	ericw	hfhds201	30	characterization	case	EDA-Eval-DesignFlow-CovBinMetaExtract-001	2026-11-07 23:58	
