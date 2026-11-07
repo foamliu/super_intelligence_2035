@@ -250,3 +250,68 @@
 > 后续动作（待运维批准）：① agentic 源分词入 `tokenized/` 镜像（需先定分词口径，部分为 jsonl/parquet 非 mcore 格式）；② `ia03/terminal-bench` 纳入去污染黑名单（与 SWE-bench Verified / Terminal Bench 同闸）；③ 分词后回写 A 节、本节状态翻「已分词」。
 > 🚫 token 不得写入本表/日报/任何 commit（运维令 13:2x ③）。
 
+---
+
+## G. 代码语料放行 + ROI 自排优先级下载（运维令 2026-11-07 08:5x · 未分词 · 落盘 `/nas_inference`）
+
+> 运维令 2026-11-07 08:5x（用户直令 · 最高优先）：放行代码语料下载——`bigcode/the-stack-v2` 禁下（67.5TB gated）、`HuggingFaceCode/stack-v3-train` 可考虑（15.9TB train，⚠️≥1TB 需报运维批准）、其余单集 <1TB 放行；agent 自排 ROI 优先级从高到低下载。
+> **三条硬口径**：① stack-v2 🚫 禁下；② stack-v3-train ⚠️ ≥1TB 需报运维（本轮不下，见 §G.3）；③ 单集 ≥1TB 一律不自行下载。
+> **本轮新增总量**：8 源 ≈ 25.15 GB，远低于 1.5TB 上限。跳过 3 源（见 §G.2）。体量来自 HF API `list_repo_tree` 实测（2026-11-07 08:5x）。
+
+### G.1 ROI 评估表（5 维度 × 排序）
+
+> 评估维度：① 相关性（PyAether/EDA 代码生成/agentic 工具调用直接帮助）② 单位成本收益（GB vs token量 vs 独特性）③ 可用性（gated/license/格式）④ 质量风险（NC license/评测污染/清洗需求）⑤ 落地成本（下载时长+转换）。
+
+| ROI | repo_id | HF体量 | 文件 | 相关性 | 单位成本 | 可用性 | 质量风险 | 落地成本 | 决策 | 理由 |
+|---:|:---|---:|---:|:---|:---|:---|:---|:---|:---|:---|
+| 1 | `utter-project/LongBlocks` | 9.57GB | 39 | 🟢高 | 🟢高 | 🟢CC BY-SA 4.0/非gated | 🟢低 | 🟢~16min | ✅下载 | 194K多语言长上下文QA(含中文)+3教师响应可蒸馏；SFT用途 |
+| 2 | `nvidia/Nemotron-RL-Agentic-SWE-Pivot-v1` | 5.10GB | 3 | 🟢高 | 🟢高 | 🟢CC-BY-4.0/非gated | 🔴高(SWE同源) | 🟢~9min | ✅下载 | 33.8K步级RL(pass-rate)；agentic SWE直接相关；须去污染 |
+| 3 | `caskcsg/NExtLong-Instruct-Magpie-Llama-3.3-Pro-1M-v0.1` | 2.89GB | 69 | 🟢高 | 🟢高 | 🟡license未核到/非gated | 🟢低(合成) | 🟢~5min | ✅下载 | 1M合成长上下文；64K/128K/256K/512K子集100%≥64K；直击decay-B闸门 |
+| 4 | `common-pile/arxiv_papers_filtered` | 6.04GB | 10 | 🟡中 | 🟡中 | 🟢CC BY/SA/CC0/非gated | 🟢低 | 🟢~10min | ✅下载 | 论文全文8K-50K；≥128K有限但版权干净且与web数据有独特性 |
+| 5 | `THUDM/LongWriter-6k` | 0.15GB | 3 | 🟡中 | 🟢高(极小) | 🟢非gated | 🟢低 | 🟢<1min | ✅下载 | 6K长输出生成SFT(2K-20K words)；体积小ROI高 |
+| 6 | `NovaSky-AI/SkyRL-v0-293-data` | 0.002GB | 3 | 🟡中 | 🟢高(极小) | 🟡license未核到 | 🟡中(SWE-Gym同源) | 🟢<1min | ✅下载 | 293 tasks验证RL pipeline；7B:11→14.6%有据 |
+| 7 | `Nethraaaaa81/swev-trm-trajectories-25models` | 0.93GB | 4 | 🟡中 | 🟡中 | 🟢MIT/非gated | 🔴高(直接用Verified) | 🟢~2min | ✅下载 | 25模型12K轨迹；仅TRM训练/分析；🚫禁SFT |
+| 8 | `zai-org/LongBench-v2` | 0.47GB | 3 | N/A(评测) | N/A | 🟢Apache-2.0 | ⚠️评测集 | 🟢<1min | ✅下载(仅去污染) | 503 MCQ；🚫禁入训练；仅去污染黑名单 |
+| — | `common-pile/project_gutenberg_filtered` | 7.63GB | 17 | 🔴低 | 🔴低(冗余) | 🟢Public Domain | 🟢低 | — | 🚫跳过 | whole-books上游；已下whole-books无需重复 |
+| — | `alea-institute/kl3m-data`(系列) | ~16.9GB | 多子集 | 🔴低 | 🟡中 | 🟡已分词(非本线tokenizer) | 🟢低 | 🟡tokenizer兼容存疑 | 🚫跳过 | 法律/金融域不匹配；已用kl3m tokenizer分词 |
+| — | `harborframework/terminal-bench-2` | N/A | — | N/A(评测) | — | — | — | — | 🚫跳过 | HF API 401 Not Found；待核正确repo名 |
+| ⚠️ | `HuggingFaceCode/stack-v3-train` | 15.9TB | — | 🟢高 | 🟢高 | 🟢ODC-By/非gated/内联 | 🟡中 | 🔴≥1TB | ⚠️报运维 | 173M仓库内联；比v2实用；≥1TB需批；本轮不下 |
+
+### G.2 跳过清单（3 源）
+
+| repo_id | 跳过原因 | 建议 |
+|:---|:---|:---|
+| `common-pile/project_gutenberg_filtered` | whole-books 上游，已下 whole-books(25.3G) 无需重复 | 如需 raw gutenberg 可后置 |
+| `alea-institute/kl3m-data`(系列) | 域不匹配(法律/金融)+已分词(kl3m tokenizer≠本线 tokenizer_eod) | 如需超长法律文书可单独评估原始文本版 |
+| `harborframework/terminal-bench-2` | HF API 401 Not Found，repo 可能不存在或需特殊访问 | 待运维核实正确 repo 名 |
+
+### G.3 ≥1TB 待批清单
+
+| repo_id | 体量 | license | 理由 | 状态 |
+|:---|---:|:---|:---|:---|
+| `HuggingFaceCode/stack-v3-train` | 15.9 TB(train) | ODC-By | 173M仓库文件内联,天然仓库级长上下文;比v2(SWHID引用)更实用;非gated | ⚠️ 报运维批准(≥1TB不自行下) |
+| `bigcode/the-stack-v2` | 67.5 TB(full)/32.1 TB(dedup) | gated+需SWH协议 | 🚫 运维令明确禁下 | 禁下(终态) |
+
+### G.4 下载登记（进行中 → 完成后回填实测）
+
+> 下载脚本：`run/data/roi_download_20261107.sh`（setsid 后台 PID=1920377，日志 `/tmp/data_download_roi_20261107.log`，状态 TSV `/tmp/data_download_roi_status.tsv`）。
+> 纪律：`nice -n 10`、`--max-workers 4`、走代理 `HTTPS_PROXY=http://172.19.92.25:13128`、断点续传、不挤 S1。
+> ⚠️ `zai-org/LongBench-v2` 为评测集——🚫 禁入训练，仅纳入去污染黑名单（与 EDA-Eval / SWE-bench Verified / ia03/terminal-bench 同闸）。
+> ⚠️ `Nethraaaaa81/swev-trm-trajectories-25models` 高污染（直接用 SWE-bench Verified）——🚫 禁入 SFT，仅 TRM 训练/分析。
+> ⚠️ `nvidia/Nemotron-RL-Agentic-SWE-Pivot-v1` 高污染（含 numpy/Pillow 等 SWE-bench 同源仓库）——下载后须去污染方可用于 RL。
+
+| # | repo_id | 落盘路径 | 主机 | 文件数 | 字节(B) | GiB | gated | incomplete | 备注 |
+|:---|:---|:---|:---|---:|---:|---:|:---|---:|:---|
+| 1 | `utter-project/LongBlocks` | `/nas_inference/app.e0031982/datasets/utter-project/LongBlocks` | .12 | — | — | 9.57 | no | — | 多语言长上下文QA(CC BY-SA 4.0) |
+| 2 | `nvidia/Nemotron-RL-Agentic-SWE-Pivot-v1` | `/nas_inference/app.e0031982/datasets/nvidia/Nemotron-RL-Agentic-SWE-Pivot-v1` | .12 | — | — | 5.10 | no | — | agentic SWE RL(CC-BY-4.0,🔴高污染) |
+| 3 | `caskcsg/NExtLong-Instruct-dataset-Magpie-Llama-3.3-Pro-1M-v0.1` | `/nas_inference/app.e0031982/datasets/caskcsg/NExtLong-Instruct-dataset-Magpie-Llama-3.3-Pro-1M-v0.1` | .12 | — | — | 2.89 | no | — | 合成长上下文训练(1M样本) |
+| 4 | `common-pile/arxiv_papers_filtered` | `/nas_inference/app.e0031982/datasets/common-pile/arxiv_papers_filtered` | .12 | — | — | 6.04 | no | — | arxiv论文全文(CC BY/SA/CC0) |
+| 5 | `THUDM/LongWriter-6k` | `/nas_inference/app.e0031982/datasets/THUDM/LongWriter-6k` | .12 | — | — | 0.15 | no | — | 长输出生成SFT(6K) |
+| 6 | `NovaSky-AI/SkyRL-v0-293-data` | `/nas_inference/app.e0031982/datasets/NovaSky-AI/SkyRL-v0-293-data` | .12 | — | — | 0.00 | no | — | RL验证(293 tasks) |
+| 7 | `Nethraaaaa81/swev-trm-trajectories-25models` | `/nas_inference/app.e0031982/datasets/Nethraaaaa81/swev-trm-trajectories-25models` | .12 | — | — | 0.93 | no | — | SWE轨迹TRM(MIT,🔴高污染禁SFT) |
+| 8 | `zai-org/LongBench-v2` | `/nas_inference/app.e0031982/datasets/zai-org/LongBench-v2` | .12 | — | — | 0.47 | no | — | ⚠️评测集仅去污染禁入训练 |
+| **合计** | **8 源** | | | **—** | **—** | **~25.15** | | **—** | 全部公开 non-gated；含2个需去污染(1评测+1高污染轨迹) |
+
+> 📌 本节文件数/字节为 HF API 预估值，下载完成后以 `du -sb` + `find -type f | wc -l` + `find -name '*.incomplete' | wc -l` 三项实测回填。
+> 🚫 token 不得写入本表/日报/任何 commit（运维令 08:5x ④）。
+

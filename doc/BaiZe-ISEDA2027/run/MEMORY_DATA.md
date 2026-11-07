@@ -18,18 +18,19 @@ WAITING: 1
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        ✅全部6项活跃运维令DONE(85M+10-31报告+09:4x报告+09:2x A类10/10+13:2x#2 RL报告+13:2x#1 B类12/12) → WAITING=1待新令
-已完成:       ✅85M;✅10-31长上下文+agentic报告;✅09:4x推理+代码SFT报告(77772B);✅09:2x长上下文10/10落地(249.48GiB);✅13:2x#2 RL+数学+agentic RL调研报告已交付(37946B);✅13:2x#1 B类下载12/12全部落地(78.73GiB/0inc)+DATA_MAPPING.md F节已写+校验
-当前动作:     唤醒1384(2026-11-07 08:34):例行空唤醒巡检→①git fetch origin(代理,gc.log+loose objects warning非阻塞)0behind/0ahead(与origin/main同步);②git diff origin/main--BAIZE_DATA_TASK.md=空(运维无新令);③3报告全在(lc_agentic115558B✓/reasoning_code_sft77772B✓/rl_math_survey37946B✓)+3生成器全在(gen_lc_agentic95012B/gen_reasoning_code_sft64206B/gen_rl_math38120B);④无hf download进程;⑤df:/nas_inference17T/38%(29T可用)/nas_train179T/87%(29T可用)/nas_env8.3T/84%(1.7T可用);⑥.incomplete=2(旧缓存残留monet+Ultra-FineWeb的.cache,A/B类本体=0);⑦体积MEMORY36.7KB/TASK33.8KB均≤40KB无需归档;⑧data线clean(未跟踪为他线产物不动)→更新心跳→commit+push→WAITING=1继续待命
-下一步:       待运维派新令;若需分词agentic源→先定分词口径(jsonl/parquet非mcore);ia03/terminal-bench纳入去污染黑名单(与SWE-bench Verified同闸)
-阻塞:         无(全部活跃令已完成;无活跃指令)
+PHASE:        🔄运维令11-07 08:5x代码语料放行ROI下载进行中(8源~25.15GB后台下载PID1920377) → WAITING=1
+已完成:       ✅85M;✅10-31报告;✅09:4x报告;✅09:2x长上下文10/10(249.48GiB);✅13:2x#2 RL报告;✅13:2x#1 B类12/12(78.73GiB);✅11-07 ROI评估表已写DATA_MAPPING.md §G
+当前动作:     唤醒1385(2026-11-07 08:55):执行11-07运维令→①git fetch(代理)0behind/0ahead;②检测到TASK.md新令(代码语料放行ROI下载);③HF API核实10候选体量;④ROI评估表(5维度排序)写DATA_MAPPING.md §G(8下载/3跳过/1报运维);⑤下载脚本roi_download_20261107.sh已启动setsid后台PID1920377(nice -n10/--max-workers4/代理/断点续传);⑥LongBlocks下载中(9/39 files ~23%);⑦跳过project_gutenberg(冗余whole-books)+kl3m-data(域不匹配)+terminal-bench-2(401);⑧stack-v3-train(15.9TB)报运维待批
+下一步:       等下载完成→du -sb+find+incomplete三项实测回填DATA_MAPPING.md §G.4→commit data下载:→IA03/terminal-bench+LongBench-v2纳入去污染黑名单
+阻塞:         无(下载后台进行中,本轮~25GB远低于1.5TB上限)
 ERROR_COUNT:  11
-未完成指令:   无(全部6项活跃令DONE)→WAITING=1
+未完成指令:   有(11-07 08:5x代码语料放行ROI下载进行中)→WAITING=1
 ```
 
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。
 
 ## 📋 本唤醒流水
+> [11-07 08:55] 唤醒1385：执行11-07运维令(代码语料放行ROI下载)→①git fetch(代理)0behind/0ahead;②检测到TASK.md新令(stack-v2禁下/stack-v3-train可考虑/单集<1TB放行/自排ROI);③HF API核实10候选体量(LongBlocks9.57G/Nemotron-RL-Agentic5.1G/NExtLong-Instruct2.89G/arxiv6.04G/LongWriter0.15G/SkyRL0.002G/swev-trm0.93G/LongBench-v2 0.47G/gutenberg7.63G/kl3m~16.9G);④ROI评估表(5维度)写DATA_MAPPING.md §G.1(8下载/3跳过/1报运维);⑤下载脚本roi_download_20261107.sh启动setsid后台PID1920377(nice -n10/--max-workers4/代理/断点续传);⑥LongBlocks下载中9/39~23%;⑦跳过gutenberg(冗余whole-books)+kl3m(域不匹配+tokenizer不兼容)+terminal-bench-2(401);⑧stack-v3-train(15.9TB)≥1TB报运维待批;⑨DATA_MAPPING.md §G.2跳过清单+§G.3≥1TB待批+§G.4下载登记已写;→更新心跳→commit+push→WAITING=1继续监控下载
 > [11-07 08:34] 唤醒1384：例行空唤醒巡检→①git fetch origin(代理)0behind/0ahead(同步);②git diff origin/main--BAIZE_DATA_TASK.md=空(无新令);③3报告全在(lc_agentic115558B✓/reasoning_code_sft77772B✓/rl_math_survey37946B✓)+3生成器全在(gen_lc_agentic95012B/gen_reasoning_code_sft64206B/gen_rl_math38120B);④无hf download进程;⑤df:/nas_inference17T/38%(29T可用)/nas_train179T/87%(29T可用)/nas_env8.3T/84%(1.7T可用);⑥.incomplete=2(均.cache内,非阻塞,A/B类本体=0);⑦体积MEMORY36.7KB/TASK33.8KB均≤40KB无需归档;⑧data线clean(未跟踪为他线产物不动)→更新心跳→commit+push→WAITING=1待命
 > [11-07 08:15] 唤醒1383：例行空唤醒巡检→①git fetch origin(代理)0behind/0ahead(同步);②git diff origin/main--BAZE_DATA_TASK.md=空(无新令);③3报告全在(lc_agentic115558B✓/reasoning_code_sft77772B✓/rl_math_survey37946B✓)+3生成器全在(gen_lc_agentic95012B/gen_reasoning_code_sft64206B/gen_rl_math38120B);④无hf download进程;⑤df:/nas_inference17T/38%(29T可用)/nas_train179T/87%(29T可用)/nas_env8.3T/84%(1.7T可用);⑥.incomplete=2(均.cache内,非阻塞,A/B类本体=0);⑦体积MEMORY36.0KB/TASK33.8KB均≤40KB无需归档;⑧data线clean(未跟踪为他线产物不动)→更新心跳→commit+push→WAITING=1待命
 > [11-07 07:57] 唤醒1382：例行空唤醒巡检→①git fetch origin(代理,gc.log+loose objects warning非阻塞)0behind/0ahead(同步);②git diff origin/main--BAIZE_DATA_TASK.md=空(运维无新令);③3报告全在(lc_agentic115558B✓/reasoning_code_sft77772B✓/rl_math_survey37946B✓)+3生成器全在(gen_lc_agentic95012B/gen_reasoning_code_sft64206B/gen_rl_math38120B);④无hf download进程;⑤df:/nas_inference17T/38%(29T可用)/nas_train179T/87%(29T可用)/nas_env8.3T/84%(1.7T可用);⑥.incomplete=2(均.cache内,非阻塞,A/B类本体=0);⑦体积MEMORY35.6KB/TASK33.8KB均≤40KB无需归档;⑧data线clean(未跟踪为他线产物不动)→更新心跳→commit+push→WAITING=1待命
