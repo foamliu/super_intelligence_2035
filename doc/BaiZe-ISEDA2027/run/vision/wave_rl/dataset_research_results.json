@@ -1,0 +1,62 @@
+{
+  "research_date": "2026-11-07",
+  "wake": "#855",
+  "search_scope": "HuggingFace datasets API (via proxy http://172.19.92.25:13128)",
+  "search_queries": [
+    "waveform", "chartqa", "plotqa", "figureqa", "chart+question+answering",
+    "oscilloscope", "signal+classification", "time+series+classification",
+    "eda+circuit", "electronic+circuit", "spice+simulation", "circuit+simulation",
+    "electrical+engineering", "chart+understanding"
+  ],
+  "key_finding": "NO waveform-specific VQA dataset exists on HuggingFace. No oscilloscope screenshots, no SPICE waveform QA, no signal chart understanding datasets were found.",
+  "closest_analogs": [
+    {
+      "id": "ahmed-masry/ChartQA",
+      "downloads": 8090,
+      "size": "10K-100K",
+      "license": "GPL-3.0",
+      "modality": "image+text",
+      "description": "Chart question answering with chart images and QA pairs. Cannot load directly with load_dataset (manual zip download needed).",
+      "waveform_suitability": "LOW - contains data visualization charts (bar/line/pie), not electronic waveforms. Could be used for transfer learning to teach general chart understanding.",
+      "migration_plan": "Could generate waveform images with matplotlib/ngspice, create QA pairs in ChartQA format. But requires building from scratch."
+    },
+    {
+      "id": "achang/plot_qa",
+      "downloads": 2196,
+      "size": "28.9M QA pairs over 224K plots",
+      "license": "CC",
+      "modality": "image+text",
+      "task": "visual-question-answering",
+      "description": "VQA dataset with 28.9M QA pairs over 224K plots from real-world sources.",
+      "waveform_suitability": "LOW - contains data plots, not electronic waveforms. Same transfer learning potential as ChartQA.",
+      "migration_plan": "Same as ChartQA - would need to synthesize waveform plots."
+    },
+    {
+      "id": "vikhyatk/figureqa",
+      "downloads": 883,
+      "size": "100K-1M",
+      "modality": "image+text",
+      "description": "Figure question answering dataset.",
+      "waveform_suitability": "LOW - contains general figures, not waveforms.",
+      "migration_plan": "Same approach - synthesize waveform figures."
+    }
+  ],
+  "eda_related": [
+    {
+      "id": "SKLP-EDA-LAB/CircuitNet3.0",
+      "downloads": 1506,
+      "license": "Apache-2.0",
+      "description": "Multi-modal dataset for AI-driven circuit design. Supports timing/power prediction, RTL/netlist/layout. NOT waveform visualization.",
+      "waveform_suitability": "NONE - focuses on circuit design artifacts (RTL/netlist/layout), not waveform analysis or visualization."
+    }
+  ],
+  "signal_processing_datasets": [
+    "mstz/waveform_noise_v1 (52 dl) - noise waveforms, not VQA",
+    "SongyangGao/earthquake-waveforms-timeseries (45 dl) - earthquake data, not VQA",
+    "lucky9-cyou/MIMIC-IV-Waveform (132 dl) - medical waveforms, not VQA",
+    "rokaijano/extracel_waveforms (11303 dl) - extracellular waveforms, not VQA",
+    "subatomic-telemetry-lab/tpc-raw-waveform-dumps (495 dl) - raw waveform dumps, not VQA"
+  ],
+  "conclusion": "No ready-made waveform VQA dataset exists. The current approach of synthesizing waveforms with ngspice and creating tool-interaction QA pairs is the correct approach. ChartQA/PlotQA could be used for pre-training on general chart understanding, but electronic waveform understanding requires domain-specific data synthesis.",
+  "recommendation": "Continue with ngspice-based waveform synthesis. Consider: (1) generating waveform images with matplotlib for multimodal VQA, (2) using ChartQA for pre-training chart understanding, (3) creating a waveform VQA benchmark from ngspice simulations for future work."
+}
