@@ -64,7 +64,7 @@ cat <<EOF
   output_dir        : ${OUTPUT_DIR}
   reward_arm        : ${REWARD_ARM}
     R1=binary | R2=exec+assertion_ratio | R3=R2+tool_call_penalty | R4=R3+API_legality
-  inference backend : SGLang (R8/R9: MiniCPM5-2B XML tool calls need minicpm5 parser)
+  inference backend : SGLang (R16: verl ToolParser handles XML tool calls, not SGLang)
   n_gpus            : ${NP} (4×A40 48GB)
   anti-cheat        : PreToolUse hook 全程启用，逐字节一致；报告 cheat rate
   red line          : RL 任务 ≠ EDA-Eval-PyAether 158 题（污染隔离 §5.1）
@@ -128,6 +128,15 @@ echo "[rl] resume: $RESUME_DIR"
 echo "[rl] output: $OUTPUT_DIR"
 
 cd "$SCRIPT_DIR" || { echo "❌ Cannot cd to $SCRIPT_DIR"; exit 1; }
+
+# 🔴 R16: Import MiniCPM5 tool parser BEFORE verl starts (registers "minicpm5" in ToolParser)
+#   verl's ToolParser (verl/experimental/agent_loop/tool_parser.py) is separate from SGLang's parser.
+#   This module registers a parser for MiniCPM5-2B's XML-format tool calls.
+#   Without this import, verl won't know how to parse <function name="..."><param>...</function>
+echo "[rl] Registering MiniCPM5 ToolParser (R16)..."
+"$BAIZE_VENV_PY" -c "import baize_posttrain_minicpm5_parser; print('  minicpm5 parser registered:', 'minicpm5' in __import__('baize_posttrain_minicpm5_parser', fromlist=['ToolParser']).ToolParser._registry)" || {
+    echo "  ⚠️ Parser registration failed — tool calls won't be parsed! Continuing anyway..."
+}
 
 "$BAIZE_VENV_PY" -m verl.trainer.main_ppo "${VERL_ARGS[@]}" > "$LOG" 2>&1
 RC=$?

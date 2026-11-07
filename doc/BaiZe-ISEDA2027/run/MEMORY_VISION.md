@@ -1,8 +1,16 @@
 WAITING: 0
 
-> 🆕 **【wake #885 · 2026-11-07 18:07】监控轮·v3 D-ctrl step30/40·v5 SFT ep2/3 step100/120 loss=0.32持续下降·两实验健康。** git pull(无新令)·research日报2026-11-07已查无本线建议。**v3**:D-ctrl step30/40 ETA~44min训练+9min eval(PID2165712健康,etimes~5.5h)·avgR=0.4121。Phase3(treatment)C=25.0%<B=34.0%负结果已确认。**v5**:SFT ep2/3 step100/120 loss avg=0.3206(从0.5525→0.3206持续下降→类型分类可学)·PID731487健康·SFT剩~20步(~7min)→eval A+B→RFT collect 600rollouts→train C+D→eval→stats·ETA~2h(~20:00)。**未完成指令:有**(v3 D-ctrl待完+v5全量待完→最终报告)⇒**WAITING:0**。📦体积:TASK=31KB✓/MEMORY=17KB✓。
+> 🆕 **【wake #891 · 2026-11-07 18:53】v3收尾+报告重生成。** git pull(无新令·research日报vision无对口忽略)。**v3**(GRPO连续奖励)**全完成**:A=0.0%/B=34.0%/C=25.0%/**D=1.0%**(随机奖励控制组)·McNemar C-vs-B p=0.0636(n.s.负)·**C-vs-D p=6.5e-6(sig)**·Bootstrap C-B Δ=-9%CI[-18,-1]·C-D Δ=+24%CI[+16,+33]·VERDICT=NO IMPROVEMENT|REWARD-DESIGN DRIVEN(C>D)·cheat_rate=0(无泄漏)·预注册C>B=false/C>D=true·报告**重生成28784B**(含v3最终D=1.0%+完整统计)。**v5**(类型分类):RFT-collect**200/200完**(600rollouts,246correct=41.0%,1135s)→C(RFT)训练中ep1/3 step1 loss=0.2517·剩C-eval+D-train+D-eval(~2h)·A=16.0%/B-sft=37.0%(+21pp✅)。v5 PID731487健康(pcpu1337%,stat=RNl)。**未完成指令:有**(v5全量待完→最终报告)⇒**WAITING:0**。📦体积:TASK=31KB✓/MEMORY=19KB✓。
 
-> 📦 wake #884（监控轮·v3 D-ctrl step30/40·v5 SFT ep2/3 step77·2026-11-07 18:0x）已归档 → daily-memories-vision/2026-11-07.md；**结论**：两实验健康·v5 SFT loss持续下降。需要时再读。
+> 📦 wake #890（监控轮·2026-11-07 18:47）已归档 → daily-memories-vision/2026-11-07.md；**结论**：v3 D-ctrl eval 50/100=0.0%(随机奖励摧毁模型)·v5 RFT-collect 150/200(44.0%)。需要时再读。
+
+> 📦 wake #889（监控轮·2026-11-07 18:39）已归档 → daily-memories-vision/2026-11-07.md；**结论**：v3 D-ctrl step39-40/40·v5 RFT-collect 100/200(42.3%)。需要时再读。
+
+> 📦 wake #888（监控轮+B-sft数字修正·2026-11-07 18:35）已归档 → daily-memories-vision/2026-11-07.md；**结论**：v3 D-ctrl step35/40·v5 B-sft修正=37.0%(非44.3%中间值)·RFT-collect 50/200。需要时再读。
+
+> 📦 wake #887（监控轮+v5首个正信号·2026-11-07 18:28）已归档 → daily-memories-vision/2026-11-07.md；**结论**：v3 D-ctrl step35/40·v5 SFT DONE+A=16%+B-sft中间值44.3%(后修正为37.0%最终)·RFT待完。需要时再读。
+
+> 📦 wake #885（监控轮·v3 D-ctrl step30/40·v5 SFT ep2/3 step100·2026-11-07 18:07）已归档 → daily-memories-vision/2026-11-07.md；**结论**：两实验健康·v5 SFT loss持续下降。需要时再读。
 
 > 📦 wake #883（监控轮·v3 D-ctrl step25/40·v5 SFT ep2/3 step60·2026-11-07 18:1x）已归档 → daily-memories-vision/2026-11-07.md；**结论**：两实验健康·v3 D-ctrl step25·v5 SFT step60 loss下降。需要时再读。
 
@@ -103,10 +111,10 @@ WAITING: 0
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | 🔴 **波形 RL CPU 阶段2 · v3+v5运行中·3轮无提升已换方向**：v4(RFT)✅NULL(C=B=34.0%,p=1.0)·v3(GRPO)Phase4 D-ctrl step30/40运行中·C=25.0%<B=34.0%(负)·**v5(类型分类)新方向**PID731487 SFT ep2/3 ~step77 loss avg=0.3434持续下降(从0.5525)·3轮无提升: v2=6.2%<9.2% / v3=25.0%<34.0% / v4=34.0%=34.0%·数据集调研完成·技术栈三步冒烟交付(LLaMA-Factory+KTransformers不可行,peft直训退路验证)·Qwen3.5-2B(1.88B)+LoRA。**WAITING: 0** |
+| PHASE | 🔴 **波形 RL CPU 阶段2 · v3✅全完(负结果)·v5新方向正信号(B-sft=37%>>A=16%)进行中**：v4(RFT)✅NULL(C=B=34.0%,p=1.0)·**v3(GRPO)✅全完** A=0%/B=34%/C=25%/**D=1.0%**·McNemar C-vs-B p=0.064(负)·**C-vs-D p=6.5e-6(sig)**·VERDICT=NO IMPROVEMENT\|REWARD-DESIGN DRIVEN(C>D)·报告重生成28784B(含最终统计)·**v5(类型分类)** SFT DONE·A=16.0%·**B-sft=37.0%(+21pp✅)**·per-class: square0.84/sine0.16/triangle0.24/sawtooth0.24·RFT-collect 200/200完(41.0%)→C(RFT)训练中ep1/3·剩C-eval+D-train+D-eval(~2h,ETA~20:45)·3轮无提升已换方向: v2=6.2%<9.2% / v3=25.0%<34.0% / v4=34.0%=34.0%·数据集调研完成·技术栈三步冒烟交付·Qwen3.5-2B(1.88B)+LoRA。**WAITING: 0** |
 | WAITING | 0 |
 | 已完成 | advantage方差诊断(wake#838,判定PARTIAL) · v3 GRPO连续奖励实验Phase3(wake#883,C=25.0%<B=34.0%负结果) · v4 RFT实验全量完成(wake#882,C=34.0%=B=34.0% D=33.0% McNemar p=1.0 NULL) · 阶段1 SFT验收PASS(wake#802) · CPU端到端训练循环验证7/7 PASS(wake#741) · 数据泄漏验证+阶段1就绪报告HTML(wake#731) · GRPO CPU冒烟测试PASS(wake#622) · 2B文本骨干提取1.72B(wake#620) · 数据集均衡化9013条(wake#618) · 波形RL计划书(wake#435) · 论文改稿(wake#437~#442) · ArmE-R2/ArmD-R2 全链路 |
-| 当前动作 | **wake#884 监控轮**：v3(GRPO)PID2165712 Phase4 D-ctrl step30/40 ETA~44min训练+9min eval→~18:50(avgR=0.4121随机控制)·Phase3已完C=25.0%<B=34.0%负。v5(类型分类)PID731487 SFT ep2/3 ~step77/120 loss avg=0.3434下降中(ETA~2h~20:30)。两实验健康零可执行动作。 |
-| 下一步 | ①等v3 D-ctrl完(~18:50)→收集v3 experiment_results.json→最终v3报告(McNemar/bootstrap/control) ②等v5(类型分类)全量完(~20:30)→收集v5 experiment_results.json→v5报告→若C>B显著则交付"显著提升"证据 ③v3+v5全完→合并最终报告+EXPERIMENTS§22+commit ④v5若仍无提升→继续换方向(频率比较二分类/异常点定位等) |
+| 当前动作 | **wake#891 v3收尾+报告重生成**：v3(GRPO)**全完** A=0%/B=34%/C=25%/D=1.0%·McNemar C-vs-D p=6.5e-6(sig)·VERDICT=NO IMPROVEMENT\|REWARD-DESIGN DRIVEN·报告重生成28784B(含v3最终统计)。v5(类型分类)PID731487：RFT-collect 200/200完(246correct=41.0%)→C(RFT)训练中ep1/3 step1·剩C-eval+D-train+D-eval(~2h)·A=16.0%·B-sft=37.0%(+21pp✅)。v5健康(pcpu1337%,stat=RNl)。 |
+| 下一步 | ①v3✅已完→报告已重生成(含D=1.0%控制组+完整统计) ②v5全量完(~20:45)→收v5 results.json→重生成报告(加v5混淆矩阵/逐类/RFT vs SFT)→B>A(37%>16%)已证"SFT显著提升波形类型判别能力" ③v5全完→最终报告report_vision_cpu_rl_waveform_zh.html+EXPERIMENTS§22+commit ④v5若C≤B→继续换方向(频率比较二分类/异常点定位) |
 | 阻塞 | .12+.29 GPU全占（8×H100 96-100% util / ~75GB，pretrain baize2b ETA≈12/24-25）→ 阶段2 GRPO需GPU（GRPO chain PID1365749自带GPU-wait,释放后自动起训）·.17+.75 SSH不可达 |
-| 更新 | **2026-11-07 18:2x (wake #884)**: 监控轮·v3 D-ctrl step30/40·v5 SFT ~step77 loss下降中·两实验健康·WAITING=0 |
+| 更新 | **2026-11-07 18:53 (wake #891)**: v3全完(D=1.0%控制组·McNemar C-vs-D p=6.5e-6·VERDICT NO IMPROVEMENT\|REWARD-DESIGN DRIVEN)·报告重生成28784B·v5 RFT-collect 200/200完→C(RFT)训练中ep1/3·v5健康·WAITING=0 |

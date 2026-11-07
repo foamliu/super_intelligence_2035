@@ -88,6 +88,10 @@ actor_rollout_ref:
     multi_turn: True             # ✅ R15 verified: verl docs confirm `multi_turn: True` (boolean)
     multi_turn_config:
       tokenization_sanity_check_mode: strict  # 🔴 R11: delta tokenization consistency check
+      format: minicpm5           # 🔴 R16: verl's OWN ToolParser (not SGLang's) — registers "minicpm5"
+                                 #   Parses XML: <function name="..."><param name="...">value</param></function>
+                                 #   Import baize_posttrain_minicpm5_parser before training to register.
+                                 #   See EXPERIMENTS_POSTTRAIN.md §R16 for full rationale.
     temperature: 1.0             # Training: high exploration
     top_p: 0.95
     prompt_length: 4096
@@ -97,12 +101,10 @@ actor_rollout_ref:
     enforce_eager: True          # Disable CUDA graph (co-located safety)
     tensor_model_parallel_size: 1  # Each A40 gets its own SGLang instance
     max_num_seqs: 12             # 🔴 R11: reduced from 16 → 12 (lower KV cache peak: 12×860MB=10.3GB)
-    # 🔴 R15: tool_call_parser is an SGLang server parameter, NOT a verl config key.
-    #   It must be passed to the SGLang server launch command, not here.
-    #   The minicpm5 parser may NOT be in pip release (PR #25600 unreleased).
-    #   Fallback: pythonic parser or manual XML parsing in the tool layer.
-    #   See EXPERIMENTS_POSTTRAIN.md §R15 for full analysis.
-    # tool_call_parser: minicpm5  # ← REMOVED: not a verl config key; pass via SGLang server args
+    # 🔴 R16: SGLang's tool_call_parser is NOT needed — verl has its own ToolParser
+    #   layer (verl/experimental/agent_loop/tool_parser.py) that parses tool calls
+    #   from model output text. SGLang just generates text; verl parses XML tags.
+    #   The "minicpm5" parser is registered by baize_posttrain_minicpm5_parser.py.
     # Tool configuration for EDA sandbox (verl Tool Agent Loop approach)
     tool_kwargs:
       tools_config_file: run/baize_posttrain_eda_tools.yaml  # ✅ R15: fixed OpenAI Function format

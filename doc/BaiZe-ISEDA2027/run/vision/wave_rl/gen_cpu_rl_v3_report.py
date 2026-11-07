@@ -26,6 +26,9 @@ V1_GRPO_ACC = 0.062
 V2_OUT = "/nas_train/app.e0031982/datasets/baize-vision/out/cpu_rl_v2"
 V4_OUT = "/nas_train/app.e0031982/datasets/baize-vision/out/cpu_rl_v4"
 V4_LOG_PATH = "/tmp/v4_rft_experiment.log"
+V5_OUT = "/nas_train/app.e0031982/datasets/baize-vision/out/cpu_rl_v5_typecls"
+V5_LOG_PATH = "/tmp/v5_full_experiment.log"
+V5_WAVEFORM_TYPES = ["sine", "square", "triangle", "sawtooth"]
 
 
 def safe_load(path):
@@ -141,6 +144,89 @@ def parse_v4_log_progress():
                     "point": float(m.group(1)) / 100,
                     "ci_lo": float(m.group(2)) / 100,
                     "ci_hi": float(m.group(3)) / 100}
+    return info
+
+
+def parse_v5_log_progress():
+    """Parse v5 type-classification experiment log (RFT + classification + confusion matrix)."""
+    if not os.path.exists(V5_LOG_PATH):
+        return {}
+    info = {"phases_done": [], "accuracies": {}, "sft_curves": [], "rft_curves": {},
+            "collection": {}, "per_class": {}, "confusion_matrix": {}}
+    with open(V5_LOG_PATH) as f:
+        for line in f:
+            line = line.strip()
+            m = re.search(r'\[(Phase \d)\] (.+)', line)
+            if m:
+                info["current_phase"] = m.group(1)
+            m = re.search(r'A \(baseline\) accuracy: ([\d.]+)%', line)
+            if m:
+                info["accuracies"]["A_baseline"] = float(m.group(1)) / 100
+            m = re.search(r'B \(SFT\) accuracy: ([\d.]+)%', line)
+            if m:
+                info["accuracies"]["B_sft"] = float(m.group(1)) / 100
+            m = re.search(r'B per-class: (\{.*\})', line)
+            if m:
+                try:
+                    info["per_class"]["B"] = json.loads(m.group(1).replace("'", '"'))
+                except Exception:
+                    pass
+            m = re.search(r'C \(RFT treatment\) accuracy: ([\d.]+)%', line)
+            if m:
+                info["accuracies"]["C_rft"] = float(m.group(1)) / 100
+            m = re.search(r'D \(RFT control\) accuracy: ([\d.]+)%', line)
+            if m:
+                info["accuracies"]["D_rft_ctrl"] = float(m.group(1)) / 100
+            m = re.search(r'\[SFT-B\] ep(\d+)/(\d+) step(\d+) loss=([\d.-]+) avg=([\d.-]+) \((\d+)s\)', line)
+            if m:
+                info["sft_curves"].append(
+                    {"epoch": int(m.group(1)), "total_epochs": int(m.group(2)),
+                     "step": int(m.group(3)), "loss": float(m.group(4)),
+                     "avg": float(m.group(5)), "elapsed_s": int(m.group(6))})
+            m = re.search(r'\[RFT-([CD])\] ep(\d+)/(\d+) step(\d+) loss=([\d.-]+) avg=([\d.-]+) \((\d+)s\)', line)
+            if m:
+                label = m.group(1)
+                info["rft_curves"].setdefault(label, []).append(
+                    {"epoch": int(m.group(2)), "total_epochs": int(m.group(3)),
+                     "step": int(m.group(4)), "loss": float(m.group(5)),
+                     "avg": float(m.group(6)), "elapsed_s": int(m.group(7))})
+            m = re.search(r'\[RFT-collect\] (\d+)/(\d+) Q, (\d+) rollouts, (\d+) correct \(([\d.]+)%\) \((\d+)s\)', line)
+            if m:
+                info["collection"] = {
+                    "questions_done": int(m.group(1)), "questions_total": int(m.group(2)),
+                    "n_rollouts": int(m.group(3)), "n_correct": int(m.group(4)),
+                    "success_rate": float(m.group(5)) / 100, "elapsed_s": int(m.group(6))}
+            m = re.search(r'(\d+) rollouts, (\d+) correct \(([\d.]+)%\)', line)
+            if m and "collection" not in info:
+                info["collection"] = {"n_rollouts": int(m.group(1)),
+                    "n_correct": int(m.group(2)),
+                    "success_rate": float(m.group(3)) / 100}
+            if "VERDICT:" in line:
+                info["verdict"] = line.split("VERDICT:")[1].strip()
+            if "McNemar" in line and "p=" in line:
+                m2 = re.search(r'p=([\d.]+).*n_disc=(\d+)', line)
+                if m2:
+                    if "C vs B" in line:
+                        info["mcnemar_cb_p"] = float(m2.group(1))
+                        info["mcnemar_cb_ndisc"] = int(m2.group(2))
+                    elif "C vs D" in line:
+                        info["mcnemar_cd_p"] = float(m2.group(1))
+                        info["mcnemar_cd_ndisc"] = int(m2.group(2))
+                    elif "B vs A" in line:
+                        info["mcnemar_ba_p"] = float(m2.group(1))
+                        info["mcnemar_ba_ndisc"] = int(m2.group(2))
+            m = re.search(r'Bootstrap C-B: ([\d.+-]+)% CI=\[([+-]?[\d.]+)%,([+-]?[\d.]+)%\]', line)
+            if m:
+                info["bootstrap_cb"] = {"point": float(m.group(1)) / 100,
+                    "ci_lo": float(m.group(2)) / 100, "ci_hi": float(m.group(3)) / 100}
+            m = re.search(r'Bootstrap C-D: ([\d.+-]+)% CI=\[([+-]?[\d.]+)%,([+-]?[\d.]+)%\]', line)
+            if m:
+                info["bootstrap_cd"] = {"point": float(m.group(1)) / 100,
+                    "ci_lo": float(m.group(2)) / 100, "ci_hi": float(m.group(3)) / 100}
+            m = re.search(r'Bootstrap B-A: ([\d.+-]+)% CI=\[([+-]?[\d.]+)%,([+-]?[\d.]+)%\]', line)
+            if m:
+                info["bootstrap_ba"] = {"point": float(m.group(1)) / 100,
+                    "ci_lo": float(m.group(2)) / 100, "ci_hi": float(m.group(3)) / 100}
     return info
 
 
@@ -456,8 +542,134 @@ v4 改用 <strong>Rejection Sampling FT</strong>（STaR/ReST 范式）：先用 
 """
 
 
-def section_combined_comparison(results_v3, log_info_v3, results_v4, log_info_v4):
-    """Combined v1→v2→v3→v4 comparison table."""
+def section_experiment_v5(results_v5, log_info_v5):
+    """v5 Waveform Type Classification experiment section (direction change after 3 negative rounds)."""
+    stats = results_v5.get("stats", {}) if results_v5 else {}
+    acc = stats.get("accuracy", {}) if stats else {}
+    cfg = results_v5.get("config", {}) if results_v5 else {}
+    training = results_v5.get("training", {}) if results_v5 else {}
+    acc_a = acc.get("A_baseline", log_info_v5.get("accuracies", {}).get("A_baseline"))
+    acc_b = acc.get("B_sft", log_info_v5.get("accuracies", {}).get("B_sft"))
+    acc_c = acc.get("C_rft_treatment", log_info_v5.get("accuracies", {}).get("C_rft"))
+    acc_d = acc.get("D_rft_control", log_info_v5.get("accuracies", {}).get("D_rft_ctrl"))
+    mc_cb = stats.get("mcnemar_C_vs_B", {})
+    boot_cb = stats.get("bootstrap_C_vs_B", {})
+    mc_cd = stats.get("mcnemar_C_vs_D", {})
+    boot_cd = stats.get("bootstrap_C_vs_D", {})
+    mc_ba = stats.get("mcnemar_B_vs_A", {})
+    boot_ba = stats.get("bootstrap_B_vs_A", {})
+    verdict = stats.get("verdict", log_info_v5.get("verdict", "实验进行中"))
+    coll = stats.get("collection_stats", log_info_v5.get("collection", {}))
+    cm_b = stats.get("B_confusion_matrix", {})
+    per_class_b = cm_b.get("per_class_accuracy", log_info_v5.get("per_class", {}).get("B", {}))
+    n_sft = cfg.get("n_sft", 400); n_rft = cfg.get("n_rft_train", 200)
+    rft_k = cfg.get("rft_k", 3); n_eval_per = cfg.get("n_eval_per_type", 25)
+    n_eval = n_eval_per * len(V5_WAVEFORM_TYPES)
+    n_sft_ep = cfg.get("sft_epochs", 3); n_rft_ep = cfg.get("rft_epochs", 3)
+    has_results = bool(results_v5)
+    cond_rows = ""
+    for label, val, desc in [
+        ("A — 基线（零样本 LoRA）", acc_a, "未训练 base model，4 类随机期望=25%"),
+        ("B — SFT（类型分类微调）", acc_b, f"{n_sft} 条合成波形 SFT，{n_sft_ep} epoch，LoRA r=16 (6.4M)"),
+        ("C — SFT + RFT（正确过滤）", acc_c, f"v5 RFT: {n_rft}×{rft_k} rollout，正确过滤，{n_rft_ep} epoch CE"),
+        ("D — SFT + RFT（随机过滤控制）", acc_d, "random filter control（排除任何数据都能提升）"),
+    ]:
+        style = "background:#c8e6c9;font-weight:bold;" if (val is not None and val == acc_c and acc_c is not None and label.startswith("C")) else ""
+        cond_rows += f'<tr style="{style}"><td>{label}</td><td>{pct(val, "—")}</td><td>{desc}</td></tr>\n'
+    perclass_html = ""
+    if per_class_b:
+        pc_rows = ""
+        for wt in V5_WAVEFORM_TYPES:
+            v = per_class_b.get(wt, per_class_b.get(str(wt), "—"))
+            pc_rows += f'<tr><td>{esc(wt)}</td><td>{pct(v, "—")}</td></tr>\n'
+        perclass_html = f'<h3>5.3 v5 B（SFT）逐类准确率</h3><table border="1" cellpadding="6"><tr><th>波形类型</th><th>B 准确率</th></tr>{pc_rows}</table>'
+    cm_html = ""
+    cm_data = cm_b.get("confusion_matrix", {})
+    if cm_data:
+        headers = V5_WAVEFORM_TYPES + ["None"]
+        cm_head = "".join(f'<th>{esc(h)}</th>' for h in headers)
+        cm_body = ""
+        for gt in V5_WAVEFORM_TYPES:
+            row = cm_data.get(gt, {})
+            cells = "".join(f'<td style="{"background:#c8e6c9;font-weight:bold;" if h==gt else ""}">{row.get(h, 0)}</td>' for h in headers)
+            cm_body += f'<tr><th>{esc(gt)}</th>{cells}</tr>\n'
+        cm_html = f'<h3>5.4 v5 B（SFT）混淆矩阵</h3><p>行=真实类型，列=预测类型。对角线=正确。</p><table border="1" cellpadding="6"><tr><th>真实＼预测</th>{cm_head}</tr>{cm_body}</table>'
+    sft_curve_html = ""
+    sft_curves = log_info_v5.get("sft_curves", [])
+    if sft_curves:
+        sc_rows = ""
+        for pt in sft_curves:
+            sc_rows += f'<tr><td>{pt["epoch"]}/{pt["total_epochs"]}</td><td>{pt["step"]}</td><td>{pt["loss"]:.4f}</td><td>{pt["avg"]:.4f}</td><td>{pt["elapsed_s"]}s</td></tr>\n'
+        sft_curve_html = f'<h3>5.5 v5 SFT 训练曲线</h3><table border="1" cellpadding="6"><tr><th>Epoch</th><th>Step</th><th>Loss</th><th>Avg(20)</th><th>耗时</th></tr>{sc_rows}</table>'
+    # === V5CONT ===
+    coll_html = ""
+    if coll:
+        n_total = coll.get("n_total_rollouts", coll.get("n_rollouts", "—"))
+        n_succ = coll.get("n_successful", coll.get("n_correct", "—"))
+        sr = coll.get("success_rate", "—")
+        coll_html = f'<h3>5.6 v5 RFT 采样统计</h3><table border="1" cellpadding="6"><tr><th>指标</th><th>值</th></tr><tr><td>总 rollout 数</td><td>{n_total}</td></tr><tr><td>正确 rollout</td><td>{n_succ}</td></tr><tr><td>成功率</td><td>{pct(sr, "—")}</td></tr></table>'
+    rft_curve_html = ""
+    rft_curves = log_info_v5.get("rft_curves", {})
+    if not rft_curves and training.get("C_losses"):
+        rft_curves = {"C": [{"step": i+1, "loss": l} for i, l in enumerate(training["C_losses"])]}
+        if training.get("D_losses"):
+            rft_curves["D"] = [{"step": i+1, "loss": l} for i, l in enumerate(training["D_losses"])]
+    if rft_curves:
+        rc_rows = ""
+        for label in ["C", "D"]:
+            for pt in rft_curves.get(label, []):
+                rc_rows += f'<tr><td>{label}</td><td>{pt.get("step", pt.get("epoch","—"))}</td><td>{pt.get("loss","—"):.4f}</td></tr>\n'
+        rft_curve_html = f'<h3>5.7 v5 RFT 训练曲线</h3><table border="1" cellpadding="6"><tr><th>条件</th><th>Step</th><th>Loss</th></tr>{rc_rows}</table>'
+    stat_html = ""
+    if mc_cb or boot_cb or mc_ba or boot_ba:
+        sr2 = ""
+        if mc_ba or boot_ba:
+            sr2 += f'<tr><td>McNemar B vs A</td><td>n_disc={mc_ba.get("n_discordant","—")}</td><td>{mc_ba.get("p","—")}</td><td>{"✅ 显著" if mc_ba.get("p",1)<0.05 else "❌" if mc_ba else "⏳"}</td></tr>'
+            sr2 += f'<tr><td>Bootstrap B-A</td><td>{pct(boot_ba.get("point_delta"),"—")}</td><td>CI=[{pct(boot_ba.get("ci_lo"),"—")}, {pct(boot_ba.get("ci_hi"),"—")}]</td><td>{"✅" if boot_ba.get("ci_lo",0)>0 else "❌" if boot_ba else "⏳"}</td></tr>'
+        sr2 += f'<tr><td>McNemar C vs B</td><td>n_disc={mc_cb.get("n_discordant","—")}</td><td>{mc_cb.get("p","—")}</td><td>{"✅ 显著" if mc_cb.get("p",1)<0.05 else "❌" if mc_cb else "⏳"}</td></tr>'
+        sr2 += f'<tr><td>Bootstrap C-B</td><td>{pct(boot_cb.get("point_delta"),"—")}</td><td>CI=[{pct(boot_cb.get("ci_lo"),"—")}, {pct(boot_cb.get("ci_hi"),"—")}]</td><td>{"✅" if boot_cb.get("ci_lo",0)>0 else "❌" if boot_cb else "⏳"}</td></tr>'
+        if mc_cd or boot_cd:
+            sr2 += f'<tr><td>McNemar C vs D</td><td>n_disc={mc_cd.get("n_discordant","—")}</td><td>{mc_cd.get("p","—")}</td><td>{"✅" if mc_cd.get("p",1)<0.05 else "❌" if mc_cd else "⏳"}</td></tr>'
+        stat_html = f'<h3>5.8 v5 统计检验</h3><table border="1" cellpadding="6"><tr><th>检验</th><th>统计量</th><th>p 值/CI</th><th>判定</th></tr>{sr2}</table>'
+    cheat_html = ""
+    cheat = stats.get("cheat_rate", {})
+    if cheat:
+        cheat_html = f'<h3>5.9 v5 数据泄漏检查</h3><p><strong>训练种子</strong>：{cheat.get("train_seed_range","—")} · <strong>评测种子</strong>：{cheat.get("eval_seed_range","—")} · <strong>重叠</strong>：{cheat.get("overlap",0)} · {esc(cheat.get("note",""))}</p>'
+    prej = stats.get("pre_registered_judgment", {})
+    prej_html = ""
+    if prej:
+        pj_rows = ""
+        pj_rows += f'<tr><td>B &gt; A</td><td>B&gt;25%(随机)</td><td>{pct(acc_b,"—")} vs {pct(acc_a,"—")}</td><td>{"✅" if prej.get("B>A") else "❌" if prej.get("B&A") is not None else "⏳"}</td></tr>'
+        pj_rows += f'<tr><td>C &gt; B</td><td>RFT提升</td><td>{pct(acc_c,"—")} vs {pct(acc_b,"—")}</td><td>{"✅" if prej.get("C>B") else "❌" if prej.get("C>B") is not None else "⏳"}</td></tr>'
+        pj_rows += f'<tr><td>C &gt; D</td><td>正确&gt;随机</td><td>{pct(acc_c,"—")} vs {pct(acc_d,"—")}</td><td>{"✅" if prej.get("C>D_reward_design") else "❌" if prej.get("C>D_reward_design") is not None else "⏳"}</td></tr>'
+        pj_rows += f'<tr><td>C vs B 显著</td><td>p&lt;0.05</td><td>p={mc_cb.get("p","—")}</td><td>{"✅" if prej.get("C_vs_B_sig") else "❌" if prej.get("C_vs_B_sig") is not None else "⏳"}</td></tr>'
+        prej_html = f'<h3>5.10 v5 预注册判据核对</h3><table border="1" cellpadding="6"><tr><th>判据</th><th>预期</th><th>实际</th><th>结果</th></tr>{pj_rows}</table>'
+    status = "⏳ 进行中" if not has_results else ""
+    return f"""
+<h2 id="v5">五、v5 实验：波形类型分类（方向转换 · 连续 3 轮无提升后换路线）</h2>
+<div class="summary">
+<p><strong>v5 设计动机</strong>：v1-v4 连续 3 轮无提升（v2=6.2%&lt;9.2% / v3=25.0%&lt;34.0% / v4=34.0%=34.0%），按任务书「连续 3 轮无提升必须换方向」规则，<strong>彻底改变任务定义</strong>：</p>
+<ul>
+<li><strong>改任务</strong>：period 数值回归 → <strong>4 类波形分类</strong>（sine/square/triangle/sawtooth）。分类比回归本质上更容易。</li>
+<li><strong>改输入</strong>：工具调用摘要统计 → <strong>16 个等距采样点直接放入 prompt</strong>。模型能"看到"波形形状。</li>
+<li><strong>保留方法</strong>：RFT（STaR/ReST），v4 已证明稳定。分类任务有更多正确 rollout → 更多训练信号。</li>
+</ul>
+<p><strong>预注册判据</strong>（wake#881，运行前写入）：A≈25%→B&gt;50%→C&gt;B→C&gt;D。成功=C&gt;B 且 McNemar p&lt;0.05 且 bootstrap CI 排除 0。</p>
+</div>
+<h3>5.1 v5 四条件结果</h3>
+<table border="1" cellpadding="6">
+<tr><th>条件</th><th>准确率</th><th>说明</th></tr>
+{cond_rows}</table>
+<p><strong>v5 判定</strong>：{esc(verdict)} {status}</p>
+{perclass_html}{cm_html}{sft_curve_html}{coll_html}{rft_curve_html}{stat_html}{cheat_html}{prej_html}
+<h3>5.11 v5 规模与算力标注</h3>
+<p>单台 CPU (224核, OMP限16, nice=19) · 2B text backbone (Qwen3.5-2B) · {n_sft} SFT + {n_rft}×{rft_k} RFT · {n_eval} 题 · <strong>结论不外推为 GPU 结论</strong>。</p>
+"""
+
+
+def section_combined_comparison(results_v3, log_info_v3, results_v4, log_info_v4,
+                               results_v5=None, log_info_v5=None):
+    """Combined v1→v2→v3→v4→v5 comparison table."""
     v3_stats = (results_v3 or {}).get("stats", {}) if results_v3 else {}
     v3_acc = v3_stats.get("accuracy", {}) if v3_stats else {}
     v3_acc_b = v3_acc.get("B_sft", log_info_v3.get("accuracies", {}).get("B_sft"))
@@ -472,26 +684,36 @@ def section_combined_comparison(results_v3, log_info_v3, results_v4, log_info_v4
     v4_acc_d = v4_acc.get("D_rft_control", log_info_v4.get("accuracies", {}).get("D_rft_ctrl"))
     v4_mc_p = v4_stats.get("mcnemar_C_vs_B", {}).get("p", "⏳")
     v4_verdict = v4_stats.get("verdict", log_info_v4.get("verdict", "⏳ 进行中"))
+    v5_stats = (results_v5 or {}).get("stats", {}) if results_v5 else {}
+    v5_acc = v5_stats.get("accuracy", {}) if v5_stats else {}
+    v5_acc_a = v5_acc.get("A_baseline", (log_info_v5 or {}).get("accuracies", {}).get("A_baseline"))
+    v5_acc_b = v5_acc.get("B_sft", (log_info_v5 or {}).get("accuracies", {}).get("B_sft"))
+    v5_acc_c = v5_acc.get("C_rft_treatment", (log_info_v5 or {}).get("accuracies", {}).get("C_rft"))
+    v5_acc_d = v5_acc.get("D_rft_control", (log_info_v5 or {}).get("accuracies", {}).get("D_rft_ctrl"))
+    v5_mc_p = v5_stats.get("mcnemar_C_vs_B", {}).get("p", "⏳")
+    v5_verdict = v5_stats.get("verdict", (log_info_v5 or {}).get("verdict", "⏳ 进行中"))
     v2_res = safe_load(os.path.join(V2_OUT, "experiment_results.json"))
     v2_acc = v2_res.get("stats", {}).get("accuracy", {}) if v2_res else {}
     v2_p = v2_res.get("stats", {}).get("mcnemar_C_vs_B", {}).get("p", "—") if v2_res else "—"
     return f"""
 <h2 id="cmp">五、综合对比与总结</h2>
-<h3>5.1 全版本对比（v1 → v2 → v3 → v4）</h3>
+<h3>5.1 全版本对比（v1 → v2 → v3 → v4 → v5）</h3>
 <table border="1" cellpadding="6">
-<tr><th>版本</th><th>方法</th><th>奖励</th><th>B (SFT)</th><th>C (处理)</th><th>D (控制)</th><th>McNemar C-B p</th><th>判定</th></tr>
-<tr><td>v1 (11-06)</td><td>GRPO</td><td>离散5档</td><td>{pct(V1_SFT_ACC)}</td><td>{pct(V1_GRPO_ACC)}</td><td>—</td><td>—</td><td>❌ C&lt;B 负结果</td></tr>
-<tr><td>v2 (11-07)</td><td>GRPO</td><td>连续 exp(-err/τ)</td><td>{pct(v2_acc.get("B_sft"))}</td><td>{pct(v2_acc.get("C_grpo_treatment"))}</td><td>{pct(v2_acc.get("D_grpo_control"))}</td><td>{v2_p}</td><td>⚠️ C&gt;B 但不显著</td></tr>
-<tr style="background:#e8eaf6;"><td><strong>v3 (11-07)</strong></td><td><strong>GRPO</strong></td><td><strong>连续 τ=0.15</strong></td><td>{pct(v3_acc_b)}</td><td>{pct(v3_acc_c)}</td><td>{pct(v3_acc_d)}</td><td>{v3_mc_p}</td><td><strong>{esc(v3_verdict)}</strong></td></tr>
-<tr style="background:#e8f5e9;"><td><strong>v4 (11-07)</strong></td><td><strong>RFT/STaR</strong></td><td><strong>连续+过滤</strong></td><td>{pct(v4_acc_b)}</td><td>{pct(v4_acc_c)}</td><td>{pct(v4_acc_d)}</td><td>{v4_mc_p}</td><td><strong>{esc(v4_verdict)}</strong></td></tr>
+<tr><th>版本</th><th>方法</th><th>任务/奖励</th><th>A(基线)</th><th>B (SFT)</th><th>C (处理)</th><th>D (控制)</th><th>McNemar C-B p</th><th>判定</th></tr>
+<tr><td>v1 (11-06)</td><td>GRPO</td><td>读数/离散5档</td><td>—</td><td>{pct(V1_SFT_ACC)}</td><td>{pct(V1_GRPO_ACC)}</td><td>—</td><td>—</td><td>❌ C&lt;B 负结果</td></tr>
+<tr><td>v2 (11-07)</td><td>GRPO</td><td>读数/连续</td><td>—</td><td>{pct(v2_acc.get("B_sft"))}</td><td>{pct(v2_acc.get("C_grpo_treatment"))}</td><td>{pct(v2_acc.get("D_grpo_control"))}</td><td>{v2_p}</td><td>⚠️ C&gt;B 但不显著</td></tr>
+<tr style="background:#e8eaf6;"><td><strong>v3 (11-07)</strong></td><td><strong>GRPO</strong></td><td><strong>读数/连续τ=0.15</strong></td><td>—</td><td>{pct(v3_acc_b)}</td><td>{pct(v3_acc_c)}</td><td>{pct(v3_acc_d)}</td><td>{v3_mc_p}</td><td><strong>{esc(v3_verdict)}</strong></td></tr>
+<tr style="background:#e8f5e9;"><td><strong>v4 (11-07)</strong></td><td><strong>RFT/STaR</strong></td><td><strong>读数/过滤</strong></td><td>—</td><td>{pct(v4_acc_b)}</td><td>{pct(v4_acc_c)}</td><td>{pct(v4_acc_d)}</td><td>{v4_mc_p}</td><td><strong>{esc(v4_verdict)}</strong></td></tr>
+<tr style="background:#fce4ec;"><td><strong>v5 (11-07)</strong></td><td><strong>RFT</strong></td><td><strong>类型分类/16点</strong></td><td>{pct(v5_acc_a)}</td><td>{pct(v5_acc_b)}</td><td>{pct(v5_acc_c)}</td><td>{pct(v5_acc_d)}</td><td>{v5_mc_p}</td><td><strong>{esc(v5_verdict)}</strong></td></tr>
 </table>
 <h3>5.2 核心结论</h3>
 <div style="background:#fff3cd;padding:12px;border-radius:6px;margin:12px 0;">
 <p><strong>GRPO 路线（v1/v2/v3）</strong>：CPU 上 GRPO 受限于小 group（std=0 问题持续）、近零 loss、波动 avgR。
-即使连续化奖励（v2/v3）也未扭转颓势 —— v3 C=25.0% &lt; B=34.0%（控制 D 待完成）。</p>
+即使连续化奖励（v2/v3）也未扭转颓势 —— v3 C=25.0% &lt; B=34.0%。</p>
 <p><strong>RFT 路线（v4）</strong>：改用 Rejection Sampling FT 绕过 group baseline 问题。
-<strong>{esc(v4_verdict)}</strong>。若 v4 也未显著提升，则连续 4 轮（v1/v2/v3/v4）负结果，
-说明在 CPU + 2B text-only + 工具交互范式下，RL/RFT 难以显著提升波形读数能力 —— 根因可能是任务定义（读数精度）对 2B 模型过难。</p>
+<strong>{esc(v4_verdict)}</strong>（C=34.0%=B=34.0%，NULL）。</p>
+<p><strong>方向转换（v5）</strong>：连续 3 轮无提升后，v5 改任务为<strong>波形类型分类</strong>（4 类）+ 改输入为<strong>16 采样点直接入 prompt</strong>。
+<strong>{esc(v5_verdict)}</strong>。v5 SFT loss 持续下降（0.55→0.32），表明类型分类可学。</p>
 </div>
 <h3>5.3 诚实边界</h3>
 <ul>
@@ -507,6 +729,8 @@ def main():
     log_info = parse_log_progress()
     results_v4 = safe_load(os.path.join(V4_OUT, "experiment_results.json"))
     log_info_v4 = parse_v4_log_progress()
+    results_v5 = safe_load(os.path.join(V5_OUT, "experiment_results.json"))
+    log_info_v5 = parse_v5_log_progress()
     now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
     # Build combined comparison table
     v4_acc_b = (results_v4 or {}).get("stats", {}).get("accuracy", {}).get("B_sft", log_info_v4.get("accuracies", {}).get("B_sft"))
@@ -514,13 +738,14 @@ def main():
     v4_acc_d = (results_v4 or {}).get("stats", {}).get("accuracy", {}).get("D_rft_control", log_info_v4.get("accuracies", {}).get("D_rft_ctrl"))
     v4_mc_p = (results_v4 or {}).get("stats", {}).get("mcnemar_C_vs_B", {}).get("p", "⏳")
     v4_verdict = (results_v4 or {}).get("stats", {}).get("verdict", log_info_v4.get("verdict", "⏳ 进行中"))
-    combined_cmp = section_combined_comparison(results, log_info, results_v4, log_info_v4)
+    combined_cmp = section_combined_comparison(results, log_info, results_v4, log_info_v4,
+                                                results_v5, log_info_v5)
     html_doc = f"""<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>视觉波形 RL · CPU 实验报告 v3+v4（2026-11-07）</title>
+<title>视觉波形 RL · CPU 实验报告 v3+v4+v5（2026-11-07）</title>
 <style>
 body {{ font-family: "Microsoft YaHei", "Noto Sans CJK SC", sans-serif; max-width: 1100px; margin: 0 auto; padding: 20px; line-height: 1.7; color: #333; }}
 h1 {{ color: #1a237e; border-bottom: 3px solid #1a237e; padding-bottom: 10px; }}
@@ -535,10 +760,10 @@ code {{ background: #f0f0f0; padding: 1px 4px; border-radius: 3px; font-size: 13
 </style>
 </head>
 <body>
-<h1>视觉波形 RL · CPU 实验报告 v3+v4</h1>
-<p><strong>生成时间</strong>：{now} · <strong>作者</strong>：vision wake#856→#869 · <strong>用户令</strong>：2026-11-07「用 CPU 设计有效 RL，证明显著提升 Qwen3.5-2B 波形理解」</p>
+<h1>视觉波形 RL · CPU 实验报告 v3+v4+v5</h1>
+<p><strong>生成时间</strong>：{now} · <strong>作者</strong>：vision wake#856→#886 · <strong>用户令</strong>：2026-11-07「用 CPU 设计有效 RL，证明显著提升 Qwen3.5-2B 波形理解」</p>
 <div class="summary">
-<p><strong>一句话总结</strong>：v1 离散 5 档奖励 → GRPO 负结果(6.2%&lt;9.2%)。v2 连续奖励方向翻转但不显著(n=45,p=0.625)。<strong>v3</strong> 聚焦 period-only(n=100)+40步+gs=8 连续奖励 GRPO → C=25.0%&lt;B=34.0%（控制D进行中）。<strong>v4</strong> 改用 RFT/STaR（绕过 group baseline）→ 进行中。</p>
+<p><strong>一句话总结</strong>：v1 离散 5 档奖励 → GRPO 负结果(6.2%&lt;9.2%)。v2 连续奖励方向翻转但不显著(n=45,p=0.625)。<strong>v3</strong> 聚焦 period-only(n=100)+40步+gs=8 连续奖励 GRPO → C=25.0%&lt;B=34.0%（负结果）。<strong>v4</strong> 改用 RFT/STaR → C=34.0%=B=34.0%（NULL，无提升）。<strong>v5</strong> 连续 3 轮无提升后换方向：改任务为波形类型分类 + 改输入为 16 采样点直接入 prompt → 进行中。</p>
 <p><strong>数据集调研</strong>：HF/GitHub/arXiv 三源均无波形 VQA 评测集，ngspice 合成波形+QA 是正确路线。</p>
 <p><strong>技术栈</strong>：LLaMA-Factory 与 Qwen3.5 架构互斥 → 退回 HF+peft 直训（已验证可行，69.7M LoRA）。</p>
 </div>
@@ -547,17 +772,18 @@ code {{ background: #f0f0f0; padding: 1px 4px; border-radius: 3px; font-size: 13
 {section_tech_stack()}
 {section_experiment(results, log_info)}
 {section_experiment_v4(results_v4, log_info_v4)}
+{section_experiment_v5(results_v5, log_info_v5)}
 {combined_cmp}
 <h2 id="next">六、下一步建议</h2>
 <ol>
-<li><strong>若 v4 显著</strong>：扩大 rollout 采集量、引入多目标(period+amplitude)、课程学习，GPU 阶段验证规模扩展。</li>
-<li><strong>若 v4 也不显著（连续 4 轮负结果）</strong>：必须换方向 —— ①改任务定义为可判定中间任务（波形类型判别/频率比较/异常定位）②切换 Qwen3.5-2B 多模态版直接处理波形图 ③增大 SFT 数据量与质量 ④等 GPU 做大规模 GRPO。</li>
-<li><strong>切换 Qwen3.5-2B 多模态版</strong>：当前 text-only backbone(工具交互)，多模态版可直接处理波形图，是未验证的更高上限。</li>
+<li><strong>若 v5 显著（C&gt;B 且 p&lt;0.05）</strong>：这是用户要的「证明显著提升」证据。扩大 SFT 数据量、引入更多波形类型（脉冲/噪声/调频）、课程学习（先易后难），GPU 阶段验证规模扩展。</li>
+<li><strong>若 v5 也不显著（连续 4 轮无提升）</strong>：①进一步简化任务（二分类：正弦 vs 方波）②增大 SFT 数据到 2000+ ③切换 Qwen3.5-2B 多模态版直接处理波形图 ④等 GPU 做大规模训练。</li>
+<li><strong>切换 Qwen3.5-2B 多模态版</strong>：当前 text-only backbone，多模态版可直接处理波形图，是未验证的更高上限。</li>
 <li><strong>GPU 训练阶段</strong>：pretrain ckpt(ETA≈12/25)后跑大规模 GRPO/RFT，验证 CPU pilot 结论可扩展性。</li>
-<li><strong>诚实边界</strong>：CPU pilot 结论不外推为 GPU 结论；负结果同样有价值（证伪了「CPU 上 RL/RFT 能提升波形读数」假设）。</li>
+<li><strong>诚实边界</strong>：CPU pilot 结论不外推为 GPU 结论；负结果同样有价值（证伪了「CPU 上 RL/RFT 能提升波形读数回归」假设，v5 换分类任务是正确方向转换）。</li>
 </ol>
 <hr>
-<p style="color:#999;font-size:12px;">本报告由 <code>gen_cpu_rl_v3_report.py</code> 自动生成（wake#856→#869, 2026-11-07）。数据来源：cpu_rl_v3/experiment_results.json + cpu_rl_v4/experiment_results.json + /tmp/v3_full_experiment.log + /tmp/v4_rft_experiment.log + dataset_research_results.json。单文件自包含，0 script, 0 外链。负结果同样有价值，如实报告。</p>
+<p style="color:#999;font-size:12px;">本报告由 <code>gen_cpu_rl_v3_report.py</code> 自动生成（wake#856→#886, 2026-11-07）。数据来源：cpu_rl_v3/v4/v5 experiment_results.json + /tmp/v{3,4,5}_*.log + dataset_research_results.json。单文件自包含，0 script, 0 外链。负结果同样有价值，如实报告。</p>
 </body>
 </html>"""
     os.makedirs(os.path.dirname(REPORT_PATH), exist_ok=True)
