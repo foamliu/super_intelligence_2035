@@ -58,6 +58,25 @@
 #### 3. 四层实施（L1/L2 本周做，L3/L4 等隧道+GPU）
 
 **L1 · 素材测绘（🚫 零依赖 —— 本轮必须交付）**
+
+**L1.0 · 先把 PyAether 文档拉到本地（用户 2026-11-07 直令 · 最优先）**
+
+> 用户原话：「你可以让 post-train 在本地（code 目录）git clone eda_fastmcp 这个仓库。地址可以从 zhulong 那里获取，这样就可以看看 PyAether 的文档。」
+
+1. **目标**：`git clone` 到本地 `~/code/eda_fastmcp`，从此**离线可读** PyAether API 文档，不必依赖 36.15 挂载或隧道。
+2. **拿地址**（仓库文档里**没有**记录 remote，必须现场查，🚫 别猜）：
+   - 在 **36.15** 上执行 `cd /nasdata/app.e0031982/code/eda_fastmcp && git remote -v`（这一步需隧道，若隧道未通则跳过）；
+   - 或查 `doc/ZhuLong_DAC2027/` 下的任务书/归档（`ZHULONG_TASK.md:317` 仅写「仓库外的独立 git 仓库」，无 URL）；
+   - 或问运维（本令的发起人）。
+3. **clone**：`cd ~/code && git clone <URL> eda_fastmcp`。`.17` 外网需显式带 proxy：`https_proxy=http://<proxy> http_proxy=http://<proxy> git clone ...`（wake17 已验证 proxy 可通 github）。
+4. ⚠️ **若 clone 失败（内网私有仓库 / .17 无路由 / 需凭证）⇒ 立刻上报 blocker 并写进报告**，改用备选路径：经隧道或 scp 从 36.15 拷 `docs/` + `kb/` 目录（只拷文档，不拷数据集）。
+5. **验收**：`ls ~/code/eda_fastmcp/docs` + `kb` 能看到 API 文档；统计文件数与总字节，与已知口径（≈8463 项 API / ≈21MB）对得上。
+
+> 💡 这一步价值很大：**把「必须等隧道才能看文档」变成「现在就能看」**，L1/L2 的数据侧因此完全解耦。
+
+---
+
+**L1.1 · API 结构化测绘**
 1. 把 8463 项 API 导出为结构化清单：`api_name / 模块 / 签名 / 参数(type,default) / 返回 / 关联示例`。
 2. **可出题性评估**（核心）：给每项打「可判分」标签 ——
    - ✅ **纯函数型**（输入→输出可断言，如查询/计算/格式化）
@@ -94,6 +113,7 @@
 
 #### 5. 本周交付物（🚫 零依赖，必须完成）
 
+0. **`~/code/eda_fastmcp` 本地克隆就绪**（L1.0）—— `docs/` + `kb/` 可离线读取；若 clone 不可行（内网私有/无路由），改为「已上报 blocker + 给出 scp 备选方案的执行结果」。**这一项决定 L1/L2 能否脱离隧道推进，优先做**。
 1. **`reports/report_posttrain_synth_rl_plan_zh.html`**（中文单文件、0 script、0 外链）—— 深度调研报告，必含：
    ① 8463 API 的可出题性分级统计（纯函数/副作用/不适用，各多少条 + 按域分布）
    ② 白名单构造方法与结果
