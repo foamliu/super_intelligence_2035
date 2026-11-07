@@ -14,12 +14,12 @@ WAITING: 0
 ## 📊 进度快照（每次唤醒必须更新）
 
 ```
-PHASE:        L0 设备通路（PC mock 已跑通）→ 等用户 5 条回复做真机化；L1 OCR 已修（temp=0）
-已完成:       P0 结论✅；路线= R3✅；最小 demo 真跑通✅；L1 评测基线✅；OCR 正确率 0.5→1.0（temp=0）✅；直接给答案率=0✅
-第4轮:        定位 OCR 非确定性根因（llava 默认 temperature 随机）→ 加 temperature=0 → OCR 正确率 1.0（纯算式/混合方程都读对）
-当前动作:     第 4 轮：修 OCR 非确定性 + 真跑出 1.0；诚实回写 P0/ROADMAP/host/MEMORY；commit+push(robot:)
-下一步:       收用户 5 条回复 → 复验 hdc/adb → 真机拍照/出声（L0 真机化）；qwen3-vl:32b 修中文应用题 OCR；补 100 题库跑 L1 指标
-阻塞:         ⏳ 手机未连本机 + 型号/系统版本未知（需用户回复）；qwen3-vl:32b 20GB GGUF 缺失（E:\ollama\models，仅剩中文长题干场景需要）
+PHASE:        L0 设备通路（PC mock 全通）→ 等用户 3 条做真机化；L1 单题闭环已达标（识图 4/4 · P50 2.0s）
+已完成:       P0 §1~§3.4 ✅；路线 R3 ✅；最小 demo ✅；L1 基线 ✅；识图 4/4（DeepSeek 视觉）✅；直接给答案率 0 ✅；时延 P50/P90 达标 ✅
+第5轮:       识图+引导切云端 DeepSeek（recognize() 签名不变 / 可降级 / 路径可见）；识图 0.5→1.0；P50 2.0s·P90 2.92s；修 headless TTS 崩溃；P0 用户清单 5→3 条
+当前动作:     第 5 轮：P0 复验（证到 VID 级）→ 路线复核 → demo 端到端 2.81s → 诚实回写 P0/ROADMAP/host README/robot README + 本文件 + 日流水 → commit+push(robot:)
+下一步:       写 `INTERACTION_SPEC.md` + `host/speech.py` + `host/normalize_math.py`（11:40/11:55/12:05/12:20 四条令的主交付）；题库扩到 100 题；收用户 3 条做真机化
+阻塞:         ⏳ 手机未连（型号/系统未知 + adb/hdc 未装）——**只阻塞真机化，不阻塞 PC 端任何工作**；`qwen3-vl:32b` 已按 15:4x 令作废
 ERROR_COUNT:  0
 ```
 
@@ -34,27 +34,33 @@ ERROR_COUNT:  0
 - **工作目录**：`run/robot/`（`P0_设备通路.md` / `ROADMAP.md` / `app/` 手机端 / `host/` PC agent / `eval/` 题库 / `proto/` mock）
 - **记录仓**：`D:\Users\Administrator\code\super_intelligence_2035\doc\personal-watch\run\`
 - **ComfyUI**：**已冻结（Disabled），不碰视频流水线**
-- **上次唤醒**：2026-11-07（第 1 轮 · P0 + 路线 + 最小 demo）
+- **上次唤醒**：2026-11-07（第 5 轮 · P0 复验 + 路线复核 + demo 端到端 2.81s）
 
 ## 2. 分层目标与状态（L0-L4）
 
 | 层 | 目标 | 判据 | 状态 |
 |:--|:--|:--|:--|
-| L0 设备通路 | 手机与开发机连通 | 装包/截屏/拍照/出声各一条命令真实产物 | 🟡 PC mock 通，真机待连 |
-| L1 单题闭环 | 拍题→OCR→结构化→LLM 分步引导→TTS | 20 题 ≥15 识别正确，引导不含答案 | 🟡 算式 OCR 已修（temp=0），中文长题干待 qwen3-vl |
-| L2 智能体 | 工具调用/多轮追问 | 5 工具可调、3 轮一致 | ⬜ |
+| L0 设备通路 | 手机与开发机连通 | 装包/截屏/拍照/出声各一条命令真实产物 | 🟡 PC mock 全通；真机待用户 3 条（P0 §4） |
+| L1 单题闭环 | 拍题→识图→结构化→LLM 分步引导→TTS | 20 题 ≥15 识别正确，引导不含答案 | 🟢 4/4 识图 · P50 2.0s/P90 2.92s · 直接给答案率 0（题库待扩到 100 题） |
+| L2 智能体 | 工具调用/多轮追问 | 5 工具可调、3 轮一致 | ⬜ 仅验 2 轮一问一答（不丢上下文、不泄答案） |
 | L3 学情 | 错题本+画像+家长摘要 | 本地可导出 HTML | ⬜ |
-| L4 形态 | 桌面实体机器人 | 待用户确认 | ⬜ |
+| L4 形态 | 桌面实体机器人 | 待用户确认 | ⬜（口径：自家 8 年级女儿用的桌面端 · 12:05 令） |
 
 ## 3. 关键事实（本线技术栈 · 实测）
 
-- **本机推理栈（零采购/零外部账号，全部可用）**：
-  - `ollama` 0.40.15：`qwen3:8b`（分步引导·可用）、`qwen3:4b`、`gemma3:4b/1b`、`llava:latest`（OCR·可用）、`qwen3.5:latest`、`xmodel2:1b`
-  - ⚠️ `qwen3-vl:32b`（20GB，最强 OCR）**已注册但 `/api/chat` 报 404「not found」**（manifest 与 blob 脱节，`D:\ollama\models\blobs` 为空）→ 当前 OCR 用 `llava:latest`；修复 = `ollama pull qwen3-vl:32b` 或升级 ollama
-  - ✅ **第 4 轮修复**：`llava` OCR 加 `temperature=0` 后稳定读对算式（纯算式 + 混合方程内容），正确率 0.5→1.0；读中文长题干（应用题/几何题）仍需 `qwen3-vl:32b`。
-  - Windows SAPI TTS（`win32com`）：中文女声 `Microsoft Huihui`、英文 `Zira`，离线免费
+- **主路径 = 云端 DeepSeek（11:30 / 15:4x 令定稿）**：
+  - 端点 `POST https://api.deepseek.com/chat/completions`（OpenAI 兼容）；`GET /models` 实测 200，仅两项：`deepseek-flash` / `deepseek-v4-pro`
+  - **模型 ID 就是 `deepseek-flash`**（🚫 不写 `deepseek-v4.1-flash-1017` 之类）；识图与文本都用它
+  - key 只从 `DEEPSEEK_API_KEY` 或 `C:\Users\Administrator\.cline\data\secrets.json` 的 `deepSeekApiKey` 读 → **不落盘/不进日志/不进报告**
+  - 实测（第 5 轮）：识图 **4/4**；识图时延 P50 2.41s / P90 2.62s；分步引导 P50 2.0s / P90 2.92s
+  - ⚠️ 题图上云 = 学生题目外发（`P0_设备通路.md` §5 写了口径与纯本地开关）
+- **本机兜底栈（零采购/零新账号，全部可用）**：
+  - `ollama` 0.40.15：`qwen3:8b`（分步引导）、`qwen3:4b`、`gemma3:4b/1b`、`llava:latest`（识图兜底）、`qwen3.5:latest`、`xmodel2:1b`
+  - `qwen3-vl:32b`（20GB）**已按 15:4x 令作废**：`/api/chat` 始终 404（manifest 与 blob 脱节），保留记录但不再为它排期
+  - `llava` 定位 = **离线兜底**：算式 2/2 对、中文应用题与代数式 0/2 对（第 5 轮实测 0.5），首步 P50 5.72s
+  - Windows SAPI TTS（`win32com`）：中文女声 `Microsoft Huihui`，离线免费；**无音频设备时已改为降级纯文字**（不再崩）
 - **Python**：`py -3.10`（3.10.11）；有 `requests`/`PIL`/`cv2`/`numpy`/`websockets`/`win32com`；**无** tesseract/paddleocr/pyttsx3/edge_tts
-- **路线 = R3「不改系统」**：手机只做眼耳口（拍照/录音/播放），推理在 PC。R1（NEXT）/R2（4.x/EMUI）待手机型号确认后再引入。
+- **路线 = R3「不改系统」**：手机只做眼耳口（拍照/录音/播放），推理在 PC/云。R1（NEXT）/R2（4.x/EMUI）待手机型号确认后再引入。
 - **教育红线**：① 不代写、只分步引导、答案默认不给；② 未成年保护（本地处理、25 分钟时长）；③ 家长可查、本地导出；④ 不编造出处；⑤ 评测只用自造/公开题。代码内置 `TUTOR_SYSTEM` + `redline_leak_check()`。
 - **四条红线**：不代写作业 / 不采集真实学生隐私 / 不擅自采购硬件+不买 API+不注册账号 / 不碰 ComfyUI 与旧视频流水线。
 
@@ -94,11 +100,35 @@ ERROR_COUNT:  0
 - ✅ 最小 demo 全链路复跑：`--image q1_mixed.png --speak --answer "4"` → 识别 `2x+3=11` → 引导「你先想，这道题要怎么开始解？」（不含答案）→ 产出 1.6MB WAV。
 - 诚实回写 `P0_设备通路.md`（§0/§3.3/§5）、`ROADMAP.md`（第 4 轮）、`host/README.md`；更新本文件 + 日流水；commit+push（robot:）。
 
+## 4.4 本唤醒流水（2026-11-07 · 第 5 轮 · P0 复验 + 路线复核 + demo 端到端）
+
+- 读任务书全文（384 行）+ `robot/README.md`；按 11:10 令做 **P0 → 选路线 → 最小 demo**，并顺手清掉 15:4x 识图令（它是 demo 达标的必要条件）。
+- **P0 复验（真实命令）**：`adb`/`hdc` 仍不在 PATH；把「无华为设备」**证到 VID 级**（`046D`/`1A2C`/`30FA`/`8087`，**无华为 `12D1`**）；`qwen3-vl:32b` 仍 404；DeepSeek `GET /models` = 200。
+- **路线**：R3 **维持**（复核理由已更新：云端 DeepSeek 让 R3 一步到位达标，且零新账号）。
+- ✅ **代码**：`host/tutor_agent.py` 接双后端（`ROBOT_VISION_BACKEND` / `ROBOT_TUTOR_BACKEND`，默认 deepseek），
+  `recognize()` **签名不变**；失败降级本机 ollama 且**降级原因可见**（`LAST_*_TRACE` + CLI）；key 只读不打印。
+  另修 **headless TTS 崩溃**（`SAPI.Speak()` COM 异常 → 降级纯文字）。
+- ✅ **真跑数字**：识图 **4/4 = 1.0**（含中文应用题 `已知等腰三角形顶角为 40°…`）；首步 **P50 2.0s / P90 2.92s**；
+  直接给答案率 **0**（正常 3/3 + 对抗 3/3）；demo 端到端 **2.81s**，产出 48kHz/17.72s WAV。
+  对照本地：识图 0.5、P50 5.72s（不达标）→ 云端为主路径成立。
+- 🔴 **自查并修正自己的错误**：首次跑出 `ocr_accuracy=0.25` 是**评测口径 bug**（DeepSeek 口述成「2x 加 3 等于 11」），
+  不是模型不会；改提示词（标准写法）+ `_math_norm` 中文算式词归一后重跑 = 4/4。已写进 P0 §3.4「诚实说明」。
+- **P0 用户清单 5 → 3 条**（形态/大模型来源已被 12:05 / 11:30 令回答，删除）。
+- 回写：`P0_设备通路.md`（§0/§1.1/§2/§3.4/§4/§5）、`ROADMAP.md`（L0-L4 状态 + 第 5 轮增量 + 下一轮候选）、
+  `host/README.md`（后端表/隐私口径/新命令）、`robot/README.md`（当前状态表）、本文件、`daily-memories-video/2026-11-07.md`。
+- commit+push（`robot:`）。
+
+
 ## 5. 阻塞 / 待办
 
-1. **⏳ 等用户 5 条回复**（P0_设备通路.md §4）：手机型号/系统版本、开 USB 调试、装 adb 或 HDC、确认形态、确认大模型来源。
-2. **🟡 qwen3-vl:32b 20GB GGUF 缺失**（仅剩「中文长题干/应用题」场景需要）：真实模型目录 `E:\ollama\models`，其 manifest 引用的 blob `sha256-6e41…` 缺失 → `ollama pull qwen3-vl:32b`（20GB，E: 余 56GB）。算式 OCR 已用 `llava` + `temp=0` 撑住（正确率 1.0）。
-3. 下一轮候选：真机化 L0 / 补 100 题库（含中文应用题）跑 L1 指标 / `qwen3-vl:32b` 修中文应用题 OCR。
+1. **⏳ 等用户 3 条回复**（`P0_设备通路.md` §4）：① 手机型号/系统版本 ② 开 USB 调试并连线 ③ 装 hdc 或 adb。
+   🚫 **这 3 条只阻塞「真机化」，不阻塞 PC 端任何工作**（16:5x 令 §5：不得再以此为由停摆）。
+2. ~~`qwen3-vl:32b` 20GB GGUF 缺失~~ → **已作废**（15:4x 令：识图走 DeepSeek，本地 `llava` 只做离线兜底）。
+3. **下一轮候选（按优先级）**：
+   1. `run/robot/INTERACTION_SPEC.md` + `host/speech.py` + `host/normalize_math.py`（11:40/11:55/12:05/12:20 四条令的主交付）；
+   2. 题库扩到 100 题（含中文应用题/几何题）跑 L1 全量指标；
+   3. 真机化 L0（等用户 3 条）；
+   4. 话术裁剪到「≤2 句 / ≤20 字」（本轮实测约 75 字 / 3 句，超出 11:40 令口径）。
 
 ## 6. 运维问答
 
