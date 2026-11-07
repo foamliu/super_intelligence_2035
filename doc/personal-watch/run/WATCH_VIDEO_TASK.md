@@ -10,6 +10,64 @@
 ---
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
+### 🔴 用户令 · 2026-11-07 22:35（**工具链自己装！不许把「adb 未安装」当阻塞项**）· 用户直令 · 最高优先 · 未完成
+
+> **用户原话**：「如果没有 ADB，为啥不能自己下载安装呢？只会等靠要吗？」「把活派给 robot，让它去做啊」
+
+#### 1. 硬性要求（本轮必须先做完 1、2 才能干别的）
+
+1. **自己装 ADB**：下载官方 `platform-tools`，装好并让 `adb version` 有输出；
+2. **自己装模拟器**：装 `emulator` + system image，建 AVD，让 `adb devices` 能看到 `emulator-5554`；
+3. 只有**三条渠道全部失败**才允许停下来报告，且必须给出：试过的渠道、每条的真实报错原文、下一步建议；
+4. 🚫 **禁止**再把「adb/hdc 未安装」写进 P0 结论当阻塞项（P0 已复验 7 次都一样，装是你要做的事，不是用户的事）。
+
+#### 2. 照抄执行（代理已给好，别自己猜）
+
+```powershell
+$env:http_proxy='http://172.19.92.25:13128'; $env:https_proxy=$env:http_proxy
+# ① ADB（7.7MB，官方免登录）
+Invoke-WebRequest -Uri 'https://dl.google.com/android/repository/platform-tools-latest-windows.zip' -OutFile 'C:\Android\platform-tools.zip'
+Expand-Archive 'C:\Android\platform-tools.zip' -DestinationPath 'C:\Android' -Force
+C:\Android\platform-tools\adb.exe version        # 验收 1
+
+# ② cmdline-tools（sdkmanager）
+Invoke-WebRequest -Uri 'https://dl.google.com/android/repository/commandlinetools-win-11076708_latest.zip' -OutFile 'C:\Android\cmdline-tools.zip'
+Expand-Archive 'C:\Android\cmdline-tools.zip' -DestinationPath 'C:\Android\cmdline-tools-tmp' -Force
+# 目录必须是 cmdline-tools\latest\bin\sdkmanager.bat
+Move-Item 'C:\Android\cmdline-tools-tmp\cmdline-tools' 'C:\Android\cmdline-tools\latest' -Force
+C:\Android\cmdline-tools\latest\bin\sdkmanager.bat --sdk_root=C:\Android --licenses
+
+# ③ 装 emulator + 镜像（~1.5GB；慢就退 android-30；再慢见 §3）
+C:\Android\cmdline-tools\latest\bin\sdkmanager.bat --sdk_root=C:\Android "platform-tools" "platforms;android-34" "emulator" "system-images;android-34;google_apis;x86_64"
+C:\Android\cmdline-tools\latest\bin\avdmanager.bat create avd -n robot34 -k "system-images;android-34;google_apis;x86_64" -d pixel_5 --force
+C:\Android\emulator\emulator.exe -avd robot34 -gpu swiftshader_indirect -no-snapshot -no-audio-input
+C:\Android\platform-tools\adb.exe devices            # 验收 2：应看到 emulator-5554
+```
+
+> ⚠️ 一律用**绝对路径**调用（`C:\Android\...`），🚫 不要依赖 PATH（SYSTEM 账户下 PATH 不可靠）。
+
+#### 3. 下载慢/失败的三级回退（必须依次试，不许第一级失败就报阻塞）
+
+1. **直连**（去掉 proxy 再试一次）；
+2. **代理**（上面的 `172.19.92.25:13128`）；
+3. **镜像站**：`https://mirrors.cloud.tencent.com/AndroidSDK/`（platform-tools/repository 同构），或 `https://mirrors.neusoft.edu.cn/android/repository/`；
+4. 若 system image 实在下不动：**先只装 `platform-tools` + `emulator` + `platforms;android-34`**（≈300MB），用 `default;x86_64` 最小镜像建 AVD；连这也不行才报阻塞。
+
+#### 4. 验收证据（缺一项算没做完）
+
+- `adb version` 原文（含版本号与路径）；
+- `adb devices` 原文（含 `emulator-5554 device`）；
+- `emulator -list-avds` 原文；
+- 安装目录清单（`C:\Android\` 下各组件大小）；
+- 若走到模拟器 UI：一张截图或 `adb exec-out screencap -p > shot.png`。
+
+#### 5. 装好之后立刻接着做
+
+`host/speech.py`（端侧 ASR/TTS 适配层 + `/tutor` 流式 + 打断）→ `host/presence.py` → `host/normalize_math.py`（≥30 单测）→ 模拟器内 60s 会话录屏。
+
+---
+
+
 ### 🔴 用户令 · 2026-11-07 22:30（**别再等真机：用模拟器跑通客户端，真机只做最后一步验收**）· 用户直令 · 最高优先 · 未完成
 
 > 用户原话：「robot 为什么不能用模拟器呢」
