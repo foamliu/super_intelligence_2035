@@ -7,12 +7,12 @@ WAITING: 1
 
 ## 进度快照
 
-- PHASE: posttrain-wake50（2026-11-07 R2造题与难度分层调研完成，R1-R4全部完成）
-- 已完成: P3预备✅ 7脚本；P0✅ D1–D6；P1✅ 数据盘点+PyAether语料+污染隔离；P2✅ 方案书；wake45✅ §替身RL预演；wake48✅ R1+R3；wake49✅ R4(五分类法)；wake50✅ R2(造题扩展500→4000+5层难度+5断言模板+pass@8校准方案+区分度证据)
-- 当前动作: wake50 唤醒→ git status clean→ R2深度调研: /tmp/pt_r2_analysis.py分析API数据库(8463API→白名单6781→可判定2414)+审计现有500题(0真实断言!+626/6781 API覆盖率9.2%)→ 设计五层难度(L1-L5,4000题)+五维评分公式+5种断言模板(T1-T5)+pass@8校准方案(533GPU-h/5.5天)+区分度证据(L3核心RL区)→ 产出EXPERIMENTS §R2(10小节)+HTML报告report_posttrain_r2_synth_expansion_zh.html(11.3KB/12节/0script)→ 体积自检+提交
-- 下一步: R1-R4全部完成→ WAITING=1；11/9 GPU到位后自动起跑(vllm serve→复测36%基线→E1生成4000题+断言→pass@8校准→采真实轨迹→用R4分类法校正→起第一轮EDA RL)
+- PHASE: posttrain-wake51（2026-11-07 E1合成题生成脚本完成+3347题落盘，R1-R4全部完成）
+- 已完成: P3预备✅ 7脚本；P0✅ D1–D6；P1✅ 数据盘点+PyAether语料+污染隔离；P2✅ 方案书；wake45✅ §替身RL预演；wake48✅ R1+R3；wake49✅ R4(五分类法)；wake50✅ R2(造题设计)；wake51✅ E1(生成脚本+3347题落盘)
+- 当前动作: wake51 唤醒→ git fetch→ R1-R4已全部完成→ 反空转条款要求继续产出→ 将R2设计转化为可执行脚本baize_posttrain_gen_synth_v2.py→ 语法检查✅+dry-run✅+小样测试17题✅→ 完整生成3347题(0.6s)→ 0污染命中→ 3347/3347真实断言(非pass)→ 5.4MB JSONL落盘→ EXPERIMENTS §E1(7小节)→ 体积自检+提交
+- 下一步: R1-R4+E1全部完成→ WAITING=1；11/9 GPU到位后自动起跑(vllm serve→复测36%基线→完整污染闸门扫描→pass@8校准→unknown API profiling补L2→采真实轨迹→起第一轮EDA RL)
 - 阻塞: GPU 2026-11-09既定到位(不再问)；L3等隧道；P3等pretrain ckpt(ETA≈2026-12-25)
-- 未完成指令: 无（R1✅R2✅R3✅R4✅ 全部完成）⇒ WAITING=1
+- 未完成指令: 无（R1✅R2✅R3✅R4✅E1✅ 全部完成）⇒ WAITING=1
 
 ## 关键事实（常驻）
 
@@ -45,5 +45,7 @@ WAITING: 1
 
 [wake49] R4(失败模式分类)深度调研: 12次评测1895task-run+103轨迹分析 → 五分类法(SYN/API/LOG/TMO/DEP) → EXPERIMENTS §R4(11小节)+HTML 12.7KB → 归档wake17-48流水。
 
-[wake50] R2(造题与难度分层)深度调研: /tmp/pt_r2_analysis.py分析API数据库(8463→白名单6781→可判定2414)+审计现有500题(0真实断言!+626/6781=9.2%覆盖) → 设计五层难度(L1-L5,4000题)+五维评分+5种断言模板(T1-T5)+pass@8校准(533GPU-h/5.5天)+区分度证据(L3核心RL区40-60%pass@1) → EXPERIMENTS §R2(10小节)+HTML报告11.3KB/12节/0script。R1-R4全部完成→WAITING=1。📦 体积：TASK=24.7KB / MEMORY≈6KB / EXPERIMENTS≈60KB。本轮新增调研产出：EXPERIMENTS §R2 + HTML报告11.3KB。未完成指令：无（R1✅R2✅R3✅R4✅）⇒ WAITING=1。
+[wake50] R2(造题与难度分层)深度调研 → 五层难度(L1-L5,4000题)+五维评分+5断言模板(T1-T5)+pass@8校准方案 → EXPERIMENTS §R2 + HTML 11.3KB。R1-R4全部完成。
+
+[wake51] E1合成题生成执行: R2设计→可执行脚本baize_posttrain_gen_synth_v2.py→ 8463 API DB→排除488评测黑名单→6781白名单→ 生成3347题(L1=1500/L2=347/L3=800/L4=500/L5=200)→ 0污染命中→ 3347/3347真实断言(非pass,v1为0/500!)→ 5.4MB rl_pyaether_synth_v2.jsonl落盘 → EXPERIMENTS §E1(7小节)。L2短缺(347 vs 1000): 4367 unknown-return API待GPU沙盒profiling补全。⚠️ commit f0080ac94已本地完成但push超时(网络慢)，下轮唤醒第一件事补推。📦 体积：TASK=24.7KB / MEMORY≈6KB / EXPERIMENTS≈68KB。本轮新增调研产出：E1生成脚本+3347题数据集+EXPERIMENTS §E1。未完成指令：无（R1✅R2✅R3✅R4✅E1✅）⇒ WAITING=1。
 

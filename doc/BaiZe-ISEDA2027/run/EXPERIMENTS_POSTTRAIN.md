@@ -946,3 +946,73 @@ def check(candidate):
 - 现有合成题：`run/rl_pyaether_synth_tasks.jsonl`（500 题，0 真实断言）
 - 污染闸门脚本：`run/baize_posttrain_contamination_gate.sh`
 - R4 pass@8 参考：sGPO (arXiv:2606.08854)
+
+---
+
+## §E1 合成题生成执行（2026-11-07 wake51 · 零 GPU · R2 设计→可执行数据）
+
+> **任务**：将 R2 调研设计（五层难度 L1-L5 + 五种断言模板 T1-T5）转化为可执行的合成题数据集。
+> **脚本**：`run/baize_posttrain_gen_synth_v2.py`（Python 3.8 兼容，`--dry-run` / `--max-tasks` 可调）
+> **产出**：`run/rl_pyaether_synth_v2.jsonl`（3347 题，5.4MB）
+
+### 1. 执行结果
+
+| 维度 | v1（现有 500 题） | v2（本次生成） | 改进 |
+|:--|:--|:--|:--|
+| 总题量 | 500 | **3347** | 6.7× 扩展 |
+| 真实断言数 | **0** | **3347** | 🚨 v1 全部 `pass`，v2 全部可机器判定 |
+| 唯一 API 使用 | 626（9.2% 覆盖） | ~5000+（~74% 覆盖） | API 覆盖大幅提升 |
+| 难度层 | 3 档（low/med/high） | 5 档（L1-L5） | 更细粒度 |
+| 难度判定 | 纯 API 数 | 五维评分公式 | 多维度 |
+| 断言模板 | 无 | 5 模板（T1-T5） | RL reward 可用 |
+| 污染命中 | 0 | 0 | 隔离保持 |
+
+### 2. 各层生成量与断言模板分布
+
+| 难度层 | 目标 | 实际 | 原因 | 断言模板 |
+|:--|--:|--:|:--|:--|
+| L1 (Trivial) | 1500 | **1500** ✅ | 1663 个 primitive-return API，充足 | T1_type_check (1500) |
+| L2 (Basic) | 1000 | **347** ⚠️ | 仅 347 个 object-return API 已分类；4367 个 unknown 待 GPU 沙盒 profiling | T1_type_check (347) |
+| L3 (Medium) | 800 | **800** ✅ | 92 类别中有 ≥3 API 的类别充足 | T3_chain_type (212) + T4_state_verify (588) |
+| L4 (Advanced) | 500 | **500** ✅ | ≥6 API/类别 的类别充足 | T4_state_verify (500) |
+| L5 (Challenge) | 200 | **200** ✅ | 6781 白名单 // 10 充足 | T5_behavior (200) |
+| **合计** | 4000 | **3347** | L2 短缺 653 题（待 GPU 后补） | 4 模板启用（T2 未触发：void-return API 极少） |
+
+### 3. 断言模板分布
+
+| 模板 | 题数 | 占比 | 适用层 | reward 映射 |
+|:--|--:|--:|:--|:--|
+| T1_type_check | 1847 | 55.2% | L1+L2 | R1 二值臂 |
+| T3_chain_type | 212 | 6.3% | L3 | R2 分档臂 |
+| T4_state_verify | 1088 | 32.5% | L3+L4 | R2/R3 分档臂 |
+| T5_behavior | 200 | 6.0% | L5 | R3 过程+结果臂 |
+| T2_value_invariant | 0 | 0% | L1（void-return） | R1 二值臂 |
+
+### 4. 污染隔离验证
+
+- 白名单构建：8463 API 数据库 → 排除 488 评测黑名单 → 排除非 function/method 类型 → 6781 白名单
+- 快速污染检查：3347 题 × API 列表 vs 评测黑名单 → **0 命中** ✅
+- 完整闸门（13-gram + 8-gram + MinHash）：dry-run ✅，GPU 后执行完整扫描
+
+### 5. L2 短缺分析与补救计划
+
+**原因**：R2 调研发现 4367 个白名单 API 的返回类型为 `unknown`（描述中未标注 `**out**type`）。当前脚本仅使用已分类的 primitive（1663）和 object（347）API 生成 L1/L2 题。
+
+**补救**：
+1. GPU 后（11/9+）用沙盒对 4367 个 unknown API 做 profiling（调用 + 检查返回类型）
+2. 补全后重跑生成脚本，L2 可扩充到 1000+
+3. 当前 3347 题已足够启动 RL 训练（L3+L4+L5 = 1500 题，pass@8 筛选后 ~900 题）
+
+### 6. 题目质量验证（抽样）
+
+- L1 例：`call_aesesavenethighlight()` → `assert isinstance(result, bool)` ✅
+- L3 例：4 API 链式调用 → `assert len(result) == 4` + 逐元素非 None 检查 ✅
+- L5 例：10 API 跨类别调用 → 幂等性检查 `r1 == r2` + 长度一致 ✅
+- 所有断言均为可机器执行的真实断言（非 `pass` 占位）
+
+### 7. 下一步（GPU 后 11/9+）
+
+1. **完整污染闸门扫描**：`bash baize_posttrain_contamination_gate.sh --rl-synth rl_pyaether_synth_v2.jsonl`
+2. **E2 pass@8 校准**：MiniCPM5-2B × 8 runs/题 → 按通过率重分桶（easy/medium/hard）
+3. **unknown API profiling**：沙盒调用 4367 个 unknown API → 补全返回类型 → 重跑生成
+4. **失败轨迹回收**：pass@8 中失败的轨迹 → SFT 错误恢复数据

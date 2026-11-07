@@ -28,6 +28,7 @@ export PATH="/home/app.e0031982/.local/node-20/bin:$PATH"
 export CLI_AGENT=cline                  # ③ cline harness (基线口径)
 export EVAL_FW_DIR="$EVAL_FW"
 export EVAL_ROOT_DIR_OVERRIDE="$EVAL_ROOT_OVERRIDE"
+export EVAL_BENCHMARK="benchmarks/EDA-Eval-pyAether/EDA-Eval-pyAether-158.jsonl"  # 评估侧 benchmark 对齐 (harness fix #4; run_cline_script.sh 已默认此值, 此处显式留证)
 export PYTHON="$BASE_DIR/venv/bin/python"   # venv (含 pydantic 等), 否则 run_python_script 退回 bare python 缺包
 export NO_PROXY="agi-gateway.cxmt.com,10.129.32.75,localhost,127.0.0.1"
 unset http_proxy https_proxy HTTP_PROXY HTTPS_PROXY   # cline 直连内部 gateway
