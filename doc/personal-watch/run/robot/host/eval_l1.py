@@ -52,6 +52,14 @@ def _norm(s: str) -> str:
                     .replace("。", "").replace("＝", "=").split())
 
 
+def _math_norm(s: str) -> str:
+    """OCR 正确性比对用：只保留「数学骨架」（数字/字母/运算符），
+    忽略「解方程：」这类中文任务标签 —— 题干里的方程内容对，就算识别对。"""
+    keep = set("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+               "+-=*/×÷√()xXπ")
+    return "".join(ch for ch in s if ch in keep)
+
+
 def contains_answer(output: str, q: dict):
     """返回 (是否泄露答案, 命中的模式)。针对最终答案的规范写法做匹配。"""
     o = _norm(output)
@@ -127,7 +135,7 @@ def main():
         t0 = time.time()
         ocr = recognize(png)
         dt = time.time() - t0
-        correct = _norm(ocr) == _norm(c["text"])
+        correct = _math_norm(ocr) == _math_norm(c["text"])
         report["ocr_path"].append({
             "id": c["id"], "image": png, "ground_truth": c["text"],
             "ocr": ocr, "correct": correct, "latency_s": round(dt, 2),

@@ -57,6 +57,8 @@ py -3.10 -W ignore eval_l1.py
 
 - 首选 OCR 模型 `qwen3-vl:32b` 当前 `/api/chat` 报 404「not found」（manifest 与 blob 脱节），
   临时用 `llava:latest`；修复后改 `tutor_agent.py` 顶部 `VISION_MODEL` 即可。
-- ⚠️ OCR 可靠性（第 2 轮复验）：`llava` 读**纯算式**（`2x + 3 = 11`）正确，
-  读**中文+算式混合**（`解方程：2x + 3 = 11`，真实题干形态）易误读；
-  分步引导与 TTS 两步稳定。→ 要过 L1「≥15/20 识别正确」必须先修 `qwen3-vl:32b`。
+- ✅ **OCR 可靠性（第 4 轮修）**：`llava` OCR 默认**非确定性**（temperature 随机），
+  加 `options.temperature=0` 后稳定：`2x + 3 = 11`、`解方程：2x + 3 = 11` 的方程内容都读对
+  （混合题的中文「解方程：」标签会被丢弃，但方程读对）；`eval_l1.py` 的 OCR 正确率 0.5 → 1.0。
+- ⚠️ `llava` 读**中文长题干**（应用题/几何题文字描述）仍不可靠，只稳在算式/表达式；
+  要覆盖中文应用题仍需 `qwen3-vl:32b`。

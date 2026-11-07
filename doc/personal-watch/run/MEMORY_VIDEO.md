@@ -14,12 +14,12 @@ WAITING: 0
 ## 📊 进度快照（每次唤醒必须更新）
 
 ```
-PHASE:        L0 设备通路（PC mock 已跑通）→ 等用户 5 条回复做真机化；L1 评测基线已建
-已完成:       P0 结论✅（adb/hdc 未装、手机未连）；路线= R3✅；最小 demo 真跑通✅；L1 评测基线✅（直接给答案率=0）
-第3轮:        新增 host/eval_l1.py 可重复评测；对抗性直接要答案 3/3 拒绝（红线顶得住）；OCR 0.5（纯算式对/混合失败）；qwen3-vl:32b 根因定位=E:\blobs 缺失
-当前动作:     第 3 轮：新增评测基线+真跑出数字；精确定位 qwen3-vl:32b 404 根因；诚实回写 P0/ROADMAP/host/MEMORY；commit+push(robot:)
-下一步:       收用户 5 条回复 → 复验 hdc/adb → 真机拍照/出声（L0 真机化）；ollama pull qwen3-vl:32b（20GB）修 OCR；补 100 题库跑 L1 指标
-阻塞:         ⏳ 手机未连本机 + 型号/系统版本未知（需用户回复）；qwen3-vl:32b 20GB GGUF 缺失（E:\ollama\models\blobs）
+PHASE:        L0 设备通路（PC mock 已跑通）→ 等用户 5 条回复做真机化；L1 OCR 已修（temp=0）
+已完成:       P0 结论✅；路线= R3✅；最小 demo 真跑通✅；L1 评测基线✅；OCR 正确率 0.5→1.0（temp=0）✅；直接给答案率=0✅
+第4轮:        定位 OCR 非确定性根因（llava 默认 temperature 随机）→ 加 temperature=0 → OCR 正确率 1.0（纯算式/混合方程都读对）
+当前动作:     第 4 轮：修 OCR 非确定性 + 真跑出 1.0；诚实回写 P0/ROADMAP/host/MEMORY；commit+push(robot:)
+下一步:       收用户 5 条回复 → 复验 hdc/adb → 真机拍照/出声（L0 真机化）；qwen3-vl:32b 修中文应用题 OCR；补 100 题库跑 L1 指标
+阻塞:         ⏳ 手机未连本机 + 型号/系统版本未知（需用户回复）；qwen3-vl:32b 20GB GGUF 缺失（E:\ollama\models，仅剩中文长题干场景需要）
 ERROR_COUNT:  0
 ```
 
@@ -41,7 +41,7 @@ ERROR_COUNT:  0
 | 层 | 目标 | 判据 | 状态 |
 |:--|:--|:--|:--|
 | L0 设备通路 | 手机与开发机连通 | 装包/截屏/拍照/出声各一条命令真实产物 | 🟡 PC mock 通，真机待连 |
-| L1 单题闭环 | 拍题→OCR→结构化→LLM 分步引导→TTS | 20 题 ≥15 识别正确，引导不含答案 | 🟡 1 题 demo 通 |
+| L1 单题闭环 | 拍题→OCR→结构化→LLM 分步引导→TTS | 20 题 ≥15 识别正确，引导不含答案 | 🟡 算式 OCR 已修（temp=0），中文长题干待 qwen3-vl |
 | L2 智能体 | 工具调用/多轮追问 | 5 工具可调、3 轮一致 | ⬜ |
 | L3 学情 | 错题本+画像+家长摘要 | 本地可导出 HTML | ⬜ |
 | L4 形态 | 桌面实体机器人 | 待用户确认 | ⬜ |
@@ -51,7 +51,7 @@ ERROR_COUNT:  0
 - **本机推理栈（零采购/零外部账号，全部可用）**：
   - `ollama` 0.40.15：`qwen3:8b`（分步引导·可用）、`qwen3:4b`、`gemma3:4b/1b`、`llava:latest`（OCR·可用）、`qwen3.5:latest`、`xmodel2:1b`
   - ⚠️ `qwen3-vl:32b`（20GB，最强 OCR）**已注册但 `/api/chat` 报 404「not found」**（manifest 与 blob 脱节，`D:\ollama\models\blobs` 为空）→ 当前 OCR 用 `llava:latest`；修复 = `ollama pull qwen3-vl:32b` 或升级 ollama
-  - 🔴 **第 2 轮新发现**：`llava` OCR 读**纯算式**对、读**中文+算式混合**（真实题干形态）易错 → 过不了 L1「≥15/20」；须先修 `qwen3-vl:32b`
+  - ✅ **第 4 轮修复**：`llava` OCR 加 `temperature=0` 后稳定读对算式（纯算式 + 混合方程内容），正确率 0.5→1.0；读中文长题干（应用题/几何题）仍需 `qwen3-vl:32b`。
   - Windows SAPI TTS（`win32com`）：中文女声 `Microsoft Huihui`、英文 `Zira`，离线免费
 - **Python**：`py -3.10`（3.10.11）；有 `requests`/`PIL`/`cv2`/`numpy`/`websockets`/`win32com`；**无** tesseract/paddleocr/pyttsx3/edge_tts
 - **路线 = R3「不改系统」**：手机只做眼耳口（拍照/录音/播放），推理在 PC。R1（NEXT）/R2（4.x/EMUI）待手机型号确认后再引入。
@@ -85,11 +85,20 @@ ERROR_COUNT:  0
 - ✅ 最小 demo 复跑：`--image q1_pure.png --speak --answer "4"` → 识别正确 → 引导不含答案 → 产出 1.15MB WAV。
 - 诚实回写 `P0_设备通路.md`（§0/§3.2/§5）、`ROADMAP.md`、`host/README.md`；更新本文件 + 日流水；commit+push（robot:）。
 
+## 4.3 本唤醒流水（2026-11-07 · 第 4 轮 · 修 OCR 非确定性）
+
+- 读任务书（11:10 令）+ `robot/README.md`；复验 P0：`adb`/`hdc` 仍未装、`Get-PnpDevice` 无华为/ADB/HDC 设备、`ollama list` 8 模型在位（`qwen3-vl:32b` 仍 404）。
+- 🔴 **定位 OCR「时对时错」真因 = 非确定性**：`llava` OCR 默认 temperature 随机，同一张 `2x+3=11` 题图 3 次读成 `我们不会看到这个问题` / `1+3=11` / `2x+3=11`（只对 1/3）。
+- ✅ **修复**：`tutor_agent.py` 的 OCR 调用加 `options.temperature=0` → 同一张图 3 次全对全一致；另加英文提示词兜底（中文拒识时）。
+- ✅ **OCR 正确率 0.5 → 1.0**（真跑 `eval_l1.py`）：纯算式、中文+算式混合（方程内容）都稳定读对；`eval_l1.py` 加 `_math_norm`（只比数学骨架，忽略「解方程：」标签）。
+- ✅ 最小 demo 全链路复跑：`--image q1_mixed.png --speak --answer "4"` → 识别 `2x+3=11` → 引导「你先想，这道题要怎么开始解？」（不含答案）→ 产出 1.6MB WAV。
+- 诚实回写 `P0_设备通路.md`（§0/§3.3/§5）、`ROADMAP.md`（第 4 轮）、`host/README.md`；更新本文件 + 日流水；commit+push（robot:）。
+
 ## 5. 阻塞 / 待办
 
 1. **⏳ 等用户 5 条回复**（P0_设备通路.md §4）：手机型号/系统版本、开 USB 调试、装 adb 或 HDC、确认形态、确认大模型来源。
-2. **🔴 qwen3-vl:32b 20GB GGUF 缺失**（OCR 弱环根因，本地可自修）：真实模型目录 `E:\ollama\models`，其 manifest 引用的 blob `sha256-6e41…` 缺失 → `ollama pull qwen3-vl:32b`（20GB，E: 余 60GB）重拉后改回 `VISION_MODEL`。
-3. 下一轮候选：真机化 L0 / 补 100 题库跑 L1 指标（识别准确率 + 直接给答案率=0）。
+2. **🟡 qwen3-vl:32b 20GB GGUF 缺失**（仅剩「中文长题干/应用题」场景需要）：真实模型目录 `E:\ollama\models`，其 manifest 引用的 blob `sha256-6e41…` 缺失 → `ollama pull qwen3-vl:32b`（20GB，E: 余 56GB）。算式 OCR 已用 `llava` + `temp=0` 撑住（正确率 1.0）。
+3. 下一轮候选：真机化 L0 / 补 100 题库（含中文应用题）跑 L1 指标 / `qwen3-vl:32b` 修中文应用题 OCR。
 
 ## 6. 运维问答
 

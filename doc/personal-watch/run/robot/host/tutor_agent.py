@@ -51,27 +51,49 @@ def _img_b64(path: str) -> str:
         return base64.b64encode(f.read()).decode("ascii")
 
 
+# OCR 提示词（第 4 轮实测：llava 读「纯算式」用中英文都能对，读「中文+算式混合」都会失败；
+# 英文提示词在中文提示词返回空/拒识时是可靠兜底）
+OCR_PROMPTS = [
+    "请只把图片里的题目逐字抄写出来，一字不改，只输出题目原文。"
+    "公式用文字描述（例如『2x 加 3 等于 11』）。"
+    "严格禁止解题、禁止写出答案、禁止任何讲解或多余的话。",
+    "Transcribe the math equation in the image. Output only the equation text, "
+    "one line, nothing else. Do not solve, do not explain.",
+]
+
+
+def _has_digit_or_math(s: str) -> bool:
+    """判空/拒识：连一个数字或常见算式符号都没有，视为未识别出题目。"""
+    return any(ch.isdigit() for ch in s) or any(c in s for c in "+-=xX×÷√")
+
+
+def _ocr_once(prompt: str, question: str) -> str:
+    r = requests.post(
+        f"{OLLAMA}/api/chat",
+        json={
+            "model": VISION_MODEL,
+            "stream": False,
+            "options": {"temperature": 0},  # 确定性 OCR（实测：默认随机会读成乱码，temp=0 稳定正确）
+            "messages": [{"role": "user", "content": prompt,
+                          "images": [_img_b64(question)]}],
+        },
+        timeout=TUTOR_TIMEOUT,
+    )
+    r.raise_for_status()
+    return r.json()["message"]["content"].strip()
+
+
 def recognize(question: str) -> str:
     """输入：题图路径（手机「拍照」产物）或纯文本；输出：结构化题干文本。"""
-    if os.path.isfile(question):
-        r = requests.post(
-            f"{OLLAMA}/api/chat",
-            json={
-                "model": VISION_MODEL,
-                "stream": False,
-                "messages": [{
-                    "role": "user",
-                    "content": "请只把图片里的题目逐字抄写出来，一字不改，只输出题目原文。"
-                               "公式用文字描述（例如『2x 加 3 等于 11』）。"
-                               "严格禁止解题、禁止写出答案、禁止任何讲解或多余的话。",
-                    "images": [_img_b64(question)],
-                }],
-            },
-            timeout=TUTOR_TIMEOUT,
-        )
-        r.raise_for_status()
-        return r.json()["message"]["content"].strip()
-    return question.strip()
+    if not os.path.isfile(question):
+        return question.strip()
+    last = ""
+    for prompt in OCR_PROMPTS:
+        last = _ocr_once(prompt, question)
+        if _has_digit_or_math(last):
+            return last
+    # 中英文提示词都未识别出算式，返回最后一次结果（诚实交给下游，不硬编）
+    return last
 
 
 def tutor_step(question: str, history=()) -> str:
