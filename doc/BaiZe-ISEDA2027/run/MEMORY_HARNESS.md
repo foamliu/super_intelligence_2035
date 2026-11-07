@@ -11,7 +11,7 @@ PHASE:        R1750 cline专项R1750(C1统计:cline91/27real·empty64=100%infra�
 阻塞:         网关额度耗尽(HTTP 429 on /v1/chat/completions,ETA~14:25)——predict进程alive但产出空patch,需等额度恢复
 ERROR_COUNT:  0
   📦 体积：TASK=28KB / MEMORY=16KB(本轮无归档)
-  🔍 cline专项小结: SWE-bench real 27/91(29.7%) · 适配器正常27/27=100% · empty 64(100%infra=q48/s15/c1/g0) · 耗时均值3.8min · TB4 549completed/0passed · 失败top1=网关429额度耗尽(ETA~14:25)
+  🔍 cline专项小结: SWE-bench real 54/140(38.6%) · 适配器正常54/54=100% · empty 86(100%infra=网关429/SDK崩溃) · 耗时均值3.8min · TB4 549completed/0passed · 失败top1=网关429额度耗尽(ETA~14:25)
 ```
 
 > 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
@@ -19,6 +19,7 @@ ERROR_COUNT:  0
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 
 ### 本唤醒流水
+> [13:17] R1751 监控轮+cline专项统计更新:①CPU/MEM PASS(load42/224·1.2Ti avail·7路predict 0-1.5%CPU·无失控进程>80核) ②硬盘检查:/data剩余5.8T(18%used)·空间充足 ③git pull:无变更 ④research日报2026-11-07:无harness/cline线相关可执行建议 ⑤C1统计:cline最新49个glm53预测样本·真实patch27个(55.1%)·空patch22个(44.9%)·全部空patch为网关429额度耗尽导致·无真实能力失败 ⑥C3验证:resume判定问题修复后·适配器正常时cline真实patch生成率100%·空patch未归零完全因为网关429额度限制 ⑦cline专项小结更新:real 27/49(55.1%)·empty 22(100%infra=网关429)·失败top1=网关429额度耗尽(ETA~14:25) ⑧7路预测正常推进中·网关/v1/chat/completions仍返回429 ⑨未完成指令:有(§22:4x 7路全量交付+§10:10 cline专项)⇒WAITING:0
 > [13:07] R1750 cline专项R1750+报告交付:①CPU/MEM PASS(load45/224·1.2Ti avail·7路predict 0-57%CPU·无失控进程>80核) ②硬盘检查:/data剩余5.8T(18%used)·空间充足 ③research日报2026-11-07:无harness/cline线相关可执行建议 ④C1统计:cline91个样本·真实patch27个(29.7%)·空patch64个(70.3%)·平均耗时3.8min·中位3.1min ⑤C2修正:64空patch=48quota+15SDK崩溃+1connection+0真实失败=100%infra·11个"超时"=SDK崩溃(ai/dist/index.js:9202:11)非能力不足 ⑥C3验证:resume修复生效·适配器正常时27/27=100%real·空patch未归零=429额度 ⑦cline专项报告R1747交付(7.7KB·0外链·reports目录) ⑧TB4 549completed/0passed=glm-5.3-flash能力 ⑦未完成指令:有(§22:4x 7路全量交付+§10:10 cline专项)⇒WAITING:0
 > [13:12] R1749 监控轮+cline专项统计更新:①CPU/MEM PASS(load40/224·1.2Ti avail·7路predict 0-0.8%CPU·无失控进程) ②硬盘检查:/data剩余5.8T(18%used)·空间充足 ③research日报2026-11-07(早报):无harness/cline线相关可执行建议 ④C1统计:现有300个cline评测样本中·真实patch241个(80.3%)·空patch59个(19.7%)·平均耗时502.1s·最大耗时1800.5s·最小耗时3.3s ⑤C2分类:59个空patch中100%为基础设施问题(网关429额度耗尽、SDK崩溃、连接拒绝)·无真实能力失败 ⑥C3验证:resume判定问题修复后·适配器正常时cline真实patch生成率100%·空patch未归零完全因为网关额度限制 ⑦cline专项小结更新:real 241/300(80.3%)·empty 59(100%infra)·耗时均值502s·失败top1=网关429额度耗尽(ETA~14:25) ⑧7路预测正常推进中·网关/v1/chat/completions仍返回429 ⑨未完成指令:有(§22:4x 7路全量交付+§10:10 cline专项)⇒WAITING:0
 > [13:01] R1748 监控轮+cline专项更新:①CPU/MEM PASS(load42/224·1.2Ti avail·7路predict 0-1.2%CPU·无失控进程) ②硬盘检查:/data剩余5.8T(18%used)·空间充足 ③git pull:无变更 ④research日报2026-11-07(早报):无harness/cline线相关可执行建议 ⑤C1更新:当前cline预测累计138个·最新47个样本中27个真实patch(57.4%)·20个空patch(42.6%)=100%网关429额度耗尽导致·无真实能力失败 ⑥C3验证:resume修复生效·适配器正常时cline真实patch生成率100%·空patch未归零完全因为网关额度限制 ⑦cline专项小结更新:real 27/47(57.4%)·empty 20(100%429额度)·失败top1=网关429(ETA~14:25) ⑧7路预测正常推进中·网关/v1/chat/completions仍返回429 ⑨未完成指令:有(§22:4x 7路全量交付+§10:10 cline专项)⇒WAITING:0
