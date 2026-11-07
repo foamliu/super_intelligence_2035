@@ -1,24 +1,5 @@
-[verified-full 09:51:05] resume: loaded 115 existing results
-[verified-full 09:51:05] [1/500] astropy__astropy-12907 SKIP (predicted, patch=2501B)
-[verified-full 09:51:05] [2/500] astropy__astropy-13033 SKIP (predicted, patch=7073B)
-[verified-full 09:51:05] [3/500] astropy__astropy-13236 SKIP (predicted, patch=5339B)
-[verified-full 09:51:05] [4/500] PREDICT deepseek-harness on astropy__astropy-13398
-[verified-full 09:52:11] resume: loaded 115 existing results
-[verified-full 09:52:11] [1/500] astropy__astropy-12907 SKIP (predicted, patch=2501B)
-[verified-full 09:52:11] [2/500] astropy__astropy-13033 SKIP (predicted, patch=7073B)
-[verified-full 09:52:11] [3/500] astropy__astropy-13236 SKIP (predicted, patch=5339B)
-[verified-full 09:52:11] [4/500] PREDICT deepseek-harness on astropy__astropy-13398
-[verified-full 09:52:12]   -> no-patch (patch=0B wall=1.0s)
-[verified-full 09:52:12] [5/500] PREDICT deepseek-harness on astropy__astropy-13453
-[verified-full 09:58:43] resume: loaded 115 existing results
-[verified-full 09:58:43] [1/500] astropy__astropy-12907 SKIP (predicted, patch=2501B)
-[verified-full 09:58:43] [2/500] astropy__astropy-13033 SKIP (predicted, patch=7073B)
-[verified-full 09:58:43] [3/500] astropy__astropy-13236 SKIP (predicted, patch=5339B)
-[verified-full 09:58:43] [4/500] PREDICT deepseek-harness on astropy__astropy-13398
-[verified-full 10:15:04] resume: loaded 115 existing results
-[verified-full 10:15:04] [1/500] astropy__astropy-12907 SKIP (predicted, patch=2501B)
-[verified-full 10:15:04] [2/500] astropy__astropy-13033 SKIP (predicted, patch=7073B)
-[verified-full 10:15:04] [3/500] astropy__astropy-13236 SKIP (predicted, patch=5339B)
-[verified-full 10:15:04] [4/500] PREDICT deepseek-harness on astropy__astropy-13398
-[verified-full 10:16:44]   -> no-patch (patch=0B wall=99.2s)
-[verified-full 10:16:44] [5/500] PREDICT deepseek-harness on astropy__astropy-13453
+[verified-full 17:19:49] resume: loaded 115 existing results
+[verified-full 17:19:49] [1/500] astropy__astropy-12907 SKIP (predicted, patch=2501B)
+[verified-full 17:19:49] [2/500] astropy__astropy-13033 SKIP (predicted, patch=7073B)
+[verified-full 17:19:49] [3/500] astropy__astropy-13236 SKIP (predicted, patch=5339B)
+[verified-full 17:19:49] [4/500] PREDICT deepseek-harness on astropy__astropy-13398
