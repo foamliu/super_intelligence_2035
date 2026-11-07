@@ -29,8 +29,10 @@ data:
   max_prompt_length: 4096
   max_response_length: 4096      # 8192 total context (R6: covers 95%+ traces)
   return_raw_chat: True          # Required for async rollout + multi-turn (R10)
-  need_tools_kwargs: True        # 🔴 R10: inject tool definitions into prompt
-  agent_name_key: agent_name     # 🔴 R10: per-sample tool config selector
+  need_tools_kwargs: True        # 🔴 R10: inject tool definitions into prompt (Tool Agent Loop)
+  # 🔴 R15: agent_name_key removed — it's for the Interaction System (BaseInteraction),
+  #   not the Tool Agent Loop (BaseTool). Tool selection is via tools_config_file.
+  # agent_name_key: agent_name   # ← REMOVED (R15): not needed for Tool Agent Loop approach
   shuffle: True
   seed: 42
   filter_overlong_prompts: True
@@ -83,7 +85,7 @@ actor_rollout_ref:
   rollout:
     name: sglang                 # 🔴 CHANGED from vllm → sglang (R8/R9)
     mode: async                  # Server-based async rollout (avoids GPU idle during sandbox)
-    multi_turn: True             # 🔴 Enable multi-turn tool calling (SGLang only)
+    multi_turn: True             # ✅ R15 verified: verl docs confirm `multi_turn: True` (boolean)
     multi_turn_config:
       tokenization_sanity_check_mode: strict  # 🔴 R11: delta tokenization consistency check
     temperature: 1.0             # Training: high exploration
@@ -95,11 +97,15 @@ actor_rollout_ref:
     enforce_eager: True          # Disable CUDA graph (co-located safety)
     tensor_model_parallel_size: 1  # Each A40 gets its own SGLang instance
     max_num_seqs: 12             # 🔴 R11: reduced from 16 → 12 (lower KV cache peak: 12×860MB=10.3GB)
-    # SGLang-specific: tool-call parser for MiniCPM5-2B XML format
-    tool_call_parser: minicpm5   # SGLang built-in parser for MiniCPM5 XML tools
-    # Tool configuration for EDA sandbox
+    # 🔴 R15: tool_call_parser is an SGLang server parameter, NOT a verl config key.
+    #   It must be passed to the SGLang server launch command, not here.
+    #   The minicpm5 parser may NOT be in pip release (PR #25600 unreleased).
+    #   Fallback: pythonic parser or manual XML parsing in the tool layer.
+    #   See EXPERIMENTS_POSTTRAIN.md §R15 for full analysis.
+    # tool_call_parser: minicpm5  # ← REMOVED: not a verl config key; pass via SGLang server args
+    # Tool configuration for EDA sandbox (verl Tool Agent Loop approach)
     tool_kwargs:
-      tools_config_file: run/baize_posttrain_eda_tools.yaml
+      tools_config_file: run/baize_posttrain_eda_tools.yaml  # ✅ R15: fixed OpenAI Function format
 
 algorithm:
   name: grpo

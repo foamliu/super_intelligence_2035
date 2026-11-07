@@ -97,9 +97,41 @@ echo "✅ 验证CUDA可用性..."
 python -c 'import torch; print(f"PyTorch版本: {torch.__version__}"); print(f"CUDA版本: {torch.version.cuda}"); print(f"CUDA可用: {torch.cuda.is_available()}"); print(f"GPU数量: {torch.cuda.device_count()}")'
 
 # 6. 安装依赖包
-# 🔴 R9 UPDATE: 安装 verl[sglang] 而非 verl[vllm]（R8 发现 MiniCPM5-2B 工具调用需 SGLang）
-echo "📦 安装 SGLang、verl[sglang]、ray等依赖..."
-pip install "sglang[srt]>=0.5.16" "ray>=2.41.0" "accelerate>=0.28.0" "transformers>=4.39.0" "datasets>=2.18.0" "evaluate>=0.4.1" "pyyaml>=6.0" "numpy>=1.26" "pandas>=2.2" "tqdm>=4.66" "sentencepiece>=0.2.0" "protobuf>=4.25" "grpcio>=1.62" "packaging>=24.0" "mlflow>=2.0"
+# 🔴 R15 UPDATE: SGLang minicpm5 parser NOT in pip release (PR #25600 merged 2026-05-22 but unreleased).
+#   Strategy: Try main branch first (has minicpm5 parser), fallback to pip release (CUDA 12.x compat).
+#   See EXPERIMENTS_POSTTRAIN.md §R15 for full analysis.
+echo "📦 安装 SGLang (with minicpm5 parser attempt)..."
+SGLANG_INSTALL_OK=0
+
+# R15: Try main branch first — has minicpm5 tool-call parser for MiniCPM5-2B
+echo "  尝试从 main 分支安装 SGLang (含 minicpm5 parser)..."
+if pip install "git+https://github.com/sgl-project/sglang.git@main#subdirectory=python" 2>&1; then
+    SGLANG_INSTALL_OK=1
+    echo "  ✅ SGLang 从 main 分支安装成功"
+else
+    echo "  ⚠️ main 分支安装失败 (可能 CUDA 12.4 不兼容), 回退到 pip 发行版..."
+    # Fallback: pip release compatible with CUDA 12.x
+    pip install "sglang[srt]==0.5.6.post3" 2>&1 || pip install "sglang[srt]>=0.4.0"
+    SGLANG_INSTALL_OK=2
+    echo "  ⚠️ 使用 pip 发行版 — minicpm5 parser 可能不可用 (需手动处理工具解析)"
+fi
+
+# Verify minicpm5 parser availability
+echo "🔍 验证 minicpm5 tool-call parser..."
+python -c "
+try:
+    from sglang.srt.function_call.function_call_parser import FunctionCallParser
+    # Try to create parser with minicpm5
+    from sglang.srt.managers.io_struct import Tool, Function
+    tools = [Tool(type='function', function=Function(name='test', description='test'))]
+    parser = FunctionCallParser(tools=tools, tool_call_parser='minicpm5')
+    print('✅ minicpm5 parser 可用')
+except Exception as e:
+    print(f'❌ minicpm5 parser 不可用: {e}')
+    print('   回退方案: 使用 pythonic parser 或手动 XML 解析')
+" 2>&1 || echo "  (验证跳过)"
+
+pip install "ray>=2.41.0" "accelerate>=0.28.0" "transformers>=4.39.0" "datasets>=2.18.0" "evaluate>=0.4.1" "pyyaml>=6.0" "numpy>=1.26" "pandas>=2.2" "tqdm>=4.66" "sentencepiece>=0.2.0" "protobuf>=4.25" "grpcio>=1.62" "packaging>=24.0" "mlflow>=2.0"
 
 # 安装verl with SGLang backend (R9: verl natively supports SGLang for multi-turn rollout)
 echo "🧠 安装 verl[sglang] GRPO框架..."

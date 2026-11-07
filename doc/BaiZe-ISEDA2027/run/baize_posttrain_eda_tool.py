@@ -48,24 +48,38 @@ class EDASandboxTool(BaseTool):
         self.timeout = config.get("timeout", self.DEFAULT_TIMEOUT)
         self._ssh_ready = False
 
-    async def create(self, *args, **kwargs) -> Tuple[str | None, Any]:
-        """Establish SSH tunnel to EDA sandbox (called once per rollout episode)."""
-        logger.info("EDASandboxTool: establishing SSH tunnel to %s", self.sandbox_endpoint)
-        self._ssh_ready = True
-        return None, None
+    async def create(self, instance_id: str | None = None, **kwargs) -> Tuple[str | None, Any]:
+        """Establish SSH tunnel to EDA sandbox (called once per rollout episode).
 
-    async def execute(self, code: str, host: str | None = None, **kwargs
+        R15 fix: Added instance_id parameter to match verl BaseTool interface.
+        verl passes instance_id for stateful session tracking across turns.
+        """
+        logger.info("EDASandboxTool[%s]: establishing SSH tunnel to %s",
+                    instance_id or "?", self.sandbox_endpoint)
+        self._ssh_ready = True
+        self._instance_id = instance_id
+        return instance_id, None
+
+    async def execute(self, instance_id: str, parameters: Dict[str, Any], **kwargs
                       ) -> Tuple[Dict[str, Any], float, Dict[str, Any]]:
         """Execute code in EDA sandbox.
+
+        R15 fix: Changed signature to (instance_id, parameters, **kwargs) to match
+        verl BaseTool.execute(). The model's tool call arguments arrive as a dict
+        in `parameters` (e.g., {"code": "...", "host": "pyAether"}).
+
         Returns: (tool_response, reward_signal, metadata)
         """
-        host = host or self.DEFAULT_HOST
+        code = parameters.get("code", "")
+        host = parameters.get("host", self.DEFAULT_HOST)
         if host not in self.sandbox_hosts:
             return ({"response": "", "error_log": f"Unknown host: {host}",
-                     "print_log": "", "result": None}, 0.0, {"host": host, "error": "unknown_host"})
+                     "print_log": "", "result": None}, 0.0,
+                    {"host": host, "error": "unknown_host", "instance_id": instance_id})
         if len(code) > self.max_code_length:
             return ({"response": "", "error_log": f"Code too long: {len(code)} > {self.max_code_length}",
-                     "print_log": "", "result": None}, 0.0, {"host": host, "error": "code_too_long"})
+                     "print_log": "", "result": None}, 0.0,
+                    {"host": host, "error": "code_too_long", "instance_id": instance_id})
 
         start = time.time()
         # TODO(11/9+): Replace with actual SSH execution to 36.15 run_code
@@ -74,16 +88,19 @@ class EDASandboxTool(BaseTool):
                            "print_log": "", "result": None}
             reward_signal = 0.0
             metadata = {"host": host, "code_length": len(code),
-                        "elapsed_s": time.time() - start, "skeleton": True}
+                        "elapsed_s": time.time() - start, "skeleton": True,
+                        "instance_id": instance_id}
         except Exception as e:
             exec_result = {"response": "", "error_log": str(e), "print_log": "", "result": None}
             reward_signal = 0.0
-            metadata = {"host": host, "error": str(e), "elapsed_s": time.time() - start}
+            metadata = {"host": host, "error": str(e), "elapsed_s": time.time() - start,
+                        "instance_id": instance_id}
         return exec_result, reward_signal, metadata
 
     async def release(self, *args, **kwargs) -> None:
         """Close SSH tunnel (called at end of rollout episode)."""
-        logger.info("EDASandboxTool: releasing SSH tunnel")
+        logger.info("EDASandboxTool: releasing SSH tunnel (instance=%s)",
+                    getattr(self, "_instance_id", "?"))
         self._ssh_ready = False
 
 
@@ -119,8 +136,10 @@ if __name__ == "__main__":
     async def dry_run():
         tool = EDASandboxTool({"sandbox_endpoint": "ssh://tunnel-to-36.15",
                                "sandbox_hosts": ["pyAether", "aether"], "timeout": 30})
-        await tool.create()
-        result, reward, meta = await tool.execute(code="import pyAether as pyScript\nprint('hello')", host="pyAether")
+        await tool.create(instance_id="test-001")
+        result, reward, meta = await tool.execute(
+            instance_id="test-001",
+            parameters={"code": "import pyAether as pyScript\nprint('hello')", "host": "pyAether"})
         print(f"Result: {result}")
         print(f"Reward: {reward}")
         print(f"Meta: {meta}")

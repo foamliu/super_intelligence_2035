@@ -2168,3 +2168,60 @@ compute_score(data_source, solution_str, ground_truth, extra_info, arm=R2)
 
 19 个文件（11 bash + 6 python + 2 YAML），合计 2,791 行代码。全量 `bash -n` / AST / YAML 验证通过。
 
+
+---
+
+## §R15 verl 多轮环境集成审计 — 7 项发现 + 4 文件修复（2026-11-07 wake63 · 零 GPU · web 调研 + 代码审计）
+
+> **动机**：R1-R14+E1 全部完成后，verl 多轮 rollout 的**环境集成层**仍是最大风险。11/9 启动时若此处出错，smoke test 直接挂。
+> **方法**：web 调研 verl v0.5.x 官方文档 + SGLang 官方 Tool Parser 文档 + DeepWiki verl 源码分析 + 代码审计。
+> **检索词**：`verl multi-turn rollout environment interaction tool calling SGLang` / `verl BaseInteraction sandbox multi-turn RL parquet` / `SGLang tool_call_parser minicpm5 supported parsers` / `verl SandboxFusionTools BaseTool create execute release`
+> **来源**：verl.readthedocs.io/en/v0.5.x/sglang_multiturn/interaction_system.html · verl.readthedocs.io/en/latest/sglang_multiturn/multiturn.html · docs.sglang.io/docs/advanced_features/tool_parser · deepwiki.com/yihan35/ai-chat/4.7
+
+### R15.1 🔴 发现 1：SGLang `minicpm5` parser 不在 pip 发行版
+
+- SGLang 官方文档列出 16 个 parser（apertus2509/deepseekv3/.../xing4_0），**`minicpm5` 不在其中**。
+- CSDN 博文（2026-09-22）证实：minicpm5 parser 在 PR #25600（2026-05-22 合入 main），但**未进 pip 发行版**。
+- `pip install "sglang[srt]>=0.5.16"` 需 CUDA 13.x；`sglang==0.5.6.post3` 是 CUDA 12.x 回退（但无 minicpm5 parser）。
+- **修复**：setup 脚本改为先从 main 安装（有 minicpm5），失败回退 pip（无 minicpm5，手动解析 XML）。verl config 移除 `tool_call_parser`（非 verl key，是 SGLang server 参数）。
+
+### R15.2 ✅ 发现 2：`multi_turn: True`（布尔值）正确
+
+verl v0.5.x 官方文档确认 `actor_rollout_ref.rollout.multi_turn: True`（布尔值，非嵌套对象）。我们的 config 正确。
+
+### R15.3 🔴 发现 3：两套多轮系统混用
+
+verl 有 Tool Agent Loop（BaseTool, `tool_kwargs.tools_config_file`）和 Interaction System（BaseInteraction, `interaction_config_file` + `agent_name_key`）。我们 config 同时有 `tool_kwargs`（Tool）和 `agent_name_key`（Interaction），不应混用。
+**修复**：移除 `agent_name_key`，仅保留 Tool Agent Loop 路径。
+
+### R15.4 🔴 发现 4：Tool YAML 格式不符 OpenAI Function Schema
+
+- `class_name: EDASandboxTool` → 缺模块路径 → 改为 `baize_posttrain_eda_tool.EDASandboxTool`
+- `tool_schema` 缺 `type: function` + `function:` 包装 → 已补全
+
+### R15.5 🔴 发现 5：BaseTool 接口签名不匹配
+
+- `create()` 缺 `instance_id` → 已加
+- `execute(self, code, host)` → 改为 `execute(self, instance_id, parameters)` 从 dict 提取参数
+- dry-run ✅ 通过（R2=0.2）
+
+### R15.6 📝 发现 6：SandboxFusionTool 参考实现已移除
+
+verl in-tree `SandboxFusionTool` 已从源码移除（commit f5e21df6），但 BaseTool 模式仍有效。我们的 EDASandboxTool 实现路径正确。
+
+### R15.7 📝 发现 7：tool_call_parser 是 SGLang server 参数
+
+非 verl config key。应通过 SGLang serve 命令 `--tool-call-parser minicpm5` 传递。已从 verl YAML 移除。
+
+### R15.8 修复验证
+
+| 文件 | 修改 | 验证 |
+|:--|:--|:--|
+| `baize_posttrain_eda_tools.yaml` | 全限定 class_name + OpenAI Function schema | YAML ✅ |
+| `baize_posttrain_eda_tool.py` | create/execute 签名修正 + dry-run 更新 | AST ✅ + dry-run ✅ |
+| `baize_posttrain_setup_cu124_venv.sh` | SGLang main→pip 回退 + parser 验证 | bash -n ✅ |
+| `baize_posttrain_rl_verl_config.yaml` | 移除 tool_call_parser + agent_name_key | YAML ✅ |
+
+### R15.9 残余风险
+
+主要残余风险 = **SGLang minicpm5 parser 的 CUDA 12.4 兼容性**。若 main 分支安装失败，回退方案是在 BaseTool.execute() 中自行解析 MiniCPM5 XML 工具调用格式。
