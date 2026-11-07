@@ -2,7 +2,8 @@
 WAITING: 0
 > 🛑 **【运维通告 · 2026-11-02 19:51】S1 已由 ops 中继重启并在跑**：`bash scripts/train.sh s1 --nodes 2`，launcher pid **4163528**，从 **ckpt 58000** 续（19:55:40 起 iter **58010**→58030，7.0–7.2 s/step ≈**582K tok/s**，双机 16 卡 **98–100%**、~75GB/卡、~690W）。⇒ **GPU 不再空闲**：🚫 严禁再起任何训练/GPU 评测进程；CPU 评测必须降载：`OMP_NUM_THREADS≤8` + `nice -n 19`，**禁止 `pkill python`**。
 
-> 2026-11-07 10:08 #1567: 🔴运维令11-07 09:1x执行中·11w检查点8集全量评测+线程/batch扫描·已转换iter_0112000→hf_iter_112000(NeMo distcp→HF safetensors,2.22B/323 tensors)·已改baize_cpu_lmeval.sh(暴露--batch_size,OMP上限8→80)·新建baize_cpu_probe_matrix.sh+gen_cpu_eval_scaling_report.py·探测矩阵v2后台运行中(8 configs=4线程×2 batch,limit=3,PID3522913,基线8线程bs=1~17.5s/req,24请求~7min/config)·已获得关键发现:bs=4在CPU上反而更慢(83.8s/req vs 17.85s),Mamba2顺序扫描无batch效率增益;8线程仅用~5核(PyTorch参考实现无mamba_ssm);peak RSS~50GB·S1健康(GPU全满100%/~75GB/57-64℃)·未完成指令:有(11w eval探测+全量评测+报告)⇒WAITING:0。
+> 2026-11-07 10:20 #1568: 🔴运维令11-07 09:1x执行中·探测矩阵v2运行中(config2/8 t8_b2@88%,PID3522913)·关键确认:bs=2比bs=1更慢(21.2s/it vs 17.16s/it),Mamba2顺序扫描无batch效率·新建baize_cpu_scaling_orchestrator.sh(PID584159,等探测结束后自动启动全量8集eval@80线程bs=1+生成报告)·重写gen_cpu_eval_scaling_report.py(含全量8集分数节)·探测config1(t8_b1):430.5s/24req=17.16s/req,全量预估~14天@8线程·探测ETA~11:15(6configs剩~54min)·orchestrator将:①等探测完→②保存探测结果→③生成初步报告→④启动全量eval(80线程bs=1无limit)→⑤eval完生成最终报告·内存峰值52.7GB/2TB安全·S1健康(GPU全满)·load avg42/224≈19%·未完成指令:有(等探测+全量eval+报告)⇒WAITING:0。
+> 2026-11-07 10:08 #1567: 运维令11-07执行中·已转iter_0112000→hf_iter_112000(2.22B/323tensors)·已改baize_cpu_lmeval.sh(batch_size暴露,OMP上限80)·探测矩阵v2后台跑·bs=4更慢(83.8s/req)·8线程仅~5核·peak RSS~50GB·S1健康·未完成指令:有⇒WAITING:0。
 
 
 

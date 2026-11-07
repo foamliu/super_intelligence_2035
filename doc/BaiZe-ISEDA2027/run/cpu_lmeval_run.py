@@ -114,6 +114,12 @@ print(f"[cpu_lmeval_run] tasks={task_list} limit={args.limit} dtype={args.dtype}
 
 t0 = time.time()
 print("[cpu_lmeval_run] Creating HFLM (device=cpu)...", file=sys.stderr, flush=True)
+# device_map="cpu" is passed via **kwargs so that lm_eval's _get_accelerate_args
+# takes the `else` branch (parallelize=False, device_map is not None) and sets
+# args["device_map"]=None.  This avoids from_pretrained's check_and_set_device_map
+# which requires accelerate>=1.1.0 (p6_tf5 transformers 5.17 gate) while the env
+# only has accelerate 0.34.2.  With device_map=None the model loads on CPU
+# natively and HFLM's own .to(device) handles placement — no accelerate needed.
 lm = HFLM(
     pretrained=args.model_path,
     dtype=args.dtype,
@@ -122,6 +128,7 @@ lm = HFLM(
     trust_remote_code=False,
     logits_cache=False,
     max_length=2048,
+    device_map="cpu",
 )
 t_load = time.time() - t0
 print(f"[cpu_lmeval_run] HFLM loaded in {t_load:.1f}s device={lm.device} max_length={lm.max_length}", file=sys.stderr, flush=True)
