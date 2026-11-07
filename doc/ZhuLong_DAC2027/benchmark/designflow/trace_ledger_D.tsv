@@ -1174,7 +1174,7 @@ wl9i4					parked		2026-11-05 22:49	交互shell驱动+Q&A n752大
 1791429687866_2igp1					parked		2026-11-07 07:41	#342 peek: Qt C++ mainwindow.cpp/.ui GUI modification, wrong domain (desktop app not EDA)
 1789887336293_97g9m					parked		2026-11-07 07:43	#342 peek: fsdb signal time-range analysis, overlaps WvFsdbReaderV2Gen-001, binary fsdb non-portable, weak
 1789730312848_hpd7c					parked		2026-11-07 07:43	#342 deepread: totem_sc_signal_em tool update (vague 更新成一下版本), multi-file refactor, ambiguous intent, weak
-1793792373749_l5r0u.messages.json	elianaz	hfeg0pkn002	218	analog_context	claimed		2026-11-07 08:05	
+1793792373749_l5r0u.messages.json	elianaz	hfeg0pkn002	218	analog_context	case	EDA-Eval-DesignFlow-IOBufTune-001	2026-11-07 19:14	
 56jqu.messages.json					parked		2026-11-07 08:07	#343 peek: weak/non-produce
 1fgo2.messages.json					parked		2026-11-07 08:07	#343 peek: weak/non-produce
 31lou.messages.json					parked		2026-11-07 08:07	#343 peek: innovus-dominant IO regression workflow (digital verif ops), not D produce
@@ -1272,3 +1272,4 @@ tjzn5					parked		2026-11-07 12:29	env Q&A + skill-creator usage (#352 peek weak
 1790127432240_oh3te.messages.json	miccao	10.129.32.47	202	schematic_netlist	case	EDA-Eval-DesignFlow-AutocellPlaceGen-001	2026-11-07 16:58	
 1792668123134_0oeb7	colinxu	10.129.2.18	124	schematic_netlist	case	EDA-Eval-DesignFlow-DelApiProbePlan-001	2026-11-07 18:37	
 1791957763339_dhgxy	e0039602	10.129.8.136	91	schematic_netlist	case	EDA-Eval-DesignFlow-NetlistSubstPlan-001	2026-11-07 19:05	
+1793524556149_f86ll.messages.json	sinanz	hfeg0pkn005	655	schematic_netlist	case	EDA-Eval-DesignFlow-DelayChainCmp-001	2026-11-07 19:36	
