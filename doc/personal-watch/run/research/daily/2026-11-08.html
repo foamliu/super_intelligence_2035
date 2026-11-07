@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>论文观察日报 · 2026-11-08（早报 · 3/5）· research 线</title>
+<style>
+  :root { --primary:#0b3d6e; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700; --bad:#cf222e;
+          --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+         color:var(--text); background:var(--bg); line-height:1.7; font-size:15px; }
+  .wrap { max-width:1040px; margin:0 auto; padding:32px 20px 80px; }
+  header.hero { background:linear-gradient(135deg,#0b3d6e 0%,#1f6feb 100%); color:#fff; border-radius:14px;
+                padding:30px 32px; margin-bottom:22px; box-shadow:0 8px 24px rgba(11,61,110,.18); }
+  header.hero h1 { margin:0 0 6px; font-size:24px; letter-spacing:.3px; }
+  header.hero .sub { font-size:15px; opacity:.95; }
+  header.hero .meta { margin-top:14px; font-size:13px; opacity:.9; display:flex; flex-wrap:wrap; gap:8px 18px; }
+  header.hero .meta span { background:rgba(255,255,255,.14); border-radius:999px; padding:2px 12px; }
+  .disc { margin-top:14px; font-size:12.5px; background:rgba(0,0,0,.18); border-radius:8px; padding:8px 12px; opacity:.95; }
+  .badge { display:inline-block; padding:1px 10px; border-radius:999px; font-size:12.5px; font-weight:700; vertical-align:middle; }
+  .b-am { background:#e6f4ea; color:#0b6b2f; }
+  .b-pm { background:#ddf4ff; color:#0b3d6e; }
+  .b-jz { background:#dafbe1; color:var(--ok); } .b-kp { background:#ffeef8; color:#a3238e; }
+  .progress { margin-top:8px; font-size:13.5px; }
+  h2.sec { font-size:19px; margin:34px 0 12px; padding-bottom:8px; border-bottom:2px solid var(--border); }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:18px 22px; margin:16px 0;
+          box-shadow:0 1px 3px rgba(27,31,36,.06); }
+  .card h3 { margin:0 0 4px; font-size:17px; line-height:1.45; }
+  .card .no { display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px; margin-right:8px;
+              border-radius:50%; background:var(--accent); color:#fff; font-size:14px; font-weight:700; vertical-align:middle; }
+  .row { display:flex; gap:10px; margin:7px 0; font-size:14px; }
+  .row .k { flex:0 0 108px; color:var(--muted); font-weight:600; }
+  .row .v { flex:1; }
+  .orig { font-style:italic; color:#0b3d6e; }
+  code { background:#eef1f4; border:1px solid #e1e4e8; border-radius:5px; padding:1px 6px;
+         font-family:Consolas,Menlo,monospace; font-size:12.5px; color:#0b3d6e; }
+  a { color:var(--accent); word-break:break-all; }
+  .reason { background:#f0f6ff; border:1px solid #cfe0f5; border-left:4px solid var(--accent); border-radius:8px;
+            padding:10px 14px; margin-top:10px; font-size:13.5px; }
+  table { border-collapse:collapse; width:100%; margin:12px 0; font-size:13px; background:var(--card); }
+  th,td { border:1px solid var(--border); padding:7px 10px; text-align:left; vertical-align:top; }
+  th { background:#eef3f8; color:var(--primary); font-weight:600; }
+  tr:nth-child(even) td { background:#fafbfc; }
+  .note { background:#fff8ef; border:1px solid #f0d9b5; border-left:4px solid var(--warn); border-radius:8px;
+          padding:10px 16px; font-size:13px; color:#6a4a00; }
+  .ok-box { background:#f0fff4; border:1px solid #b7f0c5; border-left:4px solid var(--ok); border-radius:8px;
+            padding:10px 16px; font-size:13px; }
+  footer { margin-top:44px; padding-top:16px; border-top:1px solid var(--border);
+           color:var(--muted); font-size:12.5px; }
+  ul,ol { margin:6px 0; padding-left:20px; } li { margin:3px 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+  <h1>论文观察日报 · 2026-11-08 <span class="badge b-am">早报 · 3/5</span></h1>
+  <div class="sub">每日 5 篇推荐论文（早 3 / 晚 2）· <b>今日进度 3 / 5</b>（早报 3 篇「借鉴」已出，晚报 2 篇「科普」待 18:00 补齐）· 含 <b>「对各线的可执行建议」</b>（pretrain / vision / harness / data / zhulong / designflow 六线）</div>
+  <div class="meta">
+    <span>📅 2026-11-08（周日）</span>
+    <span>🕕 生成 06:0x CST（早报）</span>
+    <span>📚 数据源 arXiv（export.arxiv.org）· 官方 API</span>
+    <span>🏷 本页口径：<b>借鉴</b>（3 篇）· 看与在研工作的相关性</span>
+  </div>
+  <div class="disc">⚠️ 免责：本页为 <b>论文解读 / 待读线索</b>，<b>非结论、非官方</b>；所有数字均为<b>作者自报</b>，本线<b>未复现</b>；原题照抄不改写。「对各线的可执行建议」为<b>基于论文的推断，供各线自行评估</b>，非指令；与各线任务书冲突时以任务书为准。</div>
+</header>
+
+<h2 class="sec">☀️ 早报 · 3 篇「借鉴」<span class="badge b-jz">借鉴</span></h2>
+<p style="font-size:13.5px;color:#59636e;margin:0 0 8px;">本轮按「<b>离各线当轮阻塞有多近</b>」选文（2026-11-07 用户令：日报要能被各线 agent 直接执行）：<b>① 评测与失败归因</b>（<code>2611.08285</code>，coding agent 的失败到底来自「题难 / 模型弱 / 这一跑运气差」）→ <b>② 基准即软件（基准维护债 + 资源预算即测量规格）</b>（<code>2611.08417</code>，Terminal-Bench 2.0 → 2.1 的审计）→ <b>③ 小模型「数据 → 技能画像」配对实验</b>（<code>2611.07812</code>，同预算同配方下换语料）。三篇均属 <code>2026-11-05</code> 批次（周末未刷新，按 §0.1 周末例外以「最近一次公告批次」为窗口），均在本轮 <b>72h 窗口内</b>；三篇分别直击 <b>harness（失败归因）/ designflow + harness（判分与资源预算）/ zhulong + data（配对与技能画像）</b> 的当轮阻塞。</p>
+
+<div class="card">
+  <h3><span class="no">1</span>Hard Issue, Weak Model, or Bad Run? Rethinking Failure Prediction for Coding Agents</h3>
+  <div class="row"><div class="k">中文一句话</div><div class="v">给 SE agent 做「轨迹失败预测」的方法很多（读一段半截轨迹，判断这次跑得对不对，错了就停、重跑或换模型），但它们真学到了「这一跑」吗？作者在公开的 <b>SWE-bench Verified</b> 轨迹上（每个模型对每题只跑一次）做分解，发现预测器表现几乎被<b>两个与「跑」无关的因素</b>吃掉：① <b>题目难度</b>——一个完全不看轨迹、只根据「这题对其他模型有多难」的参考分 <code>Dext</code>，AUROC 达 <b>0.92</b>，而轨迹预测器只有 <b>0.62–0.63</b>；② <b>模型能力</b>——在同一题内部，光知道「是哪个模型跑的」就比预测器更准（within-issue AUROC <b>0.82</b>），且预测器基本只是在复现模型的整体能力排名。扣除难度与能力后，轨迹带来的增益<b>在统计上等价于 0</b>（例如 −0.001，90% 区间落在预注册范围内；18 个配置全部如此）。这个混淆还传导到「预测后做什么」：常被用来做模型切换依据的「最佳单模型 vs any-model oracle」差距<b>不比随机波动更大</b>，逐题切换在留出跑上无收益。而在<b>重复跑 pilot</b> 中，同一模型常常「有些跑解出、有些跑解不出」——所以<b>重跑确实有空间救回失败</b>，但它只救「这一跑运气差」，救不了「超出该模型能力」的题，而现有预测器分不清这两种原因。作者据此呼吁：失败预测要能解释「<b>为什么</b>这一跑失败」，并且必须在<b>重复跑基准 + 闭环等预算</b>下评估。</div></div>
+  <div class="row"><div class="k">原题</div><div class="v"><span class="orig">Hard Issue, Weak Model, or Bad Run? Rethinking Failure Prediction for Coding Agents</span></div></div>
+  <div class="row"><div class="k">作者 / 机构</div><div class="v">Xingyue Shi · Wesley K. G. Assunção（<b>2 位</b>；据 PDF 首页：<b>NC State University</b>，Raleigh, NC, USA）</div></div>
+  <div class="row"><div class="k">日期</div><div class="v">首次提交 <b>2026-11-05</b>（<code>published=2026-11-05T16:50:11Z</code>；<code>updated</code> 同日，无 v2）· 距本轮唤醒 <b>≈61.2h</b>（<b>在 72h 窗口内</b>；批次为周末前最后一批）· PDF 实测 <b>5 页</b> / <b>24,131</b> 字符（去空白）</div></div>
+  <div class="row"><div class="k">分类 / 标签</div><div class="v"><code>cs.SE</code> · <span class="badge b-jz">借鉴</span> · 关键词：coding agent / 失败预测 / 轨迹监控 / 模型路由 / SWE-bench Verified / 重复跑 / 等预算评测 / AUROC 分解</div></div>
+  <div class="row"><div class="k">链接</div><div class="v"><a href="https://arxiv.org/abs/2611.08285">https://arxiv.org/abs/2611.08285</a>（PDF 已落地：<code>research/pdf/2026-11-08/2611.08285.pdf</code>，176,571 B，校验见附录 C）</div></div>
+  <div class="reason"><b>推荐理由（借鉴 · 与 harness 线的「失败归因」直接对口）</b>
+    <ol>
+      <li><b>正是 harness 线当轮的判据问题</b>：harness 目前要回答「TB-2.1 某路 0 passed / hermes 35 个 no-reward / predict 里 499 条 empty」到底是<b>能力不足</b>、<b>infra 故障（网关 429）</b>还是<b>单跑波动</b>。本文给出可复用结论：<b>「单跑」数据无法区分专门化与运气</b>，必须用<b>重复跑</b>才能把方差拆成「题」「模型」「跑」三部分。它的分解口径极简：先用一个<b>不看轨迹的难度参考分</b>（该题在其他模型上的通过率）作基线，再看轨迹/预测器是否还有增益。</li>
+      <li><b>硬数字可回查</b>：<code>Dext</code> 难度基线 AUROC <b>0.92</b> vs 轨迹预测器 <b>0.62–0.63</b>（在 <b>2,840</b> 条仍跑到 step 20 的 run 上）；within-issue 模型身份基线 <b>0.82</b>；轨迹增益 <b>≈0</b>（−0.001，18/18 配置一致）；「最佳单模型 vs any-model oracle」差距 <b>≤ 随机波动</b>；逐题切换在留出跑上 <b>无收益</b>。</li>
+      <li><b>可迁移的方法论</b>：① 报指标时<b>同时给 pooled AUROC 与 within-issue AUROC</b>（并把后者与「不看 run 的基线」比）；② 归因落到「题 / 模型 / 跑」三元分解，而不是笼统说「agent 不行」；③ 决策（重跑 / 换模型）要在<b>闭环、等预算</b>下评估收益。<b>不绑定具体 harness 实现</b>，可直接套到 SWE-bench / Terminal-Bench 的 7 路矩阵上。</li>
+      <li><b>边界（必须写清）</b>：① 证据主要来自<b>一个基准 + 一个 scaffold</b> 的已发布标签，重复跑 pilot 只是<b>小规模公开语料</b>；② 只评估「轨迹型」预测器，未覆盖其他失败检测形态；③ 结论针对<b>单次尝试</b>的公开评测设置，「多跑取最优」下分解的稳定性未验证；④ 作者自报、本线未复现。</li>
+    </ol>
+    <b>建议动作</b>：<b>读原文</b>（§ 重复跑 pilot 的方差拆分、§ within-issue vs pooled AUROC 定义、§ 对评测协议的三条建议）+ <b>试跑</b>：对 harness 现成的 7 模型 × 500 题矩阵，补算「<b>不看轨迹的题目难度分</b>」作为归因基线。
+  </div>
+</div>
+
+
+<div class="card">
+  <h3><span class="no">2</span>Benchmarks as Software: Terminal-Bench and the Case for Continuous Benchmarks</h3>
+  <div class="row"><div class="k">中文一句话</div><div class="v">coding agent 的评测结果正在影响真实的工程与采购决策，但<b>基准会腐坏</b>：模型变强后会给出<b>合法却被现有 verifier 判错</b>的解法，评测代码或环境的改动也会让题目里隐含的假设失效——作者把这种「基准分数与它想衡量的能力之间不断拉大的差距」命名为 <b>benchmark maintenance debt（基准维护债）</b>。他们提出一套<b>持续校验工作流</b>：社区报告 + 任务工件 + agent 轨迹 + 自动 oracle 检查 + 人工闸门修复，并把它用在经过大量人工与 LM 辅助审查/红队的 <b>Terminal-Bench 2.0</b>（89 题）上：审计发现<b>约 30%</b> 的基准存在问题，修复后以 <b>Terminal-Bench 2.1</b> 发布（28 题被修订，含 89 处环境修复 + 11 处指令修复）。修复<b>改变了评测结果</b>：准确率整体提升<b>超过 10 个百分点</b>、排行榜名次最多移动 <b>3 位</b>（尽管整体排序仍高度相关，Spearman <b>ρ=0.958</b>）。更关键的是第二层结论：<b>资源预算本身是测量规格的一部分</b>——固定 wall-clock / 输出 token 预算会实质改变 agent 表现，例如<b>放宽时间上限后，GPT 5.4 上约 20pp 的 harness 差距被抹平</b>，GPT 5.4 mini 上 <b>30pp 的差距缩到 5pp</b>（时间预算最多扫到原设定的 32×）。因此「修题」之外，评测假设与资源设置必须一起被持续复核。</div></div>
+  <div class="row"><div class="k">原题</div><div class="v"><span class="orig">Benchmarks as Software: Terminal-Bench and the Case for Continuous Benchmarks</span></div></div>
+  <div class="row"><div class="k">作者 / 机构</div><div class="v">E. Kelly Buchanan · Crystal Zhou · Scott W. Linderman · Christopher Ré（<b>4 位</b>；据 PDF 首页：<b>Stanford University</b> + <b>Cornell University</b>，美国）</div></div>
+  <div class="row"><div class="k">日期</div><div class="v">首次提交 <b>2026-11-05</b>（<code>published=2026-11-05T18:18:39Z</code>；<code>updated</code> 同日，无 v2）· 距本轮唤醒 <b>≈59.7h</b>（<b>在 72h 窗口内</b>）· PDF 实测 <b>24 页</b> / <b>52,581</b> 字符（去空白）</div></div>
+  <div class="row"><div class="k">分类 / 标签</div><div class="v"><code>cs.AI</code> · <span class="badge b-jz">借鉴</span> · 关键词：Terminal-Bench 2.0/2.1 / 基准维护债 / 持续校验 / 自动 oracle / 人工闸门 / 资源预算（wall-clock·token）/ harness gap / 排行榜稳健性</div></div>
+  <div class="row"><div class="k">链接</div><div class="v"><a href="https://arxiv.org/abs/2611.08417">https://arxiv.org/abs/2611.08417</a>（PDF 已落地：<code>research/pdf/2026-11-08/2611.08417.pdf</code>，834,868 B，校验见附录 C）</div></div>
+  <div class="reason"><b>推荐理由（借鉴 · 与 harness 的 TB-2.1 直接对口 / 与 designflow 的造题与判分直接对口）</b>
+    <ol>
+      <li><b>harness 线正在跑的正是这套基准</b>：harness 当前 TB-2.1 7 路并行（oracle 5/5、cline 88/7pass、hermes 54/3pass…）。本文就是 <b>TB-2.0 → TB-2.1 的修复说明</b>，给出两件对本线归因有用的事实：① <b>约 30% 题有问题</b>、28 题被修订，因此「0 passed / 低 pass」里有一部分是<b>基准维护债</b>而非 agent 能力；② <b>wall-clock 预算是测量规格</b>，延长时间上限可把「harness 差距 ~20pp」直接抹平——意味着本线「不同 harness 差 20pp」这类结论<b>必须声明时间/输出预算</b>，否则不可比。</li>
+      <li><b>硬数字可回查</b>：89 题审计、<b>~30%</b> 有问题、28 题修订（89 环境修复 + 11 指令修复）；准确率 <b>+&gt;10pp</b>、名次最多 <b>3 位</b>、Spearman <b>ρ=0.958</b>；时间上限放宽 ⇒ GPT 5.4 的 <b>20pp</b> harness 差距消失、GPT 5.4 mini 的 <b>30pp → 5pp</b>（预算扫到 <b>32×</b>）；judge 之间 Cohen's <b>κ=0.55–0.77</b>（说明「是否判为缺陷」本身也是主观量，需多人闸门）。</li>
+      <li><b>designflow 可直接搬的「造题 + 判分」流程</b>：社区报告 → 任务工件 → agent 轨迹 → <b>自动 oracle 检查</b> → <b>人工闸门修复</b>，并保留「每题的失败模式归类 + 修复前后 pass-rate 变化」表。这正对应 designflow 现在的 <code>rewrite_queue.tsv</code>（每条待修 case 记录问题类型、修复动作、修复后自验）与「判分可验证性」目标——差别是本文额外把<b>资源轴（CPU / 内存 / wall-clock / 输出 token）</b>列为「必须一并验证」的维度。</li>
+      <li><b>边界（必须写清）</b>：① 结论绑定 <b>Terminal-Bench 2.0</b> 这一套任务/verifier，「30% 有问题」不能外推为所有基准的比例；② 资源预算实验是<b>少数模型的定点扫描</b>（GPT 5.4 / 5.4 mini 等），不是全矩阵；③ 修复会同时抬高准确率并改变名次，说明<b>历史分数不可跨版本直接比</b>；④ 作者自报、本线未复现。</li>
+    </ol>
+    <b>建议动作</b>：<b>读原文</b>（§ benchmark maintenance debt 定义、§ 89 题缺陷分类与 28 题修订、§ 时间预算扫描图）+ <b>试跑</b>：在 TB-2.1 报告里补一列「每题 wall-clock / 输出 token 预算 + 超时次数」，把「超时」与「判错」分开统计。
+  </div>
+</div>
+
+
+<div class="card">
+  <h3><span class="no">3</span>Different Corpora, Different Skills? A Paired Study of Small Language Models</h3>
+  <div class="row"><div class="k">中文一句话</div><div class="v">小模型的训练数据预算很紧，此时「换成哪套语料」可能和模型大小、训练配方一样重要。作者做了一次<b>严格配对</b>实验：在<b>对齐的 1,000 万词与 3,700 万词</b>两个预算下，比较两份反差极大的语料——1911 年版《大英百科全书》与 <b>BabyLM 2026</b> 严格预训练语料；对每套语料都训练<b>教师模型</b>、蒸馏出的 <b>5,800 万参数 Baby-Llama 学生</b>、以及<b>不做蒸馏的学生消融</b>，且<b>模型族、训练配方、评测协议全部相同</b>。结果不是「谁更好」的单一排序，而是<b>不同的技能画像</b>：BabyLM 2026 在<b>语言可接受性</b>类基准（BLiMP / BLiMP Supplement）上稳定更强，Britannica 在 <b>Entity Tracking</b>（合成状态跟踪）上常常更强；反差在教师与学生在两个预算下都出现，其中<b>蒸馏学生对照的跨种子复现最干净</b>。针对性控制显示：在<b>匹配训练曝光量</b>以及<b>拉长诊断上下文</b>之后，该反差依然存在；而「直接集成教师」也复现不出 10M Britannica 学生的 Entity Tracking 行为。作者因此指出：小规模下比较预训练数据时<b>必须做多基准评测</b>，因为最后拿到的可能只是「技能画像差异」而不是「质量差异」。</div></div>
+  <div class="row"><div class="k">原题</div><div class="v"><span class="orig">Different Corpora, Different Skills? A Paired Study of Small Language Models</span></div></div>
+  <div class="row"><div class="k">作者 / 机构</div><div class="v">Edoardo Vaira · Georgios Chavales · Pierre Nugues（<b>3 位</b>；据 PDF 首页：<b>Lund University</b>, Department of Computer Science，瑞典）</div></div>
+  <div class="row"><div class="k">日期</div><div class="v">首次提交 <b>2026-11-05</b>（<code>published=2026-11-05T10:50:54Z</code>；<code>updated</code> 同日，无 v2）· 距本轮唤醒 <b>≈67.2h</b>（<b>在 72h 窗口内</b>）· PDF 实测 <b>13 页</b> / <b>44,028</b> 字符（去空白）</div></div>
+  <div class="row"><div class="k">分类 / 标签</div><div class="v"><code>cs.CL</code> · <span class="badge b-jz">借鉴</span> · 关键词：小模型 / 预训练语料 / 配对实验 / 蒸馏学生 / 技能画像 / 多基准评测 / 跨种子复现 / 控制变量</div></div>
+  <div class="row"><div class="k">链接</div><div class="v"><a href="https://arxiv.org/abs/2611.07812">https://arxiv.org/abs/2611.07812</a>（PDF 已落地：<code>research/pdf/2026-11-08/2611.07812.pdf</code>，250,053 B，校验见附录 C）</div></div>
+  <div class="reason"><b>推荐理由（借鉴 · 与 zhulong 的配对消融直接对口 / 与 data 的语料取舍侧面相关）</b>
+    <ol>
+      <li><b>zhulong 的两轴消融正在做「配对 + 控制变量」，本文是范式模板</b>：它把「换一个因素（这里是语料）」做成<b>配对对照</b>——同一模型族、同一配方、同一评测协议、<b>对齐预算</b>，并用「教师 / 蒸馏学生 / 无蒸馏消融」三层做<b>复现性检验</b>，最后指出<b>哪种对照的跨种子复现最干净（蒸馏学生对照）</b>。这正对应 zhulong 现在的问题：thinking 档 × 语言的每个 cell 之间如何保证口径可比，以及「效应是否稳健」要靠哪种对照支撑。</li>
+      <li><b>方法结论可直接搬到「多档位 × 多语言」矩阵</b>：① 结论可以是<b>「画像差异」而非「单一排序」</b>——zhulong 不必强行把 thinking 档压成一个平均分排名，可以按能力维度给画像（本文正是 BLiMP 强 vs Entity Tracking 强的分离）；② <b>匹配曝光量</b>（本文 matched training exposure）是必需控制项，等价于 zhulong 的<b>等 budget</b>（同 token 预算 / 同 wall-clock）比较；③ <b>教师集成复现不出学生行为</b>说明「上层能力」不能替代「训练过程」，类比 zhulong：<b>不能只用强模型结果外推弱模型 thinking 档的收益</b>。</li>
+      <li><b>硬数字可回查</b>：10M / 37M 词两个预算；学生 <b>58M</b> 参数；5 个基准族（BLiMP、BLiMP Supplement、EWoK、Entity Tracking、COMPS）；反差在教师与学生、两个预算下均出现，<b>蒸馏学生对照跨种子复现最干净</b>；控制在「匹配曝光 + 更长诊断上下文」下反差仍存；Entity Tracking 的<b>幅度对训练动力学敏感</b>（效应显著但大小不稳）。</li>
+      <li><b>边界（必须写清）</b>：① 只有<b>两份语料</b>、<b>58M 级</b>小模型、单词级小预算，不能外推到 2B 级预训练；② 结论是「这一对语料的画像差异」，不是「语料选择的一般规律」；③ Entity Tracking 是<b>合成任务</b>，幅度不稳；④ 作者自报、本线未复现。</li>
+    </ol>
+    <b>建议动作</b>：<b>读原文</b>（§ paired setup 与预算对齐、§ 控制实验（matched exposure / longer context）、§ 跨种子复现）+ <b>仅备忘</b>：作为 zhulong「等预算 + 配对 + 技能画像而非单一排名」的报告模板；data 线可借「同预算换语料 ⇒ 画像差异」这个口径评估语料取舍，但<b>不要</b>把 58M 结论直接搬到 2B。
+  </div>
+</div>
+
+
+<h2 class="sec">🎯 对各线的可执行建议（pretrain / vision / harness / data / zhulong / designflow）</h2>
+<div class="note">
+  <b>说明</b>：依据均取自本页今日 3 篇（arXiv ID + 摘要/正文关键数字，作者自报、本线未复现）；「建议动作」为<b>基于论文的推断</b>，供各线自行评估，<b>不构成新指令</b>；与各线任务书冲突时以任务书为准。某线本期确无对口论文时，如实写「本线本期无新增可用建议」。各线当轮状态取自其 <code>MEMORY_*</code> 顶部快照（2026-11-08 05:3x–05:5x）。
+</div>
+<table>
+  <tr><th>线</th><th>建议动作</th><th>依据（arXiv ID + 关键数字）</th><th>预期收益</th><th>成本</th><th>优先级</th></tr>
+  <tr>
+    <td><b>pretrain</b><br><span style="font-size:12px;color:#59636e;">S1 Mamba2-hybrid 2B 训练中；hellaswag 6-chunk CPU eval 20.8%，瓶颈 chunk1a_h1 19.40s/it、ETA ~Nov9 07:00；NUMA/HT 争用；chunk 进度已两次误读</span></td>
+    <td>① 把「<b>资源预算</b>」写进 eval 报告规格：每 chunk 的 wall-clock、每样本耗时、超时数各占一列，且<b>不同 chunk/分片之间不做直接分数横比</b>，必须先按「等预算（同 wall-clock / 同样本数）」归一后再比；② 借「题/模型/跑」三元方差拆分，对 v4 eval 的 8 个集合补报「同题不同顺序/种子的 within-issue 方差」，区分「模型差异」与「分片抖动」。</td>
+    <td><code>2611.08417</code>（时间上限放宽可抹平 <b>~20pp</b> harness gap、预算扫到 <b>32×</b>；「资源预算是测量规格的一部分」）+ <code>2611.08285</code>（pooled vs within-issue AUROC；<b>单跑数据不可分「题/模型/跑」</b>）</td>
+    <td>避免把 NUMA/分片抖动误读成模型能力变化（本线已发生过 chunk 进度误读）；eval 结论可复现性提升。</td>
+    <td>改报告脚本 ~2–3h（不动训练）</td>
+    <td>中</td>
+  </tr>
+  <tr>
+    <td><b>vision</b><br><span style="font-size:12px;color:#59636e;">全交付态（v5 波形分类 A16%→B37%→C53%、McNemar p=0.0009、cheat_rate=0）；等待新指令</span></td>
+    <td><b>本线本期无新增可用建议</b>（今日 3 篇与「波形 RL 奖励设计 / LoRA / CPU 小样本」无直接对口）。仅作备查：若将来重启新版本（如 v6），可用 <code>2611.08285</code> 的「重复跑三元方差」与 <code>2611.08417</code> 的「资源预算须随分数一起报」把现有 McNemar/Bootstrap 结论补上「单跑 vs 多跑」的口径说明——<b>不构成改排期理由</b>。</td>
+    <td><code>2611.08285</code>（重复跑可救「坏跑」但救不了「超能力」的题）；<code>2611.08417</code>（资源预算改变结论）</td>
+    <td>仅为未来复盘的报告口径备份，本期无直接收益。</td>
+    <td>0（备查）</td>
+    <td>低</td>
+  </tr>
+  <tr>
+    <td><b>harness</b><br><span style="font-size:12px;color:#59636e;">SWE-bench predict 978/3500（empty 499 全为网关 429）；TB-2.1 7 路并行（oracle 5/5、cline 7pass、hermes 3pass、cc/dsh/pi 刚起）；hermes 35 个 no-reward 待归因「docker-down vs agent error」</span></td>
+    <td>① <b>先做（低成本）</b>：在 TB-2.1 报告与 launcher 里把「<b>超时</b>」与「<b>判错</b>」分开统计，并在报告头显式声明 <b>wall-clock / 输出 token 预算</b>（每题一列）；因为该文实测「仅放宽时间上限」就能抹平 ~20pp 的 harness 差距 ⇒ 当前「不同 harness 差 20pp」若不声明预算，属不可比口径。② 用「<b>不看轨迹的题目难度分</b>」（该题在其他模型上的通过率）作 predict 失败归因基线，把 499 条 empty（429）与 479 条 real 交叉成「难度 × 模型」表；③ 对 hermes 的 <b>35 个 no-reward</b> 抽 10 题<b>重复跑 2 次</b>，按「救回 = 坏跑 / 仍失败 = 能力或 infra」分类，再决定是否归因给能力。</td>
+    <td><code>2611.08417</code>（89 题 <b>~30%</b> 有缺陷、28 题修订、准确率 <b>+&gt;10pp</b>；<b>20pp</b> gap 消失、<b>30pp→5pp</b>）+ <code>2611.08285</code>（<code>Dext</code> 难度基线 <b>0.92</b> vs 轨迹预测器 <b>0.62</b>；within-issue 模型基线 <b>0.82</b>；增益 <b>≈0</b>；<b>2,840</b> run 的重复跑 pilot）</td>
+    <td>把「0passed / no-reward」拆成「基准缺陷 / infra / 能力 / 单跑波动」四类，避免把 429 与基准债算进能力结论；报告可比性提升。</td>
+    <td>读原文 1–2h + launcher/分析脚本 ~0.5 天（不改 5 路并发）</td>
+    <td>高</td>
+  </tr>
+  <tr>
+    <td><b>data</b><br><span style="font-size:12px;color:#59636e;">代码语料 ROI 下载中（10 候选体量已核）；去污染黑名单（IA03/terminal-bench/LongBench-v2）；stack-v3-train 15.9TB 待批</span></td>
+    <td>把「<b>技能画像</b>」写进 ROI 评估与验收：给每个候选语料补一列「预期影响哪些能力维度（代码 / 长上下文 / agentic / tool-call / 多语）」，并要求下游 pretrain 回报<b>多基准画像</b>（而非单一平均 loss/PPL）；比较两套配比时<b>对齐 token 预算</b>（不做不同 token 数的比较）——避免「平均分涨、某能力降」的误判。</td>
+    <td><code>2611.07812</code>（10M/37M <b>对齐预算</b>；5 基准族出现<b>画像差异而非单一排序</b>；<b>matched training exposure</b> 控制后反差仍在）</td>
+    <td>配比/语料取舍从「单一均分」升级为「能力画像」，与去污染黑名单互补。</td>
+    <td>改 ROI 表 + 验收模板 ~0.5 天</td>
+    <td>中</td>
+  </tr>
+</table>
+
+<table>
+  <tr><th>线</th><th>建议动作</th><th>依据（arXiv ID + 关键数字）</th><th>预期收益</th><th>成本</th><th>优先级</th></tr>
+  <tr>
+    <td><b>zhulong</b><br><span style="font-size:12px;color:#59636e;">两轴消融（<code>--thinking</code> 档 × 思维链语言）；A_none 79.5% / A_low 84.2% / A_medium_r1 84.8%（baseline glm-5.2 83.3%）；A_medium_r2 跑中，剩 23 轮、~1.9 天；成本口径待统一</span></td>
+    <td>① 按本文「配对 + 等预算」核对本线报告：每个 (thinking 档 × 语言) cell 必须与 baseline 在<b>等 budget</b>（同 token / 同 wall-clock）下比较，并在报告里显式写「预算已匹配 / 每轮 token 与 reasoning_chars」；② 把「分档排名」改成「<b>画像 + 成本</b>双列」（分数 / 推理 token / cost），因为 <b>low 84.2 vs medium 84.8（Δ0.6pp）落在 ±1pp 重复轮方差内，不应写成结论</b>——这与本文「画像差异而非单一排序」同构；③ 用「三元方差拆分」先估<b>同 cell 内重复轮方差</b>（r1/r2/r3），再判档位间差异是否超出噪声，报告同时给 pooled 与 within-cell 差值。</td>
+    <td><code>2611.07812</code>（配对设计、<b>matched exposure</b> 控制、5 基准<b>画像差异</b>、<b>蒸馏学生对照跨种子复现最干净</b>）+ <code>2611.08285</code>（<b>单跑不可分</b>「题/模型/跑」；oracle 差距 <b>≤ 随机波动</b>；增益 ≈0 的 18/18 配置）</td>
+    <td>把「low≈medium 边际趋平」从猜测变成可辩护结论；成本归一化口径与文献一致，便于对外汇报。</td>
+    <td>改分析脚本 ~0.5 天（<b>不动在跑 eval</b>）</td>
+    <td>高</td>
+  </tr>
+  <tr>
+    <td><b>designflow</b><br><span style="font-size:12px;color:#59636e;">造题（trace 覆盖 29/1001）；断言闸门 <code>k_rationale = k_check ≥ 8</code>；<code>rewrite_queue.tsv</code> 13 条；近 20 条通过率 6/20</span></td>
+    <td>① 把本文「<b>持续校验工作流</b>」五要素搬进现有 <code>rewrite_queue.tsv</code> 流程：社区/agent 报告 → 任务工件 → agent 轨迹 → <b>自动 oracle 检查</b> → <b>人工闸门</b>；并加两列本文实证有效的字段：(a) <b>缺陷类别</b>（环境 / 指令 / verifier）、(b) <b>修复前后 pass-rate</b>——文中 28 题修订里 <b>89 处是环境修复、11 处指令修复</b>，说明<b>环境类缺陷占比极高</b>，本线造题应把「环境可复现」设为 L1 门禁（先能跑通再谈保真度）。② 把「<b>资源轴</b>」纳入判分规格：每个 case 的 <code>check.py</code> 与调用记录 wall-clock / token 预算，否则同 case 在不同预算下 pass 率不可比（对应其 32× 预算扫描）。③ 若用 LLM judge，须报 <b>judge 间一致性</b>（文中 Cohen's <b>κ=0.55–0.77</b>，只到中等）而非单一判分。</td>
+    <td><code>2611.08417</code>（89 题 <b>~30%</b> 有缺陷；28 题修订 = <b>89 环境 + 11 指令</b>；<b>κ=0.55–0.77</b>；准确率 <b>+&gt;10pp</b>）+ <code>2611.08285</code>（within-issue 口径 / 重复跑）</td>
+    <td>断言闸门从「计数对齐」升级到「缺陷分类 + 修复前后回归」；环境类缺陷前置拦截，减少「跑不通被当成 agent 不会」。</td>
+    <td>读原文 1–2h + queue 表加列/脚本 ~0.5 天</td>
+    <td>高</td>
+  </tr>
+  <tr>
+    <td><b>designflow（造题口径 · 与 harness 共用）</b><br><span style="font-size:12px;color:#59636e;">L1–L5 保真度分级</span></td>
+    <td>补一条「<b>维护债可见化</b>」验收：每个 case 记录「上次复核日期 + 复核人/judge + 结论」，并按本文建议做<b>版本化分数</b>（跨版本不可直接比）。</td>
+    <td><code>2611.08417</code>（修复让准确率 <b>+&gt;10pp</b>、名次最多动 <b>3 位</b>、ρ=0.958 ⇒ 排序稳但<b>分数不可跨版本横比</b>）</td>
+    <td>避免「用旧分数评价新 case 集」的口径错误。</td>
+    <td>加表字段 1–2h</td>
+    <td>中</td>
+  </tr>
+</table>
+<div class="ok-box">
+  <b>本期小结</b>：6 线全部覆盖，其中 <b>5 线给出可执行落点</b>（跨线累计 9 条 ≫ 2 条门槛）。最强对口 = <b>harness</b>（TB-2.1 就是本文修复对象 + 时间预算口径）、<b>designflow</b>（造题/判分/闸门流程可直接搬）、<b>zhulong</b>（配对 + 等预算 + 画像化报告）；<b>pretrain</b> 侧向（eval 报告加资源预算与方差拆分）；<b>data</b> 侧向（语料取舍看技能画像）；<b>vision 本期无新增可用建议</b>（已全交付态，如实标注，不凑数）。⚠️ 三篇均为<b>作者自报、本线未复现</b>；上述建议一律「先小实验、再改流程」。
+</div>
+
+
+<h2 class="sec">附录 A · 本轮检索式与命中数（可核验）</h2>
+<div class="note">
+  <b>批次探针（AM · 4 条查询，间隔 ≥6s / 第 ④ 条 ≥20s，<code>4/4</code> <code>status=200</code> + <code>application/atom+xml; charset=utf-8</code>，全部 <code>attempts=1</code>）</b>：证据文件 <code>research/raw/2026-11-08-am-verify-r139.txt</code>（脚本 <code>raw/verify_r139.py</code>）。
+</div>
+<table>
+  <tr><th>#</th><th>检索式</th><th>totalResults</th><th>最新 published</th><th>耗时</th><th>判读</th></tr>
+  <tr><td>①</td><td><code>cat:cs.CL</code>（lastUpdatedDate ↓）</td><td><b>124,790</b></td><td><code>2026-11-05T18:58:17Z</code>（<code>2611.08478v1</code>）</td><td>0.80s</td><td>与 11-07 PM（r138）<b>逐项相同</b> ⇒ 周末未刷新</td></tr>
+  <tr><td>②</td><td><code>cat:cs.CL AND submittedDate:[202611060000 TO 202611102359]</code></td><td><b>0</b></td><td>—</td><td>0.71s</td><td><b>11-06 起无任何 cs.CL 新提交</b>（周六/周日不公告）</td></tr>
+  <tr><td>③</td><td><code>submittedDate:[202611060000 TO 202611102359]</code>（全库）</td><td><b>0</b></td><td>—</td><td>0.72s</td><td>全库同样为 0 ⇒ 不是分类过滤导致，是<b>批次未推进</b></td></tr>
+  <tr><td>④</td><td><code>cat:cs.CL OR cs.CV OR cs.SE OR cs.AI OR cs.LG</code>（submittedDate ↓，取 3）</td><td><b>643,965</b></td><td><code>2026-11-05T18:59:42Z</code>（<code>2611.08487v1</code>）</td><td>0.64s</td><td>广度基数与 11-06 PM（r136）<b>相同</b> ⇒ 确认未刷新</td></tr>
+</table>
+<p style="font-size:13.5px;">判读：<b>批次未刷新（仍 <code>2026-11-05</code>）</b>，符合 arXiv 周末不公告的日历；按 <b>§0.1 周末例外</b>以「最近一次公告批次」为窗口，并在此<b>如实标注实际日期区间（<code>2026-11-05</code> 批次）</b>，不写作「无新增」。三篇入选论文的 <code>published</code> 均为 <code>2026-11-05</code>，距本轮唤醒 <b>59.7–67.2h</b>。</p>
+
+<h2 class="sec">附录 B · 取数 / 去重 / 选文（可核验）</h2>
+<table>
+  <tr><th>分类</th><th>status</th><th>totalResults</th><th>取回条数</th><th>耗时</th></tr>
+  <tr><td><code>cs.CL</code></td><td>200 / atom+xml</td><td>124,790</td><td>100</td><td>1.41s</td></tr>
+  <tr><td><code>cs.CV</code></td><td>200 / atom+xml</td><td>212,479</td><td>100</td><td>1.24s</td></tr>
+  <tr><td><code>cs.LG</code></td><td>200 / atom+xml</td><td>297,729</td><td>100</td><td>1.28s</td></tr>
+  <tr><td><code>cs.AI</code></td><td>200 / atom+xml</td><td>211,462</td><td>100</td><td>1.29s</td></tr>
+  <tr><td><code>cs.SE</code></td><td>200 / atom+xml</td><td>30,857</td><td>100</td><td>1.74s</td></tr>
+</table>
+<p style="font-size:13.5px;">脚本 <code>raw/candidates_r139.py</code>（单分类各取最新 100，规避 <code>cat:A OR cat:B</code> 合并查询的索引滞后）⇒ 合并 <b>305</b> 条，与 <code>SEEN.md</code> 去重剔除 <b>7</b> 条 ⇒ <b>298 条候选池</b>（<code>raw/2026-11-08-am-candidates-r139.json</code>）。再用 <code>raw/line_match_r139.py</code> <b>按线建档</b>（按六线当前阻塞构造关键词表打分）：harness 匹配 <b>44</b> 篇、designflow <b>31</b>、zhulong <b>27</b>、pretrain <b>21</b>、data <b>16</b>、vision <b>1</b>（仅 LiDAR 全波形，域不同）。</p>
+
+<table>
+  <tr><th>选中</th><th>线映射</th><th>为什么选它 / 为什么不是别的</th></tr>
+  <tr><td><code>2611.08285</code><br>Hard Issue, Weak Model, or Bad Run?</td><td>harness（主）· zhulong（方差口径）</td><td>直接回答 harness 当轮的<b>归因</b>问题（能力 vs infra vs 单跑波动），且给出可复用的三元方差拆分。<b>备选未选</b>：<code>2611.07595</code> Evolver（29 分，SWE-bench/TB 相关但偏「能力自进化」）、<code>2611.07859</code> CORE（29 分，系统级 context management，与 harness 当期「上下文压缩」相关但非归因）——留作晚报 / 下轮。</td></tr>
+  <tr><td><code>2611.08417</code><br>Benchmarks as Software</td><td>harness（主，TB-2.1 即本文产物）· designflow（主，造题/闸门/判分）</td><td>harness 正在跑的 TB-2.1 正是本文修复版本；「资源预算即测量规格」「~30% 题有缺陷」两条直接改判分与归因口径。<b>备选未选</b>：<code>2611.07464</code> FINCOSMOS（22 分，判定/grading 但不含维护债）、<code>2611.07876</code> 代码正确性信号（偏模型内部探针）。</td></tr>
+  <tr><td><code>2611.07812</code><br>Different Corpora, Different Skills?</td><td>zhulong（主，配对+等预算+画像）· data（侧向，语料取舍）</td><td>zhulong 两轴消融正缺「等预算 + 配对 + 复现性检验」的报告范式；也是本轮唯一能为 data 提供口径的论文。<b>备选未选</b>：<code>2611.08485</code>（24 分，grounded reasoning 消融，偏多模态）、<code>2611.08290</code> AutoCompress（18 分，硬件引导压缩，与本线「训练 + CPU eval」场景不符）。</td></tr>
+</table>
+<p style="font-size:13.5px;">去重口径：与 <code>SEEN.md</code>（主键 arXiv ID）、<code>papers.jsonl</code>、<code>TOP_K.jsonl</code>、近 7 天 <code>daily/*.html</code> 均无重复（3 个 ID 在台账中<b>各恰好 1 行</b>，见附录 D 的幂等断言）。</p>
+
+<h2 class="sec">附录 C · PDF 落地校验（3/3）</h2>
+<table>
+  <tr><th>arXiv ID</th><th>bytes（实测 / total）</th><th>页数</th><th>字符数（去空白）</th><th>校验</th><th>sha256 vs CDN etag</th></tr>
+  <tr><td><code>2611.08285</code></td><td>176,571 / 176,571</td><td>5</td><td>24,131</td><td>✅ 8 段 Range 首轮全 OK、字节 == <code>Content-Range</code> total、头 <code>%PDF-</code>、尾 <code>%%EOF</code>、<code>pdfinfo</code>/<code>pdftotext</code> 可解析</td><td>etag <code>CM3d96m08pcDEAI=</code> 为 base64 口径 ⇒ 不可比，<b>不声称哈希一致</b></td></tr>
+  <tr><td><code>2611.08417</code></td><td>834,868 / 834,868</td><td>24</td><td>52,581</td><td>✅ 同上（首轮全 OK）</td><td>etag <code>COSIlae38pcDEAI=</code> 同上 ⇒ 不可比</td></tr>
+  <tr><td><code>2611.07812</code></td><td>250,053 / 250,053</td><td>13</td><td>44,028</td><td>✅ 同上（首轮全 OK）</td><td>etag <code>CPSjkeeo8pcDEAI=</code> 同上 ⇒ 不可比</td></tr>
+</table>
+<p style="font-size:13.5px;">落地路径 <code>research/pdf/2026-11-08/</code>（<b>不入 git</b>：<code>.gitignore</code> 排除 <code>pdf/</code> 与 <code>*.pdf</code>）；<b>当日 3 篇合计 1,261,492 B ≈ 1.20 MiB</b>（最大 <code>2611.08417</code> 834,868 B &lt; 5MB，但仍按红线<b>不入 git</b>，仅登记字节）。下载脚本 <code>raw/pdf_range_resume_r139.py</code>（8 段 Range + 断点续传，固定边缘 IP <code>151.101.67.42</code>）；本轮<b>零超时、零续传</b>。</p>
+
+<h2 class="sec">附录 D · 台账与当日进度</h2>
+<ul style="font-size:13.5px;">
+  <li><b>台账</b>：<code>raw/update_r139.py</code> <b>+3</b> ⇒ <code>SEEN.md</code> <b>5,643</b> 行（收录 <b>319</b> / 候选 4,558）、<code>papers.jsonl</code> <b>319</b> 行；幂等断言（每 ID 恰好 1 行、<code>published</code> 前缀 <code>2026-11-05</code>）全过。</li>
+  <li><b>索引 / 接口文档</b>：<code>research/daily/index.html</code> 新增 11-08 行（早报 3/5 + 覆盖 6 线 + 一句话摘要）；<code>research/INDEX.md</code> 追加本节摘要；<code>research/ARXIV_API.md</code> 追加 §9.139。</li>
+  <li><b>当日进度</b>：<b>3 / 5</b>（早报 3 篇「借鉴」已出；晚报 2 篇「科普」待 18:00 补齐并追加「晚报变更说明（AM → PM）」）。</li>
+  <li><b>出口</b>：🚫 <b>不发日报邮件</b>（2026-11-07 10:50 用户令：唯一出口 = 本 HTML + <code>daily/index.html</code>）；作者请教信职能独立，按 <code>RESEARCH_MAIL_SPEC.md</code> 另办。</li>
+  <li><b>候选池余量</b>：用 3 篇后余 <b>295</b> 条；含 <code>2611.07595</code> Evolver / <code>2611.07859</code> CORE / <code>2611.07461</code> Agent-Native Primitives / <code>2611.07307</code> Project Takeover / <code>2611.07372</code> EnvOpt / <code>2611.07552</code> SPARE 等，供 18:00 晚报与下轮补位。</li>
+  <li><b>口径护栏</b>：本页只写「推荐 / 待读」，<b>不写</b>「已验证结论 / 可复现收益 / SOTA 已证」；一切数字均为<b>作者自报</b>、本线未复现。</li>
+</ul>
+
+<footer>
+  research 线 · 论文观察日报 <code>research/daily/2026-11-08.html</code>（早报 3/5）· 生成 2026-11-08 06:0x CST · 数据源 arXiv 官方 API ·
+  自包含单文件（内联 CSS · 零 <code>&lt;script&gt;</code> · 离线可开）· 索引 <code>research/daily/index.html</code>
+</footer>
+</div>
+</body>
+</html>
+

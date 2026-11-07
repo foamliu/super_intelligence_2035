@@ -421,3 +421,17 @@
 > **【PM 晚报 · 第一百三十八轮 · 出口变更 + 5/5 收口】**（2026-11-07 18:0x CST，周六；2026-11-07 10:50 用户令：**出口改为论文观察日报 HTML，停发日报邮件**）：① **批次复验 4/4**（`raw/2026-11-07-pm-verify-r138.txt`；全 200+atom+xml、attempts=1）**仍未刷新（仍 `2026-11-05`）——周末 arXiv 不公告，符合日历**，如实登记「未刷新」非「无新增」。② **晚 2「科普」** = `2611.08478` Scientist World（cs.AI；可执行环境、1,000 核验、AI-Scientist **74%** 超人类、6,400h、小模型构思 **+158%**；今日科普 TOP-1）+ `2611.08412` Gold Rush in AI4Math II（cs.AI；检测 AI 写证明、8,281 篇/5 cohort、ProofTrace·GIPS）。③ **新增「🎯 对各线的可执行建议」6 线齐全**（pretrain/vision/harness/data/zhulong/designflow），vision 如实标本期无直接对口。④ **交付** `daily/2026-11-07.html` **5/5**（51,135 B；div 112/112、0 script、外链 5 abs、8 个 h2）+ `daily/index.html`（11-07 行改晚报 5/5 + 覆盖 6 线）。⑤ **PDF 5/5** = 24,204,978 B ≈ 23.08 MiB（08478 13.6MB/08412 5.4MB >5MB 不入 git）。
 
 > **累计（截至 2026-11-07 第一百三十八轮 · PM · 当日 5/5 收口）**：收录 **316 篇**（`papers.jsonl` 316）/ 候选 **4,558** + 候选(RSS) **507**（合计 **5,381**）/ `SEEN.md` **5,640 行**（本轮 PM **+2**：晚 2 科普）。
+
+> **【AM 早报 · 第一百三十九轮 · 三篇「借鉴」按「离各线当轮阻塞有多近」选文】**（2026-11-08 06:0x CST，周日）
+
+> **批次复核（4/4 200 + `application/atom+xml`，全 `attempts=1`；证据 `raw/2026-11-08-am-verify-r139.txt` / 脚本 `raw/verify_r139.py`）**：`cat:cs.CL` lastUpdated **124,790**、最新 `2026-11-05T18:58:17Z`（与 11-07 PM 逐项相同）；`submittedDate:[202611060000 TO 202611102359]` **cs.CL = 0 / 全库 = 0**；广度 5 分类 **643,965**（同 11-06 PM）⇒ **批次未刷新（仍 `2026-11-05`）**，周末 arXiv 不公告，按 §0.1 周末例外以最近公告批次为窗口，**如实登记「未刷新」非「无新增」**。
+
+> **候选池**：`raw/candidates_r139.py` 单分类各取 100（cs.CL 124,790 / cs.CV 212,479 / cs.LG 297,729 / cs.AI 211,462 / cs.SE 30,857）⇒ 合并 **305**、去重 7 ⇒ **298 条**（`raw/2026-11-08-am-candidates-r139.json`）；新增 `raw/line_match_r139.py` **按线建档**：harness 44 / designflow 31 / zhulong 27 / pretrain 21 / data 16 / vision 1。
+
+> **早 3 篇「借鉴」**：① `2611.08285` **Hard Issue, Weak Model, or Bad Run?**（cs.SE，NC State 2 位；不看轨迹的题目难度分 `Dext` AUROC **0.92** vs 轨迹预测器 **0.62–0.63**，within-issue 模型身份 **0.82**，轨迹增益 **≈0**（−0.001，18/18 配置），模型切换收益 ≤ 随机波动，重复跑只救「坏跑」；5 页）② `2611.08417` **Benchmarks as Software: Terminal-Bench and the Case for Continuous Benchmarks**（cs.AI，Stanford + Cornell 4 位；TB-2.0 89 题审计 **~30%** 有缺陷 → TB-2.1 修订 **28 题（89 环境 + 11 指令）**、准确率 **+>10pp**、名次最多动 3 位（ρ=0.958）；**放宽时间上限抹平 GPT 5.4 上 ~20pp harness gap、5.4 mini 30pp→5pp（预算扫到 32×）**；judge κ=0.55–0.77；24 页）③ `2611.07812` **Different Corpora, Different Skills? A Paired Study of Small Language Models**（cs.CL，Lund 3 位；**10M/37M 词对齐预算**配对、58M 蒸馏学生，换语料 = **技能画像差异而非单一排序**（BabyLM 强语言可接受性 / Britannica 强 Entity Tracking），matched exposure 控制后仍在，蒸馏学生对照跨种子复现最干净；13 页）。
+
+> **PDF 3/3**：`2611.08285` **176,571 B / 5 页 / 24,131 字符**、`2611.08417` **834,868 B / 24 页 / 52,581 字符**、`2611.07812` **250,053 B / 13 页 / 44,028 字符** = **1,261,492 B ≈ 1.20 MiB**（`raw/pdf_range_resume_r139.py` 8 段 Range，**首轮全 OK、零超时/零续传**；etag 为 base64 口径 ⇒ 不声称哈希一致；`pdf/` 入 .gitignore 不入 git）。
+
+> **交付**：`daily/2026-11-08.html`（**3/5**，**41,734 B**；3 卡 + 「🎯 对各线的可执行建议」**6 线齐全** + 附录 A/B/C/D；div 67/67、table 6/6、tr 28/28；零 `<script>`；外链仅 3 条 arXiv abs）+ `daily/index.html`（新增 11-08 行 + 标题改「论文观察日报 · 索引」+ footer 最近更新）。**🚫 不发日报邮件**（2026-11-07 10:50 用户令）。
+
+> **累计（截至 2026-11-08 第一百三十九轮 · AM · 当日 3/5）**：收录 **319 篇**（`papers.jsonl` 319）/ 候选 **4,558** + 候选(RSS 补充) 507；`SEEN.md` **5,643 行**。
