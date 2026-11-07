@@ -10,6 +10,57 @@
 ---
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
+### 🔴 用户令 · 2026-11-07 22:30（**别再等真机：用模拟器跑通客户端，真机只做最后一步验收**）· 用户直令 · 最高优先 · 未完成
+
+> 用户原话：「robot 为什么不能用模拟器呢」
+
+#### 0. 结论（先读）
+
+**可以，而且现在就该用。** 本机已具备条件：`HypervisorPresent=True`（WHPX/Hyper-V 可用）、**32 逻辑核 / 31.8GB 内存**；只缺 SDK 与模拟器镜像。之前卡在"等手机"是因为没人开这条路，不是技术上不行。
+
+#### 1. 用哪条模拟器（按目标手机分叉，先做 A）
+
+| 方案 | 适用 | 成本 | 能验证什么 |
+|:--|:--|:--|:--|
+| **A. Android AVD（本轮默认）** | 手机是 HarmonyOS 4.x/EMUI，或**先不区分**、只想把 R3 客户端跑通 | cmdline-tools + emulator + `system-images;android-34;google_apis;x86_64`（~1.5GB） | App UI、相机（虚拟场景/宿主摄像头）、麦克风（宿主）、语音播放、WebSocket 与 PC 联调、**录屏取证** |
+| **B. HarmonyOS 模拟器（DevEco Simulator）** | 确认手机是 **HarmonyOS NEXT** 才做 | DevEco Studio + 华为开发者账号 + 镜像（体积大、需实名） | ArkTS/HAP 真机同构、Core Speech Kit 可用性 |
+| 🚫 其它 | 商业安卓模拟器、第三方云真机、刷机 | — | 不采用（账号/合规/不可复现） |
+
+本轮：**先做 A**；B 只做「可行性核查」（DevEco 是否可下、模拟器是否需要实名/授权），**🚫 不注册华为账号、不装第三方模拟器**。
+
+#### 2. AVD 落地步骤（照做，失败就报具体报错）
+
+1. 装 `commandlinetools-win` 到 `C:\Android\cmdline-tools`，`sdkmanager --licenses` 接受协议；
+2. `sdkmanager "platform-tools" "platforms;android-34" "system-images;android-34;google_apis;x86_64" "emulator"`（下载走代理 `172.19.92.25:13128`；**若镜像下载不动，退到 `android-30;google_apis;x86_64` 或 `default;x86_64` 最小镜像**）；
+3. `avdmanager create avd -n robot34 -k "system-images;android-34;google_apis;x86_64" -d pixel_5`；
+4. 启动：`emulator -avd robot34 -gpu swiftshader_indirect -camera-back webcam0 -camera-front webcam0 -no-snapshot -wipe-data`（GPU 不稳就用 swiftshader）；
+5. 验证四件事并贴真实输出：`adb devices` 看到 emulator / `adb shell input keyevent 3` 回桌面 / 拍一张（`adb shell am start -a android.media.action.IMAGE_CAPTURE` 或 App 内 CameraX）/ `adb shell settings get secure tts_default_synth`。
+6. **与 PC 服务联调**：模拟器访问宿主机用 **`10.0.2.2:<port>`**（不是 127.0.0.1）。
+
+#### 3. 模拟器「能信」与「不能信」（写进报告，防止把模拟器结论当真机结论）
+
+| ✅ 可作证据 | 🚫 不可作证据（必须真机复测） |
+|:--|:--|
+| App 逻辑/UI/状态机流转 | **AEC 自听回声**（模拟器音频链路完全不同） |
+| 相机→上传→引导→朗读的**功能闭环** | 首字延迟的真实值（模拟器性能不代表手机） |
+| WebSocket 流式与打断**协议正确性** | 后台保活/被杀策略、热与功耗 |
+| 录屏作为「60s 会话」的过程证据 | 端侧 ASR/TTS 的真实 CER 与音色 |
+| 权限与异常路径（拒绝权限、断网） | 华为 Kit（Core Vision/Speech）在真机的可用性 |
+
+#### 4. 交付（本轮）
+
+1. `run/robot/P1_模拟器.md`：版本、镜像、启动命令、`adb devices` 等**真实输出**、遇到的坑；
+2. `run/robot/app/` 下最小客户端（Kotlin 或 ArkTS，择一）：拍照 → POST `10.0.2.2:PORT/tutor` → TTS 朗读当前提示；
+3. **一段 ≤60s 的模拟器录屏**（`adb shell screenrecord`）+ 时延打点；
+4. 明确写出：哪些指标来自模拟器、哪些标记「待真机」。
+
+#### 5. 红线不变
+
+🚫 不代写作业、🚫 不改系统镜像/不刷机、🚫 不注册第三方账号、🚫 不把模拟器数据当真机结论。
+
+---
+
+
 ### 🔴 用户令 · 2026-11-07 20:05（**优先级钉死：HCI 四条令未交付前，暂停 L1/OCR 调优**）· 用户直令 · 最高优先 · 未完成
 
 > 背景：第 5/6/7 轮连续在重跑 L1/OCR 基线（识图 4/4、P50 1.51s），但 11:40 / 11:55 / 12:05 / 12:20 四条 HCI 令**一条都还没交付**。用户已明确「重点是人机交互」。
