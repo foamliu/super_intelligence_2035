@@ -1278,3 +1278,11 @@ tjzn5					parked		2026-11-07 12:29	env Q&A + skill-creator usage (#352 peek weak
 1790733563737_3qe6x.messages.json	e0039602	hfeg0plg102	45	waveform	case	EDA-Eval-DesignFlow-WaveCmpWrap-001	2026-11-07 22:08	
 1792223414540_erhym.messages.json	fhwang	10.129.2.14	50	schematic_netlist	case	EDA-Eval-DesignFlow-LvsRptAnalyze-001	2026-11-07 22:42	
 1789961467130_nibwl	ziyuny	10.129.32.190	154	analog_context	case	EDA-Eval-DesignFlow-CstViewPrecheck-001	2026-11-07 23:08	
+1783577039866_4dd1i	peek	peek	0	unknown	parked		2026-11-07 23:29	wrong-domain: not shard D (powerfill/layout/rscalc/pdk_qa)
+1790133815976_z9yjw	peek	peek	0	unknown	parked		2026-11-07 23:29	wrong-domain: not shard D (powerfill/layout/rscalc/pdk_qa)
+1791171109524_llns7	peek	peek	0	unknown	parked		2026-11-07 23:29	wrong-domain: not shard D (powerfill/layout/rscalc/pdk_qa)
+1790042012585_5e6p2	peek	peek	0	unknown	parked		2026-11-07 23:29	wrong-domain: not shard D (powerfill/layout/rscalc/pdk_qa)
+1793605487158_evxj6	peek	peek	0	unknown	parked		2026-11-07 23:33	wrong-domain: not shard D (digital RTL/verilog-param-cmp / aether-layout-autovia / digital-MCU-RTL-simvision)
+1793855278198_ebxsl	peek	peek	0	unknown	case	EDA-Eval-DesignFlow-SelFigReport-001	2026-11-07 23:43	wrong-domain: not shard D (digital RTL/verilog-param-cmp / aether-layout-autovia / digital-MCU-RTL-simvision)
+1788871441686_fieju	peek	peek	0	unknown	parked		2026-11-07 23:33	wrong-domain: not shard D (digital RTL/verilog-param-cmp / aether-layout-autovia / digital-MCU-RTL-simvision)
+1793150158938_6rvi0	peek	peek	0	unknown	parked		2026-11-07 23:33	wrong-domain: DRC report analysis + PDK rule deck (physical_verify), not shard D
