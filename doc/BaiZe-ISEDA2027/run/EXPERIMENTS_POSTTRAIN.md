@@ -3989,3 +3989,135 @@ R29 心跳标注"11/9需验证API DB key格式"。R31 实测：
 
 **11/9 就绪度（R31 后）**：全栈 ✅ + 关键路径 ✅ + 数据 ✅ + 奖励函数 ✅ + cheat ✅ + 脚本 ✅ + preflight ✅ + GPU ⬜（明天）
 
+
+---
+
+## §R32 GPU 显存预算 + GRPO 吞吐量估算（2026-11-08 · 零 GPU · wake80）
+
+> **动机**：R1-R31 验证了脚本/配置/数据/奖励函数，但从未定量计算 2B + FSDP + SGLang 混合引擎在 A40 45GB 上是否真正放得下，也没估算 GRPO 迭代吞吐量。R32 填补这个缺口。
+> **方法**：从 `/tmp/models/MiniCPM5-2B/config.json` 提取模型架构，按 verl hybrid engine 内存模型（FSDP 持久层 + SGLang 预分配层 + 训练/推理由替切换）逐项计算。
+> **脚本**：`baize_posttrain_gpu_budget_analysis.py`（零 GPU，纯计算，`--json` 输出机器可读结果）。
+
+### R32.1 模型参数量
+
+| 组件 | 参数量 |
+|:--|--:|
+| Embedding (130560×2048) | 267.4M |
+| LM Head (130560×2048) | 267.4M |
+| 每层 Attention (Q/K/V/O, GQA 2 KV heads) | 9.4M |
+| 每层 MLP (gate/up/down, 6144 intermediate) | 37.7M |
+| 每层 RMSNorm ×2 | ~4K |
+| **每层合计** | **47.2M** |
+| 42 层合计 | 1982.6M |
+| **总参数** | **2.517B** |
+| bf16 权重大小 | 4.69 GiB |
+
+### R32.2 GPU 显存预算（每张 A40, 46068 MiB = 44.93 GiB）
+
+> verl hybrid engine：FSDP 训练与 SGLang 推理由替使用同一组 GPU。SGLang 以 `gpu_memory_utilization` 比例预分配 KV cache 池，该内存在训练阶段也被占用（server 进程常驻）。
+
+| 层级 | 组件 | 显存 (GiB) |
+|:--|:--|--:|
+| **FSDP 持久层**（常驻） | 分片参数 (bf16, 1/4) | 1.17 |
+| | Adam 优化器状态 (fp32, 1/4: master+m+v) | 7.03 |
+| | 小计 | **8.20** |
+| **训练阶段**（额外） | 梯度 (bf16, 1/4) | 1.17 |
+| | 激活值 (gradient checkpointing) | 2.00 |
+| | 参考模型 (分片参数+log_prob 激活) | 2.17 |
+| | 小计 | **13.55** |
+| **SGLang 推理** | 模型权重 (full, TP=1) | 4.69 |
+| | KV cache (12 seqs × 8192 tok × 42 layers × 2 KV heads) | 3.94 |
+| | 实际使用 | **8.63** |
+| | 预分配 (50% × 44.93) | 22.46 |
+
+**峰值分析**：
+- 训练阶段峰值 = SGLang 预分配 (22.46) + FSDP 训练 (13.55) = **36.01 GiB**
+- 推理阶段峰值 = FSDP 持久 (8.20) + SGLang 实际 (8.63) = **16.83 GiB**
+- **峰值 = 36.01 GiB = 80.2% → 余量 8.92 GiB (19.8%) ✅ 放得下**
+
+**关键发现**：
+- ✅ `param_offload=False, optim_offload=False` 正确——2.5B 模型 FSDP 4 卡无需 offload
+- ✅ `gpu_memory_utilization=0.50` 是正确设定——0.60 会使峰值达 40.51 GiB (90.2%)，过于紧张
+- ✅ `entropy_checkpointing=True` + `entropy_from_logits_with_chunking=True` 对 vocab=130560 的 logits entropy 计算是必要的
+- ⚠️ 8.92 GiB 余量可被碎片化消耗（PyTorch allocator 碎片）——`PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True` 已在 config 中设置 ✅
+
+### R32.3 GRPO 吞吐量估算
+
+#### 全量配置 (G=8, batch=128, 3 turns, 4096 resp len)
+
+| 阶段 | 保守估计 | 乐观估计 |
+|:--|--:|--:|
+| Rollout (128 seqs × 3 turns × 4096 tok = 1.57M tokens) | 5.9 min (5000 tok/s) | 3.6 min (10000 tok/s) |
+| Training (PPO×2 + ref fwd, 128×8192=1.05M tokens) | 18.4 min | 18.4 min |
+| **每迭代** | **24.3 min** | **21.7 min** |
+| Smoke (10 iter) | 4.1 h | 3.6 h |
+| Full (2000 iter) | 810.6 h (33.8 days) | 723.2 h (30.1 days) |
+
+#### Smoke 配置 (G=4, batch=16, 3 turns)
+
+| 阶段 | 保守 | 乐观 |
+|:--|--:|--:|
+| 每迭代 | 3.1 min | 2.8 min |
+| 10 迭代总计 | 31.1 min | 27.9 min |
+
+**✅ Smoke test 28-31 min → 完美匹配 20-40 min 计划窗口**
+
+#### 🔴 关键发现：全量 RL (2000 iter) 需要 30-34 天
+
+> **这是 R32 最重要的发现**。当前 verl config 的 `total_epochs: 1` × `train_batch_size: 128` × 2000 iters 在 4×A40 上需要 **~30 天**。
+> 训练窗口（pretrain ckpt ETA 2026-12-25 → ISEDA 投稿 2027-02-01）约 **3 周 (21 天)**。
+> **2000 iters 放不进 21 天窗口**。
+
+**缓解方案（按优先级）**：
+1. **减迭代数**：500-800 iters 可能足够（GRPO 通常 200-500 iters 即见收敛趋势）；500 iters × 24 min = ~8.3 天 ✅
+2. **减 batch**：batch=64 (而非 128) → 减半 rollout 时间 → ~15 天 ✅
+3. **减 turns**：max_turns=2 (而非 3) → 减 1/3 rollout → ~20 天 ✅
+4. **组合**：500 iters + batch=64 + max_turns=2 → ~5 天 ✅
+5. **H100 替代**：若 pretrain 完成后 .29 的 H100 可用，吞吐量提升 ~3× → 10 天 ✅
+
+> ⚠️ 注意：以上估算假设所有序列都跑满 3 turns × 4096 tokens。实际中 filter_groups 会丢弃全对/全错组，且多数任务不会跑满——实际吞吐可能快 30-50%。
+
+### R32.4 基线评测吞吐量估算
+
+| 项 | 值 |
+|:--|--:|
+| 任务数 | 158 × 5 runs = 790 |
+| 并行度 (-p 8) | 20 batches/run |
+| SGLang 吞吐 (eval, batch 1-8) | ~3000 tok/s |
+| 每任务平均 token | ~10,000 |
+| 每批次时间 | ~3.3s (generation only) |
+| 每轮 | ~66s |
+| 5 轮总生成时间 | ~5.5 min |
+
+> ⚠️ 上述仅为**生成时间**。实际 harness 包含工具调用往返、沙盒执行、评分等开销。R30 执行手册估 30-60 min/轮更为现实。
+
+### R32.5 11/9 执行时间线修订
+
+基于 R32 吞吐估算，修订 R30 执行手册的时间线：
+
+| 步骤 | R30 估计 | R32 修订 | 说明 |
+|:--|:--|:--|:--|
+| Step 0: venv setup | 5-15min | 5-15min | 无变化（已在 R27 验证） |
+| Step 1: preflight | 2min | 2min | 无变化 |
+| Step 2: SGLang serve + 36% baseline | 30-60min | 30-60min | 生成 ~6min + harness 开销 |
+| Step 3: D1-D6 提取 | 10-20min | 10-20min | 无变化 |
+| Step 4: 污染隔离 | 1min | 1min | 无变化 |
+| Step 5: RL smoke (10 iter) | 20-40min | **28-31min** | R32 精确估算 ✅ |
+| **总计** | ~1.5-2.5h | ~1.5-2.5h | 无变化 |
+
+### R32.6 交付物
+
+- `baize_posttrain_gpu_budget_analysis.py`（251 行，零 GPU 纯计算，`--json` 输出）
+- `/tmp/r32_gpu_budget.json`（机器可读结果）
+- `reports/report_posttrain_r32_gpu_budget_zh.html`（HTML 报告）
+- EXPERIMENTS §R32（本节，6 小节）
+
+### R32.7 对 11/9 的直接影响
+
+1. ✅ **显存放心**：80.2% 峰值利用，8.92 GiB 余量——不会 OOM
+2. ✅ **Smoke test 时间确认**：28-31 min，与 R30 手册 20-40 min 窗口一致
+3. 🔴 **全量 RL 需缩减**：2000 iters × 24 min/iter = 34 天 > 21 天窗口。11/9 不跑全量（R30 已规定），但后续正式训练需调整 config（减 iter 或减 batch）
+4. ✅ **gpu_memory_utilization=0.50 确认正确**：不宜调高到 0.60（90.2% 过紧）
+5. 📋 **正式训练 config 建议改动**（待 pretrain ckpt 后）：total_iterations 500-800, train_batch_size 64, max_turns 2
+
+**11/9 就绪度（R32 后）**：全栈 ✅ + preflight ✅ + 数据 ✅ + 奖励函数 ✅ + cheat ✅ + 脚本 ✅ + **显存预算 ✅** + **吞吐量 ✅** + GPU ⬜（明天）
