@@ -19,7 +19,7 @@ tr:nth-child(even){background:#f8f9fa}
 code{background:#f4f6f7;padding:2px 6px;border-radius:3px}
 </style></head><body>
 <h1>BaiZe 2B CPU 评测提速报告</h1>
-<p style='color:#7f8c8d'>生成时间：2026-11-07 21:06｜检查点：iter_112000</p>
+<p style='color:#7f8c8d'>生成时间：2026-11-07 21:31｜检查点：iter_112000</p>
 <h2>一、背景与问题</h2>
 <p>用户提问：「pretrain 全量 eval 需要时间这么久吗？已经使用 llama.cpp 了吗？线程并发多一点有帮助吗」</p>
 <p><b>现状</b>：iter_112000 的 8 集全量评测（73,110 次 loglikelihood 请求）
@@ -77,15 +77,35 @@ iter_100000 GGUF 趋势检查亦通过（分数随训练单调上升，sciq 由 
 </table>
 <div class='note'><b>同时修复</b>：arc_easy 也在旧脚本（timeout=600）下挂起（14 min 无进度），
 已 kill 并用修复版脚本重启。boolq/arc_challenge 旧进程正常未受影响。</div>
-<h2>四、提速方案（8 服务器 × 16 线程，推荐）</h2>
-<p>8 个 llama-server 实例（端口 8080–8087），每个 16 线程 8 并发 slot，
-8 个任务各独占 1 个 server → 无资源争用。总线程 128（224 核机器安全），内存 ~40GB（2TB 充裕）。</p>
-<table><tr><th>配置</th><th>服务器数</th><th>每服务器线程</th><th>总并发 slot</th><th>总线程</th></tr>
-<tr><td>旧 HF 串行</td><td>1（进程内）</td><td>16</td><td>—</td><td>16</td></tr>
-<tr><td><b>GGUF 8 服务器（采用）</b></td><td>8</td><td>16</td><td>64</td><td>128</td></tr>
+<h2>三d、NUMA-pinned 分阶段并行优化（2026-11-07 21:1x）</h2>
+<div class='warn'><b>8 服务器同时跑 = 内存带宽争用 → hellaswag 13.6 s/it（76h/shard）！</b></div>
+<p>8 服务器同时启动后实测发现：Mamba2-hybrid SSM 是<b>内存带宽受限</b>（非计算受限），
+8 个 server 共享 2 个 NUMA 节点的内存带宽 → hellaswag 退化为 13.6 s/it。
+但同一 server 在独占 NUMA 带宽时可达 2-4 s/it → <b>带宽是瓶颈，不是线程</b>。</p>
+<div class='key'><b>优化方案：NUMA-pinned 分阶段并行</b><br>
+<b>核心思想</b>：减少并发 server 数 → 每 server 独享 NUMA 带宽 → 单 server 提速 + 阶段重叠<br>
+Phase 1a: arc_easy→arc_challenge→openbookqa（N0: 8080）+ piqa（N1: 8081）<br>
+Phase 1b: arc 完成后 → N0 切 hellaswag_shard1（与 piqa 重叠）<br>
+Phase 2: piqa 完成后 → N1 切 hellaswag_shard2<br>
+Phase 3: 两片 hellaswag 完成 → merge results</div>
+<table><tr><th>配置</th><th>并发 server</th><th>每 server 独享</th><th>hellaswag s/it</th><th>hellaswag ETA</th></tr>
+<tr><td>8 server 同时（旧）</td><td>8</td><td>1/4 NUMA 带宽</td><td class='bad'>13.6</td><td class='bad'>76 h/shard</td></tr>
+<tr><td><b>2 server NUMA-pinned（新）</b></td><td>2</td><td><b>全 NUMA 带宽</b></td><td class='good'>2-4</td><td class='good'>~6 h/shard</td></tr>
 </table>
-<div class='note'><b>为何 16 线程而非 56</b>：第二节探测矩阵证明 16 线程饱和。56 线程会让单 server 因 SSM 顺序扫描的调度开销变慢。
-8 服务器各 16 线程 = 任务级并行（每个 server 独立 SSM 扫描序列）+ 单任务内 16 线程饱和点，两者叠加最优。</div>
+<div class='note'><b>关键洞察</b>：Mamba2 SSM 顺序扫描 = 内存带宽受限 → 并发 server 数增加会<b>线性分摊带宽</b>。
+最优策略 = 每 NUMA 节点 1 个 server（独享带宽），阶段重叠消除串行等待。
+taskset -c 绑定核心到 NUMA 节点确保内存访问局部性。</div>
+<h2>四、提速方案（NUMA-pinned 分阶段并行，最终采用）</h2>
+<p>2 个 NUMA 节点各 1 个 llama-server（taskset -c 绑核），每 server 16 线程 8 并发 slot。
+阶段重叠：arc 任务先完成 → N0 立即切 hellaswag shard1（与 N1 piqa 并行）→ piqa 完成 → N1 切 hellaswag shard2。</p>
+<table><tr><th>配置</th><th>并发 server</th><th>每服务器线程</th><th>NUMA 绑定</th><th>总线程</th></tr>
+<tr><td>旧 HF 串行</td><td>1（进程内）</td><td>16</td><td>—</td><td>16</td></tr>
+<tr><td>8 server 同时（废弃）</td><td>8</td><td>16</td><td>无</td><td>128</td></tr>
+<tr><td><b>2 server NUMA-pinned（采用）</b></td><td>2</td><td>16</td><td><b>taskset -c</b></td><td>32</td></tr>
+</table>
+<div class='note'><b>为何 2 server 而非 8</b>：第三节三d 实测证明 Mamba2 SSM 是内存带宽受限。
+8 server 争用带宽 → hellaswag 13.6 s/it。2 server 各独享 NUMA → 2-4 s/it，提升 3-7x/server。
+阶段重叠（arc→hellaswag）消除串行等待，总时间 ≈ max(arc_chain, piqa) + hellaswag/shard。</div>
 <h2>五、提速实测对照表</h2>
 <table><tr><th>方案</th><th>实测耗时</th><th>加速倍数</th><th>精度</th></tr>
 <tr><td>HF 串行 16 线程（预估）</td><td>542.2 小时（22.6 天）</td><td>1x</td><td>基线</td></tr>
@@ -128,7 +148,7 @@ iter_100000 GGUF 趋势检查亦通过（分数随训练单调上升，sciq 由 
 </p>
 <p><b>3.「线程并发多一点有帮助吗？」</b><br>
 单进程内加线程<b>没有帮助</b>（16 线程已饱和，SSM 不可并行）。
-但<b>多服务器并行</b>有帮助——每个独立 server 有自己的 SSM 扫描序列。
-当前方案 = 8 服务器 × 16 线程 = 128 核，叠加 llama.cpp 本身的推理加速。</p>
+多 server 并行<b>有帮助但有上限</b>——Mamba2 SSM 是内存带宽受限，8 server 争用带宽反而退化。
+<b>最优策略 = 每 NUMA 节点 1 server + taskset 绑核 + 阶段重叠</b>，独享带宽 + 消除串行等待。</p>
 </div>
 </body></html>
