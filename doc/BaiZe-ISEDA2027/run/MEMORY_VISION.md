@@ -1,6 +1,8 @@
 WAITING: 0
 
-> 🆕 **【wake #884 · 2026-11-07 18:2x】监控轮·v3 Phase4 D-ctrl step30/40·v5 SFT ep2/3 ~step77 loss持续下降·两实验健康零可执行动作。** git pull(无新令)·research日报2026-11-07已查无本线建议。**v3**:Phase4 D-ctrl step30/40 ETA~44min训练+9min eval→~18:50完(PID2165712健康,etimes~5.4h)·avgR=0.4121(随机奖励控制组)。Phase3(treatment C)已完 C=25.0%<B=34.0%负结果确认。**v5**:SFT ep2/3 ~step77/120 loss avg=0.3434(从0.5525持续下降→类型分类可学)·PID731487健康·ETA~2h(SFT完→RFT→eval)。**未完成指令:有**(v3 D-ctrl待完+v5全量待完→最终报告)⇒**WAITING:0**。📦体积:TASK=31KB✓/MEMORY=17KB✓。
+> 🆕 **【wake #885 · 2026-11-07 18:07】监控轮·v3 D-ctrl step30/40·v5 SFT ep2/3 step100/120 loss=0.32持续下降·两实验健康。** git pull(无新令)·research日报2026-11-07已查无本线建议。**v3**:D-ctrl step30/40 ETA~44min训练+9min eval(PID2165712健康,etimes~5.5h)·avgR=0.4121。Phase3(treatment)C=25.0%<B=34.0%负结果已确认。**v5**:SFT ep2/3 step100/120 loss avg=0.3206(从0.5525→0.3206持续下降→类型分类可学)·PID731487健康·SFT剩~20步(~7min)→eval A+B→RFT collect 600rollouts→train C+D→eval→stats·ETA~2h(~20:00)。**未完成指令:有**(v3 D-ctrl待完+v5全量待完→最终报告)⇒**WAITING:0**。📦体积:TASK=31KB✓/MEMORY=17KB✓。
+
+> 📦 wake #884（监控轮·v3 D-ctrl step30/40·v5 SFT ep2/3 step77·2026-11-07 18:0x）已归档 → daily-memories-vision/2026-11-07.md；**结论**：两实验健康·v5 SFT loss持续下降。需要时再读。
 
 > 📦 wake #883（监控轮·v3 D-ctrl step25/40·v5 SFT ep2/3 step60·2026-11-07 18:1x）已归档 → daily-memories-vision/2026-11-07.md；**结论**：两实验健康·v3 D-ctrl step25·v5 SFT step60 loss下降。需要时再读。
 
