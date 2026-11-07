@@ -20,12 +20,12 @@ pre{background:#2c3e50;color:#ecf0f1;padding:15px;border-radius:5px;overflow-x:a
 <div class="info">
 <p><strong>模型</strong>：glm-5.3-flash（网关 <code>http://agi-gateway.cxmt.com/v1</code>）</p>
 <p><strong>7 路</strong>：cline / codex / opencode / claude-code / pi / hermes / deepseek</p>
-<p><strong>生成时间</strong>：2026-11-07 22:35（R1804）</p>
-<p><strong>状态</strong>：<span class="warn">⚠️ 中间报告</span> — SWE-bench eval 5/7 完成（hermes 运行中、deepseek 待评）；TB-2.1 cline 1/7 路完成</p>
+<p><strong>生成时间</strong>：2026-11-07 23:37（R1809）</p>
+<p><strong>状态</strong>：<span class="warn">⚠️ 中间报告</span> — SWE-bench eval 6/7 完成（deepseek 运行中）；TB-2.1 cline 完成 + codex 已终止(429) + hermes 运行中</p>
 </div>
 
 <div class="critical">
-<p><strong>网关 429 quota 影响</strong>：keyB 多次 429 额度耗尽，阻塞 predict + TB-2.1 后 6 路。22:24 网关恢复（HTTP 200）。
+<p><strong>网关 429 quota 影响</strong>：keyB 多次 429 额度耗尽，阻塞 predict + TB-2.1 后 6 路。22:24 网关恢复（HTTP 200），但 23:25 起 429 再次出现（额度再次耗尽，ETA ~50min）。
 <strong>归因红线</strong>：429/403 = infra，不得写成能力差。</p>
 </div>
 
@@ -53,13 +53,13 @@ pre{background:#2c3e50;color:#ecf0f1;padding:15px;border-radius:5px;overflow-x:a
 <tr><td>3</td><td>opencode</td><td>102</td><td class='pass'>80</td><td class='fail'>22</td><td>0</td><td><strong>78.4%</strong></td><td>✅ 已完成</td></tr>
 <tr><td>4</td><td>claude-code</td><td>36</td><td class='pass'>27</td><td class='fail'>9</td><td>0</td><td><strong>75.0%</strong></td><td>✅ 已完成</td></tr>
 <tr><td>5</td><td>pi</td><td>34</td><td class='pass'>26</td><td class='fail'>8</td><td>0</td><td><strong>76.5%</strong></td><td>✅ 已完成</td></tr>
-<tr><td>6</td><td>hermes</td><td>0</td><td class='pass'>0</td><td class='fail'>0</td><td>0</td><td><strong>—</strong></td><td>⏳ 运行中/待评</td></tr>
-<tr><td>7</td><td>deepseek-harness</td><td>0</td><td class='pass'>0</td><td class='fail'>0</td><td>0</td><td><strong>—</strong></td><td>⏳ 运行中/待评</td></tr>
+<tr><td>6</td><td>hermes</td><td>131</td><td class='pass'>124</td><td class='fail'>7</td><td>0</td><td><strong>94.7%</strong></td><td>✅ 已完成</td></tr>
+<tr><td>7</td><td>deepseek-harness</td><td>40</td><td class='pass'>—</td><td class='fail'>—</td><td>—</td><td><strong>—</strong></td><td>⏳ 运行中</td></tr>
 </table>
 <div class="info"><ul>
 <li>Eval N &lt; Real Patch 数：predict 仍在进行，eval 只覆盖已完成 real patch（按字母序）</li>
-<li><strong>hermes</strong>：131 real patches，eval 运行中（22:09 启动），预计 ~23:30 完成</li>
-<li><strong>deepseek</strong>：40 real patches，eval 待启动</li>
+<li><strong>hermes</strong>：131 real patches，eval 已完成（23:30）→ <strong>124/131 = 94.7%</strong>（所有路中最高）</li>
+<li><strong>deepseek</strong>：40 real patches，eval 运行中（23:30 启动，~40×15s≈10min）</li>
 <li>当前 resolved rate 为<strong>中间值</strong>，最终值需等全部 500 题完成后确定</li>
 </ul></div>
 
@@ -72,8 +72,8 @@ pre{background:#2c3e50;color:#ecf0f1;padding:15px;border-radius:5px;overflow-x:a
 <tr><td>opencode</td><td>401/500 (80.2%)</td><td>80/102 (78.4%)</td><td></td></tr>
 <tr><td>claude-code</td><td>273/500 (54.6%)</td><td>27/36 (75.0%)</td><td></td></tr>
 <tr><td>pi</td><td>333/500 (66.6%)</td><td>26/34 (76.5%)</td><td></td></tr>
-<tr><td>hermes</td><td>184/500 (36.8%)</td><td>0/? (—)</td><td>⚠️ interim</td></tr>
-<tr><td>deepseek-harness</td><td>—/500 (—)</td><td>0/? (—)</td><td>⚠️ interim</td></tr>
+<tr><td>hermes</td><td>184/500 (36.8%)</td><td>124/131 (94.7%)</td><td>⚠️ interim（N&lt;500）</td></tr>
+<tr><td>deepseek-harness</td><td>—/500 (—)</td><td>—/40 (运行中)</td><td>⚠️ interim</td></tr>
 </table>
 <div class="note"><p><strong>⚠️ 不可直接比较</strong>：glm-5.3-flash eval 尚未完成全量，待全量完成后方可做同口径对比。</p></div>
 
@@ -92,8 +92,10 @@ pre{background:#2c3e50;color:#ecf0f1;padding:15px;border-radius:5px;overflow-x:a
 </div>
 <table>
 <tr><th>Harness</th><th>完成</th><th>Passed</th><th>Failed</th><th>Remaining</th><th>通过率</th><th>状态</th></tr>
-<tr><td>cline</td><td>83/89</td><td class='pass'>7</td><td class='fail'>74</td><td>2</td><td><strong>8.4%</strong></td><td>✅ 已完成</td></tr>
-<tr><td colspan="6"><em>codex / hermes / opencode / claude-code / deepseek / pi — 6 路待启动（sequential launcher，网关 429 阻塞）</em></td><td>⏳ 待启动</td></tr>
+<tr><td>cline</td><td>88/89</td><td class='pass'>7</td><td class='fail'>81</td><td>1</td><td><strong>7.9%</strong></td><td>✅ 已完成</td></tr>
+<tr><td>codex</td><td>18/89</td><td class='pass'>0</td><td class='fail'>18</td><td>71</td><td><strong>0%</strong></td><td>❌ 已终止(429)</td></tr>
+<tr><td>hermes</td><td>4/89</td><td class='pass'>0</td><td class='fail'>4</td><td>85</td><td><strong>—</strong></td><td>⏳ 运行中</td></tr>
+<tr><td colspan="6"><em>opencode / claude-code / deepseek / pi — 4 路待启动（网关 429 阻塞，ETA ~50min）</em></td><td>⏳ 待启动</td></tr>
 </table>
 <div class="note"><p><strong>§15:2x 判据</strong>：TB4 全 0 → 切换 TB-2.1 → cline 7 passed → <strong>MET ✅</strong>。详见 <code>report_harness_tb21_7way_zh.html</code></p></div>
 
@@ -124,7 +126,7 @@ pre{background:#2c3e50;color:#ecf0f1;padding:15px;border-radius:5px;overflow-x:a
 
 <hr>
 <p style="text-align:center;color:#7f8c8d;font-size:0.9em">
-BaiZe Harness · R1804 · 2026-11-07 22:35<br>
+BaiZe Harness · R1809 · 2026-11-07 23:37<br>
 glm-5.3-flash · SWE-bench Verified 500 + TB-2.1 89 · 7-way · 报告正文一律写 cline
 </p>
 </body></html>

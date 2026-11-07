@@ -25,7 +25,7 @@ pre{background:#2c3e50;color:#ecf0f1;padding:15px;border-radius:5px;overflow-x:a
 <div class="info">
 <p><strong>基准口径声明</strong>：本报告数据为 <strong>TB-2.1 / 89 题 / 7-way concurrent</strong>。
 TB-2.1 与 TB4 <strong>题集不同、不可跨基准比较</strong>。</p>
-<p><strong>模型</strong>：glm-5.3-flash（网关 <code>http://agi-gateway.cxmt.com/v1</code>）｜<strong>生成时间</strong>：2026-11-07 22:32（R1804）</p>
+<p><strong>模型</strong>：glm-5.3-flash（网关 <code>http://agi-gateway.cxmt.com/v1</code>）｜<strong>生成时间</strong>：2026-11-07 23:37（R1809）</p>
 </div>
 
 <div class="critical">
@@ -50,13 +50,13 @@ TB-2.1 cline 路 <strong>7 题 passed</strong>（≥1 题 × ≥1 路 reward 非
 <h2>2. TB-2.1 · 7 路状态总览</h2>
 <div class="note">
 <p><strong>运行模式</strong>：sequential launcher（<code>launch_tb21_glm53_7way.sh</code>），7 路按序执行。
-网关 keyB 在 16:11~22:24 期间遭遇 429 quota 耗尽，阻塞 cline 剩余任务和后续 6 路。22:24 网关恢复（HTTP 200）。</p>
+网关 keyB 在 16:11~22:24 期间遭遇 429 quota 耗尽，22:24 网关恢复（HTTP 200），但 23:25 起 429 再次出现（额度再次耗尽，ETA ~50min）。</p>
 </div>
 <table>
 <tr><th>#</th><th>Harness</th><th>状态</th><th>Passed</th><th>Failed</th><th>Remaining</th><th>通过率</th></tr>
-<tr><td>1</td><td>cline</td><td><span class='tag tag-running'>运行中</span> 运行中 (82/89)</td><td class='pass'>7</td><td class='fail'>73</td><td>7</td><td>8.8%</td></tr>
-<tr><td>2</td><td>codex</td><td><span class='tag tag-pending'>未开始</span> 未开始</td><td class='pass'>0</td><td class='fail'>0</td><td>89</td><td>—</td></tr>
-<tr><td>3</td><td>hermes</td><td><span class='tag tag-pending'>未开始</span> 未开始</td><td class='pass'>0</td><td class='fail'>0</td><td>89</td><td>—</td></tr>
+<tr><td>1</td><td>cline</td><td><span class='tag tag-done'>已完成</span> 88/89</td><td class='pass'>7</td><td class='fail'>81</td><td>1</td><td>7.9%</td></tr>
+<tr><td>2</td><td>codex</td><td><span class='tag tag-pending'>已终止</span> 18/89 (429)</td><td class='pass'>0</td><td class='fail'>18</td><td>71</td><td>0%</td></tr>
+<tr><td>3</td><td>hermes</td><td><span class='tag tag-running'>运行中</span> 4/89</td><td class='pass'>0</td><td class='fail'>4</td><td>85</td><td>—</td></tr>
 <tr><td>4</td><td>opencode</td><td><span class='tag tag-pending'>未开始</span> 未开始</td><td class='pass'>0</td><td class='fail'>0</td><td>89</td><td>—</td></tr>
 <tr><td>5</td><td>claude-code</td><td><span class='tag tag-pending'>未开始</span> 未开始</td><td class='pass'>0</td><td class='fail'>0</td><td>89</td><td>—</td></tr>
 <tr><td>6</td><td>deepseek</td><td><span class='tag tag-pending'>未开始</span> 未开始</td><td class='pass'>0</td><td class='fail'>0</td><td>89</td><td>—</td></tr>
@@ -65,7 +65,7 @@ TB-2.1 cline 路 <strong>7 题 passed</strong>（≥1 题 × ≥1 路 reward 非
 
 <div class="summary-box">
 <h3>cline 路详细结果（唯一已完成路）</h3>
-<p><strong>完成</strong>：82/89 题 ｜ <strong>通过</strong>：<span class="pass">7 题（8.5%）</span> ｜ <strong>失败</strong>：73 题 ｜ <strong>剩余</strong>：2 题</p>
+<p><strong>完成</strong>：88/89 题 ｜ <strong>通过</strong>：<span class="pass">7 题（7.9%）</span> ｜ <strong>失败</strong>：81 题 ｜ <strong>剩余</strong>：1 题</p>
 <h4>✅ 通过的 7 题</h4>
 <ul class='task-list'><li class='pass'>✅ bn-fit-modify</li>
 <li class='pass'>✅ break-filter-js-from-html</li>
@@ -106,10 +106,10 @@ TB-2.1 cline 路 <strong>7 题 passed</strong>（≥1 题 × ≥1 路 reward 非
 <h3>3.1 网关 429 quota 耗尽（基础设施问题）</h3>
 <div class="critical">
 <p><strong>现象</strong>：glm-5.3-flash 网关 keyB 在评测期间多次返回 HTTP 429「本次 Token 额度已用完」。</p>
-<p><strong>影响</strong>：TB-2.1 cline 路 81/89 后剩余题被 429 阻塞；后续 6 路完全未启动（sequential launcher 等待 cline 完成）。</p>
+<p><strong>影响</strong>：TB-2.1 cline 路 88/89 完成（1 题因 429 未完成）；codex 路 18/89 全部因 429 失败已终止；hermes 路刚启动（4/89）；后续 4 路未启动（网关 429 阻塞，ETA ~50min）。</p>
 <p><strong>归因红线</strong>：网关额度耗尽 / 429 <strong>不得</strong>写成「模型能力」结论。</p>
 </div>
-<h3>3.2 cline 路 72 题失败归因</h3>
+<h3>3.2 cline 路 81 题失败归因</h3>
 <div class="info">
 <ul>
 <li><strong>能力失败</strong>（真实做错）：agent 生成 patch 但未通过 verifier — 占比最高</li>
@@ -125,7 +125,7 @@ TB-2.1 cline 路 <strong>7 题 passed</strong>（≥1 题 × ≥1 路 reward 非
 <tr><th>维度</th><th>TB4（4.0）</th><th>TB-2.1（2.1）</th></tr>
 <tr><td>题集</td><td>66 题</td><td>89 题</td></tr>
 <tr><td>TB4 结果</td><td>66×7=462 trials，0 passed</td><td>—</td></tr>
-<tr><td>TB-2.1 结果</td><td>—</td><td>cline 7/81 passed (8.6%)</td></tr>
+<tr><td>TB-2.1 结果</td><td>—</td><td>cline 7/88 passed (7.9%) · codex 0/18 (429终止) · hermes 运行中</td></tr>
 <tr><td>可比性</td><td colspan="2"><strong>🚫 不可比</strong> — 题集不同，禁止并列对比</td></tr>
 </table>
 <p><strong>TB4 全 0 passed 根因</strong>：经 R1743 诊断，verifier 正常运行（reward=0 非 None），全 0 为<strong>模型能力问题</strong>，非 verifier infra。</p>
@@ -142,8 +142,8 @@ TB-2.1 cline 路 <strong>7 题 passed</strong>（≥1 题 × ≥1 路 reward 非
 
 <h2>6. 后续计划</h2>
 <div class="info"><ol>
-<li>网关恢复后 cline 路剩余 2 题自动完成</li>
-<li>sequential launcher 将依次启动 codex / hermes / opencode / claude-code / deepseek / pi</li>
+<li>网关 429 恢复后（ETA ~00:25）：hermes 路继续推进；剩余 4 路依次启动</li>
+<li>codex 路 18/89 全部因 429 失败 → 429 恢复后可重跑（归因=infra 非能力）</li>
 <li>7 路全量完成后报告标注「7-way complete」</li>
 </ol></div>
 
@@ -158,7 +158,7 @@ done | sort</code></pre>
 
 <hr>
 <p style="text-align:center;color:#7f8c8d;font-size:0.9em">
-BaiZe Harness 研究线 · R1804 · {NOW}<br>
+BaiZe Harness 研究线 · R1809 · 2026-11-07 23:37<br>
 TB-2.1 / 89 题 / 7-way concurrent · glm-5.3-flash · 报告正文一律写 cline
 </p>
 </body></html>
