@@ -1214,3 +1214,13 @@ us0hd.messages.json					parked		2026-11-07 08:07	#343 peek: netlist 23 thin, not
 bw2u5.messages.json					parked		2026-11-07 08:07	#343 peek: netlist 5 only, too thin
 3lvd6.messages.json					parked		2026-11-07 08:07	#343 peek: dup of sr426 (same jackliu netlist/hspice/calibre)
 1793792373749_l5r0u					case	EDA-Eval-DesignFlow-IOBufParamTune-001	2026-11-07 08:47	
+1789524301977_lp4xw.messages.json	clarawang	hfeg0pgn045	77	analog_context	case	EDA-Eval-DesignFlow-FineSimDeckReport-001	2026-11-07 09:21	
+1786586471140_pepxy.messages.json					parked		2026-11-07 09:21	peeked #345, weak/non-D-domain/debug/skill-invoke
+1786705250400_92ykp.messages.json					parked		2026-11-07 09:21	peeked #345, weak/non-D-domain/debug/skill-invoke
+1789900684281_lq00u.messages.json					parked		2026-11-07 09:21	peeked #345, weak/non-D-domain/debug/skill-invoke
+1793173193409_mx7xh.messages.json					parked		2026-11-07 09:21	peeked #345, weak/non-D-domain/debug/skill-invoke
+1782803363777_e0b5q.messages.json					parked		2026-11-07 09:21	peeked #345, weak/non-D-domain/debug/skill-invoke
+1793150705842_rbvi8.messages.json					parked		2026-11-07 09:21	peeked #345, weak/non-D-domain/debug/skill-invoke
+1790128938715_nsf5a.messages.json					parked		2026-11-07 09:21	peeked #345, weak/non-D-domain/debug/skill-invoke
+1789975385741_egm8i.messages.json					parked		2026-11-07 09:21	peeked #345, weak/non-D-domain/debug/skill-invoke
+1792067800928_1b60m.messages.json					parked		2026-11-07 09:21	peeked #345, weak/non-D-domain/debug/skill-invoke
