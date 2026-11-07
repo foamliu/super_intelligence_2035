@@ -1,6 +1,8 @@
 WAITING: 0
 
-> 🆕 **【wake #866 · 2026-11-07 15:34】监控轮·v3+v4均健康运行中·零可执行动作。** git pull(rebase OK,无新令)·research日报无vision条目(忽略)·体积 TASK35.0KB(>32KB按令暂不归档)/MEMORY≈29.5KB✓。**v3**(PID2165712,etimes~10539s≈2.9h,pcpu=2876%):Phase3 C(GRPO)step35/40 avgR=0.033 loss=-0.001175——avgR轨迹-0.5→0.066→0.279→0.321→0.151→-0.043→0.398→0.033极度高方差,loss≈0,GRPO梯度信号微弱(与v1/v2一致的CPU瓶颈)。ETA:Phase3余~21min+Phase4(D控制组~3h)+eval~16min≈3.5h。**v4**(PID3843708,etimes~396s≈6.6min,pcpu=4104%):Phase1 B(SFT eval)50/100 acc=30.0%(426s),与v3同题同ckpt,预计B≈34%。ETA:B eval余~7min→Phase2 collect(60circ×4roll=240,~32min)→Phase3 RFT train(3epoch)→Phase4 D控制→Phase5 stats。**本轮判断**:两实验后台运行健康,零可执行交付动作。**下一步**:下唤醒检查进度→v3完成(Phase5输出experiment_results.json)→生成v3最终报告+统计检验+commit→v4完成同理→更新HTML报告。**未完成指令:有**(v3+v4运行中)⇒**WAITING:0**。📦体积:TASK=35.0KB(>32KB按令暂不归档)/MEMORY≈29.5KB✓。
+> 🆕 **【wake #867 · 2026-11-07 15:40】监控轮·v3 Phase3 GRPO 完成(40/40)进入C-eval·v4 B-eval 90/100·均健康·零可执行动作。** git pull(rebase OK,无新令)·research日报11-07无vision条目(忽略)·体积 TASK35.0KB(>32KB按令暂不归档)/MEMORY≈29.7KB✓。**v3**(PID2165712,etimes~10952s≈3.04h,pcpu=2881%):**Phase3 GRPO 40/40 DONE**(avgR末=0.1075/loss=0.000038;全程高方差-0.5→0.398→0.033→0.107,GRPO梯度信号微弱与v1/v2一致CPU瓶颈)→现C-grpo eval 40/100 acc=25.0%。ETA:C eval余~9min+Phase4(D随机奖励控制~3h)+eval+Phase5 stats≈3.3h。**v4**(PID3843708,etimes~809s≈13.5min,pcpu=4166%):Phase1 B eval 90/100 acc=35.6%(~86s/q,与v3同题同ckpt,将收敛B≈34%)。ETA:B eval余~1.5min→Phase2 collect(60circ×4roll=240,~32min)→Phase3 RFT train(3epoch)→Phase4 D控制→Phase5 stats。**本轮预检**:已核v3/v4 Phase4/5代码完整(McNemar+bootstrap CI+cheat_rate+verdict→experiment_results.json)且out_dir匹配报告生成器V3_OUT✓,无末段崩溃风险。**本轮判断**:两实验后台运行健康,零可执行交付动作。**下一步**:下唤醒检查→v3完成(Phase5输出experiment_results.json)→生成v3最终报告+统计检验+commit→v4完成同理→更新HTML报告(report_vision_cpu_rl_waveform_zh.html)。**未完成指令:有**(v3+v4运行中)⇒**WAITING:0**。📦体积:TASK=35.0KB(>32KB按令暂不归档)/MEMORY≈29.7KB✓。
+
+> 📦 wake #866（监控轮·v3 step35/40+v4 B-eval 50/100·2026-11-07 15:34）已归档 → daily-memories-vision/2026-11-07.md；**结论**：两实验健康运行,零可执行动作。需要时再读。
 
 > 📦 wake #865（v4崩溃修复+重启·2026-11-07 15:2x）已归档 → daily-memories-vision/2026-11-07.md；**结论**：v4 NameError(gen_train_prompt_period漏导)修复+B eval缓存+setsid重启;v3 step35/40 avgR=0.033。需要时再读。
 
@@ -216,10 +218,10 @@ WAITING: 0
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | 🟢 **波形 RL CPU 阶段2 推进中**：v3(GRPO 40step/gs8/period-only)运行中step30/40·**v4(RFT)并行启动**(换方向:GRPO→Rejection Sampling FT,无group baseline/稳定CE梯度)·数据集调研完成(HF+GitHub+arXiv三源无图像波形VQA集)·技术栈三步冒烟交付(LLaMA-Factory+KTransformers不可行,peft直训退路验证)·Qwen3.5-2B(1.88B)+LoRA 69.7M。**WAITING: 0** |
+| PHASE | 🟢 **波形 RL CPU 阶段2 推进中**：v3(GRPO 40step/gs8/period-only)Phase3 40/40 DONE→C-eval运行中·**v4(RFT)并行**(换方向:GRPO→Rejection Sampling FT,无group baseline/稳定CE梯度)B-eval 90/100·数据集调研完成(HF+GitHub+arXiv三源无图像波形VQA集)·技术栈三步冒烟交付(LLaMA-Factory+KTransformers不可行,peft直训退路验证)·Qwen3.5-2B(1.88B)+LoRA 69.7M。**WAITING: 0** |
 | WAITING | 0 |
 | 已完成 | advantage方差诊断(wake#838,判定PARTIAL) · 阶段1 SFT验收PASS(wake#802) · 阶段1 SFT CPU训练完成step3000(wake#802) · CPU端到端训练循环验证7/7 PASS(wake#741) · 数据泄漏验证+阶段1就绪报告HTML(wake#731) · 全管线就绪审计(wake#714) · GRPO链式启动器修复+启动(wake#626) · GRPO CPU冒烟测试PASS(wake#622) · 2B文本骨干提取1.72B(wake#620) · 数据集均衡化9013条(wake#618) · WaveQA-RL oracle 300题(wake#614) · 波形RL阶段0 YELLOW(wake#609) · 论文改稿(wake#437~#442) · 波形RL计划书(wake#435) · OCR合成10M(wake#275) · ArmE-R2/ArmD-R2 全链路 |
-| 当前动作 | **wake#866 v3+v4并行运行监控**：v3(GRPO)PID2165712 step35/40 avgR=0.033(高方差,loss≈0,GRPO信号弱)·v4(RFT)PID3843708 Phase1 B eval 50/100 acc=30.0%(重启后重跑)。v3 ETA~3.5h(Phase4 D控制~3h),v4 ETA~2-3h(collect+train+control)。两实验均健康运行,等完成。 |
+| 当前动作 | **wake#867 v3+v4并行运行监控**：v3(GRPO)PID2165712 **Phase3 40/40 DONE**(avgR末=0.1075,高方差)→C-grpo eval 40/100 acc=25.0%·v4(RFT)PID3843708 Phase1 B eval 90/100 acc=35.6%。v3 ETA~3.3h(Phase4 D控制~3h+Phase5),v4 ETA~2-3h(collect+RFT train+control)。两实验均健康运行,等完成。 |
 | 下一步 | ①下唤醒检查v3 Phase3完成→进Phase4(D控制) ②检查v4 B eval完成→进Phase2 collect rollouts ③任一完成(Phase5 stats+experiment_results.json)→生成最终报告+统计检验+commit ④更新HTML报告(report_vision_cpu_rl_waveform_zh.html) ⑤若v3+v4均不显著→3轮无提升,考虑课程学习/多目标/过程奖励/换任务定义 |
 | 阻塞 | .12+.29 GPU全占（8×H100 96-100% util / ~75GB，pretrain baize2b ETA≈12/24-25）→ 阶段2 GRPO需GPU（GRPO chain PID1365749自带GPU-wait,释放后自动起训）·.17+.75 SSH不可达 |
-| 更新 | **2026-11-07 15:34 (wake #866)**: v3+v4监控轮(均健康运行中)·v3 step35/40 avgR=0.033·v4 B eval 50/100·体积TASK35.0KB(>32KB按令暂不归档)/MEMORY≈29.5KB✓·WAITING=0 |
+| 更新 | **2026-11-07 15:40 (wake #867)**: v3+v4监控轮(均健康)·v3 Phase3 40/40 DONE→C eval 40/100 acc=25.0%·v4 B eval 90/100 acc=35.6%·Phase4/5代码预检PASS·体积TASK35.0KB(>32KB按令暂不归档)/MEMORY≈29.7KB✓·WAITING=0 |
