@@ -2873,6 +2873,17 @@ std>0 组 ≥30%                  ⇒ PARAM-ISSUE
 - **v4 (RFT/STaR)** Phase1 B = 34.0%（与 v3 一致✅）；Phase2 collect 40/60 circuits，160 rollouts，103 succ(64.4%)，ETA~18:30-19:00。
 - **结论判断**：v1(离散奖励,post-GRPO 6.2%<post-SFT 9.2%)→v2(15步,p=0.625不显著)→v3(40步连续奖励,C=25%<B=34%)=**连续 3 轮 GRPO 无提升**。v4 RFT 已换方向（无 group baseline→消除 std=0 根因；标准 CE 梯度→稳定）。等 v3 Phase4(控制D)+v4 完成后做最终统计检验+报告。
 
+**wake#882 更新**（2026-11-07 17:48）：**v4 (RFT) 全量实验完成 → NULL 结果确认（C=B=34.0%，无提升）**。
+- **v4 最终结果**：B(SFT)=34.0% · C(RFT treatment)=34.0% · D(RFT random control)=33.0%。
+- **统计检验**：McNemar C vs B: p=1.0000 (n_disc=16) → **不显著**；Bootstrap C-B: +0.0% CI=[-8.0%,+8.0%] → **CI 包含 0**；McNemar C vs D: p=1.0000 (n_disc=15) → **不显著**。
+- **VERDICT**: `NO IMPROVEMENT | REWARD-DESIGN DRIVEN (C>D)`——C(34.0%)>D(33.0%) 技术上成立但统计不显著（p=1.0），无法排除随机波动。
+- **诚实结论**：RFT(rejection sampling FT)对 period 回归任务**无提升**——collect 成功率 67.1%(161/240) 但 retrain 只是重复训练模型已会的 34% 正确答案，无新信息注入。**控制组 D(随机过滤)≈C(奖励过滤)**，进一步证明 RFT 的过滤策略本身不产生增益。
+- **cheat rate**: train/eval 使用 disjoint RNG seed range → overlap=0 → **无数据泄漏** ✓。
+- **v3 D-ctrl 仍在运行**（PID2165712, step ~25/40, ETA ~1h）——v3 控制组结果待下次唤醒收集。
+- **v5 方向转换已启动**（见下方 §22 v5 节）——改任务为波形类型分类(4类)，改输入为 16 采样点直接进 prompt。
+- **报告已更新**：`reports/report_vision_cpu_rl_waveform_zh.html`（22149B, 含 v4 完整 D-ctrl 数据）。
+- **数字溯源**：`/tmp/v4_rft_experiment.log` 实测 stdout + `cpu_rl_v4/experiment_results.json`（58384B）。CPU fp32 / nice19 / 零GPU / 未碰 pretrain。
+
 
 ---
 

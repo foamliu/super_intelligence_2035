@@ -1,8 +1,8 @@
 WAITING: 0
 
-> 🆕 **【wake #881 · 2026-11-07 17:28】🔴换方向执行·v5波形类型分类实验已写脚本+冒烟PASS+全量实验已启动。** git pull(无新令)·体积 TASK~31KB✓/MEMORY~17KB✓。**v5设计**(执行wake#880"换方向"决策)：**改任务**=period回归→波形类型分类(sine/square/triangle/sawtooth,4类)；**改输入**=tool-call summary stats→16个实际采样点(t,v)直接进prompt(模型能"看见"波形形状)；**保留方法**=RFT(v4已验证稳定,无std=0问题)。**根因分析**：v2-v4失败的根因=①period回归太难(2B LoRA天花板34%)②GRPO std=0占78.7%无梯度③RFT只强化已会答案④get_values只给min/max/mean/std不给采样点→模型看不到形状。v5修复全部4点。**预注册判据**：A(基线)~25%(随机)·B(SFT)>50%·C(RFT)>B·D(随机过滤控制)≤B；成功=C>B且C>D且McNemar p<0.05且bootstrap CI排除0。**脚本**=`cpu_rl_v5_typecls_experiment.py`(594行,29.9KB,SYNTAX OK)·纯Python波形生成器(无ngspice依赖)·4条件A/B/C/D×McNemar/bootstrap/cheat-rate。**冒烟测试PASS**(20 SFT/1ep/20 eval):SFT loss 0.50→0.70·B=15%(sawtooth 60%其余0%,20例太少)·RFT 20rollouts/1correct·C=15%·全链路5阶段OK·JSON保存✅。**全量实验已启动**(PID731487,OMP16/nice19):400 SFT/3ep + 200 RFT×3rollouts + 100 eval(25/type) + A/B/C/D四条件·ETA~2.5h(~20:00)。**v3+v4仍运行中**(PID2165712 v3 D-ctrl·PID3843708 v4 D-ctrl)——224核3实验并行无争用。**未完成指令:有**(v3+v4 D-ctrl待完+v5全量待完→最终报告)⇒**WAITING:0**。📦体积:TASK=~31KB✓/MEMORY=~18KB✓。
+> 🆕 **【wake #882 · 2026-11-07 17:48】v4(RFT)全量实验完成→NULL结果(C=B=34.0%)·报告已更新·v3+v5仍运行中。** git pull(无新令)·体积 TASK~31KB✓/MEMORY~18KB✓。**v4最终结果**:B(SFT)=34.0%·C(RFT treatment)=34.0%·D(RFT random control)=33.0%→McNemar C-vs-B p=1.0(n_disc=16)不显著·Bootstrap C-B=+0.0% CI=[-8%,+8%]包含0·McNemar C-vs-D p=1.0(n_disc=15)不显著→**VERDICT:NO IMPROVEMENT**。collect 240rollouts/161succ(67.1%)但retrain只重复已会答案→无新信息。cheat-rate=0(disjoint seed)✓。**报告已更新**`report_vision_cpu_rl_waveform_zh.html`(22149B,含v4完整D-ctrl)。**v3 D-ctrl仍运行**(PID2165712,step25/40,ETA~1h)·**v5 SFT进行中**(PID731487,step40/ep1,loss avg=0.4041下降中,ETA~2h)。**未完成指令:有**(v3 D-ctrl待完+v5全量待完→最终报告)⇒**WAITING:0**。📦体积:TASK=31KB✓/MEMORY=18KB✓。
 
-> 📦 wake #880（监控轮·v4 RFT最终=34%=基线·3轮无提升触发换方向·2026-11-07 17:02）已归档 → daily-memories-vision/2026-11-07.md；**结论**：v4 C=34.0%=B(SFT)=34.0%(NULL)→v2/v3/v4连续3轮无提升→必须换方向。需要时再读。
+> 📦 wake #881（换方向执行·v5波形类型分类脚本+冒烟PASS+全量启动·2026-11-07 17:28）已归档 → daily-memories-vision/2026-11-07.md；**结论**：v5设计(改任务=类型分类/改输入=16采样点/保留RFT)·冒烟PASS·全量PID731487启动ETA~2.5h。需要时再读。
 
 > 📦 wake #878-879（监控轮·v4 RFT C-eval累积噪声假象37.1%→最终34.0%=基线·v3 D-ctrl step15/40·2026-11-07 16:5x）已归档 → daily-memories-vision/2026-11-07.md；**结论**：v4"正信号"系累积噪声(70/100=37.1%→100/100=34.0%)，最终=基线无提升。需要时再读。
 
@@ -97,10 +97,10 @@ WAITING: 0
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | 🔴 **波形 RL CPU 阶段2 · 3轮无提升触发换方向**：v3(GRPO 40step/gs8/period-only)Phase4 D-ctrl ~step22/40运行中·C=25.0%<B=34.0%(第3轮负)·v4(RFT)Phase4 D-ctrl刚启动·**C(RFT)=34.0%=B(SFT)=34.0%(无提升,null result)**——wake#877-879报道"37.1%正信号"系累积噪声假象(70/100=37.1%→100/100=34.0%)·3轮无提升: v2=6.2%<9.2% / v3=25.0%<34.0% / v4=34.0%=34.0%·数据集调研完成·技术栈三步冒烟交付(LLaMA-Factory+KTransformers不可行,peft直训退路验证)·Qwen3.5-2B(1.88B)+LoRA 69.7M。**WAITING: 0** |
+| PHASE | 🔴 **波形 RL CPU 阶段2 · v4(RFT)完成NULL结果·v5(类型分类)新方向运行中**：v4(RFT)✅完成 C=34.0%=B=34.0% D=33.0% McNemar p=1.0 不显著(NULL)·v3(GRPO)Phase4 D-ctrl ~step25/40运行中·C=25.0%<B=34.0%(负)·**v5(类型分类)新方向已启动**PID731487 SFT ep1/3 step40 loss下降中·3轮无提升: v2=6.2%<9.2% / v3=25.0%<34.0% / v4=34.0%=34.0%·数据集调研完成·技术栈三步冒烟交付(LLaMA-Factory+KTransformers不可行,peft直训退路验证)·Qwen3.5-2B(1.88B)+LoRA。**WAITING: 0** |
 | WAITING | 0 |
-| 已完成 | advantage方差诊断(wake#838,判定PARTIAL) · v3 GRPO连续奖励实验(wake#870,C=25.0%<B=34.0%负结果) · v4 RFT实验(wake#880,C=34.0%=B=34.0% null) · 阶段1 SFT验收PASS(wake#802) · CPU端到端训练循环验证7/7 PASS(wake#741) · 数据泄漏验证+阶段1就绪报告HTML(wake#731) · GRPO CPU冒烟测试PASS(wake#622) · 2B文本骨干提取1.72B(wake#620) · 数据集均衡化9013条(wake#618) · 波形RL计划书(wake#435) · 论文改稿(wake#437~#442) · ArmE-R2/ArmD-R2 全链路 |
-| 当前动作 | **wake#880 v3+v4并行监控+3轮无提升换方向**：v3(GRPO)PID2165712 Phase4 D-ctrl ~step22/40(ETA~1.7h→~18:45)·C(GRPO)=25.0%<B=34.0%。v4(RFT)PID3843708 Phase4 D-ctrl刚启动(ETA~45min)·C(RFT)=34.0%=B(无提升)。两实验健康。等Phase4 D-ctrl完→experiment_results.json齐→gen报告→换方向。 |
-| 下一步 | ①等v3+v4 Phase4 D-ctrl完→experiment_results.json齐→gen_cpu_rl_v3_report.py→最终HTML+McNemar/bootstrap/control统计+EXPERIMENTS§22+commit ②**换方向(3轮无提升)**：改任务定义为波形类型判别(sine/square/triangle/sawtooth,4类分类,更可学)或频率比较(二分类),先SFT建基线再RL→证明显著提升 ③理由:GRPO CPU loss≈0/std=0占78.7%;RFT只强化已会答案;period回归2B LoRA天花板≈34% |
+| 已完成 | advantage方差诊断(wake#838,判定PARTIAL) · v3 GRPO连续奖励实验(wake#870,C=25.0%<B=34.0%负结果) · v4 RFT实验全量完成(wake#882,C=34.0%=B=34.0% D=33.0% McNemar p=1.0 NULL) · 阶段1 SFT验收PASS(wake#802) · CPU端到端训练循环验证7/7 PASS(wake#741) · 数据泄漏验证+阶段1就绪报告HTML(wake#731) · GRPO CPU冒烟测试PASS(wake#622) · 2B文本骨干提取1.72B(wake#620) · 数据集均衡化9013条(wake#618) · 波形RL计划书(wake#435) · 论文改稿(wake#437~#442) · ArmE-R2/ArmD-R2 全链路 |
+| 当前动作 | **wake#882 v4完成·v3+v5监控**：v4(RFT)✅完成 NULL结果(C=B=34.0%,D=33.0%,p=1.0)·报告已更新(22149B)。v3(GRPO)PID2165712 Phase4 D-ctrl ~step25/40(ETA~1h)·v5(类型分类)PID731487 SFT ep1/3 step40 loss avg=0.4041下降中(ETA~2h)。两实验健康。 |
+| 下一步 | ①等v3 D-ctrl完(~1h)→收集v3 experiment_results.json→最终v3报告(McNemar/bootstrap/control) ②等v5(类型分类)全量完(~2h)→收集v5 experiment_results.json→v5报告→若C>B显著则交付"显著提升"证据 ③v3+v5全完→合并最终报告+EXPERIMENTS§22+commit ④v5若仍无提升→继续换方向(频率比较二分类/异常点定位等) |
 | 阻塞 | .12+.29 GPU全占（8×H100 96-100% util / ~75GB，pretrain baize2b ETA≈12/24-25）→ 阶段2 GRPO需GPU（GRPO chain PID1365749自带GPU-wait,释放后自动起训）·.17+.75 SSH不可达 |
-| 更新 | **2026-11-07 17:02 (wake #880)**: 🔴v4 RFT最终=34.0%=基线(正信号系噪声假象)·v3 D-ctrl~step22/40·3轮无提升触发换方向·WAITING=0 |
+| 更新 | **2026-11-07 17:48 (wake #882)**: v4(RFT)全量完成NULL结果(C=B=34.0%,D=33.0%,p=1.0)·报告更新22149B·v3 D-ctrl~step25/40·v5 SFT ep1/3 step40 loss下降中·WAITING=0 |

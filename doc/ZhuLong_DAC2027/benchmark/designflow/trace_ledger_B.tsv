@@ -283,7 +283,7 @@ vbxlf.messages.json	jason17w	hfeg0pnd002	262	spice_sim	parked		2026-11-05 12:30	
 1789885303895_nv8gj	scout	scout	0	characterization	parked		2026-11-07 04:40	jinsongl@hfeg0pkn005 rootcause-question-报错原因是什么
 1793684231151_ne32u	scout	scout	0	characterization	parked		2026-11-07 04:40	adaml@hfeg0pkn002 skill-authoring-meta
 1789441210558_p8wm1	scout	scout	0	characterization	parked		2026-11-07 04:40	shaoyou@hfeg0pkn003 trivial-GUI-launch-anasim
-1791358972656_8fe71	scout	scout	0	characterization	parked		2026-11-07 04:40	thomasz@hfeg0pkn002 explain-script-consulting
+1791358972656_8fe71	scout	scout	0	characterization	parked		2026-11-07 17:49	parse .simrc script request, non-spice (thomasz)
 1793174136126_dfv2z					parked		2026-11-07 05:02	dup-McRonMismatch-001(clarawu RON .md0 6*std/230 mismatch same task as r4p2e)
 1793089887669_4c5ws					parked		2026-11-07 05:02	sysadmin-consulting(png/bcompare/apps-lowpower-not-spice)
 1790126403703_fj73q					parked		2026-11-07 05:02	env-setup(swb-python-api-config)
@@ -362,3 +362,14 @@ vbxlf.messages.json	jason17w	hfeg0pnd002	262	spice_sim	parked		2026-11-05 12:30	
 1793583394153_wnpwu	dsgao	hfhds201	186	spice_sim	case	EDA-Eval-DesignFlow-TmVerifyTbGen-001	2026-11-07 16:01	
 1793862569889_ezcgh	mike	hfhds201	235	spice_sim	case	EDA-Eval-DesignFlow-CosimRunBlockOpt-001	2026-11-07 16:27	
 1793955284770_l2j22	jiangbaol	hfeg0pkn004	228	spice_sim	case	EDA-Eval-DesignFlow-StrongarmBaselineAnalyze-001	2026-11-07 17:23	
+1793234226913_xtse5	shanliny	hfeg0pkn001	43	spice_sim	claimed		2026-11-07 17:48	
+1793953743131_0bf8m					parked		2026-11-07 17:48	strongarm-slicer continuation of l2j22 (dup topic, jiangbaol)
+1793956835876_hx6ep					parked		2026-11-07 17:48	strongarm-slicer continuation of l2j22 (dup topic, jiangbaol)
+1790230482027_7lp3l					parked		2026-11-07 17:48	strongarm-slicer session chain of l2j22 (dup topic, jiangbaol)
+1793879524880_3h21t					parked		2026-11-07 17:48	eda bridge tooling/infra question, non-spice (e0047527)
+1789019739644_ay9gd					parked		2026-11-07 17:48	dsim GUI stimulus feature dev (C++/py), non-spice (rongjiez)
+1793151796079_y2h4b					parked		2026-11-07 17:48	LPDDR5 DCA/DCM knowledge question, consulting non-spice (xinweif)
+1793620820813_7qn0b					parked		2026-11-07 17:48	DFT env walkthrough, non-spice (e0045128)
+1792207059389_k9myh					parked		2026-11-07 17:48	waveview console access question, tooling non-spice (adaml)
+1793082623350_otonl					parked		2026-11-07 17:49	LFGating find+explain consulting, non-spice-deliverable (e0022089)
+1793675351584_r4kaq					parked		2026-11-07 17:49	count file size G, non-spice (owench)
