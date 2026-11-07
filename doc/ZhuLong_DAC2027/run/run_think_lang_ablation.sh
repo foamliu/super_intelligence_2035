@@ -83,7 +83,8 @@ try:
     d=json.load(open('$RESULTS_JSON'))
 except Exception:
     d={'rounds':[]}
-print(1 if any(r.get('tag')=='$1' for r in d.get('rounds',[])) else 0)
+# round 条目结构 = {'summary':{'tag':...}, 'tasks':[...]} (extract_cost 产物); 兼容旧 {'tag':...}
+print(1 if any(((r.get('summary') or {}).get('tag') or r.get('tag'))=='$1' for r in d.get('rounds',[])) else 0)
 " 2>/dev/null; }
 
 json_append() {  # $1=summary_json_filepath
