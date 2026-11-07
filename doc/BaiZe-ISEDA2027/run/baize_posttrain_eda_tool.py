@@ -97,6 +97,16 @@ class EDASandboxTool(BaseTool):
                         "instance_id": instance_id}
         return exec_result, reward_signal, metadata
 
+    async def calc_reward(self, instance_id: str | None = None, **kwargs) -> float:
+        """Calculate episode-level reward (called at end of rollout episode).
+
+        R20 (2026-11-07): Added to complete BaseTool lifecycle.
+        Our reward is computed by external custom_reward_function (compute_score),
+        so this returns 0.0. Some verl configurations call calc_reward() on every
+        BaseTool at episode end — returning 0.0 prevents AttributeError.
+        """
+        return 0.0
+
     async def release(self, *args, **kwargs) -> None:
         """Close SSH tunnel (called at end of rollout episode)."""
         logger.info("EDASandboxTool: releasing SSH tunnel (instance=%s)",

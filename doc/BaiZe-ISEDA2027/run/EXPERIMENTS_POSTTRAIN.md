@@ -2737,3 +2737,120 @@ R15 已发现 SGLang pip 发行版（0.5.6.post3）不含 minicpm5 parser。但 
   - `python3 baize_posttrain_power_analysis_fast.py` → 输出到 stdout + `/tmp/pt_r19_power_fast.json`
 - **完整版**（含 bootstrap power 模拟）：`run/baize_posttrain_power_analysis.py`（需要更长运行时间）
 - **11/9 后补全**：用真实 36% 侧 5-run 轨迹替换模拟数据，重新校准 θ 和难度分布
+
+---
+
+## §R20 verl 多轮 Tool-Calling Rollout 执行架构深度分析（2026-11-07 · 零 GPU · web 调研 + 源码级分析）
+
+> **背景**：R9 确认 verl 原生支持 SGLang 多轮 rollout，R15/R16 修复了工具 schema 和 ToolParser，R17 审计了数据 schema 和 SGLang 兼容性，R18 调参 SGLang 和 GRPO 超参。但**端到端执行流程**——从 prompt 加载到 agent loop 到 reward 计算的完整路径——尚未深入分析。这是 11/9 RL 启动前最关键的剩余知识缺口。
+>
+> **来源**：verl 官方文档 (verl.readthedocs.io/en/latest/advance/agent_loop.html) + verl agentic_rl.rst + DeepWiki (chengminhua/verl 14.3) + AMD开发者社区源码走读 + CSDN verl 源码解读 + verl GitHub 源码路径引用。
+
+### R20.1 两条多轮架构路径（关键发现）
+
+verl 存在**两条独立的多轮 rollout 架构**，配置方式和执行路径完全不同：
+
+| 维度 | 路径 A: SGLangRollout 内置多轮 | 路径 B: AgentLoop (experimental) |
+|:--|:--|:--|
+| **源码位置** | `verl/workers/rollout/sglang_rollout/sglang_rollout.py` | `verl/experimental/agent_loop/` |
+| **核心方法** | `_async_rollout_a_request()` | `AgentLoopBase.run()` → `ToolAgentLoop` |
+| **状态机** | PENDING→RUNNING→TOOL_CALLING→COMPLETED | AgentLoopWorker 管理，用户自定义 run() |
+| **配置方式** | `rollout.multi_turn`（section） | `rollout.multi_turn: True`（boolean）+ `multi_turn_config` |
+| **工具加载** | `rollout.multi_turn.tool_config_path` | `rollout.tool_kwargs.tools_config_file` |
+| **token 接口** | SGLangRollout 内部调用 SGLang engine | `LLMServerClient.generate(prompt_ids) → response_ids` |
+| **成熟度** | 稳定 | alpha（verl 0.4.2+，API 可能变化） |
+| **负载均衡** | 无 | LLMServerClient（多 server + sticky session） |
+
+**🔴 当前配置归属**：我们的 config 使用 `multi_turn: True`（boolean）+ `multi_turn_config` + `tool_kwargs.tools_config_file` → **路径 B (AgentLoop)**。但路径 B 是 alpha 状态。
+**建议**：11/9 安装 verl 后 `python -c "from verl.experimental.agent_loop.tool_agent_loop import ToolAgentLoop; print('ok')"` 确认路径 B 可用。若不可用回退路径 A。
+
+### R20.2 端到端执行流程（路径 B: AgentLoop）
+
+```
+PPOTrainer.sample_batch(dataset)
+  → AgentLoopManager.generate_sequences(batch)
+    → wake_up(all async LLM servers) → sync_weights(FSDP → SGLang)
+    → split batch → AgentLoopWorker(s)
+      → per prompt: spawn asyncio task → ToolAgentLoop.run(sampling_params, **kwargs)
+        → LLMServerClient.generate(prompt_ids) → response_ids
+        → ToolParser.extract_tool_calls(response_ids) → (content, [FunctionCall])
+        → if tool_calls: BaseTool.create()→execute()→add tool response→repeat
+        → return AgentLoopOutput(prompt_ids, response_ids, response_mask)
+    → sleep(all servers) → release GPU memory
+  → reward = custom_reward_function(trajectories)
+  → PPOTrainer.train_step(trajectories, rewards, advantages)
+```
+
+**关键设计**：① token 级 generate 接口（非 Chat API），确保训练用原始 token 计算 advantage；② sticky session（request_id 绑定 server，复用 KV cache）；③ weight sync（rollout 前 FSDP→SGLang，rollout 后 SGLang 休眠释放显存）。
+
+### R20.3 ToolAgentLoop 状态机（路径 A 源码级）
+
+从 SGLangRollout._async_rollout_a_request() 源码分析（AMD开发者社区）：
+
+- **PENDING → RUNNING**：初始化，加载工具 schema
+- **RUNNING → TOOL_CALLING**：模型输出含工具调用（ToolParser 检测 XML `<function>` 标签）
+- **RUNNING → COMPLETED**：模型输出不含工具调用（最终回答）
+- **TOOL_CALLING → RUNNING**：工具执行完毕，结果注入对话，继续生成
+- 循环上限 = `max_assistant_turns`（🔴 我们此前缺此参数，已在 R20 修复）
+
+### R20.4 Delta-based Tokenization 与 Loss Masking
+
+多轮轨迹交替 assistant 生成和 tool 响应。训练时必须区分哪些 token 是 LLM 生成的（参与 loss），哪些是工具返回的（不参与 loss）。
+
+**verl delta 分词**：对每个 assistant 消息 i，`tokens_before = tokenize(template(messages[:i], gen_prompt=True))`，`tokens_after = tokenize(template(messages[:i+1], gen_prompt=False))`，delta = 差值 = LLM 生成的 token（response_mask=1）。Tool 响应的 delta 标记 response_mask=0。
+
+**🔴 Token 一致性风险**（verl 官方文档明确警告）：
+1. ToolParser 提取 tool_calls 时可能修改内容（剥离 `<function>` 标签），导致 re-encode ≠ 原始 token_ids
+2. Decode-Encode roundtrip 不等价（Agent-R1 issue#30）
+3. 影响：轨迹偏离 policy 分布 → PPO 不收敛（verl 官方观察到单轮场景都能导致不收敛）
+4. 缓解：`tokenization_sanity_check_mode: strict` ✅ 已配置。若失败 verl 报错终止（安全行为）。
+
+### R20.5 BaseTool 生命周期与奖励接口
+
+verl BaseTool 有 5 个方法，我们的 EDASandboxTool 原先只实现 3 个（已修复）：
+
+| 方法 | 调用时机 | 我们的状态 |
+|:--|:--|:--|
+| `create(instance_id)` | episode 开始 | ✅ 已实现 |
+| `execute(instance_id, parameters)` | 每次工具调用 | ✅ 已实现 |
+| `calc_reward(instance_id)` | episode 结束 | ✅ R20 已添加（返回 0.0，奖励由外部 compute_score 计算） |
+| `release(instance_id)` | episode 结束 | ✅ 已实现 |
+| schema | 初始化 | ✅ 通过 YAML |
+
+### R20.6 多轮 GRPO 奖励计算流程
+
+GRPO 奖励是 episode 级 scalar（非 per-turn）：① rollout 产出 (prompt_ids, response_ids, response_mask)；② custom_reward_function → scalar reward；③ reward 放在 response 最后一个 LLM token 位置；④ GRPO advantage = (R_i - μ_group)/(σ_group + ε)，filter_groups 丢弃全对/全错组；⑤ PPO loss 只对 response_mask=1 的 token；⑥ KL loss 同理。
+
+**关键洞察**：response_mask 确保只有 LLM 生成 token 参与梯度——多轮 RL 核心正确性保证。filter_groups 丢弃无梯度信号的组。episode 级 scalar 在 3-turn 轨迹上极稀疏，R2 部分分奖励是关键缓解。
+
+### R20.7 当前配置问题诊断（6 项 · 11/9 启动前必修）
+
+| # | 问题 | 严重性 | 修复 |
+|:--|:--|:--|:--|
+| C1 | `multi_turn: True` 可能不匹配 verl 版本 | 🔴 P0 | 安装后测 ToolAgentLoop import；若失败改路径 A |
+| C2 | 缺 `max_assistant_turns` | 🔴 P0 | ✅ 已添加 `multi_turn_config.max_assistant_turns: 3` |
+| C3 | 缺 `max_tool_response_length` | 🟡 P1 | ✅ 已添加 `2048` |
+| C4 | 缺 `max_parallel_calls` | 🟡 P1 | ✅ 已添加 `1`（EDA 需顺序调用） |
+| C5 | `tool_kwargs.tools_config_file` key 待验 | 🟡 P1 | 11/9 安装后验证正确 key |
+| C6 | EDASandboxTool 缺 `calc_reward()` | 🟢 P2 | ✅ 已添加（返回 0.0） |
+
+**C2 最关键**：`agent.max_turns: 3` 是自定义元数据，verl 不读取。无 `max_assistant_turns` 时 verl 可能默认单轮 → 多轮工具调用完全不生效。
+
+### R20.8 11/9 启动前修订检查清单（R18 → R20 增量）
+
+在 R18 的 V1-V8 基础上新增 6 项：
+
+| # | 验证项 | 通过判据 |
+|:--|:--|:--|
+| V9 | AgentLoop 路径可用 | `from verl.experimental.agent_loop.tool_agent_loop import ToolAgentLoop` 无 ImportError |
+| V10 | multi_turn 配置生效 | smoke test 日志含 `max_assistant_turns=3` |
+| V11 | Delta tokenization 一致 | smoke test 无 sanity_check 错误 |
+| V12 | Tool 响应截断 | 日志含 `max_tool_response_length=2048` |
+| V13 | calc_reward 不报错 | smoke test 完成 BaseTool 全生命周期 |
+| V14 | filter_groups 行为 | GRPO 日志显示非零 group 过滤比例 |
+
+### R20.9 与 R1-R19 的关系 / 局限性
+
+**与既有发现关系**：R20 深化了 R9(SGLang集成)、R15(BaseTool schema)、R16(ToolParser)、R17(数据schema审计)、R18(SGLang调参) 的发现，发现 6 项配置问题并修复 4 项，新增 6 项 11/9 验证清单。
+
+**局限性**：① verl 版本不确定（分析基于 0.4.2-0.7 文档，安装版本可能有 API 差异）；② 两条架构路径未实测确认；③ Token 一致性未在 MiniCPM5-2B 上实测；④ SGLang ZeroMQ 通信路径基于文档描述。
