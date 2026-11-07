@@ -121,9 +121,11 @@ def read_live_progress():
         "8085": ("S0-HT", "112-167"), "8083": ("S1-HT", "168-183"),
     }
     # Map output subdir -> port (from process args)
-    # chunk0a was stuck & killed #1643; replaced by half1(0-5019)+half2(5020-10039)
+    # #1645: chunk0a_half1(0-5019) & half2(5020-10039) replaced by chunk0_missing(0-2509)
+    #   5 running chunks cover 2510-10041; only 0-2509 missing → smaller chunk = faster
+    #   chunk0a_half2 fully redundant with chunk1a+chunk1b → not needed
     task_port = {
-        "hellaswag_chunk0a_half1": "8083", "hellaswag_chunk0a_half2": "8085",
+        "hellaswag_chunk0_missing": "8080",
         "hellaswag_chunk0b": "8085",
         "hellaswag_chunk1a_half1": "8086", "hellaswag_chunk1a_half2": "8081",
         "hellaswag_chunk1b_a": "8080", "hellaswag_chunk1b_b": "8084",
