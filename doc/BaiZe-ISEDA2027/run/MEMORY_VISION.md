@@ -1,6 +1,8 @@
 WAITING: 0
 
-> 🆕 **【wake #883 · 2026-11-07 18:1x】监控轮·v3 Phase4 D-ctrl step25/40·v5 SFT ep2/3 step60 loss持续下降·两实验健康零可执行动作。** git pull(无新令)·research日报2026-11-07无本线可执行建议(论文为3D存算/RAM精度/线性注意力)。**v3**:Phase3(treatment C)已完 C=25.0%<B=34.0%负结果确认·Phase4 D-ctrl step25/40 ETA~1h(PID2165712健康,etimes~5.3h)·avgR=0.6659(随机奖励控制组)。**v5**:SFT ep2/3 step60 loss avg=0.3434(从0.5525持续下降→类型分类可学)·PID731487健康·ETA~2h(SFT完→RFT→eval)。**未完成指令:有**(v3 D-ctrl待完+v5全量待完→最终报告)⇒**WAITING:0**。📦体积:TASK=31KB✓/MEMORY=17KB✓。
+> 🆕 **【wake #884 · 2026-11-07 18:2x】监控轮·v3 Phase4 D-ctrl step30/40·v5 SFT ep2/3 ~step77 loss持续下降·两实验健康零可执行动作。** git pull(无新令)·research日报2026-11-07已查无本线建议。**v3**:Phase4 D-ctrl step30/40 ETA~44min训练+9min eval→~18:50完(PID2165712健康,etimes~5.4h)·avgR=0.4121(随机奖励控制组)。Phase3(treatment C)已完 C=25.0%<B=34.0%负结果确认。**v5**:SFT ep2/3 ~step77/120 loss avg=0.3434(从0.5525持续下降→类型分类可学)·PID731487健康·ETA~2h(SFT完→RFT→eval)。**未完成指令:有**(v3 D-ctrl待完+v5全量待完→最终报告)⇒**WAITING:0**。📦体积:TASK=31KB✓/MEMORY=17KB✓。
+
+> 📦 wake #883（监控轮·v3 D-ctrl step25/40·v5 SFT ep2/3 step60·2026-11-07 18:1x）已归档 → daily-memories-vision/2026-11-07.md；**结论**：两实验健康·v3 D-ctrl step25·v5 SFT step60 loss下降。需要时再读。
 
 > 📦 wake #882（v4 RFT全量完成NULL结果+报告更新·2026-11-07 17:48）已归档 → daily-memories-vision/2026-11-07.md；**结论**：v4 C=B=34.0% D=33.0% McNemar p=1.0 NULL·报告22149B更新。需要时再读。
 
@@ -99,10 +101,10 @@ WAITING: 0
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | 🔴 **波形 RL CPU 阶段2 · v3+v5运行中·3轮无提升已换方向**：v4(RFT)✅NULL(C=B=34.0%,p=1.0)·v3(GRPO)Phase4 D-ctrl step25/40运行中·C=25.0%<B=34.0%(负)·**v5(类型分类)新方向**PID731487 SFT ep2/3 step60 loss avg=0.3434持续下降(从0.5525)·3轮无提升: v2=6.2%<9.2% / v3=25.0%<34.0% / v4=34.0%=34.0%·数据集调研完成·技术栈三步冒烟交付(LLaMA-Factory+KTransformers不可行,peft直训退路验证)·Qwen3.5-2B(1.88B)+LoRA。**WAITING: 0** |
+| PHASE | 🔴 **波形 RL CPU 阶段2 · v3+v5运行中·3轮无提升已换方向**：v4(RFT)✅NULL(C=B=34.0%,p=1.0)·v3(GRPO)Phase4 D-ctrl step30/40运行中·C=25.0%<B=34.0%(负)·**v5(类型分类)新方向**PID731487 SFT ep2/3 ~step77 loss avg=0.3434持续下降(从0.5525)·3轮无提升: v2=6.2%<9.2% / v3=25.0%<34.0% / v4=34.0%=34.0%·数据集调研完成·技术栈三步冒烟交付(LLaMA-Factory+KTransformers不可行,peft直训退路验证)·Qwen3.5-2B(1.88B)+LoRA。**WAITING: 0** |
 | WAITING | 0 |
 | 已完成 | advantage方差诊断(wake#838,判定PARTIAL) · v3 GRPO连续奖励实验Phase3(wake#883,C=25.0%<B=34.0%负结果) · v4 RFT实验全量完成(wake#882,C=34.0%=B=34.0% D=33.0% McNemar p=1.0 NULL) · 阶段1 SFT验收PASS(wake#802) · CPU端到端训练循环验证7/7 PASS(wake#741) · 数据泄漏验证+阶段1就绪报告HTML(wake#731) · GRPO CPU冒烟测试PASS(wake#622) · 2B文本骨干提取1.72B(wake#620) · 数据集均衡化9013条(wake#618) · 波形RL计划书(wake#435) · 论文改稿(wake#437~#442) · ArmE-R2/ArmD-R2 全链路 |
-| 当前动作 | **wake#883 监控轮**：v3(GRPO)PID2165712 Phase4 D-ctrl step25/40 ETA~1h(avgR=0.6659随机控制)·Phase3已完C=25.0%<B=34.0%负。v5(类型分类)PID731487 SFT ep2/3 step60 loss avg=0.3434下降中(ETA~2h)。两实验健康零可执行动作。 |
-| 下一步 | ①等v3 D-ctrl完(~1h)→收集v3 experiment_results.json→最终v3报告(McNemar/bootstrap/control) ②等v5(类型分类)全量完(~2h)→收集v5 experiment_results.json→v5报告→若C>B显著则交付"显著提升"证据 ③v3+v5全完→合并最终报告+EXPERIMENTS§22+commit ④v5若仍无提升→继续换方向(频率比较二分类/异常点定位等) |
+| 当前动作 | **wake#884 监控轮**：v3(GRPO)PID2165712 Phase4 D-ctrl step30/40 ETA~44min训练+9min eval→~18:50(avgR=0.4121随机控制)·Phase3已完C=25.0%<B=34.0%负。v5(类型分类)PID731487 SFT ep2/3 ~step77/120 loss avg=0.3434下降中(ETA~2h~20:30)。两实验健康零可执行动作。 |
+| 下一步 | ①等v3 D-ctrl完(~18:50)→收集v3 experiment_results.json→最终v3报告(McNemar/bootstrap/control) ②等v5(类型分类)全量完(~20:30)→收集v5 experiment_results.json→v5报告→若C>B显著则交付"显著提升"证据 ③v3+v5全完→合并最终报告+EXPERIMENTS§22+commit ④v5若仍无提升→继续换方向(频率比较二分类/异常点定位等) |
 | 阻塞 | .12+.29 GPU全占（8×H100 96-100% util / ~75GB，pretrain baize2b ETA≈12/24-25）→ 阶段2 GRPO需GPU（GRPO chain PID1365749自带GPU-wait,释放后自动起训）·.17+.75 SSH不可达 |
-| 更新 | **2026-11-07 18:1x (wake #883)**: 监控轮·v3 D-ctrl step25/40·v5 SFT ep2/3 step60 loss下降中·两实验健康·WAITING=0 |
+| 更新 | **2026-11-07 18:2x (wake #884)**: 监控轮·v3 D-ctrl step30/40·v5 SFT ~step77 loss下降中·两实验健康·WAITING=0 |
