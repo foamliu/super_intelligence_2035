@@ -200,3 +200,6 @@
 1792746530652_5erm4.messages.json	shanliny	hfeg0pkn001	80	verification	case	EDA-Eval-DesignFlow-SvIntegrateGen-001	2026-11-07 18:05	
 1791946315674_hg1xu.messages.json	shanliny	hfeg0pkn001	72	verification	parked		2026-11-07 18:14	shanliny 3-conn (r189+5erm4 sibling); 4 sids identical kw = same SV task retry; defer for diversity
 1793861357108_vagnh.messages.json	tabtao	hfeg0pkn004	29	pnr_signoff	case	EDA-Eval-DesignFlow-DcLogErrDiagnose-001	2026-11-07 18:28	
+1792992278510_lku2o.messages.json	e0045144	hfeg0pkn002	129	digital	parked		2026-11-07 18:55	DUPLICATE of ckulq/r200 RdcViolCatalog-001: same user e0045144+host hfeg0pkn002+mc129+identical keywords+identical user turns (USER#5 list setup/corruption violation types = r200 selected turn). Retry of same RDC userguide task. Not a new case.
+1792724746849_gu1m2.messages.json	lorikx	hfeg0pkn001	80	digital	parked		2026-11-07 18:57	DUPLICATE of bw2u5/r84 VCSMakefile-001: same user lorikx+identical USER#0 (sim Makefile iverilog->VCS/FSDB/verdi)+identical subsequent turns (中文重发/查Fail/vcode 80 refclk/讲parameter/改rtl_synth). Same freq_calibration_model task retry. Not a new case.
+1790596559451_9p8g2.messages.json	clwang	hfeg0pkn005	100	digital	case	EDA-Eval-DesignFlow-ToggleCounterBindGen-001	2026-11-07 19:09	
