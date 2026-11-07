@@ -25,7 +25,7 @@ pre{background:#2c3e50;color:#ecf0f1;padding:15px;border-radius:5px;overflow-x:a
 <div class="info">
 <p><strong>基准口径声明</strong>：本报告数据为 <strong>TB-2.1 / 89 题 / 7-way concurrent</strong>。
 TB-2.1 与 TB4 <strong>题集不同、不可跨基准比较</strong>。</p>
-<p><strong>模型</strong>：glm-5.3-flash（网关 <code>http://agi-gateway.cxmt.com/v1</code>）｜<strong>生成时间</strong>：2026-11-07 23:48（R1810）</p>
+<p><strong>模型</strong>：glm-5.3-flash（网关 <code>http://agi-gateway.cxmt.com/v1</code>）｜<strong>生成时间</strong>：2026-11-07 23:58（R1811）</p>
 </div>
 
 <div class="critical">
@@ -54,9 +54,9 @@ TB-2.1 cline 路 <strong>7 题 passed</strong>（≥1 题 × ≥1 路 reward 非
 </div>
 <table>
 <tr><th>#</th><th>Harness</th><th>状态</th><th>Passed</th><th>Failed</th><th>Remaining</th><th>通过率</th></tr>
-<tr><td>1</td><td>cline</td><td><span class='tag tag-done'>已完成</span> 88/89</td><td class='pass'>7</td><td class='fail'>81</td><td>1</td><td>7.9%</td></tr>
-<tr><td>2</td><td>codex</td><td><span class='tag tag-pending'>已终止</span> 18/89 (429)</td><td class='pass'>0</td><td class='fail'>18</td><td>71</td><td>0%</td></tr>
-<tr><td>3</td><td>hermes</td><td><span class='tag tag-running'>运行中</span> 14/89</td><td class='pass'>0</td><td class='fail'>8</td><td>75</td><td>—</td></tr>
+<tr><td>1</td><td>cline</td><td><span class='tag tag-done'>已完成</span> 89/89</td><td class='pass'>7</td><td class='fail'>82</td><td>0</td><td>7.9%</td></tr>
+<tr><td>2</td><td>codex</td><td><span class='tag tag-pending'>已终止</span> 17/89 (429)</td><td class='pass'>0</td><td class='fail'>17</td><td>72</td><td>0%</td></tr>
+<tr><td>3</td><td>hermes</td><td><span class='tag tag-running'>运行中</span> 22/89</td><td class='pass'>0</td><td class='fail'>13</td><td>67</td><td>—</td></tr>
 <tr><td>4</td><td>opencode</td><td><span class='tag tag-pending'>未开始</span> 未开始</td><td class='pass'>0</td><td class='fail'>0</td><td>89</td><td>—</td></tr>
 <tr><td>5</td><td>claude-code</td><td><span class='tag tag-pending'>未开始</span> 未开始</td><td class='pass'>0</td><td class='fail'>0</td><td>89</td><td>—</td></tr>
 <tr><td>6</td><td>deepseek</td><td><span class='tag tag-pending'>未开始</span> 未开始</td><td class='pass'>0</td><td class='fail'>0</td><td>89</td><td>—</td></tr>
@@ -65,7 +65,7 @@ TB-2.1 cline 路 <strong>7 题 passed</strong>（≥1 题 × ≥1 路 reward 非
 
 <div class="summary-box">
 <h3>cline 路详细结果（唯一已完成路）</h3>
-<p><strong>完成</strong>：88/89 题 ｜ <strong>通过</strong>：<span class="pass">7 题（7.9%）</span> ｜ <strong>失败</strong>：81 题 ｜ <strong>剩余</strong>：1 题</p>
+<p><strong>完成</strong>：89/89 题 ｜ <strong>通过</strong>：<span class="pass">7 题（7.9%）</span> ｜ <strong>失败</strong>：82 题 ｜ <strong>剩余</strong>：0 题 ｜ <strong>错误</strong>：7 题</p>
 <h4>✅ 通过的 7 题</h4>
 <ul class='task-list'><li class='pass'>✅ bn-fit-modify</li>
 <li class='pass'>✅ break-filter-js-from-html</li>
@@ -106,7 +106,7 @@ TB-2.1 cline 路 <strong>7 题 passed</strong>（≥1 题 × ≥1 路 reward 非
 <h3>3.1 网关 429 quota 耗尽（基础设施问题）</h3>
 <div class="critical">
 <p><strong>现象</strong>：glm-5.3-flash 网关 keyB 在评测期间多次返回 HTTP 429「本次 Token 额度已用完」。</p>
-<p><strong>影响</strong>：TB-2.1 cline 路 88/89 完成（1 题因 429 未完成）；codex 路 18/89 全部因 429 失败已终止；hermes 路 14/89 已完成（0 passed，6 errored）；后续 4 路未启动（网关 429 阻塞，ETA ~39min≈00:25）。</p>
+<p><strong>影响</strong>：TB-2.1 cline 路 89/89 完成（7 passed）；codex 路 17/89 全部因 429 失败已终止；hermes 路 22/89 已完成（0 passed，9 errored）；后续 4 路未启动（网关 429 阻塞，ETA ~29min≈00:26）。</p>
 <p><strong>归因红线</strong>：网关额度耗尽 / 429 <strong>不得</strong>写成「模型能力」结论。</p>
 </div>
 <h3>3.2 cline 路 81 题失败归因</h3>
@@ -121,7 +121,7 @@ TB-2.1 cline 路 <strong>7 题 passed</strong>（≥1 题 × ≥1 路 reward 非
 
 <h3>3.3 hermes 路 python3 缺失错误（基础设施问题）</h3>
 <div class="critical">
-<p><strong>现象</strong>：hermes 路 14/89 已完成中 <strong>6 题 errored</strong>，根因为任务容器内 <code>python3: command not found</code>（exit 127）。
+<p><strong>现象</strong>：hermes 路 22/89 已完成中 <strong>9 题 errored</strong>，根因为任务容器内 <code>python3: command not found</code>（exit 127）。
 hermes agent 需在任务容器内 <code>pip install hermes-agent</code>，但部分 TB-2.1 任务镜像无 python3 解释器。</p>
 <p><strong>证据</strong>：<code>/tmp/tb21_glm53_jobs/hermes/2026-11-07__23-28-03/job.log</code> 行：<br>
 <code>Trial compile-compcert__KaPufzU failed: Command failed (exit 127): python3 /tmp/get-pip.py ... stdout: bash: line 1: python3: command not found</code></p>
@@ -136,7 +136,7 @@ hermes agent 需在任务容器内 <code>pip install hermes-agent</code>，但�
 <tr><th>维度</th><th>TB4（4.0）</th><th>TB-2.1（2.1）</th></tr>
 <tr><td>题集</td><td>66 题</td><td>89 题</td></tr>
 <tr><td>TB4 结果</td><td>66×7=462 trials，0 passed</td><td>—</td></tr>
-<tr><td>TB-2.1 结果</td><td>—</td><td>cline 7/88 passed (7.9%) · codex 0/18 (429终止) · hermes 运行中</td></tr>
+<tr><td>TB-2.1 结果</td><td>—</td><td>cline 7/89 passed (7.9%) · codex 0/17 (429终止) · hermes 0/22 (运行中) · 4路未开始</td></tr>
 <tr><td>可比性</td><td colspan="2"><strong>🚫 不可比</strong> — 题集不同，禁止并列对比</td></tr>
 </table>
 <p><strong>TB4 全 0 passed 根因</strong>：经 R1743 诊断，verifier 正常运行（reward=0 非 None），全 0 为<strong>模型能力问题</strong>，非 verifier infra。</p>
@@ -153,8 +153,8 @@ hermes agent 需在任务容器内 <code>pip install hermes-agent</code>，但�
 
 <h2>6. 后续计划</h2>
 <div class="info"><ol>
-<li>网关 429 恢复后（ETA ~00:25）：hermes 路继续推进；剩余 4 路依次启动</li>
-<li>codex 路 18/89 全部因 429 失败 → 429 恢复后可重跑（归因=infra 非能力）</li>
+<li>网关 429 恢复后（ETA ~00:26）：hermes 路继续推进；剩余 4 路依次启动</li>
+<li>codex 路 17/89 全部因 429 失败 → 429 恢复后可重跑（归因=infra 非能力）</li>
 <li>7 路全量完成后报告标注「7-way complete」</li>
 </ol></div>
 
@@ -169,7 +169,7 @@ done | sort</code></pre>
 
 <hr>
 <p style="text-align:center;color:#7f8c8d;font-size:0.9em">
-BaiZe Harness 研究线 · R1810 · 2026-11-07 23:48<br>
+BaiZe Harness 研究线 · R1811 · 2026-11-07 23:58<br>
 TB-2.1 / 89 题 / 7-way concurrent · glm-5.3-flash · 报告正文一律写 cline
 </p>
 </body></html>
