@@ -1,5 +1,48 @@
 # BAIZE_DATA_TASK.md
-### 🚀 运维令 · 2026-11-04 13:2x（**放行 B 类 agentic 数据下载 · 落盘 /nas_inference**）· 用户直令 · 最高优先
+### 🔴 运维令 · 2026-11-07 08:5x（**代码语料放行：`stack-v3-train` 可考虑，`the-stack-v2` 禁下，其余单集 <1TB 放行 —— 你自己按 ROI 从高到低排优先级下载**）· 用户直令 · 最高优先 · ⚠️ 未完成
+
+> **用户原话**：「report_data_lc_agentic_survey_zh.html 这个报告我看了。bigcode/the-stack-v2 占用空间太大，不能下载。HuggingFaceCode/stack-v3-train 可以考虑，其它单集 <1TB 的也可以放行。让它自己排个优先级，从 ROI 从高到低开始下载吧。」
+
+**① 三条硬口径（不可改）**
+
+| 数据集 | 结论 | 依据 |
+|:--|:--|:--|
+| `bigcode/the-stack-v2` | 🚫 **禁止下载** | 67.5TB full / **32.1TB dedup**，且需与 SoftwareHeritage/INRIA 签协议 + gated |
+| `HuggingFaceCode/stack-v3-train` | ⚠️ **可以考虑**（非无条件放行） | **train 15.9TB**（full 113.7TB，🚫 不许下 full）；ODC-By、非 gated、**文件内容内联**（比 v2 的 SWHID 引用形态更实用） |
+| 其它**单集 < 1TB** | ✅ **放行**（你自行判断 ROI） | 见下方 §② 候选池 |
+
+> 🚫 **单集 ≥1TB 一律不下载**，包括 `stack-v3-train` 的 full 版（113.7TB）与 `AlienKevin/SWE-ZERO-12M-trajectories`(111G 可下，但要注意它不是 <1TB 的问题而是性价比)。若你认为某 ≥1TB 集必须下，**先报运维批准**，🚫 不许自行开工。
+
+**② 允许放行的候选池（从 `report_data_lc_agentic_survey_zh.html` 提取，单集均 <1TB）**
+
+- **长上下文 E 类**（部分已下载，见 `DATA_MAPPING.md` §E，🚫 不重复下）：`ysngkil/whole-books` 25.3G · `princeton-nlp/prolong-data-512K` 114G（**代码仓库级，ROI 高**）· `openbmb/InfLLM-V2-data-5B` 15G · `self-long/RULER-llama3-1M` 5.1G · `caskcsg/NExtLong-128K-dataset` 20.5G · `THUDM/LongAlign-10k` 0.6G · `ghostcc3/mix-context-post-training-128k` 32.5G · `yuyijiong/LongData-Corpus` 36.1G(gated) · `birgermoell/oellm-longctx-tokenized-...-pilot-v1` · `deepmind/pg19`(仅脚本)
+- **新增候选**（报告中出现、尚未下载）：`caskcsg/NExtLong-Instruct-dataset-Magpie-Llama-3` · `THUDM/LongWriter-6k` · `utter-project/LongBlocks` · `zai-org/LongBench-v2` · `alea-institute/kl3m-data` · `common-pile/arxiv_papers_filtered` · `common-pile/project_gutenberg_filtered` · `NovaSky-AI/SkyRL-v0-293-data` · `Nethraaaaa81/swev-trm-trajectories-25models` · `harborframework/terminal-bench-2`（⚠️ 评测集，仅去污染）
+- **B 类 agentic 补漏**：`nvidia/Nemotron-RL-Agentic-SWE-Pivot-v1`（报告中出现，未在 F 节）
+
+**③ 你要自己做的事：排 ROI 优先级 → 从高到低下载**
+
+1. **先做 ROI 评估表**（写进 `DATA_MAPPING.md` 新节或报告），每个候选至少评 5 个维度：
+   - **相关性**：对 PyAether / EDA 代码生成 / agentic 工具调用的直接帮助
+   - **单位成本收益**：GB 投入 vs 预期 token 量 vs 独特性（是否与已有数据重复）
+   - **可用性**：是否 gated、是否需签协议、格式是否可直接用（parquet/jsonl vs SWHID 引用）
+   - **质量风险**：license（🚫 NC 类需标注）、是否含评测集污染、是否需要重度清洗
+   - **落地成本**：下载时长（按 ~10MB/s 估）+ 是否需额外转换
+2. **给出排序结果 + 理由**，然后**按序下载**（不必等我逐条批；但 ≥1TB 的除外）。
+3. **总量控制**：本轮新增下载**建议 ≤ 1.5TB**；`/nas_inference` 现有 29T 可用，但需留余量给后续分词产物。超 1.5TB 先报。
+
+**④ 落盘与纪律（沿用 11-04 令）**
+
+- 落盘 `/nas_inference/app.e0031982/datasets/<repo原名>/`；gated 源用已配 token（`.29` `~/.cache/huggingface/token`）；走代理 `HTTPS_PROXY=http://172.19.92.25:13128`
+- `setsid` 后台 + `/tmp/data_download_*.log`；🚫 不挤 S1（`nice`、`--max-workers 4`、留带宽）；断点续传
+- 🚫 `ia03/terminal-bench` / `harborframework/terminal-bench-2` 等**评测集只进去污染黑名单，禁入训练**
+- 下载完写 `DATA_MAPPING.md` 新节（`du -sb` + `find | wc -l` + `incomplete` 三项核对）；commit `data 下载:`
+- 🚫 token 不得写入表/日报/commit
+
+> **完成标记**：ROI 评估表 + 下载（含本轮已完成部分）落盘核对齐全 ⇒ 本行改 `✅ 已交付`；未完成 ⇒ `WAITING: 0`（60s 后继续）。
+
+---
+
+### 🚀 运维令 · 2026-11-04 13:2x（**放行 B 类 agentic 数据下载 · 落盘 /nas_inference**）· 用户直令 · 最高优先 · ✅ 已交付（12/12 落地 78.73 GiB）
 
 > 用户批准（2026-11-04 13:2x）：放行数据下载（A+B 类）。A 类已落地 10/10；本条放行 **B 类 agentic**。
 
@@ -15,43 +58,10 @@
 
 **④ 纪律**：`setsid` 后台 + `/tmp/data_download_*.log`；🚫 不挤 S1（nice、限并发、留带宽）；断点续传；93 完成后写 mapping；commit `data 下载:`；心跳 `未完成指令：有` ⇒ `WAITING: 0`。
 
-### 🚀 运维令 · 2026-11-04 13:2x（**调研提升复杂推理/代码/数学/agentic 能力的 SFT+RL 数据集 · 不含 A+B 类**）· 用户直令 · 最高优先
+### 📦 运维令 · 2026-11-04 13:2x（RL+数学+agentic 调研）+ 09:4x（复杂推理+代码 SFT 调研）· ✅ 均已交付 → 原文见 `ARCHIVE_OPERATOR_DATA.md`
 
-> 用户原话（2026-11-04 13:2x）：「调研能够提升 LLM 复杂推理、代码、数学和 agentic 能力的 SFT 和 RL 数据集（不包含在 A+B 类之内的），写成中文 HTML 报告。」
-
-**① 范围界定（关键）**：排除 10-31 已调研的 A 类（长上下文）+ B 类（agentic），也避免与 09:4x（复杂推理+代码 SFT）重复——**本令增量 = RL（强化学习，有可验证 reward 信号）+ 数学 + agentic RL**。已覆盖的只列「已覆盖」指针即可。
-
-**② 调研方法（同前，硬性）**：真去 hf.co 检索核实（repo id/体量/语言/license/gated/字段/更新时间/奖励信号类型），核不到写「未核到」禁编造；与盘上 12 源 + A/B 类 + 09:4x 报告去重；与 SWE-bench Verified·Terminal Bench 污染风险单列。
-
-**③ 分层**：① RL 数据集（数学 RL：DAPO/OpenR 类、代码 RL、通用 agent RL、process reward 轨迹）② 数学 SFT ③ 复杂推理补强 ④ agentic RL（可执行验证信号）。每候选给「奖励信号从哪来」（单测/diff/答案匹配/环境奖励）。
-
-**④ 报告结构（7 节）**：TL;DR（TOP-3+体量）→ 方法口径 → 主表（repo/体量/license/gated/奖励信号/适用 SFT|RL）→ 污染去重 → 下载方案（体量/落盘 /nas_inference/ETA）→ 诚实条款。中文 HTML，0 script/0 外链、标签配平、≥25KB，生成器幂等，commit `data survey:`。
-
-**⑤ 红线**：只调研不下载；不挤 S1 与正在跑的 A/B 下载；不编造；心跳 `未完成指令：有` ⇒ `WAITING: 0` 直到报告交付。
-
-### 🚀 运维令 · 2026-11-04 09:4x（**web search 调研强化复杂推理 + 代码能力的 SFT / Code-SFT 数据集**）· 用户直令 · 最高优先
-
-> 用户原话（2026-11-04 09:4x）：「请 data 调研能够强化 LLM 复杂推理和代码能力的 SFT 和 Code-SFT 数据集，写成中文 HTML 报告。」
-
-**交付物**：`doc/BaiZe-ISEDA2027/reports/report_data_reasoning_code_sft_survey_zh.html`（中文、单文件自包含、**0 `script`/0 外链/0 CDN**、标签配平、**≥25KB**）+ 生成器 `data/gen_reasoning_code_sft_survey_report.py`（幂等）+ commit `data survey:`。
-
-#### ① 调研方法（硬性，同 10-31 令口径）
-- **真去 hf.co 检索并打开数据集页**（web search + fetch，可用 cimi_search/cimi_fetch）；每条给 **repo id + 可点开路由**，禁止凭记忆。
-- 每候选核实：**repo id · 体量(字节/样本) · 语言 · license · 字段结构 · 更新时间 · gated**；核不到写「未核到」，禁编造。
-- 与我们盘上已有源（`run/data/DATA_MAPPING.md`）**不重复推荐**，可在「已覆盖」节列出。
-
-#### ② 类别分层（每类给 3-5 候选，尽量含体量 + license）
-1. **复杂推理 SFT**：数学（GSM/MATH/奥赛类）、逻辑/符号推理、长链 CoT（长思考轨迹）、科学推理。给「是否有可验证奖励信号」（答案匹配/程序验证）。
-2. **代码 SFT（Code-SFT）**：代码合成、代码修复（bug-fix）、代码推理、指令跟随代码、多文件仓库级。给「奖励信号」（单测/diff/执行）与「与 SWE-bench Verified · Terminal-Bench 的污染风险」（单独一节，复用 13-gram 指纹黑名单）。
-
-#### ③ 报告结构（7 节，缺一不可）
-TL;DR（两类 TOP-3 + 一句话理由 + 预计体量）→ 检索方法与口径 → A 类主表（repo/体量/语言/license/gated/奖励信号）→ B 类主表（同）→ 污染与去重（vs 12 源 + vs 两个目标基准）→ 下载方案（建议下哪几个/体量/落盘 `/nas_inference`/`hf download` 命令/预计磁盘与 ETA）→ 诚实条款（未核到字段/代理指标/license 风险）。
-
-#### ④ 红线
-- 🚫 **只调研 + 写报告，不下载**；不占 GPU、不挤 S1 与正在跑的 A 类下载（nice、低并发）。
-- 🚫 不编造 repo id/体量/license；gated 单列；与 SWE-bench·TB 污染风险必须显式标注。
-- 报告 ≥25KB、0 script、0 外链；commit `data survey:`；心跳写 `未完成指令：有` ⇒ `WAITING: 0` 直到报告交付。
-
+> **用户原话**：①「请 data 调研能够强化 LLM 复杂推理和代码能力的 SFT 和 Code-SFT 数据集，写成中文 HTML 报告。」②「调研提升复杂推理/代码/数学/agentic 能力的 SFT+RL 数据集」。
+> **交付**：`report_data_reasoning_code_sft_survey_zh.html`(79KB) + `report_data_rl_math_survey_zh.html`(38KB)，均 0 script 0 外链。**口径**：只调研不下载；真去 hf.co 核实 repo/体量/license/gated/字段；奖励信号类型单列；与盘上 12 源去重。需要明细读报告原文。
 ### 🚀 运维令 · 2026-11-04 09:2x（**批准下载长上下文(A类)数据 · 落盘 /nas_inference**）· 用户直令 · 最高优先
 
 > 用户批准（2026-11-04 09:2x）：批准下载「长上下文」数据集，落盘 `/nas_inference/app.e0031982/datasets/`（覆盖报告 §6 里的 `/nas_env` 老路径）。
@@ -76,56 +86,10 @@ TL;DR（两类 TOP-3 + 一句话理由 + 预计体量）→ 检索方法与口�
 
 **③ 下一步 P0/P2/P3 暂不执行**：whole-books / SWE-smith / Nemotron-Terminal-Corpus / SWE-rebench / mix-ctx-128k / terminal-bench-2.1 **仍 WAITING=1，待运维另行批准后再下**（本轮只确认 85M 完成，不启动新下载）。
 
-### 🚀 运维令 · 2026-10-31 17:3x（**web search 调研 HF 两类数据集：长上下文 + agentic**）· 用户直令 · 最高优先
+### 📦 运维令 · 2026-10-31 17:3x（HF 两类数据集调研：长上下文 + agentic）· ✅ 已交付 → 原文见 `ARCHIVE_OPERATOR_DATA.md`
 
-> **用户原话**：「让 data 用 web search 去 hf.co 找找下边两类数据集：1. 长上下文（用于白泽的长上下文训练）2. agentic（用于白泽的 SFT 和 RL，提升智能体能力，以提升在 SWE-bench Verified & Terminal Bench 的表现）。上述调研写个中文 HTML 报告」
-
-**交付物**：`reports/report_data_lc_agentic_survey_zh.html`（中文、单文件自包含、**0 `script` / 0 外链 / 0 CDN**、标签配平、**≥25KB**）+ 生成器 `data/gen_lc_agentic_survey_report.py`（幂等）+ commit `data survey:` + push。
-
-#### ① 调研方法（硬性，决定报告可信度）
-- **必须真去 hf.co 检索并打开数据集页面**（用 CLI/data 线可用的检索工具）；**每条必须给 repo id + 可点开的路由**，不许凭记忆写。
-- 每个数据集至少核实：**repo id · 体量（字节或样本数）· 语言 · license · 字段结构 · 更新时间 · 下载是否需授权（gated）**。
-- 拿不到的字段写「未核到」，**禁止编造**；gated/需申请的单独标出（我们下不了就白搭）。
-- 已存在于我们盘上的源（见 `run/data/DATA_MAPPING.md`）**不要重复推荐**，但可在「已覆盖」一节列出以示不遗漏。
-
-#### ② 类别 A：长上下文（用于 BaiZe 长上下文训练）
-**背景约束（必须写进报告，决定筛选口径）**：我们的 decay-B 段目前卡在数据闸门——`en_v1_4` 里 **≥32K 文档仅占 2.52% token、≥128K 仅 0.03%**，目标 ≥20% / ≥5%（见论文 §4.5 与 `configs/longctx_ladder.tsv`）。**所以本类调研的核心不是"数据量大"，而是"真有长文档"**。
-
-至少覆盖这些方向，每类给 3-5 个候选：
-1. **书籍/长文**（Gutenberg 系、Books3 类、论文全文、Wikipedia 全文）
-2. **代码仓库级**（repo-level，多文件按依赖/目录顺序拼接；SWE 类语料也可归此）
-3. **长文档 QA / 合成 haystack**（RULER、NIAH 生成器、多跳长文 QA）
-4. **长上下文训练集**（公开的 128K/256K/1M 训练用数据）
-5. 法律/标准/专利类（天然超长）
-
-**关键判定**：对每个候选，**尽量给出「≥32K / ≥128K 文档占比」的证据或代理指标**（有数据集卡说明就引用；没有就写「未标注，需下载抽样实测」并给出抽样方法）。**没有这一列，这个报告对我们的价值就很低。**
-
-#### ③ 类别 B：agentic（用于 SFT + RL，目标提升 SWE-bench Verified & Terminal Bench）
-**必须分层给出**，因为两者的"可验证性"完全不同：
-1. **可直接 RL（有可执行验证信号）**：SWE 类轨迹、可跑单测的仓库任务、终端命令任务、可验证奖励数据集。给每个候选说明**奖励信号从哪来**（单测？diff 匹配？脚本断言？）
-2. **只能 SFT（无自动验证）**：通用 agentic 工具调用、多轮规划、浏览器/OS 操作轨迹
-3. **与 SWE-bench Verified / Terminal Bench 的对齐风险**：**必须单独一节**说明哪些数据集与这两个基准有**污染风险**（同源仓库/同 issue），并给出去污染建议（我们已有 193,295 条 13-gram 指纹黑名单机制，可直接复用）
-
-至少覆盖：SWE 类（SWE-Gym / SWE-smith / SWE-bench 训练集 / nemotron 类）、终端与 shell 类（Terminal-Bench 相关、tty 轨迹）、通用工具调用（ToolBench/Apibench/BFCL 类）、多轮 agent 轨迹、代码修复轨迹。
-
-#### ④ 报告结构（7 节，缺一不可）
-1. **TL;DR**：两类各给 TOP-3 推荐 + 一句话理由 + 预计下载体量
-2. **检索方法与口径**：怎么找的、核了哪些字段、哪些没核到
-3. **A 类主表**：候选表（repo id / 体量 / 语言 / license / gated / **≥32K 占比** / **≥128K 占比** / 证据来源）
-4. **B 类主表**：候选表（repo id / 体量 / **奖励信号类型** / 适用阶段 SFT|RL / 与 SWE-bench·TB 污染风险）
-5. **污染与去重**：与我们现有 12 源的重叠、与两个目标基准的污染风险、去污染方案
-6. **下载方案**：建议下哪几个、体量、落盘路径（遵守现有 `/nas_env` 与 `/nas_train` 规范）、`hf download` 命令模板、**预计磁盘与 ETA（按当前实测带宽）**
-7. **诚实条款**：未核到的字段、代理指标 vs 实测、license 风险
-
-#### ⑤ 红线
-- 🚫 **本轮只调研 + 写报告，不下载任何数据**（磁盘与带宽要留给 85M 下载与训练）。
-- 🚫 **不占 GPU**；不打断 85M 下载（当前 ~87.6%）。
-- 🚫 不许编造 repo id / 体量 / license；**核不到的写「未核到」**。
-- 🚫 不得把「未标注长文档占比」的数据集默认当作满足闸门——**必须单列「未验证」**。
-- 报告必须说明：**HF 上的数据集体量以数据集卡为准，与实际下载字节可能差异大**（这是已知坑）。
-- 体积：任务书当前 37.6KB，**已超 32KB**；本轮请顺手归档已闭合的 10-30 85M 令（如已交付完整）以腾空间，🚫 **不得归档本令**。
-
-
+> **用户原话**：「让 data 用 web search 去 hf.co 找找下边两类数据集：1. 长上下文（用于白泽的长上下文训练）2. agentic（用于白泽的 SFT 和 RL…）。上述调研写个中文 HTML 报告」
+> **交付**：`reports/report_data_lc_agentic_survey_zh.html`（117KB，单文件 0 script 0 外链）+ 生成器（幂等）。**关键口径**：decay-B 闸门 = `en_v1_4` 里 ≥32K 文档仅 2.52% token、≥128K 仅 0.03%，目标 ≥20%/≥1%；报告须给每个候选的「≥32K/≥128K 占比」证据或标「未标注需实测」。需要明细再读 archive / 报告原文。
 ### ⚖️ 口径仲裁（2026-10-25 13:3x · **与下文任何旧条冲突时，一律以本表为准**）
 | 冲突点 | 旧说法 | **现在按这个做** |
 |---|---|---|
