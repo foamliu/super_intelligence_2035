@@ -104,7 +104,13 @@ parser.add_argument("--limit", type=int, default=None)
 parser.add_argument("--num_fewshot", type=int, default=0)
 parser.add_argument("--dtype", default="bfloat16")
 parser.add_argument("--batch_size", type=int, default=1)
+parser.add_argument("--samples", default=None, help='JSON string: {"task_name": [doc_idx,...]}')
 args = parser.parse_args()
+
+samples_dict = None
+if args.samples:
+    samples_dict = json.loads(args.samples)
+    print(f"[cpu_lmeval_run] samples={samples_dict}", file=sys.stderr)
 
 task_list = [t.strip() for t in args.tasks.split(",")]
 os.makedirs(args.output_path, exist_ok=True)
@@ -145,6 +151,7 @@ results = simple_evaluate(
     tasks=task_list,
     num_fewshot=args.num_fewshot,
     limit=args.limit,
+    samples=samples_dict,
     log_samples=False,
 )
 
