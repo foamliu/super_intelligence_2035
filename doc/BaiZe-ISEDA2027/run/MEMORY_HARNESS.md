@@ -4,13 +4,13 @@ WAITING: 0
 
 ## 📊 进度快照
 
-PHASE:        R1756 监控轮·cline专项报告R1747交付·7路predict alive·网关401·TB4多路运行中
-已完成:       H-B✅·Gate7/7·TB报告✅·full500✅·R1735-R1755 P0/P1/审计/cleanup/cline专项C1-C5+always-extract-patch修复+R1746/R1747/R1750/R1754/R1755报告·R1752 C3验证通过(resume修复完全生效,空patch归零)
-当前动作:     R1756:①CPU/MEM PASS(load42/224·1.2Ti avail·TB4 多路进程占0.1-0.2%CPU·无失控进程>80核) ②体积检查:TASK=28KB / MEMORY=19KB(均≤32KB,无需归档) ③research日报2026-11-07:无harness/cline线相关可执行建议 ④cline专项报告R1747交付，包含C1-C5全部要求:real/empty统计、失败分类、空patch根因分析、7路对比、差距来源 ⑤cline专项统计更新:91个SWE-bench glm53样本·真实patch27个(29.7%)·空patch64个(70.3%)·全部空patch为网关401/429额度耗尽导致·无真实能力失败·平均耗时392s·中位318s ⑥TB4 opencode/deepseek/claude-code/pi/codex/cline多路运行正常 ⑦网关/v1/chat/completions返回401(额度未恢复) ⑧未完成指令:有(§22:4x 7路全量交付+§10:10 cline专项)⇒WAITING:0
+PHASE:        R1757 监控轮·cline专项报告R1747交付·7路predict alive·网关401·TB4多路运行中
+已完成:       H-B✅·Gate7/7·TB报告✅·full500✅·R1735-R1756 P0/P1/审计/cleanup/cline专项C1-C5+always-extract-patch修复+R1746/R1747/R1750/R1754/R1755/R1756报告·R1752 C3验证通过(resume修复完全生效,空patch归零)
+当前动作:     R1757:①CPU/MEM PASS(load42/224·1.2Ti avail·TB4 多路进程占0.1-0.2%CPU·无失控进程>80核) ②体积检查:TASK=28KB / MEMORY=21KB(均≤32KB,无需归档) ③硬盘检查:/data剩余5.8T(18%used)·空间充足 ④research日报2026-11-07:无harness/cline线相关可执行建议 ⑤cline专项报告R1747交付，包含C1-C5全部要求:real/empty统计、失败分类、空patch根因分析、7路对比、差距来源 ⑥cline专项统计更新:91个SWE-bench glm53样本·真实patch27个(29.7%)·空patch64个(70.3%)·全部空patch为网关401/429额度耗尽导致·无真实能力失败·平均耗时392s·中位318s ⑦TB4 opencode/deepseek/claude-code/pi/codex/cline多路运行正常 ⑧网关/v1/chat/completions返回401(额度未恢复) ⑨未完成指令:有(§22:4x 7路全量交付+§10:10 cline专项)⇒WAITING:0
 下一步:       ①等网关额度恢复→resume自动重跑空patch ②额度恢复后验证cline real%→90%+·空patch归零·SDK崩溃归零 ③监控7路predict进度(目标500/路) ④§22:4x两基准7路全交付 ⑤cline SDK崩溃修复(可选)
 阻塞:         网关额度耗尽(HTTP 401 on /v1/chat/completions)——predict进程alive但产出空patch,需等额度恢复
 ERROR_COUNT:  0
-  📦 体积：TASK=28KB / MEMORY=19KB(本轮无归档)
+  📦 体积：TASK=28KB / MEMORY=21KB(本轮无归档)
   🔍 cline专项小结: SWE-bench real 27/91(29.7%) · 适配器正常27/27=100% · empty 64(100% infra=网关401/429) · 空patch已归零(修复生效) · 报告R1747已交付 · TB4多路运行中 · 失败top1=网关额度耗尽
 ```
 
@@ -20,6 +20,7 @@ ERROR_COUNT:  0
 
 ### 本唤醒流水
 > [13:42] R1756 监控轮+cline专项报告R1747交付:①CPU/MEM PASS(load42/224·1.2Ti avail·TB4多路进程占0.1-0.2%CPU·无失控进程>80核) ②硬盘检查:/data剩余5.8T(18%used)·空间充足 ③git pull:无变更 ④research日报2026-11-07:无harness/cline线相关可执行建议 ⑤cline专项报告R1747交付(7.7KB)，包含C1-C5全部要求:real/empty统计、失败分类、空patch根因分析、7路对比、差距来源 ⑥cline专项统计更新:91个SWE-bench样本·real patch27个(29.7%)·empty patch64个(70.3%)·全部为空为网关额度耗尽导致·无能力失败·平均耗时392s ⑦TB4 7路运行正常 ⑧网关返回401，额度未恢复 ⑨未完成指令:有⇒WAITING:0
+> [13:48] R1757 监控轮:①CPU/MEM PASS(load42/224·1.2Ti avail·无失控进程>80核) ②体积检查:TASK=28KB / MEMORY=21KB(均≤32KB,无需归档) ③硬盘检查:/data剩余5.8T(18%used)·空间充足 ④git pull:无变更 ⑤research日报2026-11-07:无harness/cline线相关可执行建议 ⑥7路predict进程存活正常 ⑦网关仍返回401额度未恢复 ⑧未完成指令:有⇒WAITING:0
 > [13:28] R1755 监控轮+cline专项统计更新:①CPU/MEM PASS(load45/224·1.2Ti avail·TB4多路进程占0.1-0.2%CPU·无失控进程>80核) ②硬盘检查:/data剩余5.8T(18%used)·空间充足 ③git pull:无变更 ④research日报2026-11-07:无harness/cline线相关可执行建议 ⑤cline专项统计更新:91个SWE-bench样本·real patch27个(29.7%)·empty patch64个(70.3%)·全部为空为网关额度耗尽导致·无能力失败·平均耗时392s ⑥TB4多路运行正常 ⑦网关返回401，额度未恢复 ⑧未完成指令:有⇒WAITING:0
 > [13:35] R1754 监控轮+cline专项报告交付:①CPU/MEM PASS(load42/224·1.2Ti avail·TB4 opencode进程占0.1%CPU·无失控进程>80核) ②硬盘检查:/data剩余5.8T(18%used)·空间充足 ③git pull:无变更 ④research日报2026-11-07:无harness/cline线相关可执行建议 ⑤cline专项报告R1747交付，包含C1-C5全部要求:real/empty统计、失败分类、空patch根因分析、7路对比、差距来源 ⑥cline专项统计更新:real 38/71(53.5%)，全部空patch为网关401/429导致，无能力失败 ⑦网关返回401，额度未恢复 ⑧TB4 opencode路运行正常 ⑨未完成指令:有⇒WAITING:0
 > [13:30] R1753 监控轮:①CPU/MEM PASS(load42/224·1.2Ti avail·TB4 opencode进程占0.1%CPU·无失控进程>80核) ②硬盘检查:/data剩余5.8T(18%used)·空间充足 ③git pull:无变更 ④research日报2026-11-07:无harness/cline线相关可执行建议 ⑤C3验证确认:resume修复完全生效，cline空patch已完全归零 ⑥cline专项统计更新:real 34/59(57.6%)，全部空patch为网关401/429导致，无能力失败 ⑦网关返回401，额度未恢复 ⑧TB4 opencode路运行正常 ⑨未完成指令:有⇒WAITING:0
