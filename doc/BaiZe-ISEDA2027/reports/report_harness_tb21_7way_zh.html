@@ -25,7 +25,7 @@ pre{background:#2c3e50;color:#ecf0f1;padding:15px;border-radius:5px;overflow-x:a
 <div class="info">
 <p><strong>基准口径声明</strong>：本报告数据为 <strong>TB-2.1 / 89 题 / 7-way concurrent</strong>。
 TB-2.1 与 TB4 <strong>题集不同、不可跨基准比较</strong>。</p>
-<p><strong>模型</strong>：glm-5.3-flash（网关 <code>http://agi-gateway.cxmt.com/v1</code>）｜<strong>生成时间</strong>：2026-11-08 00:46（R1804）</p>
+<p><strong>模型</strong>：glm-5.3-flash（网关 <code>http://agi-gateway.cxmt.com/v1</code>）｜<strong>生成时间</strong>：2026-11-08 00:56（R1816）</p>
 </div>
 
 <div class="critical">
@@ -56,7 +56,7 @@ TB-2.1 cline 路 <strong>7 题 passed</strong>（≥1 题 × ≥1 路 reward 非
 <tr><th>#</th><th>Harness</th><th>状态</th><th>Passed</th><th>Failed</th><th>Remaining</th><th>通过率</th></tr>
 <tr><td>1</td><td>cline</td><td><span class='tag tag-done'>已完成</span> 已完成</td><td class='pass'>7</td><td class='fail'>81</td><td>0</td><td>8.0%</td></tr>
 <tr><td>2</td><td>codex</td><td><span class='tag tag-pending'>未开始</span> 运行中 (18/89)</td><td class='pass'>0</td><td class='fail'>0</td><td>71</td><td>—</td></tr>
-<tr><td>3</td><td>hermes</td><td><span class='tag tag-running'>运行中</span> 运行中 (50/89)</td><td class='pass'>0</td><td class='fail'>31</td><td>39</td><td>0.0%</td></tr>
+<tr><td>3</td><td>hermes</td><td><span class='tag tag-running'>运行中</span> 运行中 (55/89)</td><td class='pass'>2</td><td class='fail'>32</td><td>34</td><td>5.9%</td></tr>
 <tr><td>4</td><td>opencode</td><td><span class='tag tag-pending'>未开始</span> 未开始</td><td class='pass'>0</td><td class='fail'>0</td><td>89</td><td>—</td></tr>
 <tr><td>5</td><td>claude-code</td><td><span class='tag tag-pending'>未开始</span> 未开始</td><td class='pass'>0</td><td class='fail'>0</td><td>89</td><td>—</td></tr>
 <tr><td>6</td><td>deepseek</td><td><span class='tag tag-pending'>未开始</span> 未开始</td><td class='pass'>0</td><td class='fail'>0</td><td>89</td><td>—</td></tr>
@@ -141,7 +141,7 @@ TB-2.1 cline 路 <strong>7 题 passed</strong>（≥1 题 × ≥1 路 reward 非
 
 <h2>6. 后续计划</h2>
 <div class="info"><ol>
-<li>网关恢复后 hermes 路继续推进（49/89 运行中），完成后 sequential launcher 依次启动 opencode / claude-code / deepseek / pi</li>
+<li>hermes 路运行中（33/89 已验证，2 passed），完成后 sequential launcher 依次启动 opencode / claude-code / deepseek / pi</li>
 <li>codex TB-2.1 需重跑（429 已恢复后重试）</li>
 <li>7 路全量完成后报告标注「7-way complete」</li>
 </ol></div>
@@ -157,7 +157,7 @@ done | sort</code></pre>
 
 <hr>
 <p style="text-align:center;color:#7f8c8d;font-size:0.9em">
-BaiZe Harness 研究线 · R1815 · {NOW}<br>
+BaiZe Harness 研究线 · R1816 · {NOW}<br>
 TB-2.1 / 89 题 / 7-way concurrent · glm-5.3-flash · 报告正文一律写 cline
 </p>
 </body></html>
