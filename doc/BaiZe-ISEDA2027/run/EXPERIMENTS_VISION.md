@@ -2839,7 +2839,9 @@ std>0 组 ≥30%                  ⇒ PARAM-ISSUE
 **交付物**：
 - `vision/wave_rl/cpu_rl_v3_experiment.py`（v3实验脚本，period-only）✅
 - `vision/wave_rl/gen_cpu_rl_v3_report.py`（v3报告生成器）✅
-- `vision/wave_rl/dataset_research_results.json`（HF数据集调研结果）✅
+- `vision/wave_rl/dataset_research_results.json`（数据集调研结果：wake#855 HF-only → wake#860 扩展为 HF+GitHub+arXiv 三源）✅
+  - **wake#860 关键新发现**：找到最接近的领域基准 **WaveformQA**（arXiv 2607.20638, IEEE ICLAD 2026, CC-BY-4.0）—— 360题/8类，评估 LLM 对**数字**波形的时序推理，但**基于文本**(VCD/event-time JSON)**而非图像**，不能直接用作我们的视觉基准；高价值作 related-work 引用 + 8类 QA 模板迁移参考。另核到 `Eslam79/fatima-fellowship-rtl-waveform-eval`（RTL/SV 文本调试 eval）与 `mlnomad/...oscilloscope_CRO`（ImageNet 示波器类 ~1.3K 图，仅分类标签）。ChartQA/PlotQA/FigureQA/ChartBench/ChartX + 7篇 arXiv chart-VQA 论文（ChartQAPro/ChartMind/ChartNet 等）均为数据可视化图（柱/线/饼），无电子波形。
+  - **结论**：三个来源均**无**图像基模拟/电子波形 VQA 数据集 ⇒ 继续用 ngspice 合成是唯一可行路径（已验证）。GitHub 仓库 URL 标「未核到」（API 搜索 0 命中，作者无私开 repo，不编造）。
 - `reports/report_vision_cpu_rl_waveform_zh.html`（中文HTML报告，当前partial, 实验完成后自动更新）✅
 - `cpu_rl_v3/experiment_results.json`（完整结果JSON，实验完成后生成）⏳
 
