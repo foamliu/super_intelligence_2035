@@ -739,7 +739,7 @@
 1791795024899_lp74k.messages.json					parked		2026-11-05 20:35	skill-load: U#0=启动aether skill
 1792653194974_s2f9d.messages.json					parked		2026-11-05 20:35	debug: U#0=user gives TOOL_DIR error root-cause (A档禁)
 1792386804961_6tiy7.messages.json					parked		2026-11-05 20:35	mid-conv: U#0=Context summary tool_calls not clean produce
-1790236124444_8orer.messages.json					parked		2026-11-05 20:35	skill-load: U#0=skilldev
+1790236124444_8orer.messages.json					case	EDA-Eval-DesignFlow-SchHierCopyPlan-001	2026-11-07 15:07	skill-load: U#0=skilldev
 1789561002781_mqop7.messages.json					parked		2026-11-05 20:35	doc-edit: U#0=cwd switch, then LVS log analysis doc editing
 1785738164906_rqpb4.messages.json					parked		2026-11-05 20:35	infra: U#0=MCP service setup/multimodal workflow planning
 1792143054616_zr9dt.messages.json					parked		2026-11-05 20:35	iterative-opt: U#0=size-tune MP for vih flip-point (needs real sim, hard to judge offline)
@@ -1265,3 +1265,4 @@ tjzn5					parked		2026-11-07 12:29	env Q&A + skill-creator usage (#352 peek weak
 1789894067947_9lbfz					parked		2026-11-07 12:58	#353 peek weak: see MEMORY_D
 1792737644972_wdnwl	cuij	10.129.2.11	42	schematic_netlist	case	EDA-Eval-DesignFlow-LvsMrcBrknetDiag-001	2026-11-07 14:02	
 1793857741122_genvz	adaml	10.129.2.11	183	schematic_netlist	case	EDA-Eval-DesignFlow-CdlNetlistGen-001	2026-11-07 14:37	
+1793260818025_aw9d7.messages.json	dsgao	hfhds201	273	schematic_netlist	case	EDA-Eval-DesignFlow-SpiceClosureExtract-001	2026-11-07 15:11	
