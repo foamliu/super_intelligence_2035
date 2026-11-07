@@ -379,3 +379,11 @@ vbxlf.messages.json	jason17w	hfeg0pnd002	262	spice_sim	parked		2026-11-05 12:30	
 1793861227844_poh36.messages.json					parked		2026-11-07 18:41	DDR5 CM cell listing via Aether, non-spice
 1793237557021_twq9b.messages.json					parked		2026-11-07 18:41	open schematic viewer / view SRAM, GUI access non-spice
 1793240378933_kck7n.messages.json					parked		2026-11-07 18:41	which GDS viewer / klayout / virtuoso access, tooling non-spice
+1793326498040_6ftap	irene1li	hfeg0pkn004	1446	spice_sim	case	EDA-Eval-DesignFlow-TrtfMeasDeckGen-001	2026-11-07 19:19	
+1793277409017_nw0fr					parked		2026-11-07 19:19	GUI stdcell sizing web app non-spice-deliverable
+1793950485414_11p4q					parked		2026-11-07 19:19	debugging .sp probe + how-to consulting non-A-faithful
+1791457560417_636qr					parked		2026-11-07 19:19	code review runModelQA refactor non-A-faithful
+1792137924614_tadah					parked		2026-11-07 19:19	verilog waveform x-state analysis non-spice
+1793707420467_xqeql					parked		2026-11-07 19:19	LVS/ERC/hcell physical_verify non-spice
+1789474120804_1vb6o					parked		2026-11-07 19:19	trivial hello/introduce non-spice
+1793666893047_bz56k					parked		2026-11-07 19:19	CDL netlist extraction consulting non-spice

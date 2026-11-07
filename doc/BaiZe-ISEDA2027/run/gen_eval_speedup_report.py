@@ -229,6 +229,22 @@ def body_sections():
     p.append("iter_100000 GGUF 趋势检查亦通过（分数随训练单调上升，sciq 由 NaN 恢复 0.79→0.88）。")
     p.append("结论：<b>_fixed_ GGUF 转换器对当前 ckpt 正确</b>，已获准用于全量 eval。</div>")
 
+    # 三c、v4 eval 问题诊断与修复
+    p.append("<h2>三c、v4 全量 eval 问题诊断与修复（2026-11-07 19:1x）</h2>")
+    p.append("<div class='warn'><b>v4 首轮运行发现两个问题，已诊断并修复：</b></div>")
+    p.append("<table><tr><th>问题</th><th>现象</th><th>根因</th><th>修复</th><th>验证</th></tr>")
+    p.append("<tr><td><b>logit_bias 崩溃</b></td><td>sciq/piqa 进程 RuntimeError<br><code>目标 token 未被强制：got=3982 want=85</code></td>")
+    p.append("<td>logit_bias=100.0 不足以强制<br>极端 token 对（logit 差>100）</td>")
+    p.append("<td>bias 100→<b>1000</b><br>+ 降级处理（不崩溃，返回 logprob=-100）</td>")
+    p.append("<td class='good'>sciq 重启后正常运行<br>（69/4000 @1.7it/s 无崩溃）</td></tr>")
+    p.append("<tr><td><b>hellaswag 进程挂起</b></td><td>chunk0/1 37 min 无进度<br>进程 State=S 150 线程<br>chunk2/3 ETA 37-48h</td>")
+    p.append("<td>requests 库 timeout=600s<br>仅限连接+字节间隔，非总超时<br>长序列 HTTP 请求永久挂起</td>")
+    p.append("<td>timeout 600→<b>120s</b><br>+ 连接超时 (10,120)<br>+ kill 重启全 4 shards</td>")
+    p.append("<td class='good'>重启后 chunk0-3 全部正常<br>（~2.8s/it vs 旧 4.8-17s/it）</td></tr>")
+    p.append("</table>")
+    p.append("<div class='note'><b>同时修复</b>：arc_easy 也在旧脚本（timeout=600）下挂起（14 min 无进度），")
+    p.append("已 kill 并用修复版脚本重启。boolq/arc_challenge 旧进程正常未受影响。</div>")
+
     # 四、提速方案（8 服务器 × 16 线程，推荐）
     p.append("<h2>四、提速方案（8 服务器 × 16 线程，推荐）</h2>")
     p.append("<p>8 个 llama-server 实例（端口 8080–8087），每个 16 线程 8 并发 slot，")

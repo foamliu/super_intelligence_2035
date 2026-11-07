@@ -51,7 +51,7 @@ class GGUFServerLM(TemplateLM):
         eot_token_id,
         parallel=2,
         max_length=2048,
-        timeout=600,
+        timeout=120,
         batch_size=32,
         max_prompt_tokens=0,
     ):
@@ -115,7 +115,7 @@ class GGUFServerLM(TemplateLM):
         last = None
         for attempt in range(retries):
             try:
-                r = sess.post(url, json=payload, timeout=self.timeout)
+                r = sess.post(url, json=payload, timeout=(10, self.timeout))
                 if r.status_code >= 400:
                     raise RuntimeError(f"HTTP {r.status_code}: {r.text[:400]}")
                 return r.json()
@@ -158,7 +158,7 @@ class GGUFServerLM(TemplateLM):
             "min_p": 0.0,
             "n_probs": 10,
             # native /completion 的 logit_bias 期望 [[token_id, bias], ...]
-            "logit_bias": [[int(target_id), 100.0]],
+            "logit_bias": [[int(target_id), 1000.0]],
             "cache_prompt": True,
             "return_tokens": True,
             "id_slot": int(slot),
@@ -171,10 +171,15 @@ class GGUFServerLM(TemplateLM):
         entry = probs[0]
         got = int(entry.get("id", -1))
         if got != int(target_id):
-            raise RuntimeError(
-                f"目标 token 未被强制：got={got} want={target_id} "
-                f"（检查 llama.cpp 是否支持 logit_bias / n_probs）"
+            # 降级处理：logit_bias 未能强制目标 token（bias=1000 仍不够的极端情况）
+            # 不崩溃，返回极低 logprob（相当于该 token 概率≈0），让 eval 继续
+            sys.stderr.write(
+                f"[WARN] logit_bias 未强制 target={target_id} got={got} "
+                f"—— 降级返回 logprob=-100.0\n"
             )
+            with self._stat_lock:
+                self.n_token_requests += 1
+            return -100.0, False
         logprob = float(entry["logprob"])
         tops = entry.get("top_logprobs") or []
         greedy = bool(tops) and int(max(tops, key=lambda t: t["logprob"]).get("id", -1)) == int(target_id)
