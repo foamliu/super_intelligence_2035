@@ -345,3 +345,6 @@ vbxlf.messages.json	jason17w	hfeg0pnd002	262	spice_sim	parked		2026-11-05 12:30	
 1792841497181_wbge3					parked		2026-11-07 09:46	LSF monitoring not spice
 1791446512697_3s3zx					parked		2026-11-07 09:46	incomplete: assistant asked question, session terminated, no resolution
 1789544872347_mi210					parked		2026-11-07 09:46	DUP of SetNetlistParam-001 (same Run_Compress_Netlist)
+1791463574990_um5we	xuebaok	hfhds201	50	spice_sim	case	EDA-Eval-DesignFlow-DetermSeedByName-001	2026-11-07 10:11	
+1791611498731_wg5u2	zjqiao	hfhds201	30	spice_sim	parked		2026-11-07 10:11	DUP LibCellListGen-001 (identical prompt, ynbai 66tx9 already case)
+1792031875998_68gc9	kli	hfhds201	40	spice_sim	parked		2026-11-07 10:11	consulting/analysis: multi-turn si.out compare + memory rootcause, no clean single deliverable
