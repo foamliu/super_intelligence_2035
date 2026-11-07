@@ -4383,3 +4383,126 @@ R34 在后台启动 `CUDA_HOME=/usr/local/cuda-12.4 pip install flash-attn==2.7.
 - `baize_posttrain_rl_verl_config.yaml`（attn: sdpa → flash_attention_2）
 - `reports/report_posttrain_r35_adversarial_reward_test_zh.html`（HTML 报告）
 - EXPERIMENTS §R35（本节，6 小节）
+
+---
+
+## §R36 RL 训练可观测性与故障恢复（2026-11-08 · 零 GPU · 纯设计+实现）
+
+> **动机**：R22 在 RL config YAML 中注释了"Monitoring & early stopping"但从未实现。
+> GRPO 训练可能**静默发散**（KL 爆炸、奖励坍缩、熵坍缩、梯度爆炸），若无监控，
+> 11/9 起的 GPU 时间可能被浪费数小时而不自知。R35 验证了奖励函数的对抗鲁棒性，
+> 但训练过程中的指标监控仍是空白。本节填补该空白。
+
+### R36.1 设计目标
+
+1. **实时指标解析**：从 verl stdout 日志提取 12 个关键 GRPO 指标（每 step）。
+2. **7 种发散模式检测**：每种带可配置阈值 + 连续步数要求（抗噪声）。
+3. **早停信号**：连续 N 步触发 CRITICAL → 写 STOP 信号文件，训练 wrapper 可检查。
+4. **检查点建议**：基于奖励轨迹推荐保留/丢弃哪些 checkpoint。
+5. **恢复程序**：每种发散模式打印可执行的恢复命令（YAML override 参数）。
+6. **零依赖**：纯标准库（re/json/math/pathlib），无需安装额外包。
+
+### R36.2 7 种发散模式与阈值标定
+
+> 阈值标定来源：DeepSeek-R1 (arXiv:2501.12948)、GRPO 原始论文 (arXiv:2402.03300)、
+> sGPO (arXiv:2606.08854)、DAPO (arXiv:2503.14476)、verl 文档、vision 线离散奖励教训。
+
+| 模式 | 检测条件 | 阈值 | 连续步数 | 严重度 | 文献依据 |
+|:--|:--|:--|:--|:--|:--|
+| P1 KL 爆炸 | kl_loss > KL_MAX | 10.0 | 3→WARN, 5→CRITICAL | 停训 | DeepSeek-R1: KL 典型 0.01–2.0；>10=策略漂移失控 |
+| P2 奖励坍缩 | rewards_mean < REWARD_FLOOR | 0.01 | 3→WARN, 5→CRITICAL | 停训 | 全部 rollout 返回 0 → 无学习信号 → 静默空转 |
+| P3 奖励方差坍缩 | rewards_std < STD_FLOOR | 0.01 | 3→WARN, 5→CRITICAL | 停训 | GRPO 需组内方差归一化 advantage；std→0 → advantage=0 |
+| P4 熵坍缩 | entropy < ENTROPY_FLOOR | 0.1 | 3→WARN, 5→CRITICAL | 停训 | 2B 模型 vocab=130560，自然熵 3–8 nats；<0.1=模式坍缩 |
+| P5 梯度爆炸 | grad_norm > GRAD_MAX | 100.0 | 3→WARN, 5→CRITICAL | 停训 | 2B FSDP 典型 0.1–5.0；>100=不稳定 |
+| P6 NaN/Inf | 任意指标 NaN 或 Inf | — | 3→WARN, 5→CRITICAL | 立即停 | 数值不稳定，继续会损坏 checkpoint |
+| P7 作弊率飙升 | cheat_rate > CHEAT_MAX | 0.05 | 3→WARN | 报告不停 | 红线 §5.2，须在论文中报告 |
+
+**关键设计决策**：
+- **连续步数要求**（alert_consecutive=3, stop_consecutive=5）：单步超阈值可能是噪声，
+  连续 3 步 = WARNING，连续 5 步 = CRITICAL + STOP。避免误杀正常波动。
+- **P7 不触发停训**：作弊率是红线报告项，不是停训条件——作弊率升高时应记录并修复，
+  但不停训（停训会丢失训练进度）。
+- **P6 是最严重**：NaN 一旦出现，checkpoint 可能已被污染，必须立即从上一个正常 ckpt resume。
+
+### R36.3 恢复程序（每种模式的可执行命令）
+
+每种 CRITICAL 告警触发时，监控脚本自动打印恢复命令。以下为关键恢复路径：
+
+| 模式 | 恢复命令（YAML override） | 备选 |
+|:--|:--|:--|
+| P1 KL 爆炸 | `--actor_rollout_ref.actor.kl_loss_coef 0.04 --actor_rollout_ref.actor.optim.lr 1e-6` | 减 ppo_epochs 2→1 |
+| P2 奖励坍缩 | `--reward.arm R0`（切骨架模式） | 混入 L1/L2 易题 |
+| P3 方差坍缩 | `--algorithm.group_size 16`（增组大小） | R1→R2 切部分分 |
+| P4 熵坍缩 | `--actor_rollout_ref.actor.entropy_coeff 0.01` | 增采样温度 |
+| P5 梯度爆炸 | `--actor_rollout_ref.actor.optim.lr 1e-6 --actor_rollout_ref.actor.grad_clip 0.5` | 停训 resume |
+| P6 NaN | 立即停训，`--resume-ckpt <last_good>` | 检查 fp16 溢出 |
+| P7 作弊率 | `--reward.arm R4`（API 合法性惩罚） | 收紧 ngram 8→5 |
+
+### R36.4 检查点管理策略
+
+verl 默认 `save_interval: 200`（每 200 步存一个 checkpoint），baize-C 配置 1000 iters → 5 个 ckpt。
+每个 ckpt ~16GB（2B 模型 FSDP），5 个 = 80GB，在 .17 的 386GB 可用磁盘中安全。
+
+**监控脚本提供的检查点建议**：
+- `best_step`：奖励均值最高的 checkpoint（推荐用于评测）
+- `last_good_step`：最后一次无 CRITICAL 告警的 step（推荐用于 resume）
+- 磁盘策略：保留 best + 最近 2 个，丢弃更早的（节省磁盘）
+
+### R36.5 与训练脚本的集成方式
+
+监控脚本设计为**独立进程**，与训练并行运行：
+
+```bash
+# Terminal 1: 训练
+bash baize_posttrain_rl_grpo.sh --reward-arm R2 --gpu-ids 0,1,2,3
+
+# Terminal 2: 监控
+python baize_posttrain_rl_monitor.py \
+    --log-dir $OUTPUT_DIR/logs \
+    --save-dir $OUTPUT_DIR \
+    --poll-interval 30 \
+    --output /tmp/rl_monitor_state.json
+```
+
+**STOP 信号机制**：监控脚本在 CRITICAL 连续触发时写 `RL_STOP_SIGNAL` 文件。
+训练 wrapper（`baize_posttrain_rl_grpo.sh`）可在每个 epoch 开始时检查该文件：
+
+```bash
+# 在 baize_posttrain_rl_grpo.sh 的训练循环中添加：
+if [ -f "$OUTPUT_DIR/RL_STOP_SIGNAL" ]; then
+    echo "RL STOP SIGNAL detected, halting training"
+    cat "$OUTPUT_DIR/RL_STOP_SIGNAL"
+    break
+fi
+```
+
+> ⚠️ 当前 `baize_posttrain_rl_grpo.sh` 尚未集成 STOP 信号检查——这是 11/9 GPU 到位后
+> 的第一项集成任务（在 smoke test 前完成）。
+
+### R36.6 验证结果
+
+- `py_compile`：✅ 通过
+- `--help`：✅ 正常打印
+- 合成日志测试：✅ 正确检测 P4 熵坍缩（entropy 0.03 < 0.1 阈值，连续 3 步触发 WARNING）
+- 检查点建议：✅ 正确识别 best_step=5, best_reward=0.40
+- 恢复程序打印：✅ CRITICAL 告警时打印可执行恢复命令
+
+### R36.7 与 R30-R35 的关系
+
+| 前序研究 | 本节补充 |
+|:--|:--|
+| R30（执行手册） | 补充训练过程中的监控步骤 |
+| R32（显存预算） | 不冲突（监控是 CPU 进程，不占 GPU） |
+| R33（排程优化） | 早停可节省排程余量（baize-C 14.3 天 → 若早停在 iter 600，节省 ~5.7 天） |
+| R34（最终审计） | preflight 35 项中"监控"项现在有实际脚本支撑 |
+| R35（对抗奖励测试） | 奖励函数的鲁棒性是输入端；本节是训练过程的输出端监控 |
+
+### R36.8 11/9 就绪度更新
+
+全栈 ✅ + preflight ✅ + 数据 ✅ + 奖励 ✅ + cheat ✅ + 脚本 ✅ + 显存 ✅ + 吞吐 ✅ + 排程 ✅ + flash_attn ✅ + **监控 ✅(R36)** + GPU ⬜（明天 11/9）
+
+### R36.9 交付物
+
+- `baize_posttrain_rl_monitor.py`（~445 行，7 种发散检测 + 早停 + 检查点建议 + 恢复程序）
+- `reports/report_posttrain_r36_rl_observability_zh.html`（HTML 报告）
+- EXPERIMENTS §R36（本节，9 小节）
