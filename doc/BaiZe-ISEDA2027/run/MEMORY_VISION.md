@@ -1,5 +1,7 @@
 WAITING: 1
 
+> 🆕 **【wake #893 · 2026-11-07 22:0x】用户令标✅已交付+收尾巡检。** git pull(已最新·无新令)·research日报2026-11-07查阅(vision无直接对口论文·仅侧向借鉴Scientist World评测范式·低优先·按令忽略不影响排期)·体积自检TASK=31KB✓/MEMORY=19KB✓(0归档)。**本轮动作**：①核对全部交付物在位——报告HTML 29903B(`reports/report_vision_cpu_rl_waveform_zh.html`)✓·EXPERIMENTS§22(v5完整结果)✓·数据集调研JSON✓·技术栈冒烟S2 FALLBACK_VIABLE✓·v5实验结果(A16%→B37%→C53%·McNemar p=0.0009·Bootstrap CI=[+7,+25]·cheat_rate=0)✓。②**按完成标记将两条用户令(10:10阶段2放行+09:2x走出干等GPU)标为✅已交付**——09:2x完成标记明确授权"交付⇒本行改✅已交付"·10:10为09:2x的授权补充(6项已授权变更全部尝试v2-v5·v5获统计显著正结果)。③进程巡检：仅GPU-wait chain PID1365749(ppid=1·etimes~30h·健康轮询)·无活跃CPU实验·未碰pretrain。**未完成指令:无**(两条用户令均✅已交付)。📦体积:TASK=31KB✓/MEMORY=19KB✓(0归档)。
+
 > 🆕 **【wake #892 · 2026-11-07 19:1x】v5全量完成→✅显著提升！报告+EXPERIMENTS更新。** git pull(无新令·research日报vision无对口忽略)。**v5**(波形类型分类)**全量完成**：**A=16.0%→B(SFT)=37.0%→C(RFT)=53.0%**·D(随机控制)=32.0%·McNemar **C-vs-B p=0.0009(✅显著)**·Bootstrap C-B **Δ=+16% CI=[+7%,+25%](✅排除0)**·McNemar C-vs-D **p=0.0003(✅)**·VERDICT=**TREATMENT SIGNIFICANT|REWARD-DESIGN DRIVEN(C>D)**·cheat_rate=0·**所有预注册判据全部满足✅**。报告**重生成29903B**(含v5最终结果+混淆矩阵+预注册核对)。EXPERIMENTS §22更新(⏳→✅完成)。**v2-v4连续3轮无提升→v5方向转换(改任务=分类+改输入=16采样点)→首次获得统计显著正结果**。用户令核心目标"证明显著提升"**已达成**。**未完成指令:无**(v5✅→最终报告✅→用户令可标✅已交付)。📦体积:TASK=31KB✓/MEMORY=19KB✓。
 
 > 📦 wake #890（监控轮·2026-11-07 18:47）已归档 → daily-memories-vision/2026-11-07.md；**结论**：v3 D-ctrl eval 50/100=0.0%(随机奖励摧毁模型)·v5 RFT-collect 150/200(44.0%)。需要时再读。
@@ -114,7 +116,7 @@ WAITING: 1
 | PHASE | ✅ **波形 RL CPU 阶段2 · v5✅全完(显著提升！)·用户令核心目标达成**：**v5(类型分类)✅全完** **A=16.0%→B(SFT)=37.0%→C(RFT)=53.0%**·D(随机控制)=32.0%·McNemar **C-vs-B p=0.0009(✅)**·Bootstrap C-B **Δ=+16% CI=[+7%,+25%](✅)**·**C-vs-D p=0.0003(✅)**·VERDICT=**TREATMENT SIGNIFICANT\|REWARD-DESIGN DRIVEN**·所有预注册判据全部满足·cheat_rate=0·报告29903B(含v5完整结果)·v4(RFT)✅NULL(C=B=34%,p=1.0)·v3(GRPO)✅全完(C=25%<B=34%负结果)·v2=6.2%<9.2%·**v2-v4连续3轮无提升→v5方向转换(分类+16采样点)→首次显著正结果**·数据集调研完成·技术栈三步冒烟交付·Qwen3.5-2B(1.88B)+LoRA。**WAITING: 1** |
 | WAITING | 1 |
 | 已完成 | **v5波形类型分类全量实验✅(wake#892, A=16%→B=37%→C=53%, p=0.0009显著)** · v4 RFT实验全量完成(wake#882,NULL) · v3 GRPO连续奖励全完(wake#891,负结果) · advantage方差诊断(wake#838,PARTIAL) · 阶段1 SFT验收PASS(wake#802) · CPU端到端训练循环验证7/7 PASS(wake#741) · 数据泄漏验证+就绪报告HTML(wake#731) · GRPO CPU冒烟PASS(wake#622) · 2B文本骨干提取1.72B(wake#620) · 数据集均衡化9013条(wake#618) · 波形RL计划书(wake#435) · 论文改稿(wake#437~#442) · ArmE-R2/ArmD-R2 全链路 |
-| 当前动作 | **wake#892 v5全量完成→报告+EXPERIMENTS更新**：v5(类型分类)**✅全完** A=16.0%/B(SFT)=37.0%/C(RFT)=53.0%/D=32.0%·McNemar C-vs-B **p=0.0009**·Bootstrap C-B **Δ=+16% CI=[+7%,+25%]**·**VERDICT=TREATMENT SIGNIFICANT\|REWARD-DESIGN DRIVEN**·所有预注册判据满足✅·报告重生成29903B·EXPERIMENTS §22更新(✅完成)。v2-v4连续3轮无提升→v5方向转换(改任务=分类+改输入=16采样点)→**首次统计显著正结果**。 |
+| 当前动作 | **wake#893 用户令标✅已交付+收尾巡检**：核对全部交付物在位(报告29903B/EXPERIMENTS§22/v5结果/数据集调研/技术栈冒烟)·**按完成标记将两条用户令(10:10阶段2放行+09:2x走出干等GPU)标为✅已交付**·research日报2026-11-07 vision无直接对口(仅侧向借鉴·低优先·按令忽略)·仅GPU-wait chain PID1365749健康·无活跃CPU实验·未碰pretrain。 |
 | 下一步 | ①v5✅已交付(报告+EXPERIMENTS+commit) ②用户令核心目标"证明显著提升"已达成→标✅已交付 ③可选下一步：扩大v5规模(更多SFT数据/更多RFT轮次)/尝试其他可判定中间任务(频率比较/异常点定位)/迁移到GPU验证规模效应 ④待运维/用户确认是否需要进一步实验或GPU验证 |
 | 阻塞 | .12+.29 GPU全占（8×H100 96-100% util / ~75GB，pretrain baize2b ETA≈12/24-25）→ GPU验证待pretrain释放 ·.17+.75 SSH不可达 |
-| 更新 | **2026-11-07 19:1x (wake #892)**: v5全量完成✅ A=16%→B=37%→C=53%·McNemar C-vs-B p=0.0009✅·Bootstrap Δ=+16% CI=[+7,+25]✅·所有预注册判据满足·报告29903B·EXPERIMENTS §22✅·用户令核心目标达成·WAITING=1(全交付) |
+| 更新 | **2026-11-07 22:0x (wake #893)**: 两条用户令(10:10+09:2x)标✅已交付·全部交付物核对在位·research日报vision无对口忽略·仅GPU-wait chain健康·WAITING=1(全交付) |
