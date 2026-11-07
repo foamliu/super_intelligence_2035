@@ -4,7 +4,7 @@
 <div class="summary-box"><h3>核心发现</h3>
 <p><strong>基线</strong>(8线程,bs=1): 7.4min / 24请求 → 0.05 请求/秒</p>
 <p><strong>最优配置</strong>: 80线程,bs=2 → 5.4min · 加速 <strong>1.36x</strong></p>
-<p><strong>全量8集预估时长</strong>（已扣除模型加载30s仅摊销一次）: 基线(8线程)<span class="bad">13.9天</span> · 最优配置<span class="warn">9.9天</span></p>
+<p><strong>全量8集预估时长</strong>（探测估算 vs 实测修正）: 探测估算最优配置9.9天 · <span class="bad">实测修正: ~35天</span>（含hellaswag长序列，实测~41s/req × 73106 req，探测仅含短序列故偏低3x）</p>
 <p><strong>关键发现</strong>: Mamba2-hybrid 2.22B 在 CPU 上使用 PyTorch 参考实现（无 mamba_ssm/causal_conv1d CUDA 内核）。线程扩展在 16 线程饱和（SSM 顺序扫描不可并行，仅注意力/MLP 层受益），80 线程反而因调度开销变慢（bs=1 时 392s vs 16 线程 359s）。但 80 线程 + bs=2 可利用富余核心处理 batch 维度，达到最优 325s（1.36x）。低线程时 bs=2 更慢（batch 无并行收益）。</p>
 <p><strong>内存峰值</strong>: 50.3 GB（远低于 2TB 可用内存）</p></div>
 <h2>① 线程数 vs 吞吐/时长 (bs=1)</h2>
@@ -39,5 +39,5 @@
 <li><strong>全量评测</strong>: 8集×全量样本, 16线程(探测最优), bs=1, 无limit, 后台运行</li>
 <li><strong>架构说明</strong>: Mamba2-hybrid (NemotronH), CPU回退到PyTorch参考实现(无mamba_ssm/causal_conv1d)</li>
 </ul></div>
-<h2>❼ 全量8集评测分数（iter_112000）</h2><div class="card"><p>全量评测仍在运行中（预估9.9天，已扣除模型加载30s仅摊销一次）。完成后此节将填充实际分数。</p><p><small>全量评测=无limit，8集合计~69,650个请求，16线程bs=1配置（探测最优，80线程反而更慢）。</small></p></div>
+<h2>❼ 全量8集评测分数（iter_112000）</h2><div class="card"><p>全量评测仍在后台运行中（PID 3726478, 16线程bs=1, nice 19）。</p><p><strong>实测进度</strong>: 30/73106 请求, ~41s/req → ETA ~35天。探测估算9.9天偏低，因探测仅含短序列任务(openbookqa+arc_challenge)，全量含hellaswag长序列致单请求耗时~3x。</p><p><small>全量评测=无limit，8集合计73,106个loglikelihood请求。CPU推理慢因无mamba_ssm/causal_conv1d CUDA内核→PyTorch参考实现。完成后此节将填充实际分数。</small></p></div>
 <hr><p><small>BaiZe Pretrain · CPU Eval Thread/Batch Scaling · iter_112000 · 2026-11-07 11:01 · 0 script / 0 外链</small></p></body></html>
