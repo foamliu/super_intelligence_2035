@@ -109,6 +109,63 @@ def fmt_pct(v):
     if v is None: return "N/A"
     return f"{v*100:.2f}%"
 
+def read_live_progress():
+    """Read live progress from orchestrator log. Returns list of dicts or empty list."""
+    import re
+    orch_log = "/tmp/baize_eval_v4/orchestrate_fixed.log"
+    if not os.path.exists(orch_log):
+        return []
+    try:
+        lines = open(orch_log).readlines()
+        # Find the last "--- Progress ---" block
+        last_block = []
+        for i, line in enumerate(lines):
+            if "--- Progress ---" in line:
+                last_block = lines[i:i+15]
+        if not last_block:
+            return []
+        # Parse each task line
+        numa_map = {
+            "arc_easy": ("N0", "8080"), "arc_challenge": ("N0", "8080"),
+            "openbookqa": ("N0", "8080"), "hellaswag_chunk1b": ("N0", "8080"),
+            "piqa": ("N1", "8081"), "piqa_part2": ("N1", "8081"),
+            "hellaswag_chunk0b": ("N1", "8081"),
+            "hellaswag_chunk1a": ("N2", "8082"),
+            "hellaswag_chunk0a": ("N3", "8083"),
+            "boolq": ("—", "—"), "sciq": ("—", "—"), "winogrande": ("—", "—"),
+        }
+        results = []
+        for line in last_block:
+            line = line.strip()
+            if not line or "--- Progress ---" in line:
+                continue
+            # Format: [timestamp]   task_name: STATUS
+            m = re.match(r'\[[\d\-: ]+\]\s+(\S+):\s+(.*)', line)
+            if not m:
+                continue
+            task = m.group(1).rstrip(':')
+            rest = m.group(2)
+            numa, port = numa_map.get(task, ("—", "—"))
+            if rest == "DONE":
+                results.append({"numa": numa, "port": port, "task": task,
+                                "progress": "✅ 完成", "rate": "—", "status": "DONE"})
+            elif rest == "waiting...":
+                results.append({"numa": numa, "port": port, "task": task,
+                                "progress": "⏳ 等待", "rate": "—", "status": "waiting"})
+            else:
+                # Try to extract progress percentage and rate
+                pm = re.search(r'(\d+)%\|.*?\|\s*(\d+)/(\d+)\s*\[.*?\]\s*([\d.]+s/it)', rest)
+                if pm:
+                    pct, cur, total, rate = pm.group(1), pm.group(2), pm.group(3), pm.group(4)
+                    results.append({"numa": numa, "port": port, "task": task,
+                                    "progress": f"{pct}% ({cur}/{total})", "rate": rate, "status": "running"})
+                else:
+                    results.append({"numa": numa, "port": port, "task": task,
+                                    "progress": rest[:60], "rate": "—", "status": "running"})
+        return results
+    except Exception:
+        return []
+
 def fmt_dur(sec):
     if sec is None: return "—"
     h = sec / 3600
@@ -249,34 +306,36 @@ def body_sections():
     p.append("<h2>三d、NUMA-pinned 分阶段并行优化（2026-11-07 21:1x）</h2>")
     p.append("<div class='warn'><b>8 服务器同时跑 = 内存带宽争用 → hellaswag 13.6 s/it（76h/shard）！</b></div>")
     p.append("<p>8 服务器同时启动后实测发现：Mamba2-hybrid SSM 是<b>内存带宽受限</b>（非计算受限），")
-    p.append("8 个 server 共享 2 个 NUMA 节点的内存带宽 → hellaswag 退化为 13.6 s/it。")
-    p.append("但同一 server 在独占 NUMA 带宽时可达 2-4 s/it → <b>带宽是瓶颈，不是线程</b>。</p>")
-    p.append("<div class='key'><b>优化方案：NUMA-pinned 分阶段并行</b><br>")
-    p.append("<b>核心思想</b>：减少并发 server 数 → 每 server 独享 NUMA 带宽 → 单 server 提速 + 阶段重叠<br>")
-    p.append("Phase 1a: arc_easy→arc_challenge→openbookqa（N0: 8080）+ piqa（N1: 8081）<br>")
-    p.append("Phase 1b: arc 完成后 → N0 切 hellaswag_shard1（与 piqa 重叠）<br>")
-    p.append("Phase 2: piqa 完成后 → N1 切 hellaswag_shard2<br>")
-    p.append("Phase 3: 两片 hellaswag 完成 → merge results</div>")
+    p.append("8 个 server 共享 4 个 NUMA 节点的内存带宽 → hellaswag 退化为 13.6 s/it。")
+    p.append("但同一 server 在独占 NUMA 带宽时可达 2-7 s/it → <b>带宽是瓶颈，不是线程</b>。</p>")
+    p.append("<div class='key'><b>优化方案：4 NUMA-pinned 分阶段并行（最终采用）</b><br>")
+    p.append("<b>核心思想</b>：每 NUMA 节点 1 个 server（独享带宽）→ 4 server × 16 线程 + 阶段重叠<br>")
+    p.append("N0(8080, cores 0-55): arc_easy→arc_challenge→openbookqa→hellaswag_chunk1b<br>")
+    p.append("N1(8081, cores 56-111): piqa_part1→hellaswag_chunk0b<br>")
+    p.append("N2(8082, cores 112-167): piqa_part2→hellaswag_chunk1a<br>")
+    p.append("N3(8083, cores 168-223): hellaswag_chunk0a（最大任务先启）<br>")
+    p.append("boolq/sciq/winogrande 在早期阶段已完成</div>")
     p.append("<table><tr><th>配置</th><th>并发 server</th><th>每 server 独享</th><th>hellaswag s/it</th><th>hellaswag ETA</th></tr>")
     p.append("<tr><td>8 server 同时（旧）</td><td>8</td><td>1/4 NUMA 带宽</td><td class='bad'>13.6</td><td class='bad'>76 h/shard</td></tr>")
-    p.append("<tr><td><b>2 server NUMA-pinned（新）</b></td><td>2</td><td><b>全 NUMA 带宽</b></td><td class='good'>2-4</td><td class='good'>~6 h/shard</td></tr>")
+    p.append("<tr><td><b>4 server NUMA-pinned（采用）</b></td><td>4</td><td><b>全 NUMA 带宽</b></td><td class='good'>2-7</td><td class='good'>~6-9 h/shard</td></tr>")
     p.append("</table>")
     p.append("<div class='note'><b>关键洞察</b>：Mamba2 SSM 顺序扫描 = 内存带宽受限 → 并发 server 数增加会<b>线性分摊带宽</b>。")
     p.append("最优策略 = 每 NUMA 节点 1 个 server（独享带宽），阶段重叠消除串行等待。")
     p.append("taskset -c 绑定核心到 NUMA 节点确保内存访问局部性。</div>")
 
     # 四、提速方案（NUMA-pinned 分阶段并行，最终采用）
-    p.append("<h2>四、提速方案（NUMA-pinned 分阶段并行，最终采用）</h2>")
-    p.append("<p>2 个 NUMA 节点各 1 个 llama-server（taskset -c 绑核），每 server 16 线程 8 并发 slot。")
-    p.append("阶段重叠：arc 任务先完成 → N0 立即切 hellaswag shard1（与 N1 piqa 并行）→ piqa 完成 → N1 切 hellaswag shard2。</p>")
+    p.append("<h2>四、提速方案（4 NUMA-pinned 分阶段并行，最终采用）</h2>")
+    p.append("<p>4 个 NUMA 节点各 1 个 llama-server（taskset -c 绑核），每 server 16 线程 8 并发 slot。")
+    p.append("阶段重叠：arc 链完成后 → N0 切 hellaswag_chunk1b；piqa 两半完成后 → N1/N2 切 hellaswag_chunk0b/1a。</p>")
     p.append("<table><tr><th>配置</th><th>并发 server</th><th>每服务器线程</th><th>NUMA 绑定</th><th>总线程</th></tr>")
     p.append("<tr><td>旧 HF 串行</td><td>1（进程内）</td><td>16</td><td>—</td><td>16</td></tr>")
     p.append("<tr><td>8 server 同时（废弃）</td><td>8</td><td>16</td><td>无</td><td>128</td></tr>")
-    p.append("<tr><td><b>2 server NUMA-pinned（采用）</b></td><td>2</td><td>16</td><td><b>taskset -c</b></td><td>32</td></tr>")
+    p.append("<tr><td><b>4 server NUMA-pinned（采用）</b></td><td>4</td><td>16</td><td><b>taskset -c</b></td><td>64</td></tr>")
     p.append("</table>")
-    p.append("<div class='note'><b>为何 2 server 而非 8</b>：第三节三d 实测证明 Mamba2 SSM 是内存带宽受限。")
-    p.append("8 server 争用带宽 → hellaswag 13.6 s/it。2 server 各独享 NUMA → 2-4 s/it，提升 3-7x/server。")
-    p.append("阶段重叠（arc→hellaswag）消除串行等待，总时间 ≈ max(arc_chain, piqa) + hellaswag/shard。</div>")
+    p.append("<div class='note'><b>为何 4 server（每 NUMA 1 个）而非 8</b>：第三节三d 实测证明 Mamba2 SSM 是内存带宽受限。")
+    p.append("8 server 争用带宽 → hellaswag 13.6 s/it。4 server 各独享 NUMA → 2-7 s/it。")
+    p.append("阶段重叠（arc→hellaswag）消除串行等待，总时间 ≈ max(arc_chain, piqa) + hellaswag/shard。")
+    p.append("hellaswag 分 4 片并行 → 每片仅 2510 req，4 server 同时跑 → 木桶效应最小化。</div>")
 
     # 五、提速实测对照表
     p.append("<h2>五、提速实测对照表</h2>")
@@ -295,6 +354,17 @@ def body_sections():
         p.append(f"<tr><td>HF 串行 16 线程</td><td>{fmt_dur(hf_total_sec)}（{hf_total_sec/86400:.1f} 天）</td><td>1x</td><td>基线</td></tr>")
         p.append("<tr><td>GGUF 4 NUMA-pinned 服务器并行</td><td><b>进行中…</b></td><td>待实测</td><td class='good'>Δ≤0.02</td></tr>")
         p.append("</table>")
+
+        # 5.1 实时进度（从编排日志读取）
+        progress = read_live_progress()
+        if progress:
+            p.append(f"<h3>5.1 实时进度（截至 {time.strftime('%H:%M')}）</h3>")
+            p.append("<table><tr><th>NUMA 节点</th><th>端口</th><th>当前任务</th><th>进度</th><th>速率</th><th>状态</th></tr>")
+            for entry in progress:
+                cls = "good" if entry["status"] == "DONE" else ""
+                p.append(f"<tr><td>{esc(entry['numa'])}</td><td>{esc(entry['port'])}</td><td>{esc(entry['task'])}</td>"
+                         f"<td>{esc(entry['progress'])}</td><td>{esc(entry['rate'])}</td><td class='{cls}'>{esc(entry['status'])}</td></tr>")
+            p.append("</table>")
 
     # 六、全量分数与一致性校验
     p.append("<h2>六、全量分数与一致性校验</h2>")
