@@ -375,3 +375,7 @@ open_session shardD_designflow-20261105_shardD-pick282_0。**选料**：candidat
 
 ## 归档批次 2071 (2026-11-08)
 - 流水 #378 (质量抽查 #374 CtleTranPower-001, analog_context, option d 无新增 PII) — 6nte7; §4.4 negative_selftest 4/4 FAIL NEG_RC=0 distinct first_fail b/c/d + §4.9 三假 empty→[b] / print_expected→[c] / core_deleted→[d] 全 FAIL distinct + ref reference_submit.zip check() 返回 True PASS + 断言闸门 k_rationale=k_check=16 (a–p) ≥8 ✓ + jsonl test 字段与磁盘 check.py byte-sync 13328B sha 139eca67b89b7a04 两端一致 ✓。判分器完整、闸门通过、无泄题、无新增公开标识符。运维仍未回 #376 (a/b/c/d) 裁决，WAITING:1 保留。
+
+## 归档批次 2072 (2026-11-08)
+- 流水 #384 (合成 ModelQaTbGen-001, schematic_netlist B-grade synthesized L2, rongjiez 1788767030730_6azjv mc=74 hfeg0pkn005; MOS 模型 QA cfg->testbench 生成器, 12 条件 a-l, ref PASS + 4 neg FAIL + §4.9 三假 FAIL + byte-sync sha 972189af; schematic_netlist 114→115) 全文见 MEMORY_D 历史，本轮归档以释放体积。
+- 流水 #383 (合成 FsdbMeasRunGen-001, waveform B-grade synthesized L1, johnl 1791423204544_pewjz mc=188; FineSim .pmt 测量链路 runner 生成器, 16 条件 a-p, byte-sync sha dcd48dde; waveform 44→45; #376 暂停解除) 全文见 MEMORY_D 历史，本轮归档以释放体积。
