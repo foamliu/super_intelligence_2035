@@ -141,8 +141,8 @@ agent:
 trainer:
   total_epochs: 1
   save_interval: 200
-  save_dir: /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize_posttrain_rl_grpo
-  log_dir: /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize_posttrain_rl_grpo/logs
+  save_dir: /nas_data/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize_posttrain_rl_grpo  # R12: /nas_train empty on .17
+  log_dir: /nas_data/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize_posttrain_rl_grpo/logs
   log_interval: 10
   cheat_rate_interval: 200
   tensorboard: true

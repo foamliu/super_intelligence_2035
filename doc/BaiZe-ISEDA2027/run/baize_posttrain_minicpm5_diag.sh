@@ -20,15 +20,19 @@
 #   bash baize_posttrain_minicpm5_diag.sh --vllm-only            # 仅启动 vLLM 服务
 set -uo pipefail
 
-MODEL_PATH="/tmp/models/MiniCPM5-2B"
-EDA_BASE="$HOME/code/eda_fastmcp"
+# R12: Auto-detect paths + SGLang switch (R8/R9: MiniCPM5-2B needs SGLang minicpm5 parser)
+SCRIPT_DIR="$(dirname "$(realpath "${BASH_SOURCE[0]}")")"
+source "$SCRIPT_DIR/baize_posttrain_paths.sh"
+
+MODEL_PATH="${BAIZE_MODEL_PATH}"
+EDA_BASE="$BAIZE_EDA_BASE"
 DRIVER="$EDA_BASE/pyAether-eval/run_cline_script.sh"
 EVAL_PY="$EDA_BASE/scripts/run_eval.py"
 TRACE_READER="$EDA_BASE/scripts/trace_reader.py"
 DATASET="$EDA_BASE/pyAether-eval/original_dataset/EDA-Eval-PyAether-v20260311.jsonl"
 EVAL_CODE_DIR="$HOME/eda_code_eval"
 EXTRACT_SCRIPT="$(dirname "$(realpath "${BASH_SOURCE[0]}")")/pt_p0_minicpm5_extract.py"
-VLLM_VENV="$HOME/code/vllm_venv"
+VLLM_VENV="$BAIZE_VENV_DIR"  # R12: use cu124 venv (was vllm_venv)
 VLLM_PORT=8866
 SERVED_MODEL_NAME="minicpm5-2b"
 
@@ -100,64 +104,53 @@ if [ "$EXTRACT_ONLY" = 1 ]; then
   exit $?
 fi
 
-echo "[step1] 检查/创建 vLLM 虚拟环境..."
-# 系统 python3=3.8 不支持 vLLM（需 ≥3.9）；优先用 eda_fastmcp venv 的 python3.13
-PYTHON_FOR_VENV=""
-if [ -x "$EDA_BASE/.venv/bin/python3.13" ]; then
-  PYTHON_FOR_VENV="$EDA_BASE/.venv/bin/python3.13"
-elif command -v python3.10 >/dev/null 2>&1; then
-  PYTHON_FOR_VENV="python3.10"
-elif command -v python3.11 >/dev/null 2>&1; then
-  PYTHON_FOR_VENV="python3.11"
-elif command -v python3.12 >/dev/null 2>&1; then
-  PYTHON_FOR_VENV="python3.12"
-else
-  PYTHON_FOR_VENV="python3"  # fallback（可能=3.8，vLLM 安装会失败）
-fi
-echo "  使用 Python: $PYTHON_FOR_VENV"
+echo "[step1] 检查 cu124 venv (SGLang)..."
+# R12: Use cu124 venv (created by baize_posttrain_setup_cu124_venv.sh)
+# R8/R9: SGLang required for MiniCPM5-2B XML tool calls (vLLM cannot parse)
 if [ ! -d "$VLLM_VENV" ]; then
-  echo "  创建 venv: $VLLM_VENV"
-  "$PYTHON_FOR_VENV" -m venv "$VLLM_VENV" || { echo "❌ venv 创建失败"; exit 1; }
-  "$VLLM_VENV/bin/pip" install --upgrade pip wheel
-  echo "  安装 vLLM（可能需要数分钟）..."
-  "$VLLM_VENV/bin/pip" install vllm || { echo "❌ vLLM 安装失败"; exit 1; }
-else
-  echo "  venv 已存在"
-  "$VLLM_VENV/bin/python" -c "import vllm" 2>/dev/null || {
-    echo "  vLLM 未安装，正在安装..."
-    "$VLLM_VENV/bin/pip" install vllm || { echo "❌ vLLM 安装失败"; exit 1; }
-  }
+  echo "  ❌ cu124 venv 不存在: $VLLM_VENV"
+  echo "  先运行: bash $SCRIPT_DIR/baize_posttrain_setup_cu124_venv.sh"
+  exit 1
 fi
-VLLM_BIN="$VLLM_VENV/bin/vllm"
 VLLM_PY="$VLLM_VENV/bin/python"
+# Check SGLang is installed
+"$VLLM_PY" -c "import sglang" 2>/dev/null || {
+  echo "  ❌ SGLang 未安装在 $VLLM_VENV"
+  echo "  先运行: bash $SCRIPT_DIR/baize_posttrain_setup_cu124_venv.sh"
+  exit 1
+}
+echo "  ✅ cu124 venv + SGLang 就绪"
 
 ENDPOINT="http://127.0.0.1:${VLLM_PORT}/v1"
 GPU_FLAG=""
 [ -n "$GPU_IDS" ] && GPU_FLAG="CUDA_VISIBLE_DEVICES=$GPU_IDS"
 
-echo "[step2] 启动 vLLM 服务 MiniCPM5-2B..."
+echo "[step2] 启动 SGLang 服务 MiniCPM5-2B (tool-call-parser=minicpm5)..."
 if curl -s "$ENDPOINT/v1/models" 2>/dev/null | grep -q "$SERVED_MODEL_NAME"; then
-  echo "  vLLM 已在运行，跳过启动"
+  echo "  SGLang 已在运行，跳过启动"
 else
   mkdir -p "$EVAL_CODE_DIR"
-  eval "$GPU_FLAG $VLLM_BIN serve '$MODEL_PATH' \
-    --served-model-name '$SERVED_MODEL_NAME' \
-    --port '$VLLM_PORT' --dtype bfloat16 \
-    --max-model-len 32768 --gpu-memory-utilization 0.85 \
-    --trust-remote-code" > "$EVAL_CODE_DIR/vllm_serve.log" 2>&1 &
+  # R8/R9: SGLang with minicpm5 tool-call parser for XML format tool calls
+  eval "$GPU_FLAG $VLLM_PY -m sglang.launch_server" \
+    "--model-path '$MODEL_PATH'" \
+    "--served-model-name '$SERVED_MODEL_NAME'" \
+    "--port '$VLLM_PORT' --dtype bfloat16" \
+    "--context-length 32768 --mem-fraction-static 0.85" \
+    "--tool-call-parser minicpm5" \
+    "--trust-remote-code" > "$EVAL_CODE_DIR/sglang_serve.log" 2>&1 &
   VLLM_PID=$!
-  echo "  vLLM PID: $VLLM_PID, 等待就绪..."
+  echo "  SGLang PID: $VLLM_PID, 等待就绪..."
   READY=0
   for i in $(seq 1 60); do
     sleep 5
     curl -s "$ENDPOINT/v1/models" 2>/dev/null | grep -q "$SERVED_MODEL_NAME" && { READY=1; break; }
     echo "  [$i/60] 等待中..."
   done
-  [ $READY = 0 ] && { echo "❌ vLLM 超时(300s)，见 $EVAL_CODE_DIR/vllm_serve.log"; kill $VLLM_PID 2>/dev/null; exit 1; }
-  echo "  ✅ vLLM 就绪: $ENDPOINT"
+  [ $READY = 0 ] && { echo "❌ SGLang 超时(300s)，见 $EVAL_CODE_DIR/sglang_serve.log"; kill $VLLM_PID 2>/dev/null; exit 1; }
+  echo "  ✅ SGLang 就绪: $ENDPOINT"
 fi
 
-[ $VLLM_ONLY = 1 ] && { echo "[vllm-only] 服务已启动，退出。"; exit 0; }
+[ $VLLM_ONLY = 1 ] && { echo "[sglang-only] 服务已启动，退出。"; exit 0; }
 
 echo "[step3] 配置 cline auth..."
 CLINE_AUTH_BACKUP="$EVAL_CODE_DIR/cline_auth_backup_$(date '+%s')"
@@ -199,4 +192,4 @@ else
 fi
 
 echo "[done] 结果: $EVAL_CODE_DIR | 汇总: $SUMMARY_FILE"
-echo "  停止 vLLM: kill \$(pgrep -f 'vllm serve.*$SERVED_MODEL_NAME')"
+echo "  停止 SGLang: kill \$(pgrep -f 'sglang.launch_server.*$SERVED_MODEL_NAME')"

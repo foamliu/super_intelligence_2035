@@ -21,12 +21,16 @@
 #   bash baize_posttrain_eval.sh --backbone baize-rl --endpoint http://127.0.0.1:8000/v1 --key <KEY> --model <MODEL_ID>
 set -uo pipefail
 
-EDA_BASE=/nasdata/app.e0031982/code/eda_fastmcp
+# R12: Auto-detect paths
+SCRIPT_DIR="$(dirname "$(realpath "${BASH_SOURCE[0]}")")"
+source "$SCRIPT_DIR/baize_posttrain_paths.sh"
+
+EDA_BASE="$BAIZE_EDA_BASE"
 DRIVER="$EDA_BASE/scripts/run_cline_script.sh"
 EVAL_PY="$EDA_BASE/scripts/run_eval.py"
 DATASET="$EDA_BASE/pyAether-eval/original_dataset/EDA-Eval-PyAether-v20260311.jsonl"
-RUN_DIR=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
-OUT_BASE=/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize_posttrain_eval
+RUN_DIR="$BAIZE_RUN_DIR"
+OUT_BASE="$BAIZE_EXP_DIR/baize_posttrain_eval"
 
 N_RUNS=5; TASK_TIMEOUT=2500; PARALLEL=8; FRESH_CONTEXT=1; RESHUFFLE=1; N_TASKS=158
 

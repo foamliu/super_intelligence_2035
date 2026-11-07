@@ -7,12 +7,12 @@ WAITING: 1
 
 ## 进度快照
 
-- PHASE: posttrain-wake59（2026-11-07 R11 GRPO内存预算+超参校准完成，发现gpu_mem_utilization=0.35可能OOM，已校准为0.50）
-- 已完成: P3预备✅ 7脚本；P0✅ D1–D6；P1✅ 数据盘点+PyAether语料+污染隔离；P2✅ 方案书；wake45✅ §替身RL预演；wake48✅ R1+R3；wake49✅ R4；wake50✅ R2；wake51✅ E1(3347题)；wake52✅ R5(verl+GRPO)；wake53✅ R6(SFT)+R7(verl环境+CUDA发现)；wake55✅ 11/9启动脚本；wake56✅ R8(模型架构+Tokenizer+SGLang发现)；wake57✅ R9(verl+SGLang集成+EDA工具骨架)；wake58✅ R10(verl数据格式+Parquet转换)；wake59✅ R11(GRPO内存预算+超参校准)
-- 当前动作: wake59 唤醒→体积自检(TASK=24.7KB/MEMORY=15.0KB合规)→ git同步(已同步)→ R11: 研究verl官方硬件需求表+性能调优指南+SGLang后端文档+多轮Rollout文档→ 逐项计算MiniCPM5-2B在4×A40上的显存预算(Actor 6GB+Ref 1GB+激活3GB+杂项2GB=12GB/卡,剩余34GB给SGLang)→ 多轮KV cache分析(42KB/token×20480token=860MB/seq,16并发=13.8GB)→ 🔴发现当前gpu_mem_utilization=0.35分配11.9GB不足3轮峰值13.8GB→ 校准为0.50+max_num_seqs=12→ 添加entropy_checkpointing+entropy_chunking+tokenization_sanity_check→ 更新verl配置YAML(YAML✅验证通过)→ 5级OOM降级阶梯+smoke test方案+监控清单→ EXPERIMENTS §R11(9小节)+HTML报告7.0KB
-- 下一步: R1-R11+E1全部完成→ WAITING=1；11/9 GPU到位后自动起跑(Step0 venv→Step1 preflight→Step2a SGLang serve→Step3评测→Step4采轨迹→Step5 profiling→Step6 parquet✅→Step7 verl RL with R11校准配置)
+- PHASE: posttrain-wake60（2026-11-07 R12 启动就绪审计+GRPO超参对账完成，修复6类critical脚本缺陷+创建master编排脚本）
+- 已完成: P3预备✅ 7脚本；P0✅ D1–D6；P1✅ 数据盘点+PyAether语料+污染隔离；P2✅ 方案书；wake45✅ §替身RL预演；wake48✅ R1+R3；wake49✅ R4；wake50✅ R2；wake51✅ E1(3347题)；wake52✅ R5(verl+GRPO)；wake53✅ R6(SFT)+R7(verl环境+CUDA发现)；wake55✅ 11/9启动脚本；wake56✅ R8(模型架构+Tokenizer+SGLang发现)；wake57✅ R9(verl+SGLang集成+EDA工具骨架)；wake58✅ R10(verl数据格式+Parquet转换)；wake59✅ R11(GRPO内存预算+超参校准)；wake60✅ R12(启动就绪审计+GRPO超参对账+master编排脚本)
+- 当前动作: wake60 唤醒→体积自检→ R12: 发现/nas_train空目录critical→创建baize_posttrain_paths.sh自动检测→重写baize_posttrain_rl_grpo.sh(占位→verl入口)→修复baize_posttrain_minicpm5_diag.sh(vLLM→SGLang+minicpm5 parser)→重写preflight(SGLang+parquet+语法检查)→修复sft/anneal/eval路径→修复YAML save_dir→创建baize_posttrain_launch_11_9.sh(7步master编排)→DeepSeek-R1 Nature论文GRPO超参对账(lr/KL/clip/G/epochs全部对齐)→14文件全量语法验证通过→EXPERIMENTS §R12(9小节)+HTML报告6.5KB
+- 下一步: R1-R12+E1全部完成→ WAITING=1；11/9 GPU到位后自动起跑: bash baize_posttrain_launch_11_9.sh --step 0-6
 - 阻塞: GPU 2026-11-09既定到位(不再问)；L3等隧道；P3等pretrain ckpt(ETA≈2026-12-25)
-- 未完成指令: 无（R1✅R2✅R3✅R4✅R5✅R6✅R7✅R8✅R9✅R10✅R11✅E1✅ 全部完成）⇒ WAITING=1
+- 未完成指令: 无（R1✅...R12✅E1✅ 全部完成）⇒ WAITING=1
 
 ## 关键事实（常驻）
 

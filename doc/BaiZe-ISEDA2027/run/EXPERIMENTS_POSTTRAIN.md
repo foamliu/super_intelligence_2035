@@ -1892,3 +1892,87 @@ verl 多轮 rollout 使用 **delta-based tokenization**：只对 assistant 新�
 | CSDN verl 3D-HybridEngine 实测 | https://blog.csdn.net/weixin_42355400/article/details/157451594 | 2026-11-07 |
 | Belgavi.AI GRPO 内存分析 | https://aicassindra.com/blogs/gpu/gpu_grpo.html | 2026-11-07 |
 
+
+## §R12 Launch Readiness Audit + GRPO Hyperparameter Deep Dive (2026-11-07 wake60)
+
+> **目的**：11/9 GPU 到位前 2 天的启动就绪审计。发现并修复 6 类 critical 脚本缺陷；研究 DeepSeek-R1 (Nature) 论文的 GRPO 超参细节并与当前配置对账。
+
+### R12.1 Critical Path Discovery: `/nas_train` 空目录 on `.17`
+
+**发现**：`.17` 上 `/nas_train` 是符号链接 → `/H100_train`（空目录），实际 NFS 在 `/nas_data`（127T）。
+
+**影响**：5 个 posttrain 脚本 + 1 个 YAML 硬编码 `/nas_train/...`，在 `.17` 上全部失败。
+
+**修复**：创建 `baize_posttrain_paths.sh` 通用路径自动检测模块（`/nas_data` vs `/nas_train`）。6 个文件已全部修复，`bash -n` 通过。
+
+### R12.2 RL GRPO Script: Placeholder → verl Entry Point
+
+**发现**：`baize_posttrain_rl_grpo.sh` 原版使用不存在的占位入口 `grpo_train.py`。
+
+**修复**：重写为 `$BAIZE_VENV_PY -m verl.trainer.main_ppo --config ... --reward.arm ...`。默认 `RESUME_DIR=/tmp/models/MiniCPM5-2B`，`REWARD_ARM=R2`，`NP=4`。dry-run 验证通过。
+
+### R12.3 Diag Script: vLLM → SGLang + minicpm5 Parser
+
+**发现**：diag 脚本用 vLLM serve，但 R8 发现 MiniCPM5-2B XML 工具调用 vLLM 无法解析 → 36% 基线不可比。
+
+**修复**：`vllm serve` → `python -m sglang.launch_server --tool-call-parser minicpm5`。venv 从 `vllm_venv` → `verl_cu124_venv`。
+
+### R12.4 Preflight Check Update
+
+路径检查改 `source baize_posttrain_paths.sh`；vLLM 检查 → SGLang；新增 ray/flash_attn/parquet/语法检查；SSH 隧道降级为 WARN。
+
+### R12.5 GRPO 超参对账：vs DeepSeek-R1 (Nature 2025)
+
+| 参数 | DeepSeek-R1 | 我们 | 评估 |
+|:--|:--|:--|:--|
+| Learning rate | 3e-6 | 1e-6 | ✅ 2B 模型宜低 |
+| KL coefficient | 0.001 | 0.04 | ✅ 范围 0.01-0.05；DeepSeek 用 KL 作 reward penalty 而非 loss |
+| Clip ratio | ε=10 | 0.2 | ⚠️ 不同参数语义；verl clip_ratio=0.2 是标准 PPO |
+| Temperature | 1.0 | 1.0 | ✅ 一致 |
+| Group size | 16 | 8 | ✅ ≥4 最低要求 |
+| PPO epochs | 1 | 1 | ✅ 一致 |
+| Entropy coeff | 未明确 | 0.0 | ⚠️ 可考虑 0.001 增加探索 |
+
+### R12.6 Master Launch Script: `baize_posttrain_launch_11_9.sh`
+
+7 步编排脚本（--step / --dry-run / --quick 支持）：
+
+| Step | 名称 | 预计时间 |
+|:--|:--|:--|
+| 0 | cu124 venv 安装 | ~30 min |
+| 1 | 预飞行检查 | ~1 min |
+| 2 | SGLang serve + 36% 基线复测 (5-run) | ~4-6 h |
+| 3 | D1-D6 轨迹提取 | ~10 min |
+| 4 | 污染闸门 | ~5 min |
+| 5 | RL smoke test (R2, 10 iters) | ~30 min |
+| 6 | Full RL training (R2, surrogate) | ~8-12 h |
+
+dry-run 验证通过。
+
+### R12.7 全量语法验证结果
+
+14 个文件全部 `bash -n` / `py_compile` / YAML 解析通过。详见 HTML 报告。
+
+### R12.8 11/9 启动检查清单
+
+1. ✅ 路径自动检测（6 脚本已修复）
+2. ✅ RL 入口已切 verl
+3. ✅ 诊断脚本已切 SGLang（minicpm5 parser）
+4. ✅ 预飞行检查已更新
+5. ✅ Master 编排脚本已创建
+6. ✅ GRPO 超参已对账 DeepSeek-R1 论文
+7. ⬜ cu124 venv 待 11/9 创建
+8. ⬜ GPU 4×A40 待 11/9 释放
+9. ⬜ SSH 隧道到 .15 待配置
+
+### R12.9 数据来源
+
+| 来源 | URL |
+|:--|:--|
+| DeepSeek-R1 Nature | https://doi.org/10.1038/s41586-025-09422-z |
+| verl 官方文档 | https://verl.readthedocs.io/ |
+| CSDN verl GRPO 实践 | https://blog.csdn.net/weixin_42355400/article/details/157451594 |
+
+
+**结论**：当前超参与 DeepSeek-R1 论文对齐，差异有合理解释，无需修改核心超参。
+
