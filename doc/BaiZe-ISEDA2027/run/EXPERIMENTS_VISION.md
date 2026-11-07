@@ -2846,3 +2846,5 @@ std>0 组 ≥30%                  ⇒ PARAM-ISSUE
 - `cpu_rl_v3/experiment_results.json`（完整结果JSON，实验完成后生成）⏳
 
 **数字溯源**：`cpu_rl_v3_experiment.py` 实测 stdout (`/tmp/v3_full_experiment.log`) + JSON输出。CPU fp32 / nice19 / OMP32 / 零GPU / 未碰pretrain。可复现(seed=20261107 + step3000 ckpt + group_size=8)。
+
+**wake#861 更新**（2026-11-07 14:5x）：v3 Phase3 step25/40，avgR波动轨迹 -0.5→0.066→0.279→0.321→0.151→**-0.043**，loss≈0.000038（近零）→GRPO策略梯度极弱。**预备v4 RFT脚本**（`vision/wave_rl/cpu_rl_v4_rft_experiment.py`，385行，SYNTAX OK）——若v3未达显著性则换方向：GRPO→Rejection Sampling FT(STaR/ReST)。v4设计：收集SFT模型rollout(60circuits×4)→按连续奖励过滤(reward>0.3)→标准CE SFT训练成功轨迹(3epoch/lr1e-5/batch4)。优势：无group baseline(消除std=0根因)、稳定CE梯度(非noisy policy gradient)、解耦收集与训练。预注册判据：C(RFT)>B(SFT=34%)且C>D(随机过滤控制)，McNemar p<0.05+bootstrap CI排除0。v4不改变奖励函数或任务(仅改优化方法)。**v4脚本未启动**(v3正在跑，避免CPU竞争；v3完成后或失败时启动)。

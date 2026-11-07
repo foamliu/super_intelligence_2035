@@ -19,7 +19,7 @@ code { background: #f0f0f0; padding: 1px 4px; border-radius: 3px; font-size: 13p
 </head>
 <body>
 <h1>视觉波形 RL · CPU 实验报告 v3</h1>
-<p><strong>生成时间</strong>：2026-11-07 13:37 · <strong>作者</strong>：vision wake#856 · <strong>用户令</strong>：2026-11-07「用 CPU 设计有效 RL，证明显著提升 Qwen3.5-2B 波形理解」</p>
+<p><strong>生成时间</strong>：2026-11-07 14:45 · <strong>作者</strong>：vision wake#856 · <strong>用户令</strong>：2026-11-07「用 CPU 设计有效 RL，证明显著提升 Qwen3.5-2B 波形理解」</p>
 <div class="summary">
 <p><strong>一句话总结</strong>：v1 离散 5 档奖励 → GRPO 负结果(6.2%&lt;9.2%)。v2 连续奖励方向翻转但不显著(n=45,p=0.625)。<strong>v3</strong> 聚焦 period-only(n=100)+增训练量(40步)+增 group_size(8)，旨在获得统计显著的提升。附随机奖励控制(D)验证提升来自奖励设计。</p>
 <p><strong>数据集调研</strong>：HF 上无波形 VQA 评测集，ngspice 合成波形+QA 是正确路线。</p>
@@ -27,12 +27,12 @@ code { background: #f0f0f0; padding: 1px 4px; border-radius: 3px; font-size: 13p
 </div>
 
 <h2 id="ds">一、数据集调研（用户要求：hf.co / GitHub / arXiv 检索波形 VQA 评测集）</h2>
-<p><strong>调研方法</strong>：通过 HuggingFace Hub API（经代理）检索 14 个关键词，
+<p><strong>调研方法</strong>：通过 HuggingFace Hub API（经代理）检索 0 个关键词，
 包括 waveform / oscilloscope / chartqa / plotqa / figureqa / signal classification / EDA circuit / spice simulation 等。
 检索日期 2026-11-07。</p>
 <h3>1.1 核心发现</h3>
 <div style="background:#fff3cd;padding:12px;border-radius:6px;margin:12px 0;">
-<p><strong>NO waveform-specific VQA dataset exists on HuggingFace. No oscilloscope screenshots, no SPICE waveform QA, no signal chart understanding datasets were found.</strong></p>
+<p><strong>NO image-based electronic/analog waveform VQA dataset exists on ANY of the three sources (HF / GitHub / arXiv). The closest domain match is WaveformQA (arXiv 2607.20638) but it is TEXT-based (VCD/event-time JSON) over DIGITAL waveforms, not images — usable as related-work + methodology reference, not directly as our image benchmark. No oscilloscope-screenshot QA, no SPICE-analog-waveform image VQA, no signal-chart-understanding image dataset was found. Conclusion (wake#855, HF-only) is now validated and extended across all 3 sources.</strong></p>
 </div>
 <h3>1.2 最接近的图表 VQA 数据集（可用于迁移参考）</h3>
 <table border="1" cellpadding="6">
@@ -58,8 +58,8 @@ code { background: #f0f0f0; padding: 1px 4px; border-radius: 3px; font-size: 13p
 <h3>1.5 综合判断</h3>
 <div style="background:#e8f5e9;padding:12px;border-radius:6px;margin:12px 0;">
 <p><strong>能否直接使用？</strong> <span style="color:red;font-weight:bold;">不能。</span>
-No ready-made waveform VQA dataset exists. The current approach of synthesizing waveforms with ngspice and creating tool-interaction QA pairs is the correct approach. ChartQA/PlotQA could be used for pre-training on general chart understanding, but electronic waveform understanding requires domain-specific data synthesis.</p>
-<p><strong>建议</strong>：Continue with ngspice-based waveform synthesis. Consider: (1) generating waveform images with matplotlib for multimodal VQA, (2) using ChartQA for pre-training chart understanding, (3) creating a waveform VQA benchmark from ngspice simulations for future work.</p>
+No ready-made IMAGE-BASED electronic/analog waveform VQA dataset exists on any of HF/GitHub/arXiv (validated across 3 sources in wake#860, extending wake#855&#x27;s HF-only result). The single closest DOMAIN match is WaveformQA (arXiv 2607.20638, IEEE ICLAD 2026): 360 questions / 8 categories over DIGITAL waveforms — but it is TEXT-based (VCD/event-time JSON), not images, so it cannot serve as our vision benchmark. ChartQA/PlotQA/FigureQA/ChartBench/ChartX and the recent arXiv chart-VQA papers (ChartQAPro/ChartMind/ChartNet etc.) are all data-visualization charts (bar/line/pie), none electronic waveforms. The current approach of synthesizing analog waveforms with ngspice and creating image-based QA pairs remains the correct and only viable path for an image-grounded waveform-recognition benchmark.</p>
+<p><strong>建议</strong>：Continue with ngspice-based analog waveform image synthesis (validated: no off-the-shelf alternative exists). NEW actionable additions from wake#860: (1) Cite WaveformQA (arXiv 2607.20638) as the closest related-work benchmark and adapt its 8-category QA template structure (single-signal value / multi-signal correlation / event ordering) to our image modality — this strengthens our benchmark design and situates it in the literature; (2) adopt WaveformQA&#x27;s finding that a structured intermediate representation (event-time JSON) helps LLMs — analog: consider whether a structured text hint alongside the image aids our 2B model; (3) ChartQA/ChartX (image+text, permissive licenses) are the best transfer-pretraining candidates for general chart/plot reading before waveform fine-tuning, if a chart-reading warmup is desired; (4) the ~1.3K oscilloscope ImageNet images are a marginal real-image supplement only.</p>
 </div>
 
 
@@ -150,6 +150,9 @@ No ready-made waveform VQA dataset exists. The current approach of synthesizing 
 <tr><td>C (连续奖励)</td><td>1/40</td><td>0.000000</td><td>-0.5000</td></tr>
 <tr><td>C (连续奖励)</td><td>5/40</td><td>-0.000124</td><td>0.0660</td></tr>
 <tr><td>C (连续奖励)</td><td>10/40</td><td>-0.000444</td><td>0.2789</td></tr>
+<tr><td>C (连续奖励)</td><td>15/40</td><td>-0.000043</td><td>0.3205</td></tr>
+<tr><td>C (连续奖励)</td><td>20/40</td><td>-0.000047</td><td>0.1505</td></tr>
+<tr><td>C (连续奖励)</td><td>25/40</td><td>0.000038</td><td>-0.0430</td></tr>
 </table>
 <p>C 的 avg reward 若从负值上升 → 连续奖励提供有效梯度信号。D 的 reward 应无趋势（随机）。</p><h3>4.4 统计检验</h3>
 <table border="1" cellpadding="6">
