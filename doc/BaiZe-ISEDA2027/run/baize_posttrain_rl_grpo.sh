@@ -41,13 +41,14 @@ RESUME_DIR="${RESUME_DIR:-${BAIZE_MODEL_PATH}}"  # Default: MiniCPM5-2B for surr
 REWARD_ARM=R2
 NP=4  # 4×A40 on .17
 
-DRY_RUN=0; SMOKE=0
+DRY_RUN=0; SMOKE=0; GPU_IDS=""
 while [ $# -gt 0 ]; do
   case "$1" in
     --dry-run) DRY_RUN=1 ;; --smoke) SMOKE=1 ;;
     --reward-arm) REWARD_ARM="$2"; shift ;;
     --resume) RESUME_DIR="$2"; shift ;;
     --config) CONFIG_FILE="$2"; shift ;;
+    --gpu-ids) GPU_IDS="$2"; shift ;;
     *) echo "未知参数: $1" ;;
   esac
   shift
@@ -58,7 +59,7 @@ case "$REWARD_ARM" in R1|R2|R3|R4) ;; *) echo "❌ --reward-arm 必须是 R1/R2/
 cat <<EOF
 ===== BaiZe Stage(ii) RLVR+GRPO (verl) — RECIPE @ $(date '+%F %T') =====
   mode              : $([ $DRY_RUN = 1 ] && echo DRY-RUN || ([ $SMOKE = 1 ] && echo SMOKE || echo TRAIN))
-  framework         : verl (python -m verl.trainer.main_ppo)
+  framework         : verl via baize_posttrain_verl_wrapper.py (R21: in-process parser)
   config            : ${CONFIG_FILE}
   resume_ckpt       : ${RESUME_DIR}
   output_dir        : ${OUTPUT_DIR}
@@ -83,9 +84,16 @@ EOF
 RL_PARQUET="$SCRIPT_DIR/rl_pyaether_synth_v2.parquet"
 [ -f "$RL_PARQUET" ] || { echo "❌ RL parquet 不存在: $RL_PARQUET"; exit 1; }
 
-# Check GPU availability
-GPU_BUSY=$(nvidia-smi --query-gpu=index,memory.used --format=csv,noheader 2>/dev/null | awk -F', ' '{gsub(/[^0-9]/,"",$2); if($2+0>1000) print $1}')
-[ -n "$GPU_BUSY" ] && { echo "❌ GPU $GPU_BUSY 非空（used>1GB），停手"; exit 1; }
+# === GPU allocation (R21: support --gpu-ids for 4-of-8 allocation) ===
+if [ -n "$GPU_IDS" ]; then
+    export CUDA_VISIBLE_DEVICES="$GPU_IDS"
+    echo "[rl] CUDA_VISIBLE_DEVICES=$CUDA_VISIBLE_DEVICES"
+    NP=$(echo "$GPU_IDS" | tr ',' '\n' | wc -l)
+else
+    # Check GPU availability (all GPUs must be free if no explicit allocation)
+    GPU_BUSY=$(nvidia-smi --query-gpu=index,memory.used --format=csv,noheader 2>/dev/null | awk -F', ' '{gsub(/[^0-9]/,"",$2); if($2+0>1000) print $1}')
+    [ -n "$GPU_BUSY" ] && { echo "❌ GPU $GPU_BUSY 非空（used>1GB），停手。用 --gpu-ids 0,1,2,3 指定GPU"; exit 1; }
+fi
 
 # === Environment ===
 export HF_HOME="${NAS_ROOT}/app.e0031982/.cache"
@@ -129,16 +137,14 @@ echo "[rl] output: $OUTPUT_DIR"
 
 cd "$SCRIPT_DIR" || { echo "❌ Cannot cd to $SCRIPT_DIR"; exit 1; }
 
-# 🔴 R16: Import MiniCPM5 tool parser BEFORE verl starts (registers "minicpm5" in ToolParser)
-#   verl's ToolParser (verl/experimental/agent_loop/tool_parser.py) is separate from SGLang's parser.
-#   This module registers a parser for MiniCPM5-2B's XML-format tool calls.
-#   Without this import, verl won't know how to parse <function name="..."><param>...</function>
-echo "[rl] Registering MiniCPM5 ToolParser (R16)..."
-"$BAIZE_VENV_PY" -c "import baize_posttrain_minicpm5_parser; print('  minicpm5 parser registered:', 'minicpm5' in __import__('baize_posttrain_minicpm5_parser', fromlist=['ToolParser']).ToolParser._registry)" || {
-    echo "  ⚠️ Parser registration failed — tool calls won't be parsed! Continuing anyway..."
-}
+# 🔴 R21 FIX (2026-11-07): Use wrapper script instead of separate process.
+#   Previously, parser was imported in a throwaway `python -c` process — the
+#   registration was lost when that process exited, and verl training started
+#   WITHOUT the "minicpm5" parser registered → multi-turn RL would silently
+#   fail. The wrapper imports the parser IN THE SAME PROCESS as verl training.
+echo "[rl] Launching verl via wrapper (parser registered in-process, R21 fix)..."
 
-"$BAIZE_VENV_PY" -m verl.trainer.main_ppo "${VERL_ARGS[@]}" > "$LOG" 2>&1
+"$BAIZE_VENV_PY" "$SCRIPT_DIR/baize_posttrain_verl_wrapper.py" "${VERL_ARGS[@]}" > "$LOG" 2>&1
 RC=$?
 
 echo "  rc=${RC}" | tee -a /tmp/baize_posttrain_rl.sum

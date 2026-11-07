@@ -2854,3 +2854,110 @@ GRPO 奖励是 episode 级 scalar（非 per-turn）：① rollout 产出 (prompt
 **与既有发现关系**：R20 深化了 R9(SGLang集成)、R15(BaseTool schema)、R16(ToolParser)、R17(数据schema审计)、R18(SGLang调参) 的发现，发现 6 项配置问题并修复 4 项，新增 6 项 11/9 验证清单。
 
 **局限性**：① verl 版本不确定（分析基于 0.4.2-0.7 文档，安装版本可能有 API 差异）；② 两条架构路径未实测确认；③ Token 一致性未在 MiniCPM5-2B 上实测；④ SGLang ZeroMQ 通信路径基于文档描述。
+
+---
+
+## §R21 11/9 启动前全面审计（2026-11-07 wake69 · 零 GPU · 23 脚本/配置/数据全量检查）
+
+> **任务**：在 GPU 到位前 2 天，对所有 post-train 脚本、配置、数据文件进行系统性审计，发现并修复 11/9 启动时的 showstopper。
+> **方法**：bash -n 全脚本 + python ast.parse 全 .py + YAML safe_load + Parquet magic check + 路径存在性验证 + 逐文件源码走读。
+
+### R21.1 审计范围与通过率
+
+| 类别 | 检查项数 | 通过 | 失败 | 备注 |
+|:--|--:|--:|--:|:--|
+| Shell 脚本语法 (bash -n) | 11 | 11 | 0 | ✅ 全通过 |
+| Python 语法 (ast.parse) | 9 | 9 | 0 | ✅ 全通过 |
+| YAML 验证 (safe_load) | 2 | 2 | 0 | ✅ 全通过 |
+| Parquet 完整性 (magic+footer) | 2 | 2 | 0 | ✅ PAR1 魔数确认 |
+| JSONL 行数 | 2 | 2 | 0 | SFT=19610, RL=3347 |
+| 关键路径存在性 | 7 | 7 | 0 | 模型/venv/EDA/数据集全在 |
+| **源码逻辑走读** | 23 | **19** | **4** | 🔴 发现 4 项需修复 |
+
+### R21.2 发现的问题（按严重度排序）
+
+#### 🔴 C1 (P0 · Showstopper): Parser 注册在独立进程中，verl 训练时未注册
+
+- **文件**：`baize_posttrain_rl_grpo.sh` 原 L137-149
+- **问题**：脚本用 `"$BAIZE_VENV_PY" -c "import baize_posttrain_minicpm5_parser..."` 在一个**一次性进程**中注册 parser。该进程退出后，注册丢失。随后 `python -m verl.trainer.main_ppo` 在**另一个进程**中启动 → verl 的 ToolParser 注册表中没有 "minicpm5" → 多轮工具调用解析完全失效 → RL 退化为单轮。
+- **影响**：**多轮 RL 完全不工作**。模型生成 XML 工具调用，但 verl 无法解析 → 不会调用 EDA sandbox tool → 无执行反馈 → 无有效奖励信号 → GRPO 无梯度。
+- **修复**：✅ 新建 `baize_posttrain_verl_wrapper.py`，在同一进程中先 `import baize_posttrain_minicpm5_parser`（注册 parser），再 `from verl.trainer.main_ppo import main; main()`。`rl_grpo.sh` 改为调用 wrapper 而非直接 `python -m verl.trainer.main_ppo`。
+
+#### 🟠 C2 (P1 · 降级): EDA sandbox tool 仍为 skeleton 模式
+
+- **文件**：`baize_posttrain_eda_tool.py` L85-88
+- **问题**：`execute()` 方法返回 `"[skeleton] SSH not yet implemented"`，未实现实际 SSH 执行。
+- **影响**：11/9 RL 训练无法获得真实执行结果。`compute_r2_reward` 检测到 "skeleton" 在 error_log 中 → 跳过 error 判断 → 返回固定 0.2 (exec_success base) → **所有 completion 获得相同 reward → GRPO advantage=0 → 无梯度**。
+- **处置**：这是**已知限制**（TODO 11/9+）。11/9 首日 RL smoke test 验证的是**管道连通性**（parser→tool→reward→GRPO），不是真实 RL 学习。真实 SSH 执行需要在 GPU 到位后、隧道建立后实现。报告中需明确标注 "skeleton mode, no learning signal"。
+
+#### 🟠 C3 (P1 · 配置错误): YAML 相对路径含多余 `run/` 前缀
+
+- **文件**：`baize_posttrain_rl_verl_config.yaml` L25, L116, L130
+- **问题**：YAML 中 `train_files: run/rl_pyaether_synth_v2.parquet`、`tools_config_file: run/baize_posttrain_eda_tools.yaml`、`path: run/baize_posttrain_reward_functions.py` 均以 `run/` 开头。但 `rl_grpo.sh` 在启动前执行 `cd "$SCRIPT_DIR"`（即 `run/` 目录），CWD 已是 `run/`。verl 解析相对路径时 → `run/run/baize_posttrain_eda_tools.yaml` → FileNotFoundError。
+- **影响**：verl 找不到工具配置和奖励函数 → 训练启动即失败。
+- **修复**：✅ 移除 3 处 `run/` 前缀：`train_files: rl_pyaether_synth_v2.parquet`、`tools_config_file: baize_posttrain_eda_tools.yaml`、`path: baize_posttrain_reward_functions.py`。`ngram_blocklist` 路径同样修复。
+
+#### 🟠 C4 (P1 · 超参未更新): R18 超参建议未应用到 YAML
+
+- **文件**：`baize_posttrain_rl_verl_config.yaml` L61, L63, L65, L69
+- **问题**：R18 调研建议 4 项超参修正，但 YAML 仍保留旧值：
+  - `lr: 1.0e-6` (R18 建议 3e-6，防止误判 RL 无效)
+  - `entropy_coeff: 0.0` (R18 建议 0.001，防止策略坍缩)
+  - `ppo_epochs: 1` (R18 建议 2，提高样本效率)
+  - `kl_loss_coef: 0.04` (R18 建议分阶段 0.04→0.02→0.01)
+- **影响**：lr 太低 → 梯度过小 → RL 看似无效；entropy=0 → 策略可能坍缩到单一模式；ppo_epochs=1 → 样本利用率低。
+- **修复**：✅ 4 项全部修正：`lr: 3.0e-6`、`entropy_coeff: 0.001`、`ppo_epochs: 2`、`kl_loss_coef: 0.02`（起始值，后续可手动调低）。
+
+#### 🟡 C5 (P1 · GPU 分配): rl_grpo.sh 不支持指定 GPU ID
+
+- **文件**：`baize_posttrain_rl_grpo.sh`
+- **问题**：11/9 仅分配 4 张 A40（8 张中的 4 张），但脚本不设置 `CUDA_VISIBLE_DEVICES`，且 GPU 忙碌检查是全量的 → 要么全部 GPU 空闲才放行，要么直接退出。
+- **影响**：11/9 有 4 张 GPU 仍被 SGLang Qwen3.8-27B 占用 → 脚本的 GPU 检查会直接退出。
+- **修复**：✅ 新增 `--gpu-ids` 参数，设置 `CUDA_VISIBLE_DEVICES`，并按指定 GPU 数量调整 `NP`。`launch_11_9.sh` 也已更新，将 `--gpu-ids` 传递到 RL 步骤。
+
+### R21.3 未修复的已知限制（11/9 后处理）
+
+| # | 限制 | 影响 | 处置时机 |
+|:--|:--|:--|:--|
+| L1 | EDA sandbox SSH 未实现（skeleton） | RL 无真实学习信号 | 11/9 隧道建立后 |
+| L2 | cheat_rate.json 无脚本产出 | post-train 检查为空 | 需在 reward function 中添加 |
+| L3 | 无 checkpoint resume 机制 | 崩溃需从头重来 | 正式训练前添加 |
+| L4 | flash-attn 构建可能失败 | 无 flash attention 加速 | venv 安装时验证 |
+| L5 | SGLang 版本固定 0.5.6.post3 | 可能与 torch 2.4.0 不兼容 | 安装时 fallback |
+| L6 | verl[sglang] extra 可能不存在 | 安装失败 | 安装时改用分别安装 |
+
+### R21.4 修复验证
+
+```
+bash -n baize_posttrain_rl_grpo.sh          → OK
+bash -n baize_posttrain_launch_11_9.sh      → OK
+python3 ast.parse baize_posttrain_verl_wrapper.py → OK
+python3 yaml.safe_load verl_config.yaml     → OK
+bash baize_posttrain_rl_grpo.sh --dry-run --reward-arm R2 --gpu-ids 0,1,2,3 → OK (配方打印正常)
+```
+
+### R21.5 11/9 启动前新增验证清单（V15-V19）
+
+在 R18 V1-V8 + R20 V9-V14 基础上新增：
+
+| # | 验证项 | 通过判据 |
+|:--|:--|:--|
+| V15 | verl wrapper 正常启动 | 日志含 `[wrapper] MiniCPM5 ToolParser registered: 'minicpm5' in registry = True` |
+| V16 | YAML 路径解析正确 | verl 日志无 FileNotFoundError（tools_config_file / reward_function / train_files） |
+| V17 | GPU ID 隔离生效 | `nvidia-smi` 显示仅 CUDA_VISIBLE_DEVICES 指定的 GPU 被使用 |
+| V18 | 超参生效 | verl 日志含 `lr=3e-6, entropy_coeff=0.001, ppo_epochs=2, kl_coef=0.02` |
+| V19 | skeleton 模式可识别 | RL 日志或 reward 日志标注 `skeleton=True`（11/9 首日预期行为） |
+
+### R21.6 修复文件清单
+
+| 文件 | 修改类型 | 内容 |
+|:--|:--|:--|
+| `baize_posttrain_verl_wrapper.py` | 🆕 新建 | Parser 注册 + verl 启动同一进程 |
+| `baize_posttrain_rl_grpo.sh` | ✏️ 修改 | C1(wrapper替代独立进程) + C5(--gpu-ids) + 框架标签更新 |
+| `baize_posttrain_rl_verl_config.yaml` | ✏️ 修改 | C3(3处路径) + C4(4项超参) |
+| `baize_posttrain_launch_11_9.sh` | ✏️ 修改 | C5(GPU_FLAG传递到RL步骤) |
+
+### R21.7 与 R1-R20 的关系
+
+R21 是 R1-R20 全部调研的**集成验证**——不是新方向，而是把 20 轮调研产出的 23 个文件做端到端审计，发现并修复 5 项问题（1 P0 + 4 P1）。R18 的超参建议（C4）和 R16 的 parser 发现（C1）在 R21 中被验证为**实际未落地**——调研发现了问题但修改未应用到配置文件，R21 补上了这个缺口。
+

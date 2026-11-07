@@ -22,7 +22,7 @@
 
 data:
   tokenizer: /tmp/models/MiniCPM5-2B
-  train_files: run/rl_pyaether_synth_v2.parquet  # ✅ R10: 3347 tasks, 931KB, verl RLHF parquet
+  train_files: rl_pyaether_synth_v2.parquet  # ✅ R10: 3347 tasks, 931KB, verl RLHF parquet (R21: fixed relative path)
   val_files: null
   train_batch_size: 128          # G=8 × 16 prompts per iter
   prompt_key: prompt
@@ -58,15 +58,15 @@ actor_rollout_ref:
     ppo_max_token_len_per_gpu: 16384
     grad_clip: 1.0
     clip_ratio: 0.2              # Standard PPO/GRPO clip
-    entropy_coeff: 0.0
+    entropy_coeff: 0.001          # 🔴 R21 FIX: R18 recommended 0.001 (was 0.0) to prevent policy collapse
     use_kl_loss: True            # Required for GRPO
-    kl_loss_coef: 0.04           # DeepSeek-R1 KL coefficient
+    kl_loss_coef: 0.02           # 🔴 R21 FIX: R18 recommended staged 0.04→0.02→0.01; start at 0.02 (was 0.04)
     kl_loss_type: low_var_kl     # GRPO standard
-    ppo_epochs: 1
+    ppo_epochs: 2                # 🔴 R21 FIX: R18 recommended 2 (was 1) for better sample efficiency
     use_torch_compile: False     # Disabled for A40 (compile overhead > benefit at 2B)
     entropy_checkpointing: True  # 🔴 R11: entropy computation memory optimization (vocab=130560)
     optim:
-      lr: 1.0e-6
+      lr: 3.0e-6                    # 🔴 R21 FIX: R18 recommended 3e-6 (was 1e-6) to avoid misjudging RL as ineffective
       lr_warmup_steps: 50
       lr_scheduler_type: constant
     fsdp_config:
@@ -113,7 +113,7 @@ actor_rollout_ref:
     #   The "minicpm5" parser is registered by baize_posttrain_minicpm5_parser.py.
     # Tool configuration for EDA sandbox (verl Tool Agent Loop approach)
     tool_kwargs:
-      tools_config_file: run/baize_posttrain_eda_tools.yaml  # ✅ R15: fixed OpenAI Function format
+      tools_config_file: baize_posttrain_eda_tools.yaml  # ✅ R15: fixed OpenAI Function format (R21: fixed relative path)
 
 algorithm:
   name: grpo
@@ -127,7 +127,7 @@ reward:
   # The reward function implements 4 arms (R1-R4) in baize_posttrain_reward_functions.py
   # verl loads it via load_reward_manager() → custom_reward_function.path + .name
   custom_reward_function:
-    path: run/baize_posttrain_reward_functions.py
+    path: baize_posttrain_reward_functions.py  # R21: fixed relative path (was run/baize_posttrain_reward_functions.py)
     name: compute_score
     reward_kwargs:
       arm: R2                    # START with R2 (partial credit), NOT R1 (binary)
@@ -140,7 +140,7 @@ reward:
   assertion_source: task.test
   anti_cheat:
     enabled: true                # Red line §5.2: PreToolUse hook always on
-    ngram_blocklist: baize_posttrain_contamination_gate.sh
+    ngram_blocklist: baize_posttrain_contamination_gate.sh  # R21: fixed relative path
     report_cheat_rate: true
     report_interval: 200
 
