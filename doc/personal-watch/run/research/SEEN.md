@@ -5636,3 +5636,5 @@
 | 2026-11-07 | 2611.07707 | CAMP: Context-Aware Mapping and Placement for LLMs on 3D-IMC Arrays | cs.AR | 收录 |
 | 2026-11-07 | 2611.08363 | StrataFlux: Memory-Hierarchy-Native Low-Bit LLM Inference | cs.LG | 收录 |
 | 2026-11-07 | 2611.08133 | Beyond K/V Caches: Cross-Model State Handoff in Hybrid Linear-Attention LLMs | cs.CL | 收录 |
+| 2026-11-07 | 2611.08478 | Scientist World: Grow a Research World for AI-Scientists | cs.AI | 收录 |
+| 2026-11-07 | 2611.08412 | The Gold Rush in AI4Math, II: What are signatures of AI-assisted Proofs? | cs.AI | 收录 |
