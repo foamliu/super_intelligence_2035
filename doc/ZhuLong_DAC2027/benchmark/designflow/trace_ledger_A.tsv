@@ -216,3 +216,4 @@
 1793932764787_i7eyp	johnl	hfeg0pkn001	39	digital	case	EDA-Eval-DesignFlow-DcScriptMigrate-001	2026-11-08 01:37	
 1793098457331_js3ur	lorikx	hfeg0pkn001	57	digital	case	EDA-Eval-DesignFlow-SramConflictDeltaPort-001	2026-11-08 02:14	
 1792149393076_8ylkn	xuluo	hfeg0pkn001	331	digital	case	EDA-Eval-DesignFlow-XyzSvEnumPort-001	2026-11-08 03:33	
+1793933023338_1uxza	johnl	hfeg0pkn001	302	pnr_signoff	case	EDA-Eval-DesignFlow-DcPolicyRemoveMigrate-001	2026-11-08 04:08	r217 daily-log fallback; 234 innovus+39 synthesis+28 netlist; pure Innovus PnR session
