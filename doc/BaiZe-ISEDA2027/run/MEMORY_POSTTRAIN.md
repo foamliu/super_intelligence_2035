@@ -7,12 +7,12 @@ WAITING: 1
 
 ## 进度快照
 
-- PHASE: posttrain-wake51（2026-11-07 E1合成题生成脚本完成+3347题落盘，R1-R4全部完成）
-- 已完成: P3预备✅ 7脚本；P0✅ D1–D6；P1✅ 数据盘点+PyAether语料+污染隔离；P2✅ 方案书；wake45✅ §替身RL预演；wake48✅ R1+R3；wake49✅ R4(五分类法)；wake50✅ R2(造题设计)；wake51✅ E1(生成脚本+3347题落盘)
-- 当前动作: wake51 唤醒→ git fetch→ R1-R4已全部完成→ 反空转条款要求继续产出→ 将R2设计转化为可执行脚本baize_posttrain_gen_synth_v2.py→ 语法检查✅+dry-run✅+小样测试17题✅→ 完整生成3347题(0.6s)→ 0污染命中→ 3347/3347真实断言(非pass)→ 5.4MB JSONL落盘→ EXPERIMENTS §E1(7小节)→ 体积自检+提交
-- 下一步: R1-R4+E1全部完成→ WAITING=1；11/9 GPU到位后自动起跑(vllm serve→复测36%基线→完整污染闸门扫描→pass@8校准→unknown API profiling补L2→采真实轨迹→起第一轮EDA RL)
+- PHASE: posttrain-wake52（2026-11-07 R5 RL框架选型+GRPO实现设计完成，API profiler脚本+verl YAML配置落盘）
+- 已完成: P3预备✅ 7脚本；P0✅ D1–D6；P1✅ 数据盘点+PyAether语料+污染隔离；P2✅ 方案书；wake45✅ §替身RL预演；wake48✅ R1+R3；wake49✅ R4(五分类法)；wake50✅ R2(造题设计)；wake51✅ E1(生成脚本+3347题落盘)；wake52✅ R5(RL框架选型verl+GRPO实现设计+内存预算+沙盒架构+verl YAML配置+API profiler脚本)
+- 当前动作: wake52 唤醒→ git sync(已在同步,fetch/push超时但origin/main=main=e57554529)→ R5深度调研: verl vs OpenRLHF vs 自研→ 推荐verl+ReTool/ToolAgent模式→ 内存预算(2B on 4×A40=92GB/184GB=50%利用率)→ GRPO超参(G=8,clip=0.2,KL=0.04,lr=1e-6)→ 沙盒集成架构(SSH隧道→36.15 run_code)→ rollout预算(5.5天)→ anti-cheat集成→ 8种失败模式缓解→ verl YAML配置草案→ API profiler脚本(baize_posttrain_api_profiler.py,语法✅dry-run✅6779 unknown API)→ EXPERIMENTS §R5(11小节)→ 体积自检+提交
+- 下一步: R1-R5+E1全部完成→ WAITING=1；11/9 GPU到位后自动起跑(vllm serve→复测36%基线→完整污染闸门扫描→pass@8校准→unknown API profiling补L2→采真实轨迹→起第一轮EDA RL with verl)
 - 阻塞: GPU 2026-11-09既定到位(不再问)；L3等隧道；P3等pretrain ckpt(ETA≈2026-12-25)
-- 未完成指令: 无（R1✅R2✅R3✅R4✅E1✅ 全部完成）⇒ WAITING=1
+- 未完成指令: 无（R1✅R2✅R3✅R4✅R5✅E1✅ 全部完成）⇒ WAITING=1
 
 ## 关键事实（常驻）
 
@@ -48,4 +48,6 @@ WAITING: 1
 [wake50] R2(造题与难度分层)深度调研 → 五层难度(L1-L5,4000题)+五维评分+5断言模板(T1-T5)+pass@8校准方案 → EXPERIMENTS §R2 + HTML 11.3KB。R1-R4全部完成。
 
 [wake51] E1合成题生成执行: R2设计→可执行脚本baize_posttrain_gen_synth_v2.py→ 8463 API DB→排除488评测黑名单→6781白名单→ 生成3347题(L1=1500/L2=347/L3=800/L4=500/L5=200)→ 0污染命中→ 3347/3347真实断言(非pass,v1为0/500!)→ 5.4MB rl_pyaether_synth_v2.jsonl落盘 → EXPERIMENTS §E1(7小节)。L2短缺(347 vs 1000): 4367 unknown-return API待GPU沙盒profiling补全。⚠️ commit f0080ac94已本地完成但push超时(网络慢)，下轮唤醒第一件事补推。📦 体积：TASK=24.7KB / MEMORY≈6KB / EXPERIMENTS≈68KB。本轮新增调研产出：E1生成脚本+3347题数据集+EXPERIMENTS §E1。未完成指令：无（R1✅R2✅R3✅R4✅E1✅）⇒ WAITING=1。
+
+[wake52] R5 RL框架选型+GRPO实现设计: verl vs OpenRLHF vs 自研→ 推荐verl+ReTool/ToolAgent(EDA沙盒=天然tool,co-located vLLM,GRPO原生)→ 内存预算(MiniCPM5-2B on 4×A40: 训练40GB+推理52GB=92GB/184GB=50%利用率✅)→ GRPO超参(G=8,clip=0.2,KL=0.04,lr=1e-6,来源arXiv:2608.14109 Granite 2B)→ 沙盒架构(.17 verl→SSH隧道→36.15 run_code)→ rollout预算(1500题×G=8×60s/8并发×2000steps≈5.5天)→ anti-cheat(PreToolUse hook in ToolAgentLoop)→ 8失败模式(R2起步避全0无梯度)→ verl YAML配置(baize_posttrain_rl_verl_config.yaml✅)→ API profiler脚本(baize_posttrain_api_profiler.py,语法✅dry-run✅6779 unknown API)→ EXPERIMENTS §R5(11小节)。git sync: origin/main=main=e57554529(已在同步,push/fetch超时但ref一致)。⚠️ commit 9eae193d3已本地完成但push超时(NFS网络慢,同wake51模式),下轮唤醒第一件事补推。📦 体积：TASK=24.7KB / MEMORY≈7KB。本轮新增调研产出：§R5 RL框架选型+GRPO实现设计+verl YAML配置+API profiler脚本。未完成指令：无（R1✅R2✅R3✅R4✅R5✅E1✅）⇒ WAITING=1。
 

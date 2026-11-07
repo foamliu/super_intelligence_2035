@@ -1233,3 +1233,4 @@ bw2u5.messages.json					parked		2026-11-07 08:07	#343 peek: netlist 5 only, too 
 1791456748770_htwv2	yzwang	hfeg0plg55	76	schematic_netlist	case	EDA-Eval-DesignFlow-LvsRuleAudit-001	2026-11-07 10:39	
 1789634625396_ew6gi	rongjiez	10.129.2.11	53	schematic_netlist	case	EDA-Eval-DesignFlow-FFLatchExtract-001	2026-11-07 11:09	
 1793094734633_bn62m	han1li	10.129.35.68	76	schematic_netlist	case	EDA-Eval-DesignFlow-PexFailDiag-001	2026-11-07 11:42	
+1792137921430_3lvd6	jackliu	hfhds083	88	waveform	case	EDA-Eval-DesignFlow-XfightingDiag-001	2026-11-07 12:13	

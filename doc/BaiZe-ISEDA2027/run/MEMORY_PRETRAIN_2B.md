@@ -2,6 +2,9 @@
 WAITING: 1
 > 🛑 **【运维通告 · 2026-11-02 19:51】S1 已由 ops 中继重启并在跑**：`bash scripts/train.sh s1 --nodes 2`，launcher pid **4163528**，从 **ckpt 58000** 续（19:55:40 起 iter **58010**→58030，7.0–7.2 s/step ≈**582K tok/s**，双机 16 卡 **98–100%**、~75GB/卡、~690W）。⇒ **GPU 不再空闲**：🚫 严禁再起任何训练/GPU 评测进程；CPU 评测必须降载：`OMP_NUM_THREADS≤8` + `nice -n 19`，**禁止 `pkill python`**。
 
+> 2026-11-07 12:22 #1574: 例行监控轮·无新运维令·S1健康(iter115640/700000@12:20,loss2.043,7.2-7.4s/it,0NaN/0skip,grad-norm0.089-0.098稳态,GPU.29全满载96-100%/~75GB/672-687W/55-63℃)·ckpt iter_0114000在盘(三ckpt 110k/112k/114k全在)·全量eval后台继续(PID3726478,154/73106req@1h20m,~28s/req稳定,859%CPU≈8.6核,9.5GB RSS,nice19,不抢S1,ETA~23.6天)·内存684GB/2015GB充裕·load50/224核·ops/inbox无新令(RUN_ID245旧令已执行)·research日报11-07无pretrain建议·pretrain_launcher PID146283活·📦TASK=31.2KB✓/MEMORY=30.9KB✓(均<32KB无需归档)·未完成指令:无⇒WAITING:1。
+
+
 > 2026-11-07 12:03 #1573: 例行监控轮·无新运维令·S1健康(iter115500/700000@12:03,loss2.052,7.0-7.5s/it,0NaN/0skip,grad-norm0.085-0.125稳态,GPU.29全满载97-100%/~75GB/676-699W/56-64℃,GPU.12全满载88-100%/~75GB/638-691W/57-64℃)·新ckpt iter_0114000在盘(上轮iter_0112000)·全量eval后台继续(PID3726478,116/73106req@62min,~27s/req,847%CPU≈8.5核,8.1GB RSS,nice19,不抢S1,ETA~23天)·内存682GB/2015GB充裕·load49.7/224核·ops/inbox无新令(RUN_ID245旧令已执行)·research日报11-07无pretrain建议·pretrain_launcher PID146283活(~112h)·📦TASK=31.2KB✓/MEMORY=30.2KB✓(均<32KB无需归档)·未完成指令:无⇒WAITING:1。
 
 > 2026-11-07 11:45 #1572: 例行监控轮·无新运维令·S1健康(iter115340/700000@11:44,loss2.042,7.1s/it,0NaN/0skip,grad-norm0.099-0.113,GPU.29全满载94-100%/~75GB/655-690W/55-65℃)·全量eval后台继续(PID3726478,75/73106req@43min,速度从41s/req加速至~27s/req,839%CPU≈8核,7.3GB RSS,nice19,不抢S1)·evalETA下修:27s/req→~23天(vs #1571估35天@41s/req)·内存681GB/2015GB充裕·load54/224核·ops/inbox无新令(RUN_ID245旧令已执行)·research日报11-07无pretrain建议·📦TASK=31.2KB✓/MEMORY=29.7KB✓(均<32KB无需归档)·未完成指令:无⇒WAITING:1。

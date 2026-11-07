@@ -1016,3 +1016,210 @@ def check(candidate):
 2. **E2 pass@8 校准**：MiniCPM5-2B × 8 runs/题 → 按通过率重分桶（easy/medium/hard）
 3. **unknown API profiling**：沙盒调用 4367 个 unknown API → 补全返回类型 → 重跑生成
 4. **失败轨迹回收**：pass@8 中失败的轨迹 → SFT 错误恢复数据
+
+---
+
+## §R5 RL 框架选型 & GRPO 实现设计（2026-11-07 wake52 · 零 GPU · 深度调研）
+
+> **任务**：为 11/9 GPU 到位后的替身 RL 预演（MiniCPM5-2B on 4×A40 + EDA 沙盒）选定 RL 框架、计算内存预算、确定 GRPO 超参、设计沙盒集成架构。
+> **背景**：现有 `baize_posttrain_rl_grpo.sh` 的训练入口 `grpo_train.py + reward_compute.py` 为占位（标注"待确认 verl/OpenRLHF/自研"）。本节给出明确选型与依据。
+> **检索词**：verl GRPO agentic RL, OpenRLHF GRPO verifier, GRPO hyperparameters 2B model, co-located vLLM FSDP training, ReTool tool-use recipe
+
+### 1. 框架对比：verl vs OpenRLHF vs 自研
+
+| 维度 | **verl** (ByteDance/Volcengine) | **OpenRLHF** (OpenLLMAI) | **自研** (torchrun + vLLM) |
+|:--|:--|:--|:--|
+| GRPO 支持 | ✅ 原生 PPO/GRPO/DAPO | ✅ GRPOTrainer + verifier 抽象 | ❌ 需自行实现 advantage/clip/KL |
+| Agentic RL（多轮工具调用） | ✅ **ToolAgentLoop(AgentLoopBase)** — 框架一等公民；ReTool recipe 支持"思考→执行→反馈"多轮 | ⚠️ 有 verifier 但无原生多轮 agent loop | ❌ 需从零写多轮调度 |
+| 沙盒集成 | ✅ Daytona/SandboxFusion 已验证；可自定义 sandbox tool | ⚠️ ToolCallVerifier 但沙盒需自接 | ❌ 全自行 |
+| 推理引擎 | ✅ vLLM / SGLang 内置；3D-HybridEngine 共置（co-located） | ✅ vLLM 支持 | ✅ vLLM 但需手动管理 |
+| 训练后端 | ✅ FSDP / Megatron-LM | ✅ FSDP / DeepSpeed | ✅ FSDP（自行配） |
+| 分布式 | ✅ Ray（成熟） | ✅ Ray | ⚠️ torchrun（无 Ray 调度） |
+| 2B 模型适配 | ✅ HuggingFace 模型直接加载 | ✅ HuggingFace | ✅ 但需自行处理 |
+| 文档/社区 | ✅ readthedocs + 活跃社区 + 火山引擎背书 | ✅ GitHub 文档 + 社区 | ❌ 无 |
+| **与 EDA 沙盒的契合度** | ⭐ **最高** — ToolAgentLoop 可直接注册 EDA sandbox 为 tool | 中 — verifier 可接但无多轮 | 低 |
+
+**来源**：verl 文档 https://verl.readthedocs.io/；ReTool recipe https://deepwiki.com/verl-project/verl-recipe/7.5-tool-use-and-code-execution-recipes (2026-08-29)；ToolAgentLoop 腾讯云 TIONE 实践 (2026-07-14)；OpenRLHF GRPO https://callsphere.ai/blog/vw8g-rlhf-chat-agents-reward-model-grpo-2026 (2026-03-24)
+
+### 2. 推荐：verl + ReTool/ToolAgent 模式
+
+**理由**：① EDA 沙盒 = 天然 tool，ToolAgentLoop 把"生成→工具调用→反馈→继续"做成框架原生流程；② Co-located vLLM（3D-HybridEngine）让训练和推理共享同一组 GPU，4×A40 零浪费；③ GRPO 原生支持，无需自研核心逻辑；④ ReTool recipe 2025-07 完全开源，社区验证充分。
+
+**接入方式**（伪代码）：
+```python
+@register("eda_sandbox_agent")
+class EDASandboxAgentLoop(AgentLoopBase):
+    def call_tool(self, tool_name, tool_args):
+        result = ssh_tunnel_execute(tool_args["code"], tool_args["host"])
+        return {"response": result.response, "error_log": result.error_log,
+                "print_log": result.print_log, "result": result.result}
+    def compute_reward(self, trajectory, ground_truth):
+        return assertion_based_reward(trajectory, ground_truth)
+```
+
+### 3. 内存预算：MiniCPM5-2B on 4×A40（46GB × 4 = 184GB）
+
+| 组件 | 单卡 | 4卡总 | 依据 |
+|:--|--:|--:|:--|
+| 模型权重 (BF16, FSDP分片) | 1.0 GB | 4.0 GB | 2B×2B/4卡 |
+| 梯度 (BF16) | 1.0 GB | 4.0 GB | 同上 |
+| 优化器 (Adam mixed) | 4.0 GB | 16.0 GB | 2B×8B/4卡 |
+| 参考模型 (BF16, KL用) | 1.0 GB | 4.0 GB | FSDP分片 |
+| 激活值 (batch=4, seq=4096) | ~3.0 GB | ~12.0 GB | 42层×2048d |
+| **训练侧小计** | **~10 GB** | **~40 GB** | |
+| vLLM 权重 (BF16, 全副本) | 4.0 GB | 16.0 GB | TP=1 |
+| KV cache (max_len=8192) | ~8.0 GB | ~32.0 GB | max_num_seqs=16 |
+| vLLM 开销 | ~1.0 GB | ~4.0 GB | |
+| **推理侧小计** | **~13 GB** | **~52 GB** | |
+| **总计** | **~23 GB** | **~92 GB** | 184GB→利用率50% ✅ |
+
+**关键配置**：`gpu_memory_utilization: 0.35`（vLLM 占 35%）；`enforce_eager: true`（禁 CUDA graph 避免冲突）；`tensor_parallel_size: 1`（每卡独立 vLLM）；`max_num_seqs: 16`。
+**来源**：https://www.runpod.io/articles/guides/gpu-memory-sizing-guide-for-llm-inference；https://github.com/HumanDotPy/ToSSim/blob/main/README_COLOCATED_GRPO.md
+
+### 4. GRPO 超参（文献依据 + 2B 特化）
+
+| 超参 | 推荐值 | 来源 | 现有脚本 |
+|:--|:--|:--|:--|
+| Group size G | 8 | arXiv:2608.14109 Granite 2B 用 G=4；G=8 更稳 | 需改 16→8 |
+| Clip ε | 0.2 | PPO/GRPO 标准 | — |
+| KL coef β | 0.04 | DeepSeek-R1 | ✅ 已设 |
+| Learning rate | 1e-6 | GRPO 通用 | ✅ 已设 |
+| Max grad norm | 1.0 | arXiv:2608.14109 Table 5 | 需加 |
+| Temperature | 1.0 (训练) / 0.7 (pass@8) | 通用 | — |
+| Max turns | 3 | 对齐 DeepSeek Φ=5 | ✅ 已设 |
+| Sandbox concurrency | 8 | 4×A40→8并发 | 需改 8→8 ✅ |
+| Training steps | 2000 | 3347题/batch=4≈837prompts/epoch→2.4 epochs | ✅ 已设 |
+
+**GRPO advantage**：`A_i = (R_i - μ_G) / (σ_G + ε)`，ε=1e-8。全对(σ=0)→无梯度→sGPO 建议丢弃。
+**Loss**：`L = -E[min(r·A, clip(r,1-ε,1+ε)·A)] + β·KL(π_ref‖π_θ)`
+
+### 5. 沙盒集成架构
+
+```
+.17 (4×A40) — verl GRPO training loop
+  FSDP training ←→ vLLM (rollout) ←→ ToolAgentLoop (EDA agent)
+  reward_compute.py: R1=binary | R2=exec+assert_ratio | R3=R2+tool_penalty | R4=R3+API_legality
+      │ SSH 双向隧道 (R1 调研 §Tunnel-SOP)
+      ▼
+36.15 — EDA 执行环境
+  run_code(code, host) → {response, error_log, print_log, result}
+  host: pyAether / aether / skill×virtuoso / tcl×innovus / tcl×waveview
+  + PyAether API 文档 (docs/ + kb/)
+```
+
+**Rollout 流程**（单 prompt）：① verl 采样 prompt（synth task 的 `prompt`）→ ② vLLM 生成 G=8 completions（T=1.0）→ ③ 每个 completion → ToolAgentLoop → 沙盒执行 → 反馈 → ④ reward_compute.py 执行断言（`test` 字段）→ R1/R2/R3/R4 → ⑤ GRPO advantage → FSDP 梯度更新 → ⑥ 重复。
+
+**超时与恢复**：单题超时 2500s→reward=0（不计 group）；沙盒断开→重试 1 次（退避 5s）→ reward=0+`sandbox_error`；连续 5 题 sandbox_error→暂停训练→检查隧道→resume。
+
+### 6. Rollout 预算 & 墙钟估算
+
+> 预算口径 = 沙盒并发数 × 墙钟（非 GPU-hour）。
+
+| 参数 | 值 | 依据 |
+|:--|:--|:--|
+| RL 任务数 | 1500（L3+L4+L5） | E1 §7 |
+| Group size G | 8 | §4 |
+| 每题 rollout 时长 | ~60s | R1 调研估算 |
+| 沙盒并发 | 8 | 4×A40 |
+| 每 step prompts | 4 | 显存限制 |
+| 每 step 墙钟 | 4×8/8×60s = 240s = 4min | |
+| 总 steps | 2000 | |
+| **总墙钟** | **2000×4min ≈ 133h ≈ 5.5 天** | |
+
+加速选项：sandbox_concurrency=16→2.8 天；去掉 L5→4.5 天；async rollout→1.5× 加速。
+
+### 7. Anti-Cheat 集成（红线 §5.2）
+
+**在 verl 中的实现**：① 在 ToolAgentLoop 的 `call_tool` 中，发送代码到沙盒前运行 anti-cheat：n-gram 匹配评测题签名/断言、检测硬编码答案、检测沙盒绕过（`os.system`）；② 每 200 steps 统计 cheat rate 写入日志；③ harness 评测和 RL 训练用**同一份** anti-cheat 脚本。
+
+### 8. 失败模式与缓解（2B + A40 + EDA 沙盒特化）
+
+| 失败模式 | 症状 | 缓解 |
+|:--|:--|:--|
+| 全 0 reward (R1) | 2B 大面积 0→σ=0→无梯度 | ⭐ **R2 起步**（执行 0.2/部分断言 0.2-0.8/全通过 1.0） |
+| 全 1 reward (太易) | L1 太易→σ=0 | sGPO：丢弃 0/G 和 G/G prompt |
+| 隧道断开 | 沙盒不可达 | 重试 1 次+退避；连续 5 题暂停 |
+| 长度作弊 | 超长无意义代码 | max_tokens=2048；超过→reward=0 |
+| 格式作弊 | 非代码文本绕断言 | ToolAgentLoop 强制解析代码块 |
+| API 幻觉 | 编造不存在 API | R4 臂：不在 8463 DB→penalty -0.5 |
+| 显存碎片 | vLLM/FSDP 竞争 | `expandable_segments:True`✅ + `enforce_eager:true` |
+| NCCL 超时 | 4 卡通信超时 | `ASYNC_ERROR_HANDLING=1`✅ + timeout=1800s |
+
+### 9. verl 配置文件草案（待 GPU 后微调）
+
+```yaml
+# baize_posttrain_rl_verl_config.yaml — verl GRPO for MiniCPM5-2B on 4×A40
+train:
+  policy_trainer:
+    type: fsdp
+    model: {path: /tmp/models/MiniCPM5-2B, dtype: bfloat16}
+    optimizer: {type: adamw, lr: 1.0e-6, weight_decay: 0.0}
+    scheduler: {type: constant_with_warmup, warmup_steps: 50}
+    gradient_clip: 1.0
+    save_interval: 200
+algorithm:
+  name: grpo
+  group_size: 8
+  clip_epsilon: 0.2
+  kl_coef: 0.04
+  advantage_type: group_norm
+  filter_groups: true  # 丢弃全对/全错
+rollout:
+  engine: vllm
+  co_located: true
+  tensor_parallel_size: 1
+  gpu_memory_utilization: 0.35
+  enforce_eager: true
+  max_num_seqs: 16
+  max_model_len: 8192
+  temperature: 1.0
+  top_p: 0.95
+  max_tokens: 2048
+agent:
+  name: eda_sandbox_agent
+  max_turns: 3
+  task_timeout: 2500
+  sandbox_concurrency: 8
+  sandbox_endpoint: ssh://tunnel-to-36.15
+  anti_cheat: {enabled: true, report_cheat_rate: true}
+reward:
+  arm: R2  # 起步用 R2（分档），不用 R1（二值）
+  partial_credit: {exec_success: 0.2, partial_assert: 0.2, full_pass: 1.0}
+data:
+  train_path: run/rl_pyaether_synth_v2.jsonl
+  filter: {difficulty: [L3, L4, L5], pass_rate: [0.125, 0.875]}
+runtime:
+  n_gpus: 4
+  ray_address: auto
+  logging: {wandb: false, tensorboard: true}
+```
+
+### 10. 向 BaiZe 的迁移路径
+
+| 组件 | 替身(MiniCPM5-2B) | 白泽(pretrain ckpt) | 迁移性 |
+|:--|:--|:--|:--|
+| 框架 | verl+GRPO | verl+GRPO | ✅ 完全复用 |
+| 沙盒 | 36.15 EDA | 同 | ✅ 完全复用 |
+| 任务集 | 3347 synth | 同或扩展 | ✅ 完全复用 |
+| 奖励 | R2 起步 | R2→R3→R4 | ✅ 配置切换 |
+| 模型加载 | HF /tmp/models/MiniCPM5-2B | NeMo→HF 转换 | ⚠️ 需格式转换 |
+| GPU | 4×A40(46GB) | 8×H100(80GB) | ⚠️ 重配 FSDP/TP |
+| Group size | 8 | 16-32 | 配置调整 |
+| **结论可迁移性** | 🚫 **分数不可迁移** | — | 流程/配置/脚本可复用 |
+
+> ⚠️ 替身 RL 收益不可迁移到白泽。本次仅验证方法链路 + 沉淀可复用的 verl 配置 + 沙盒集成代码 + 奖励逻辑。
+
+### 11. 数据来源与检索
+
+| 来源 | URL | 日期 |
+|:--|:--|:--|
+| verl 文档 | https://verl.readthedocs.io/ | 2026-11-07 |
+| verl GitHub | https://github.com/volcengine/verl | 2026-11-07 |
+| ReTool recipe | https://deepwiki.com/verl-project/verl-recipe/7.5-tool-use-and-code-execution-recipes | 2026-11-07 |
+| ToolAgentLoop | https://cloud.tencent.com.cn/document/api/876/134124 | 2026-11-07 |
+| OpenRLHF GRPO | https://callsphere.ai/blog/vw8g-rlhf-chat-agents-reward-model-grpo-2026 | 2026-11-07 |
+| GRPO 2B 超参 | https://arxiv.org/pdf/2608.14109 | 2026-11-07 |
+| Co-located GRPO | https://github.com/HumanDotPy/ToSSim/blob/main/README_COLOCATED_GRPO.md | 2026-11-07 |
+| GPU memory sizing | https://www.runpod.io/articles/guides/gpu-memory-sizing-guide-for-llm-inference | 2026-11-07 |
+| GRPO 算法详解 | https://deepwiki.com/lzhxmu/CPPO/2.1-grpo-algorithm | 2026-11-07 |
+| DeepSeekMath GRPO | arXiv:2402.03300 | 引用 |
