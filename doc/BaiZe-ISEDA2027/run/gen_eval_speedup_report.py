@@ -152,20 +152,20 @@ def body_sections():
     n100_100k = read_gguf_n100(100000)
     n100_10k = read_gguf_n100(10000)
 
-    # eval_done: results.json exists is the primary signal.
-    # END marker may be missing (v4 script doesn't write it), so fall back to
-    # results.json mtime as the end timestamp.
-    eval_done = full is not None
-    if marker and marker[0] and marker[1] is not None:
+    # eval_done: ALL 8 tasks must be present in merged results.json.
+    # An intermediate results.json (e.g. 3/8 tasks from an earlier merge)
+    # must NOT be treated as "done" — it would falsely report completion.
+    eval_done = full is not None and len(full) >= len(TASKS)
+    if eval_done and marker and marker[0] and marker[1] is not None:
         wall_sec = marker[1] - marker[0]
-    elif marker and marker[0] and full is not None:
-        # END marker missing but results.json exists → use file mtime as end
+    elif eval_done and marker and marker[0]:
+        # END marker missing but full results.json exists → use file mtime as end
         rj_path = os.path.join(FULL_EVAL_DIR, "results.json")
         end_ts = int(os.path.getmtime(rj_path))
         wall_sec = end_ts - marker[0]
     else:
         wall_sec = None
-    if marker and marker[0] and full is None:
+    if marker and marker[0] and not eval_done:
         wall_sec_live = int(time.time()) - marker[0]
     else:
         wall_sec_live = None
@@ -181,7 +181,7 @@ def body_sections():
     p.append("1. <b>线程已饱和</b>：Mamba2-hybrid 的 SSM 顺序扫描不可并行，16 线程已达瓶颈<br>")
     p.append("2. <b>llama.cpp 后端可用</b>：_fixed_ GGUF 转换器精度回归通过（Δacc ≤ 0.02）<br>")
     p.append("3. <b>任务级并行</b>：8 个任务各独占 1 个 llama-server（16 线程），零技术风险<br>")
-    p.append("4. <b>综合提速</b>：llama.cpp + 8 服务器并行 → 详见第五节实测对照</div>")
+    p.append("4. <b>综合提速</b>：llama.cpp + 4 NUMA-pinned 服务器并行 → 详见第五节实测对照</div>")
 
     # 二、线程饱和
     p.append("<h2>二、线程饱和分析（#1570 探测矩阵）</h2>")
@@ -284,16 +284,16 @@ def body_sections():
         speedup = hf_total_sec / wall_sec if wall_sec > 0 else 0
         p.append("<table><tr><th>方案</th><th>实测耗时</th><th>加速倍数</th><th>精度</th></tr>")
         p.append(f"<tr><td>HF 串行 16 线程（预估）</td><td>{fmt_dur(hf_total_sec)}（{hf_total_sec/86400:.1f} 天）</td><td>1x</td><td>基线</td></tr>")
-        p.append(f"<tr><td><b>GGUF 8 服务器并行（实测）</b></td><td class='good'>{fmt_dur(wall_sec)}</td><td class='good'>{speedup:.0f}x</td><td class='good'>Δ≤0.02</td></tr>")
+        p.append(f"<tr><td><b>GGUF 4 NUMA-pinned 服务器并行（实测）</b></td><td class='good'>{fmt_dur(wall_sec)}</td><td class='good'>{speedup:.0f}x</td><td class='good'>Δ≤0.02</td></tr>")
         p.append("</table>")
         p.append(f"<div class='key'><b>实测结论</b>：{fmt_dur(hf_total_sec)} → {fmt_dur(wall_sec)}，加速 <b>{speedup:.0f} 倍</b>。</div>")
     else:
         live = fmt_dur(wall_sec_live) if wall_sec_live else "—"
-        p.append("<div class='warn'><b>全量 GGUF eval 进行中</b>（8 服务器 × 16 线程，已运行 " + live + "）。")
+        p.append("<div class='warn'><b>全量 GGUF eval 进行中</b>（4 NUMA-pinned 服务器 × 16 线程，已运行 " + live + "）。")
         p.append(f"完成后重新运行 <code>python3 gen_eval_speedup_report.py</code> 即自动填入实测耗时与加速倍数。</div>")
         p.append("<table><tr><th>方案</th><th>耗时</th><th>加速（预估）</th><th>精度</th></tr>")
         p.append(f"<tr><td>HF 串行 16 线程</td><td>{fmt_dur(hf_total_sec)}（{hf_total_sec/86400:.1f} 天）</td><td>1x</td><td>基线</td></tr>")
-        p.append("<tr><td>GGUF 8 服务器并行</td><td><b>进行中…</b></td><td>待实测</td><td class='good'>Δ≤0.02</td></tr>")
+        p.append("<tr><td>GGUF 4 NUMA-pinned 服务器并行</td><td><b>进行中…</b></td><td>待实测</td><td class='good'>Δ≤0.02</td></tr>")
         p.append("</table>")
 
     # 六、全量分数与一致性校验
@@ -323,13 +323,21 @@ def body_sections():
     else:
         live = fmt_dur(wall_sec_live) if wall_sec_live else "—"
         p.append(f"<div class='warn'>全量 eval 进行中（已运行 {live}），完成后本节自动填入 8 集全量分数与一致性校验。</div>")
+        if full:
+            done_tasks = [t for t in TASKS if t in full and full[t].get("acc") is not None]
+            p.append(f"<p><b>已完成 {len(done_tasks)}/8 集</b>：</p>")
+            p.append("<table><tr><th>任务</th><th>题数</th><th>全量 acc</th><th>acc_norm</th></tr>")
+            for t in done_tasks:
+                fr = full[t]
+                p.append(f"<tr><td>{esc(t)}</td><td>{fr.get('sample_len',0)}</td><td><b>{fmt_pct(fr.get('acc'))}</b></td><td>{fmt_pct(fr.get('acc_norm'))}</td></tr>")
+            p.append("</table>")
         p.append("<p><b>一致性校验方法</b>：全量 GGUF 分数 vs 100k n=100 GGUF 分数（同转换器、相邻 ckpt）→")
         p.append("各任务 Δ 应在采样误差内；全量分数 ≥ 100k 分数（训练继续提升）→ 一致性 PASS。</p>")
 
     # 七、交付物
     p.append("<h2>七、交付物清单</h2>")
     p.append("<ul>")
-    p.append("<li><code>baize_llamacpp_full_eval.sh</code> — 全量 llama.cpp 评测编排（8 服务器 × 8 任务并行，16 线程/server）</li>")
+    p.append("<li><code>baize_llamacpp_full_eval.sh</code> — 全量 llama.cpp 评测编排（4 NUMA-pinned 服务器 × 任务级并行，16 线程/server）</li>")
     p.append("<li><code>launch_full_eval_detached.sh</code> — setsid 完全脱离启动器（记录开始/结束时间戳）</li>")
     p.append("<li><code>pretrain_cpu_eval_gguf/gguf_lmeval_run.py</code> — llama-server HTTP 后端 lm_eval 适配（--samples 分片）</li>")
     p.append("<li><code>merge_parallel_results.py</code> — 多任务/分片结果合并</li>")
@@ -343,15 +351,15 @@ def body_sections():
     p.append("<p><b>回答用户三个问题</b>：</p>")
     p.append("<p><b>1.「需要时间这么久吗？」</b><br>")
     if eval_done and wall_sec is not None:
-        p.append(f"不需要。通过 llama.cpp + 8 服务器并行，{fmt_dur(hf_total_sec)}（{hf_total_sec/86400:.1f} 天）→ <b>{fmt_dur(wall_sec)}</b>。</p>")
+        p.append(f"不需要。通过 llama.cpp + 4 NUMA-pinned 服务器并行，{fmt_dur(hf_total_sec)}（{hf_total_sec/86400:.1f} 天）→ <b>{fmt_dur(wall_sec)}</b>。</p>")
     else:
-        p.append(f"不需要。通过 llama.cpp + 8 服务器并行，{fmt_dur(hf_total_sec)}（{hf_total_sec/86400:.1f} 天）→ 预估 <b>数小时</b>（eval 进行中）。</p>")
+        p.append(f"不需要。通过 llama.cpp + 4 NUMA-pinned 服务器并行，{fmt_dur(hf_total_sec)}（{hf_total_sec/86400:.1f} 天）→ 预估 <b>~14 小时</b>（eval 进行中，详见第五节）。</p>")
     p.append("<p><b>2.「已经使用 llama.cpp 了吗？」</b><br>")
     p.append("已切回。GGUF 转换成功（4.2GB f16, 323 tensors），iter_10000 精度回归通过（HF vs GGUF Δacc ≤ 0.02）。")
     if eval_done:
-        p.append("全量 GGUF eval <b>已完成</b>：8 个 llama-server 实例（各 16 线程）+ 8 任务并行。")
+        p.append("全量 GGUF eval <b>已完成</b>：4 个 NUMA-pinned llama-server 实例（各 16 线程）+ 任务级并行（hellaswag 分 4 片并行）。")
     else:
-        p.append("全量 GGUF eval <b>运行中</b>：8 个 llama-server 实例（各 16 线程）+ 8 任务并行（hellaswag 分 4 片并行），日志在各任务子目录 <code>*.log</code>。")
+        p.append("全量 GGUF eval <b>运行中</b>：4 个 NUMA-pinned llama-server 实例（各 16 线程）+ 任务级并行（hellaswag 分 4 片并行），日志在各任务子目录 <code>*.log</code>。")
     p.append("</p>")
     p.append("<p><b>3.「线程并发多一点有帮助吗？」</b><br>")
     p.append("单进程内加线程<b>没有帮助</b>（16 线程已饱和，SSM 不可并行）。")
