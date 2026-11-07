@@ -1,6 +1,8 @@
 WAITING: 0
 
-> 🆕 **【wake #888 · 2026-11-07 18:35】监控轮+B-sft数字修正。** git pull(无新令)·research日报2026-11-07已查：vision「无直接对口论文」·「建议继续按自身预注册推进」→无actionable item，不改排期。**v3**(GRPO连续奖励):D-ctrl step35/40(ETA~1329s+eval~9min→done~19:05)·Phase3 C=25.0%<B=34.0%负结果确认·avgR轨迹step35=0.4919(控制组随机奖励方差大,符合预期)。**v5**(类型分类·新方向):**SFT DONE loss0.55→0.28✅**·A-base=16.0%·**B-sft修正=37.0%(100/100最终,非70/100中间值44.3%)**·per-class: sine0.16/square0.84/triangle0.24/sawtooth0.24·B>>A +21pp✅正信号维持·**RFT-collect 50/200 Q(57/150=38.0%,282s)**→collect ETA~19min→train C+D(3ep各)→eval→done~20:00-20:30。两实验健康(pcpu v3=2884%/v5=1303%)。**未完成指令:有**(v3 D-ctrl待完+v5 RFT全量待完→最终报告)⇒**WAITING:0**。📦体积:TASK=31KB✓/MEMORY=18KB✓。
+> 🆕 **【wake #889 · 2026-11-07 18:39】监控轮。** git pull(无新令·designflow/zhulong变更非本线)。**v3**(GRPO连续奖励):D-ctrl ~step39-40/40(log仍显示step35,step40日志即将出现,每步~265s)·step40后eval~543s→**v3全完成ETA~18:50**·Phase3 C=25.0%<B=34.0%负结果已确认·avgR控制组step35=0.4919(随机奖励方差大,符合预期)。**v5**(类型分类·新方向):RFT-collect **100/200 Q(300 rollouts,127 correct=42.3%,557s)**·collect剩余~100Q(~10min)→train C+D(3ep各~95min)→eval C+D(~13min)→**v5全完成ETA~20:45**·A-base=16.0%·B-sft=37.0%(+21pp✅正信号)·per-class:sine0.16/square0.84/triangle0.24/sawtooth0.24。两实验健康(pcpu v3=2884%/v5=1320%)。daily-memories-vision NFS缓存曾显示空(实存在2026-11-07.md=83027B,git checkout刷新后可见)。**未完成指令:有**(v3待完+v5 RFT全量待完→最终报告)⇒**WAITING:0**。📦体积:TASK=31KB✓/MEMORY=18KB✓。
+
+> 📦 wake #888（监控轮+B-sft数字修正·2026-11-07 18:35）已归档 → daily-memories-vision/2026-11-07.md；**结论**：v3 D-ctrl step35/40·v5 B-sft修正=37.0%(非44.3%中间值)·RFT-collect 50/200。需要时再读。
 
 > 📦 wake #887（监控轮+v5首个正信号·2026-11-07 18:28）已归档 → daily-memories-vision/2026-11-07.md；**结论**：v3 D-ctrl step35/40·v5 SFT DONE+A=16%+B-sft中间值44.3%(后修正为37.0%最终)·RFT待完。需要时再读。
 
