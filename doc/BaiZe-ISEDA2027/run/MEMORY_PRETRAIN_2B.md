@@ -2,6 +2,10 @@
 WAITING: 1
 > 🛑 **【运维通告 · 2026-11-02 19:51】S1 已由 ops 中继重启并在跑**：`bash scripts/train.sh s1 --nodes 2`，launcher pid **4163528**，从 **ckpt 58000** 续（19:55:40 起 iter **58010**→58030，7.0–7.2 s/step ≈**582K tok/s**，双机 16 卡 **98–100%**、~75GB/卡、~690W）。⇒ **GPU 不再空闲**：🚫 严禁再起任何训练/GPU 评测进程；CPU 评测必须降载：`OMP_NUM_THREADS≤8` + `nice -n 19`，**禁止 `pkill python`**。
 
+> 2026-11-07 08:17 #1565: 例行监控轮·无新运维令·S1健康(worker log /tmp/baize_s1_baize2b_worker.log 活跃 iter113620/700000@08:16:42,loss2.065,6990-7218ms/it(~7.1s),lr1e-3,0NaN/0skip,grad-norm0.088-0.125稳态,consumed29086720)·GPU.29(0-7:96-100%/~75GB/680-693W/56-65℃)全满载·GPU.12(ssh确认0-7:96-100%/~75GB/677-687W/56-66℃)全满载·pretrain_launcher.py PID146283(etimes~390246s≈108.4h)活双机16卡·ssh.12 torchrun PID2612442(node_rank=0,etimes~390386s≈108.4h,活)·latest ckpt iter_0112000·next ckpt iter_0114000 ETA~Nov7 09:02(380it×~7.1s≈45min)·100k eval已于#1490交付(10/10全在,Avg harness 57.75%/raw 54.75%)·eval管线已全退出(无llama-server/lm_eval/convert)·ops/inbox仅RUN_ID245(2026-11-05旧令kill wedge cline,已执行,非本线待办)·ops_relay_v2 PID2259598(ppid=1,~1169019s≈13.5d,健康)·loop PID3165013(etimes~774481s≈8.96d,活)·git clean(##main...origin/main无ahead/behind;workspace仅他线在途文件,未碰)·📦TASK=25.8KB✓/MEMORY=30.8KB→归档#1557(1条)→加本条≈31.5KB✓(均低于32KB)·未完成指令:无⇒WAITING:1。
+
+
+
 > 2026-11-07 07:55 #1564: 例行监控轮·无新运维令·S1健康(worker log /tmp/baize_s1_baize2b_worker.log 活跃 iter113440/700000@07:55:23,loss2.074,7078-7122ms/it(~7.1s),lr1e-3,0NaN/0skip,grad-norm0.088-0.114稳态,consumed29040640)·GPU.29(0-7:96-100%/~75GB/678-692W/55-64℃)全满载·GPU.12(0-7:96-100%/~75GB/681-697W/57-65℃)全满载·pretrain_launcher.py PID146283(etimes~388944s≈107.9h)活双机16卡·ssh.12 torchrun PID2612442(node_rank=0,etimes~389082s≈108.0h,活)·latest ckpt iter_0112000·next ckpt iter_0114000 ETA~Nov7 09:01(560it×~7.1s≈66min)·100k eval已于#1490交付(10/10全在,Avg harness 57.75%/raw 54.75%)·eval管线已全退出(无llama-server/lm_eval/convert)·ops/inbox仅RUN_ID245(2026-11-05旧令,已执行,非本线待办)·ops_relay_v2 PID2259598(ppid=1,~1167696s≈13.5d,健康)·loop PID3165013(etimes~773159s≈8.9d,活)·git clean(##main...origin/main无ahead/behind;workspace仅他线在途文件,未碰)·📦TASK=25.8KB✓/MEMORY=31.3KB→归档#1556(1条)→加本条≈31.0KB✓(均低于32KB)·未完成指令:无⇒WAITING:1。
 
 
@@ -24,7 +28,7 @@ WAITING: 1
 > 📦 §#1558（11-07 05:52, 监控轮·iter112400/700000）→ daily-memories/2026-11-07.md「归档 #1558-#1559」节；**结论**：S1健康0NaN/0skip,loss2.076,latest ckpt iter_0112000,next iter_0114000 ETA~Nov7 09:05。需要时再读。
 
 
-> 2026-11-07 05:29 #1557: 例行监控轮·无新运维令·S1健康(worker log /tmp/baize_s1_baize2b_worker.log 活跃 iter112210/700000@05:29:43,loss2.087,6991-7158ms/it(~7.1s),lr1e-3,0NaN/0skip,grad-norm0.090-0.149稳态(112060瞬态spike1.039→112070 0.112自恢复,112140 spike0.902→112150 0.118自恢复,112210 spike0.495),consumed28725760)·GPU.29(0-7:97-100%/~75GB/56-65℃/679-694W)全满载·GPU.12(0-7:95-100%/~75GB/56-65℃/676-695W)全满载·ssh.12 torchrun PID2612442(node_rank=0,活)·latest ckpt iter_0112000(worker log 05:04 save-checkpoint已存)·next ckpt iter_0114000 ETA~Nov7 09:05(1790it×~7.1s≈3.5h)·100k eval已于#1490交付(10/10全在,Avg harness 57.75%/raw 54.75%)·eval管线已全退出(无llama-server/lm_eval/convert)·ops/inbox仅RUN_ID245(2026-11-05旧令,已执行,非本线待办)·ops_relay_v2 PID2259598(ppid=1,~1158964s≈13.4d,健康)·loop PID3165013(活)·git clean(##main...origin/main无ahead/behind;workspace仅他线在途文件,未碰)·📦TASK=25.8KB✓/MEMORY=31.0KB→归档#1550-#1551(2条)→加本条≈31.0KB✓(均低于32KB)·未完成指令:无⇒WAITING:1。
+> 📦 §#1557（11-07 05:29, 监控轮·iter112210/700000）→ daily-memories/2026-11-07.md「归档 #1557」节；**结论**：S1健康0NaN/0skip,loss2.087(含3次grad-norm瞬态spike自恢复),latest ckpt iter_0112000,next iter_0114000 ETA~Nov7 09:05。被#1560确认延续。需要时再读。
 
 
 > 📦 §#1556（11-07 05:12, 监控轮·iter112050/700000）→ daily-memories/2026-11-07.md「归档 #1556」节；**结论**：S1健康0NaN/0skip,loss2.068,latest ckpt iter_0112000(新),next iter_0114000 ETA~Nov7 09:00。被#1557确认延续。需要时再读。
