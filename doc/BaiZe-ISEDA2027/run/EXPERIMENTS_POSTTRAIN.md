@@ -633,3 +633,144 @@ cheat_rate = num_cheat_detected / total_rollouts，每SAVE_INTERVAL报告一次�
 - DAPO/Dr.GRPO对比: https://github.com/Guo-astro/train-llm-from-scratch/blob/main/docs/modern/rl_reasoning.md
 - TRL GRPOTrainer: https://huggingface.co/docs/trl/grpo_trainer
 - Kensink GRPO实践: https://www.kensink.com/llm/fine-tuning/methods/grpo-rft
+
+---
+
+## §R4 35% 侧失败模式分类（2026-11-07 wake49 · 零 GPU · 实测数据+外推框架）
+
+> 对应 §用户令·2026-11-07 10:10 R4 方向。
+> **数据来源**：① `~/code/EDA-Eval-Framework/output_evaluation/*/final_report.json`（12 次代码生成评测，含 DeepSeek-V3.2 最优 71.5% + aether_coder 10% 弱模型对照）；② `~/code/eda_fastmcp/pyAether-eval/cline_cli_trace/cline_trace_v1_3/`（103 任务 DeepSeek 全 harness 智能体轨迹，工具调用级错误提取）；③ 158 题数据集 `metadata`（scenario/category/num_apis/techlib_dependency）。
+> ⚠️ **MiniCPM5-2B 36% 侧轨迹不在本节点**（在评测机 `~/eda_code_eval/`）。以下分类法基于 DeepSeek 强模型行为 + 弱模型(aether_coder 10%)对照构建，**等 GPU 后用 36% 侧真实轨迹校正**。
+
+### 1. 五分类法定义
+
+| 类别 | 代码 | 包含的 error_type | 治理手段 | 预期 36% 侧占比 |
+|:--|:--|:--|:--|:--|
+| 语法错 | SYN | SyntaxError, IndentationError, Parse failed | SFT 注入 canonical_solution 结构 | 低（强模型仅 4/1895=0.2%） |
+| API 误用 | API | TypeError, ValueError, AttributeError, NameError, ImportError, KeyError, IndexError | SFT 注入 API 参考语料 + 领域退火 | 高（弱模型 aether_coder 占 42%） |
+| 逻辑错 | LOG | AssertionError, Unknown Failure（代码跑通但结果错/无输出） | RL(GRPO) 打磨"查-写-改"闭环 | 中-高（DeepSeek 侧 AssertionError 占 254/535=47%） |
+| 超时 | TMO | Generation timeout, execution Timeout | 上下文长度适配 + 推理加速 | 中（高 API 数任务 21-50 APIs: 90% 失败率） |
+| 缺依赖 | DEP | ModuleNotFoundError, FileNotFoundError, techlib_dependency 相关 RuntimeError | 领域退火注入 techlib 语料 + SFT 环境配置 | 中（techlib=True 失败率 38.9% vs 25.0%） |
+
+### 2. 实测数据：跨 12 次评测的聚合错误类型
+
+> 12 次代码生成评测（DeepSeek-V3.2 × 9 + zhulong × 1 + aether_coder × 1 + 部分运行 × 1），共 1895 个 task-run 数据点。
+
+| error_type | 次数 | 占比 | 分类 |
+|:--|--:|--:|:--|
+| AssertionError | 254 | 47.9% | LOG |
+| Unknown Failure | 100 | 18.9% | LOG（代码跑通但无输出/结果错） |
+| Generation timeout | 70 | 13.2% | TMO |
+| Generation failure | 35 | 6.6% | SYN/API（模型无法生成有效代码） |
+| TypeError | 34 | 6.4% | API |
+| ValueError | 31 | 5.8% | API |
+| AttributeError | 31 | 5.8% | API |
+| RuntimeError | 20 | 3.8% | DEP/API |
+| NameError | 13 | 2.5% | API |
+| Timeout | 6 | 1.1% | TMO |
+| SyntaxError | 4 | 0.8% | SYN |
+| Parse failed | 4 | 0.8% | SYN |
+| ModuleNotFoundError | 1 | 0.2% | DEP |
+| 其他 | 6 | 1.1% | 其他 |
+
+**分类汇总**：LOG 354 (66.7%) > API 110 (20.7%) > TMO 76 (14.3%) > SYN 8 (1.5%) > DEP 1 (0.2%) > 其他 6 (1.1%)
+
+### 3. DeepSeek 全 harness 轨迹工具调用级错误（103 任务）
+
+> 中间错误（不一定导致最终失败），反映交互式场景下的错误分布。
+
+| 错误类型 | 次数 | 说明 |
+|:--|--:|:--|
+| ValueError | 241 | 参数类型/值不匹配（API 误用） |
+| TypeError | 140 | 类型构造错误（SWIG 对象 vs 原生值） |
+| AttributeError | 101 | 访问不存在的属性/API |
+| AssertionError | 89 | 断言失败（逻辑错） |
+| RuntimeError | 76 | 运行时错误（含 techlib） |
+| Timeout | 69 | 超时（含沙箱执行超时） |
+| ImportError | 54 | 导入失败（缺依赖） |
+| FileNotFoundError | 19 | 文件未找到 |
+| IndexError | 10 | 索引越界 |
+| NameError | 7 | 未定义名称 |
+| SyntaxError | 6 | 语法错 |
+
+**82/103 任务（79.6%）**迭代中至少遇到一次错误 → 强模型通过"执行→看报错→修正"闭环恢复 → **RL(GRPO) 训练的核心能力**。
+
+### 4. Per-scenario 失败率（最优轮 71.5%）
+
+| scenario | 通过率 | 失败数 | 主要失败类型 |
+|:--|--:|--:|:--|
+| Design Mgmt | 78.3% (18/23) | 5 | AssertionError (5) |
+| Others | 82.6% (19/23) | 4 | AssertionError (3)+AttributeError (1) |
+| Layout | 69.1% (38/55) | 17 | AssertionError (8)+RuntimeError (3)+TypeError (2) |
+| Schematic | 65.1% (28/43) | 15 | **AssertionError (12)**+TypeError/NameError/SystemError |
+
+→ Schematic 最难（65.1%），失败几乎全是 AssertionError（逻辑错）→ RL 价值最大。
+
+### 5. API 数量 vs 失败率
+
+| API 数量 | 失败率 | 样本 | 判读 |
+|:--|--:|--:|:--|
+| 1-2 | 5.6% | 18 | 简单，2B 也能做 |
+| 3-5 | 24.6% | 61 | 中等，SFT 可大幅改善 |
+| 6-10 | 32.6% | 43 | 需多 API 协作，SFT+RL |
+| 11-20 | 16.7% | 12 | 偶尔通过（样本少） |
+| **21-50** | **90.0%** | **10** | **极难，强模型也大面积失败** |
+
+→ RL 训练题应集中在 3-10 API 范围（104/158=66%），21+ API 暂不用于 RL（reward 全 0 无梯度）。
+
+### 6. Techlib 依赖 vs 失败率
+
+| techlib | 失败率 | 样本 | 判读 |
+|:--|--:|--:|:--|
+| True | 38.9% | 36 | 需 techlib 知识，退火语料必须包含 |
+| False | 25.0% | 108 | 通用编程能力可覆盖 |
+
+→ techlib=True 的 36 个任务（22.8%）是**领域退火关键靶点**。
+
+### 7. 任务失败一致性（跨 12 次评测）
+
+| 类别 | 数量 | 占比 | 含义 |
+|:--|--:|--:|:--|
+| 始终通过 | 29 | 18.4% | 容易题，2B 应也能做 |
+| 有时失败 | 104 | 65.8% | **SFT/RL 主要训练靶点** |
+| 始终失败 | 25 | 15.8% | 极难题（avg 18.3 APIs），暂不用于 RL |
+
+### 8. 弱模型对照：aether_coder 10% 错误分布
+
+| error_type | 次数 | 占比 | 分类 |
+|:--|--:|--:|:--|
+| AttributeError | 14 | 32.6% | API |
+| NameError | 7 | 16.3% | API |
+| AssertionError | 6 | 14.0% | LOG |
+| Unknown Failure | 5 | 11.6% | LOG |
+| TypeError | 4 | 9.3% | API |
+| ValueError | 3 | 7.0% | API |
+| SyntaxError | 2 | 4.7% | SYN |
+| RuntimeError | 2 | 4.7% | DEP/API |
+
+→ **弱模型 API 误用占 65.5%**，远高于强模型 20.7% → 预测 36% 侧 API 误用 40-60% → **SFT 注入 PyAether API 语料是最高 ROI 第一步**。
+
+### 9. 对 post-train 三步走侧重建议
+
+| 步骤 | 靶向类别 | 预期回收 pp | 依据 |
+|:--|:--|:--|:--|
+| 领域退火 | DEP + 部分 API | 5-10 | techlib 失败率 38.9%→目标 25% |
+| SFT | API（主）+ SYN + 部分 LOG | 15-25 | 弱模型 API 误用 65.5%→SFT 后降至 30% |
+| RL(GRPO) | LOG（主）+ TMO | 5-15 | AssertionError 47%→RL 后降至 30% |
+| **合计** | — | **25-50** | 36%+25-50 = **61%-86%**，覆盖 M2-M4 |
+
+### 10. 36% 侧轨迹校正计划（GPU 后第一件事）
+
+1. `vllm serve /tmp/models/MiniCPM5-2B` → 158 题 5-run 评测
+2. 用本分类法标注每个失败任务 → 填充"36% 侧实测"列
+3. 三方错误分布对比 → 校正外推假设
+4. 按实测调整 SFT 数据配比
+5. 产出 `reports/report_posttrain_r4_36pct_validated_zh.html`
+
+### 11. 数据来源与脚本
+
+- 分析脚本：`/tmp/pt_r4_analysis.py` + `/tmp/pt_r4_deep_trace.py`
+- 结构化输出：`/tmp/pt_r4_output.json` + `/tmp/pt_r4_trace_output.json`
+- 错误分类逻辑：`~/code/EDA-Eval-Framework/scripts/calculate_results.py` L26-80
+- 158 题数据集：`~/code/eda_fastmcp/pyAether-eval/original_dataset/EDA-Eval-PyAether-v20260311.jsonl`
+- DeepSeek 轨迹：`~/code/eda_fastmcp/pyAether-eval/cline_cli_trace/cline_trace_v1_3/cline_trace/`
