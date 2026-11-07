@@ -1231,3 +1231,4 @@ bw2u5.messages.json					parked		2026-11-07 08:07	#343 peek: netlist 5 only, too 
 1789957560618_7kyrv					parked		2026-11-07 09:43	wrong domain (synopsys:1274 ddr6_model SystemC/VCS build debug, not D-domain)
 1790078872955_vpj8o					parked		2026-11-07 09:43	AnaWeave GG execution, overlaps AnalogGroupCfgMergeDummy-001 (cfg domain)
 1791456748770_htwv2	yzwang	hfeg0plg55	76	schematic_netlist	case	EDA-Eval-DesignFlow-LvsRuleAudit-001	2026-11-07 10:39	
+1789634625396_ew6gi	rongjiez	10.129.2.11	53	schematic_netlist	case	EDA-Eval-DesignFlow-FFLatchExtract-001	2026-11-07 11:09	
