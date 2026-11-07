@@ -198,3 +198,5 @@
 1791977055190_ckulq.messages.json	e0045144	hfeg0pkn002	129	verification	case	EDA-Eval-DesignFlow-RdcViolCatalog-001	2026-11-07 16:24	
 1793065763835_y6liq.messages.json	t0002614	hfeg0pkn001	150	digital	case	EDA-Eval-DesignFlow-SpiceStructAnalyze-001	2026-11-07 17:10	
 1792746530652_5erm4.messages.json	shanliny	hfeg0pkn001	80	verification	case	EDA-Eval-DesignFlow-SvIntegrateGen-001	2026-11-07 18:05	
+1791946315674_hg1xu.messages.json	shanliny	hfeg0pkn001	72	verification	parked		2026-11-07 18:14	shanliny 3-conn (r189+5erm4 sibling); 4 sids identical kw = same SV task retry; defer for diversity
+1793861357108_vagnh.messages.json	tabtao	hfeg0pkn004	29	pnr_signoff	case	EDA-Eval-DesignFlow-DcLogErrDiagnose-001	2026-11-07 18:28	
