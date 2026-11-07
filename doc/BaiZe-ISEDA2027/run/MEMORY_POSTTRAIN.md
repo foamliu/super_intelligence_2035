@@ -13,6 +13,7 @@ WAITING: 1
 - 下一步: ①11/9 GPU释放4张A40后: bash baize_posttrain_launch_11_9.sh --step 1-5 --gpu-ids 0,1,2,3 ②SGLang serve MiniCPM5-2B→36%基线复测(5-run) ③采集失败轨迹→D1-D6实测 ④RL smoke test(GRPO R2,10 iters)+监控脚本并行 ⑤集成STOP信号到baize_posttrain_rl_grpo.sh ⑥surrogate-A→surrogate-C按R33时间线 ⑦正式训练(待pretrain ckpt):baize-C config
 - 阻塞: GPU 2026-11-09既定到位(明天,不再问)；L1 sandbox SSH等隧道(.17→36.15超时,R23+R25确认,R0降级)；P3等pretrain ckpt(ETA≈2026-12-25)
 - 未完成指令: 无（R1✅...R36✅E1✅ 全部完成）⇒ WAITING=1
+- ⚠️ push超时: commit a0e7216e2 本地完成但 push 超时(NFS网络慢,重试2次均timeout=124,ahead 1)，下次唤醒第一件事补推
 
 ## 关键事实（常驻）
 
