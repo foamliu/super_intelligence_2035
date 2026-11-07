@@ -1234,3 +1234,17 @@ bw2u5.messages.json					parked		2026-11-07 08:07	#343 peek: netlist 5 only, too 
 1789634625396_ew6gi	rongjiez	10.129.2.11	53	schematic_netlist	case	EDA-Eval-DesignFlow-FFLatchExtract-001	2026-11-07 11:09	
 1793094734633_bn62m	han1li	10.129.35.68	76	schematic_netlist	case	EDA-Eval-DesignFlow-PexFailDiag-001	2026-11-07 11:42	
 1792137921430_3lvd6	jackliu	hfhds083	88	waveform	case	EDA-Eval-DesignFlow-XfightingDiag-001	2026-11-07 12:13	
+w7un3					parked		2026-11-07 12:24	device_match report 30-turns continuation too complex (#351 peek weak)
+9pcjd					parked		2026-11-07 12:24	autocell param safety check L1 too thin (#351 peek weak)
+se4uf					parked		2026-11-07 12:24	AutoCell TCL flow covered by shard C (#351 peek weak)
+hkyyj					parked		2026-11-07 12:24	pyAether layout edit probe not produce (#351 peek weak)
+2uipn					parked		2026-11-07 12:24	pyAether auto-placement script probe (#351 peek weak)
+wiglh					parked		2026-11-07 12:24	regression run 1-turn weak (#351 peek weak)
+0oeb7					parked		2026-11-07 12:24	test delete API 1-turn weak (#351 peek weak)
+xs1lj					parked		2026-11-07 12:24	NO_FILE (#351 peek weak)
+7hpf9					parked		2026-11-07 12:29	NO_FILE (#352 peek)
+1bc9r					parked		2026-11-07 12:29	1-turn incoherent path only (#352 peek weak)
+hi28t					parked		2026-11-07 12:29	GUI menu Save Exclusions Q&A 2 turns (#352 peek weak)
+c39j4					parked		2026-11-07 12:29	stimulus extraction debug 2 turns (#352 peek weak)
+tjzn5					parked		2026-11-07 12:29	env Q&A + skill-creator usage (#352 peek weak)
+1782800756855_5u4s2	e0025730	10.129.8.86	52	analog_context	case	EDA-Eval-DesignFlow-LvlShftCatalog-001	2026-11-07 12:40	
