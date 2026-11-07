@@ -10,6 +10,45 @@
 ---
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
+### 🔴 运维补充 · 2026-11-07 22:40（**ADB 下载已实测成功过，别再删、别再用 curl、不许"记录后就跳过"**）· 最高优先 · 未完成
+
+> 事实：22:3x 本机 `C:\Android\platform-tools.zip` **曾经完整下到 8,031,822 字节**（约 7.66MB），随后被删除、改用腾讯镜像 curl，只得到 **1,518 字节**（那是错误页，不是包）。别再重复踩。
+
+#### 1. 唯一正确下法（已实测 200 / 7.7MB）
+
+```powershell
+$ProgressPreference='SilentlyContinue'
+$env:http_proxy='http://172.19.92.25:13128'; $env:https_proxy=$env:http_proxy
+New-Item -ItemType Directory -Force C:\Android | Out-Null
+Invoke-WebRequest -Uri 'https://dl.google.com/android/repository/platform-tools-latest-windows.zip' `
+                  -OutFile 'C:\Android\platform-tools.zip' -UseBasicParsing
+(Get-Item 'C:\Android\platform-tools.zip').Length      # 完整应为 8031822 字节（>7,000,000 即可）
+Expand-Archive 'C:\Android\platform-tools.zip' -DestinationPath 'C:\Android' -Force
+C:\Android\platform-tools\adb.exe version              # 验收
+```
+
+#### 2. 三条纪律（这次别再犯）
+
+1. **不许删已下载的文件**——先量字节判断完整性；不完整就原地重下覆盖（`-OutFile` 本身会覆盖，无需先删）；
+2. **不许用 `curl`**：PowerShell 会把 curl 的进度写进 stderr，被当成 `NativeCommandError`，你会误判成失败（本轮就是这么把好文件删掉的）；
+3. **腾讯/东软镜像路径未核实**（`mirrors.cloud.tencent.com/AndroidSDK/...` 返回 1.5KB 错误页）⇒ **不要浪费时间试镜像**，官方 + 代理已验证可下。
+
+#### 3. 若下载中断（超时/断流）
+
+```powershell
+$f='C:\Android\platform-tools.zip'; $n=(Get-Item $f).Length
+Invoke-WebRequest -Uri 'https://dl.google.com/android/repository/platform-tools-latest-windows.zip' `
+  -Headers @{ Range = "bytes=$n-" } -OutFile 'C:\Android\pt.part' -UseBasicParsing
+# 若服务器不支持 Range（返回 200 而非 206），直接整套重下即可；7.7MB 不该反复失败
+```
+
+#### 4. 验收是硬的
+
+`adb.exe version` 与 `adb devices` 的**原文**必须出现在 `run/robot/P1_模拟器.md` 里。🚫 **不许**写「下载困难，记录后跳过」——`platform-tools` 只有 7.7MB，本机代理实测可达；装不上只能是方法错，不是网络不允许。
+
+---
+
+
 ### 🔴 用户令 · 2026-11-07 22:35（**工具链自己装！不许把「adb 未安装」当阻塞项**）· 用户直令 · 最高优先 · 未完成
 
 > **用户原话**：「如果没有 ADB，为啥不能自己下载安装呢？只会等靠要吗？」「把活派给 robot，让它去做啊」
