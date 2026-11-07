@@ -4,14 +4,13 @@ WAITING: 0
 
 ## 📊 进度快照
 
-```
-PHASE:        R1735 代际审计P0/P1/P2:TB4根因纠正(运维预判verifier overlay错误→实为agent端失败)+P1 resume bug修复+cleanup脚本就绪·网关429(ETA~09:24)
-已完成:       H-B✅·Gate7/7·TB报告✅·full500✅·R1685 cline低分归因✅·R1694-R1734 glm53重测启动·R1735 TB4根因纠正+P1 fix+cleanup脚本
-当前动作:     R1735 代际审计:①TB4根因=agent端失败非verifier overlay(opencode/pi smoke完成reward=0.0证明verifier正常·TB4 test.sh用pytest不用uvx)②run_serial_kimi.py:288 size>50B→model_patch非空(已修)③cleanup_empty_patches.py就绪(285/479=59%空)④harbor有oracle agent ⑤网关429(ETA~09:24)
-下一步:       ①等~09:24网关恢复→1题×1路验证reward非0→oracle=1.0 ②--delete清理空patch→重跑 ③TB4重跑(全errored) ④P2代际矩阵审计 ⑤P3 3题×7路 ⑥P4全量 ⑦报告
-阻塞:         🚨网关429(ETA~09:24)·P0验证/P3/P4需网关
-ERROR_COUNT:  1
-  📦 体积：TASK=32454B(31.7KB) / MEMORY=~30KB(本轮归档R1734/R1733→1行指针)
+PHASE:        R1736 代际审计P0✅+P1✅+P2✅:oracle=1.0×3(coq/html/atrx)·verifier正常·TB4全0=agent崩(429 81.6%)+合理失败(18.4%)·kimi默认值已切glm53·代际矩阵报告已交付
+已完成:       H-B✅·Gate7/7·TB报告✅·full500✅·R1735 P0/P1 fix·R1736 P0 oracle=1.0×3+P2代际矩阵审计+报告交付
+当前动作:     R1736 代际审计报告交付:①P0 oracle=1.0×3(coq-block-bound/html-js-filter/atrx-vep-crispr)→verifier功能正常 ②TB4全0根因=agent崩(429 81.6%)+合理失败(hermes47verified全0.0=pytest真实失败) ③运维预判"overlay不传播→全0"=部分错误 ④kimi残留26928处(16339JSON只读/597历史只读/35活代码已修/9957注释) ⑤P1 resume bug已修(run_serial_kimi.py:288) ⑥报告=reports/report_harness_script_audit_gen_matrix_zh.html
+下一步:       ①P3 3题×7路TB4回归(gateway已恢复200) ②P4 TB4全量+SWE-bench全量 ③codex SWE 1/76非空需排查config.toml ④§22:4x口径跑满 ⑤空patch 205个作废重跑
+阻塞:         无(gateway已恢复HTTP 200)
+ERROR_COUNT:  0
+  📦 体积：TASK=32454B(31.7KB) / MEMORY=~30KB(本轮无归档)
 ```
 
 > 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
@@ -19,7 +18,8 @@ ERROR_COUNT:  1
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 
 ### 本唤醒流水
-> [08:05] R1735 代际审计P0/P1/P2:①自检CPU/MEM PASS(load43/224·无>8000%·无>50GB) ②disk /data 5.8T(18%)/ 352G(4%)✅ ③gateway 429(请等待1h18m,ETA~09:24) ④**TB4根因纠正**:运维预判"verifier overlay不生效"=**错误**→TB4 verifier自带pytest(tests/Dockerfile预装)·test.sh用pytest不用uvx·**证据**:opencode/pi smoke完成reward=0.0(verifier正常·agent没解题)→TB4全0=agent端失败(cline exit code1·gateway 429)·overlay警告仅WARNING非fatal ⑤**P1修复**:run_serial_kimi.py:288 `size>50B`→改为`model_patch`非空·run_verified_full.py:242已正确 ⑥cleanup_empty_patches.py就绪:dry-run=285/479(59%)空patch·codex 98%空 ⑦harbor有oracle/nop agent→可验oracle=1.0 ⑧SWE-bench 479/3500(13.7%):her98/op82/cc90/cl55/pi48/ds43/codex63·7/7 predict alive ⑨kimi残留6759处/156文件 ⑩_base.py docstring仍写kimi(stale)·WAITING:0(未完成指令·网关429外部阻塞)
+> [08:40] R1736 代际审计P0✅+P1✅+P2✅+报告交付:①自检CPU/MEM PASS(load43/224·无>8000%·无>50GB) ②**P0 oracle=1.0×3**:coq-block-bound(46s,pytest0failed)·html-js-filter(38s)·atrx-vep-crispr(37s)→**verifier功能正常** ③cad-model oracle=0.0(gold solution bug:OCP.collections ModuleNotFoundError·build123d/ocp_gordon版本不兼容) ④data-anonymization oracle=0.0(artifact权限640·nobody无读→Permission denied) ⑤**TB4全0根因链**:agent崩(429 81.6%·199/244errored)+合理失败(hermes47verified全0.0=pytest真实失败·vllm 4failed/1passed)+verifier网络依赖(少数·payments-pipeline-fix)+artifact权限(个别)+gold bug(个别) ⑥运维预判"overlay不传播→全0"=**部分错误**(844B日志是warning非error) ⑦**P1已修**:run_serial_kimi.py:288 size>50B→model_patch非空·run_verified_full.py:237已正确 ⑧**kimi残留26928处**:16339JSON(只读)/597历史(只读)/35活代码(已修)/9957注释(部分改) ⑨活代码已切glm53:run_harness.py:45·run_verified_full.py:29·_base.py:42,46·docstring已更新 ⑩gateway恢复200(08:25)·6路TB4 batch运行中 ⑪SWE-bench 521/3500·194非空(opencode63/84最佳·codex1/76最差) ⑫报告=reports/report_harness_script_audit_gen_matrix_zh.html(15KB·0script0外链)·WAITING:0(未完成指令:P3/P4全量)
+> [08:05] R1735 代际审计P0/P1/P2:①自检CPU/MEM PASS ②TB4根因纠正 ③P1修复 ④cleanup脚本就绪 ⑤harbor有oracle ⑥网关429(ETA~09:24)
 > 📦 R1734 流水已归档 → daily-memories-harness/2026-11-07.md。结论：监控轮,SWE-bench 398/3500,TB4全7路0 passed。需要时再读。
 > 📦 R1733 流水已归档 → daily-memories-harness/2026-11-07.md。结论：网关429首报,SWE-bench 336/3500,resume bug(run_serial_kimi.py:288)定位。需要时再读。
 > 📦 R1732 流水已归档 → daily-memories-harness/2026-11-07.md。结论：TB4全7路启动+SWE-bench 321/3500。需要时再读。
