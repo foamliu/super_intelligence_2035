@@ -79,9 +79,15 @@
 - ✅ **L1 四指标复跑（`eval_l1.py` 云端）**：识图 **4/4=1.0**；首步 **P50 1.25s / P90 1.27s**（≤2.5/≤4 达标）；**直接给答案率 0**（引导 0/3 + 对抗 0/3 全拒）；`ocr_fallback_count=0`（无静默降级）。
 - 📌 **结论**：与第 7 轮一致、无回归；11:10 令（P0 → 选路线 → 最小 demo）持续闭环；用户清单维持 **3 条（≤5）**。
 
+## 第 9 轮增量（2026-11-07 · 执行 20:05 令交付 INTERACTION_SPEC.md）
+
+- ✅ **`INTERACTION_SPEC.md` 交付（20:05 令本轮唯一交付）**：四态状态机 + 常听 `ambient` + 异常态（`clarify`/`encourage`/`presence`/`idle`/`muted`），状态机 2 图（ASCII 29 行 + mermaid 17 行）+ 状态表 10 行；三层提示阶梯 L1/L2/L3（禁跳级、禁给答案）；**话术模板 21 条**；**时延指标 13 条**（P50≤2.5s/P90≤4s/打断≤300ms/静默 6s→10s 等）；打断协议、静默/超时/降级矩阵、在座检测（presence）、语音链路端侧定稿。
+- ✅ **P0 七度复验（真实命令）**：`adb`/`hdc` 仍未装（`Get-Command` 均 `$null`）、`ANDROID_HOME` 空、USB `VID` 无华为 `12D1`（仅 `30FA`/`046D`/`1A2C`/`8087`）——与第 8 轮一致、无回归。
+- 📌 **结论**：HCI 规范的「设计/口径」已定稿；代码（speech.py/presence.py/normalize_math.py）与实测验收留待下一轮，本轮不谎称已测。11:10 令（P0→路线→demo）维持闭环，不再重复复跑。
+
 ## 下一轮候选（按优先级）
 
-1. **`INTERACTION_SPEC.md` + `host/speech.py`**（11:40/11:55/12:05/12:20 四条令的主交付）：四态+常听态状态机、三层提示阶梯、话术裁剪到「≤2 句 / ≤20 字」、打断协议。
-2. **`host/normalize_math.py`**（口述 → 数学式纠错，≥30 条单测）+ `speech.py` 端侧 ASR/TTS 适配层（`eval/speech_compare.json`）。
-3. 题库扩到 100 题（含中文应用题/几何题），跑 L1 全量指标（识别准确率 / 直接给答案率 = 0）。
-4. 收用户 3 条回复 → 复验 `hdc list targets` / `adb devices`，打通真机「拍照/出声」（L0 真机化）。
+1. **`host/speech.py`**（端侧 ASR/TTS 适配层：`asr_stream/tts_stream/stop`，端侧默认）+ **`host/normalize_math.py`**（口述→数学式纠错，≥30 单测）——11:40/11:55/12:05/12:20 的代码交付（spec 已就绪）。
+2. **`host/presence.py`**（在座检测，先 PC 摄像头跑通 + 20 次实测）。
+3. **`eval/interaction_*.json`**（时延 / 打断 / 模拟学生 3 人设）——语音链路落地后实测。
+4. 题库扩到 100 题跑 L1 全量指标；收用户 3 条回复 → 复验 `hdc list targets` / `adb devices`，打通真机「拍照/出声」（L0 真机化）。

@@ -14,14 +14,15 @@ WAITING: 0
 ## 📊 进度快照（每次唤醒必须更新）
 
 ```
-PHASE:        L0 设备通路（PC mock 全通）→ 等用户 3 条做真机化；L1 单题闭环已达标（识图 4/4 · 首步 P50 1.25s/P90 1.27s）
-已完成:       P0 §1~§3.4 ✅；路线 R3 ✅；最小 demo ✅；L1 基线 ✅；识图 4/4（DeepSeek 视觉）✅；直接给答案率 0 ✅；时延 P50/P90 达标 ✅
+PHASE:        L0 设备通路（PC mock 全通）→ 等用户 3 条做真机化；L1 单题闭环已达标；**HCI 交互规范已交付（INTERACTION_SPEC.md）**
+已完成:       P0 §1~§3.4 ✅；路线 R3 ✅；最小 demo ✅；L1 基线 ✅；识图 4/4（DeepSeek 视觉）✅；直接给答案率 0 ✅；时延 P50/P90 达标 ✅；**INTERACTION_SPEC.md ✅（20:05 令）**
 第5轮:       识图+引导切云端 DeepSeek（recognize() 签名不变 / 可降级 / 路径可见）；识图 0.5→1.0；P50 2.0s·P90 2.92s；修 headless TTS 崩溃；P0 用户清单 5→3 条
 第6轮:       按 11:10 令全链路复跑无回归——P0 四度复验、R3 维持、demo 端到端 2.95s、L1 四指标达标（识图 1.0·首步 P50 1.51s/P90 2.22s·给答案率 0）
 第7轮:       按 11:10 令全链路复跑无回归——P0 五度复验、R3 维持、demo 端到端 3.33s、L1 四指标达标（识图 4/4·首步 P50 1.6s/P90 1.78s·给答案率 0·无静默降级）
 第8轮:       按 11:10 令全链路复跑无回归——P0 六度复验、R3 维持、demo 端到端 3.88s、L1 四指标达标（识图 4/4·首步 P50 1.25s/P90 1.27s·给答案率 0·无静默降级）
-当前动作:     第 8 轮：P0 复验 → 路线复核 → demo 端到端 3.88s → eval 复跑 → 回写 P0/ROADMAP/MEMORY + 日流水 → commit+push(robot:)
-下一步:       写 `INTERACTION_SPEC.md` + `host/speech.py` + `host/normalize_math.py`（11:40/11:55/12:05/12:20 四条令的主交付）；题库扩到 100 题；收用户 3 条做真机化
+第9轮:       执行 20:05 令——交付 `INTERACTION_SPEC.md`（四态+常听态状态机、三层提示阶梯、21 条话术、13 条时延指标、打断/降级/在座检测/语音链路选型）；P0 七度复验无回归
+当前动作:     第 9 轮：读任务书 → 识别最新 20:05 令（暂停 L1/OCR 重跑，先交 INTERACTION_SPEC）→ 交付 spec → 回写 MEMORY/ROADMAP/P0 + 日流水 → commit+push(robot:)
+下一步:       `host/speech.py`（端侧 ASR/TTS 适配层）+ `host/presence.py`（在座检测，PC 摄像头先跑）+ `host/normalize_math.py`（≥30 单测）（11:40/11:55/12:05/12:20 的代码交付）；题库扩到 100 题；收用户 3 条做真机化
 阻塞:         ⏳ 手机未连（型号/系统未知 + adb/hdc 未装）——**只阻塞真机化，不阻塞 PC 端任何工作**；`qwen3-vl:32b` 已按 15:4x 令作废
 ERROR_COUNT:  0
 ```
@@ -155,16 +156,25 @@ ERROR_COUNT:  0
 - 回写：`P0_设备通路.md`（§0/§1.4/§4）、`ROADMAP.md`（第 8 轮复验）、本文件、`daily-memories-video/2026-11-07.md`。
 - commit+push（`robot:`）。
 
+## 4.8 本唤醒流水（2026-11-07 · 第 9 轮 · 执行 20:05 令交付 INTERACTION_SPEC.md）
+
+- 读任务书全文（409 行）+ `robot/README.md`；识别到**最新最高优先 20:05 令**：HCI 四条令（11:40/11:55/12:05/12:20）未交付前，**暂停 L1/OCR 重跑**，本轮唯一交付 = `INTERACTION_SPEC.md`。故不再第 5 次重跑 11:10 demo（第 5–8 轮已连续复跑 4 次），改为交付 HCI 规范。ComfyUI 全程未碰（已冻结）。
+- **P0 七度复验（真实命令）**：`adb`/`hdc` 仍未装（`Get-Command` 均 `$null`）；`ANDROID_HOME` 空；USB `VID` 仍无华为 `12D1`（仅 `30FA`/`046D`/`1A2C`/`8087`）。
+- ✅ **交付 `INTERACTION_SPEC.md`**（可数可核）：状态机 **2 图**（ASCII 29 行 + mermaid 17 行）+ 状态表 **10 行**（ambient/listen/think/speak/wait_student/clarify/encourage/presence/idle/muted）；三层提示阶梯 L1/L2/L3（禁跳级、禁给答案）；**话术模板 21 条**（T01–T21）；**时延指标 13 条**（M01–M13：P50≤2.5s / P90≤4s / 打断≤300ms / 静默 6s→10s 等）；打断协议、静默/超时/降级矩阵、在座检测（presence）、语音链路端侧定稿（含「云端语音默认 off」）。
+- 📌 **结论**：20:05 令（交付 `INTERACTION_SPEC.md`）✅ 闭环；HCI 代码（speech.py / presence.py / normalize_math.py）与 11:40 交互验收（录音 / 打断 / 模拟学生 / 走查）留待下一轮，本轮**不谎称已测**。
+- 回写：`INTERACTION_SPEC.md`（新建）、`ROADMAP.md`（第 9 轮增量 + 下一轮候选）、本文件、`P0_设备通路.md`（§0 第 9 轮注）、`daily-memories-video/2026-11-07.md`。
+- commit+push（`robot:`）。
+
 ## 5. 阻塞 / 待办
 
 1. **⏳ 等用户 3 条回复**（`P0_设备通路.md` §4）：① 手机型号/系统版本 ② 开 USB 调试并连线 ③ 装 hdc 或 adb。
    🚫 **这 3 条只阻塞「真机化」，不阻塞 PC 端任何工作**（16:5x 令 §5：不得再以此为由停摆）。
 2. ~~`qwen3-vl:32b` 20GB GGUF 缺失~~ → **已作废**（15:4x 令：识图走 DeepSeek，本地 `llava` 只做离线兜底）。
 3. **下一轮候选（按优先级）**：
-   1. `run/robot/INTERACTION_SPEC.md` + `host/speech.py` + `host/normalize_math.py`（11:40/11:55/12:05/12:20 四条令的主交付）；
-   2. 题库扩到 100 题（含中文应用题/几何题）跑 L1 全量指标；
-   3. 真机化 L0（等用户 3 条）；
-   4. 话术裁剪到「≤2 句 / ≤20 字」（本轮实测约 75 字 / 3 句，超出 11:40 令口径）。
+   1. `host/speech.py`（端侧 ASR/TTS 适配层：`asr_stream/tts_stream/stop`，端侧默认）+ `host/normalize_math.py`（口述→数学式，≥30 单测）——11:40/11:55/12:05/12:20 的代码交付（spec 已就绪）；
+   2. `host/presence.py`（在座检测，先 PC 摄像头跑通 + 20 次实测）；
+   3. `eval/interaction_*.json`（时延 / 打断 / 模拟学生 3 人设）——语音链路落地后实测；
+   4. 题库扩到 100 题跑 L1 全量指标；真机化 L0（等用户 3 条）。
 
 ## 6. 运维问答
 
