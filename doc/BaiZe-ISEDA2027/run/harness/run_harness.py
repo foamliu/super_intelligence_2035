@@ -207,7 +207,7 @@ class ClineDriver:
             "OPENAI_BASE_URL": f"http://127.0.0.1:{GW_PROXY_PORT}/v1",
         })
         r.harness = self.name
-        r.model_patch = git_patch(workdir) if r.returncode == 0 else ""
+        r.model_patch = git_patch(workdir)  # R1744 fix: always extract patch; rc!=0 may still have real edits
         return r
 
 
@@ -246,7 +246,7 @@ class CodexDriver:
             "OPENAI_BASE_URL": f"http://127.0.0.1:{GW_PROXY_PORT}/v1",
         })
         r.harness = self.name
-        r.model_patch = git_patch(workdir) if r.returncode == 0 else ""
+        r.model_patch = git_patch(workdir)  # R1744 fix: always extract patch; rc!=0 may still have real edits
         return r
 
 
@@ -274,7 +274,7 @@ class OpencodeDriver:
         ]
         r = _run(cmd, workdir, timeout)
         r.harness = self.name
-        r.model_patch = git_patch(workdir) if r.returncode == 0 else ""
+        r.model_patch = git_patch(workdir)  # R1744 fix: always extract patch; rc!=0 may still have real edits
         return r
 
 
@@ -357,7 +357,7 @@ class ClaudeCodeDriver:
         }
         r = _run(cmd, workdir, timeout, env=env)
         r.harness = self.name
-        r.model_patch = git_patch(workdir) if r.returncode == 0 else ""
+        r.model_patch = git_patch(workdir)  # R1744 fix: always extract patch; rc!=0 may still have real edits
         return r
 
 
@@ -495,7 +495,7 @@ class PiDriver:
         }
         r = _run(cmd, workdir, timeout, env=env)
         r.harness = self.name
-        r.model_patch = git_patch(workdir) if r.returncode == 0 else ""
+        r.model_patch = git_patch(workdir)  # R1744 fix: always extract patch; rc!=0 may still have real edits
         return r
 
 
@@ -547,7 +547,7 @@ class HermesDriver:
         }
         r = _run(cmd, workdir, timeout, env=env)
         r.harness = self.name
-        r.model_patch = git_patch(workdir) if r.returncode == 0 else ""
+        r.model_patch = git_patch(workdir)  # R1744 fix: always extract patch; rc!=0 may still have real edits
         return r
 
 

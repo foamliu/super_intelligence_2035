@@ -42,7 +42,7 @@ def run_cline_patched(instance, workdir, timeout):
             "OPENAI_BASE_URL": f"http://127.0.0.1:{os.environ.get('GW_PROXY_PORT', '9090')}/v1",
         })
         r.harness = self.name
-        r.model_patch = git_patch(workdir) if r.returncode == 0 else ""
+        r.model_patch = git_patch(workdir)  # R1744 fix: always extract patch; rc!=0 may still have real edits
         return r
     driver.run = types.MethodType(run_patched, driver)
     return driver.run(instance, workdir, timeout)
@@ -115,7 +115,11 @@ def main():
         print(f"[run_single] cleanup: git reset --hard {base_commit}")
         reset_workdir(workdir, base_commit)
 
-    return 0 if res.returncode == 0 else 1
+    # R1744 fix: always return 0 — patch is extracted regardless of harness rc;
+    # the official SWE-bench eval will judge the patch honestly.  A non-zero
+    # harness rc (API error, timeout) should not prevent the prediction from
+    # being saved and evaluated.
+    return 0
 
 
 if __name__ == "__main__":
