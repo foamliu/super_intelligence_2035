@@ -20,8 +20,8 @@ pre{background:#2c3e50;color:#ecf0f1;padding:15px;border-radius:5px;overflow-x:a
 <div class="info">
 <p><strong>模型</strong>：glm-5.3-flash（网关 <code>http://agi-gateway.cxmt.com/v1</code>）</p>
 <p><strong>7 路</strong>：cline / codex / opencode / claude-code / pi / hermes / deepseek</p>
-<p><strong>生成时间</strong>：2026-11-07 23:37（R1809）</p>
-<p><strong>状态</strong>：<span class="warn">⚠️ 中间报告</span> — SWE-bench eval 6/7 完成（deepseek 运行中）；TB-2.1 cline 完成 + codex 已终止(429) + hermes 运行中</p>
+<p><strong>生成时间</strong>：2026-11-07 23:48（R1810）</p>
+<p><strong>状态</strong>：<span class="warn">⚠️ 中间报告</span> — SWE-bench eval 6/7 完成（deepseek eval 运行中，16/40 instances）；TB-2.1 cline 完成 + codex 已终止(429) + hermes 运行中(14/89，6 errored=python3缺失)</p>
 </div>
 
 <div class="critical">
@@ -94,7 +94,7 @@ pre{background:#2c3e50;color:#ecf0f1;padding:15px;border-radius:5px;overflow-x:a
 <tr><th>Harness</th><th>完成</th><th>Passed</th><th>Failed</th><th>Remaining</th><th>通过率</th><th>状态</th></tr>
 <tr><td>cline</td><td>88/89</td><td class='pass'>7</td><td class='fail'>81</td><td>1</td><td><strong>7.9%</strong></td><td>✅ 已完成</td></tr>
 <tr><td>codex</td><td>18/89</td><td class='pass'>0</td><td class='fail'>18</td><td>71</td><td><strong>0%</strong></td><td>❌ 已终止(429)</td></tr>
-<tr><td>hermes</td><td>4/89</td><td class='pass'>0</td><td class='fail'>4</td><td>85</td><td><strong>—</strong></td><td>⏳ 运行中</td></tr>
+<tr><td>hermes</td><td>14/89</td><td class='pass'>0</td><td class='fail'>8</td><td>75</td><td><strong>—</strong></td><td>⏳ 运行中(6 errored=python3缺失)</td></tr>
 <tr><td colspan="6"><em>opencode / claude-code / deepseek / pi — 4 路待启动（网关 429 阻塞，ETA ~50min）</em></td><td>⏳ 待启动</td></tr>
 </table>
 <div class="note"><p><strong>§15:2x 判据</strong>：TB4 全 0 → 切换 TB-2.1 → cline 7 passed → <strong>MET ✅</strong>。详见 <code>report_harness_tb21_7way_zh.html</code></p></div>
@@ -126,7 +126,7 @@ pre{background:#2c3e50;color:#ecf0f1;padding:15px;border-radius:5px;overflow-x:a
 
 <hr>
 <p style="text-align:center;color:#7f8c8d;font-size:0.9em">
-BaiZe Harness · R1809 · 2026-11-07 23:37<br>
+BaiZe Harness · R1810 · 2026-11-07 23:48<br>
 glm-5.3-flash · SWE-bench Verified 500 + TB-2.1 89 · 7-way · 报告正文一律写 cline
 </p>
 </body></html>

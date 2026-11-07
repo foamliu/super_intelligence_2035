@@ -25,7 +25,7 @@ pre{background:#2c3e50;color:#ecf0f1;padding:15px;border-radius:5px;overflow-x:a
 <div class="info">
 <p><strong>基准口径声明</strong>：本报告数据为 <strong>TB-2.1 / 89 题 / 7-way concurrent</strong>。
 TB-2.1 与 TB4 <strong>题集不同、不可跨基准比较</strong>。</p>
-<p><strong>模型</strong>：glm-5.3-flash（网关 <code>http://agi-gateway.cxmt.com/v1</code>）｜<strong>生成时间</strong>：2026-11-07 23:37（R1809）</p>
+<p><strong>模型</strong>：glm-5.3-flash（网关 <code>http://agi-gateway.cxmt.com/v1</code>）｜<strong>生成时间</strong>：2026-11-07 23:48（R1810）</p>
 </div>
 
 <div class="critical">
@@ -50,13 +50,13 @@ TB-2.1 cline 路 <strong>7 题 passed</strong>（≥1 题 × ≥1 路 reward 非
 <h2>2. TB-2.1 · 7 路状态总览</h2>
 <div class="note">
 <p><strong>运行模式</strong>：sequential launcher（<code>launch_tb21_glm53_7way.sh</code>），7 路按序执行。
-网关 keyB 在 16:11~22:24 期间遭遇 429 quota 耗尽，22:24 网关恢复（HTTP 200），但 23:25 起 429 再次出现（额度再次耗尽，ETA ~50min）。</p>
+网关 keyB 在 16:11~22:24 期间遭遇 429 quota 耗尽，22:24 网关恢复（HTTP 200），但 23:25 起 429 再次出现（额度再次耗尽，ETA ~39min≈00:25）。</p>
 </div>
 <table>
 <tr><th>#</th><th>Harness</th><th>状态</th><th>Passed</th><th>Failed</th><th>Remaining</th><th>通过率</th></tr>
 <tr><td>1</td><td>cline</td><td><span class='tag tag-done'>已完成</span> 88/89</td><td class='pass'>7</td><td class='fail'>81</td><td>1</td><td>7.9%</td></tr>
 <tr><td>2</td><td>codex</td><td><span class='tag tag-pending'>已终止</span> 18/89 (429)</td><td class='pass'>0</td><td class='fail'>18</td><td>71</td><td>0%</td></tr>
-<tr><td>3</td><td>hermes</td><td><span class='tag tag-running'>运行中</span> 4/89</td><td class='pass'>0</td><td class='fail'>4</td><td>85</td><td>—</td></tr>
+<tr><td>3</td><td>hermes</td><td><span class='tag tag-running'>运行中</span> 14/89</td><td class='pass'>0</td><td class='fail'>8</td><td>75</td><td>—</td></tr>
 <tr><td>4</td><td>opencode</td><td><span class='tag tag-pending'>未开始</span> 未开始</td><td class='pass'>0</td><td class='fail'>0</td><td>89</td><td>—</td></tr>
 <tr><td>5</td><td>claude-code</td><td><span class='tag tag-pending'>未开始</span> 未开始</td><td class='pass'>0</td><td class='fail'>0</td><td>89</td><td>—</td></tr>
 <tr><td>6</td><td>deepseek</td><td><span class='tag tag-pending'>未开始</span> 未开始</td><td class='pass'>0</td><td class='fail'>0</td><td>89</td><td>—</td></tr>
@@ -106,7 +106,7 @@ TB-2.1 cline 路 <strong>7 题 passed</strong>（≥1 题 × ≥1 路 reward 非
 <h3>3.1 网关 429 quota 耗尽（基础设施问题）</h3>
 <div class="critical">
 <p><strong>现象</strong>：glm-5.3-flash 网关 keyB 在评测期间多次返回 HTTP 429「本次 Token 额度已用完」。</p>
-<p><strong>影响</strong>：TB-2.1 cline 路 88/89 完成（1 题因 429 未完成）；codex 路 18/89 全部因 429 失败已终止；hermes 路刚启动（4/89）；后续 4 路未启动（网关 429 阻塞，ETA ~50min）。</p>
+<p><strong>影响</strong>：TB-2.1 cline 路 88/89 完成（1 题因 429 未完成）；codex 路 18/89 全部因 429 失败已终止；hermes 路 14/89 已完成（0 passed，6 errored）；后续 4 路未启动（网关 429 阻塞，ETA ~39min≈00:25）。</p>
 <p><strong>归因红线</strong>：网关额度耗尽 / 429 <strong>不得</strong>写成「模型能力」结论。</p>
 </div>
 <h3>3.2 cline 路 81 题失败归因</h3>
@@ -117,6 +117,17 @@ TB-2.1 cline 路 <strong>7 题 passed</strong>（≥1 题 × ≥1 路 reward 非
 <li><strong>429 阻塞</strong>：网关额度耗尽期间 agent 无法获取 LLM 响应</li>
 </ul>
 <p><strong>归因红线</strong>：能力差（真实做错）<strong>不得</strong>用「基础设施问题」掩盖。</p>
+</div>
+
+<h3>3.3 hermes 路 python3 缺失错误（基础设施问题）</h3>
+<div class="critical">
+<p><strong>现象</strong>：hermes 路 14/89 已完成中 <strong>6 题 errored</strong>，根因为任务容器内 <code>python3: command not found</code>（exit 127）。
+hermes agent 需在任务容器内 <code>pip install hermes-agent</code>，但部分 TB-2.1 任务镜像无 python3 解释器。</p>
+<p><strong>证据</strong>：<code>/tmp/tb21_glm53_jobs/hermes/2026-11-07__23-28-03/job.log</code> 行：<br>
+<code>Trial compile-compcert__KaPufzU failed: Command failed (exit 127): python3 /tmp/get-pip.py ... stdout: bash: line 1: python3: command not found</code></p>
+<p><strong>归因</strong>：基础设施问题（任务镜像缺 python3），<strong>非 429</strong>、<strong>非模型能力</strong>。
+受影响任务：compile-compcert、configure-git-webserver 等（镜像无 python3 的任务）。</p>
+<p><strong>归因红线</strong>：此错误不得写成「hermes 能力差」。</p>
 </div>
 
 <h2>4. TB4 vs TB-2.1 不可比性说明</h2>
@@ -158,7 +169,7 @@ done | sort</code></pre>
 
 <hr>
 <p style="text-align:center;color:#7f8c8d;font-size:0.9em">
-BaiZe Harness 研究线 · R1809 · 2026-11-07 23:37<br>
+BaiZe Harness 研究线 · R1810 · 2026-11-07 23:48<br>
 TB-2.1 / 89 题 / 7-way concurrent · glm-5.3-flash · 报告正文一律写 cline
 </p>
 </body></html>
