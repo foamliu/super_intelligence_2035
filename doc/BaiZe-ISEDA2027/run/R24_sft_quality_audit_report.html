@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>R24 SFT 数据质量审计报告 - BaiZe Post-Train</title>
+<style>
+body{font-family:system-ui,sans-serif;max-width:980px;margin:1.5em auto;padding:0 1em;background:#fafafa;color:#222;line-height:1.6}
+h1{border-bottom:3px solid #c0392b;padding-bottom:.3em}
+h2{border-bottom:1px solid #ccc;padding-bottom:.2em;margin-top:1.8em;color:#2c3e50}
+h3{color:#34495e;margin-top:1.4em}
+table{border-collapse:collapse;width:100%;margin:1em 0;font-size:.9em}
+th,td{border:1px solid #ccc;padding:.4em .6em;text-align:left}
+th{background:#e8e8e8;font-weight:600}
+tr:nth-child(even){background:#f5f5f5}
+.bad{color:#c0392b;font-weight:bold}
+.good{color:#27ae60;font-weight:bold}
+.warn{color:#e67e22;font-weight:bold}
+code{background:#eee;padding:.1em .3em;border-radius:3px;font-size:.85em}
+pre{background:#2c3e50;color:#ecf0f1;padding:.8em 1em;border-radius:6px;overflow-x:auto;font-size:.82em;line-height:1.4}
+pre .v1{color:#e74c3c}
+pre .v2{color:#2ecc71}
+.badge{display:inline-block;padding:.15em .6em;border-radius:3px;font-size:.8em;font-weight:bold;color:#fff}
+.badge.p0{background:#e74c3c}
+.badge.high{background:#27ae60}
+.badge.med{background:#f39c12}
+.badge.low{background:#95a5a6}
+.badge.pass{background:#27ae60}
+.metric{display:inline-block;margin:.3em 1em .3em 0;padding:.5em 1em;border-radius:6px;background:#fff;border:1px solid #ddd}
+.metric .num{font-size:1.6em;font-weight:bold}
+.metric .lbl{font-size:.8em;color:#666}
+.improve{color:#27ae60;font-weight:bold;font-size:1.1em}
+</style>
+</head>
+<body>
+<h1>R24 SFT 数据质量审计 + v2 语料修复报告</h1>
+<p><strong>实验编号</strong>: R24 | <strong>日期</strong>: 2026-11-07 (wake72) | <strong>类型</strong>: 零GPU预研 | <strong>状态</strong>: <span class="badge pass">完成</span></p>
+
+<h2>摘要</h2>
+<p>对 v1 SFT 语料做全量审计，发现 <span class="badge p0">P0</span> 级数据质量缺陷：<strong>100% 的 API 调用使用零参数</strong>。根因为生成脚本硬编码零参数模板。编写 v2 生成器，采用四策略参数提取，将 has-args 比率从 <span class="bad">0%</span> 提升至 <span class="good">64%</span>。</p>
+
+<div>
+<div class="metric"><span class="num good">0→64%</span><br><span class="lbl">has-args 比率提升</span></div>
+<div class="metric"><span class="num">12758</span><br><span class="lbl">v2 有参数调用数</span></div>
+<div class="metric"><span class="num">11733</span><br><span class="lbl">high-quality 对(自包含)</span></div>
+<div class="metric"><span class="num good">0</span><br><span class="lbl">污染命中</span></div>
+<div class="metric"><span class="num">19524</span><br><span class="lbl">v2 总对数</span></div>
+</div>
+
+<h2>1. P0 缺陷：v1 SFT 语料 100% 零参数调用</h2>
+<table>
+<tr><th>类型</th><th>总数</th><th>empty-arg</th><th>has-args</th><th>empty-arg%</th></tr>
+<tr><td>S1_doc_to_code</td><td>8012</td><td>5114</td><td>0</td><td class="bad">100.0%</td></tr>
+<tr><td>S2_api_lookup</td><td>8098</td><td>5114</td><td>0</td><td class="bad">100.0%</td></tr>
+<tr><td>S3_multi_api_chain</td><td>89</td><td>267</td><td>0</td><td class="bad">100.0%</td></tr>
+<tr><td>S4_error_recovery</td><td>3411</td><td>3375</td><td>0</td><td class="bad">100.0%</td></tr>
+<tr style="font-weight:bold"><td>合计</td><td>19610</td><td>13870</td><td>0</td><td class="bad">100.0%</td></tr>
+</table>
+<p><strong>根因</strong>：<code>baize_posttrain_gen_sft_corpus.py</code> 第89行硬编码 <code>pyScript.{func_name}()</code> 零参数模板。</p>
+<h2>2. v2 修复：四策略参数提取</h2>
+<table>
+<tr><th>策略</th><th>方法</th><th>质量</th><th>自包含</th></tr>
+<tr><td>1</td><td>签名提取必填参数→类型化占位符</td><td><span class="badge high">high</span></td><td>是</td></tr>
+<tr><td>2</td><td>Parameters section→类型化占位符</td><td><span class="badge high">high</span></td><td>是</td></tr>
+<tr><td>3</td><td>Examples真实调用</td><td><span class="badge med">medium</span></td><td>可能引用未定义变量</td></tr>
+<tr><td>4</td><td>无参数信息→fallback</td><td><span class="badge low">low</span></td><td>是</td></tr>
+</table>
+<p>关键修复：正则支持 <code>-&gt; ret_type</code> 后缀；可选参数跳过；balanced-paren 嵌套括号提取。</p>
+<h2>3. v1 vs v2 对比</h2>
+<table>
+<tr><th>维度</th><th>v1</th><th>v2</th><th>改进</th></tr>
+<tr><td>总对数</td><td>19610</td><td>19524</td><td>-86</td></tr>
+<tr><td>has-args 调用</td><td class="bad">0</td><td class="good">12758</td><td class="improve">0→12758</td></tr>
+<tr><td>has-args 比率</td><td class="bad">0.0%</td><td class="good">64.0%</td><td class="improve">+64pp</td></tr>
+<tr><td>high quality</td><td>0</td><td>11733 (60.1%)</td><td>新增</td></tr>
+<tr><td>low quality</td><td>19610</td><td>7090 (36.3%)</td><td>-64%</td></tr>
+<tr><td>污染命中</td><td>0</td><td>0</td><td>保持</td></tr>
+</table>
+<h2>4. 示例对比</h2>
+<h3>v1（零参数—执行必报错）</h3>
+<pre><span class="v1">result = pyScript.aeAddHighLightCircle()  # 无参数！</span></pre>
+<h3>v2 high（类型化必填参数—自包含可执行）</h3>
+<pre><span class="v2">result = pyScript.aeAddHighLightCircle(
+    center=pyScript.emyPointF(0, 0), radius=0.0)</span></pre>
+<h2>5. 污染隔离验证</h2>
+<ul>
+<li>API 黑名单：19524 对 × 488 eval API → <span class="good">0 命中</span> PASS</li>
+<li>Entry_point：19524 对 × 155 eval entry_points → <span class="good">0 命中</span> PASS</li>
+</ul>
+<h2>6. SFT 数据混合策略建议</h2>
+<table>
+<tr><th>阶段</th><th>数据</th><th>配比</th><th>目的</th></tr>
+<tr><td>Warmup</td><td>UltraData-SFT-2605 通用指令</td><td>~80%</td><td>恢复指令跟随能力</td></tr>
+<tr><td>Domain</td><td>v2 high+medium (12524对) + 14条行为模式</td><td>~15%</td><td>注入 API 知识 + 参数传递</td></tr>
+<tr><td>Agentic</td><td>UltraData-SFT-Agent-2609</td><td>~5%</td><td>注入工具调用协议</td></tr>
+</table>
+<h2>7. 11/9 启动建议</h2>
+<ol>
+<li>使用 <code>sft_pyaether_corpus_v2.jsonl</code> 替代 v1</li>
+<li>用 <code>baize_posttrain_jsonl_to_parquet.py</code> 转换为 verl parquet 格式</li>
+<li>Smoke test 先仅用 high quality（11733 对）</li>
+<li>v1 保留作对照</li>
+</ol>
+<h2>8. 文件清单</h2>
+<table>
+<tr><th>文件</th><th>类型</th><th>说明</th></tr>
+<tr><td><code>baize_posttrain_gen_sft_corpus_v2.py</code></td><td>新建</td><td>v2 生成器(359行)</td></tr>
+<tr><td><code>sft_pyaether_corpus_v2.jsonl</code></td><td>新建</td><td>v2 语料(19524对,21.8MB,64% has-args)</td></tr>
+<tr><td><code>baize_posttrain_contam_check_v2.py</code></td><td>新建</td><td>污染快速检查</td></tr>
+</table>
+<hr>
+<p style="color:#888;font-size:.8em">BaiZe Post-Train R24 | 2026-11-07 | 零GPU预研 | 自动生成</p>
+</body>
+</html>

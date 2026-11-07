@@ -7,12 +7,12 @@ WAITING: 1
 
 ## 进度快照
 
-- PHASE: posttrain-wake71（2026-11-07 R23: DeepSeek轨迹挖掘→发现100%污染(红线!)→行为模式提取14条零污染SFT+EDA沙盒SSH不通→验证R0必要性）
-- 已完成: P3预备✅ 7脚本；P0✅ D1–D6；P1✅ 数据盘点+PyAether语料+污染隔离；P2✅ 方案书；wake45✅ §替身RL预演；wake48-51✅ R1-R4+E1；wake52✅ R5；wake53✅ R6+R7；wake55✅ 11/9启动脚本；wake56-68✅ R8-R20；wake69✅ R21(审计)；wake70✅ R22(R0+resume+cheat rate)；wake71✅ R23(DeepSeek轨迹100%污染→行为模式提取+沙盒SSH不通)
-- 当前动作: wake71 R23: 挖掘103条DeepSeek轨迹→发现101/103=98.1% entry_point匹配158评测题→🔴raw轨迹绝对不能进训练集(红线§5.1)→提取61条行为模式(工具序列+错误恢复)→生成14条零污染SFT对(sft_deepseek_patterns.jsonl 9.2KB)→EDA沙盒:SSH .17→36.15超时+pyAether不可导入→验证R0 auto-fallback必要性→4方案(A隧道/B HTTP/C R0/D安装)→EXPERIMENTS §R23(7小节)+HTML报告
-- 下一步: R1-R23+E1全部完成→ WAITING=1；11/9 GPU到位后自动起跑: bash baize_posttrain_launch_11_9.sh --step 0-5 --gpu-ids 0,1,2,3；11/9首验24项:V1-V8(R18)+V9-V14(R20)+V15-V19(R21)+V20-V24(R22)；11/9首日RL用R0(auto-fallback)→隧道后切R2；11/9首事请求运维建.17↔36.15隧道
+- PHASE: posttrain-wake72（2026-11-07 R24: SFT数据质量审计→发现v1 P0级100%零参数调用→v2四策略修复has-args 0%→64%→污染0命中→SFT混合策略建议）
+- 已完成: P3预备✅ 7脚本；P0✅ D1–D6；P1✅ 数据盘点+PyAether语料+污染隔离；P2✅ 方案书；wake45✅ §替身RL预演；wake48-51✅ R1-R4+E1；wake52✅ R5；wake53✅ R6+R7；wake55✅ 11/9启动脚本；wake56-68✅ R8-R20；wake69✅ R21(审计)；wake70✅ R22(R0+resume+cheat rate)；wake71✅ R23(DeepSeek轨迹100%污染→行为模式提取+沙盒SSH不通)；wake72✅ R24(SFT质量审计+v2修复0→64% has-args)
+- 当前动作: wake72 R24: 审计v1 SFT语料→🔴P0: 100% API调用零参数(19610对,根因=第89行硬编码func())→编写v2生成器(四策略:签名参数→Parameters→Examples→fallback)→修复extract_signature正则(支持->ret_type)→可选参数跳过→生成v2语料19524对(64% has-args,high=11733/med=701/low=7090)→污染检查0命中(API+entry_point双PASS)→EXPERIMENTS §R24(13小节)+HTML报告→SFT混合策略建议(三阶段课程80/15/5)
+- 下一步: R1-R24+E1全部完成→ WAITING=1；11/9 GPU到位后自动起跑: bash baize_posttrain_launch_11_9.sh --step 0-5 --gpu-ids 0,1,2,3；11/9首验24项:V1-V8(R18)+V9-V14(R20)+V15-V19(R21)+V20-V24(R22)；11/9首日RL用R0(auto-fallback)→隧道后切R2；11/9首事请求运维建.17↔36.15隧道；11/9 SFT用v2语料(替代v1)
 - 阻塞: GPU 2026-11-09既定到位(不再问)；L1 sandbox SSH等隧道(.17→36.15超时,R23发现)；P3等pretrain ckpt(ETA≈2026-12-25)
-- 未完成指令: 无（R1✅...R23✅E1✅ 全部完成）⇒ WAITING=1
+- 未完成指令: 无（R1✅...R24✅E1✅ 全部完成）⇒ WAITING=1
 
 ## 关键事实（常驻）
 
@@ -28,7 +28,7 @@ WAITING: 1
 - .17 GPU 现状：8×A40 全被 SGLang Qwen3.8-27B 占用（44-45/46GB），2026-11-09 分配 4 张给 post-train
 - 🔴 **CUDA 不匹配（wake53 发现）**：系统 CUDA 驱动=12.4（nvcc 12.4.131），但 vllm_venv torch=2.14.0+cu130 → `torch.cuda.is_available()=False`。11/9 前必须新建 cu124 兼容 venv（`pip install torch==2.4.0 --index-url https://download.pytorch.org/whl/cu124` + `pip install verl[sglang]`）
 - 🔴 **R9 verl+SGLang 集成（wake57 发现）**：verl 原生支持 SGLang（`pip install verl[sglang]`），多轮工具调用**仅 SGLang** 支持。配置已从 vLLM 切到 SGLang（`rollout.name: sglang` + `multi_turn: True` + `mode: async`）。EDA 沙盒工具骨架 `baize_posttrain_eda_tool.py` 已创建（BaseTool 子类，dry-run✅）
-- SFT 语料：✅ **已生成** `run/sft_pyaether_corpus.jsonl`（19610 对：S1=8012/S2=8098/S3=89/S4=3411，18.8MB，0 污染命中 488 评测 API）
+- SFT 语料：✅ v1 `sft_pyaether_corpus.jsonl`(19610对,0污染) + ✅ v2 `sft_pyaether_corpus_v2.jsonl`(19524对,64% has-args,0污染,R24) — **v2 替代 v1 用于训练**
 - RL/SFT Parquet：✅ **已转换**（R10）`run/rl_pyaether_synth_v2.parquet`（3347 records, 931KB, verl RLHF 格式: prompt+reward_model+agent_name）+ `run/sft_pyaether_corpus.parquet`（19610 records, 2.7MB, verl SFT 格式: conversation+metadata）
 - 🔴 **R11 GRPO 内存校准（wake59 发现）**：当前 `gpu_memory_utilization=0.35` 在多轮 3-turn 场景下**可能 OOM**——KV cache 需 13.8GB > 分配 11.9GB。已校准为 **0.50 + max_num_seqs=12**。训练态 ~12GB/卡，剩余 ~34GB 给 SGLang。4×A40 对 2B 全参 GRPO 是充裕配置（verl 官方 3B LoRA 需 1×H100）。添加 entropy_checkpointing + entropy_chunking 优化。5 级 OOM 降级阶梯已写入 §R11。
 - 论文章节：`BaiZe-ISEDA2027/ISEDA2027/5_llm_posttrain.tex`（已写设计，结果=[TBD]）
@@ -46,17 +46,7 @@ WAITING: 1
 > 📦 wake9–wake16 流水已归档 → daily-memories-posttrain/2026-11-06.md（vLLM 安装/MiniCPM5-2B 下载/诊断脚本增强/CPU 模型加载验证）。
 > 📦 wake17–wake48 流水已归档 → daily-memories-posttrain/2026-11-07.md（survey/例行巡检/替身RL预演/R1+R3深度调研）。
 
-[wake48] §用户令·2026-11-07 10:10 → R1(EDA环境RL)+R3(GRPO奖励)深度调研 → EXPERIMENTS §R1+§R3 → HTML报告12.5KB → 归档§替身RL预演(TASK→24.7KB)。本轮新增:§R1+§R3+HTML。
-
-[wake49] R4(失败模式分类)深度调研: 12次评测1895task-run+103轨迹分析 → 五分类法(SYN/API/LOG/TMO/DEP) → EXPERIMENTS §R4(11小节)+HTML 12.7KB → 归档wake17-48流水。
-
-[wake50] R2(造题与难度分层)深度调研 → 五层难度(L1-L5,4000题)+五维评分+5断言模板(T1-T5)+pass@8校准方案 → EXPERIMENTS §R2 + HTML 11.3KB。R1-R4全部完成。
-
-[wake51] E1合成题生成执行: R2设计→可执行脚本baize_posttrain_gen_synth_v2.py→ 8463 API DB→排除488评测黑名单→6781白名单→ 生成3347题(L1=1500/L2=347/L3=800/L4=500/L5=200)→ 0污染命中→ 3347/3347真实断言(非pass,v1为0/500!)→ 5.4MB rl_pyaether_synth_v2.jsonl落盘 → EXPERIMENTS §E1(7小节)。L2短缺(347 vs 1000): 4367 unknown-return API待GPU沙盒profiling补全。⚠️ commit f0080ac94已本地完成但push超时(网络慢)，下轮唤醒第一件事补推。📦 体积：TASK=24.7KB / MEMORY≈6KB / EXPERIMENTS≈68KB。本轮新增调研产出：E1生成脚本+3347题数据集+EXPERIMENTS §E1。未完成指令：无（R1✅R2✅R3✅R4✅E1✅）⇒ WAITING=1。
-
-[wake52] R5 RL框架选型+GRPO实现设计: verl vs OpenRLHF vs 自研→ 推荐verl+ReTool/ToolAgent(EDA沙盒=天然tool,co-located vLLM,GRPO原生)→ 内存预算(MiniCPM5-2B on 4×A40: 训练40GB+推理52GB=92GB/184GB=50%利用率✅)→ GRPO超参(G=8,clip=0.2,KL=0.04,lr=1e-6,来源arXiv:2608.14109 Granite 2B)→ 沙盒架构(.17 verl→SSH隧道→36.15 run_code)→ rollout预算(1500题×G=8×60s/8并发×2000steps≈5.5天)→ anti-cheat(PreToolUse hook in ToolAgentLoop)→ 8失败模式(R2起步避全0无梯度)→ verl YAML配置(baize_posttrain_rl_verl_config.yaml✅)→ API profiler脚本(baize_posttrain_api_profiler.py,语法✅dry-run✅6779 unknown API)→ EXPERIMENTS §R5(11小节)。git sync: origin/main=main=e57554529(已在同步,push/fetch超时但ref一致)。⚠️ commit 9eae193d3已本地完成但push超时(NFS网络慢,同wake51模式),下轮唤醒第一件事补推。📦 体积：TASK=24.7KB / MEMORY≈7KB。本轮新增调研产出：§R5 RL框架选型+GRPO实现设计+verl YAML配置+API profiler脚本。未完成指令：无（R1✅R2✅R3✅R4✅R5✅E1✅）⇒ WAITING=1。
-
-[wake53] R6 SFT深度方案+R7 verl环境预检: git sync确认(origin/main=local=01c999bae,已同步,wake52的push已成功)→ R6: 数据混合策略(35%通用/30%agentic/25%PyAether/10%错误恢复)→ SFT语料合成脚本baize_posttrain_gen_sft_corpus.py(语法✅dry-run✅)→ 执行生成19610对(S1=8012 doc-to-code/S2=8098 api-lookup/S3=89 multi-chain/S4=3411 error-recovery,0污染,18.8MB,sft_pyaether_corpus.jsonl落盘)→ 上下文长度8192(覆盖95%+轨迹)→ LoRA vs 全参(替身LoRA/白泽全参)→ 课程学习5阶段(warmup→API→工具→纠错→decay)→ 超参(LR=2e-5,GBS=128,3000步,WSD)→ R7: 🔴CRITICAL发现CUDA 12.4驱动vs vllm_venv torch cu130不匹配(torch.cuda.is_available()=False)→ verl依赖清单(torch/verl/ray/vllm/accelerate/flash-attn全缺)→ 11/9启动序列6步(新建venv→验证CUDA→vllm serve→评测→采集轨迹→起RL)→ 预飞行检查脚本→ 风险矩阵→ EXPERIMENTS §R6+§R7→ HTML报告8.3KB(report_posttrain_r6r7_sft_verl_readiness_zh.html)。本轮新增调研产出：§R6 SFT深度方案+19610对SFT语料+§R7 verl环境预检+CUDA不匹配发现+11/9启动序列+HTML报告。未完成指令：无（R1✅R2✅R3✅R4✅R5✅R6✅R7✅E1✅）⇒ WAITING=1。
+> 📦 wake48-59 已归档到 daily-memories-posttrain/2026-11-07.md（R1-R11：EDA环境RL/GRPO奖励/失败模式/造题分层/合成题生成/RL框架/SFT方案/verl环境/SGLang集成/Parquet转换/内存预算）
 
 [wake54] 唤醒→体积自检（TASK=24.7KB / MEMORY=9.1KB，均符合≤32KB要求）→确认所有调研任务R1-R7/E1/P0-P3预备全部完成→未完成指令：无→等待2026-11-09 GPU到位自动执行启动序列。⇒ WAITING=1。
 
@@ -87,3 +77,4 @@ WAITING: 1
 
 [wake71] R23 DeepSeek轨迹挖掘→行为模式提取+EDA沙盒连通性: 体积自检(TASK=24.7KB/MEMORY=27.2KB合规)→git同步(无ahead/behind)→R23: 挖掘103条DeepSeek full-harness轨迹(cline_trace_v1_3)+20条错误轨迹→🔴关键发现:101/103=98.1% entry_point匹配158评测题→raw轨迹=评测题本身→绝对不能进训练集(红线§5.1)→此前R1-R22假设"DeepSeek轨迹可作gold SFT"被推翻→改为提取行为模式:工具使用统计(search_apis 573/run_pyAether_code_tool 516/get_api_details 386,均值14.32/task与D2一致✅)+工具序列模式(Top5:搜索→详情→执行最常见~45次)+错误恢复(9对error→fix:ImportError/AttributeError/TypeError/AssertionError)+错误轨迹(20条135处错误,执行报错为主与D4一致✅)→生成14条零污染SFT对(sft_deepseek_patterns.jsonl 9.2KB,5条tool_call_sequence+9条error_recovery,函数签名已脱敏)→EDA沙盒连通性:SSH .17→36.15超时❌+pyAether不可导入❌+eda_fastmcp本地克隆✅→4方案(A运维反向隧道/B HTTP API/C R0 fallback/D安装Aether)→验证R22 R0 auto-fallback必要性✅→EXPERIMENTS §R23(7小节)+HTML报告(report_posttrain_r23_deepseek_trace_mining_zh.html)。📦 体积：TASK=24.7KB / MEMORY≈27.5KB。本轮新增调研产出：§R23 DeepSeek轨迹100%污染发现(红线)+14条零污染SFT对+沙盒SSH不通发现+HTML报告。未完成指令：无（R1✅...R23✅E1✅）⇒ WAITING=1。⚠️ push超时(ahead 1),下轮补推。
 
+[wake72] R24 SFT数据质量审计+v2语料修复: 体积自检(MEMORY≈25KB→归档wake48-59后下降)→git同步→R24: 审计v1 SFT语料→🔴P0发现:100% API调用零参数(19610对全部empty-arg,根因=baize_posttrain_gen_sft_corpus.py第89行硬编码pyScript.{func_name}()零参数模板)→影响:模型学到不传参数→M1不可达→编写v2生成器baize_posttrain_gen_sft_corpus_v2.py(359行,四策略:1.签名提取必填参数→类型化占位符high/2.Parameters section→占位符high/3.Examples真实调用medium/4.fallback零参数low)→修复extract_signature正则(支持**`func(params) -> ret_type`**格式,v1不支持→46% API签名提取失败)→可选参数跳过(有=default的不生成)→balanced-paren嵌套括号→14种类型→占位符映射(int→0/bool→True/float→0.0/emyPointF→pyScript.emyPointF(0,0)/emyDesign→pyScript.dbNewCV(...))→生成v2语料sft_pyaether_corpus_v2.jsonl(19524对,21.8MB,has-args=64.0%↑from 0%,high=11733(60.1%)/med=701(3.6%)/low=7090(36.3%))→污染检查:API黑名单0命中+entry_point 0命中双PASS→EXPERIMENTS §R24(13小节)+HTML报告(R24_sft_quality_audit_report.html)→SFT混合策略建议(三阶段课程:Warmup 80%通用指令/Domain 15% v2 high+medium+14条行为模式/Agentic 5%工具协议)→11/9 SFT用v2替代v1。📦 体积：TASK=24.7KB / MEMORY≈26KB（归档后）。本轮新增调研产出：§R24 SFT质量审计P0发现+v2四策略修复(0→64% has-args)+HTML报告+SFT混合策略。未完成指令：无（R1✅...R24✅E1✅）⇒ WAITING=1。

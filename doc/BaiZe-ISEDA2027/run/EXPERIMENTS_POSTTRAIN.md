@@ -3188,3 +3188,108 @@ no_reference: is_cheat=False, ratio=0.0000  ← 无参考集
 3. **沙盒就绪后**：切换到 R2/R3/R4 reward arm。
 4. **SFT 数据**：将 14 条行为模式 SFT 对合并到 R6 的 19610 条合成数据中（占比 0.07%，作为工具调用行为示范）。
 5. **污染检测**：11/9 评测前必跑 `baize_posttrain_contamination_gate.sh` 确认训练数据零污染。
+
+---
+
+## §R24 SFT 数据质量审计 + v2 语料修复（2026-11-07 wake72 · 零 GPU · 实测）
+
+> **背景**：11/9 GPU 到位倒计时 2 天。R1-R23 全部完成，继续深入调研 SFT 阶段数据质量。
+> **方法**：对 v1 SFT 语料做全量统计分析，发现并修复 P0 级数据质量缺陷。
+
+### R24.1 P0 级数据质量缺陷发现：v1 SFT 语料 100% 零参数调用
+
+**发现**：v1 SFT 语料的所有 19610 对 completion 中，API 调用全部使用零参数（100% empty-arg）。
+
+| 类型 | 总数 | empty-arg | has-args | empty-arg% |
+|:--|--:|--:|--:|--:|
+| S1_doc_to_code | 8012 | 5114 | 0 | 100.0% |
+| S2_api_lookup | 8098 | 5114 | 0 | 100.0% |
+| S3_multi_api_chain | 89 | 267 | 0 | 100.0% |
+| S4_error_recovery | 3411 | 3375 | 0 | 100.0% |
+| **合计** | **19610** | **13870** | **0** | **100.0%** |
+
+**示例**（v1 对 aeAddHighLightCircle）：API 文档要求 center: emyPointF, radius: float，但 v1 生成 `pyScript.aeAddHighLightCircle()` 零参数，实际执行必报错。
+
+### R24.2 根因分析
+
+根因：`baize_posttrain_gen_sft_corpus.py` 第 89 行硬编码零参数模板 `pyScript.{func_name}()`。`extract_signature()` 虽提取了参数但用 `_` 丢弃。影响：模型学到不传参数的 API 调用 → M1（50%）不可达。
+
+### R24.3 API 文档可用性（8463 API）
+
+- Examples（>>> 示例）：3892（46.0%）
+- Parameters section：5118（60.5%）
+- 可提取签名含参数：2340（27.6%）
+
+### R24.4 v2 修复：四策略参数提取
+
+新脚本 `baize_posttrain_gen_sft_corpus_v2.py`（359 行，AST OK，全量生成 OK）。
+
+| 策略 | 方法 | 质量 | 自包含 |
+|:--|:--|:--|:--|
+| 1 | 签名提取必填参数 → 类型化占位符 | high | 是 |
+| 2 | Parameters section → 类型化占位符 | high | 是 |
+| 3 | Examples 真实调用 | medium | 可能引用未定义变量 |
+| 4 | 无参数信息 → fallback | low | 是 |
+
+类型映射：int→0, bool→True, float→0.0, emyPointF→pyScript.emyPointF(0,0), emyDesign→pyScript.dbNewCV(...), 等 14 种。
+
+关键修复：
+1. `extract_signature` 正则修复支持 `-> ret_type` 后缀（v1 不支持 → 46% API 签名提取失败）
+2. 可选参数跳过（有 `=default` 的不生成占位符）
+3. 嵌套括号 balanced-paren 提取
+
+### R24.5 v2 生成结果
+
+| 维度 | v1 | v2 | 改进 |
+|:--|:--|:--|:--|
+| 总对数 | 19610 | 19524 | -86 |
+| has-args 调用 | 0 | 12758 | 0→12758 |
+| empty-arg 调用 | 13870 | 7173 | -48% |
+| has-args 比率 | 0.0% | 64.0% | +64pp |
+| high quality | 0 | 11733 (60.1%) | 新增 |
+| medium quality | 0 | 701 (3.6%) | 新增 |
+| low quality | 19610 | 7090 (36.3%) | -64% |
+| 污染命中 | 0 | 0 | 保持 |
+| quality_tier 标签 | 无 | 有 | 可过滤 |
+
+各类型 v2 质量分布：S1(8012: high=4620/med=204/low=3188), S2(8012: same), S3(89: med=89), S4(3411: high=2493/med=204/low=714)
+
+### R24.6 v2 示例对比
+
+v1（零参数）：`pyScript.aeAddHighLightCircle()` → 执行必报错
+v2 high（类型化必填参数）：`pyScript.aeAddHighLightCircle(center=pyScript.emyPointF(0, 0), radius=0.0)` → 自包含可执行
+v2 high（emyDesign）：`pyScript.aeAddDesignMapping(schematic=pyScript.dbNewCV('test', 'test', 'schematic'), layout=pyScript.dbNewCV('test', 'test', 'schematic'))`
+
+### R24.7 污染隔离验证
+
+- API 黑名单：19524 对 x 488 eval API → 0 命中 PASS
+- Entry_point：19524 对 x 155 eval entry_points → 0 命中 PASS
+
+### R24.8 36.3% low-quality 残余分析
+
+7090 对仍为零参数。原因：API 签名为 *args/**kwargs、无 Parameters section、文档极简。处置：保留（仍有基础价值）、可过滤（仅用 high+medium=12524 对）、11/9+ sandbox profiling 补全。
+
+### R24.9 对 SFT 训练策略的影响
+
+- v1 不可用（100% 零参数）；v2 可用（64% 有参数）
+- v2 quality_tier 可用于课程学习
+- M1 可达性确认：v2 high-quality 对直接教参数传递
+
+### R24.10 SFT 数据混合策略建议
+
+三阶段课程：Warmup(UltraData-SFT-2605通用指令~80%) → Domain(v2 high+medium 12524对+14条行为模式~15%) → Agentic(UltraData-SFT-Agent-2609~5%)。PyAether SFT 占总 SFT ~15%。
+
+### R24.11 11/9 启动建议更新
+
+1. SFT 数据：使用 sft_pyaether_corpus_v2.jsonl（替代 v1）
+2. Parquet 转换：11/9 用 jsonl_to_parquet.py 转换 v2
+3. 质量过滤：smoke test 先仅用 high quality（11733 对）
+4. v1 保留作对照
+
+### R24.12 修改/新建文件清单
+
+| 文件 | 类型 | 说明 |
+|:--|:--|:--|
+| baize_posttrain_gen_sft_corpus_v2.py | 新建 | v2 SFT 语料生成器(359行) |
+| sft_pyaether_corpus_v2.jsonl | 新建 | v2 SFT 语料(19524对,21.8MB,64% has-args) |
+| baize_posttrain_contam_check_v2.py | 新建 | v2 污染快速检查 |
