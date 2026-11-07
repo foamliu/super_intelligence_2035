@@ -88,47 +88,59 @@ echo "🔧 激活venv并升级pip..."
 source "$VENV_PATH/bin/activate"
 pip install --upgrade pip setuptools wheel
 
-# 4. 安装torch + cu124
-echo "🔥 安装PyTorch 2.4.0 + CUDA 12.4..."
-pip install torch==2.4.0 torchvision==0.19.0 torchaudio==2.4.0 --index-url https://download.pytorch.org/whl/cu124
+# 4. 安装torch 2.6.0 + cu124
+# 🔴 R26 FIX (2026-11-08): Upgraded from torch 2.4.0 → 2.6.0+cu124.
+#   SGLang 0.4.6.post1 [srt] pins torch==2.6.0. With torch 2.4.0, pip falls into
+#   infinite backtracking (R25 stuck 47min). torch 2.6.0+cu124 works with driver 550.54.14.
+echo "🔥 安装PyTorch 2.6.0 + CUDA 12.4..."
+pip install torch==2.6.0 torchvision==0.21.0 torchaudio==2.6.0 --index-url https://download.pytorch.org/whl/cu124
+
+# 4b. R26 FIX: nvidia-cusparselt-cu12 (torch 2.6.0 dep, libcusparseLt.so.0)
+echo "📋 安装 nvidia-cusparselt-cu12..."
+pip install nvidia-cusparselt-cu12 2>/dev/null || {
+    echo "⚠️  pip失败,从其他用户复制 libcusparseLt.so.0..."
+    mkdir -p "$VENV_PATH/lib/python3.10/site-packages/cusparselt/lib/"
+    cp /home/app.t0001941/miniforge3/envs/py310/lib/python3.10/site-packages/cusparselt/lib/libcusparseLt.so.0 \
+       "$VENV_PATH/lib/python3.10/site-packages/cusparselt/lib/" 2>/dev/null && echo "  ✅ 已复制"
+}
+# 4c. R26 FIX: LD_LIBRARY_PATH in activate script
+if ! grep -q 'cusparselt' "$VENV_PATH/bin/activate" 2>/dev/null; then
+    echo 'export LD_LIBRARY_PATH="$HOME/code/verl_cu124_venv/lib/python3.10/site-packages/cusparselt/lib:${LD_LIBRARY_PATH:-}"' >> "$VENV_PATH/bin/activate"
+fi
+export LD_LIBRARY_PATH="$VENV_PATH/lib/python3.10/site-packages/cusparselt/lib:${LD_LIBRARY_PATH:-}"
 
 # 5. 验证CUDA可用
 echo "✅ 验证CUDA可用性..."
 python -c 'import torch; print(f"PyTorch版本: {torch.__version__}"); print(f"CUDA版本: {torch.version.cuda}"); print(f"CUDA可用: {torch.cuda.is_available()}"); print(f"GPU数量: {torch.cuda.device_count()}")'
 
-# 6. 安装依赖包
-# 🔴 R25 FIX (2026-11-07): SGLang's deps pull torch==2.9.1 (generic PyPI) which
-#   breaks CUDA 12.4 compat. Use constraints file to pin torch at 2.4.0+cu124.
-#   See EXPERIMENTS_POSTTRAIN.md §R25 for full analysis.
-echo "📋 创建 torch 约束文件（防止 SGLang 升级 torch）..."
-CONSTRAINT_FILE="/tmp/torch_constraint_$$.txt"
-echo "torch==2.4.0" > "$CONSTRAINT_FILE"
-echo "torchvision==0.19.0" >> "$CONSTRAINT_FILE"
-echo "torchaudio==2.4.0" >> "$CONSTRAINT_FILE"
+# 6. 安装 SGLang 0.4.6.post1 + srt extras
+# 🔴 R26 FIX (2026-11-08): Pinned to sglang[srt]==0.4.6.post1 (NOT 0.5.x).
+#   - SGLang 0.5.x pins torch==2.9.1 → incompatible with CUDA 12.4
+#   - SGLang 0.4.6.post1 srt pins torch==2.6.0 → compatible with 2.6.0+cu124
+#   - sgl-kernel==0.1.0 (102MB) + flashinfer_python==0.2.3
+#   - R25's fallback `sglang[srt]>=0.4.0` caused infinite backtracking → REMOVED
+echo "📦 安装 SGLang 0.4.6.post1 [srt] (torch 2.6.0 compatible)..."
+pip install "sglang[srt]==0.4.6.post1"
+echo "  ✅ SGLang 0.4.6.post1 安装完成"
 
-# 🔴 R16 UPDATE: SGLang's minicpm5 parser is NOT needed!
-#   verl has its OWN ToolParser layer (verl/experimental/agent_loop/tool_parser.py)
-#   that parses tool calls from model output text. We register a custom "minicpm5"
-#   parser via baize_posttrain_minicpm5_parser.py. SGLang just generates text.
-#   Therefore: pip release SGLang is sufficient (no main branch, no CUDA 13.x).
-#   See EXPERIMENTS_POSTTRAIN.md §R16 for full analysis.
-echo "📦 安装 SGLang (pip release — verl ToolParser handles tool calls, torch pinned)..."
-pip install "sglang[srt]==0.5.6.post3" -c "$CONSTRAINT_FILE" 2>&1 || pip install "sglang[srt]>=0.4.0" -c "$CONSTRAINT_FILE"
-echo "  ✅ SGLang pip 发行版安装完成 (verl ToolParser 处理工具解析, torch 仍为 2.4.0+cu124)"
-
-# Verify SGLang basic import (tool parser check no longer needed — R16)
+# Verify SGLang basic import
 echo "🔍 验证 SGLang 基本导入..."
 python -c "import sglang; print(f'SGLang version: {sglang.__version__}')" 2>&1 || echo "  (SGLang import check skipped)"
 
-pip install "ray>=2.41.0" "accelerate>=0.28.0" "transformers>=4.39.0" "datasets>=2.18.0" "evaluate>=0.4.1" "pyyaml>=6.0" "numpy>=1.26" "pandas>=2.2" "tqdm>=4.66" "sentencepiece>=0.2.0" "protobuf>=4.25" "grpcio>=1.62" "packaging>=24.0" "mlflow>=2.0"
+# 7. 安装 verl 0.4.0 (NOT latest 0.9.1)
+# 🔴 R26 FIX (2026-11-08): Pinned to verl==0.4.0 (NOT verl[sglang] latest).
+#   - verl 0.9.1 expects SGLang 0.5.x API (sglang.launch_server module structure)
+#   - verl 0.4.0 has sglang_rollout integration compatible with SGLang 0.4.6
+#   - Install verl base + deps separately (SGLang already installed above)
+echo "🧠 安装 verl 0.4.0 (compatible with SGLang 0.4.6)..."
+pip install "verl==0.4.0"
+pip install "ray[default]>=2.41.0" "accelerate" "codetiming" "datasets" "dill" "hydra-core" \
+    "numpy<2" "pandas" "peft" "pyarrow>=19.0.0" "pybind11" "pylatexenc" \
+    "tensorboard" "tensordict<=0.6.2" "torchdata" "transformers>=4.39.0" "wandb" "packaging>=20.0"
 
-# 安装verl with SGLang backend (R9: verl natively supports SGLang for multi-turn rollout)
-echo "🧠 安装 verl[sglang] GRPO框架..."
-pip install "verl[sglang]" --extra-index-url https://download.pytorch.org/whl/cu124 -c "$CONSTRAINT_FILE"
-
-# 安装flash-attn（可选，用于加速）
-echo "⚡ 安装flash-attention 2..."
-pip install flash-attn --no-build-isolation
+# 8. 安装flash-attn（可选；可能编译失败，不影响主流程）
+echo "⚡ 安装flash-attention 2 (optional)..."
+pip install flash-attn --no-build-isolation 2>&1 || echo "  ⚠️ flash-attn 安装失败，不影响主流程（attn_implementation 可回退到 sdpa）"
 
 # 7. 验证所有依赖
 echo ""
@@ -138,15 +150,12 @@ for pkg in torch sglang ray verl accelerate transformers; do
     python -c "import $pkg; print($pkg.__version__)"
 done
 
-# R25: Verify torch CUDA compat not broken by SGLang/verl install
+# R26: Verify torch CUDA compat (torch 2.6.0+cu124 with driver 550.54.14)
 echo ""
-echo "🔍 R25 验证 torch CUDA 兼容性..."
+echo "🔍 R26 验证 torch CUDA 兼容性..."
 python -c 'import torch; assert torch.version.cuda == "12.4", f"CUDA mismatch: {torch.version.cuda}"; assert torch.cuda.is_available(), "CUDA not available"; print(f"✅ torch={torch.__version__}, CUDA={torch.version.cuda}, available={torch.cuda.is_available()}")'
 
-# Cleanup constraint file
-rm -f "$CONSTRAINT_FILE"
-
 echo ""
-echo "🎉 CUDA 12.4 venv 配置完成！"
+echo "🎉 CUDA 12.4 venv 配置完成！ (R26: torch 2.6.0+cu124 + SGLang 0.4.6.post1 + verl 0.4.0)"
 echo "使用方法: source $VENV_PATH/bin/activate"
 echo "下一步运行预飞行检查: bash baize_posttrain_preflight_check.sh"

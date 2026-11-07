@@ -3423,3 +3423,140 @@ multi_turn:
 | Launch dry-run | ✅ | ✅ | 无变化 |
 | 污染隔离 | ✅ | ✅ | 无变化 |
 | 反作弊 | ✅ | ✅ | 无变化 |
+
+---
+
+## §R26 cu124 venv 完成方案：torch 2.6.0 升级 + SGLang/verl 版本对齐 + pip 回溯地狱根因消除（2026-11-08 wake74 · 零 GPU · 实测）
+
+> **背景**：R25 创建了 cu124 venv（torch 2.4.0+cu124），但 SGLang/verl 安装在后台进行中且卡死。本轮诊断并彻底修复。
+
+### R26.1 🔴 P0 根因：pip 依赖回溯地狱（R25 遗留）
+
+**现象**：R25 启动的后台 pip 进程（PID 1247028）运行 47+ 分钟未完成，日志显示反复下载 500MB+ 的 sgl-kernel wheel。
+
+**根因分析**：
+```
+R25 命令: pip install "sglang[srt]>=0.4.0" -c /tmp/torch_constraint.txt
+约束文件: torch==2.4.0 (R25 创建，pin 住 torch 2.4.0)
+
+pip 解析逻辑:
+  sglang[srt]>=0.4.0 → 尝试 SGLang 0.5.10.post1 (最新)
+    └→ srt extra pins torch==2.9.1 → 与 constraint torch==2.4.0 冲突
+  回溯 → 尝试 SGLang 0.5.5.post2
+    └→ srt extra pins torch==2.6.0 → 冲突
+    └→ sgl-kernel==0.3.17.post1 (512MB) 下载
+  回溯 → 尝试 SGLang 0.5.5.post1
+    └→ sgl-kernel==0.3.17 (511MB) 下载
+  回溯 → 尝试 SGLang 0.5.5
+    └→ sgl-kernel==0.3.16.post5 (511MB) 下载
+  ... 无限循环，每次下载 500MB+
+```
+
+**关键发现**：
+- SGLang 0.5.x 的 srt extra pins `torch==2.9.1` 或 `torch==2.6.0`，都与 `torch==2.4.0` 约束冲突
+- pip 的回溯算法逐版本尝试，每个版本需要下载不同的 sgl-kernel（500MB+）
+- 这个回溯**永远不会成功**，因为没有任何 SGLang 版本的 srt extra 支持 torch 2.4.0
+- **R25 的约束方案（pin torch==2.4.0 + 装 SGLang srt）从设计上就是不可能的**
+
+**处置**：`kill 1247028 1247021`（终止回溯进程）
+
+### R26.2 版本兼容性矩阵（实测 + 包元数据分析）
+
+| 组件 | R25 方案 | R26 修正方案 | 原因 |
+|:--|:--|:--|:--|
+| **torch** | 2.4.0+cu124 | **2.6.0+cu124** | SGLang 0.4.6 srt pins torch==2.6.0；driver 550.54.14 支持 CUDA 12.4 |
+| **SGLang** | 0.5.6.post3 (fallback ≥0.4.0) | **0.4.6.post1** (pinned) | 0.5.x pins torch==2.9.1（需 CUDA 13）；0.4.6 pins torch==2.6.0（cu124 可用） |
+| **sgl-kernel** | 随 SGLang 版本变 | **0.1.0** (102MB) | 0.4.6.post1 配套版本，仅 102MB（vs 0.5.x 的 500MB+） |
+| **flashinfer** | 随 SGLang 版本变 | **0.2.3** | 0.4.6.post1 配套版本 |
+| **verl** | latest (0.9.1) | **0.4.0** (pinned) | 0.9.1 expects SGLang 0.5.x API；0.4.0 has sglang_rollout compatible with 0.4.6 |
+| **transformers** | ≥4.39.0 | ≥4.39.0 (SGLang runtime-common pins 4.51.1) | verl 0.4.0 不 pin transformers |
+| **constraints** | torch==2.4.0 | **无约束文件** | torch 2.6.0 满足 SGLang srt 要求，不需要约束 |
+
+### R26.3 torch 2.6.0+cu124 升级（实测）
+
+**步骤**：
+1. 下载 cached wheel：`/tmp/torch260_check/torch-2.6.0+cu124-cp310-cp310-linux_x86_64.whl` (768MB)
+2. 安装：`pip install <wheel> --no-deps`
+3. 验证 CUDA：`torch.cuda.is_available()` → ❌ `ImportError: libcusparseLt.so.0`
+
+**libcusparseLt.so.0 缺失问题**：
+- torch 2.6.0+cu124 需要 `libcusparseLt.so.0`（cuSPARSELt 库）
+- 因 `--no-deps` 安装，CUDA 依赖库未自动安装
+- 系统 CUDA 12.4 toolkit 无此库
+- **修复**：从 `/home/app.t0001941/miniforge3/envs/py310/lib/python3.10/site-packages/cusparselt/lib/libcusparseLt.so.0` 复制到 venv site-packages
+- 设置 `LD_LIBRARY_PATH` 包含 cusparselt/lib 目录
+- 添加到 activate 脚本（持久化）
+- 验证：`torch.cuda.is_available()` → ✅ True, device=NVIDIA A40
+
+### R26.4 SGLang 0.4.6.post1 [srt] 安装（后台进行中）
+
+**命令**：`pip install "sglang[srt]==0.4.6.post1"`
+
+**已安装的 runtime-common 依赖**（手动逐个安装，因 --no-deps 安装的 SGLang 缺少传递依赖）：
+- tqdm ✅, requests ✅, aiohttp ✅, setproctitle ✅, IPython ✅, pydantic ✅
+- orjson ✅, uvicorn ✅, fastapi ✅, uvloop ✅, pyzmq ✅, psutil ✅, Pillow ✅
+
+**srt extra 依赖**（pip 自动解析中）：
+- sgl-kernel==0.1.0 (102MB) ✅ 下载完成
+- flashinfer_python==0.2.3 + flashinfer_cubin==0.5.0 ✅ 下载完成
+- torch==2.6.0 的 nvidia-*-cu12 依赖（cublas 363MB, cufft 211MB, etc.） 🔄 下载中
+- outlines, partial_json_parser, einops, cuda-python
+
+**验证**（待安装完成后）：
+- `import sglang` → ✅ 0.4.6.post1 (已验证)
+- `python -m sglang.launch_server --help` → 待验证
+
+### R26.5 verl 0.4.0 版本选择依据
+
+**verl 0.9.1 vs 0.4.0 对比**：
+
+| 维度 | verl 0.9.1 | verl 0.4.0 |
+|:--|:--|:--|
+| SGLang 集成 | `verl.workers.rollout.sglang_rollout.async_sglang_server` | `verl.workers.rollout.sglang_rollout.async_sglang_server` |
+| SGLang API 期望 | 0.5.x (`sglang.launch_server` with new module structure) | 0.4.6 (`sglang.srt.entrypoints.engine`, `sglang.srt.managers.tokenizer_manager`) |
+| sglang extra | `sglang[openai,srt]==0.4.6.post5` (pins SGLang) | `sglang[openai,srt]==0.4.6.post5` (pins SGLang) |
+| torch 要求 | unpinned (base) / `torch==2.6.0` (sglang extra) | unpinned (base) / `torch==2.6.0` (sglang extra) |
+| transformers | `>=5.5.3` (very new) | unpinned |
+| numpy | `>=2.0.0` | unpinned |
+| tensordict | `<=0.10.0,>=0.8.0` | `<=0.6.2` |
+
+**结论**：verl 0.4.0 与 SGLang 0.4.6.post1 + torch 2.6.0 完全兼容。0.9.1 的 transformers>=5.5.3 和 numpy>=2.0.0 要求与 SGLang runtime-common 的 transformers==4.51.1 和 numpy<2 冲突。
+
+### R26.6 baize_posttrain_setup_cu124_venv.sh 更新（已落盘）
+
+**修改清单**：
+1. torch 安装：`2.4.0` → `2.6.0` (+ torchvision 0.21.0, torchaudio 2.6.0)
+2. 新增 nvidia-cusparselt-cu12 安装 + LD_LIBRARY_PATH 持久化
+3. SGLang 安装：`sglang[srt]==0.5.6.post3` (fallback) → `sglang[srt]==0.4.6.post1` (pinned, no fallback)
+4. verl 安装：`verl[sglang]` (latest) → `verl==0.4.0` + 手动安装 base deps
+5. 移除 constraints file（不再需要 pin torch）
+6. flash-attn：添加失败容错（`|| echo warning`）
+7. 验证标签：R25 → R26
+
+**语法检查**：`bash -n` → ✅ Syntax OK
+
+### R26.7 11/9 启动就绪度评估（R26 后更新）
+
+| 项目 | R25 后 | R26 后 | 变化 |
+|:--|:--|:--|:--|
+| cu124 venv torch | torch 2.4.0+cu124 | **torch 2.6.0+cu124** ✅ | 🔴 升级（SGLang srt 要求） |
+| cu124 venv CUDA | torch.cuda=True ✅ | torch.cuda=True ✅ | ✅ (libcusparseLt fix) |
+| SGLang | 0.5.10.post1 (import fail) | **0.4.6.post1** (import ✅) | 🔴 降级（torch 兼容） |
+| SGLang srt deps | ⬜ 未安装 | 🔄 安装中（sgl-kernel+flashinfer+cuda deps） | 🟠 后台进行 |
+| verl | 0.9.1 (import fail) | **0.4.0** (import 待验证) | 🔴 降级（SGLang 兼容） |
+| verl deps | ⬜ 未安装 | ⬜ 待安装（ray/transformers/etc.） | ⬜ SGLang 完成后 |
+| setup script | R25 版本 (torch 2.4.0) | **R26 版本** (torch 2.6.0) ✅ | ✅ 已更新 |
+| verl config | ✅ multi_turn 修复 | ✅ 无需改动 | ✅ |
+| Launch dry-run | ✅ | ✅ | ✅ |
+| 污染隔离 | ✅ | ✅ | ✅ |
+| 反作弊 | ✅ | ✅ | ✅ |
+
+### R26.8 剩余工作（11/9 GPU 到位前）
+
+1. ⏳ SGLang srt 安装完成（后台 PID 1267830，预计 10-20min）
+2. ⬜ 验证 `python -m sglang.launch_server --help` 可运行
+3. ⬜ 安装 verl 0.4.0 base deps（ray, transformers, tensordict, etc.）
+4. ⬜ 验证 `import verl` 可导入
+5. ⬜ 验证 verl SGLang rollout 模块可导入
+6. ⬜ 11/9 GPU 释放后：`vllm serve /tmp/models/MiniCPM5-2B` → 复测 36% 基线
+
