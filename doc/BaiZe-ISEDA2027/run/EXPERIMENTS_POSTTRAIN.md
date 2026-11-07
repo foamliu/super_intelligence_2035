@@ -2225,3 +2225,117 @@ verl in-tree `SandboxFusionTool` 已从源码移除（commit f5e21df6），但 B
 ### R15.9 残余风险
 
 主要残余风险 = **SGLang minicpm5 parser 的 CUDA 12.4 兼容性**。若 main 分支安装失败，回退方案是在 BaseTool.execute() 中自行解析 MiniCPM5 XML 工具调用格式。
+
+---
+
+## §R16 — verl ToolParser 层独立实现（消除 SGLang parser 依赖风险）
+
+> **日期**：2026-11-07 · **wake64** · R16 研究项
+> **结论**：✅ **消除了 R15 §R15.9 残余风险** —— verl 有自己的 ToolParser 层，不需要 SGLang 的 minicpm5 parser。
+
+### R16.1 🔴 关键发现：verl 有独立的 ToolParser 层
+
+R15 §R15.9 的残余风险是"SGLang minicpm5 parser 不在 pip 发行版，需要 main 分支（CUDA 13.x）"。
+
+R16 通过 verl 源码分析发现：**verl 有自己的 `ToolParser` 基类**，位于 `verl/experimental/agent_loop/tool_parser.py`。
+
+- 它有注册机制：`@ToolParser.register("name")` 装饰器
+- 它从**模型输出的原始文本**中解析工具调用 —— **不依赖 SGLang 的 parser**
+- SGLang 只负责生成文本，verl 的 ToolParser 负责解析 XML 工具调用标签
+- 这意味着：**pip 发行版 SGLang 完全够用**，不需要 main 分支，不需要 CUDA 13.x
+
+### R16.2 MiniCPM5-2B 工具调用格式
+
+MiniCPM5-2B 使用 XML 格式的工具调用：
+
+```xml
+<function name="run_eda_code">
+  <param name="code">import pyAether as pyScript
+result = pyScript.get_cell("A1")</param>
+  <param name="host">pyAether</param>
+</function>
+```
+
+特点：
+- `<function name="...">` 包裹函数名
+- `<param name="...">value</param>` 包裹参数
+- 特殊字符用 CDATA 包裹：`<![CDATA[...]]>`
+- 可以有多个 `<function>` 块（多工具调用）
+- 可以混合文本和工具调用
+
+### R16.3 实现：baize_posttrain_minicpm5_parser.py
+
+创建了 `baize_posttrain_minicpm5_parser.py`（~409 行），包含：
+
+1. **`MiniCPM5ToolParser` 类**（继承 `ToolParser`）：
+   - `@ToolParser.register("minicpm5")` 注册到 verl registry
+   - `parse()` 方法：从原始文本提取工具调用
+   - 类型推断：int / float / bool / JSON / str
+
+2. **`parse_minicpm5_tool_calls()` 顶层函数**：
+   - 解析 `<function>` / `<param>` 标签
+   - CDATA 提取（`<![CDATA[...]]>`）
+   - 多函数调用支持
+   - 混合文本+工具调用分离
+
+3. **自测 8 用例**（全部 PASS）：
+   - Test 1: 单函数调用 ✅
+   - Test 2: CDATA 包裹参数 ✅
+   - Test 3: 无工具调用（纯文本）✅
+   - Test 4: 文本+函数调用 ✅
+   - Test 5: 多函数调用 ✅
+   - Test 6: 整数参数 ✅
+   - Test 7: 布尔参数 ✅
+   - Test 8: 注册检查（`minicpm5` 在 ToolParser._registry 中）✅
+
+### R16.4 配置更新
+
+| 文件 | 修改 | 验证 |
+|:--|:--|:--|
+| `baize_posttrain_rl_verl_config.yaml` | 新增 `multi_turn_config.format: minicpm5` | YAML ✅ |
+| `baize_posttrain_setup_cu124_venv.sh` | SGLang 安装简化为 pip 发行版（移除 main 分支尝试+parser 验证） | bash -n ✅ |
+| `baize_posttrain_rl_grpo.sh` | 新增 parser import 步骤（verl 启动前导入 `baize_posttrain_minicpm5_parser`） | bash -n ✅ |
+
+### R16.5 风险消除对比
+
+| 风险项 | R15 状态 | R16 状态 |
+|:--|:--|:--|
+| SGLang minicpm5 parser 不在 pip 发行版 | 🔴 残余风险 | ✅ **消除**（verl 自己解析） |
+| SGLang main 分支需要 CUDA 13.x | 🔴 阻塞 | ✅ **消除**（不需要 main） |
+| 工具调用解析需要 SGLang 配合 | 🟠 未确认 | ✅ **确认不需要** |
+| verl ToolParser 注册机制 | 🟢 未发现 | ✅ `@ToolParser.register()` |
+| 多工具调用解析 | 🟠 未实现 | ✅ 已实现+自测 |
+
+### R16.6 集成路径
+
+RL 训练启动时的工具调用解析链：
+
+```
+SGLang 生成原始文本（含 <function>/<param> XML 标签）
+    ↓
+verl agent_loop 取回 model output text
+    ↓
+MiniCPM5ToolParser.parse() 解析 XML → FunctionCall 对象列表
+    ↓
+verl 调用 EDASandboxTool.execute(instance_id, parameters)
+    ↓
+沙盒执行结果 → verl 继续多轮
+```
+
+关键：`baize_posttrain_rl_grpo.sh` 在启动 `python -m verl.trainer.main_ppo` 之前先 import `baize_posttrain_minicpm5_parser`，确保 `"minicpm5"` 注册到 ToolParser registry。verl agent loop 通过 `multi_turn_config.format: minicpm5` 找到注册的 parser。
+
+### R16.7 验证结果
+
+- AST 语法检查 ✅
+- 8/8 自测用例 PASS ✅
+- YAML 解析 ✅（`multi_turn_config: {tokenization_sanity_check_mode: strict, format: minicpm5}`）
+- bash -n（3 脚本）✅
+- SGLang pip 发行版不需要 tool_call_parser ✅
+
+### R16.8 残余风险（更新）
+
+R15 §R15.9 的残余风险已完全消除。新的残余风险：
+
+1. **verl ToolParser API 变更**：`verl/experimental/agent_loop/tool_parser.py` 在 `experimental/` 下，API 可能在未来版本变更。缓解：pin verl 版本。
+2. **parser import 时机**：必须在 verl agent loop 初始化前 import。已通过 `baize_posttrain_rl_grpo.sh` 的启动顺序保证。
+3. **多轮 token 拼接**：parser 只解析工具调用，多轮对话的 token 拼接由 verl agent loop 内部处理（不经过我们的 parser）。
