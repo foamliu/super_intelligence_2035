@@ -2853,3 +2853,10 @@ std>0 组 ≥30%                  ⇒ PARAM-ISSUE
 - **v3 (GRPO)** PID2165712：step **30/40**，avgR轨迹 -0.5→0.066→0.279→0.321→0.151→-0.043→**0.398**(step30回升!)，ETA~43min(Phase3余)+eval。avgR高方差但非单调下降。
 - **v4 (RFT) 启动** PID3750214：Phase1 B(SFT eval)进行中。**修复v4 bug**：v4引用`EVAL_SEED_BASE_V3`/`TRAIN_SEED_BASE_V3`/`build_eval_set_period`但未定义/导入→添加`from cpu_rl_v3_experiment import build_eval_set_period`+常量定义(990100/20261105)。v4复用v3的100 eval题(same seed→valid matched pairs)。不skip_sft_eval(需B逐题结果做McNemar)。v4流程：B eval→collect 240 rollouts→filter reward>0.3→CE-SFT train C(treatment)+D(random control)→eval→stats。预计~2.5h。
 - **决策理由**：v3是第3轮GRPO(前2轮v1负/v2不显著p=0.625)，avgR高方差+loss近零→GRPO在CPU上信号弱。v4换RFT(无group baseline/稳定CE梯度)是任务书"连续3轮无提升必须换方向"的执行。并行启动因224核仅用~80，不争用。
+
+**wake#863 更新**（2026-11-07 15:0x）：🔴 **发现并修复 v4 严重 bug（gt_value 错配）→ v4 重启**。
+- **bug 发现**：v4 Phase1 B eval 显示 acc=10%（10/100），但 v3 同题同模型 B=34%。经代码审查定位根因：v4 从 v3 的 `eval_questions.json` 加载题目（JSON 不含 `spec` 对象），然后用 `generate_circuit(rng, wd, ct)` 重新生成电路——但 RNG 状态与 v3 **发散**（v3 的 `build_eval_set_period` 中 rng 同时被 `rng.choice`(选电路类型) 和失败尝试消耗，而 v4 仅被 `generate_circuit` 消耗）→ **v4 生成了不同电路（不同元件值/不同波形）但用 v3 旧 gt_value 判定** → gt 错配 → 准确率人为降低至 10%。
+- **修复**：将 v4 Phase0 改为**始终调用 `build_eval_set_period(n_questions=100)`**（与 v3 同 seed=990100，确定性可复现，生成完全相同的题目），不再从 JSON 加载。增加 sanity check：对比重建题目的 gt_value 与 v3 JSON → **0 mismatches** ✅。
+- **v4 重启**：kill 旧 PID3750214（已跑 10min B eval 全部作废），重启 PID3181986（OMP48/nice19）。Phase0 重建 100 题（0 mismatch ✅）→ Phase1 B eval 10/100 **acc=30.0%**（与 v3 的 30.0% 完全一致 ✅，修复确认）。
+- **v3 进度**：step 30/40，avgR=0.398，ETA~21min(Phase3余)+eval。v3 仍健康运行中。
+- **教训**：跨实验复用 eval 题目时，JSON 序列化丢失 `spec` 对象 + RNG 状态不可从 JSON 恢复 → 必须用确定性函数重建（同 seed），不能从 JSON 部分恢复。

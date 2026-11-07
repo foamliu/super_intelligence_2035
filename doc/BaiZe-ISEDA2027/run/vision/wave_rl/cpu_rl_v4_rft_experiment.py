@@ -201,29 +201,25 @@ def main():
     print(f"  n_circuits={args.n_circuits}, k={args.k_per_circuit}, "
           f"threshold={args.reward_threshold}, epochs={args.n_epochs}", flush=True)
 
-    # ---- Load or build eval questions (reuse v3) ----
-    questions = []
+    # ---- Build eval questions (ALWAYS rebuild with same seed as v3) ----
+    # NOTE: We cannot load from v3's JSON because it lacks the `spec` object.
+    # Regenerating circuits from JSON with a re-seeded RNG DIVERGES from v3's
+    # RNG state (v3 consumed RNG for circuit-type selection + failed attempts),
+    # producing different circuits with mismatched gt_value -> invalid eval.
+    # build_eval_set_period() with EVAL_SEED_BASE_V3=990100 is deterministic
+    # and produces IDENTICAL questions to v3 (same circuits, same gt_value).
+    print("\n[Phase 0] Building period-only eval set (n=100, same seed as v3)", flush=True)
+    questions = build_eval_set_period(n_questions=100)
+    print(f"  Built {len(questions)} period questions", flush=True)
+    # Sanity check: verify gt_value matches v3's saved JSON if available
     if args.eval_questions and os.path.exists(args.eval_questions):
-        print(f"\n[Phase 0] Loading v3 eval questions from {args.eval_questions}", flush=True)
         with open(args.eval_questions) as f:
-            raw_qs = json.load(f)
-        rng = np.random.default_rng(EVAL_SEED_BASE_V3)
-        for qd in raw_qs:
-            wd = os.path.join(tempfile.mkdtemp(prefix=f"v4ev_{qd['qid']:04d}_", dir="/tmp"))
-            ct = qd["circuit_type"]
-            spec = generate_circuit(rng, wd, ct)
-            ok, _ = run_ngspice(spec.netlist)
-            if ok and os.path.exists(spec.raw_path):
-                questions.append({
-                    "qid": qd["qid"], "task": "period", "circuit_type": ct,
-                    "raw_path": spec.raw_path, "workdir": wd,
-                    "signal": qd["signal"], "gt_value": qd["gt_value"],
-                    "measure_type": "period", "spec": spec})
-        print(f"  Loaded {len(questions)} period questions", flush=True)
-    else:
-        print("\n[Phase 0] Building period-only eval set (n=100)", flush=True)
-        questions = build_eval_set_period(n_questions=100)
-        print(f"  Built {len(questions)} period questions", flush=True)
+            v3_qs = json.load(f)
+        mismatches = sum(1 for q, v3q in zip(questions, v3_qs)
+                         if abs(q["gt_value"] - v3q["gt_value"]) > 1e-15)
+        print(f"  Sanity check: {len(questions)} questions, {mismatches} gt_value mismatches vs v3 JSON", flush=True)
+        if mismatches > 0:
+            print("  WARNING: gt_value mismatches detected! Eval may be invalid.", flush=True)
 
     from transformers import AutoTokenizer
     tokenizer = AutoTokenizer.from_pretrained(args.model_path, trust_remote_code=True)
