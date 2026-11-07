@@ -2,6 +2,20 @@
 
 > 📄 **报告格式常驻规程（2026-10-24 用户令）**：**所有报告一律用中文 HTML**（单文件自包含、无外链/CDN），除非用户另行指定；🚫 不用 `.md` / `.pdf` / 纯文本顶替。适用于**所有线**（pretrain / vision / data / harness / zhulong / news / recruit / research / video）。
 
+## 2026-11-07 11:03 — video 线转型为 `robot` 线（AI 家教机器人）+ 已重启
+
+用户令：「重启 video 线，新任务是开发一个基于华为手机的 AI 机器人。用于调用大模型和智能体，辅导初中生做功课。」
+
+落地：
+
+1. **任务书** `doc/personal-watch/run/WATCH_VIDEO_TASK.md` 顶部新增 11:10 块：旧短视频/ComfyUI 任务全部终止（不补 EP06、不做分镜成片），资产冻结不删；新目标分层 L0 设备通路 / L1 单题闭环（拍题->OCR->分步引导->TTS）/ L2 智能体工具 / L3 学情 / L4 实体形态（待确认）。P0 = 判 HarmonyOS NEXT（HDC）vs 4.x/EMUI（adb），并在 A 软件机器人 / B 实体机器人（需采购，未批不得买）/ C 手机+PC 协同 三条形态里选；教育红线：**不代写、最终答案默认不给、本地处理、时长限制**；评测 100 题 + 「直接给答案率必须 0」。
+2. **记忆** `MEMORY_VIDEO.md` 顶部加转型说明：首轮必须把 88KB 旧记忆归档到 `MEMORY_VIDEO_ARCHIVE.md` 并重写到 <=32KB，只保留 robot 线状态；ComfyUI/EP06 断点降级为一行存档。
+3. **项目目录** `doc/personal-watch/run/robot/`（新建 README：目录约定 + 四条红线 + 第一轮验收）。
+4. **loop 改造** `watch_video_loop.ps1`：cline 工作目录 短剧仓 -> **主仓**；prompt 改为 robot 使命；兜底 git 只同步 `MEMORY_VIDEO.md` / `MEMORY_VIDEO_ARCHIVE.md` / `daily-memories-video` / `robot/`，前缀 `robot`；停掉短剧仓同步；`Parser` 校验 PARSE OK。
+5. **重启**：`WatchVideoLoop` 由 Disabled -> Enabled 并 Start（11:03:28 起，PID 27148，cline PID 22068 已接管）；`ComfyUI` 保持 Disabled（新任务不需要）。节奏仍为整点唤醒，单轮 <=55min。
+6. 已 commit+push：`ed1a04021`。
+
+
 ## 2026-11-07 10:50 — research 出口改为日报 HTML + 6 条线常驻指针
 
 用户令：「把 research 的出口，从给 paul.liu@cxmt.com 发邮件，改成生成论文观察日报 HTML；在 pretrain/vision/harness/data/zhulong/designflow 的任务书中常驻一个指向 research 日报的路径链接；同时 research 的调研也联系其他 agent 正在做的工作，争取对他们有帮助。」
