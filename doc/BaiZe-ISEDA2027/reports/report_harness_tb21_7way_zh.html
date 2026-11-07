@@ -1,6 +1,6 @@
 <!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><title>BaiZe Harness · TB-2.1 · 7-way</title><style>body{font-family:"Noto Sans CJK SC","Microsoft YaHei",sans-serif;max-width:1100px;margin:0 auto;padding:20px;background:#f8f9fa;color:#333}h1{color:#1a5276;border-bottom:3px solid #2980b9;padding-bottom:10px}h2{color:#1a5276;margin-top:30px;border-left:5px solid #2980b9;padding-left:10px}table{border-collapse:collapse;width:100%;margin:15px 0}th,td{border:1px solid #ddd;padding:8px 12px;text-align:left}th{background:#2980b9;color:white}tr:nth-child(even){background:#ecf0f1}.pass{color:#27ae60;font-weight:bold}.fail{color:#e74c3c}.warn{color:#e67e22}.note{background:#fef9e7;border-left:4px solid #f39c12;padding:10px 15px;margin:15px 0}.critical{background:#fdedec;border-left:4px solid #e74c3c;padding:10px 15px;margin:15px 0}.info{background:#ebf5fb;border-left:4px solid #3498db;padding:10px 15px;margin:15px 0}.summary-box{background:#fff;border:1px solid #d5d8dc;border-radius:5px;padding:15px;margin:15px 0}.task-list{font-size:0.85em;columns:2;-webkit-columns:2}pre{background:#f4f6f7;padding:10px;border-radius:5px;overflow-x:auto}</style></head><body>
 <h1>BaiZe Harness · Terminal-Bench 2.1 · 7-way 横评报告</h1>
-<p><strong>基准</strong>：Terminal-Bench 2.1（89 题）｜ <strong>模型</strong>：glm-5.3-flash｜ <strong>并发</strong>：7-way concurrent（每路独立 jobs-dir 放 /tmp）<br><strong>轮次</strong>：R1851 · 2026-11-08 07:08｜ <strong>口径声明</strong>：TB-2.1 与 TB4 题集不同，<strong>禁止跨基准对比</strong></p>
+<p><strong>基准</strong>：Terminal-Bench 2.1（89 题）｜ <strong>模型</strong>：glm-5.3-flash｜ <strong>并发</strong>：7-way concurrent（每路独立 jobs-dir 放 /tmp）<br><strong>轮次</strong>：R1852 · 2026-11-08 07:20｜ <strong>口径声明</strong>：TB-2.1 与 TB4 题集不同，<strong>禁止跨基准对比</strong></p>
 <div class="info"><p><strong>命名纪律</strong>：报告正文一律写 <code>cline</code>，不写 <code>cline-patched</code>（代码/脚本里的真实路径标识符不改，但报告引用一律转写为 cline）。</p></div>
 <h2>0. 切换判据（用户令 · 2026-11-07）</h2>
 <div class="critical"><p><strong>用户原话</strong>：「如果 TB4 的问题 11/7 无法解决，就换 TB-2.1」。<br>
@@ -17,19 +17,19 @@
 <tr><td>log-summary-date-ranges</td><td class='pass'>1</td></tr>
 </table>
 <p><strong>Oracle 结果</strong>：<span class='pass'>5/5 PASSED</span> — verifier 正常，可跑全量。</p>
-<h2>2. 7 路全量结果（实时快照 · 2026-11-08 07:08）</h2>
+<h2>2. 7 路全量结果（实时快照 · 2026-11-08 07:20）</h2>
 <div class="note"><p><strong>状态</strong>：2 路已完成（cline / hermes），5 路运行中。下表为<strong>当前快照</strong>，非最终结果；7 路全量完成后将标注「7-way complete」。<br>
 <strong>时间预算声明</strong>（来自 research 日报 2611.08417）：wall-clock 预算是测量规格的一部分，TB_AGENT_TIMEOUT=3600s/题。延时可抹去高达 20pp 的 harness 差距 => 本表分数<strong>仅在统一时间预算下有效</strong>，跨时间预算对比无效。</p></div>
 <table><tr><th>Harness</th><th>状态</th><th>已跑题数</th><th>已评分</th><th>Passed</th><th>Pass%</th><th>剩余</th></tr>
 <tr><td>cline</td><td>已完成</td><td>89</td><td>88</td><td class='pass'>7</td><td>8.0%</td><td>0</td></tr>
 <tr><td>hermes</td><td>已完成</td><td>89</td><td>54</td><td class='pass'>3</td><td>5.6%</td><td>0(35 errored)</td></tr>
 <tr><td>opencode</td><td>运行中</td><td>24</td><td>13</td><td class='pass'>5</td><td>38.5%</td><td>65</td></tr>
-<tr><td>pi</td><td>运行中</td><td>18</td><td>17</td><td class='pass'>5</td><td>29.4%</td><td>71</td></tr>
+<tr><td>pi</td><td>运行中</td><td>23</td><td>23</td><td class='pass'>6</td><td>26.1%</td><td>66</td></tr>
 <tr><td>codex</td><td>运行中(重跑)</td><td>13</td><td>6</td><td class='pass'>2</td><td>33.3%</td><td>76</td></tr>
-<tr><td>claude-code</td><td>运行中</td><td>11</td><td>3</td><td class='pass'>1</td><td>33.3%</td><td>78</td></tr>
-<tr><td>deepseek</td><td>运行中</td><td>16</td><td>4</td><td class='pass'>3</td><td>75.0%</td><td>73</td></tr>
+<tr><td>claude-code</td><td>运行中</td><td>11</td><td>5</td><td class='pass'>3</td><td>60.0%</td><td>78</td></tr>
+<tr><td>deepseek</td><td>运行中</td><td>16</td><td>5</td><td class='pass'>3</td><td>60.0%</td><td>73</td></tr>
 </table>
-<p><strong>合计</strong>：260 题 / 185 已评分 / 26 passed（14.1%）。注：运行中路为早期快照，Pass% 会随题量增加收敛。</p>
+<p><strong>合计</strong>：194 已评分 / 29 passed（14.9%）。注：运行中路为早期快照，Pass% 会随题量增加收敛。gateway 200 OK，5 路均 alive。</p>
 <div class="summary-box">
 <h3>cline 路（已完成 · 唯一满量路）</h3>
 <p><strong>完成</strong>：89/89 题｜ <strong>通过</strong>：<span class="pass">7 题（8.0%）</span>｜ <strong>失败</strong>：81 题｜ <strong>未评分</strong>：1 题</p>
@@ -101,5 +101,5 @@ for h in sorted(os.listdir(JOBS)):
         if open(rf).read().strip() in ("1","1.0"): passed+=1
     print(f"{h:22s} scored={scored:4d} passed={passed:3d}")
 EOF</code></pre>
-<hr><p style="text-align:center;color:#7f8c8d;font-size:0.9em">BaiZe Harness · R1851 · 2026-11-08 07:08<br>TB-2.1 / 89 题 / 7-way concurrent · glm-5.3-flash · 报告正文一律写 cline<br>2 路完成 + 5 路运行中 = 快照非最终 · 时间预算 3600s/题 · single-run</p>
+<hr><p style="text-align:center;color:#7f8c8d;font-size:0.9em">BaiZe Harness · R1852 · 2026-11-08 07:20<br>TB-2.1 / 89 题 / 7-way concurrent · glm-5.3-flash · 报告正文一律写 cline<br>2 路完成 + 5 路运行中 = 快照非最终 · 时间预算 3600s/题 · single-run</p>
 </body></html>
