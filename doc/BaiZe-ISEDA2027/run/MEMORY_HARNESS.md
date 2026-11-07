@@ -4,13 +4,13 @@ WAITING: 0
 
 ## 📊 进度快照
 
-PHASE:        R1736 代际审计P0✅+P1✅+P2✅:oracle=1.0×3(coq/html/atrx)·verifier正常·TB4全0=agent崩(429 81.6%)+合理失败(18.4%)·kimi默认值已切glm53·代际矩阵报告已交付
-已完成:       H-B✅·Gate7/7·TB报告✅·full500✅·R1735 P0/P1 fix·R1736 P0 oracle=1.0×3+P2代际矩阵审计+报告交付
-当前动作:     R1736 代际审计报告交付:①P0 oracle=1.0×3(coq-block-bound/html-js-filter/atrx-vep-crispr)→verifier功能正常 ②TB4全0根因=agent崩(429 81.6%)+合理失败(hermes47verified全0.0=pytest真实失败) ③运维预判"overlay不传播→全0"=部分错误 ④kimi残留26928处(16339JSON只读/597历史只读/35活代码已修/9957注释) ⑤P1 resume bug已修(run_serial_kimi.py:288) ⑥报告=reports/report_harness_script_audit_gen_matrix_zh.html
-下一步:       ①P3 3题×7路TB4回归(gateway已恢复200) ②P4 TB4全量+SWE-bench全量 ③codex SWE 1/76非空需排查config.toml ④§22:4x口径跑满 ⑤空patch 205个作废重跑
-阻塞:         无(gateway已恢复HTTP 200)
+PHASE:        R1737 监控轮:gateway额度耗尽(假阳性纠正)·358/552空patch(64%)·TB4全0(hermes57task全0·6路agent相位中)·gateway_probe.sh已建·待~09:21额度恢复后cleanup+重跑
+已完成:       H-B✅·Gate7/7·TB报告✅·full500✅·R1735 P0/P1 fix·R1736 P0/P1/P2+报告交付·R1737 gateway假阳性纠正+probe脚本
+当前动作:     R1737 监控+根因纠正:①CPU/MEM PASS(load36/224·无失控) ②**gateway假阳性纠正**:R1736报"gateway恢复200"=只查了/v1/models;/v1/chat/completions返回"额度已用完,等待22min"→ETA~09:21 ③建gateway_probe.sh(测chat非models) ④SWE-bench 552pred·358空(64%):opencode63real/23empty最佳·codex1/84最差 ⑤codex config.toml已验正确(glm53/chat/9092)·1/84=额度耗尽非config ⑥TB4 7路运行中·hermes57task全0(额度)·6路agent相位 ⑦cleanup dry-run=358/552空 ⑧gw_proxy 9092/9093运行中 ⑨不杀batch(额度恢复自动续)·不删空patch(会重建)
+下一步:       ①~09:21额度恢复→cleanup --delete+重跑空patch ②P3 TB4 3题×7路回归 ③P4全量 ④更新audit报告(gateway probe纠正) ⑤§22:4x口径跑满
+阻塞:         gateway额度耗尽(ETA~09:21)·等待恢复后即可推进P3/P4
 ERROR_COUNT:  0
-  📦 体积：TASK=32454B(31.7KB) / MEMORY=~30KB(本轮无归档)
+  📦 体积：TASK=32454B(31.7KB) / MEMORY=32312B(31.5KB)(本轮归档R1736→daily)
 ```
 
 > 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
@@ -18,8 +18,9 @@ ERROR_COUNT:  0
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 
 ### 本唤醒流水
-> [08:40] R1736 代际审计P0✅+P1✅+P2✅+报告交付:①自检CPU/MEM PASS(load43/224·无>8000%·无>50GB) ②**P0 oracle=1.0×3**:coq-block-bound(46s,pytest0failed)·html-js-filter(38s)·atrx-vep-crispr(37s)→**verifier功能正常** ③cad-model oracle=0.0(gold solution bug:OCP.collections ModuleNotFoundError·build123d/ocp_gordon版本不兼容) ④data-anonymization oracle=0.0(artifact权限640·nobody无读→Permission denied) ⑤**TB4全0根因链**:agent崩(429 81.6%·199/244errored)+合理失败(hermes47verified全0.0=pytest真实失败·vllm 4failed/1passed)+verifier网络依赖(少数·payments-pipeline-fix)+artifact权限(个别)+gold bug(个别) ⑥运维预判"overlay不传播→全0"=**部分错误**(844B日志是warning非error) ⑦**P1已修**:run_serial_kimi.py:288 size>50B→model_patch非空·run_verified_full.py:237已正确 ⑧**kimi残留26928处**:16339JSON(只读)/597历史(只读)/35活代码(已修)/9957注释(部分改) ⑨活代码已切glm53:run_harness.py:45·run_verified_full.py:29·_base.py:42,46·docstring已更新 ⑩gateway恢复200(08:25)·6路TB4 batch运行中 ⑪SWE-bench 521/3500·194非空(opencode63/84最佳·codex1/76最差) ⑫报告=reports/report_harness_script_audit_gen_matrix_zh.html(15KB·0script0外链)·WAITING:0(未完成指令:P3/P4全量)
-> [08:05] R1735 代际审计P0/P1/P2:①自检CPU/MEM PASS ②TB4根因纠正 ③P1修复 ④cleanup脚本就绪 ⑤harbor有oracle ⑥网关429(ETA~09:24)
+> [08:58] R1737 监控+gateway假阳性纠正:①CPU/MEM PASS(load36/224·无>8000%·无>50GB) ②**gateway假阳性**:/v1/models=200但/v1/chat/completions="额度已用完,等待22min43s"→ETA~09:21·R1736"gateway恢复200"=只查models ③建gateway_probe.sh(测chat非models·exit1=额度耗尽) ④SWE-bench 552pred/358空(64%):real=opencode63/hermes51/cline23/ds22/cc18/pi16/codex1·空=额度耗尽(非能力) ⑤codex config.toml已验正确(glm53/chat/9092)·1/84=额度非config ⑥cline空patch:returncode!=0→model_patch=""(run_single.py:45)·real patch全在00:06-05:06(额度耗尽前) ⑦TB4:hermes57task全0(06:37起=额度期)·6路agent相位中(cline67result/0reward) ⑧cleanup dry-run=358/552空 ⑨gw_proxy9092/9093运行 ⑩不杀batch(额度恢复自动续)·不删空patch(会重建)·WAITING:0(P3/P4未完成)
+> 📦 R1736 流水(08:40,P0/P1/P2+报告交付)已归档 → daily-memories-harness/2026-11-07.md。结论：oracle=1.0×3(verifier正常)·TB4全0=429+合理失败·报告已交付·⚠️gateway"200"=假阳性(见R1737)。需要时再读。
+> 📦 R1735 流水(08:05,P0/P1/P2诊断)已归档 → daily-memories-harness/2026-11-07.md。结论：P1修复+cleanup脚本就绪+网关429。需要时再读。
 > 📦 R1734 流水已归档 → daily-memories-harness/2026-11-07.md。结论：监控轮,SWE-bench 398/3500,TB4全7路0 passed。需要时再读。
 > 📦 R1733 流水已归档 → daily-memories-harness/2026-11-07.md。结论：网关429首报,SWE-bench 336/3500,resume bug(run_serial_kimi.py:288)定位。需要时再读。
 > 📦 R1732 流水已归档 → daily-memories-harness/2026-11-07.md。结论：TB4全7路启动+SWE-bench 321/3500。需要时再读。
