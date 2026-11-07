@@ -3551,12 +3551,111 @@ pip 解析逻辑:
 | 污染隔离 | ✅ | ✅ | ✅ |
 | 反作弊 | ✅ | ✅ | ✅ |
 
-### R26.8 剩余工作（11/9 GPU 到位前）
+### R26.8 剩余工作（11/9 GPU 到位前）—— ✅ R27 全部完成
 
-1. ⏳ SGLang srt 安装完成（后台 PID 1267830，预计 10-20min）
-2. ⬜ 验证 `python -m sglang.launch_server --help` 可运行
-3. ⬜ 安装 verl 0.4.0 base deps（ray, transformers, tensordict, etc.）
-4. ⬜ 验证 `import verl` 可导入
-5. ⬜ 验证 verl SGLang rollout 模块可导入
-6. ⬜ 11/9 GPU 释放后：`vllm serve /tmp/models/MiniCPM5-2B` → 复测 36% 基线
+1. ✅ SGLang srt 安装完成（R26 后台 PID 1267830 已结束）
+2. ✅ 验证 `python -m sglang.launch_server --help` 可运行（R27 修复后通过）
+3. ✅ 安装 verl 0.4.0 base deps（ray 2.60.0, tensordict 0.6.2, wandb 等，R27 用 constraint file 防 torch 升级）
+4. ✅ 验证 `import verl` 可导入（R27 修复 setuptools/pkg_resources 后通过）
+5. ⬜ 验证 verl SGLang rollout 模块可导入（需 GPU，11/9 后）
+6. ⬜ 11/9 GPU 释放后：`sglang.launch_server` serve MiniCPM5-2B → 复测 36% 基线
+
+---
+
+## §R27 cu124 venv 依赖地狱根因消除 + 全栈验证通过（2026-11-08 wake75 · 零 GPU）
+
+> **目标**：解决 R26 遗留的 SGLang launch_server + verl import 失败问题，使 cu124 venv 全栈可用。
+> **结论**：✅ **全栈通过** — torch 2.6.0+cu124 (CUDA True) + SGLang 0.4.6.post1 (launch_server ✅) + verl 0.4.0 (import ✅) + ray 2.60.0。
+
+### R27.1 问题诊断：torch 2.7+ API 依赖链
+
+R26 将 torch 升级到 2.6.0+cu124（CUDA 12.4 的最高支持版本），但 SGLang 0.4.6.post1 [srt] 的依赖链中多个包预期 torch 2.7+：
+
+| 依赖包 | 版本 | 需要的 torch 2.7+ API | 实际错误 |
+|:--|:--|:--|:--|
+| **torchao** | 0.18.0 | `torch.nn.functional.ScalingType`, `scaled_grouped_mm` | `ImportError: cannot import name 'ScalingType'` |
+| **transformers** | 4.51.1 | `torch.utils._pytree.register_constant` | `RuntimeError: module 'torch.utils._pytree' has no attribute 'register_constant'` |
+| **compressed_tensors** | 0.14.0+ | `transformers.masking_utils.ALL_MASK_ATTENTION_FUNCTIONS` | `ModuleNotFoundError: No module named 'transformers.masking_utils'` |
+
+**根因**：torch 2.6.0 是支持 CUDA 12.4 的最后一个版本（torch 2.7+ 需要 CUDA 12.6+），但 SGLang 的依赖链（torchao/transformers/compressed_tensors）在 2025 下半年陆续迁移到 torch 2.7+ API。
+
+### R27.2 修复方案：三重 shim + 依赖降级
+
+#### Fix 1: setuptools < 70（恢复 pkg_resources）
+- **问题**：setuptools 84.2.1（pip 默认安装）删除了 `pkg_resources` 模块；verl 0.4.0 `__init__.py` line 18 `import pkg_resources` 失败。
+- **修复**：`pip install 'setuptools<70'` → 安装 setuptools 69.5.1（含 pkg_resources）。
+- **验证**：`python -c 'import pkg_resources; print("OK")'` → ✅
+
+#### Fix 2: 卸载 torchao + 降级 compressed_tensors
+- **问题**：torchao 0.18.0 需要 `torch.nn.functional.ScalingType`（torch 2.7+）；compressed_tensors 0.15.0.1 需要 `transformers.masking_utils`（transformers 4.52+）。
+- **修复**：
+  1. `pip uninstall torchao -y` — torchao 是可选量化库，服务未量化模型不需要。
+  2. `pip install 'compressed-tensors==0.14.0'` — 降级到与 SGLang 0.4.6 同期的版本。
+- **注意**：compressed_tensors 0.14.0 仍然 import `transformers.masking_utils`（该模块在 4.52 引入），需 Fix 3。
+
+#### Fix 3: transformers.masking_utils shim + _pytree.register_constant shim
+- **masking_utils shim**：在 `$SITE_PKG/transformers/masking_utils.py` 创建 shim 文件，从 `modeling_attn_mask_utils` 导入可用函数并构造 `ALL_MASK_ATTENTION_FUNCTIONS` dict。
+  ```python
+  from transformers.modeling_attn_mask_utils import (
+      _prepare_4d_attention_mask, _prepare_4d_attention_mask_for_sdpa, ...)
+  ALL_MASK_ATTENTION_FUNCTIONS = {"default": ..., "sdpa": ..., "eager": ..., "causal": ...}
+  ```
+- **register_constant shim**：在 `$SITE_PKG/_torch_pytree_shim.py` 创建 shim + `.pth` 文件（`zzz_torch_pytree_shim.pth`），在 Python 启动时自动注入 `register_constant` no-op。
+  ```python
+  import torch.utils._pytree as _pytree
+  if not hasattr(_pytree, "register_constant"):
+      _pytree.register_constant = lambda cls, module_name=None: cls
+  ```
+
+#### Fix 4: verl deps 安装用 constraint file 防 torch 升级
+- **问题**：`tensordict<=0.6.2` 声明 `torch>=2.11.0a0` → pip 自动下载 torch 2.14.1（554MB），破坏 cu124 兼容。
+- **修复**：创建 `/tmp/pt_torch_constraint.txt`（pin `torch==2.6.0+cu124`），用 `pip install -c` 安装所有 verl deps。
+- **验证**：安装后 `torch.__version__` 仍为 `2.6.0+cu124`，`torch.cuda.is_available()=True`。
+
+### R27.3 全栈验证结果
+
+| 组件 | 版本 | 状态 |
+|:--|:--|:--|
+| Python | 3.10.22 | ✅ |
+| torch | 2.6.0+cu124 | ✅ CUDA True |
+| setuptools | 69.5.1 | ✅ pkg_resources available |
+| transformers | 4.51.1 | ✅ (with masking_utils shim) |
+| SGLang | 0.4.6.post1 | ✅ import + launch_server --help |
+| compressed_tensors | 0.14.0 | ✅ (with masking_utils shim) |
+| verl | 0.4.0 | ✅ import OK |
+| ray | 2.60.0 | ✅ |
+| accelerate | 1.15.0 | ✅ |
+| peft | 0.21.2 | ✅ |
+| wandb | 0.31.0 | ✅ |
+| tensordict | 0.6.2 | ✅ (torch not upgraded) |
+| torchao | uninstalled | ✅ (not needed) |
+| torch.utils._pytree.register_constant | shim | ✅ via .pth |
+| transformers.masking_utils | shim | ✅ in package dir |
+
+### R27.4 setup 脚本更新（R27 版）
+
+`baize_posttrain_setup_cu124_venv.sh` 已更新（`bash -n` ✅）：
+1. `pip install 'setuptools<70'` 替代默认 setuptools 升级
+2. SGLang 安装后自动执行 R27a-R27e（卸载 torchao → 降级 compressed_tensors → 创建 masking_utils shim → 创建 .pth shim → 验证 launch_server）
+3. verl deps 用 constraint file 安装（防 torch 升级）
+4. transformers pin `==4.51.1`（SGLang 要求）
+
+### R27.5 11/9 就绪度评估
+
+| 检查项 | 状态 |
+|:--|:--|
+| cu124 venv 全栈 | ✅ torch+SGLang+verl+ray 全部 import OK |
+| SGLang launch_server | ✅ --help 通过（实际 serve 需 GPU） |
+| verl import | ✅ |
+| MiniCPM5-2B 模型 | ✅ /tmp/models/MiniCPM5-2B/ (4.7GB) |
+| 158-case 数据集 | ✅ EDA-Eval-PyAether-v20260311.jsonl (689KB) |
+| EDA 评测 driver | ✅ ~/code/eda_fastmcp/scripts/run_cline_script.sh |
+| EDA 评分脚本 | ✅ ~/code/eda_fastmcp/scripts/run_eval.py |
+| SFT 语料 v2 | ✅ sft_pyaether_corpus_v2.jsonl (19524对, 0污染) |
+| RL Parquet | ✅ rl_pyaether_synth_v2.parquet (3347 records) |
+| Launch 脚本 dry-run | ✅ Venv/Model/EDA Base 全部 exists |
+| setup 脚本 bash -n | ✅ |
+| GPU | ⬜ 8×A40 全被占（44-45GB/46GB），11/9 释放 4 张 |
+
+**结论**：cu124 venv 全栈就绪，11/9 GPU 释放后可直接 `bash baize_posttrain_launch_11_9.sh --step 2` 起跑 SGLang serve + 36% 基线复测。
 

@@ -86,7 +86,10 @@ fi
 # 3. 激活venv
 echo "🔧 激活venv并升级pip..."
 source "$VENV_PATH/bin/activate"
-pip install --upgrade pip setuptools wheel
+pip install --upgrade pip wheel
+# 🔴 R27 FIX (2026-11-08): Pin setuptools<70 — setuptools>=70 drops pkg_resources,
+#   which verl 0.4.0 imports (verl/__init__.py line 18: import pkg_resources).
+pip install 'setuptools<70'
 
 # 4. 安装torch 2.6.0 + cu124
 # 🔴 R26 FIX (2026-11-08): Upgraded from torch 2.4.0 → 2.6.0+cu124.
@@ -127,6 +130,66 @@ echo "  ✅ SGLang 0.4.6.post1 安装完成"
 echo "🔍 验证 SGLang 基本导入..."
 python -c "import sglang; print(f'SGLang version: {sglang.__version__}')" 2>&1 || echo "  (SGLang import check skipped)"
 
+# 🔴 R27 FIX (2026-11-08): torch 2.7+ API compatibility shims
+#   SGLang 0.4.6.post1 [srt] pulls in: transformers 4.51.1, compressed_tensors, torchao
+#   - torchao 0.18.0 imports torch.nn.functional.ScalingType (torch 2.7+ only) → UNINSTALL
+#   - compressed_tensors imports transformers.masking_utils (only in 4.52+) → CREATE SHIM
+#   - transformers 4.51.1 imports torch.utils._pytree.register_constant (torch 2.7+) → SHIM via .pth
+#   Root cause: torch 2.6.0 is the LAST version with cu124 support; torch 2.7+ needs CUDA 12.6+
+echo "🔧 R27: Applying torch 2.7+ API compatibility shims..."
+
+# R27a: Uninstall torchao (needs torch 2.7+ ScalingType; not needed for unquantized serving)
+pip uninstall torchao -y 2>/dev/null || true
+
+# R27b: Downgrade compressed_tensors to 0.14.0 (avoids newer torchao/masking_utils deps)
+pip install 'compressed-tensors==0.14.0' 2>/dev/null || true
+
+# R27c: Create transformers.masking_utils shim (introduced in 4.52, compressed_tensors expects it)
+SITE_PKG=$(python -c 'import site; print(site.getsitepackages()[0])')
+cat > "$SITE_PKG/transformers/masking_utils.py" << 'MASKING_SHIM'
+"""
+Shim: transformers.masking_utils for transformers 4.51.1.
+compressed_tensors expects this module (introduced in transformers 4.52).
+We provide the minimal API surface needed.
+"""
+from transformers.modeling_attn_mask_utils import (
+    AttentionMaskConverter,
+    _create_4d_causal_attention_mask,
+    _prepare_4d_attention_mask,
+    _prepare_4d_attention_mask_for_sdpa,
+    _prepare_4d_causal_attention_mask,
+    _prepare_4d_causal_attention_mask_for_sdpa,
+)
+
+ALL_MASK_ATTENTION_FUNCTIONS = {
+    "default": _prepare_4d_attention_mask,
+    "sdpa": _prepare_4d_attention_mask_for_sdpa,
+    "eager": _prepare_4d_attention_mask,
+    "causal": _prepare_4d_causal_attention_mask,
+}
+MASKING_SHIM
+echo "  ✅ transformers.masking_utils shim created"
+
+# R27d: Create torch.utils._pytree.register_constant shim (torch 2.7+ API, needed by transformers 4.51+)
+cat > "$SITE_PKG/_torch_pytree_shim.py" << 'PYTREE_SHIM'
+"""
+Torch _pytree.register_constant shim for torch < 2.7.
+transformers >= 4.50 uses torch.utils._pytree.register_constant,
+which was added in torch 2.7. On torch 2.6.0+cu124, this attribute is missing.
+"""
+import torch.utils._pytree as _pytree
+if not hasattr(_pytree, "register_constant"):
+    def _register_constant(cls, module_name=None):
+        return cls
+    _pytree.register_constant = _register_constant
+PYTREE_SHIM
+echo 'import _torch_pytree_shim' > "$SITE_PKG/zzz_torch_pytree_shim.pth"
+echo "  ✅ torch.utils._pytree.register_constant shim installed (.pth)"
+
+# R27e: Verify SGLang launch_server can import (the real test)
+echo "🔍 R27: 验证 SGLang launch_server 可导入..."
+python -m sglang.launch_server --help >/dev/null 2>&1 && echo "  ✅ SGLang launch_server 导入成功" || echo "  ⚠️ SGLang launch_server 导入仍有问题，检查上方日志"
+
 # 7. 安装 verl 0.4.0 (NOT latest 0.9.1)
 # 🔴 R26 FIX (2026-11-08): Pinned to verl==0.4.0 (NOT verl[sglang] latest).
 #   - verl 0.9.1 expects SGLang 0.5.x API (sglang.launch_server module structure)
@@ -134,9 +197,16 @@ python -c "import sglang; print(f'SGLang version: {sglang.__version__}')" 2>&1 |
 #   - Install verl base + deps separately (SGLang already installed above)
 echo "🧠 安装 verl 0.4.0 (compatible with SGLang 0.4.6)..."
 pip install "verl==0.4.0"
-pip install "ray[default]>=2.41.0" "accelerate" "codetiming" "datasets" "dill" "hydra-core" \
+
+# 🔴 R27 FIX: Use constraint file to prevent tensordict from pulling torch 2.11+ (would break cu124)
+echo 'torch==2.6.0+cu124' > /tmp/pt_torch_constraint.txt
+echo 'torchvision==0.21.0' >> /tmp/pt_torch_constraint.txt
+echo 'torchaudio==2.6.0' >> /tmp/pt_torch_constraint.txt
+# R27: Pin transformers==4.51.1 (SGLang 0.4.6.post1 pins this; newer versions need torch 2.7+)
+pip install -c /tmp/pt_torch_constraint.txt \
+    "ray[default]>=2.41.0" "accelerate" "codetiming" "datasets" "dill" "hydra-core" \
     "numpy<2" "pandas" "peft" "pyarrow>=19.0.0" "pybind11" "pylatexenc" \
-    "tensorboard" "tensordict<=0.6.2" "torchdata" "transformers>=4.39.0" "wandb" "packaging>=20.0"
+    "tensorboard" "tensordict<=0.6.2" "torchdata" "transformers==4.51.1" "wandb" "packaging>=20.0"
 
 # 8. 安装flash-attn（可选；可能编译失败，不影响主流程）
 echo "⚡ 安装flash-attention 2 (optional)..."
