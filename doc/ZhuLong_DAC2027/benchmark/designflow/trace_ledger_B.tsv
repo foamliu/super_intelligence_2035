@@ -433,3 +433,10 @@ q4473					parked		2026-11-08 01:58	Finesim DC convergence Q&A prose dup of uky6c
 p9427					parked		2026-11-08 01:58	Finesim DC convergence Q&A prose dup of uky6c/FineSimDcConvFix-001, not design_flow deliverable
 qnm9e					parked		2026-11-08 01:58	Finesim DC convergence Q&A prose dup of uky6c/FineSimDcConvFix-001, not design_flow deliverable
 2ppoj					parked		2026-11-08 01:58	Finesim DC convergence Q&A prose dup of uky6c/FineSimDcConvFix-001, not design_flow deliverable
+1793670219522_sdtpg	dsgao	hfhds201	295	spice_sim	parked		2026-11-08 02:22	fails-strict-filter:spice=2/410=0.5%,synthesis/netlist-dominant
+1793084506490_ytldc	dsgao	hfhds201	175	spice_sim	parked		2026-11-08 02:22	fails-strict-filter:spice=50/574=8.7%,calibre/LVS-dominant
+1793091608908_lzt3e	e0023936	hfhds201	161	spice_sim	parked		2026-11-08 02:22	fails-strict-filter:spice=2/230=0.9%,pyAether/virtuoso-dominant
+1789723764998_zlqaz	zjqiao	hfhds201	12	spice_sim	parked		2026-11-08 02:22	non-spice-domain:netlist:11,analog:2,no-spice-keywords
+1793877732979_qyroq	shanksw	hfhds201	21	spice_sim	parked		2026-11-08 02:22	non-spice-domain:netlist:31,lvs:9,aether:8,no-spice-keywords
+1789723438003_vefeh	zjqiao	hfhds201	9	spice_sim	parked		2026-11-08 02:22	non-spice-domain:netlist:15,analog:1,no-spice-keywords
+1789633680645_racxm	ericw	hfhds201	13	spice_sim	parked		2026-11-08 02:22	non-spice-domain:analog:23,drc:8,no-spice-keywords
