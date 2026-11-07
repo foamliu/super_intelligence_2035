@@ -4300,3 +4300,86 @@ R29 心跳标注"11/9需验证API DB key格式"。R31 实测：
 - `baize_posttrain_setup_cu124_venv.sh`（flash-attn 安装步骤 CUDA_HOME 修正）
 - EXPERIMENTS §R34（本节，9 小节）
 
+
+## §R35 flash_attn 编译成功→RL config 升级 + 奖励函数对抗鲁棒性测试（2026-11-08 wake83 · 零 GPU · 实测）
+
+> **目标**：GPU 到位前最后一天，验证 R34 后台 flash_attn 编译结果 + 奖励函数对抗鲁棒性全量测试。
+> **关键发现**：① flash_attn 2.7.4.post1 编译成功（R34 后台任务完成）→ RL config 升级回 flash_attention_2（+10-20%吞吐）② 奖励函数 None 输入崩溃 bug（已修复）③ R0 语法错误代码高分 reward hacking 向量（已修复，anti-gaming cap 0.3）。
+
+### R35.1 flash_attn 编译成功验证
+
+R34 在后台启动 `CUDA_HOME=/usr/local/cuda-12.4 pip install flash-attn==2.7.4.post1 --no-build-isolation`，本轮验证结果：
+
+| 组件 | 版本 | 状态 |
+|:--|:--|:--|
+| flash_attn | 2.7.4.post1 | ✅ `import flash_attn` 成功 |
+| flash_attn_func | — | ✅ 可导入 |
+| torch | 2.6.0+cu124 | ✅ cuda_available=True |
+| CUDA_HOME | /usr/local/cuda-12.4 | ✅ 正确（R34 修正） |
+
+**RL config 更新**：`baize_posttrain_rl_verl_config.yaml` 中 `attn_implementation: sdpa` → `flash_attention_2`。YAML 重新验证通过 ✅。
+
+**吞吐影响**（R34 估算）：flash_attention_2 vs sdpa = +10-20% 训练吞吐。R33 排程中 baize-C(1000iters,3turns,4GPU)=14.3天 → 预计降至 11.4-12.9 天（-1.4-2.9天），训练窗口余量从 6.7 天增至 8.1-9.6 天。
+
+### R35.2 对抗鲁棒性测试套件（29 项 · 6 类）
+
+测试脚本：`baize_posttrain_reward_adversarial_test.py`（~450行）+ `baize_posttrain_reward_adversarial_results.json`（结果）。
+
+| 类别 | 测试数 | 通过 | 关键发现 |
+|:--|--:|--:|:--|
+| T1-EdgeCases | 7 | 7 | None 输入原崩溃→已修；10k chars 无 OOM；unicode 无异常 |
+| T2-RewardHacking | 6 | 6 | format-only(pass)→0.18<0.3✅；hardcoded→0.60≤0.7✅；excessive calls R3 惩罚✅；hallucinated API R4 惩罚✅ |
+| T3-SignalProps | 5 | 5 | R0 std=0.37(>>0.05 GRPO阈值)✅；单调性✅；R2 5级梯度✅；全臂 [0,1.1] 范围✅ |
+| T4-AutoFallback | 3 | 3 | R2 无沙盒→自动 R0✅；无 fallback→精确 0✅；有沙盒→不触发 fallback✅ |
+| T5-CheatDetect | 5 | 5 | 精确复制→cheat=True ratio=1.0✅；干净代码→False✅；空输入不崩溃✅ |
+| T6-CrossArm | 6 | 6 | 全通过→全臂≥0.8✅；全失败→全臂=0✅；R3≤R2(0 tool calls)✅ |
+| **合计** | **29** | **29** | **ALL PASS** |
+
+### R35.3 发现并修复的 2 个 Bug
+
+**Bug 1（CRITICAL）：None solution_str 崩溃**
+- **现象**：`compute_score("t", None, ...)` → `TypeError: expected string or bytes-like object`（regex 操作崩溃）
+- **根因**：`compute_score` 入口未对 solution_str 做 None/类型守卫
+- **影响**：verl 在空生成或解码错误时可能传入 None → 训练崩溃
+- **修复**：`compute_score` 入口添加 `if solution_str is None: solution_str = ""` + 类型守卫
+
+**Bug 2（Reward Hacking 向量）：语法错误代码 R0 高分**
+- **现象**：`def call_test_func(
+    return pyScript.testFunc(` (语法错误) → R0=0.86（过高）
+- **根因**：R0 的 API 名匹配(0.3) + entry_point(0.2) + structure(部分) + test_align(部分) + format(0.02) 在语法完全无效时仍给出高分。syntax_score=0 但其他组件不受语法影响
+- **影响**：模型可能学会「只提 API 名不写合法代码」获得高 R0 reward → GRPO 优化方向错误
+- **修复**：`reward_r0_skeleton` 增加 anti-gaming cap：`if n_total > 0 and n_valid == 0: total = min(total, 0.3)`
+- **修复后**：语法错误代码 R0=0.30（从 0.86 降至 0.30，-65%）✅
+
+### R35.4 奖励信号属性分析（GRPO 可用性确认）
+
+| 属性 | 值 | 判据 | 结论 |
+|:--|:--|:--|:--|
+| R0 方差(std) | 0.3718 | >0.05（GRPO advantage 非零的最低要求） | ✅ 充分梯度信号 |
+| R0 单调性 | True | 好回答 > 差回答 | ✅ 优化方向正确 |
+| R2 梯度级数 | 5 | ≥3（非 binary） | ✅ 精细部分分 |
+| 全臂范围 | [0, 1.1] | ∈[0, 1.1] | ✅ 无 NaN/Inf |
+| R1 binary | {0, 1.0} | 仅二值 | ✅ 符合设计（baseline 对照用） |
+| R3 vs R2(0 calls) | R3 < R2 | 零工具惩罚生效 | ✅ |
+| R4 vs R3(hallucinated) | R4 < R3 | 幻觉 API 惩罚生效 | ✅ |
+
+### R35.5 11/9 就绪度（R35 后）
+
+| 检查项 | R34 后 | R35 后 |
+|:--|:--|:--|
+| flash_attn | ⬜(sdpa回退) | ✅ 2.7.4.post1 编译成功，RL config 升级 |
+| 奖励函数 None 安全性 | ❌ 未测试 | ✅ 修复+29 项对抗测试全通过 |
+| R0 reward hacking 防护 | ❌ 未测试 | ✅ 语法错误 anti-gaming cap 0.3 |
+| 奖励信号 GRPO 可用性 | ⬜ 未验证 | ✅ std=0.37, 单调性, 5级梯度 |
+| cheat detection | ✅ R30 修复 | ✅ R35 对抗测试确认（精确复制检出/干净放行） |
+
+**11/9 就绪度（R35 后）**：全栈 ✅ + preflight ✅ + 数据 ✅ + 奖励 ✅(29/29 对抗测试) + cheat ✅ + 脚本 ✅ + 显存 ✅ + 吞吐 ✅(flash_attn +10-20%) + 排程 ✅ + **flash_attn ✅** + GPU ⬜（明天 11/9）
+
+### R35.6 交付物
+
+- `baize_posttrain_reward_adversarial_test.py`（~450行，6类29项对抗测试）
+- `baize_posttrain_reward_adversarial_results.json`（测试结果 JSON）
+- `baize_posttrain_reward_functions.py`（R35 修复：None 守卫 + anti-gaming cap）
+- `baize_posttrain_rl_verl_config.yaml`（attn: sdpa → flash_attention_2）
+- `reports/report_posttrain_r35_adversarial_reward_test_zh.html`（HTML 报告）
+- EXPERIMENTS §R35（本节，6 小节）
