@@ -4506,3 +4506,88 @@ fi
 - `baize_posttrain_rl_monitor.py`（~445 行，7 种发散检测 + 早停 + 检查点建议 + 恢复程序）
 - `reports/report_posttrain_r36_rl_observability_zh.html`（HTML 报告）
 - EXPERIMENTS §R36（本节，9 小节）
+
+---
+
+## §R37 EDA 沙盒连通性分析与三层回退策略（2026-11-08 wake85 · 零 GPU · 实测）
+
+> **调研方向**: R1（EDA 环境交互式 RL 的可执行方案）—— 环境接口如何稳定调用？
+> **方法**: 源码分析 `eda_fastmcp/server/sandbox_server/exec_code.py` + 网络实测（ICMP/TCP/SSH）
+> **交付物**: `baize_posttrain_eda_sandbox_client.py`（280行, py_compile✅, --test✅, --exec✅, --json✅）+ HTML报告 6.5KB
+
+### R37.1 沙盒架构发现
+
+通过分析 `~/code/eda_fastmcp/server/sandbox_server/exec_code.py` 源码发现：
+
+- **协议**: HTTP API（非 SSH），`POST http://{HOST}:{PORT}/v1/run_code`
+- **请求体**: `{"code": "<pyAether代码>", "lang": "pyAether"}`
+- **响应**: `{"response": "...", "error_log": "...", "print_log": "..."}`
+- **默认主机**: `10.129.32.75`（来自 `.env` 的 `SANDBOX_HOST`）
+- **多端点池**: 端口 8664/8665/8653/8669（各自独立 workdir，物理隔离）
+- **默认单端口**: 8667
+- **TCP 备选端口**: 8668（socket 模式）
+
+**关键纠正**: `baize_posttrain_eda_tool.py`（R9 创建）使用 SSH 隧道方式连接沙盒，但实际沙盒协议是 HTTP API。新脚本 `baize_posttrain_eda_sandbox_client.py` 修正了这一设计。
+
+### R37.2 网络实测（2026-11-08 07:02 从 .17）
+
+| 检测项 | 目标 | 结果 | 判定 |
+|:--|:--|:--|:--|
+| ICMP ping | 10.129.32.75 | 0.387ms, 1/1 收到 | ✅ 可达 |
+| TCP 8667 (HTTP) | 10.129.32.75:8667 | Connection timed out (5s) | ❌ 过滤 |
+| TCP 8669 | 10.129.32.75:8669 | 超时 | ❌ 过滤 |
+| TCP 8664 | 10.129.32.75:8664 | 超时 | ❌ 过滤 |
+| TCP 8665 | 10.129.32.75:8665 | 超时 | ❌ 过滤 |
+| TCP 8653 | 10.129.32.75:8653 | 超时 | ❌ 过滤 |
+| TCP 8668 | 10.129.32.75:8668 | 超时 | ❌ 过滤 |
+| TCP 22 (SSH) | 10.129.32.75:22 | 超时 | ❌ 过滤 |
+| SSH | 10.251.36.15:22 | Connection timed out (3s) | ❌ 不可达 |
+
+**诊断**: ICMP 可达但所有 TCP 端口被过滤 → `10.129.32.75` 上有防火墙阻止 `.17` 子网的 TCP 连接。`10.251.36.15` SSH 同样不可达。
+
+### R37.3 三层回退策略
+
+| 层级 | 方式 | 状态 | 奖励臂 | 说明 |
+|:--|:--|:--|:--|:--|
+| Tier 1 | 直接 HTTP API `10.129.32.75:8667-8669` | ❌ 不可达 | R1-R4 (执行型) | 防火墙过滤 TCP，需运维开放端口 |
+| Tier 2 | SSH 隧道经 36.15 | ❌ 不可达 | R1-R4 (执行型) | SSH 22 超时，36.15 网络不通 |
+| Tier 3 | R0 骨架静态分析（纯 Python） | ✅ 就绪 | R0 (静态分析) | 语法+API名+入口点+结构+测试对齐 |
+
+### R37.4 Tier 3 (R0) 奖励信号质量（R35 已验证）
+
+- **标准差**: std = 0.3718（远 > 0.05 阈值）→ GRPO advantage ≠ 0 → 有学习信号
+- **单调性**: 正确代码 > 部分正确 > 语法错误 → 梯度方向正确
+- **对抗鲁棒性**: 29/29 项测试全 PASS（R35），含 R0 anti-gaming cap（语法错误代码 0.86→0.30）
+- **范围**: [0, 1.1]，跨臂一致
+- **限制**: R0 无法验证代码执行正确性（无断言通过/失败），仅基于静态分析
+
+### R37.5 对 11/9 RL 训练的影响与操作建议
+
+| 阶段 | 原计划 | 调整后 | 理由 |
+|:--|:--|:--|:--|
+| Day-1 基线复测 | SGLang serve + 5-run eval | 不变 | 评测不依赖沙盒（在评测机跑） |
+| Day-2 RL smoke | GRPO R2 (执行型, 10 iters) | **GRPO R0 (骨架型, 10 iters)** | 沙盒不可达，R0 是唯一可用奖励臂 |
+| Day 3-4 surrogate-A | GRPO R2 500 iters | **GRPO R0 500 iters** | 验证 R0 信号在长训练中的稳定性 |
+| Day-5 评测 | quick 1-run + full 5-run | 不变 | 评测在评测机执行 |
+
+**运维请求**（非阻塞，并行推进）: 请网络运维在 `10.129.32.75` 上为 `10.252.32.17` 开放 TCP 端口 8664-8669。一旦开放，`baize_posttrain_eda_sandbox_client.py` 自动检测到 Tier 1 可用，切换到执行型奖励 R1-R4。
+
+### R37.6 与 R1 调研方向的对应
+
+| R1 问题 | R37 回答 |
+|:--|:--|
+| 环境接口如何稳定调用？ | HTTP API（`10.129.32.75:8667/v1/run_code`），但从 .17 不可达。三层回退：HTTP→SSH→R0 |
+| 奖励如何自动可判定？ | Tier 1/2: 沙盒执行结果（pass/fail/assertion）；Tier 3: R0 静态分析（std=0.3718） |
+| 单题 rollout 预算？ | 不变（R33 排程：smoke 2.77s/sample/GPU，3.5× 开销系数） |
+| 超时与部分失败的恢复策略？ | Tier 1/2 超时→自动降级到下一层；R36 监控脚本检测训练发散→早停+检查点恢复 |
+
+### R37.7 11/9 就绪度更新
+
+全栈 ✅ + preflight ✅ + 奖励 ✅ + cheat ✅ + 脚本 ✅ + 显存 ✅ + 吞吐 ✅ + 排程 ✅ + flash_attn ✅ + 监控 ✅ + **沙盒连通性 ⚠️(Tier3 R0 可用)** + GPU ⬜（明天 11/9）
+
+### R37.8 交付物
+
+- `baize_posttrain_eda_sandbox_client.py`（~280 行，三层回退 + 连通性诊断 + JSON 输出）
+- `reports/report_posttrain_r37_sandbox_connectivity_zh.html`（HTML 报告，6.5KB）
+- EXPERIMENTS §R37（本节，8 小节）
+
