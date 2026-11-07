@@ -2,6 +2,20 @@
 
 > 📄 **报告格式常驻规程（2026-10-24 用户令）**：**所有报告一律用中文 HTML**（单文件自包含、无外链/CDN），除非用户另行指定；🚫 不用 `.md` / `.pdf` / 纯文本顶替。适用于**所有线**（pretrain / vision / data / harness / zhulong / news / recruit / research / video）。
 
+## 2026-11-07 11:30 — robot 线算力/形态定稿（云端 DeepSeek + 手机只做眼耳口）
+
+用户令：「robot 可以使用云上的大模型，比如 DeepSeek；手机只是「眼耳口」（拍照/录音/播放）；推理在云端；智能体似乎可以跑在手机上？」
+
+落地（`run/WATCH_VIDEO_TASK.md` 顶部 11:30 块）：
+
+- **模型**：主路径 = 云端 DeepSeek（`https://api.deepseek.com`，`deepseek-chat`/`deepseek-reasoner`）；凭据已在本机 `C:\Users\Administrator\.cline\data\secrets.json` 的 `deepSeekApiKey`（**禁止明文入库/入日志**）；ollama 降为离线兜底；单题成本目标 <= ¥0.02。
+- **手机定位**：只做眼/耳/口（拍照、录音、播放、显示），**不跑推理**。
+- **智能体位置**：要求给三方案结论并实测 —— S1 云端 agent（主路径，本轮必须真跑通一题）、S2 PC agent（同构接口 `/tutor`，断网兜底）、S3 手机端 agent（ArkTS/Android 内跑 function-calling 循环；给可行性结论 + 最小 demo，含后台限制/耗电/端侧 OCR/签名成本）。统一接口 `POST /tutor -> {reply_text, step, needs, hint_level, tts_text}`，手机端只是客户端。
+- **上云合规**：裁剪题干再上传、可一键切本地模式、服务端不落库、未成年人默认 25 分钟 + 夜间免打扰。
+- **本轮验收**：DeepSeek 真调用（脱敏）+ 时延 + token/费用记账 + `P0_设备通路.md` 增「S3 评估」节 + 0 处明文 key 自检。
+- 任务书已瘦身：旧视频 SOP（10-12 令 + §0-§8）整体归档到 `run/video/WATCH_VIDEO_TASK_ARCHIVE.md`，原地留指针；任务书 42.8KB -> **12.2KB**。
+
+
 ## 2026-11-07 11:03 — video 线转型为 `robot` 线（AI 家教机器人）+ 已重启
 
 用户令：「重启 video 线，新任务是开发一个基于华为手机的 AI 机器人。用于调用大模型和智能体，辅导初中生做功课。」
