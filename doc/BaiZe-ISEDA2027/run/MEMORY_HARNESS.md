@@ -4,14 +4,14 @@ WAITING: 0
 
 ## 📊 进度快照
 
-PHASE:        R1740 cline专项(C1-C5)·exit-code修复TB4 cline根因·deepseek predict重启·7/7路predict alive·TB4 cline rerun2运行中(修复后)
-已完成:       H-B✅·Gate7/7·TB报告✅·full500✅·R1735-R1739 P0/P1/审计/cleanup·R1740 cline专项C1-C5+exit-code修复+deepseek重启
-当前动作:     R1740:①CPU/MEM PASS(load59/224) ②cline专项C1:SWE-bench cline 27/29 real=93.1% ③C2:TB4首轮66/66 errored=ECONNRESET(infra)·重跑2完成reward0=能力+2errored=finish-reason(infra) ④C3:空patch 51.5%→6.9%(resume fix生效) ⑤exit-code修复cline_patched.py:201(仅无run_result才raise→verifier可评分) ⑥cline TB4 rerun2启动(PID2737781) ⑦deepseek predict重启(PID2737772,gw_proxy_dsh 9093 HTTP200) ⑧7/7路predict alive ⑨C5:cline专题HTML报告已交付 ⑩gateway HTTP200健康
-下一步:       ①监控cline TB4 rerun2(验证exit-code修复→errored归零) ②监控7路predict进度(目标500/路) ③TB4全路完成后汇总 ④§22:4x两基准7路全交付
-阻塞:         无(gw_proxy_dsh已恢复)
+PHASE:        R1741 cline专项深化(progress口径C1-C5)·7路predict alive(91-120/500)·TB4 rerun2运行中·ConnectionRefused根因定位
+已完成:       H-B✅·Gate7/7·TB报告✅·full500✅·R1735-R1740 P0/P1/审计/cleanup/cline专项C1-C5+exit-code修复·R1741 cline专项深化(progress口径+ConnectionRefused归因)
+当前动作:     R1741:①CPU/MEM PASS(load49/224·1.2Ti avail) ②C1:cline SWE-bench done=91/500 real=27(29.7%) empty=64(70.3%) patch median=2399B ③C2:空patch分类=ConnectionRefused18(28%)+AI_SDK/other31(48%)+timeout11(17%)+5xx1(2%)+capability3(5%)=100% ④C3:glm53空patch未归零(70.3%)但根因=适配器故障(93%)非resume bug·resume fix对kimi生效(51.5%→6.9%) ⑤关键发现:连接正常时cline real=27/30=90%≈opencode 67/74=90.5%·低分主因=适配器ConnectionRefused率3.6倍opencode ⑥7路predict progress:cline91/codex95/opencode91/claude120/pi59/hermes111/deepseek115 ⑦TB4 cline rerun2运行中(66题,0完成1运行65待) ⑧C5:报告更新R1741(10.4KB,含ConnectionRefused归因+差距分析+可检验假设)
+下一步:       ①监控7路predict进度(目标500/路,当前59-120/500) ②监控cline TB4 rerun2(验证exit-code修复→errored下降) ③TB4全路完成后汇总 ④§22:4x两基准7路全交付 ⑤cline适配器ConnectionRefused重试机制(可检验假设下一步)
+阻塞:         无
 ERROR_COUNT:  0
-  📦 体积：TASK=27KB / MEMORY=7.6KB(本轮归档§08:1x→ARCHIVE+R1612-R1734 bulk→daily)
-  🔍 cline专项小结: SWE-bench real 27/29(93.1%) · TB4首轮66/66全errored(ECONNRESET=infra)→重跑5题(2完成reward0=能力,2errored=网关finish-reason) · exit-code修复R1740已应用·rerun2运行中 · 失败top1=ECONNRESET/finish-reason(网关协议兼容)
+  📦 体积：TASK=28KB / MEMORY=7.6KB(本轮无归档)
+  🔍 cline专项小结: SWE-bench real 27/91(29.7%) · empty 64/91(70.3%=95%适配器ConnectionRefused+AI_SDK+timeout,5%能力) · 连接正常real=90%≈opencode · TB4 rerun2运行中(completed=0,running=1) · 失败top1=ConnectionRefused(适配器/gw_proxy连接不可靠,3.6倍opencode)
 ```
 
 > 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
@@ -19,6 +19,7 @@ ERROR_COUNT:  0
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 
 ### 本唤醒流水
+> [11:12] R1741 cline专项深化(progress口径):①CPU/MEM PASS(load49/224·1.2Ti avail) ②C1:progress口径cline done=91/500 patch=27(29.7%) no_patch=64(70.3%)·file口径30文件27real(90%)·patch median=2399B mean=4038B max=22706B·耗时median=351s p90=1800s ③C2:64空patch分类=ConnectionRefused18(28%)+AI_SDK/other_adapter31(48%)+timeout_1800_11(17%)+5xx_1(2%)+capability_3(5%)=100%·top1=ConnectionRefused(gw_proxy127.0.0.1:9090拒绝连接) ④C3:glm53空patch70.3%未归零但根因=93%适配器故障≠resume bug·resume fix对kimi生效(51.5%→6.9%)·glm53的64空patch被正确识别为未完成(下次resume自动重跑) ⑤**关键发现**:连接正常时cline real=27/30=90%≈opencode 67/74=90.5%≈hermes 69/78=88.5%·三路能力相当!·cline低分主因=适配器ConnectionRefused率3.6倍opencode(61vs17) ⑥7路predict progress:cline91/codex95/quota87/opencode91/claude120/quota1/pi59/quota22/hermes111/quota33/deepseek115 ⑦TB4 cline rerun2(PID2737781,10:47启动,exit-code修复后):completed=0 running=1 pending=65 ⑧C5:报告更新gen_cline_special_r1741.py→report_harness_cline_special_r1740_zh.html(10.4KB,含ConnectionRefused归因+差距表+可检验假设:①重试机制②错峰③直连vs gw_proxy) ⑨未完成指令:有(§22:4x)⇒WAITING:0
 > [10:53] R1740 cline专项+exit-code修复:①CPU/MEM PASS(load59/224) ②C1:SWE-bench cline 27/29 real=93.1%(median patch 2398B)·opencode 67/67·hermes 67/74 ③C2:TB4首轮66/66全errored=RuntimeError(exit1)·根因=ECONNRESET(socket closed)=infra·重跑5题:2完成reward0=能力(verifier ran)+2errored="Model ended without recognized finish reason"=网关协议兼容(infra)+1CancelledError(我kill) ④C3:空patch 51.5%→6.9%(resume fix is_predicted检查model_patch非空·2个剩余空patch为新鲜产出将自动重跑) ⑤**exit-code修复**:cline_patched.py:201原"非零退出→raise RuntimeError→verifier跳过"改为"仅无run_result事件才raise,否则记warning让verifier评分"·语法验证OK ⑥cline TB4 rerun2启动(PID2737781,修复后代码) ⑦deepseek predict重启(PID2737772,gw_proxy_dsh 9093 HTTP200,astropy-13398 no-patch 138s,astropy-13453 SKIP=真实14059B patch progress记录stale 0B) ⑧7/7路predict alive(cline29/codex6/opencode68/claude21/pi22/hermes75/deepseek24) ⑨C5:report_harness_cline_special_r1740_zh.html交付(11.6KB) ⑩gateway HTTP200健康 ⑪未完成指令:有(§22:4x)⇒WAITING:0
 > [09:33] R1739 predict重启:①CPU/MEM PASS(load70/224·1.2Ti avail) ②killed 7旧predict(429空转+旧resume代码:is_predicted用size>50B而非model_patch)→gateway立即恢复GATEWAY_OK(13并发→9并发→恢复) ③cleanup --delete×2=423空patch删除(392+31) ④restart predict batch1(opencode/hermes/cline)+batch2(codex/claude-code/pi)+batch3(deepseek)=7路 ⑤固定resume代码确认生效:SKIP real patch(500B/3058B/...),PREDICT deleted-empty任务 ⑥6/7工作正常(opencode task3/hermes task6/cline task3/codex task2/claude task2/pi task1) ⑦deepseek-harness 1.1s空patch=异常(gw_proxy_dsh 9093问题)→已kill待查 ⑧TB4 6路harbor alive·gateway 13并发OK ⑨§08:1x审计报告已交付+oracle=1.0×3✅→标✅已交付 ⑩未完成指令:有(§22:4x)⇒WAITING:0
 > 📦 R1738 流水(09:08,监控轮)已归档 → daily-memories-harness/2026-11-07.md。结论：gateway耗尽ETA09:20·cleanup dry-run=372空·TB4 hermes60reward全0=能力·运维预判overlay根因=错误。需要时再读。
