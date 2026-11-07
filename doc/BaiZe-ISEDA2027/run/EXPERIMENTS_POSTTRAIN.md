@@ -2339,3 +2339,130 @@ R15 §R15.9 的残余风险已完全消除。新的残余风险：
 1. **verl ToolParser API 变更**：`verl/experimental/agent_loop/tool_parser.py` 在 `experimental/` 下，API 可能在未来版本变更。缓解：pin verl 版本。
 2. **parser import 时机**：必须在 verl agent loop 初始化前 import。已通过 `baize_posttrain_rl_grpo.sh` 的启动顺序保证。
 3. **多轮 token 拼接**：parser 只解析工具调用，多轮对话的 token 拼接由 verl agent loop 内部处理（不经过我们的 parser）。
+
+---
+
+## §R17 SGLang MiniCPM5-2B 服务架构验证 + verl 数据加载器 Schema 审计（2026-11-07 · wake65 · 零 GPU）
+
+> **目的**：11/9 GPU 到位前，零 GPU 验证 SGLang 能否正确加载/服务 MiniCPM5-2B，审计 verl 数据格式兼容性，修正 R11 KV cache 预算。
+> **方法**：模型 config.json / tokenizer_config.json / chat_template.jinja 实地读取 + SGLang 官方部署文档 (MiniCPM GitHub skill) + verl data format 文档交叉验证。
+> **检索词**：`SGLang MiniCPM5 model architecture support serving inference`
+
+### R17.1 MiniCPM5-2B 模型架构分析（config.json 实测）
+
+| 属性 | 值 | 对 SGLang/verl 的影响 |
+|:--|:--|:--|
+| architectures | `["LlamaForCausalLM"]` | ✅ **标准架构**，所有推理引擎原生支持，无需自定义 kernel/model code |
+| model_type | `llama` | ✅ SGLang/verl/vLLM 均内置 Llama 支持 |
+| hidden_size | 2048 | 2B 模型，4×A40 48GB 完全够用 |
+| num_hidden_layers | 42 | 比 Qwen2.5-2B(28) 多 50%，训练稍慢但推理无碍 |
+| num_attention_heads | 16 (Q) | 标准 GQA |
+| **num_key_value_heads** | **2** | **GQA ratio 8:1** → KV cache 极小（见 R17.6） |
+| head_dim | 128 | |
+| vocab_size | **130560** | ⚠️ 大词表 → logits/entropy 内存峰值高（R11 已用 chunking 缓解） |
+| max_position_embeddings | 131072 (128K) | 远超训练用的 8192 上下文 |
+| rope_theta | **5000000** | 极高（标准 Llama=500K），为长上下文优化 |
+| torch_dtype | bfloat16 | A40 原生支持 |
+| tie_word_embeddings | false | 有独立 lm_head |
+| transformers_version | 5.6.2 | ⚠️ 较新版本保存，setup 脚本装 `transformers>=4.39.0` 可能不够 |
+
+**结论**：MiniCPM5-2B 是**纯标准 LlamaForCausalLM**，无自定义层/kernel。SGLang 加载零风险。官方部署文档确认："standard LlamaForCausalLM architecture, so mainstream inference engines can load it directly: no custom kernels, no model-code"。
+
+### R17.2 SGLang 服务兼容性确认（官方文档交叉验证）
+
+来源：`github.com/T2020T/MiniCPM/blob/main/skills/minicpm5-deploy-sglang/SKILL.md`
+
+| 检查项 | 状态 | 说明 |
+|:--|:--|:--|
+| 模型加载 | ✅ 确认 | LlamaForCausalLM 是 SGLang 内置支持 |
+| 推理服务 | ✅ 确认 | `python -m sglang.launch_server --model-path /tmp/models/MiniCPM5-2B --port 30000` |
+| 工具调用解析 | ✅ verl 层 | SGLang 有 `--tool-call-parser minicpm5`（pip 0.5.6.post3 不含）；verl ToolParser (R16) 替代 |
+| 已知 pitfall | ⚠️ GLIBCXX | 若遇 `GLIBCXX_3.4.31 not found`，用 `LD_PRELOAD=/lib/x86_64-linux-gnu/libstdc++.so.6` |
+
+**SGLang 版本风险**：setup 装 `sglang[srt]==0.5.6.post3`。该版本能加载 LlamaForCausalLM ✅，不含 minicpm5 parser ❌（R16 已解决），`transformers_version: 5.6.2` 模型文件可能需要 `transformers>=5.0`（需 11/9 验证）。
+
+### R17.3 Tokenizer 与 Chat Template 深度分析
+
+**Tokenizer**：`PreTrainedTokenizerFast`（BPE），model_max_length=131072，510 added tokens。
+
+关键 special tokens（实测）：
+
+| Token ID | Content | 用途 |
+|:--|:--|:--|
+| 0 | `<s>` | BOS |
+| 1 | `</s>` | EOS（标准） |
+| 2/130072 | `<|im_start|>` | ChatML 消息开始 |
+| 3/130073 | `<|im_end|>` | ChatML 消息结束（**EOS 之一**） |
+| 8/9 | 思考开始/结束 | hybrid reasoning |
+| 12/13 | `<tools>`/`</tools>` | 工具定义 |
+| 18/19 | `<function`/`</function>` | 函数调用 |
+| 130075/130076 | `<|thought_begin|>`/`<|thought_end|>` | 思考模式 |
+| 130077 | `<|tool_call|>` | 工具调用标记 |
+
+**Chat Template**：ChatML 格式（`<|im_start|>role\ncontent<|im_end|>`）；工具存在时注入 `<tools>` XML；调用格式 `<function name="..."><param name="...">value</param></function>`；支持 CDATA；有 `enable_thinking` 参数。
+
+**verl 兼容性**：verl `return_raw_chat: True` 时用 tokenizer chat template，MiniCPM5-2B 有 chat_template.jinja ✅。
+
+### R17.4 EOS 多令牌处理风险（新发现 · 11/9 必验）
+
+MiniCPM5-2B 有 **两个 EOS token**：`eos_token_id: [1, 130073]`（`</s>` + `<|im_end|>`）。
+
+**风险**：SGLang/verl 可能只认第一个 EOS，生成在 `<|im_end|>` 处不停 → 输出超长/多轮混乱。
+
+**缓解**（11/9 smoke test 必查）：
+1. SGLang serve 后检查生成是否在 `<|im_end|>` (130073) 处停止
+2. 若不停止，加 `--stop-token-ids 130073`
+3. 检查 verl multi-turn rollout 的回合分割是否正确
+
+### R17.5 verl RL/SFT Parquet Schema 审计（jsonl_to_parquet.py 源码 + JSONL 头部实测）
+
+**RL Parquet**（rl_pyaether_synth_v2.parquet, 3347 records, 931KB）：
+
+| 列名 | 类型 | 值示例 | verl 期望 | 匹配 |
+|:--|:--|:--|:--|:--|
+| `prompt` | list[struct{role,content}] | `[{"role":"user","content":"You are an EDA..."}]` | `return_raw_chat: True` 需要 list[dict] | ✅ |
+| `reward_model` | struct | `{"test_code":"...","canonical_solution":"...","entry_point":"..."}` | 传给 custom_reward_function | ✅ |
+| `agent_name` | str | `"eda_sandbox"` | R15 已移除 `agent_name_key`，此列被 verl 忽略 | ⚠️ 无害冗余 |
+
+**SFT Parquet**（sft_pyaether_corpus.parquet, 19610 records, 2.7MB）：
+
+| 列名 | 类型 | 值示例 | verl 期望 | 匹配 |
+|:--|:--|:--|:--|:--|
+| `conversation` | list[struct{role,content}] | 3 turns: system/user/assistant | `use_conversation_format` | ✅ |
+| `pair_id` | str | `"S1-e69a97c337fa"` | metadata | ✅ |
+| `type` | str | `"S1_doc_to_code"` | metadata | ✅ |
+| `api_used` | str (JSON) | `["aeAddDesignMapping"]` | metadata | ✅ |
+| `contamination_check` | str | `"pass"` | 污染隔离记录 | ✅ |
+
+**verl Config 对齐**：`prompt_key: prompt` ✅ / `return_raw_chat: True` ✅ / `need_tools_kwargs: True` ✅ / `multi_turn_config.format: minicpm5` ✅。**数据格式与 verl 期望完全对齐，无 schema mismatch**。
+
+### R17.6 GQA KV Cache 重新计算（R11 修正）
+
+**R11 原估计**：KV cache 需 13.8GB → `gpu_memory_utilization` 提到 0.50 + `max_num_seqs` 降到 12。
+
+**R17 修正**：R11 用了 `num_attention_heads` (16) 而非 `num_key_value_heads` (2)。MiniCPM5-2B 用 **GQA**，KV cache 只存 KV head：
+
+```
+KV per token = 42 layers × 2 KV heads × 128 head_dim × 2 (K+V) × 2 (bf16) = 42 KB
+Per sequence (8192 tokens): 42 KB × 8192 = 344 MB
+Total for 12 sequences: 344 MB × 12 = 4.1 GB  ← 实际值
+```
+
+**影响**：实际 KV cache 仅 ~4.1GB（R11 估 13.8GB 偏高 3.4×）。`gpu_memory_utilization: 0.50` (24GB) 中模型 ~4.7GB + KV ~4.1GB = ~8.8GB，余量 ~15GB。可安全将 `max_num_seqs` 提到 16-24。但保守配置不会出错，建议 smoke test 后按实测调整。
+
+### R17.7 11/9 启动前修复建议（按优先级）
+
+| 优先级 | 修复项 | 位置 | 说明 |
+|:--|:--|:--|:--|
+| 🔴 P0 | EOS multi-token 验证 | rl_grpo.sh | SGLang serve 后检查生成是否在 `<|im_end|>` (130073) 停止。若不停止加 `--stop-token-ids 130073` |
+| 🟡 P1 | transformers 版本 | setup_cu124_venv.sh | 模型标注 `transformers_version: 5.6.2`，当前装 `>=4.39.0`。若加载报错升级到 `>=5.0` |
+| 🟡 P1 | GLIBCXX 预防 | rl_grpo.sh | 若 SGLang 报 `GLIBCXX_3.4.31`，加 `export LD_PRELOAD=/lib/x86_64-linux-gnu/libstdc++.so.6` |
+| 🟢 P2 | max_num_seqs 调优 | verl_config.yaml | KV cache 实际仅 4.1GB，可从 12 提到 16-24（smoke test 后调） |
+| 🟢 P3 | enable_thinking 控制 | verl_config.yaml | RL 训练建议关闭思考模式（`chat_template_kwargs: {enable_thinking: false}`）以简化 rollout |
+
+### R17.8 残余风险
+
+1. **SGLang 0.5.6.post3 + MiniCPM5 tokenizer 兼容**：架构支持确定无碍，tokenizer 加载/特殊 token 映射可能有版本差异。11/9 首次 `sglang.launch_server` 验证。
+2. **multi-eos 在 verl 多轮中的行为**：verl agent loop 需正确检测两个 EOS。若只检查 `</s>` (1) 不检查 `<|im_end|>` (130073)，多轮可能卡住。smoke test 观察。
+3. **chat_template + verl need_tools_kwargs 双重注入**：chat_template.jinja 在 `tools` 存在时注入工具定义，verl `need_tools_kwargs: True` 也会注入 → 可能**双重注入**。smoke test 检查 prompt 是否含两份工具定义。
+4. **thinking 模式消耗 response 预算**：MiniCPM5 的 `国防部...国防部` 思考内容消耗 4096 token 预算，可能导致工具调用空间不足。建议 RL 关闭 thinking 模式。
