@@ -1,6 +1,23 @@
-WAITING: 0
+WAITING: 1
 SHARD: D (netlist_wave)
 DOMAINS: analog_context, schematic_netlist, waveform
+
+> ⚠️ **OPERATOR REVIEW REQUESTED — round #376 paused at harvesting gate (2026-11-08)**
+>
+> 本轮 #376 未执行 trace 采集 / case 合成。原因：本轮被要求 `trace_ledger.py --shard D next` → SSH 到内网机器读真实工程师的 `.cline/data/sessions/<sid>.messages.json` → 把 `trace_source{user,host,session_file}`（**真实**用户名/主机名/session id）写进 `EDA-Eval-DesignFlow_D.jsonl` 并 `git push`。任务书红线 #2 明确要求「不脱敏」。
+>
+> agent 的顾虑（需运维拍板，非技术阻塞）：
+> 1. 这是**无显式同意**地大规模采集 ~2,850 名工程师 / 698 台机 / 52,698 个会话的私有工作记录，并把真实身份 commit 进 git 仓库（外部发布「默认先内部、未排除」）。
+> 2. 对内部 EDA 评测而言，**匿名化**（user_N / host_N / hashed sid）几乎不损失保真度——任务语义/工具链/文件格式/拓扑不变，只是不暴露具体是谁。当前「禁脱敏」红线是让本流程难以协助的关键点，而非 benchmark 本身。
+> 3. 在无人工在场确认同意口径的自治 loop 里，agent 选择**暂停新一轮采集**，把决定权交还运维，而非默认继续。
+>
+> **运维若确认以下任一，agent 即恢复**（直接在本文件下方回写即可，loop 下轮读到即生效）：
+> - (a) 已有文档化的内部策略/用户知情同意，允许采集与提交真实标识 → 按 #376 原流程继续；
+> - (b) 放宽红线 #2，允许匿名化 → agent 继续 loop 但写匿名标识；
+> - (c) 仅用运维本人或已明确授权的 session → agent 只从该子集选料；
+> - (d) 暂停采集，转做已建 case 的质量审计（check.py 严度 / negative / 断言闸门 / 难度校准），不访问新用户数据。
+>
+> 未做任何 SSH 采集、未改 jsonl、未动台账。本条为**待人工裁决的外部阻塞**，故 `WAITING: 1`。
 DEBT: 0（#375 已合成 PortTextPinPlan-001（schematic_netlist B-grade synthesized L1，SKILL port-text pin plan 生成器，spec-driven proceedCreate 模式 + vcc/vss 过滤只对 layout-only，16 条件 a-p，源 trace 5vmvu ellawu SKILL 脚本改造 310 msgs/4 轮 editor×66 迭代产 v2.il）；⚠️ L1/L2 比例债 29→30 轮（#365 降到的 20 已被 #366-#375 连续 10 轮 L1 顶到 30；fresh mc>=30 D-domain 池顶部多为 skill-authoring/Q&A/debug（vbxlf/27c6f=run-regression skill 优化，ld0p8=lvs-debuger skill 设计，tcqqs/phgjl=SimDiag 工具开发，5vmvu=SKILL 脚本改造），clean produce 稀缺 → B 档 synthesized L1 离线可验）。下轮继续优先 L2/L3 produce（挑 hspice/spectre/calibre/wv 真跑类 trace 或跨 shard 共享 L2 trace）；waveform(44) 仍为最低覆盖域，继续优先补；可降 mc 阈值到 ≥5 重建 fresh 池。
 
 - **PHASE**: shard D 运行中。已交付 206 条 case（D.jsonl 410 行，proper design_flow 含 analog_context:48/schematic_netlist:114/waveform:44）；台账 case-mark 204 + 1044 parked = 1248 已动过。**本轮 #375 = 交付 EDA-Eval-DesignFlow-PortTextPinPlan-001**（schematic_netlist B-grade synthesized **L1**，SKILL port-text pin plan 生成器，gen_porttext_plan.py，spec-driven proceedCreate 模式 + vcc/vss 过滤只对 layout-only，16 条件 a-p；源 trace 5vmvu ellawu SKILL 脚本 cxmt_autoPR_generatePortText.il 改造 310 msgs/4 轮 editor×66 迭代产 v2.il）。**#374**(归档批次 2069)：6nte7→CtleTranPower-001（analog_context L1 HSPICE TRAN 功耗 deck 生成器）。**#373**(归档批次 2068)：6c7d2→DecoderNetlistGen-001（schematic_netlist L1 译码器网表生成器）。**#372**(归档批次 2067)：7dnyc→DevListSummary-001（schematic_netlist L1 SPICE 器件清单双 CSV）。**#371**(归档批次 2066)：ebxsl→SelFigReport-001（analog_context L1 mock-pyAether）。**#370**(归档批次 2065)：nibwl→CstViewPrecheck-001（analog_context L1）。**#369**(归档批次 2064)：erhym→LvsRptAnalyze-001（schematic_netlist L1）。**#365**(归档批次 2060)：p5x6n→CosWaveWdf-001（waveform **L2 真跑 WaveView ACE**，A-faithful，14 条件 a-n）。**#375**：5vmvu/ellawu/hfeg0pkn005/mc165, **B-grade synthesized** **L1**(spec-driven SKILL port-text 生成器离线可验, 无 live Virtuoso 依赖), 16 条件 a-p；gen_porttext_plan.py --spec --outdir → 读 spec.json(design/top_cell/label_layer/pin_layer/power_nets/pins[]) → 产 <design>_porttext.il(SKILL proceedCreate 模式: mapped→created 无条件, layout-only+电源地→skipped, layout-only+非电源地→created; dbCreateLabel/dbCreatePin, layer+xy 取自 spec)+pin_plan.csv(每 pin 决策)+plan_summary.json(统计). **A-faithful 不可行**：真实 /home/ellawu Virtuoso cellview/layout DB 不可附加, live SKILL dbCreateLabel/dbCreatePin 不可移植 → B 档 synthesized. A=spec_A DDR5_TopIO M1/M2 power=[VCC,vcc,VSS,vss] 10 pins(可见 SUT); hidden B=spec_B LPDDR4_PHY M2/M3 power=[VDD,vdd,GND,gnd] 12 pins; hidden B2=spec_B2 SerDes_RX MT/MT power=[AVDD,avdd,AVSS,avss] 9 pins. 反硬编码五轴: 不同 design + 不同 power_nets(VCC/VSS vs VDD/GND vs AVDD/AVSS) + 不同 layer(M1/M2 vs M2/M3 vs MT/MT) + 不同 pin 集 + A-run≠B-run(sha256). 自验 ref PASS 16/16 + 7 neg FAIL 6 distinct first_fail(b/d/e/f/g/j) + §4.9 三假 FAIL(empty→b/print_only→f/core_deleted→d) + 断言闸门 k=16 + 确定性 3x sha256(.il) 一致 + test==disk check.py byte-sync(11306B). 台账 mark 5vmvu→case; case-mark 203→204; schematic_netlist 113→114; D.jsonl 409→410.
