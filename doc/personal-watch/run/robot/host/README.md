@@ -42,5 +42,8 @@ py -3.10 -W ignore tutor_agent.py --interactive
 
 ## 备注
 
-- 首选 OCR 模型 `qwen3-vl:32b` 当前 `/api/chat` 报 404「not found」（manifest 异常），
+- 首选 OCR 模型 `qwen3-vl:32b` 当前 `/api/chat` 报 404「not found」（manifest 与 blob 脱节），
   临时用 `llava:latest`；修复后改 `tutor_agent.py` 顶部 `VISION_MODEL` 即可。
+- ⚠️ OCR 可靠性（第 2 轮复验）：`llava` 读**纯算式**（`2x + 3 = 11`）正确，
+  读**中文+算式混合**（`解方程：2x + 3 = 11`，真实题干形态）易误读；
+  分步引导与 TTS 两步稳定。→ 要过 L1「≥15/20 识别正确」必须先修 `qwen3-vl:32b`。

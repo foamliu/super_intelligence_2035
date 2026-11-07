@@ -16,9 +16,10 @@ WAITING: 0
 ```
 PHASE:        L0 设备通路（PC mock 已跑通）→ 等用户 5 条回复做真机化
 已完成:       P0 结论✅（adb/hdc 未装、手机未连）；路线= R3 手机+PC 协同✅；最小 demo 真跑通✅（题图→OCR→分步引导→TTS 出声）
-当前动作:     robot/ 落代码+文档；写 P0_设备通路.md / ROADMAP.md；归档 MEMORY + 日流水 + commit+push(robot:)
-下一步:       收用户 5 条回复 → 复验 hdc/adb → 真机拍照/出声（L0 真机化）；修复 qwen3-vl:32b 404；补 100 题库跑 L1 指标
-阻塞:         ⏳ 手机未连本机 + 型号/系统版本未知（需用户回复）；qwen3-vl:32b /api/chat 报 404（本地可自修）
+第2轮复验:    P0 结论复验✅；链路复跑通✅；发现 OCR 最弱一环⚠️（llava 读纯算式对/中文+算式混易错）
+当前动作:     第 2 轮：真实命令复验 P0+demo；定位 OCR 弱环；诚实回写 P0/ROADMAP/host 文档；commit+push(robot:)
+下一步:       收用户 5 条回复 → 复验 hdc/adb → 真机拍照/出声（L0 真机化）；修复 qwen3-vl:32b 404（ollama pull 20GB）；补 100 题库跑 L1
+阻塞:         ⏳ 手机未连本机 + 型号/系统版本未知（需用户回复）；qwen3-vl:32b /api/chat 报 404（OCR 最弱一环的根因）
 ERROR_COUNT:  0
 ```
 
@@ -49,7 +50,8 @@ ERROR_COUNT:  0
 
 - **本机推理栈（零采购/零外部账号，全部可用）**：
   - `ollama` 0.40.15：`qwen3:8b`（分步引导·可用）、`qwen3:4b`、`gemma3:4b/1b`、`llava:latest`（OCR·可用）、`qwen3.5:latest`、`xmodel2:1b`
-  - ⚠️ `qwen3-vl:32b`（20GB，最强 OCR）**已注册但 `/api/chat` 报 404「not found」**（manifest 异常/ollama 过旧）→ 当前 OCR 用 `llava:latest`；修复 = `ollama pull qwen3-vl:32b` 或升级 ollama
+  - ⚠️ `qwen3-vl:32b`（20GB，最强 OCR）**已注册但 `/api/chat` 报 404「not found」**（manifest 与 blob 脱节，`D:\ollama\models\blobs` 为空）→ 当前 OCR 用 `llava:latest`；修复 = `ollama pull qwen3-vl:32b` 或升级 ollama
+  - 🔴 **第 2 轮新发现**：`llava` OCR 读**纯算式**对、读**中文+算式混合**（真实题干形态）易错 → 过不了 L1「≥15/20」；须先修 `qwen3-vl:32b`
   - Windows SAPI TTS（`win32com`）：中文女声 `Microsoft Huihui`、英文 `Zira`，离线免费
 - **Python**：`py -3.10`（3.10.11）；有 `requests`/`PIL`/`cv2`/`numpy`/`websockets`/`win32com`；**无** tesseract/paddleocr/pyttsx3/edge_tts
 - **路线 = R3「不改系统」**：手机只做眼耳口（拍照/录音/播放），推理在 PC。R1（NEXT）/R2（4.x/EMUI）待手机型号确认后再引入。
@@ -65,10 +67,18 @@ ERROR_COUNT:  0
 - 写 `P0_设备通路.md`（真实命令输出 + 路线裁决 + 用户 5 条清单）+ `ROADMAP.md`。
 - 归档旧视频记忆 → `MEMORY_VIDEO_ARCHIVE.md`；重写本文件 ≤32KB；追加日流水；commit+push（robot:）。
 
+## 4.1 本唤醒流水（2026-11-07 · 第 2 轮 · P0/demo 复验）
+
+- 读任务书（按 11:10 令）+ `robot/README.md`；复验 P0 结论：`adb`/`hdc` 仍未装、`Get-PnpDevice` 无华为/ADB/HDC 设备、`ollama list` 8 模型在位。
+- 复跑最小 demo：题图 → `llava` OCR → `qwen3:8b` 引导 → SAPI TTS，链路通、每步真实产物。
+- 🔴 **新发现 OCR 最弱一环**：`llava` 读纯算式 `2x+3=11` 正确，读中文+算式混合 `解方程：2x+3=11` 连续误读（`二十一 加 二 等于 12` 等）；分步引导+TTS 两步稳定不泄答案。
+- 诚实回写 `P0_设备通路.md` §0/§3.1/§5、`ROADMAP.md`、`host/README.md`；定位根因 = `qwen3-vl:32b` 404（manifest 与 blob 脱节）。
+- 更新本文件 + 日流水；commit+push（robot:）。
+
 ## 5. 阻塞 / 待办
 
 1. **⏳ 等用户 5 条回复**（P0_设备通路.md §4）：手机型号/系统版本、开 USB 调试、装 adb 或 HDC、确认形态、确认大模型来源。
-2. **qwen3-vl:32b 404**（本地可自修）：`ollama pull qwen3-vl:32b` 或升级 ollama → 换回更强 OCR。
+2. **🔴 qwen3-vl:32b 404**（OCR 最弱一环的根因，本地可自修）：`ollama pull qwen3-vl:32b`（20GB）或升级 ollama → 换回更强 OCR，再跑 L1 识别准确率。
 3. 下一轮候选：真机化 L0 / 补 100 题库跑 L1 指标（识别准确率 + 直接给答案率=0）。
 
 ## 6. 运维问答
