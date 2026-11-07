@@ -3,16 +3,16 @@
 > ⭐ 本文件每次唤醒被全文读进 cline 上下文 ⇒ ≤32KB；超限滚动到 `daily-memories-posttrain/`。
 > `WAITING:` 只在顶部出现一次；正文/流水/快照里不得再出现以 `WAITING:` 开头的行。
 
-WAITING: 1
+WAITING: 0
 
 ## 进度快照
 
-- PHASE: posttrain-wake47（2026-11-07 10:09；例行巡检，无新指令）
-- 已完成: P3预备✅ 7脚本(wake1/2)；P1-e✅ 污染隔离(wake2)；P1-a/b✅ 数据盘点(wake2)；P2✅ 方案书(wake3)；P0✅ D1–D6 DeepSeek侧(wake4→14)；P1-d✅ PyAether语料(wake4)；P1✅ HTML报告(wake6)；wake17✅ 后训练数据调研HTML报告(44.9KB/10节)+§E+硬盘体检；wake40✅ TASK§用户令·22:5x标记✅已交付；wake45✅ §用户令·2026-11-07 替身RL预演4项交付物；wake46✅ 例行巡检；wake47✅ 例行巡检(交付物复核5报告+7脚本+500题/阻塞项全无变化)
-- 当前动作: wake47 唤醒→ git fetch timeout但git status clean(## main...origin/main,无behind)→ TASK文件diff空(无新运维令)→ 交付物复核:5报告(synth_rl 12690B+diag 36923B+inventory 30479B+plan 38068B+survey 44894B)+7脚本bash -n全PASS+rl_pyaether_synth_tasks.jsonl(500行)+eda_fastmcp本地克隆在位(docs/kb)→ 阻塞项复查(全无变化):~/eda_code_eval MISSING+/nas_inference//nas_env未挂载+8×A40 SGLang idle(0% 44-45GB/卡)→ 硬盘/ 385G(84%)/nas_data 20T(85%)无变化→ 无新运维令→ 体积自检+提交。📦 体积：TASK=31.6KB / MEMORY=30.2KB（均≤32KB ✅）
-- 下一步: 本节点零GPU可达项**已全完成**(含§用户令·2026-11-07)。剩余阻塞：①P0 36%侧等GPU(2026-11-09)或运维拷轨迹；②P1-c等/nas_inference挂载；③正式训练P3阻塞pretrain ckpt(ETA≈2026-12-25)；④L3环境自验证等隧道连通36.15
-- 阻塞: P0-36%侧等GPU/P1-c等挂载/P3等pretrain ckpt/L3等隧道——均阻塞于外部依赖，本节点无更多零GPU项可做
-- 未完成指令: 无（§用户令·2026-11-07已✅已交付并标记；§用户令·22:5x已✅已交付；P0-36%侧/P1-c/P3/L3均阻塞外部依赖，非本节点可推进）⇒ WAITING=1
+- PHASE: posttrain-wake48（2026-11-07 深入调研 R1+R3）
+- 已完成: P3预备✅ 7脚本；P0✅ D1–D6；P1✅ 数据盘点+PyAether语料+污染隔离；P2✅ 方案书；wake45✅ §替身RL预演4项交付物；wake48✅ R1(EDA环境RL可执行方案)+R3(GRPO奖励设计稳定性)深度调研
+- 当前动作: wake48 唤醒→ git fetch+pull(fast-forward到86208e057)→ TASK diff发现新指令§用户令·2026-11-07 10:10（GPU 11/9既定,等待期继续深入调研,反空转条款）→ 读eda_fastmcp源码(run_code.py/exec_code.py/main.py)→ web调研GRPO(Dr.GRPO/DAPO/DeepSeek-R1)→ 产出EXPERIMENTS §R1(环境接口+沙箱并发+奖励判定+rollout预算+失败恢复+RL伪代码)+§R3(GRPO偏差+四臂公式+2B调参+anti-cheat+冷启动+vision教训对照)→ HTML报告report_posttrain_rl_deep_research_zh.html(12.5KB/12节)→ 归档§替身RL预演到ARCHIVE(TASK 35KB→24.7KB)→ 体积自检+提交
+- 下一步: 下一轮继续R2(造题扩展到2k-5k)或R4(失败模式分类)；11/9 GPU到位后自动起跑(vllm serve MiniCPM5-2B→复测36%基线→采真实轨迹→起第一轮EDA RL)
+- 阻塞: GPU 2026-11-09既定到位(不再问)；L3等隧道；P3等pretrain ckpt(ETA≈2026-12-25)
+- 未完成指令: 有（§用户令·2026-11-07 10:10 R1✅R3✅, R2/R4待做）⇒ WAITING=0
 
 ## 关键事实（常驻）
 
@@ -81,4 +81,8 @@ WAITING: 1
 [09:49] wake46：唤醒→ git fetch(proxy)+pull --rebase(behind 4,fast-forward到068216f6d,他线news/designflow活跃)→ git status clean(## main...origin/main)→ TASK文件diff空(无新运维令)→ 交付物复核:5报告(synth_rl 12690B+diag 36923B+inventory 30479B+plan 38068B+survey 44894B)+7脚本(anneal/sft/rl_grpo/eval/contamination_gate/minicpm5_diag/loop)bash -n全PASS+rl_pyaether_synth_tasks.jsonl(500行/545996B)+eda_fastmcp本地克隆在位(docs 73M/kb 908M)→ 阻塞项复查(全无变化):~/eda_code_eval MISSING+/nas_inference//nas_env未挂载+8×A40 SGLang idle(0% 44-45GB/卡,11-09距今2天)→ 硬盘/ 385G(84%)/nas_data 20T(85%)无变化→ 无新运维令(§用户令·2026-11-07已✅已交付)→ 补写wake45日报+体积自检+提交。📦 体积：TASK=31.6KB / MEMORY≈29KB（均≤32KB ✅，无需归档）。
 
 [10:09] wake47：唤醒→ git fetch timeout但git status -sb显示clean(## main...origin/main,无behind)→ git log HEAD=5dda1e604(本线wake46提交)→ TASK diff空(无新运维令)→ 交付物复核:5报告(synth_rl 12690B+diag 36923B+inventory 30479B+plan 38068B+survey 44894B)全在位✅+7脚本(anneal/sft/rl_grpo/eval/contamination_gate/minicpm5_diag/loop)bash -n全PASS✅+rl_pyaether_synth_tasks.jsonl(500行)✅+eda_fastmcp本地克隆(docs/kb)✅→ 阻塞项复查(全无变化):~/eda_code_eval MISSING+/nas_inference//nas_env未挂载+8×A40 SGLang idle(0% 44-45GB/卡,11-09距今2天)→ 硬盘/ 385G(84%)/nas_data 20T(85%)无变化→ 无新运维令→ 体积自检+提交。📦 体积：TASK=31.6KB / MEMORY=30.2KB（均≤32KB ✅，无需归档）。
+
+> 📦 wake42–wake47 流水已归档 → daily-memories-posttrain/2026-11-07.md（例行巡检，交付物复核无变化）。
+
+[wake48] 唤醒→ git fetch(proxy)+pull(fast-forward到86208e057,他线活跃)→ TASK diff发现新指令§用户令·2026-11-07 10:10（GPU 11/9既定安排,等待期继续深入调研R1-R4,反空转条款,WAITING=0）→ 读eda_fastmcp源码:run_code.py(L96 run_code→validate_ascii→probe→run_code_http→HTTP POST沙箱) +exec_code.py(SANDBOX_ENDPOINTS多端口池,4端口隔离workdir) +main.py(L19-46 asyncio.Queue端口池) → web调研GRPO:Dr.GRPO(arXiv:2503.20783长度/难度偏差修复)+DAPO(arXiv:2503.14476 clip-higher+dynamic sampling+token level loss)+DeepSeek-R1(arXiv:2501.12948)+TRL GRPOTrainer+Kensink实践 → 产出EXPERIMENTS §R1(7小节:环境接口架构/沙箱并发模型/奖励自动判定/R2部分分公式/rollout预算~66h/超时恢复/RL伪代码)+§R3(7小节:GRPO偏差/四臂公式/2B调参/anti-cheat/冷启动S0-S3/vision教训对照/来源URL) → HTML报告report_posttrain_rl_deep_research_zh.html(12498B/12节/0 script/0外链) → 归档§替身RL预演块到ARCHIVE_OPERATOR_POSTTRAIN.md(TASK 35.2KB→24.7KB) → 体积自检+提交。📦 体积：TASK=24.7KB / MEMORY≈31KB（均≤32KB ✅）。本轮新增调研产出：EXPERIMENTS §R1+§R3 + HTML报告12.5KB。
 

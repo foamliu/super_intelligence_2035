@@ -471,3 +471,165 @@ Host eda-sandbox
 - **结论**：SFT 数据在 .29/.12 的共享 NFS 上可达（`/nas_train/app.e0031982/datasets/baize-data/tokenized/`），.17 需通过 NFS 挂载或 scp 获取。B 类 agentic 数据（`/nas_inference`）同样不在 .17。
 
 ### ⚠️ 按用户11-07指示：B类agentic下载暂缓，本轮不做
+
+---
+
+## §R1 EDA 环境交互式 RL 可执行方案（2026-11-07 wake48 · 零 GPU · 源码级调研）
+
+> 对应 §用户令·2026-11-07 10:10 R1 方向。基于 `eda_fastmcp` 源码（`~/code/eda_fastmcp/`）实测分析。
+
+### 1. 环境接口架构（源码实测）
+
+**run_code 工具链路**（`tools/run_code.py:96` → `server/sandbox_server/exec_code.py`）：
+
+```
+模型/Agent 生成 pyAether 代码
+  ↓ run_code(code, encoding, probe, endpoint, lang)
+  ↓ validate_ascii_code → probe(可选) → run_code_http
+  ↓ HTTP POST → http://<SANDBOX_HOST>:<PORT>/v1/run_code  payload={"code":code,"lang":"pyAether"|"skill"}
+沙箱服务端（36.15 / 10.129.32.75）→ 隔离 workdir 执行 → 返回 JSON:
+  {"response":"执行成功"/返回值摘要, "error_log":""或完整错误堆栈, "print_log":print()累积输出}
+```
+
+**返回字段**：`response`=状态/返回值摘要；`error_log`=""⇔执行无异常（**主判分信号**）；`print_log`=print()输出（断言通过/失败计数在此）。
+**probe 模式**：`probe=True` 先跑轻量探测（catch IMPORT_ERROR/TYPE_ERROR），失败跳过全量执行 → **可用于 RL 快速过滤明显错误的 rollout**。
+
+### 2. 沙箱多端口并发模型（`main.py:19-46` + `exec_code.py`）
+
+- `SANDBOX_ENDPOINTS="8653:workdir_a,8654:workdir_b,..."` → 每端口独立 workdir → 物理隔离 lib.defs/TECHLIB → 无污染真并行
+- `asyncio.Queue` 端口池 → N 路并行；`RUN_CODE_MAX_CONCURRENT` 可选 cap
+- 当前 36.15 配 4 个隔离端口，SKILL 与 pyAether 共用同一池
+- **RL 起步**：`SANDBOX_CONCURRENCY=2`（smoke），稳定后 4→8；最高 4 路真并行（license 槽位限制）
+
+### 3. 奖励自动可判定机制
+
+| 信号 | 来源 | 判定 | 奖励臂 |
+|:--|:--|:--|:--|
+| 执行成功 | `error_log==""` | 二值 | R1 |
+| 断言通过率 | `print_log` AssertionError 计数 vs 总断言 | 连续[0,1] | R2 |
+| 代码可执行 | `response!="ERROR"` 且 `error_log==""` | 二值 | R2 基础分0.2 |
+| 静态验证 | `validate_code.py`（0误报,158GT全过） | 附加 | R4 |
+
+**R2 部分分公式**：`reward=0.0; if error_log=="": reward+=0.2; reward+=0.8*(passed/total); elif "ImportError" in error_log: reward=0.0; else: reward=0.0`
+- 不给运行时错误部分分 → 防止「能跑但不对」；导入失败给0 → 防虚构 API；断言率 0.8 权重 → 缓解 2B 全0梯度
+
+### 4. 单题 rollout 预算
+
+- 单次沙箱执行 3-15s（超时60s）；模型生成 5-20s/turn（vLLM 2B bf16 ~200tok/s）；max_turns=3
+- **单题 ~30-90s**；GROUP_SIZE=4 ~120-360s
+- 2000 iters × GROUP_SIZE=16 = 32000 次沙箱调用；4路并发 × 15s → 沙箱33h + 推理33h = **~66h（2.75天）**，4×A40 可行
+
+### 5. 超时与部分失败恢复
+
+| 失败模式 | 检测 | 恢复 |
+|:--|:--|:--|
+| 沙箱超时 | `SANDBOX_TIMEOUT` | reward=0，不重试 |
+| 空代码 | `code.strip()==""` | reward=0，记 `empty_generation` |
+| 连接失败 | `ConnectionRefusedError` | 重试1次(3s)；仍失败→reward=0 |
+| probe IMPORT_ERROR | `probe_ok=False` | 跳过全量，reward=0（省60s） |
+| silent failure | `print_log` 正则 `(\\w+)\\s*=\\s*None` | 附加warning，reward不变 |
+
+### 6. .17→36.15 连接方案
+
+SSH隧道起步（`-L 8360:127.0.0.1:8667`，`ServerAliveInterval=30`）；稳定后申请直连。详见 §Tunnel-SOP。
+
+### 7. RL 训练循环伪代码
+
+```python
+for iter in range(ITERS):
+    prompt = sample_task(rl_tasks)
+    rollouts = []
+    for g in range(GROUP_SIZE):
+        code = generate(model, prompt, max_turns=3)
+        for turn in range(max_turns):
+            result = sandbox.run_code(code)
+            if result.error_log == "": break
+            code = generate(model, prompt + format_feedback(result))
+        reward = compute_reward(result, reward_arm)
+        rollouts.append((code, reward))
+    rewards = [r for _, r in rollouts]
+    if np.std(rewards) < 1e-6: continue  # DAPO dynamic sampling
+    advantages = [(r - np.mean(rewards)) / np.std(rewards) for r in rewards]
+    update_policy(model, rollouts, advantages, kl_coef=0.04)
+```
+
+---
+
+## §R3 奖励设计与 GRPO 稳定性（2026-11-07 wake48 · 零 GPU · 文献+源码调研）
+
+> 对应 §用户令·2026-11-07 10:10 R3 方向。来源：DeepSeek-R1 (arXiv:2501.12948)、Dr.GRPO (arXiv:2503.20783)、DAPO (arXiv:2503.14476)、TRL GRPOTrainer 文档。
+
+### 1. GRPO 核心公式与已知偏差
+
+**原始 GRPO**：`A_i = (r_i - mean(r)) / std(r)`；`L = -1/G Σ 1/|o_i| Σ [min(ρA, clip(ρ,1-ε,1+ε)A) - β·KL]`
+
+| 偏差 | 原因 | 对2B影响 | 修复 |
+|:--|:--|:--|:--|
+| 长度偏差 | `1/|o_i|` 使长回答每token权重低 | 2B易生成冗长无意义代码 | Dr.GRPO:用`1/Σ|o_i|`替代`1/|o_i|` |
+| 难度偏差 | `std`分母在接近全对/全错时爆炸 | 简单单API题大量全对→std≈0→无效 | Dr.GRPO:去掉std,只用`A_i=r_i-mean(r)` |
+| 熵坍缩 | 对称clip(1±0.2)限制低概率好token增长 | 2B探索能力弱,更易坍缩 | DAPO:clip-higher(ε_high=0.28,ε_low=0.2) |
+
+### 2. 四臂奖励具体公式
+
+| 臂 | 公式 | 场景 | 风险 |
+|:--|:--|:--|:--|
+| R1 | `1.0 if all_pass else 0.0` | 基线对照 | 2B大面积0→无梯度 |
+| R2 | `0.2*(exec_ok)+0.8*(passed/total)` | **推荐起步** | 可能刷exec_ok但不通过断言 |
+| R3 | `R2-0.05*(tool_calls/10)` | 成本敏感 | α过大→不调用工具 |
+| R4 | `R3+0.1*(api_legality)` | 防虚构API | β需调参 |
+
+- R3工具惩罚 α=0.05（与harness成本模型对齐，D2显示DeepSeek平均14.32次调用）
+- R4 API合法性 `api_legality=1-(fabricated/total_called)`，用`validate_code.py`的0误报规则，β=0.1
+
+### 3. 2B 模型专项调参
+
+| 超参 | 推荐值 | 理由 |
+|:--|:--|:--|
+| GROUP_SIZE | 8(smoke:4) | 2B推理快,8组够估计优势 |
+| KL_COEF | 0.04 | DeepSeek-R1默认;2B更易漂移 |
+| clip ε | 0.2低/0.28高 | DAPO clip-higher防熵坍缩 |
+| LR | 1e-6 | 2B比7B敏感 |
+| max_turns | 3 | 起步保守 |
+| token_level_loss | True | DAPO建议 |
+| dynamic_sampling | True | 跳过全对/全错组(std≈0) |
+
+### 4. Anti-cheat 与 reward hacking 防护
+
+| 攻击 | 检测 | 防护 |
+|:--|:--|:--|
+| 虚构API | validate_code.py E001-E008(0误报) | R4扣分 |
+| 空函数 | code.strip()长度<20 | reward=0 |
+| hardcode答案 | 检测`return<literal>` | reward=0 |
+| except吞异常 | E008规则 | print_log warning |
+| 长度hacking | 监控avg_response_length | Dr.GRPO长度归一化 |
+| 格式作弊 | PreToolUse hook逐字节一致 | 全程启用+报告cheat_rate |
+
+cheat_rate = num_cheat_detected / total_rollouts，每SAVE_INTERVAL报告一次。
+
+### 5. 冷启动策略
+
+| 阶段 | 动作 | 预期 |
+|:--|:--|:--|
+| S0 SFT冷启动 | 500题canonical_solution做SFT(3epoch,LR2e-5) | 产出合法pyAether代码结构 |
+| S1 RL热身 | R2,GROUP_SIZE=4,ITERS=200,只用低难度280题 | reward~0.2→~0.4 |
+| S2 RL正式 | R2,GROUP_SIZE=8,ITERS=2000,全难度 | reward目标~0.5-0.6 |
+| S3 RL精炼 | R4,GROUP_SIZE=8,ITERS=500 | cheat_rate<5% |
+
+### 6. vision 线离散奖励教训对照
+
+| vision教训 | 本线对策 |
+|:--|:--|
+| 离散二值奖励2B大面积0 | R2部分分起步(0.2 exec_ok保底) |
+| 无动态采样→有效batch萎缩 | DAPO dynamic_sampling跳过std≈0组 |
+| 长度无控制→response膨胀 | Dr.GRPO长度归一化+监控 |
+| KL过松→模型漂移到乱码 | KL_COEF=0.04+每200步评测 |
+
+### 7. 来源 URL
+
+- DeepSeek-R1: https://arxiv.org/abs/2501.12948 (2025-01)
+- Dr.GRPO: https://arxiv.org/abs/2503.20783 (2025-03)
+- DAPO: https://arxiv.org/abs/2503.14476 (2025-03)
+- GRPO完整解释: https://www.compilenrun.com/docs/ai/llm/llm-post-training/llm-reasoning-rl/
+- DAPO/Dr.GRPO对比: https://github.com/Guo-astro/train-llm-from-scratch/blob/main/docs/modern/rl_reasoning.md
+- TRL GRPOTrainer: https://huggingface.co/docs/trl/grpo_trainer
+- Kensink GRPO实践: https://www.kensink.com/llm/fine-tuning/methods/grpo-rft
