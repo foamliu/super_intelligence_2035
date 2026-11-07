@@ -2867,3 +2867,9 @@ std>0 组 ≥30%                  ⇒ PARAM-ISSUE
 - **v4 重启**：PID3843708（ppid=1,OMP48/nice19），Phase0 重建100题(0 mismatch✅)→Phase1 B eval 重新开始。
 - **v3**：PID2165712 Phase3 step35/40 avgR=0.033，ETA~21min(Phase3余)+Phase4(~3h)+eval。
 - **教训**：跨实验导入需验证所有被调用函数都已导入；长耗时 eval 结果应缓存防 crash 丢失。
+
+**wake#870 更新**（2026-11-07 16:04）：**v3 Phase3 完成 → 第 3 轮 GRPO 负结果确认；v4 Phase2 进展健康**。
+- **v3 (GRPO 连续奖励)** Phase3 C = **25.0%**（100 题逐题 eval, 543s）→ **C < B(34.0%) by 9pp，负结果**。avgR 轨迹：step1=-0.500→step5=0.066→step10=0.279→step15=0.321(峰)→step20=0.151→step25=-0.043→step30=0.398→step35=0.033→step40=0.108；loss 全程≈0（策略梯度极弱，连续化奖励未解决 std=0 根因下的梯度消失）。Phase4 D-ctrl(随机奖励控制) step 1/40 启动，ETA~2.5h→done≈18:30。Phase5 stats 待 Phase4 完成。
+- **v4 (RFT/STaR)** Phase1 B = 34.0%（与 v3 一致✅）；Phase2 collect 40/60 circuits，160 rollouts，103 succ(64.4%)，ETA~18:30-19:00。
+- **结论判断**：v1(离散奖励,post-GRPO 6.2%<post-SFT 9.2%)→v2(15步,p=0.625不显著)→v3(40步连续奖励,C=25%<B=34%)=**连续 3 轮 GRPO 无提升**。v4 RFT 已换方向（无 group baseline→消除 std=0 根因；标准 CE 梯度→稳定）。等 v3 Phase4(控制D)+v4 完成后做最终统计检验+报告。
+
