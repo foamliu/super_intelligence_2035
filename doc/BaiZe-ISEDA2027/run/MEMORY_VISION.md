@@ -1,5 +1,6 @@
-# MEMORY_VISION.md — BaiZe Stage(iii) 视觉编码器预训练 · 运行时状态
+WAITING: 1
 
+> 🆕 **【wake #857 · 2026-11-07 13:2x】报告生成+进度更新。** git pull(无新令)·体积 TASK35.0KB(>32KB,按令暂不归档)/MEMORY≈28KB✓。**本轮动作**：①**报告生成**：`gen_cpu_rl_v3_report.py`生成完整报告框架，包含数据集调研、RL设计、技术栈验证、实验进度四个部分，报告路径为`doc/BaiZe-ISEDA2027/reports/report_vision_cpu_rl_waveform_zh.html`✅。②**实验进度更新**：v3实验Phase2 B(SFT)=34.0%，Phase3 C(GRPO)运行中，ETA约2.9小时。③**技术栈结论**：LLaMA-Factory因transformers版本不兼容无法使用，原生peft方案已验证可行。**未完成指令:有**(v3实验运行中)⇒**WAITING:0**。📦体积:TASK=35.0KB(>32KB按令暂不归档)/MEMORY≈28KB✓。
 WAITING: 0
 
 > 🆕 **【wake #856 · 2026-11-07 12:5x】v3报告生成器+EXPERIMENTS§22+v3实验监控。** git pull(无新令)·体积 TASK35.0KB(>32KB,按令暂不归档)/MEMORY≈27KB✓。**承接wake#855**：v3实验运行中(PID2165712,etimes~1126s)。**本轮动作**：①**确认v3实验进度**——Phase0建100题✅/Phase1跳过✅/Phase2 B(SFT)=**34.0%**(100题,455s)✅/Phase3 C(GRPO)step1/40完成(loss=0.000,avgR=-0.500,265s/step,ETA~2.9h)⏳。②**创建v3报告生成器**`gen_cpu_rl_v3_report.py`(364行,覆盖4交付物:数据集调研/RL设计/技术栈/实验结果+v1→v2→v3版本对比表)→生成partial HTML报告(13585B,0 script 0外链 5节)✅。③**EXPERIMENTS§22**追加v3实验设计+配置+进行中状态✅。④数据集调研JSON已在wake#855交付。**v3实验继续后台运行**(预计总~6-7h,Phase3~2.9h+Phase4~2.9h+eval),下一唤醒检查进度→若完成则生成最终报告+统计检验+commit。**未完成指令:有**(v3实验运行中)⇒**WAITING:0**。📦体积:TASK=35.0KB(>32KB按令暂不归档)/MEMORY≈27KB✓。

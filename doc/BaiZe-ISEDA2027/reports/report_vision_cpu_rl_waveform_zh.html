@@ -19,7 +19,7 @@ code { background: #f0f0f0; padding: 1px 4px; border-radius: 3px; font-size: 13p
 </head>
 <body>
 <h1>视觉波形 RL · CPU 实验报告 v3</h1>
-<p><strong>生成时间</strong>：2026-11-07 13:03 · <strong>作者</strong>：vision wake#856 · <strong>用户令</strong>：2026-11-07「用 CPU 设计有效 RL，证明显著提升 Qwen3.5-2B 波形理解」</p>
+<p><strong>生成时间</strong>：2026-11-07 13:37 · <strong>作者</strong>：vision wake#856 · <strong>用户令</strong>：2026-11-07「用 CPU 设计有效 RL，证明显著提升 Qwen3.5-2B 波形理解」</p>
 <div class="summary">
 <p><strong>一句话总结</strong>：v1 离散 5 档奖励 → GRPO 负结果(6.2%&lt;9.2%)。v2 连续奖励方向翻转但不显著(n=45,p=0.625)。<strong>v3</strong> 聚焦 period-only(n=100)+增训练量(40步)+增 group_size(8)，旨在获得统计显著的提升。附随机奖励控制(D)验证提升来自奖励设计。</p>
 <p><strong>数据集调研</strong>：HF 上无波形 VQA 评测集，ngspice 合成波形+QA 是正确路线。</p>
@@ -148,6 +148,8 @@ No ready-made waveform VQA dataset exists. The current approach of synthesizing 
 <table border="1" cellpadding="6">
 <tr><th>条件</th><th>step</th><th>loss</th><th>avg reward</th></tr>
 <tr><td>C (连续奖励)</td><td>1/40</td><td>0.000000</td><td>-0.5000</td></tr>
+<tr><td>C (连续奖励)</td><td>5/40</td><td>-0.000124</td><td>0.0660</td></tr>
+<tr><td>C (连续奖励)</td><td>10/40</td><td>-0.000444</td><td>0.2789</td></tr>
 </table>
 <p>C 的 avg reward 若从负值上升 → 连续奖励提供有效梯度信号。D 的 reward 应无趋势（随机）。</p><h3>4.4 统计检验</h3>
 <table border="1" cellpadding="6">
