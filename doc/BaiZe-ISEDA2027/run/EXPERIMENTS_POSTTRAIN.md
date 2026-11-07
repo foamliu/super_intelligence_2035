@@ -1758,3 +1758,137 @@ DataProto → Compute Advantage (GRPO group_norm) → FSDP Update
 | GitCode verl Rollout 源码分析 | https://gitcode.com/gh_mirrors/aw/Awesome-ML-SYS-Tutorial | 2026-11-07 |
 | verl 官方文档 | https://verl.readthedocs.io/en/latest/ | 2026-11-07 |
 
+---
+
+## §R11 GRPO 内存预算与超参校准（4×A40 48GB · 2026-11-07 wake59 · 零 GPU · 文献+计算分析）
+
+> **目的**：R5 配置了 verl GRPO 超参（group_size=8, gpu_memory_utilization=0.35, ppo_micro_batch=4 等），但从未做过针对 4×A40 (48GB) 的显存可行性分析。11/9 GPU 到位后第一轮 RL 若 OOM 会浪费宝贵的 GPU 窗口。本节给出逐项显存计算、KV cache 分析、配置校准、OOM 降级阶梯和 smoke test 验证方案。
+
+### R11.1 硬件基线对照（verl 官方已知配置）
+
+> **来源**：verl 官方 Hardware Resource Needed for RL https://verl.org.cn/en/latest/perf/device_tuning.html
+
+| 模型 | 方法 | 最低资源 | 训练后端 | 推理后端 |
+|:--|:--|:--|:--|:--|
+| Qwen2-3B | GRPO-LoRA | 1×H100 80GB | FSDP | vLLM 0.8.3 |
+| Qwen2-7B | GRPO 全参 | 2×H800 80GB | FSDP | vLLM 0.8.2 |
+| Qwen2-14B | GRPO 全参 | 4×H800 80GB | FSDP | vLLM 0.8.2 |
+| Qwen2-32B | GRPO 全参 | 8×H20 96GB | Megatron | vLLM 0.8.2 |
+
+**推论**：3B LoRA 需 1×H100 80GB → 我们的 **2B 全参** 在 4×A40 48GB（总 192GB）上**绰绰有余**（2.4× 于 1×H100 总显存，且模型更小）。7B 全参需 2×H800 160GB → 2B 全参（≈7B 的 28%）在 192GB 上**远低于饱和点**。**结论**：4×A40 对 2B 全参 GRPO 是**充裕配置**，风险不在"能否放下"，而在"配置是否合理利用了显存"。
+
+### R11.2 MiniCPM5-2B 逐项显存预算（FSDP 4-way · bf16）
+
+> 模型参数来自 R8 实测：LlamaForCausalLM 42层 2048d GQA 16:2 head_dim=128 vocab=130560
+
+**训练态（Actor · FSDP sharded across 4 GPUs）**：
+- 权重（bf16）：2B × 2B / 4 = **1.0 GB**
+- 优化器 Adam（fp32 m+v）：2B × 8B / 4 = **4.0 GB**
+- 梯度（bf16）：2B × 2B / 4 = **1.0 GB**
+- **Actor 小计：6.0 GB**
+
+**参考模型（Ref · FSDP frozen · bf16）**：
+- 权重（frozen）：2B × 2B / 4 = **1.0 GB**
+- **Ref 小计：1.0 GB**
+
+**激活内存（gradient checkpointing · dynamic bsz）**：
+- ppo_micro_batch=4 × 8192 tokens，checkpointing 后峰值 ≈ **3.0 GB**
+
+**CUDA 上下文 + 杂项**：≈ **2.0 GB**
+
+**训练态合计：~12.0 GB/卡**，A40 usable 46GB → **剩余 ~34 GB 给 SGLang**。
+
+### R11.3 多轮工具调用 KV Cache 分析
+
+> **关键**：multi_turn=True + max_turns=3 意味着对话上下文逐轮增长，KV cache 需求远超单轮。
+
+**KV cache 逐 token 开销**：每层 K+V = 2 KV heads × 128 head_dim × 2 (K+V) × 2 bytes = 1024 bytes = 1 KB；42 层 = **42 KB / token**。
+
+**多轮上下文增长模型**：
+
+| 轮次 | 累计 token | KV cache / seq |
+|:--|:--|:--|
+| 初始 prompt | 4096 | 172 MB |
+| Turn 1 (resp+tool) | ~10240 | 430 MB |
+| Turn 2 (resp+tool) | ~16384 | 688 MB |
+| Turn 3 (resp) | ~20480 | 860 MB |
+
+**并发序列 KV cache 总量**：
+- max_num_seqs=16, 3 轮峰值：16 × 860 MB = **13.8 GB**
+- 带 prefix cache（同组 G=8 共享 prompt）：~**12.4 GB**
+
+**🔴 发现**：当前 `gpu_memory_utilization=0.35` 分配 0.35 × 34 = **11.9 GB**，而 3 轮峰值 KV cache 需 **13.8 GB** → **可能 OOM！**
+
+### R11.4 推荐配置变更
+
+| 参数 | 当前 | 推荐 | 理由 |
+|:--|:--|:--|:--|
+| `rollout.gpu_memory_utilization` | 0.35 | **0.50** | 3-turn KV cache 需 13.8GB，0.50→17GB 充裕 |
+| `rollout.max_num_seqs` | 16 | **12** | 降低并发减峰值；12×860MB=10.3GB 更安全 |
+| `actor.entropy_checkpointing` | — | **True** | vocab=130560 的 logits 张量大，优化熵计算内存 |
+| `ref.entropy_from_logits_with_chunking` | — | **True** | 分块计算 logits 熵，降内存峰值 |
+| `multi_turn.tokenization_sanity_check_mode` | — | **strict** | delta tokenization 一致性检查（verl 默认） |
+| 其余参数 | — | **保持** | group_size=8, lr=1e-6, kl=0.04, clip=0.2, TP=1, offload=False 均合理 |
+
+### R11.5 OOM 降级阶梯
+
+如果 11/9 遇到 OOM，按以下顺序降级（每步只改一个参数）：
+
+```
+Level 0 (推荐): gpu_mem=0.50, max_num_seqs=12, micro_batch=4
+  ↓ SGLang OOM → Level 1: gpu_mem=0.45, max_num_seqs=8
+  ↓ SGLang OOM → Level 2: gpu_mem=0.40, max_num_seqs=4, max_turns=2
+  ↓ 训练 OOM   → Level 3: micro_batch=2, max_token_len=8192
+  ↓ 优化器 OOM → Level 4: param_offload=True, optimizer_offload=True, gpu_mem=0.60
+  ↓ 仍 OOM     → Level 5: LoRA r=64, offload=True, gpu_mem=0.70
+```
+
+**判别 OOM 来源**：SGLang OOM → 降 max_num_seqs/gpu_mem；训练 OOM → 降 micro_batch/开 offload；优化器 OOM → 开 optimizer_offload。
+
+### R11.6 Smoke Test 验证方案
+
+11/9 GPU 到位后，**正式 RL 前必须先跑 smoke test**（config 中 `smoke` 块已定义）：
+
+```bash
+python -m verl.trainer.main_ppo \
+    --config baize_posttrain_rl_verl_config.yaml \
+    --reward-arm R2 --smoke
+# 另一终端监控：watch -n 5 'nvidia-smi --query-gpu=index,memory.used,memory.free --format=csv'
+```
+
+**通过判据**：① 10 iters 全完成无 OOM ② 峰值 <44GB/卡 ③ SGLang 无 "KV cache pool is full" ④ 奖励非全零 ⑤ KL∈[0.001,10] ⑥ cheat rate=0。
+
+通过后逐步放大：先 G=4→8，再 batch=16→128，每步 5 iters 确认无 OOM。
+
+### R11.7 11/9 监控清单
+
+| 检查项 | 命令 | 频率 | 告警阈值 |
+|:--|:--|:--|:--|
+| GPU 显存 | `nvidia-smi --query-gpu=memory.used --format=csv,noheader` | 30s | >44GB/卡 |
+| SGLang KV cache | 日志 grep `KV cache` | 每 iter | "pool is full" |
+| 训练 loss | TensorBoard | 10 iter | NaN/持续上升 |
+| KL divergence | 日志 grep `kl` | 10 iter | >10或<0.001 |
+| 奖励分布 | 日志 grep `reward` | 10 iter | 全零/全相同 |
+| Cheat rate | 日志 grep `cheat` | 200 iter | >0 |
+| 沙盒超时率 | 日志 grep `timeout` | 每 iter | >20% |
+| Rollout 吞吐 | 日志 grep `throughput` | 50 iter | <100 tok/s |
+
+### R11.8 多轮 delta tokenization 注意事项
+
+> **来源**：verl 官方多轮 Rollout 文档 https://verl.org.cn/en/latest/sglang_multiturn/multiturn.html
+
+verl 多轮 rollout 使用 **delta-based tokenization**：只对 assistant 新生成 token 计算 loss。关键配置 `multi_turn.tokenization_sanity_check_mode: strict`（默认）每次 rollout 自动验证一致性。
+
+**潜在风险**：MiniCPM5-2B 的双 EOS token（`[1, 130073]`，R8 发现）可能在多轮中被误截断 → smoke test 时重点检查每 turn 的 token 长度。若出现 `"Inconsistent training and inference tokenization detected"` 警告 → 检查 SGLang minicpm5 parser 与 HuggingFace chat template 的 token 序列一致性。
+
+### R11.9 数据来源
+
+| 来源 | URL | 日期 |
+|:--|:--|:--|
+| verl 硬件资源需求表 | https://verl.org.cn/en/latest/perf/device_tuning.html | 2026-11-07 |
+| verl 性能调优指南 | https://verl.org.cn/en/latest/perf/perf_tuning.html | 2026-11-07 |
+| verl SGLang 后端文档 | https://verl.readthedocs.io/en/v0.5.x/workers/sglang_worker.html | 2026-11-07 |
+| verl 多轮 Rollout 文档 | https://verl.org.cn/en/latest/sglang_multiturn/multiturn.html | 2026-11-07 |
+| CSDN verl 3D-HybridEngine 实测 | https://blog.csdn.net/weixin_42355400/article/details/157451594 | 2026-11-07 |
+| Belgavi.AI GRPO 内存分析 | https://aicassindra.com/blogs/gpu/gpu_grpo.html | 2026-11-07 |
+

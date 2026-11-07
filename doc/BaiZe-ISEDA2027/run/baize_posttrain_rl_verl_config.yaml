@@ -62,6 +62,7 @@ actor_rollout_ref:
     kl_loss_type: low_var_kl     # GRPO standard
     ppo_epochs: 1
     use_torch_compile: False     # Disabled for A40 (compile overhead > benefit at 2B)
+    entropy_checkpointing: True  # 🔴 R11: entropy computation memory optimization (vocab=130560)
     optim:
       lr: 1.0e-6
       lr_warmup_steps: 50
@@ -77,20 +78,23 @@ actor_rollout_ref:
     fsdp_config:
       param_offload: False
       log_prob_micro_batch_size_per_gpu: 8
+    entropy_from_logits_with_chunking: True  # 🔴 R11: chunked logits entropy to reduce memory peak
 
   rollout:
     name: sglang                 # 🔴 CHANGED from vllm → sglang (R8/R9)
     mode: async                  # Server-based async rollout (avoids GPU idle during sandbox)
     multi_turn: True             # 🔴 Enable multi-turn tool calling (SGLang only)
+    multi_turn_config:
+      tokenization_sanity_check_mode: strict  # 🔴 R11: delta tokenization consistency check
     temperature: 1.0             # Training: high exploration
     top_p: 0.95
     prompt_length: 4096
     response_length: 4096
     dtype: bfloat16
-    gpu_memory_utilization: 0.35 # Leave 65% for FSDP training
+    gpu_memory_utilization: 0.50 # 🔴 R11: raised from 0.35 → 0.50 (3-turn KV cache needs 13.8GB, 0.35=11.9GB insufficient)
     enforce_eager: True          # Disable CUDA graph (co-located safety)
     tensor_model_parallel_size: 1  # Each A40 gets its own SGLang instance
-    max_num_seqs: 16             # Reduced for co-location
+    max_num_seqs: 12             # 🔴 R11: reduced from 16 → 12 (lower KV cache peak: 12×860MB=10.3GB)
     # SGLang-specific: tool-call parser for MiniCPM5-2B XML format
     tool_call_parser: minicpm5   # SGLang built-in parser for MiniCPM5 XML tools
     # Tool configuration for EDA sandbox
