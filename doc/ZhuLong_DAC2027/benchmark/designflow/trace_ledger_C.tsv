@@ -350,3 +350,5 @@
 1793666914540_bsypf	e0047488	hfeg0pkn002	98	layout_aether	case	EDA-Eval-DesignFlow-YamlToGds-001	2026-11-07 21:24	
 1793784075345_99pcm	ruifan	hfeg0plg36	69	layout_virtuoso	case	EDA-Eval-DesignFlow-CmLatchMaOpGen-001	2026-11-07 21:54	
 1793690977457_sakf0	e0024852	hfeg0pkn005	633	physical_verify	case	EDA-Eval-DesignFlow-CalibreLvsRepDiag-001	2026-11-07 22:27	
+1793614737757_3y3vq	sinanz	hfeg0pkn005	590	layout_aether	parked		2026-11-07 22:47	schematic editing via pyAether (rename nets/pins, build adder/decoder from logic gates, edit wires) — wrong domain for shard C (layout_aether/layout_virtuoso/pg_layout/physical_verify); belongs to schematic shard
+1793861396422_46xqi	xxchen	hfeg0pkn002	181	layout_aether	claimed		2026-11-07 22:47	
