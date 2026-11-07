@@ -163,14 +163,15 @@ while ($true) {
         #    · 直调 node.exe 仍受 CreateProcess 32767 上限 + PS5.1 引号转义影响
         #  ⇒ 用「**短指针 prompt**」把任务书**绝对路径**交给 cline，agent 自己读全文（更稳，且永远读到最新版）。
         $prompt = (
-            '你在 personal-watch 的 robot 线工作（原 video 线已转型：基于华为手机的 AI 家教机器人，调用大模型/智能体辅导初中生功课）。',
+            '你在 personal-watch 的 robot 线工作（基于华为手机的 AI 家教机器人，调用大模型/智能体辅导初中生功课）。',
             '',
             "【第一步·必做】用工具读取任务书全文（不要凭记忆）：$TaskMd",
-            '读完后严格按其中「2026-11-07 11:10」用户令执行本轮工作（P0 设备通路 -> 选路线 -> 最小 demo）。',
-            "工作目录 = 主仓 $PWRepo；项目目录 = doc/personal-watch/run/robot/（先读 README.md）。",
+            '读完后**按「运维指令区」自上而下第一条标记为「未完成」的用户令执行**；🚫 不要使用任何固定日期/固定轮次，🚫 不要按已标 ✅ 的旧令重跑。',
+            '若同时有多条未完成，优先级：① 安装工具链(ADB/模拟器) ② host/speech.py ③ host/presence.py ④ 交互验收。',
+            "工作目录 = 主仓 $PWRepo；项目目录 = doc/personal-watch/run/robot/（先读 README.md 与 INTERACTION_SPEC.md）。",
             "结束时：更新 $MemoryMd + 追加 daily-memories-video/<date>.md + 主仓 commit+push（前缀 robot:）。",
             '',
-            "【本轮提示】ComfyUI 已停用、不要碰视频流水线；手机未连上本机时先用 PC 端 mock 跑通，并把需要用户做的事压成 <=5 条。"
+            "【本轮提示】ComfyUI 已停用、不要碰视频流水线；手机未连时用 PC mock 或 **Android 模拟器**（先自己装 platform-tools/emulator，见任务书 22:30/22:35/22:40 令）。"
         ) -join [Environment]::NewLine
 
         $baseArgs = @('-c', $PWRepo, '--auto-approve', 'true', '--config', $ClineCfg, '--data-dir', $ClineData, '-t', "$ClineTimeout")
