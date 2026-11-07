@@ -2,7 +2,9 @@
 
 WAITING: 0
 
-> 🆕 **【wake #855 · 2026-11-07 12:3x】v3全量实验启动+数据集调研完成。** git pull(无新令)·体积 TASK35.0KB(>32KB,按令暂不归档)/MEMORY≈26KB(归档wake#854+#853详情→daily)✓。**承接wake#854**：v3 quick eval证明15步GRPO不足(C≈B=32%,p=0.50)，下一步=增训练量40步+lr5e-6。**本轮两件事**：①**启动v3全量实验**(40步GRPO,lr=5e-6,group_size=8,n_eval=100,period-only,pre-registered)后台运行(PID2165712,nice+19,32线程)——Phase0建100题✅,Phase2 SFT eval进行中(20/100 acc=25%,~4.6s/题)。预计总时长~7h(训练40步×2臂+eval 100题×3条件)。②**数据集调研**(用户令§②)：HF API搜索14个query→**无波形VQA数据集**；最近似ChartQA(8090dl/GPL-3.0)、PlotQA(2196dl/CC)、FigureQA(883dl)均非电子波形；EDA相关CircuitNet3.0(Apache-2.0)非波形可视化。结论：ngspice合成波形+QA是正确路线，无需改用现成数据集。交付dataset_research_results.json。**未完成指令:有**(v3实验运行中,预计~7h)⇒**WAITING:0**。📦体积:TASK=35.0KB(>32KB按令暂不归档)/MEMORY≈26KB✓。
+> 🆕 **【wake #856 · 2026-11-07 12:5x】v3报告生成器+EXPERIMENTS§22+v3实验监控。** git pull(无新令)·体积 TASK35.0KB(>32KB,按令暂不归档)/MEMORY≈27KB✓。**承接wake#855**：v3实验运行中(PID2165712,etimes~1126s)。**本轮动作**：①**确认v3实验进度**——Phase0建100题✅/Phase1跳过✅/Phase2 B(SFT)=**34.0%**(100题,455s)✅/Phase3 C(GRPO)step1/40完成(loss=0.000,avgR=-0.500,265s/step,ETA~2.9h)⏳。②**创建v3报告生成器**`gen_cpu_rl_v3_report.py`(364行,覆盖4交付物:数据集调研/RL设计/技术栈/实验结果+v1→v2→v3版本对比表)→生成partial HTML报告(13585B,0 script 0外链 5节)✅。③**EXPERIMENTS§22**追加v3实验设计+配置+进行中状态✅。④数据集调研JSON已在wake#855交付。**v3实验继续后台运行**(预计总~6-7h,Phase3~2.9h+Phase4~2.9h+eval),下一唤醒检查进度→若完成则生成最终报告+统计检验+commit。**未完成指令:有**(v3实验运行中)⇒**WAITING:0**。📦体积:TASK=35.0KB(>32KB按令暂不归档)/MEMORY≈27KB✓。
+
+> 📦 wake #855（v3全量实验启动+数据集调研·2026-11-07 12:3x）已归档 → daily-memories-vision/2026-11-07.md；**结论**：v3实验启动(40步/lr5e-6/gs8/n=100/period-only)+HF数据集调研(无波形VQA集)。需要时再读。
 
 > 📦 wake #854（v3快速评估·2026-11-07 12:2x）已归档 → daily-memories-vision/2026-11-07.md；**结论**：v2假阳性排除(C≈B=32% p=0.50)，15步GRPO不足，需增训练量。需要时再读。
 

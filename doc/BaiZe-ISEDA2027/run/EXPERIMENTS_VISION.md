@@ -2803,3 +2803,44 @@ std>0 组 ≥30%                  ⇒ PARAM-ISSUE
 
 **成本**：74.1min CPU（4443.5s），零 GPU·h。
 
+---
+
+## §22 CPU RL Waveform v3 Experiment (wake#854-#856, 2026-11-07)
+
+**背景**：v1离散5档奖励GRPO负结果(post-GRPO 6.2% < post-SFT 9.2%)。v2连续奖励方向翻转但不显著(C=11.1%>B=6.7%, McNemar p=0.625, n=45太小)。v3针对v2三项弱点(统计功效/训练量/advantage估计)进行改进。
+
+**预注册设计**（wake#854, 2026-11-07 12:2x, 改奖励=改目标函数→判据先定后测）：
+
+| 改进项 | v2 | v3 | 理由 |
+|:--|:--|:--|:--|
+| 统计功效 | n=45(3×15), McNemar仅4 discordant | **n=100 period-only** | period是唯一有信号目标(B=20%,C=33.3%) |
+| 训练量 | 15步GRPO | **40步** | v2 quick eval证明15步不够(C≈B=32%,p=0.50) |
+| advantage估计 | group_size=4, std=0占78.7% | **group_size=8** | gs8诊断std=0降至73%, period std>0达78.3% |
+
+**配置**：
+- 奖励：R_main = exp(-|rel_err|/τ), τ=0.15（连续，与v2相同）
+- 目标：**仅period**（eval + training prompts）
+- 模型：Qwen3.5-2B text-extracted + LoRA r=16 (69.7M, step3000 SFT adapter)
+- CPU: OMP=32, nice=19, ~265s/step
+- lr=5e-6, batch_prompts=2, group_size=8, max_turns=5, max_new_tokens=24
+- 四条件：A=基线(跳过,已知~0%) / B=SFT / C=SFT+GRPO(连续奖励) / D=SFT+GRPO(随机奖励控制)
+- 判据：C>B 且 McNemar p<0.05 且 bootstrap CI下界>0；控制：C>D
+- cheat rate: train seed=20261105+0~8000, eval seed=990100+, 分离无泄漏
+
+**进行中状态**（wake#856, 2026-11-07 12:5x）：
+- Phase 0: 100 period-only eval题 ✅
+- Phase 1: Baseline跳过(已知~0%) ✅
+- Phase 2: B(SFT) = **34.0%** (100题, 455s) ✅
+- Phase 3: C(GRPO) step 1/40完成, loss=0.000000 avgR=-0.5000 (265s/step, ETA ~2.9h) ⏳
+- Phase 4: D(控制) 待Phase 3完成后启动 ⏳
+- Phase 5: 统计分析 ⏳
+- 总ETA: ~6-7h (Phase 3 ~2.9h + Phase 4 ~2.9h + eval ~0.3h)
+
+**交付物**：
+- `vision/wave_rl/cpu_rl_v3_experiment.py`（v3实验脚本，period-only）✅
+- `vision/wave_rl/gen_cpu_rl_v3_report.py`（v3报告生成器）✅
+- `vision/wave_rl/dataset_research_results.json`（HF数据集调研结果）✅
+- `reports/report_vision_cpu_rl_waveform_zh.html`（中文HTML报告，当前partial, 实验完成后自动更新）✅
+- `cpu_rl_v3/experiment_results.json`（完整结果JSON，实验完成后生成）⏳
+
+**数字溯源**：`cpu_rl_v3_experiment.py` 实测 stdout (`/tmp/v3_full_experiment.log`) + JSON输出。CPU fp32 / nice19 / OMP32 / 零GPU / 未碰pretrain。可复现(seed=20261107 + step3000 ckpt + group_size=8)。

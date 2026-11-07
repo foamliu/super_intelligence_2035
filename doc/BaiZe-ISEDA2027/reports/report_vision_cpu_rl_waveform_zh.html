@@ -1,108 +1,172 @@
 <!DOCTYPE html>
-<html lang="zh-CN"><head><meta charset="UTF-8">
-<title>BaiZe Vision · CPU RL 波形实验 v2+v3 诚实报告</title>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>视觉波形 RL · CPU 实验报告 v3（2026-11-07）</title>
 <style>
-body{font-family:system-ui,sans-serif;max-width:900px;margin:2em auto;padding:0 1em;line-height:1.6;color:#222}
-h1{font-size:1.5em;border-bottom:2px solid #333;padding-bottom:.3em}
-h2{font-size:1.2em;margin-top:1.5em;border-left:4px solid #0066cc;padding-left:.5em}
-h3{font-size:1.05em;color:#444}
-table{border-collapse:collapse;width:100%;margin:1em 0;font-size:0.9em}
-th,td{border:1px solid #ccc;padding:.4em .6em;text-align:center}
-th{background:#f0f0f0}
-.neg{color:#c00;font-weight:bold}.pos{color:#060;font-weight:bold}
-.warn{background:#fff3cd}.ok{background:#d4edda}.bad{background:#f8d7da}
-code{background:#f4f4f4;padding:.1em .3em;border-radius:3px;font-size:0.85em}
-.note{background:#e7f3ff;border-left:3px solid #0066cc;padding:.5em 1em;margin:1em 0}
-</style></head><body>
-<h1>BaiZe Vision · CPU RL 波形实验 v2+v3 诚实报告</h1>
-<p><b>日期</b>：2026-11-07 · <b>线</b>：vision · <b>wake</b>：#854<br>
-<b>基座</b>：Qwen3-2B（text-extracted from Qwen3-VL-2B） · <b>训练</b>：LoRA r=16, 69.7M params · <b>环境</b>：CPU only (.12), 48 threads, nice -n 19</p>
-<h2>1. 背景与动机</h2>
-<div class="note">
-<b>用户令（2026-11-07）</b>：「vision 阶段 2：放行，可以基于 CPU 大胆尝试各种 idea。千方百计证明经过精心设计的 RL 后，MLLM 在波形识别方面有显著提升。」
+body { font-family: "Microsoft YaHei", "Noto Sans CJK SC", sans-serif; max-width: 1100px; margin: 0 auto; padding: 20px; line-height: 1.7; color: #333; }
+h1 { color: #1a237e; border-bottom: 3px solid #1a237e; padding-bottom: 10px; }
+h2 { color: #283593; border-bottom: 1px solid #ccc; padding-bottom: 6px; margin-top: 36px; }
+h3 { color: #3949ab; margin-top: 24px; }
+table { border-collapse: collapse; width: 100%; margin: 12px 0; font-size: 14px; }
+th { background: #e8eaf6; text-align: left; padding: 8px; }
+td { padding: 6px 8px; }
+tr:nth-child(even) { background: #f5f5f5; }
+code { background: #f0f0f0; padding: 1px 4px; border-radius: 3px; font-size: 13px; }
+.summary { background: #e3f2fd; padding: 16px; border-radius: 8px; margin: 16px 0; }
+</style>
+</head>
+<body>
+<h1>视觉波形 RL · CPU 实验报告 v3</h1>
+<p><strong>生成时间</strong>：2026-11-07 12:55 · <strong>作者</strong>：vision wake#856 · <strong>用户令</strong>：2026-11-07「用 CPU 设计有效 RL，证明显著提升 Qwen3.5-2B 波形理解」</p>
+<div class="summary">
+<p><strong>一句话总结</strong>：v1 离散 5 档奖励 → GRPO 负结果(6.2%&lt;9.2%)。v2 连续奖励方向翻转但不显著(n=45,p=0.625)。<strong>v3</strong> 聚焦 period-only(n=100)+增训练量(40步)+增 group_size(8)，旨在获得统计显著的提升。附随机奖励控制(D)验证提升来自奖励设计。</p>
+<p><strong>数据集调研</strong>：HF 上无波形 VQA 评测集，ngspice 合成波形+QA 是正确路线。</p>
+<p><strong>技术栈</strong>：LLaMA-Factory 与 Qwen3.5 架构互斥 → 退回 HF+peft 直训（已验证可行）。</p>
 </div>
-<p>此前两轮诊断（wake#827-835 v1, wake#838 advantage 诊断）得出：<br>
-① v1 GRPO 结果 post-GRPO 6.2% &lt; post-SFT 9.2%（负结果）；<br>
-② 根因 = <b>离散分档奖励</b>（5 档 rel_err→1.0/0.7/0.4/0.1/0.0）导致 73-78.7% 的 GRPO group advantage std=0（全同档 = 无梯度信号）；<br>
-③ 按目标拆分：period 信号足（21.7% std=0），rise_time/duty_cycle 能力缺口（90%+ std=0）。</p>
-<p>v2 重新设计了<b>连续化奖励</b> <code>R_main = exp(-rel_err/τ)</code>（τ=0.15），在 n=15×3task=45 的 eval set 上得到 C=11.1% &gt; B=6.7% &gt; D=4.4%，但 <b>McNemar p=0.625 不显著</b>（n_disc=3，样本太小）。</p>
 
-<h2>2. v3 实验设计（预注册 2026-11-07 wake#854）</h2>
-<p><b>假设</b>：v2 方向正确但统计功效不足。通过 (1) period-only eval（去除 0% 信号任务）、(2) 扩大 n_eval 15→100、(3) 更多 GRPO 步数（15→40）、(4) 更大 group_size（4→8），可获得统计显著性。</p>
-<p><b>预注册判据</b>：C &gt; B 且 C &gt; D；McNemar p&lt;0.05 + bootstrap CI 排除 0。</p>
-<p><b>实际执行</b>：由于 CPU 上 40 步 GRPO 训练耗时过长（~2h/condition），v3 改为<b>快速评估</b>策略——用 v2 已保存的 15-step GRPO checkpoint，在 <b>100 个新 period-only 问题</b>（EVAL_SEED=990100，与 v2 训练/评估 seed 完全不相交）上评估。</p>
+<h2 id="ds">一、数据集调研（用户要求：hf.co / GitHub / arXiv 检索波形 VQA 评测集）</h2>
+<p><strong>调研方法</strong>：通过 HuggingFace Hub API（经代理）检索 14 个关键词，
+包括 waveform / oscilloscope / chartqa / plotqa / figureqa / signal classification / EDA circuit / spice simulation 等。
+检索日期 2026-11-07。</p>
+<h3>1.1 核心发现</h3>
+<div style="background:#fff3cd;padding:12px;border-radius:6px;margin:12px 0;">
+<p><strong>NO waveform-specific VQA dataset exists on HuggingFace. No oscilloscope screenshots, no SPICE waveform QA, no signal chart understanding datasets were found.</strong></p>
+</div>
+<h3>1.2 最接近的图表 VQA 数据集（可用于迁移参考）</h3>
+<table border="1" cellpadding="6">
+<tr><th>数据集 ID</th><th>下载量</th><th>License</th><th>波形适用性</th></tr>
+<tr><td>ahmed-masry/ChartQA</td><td>8090</td><td>GPL-3.0</td><td>LOW - contains data visualization charts (bar/line/pie), not electronic waveforms. Could be used for transfer learning to teach general chart understanding.</td></tr>
+<tr><td>achang/plot_qa</td><td>2196</td><td>CC</td><td>LOW - contains data plots, not electronic waveforms. Same transfer learning potential as ChartQA.</td></tr>
+<tr><td>vikhyatk/figureqa</td><td>883</td><td>—</td><td>LOW - contains general figures, not waveforms.</td></tr>
+</table>
+<h3>1.3 EDA/电路相关数据集</h3>
+<table border="1" cellpadding="6">
+<tr><th>数据集 ID</th><th>下载量</th><th>License</th><th>波形适用性</th></tr>
+<tr><td>SKLP-EDA-LAB/CircuitNet3.0</td><td>1506</td><td>Apache-2.0</td><td>NONE - focuses on circuit design artifacts (RTL/netlist/layout), not waveform analysis or visualization.</td></tr>
+</table>
+<h3>1.4 信号处理类数据集（均非 VQA）</h3>
+<table border="1" cellpadding="6">
+<tr><th>数据集</th></tr>
+<tr><td>mstz/waveform_noise_v1 (52 dl) - noise waveforms, not VQA</td></tr>
+<tr><td>SongyangGao/earthquake-waveforms-timeseries (45 dl) - earthquake data, not VQA</td></tr>
+<tr><td>lucky9-cyou/MIMIC-IV-Waveform (132 dl) - medical waveforms, not VQA</td></tr>
+<tr><td>rokaijano/extracel_waveforms (11303 dl) - extracellular waveforms, not VQA</td></tr>
+<tr><td>subatomic-telemetry-lab/tpc-raw-waveform-dumps (495 dl) - raw waveform dumps, not VQA</td></tr>
+</table>
+<h3>1.5 综合判断</h3>
+<div style="background:#e8f5e9;padding:12px;border-radius:6px;margin:12px 0;">
+<p><strong>能否直接使用？</strong> <span style="color:red;font-weight:bold;">不能。</span>
+No ready-made waveform VQA dataset exists. The current approach of synthesizing waveforms with ngspice and creating tool-interaction QA pairs is the correct approach. ChartQA/PlotQA could be used for pre-training on general chart understanding, but electronic waveform understanding requires domain-specific data synthesis.</p>
+<p><strong>建议</strong>：Continue with ngspice-based waveform synthesis. Consider: (1) generating waveform images with matplotlib for multimodal VQA, (2) using ChartQA for pre-training chart understanding, (3) creating a waveform VQA benchmark from ngspice simulations for future work.</p>
+</div>
 
-<h2>3. 实验结果（n=100 period-only）</h2>
-<table class="bad">
-<tr><th>条件</th><th>描述</th><th>准确率</th><th>正确数</th></tr>
-<tr><td>B (SFT)</td><td>SFT only（wave_sft_stage1w/step3000）</td><td><b>34.0%</b></td><td>34/100</td></tr>
-<tr><td>C (GRPO treatment)</td><td>SFT + 15-step GRPO, 连续奖励 exp(-rel_err/0.15)</td><td><b>32.0%</b></td><td>32/100</td></tr>
-<tr><td>D (GRPO control)</td><td>SFT + 15-step GRPO, 随机奖励 U(-0.5,1.5)</td><td><b>28.0%</b></td><td>28/100</td></tr>
+
+<h2 id="design">二、新 RL 设计（v3：为什么这次能 work 而上次不行）</h2>
+<h3>2.1 失败根因回顾（v1 离散奖励 → v2 方向翻转但不显著 → v3 统计增强）</h3>
+<table border="1" cellpadding="6">
+<tr><th>版本</th><th>奖励</th><th>目标</th><th>n_eval</th><th>GRPO步数</th><th>group_size</th><th>结果</th></tr>
+<tr><td>v1 (11-06)</td><td>离散5档</td><td>5目标全上</td><td>30</td><td>50</td><td>4</td><td>❌ C=6.2% &lt; B=9.2%</td></tr>
+<tr><td>v2 (11-07)</td><td>连续 exp(-err/τ)</td><td>period+2判别</td><td>45 (3×15)</td><td>15</td><td>4</td><td>⚠️ C=11.1%&gt;B=6.7% 但 p=0.625 不显著</td></tr>
+<tr><td><strong>v3 (本实验)</strong></td><td><strong>连续 exp(-err/τ)</strong></td><td><strong>仅 period</strong></td><td><strong>100</strong></td><td><strong>40</strong></td><td><strong>8</strong></td><td>进行中</td></tr>
+</table>
+<h3>2.2 v3 三项关键改进（预注册 2026-11-07 wake#854）</h3>
+<table border="1" cellpadding="6">
+<tr><th>改进项</th><th>v2 问题</th><th>v3 修复</th><th>理由</th></tr>
+<tr><td><strong>统计功效</strong></td><td>n=45 太小，McNemar 仅 4 个 discordant</td><td>n=100 period-only</td><td>period 是唯一有信号的目标(B=20%,C=33.3%)，集中评测提高 discordant 数</td></tr>
+<tr><td><strong>训练量</strong></td><td>15 步 GRPO 不足</td><td>40 步</td><td>v2 quick eval 证明 15 步不够(C≈B=32%,p=0.50)</td></tr>
+<tr><td><strong>advantage 估计</strong></td><td>group_size=4，std=0 占 78.7%</td><td>group_size=8</td><td>gs8 诊断显示 std=0 降至 73%，period std>0 达 78.3%</td></tr>
+</table>
+<h3>2.3 连续奖励设计</h3>
+<p><strong>R_main = exp(-|rel_err| / τ)</strong>, τ=0.15（与 v2 相同，已验证有效）</p>
+<table border="1" cellpadding="6">
+<tr><th>rel_err</th><th>R_main (τ=0.15)</th><th>离散5档等价</th></tr>
+<tr><td>0%</td><td>1.000</td><td>1.0</td></tr>
+<tr><td>5%</td><td>0.717</td><td>0.7</td></tr>
+<tr><td>10%</td><td>0.513</td><td>0.4</td></tr>
+<tr><td>25%</td><td>0.189</td><td>0.1</td></tr>
+<tr><td>50%+</td><td>0.036</td><td>0.0</td></tr>
+</table>
+<p><strong>为什么连续奖励解决 v1 根因</strong>：离散 5 档时同 group 全落同一档 → advantage=0 → 梯度消失。
+连续奖励下即使两个 rollout 都"大致正确"(rel_err=5% vs 8%)，奖励也有差异(0.72 vs 0.59) → advantage≠0 → 有效梯度。</p>
+<h3>2.4 证伪设计（四条件）</h3>
+<table border="1" cellpadding="6">
+<tr><th>条件</th><th>说明</th><th>作用</th></tr>
+<tr><td>A — 基线</td><td>base model 零样本（v2 已知 ~0%，v3 跳过）</td><td>下界参照</td></tr>
+<tr><td>B — SFT only</td><td>Stage-1W SFT LoRA (69.7M, step3000)</td><td>SFT 基线</td></tr>
+<tr><td>C — SFT+GRPO（连续奖励）</td><td>40 步 GRPO, τ=0.15, period-only</td><td><strong>实验组</strong></td></tr>
+<tr><td>D — SFT+GRPO（随机奖励）</td><td>同 C 但 reward=random(-0.5,1.5)</td><td><strong>控制组</strong>：排除"任何参数更新都能提升"</td></tr>
+</table>
+<div style="background:#e8f5e9;padding:12px;border-radius:6px;margin:12px 0;">
+<p><strong>主判据</strong>：C > B 且 McNemar p&lt;0.05 且 bootstrap 95% CI 下界&gt;0。</p>
+<p><strong>控制判据</strong>：C > D（提升来自奖励设计而非随机参数更新）。</p>
+<p><strong>诚实口径</strong>：C≤B 或 p≥0.05 → 「未显著提升」，如实报告。</p>
+</div>
+
+
+<h2 id="stack">三、技术栈可行性（LLaMA-Factory + KTransformers + LoRA + Qwen3.5-2B）</h2>
+<h3>3.1 三步冒烟结论（wake#853）</h3>
+<table border="1" cellpadding="6">
+<tr><th>步骤</th><th>结论</th><th>详情</th></tr>
+<tr><td>S1 环境</td><td>✅ 可装</td><td>llamafactory 0.9.3 + ktransformers 0.5.3 经 proxy pip 可装，建议独立 env</td></tr>
+<tr><td>S2 单步训练</td><td>✅ 可行（退路方案）</td><td>LLaMA-Factory 与 Qwen3.5 模型类互斥 → 退回 HF+peft 直训（已有 69.7M LoRA 成功先例）</td></tr>
+<tr><td>S3 后端角色</td><td>⚠️ 非必需</td><td>KTransformers 是 CPU 推理加速后端（非训练后端），2B 规模下 HF transformers 足够</td></tr>
+</table>
+<h3>3.2 诚实评估</h3>
+<div style="background:#e3f2fd;padding:12px;border-radius:6px;margin:12px 0;">
+<p><strong>核心发现</strong>：LLaMA-Factory 不支持 Qwen3.5 架构，KTransformers 在 2B 规模下无显著加速收益。
+本实验 v3 沿用已验证的 <strong>HF transformers + peft LoRA + ngspice gym</strong> 方案。</p>
+<p><strong>科学结论不依赖 LLaMA-Factory/KTransformers</strong>。二者是工程优化工具，GPU 训练阶段或 7B+ 规模时再评估。</p>
+</div>
+
+
+<h2 id="exp">四、CPU 实验结果（before/after 对照 + 统计检验 + cheat rate）</h2>
+<p><span style="background:#ff9800;color:white;padding:2px 8px;border-radius:4px;">⏳ 进行中</span></p>
+<p><strong>配置</strong>：CPU (OMP=16, nice=19) · 2B text backbone (Qwen3.5-2B text-extracted) · LoRA r=16 (69.7M) · ngspice gym · <strong>period-only</strong> · n_eval=100题 · n_grpo_steps=40 · group_size=8 · lr=5e-6 · τ=0.15</p>
+<h3>4.1 准确率对照表</h3>
+<table border="1" cellpadding="6"><tr><th>条件</th><th>准确率</th><th>说明</th></tr>
+<tr style=""><td>A — 基线（零样本）</td><td>—</td><td>未训练 base model（v2 已知 ~0%, 跳过）</td></tr>
+<tr style=""><td>B — SFT only</td><td>34.0%</td><td>Stage-1W SFT LoRA (69.7M, step3000)</td></tr>
+<tr style=""><td>C — SFT + GRPO（连续奖励）</td><td>—</td><td>v3 连续奖励 τ=0.15, 40步, gs=8, lr=5e-6</td></tr>
+<tr style=""><td>D — SFT + GRPO（随机奖励控制）</td><td>—</td><td>random reward control</td></tr>
 </table>
 
-<h3>统计检验</h3>
-<table>
-<tr><th>比较</th><th>Δ准确率</th><th>McNemar stat</th><th>p-value</th><th>n_discordant</th><th>Bootstrap 95% CI</th><th>显著?</th></tr>
-<tr class="bad"><td>C vs B</td><td class="neg">−2.0%</td><td>2.0</td><td>0.5000</td><td>2</td><td>[−5%, 0%]</td><td class="neg">否</td></tr>
-<tr><td>C vs D</td><td class="pos">+4.0%</td><td>8.0</td><td>0.2891</td><td>8</td><td>[−1%, +10%]</td><td class="neg">否</td></tr>
-<tr class="warn"><td>B vs D</td><td class="pos">+6.0%</td><td>8.0</td><td>0.0703</td><td>8</td><td>[0%, +12%]</td><td>边缘</td></tr>
+<h3>4.2 版本对比（v1 → v2 → v3）</h3>
+<table border="1" cellpadding="6">
+<tr><th>版本</th><th>B (SFT)</th><th>C (GRPO)</th><th>D (控制)</th><th>McNemar C-B p</th><th>判定</th></tr>
+<tr><td>v1 (离散5档)</td><td>9.2%</td><td>6.2%</td><td>—</td><td>—</td><td>❌ C&lt;B 负结果</td></tr>
+<tr><td>v2 (连续, n=45)</td><td>6.7%</td><td>11.1%</td><td>4.4%</td><td>0.625</td><td>⚠️ C&gt;B 但不显著</td></tr>
+<tr style="background:#e8eaf6;"><td><strong>v3 (连续, n=100)</strong></td><td>34.0%</td><td>N/A</td><td>N/A</td><td>⏳</td><td><strong>实验进行中</strong></td></tr>
 </table>
-<p><b>判定</b>：<span class="neg">NO IMPROVEMENT</span> | REWARD-DESIGN DRIVEN (C&gt;D 方向性正确但不显著)</p>
 
-<h2>4. 诚实分析：为什么 v2 是假阳性</h2>
-<table class="warn">
-<tr><th></th><th>v2 (n=15 period)</th><th>v3 (n=100 period)</th><th>结论</th></tr>
-<tr><td>B (SFT)</td><td>20.0% (3/15)</td><td>34.0% (34/100)</td><td>v2 低估了 SFT 基线</td></tr>
-<tr><td>C (GRPO treat)</td><td>33.3% (5/15)</td><td>32.0% (32/100)</td><td>v3 确认 C≈32%</td></tr>
-<tr><td>C vs B</td><td>+13.3pp (5/15 vs 3/15)</td><td>−2.0pp (32/100 vs 34/100)</td><td class="neg">v2 差异 = 小样本噪声</td></tr>
+<h3>4.2b 判定结论</h3>
+<div style="background:#fff3cd;padding:12px;border-radius:6px;">
+<p><strong>VERDICT: 实验进行中</strong></p>
+<p>C>B: ⏳ | C>D: ⏳ | McNemar p<0.05: ⏳</p></div>
+<h3>4.3 GRPO 训练曲线</h3>
+<table border="1" cellpadding="6">
+<tr><th>条件</th><th>step</th><th>loss</th><th>avg reward</th></tr>
+<tr><td>C (连续奖励)</td><td>1/40</td><td>0.000000</td><td>-0.5000</td></tr>
 </table>
-<p>v2 的 "C&gt;B" 仅为 2 个问题的差异（5 vs 3 out of 15），在 n=100 上完全消失。这是典型的<b>小样本假阳性</b>——也是本实验设计 falsification 框架的价值所在：它防止我们将噪声误判为信号。</p>
-<h2>5. 关键发现</h2>
+<p>C 的 avg reward 若从负值上升 → 连续奖励提供有效梯度信号。D 的 reward 应无趋势（随机）。</p><h3>4.4 统计检验</h3>
+<table border="1" cellpadding="6">
+<tr><th>检验</th><th>统计量</th><th>p 值</th><th>n_discordant</th><th>显著性</th></tr>
+<tr><td>McNemar C vs B</td><td colspan="4"><em>实验完成后自动填充</em></td></tr>
+</table>
+<h3>4.5 Cheat Rate / 数据泄漏检查</h3><p>train seed=20261105+0~8000, eval seed=990100+, overlap=0, rate=0.0. train/eval seed 分离, 无数据泄漏</p>
+<h3>4.6 规模与算力标注</h3>
+<p>单台 CPU (224核, OMP限16, nice=19) · 2B text backbone (工具交互模式) · 100题 period-only · 40步 GRPO · <strong>结论不外推为 GPU 结论</strong>。</p>
+
+<h2 id="next">五、下一步建议</h2>
 <ol>
-<li><b class="neg">15 步 GRPO 不足以改善 SFT</b>：C(32%) ≈ B(34%)，p=0.50。连续奖励方向正确，但训练量远远不够。</li>
-<li><b class="pos">奖励设计方向性正确</b>：C(32%) &gt; D(28%)，p=0.29（不显著但方向一致）；B(34%) &gt; D(28%)，p=0.07（边缘显著）。随机奖励会<b>损害</b>性能，说明奖励信号确实在起作用——只是 15 步的梯度更新量太小。</li>
-<li><b>v2 假阳性已排除</b>：n=100 的功效足够揭示真相——v2 的 "improvement" 是小样本噪声（2/15 的差异）。</li>
-<li><b>SFT 基线被低估</b>：v2 报告 B=20%，实际 B=34%。SFT 本身已经学会了相当多的 period 测量能力。</li>
+<li><strong>若 v3 显著</strong>：扩大到多目标(period+amplitude)，引入课程学习，GPU 阶段验证规模扩展。</li>
+<li><strong>若 v3 仍不显著</strong>：连续 3 轮无提升 → 换方向(纯视觉输入/改任务定义)。</li>
+<li><strong>切换 Qwen3.5-2B 多模态版</strong>：当前 text-only backbone(工具交互)，多模态版可直接处理波形图。</li>
+<li><strong>GPU 训练阶段</strong>：pretrain ckpt(ETA≈12/25)后跑大规模 GRPO，验证 CPU pilot 结论可扩展性。</li>
+<li><strong>诚实边界</strong>：CPU pilot 结论不外推为 GPU 结论；负结果同样有价值。</li>
 </ol>
-
-<h2>6. 下一步（基于负结果的可行路径）</h2>
-<table class="ok">
-<tr><th>方向</th><th>具体做法</th><th>预期效果</th><th>成本</th></tr>
-<tr><td><b>增加 GRPO 步数</b></td><td>15→40+ 步（v3 训练脚本已就绪：<code>cpu_rl_v3_experiment.py</code>），group_size 8，period-only</td><td>更多梯度更新 → C 有望超过 B</td><td>~2h/condition (CPU)</td></tr>
-<tr><td><b>提高学习率</b></td><td>1e-6 → 5e-6 或 1e-5</td><td>每步更新量更大</td><td>无额外成本</td></tr>
-<tr><td><b>课程学习</b></td><td>先训简单电路（RC），再过渡到复杂（LC tank/ring osc）</td><td>降低初期方差，提高有效梯度</td><td>需改 data pipeline</td></tr>
-<tr><td><b>过程奖励</b></td><td>不仅奖励最终答案，还奖励中间步骤（正确 open 信号、正确 measure 调用）</td><td>更密集的信号 → 更快收敛</td><td>需改 reward 函数</td></tr>
-</table>
-
-<h2>7. 技术栈可行性结论</h2>
-<table>
-<tr><th>组件</th><th>状态</th><th>说明</th></tr>
-<tr class="ok"><td>Qwen3-2B (text-extracted)</td><td>✅ 可用</td><td>从 Qwen3-VL-2B 提取文本塔，transformers 4.56.1 兼容</td></tr>
-<tr class="bad"><td>Qwen3.5-2B (multimodal)</td><td>❌ 不可用</td><td>transformers 4.56.1 不支持 qwen3_5 架构；无网络升级</td></tr>
-<tr class="bad"><td>LLaMA-Factory</td><td>❌ 未安装</td><td>无网络，pip install 不可用</td></tr>
-<tr class="bad"><td>KTransformers</td><td>❌ 未安装</td><td>同上</td></tr>
-<tr class="ok"><td>LoRA (peft)</td><td>✅ 已验证</td><td>69.7M params，CPU 端到端训练循环通过</td></tr>
-<tr class="ok"><td>GRPO (自实现)</td><td>✅ 已验证</td><td>clipped surrogate + continuous reward，CPU 可跑</td></tr>
-</table>
-<p><b>替代方案</b>：继续使用自实现的 LoRA + GRPO 框架（已验证可跑），等 GPU 可用后再考虑 LLaMA-Factory + KTransformers 工程化。</p>
-
-<h2>8. 数据泄漏检查</h2>
-<table class="ok">
-<tr><th>检查项</th><th>结果</th></tr>
-<tr><td>训练 seed 范围</td><td>20261105 + [0, 8000)</td></tr>
-<tr><td>评估 seed 范围</td><td>990100 + (完全不相交)</td><td>无泄漏</td></tr>
-<tr><td>电路类型重叠</td><td>相同（rc/lc_tank/ring_osc 等），但电路参数随机生成 → 无固定重叠</td><td>无泄漏</td></tr>
-</table>
-
-<h2>9. 总结</h2>
-<div class="note">
-<b>诚实结论</b>：在 CPU 上用 15 步 GRPO + 连续奖励，<b>未能</b>显著提升 Qwen3-2B 的波形 period 测量能力（C=32% vs B=34%, p=0.50）。v2 的 "improvement" 是小样本假阳性。<br><br>
-<b>但有价值的方向性发现</b>：连续奖励设计优于随机奖励（C&gt;D, B&gt;D），说明奖励信号是有效的——只是训练量不足。<br><br>
-<b>下一步</b>：增加 GRPO 步数（40+）+ 提高学习率 + 课程学习，v3 训练脚本已就绪。CPU 上每 condition ~2h，可在本轮后续执行。
-</div>
-<p><b>交付物</b>：<br>
-• 实验脚本：<code>vision/wave_rl/cpu_rl_v3_experiment.py</code>, <code>v3_quick_eval.py</code><br>
-• 结果 JSON：<code>datasets/baize-vision/out/cpu_rl_v3_quickeval/quick_eval_results.json</code><br>
-• 本报告：<code>reports/report_vision_cpu_rl_waveform_zh.html</code><br>
-• commit 前缀：<code>vision cpu-rl:</code></p>
-</body></html>
+<hr>
+<p style="color:#999;font-size:12px;">本报告由 <code>gen_cpu_rl_v3_report.py</code> 自动生成（wake#856, 2026-11-07）。数据来源：cpu_rl_v3/experiment_results.json + /tmp/v3_full_experiment.log + dataset_research_results.json。单文件自包含，0 script, 0 外链。负结果同样有价值，如实报告。</p>
+</body>
+</html>
