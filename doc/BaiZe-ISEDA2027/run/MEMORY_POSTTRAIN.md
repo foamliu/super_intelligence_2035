@@ -47,5 +47,5 @@ WAITING: 1
 
 [wake50] R2(造题与难度分层)深度调研 → 五层难度(L1-L5,4000题)+五维评分+5断言模板(T1-T5)+pass@8校准方案 → EXPERIMENTS §R2 + HTML 11.3KB。R1-R4全部完成。
 
-[wake51] E1合成题生成执行: R2设计→可执行脚本baize_posttrain_gen_synth_v2.py→ 8463 API DB→排除488评测黑名单→6781白名单→ 生成3347题(L1=1500/L2=347/L3=800/L4=500/L5=200)→ 0污染命中→ 3347/3347真实断言(非pass,v1为0/500!)→ 5.4MB rl_pyaether_synth_v2.jsonl落盘 → EXPERIMENTS §E1(7小节)。L2短缺(347 vs 1000): 4367 unknown-return API待GPU沙盒profiling补全。📦 体积：TASK=24.7KB / MEMORY≈6KB / EXPERIMENTS≈68KB。本轮新增调研产出：E1生成脚本+3347题数据集+EXPERIMENTS §E1。未完成指令：无（R1✅R2✅R3✅R4✅E1✅）⇒ WAITING=1。
+[wake51] E1合成题生成执行: R2设计→可执行脚本baize_posttrain_gen_synth_v2.py→ 8463 API DB→排除488评测黑名单→6781白名单→ 生成3347题(L1=1500/L2=347/L3=800/L4=500/L5=200)→ 0污染命中→ 3347/3347真实断言(非pass,v1为0/500!)→ 5.4MB rl_pyaether_synth_v2.jsonl落盘 → EXPERIMENTS §E1(7小节)。L2短缺(347 vs 1000): 4367 unknown-return API待GPU沙盒profiling补全。⚠️ commit f0080ac94已本地完成但push超时(网络慢)，下轮唤醒第一件事补推。📦 体积：TASK=24.7KB / MEMORY≈6KB / EXPERIMENTS≈68KB。本轮新增调研产出：E1生成脚本+3347题数据集+EXPERIMENTS §E1。未完成指令：无（R1✅R2✅R3✅R4✅E1✅）⇒ WAITING=1。
 
