@@ -3075,3 +3075,116 @@ no_reference: is_cheat=False, ratio=0.0000  ← 无参考集
 | L4-L6 | ⬜ 未变 | venv 安装时验证 |
 
 **核心贡献**：修复 R21 审计的 3 个阻塞项（L1 缓解 + L2/L3 解决），并发现 R21 未识别的 **P0 级 silent no-op bug**。R0 auto-fallback 确保 11/9 首日即使隧道未就绪 RL 也不空转。
+
+---
+
+## §R23 DeepSeek 轨迹挖掘 → 行为模式提取 + EDA 沙盒连通性分析（2026-11-07 wake71 · 零 GPU）
+
+> **任务**：从 103 条 DeepSeek full-harness 轨迹中提取 gold-standard SFT 数据；分析 EDA 沙盒连通性。
+> **脚本**：`run/baize_posttrain_mine_deepseek_traces.py`（Python 3.8 兼容，`--dry-run` / `--max-tasks`）
+> **产出**：`run/sft_deepseek_patterns.jsonl`（14 条行为模式 SFT 对，9.2KB）+ `run/sft_deepseek_gold_stats.json`
+
+### R23.1 🔴 关键发现：DeepSeek 轨迹 = 评测题本身 → 100% 污染
+
+| 指标 | 值 |
+|:--|:--|
+| 成功轨迹 | 103 条 |
+| 错误轨迹 | 20 条 |
+| 污染（entry_point 匹配 158 评测题） | **101/103 = 98.1%** |
+| 未匹配的 2 条 | `create_schematic_pins` / `create_wrapped_qstring_list`（可能为评测集变体或更名） |
+| **结论** | DeepSeek full-harness 轨迹**就是在 158 评测题上跑的** → **raw 轨迹绝对不能进训练集**（红线 §5.1） |
+
+> 🚨 **红线确认**：此前 R1-R22 均假设"DeepSeek 轨迹可用作 SFT gold data"。本次实测推翻此假设：**103 条轨迹的 task prompt 包含评测题的函数签名和断言代码**，直接使用将违反污染隔离红线。R22 的 cheat rate tracker（n-gram overlap）会在训练时检测到这一点，但更好的做法是**从源头不使用**。
+
+### R23.2 行为模式提取（非污染）
+
+> 虽然原始轨迹不能用于 SFT，但 DeepSeek 的**工具调用行为模式**（搜索→查询→编码→执行→纠错）是可以提取的——这些模式不包含评测题的具体函数签名或断言。
+
+**工具使用统计**（103 条成功轨迹）：
+
+| 工具 | 调用次数 | 每任务均值 |
+|:--|--:|--:|
+| `search_apis` | 573 | 5.56 |
+| `run_pyAether_code_tool` | 516 | 5.01 |
+| `get_api_details` | 386 | 3.75 |
+| **合计** | **1475** | **14.32** |
+
+> 与 D2 诊断一致（14.32 calls/task），验证了 D2 数据的准确性。
+
+**工具调用序列模式**（Top 5）：
+
+| 序列 | 频次 | 含义 |
+|:--|--:|:--|
+| search_apis → get_api_details → run_pyAether_code_tool | ~45 | 标准三步：查 API → 取详情 → 执行代码 |
+| search_apis → get_api_details → search_apis → ... → run_pyAether_code_tool | ~20 | 多轮搜索后编码 |
+| search_apis → run_pyAether_code_tool | ~15 | 直接搜索后编码（跳过详情） |
+| get_api_details → run_pyAether_code_tool → get_api_details → run_pyAether_code_tool | ~10 | 迭代调试 |
+| search_apis → get_api_details → run_pyAether_code_tool → get_api_details → run_pyAether_code_tool | ~8 | 编码+调试混合 |
+
+**每任务工具调用轮数分布**：均值 14.3，中位 ~12，最小 1，最大 41。与 D6（均值 5.01 迭代轮数）的差异是因为 D6 统计的是"生成→执行→改"闭环轮数，而这里统计的是每次工具调用。
+
+**错误恢复模式**：从成功轨迹中提取了 9 对 error→fix 模式，主要错误类型：
+- ImportError（模块路径错误）
+- AttributeError（API 名称拼写错误）
+- TypeError（参数类型不匹配）
+- AssertionError（断言失败 → 模型调整逻辑）
+
+**错误轨迹分析**（20 条）：共 135 处错误，主要类型为执行报错（import/file/type），与 D4 一致（执行报错 74%）。
+
+### R23.3 SFT 行为模式对（14 条，零污染）
+
+> 从行为模式生成的 SFT 训练对，**不含任何评测题的函数签名或断言**。可安全加入 SFT 数据集。
+
+| 类型 | 条数 | 内容 |
+|:--|--:|:--|
+| tool_call_sequence | 5 | 教模型"查 API → 取详情 → 编码 → 执行"的标准流程 |
+| error_recovery | 9 | 教模型如何从 ImportError/AttributeError/TypeError 中恢复 |
+
+> 这些 SFT 对已写入 `sft_deepseek_patterns.jsonl`（9.2KB），可与 R6 的 19610 条合成 SFT 数据合并使用。
+
+### R23.4 EDA 沙盒连通性分析
+
+| 测试项 | 结果 | 说明 |
+|:--|:--|:--|
+| SSH .17 → 36.15（ZhuLong 机器） | ❌ **超时** | `ssh -o ConnectTimeout=5 10.251.36.15` → Connection timed out |
+| pyAether 在 .17 可导入 | ❌ **不可用** | `import pyAether` → ModuleNotFoundError（系统 Python 和 .venv 均不可用） |
+| pyAether 在 .17 .venv | ❌ **未安装** | `~/code/eda_fastmcp/.venv` 无 pyAether 包 |
+| eda_fastmcp 本地克隆 | ✅ 存在 | `~/code/eda_fastmcp/`（含 scripts/、docs/、pyAether-eval/） |
+| 评测驱动脚本 | ✅ 存在 | `~/code/eda_fastmcp/scripts/run_cline_script.sh` |
+
+**结论**：
+1. **RL 沙盒不能在 .17 本地运行**（pyAether 未安装，需 Aether EDA 环境）。
+2. **SSH 到 36.15 不通**（可能防火墙/网络隔离）。
+3. **R22 的 R0 auto-fallback 是正确的保险措施**——即使隧道不通，RL 也不空转。
+4. **11/9 GPU 到位后的沙盒方案**（按优先级）：
+   - **方案 A**（推荐）：请求运维在 36.15 建立反向 SSH 隧道到 .17（`ssh -R`），或开放 36.15 的 SSH 端口。
+   - **方案 B**：在评测机（有 pyAether 环境）上部署 sandbox server，.17 通过 HTTP API 调用。
+   - **方案 C**（fallback）：RL 首日使用 R0 skeleton reward（无需沙盒），等隧道建立后切换到 R2/R3/R4。
+   - **方案 D**（长期）：在 .17 安装 Aether EDA 环境（需许可+安装，非短期可行）。
+
+### R23.5 对已有研究的影响
+
+| 原假设 | R23 修正 |
+|:--|:--|
+| "DeepSeek 轨迹可用作 gold SFT data" | ❌ **推翻**：轨迹=评测题，100% 污染 |
+| D2 工具频次 14.32/task | ✅ **验证**：本次独立统计 14.32，完全一致 |
+| D4 执行报错 74% | ✅ **验证**：错误轨迹 135 处错误，以执行报错为主 |
+| D6 迭代轮数 5.01 | ✅ **验证**：工具调用序列支持"生成→执行→改"闭环 |
+| R0 auto-fallback（R22） | ✅ **验证为必要**：SSH 不通 → R0 是唯一可用 reward |
+| 沙盒 SSH 隧道（R5/R1） | ⚠️ **风险升级**：.17→36.15 SSH 超时，需运维介入 |
+
+### R23.6 修改/新建文件清单
+
+| 文件 | 类型 | 内容 |
+|:--|:--|:--|
+| `baize_posttrain_mine_deepseek_traces.py` | 🆕 新建 | 轨迹挖掘 + 行为模式提取 + 污染检测 |
+| `sft_deepseek_patterns.jsonl` | 🆕 新建 | 14 条零污染行为模式 SFT 对（9.2KB） |
+| `sft_deepseek_gold_stats.json` | 🆕 新建 | 统计数据 |
+
+### R23.7 11/9 启动建议（基于 R23 发现更新）
+
+1. **RL 首日**：使用 R0 skeleton reward（auto-fallback），**不依赖沙盒**。
+2. **沙盒建立**：11/9 第一件事请求运维建立 .17↔36.15 隧道（方案 A 或 B）。
+3. **沙盒就绪后**：切换到 R2/R3/R4 reward arm。
+4. **SFT 数据**：将 14 条行为模式 SFT 对合并到 R6 的 19610 条合成数据中（占比 0.07%，作为工具调用行为示范）。
+5. **污染检测**：11/9 评测前必跑 `baize_posttrain_contamination_gate.sh` 确认训练数据零污染。
