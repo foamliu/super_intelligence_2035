@@ -39,7 +39,10 @@ from pathlib import Path
 # gw_proxy or cline's own globalState.json, so it is not directly used in the
 # active flow. Updated for correctness/future-proofing.
 GATEWAY = os.environ.get("OPENAI_API_URL", "http://agi-gateway.cxmt.com/v1")
-UNIFIED_MODEL = os.environ.get("HARNESS_MODEL", "kimi-k2.6-cloud")
+# 2026-11-07 audit: default changed kimi-k2.6-cloud → glm-5.3-flash.
+# Launch scripts set HARNESS_MODEL=glm-5.3-flash; this default follows suit
+# so a bare `python run_harness.py` no longer silently targets the old model.
+UNIFIED_MODEL = os.environ.get("HARNESS_MODEL", "glm-5.3-flash")
 OPENCODE_MODEL = f"gw/{UNIFIED_MODEL}"  # provider/model per ~/.config/opencode/opencode.json
 # Dummy key handed to harnesses that route through the local gw_proxy (the proxy
 # injects the real gateway key upstream).  See harness_work/gw_proxy.py.

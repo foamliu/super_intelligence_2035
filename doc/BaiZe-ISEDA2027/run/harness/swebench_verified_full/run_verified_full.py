@@ -25,7 +25,8 @@ RUN_SINGLE = HARNESS_DIR / "run_single.py"
 ENRICHED = HERE / "enriched_500.json"
 IDS_FILE = HERE / "verified_500_ids.txt"
 # Env-var overrides for multi-model support (backward-compatible defaults).
-MODEL_SUFFIX = os.environ.get("MODEL_SUFFIX", "kimi-k2.6-cloud")
+# 2026-11-07 audit: default changed kimi-k2.6-cloud → glm-5.3-flash.
+MODEL_SUFFIX = os.environ.get("MODEL_SUFFIX", "glm-5.3-flash")
 RUN_ID_PREFIX = os.environ.get("RUN_ID_PREFIX", "verified_full")
 EVAL_TAG = os.environ.get("EVAL_TAG", "")          # e.g. "glm53_" → eval_glm53_<h>.json
 PRED_SUBDIR = os.environ.get("PRED_SUBDIR", "predictions")

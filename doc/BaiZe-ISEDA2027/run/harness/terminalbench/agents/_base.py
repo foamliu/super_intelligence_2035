@@ -1,8 +1,8 @@
 """Shared base class for Terminal-Bench 7-harness adapters.
 
 Common configuration:
-  - Model: kimi-k2.6-cloud
-  - Gateway: http://agi-gateway.cxmt.com/cloud/v1
+  - Model: glm-5.3-flash (was kimi-k2.6-cloud; switched 2026-11-07 audit)
+  - Gateway: http://agi-gateway.cxmt.com/v1 (/cloud/v1 returns 403 for glm53)
   - API key: passed via env TB_API_KEY (never hardcoded; sourced from doc/keys.txt)
   - All harnesses run headlessly inside Harbor Docker containers.
 
@@ -37,11 +37,13 @@ from harbor.models.agent.context import AgentContext
 # Shared constants
 # ---------------------------------------------------------------------------
 
-#: Model name used across all 7 harnesses (same as SWE-bench 7×300).
-TB_MODEL = os.environ.get("TB_MODEL", "kimi-k2.6-cloud")
+#: Model name used across all 7 harnesses.
+#: 2026-11-07 audit: default changed kimi-k2.6-cloud → glm-5.3-flash.
+TB_MODEL = os.environ.get("TB_MODEL", "glm-5.3-flash")
 
-#: Gateway base URL (kimi-k2.6-cloud endpoint per doc/keys.txt).
-TB_BASE_URL = os.environ.get("TB_BASE_URL", "http://agi-gateway.cxmt.com/cloud/v1")
+#: Gateway base URL.
+#: 2026-11-07 audit: /cloud/v1 returns 403 for glm-5.3-flash key → use /v1.
+TB_BASE_URL = os.environ.get("TB_BASE_URL", "http://agi-gateway.cxmt.com/v1")
 
 #: API key — MUST be set via env (sourced from doc/keys.txt at launch time).
 #: Adapters never hardcode the key; reports must not print it.
