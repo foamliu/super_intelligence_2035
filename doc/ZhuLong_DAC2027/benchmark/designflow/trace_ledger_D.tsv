@@ -166,7 +166,7 @@
 1791512939497_0aw4j	jason17w	hfeg0pnd002	265	analog_context	parked		2026-11-05 02:32	mid-conv VPS/uvs regression submit (digital verif), not D-domain
 1792979644454_hgqho	e02141	hfeg0plg56	280	analog_context	parked		2026-11-05 02:32	sentaurus TCAD deck study/summarize doc-task, no runnable deliverable
 1791528127580_l1u7n	e02141	hfeg0plg56	280	analog_context	parked		2026-11-05 02:32	sentaurus TCAD deck study/summarize doc-task, no runnable deliverable
-1792827081154_d810y	jackjia	hfeg0plg95	274	schematic_netlist	parked		2026-11-05 02:32	Aether flight-line how-to Q&A, no runnable deliverable
+1792827081154_d810y	jackjia	hfeg0plg95	274	schematic_netlist	case	EDA-Eval-DesignFlow-WvDispCfg-001	2026-11-07 21:40	Aether flight-line how-to Q&A, no runnable deliverable
 1789551540622_zpvgj	miccao	hfeg0plg92	258	schematic_netlist	parked		2026-11-05 02:32	mid-conv compressed context, U#0=assistant text no clean demand round
 1785745498995_8c5jw	t0002638	hfeg0plg49	289	analog_context	parked		2026-11-05 02:32	Q&A: can-you-call pyAether screenshot API, no runnable deliverable
 1792133845232_k7jwl.messages.json	reedchen	hfeg0plg93	2945	waveform	parked		2026-11-05 03:04	dup of existing case FineSimTskew-001/TskewCalc-001 (same user/csv/demand)
