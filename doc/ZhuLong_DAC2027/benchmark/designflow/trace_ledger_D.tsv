@@ -1224,7 +1224,7 @@ bw2u5.messages.json					parked		2026-11-07 08:07	#343 peek: netlist 5 only, too 
 1790128938715_nsf5a.messages.json					parked		2026-11-07 09:21	peeked #345, weak/non-D-domain/debug/skill-invoke
 1789975385741_egm8i.messages.json					parked		2026-11-07 09:21	peeked #345, weak/non-D-domain/debug/skill-invoke
 1792067800928_1b60m.messages.json					parked		2026-11-07 09:21	peeked #345, weak/non-D-domain/debug/skill-invoke
-1790149493569_194wf	ziyuny	10.129.32.190	128	schematic_netlist	claimed		2026-11-07 09:43	
+1790149493569_194wf	ziyuny	10.129.32.190	128	schematic_netlist	case	EDA-Eval-DesignFlow-AnalogGroupRoleInfer-001	2026-11-07 10:05	
 1791783189298_t2hnp					parked		2026-11-07 09:43	dup of NetHighlightProbe-001 (same task: highlight nets starting with 'net' in virtuoso schematic)
 1792135280846_sr426					parked		2026-11-07 09:43	dup of NetlistFightX-001 (same vblh X-fighting debug from netlist)
 1792057192352_iz828					parked		2026-11-07 09:43	weak Q&A (32 RAG search, hierarchy-jump button, no clean produce)
