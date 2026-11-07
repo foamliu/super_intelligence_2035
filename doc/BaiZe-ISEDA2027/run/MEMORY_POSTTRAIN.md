@@ -55,3 +55,5 @@ WAITING: 1
 
 [wake53] R6 SFT深度方案+R7 verl环境预检: git sync确认(origin/main=local=01c999bae,已同步,wake52的push已成功)→ R6: 数据混合策略(35%通用/30%agentic/25%PyAether/10%错误恢复)→ SFT语料合成脚本baize_posttrain_gen_sft_corpus.py(语法✅dry-run✅)→ 执行生成19610对(S1=8012 doc-to-code/S2=8098 api-lookup/S3=89 multi-chain/S4=3411 error-recovery,0污染,18.8MB,sft_pyaether_corpus.jsonl落盘)→ 上下文长度8192(覆盖95%+轨迹)→ LoRA vs 全参(替身LoRA/白泽全参)→ 课程学习5阶段(warmup→API→工具→纠错→decay)→ 超参(LR=2e-5,GBS=128,3000步,WSD)→ R7: 🔴CRITICAL发现CUDA 12.4驱动vs vllm_venv torch cu130不匹配(torch.cuda.is_available()=False)→ verl依赖清单(torch/verl/ray/vllm/accelerate/flash-attn全缺)→ 11/9启动序列6步(新建venv→验证CUDA→vllm serve→评测→采集轨迹→起RL)→ 预飞行检查脚本→ 风险矩阵→ EXPERIMENTS §R6+§R7→ HTML报告8.3KB(report_posttrain_r6r7_sft_verl_readiness_zh.html)。本轮新增调研产出：§R6 SFT深度方案+19610对SFT语料+§R7 verl环境预检+CUDA不匹配发现+11/9启动序列+HTML报告。未完成指令：无（R1✅R2✅R3✅R4✅R5✅R6✅R7✅E1✅）⇒ WAITING=1。
 
+[wake54] 唤醒→体积自检（TASK=24.7KB / MEMORY=9.1KB，均符合≤32KB要求）→确认所有调研任务R1-R7/E1/P0-P3预备全部完成→未完成指令：无→等待2026-11-09 GPU到位自动执行启动序列。⇒ WAITING=1。
+
