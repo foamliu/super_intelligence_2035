@@ -2873,3 +2873,47 @@ std>0 组 ≥30%                  ⇒ PARAM-ISSUE
 - **v4 (RFT/STaR)** Phase1 B = 34.0%（与 v3 一致✅）；Phase2 collect 40/60 circuits，160 rollouts，103 succ(64.4%)，ETA~18:30-19:00。
 - **结论判断**：v1(离散奖励,post-GRPO 6.2%<post-SFT 9.2%)→v2(15步,p=0.625不显著)→v3(40步连续奖励,C=25%<B=34%)=**连续 3 轮 GRPO 无提升**。v4 RFT 已换方向（无 group baseline→消除 std=0 根因；标准 CE 梯度→稳定）。等 v3 Phase4(控制D)+v4 完成后做最终统计检验+报告。
 
+
+---
+
+### §22 CPU RL v5: Waveform Type Classification（2026-11-07 wake#881 · 方向转换 · ⏳运行中）
+
+**背景**：v2(GRPO离散)=6.2%<SFT9.2%·v3(GRPO连续)=25.0%<SFT34.0%·v4(RFT)=34.0%=SFT34.0%→连续3轮无提升，任务书§3节奏"连续3轮无提升必须换方向"触发。
+
+**根因分析（v2-v4为何失败）**：
+1. **Period回归太难**：要求2B LoRA模型输出精确周期值，SFT天花板≈34%，RL无法突破。
+2. **GRPO std=0**：78.7%的group内所有rollout获得相同奖励→advantage=0→梯度无信号（连续化奖励v3也未解决）。
+3. **RFT只强化已会答案**：v4 collect成功率67.1%但retrain只是重复训练模型已会的34%正确答案→无新信息。
+4. **输入信息不足**：get_values tool-call只返回min/max/mean/std统计量，**不返回实际采样点**→模型无法看到波形形状。
+
+**v5设计（4项修复，预注册2026-11-07）**：
+1. **改任务**：period回归→**波形类型分类**（sine/square/triangle/sawtooth，4类）。分类(输出标签)比回归(输出精确数字)根本性更易。
+2. **改输入**：tool-call summary stats→**16个均匀采样点(t,v)直接进prompt**。模型能"看见"波形形状（sine=平滑振荡、square=两值突变、triangle=线性三角、sawtooth=线性斜坡+突变）。
+3. **保留方法**：RFT（Rejection Sampling FT, STaR/ReST）——v4已验证稳定（标准CE loss，无group baseline，无std=0问题）。分类任务会有更多正确rollout→更多训练信号。
+4. **纯Python波形生成器**：不依赖ngspice，直接程序生成sine/square/triangle/sawtooth（含随机amp/offset/freq/phase/noise），速度快、可控。
+
+**预注册判据**：
+- A(基线,fresh LoRA): ~25%（4类随机概率）
+- B(SFT 400ex×3ep): >50%（形状识别可学）
+- C(RFT correct-filter): >B（更多正确rollout→更多训练信号）
+- D(RFT random-filter 控制): ≤B（随机过滤不帮助）
+- 成功：C>B 且 C>D 且 McNemar p<0.05 且 bootstrap 95%CI on (C-B)排除0
+
+**证伪设计**：4条件×100 eval(25/type)×McNemar/bootstrap CI/cheat-rate(train/eval disjoint seed)。
+
+**脚本**：`vision/wave_rl/cpu_rl_v5_typecls_experiment.py`（594行,29.9KB,SYNTAX OK）。
+
+**冒烟测试结果**（20 SFT/1ep/20 eval,skip_baseline,skip_control）：
+- SFT: 3 steps, loss 0.50→0.70, 6.4M trainable params (LoRA r=16)
+- B(SFT) = 15%（sawtooth 60%, 其余0%——20例太少）
+- RFT collect: 20 rollouts, 1 correct (5%)
+- C(RFT) = 15%（1例RFT训练无效果——预期）
+- 全链路5阶段（Phase0-5）全部PASS，JSON保存✅
+- 冒烟验证：模型加载✓ SFT训练✓ eval✓ RFT收集✓ RFT训练✓ 统计✓ JSON输出✓
+
+**全量实验**（PID731487,OMP16/nice19,2026-11-07 17:28启动）：
+- 400 SFT examples × 3 epochs + 200 RFT questions × 3 rollouts + 100 eval (25/type) + A/B/C/D四条件
+- ETA ~2.5h (~20:00)
+- `cpu_rl_v5/experiment_results.json`（实验完成后生成）⏳
+
+**数字溯源**：`cpu_rl_v5_typecls_experiment.py` 实测 stdout (`/tmp/v5_full_experiment.log`) + JSON输出。CPU fp32 / nice19 / OMP16 / 零GPU / 未碰pretrain。可复现(seed=20261107 train / 995100 eval, disjoint)。
