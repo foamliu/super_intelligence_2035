@@ -1287,3 +1287,4 @@ tjzn5					parked		2026-11-07 12:29	env Q&A + skill-creator usage (#352 peek weak
 1788871441686_fieju	peek	peek	0	unknown	parked		2026-11-07 23:33	wrong-domain: not shard D (digital RTL/verilog-param-cmp / aether-layout-autovia / digital-MCU-RTL-simvision)
 1793150158938_6rvi0	peek	peek	0	unknown	parked		2026-11-07 23:33	wrong-domain: DRC report analysis + PDK rule deck (physical_verify), not shard D
 1793873169781_7dnyc.messages.json	hairuizh	hfeg0pkn002	80	schematic_netlist	case	EDA-Eval-DesignFlow-DevListSummary-001	2026-11-08 00:17	
+1793864423469_6c7d2	sinanz	hfeg0pkn005	322	schematic_netlist	case	EDA-Eval-DesignFlow-DecoderNetlistGen-001	2026-11-08 00:58	
