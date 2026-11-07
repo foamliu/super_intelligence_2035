@@ -1,4 +1,45 @@
 # BAIZE_DATA_TASK.md
+### 🔴 运维令 · 2026-11-07 10:10（**`stack-v3-train` 正式放行：ROI 高，先下 2TB 优质子集**）· 用户直令 · 最高优先 · 未完成
+
+> **用户原话**：「data：stack-v3-train 从 ROI 来讲，I 比较高，因此 ROI 有限。可以选择下载部分优质的（比如先下 2TB）。」
+>
+> 解读（按上下文最合理口径）：**stack-v3-train 的 ROI 高，但整库太大（15.9TB train / 113.7TB full）导致实际可拿的收益有限，因此只挑优质子集，首批 2TB。**
+
+#### 1. 授权范围（本令即批文）
+
+| 项 | 口径 |
+|:--|:--|
+| 数据集 | `HuggingFaceCode/stack-v3-train`（**仅 train 分片**，🚫 full 113.7TB） |
+| 首批体量 | **2TB 上限**（含 `.incomplete` 已下部分；不再走"单集 >=1TB 需报批"流程） |
+| 批次粒度 | 每批 <=300GB，逐批实测/校验/回填后 commit，再起下一批 |
+| 总量红线 | 本批次总占用 <=2TB；批间须复核 `/nas_inference` 余量 >=5T，不足则暂停报运维 |
+| 并发/带宽 | `nice -n 10`（或 19）、`--max-workers <=2`、断点续传；🚫 不得与 S1 抢带宽 |
+
+#### 2. "优质"的判定（自定但必须写清并留证据）
+
+1. **语言优先序（EDA/PyAether 相关性）**：Python（含 PyAether/EDA 工具链脚本）> C/C++ > Verilog/SystemVerilog > Tcl > Makefile/CMake/Shell/Bazel。
+2. **质量过滤**：剔除 minified / generated / vendored 第三方 / test fixture / 纯配置大文件 / 单文件 >1MB 的生成物；剔除低质量仓库（无 license、星数极低、空仓库、纯文档仓库）。
+3. 用 HF `--include` 按子集/语言/分片挑选，**禁止整库拉取**；挑选规则与命中量写进 `DATA_MAPPING.md`。
+4. 若发现 stack-v3-train 的分片结构不支持按语言筛，则按分片号 + 抽样质检的方式挑选，并说明抽样方法与置信度（不许凭感觉）。
+
+#### 3. 每批必交付（否则视为未完成）
+
+1. `du -sb` 实测字节 + `find | wc -l` 文件数 + `.incomplete` 数量；
+2. 语言分布与 token 估算（给出估算方法）；
+3. 质量过滤规则命中数（剔除量/保留量）；
+4. `DATA_MAPPING.md` 增行（源/字节/文件数/存储形态/证据命令），并更新 ROI 表；
+5. commit 前缀 `data stackv3:`。
+
+#### 4. 2TB 完成后的复盘（后一批须运维再批）
+
+- 给一份**实测 ROI 复盘**：每 TB 带来的 token / 独特性 / 与现有 UltraData-Code L2/L3 的重叠度（可抽样 1 万文件估 n-gram 重叠）。
+- 明显低效则停；确有价值再报下一批。**2TB 不是要"下满"，够用即停。**
+
+> 与原 08:5x 令的关系：08:5x 令的">=1TB 先报批"由本令对该 2TB 批次**豁免**；`the-stack-v2` 仍**禁下**，其余单集 <1TB 口径不变。
+
+---
+
+
 ### 🔴 运维令 · 2026-11-07 08:5x（**代码语料放行：`stack-v3-train` 可考虑，`the-stack-v2` 禁下，其余单集 <1TB 放行 —— 你自己按 ROI 从高到低排优先级下载**）· 用户直令 · 最高优先 · ⚠️ 未完成
 
 > **用户原话**：「report_data_lc_agentic_survey_zh.html 这个报告我看了。bigcode/the-stack-v2 占用空间太大，不能下载。HuggingFaceCode/stack-v3-train 可以考虑，其它单集 <1TB 的也可以放行。让它自己排个优先级，从 ROI 从高到低开始下载吧。」

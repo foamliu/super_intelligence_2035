@@ -2,6 +2,22 @@
 
 > 📄 **报告格式常驻规程（2026-10-24 用户令）**：**所有报告一律用中文 HTML**（单文件自包含、无外链/CDN），除非用户另行指定；🚫 不用 `.md` / `.pdf` / 纯文本顶替。适用于**所有线**（pretrain / vision / data / harness / zhulong / news / recruit / research / video）。
 
+## 2026-11-07 10:10 — 用户四条决策（运维已写入各线任务书顶部）
+
+用户看完进展汇报后一次性给 4 条决定，已分别落成任务书顶部的「用户直令 · 最高优先」块：
+
+| 线 | 任务书 | 用户口令 | 落地要点 |
+|:--|:--|:--|:--|
+| vision | `run/BAIZE_VISION_TASK.md` | 「阶段 2：放行，可以基于 CPU 大胆尝试各种 idea」 | 授权 6 项变更（奖励连续化 / 目标差异化 / 换 Qwen3.5-2B / 改任务定义 / 推翻旧 plan / 放开 idea）；仍须重预注册判据 + 三档对照 + 负结果如实记录 |
+| data | `run/BAIZE_DATA_TASK.md` | 「stack-v3-train ROI 高，可以选择下载部分优质的（比如先下 2TB）」 | 放行 train 分片首批 **2TB**（每批 <=300GB、`--max-workers <=2`、`nice`、不抢 S1 带宽、逐批实测回填 DATA_MAPPING）；full 113.7TB 仍禁；`the-stack-v2` 仍禁 |
+| posttrain | `run/BAIZE_POSTTRAIN_TASK.md` | 「不是说了 11/9 吗，还问啥。继续调研啊」 | 11/9 GPU 为既定安排，禁止再上报为阻塞/待决策；等待期每轮必须有实质调研产出（R1 EDA 环境 RL / R2 造题难度分层 / R3 奖励与 GRPO 稳定性 / R4 36% 失败模式分类）；连续两轮无产出 = 未完成 |
+| harness | `run/BAIZE_HARNESS_TASK.md` | 「按早晨的用户令评测，同时多关注一点 cline」 | 主线照 08:1x 代际审计令 + §22:4x 全交付；新增 cline 专项 C1-C5（独立统计 / 失败分类 / 空 patch 归零确认 / 每轮心跳一行小结 / 专题报告）；`deepseek gw_proxy_dsh:9093` 继续修 |
+
+- 记录方式：纯中文 + ASCII 符号（本机编辑器通道会把 emoji、箭头、大于等于号转成乱码）。
+- 各任务书插入后体积：VISION / POSTTRAIN / HARNESS 略超 32KB 红线 -> agent 下次唤醒按既有纪律**先归档已闭合块**（不得归档本次未完成的新令），DATA 走 40KB 红线仍有余量。
+- 运维不再代劳执行；四条线均在远端 agent loop 上，靠 `git fetch` 读任务书生效。
+
+
 ## 2026-10-25 17:5x — 四条用户令下发（harness / data / vision / pretrain）
 
 用户 17:4x 一次性下四条，已写进各自任务书顶部（用户直令 · 最高优先），并同步把「已闭合」旧块原文搬进 ARCHIVE（emoji 原样保留）：
