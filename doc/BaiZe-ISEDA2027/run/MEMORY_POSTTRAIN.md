@@ -3,16 +3,16 @@
 > ⭐ 本文件每次唤醒被全文读进 cline 上下文 ⇒ ≤32KB；超限滚动到 `daily-memories-posttrain/`。
 > `WAITING:` 只在顶部出现一次；正文/流水/快照里不得再出现以 `WAITING:` 开头的行。
 
-WAITING: 0
+WAITING: 1
 
 ## 进度快照
 
-- PHASE: posttrain-wake49（2026-11-07 深入调研 R4 失败模式分类）
-- 已完成: P3预备✅ 7脚本；P0✅ D1–D6；P1✅ 数据盘点+PyAether语料+污染隔离；P2✅ 方案书；wake45✅ §替身RL预演；wake48✅ R1+R3深度调研；wake49✅ R4(失败模式分类五分类法+12次评测聚合+103轨迹分析+三步走侧重)
-- 当前动作: wake49 唤醒→ git fetch+status clean→ 无新运维令→ R4深度调研: /tmp/pt_r4_analysis.py分析12次EDA-Eval-Framework评测(1895 task-run)+/tmp/pt_r4_deep_trace.py分析103任务DeepSeek全harness轨迹→ 构建五分类法(SYN/API/LOG/TMO/DEP)→ 产出EXPERIMENTS §R4(11小节)+HTML报告report_posttrain_r4_failure_taxonomy_zh.html(12.7KB/12节)→ 归档wake17-wake48流水到daily-memories→ 体积自检+提交
-- 下一步: 下一轮继续R2(造题扩展到2k-5k)；11/9 GPU到位后自动起跑(vllm serve MiniCPM5-2B→复测36%基线→采真实轨迹→用R4分类法校正→起第一轮EDA RL)
+- PHASE: posttrain-wake50（2026-11-07 R2造题与难度分层调研完成，R1-R4全部完成）
+- 已完成: P3预备✅ 7脚本；P0✅ D1–D6；P1✅ 数据盘点+PyAether语料+污染隔离；P2✅ 方案书；wake45✅ §替身RL预演；wake48✅ R1+R3；wake49✅ R4(五分类法)；wake50✅ R2(造题扩展500→4000+5层难度+5断言模板+pass@8校准方案+区分度证据)
+- 当前动作: wake50 唤醒→ git status clean→ R2深度调研: /tmp/pt_r2_analysis.py分析API数据库(8463API→白名单6781→可判定2414)+审计现有500题(0真实断言!+626/6781 API覆盖率9.2%)→ 设计五层难度(L1-L5,4000题)+五维评分公式+5种断言模板(T1-T5)+pass@8校准方案(533GPU-h/5.5天)+区分度证据(L3核心RL区)→ 产出EXPERIMENTS §R2(10小节)+HTML报告report_posttrain_r2_synth_expansion_zh.html(11.3KB/12节/0script)→ 体积自检+提交
+- 下一步: R1-R4全部完成→ WAITING=1；11/9 GPU到位后自动起跑(vllm serve→复测36%基线→E1生成4000题+断言→pass@8校准→采真实轨迹→用R4分类法校正→起第一轮EDA RL)
 - 阻塞: GPU 2026-11-09既定到位(不再问)；L3等隧道；P3等pretrain ckpt(ETA≈2026-12-25)
-- 未完成指令: 有（§用户令·2026-11-07 10:10 R1✅R3✅R4✅, R2待做）⇒ WAITING=0
+- 未完成指令: 无（R1✅R2✅R3✅R4✅ 全部完成）⇒ WAITING=1
 
 ## 关键事实（常驻）
 
@@ -43,5 +43,7 @@ WAITING: 0
 
 [wake48] §用户令·2026-11-07 10:10 → R1(EDA环境RL)+R3(GRPO奖励)深度调研 → EXPERIMENTS §R1+§R3 → HTML报告12.5KB → 归档§替身RL预演(TASK→24.7KB)。本轮新增:§R1+§R3+HTML。
 
-[wake49] 唤醒→ git fetch(proxy)+status clean(## main...origin/main,HEAD=391910652)→ 无新运维令→ R4(失败模式分类)深度调研: /tmp/pt_r4_analysis.py分析12次EDA-Eval-Framework评测(1895 task-run,DeepSeek最优71.5%+aether_coder 10%弱模型对照)→ 聚合error_types:AssertionError254(47.9%)/Unknown Failure100(18.9%)/Generation timeout70(13.2%)/TypeError34+ValueError31+AttributeError31(API误用) → /tmp/pt_r4_deep_trace.py分析103任务DeepSeek全harness轨迹(82/103任务有中间错误,ValueError241/TypeError140/AttributeError101) → 构建五分类法(SYN/API/LOG/TMO/DEP) → API数量vs失败率(21+API=90%失败) → techlib=True失败率38.9%vs25.0% → 始终失败25题(avg18.3 APIs) → 弱模型API误用65.5%(预测36%侧40-60%) → 三步走侧重:退火5-10pp+SFT15-25pp+RL5-15pp=25-50pp(36%→61-86%) → 产出EXPERIMENTS §R4(11小节) + HTML报告report_posttrain_r4_failure_taxonomy_zh.html(12.7KB/12节/0script/0外链) → 体积自检+提交。📦 体积：TASK=24.7KB / MEMORY≈28KB / EXPERIMENTS=52.6KB。本轮新增调研产出：EXPERIMENTS §R4 + HTML报告12.7KB。未完成指令：有（R2造题扩展待做）⇒ WAITING=0。
+[wake49] R4(失败模式分类)深度调研: 12次评测1895task-run+103轨迹分析 → 五分类法(SYN/API/LOG/TMO/DEP) → EXPERIMENTS §R4(11小节)+HTML 12.7KB → 归档wake17-48流水。
+
+[wake50] R2(造题与难度分层)深度调研: /tmp/pt_r2_analysis.py分析API数据库(8463→白名单6781→可判定2414)+审计现有500题(0真实断言!+626/6781=9.2%覆盖) → 设计五层难度(L1-L5,4000题)+五维评分+5种断言模板(T1-T5)+pass@8校准(533GPU-h/5.5天)+区分度证据(L3核心RL区40-60%pass@1) → EXPERIMENTS §R2(10小节)+HTML报告11.3KB/12节/0script。R1-R4全部完成→WAITING=1。📦 体积：TASK=24.7KB / MEMORY≈6KB / EXPERIMENTS≈60KB。本轮新增调研产出：EXPERIMENTS §R2 + HTML报告11.3KB。未完成指令：无（R1✅R2✅R3✅R4✅）⇒ WAITING=1。
 

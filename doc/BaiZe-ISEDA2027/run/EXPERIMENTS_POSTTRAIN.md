@@ -774,3 +774,175 @@ cheat_rate = num_cheat_detected / total_rollouts，每SAVE_INTERVAL报告一次�
 - 错误分类逻辑：`~/code/EDA-Eval-Framework/scripts/calculate_results.py` L26-80
 - 158 题数据集：`~/code/eda_fastmcp/pyAether-eval/original_dataset/EDA-Eval-PyAether-v20260311.jsonl`
 - DeepSeek 轨迹：`~/code/eda_fastmcp/pyAether-eval/cline_cli_trace/cline_trace_v1_3/cline_trace/`
+
+---
+
+## §R2 PyAether 造题与难度分层（2026-11-07 wake50 · 零 GPU · 深度调研）
+
+> **任务**：把 500 题模板扩展到可自动判定正确性的规模（目标 2k-5k）；难度标定方法（pass@8 profiling vs 规则分层）；每档题的区分度证据。
+> **分析脚本**：`/tmp/pt_r2_analysis.py` → 结构化输出 `/tmp/pt_r2_output.json`
+> **HTML 报告**：`reports/report_posttrain_r2_synth_expansion_zh.html`
+
+### 1. 现有 500 题质量审计
+
+| 维度 | 实测值 | 问题 |
+|:--|:--|:--|
+| 总题量 | 500 | 仅占目标 2k-5k 的 10-25% |
+| **真实断言数** | **0** | 🚨 全部 500 题的 test 字段 = `pass # Verification executed in sandbox` —— **零自动判定** |
+| 唯一 API 使用数 | 626 | 占白名单 6781 的 9.2% —— 91% 的可用 API 未被覆盖 |
+| 难度分布 | low=280 / medium=150 / high=70 | 仅 3 档，粒度过粗 |
+| 难度判定方式 | 纯 API 数量（1/2/3） | 无返回类型/techlib/LOC 维度 |
+| 模板类型 | 3 种（单调用/双串联/三分析） | 缺多样性，高难度题模板同质化 |
+
+**核心结论**：现有 500 题是「占位验证」级别——污染隔离✅（0 命中），但**自动判定缺失**是阻断 RL 训练的最大缺陷。GRPO 需要每题有可机器执行的 reward 信号（pass/fail），当前全部 `pass` 意味着 reward 恒为 1，梯度为零。
+
+### 2. API 数据库扩展容量分析
+
+| 指标 | 数量 | 说明 |
+|:--|--:|:--|
+| API 数据库总量 | 8463 | `API_INFO_MERGED_V3.json`（function 3566 + method 3476 + property 889 + class 469 + type 50 + pattern 13） |
+| 评测占用 API | 488 | 158 题使用的唯一 API（污染隔离黑名单） |
+| 白名单（可调用 + 不在评测） | **6781** | function + method，与评测零交集 |
+| 白名单返回类型可判定 | 2414 | primitive 1887 + object 281 + other 246（可做 type assertion） |
+| 白名单返回类型未知 | 4367 | 描述未标注返回值（需沙盒 profiling 补全） |
+| 白名单覆盖类别数 | 92 | 94 个类别中 92 个有可出题 API |
+
+**扩展容量结论**：6781 个白名单 API 远超 2k-5k 题需求。即使每题仅用 1 个 API，2168 个类型可判定 API 即可支撑 1500 题（L1）；intra-category 对组 29 万对可支撑 L2/L3 的数千题。**容量不是瓶颈**，瓶颈是**断言模板设计**和**难度校准**。
+
+### 3. 五层难度体系设计（规则分层 · 零 GPU · 初始标定）
+
+> 依据：R4 数据（API 数 vs 失败率）+ API 返回类型复杂度 + techlib 依赖 + LOC 估计 + 类别多样性。
+
+| 层级 | 名称 | API 数/题 | 返回类型 | techlib | LOC | 目标题量 | 模板 |
+|:--|:--|:--|:--|:--|:--|--:|:--|
+| **L1** | Trivial | 1 | primitive | 无 | 1-3 | 1500 | T1_type_check + T2_value_invariant |
+| **L2** | Basic | 1-2 | object | 无 | 2-5 | 1000 | T1_type_check + T3_chain_type |
+| **L3** | Medium | 3-5 | mixed | 可选 | 4-10 | 800 | T3_chain_type + T4_state_verify |
+| **L4** | Advanced | 6-10 | mixed | 有 | 8-20 | 500 | T4_state_verify + T5_behavior |
+| **L5** | Challenge | 10+ | mixed | 有 | 15+ | 200 | T5_behavior + custom |
+| **合计** | | | | | | **4000** | |
+
+**五维难度评分公式**（初始标定，零 GPU）：
+
+```
+difficulty_score = w1 * api_count + w2 * return_complexity + w3 * techlib_dep
+                 + w4 * loc_estimate + w5 * category_diversity
+```
+- `api_count`: 1/2/3-5/6-10/10+ → 1/2/3/4/5
+- `return_complexity`: primitive=1, object=2, unknown=3
+- `techlib_dep`: False=0, True=2
+- `loc_estimate`: 1-3=1, 4-8=2, 9-15=3, 16+=4
+- `category_diversity`: same_module=0, cross_module=1, cross_domain=2
+- 权重：w1=0.35, w2=0.15, w3=0.20, w4=0.15, w5=0.15
+- 分值映射：≤1.5→L1, 1.6-2.5→L2, 2.6-3.5→L3, 3.6-4.5→L4, >4.5→L5
+
+### 4. 自动可判定断言模板设计（5 模板）
+
+> **当前缺陷**：500 题全部 `pass`，零自动判定。以下模板修复此缺陷。
+
+#### T1_type_check（L1，~1500 题）
+```python
+import pyAether as pyScript
+def check(candidate):
+    result = candidate()
+    assert result is not None, "Should return non-None"
+    assert isinstance(result, ({ret_type_py}), f"Expected {ret_type}"
+```
+- 适用：单 API 调用，返回类型已知（primitive/object）；判定：非 None + 类型匹配；覆盖：2168 个 type-checkable API
+
+#### T2_value_invariant（L1/L2，~500 题）
+```python
+def check(candidate):
+    r1 = candidate()
+    r2 = candidate()
+    assert r1 == r2, f"Non-deterministic: {r1} != {r2}"
+```
+- 适用：确定性 getter（同输入同输出）；判定：两次调用结果一致；覆盖：返回 bool/int/string 的纯函数
+
+#### T3_chain_type（L2/L3，~800 题）
+```python
+def check(candidate):
+    result = candidate({args})
+    assert result is not None
+    assert isinstance(result, (list, tuple)), "Should return collection"
+    assert len(result) >= 0
+```
+- 适用：2-3 API 串联链；判定：最终返回非 None + 集合类型 + 长度合法；覆盖：intra-category API 链
+
+#### T4_state_verify（L3/L4，~500 题）
+```python
+def check(candidate):
+    result = candidate({args})
+    assert isinstance(result, dict), "Should return dict"
+    assert "status" in result, "Must contain status key"
+    assert result["status"] in ("ok", "error"), "Status must be ok/error"
+```
+- 适用：多 API 状态查询；判定：返回结构 + 关键字段 + 值域合法；覆盖：6-10 API 交叉类别任务
+
+#### T5_behavior（L4/L5，~200 题）
+```python
+def check(candidate):
+    result = candidate({args})
+    r2 = candidate({args})
+    assert result == r2, "Workflow should be idempotent"
+    assert hasattr(result, "__len__") or result is not None
+```
+- 适用：复杂工作流；判定：幂等性 + 结构完整性；覆盖：10+ API 复杂任务
+
+**断言模板 → RL reward 映射**：T1/T2→二值 R1 臂；T3/T4→分档 R2 臂；T5→过程+结果 R3 臂。
+
+### 5. pass@8 经验校准方案（GPU 后 · 11/9 起）
+
+> 规则分层是初始标定；pass@8 是经验校准。参考 sGPO (arXiv:2606.08854)。
+
+1. MiniCPM5-2B 对每题跑 8 次（n=8, T=0.7, top_p=0.95）
+2. 通过率 p = passed/8
+3. **保留** 1/8 ≤ p ≤ 7/8（GRPO advantage ≠ 0）；**丢弃** 0/8（太难）和 8/8（太易）
+4. 按 p 重分桶：easy(6-7/8) / medium(3-5/8) / hard(1-2/8)
+5. 预计保留率 ~60%（sGPO 报告 3× 效率提升）
+6. 预算：4000 题 × 8 次 × ~60s = ~533 GPU-hours → 4×A40 ~5.5 天
+
+### 6. 各难度层区分度证据（基于 R4 数据外推）
+
+| 层级 | API 数 | DeepSeek 失败率(R4) | 预估 2B 失败率 | 预估 2B pass@1 | 区分度判读 |
+|:--|:--|:--|:--|:--|:--|
+| L1 | 1 | 5.6% (n=18) | ~10% | 85-95% | 太易，RL 收益低；保留用于 SFT warmup |
+| L2 | 2 | ~10% | ~25% | 65-80% | 中等，SFT 后大部分可解；RL 边际收益小 |
+| L3 | 3-5 | 24.6% (n=61) | ~50% | 40-60% | **核心 RL 训练区**——GRPO advantage 最大 |
+| L4 | 6-10 | 32.6% (n=43) | ~65% | 25-45% | **高级 RL 区**——SFT+RL 协同 |
+| L5 | 10+ | ~50-90% | ~85% | 10-25% | 极难；仅用于 RL challenge 集 |
+
+**配比建议**：RL 主力用 L3+L4（~1300 题，pass@8 筛选后 ~800 题）；L1-L2 转 SFT warmup；L5 作 challenge 集。
+
+### 7. 造题扩展执行计划
+
+| 阶段 | 内容 | GPU | 产出 | 时机 |
+|:--|:--|:--|:--|:--|
+| E1 | 规则分层生成 4000 题 + 5 模板断言 + 污染闸门 | 零 | `rl_pyaether_synth_v2.jsonl` | 11/8-11/9 |
+| E2 | pass@8 经验校准（MiniCPM5-2B × 8 runs） | 4×A40 | `rl_pyaether_synth_calibrated.jsonl` | 11/9-11/15 |
+| E3 | 失败轨迹回收 → SFT 错误恢复数据 | 零 | `sft_pyaether_error_recovery.jsonl` | 11/15-11/17 |
+| E4 | 二次校准（SFT ckpt × pass@8）→ 最终 RL 集 | 4×A40 | `rl_pyaether_final.jsonl` | SFT 后 |
+
+### 8. 污染隔离保持
+
+- 白名单 6781 API 与评测 488 API 零交集（wake45 验证）
+- E1 生成后重跑 `baize_posttrain_contamination_gate.sh`（13-gram + 8-gram + MinHash + entry_point sha256）
+- 断言模板不包含评测题的函数签名/断言代码
+- 🚨 E1 生成时**禁止**使用 158 题的 prompt/canonical_solution/test 作为模板源
+
+### 9. 与 R1/R3/R4 的协同
+
+| 调研 | 与 R2 的关联 |
+|:--|:--|
+| R1 (EDA 环境 RL) | R2 的断言模板在沙盒中执行 → R1 的环境接口决定断言可行性 |
+| R3 (GRPO 奖励) | R2 的断言模板 → R3 的 reward 信号源；T1/T2→R1 臂，T3/T4→R2 臂，T5→R3 臂 |
+| R4 (失败模式) | R2 的难度分层依据 R4 的 API 数 vs 失败率数据；L3/L4 靶向 R4 的 LOG/API 错误 |
+
+### 10. 数据来源与脚本
+
+- 分析脚本：`/tmp/pt_r2_analysis.py`；结构化输出：`/tmp/pt_r2_output.json`
+- API 数据库：`~/code/eda_fastmcp/docs/API_INFO_MERGED_V3.json`（8463 API）
+- 评测数据集：`~/code/eda_fastmcp/pyAether-eval/original_dataset/EDA-Eval-PyAether-v20260311.jsonl`（158 题，488 API）
+- 现有合成题：`run/rl_pyaether_synth_tasks.jsonl`（500 题，0 真实断言）
+- 污染闸门脚本：`run/baize_posttrain_contamination_gate.sh`
+- R4 pass@8 参考：sGPO (arXiv:2606.08854)
