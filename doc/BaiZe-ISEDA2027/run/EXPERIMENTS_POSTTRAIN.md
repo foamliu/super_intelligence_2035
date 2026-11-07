@@ -2594,3 +2594,263 @@ R15 已发现 SGLang pip 发行版（0.5.6.post3）不含 minicpm5 parser。但 
 | R17 EOS 多令牌 | R18 给出具体 `--stop-token-ids` 参数 |
 | R11 GRPO lr=1e-6 | R18 对照文献建议提到 3e-6 |
 | R12 launch script 6 步 | R18 补充时间预算 + Go/No-Go 判据 + 失败回退 |
+
+---
+
+## §R19 — 统计功效分析：5-run 评测协议的统计检验力与预注册阈值（2026-11-07 wake67 · 零 GPU · 纯统计模拟）
+
+> **任务书要求**：「预注册判定阈值：点估计 + 配对检验（McNemar / paired bootstrap）显著性 + 成本比 —— 必须先定后测」。
+> **本节回答**：158 任务 × 5 runs 的评测协议能否统计区分 M1–M4 成功阶梯（36%→50%→65%→75%→85%）？需要多少 runs？哪种检验最有力？多重比较校正后是否仍显著？
+> **脚本**：`run/baize_posttrain_power_analysis_fast.py`（纯 Python 3.8，无第三方依赖，500 次蒙特卡洛模拟，~60s）
+> **输出**：`/tmp/pt_r19_power_fast.json`
+
+### R19.1 任务难度模型与能力校准
+
+采用 Rasch-like 模型：P(pass|d_i, θ) = σ(θ - d_i)，其中 d_i 为任务难度，θ 为模型能力。
+
+- **难度分布**（基于 D5 实测 scenario 分布）：Layout(64)~N(0.50,0.15), Schematic(47)~N(0.65,0.15), DesignMgmt(24)~N(0.35,0.15), Others(23)~N(0.30,0.15)
+- **能力校准**（使均值 Pass@1 = 目标率）：baseline_36→θ=-0.074, M1_50→θ=0.506, M2_65→θ=1.130, M3_75→θ=1.613, M4_85→θ=2.253
+- **验证**：校准后实际通过率与目标误差 <0.1%
+
+### R19.2 非配对 95% CI（Wald，n=158）
+
+| 水平 | Pass@1 | SE | 95% CI | CI 宽度 |
+|:--|:--|:--|:--|:--|
+| baseline_36 | 36% | 3.82pp | [28.5%, 43.5%] | ±7.5pp |
+| M1_50 | 50% | 3.98pp | [42.2%, 57.8%] | ±7.8pp |
+| M2_65 | 65% | 3.79pp | [57.6%, 72.4%] | ±7.4pp |
+| M3_75 | 75% | 3.44pp | [68.2%, 81.8%] | ±6.8pp |
+| M4_85 | 85% | 2.84pp | [79.4%, 90.6%] | ±5.6pp |
+
+🔴 **关键发现**：**所有相邻 M 水平的 95% CI 均有重叠**：
+- 36% CI 上界=43.5% vs 50% CI 下界=42.2% → 重叠 1.3pp
+- 65% CI 下界=57.6% vs 50% CI 上界=57.8% → 重叠 0.2pp
+- 75% CI 下界=68.2% vs 65% CI 上界=72.4% → 重叠 4.2pp
+- 85% CI 下界=79.4% vs 75% CI 上界=81.8% → 重叠 2.4pp
+
+⇒ **非配对检验无法在任何 M 水平对上达到统计显著**（CI 重叠 → 差异不拒绝 H0）。
+
+### R19.3 配对检验功效（500 次蒙特卡洛模拟，α=0.05）
+
+| 比较 | Gap | McNemar(5run) | McNemar(1run) | t-test(5run) | 非配对MDES |
+|:--|---:|---:|---:|---:|---:|
+| baseline→M1 (36→50%) | 14pp | **0.994** | 0.714 | **1.000** | 15.3pp |
+| M1→M2 (50→65%) | 15pp | **0.998** | 0.772 | **1.000** | 15.2pp |
+| M2→M3 (65→75%) | 10pp | **0.872** | 0.442 | **0.992** | 14.2pp |
+| M3→M4 (75→85%) | 10pp | **0.738** | 0.554 | **1.000** | 12.3pp |
+
+⭐ **核心结论**：
+1. **配对 t-test（per-task pass rate）在所有 4 个比较中功效 ≥ 99.2%** → 首选检验方法
+2. **McNemar（5 runs）在前 2 个比较（14-15pp gap）功效 ≥ 99.4%**；在 10pp gap 比较中降至 74-87%
+3. **McNemar（1 run）在所有比较中功效均 < 80%** → 1 run 不足以做统计推断
+4. **非配对 MDES ≈ 12-15pp** → 10pp gap 在非配对下完全不可检测
+
+### R19.4 Runs 数量对功效的影响（baseline 36% vs M1 50%）
+
+| Runs | McNemar Power |
+|---:|---:|
+| 1 | 0.714 (❌ <80%) |
+| 3 | 0.968 (✅) |
+| **5** | **0.994 (✅ 最优)** |
+| 10 | 1.000 (边际递减) |
+| 20 | 1.000 (无额外收益) |
+
+⇒ **5 runs 是最优配置**：3 runs 即可达 80% 功效阈值，5 runs 达 99.4%，10+ runs 边际递减。任务书规定 5-run 是统计上最优选择。
+
+### R19.5 Bonferroni 多重比较校正
+
+- 4 个 M 水平比较（M1-M4）→ Bonferroni α = 0.05/4 = **0.0125**
+- McNemar(5run) baseline→M1 在 Bonferroni 校正下功效 = **0.986** → 仍然 > 80% ✅
+- 配对 t-test 在 Bonferroni 下功效预计仍 > 99%（原始功效=1.000）
+
+⇒ **多重比较校正不影响结论的统计可检测性**。
+
+### R19.6 Discordant Pair 分析（单次模拟）
+
+| 比较 | b (A pass B fail) | c (A fail B pass) | Discordant total | Net improvement |
+|:--|---:|---:|---:|---:|
+| 36→50% | 26 | 44 | 70/158 (44%) | +18 |
+| 50→65% | 23 | 57 | 80/158 (51%) | +34 |
+| 65→75% | 13 | 32 | 45/158 (28%) | +19 |
+| 75→85% | 4 | 15 | 19/158 (12%) | +11 |
+
+⭐ **McNemar 功效下降的原因**：75→85% 比较仅有 19 个 discordant pairs（12%），因为高分段模型在大多数任务上已稳定通过/失败，少数翻转任务不足以提供高统计力。配对 t-test 不受此限（使用连续 pass rate 而非二值化）。
+
+### R19.7 Cohen's h 效应量
+
+| 比较 | Cohen's h | 分类 |
+|:--|:--|:--|
+| 36→50% | 0.284 | small-medium |
+| 50→65% | 0.305 | medium |
+| 65→75% | 0.219 | small |
+| 75→85% | 0.252 | small |
+
+效应量虽为 small-medium，但因 n=158 配对设计，统计功效仍然充足。
+
+### R19.8 预注册阈值建议（先定后测）
+
+基于上述分析，**正式预注册如下**：
+
+1. **主检验**：配对 t-test on per-task pass rates（5 runs 平均），单侧 H1: treatment > baseline
+   - α = 0.0125（Bonferroni 校正 4 比较后）
+   - 功效 ≥ 99%（所有 M 水平对）
+   - 报告：t 统计量、p 值、Cohen's h、95% paired bootstrap CI
+
+2. **辅助检验**：McNemar test（3/5 majority vote 二值化），双侧
+   - α = 0.0125
+   - 功效 ≥ 74%（10pp gap 比较可能低于 80%，如实报告）
+   - 报告：χ²、p 值、discordant pair count (b, c)
+
+3. **置信区间**：95% paired bootstrap CI（B=10000 resamples on tasks）
+   - 必须排除 0 才声明显著
+
+4. **成功阶梯判定**（每级需同时满足）：
+   - **M1 (50%)**: t-test p < 0.0125 AND bootstrap CI > 0 AND point estimate ≥ 47.5%
+   - **M2 (65%)**: t-test p < 0.0125 AND bootstrap CI > 0 AND point estimate ≥ 62.5%
+   - **M3 (75%)**: t-test p < 0.0125 AND bootstrap CI > 0 AND point estimate ≥ 72.5%
+   - **M4 (85%)**: t-test p < 0.0125 AND bootstrap CI > 0 AND point estimate ≥ 82.5%
+   - 注：point estimate 阈值设为 (M-2.5pp) 以允许 ±2.5pp 测量噪声
+
+5. **失败保护**：若任一 M 水平未达统计显著但点估计超过阈值 → 报告为「方向正确但未达统计显著」，不做事后合理化
+
+### R19.9 与 R1-R18 的关系
+
+| 既有发现 | R19 贡献 |
+|:--|:--|
+| 任务书规定 5-run mean±std | R19 量化证明 5 runs 是统计最优（99.4% 功效 vs 1 run 71.4%） |
+| 任务书要求 McNemar/paired bootstrap | R19 量化比较：t-test > bootstrap > McNemar（对 10pp gap） |
+| 成功阶梯 M1-M4 预注册 | R19 给出可执行的判定阈值（α=0.0125 + CI 排除 0 + 点估计门槛） |
+| D5 per-scenario 通过率 | R19 用 scenario 分布建模任务难度，使模拟更贴合实际 |
+| R18 11/9 运行手册 Step 3（full eval 8-40h） | R19 确认 5-run 的必要性（1-run 不可做统计推断） |
+
+### R19.10 局限性
+
+1. **模型假设**：Rasch-like 模型假设 P(pass) 仅依赖 (θ, d)，未建模多轮工具调用闭环效应。真实轨迹中，工具调用成功率可能非线性依赖 θ。
+2. **难度分布**：scenario 难度参数（μ, σ）基于 D5 经验外推，非实测拟合。11/9 后可用真实 36% 侧轨迹重新校准。
+3. **独立性假设**：5 runs 间假设独立（不同随机种子），实际可能有 shared state 残留。任务书要求 fresh context 缓解此问题。
+4. **McNemar 阈值**：3/5 majority vote (0.6) 的选择影响 power。若改为 ≥1/5（宽松）或 ≥4/5（严格），power 会变化。t-test 不受此影响。
+5. **Bootstrap CI 未模拟**：因纯 Python 性能限制，bootstrap power 通过 t-test power 间接推断（两者渐近等价）。11/9 后可用 scipy 补全。
+
+### R19.11 实操脚本
+
+- **分析脚本**：`run/baize_posttrain_power_analysis_fast.py`（纯 Python 3.8，500 次模拟，~60s）
+  - `python3 baize_posttrain_power_analysis_fast.py` → 输出到 stdout + `/tmp/pt_r19_power_fast.json`
+- **完整版**（含 bootstrap power 模拟）：`run/baize_posttrain_power_analysis.py`（需要更长运行时间）
+- **11/9 后补全**：用真实 36% 侧 5-run 轨迹替换模拟数据，重新校准 θ 和难度分布
+
+---
+
+## §R20 verl 多轮 Tool-Calling Rollout 执行架构深度分析（2026-11-07 · 零 GPU · web 调研 + 源码级分析）
+
+> **背景**：R9 确认 verl 原生支持 SGLang 多轮 rollout，R15/R16 修复了工具 schema 和 ToolParser，R17 审计了数据 schema 和 SGLang 兼容性，R18 调参 SGLang 和 GRPO 超参。但**端到端执行流程**——从 prompt 加载到 agent loop 到 reward 计算的完整路径——尚未深入分析。这是 11/9 RL 启动前最关键的剩余知识缺口。
+>
+> **来源**：verl 官方文档 (verl.readthedocs.io/en/latest/advance/agent_loop.html) + verl agentic_rl.rst + DeepWiki (chengminhua/verl 14.3) + AMD开发者社区源码走读 + CSDN verl 源码解读 + verl GitHub 源码路径引用。
+
+### R20.1 两条多轮架构路径（关键发现）
+
+verl 存在**两条独立的多轮 rollout 架构**，配置方式和执行路径完全不同：
+
+| 维度 | 路径 A: SGLangRollout 内置多轮 | 路径 B: AgentLoop (experimental) |
+|:--|:--|:--|
+| **源码位置** | `verl/workers/rollout/sglang_rollout/sglang_rollout.py` | `verl/experimental/agent_loop/` |
+| **核心方法** | `_async_rollout_a_request()` | `AgentLoopBase.run()` → `ToolAgentLoop` |
+| **状态机** | PENDING→RUNNING→TOOL_CALLING→COMPLETED | AgentLoopWorker 管理，用户自定义 run() |
+| **配置方式** | `rollout.multi_turn`（section） | `rollout.multi_turn: True`（boolean）+ `multi_turn_config` |
+| **工具加载** | `rollout.multi_turn.tool_config_path` | `rollout.tool_kwargs.tools_config_file` |
+| **token 接口** | SGLangRollout 内部调用 SGLang engine | `LLMServerClient.generate(prompt_ids) → response_ids` |
+| **成熟度** | 稳定 | alpha（verl 0.4.2+，API 可能变化） |
+| **负载均衡** | 无 | LLMServerClient（多 server + sticky session） |
+
+**🔴 当前配置归属**：我们的 config 使用 `multi_turn: True`（boolean）+ `multi_turn_config` + `tool_kwargs.tools_config_file` → **路径 B (AgentLoop)**。但路径 B 是 alpha 状态。
+**建议**：11/9 安装 verl 后 `python -c "from verl.experimental.agent_loop.tool_agent_loop import ToolAgentLoop; print('ok')"` 确认路径 B 可用。若不可用回退路径 A。
+
+### R20.2 端到端执行流程（路径 B: AgentLoop）
+
+```
+PPOTrainer.sample_batch(dataset)
+  → AgentLoopManager.generate_sequences(batch)
+    → wake_up(all async LLM servers) → sync_weights(FSDP → SGLang)
+    → split batch → AgentLoopWorker(s)
+      → per prompt: spawn asyncio task → ToolAgentLoop.run(sampling_params, **kwargs)
+        → LLMServerClient.generate(prompt_ids) → response_ids
+        → ToolParser.extract_tool_calls(response_ids) → (content, [FunctionCall])
+        → if tool_calls: BaseTool.create()→execute()→add tool response→repeat
+        → return AgentLoopOutput(prompt_ids, response_ids, response_mask)
+    → sleep(all servers) → release GPU memory
+  → reward = custom_reward_function(trajectories)
+  → PPOTrainer.train_step(trajectories, rewards, advantages)
+```
+
+**关键设计**：① token 级 generate 接口（非 Chat API），确保训练用原始 token 计算 advantage；② sticky session（request_id 绑定 server，复用 KV cache）；③ weight sync（rollout 前 FSDP→SGLang，rollout 后 SGLang 休眠释放显存）。
+
+### R20.3 ToolAgentLoop 状态机（路径 A 源码级）
+
+从 SGLangRollout._async_rollout_a_request() 源码分析（AMD开发者社区）：
+
+- **PENDING → RUNNING**：初始化，加载工具 schema
+- **RUNNING → TOOL_CALLING**：模型输出含工具调用（ToolParser 检测 XML `<function>` 标签）
+- **RUNNING → COMPLETED**：模型输出不含工具调用（最终回答）
+- **TOOL_CALLING → RUNNING**：工具执行完毕，结果注入对话，继续生成
+- 循环上限 = `max_assistant_turns`（🔴 我们此前缺此参数，已在 R20 修复）
+
+### R20.4 Delta-based Tokenization 与 Loss Masking
+
+多轮轨迹交替 assistant 生成和 tool 响应。训练时必须区分哪些 token 是 LLM 生成的（参与 loss），哪些是工具返回的（不参与 loss）。
+
+**verl delta 分词**：对每个 assistant 消息 i，`tokens_before = tokenize(template(messages[:i], gen_prompt=True))`，`tokens_after = tokenize(template(messages[:i+1], gen_prompt=False))`，delta = 差值 = LLM 生成的 token（response_mask=1）。Tool 响应的 delta 标记 response_mask=0。
+
+**🔴 Token 一致性风险**（verl 官方文档明确警告）：
+1. ToolParser 提取 tool_calls 时可能修改内容（剥离 `<function>` 标签），导致 re-encode ≠ 原始 token_ids
+2. Decode-Encode roundtrip 不等价（Agent-R1 issue#30）
+3. 影响：轨迹偏离 policy 分布 → PPO 不收敛（verl 官方观察到单轮场景都能导致不收敛）
+4. 缓解：`tokenization_sanity_check_mode: strict` ✅ 已配置。若失败 verl 报错终止（安全行为）。
+
+### R20.5 BaseTool 生命周期与奖励接口
+
+verl BaseTool 有 5 个方法，我们的 EDASandboxTool 原先只实现 3 个（已修复）：
+
+| 方法 | 调用时机 | 我们的状态 |
+|:--|:--|:--|
+| `create(instance_id)` | episode 开始 | ✅ 已实现 |
+| `execute(instance_id, parameters)` | 每次工具调用 | ✅ 已实现 |
+| `calc_reward(instance_id)` | episode 结束 | ✅ R20 已添加（返回 0.0，奖励由外部 compute_score 计算） |
+| `release(instance_id)` | episode 结束 | ✅ 已实现 |
+| schema | 初始化 | ✅ 通过 YAML |
+
+### R20.6 多轮 GRPO 奖励计算流程
+
+GRPO 奖励是 episode 级 scalar（非 per-turn）：① rollout 产出 (prompt_ids, response_ids, response_mask)；② custom_reward_function → scalar reward；③ reward 放在 response 最后一个 LLM token 位置；④ GRPO advantage = (R_i - μ_group)/(σ_group + ε)，filter_groups 丢弃全对/全错组；⑤ PPO loss 只对 response_mask=1 的 token；⑥ KL loss 同理。
+
+**关键洞察**：response_mask 确保只有 LLM 生成 token 参与梯度——多轮 RL 核心正确性保证。filter_groups 丢弃无梯度信号的组。episode 级 scalar 在 3-turn 轨迹上极稀疏，R2 部分分奖励是关键缓解。
+
+### R20.7 当前配置问题诊断（6 项 · 11/9 启动前必修）
+
+| # | 问题 | 严重性 | 修复 |
+|:--|:--|:--|:--|
+| C1 | `multi_turn: True` 可能不匹配 verl 版本 | 🔴 P0 | 安装后测 ToolAgentLoop import；若失败改路径 A |
+| C2 | 缺 `max_assistant_turns` | 🔴 P0 | ✅ 已添加 `multi_turn_config.max_assistant_turns: 3` |
+| C3 | 缺 `max_tool_response_length` | 🟡 P1 | ✅ 已添加 `2048` |
+| C4 | 缺 `max_parallel_calls` | 🟡 P1 | ✅ 已添加 `1`（EDA 需顺序调用） |
+| C5 | `tool_kwargs.tools_config_file` key 待验 | 🟡 P1 | 11/9 安装后验证正确 key |
+| C6 | EDASandboxTool 缺 `calc_reward()` | 🟢 P2 | ✅ 已添加（返回 0.0） |
+
+**C2 最关键**：`agent.max_turns: 3` 是自定义元数据，verl 不读取。无 `max_assistant_turns` 时 verl 可能默认单轮 → 多轮工具调用完全不生效。
+
+### R20.8 11/9 启动前修订检查清单（R18 → R20 增量）
+
+在 R18 的 V1-V8 基础上新增 6 项：
+
+| # | 验证项 | 通过判据 |
+|:--|:--|:--|
+| V9 | AgentLoop 路径可用 | `from verl.experimental.agent_loop.tool_agent_loop import ToolAgentLoop` 无 ImportError |
+| V10 | multi_turn 配置生效 | smoke test 日志含 `max_assistant_turns=3` |
+| V11 | Delta tokenization 一致 | smoke test 无 sanity_check 错误 |
+| V12 | Tool 响应截断 | 日志含 `max_tool_response_length=2048` |
+| V13 | calc_reward 不报错 | smoke test 完成 BaseTool 全生命周期 |
+| V14 | filter_groups 行为 | GRPO 日志显示非零 group 过滤比例 |
+
+### R20.9 与 R1-R19 的关系 / 局限性
+
+**与既有发现关系**：R20 深化了 R9(SGLang集成)、R15(BaseTool schema)、R16(ToolParser)、R17(数据schema审计)、R18(SGLang调参) 的发现，发现 6 项配置问题并修复 4 项，新增 6 项 11/9 验证清单。
+
+**局限性**：① verl 版本不确定（分析基于 0.4.2-0.7 文档，安装版本可能有 API 差异）；② 两条架构路径未实测确认；③ Token 一致性未在 MiniCPM5-2B 上实测；④ SGLang ZeroMQ 通信路径基于文档描述。

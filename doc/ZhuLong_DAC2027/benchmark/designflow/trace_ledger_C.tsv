@@ -346,4 +346,4 @@
 1793760774987_u7mv3	alan3zh	hfeg0pkn001	324	pg_layout	case	EDA-Eval-DesignFlow-InnovusFpLogDiag-001	2026-11-07 18:09	
 1792736016983_y42xz	yzwang	hfeg0pkn001	48	layout_virtuoso	case	EDA-Eval-DesignFlow-NoOverlapPcellLayerParse-001	2026-11-07 18:48	
 1793271534868_4c4el	yzwang	hfeg0pkn001	90	layout_virtuoso	case	EDA-Eval-DesignFlow-SwitchGatedSpacePatternGen-001	2026-11-07 19:38	
-1793845474118_uno3l	ethan5c	hfeg0pkn005	115	layout_aether	claimed		2026-11-07 19:24	
+1793845474118_uno3l	ethan5c	hfeg0pkn005	115	layout_aether	case	EDA-Eval-DesignFlow-InvLayoutGen-001	2026-11-07 20:05	

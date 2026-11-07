@@ -397,3 +397,16 @@ vbxlf.messages.json	jason17w	hfeg0pnd002	262	spice_sim	parked		2026-11-05 12:30	
 1790575149766_y8vwx					parked		2026-11-07 19:52	alenxu@pkn003: 首轮'2' = 单字符菜单选择, 无意图
 1793668468329_3qaax					parked		2026-11-07 19:52	mwxi@pkn002: Disk_Usage scan_os V5 脚本编辑 = Python disk工具, 非spice(spice匹配假阳性)
 1791961257165_nohd9					parked		2026-11-07 19:52	xinweif@pkn005: '你可以干什么' = trivial greeting
+1790229492123_m7hxu	cynthiaz	hfeg0pkn005	409	spice_sim	case	EDA-Eval-DesignFlow-DblTailSlicerDeckGen-001	2026-11-07 20:29	
+1791509106344_8zuer					parked		2026-11-07 20:29	consulting: 学习分析sp文件组织结构+总结仿真方案
+1790735750467_9wlpy					parked		2026-11-07 20:29	consulting: 分析run.py+解释CPM流程
+1783578981323_btryq					parked		2026-11-07 20:29	non-spice FP: 优化.bashrc
+1790906016531_6iesh					parked		2026-11-07 20:29	non-spice FP: LSF queue proj tagging
+1793544152898_p8z88					parked		2026-11-07 20:29	continuation: 整理代码+生成html报告
+1793165088136_0suhi					parked		2026-11-07 20:29	consulting: Q&A GUI CPU核数/单进程
+1790133815976_z9yjw					parked		2026-11-07 20:29	layout continuation: BCenterCA降阻迭代 非 spice
+1789526951493_wa1uw					parked		2026-11-07 20:29	teaching: 阐述6-5ys/教会我仿真目的
+1790130937510_jg6af					parked		2026-11-07 20:29	non-spice FP: collect_env_info.sh
+1782728857158_05p8p					parked		2026-11-07 20:29	troubleshooting: Virtuoso未连接排查
+1790751104057_raf93					parked		2026-11-07 20:29	run-regression skill 模板替换queue
+1793586676522_9kzwd.messages.json	ericw	hfhds201	1017	spice_sim	case	EDA-Eval-DesignFlow-CovMissBinExtract-001	2026-11-07 21:04	

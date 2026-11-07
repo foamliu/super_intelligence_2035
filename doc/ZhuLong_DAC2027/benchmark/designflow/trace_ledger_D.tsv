@@ -1273,3 +1273,5 @@ tjzn5					parked		2026-11-07 12:29	env Q&A + skill-creator usage (#352 peek weak
 1792668123134_0oeb7	colinxu	10.129.2.18	124	schematic_netlist	case	EDA-Eval-DesignFlow-DelApiProbePlan-001	2026-11-07 18:37	
 1791957763339_dhgxy	e0039602	10.129.8.136	91	schematic_netlist	case	EDA-Eval-DesignFlow-NetlistSubstPlan-001	2026-11-07 19:05	
 1793524556149_f86ll.messages.json	sinanz	hfeg0pkn005	655	schematic_netlist	case	EDA-Eval-DesignFlow-DelayChainCmp-001	2026-11-07 19:36	
+1793252859649_p5x6n	e0023936	10.129.32.75	92	waveform	case	EDA-Eval-DesignFlow-CosWaveWdf-001	2026-11-07 20:45	
+1793847350187_pspw5.messages.json	t0002616	hfeg0pkn004	29	waveform	case	EDA-Eval-DesignFlow-WrCornerCmp-001	2026-11-07 20:54	
