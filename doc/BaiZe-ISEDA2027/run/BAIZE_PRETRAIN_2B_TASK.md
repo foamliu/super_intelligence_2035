@@ -1,5 +1,43 @@
 # BAIZE_PRETRAIN_2B_TASK.md
 
+### 🔴 运维令 · 2026-11-07 09:1x（**11w 检查点 8 集评测：去掉 `--limit 100` 改全量题目 + 扫不同线程数看 EDA 效率**）· 用户直令 · 最高优先 · ⚠️ 未完成
+
+> **用户原话**：「让 pretrain 开始 8 集评测 11w 这个检查点。以前的评测是否是 limit 100，现在去掉这个限制，用全量题目评测，看看不同线程数下的 EDA。这台机器有 224 核，基线是 8 线程。」
+>
+> ⚠️ **用户补充：「可以略作提醒但不要微操」** —— 下面只是现状核对与风险提示，**具体怎么跑、先跑哪档、跑几档、要不要同时扫 batch_size，你自己定**，不用回来逐条请示。
+
+**① 目标**
+1. 用 **11w 检查点**（`iter_0110000` 或 `iter_0112000`，以盘上实际存在者为准）跑 **8 集**（`arc_challenge, arc_easy, boolq, hellaswag, openbookqa, piqa, sciq, winogrande`）。
+2. **去掉 `--limit 100`**，改**全量题目**。
+3. **扫不同 `OMP_NUM_THREADS`**，看这台 224 核机器上 CPU 推理的吞吐/效率曲线。**基线 = 8 线程**（现有脚本默认值）。
+
+**② 现状核对（运维侧预查，供参考）**
+- 8 集任务名列表在 `run/baize_cpu_lmeval.sh:24`；`--limit` 由 `run/baize_cpu_eval_all.sh` 传入。
+- **⚠️ 已知障碍**：`baize_cpu_lmeval.sh:45-46` 有硬钳制
+  ```bash
+  export OMP_NUM_THREADS="${OMP_NUM_THREADS:-4}"
+  if [[ "${OMP_NUM_THREADS:-4}" -gt 8 ]]; then export OMP_NUM_THREADS=8; fi
+  ```
+  **这行会把 >8 的线程数压回 8**，不处理的话扫线程是无效的。是改脚本还是绕过直调 `cpu_lmeval_run.py`，你决定。
+- 全量样本量级：8 集合计 **≈21,465 条**（hellaswag 10042 / boolq 3270 / arc_easy 2376 / piqa 1838 / winogrande 1267 / arc_challenge 1172 / sciq 1000 / openbookqa 500）。**原 `--limit 100` × 8 集只有 800 条 ⇒ 放大 ≈27 倍**，请先按单条实测耗时估总时长，再决定扫几档。
+- `--batch_size 1` 当前写死；**batch_size 与线程数有交互**，是否同时扫由你判断。
+
+**③ 风险提示（不是禁令，自己权衡）**
+- **S1 正在跑**（iter ~113800/700000，16 卡）。CPU 评测吃满核心可能抢 S1 dataloader 的 CPU。
+- **旧运维令 11-02 有「单进程 %cpu > 8000%（=80 核）立杀」的条款**。本令**允许你超过 80 核做线程扫描**（这是用户明确要做的事），但这属于**本令的局部豁免**：仍需保证 S1 不掉速、不 OOM；若观察到 S1 iter 时间明显劣化（现 ~7.1s/it），**降档或停测**并记录。
+- 高线程数下内存也会涨，注意别把机器打爆。
+
+**④ 交付**
+- 每档线程的：`tasks_done` / wall-clock / 每档 8 集各自分数 + Avg / 实测 tokens/s 或 samples/s。
+- **中文 HTML 报告**（`reports/report_pretrain_cpu_eval_thread_scaling_zh.html`，单文件 0 script 0 外链）：含线程数 vs 吞吐/时长的曲线、与 8 线程基线的加速比、以及**分数是否随线程数变化**（应不变，若变了说明有数值问题，须查）。
+- 🚫 不同线程数的**分数**原则上应一致（只是算得快慢）；若出现差异必须查清原因再写结论。
+- 结果落 `lm_eval_results/`，🚫 结果 JSON 不入库。
+
+> **完成标记**：报告交付 + 至少覆盖 8 线程基线及 ≥2 档更高线程 ⇒ 本行改 `✅ 已交付`；未完成 ⇒ `WAITING: 0`。
+
+---
+
+
 > 📦 §用户令 2026-11-03 22:0x（llama.cpp pilot）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：✅已执行 pilot=FAIL(commit 9cdc4469f/0d1b0567e, 报告report_pretrain_llamacpp_pilot_zh.html 8422B)，根因=GGUF转换Duplicated key覆写hybrid元数据, 速度7.03x达标但Δacc16-18pp, 保留HF float32路线等用户令。需要时再读。
 
 > 📦 §运维令 2026-11-02 19:51（S1 重启事故+CPU降载）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md「归档 2026-11-04 第四批」节；**结论**：✅ S1 18:39 SIGKILL 后 19:51 从 ckpt58000 续跑恢复，训练在跑；CPU降载纪律(OMP≤8/nice19/禁pkill)已并入 11-02 11:1x 与 11-04 09:3x 令。需要时再读。
