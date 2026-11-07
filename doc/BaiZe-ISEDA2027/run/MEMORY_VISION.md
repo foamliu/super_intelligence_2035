@@ -1,6 +1,8 @@
 WAITING: 0
 
-> 🆕 **【wake #878 · 2026-11-07 16:51】监控轮·🟢v4 RFT C-eval 30/100=40.0%>B=34.0%(首现正信号!)·v3 D-ctrl step15/40。** git pull(无新令)·research日报2026-11-07无vision条目(忽略)·体积 TASK31.2KB✓/MEMORY16.4KB✓。**v3**(PID2165712,etimes~4.25h,pcpu=2885%,stat=RNl存活):Phase4 **D-ctrl step15/40** avgR=0.3012(ETA~6488s≈1.8h)→D-eval→v3全链路DONE≈18:40。C(GRPO)=25.0%<B(SFT)=34.0%确认(第3轮负)。**v4**(PID3843708,etimes~1.43h,pcpu=4153%,stat=RNsl存活):Phase3 RFT epoch3/3 DONE→**C-eval 30/100 acc=40.0%**(>B=34.0%,**首现正信号!**)→C-eval剩余~10min(~17:02完成)→D-ctrl RFT控制(~45min)→Phase5 stats→v4全链路DONE≈17:50。B(SFT)=34.0%·collect 240/161succ(67.1%)·loss=0.2473单调↓。Load安全。**本轮动作**:①确认两进程存活+进度(v4 C-eval 30/100=40.0%正信号,v3 D-ctrl step15/40)②查research日报(无vision条目,忽略)③体积自检。**下一步**:等v4 C-eval完(~17:02)→D-ctrl→v4全链路DONE(~17:50)→等v3全链路DONE(~18:40)→两experiment_results.json齐→gen_cpu_rl_v3_report.py→最终HTML+McNemar/bootstrap统计+EXPERIMENTS§22+commit。**未完成指令:有**(v3+v4运行中)⇒**WAITING:0**。📦体积:TASK=31.2KB✓/MEMORY=16.4KB✓。
+> 🆕 **【wake #879 · 2026-11-07 16:5x】监控轮·🟢v4 RFT C-eval 70/100=37.1%>B=34.0%(正信号维持)·v3 D-ctrl step15/40不变。** git pull(无新令)·research日报2026-11-07无vision条目(grep vision/波形/waveform=0命中,忽略)·体积 TASK31.2KB✓/MEMORY16.8KB✓。**v3**(PID2165712,etimes~4.35h,pcpu=2884%,stat=RNl存活):Phase4 **D-ctrl step15/40** avgR=0.3012(ETA~6488s≈1.8h)→D-eval→v3全链路DONE≈18:40。C(GRPO)=25.0%<B(SFT)=34.0%确认(第3轮负)。**v4**(PID3843708,etimes~1.5h,pcpu=4157%,stat=RNsl存活):Phase3 **C-eval 70/100 acc=37.1%**(>B=34.0%,🟢正信号维持!曲线30.0/35.0/40.0/35.0/36.0/35.0/37.1)→剩余~30题(~260s,~17:02完成)→Phase4 D-ctrl RFT控制(~45min)→Phase5 stats→v4全链路DONE≈17:50。B(SFT)=34.0%·collect 240/161succ(67.1%)·loss=0.2473单调↓。Load安全。**本轮动作**:①确认两进程存活+进度(v4 C-eval 70/100=37.1%正信号维持,v3 D-ctrl step15/40)②查research日报(无vision条目,忽略)③体积自检。**下一步**:等v4 C-eval完(~17:02)→D-ctrl→v4全链路DONE(~17:50)→等v3全链路DONE(~18:40)→两experiment_results.json齐→gen_cpu_rl_v3_report.py→最终HTML+McNemar/bootstrap统计+EXPERIMENTS§22+commit。**未完成指令:有**(v3+v4运行中)⇒**WAITING:0**。📦体积:TASK=31.2KB✓/MEMORY=16.8KB✓。
+
+> 📦 wake #878（监控轮·v4 RFT C-eval 30/100=40.0%>B=34.0%(首现正信号)·v3 D-ctrl step15/40·2026-11-07 16:51）已归档 → daily-memories-vision/2026-11-07.md；**结论**：两实验健康·v4正信号初现。需要时再读。
 
 > 📦 wake #877（监控轮·v4 RFT epoch3/3完成·v3 D-ctrl step10/40·2026-11-07 16:46）已归档 → daily-memories-vision/2026-11-07.md；**结论**：两实验健康·v4 RFT训练完成·v3控制组运行中。需要时再读。
 
@@ -93,10 +95,10 @@ WAITING: 0
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | 🟢 **波形 RL CPU 阶段2 推进中**：v3(GRPO 40step/gs8/period-only)Phase4 D-ctrl step15/40运行中·C=25.0%<B=34.0%(第3轮负)·**v4(RFT)并行**Phase3 C-eval 30/100=40.0%>B=34.0%(🟢首现正信号!)→C-eval进行中·数据集调研完成(HF+GitHub+arXiv三源无图像波形VQA集)·技术栈三步冒烟交付(LLaMA-Factory+KTransformers不可行,peft直训退路验证)·Qwen3.5-2B(1.88B)+LoRA 69.7M。**WAITING: 0** |
+| PHASE | 🟢 **波形 RL CPU 阶段2 推进中**：v3(GRPO 40step/gs8/period-only)Phase4 D-ctrl step15/40运行中·C=25.0%<B=34.0%(第3轮负)·**v4(RFT)并行**Phase3 C-eval 70/100=37.1%>B=34.0%(🟢正信号维持!)→C-eval进行中·数据集调研完成(HF+GitHub+arXiv三源无图像波形VQA集)·技术栈三步冒烟交付(LLaMA-Factory+KTransformers不可行,peft直训退路验证)·Qwen3.5-2B(1.88B)+LoRA 69.7M。**WAITING: 0** |
 | WAITING | 0 |
 | 已完成 | advantage方差诊断(wake#838,判定PARTIAL) · 阶段1 SFT验收PASS(wake#802) · 阶段1 SFT CPU训练完成step3000(wake#802) · CPU端到端训练循环验证7/7 PASS(wake#741) · 数据泄漏验证+阶段1就绪报告HTML(wake#731) · 全管线就绪审计(wake#714) · GRPO链式启动器修复+启动(wake#626) · GRPO CPU冒烟测试PASS(wake#622) · 2B文本骨干提取1.72B(wake#620) · 数据集均衡化9013条(wake#618) · WaveQA-RL oracle 300题(wake#614) · 波形RL阶段0 YELLOW(wake#609) · 论文改稿(wake#437~#442) · 波形RL计划书(wake#435) · OCR合成10M(wake#275) · ArmE-R2/ArmD-R2 全链路 |
-| 当前动作 | **wake#878 v3+v4并行运行监控**：v3(GRPO)PID2165712 Phase4 **D-ctrl step15/40**(avgR=0.3012,ETA~1.8h→~18:40)·C(GRPO)=25.0%<B(SFT)=34.0%确认(第3轮负)。v4(RFT)PID3843708 Phase3 **C-eval 30/100=40.0%**(>B=34.0%,🟢首现正信号!)→C-eval进行中(~17:02完成)→D-ctrl RFT控制→全链路DONE~17:50。两实验健康。 |
+| 当前动作 | **wake#879 v3+v4并行运行监控**：v3(GRPO)PID2165712 Phase4 **D-ctrl step15/40**(avgR=0.3012,ETA~1.8h→~18:40)·C(GRPO)=25.0%<B(SFT)=34.0%确认(第3轮负)。v4(RFT)PID3843708 Phase3 **C-eval 70/100=37.1%**(>B=34.0%,🟢正信号维持!曲线30/35/40/35/36/35/37.1)→C-eval进行中(~17:02完成)→D-ctrl RFT控制→全链路DONE~17:50。两实验健康。 |
 | 下一步 | ①v4 C-eval完(~17:02)→D-ctrl RFT控制→Phase5 stats→v4全链路DONE(~17:50) ②v3 Phase4 D-ctrl完→D-eval→v3全链路DONE(~18:40) ③两experiment_results.json齐→gen_cpu_rl_v3_report.py→最终HTML+McNemar/bootstrap统计+EXPERIMENTS§22+commit ④若v4正信号保持→RFT方向有效;若v3+v4均不显著→3轮无提升,考虑课程学习/多目标/过程奖励/换任务定义 |
 | 阻塞 | .12+.29 GPU全占（8×H100 96-100% util / ~75GB，pretrain baize2b ETA≈12/24-25）→ 阶段2 GRPO需GPU（GRPO chain PID1365749自带GPU-wait,释放后自动起训）·.17+.75 SSH不可达 |
-| 更新 | **2026-11-07 16:51 (wake #878)**: v3+v4监控轮·🟢v4 RFT C-eval 30/100=40.0%>B=34.0%(首现正信号!)·v3 D-ctrl step15/40·research日报无vision条目(忽略)·WAITING=0 |
+| 更新 | **2026-11-07 16:5x (wake #879)**: v3+v4监控轮·🟢v4 RFT C-eval 70/100=37.1%>B=34.0%(正信号维持)·v3 D-ctrl step15/40·research日报无vision条目(忽略)·WAITING=0 |
