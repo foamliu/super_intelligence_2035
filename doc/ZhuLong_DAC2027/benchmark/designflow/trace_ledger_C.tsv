@@ -335,4 +335,5 @@
 1793865643606_3b73c	m1wang	hfeg0pkn002	251	layout_aether	case	EDA-Eval-DesignFlow-HierCellPatternFind-001	2026-11-07 09:51	
 1790042369946_o1yhw	steveny	hfeg0pnd001	78	pg_layout	case	EDA-Eval-DesignFlow-PgRscalcAgentInline-001	2026-11-07 10:26	
 1793769280754_huszl	leozhao	hfeg0plg36	350	layout_aether	case	EDA-Eval-DesignFlow-CentroidPlaceAudit-001	2026-11-07 11:04	
-1791851758041_0d17g	xxchen	hfeg0pkn002	393	layout_aether	claimed		2026-11-07 11:37	
+1791851758041_0d17g	xxchen	hfeg0pkn002	393	layout_aether	case	EDA-Eval-DesignFlow-AntPatternConfigAudit-001	2026-11-07 12:04	
+1791941540422_1tao4	xxchen	hfeg0pkn002	294	physical_verify	case	EDA-Eval-DesignFlow-MaxAreaRatioSidewallSolver-001	2026-11-07 12:23	
