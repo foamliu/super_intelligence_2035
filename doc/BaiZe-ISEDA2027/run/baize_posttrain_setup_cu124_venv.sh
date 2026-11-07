@@ -203,9 +203,10 @@ echo 'torch==2.6.0+cu124' > /tmp/pt_torch_constraint.txt
 echo 'torchvision==0.21.0' >> /tmp/pt_torch_constraint.txt
 echo 'torchaudio==2.6.0' >> /tmp/pt_torch_constraint.txt
 # R27: Pin transformers==4.51.1 (SGLang 0.4.6.post1 pins this; newer versions need torch 2.7+)
+# R28 FIX: cachetools + openai are required by verl's async_server (used by SGLang rollout + PPO trainer)
 pip install -c /tmp/pt_torch_constraint.txt \
-    "ray[default]>=2.41.0" "accelerate" "codetiming" "datasets" "dill" "hydra-core" \
-    "numpy<2" "pandas" "peft" "pyarrow>=19.0.0" "pybind11" "pylatexenc" \
+    "ray[default]>=2.41.0" "accelerate" "cachetools" "codetiming" "datasets" "dill" "hydra-core" \
+    "numpy<2" "openai" "pandas" "peft" "pyarrow>=19.0.0" "pybind11" "pylatexenc" \
     "tensorboard" "tensordict<=0.6.2" "torchdata" "transformers==4.51.1" "wandb" "packaging>=20.0"
 
 # 8. 安装flash-attn（可选；可能编译失败，不影响主流程）
@@ -219,6 +220,13 @@ for pkg in torch sglang ray verl accelerate transformers; do
     echo -n "$pkg: "
     python -c "import $pkg; print($pkg.__version__)"
 done
+
+# R28: Verify verl critical path imports (cachetools + openai fix)
+echo ""
+echo "🔍 R28 验证 verl 关键路径导入..."
+python -c 'from verl.trainer.ppo.ray_trainer import RayPPOTrainer; print("✅ RayPPOTrainer")' 2>&1 || echo "❌ RayPPOTrainer import failed"
+python -c 'from verl.workers.rollout.sglang_rollout.sglang_rollout import SGLangRollout; print("✅ SGLangRollout")' 2>&1 || echo "❌ SGLangRollout import failed"
+python -c 'from verl.workers.rollout.async_server import AsyncLLMServerManager; print("✅ AsyncLLMServerManager")' 2>&1 || echo "❌ AsyncLLMServerManager import failed"
 
 # R26: Verify torch CUDA compat (torch 2.6.0+cu124 with driver 550.54.14)
 echo ""

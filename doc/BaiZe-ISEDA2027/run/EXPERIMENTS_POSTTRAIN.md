@@ -3659,3 +3659,98 @@ R26 将 torch 升级到 2.6.0+cu124（CUDA 12.4 的最高支持版本），但 S
 
 **结论**：cu124 venv 全栈就绪，11/9 GPU 释放后可直接 `bash baize_posttrain_launch_11_9.sh --step 2` 起跑 SGLang serve + 36% 基线复测。
 
+---
+
+## §R28 11/9 GPU 前夜全链路 Dry-Run 验证 + verl 关键路径缺失依赖修复（2026-11-08 wake76 · 零 GPU）
+
+> **目标**：GPU 到位前一天（11/8），对 11/9 启动序列做端到端 dry-run，发现并修复所有剩余阻塞项。
+> **结论**：✅ **全链路通过** — 启动脚本 dry-run 全路径 exists + 11 脚本语法全 PASS + venv 全栈验证通过 + 🔴 发现并修复 2 个 verl 关键路径缺失依赖（cachetools + openai）→ verl PPO trainer + SGLang rollout + async server 全部 import OK。
+
+### R28.1 验证方法论
+
+在 GPU 不可用条件下，对 11/9 启动序列做最大范围验证：
+
+| 验证维度 | 方法 | 覆盖范围 |
+|:--|:--|:--|
+| 启动脚本 dry-run | `bash baize_posttrain_launch_11_9.sh --dry-run` | Step 0-6 全路径，检查 venv/model/EDA base exists |
+| 脚本语法 | `bash -n baize_posttrain_*.sh` | 全部 11 个 shell 脚本 |
+| venv 全栈 | venv python import 各包 | torch/SGLang/verl/ray/transformers |
+| **verl 关键路径** | **逐模块 import** | **PPO trainer / SGLang rollout / async server** |
+| 数据资产 | `ls -lh` 逐文件 | 模型/158-case/RL parquet/SFT JSONL |
+| YAML 配置 | `yaml.safe_load` | verl RL 配置文件 |
+| GPU 状态 | `nvidia-smi` | 8×A40 占用情况 |
+
+### R28.2 启动脚本 Dry-Run 结果
+
+| 检查项 | 结果 |
+|:--|:--|
+| NAS_ROOT | /nas_data ✅ |
+| Venv | ~/code/verl_cu124_venv (exists) ✅ |
+| Model | /tmp/models/MiniCPM5-2B (exists) ✅ |
+| EDA Base | ~/code/eda_fastmcp (exists) ✅ |
+| Step 0-6 dry-run | 全部打印配方 ✅ |
+
+### R28.3 脚本语法验证（11 个脚本全 PASS）
+
+baize_posttrain_anneal.sh ✅ / contamination_gate.sh ✅ / eval.sh ✅ / launch_11_9.sh ✅ / loop.sh ✅ / minicpm5_diag.sh ✅ / paths.sh ✅ / preflight_check.sh ✅ / rl_grpo.sh ✅ / setup_cu124_venv.sh ✅ / sft.sh ✅
+
+### R28.4 Venv 全栈验证
+
+torch 2.6.0+cu124 CUDA True ✅ / SGLang 0.4.6.post1 launch_server --help ✅ / verl 0.4.0 import ✅ / ray 2.60.0 ✅ / YAML config 8 keys safe_load ✅
+
+### R28.5 🔴 verl 关键路径缺失依赖发现与修复（R28 核心发现）
+
+> **R28 最重要的发现**：R27 验证了 `import verl` 成功，但未验证 verl 的**关键训练路径**模块导入。R28 逐模块验证发现 2 个缺失依赖。
+
+**发现过程**：
+1. `from verl.workers.rollout.sglang_rollout.async_sglang_server import ...` → `ModuleNotFoundError: No module named 'cachetools'`
+2. 安装 cachetools → `from verl.workers.rollout.async_server import ...` → `ModuleNotFoundError: No module named 'openai'`
+3. 安装 openai → `from verl.trainer.ppo.ray_trainer import RayPPOTrainer` → ✅ OK
+
+**根因**：cachetools 和 openai 不在 verl 0.4.0 的 `install_requires` 中，是 SGLang rollout 路径的传递依赖。R27 只验证了顶层 `import verl`，未深入到子模块。
+
+**修复**：`pip install cachetools` (7.3.0) + `pip install openai` (3.46.0)。setup 脚本已更新（第 206-209 行加入两个包 + 新增 R28 验证段 3 个 import 检查）。
+
+**修复后验证**：RayPPOTrainer ✅ / SGLangRollout ✅ / AsyncLLMServerManager ✅ / AsyncSglangServer ✅（注意类名小写 g）
+
+### R28.6 数据资产验证
+
+MiniCPM5-2B config 704B ✅ / API_INFO_MERGED_V3.json 18M ✅ / 158-case 674K ✅ / RL JSONL 5.4M ✅ / RL Parquet 932K ✅ / SFT JSONL v1 18M ✅ / SFT JSONL v2 21M ✅ / SFT Parquet 2.8M ✅
+
+### R28.7 GPU 状态（11/8 前夜）
+
+8×A40 全被 SGLang Qwen3.8-27B 占用（44-45GB/46GB，util 0%）。11/9 释放 4 张后 post-train 可用 ~4×46GB。
+
+### R28.8 11/9 执行计划（最终版）
+
+| 步骤 | 命令 | 预计耗时 |
+|:--|:--|:--|
+| 0 | `bash baize_posttrain_setup_cu124_venv.sh --yes` | ~15min |
+| 1 | `bash baize_posttrain_preflight_check.sh` | ~2min |
+| 2 | `bash baize_posttrain_launch_11_9.sh --step 2 --gpu-ids 0,1,2,3` | ~4h（158×5run） |
+| 3 | `bash baize_posttrain_launch_11_9.sh --step 3 --gpu-ids 0,1,2,3` | ~10min |
+| 4 | `bash baize_posttrain_launch_11_9.sh --step 4` | ~1min |
+| 5 | `bash baize_posttrain_launch_11_9.sh --step 5 --gpu-ids 0,1,2,3` | ~30min（smoke） |
+
+快捷启动：`bash baize_posttrain_launch_11_9.sh --step 2-5 --gpu-ids 0,1,2,3`
+
+### R28.9 已知非阻塞项
+
+- pynvml FutureWarning：cosmetic，可 `pip install nvidia-ml-py` 消除（非必须）
+- SSH .15 超时：不阻塞主流程（已知 R23/R25），L3 等隧道通后
+- vLLM rollout 不可导入：不影响（已选 SGLang 作 rollout 后端）
+- SFT parquet 是 v1 格式：SFT 训练应用 v2 JSONL 重新转换
+
+### R28.10 11/9 就绪度最终评估
+
+| 检查项 | R27 后 | R28 后 |
+|:--|:--|:--|
+| verl PPO trainer import | ⬜ 未验证 | ✅ |
+| verl SGLang rollout import | ⬜ 未验证 | ✅ |
+| verl async server import | ⬜ 未验证 | ✅ |
+| cachetools | ❌ 缺失 | ✅ 已安装 |
+| openai | ❌ 缺失 | ✅ 已安装 |
+| setup 脚本 | R27 版本 | R28 版本（+cachetools+openai+验证段） |
+
+**结论**：R28 发现并修复了 verl 关键路径的 2 个缺失依赖（cachetools + openai），使 verl PPO trainer + SGLang rollout + async server 全部可导入。**若无 R28 dry-run，这两个缺失依赖将在 11/9 GPU 到位后首次启动 RL 训练时才被发现，浪费宝贵 GPU 时间。** 11/9 就绪度：全栈 ✅ + 关键路径 ✅ + 数据 ✅ + 脚本 ✅ + GPU ⬜（明天）。
+
