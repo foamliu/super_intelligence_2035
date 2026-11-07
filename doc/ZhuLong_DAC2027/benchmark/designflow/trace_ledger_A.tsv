@@ -207,3 +207,4 @@
 1793068260319_c7kk2.messages.json	xinweif	hfeg0pkn005	18	digital	case	EDA-Eval-DesignFlow-Lpddr5CbtTbGen-001	2026-11-07 19:50	LPDDR5 CBT testbench gen: verbatim USER#0 "帮我用verilog写一个验证LPDDR5 command bus training功能的测试激励"; assistant created full CBT env (pkg+DRAM+controller+test+top) with MR23 enter/exit, CA training patterns (walking-1/0/checkerboard/all-1/0), WCK CA sampling + DQ echo, self-check compare, CK/WCK diff clocks; 139msgs/71user-turns; gold=real .sv files fetched from /home/xinweif/lpddr5_cbt/ on hfeg0pkn005
 1788859959654_gs5dr.messages.json	lorikx	hfeg0pkn005	66	digital	case	EDA-Eval-DesignFlow-RtlSimfixVerdict-001	2026-11-07 20:31	
 1793859562375_2o0nk	e0046913	hfeg0pkn003	107	digital	case	EDA-Eval-DesignFlow-DcUpfPgDiagnose-001	2026-11-07 21:05	
+1793584339937_phh7f.messages.json	e0046913	hfeg0pkn003	46	digital	case	EDA-Eval-DesignFlow-RtlHierarchyVerdiGuide-001	2026-11-07 21:29	
