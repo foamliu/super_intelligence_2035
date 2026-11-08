@@ -28898,3 +28898,43 @@ done
 
 === 272 done ===
 ```
+
+---
+
+## RUN_ID 273 · 2026-11-08 22:56:22 · host=`whag0pgpuap12` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 273 | progress | $(date '+%F %T') | host=$(hostname) ==="
+SSH="ssh -o BatchMode=yes -o ConnectTimeout=6 -o StrictHostKeyChecking=no"
+$SSH 10.239.2.29 'set -u
+D=/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/lm_eval_results/gguf_iter_112000_full_v5_correct_binary
+for c in 0 1 2 3; do
+  echo "== chunk$c =="
+  ls -t $D/hellaswag_chunk$c/ 2>/dev/null | head -6 | sed "s/^/  /"
+  f=$(ls -t $D/hellaswag_chunk$c/*.log 2>/dev/null | head -1)
+  [ -n "$f" ] && { echo "  log=$f"; grep -oE "[0-9]+/[0-9]+ \\[[^]]*\\]" "$f" | tail -1 | sed "s/^/  /"; tail -1 "$f" | cut -c1-140 | sed "s/^/  /"; }
+done
+echo "== piqa =="; ls -t $D/piqa/ 2>/dev/null | head -5 | sed "s/^/  /"; f=$(ls -t $D/piqa/*.log 2>/dev/null | head -1); [ -n "$f" ] && tail -1 "$f" | cut -c1-140 | sed "s/^/  /"
+echo "== writer lines =="; grep -nE "json.dump|json.dumps|samples.*open|write\(" /tmp/baize_eval_v4/gguf_lmeval_run.py | cut -c1-120 | head -8'
+echo
+echo "=== 273 done ==="
+```
+
+**输出**
+```
+=== RUN_ID 273 | progress | 2026-11-08 22:56:22 | host=whag0pgpuap12 ===
+== chunk0 ==
+== chunk1 ==
+== chunk2 ==
+== chunk3 ==
+== piqa ==
+== writer lines ==
+176:            sys.stderr.write(
+210:            slot = zlib.crc32(json.dumps(ctx_ids).encode("utf-8")) % self.parallel
+298:        json.dump(results, f, indent=2, ensure_ascii=False, default=str)
+321:        json.dump(meta, f, indent=2, ensure_ascii=False)
+
+=== 273 done ===
+```
