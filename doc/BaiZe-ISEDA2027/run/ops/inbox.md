@@ -1,56 +1,79 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
-<!-- RUN_ID: 245 | TARGET: 29 -->
-## RUN_ID 245 — **杀掉卡死的 pretrain cline 会话**（用户直令 · 仅 kill 该进程，不动 loop/评测/训练）
+<!-- RUN_ID: 246 | TARGET: 12 -->
+## RUN_ID 246 — **训练变慢根因 A/B：冻结 eval client 10 分钟**（用户直令 2026-11-08 12:0x）
 
-> 用户原话（2026-11-05 22:4x）：「pretrain 那个 cline 会话 杀掉吧，时间太久不正常」
-> 依据：PID 3640274 已连续运行 **~2h53m**（21:13/22:09 两次探针均为 99.9% CPU、97 线程），日志认知停在「5/10、60k in progress」，实际已 8/10。
-> **护栏**：只按 `--data-dir /nas_train/app.e0031982/.cline_pretrain` 精确定位；先 `TERM`，4 s 不退再 `KILL`；🚫 不碰 loop(3165013) / pipeline(3543961) / llama-server / torchrun / S1。
+> 背景：S1 `Step Time` 从 6.93–7.04 s（11-06，eval 未启动）升到 7.9 s（11-08 11:42，eval 7 server+7 client 运行中）。
+> 假设：CPU eval 与训练 node_rank=0 共置 `.12`，同步 DP 被最慢 rank 拖住。
+> 做法：**只 SIGSTOP 7 个 `gguf_lmeval_run.py` 客户端**（不 kill、不动 llama-server / torchrun / watcher / ckpt），冻结 **600 s** 后自动 SIGCONT；脚本带 `trap`，异常退出也必恢复。
+> 预期：client 停 → server 无请求 → 机器 CPU/内存带宽让出 → `Step Time` 回到 ~7.0 s；恢复后回到 7.9 s。
+> 护栏：只匹配 `gguf_lmeval_run.py` 且排除 `cline|bun`（见 ops/README §8 硬教训 1）；不写任何训练侧文件。
 
 ```bash
 set -u
-echo "=== RUN_ID 245 | kill wedged pretrain cline | $(date '+%F %T') | host=$(hostname) ==="
-echo
-echo "[1] 定位目标（只认 .cline_pretrain data-dir）"
-CL=$(ps -eo pid,etimes,pcpu,rss,args --no-headers 2>/dev/null \
-     | grep -F 'data-dir /nas_train/app.e0031982/.cline_pretrain' | grep -v grep | awk '{print $1}' | head -1)
-echo "target_cline_pid=${CL:-none}"
-if [ -z "${CL:-}" ]; then
-  echo "NOT_FOUND: 目标已不在（可能已自行退出）——不执行 kill"
-else
-  ps -o pid,etimes,pcpu,rss,nlwp,args --no-headers -p "$CL" 2>/dev/null | cut -c1-220
-  echo "--- TERM ---"
-  kill -TERM "$CL" 2>&1 || echo "TERM_FAILED(rc=$?)"
-  sleep 4
-  if kill -0 "$CL" 2>/dev/null; then
-    echo "still alive after TERM -> KILL"
-    kill -KILL "$CL" 2>&1 || echo "KILL_FAILED(rc=$?)"
-    sleep 3
-  fi
-  if kill -0 "$CL" 2>/dev/null; then echo "RESULT=STILL_ALIVE"; else echo "RESULT=KILLED_OK"; fi
-fi
-echo
-echo "[2] 复核：cline_pretrain 是否已无残留"
-pgrep -af 'data-dir /nas_train/app.e0031982/.cline_pretrain' 2>/dev/null | cut -c1-180 || echo "(none)"
-echo
-echo "[3] 护栏：loop / pipeline / llama-server / torchrun 必须仍在"
-echo "loop:";     pgrep -af 'baize_pretrain_loop\.sh' 2>/dev/null | head -2 | cut -c1-120
-echo "pipeline:"; pgrep -af 'baize_eval_60k_100k_pipeline' 2>/dev/null | head -1 | cut -c1-120
-echo "server:";   pgrep -af 'llama-server' 2>/dev/null | head -2 | cut -c1-150
-echo "train:";    pgrep -af 'scripts/train\.sh s1' 2>/dev/null | head -1 | cut -c1-120
-echo
-echo "[4] 杀掉后 10 s：loop 是否已继续（会提交/或重开会话）"
-sleep 10
-tail -12 /tmp/baize_pretrain_loop.log 2>/dev/null | cut -c1-180
-echo "--- cline_pretrain now ---"
-pgrep -af 'data-dir /nas_train/app.e0031982/.cline_pretrain' 2>/dev/null | cut -c1-120 || echo "(none: 等 loop 下一轮唤醒)"
-echo
-echo "[5] 当前评测进度快照（确认 kill 未影响落盘）"
-R=/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/lm_eval_results
-for it in 60000 70000 80000 90000; do
-  f=$R/gguf_iter_${it}_fixed_8set/results.json
-  if [ -f "$f" ]; then stat -c "iter_$it results.json mtime=%y" "$f"; else echo "iter_$it results.json MISSING"; fi
+echo "=== RUN_ID 246 | eval-freeze A/B | $(date '+%F %T') | host=$(hostname) ==="
+cat > /tmp/baize_eval_freeze_ab.sh <<'EOS'
+#!/bin/bash
+set -u
+OUT=/tmp/baize_eval_freeze_ab.txt
+LOG=""
+for f in /tmp/baize_s1_baize2b_master.log /tmp/baize_s1_baize2b_worker.log; do
+  if [ -f "$f" ]; then LOG="$f"; break; fi
 done
-pgrep -af 'llama-server' 2>/dev/null | head -1 | grep -o 'bz2b-[0-9]*-f16.gguf' || true
+step(){ grep -E 'elapsed time per iteration' "$LOG" 2>/dev/null | tail -1 | sed 's/^ *//'; }
+srv_cpu(){ ps -eo pcpu=,args= | awk '/[l]lama-server/ && !/cline/ {s+=$1;n++} END{printf "srv_n=%d srv_cpu=%.0f%%",n,s}'; }
+ld(){ cut -d' ' -f1-3 /proc/loadavg; }
+
+CLI=$(ps -eo pid=,args= | awk '/gguf_lmeval_run\.py/ && !/awk/ && !/cline/ && !/bun/ {print $1}')
+echo "clients=$(echo $CLI | wc -w) pids=[$(echo $CLI)]" >>"$OUT"
+
+resume(){ for p in $CLI; do kill -CONT "$p" 2>/dev/null; done; }
+trap resume EXIT INT TERM
+
+{
+  echo "=== start $(date '+%F %T') host=$(hostname) log=$LOG ==="
+  echo "[baseline] $(step)"
+  echo "[baseline] load=$(ld) $(srv_cpu)"
+  echo "--- last 8 step lines ---"
+  grep -E 'elapsed time per iteration' "$LOG" | tail -8 | sed 's/^ *//'
+  echo "--- client stdout (size before) ---"
+  for p in $CLI; do f=$(readlink /proc/$p/fd/1 2>/dev/null); [ -n "$f" ] && echo "$p -> $f size=$(stat -c %s "$f" 2>/dev/null)"; done
+} >>"$OUT"
+
+for p in $CLI; do kill -STOP "$p" 2>/dev/null; done
+sleep 20
+
+{
+  echo "=== FROZEN $(date '+%F %T') (clients SIGSTOP only; servers/training untouched) ==="
+  for i in 0 1 2 3 4 5 6 7 8 9 10; do
+    echo "[f${i} $(date '+%H:%M:%S')] $(step) | load=$(ld) | $(srv_cpu)"
+    [ "$i" -lt 10 ] && sleep 60
+  done
+} >>"$OUT"
+
+resume
+trap - EXIT INT TERM
+sleep 5
+
+{
+  echo "=== RESUMED $(date '+%F %T') ==="
+  for i in 0 1 2 3 4 5; do
+    echo "[r${i} $(date '+%H:%M:%S')] $(step) | load=$(ld) | $(srv_cpu)"
+    [ "$i" -lt 5 ] && sleep 60
+  done
+  echo "--- client stdout (size after) ---"
+  for p in $CLI; do f=$(readlink /proc/$p/fd/1 2>/dev/null); [ -n "$f" ] && echo "$p -> $f size=$(stat -c %s "$f" 2>/dev/null)"; done
+  echo "--- client state (expect S/R, not T) ---"
+  for p in $CLI; do ps -o pid=,stat=,pcpu=,etimes= -p "$p" 2>/dev/null; done
+  echo "=== DONE $(date '+%F %T') ==="
+} >>"$OUT"
+EOS
+chmod +x /tmp/baize_eval_freeze_ab.sh
+rm -f /tmp/baize_eval_freeze_ab.txt
+setsid nohup bash /tmp/baize_eval_freeze_ab.sh >/tmp/baize_eval_freeze_ab.run.log 2>&1 < /dev/null &
+echo "detached_pid=$!"
+sleep 8
+echo "--- early result ---"
+head -40 /tmp/baize_eval_freeze_ab.txt 2>/dev/null
 echo
-echo "=== DONE 245 ==="
+echo "=== 246 dispatched; result completes ~17 min later (see RUN_ID 247) ==="
 ```
