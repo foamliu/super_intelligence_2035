@@ -529,3 +529,8 @@ qnm9e					parked		2026-11-08 01:58	Finesim DC convergence Q&A prose dup of uky6c
 1793955925596_5cgk3	rongjiez	hfeg0pkn005	5	spice_sim	parked		scout_1109_23: waveform compare script batch -reuse param add (compare_wave_new.pl), not spice_char; REJECT wrong-shard	
 1794133519350_pchuf	harrywu	hfeg0pkn002	1005	spice_sim	case	EDA-Eval-DesignFlow-ClampPwrStateExtract-001	2026-11-09 00:14	
 1791969171304_w3eav.messages.json	zxtu	hfeg0pkn001	341	spice_sim	case	EDA-Eval-DesignFlow-LatchSubcktLocate-001	2026-11-09 00:52	
+1793667622298_rh3ek	ypzheng	hfeg0pkn003	180	spice_sim	case	EDA-Eval-DesignFlow-SimExitMatrixDiag-001	2026-11-09 01:19	
+1794120029303_q4f45	e0023936	hfeg0pkn004	33	spice_sim	parked		2026-11-09 01:19	wrong-shard cline plugin dev
+1793952138224_b2l64	t0003117	hfeg0pkn005	405	spice_sim	parked		2026-11-09 01:19	eval-user+premise-missing fault-inject
+1791522635010_ikvky	clarawu	hfeg0pkn004	277	spice_sim	parked		2026-11-09 01:19	wrong-shard gvim vimrc config
+1792375467654_hs5zf	mwxi	hfhds228	35	spice_sim	parked		2026-11-09 01:19	unreachable SSH no-file
