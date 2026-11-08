@@ -1,0 +1,653 @@
+{
+  "timestamp": "2026-11-09T00:19:15.133859",
+  "checks": [
+    {
+      "category": "node",
+      "name": "Node=.17",
+      "status": "pass",
+      "detail": "IP=10.252.32.17"
+    },
+    {
+      "category": "bash_syntax",
+      "name": "baize_posttrain_gpu_watcher.sh",
+      "status": "pass",
+      "detail": "OK"
+    },
+    {
+      "category": "bash_syntax",
+      "name": "baize_posttrain_launch_11_9.sh",
+      "status": "pass",
+      "detail": "OK"
+    },
+    {
+      "category": "bash_syntax",
+      "name": "baize_posttrain_preflight_check.sh",
+      "status": "pass",
+      "detail": "OK"
+    },
+    {
+      "category": "bash_syntax",
+      "name": "baize_posttrain_rl_grpo.sh",
+      "status": "pass",
+      "detail": "OK"
+    },
+    {
+      "category": "bash_syntax",
+      "name": "baize_posttrain_sft.sh",
+      "status": "pass",
+      "detail": "OK"
+    },
+    {
+      "category": "bash_syntax",
+      "name": "baize_posttrain_eval.sh",
+      "status": "pass",
+      "detail": "OK"
+    },
+    {
+      "category": "bash_syntax",
+      "name": "baize_posttrain_anneal.sh",
+      "status": "pass",
+      "detail": "OK"
+    },
+    {
+      "category": "bash_syntax",
+      "name": "baize_posttrain_minicpm5_diag.sh",
+      "status": "pass",
+      "detail": "OK"
+    },
+    {
+      "category": "bash_syntax",
+      "name": "baize_posttrain_contamination_gate.sh",
+      "status": "pass",
+      "detail": "OK"
+    },
+    {
+      "category": "bash_syntax",
+      "name": "baize_posttrain_post_rl_pipeline.sh",
+      "status": "pass",
+      "detail": "OK"
+    },
+    {
+      "category": "bash_syntax",
+      "name": "baize_posttrain_72h_guardian.sh",
+      "status": "pass",
+      "detail": "OK"
+    },
+    {
+      "category": "bash_syntax",
+      "name": "baize_posttrain_day1_runbook.sh",
+      "status": "pass",
+      "detail": "OK"
+    },
+    {
+      "category": "bash_syntax",
+      "name": "baize_posttrain_paths.sh",
+      "status": "pass",
+      "detail": "OK"
+    },
+    {
+      "category": "bash_syntax",
+      "name": "baize_posttrain_setup_cu124_venv.sh",
+      "status": "pass",
+      "detail": "OK"
+    },
+    {
+      "category": "py_syntax",
+      "name": "baize_posttrain_day1_diag.py",
+      "status": "pass",
+      "detail": "OK"
+    },
+    {
+      "category": "py_syntax",
+      "name": "baize_posttrain_reward_functions.py",
+      "status": "pass",
+      "detail": "OK"
+    },
+    {
+      "category": "py_syntax",
+      "name": "baize_posttrain_reward_validate.py",
+      "status": "pass",
+      "detail": "OK"
+    },
+    {
+      "category": "py_syntax",
+      "name": "baize_posttrain_eda_tool.py",
+      "status": "pass",
+      "detail": "OK"
+    },
+    {
+      "category": "py_syntax",
+      "name": "baize_posttrain_gen_sft_corpus_v2.py",
+      "status": "pass",
+      "detail": "OK"
+    },
+    {
+      "category": "py_syntax",
+      "name": "baize_posttrain_gen_synth_v2.py",
+      "status": "pass",
+      "detail": "OK"
+    },
+    {
+      "category": "py_syntax",
+      "name": "baize_posttrain_jsonl_to_parquet.py",
+      "status": "pass",
+      "detail": "OK"
+    },
+    {
+      "category": "py_syntax",
+      "name": "baize_posttrain_ckpt_selector.py",
+      "status": "pass",
+      "detail": "OK"
+    },
+    {
+      "category": "py_syntax",
+      "name": "baize_posttrain_eval_analysis.py",
+      "status": "pass",
+      "detail": "OK"
+    },
+    {
+      "category": "py_syntax",
+      "name": "baize_posttrain_baseline_gate.py",
+      "status": "pass",
+      "detail": "OK"
+    },
+    {
+      "category": "py_syntax",
+      "name": "baize_posttrain_smoke_calibrator.py",
+      "status": "pass",
+      "detail": "OK"
+    },
+    {
+      "category": "py_syntax",
+      "name": "baize_posttrain_rl_monitor.py",
+      "status": "pass",
+      "detail": "OK"
+    },
+    {
+      "category": "py_syntax",
+      "name": "baize_posttrain_rl_prompt_prescreen.py",
+      "status": "pass",
+      "detail": "OK"
+    },
+    {
+      "category": "py_syntax",
+      "name": "baize_posttrain_campaign_projection.py",
+      "status": "pass",
+      "detail": "OK"
+    },
+    {
+      "category": "py_syntax",
+      "name": "baize_posttrain_sft_dynamics.py",
+      "status": "pass",
+      "detail": "OK"
+    },
+    {
+      "category": "py_syntax",
+      "name": "baize_posttrain_rollout_throughput.py",
+      "status": "pass",
+      "detail": "OK"
+    },
+    {
+      "category": "py_syntax",
+      "name": "baize_posttrain_sglang_preflight.py",
+      "status": "pass",
+      "detail": "OK"
+    },
+    {
+      "category": "py_syntax",
+      "name": "baize_posttrain_verl_wrapper.py",
+      "status": "pass",
+      "detail": "OK"
+    },
+    {
+      "category": "py_syntax",
+      "name": "baize_posttrain_minicpm5_parser.py",
+      "status": "pass",
+      "detail": "OK"
+    },
+    {
+      "category": "py_syntax",
+      "name": "baize_posttrain_api_profiler.py",
+      "status": "pass",
+      "detail": "OK"
+    },
+    {
+      "category": "py_syntax",
+      "name": "baize_posttrain_day0_audit.py",
+      "status": "pass",
+      "detail": "OK"
+    },
+    {
+      "category": "py_syntax",
+      "name": "baize_posttrain_e2e_audit.py",
+      "status": "pass",
+      "detail": "OK"
+    },
+    {
+      "category": "py_syntax",
+      "name": "baize_posttrain_v2_consistency_audit.py",
+      "status": "pass",
+      "detail": "OK"
+    },
+    {
+      "category": "py_syntax",
+      "name": "baize_posttrain_data_audit.py",
+      "status": "pass",
+      "detail": "OK"
+    },
+    {
+      "category": "py_syntax",
+      "name": "baize_posttrain_contam_check_v2.py",
+      "status": "pass",
+      "detail": "OK"
+    },
+    {
+      "category": "py_syntax",
+      "name": "baize_posttrain_ctx_budget_analyzer.py",
+      "status": "pass",
+      "detail": "OK"
+    },
+    {
+      "category": "py_syntax",
+      "name": "baize_posttrain_gpu_budget_analysis.py",
+      "status": "pass",
+      "detail": "OK"
+    },
+    {
+      "category": "py_syntax",
+      "name": "baize_posttrain_gpu_schedule_optimizer.py",
+      "status": "pass",
+      "detail": "OK"
+    },
+    {
+      "category": "py_syntax",
+      "name": "baize_posttrain_grpo_dynamics_sim.py",
+      "status": "pass",
+      "detail": "OK"
+    },
+    {
+      "category": "py_syntax",
+      "name": "baize_posttrain_power_analysis.py",
+      "status": "pass",
+      "detail": "OK"
+    },
+    {
+      "category": "py_syntax",
+      "name": "baize_posttrain_power_analysis_fast.py",
+      "status": "pass",
+      "detail": "OK"
+    },
+    {
+      "category": "py_syntax",
+      "name": "baize_posttrain_reward_adversarial_test.py",
+      "status": "pass",
+      "detail": "OK"
+    },
+    {
+      "category": "py_syntax",
+      "name": "baize_posttrain_sft_data_mixer.py",
+      "status": "pass",
+      "detail": "OK"
+    },
+    {
+      "category": "py_syntax",
+      "name": "baize_posttrain_sglang_patch.py",
+      "status": "pass",
+      "detail": "OK"
+    },
+    {
+      "category": "py_syntax",
+      "name": "baize_posttrain_ray_patch_verify.py",
+      "status": "pass",
+      "detail": "OK"
+    },
+    {
+      "category": "py_syntax",
+      "name": "baize_posttrain_mine_deepseek_traces.py",
+      "status": "pass",
+      "detail": "OK"
+    },
+    {
+      "category": "py_syntax",
+      "name": "baize_posttrain_eda_sandbox_client.py",
+      "status": "pass",
+      "detail": "OK"
+    },
+    {
+      "category": "py_syntax",
+      "name": "baize_posttrain_vision_lessons_analyzer.py",
+      "status": "pass",
+      "detail": "OK"
+    },
+    {
+      "category": "py_syntax",
+      "name": "baize_posttrain_build_eval_ngrams.py",
+      "status": "pass",
+      "detail": "OK"
+    },
+    {
+      "category": "data",
+      "name": "rl_pyaether_synth_v2.parquet",
+      "status": "pass",
+      "detail": "RL parquet 931KB"
+    },
+    {
+      "category": "data",
+      "name": "rl_pyaether_synth_v2.jsonl",
+      "status": "pass",
+      "detail": "RL JSONL 5440KB"
+    },
+    {
+      "category": "data",
+      "name": "sft_pyaether_corpus_v2.jsonl",
+      "status": "pass",
+      "detail": "SFT v2 JSONL 21271KB"
+    },
+    {
+      "category": "data",
+      "name": "sft_pyaether_corpus_v2.parquet",
+      "status": "pass",
+      "detail": "SFT v2 parquet 3582KB"
+    },
+    {
+      "category": "data",
+      "name": "sft_pyaether_corpus.jsonl",
+      "status": "pass",
+      "detail": "SFT v1 JSONL 18329KB"
+    },
+    {
+      "category": "data",
+      "name": "sft_pyaether_corpus.parquet",
+      "status": "pass",
+      "detail": "SFT v1 parquet 2808KB"
+    },
+    {
+      "category": "data",
+      "name": "rl_pyaether_synth_tasks.jsonl",
+      "status": "pass",
+      "detail": "RL tasks 533KB"
+    },
+    {
+      "category": "data",
+      "name": "sft_deepseek_patterns.jsonl",
+      "status": "pass",
+      "detail": "DeepSeek patterns 9KB"
+    },
+    {
+      "category": "data",
+      "name": "sft_mixed_output.jsonl",
+      "status": "pass",
+      "detail": "SFT mixed output 25466KB"
+    },
+    {
+      "category": "data",
+      "name": "RL v2 records",
+      "status": "pass",
+      "detail": "3347 records"
+    },
+    {
+      "category": "data",
+      "name": "SFT v2 records",
+      "status": "pass",
+      "detail": "19524 records"
+    },
+    {
+      "category": "venv",
+      "name": "cu124/torch",
+      "status": "pass",
+      "detail": "/home/app.e0031982/code/verl_cu124_venv/lib/python3.10/site-packages/torch"
+    },
+    {
+      "category": "venv",
+      "name": "cu124/sglang",
+      "status": "pass",
+      "detail": "/home/app.e0031982/code/verl_cu124_venv/lib/python3.10/site-packages/sglang"
+    },
+    {
+      "category": "venv",
+      "name": "cu124/verl",
+      "status": "pass",
+      "detail": "/home/app.e0031982/code/verl_cu124_venv/lib/python3.10/site-packages/verl"
+    },
+    {
+      "category": "venv",
+      "name": "cu124/ray",
+      "status": "pass",
+      "detail": "/home/app.e0031982/code/verl_cu124_venv/lib/python3.10/site-packages/ray"
+    },
+    {
+      "category": "venv",
+      "name": "cu124/flash_attn",
+      "status": "pass",
+      "detail": "/home/app.e0031982/code/verl_cu124_venv/lib/python3.10/site-packages/flash_attn"
+    },
+    {
+      "category": "venv",
+      "name": "cu124/flashinfer",
+      "status": "pass",
+      "detail": "/home/app.e0031982/code/verl_cu124_venv/lib/python3.10/site-packages/flashinfer"
+    },
+    {
+      "category": "venv",
+      "name": "cu124/transformers",
+      "status": "pass",
+      "detail": "/home/app.e0031982/code/verl_cu124_venv/lib/python3.10/site-packages/transformers"
+    },
+    {
+      "category": "venv",
+      "name": "cu124/pyarrow",
+      "status": "pass",
+      "detail": "/home/app.e0031982/code/verl_cu124_venv/lib/python3.10/site-packages/pyarrow"
+    },
+    {
+      "category": "venv",
+      "name": "cu124/yaml",
+      "status": "pass",
+      "detail": "/home/app.e0031982/code/verl_cu124_venv/lib/python3.10/site-packages/yaml"
+    },
+    {
+      "category": "venv",
+      "name": "cu124/pandas",
+      "status": "pass",
+      "detail": "/home/app.e0031982/code/verl_cu124_venv/lib/python3.10/site-packages/pandas"
+    },
+    {
+      "category": "venv",
+      "name": "vllm_venv",
+      "status": "pass",
+      "detail": "/home/app.e0031982/code/vllm_venv/bin/python"
+    },
+    {
+      "category": "model",
+      "name": "MiniCPM5-2B/config.json",
+      "status": "pass",
+      "detail": "0KB"
+    },
+    {
+      "category": "model",
+      "name": "MiniCPM5-2B/model.safetensors",
+      "status": "pass",
+      "detail": "split found"
+    },
+    {
+      "category": "model",
+      "name": "MiniCPM5-2B/tokenizer.json",
+      "status": "pass",
+      "detail": "9662KB"
+    },
+    {
+      "category": "model",
+      "name": "MiniCPM5-2B/tokenizer_config.json",
+      "status": "pass",
+      "detail": "92KB"
+    },
+    {
+      "category": "model",
+      "name": "MiniCPM5-2B/special_tokens_map.json",
+      "status": "pass",
+      "detail": "0KB"
+    },
+    {
+      "category": "model",
+      "name": "total size",
+      "status": "pass",
+      "detail": "5.04GB"
+    },
+    {
+      "category": "gpu",
+      "name": "availability",
+      "status": "warn",
+      "detail": "0/8 free — need 4"
+    },
+    {
+      "category": "sglang",
+      "name": "port 8099",
+      "status": "pass",
+      "detail": "HTTP 200 (existing)"
+    },
+    {
+      "category": "sglang",
+      "name": "port 8098",
+      "status": "pass",
+      "detail": "HTTP 200 (existing)"
+    },
+    {
+      "category": "sglang",
+      "name": "port 30000",
+      "status": "warn",
+      "detail": "HTTP N/A"
+    },
+    {
+      "category": "eda",
+      "name": "158-case dataset",
+      "status": "pass",
+      "detail": "673KB"
+    },
+    {
+      "category": "eda",
+      "name": "eval script",
+      "status": "pass",
+      "detail": "38KB"
+    },
+    {
+      "category": "eda",
+      "name": "code gen driver",
+      "status": "pass",
+      "detail": "28KB"
+    },
+    {
+      "category": "eda",
+      "name": "API knowledge base",
+      "status": "pass",
+      "detail": "17707KB"
+    },
+    {
+      "category": "eda",
+      "name": "API count",
+      "status": "pass",
+      "detail": "8463 APIs"
+    },
+    {
+      "category": "config",
+      "name": "RL YAML v2",
+      "status": "warn",
+      "detail": "missing context"
+    },
+    {
+      "category": "process",
+      "name": "gpu_watcher",
+      "status": "pass",
+      "detail": "PID: 2022305 bash /nas_data/app.e0031982/code/super_intelligence_"
+    },
+    {
+      "category": "launch",
+      "name": "dry-run",
+      "status": "pass",
+      "detail": "venv+model+eda exists"
+    },
+    {
+      "category": "disk",
+      "name": "/dev/mapper/ubuntu--vg-ubuntu--lv",
+      "status": "pass",
+      "detail": "avail=359G use=85%"
+    },
+    {
+      "category": "disk",
+      "name": "/dev/mapper/ubuntu--vg-ubuntu--lv",
+      "status": "pass",
+      "detail": "avail=359G use=85%"
+    },
+    {
+      "category": "disk",
+      "name": "10.251.28.110:/train",
+      "status": "pass",
+      "detail": "avail=20T use=85%"
+    }
+  ],
+  "summary": {
+    "pass": 94,
+    "fail": 0,
+    "warn": 3,
+    "total": 97
+  },
+  "gpu_status": {
+    "gpus": [
+      {
+        "id": "0",
+        "free_mib": 64,
+        "total_mib": 46068,
+        "util": 0
+      },
+      {
+        "id": "1",
+        "free_mib": 1085,
+        "total_mib": 46068,
+        "util": 0
+      },
+      {
+        "id": "2",
+        "free_mib": 1085,
+        "total_mib": 46068,
+        "util": 0
+      },
+      {
+        "id": "3",
+        "free_mib": 1085,
+        "total_mib": 46068,
+        "util": 0
+      },
+      {
+        "id": "4",
+        "free_mib": 474,
+        "total_mib": 46068,
+        "util": 0
+      },
+      {
+        "id": "5",
+        "free_mib": 989,
+        "total_mib": 46068,
+        "util": 0
+      },
+      {
+        "id": "6",
+        "free_mib": 985,
+        "total_mib": 46068,
+        "util": 0
+      },
+      {
+        "id": "7",
+        "free_mib": 987,
+        "total_mib": 46068,
+        "util": 0
+      }
+    ],
+    "free_count": 0,
+    "total": 8
+  },
+  "watcher_running": true,
+  "blocking_items": [
+    "GPU: 0/8 free, waiting for 4 A40 release"
+  ],
+  "ready_to_launch": false,
+  "node": "10.252.32.17"
+}

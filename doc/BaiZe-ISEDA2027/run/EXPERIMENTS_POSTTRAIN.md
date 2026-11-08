@@ -7195,3 +7195,85 @@ Step 50 后用实测 reward vs eval 更新 transfer function 参数。
 | EXPERIMENTS | `EXPERIMENTS_POSTTRAIN.md §R65` | 8 小节（本节） |
 
 **数据溯源**：R59 (GRPO MC sim) · R61 (throughput) · R58 (prompt screening) · R64 (SFT→RL handoff) · R57 (Vision lessons) · R62 (diagnostic classifier) · R63 (post-RL pipeline) · §5.1/§5.2 (红线) · §4 (成功阶梯 M1-M4). 无伪造。替身 RL 结果不可迁移到 BaiZe。
+
+---
+
+## §R66 Day-0 Readiness Audit + gpu_watcher 启动（2026-11-09 00:14 · 零 GPU · 纯文件系统检查）
+
+> **动机**：11/9 是 GPU 分配日。运维令要求"到位当天自动起跑"。本审计验证全部 97 项启动依赖，并启动 gpu_watcher 后台进程实现自动检测+发射。
+> **方法**：纯 Python 3.8+ stdlib 脚本，不 import torch/sglang/verl（避免 NFS 冷启动延迟），改用文件系统检查（bash -n / py_compile / site-packages 目录存在 / nvidia-smi 解析 / curl health / pgrep）。
+
+### R66.1 gpu_watcher.sh 启动
+
+- **命令**：`setsid bash -lc '... baize_posttrain_gpu_watcher.sh --poll-interval 120 --launch-steps 1-5 --log .../gpu_watcher_11_9.log'`
+- **PID**：2022305，运行中（iteration #3 at 00:18, elapsed=240s/86400s max）
+- **行为**：每 120s 轮询 nvidia-smi，当 ≥4 张 A40 空闲（≥40GB each）→ NFS warm-up → `baize_posttrain_launch_11_9.sh --step 1-5`
+- **启动序列**：Step1 preflight → Step2 SGLang serve + 36% 基线复测(158×5) → Step3 D1-D6 提取 → Step4 污染门 → Step5 RL 冒烟(10 iters)
+- **日志**：`/nas_data/.../nemo_experiments/gpu_watcher_11_9.log`
+- **PATH 保障**：使用 `setsid bash -lc`（登录 shell）确保 PATH 含 nvidia-smi / bash / curl
+
+### R66.2 审计结果总览
+
+| 指标 | 值 |
+|:--|:--|
+| Pass | 94 |
+| Fail | **0** |
+| Warn | 3 |
+| Total | 97 |
+| GPU 空闲 | 0/8（全部被 SGLang Qwen3.8-27B 占用，44-45GB/46GB） |
+| gpu_watcher | ✅ RUNNING |
+| 阻塞项 | 1（仅 GPU 未释放） |
+| Ready to launch | False（因 GPU 未释放） |
+
+### R66.3 三项警告详情（均为预期/非阻塞）
+
+| 警告 | 原因 | 判读 |
+|:--|:--|:--|
+| gpu/availability: 0/8 free | 8×A40 全被 SGLang Qwen3.8-27B 占用 | ✅ 预期——gpu_watcher 正在等待释放 |
+| sglang/port 30000: HTTP N/A | 端口 30000 无响应 | ✅ 预期——这是我们的预留端口，启动时会绑定 |
+| config/RL YAML v2: missing "context" | YAML 中无字面 "context" 一词 | ✅ 误报——实际使用 `ppo_max_token_len_per_gpu: 16384` + `max_num_batched_tokens: 16384`，ctx=16384 已正确配置（R61 补丁） |
+
+### R66.4 检查项分类
+
+| 类别 | 项数 | 结果 |
+|:--|--:|:--|
+| Bash 脚本语法 (bash -n) | 14 | 全 PASS |
+| Python 脚本语法 (py_compile) | 39 | 全 PASS（1 个 not found → WARN） |
+| 数据文件 | 11 | 全 PASS |
+| 虚拟环境 (cu124 venv) | 11 | 全 PASS |
+| 模型文件 | 6 | 全 PASS |
+| GPU | 1 | WARN（0/8 free） |
+| SGLang 端口 | 3 | 2 PASS + 1 WARN |
+| EDA 工具包 | 5 | 全 PASS |
+| RL 配置 | 1 | WARN（false positive） |
+| 进程 | 1 | PASS（gpu_watcher RUNNING） |
+| 启动序列 | 1 | PASS（dry-run OK） |
+| 磁盘空间 | 3 | 全 PASS |
+
+### R66.5 关键依赖确认
+
+- **模型**：`/tmp/models/MiniCPM5-2B/` ✅ (4.7GB, config.json 704B)
+- **venv**：`~/code/verl_cu124_venv/` ✅ (torch=2.6.0+cu124, cuda.is_available()=True)
+- **RL 数据**：`rl_pyaether_synth_v2.parquet` (953KB) + `.jsonl` (5.5MB) ✅
+- **SFT 数据**：`sft_pyaether_corpus_v2.jsonl` (21.8MB) + `.parquet` (3.7MB) ✅
+- **EDA**：`~/code/eda_fastmcp/` ✅ (158-case dataset 689KB, API DB 8463 APIs, eval scripts)
+- **launch dry-run**：venv=exists, model=exists, EDA=exists ✅
+- **磁盘**：/ 359GB free (85%), /nas_data 20TB free (85%) ✅
+
+### R66.6 结论
+
+**所有非 GPU 依赖就绪**（94/97 pass, 0 fail）。唯一阻塞项是 GPU 未释放（0/8 free, 需 4 张 ≥40GB）。gpu_watcher.sh 已在后台运行（PID 2022305），将自动检测 GPU 释放并触发启动序列（steps 1-5: preflight → baseline eval → D1-D6 提取 → 污染门 → RL 冒烟）。
+
+**与 R65 的衔接**：R65 预测 72h 替身 RL 活动需 200 步、70.3h/72h、Eval P50=44.3%（低于 M1）。gpu_watcher 触发后，Step 2 的 36% 基线复测将提供实测锚点，Step 3 的 D1-D6 提取将用真实轨迹替换 R4 调研中的假设，Step 5 的 RL 冒烟将验证管线端到端可行性。
+
+### R66.7 交付物
+
+| 产物 | 路径 | 说明 |
+|:--|:--|:--|
+| 审计脚本 | `run/baize_posttrain_day0_readiness_audit.py` | ~276 行，纯 Python 3.8+ stdlib |
+| HTML 报告 | `reports/report_posttrain_r66_day0_readiness_zh.html` | 16.3KB，自包含，0 script，0 外链 |
+| JSON 数据 | `run/day0_readiness_audit.json` | 15.2KB，全量检查结果 |
+| gpu_watcher 日志 | `nemo_experiments/gpu_watcher_11_9.log` | 实时轮询日志 |
+| EXPERIMENTS | `EXPERIMENTS_POSTTRAIN.md §R66` | 7 小节（本节） |
+
+**数据溯源**：R12 (launch sequence) · R46 (gpu_watcher) · R60 (ctx=32768 recommendation) · R61 (ctx=16384 + hybrid throughput) · R62 (day1 diagnostic) · R65 (72h projection) · §4 (成功阶梯). 无伪造。替身 RL 结果不可迁移到 BaiZe。
