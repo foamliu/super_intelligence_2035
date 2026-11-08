@@ -8418,4 +8418,110 @@ R75 建立了 8 类 Hack 分类法和 8 项 PreToolUse hook 规范，其中 PTU-
 - `r78_gpu_day_audit.json`（22.7KB）
 - 修复：`baize_posttrain_baseline_d1d6_analyzer.py`（457 个 Unicode 转义 → 实际字符）
 
+
+---
+
+## §R79 SFT 数据混合比仿真与优化（2026-11-09 · 零 GPU · 蒙特卡洛 18000 trials）
+
+> 出处：用户令 2026-11-07「继续调研」。§5.2 SFT 数据混合未系统化分析。
+> 方法：6 数据源 × 3 采样策略 × 4 token 预算 × 3 上下文长度 × 5 seeds = 18000 trials 蒙特卡洛。
+
+### 1. 数据源与修复向量
+
+| 数据源 | 可用量 | D1(合法率) | D2(频次) | D4(知识) | D5(场景) | D6(迭代) | 抗遗忘 |
+|:--|--:|--:|--:|--:|--:|--:|--:|
+| General (UltraData-SFT-2605) | 18.89B tok | 0.02 | 0.01 | 0.03 | 0.02 | 0.01 | 0.95 |
+| Agentic (UltraData-SFT-Agent) | 5.97B tok | 0.15 | 0.20 | 0.05 | 0.03 | 0.18 | 0.70 |
+| PyAether API 语料 | 4.5M tok | 0.05 | 0.03 | 0.25 | 0.15 | 0.02 | 0.50 |
+| Code 子集 | 2.5B tok | 0.03 | 0.02 | 0.12 | 0.05 | 0.08 | 0.80 |
+| Math 子集 | 1.5B tok | 0.01 | 0.01 | 0.08 | 0.03 | 0.05 | 0.85 |
+| PyAether SFT v2 pairs | 15M tok | 0.10 | 0.08 | 0.15 | 0.20 | 0.12 | 0.60 |
+
+> 修复向量 = 每 1B tokens 对 D-dimensions 的预期改善（sqrt 缩放前）。
+
+### 2. 关键仿真结果
+
+| 指标 | 值 |
+|:--|:--|
+| 总试验数 | 18000 |
+| 唯一配置数 | 156 |
+| Pareto 最优 | 6 |
+| 最优 Pass@1 投影 | **63.7%**（agentic=29%, pyaether_api=27%, pyaether_sft=20%, code=14%, general=5%, math=5% @ 2B tok, 16K ctx） |
+| P(M1>=50%) | 最优配置 100% |
+| P(M2>=65%) | **0%**（无配置达到 → SFT 单独不足以到 M2，需领域退火+RL） |
+
+### 3. 数据源与 Pass@1 相关性
+
+| 数据源 | 相关系数 | 方向 |
+|:--|:--|:--|
+| pyaether_api | +0.4536 | **最强正相关** |
+| pyaether_sft | +0.1204 | 正相关 |
+| code | +0.0836 | 弱正相关 |
+| math | -0.2055 | 负相关 |
+| agentic | -0.2259 | 负相关* |
+| general | -0.2580 | 负相关* |
+
+> *agentic/general 负相关受 Dirichlet 采样互斥效应影响（多 A 则少 B），非因果。Pareto 前沿显示最优配置仍含 29% agentic。
+
+### 4. 上下文长度影响
+
+| 上下文 | 平均 Pass@1 | 范围 |
+|:--|:--|:--|
+| 4K | 48.7% | [38.6%, 55.8%] |
+| 8K | 54.1% | [45.8%, 61.2%] |
+| **16K** | **56.7%** | [47.6%, 63.7%] |
+
+> 4K→8K: +5.4pp（agentic 轨迹覆盖 55%→82%）；8K→16K: +2.6pp（边际递减但仍有收益）。
+
+### 5. Token 预算影响
+
+| 预算 | 平均 Pass@1 | 范围 |
+|:--|:--|:--|
+| 1B | 53.2% | [42.9%, 61.4%] |
+| **2B** | **55.0%** | [43.7%, 63.7%] |
+| 4B | 54.0% | [43.2%, 62.0%] |
+| 8B | 50.6% | [38.6%, 60.7%] |
+
+> 2B 是成本效益最优；8B 反而下降（遗忘效应 > 修复增益，sqrt 缩放边际递减）。
+
+### 6. 机制建模
+
+- **递减回报**：repair ∝ sqrt(tokens)，多数据边际增益递减
+- **灾难性遗忘**：forgetting = 1 - exp(-0.03 × domain_btok)，domain 数据越多遗忘越多
+- **协同效应**：互补数据源共存时加成（agentic+pyaether_api = +1.5% synergy）
+- **上下文交互**：短上下文截断 agentic 轨迹 → D1/D2/D6 修复效率降低
+- **D→Pass@1 映射**：D1=0.12, D2=0.08, D4=0.15, D5=0.10, D6=0.10（合计 0.55 ≈ 58pp gap）
+
+### 7. 对 post-train 三步的侧重建议
+
+1. **领域退火**：PyAether API 语料占比 25-30%（R77 建议语料×3.0），步数 5000-15000
+2. **SFT**：推荐混合 agentic=25-30%, pyaether_api=20-25%, pyaether_sft=15-20%, code=10-15%, general=15-20%, math=5%；2-4B tokens；8K 上下文（16K 如 GPU 内存允许）
+3. **RL**：M2(65%) 需 RL 补足 SFT 不足部分（仿真最高 63.7% < 65%）
+
+### 8. 消融实验设计（GPU 后验证）
+
+| 消融 | 配置 | 预期 | 目的 |
+|:--|:--|:--|:--|
+| A0 全量 | 推荐混合 | ~60-64% | 基线 |
+| A1 去 agentic | 移除 agentic | -8~12pp | D1/D2/D6 修复重要性 |
+| A2 去 PyAether | 移除 pyaether_api+sft | -10~15pp | D4/D5 领域知识重要性 |
+| A3 仅通用 | 100% general | +2~5pp | 最小领域适配 |
+| A4 4K ctx | 全量 4K | -5~8pp | 上下文长度效应 |
+| A5 1B tok | 全量半预算 | -3~6pp | 预算敏感性 |
+
+### 9. 交付物
+
+- `baize_posttrain_sft_mix_optimizer.py`（~400 行，py_compile ✅，纯 Python 3.8 stdlib）
+- `reports/report_posttrain_r79_sft_mix_optimizer_zh.html`（10KB，0 script，0 外链，自包含）
+- `r79_sft_mix_optimizer.json`（15.3KB）
+
+### 10. 局限
+
+- 修复向量基于 D1-D6 分析 + 文献推断，**非实测**；GPU 后需 pilot 训练校准
+- MiniCPM5-2B D1-D6 为假设值（实测待 GPU Day Step 3）
+- sqrt 缩放假设可能不适用于所有数据类型
+- 训练动力学（LR/batch/warmup）未建模
+- 替身模型结果**不可直接迁移**到 BaiZe pretrain ckpt
+
+- 无伪造。蒙特卡洛仿真结果基于合理假设，标注为「仿真投影」非实测。
 - 无伪造。替身模型（MiniCPM5-2B）审计结果不可迁移到 BaiZe 正式训练。

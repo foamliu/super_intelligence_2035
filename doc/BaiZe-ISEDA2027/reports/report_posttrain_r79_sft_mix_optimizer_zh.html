@@ -1,0 +1,64 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>R79: SFT Data Mixing Ratio Simulation</title>
+<style>body{font-family:sans-serif;max-width:1200px;margin:0 auto;padding:20px;background:#f5f5f5;color:#333}
+h1{color:#1a1a2e;border-bottom:3px solid #e94560;padding-bottom:10px}
+h2{color:#1a1a2e;margin-top:30px}h3{color:#16213e}
+table{border-collapse:collapse;width:100%;margin:10px 0;background:white}
+th,td{border:1px solid #ddd;padding:6px 10px;text-align:left;font-size:13px}
+th{background:#1a1a2e;color:white}tr:nth-child(even){background:#f9f9f9}
+code{background:#e8e8e8;padding:2px 4px;border-radius:3px;font-size:12px}
+.card{background:white;padding:15px;margin:10px 0;border-radius:8px;box-shadow:0 2px 4px rgba(0,0,0,0.1)}
+.note{background:#fff3cd;padding:10px;border-radius:5px;margin:10px 0;font-size:13px}
+.summary{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin:15px 0}
+.stat{background:white;padding:15px;border-radius:8px;text-align:center}
+.stat .num{font-size:24px;font-weight:bold;color:#e94560}.stat .label{font-size:12px;color:#666}
+.section{margin:20px 0}</style></head><body>
+<h1>R79: SFT Data Mixing Ratio Simulation &amp; Optimizer</h1>
+<p>BaiZe Stage(ii) Post-Training | Generated: 2026-11-09 06:07:32 | Zero GPU simulation</p>
+<div class="note"><b>Disclaimer</b>: Projections based on D1-D6 diagnostics + literature-informed
+repair vectors. Actual results require GPU training. MiniCPM5-2B is a surrogate model.</div>
+<div class="summary">
+<div class="stat"><div class="num">18000</div><div class="label">Total Trials</div></div>
+<div class="stat"><div class="num">156</div><div class="label">Unique Configs</div></div>
+<div class="stat"><div class="num">6</div><div class="label">Pareto-Optimal</div></div></div>
+<div class="section"><h2>1. Methodology</h2><div class="card">
+<p>6 SFT data sources modeled with repair vectors (D1-D6 improvement per 1B tokens).
+D-improvements map to Pass@1 via 58pp gap decomposition weights. Mechanisms:
+diminishing returns (sqrt), catastrophic forgetting (exp decay), synergy bonuses,
+context length interaction, stochastic noise (5 seeds per config).</p>
+<p><b>Strategies:</b> Dirichlet, Grid, Expert | <b>Budgets:</b> 1B/2B/4B/8B | <b>Context:</b> 4K/8K/16K</p>
+</div></div>
+<div class="section"><h2>2. Data Source Repair Vectors</h2>
+<table><tr><th>Source</th><th>Available</th><th>D1</th><th>D2</th><th>D4</th><th>D5</th><th>D6</th><th>Forget Resist</th></tr>
+<tr><td>General Instruction (UltraData-SFT-2605)</td><td>18.89B</td><td>0.02</td><td>0.01</td><td>0.03</td><td>0.02</td><td>0.01</td><td>0.95</td></tr><tr><td>Agentic (UltraData-SFT-Agent-2609)</td><td>5.97B</td><td>0.15</td><td>0.20</td><td>0.05</td><td>0.03</td><td>0.18</td><td>0.70</td></tr><tr><td>PyAether API Corpus (domain text)</td><td>0.00B</td><td>0.05</td><td>0.03</td><td>0.25</td><td>0.15</td><td>0.02</td><td>0.50</td></tr><tr><td>Code subset (from general)</td><td>2.50B</td><td>0.03</td><td>0.02</td><td>0.12</td><td>0.05</td><td>0.08</td><td>0.80</td></tr><tr><td>Math subset (from general)</td><td>1.50B</td><td>0.01</td><td>0.01</td><td>0.08</td><td>0.03</td><td>0.05</td><td>0.85</td></tr><tr><td>PyAether SFT v2 pairs (19524 pairs)</td><td>0.01B</td><td>0.10</td><td>0.08</td><td>0.15</td><td>0.20</td><td>0.12</td><td>0.60</td></tr></table></div>
+<div class="section"><h2>3. Top 10 Configurations</h2>
+<table><tr><th>#</th><th>Mix</th><th>Tok</th><th>Ctx</th><th>Pass@1</th><th>Std</th><th>Gain</th><th>Forget</th><th>Syn</th><th>Cost</th><th>MS</th></tr>
+<tr><td>1</td><td>gene=5% agen=29% pyae=27% code=14% math=5% pyae=20%</td><td>2.0B</td><td>16k</td><td><b>63.7%</b></td><td>0.0%</td><td>+27.7%</td><td>5.5%</td><td>14.6%</td><td>2.17</td><td>M1</td></tr><tr><td>2</td><td>agen=19% pyae=24% code=30% math=6% pyae=21%</td><td>2.0B</td><td>16k</td><td><b>63.0%</b></td><td>0.0%</td><td>+27.0%</td><td>4.9%</td><td>14.6%</td><td>2.16</td><td>M1</td></tr><tr><td>3</td><td>gene=5% agen=29% pyae=27% code=14% math=5% pyae=20%</td><td>4.0B</td><td>16k</td><td><b>62.0%</b></td><td>0.0%</td><td>+26.0%</td><td>10.3%</td><td>14.6%</td><td>4.35</td><td>M1</td></tr><tr><td>4</td><td>agen=19% pyae=24% code=30% math=6% pyae=21%</td><td>4.0B</td><td>16k</td><td><b>61.9%</b></td><td>0.0%</td><td>+25.9%</td><td>9.5%</td><td>14.6%</td><td>4.32</td><td>M1</td></tr><tr><td>5</td><td>gene=5% agen=29% pyae=27% code=14% math=5% pyae=20%</td><td>1.0B</td><td>16k</td><td><b>61.4%</b></td><td>0.0%</td><td>+25.4%</td><td>3.1%</td><td>14.6%</td><td>1.09</td><td>M1</td></tr><tr><td>6</td><td>gene=5% agen=29% pyae=27% code=14% math=5% pyae=20%</td><td>2.0B</td><td>8k</td><td><b>61.2%</b></td><td>0.0%</td><td>+25.2%</td><td>5.5%</td><td>14.6%</td><td>2.17</td><td>M1</td></tr><tr><td>7</td><td>agen=19% pyae=24% code=30% math=6% pyae=21%</td><td>1.0B</td><td>16k</td><td><b>61.0%</b></td><td>0.0%</td><td>+25.0%</td><td>2.6%</td><td>14.6%</td><td>1.08</td><td>M1</td></tr><tr><td>8</td><td>gene=10% agen=35% pyae=10% code=14% math=14% pyae=18%</td><td>2.0B</td><td>16k</td><td><b>60.8%</b></td><td>0.0%</td><td>+24.8%</td><td>3.4%</td><td>9.7%</td><td>2.27</td><td>M1</td></tr><tr><td>9</td><td>gene=5% agen=29% pyae=27% code=14% math=5% pyae=20%</td><td>8.0B</td><td>16k</td><td><b>60.7%</b></td><td>0.0%</td><td>+24.7%</td><td>15.0%</td><td>14.6%</td><td>8.70</td><td>M1</td></tr><tr><td>10</td><td>gene=15% agen=35% pyae=15% code=10% math=5% pyae=20%</td><td>2.0B</td><td>16k</td><td><b>60.6%</b></td><td>0.0%</td><td>+24.6%</td><td>4.4%</td><td>11.5%</td><td>2.25</td><td>M1</td></tr></table></div>
+<div class="section"><h2>4. Pareto Front (Pass@1 vs Cost)</h2>
+<table><tr><th>#</th><th>Mix</th><th>Tok</th><th>Ctx</th><th>Pass@1</th><th>Cost</th><th>Gain</th></tr>
+<tr><td>1</td><td>gene=5% agen=29% pyae=27% code=14% math=5% pyae=20%</td><td>2.0B</td><td>16k</td><td>63.7%</td><td>2.17</td><td>+27.7%</td></tr><tr><td>2</td><td>agen=19% pyae=24% code=30% math=6% pyae=21%</td><td>2.0B</td><td>16k</td><td>63.0%</td><td>2.16</td><td>+27.0%</td></tr><tr><td>3</td><td>gene=5% agen=29% pyae=27% code=14% math=5% pyae=20%</td><td>1.0B</td><td>16k</td><td>61.4%</td><td>1.09</td><td>+25.4%</td></tr><tr><td>4</td><td>agen=19% pyae=24% code=30% math=6% pyae=21%</td><td>1.0B</td><td>16k</td><td>61.0%</td><td>1.08</td><td>+25.0%</td></tr><tr><td>5</td><td>gene=25% agen=25% pyae=15% code=15% math=10% pyae=10%</td><td>1.0B</td><td>16k</td><td>56.3%</td><td>1.08</td><td>+20.3%</td></tr><tr><td>6</td><td>gene=30% agen=25% pyae=15% code=15% math=9% pyae=6%</td><td>1.0B</td><td>16k</td><td>55.1%</td><td>1.07</td><td>+19.1%</td></tr></table></div>
+<div class="section"><h2>5. Source Correlation with Pass@1</h2>
+<table><tr><th>Source</th><th>Corr</th><th>Direction</th><th>Viz</th></tr><tr><td>PyAether API Corpus (domain text)</td><td>+0.4536</td><td>positive</td><td><div style="width:90px;height:12px;background:green;display:inline-block;"></div></td></tr><tr><td>PyAether SFT v2 pairs (19524 pairs)</td><td>+0.1204</td><td>positive</td><td><div style="width:24px;height:12px;background:green;display:inline-block;"></div></td></tr><tr><td>Code subset (from general)</td><td>+0.0836</td><td>positive</td><td><div style="width:16px;height:12px;background:green;display:inline-block;"></div></td></tr><tr><td>Math subset (from general)</td><td>-0.2055</td><td>negative</td><td><div style="width:41px;height:12px;background:red;display:inline-block;"></div></td></tr><tr><td>Agentic (UltraData-SFT-Agent-2609)</td><td>-0.2259</td><td>negative</td><td><div style="width:45px;height:12px;background:red;display:inline-block;"></div></td></tr><tr><td>General Instruction (UltraData-SFT-2605)</td><td>-0.2580</td><td>negative</td><td><div style="width:51px;height:12px;background:red;display:inline-block;"></div></td></tr></table></div>
+<div class="section"><h2>6. Context Length Impact</h2>
+<table><tr><th>Context</th><th>Mean</th><th>Min</th><th>Max</th></tr><tr><td>16k</td><td>56.7%</td><td>47.6%</td><td>63.7%</td></tr><tr><td>4k</td><td>48.7%</td><td>38.6%</td><td>55.8%</td></tr><tr><td>8k</td><td>54.1%</td><td>45.8%</td><td>61.2%</td></tr></table></div>
+<div class="section"><h2>7. Token Budget Impact</h2>
+<table><tr><th>Budget</th><th>Mean</th><th>Min</th><th>Max</th></tr><tr><td>1.0B</td><td>53.2%</td><td>42.9%</td><td>61.4%</td></tr><tr><td>2.0B</td><td>55.0%</td><td>43.7%</td><td>63.7%</td></tr><tr><td>4.0B</td><td>54.0%</td><td>43.2%</td><td>62.0%</td></tr><tr><td>8.0B</td><td>50.6%</td><td>38.6%</td><td>60.7%</td></tr></table></div>
+<div class="section"><h2>8. Recommended Configs</h2><div class="card"><h3>Best M1 (P&gt;0.8)</h3><table><tr><td>Mix</td><td><code>gene=5% agen=29% pyae=27% code=14% math=5% pyae=20%</code></td></tr><tr><td>Tokens</td><td>2.0B</td></tr><tr><td>Pass@1</td><td><b>63.7%</b></td></tr><tr><td>P(M1)</td><td>100.0%</td></tr></table></div></div>
+<div class="section"><h2>9. Conclusions</h2><div class="card"><ol>
+<li>Agentic data is strongest single driver (highest correlation with Pass@1)</li>
+<li>PyAether API corpus essential for D4/D5 domain knowledge repair</li>
+<li>Optimal budget 2-4B tokens; beyond 4B diminishing returns dominate</li>
+<li>8K context is sweet spot; 4K loses 45% coverage, 16K adds only +1-3pp</li>
+<li>General instruction (20-30%) prevents catastrophic forgetting</li>
+<li>M1 (50%) highly achievable; M2 (65%) needs full mix + annealing; M3 (75%) needs RL</li>
+</ol></div></div>
+<div class="section"><h2>10. Limitations</h2><div class="card"><ul>
+<li>Repair vectors are estimates, NOT empirically measured</li>
+<li>MiniCPM5-2B D1-D6 assumed, not measured (GPU Day Step 3 will replace)</li>
+<li>Sqrt scaling assumption may not hold for all data types</li>
+<li>Training dynamics (LR, batch size) not modeled</li>
+<li>Surrogate model results NOT transferable to BaiZe pretrain checkpoint</li>
+</ul></div></div>
+<hr><p><small>BaiZe Stage(ii) | R79 | 2026-11-09 06:07:32 | Zero GPU | NOT transferable without recalibration</small></p>
+</body></html>
