@@ -1,0 +1,30 @@
+# baize_posttrain_tool_config.yaml — verl 0.4.0 tool config for EDA sandbox
+# R69 (2026-11-09): Tool configuration for verl multi-turn rollout.
+# ⚠️ Surrogate RL results are NOT transferable to BaiZe.
+tools:
+  - class_name: baize_posttrain_eda_tool_v2.EDASandboxToolV2
+    tool_schema:
+      type: function
+      function:
+        name: eda_sandbox
+        description: >
+          Execute Python code in the EDA (pyAether) sandbox environment.
+          Use this tool to run EDA API calls, test code, and verify results.
+        parameters:
+          type: object
+          properties:
+            code:
+              type: string
+              description: Python code to execute in the EDA sandbox
+            host:
+              type: string
+              description: Target EDA environment. Default: pyAether
+              enum: [pyAether, aether, skill_virtuoso, tcl_innovus, tcl_waveview]
+          required: [code]
+    config:
+      sandbox_endpoint: tier3_static_analysis
+      sandbox_hosts: [pyAether, aether, skill_virtuoso, tcl_innovus, tcl_waveview]
+      max_code_length: 5000
+      timeout: 60
+      tier: 3
+      api_database: ~/code/eda_fastmcp/docs/API_INFO_MERGED_V3.json

@@ -1,0 +1,181 @@
+{
+  "round": "R69",
+  "date": "2026-11-09",
+  "wake": "wake117",
+  "verl_version": "0.4.0",
+  "source_files": {
+    "verl_base_tool": {
+      "path": "/home/app.e0031982/code/verl_cu124_venv/lib/python3.10/site-packages/verl/tools/base_tool.py",
+      "exists": true,
+      "size": 2839
+    },
+    "verl_sglang_rollout": {
+      "path": "/home/app.e0031982/code/verl_cu124_venv/lib/python3.10/site-packages/verl/workers/rollout/sglang_rollout/sglang_rollout.py",
+      "exists": true,
+      "size": 56507
+    },
+    "verl_schemas": {
+      "path": "/home/app.e0031982/code/verl_cu124_venv/lib/python3.10/site-packages/verl/workers/rollout/schemas.py",
+      "exists": true,
+      "size": 11886
+    },
+    "verl_sandbox_fusion": {
+      "path": "/home/app.e0031982/code/verl_cu124_venv/lib/python3.10/site-packages/verl/tools/sandbox_fusion_tools.py",
+      "exists": true,
+      "size": 7099
+    }
+  },
+  "findings": [
+    {
+      "id": "F01",
+      "severity": "CRITICAL",
+      "component": "BaseTool.__init__",
+      "description": "verl BaseTool.__init__(self, config, tool_schema) requires TWO params. Our EDASandboxTool.__init__(self, config) only takes ONE.",
+      "evidence": "base_tool.py line 31",
+      "fix": "Add tool_schema param and pass to super().__init__()",
+      "status": "IDENTIFIED"
+    },
+    {
+      "id": "F02",
+      "severity": "CRITICAL",
+      "component": "BaseTool.create()",
+      "description": "verl create() returns str. Our tool returns Tuple. verl uses return as instance_id.",
+      "evidence": "base_tool.py line 39: -> str",
+      "fix": "Change create() to return just instance_id (str)",
+      "status": "IDENTIFIED"
+    },
+    {
+      "id": "F03",
+      "severity": "CRITICAL",
+      "component": "BaseTool.execute()",
+      "description": "verl execute() returns Tuple[str, float, dict]. Our tool returns Tuple[Dict,...]. verl passes response string to add_tool_response_message(tokenizer, resp).",
+      "evidence": "base_tool.py line 52",
+      "fix": "Serialize response dict to JSON string before returning",
+      "status": "IDENTIFIED"
+    },
+    {
+      "id": "F04",
+      "severity": "HIGH",
+      "component": "BaseTool.calc_reward()",
+      "description": "verl calls calc_reward(instance_id) at episode end. Our 0.0 return is correct.",
+      "evidence": "sglang_rollout.py line 839",
+      "fix": "No fix needed.",
+      "status": "OK"
+    },
+    {
+      "id": "F05",
+      "severity": "HIGH",
+      "component": "max_turns default",
+      "description": "verl sets max_turns = max_model_len // 3 if None. With 16384 gives 5461 turns.",
+      "evidence": "sglang_rollout.py line 331-332",
+      "fix": "Set max_turns: 3 explicitly (done in config v2)",
+      "status": "FIXED_IN_CONFIG"
+    },
+    {
+      "id": "F06",
+      "severity": "HIGH",
+      "component": "Context overflow mid-turn",
+      "description": "Tool response pushing input_ids >= max_model_len forces STOP. False negatives possible.",
+      "evidence": "sglang_rollout.py line 760-764",
+      "fix": "Mitigate with ctx=16384+ (done). Monitor false_negative_rate in smoke.",
+      "status": "IDENTIFIED"
+    },
+    {
+      "id": "F07",
+      "severity": "MEDIUM",
+      "component": "Tool call JSON decode error",
+      "description": "Malformed tool call args are SILENTLY DROPPED. Model thinks it called a tool.",
+      "evidence": "sglang_rollout.py line 802: if has_decode_error: continue",
+      "fix": "Log decode_error_count. Penalize in R4 arm.",
+      "status": "IDENTIFIED"
+    },
+    {
+      "id": "F08",
+      "severity": "MEDIUM",
+      "component": "LENGTH finish reason",
+      "description": "Generation hitting response_length limit breaks rollout with already_over_long=True.",
+      "evidence": "sglang_rollout.py line 773-780",
+      "fix": "Accept. response_length=8192 sufficient.",
+      "status": "IDENTIFIED"
+    },
+    {
+      "id": "F09",
+      "severity": "CRITICAL",
+      "component": "tool_config_path",
+      "description": "RL config v2 has tool_config_path: null. verl returns empty lists when None. NO tools loaded, multi-turn cannot work.",
+      "evidence": "sglang_rollout.py line 427",
+      "fix": "Create tool_config.yaml. Set tool_config_path when enabling multi_turn.",
+      "status": "IDENTIFIED"
+    },
+    {
+      "id": "F10",
+      "severity": "HIGH",
+      "component": "Tool initialization flow",
+      "description": "verl loads tools from YAML via OmegaConf. Class loaded via importlib. Tool must be importable from verl venv Python path.",
+      "evidence": "sglang_rollout.py line 440-461",
+      "fix": "Ensure tool v2 on PYTHONPATH. Use full module path in class_name.",
+      "status": "IDENTIFIED"
+    },
+    {
+      "id": "F11",
+      "severity": "HIGH",
+      "component": "Dual reward system",
+      "description": "Two mechanisms: (1) per-tool calc_reward() at episode end, (2) external compute_score via NaiveRewardManager. Our design uses (2), returns 0 from (1).",
+      "evidence": "sglang_rollout.py line 838-848",
+      "fix": "Document. Verify compute_score receives tool responses in smoke.",
+      "status": "IDENTIFIED"
+    },
+    {
+      "id": "F12",
+      "severity": "MEDIUM",
+      "component": "Reward scores storage",
+      "description": "tool_reward_scores in _req.reward_scores. May not propagate to training loop.",
+      "evidence": "sglang_rollout.py line 849",
+      "fix": "Verify in smoke test.",
+      "status": "IDENTIFIED"
+    },
+    {
+      "id": "F13",
+      "severity": "HIGH",
+      "component": "Chat format: chatml vs qwen",
+      "description": "verl supports 'chatml' and 'qwen'. MiniCPM5-2B uses ChatML.",
+      "evidence": "schemas.py line 89-105",
+      "fix": "Use 'chatml' (done). Verify tokenizer has <|im_start|>tool tokens.",
+      "status": "IDENTIFIED"
+    },
+    {
+      "id": "F14",
+      "severity": "MEDIUM",
+      "component": "Function call parser type",
+      "description": "get_tool_call_parser_type(tokenizer) may return None for MiniCPM5-2B. If None, tool calls NOT detected. POTENTIAL BLOCKER.",
+      "evidence": "sglang_rollout.py line 471",
+      "fix": "Check parser type in smoke. If None, register custom parser.",
+      "status": "IDENTIFIED"
+    },
+    {
+      "id": "F15",
+      "severity": "MEDIUM",
+      "component": "Async rollout concurrency",
+      "description": "Multi-turn processes each prompt individually. Tool calls run via asyncio.gather.",
+      "evidence": "sglang_rollout.py line 742",
+      "fix": "Ensure execute() is async. Use asyncio.to_thread() for CPU-bound Tier3.",
+      "status": "IDENTIFIED"
+    },
+    {
+      "id": "F16",
+      "severity": "LOW",
+      "component": "Rate limiting",
+      "description": "SandboxFusionTool uses Ray TokenBucketWorker. Our tool has no rate limiting.",
+      "evidence": "sandbox_fusion_tools.py line 43-62",
+      "fix": "Add if needed. Not needed for Tier3.",
+      "status": "IDENTIFIED"
+    }
+  ],
+  "summary": {
+    "total": 16,
+    "critical": 4,
+    "high": 6,
+    "medium": 5,
+    "low": 1
+  }
+}

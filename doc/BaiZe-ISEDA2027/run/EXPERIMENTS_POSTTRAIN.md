@@ -7545,3 +7545,70 @@ R37 发现 EDA 沙盒从 .17 完全不可达（所有 TCP 端口被防火墙过�
 - RL 配置：`baize_posttrain_rl_verl_config_v2.yaml`
 - A40 规格：NVIDIA 官方（696 GB/s, 46 GB, 150 TFLOPS bf16）
 - 无伪造。替身 RL 结果不可迁移到 BaiZe。
+
+---
+
+## §R69: verl 0.4.0 多轮工具调用协议源码级审计（wake117, 2026-11-09, 零 GPU）
+
+> **任务**：从 verl 0.4.0 安装的实际源码出发，审计多轮工具调用协议，识别 EDASandboxTool v1 与 BaseTool API 的集成差距。
+> **脚本**：`baize_posttrain_verl_multiturn_audit.py`（~330 行，纯 Python 3.8+，0 依赖）
+
+### 1. 多轮工具调用状态机（源码级）
+
+verl 0.4.0 SGLang rollout 在 `multi_turn.enable=True` 时对每个 prompt 独立调用 `_async_rollout_a_request()`。状态机：
+
+```
+PENDING → RUNNING → SGLang generate → 检查 finish_reason
+  LENGTH → BREAK | STOP → BREAK | TOOL_CALL → parse → TOOL_CALLING
+TOOL_CALLING → asyncio.gather(*[tool.execute()]) → add_tool_response
+  → input_ids >= max_model_len ? BREAK : RUNNING 循环
+[结束] calc_reward_and_release_fn() → finalize()
+```
+
+### 2. 16 项发现（4 CRITICAL / 6 HIGH / 5 MEDIUM / 1 LOW）
+
+| ID | 严重性 | 组件 | 问题 | 修复 |
+|:--|:--|:--|:--|:--|
+| F01 | CRITICAL | BaseTool.__init__ | verl 要求 (config, tool_schema)，v1 只有一个 | v2 已修复 |
+| F02 | CRITICAL | create() | verl 要求返回 str，v1 返回 tuple | v2 已修复 |
+| F03 | CRITICAL | execute() | verl 要求 Tuple[str,float,dict]，v1 返回 Dict | v2 已修复 |
+| F04 | HIGH | calc_reward() | verl 调用 calc_reward() 在 episode 结束 | v1 返回 0.0 正确 |
+| F05 | HIGH | max_turns | 默认 max_model_len//3=5461 | 配置 v2 已设为 3 |
+| F06 | HIGH | 上下文溢出 | tool response 使 input_ids 超限→force STOP | ctx=16384 缓解 |
+| F07 | MEDIUM | JSON 解码错误 | 畸形 tool call 静默丢弃 | log+R4 惩罚 |
+| F08 | MEDIUM | LENGTH finish | response_length 到限中断 | 8192 足够 |
+| F09 | CRITICAL | tool_config_path | 配置 v2 为 null→无工具加载 | 已创建 YAML |
+| F10 | HIGH | 工具加载 | importlib 动态加载 | 确保 PYTHONPATH |
+| F11 | HIGH | 双奖励系统 | calc_reward()+compute_score() | 文档化+smoke 验证 |
+| F12 | MEDIUM | reward 存储 | tool_reward_scores 传播 | smoke 验证 |
+| F13 | HIGH | 聊天格式 | chatml vs qwen | 用 chatml（已设） |
+| F14 | MEDIUM | tool_call_parser | MiniCPM5-2B 可能无 parser→**潜在 BLOCKER** | smoke 第一时间检查 |
+| F15 | MEDIUM | 异步并发 | Tier3 是 CPU-bound | asyncio.to_thread() |
+| F16 | LOW | 速率限制 | 无 | Tier3 不需要 |
+
+### 3. 修复交付物
+
+| 交付物 | 路径 | 验证 |
+|:--|:--|:--|
+| 审计脚本 | `baize_posttrain_verl_multiturn_audit.py` | py_compile ✅ + --verbose ✅ |
+| 修正工具 v2 | `baize_posttrain_eda_tool_v2.py` | py_compile ✅ + dry-run ✅ |
+| 工具配置 | `baize_posttrain_tool_config.yaml` | --generate-config 生成 |
+| HTML 报告 | `reports/report_posttrain_r69_verl_multiturn_audit_zh.html` | 0 script 0 外链 |
+| JSON 输出 | `r69_verl_multiturn_audit.json` | 16 项结构化 |
+
+### 4. 关键结论
+
+- verl 0.4.0 多轮协议**成熟可用**——状态机清晰、工具接口规范。
+- EDASandboxTool v1 有 3 个 CRITICAL API 不匹配（F01-F03），v2 修正后可无缝接入。
+- **F14 是潜在 BLOCKER**：MiniCPM5-2B tool_call_parser 可能返回 None → tool calls 无法解析。smoke 第一时间检查。
+- 多轮启用路线图：R0 单轮→smoke→检查 F14→启用多轮+Tier3。
+
+### 5. 与既有研究关联
+
+R1（源码级深化）· R3（F07/F11 影响 GRPO advantage）· R9（修正 API 不匹配）· R47（补充 tool_config_path）· R60（F06 确认截断实现）· R37（Tier3 fallback 在 v2 中实现）
+
+### 6. 数据溯源
+
+- verl 源码：`~/code/verl_cu124_venv/.../verl/`（0.4.0 实测）
+- base_tool.py（80 行）· sglang_rollout.py（1199 行）· schemas.py · sandbox_fusion_tools.py（179 行）
+- 无伪造。替身 RL 结果不可迁移到 BaiZe。
