@@ -494,3 +494,6 @@ cron log 未变；hfhds201 fresh since 01:50→0；SSH 3 台→全 0；11-05 sum
 
 ## 归档批次 118
 [归档] 2026-11-08 11:02 流水（WtmWriteArrayScope-001 交付 spice_sim A-faithful L1 k=15, tongfanl xd7ut@hfhds201；11-05 重扫令 hfhds201 fresh 0 + summary/cron 未变 → cron 盲区 270 sessions top-100 diff ledger_B(1792) → 9 非内部 not-in-ledger peek 9 → xd7ut CLEAN；金标准=assistant A#107 WTM 模式下 write 把数据写入 array，write_mem_arr 门控 if 只跳过 Write_Leveling_Training 未含 Write_Training_Mode；合成 analyze_wtm_write_array.py；判分 15 断言；自验 ref PASS 15/15 + 4neg FAIL distinct + 三假 FAIL + 断言闸门 15==15≥8 → jsonl 169→170 + mark ledger 171→172 covered, spice_sim 135→136）原文见 MEMORY_DESIGNFLOW_B.md 11:02 流水（归档前）
+
+## 归档批次 119 (2026-11-08 12:10)
+- [归档] 11-08 11:38 流水（VecgenProbeEmptyDiag-001 交付 spice_sim A-faithful L1 k=16, tongfanl k7hc6@hfhds201；11-05 重扫令 hfhds201 fresh 0(since 11:02) + 11-08 cron 478037B + 11-05 summary 5823 均未变 → 复用上轮 11:02 cron 盲区 4 CLEAN 备选 peek 4 → k7hc6 CLEAN A-faithful；金标准=assistant A#75 d6vecgen FF 角 probe.tcl 空→NORUNCMD→ERROR，根因 bin/vsim gentbprobefile local 无 !-z 守卫）原文见 MEMORY_DESIGNFLOW_B.md line1+line13 (12:10 轮归档)
