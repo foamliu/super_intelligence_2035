@@ -29,7 +29,7 @@ pre{background:#f4f4f4;padding:12px;border-radius:6px;overflow-x:auto;font-size:
 </style>
 </head>
 <body>
-<h1>🚨 预训练全量评测均值异常诊断报告 <span class="updated">（修订版 v2 · 2026-11-08 18:30）</span></h1>
+<h1>🚨 预训练全量评测均值异常诊断报告 <span class="updated">（修订版 v2.1 · 2026-11-08 19:12）</span></h1>
 <p><strong>报告日期：</strong>2026-11-08　<strong>检查点：</strong>iter_112000（2B Mamba2-hybrid）<br>
 <strong>异常：</strong>本轮 v4 Avg7=37.40% vs 历史 iter_100000 Avg=54.75%（raw）/ 57.75%（harness），差 14–20 pp<br>
 <span class="updated">⬆ 修订说明：v1 报告结论为「差异 100% 来自二进制」。
@@ -257,7 +257,7 @@ hellaswag 全量 = 10042 题 × 4 选项 = 40168 次请求，是最大的任务�
 <li><strong>因② 全量评测 vs limit=100：</strong>v5 全量 boolq=0.587 vs 历史 limit=100 boolq=0.67（Δ=8.3pp），v5 全量 sciq=0.842 vs 历史 limit=100 sciq=0.88（Δ=3.8pp）。<code>limit=100</code> 取 <code>instances[:100]</code>（前 100 题）存在系统性偏差，方向因任务而异（boolq 高估 8.3pp，openbookqa 低估 5.6pp）。</li>
 <li>v1 报告「差异 100% 来自二进制」<strong>被 v5 boolq 数据推翻</strong>：boolq 二进制效应仅 1.3pp，总差异 7.0pp 中的 8.3pp 来自全量vs限100。</li>
 </ol>
-<p><strong>量化影响（基于已完成 3 集 v5 数据）：</strong></p>
+<p><strong>量化影响（基于已完成 4 集 v5 数据，arc_challenge 96%/arc_easy 68% 运行中）：</strong></p>
 <ul>
 <li>sciq：二进制 −52.6pp（主因）+ 全量vs限100 +3.8pp = 总 −56.4pp</li>
 <li>boolq：二进制 −1.3pp（微）+ 全量vs限100 +8.3pp（主因）= 总 −7.0pp</li>

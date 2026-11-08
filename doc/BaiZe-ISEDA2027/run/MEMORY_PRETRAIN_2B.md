@@ -1,7 +1,9 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 0
 
-> 2026-11-08 19:06 #1708: **v5 eval监控轮·arc_challenge88%(4135/4687)ETA~10min·arc_easy63%(5940/9501)ETA~30min·piqa3%极慢·hellaswag1-3%极慢·4/8done Avg4=56.1%·报告v2完整(12节23KB 0-script)**·**动作**:① v5 eval 7路健康(arc_challenge88%即将完成·arc_easy63%·piqa3%116/3676~10s/it·hellaswag4shard各1-3%~10-20s/it带宽争抢) ② 4/8已完成:boolq=0.587/sciq=0.842/openbookqa=0.266/winogrande=0.549→Avg4=56.1% ③ 报告v2(12节23KB)覆盖运维令6项①-⑥+结论A(二因叠加)已committed(#1706) ④ v4旧二进制vs v5新二进制逐集对比:sciq0.316→0.842(+52.6pp二进制主因)·boolq0.600→0.587(Δ1.3pp二进制微影响)·openbookqa0.184→0.266(+8.2pp)·winogrande0.496→0.549(+5.2pp) ⑤ S1健康(iter~128000/700k) **计划**:下次唤醒①arc_challenge应已完成→读results.json补入报告②arc_easy完成后补入③piqa/hellaswag待arc完成后带宽释放加速·📦TASK=31.2KB✓/MEMORY=31.0KB✓(归档0)·未完成指令:有(v5 eval运行中)⇒WAITING:0。
+> 2026-11-08 19:12 #1709: **v5 eval监控轮·arc_challenge96%(4485/4687)ETA~8min·arc_easy68%(6480/9501)ETA~70min·piqa4%极慢·hellaswag3-4%极慢·4/8done Avg4=56.1%·报告v2.1微修(3→4集)**·**动作**:① v5 eval 7路健康(arc_challenge96%即将完成·arc_easy68%·piqa4%150/3676~10s/it·hellaswag4shard各3-4%~7-11s/it) ② 4/8已完成带完整n-samples/stderr:boolq=0.5872(n=3270,stderr=0.009)/sciq=0.842(n=1000,stderr=0.012)/openbookqa=0.266(n=500,stderr=0.020)/winogrande=0.5485(n=1267,stderr=0.014)→Avg4=56.1% ③ 报告v2.1(12节23.6KB)覆盖运维令6项①-⑥+结论A(二因叠加)+phase2说明,微修"3集→4集"并更新版本号 ④ 结论A铁证:决定性实验iter_100000同GGUF换二进制sciq 0.44(旧)→0.88(新),训练loss 90k-128k平滑无退化 ⑤ S1健康(iter~128000/700k) **计划**:下次唤醒①arc_challenge应已完成→读results.json补入报告②arc_easy完成后补入③piqa/hellaswag待arc完成后带宽释放加速·📦TASK=31.2KB✓/MEMORY=31.3KB✓(归档0)·未完成指令:有(v5 eval运行中)⇒WAITING:0。
+
+> 📦 §#1708（11-08 19:06, v5 eval监控轮·arc_challenge88%·4/8done·报告v2完整12节）→ daily-memories/2026-11-08.md「#1708」节；**结论**：v5 eval 4/8完成Avg4=56.1%,报告12节23KB覆盖6项+结论A。需要时再读。
 
 > 📦 §#1707（11-08 18:50, v5 eval监控轮·4/8完成·报告v3验证完整·hellaswag ETA修正~22h）→ daily-memories/2026-11-08.md「#1707」节；**结论**：v5 eval 4/8完成Avg4=56.1%,报告11节覆盖6项+结论A,hellaswag ETA~22h。需要时再读。
 
