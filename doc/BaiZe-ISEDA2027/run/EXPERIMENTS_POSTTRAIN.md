@@ -5572,3 +5572,69 @@ MiniCPM5 用 XML 格式（`<function name="...">`），不匹配 4 个内置 par
 - `run/baize_posttrain_arm_ablation_plan.py`（~545 行, py_compile ✅, --simulate ✅, --html ✅, --analyze 待 GPU 后用）
 - `reports/report_posttrain_r48_arm_ablation_prereg_zh.html`（6.7KB, 自包含, 0 script, 0 外链）
 - 本节（EXPERIMENTS §R48, 9 小节）
+
+---
+
+## §R49 Day-0 Launch v2 Config Propagation Audit & Fix（2026-11-08 · 零 GPU · wake97）
+
+> **触发**：R47 创建 v2 config 并更新 rl_grpo.sh，但 6 个其他脚本仍引用有 5 个 CRITICAL bug 的 v1 config。
+> **影响**：11/9 GPU 到位后 preflight 会验证错误配置 → 虚假安全感 → GRPO 静默退化。
+> **结论**：🟢 GO — 全部 7 处 stale v1 引用已修复，v2 consistency audit OVERALL=GO。
+
+### R49.1 发现的 Stale v1 引用（7 处，6 文件）
+
+| # | 文件 | 行号 | 修复内容 |
+|:--|:--|:--|:--|
+| 1 | `baize_posttrain_preflight_check.sh` | 90 | YAML 验证从 v1 改为 v2 + 新增 v1 stale-ref 检测项 |
+| 2 | `baize_posttrain_day1_runbook.sh` | 47-66 | audit 从 v1 改为 v2 + 扩展从 4 项到 8 项 R47 bug 检查 |
+| 3 | `baize_posttrain_day1_runbook.sh` | 99 | 文件存在检查列表从 v1 改为 v2 |
+| 4 | `baize_posttrain_rl_grpo.sh` | 6 | 注释从 v1 改为 v2 |
+| 5 | `baize_posttrain_day0_audit.py` | 109,118,175,214 | 4 处 sed 批量替换 v1→v2 |
+| 6 | `baize_posttrain_smoke_calibrator.py` | 31 | CONFIG_PATH 从 v1 改为 v2 |
+
+### R49.2 新增脚本
+
+`baize_posttrain_v2_consistency_audit.py`（~224 行, py_compile ✅）:
+- `scan_stale_v1_refs()`: 正则扫描所有 `baize_posttrain_*.sh/py` 中残留 v1 引用
+- `audit_v2_config()`: 验证 v2 YAML 的 R47 BUG1-BUG5 修复 + 4 项额外检查（sglang/auto_fallback/flash_attn/n_gpus）
+- `scan_script_config_refs()`: 每个脚本的 v2/v1 引用计数 + 状态分类（OK/MIXED/V1_ONLY/NONE）
+- `check_reward_arm()`: 脚本默认臂 vs 配置臂一致性
+- `check_wrapper()`: verl wrapper 存在性 + 关键特性
+- `check_launch()`: 7 步启动序列完整性
+- `run_audit()`: 汇总 → OVERALL GO/NO-GO
+- 三种输出模式：text（默认）/ JSON（--json）/ HTML（--html）
+
+### R49.3 验证结果
+
+```
+R49 v2 Consistency Audit — GO
+1. Stale v1 refs: 0 (OK)
+2. v2 Config R47 Fixes: 9/9 OK (BUG1-BUG5 + sglang + auto_fallback + flash_attn + n_gpus)
+3. Script→Config refs: rl_grpo.sh=OK, preflight=OK, day1_runbook=OK (其余 NONE=不引用config)
+4. Reward arm: script=R0, config=R0, consistent=True
+5. Wrapper: exists=True, verl_import=True, lines=110
+6. Launch: all_steps=True, smoke=R0, full=R0
+OVERALL: GO
+```
+
+Day-1 runbook audit: **PASS=16 FAIL=0 WARN=0** — "No critical issues. Ready for 11/9."
+
+### R49.4 day1_runbook audit 扩展（4→8 项）
+
+| # | 检查项 | R47 Bug | 结果 |
+|:--|:--|:--|:--|
+| 1 | auto_fallback=true | R22 | OK |
+| 2 | attn_implementation=flash_attention_2 | R35 | OK |
+| 3 | rollout.name=sglang | R9 | OK |
+| 4 | multi_turn.enable=False | BUG4 | OK (Phase1) |
+| 5 | adv_estimator=grpo | BUG2 | OK |
+| 6 | custom_reward_function top-level | BUG1 | OK |
+| 7 | rollout.n≥4 | BUG3 | OK (n=8) |
+| 8 | (tool_config_path in multi_turn) | BUG5 | — (Phase1 null, OK) |
+
+### R49.5 交付物
+
+- `run/baize_posttrain_v2_consistency_audit.py`（~224 行, py_compile ✅, --html ✅）
+- `reports/report_posttrain_r49_v2_consistency_audit_zh.html`（4.1KB, 自包含, 0 script, 0 外链）
+- 6 个脚本修复（preflight_check.sh, day1_runbook.sh, rl_grpo.sh, day0_audit.py, smoke_calibrator.py）
+- 本节（EXPERIMENTS §R49, 5 小节）

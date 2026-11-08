@@ -28,7 +28,7 @@ import sys
 from typing import Any, Dict, List, Optional, Tuple
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-CONFIG_PATH = os.path.join(SCRIPT_DIR, "baize_posttrain_rl_verl_config.yaml")
+CONFIG_PATH = os.path.join(SCRIPT_DIR, "baize_posttrain_rl_verl_config_v2.yaml")  # R49: v2 (R47 fixes)
 
 # R0 reward structure (from baize_posttrain_reward_functions.py lines 18-20)
 R0_COMPONENTS = {

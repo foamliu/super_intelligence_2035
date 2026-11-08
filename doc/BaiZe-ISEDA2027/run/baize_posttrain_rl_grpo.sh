@@ -3,7 +3,7 @@
 #
 # 🔴 R12 UPDATE (2026-11-07): Complete rewrite from placeholder to verl entry point.
 #   - Replaced placeholder grpo_train.py with `python -m verl.trainer.main_ppo`
-#   - Uses baize_posttrain_rl_verl_config.yaml as config source
+#   - Uses baize_posttrain_rl_verl_config_v2.yaml as config source (R47: v2 fixes 5 critical bugs)
 #   - Auto-detects /nas_data vs /nas_train (R12 path fix)
 #   - SGLang backend (R8/R9: MiniCPM5-2B XML tool calls need SGLang parser)
 #

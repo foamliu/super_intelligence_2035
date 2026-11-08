@@ -44,26 +44,43 @@ do_audit() {
   echo "  Full train arm: $full_arm (same auto_fallback applies)"
 
   echo ""
-  echo "=== 2. RL Config (baize_posttrain_rl_verl_config.yaml) ==="
+  echo "=== 2. RL Config (baize_posttrain_rl_verl_config_v2.yaml) ==="
+  echo "  (R49: switched from v1 to v2 — R47 fixed 5 critical bugs)"
+  local RL_CFG_V2="$SCRIPT_DIR/baize_posttrain_rl_verl_config_v2.yaml"
   local auto_fb
-  auto_fb=$(grep 'auto_fallback' "$SCRIPT_DIR/baize_posttrain_rl_verl_config.yaml" 2>/dev/null | grep -o 'true\|false' || echo "not_found")
+  auto_fb=$(grep 'auto_fallback' "$RL_CFG_V2" 2>/dev/null | grep -o 'true\|false' || echo "not_found")
   echo "  auto_fallback: $auto_fb (R22: must be true for R0 fallback)"
   if [ "$auto_fb" = "true" ]; then echo "  OK"; PASS=$((PASS+1)); else echo "  CRITICAL: auto_fallback not true"; FAIL=$((FAIL+1)); fi
 
   local flash_attn
-  flash_attn=$(grep 'attn_implementation' "$SCRIPT_DIR/baize_posttrain_rl_verl_config.yaml" 2>/dev/null | grep -v '^#' | head -1 | grep -o 'flash_attention_2\|sdpa\|eager' | head -1 || echo "not_found")
+  flash_attn=$(grep 'attn_implementation' "$RL_CFG_V2" 2>/dev/null | grep -v '^#' | head -1 | grep -o 'flash_attention_2\|sdpa\|eager' | head -1 || echo "not_found")
   echo "  attn_implementation: $flash_attn (R35: flash_attn compiled, +10-20% throughput)"
   if [ "$flash_attn" = "flash_attention_2" ]; then echo "  OK (R35 verified)"; PASS=$((PASS+1)); else echo "  WARN: not flash_attention_2"; WARN=$((WARN+1)); fi
 
   local rollout_name
-  rollout_name=$(grep 'name:' "$SCRIPT_DIR/baize_posttrain_rl_verl_config.yaml" 2>/dev/null | grep -o 'sglang\|vllm' | head -1 || echo "not_found")
+  rollout_name=$(grep 'name:' "$RL_CFG_V2" 2>/dev/null | grep -o 'sglang\|vllm' | head -1 || echo "not_found")
   echo "  rollout.name: $rollout_name (R9: must be sglang for MiniCPM5 XML tool calls)"
   if [ "$rollout_name" = "sglang" ]; then echo "  OK"; PASS=$((PASS+1)); else echo "  CRITICAL: not sglang"; FAIL=$((FAIL+1)); fi
 
-  local multi_turn
-  multi_turn=$(grep 'multi_turn' "$SCRIPT_DIR/baize_posttrain_rl_verl_config.yaml" 2>/dev/null | grep -o 'True\|False' || echo "not_found")
-  echo "  multi_turn: $multi_turn (R9: required for tool-call agent loop)"
-  if [ "$multi_turn" = "True" ]; then echo "  OK"; PASS=$((PASS+1)); else echo "  WARN"; WARN=$((WARN+1)); fi
+  local multi_turn_enable
+  multi_turn_enable=$(grep 'enable:' "$RL_CFG_V2" 2>/dev/null | head -1 | grep -o 'True\|False' || echo "not_found")
+  echo "  multi_turn.enable: $multi_turn_enable (R47: nested dict; False for Phase1 single-turn)"
+  if [ "$multi_turn_enable" = "False" ]; then echo "  OK (Phase1 single-turn, R47)"; PASS=$((PASS+1)); else echo "  WARN"; WARN=$((WARN+1)); fi
+
+  local adv_est
+  adv_est=$(grep 'adv_estimator:' "$RL_CFG_V2" 2>/dev/null | head -1 | grep -o 'grpo\|gae' | head -1 || echo "not_found")
+  echo "  adv_estimator: $adv_est (R47 BUG2 FIX: must be grpo, not algorithm.name)"
+  if [ "$adv_est" = "grpo" ]; then echo "  OK"; PASS=$((PASS+1)); else echo "  CRITICAL: not grpo"; FAIL=$((FAIL+1)); fi
+
+  local custom_rw_top
+  custom_rw_top=$(grep -c '^custom_reward_function:' "$RL_CFG_V2" 2>/dev/null || echo "0")
+  echo "  custom_reward_function (top-level): $custom_rw_top (R47 BUG1 FIX: must be top-level not under reward.)"
+  if [ "$custom_rw_top" -ge 1 ]; then echo "  OK"; PASS=$((PASS+1)); else echo "  CRITICAL: not top-level"; FAIL=$((FAIL+1)); fi
+
+  local rollout_n
+  rollout_n=$(grep -A0 '^\s*n:' "$RL_CFG_V2" 2>/dev/null | head -1 | sed 's/.*n:[[:space:]]*//' | grep -o '^[0-9]*' || echo "0")
+  echo "  rollout.n: $rollout_n (R47 BUG3 FIX: group_size moved to rollout.n)"
+  if [ "$rollout_n" -ge 4 ] 2>/dev/null; then echo "  OK"; PASS=$((PASS+1)); else echo "  WARN: n<4 or unparseable"; WARN=$((WARN+1)); fi
 
   echo ""
   echo "=== 3. Monitoring (R36) ==="
@@ -79,7 +96,7 @@ do_audit() {
 
   echo ""
   echo "=== 6. Data Files ==="
-  for f in rl_pyaether_synth_v2.parquet sft_pyaether_corpus_v2.jsonl baize_posttrain_eda_tools.yaml baize_posttrain_rl_verl_config.yaml; do
+  for f in rl_pyaether_synth_v2.parquet sft_pyaether_corpus_v2.jsonl baize_posttrain_eda_tools.yaml baize_posttrain_rl_verl_config_v2.yaml; do
     if [ -f "$SCRIPT_DIR/$f" ]; then echo "  OK: $f"; PASS=$((PASS+1)); else echo "  MISSING: $f"; FAIL=$((FAIL+1)); fi
   done
 

@@ -106,7 +106,7 @@ def audit_data_files():
         add_check('A4_DataFiles', f'{label} parquet schema', 'pass' if rc == 0 and 'rows=' in oc else 'fail', oc[:150] if rc == 0 else out[:200])
 
 def audit_config_files(venv_py):
-    configs = [('verl config', SCRIPT_DIR / 'baize_posttrain_rl_verl_config.yaml'),
+    configs = [('verl config', SCRIPT_DIR / 'baize_posttrain_rl_verl_config_v2.yaml'),
                ('EDA tools', SCRIPT_DIR / 'baize_posttrain_eda_tools.yaml')]
     for name, path in configs:
         if not path.exists():
@@ -115,7 +115,7 @@ def audit_config_files(venv_py):
         rc, out = run_cmd(f"'{venv_py}' -c \"import yaml; d=yaml.safe_load(open('{path}')); print(list(d.keys()))\" 2>&1", timeout=15)
         oc = clean(out)
         add_check('A5_ConfigFiles', name, 'pass' if rc == 0 and oc else 'fail', oc[:150] if rc == 0 else out[:200])
-    vc = SCRIPT_DIR / 'baize_posttrain_rl_verl_config.yaml'
+    vc = SCRIPT_DIR / 'baize_posttrain_rl_verl_config_v2.yaml'
     if vc.exists():
         rc, out = run_cmd(f"'{venv_py}' -c \"import yaml; d=yaml.safe_load(open('{vc}')); keys=[]; keys.append('data.train_files=' + str(d.get('data',{{}}).get('train_files','MISSING'))); keys.append('rollout.name=' + str(d.get('actor_rollout_ref',{{}}).get('rollout',{{}}).get('name','MISSING'))); keys.append('algorithm=' + str(d.get('algorithm',{{}}).get('name','MISSING'))); keys.append('reward.path=' + str(d.get('reward',{{}}).get('custom_reward_function',{{}}).get('path','MISSING'))); keys.append('max_turns=' + str(d.get('agent',{{}}).get('max_turns','MISSING'))); keys.append('n_gpus=' + str(d.get('runtime',{{}}).get('n_gpus','MISSING'))); print('; '.join(keys))\" 2>&1", timeout=15)
         oc = clean(out)
@@ -172,7 +172,7 @@ def audit_path_consistency():
              ('EDA base', EDA_BASE), ('EDA dataset', EDA_BASE / 'pyAether-eval' / 'original_dataset' / 'EDA-Eval-PyAether-v20260311.jsonl'),
              ('EDA eval script', EDA_BASE / 'scripts' / 'run_eval.py'), ('EDA driver', EDA_BASE / 'pyAether-eval' / 'run_cline_script.sh'),
              ('API database', EDA_BASE / 'docs' / 'API_INFO_MERGED_V3.json'), ('RL parquet', SCRIPT_DIR / 'rl_pyaether_synth_v2.parquet'),
-             ('SFT v2 jsonl', SCRIPT_DIR / 'sft_pyaether_corpus_v2.jsonl'), ('verl YAML', SCRIPT_DIR / 'baize_posttrain_rl_verl_config.yaml'),
+             ('SFT v2 jsonl', SCRIPT_DIR / 'sft_pyaether_corpus_v2.jsonl'), ('verl YAML', SCRIPT_DIR / 'baize_posttrain_rl_verl_config_v2.yaml'),
              ('EDA tools YAML', SCRIPT_DIR / 'baize_posttrain_eda_tools.yaml'), ('Reward functions', SCRIPT_DIR / 'baize_posttrain_reward_functions.py'),
              ('verl wrapper', SCRIPT_DIR / 'baize_posttrain_verl_wrapper.py'), ('cu124 venv', Path(VENV_PY_DEFAULT)),
              ('Day-1 runbook', SCRIPT_DIR / 'baize_posttrain_day1_runbook.sh'), ('Launch script', SCRIPT_DIR / 'baize_posttrain_launch_11_9.sh'),
@@ -211,7 +211,7 @@ def audit_sandbox_connectivity():
         except Exception: pass
         finally: sock.close()
     add_check('A10_SandboxConnectivity', 'TCP 8664-8669', 'pass' if reachable else 'warn', f'Reachable: {reachable}' if reachable else 'All filtered — R0 fallback')
-    vc = SCRIPT_DIR / 'baize_posttrain_rl_verl_config.yaml'
+    vc = SCRIPT_DIR / 'baize_posttrain_rl_verl_config_v2.yaml'
     if vc.exists() and 'auto_fallback: true' in vc.read_text():
         add_check('A10_SandboxConnectivity', 'R0 auto-fallback', 'pass', 'auto_fallback: true configured')
     else:

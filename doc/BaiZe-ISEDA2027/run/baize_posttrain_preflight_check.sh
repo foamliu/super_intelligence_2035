@@ -85,12 +85,17 @@ check "SFT.sh" "bash -n \"$BAIZE_RUN_DIR/baize_posttrain_sft.sh\""
 check "eval.sh" "bash -n \"$BAIZE_RUN_DIR/baize_posttrain_eval.sh\""
 check "diag.sh" "bash -n \"$BAIZE_RUN_DIR/baize_posttrain_minicpm5_diag.sh\""
 
-# YAML
+# YAML — R49: Must validate v2 config (R47 fixed 5 critical bugs in v1)
+RL_CONFIG_V2="$BAIZE_RUN_DIR/baize_posttrain_rl_verl_config_v2.yaml"
 if [ -d "$VENV_PATH" ]; then
-    check "RL YAML" "$VENV_PATH/bin/python -c 'import yaml; yaml.safe_load(open(\"$BAIZE_RUN_DIR/baize_posttrain_rl_verl_config.yaml\")); exit(0)'"
+    check "RL YAML v2" "$VENV_PATH/bin/python -c 'import yaml; yaml.safe_load(open(\"$RL_CONFIG_V2\")); exit(0)'"
 else
-    warn_check "RL YAML (sys py)" "python3 -c 'import yaml; yaml.safe_load(open(\"$BAIZE_RUN_DIR/baize_posttrain_rl_verl_config.yaml\")); exit(0)'"
+    warn_check "RL YAML v2 (sys py)" "python3 -c 'import yaml; yaml.safe_load(open(\"$RL_CONFIG_V2\")); exit(0)'"
 fi
+# R49: Warn if v1 still referenced anywhere (should be gone after R49 fix)
+echo -n "[RL v1 stale ref] ... "
+STALE_COUNT=$(grep -rl 'baize_posttrain_rl_verl_config\.yaml' "$BAIZE_RUN_DIR"/baize_posttrain_*.sh 2>/dev/null | grep -v 'config_v2' | wc -l)
+if [ "$STALE_COUNT" -eq 0 ]; then echo "PASS"; PASS=$((PASS+1)); else echo "WARN ($STALE_COUNT files still reference v1)"; WARN=$((WARN+1)); fi
 
 # 5. GPU
 GPU_BUSY=$(nvidia-smi --query-gpu=index,memory.used --format=csv,noheader 2>/dev/null | awk -F', ' '{gsub(/[^0-9]/,"",$2); if($2+0>1000) print $1}')
