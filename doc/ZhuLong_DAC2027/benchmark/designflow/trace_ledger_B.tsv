@@ -451,3 +451,5 @@ qnm9e					parked		2026-11-08 01:58	Finesim DC convergence Q&A prose dup of uky6c
 1790998236503_95kx2	tongfanl	hfhds201	117	spice_sim	case	EDA-Eval-DesignFlow-StimOp2MisMatchDiag-001	2026-11-08 07:16	
 1791796775106_b1w28	tongfanl	hfhds201	222	spice_sim	case	EDA-Eval-DesignFlow-WriteDqPsdMappingExtract-001	2026-11-08 07:49	
 1791961682094_f1cbt	tongfanl	hfhds201	33	spice_sim	case	EDA-Eval-DesignFlow-MrSelfClearExpDiag-001	2026-11-08 08:16	
+1790146508454_t06pr	tongfanl	hfhds201	21	spice_sim	parked		2026-11-08 08:26	trace-incomplete-ends-tool_result-no-gold-standard-no-user-acceptance
+1790849679042_bjkmi	tongfanl	hfhds201	862	spice_sim	case	EDA-Eval-DesignFlow-DQSEHFlagNoEffectDiag-001	2026-11-08 08:43	
