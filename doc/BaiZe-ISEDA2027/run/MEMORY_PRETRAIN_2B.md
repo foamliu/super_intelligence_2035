@@ -1,33 +1,15 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 0
 
-> 2026-11-08 19:30 #1711: **v5 eval监控轮·5/8done Avg5(acc)=50.95%·报告v2.3更新进度+hellaswag shard明细·运维令6项已全部覆盖**·**动作**:① 5/8集仍完成(arc_challenge/boolq/openbookqa/sciq/winogrande),arc_easy79%(7542/9501)ETA~40min·piqa6%(226/3676)~7s/it·hellaswag 4shard 1-6%极慢 ② 报告v2.3(27.5KB)更新:进度数arc_easy72%→79%/piqa5%→6%/hellaswag2%→3%,新增hellaswag 4-shard进度表(port/速率/ETA)+HS单位澄清(loglikelihood请求数非doc数)+Avg8预测46-50% ③ 运维令6项核对:①分集明细✅(三口径8任务表) ②样本数✅(n列) ③后端精度✅(旧vs修复二进制+GGUF F16) ④fewshot✅(num_fewshot=0 zero-shot) ⑤hellaswag进度✅(40168请求/4shard表) ⑥同ckpt对比✅(§七决定性实验 iter_100000同GGUF换二进制 sciq 0.44→0.88) ④ 结论A(口径差异非真实下降):因①旧二进制(sciq+52.6pp主因)+因②全量vs限100(boolq-8.3pp主因),loss平滑无退化 ⑤ S1健康(iter~130000/700k) **计划**:下次唤醒①arc_easy应已完成→补入报告②piqa/hellaswag极慢,待arc完成后带宽释放③v5全部完成后算Avg8·📦TASK=31.2KB✓/MEMORY=31.8KB✓(归档0)·未完成指令:有(v5 eval运行中)⇒WAITING:0。
+> 2026-11-08 19:38 #1712: **v5 eval监控轮·5/8done Avg5=50.95%·arc_easy86%(8127/9501)ETA~15-30min·报告v2.4进度更新·归档#1700-#1709释放MEMORY**·**动作**:① 5/8集仍完成(arc_challenge=0.3038/boolq=0.5872/openbookqa=0.266/sciq=0.842/winogrande=0.5485),arc_easy86%(8127/9501)ETA~15-30min·piqa7%(268/3676)~7-12s/it ETA~6-8h·hellaswag 4shard chunk0=311(3%)/chunk1=630(6%)/chunk2=185(2%)/chunk3=194(2%)极慢ETA~24h ② 报告v2.4更新:arc_easy79%→86%/piqa6%→7%/hellaswag shard表更新 ③ 运维令6项已全覆盖(详见#1711) ④ 结论A确认:二因(旧二进制sciq+52.6pp主因 + 全量vs限100 boolq-8.3pp主因),loss平滑无退化 ⑤ S1健康(iter_0130000@19:02,8GPU 86-100%util) ⑥ 归档#1700-#1709(10条监控指针)释放MEMORY~2.1KB **计划**:下次唤醒①arc_easy应已完成→补入报告②piqa/hellaswag极慢待arc完成后带宽释放③v5全部完成后算Avg8·📦TASK=31.2KB✓/MEMORY=30.5KB✓(归档2.1KB→daily-memories)·未完成指令:有(v5 eval运行中)⇒WAITING:0。
 
-> 📦 §#1709（11-08 19:12, v5 eval监控轮·arc_challenge96%·4/8done·报告v2.1微修）→ daily-memories/2026-11-08.md「#1709」节；**结论**：v5 eval 4/8完成Avg4=56.1%,报告v2.1微修3→4集。需要时再读。
+> 📦 §#1711（11-08 19:30, v5 eval监控轮·5/8done·报告v2.3+hellaswag shard明细·运维令6项全覆盖）→ daily-memories/2026-11-08.md「#1711」节；**结论**：v5 5/8完成Avg5=50.95%,运维令6项全覆盖,结论A确认。需要时再读。
 
-> 📦 §#1708（11-08 19:06, v5 eval监控轮·arc_challenge88%·4/8done·报告v2完整12节）→ daily-memories/2026-11-08.md「#1708」节；**结论**：v5 eval 4/8完成Avg4=56.1%,报告12节23KB覆盖6项+结论A。需要时再读。
+> 📦 §#1700-#1709（11-08 17:33-19:12, 10轮v5 eval监控·0→5/8done·报告v1→v2.3迭代）→ daily-memories/2026-11-08.md「#1700-#1709」节；**结论**：v5 eval从0→5/8完成,报告从v1迭代至v2.3覆盖6项+结论A。需要时再读。
 
-> 📦 §#1707（11-08 18:50, v5 eval监控轮·4/8完成·报告v3验证完整·hellaswag ETA修正~22h）→ daily-memories/2026-11-08.md「#1707」节；**结论**：v5 eval 4/8完成Avg4=56.1%,报告11节覆盖6项+结论A,hellaswag ETA~22h。需要时再读。
+> 🔑 **v5五集结果(19:19)**: arc_challenge=0.3038/boolq=0.5872/openbookqa=0.266/sciq=0.842/winogrande=0.5485 → **v5 Avg5=50.95%**,远高于v4 Avg7=37.4%,接近历史limit=100 Avg8=54.75%。结论A(口径差异)确认。
 
-> 📦 §#1706（11-08 18:45, v5 eval 4/8集完成·winogrande=0.549·重启piqa+hellaswag·报告v3更新）→ daily-memories/2026-11-08.md「#1706」节；**结论**：v5 Avg4=56.1%确认结论A,hellaswag重启ETA需修正(3-4h→~22h)。需要时再读。
-
-> 🔑 **v5四集结果(18:45)**: boolq=0.587/sciq=0.842/openbookqa=0.266/winogrande=0.549 → **v5 Avg4=56.1%**,远高于v4 Avg7=37.4%,接近历史limit=100 Avg8=54.75%。winogrande二因均等(各+5.2pp)。报告v3已更新。
-
-> 📦 §#1705（11-08 18:30, v5异常报告v2修订·3集完成·二因结论）→ daily-memories/2026-11-08.md「#1705」节；**结论**：v5 boolq/sciq/openbookqa完成,二因叠加确认,报告v2已交付。需要时再读。
-> 📦 §#1704（11-08 18:14, v5 eval优化轮·杀piqa瓶颈·boolq首批结果0.5872确认二因）→ daily-memories/2026-11-08.md「#1704」节；**结论**：v5 boolq=0.5872证明binary对boolq几乎无影响,full-vs-limit100是主因,异常报告需修订为二因。需要时再读。
-
-> 📦 §#1703（11-08 18:12, v5 eval优化轮·杀4 hellaswag shard释放带宽·7非HS任务加速·运维令6项已交付）→ daily-memories/2026-11-08.md「#1703」节；**结论**：v5 eval杀掉hellaswag 4 shard释放带宽,7非HS任务推进中,运维令6项异常报告已交付。需要时再读。
-
-> 📦 §#1702（11-08 17:52, v5 eval监控轮·全11路健康·0/11完成·openbookqa最近ETA~30min）→ daily-memories/2026-11-08.md「#1702」节；**结论**：v5 eval 11/11健康0/11完成,运维令6项异常报告+speedup报告均已交付。需要时再读。
-
-
-> 📦 §#1701（11-08 17:42, v5 eval监控轮·全11路健康·0/11完成·运维令6项报告均已交付）→ daily-memories/2026-11-08.md「#1701」节；**结论**：v5 eval 11/11健康0/11完成,运维令6项异常报告+speedup报告均已交付。需要时再读。
-> 📦 §#1700（11-08 17:33, v5 eval监控轮·全11路健康·0/11完成·小任务即将出首批结果）→ daily-memories/2026-11-08.md「#1700」节；**结论**：v5 eval 11/11健康0/11完成,带宽争抢piqa/hellaswag极慢,异常报告12节确认完整。需要时再读。
-
-> 📦 §#1699（11-08 17:41, v5 eval监控轮·全11路运行·异常报告验证完整）→ daily-memories/2026-11-08.md「#1699」节；**结论**：v5 eval 11/11健康0/11完成,异常报告12节确认覆盖6项①-⑥+结论A。需要时再读。
-
-> 📦 §#1698（11-08 17:24, v5 eval监控轮·健康但慢·杀残留port8092）→ daily-memories/2026-11-08.md「#1698」节；**结论**：v5 eval 11/11健康,杀掉旧port8092决定性实验遗留server,异常报告12节确认完整。需要时再读。
-> 📦 §#1697（11-08 17:12, v5修复版全量eval启动·11路并行·修复版二进制MD5=f95ac952）→ daily-memories/2026-11-08.md「#1697」节；**结论**：杀掉全部v4旧二进制eval，创建baize_eval_v5_correct.sh(code/llama.cpp修复版+11路任务并行+HF离线)，11/11 server+client运行中。需要时再读。
+> 📦 §#1696-#1697（11-08 16:56-17:12, 根因定位+v5修复版eval启动）→ daily-memories/2026-11-08.md「#1696-#1697」节；**结论**：根因=v4旧二进制(sciq 0.44→0.88),v5修复版二进制MD5=f95ac952,11路并行eval启动。需要时再读。
 > 📦 §#1696（11-08 16:56, Avg7=37.40%异常根因定位=llama-server旧二进制回归·决定性实验sciq旧0.44/新0.88·报告15KB·结论A口径差异）→ daily-memories/2026-11-08.md「#1696」节；**结论**：根因=v4用旧二进制(tools/llama.cpp,缺nemotron-h logits修复)，同GGUF旧sciq=0.44/新sciq=0.88，loss平滑无退化，结论A非真实下降，报告report_pretrain_eval_avg7_anomaly_zh.html已交付。需要时再读。
 > 📦 §#1694（11-08 15:25, phase2误杀chunk0_missing(70%丢失)→修复+恢复+切v4 watcher·S1 iter~128000/700k）→ daily-memories/2026-11-08.md「#1694」节；**结论**：phase2误杀chunk0_missing导致docs 0-1757覆盖缺口→#1695创建fill_gap脚本修复。需要时再读。
 > 📦 §#1692（11-08 14:55, chunk0b_b崩溃修复·重启llama-server 8083+创建split1/split2·phase2 get_port()bug待修·S1 iter~128200/700k）→ daily-memories/2026-11-08.md「#1692」节；**结论**：phase2 bug杀死chunk0b_b eval client未启动替代,手动创建split1/split2修复,phase2 get_port()bug待下次唤醒修→#1693已修。需要时再读。

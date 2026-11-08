@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>预训练全量评测均值异常诊断报告 (Avg7=37.40% vs 历史 51.5–57.9%) — 修订版</title>
-<!-- v2.3: 进度更新 arc_easy 79%/piqa 6%/hellaswag 3%, 5/8 集 -->
+<!-- v2.4: 进度更新 arc_easy 86%/piqa 7%/hellaswag 3%, 5/8 集 -->
 <style>
 body{font-family:system-ui,sans-serif;max-width:1100px;margin:0 auto;padding:20px;line-height:1.6;color:#222;background:#fafafa}
 h1{color:#c0392b;border-bottom:3px solid #c0392b;padding-bottom:10px}
@@ -87,7 +87,7 @@ v5 全量 sciq=0.842 vs 历史 limit=100 sciq=0.88（Δ=3.8pp）——均显示�
 <tr><td>sciq</td><td class="red">0.3160</td><td class="green">0.8420</td><td>0.8800</td><td class="green">+52.6pp (巨)</td><td class="orange">+3.8pp</td><td>1000</td></tr>
 <tr><td>winogrande</td><td class="orange">0.4964</td><td class="green">0.5485</td><td>0.6000</td><td class="green">+5.2pp</td><td class="orange">+5.2pp</td><td>1267</td></tr>
 <tr><td>hellaswag</td><td colspan="2" class="blue">v5 重启中（4 shard 并行）</td><td>0.4100</td><td colspan="3">hellaswag v5 已重启（4 shard × 16 核，port 8184-8187）</td></tr>
-<tr><td><strong>Avg7</strong></td><td class="red">37.40%</td><td class="blue">待算（5/7 已完成）</td><td class="green">52.86%</td><td colspan="3">v5 已完成 5/8 集，Avg5(acc)=50.95%，剩余 arc_easy 79%/piqa 6%/hellaswag 3% 运行中</td></tr>
+<tr><td><strong>Avg7</strong></td><td class="red">37.40%</td><td class="blue">待算（5/7 已完成）</td><td class="green">52.86%</td><td colspan="3">v5 已完成 5/8 集，Avg5(acc)=50.95%，剩余 arc_easy 86%/piqa 7%/hellaswag 3% 运行中</td></tr>
 </table>
 <p>* openbookqa 全量 n=500 = 数据集全部题量（无更大集合），limit=100 取前 100 题。
 v5 全量 0.266 反而<strong>高于</strong>历史 limit=100 的 0.21，说明 limit=100 对 openbookqa 不是高估而是低估——
@@ -147,13 +147,13 @@ v5 vs v4 隔离了二进制效应，v5 vs 历史隔离了全量vs限100 效应�
 <p><span class="updated">v5 评测中 hellaswag 的 4 个分片（chunk0-3）已重启</span>，与 piqa 一起在释放的 5 组核心上并行运行（port 8183=piqa, 8184-8187=4 hellaswag shards）。
 hellaswag 全量 = 10042 题 × 4 选项 = 40168 次 loglikelihood 请求，是最大的任务（约占总请求量的 55%）。
 <strong>「HS 20.8%」的单位是 loglikelihood 请求数</strong>（非 doc 数）——hellaswag 有 10042 个 doc，每个 doc 4 个选项 = 40168 次请求，4 shard 各约 10042 次。</p>
-<p><strong>当前 4 shard 进度（截至 19:30）：</strong></p>
+<p><strong>当前 4 shard 进度（截至 19:38）：</strong></p>
 <table>
 <tr><th>shard</th><th>port</th><th>进度</th><th>速率</th><th>ETA</th></tr>
-<tr><td>chunk0</td><td>8184</td><td>295/10044 (3%)</td><td>~43s/it</td><td class="red">极慢（带宽争抢）</td></tr>
-<tr><td>chunk1</td><td>8185</td><td>569/10044 (6%)</td><td>~9s/it</td><td>~24h</td></tr>
-<tr><td>chunk2</td><td>8186</td><td>149/10044 (1%)</td><td>~24s/it</td><td class="red">极慢</td></tr>
-<tr><td>chunk3</td><td>8187</td><td>165/10036 (2%)</td><td>~14s/it</td><td class="red">极慢</td></tr>
+<tr><td>chunk0</td><td>8184</td><td>311/10044 (3%)</td><td>~30s/it</td><td class="red">极慢（带宽争抢）</td></tr>
+<tr><td>chunk1</td><td>8185</td><td>630/10044 (6%)</td><td>~9s/it</td><td>~24h</td></tr>
+<tr><td>chunk2</td><td>8186</td><td>185/10044 (2%)</td><td>~24s/it</td><td class="red">极慢</td></tr>
+<tr><td>chunk3</td><td>8187</td><td>194/10036 (2%)</td><td>~14s/it</td><td class="red">极慢</td></tr>
 </table>
 <p><strong>hellaswag 的 v5 分数待后续补入本报告。</strong> 全量 hellaswag 预计 acc 在 0.30–0.42 区间（全量通常低于 limit=100）。
 8 集均值预计：若 hellaswag≈0.35，则 Avg8 ≈ (50.95×5 + 0.57×arc_easy + 0.65×piqa + 0.35)/8 ≈ <strong>46–50%</strong>（高于 v4 的 37.4%，低于历史 limit=100 的 54.75%）。</p>
@@ -271,7 +271,7 @@ hellaswag 全量 = 10042 题 × 4 选项 = 40168 次 loglikelihood 请求，是�
 <li><strong>因② 全量评测 vs limit=100：</strong>v5 全量 boolq=0.587 vs 历史 limit=100 boolq=0.67（Δ=8.3pp），v5 全量 sciq=0.842 vs 历史 limit=100 sciq=0.88（Δ=3.8pp）。<code>limit=100</code> 取 <code>instances[:100]</code>（前 100 题）存在系统性偏差，方向因任务而异（boolq 高估 8.3pp，openbookqa 低估 5.6pp）。</li>
 <li>v1 报告「差异 100% 来自二进制」<strong>被 v5 boolq 数据推翻</strong>：boolq 二进制效应仅 1.3pp，总差异 7.0pp 中的 8.3pp 来自全量vs限100。</li>
 </ol>
-<p><strong>量化影响（基于已完成 5 集 v5 数据，arc_easy 79%/piqa 6%/hellaswag 3% 运行中）：</strong></p>
+<p><strong>量化影响（基于已完成 5 集 v5 数据，arc_easy 86%/piqa 7%/hellaswag 3% 运行中）：</strong></p>
 
 <h3>逐集对照表（v5 全量 vs 历史 iter_100000 limit=100）</h3>
 <table>
@@ -299,7 +299,7 @@ hellaswag 全量 = 10042 题 × 4 选项 = 40168 次 loglikelihood 请求，是�
 <p><strong>下一步：</strong></p>
 <ul>
 <li>🚫 <strong>不需要暂停训练或回滚检查点</strong>——模型训练正常（loss 平滑无跳变）</li>
-<li>✅ v5 修复版二进制全量评测<strong>正在运行</strong>（5/8 集已完成：arc_challenge/boolq/openbookqa/sciq/winogrande；arc_easy 79%/piqa 6%/hellaswag 3% 运行中）</li>
+<li>✅ v5 修复版二进制全量评测<strong>正在运行</strong>（5/8 集已完成：arc_challenge/boolq/openbookqa/sciq/winogrande；arc_easy 86%/piqa 7%/hellaswag 3% 运行中）</li>
 <li>✅ v5 Avg5（已完成 5 集, acc）= <strong>50.95%</strong>，远高于 v4 Avg7=37.40%。同 5 集对比历史 limit=100 Avg5=53.20%，差仅 −2.25pp——全量分数略低于 limit=100 是预期行为（limit=100 系统性偏差因任务而异）</li>
 <li>✅ 待 v5 全部完成后，计算 v5 Avg8（预计 ~48–53%，高于 v4 的 37.4%，低于历史 limit=100 的 54.75%）</li>
 <li>✅ 历史报告的 limit=100 分数<strong>不能直接作为全量基线</strong>——建议后续统一用全量评测</li>
