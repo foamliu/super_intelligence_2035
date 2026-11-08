@@ -384,3 +384,6 @@
 1789629651143_l5349	rongjiez	hfeg0pkn005	137	layout_aether	case	EDA-Eval-DesignFlow-SkillPyaetherTransAudit-001	2026-11-08 09:29	
 1782880367712_jzzsv.messages.json	e03179	hfeg0pkn002	495	layout_virtuoso	case	EDA-Eval-DesignFlow-SkillM1ShapeDeleteAudit-001	2026-11-08 10:13	
 1793240378933_kck7n.messages.json					parked		2026-11-08 09:58	env-recon/how-to Q&A (查gds工具/启klayout/how to use virtuoso), no real task deliverable, non-seed
+1792497366260_giuwf.messages.json	johnl	hfeg0pkn001	24	pg_layout	parked		2026-11-08 10:29	Q&A find .lib/cells.yaml files + mtime; innovus kw from dir names not tool runs; no layout/PG deliverable
+1792371906656_jyoob.messages.json	pwma	hfeg0pkn005	147	layout_virtuoso	parked		2026-11-08 10:31	Virtuoso IC617ISR23/RHEL8.10 OA_UNSUPPORTED_PLAT launch only; subset of r230 VirtuosoStartupDiag (no libnsl/libstdc++ layers); env-recon no layout deliverable; user only 'open virtuoso'
+1793605922073_ets0m.messages.json	e0047695	hfeg0pkn005	150	layout_virtuoso	case	EDA-Eval-DesignFlow-InstM0ShapePinIdentify-001	2026-11-08 10:47	
