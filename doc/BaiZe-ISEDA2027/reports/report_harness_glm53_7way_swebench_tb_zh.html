@@ -1,6 +1,6 @@
 <!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><title>BaiZe Harness · glm-5.3-flash · 7-way</title><style>body{font-family:"Microsoft YaHei","Noto Sans CJK SC",sans-serif;max-width:1200px;margin:0 auto;padding:20px;background:#f5f5f5;color:#333}h1{color:#1a5276;border-bottom:3px solid #2980b9;padding-bottom:10px}h2{color:#2874a6;margin-top:30px;border-left:5px solid #3498db;padding-left:10px}table{border-collapse:collapse;width:100%;margin:10px 0;background:#fff}th,td{border:1px solid #ddd;padding:8px 12px;text-align:left}th{background:#2980b9;color:#fff}tr:nth-child(even){background:#f9f9f9}.green{color:#27ae60;font-weight:bold}.red{color:#e74c3c;font-weight:bold}.orange{color:#e67e22;font-weight:bold}.pass{color:#27ae60;font-weight:bold}.fail{color:#e74c3c}.warn{color:#e67e22}.note{background:#fef9e7;border-left:4px solid #f39c12;padding:10px;margin:10px 0}.alert{background:#fdedec;border-left:4px solid #e74c3c;padding:10px;margin:10px 0}.ok{background:#eafaf1;border-left:4px solid #27ae60;padding:10px;margin:10px 0}.info{background:#ebf5fb;border-left:4px solid #3498db;padding:10px;margin:10px 0}.critical{background:#fdedec;border-left:4px solid #e74c3c;padding:10px;margin:15px 0}code{background:#eee;padding:2px 6px;border-radius:3px;font-size:0.9em}</style></head><body>
 <h1>BaiZe Harness 横评报告 · glm-5.3-flash · 7-way</h1>
-<p><strong>模型</strong>：glm-5.3-flash｜ <strong>7 路</strong>：cline / codex / opencode / claude-code / pi / hermes / deepseek<br><strong>基准</strong>：SWE-bench Verified 500 + TB-2.1 89<br><strong>轮次</strong>：R1872 · 2026-11-08 11:45｜ <strong>网关</strong>：HTTP 200 ✅</p>
+<p><strong>模型</strong>：glm-5.3-flash｜ <strong>7 路</strong>：cline / codex / opencode / claude-code / pi / hermes / deepseek<br><strong>基准</strong>：SWE-bench Verified 500 + TB-2.1 89<br><strong>轮次</strong>：R1873 · 2026-11-08 11:52｜ <strong>网关</strong>：HTTP 200 ✅</p>
 <div class="info"><p><strong>📌 命名纪律</strong>：报告正文一律写 <code>cline</code>，不写 <code>cline-patched</code>。</p></div>
 <h2>1. SWE-bench Verified · eval 结果（R1789 中间）</h2>
 <table><tr><th>Harness</th><th>eval题数</th><th>resolved</th><th>failed</th><th>infra</th><th>通过率</th><th>状态</th></tr>
@@ -14,19 +14,19 @@
 </table>
 <div class="note"><p>eval 题数 &lt; 500 因 predict 尚未跑满。待满 500 后重跑 eval。</p></div>
 <h2>2. SWE-bench · predict 进度（7路运行中）</h2>
-<p><strong>总进度</strong>：1423/3500（40.7%）｜ <strong>网关</strong>：HTTP 200 ✅</p>
+<p><strong>总进度</strong>：1427/3500（40.8%）｜ <strong>网关</strong>：HTTP 200 ✅</p>
 <table><tr><th>Harness</th><th>进度</th><th>real patch</th><th>empty patch</th><th>real rate</th></tr>
-<tr><td>cline</td><td>163/500</td><td class='pass'>83</td><td class='fail'>80</td><td><strong>50.9%</strong></td></tr>
+<tr><td>cline</td><td>164/500</td><td class='pass'>84</td><td class='fail'>80</td><td><strong>51.2%</strong></td></tr>
 <tr><td>codex</td><td>264/500</td><td class='pass'>23</td><td class='fail'>241</td><td><strong>8.7%</strong></td></tr>
-<tr><td>opencode</td><td>216/500</td><td class='pass'>177</td><td class='fail'>39</td><td><strong>81.9%</strong></td></tr>
+<tr><td>opencode</td><td>217/500</td><td class='pass'>178</td><td class='fail'>39</td><td><strong>82.0%</strong></td></tr>
 <tr><td>claude-code</td><td>290/500</td><td class='pass'>49</td><td class='fail'>241</td><td><strong>16.9%</strong></td></tr>
 <tr><td>pi</td><td>109/500</td><td class='pass'>42</td><td class='fail'>67</td><td><strong>38.5%</strong></td></tr>
-<tr><td>hermes</td><td>280/500</td><td class='pass'>187</td><td class='fail'>93</td><td><strong>66.8%</strong></td></tr>
+<tr><td>hermes</td><td>282/500</td><td class='pass'>189</td><td class='fail'>93</td><td><strong>67.0%</strong></td></tr>
 <tr><td>deepseek</td><td>101/500</td><td class='pass'>58</td><td class='fail'>43</td><td><strong>57.4%</strong></td></tr>
 </table>
 <div class="info"><ul>
-<li><strong>cline 专项</strong>：163题predict，83real，80empty（51% real rate）。空patch中429=1，能力=79。</li>
-<li><strong>opencode</strong>：216题，177real（82% = 最高）</li>
+<li><strong>cline 专项</strong>：164题predict，84real，80empty（51% real rate）。空patch中429=1，能力=79。</li>
+<li><strong>opencode</strong>：217题，178real（82% = 最高）</li>
 <li>网关200✅·predict正常推进中</li></ul></div>
 <h2>3. 与 kimi-k2.6-cloud 对照</h2>
 <table><tr><th>Harness</th><th>kimi(resolved/500)</th><th>glm53(interim)</th><th>备注</th></tr>
@@ -47,11 +47,11 @@
 <table><tr><th>Harness</th><th>完成</th><th>Passed</th><th>Failed</th><th>Remaining</th><th>通过率</th><th>状态</th></tr>
 <tr><td>cline</td><td>89/89</td><td class='pass'>7</td><td class='fail'>91</td><td>0</td><td><strong>7.1%</strong></td><td>✅ DONE</td></tr>
 <tr><td>codex</td><td>89/89</td><td class='pass'>4</td><td class='fail'>97</td><td>0</td><td><strong>4.0%</strong></td><td>✅ DONE</td></tr>
-<tr><td>opencode</td><td>44/89</td><td class='pass'>12</td><td class='fail'>32</td><td>45</td><td><strong>27.3%</strong></td><td>⏳ 运行中(44/89)</td></tr>
+<tr><td>opencode</td><td>45/89</td><td class='pass'>12</td><td class='fail'>33</td><td>44</td><td><strong>26.7%</strong></td><td>⏳ 运行中(45/89)</td></tr>
 <tr><td>claude-code</td><td>33/89</td><td class='pass'>5</td><td class='fail'>28</td><td>56</td><td><strong>15.2%</strong></td><td>⏳ 运行中(33/89)</td></tr>
-<tr><td>pi</td><td>43/89</td><td class='pass'>11</td><td class='fail'>32</td><td>46</td><td><strong>25.6%</strong></td><td>⏳ 运行中(43/89)</td></tr>
+<tr><td>pi</td><td>45/89</td><td class='pass'>11</td><td class='fail'>34</td><td>44</td><td><strong>24.4%</strong></td><td>⏳ 运行中(45/89)</td></tr>
 <tr><td>hermes</td><td>89/89</td><td class='pass'>4</td><td class='fail'>102</td><td>0</td><td><strong>3.8%</strong></td><td>✅ DONE</td></tr>
-<tr><td>deepseek</td><td>51/89</td><td class='pass'>7</td><td class='fail'>44</td><td>38</td><td><strong>13.7%</strong></td><td>⏳ 运行中(51/89)</td></tr>
+<tr><td>deepseek</td><td>53/89</td><td class='pass'>9</td><td class='fail'>44</td><td>36</td><td><strong>17.0%</strong></td><td>⏳ 运行中(53/89)</td></tr>
 
 </table>
 <div class="note"><p><strong>§15:2x判据</strong>：TB4全0→切换TB-2.1→cline 7 passed→<strong>MET ✅</strong></p></div>
@@ -65,15 +65,15 @@
 <table><tr><th>路径</th><th>容量</th><th>可用</th><th>使用率</th></tr><tr><td>/data</td><td>7.0T</td><td>5.8T</td><td>18%</td></tr><tr><td>/</td><td>384G</td><td>352G</td><td>4%</td></tr></table>
 <h2>7. cline专项小结（§10:10 C1–C5）</h2>
 <div class="info"><ul>
-<li><strong>C1</strong>：predict 163/500(83real·80empty·51%)；eval 35/46；TB-2.1 7pass/89</li>
+<li><strong>C1</strong>：predict 164/500(84real·80empty·51%)；eval 35/46；TB-2.1 7pass/89</li>
 <li><strong>C2</strong>：空patch分类 429=1 + 能力=79 + 其他=0 = 100%</li>
 <li><strong>C3</strong>：resume fix后R1789 eval 0 empty_patch ✅；predict empty为能力(非bug复发)</li>
-<li><strong>C4</strong>：real=83/empty=80/失败top1=能力(79/163=48%)</li>
-<li><strong>C5</strong>：report_harness_cline_special_r1872_zh.html（本报告+专项报告）</li></ul></div>
+<li><strong>C4</strong>：real=84/empty=80/失败top1=能力(79/164=48%)</li>
+<li><strong>C5</strong>：report_harness_cline_special_r1873_zh.html（本报告+专项报告）</li></ul></div>
 <h2>8. 后续计划</h2>
 <div class="info"><ol>
 <li>SWE-bench：predict 7路推进至500（网关200✅），满500后重跑eval</li>
 <li>TB-2.1：3路DONE(cline/codex/hermes)，4路运行中(opencode/cc/pi/dsh)，待全部完成汇总</li>
 <li>待predict满500后重跑全量eval并更新最终报告</li></ol></div>
-<hr><p style="text-align:center;color:#7f8c8d;font-size:0.9em">BaiZe Harness · R1872 · 2026-11-08 11:45<br>glm-5.3-flash · SWE-bench Verified 500 + TB-2.1 89 · 7-way · 报告正文一律写 cline</p>
+<hr><p style="text-align:center;color:#7f8c8d;font-size:0.9em">BaiZe Harness · R1873 · 2026-11-08 11:52<br>glm-5.3-flash · SWE-bench Verified 500 + TB-2.1 89 · 7-way · 报告正文一律写 cline</p>
 </body></html>
