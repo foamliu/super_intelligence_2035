@@ -28293,3 +28293,210 @@ env: ‘cline’: No such file or directory
 
 === 268 done ===
 ```
+
+---
+
+## RUN_ID 269 · 2026-11-08 15:05:12 · host=`whag0pgpuap12` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 269 | verify cline source patch | $(date '+%F %T') | host=$(hostname) ==="
+H=/nas_train/app.e0031982/harness/cline
+
+echo
+echo "########## A) 仓库是否存在 ##########"
+ls -ld "$H" 2>/dev/null || echo "NOT FOUND: $H"
+if [ -d "$H" ]; then
+  echo "-- top level --"; ls -la "$H" 2>/dev/null | head -20
+  echo "-- git remote/branch --"
+  cd "$H" 2>/dev/null && { git remote -v 2>/dev/null | head -4; git log -1 --format='HEAD=%h %ad %s' --date=iso 2>/dev/null; }
+  echo "-- git status（是否有本地改动）--"
+  cd "$H" 2>/dev/null && git status --porcelain 2>/dev/null | head -20
+  echo "-- git diff 统计（未提交的改动）--"
+  cd "$H" 2>/dev/null && git diff --stat 2>/dev/null | tail -15
+fi
+
+echo
+echo "########## B) checkpoint 相关源码是否被改 ##########"
+if [ -d "$H" ]; then
+  echo "-- grep checkpoint 源码文件（排除 node_modules）--"
+  grep -rlniE 'checkpoint' "$H" --include='*.ts' --include='*.tsx' --include='*.js' \
+       --exclude-dir=node_modules --exclude-dir=.git --exclude-dir=dist --exclude-dir=out 2>/dev/null | head -20
+  echo "-- 关键：是否有 shadow git / checkpoint 初始化被注释或强制 false --"
+  grep -rniE 'enableCheckpoints|checkpoint.*false|CHECKPOINT' "$H" \
+       --include='*.ts' --include='*.tsx' \
+       --exclude-dir=node_modules --exclude-dir=.git 2>/dev/null | head -20
+fi
+
+echo
+echo "########## C) 当前运行的 cline 是哪个构建 ##########"
+echo "-- which/realpath --"
+ls -l /home/app.e0031982/.npm-global/bin/cline 2>/dev/null
+readlink -f /home/app.e0031982/.npm-global/bin/cline 2>/dev/null
+echo "-- 已安装包版本与来源 --"
+cat /home/app.e0031982/.npm-global/lib/node_modules/cline/package.json 2>/dev/null \
+  | grep -E '"(name|version|_resolved|_from)"' | head -8
+echo "-- 安装目录是否软链到 harness/cline --"
+ls -ld /home/app.e0031982/.npm-global/lib/node_modules/cline 2>/dev/null
+readlink -f /home/app.e0031982/.npm-global/lib/node_modules/cline 2>/dev/null
+echo "-- 二进制文件时间 vs 源码 mtime（判断是否重装过）--"
+stat -c '%y  %n' /home/app.e0031982/.npm-global/lib/node_modules/cline/package.json 2>/dev/null
+stat -c '%y  %n' "$H" 2>/dev/null
+
+echo
+echo "########## D) 运行时实证：checkpoint 是否真的被跳过 ##########"
+echo "-- 当前 data cline 进程（新 loop 起的）--"
+ps -eo pid=,ppid=,lstart=,etime=,pcpu=,args= | grep -i '[c]line --data-dir /nas_train/app.e0031982/.cline_data' | cut -c1-185
+echo "-- data 线日志里 checkpoint 相关行（近期）--"
+grep -iE 'checkpoint' /tmp/baize_data_loop.log 2>/dev/null | tail -8 || echo "  (日志无 checkpoint 字样 = 很可能已禁用)"
+echo "-- 其他线日志对照 --"
+for L in /tmp/baize_vision_loop.log /tmp/baize_harness_loop.log /tmp/baize_pretrain_loop.log; do
+  [ -f "$L" ] || continue
+  n=$(grep -ciE 'checkpoint' "$L" 2>/dev/null || echo 0)
+  echo "  $L  checkpoint_lines=$n  mtime=$(stat -c '%y' "$L" 2>/dev/null | cut -c1-19)"
+done
+
+echo
+echo "########## E) shadow git 目录（checkpoint 的副产物）是否仍在写 ##########"
+echo "-- .cline_data 下是否有 checkpoints/shadow git --"
+find /nas_train/app.e0031982/.cline_data -maxdepth 4 -type d \( -name '*checkpoint*' -o -name '*shadow*' \) 2>/dev/null | head -10
+echo "-- 近 1 小时内被修改的 checkpoint 痕迹 --"
+find /nas_train/app.e0031982/.cline_data -maxdepth 5 -newermt '-60 minutes' -type d 2>/dev/null | grep -iE 'checkpoint|shadow' | head -10 || echo "  (无近期改动)"
+
+echo
+echo "=== 269 done ==="
+```
+
+**输出**
+```
+=== RUN_ID 269 | verify cline source patch | 2026-11-08 15:05:12 | host=whag0pgpuap12 ===
+
+########## A) 仓库是否存在 ##########
+drwxr-x--- 22 app.e0031982 app.adm 8192 Oct 28 15:08 /nas_train/app.e0031982/harness/cline
+-- top level --
+total 6636
+drwxr-x--- 22 app.e0031982 app.adm    8192 Oct 28 15:08 .
+drwxr-x--- 12 app.e0031982 app.adm    4096 Oct 14 13:50 ..
+drwxr-x---  3 app.e0031982 app.adm    4096 Jun 25 12:02 .agents
+-rw-r-----  1 app.e0031982 app.adm    5279 Jul 28 10:46 AGENTS.md
+drwxr-x---  7 app.e0031982 app.adm    4096 Jul 21 10:23 apps
+drwxr-x---  4 app.e0031982 app.adm    4096 Jun 25 12:02 assets
+-rw-r-----  1 app.e0031982 app.adm    4598 Jun 25 12:02 biome.json
+-rw-r-----  1 app.e0031982 app.adm    3657 Sep  7 16:24 BUILD_CLI.md
+-rw-r--r--  1 app.e0031982 app.adm  990442 Sep  8 09:13 bun.lock
+-rw-r-----  1 app.e0031982 app.adm  108122 Sep  8 09:04 CHANGELOG.md
+drwxr-x---  2 app.e0031982 app.adm    4096 Sep  8 09:04 .changeset
+drwxr-x---  5 app.e0031982 app.adm    4096 Jun 25 12:02 .claude
+drwxr-x---  3 app.e0031982 app.adm    4096 Jun 25 12:02 .cline
+drwxr-x---  4 app.e0031982 app.adm    4096 Jul 21 10:23 .clinerules
+-rw-r-----  1 app.e0031982 app.adm    3373 Jun 25 12:02 CODE_OF_CONDUCT.md
+drwxr-x---  3 app.e0031982 app.adm    4096 Jun 25 12:02 .codex
+-rw-r-----  1 app.e0031982 app.adm    8764 Aug  4 17:04 CONTRIBUTING.md
+drwxr-x---  2 app.e0031982 app.adm    4096 Oct 28 15:08 dist
+drwxr-x--- 19 app.e0031982 app.adm    4096 Sep  8 09:04 docs
+-- git remote/branch --
+origin	https://github.com/cline/cline (fetch)
+origin	https://github.com/cline/cline (push)
+HEAD=e1352fa709 2026-08-06 00:28:37 -0700 chore(cli): release v3.0.51
+-- git status（是否有本地改动）--
+ M apps/cli/src/runtime/defaults.ts
+ M bun.lock
+ M package.json
+?? .cline/skills/publish-cli/.nfs0000000604f1400000fcdc46
+?? .cline/skills/publish-desktop/.nfs0000000604e3cec000fcdc47
+?? .cline/skills/publish-extension/.nfs000000061b82e40000fcdc48
+?? .nfs0000000604cee1c000fcdc49
+?? .nfs0000000604e3c58000fcdc4a
+?? .nfs0000000604f200c000fcdc4b
+?? .nfs0000000af8ab4b0000fcdc45
+?? BUILD_CLI.md
+?? linux-x64.tar.gz
+-- git diff 统计（未提交的改动）--
+ apps/cli/src/runtime/defaults.ts | 4 +++-
+ bun.lock                         | 9 +++------
+ package.json                     | 1 +
+ 3 files changed, 7 insertions(+), 7 deletions(-)
+
+########## B) checkpoint 相关源码是否被改 ##########
+-- grep checkpoint 源码文件（排除 node_modules）--
+/nas_train/app.e0031982/harness/cline/apps/cli/src/commands/history.test.ts
+/nas_train/app.e0031982/harness/cline/apps/cli/src/commands/history.ts
+/nas_train/app.e0031982/harness/cline/apps/cli/src/main.ts
+/nas_train/app.e0031982/harness/cline/apps/cli/src/runtime/defaults.ts
+/nas_train/app.e0031982/harness/cline/apps/cli/src/runtime/interactive/fork/metadata.test.ts
+/nas_train/app.e0031982/harness/cline/apps/cli/src/runtime/interactive/fork/metadata.ts
+/nas_train/app.e0031982/harness/cline/apps/cli/src/runtime/interactive/session-config.ts
+/nas_train/app.e0031982/harness/cline/apps/cli/src/runtime/interactive/session-runtime.ts
+/nas_train/app.e0031982/harness/cline/apps/cli/src/runtime/run-agent.ts
+/nas_train/app.e0031982/harness/cline/apps/cli/src/runtime/run-interactive.ts
+/nas_train/app.e0031982/harness/cline/apps/cli/src/tui/commands/slash-command-registry.ts
+/nas_train/app.e0031982/harness/cline/apps/cli/src/tui/components/dialogs/checkpoint-confirm.tsx
+/nas_train/app.e0031982/harness/cline/apps/cli/src/tui/components/dialogs/checkpoint-picker.tsx
+/nas_train/app.e0031982/harness/cline/apps/cli/src/tui/components/dialogs/command-palette-items.ts
+/nas_train/app.e0031982/harness/cline/apps/cli/src/tui/components/dialogs/help-dialog.tsx
+/nas_train/app.e0031982/harness/cline/apps/cli/src/tui/checkpoint-picker-items.test.ts
+/nas_train/app.e0031982/harness/cline/apps/cli/src/tui/hooks/use-root-keyboard.ts
+/nas_train/app.e0031982/harness/cline/apps/cli/src/tui/root.tsx
+/nas_train/app.e0031982/harness/cline/apps/cli/src/tui/types.ts
+/nas_train/app.e0031982/harness/cline/apps/cli/src/tui/checkpoint-picker-items.ts
+-- 关键：是否有 shadow git / checkpoint 初始化被注释或强制 false --
+/nas_train/app.e0031982/harness/cline/apps/cli/src/commands/history.test.ts:8:	formatCheckpointDetail,
+/nas_train/app.e0031982/harness/cline/apps/cli/src/commands/history.test.ts:52:	it("includes checkpoint metadata when present", () => {
+/nas_train/app.e0031982/harness/cline/apps/cli/src/commands/history.test.ts:58:					checkpoint: {
+/nas_train/app.e0031982/harness/cline/apps/cli/src/commands/history.test.ts:79:	it("formats a compact checkpoint badge summary in the line", () => {
+/nas_train/app.e0031982/harness/cline/apps/cli/src/commands/history.test.ts:85:					checkpoint: {
+/nas_train/app.e0031982/harness/cline/apps/cli/src/commands/history.test.ts:107:	it("formats checkpoint detail text for the selected row footer", () => {
+/nas_train/app.e0031982/harness/cline/apps/cli/src/commands/history.test.ts:108:		const detail = formatCheckpointDetail(
+/nas_train/app.e0031982/harness/cline/apps/cli/src/commands/history.test.ts:113:					checkpoint: {
+/nas_train/app.e0031982/harness/cline/apps/cli/src/commands/history.test.ts:129:		expect(detail).toContain("Checkpoint");
+/nas_train/app.e0031982/harness/cline/apps/cli/src/commands/history.test.ts:134:	it("omits checkpoint summary when absent", () => {
+/nas_train/app.e0031982/harness/cline/apps/cli/src/commands/history.test.ts:144:		expect(line).not.toContain("checkpoints:");
+/nas_train/app.e0031982/harness/cline/apps/cli/src/commands/history.ts:8:	formatCheckpointDetail,
+/nas_train/app.e0031982/harness/cline/apps/cli/src/main.ts:18:import { CLI_DEFAULT_CHECKPOINT_CONFIG } from "./runtime/defaults";
+/nas_train/app.e0031982/harness/cline/apps/cli/src/main.ts:1051:			checkpoint: CLI_DEFAULT_CHECKPOINT_CONFIG,
+/nas_train/app.e0031982/harness/cline/apps/cli/src/runtime/defaults.ts:12: * Default checkpoint configuration for the CLI.
+/nas_train/app.e0031982/harness/cline/apps/cli/src/runtime/defaults.ts:13: * Core leaves checkpoints disabled by default (opt-in);
+/nas_train/app.e0031982/harness/cline/apps/cli/src/runtime/defaults.ts:18:export const CLI_DEFAULT_CHECKPOINT_CONFIG = {
+/nas_train/app.e0031982/harness/cline/apps/cli/src/runtime/interactive/fork/metadata.test.ts:24:					checkpoint: {
+/nas_train/app.e0031982/harness/cline/apps/cli/src/runtime/interactive/fork/metadata.test.ts:44:			checkpoints: {
+/nas_train/app.e0031982/harness/cline/apps/cli/src/runtime/interactive/fork/metadata.ts:28:	const checkpointMetadata = sourceMetadata?.checkpoint;
+
+########## C) 当前运行的 cline 是哪个构建 ##########
+-- which/realpath --
+lrwxrwxrwx 1 app.e0031982 app.adm 35 Sep  8 08:56 /home/app.e0031982/.npm-global/bin/cline -> ../lib/node_modules/cline/bin/cline
+/home/app.e0031982/.npm-global/lib/node_modules/cline/bin/cline
+-- 已安装包版本与来源 --
+  "name": "cline",
+  "version": "3.0.51",
+    "name": "Cline Bot Inc."
+-- 安装目录是否软链到 harness/cline --
+drwxr-x--- 4 app.e0031982 app.adm 4096 Sep  8 08:55 /home/app.e0031982/.npm-global/lib/node_modules/cline
+/home/app.e0031982/.npm-global/lib/node_modules/cline
+-- 二进制文件时间 vs 源码 mtime（判断是否重装过）--
+2026-09-08 08:55:56.716182790 +0800  /home/app.e0031982/.npm-global/lib/node_modules/cline/package.json
+2026-10-28 15:08:34.149808902 +0800  /nas_train/app.e0031982/harness/cline
+
+########## D) 运行时实证：checkpoint 是否真的被跳过 ##########
+-- 当前 data cline 进程（新 loop 起的）--
+1943382 1943222 Sun Nov  8 14:39:40 2026       25:33  0.0 node /home/app.e0031982/.npm-global/bin/cline --data-dir /nas_train/app.e0031982/.cline_data -c /nas_train/app.e0031982/code/su
+1943448 1943382 Sun Nov  8 14:39:40 2026       25:33  1.5 /home/app.e0031982/.npm-global/lib/node_modules/cline/bin/.cline --data-dir /nas_train/app.e0031982/.cline_data -c /nas_train/a
+-- data 线日志里 checkpoint 相关行（近期）--
+      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)
+      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)
+      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)
+      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)
+      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)
+      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)
+      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)
+      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)
+-- 其他线日志对照 --
+  /tmp/baize_vision_loop.log  checkpoint_lines=55992  mtime=2026-11-08 14:44:03
+  /tmp/baize_pretrain_loop.log  checkpoint_lines=18  mtime=2026-10-24 23:46:11
+
+########## E) shadow git 目录（checkpoint 的副产物）是否仍在写 ##########
+-- .cline_data 下是否有 checkpoints/shadow git --
+-- 近 1 小时内被修改的 checkpoint 痕迹 --
+
+=== 269 done ===
+```
