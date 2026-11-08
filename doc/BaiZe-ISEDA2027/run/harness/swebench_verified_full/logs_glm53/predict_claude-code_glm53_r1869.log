@@ -1,0 +1,5 @@
+[verified-full 11:15:06] resume: loaded 500 existing results
+[verified-full 11:15:06] [1/500] astropy__astropy-12907 SKIP (predicted, patch=1784B)
+[verified-full 11:15:06] [2/500] astropy__astropy-13033 SKIP (predicted, patch=4640B)
+[verified-full 11:15:06] [3/500] astropy__astropy-13236 SKIP (predicted, patch=2199B)
+[verified-full 11:15:06] [4/500] PREDICT claude-code on astropy__astropy-13398
