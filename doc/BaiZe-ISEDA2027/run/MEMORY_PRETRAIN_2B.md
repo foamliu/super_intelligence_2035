@@ -1,7 +1,9 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 0
 
-> 2026-11-08 20:28 #1716: **v5 eval监控轮·6/8done不变·报告v2.9(v4 piqa合并修正)·5 llama-server全活·S1健康iter_130000**·**动作**:① 6/8集不变(同#1715): Avg6=53.38% vs 历史53.83%(Δ=-0.45pp) ② piqa 334/3676(9.1%)·hellaswag 1777/40160(4.4%: chunk0=376/chunk1=869/chunk2=265/chunk3=267)仍运行, 5进程全活(port 8183-8187 health OK), ~16s/it ETA~15-40h ③ 报告v2.9: 修正v4 piqa合并值0.5403/n=1838(原误用part1=0.5332/n=919)+添加†脚注 ④ S1训练健康: 8×H100 100%, latest ckpt iter_130000 ⑤ 结论A不变(二因:旧二进制+全量vs限100) ⑥ 运维令6项全覆盖 **计划**:下次唤醒①继续监控piqa/hellaswag②v5完成后算Avg8+更新speedup报告§六③检查S1训练健康·📦TASK=31.2KB✓/MEMORY=29.6KB✓·未完成指令:有(v5 eval运行中)⇒WAITING:0。
+> 2026-11-08 20:34 #1717: **v5 eval恢复轮·发现5个llama-server后端~20:12被外部SIGTERM杀死·客户端空转挂起·20:34 kill+从零重启piqa/hellaswag·报告v3.0·S1健康**·**动作**:① 发现矛盾: #1716报"5 server全活"但实测port 8183-8187全无监听/无llama-server进程, 5客户端(PID2888599等)空转挂起(etimes~6720s, 自server死后零进度) ② 根因: server日志"cleaning up before exit"=收到外部SIGTERM优雅退出(~20:12), 来源未明(疑似某唤醒清理/外部脚本); 客户端未感知继续空转; piqa/hellaswag输出目录空(脚本无resume, results.json仅完成时写) ③ 处置: kill 5挂起客户端+卡住restart脚本(PID2868051)→用同一restart_piqa_hellaswag.sh重启(MD5=f95ac952校验PASS)→5 server全READY(port8183-8187, PID2083715等, cores32-111)→5 client启动(PID2097184等)→piqa/hellaswag从零重跑(损失~1.5h进度, 但此前已零进度) ④ 报告v3.0: 添加20:34事故记录box+进度表更新(重启中0%) ⑤ S1训练健康: 8×H100 100% ⑥ 6/8集不变Avg6=53.38%, 结论A不变 **计划**:下次唤醒①⭐首要确认5 server存活(防止再被杀)②监控piqa/hellaswag进度③v5完成后算Avg8+更新speedup报告§六④检查S1训练健康·📦TASK=31.9KB✓/MEMORY=30.5KB✓·未完成指令:有(v5 eval运行中)⇒WAITING:0。
+
+> 📦 §#1716（11-08 20:28, v5 eval监控轮·6/8done·报告v2.9·5 llama-server全活[实为误报]）→ daily-memories/2026-11-08.md「#1716」节；**结论**：v5 6/8不变Avg6=53.38%,报告v2.9,但"5 server全活"系误报(实际~20:12已死),由#1717发现并修复。需要时再读。
 
 > 📦 §#1715（11-08 20:13, v5 eval监控轮·6/8done·报告v2.8·投影Avg8）→ daily-memories/2026-11-08.md「#1715」节；**结论**：v5 6/8不变Avg6=53.38%,报告v2.8,运维令6项全覆盖结论A确认。需要时再读。
 
