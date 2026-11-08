@@ -6125,3 +6125,67 @@ Phase 1 启动零阻塞，Phase 2 的唯一 OPEN 项已关闭。
 - `run/baize_posttrain_reward_adversarial_results.json`（29 项测试结果 JSON）
 - `reports/report_posttrain_r54_pre_launch_verification_zh.html`（自包含, 0 script, 0 外链）
 - 本节（EXPERIMENTS §R54, 7小节）
+
+---
+
+## \u00a7R55 \u81ea\u52a8\u5316 Post-Baseline D1-D6 \u5206\u6790\u7ba1\u7ebf\uff08wake103\uff0c2026-11-08\uff09
+
+> \u76ee\u7684\uff1a11/9 \u57fa\u7ebf\u8fd0\u884c\u540e\uff0c\u81ea\u52a8\u4ece fresh MiniCPM5-2B traces + final_report.json \u63d0\u53d6 D1-D6\uff0c\u586b\u8865\u6b64\u524d \"\u274c not on this node\" \u7684\u7a7a\u767d\u3002
+
+### R55.1 \u811a\u672c\uff1abaize_posttrain_baseline_d1d6_analyzer.py
+
+| \u5c5e\u6027 | \u503c |
+|:--|:--|
+| \u6587\u4ef6 | `run/baize_posttrain_baseline_d1d6_analyzer.py` |
+| \u884c\u6570 | 609 \u884c |
+| py_compile | \u2705 PASS |
+| \u4f9d\u8d56 | eda_fastmcp/memory_bank/trace_parser.py\uff08\u53ef\u9009\uff0c\u4e0d\u5728\u5219\u56de\u9000\u5230\u6d88\u606f\u8ba1\u6570\u4ee3\u7406\uff09|
+| \u8f93\u5165 | `--report-json`\uff08\u5fc5\u586b\uff09+ `--trace-dir`\uff08\u53ef\u9009\uff09+ `--deepseek-report-json`\uff08\u5bf9\u7167\uff09|
+| \u8f93\u51fa | JSON \u5230 stdout/--json-out + HTML \u5230 --html |
+
+### R55.2 \u63d0\u53d6\u7684 D1-D6 \u6307\u6807
+
+| \u6307\u6807 | \u6570\u636e\u6e90 | \u8bf4\u660e |
+|:--|:--|:--|
+| D1 \u5de5\u5177\u8c03\u7528\u5408\u6cd5\u7387 | traces (trace_parser) | \u89e3\u6790\u6210\u529f tool_call / \u603b\u6570\uff1b<90% \u2192 \u534f\u8bae\u95ee\u9898\uff0cSFT \u53ef\u56de\u6536 |
+| D2 \u8c03\u7528\u9891\u6b21 | traces (trace_parser) | \u6bcf\u4efb\u52a1\u5e73\u5747\u8c03\u7528\u6570\uff1b\u504f\u4f4e \u2192 \u6a21\u578b\u4e0d\u201c\u7528\u5de5\u5177\u201d\u2192 SFT \u53ef\u4fee |
+| D3 \u8d85\u65f6/\u622a\u65ad | final_report.json | generation_statistics.timeout / total\uff1b\u9ad8 \u2192 \u957f\u4e0a\u4e0b\u6587\u9002\u914d\u662f\u524d\u7f6e\u9879 |
+| D4 \u5931\u8d25\u7c7b\u578b\u5206\u89e3 | final_report.json | error_types \u4e2d AssertionError vs \u5176\u4ed6\uff1b\u62a5\u9519\u591a\u2192API/\u9886\u57df\u77e5\u8bc6(SFT)\uff1b\u65ad\u8a00\u591a\u2192\u8bed\u4e49\u63a8\u7406(RL) |
+| D5 per-scenario | final_report.json + dataset | \u6309 scenario \u5206\u7ec4\u7b97 pass_rate\uff1bLayout 64/Schematic 47/DesignMgmt 24/Others 23 |
+| D6 \u8fed\u4ee3\u8f6e\u6570 \u03a6 | traces (trace_parser) | \u4ee3\u7801\u5199+\u6267\u884c\u5faa\u73af\u6570\uff1b\u4f4e \u2192 \u4e0d\u4f1a\u7528\u6267\u884c\u53cd\u9988\u95ed\u73af \u2192 RL(GRPO) \u4e3b\u6218\u573a |
+
+### R55.3 Gap \u5206\u6790\u65b9\u6cd5
+
+\u542f\u53d1\u5f0f\u4f30\u8ba1\uff08\u975e\u7cbe\u786e\u5206\u89e3\uff0c\u5f85\u771f\u5b9e\u8f68\u8ff9\u6821\u6b63\uff09\uff1a
+- \u534f\u8bae\u53ef\u56de\u6536 = D1\u5dee\u00d720 + D2\u5dee\u00d72(cap15) + D6\u5dee\u00d73(cap15)\uff0c\u4e0a\u9650 80% \u603b\u5dee\u8ddd
+- \u771f\u5b9e\u80fd\u529b\u5dee\u8ddd = \u603b\u5dee\u8ddd \u2212 \u534f\u8bae\u53ef\u56de\u6536
+- \u7528\u4e8e\u6307\u5bfc post-train \u4e09\u6b65\u4fa7\u91cd\uff1a\u534f\u8bae\u5360\u6bd4\u9ad8\u2192SFT\u4f18\u5148\uff1b\u80fd\u529b\u5dee\u8ddd\u5360\u6bd4\u9ad8\u2192RL\u4e3b\u6218\u573a
+
+### R55.4 Dry-Run \u9a8c\u8bc1
+
+\u4f7f\u7528\u73b0\u6709 DeepSeek \u6570\u636e\u4f5c\u4e3a\u201c\u57fa\u7ebf\u201d\u6d4b\u8bd5\uff08\u65e0 MiniCPM5 \u771f\u5b9e\u8f68\u8ff9\uff0c\u4ec5\u9a8c\u8bc1\u7ba1\u7ebf\u529f\u80fd\uff09\uff1a
+
+| \u6d4b\u8bd5 | \u7ed3\u679c |
+|:--|:--|
+| py_compile | \u2705 PASS |
+| --help | \u2705 \u8f93\u51fa\u6b63\u786e |
+| \u65e0\u5bf9\u7167\u8fd0\u884c | \u2705 JSON+HTML \u4ea7\u51fa\u6210\u529f |
+| \u5e26\u5bf9\u7167\u8fd0\u884c | \u2705 gap_analysis \u8ba1\u7b97\u6b63\u786e |
+| D5 scenario \u63d0\u53d6 | \u2705 Layout/Schematic/DesignMgmt/Others |
+| D4 error_types | \u2705 AssertionError/TypeError/SyntaxError/Generation timeout \u7b49 |
+| HTML \u62a5\u544a | 7.6KB, \u81ea\u5305\u542b, 0 script, 0 \u5916\u94fe |
+
+### R55.5 11/9 \u4f7f\u7528\u65b9\u5f0f
+
+```bash
+# \u57fa\u7ebf\u8dd1\u5b8c\u540e\u7acb\u5373\u6267\u884c\uff1a
+python baize_posttrain_baseline_d1d6_analyzer.py \\
+  --report-json <baseline_run>/final_report.json \\
+  --trace-dir <baseline_trace_dir>/cline_trace/ \\
+  --deepseek-report-json <deepseek_run>/final_report.json \\
+  --deepseek-trace-dir ~/code/eda_fastmcp/pyAether-eval/cline_cli_trace/cline_trace_v1_3/cline_trace \\
+  --html reports/report_posttrain_r55_d1d6_baseline_analysis_zh.html \\
+  --json-out /tmp/r55_d1d6_baseline.json
+```
+
+\u2192 \u4ea7\u51fa\uff1aD1-D6 \u5b8c\u6574\u5bf9\u7167 + gap \u5206\u89e3 + HTML \u62a5\u544a\uff0c\u66ff\u4ee3\u6b64\u524d P0 \u7684 \u201c\u274c not on this node\u201d \u5047\u8bbe\u5916\u63a8\u3002
