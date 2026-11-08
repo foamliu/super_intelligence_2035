@@ -528,3 +528,4 @@ qnm9e					parked		2026-11-08 01:58	Finesim DC convergence Q&A prose dup of uky6c
 1790058749132_f0qtv	t0002987	hfeg0pkn005	6	spice_sim	parked		scout_1109_23: zhulong agent client VM issues (Chinese garble/session stall), not spice; REJECT wrong-shard	
 1793955925596_5cgk3	rongjiez	hfeg0pkn005	5	spice_sim	parked		scout_1109_23: waveform compare script batch -reuse param add (compare_wave_new.pl), not spice_char; REJECT wrong-shard	
 1794133519350_pchuf	harrywu	hfeg0pkn002	1005	spice_sim	case	EDA-Eval-DesignFlow-ClampPwrStateExtract-001	2026-11-09 00:14	
+1791969171304_w3eav.messages.json	zxtu	hfeg0pkn001	341	spice_sim	case	EDA-Eval-DesignFlow-LatchSubcktLocate-001	2026-11-09 00:52	
