@@ -252,3 +252,5 @@
 1792201142166_8g8rx	jessegao	hfeg0pkn005	203	eda_other	case	EDA-Eval-DesignFlow-LdoVerifyReport-001	2026-11-08 23:09	
 1793245121084_56j3w	e0023936	hfhds201	114	eda_other	parked		2026-11-08 23:29	duplicate of WvSineWaveAnalyze-001 (sine wave gen in WaveView tcl); pivot to givdz
 1793255447731_givdz					case	EDA-Eval-DesignFlow-CdlTbGen-001	2026-11-08 23:47	
+1792140744683_z5ett	jessegao	hfeg0pkn005	137	eda_other	parked		2026-11-09 00:04	dup of r248 8g8rx LDO design (same user jessegao, identical specs 1.1V->0.9V/10uA/PSRR/DCgain/PM)
+1793084506490_ytldc	dsgao	hfhds201	175	eda_other	case	EDA-Eval-DesignFlow-CdlNetlistAnalyze-001	2026-11-09 00:20	
