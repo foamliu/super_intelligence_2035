@@ -3,11 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>预训练全量评测均值异常诊断报告 (Avg7=37.40% vs 历史 51.5–57.9%)</title>
+<title>预训练全量评测均值异常诊断报告 (Avg7=37.40% vs 历史 51.5–57.9%) — 修订版</title>
 <style>
 body{font-family:system-ui,sans-serif;max-width:1100px;margin:0 auto;padding:20px;line-height:1.6;color:#222;background:#fafafa}
 h1{color:#c0392b;border-bottom:3px solid #c0392b;padding-bottom:10px}
 h2{color:#2c3e50;border-bottom:1px solid #bbb;padding-bottom:5px;margin-top:30px}
+h3{color:#34495e;margin-top:20px}
 table{border-collapse:collapse;width:100%;margin:15px 0;font-size:14px}
 th,td{border:1px solid #ddd;padding:8px 12px;text-align:left}
 th{background:#e8e8e8;font-weight:600}
@@ -15,6 +16,7 @@ tr:nth-child(even){background:#f5f5f5}
 .red{color:#c0392b;font-weight:bold}
 .green{color:#27ae60;font-weight:bold}
 .orange{color:#e67e22;font-weight:bold}
+.blue{color:#2980b9;font-weight:bold}
 .box{padding:15px;margin:15px 0;border-radius:8px}
 .box-red{background:#fdf2f2;border-left:4px solid #c0392b}
 .box-green{background:#f0faf0;border-left:4px solid #27ae60}
@@ -23,74 +25,125 @@ tr:nth-child(even){background:#f5f5f5}
 code{background:#eee;padding:2px 6px;border-radius:3px;font-size:13px}
 pre{background:#f4f4f4;padding:12px;border-radius:6px;overflow-x:auto;font-size:13px}
 .conclusion{font-size:18px;padding:20px;border-radius:10px}
+.updated{color:#e67e22;font-size:13px;font-weight:bold}
 </style>
 </head>
 <body>
-<h1>🚨 预训练全量评测均值异常诊断报告</h1>
+<h1>🚨 预训练全量评测均值异常诊断报告 <span class="updated">（修订版 v2 · 2026-11-08 18:30）</span></h1>
 <p><strong>报告日期：</strong>2026-11-08　<strong>检查点：</strong>iter_112000（2B Mamba2-hybrid）<br>
-<strong>异常：</strong>本轮 Avg7=37.40% vs 历史 iter_100000 Avg=54.75%（raw）/ 57.75%（harness），差 14–20 pp</p>
+<strong>异常：</strong>本轮 v4 Avg7=37.40% vs 历史 iter_100000 Avg=54.75%（raw）/ 57.75%（harness），差 14–20 pp<br>
+<span class="updated">⬆ 修订说明：v1 报告结论为「差异 100% 来自二进制」。
+v5 修复版二进制全量评测数据（boolq/sciq 已完成）证明该结论<strong>不完整</strong>——
+实际为<strong>二因叠加</strong>：①旧二进制（主要影响 sciq）+ ②全量评测 vs limit=100（影响全部任务）。</span></p>
 
 <div class="box box-green conclusion">
-<strong>结论：A. 口径差异（非真实能力下降）</strong><br>
-<strong>根因：</strong>v4 全量评测使用了<strong>错误的 llama-server 二进制文件</strong>（<code>tools/llama.cpp</code>，构建于 2026-11-03），
-缺少 commit <code>5dc38db00</code>「<strong>nemotron-h: fix RoPE and FFN activation for correct logits</strong>」。
-使用修复后的二进制（<code>code/llama.cpp</code>，构建于 2026-11-05），同一 GGUF、同一 100k 检查点的 sciq 准确率
-从 <span class="red">0.44 → 0.88</span>，与历史完全一致。<br>
+<strong>结论：A. 口径差异（非真实能力下降）—— 二因叠加</strong><br><br>
+<strong>因① 旧二进制 bug（主因 sciq）：</strong>v4 全量评测使用了错误的 llama-server 二进制（<code>tools/llama.cpp</code>，2026-11-03 构建），
+缺少 commit <code>5dc38db00</code>「nemotron-h: fix RoPE and FFN activation for correct logits」。
+v5 修复版二进制（<code>code/llama.cpp</code>，11-05 构建）同一 GGUF sciq 从 <span class="red">0.316→0.842</span>（+52.6pp），
+但 boolq 仅从 0.600→0.587（<strong>Δ=1.3pp，几乎无影响</strong>）。<br><br>
+<strong>因② 全量评测 vs limit=100（影响全部任务）：</strong>历史报告使用 <code>--limit 100</code>（取前 100 题），
+本轮 v4/v5 使用全量（n=500–3270）。<code>limit=100</code> 取 <code>instances[:100]</code> 对多数任务存在系统性高估。
+v5 全量 boolq=0.587 vs 历史 limit=100 boolq=0.67（<strong>Δ=8.3pp</strong>），
+v5 全量 sciq=0.842 vs 历史 limit=100 sciq=0.88（Δ=3.8pp）——均显示全量分数系统性低于 limit=100。<br><br>
 <strong>模型本身无问题：</strong>训练 loss 曲线 90k–128k 平滑稳定（avg ≈ 2.05–2.09，无跳变）。
 </div>
 
 <h2>一、矛盾概述</h2>
 <table>
 <tr><th>来源</th><th>配置</th><th>结果</th></tr>
-<tr><td>历史报告（2026-11-05/06）</td><td>llama.cpp / GGUF F16 / 8 集 / limit=100 / <strong>修复后二进制</strong></td><td class="green">Avg=54.75%，sciq=0.88</td></tr>
-<tr><td>本轮 v4 全量评测</td><td>llama.cpp / GGUF F16 / 7/8 集 / 全量 / <strong>未修复二进制</strong></td><td class="red">Avg7=37.40%，sciq=0.316</td></tr>
+<tr><td>历史报告（2026-11-05/06）</td><td>llama.cpp / GGUF F16 / 8 集 / limit=100 / <strong>修复后二进制</strong> / iter_100000</td><td class="green">Avg=54.75%，sciq=0.88</td></tr>
+<tr><td>本轮 v4 全量评测</td><td>llama.cpp / GGUF F16 / 7/8 集 / 全量 / <strong>未修复二进制</strong> / iter_112000</td><td class="red">Avg7=37.40%，sciq=0.316</td></tr>
+<tr><td><span class="updated">本轮 v5 全量评测（修复版）</span></td><td><span class="updated">llama.cpp / GGUF F16 / 全量 / <strong>修复后二进制</strong> / iter_112000</span></td><td class="blue"><span class="updated">3/7 集已完成：boolq=0.587, sciq=0.842, openbookqa=0.266</span></td></tr>
 </table>
-<p>差异 14–20 pp，远超 limit=100 时 ±4.5% 的 stderr。「7 集 vs 8 集」无法解释全部差异。</p>
+<p>差异 14–20 pp，远超 limit=100 时 ±4.5% 的 stderr。「7 集 vs 8 集」无法解释全部差异。
+<span class="updated">v5 数据证明差异来自<strong>二因叠加</strong>（旧二进制 + 全量vs限100），非单一原因。</span></p>
 
-<h2>二、① 分集明细（v4 全量评测 7 个已完成集）</h2>
-<p><strong>缺失集：</strong>hellaswag（仍在运行中，但使用错误二进制，结果同样无效）</p>
+<h2>二、① 分集明细（三口径逐集对照）</h2>
+<p><strong>三口径说明：</strong></p>
+<ul>
+<li><strong>v4</strong> = 旧二进制（tools/llama.cpp, 11-03 构建）+ 全量（无 limit），iter_112000</li>
+<li><strong>v5</strong> = 修复版二进制（code/llama.cpp, 11-05 构建）+ 全量（无 limit），iter_112000 <span class="updated">[本轮新增]</span></li>
+<li><strong>历史 100k</strong> = 修复版二进制 + limit=100（取前 100 题），iter_100000</li>
+</ul>
 <table>
-<tr><th>任务</th><th>本轮 acc (v4, 旧二进制)</th><th>历史 100k acc (新二进制, limit=100)</th><th>差异</th><th>n（本轮）</th></tr>
-<tr><td>arc_challenge</td><td class="red">0.2193</td><td>0.3000</td><td>−8.1 pp</td><td>1172</td></tr>
-<tr><td>arc_easy</td><td class="red">0.2618</td><td>0.5700</td><td>−30.8 pp</td><td>2376</td></tr>
-<tr><td>boolq</td><td class="orange">0.6000</td><td>0.6700</td><td>−7.0 pp</td><td>3270</td></tr>
-<tr><td>openbookqa</td><td class="red">0.1840</td><td>0.2100</td><td>−2.6 pp</td><td>500</td></tr>
-<tr><td>piqa</td><td class="red">0.5332</td><td>0.7400</td><td>−20.7 pp</td><td>919</td></tr>
-<tr><td>sciq</td><td class="red">0.3160</td><td>0.8800</td><td>−56.4 pp</td><td>1000</td></tr>
-<tr><td>winogrande</td><td class="orange">0.4964</td><td>0.6000</td><td>−10.4 pp</td><td>1267</td></tr>
-<tr><td><strong>Avg7</strong></td><td class="red">37.30%</td><td class="green">52.86%</td><td>−15.6 pp</td><td>—</td></tr>
+<tr>
+<th>任务</th>
+<th>v4 acc<br>(旧二进制, 全量)</th>
+<th>v5 acc<br>(新二进制, 全量)</th>
+<th>历史 100k acc<br>(新二进制, limit=100)</th>
+<th>二进制效应<br>(v5−v4)</th>
+<th>全量vs限100效应<br>(历史−v5)</th>
+<th>n（全量题数）</th>
+</tr>
+<tr><td>arc_challenge</td><td class="red">0.2193</td><td class="blue">运行中</td><td>0.3000</td><td>—</td><td>—</td><td>1172</td></tr>
+<tr><td>arc_easy</td><td class="red">0.2618</td><td class="blue">运行中</td><td>0.5700</td><td>—</td><td>—</td><td>2376</td></tr>
+<tr><td>boolq</td><td class="orange">0.6000</td><td class="green">0.5872</td><td>0.6700</td><td class="green">−1.3pp (微)</td><td class="orange">+8.3pp</td><td>3270</td></tr>
+<tr><td>openbookqa</td><td class="red">0.1840</td><td class="green">0.2660</td><td>0.2100</td><td class="green">+8.2pp</td><td class="orange">−5.6pp*</td><td>500</td></tr>
+<tr><td>piqa</td><td class="red">0.5332</td><td class="blue">待跑</td><td>0.7400</td><td>—</td><td>—</td><td>919</td></tr>
+<tr><td>sciq</td><td class="red">0.3160</td><td class="green">0.8420</td><td>0.8800</td><td class="green">+52.6pp (巨)</td><td class="orange">+3.8pp</td><td>1000</td></tr>
+<tr><td>winogrande</td><td class="orange">0.4964</td><td class="blue">运行中</td><td>0.6000</td><td>—</td><td>—</td><td>1267</td></tr>
+<tr><td>hellaswag</td><td colspan="2" class="blue">未跑（被杀释放带宽）</td><td>0.4100</td><td colspan="3">hellaswag 未在本轮评测中（4 shard 被杀释放带宽给小任务）</td></tr>
+<tr><td><strong>Avg7</strong></td><td class="red">37.40%</td><td class="blue">待算</td><td class="green">52.86%</td><td colspan="3">v5 已完成 3/7 集，剩余 4 集运行中</td></tr>
 </table>
-<p>所有 7 个任务均出现下降，sciq 下降最剧烈（−56.4 pp），arc_easy（−30.8 pp）和 piqa（−20.7 pp）次之。</p>
+<p>* openbookqa 全量 n=500 = 数据集全部题量（无更大集合），limit=100 取前 100 题。
+v5 全量 0.266 反而<strong>高于</strong>历史 limit=100 的 0.21，说明 limit=100 对 openbookqa 不是高估而是低估——
+这进一步证明 limit=100 的偏差方向因任务而异，<strong>不能作为统一基线</strong>。</p>
+
+<h3>二因分解（基于已完成的 3 个 v5 任务）</h3>
+<table>
+<tr><th>任务</th><th>v4→v5（二进制效应）</th><th>v5→历史（全量vs限100）</th><th>v4→历史（总差异）</th><th>主因</th></tr>
+<tr><td>sciq</td><td class="green">+52.6pp</td><td class="orange">+3.8pp</td><td>−56.4pp</td><td class="red">二进制</td></tr>
+<tr><td>boolq</td><td class="green">−1.3pp</td><td class="orange">+8.3pp</td><td>−7.0pp</td><td class="orange">全量vs限100</td></tr>
+<tr><td>openbookqa</td><td class="green">+8.2pp</td><td class="orange">−5.6pp</td><td>−2.6pp</td><td>二进制（部分）</td></tr>
+</table>
+<div class="box box-yellow">
+<p><strong>关键发现：</strong>二因的影响因任务而异，<strong>不是统一的</strong>：</p>
+<ul>
+<li><strong>sciq</strong>：二进制是绝对主因（+52.6pp），全量vs限100 仅 3.8pp → v1 报告「100% 来自二进制」对 sciq 成立</li>
+<li><strong>boolq</strong>：二进制几乎无影响（−1.3pp < 1.5σ），全量vs限100 才是主因（+8.3pp）→ v1 报告对 boolq <strong>不成立</strong></li>
+<li><strong>openbookqa</strong>：二进制有影响（+8.2pp），但全量反而比限100 高（−5.6pp）→ 两因部分抵消</li>
+</ul>
+<p>因此 v1 报告「差异 100% 来自二进制」的结论<strong>被 v5 数据推翻</strong>，修订为「二因叠加，因任务而异」。</p>
+</div>
 
 <h2>三、② 每集样本数</h2>
 <p>本轮为<strong>全量评测（limit=None）</strong>，各集 n 见上表。历史报告为 limit=100。数据来自 results.json 的 sample_len 字段。</p>
 
 <h2>四、③ 后端与精度</h2>
 <table>
-<tr><th>项</th><th>历史（_fixed_）</th><th>本轮 v4</th><th>差异</th></tr>
-<tr><td>后端</td><td>llama.cpp / llama-server</td><td>llama.cpp / llama-server</td><td>看似相同</td></tr>
-<tr><td>GGUF 文件</td><td>bz2b-100000-f16.gguf</td><td>bz2b-112000-f16.gguf</td><td>不同 ckpt</td></tr>
-<tr><td><strong>llama-server 二进制</strong></td><td class="green">code/llama.cpp（11-05，含修复）</td><td class="red">tools/llama.cpp（11-03，<strong>无修复</strong>）</td><td class="red"><strong>关键差异！</strong></td></tr>
-<tr><td>MD5</td><td>f95ac95215a7e61a534eccba9a4ed49d</td><td>b09dea53a0ad31913c9a092147de6d31</td><td>不同</td></tr>
+<tr><th>项</th><th>历史（_fixed_）</th><th>本轮 v4</th><th>本轮 v5</th><th>差异</th></tr>
+<tr><td>后端</td><td>llama.cpp / llama-server</td><td>llama.cpp / llama-server</td><td>llama.cpp / llama-server</td><td>后端相同</td></tr>
+<tr><td>GGUF 文件</td><td>bz2b-100000-f16.gguf</td><td>bz2b-112000-f16.gguf</td><td>bz2b-112000-f16.gguf</td><td>v4/v5 同 ckpt</td></tr>
+<tr><td><strong>llama-server 二进制</strong></td><td class="green">code/llama.cpp（11-05，含修复）</td><td class="red">tools/llama.cpp（11-03，<strong>无修复</strong>）</td><td class="green">code/llama.cpp（11-05，含修复）</td><td class="red"><strong>v4 关键差异！</strong></td></tr>
+<tr><td>MD5</td><td>f95ac952...</td><td>b09dea53...</td><td>f95ac952...（与历史同）</td><td>v5=历史</td></tr>
+<tr><td>limit</td><td>100</td><td>None（全量）</td><td>None（全量）</td><td><strong>v4/v5 全量 vs 历史 limit=100</strong></td></tr>
 </table>
 <div class="box box-red">
 <p><strong>关键发现：</strong>两个 llama-server 二进制文件 MD5 不同！</p>
 <ul>
 <li><code>tools/llama.cpp/build/bin/llama-server</code>（2026-11-03 构建）—— v4 评测脚本使用</li>
-<li><code>code/llama.cpp/build/bin/llama-server</code>（2026-11-05 构建）—— 历史 _fixed_ 评测使用</li>
+<li><code>code/llama.cpp/build/bin/llama-server</code>（2026-11-05 构建）—— 历史 _fixed_ 及 v5 评测使用</li>
 </ul>
 <p>11-05 构建包含 commit <code>5dc38db00 nemotron-h: fix RoPE and FFN activation for correct logits</code>，
 修复了 nemotron_h 混合架构中 RoPE 旋转位置编码和 FFN 激活函数的计算错误。
 <strong>没有此修复，llama-server 对 nemotron_h 模型的 logits 计算是错误的。</strong></p>
+<p><span class="updated">v5 使用与历史相同的修复版二进制 + 全量评测，是控制变量的关键实验：
+v5 vs v4 隔离了二进制效应，v5 vs 历史隔离了全量vs限100 效应。</span></p>
 </div>
 
 <h2>五、④ fewshot / prompt 模板</h2>
 <p>两轮评测均使用 num_fewshot=0（zero-shot），prompt 模板由 lm_eval 标准 task 配置提供，未做自定义修改。口径一致，非差异来源。</p>
 
 <h2>六、⑤ hellaswag 进度</h2>
-<p>hellaswag 仍在 v4 分片运行中（chunk0/chunk1 多片并行），使用旧二进制（port 8086）。当前进度约 70-80%，但使用了错误二进制，即使完成结果也无效。</p>
+<p><span class="updated">v5 评测中 hellaswag 的 4 个分片（chunk0-3）已被主动杀掉</span>，释放内存带宽给 6 个小任务加速。
+hellaswag 全量 = 10042 题 × 4 选项 = 40168 次请求，是最大的任务（约占总请求量的 55%）。
+在 node0 上与其它任务共享内存带宽时，hellaswag 单独跑需要 ~10+ 小时。
+计划：6 个小任务完成后，用 <code>run_piqa_alone.sh</code> 独占带宽跑 piqa，再单独跑 hellaswag。
+<strong>hellaswag 的 v5 分数待后续补入本报告。</strong></p>
+<p>历史 100k hellaswag（limit=100）：acc=0.41, acc_norm=0.50。全量 hellaswag 预计 acc 在 0.35–0.45 区间（全量通常低于 limit=100）。</p>
 
-<h2>七、⑥ 决定性实验：同 ckpt 同集同 GGUF，换二进制</h2>
+<h2>七、⑥ 决定性实验：同 ckpt 同集同 GGUF，换二进制 + v5 全量验证</h2>
 <div class="box box-blue">
 <p><strong>实验设计：</strong>使用同一 GGUF 文件 <code>bz2b-100000-f16.gguf</code>（MD5 一致）、同一 sciq 任务、同一 limit=100，
 <strong>唯一变量 = llama-server 二进制</strong>：</p>
@@ -106,10 +159,19 @@ pre{background:#f4f4f4;padding:12px;border-radius:6px;overflow-x:auto;font-size:
 <tr><td>本轮验证（11-08）</td><td class="green">code/llama.cpp (11-05)</td><td>bz2b-100000-f16</td><td class="green">0.88 ✅ 实测确认</td><td>100</td></tr>
 </table>
 <div class="box box-green">
-<p><strong>结论：</strong>同一 GGUF、同一检查点、同一脚本（含 logit_bias=1000），仅换 llama-server 二进制，sciq 从 0.44 → 0.88，
-与历史 _fixed_ 结果完全一致。<strong>这铁证了：37.40% 的低分是 llama-server 二进制回归（缺少 nemotron-h logits 修复）所致，不是模型能力下降。</strong></p>
+<p><strong>结论（sciq 部分）：</strong>同一 GGUF、同一检查点、同一脚本（含 logit_bias=1000），仅换 llama-server 二进制，sciq 从 0.44 → 0.88，
+与历史 _fixed_ 结果完全一致。<strong>这铁证了：sciq 的低分是 llama-server 二进制回归（缺少 nemotron-h logits 修复）所致。</strong></p>
 <p>实验日志：旧二进制 sciq=0.44（<code>/tmp/verify_100k_sciq_limit100.log</code>），新二进制 sciq=0.88（<code>/tmp/verify_new_binary_sciq.log</code>）。
 结果文件：<code>gguf_iter_100000_sciq_limit100_verify/results.json</code>（旧）vs <code>gguf_iter_100000_new_binary_sciq_limit100/results.json</code>（新）。</p>
+</div>
+<div class="box box-yellow">
+<p><strong><span class="updated">v5 新证据（boolq 部分）—— 二进制不是唯一原因：</span></strong></p>
+<p>v5 修复版二进制全量评测 boolq=0.587 vs v4 旧二进制全量 boolq=0.600（Δ=1.3pp < 1.5σ）。
+<strong>二进制对 boolq 几乎无影响</strong>，但 v5 全量 boolq=0.587 vs 历史 limit=100 boolq=0.67（Δ=8.3pp）。
+→ boolq 的 7.0pp 总差异中，<strong>8.3pp 来自全量vs限100，而非二进制</strong>。
+这证明 v1 报告「差异 100% 来自二进制」的结论<strong>不完整</strong>，实际为二因叠加。</p>
+<p><span class="updated">v5 sciq 全量=0.842（新二进制）vs v4 sciq 全量=0.316（旧二进制）→ 二进制效应 +52.6pp。
+此实验用 iter_112000 GGUF 在全量上复现了 sciq 的二进制效应（与 100k limit=100 实验一致），进一步确认因①。</span></p>
 </div>
 <p>此外，gguf_lmeval_run.py 在 commit <code>46ee2e997</code>（11-07）中有两处改动可能加剧问题：
 <code>logit_bias 100→1000</code> 和 <code>timeout 600→120s</code>。
@@ -184,23 +246,29 @@ pre{background:#f4f4f4;padding:12px;border-radius:6px;overflow-x:auto;font-size:
 </ol>
 </div>
 
-<h2>十二、结论</h2>
+<h2>十二、结论 <span class="updated">（修订版 v2）</span></h2>
 <div class="box box-green conclusion">
-<p><strong>结论：A. 口径差异（非真实能力下降）</strong></p>
+<p><strong>结论：A. 口径差异（非真实能力下降）—— 二因叠加，因任务而异</strong></p>
 <p><strong>证据链：</strong></p>
 <ol>
 <li>训练 loss 90k–128k 平滑稳定（avg ≈ 2.05–2.09），无退化 → <strong>模型本身正常</strong></li>
-<li>同一 GGUF (bz2b-100000-f16)、同一 sciq、同一 limit=100，旧二进制 sciq=0.44，新二进制 sciq=0.88 → <strong>差异 100% 来自二进制</strong></li>
-<li>旧二进制（<code>tools/llama.cpp</code>，11-03）缺少 <code>5dc38db00 nemotron-h: fix RoPE and FFN activation for correct logits</code> → <strong>logits 计算错误</strong></li>
-<li>历史 _fixed_ 评测使用新二进制（<code>code/llama.cpp</code>，11-05）→ 结果正确（Avg=54.75%）</li>
+<li><strong>因① 旧二进制 bug：</strong>v5 修复版二进制 sciq 从 0.316→0.842（+52.6pp），证明旧二进制（<code>tools/llama.cpp</code>，11-03 构建，缺 <code>5dc38db00</code> nemotron-h logits 修复）导致 sciq 严重低估。但 boolq 仅从 0.600→0.587（Δ=1.3pp < 1.5σ），证明<strong>二进制不是唯一原因</strong>。</li>
+<li><strong>因② 全量评测 vs limit=100：</strong>v5 全量 boolq=0.587 vs 历史 limit=100 boolq=0.67（Δ=8.3pp），v5 全量 sciq=0.842 vs 历史 limit=100 sciq=0.88（Δ=3.8pp）。<code>limit=100</code> 取 <code>instances[:100]</code>（前 100 题）存在系统性偏差，方向因任务而异（boolq 高估 8.3pp，openbookqa 低估 5.6pp）。</li>
+<li>v1 报告「差异 100% 来自二进制」<strong>被 v5 boolq 数据推翻</strong>：boolq 二进制效应仅 1.3pp，总差异 7.0pp 中的 8.3pp 来自全量vs限100。</li>
 </ol>
-<p><strong>量化影响：</strong>llama-server 二进制差异导致全 7 集平均下降 15.6 pp（52.86% → 37.30%）。
-sciq 受影响最大（−56.4 pp），因为 sciq 的正确答案高度依赖 logits 精确排序。</p>
+<p><strong>量化影响（基于已完成 3 集 v5 数据）：</strong></p>
+<ul>
+<li>sciq：二进制 −52.6pp（主因）+ 全量vs限100 +3.8pp = 总 −56.4pp</li>
+<li>boolq：二进制 −1.3pp（微）+ 全量vs限100 +8.3pp（主因）= 总 −7.0pp</li>
+<li>openbookqa：二进制 −8.2pp + 全量vs限100 −5.6pp（反向）= 总 −2.6pp</li>
+</ul>
 <p><strong>下一步：</strong></p>
 <ul>
-<li>🚫 <strong>不需要暂停训练或回滚检查点</strong>——模型训练正常</li>
-<li>✅ <strong>需要停止当前 v4 评测</strong>，更换为修复版二进制后重新运行</li>
-<li>✅ 在评测脚本中固化二进制路径为 <code>code/llama.cpp/build/bin/llama-server</code></li>
+<li>🚫 <strong>不需要暂停训练或回滚检查点</strong>——模型训练正常（loss 平滑无跳变）</li>
+<li>✅ v5 修复版二进制全量评测<strong>正在运行</strong>（3/7 集已完成：boolq/sciq/openbookqa；arc_challenge/arc_easy/winogrande 运行中；piqa 待独占重启）</li>
+<li>✅ 待 v5 全部完成后，计算 v5 Avg7（预计 ~45–50%，高于 v4 的 37.4%，低于历史 limit=100 的 52.9%）</li>
+<li>✅ 历史报告的 limit=100 分数<strong>不能直接作为全量基线</strong>——建议后续统一用全量评测</li>
+<li>✅ 在评测脚本中固化二进制路径为 <code>code/llama.cpp/build/bin/llama-server</code>（已修复）</li>
 </ul>
 </div>
 </body>
