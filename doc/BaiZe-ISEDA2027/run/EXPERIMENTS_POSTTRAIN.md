@@ -6994,3 +6994,99 @@ cat /path/to/guardian_heartbeat.txt
 | HTML 报告 | `reports/report_posttrain_r63_post_rl_pipeline_zh.html` | ~8KB |
 
 **数据溯源**：R36 (RL monitor 阈值) · R48 (reward arm 预注册) · R57 (Vision std=0 78.7% 教训) · R59 (GRPO dynamics) · R62 (Day-1 diagnostic classifier) · §5.2 (anti-cheat 红线) · launch_11_9.sh (steps 0-6) · eval_analysis.py (McNemar/bootstrap) · baseline_gate.py (M1-M4). 无伪造。替身 RL 结果不可迁移到 BaiZe。
+
+---
+
+## §R64 SFT 训练动力学预测 + 退火配比敏感性 + SFT→RL 交接协议（2026-11-08 wake112 · 零 GPU · Python 3.8+ stdlib）
+
+> 填补 R6（SFT 高层方案）与 R56（数据混合管线）之间的空白：预测具体训练动力学、分析退火配比敏感性、定义 SFT→RL 检查点交接协议。
+
+### 1. SFT 吞吐量估算（4×A40, BaiZe-2B 2B 参数）
+
+| ctx_len | GBS | MBS | tok/step | 秒/step | step/h | tok/s | 全参 GB/卡 | LoRA GB/卡 | 全参可行 | LoRA 可行 |
+|:--|--:|--:|--:|--:|--:|--:|--:|--:|:--|:--|
+| 4096 | 128 | 2 | 524,288 | 35.0 | 102.9 | 15,000 | 8.1 | 3.3 | ✅ | ✅ |
+| 8192 | 128 | 1 | 1,048,576 | 69.9 | 51.5 | 15,000 | 8.1 | 3.3 | ✅ | ✅ |
+| 16384 | 128 | 1 | 2,097,152 | 139.8 | 25.8 | 15,000 | 10.2 | 5.4 | ✅ | ✅ |
+
+MFU=30%（SFT 因变长序列 + response-only loss 低于预训练）。全参在 ctx≤8192 显存可行（A40 46GB）；ctx=16384 需 FSDP 或梯度累积。LoRA 全配置可行。
+
+### 2. 训练时间与 Token 预算（3000 步 SFT）
+
+| 配置 | ctx | 步数 | 训练时间 | Token 消耗 | 唯一 Token | Epochs | 过拟合 | 最终 loss |
+|:--|--:|--:|--:|--:|--:|--:|:--|--:|
+| ctx4096 | 4096 | 3000 | 29.1h | 1.57B | ~4.0B | 0.39 | high | 2.55 |
+| ctx8192 | 8192 | 3000 | 58.3h | 3.15B | ~4.0B | 0.79 | high | 2.37 |
+| ctx16384 | 16384 | 3000 | 116.5h | 6.29B | ~4.0B | 1.57 | high | 2.17 |
+
+R60 发现 DeepSeek 轨迹 avg 28K tok/任务，ctx=8192 截断率 98%。建议：替身预演用 ctx=8192 LoRA（快速验证管线）；白泽正式训练用 ctx=16384 全参（R61 已升级 sft.sh 默认值）。
+
+### 3. 损失动力学预测
+
+| 配置 | 初始 loss | 最终 loss | Δloss | PyAether epochs | 领域 PPL | 过拟合风险 |
+|:--|--:|--:|--:|--:|--:|:--|
+| ctx4096 | 2.80 | 2.55 | -0.25 | 78.5 | 3.3 | **high** |
+| ctx8192 | 2.80 | 2.37 | -0.43 | 157.5 | 3.0 | **high** |
+| ctx16384 | 2.80 | 2.17 | -0.63 | 314.5 | 2.4 | **high** |
+
+**过拟合分析**：PyAether SFT 语料仅 ~5M token，在 3000 步 × 16384 × GBS=128 = ~6.3B token 消耗下，PyAether 部分被采样 ~300+ 次（按 25% 配比）。PyAether epochs > 5 → 高过拟合风险。
+**缓解**：① 降低 PyAether 配比到 15-20%；② 对 PyAether 数据做 dropout/augmentation；③ 早停（监控 eval loss）。
+
+### 4. 退火配比敏感性（5 种配置 · 4000 步 × 4096 × GBS512 = 8.4B token）
+
+| 配置 | 描述 | 领域% | 领域 Token | 覆盖率 | 遗忘风险 | 退火时间 | 预期 pp |
+|:--|:--|--:|--:|--:|:--|--:|:--|
+| default | 领域30%+web50%+code12%+math8% | 30% | 2,520M | 504.0x | low | ~111h | 3-8 |
+| domain_heavy | 领域50%+web30%+code12%+math8% | 50% | 4,200M | 840.0x | medium | ~111h | 5-12 |
+| domain_light | 领域15%+web60%+code15%+math10% | 15% | 1,260M | 252.0x | low | ~111h | 1-4 |
+| code_heavy | 领域25%+web40%+code25%+math10% | 25% | 2,100M | 420.0x | low | ~111h | 3-8 |
+| no_anneal | 无退火（对照组） | 0% | 0M | 0.0x | none | ~111h | 0 (对照) |
+
+**退火建议**：默认 30% domain → 每个 API 文档平均见到 504 次（足够注入知识但不至于背诵）。50% domain 覆盖率 840x，遗忘风险中等。主线用 default(30%)，消融用 domain_heavy(50%)。
+
+### 5. 消融矩阵设计（6 格战略子集 · 25 格全矩阵不可行）
+
+| ID | 名称 | 退火 | SFT 配比 | 目的 | 预期 | GPU-h | 优先级 |
+|:--|:--|:--|:--|:--|:--|--:|:--|
+| A1 | Baseline (no anneal + R6 default SFT) | no_anneal | R6_default | 下界基线：跳过退火，仅 SFT | M1 (50%) | 12h | P1 |
+| A2 | Default anneal + R6 default SFT | default | R6_default | 主线配置 | M2 (65%) | 18h | P1 |
+| A3 | Domain-heavy anneal + R6 default SFT | domain_heavy | R6_default | 退火领域浓度上限 | M2+ (65-70%) | 18h | P2 |
+| A4 | Default anneal + domain-heavy SFT | default | domain_heavy | SFT 领域浓度效应 | M2 (65%) | 18h | P2 |
+| A5 | Default anneal + agent-heavy SFT | default | agent_heavy | 工具调用修复 | M1→M2 | 18h | P3 |
+| A6 | No anneal + domain-heavy SFT | no_anneal | domain_heavy | 退火可否被 SFT 替代 | M1-M2 | 12h | P3 |
+
+**设计逻辑**：A1 vs A2 隔离退火贡献 | A2 vs A3 退火领域浓度 | A2 vs A4 SFT 领域浓度 | A1 vs A6 退火可否被 SFT 替代。P1（A1+A2）~30h，3 天完成。
+
+### 6. SFT→RL 交接协议
+
+**检查点选择**（5 标准）：① eval Pass@1 ≥ M1 (50%) on 20-task subset ② SFT loss 收敛（最后 200 步下降 <5%）③ 无 NaN/Inf ④ 工具调用合法率 >80%（D1 修复验证）⑤ 无严重过拟合。规则：满足全部标准中选 eval Pass@1 最高的。
+
+**RL 前验证门**（5 项）：① Model load（SGLang serve → HTTP 200）② Tool call format（≥8/10 格式合法）③ API knowledge（≥7/10 API 名正确）④ No degradation（Pass@1 ≥ 36%）⑤ Cheat rate（<5%，红线）。门控：全 PASS → GO for RL；任一 FAIL → 回退；Cheat rate FAIL → 硬停。
+
+**RL 热启动**：RL LR = SFT LR × 0.1（2e-6 full, 1e-5 LoRA）；KL 初始 0.05；Entropy 0.8。SFT 后模型已有工具格式知识，GRPO 应重点优化语义正确性。
+
+### 7. 与 11/9 发射序列的关系
+
+11/9 替身预演（MiniCPM5-2B）的 launch_11_9.sh Steps 0-7 **不含 SFT** —— 替身目标验证 RL 管线。
+白泽正式训练（pretrain ckpt ETA 12/25 后）：退火(~6h) → SFT(~12-20h, ctx=16384 全参) → 交接验证(~1h) → RL(~72h) → Post-RL eval(R63)。消融矩阵在主训练完成后按优先级追加。
+
+### 8. 局限性
+
+- 吞吐量 MFU=30% 保守；实测可能 ±30%
+- 损失动力学用 Chinchilla-style 经验公式，SFT scaling law 尚不成熟
+- 退火覆盖率假设均匀采样；实际按 blend 权重加权
+- 过拟合分析基于 PyAether ~5M token；扩展到 20M+（R2 目标 2K-5K 题）风险降低
+- 消融 GPU-h 未含评测时间（每臂 5-run ~4-6h）
+- 交接协议阈值需 11/9 实测后校正
+- 替身预演结果不可迁移到白泽正式训练
+
+### 9. 交付物
+
+| 产物 | 路径 | 说明 |
+|:--|:--|:--|
+| 分析脚本 | `run/baize_posttrain_sft_dynamics.py` | ~420 行，纯 Python 3.8+ stdlib |
+| HTML 报告 | `reports/report_posttrain_r64_sft_dynamics_zh.html` | 10.7KB，0 script，0 外链 |
+| JSON 数据 | `run/sft_dynamics.json` | 全部计算结果 |
+| EXPERIMENTS | `EXPERIMENTS_POSTTRAIN.md §R64` | 9 小节 |
+
+**数据溯源**：R6 (SFT 方案) · R56 (数据混合管线) · R60 (上下文窗口 28K tok) · R61 (发射补丁 ctx→16384) · DATA_MAPPING (数据规模) · §5.1/§5.2 (红线) · §4 (成功阶梯 M1-M4). 无伪造。替身预演结果不可迁移到 BaiZe。

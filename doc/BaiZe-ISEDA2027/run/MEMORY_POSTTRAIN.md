@@ -7,12 +7,12 @@ WAITING: 1
 
 ## 进度快照
 
-- PHASE: posttrain-wake111（2026-11-08 R63: Post-RL Evaluation Pipeline + 72h Guardian→填补launch_11_9.sh Step 7空白→ckpt_selector.py 312行+post_rl_pipeline.sh 146行+72h_guardian.sh 178行→选最佳ckpt(排除NaN/OOM/reward<0.01/std=0>80%/cheat>5%)+链eval→eval_analysis→baseline_gate→72h墙钟守护(心跳+看门狗+自动评测触发)→py_compile✅+bash -n✅+dry-run✅→EXPERIMENTS §R63）
-- 已完成: P3预备✅ 8脚本；P0✅ D1–D6；P1✅ 数据盘点+PyAether语料+污染隔离；P2✅ 方案书；R1-R63✅；wake111✅ R63(Post-RL pipeline+72h guardian)
-- 当前动作: wake111 R63: ①识别launch_11_9.sh空白(Step 0-6有,Step 7评测缺失) ②baize_posttrain_ckpt_selector.py(312行,纯stdlib,日志解析8指标+排除5类+排序3键+JSON/HTML输出) ③baize_posttrain_post_rl_pipeline.sh(146行,7a选ckpt→7b eval.sh→7c eval_analysis.py(McNemar+bootstrap)→7d baseline_gate.py) ④baize_posttrain_72h_guardian.sh(178行,心跳5min+看门狗60s+T-4h eval_window+T-0 SIGTERM+Phase1 launch+Phase2 post_rl+trap清理) ⑤测试:py_compile✅+bash -n✅×2+dry-run✅×3(ckpt选step50+post_rl全链打印+guardian完整计划)+HTML 2.7KB✅ ⑥HTML报告6.7KB ⑦EXPERIMENTS §R63
-- 下一步: ①11/9 GPU到位→gpu_watcher自动检测→day1_diag.py --warmup→NFS预热 ②sglang_preflight→GO ③launch_11_9.sh steps 0-6 ④RL smoke(ctx16384,hybrid,37min/10步) ⑤smoke→day1_diag.py --classify ⑥主RL(ctx16384,hybrid,200步/72h) ⑦RL完成→baize_posttrain_post_rl_pipeline.sh(Step 7a-7d) ⑧或72h_guardian.sh自动 ⑨用实测替换R58/R59/R60/R61估计 ⑩正式训练待pretrain ckpt(ETA≈2026-12-25)
+- PHASE: posttrain-wake112（2026-11-08 R64: SFT训练动力学预测+退火配比敏感性+SFT→RL交接协议→填补R6/R56空白→baize_posttrain_sft_dynamics.py ~420行→3种ctx配置吞吐量/时间/loss预测+5种退火配比覆盖率/遗忘分析+6格消融矩阵(A1-A6,96h)+SFT→RL交接(5标准+5验证门+RL热启动)→py_compile✅+dry-run✅+HTML 10.7KB✅+JSON✅→EXPERIMENTS §R64）
+- 已完成: P3预备✅ 8脚本；P0✅ D1–D6；P1✅ 数据盘点+PyAether语料+污染隔离；P2✅ 方案书；R1-R64✅；wake112✅ R64(SFT动力学+退火配比+交接)
+- 当前动作: wake112 R64: ①识别R6(SFT方案)与R56(数据混合)空白 ②baize_posttrain_sft_dynamics.py(~420行,纯Python3.8+stdlib,0依赖) ③SFT吞吐量:ctx4096=35s/step,ctx8192=70s/step,ctx16384=140s/step,MFU=30% ④训练时间:ctx8192/3000步=58h,ctx16384=117h ⑤损失:2.80→2.17(ctx16384),过拟合high(PyAether epochs>300) ⑥退火5配比:default30%覆盖率504x/forgetting low,domain_heavy50%覆盖率840x/medium ⑦消融6格:A1vsA2退火贡献,A2vsA3浓度,A2vsA4 SFT浓度,A1vsA6替代性,96h,P1=30h ⑧SFT→RL交接:5标准选ckpt+5验证门(含cheat<5%红线)+RL LR=SFT×0.1 ⑨py_compile✅+dry-run✅+HTML 10.7KB(0script,0外链)+JSON✅ ⑩EXPERIMENTS §R64(9小节)
+- 下一步: ①11/9 GPU到位→gpu_watcher自动检测→day1_diag.py --warmup→NFS预热 ②sglang_preflight→GO ③launch_11_9.sh steps 0-6 ④RL smoke(ctx16384,hybrid,37min/10步) ⑤smoke→day1_diag.py --classify ⑥主RL(ctx16384,hybrid,200步/72h) ⑦RL完成→post_rl_pipeline.sh(Step 7a-7d) ⑧或72h_guardian.sh自动 ⑨用实测替换R58/R59/R60/R61/R64估计 ⑩正式训练待pretrain ckpt(ETA≈2026-12-25)
 - 阻塞: GPU 2026-11-09既定到位(明天);P3等pretrain ckpt(ETA≈2026-12-25)
-- 未完成指令: 无（R1✅...R63✅E1✅ 全部完成）⇒ WAITING=1
+- 未完成指令: 无（R1✅...R64✅E1✅ 全部完成）⇒ WAITING=1
 
 ## 关键事实（常驻）
 
