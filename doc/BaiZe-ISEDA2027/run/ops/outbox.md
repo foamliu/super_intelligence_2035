@@ -27275,3 +27275,49 @@ post    n=0
 
 === 255 done ===
 ```
+
+---
+
+## RUN_ID 256 · 2026-11-08 12:44:39 · host=`whag0pgpuap12` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 256 | buckets from worker.log | $(date '+%F %T') | host=$(hostname) ==="
+SSH="ssh -o BatchMode=yes -o ConnectTimeout=6 -o StrictHostKeyChecking=no"
+$SSH 10.239.2.29 'cp -f /tmp/baize_ab_analyze.sh /tmp/baize_ab_analyze_worker.sh; sed -i "s#baize_s1_baize2b_master.log#baize_s1_baize2b_worker.log#; /^sleep 800$/d" /tmp/baize_ab_analyze_worker.sh; bash /tmp/baize_ab_analyze_worker.sh; echo "-- buckets --"; grep -E "^[[:space:]]*(pre|FROZEN|post)[[:space:]]+n=" /tmp/baize_ab_analyze.txt; echo; echo "-- raw last 14 --"; sed -n "/--- last 14 step lines ---/,/=== END ===/p" /tmp/baize_ab_analyze.txt | head -20; echo; echo "-- grep count worker --"; grep -c "elapsed time per iteration" /tmp/baize_s1_baize2b_worker.log'
+echo
+echo "=== 256 done ==="
+```
+
+**输出**
+```
+=== RUN_ID 256 | buckets from worker.log | 2026-11-08 12:44:39 | host=whag0pgpuap12 ===
+-- buckets --
+pre     n=  8 mean=8420.0 ms min=7812.9 max=9221.4 last=8865.4
+FROZEN  n=  7 mean=7296.9 ms min=7092.3 max=7555.8 last=7555.8
+post    n=  8 mean=8150.6 ms min=7880.1 max=8628.6 last=8139.2
+
+-- raw last 14 --
+--- last 14 step lines ---
+  t=2026-11-08 12:27:29 it=127050 ms=7092.3
+  t=2026-11-08 12:28:43 it=127060 ms=7410.0
+  t=2026-11-08 12:29:56 it=127070 ms=7232.6
+  t=2026-11-08 12:31:08 it=127080 ms=7188.9
+  t=2026-11-08 12:32:23 it=127090 ms=7555.8
+  t=2026-11-08 12:33:42 it=127100 ms=7860.5
+  t=2026-11-08 12:35:05 it=127110 ms=8356.3
+  t=2026-11-08 12:36:26 it=127120 ms=8040.1
+  t=2026-11-08 12:37:46 it=127130 ms=8041.7
+  t=2026-11-08 12:39:07 it=127140 ms=8080.5
+  t=2026-11-08 12:40:26 it=127150 ms=7880.1
+  t=2026-11-08 12:41:52 it=127160 ms=8628.6
+  t=2026-11-08 12:43:12 it=127170 ms=8038.0
+  t=2026-11-08 12:44:34 it=127180 ms=8139.2
+=== END ===
+
+-- grep count worker --
+6918
+
+=== 256 done ===
+```
