@@ -1322,3 +1322,4 @@ tjzn5					parked		2026-11-07 12:29	env Q&A + skill-creator usage (#352 peek weak
 1793079626059_uhxqp					parked		2026-11-08 11:45	non-seed: how to deploy agent on Zhulong (harness meta, 105 msgs)
 1793861357108_vagnh					parked		2026-11-08 11:45	wrong-shard: synthesis dc.tcl/Makefile dc.log error debug (digital_impl)
 1793692406403_lcg3v					parked		2026-11-08 11:45	non-seed: siliconSmart char hspice failure debug (spice_sim/characterization, borderline shard B; user cites failure)
+1791617131890_5kh50	ziyuny	10.129.32.190	67	analog_context	case	EDA-Eval-DesignFlow-ABMatchPlacementCheck-001	2026-11-08 12:11	
