@@ -4,14 +4,14 @@ WAITING: 0
 
 ## 📊 进度快照
 
-PHASE:        R1934 监控+双报告更新轮·gateway 200·predict 2468/3500(70.5%)·real 908·TB-2.1 107p(unique)·eval R1933后台RUN(cline 69new·15min)·双报告R1934更新
-已完成:       H-B✅·Gate7/7·TB报告✅·full500✅·cline专项C1-C5+报告R1785-R1933·TB4 0passed(能力)·TB-2.1 oracle5/5✅·§15:2x判据MET✅·R1789 eval 7/7DONE✅·R1804双报告交付✅·R1814-R1933 predict推进+TB-2.1并行+gateway恢复+CPU杀+eval重启·R1934双报告更新
-当前动作:     R1934:①CPU/MEM:PASS(load83/224=37%·无>8000%·top=pretrain llama非本线·mem809G/avail1069G) ②体积:TASK=30306B(29.6KB)/MEMORY~30KB·均≤32KB✅ ③gateway:9092=200/9093=200 ④predict 6路alive 2468/3500(70.5%):cline287(116r)·codex500DONE(44r)·opencode337(248r)·cc491(79r)·pi214(69r)·hermes426(265r)·dsh213(87r)·real=908·empty=1560 ⑤eval R1933后台RUN(PID2642425·etimes915s·cline 69new instances·sg docker alive) ⑥TB-2.1 unique:cline16p/88·codex7p/12·opencode23p/41·cc14p/58·pi27p/70·hermes5p/54·dsh15p/22·4harbor alive(cc·cline·pi·opencode) ⑦双报告R1934:main 8474B+tb21 7680B(gen_report_r1934.py) ⑧cline C4:cline287(116r/171e=40.4%)·TB-2.1 16p·C2 empty top1=quota(429·已恢复)·C3 resume fix✅ ⑨research 11-08已读 ⑩未完成指令:有(§22:4x+§10:10)⇒W:0
-下一步:       ①eval R1933后台跑完cline 69new→继续其余6路new instances ②predict 5路推进至500(cline287·opencode337·pi214·dsh213·hermes426) ③TB-2.1 4harbor推进→待全DONE ④全DONE后聚合最终7路报告+可辨识性闸门(research建议)
-阻塞:         无(gateway 200·6路predict alive·TB-2.1 4harbor alive·eval R1933后台RUN·push已补推成功329fe1ec6)
+PHASE:        R1935 监控+opencode predict重启轮·gateway 200·predict 2475/3500(70.7%)·real 913·TB-2.1 4harbor alive·eval R1933后台RUN(21min)·opencode predict已重启
+已完成:       H-B✅·Gate7/7·TB报告✅·full500✅·cline专项C1-C5+报告R1785-R1933·TB4 0passed(能力)·TB-2.1 oracle5/5✅·§15:2x判据MET✅·R1789 eval 7/7DONE✅·R1804双报告交付✅·R1814-R1934 predict推进+TB-2.1并行+gateway恢复+CPU杀+eval重启·R1935 opencode predict重启
+当前动作:     R1935:①CPU/MEM:PASS(load93/224=42%·无本线>8000%·top=pretrain llama非本线·mem803G/avail1075G) ②体积:TASK=30306B(29.6KB)/MEMORY=31321B(30.6KB)·均≤32KB✅ ③gateway:9092=200/9093=200/direct=200 ④predict 6路alive 2475/3500(70.7%) real=913:cline288(117r)·codex500DONE(44r)·opencode338(249r·**已重启PID1185812**)·cc493(80r)·pi214(69r·slow)·hermes428(267r)·dsh213(87r)·empty=1562 ⑤eval R1933后台RUN(PID2642425·etimes~1247s·3 docker containers cline matplotlib+codex astropy) ⑥TB-2.1 reward_files/passed:cline253/19·codex15/8·opencode42/24·cc68/16·pi113/35·hermes160/6·dsh29/21·4harbor alive(cc·cline·pi·opencode) ⑦双报告R1934 current(main 9170B+tb21 8223B) ⑧cline C4:cline288(117r/171e=40.6%)·TB-2.1 19p·C2 empty top1=quota(429·已恢复)·C3 resume fix✅ ⑨research 11-08已读(可辨识性闸门+预算声明建议) ⑩未完成指令:有(§22:4x+§10:10)⇒W:0
+下一步:       ①eval R1933后台跑完cline 69new→继续其余6路new instances ②predict 6路推进至500(cline288·opencode338·cc493·pi214·dsh213·hermes428) ③TB-2.1 4harbor推进→待全DONE ④全DONE后聚合最终7路报告+可辨识性闸门(research 11-08建议)
+阻塞:         无(gateway 200·6路predict alive含opencode重启·TB-2.1 4harbor alive·eval R1933后台RUN)
 ERROR_COUNT:  0
-  📦 体积：TASK=30306B(29.6KB) / MEMORY=~30KB·均≤32KB✅
-  🔍 cline专项小结: predict cline287(116r/171e=40.4%)·TB-2.1 cline16p·C2 empty top1=quota(429·已恢复gateway200)·C3 resume fix✅·real复产中(116+)
+  📦 体积：TASK=30306B(29.6KB) / MEMORY=31321B(30.6KB)·均≤32KB✅
+  🔍 cline专项小结: predict cline288(117r/171e=40.6%)·TB-2.1 cline19p·C2 empty top1=quota(429·已恢复gateway200)·C3 resume fix✅·real复产中(117+)
 ```
 
 > 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
@@ -22,6 +22,8 @@ ERROR_COUNT:  0
 [04:15] R1933 监控+eval重启+双报告更新:①CPU/MEM:PASS(load85/108/124·无>8000%·top=pretrain llama非本线·pytest488%=~5核·mem827G/avail1097G) ②gateway 9092=200/9093=200 ③predict 6路alive 2450/3500(70%) real=890:cline286(115r)·codex500DONE(44r)·opencode333(244r)·cc487(75r)·pi212(68r)·hermes419(258r)·dsh211(86r) ④eval R1933重启(PID2642425 setsid·incr_eval_glm53_R1933.py·cline 69new instances·sg docker swebench run_evaluation alive PID2954083) ⑤TB-2.1 cumulative passed:cline19·codex8·opencode22·cc14·pi32·hermes6·dsh21·4harbor alive(cc/cline/pi/opencode) ⑥双报告R1933:main 9229B+tb21 7326B(r1896+r1881 gen) ⑦disk /data 5.8T(18%) /(352G 4%) ⑧未完成指令:有(§22:4x+§10:10)⇒W:0
 
 [04:25] R1934 监控+双报告更新:①CPU/MEM:PASS(load83/224=37%·无本线失控·top=pretrain llama非本线·mem809G/avail1069G) ②gateway 9092=200/9093=200 ③predict 6路alive 2468/3500(70.5%) real=908:cline287(116r)·codex500DONE(44r)·opencode337(248r)·cc491(79r)·pi214(69r)·hermes426(265r)·dsh213(87r) ④eval R1933 RUN(PID2642425·etimes915s·cline 69new·sg docker alive) ⑤TB-2.1 unique passed:cline16·codex7·opencode23·cc14·pi27·hermes5·dsh15·4harbor alive(cc/cline/pi/opencode) ⑥双报告R1934:main 8474B+tb21 7680B(gen_report_r1934.py) ⑦disk /data 5.8T(18%) /(352G 4%) ⑧⚠️push失败(proxy 503·2次重试·commit 33daca7f8 ahead 1·下轮补推) ⑨未完成指令:有(§22:4x+§10:10)⇒W:0
+
+[04:38] R1935 监控+opencode predict重启:①CPU/MEM:PASS(load93/224=42%·无本线>8000%·top=pretrain llama 776%非本线·mem803G/avail1075G) ②体积:TASK=30306B(29.6KB)/MEMORY=31321B(30.6KB)·均≤32KB✅ ③gateway:9092=200/9093=200/direct=200 ④**opencode predict已死→重启✅**(PID1185812·log显示resume loaded 91→skip23→PREDICT django-10554 task24/500) ⑤predict 6路alive 2475/3500(70.7%) real=913:cline288(117r)·codex500DONE(44r)·opencode338(249r·RESTARTED)·cc493(80r)·pi214(69r·slow 16min/file)·hermes428(267r)·dsh213(87r) ⑥eval R1933后台RUN(PID2642425·etimes~1247s=21min·3 docker containers:cline matplotlib×3+codex astropy×1) ⑦TB-2.1 reward_files/passed:cline253/19·codex15/8·opencode42/24·cc68/16·pi113/35·hermes160/6·dsh29/21·4harbor alive(cc·cline·pi·opencode)·launcher PID2141831 alive 36h ⑧双报告R1934 current(main 9170B+tb21 8223B) ⑨disk /data 5.8T(18%) /(352G 4%) ⑩research 11-08已读(可辨识性闸门:0p/no-reward重跑2次判stable vs unidentifiable·预算声明:wall-clock/token budget per task) ⑪未完成指令:有(§22:4x+§10:10)⇒W:0
 
 > 📦 R1932 流水(03:58,CPU杀+双报告更新·gateway 200·predict 2443/3500·eval STOPPED·TB-2.1 104p)已归档 → daily-memories-harness/2026-11-09.md。
 
