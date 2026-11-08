@@ -11,7 +11,7 @@ WAITING: 0
 - 已完成: P3预备✅ 8脚本；P0✅ D1–D6；P1✅ 数据盘点+PyAether语料+污染隔离；P2✅ 方案书；R1-R75✅；wake123✅ R75(anti-hack框架)
 - 当前动作: wake123 R75: baize_posttrain_antihack_framework.py(~400行,纯stdlib). 8类Hack分类法(H1-H8). 37920 rollout仿真(158task×G8×5seeds×6configs). Recall=1.0/Precision=0.8069/F1=0.8931. CRITICAL hacks(H2/H3/H4)检测率100%(PreToolUse硬阻断). False alarm~5.8%(需真实数据校准). 8项PTU hook(PTU-01~05已实现R69/PTU-06~08待创建). Cheat-aware奖励修正:CRITICAL→清零/HIGH→×0.5/MEDIUM→×0.75/LOW→×0.875. 监控3级告警(WARN/ALERT/ABORT). py_compile✅+--verbose✅+--html✅(15.1KB)+--json✅(41.3KB). EXPERIMENTS §R75(7小节).
 - 下一步: ①GPU释放→gpu_watcher自动触发→steps1-5 ②单轮smoke(10步,KL=0.04,clip=0.2,G=8,lr=1e-5) ③F14预检→多轮smoke(导入patch) ④PTU-06~08用真实轨迹标定 ⑤正式训练待pretrain ckpt(ETA≈2026-12-25)
-- 阻塞: GPU 0/8free(11/9既定到位,SGLang Qwen3.8-27B占全8卡,gpu_watcher PID2022305 iteration#132+等待中);P3等pretrain ckpt(ETA≈2026-12-25)
+- 阻塞: GPU 0/8free(11/9既定到位,SGLang Qwen3.8-27B占全8卡,gpu_watcher PID2022305 iteration#132+等待中);⚠️git push ahead 1(网络超时,后台push运行中,loop兜底或下次唤醒补推);P3等pretrain ckpt(ETA≈2026-12-25)
 - 本轮新增调研产出: R75 Anti-Reward-Hacking检测框架（baize_posttrain_antihack_framework.py ~400行 + 8类Hack分类法 + 37920 rollout蒙特卡洛 + Recall=100%/F1=0.89 + 8项PreToolUse hook规范 + cheat-aware奖励修正器 + 3级告警 + HTML 15.1KB + JSON 41.3KB + EXPERIMENTS §R75）
 - 未完成指令: 🔴用户令2026-11-07(GPU未到位,需持续产出调研) ⇒ WAITING=0
 
