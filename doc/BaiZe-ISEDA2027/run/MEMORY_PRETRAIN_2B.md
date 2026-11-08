@@ -3,7 +3,9 @@ WAITING: 0
 
 > 📦 §#1727（11-08 22:16, v5 eval监控轮·5s+5c全活·6/8done Avg6=53.38%·hs_chunk3=70h瓶颈）→ daily-memories/2026-11-08.md「#1727」节；**结论**：5s+5c全活(后被第4次SIGTERM杀死),Avg6=53.38%不变,报告v3.2已交付结论A。需要时再读。
 
-> 2026-11-08 22:30 #1728: **v6 eval重启轮·第4次SIGTERM后重建·5s+5c全活·6/8done Avg6=53.38%不变·结论A铁证**·**动作**:①git fetch+status(synced) ②发现#1727(22:16)后所有5 llama-server(port8183-8187)再次被外部SIGTERM杀死,/tmp/baize_eval_v5/被清理 ③创建restart_piqa_hellaswag_v6.sh(修复版二进制MD5=f95ac952,5server:8183=piqa/cores0-15,8184-8187=hellaswag4shard/cores16-79) ④5/5 server全READY(health=ok×5) ⑤5/5 eval client全活(PID2516445-2516465,etime=20s) ⑥6/8done不变Avg6=53.38%(arc_c=0.304/arc_e=0.655/boolq=0.587/obqa=0.266/sciq=0.842/wg=0.549) ⑦报告v3.3更新(第4次SIGTERM记录+v6重启) ⑧训练.29健康GPU100%/75GB **计划**:下次唤醒①确认5 server存活②监控piqa/hellaswag进度③全部完成后合并8集→更新报告终版④📦TASK=31.2KB/MEMORY=11.9KB·未完成指令:有(v6 eval运行中)⇒WAITING:0。
+> 📦 §#1728（11-08 22:30, v6 eval重启轮·第4次SIGTERM后重建·5s+5c全活·6/8done Avg6=53.38%不变·结论A铁证）→ daily-memories/2026-11-08.md「#1728」节；**结论**：v6重启5s+5c全活,Avg6=53.38%不变,报告v3.3已交付。需要时再读。
+
+> 2026-11-08 22:37 #1729: **v6 eval监控轮·2h稳定无SIGTERM·精确进度piqa13.6%/hs4.2%·报告v3.4**·**动作**:①git fetch+status(synced,only vision/harness in-flight) ②确认5 llama-server(port8183-8187)全活health=ok×5,etime=7138s(~2h,20:34重启后无第5次SIGTERM) ③确认5 eval client全活(PID2097184=piqa/2097193+2097209+2097234+2097251=hs4shard,etime=7127s) ④精确进度(client tqdm):piqa 502/3676(13.6%,~14s/it,ETA~12h)·hellaswag 4shard各~417/10036(4.2%,~17s/it,ETA~46h) ⑤6/8done不变Avg6(acc)=53.38%(arc_c=0.304/arc_e=0.655/boolq=0.587/obqa=0.266/sciq=0.842/wg=0.549) ⑥报告v3.4更新(piqa/hs精确进度+2h无SIGTERM) ⑦训练.29健康8×H100 100%util~75GB/卡 **计划**:下次唤醒①确认5s+5c存活②监控piqa/hs进度(piqa~12h完成,hs~46h)③piqa完成后合并7集④全部8集完成后更新报告终版⑤📦TASK=31.2KB/MEMORY=12.2KB·未完成指令:有(v6 eval运行中)⇒WAITING:0。
 
 > 📦 §#1726（11-08 22:09, v5 eval监控轮·5s+5c全活·6/8done Avg6=53.38%不变·异常报告v3.2已验全6项覆盖）→ daily-memories/2026-11-08.md「#1726」节；**结论**：5s+5c全活,Avg6=53.38%不变,报告v3.2已验证全6项覆盖,结论A确认。需要时再读。
 
