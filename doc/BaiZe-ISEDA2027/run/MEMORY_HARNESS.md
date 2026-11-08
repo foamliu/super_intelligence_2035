@@ -4,14 +4,14 @@ WAITING: 0
 
 ## 📊 进度快照
 
-PHASE:        R1926 监控轮·gateway 200(9092+9093)·predict 2384/3500(7路alive)·TB-2.1 rerun 4/7DONE+3/7RUN·CPU/MEM PASS
-已完成:       H-B✅·Gate7/7·TB报告✅·full500✅·cline专项C1-C5+报告R1785-R1896·TB4 0passed(能力)·TB-2.1 oracle5/5✅·§15:2x判据MET✅·R1789 eval 7/7DONE✅·R1804双报告交付✅·R1814-R1925 predict推进+TB-2.1并行+gateway恢复·R1924 deepseek硬故障解决·R1925 监控轮(gateway200/predict2061)·R1926 监控轮(gateway200/predict2384/TB-2.1 4DONE)
-当前动作:     R1926:①CPU/MEM PASS(load64/224·avail1.1T·harness无>8000%·top=pretrain llama-server非本线) ②体积:TASK=30306B/MEMORY归档后≤32KB✅ ③硬盘:/data 18%//4% ④gateway:9092=200/0.08s+9093=200/0.06s(direct=401预期=dummy key) ⑤predict 7路alive 2384/3500 real=851:cline278(112r)·codex500(44r)·opencode322(235r)·cc479(70r)·pi203(64r)·hermes403(244r)·dsh199(82r) ⑥TB-2.1 rerun 4DONE+3RUN:codex1p(88err)·opencode20p(59err)·hermes2p(36err)·dsh7p(77err)DONE·cline5p(80d/8pend)·cc2p(21d/67pend)·pi5p(36d/52pend)RUN ⑦cline C4:cline278(112r/166e=40.3%·gateway200复产中)·TB-2.1 cline5p(80done) ⑧未完成指令:有(§22:4x+§10:10)⇒W:0
-下一步:       ①监控TB-2.1 rerun→cline/cc/pi达89/89 ②predict→每路达500(codex500DONE·cc479近达标) ③待predict满后增量更新报告+eval ④TB-2.1全DONE后更新tb21报告
-阻塞:         无(gateway 200·deepseek复产real·TB-2.1 rerun 3路running)
+PHASE:        R1927 监控+修复轮·hermes predict STALLED→已重启·opencode TB-2.1 rerun启动·gateway 200·predict 2397/3500·TB-2.1 3DONE+4RUN·CPU/MEM PASS
+已完成:       H-B✅·Gate7/7·TB报告✅·full500✅·cline专项C1-C5+报告R1785-R1896·TB4 0passed(能力)·TB-2.1 oracle5/5✅·§15:2x判据MET✅·R1789 eval 7/7DONE✅·R1804双报告交付✅·R1814-R1925 predict推进+TB-2.1并行+gateway恢复·R1924 deepseek硬故障解决·R1925-R1926 监控轮·R1927 hermes predict修复+opencode TB-2.1 rerun
+当前动作:     R1927:①CPU/MEM PASS(load70/224=31%·mem798G/avail1081G·无失控>8000%) ②体积:TASK=30306B(29.6KB)/MEMORY=25993B(25.4KB)·均≤32KB✅ ③硬盘:/data 18%//4% ④gateway:9092=200/0.001s+9093=200/0.022s+direct=200/0.063s ⑤predict 7路alive 2397/3500 real=857:cline279(112r/167e=40.1%)·codex500DONE(44r/456e=8.8%)·opencode325(237r/88e=72.9%)·cc482(71r/411e=14.7%)·pi207(65r/142e=31.4%)·hermes404(245r/159e=60.6%·**STALLED→RESTARTED PID2432279**)·dsh200(83r/117e=41.5%) ⑥TB-2.1:3DONE+4RUN·codex7p/76err·hermes2p/35err·dsh14p/63err DONE·cline6p/1err/88scd·cc10p/32err/57scd·pi21p/9err/80scd RUN·**opencode rerun launched(59err tasks reprocessing PID2697964)** ⑦归因:TB-2.1 errors=agent exit code1(CLI crash非429)·codex86 RuntimeError=持久 ⑧未完成指令:有(§22:4x+§10:10)⇒W:0
+下一步:       ①监控hermes predict→达500 ②监控opencode TB-2.1 rerun→errored tasks恢复 ③predict→cc482近达标·其余推进到500 ④TB-2.1全DONE后聚合更新tb21报告 ⑤predict满后增量更新报告+eval
+阻塞:         无(gateway 200·hermes已重启·4 harbor RUN)
 ERROR_COUNT:  0
-  📦 体积：TASK=30306B(29.6KB) / MEMORY归档后≤32KB✅（R1926归档R1831-R1835→daily-memories-harness/2026-11-08.md）
-  🔍 cline专项小结: predict cline278(112r/166e=40.3%·gateway200复产中)·R1789 eval cline35/46=76.1%(C3✅)·TB-2.1 cline5p(80done/8pending)·C2 empty top1=quota(429·已恢复)·复算:python3 -c"import json,glob;f=glob.glob('swebench_verified_full/predictions_glm53/cline-patched__*.json');r=sum(1 for x in f if (lambda d:(d[0] if isinstance(d,list) else d).get('model_patch','').strip())(json.load(open(x))));print(f'real={r} empty={len(f)-r}')"
+  📦 体积：TASK=30306B(29.6KB) / MEMORY=25993B(25.4KB)·均≤32KB✅
+  🔍 cline专项小结: predict cline279(112r/167e=40.1%)·TB-2.1 cline6p/88scd(6.8%)·C2 empty top1=quota(429·已恢复gateway200)·C3 resume fix✅·复算:python3 -c"import json,glob;f=glob.glob('swebench_verified_full/predictions_glm53/cline-patched__*.json');r=sum(1 for x in f if (lambda d:(d[0] if isinstance(d,list) else d).get('model_patch','').strip())(json.load(open(x))));print(f'real={r} empty={len(f)-r}')"
 ```
 
 > 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
@@ -36,6 +36,8 @@ ERROR_COUNT:  0
 > 📦 R1924 流水(20:47,监控轮·gateway200·deepseek复产real145j/74r·predict2056/3500·TB-2.1 rerun 7harbor alive·CPU/MEM PASS)已归档 → daily-memories-harness/2026-11-08.md。
 > 📦 R1925 流水(20:55,监控轮·gateway200·predict2061/3500·real790·TB-2.1 rerun 7harbor alive·CPU/MEM PASS)已归档 → daily-memories-harness/2026-11-08.md。
 > [02:35] R1926 监控轮·gateway 200(9092+9093)·predict 2384/3500 real=851·TB-2.1 rerun 4DONE+3RUN·CPU/MEM PASS:①CPU load64/224·avail1.1T·harness无>8000%·top=pretrain llama-server(767%)非本线 ②体积:TASK=30306B(29.6KB)/MEMORY归档R1831-R1833后≤32KB✅ ③硬盘:/data 18%//4% ④gateway:9092=200/0.08s+9093=200/0.06s(direct=401=dummy key预期) ⑤predict 7路alive 2384/3500 real=851:cline278(112r)·codex500(44r·DONE)·opencode322(235r)·cc479(70r)·pi203(64r)·hermes403(244r)·dsh199(82r) ⑥TB-2.1 rerun 4DONE+3RUN:codex1p(88err·DONE)·opencode20p(59err·DONE)·hermes2p(36err·DONE)·dsh7p(77err·DONE)·cline5p(80d/8pend·RUN)·cc2p(21d/67pend·RUN)·pi5p(36d/52pend·RUN) ⑦cline C4:cline278(112r/166e=40.3%·gateway200复产中)·TB-2.1 cline5p ⑧未完成指令:有(§22:4x+§10:10)⇒W:0
+
+> [02:50] R1927 监控+修复轮·hermes predict STALLED→RESTARTED·opencode TB-2.1 rerun启动·gateway 200·predict 2397/3500·TB-2.1 3DONE+4RUN·CPU/MEM PASS:①CPU load70/224=31%·mem798G/avail1081G·无失控>8000% ②体积:TASK=30306B(29.6KB)/MEMORY=25993B(25.4KB)·均≤32KB✅ ③硬盘:/data 18%//4% ④gateway:9092=200/0.001s+9093=200/0.022s+direct=200/0.063s ⑤predict 7路alive 2397/3500 real=857:cline279(112r)·codex500DONE(44r)·opencode325(237r)·cc482(71r)·pi207(65r)·hermes404(245r·**STALLED 198min→RESTARTED PID2432279**)·dsh200(83r) ⑥TB-2.1 3DONE+4RUN:codex7p/76err·hermes2p/35err·dsh14p/63err DONE·cline6p/1err/88scd·cc10p/32err/57scd·pi21p/9err/80scd RUN·**opencode rerun launched(59err deleted·PID2697964)** ⑦归因:TB-2.1 errors=agent exit code1(CLI crash非429·codex86 RuntimeError=持久) ⑧cline C4:cline279(112r/167e=40.1%)·TB-2.1 cline6p/88scd ⑨未完成指令:有(§22:4x+§10:10)⇒W:0
 
 > 📦 R1899-R1911 流水(16:51~18:35,~13轮监控·gateway 200→429·predict 1778→1863/3500·real 715→775·TB-2.1 2-3DONE+5-4RUN·CPU/MEM PASS)已归档 → daily-memories-harness/2026-11-08.md。
 
