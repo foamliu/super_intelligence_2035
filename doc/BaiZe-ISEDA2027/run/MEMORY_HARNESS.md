@@ -8,7 +8,7 @@ PHASE:        R1934 监控+双报告更新轮·gateway 200·predict 2468/3500(70
 已完成:       H-B✅·Gate7/7·TB报告✅·full500✅·cline专项C1-C5+报告R1785-R1933·TB4 0passed(能力)·TB-2.1 oracle5/5✅·§15:2x判据MET✅·R1789 eval 7/7DONE✅·R1804双报告交付✅·R1814-R1933 predict推进+TB-2.1并行+gateway恢复+CPU杀+eval重启·R1934双报告更新
 当前动作:     R1934:①CPU/MEM:PASS(load83/224=37%·无>8000%·top=pretrain llama非本线·mem809G/avail1069G) ②体积:TASK=30306B(29.6KB)/MEMORY~30KB·均≤32KB✅ ③gateway:9092=200/9093=200 ④predict 6路alive 2468/3500(70.5%):cline287(116r)·codex500DONE(44r)·opencode337(248r)·cc491(79r)·pi214(69r)·hermes426(265r)·dsh213(87r)·real=908·empty=1560 ⑤eval R1933后台RUN(PID2642425·etimes915s·cline 69new instances·sg docker alive) ⑥TB-2.1 unique:cline16p/88·codex7p/12·opencode23p/41·cc14p/58·pi27p/70·hermes5p/54·dsh15p/22·4harbor alive(cc·cline·pi·opencode) ⑦双报告R1934:main 8474B+tb21 7680B(gen_report_r1934.py) ⑧cline C4:cline287(116r/171e=40.4%)·TB-2.1 16p·C2 empty top1=quota(429·已恢复)·C3 resume fix✅ ⑨research 11-08已读 ⑩未完成指令:有(§22:4x+§10:10)⇒W:0
 下一步:       ①eval R1933后台跑完cline 69new→继续其余6路new instances ②predict 5路推进至500(cline287·opencode337·pi214·dsh213·hermes426) ③TB-2.1 4harbor推进→待全DONE ④全DONE后聚合最终7路报告+可辨识性闸门(research建议)
-阻塞:         push失败(proxy 503·commit 33daca7f8 ahead 1·下一轮第一件事补推)·其余无异常(gateway 200·6路predict alive·TB-2.1 4harbor alive·eval R1933后台RUN)
+阻塞:         无(gateway 200·6路predict alive·TB-2.1 4harbor alive·eval R1933后台RUN·push已补推成功329fe1ec6)
 ERROR_COUNT:  0
   📦 体积：TASK=30306B(29.6KB) / MEMORY=~30KB·均≤32KB✅
   🔍 cline专项小结: predict cline287(116r/171e=40.4%)·TB-2.1 cline16p·C2 empty top1=quota(429·已恢复gateway200)·C3 resume fix✅·real复产中(116+)
