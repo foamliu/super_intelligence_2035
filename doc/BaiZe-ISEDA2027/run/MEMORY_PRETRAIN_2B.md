@@ -1,7 +1,9 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 0
 
-> 2026-11-08 19:38 #1712: **v5 eval监控轮·5/8done Avg5=50.95%·arc_easy86%(8127/9501)ETA~15-30min·报告v2.4进度更新·归档#1700-#1709释放MEMORY**·**动作**:① 5/8集仍完成(arc_challenge=0.3038/boolq=0.5872/openbookqa=0.266/sciq=0.842/winogrande=0.5485),arc_easy86%(8127/9501)ETA~15-30min·piqa7%(268/3676)~7-12s/it ETA~6-8h·hellaswag 4shard chunk0=311(3%)/chunk1=630(6%)/chunk2=185(2%)/chunk3=194(2%)极慢ETA~24h ② 报告v2.4更新:arc_easy79%→86%/piqa6%→7%/hellaswag shard表更新 ③ 运维令6项已全覆盖(详见#1711) ④ 结论A确认:二因(旧二进制sciq+52.6pp主因 + 全量vs限100 boolq-8.3pp主因),loss平滑无退化 ⑤ S1健康(iter_0130000@19:02,8GPU 86-100%util) ⑥ 归档#1700-#1709(10条监控指针)释放MEMORY~2.1KB **计划**:下次唤醒①arc_easy应已完成→补入报告②piqa/hellaswag极慢待arc完成后带宽释放③v5全部完成后算Avg8·📦TASK=31.2KB✓/MEMORY=30.5KB✓(归档2.1KB→daily-memories)·未完成指令:有(v5 eval运行中)⇒WAITING:0。
+> 2026-11-08 19:49 #1713: **v5 eval监控轮·5/8done Avg5=50.95%·arc_easy92%(8787/9501)ETA~12min·报告v2.5进度+吞吐瓶颈说明·运维令6项全覆盖结论A确认**·**动作**:① 5/8集仍完成(arc_challenge=0.3038/boolq=0.5872/openbookqa=0.266/sciq=0.842/winogrande=0.5485),arc_easy92%(8787/9501)~1.0it/s ETA~12min即将完成·piqa8%(294/3676)~25s/it ETA~25h·hellaswag chunk0=332(3.3%)/chunk1=722(7.2%)/chunk2=215(2.1%)/chunk3=219(2.2%)极慢 ② 报告v2.5更新:hellaswag shard表刷新至19:49+新增吞吐瓶颈说明box(6路llama-server争抢内存带宽=1/6速度,慢≠错) ③ 运维令6项全覆盖(①分集明细②样本数③后端精度④fewshot=0零shot⑤hellaswag进度⑥历史100k逐集对比) ④ 结论A确认:二因(旧二进制sciq+52.6pp主因 + 全量vs限100 boolq-8.3pp主因),loss平滑无退化,无需暂停训练/回滚ckpt ⑤ 7个llama-server健康(port8181-8187,6活跃1空闲) **计划**:下次唤醒①arc_easy应已完成→补入报告算Avg6②piqa/hellaswag极慢待arc完成后带宽释放③v5全部完成后算Avg8·📦TASK=31.2KB✓/MEMORY=29.1KB✓·未完成指令:有(v5 eval运行中)⇒WAITING:0。
+
+> 📦 §#1712（11-08 19:38, v5 eval监控轮·5/8done·报告v2.4·归档#1700-#1709）→ daily-memories/2026-11-08.md「#1712」节；**结论**：v5 5/8完成Avg5=50.95%,报告v2.4,归档释放MEMORY2.1KB。需要时再读。
 
 > 📦 §#1711（11-08 19:30, v5 eval监控轮·5/8done·报告v2.3+hellaswag shard明细·运维令6项全覆盖）→ daily-memories/2026-11-08.md「#1711」节；**结论**：v5 5/8完成Avg5=50.95%,运维令6项全覆盖,结论A确认。需要时再读。
 
