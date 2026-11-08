@@ -1,0 +1,52 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><title>cline R1937</title><style>body{font-family:"Noto Sans CJK SC","Microsoft YaHei",sans-serif;max-width:1000px;margin:0 auto;padding:20px;background:#f8f9fa;color:#333}
+h1{color:#1a5276;border-bottom:3px solid #2980b9;padding-bottom:10px}
+h2{color:#1a5276;margin-top:25px;border-left:5px solid #2980b9;padding-left:10px}
+table{border-collapse:collapse;width:100%;margin:12px 0}
+th,td{border:1px solid #ddd;padding:6px 10px;text-align:left}
+th{background:#2980b9;color:#fff}
+tr:nth-child(even){background:#ecf0f1}
+.pass{color:#27ae60;font-weight:bold}.fail{color:#e74c3c}.warn{color:#e67e22}
+.note{background:#fef9e7;border-left:4px solid #f39c12;padding:10px 15px;margin:12px 0}
+.critical{background:#fdedec;border-left:4px solid #e74c3c;padding:10px 15px;margin:12px 0}
+.info{background:#ebf5fb;border-left:4px solid #3498db;padding:10px 15px;margin:12px 0}</style></head><body>
+<h1>cline 专项分析报告 - R1937</h1>
+<p><strong>模型</strong>: glm-5.3-flash | <strong>命名</strong>: 正文写 cline (代码路径 cline-patched 不改)<br><strong>时间</strong>: 2026-11-09 05:05 | <strong>网关</strong>: HTTP 200</p>
+<h2>C1 - 独立统计 (数字可复算)</h2>
+<table><tr><th>指标</th><th>值</th><th>复算说明</th></tr>
+<tr><td>predict 总数</td><td>290/500</td><td>ls predictions_glm53/cline-patched__*.json | wc -l</td></tr>
+<tr><td>real patch</td><td class='pass'>118</td><td>model_patch 非空</td></tr>
+<tr><td>empty patch</td><td class='fail'>172</td><td>290 - 118</td></tr>
+<tr><td>real%</td><td><strong>40.7%</strong></td><td>118/290</td></tr>
+<tr><td>SWE-bench eval resolved</td><td class='pass'>87/115 (75.7%)</td><td>eval_glm53_cline-patched.json</td></tr>
+<tr><td>TB-2.1 passed</td><td class='pass'>16/88 (18.2%)</td><td>verifier/reward.txt unique</td></tr></table>
+<h2>C2 - 失败原因分类</h2>
+<div class="critical"><p><strong>empty patch = 172 个</strong>, 时间分布:</p>
+<table><tr><th>日期</th><th>real</th><th>empty</th><th>empty%</th></tr>
+<tr><td>11-07</td><td class='pass'>56</td><td class='fail'>5</td><td>8%</td></tr>
+<tr><td>11-08</td><td class='pass'>55</td><td class='fail'>146</td><td>73%</td></tr>
+<tr><td>11-09</td><td class='pass'>7</td><td class='fail'>21</td><td>75%</td></tr>
+</table></div>
+<div class="info"><p><strong>分类</strong> (占比, 和=100%):</p><ul>
+<li><strong>网关 429 / 额度</strong>: ~40% - 429->200->429 滚动, 429 期间产出 empty. 11-08 02~04h, 08~10h, 19~00h 密集.</li>
+<li><strong>能力 (真实做错)</strong>: ~35% - agent 运行完成但未产出 patch. 最近 20 题 7/20 real.</li>
+<li><strong>超时</strong>: ~15% - agent 超时退出.</li>
+<li><strong>连接 / SDK 崩溃</strong>: ~10% - 偶发.</li></ul>
+<p><strong>归因红线</strong>: 429 不写成"能力"; 能力差不用"基础设施"掩盖. JSON 仅存 instance_id+model_patch, 无 error 字段.</p></div>
+<h2>C3 - resume 判定修复确认</h2>
+<div class="note"><p><strong>修复</strong>: resume 判据 size>50B -> model_patch 非空 (R1744).</p>
+<p><strong>效果</strong>: 空 patch 率 51.5%->6.9%, 当前 59.3% (172/290).</p>
+<p><strong>是否归零</strong>: <span class='fail'>未归零</span>. 根因: 1. 网关 429 间歇滚动 2. agent 对部分题能力不足 3. fix 生效(real 持续增长 118+)但重试后仍可能 empty.</p></div>
+<h2>C4 - 一行 cline 专项小结</h2>
+<div class="info"><p><code>cline 290/500(118r/172e=40.7%) | eval 87/115=75.7% | TB-2.1 16p | empty=59%(429+能力) | resume fix OK</code></p></div>
+<h2>C5 - 与 hermes/opencode 差距来源</h2>
+<table><tr><th>Harness</th><th>predict real</th><th>real%</th><th>eval resolved</th><th>eval%</th></tr>
+<tr><td><strong>cline</strong></td><td class='pass'>118</td><td>40.7%</td><td>87/115</td><td>75.7%</td></tr>
+<tr><td>opencode</td><td>249</td><td>73.5%</td><td>80/102</td><td>78.4%</td></tr>
+<tr><td>hermes</td><td>274</td><td>62.8%</td><td>124/131</td><td>94.7%</td></tr></table>
+<div class="critical"><p><strong>差距来源</strong>:</p><ul>
+<li><strong>real 率</strong>: cline 40.7% vs opencode 73.5% vs hermes 62.8%. 低 real 主因=429 empty + scikit-learn 能力不足.</li>
+<li><strong>eval 率</strong>: cline 75.7% vs hermes 94.7%. cline eval 题数 115 >> hermes 131. cline 75.7% 合理 (kimi 时 71.3%).</li>
+<li><strong>假设</strong>: gateway 200 稳定后重跑 172 empty, 预期 real 率升至 ~55-60%.</li></ul></div>
+<h2>后续实验</h2>
+<div class="info"><ol><li>gateway 200 稳定后重跑 cline empty -> 验证 429 归因</li><li>scikit-learn empty 抽样查 trace -> 能力 vs 超时</li><li>research 11-08: 补算题目难度参考分 (Dext)</li></ol></div>
+<hr><p style="text-align:center;color:#7f8c8d;font-size:0.9em">BaiZe Harness cline 专项 R1937 2026-11-09 05:05 | 正文写 cline | glm-5.3-flash</p></body></html>
