@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
-<!-- RUN_ID: 259 | TARGET: 12 -->
-## RUN_ID 259 — **修复 `.29` relay：换成本地 no-fetch 版本并重启**
+<!-- RUN_ID: 260 | TARGET: 12 -->
+## RUN_ID 260 — **修复 `.29` relay（retry：护栏自匹配 `mkfs` 已改为 `m[k]fs`）**
 
 > 诊断：`.29` relay 进程存活（`do_wait` + `sleep 20` 子进程），但 `git fetch` 反复 **Bus error**，且 `git_sync()` 里的 `git pull --rebase` **无超时** → 曾长时间阻塞，导致 TARGET 29 的 RUN_ID 248 被后续 RUN_ID 越过。
 > 修复：`.29` 改用 `/tmp/ops_relay_v2_29_fixed.sh`（**不 fetch/pull**，工作副本由 `.12` relay 同步；push 加 60 s 超时，失败留给 `.12` 代推；其余逻辑/state 文件不变）。
@@ -8,7 +8,7 @@
 
 ```bash
 set -u
-echo "=== RUN_ID 259 | fix .29 relay | $(date '+%F %T') | host=$(hostname) ==="
+echo "=== RUN_ID 260 | fix .29 relay | $(date '+%F %T') | host=$(hostname) ==="
 SSH="ssh -o BatchMode=yes -o ConnectTimeout=6 -o StrictHostKeyChecking=no"
 $SSH 10.239.2.29 'cat > /tmp/ops_relay_v2_29_fixed.sh' <<'EOSR'
 #!/bin/bash
@@ -30,7 +30,7 @@ last_run_id(){ [ -f "$STATE" ] && cat "$STATE" 2>/dev/null || echo 0; }
 
 guard_block(){
   local block="$1" pat
-  local -a bad=( 'rm[[:space:]]+-[^[:space:]]*[[:space:]]+/($|[[:space:]])' 'rm[[:space:]]+-[^[:space:]]*[[:space:]]+/\*' 'mkfs' 'dd[[:space:]]+.*of=/dev/' '>[[:space:]]*/dev/sd' '>[[:space:]]*/dev/nvme' )
+  local -a bad=( 'rm[[:space:]]+-[^[:space:]]*[[:space:]]+/($|[[:space:]])' 'rm[[:space:]]+-[^[:space:]]*[[:space:]]+/\*' 'm[k]fs' 'dd[[:space:]]+.*of=/dev/' '>[[:space:]]*/dev/sd' '>[[:space:]]*/dev/nvme' )
   for pat in "${bad[@]}"; do
     if printf '%s' "$block" | grep -qE -- "$pat"; then echo "REFUSED: $pat"; return 1; fi
   done
