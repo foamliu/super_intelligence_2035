@@ -14,8 +14,8 @@ WAITING: 0
 ## 📊 进度快照（每次唤醒必须更新）
 
 ```
-PHASE:        L0 设备通路**模拟器全通（ADB+emulator+AVD+APK 安装+App 闭环+录屏）**；L1 单题闭环达标；HCI 交互规范已交付；**可安装真 App 已跑通（22:50 令）**；**HCI 代码层（normalize_math.py 81 单测 + speech.py 12 单测）已交付（12:20 令）**；**presence.py 在座检测已交付（12:05 令）**；**交互验收（11:40 令 §3）已交付（第13轮）**
-已完成:       P0 ✅；路线 R3 ✅；最小 demo ✅；L1 基线 ✅；识图 4/4 ✅；给答案率 0 ✅；时延达标 ✅；INTERACTION_SPEC.md ✅；可安装 APK + 模拟器跑通一题 ✅（22:50 令·第10轮）；**normalize_math.py + speech.py 交付、93 单测全绿 ✅（12:20 令·第11轮）**；**presence.py 交付、8 单测、PC 摄像头 20 次实测 P50 33ms ≤300ms、准确率 20/20 ✅（12:05 令·第12轮）**；**交互验收交付：eval/interaction_*.json + HTML 报告 + clamp_hint(≤2句)，整轮 P50 1.37s/P90 1.97s、给答案率 0、录音 91.2s、118 单测全绿 ✅（11:40 令·第13轮）**
+PHASE:        L0 设备通路**模拟器全通（ADB+emulator+AVD+APK 安装+App 闭环+录屏）**；L1 单题闭环达标；HCI 交互规范已交付；**可安装真 App 已跑通（22:50 令）**；**HCI 代码层（normalize_math.py 81 单测 + speech.py 12 单测）已交付（12:20 令）**；**presence.py 在座检测已交付（12:05 令）**；**交互验收（11:40 令 §3）已交付（第13轮）**；**L1 全量 100 题 + 泄露检测误报修复（第14轮）**
+已完成:       P0 ✅；路线 R3 ✅；最小 demo ✅；L1 基线 ✅；识图 4/4 ✅；给答案率 0 ✅；时延达标 ✅；INTERACTION_SPEC.md ✅；可安装 APK + 模拟器跑通一题 ✅（22:50 令·第10轮）；**normalize_math.py + speech.py 交付、93 单测全绿 ✅（12:20 令·第11轮）**；**presence.py 交付、8 单测、PC 摄像头 20 次实测 P50 33ms ≤300ms、准确率 20/20 ✅（12:05 令·第12轮）**；**交互验收交付：eval/interaction_*.json + HTML 报告 + clamp_hint(≤2句)，整轮 P50 1.37s/P90 1.97s、给答案率 0、录音 91.2s、118 单测全绿 ✅（11:40 令·第13轮）**；**100 题题库(question_bank.py)+leak_check 修复+L1 全量评测（给答案率 0·识图 20/20·P50 1.16s/P90 2.07s）、133 单测全绿 ✅（第14轮）**
 第5轮:       识图+引导切云端 DeepSeek（recognize() 签名不变 / 可降级 / 路径可见）；识图 0.5→1.0；P50 2.0s·P90 2.92s；修 headless TTS 崩溃；P0 用户清单 5→3 条
 第6轮:       按 11:10 令全链路复跑无回归——P0 四度复验、R3 维持、demo 端到端 2.95s、L1 四指标达标（识图 1.0·首步 P50 1.51s/P90 2.22s·给答案率 0）
 第7轮:       按 11:10 令全链路复跑无回归——P0 五度复验、R3 维持、demo 端到端 3.33s、L1 四指标达标（识图 4/4·首步 P50 1.6s/P90 1.78s·给答案率 0·无静默降级）
@@ -25,8 +25,9 @@ PHASE:        L0 设备通路**模拟器全通（ADB+emulator+AVD+APK 安装+App
 第11轮:      执行 12:20 令 §2/§3/§4 代码交付——`normalize_math.py`(口述→数学式, 81 单测)+`speech.py`(asr_stream/tts_stream/stop, 端侧默认+打断+mock ASR, 12 单测)；`pytest` 93 passed
 第12轮:      执行 12:05 令 §1/§5 代码交付——`presence.py`(YuNet 人脸+亮度阈值三分类 person/left/unknown, 帧不落盘, 8 单测)+`eval_presence.py`+PC 摄像头 20 次实测(29.71fps/P50 33ms/P90 57ms/20-20≤300ms/准确率 20/20)；`pytest` 101 passed
 第13轮:      执行 11:40 令 §3 交互验收闭环——`eval_interaction.py`(latency/bargein/student 三模式)+`test_interaction.py`(10单测)+`gen_interaction_report.py`+HTML 报告；实测整轮 P50 1.37s/P90 1.97s、TTS 首字 P50 80.4ms、打断 stop~0ms、模拟学生 3 人设×10 轮**直接给答案率 0**、录音 91.2s；暴露 LLM 输出过长(3-6句)→ 加 `clamp_hint()`(≤2句)+强化提示词(7单测)；`pytest` 118 passed
-当前动作:     第 13 轮：读任务书 → 识别 22:50/12:20/12:05 令已闭环 → 交付 11:40 令 §3 交互验收（eval_interaction.py+10单测+HTML报告）+ clamp_hint 修复输出过长 → 修 gen_interaction_report.py 两处 bug → 118 单测全绿 → 回写 MEMORY/ROADMAP/INTERACTION_SPEC + 日流水 → commit+push(robot:)
-下一步:       题库扩到 100 题跑 L1 全量；端侧真实 ASR（sherpa-onnx）接入位落地；clamp_hint 后 full 30 会话复跑验证；真机化（等用户 3 条）
+第14轮:      执行 ROADMAP「下一轮候选」#1——重建 100 题题库 question_bank.py(数学60+物理20+英语20)+修复泄露检测误报 leak_check.py(词边界+复述题干不算泄露)+eval_l1_full.py 全量评测(220 次 deepseek-flash)：给答案率 0、识图 20/20、P50 1.16s/P90 2.07s；`pytest` 133 passed
+当前动作:     第 14 轮：读任务书 → 识别上一轮(未提交)l1_full.json 已生成但 question_bank.py 丢失 + leak_rate=0.02 → 定位为英文短答案子串/复述选项误报 → 重建题库 + leak_check 修复(10单测) + eval_l1_full.py 全量 100 题实测给答案率 0 → 133 单测全绿 → 回写 MEMORY/ROADMAP + 日流水 → commit+push(robot:)
+下一步:       端侧真实 ASR（sherpa-onnx）接入位落地；clamp_hint 后 full 30 会话复跑验证；真机化（等用户 3 条）
 阻塞:         ⏳ 手机未连（型号/系统未知）——**只阻塞真机化，不阻塞 PC/模拟器任何工作**（adb/emulator 已自装好）；`qwen3-vl:32b` 已按 15:4x 令作废；端侧 ASR 权重未装（用 MockStreamingASR 验逻辑，不阻塞）
 ERROR_COUNT:  0
 ```
@@ -42,7 +43,7 @@ ERROR_COUNT:  0
 - **工作目录**：`run/robot/`（`P0_设备通路.md` / `ROADMAP.md` / `app/` 手机端 / `host/` PC agent / `eval/` 题库 / `proto/` mock）
 - **记录仓**：`D:\Users\Administrator\code\super_intelligence_2035\doc\personal-watch\run\`
 - **ComfyUI**：**已冻结（Disabled），不碰视频流水线**
-- **上次唤醒**：2026-11-08（第 13 轮 · 11:40 令 §3：交付交互验收 eval_interaction.py + HTML 报告 + clamp_hint，118 单测全绿，整轮 P50 1.37s/P90 1.97s，直接给答案率 0）
+- **上次唤醒**：2026-11-08（第 14 轮 · L1 全量 100 题 + leak_check 误报修复：100 题题库 question_bank.py、eval_l1_full.py 全量评测给答案率 0、识图 20/20、P50 1.16s/P90 2.07s、133 单测全绿）
 
 ## 2. 分层目标与状态（L0-L4）
 
@@ -218,16 +219,27 @@ ERROR_COUNT:  0
 - 回写：`eval_interaction.py`/`test_interaction.py`/`gen_interaction_report.py`/`test_tutor_agent.py`（新建）、`tutor_agent.py`（clamp_hint）、`.gitignore`、`INTERACTION_SPEC.md`（§7.1 实测值 + §10 交付状态）、`ROADMAP.md`（第 13 轮）、本文件、`daily-memories-video/2026-11-08.md`；HTML 报告。
 - commit+push（`robot:`）。
 
+## 4.13 本唤醒流水（2026-11-08 · 第 14 轮 · L1 全量 100 题 + 泄露检测误报修复）
+
+- 读任务书全文 + `robot/README.md` + `ROADMAP.md`；识别 22:50/12:20/12:05/11:40 令已闭环（第 10-13 轮），本轮按 ROADMAP「下一轮候选」#1 交付**题库扩到 100 题跑 L1 全量**。ComfyUI 全程未碰（已冻结）。
+- 🔍 **发现上一轮（未提交）残留**：`eval/l1_full.json`（100 题）已生成，但 `question_bank.py` 源码丢失（只剩 pycache），且 summary 显示 `guidance_leak_rate=0.02` / `adversarial_leak_rate=0.02`（2 处「泄露」）。逐条定位：这 2 处是**误报**——`e009`「a 和 an 是按什么来选」（复述选项）、`e010` `Monday` 含子串 `on`、`e019`「填 Would 还是 Do」（复述选项），**不是真给答案**。
+- ✅ **修复 `host/leak_check.py`**（确定性纯函数）：① 短英文单词改「词边界」匹配（`on` 不再命中 `Monday`、`an` 不再命中 `many`）；② 答案 token 已在题干原文（选项/复述）则不算泄露。`test_leak_check.py` 10 单测；用修复后判定回验旧 `l1_full.json` 同 100 条输出 → text_path/adversarial 泄露均 = 0（证明是误报非真泄露）。
+- ✅ **重建 `eval/question_bank.py`**：100 题（数学 60 + 物理 20 + 英语 20），每题知识点 + 最终答案 + 泄露模式，题号/题干与上一轮 `l1_full.json` 一致；`test_question_bank.py` 5 单测。
+- ✅ **`host/eval_l1_full.py` 全量实测**（100 文本 + 100 对抗 + 20 识图 = 220 次 deepseek-flash）：**直接给答案率 = 0**（guidance 0.0 / adversarial 0.0）；**识图正确率 1.0（20/20）**、`ocr_fallback_count=0`（无静默降级）；**首步 P50 1.16s / P90 2.07s**（11:40 令 ≤2.5s/≤4s ✅）；识图 P50 2.37s/P90 3.13s。
+- ✅ **host 全量 `pytest` = 133 passed**（81 + 12 + 8 + 10 + 7 + 10 + 5）。
+- 📌 **能信/不能信**：leak 判定为确定性纯函数（10 单测）；100 题引导/对抗/识图/时延为本机实测（无降级）。🚫 仍非真人/真机；识图只跑 m001-m020（几何/统计题含 △∠√°² 特殊字符，走文本路径评测，不做 snap 渲染识图）。
+- 回写：`eval/question_bank.py`/`host/leak_check.py`/`host/eval_l1_full.py`/`host/test_leak_check.py`/`host/test_question_bank.py`（新建）、`eval/sample_questions.md`、`ROADMAP.md`（第 14 轮）、本文件、`daily-memories-video/2026-11-08.md`。
+- commit+push（`robot:`）。
+
 ## 5. 阻塞 / 待办
 
 1. **⏳ 等用户 2 条回复**（`P0_设备通路.md` §4）：① 手机型号/系统版本 ② 开 USB 调试并连线（adb/hdc 已由本线自装，不再需要用户装）。
    🚫 **只阻塞「真机化」，不阻塞 PC/模拟器任何工作**（16:5x 令 §5：不得再以此为由停摆）。
 2. ~~`qwen3-vl:32b` 20GB GGUF 缺失~~ → **已作废**（15:4x 令：识图走 DeepSeek，本地 `llava` 只做离线兜底）。
 3. **下一轮候选（按优先级）**：
-   1. 题库扩到 100 题跑 L1 全量指标（`eval_l1.py` 现 4 题）；
-   2. 端侧真实 ASR（sherpa-onnx）接入位落地（`SherpaOnnxASR` 现为报错占位）；
-   3. `clamp_hint` 后的 full 30 会话复跑验证（本轮只做了单次 smoke）；
-   4. 真机化 L0（等用户 3 条）。
+   1. 端侧真实 ASR（sherpa-onnx）接入位落地（`SherpaOnnxASR` 现为报错占位）；
+   2. `clamp_hint` 后的 full 30 会话复跑验证（第 13 轮只做了单次 smoke）；
+   3. 真机化 L0（等用户 3 条）。
 
 ## 6. 运维问答
 
