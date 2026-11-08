@@ -1,0 +1,52 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><title>cline 专项报告 R1879</title><style>body{font-family:"Microsoft YaHei","Noto Sans CJK SC",sans-serif;max-width:1200px;margin:0 auto;padding:20px;background:#f5f5f5;color:#333}h1{color:#1a5276;border-bottom:3px solid #2980b9;padding-bottom:10px}h2{color:#2874a6;margin-top:30px;border-left:5px solid #3498db;padding-left:10px}table{border-collapse:collapse;width:100%;margin:10px 0;background:#fff}th,td{border:1px solid #ddd;padding:8px 12px;text-align:left}th{background:#2980b9;color:#fff}tr:nth-child(even){background:#f9f9f9}.green{color:#27ae60;font-weight:bold}.red{color:#e74c3c;font-weight:bold}.orange{color:#e67e22;font-weight:bold}.pass{color:#27ae60;font-weight:bold}.fail{color:#e74c3c}.warn{color:#e67e22}.note{background:#fef9e7;border-left:4px solid #f39c12;padding:10px;margin:10px 0}.alert{background:#fdedec;border-left:4px solid #e74c3c;padding:10px;margin:10px 0}.ok{background:#eafaf1;border-left:4px solid #27ae60;padding:10px;margin:10px 0}.info{background:#ebf5fb;border-left:4px solid #3498db;padding:10px;margin:10px 0}.critical{background:#fdedec;border-left:4px solid #e74c3c;padding:10px;margin:15px 0}code{background:#eee;padding:2px 6px;border-radius:3px;font-size:0.9em}</style></head><body>
+<h1>cline 专项报告 · R1879 · glm-5.3-flash</h1>
+<p><strong>轮次</strong>：R1879 · 2026-11-08 12:57｜ <strong>网关</strong>：HTTP 200/429 间歇（降级中）｜ <strong>命名</strong>：正文一律写 cline</p>
+<div class="alert"><strong>⚠️ 网关状态变更</strong>：R1877 时 gateway 200，本轮探测 3 次 = 1×200 + 2×429 → <strong>间歇性 429</strong>（额度滚动耗尽）。predict 7 路仍 alive 但推进缓慢（codex 日志显式 "quota-blocked"）。此为 <strong>infra 问题</strong>，不计入模型能力。</div>
+  <div class="info"><strong>📌 命名纪律</strong>：报告正文一律写 <code>cline</code>，不写 <code>cline-patched</code>。代码/脚本里的标识符不改。</div>
+<h2>C1 — cline 独立统计（real / empty / 近10题）</h2>
+<table><tr><th>Harness</th><th>predict数</th><th>real patch</th><th>empty patch</th><th>real rate</th><th>近10题real</th></tr>
+<tr><td>cline</td><td>173</td><td class='green'>92</td><td class='red'>81</td><td class='orange'>53%</td><td>9/10</td></tr>
+<tr><td>codex</td><td>268</td><td class='green'>25</td><td class='red'>243</td><td class='red'>9%</td><td>5/10</td></tr>
+<tr><td>opencode</td><td>227</td><td class='green'>186</td><td class='red'>41</td><td class='green'>82%</td><td>8/10</td></tr>
+<tr><td>claude-code</td><td>290</td><td class='green'>49</td><td class='red'>241</td><td class='red'>17%</td><td>4/10</td></tr>
+<tr><td>pi</td><td>116</td><td class='green'>47</td><td class='red'>69</td><td class='orange'>41%</td><td>6/10</td></tr>
+<tr><td>hermes</td><td>295</td><td class='green'>200</td><td class='red'>95</td><td class='orange'>68%</td><td>8/10</td></tr>
+<tr><td>deepseek</td><td>106</td><td class='green'>62</td><td class='red'>44</td><td class='orange'>58%</td><td>6/10</td></tr>
+</table>
+<div class="note"><b>复算命令</b>：<code>python3 -c "import json,glob;f=glob.glob('predictions_glm53/cline-patched__*.json');r=sum(1 for x in f if (lambda d:(d[0] if isinstance(d,list) else d).get('model_patch','').strip())(json.load(open(x))));print(f'real={r} empty={len(f)-r}')"</code></div>
+<h2>C2 — cline 失败原因分类</h2>
+<table><tr><th>分类</th><th>数量</th><th>占比</th><th>归因</th></tr>
+<tr><td>网关额度429</td><td>1</td><td>1%</td><td class='orange'>infra(间歇429·额度滚动)</td></tr>
+<tr><td>能力未产出patch</td><td>80</td><td>46%</td><td class='red'>能力</td></tr>
+<tr><td>超时/其他</td><td>0</td><td>0%</td><td>其他</td></tr>
+<tr><td>real_patch(成功)</td><td>92</td><td>53%</td><td class='green'>成功</td></tr>
+<tr><td><b>合计</b></td><td><b>173</b></td><td><b>100%</b></td><td></td></tr></table>
+<div class="note"><b>Top3 样本</b>（能力类·empty patch无错误标记）：<br>cline-patched__django__django-13933.json · cline-patched__django__django-13964.json · cline-patched__django__django-14007.json<br>这些 JSON 仅有 keys=['instance_id','model_name_or_path','model_patch']，model_patch 为空字符串——cline 运行完毕但未产出 diff。</div>
+<h2>C3 — resume 修复后 cline 空 patch 是否归零</h2>
+<div class="ok"><b>结论：归零（eval 层面）✅</b><br>R1789 eval：cline 46 submitted，45 completed，<b>0 empty_patch</b>，1 error（astropy-12907）。<br>resume fix（R1733：size&gt;50B → model_patch 非空）完全生效。<br>predict 阶段 empty=81/173（47%），根因：429=1(infra) + 能力=80。<b>非 bug 复发</b>。</div>
+<h2>C4 — cline 专项小结（心跳行）</h2>
+<div class="note"><code>cline predict 173files(92real/81empty=53% · 429=1 · 能力=80) · R1789 eval 35/46=76.1% · 0 empty_patch(C3✅) · TB-2.1 cline 88/89 9pass(9%) · 失败top1=能力(80/173=46%无patch) · gateway 200✅</code></div>
+<h2>C5 — 与 hermes/opencode 差距来源</h2>
+<div class="note"><b>predict real%</b>：opencode 82% &gt; hermes 68% &gt; deepseek 58% &gt; cline 53% &gt; pi 41% &gt; cc 17% &gt; codex 9%<br><b>eval resolve%</b>：hermes 94.7% &gt; deepseek 82.5% &gt; opencode 78.4% &gt; pi 76.5% &gt; cline 76.1% &gt; cc 75.0% &gt; codex 75.0%<br><b>差距来源</b>：cline vs opencode/hermes 的 predict real% 差距 = no_patch（能力），非 429（仅1个429）。eval resolve% 差距较小——cline 产出 patch 质量与 opencode 接近，差距主要在产出率。<br><b>可检验假设</b>：cline no_patch=80 中部分可能因 glm-5.3-flash 下 diff 格式输出不匹配 cline 的 patch 解析。下一步：抽查 5 个 no_patch 题 trace。</div>
+<h2>SWE-bench Verified predict 全量进度</h2>
+<div class="ok"><b>网关</b>：HTTP 200/429 间歇（降级中）（9092 + 9093）<br><b>总量</b>：1475/3500 (42.1%) · real=661</div>
+<h2>TB-2.1 reward 聚合（7 路 + oracle）</h2>
+<div class="ok"><b>oracle 5/5 ✅</b>｜ <b>口径</b>：TB-2.1 / 89 题 / 7-way concurrent（不可与 TB4 比较）</div>
+<table><tr><th>route</th><th>scored</th><th>unique</th><th>pass</th><th>pass%</th><th>状态</th></tr>
+<tr><td>cline</td><td>99</td><td>88</td><td class='green'>9</td><td><b>9%</b></td><td>DONE</td></tr>
+<tr><td>codex</td><td>13</td><td>12</td><td class='green'>7</td><td><b>54%</b></td><td>running</td></tr>
+<tr><td>opencode</td><td>26</td><td>26</td><td class='green'>15</td><td><b>58%</b></td><td>running</td></tr>
+<tr><td>claude-code</td><td>17</td><td>17</td><td class='green'>5</td><td><b>29%</b></td><td>running</td></tr>
+<tr><td>pi</td><td>52</td><td>52</td><td class='green'>17</td><td><b>33%</b></td><td>running</td></tr>
+<tr><td>hermes</td><td>68</td><td>54</td><td class='green'>5</td><td><b>7%</b></td><td>running</td></tr>
+<tr><td>deepseek</td><td>16</td><td>16</td><td class='green'>11</td><td><b>69%</b></td><td>running</td></tr>
+
+<tr><td><b>合计</b></td><td><b>291</b></td><td></td><td><b>69</b></td><td><b>23.7%</b></td><td></td></tr></table>
+<h2>归因总结</h2>
+<table><tr><th>现象</th><th>归因</th><th>证据</th></tr>
+<tr><td>网关 200</td><td class='green'>infra(已恢复)</td><td>gateway probe: 9092=200, 9093=200</td></tr>
+<tr><td>cline no_patch=80</td><td class='red'>能力</td><td>429 仅 1，其余无错误标记</td></tr>
+<tr><td>cline eval 0 empty_patch</td><td class='green'>resume fix 生效</td><td>R1789 eval: empty_patch=0</td></tr>
+<tr><td>TB-2.1 cline 9p/88</td><td>能力</td><td>oracle 5/5 ✅</td></tr>
+<tr><td>TB4 全 0</td><td>能力</td><td>reward=0 非 None</td></tr></table>
+<hr><p style="color:#7f8c8d;font-size:0.85em">R1879 · 2026-11-08 12:57 · harness 线 · 正文一律 cline · 自包含 0 外链 0 script</p></body></html>

@@ -1,0 +1,11 @@
+[verified-full 12:57:33] resume: loaded 500 existing results
+[verified-full 12:57:33] [1/500] astropy__astropy-12907 SKIP (predicted, patch=1333B)
+[verified-full 12:57:33] [2/500] PREDICT codex on astropy__astropy-13033
+[verified-full 12:58:41]   -> quota-blocked (patch=0B wall=67.9s)
+[verified-full 12:58:41] [3/500] PREDICT codex on astropy__astropy-13236
+[verified-full 13:00:36]   -> quota-blocked (patch=0B wall=115.1s)
+[verified-full 13:00:36] [4/500] PREDICT codex on astropy__astropy-13398
+[verified-full 13:02:11]   -> quota-blocked (patch=0B wall=94.7s)
+[verified-full 13:02:11] [5/500] PREDICT codex on astropy__astropy-13453
+[verified-full 13:03:42]   -> quota-blocked (patch=0B wall=90.7s)
+[verified-full 13:03:42] [6/500] PREDICT codex on astropy__astropy-13579
