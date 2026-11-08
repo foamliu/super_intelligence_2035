@@ -226,3 +226,4 @@
 1793946881286_z34dy	t0002965	hfhds222	88	pnr_signoff	parked		2026-11-08 08:04	session file not found on any of 4 hosts (hfhds222/230/224/pnd008) nor .75; scan 11/08 00:01 caught transient, deleted by 07:56
 1792562152582_saz5l	e0046913	hfeg0pkn003	40	digital	case	EDA-Eval-DesignFlow-LowPowerKpiGen-001	2026-11-08 08:19	
 1789972559943_a2an2	johnl	hfeg0pkn001	143	digital	case	EDA-Eval-DesignFlow-SgeStdcellPortDiagnose-001	2026-11-08 09:22	
+1793582130511_ju0g4.messages.json	e0047722	hfeg0pkn004	166	eda_other	case	EDA-Eval-DesignFlow-WvSineWaveAnalyze-001	2026-11-08 09:52	
