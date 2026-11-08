@@ -254,3 +254,4 @@
 1793255447731_givdz					case	EDA-Eval-DesignFlow-CdlTbGen-001	2026-11-08 23:47	
 1792140744683_z5ett	jessegao	hfeg0pkn005	137	eda_other	parked		2026-11-09 00:04	dup of r248 8g8rx LDO design (same user jessegao, identical specs 1.1V->0.9V/10uA/PSRR/DCgain/PM)
 1793084506490_ytldc	dsgao	hfhds201	175	eda_other	case	EDA-Eval-DesignFlow-CdlNetlistAnalyze-001	2026-11-09 00:20	
+1793858909531_b9fua.messages.json	e0039102	hfeg0pkn002	34	eda_other	case	EDA-Eval-DesignFlow-AutoTmscanScriptAnalyze-001	2026-11-09 00:53	
