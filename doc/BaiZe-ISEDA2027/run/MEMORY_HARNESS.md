@@ -4,21 +4,23 @@ WAITING: 0
 
 ## 📊 进度快照
 
-PHASE:        R1947 监控+三报告更新轮·gateway 200·predict 2570/3500(73.4%)·eval R1933 incr_eval RUN(hermes eval中)·TB-2.1 114unique passed·3harbor alive(cc/pi/opencode)
-已完成:       H-B✅·Gate7/7·TB报告✅·full500✅·cline专项C1-C5+报告R1785-R1947·TB4 0passed(能力)·TB-2.1 oracle5/5✅·§15:2x判据MET✅·R1789 eval 7/7DONE✅·R1804双报告交付✅·R1814-R1946 predict推进+TB-2.1并行+gateway恢复+eval重启·R1947 predict2570/3500+三报告更新+eval R1933 incr_eval运行中
-当前动作:     R1947:①CPU/MEM:PASS(load87/224=39%·无本线>8000%·无>50GB·mem805G/avail1067G) ②体积:TASK=30306B(29.6KB)/MEMORY=~28.2KB✅ ③gateway:9092=200/9093=200/gw=200 ④predict 5路alive 2570/3500(73.4%):cline300(121r)·codex500DONE(44r)·opencode351(255r)·cc500DONE(92r)·pi233(75r)·hermes452(279r)·dsh234(92r) ⑤**eval R1933:incr_eval RUN**(cline87/115=75.7%·codex29/44=65.9%·opencode199/249=79.9%·cc71/90=78.9%·pi51/69=73.9%·hermes124/131=94.7% eval RUNNING 148new·dsh33/40=82.5% pending) ⑥TB-2.1:114unique passed(cline16·codex7·opencode25·cc17·pi29·hermes5·dsh15)·3harbor alive(cc·pi·opencode) ⑦**三报告R1947**(main 9147B+cline_special 4865B) ⑧cline C4:cline300(121r/179e=40.3%)·C2 empty=429滚动+能力·C3 resume fix✅未归零 ⑨disk /data 5.8T(18%) /(352G 4%) ⑩research 11-09 06:00已读→harness建议=经验资产化+执行证据审计(借鉴·非指令) ⑪未完成指令:有(§22:4x+§10:10)⇒W:0
-下一步:       ①eval R1933 incr_eval跑完hermes→继续dsh eval ②predict 5路推进至500(cline300·opencode351·pi233·dsh234·hermes452) ③TB-2.1 3harbor(cc/pi/opencode)推进→待全DONE ④全DONE后聚合最终7路报告+可辨识性闸门
+PHASE:        R1948 监控+三报告更新轮·gateway 200·predict 2590/3500(74.0%)·eval R1933 incr_eval RUN(hermes eval中)·TB-2.1 116unique passed·3harbor alive(cc/pi/opencode)
+已完成:       H-B✅·Gate7/7·TB报告✅·full500✅·cline专项C1-C5+报告R1785-R1948·TB4 0passed(能力)·TB-2.1 oracle5/5✅·§15:2x判据MET✅·R1789 eval 7/7DONE✅·R1804双报告交付✅·R1814-R1947 predict推进+TB-2.1并行+gateway恢复+eval重启·R1948 predict2590/3500+三报告更新+eval R1933 incr_eval运行中
+当前动作:     R1948:①CPU/MEM:PASS(load105/224=47%·无本线>8000%·无>50GB·mem808G/avail1065G) ②体积:TASK=30306B(29.6KB)/MEMORY=~28.6KB✅ ③gateway:9092=200/9093=200/gw=200 ④predict 5路alive 2590/3500(74.0%):cline302(122r/180e)·codex500DONE(44r)·opencode353(256r)·cc500DONE(94r)·pi237(79r)·hermes458(284r)·dsh240(97r) ⑤**eval R1933:incr_eval RUN**(cline87·codex29·opencode199·cc71·pi51·hermes124 eval RUNNING 148new·dsh33 pending) ⑥TB-2.1:116unique passed(cline16·codex7·opencode27·cc17·pi29·hermes5·dsh15)·3harbor alive(cc·pi·opencode) ⑦**三报告R1948**(main 9147B+tb21 8411B+cline_special 4349B) ⑧cline C4:cline302(122r/180e=40.3%)·C2 empty=429滚动+能力·C3 resume fix✅未归零 ⑨disk /data 5.8T(18%) /(352G 4%) ⑩research 11-09 06:00已读→harness建议=经验资产化(Evolver)+证据审计(ReproBridge)(借鉴·非指令) ⑪未完成指令:有(§22:4x+§10:10)⇒W:0
+下一步:       ①eval R1933 incr_eval跑完hermes→继续dsh eval ②predict 5路推进至500(cline302·opencode353·pi237·dsh240·hermes458) ③TB-2.1 3harbor(cc/pi/opencode)推进→待全DONE ④全DONE后聚合最终7路报告+可辨识性闸门
 阻塞:         无(gateway 200·5路predict alive·TB-2.1 3harbor alive·eval R1933 incr_eval运行中)
 ERROR_COUNT:  0
-  📦 体积：TASK=30306B(29.6KB) / MEMORY=~28.2KB·均≤32KB✅
-  🔍 cline专项小结: predict cline300(121r/179e=40.3%)·TB-2.1 cline16p(18.2%)·C2 empty=429滚动+能力·C3 resume fix✅未归零(429间歇+能力)·real复产中(121)
+  📦 体积：TASK=30306B(29.6KB) / MEMORY=~28.6KB·均≤32KB✅
+  🔍 cline专项小结: predict cline302(122r/180e=40.3%)·TB-2.1 cline16p(18.2%)·C2 empty=429滚动+能力·C3 resume fix✅未归零(429间歇+能力)·real复产中(122)
 ```
 
 > 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
 
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 ### 本唤醒流水
-[07:15] R1947 监控+三报告更新:①CPU/MEM:PASS(load87/224=39%·无本线>8000%·无>50GB·mem805G/avail1067G) ②体积:TASK=30306B(29.6KB)/MEMORY=~28.2KB✅ ③gateway:9092=200/9093=200/gw=200 ④predict 5路alive 2570/3500(73.4%):cline300(121r)·codex500DONE(44r)·opencode351(255r)·cc500DONE(92r)·pi233(75r)·hermes452(279r)·dsh234(92r) ⑤**eval R1933:incr_eval RUN**(cline87/115=75.7%·codex29/44=65.9%·opencode199/249=79.9%·cc71/90=78.9%·pi51/69=73.9%·hermes124/131=94.7% eval RUNNING 148new·dsh33/40=82.5% pending) ⑥TB-2.1:114unique passed(cline16·codex7·opencode25·cc17·pi29·hermes5·dsh15)·3harbor alive(cc·pi·opencode) ⑦**三报告R1947**(gen_report_r1947+gen_cline_special_r1947:main 9147B+cline_special 4865B) ⑧cline C4:cline300(121r/179e=40.3%)·C2 empty=429滚动+能力·C3 resume fix✅未归零 ⑨disk /data 5.8T(18%) /(352G 4%) ⑩未完成指令:有(§22:4x+§10:10)⇒W:0
+[07:26] R1948 监控+三报告更新:①CPU/MEM:PASS(load105/224=47%·无本线>8000%·无>50GB·mem808G/avail1065G) ②体积:TASK=30306B(29.6KB)/MEMORY=~28.6KB✅ ③gateway:9092=200/9093=200/gw=200 ④predict 5路alive 2590/3500(74.0%):cline302(122r/180e)·codex500DONE(44r)·opencode353(256r)·cc500DONE(94r)·pi237(79r)·hermes458(284r)·dsh240(97r) ⑤**eval R1933:incr_eval RUN**(hermes eval PID532859 etimes3029s·cline87·codex29·opencode199·cc71·pi51·hermes124 eval RUNNING 148new·dsh33 pending) ⑥TB-2.1:116unique passed(cline16·codex7·opencode27·cc17·pi29·hermes5·dsh15)·3harbor alive(cc PID1147851·pi PID1308528·opencode PID2697964) ⑦**三报告R1948**(gen_report_r1948+gen_cline_special_r1948:main 9147B+tb21 8411B+cline_special 4349B) ⑧cline C4:cline302(122r/180e=40.3%)·C2 empty=429滚动+能力·C3 resume fix✅未归零 ⑨disk /data 5.8T(18%) /(352G 4%) ⑩research 11-09 06:00已读→harness建议=经验资产化(Evolver 2611.07595)+证据审计(ReproBridge 2611.08452)(借鉴·非指令) ⑪未完成指令:有(§22:4x+§10:10)⇒W:0
+
+> 📦 R1947 流水(07:15,监控+三报告更新·predict 2570/3500·eval R1933 hermes eval中·TB-2.1 114p)已归档 → daily-memories-harness/2026-11-09.md。
 
 > 📦 R1946 流水(07:08,监控+hermes/dsh predict重启+三报告更新·predict 2567/3500·eval R1933 hermes eval中·TB-2.1 114p)已归档 → daily-memories-harness/2026-11-09.md。
 
