@@ -1367,3 +1367,4 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1790844649225_ppwfb	thomasz	hfeg0pkn004	126	schematic_netlist	case	TotemXtrShortAudit-001	2026-11-09 06:29	Totem-SC DDR5 XTR.119 power-net short audit: net_id->name map, ExtractView vs phmv short_file
 1793849641832_97ksq.messages.json	jiangbaol	hfeg0pkn001	636	schematic_netlist	case	EDA-Eval-DesignFlow-SpiceMeasInserter-001	2026-11-09 06:51	
 1793932002608_suauw.messages.json	jiangbaol	hfeg0pkn001	290	schematic_netlist	case	EDA-Eval-DesignFlow-CapInsertStgOut-001	2026-11-09 07:26	
+1794143556321_ejp6w.messages.json	yuchens	hfeg0pkn004	549	schematic_netlist	case	EDA-Eval-DesignFlow-NetlistStructDiff-001	2026-11-09 07:43	
