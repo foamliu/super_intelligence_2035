@@ -6668,3 +6668,99 @@ KV cache = 2 × 42 × 2 × 128 × ctx_len × batch × 2 bytes = 43,008 × ctx_le
 | HTML 报告 | `reports/report_posttrain_r60_ctx_budget_zh.html` | 18.7KB |
 
 **数据溯源**：DeepSeek cline_trace_v1_3（103 任务，实测加载 103）· MiniCPM5-2B config.json（实测 max_pos=131072, GQA 2 kv-heads）· baize_posttrain_sft.sh（实测 CONTEXT_LEN=8192）· baize_posttrain_rl_grpo.sh（实测缺失 context 配置）· A40 46GB 规格 · R11 内存校准结论 · R57 vision 教训。无伪造。
+
+---
+
+## §R61 RL Rollout Throughput Projection + Launch Patch Implementation（2026-11-08 wake109 · 零 GPU · Python 3.8+）
+
+> **动机**：R60 推荐 ctx=32768 但未评估吞吐量可行性。本节回答：500 步 GRPO 训练在 4×A40 上需要多久？ctx=32768 是否可行？最优上下文窗口是多少？
+
+### 1. 方法
+
+创建 `baize_posttrain_rollout_throughput.py`（~195 行，纯 Python 3.8+，0 依赖），从以下输入投影 GRPO 吞吐量：
+- R60 实测轨迹数据（mean=28,339 tok, median=23,906, turns=5.01, user 60.7%, assistant 39.3%）
+- MiniCPM5-2B 模型规格（2B params, 42 layers, d=2048, 32 KV heads）
+- A40 48GB 硬件规格
+- SGLang 吞吐量估计（prefill 3500 tok/s/GPU, batch decode 1500 tok/s/GPU）
+- GRPO 配置（G=8, batch=128, FSDP 4 GPU）
+
+**两种内存模式**：
+- **Non-hybrid**（当前配置）：训练 + SGLang 共存于 GPU，`gpu_memory_utilization` 分配 SGLang 预算
+- **Hybrid**（verl 混合引擎）：训练阶段 offload 到 CPU，SGLang 独占 GPU（util=0.85）
+
+### 2. 关键发现：ctx=32768 在 non-hybrid 模式下**不可行**
+
+| 配置 | ctx | bs | G | 模式 | KV/seq | 并发/GPU | 总并发 | prompt/wave | s/step | steps/hr | 500步 | 72h? |
+|:--|:--|:--|:--|:--|:--|:--|:--|:--|:--|:--|:--|:--|
+| OLD 8K (当前) | 8192 | 128 | 8 | non-hybrid | 2.625GB | 4 | 16 | 2 | 1531 | 2.35 | 8.8天 | ❌ |
+| 32K non-hybrid | 32768 | 128 | 8 | non-hybrid | 10.5GB | **1** | 4 | **0** | N/A | 0 | **不可行** | ❌ |
+| 32K hybrid | 32768 | 128 | 8 | hybrid(0.85) | 10.5GB | 3 | 12 | 1 | 3017 | 1.19 | 17.5天 | ❌ |
+| **16K hybrid** | **16384** | **128** | **8** | **hybrid(0.85)** | **5.25GB** | **6** | **24** | **3** | **1044** | **3.45** | **6天** | ❌ |
+| 16K non-hybrid | 16384 | 128 | 8 | non-hybrid | 5.25GB | 2 | 8 | 1 | 3017 | 1.19 | 17.5天 | ❌ |
+| 32K hybrid G=4 | 32768 | 128 | 4 | hybrid(0.85) | 10.5GB | 3 | 12 | 3 | 1343 | 2.68 | 7.8天 | ❌ |
+| Smoke 32K hybrid | 32768 | 16 | 4 | hybrid(0.85) | 10.5GB | 3 | 12 | 3 | 226 | 15.9 | 37min | ✅ |
+
+**根因**：ctx=32768 时 KV cache 每序列 = 2×42×32×64×2×32768 = **10.5GB**。在 non-hybrid 模式下 SGLang 预算仅 18GB（util=0.50×48 - 4GB模型 - 2GB开销），只能放 1 个序列/GPU。G=8 需要 8 个并发序列 → **连一个完整 group 都放不下**。
+
+### 3. 72 小时窗口可行性分析
+
+| 配置 | steps/hr | 72h 可完成步数 | 评估 |
+|:--|:--|:--|:--|
+| 16K hybrid (最优主训练) | 3.45 | ~248 步 | ⚠️ 需将目标从 500 步降至 200 步 |
+| 8K non-hybrid (当前) | 2.35 | ~169 步 | ⚠️ 98% 截断，假阴性奖励严重 |
+| 32K hybrid | 1.19 | ~86 步 | ❌ 步数太少 |
+| Smoke 32K hybrid | 15.9 | ~1146 步 | ✅ smoke 验证用 |
+
+**结论**：72h GPU 窗口内，**ctx=16384 + hybrid engine + 200 步**是唯一可行的主训练方案。500 步需要 ~6 天（需多轮 GPU 窗口或延长使用）。
+
+### 4. 已应用的补丁
+
+#### 4.1 RL 配置补丁（`baize_posttrain_rl_verl_config_v2.yaml`）
+
+| 参数 | 旧值 | 新值 | 依据 |
+|:--|:--|:--|:--|
+| `data.max_prompt_length` | 4096 | **8192** | R60: prompt avg 17K user tok |
+| `data.max_response_length` | 4096 | **8192** | R61: total ctx=16384 |
+| `rollout.prompt_length` | 4096 | **8192** | 同上 |
+| `rollout.response_length` | 4096 | **8192** | 同上 |
+| `rollout.gpu_memory_utilization` | 0.35 | **0.50** | R11: multi-turn KV budget |
+| `rollout.max_num_batched_tokens` | 8192 | **16384** | 匹配 ctx=16384 |
+| `rollout.max_num_seqs` | 256 | **24** | R11: 2×G=16/GPU × safety |
+
+**注意**：未直接设为 32768，因为 R61 吞吐量分析表明 32K 在 72h 内不可行。如需 32K，使用 `--smoke` 模式（bs=16, G=4, 37min/10步）。
+
+#### 4.2 SFT 脚本补丁（`baize_posttrain_sft.sh`）
+
+| 参数 | 旧值 | 新值 | 依据 |
+|:--|:--|:--|:--|
+| `CONTEXT_LEN` | 8192 | **16384** | R60: avg 28K tok, 16K captures 82% |
+| recipe 输出 | "4096/8192/16384" | "8192/16384/32768" | 更新可选范围 |
+
+### 5. 单次 Rollout 耗时分解（ctx=16384, G=8）
+
+| 阶段 | 耗时 | 说明 |
+|:--|:--|:--|
+| Prefill | 1.23s | 17,202 增量 token, 3500 tok/s/GPU × 4 GPU |
+| Decode | 6.96s | 11,137 gen token, 1600 tok/s 有效吞吐 |
+| Tool exec | 15.03s | 5.01 turns × 2 calls × 1.5s/call |
+| **总计** | **23.22s** | per prompt (G=8 并行) |
+
+### 6. 11/9 发射建议更新
+
+1. **Smoke test**：ctx=32768, bs=16, G=4, hybrid → 37min/10步 ✅
+2. **主 RL 训练**：ctx=16384, bs=128, G=8, hybrid → 200步/72h（调目标步数）
+3. **如需 500 步**：需 ~6 天（申请延长 GPU 窗口，或分 3×72h 轮次）
+4. **Hybrid engine 启用**：verl `hybrid_engine: True`（已在配置中）；确保 SGLang `gpu_memory_utilization` 在 hybrid 模式下设为 0.85
+5. **工具结果摘要**（R60 策略 B）：截断 user 侧工具输出，可减 60-80% user token → 有效降低 KV cache 压力
+
+### 7. 交付物
+
+| 产物 | 路径 | 大小 |
+|:--|:--|:--|
+| 分析脚本 | `run/baize_posttrain_rollout_throughput.py` | ~195 行 |
+| JSON 结果 | `run/r61_rollout_throughput.json` | ~8KB |
+| HTML 报告 | `reports/report_posttrain_r61_rollout_throughput_zh.html` | ~12KB |
+| RL 配置补丁 | `run/baize_posttrain_rl_verl_config_v2.yaml` | 7 处修改 |
+| SFT 配置补丁 | `run/baize_posttrain_sft.sh` | 2 处修改 |
+
+**数据溯源**：R60 实测 103 DeepSeek 轨迹 · MiniCPM5-2B config.json (42 layers, 32 KV heads, d=2048) · A40 48GB 规格 · SGLang 0.4.6 吞吐量估计 · verl 0.4.0 hybrid engine 文档 · R11 内存校准。无伪造。

@@ -33,7 +33,7 @@ RUN_DIR="$BAIZE_RUN_DIR"
 OUTPUT_DIR="$BASE/nemo_experiments/baize_posttrain_sft"
 RESUME_DIR="${RESUME_DIR:-$BASE/nemo_experiments/baize_posttrain_anneal/step_final}"
 
-CONTEXT_LEN=8192; FT_MODE=full; TOOL_TRACES=1
+CONTEXT_LEN=16384; FT_MODE=full; TOOL_TRACES=1   # R61: was 8192; R60 found avg 28K tok/task, 16K captures 82%
 DATA_MIX="agent50:general30:pyaether20"
 GBS=128; MBS=1; ITERS=3000; WARMUP=100; DECAY=300
 LR=2e-5; MIN_LR=1e-6; SAVE_INTERVAL=300
@@ -65,7 +65,7 @@ cat <<EOF
   resume_ckpt   : ${RESUME_DIR}
   output_dir    : ${OUTPUT_DIR}
   ablations     :
-    context_len : ${CONTEXT_LEN}   (4096/8192/16384; agentic 轨迹易超长 → 长上下文适配是前置项)
+    context_len : ${CONTEXT_LEN}   (8192/16384/32768; R61: default upgraded 8192→16384; agentic 轨迹易超长)
     ft_mode     : ${FT_MODE}       (full / lora; lora_r=${LORA_R} lora_alpha=${LORA_ALPHA})
     tool_traces : ${TOOL_TRACES}   (1=CoT+工具轨迹 / 0=纯代码)
     data_mix    : ${DATA_MIX}      (agent/general/pyaether 占比%)

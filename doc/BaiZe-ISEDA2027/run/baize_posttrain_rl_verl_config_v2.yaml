@@ -28,8 +28,8 @@ data:
   train_batch_size: 128
   prompt_key: prompt
   reward_fn_key: data_source     # R47: verl default; NaiveRewardManager reads this
-  max_prompt_length: 4096
-  max_response_length: 4096
+  max_prompt_length: 8192           # R61: was 4096; prompts avg 17K tok user-side, 8K captures most
+  max_response_length: 8192         # R61: was 4096; total ctx=16384 (R60 found 28K avg → 16K captures 82%)
   return_raw_chat: True
   need_tools_kwargs: True
   shuffle: True
@@ -79,14 +79,14 @@ actor_rollout_ref:
     mode: async
     temperature: 0.7
     top_p: 0.95
-    prompt_length: 4096
-    response_length: 4096
-    gpu_memory_utilization: 0.35  # R11: conservative for A40
+    prompt_length: 8192              # R61: was 4096; total ctx=16384 (R60 recommendation adjusted by R61 throughput)
+    response_length: 8192            # R61: was 4096; R61 found 32K infeasible for 500 steps (17.5 days)
+    gpu_memory_utilization: 0.50     # R61: was 0.35; R11 recommended 0.50 for multi-turn KV budget
     enforce_eager: True
     load_format: dummy_dtensor
     tensor_model_parallel_size: 1
-    max_num_batched_tokens: 8192
-    max_num_seqs: 256
+    max_num_batched_tokens: 16384    # R61: was 8192; match ctx=16384
+    max_num_seqs: 24                 # R61: was 256; R11 calibrates to 2×G=16 per GPU × safety
     n: 8                         # R47 BUG3 FIX: G=8 (was algorithm.group_size)
     multi_turn:
       enable: False              # R47: Start SINGLE-TURN (R0 skeleton, no tools)
