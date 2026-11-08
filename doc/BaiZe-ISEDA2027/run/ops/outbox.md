@@ -27619,3 +27619,35 @@ new_pid=1727811
 
 === 259 done ===
 ```
+
+---
+
+## RUN_ID 261 · 2026-11-08 12:56:54 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 261 | .29 relay E2E | $(date '+%F %T') ==="
+echo "host=$(hostname)"
+echo "-- relay --"; pgrep -af "[o]ps_relay" | cut -c1-150
+echo "-- state --"; cat /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/ops/.last_run_id.29 2>/dev/null
+echo "-- git locks --"; ls -l /nas_train/app.e0031982/code/super_intelligence_2035/.git/index.lock /nas_train/app.e0031982/code/super_intelligence_2035/.git/HEAD.lock 2>/dev/null || echo "no locks"
+echo "-- load --"; cut -d" " -f1-3 /proc/loadavg
+echo "RELAY29_E2E_OK"
+```
+
+**输出**
+```
+=== RUN_ID 261 | .29 relay E2E | 2026-11-08 12:56:54 ===
+host=whag0pgpuap29
+-- relay --
+1727811 bash /tmp/ops_relay_v2_29_fixed.sh
+1958576 bash /tmp/ops_relay_v2_29_fixed.sh
+-- state --
+247
+-- git locks --
+no locks
+-- load --
+101.94 92.82 89.50
+RELAY29_E2E_OK
+```
