@@ -1338,3 +1338,4 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1790079870984_56jqu.messages.json	jason17w	hfeg0pnd002	211	schematic_netlist	parked		2026-11-08 18:50	wrong-domain: VPS sim-regression LSF env debug (LD_PRELOAD/GLIBCXX), not schematic_netlist/analog/waveform; 322 netlist kw = verilog simdir paths
 1793857124040_5i5bo.messages.json	zqzhan	hfeg0pkn002	155	schematic_netlist	case	EDA-Eval-DesignFlow-2StepOCChainAnalyze-001	2026-11-08 19:09	
 1790650962650_7bg20.messages.json	fxian	hfeg0pkn002	221	schematic_netlist	case	EDA-Eval-DesignFlow-AddrRtlGateMap-001	2026-11-08 19:56	
+1793078652491_wk3wd	cliu	hfeg0pkn004	197	schematic_netlist	case	EDA-Eval-DesignFlow-VsimCovReport-001	2026-11-08 20:34	
