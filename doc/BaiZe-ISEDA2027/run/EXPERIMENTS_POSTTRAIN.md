@@ -5275,3 +5275,82 @@ Failure classification:
 
 - `reports/report_posttrain_r45_launch_verification_zh.html`（自包含, 0 script, 0 外链, 9节）
 - 本节 (EXPERIMENTS §R45, 7小节)
+
+---
+
+## §R46 GPU Auto-Watcher + NFS Warm-up + T-0 Launch Auto-Pilot（2026-11-08 wake94 · 零 GPU）
+
+> **来源**：R45 发现两个运维级操作缺口：(1) GPU 释放无自动检测，需人工盯 nvidia-smi；(2) NFS 冷启动延迟，import torch >30s。
+> **目标**：创建 `baize_posttrain_gpu_watcher.sh`，实现 GPU 释放自动检测 → NFS 预热 → 自动触发 launch 序列。
+
+### R46.1 脚本架构
+
+```
+baize_posttrain_gpu_watcher.sh
+├── check_gpus()     — nvidia-smi 轮询，检测 ≥N 张 GPU 各 ≥M MiB 空闲
+├── nfs_warmup()     — 并行 pre-read model/venv/data/eval → NFS page cache 热加载
+├── trigger_launch() — 调用 baize_posttrain_launch_11_9.sh --step 1-5
+└── main loop        — poll → check → warmup → launch（或超时退出）
+```
+
+### R46.2 三种运行模式
+
+| 模式 | 命令 | 用途 | GPU 需求 |
+|:--|:--|:--|:--|
+| 完整监控 | `bash baize_posttrain_gpu_watcher.sh` | 11/9 部署：自动等待 GPU → 预热 → 启动 | 自动检测 |
+| Dry-run | `--dry-run` | 验证逻辑，不执行任何操作 | 无 |
+| 仅检查 | `--check-now` | 一次性 GPU 状态查询，输出后退出 | 无 |
+| 仅预热 | `--warmup-only` | 仅执行 NFS warm-up（可提前运行） | 无 |
+
+### R46.3 NFS Warm-up 对象
+
+| 类别 | 路径 | 大小 | 方法 |
+|:--|:--|--:|:--|
+| 模型文件 | `/tmp/models/MiniCPM5-2B/` | 4.7GB | `find -type f -exec cat {} +` |
+| venv 包 | torch/sglang/verl/flash_attn/ray/flashinfer/numpy/transformers | ~8GB | 逐包并行 pre-read |
+| RL 数据 | `rl_pyaether_synth_v2.parquet` + `.jsonl` | ~6.3MB | `cat > /dev/null` |
+| SFT 数据 | `sft_pyaether_corpus.parquet` + `_v2.jsonl` | ~24MB | `cat > /dev/null` |
+| 评测数据 | `EDA-Eval-PyAether-v20260311.jsonl` | 674KB | `cat > /dev/null` |
+
+### R46.4 验证结果（2026-11-08 12:01 实测）
+
+```
+$ bash -n baize_posttrain_gpu_watcher.sh → PASS
+$ bash baize_posttrain_gpu_watcher.sh --check-now
+  FREE_GPUS=0 TOTAL_GPUS=8 DETAILS=GPU0:64MiB/46068MiB(0%) ...
+  → exit code 1（正确：8×A40 全被 SGLang Qwen3.8-27B 占用）
+$ bash baize_posttrain_gpu_watcher.sh --dry-run
+  Watch iteration #1 → free=0/8 → [dry-run] Exiting → PASS
+$ bash baize_posttrain_gpu_watcher.sh --warmup-only --dry-run
+  模型/venv(8包)/数据(4文件)/评测(1文件) 全部正确识别 → PASS
+```
+
+### R46.5 11/9 操作清单
+
+1. **提前预热**（零 GPU）：`bash baize_posttrain_gpu_watcher.sh --warmup-only`
+2. **启动监控**：`nohup bash baize_posttrain_gpu_watcher.sh --gpu-ids 0,1,2,3 --launch-steps 1-5 --poll-interval 30 > /tmp/baize_gpu_watcher.log 2>&1 &`
+3. **GPU 释放后自动触发**：warmup（若未提前）→ launch steps 1-5
+4. **结果判定**：`baseline_gate.py`（R44）→ GO/COND/NO-GO；`smoke_calibrator.py`（R43）→ GO/ADJUST/ABORT
+
+### R46.6 故障恢复矩阵
+
+| 场景 | 检测 | 恢复 |
+|:--|:--|:--|
+| SGLang OOM | step 2 exit≠0 | 降 gpu_memory_utilization，重试 --step 2 |
+| Baseline NO-GO | baseline_gate.py | 查 SGLang 健康，重跑 5-run |
+| Smoke ABORT | smoke_calibrator.py | 调 kl_coef/clip_ratio，重跑 |
+| GPU 仅释放 3 张 | free=3 | 继续等待，或 --min-free-gpus 3 |
+| 24h 超时 | max-wait | 手动启动 launch 脚本 |
+
+### R46.7 局限性
+
+- 无 GPU 释放通知机制（仅日志，不发邮件/消息）
+- warm-up 依赖 NFS 带宽（被 pretrain/data 占满时可能慢）
+- GPU 空闲判定基于 memory.free ≥40GB（阈值已保守）
+- 非替身模型：使用 MiniCPM5-2B，结果不可迁移到 BaiZe
+
+### R46.8 交付物
+
+- `run/baize_posttrain_gpu_watcher.sh`（~260行，bash -n PASS，3 模式 dry-run 全绿）
+- `reports/report_posttrain_r46_gpu_watcher_zh.html`（自包含，0 script，0 外链，9 节）
+- 本节（EXPERIMENTS §R46，8 小节）
