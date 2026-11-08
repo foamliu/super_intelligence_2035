@@ -238,3 +238,5 @@
 1791943493253_tjzn5	tongfanl	hfeg0pkn004	114	verification	case	EDA-Eval-DesignFlow-VecgenPortModeAnalyze-001	2026-11-08 14:25	
 1790128216866_kbs81	e02141	hfeg0pkn001	96	eda_other	case	EDA-Eval-DesignFlow-SwbProjectCreate-001	2026-11-08 15:03	
 1792551270043_d3opd	xinqiaoz	hfeg0pkn002	48	eda_other	case	EDA-Eval-DesignFlow-ClineWorkdirDiagnose-001	2026-11-08 15:50	
+1793584116177_ox6r3	e0047722	hfeg0pkn002	166	eda_other	parked		2026-11-08 16:11	failed trace: WaveView Tcl sandbox never connected, user spent 6 msgs debugging connection, no working sine-wave result, no gold standard
+1793147699495_as67p					case	EDA-Eval-DesignFlow-CosimFlowAnalyze-001	2026-11-08 16:37	
