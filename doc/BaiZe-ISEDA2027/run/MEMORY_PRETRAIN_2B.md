@@ -1,7 +1,9 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 0
 
-> 2026-11-08 22:02 #1725: **v5 eval监控轮·5s+5c全活(无再被SIGTERM)·6/8done Avg6(acc)=53.38%不变·piqa 10%+hs 6.1%推进中·报告v3.2已更新·训练健康**·**动作**:①git fetch+status(synced) ②5 llama-server全活(8183-8187,MD5=f95ac952,bz2b-112000-f16.gguf,20:34重启后无再被SIGTERM) ③5 eval client全活+推进:piqa 356/3676(10%,ETA~22h,24s/it)·hs_c0 866/10044(9%,ETA~14.5h,5.7s/it←NUMA修复最快)·hs_c1 997/10044(10%,ETA~11h,4.4s/it)·hs_c2 295/10044(3%,ETA~27h,10s/it←瓶颈)·hs_c3 298/10036(3%,ETA~62h,22.9s/it←木桶最慢)→hs总计2456/40160(6.1%) ④6/8done不变:arc_c=0.3038/n1172·arc_e=0.6553/n2376·boolq=0.5872/n3270·obqa=0.266/n500·sciq=0.842/n1000·wino=0.5485/n1267→Avg6(acc)=53.38% ⑤5个运行中输出目录仍空(results.json仅完成时写) ⑥训练.29健康8×H100~75GB/iter~131000/700k ⑦异常报告更新v3.2(31.6KB,加v3.2进度注),结论A不变·speedup报告17KB不变 **计划**:下次唤醒①⭐确认5 server存活(防再被SIGTERM)②监控eval→待piqa+4hs完成→算Avg8+更新异常报告终版③📦TASK=31.2KB/MEMORY=10.8KB·未完成指令:有(v5 eval运行中)⇒WAITING:0。
+> 2026-11-08 22:09 #1726: **v5 eval监控轮·5s+5c全活·6/8done Avg6(acc)=53.38%不变·piqa+4hs仍在跑·异常报告v3.2已验全6项覆盖·训练健康**·**动作**:①git fetch+status(synced) ②5 llama-server全活(8183-8187,health=200×5,无再被SIGTERM) ③5 eval client全活(piqa+hs_c0-3,7min内无新完成,输出目录仍空) ④6/8done不变Avg6=53.38% ⑤异常报告v3.2(32KB)已验证全6项覆盖(①分集明细②样本数全量limit=None③后端llama.cpp新旧二进制④fewshot=0 zero-shot⑤hs进度⑥v5 vs历史100k差-0.45pp)+phase2稳定性说明+结论A(二因叠加:旧二进制bug+全量vs限100) ⑥speedup报告17KB不变 ⑦训练.29健康GPU100%/75GB **计划**:下次唤醒①确认5 server存活②监控eval→待piqa+4hs完成→算Avg8+异常报告终版③📦TASK=31.2KB/MEMORY=11.6KB·未完成指令:有(v5 eval运行中)⇒WAITING:0。
+
+> 📦 §#1725（11-08 22:02, v5 eval监控轮·5s+5c全活·piqa10%+hs6.1%·报告v3.2）→ daily-memories/2026-11-08.md「#1725」节；**结论**：5s+5c全活,Avg6=53.38%不变,报告v3.2已更新,结论A不变。需要时再读。
 
 > 📦 §#1724（11-08 21:56, v5 eval监控轮·5s+5c全活·6/8done Avg6=53.38%不变）→ daily-memories/2026-11-08.md「#1724」节；**结论**：5s+5c全活,Avg6=53.38%不变,无server被杀,两报告已交付。需要时再读。
 
