@@ -1,0 +1,5598 @@
+{
+  "title": "R80: GRPO Collapse Mode Taxonomy & Detection Threshold Calibration",
+  "date": "2026-11-09",
+  "mode_count": 7,
+  "mc_runs_per_mode": 200,
+  "max_steps": 500,
+  "total_simulated_steps": 700000,
+  "modes": [
+    {
+      "id": "C1_reward_hacking",
+      "name": "奖励作弊 (Reward Hacking)",
+      "simulation": {
+        "collapse_mode": "C1_reward_hacking",
+        "onset_step": 150,
+        "severity": 1.0,
+        "mc_runs": 200,
+        "max_steps": 500,
+        "thresholds": {
+          "avg_reward": {
+            "threshold": 0.7192,
+            "direction": "above",
+            "detect_rate": 0.442,
+            "false_positive_rate": 0.01,
+            "post_median": 0.7047
+          },
+          "reward_std": {
+            "threshold": 0.0585,
+            "direction": "below",
+            "detect_rate": 0.0116,
+            "false_positive_rate": 0.01,
+            "post_median": 0.1479
+          },
+          "policy_entropy": {
+            "threshold": 1.204,
+            "direction": "below",
+            "detect_rate": 1.0,
+            "false_positive_rate": 0.01,
+            "post_median": 0.85
+          },
+          "kl_from_ref": {
+            "threshold": 0.296,
+            "direction": "above",
+            "detect_rate": 1.0,
+            "false_positive_rate": 0.01,
+            "post_median": 0.65
+          },
+          "grad_norm": {
+            "threshold": 0.0463,
+            "direction": "above",
+            "detect_rate": 0.0105,
+            "false_positive_rate": 0.01,
+            "post_median": 0.0
+          },
+          "avg_length": {
+            "threshold": 50.0,
+            "direction": "above",
+            "detect_rate": 0.0,
+            "false_positive_rate": 0.01,
+            "post_median": 50.0
+          },
+          "cheat_rate": {
+            "threshold": 0.0,
+            "direction": "above",
+            "detect_rate": 0.9418,
+            "false_positive_rate": 0.01,
+            "post_median": 0.25
+          },
+          "pass_at_1": {
+            "threshold": 0.364,
+            "direction": "below",
+            "detect_rate": 0.1624,
+            "false_positive_rate": 0.01,
+            "post_median": 0.482
+          }
+        },
+        "avg_detection_latency_steps": 57.7,
+        "detection_latency_samples": 1391,
+        "representative_trajectory": [
+          {
+            "step": 451,
+            "pass_at_1": 0.356,
+            "avg_reward": 0.5349,
+            "reward_std": 0.2102,
+            "advantage_std": 0.2102,
+            "policy_entropy": 0.598,
+            "kl_from_ref": 0.902,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.25,
+            "is_collapsed": true
+          },
+          {
+            "step": 452,
+            "pass_at_1": 0.355,
+            "avg_reward": 0.5149,
+            "reward_std": 0.2344,
+            "advantage_std": 0.2344,
+            "policy_entropy": 0.596,
+            "kl_from_ref": 0.904,
+            "grad_norm": 0.0299,
+            "avg_length": 50.0,
+            "cheat_rate": 0.125,
+            "is_collapsed": true
+          },
+          {
+            "step": 453,
+            "pass_at_1": 0.354,
+            "avg_reward": 0.6155,
+            "reward_std": 0.1847,
+            "advantage_std": 0.1847,
+            "policy_entropy": 0.594,
+            "kl_from_ref": 0.906,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.375,
+            "is_collapsed": true
+          },
+          {
+            "step": 454,
+            "pass_at_1": 0.353,
+            "avg_reward": 0.5559,
+            "reward_std": 0.16,
+            "advantage_std": 0.16,
+            "policy_entropy": 0.592,
+            "kl_from_ref": 0.908,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.125,
+            "is_collapsed": true
+          },
+          {
+            "step": 455,
+            "pass_at_1": 0.352,
+            "avg_reward": 0.7187,
+            "reward_std": 0.1413,
+            "advantage_std": 0.1413,
+            "policy_entropy": 0.59,
+            "kl_from_ref": 0.91,
+            "grad_norm": 0.0107,
+            "avg_length": 50.0,
+            "cheat_rate": 0.5,
+            "is_collapsed": true
+          },
+          {
+            "step": 456,
+            "pass_at_1": 0.351,
+            "avg_reward": 0.6449,
+            "reward_std": 0.2323,
+            "advantage_std": 0.2323,
+            "policy_entropy": 0.588,
+            "kl_from_ref": 0.912,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.5,
+            "is_collapsed": true
+          },
+          {
+            "step": 457,
+            "pass_at_1": 0.35,
+            "avg_reward": 0.659,
+            "reward_std": 0.154,
+            "advantage_std": 0.154,
+            "policy_entropy": 0.586,
+            "kl_from_ref": 0.914,
+            "grad_norm": 0.0139,
+            "avg_length": 50.0,
+            "cheat_rate": 0.25,
+            "is_collapsed": true
+          },
+          {
+            "step": 458,
+            "pass_at_1": 0.349,
+            "avg_reward": 0.7303,
+            "reward_std": 0.159,
+            "advantage_std": 0.159,
+            "policy_entropy": 0.584,
+            "kl_from_ref": 0.916,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.5,
+            "is_collapsed": true
+          },
+          {
+            "step": 459,
+            "pass_at_1": 0.348,
+            "avg_reward": 0.547,
+            "reward_std": 0.0863,
+            "advantage_std": 0.0863,
+            "policy_entropy": 0.582,
+            "kl_from_ref": 0.918,
+            "grad_norm": 0.0303,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 460,
+            "pass_at_1": 0.347,
+            "avg_reward": 0.487,
+            "reward_std": 0.0952,
+            "advantage_std": 0.0952,
+            "policy_entropy": 0.58,
+            "kl_from_ref": 0.92,
+            "grad_norm": 0.0275,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 461,
+            "pass_at_1": 0.346,
+            "avg_reward": 0.6461,
+            "reward_std": 0.1687,
+            "advantage_std": 0.1687,
+            "policy_entropy": 0.578,
+            "kl_from_ref": 0.922,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.25,
+            "is_collapsed": true
+          },
+          {
+            "step": 462,
+            "pass_at_1": 0.345,
+            "avg_reward": 0.7368,
+            "reward_std": 0.1245,
+            "advantage_std": 0.1245,
+            "policy_entropy": 0.576,
+            "kl_from_ref": 0.924,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.5,
+            "is_collapsed": true
+          },
+          {
+            "step": 463,
+            "pass_at_1": 0.344,
+            "avg_reward": 0.661,
+            "reward_std": 0.1647,
+            "advantage_std": 0.1647,
+            "policy_entropy": 0.574,
+            "kl_from_ref": 0.926,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.375,
+            "is_collapsed": true
+          },
+          {
+            "step": 464,
+            "pass_at_1": 0.343,
+            "avg_reward": 0.6159,
+            "reward_std": 0.2617,
+            "advantage_std": 0.2617,
+            "policy_entropy": 0.572,
+            "kl_from_ref": 0.928,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.5,
+            "is_collapsed": true
+          },
+          {
+            "step": 465,
+            "pass_at_1": 0.342,
+            "avg_reward": 0.5938,
+            "reward_std": 0.1908,
+            "advantage_std": 0.1908,
+            "policy_entropy": 0.57,
+            "kl_from_ref": 0.93,
+            "grad_norm": 0.0098,
+            "avg_length": 50.0,
+            "cheat_rate": 0.25,
+            "is_collapsed": true
+          },
+          {
+            "step": 466,
+            "pass_at_1": 0.341,
+            "avg_reward": 0.4999,
+            "reward_std": 0.1871,
+            "advantage_std": 0.1871,
+            "policy_entropy": 0.568,
+            "kl_from_ref": 0.932,
+            "grad_norm": 0.0031,
+            "avg_length": 50.0,
+            "cheat_rate": 0.125,
+            "is_collapsed": true
+          },
+          {
+            "step": 467,
+            "pass_at_1": 0.34,
+            "avg_reward": 0.6043,
+            "reward_std": 0.222,
+            "advantage_std": 0.222,
+            "policy_entropy": 0.566,
+            "kl_from_ref": 0.934,
+            "grad_norm": 0.0358,
+            "avg_length": 50.0,
+            "cheat_rate": 0.25,
+            "is_collapsed": true
+          },
+          {
+            "step": 468,
+            "pass_at_1": 0.339,
+            "avg_reward": 0.5216,
+            "reward_std": 0.1207,
+            "advantage_std": 0.1207,
+            "policy_entropy": 0.564,
+            "kl_from_ref": 0.936,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.125,
+            "is_collapsed": true
+          },
+          {
+            "step": 469,
+            "pass_at_1": 0.338,
+            "avg_reward": 0.5766,
+            "reward_std": 0.1672,
+            "advantage_std": 0.1672,
+            "policy_entropy": 0.562,
+            "kl_from_ref": 0.938,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.25,
+            "is_collapsed": true
+          },
+          {
+            "step": 470,
+            "pass_at_1": 0.337,
+            "avg_reward": 0.5739,
+            "reward_std": 0.2698,
+            "advantage_std": 0.2698,
+            "policy_entropy": 0.56,
+            "kl_from_ref": 0.94,
+            "grad_norm": 0.017,
+            "avg_length": 50.0,
+            "cheat_rate": 0.375,
+            "is_collapsed": true
+          },
+          {
+            "step": 471,
+            "pass_at_1": 0.336,
+            "avg_reward": 0.5425,
+            "reward_std": 0.1897,
+            "advantage_std": 0.1897,
+            "policy_entropy": 0.558,
+            "kl_from_ref": 0.942,
+            "grad_norm": 0.0084,
+            "avg_length": 50.0,
+            "cheat_rate": 0.25,
+            "is_collapsed": true
+          },
+          {
+            "step": 472,
+            "pass_at_1": 0.335,
+            "avg_reward": 0.6618,
+            "reward_std": 0.1023,
+            "advantage_std": 0.1023,
+            "policy_entropy": 0.556,
+            "kl_from_ref": 0.944,
+            "grad_norm": 0.0012,
+            "avg_length": 50.0,
+            "cheat_rate": 0.375,
+            "is_collapsed": true
+          },
+          {
+            "step": 473,
+            "pass_at_1": 0.334,
+            "avg_reward": 0.4363,
+            "reward_std": 0.1837,
+            "advantage_std": 0.1837,
+            "policy_entropy": 0.554,
+            "kl_from_ref": 0.946,
+            "grad_norm": 0.0179,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 474,
+            "pass_at_1": 0.333,
+            "avg_reward": 0.5026,
+            "reward_std": 0.1341,
+            "advantage_std": 0.1341,
+            "policy_entropy": 0.552,
+            "kl_from_ref": 0.948,
+            "grad_norm": 0.0541,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 475,
+            "pass_at_1": 0.332,
+            "avg_reward": 0.5647,
+            "reward_std": 0.2301,
+            "advantage_std": 0.2301,
+            "policy_entropy": 0.55,
+            "kl_from_ref": 0.95,
+            "grad_norm": 0.0271,
+            "avg_length": 50.0,
+            "cheat_rate": 0.25,
+            "is_collapsed": true
+          },
+          {
+            "step": 476,
+            "pass_at_1": 0.331,
+            "avg_reward": 0.5889,
+            "reward_std": 0.1918,
+            "advantage_std": 0.1918,
+            "policy_entropy": 0.548,
+            "kl_from_ref": 0.952,
+            "grad_norm": 0.0189,
+            "avg_length": 50.0,
+            "cheat_rate": 0.25,
+            "is_collapsed": true
+          },
+          {
+            "step": 477,
+            "pass_at_1": 0.33,
+            "avg_reward": 0.6321,
+            "reward_std": 0.1542,
+            "advantage_std": 0.1542,
+            "policy_entropy": 0.546,
+            "kl_from_ref": 0.954,
+            "grad_norm": 0.0082,
+            "avg_length": 50.0,
+            "cheat_rate": 0.25,
+            "is_collapsed": true
+          },
+          {
+            "step": 478,
+            "pass_at_1": 0.329,
+            "avg_reward": 0.5152,
+            "reward_std": 0.1792,
+            "advantage_std": 0.1792,
+            "policy_entropy": 0.544,
+            "kl_from_ref": 0.956,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.125,
+            "is_collapsed": true
+          },
+          {
+            "step": 479,
+            "pass_at_1": 0.328,
+            "avg_reward": 0.668,
+            "reward_std": 0.1574,
+            "advantage_std": 0.1574,
+            "policy_entropy": 0.542,
+            "kl_from_ref": 0.958,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.375,
+            "is_collapsed": true
+          },
+          {
+            "step": 480,
+            "pass_at_1": 0.327,
+            "avg_reward": 0.4256,
+            "reward_std": 0.0994,
+            "advantage_std": 0.0994,
+            "policy_entropy": 0.54,
+            "kl_from_ref": 0.96,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 481,
+            "pass_at_1": 0.326,
+            "avg_reward": 0.5209,
+            "reward_std": 0.1965,
+            "advantage_std": 0.1965,
+            "policy_entropy": 0.538,
+            "kl_from_ref": 0.962,
+            "grad_norm": 0.0179,
+            "avg_length": 50.0,
+            "cheat_rate": 0.125,
+            "is_collapsed": true
+          },
+          {
+            "step": 482,
+            "pass_at_1": 0.325,
+            "avg_reward": 0.5345,
+            "reward_std": 0.2252,
+            "advantage_std": 0.2252,
+            "policy_entropy": 0.536,
+            "kl_from_ref": 0.964,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.25,
+            "is_collapsed": true
+          },
+          {
+            "step": 483,
+            "pass_at_1": 0.324,
+            "avg_reward": 0.5313,
+            "reward_std": 0.2047,
+            "advantage_std": 0.2047,
+            "policy_entropy": 0.534,
+            "kl_from_ref": 0.966,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.125,
+            "is_collapsed": true
+          },
+          {
+            "step": 484,
+            "pass_at_1": 0.323,
+            "avg_reward": 0.5404,
+            "reward_std": 0.2341,
+            "advantage_std": 0.2341,
+            "policy_entropy": 0.532,
+            "kl_from_ref": 0.968,
+            "grad_norm": 0.017,
+            "avg_length": 50.0,
+            "cheat_rate": 0.375,
+            "is_collapsed": true
+          },
+          {
+            "step": 485,
+            "pass_at_1": 0.322,
+            "avg_reward": 0.6931,
+            "reward_std": 0.2092,
+            "advantage_std": 0.2092,
+            "policy_entropy": 0.53,
+            "kl_from_ref": 0.97,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.5,
+            "is_collapsed": true
+          },
+          {
+            "step": 486,
+            "pass_at_1": 0.321,
+            "avg_reward": 0.5233,
+            "reward_std": 0.2052,
+            "advantage_std": 0.2052,
+            "policy_entropy": 0.528,
+            "kl_from_ref": 0.972,
+            "grad_norm": 0.0038,
+            "avg_length": 50.0,
+            "cheat_rate": 0.125,
+            "is_collapsed": true
+          },
+          {
+            "step": 487,
+            "pass_at_1": 0.32,
+            "avg_reward": 0.6192,
+            "reward_std": 0.1621,
+            "advantage_std": 0.1621,
+            "policy_entropy": 0.526,
+            "kl_from_ref": 0.974,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.25,
+            "is_collapsed": true
+          },
+          {
+            "step": 488,
+            "pass_at_1": 0.319,
+            "avg_reward": 0.5476,
+            "reward_std": 0.1807,
+            "advantage_std": 0.1807,
+            "policy_entropy": 0.524,
+            "kl_from_ref": 0.976,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.125,
+            "is_collapsed": true
+          },
+          {
+            "step": 489,
+            "pass_at_1": 0.318,
+            "avg_reward": 0.6526,
+            "reward_std": 0.2019,
+            "advantage_std": 0.2019,
+            "policy_entropy": 0.522,
+            "kl_from_ref": 0.978,
+            "grad_norm": 0.006,
+            "avg_length": 50.0,
+            "cheat_rate": 0.25,
+            "is_collapsed": true
+          },
+          {
+            "step": 490,
+            "pass_at_1": 0.317,
+            "avg_reward": 0.5234,
+            "reward_std": 0.2278,
+            "advantage_std": 0.2278,
+            "policy_entropy": 0.52,
+            "kl_from_ref": 0.98,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.25,
+            "is_collapsed": true
+          },
+          {
+            "step": 491,
+            "pass_at_1": 0.316,
+            "avg_reward": 0.5975,
+            "reward_std": 0.1522,
+            "advantage_std": 0.1522,
+            "policy_entropy": 0.518,
+            "kl_from_ref": 0.982,
+            "grad_norm": 0.0309,
+            "avg_length": 50.0,
+            "cheat_rate": 0.25,
+            "is_collapsed": true
+          },
+          {
+            "step": 492,
+            "pass_at_1": 0.315,
+            "avg_reward": 0.6854,
+            "reward_std": 0.2413,
+            "advantage_std": 0.2413,
+            "policy_entropy": 0.516,
+            "kl_from_ref": 0.984,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.5,
+            "is_collapsed": true
+          },
+          {
+            "step": 493,
+            "pass_at_1": 0.314,
+            "avg_reward": 0.5406,
+            "reward_std": 0.1946,
+            "advantage_std": 0.1946,
+            "policy_entropy": 0.514,
+            "kl_from_ref": 0.986,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.25,
+            "is_collapsed": true
+          },
+          {
+            "step": 494,
+            "pass_at_1": 0.313,
+            "avg_reward": 0.4893,
+            "reward_std": 0.1827,
+            "advantage_std": 0.1827,
+            "policy_entropy": 0.512,
+            "kl_from_ref": 0.988,
+            "grad_norm": 0.0015,
+            "avg_length": 50.0,
+            "cheat_rate": 0.125,
+            "is_collapsed": true
+          },
+          {
+            "step": 495,
+            "pass_at_1": 0.312,
+            "avg_reward": 0.6042,
+            "reward_std": 0.2015,
+            "advantage_std": 0.2015,
+            "policy_entropy": 0.51,
+            "kl_from_ref": 0.99,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.25,
+            "is_collapsed": true
+          },
+          {
+            "step": 496,
+            "pass_at_1": 0.311,
+            "avg_reward": 0.6057,
+            "reward_std": 0.2164,
+            "advantage_std": 0.2164,
+            "policy_entropy": 0.508,
+            "kl_from_ref": 0.992,
+            "grad_norm": 0.0116,
+            "avg_length": 50.0,
+            "cheat_rate": 0.25,
+            "is_collapsed": true
+          },
+          {
+            "step": 497,
+            "pass_at_1": 0.31,
+            "avg_reward": 0.3731,
+            "reward_std": 0.193,
+            "advantage_std": 0.193,
+            "policy_entropy": 0.506,
+            "kl_from_ref": 0.994,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 498,
+            "pass_at_1": 0.309,
+            "avg_reward": 0.4107,
+            "reward_std": 0.2909,
+            "advantage_std": 0.2909,
+            "policy_entropy": 0.504,
+            "kl_from_ref": 0.996,
+            "grad_norm": 0.0174,
+            "avg_length": 50.0,
+            "cheat_rate": 0.25,
+            "is_collapsed": true
+          },
+          {
+            "step": 499,
+            "pass_at_1": 0.308,
+            "avg_reward": 0.6892,
+            "reward_std": 0.1725,
+            "advantage_std": 0.1725,
+            "policy_entropy": 0.502,
+            "kl_from_ref": 0.998,
+            "grad_norm": 0.0035,
+            "avg_length": 50.0,
+            "cheat_rate": 0.375,
+            "is_collapsed": true
+          },
+          {
+            "step": 500,
+            "pass_at_1": 0.307,
+            "avg_reward": 0.5028,
+            "reward_std": 0.1432,
+            "advantage_std": 0.1432,
+            "policy_entropy": 0.5,
+            "kl_from_ref": 1.0,
+            "grad_norm": 0.0073,
+            "avg_length": 50.0,
+            "cheat_rate": 0.125,
+            "is_collapsed": true
+          }
+        ],
+        "pre_collapse_stats": {
+          "avg_reward": {
+            "mean": 0.5077,
+            "count": 29800
+          },
+          "reward_std": {
+            "mean": 0.1348,
+            "count": 29800
+          },
+          "policy_entropy": {
+            "mean": 1.35,
+            "count": 29800
+          },
+          "kl_from_ref": {
+            "mean": 0.15,
+            "count": 29800
+          },
+          "grad_norm": {
+            "mean": 0.0079,
+            "count": 29800
+          },
+          "avg_length": {
+            "mean": 50.0,
+            "count": 29800
+          },
+          "cheat_rate": {
+            "mean": 0.0,
+            "count": 29800
+          },
+          "pass_at_1": {
+            "mean": 0.51,
+            "count": 29800
+          }
+        },
+        "post_collapse_stats": {
+          "avg_reward": {
+            "mean": 0.6971,
+            "count": 70200
+          },
+          "reward_std": {
+            "mean": 0.15,
+            "count": 70200
+          },
+          "policy_entropy": {
+            "mean": 0.85,
+            "count": 70200
+          },
+          "kl_from_ref": {
+            "mean": 0.65,
+            "count": 70200
+          },
+          "grad_norm": {
+            "mean": 0.008,
+            "count": 70200
+          },
+          "avg_length": {
+            "mean": 50.0,
+            "count": 70200
+          },
+          "cheat_rate": {
+            "mean": 0.2997,
+            "count": 70200
+          },
+          "pass_at_1": {
+            "mean": 0.482,
+            "count": 70200
+          }
+        }
+      }
+    },
+    {
+      "id": "C2_kl_explosion",
+      "name": "KL 散度爆炸",
+      "simulation": {
+        "collapse_mode": "C2_kl_explosion",
+        "onset_step": 200,
+        "severity": 0.8,
+        "mc_runs": 200,
+        "max_steps": 500,
+        "thresholds": {
+          "avg_reward": {
+            "threshold": 0.8106,
+            "direction": "above",
+            "detect_rate": 0.0054,
+            "false_positive_rate": 0.01,
+            "post_median": 0.3983
+          },
+          "reward_std": {
+            "threshold": 0.058,
+            "direction": "below",
+            "detect_rate": 0.0175,
+            "false_positive_rate": 0.01,
+            "post_median": 0.1267
+          },
+          "policy_entropy": {
+            "threshold": 1.104,
+            "direction": "below",
+            "detect_rate": 1.0,
+            "false_positive_rate": 0.01,
+            "post_median": 0.8
+          },
+          "kl_from_ref": {
+            "threshold": 0.396,
+            "direction": "above",
+            "detect_rate": 1.0,
+            "false_positive_rate": 0.01,
+            "post_median": 6.438
+          },
+          "grad_norm": {
+            "threshold": 0.0465,
+            "direction": "above",
+            "detect_rate": 0.0091,
+            "false_positive_rate": 0.01,
+            "post_median": 0.0
+          },
+          "avg_length": {
+            "threshold": 50.0,
+            "direction": "above",
+            "detect_rate": 0.0,
+            "false_positive_rate": 0.01,
+            "post_median": 50.0
+          },
+          "cheat_rate": {
+            "threshold": 0.0,
+            "direction": "above",
+            "detect_rate": 0.0,
+            "false_positive_rate": 0.01,
+            "post_median": 0.0
+          },
+          "pass_at_1": {
+            "threshold": 0.364,
+            "direction": "below",
+            "detect_rate": 0.4551,
+            "false_positive_rate": 0.01,
+            "post_median": 0.3956
+          }
+        },
+        "avg_detection_latency_steps": 63.8,
+        "detection_latency_samples": 1149,
+        "representative_trajectory": [
+          {
+            "step": 451,
+            "pass_at_1": 0.1532,
+            "avg_reward": 0.1534,
+            "reward_std": 0.106,
+            "advantage_std": 0.106,
+            "policy_entropy": 0.598,
+            "kl_from_ref": 10.478,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 452,
+            "pass_at_1": 0.1508,
+            "avg_reward": 0.2502,
+            "reward_std": 0.1468,
+            "advantage_std": 0.1468,
+            "policy_entropy": 0.596,
+            "kl_from_ref": 10.518,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 453,
+            "pass_at_1": 0.1484,
+            "avg_reward": 0.1378,
+            "reward_std": 0.117,
+            "advantage_std": 0.117,
+            "policy_entropy": 0.594,
+            "kl_from_ref": 10.558,
+            "grad_norm": 0.0122,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 454,
+            "pass_at_1": 0.146,
+            "avg_reward": 0.2147,
+            "reward_std": 0.1255,
+            "advantage_std": 0.1255,
+            "policy_entropy": 0.592,
+            "kl_from_ref": 10.598,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 455,
+            "pass_at_1": 0.1436,
+            "avg_reward": 0.1393,
+            "reward_std": 0.0586,
+            "advantage_std": 0.0586,
+            "policy_entropy": 0.59,
+            "kl_from_ref": 10.638,
+            "grad_norm": 0.0148,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 456,
+            "pass_at_1": 0.1412,
+            "avg_reward": 0.1994,
+            "reward_std": 0.1249,
+            "advantage_std": 0.1249,
+            "policy_entropy": 0.588,
+            "kl_from_ref": 10.678,
+            "grad_norm": 0.0046,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 457,
+            "pass_at_1": 0.1388,
+            "avg_reward": 0.1368,
+            "reward_std": 0.0887,
+            "advantage_std": 0.0887,
+            "policy_entropy": 0.586,
+            "kl_from_ref": 10.718,
+            "grad_norm": 0.0155,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 458,
+            "pass_at_1": 0.1364,
+            "avg_reward": 0.1293,
+            "reward_std": 0.0911,
+            "advantage_std": 0.0911,
+            "policy_entropy": 0.584,
+            "kl_from_ref": 10.758,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 459,
+            "pass_at_1": 0.134,
+            "avg_reward": 0.0931,
+            "reward_std": 0.1178,
+            "advantage_std": 0.1178,
+            "policy_entropy": 0.582,
+            "kl_from_ref": 10.798,
+            "grad_norm": 0.0155,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 460,
+            "pass_at_1": 0.1316,
+            "avg_reward": 0.2533,
+            "reward_std": 0.1742,
+            "advantage_std": 0.1742,
+            "policy_entropy": 0.58,
+            "kl_from_ref": 10.838,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 461,
+            "pass_at_1": 0.1292,
+            "avg_reward": 0.0985,
+            "reward_std": 0.1238,
+            "advantage_std": 0.1238,
+            "policy_entropy": 0.578,
+            "kl_from_ref": 10.878,
+            "grad_norm": 0.0098,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 462,
+            "pass_at_1": 0.1268,
+            "avg_reward": 0.1264,
+            "reward_std": 0.1346,
+            "advantage_std": 0.1346,
+            "policy_entropy": 0.576,
+            "kl_from_ref": 10.918,
+            "grad_norm": 0.0068,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 463,
+            "pass_at_1": 0.1244,
+            "avg_reward": 0.1105,
+            "reward_std": 0.0799,
+            "advantage_std": 0.0799,
+            "policy_entropy": 0.574,
+            "kl_from_ref": 10.958,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 464,
+            "pass_at_1": 0.122,
+            "avg_reward": 0.1058,
+            "reward_std": 0.0892,
+            "advantage_std": 0.0892,
+            "policy_entropy": 0.572,
+            "kl_from_ref": 10.998,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 465,
+            "pass_at_1": 0.1196,
+            "avg_reward": 0.1661,
+            "reward_std": 0.1431,
+            "advantage_std": 0.1431,
+            "policy_entropy": 0.57,
+            "kl_from_ref": 11.038,
+            "grad_norm": 0.0036,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 466,
+            "pass_at_1": 0.1172,
+            "avg_reward": 0.0877,
+            "reward_std": 0.0673,
+            "advantage_std": 0.0673,
+            "policy_entropy": 0.568,
+            "kl_from_ref": 11.078,
+            "grad_norm": 0.0056,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 467,
+            "pass_at_1": 0.1148,
+            "avg_reward": 0.1443,
+            "reward_std": 0.1287,
+            "advantage_std": 0.1287,
+            "policy_entropy": 0.566,
+            "kl_from_ref": 11.118,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 468,
+            "pass_at_1": 0.1124,
+            "avg_reward": 0.1845,
+            "reward_std": 0.1593,
+            "advantage_std": 0.1593,
+            "policy_entropy": 0.564,
+            "kl_from_ref": 11.158,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 469,
+            "pass_at_1": 0.11,
+            "avg_reward": 0.1507,
+            "reward_std": 0.1248,
+            "advantage_std": 0.1248,
+            "policy_entropy": 0.562,
+            "kl_from_ref": 11.198,
+            "grad_norm": 0.0383,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 470,
+            "pass_at_1": 0.1076,
+            "avg_reward": 0.1206,
+            "reward_std": 0.1084,
+            "advantage_std": 0.1084,
+            "policy_entropy": 0.56,
+            "kl_from_ref": 11.238,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 471,
+            "pass_at_1": 0.1052,
+            "avg_reward": 0.1466,
+            "reward_std": 0.1102,
+            "advantage_std": 0.1102,
+            "policy_entropy": 0.558,
+            "kl_from_ref": 11.278,
+            "grad_norm": 0.008,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 472,
+            "pass_at_1": 0.1028,
+            "avg_reward": 0.093,
+            "reward_std": 0.065,
+            "advantage_std": 0.065,
+            "policy_entropy": 0.556,
+            "kl_from_ref": 11.318,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 473,
+            "pass_at_1": 0.1004,
+            "avg_reward": 0.0629,
+            "reward_std": 0.0684,
+            "advantage_std": 0.0684,
+            "policy_entropy": 0.554,
+            "kl_from_ref": 11.358,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 474,
+            "pass_at_1": 0.098,
+            "avg_reward": 0.11,
+            "reward_std": 0.0803,
+            "advantage_std": 0.0803,
+            "policy_entropy": 0.552,
+            "kl_from_ref": 11.398,
+            "grad_norm": 0.0281,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 475,
+            "pass_at_1": 0.0956,
+            "avg_reward": 0.1809,
+            "reward_std": 0.0968,
+            "advantage_std": 0.0968,
+            "policy_entropy": 0.55,
+            "kl_from_ref": 11.438,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 476,
+            "pass_at_1": 0.0932,
+            "avg_reward": 0.1235,
+            "reward_std": 0.1046,
+            "advantage_std": 0.1046,
+            "policy_entropy": 0.548,
+            "kl_from_ref": 11.478,
+            "grad_norm": 0.0062,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 477,
+            "pass_at_1": 0.0908,
+            "avg_reward": 0.045,
+            "reward_std": 0.0744,
+            "advantage_std": 0.0744,
+            "policy_entropy": 0.546,
+            "kl_from_ref": 11.518,
+            "grad_norm": 0.0001,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 478,
+            "pass_at_1": 0.0884,
+            "avg_reward": 0.0948,
+            "reward_std": 0.1062,
+            "advantage_std": 0.1062,
+            "policy_entropy": 0.544,
+            "kl_from_ref": 11.558,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 479,
+            "pass_at_1": 0.086,
+            "avg_reward": 0.0834,
+            "reward_std": 0.1097,
+            "advantage_std": 0.1097,
+            "policy_entropy": 0.542,
+            "kl_from_ref": 11.598,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 480,
+            "pass_at_1": 0.0836,
+            "avg_reward": 0.138,
+            "reward_std": 0.118,
+            "advantage_std": 0.118,
+            "policy_entropy": 0.54,
+            "kl_from_ref": 11.638,
+            "grad_norm": 0.0152,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 481,
+            "pass_at_1": 0.0812,
+            "avg_reward": 0.0778,
+            "reward_std": 0.0737,
+            "advantage_std": 0.0737,
+            "policy_entropy": 0.538,
+            "kl_from_ref": 11.678,
+            "grad_norm": 0.0015,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 482,
+            "pass_at_1": 0.0788,
+            "avg_reward": 0.0252,
+            "reward_std": 0.0393,
+            "advantage_std": 0.0393,
+            "policy_entropy": 0.536,
+            "kl_from_ref": 11.718,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 483,
+            "pass_at_1": 0.0764,
+            "avg_reward": 0.034,
+            "reward_std": 0.0449,
+            "advantage_std": 0.0449,
+            "policy_entropy": 0.534,
+            "kl_from_ref": 11.758,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 484,
+            "pass_at_1": 0.074,
+            "avg_reward": 0.0976,
+            "reward_std": 0.0884,
+            "advantage_std": 0.0884,
+            "policy_entropy": 0.532,
+            "kl_from_ref": 11.798,
+            "grad_norm": 0.0114,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 485,
+            "pass_at_1": 0.0716,
+            "avg_reward": 0.1629,
+            "reward_std": 0.1213,
+            "advantage_std": 0.1213,
+            "policy_entropy": 0.53,
+            "kl_from_ref": 11.838,
+            "grad_norm": 0.0134,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 486,
+            "pass_at_1": 0.0692,
+            "avg_reward": 0.0509,
+            "reward_std": 0.0393,
+            "advantage_std": 0.0393,
+            "policy_entropy": 0.528,
+            "kl_from_ref": 11.878,
+            "grad_norm": 0.0094,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 487,
+            "pass_at_1": 0.0668,
+            "avg_reward": 0.1191,
+            "reward_std": 0.103,
+            "advantage_std": 0.103,
+            "policy_entropy": 0.526,
+            "kl_from_ref": 11.918,
+            "grad_norm": 0.0189,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 488,
+            "pass_at_1": 0.0644,
+            "avg_reward": 0.0882,
+            "reward_std": 0.1032,
+            "advantage_std": 0.1032,
+            "policy_entropy": 0.524,
+            "kl_from_ref": 11.958,
+            "grad_norm": 0.0354,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 489,
+            "pass_at_1": 0.062,
+            "avg_reward": 0.1068,
+            "reward_std": 0.0915,
+            "advantage_std": 0.0915,
+            "policy_entropy": 0.522,
+            "kl_from_ref": 11.998,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 490,
+            "pass_at_1": 0.0596,
+            "avg_reward": 0.0452,
+            "reward_std": 0.0965,
+            "advantage_std": 0.0965,
+            "policy_entropy": 0.52,
+            "kl_from_ref": 12.038,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 491,
+            "pass_at_1": 0.0572,
+            "avg_reward": 0.1591,
+            "reward_std": 0.09,
+            "advantage_std": 0.09,
+            "policy_entropy": 0.518,
+            "kl_from_ref": 12.078,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 492,
+            "pass_at_1": 0.0548,
+            "avg_reward": 0.0551,
+            "reward_std": 0.0583,
+            "advantage_std": 0.0583,
+            "policy_entropy": 0.516,
+            "kl_from_ref": 12.118,
+            "grad_norm": 0.0225,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 493,
+            "pass_at_1": 0.0524,
+            "avg_reward": 0.1004,
+            "reward_std": 0.1039,
+            "advantage_std": 0.1039,
+            "policy_entropy": 0.514,
+            "kl_from_ref": 12.158,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 494,
+            "pass_at_1": 0.05,
+            "avg_reward": 0.1404,
+            "reward_std": 0.1856,
+            "advantage_std": 0.1856,
+            "policy_entropy": 0.512,
+            "kl_from_ref": 12.198,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 495,
+            "pass_at_1": 0.0476,
+            "avg_reward": 0.049,
+            "reward_std": 0.0798,
+            "advantage_std": 0.0798,
+            "policy_entropy": 0.51,
+            "kl_from_ref": 12.238,
+            "grad_norm": 0.0144,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 496,
+            "pass_at_1": 0.0452,
+            "avg_reward": 0.0474,
+            "reward_std": 0.082,
+            "advantage_std": 0.082,
+            "policy_entropy": 0.508,
+            "kl_from_ref": 12.278,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 497,
+            "pass_at_1": 0.0428,
+            "avg_reward": 0.0689,
+            "reward_std": 0.0839,
+            "advantage_std": 0.0839,
+            "policy_entropy": 0.506,
+            "kl_from_ref": 12.318,
+            "grad_norm": 0.0315,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 498,
+            "pass_at_1": 0.0404,
+            "avg_reward": 0.0454,
+            "reward_std": 0.0547,
+            "advantage_std": 0.0547,
+            "policy_entropy": 0.504,
+            "kl_from_ref": 12.358,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 499,
+            "pass_at_1": 0.038,
+            "avg_reward": 0.0932,
+            "reward_std": 0.0867,
+            "advantage_std": 0.0867,
+            "policy_entropy": 0.502,
+            "kl_from_ref": 12.398,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 500,
+            "pass_at_1": 0.0356,
+            "avg_reward": 0.1048,
+            "reward_std": 0.0908,
+            "advantage_std": 0.0908,
+            "policy_entropy": 0.5,
+            "kl_from_ref": 12.438,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          }
+        ],
+        "pre_collapse_stats": {
+          "avg_reward": {
+            "mean": 0.5576,
+            "count": 39800
+          },
+          "reward_std": {
+            "mean": 0.1344,
+            "count": 39800
+          },
+          "policy_entropy": {
+            "mean": 1.3,
+            "count": 39800
+          },
+          "kl_from_ref": {
+            "mean": 0.2,
+            "count": 39800
+          },
+          "grad_norm": {
+            "mean": 0.0081,
+            "count": 39800
+          },
+          "avg_length": {
+            "mean": 50.0,
+            "count": 39800
+          },
+          "cheat_rate": {
+            "mean": 0.0,
+            "count": 39800
+          },
+          "pass_at_1": {
+            "mean": 0.56,
+            "count": 39800
+          }
+        },
+        "post_collapse_stats": {
+          "avg_reward": {
+            "mean": 0.4028,
+            "count": 60200
+          },
+          "reward_std": {
+            "mean": 0.1282,
+            "count": 60200
+          },
+          "policy_entropy": {
+            "mean": 0.8,
+            "count": 60200
+          },
+          "kl_from_ref": {
+            "mean": 6.438,
+            "count": 60200
+          },
+          "grad_norm": {
+            "mean": 0.008,
+            "count": 60200
+          },
+          "avg_length": {
+            "mean": 50.0,
+            "count": 60200
+          },
+          "cheat_rate": {
+            "mean": 0.0,
+            "count": 60200
+          },
+          "pass_at_1": {
+            "mean": 0.3956,
+            "count": 60200
+          }
+        }
+      }
+    },
+    {
+      "id": "C3_advantage_vanishing",
+      "name": "优势消失 (std=0)",
+      "simulation": {
+        "collapse_mode": "C3_advantage_vanishing",
+        "onset_step": 100,
+        "severity": 0.6,
+        "mc_runs": 200,
+        "max_steps": 500,
+        "thresholds": {
+          "avg_reward": {
+            "threshold": 0.6317,
+            "direction": "above",
+            "detect_rate": 0.0813,
+            "false_positive_rate": 0.01,
+            "post_median": 0.5578
+          },
+          "reward_std": {
+            "threshold": 0.0593,
+            "direction": "below",
+            "detect_rate": 0.0097,
+            "false_positive_rate": 0.01,
+            "post_median": 0.1333
+          },
+          "policy_entropy": {
+            "threshold": 1.302,
+            "direction": "below",
+            "detect_rate": 0.0,
+            "false_positive_rate": 0.01,
+            "post_median": 1.302
+          },
+          "kl_from_ref": {
+            "threshold": 0.198,
+            "direction": "above",
+            "detect_rate": 1.0,
+            "false_positive_rate": 0.01,
+            "post_median": 0.6
+          },
+          "grad_norm": {
+            "threshold": 0.0466,
+            "direction": "above",
+            "detect_rate": 0.0098,
+            "false_positive_rate": 0.01,
+            "post_median": 0.0
+          },
+          "avg_length": {
+            "threshold": 50.0,
+            "direction": "above",
+            "detect_rate": 0.0,
+            "false_positive_rate": 0.01,
+            "post_median": 50.0
+          },
+          "cheat_rate": {
+            "threshold": 0.0,
+            "direction": "above",
+            "detect_rate": 0.0,
+            "false_positive_rate": 0.01,
+            "post_median": 0.0
+          },
+          "pass_at_1": {
+            "threshold": 0.362,
+            "direction": "below",
+            "detect_rate": 0.0,
+            "false_positive_rate": 0.01,
+            "post_median": 0.558
+          }
+        },
+        "avg_detection_latency_steps": 50.7,
+        "detection_latency_samples": 790,
+        "representative_trajectory": [
+          {
+            "step": 451,
+            "pass_at_1": 0.558,
+            "avg_reward": 0.557,
+            "reward_std": 0.0754,
+            "advantage_std": 0.0754,
+            "policy_entropy": 1.302,
+            "kl_from_ref": 0.902,
+            "grad_norm": 0.011,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 452,
+            "pass_at_1": 0.558,
+            "avg_reward": 0.5238,
+            "reward_std": 0.1389,
+            "advantage_std": 0.1389,
+            "policy_entropy": 1.302,
+            "kl_from_ref": 0.904,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 453,
+            "pass_at_1": 0.558,
+            "avg_reward": 0.5134,
+            "reward_std": 0.0844,
+            "advantage_std": 0.0844,
+            "policy_entropy": 1.302,
+            "kl_from_ref": 0.906,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 454,
+            "pass_at_1": 0.558,
+            "avg_reward": 0.5612,
+            "reward_std": 0.1284,
+            "advantage_std": 0.1284,
+            "policy_entropy": 1.302,
+            "kl_from_ref": 0.908,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 455,
+            "pass_at_1": 0.558,
+            "avg_reward": 0.5574,
+            "reward_std": 0.2167,
+            "advantage_std": 0.2167,
+            "policy_entropy": 1.302,
+            "kl_from_ref": 0.91,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 456,
+            "pass_at_1": 0.558,
+            "avg_reward": 0.5864,
+            "reward_std": 0.1751,
+            "advantage_std": 0.1751,
+            "policy_entropy": 1.302,
+            "kl_from_ref": 0.912,
+            "grad_norm": 0.0296,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 457,
+            "pass_at_1": 0.558,
+            "avg_reward": 0.5454,
+            "reward_std": 0.1343,
+            "advantage_std": 0.1343,
+            "policy_entropy": 1.302,
+            "kl_from_ref": 0.914,
+            "grad_norm": 0.0018,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 458,
+            "pass_at_1": 0.558,
+            "avg_reward": 0.5496,
+            "reward_std": 0.1651,
+            "advantage_std": 0.1651,
+            "policy_entropy": 1.302,
+            "kl_from_ref": 0.916,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 459,
+            "pass_at_1": 0.558,
+            "avg_reward": 0.5323,
+            "reward_std": 0.1545,
+            "advantage_std": 0.1545,
+            "policy_entropy": 1.302,
+            "kl_from_ref": 0.918,
+            "grad_norm": 0.0027,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 460,
+            "pass_at_1": 0.558,
+            "avg_reward": 0.5503,
+            "reward_std": 0.084,
+            "advantage_std": 0.084,
+            "policy_entropy": 1.302,
+            "kl_from_ref": 0.92,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 461,
+            "pass_at_1": 0.558,
+            "avg_reward": 0.5582,
+            "reward_std": 0.1665,
+            "advantage_std": 0.1665,
+            "policy_entropy": 1.302,
+            "kl_from_ref": 0.922,
+            "grad_norm": 0.0083,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 462,
+            "pass_at_1": 0.558,
+            "avg_reward": 0.5393,
+            "reward_std": 0.1159,
+            "advantage_std": 0.1159,
+            "policy_entropy": 1.302,
+            "kl_from_ref": 0.924,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 463,
+            "pass_at_1": 0.558,
+            "avg_reward": 0.5887,
+            "reward_std": 0.1325,
+            "advantage_std": 0.1325,
+            "policy_entropy": 1.302,
+            "kl_from_ref": 0.926,
+            "grad_norm": 0.0097,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 464,
+            "pass_at_1": 0.558,
+            "avg_reward": 0.4914,
+            "reward_std": 0.1104,
+            "advantage_std": 0.1104,
+            "policy_entropy": 1.302,
+            "kl_from_ref": 0.928,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 465,
+            "pass_at_1": 0.558,
+            "avg_reward": 0.5325,
+            "reward_std": 0.1044,
+            "advantage_std": 0.1044,
+            "policy_entropy": 1.302,
+            "kl_from_ref": 0.93,
+            "grad_norm": 0.0067,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 466,
+            "pass_at_1": 0.558,
+            "avg_reward": 0.5753,
+            "reward_std": 0.0745,
+            "advantage_std": 0.0745,
+            "policy_entropy": 1.302,
+            "kl_from_ref": 0.932,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 467,
+            "pass_at_1": 0.558,
+            "avg_reward": 0.4865,
+            "reward_std": 0.2051,
+            "advantage_std": 0.2051,
+            "policy_entropy": 1.302,
+            "kl_from_ref": 0.934,
+            "grad_norm": 0.0012,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 468,
+            "pass_at_1": 0.558,
+            "avg_reward": 0.5507,
+            "reward_std": 0.0841,
+            "advantage_std": 0.0841,
+            "policy_entropy": 1.302,
+            "kl_from_ref": 0.936,
+            "grad_norm": 0.0311,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 469,
+            "pass_at_1": 0.558,
+            "avg_reward": 0.5859,
+            "reward_std": 0.0949,
+            "advantage_std": 0.0949,
+            "policy_entropy": 1.302,
+            "kl_from_ref": 0.938,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 470,
+            "pass_at_1": 0.558,
+            "avg_reward": 0.6722,
+            "reward_std": 0.1571,
+            "advantage_std": 0.1571,
+            "policy_entropy": 1.302,
+            "kl_from_ref": 0.94,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 471,
+            "pass_at_1": 0.558,
+            "avg_reward": 0.5427,
+            "reward_std": 0.1528,
+            "advantage_std": 0.1528,
+            "policy_entropy": 1.302,
+            "kl_from_ref": 0.942,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 472,
+            "pass_at_1": 0.558,
+            "avg_reward": 0.5835,
+            "reward_std": 0.1313,
+            "advantage_std": 0.1313,
+            "policy_entropy": 1.302,
+            "kl_from_ref": 0.944,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 473,
+            "pass_at_1": 0.558,
+            "avg_reward": 0.6489,
+            "reward_std": 0.1501,
+            "advantage_std": 0.1501,
+            "policy_entropy": 1.302,
+            "kl_from_ref": 0.946,
+            "grad_norm": 0.0066,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 474,
+            "pass_at_1": 0.558,
+            "avg_reward": 0.4792,
+            "reward_std": 0.1465,
+            "advantage_std": 0.1465,
+            "policy_entropy": 1.302,
+            "kl_from_ref": 0.948,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 475,
+            "pass_at_1": 0.558,
+            "avg_reward": 0.4428,
+            "reward_std": 0.0885,
+            "advantage_std": 0.0885,
+            "policy_entropy": 1.302,
+            "kl_from_ref": 0.95,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 476,
+            "pass_at_1": 0.558,
+            "avg_reward": 0.5384,
+            "reward_std": 0.1121,
+            "advantage_std": 0.1121,
+            "policy_entropy": 1.302,
+            "kl_from_ref": 0.952,
+            "grad_norm": 0.0325,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 477,
+            "pass_at_1": 0.558,
+            "avg_reward": 0.5966,
+            "reward_std": 0.1485,
+            "advantage_std": 0.1485,
+            "policy_entropy": 1.302,
+            "kl_from_ref": 0.954,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 478,
+            "pass_at_1": 0.558,
+            "avg_reward": 0.5287,
+            "reward_std": 0.1658,
+            "advantage_std": 0.1658,
+            "policy_entropy": 1.302,
+            "kl_from_ref": 0.956,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 479,
+            "pass_at_1": 0.558,
+            "avg_reward": 0.5978,
+            "reward_std": 0.0858,
+            "advantage_std": 0.0858,
+            "policy_entropy": 1.302,
+            "kl_from_ref": 0.958,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 480,
+            "pass_at_1": 0.558,
+            "avg_reward": 0.5358,
+            "reward_std": 0.148,
+            "advantage_std": 0.148,
+            "policy_entropy": 1.302,
+            "kl_from_ref": 0.96,
+            "grad_norm": 0.0232,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 481,
+            "pass_at_1": 0.558,
+            "avg_reward": 0.5151,
+            "reward_std": 0.1639,
+            "advantage_std": 0.1639,
+            "policy_entropy": 1.302,
+            "kl_from_ref": 0.962,
+            "grad_norm": 0.0092,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 482,
+            "pass_at_1": 0.558,
+            "avg_reward": 0.6143,
+            "reward_std": 0.1447,
+            "advantage_std": 0.1447,
+            "policy_entropy": 1.302,
+            "kl_from_ref": 0.964,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 483,
+            "pass_at_1": 0.558,
+            "avg_reward": 0.5979,
+            "reward_std": 0.1512,
+            "advantage_std": 0.1512,
+            "policy_entropy": 1.302,
+            "kl_from_ref": 0.966,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 484,
+            "pass_at_1": 0.558,
+            "avg_reward": 0.5128,
+            "reward_std": 0.0924,
+            "advantage_std": 0.0924,
+            "policy_entropy": 1.302,
+            "kl_from_ref": 0.968,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 485,
+            "pass_at_1": 0.558,
+            "avg_reward": 0.5195,
+            "reward_std": 0.0858,
+            "advantage_std": 0.0858,
+            "policy_entropy": 1.302,
+            "kl_from_ref": 0.97,
+            "grad_norm": 0.0214,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 486,
+            "pass_at_1": 0.558,
+            "avg_reward": 0.5305,
+            "reward_std": 0.1214,
+            "advantage_std": 0.1214,
+            "policy_entropy": 1.302,
+            "kl_from_ref": 0.972,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 487,
+            "pass_at_1": 0.558,
+            "avg_reward": 0.5294,
+            "reward_std": 0.17,
+            "advantage_std": 0.17,
+            "policy_entropy": 1.302,
+            "kl_from_ref": 0.974,
+            "grad_norm": 0.0373,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 488,
+            "pass_at_1": 0.558,
+            "avg_reward": 0.6219,
+            "reward_std": 0.0774,
+            "advantage_std": 0.0774,
+            "policy_entropy": 1.302,
+            "kl_from_ref": 0.976,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 489,
+            "pass_at_1": 0.558,
+            "avg_reward": 0.4913,
+            "reward_std": 0.0953,
+            "advantage_std": 0.0953,
+            "policy_entropy": 1.302,
+            "kl_from_ref": 0.978,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 490,
+            "pass_at_1": 0.558,
+            "avg_reward": 0.5622,
+            "reward_std": 0.2335,
+            "advantage_std": 0.2335,
+            "policy_entropy": 1.302,
+            "kl_from_ref": 0.98,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 491,
+            "pass_at_1": 0.558,
+            "avg_reward": 0.6061,
+            "reward_std": 0.1999,
+            "advantage_std": 0.1999,
+            "policy_entropy": 1.302,
+            "kl_from_ref": 0.982,
+            "grad_norm": 0.019,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 492,
+            "pass_at_1": 0.558,
+            "avg_reward": 0.5544,
+            "reward_std": 0.1197,
+            "advantage_std": 0.1197,
+            "policy_entropy": 1.302,
+            "kl_from_ref": 0.984,
+            "grad_norm": 0.0124,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 493,
+            "pass_at_1": 0.558,
+            "avg_reward": 0.5926,
+            "reward_std": 0.1601,
+            "advantage_std": 0.1601,
+            "policy_entropy": 1.302,
+            "kl_from_ref": 0.986,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 494,
+            "pass_at_1": 0.558,
+            "avg_reward": 0.5654,
+            "reward_std": 0.0989,
+            "advantage_std": 0.0989,
+            "policy_entropy": 1.302,
+            "kl_from_ref": 0.988,
+            "grad_norm": 0.0048,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 495,
+            "pass_at_1": 0.558,
+            "avg_reward": 0.5309,
+            "reward_std": 0.1129,
+            "advantage_std": 0.1129,
+            "policy_entropy": 1.302,
+            "kl_from_ref": 0.99,
+            "grad_norm": 0.028,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 496,
+            "pass_at_1": 0.558,
+            "avg_reward": 0.5535,
+            "reward_std": 0.0948,
+            "advantage_std": 0.0948,
+            "policy_entropy": 1.302,
+            "kl_from_ref": 0.992,
+            "grad_norm": 0.038,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 497,
+            "pass_at_1": 0.558,
+            "avg_reward": 0.5082,
+            "reward_std": 0.2125,
+            "advantage_std": 0.2125,
+            "policy_entropy": 1.302,
+            "kl_from_ref": 0.994,
+            "grad_norm": 0.0068,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 498,
+            "pass_at_1": 0.558,
+            "avg_reward": 0.4698,
+            "reward_std": 0.1655,
+            "advantage_std": 0.1655,
+            "policy_entropy": 1.302,
+            "kl_from_ref": 0.996,
+            "grad_norm": 0.0532,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 499,
+            "pass_at_1": 0.558,
+            "avg_reward": 0.5492,
+            "reward_std": 0.1121,
+            "advantage_std": 0.1121,
+            "policy_entropy": 1.302,
+            "kl_from_ref": 0.998,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 500,
+            "pass_at_1": 0.558,
+            "avg_reward": 0.3904,
+            "reward_std": 0.1038,
+            "advantage_std": 0.1038,
+            "policy_entropy": 1.302,
+            "kl_from_ref": 1.0,
+            "grad_norm": 0.0098,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          }
+        ],
+        "pre_collapse_stats": {
+          "avg_reward": {
+            "mean": 0.4578,
+            "count": 19800
+          },
+          "reward_std": {
+            "mean": 0.1351,
+            "count": 19800
+          },
+          "policy_entropy": {
+            "mean": 1.4,
+            "count": 19800
+          },
+          "kl_from_ref": {
+            "mean": 0.1,
+            "count": 19800
+          },
+          "grad_norm": {
+            "mean": 0.0079,
+            "count": 19800
+          },
+          "avg_length": {
+            "mean": 50.0,
+            "count": 19800
+          },
+          "cheat_rate": {
+            "mean": 0.0,
+            "count": 19800
+          },
+          "pass_at_1": {
+            "mean": 0.46,
+            "count": 19800
+          }
+        },
+        "post_collapse_stats": {
+          "avg_reward": {
+            "mean": 0.5578,
+            "count": 80200
+          },
+          "reward_std": {
+            "mean": 0.1351,
+            "count": 80200
+          },
+          "policy_entropy": {
+            "mean": 1.302,
+            "count": 80200
+          },
+          "kl_from_ref": {
+            "mean": 0.6,
+            "count": 80200
+          },
+          "grad_norm": {
+            "mean": 0.008,
+            "count": 80200
+          },
+          "avg_length": {
+            "mean": 50.0,
+            "count": 80200
+          },
+          "cheat_rate": {
+            "mean": 0.0,
+            "count": 80200
+          },
+          "pass_at_1": {
+            "mean": 0.558,
+            "count": 80200
+          }
+        }
+      }
+    },
+    {
+      "id": "C4_entropy_collapse",
+      "name": "策略熵坍缩",
+      "simulation": {
+        "collapse_mode": "C4_entropy_collapse",
+        "onset_step": 250,
+        "severity": 0.7,
+        "mc_runs": 200,
+        "max_steps": 500,
+        "thresholds": {
+          "avg_reward": {
+            "threshold": 0.8874,
+            "direction": "above",
+            "detect_rate": 0.02,
+            "false_positive_rate": 0.01,
+            "post_median": 0.7316
+          },
+          "reward_std": {
+            "threshold": 0.0589,
+            "direction": "below",
+            "detect_rate": 0.011,
+            "false_positive_rate": 0.01,
+            "post_median": 0.1281
+          },
+          "policy_entropy": {
+            "threshold": 1.006,
+            "direction": "below",
+            "detect_rate": 1.0,
+            "false_positive_rate": 0.01,
+            "post_median": 0.01
+          },
+          "kl_from_ref": {
+            "threshold": 0.494,
+            "direction": "above",
+            "detect_rate": 1.0,
+            "false_positive_rate": 0.01,
+            "post_median": 0.75
+          },
+          "grad_norm": {
+            "threshold": 0.0466,
+            "direction": "above",
+            "detect_rate": 0.0105,
+            "false_positive_rate": 0.01,
+            "post_median": 0.0001
+          },
+          "avg_length": {
+            "threshold": 50.0,
+            "direction": "above",
+            "detect_rate": 0.0,
+            "false_positive_rate": 0.01,
+            "post_median": 50.0
+          },
+          "cheat_rate": {
+            "threshold": 0.0,
+            "direction": "above",
+            "detect_rate": 0.0,
+            "false_positive_rate": 0.01,
+            "post_median": 0.0
+          },
+          "pass_at_1": {
+            "threshold": 0.366,
+            "direction": "below",
+            "detect_rate": 0.0,
+            "false_positive_rate": 0.01,
+            "post_median": 0.732
+          }
+        },
+        "avg_detection_latency_steps": 28.6,
+        "detection_latency_samples": 973,
+        "representative_trajectory": [
+          {
+            "step": 451,
+            "pass_at_1": 0.656,
+            "avg_reward": 0.716,
+            "reward_std": 0.1105,
+            "advantage_std": 0.1105,
+            "policy_entropy": 0.01,
+            "kl_from_ref": 0.902,
+            "grad_norm": 0.0141,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 452,
+            "pass_at_1": 0.655,
+            "avg_reward": 0.7184,
+            "reward_std": 0.139,
+            "advantage_std": 0.139,
+            "policy_entropy": 0.01,
+            "kl_from_ref": 0.904,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 453,
+            "pass_at_1": 0.654,
+            "avg_reward": 0.6264,
+            "reward_std": 0.0925,
+            "advantage_std": 0.0925,
+            "policy_entropy": 0.01,
+            "kl_from_ref": 0.906,
+            "grad_norm": 0.0019,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 454,
+            "pass_at_1": 0.653,
+            "avg_reward": 0.5757,
+            "reward_std": 0.0938,
+            "advantage_std": 0.0938,
+            "policy_entropy": 0.01,
+            "kl_from_ref": 0.908,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 455,
+            "pass_at_1": 0.652,
+            "avg_reward": 0.6978,
+            "reward_std": 0.15,
+            "advantage_std": 0.15,
+            "policy_entropy": 0.01,
+            "kl_from_ref": 0.91,
+            "grad_norm": 0.0207,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 456,
+            "pass_at_1": 0.651,
+            "avg_reward": 0.6752,
+            "reward_std": 0.0899,
+            "advantage_std": 0.0899,
+            "policy_entropy": 0.01,
+            "kl_from_ref": 0.912,
+            "grad_norm": 0.0389,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 457,
+            "pass_at_1": 0.65,
+            "avg_reward": 0.6132,
+            "reward_std": 0.088,
+            "advantage_std": 0.088,
+            "policy_entropy": 0.01,
+            "kl_from_ref": 0.914,
+            "grad_norm": 0.0302,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 458,
+            "pass_at_1": 0.649,
+            "avg_reward": 0.6947,
+            "reward_std": 0.1484,
+            "advantage_std": 0.1484,
+            "policy_entropy": 0.01,
+            "kl_from_ref": 0.916,
+            "grad_norm": 0.0048,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 459,
+            "pass_at_1": 0.648,
+            "avg_reward": 0.6918,
+            "reward_std": 0.0867,
+            "advantage_std": 0.0867,
+            "policy_entropy": 0.01,
+            "kl_from_ref": 0.918,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 460,
+            "pass_at_1": 0.647,
+            "avg_reward": 0.7205,
+            "reward_std": 0.1391,
+            "advantage_std": 0.1391,
+            "policy_entropy": 0.01,
+            "kl_from_ref": 0.92,
+            "grad_norm": 0.0074,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 461,
+            "pass_at_1": 0.646,
+            "avg_reward": 0.706,
+            "reward_std": 0.1121,
+            "advantage_std": 0.1121,
+            "policy_entropy": 0.01,
+            "kl_from_ref": 0.922,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 462,
+            "pass_at_1": 0.645,
+            "avg_reward": 0.5764,
+            "reward_std": 0.1134,
+            "advantage_std": 0.1134,
+            "policy_entropy": 0.01,
+            "kl_from_ref": 0.924,
+            "grad_norm": 0.0178,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 463,
+            "pass_at_1": 0.644,
+            "avg_reward": 0.6874,
+            "reward_std": 0.1522,
+            "advantage_std": 0.1522,
+            "policy_entropy": 0.01,
+            "kl_from_ref": 0.926,
+            "grad_norm": 0.0183,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 464,
+            "pass_at_1": 0.643,
+            "avg_reward": 0.6269,
+            "reward_std": 0.1528,
+            "advantage_std": 0.1528,
+            "policy_entropy": 0.01,
+            "kl_from_ref": 0.928,
+            "grad_norm": 0.0224,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 465,
+            "pass_at_1": 0.642,
+            "avg_reward": 0.6657,
+            "reward_std": 0.2577,
+            "advantage_std": 0.2577,
+            "policy_entropy": 0.01,
+            "kl_from_ref": 0.93,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 466,
+            "pass_at_1": 0.641,
+            "avg_reward": 0.6379,
+            "reward_std": 0.1916,
+            "advantage_std": 0.1916,
+            "policy_entropy": 0.01,
+            "kl_from_ref": 0.932,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 467,
+            "pass_at_1": 0.64,
+            "avg_reward": 0.7256,
+            "reward_std": 0.1426,
+            "advantage_std": 0.1426,
+            "policy_entropy": 0.01,
+            "kl_from_ref": 0.934,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 468,
+            "pass_at_1": 0.639,
+            "avg_reward": 0.5807,
+            "reward_std": 0.1468,
+            "advantage_std": 0.1468,
+            "policy_entropy": 0.01,
+            "kl_from_ref": 0.936,
+            "grad_norm": 0.0171,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 469,
+            "pass_at_1": 0.638,
+            "avg_reward": 0.6612,
+            "reward_std": 0.1372,
+            "advantage_std": 0.1372,
+            "policy_entropy": 0.01,
+            "kl_from_ref": 0.938,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 470,
+            "pass_at_1": 0.637,
+            "avg_reward": 0.6762,
+            "reward_std": 0.118,
+            "advantage_std": 0.118,
+            "policy_entropy": 0.01,
+            "kl_from_ref": 0.94,
+            "grad_norm": 0.013,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 471,
+            "pass_at_1": 0.636,
+            "avg_reward": 0.5184,
+            "reward_std": 0.1364,
+            "advantage_std": 0.1364,
+            "policy_entropy": 0.01,
+            "kl_from_ref": 0.942,
+            "grad_norm": 0.0289,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 472,
+            "pass_at_1": 0.635,
+            "avg_reward": 0.6319,
+            "reward_std": 0.1754,
+            "advantage_std": 0.1754,
+            "policy_entropy": 0.01,
+            "kl_from_ref": 0.944,
+            "grad_norm": 0.0395,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 473,
+            "pass_at_1": 0.634,
+            "avg_reward": 0.6033,
+            "reward_std": 0.1482,
+            "advantage_std": 0.1482,
+            "policy_entropy": 0.01,
+            "kl_from_ref": 0.946,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 474,
+            "pass_at_1": 0.633,
+            "avg_reward": 0.5801,
+            "reward_std": 0.1007,
+            "advantage_std": 0.1007,
+            "policy_entropy": 0.01,
+            "kl_from_ref": 0.948,
+            "grad_norm": 0.0063,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 475,
+            "pass_at_1": 0.632,
+            "avg_reward": 0.5636,
+            "reward_std": 0.1438,
+            "advantage_std": 0.1438,
+            "policy_entropy": 0.01,
+            "kl_from_ref": 0.95,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 476,
+            "pass_at_1": 0.631,
+            "avg_reward": 0.5524,
+            "reward_std": 0.0684,
+            "advantage_std": 0.0684,
+            "policy_entropy": 0.01,
+            "kl_from_ref": 0.952,
+            "grad_norm": 0.0013,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 477,
+            "pass_at_1": 0.63,
+            "avg_reward": 0.6599,
+            "reward_std": 0.1452,
+            "advantage_std": 0.1452,
+            "policy_entropy": 0.01,
+            "kl_from_ref": 0.954,
+            "grad_norm": 0.0277,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 478,
+            "pass_at_1": 0.629,
+            "avg_reward": 0.6224,
+            "reward_std": 0.132,
+            "advantage_std": 0.132,
+            "policy_entropy": 0.01,
+            "kl_from_ref": 0.956,
+            "grad_norm": 0.0243,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 479,
+            "pass_at_1": 0.628,
+            "avg_reward": 0.6943,
+            "reward_std": 0.1214,
+            "advantage_std": 0.1214,
+            "policy_entropy": 0.01,
+            "kl_from_ref": 0.958,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 480,
+            "pass_at_1": 0.627,
+            "avg_reward": 0.5995,
+            "reward_std": 0.0873,
+            "advantage_std": 0.0873,
+            "policy_entropy": 0.01,
+            "kl_from_ref": 0.96,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 481,
+            "pass_at_1": 0.626,
+            "avg_reward": 0.6157,
+            "reward_std": 0.1004,
+            "advantage_std": 0.1004,
+            "policy_entropy": 0.01,
+            "kl_from_ref": 0.962,
+            "grad_norm": 0.0242,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 482,
+            "pass_at_1": 0.625,
+            "avg_reward": 0.5534,
+            "reward_std": 0.0591,
+            "advantage_std": 0.0591,
+            "policy_entropy": 0.01,
+            "kl_from_ref": 0.964,
+            "grad_norm": 0.0257,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 483,
+            "pass_at_1": 0.624,
+            "avg_reward": 0.6837,
+            "reward_std": 0.1494,
+            "advantage_std": 0.1494,
+            "policy_entropy": 0.01,
+            "kl_from_ref": 0.966,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 484,
+            "pass_at_1": 0.623,
+            "avg_reward": 0.5304,
+            "reward_std": 0.1415,
+            "advantage_std": 0.1415,
+            "policy_entropy": 0.01,
+            "kl_from_ref": 0.968,
+            "grad_norm": 0.0087,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 485,
+            "pass_at_1": 0.622,
+            "avg_reward": 0.6656,
+            "reward_std": 0.1746,
+            "advantage_std": 0.1746,
+            "policy_entropy": 0.01,
+            "kl_from_ref": 0.97,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 486,
+            "pass_at_1": 0.621,
+            "avg_reward": 0.6552,
+            "reward_std": 0.1778,
+            "advantage_std": 0.1778,
+            "policy_entropy": 0.01,
+            "kl_from_ref": 0.972,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 487,
+            "pass_at_1": 0.62,
+            "avg_reward": 0.5282,
+            "reward_std": 0.1061,
+            "advantage_std": 0.1061,
+            "policy_entropy": 0.01,
+            "kl_from_ref": 0.974,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 488,
+            "pass_at_1": 0.619,
+            "avg_reward": 0.6243,
+            "reward_std": 0.1231,
+            "advantage_std": 0.1231,
+            "policy_entropy": 0.01,
+            "kl_from_ref": 0.976,
+            "grad_norm": 0.0182,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 489,
+            "pass_at_1": 0.618,
+            "avg_reward": 0.6673,
+            "reward_std": 0.0775,
+            "advantage_std": 0.0775,
+            "policy_entropy": 0.01,
+            "kl_from_ref": 0.978,
+            "grad_norm": 0.0062,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 490,
+            "pass_at_1": 0.617,
+            "avg_reward": 0.654,
+            "reward_std": 0.1207,
+            "advantage_std": 0.1207,
+            "policy_entropy": 0.01,
+            "kl_from_ref": 0.98,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 491,
+            "pass_at_1": 0.616,
+            "avg_reward": 0.6913,
+            "reward_std": 0.1241,
+            "advantage_std": 0.1241,
+            "policy_entropy": 0.01,
+            "kl_from_ref": 0.982,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 492,
+            "pass_at_1": 0.615,
+            "avg_reward": 0.5851,
+            "reward_std": 0.1465,
+            "advantage_std": 0.1465,
+            "policy_entropy": 0.01,
+            "kl_from_ref": 0.984,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 493,
+            "pass_at_1": 0.614,
+            "avg_reward": 0.6717,
+            "reward_std": 0.1357,
+            "advantage_std": 0.1357,
+            "policy_entropy": 0.01,
+            "kl_from_ref": 0.986,
+            "grad_norm": 0.0018,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 494,
+            "pass_at_1": 0.613,
+            "avg_reward": 0.665,
+            "reward_std": 0.1175,
+            "advantage_std": 0.1175,
+            "policy_entropy": 0.01,
+            "kl_from_ref": 0.988,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 495,
+            "pass_at_1": 0.612,
+            "avg_reward": 0.5678,
+            "reward_std": 0.135,
+            "advantage_std": 0.135,
+            "policy_entropy": 0.01,
+            "kl_from_ref": 0.99,
+            "grad_norm": 0.0009,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 496,
+            "pass_at_1": 0.611,
+            "avg_reward": 0.599,
+            "reward_std": 0.1284,
+            "advantage_std": 0.1284,
+            "policy_entropy": 0.01,
+            "kl_from_ref": 0.992,
+            "grad_norm": 0.0156,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 497,
+            "pass_at_1": 0.61,
+            "avg_reward": 0.573,
+            "reward_std": 0.1636,
+            "advantage_std": 0.1636,
+            "policy_entropy": 0.01,
+            "kl_from_ref": 0.994,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 498,
+            "pass_at_1": 0.609,
+            "avg_reward": 0.5293,
+            "reward_std": 0.1033,
+            "advantage_std": 0.1033,
+            "policy_entropy": 0.01,
+            "kl_from_ref": 0.996,
+            "grad_norm": 0.0055,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 499,
+            "pass_at_1": 0.608,
+            "avg_reward": 0.5578,
+            "reward_std": 0.0755,
+            "advantage_std": 0.0755,
+            "policy_entropy": 0.01,
+            "kl_from_ref": 0.998,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 500,
+            "pass_at_1": 0.607,
+            "avg_reward": 0.6336,
+            "reward_std": 0.1509,
+            "advantage_std": 0.1509,
+            "policy_entropy": 0.01,
+            "kl_from_ref": 1.0,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          }
+        ],
+        "pre_collapse_stats": {
+          "avg_reward": {
+            "mean": 0.606,
+            "count": 49800
+          },
+          "reward_std": {
+            "mean": 0.1324,
+            "count": 49800
+          },
+          "policy_entropy": {
+            "mean": 1.25,
+            "count": 49800
+          },
+          "kl_from_ref": {
+            "mean": 0.25,
+            "count": 49800
+          },
+          "grad_norm": {
+            "mean": 0.0081,
+            "count": 49800
+          },
+          "avg_length": {
+            "mean": 50.0,
+            "count": 49800
+          },
+          "cheat_rate": {
+            "mean": 0.0,
+            "count": 49800
+          },
+          "pass_at_1": {
+            "mean": 0.61,
+            "count": 49800
+          }
+        },
+        "post_collapse_stats": {
+          "avg_reward": {
+            "mean": 0.7291,
+            "count": 50200
+          },
+          "reward_std": {
+            "mean": 0.1297,
+            "count": 50200
+          },
+          "policy_entropy": {
+            "mean": 0.1014,
+            "count": 50200
+          },
+          "kl_from_ref": {
+            "mean": 0.75,
+            "count": 50200
+          },
+          "grad_norm": {
+            "mean": 0.008,
+            "count": 50200
+          },
+          "avg_length": {
+            "mean": 50.0,
+            "count": 50200
+          },
+          "cheat_rate": {
+            "mean": 0.0,
+            "count": 50200
+          },
+          "pass_at_1": {
+            "mean": 0.732,
+            "count": 50200
+          }
+        }
+      }
+    },
+    {
+      "id": "C5_grad_explosion",
+      "name": "梯度爆炸",
+      "simulation": {
+        "collapse_mode": "C5_grad_explosion",
+        "onset_step": 180,
+        "severity": 1.2,
+        "mc_runs": 200,
+        "max_steps": 500,
+        "thresholds": {
+          "avg_reward": {
+            "threshold": 0.7719,
+            "direction": "above",
+            "detect_rate": 0.3039,
+            "false_positive_rate": 0.01,
+            "post_median": 0.7105
+          },
+          "reward_std": {
+            "threshold": 0.0591,
+            "direction": "below",
+            "detect_rate": 0.021,
+            "false_positive_rate": 0.01,
+            "post_median": 0.1265
+          },
+          "policy_entropy": {
+            "threshold": 1.144,
+            "direction": "below",
+            "detect_rate": 1.0,
+            "false_positive_rate": 0.01,
+            "post_median": 0.82
+          },
+          "kl_from_ref": {
+            "threshold": 0.356,
+            "direction": "above",
+            "detect_rate": 1.0,
+            "false_positive_rate": 0.01,
+            "post_median": 0.68
+          },
+          "grad_norm": {
+            "threshold": 0.047,
+            "direction": "above",
+            "detect_rate": 0.0093,
+            "false_positive_rate": 0.01,
+            "post_median": 0.0
+          },
+          "avg_length": {
+            "threshold": 50.0,
+            "direction": "above",
+            "detect_rate": 0.0,
+            "false_positive_rate": 0.01,
+            "post_median": 50.0
+          },
+          "cheat_rate": {
+            "threshold": 0.0,
+            "direction": "above",
+            "detect_rate": 0.0,
+            "false_positive_rate": 0.01,
+            "post_median": 0.0
+          },
+          "pass_at_1": {
+            "threshold": 0.364,
+            "direction": "below",
+            "detect_rate": 0.0063,
+            "false_positive_rate": 0.01,
+            "post_median": 0.7124
+          }
+        },
+        "avg_detection_latency_steps": 38.3,
+        "detection_latency_samples": 989,
+        "representative_trajectory": [
+          {
+            "step": 451,
+            "pass_at_1": 0.4652,
+            "avg_reward": 0.4456,
+            "reward_std": 0.0801,
+            "advantage_std": 0.0801,
+            "policy_entropy": 0.598,
+            "kl_from_ref": 0.902,
+            "grad_norm": 0.0093,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 452,
+            "pass_at_1": 0.4795,
+            "avg_reward": 0.4853,
+            "reward_std": 0.1527,
+            "advantage_std": 0.1527,
+            "policy_entropy": 0.596,
+            "kl_from_ref": 0.904,
+            "grad_norm": 0.0286,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 453,
+            "pass_at_1": 0.4928,
+            "avg_reward": 0.4398,
+            "reward_std": 0.0742,
+            "advantage_std": 0.0742,
+            "policy_entropy": 0.594,
+            "kl_from_ref": 0.906,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 454,
+            "pass_at_1": 0.4856,
+            "avg_reward": 0.4923,
+            "reward_std": 0.159,
+            "advantage_std": 0.159,
+            "policy_entropy": 0.592,
+            "kl_from_ref": 0.908,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 455,
+            "pass_at_1": 0.4775,
+            "avg_reward": 0.495,
+            "reward_std": 0.0992,
+            "advantage_std": 0.0992,
+            "policy_entropy": 0.59,
+            "kl_from_ref": 0.91,
+            "grad_norm": 0.0063,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 456,
+            "pass_at_1": 0.4877,
+            "avg_reward": 0.5266,
+            "reward_std": 0.0873,
+            "advantage_std": 0.0873,
+            "policy_entropy": 0.588,
+            "kl_from_ref": 0.912,
+            "grad_norm": 0.0153,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 457,
+            "pass_at_1": 0.4565,
+            "avg_reward": 0.5392,
+            "reward_std": 0.1052,
+            "advantage_std": 0.1052,
+            "policy_entropy": 0.586,
+            "kl_from_ref": 0.914,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 458,
+            "pass_at_1": 0.4482,
+            "avg_reward": 0.5218,
+            "reward_std": 0.1447,
+            "advantage_std": 0.1447,
+            "policy_entropy": 0.584,
+            "kl_from_ref": 0.916,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 459,
+            "pass_at_1": 0.4407,
+            "avg_reward": 0.4809,
+            "reward_std": 0.1039,
+            "advantage_std": 0.1039,
+            "policy_entropy": 0.582,
+            "kl_from_ref": 0.918,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 460,
+            "pass_at_1": 0.4453,
+            "avg_reward": 0.4285,
+            "reward_std": 0.0992,
+            "advantage_std": 0.0992,
+            "policy_entropy": 0.58,
+            "kl_from_ref": 0.92,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 461,
+            "pass_at_1": 0.4624,
+            "avg_reward": 0.5047,
+            "reward_std": 0.1494,
+            "advantage_std": 0.1494,
+            "policy_entropy": 0.578,
+            "kl_from_ref": 0.922,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 462,
+            "pass_at_1": 0.4627,
+            "avg_reward": 0.5168,
+            "reward_std": 0.0709,
+            "advantage_std": 0.0709,
+            "policy_entropy": 0.576,
+            "kl_from_ref": 0.924,
+            "grad_norm": 0.0083,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 463,
+            "pass_at_1": 0.4621,
+            "avg_reward": 0.5836,
+            "reward_std": 0.0779,
+            "advantage_std": 0.0779,
+            "policy_entropy": 0.574,
+            "kl_from_ref": 0.926,
+            "grad_norm": 0.004,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 464,
+            "pass_at_1": 0.4595,
+            "avg_reward": 0.4271,
+            "reward_std": 0.1742,
+            "advantage_std": 0.1742,
+            "policy_entropy": 0.572,
+            "kl_from_ref": 0.928,
+            "grad_norm": 0.0024,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 465,
+            "pass_at_1": 0.4511,
+            "avg_reward": 0.4058,
+            "reward_std": 0.1713,
+            "advantage_std": 0.1713,
+            "policy_entropy": 0.57,
+            "kl_from_ref": 0.93,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 466,
+            "pass_at_1": 0.4502,
+            "avg_reward": 0.4009,
+            "reward_std": 0.1101,
+            "advantage_std": 0.1101,
+            "policy_entropy": 0.568,
+            "kl_from_ref": 0.932,
+            "grad_norm": 0.0041,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 467,
+            "pass_at_1": 0.451,
+            "avg_reward": 0.529,
+            "reward_std": 0.0481,
+            "advantage_std": 0.0481,
+            "policy_entropy": 0.566,
+            "kl_from_ref": 0.934,
+            "grad_norm": 0.024,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 468,
+            "pass_at_1": 0.4499,
+            "avg_reward": 0.4086,
+            "reward_std": 0.1863,
+            "advantage_std": 0.1863,
+            "policy_entropy": 0.564,
+            "kl_from_ref": 0.936,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 469,
+            "pass_at_1": 0.4774,
+            "avg_reward": 0.5151,
+            "reward_std": 0.1613,
+            "advantage_std": 0.1613,
+            "policy_entropy": 0.562,
+            "kl_from_ref": 0.938,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 470,
+            "pass_at_1": 0.4787,
+            "avg_reward": 0.5254,
+            "reward_std": 0.1378,
+            "advantage_std": 0.1378,
+            "policy_entropy": 0.56,
+            "kl_from_ref": 0.94,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 471,
+            "pass_at_1": 0.5069,
+            "avg_reward": 0.5039,
+            "reward_std": 0.2237,
+            "advantage_std": 0.2237,
+            "policy_entropy": 0.558,
+            "kl_from_ref": 0.942,
+            "grad_norm": 0.0131,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 472,
+            "pass_at_1": 0.5247,
+            "avg_reward": 0.5518,
+            "reward_std": 0.113,
+            "advantage_std": 0.113,
+            "policy_entropy": 0.556,
+            "kl_from_ref": 0.944,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 473,
+            "pass_at_1": 0.5162,
+            "avg_reward": 0.5139,
+            "reward_std": 0.1017,
+            "advantage_std": 0.1017,
+            "policy_entropy": 0.554,
+            "kl_from_ref": 0.946,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 474,
+            "pass_at_1": 0.508,
+            "avg_reward": 0.5136,
+            "reward_std": 0.1047,
+            "advantage_std": 0.1047,
+            "policy_entropy": 0.552,
+            "kl_from_ref": 0.948,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 475,
+            "pass_at_1": 0.505,
+            "avg_reward": 0.4717,
+            "reward_std": 0.1883,
+            "advantage_std": 0.1883,
+            "policy_entropy": 0.55,
+            "kl_from_ref": 0.95,
+            "grad_norm": 0.013,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 476,
+            "pass_at_1": 0.4989,
+            "avg_reward": 0.5826,
+            "reward_std": 0.0846,
+            "advantage_std": 0.0846,
+            "policy_entropy": 0.548,
+            "kl_from_ref": 0.952,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 477,
+            "pass_at_1": 0.4904,
+            "avg_reward": 0.4847,
+            "reward_std": 0.1364,
+            "advantage_std": 0.1364,
+            "policy_entropy": 0.546,
+            "kl_from_ref": 0.954,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 478,
+            "pass_at_1": 0.5028,
+            "avg_reward": 0.5255,
+            "reward_std": 0.1598,
+            "advantage_std": 0.1598,
+            "policy_entropy": 0.544,
+            "kl_from_ref": 0.956,
+            "grad_norm": 0.0069,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 479,
+            "pass_at_1": 0.494,
+            "avg_reward": 0.4384,
+            "reward_std": 0.1654,
+            "advantage_std": 0.1654,
+            "policy_entropy": 0.542,
+            "kl_from_ref": 0.958,
+            "grad_norm": 0.016,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 480,
+            "pass_at_1": 0.4991,
+            "avg_reward": 0.4921,
+            "reward_std": 0.1456,
+            "advantage_std": 0.1456,
+            "policy_entropy": 0.54,
+            "kl_from_ref": 0.96,
+            "grad_norm": 0.0307,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 481,
+            "pass_at_1": 0.5071,
+            "avg_reward": 0.5447,
+            "reward_std": 0.1424,
+            "advantage_std": 0.1424,
+            "policy_entropy": 0.538,
+            "kl_from_ref": 0.962,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 482,
+            "pass_at_1": 0.5114,
+            "avg_reward": 0.5132,
+            "reward_std": 0.1496,
+            "advantage_std": 0.1496,
+            "policy_entropy": 0.536,
+            "kl_from_ref": 0.964,
+            "grad_norm": 0.0077,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 483,
+            "pass_at_1": 0.5086,
+            "avg_reward": 0.4684,
+            "reward_std": 0.1192,
+            "advantage_std": 0.1192,
+            "policy_entropy": 0.534,
+            "kl_from_ref": 0.966,
+            "grad_norm": 0.0116,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 484,
+            "pass_at_1": 0.5109,
+            "avg_reward": 0.5004,
+            "reward_std": 0.1557,
+            "advantage_std": 0.1557,
+            "policy_entropy": 0.532,
+            "kl_from_ref": 0.968,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 485,
+            "pass_at_1": 0.4929,
+            "avg_reward": 0.4378,
+            "reward_std": 0.1772,
+            "advantage_std": 0.1772,
+            "policy_entropy": 0.53,
+            "kl_from_ref": 0.97,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 486,
+            "pass_at_1": 0.4998,
+            "avg_reward": 0.5669,
+            "reward_std": 0.1765,
+            "advantage_std": 0.1765,
+            "policy_entropy": 0.528,
+            "kl_from_ref": 0.972,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 487,
+            "pass_at_1": 0.5073,
+            "avg_reward": 0.5526,
+            "reward_std": 0.1273,
+            "advantage_std": 0.1273,
+            "policy_entropy": 0.526,
+            "kl_from_ref": 0.974,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 488,
+            "pass_at_1": 0.524,
+            "avg_reward": 0.5727,
+            "reward_std": 0.1111,
+            "advantage_std": 0.1111,
+            "policy_entropy": 0.524,
+            "kl_from_ref": 0.976,
+            "grad_norm": 0.019,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 489,
+            "pass_at_1": 0.5446,
+            "avg_reward": 0.5211,
+            "reward_std": 0.0712,
+            "advantage_std": 0.0712,
+            "policy_entropy": 0.522,
+            "kl_from_ref": 0.978,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 490,
+            "pass_at_1": 0.53,
+            "avg_reward": 0.4922,
+            "reward_std": 0.0573,
+            "advantage_std": 0.0573,
+            "policy_entropy": 0.52,
+            "kl_from_ref": 0.98,
+            "grad_norm": 0.0126,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 491,
+            "pass_at_1": 0.5387,
+            "avg_reward": 0.5245,
+            "reward_std": 0.2026,
+            "advantage_std": 0.2026,
+            "policy_entropy": 0.518,
+            "kl_from_ref": 0.982,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 492,
+            "pass_at_1": 0.5393,
+            "avg_reward": 0.6936,
+            "reward_std": 0.0868,
+            "advantage_std": 0.0868,
+            "policy_entropy": 0.516,
+            "kl_from_ref": 0.984,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 493,
+            "pass_at_1": 0.5281,
+            "avg_reward": 0.5411,
+            "reward_std": 0.0945,
+            "advantage_std": 0.0945,
+            "policy_entropy": 0.514,
+            "kl_from_ref": 0.986,
+            "grad_norm": 0.0095,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 494,
+            "pass_at_1": 0.5298,
+            "avg_reward": 0.4625,
+            "reward_std": 0.1689,
+            "advantage_std": 0.1689,
+            "policy_entropy": 0.512,
+            "kl_from_ref": 0.988,
+            "grad_norm": 0.0004,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 495,
+            "pass_at_1": 0.5294,
+            "avg_reward": 0.4836,
+            "reward_std": 0.0916,
+            "advantage_std": 0.0916,
+            "policy_entropy": 0.51,
+            "kl_from_ref": 0.99,
+            "grad_norm": 0.0115,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 496,
+            "pass_at_1": 0.5334,
+            "avg_reward": 0.5481,
+            "reward_std": 0.1894,
+            "advantage_std": 0.1894,
+            "policy_entropy": 0.508,
+            "kl_from_ref": 0.992,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 497,
+            "pass_at_1": 0.5398,
+            "avg_reward": 0.5822,
+            "reward_std": 0.1452,
+            "advantage_std": 0.1452,
+            "policy_entropy": 0.506,
+            "kl_from_ref": 0.994,
+            "grad_norm": 0.0032,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 498,
+            "pass_at_1": 0.5514,
+            "avg_reward": 0.581,
+            "reward_std": 0.188,
+            "advantage_std": 0.188,
+            "policy_entropy": 0.504,
+            "kl_from_ref": 0.996,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 499,
+            "pass_at_1": 0.5585,
+            "avg_reward": 0.4725,
+            "reward_std": 0.1539,
+            "advantage_std": 0.1539,
+            "policy_entropy": 0.502,
+            "kl_from_ref": 0.998,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 500,
+            "pass_at_1": 0.5514,
+            "avg_reward": 0.5286,
+            "reward_std": 0.1303,
+            "advantage_std": 0.1303,
+            "policy_entropy": 0.5,
+            "kl_from_ref": 1.0,
+            "grad_norm": 0.0019,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          }
+        ],
+        "pre_collapse_stats": {
+          "avg_reward": {
+            "mean": 0.5379,
+            "count": 35800
+          },
+          "reward_std": {
+            "mean": 0.1352,
+            "count": 35800
+          },
+          "policy_entropy": {
+            "mean": 1.32,
+            "count": 35800
+          },
+          "kl_from_ref": {
+            "mean": 0.18,
+            "count": 35800
+          },
+          "grad_norm": {
+            "mean": 0.008,
+            "count": 35800
+          },
+          "avg_length": {
+            "mean": 50.0,
+            "count": 35800
+          },
+          "cheat_rate": {
+            "mean": 0.0,
+            "count": 35800
+          },
+          "pass_at_1": {
+            "mean": 0.54,
+            "count": 35800
+          }
+        },
+        "post_collapse_stats": {
+          "avg_reward": {
+            "mean": 0.7023,
+            "count": 64200
+          },
+          "reward_std": {
+            "mean": 0.1278,
+            "count": 64200
+          },
+          "policy_entropy": {
+            "mean": 0.82,
+            "count": 64200
+          },
+          "kl_from_ref": {
+            "mean": 0.68,
+            "count": 64200
+          },
+          "grad_norm": {
+            "mean": 0.008,
+            "count": 64200
+          },
+          "avg_length": {
+            "mean": 50.0,
+            "count": 64200
+          },
+          "cheat_rate": {
+            "mean": 0.0,
+            "count": 64200
+          },
+          "pass_at_1": {
+            "mean": 0.7078,
+            "count": 64200
+          }
+        }
+      }
+    },
+    {
+      "id": "C6_reward_stagnation",
+      "name": "奖励停滞 (Plateau)",
+      "simulation": {
+        "collapse_mode": "C6_reward_stagnation",
+        "onset_step": 300,
+        "severity": 0.5,
+        "mc_runs": 200,
+        "max_steps": 500,
+        "thresholds": {
+          "avg_reward": {
+            "threshold": 0.949,
+            "direction": "above",
+            "detect_rate": 0.191,
+            "false_positive_rate": 0.01,
+            "post_median": 0.9197
+          },
+          "reward_std": {
+            "threshold": 0.0518,
+            "direction": "below",
+            "detect_rate": 0.0991,
+            "false_positive_rate": 0.01,
+            "post_median": 0.0887
+          },
+          "policy_entropy": {
+            "threshold": 0.906,
+            "direction": "below",
+            "detect_rate": 1.0,
+            "false_positive_rate": 0.01,
+            "post_median": 0.902
+          },
+          "kl_from_ref": {
+            "threshold": 0.594,
+            "direction": "above",
+            "detect_rate": 1.0,
+            "false_positive_rate": 0.01,
+            "post_median": 0.598
+          },
+          "grad_norm": {
+            "threshold": 0.0468,
+            "direction": "above",
+            "detect_rate": 0.0095,
+            "false_positive_rate": 0.01,
+            "post_median": 0.0
+          },
+          "avg_length": {
+            "threshold": 50.0,
+            "direction": "above",
+            "detect_rate": 0.0,
+            "false_positive_rate": 0.01,
+            "post_median": 50.0
+          },
+          "cheat_rate": {
+            "threshold": 0.0,
+            "direction": "above",
+            "detect_rate": 0.0,
+            "false_positive_rate": 0.01,
+            "post_median": 0.0
+          },
+          "pass_at_1": {
+            "threshold": 0.366,
+            "direction": "below",
+            "detect_rate": 0.0,
+            "false_positive_rate": 0.01,
+            "post_median": 0.958
+          }
+        },
+        "avg_detection_latency_steps": 16.1,
+        "detection_latency_samples": 974,
+        "representative_trajectory": [
+          {
+            "step": 451,
+            "pass_at_1": 0.958,
+            "avg_reward": 0.8942,
+            "reward_std": 0.0924,
+            "advantage_std": 0.0924,
+            "policy_entropy": 0.902,
+            "kl_from_ref": 0.598,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 452,
+            "pass_at_1": 0.958,
+            "avg_reward": 0.8982,
+            "reward_std": 0.1028,
+            "advantage_std": 0.1028,
+            "policy_entropy": 0.902,
+            "kl_from_ref": 0.598,
+            "grad_norm": 0.014,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 453,
+            "pass_at_1": 0.958,
+            "avg_reward": 0.9514,
+            "reward_std": 0.0749,
+            "advantage_std": 0.0749,
+            "policy_entropy": 0.902,
+            "kl_from_ref": 0.598,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 454,
+            "pass_at_1": 0.958,
+            "avg_reward": 0.9142,
+            "reward_std": 0.0643,
+            "advantage_std": 0.0643,
+            "policy_entropy": 0.902,
+            "kl_from_ref": 0.598,
+            "grad_norm": 0.003,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 455,
+            "pass_at_1": 0.958,
+            "avg_reward": 0.9076,
+            "reward_std": 0.0984,
+            "advantage_std": 0.0984,
+            "policy_entropy": 0.902,
+            "kl_from_ref": 0.598,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 456,
+            "pass_at_1": 0.958,
+            "avg_reward": 0.8823,
+            "reward_std": 0.0912,
+            "advantage_std": 0.0912,
+            "policy_entropy": 0.902,
+            "kl_from_ref": 0.598,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 457,
+            "pass_at_1": 0.958,
+            "avg_reward": 0.9064,
+            "reward_std": 0.0945,
+            "advantage_std": 0.0945,
+            "policy_entropy": 0.902,
+            "kl_from_ref": 0.598,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 458,
+            "pass_at_1": 0.958,
+            "avg_reward": 0.9024,
+            "reward_std": 0.1187,
+            "advantage_std": 0.1187,
+            "policy_entropy": 0.902,
+            "kl_from_ref": 0.598,
+            "grad_norm": 0.0308,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 459,
+            "pass_at_1": 0.958,
+            "avg_reward": 0.8792,
+            "reward_std": 0.1231,
+            "advantage_std": 0.1231,
+            "policy_entropy": 0.902,
+            "kl_from_ref": 0.598,
+            "grad_norm": 0.0081,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 460,
+            "pass_at_1": 0.958,
+            "avg_reward": 0.9073,
+            "reward_std": 0.0802,
+            "advantage_std": 0.0802,
+            "policy_entropy": 0.902,
+            "kl_from_ref": 0.598,
+            "grad_norm": 0.0065,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 461,
+            "pass_at_1": 0.958,
+            "avg_reward": 0.9292,
+            "reward_std": 0.0842,
+            "advantage_std": 0.0842,
+            "policy_entropy": 0.902,
+            "kl_from_ref": 0.598,
+            "grad_norm": 0.0059,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 462,
+            "pass_at_1": 0.958,
+            "avg_reward": 0.8929,
+            "reward_std": 0.0862,
+            "advantage_std": 0.0862,
+            "policy_entropy": 0.902,
+            "kl_from_ref": 0.598,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 463,
+            "pass_at_1": 0.958,
+            "avg_reward": 0.9547,
+            "reward_std": 0.0541,
+            "advantage_std": 0.0541,
+            "policy_entropy": 0.902,
+            "kl_from_ref": 0.598,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 464,
+            "pass_at_1": 0.958,
+            "avg_reward": 0.9047,
+            "reward_std": 0.1126,
+            "advantage_std": 0.1126,
+            "policy_entropy": 0.902,
+            "kl_from_ref": 0.598,
+            "grad_norm": 0.0372,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 465,
+            "pass_at_1": 0.958,
+            "avg_reward": 0.8679,
+            "reward_std": 0.1101,
+            "advantage_std": 0.1101,
+            "policy_entropy": 0.902,
+            "kl_from_ref": 0.598,
+            "grad_norm": 0.0011,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 466,
+            "pass_at_1": 0.958,
+            "avg_reward": 0.8944,
+            "reward_std": 0.1401,
+            "advantage_std": 0.1401,
+            "policy_entropy": 0.902,
+            "kl_from_ref": 0.598,
+            "grad_norm": 0.0002,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 467,
+            "pass_at_1": 0.958,
+            "avg_reward": 0.894,
+            "reward_std": 0.1406,
+            "advantage_std": 0.1406,
+            "policy_entropy": 0.902,
+            "kl_from_ref": 0.598,
+            "grad_norm": 0.0116,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 468,
+            "pass_at_1": 0.958,
+            "avg_reward": 0.9634,
+            "reward_std": 0.0679,
+            "advantage_std": 0.0679,
+            "policy_entropy": 0.902,
+            "kl_from_ref": 0.598,
+            "grad_norm": 0.0074,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 469,
+            "pass_at_1": 0.958,
+            "avg_reward": 0.9217,
+            "reward_std": 0.0703,
+            "advantage_std": 0.0703,
+            "policy_entropy": 0.902,
+            "kl_from_ref": 0.598,
+            "grad_norm": 0.0007,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 470,
+            "pass_at_1": 0.958,
+            "avg_reward": 0.9052,
+            "reward_std": 0.1032,
+            "advantage_std": 0.1032,
+            "policy_entropy": 0.902,
+            "kl_from_ref": 0.598,
+            "grad_norm": 0.0257,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 471,
+            "pass_at_1": 0.958,
+            "avg_reward": 0.8927,
+            "reward_std": 0.132,
+            "advantage_std": 0.132,
+            "policy_entropy": 0.902,
+            "kl_from_ref": 0.598,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 472,
+            "pass_at_1": 0.958,
+            "avg_reward": 0.8665,
+            "reward_std": 0.0925,
+            "advantage_std": 0.0925,
+            "policy_entropy": 0.902,
+            "kl_from_ref": 0.598,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 473,
+            "pass_at_1": 0.958,
+            "avg_reward": 0.906,
+            "reward_std": 0.1071,
+            "advantage_std": 0.1071,
+            "policy_entropy": 0.902,
+            "kl_from_ref": 0.598,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 474,
+            "pass_at_1": 0.958,
+            "avg_reward": 0.8921,
+            "reward_std": 0.1004,
+            "advantage_std": 0.1004,
+            "policy_entropy": 0.902,
+            "kl_from_ref": 0.598,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 475,
+            "pass_at_1": 0.958,
+            "avg_reward": 0.9072,
+            "reward_std": 0.0856,
+            "advantage_std": 0.0856,
+            "policy_entropy": 0.902,
+            "kl_from_ref": 0.598,
+            "grad_norm": 0.0078,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 476,
+            "pass_at_1": 0.958,
+            "avg_reward": 0.898,
+            "reward_std": 0.0907,
+            "advantage_std": 0.0907,
+            "policy_entropy": 0.902,
+            "kl_from_ref": 0.598,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 477,
+            "pass_at_1": 0.958,
+            "avg_reward": 0.8976,
+            "reward_std": 0.1191,
+            "advantage_std": 0.1191,
+            "policy_entropy": 0.902,
+            "kl_from_ref": 0.598,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 478,
+            "pass_at_1": 0.958,
+            "avg_reward": 0.9028,
+            "reward_std": 0.1024,
+            "advantage_std": 0.1024,
+            "policy_entropy": 0.902,
+            "kl_from_ref": 0.598,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 479,
+            "pass_at_1": 0.958,
+            "avg_reward": 0.9355,
+            "reward_std": 0.0886,
+            "advantage_std": 0.0886,
+            "policy_entropy": 0.902,
+            "kl_from_ref": 0.598,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 480,
+            "pass_at_1": 0.958,
+            "avg_reward": 0.9254,
+            "reward_std": 0.1393,
+            "advantage_std": 0.1393,
+            "policy_entropy": 0.902,
+            "kl_from_ref": 0.598,
+            "grad_norm": 0.0078,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 481,
+            "pass_at_1": 0.958,
+            "avg_reward": 0.8877,
+            "reward_std": 0.1333,
+            "advantage_std": 0.1333,
+            "policy_entropy": 0.902,
+            "kl_from_ref": 0.598,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 482,
+            "pass_at_1": 0.958,
+            "avg_reward": 0.9511,
+            "reward_std": 0.036,
+            "advantage_std": 0.036,
+            "policy_entropy": 0.902,
+            "kl_from_ref": 0.598,
+            "grad_norm": 0.0224,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 483,
+            "pass_at_1": 0.958,
+            "avg_reward": 0.9239,
+            "reward_std": 0.1381,
+            "advantage_std": 0.1381,
+            "policy_entropy": 0.902,
+            "kl_from_ref": 0.598,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 484,
+            "pass_at_1": 0.958,
+            "avg_reward": 0.8912,
+            "reward_std": 0.0808,
+            "advantage_std": 0.0808,
+            "policy_entropy": 0.902,
+            "kl_from_ref": 0.598,
+            "grad_norm": 0.0178,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 485,
+            "pass_at_1": 0.958,
+            "avg_reward": 0.8905,
+            "reward_std": 0.126,
+            "advantage_std": 0.126,
+            "policy_entropy": 0.902,
+            "kl_from_ref": 0.598,
+            "grad_norm": 0.0054,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 486,
+            "pass_at_1": 0.958,
+            "avg_reward": 0.8616,
+            "reward_std": 0.1201,
+            "advantage_std": 0.1201,
+            "policy_entropy": 0.902,
+            "kl_from_ref": 0.598,
+            "grad_norm": 0.0113,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 487,
+            "pass_at_1": 0.958,
+            "avg_reward": 0.9419,
+            "reward_std": 0.0787,
+            "advantage_std": 0.0787,
+            "policy_entropy": 0.902,
+            "kl_from_ref": 0.598,
+            "grad_norm": 0.0171,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 488,
+            "pass_at_1": 0.958,
+            "avg_reward": 0.9161,
+            "reward_std": 0.0964,
+            "advantage_std": 0.0964,
+            "policy_entropy": 0.902,
+            "kl_from_ref": 0.598,
+            "grad_norm": 0.0091,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 489,
+            "pass_at_1": 0.958,
+            "avg_reward": 0.9529,
+            "reward_std": 0.0406,
+            "advantage_std": 0.0406,
+            "policy_entropy": 0.902,
+            "kl_from_ref": 0.598,
+            "grad_norm": 0.0091,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 490,
+            "pass_at_1": 0.958,
+            "avg_reward": 0.9074,
+            "reward_std": 0.0922,
+            "advantage_std": 0.0922,
+            "policy_entropy": 0.902,
+            "kl_from_ref": 0.598,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 491,
+            "pass_at_1": 0.958,
+            "avg_reward": 0.975,
+            "reward_std": 0.0518,
+            "advantage_std": 0.0518,
+            "policy_entropy": 0.902,
+            "kl_from_ref": 0.598,
+            "grad_norm": 0.0242,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 492,
+            "pass_at_1": 0.958,
+            "avg_reward": 0.9485,
+            "reward_std": 0.0675,
+            "advantage_std": 0.0675,
+            "policy_entropy": 0.902,
+            "kl_from_ref": 0.598,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 493,
+            "pass_at_1": 0.958,
+            "avg_reward": 0.8841,
+            "reward_std": 0.0947,
+            "advantage_std": 0.0947,
+            "policy_entropy": 0.902,
+            "kl_from_ref": 0.598,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 494,
+            "pass_at_1": 0.958,
+            "avg_reward": 0.9811,
+            "reward_std": 0.0391,
+            "advantage_std": 0.0391,
+            "policy_entropy": 0.902,
+            "kl_from_ref": 0.598,
+            "grad_norm": 0.0086,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 495,
+            "pass_at_1": 0.958,
+            "avg_reward": 0.898,
+            "reward_std": 0.1215,
+            "advantage_std": 0.1215,
+            "policy_entropy": 0.902,
+            "kl_from_ref": 0.598,
+            "grad_norm": 0.0104,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 496,
+            "pass_at_1": 0.958,
+            "avg_reward": 0.9546,
+            "reward_std": 0.0543,
+            "advantage_std": 0.0543,
+            "policy_entropy": 0.902,
+            "kl_from_ref": 0.598,
+            "grad_norm": 0.0205,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 497,
+            "pass_at_1": 0.958,
+            "avg_reward": 0.9241,
+            "reward_std": 0.0788,
+            "advantage_std": 0.0788,
+            "policy_entropy": 0.902,
+            "kl_from_ref": 0.598,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 498,
+            "pass_at_1": 0.958,
+            "avg_reward": 0.9425,
+            "reward_std": 0.082,
+            "advantage_std": 0.082,
+            "policy_entropy": 0.902,
+            "kl_from_ref": 0.598,
+            "grad_norm": 0.011,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 499,
+            "pass_at_1": 0.958,
+            "avg_reward": 0.8782,
+            "reward_std": 0.1189,
+            "advantage_std": 0.1189,
+            "policy_entropy": 0.902,
+            "kl_from_ref": 0.598,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 500,
+            "pass_at_1": 0.958,
+            "avg_reward": 0.9241,
+            "reward_std": 0.0925,
+            "advantage_std": 0.0925,
+            "policy_entropy": 0.902,
+            "kl_from_ref": 0.598,
+            "grad_norm": 0.0,
+            "avg_length": 50.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          }
+        ],
+        "pre_collapse_stats": {
+          "avg_reward": {
+            "mean": 0.6521,
+            "count": 59800
+          },
+          "reward_std": {
+            "mean": 0.1275,
+            "count": 59800
+          },
+          "policy_entropy": {
+            "mean": 1.2,
+            "count": 59800
+          },
+          "kl_from_ref": {
+            "mean": 0.3,
+            "count": 59800
+          },
+          "grad_norm": {
+            "mean": 0.008,
+            "count": 59800
+          },
+          "avg_length": {
+            "mean": 50.0,
+            "count": 59800
+          },
+          "cheat_rate": {
+            "mean": 0.0,
+            "count": 59800
+          },
+          "pass_at_1": {
+            "mean": 0.66,
+            "count": 59800
+          }
+        },
+        "post_collapse_stats": {
+          "avg_reward": {
+            "mean": 0.9169,
+            "count": 40200
+          },
+          "reward_std": {
+            "mean": 0.0898,
+            "count": 40200
+          },
+          "policy_entropy": {
+            "mean": 0.902,
+            "count": 40200
+          },
+          "kl_from_ref": {
+            "mean": 0.598,
+            "count": 40200
+          },
+          "grad_norm": {
+            "mean": 0.008,
+            "count": 40200
+          },
+          "avg_length": {
+            "mean": 50.0,
+            "count": 40200
+          },
+          "cheat_rate": {
+            "mean": 0.0,
+            "count": 40200
+          },
+          "pass_at_1": {
+            "mean": 0.958,
+            "count": 40200
+          }
+        }
+      }
+    },
+    {
+      "id": "C7_length_exploitation",
+      "name": "长度利用 (Padding)",
+      "simulation": {
+        "collapse_mode": "C7_length_exploitation",
+        "onset_step": 220,
+        "severity": 0.9,
+        "mc_runs": 200,
+        "max_steps": 500,
+        "thresholds": {
+          "avg_reward": {
+            "threshold": 0.8413,
+            "direction": "above",
+            "detect_rate": 0.1021,
+            "false_positive_rate": 0.01,
+            "post_median": 0.7148
+          },
+          "reward_std": {
+            "threshold": 0.0586,
+            "direction": "below",
+            "detect_rate": 0.0069,
+            "false_positive_rate": 0.01,
+            "post_median": 0.1382
+          },
+          "policy_entropy": {
+            "threshold": 1.066,
+            "direction": "below",
+            "detect_rate": 1.0,
+            "false_positive_rate": 0.01,
+            "post_median": 0.78
+          },
+          "kl_from_ref": {
+            "threshold": 0.434,
+            "direction": "above",
+            "detect_rate": 1.0,
+            "false_positive_rate": 0.01,
+            "post_median": 0.72
+          },
+          "grad_norm": {
+            "threshold": 0.0466,
+            "direction": "above",
+            "detect_rate": 0.009,
+            "false_positive_rate": 0.01,
+            "post_median": 0.0
+          },
+          "avg_length": {
+            "threshold": 50.0,
+            "direction": "above",
+            "detect_rate": 1.0,
+            "false_positive_rate": 0.01,
+            "post_median": 618.6
+          },
+          "cheat_rate": {
+            "threshold": 0.0,
+            "direction": "above",
+            "detect_rate": 0.0,
+            "false_positive_rate": 0.01,
+            "post_median": 0.0
+          },
+          "pass_at_1": {
+            "threshold": 0.366,
+            "direction": "below",
+            "detect_rate": 0.0,
+            "false_positive_rate": 0.01,
+            "post_median": 0.657
+          }
+        },
+        "avg_detection_latency_steps": 27.5,
+        "detection_latency_samples": 1150,
+        "representative_trajectory": [
+          {
+            "step": 451,
+            "pass_at_1": 0.566,
+            "avg_reward": 0.6845,
+            "reward_std": 0.1881,
+            "advantage_std": 0.1881,
+            "policy_entropy": 0.598,
+            "kl_from_ref": 0.902,
+            "grad_norm": 0.0081,
+            "avg_length": 3136.57,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 452,
+            "pass_at_1": 0.565,
+            "avg_reward": 0.6233,
+            "reward_std": 0.1623,
+            "advantage_std": 0.1623,
+            "policy_entropy": 0.596,
+            "kl_from_ref": 0.904,
+            "grad_norm": 0.0,
+            "avg_length": 3193.02,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 453,
+            "pass_at_1": 0.564,
+            "avg_reward": 0.6772,
+            "reward_std": 0.0684,
+            "advantage_std": 0.0684,
+            "policy_entropy": 0.594,
+            "kl_from_ref": 0.906,
+            "grad_norm": 0.018,
+            "avg_length": 3250.5,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 454,
+            "pass_at_1": 0.563,
+            "avg_reward": 0.5704,
+            "reward_std": 0.1185,
+            "advantage_std": 0.1185,
+            "policy_entropy": 0.592,
+            "kl_from_ref": 0.908,
+            "grad_norm": 0.0,
+            "avg_length": 3309.01,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 455,
+            "pass_at_1": 0.562,
+            "avg_reward": 0.534,
+            "reward_std": 0.2201,
+            "advantage_std": 0.2201,
+            "policy_entropy": 0.59,
+            "kl_from_ref": 0.91,
+            "grad_norm": 0.0236,
+            "avg_length": 3368.57,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 456,
+            "pass_at_1": 0.561,
+            "avg_reward": 0.6482,
+            "reward_std": 0.1762,
+            "advantage_std": 0.1762,
+            "policy_entropy": 0.588,
+            "kl_from_ref": 0.912,
+            "grad_norm": 0.0313,
+            "avg_length": 3429.2,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 457,
+            "pass_at_1": 0.56,
+            "avg_reward": 0.4341,
+            "reward_std": 0.1819,
+            "advantage_std": 0.1819,
+            "policy_entropy": 0.586,
+            "kl_from_ref": 0.914,
+            "grad_norm": 0.0018,
+            "avg_length": 3490.93,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 458,
+            "pass_at_1": 0.559,
+            "avg_reward": 0.6138,
+            "reward_std": 0.2223,
+            "advantage_std": 0.2223,
+            "policy_entropy": 0.584,
+            "kl_from_ref": 0.916,
+            "grad_norm": 0.005,
+            "avg_length": 3553.77,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 459,
+            "pass_at_1": 0.558,
+            "avg_reward": 0.6324,
+            "reward_std": 0.1096,
+            "advantage_std": 0.1096,
+            "policy_entropy": 0.582,
+            "kl_from_ref": 0.918,
+            "grad_norm": 0.0076,
+            "avg_length": 3617.73,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 460,
+            "pass_at_1": 0.557,
+            "avg_reward": 0.577,
+            "reward_std": 0.1969,
+            "advantage_std": 0.1969,
+            "policy_entropy": 0.58,
+            "kl_from_ref": 0.92,
+            "grad_norm": 0.0,
+            "avg_length": 3682.85,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 461,
+            "pass_at_1": 0.556,
+            "avg_reward": 0.6001,
+            "reward_std": 0.1455,
+            "advantage_std": 0.1455,
+            "policy_entropy": 0.578,
+            "kl_from_ref": 0.922,
+            "grad_norm": 0.0,
+            "avg_length": 3749.15,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 462,
+            "pass_at_1": 0.555,
+            "avg_reward": 0.6207,
+            "reward_std": 0.1427,
+            "advantage_std": 0.1427,
+            "policy_entropy": 0.576,
+            "kl_from_ref": 0.924,
+            "grad_norm": 0.0171,
+            "avg_length": 3816.63,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 463,
+            "pass_at_1": 0.554,
+            "avg_reward": 0.5732,
+            "reward_std": 0.1523,
+            "advantage_std": 0.1523,
+            "policy_entropy": 0.574,
+            "kl_from_ref": 0.926,
+            "grad_norm": 0.0,
+            "avg_length": 3885.33,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 464,
+            "pass_at_1": 0.553,
+            "avg_reward": 0.6335,
+            "reward_std": 0.0741,
+            "advantage_std": 0.0741,
+            "policy_entropy": 0.572,
+            "kl_from_ref": 0.928,
+            "grad_norm": 0.0,
+            "avg_length": 3955.27,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 465,
+            "pass_at_1": 0.552,
+            "avg_reward": 0.6364,
+            "reward_std": 0.144,
+            "advantage_std": 0.144,
+            "policy_entropy": 0.57,
+            "kl_from_ref": 0.93,
+            "grad_norm": 0.0,
+            "avg_length": 4026.46,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 466,
+            "pass_at_1": 0.551,
+            "avg_reward": 0.5362,
+            "reward_std": 0.1696,
+            "advantage_std": 0.1696,
+            "policy_entropy": 0.568,
+            "kl_from_ref": 0.932,
+            "grad_norm": 0.0094,
+            "avg_length": 4098.94,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 467,
+            "pass_at_1": 0.55,
+            "avg_reward": 0.5704,
+            "reward_std": 0.1324,
+            "advantage_std": 0.1324,
+            "policy_entropy": 0.566,
+            "kl_from_ref": 0.934,
+            "grad_norm": 0.0272,
+            "avg_length": 4172.72,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 468,
+            "pass_at_1": 0.549,
+            "avg_reward": 0.6,
+            "reward_std": 0.1345,
+            "advantage_std": 0.1345,
+            "policy_entropy": 0.564,
+            "kl_from_ref": 0.936,
+            "grad_norm": 0.0,
+            "avg_length": 4247.83,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 469,
+            "pass_at_1": 0.548,
+            "avg_reward": 0.601,
+            "reward_std": 0.169,
+            "advantage_std": 0.169,
+            "policy_entropy": 0.562,
+            "kl_from_ref": 0.938,
+            "grad_norm": 0.0011,
+            "avg_length": 4324.29,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 470,
+            "pass_at_1": 0.547,
+            "avg_reward": 0.5817,
+            "reward_std": 0.2062,
+            "advantage_std": 0.2062,
+            "policy_entropy": 0.56,
+            "kl_from_ref": 0.94,
+            "grad_norm": 0.0454,
+            "avg_length": 4402.12,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 471,
+            "pass_at_1": 0.546,
+            "avg_reward": 0.4695,
+            "reward_std": 0.1504,
+            "advantage_std": 0.1504,
+            "policy_entropy": 0.558,
+            "kl_from_ref": 0.942,
+            "grad_norm": 0.0176,
+            "avg_length": 4481.36,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 472,
+            "pass_at_1": 0.545,
+            "avg_reward": 0.6115,
+            "reward_std": 0.1021,
+            "advantage_std": 0.1021,
+            "policy_entropy": 0.556,
+            "kl_from_ref": 0.944,
+            "grad_norm": 0.0,
+            "avg_length": 4562.03,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 473,
+            "pass_at_1": 0.544,
+            "avg_reward": 0.5722,
+            "reward_std": 0.1218,
+            "advantage_std": 0.1218,
+            "policy_entropy": 0.554,
+            "kl_from_ref": 0.946,
+            "grad_norm": 0.0,
+            "avg_length": 4644.14,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 474,
+            "pass_at_1": 0.543,
+            "avg_reward": 0.6268,
+            "reward_std": 0.1833,
+            "advantage_std": 0.1833,
+            "policy_entropy": 0.552,
+            "kl_from_ref": 0.948,
+            "grad_norm": 0.0468,
+            "avg_length": 4727.74,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 475,
+            "pass_at_1": 0.542,
+            "avg_reward": 0.5445,
+            "reward_std": 0.1732,
+            "advantage_std": 0.1732,
+            "policy_entropy": 0.55,
+            "kl_from_ref": 0.95,
+            "grad_norm": 0.0102,
+            "avg_length": 4812.84,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 476,
+            "pass_at_1": 0.541,
+            "avg_reward": 0.6656,
+            "reward_std": 0.1209,
+            "advantage_std": 0.1209,
+            "policy_entropy": 0.548,
+            "kl_from_ref": 0.952,
+            "grad_norm": 0.0,
+            "avg_length": 4899.47,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 477,
+            "pass_at_1": 0.54,
+            "avg_reward": 0.6147,
+            "reward_std": 0.1531,
+            "advantage_std": 0.1531,
+            "policy_entropy": 0.546,
+            "kl_from_ref": 0.954,
+            "grad_norm": 0.0065,
+            "avg_length": 4987.66,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 478,
+            "pass_at_1": 0.539,
+            "avg_reward": 0.5132,
+            "reward_std": 0.165,
+            "advantage_std": 0.165,
+            "policy_entropy": 0.544,
+            "kl_from_ref": 0.956,
+            "grad_norm": 0.0301,
+            "avg_length": 5077.44,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 479,
+            "pass_at_1": 0.538,
+            "avg_reward": 0.4711,
+            "reward_std": 0.1314,
+            "advantage_std": 0.1314,
+            "policy_entropy": 0.542,
+            "kl_from_ref": 0.958,
+            "grad_norm": 0.0,
+            "avg_length": 5168.83,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 480,
+            "pass_at_1": 0.537,
+            "avg_reward": 0.584,
+            "reward_std": 0.1358,
+            "advantage_std": 0.1358,
+            "policy_entropy": 0.54,
+            "kl_from_ref": 0.96,
+            "grad_norm": 0.0,
+            "avg_length": 5261.87,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 481,
+            "pass_at_1": 0.536,
+            "avg_reward": 0.5036,
+            "reward_std": 0.1301,
+            "advantage_std": 0.1301,
+            "policy_entropy": 0.538,
+            "kl_from_ref": 0.962,
+            "grad_norm": 0.0,
+            "avg_length": 5356.58,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 482,
+            "pass_at_1": 0.535,
+            "avg_reward": 0.5347,
+            "reward_std": 0.1732,
+            "advantage_std": 0.1732,
+            "policy_entropy": 0.536,
+            "kl_from_ref": 0.964,
+            "grad_norm": 0.0043,
+            "avg_length": 5453.0,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 483,
+            "pass_at_1": 0.534,
+            "avg_reward": 0.6446,
+            "reward_std": 0.1604,
+            "advantage_std": 0.1604,
+            "policy_entropy": 0.534,
+            "kl_from_ref": 0.966,
+            "grad_norm": 0.0,
+            "avg_length": 5551.16,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 484,
+            "pass_at_1": 0.533,
+            "avg_reward": 0.4933,
+            "reward_std": 0.0993,
+            "advantage_std": 0.0993,
+            "policy_entropy": 0.532,
+            "kl_from_ref": 0.968,
+            "grad_norm": 0.0,
+            "avg_length": 5651.08,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 485,
+            "pass_at_1": 0.532,
+            "avg_reward": 0.5876,
+            "reward_std": 0.1872,
+            "advantage_std": 0.1872,
+            "policy_entropy": 0.53,
+            "kl_from_ref": 0.97,
+            "grad_norm": 0.0,
+            "avg_length": 5752.8,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 486,
+            "pass_at_1": 0.531,
+            "avg_reward": 0.5567,
+            "reward_std": 0.0939,
+            "advantage_std": 0.0939,
+            "policy_entropy": 0.528,
+            "kl_from_ref": 0.972,
+            "grad_norm": 0.0,
+            "avg_length": 5856.35,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 487,
+            "pass_at_1": 0.53,
+            "avg_reward": 0.5985,
+            "reward_std": 0.1029,
+            "advantage_std": 0.1029,
+            "policy_entropy": 0.526,
+            "kl_from_ref": 0.974,
+            "grad_norm": 0.024,
+            "avg_length": 5961.76,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 488,
+            "pass_at_1": 0.529,
+            "avg_reward": 0.5128,
+            "reward_std": 0.1147,
+            "advantage_std": 0.1147,
+            "policy_entropy": 0.524,
+            "kl_from_ref": 0.976,
+            "grad_norm": 0.0147,
+            "avg_length": 6069.07,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 489,
+            "pass_at_1": 0.528,
+            "avg_reward": 0.6171,
+            "reward_std": 0.1144,
+            "advantage_std": 0.1144,
+            "policy_entropy": 0.522,
+            "kl_from_ref": 0.978,
+            "grad_norm": 0.0,
+            "avg_length": 6178.32,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 490,
+            "pass_at_1": 0.527,
+            "avg_reward": 0.6025,
+            "reward_std": 0.1502,
+            "advantage_std": 0.1502,
+            "policy_entropy": 0.52,
+            "kl_from_ref": 0.98,
+            "grad_norm": 0.0,
+            "avg_length": 6289.52,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 491,
+            "pass_at_1": 0.526,
+            "avg_reward": 0.6429,
+            "reward_std": 0.1531,
+            "advantage_std": 0.1531,
+            "policy_entropy": 0.518,
+            "kl_from_ref": 0.982,
+            "grad_norm": 0.0117,
+            "avg_length": 6402.74,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 492,
+            "pass_at_1": 0.525,
+            "avg_reward": 0.5959,
+            "reward_std": 0.063,
+            "advantage_std": 0.063,
+            "policy_entropy": 0.516,
+            "kl_from_ref": 0.984,
+            "grad_norm": 0.0086,
+            "avg_length": 6517.99,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 493,
+            "pass_at_1": 0.524,
+            "avg_reward": 0.5402,
+            "reward_std": 0.1732,
+            "advantage_std": 0.1732,
+            "policy_entropy": 0.514,
+            "kl_from_ref": 0.986,
+            "grad_norm": 0.0,
+            "avg_length": 6635.31,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 494,
+            "pass_at_1": 0.523,
+            "avg_reward": 0.5266,
+            "reward_std": 0.1788,
+            "advantage_std": 0.1788,
+            "policy_entropy": 0.512,
+            "kl_from_ref": 0.988,
+            "grad_norm": 0.0282,
+            "avg_length": 6754.74,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 495,
+            "pass_at_1": 0.522,
+            "avg_reward": 0.6565,
+            "reward_std": 0.1087,
+            "advantage_std": 0.1087,
+            "policy_entropy": 0.51,
+            "kl_from_ref": 0.99,
+            "grad_norm": 0.0,
+            "avg_length": 6876.33,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 496,
+            "pass_at_1": 0.521,
+            "avg_reward": 0.6099,
+            "reward_std": 0.1268,
+            "advantage_std": 0.1268,
+            "policy_entropy": 0.508,
+            "kl_from_ref": 0.992,
+            "grad_norm": 0.0,
+            "avg_length": 7000.1,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 497,
+            "pass_at_1": 0.52,
+            "avg_reward": 0.5782,
+            "reward_std": 0.1503,
+            "advantage_std": 0.1503,
+            "policy_entropy": 0.506,
+            "kl_from_ref": 0.994,
+            "grad_norm": 0.0091,
+            "avg_length": 7126.11,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 498,
+            "pass_at_1": 0.519,
+            "avg_reward": 0.6031,
+            "reward_std": 0.1968,
+            "advantage_std": 0.1968,
+            "policy_entropy": 0.504,
+            "kl_from_ref": 0.996,
+            "grad_norm": 0.0,
+            "avg_length": 7254.38,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 499,
+            "pass_at_1": 0.518,
+            "avg_reward": 0.5275,
+            "reward_std": 0.1596,
+            "advantage_std": 0.1596,
+            "policy_entropy": 0.502,
+            "kl_from_ref": 0.998,
+            "grad_norm": 0.0,
+            "avg_length": 7384.95,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          },
+          {
+            "step": 500,
+            "pass_at_1": 0.517,
+            "avg_reward": 0.5345,
+            "reward_std": 0.1025,
+            "advantage_std": 0.1025,
+            "policy_entropy": 0.5,
+            "kl_from_ref": 1.0,
+            "grad_norm": 0.0,
+            "avg_length": 7517.88,
+            "cheat_rate": 0.0,
+            "is_collapsed": true
+          }
+        ],
+        "pre_collapse_stats": {
+          "avg_reward": {
+            "mean": 0.577,
+            "count": 43800
+          },
+          "reward_std": {
+            "mean": 0.134,
+            "count": 43800
+          },
+          "policy_entropy": {
+            "mean": 1.28,
+            "count": 43800
+          },
+          "kl_from_ref": {
+            "mean": 0.22,
+            "count": 43800
+          },
+          "grad_norm": {
+            "mean": 0.008,
+            "count": 43800
+          },
+          "avg_length": {
+            "mean": 50.0,
+            "count": 43800
+          },
+          "cheat_rate": {
+            "mean": 0.0,
+            "count": 43800
+          },
+          "pass_at_1": {
+            "mean": 0.58,
+            "count": 43800
+          }
+        },
+        "post_collapse_stats": {
+          "avg_reward": {
+            "mean": 0.712,
+            "count": 56200
+          },
+          "reward_std": {
+            "mean": 0.14,
+            "count": 56200
+          },
+          "policy_entropy": {
+            "mean": 0.78,
+            "count": 56200
+          },
+          "kl_from_ref": {
+            "mean": 0.72,
+            "count": 56200
+          },
+          "grad_norm": {
+            "mean": 0.008,
+            "count": 56200
+          },
+          "avg_length": {
+            "mean": 1503.0262,
+            "count": 56200
+          },
+          "cheat_rate": {
+            "mean": 0.0,
+            "count": 56200
+          },
+          "pass_at_1": {
+            "mean": 0.657,
+            "count": 56200
+          }
+        }
+      }
+    }
+  ],
+  "summary": [
+    {
+      "id": "C1_reward_hacking",
+      "name": "奖励作弊 (Reward Hacking)",
+      "latency": "57.7 步",
+      "best_metric": "policy_entropy",
+      "best_detect_rate": "100.0%"
+    },
+    {
+      "id": "C2_kl_explosion",
+      "name": "KL 散度爆炸",
+      "latency": "63.8 步",
+      "best_metric": "policy_entropy",
+      "best_detect_rate": "100.0%"
+    },
+    {
+      "id": "C3_advantage_vanishing",
+      "name": "优势消失 (std=0)",
+      "latency": "50.7 步",
+      "best_metric": "kl_from_ref",
+      "best_detect_rate": "100.0%"
+    },
+    {
+      "id": "C4_entropy_collapse",
+      "name": "策略熵坍缩",
+      "latency": "28.6 步",
+      "best_metric": "policy_entropy",
+      "best_detect_rate": "100.0%"
+    },
+    {
+      "id": "C5_grad_explosion",
+      "name": "梯度爆炸",
+      "latency": "38.3 步",
+      "best_metric": "policy_entropy",
+      "best_detect_rate": "100.0%"
+    },
+    {
+      "id": "C6_reward_stagnation",
+      "name": "奖励停滞 (Plateau)",
+      "latency": "16.1 步",
+      "best_metric": "policy_entropy",
+      "best_detect_rate": "100.0%"
+    },
+    {
+      "id": "C7_length_exploitation",
+      "name": "长度利用 (Padding)",
+      "latency": "27.5 步",
+      "best_metric": "policy_entropy",
+      "best_detect_rate": "100.0%"
+    }
+  ]
+}

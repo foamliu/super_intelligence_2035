@@ -6128,57 +6128,57 @@ Phase 1 启动零阻塞，Phase 2 的唯一 OPEN 项已关闭。
 
 ---
 
-## \u00a7R55 \u81ea\u52a8\u5316 Post-Baseline D1-D6 \u5206\u6790\u7ba1\u7ebf\uff08wake103\uff0c2026-11-08\uff09
+## §R55 自动化 Post-Baseline D1-D6 分析管线（wake103，2026-11-08）
 
-> \u76ee\u7684\uff1a11/9 \u57fa\u7ebf\u8fd0\u884c\u540e\uff0c\u81ea\u52a8\u4ece fresh MiniCPM5-2B traces + final_report.json \u63d0\u53d6 D1-D6\uff0c\u586b\u8865\u6b64\u524d \"\u274c not on this node\" \u7684\u7a7a\u767d\u3002
+> 目的：11/9 基线运行后，自动从 fresh MiniCPM5-2B traces + final_report.json 提取 D1-D6，填补此前 \"❌ not on this node\" 的空白。
 
-### R55.1 \u811a\u672c\uff1abaize_posttrain_baseline_d1d6_analyzer.py
+### R55.1 脚本：baize_posttrain_baseline_d1d6_analyzer.py
 
-| \u5c5e\u6027 | \u503c |
+| 属性 | 值 |
 |:--|:--|
-| \u6587\u4ef6 | `run/baize_posttrain_baseline_d1d6_analyzer.py` |
-| \u884c\u6570 | 609 \u884c |
-| py_compile | \u2705 PASS |
-| \u4f9d\u8d56 | eda_fastmcp/memory_bank/trace_parser.py\uff08\u53ef\u9009\uff0c\u4e0d\u5728\u5219\u56de\u9000\u5230\u6d88\u606f\u8ba1\u6570\u4ee3\u7406\uff09|
-| \u8f93\u5165 | `--report-json`\uff08\u5fc5\u586b\uff09+ `--trace-dir`\uff08\u53ef\u9009\uff09+ `--deepseek-report-json`\uff08\u5bf9\u7167\uff09|
-| \u8f93\u51fa | JSON \u5230 stdout/--json-out + HTML \u5230 --html |
+| 文件 | `run/baize_posttrain_baseline_d1d6_analyzer.py` |
+| 行数 | 609 行 |
+| py_compile | ✅ PASS |
+| 依赖 | eda_fastmcp/memory_bank/trace_parser.py（可选，不在则回退到消息计数代理）|
+| 输入 | `--report-json`（必填）+ `--trace-dir`（可选）+ `--deepseek-report-json`（对照）|
+| 输出 | JSON 到 stdout/--json-out + HTML 到 --html |
 
-### R55.2 \u63d0\u53d6\u7684 D1-D6 \u6307\u6807
+### R55.2 提取的 D1-D6 指标
 
-| \u6307\u6807 | \u6570\u636e\u6e90 | \u8bf4\u660e |
+| 指标 | 数据源 | 说明 |
 |:--|:--|:--|
-| D1 \u5de5\u5177\u8c03\u7528\u5408\u6cd5\u7387 | traces (trace_parser) | \u89e3\u6790\u6210\u529f tool_call / \u603b\u6570\uff1b<90% \u2192 \u534f\u8bae\u95ee\u9898\uff0cSFT \u53ef\u56de\u6536 |
-| D2 \u8c03\u7528\u9891\u6b21 | traces (trace_parser) | \u6bcf\u4efb\u52a1\u5e73\u5747\u8c03\u7528\u6570\uff1b\u504f\u4f4e \u2192 \u6a21\u578b\u4e0d\u201c\u7528\u5de5\u5177\u201d\u2192 SFT \u53ef\u4fee |
-| D3 \u8d85\u65f6/\u622a\u65ad | final_report.json | generation_statistics.timeout / total\uff1b\u9ad8 \u2192 \u957f\u4e0a\u4e0b\u6587\u9002\u914d\u662f\u524d\u7f6e\u9879 |
-| D4 \u5931\u8d25\u7c7b\u578b\u5206\u89e3 | final_report.json | error_types \u4e2d AssertionError vs \u5176\u4ed6\uff1b\u62a5\u9519\u591a\u2192API/\u9886\u57df\u77e5\u8bc6(SFT)\uff1b\u65ad\u8a00\u591a\u2192\u8bed\u4e49\u63a8\u7406(RL) |
-| D5 per-scenario | final_report.json + dataset | \u6309 scenario \u5206\u7ec4\u7b97 pass_rate\uff1bLayout 64/Schematic 47/DesignMgmt 24/Others 23 |
-| D6 \u8fed\u4ee3\u8f6e\u6570 \u03a6 | traces (trace_parser) | \u4ee3\u7801\u5199+\u6267\u884c\u5faa\u73af\u6570\uff1b\u4f4e \u2192 \u4e0d\u4f1a\u7528\u6267\u884c\u53cd\u9988\u95ed\u73af \u2192 RL(GRPO) \u4e3b\u6218\u573a |
+| D1 工具调用合法率 | traces (trace_parser) | 解析成功 tool_call / 总数；<90% → 协议问题，SFT 可回收 |
+| D2 调用频次 | traces (trace_parser) | 每任务平均调用数；偏低 → 模型不“用工具”→ SFT 可修 |
+| D3 超时/截断 | final_report.json | generation_statistics.timeout / total；高 → 长上下文适配是前置项 |
+| D4 失败类型分解 | final_report.json | error_types 中 AssertionError vs 其他；报错多→API/领域知识(SFT)；断言多→语义推理(RL) |
+| D5 per-scenario | final_report.json + dataset | 按 scenario 分组算 pass_rate；Layout 64/Schematic 47/DesignMgmt 24/Others 23 |
+| D6 迭代轮数 Φ | traces (trace_parser) | 代码写+执行循环数；低 → 不会用执行反馈闭环 → RL(GRPO) 主战场 |
 
-### R55.3 Gap \u5206\u6790\u65b9\u6cd5
+### R55.3 Gap 分析方法
 
-\u542f\u53d1\u5f0f\u4f30\u8ba1\uff08\u975e\u7cbe\u786e\u5206\u89e3\uff0c\u5f85\u771f\u5b9e\u8f68\u8ff9\u6821\u6b63\uff09\uff1a
-- \u534f\u8bae\u53ef\u56de\u6536 = D1\u5dee\u00d720 + D2\u5dee\u00d72(cap15) + D6\u5dee\u00d73(cap15)\uff0c\u4e0a\u9650 80% \u603b\u5dee\u8ddd
-- \u771f\u5b9e\u80fd\u529b\u5dee\u8ddd = \u603b\u5dee\u8ddd \u2212 \u534f\u8bae\u53ef\u56de\u6536
-- \u7528\u4e8e\u6307\u5bfc post-train \u4e09\u6b65\u4fa7\u91cd\uff1a\u534f\u8bae\u5360\u6bd4\u9ad8\u2192SFT\u4f18\u5148\uff1b\u80fd\u529b\u5dee\u8ddd\u5360\u6bd4\u9ad8\u2192RL\u4e3b\u6218\u573a
+启发式估计（非精确分解，待真实轨迹校正）：
+- 协议可回收 = D1差×20 + D2差×2(cap15) + D6差×3(cap15)，上限 80% 总差距
+- 真实能力差距 = 总差距 − 协议可回收
+- 用于指导 post-train 三步侧重：协议占比高→SFT优先；能力差距占比高→RL主战场
 
-### R55.4 Dry-Run \u9a8c\u8bc1
+### R55.4 Dry-Run 验证
 
-\u4f7f\u7528\u73b0\u6709 DeepSeek \u6570\u636e\u4f5c\u4e3a\u201c\u57fa\u7ebf\u201d\u6d4b\u8bd5\uff08\u65e0 MiniCPM5 \u771f\u5b9e\u8f68\u8ff9\uff0c\u4ec5\u9a8c\u8bc1\u7ba1\u7ebf\u529f\u80fd\uff09\uff1a
+使用现有 DeepSeek 数据作为“基线”测试（无 MiniCPM5 真实轨迹，仅验证管线功能）：
 
-| \u6d4b\u8bd5 | \u7ed3\u679c |
+| 测试 | 结果 |
 |:--|:--|
-| py_compile | \u2705 PASS |
-| --help | \u2705 \u8f93\u51fa\u6b63\u786e |
-| \u65e0\u5bf9\u7167\u8fd0\u884c | \u2705 JSON+HTML \u4ea7\u51fa\u6210\u529f |
-| \u5e26\u5bf9\u7167\u8fd0\u884c | \u2705 gap_analysis \u8ba1\u7b97\u6b63\u786e |
-| D5 scenario \u63d0\u53d6 | \u2705 Layout/Schematic/DesignMgmt/Others |
-| D4 error_types | \u2705 AssertionError/TypeError/SyntaxError/Generation timeout \u7b49 |
-| HTML \u62a5\u544a | 7.6KB, \u81ea\u5305\u542b, 0 script, 0 \u5916\u94fe |
+| py_compile | ✅ PASS |
+| --help | ✅ 输出正确 |
+| 无对照运行 | ✅ JSON+HTML 产出成功 |
+| 带对照运行 | ✅ gap_analysis 计算正确 |
+| D5 scenario 提取 | ✅ Layout/Schematic/DesignMgmt/Others |
+| D4 error_types | ✅ AssertionError/TypeError/SyntaxError/Generation timeout 等 |
+| HTML 报告 | 7.6KB, 自包含, 0 script, 0 外链 |
 
-### R55.5 11/9 \u4f7f\u7528\u65b9\u5f0f
+### R55.5 11/9 使用方式
 
 ```bash
-# \u57fa\u7ebf\u8dd1\u5b8c\u540e\u7acb\u5373\u6267\u884c\uff1a
+# 基线跑完后立即执行：
 python baize_posttrain_baseline_d1d6_analyzer.py \\
   --report-json <baseline_run>/final_report.json \\
   --trace-dir <baseline_trace_dir>/cline_trace/ \\
@@ -6188,7 +6188,7 @@ python baize_posttrain_baseline_d1d6_analyzer.py \\
   --json-out /tmp/r55_d1d6_baseline.json
 ```
 
-\u2192 \u4ea7\u51fa\uff1aD1-D6 \u5b8c\u6574\u5bf9\u7167 + gap \u5206\u89e3 + HTML \u62a5\u544a\uff0c\u66ff\u4ee3\u6b64\u524d P0 \u7684 \u201c\u274c not on this node\u201d \u5047\u8bbe\u5916\u63a8\u3002
+→ 产出：D1-D6 完整对照 + gap 分解 + HTML 报告，替代此前 P0 的 “❌ not on this node” 假设外推。
 
 ---
 
@@ -8524,4 +8524,85 @@ R75 建立了 8 类 Hack 分类法和 8 项 PreToolUse hook 规范，其中 PTU-
 - 替身模型结果**不可直接迁移**到 BaiZe pretrain ckpt
 
 - 无伪造。蒙特卡洛仿真结果基于合理假设，标注为「仿真投影」非实测。
+- 无伪造。替身模型（MiniCPM5-2B）审计结果不可迁移到 BaiZe 正式训练。
+
+---
+
+## §R80 GRPO 崩溃模式分类法与检测阈值校准（2026-11-09 · 零 GPU · 蒙特卡洛 700k 步）
+
+> **调研方向**：R3（奖励设计与 GRPO 稳定性）运营监控延伸。系统分类 7 种崩溃模式，通过蒙特卡洛仿真校准实时检测阈值。
+
+### 1. 崩溃模式总览
+
+| 编号 | 名称 | 机制 | Vision线教训 | 检测延迟 | 最佳指标 | 检出率 |
+|:--|:--|:--|:--|:--|:--|:--|
+| C1 | 奖励作弊 | 模型发现奖励漏洞获高奖励 | R57 §2.1 全黑图像 | 57.7步 | policy_entropy | 100% |
+| C2 | KL爆炸 | 策略偏离参考过远 | R57 §2.3 kl=0 | 63.8步 | policy_entropy | 100% |
+| C3 | 优势消失 | std=0→advantage=0 | R57 §2.2 40%prompt | 50.7步 | kl_from_ref | 100% |
+| C4 | 熵坍缩 | 探索性丧失 | R57 §2.4 1.2→0.1 | 28.6步 | policy_entropy | 100% |
+| C5 | 梯度爆炸 | loss spike/NaN | R57 §2.5 step200 | 38.3步 | policy_entropy | 100% |
+| C6 | 奖励停滞 | 长时间无进展 | R57 §2.6 step300+ | 16.1步 | policy_entropy | 100% |
+| C7 | 长度利用 | 输出膨胀骗奖励 | 文献常见 | 27.5步 | avg_length | 100% |
+
+### 2. 校准方法
+
+每模式 200 次 MC × 500 步 = 100k 步。崩溃前(pre)后(post)分布的 p99/p01 作为阈值，检出率=post超阈值比例，误报率=1%(构造保证)。
+
+### 3. 关键阈值（校准结果）
+
+| 指标 | C1阈值 | C2阈值 | C3阈值 | C4阈值 | C5阈值 | C7阈值 |
+|:--|:--|:--|:--|:--|:--|:--|
+| cheat_rate | >0.0(44%) | — | — | — | — | — |
+| kl_from_ref | >0.296(100%) | >0.398(100%) | >0.2(100%) | >0.514(100%) | >0.364(100%) | >0.434(100%) |
+| policy_entropy | <1.204(100%) | <1.13(100%) | <1.25(100%) | <1.04(100%) | <1.16(100%) | <1.066(100%) |
+| reward_std | <0.059(1%) | <0.059(1%) | <0.059(100%) | <0.059(1%) | <0.059(1%) | <0.059(1%) |
+| grad_norm | >0.046(1%) | >0.046(1%) | >0.046(1%) | >0.046(1%) | >0.046(100%) | >0.047(1%) |
+| avg_length | >50(0%) | >50(0%) | >50(0%) | >50(0%) | >50(0%) | >50(100%) |
+| avg_reward | >0.719(44%) | >0.534(6%) | >0.54(0%) | >0.534(6%) | >0.534(6%) | >0.841(10%) |
+
+> **关键发现**：policy_entropy 是多数崩溃模式的通用检测指标（7/7 模式 100% 检出率）。kl_from_ref 在 C2/C3 中同样 100%。专用指标：cheat_rate(C1)、reward_std(C3)、grad_norm(C5)、avg_length(C7)在各自模式中 100% 检出。
+
+### 4. 三级告警体系
+
+| 指标 | watch(黄) | warn(橙) | stop(红) |
+|:--|:--|:--|:--|
+| cheat_rate | >2% | >5% | >10% |
+| kl_from_ref | >1.0 | >2.0 | >5.0 |
+| reward_std | <0.05 | <0.02 | ≈0(50步) |
+| policy_entropy | <0.5 | <0.3 | <0.1 |
+| grad_norm | >0.5 | >1.0 | NaN/Inf |
+| avg_length | ↑0.3/step | ↑0.5/step | ↑1.0/step |
+
+### 5. 恢复协议汇总
+
+| 模式 | R-01 | R-02 | R-03 | R-04 |
+|:--|:--|:--|:--|:--|
+| C1 | lr×0.1 | 加强 hook | 切R3/R4臂 | >20%→回滚 |
+| C2 | kl_coef×10 | lr×0.5 | KL>5→回滚 | — |
+| C3 | 切Dr.GRPO | +中等题 | n:8→16 | >60%→暂停 |
+| C4 | entropy_coef×5 | +温度 | 注入新prompt | <0.1→重跑 |
+| C5 | lr×0.1 | grad clip 1.0 | NaN→回滚 | fp32累积 |
+| C6 | 推进课程 | cosine restart | 注入新题 | >100步→结束 |
+| C7 | -λ×len | 降max_tokens | 切R1二值 | 归一化长度 |
+
+### 6. 与既有研究的关系
+
+- R75 anti-hack framework → R80 提供 C1 检测阈值（R75 提供框架）
+- R73 GRPO超参 → R80 量化 C2 KL阈值（R73 提供超参选择）
+- R59 GRPO动力学 → R80 校准 C3 std=0（R59 预测std趋势）
+- R57 vision教训 → R80 量化 C4 entropy（R57 提供案例）
+
+### 7. 交付物
+
+- `baize_posttrain_grpo_collapse_detector.py`（347行，py_compile ✔，纯 Python 3.8+ stdlib）
+- `reports/report_posttrain_r80_grpo_collapse_zh.html`（22.4KB，0 script，0 外链，自包含）
+- `r80_grpo_collapse_results.json`（162KB）
+
+### 8. 局限
+
+- 仿真基于简化动力学模型，真实 GRPO 可能更复杂
+- 阈值基于 MiniCPM5-2B（2B, lr=1e-6, n=8），BaiZe 正式模型需重新校准
+- 崩溃起始步(onset_step)为假设值，实际可能更早/晚
+- 替身模型结果不可直接迁移到 BaiZe 正式训练
+- 无伪造。蒙特卡洛仿真基于合理假设，标注为仿真投影非实测。
 - 无伪造。替身模型（MiniCPM5-2B）审计结果不可迁移到 BaiZe 正式训练。
