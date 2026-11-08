@@ -1,4 +1,54 @@
 # BAIZE_PRETRAIN_2B_TASK.md
+### 🚨 运维令 · 2026-11-08 15:3x（**全量 eval 均值 37.40% 与历史 51.5–57.9% 严重不符 —— 必须查清，不是测完就算**）· 用户直令 · 最高优先 · 未完成
+
+> **用户原话**：「pretrain 全量均值这么低吗，比原来大幅降低。」「需要安排 pretrain 查一下。不是测了就完了。」
+
+#### 0. 矛盾在哪（先看清，别急着解释）
+
+| 来源 | 配置 | Avg |
+|:--|:--|:--|
+| `reports/report_pretrain_llamacpp_scaling_60k_100k_zh.html`（2026-11-06） | llama.cpp / GGUF F16 / **8 集** / `limit=100` | **51.50%（10k）→ 57.88%（90k）** |
+| 你本轮上报 | **Avg7**（7/8 完成，不含 hellaswag） | **37.40%** |
+
+**差 14–20 pp。** 这远超 `limit=100` 时 ±4.5% 的 stderr，不是波动。
+
+粗算：若 hellaswag≈70%，8 集折算 = (37.4×7+70)/8 ≈ **41.5%** —— **仍比历史低 10 pp 以上**。**「7 集 vs 8 集」解释不了全部差异。**
+
+#### 1. 必须查清的 6 件事（缺一条本令不算完成）
+
+**① 分集明细**：把 7 个已完成集各自的 acc **逐集列出**（arc_challenge / arc_easy / boolq / hellaswag / openbookqa / piqa / sciq / winogrande 里已完成的那 7 个），标明哪个是缺的。**不要只给 Avg7 一个数。**
+
+**② 每集样本数**：是 `limit=100` 还是全量？各自 n 是多少？`results.json` 里的 `n-samples` 字段直接抄出来。
+
+**③ 后端与精度**：本轮是 llama.cpp+GGUF 还是 HF+bf16？GGUF 是哪个构建/哪个 `_fixed_` 版本？**如果与历史报告后端不同，这个对比不成立，必须明说。**
+
+**④ fewshot / prompt 模板**：`num_fewshot` 是多少？prompt template 有没有换过？与历史 60k–100k 那份报告是否完全同口径？
+
+**⑤ hellaswag 的真实进度**：`HS 20.8%` 具体是 8348/40180 的什么单位（doc 数？请求数？）。它跑完后 8 集均值预计是多少？
+
+**⑥ 与历史同 ckpt 的直接对比**：历史报告里有 `iter_100000` 的 8 集成绩。**请调出 `iter_100000` 在本轮的分数，与历史 `iter_100000` 逐集比对。** 同一个 ckpt、同一套题，差多少一目了然 —— **这是最有力的判据。**
+
+#### 2. 如果确认真的掉到 37%（按此顺序排查）
+
+1. **先查 ckpt 本身**：对比 `iter_100000` 与 `iter_128000` 的 loss / grad-norm 曲线，看是否有异常跳变；
+2. **查 GGUF 转换**：历史上出过 `Duplicated key` 覆写 hybrid 层模式数组的 bug（`convert_hf_to_gguf.py`），导致 Δacc 16–18 pp。**确认当前用的 GGUF 是 `_fixed_` 版本，且转换日志无 warning。**
+3. **查评测脚本口径**：是否某次改动动了 `num_fewshot` / `task` 列表 / `--limit`。
+4. **查 node0 内存带宽争抢**：你自己 #1656 诊断过「node0 上 3 server 共享内存带宽=3x 慢」，**慢不等于错**，但若中途有 client 被 SIGKILL/误杀，可能产出半截结果被当成完整结果统计。
+
+#### 3. 交付要求
+
+- **`reports/report_pretrain_eval_avg7_anomaly_zh.html`**（中文单文件 0 脚本 0 外链），必含：分集对照表（本轮 vs 历史 iter_100000）、口径差异说明、结论（是**口径问题**还是**真实能力下降**）。
+- **结论必须二选一并给证据**：
+  - **A. 口径差异**（如：limit=100 vs 全量、后端不同、fewshot 不同）→ 列出每一项差异及其对均值的量化影响；
+  - **B. 真实下降** → 给出根因与下一步（是否需暂停训练/回滚 ckpt）。
+- 🚫 **不许只写「Avg7=37.40%，待后续观察」** —— 这就是用户批评的「测了就完了」。
+
+#### 4. 顺带：phase2 稳定性（相关但独立）
+
+你在 #1691/#1692/#1694 连续三轮修 phase2（`get_port()` / `find_free_port()` / `port: unbound variable`），且 **#1694 误杀 chunk0_missing，丢失 7.7 小时**。
+**在这种状态下产出的数字可信度存疑。** 请在报告里说明：**当前 7 集结果是在 phase2 稳定之前还是之后产出的、有无被误杀重启过的 chunk。**
+
+
 
 ### 📌 常驻 · 论文观察日报（research 线产出 · 2026-11-07 用户令）
 
@@ -42,9 +92,8 @@
 
 
 
-> 📦 §运维令·2026-11-07 09:1x（11w 检查点 8 集评测：去 --limit 100 改全量 + 扫线程/batch）**✅ 已交付 #1570** → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：探测矩阵 8/8 全完成(8/16/32/80 线程 × bs1/bs2)，报告 reports/report_pretrain_cpu_eval_thread_scaling_zh.html(9427B/5表/0外链)；**核心发现 = 16 线程饱和(SSM 顺序扫描不可并行)，80 线程 bs1 反变慢，80×bs2 最优 1.36x**；全量 eval 已后台启动(16 线程 bs1 无 limit)。需要时再读。
+> 📦 §运维令·2026-11-07 09:1x（11w 检查点 8 集评测：去 `--limit 100` 改全量 + 扫线程/batch）**✅ 已交付 #1570**；§2026-10-30 22:2x（1M 长上下文 + 95% 大海捞针报告，`report_pretrain_1m_needle_zh.html` 33.7KB）**✅ 已交付 #983** → 两者原文归档 `run/ARCHIVE_OPERATOR_PRETRAIN.md`。**结论**：① 探测矩阵 8/8 完成，**16 线程饱和（SSM 顺序扫描不可并行）、80 线程 bs1 反变慢、80×bs2 最优 1.36x** → `report_pretrain_cpu_eval_thread_scaling_zh.html`；② 全量 eval 已启动（16 线程 bs1 无 limit）。需要时再读。
 
-### [已完成] 🚨 2026-10-30 22:2x 运维直令：写「1M 长上下文 + 95% 大海捞针」技术报告 · ✅ 已完成（#983 2026-10-30 23:17 交付 `reports/report_pretrain_1m_needle_zh.html` 33,667B/6节+总结路线图/0 script/0外链，覆盖现状基线-怎么做到1M-怎么到>95% needle-实验矩阵6组-取舍建议-与Qwen/Llama3对比；commit d0424c1f1）→ 原文归档到 `run/ARCHIVE_OPERATOR_PRETRAIN.md`「归档 2026-10-31」节。需要时再读。
 
 
 
@@ -59,9 +108,11 @@
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
-> 📦 §运维令 2026-11-05 18:2x（继续评测 60k–100k 五个检查点 + 10 点常识曲线 + 700k 重拟合 + 报告 v2）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md「归档 2026-11-06 第一批」节；**结论**：✅ 10/10 ckpt(10k–100k)全评测，100k Avg(harness)=57.75%/raw=54.75%，10点 harness Avg 51.50→52.00→53.00→55.12→54.25→54.25→56.00→57.00→57.88→57.75%，700k 对数拟合 62.8%/R²=0.860（vs 5点 60.16%/R²=0.792，数据点翻倍结论强化；幂律发散 pred 161% 退化），v2 报告 report_pretrain_llamacpp_scaling_60k_100k_zh.html(21087B)幂等 PASS，gen_llamacpp_scaling_report.py TARGET_ITERS=10 动态，watcher 自治 commit 173c848a8 已 push，gguf_iter_{10k..100k}_fixed_8set/results.json 10/10 全在无NaN。需要时再读。
+> 📦 **历史基线（§0 与 §1⑥ 的对照源）** —— 2026-11-05/06 llama.cpp 8 集能力曲线两批已合并归档 → `run/ARCHIVE_OPERATOR_PRETRAIN.md`「归档 2026-11-06 第一批」+「2026-11-05 第七批」。**结论**：① 10/10 ckpt(10k–100k) 全评测，10 点 harness Avg `51.50→52.00→53.00→55.12→54.25→54.25→56.00→57.00→57.88→57.75%`；② 100k 双口径 **harness 57.75% / raw 54.75%**；③ 700k 对数拟合 **62.8% / R²=0.860**（幂律发散 pred 161% 已判退化）；④ `sciq` 全恢复非 NaN（证实 sciq=0 系 HF/bf16 路径问题，非 ckpt 权重）；⑤ **口径 = 8 集 / zero-shot / `limit=100` / GGUF F16 / `-t 8`**；⑥ 结果落盘 `gguf_iter_{10k..100k}_fixed_8set/results.json` 10/10 全在；生成器 `gen_llamacpp_scaling_report.py`（TARGET_ITERS=10 动态）。**⚠️ 本轮 37.40% 必须与此表同口径比对。**
 
-### [已完成] 🚨 2026-11-05 09:0x 运维直令：llama.cpp 评测全部 checkpoint 8 集 + 能力曲线 + 700k 预测 · ✅ 已完成（#1403 2026-11-05 16:38 交付 `reports/report_pretrain_llamacpp_scaling_zh.html` 17777B/6节，5/5 ckpt Avg 51.50%→52.00%→53.00%→55.12%→54.25%，700k 对数拟合 R²=0.792→外推 60.16%（不确定度明示），sciq 全恢复非NaN 证实非ckpt权重问题，生成器 gen_llamacpp_scaling_report.py 514行，5/5 results.json 落盘 gguf_iter_*_fixed_8set/；commit b8669b0de+bd812d0c0）→ 原文归档到 `run/ARCHIVE_OPERATOR_PRETRAIN.md`「归档 2026-11-05 第七批」节。需要时再读。
+
+> 📦 §运维令 2026-11-04 22:1x（llama.cpp 调试每环节落盘 + 清理残留）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md「归档 2026-11-05 第六批」节；**结论**：✅ A-E 检查点全有结论(A/B/D=PASS, C=FAIL dt-clamp 影响小 1/64 head), 残留已清(llama-server 11→0, GGUF 34G→13G), 根因已定位。需要时再读。
+
 
 > 📦 §运维令 2026-11-04 22:1x（llama.cpp 调试每环节落盘 + 清理残留）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md「归档 2026-11-05 第六批」节；**结论**：✅ A-E 检查点全有结论(A/B/D=PASS, C=FAIL dt-clamp 影响小 1/64 head), 残留已清(llama-server 11→0, GGUF 34G→13G), 根因已定位。需要时再读。
 
