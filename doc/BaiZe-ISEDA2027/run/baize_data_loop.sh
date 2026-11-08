@@ -114,6 +114,9 @@ waiting_is_1() {
     grep -qE '^WAITING:[[:space:]]*1' "$MEMORY" 2>/dev/null
 }
 
+# CLINE_BIN_CHECK_V268: 保证 cline 在 PATH（setsid 重启时环境可能不全）
+export PATH="/home/app.e0031982/.npm-global/bin:$PATH"
+if ! command -v cline >/dev/null 2>&1; then echo "[loop] FATAL: cline not found in PATH=$PATH"; exit 127; fi
 while true; do
     echo "[loop] $(date '+%F %T') wake up, invoking cline ..."
     if [[ -f "$TASK_MD" ]]; then

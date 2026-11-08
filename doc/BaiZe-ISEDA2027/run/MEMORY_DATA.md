@@ -18,18 +18,19 @@ WAITING: 1
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        🔄运维令11-07 08:5x代码语料放行ROI下载进行中(8源~25.15GB后台下载PID1920377) → WAITING=1
-已完成:       ✅85M;✅10-31报告;✅09:4x报告;✅09:2x长上下文10/10(249.48GiB);✅13:2x#2 RL报告;✅13:2x#1 B类12/12(78.73GiB);✅11-07 ROI评估表已写DATA_MAPPING.md §G
-当前动作:     唤醒1385(2026-11-07 08:55):执行11-07运维令→①git fetch(代理)0behind/0ahead;②检测到TASK.md新令(代码语料放行ROI下载);③HF API核实10候选体量;④ROI评估表(5维度排序)写DATA_MAPPING.md §G(8下载/3跳过/1报运维);⑤下载脚本roi_download_20261107.sh已启动setsid后台PID1920377(nice -n10/--max-workers4/代理/断点续传);⑥LongBlocks下载中(9/39 files ~23%);⑦跳过project_gutenberg(冗余whole-books)+kl3m-data(域不匹配)+terminal-bench-2(401);⑧stack-v3-train(15.9TB)报运维待批
-下一步:       等下载完成→du -sb+find+incomplete三项实测回填DATA_MAPPING.md §G.4→commit data下载:→IA03/terminal-bench+LongBench-v2纳入去污染黑名单
-阻塞:         无(下载后台进行中,本轮~25GB远低于1.5TB上限)
+PHASE:        🔄stack-v3-train 2TB下载 batch1进行中(PID1659589,part-000*~006*,700shard~289GB) → WAITING=1
+已完成:       ✅85M;✅10-31报告;✅09:4x报告;✅09:2x长上下文10/10(249.48GiB);✅13:2x#2 RL报告;✅13:2x#1 B类12/12(78.73GiB);✅11-07 08:5x ROI 8源下载DONE(25.14GB/135文件/0incomplete);✅stack-v3-train结构调研DONE(8192shard/3.22TiB/EDA语言27.1%tokens)
+当前动作:     唤醒1386(2026-11-08 15:3x):执行10:10运维令(stack-v3-train 2TB放行)→①git pull(up-to-date);②检测到10:10新令(stack-v3-train 2TB优质子集);③HF API实测:8192 parquet shard/3.22TiB压缩/11.5TB解压/avg413MiB;④stats/train JSON下载(totals+by_language+by_license+repo_distributions);⑤样本shard part-00000质检(RG0 26622 files,EDA目标语言60.5%字节,vendor 0.5%);⑥语言统计:EDA 11语言=2.44TiB解压/978.5B tok(27.1%),全目标32语言=5.29TiB/1731.8B tok(47.9%);⑦发现shard不按语言分目录→--include无法按语言筛→改用顺序shard+parquet级过滤(§H.3);⑧08:5x实测回填DATA_MAPPING §G.4(8源/25.14GB/0incomplete);⑨§H stack-v3-train计划写入DATA_MAPPING(结构+语言统计+下载策略+批次表);⑩stackv3_batch_download.sh创建+batch1启动(PID1659589,part-000~006,~289GB,ETA~2h)
+下一步:       等batch1完成→du -sb+find+incomplete实测→抽样3 shard质检(语言/vendor/文件大小)→回填§H.4→commit data stackv3:→启动batch2
+阻塞:         无(batch1后台下载中,/nas_inference 29T可用≥5T红线)
 ERROR_COUNT:  11
-未完成指令:   有(11-07 08:5x代码语料放行ROI下载进行中)→WAITING=1
+未完成指令:   有(10:10 stack-v3-train 2TB下载batch1进行中 + 08:5x 8源已DONE待最终commit)→WAITING=1
 ```
 
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。
 
 ## 📋 本唤醒流水
+> [11-08 15:3x] 唤醒1386：执行10:10运维令(stack-v3-train 2TB放行)→①git pull(up-to-date);②检测到10:10新令(stack-v3-train 2TB优质子集,首批2TB上限);③HF API实测:8192 parquet shard/3.22TiB压缩(非15.9TB,15.9TB=解压内容)/11.5TB解压/avg413MiB/713语言/173M仓库;④stats/train 5个JSON下载(totals+by_language+by_license+repo_distributions);⑤样本shard part-00000质检(RG0:2689repos/26622files/185.8MB,EDA目标14语言占60.5%字节,vendor仅0.5%);⑥语言统计:EDA 11语言(Python/C/C++/Verilog/VHDL/SV/MATLAB/Tcl/Shell/Makefile/CMake)=2.44TiB解压/978.5B tok(27.1%),全目标32语言=5.29TiB/1731.8B tok(47.9%);⑦关键发现:shard不按语言分目录(language是parquet内列)→--include无法按语言筛→按运维令§2.4回退方案=顺序shard下载+parquet级过滤;⑧08:5x 8源ROI下载实测回填DATA_MAPPING §G.4(25,144,280,312B/135文件/0incomplete);⑨§H stack-v3-train完整计划写入DATA_MAPPING(H.1结构+H.2语言统计+H.3下载策略+H.4批次进度表);⑩stackv3_batch_download.sh创建(每hundred=100shard单独hf download调用,nice-n10/max-workers2/断点续传/磁盘检查);⑪batch1启动(PID1659589,part-000~006,700shard~289GB,ETA~2h);⑫df检查/nas_inference 29T可用≥5T红线OK→更新心跳→commit+push→WAITING=1监控batch1
 > [11-07 08:55] 唤醒1385：执行11-07运维令(代码语料放行ROI下载)→①git fetch(代理)0behind/0ahead;②检测到TASK.md新令(stack-v2禁下/stack-v3-train可考虑/单集<1TB放行/自排ROI);③HF API核实10候选体量(LongBlocks9.57G/Nemotron-RL-Agentic5.1G/NExtLong-Instruct2.89G/arxiv6.04G/LongWriter0.15G/SkyRL0.002G/swev-trm0.93G/LongBench-v2 0.47G/gutenberg7.63G/kl3m~16.9G);④ROI评估表(5维度)写DATA_MAPPING.md §G.1(8下载/3跳过/1报运维);⑤下载脚本roi_download_20261107.sh启动setsid后台PID1920377(nice -n10/--max-workers4/代理/断点续传);⑥LongBlocks下载中9/39~23%;⑦跳过gutenberg(冗余whole-books)+kl3m(域不匹配+tokenizer不兼容)+terminal-bench-2(401);⑧stack-v3-train(15.9TB)≥1TB报运维待批;⑨DATA_MAPPING.md §G.2跳过清单+§G.3≥1TB待批+§G.4下载登记已写;→更新心跳→commit+push→WAITING=1继续监控下载
 > [11-07 08:34] 唤醒1384：例行空唤醒巡检→①git fetch origin(代理)0behind/0ahead(同步);②git diff origin/main--BAIZE_DATA_TASK.md=空(无新令);③3报告全在(lc_agentic115558B✓/reasoning_code_sft77772B✓/rl_math_survey37946B✓)+3生成器全在(gen_lc_agentic95012B/gen_reasoning_code_sft64206B/gen_rl_math38120B);④无hf download进程;⑤df:/nas_inference17T/38%(29T可用)/nas_train179T/87%(29T可用)/nas_env8.3T/84%(1.7T可用);⑥.incomplete=2(均.cache内,非阻塞,A/B类本体=0);⑦体积MEMORY36.7KB/TASK33.8KB均≤40KB无需归档;⑧data线clean(未跟踪为他线产物不动)→更新心跳→commit+push→WAITING=1待命
 > [11-07 08:15] 唤醒1383：例行空唤醒巡检→①git fetch origin(代理)0behind/0ahead(同步);②git diff origin/main--BAZE_DATA_TASK.md=空(无新令);③3报告全在(lc_agentic115558B✓/reasoning_code_sft77772B✓/rl_math_survey37946B✓)+3生成器全在(gen_lc_agentic95012B/gen_reasoning_code_sft64206B/gen_rl_math38120B);④无hf download进程;⑤df:/nas_inference17T/38%(29T可用)/nas_train179T/87%(29T可用)/nas_env8.3T/84%(1.7T可用);⑥.incomplete=2(均.cache内,非阻塞,A/B类本体=0);⑦体积MEMORY36.0KB/TASK33.8KB均≤40KB无需归档;⑧data线clean(未跟踪为他线产物不动)→更新心跳→commit+push→WAITING=1待命

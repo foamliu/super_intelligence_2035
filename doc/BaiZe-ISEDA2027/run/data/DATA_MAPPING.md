@@ -289,29 +289,108 @@
 
 | repo_id | 体量 | license | 理由 | 状态 |
 |:---|---:|:---|:---|:---|
-| `HuggingFaceCode/stack-v3-train` | 15.9 TB(train) | ODC-By | 173M仓库文件内联,天然仓库级长上下文;比v2(SWHID引用)更实用;非gated | ⚠️ 报运维批准(≥1TB不自行下) |
+| `HuggingFaceCode/stack-v3-train` | 3.22 TiB(压缩parquet,8192shard) / 11.5TB(解压内容) | ODC-By | 173M仓库文件内联,天然仓库级长上下文;比v2(SWHID引用)更实用;非gated | ✅ 已放行(11-07 10:10令,2TB上限,见§H) |
 | `bigcode/the-stack-v2` | 67.5 TB(full)/32.1 TB(dedup) | gated+需SWH协议 | 🚫 运维令明确禁下 | 禁下(终态) |
 
-### G.4 下载登记（进行中 → 完成后回填实测）
+### G.4 下载登记（✅ 已完成实测回填 · 2026-11-07 09:12 全部落地）
 
-> 下载脚本：`run/data/roi_download_20261107.sh`（setsid 后台 PID=1920377，日志 `/tmp/data_download_roi_20261107.log`，状态 TSV `/tmp/data_download_roi_status.tsv`）。
+> 下载脚本：`run/data/roi_download_20261107.sh`（已完成 PID=1920377，日志 `/tmp/data_download_roi_20261107.log`，状态 TSV `/tmp/data_download_roi_status.tsv`）。
 > 纪律：`nice -n 10`、`--max-workers 4`、走代理 `HTTPS_PROXY=http://172.19.92.25:13128`、断点续传、不挤 S1。
+> ✅ 8 源全部 `status=OK`、`incomplete=0`，下载于 2026-11-07 09:11:57 全部落地（`==== ROI download FINISH 20261107_091157 ====`）。
 > ⚠️ `zai-org/LongBench-v2` 为评测集——🚫 禁入训练，仅纳入去污染黑名单（与 EDA-Eval / SWE-bench Verified / ia03/terminal-bench 同闸）。
 > ⚠️ `Nethraaaaa81/swev-trm-trajectories-25models` 高污染（直接用 SWE-bench Verified）——🚫 禁入 SFT，仅 TRM 训练/分析。
 > ⚠️ `nvidia/Nemotron-RL-Agentic-SWE-Pivot-v1` 高污染（含 numpy/Pillow 等 SWE-bench 同源仓库）——下载后须去污染方可用于 RL。
 
 | # | repo_id | 落盘路径 | 主机 | 文件数 | 字节(B) | GiB | gated | incomplete | 备注 |
 |:---|:---|:---|:---|---:|---:|---:|:---|---:|:---|
-| 1 | `utter-project/LongBlocks` | `/nas_inference/app.e0031982/datasets/utter-project/LongBlocks` | .12 | — | — | 9.57 | no | — | 多语言长上下文QA(CC BY-SA 4.0) |
-| 2 | `nvidia/Nemotron-RL-Agentic-SWE-Pivot-v1` | `/nas_inference/app.e0031982/datasets/nvidia/Nemotron-RL-Agentic-SWE-Pivot-v1` | .12 | — | — | 5.10 | no | — | agentic SWE RL(CC-BY-4.0,🔴高污染) |
-| 3 | `caskcsg/NExtLong-Instruct-dataset-Magpie-Llama-3.3-Pro-1M-v0.1` | `/nas_inference/app.e0031982/datasets/caskcsg/NExtLong-Instruct-dataset-Magpie-Llama-3.3-Pro-1M-v0.1` | .12 | — | — | 2.89 | no | — | 合成长上下文训练(1M样本) |
-| 4 | `common-pile/arxiv_papers_filtered` | `/nas_inference/app.e0031982/datasets/common-pile/arxiv_papers_filtered` | .12 | — | — | 6.04 | no | — | arxiv论文全文(CC BY/SA/CC0) |
-| 5 | `THUDM/LongWriter-6k` | `/nas_inference/app.e0031982/datasets/THUDM/LongWriter-6k` | .12 | — | — | 0.15 | no | — | 长输出生成SFT(6K) |
-| 6 | `NovaSky-AI/SkyRL-v0-293-data` | `/nas_inference/app.e0031982/datasets/NovaSky-AI/SkyRL-v0-293-data` | .12 | — | — | 0.00 | no | — | RL验证(293 tasks) |
-| 7 | `Nethraaaaa81/swev-trm-trajectories-25models` | `/nas_inference/app.e0031982/datasets/Nethraaaaa81/swev-trm-trajectories-25models` | .12 | — | — | 0.93 | no | — | SWE轨迹TRM(MIT,🔴高污染禁SFT) |
-| 8 | `zai-org/LongBench-v2` | `/nas_inference/app.e0031982/datasets/zai-org/LongBench-v2` | .12 | — | — | 0.47 | no | — | ⚠️评测集仅去污染禁入训练 |
-| **合计** | **8 源** | | | **—** | **—** | **~25.15** | | **—** | 全部公开 non-gated；含2个需去污染(1评测+1高污染轨迹) |
+| 1 | `utter-project/LongBlocks` | `/nas_inference/app.e0031982/datasets/utter-project/LongBlocks` | .12 | 39 | 9,568,253,231 | 8.91 | no | 0 | 多语言长上下文QA(CC BY-SA 4.0) |
+| 2 | `nvidia/Nemotron-RL-Agentic-SWE-Pivot-v1` | `/nas_inference/app.e0031982/datasets/nvidia/Nemotron-RL-Agentic-SWE-Pivot-v1` | .12 | 3 | 5,101,917,692 | 4.75 | no | 0 | agentic SWE RL(CC-BY-4.0,🔴高污染) |
+| 3 | `caskcsg/NExtLong-Instruct-dataset-Magpie-Llama-3.3-Pro-1M-v0.1` | `/nas_inference/app.e0031982/datasets/caskcsg/NExtLong-Instruct-dataset-Magpie-Llama-3.3-Pro-1M-v0.1` | .12 | 70 | 2,890,396,882 | 2.69 | no | 0 | 合成长上下文训练(1M样本) |
+| 4 | `common-pile/arxiv_papers_filtered` | `/nas_inference/app.e0031982/datasets/common-pile/arxiv_papers_filtered` | .12 | 10 | 6,037,477,720 | 5.62 | no | 0 | arxiv论文全文(CC BY/SA/CC0) |
+| 5 | `THUDM/LongWriter-6k` | `/nas_inference/app.e0031982/datasets/THUDM/LongWriter-6k` | .12 | 3 | 149,237,015 | 0.14 | no | 0 | 长输出生成SFT(6K) |
+| 6 | `NovaSky-AI/SkyRL-v0-293-data` | `/nas_inference/app.e0031982/datasets/NovaSky-AI/SkyRL-v0-293-data` | .12 | 3 | 2,215,444 | 0.00 | no | 0 | RL验证(293 tasks) |
+| 7 | `Nethraaaaa81/swev-trm-trajectories-25models` | `/nas_inference/app.e0031982/datasets/Nethraaaaa81/swev-trm-trajectories-25models` | .12 | 4 | 929,267,948 | 0.87 | no | 0 | SWE轨迹TRM(MIT,🔴高污染禁SFT) |
+| 8 | `zai-org/LongBench-v2` | `/nas_inference/app.e0031982/datasets/zai-org/LongBench-v2` | .12 | 3 | 465,514,380 | 0.43 | no | 0 | ⚠️评测集仅去污染禁入训练 |
+| **合计** | **8 源** | | | **135** | **25,144,280,312** | **23.41** | | **0** | 全部公开 non-gated；含2个需去污染(1评测+1高污染轨迹) |
 
-> 📌 本节文件数/字节为 HF API 预估值，下载完成后以 `du -sb` + `find -type f | wc -l` + `find -name '*.incomplete' | wc -l` 三项实测回填。
+> 证据命令：`cat /tmp/data_download_roi_status.tsv`（8 行 OK / 0 incomplete）；`du -sb` + `find -type f ! -path '*/.cache/*' | wc -l` 逐目录实测。
 > 🚫 token 不得写入本表/日报/任何 commit（运维令 08:5x ④）。
+
+---
+
+## H. stack-v3-train 代码语料下载（运维令 2026-11-07 10:10 · 2TB 上限 · 进行中）
+
+> **授权**：`HuggingFaceCode/stack-v3-train`（仅 train 分片），首批 2TB 上限，每批 ≤300GB，`nice -n 10`、`--max-workers 2`、断点续传、🚫 不与 S1 抢带宽。
+> **落盘**：`/nas_inference/app.e0031982/datasets/HuggingFaceCode/stack-v3-train/`。
+
+### H.1 数据集结构（HF API + 样本 shard 实测 · 2026-11-08）
+
+| 项 | 值 | 证据 |
+|:---|:---|:---|
+| repo | `HuggingFaceCode/stack-v3-train` | HF API `dataset_info` |
+| 分片结构 | **扁平 parquet**：`data/part-00000` ~ `data/part-08191`，共 **8192** shard | `list_repo_tree(path='data')` 实测 |
+| 压缩总量 | **3,545,762,968,481 B = 3.22 TiB**（snappy parquet） | 同上，求和 8192 shard size |
+| 解压内容总量 | **11.50 TB**（11,501,524,769,560 B） | `stats/train/totals.json` |
+| 平均 shard | 412.8 MiB（min 260 / max 1577 MiB） | 同上 |
+| 仓库数 | 172,823,131（173M） | `totals.json` |
+| 文件数 | 2,267,483,994（2.27B） | `totals.json` |
+| token 估算 | 3,611,282,968,225（~3.6T，tokenizer=Qwen3-Coder-Next-Base） | `totals.json`（🚫 不写入 commit） |
+| 语言数 | 713 | `totals.json` |
+| license | ODC-By（数据集级）；仓库级 96.6% no_license / 3.4% permissive | `stats_by_license.json` |
+| **能否按语言筛** | **🚫 不能** —— 语言是 parquet 内 `files[].language` 列，shard 间混合 | 样本 shard part-00000 实测 |
+| schema | `repo_path`, `repo_id`, `commit_id`, `github_metadata{stars,forks,is_fork,is_org_owned,...}`, `num_files`, `files[]{content,language,size_bytes,is_vendor,file_path,...}` | `pq.schema_arrow` |
+
+> ⚠️ **关键发现**：shard 不按语言分目录 → `--include` 无法按语言筛 → 按 **分片号顺序下载 + 下载后 parquet 级过滤**（运维令 §2.4 允许的回退方案）。
+
+### H.2 语言统计（`stats/train/stats_by_language.json` · 解压内容量）
+
+> 单位：TiB（1 TiB = 1024 GiB）。占比基于 totals.json 的 11.50 TB 解压总量。
+
+| 优先级 | 语言 | 解压 TiB | token(B) | 文件数 | 占比 | 说明 |
+|:---:|:---|---:|---:|---:|---:|:---|
+| P0 | Python | 0.54 | 154.0 | 159,360,122 | 5.2% | EDA/PyAether 工具链首选 |
+| P0 | C++ | 1.26 | 549.3 | 87,548,938 | 12.1% | 最大单一语言 |
+| P0 | C | 0.45 | 195.6 | 42,510,054 | 4.3% | |
+| P1 | Verilog | 0.05 | 24.1 | 1,726,034 | 0.5% | EDA 硬件描述 |
+| P1 | VHDL | 0.05 | 21.9 | 948,858 | 0.5% | EDA 硬件描述 |
+| P1 | SystemVerilog | 0.00 | 1.3 | 575,303 | 0.0% | EDA 硬件描述 |
+| P1 | MATLAB | 0.02 | 7.5 | 7,011,032 | 0.2% | EDA 仿真脚本 |
+| P1 | Tcl | 0.01 | 1.9 | 492,449 | 0.1% | EDA 工具脚本 |
+| P1 | Shell | 0.04 | 14.7 | 18,729,950 | 0.4% | 构建/CI |
+| P1 | Makefile | 0.02 | 6.1 | 5,753,750 | 0.2% | 构建 |
+| P1 | CMake | 0.01 | 2.2 | 5,092,804 | 0.1% | 构建 |
+| — | **EDA 小计** | **2.44** | **978.5** | **334,720,294** | **23.4%** | 11 语言 |
+| P2 | Java | 0.80 | 197.8 | 310,808,655 | 7.6% | 通用编程 |
+| P2 | JavaScript | 0.68 | 189.3 | 194,120,959 | 6.5% | 通用编程 |
+| P2 | TypeScript | 0.22 | 58.3 | 110,294,041 | 2.1% | 通用编程 |
+| P2 | Go | 0.07 | 20.5 | 22,721,809 | 0.7% | 通用编程 |
+| P2 | Rust | 0.05 | 13.4 | 9,214,816 | 0.5% | 通用编程 |
+| — | **全部目标小计** | **5.29** | **1,731.8** | **1,312,826,201** | **47.9%** | 32 语言 |
+| — | 全量 | 10.70 | 3,611.3 | 2,267,483,994 | 100% | 713 语言（含 JSON/Markdown/HTML 等非代码） |
+
+> 样本 shard part-00000 实测（RG0, 2689 repos, 26622 files）：目标语言（Python/C/C++/Verilog/SV/Tcl/Makefile/CMake/Shell/MATLAB/VHDL 等 14 种）占 **60.5% 字节**；vendor 文件仅 0.5%（139/26622）。
+
+### H.3 下载策略
+
+1. **分片选择**：顺序下载 `part-00000` → `part-08191`（shard 混合语言，无法按语言挑 shard）。
+2. **2TB 预算**：3.22 TiB 全量中取前 **~60%** = 前 **~4966** shard（≈ 2.00 TiB）。下载后 parquet 级过滤保留 EDA/目标语言，预计产出 ~1.0 TiB 过滤后内容。
+3. **批次**：每批 ≤300 GB ≈ **700 shard**（7 个 `--include "data/part-NNN*"` pattern，每个 100 shard ≈ 41 GB）。共 ~7 批。
+4. **质量过滤（下载后 parquet 级）**：保留 `files[].language ∈ EDA目标集` AND `is_vendor=false` AND `size_bytes < 1,048,576`（<1MB）；剔除 minified（行数<5 且含 `.min.` 或长行>10KB）、空仓库（num_files=0）、纯文档仓库。
+5. **抽样质检**：每批下载后抽 3 shard，统计语言分布 / vendor 比例 / 文件大小分布，写入本节。
+
+### H.4 批次进度登记
+
+| 批次 | shard 范围 | 预估 GB | 实测字节(B) | 文件数 | incomplete | 状态 | 证据 |
+|:---:|:---|---:|---:|---:|---:|:---|:---|
+| 样本 | part-00000 | 0.38 | 398,721,289 | 1 | 0 | ✅ 已下(质检) | `du -sb data/part-00000*.parquet` |
+| 1 | part-00000~00699 | ~289 | — | — | — | 🔄 下载中 | 脚本 `stackv3_batch_download.sh` |
+| 2 | part-00700~01399 | ~289 | — | — | — | ⬜ 待启动 | |
+| 3 | part-01400~02099 | ~289 | — | — | — | ⬜ 待启动 | |
+| 4 | part-02100~02799 | ~289 | — | — | — | ⬜ 待启动 | |
+| 5 | part-02800~03499 | ~289 | — | — | — | ⬜ 待启动 | |
+| 6 | part-03500~04199 | ~289 | — | — | — | ⬜ 待启动 | |
+| 7 | part-04200~04966 | ~316 | — | — | — | ⬜ 待启动(末批,凑满2TB) | |
+| **合计** | 4967 shard | ~2040 | — | — | — | | 2TB 上限内 |
+
+> stats/ 目录（5 JSON, ~484 KB）已随样本下载落地，含 per-language / per-license / repo-distribution 统计。
 
