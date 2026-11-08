@@ -6764,3 +6764,117 @@ KV cache = 2 × 42 × 2 × 128 × ctx_len × batch × 2 bytes = 43,008 × ctx_le
 | SFT 配置补丁 | `run/baize_posttrain_sft.sh` | 2 处修改 |
 
 **数据溯源**：R60 实测 103 DeepSeek 轨迹 · MiniCPM5-2B config.json (42 layers, 32 KV heads, d=2048) · A40 48GB 规格 · SGLang 0.4.6 吞吐量估计 · verl 0.4.0 hybrid engine 文档 · R11 内存校准。无伪造。
+
+## §R62 Day-1 Cold-Start NFS Warm-up + Smoke Test Diagnostic Classifier（2026-11-08 wake110 · 零 GPU · Python 3.8+ stdlib）
+
+### 1. 动机
+
+> **Day-1 风险**：11/9 GPU 到位后首跑有两个已知风险：
+> 1. **NFS 冷启动延迟**（R45 实测：`import torch` >30s on first NFS access）→ 导致 SGLang/verl 启动超时或误判
+> 2. **Smoke test 输出判读**：人工判读 10-step smoke test log 容易遗漏 Vision 线失败模式（R57: std=0 dominance 78.7%, loss~0, reward variance~0）
+>
+> R62 创建 `baize_posttrain_day1_diag.py`（~698 行，纯 Python 3.8+ stdlib，0 依赖），4 模块自动化解决这两个风险。
+
+### 2. Module 1: NFS Cold-Start Warm-up
+
+| 功能 | 实现 |
+|:--|:--|
+| Import 计时 | 5 模块：torch, verl, sglang, vllm, transformers |
+| 阈值 | OK <10s / SLOW 10-30s / FAIL >30s / TIMEOUT >120s / NO_VENV |
+| 模型文件预热 | `dd if=<file> of=/dev/null` + readfile 验证（MiniCPM5-2B 4.7GB） |
+| 冷启动检测 | 对比阈值判定 `cold_start_detected` |
+| Ready 判定 | OK≥3 AND FAIL=0 AND TIMEOUT=0 → ready=True |
+
+> **使用**：`python3 baize_posttrain_day1_diag.py --warmup --venv ~/code/verl_cu124_venv/bin/python`
+
+### 3. Module 2: Log Parser
+
+15 个 regex 模式从 verl 训练日志提取指标：
+
+| Pattern | 匹配 | 提取值 |
+|:--|:--|:--|
+| step | `step:1`, `global_step=5` | int |
+| kl_loss | `kl_loss:0.05` | float |
+| reward_mean | `reward/mean:0.15`, `rewards_mean=0.2` | float |
+| reward_std | `reward/std:0.08` | float |
+| entropy | `entropy:2.8` | float |
+| grad_norm | `grad_norm:0.5` | float |
+| loss | `loss:0.03` (排除 kl_loss/policy_loss) | float |
+| policy_loss | `policy_loss:0.02` | float |
+| cheat_rate | `cheat_rate:0.0` | float |
+| std_zero_pct | `std_zero_pct:20.5` | float |
+| filter_rate | `filter_rate:0.1`, `filter_groups:5` | float |
+| nan_inf | `NaN`, `inf`, `Inf` | presence |
+| oom | `OOM`, `CUDA out of memory` | presence |
+| error | `ERROR`, `Traceback`, `RuntimeError` | presence |
+| timeout | `timeout`, `timed out` | presence |
+
+### 4. Module 3: 12-Check Diagnostic Classifier
+
+> **4-tier verdict**: GO（全 PASS）/ WARN（有 WARN 无 FAIL）/ DEBUG（有 FAIL 可修复）/ ABORT（NaN/OOM/timeout 不可恢复）
+
+| # | Check | 触发条件 | Verdict | 来源 |
+|:--|:--|:--|:--|:--|
+| 1 | NaN/Inf | log 中出现 NaN/Inf | ABORT | 通用 |
+| 2 | OOM | CUDA out of memory | ABORT | 通用 |
+| 3 | Steps completed | <8/10 steps | DEBUG | R38 runbook |
+| 4 | Timeout | timeout/timed out | ABORT | 通用 |
+| 5 | Reward collapse | mean <0.01 | DEBUG | R57 Vision |
+| 5b | Low reward | mean <0.05 | WARN | R57 |
+| 6 | std=0 dominance | >80% | DEBUG | **R57 Vision 78.7%** |
+| 6b | High std=0 | >50% | WARN | R57 |
+| 7 | Loss ~0 | <0.001 | WARN | **R57 Vision v3** |
+| 8 | KL divergence | >10 | DEBUG | verl 标准 |
+| 8b | Elevated KL | >3 | WARN | verl 标准 |
+| 9 | Entropy collapse | <0.1 | WARN | RL 通用 |
+| 10 | Gradient explosion | >100 | DEBUG | RL 通用 |
+| 11 | Cheat rate (5.2) | >15% | DEBUG | **§5.2 红线** |
+| 12 | Reward std (signal) | <0.01 | WARN | GRPO 信号质量 |
+
+> **Vision pattern detection**: 当 reasons 中出现 "Vision" 关键词时，触发 `vision_pattern_match=True`，HTML 中显示 Vision alert box，提示 R57 教训：R2 not R1, monitor std=0, step 500 check, no RFT fallback。
+
+### 5. Module 4: HTML Report
+
+自包含 HTML（0 script, 0 外链），包含：
+- Section 1: NFS warm-up table（import 时间 + 模型文件预热 + ready 判定）
+- Section 2: Smoke test verdict box（颜色编码 GO/WARN/DEBUG/ABORT）
+- Vision alert box（黄色，当 Vision pattern detected）
+- Checks table（12 行，PASS 绿/WARN 黄/FAIL 红）
+- Reasons + Actions list
+- Metrics summary table
+- Footer: R57 lessons + 红线 + surrogate warning
+
+### 6. 测试验证
+
+| 场景 | 输入 | Verdict | Checks | Vision Pattern |
+|:--|:--|:--|:--|:--|
+| GO（健康） | 10步, reward 0.42, std_zero 9.8%, grad 1.2, KL 0.21 | **GO** | 12P/0W/0F | No |
+| ABORT（多重失败） | 3步, OOM, reward 0.01, std_zero 82.3%, grad 120 | **ABORT** | 6P/3W/3F | **Yes** |
+
+> GO 场景：所有 12 checks PASS，verdict GO，actions 建议继续完整 RL 训练。
+> ABORT 场景：检测到 OOM + std=0 dominance 82.3% > 80%（Vision 78.7%） + gradient explosion 120 > 100 + reward collapse 0.01 < 0.01 + reward std 0.0。Vision failure pattern detected。6 项具体 remediation actions 输出。
+
+### 7. 使用方法（Day-1 流程）
+
+```bash
+# Step 0: GPU 到位后，先做 NFS warm-up
+python3 baize_posttrain_day1_diag.py --warmup --venv ~/code/verl_cu124_venv/bin/python
+
+# Step 1-5: launch_11_9.sh 执行 preflight + smoke test
+
+# Step 6: Smoke test 完成后，分类输出
+python3 baize_posttrain_day1_diag.py \
+    --classify /path/to/verl_smoke.log \
+    --html reports/report_posttrain_r62_day1_diag.html \
+    --json reports/report_posttrain_r62_day1_diag.json
+```
+
+### 8. 交付物
+
+| 产物 | 路径 | 大小 |
+|:--|:--|:--|
+| 诊断脚本 | `run/baize_posttrain_day1_diag.py` | ~698 行 |
+| HTML 报告（GO 场景测试） | `/tmp/test_diag.html` | 3.9KB |
+| JSON 结果（GO 场景测试） | `/tmp/test_diag.json` | ~2KB |
+
+**数据溯源**：R45 NFS cold start 实测 · R43 smoke calibrator · R57 Vision GRPO 失败模式（std=0 78.7%, loss~0, reward variance） · R36 RL monitor 指标 · R38 Day-1 runbook step 阈值 · R60/R61 上下文窗口 + 吞吐量约束 · §5.2 anti-cheat 红线。无伪造。替身 RL 结果（MiniCPM5-2B）不可直接迁移到 BaiZe。
