@@ -28649,3 +28649,107 @@ for job in "${JOBS[@]}"; do
 
 === 270 done ===
 ```
+
+---
+
+## RUN_ID 271 · 2026-11-08 22:52:08 · host=`whag0pgpuap12` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 271 | recon2 | $(date '+%F %T') | host=$(hostname) ==="
+SSH="ssh -o BatchMode=yes -o ConnectTimeout=6 -o StrictHostKeyChecking=no"
+$SSH 10.239.2.29 'set -u
+echo "-- ports --"; ss -ltnp 2>/dev/null | grep -E ":818[0-9]" | tr -s " " | cut -c1-170
+echo "-- client cmdlines --"
+ps -eo pid=,args= | awk "/[g]guf_lmeval_run\.py/ && !/cline/ {print \"  \" \$1 \" :: \" substr(\$0,index(\$0,\$2),400)}"
+echo "-- script key lines --"
+grep -nE "taskset|numactl|llama-server|gguf_lmeval_run|--port|--limit|--tasks|--output|shard|nohup" /tmp/baize_eval_v5/restart_piqa_hellaswag.sh /tmp/baize_eval_v5/run_hellaswag_only.sh /tmp/baize_eval_v5/baize_eval_v5_correct.sh 2>/dev/null | cut -c1-190
+echo "-- relaunch log --"; cat /tmp/baize_eval_v5/relaunch_2034.log 2>/dev/null
+echo "-- logs --"; D=/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/lm_eval_results/gguf_iter_112000_full_v5_correct_binary; ls -l $D/*.log 2>/dev/null | awk "{print \"  \" \$5 \" \" \$9}"
+echo "-- tails --"
+for f in $D/piqa*.log $D/hellaswag_chunk*.log; do [ -f "$f" ] && { echo "  == $(basename $f)"; tail -1 "$f" | cut -c1-150 | sed "s/^/    /"; }; done
+echo "-- load --"; cut -d" " -f1-3 /proc/loadavg'
+echo
+echo "=== 271 done ==="
+```
+
+**输出**
+```
+=== RUN_ID 271 | recon2 | 2026-11-08 22:52:08 | host=whag0pgpuap12 ===
+-- ports --
+LISTEN 0 512 127.0.0.1:8183 0.0.0.0:* users:(("llama-server",pid=2083715,fd=3)) 
+LISTEN 0 512 127.0.0.1:8185 0.0.0.0:* users:(("llama-server",pid=2083721,fd=3)) 
+LISTEN 0 512 127.0.0.1:8184 0.0.0.0:* users:(("llama-server",pid=3596298,fd=3)) 
+LISTEN 0 512 127.0.0.1:8187 0.0.0.0:* users:(("llama-server",pid=2083724,fd=3)) 
+LISTEN 0 512 127.0.0.1:8186 0.0.0.0:* users:(("llama-server",pid=2083722,fd=3)) 
+-- client cmdlines --
+  2097184 :: /nas_train/app.e0031982/miniforge3/envs/py310/bin/python /tmp/baize_eval_v4/gguf_lmeval_run.py --base-url http://127.0.0.1:8183 --hf-dir /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/hf_iter_112000 --output /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/lm_eval_results/gguf_iter_112000_full_v5_correct_binary/piqa --tasks piqa --parallel 8 --batch-size
+  2097209 :: /nas_train/app.e0031982/miniforge3/envs/py310/bin/python /tmp/baize_eval_v4/gguf_lmeval_run.py --base-url http://127.0.0.1:8185 --hf-dir /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/hf_iter_112000 --output /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/lm_eval_results/gguf_iter_112000_full_v5_correct_binary/hellaswag_chunk1 --tasks hellaswag --parall
+  2097234 :: /nas_train/app.e0031982/miniforge3/envs/py310/bin/python /tmp/baize_eval_v4/gguf_lmeval_run.py --base-url http://127.0.0.1:8186 --hf-dir /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/hf_iter_112000 --output /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/lm_eval_results/gguf_iter_112000_full_v5_correct_binary/hellaswag_chunk2 --tasks hellaswag --parall
+  2097251 :: /nas_train/app.e0031982/miniforge3/envs/py310/bin/python /tmp/baize_eval_v4/gguf_lmeval_run.py --base-url http://127.0.0.1:8187 --hf-dir /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/hf_iter_112000 --output /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/lm_eval_results/gguf_iter_112000_full_v5_correct_binary/hellaswag_chunk3 --tasks hellaswag --parall
+  3765473 :: /nas_train/app.e0031982/miniforge3/envs/py310/bin/python /tmp/baize_eval_v4/gguf_lmeval_run.py --base-url http://127.0.0.1:8184 --hf-dir /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/hf_iter_112000 --output /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/lm_eval_results/gguf_iter_112000_full_v5_correct_binary/hellaswag_chunk0 --tasks hellaswag --parall
+-- script key lines --
+/tmp/baize_eval_v5/restart_piqa_hellaswag.sh:8:LLAMA_SERVER="/nas_train/app.e0031982/code/llama.cpp/build/bin/llama-server"
+/tmp/baize_eval_v5/restart_piqa_hellaswag.sh:11:EVAL_PY="/tmp/baize_eval_v4/gguf_lmeval_run.py"
+/tmp/baize_eval_v5/restart_piqa_hellaswag.sh:29:  "hellaswag:8184:48:hellaswag_chunk0:/tmp/baize_eval_v5/hs_shard0.json"
+/tmp/baize_eval_v5/restart_piqa_hellaswag.sh:30:  "hellaswag:8185:64:hellaswag_chunk1:/tmp/baize_eval_v5/hs_shard1.json"
+/tmp/baize_eval_v5/restart_piqa_hellaswag.sh:31:  "hellaswag:8186:80:hellaswag_chunk2:/tmp/baize_eval_v5/hs_shard2.json"
+/tmp/baize_eval_v5/restart_piqa_hellaswag.sh:32:  "hellaswag:8187:96:hellaswag_chunk3:/tmp/baize_eval_v5/hs_shard3.json"
+/tmp/baize_eval_v5/restart_piqa_hellaswag.sh:36:echo "[restart] 启动 5 个 llama-server..."
+/tmp/baize_eval_v5/restart_piqa_hellaswag.sh:41:  setsid taskset -c "$cores" "$LLAMA_SERVER" \
+/tmp/baize_eval_v5/restart_piqa_hellaswag.sh:43:    --host 127.0.0.1 --port "$port" \
+/tmp/baize_eval_v5/restart_piqa_hellaswag.sh:68:      --output "$out_dir" --tasks "$task" --parallel 8 --batch-size 32 --timeout 600 \
+/tmp/baize_eval_v5/restart_piqa_hellaswag.sh:73:      --output "$out_dir" --tasks "$task" --parallel 8 --batch-size 32 --timeout 600 \
+/tmp/baize_eval_v5/run_hellaswag_only.sh:7:LLAMA_SERVER="/nas_train/app.e0031982/code/llama.cpp/build/bin/llama-server"
+/tmp/baize_eval_v5/run_hellaswag_only.sh:10:EVAL_PY="/tmp/baize_eval_v4/gguf_lmeval_run.py"
+/tmp/baize_eval_v5/run_hellaswag_only.sh:20:# shard files already generated by v5 main run
+/tmp/baize_eval_v5/run_hellaswag_only.sh:22:  [[ -f "/tmp/baize_eval_v5/hs_shard${i}.json" ]] || { echo "FATAL: hs_shard${i}.json missing"; exit 1; }
+/tmp/baize_eval_v5/run_hellaswag_only.sh:24:echo "[hs-only] shard files OK"
+/tmp/baize_eval_v5/run_hellaswag_only.sh:26:  "hellaswag:8188:0:hellaswag_chunk0:/tmp/baize_eval_v5/hs_shard0.json"
+/tmp/baize_eval_v5/run_hellaswag_only.sh:27:  "hellaswag:8189:16:hellaswag_chunk1:/tmp/baize_eval_v5/hs_shard1.json"
+/tmp/baize_eval_v5/run_hellaswag_only.sh:28:  "hellaswag:8190:32:hellaswag_chunk2:/tmp/baize_eval_v5/hs_shard2.json"
+/tmp/baize_eval_v5/run_hellaswag_only.sh:29:  "hellaswag:8191:48:hellaswag_chunk3:/tmp/baize_eval_v5/hs_shard3.json"
+/tmp/baize_eval_v5/run_hellaswag_only.sh:35:  setsid taskset -c "$cores" "$LLAMA_SERVER" -m "$GGUF" -t 16 -tb 16 -c 16384 --parallel 8 --host 127.0.0.1 --port "$port" --no-warmup --metrics -
+/tmp/baize_eval_v5/run_hellaswag_only.sh:48:  "$PYTHON" "$EVAL_PY" --base-url "http://127.0.0.1:${port}" --hf-dir "$HF_DIR" --output "$out_dir" --tasks "$task" --parallel 8 --batch-size 32 -
+/tmp/baize_eval_v5/baize_eval_v5_correct.sh:13:LLAMA_SERVER="/nas_train/app.e0031982/code/llama.cpp/build/bin/llama-server"
+/tmp/baize_eval_v5/baize_eval_v5_correct.sh:16:EVAL_PY="/tmp/baize_eval_v4/gguf_lmeval_run.py"
+/tmp/baize_eval_v5/baize_eval_v5_correct.sh:30:# 生成 hellaswag 4 shard sample 列表 (10042 docs, 拆4份, 紧凑JSON无空格)
+/tmp/baize_eval_v5/baize_eval_v5_correct.sh:36:    with open(f'/tmp/baize_eval_v5/hs_shard{i}.json','w') as f:
+/tmp/baize_eval_v5/baize_eval_v5_correct.sh:38:    print(f'  hs_shard{i}: docs {s}-{e-1} ({e-s} docs)')
+/tmp/baize_eval_v5/baize_eval_v5_correct.sh:49:  "hellaswag:8188:112:hellaswag_chunk0:/tmp/baize_eval_v5/hs_shard0.json"
+/tmp/baize_eval_v5/baize_eval_v5_correct.sh:50:  "hellaswag:8189:128:hellaswag_chunk1:/tmp/baize_eval_v5/hs_shard1.json"
+/tmp/baize_eval_v5/baize_eval_v5_correct.sh:51:  "hellaswag:8190:144:hellaswag_chunk2:/tmp/baize_eval_v5/hs_shard2.json"
+/tmp/baize_eval_v5/baize_eval_v5_correct.sh:52:  "hellaswag:8191:160:hellaswag_chunk3:/tmp/baize_eval_v5/hs_shard3.json"
+/tmp/baize_eval_v5/baize_eval_v5_correct.sh:55:echo "[v5] 启动 ${#JOBS[@]} 个 llama-server（各 16 线程，CPU-pinned）..."
+/tmp/baize_eval_v5/baize_eval_v5_correct.sh:60:  setsid taskset -c "$cores" "$LLAMA_SERVER" \
+/tmp/baize_eval_v5/baize_eval_v5_correct.sh:62:    --host 127.0.0.1 --port "$port" \
+/tmp/baize_eval_v5/baize_eval_v5_correct.sh:93:  cmd_args=("$PYTHON" "$EVAL_PY" --base-url "http://127.0.0.1:${port}" --hf-dir "$HF_DIR" --output "$out_dir" --tasks "$task" --parallel 8 --ba
+/tmp/baize_eval_v5/baize_eval_v5_correct.sh:122:pkill -f "code/llama.cpp/build/bin/llama-server.*--port 818" 2>/dev/null || true
+-- relaunch log --
+[restart] 二进制校验 PASS (MD5=f95ac95215a7e61a534eccba9a4ed49d)
+[restart] 启动 5 个 llama-server...
+  server: task=piqa port=8183 cores=32-47 PID=2083715
+  server: task=hellaswag port=8184 cores=48-63 PID=2083718
+  server: task=hellaswag port=8185 cores=64-79 PID=2083721
+  server: task=hellaswag port=8186 cores=80-95 PID=2083722
+  server: task=hellaswag port=8187 cores=96-111 PID=2083724
+  port 8183: READY
+  port 8184: READY
+  port 8185: READY
+  port 8186: READY
+  port 8187: READY
+[restart] 启动 5 个评测客户端...
+  client: task=piqa port=8183 PID=2097184
+  client: task=hellaswag port=8184 PID=2097193
+  client: task=hellaswag port=8185 PID=2097209
+  client: task=hellaswag port=8186 PID=2097234
+  client: task=hellaswag port=8187 PID=2097251
+[restart] 等待客户端完成...
+-- logs --
+-- tails --
+-- load --
+76.42 78.02 77.96
+
+=== 271 done ===
+```
