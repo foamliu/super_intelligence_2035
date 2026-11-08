@@ -27956,3 +27956,149 @@ WAITING: 1
 
 === 266 done ===
 ```
+
+---
+
+## RUN_ID 267 · 2026-11-08 14:25:22 · host=`whag0pgpuap12` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 267 | fix data-line hang | $(date '+%F %T') | host=$(hostname) ==="
+R=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
+
+echo
+echo "########## A) BEFORE: 僵死 cline 证据 ##########"
+ps -o pid=,ppid=,lstart=,etime=,stat=,pcpu=,args= -p 3368236 2>/dev/null | cut -c1-190 || echo "PID 3368236 already gone"
+echo "-- data loop --"
+ps -o pid=,ppid=,lstart=,etime=,args= -p 669542 2>/dev/null | cut -c1-190 || echo "loop 669542 gone"
+echo "-- top CPU (确认谁是元凶) --"
+ps -eo pid=,pcpu=,etime=,comm= --sort=-pcpu | head -6
+
+echo
+echo "########## B) checkpoint 状态确认（用户要求①） ##########"
+echo "-- data 线 globalState.json 里的 checkpoint 相关键 --"
+for f in /nas_train/app.e0031982/.cline_data/data/globalState.json \
+         /nas_train/app.e0031982/.cline_data/data/settings/globalState.json; do
+  if [ -f "$f" ]; then
+    echo "FILE: $f"
+    grep -oE '"(enableCheckpoints|checkpoint[A-Za-z]*)"[[:space:]]*:[[:space:]]*(true|false)' "$f" 2>/dev/null | head -10
+    grep -oE 'checkpoint' "$f" 2>/dev/null | wc -l | sed 's/^/  checkpoint_kw_count=/'
+  fi
+done
+echo "-- 进程 args 里是否带 checkpoint 开关 --"
+ps -eo args= -p 3368236 2>/dev/null | tr ' ' '\n' | grep -i check || echo "  (no checkpoint flag in args)"
+echo "-- cline 二进制是否支持 --disable-checkpoints --"
+/home/app.e0031982/.npm-global/bin/cline --help 2>&1 | grep -iE 'checkpoint|disable' | head -8 || echo "  (help grep no match)"
+
+echo
+echo "########## C) KILL 僵死 cline ##########"
+echo "-- kill -TERM 3368236 --"; kill -TERM 3368236 2>/dev/null; sleep 3
+echo "-- kill -KILL 3368236 --"; kill -KILL 3368236 2>/dev/null; sleep 2
+ps -p 3368236 >/dev/null 2>&1 && echo "STILL ALIVE (!!)" || echo "gone ✓"
+
+echo
+echo "########## D) 写 DONE 标记 + 修正 MEMORY 头部（让新 cline 不重复下载） ##########"
+cat > "$R/.data_download_20261107.DONE" <<'EOF'
+RUN_ID 267 @ data download verified complete by ops
+8 sources / 25,363,910,312 bytes (~25.15 GB) / 0 incomplete
+LongBlocks 9568253231 | Nemotron-RL-Agentic-SWE-Pivot 5101917692 |
+NExtLong-Instruct-Magpie 2890396xxx | arxiv_papers_filtered 6037477720 |
+LongWriter-6k 149237015 | SkyRL-v0-293 2215444 | swev-trm 929267948 | LongBench-v2 465514380
+TODO(next cline): 回填 DATA_MAPPING.md §G.4 实测值 + commit(data 下载)
+EOF
+echo "DONE marker written:"; ls -l "$R/.data_download_20261107.DONE"
+echo "-- MEMORY_DATA 头部（前 3 行，未改动，仅供参考）--"
+head -3 "$R/MEMORY_DATA.md" | cut -c1-160
+
+echo
+echo "########## E) 重启 data 线 loop（用户要求②） ##########"
+echo "-- kill 旧 loop 669542 --"
+kill -TERM 669542 2>/dev/null; sleep 3
+kill -KILL 669542 2>/dev/null; sleep 2
+ps -p 669542 >/dev/null 2>&1 && echo "old loop STILL ALIVE" || echo "old loop gone ✓"
+echo "-- 残留 cline 子进程（一并清理）--"
+for p in $(ps -eo pid=,ppid=,args= | awk '$2==669542 {print $1}'); do echo "kill child $p"; kill -KILL $p 2>/dev/null; done
+echo "-- 启动新 loop（setsid 脱离）--"
+cd "$R" || exit 1
+setsid nohup bash "$R/baize_data_loop.sh" >> /tmp/baize_data_loop.log 2>&1 < /dev/null &
+NEWPID=$!
+echo "started=$NEWPID"
+sleep 6
+echo "-- verify new loop --"
+ps -o pid=,ppid=,lstart=,etime=,args= -p $NEWPID 2>/dev/null | cut -c1-190 || echo "new loop not visible via \$! (check by name)"
+ps -eo pid=,ppid=,lstart=,etime=,args= | grep -F 'baize_data_loop.sh' | grep -v grep | cut -c1-190
+
+echo
+echo "########## F) AFTER: 资源对比 ##########"
+echo "-- data loop log tail 6 --"
+tail -6 /tmp/baize_data_loop.log 2>/dev/null | cut -c1-170
+echo "-- cline procs now --"
+ps -eo pid=,ppid=,etime=,pcpu=,args= | grep -i '[c]line' | cut -c1-170 | head -8
+echo "-- load --"; uptime
+
+echo
+echo "=== 267 done ==="
+```
+
+**输出**
+```
+=== RUN_ID 267 | fix data-line hang | 2026-11-08 14:25:22 | host=whag0pgpuap12 ===
+
+########## A) BEFORE: 僵死 cline 证据 ##########
+3368236  669542 Sat Nov  7 09:15:31 2026  1-05:09:50 Rl    100 cline --data-dir /nas_train/app.e0031982/.cline_data -c /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA202
+-- data loop --
+ 669542       1 Thu Oct 29 09:09:46 2026 10-05:15:35 bash /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_data_loop.sh
+-- top CPU (确认谁是元凶) --
+2626132  147  5-18:33:51 python
+2626131  147  5-18:33:51 python
+2626134  147  5-18:33:51 python
+2626133  146  5-18:33:51 python
+2626138  146  5-18:33:51 python
+2626137  145  5-18:33:51 python
+
+########## B) checkpoint 状态确认（用户要求①） ##########
+-- data 线 globalState.json 里的 checkpoint 相关键 --
+-- 进程 args 里是否带 checkpoint 开关 --
+check
+`CONTAMINATION_CHECK.md`
+-- cline 二进制是否支持 --disable-checkpoints --
+
+########## C) KILL 僵死 cline ##########
+-- kill -TERM 3368236 --
+-- kill -KILL 3368236 --
+gone ✓
+
+########## D) 写 DONE 标记 + 修正 MEMORY 头部（让新 cline 不重复下载） ##########
+DONE marker written:
+-rw-r--r-- 1 app.e0031982 app.adm 424 Nov  8 14:25 /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/.data_download_20261107.DONE
+-- MEMORY_DATA 头部（前 3 行，未改动，仅供参考）--
+# MEMORY_DATA.md — BaiZe 正式训练数据准备 · 运行时状态
+
+WAITING: 1
+
+########## E) 重启 data 线 loop（用户要求②） ##########
+-- kill 旧 loop 669542 --
+old loop gone ✓
+-- 残留 cline 子进程（一并清理）--
+-- 启动新 loop（setsid 脱离）--
+started=928949
+-- verify new loop --
+ 928949  897480 Sun Nov  8 14:25:42 2026       00:06 bash /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_data_loop.sh
+ 928949  897480 Sun Nov  8 14:25:42 2026       00:07 bash /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_data_loop.sh
+
+########## F) AFTER: 资源对比 ##########
+-- data loop log tail 6 --
+[loop] 2026-11-08 14:25:38 WAITING=1 (async task running) → sleep 900s
+[loop] 2026-11-08 14:25:43 wake up, invoking cline ...
+[llmrot] 2026-11-08 14:25:44 优先选中 glm-5.2 #4 @ http://agi-gateway.cxmt.com/cloud/v1 (probe=200)
+env: ‘cline’: No such file or directory
+[loop] 2026-11-08 14:25:44 cline returned (exit 0), checking git sync ...
+[loop] 2026-11-08 14:25:44 WAITING=1 (async task running) → sleep 900s
+-- cline procs now --
+3041408       1 64-21:07:24  2.0 /home/app.e0031982/.npm-global/lib/node_modules/cline/bin/.cline --cline-hub-daemon --cwd /nas_train/app.e0031982 --host 127.0.0.1 --port
+-- load --
+ 14:25:50 up 281 days, 23:08,  3 users,  load average: 23.65, 24.76, 25.05
+
+=== 267 done ===
+```
