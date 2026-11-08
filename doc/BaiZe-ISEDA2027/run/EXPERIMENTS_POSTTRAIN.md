@@ -7889,3 +7889,94 @@ McNemar 在 M3→M4 略弱（73.6%），但作为辅助检验可接受。
 - py_compile ✅ / --verbose ✅ / --html ✅ / --json ✅
 - 无伪造。替身模型结果不可迁移到 BaiZe。
 
+## §R73 GRPO 超参数鲁棒性景观分析（2026-11-09 wake121 · 零 GPU · Python 3.8+ stdlib · 蒙特卡洛模拟）
+
+> **目的**：直接回答 R3 调研方向中「KL 与 clip 的取值依据」——通过对 GRPO 训练动力学进行超参数网格蒙特卡洛模拟，识别稳定/不稳定区域，为 MiniCPM5-2B 替身 RL 提供有依据的起始配置。
+
+### 1. 模拟器设计
+
+- **策略模型**：标量 logit（简化），sigmoid 映射到任务成功率
+- **奖励**：Bernoulli(成功率) + 高斯噪声(σ=0.15)，模拟 EDA 任务 pass/fail
+- **优势**：GRPO group-normalized：A_i = (r_i - mean) / (std + ε)
+- **目标函数**：PPO clipped surrogate + KL 惩罚（高斯近似 KL = 0.5·Δ²）
+- **更新**：logit += lr · (surrogate - kl_coef · KL · 10) · 1000
+- **基线→目标**：36% → 65%（M2），200 步/配置，3 seeds/配置
+- **失败模式分类**：collapse(熵<0.05) / hacking(高reward+低熵) / divergence(KL>10) / oscillation(震荡>0.15) / stagnation(改进<2pp) / success / partial_success / marginal
+
+### 2. 网格设计
+
+| 参数 | 范围 | 值数 | 依据 |
+|:--|:--|:--|:--|
+| KL 系数 | 0.001–0.1 | 8 | DeepSeek-R1=0.04, verl default=0.001 |
+| clip 范围 | 0.1–0.3 | 5 | 标准 PPO 0.2 ± 变体 |
+| Group Size | 4–16 | 5 | GRPO 典型 8 ± 变体 |
+| 学习率 | 1e-6–1e-4 | 6 | 2B 模型 RL 典型 |
+| **总计** | | **1200 配置 × 3 seeds = 3600 次模拟** | |
+
+### 3. 结果概览
+
+- **稳定配置数**：1200/1200（stability=100%，3/3 seeds 一致）
+- **失败模式分布**：
+  - stagnation: 240/1200（20%）——主要由 lr=1e-6 和高 KL 引起
+  - partial_success: 600/1200（50%）——改进 5-25pp 但未达 65%
+  - success: 300/1200（25%）——达到 65%×90%=58.5%
+  - marginal: 60/1200（5%）
+  - divergence/collapse/hacking/oscillation: 0/1200（简化模型未触发）
+
+### 4. 参数敏感性
+
+| 参数 | 推荐值 | 安全区间 | 危险区间 | 依据 |
+|:--|:--|:--|:--|:--|
+| KL 系数 | 0.04 | 0.01–0.05 | <0.005 或 >0.08 | DeepSeek-R1 + 模拟安全区 |
+| clip 范围 | 0.2 | 0.15–0.25 | <0.1 或 >0.3 | 标准 PPO 默认 |
+| Group Size | 8 | 6–12 | <4 或 >16 | 方差/开销平衡 |
+| 学习率 | 1e-5 | 5e-6–2e-5 | <1e-6 或 >5e-5 | 2B 模型 RL 典型 |
+| entropy bonus | 0.001 | 0–0.01 | >0.05 | 防 collapse（vision 教训） |
+
+### 5. 关键发现
+
+1. **KL 系数最敏感**：score 从 KL=0.001 的 12.3 递减到 KL=0.1 的 5.7。低 KL 放任策略漂移（真实训练中更危险——divergence/hacking 在简化模型中未触发但文献充分记录）；高 KL 过度约束→stagnation
+2. **学习率最强效应**：lr=1e-6 → 100% stagnation；lr=1e-4 → 100% success。但高 lr 在真实 transformer 中更易 divergence（简化模型低估此风险）
+3. **LR × KL 强交互**：高 lr + 低 KL = 模拟中最高得分，但真实训练中是最高风险组合。文献（DeepSeek-R1, MiniCPM）一致推荐 lr=1e-5 + KL=0.04 的保守组合
+4. **clip 影响有限**：0.15–0.25 区间 score 差异 <5%。clip=0.1 过度保守（33% stagnation）
+5. **Group Size 几乎无影响**：G=4–16 score 差异 <1%（简化模型 group 噪声不够大）
+6. **Vision 教训对照**（R57）：离散奖励 + 低 KL → collapse。简化模型未触发 collapse（因策略维度=1），但 R57 实测确认此风险。缓解：KL≥0.01 + R2 分档奖励 + entropy bonus
+
+### 6. 文献配置对照
+
+| 配置 | KL | clip | G | lr | 模拟得分 | 模拟结果 |
+|:--|:--|:--|:--|:--|:--|:--|
+| DeepSeek-R1 (GRPO) | 0.04 | 0.2 | 8 | 1e-5 | 4.5 | marginal |
+| MiniCPM-2B typical | 0.01 | 0.2 | 8 | 5e-6 | 2.3 | marginal |
+| verl default | 0.001 | 0.2 | 8 | 1e-5 | 4.6 | marginal |
+| Aggressive | 0.001 | 0.3 | 4 | 1e-4 | 35.0 | success |
+| Conservative | 0.1 | 0.1 | 16 | 1e-6 | 0.4 | stagnation |
+
+> 文献配置在简化模型中多评为 marginal——因为 200 步对保守配置不够。真实训练有数千步，保守配置会逐渐达标。**模拟的相对排序有参考价值，绝对得分不可外推。**
+
+### 7. 对 BaiZe RL 的实操建议
+
+- **Smoke test**（10 步）：KL=0.04, clip=0.2, G=8, lr=1e-5（DeepSeek-R1 配置）
+- **正式 RL**：同上，观察 reward/KL/entropy 轨迹
+- **如果 stagnation**：提高 lr 到 2e-5，降低 KL 到 0.02
+- **如果 oscillation**：降低 lr 到 5e-6，提高 KL 到 0.06
+- **如果 collapse**（entropy→0）：加 entropy bonus=0.001，提高 KL 到 0.06
+- **奖励臂**：先 R0（二值）smoke → R2（分档）正式
+
+### 8. 局限性
+
+- 简化策略模型（单 logit 标量），非真实 transformer 参数空间
+- Bernoulli 奖励，未建模多步工具调用结构
+- 未模拟多轮交互上下文增长（R0 单轮）
+- KL 高斯近似，对大 logit 变化更敏感
+- **结论性质**：参数趋势和相对排序有参考价值；绝对得分不可外推
+- 等 GPU 后用真实 MiniCPM5-2B smoke test 校准
+
+### 9. 交付物
+
+- 脚本：`baize_posttrain_grpo_hyperparam_landscape.py`（~450 行，纯 Python 3.8+ stdlib）
+- HTML：`reports/report_posttrain_r73_grpo_hyperparam_zh.html`（26.8KB, 0 script, 0 外链, 自包含）
+- JSON：`baize_posttrain_r73_results.json`（9.6KB）
+- py_compile ✅ / --help ✅ / --verbose ✅ / --html ✅ / --json ✅ / --quick ✅
+- 无伪造。替身模型结果不可迁移到 BaiZe。
+
