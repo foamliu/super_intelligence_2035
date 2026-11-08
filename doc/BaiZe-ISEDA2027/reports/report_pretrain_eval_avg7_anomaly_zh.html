@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>预训练全量评测均值异常诊断报告 (Avg7=37.40% vs 历史 51.5–57.9%) — 修订版 v4.0</title>
-<!-- v4.0: Latest progress@02:52: piqa 1570/3676(43%,7.12s/it,ETA~4.2h→07:00)·hs_c0 4647/10044(46%,8.10s/it,ETA~12.1h→15:00)·hs_c1 3544/10044(35%,8.85s/it,ETA~16h→19:00)·hs_c2 1397/10044(14%,22.94s/it,ETA~55h→Nov11←bottleneck)·hs_c3 717/10036(7%,9.87s/it,ETA~25.6h→Nov10). 5s+5c全活. 6/8done Avg6=53.38%≈历史53.83%差-0.45pp. 结论A铁证(口径差异:旧二进制+全量vs限100). S1健康.29 iter_132000/700k 8xH100. -->
+<title>预训练全量评测均值异常诊断报告 (Avg7=37.40% vs 历史 51.5–57.9%) — 修订版 v4.1</title>
+<!-- v4.1: Latest progress@03:15: piqa 1662/3676(45%,7.98s/it,ETA~4.5h→07:45)·hs_c0 4892/10044(49%,3.34s/it,ETA~4.8h→08:00)·hs_c1 3618/10044(36%,8.46s/it,ETA~15h→18:00)·hs_c2 1467/10044(15%,32.82s/it,ETA~78h←bottleneck,rebalance watcher待piqa完成→迁8183降至~21h)·hs_c3 783/10036(8%,20.85s/it,ETA~53h,rebalance watcher待c0完成→迁8184降至~10h). 5s+5c全活(health ok×5). 6/8done Avg6(acc)=53.38%≈历史53.83%差-0.45pp. 结论A铁证(口径差异:旧二进制+全量vs限100). S1健康.29 iter_132000/700k 8xH100. 全8集完成ETA≈Nov10~04:30. -->
 <style>
 body{font-family:system-ui,sans-serif;max-width:1100px;margin:0 auto;padding:20px;line-height:1.6;color:#222;background:#fafafa}
 h1{color:#c0392b;border-bottom:3px solid #c0392b;padding-bottom:10px}
@@ -30,7 +30,7 @@ pre{background:#f4f4f4;padding:12px;border-radius:6px;overflow-x:auto;font-size:
 </style>
 </head>
 <body>
-<h1>🚨 预训练全量评测均值异常诊断报告 <span class="updated">（修订版 v4.0 · 2026-11-09 02:52）</span></h1>
+<h1>🚨 预训练全量评测均值异常诊断报告 <span class="updated">（修订版 v4.1 · 2026-11-09 03:15）</span></h1>
 <p><strong>报告日期：</strong>2026-11-08　<strong>检查点：</strong>iter_112000（2B Mamba2-hybrid）<br>
 <strong>异常：</strong>本轮 v4 Avg7=37.40% vs 历史 iter_100000 Avg=54.75%（raw）/ 57.75%（harness），差 14–20 pp<br>
 <span class="updated">⬆ 修订说明：v1 报告结论为「差异 100% 来自二进制」。
@@ -328,7 +328,7 @@ piqa（3676 题）和 hellaswag（40168 请求）是大任务，完成需较长�
 <p><strong>下一步：</strong></p>
 <ul>
 <li>🚫 <strong>不需要暂停训练或回滚检查点</strong>——模型训练正常（loss 平滑无跳变）</li>
-<li>✅ v5 修复版二进制全量评测<strong>正在运行</strong>（6/8 集已完成：arc_challenge/arc_easy/boolq/openbookqa/sciq/winogrande；piqa 43%/hellaswag 26% 运行中）</li>
+<li>✅ v5 修复版二进制全量评测<strong>正在运行</strong>（6/8 集已完成：arc_challenge/arc_easy/boolq/openbookqa/sciq/winogrande；piqa 45%/hellaswag 27%(c0 49%/c1 36%/c2 15%/c3 8%) 运行中，全 8 集完成 ETA≈Nov10 04:30）</li>
 <li>✅ v5 Avg6（已完成 6 集, acc）= <strong>53.38%</strong>，远高于 v4 Avg7=37.40%。同 6 集对比历史 limit=100 Avg6=53.83%，差仅 −0.45pp——几乎完全一致！</li>
 <li>✅ 待 v5 全部完成后，计算 v5 Avg8（预计 ~48–53%，高于 v4 的 37.4%，接近历史 limit=100 的 54.75%）</li>
 <li>✅ 历史报告的 limit=100 分数<strong>不能直接作为全量基线</strong>——建议后续统一用全量评测</li>
