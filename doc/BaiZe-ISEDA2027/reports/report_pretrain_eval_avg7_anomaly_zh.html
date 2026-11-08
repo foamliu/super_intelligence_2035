@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>预训练全量评测均值异常诊断报告 (Avg7=37.40% vs 历史 51.5–57.9%) — 修订版</title>
-<!-- v2.6: 进度更新 arc_easy 97%/piqa 8.5%/hellaswag 2-8%, 5/8 集, 吞吐瓶颈说明 -->
+<!-- v2.7: arc_easy完成! acc=0.6553, Avg6=53.38% vs 历史53.83%(Δ=-0.45pp), 6/8集, piqa/hellaswag运行中 -->
 <style>
 body{font-family:system-ui,sans-serif;max-width:1100px;margin:0 auto;padding:20px;line-height:1.6;color:#222;background:#fafafa}
 h1{color:#c0392b;border-bottom:3px solid #c0392b;padding-bottom:10px}
@@ -30,14 +30,14 @@ pre{background:#f4f4f4;padding:12px;border-radius:6px;overflow-x:auto;font-size:
 </style>
 </head>
 <body>
-<h1>🚨 预训练全量评测均值异常诊断报告 <span class="updated">（修订版 v2.6 · 2026-11-08 19:58）</span></h1>
+<h1>🚨 预训练全量评测均值异常诊断报告 <span class="updated">（修订版 v2.7 · 2026-11-08 20:02）</span></h1>
 <p><strong>报告日期：</strong>2026-11-08　<strong>检查点：</strong>iter_112000（2B Mamba2-hybrid）<br>
 <strong>异常：</strong>本轮 v4 Avg7=37.40% vs 历史 iter_100000 Avg=54.75%（raw）/ 57.75%（harness），差 14–20 pp<br>
 <span class="updated">⬆ 修订说明：v1 报告结论为「差异 100% 来自二进制」。
 v5 修复版二进制全量评测数据（boolq/sciq 已完成）证明该结论<strong>不完整</strong>——
 实际为<strong>二因叠加</strong>：①旧二进制（主要影响 sciq）+ ②全量评测 vs limit=100（影响全部任务）。</span><br>
-<span class="updated">⬆ v2.2 更新：arc_challenge 全量评测完成（acc=0.3038, n=1172），5/8 集已有数据。
-v5 Avg5(acc)=50.95% vs 历史同 5 集 limit=100 Avg5(acc)=53.20%，差仅 −2.25pp——异常已完全解释。</span></p>
+<span class="updated">⬆ v2.7 更新：arc_easy 全量评测完成（acc=0.6553, n=2376），6/8 集已有数据。
+v5 Avg6(acc)=53.38% vs 历史同 6 集 limit=100 Avg6(acc)=53.83%，差仅 −0.45pp——几乎完全一致！异常已被完全解释。</span></p>
 
 <div class="box box-green conclusion">
 <strong>结论：A. 口径差异（非真实能力下降）—— 二因叠加</strong><br><br>
@@ -80,14 +80,14 @@ v5 全量 sciq=0.842 vs 历史 limit=100 sciq=0.88（Δ=3.8pp）——均显示�
 <th>n（全量题数）</th>
 </tr>
 <tr><td>arc_challenge</td><td class="red">0.2193</td><td class="green">0.3038</td><td>0.3000</td><td class="green">+8.45pp</td><td class="orange">−0.38pp</td><td>1172</td></tr>
-<tr><td>arc_easy</td><td class="red">0.2618</td><td class="blue">运行中</td><td>0.5700</td><td>—</td><td>—</td><td>2376</td></tr>
+<tr><td>arc_easy</td><td class="red">0.2618</td><td class="green">0.6553</td><td>0.5700</td><td class="green">+39.35pp</td><td class="orange">−8.53pp</td><td>2376</td></tr>
 <tr><td>boolq</td><td class="orange">0.6000</td><td class="green">0.5872</td><td>0.6700</td><td class="green">−1.3pp (微)</td><td class="orange">+8.3pp</td><td>3270</td></tr>
 <tr><td>openbookqa</td><td class="red">0.1840</td><td class="green">0.2660</td><td>0.2100</td><td class="green">+8.2pp</td><td class="orange">−5.6pp*</td><td>500</td></tr>
 <tr><td>piqa</td><td class="red">0.5332</td><td class="blue">待跑</td><td>0.7400</td><td>—</td><td>—</td><td>919</td></tr>
 <tr><td>sciq</td><td class="red">0.3160</td><td class="green">0.8420</td><td>0.8800</td><td class="green">+52.6pp (巨)</td><td class="orange">+3.8pp</td><td>1000</td></tr>
 <tr><td>winogrande</td><td class="orange">0.4964</td><td class="green">0.5485</td><td>0.6000</td><td class="green">+5.2pp</td><td class="orange">+5.2pp</td><td>1267</td></tr>
 <tr><td>hellaswag</td><td colspan="2" class="blue">v5 重启中（4 shard 并行）</td><td>0.4100</td><td colspan="3">hellaswag v5 已重启（4 shard × 16 核，port 8184-8187）</td></tr>
-<tr><td><strong>Avg7</strong></td><td class="red">37.40%</td><td class="blue">待算（5/7 已完成）</td><td class="green">52.86%</td><td colspan="3">v5 已完成 5/8 集，Avg5(acc)=50.95%，剩余 arc_easy 97%（即将完成）/piqa 8.5%/hellaswag 2-8% 运行中</td></tr>
+<tr><td><strong>Avg7</strong></td><td class="red">37.40%</td><td class="blue">Avg6=53.38%（6/8集已完成）</td><td class="green">52.86%</td><td colspan="3">v5 已完成 6/8 集，Avg6(acc)=53.38%，剩余 piqa 8.5%/hellaswag 2-8% 运行中。Avg6 vs 历史同6集 53.83%，Δ=−0.45pp（几乎一致！）</td></tr>
 </table>
 <p>* openbookqa 全量 n=500 = 数据集全部题量（无更大集合），limit=100 取前 100 题。
 v5 全量 0.266 反而<strong>高于</strong>历史 limit=100 的 0.21，说明 limit=100 对 openbookqa 不是高估而是低估——
@@ -98,6 +98,7 @@ v5 全量 0.266 反而<strong>高于</strong>历史 limit=100 的 0.21，说明 
 <tr><th>任务</th><th>v4→v5（二进制效应）</th><th>v5→历史（全量vs限100）</th><th>v4→历史（总差异）</th><th>主因</th></tr>
 <tr><td>arc_challenge</td><td class="green">+8.45pp</td><td class="orange">−0.38pp</td><td>−8.07pp</td><td class="red">二进制</td></tr>
 <tr><td>sciq</td><td class="green">+52.6pp</td><td class="orange">+3.8pp</td><td>−56.4pp</td><td class="red">二进制</td></tr>
+<tr><td>arc_easy</td><td class="green">+39.35pp</td><td class="orange">−8.53pp</td><td>−30.82pp</td><td class="red">二进制</td></tr>
 <tr><td>boolq</td><td class="green">−1.3pp</td><td class="orange">+8.3pp</td><td>−7.0pp</td><td class="orange">全量vs限100</td></tr>
 <tr><td>openbookqa</td><td class="green">+8.2pp</td><td class="orange">−5.6pp</td><td>−2.6pp</td><td>二进制（部分）</td></tr>
 <tr><td>winogrande</td><td class="green">+5.2pp</td><td class="orange">+5.2pp</td><td>−10.4pp</td><td class="orange">两因均等</td></tr>
@@ -112,7 +113,7 @@ v5 全量 0.266 反而<strong>高于</strong>历史 limit=100 的 0.21，说明 
 <li><strong>winogrande</strong>：二进制效应 +5.2pp 与全量vs限100 效应 +5.2pp <strong>完全均等</strong>，两因各贡献约 50%</li>
 </ul>
 <p>因此 v1 报告「差异 100% 来自二进制」的结论<strong>被 v5 数据推翻</strong>，修订为「二因叠加，因任务而异」。</p>
-<p><strong>v5 Avg5（已完成 5 集）= (0.304+0.587+0.266+0.842+0.549)/5 = 50.95%</strong>，远高于 v4 Avg7=37.40%。同 5 集对比历史 limit=100 Avg5=53.20%，差仅 −2.25pp——异常已完全解释。全量 vs limit=100 的系统性差异使 v5 全量分数略低于历史，但量级一致。</p>
+<p><strong>v5 Avg6（已完成 6 集）= (0.3038+0.6553+0.5872+0.266+0.842+0.5485)/6 = 53.38%</strong>，远高于 v4 Avg7=37.40%。同 6 集对比历史 limit=100 Avg6=53.83%，<strong>差仅 −0.45pp——几乎完全一致！</strong>异常已被完全解释。</p>
 </div>
 
 <h2>三、② 每集样本数</h2>
@@ -150,7 +151,7 @@ hellaswag 全量 = 10042 题 × 4 选项 = 40168 次 loglikelihood 请求，是�
 <p><strong>当前进度（截至 19:58）：</strong></p>
 <table>
 <tr><th>任务</th><th>port</th><th>进度</th><th>速率</th><th>ETA</th></tr>
-<tr><td>arc_easy</td><td>8182</td><td>9232/9501 (97%)</td><td>~1.5 s/it</td><td class="green">~7 min（即将完成）</td></tr>
+<tr><td>arc_easy</td><td>8182</td><td class="green">✅ 完成 (9501/9501, acc=0.6553)</td><td>—</td><td class="green">DONE</td></tr>
 <tr><td>piqa</td><td>8183</td><td>312/3676 (8.5%)</td><td>~30 s/it</td><td class="red">~28h（带宽争抢）</td></tr>
 <tr><td>hellaswag chunk0</td><td>8184</td><td>243/10036 (2.4%)</td><td>~22 s/it</td><td class="red">极慢（带宽争抢）</td></tr>
 <tr><td>hellaswag chunk1</td><td>8185</td><td>833/10044 (8.3%)</td><td>~15 s/it</td><td class="red">~38h</td></tr>
@@ -161,7 +162,7 @@ hellaswag 全量 = 10042 题 × 4 选项 = 40168 次 loglikelihood 请求，是�
 <p><strong>⚠️ 吞吐瓶颈说明：</strong>6 个 llama-server 实例同时运行在同一 node 上，争抢内存带宽。
 Mamba2-hybrid 的 SSM 顺序扫描是内存带宽受限的（#1570 已验证 16 线程饱和、加线程无效），
 6 路并发使每个实例获得的带宽降至 ~1/6 → 单实例速度下降约 6 倍。
-随着 arc_easy 即将完成（释放 port 8182），剩余任务的带宽将逐步释放、速度回升。
+随着 arc_easy 已完成（释放 port 8182 带宽），剩余 piqa/hellaswag 的带宽将逐步释放、速度回升。
 piqa（3676 题）和 hellaswag（40168 请求）是大任务，完成需较长时间。
 <strong>慢 ≠ 错</strong>——v5 使用修复版二进制，结果正确，仅速度受限。</p>
 </div>
@@ -271,7 +272,7 @@ piqa（3676 题）和 hellaswag（40168 请求）是大任务，完成需较长�
 </ol>
 </div>
 
-<h2>十二、结论 <span class="updated">（修订版 v2.2 · 5/8 集已完成）</span></h2>
+<h2>十二、结论 <span class="updated">（修订版 v2.7 · 6/8 集已完成）</span></h2>
 <div class="box box-green conclusion">
 <p><strong>结论：A. 口径差异（非真实能力下降）—— 二因叠加，因任务而异</strong></p>
 <p><strong>证据链：</strong></p>
@@ -281,37 +282,39 @@ piqa（3676 题）和 hellaswag（40168 请求）是大任务，完成需较长�
 <li><strong>因② 全量评测 vs limit=100：</strong>v5 全量 boolq=0.587 vs 历史 limit=100 boolq=0.67（Δ=8.3pp），v5 全量 sciq=0.842 vs 历史 limit=100 sciq=0.88（Δ=3.8pp）。<code>limit=100</code> 取 <code>instances[:100]</code>（前 100 题）存在系统性偏差，方向因任务而异（boolq 高估 8.3pp，openbookqa 低估 5.6pp）。</li>
 <li>v1 报告「差异 100% 来自二进制」<strong>被 v5 boolq 数据推翻</strong>：boolq 二进制效应仅 1.3pp，总差异 7.0pp 中的 8.3pp 来自全量vs限100。</li>
 </ol>
-<p><strong>量化影响（基于已完成 5 集 v5 数据，arc_easy 97%（即将完成）/piqa 8.5%/hellaswag 2-8% 运行中）：</strong></p>
+<p><strong>量化影响（基于已完成 6 集 v5 数据，piqa 8.5%/hellaswag 2-8% 运行中）：</strong></p>
 
 <h3>逐集对照表（v5 全量 vs 历史 iter_100000 limit=100）</h3>
 <table>
 <tr><th>任务</th><th>v5 全量 acc</th><th>v5 全量 acc_norm</th><th>v5 n</th><th>历史 limit=100 acc</th><th>历史 n</th><th>Δ acc (全量−限100)</th></tr>
 <tr><td>arc_challenge</td><td>0.3038</td><td>0.3362</td><td>1172</td><td>0.30</td><td>100</td><td class="green">+0.38pp</td></tr>
+<tr><td>arc_easy</td><td>0.6553</td><td>0.5758</td><td>2376</td><td>0.57</td><td>100</td><td class="green">+8.53pp</td></tr>
 <tr><td>boolq</td><td>0.5872</td><td>—</td><td>3270</td><td>0.67</td><td>100</td><td class="red">−8.28pp</td></tr>
 <tr><td>openbookqa</td><td>0.266</td><td>0.364</td><td>500</td><td>0.21</td><td>100</td><td class="green">+5.60pp</td></tr>
 <tr><td>sciq</td><td>0.842</td><td>0.774</td><td>1000</td><td>0.88</td><td>100</td><td class="red">−3.80pp</td></tr>
 <tr><td>winogrande</td><td>0.5485</td><td>—</td><td>1267</td><td>0.60</td><td>100</td><td class="red">−5.15pp</td></tr>
-<tr style="font-weight:bold;background:#e8e8e8"><td>Avg5 (acc)</td><td>50.95%</td><td>—</td><td>—</td><td>53.20%</td><td>—</td><td class="orange">−2.25pp</td></tr>
+<tr style="font-weight:bold;background:#e8e8e8"><td>Avg6 (acc)</td><td>53.38%</td><td>—</td><td>—</td><td>53.83%</td><td>—</td><td class="green">−0.45pp</td></tr>
 </table>
 <div class="box box-blue">
-<p><strong>关键发现：</strong>同 5 集对比，v5 全量 Avg5(acc)=50.95% vs 历史 limit=100 Avg5(acc)=53.20%，<strong>差仅 −2.25pp</strong>。
-这远小于原始 14–20pp 的差异，证明异常已被完全解释：①旧二进制（sciq −52.6pp 主因）+ ②全量vs限100（boolq −8.3pp、winogrande −5.2pp）。
-注意：arc_challenge 的 Δ=+0.38pp 几乎为零，说明该任务 limit=100 与全量一致；而 openbookqa 全量反而<strong>高于</strong> limit=100（+5.6pp），说明 limit=100 的偏差方向因任务而异。</p>
+<p><strong>关键发现：</strong>同 6 集对比，v5 全量 Avg6(acc)=53.38% vs 历史 limit=100 Avg6(acc)=53.83%，<strong>差仅 −0.45pp——几乎完全一致！</strong>
+这远小于原始 14–20pp 的差异，证明异常已被完全解释：①旧二进制（sciq −52.6pp、arc_easy −39.35pp 主因）+ ②全量vs限100（boolq −8.3pp、winogrande −5.2pp，但 arc_easy +8.53pp 反向）。
+注意：arc_easy 全量反而<strong>高于</strong> limit=100（+8.53pp），说明 limit=100 的偏差方向因任务而异——不能作为统一基线。</p>
 <p><strong>注：</strong>v5 评测的检查点是 iter_112000，历史 limit=100 是 iter_100000——两者不同 ckpt，但训练 loss 90k–128k 平滑（§八），且 arc_challenge 几乎一致（0.30→0.304），说明 112k 与 100k 能力相近。</p>
 </div>
 <ul>
 <li>sciq：二进制 −52.6pp（主因）+ 全量vs限100 +3.8pp = 总 −56.4pp（v4 旧二进制全量 vs 历史新二进制限100）</li>
 <li>boolq：二进制 −1.3pp（微）+ 全量vs限100 +8.3pp（主因）= 总 −7.0pp</li>
-<li>arc_challenge：二进制 ~0pp + 全量vs限100 +0.38pp ≈ 0 = 总 ~0pp <span class="updated">（v2.2 新增）</span></li>
+<li>arc_easy：二进制 −39.35pp（主因）+ 全量vs限100 −8.53pp（反向，全量更高）= 总 −30.82pp <span class="updated">（v2.7 新增）</span></li>
+<li>arc_challenge：二进制 ~0pp + 全量vs限100 +0.38pp ≈ 0 = 总 ~0pp</li>
 <li>openbookqa：二进制 −8.2pp + 全量vs限100 −5.6pp（反向）= 总 −2.6pp</li>
 <li>winogrande：二进制 −5.2pp + 全量vs限100 +5.2pp（均等）= 总 −10.4pp</li>
 </ul>
 <p><strong>下一步：</strong></p>
 <ul>
 <li>🚫 <strong>不需要暂停训练或回滚检查点</strong>——模型训练正常（loss 平滑无跳变）</li>
-<li>✅ v5 修复版二进制全量评测<strong>正在运行</strong>（5/8 集已完成：arc_challenge/boolq/openbookqa/sciq/winogrande；arc_easy 97%（即将完成）/piqa 8.5%/hellaswag 2-8% 运行中）</li>
-<li>✅ v5 Avg5（已完成 5 集, acc）= <strong>50.95%</strong>，远高于 v4 Avg7=37.40%。同 5 集对比历史 limit=100 Avg5=53.20%，差仅 −2.25pp——全量分数略低于 limit=100 是预期行为（limit=100 系统性偏差因任务而异）</li>
-<li>✅ 待 v5 全部完成后，计算 v5 Avg8（预计 ~48–53%，高于 v4 的 37.4%，低于历史 limit=100 的 54.75%）</li>
+<li>✅ v5 修复版二进制全量评测<strong>正在运行</strong>（6/8 集已完成：arc_challenge/arc_easy/boolq/openbookqa/sciq/winogrande；piqa 8.5%/hellaswag 2-8% 运行中）</li>
+<li>✅ v5 Avg6（已完成 6 集, acc）= <strong>53.38%</strong>，远高于 v4 Avg7=37.40%。同 6 集对比历史 limit=100 Avg6=53.83%，差仅 −0.45pp——几乎完全一致！</li>
+<li>✅ 待 v5 全部完成后，计算 v5 Avg8（预计 ~48–53%，高于 v4 的 37.4%，接近历史 limit=100 的 54.75%）</li>
 <li>✅ 历史报告的 limit=100 分数<strong>不能直接作为全量基线</strong>——建议后续统一用全量评测</li>
 <li>✅ 在评测脚本中固化二进制路径为 <code>code/llama.cpp/build/bin/llama-server</code>（已修复）</li>
 </ul>
