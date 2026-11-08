@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>论文观察日报 · 2026-11-09（早报 · 3/5）· research 线</title>
+<style>
+  :root { --primary:#0b3d6e; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700; --bad:#cf222e;
+          --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+         color:var(--text); background:var(--bg); line-height:1.7; font-size:15px; }
+  .wrap { max-width:1040px; margin:0 auto; padding:32px 20px 80px; }
+  header.hero { background:linear-gradient(135deg,#0b3d6e 0%,#1f6feb 100%); color:#fff; border-radius:14px;
+                padding:30px 32px; margin-bottom:22px; box-shadow:0 8px 24px rgba(11,61,110,.18); }
+  header.hero h1 { margin:0 0 6px; font-size:24px; letter-spacing:.3px; }
+  header.hero .sub { font-size:15px; opacity:.95; }
+  header.hero .meta { margin-top:14px; font-size:13px; opacity:.9; display:flex; flex-wrap:wrap; gap:8px 18px; }
+  header.hero .meta span { background:rgba(255,255,255,.14); border-radius:999px; padding:2px 12px; }
+  .disc { margin-top:14px; font-size:12.5px; background:rgba(0,0,0,.18); border-radius:8px; padding:8px 12px; opacity:.95; }
+  .badge { display:inline-block; padding:1px 10px; border-radius:999px; font-size:12.5px; font-weight:700; vertical-align:middle; }
+  .b-am { background:#e6f4ea; color:#0b6b2f; }
+  .b-pm { background:#ddf4ff; color:#0b3d6e; }
+  .b-jz { background:#dafbe1; color:var(--ok); } .b-kp { background:#ffeef8; color:#a3238e; }
+  .progress { margin-top:8px; font-size:13.5px; }
+  h2.sec { font-size:19px; margin:34px 0 12px; padding-bottom:8px; border-bottom:2px solid var(--border); }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:18px 22px; margin:16px 0;
+          box-shadow:0 1px 3px rgba(27,31,36,.06); }
+  .card h3 { margin:0 0 4px; font-size:17px; line-height:1.45; }
+  .card .no { display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px; margin-right:8px;
+              border-radius:50%; background:var(--accent); color:#fff; font-size:14px; font-weight:700; vertical-align:middle; }
+  .row { display:flex; gap:10px; margin:7px 0; font-size:14px; }
+  .row .k { flex:0 0 108px; color:var(--muted); font-weight:600; }
+  .row .v { flex:1; }
+  .orig { font-style:italic; color:#0b3d6e; }
+  code { background:#eef1f4; border:1px solid #e1e4e8; border-radius:5px; padding:1px 6px;
+         font-family:Consolas,Menlo,monospace; font-size:12.5px; color:#0b3d6e; }
+  a { color:var(--accent); word-break:break-all; }
+  .reason { background:#f0f6ff; border:1px solid #cfe0f5; border-left:4px solid var(--accent); border-radius:8px;
+            padding:10px 14px; margin-top:10px; font-size:13.5px; }
+  table { border-collapse:collapse; width:100%; margin:12px 0; font-size:13px; background:var(--card); }
+  th,td { border:1px solid var(--border); padding:7px 10px; text-align:left; vertical-align:top; }
+  th { background:#eef3f8; color:var(--primary); font-weight:600; }
+  tr:nth-child(even) td { background:#fafbfc; }
+  .note { background:#fff8ef; border:1px solid #f0d9b5; border-left:4px solid var(--warn); border-radius:8px;
+          padding:10px 16px; font-size:13px; color:#6a4a00; }
+  .ok-box { background:#f0fff4; border:1px solid #b7f0c5; border-left:4px solid var(--ok); border-radius:8px;
+            padding:10px 16px; font-size:13px; }
+  footer { margin-top:44px; padding-top:16px; border-top:1px solid var(--border);
+           color:var(--muted); font-size:12.5px; }
+  ul,ol { margin:6px 0; padding-left:20px; } li { margin:3px 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+  <h1>论文观察日报 · 2026-11-09 <span class="badge b-am">早报 · 3/5</span></h1>
+  <div class="sub">每日 5 篇推荐论文（早 3 / 晚 2）· <b>今日进度 3 / 5</b>（早报 3 篇「借鉴」；晚报 2 篇「科普」待 18:00）· 含 <b>「对各线的可执行建议」</b>（pretrain / vision / harness / data / zhulong / designflow 六线）</div>
+  <div class="meta">
+    <span>📅 2026-11-09（周一）</span>
+    <span>🕕 生成 06:0x CST（早报）</span>
+    <span>📚 数据源 arXiv（export.arxiv.org）· 官方 API</span>
+    <span>🏷 本页口径：<b>借鉴</b>（3 篇）</span>
+  </div>
+  <div class="disc">⚠️ 免责：本页为 <b>论文解读 / 待读线索</b>，<b>非结论、非官方</b>；所有数字均为<b>作者自报</b>，本线<b>未复现</b>；原题照抄不改写。「对各线的可执行建议」为<b>基于论文的推断，供各线自行评估</b>，非指令；与各线任务书冲突时以任务书为准。</div>
+</header>
+
+
+<div class="note">
+  <b>批次状态（先看这条）</b>：本轮 4 条独立探针 <b>4/4</b> <code>status=200</code> + <code>application/atom+xml; charset=utf-8</code>、全部 <code>attempts=1</code> —— ① <code>cat:cs.CL</code> <code>totalResults=</code><b>124,790</b>、最新 <code>published</code> 仍为 <code>2026-11-05T18:58:17Z</code>（<code>2611.08478v1</code>）；② <code>cat:cs.CL AND submittedDate:[202611080000 TO 202611122359]</code> → <b>total=0</b>；③ 全库同区间 → <b>total=0</b>；④ 广度 5 分类 → <b>643,965</b>。四项与 r139/r140 <b>逐项相同</b> ⇒ <b>公告批次未刷新（仍 <code>2026-11-05</code>）</b>：本地 06:00 CST = 美东 11-08 17:00（周日），下一批公告 = 美东 11-08 20:00 ET = <b>本地 11-09 09:00</b>，晚于本轮约 3h ⇒ <b>符合日历</b>。按 §0.1「周末 / 周一早间公告批次例外」，以<b>最近一次公告批次（2026-11-05）</b>为窗口，并在每张卡片的「日期」行<b>如实标注实际距唤醒时长（75–86h，已超出 72h 常规窗口，走例外）</b>，<b>不写成「无新增」</b>。
+</div>
+
+<h2 class="sec">☀️ 早报 · 3 篇「借鉴」<span class="badge b-jz">借鉴</span></h2>
+<p style="font-size:13.5px;color:#59636e;margin:0 0 8px;">本轮按「<b>离各线当轮阻塞有多近</b>」选文（2026-11-07 用户令：日报要能被各线 agent 直接执行），三篇分别对准三类<b>正在付出的成本</b>：<b>① 重复探索的成本</b>（<code>2611.07595</code> Evolver：把 agent 探索沉淀成可复用经验资产，不改参数；+4.38pp / token −24.24%）→ <b>harness（predict 与 TB-2.1 的 token 预算）+ zhulong（成本口径）</b>；<b>② 口径漂移的成本</b>（<code>2611.08452</code> ReproBridge：把复现做成「四件套工件 + 独立审计器 + 5 参考观测 + 10% 变异门槛」）→ <b>pretrain（37.40% vs 51.50% 这类同 ckpt 不可比）+ harness（证据审计）</b>；<b>③ 判错与返工的成本</b>（<code>2611.07634</code> AiXapply：验证漏斗造数据 + 语言/格式感知等价判分 + 按错误类型加权的密集奖励）→ <b>data + designflow + vision</b>。三篇均属 <code>2026-11-05</code> 公告批次（<b>公告批次例外，见上方说明</b>）。</p>
+
+<div class="card">
+  <h3><span class="no">1</span>Evolver: Turning Agent Exploration into Evolving Capabilities</h3>
+  <div class="row"><div class="k">中文一句话</div><div class="v">agent 每次跑任务都会「摸索」出有用的流程知识，但跑完就随轨迹丢掉，下一次还得重新摸。作者把这部分经验做成<b>不改模型参数</b>的可复用资产：结构化 <b>Gene</b>（策略 + 适用条件）、绑定具体执行案例的 <b>Capsule</b>、以及记录「别这么做」的 <b>AntiGene</b>；执行时在 session 起点注入（<b>注入预算 12,000 字节</b>），可选在提示时机按需检索。评测用 <b>Baseline–Extraction–Gene（B–E–G）配对协议</b>：同题、同 harness、同基座，B = 原生跑，G = 注入经验后在新 session 重跑，两边都保留完整 token 记录。在 Claude Code / Codex × 2 个基座 × 4 个基准（Terminal-Bench 2.1、SWE-bench Multilingual、SWE-rebench、GAIA）的 <b>16 个配置、320 对配对</b>上，成功率 <b>83.13% → 87.50%（+4.38pp）</b>、任务执行 token <b>−24.24%</b>；在<b>两边都成功</b>的 265 对里 token 仍 <b>−17.57%</b>（省的不只是「失败重试」）。分基准：<b>Terminal-Bench 2.1 提升最大（64/80 → 71/80，+8.75pp）</b>、SWE-rebench +5.00pp、GAIA +3.75pp、<b>SWE-bench Multilingual 96.25% 持平</b>；16 个配置中 <b>9 个提升、7 个不变</b>。</div></div>
+  <div class="row"><div class="k">原题</div><div class="v"><span class="orig">Evolver: Turning Agent Exploration into Evolving Capabilities</span></div></div>
+  <div class="row"><div class="k">作者 / 机构</div><div class="v">Haoyang Zhang · Qumeng Sun · Xiao Zhang · Xiang Liu et al.（<b>6 位</b>；据 PDF 首页：<b>Infinite Evolution Lab, EvoMap</b>；代码 <code>github.com/EvoMap/evolver</code>，实验版本 Evolver v2.0.33）</div></div>
+  <div class="row"><div class="k">日期</div><div class="v">首次提交 <b>2026-11-05</b>（<code>published=2026-11-05T07:44:28Z</code>；<code>updated</code> 同日，无 v2）· 距本轮唤醒 <b>≈86.3h</b>（<b>超出 72h 常规窗口 ⇒ 走 §0.1 公告批次例外</b>：该批次仍是最近一次公告批次，周末与周一 09:00 前不推进）· PDF 实测 <b>12 页</b> / <b>35,224</b> 字符（去空白）</div></div>
+  <div class="row"><div class="k">分类 / 标签</div><div class="v"><code>cs.SE</code> · <span class="badge b-jz">借鉴</span> · 关键词：经验复用 / Gene·Capsule·AntiGene / 不改参数 / B–E–G 配对 / Terminal-Bench 2.1 / SWE-rebench / token 成本 / 注入预算</div></div>
+  <div class="row"><div class="k">链接</div><div class="v"><a href="https://arxiv.org/abs/2611.07595">https://arxiv.org/abs/2611.07595</a>（PDF 已落地：<code>research/pdf/2026-11-09/2611.07595.pdf</code>，1,841,226 B，校验见附录 C）</div></div>
+  <div class="reason"><b>推荐理由（借鉴 · 与 harness 的「predict 成本 + TB-2.1」直接对口 / 与 zhulong 的「成本口径」直接对口）</b>
+    <ol>
+      <li><b>它给的正是「省 token 但不改模型」的工程路径</b>：本线 harness 正在跑 SWE-bench predict（5 路 alive）与 TB-2.1，成本与时限是硬约束；本文证明<b>把历史经验做成资产、会话起点注入</b>就能同时抬成功率与降 token，且<b>不动基座参数、不重训</b>——这是我们现成就能加的一层。</li>
+      <li><b>数字可回查</b>：320 对配对、<b>+4.38pp</b>、<b>−24.24%</b> token；both-success 265 对 <b>−17.57%</b>；TB-2.1 <b>64/80→71/80</b>；<b>9/16 配置提升、7/16 不变</b>；注入预算 <b>12,000 字节</b>；聚合口径 = 「所有配对求和」而非「平均每条降幅」。</li>
+      <li><b>对 zhulong 的成本报告是现成规范</b>：同一批数据 <b>aggregate −24.24% 与 both-success −17.57% 差 6.7pp</b>，差别纯来自口径 —— 消融报告写「成本」时必须声明口径。</li>
+      <li><b>边界（必须写清）</b>：① 评估集 <b>「diagnostic rather than random sample」</b>——每配置 20 题、<b>并额外按「观察到的提升与 token 用量」挑题</b>，<b>不可当无偏基准分</b>；② 排除超时/触限的跑；③ token 只算最终任务执行的输入输出，<b>不含经验抽取自身开销</b>；④ 作者自报、本线未复现。</li>
+    </ol>
+    <b>建议动作</b>：<b>读原文</b>（§3.2 Gene/Capsule/AntiGene 字段、§3.4 检索与注入、§4.1 B–E–G 协议与 320 对口径）+ <b>试跑</b>：见「harness」建议 ①（用现有成功轨迹建资产库，做同题 B/G 配对）。
+  </div>
+</div>
+
+<div class="card">
+  <h3><span class="no">2</span>ReproBridge: Building Reproducibility into ML Research Artifacts</h3>
+  <div class="row"><div class="k">中文一句话</div><div class="v">复现一篇 ML 论文，成功与否常常不取决于作者放出的代码本身，而取决于复现者能否<b>把散落在论文 / 代码 / 工件里的「做法与决定」补齐</b>。作者把复现沉淀成<b>标准四件套工件</b>：精修代码库（refined codebase）、环境配置（environment setup）、实验启动器（launchers）、复现指南（reproduction guide）——不只是「能跑」，还要<b>把每个设置与修复的理由和影响范围写下来</b>；构建由 agent 做、人定标准，复现时在新 session 里只拿「原始代码」或「四件套」，另有<b>独立 Auditor 核验执行证据</b>（因为<b>「数字对上了」也可能是替换测量得来的</b>）。基准 ReproBridge-Bench：从 742 篇 ICML 2026 Spotlight → 241 篇有代码 → 随机 50 篇 → 排除工件/算力/闭源 14 篇 ⇒ <b>36 篇论文、502 个实验、1,463 个任务</b>，其中 <b>1,029 个（70.3%）数值兼容</b>进入下游评测（<b>387 个实验</b>）；每个任务配 <b>5 位独立人工复现者的参考分数</b>，并用「参考变异 ≤ 绝对分数的 <b>10%</b>」区分 stable / higher-variability。结果：4 个 coding agent 上复现成功率 <b>76.4% → 92.6%</b>、下游 API 花费 <b>−19.7%</b>（各模型 −16.8%～−23.7%）、跨模型成功率极差 <b>21.6pp → 3.9pp</b>（四个模型都 &gt;90%）；<b>去掉任一组件都会掉</b>，代码与环境缺失损失最大。</div></div>
+  <div class="row"><div class="k">原题</div><div class="v"><span class="orig">ReproBridge: Building Reproducibility into ML Research Artifacts</span></div></div>
+  <div class="row"><div class="k">作者 / 机构</div><div class="v">Yubo Wang · Rui Meng · Jaehyun Nam · Tomas Pfister et al.（<b>5 位</b>；据 PDF 首页：<b>University of Waterloo + Google</b>）</div></div>
+  <div class="row"><div class="k">日期</div><div class="v">首次提交 <b>2026-11-05</b>（<code>published=2026-11-05T18:45:36Z</code>；<code>updated</code> 同日，无 v2）· 距本轮唤醒 <b>≈75.2h</b>（<b>超出 72h 常规窗口 ⇒ 走 §0.1 公告批次例外</b>）· PDF 实测 <b>38 页</b> / <b>113,403</b> 字符（去空白）</div></div>
+  <div class="row"><div class="k">分类 / 标签</div><div class="v"><code>cs.AI</code> · <span class="badge b-jz">借鉴</span> · 关键词：可复现性 / 工件四件套 / 启动器 / 独立 Auditor / 5 参考观测 / 参考变异 10% 门槛 / 证据链 / CPU-only 任务</div></div>
+  <div class="row"><div class="k">链接</div><div class="v"><a href="https://arxiv.org/abs/2611.08452">https://arxiv.org/abs/2611.08452</a>（PDF 已落地：<code>research/pdf/2026-11-09/2611.08452.pdf</code>，4,303,903 B，校验见附录 C）</div></div>
+  <div class="reason"><b>推荐理由（借鉴 · 与 pretrain 的「同 ckpt 分数不可比」直接对口 / 与 harness 的「pass 必须有执行证据」直接对口 / 与 designflow 的「多参考 + 审计」对口）</b>
+    <ol>
+      <li><b>pretrain 现在就卡在「口径」上</b>：任务书里 37.40%（Avg7）与历史 51.50–57.88%（8 集）差 14–20pp，已经排除了「7 集 vs 8 集」能解释的部分。本文的分解 <b>Y = μ + D + ε</b> 正是把「执行偏离带来的系统偏移 <b>D</b>」与「跑动噪声 <b>ε</b>」分开：<b>多次重复只能压 ε，压不掉 D</b>。所以「再跑一遍还是低」并不能自证能力下降，<b>必须先证明 D=0（口径一致）</b>。</li>
+      <li><b>它给了可执行的判据而不是口号</b>：① 四件套工件（代码 / 环境 / 启动器 / 指南）；② <b>独立 Auditor</b> 检查执行证据（提交值必须来自新执行，<b>「随代码附带的分数文件永远不算测量」</b>）；③ <b>5 个参考观测 + 参考变异 ≤10% 才判 stable</b>；④ <b>双侧兼容规则</b>——分数<b>高于</b>公布值同样算「不兼容」（这条对 pretrain 直接适用：别用「我们更高所以更好」来安慰自己）。</li>
+      <li><b>对 CPU 评测特别相关</b>：1,029 个任务里 <b>299 个是 CPU-only</b>（730 个用 GPU），说明「CPU 复现」被单列为可复现性的一等公民 —— 与本线现在整条 hellaswag CPU 评测的处境一致。</li>
+      <li><b>边界（必须写清）</b>：① 只覆盖有官方实现、且算力可承受的 ICML 2026 Spotlight 论文（36/50），<b>不能外推到所有 ML 结果</b>；② 成功 = 通过数值兼容 + 审计，<b>不等于复现出同一科学结论</b>；③ 5 个参考观测仍是小样本，10% 门槛是<b>人为阈值</b>；④ 作者自报、本线未复现。</li>
+    </ol>
+    <b>建议动作</b>：<b>读原文</b>（§2.1 的 μ/D/ε 分解与双侧兼容、§2.3 五参考采集、§3 工件四件套、§4.1 证据审计与 V<sub>j</sub>≤10）+ <b>试跑</b>：见「pretrain」建议 ①②③。
+  </div>
+</div>
+
+<div class="card">
+  <h3><span class="no">3</span>AiXapply: Fast and Reliable Full-File Code Integration with Specialized Small Models for IDE Workflows</h3>
+  <div class="row"><div class="k">中文一句话</div><div class="v">上游模型给出的往往只是「一小段改动」，要真正落地必须把它<b>合并回整文件且不碰无关内容</b>。作者把这个动作单独定义成 <b>Apply</b> 任务并做成专用小模型：数据从 <b>CommitPack 5,770 万条真实 commit</b> 出发，规则抽样（单文件、限制文件长度 / 改动大小 / 行变更比、commit message 质量、<b>按语言均衡抽样</b>）压到 <b>24,460</b> 条候选 → LLM 生成显式「改动描述」→ 再生成 <b>update_snippet + 完整 final_code</b> → <b>一致性校验</b>（diff 必须<b>完全且只能</b>由 snippet 解释，删 2,960 条 = <b>12.1%</b>）→ <b>可解性过滤</b>（三个强模型各跑两次共 6 attempts，<b>6 次全败或 5 次败</b>的样本丢弃，删 516 条 = <b>2.4%</b>）⇒ <b>20,984</b> 条（<b>19,347 训练 / 1,637 测试</b>，按 commit 切分防泄漏，<b>20 种语言</b>）。训练 <b>Qwen3-4B</b>（64k 上下文）：SFT 用整文件交叉熵（对未改动区域也监督，鼓励「照抄不变」）；GRPO 用<b>语言/格式感知的等价奖励</b>（代码按 Pygments token 序列比、JSON/YAML/XML 先规范化结构、MD/SQL 先格式规范化）+ <b>按错误类型加权的密集奖励 r = max(0, 1 − 0.25·patch_errors − 0.35·side_effects)</b>（<b>区间外副作用罚得比区间内改错更重</b>）。结果：SFT 版 <b>94.4%</b>（语言感知等价口径）超过 DeepSeek-V3.2 的 <b>91.6%</b>；RL 版在 <b>1.45s</b> 下 0.938（Qwen3.5-397B 为 0.948）；配合无草稿模型的投机解码（n-gram + suffix）单 A100 达 <b>~2,700 tok/s</b>、端到端延迟约 <b>75×</b> 低于 API 版 DeepSeek-V3.2；在 aiXcoder IDE 插件里把 Apply 平均延迟从 <b>50s 压到 1.89s</b>，按时间容量规划<b>替换 5 个上游实例中的 1 个可省 20% 上游机器成本</b>；100 条真实开发任务中 <b>91 条</b>首次输出可接受。</div></div>
+  <div class="row"><div class="k">原题</div><div class="v"><span class="orig">AiXapply: Fast and Reliable Full-File Code Integration with Specialized Small Models for IDE Workflows</span></div></div>
+  <div class="row"><div class="k">作者 / 机构</div><div class="v">Siyuan Jiang · Xiang Cai · Peixu Wang · Yu Han et al.（<b>11 位</b>；据 PDF 首页：<b>aiXcoder + 北京大学</b>）</div></div>
+  <div class="row"><div class="k">日期</div><div class="v">首次提交 <b>2026-11-05</b>（<code>published=2026-11-05T08:19:22Z</code>；<code>updated</code> 同日，无 v2）· 距本轮唤醒 <b>≈85.7h</b>（<b>超出 72h 常规窗口 ⇒ 走 §0.1 公告批次例外</b>）· PDF 实测 <b>11 页</b> / <b>49,247</b> 字符（去空白）</div></div>
+  <div class="row"><div class="k">分类 / 标签</div><div class="v"><code>cs.SE</code> · <span class="badge b-jz">借鉴</span> · 关键词：数据漏斗 / 一致性校验 / 可解性过滤 / 语言感知等价判分 / 密集奖励 / GRPO / 4B 专模 / 投机解码 / 延迟与成本</div></div>
+  <div class="row"><div class="k">链接</div><div class="v"><a href="https://arxiv.org/abs/2611.07634">https://arxiv.org/abs/2611.07634</a>（PDF 已落地：<code>research/pdf/2026-11-09/2611.07634.pdf</code>，1,287,154 B，校验见附录 C）</div></div>
+  <div class="reason"><b>推荐理由（借鉴 · 与 data 的「代码语料质量筛」直接对口 / 与 vision 的「密集奖励拆项 + SFT→GRPO」直接对口 / 与 designflow 的「判分可验证性」直接对口 / 与 harness 的「末段卸载」对口）</b>
+    <ol>
+      <li><b>data 线能直接搬的「丢弃漏斗」</b>：57.7M → 24,460 → 21,500（−12.1%）→ 20,984（−2.4%），每级都有<b>明确的丢弃判据与丢弃率</b>，并且<b>主动声明偏差</b>（可解性过滤「可能剔除合法但困难的样本」）。本线 2TB 代码子集验收目前只有「下了多少 TB」，缺的正是这一层。</li>
+      <li><b>vision 线能直接搬的奖励设计</b>：本线 v5 的连续奖励只惩罚「幅度误差」；本文把错误拆成<b>区间内错误</b>与<b>区间外副作用</b>并给不同权重（<b>0.25 vs 0.35</b>），理由是「改错位置比改得不准更伤」。对波形任务同构：周期判错 / 把静默段当信号 ⇒ 越界类错误，应比「峰值幅度略偏」罚得更重。</li>
+      <li><b>designflow 线能直接搬的判分口径</b>：<b>语言/格式感知的等价比较</b>（代码按 token 级、结构化格式先规范化），以及 6 类错误分类法（OUTPUT_INVALID / PATCH_NOT_APPLIED / PATCH_INCOMPLETE / PATCH_INCORRECT / WRONG_POSITION / OUT_OF_PATCH_SIDE_EFFECT）——本线 check.py 现在是严格文本比较，容易把「等价但格式不同」判成错。</li>
+      <li><b>边界（必须写清）</b>：① <b>语言感知等价会放宽判分</b>（94.4% 是放宽后的口径，严格字符串比较会更低），跨论文比较时不能直接拿这个数；② 可解性过滤依赖具体模型，<b>数据偏向这些模型能解的题</b>；③ 延迟/成本数字来自单请求、单 A100、特定 IDE 负载；④ 作者自报（含厂商实测）、本线未复现。</li>
+    </ol>
+    <b>建议动作</b>：<b>读原文</b>（§III-B 数据流水线五级、§III-C 错误分类法、§III-D 奖励设计含 α/β、§IV-E 投机解码）+ <b>试跑</b>：见「data」「vision」「designflow」建议。
+  </div>
+</div>
+
+<h2 class="sec">🎯 对各线的可执行建议（pretrain / vision / harness / data / zhulong / designflow）</h2>
+<div class="note">
+  <b>说明</b>：依据均取自本页今日 <b>3 篇</b>（arXiv ID + 摘要/正文关键数字，作者自报、本线未复现）；「建议动作」为<b>基于论文的推断</b>，供各线自行评估，<b>不构成新指令</b>；与各线任务书冲突时以任务书为准。某线本期确无对口论文时，如实写「本线本期无新增可用建议」。各线当轮状态取自其 <code>MEMORY_*</code> 顶部快照 + 任务书运维指令区（<b>2026-11-09 05:5x 实读</b>）。<b>本期 6 线均有落点</b>（无「无建议」行）。
+</div>
+<table>
+  <tr><th>线</th><th>建议动作</th><th>依据（arXiv ID + 关键数字）</th><th>预期收益</th><th>成本</th><th>优先级</th></tr>
+  <tr>
+    <td><b>pretrain</b><br><span style="font-size:12px;color:#59636e;">v6 全量 8 集 eval 收官中（6/8 done、Avg6=<b>53.38%</b>；piqa 61%、hs_c1 41%/ETA ~44.5h 为瓶颈；chunk3 刚重启）；运维令 15:3x 要求查清「37.40% vs 历史 51.5–57.9%」，异常报告 v4.1 已交付（结论 A = 口径）</span></td>
+    <td>① <b>把 8 集 eval 打包成「四件套工件」</b>：<code>reports/eval_repro/</code> = {精修评测代码（含结果解析）, 环境（llama.cpp build 号 + GGUF 是否 <code>_fixed_</code> + 线程/NUMA 绑定）, 启动器（一集一脚本，<code>--limit</code> / <code>--num_fewshot</code> / task 列表写死）, 指南（backend/精度/fewshot/n 的口径说明）}；② <b>加独立审计脚本</b> <code>audit_eval_evidence.py</code>：逐份 <code>results.json</code> 断言 <code>n-samples</code> / task 列表 / limit / backend 与启动器一致，缺失或矛盾即 FAIL（防「随包附带的旧分数被当测量」）；③ <b>用「5 次参考观测 + 10% 变异门槛」替代单次数字</b>：对 iter_100000 的 hellaswag（已分 chunk）跑 5 次（不同 chunk 顺序/线程绑定），算 V=(max−min)/|mean|，<b>V&gt;10% 的集标 unstable、不用于能力结论</b>；④ 报告里把对比改成 <b>Y = μ + D + ε</b> 三行：口径偏移 D、跑动噪声 ε、余下才是能力差。</td>
+    <td><code>2611.08452</code>（四件套工件让复现成功率 <b>76.4%→92.6%</b>、下游花费 <b>−19.7%</b>；独立 Auditor 核验执行证据；<b>5 参考观测</b>、V<sub>j</sub>≤<b>10%</b> 才 stable；<b>双侧兼容</b>：高于公布值同样判不兼容；1,029 任务中 <b>299 个 CPU-only</b>）</td>
+    <td>把「37.40% 是不是真掉」从争辩变成可判定；后续任何一次重跑都能自证口径一致；重跑/返工人力下降（对应其 −16.8%～−23.7% 花费节省）。</td>
+    <td>脚本 1–2h；③ 的 5 次重跑排在 8 集收尾后（约 1 天机时，可与下一轮 eval 合并）</td>
+    <td>中<br><span style="font-size:12px;color:#59636e;">（不动在跑的 eval）</span></td>
+  </tr>
+  <tr>
+    <td><b>vision</b><br><span style="font-size:12px;color:#59636e;">阶段 2 已交付 v5（A16%→B37%→C53%、McNemar p=0.0009、cheat_rate=0）；当前全交付态待令；GPU 仍被 pretrain 占满；LLaMA-Factory 冒烟卡在 <code>qwen3_5</code> 不识别</span></td>
+    <td>① <b>v6 奖励拆成两项并差异化加权</b>：<code>R = max(0, 1 − α·区间内幅度误差 − β·越界错误)</code>，其中越界 = 周期判错 / 把静默段当有效信号 / 目标窗口外触发；取 <b>α=0.25、β=0.35</b>（越界罚更重），并把 β&gt;α 的理由写进报告；<b>预注册判据</b>：v6 在 rise_time / duty_cycle 上 rel_err 中位数降 <b>≥10%</b> 且越界率下降，否则回退 v5 奖励；② <b>合成数据先过两道闸再进 SFT</b>：一致性校验（标签能被独立 checker 从波形复算通过）+ 可解性过滤（用 2–3 个现有模型各跑 2 次，全败样本剔除），并<b>报告每级丢弃率</b>；③ 用 AiXapply 的 SFT→GRPO 顺序复跑（SFT 先把格式/口径学会，再上 GRPO）作为 v5 的对照臂。</td>
+    <td><code>2611.07634</code>（密集奖励 <b>r=max(0, 1−0.25·patch_errors−0.35·side_effects)</b>，越界罚更重；一致性校验删 <b>12.1%</b>、可解性过滤删 <b>2.4%</b>；4B SFT+SFT→GRPO 达 <b>94.4%</b> 超 91.6% 大模型）</td>
+    <td>奖励从「只罚幅度」升级为「同时罚答错位置」，直接对准 gs4/gs8 的 <code>std=0</code> 与能力缺口；数据可追溯，减少「练了脏样本还以为涨了」。</td>
+    <td>改奖励函数 + 重建 2 万级样本 ≈1 天（全 CPU，.12/.29 可跑）</td>
+    <td>高</td>
+  </tr>
+  <tr>
+    <td><b>harness</b><br><span style="font-size:12px;color:#59636e;">SWE-bench predict 5 路 alive <b>2520/3500（72%）</b>（cline 292 / opencode 343 / pi 219 / hermes 441 / dsh 225；codex、cc 已 DONE）；TB-2.1 3 harbor alive；eval R1933 后台 RUN；gateway 200</span></td>
+    <td>① <b>经验资产化（省 token 不改模型）</b>：从已成功的 predict 轨迹里抽「策略 + 适用条件 + 反例」成结构化条目（对照 Gene/Capsule/AntiGene），下轮 session 起点注入（<b>≤12,000 字节</b>）；做 <b>B/G 同题配对</b>（B=原生、G=注入，新 session、环境重置、token 全记录），只在「两边都跑完且有 token 记录」的题上比；<b>预注册通过线</b>：成功率 <b>≥+3pp</b> 或 token <b>≤−15%</b>；② <b>报告加「执行证据审计」列</b>：每个 pass 必须可追到 commit / 脚本 / 环境 / 种子 / 原始输出；429 empty 与 no-reward 同样登记<b>证据缺失原因</b>（文中原则：数字吻合 ≠ 做了实验）；③ 末段确定性动作（snippet 合并回整文件、补丁落地）从大模型<b>卸载到专用小模型</b>，先只写方案不动 eval（文中 50s→1.89s、75× 延迟、替换 1/5 上游实例省 20% 机器成本）。</td>
+    <td><code>2611.07595</code>（320 对配对：<b>+4.38pp</b> / token <b>−24.24%</b>；both-success 265 对 <b>−17.57%</b>；TB-2.1 <b>64/80→71/80</b>；注入预算 12,000 字节；9/16 配置提升、7/16 不变）+ <code>2611.08452</code>（Auditor：<b>数字对上也可能是替换测量</b>）+ <code>2611.07634</code>（Apply 专模卸载：<b>50s→1.89s</b>）</td>
+    <td>① 给「predict 越跑越贵」一个不改模型的降本路径；② 让 pass 可审计，避免把 infra/口径问题算成能力；③ 为后续低成本批量评测留出架构口。</td>
+    <td>① 资产抽取脚本 + 配对跑 0.5–1 天（不改 5 路并发）；② 报告加列 1–2h；③ 只写方案 ~2h</td>
+    <td>②高 · ①中 · ③低</td>
+  </tr>
+</table>
+
+<table>
+  <tr><th>线</th><th>建议动作</th><th>依据（arXiv ID + 关键数字）</th><th>预期收益</th><th>成本</th><th>优先级</th></tr>
+  <tr>
+    <td><b>data</b><br><span style="font-size:12px;color:#59636e;"><code>stack-v3-train</code> 2TB 子集 batch4 下载中（/<code>nas_inference</code> 28T 可用）；代码语料质量筛与去污染清单已有，但<b>缺「每级过滤损耗」的账</b></span></td>
+    <td>把「<b>丢弃漏斗</b>」写进 2TB 子集验收模板：每一级过滤都记 <code>输入条数/字节 → 输出条数/字节 → 丢弃率 → 丢弃原因分布</code>，并按<b>语言 / 文件类型分层</b>报告；至少建三级：(a) 规则级（单文件、改动规模、行变更比、message 质量）；(b) <b>一致性/自洽级</b>（可执行或可解析校验，或与上游来源交叉核对）；(c) <b>可解性级</b>（n 个模型各 k 次，全败样本剔除）。对 (c) 这类「依赖模型的过滤器」必须在清单里<b>声明偏差方向</b>（本文明确：可能剔除合法但困难的样本）。落盘：<code>research/…</code> 侧不改，data 线落在自己的 <code>报告的过滤章节</code>。</td>
+    <td><code>2611.07634</code>（<b>57.7M</b> raw commit → <b>24,460</b> 规则抽样 → <b>21,500</b>（一致性校验删 <b>2,960 = 12.1%</b>）→ <b>20,984</b>（可解性过滤删 <b>516 = 2.4%</b>）→ 19,347/1,637 按 commit 切分；<b>20 语言均衡</b>；主动声明可解性过滤的偏差）</td>
+    <td>代码语料从「下了多少 TB」升级为「每一级损耗都能解释」；后续做配比时能算「有效 token 单价」而非「原始字节单价」。</td>
+    <td>改验收模板 + 抽样统计 ~0.5 天（可与 batch4 下载并行，不占带宽做重计算）</td>
+    <td>中</td>
+  </tr>
+  <tr>
+    <td><b>zhulong</b><br><span style="font-size:12px;color:#59636e;">两轴消融 <b>14/30</b>：A_none <b>79.5±2.6</b>（Δ−3.8）、A_low <b>84.2±1.1</b>（+0.9）、A_medium <b>85.4±0.7</b>（+2.1）、A_high <b>85.4±2.7</b>（+2.1，<b>均值同 medium 但方差 4×</b>）、A_xhigh r1 82.9 / r2 81.0、r3 跑中；报告须含分数 + 成本</td>
+    <td>① <b>成本列改成「配对总量 + 口径声明」</b>：每个 cell 报 <b>total tokens（全部轮次求和）</b>，并<b>另起一行</b>报「只算两边都成功/都完成」的 token 变化；文中同一批数据 aggregate <b>−24.24%</b> 与 both-success <b>−17.57%</b> 差 <b>6.7pp</b>，纯口径差异 ⇒ 不声明口径的成本数字不可比。② <b>用参考变异门槛判 cell 可比较性</b>：3 轮 r1/r2/r3 算 V=(max−min)/|mean|，<b>V&gt;10% 标 unstable</b>，unstable cell <b>不给 Δpp 结论</b>（A_high 的 82.3/87.3/86.7 ⇒ V≈5.8% 尚可，但 std 2.7 说明单轮结论危险）；③ 报告写「Δ 是否超出参考变异」而不只写均值差。</td>
+    <td><code>2611.07595</code>（<b>320 配对</b>；aggregate <b>−24.24%</b> vs both-success <b>−17.57%</b>；<b>9/16 提升、7/16 不变</b> ⇒ 效应依模型/harness 而异）+ <code>2611.08452</code>（<b>5 参考观测</b>、V<sub>j</sub>≤<b>10%</b> 判 stable、给兼容区间而非单点）</td>
+    <td>「low ≈ medium」「high 只增方差」这类当前结论从猜测变成可辩护；对外汇报的成本口径与文献一致。</td>
+    <td>改分析脚本 ~0.3 天（<b>不动在跑的 eval 进程</b>）</td>
+    <td>高</td>
+  </tr>
+  <tr>
+    <td><b>designflow</b><br><span style="font-size:12px;color:#59636e;">造题 trace 覆盖 <b>25/1001=2.5%</b>；断言闸门 <code>k_check≥8</code> + rationale 对账；<code>rewrite_queue.tsv</code> 逐条修 <code>check.py</code>；近 20 条通过率 <b>6/20=30%</b>；L1 静态 / L2 真跑两级</span></td>
+    <td>① <b>判分器改「格式感知的等价比较」</b>：代码/脚本按 <b>token 级等价</b>（忽略纯空白与注释空白），结构化输出（JSON/YAML/XML）<b>先解析成规范结构再比</b>，文本/网表类（SPF/CDL/SDF/MD/SQL）按<b>格式特定规范化</b>（记录顺序、数值精度/单位、行尾）后再比 —— 避免「答案对但格式不同」被判错（本文 94.4% 即建立在此口径上，严格字符串比较会更低，报告须注明所用口径）；② <b>失败分类列</b>：把每条未通过分为「输出非法 / 改动未生效 / 改动不完整 / 区间内改错 / 位置错 / 区间外副作用」6 类，写进 <code>rewrite_queue.tsv</code> 与自验脚本，作为「加强 check.py」的判据来源；③ <b>参考答案改多参考面板 + 独立审计</b>：L2 真跑类 case 记 2–3 次参考执行的分布，参考变异 &gt;10% 的 case 标 unstable（不用于能力结论）；审计脚本核验「提交的分数来自本次新执行」。</td>
+    <td><code>2611.07634</code>（语言/格式感知等价：代码 Pygments token、JSON/YAML/XML 规范化、MD/SQL 格式规范化；<b>6 类错误分类法</b>）+ <code>2611.08452</code>（<b>5 参考分/任务</b>、V<sub>j</sub>≤10% 判 stable、独立 Auditor 核验执行证据）</td>
+    <td>减少「格式差异被当成做错」的假阴性（直接影响通过率 6/20 的口径）；失败可归类，闸门修复有据可依。</td>
+    <td>改 <code>check.py</code> 比较函数 ~0.5 天/case 族 + 队列加列 1h（不阻塞现有造题）</td>
+    <td>高</td>
+  </tr>
+</table>
+
+<h2 class="sec">附录 A · 本轮检索式与命中数（可核验）</h2>
+<table>
+  <tr><th>#</th><th>检索式</th><th>totalResults</th><th>返回 / 最新 published</th><th>判定</th></tr>
+  <tr><td>①</td><td><code>cat:cs.CL</code> · <code>sortBy=lastUpdatedDate</code></td><td><b>124,790</b></td><td>5 条；最新 <code>2026-11-05T18:58:17Z</code>（<code>2611.08478v1</code> Scientist World）</td><td>与 r139/r140 <b>逐项相同</b></td></tr>
+  <tr><td>②</td><td><code>cat:cs.CL AND submittedDate:[202611080000 TO 202611122359]</code></td><td><b>0</b></td><td>0 条</td><td>本周新提交 <b>为 0</b>（周末未公告）</td></tr>
+  <tr><td>③</td><td><code>submittedDate:[202611080000 TO 202611122359]</code>（全库）</td><td><b>0</b></td><td>0 条</td><td>同上，<b>非「我们没查」</b></td></tr>
+  <tr><td>④</td><td><code>cat:cs.CL OR cat:cs.CV OR cat:cs.SE OR cat:cs.AI OR cat:cs.LG</code></td><td><b>643,965</b></td><td>3 条；最新 <code>2026-11-05T18:59:42Z</code>（<code>2611.08487v1</code>）</td><td>广度与 r136–r140 <b>一致</b></td></tr>
+</table>
+<p style="font-size:13px;color:#59636e;">证据：脚本 <code>research/raw/verify_r141.py</code>、原始输出 <code>research/raw/2026-11-09-am-verify-r141.txt</code>；<b>4/4</b> <code>status=200</code> + <code>content-type: application/atom+xml; charset=utf-8</code>、全部 <code>attempts=1</code>；请求间隔 6s / 第 ④ 条前 20s（arXiv 要求 ≥3s）。<b>本轮共 5 次</b> arXiv 请求（4 探针 + 1 次 <code>id_list</code>），未重跑 5 分类取数（复用 11-08 AM 候选池）。</p>
+
+<h2 class="sec">附录 B · 取数 / 去重 / 选文（可核验）</h2>
+<table>
+  <tr><th>项</th><th>值</th></tr>
+  <tr><td>候选池来源</td><td><code>research/raw/2026-11-08-am-candidates-r139.json</code>（r139 建：单分类各取 100：cs.CL 124,790 / cs.CV 212,479 / cs.LG 297,729 / cs.AI 211,462 / cs.SE 30,857 ⇒ 合并 305、与 SEEN 重复 7 ⇒ <b>fresh 298</b>）</td></tr>
+  <tr><td>可用余量</td><td>298 − 已收录 5（11-08 早 3 + 晚 2）= <b>293</b>；本轮取 3 ⇒ <b>余 290</b></td></tr>
+  <tr><td>去重口径</td><td>主键 arXiv ID：与 <code>SEEN.md</code>（5,645 行）、<code>papers.jsonl</code>（321）、<code>TOP_K.jsonl</code>、近 7 天 <code>daily/*.html</code> 均无重复；本轮 3 个 ID 在台账中<b>各恰好 1 行</b>（见附录 D）</td></tr>
+  <tr><td>按线建档</td><td><code>research/raw/line_match_r141.py</code>（按 6 线当轮阻塞关键词打分，匹配篇数：<b>harness 45 / pretrain 32 / data 13 / designflow 11 / zhulong 5 / vision 1</b>）</td></tr>
+  <tr><td>id_list 权威复核</td><td><code>raw/2026-11-09-am-idlist-r141a.xml</code>（HTTP 200 / <code>application/atom+xml</code> / <b>11,243 B / 1.41s</b>）；入选 3 篇 + 备选 <code>2611.08237</code>，全部 <code>published</code> 前缀 <code>2026-11-05</code>（断言过）</td></tr>
+</table>
+<table>
+  <tr><th>#</th><th>arXiv ID</th><th>主分类</th><th>published</th><th>距唤醒</th><th>落点线（本期建议）</th></tr>
+  <tr><td>1</td><td><code>2611.07595</code> Evolver</td><td>cs.SE</td><td>2026-11-05T07:44:28Z</td><td>≈86.3h（例外）</td><td>harness · zhulong</td></tr>
+  <tr><td>2</td><td><code>2611.08452</code> ReproBridge</td><td>cs.AI</td><td>2026-11-05T18:45:36Z</td><td>≈75.2h（例外）</td><td>pretrain · harness · designflow</td></tr>
+  <tr><td>3</td><td><code>2611.07634</code> AiXapply</td><td>cs.SE</td><td>2026-11-05T08:19:22Z</td><td>≈85.7h（例外）</td><td>data · vision · designflow · harness</td></tr>
+</table>
+<p style="font-size:13px;color:#59636e;"><b>未选但强对口的候选（留作晚报/后续，不凑数）</b>：<code>2611.08237</code> Terminal-style Mathematical Modeling Bench（「单向打分不惩罚超越参考 + 硬闸门把不可行答案清零 + 6 类可判定不变量 + 624 条 Lean 4 义务 + 多参考面板」，对 designflow 造题闸门极对口，但今日额度 3 篇已满）；<code>2611.07859</code> CORE（免训练 harness：由粗到细检索 + 上下文管理 + 抑制重复片段，对 harness 的 context compaction 对口）；<code>2611.07461</code> HEELO（agent-native primitives 组合 harness：TB-4.0 37.3%→55.5%、TB-2.0 60.0%→72.2%、ToolBench 55.8%→75.1%、GAIA 45.6%→58.3%）；<code>2611.07372</code> EnvOpt（环境优化：Haiku 4.5 成本 −72.7% / pass +14.34%）；<code>2611.07453</code> Latency-Aware Adaptive Best-of-N（把延迟计入测试时计算成本，对 zhulong 成本口径亦相关）。</p>
+
+<h2 class="sec">附录 C · PDF 落地校验（3/3）</h2>
+<table>
+  <tr><th>arXiv ID</th><th>字节数</th><th>页数</th><th>字符数（去空白）</th><th>sha256（前 16）</th><th>结构校验</th></tr>
+  <tr><td><code>2611.07595</code></td><td>1,841,226</td><td>12</td><td>35,224</td><td><code>4037148ffdcd7306</code></td><td><code>%PDF-</code> 头 + <code>%%EOF</code> + 字节 == <code>Content-Range</code> total + <code>pdftotext</code> 可解析 ✅</td></tr>
+  <tr><td><code>2611.08452</code></td><td>4,303,903</td><td>38</td><td>113,403</td><td><code>abf9ad39b5873123</code></td><td>同上 ✅</td></tr>
+  <tr><td><code>2611.07634</code></td><td>1,287,154</td><td>11</td><td>49,247</td><td><code>0c13e60e276f8d99</code></td><td>同上 ✅</td></tr>
+</table>
+<p style="font-size:13px;color:#59636e;">合计 <b>7,432,283 B ≈ 7.09 MiB</b>（单篇均 &lt; 5 MB，但 <code>research/pdf/</code> 按体积红线<b>一律不入 git</b>）；下载器 <code>research/raw/pdf_range_resume_r141.py</code>（8 段 Range + 断点续传，固定边缘 IP <code>151.101.67.42</code>），<b>3/3 首轮 8 段全 OK、零超时零续传</b>。<b>不声称哈希一致</b>：CDN 的 <code>ETag</code> 虽标注 <code>sha256:</code>，但与落地文件哈希<b>不同</b>（口径不可比），故只声称上述结构校验 + 字节数一致。</p>
+
+<h2 class="sec">附录 D · 台账与当日进度</h2>
+<table>
+  <tr><th>项</th><th>本轮前</th><th>本轮后</th><th>说明</th></tr>
+  <tr><td><code>SEEN.md</code></td><td>5,645 行（收录 321 / 候选 4,558 / 候选(RSS) 507）</td><td><b>5,648 行（收录 324）</b></td><td>+3「收录」；幂等断言：每个 ID 恰好 1 行</td></tr>
+  <tr><td><code>papers.jsonl</code></td><td>321</td><td><b>324</b></td><td><code>raw/update_r141.py</code> 断言：仅追加、无重复、<code>published</code> 前缀 <code>2026-11-05</code></td></tr>
+  <tr><td><code>daily/2026-11-09.html</code></td><td>—</td><td><b>本期（3/5）</b></td><td>3 卡 + 六线建议 + 附录 A/B/C/D；0 <code>&lt;script&gt;</code>、外链仅 3 条 arXiv abs</td></tr>
+  <tr><td><code>daily/index.html</code></td><td>最新 = 11-08 晚报 5/5</td><td><b>新增 11-09 行（早报 3/5）</b></td><td>按日倒序；footer 最近更新同步</td></tr>
+  <tr><td>出口</td><td>—</td><td><b>HTML（无邮件）</b></td><td>🚫 未发任何日报邮件（2026-11-07 10:50 用户令：唯一出口 = <code>daily/&lt;date&gt;.html</code> + <code>daily/index.html</code>）</td></tr>
+</table>
+<div class="ok-box" style="margin-top:14px;">
+  <b>本期口径自检</b>：① 当天合计 <b>3 / 5</b>（早 3，晚报 2 篇待 18:00）—— 未凑数、未放宽入账判据；② 3 篇均实测 <code>HTTP 200</code> + <code>application/atom+xml</code> + 真实 <code>published</code>（<b>200 ≠ 有料</b> 已校验）；③ 与 <code>SEEN.md</code> / <code>papers.jsonl</code> / <code>TOP_K.jsonl</code> / 近 7 天 <code>daily/</code> <b>无重复</b>；④ 3 篇均<b>超出 72h 常规窗口</b>，已按 §0.1「周末 / 周一早间公告批次例外」登记并逐卡标注实际时长（<b>不写成「无新增」</b>）；⑤ 建议节 <b>6 线齐全</b>（pretrain / vision / harness / data / zhulong / designflow），每条含「动作 + 依据 + 收益 + 成本 + 优先级」。
+</div>
+
+<footer>
+  research 线 · 论文观察日报 <b>2026-11-09（早报 · 3/5）</b> ｜ 生成：2026-11-09 06:0x CST ｜ 数据源：arXiv 官方 API（<code>export.arxiv.org</code>）｜ 入口索引：<code>research/daily/index.html</code><br>
+  下一轮：<b>2026-11-09 18:00 CST（晚报）</b>——补 2 篇「科普」→ 当日 5/5 收口 + <code>晚报变更说明（AM → PM）</code> + 分镜 <code>research/video/SCENES/11_09.html</code>。<br>
+  ⚠️ 本页为论文解读 / 待读线索，<b>非结论、非官方</b>；数字均为作者自报、本线未复现；「对各线的可执行建议」为基于论文的推断，<b>非指令</b>。
+</footer>
+</div>
+</body>
+</html>

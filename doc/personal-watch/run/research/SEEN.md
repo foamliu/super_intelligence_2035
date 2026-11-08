@@ -5643,3 +5643,6 @@
 | 2026-11-08 | 2611.07812 | Different Corpora, Different Skills? A Paired Study of Small Language Models | cs.CL | 收录 |
 | 2026-11-08 | 2611.07920 | How Finite Brains Generalize Without Bound: Spatial Memory as a Universal Computer | cs.AI | 收录 |
 | 2026-11-08 | 2611.08469 | Same Behavior, Different Mechanism: What Finite Experiments Can Certify About Integrated Information | cs.LG | 收录 |
+| 2026-11-09 | 2611.07595 | Evolver: Turning Agent Exploration into Evolving Capabilities | cs.SE | 收录 |
+| 2026-11-09 | 2611.08452 | ReproBridge: Building Reproducibility into ML Research Artifacts | cs.AI | 收录 |
+| 2026-11-09 | 2611.07634 | AiXapply: Fast and Reliable Full-File Code Integration with Specialized Small Models for IDE Workflows | cs.SE | 收录 |
