@@ -1,7 +1,13 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 0
 
-> 2026-11-08 21:56 #1724: **v5 eval监控轮·5s+5c全活·6/8done Avg6(acc)=53.38%/Avg6(norm)=51.25%不变·piqa+4hs chunk运行中·无server被杀·训练健康**·**动作**:①git fetch+status(synced,HEAD=vision#928 21:53) ②5 llama-server全活(8183-8187,固定二进制code/llama.cpp/build,MD5=f95ac952,bz2b-112000-f16.gguf) ③5 eval client全活:piqa(PID2097184,port8183,~80min)+hs_c0(PID3765473,port8184,~64min←NUMA修复版)+hs_c1(PID2097209,port8185,~80min)+hs_c2(PID2097234,port8186,~80min)+hs_c3(PID2097251,port8187,~80min) ④6/8done不变:arc_c=0.3038/n1172·arc_e=0.6553/n2376·boolq=0.5872/n3270·obqa=0.266/n500·sciq=0.842/n1000·wino=0.5485/n1267→Avg6(acc)=53.38% ⑤5个运行中输出目录仍空(results.json仅完成时写) ⑥训练.29健康8×H100=91-100%~75GB/pretrain_launcher PID146283活/iter~131000/700k ⑦两报告已交付:异常调查31KB v3.1结论A(口径差异非真实下降)+speedup17KB **计划**:下次唤醒①⭐确认5 server存活(防再被SIGTERM)②监控eval→待piqa+4hs完成→算Avg8+更新异常报告终版③📦TASK=31.2KB/MEMORY=10.8KB·未完成指令:有(v5 eval运行中)⇒WAITING:0。
+> 2026-11-08 22:16 #1727: **v5 eval监控轮·5s+5c全活·6/8done Avg6=53.38%不变·精确tqdm进度已取·hs_chunk3=70h瓶颈·训练健康**·**动作**:①git fetch+status(synced) ②5 llama-server全活(8183-8187,health=200×5) ③5 eval client全活 ④6/8done不变Avg6=53.38%(arc_c=0.304/arc_e=0.655/boolq=0.587/obqa=0.266/sciq=0.842/wg=0.549,n=9585全量) ⑤精确tqdm进度:piqa=421/3676(11%,25s/it,~22h)/hs_c0=1027/10044(10%,5s/it,~12h)/hs_c1=1232/10044(12%,2s/it,~5h最快)/hs_c2=346/10044(3%,10s/it,~28h)/hs_c3=337/10036(3%,26s/it,~70h瓶颈) ⑥异常报告v3.2(32KB)+speedup报告(17KB)均已交付结论A ⑦训练.29健康GPU96-100%/75GB/680-692W/7.15s/step **计划**:下次唤醒①确认5 server存活②监控eval进度(hs_c1~5h先完成)③待全部8集完成→算Avg8+异常报告终版④📦TASK=31.2KB/MEMORY=11.6KB·未完成指令:有(v5 eval运行中)⇒WAITING:0。
+
+> 📦 §#1726（11-08 22:09, v5 eval监控轮·5s+5c全活·6/8done Avg6=53.38%不变·异常报告v3.2已验全6项覆盖）→ daily-memories/2026-11-08.md「#1726」节；**结论**：5s+5c全活,Avg6=53.38%不变,报告v3.2已验证全6项覆盖,结论A确认。需要时再读。
+
+> 📦 §#1725（11-08 22:02, v5 eval监控轮·5s+5c全活·piqa10%+hs6.1%·报告v3.2）→ daily-memories/2026-11-08.md「#1725」节；**结论**：5s+5c全活,Avg6=53.38%不变,报告v3.2已更新,结论A不变。需要时再读。
+
+> 📦 §#1724（11-08 21:56, v5 eval监控轮·5s+5c全活·6/8done Avg6=53.38%不变）→ daily-memories/2026-11-08.md「#1724」节；**结论**：5s+5c全活,Avg6=53.38%不变,无server被杀,两报告已交付。需要时再读。
 
 > 📦 §#1723（11-08 21:49, v5 eval监控轮·5s+5c全活·chunk2瓶颈22s/it ETA~59h）→ daily-memories/2026-11-08.md「#1723」节；**结论**：5s+5c全活,Avg6=53.38%不变,chunk0 NUMA修复后2.3s/it最快,chunk2=22s/it瓶颈。需要时再读。
 
