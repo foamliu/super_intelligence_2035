@@ -338,7 +338,7 @@ def generate_html(result, output_path):
     comp = result.get("comparison", {})
     mt = m.get("trace_analysis", {})
     dt = d.get("trace_analysis", {}) if d else {}
-    gap = comp.get("gap_pp", "\u2014")
+    gap = comp.get("gap_pp", "—")
     gap_analysis = comp.get("gap_analysis", {})
 
     d5_rows = ""
@@ -347,14 +347,14 @@ def generate_html(result, output_path):
         for sc, vals in d5_comp.items():
             m5 = vals.get("minicpm5", {})
             d5v = vals.get("deepseek", {})
-            m_rate = f"{m5.get('pass_rate', 0)*100:.1f}%" if m5 else "\u2014"
-            d_rate = f"{d5v.get('pass_rate', 0)*100:.1f}%" if d5v else "\u2014"
-            m_cnt = f"{m5.get('pass',0)}/{m5.get('total',0)}" if m5 else "\u2014"
-            d_cnt = f"{d5v.get('pass',0)}/{d5v.get('total',0)}" if d5v else "\u2014"
+            m_rate = f"{m5.get('pass_rate', 0)*100:.1f}%" if m5 else "—"
+            d_rate = f"{d5v.get('pass_rate', 0)*100:.1f}%" if d5v else "—"
+            m_cnt = f"{m5.get('pass',0)}/{m5.get('total',0)}" if m5 else "—"
+            d_cnt = f"{d5v.get('pass',0)}/{d5v.get('total',0)}" if d5v else "—"
             d5_rows += f"<tr><td>{sc}</td><td>{m_cnt}</td><td>{m_rate}</td><td>{d_cnt}</td><td>{d_rate}</td></tr>"
     else:
         for sc, vals in m.get("D5_per_scenario", {}).items():
-            d5_rows += f"<tr><td>{sc}</td><td>{vals.get('pass',0)}/{vals.get('total',0)}</td><td>{vals.get('pass_rate',0)*100:.1f}%</td><td>\u2014</td><td>\u2014</td></tr>"
+            d5_rows += f"<tr><td>{sc}</td><td>{vals.get('pass',0)}/{vals.get('total',0)}</td><td>{vals.get('pass_rate',0)*100:.1f}%</td><td>—</td><td>—</td></tr>"
 
     m_d4 = m.get("D4_error_types", {})
     d4_rows = ""
@@ -376,22 +376,22 @@ def generate_html(result, output_path):
     if gap_analysis:
         gap_section = f"""
         <section>
-            <h2>Gap \u5206\u6790\uff1a58 pp \u5dee\u8ddd\u5206\u89e3</h2>
+            <h2>Gap 分析：58 pp 差距分解</h2>
             <table class="data">
-                <tr><th>\u6307\u6807</th><th>\u503c</th></tr>
-                <tr><td>\u603b\u5dee\u8ddd</td><td>{gap_analysis.get('total_gap_pp','\u2014')} pp</td></tr>
-                <tr><td>\u534f\u8bae\u53ef\u56de\u6536\uff08\u4f30\u8ba1\uff09</td><td>{gap_analysis.get('protocol_recoverable_estimate_pp','\u2014')} pp ({gap_analysis.get('protocol_recoverable_pct','\u2014')}%)</td></tr>
-                <tr><td>\u771f\u5b9e\u80fd\u529b\u5dee\u8ddd\uff08\u4f30\u8ba1\uff09</td><td>{gap_analysis.get('real_capability_gap_estimate_pp','\u2014')} pp</td></tr>
-                <tr><td>D1 \u5408\u6cd5\u7387\u5dee\u5f02</td><td>{gap_analysis.get('d1_diff','\u2014')}</td></tr>
-                <tr><td>D2 \u8c03\u7528\u9891\u6b21\u5dee\u5f02</td><td>{gap_analysis.get('d2_diff','\u2014')}</td></tr>
-                <tr><td>D6 \u8fed\u4ee3\u8f6e\u6570\u5dee\u5f02</td><td>{gap_analysis.get('d6_diff','\u2014')}</td></tr>
+                <tr><th>指标</th><th>值</th></tr>
+                <tr><td>总差距</td><td>{gap_analysis.get('total_gap_pp','—')} pp</td></tr>
+                <tr><td>协议可回收（估计）</td><td>{gap_analysis.get('protocol_recoverable_estimate_pp','—')} pp ({gap_analysis.get('protocol_recoverable_pct','—')}%)</td></tr>
+                <tr><td>真实能力差距（估计）</td><td>{gap_analysis.get('real_capability_gap_estimate_pp','—')} pp</td></tr>
+                <tr><td>D1 合法率差异</td><td>{gap_analysis.get('d1_diff','—')}</td></tr>
+                <tr><td>D2 调用频次差异</td><td>{gap_analysis.get('d2_diff','—')}</td></tr>
+                <tr><td>D6 迭代轮数差异</td><td>{gap_analysis.get('d6_diff','—')}</td></tr>
             </table>
-            <p><strong>\u5bf9 post-train \u4e09\u6b65\u7684\u4fa7\u91cd\u5efa\u8bae</strong>\uff1a</p>
+            <p><strong>对 post-train 三步的侧重建议</strong>：</p>
             <ul>
-                <li>\u534f\u8bae\u53ef\u56de\u6536\u5360\u6bd4\u9ad8 \u2192 SFT \u6ce8\u5165\u5de5\u5177\u8f68\u8ff9+API \u8bed\u6599\u4f18\u5148</li>
-                <li>\u771f\u5b9e\u80fd\u529b\u5dee\u8ddd\u5360\u6bd4\u9ad8 \u2192 RL(GRPO) \u6253\u78e8\u95ed\u73af\u63a8\u7406\u662f\u4e3b\u6218\u573a</li>
-                <li>D4 \u6267\u884c\u62a5\u9519\u591a \u2192 \u9886\u57df\u9000\u706b\u8865 API \u77e5\u8bc6</li>
-                <li>D4 \u65ad\u8a00\u5931\u8d25\u591a \u2192 \u8bed\u4e49\u63a8\u7406\u95ee\u9898\uff0cRL \u4ef7\u503c\u66f4\u5927</li>
+                <li>协议可回收占比高 → SFT 注入工具轨迹+API 语料优先</li>
+                <li>真实能力差距占比高 → RL(GRPO) 打磨闭环推理是主战场</li>
+                <li>D4 执行报错多 → 领域退火补 API 知识</li>
+                <li>D4 断言失败多 → 语义推理问题，RL 价值更大</li>
             </ul>
         </section>"""
 
@@ -399,15 +399,15 @@ def generate_html(result, output_path):
     if d:
         deepseek_section = f"""
         <section>
-            <h2>DeepSeek \u5bf9\u7167\u4fa7 (94%)</h2>
+            <h2>DeepSeek 对照侧 (94%)</h2>
             <table class="data">
-                <tr><th>\u6307\u6807</th><th>\u503c</th></tr>
-                <tr><td>\u6a21\u578b</td><td>{d.get('model_name','\u2014')}</td></tr>
-                <tr><td>\u603b\u901a\u8fc7\u7387</td><td>{d.get('overall_pass_rate',0)*100:.1f}%</td></tr>
-                <tr><td>D1 \u5de5\u5177\u8c03\u7528\u5408\u6cd5\u7387</td><td>{dt.get('D1_tool_call_legality','\u2014')}</td></tr>
-                <tr><td>D2 \u5e73\u5747\u8c03\u7528\u9891\u6b21</td><td>{dt.get('D2_avg_calls_per_task','\u2014')}</td></tr>
-                <tr><td>D3 \u8d85\u65f6\u6bd4\u4f8b</td><td>{f'{(d or {}).get("D3_timeout_ratio",0)*100:.1f}%' if d else '\u2014'}</td></tr>
-                <tr><td>D6 \u5e73\u5747\u8fed\u4ee3\u8f6e\u6570</td><td>{dt.get('D6_avg_iterations','\u2014')}</td></tr>
+                <tr><th>指标</th><th>值</th></tr>
+                <tr><td>模型</td><td>{d.get('model_name','—')}</td></tr>
+                <tr><td>总通过率</td><td>{d.get('overall_pass_rate',0)*100:.1f}%</td></tr>
+                <tr><td>D1 工具调用合法率</td><td>{dt.get('D1_tool_call_legality','—')}</td></tr>
+                <tr><td>D2 平均调用频次</td><td>{dt.get('D2_avg_calls_per_task','—')}</td></tr>
+                <tr><td>D3 超时比例</td><td>{f'{(d or {}).get("D3_timeout_ratio",0)*100:.1f}%' if d else '—'}</td></tr>
+                <tr><td>D6 平均迭代轮数</td><td>{dt.get('D6_avg_iterations','—')}</td></tr>
             </table>
         </section>"""
 
@@ -416,7 +416,7 @@ def generate_html(result, output_path):
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>R55: Post-Baseline D1-D6 \u81ea\u52a8\u5206\u6790\u62a5\u544a</title>
+<title>R55: Post-Baseline D1-D6 自动分析报告</title>
 <style>
 body {{ font-family: -apple-system, "Noto Sans SC", sans-serif; max-width: 960px; margin: 0 auto; padding: 20px; line-height: 1.6; color: #333; }}
 h1 {{ color: #1a5276; border-bottom: 3px solid #2980b9; padding-bottom: 10px; }}
@@ -433,89 +433,89 @@ section {{ margin-bottom: 30px; }}
 </style>
 </head>
 <body>
-<h1>R55: Post-Baseline D1-D6 \u81ea\u52a8\u5206\u6790\u62a5\u544a</h1>
-<p><small>\u751f\u6210\u65f6\u95f4\uff1a{result.get('generated_at','\u2014')} | \u811a\u672c\uff1abaize_posttrain_baseline_d1d6_analyzer.py | R55 / wake103</small></p>
+<h1>R55: Post-Baseline D1-D6 自动分析报告</h1>
+<p><small>生成时间：{result.get('generated_at','—')} | 脚本：baize_posttrain_baseline_d1d6_analyzer.py | R55 / wake103</small></p>
 <div class="summary-box">
-<p><strong>\u76ee\u7684</strong>\uff1a\u4ece 11/9 MiniCPM5-2B \u57fa\u7ebf\u8fd0\u884c\u7684 fresh traces + final_report.json \u81ea\u52a8\u63d0\u53d6 D1-D6\uff0c\u586b\u8865\u6b64\u524d MiniCPM5-2B \u4fa7\u6570\u636e \"not on this node\" \u7684\u7a7a\u767d\u3002\u5e76\u4e0e DeepSeek 94% \u4fa7\u5bf9\u7167\uff0c\u91cf\u5316 58 pp \u5dee\u8ddd\u4e2d\u300c\u534f\u8bae\u53ef\u56de\u6536\u300dvs\u300c\u771f\u5b9e\u80fd\u529b\u5dee\u8ddd\u300d\u7684\u5360\u6bd4\u3002</p>
+<p><strong>目的</strong>：从 11/9 MiniCPM5-2B 基线运行的 fresh traces + final_report.json 自动提取 D1-D6，填补此前 MiniCPM5-2B 侧数据 \"not on this node\" 的空白。并与 DeepSeek 94% 侧对照，量化 58 pp 差距中「协议可回收」vs「真实能力差距」的占比。</p>
 </div>
 <section>
-    <h2>MiniCPM5-2B \u57fa\u7ebf\u4fa7 (36%)</h2>
+    <h2>MiniCPM5-2B 基线侧 (36%)</h2>
     <table class="data">
-        <tr><th>\u6307\u6807</th><th>\u503c</th></tr>
-        <tr><td>\u6a21\u578b</td><td>{m.get('model_name','\u2014')}</td></tr>
-        <tr><td>\u8bc4\u6d4b\u6a21\u5f0f</td><td>{m.get('evaluation_mode','\u2014')}</td></tr>
-        <tr><td>\u603b\u4efb\u52a1\u6570</td><td>{m.get('total_tasks','\u2014')}</td></tr>
-        <tr><td>\u603b\u901a\u8fc7\u7387</td><td>{m.get('overall_pass_rate',0)*100:.1f}%</td></tr>
+        <tr><th>指标</th><th>值</th></tr>
+        <tr><td>模型</td><td>{m.get('model_name','—')}</td></tr>
+        <tr><td>评测模式</td><td>{m.get('evaluation_mode','—')}</td></tr>
+        <tr><td>总任务数</td><td>{m.get('total_tasks','—')}</td></tr>
+        <tr><td>总通过率</td><td>{m.get('overall_pass_rate',0)*100:.1f}%</td></tr>
     </table>
     <p>
-        <span class="metric">D1 \u5408\u6cd5\u7387: <strong>{mt.get('D1_tool_call_legality','\u2014')}</strong></span>
-        <span class="metric">D2 \u8c03\u7528/\u4efb\u52a1: <strong>{mt.get('D2_avg_calls_per_task','\u2014')}</strong></span>
-        <span class="metric">D3 \u8d85\u65f6: <strong>{m.get('D3_timeout_ratio',0)*100:.1f}%</strong></span>
-        <span class="metric">D6 \u8fed\u4ee3: <strong>{mt.get('D6_avg_iterations','\u2014')}</strong></span>
+        <span class="metric">D1 合法率: <strong>{mt.get('D1_tool_call_legality','—')}</strong></span>
+        <span class="metric">D2 调用/任务: <strong>{mt.get('D2_avg_calls_per_task','—')}</strong></span>
+        <span class="metric">D3 超时: <strong>{m.get('D3_timeout_ratio',0)*100:.1f}%</strong></span>
+        <span class="metric">D6 迭代: <strong>{mt.get('D6_avg_iterations','—')}</strong></span>
     </p>
 </section>
 <section>
-    <h2>D1: \u5de5\u5177\u8c03\u7528\u5408\u6cd5\u7387</h2>
+    <h2>D1: 工具调用合法率</h2>
     <table class="data">
-        <tr><th>\u6307\u6807</th><th>MiniCPM5-2B</th><th>DeepSeek</th></tr>
-        <tr><td>\u5408\u6cd5\u7387</td><td>{mt.get('D1_tool_call_legality','\u2014')}</td><td>{dt.get('D1_tool_call_legality','\u2014') if dt else '\u2014'}</td></tr>
-        <tr><td>\u603b\u8c03\u7528\u6570</td><td>{mt.get('D1_total_tool_calls','\u2014')}</td><td>{dt.get('D1_total_tool_calls','\u2014') if dt else '\u2014'}</td></tr>
-        <tr><td>\u6709\u8f68\u8ff9\u4efb\u52a1\u6570</td><td>{mt.get('tasks_with_traces','\u2014')}</td><td>{dt.get('tasks_with_traces','\u2014') if dt else '\u2014'}</td></tr>
+        <tr><th>指标</th><th>MiniCPM5-2B</th><th>DeepSeek</th></tr>
+        <tr><td>合法率</td><td>{mt.get('D1_tool_call_legality','—')}</td><td>{dt.get('D1_tool_call_legality','—') if dt else '—'}</td></tr>
+        <tr><td>总调用数</td><td>{mt.get('D1_total_tool_calls','—')}</td><td>{dt.get('D1_total_tool_calls','—') if dt else '—'}</td></tr>
+        <tr><td>有轨迹任务数</td><td>{mt.get('tasks_with_traces','—')}</td><td>{dt.get('tasks_with_traces','—') if dt else '—'}</td></tr>
     </table>
-    <p><small>\u5224\u8bfb\uff1a&lt;90% \u2192 \u534f\u8bae\u95ee\u9898\uff0cSFT \u53ef\u5927\u5e45\u56de\u6536</small></p>
+    <p><small>判读：&lt;90% → 协议问题，SFT 可大幅回收</small></p>
 </section>
 <section>
-    <h2>D2: \u5de5\u5177\u8c03\u7528\u9891\u6b21</h2>
+    <h2>D2: 工具调用频次</h2>
     <table class="data">
-        <tr><th>\u6307\u6807</th><th>MiniCPM5-2B</th><th>DeepSeek</th></tr>
-        <tr><td>\u5e73\u5747\u8c03\u7528/\u4efb\u52a1</td><td>{mt.get('D2_avg_calls_per_task','\u2014')}</td><td>{dt.get('D2_avg_calls_per_task','\u2014') if dt else '\u2014'}</td></tr>
-        <tr><td>\u4e2d\u4f4d\u8c03\u7528/\u4efb\u52a1</td><td>{mt.get('D2_median_calls_per_task','\u2014')}</td><td>{dt.get('D2_median_calls_per_task','\u2014') if dt else '\u2014'}</td></tr>
-    </table>
-</section>
-<section>
-    <h2>D3: \u8d85\u65f6/\u622a\u65ad\u6bd4\u4f8b</h2>
-    <table class="data">
-        <tr><th>\u6307\u6807</th><th>MiniCPM5-2B</th><th>DeepSeek</th></tr>
-        <tr><td>\u8d85\u65f6\u6bd4\u4f8b</td><td>{m.get('D3_timeout_ratio',0)*100:.1f}%</td><td>{f'{(d or {}).get("D3_timeout_ratio",0)*100:.1f}%' if d else '\u2014'}</td></tr>
-        <tr><td>\u8d85\u65f6\u6570</td><td>{m.get('D3_timeout_count','\u2014')}</td><td>{d.get('D3_timeout_count','\u2014') if d else '\u2014'}</td></tr>
+        <tr><th>指标</th><th>MiniCPM5-2B</th><th>DeepSeek</th></tr>
+        <tr><td>平均调用/任务</td><td>{mt.get('D2_avg_calls_per_task','—')}</td><td>{dt.get('D2_avg_calls_per_task','—') if dt else '—'}</td></tr>
+        <tr><td>中位调用/任务</td><td>{mt.get('D2_median_calls_per_task','—')}</td><td>{dt.get('D2_median_calls_per_task','—') if dt else '—'}</td></tr>
     </table>
 </section>
 <section>
-    <h2>D4: \u5931\u8d25\u7c7b\u578b\u5206\u89e3</h2>
+    <h2>D3: 超时/截断比例</h2>
     <table class="data">
-        <tr><th>\u6307\u6807</th><th>MiniCPM5-2B</th><th>DeepSeek</th></tr>
-        <tr><td>\u6267\u884c\u62a5\u9519\u6570</td><td>{m.get('D4_exec_error_count','\u2014')}</td><td>{(d or {}).get('D4_exec_error_count','\u2014') if d else '\u2014'}</td></tr>
-        <tr><td>\u65ad\u8a00\u5931\u8d25\u6570</td><td>{m.get('D4_assertion_fail_count','\u2014')}</td><td>{(d or {}).get('D4_assertion_fail_count','\u2014') if d else '\u2014'}</td></tr>
-        <tr><td>\u6267\u884c\u62a5\u9519\u5360\u6bd4</td><td>{m.get('D4_exec_vs_assert_ratio',{}).get('exec_pct','\u2014')}%</td><td>{(d or {}).get('D4_exec_vs_assert_ratio',{}).get('exec_pct','\u2014') if d else '\u2014'}%</td></tr>
+        <tr><th>指标</th><th>MiniCPM5-2B</th><th>DeepSeek</th></tr>
+        <tr><td>超时比例</td><td>{m.get('D3_timeout_ratio',0)*100:.1f}%</td><td>{f'{(d or {}).get("D3_timeout_ratio",0)*100:.1f}%' if d else '—'}</td></tr>
+        <tr><td>超时数</td><td>{m.get('D3_timeout_count','—')}</td><td>{d.get('D3_timeout_count','—') if d else '—'}</td></tr>
     </table>
-    {f"<table class='data'><tr><th>\u9519\u8bef\u7c7b\u578b</th><th>MiniCPM5-2B</th><th>DeepSeek</th></tr>{d4_rows}</table>" if d4_rows else ""}
 </section>
 <section>
-    <h2>D5: Per-Scenario \u901a\u8fc7\u7387</h2>
+    <h2>D4: 失败类型分解</h2>
     <table class="data">
-        <tr><th>Scenario</th><th>MiniCPM5 \u901a\u8fc7</th><th>MiniCPM5 \u7387</th><th>DeepSeek \u901a\u8fc7</th><th>DeepSeek \u7387</th></tr>
+        <tr><th>指标</th><th>MiniCPM5-2B</th><th>DeepSeek</th></tr>
+        <tr><td>执行报错数</td><td>{m.get('D4_exec_error_count','—')}</td><td>{(d or {}).get('D4_exec_error_count','—') if d else '—'}</td></tr>
+        <tr><td>断言失败数</td><td>{m.get('D4_assertion_fail_count','—')}</td><td>{(d or {}).get('D4_assertion_fail_count','—') if d else '—'}</td></tr>
+        <tr><td>执行报错占比</td><td>{m.get('D4_exec_vs_assert_ratio',{}).get('exec_pct','—')}%</td><td>{(d or {}).get('D4_exec_vs_assert_ratio',{}).get('exec_pct','—') if d else '—'}%</td></tr>
+    </table>
+    {f"<table class='data'><tr><th>错误类型</th><th>MiniCPM5-2B</th><th>DeepSeek</th></tr>{d4_rows}</table>" if d4_rows else ""}
+</section>
+<section>
+    <h2>D5: Per-Scenario 通过率</h2>
+    <table class="data">
+        <tr><th>Scenario</th><th>MiniCPM5 通过</th><th>MiniCPM5 率</th><th>DeepSeek 通过</th><th>DeepSeek 率</th></tr>
         {d5_rows}
     </table>
 </section>
 <section>
-    <h2>D6: \u5e73\u5747\u8fed\u4ee3\u8f6e\u6570 (\u03a6) \u5206\u5e03</h2>
+    <h2>D6: 平均迭代轮数 (Φ) 分布</h2>
     <table class="data">
-        <tr><th>\u6307\u6807</th><th>MiniCPM5-2B</th><th>DeepSeek</th></tr>
-        <tr><td>\u5e73\u5747\u8fed\u4ee3</td><td>{mt.get('D6_avg_iterations','\u2014')}</td><td>{dt.get('D6_avg_iterations','\u2014') if dt else '\u2014'}</td></tr>
-        <tr><td>\u4e2d\u4f4d\u8fed\u4ee3</td><td>{mt.get('D6_median_iterations','\u2014')}</td><td>{dt.get('D6_median_iterations','\u2014') if dt else '\u2014'}</td></tr>
+        <tr><th>指标</th><th>MiniCPM5-2B</th><th>DeepSeek</th></tr>
+        <tr><td>平均迭代</td><td>{mt.get('D6_avg_iterations','—')}</td><td>{dt.get('D6_avg_iterations','—') if dt else '—'}</td></tr>
+        <tr><td>中位迭代</td><td>{mt.get('D6_median_iterations','—')}</td><td>{dt.get('D6_median_iterations','—') if dt else '—'}</td></tr>
     </table>
-    {f"<table class='data'><tr><th>\u8f6e\u6570\u533a\u95f4</th><th>MiniCPM5-2B</th><th>DeepSeek</th></tr>{d6_rows}</table>" if d6_rows else ""}
+    {f"<table class='data'><tr><th>轮数区间</th><th>MiniCPM5-2B</th><th>DeepSeek</th></tr>{d6_rows}</table>" if d6_rows else ""}
 </section>
 {deepseek_section}
 {gap_section}
 <section>
-    <h2>\u6280\u672f\u8bf4\u660e</h2>
+    <h2>技术说明</h2>
     <ul>
-        <li>trace_parser \u53ef\u7528\uff1a{'\u2705' if _TP_AVAILABLE else '\u274c\uff08\u56de\u9000\u5230\u6d88\u606f\u8ba1\u6570\u4ee3\u7406\uff09'}</li>
-        <li>final_report.json: <code>{result.get('minicpm5',{}).get('_report_path','\u2014')}</code></li>
-        <li>trace_dir: <code>{result.get('minicpm5',{}).get('_trace_dir','\u2014')}</code></li>
+        <li>trace_parser 可用：{'✅' if _TP_AVAILABLE else '❌（回退到消息计数代理）'}</li>
+        <li>final_report.json: <code>{result.get('minicpm5',{}).get('_report_path','—')}</code></li>
+        <li>trace_dir: <code>{result.get('minicpm5',{}).get('_trace_dir','—')}</code></li>
     </ul>
-    <p><small>\u26a0\ufe0f \u9996\u6b21\u4f7f\u7528 MiniCPM5-2B \u4fa7\u771f\u5b9e\u8f68\u8ff9\u6570\u636e\u66ff\u4ee3\u4e4b\u524d\u7684\u5047\u8bbe\u5916\u63a8\u3002gap \u5206\u6790\u4e3a\u542f\u53d1\u5f0f\u4f30\u8ba1\uff0c\u975e\u7cbe\u786e\u5206\u89e3\u3002</small></p>
+    <p><small>⚠️ 首次使用 MiniCPM5-2B 侧真实轨迹数据替代之前的假设外推。gap 分析为启发式估计，非精确分解。</small></p>
 </section>
 </body>
 </html>"""

@@ -8279,3 +8279,143 @@ R75 建立了 8 类 Hack 分类法和 8 项 PreToolUse hook 规范，其中 PTU-
 - `r77_tokenizer_coverage.json`（13.4KB）
 
 - 无伪造。替身模型（MiniCPM5-2B）分析结果不可迁移到 BaiZe 正式训练。
+
+---
+
+## §R78 GPU-Day 综合就绪审计（2026-11-09 · 零 GPU · wake126）
+
+> **目的**：GPU 11/9 到位日，在 GPU 仍被 SGLang 占用期间，对自动起跑管线做全面就绪审计——确保 GPU 一释放、gpu_watcher 自动触发 steps 1-5 时零失败。
+
+### 1. 审计工具
+
+- `baize_posttrain_gpu_day_audit.py`（~450 行，纯 Python 3.8 stdlib，零依赖，零 GPU，零网络）
+- 8 大审计维度：脚本库存 → 配置审计 → 数据审计 → venv 审计 → GPU watcher 状态 → launch 依赖链 → 风险评估 → 时间线投影
+- 输出：终端报告 + HTML（24.6KB）+ JSON（22.7KB）
+
+### 2. 审计结果总览
+
+| 指标 | 数值 |
+|:--|--:|
+| PASS | 118 |
+| FAIL | **0** |
+| WARN | 6 |
+| INFO | 15 |
+| 就绪度 | **100%**（118/118 项通过，6 WARN 均为已知风险且有缓解） |
+| 审计耗时 | 7.3s |
+
+### 3. 8 维审计详情
+
+#### 3.1 脚本语法检查（bash -n + py_compile）
+
+- **.sh 脚本**：18 个全部 `bash -n` PASS
+- **.py 脚本**：检查时发现 `baize_posttrain_baseline_d1d6_analyzer.py` py_compile FAIL（f-string 内含 `\uXXXX` 转义，Python 3.8/3.10 限制）→ **已修复**：用正则替换 457 个 `\uXXXX` → 实际 Unicode 字符 → py_compile PASS
+- 修复后全部 PASS ✅
+
+#### 3.2 RL 配置 v2 审计（11 项关键配置）
+
+| 检查项 | 状态 | 出处 |
+|:--|:--|:--|
+| custom_reward_function 在顶层 | ✅ PASS | R47 BUG1 修复 |
+| algorithm.adv_estimator: grpo | ✅ PASS | R47 BUG2 修复 |
+| rollout.name: sglang | ✅ PASS | R9 |
+| rollout.n: 8 | ✅ PASS | R47 BUG3 修复 |
+| multi_turn.enable: False | ✅ PASS | Phase1 单轮 |
+| attn_implementation: flash_attention_2 | ✅ PASS | R35 |
+| auto_fallback: true | ✅ PASS | R22 |
+| n_gpus_per_node: 4 | ✅ PASS | R47 |
+| max_prompt_length: 8192 | ✅ PASS | R61 |
+| max_response_length: 8192 | ✅ PASS | R61 |
+| train_files: rl_pyaether_synth_v2.parquet | ✅ PASS | 文件存在 |
+
+#### 3.3 数据文件审计
+
+| 类别 | 文件 | 大小 | 状态 |
+|:--|:--|--:|:--|
+| Model | MiniCPM5-2B (/tmp/models/) | 4.7GB | ✅ |
+| SFT | sft_pyaether_corpus_v2.jsonl | 21.8MB | ✅ |
+| SFT | sft_pyaether_corpus_v2.parquet | — | ✅ |
+| RL | rl_pyaether_synth_v2.parquet | — | ✅ |
+| RL | reward_functions.py | 33KB | ✅ |
+| RL | rl_monitor.py | 18.6KB | ✅ |
+| Anti-hack | antihack_framework.py | 35KB | ✅ |
+| Anti-hack | antihack_monitor.py | 18.6KB | ✅ |
+| Tool | eda_tool_v2.py | 4.9KB | ✅ |
+| Parser | minicpm5_parser_patch.py | 4.3KB | ✅ |
+| EDA | EDA-Eval-PyAether-v20260311.jsonl | — | ✅ |
+| EDA | API_INFO_MERGED_V3.json | — | ✅ |
+| EDA | run_cline_script.sh | — | ✅ |
+| EDA | run_eval.py | — | ✅ |
+
+#### 3.4 Venv 包审计（cu124 venv）
+
+| 包 | 状态 |
+|:--|:--|
+| torch | ✅ PASS |
+| sglang | ✅ PASS |
+| verl | ✅ PASS |
+| ray | ✅ PASS |
+| flash_attn | ✅ PASS |
+| flashinfer | ✅ PASS |
+| transformers | ✅ PASS |
+| vllm | ⚠️ WARN（预期：已切换到 SGLang） |
+
+#### 3.5 GPU Watcher 状态
+
+- 进程：✅ 运行中（PID 2022305，poll-interval=120s，launch-steps=1-5）
+- GPU：0/8 free（SGLang Qwen3.8-27B 占全 8 卡，util 0%）
+- 就绪：⚠️ 等待 GPU 释放（不杀进程）
+- 日志：iteration #161+，elapsed ~5.3h
+
+#### 3.6 Launch 依赖链（Steps 0-6）
+
+| 步骤 | 脚本 | 状态 |
+|:--|:--|:--|
+| Step 0 | setup_cu124_venv.sh | ✅ |
+| Step 1 | preflight_check.sh | ✅ |
+| Step 2 | minicpm5_diag.sh (full) | ✅ |
+| Step 3 | minicpm5_diag.sh (extract) | ✅ |
+| Step 4 | contamination_gate.sh | ✅ |
+| Step 5 | rl_grpo.sh (smoke R0) | ✅ |
+| Step 6 | rl_grpo.sh (full R0) | ✅ |
+
+#### 3.7 风险评估（6 项 WARN + 2 项 INFO）
+
+| ID | 风险 | 严重度 | 缓解措施 |
+|:--|:--|:--|:--|
+| R1 | NFS 冷启动 import >30s | WARN | gpu_watcher 含 NFS warm-up |
+| R2 | SGLang 占全 8 卡 | WARN | gpu_watcher 轮询 120s，不杀进程 |
+| R3 | 沙盒 TCP 过滤 (R37) | INFO | 用 R0（无沙盒），R2 延后 |
+| R4 | MiniCPM5 XML 格式不匹配 (R70) | INFO | monkey-patch 已创建，Phase1 单轮不受影响 |
+| R5 | 上下文 28K avg (R60) | WARN | 16K ctx 覆盖 82%，32K 不可行 |
+| R6 | 奖励全零 smoke | INFO | R0 std=0.3718，P2 监控告警 |
+| R7 | OOM 4×A40 | WARN | 降级：micro_batch 4→2, gpu_mem 0.50→0.35 |
+| R8 | pretrain ckpt 未就绪 | INFO | 当前 RL 为替身(MiniCPM5-2B)，非 BaiZe |
+
+#### 3.8 时间线投影
+
+| 步骤 | 预估耗时 | 备注 |
+|:--|:--|:--|
+| Step 0: Venv Setup | 15-30 min | 已完成，可能跳过 |
+| Step 1: Preflight | 2-5 min | NFS warm-up +30s |
+| Step 2: Baseline (quick) | 20-30 min | 10 tasks × 1 run |
+| Step 2b: Baseline (full) | 15-25 hours | 158 tasks × 5 runs, 后台 |
+| Step 3: D1-D6 提取 | 5-10 min | 先从 quick 结果 |
+| Step 4: 污染门 | 1-2 min | 文件哈希检查 |
+| Step 5: RL Smoke (10 iters) | 20-40 min | R0, G=4, batch=16 |
+| Step 6: Full RL (2000 iters) | 3-5 days | R0, G=8, batch=128 |
+
+### 4. 审计结论
+
+- **GPU-Day 自动起跑管线就绪**：118/118 项通过，0 FAIL，6 WARN 均为已知风险且有缓解措施。
+- **gpu_watcher** 正在运行（PID 2022305），每 120s 轮询，GPU 释放（≥4 卡 ≥40GB free）后自动触发 steps 1-5。
+- **关键修复**：`baize_posttrain_baseline_d1d6_analyzer.py` 的 457 个 f-string Unicode 转义已修复（Python 3.8/3.10 兼容）。
+- **下一步**：SGLang 进程释放 GPU → gpu_watcher 自动触发 → steps 1-5 依次执行 → 产出 36% 基线 + D1-D6 实测 + RL smoke test。
+
+### 5. 交付物
+
+- `baize_posttrain_gpu_day_audit.py`（~450 行，py_compile ✅，8 维审计）
+- `reports/report_posttrain_gpu_day_audit_zh.html`（24.6KB，0 script，0 外链，自包含）
+- `r78_gpu_day_audit.json`（22.7KB）
+- 修复：`baize_posttrain_baseline_d1d6_analyzer.py`（457 个 Unicode 转义 → 实际字符）
+
+- 无伪造。替身模型（MiniCPM5-2B）审计结果不可迁移到 BaiZe 正式训练。
