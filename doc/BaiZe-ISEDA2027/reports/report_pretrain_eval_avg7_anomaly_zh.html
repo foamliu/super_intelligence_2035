@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>预训练全量评测均值异常诊断报告 (Avg7=37.40% vs 历史 51.5–57.9%) — 修订版</title>
-<!-- v3.7: NUMA fix applied: chunk2 client pinned to Node0 cores48-63(was CPU192 Node1 cross-NUMA 3x slow), piqa client pinned to Node0 cores16-31(was CPU159 Node1). 5s+5c全活. progress: piqa838/3676(23%)·hs_c0 2322/10044(23%)·hs_c1 2711/10044(27%←最快)·hs_c2 756/10044(7.5%,速率待改善)·hs_c3 121/10036(1%). 6/8done Avg6=53.38%不变. 结论A铁证(口径差异非真实下降). S1健康.29 8xH100 100%. -->
+<title>预训练全量评测均值异常诊断报告 (Avg7=37.40% vs 历史 51.5–57.9%) — 修订版 v3.8</title>
+<!-- v3.8: NUMA fix verified in effect (chunk2 client cores48-63 Node0 lastcpu=60✓, piqa client cores16-31 Node0 lastcpu=25✓). Server affinity confirmed: 8183=cores32-47(N0), 8184=cores0-15(N0), 8185=cores64-79(N0), 8186=cores80-95(N0), 8187=cores96-111(N1). Bandwidth contention: 4 servers on Node0 sharing memory BW → c0/c1 fast(~2.3s/it) but c2/piqa slow(~16-23s/it). Latest progress: piqa878/3676(24%,22.8s/it,ETA18h)·hs_c0 2550/10044(25%,2.3s/it,ETA4.7h←最快)·hs_c1 2870/10044(29%,2.4s/it,ETA4.8h)·hs_c2 793/10044(8%,16.3s/it,ETA42h←瓶颈)·hs_c3 170/10036(1.7%,22.5s/it,ETA62h). Plan: c0/c1 finish(~5h)→kill c2/c3, restart on freed Node0 cores. 6/8done Avg6=53.38%不变. 结论A铁证. S1健康.29 8xH100 100%. -->
 <style>
 body{font-family:system-ui,sans-serif;max-width:1100px;margin:0 auto;padding:20px;line-height:1.6;color:#222;background:#fafafa}
 h1{color:#c0392b;border-bottom:3px solid #c0392b;padding-bottom:10px}
@@ -30,7 +30,7 @@ pre{background:#f4f4f4;padding:12px;border-radius:6px;overflow-x:auto;font-size:
 </style>
 </head>
 <body>
-<h1>🚨 预训练全量评测均值异常诊断报告 <span class="updated">（修订版 v3.7 · 2026-11-08 23:58）</span></h1>
+<h1>🚨 预训练全量评测均值异常诊断报告 <span class="updated">（修订版 v3.8 · 2026-11-09 00:10）</span></h1>
 <p><strong>报告日期：</strong>2026-11-08　<strong>检查点：</strong>iter_112000（2B Mamba2-hybrid）<br>
 <strong>异常：</strong>本轮 v4 Avg7=37.40% vs 历史 iter_100000 Avg=54.75%（raw）/ 57.75%（harness），差 14–20 pp<br>
 <span class="updated">⬆ 修订说明：v1 报告结论为「差异 100% 来自二进制」。
@@ -46,7 +46,8 @@ v5 Avg6(acc)=53.38% vs 历史同 6 集 limit=100 Avg6(acc)=53.83%，差仅 −0.
 <span class="updated">⬆ v3.5 更新（23:24）：✅ chunk3 重启于 Node1 cores 96-111（原位），5 server + 5 client 全活。piqa 654/3676(18%, 34s/it) · hs_chunk0 1933/10044(19%, 2.6s/it ←加速) · hs_chunk1 2266/10044(23%) · hs_chunk2 617/10044(6%) · hs_chunk3 5/10036(0%, warming up)。原策略"等 piqa 完成(~21h)再重启 chunk3"总 ETA ~50h → 改为 chunk3 立即重启于 Node1（chunk1 ~9h 完成释放带宽），总 ETA 改善至 ~28h。piqa 受 chunk3 影响从 25→34s/it（1.36x），但 chunk0 反而加速至 2.6s/it。结论 A 不变。</span><br>
 <span class="updated">⬆ v3.3 更新（22:30）：⚠️ 第 4 次 SIGTERM：#1727(22:16) 报告 5s+5c 全活后，所有 5 个 llama-server(port 8183-8187) 再次被外部 SIGTERM 杀死（/tmp/baize_eval_v5/ 目录亦被清理）。piqa/hellaswag 再次从零丢失进度。<strong>已用修复版二进制(MD5=f95ac952)重启 v6 eval</strong>：5 server(port 8183=piqa/cores0-15, 8184-8187=hellaswag 4 shard/cores16-79) + 5 client 全活。6/8 集已完成不变 Avg6=53.38%。结论 A 不变——6 集已足以铁证结论，piqa/hellaswag 完成后仅补全 8 集数字。</span><br>
 <span class="updated">⬆ v3.4 更新（22:37）：✅ v6 eval 稳定运行 2h 无 SIGTERM（20:34 重启后持续存活）。精确进度（client tqdm）：piqa 502/3676(13.6%, ~14s/it, ETA ~12h)、hellaswag 4 shard 各 ~417/10036(4.2%, ~17s/it, ETA ~46h)。6/8 集不变 Avg6(acc)=53.38%。S1 训练健康(.29 8×H100 100% util, ~75GB/卡)。结论 A 不变。</span><br>
-<span class="updated">⬆ v3.7 更新（23:5x）：🔧 <strong>NUMA 亲和性修复（零重启零丢进度）</strong>：诊断发现 chunk2 客户端(PID2097234)运行在 CPU192(Node1) 但其 server 8186 在 Node0(cores80-95) → 跨 NUMA 3x 慢（742/10044 仅 7% = 瓶颈）；piqa 客户端(PID2097184)同样跨 NUMA(CPU159 Node1 → server 8183 Node0)。已用 <code>taskset -p</code> 将 chunk2 客户端钉到 cores48-63(Node0)、piqa 客户端钉到 cores16-31(Node0)，消除跨 NUMA 访问。验证：lastcpu 2097234=57✓ / 2097184=19✓（均在 Node0）。预计 chunk2 速率从 ~15s/it 提升至 ~5s/it（ETA 从 ~40h 降至 ~13h），piqa 从 ~10s/it 提升至 ~4s/it。tqdm 移动均值需数分钟反映。其余 3 客户端(chunk0/1/3)本就在同 NUMA。6/8 集不变 Avg6=53.38%。结论 A 不变。</span></p>
+<span class="updated">⬆ v3.7 更新（23:5x）：🔧 <strong>NUMA 亲和性修复（零重启零丢进度）</strong>：诊断发现 chunk2 客户端(PID2097234)运行在 CPU192(Node1) 但其 server 8186 在 Node0(cores80-95) → 跨 NUMA 3x 慢（742/10044 仅 7% = 瓶颈）；piqa 客户端(PID2097184)同样跨 NUMA(CPU159 Node1 → server 8183 Node0)。已用 <code>taskset -p</code> 将 chunk2 客户端钉到 cores48-63(Node0)、piqa 客户端钉到 cores16-31(Node0)，消除跨 NUMA 访问。验证：lastcpu 2097234=57✓ / 2097184=19✓（均在 Node0）。预计 chunk2 速率从 ~15s/it 提升至 ~5s/it（ETA 从 ~40h 降至 ~13h），piqa 从 ~10s/it 提升至 ~4s/it。tqdm 移动均值需数分钟反映。其余 3 客户端(chunk0/1/3)本就在同 NUMA。6/8 集不变 Avg6=53.38%。结论 A 不变。</span><br>
+<span class="updated">⬆ v3.8 更新（00:10）：✅ NUMA 修复已验证生效（chunk2 lastcpu=60✓ Node0, piqa lastcpu=25✓ Node0）。<strong>但带宽争抢是新瓶颈</strong>：5 个 server 的 CPU 亲和性解码确认 4 个在 Node0(cores 0-15/32-47/64-79/80-95)、1 个在 Node1(cores 96-111)。Node0 上 4 个 server × 16 线程 = 64 线程争抢内存带宽 → c0/c1 快(~2.3s/it)但 c2/piqa 慢(~16-23s/it)。最新进度：piqa 878/3676(24%)·hs_c0 2550/10044(25%,ETA~4.7h←最先完成)·hs_c1 2870/10044(29%,ETA~4.8h)·hs_c2 793/10044(8%,ETA~42h←瓶颈)·hs_c3 170/10036(1.7%,ETA~62h)。<strong>再分配计划</strong>：c0/c1 完成后(~5h)→kill c2/c3，在释放的 Node0 核心上重启（3→2 个 server 竞争带宽，预计速率提升 1.5-2x）。6/8 集不变 Avg6=53.38%。结论 A 不变。</span></p>
 
 <div class="box box-green conclusion">
 <strong>结论：A. 口径差异（非真实能力下降）—— 二因叠加</strong><br><br>
@@ -162,11 +163,11 @@ hellaswag 全量 = 10042 题 × 4 选项 = 40168 次 loglikelihood 请求，是�
 <table>
 <tr><th>任务</th><th>port</th><th>进度</th><th>速率</th><th>ETA</th></tr>
 <tr><td>arc_easy</td><td>8182</td><td class="green">✅ 完成 (9501/9501, acc=0.6553)</td><td>—</td><td class="green">DONE</td></tr>
-<tr><td>piqa</td><td>8183</td><td>777/3676 (21%)</td><td>~9 s/it</td><td class="red">~7-11h</td></tr>
-<tr><td>hellaswag chunk0</td><td>8184</td><td>2265/10044 (23%)</td><td>~6 s/it</td><td class="red">~11-14h</td></tr>
-<tr><td>hellaswag chunk1</td><td>8185</td><td>2600/10044 (26%)</td><td>~4 s/it</td><td class="orange">~8-10h ← 最快</td></tr>
-<tr><td>hellaswag chunk2</td><td>8186</td><td>717/10044 (7%)</td><td>~19 s/it (Node1跨NUMA)</td><td class="red">~36-51h ← 瓶颈</td></tr>
-<tr><td>hellaswag chunk3</td><td>8187</td><td>97/10036 (1%)</td><td>~14 s/it (Node1)</td><td class="red">~14-39h</td></tr>
+<tr><td>piqa</td><td>8183</td><td>878/3676 (24%)</td><td>22.8 s/it (N0带宽争抢)</td><td class="red">~18h</td></tr>
+<tr><td>hellaswag chunk0</td><td>8184</td><td>2550/10044 (25%)</td><td>2.3 s/it</td><td class="orange">~4.7h ← 最快最先完成</td></tr>
+<tr><td>hellaswag chunk1</td><td>8185</td><td>2870/10044 (29%)</td><td>2.4 s/it</td><td class="orange">~4.8h</td></tr>
+<tr><td>hellaswag chunk2</td><td>8186</td><td>793/10044 (8%)</td><td>16.3 s/it (NUMA已修,带宽争抢)</td><td class="red">~42h ← 瓶颈</td></tr>
+<tr><td>hellaswag chunk3</td><td>8187</td><td>170/10036 (1.7%)</td><td>22.5 s/it (Node1)</td><td class="red">~62h</td></tr>
 </table>
 <div class="box box-red">
 <p><strong>⚠️ 20:34 事故记录：</strong>上一轮 piqa/hellaswag（#1706 于 18:25 启动）的 5 个 llama-server 后端在 ~20:12 收到外部 SIGTERM 优雅退出（server 日志 "cleaning up before exit"），但 5 个 eval 客户端未感知、继续空转挂起。#1716(20:28) 心跳误报"5 server 全活"（实际已死）。因脚本无 resume、输出目录为空，20:34 kill 挂起进程后从零重跑，损失 ~1.5h。SIGTERM 来源未明（疑似某次唤醒的清理操作或外部脚本），<strong>下次唤醒须首要确认 server 存活</strong>。</p>
