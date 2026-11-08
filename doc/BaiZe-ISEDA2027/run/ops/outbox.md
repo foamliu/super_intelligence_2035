@@ -27321,3 +27321,105 @@ post    n=  8 mean=8150.6 ms min=7880.1 max=8628.6 last=8139.2
 
 === 256 done ===
 ```
+
+---
+
+## RUN_ID 257 · 2026-11-08 12:48:47 · host=`whag0pgpuap12` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 257 | diagnose .29 relay | $(date '+%F %T') | host=$(hostname) ==="
+SSH="ssh -o BatchMode=yes -o ConnectTimeout=6 -o StrictHostKeyChecking=no"
+$SSH 10.239.2.29 'set -u
+P=2259598
+echo "-- relay proc --"; ps -o pid=,ppid=,stat=,etimes=,args= -p $P 2>/dev/null | cut -c1-160
+echo "-- cwd --"; CWD=$(readlink /proc/$P/cwd 2>/dev/null); echo "$CWD"
+echo "-- script --"; tr "\0" " " < /proc/$P/cmdline 2>/dev/null | cut -c1-200; echo
+echo "-- fd1 --"; readlink /proc/$P/fd/1 2>/dev/null
+echo "-- env(hint) --"; tr "\0" "\n" < /proc/$P/environ 2>/dev/null | grep -Ei "^(HOSTTAG|HOME|PWD|OLDPWD)=" | head -6
+echo "-- relay log tail --"; tail -8 /tmp/baize_ops_relay.29.log 2>/dev/null
+echo
+if [ -n "${CWD:-}" ] && cd "$CWD" 2>/dev/null; then
+  echo "-- pwd/toplevel --"; pwd; git rev-parse --show-toplevel 2>/dev/null
+  echo "-- branch/head --"; git status -sb 2>/dev/null | head -3; echo "HEAD=$(git rev-parse --short HEAD 2>/dev/null) origin/main=$(git rev-parse --short origin/main 2>/dev/null)"
+  echo "-- state/local inbox --"; cat ops/.last_run_id.29 2>/dev/null; echo; head -3 ops/inbox.md 2>/dev/null | tr -d "\r"
+  echo "-- counts --"; git count-objects -v 2>/dev/null | head -8
+  echo "-- packs --"; ls -la .git/objects/pack 2>/dev/null | head -12
+  echo "-- tmp packs/locks --"; find .git -maxdepth 2 \( -name "tmp_pack_*" -o -name "*.lock" \) -printf "  %s %p\n" 2>/dev/null | head -10
+  echo "-- partial clone cfg --"; git config --get remote.origin.promisor; git config --get remote.origin.partialclonefilter; git config --get core.repositoryformatversion
+  echo "-- git version --"; git --version
+else
+  echo "CWD_INVALID"
+fi'
+echo
+echo "=== 257 done ==="
+```
+
+**输出**
+```
+=== RUN_ID 257 | diagnose .29 relay | 2026-11-08 12:48:47 | host=whag0pgpuap12 ===
+-- relay proc --
+2259598       1 Ss   1271664 bash ./ops_relay_v2.sh
+-- cwd --
+/nas_train/app.e0031982/code/super_intelligence_2035
+-- script --
+bash ./ops_relay_v2.sh 
+
+-- fd1 --
+/tmp/baize_ops_relay.29.log
+-- env(hint) --
+PWD=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
+HOME=/home/app.e0031982
+OLDPWD=/nas_train/app.e0031982/code/super_intelligence_2035
+-- relay log tail --
+[relay-29] RUN_ID=241 executed, exit=0, appended to outbox.
+[relay-29] RUN_ID=242 executed, exit=0, appended to outbox.
+[relay-29] RUN_ID=243 executed, exit=0, appended to outbox.
+[relay-29] RUN_ID=244 executed, exit=0, appended to outbox.
+[relay-29] RUN_ID=245 executed, exit=0, appended to outbox.
+./ops_relay_v2.sh: line 77: 582119 Bus error               timeout 60 git fetch origin > /dev/null 2>&1
+./ops_relay_v2.sh: line 77: 3741106 Bus error               timeout 60 git fetch origin > /dev/null 2>&1
+[relay-29] RUN_ID=247 executed, exit=0, appended to outbox.
+
+-- pwd/toplevel --
+/nas_train/app.e0031982/code/super_intelligence_2035
+/nas_train/app.e0031982/code/super_intelligence_2035
+-- branch/head --
+## main...origin/main
+ M doc/BaiZe-ISEDA2027/reports/report_harness_cline_special_r1877_zh.html
+ M doc/BaiZe-ISEDA2027/reports/report_harness_glm53_7way_swebench_tb_zh.html
+HEAD=1ae66ca2d origin/main=1ae66ca2d
+-- state/local inbox --
+
+-- counts --
+count: 14086
+size: 248480
+in-pack: 150879
+packs: 17
+size-pack: 36352165
+prune-packable: 0
+garbage: 2
+size-garbage: 442112
+-- packs --
+total 36794668
+drwxr-x---   2 app.e0031982 app.adm        8192 Nov  8 12:39 .
+drwxr-x--- 260 app.e0031982 app.adm       36864 Nov  8 12:48 ..
+-r--r--r--   1 app.e0031982 app.adm        5608 Nov  6 00:48 pack-1e563db48099b01f760f6751bb2c0b111501a93b.idx
+-r--r--r--   1 app.e0031982 app.adm     2994984 Nov  6 00:48 pack-1e563db48099b01f760f6751bb2c0b111501a93b.pack
+-r--r-----   1 app.e0031982 app.adm       51584 Nov  6 20:23 pack-2db427dc3fabfa6f6ec40de75879d9546c20bc89.idx
+-r--r-----   1 app.e0031982 app.adm    11412940 Nov  7 00:01 pack-2db427dc3fabfa6f6ec40de75879d9546c20bc89.pack
+-r--r--r--   1 app.e0031982 app.adm       21960 Nov  3 12:50 pack-3e1094407a33df6dd284d109e9128a322869249e.idx
+-r--r--r--   1 app.e0031982 app.adm     2267210 Nov  6 15:48 pack-3e1094407a33df6dd284d109e9128a322869249e.pack
+-r--r-----   1 app.e0031982 app.adm       16864 Nov  3 09:37 pack-586f78500a9fc56d853abdbe7e33a44d5bc58a78.idx
+-r--r-----   1 app.e0031982 app.adm     1865465 Nov  3 19:51 pack-586f78500a9fc56d853abdbe7e33a44d5bc58a78.pack
+-r--r-----   1 app.e0031982 app.adm      206676 Nov  6 14:35 pack-65319e55dc22ecc68f43ed5f593cb2fe4eb3a1ca.idx
+-- tmp packs/locks --
+  0 .git/index.stash.3749657.lock
+-- partial clone cfg --
+0
+-- git version --
+git version 2.34.1
+
+=== 257 done ===
+```
