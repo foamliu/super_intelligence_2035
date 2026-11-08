@@ -27423,3 +27423,79 @@ git version 2.34.1
 
 === 257 done ===
 ```
+
+---
+
+## RUN_ID 258 · 2026-11-08 12:51:14 · host=`whag0pgpuap12` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 258 | relay hang check | $(date '+%F %T') | host=$(hostname) ==="
+SSH="ssh -o BatchMode=yes -o ConnectTimeout=6 -o StrictHostKeyChecking=no"
+$SSH 10.239.2.29 'set -u
+P=2259598; R=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
+echo "-- state29 --"; cat $R/ops/.last_run_id.29 2>/dev/null; echo
+echo "-- inbox run_id --"; sed -n "s/.*RUN_ID:[[:space:]]*\([0-9]\+\).*/\1/p" $R/ops/inbox.md | head -1
+echo "-- local outbox RUN_ID 248..258 --"; grep -nE "^## RUN_ID (24[8-9]|25[0-8])" $R/ops/outbox.md | tail -12
+echo "-- relay status --"; grep -E "^(State|Threads|voluntary_ctxt_switches|nonvoluntary_ctxt_switches)" /proc/$P/status 2>/dev/null
+echo "-- wchan --"; cat /proc/$P/wchan 2>/dev/null; echo
+echo "-- children --"; ps -o pid=,ppid=,stat=,etimes=,args= --ppid $P 2>/dev/null | cut -c1-160
+echo "-- open fds --"; ls -l /proc/$P/fd 2>/dev/null | awk "{print \$9,\$10,\$11}" | head -12
+echo "-- recent git procs --"; ps -eo pid=,ppid=,stat=,etimes=,args= | awk "/[g]it |[g]it-remote|[s]sh / && !/cline/ {print \"  \" \$1 \" ppid=\" \$2 \" \" \$3 \" et=\" \$4 \" :: \" substr(\$0,index(\$0,\$5),110)}" | head -10
+echo "-- lock/rebase --"; ls -l .git/index.lock .git/HEAD.lock 2>/dev/null; ls -d .git/rebase-merge .git/rebase-apply 2>/dev/null
+echo "-- push path test (15s) --"; cd /nas_train/app.e0031982/code/super_intelligence_2035; timeout 15 git ls-remote origin HEAD 2>&1 | tail -2; echo "lsremote_rc=$?"
+echo "-- log tail --"; tail -4 /tmp/baize_ops_relay.29.log 2>/dev/null'
+echo
+echo "=== 258 done ==="
+```
+
+**输出**
+```
+=== RUN_ID 258 | relay hang check | 2026-11-08 12:51:14 | host=whag0pgpuap12 ===
+-- state29 --
+247
+
+-- inbox run_id --
+258
+-- local outbox RUN_ID 248..258 --
+26078:## RUN_ID 249 · 2026-11-08 12:23:45 · host=`whag0pgpuap12` · exit=0
+26197:## RUN_ID 250 · 2026-11-08 12:25:58 · host=`whag0pgpuap12` · exit=0
+26274:## RUN_ID 251 · 2026-11-08 12:28:04 · host=`whag0pgpuap12` · exit=0
+26320:## RUN_ID 252 · 2026-11-08 12:37:30 · host=`whag0pgpuap12` · exit=0
+26357:## RUN_ID 253 · 2026-11-08 12:39:15 · host=`whag0pgpuap12` · exit=0
+27215:## RUN_ID 254 · 2026-11-08 12:41:50 · host=`whag0pgpuap12` · exit=0
+27247:## RUN_ID 255 · 2026-11-08 12:43:34 · host=`whag0pgpuap12` · exit=0
+27281:## RUN_ID 256 · 2026-11-08 12:44:39 · host=`whag0pgpuap12` · exit=0
+27327:## RUN_ID 257 · 2026-11-08 12:48:47 · host=`whag0pgpuap12` · exit=0
+-- relay status --
+State:	S (sleeping)
+Threads:	1
+voluntary_ctxt_switches:	546622
+nonvoluntary_ctxt_switches:	6881
+-- wchan --
+do_wait
+-- children --
+1389142 2259598 S          6 sleep 20
+-- open fds --
+  
+0 -> /dev/null
+1 -> /tmp/baize_ops_relay.29.log
+2 -> /tmp/baize_ops_relay.29.log
+255 -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/ops_relay_v2.sh
+-- recent git procs --
+  1033075 ppid=1 Ss et=958225 :: /usr/lib/autossh/autossh -N  -M 0 -o ServerAliveInterval=30 -o ServerAliveCountMax=3 -o ExitOnForwardFailure=y
+  1033077 ppid=1033075 S et=958225 :: /usr/bin/ssh -N -o ServerAliveInterval=30 -o ServerAliveCountMax=3 -o ExitOnForwardFailure=yes -R 13128:172.19
+  4163745 ppid=4163528 S et=493196 :: ssh -n -o StrictHostKeyChecking=no -o ServerAliveInterval=30 -o BatchMode=yes 10.239.2.12 ulimit -n 65536 && c
+-- lock/rebase --
+-- push path test (15s) --
+04a8112bcd4999b9ea7b5cf1c8878c38d6bba97e	HEAD
+lsremote_rc=0
+-- log tail --
+[relay-29] RUN_ID=245 executed, exit=0, appended to outbox.
+./ops_relay_v2.sh: line 77: 582119 Bus error               timeout 60 git fetch origin > /dev/null 2>&1
+./ops_relay_v2.sh: line 77: 3741106 Bus error               timeout 60 git fetch origin > /dev/null 2>&1
+[relay-29] RUN_ID=247 executed, exit=0, appended to outbox.
+
+=== 258 done ===
+```
