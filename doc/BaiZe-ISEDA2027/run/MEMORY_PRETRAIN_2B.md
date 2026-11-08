@@ -1,7 +1,9 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 0
 
-> 2026-11-08 20:13 #1715: **v5 eval监控轮·6/8done不变·报告v2.8(进度+投影Avg8)·S1健康iter_130000·运维令6项全覆盖结论A确认**·**动作**:① 6/8集完成(同#1714): Avg6(acc)=53.38% vs 历史53.83%(Δ=-0.45pp) ② piqa 9.1%(334/3676)~16s/it ETA~15h·hellaswag 4.4%(1777/40160: chunk0=376/chunk1=869/chunk2=265/chunk3=267)极慢 ③ 报告v2.8: 修正line60(5/8→6/8)+进度更新+投影Avg8≈52-54%(piqa≈0.70/hs≈0.35→53.2%) ④ S1训练健康: 8×H100 96-100%, latest ckpt iter_130000(19:02) ⑤ 运维令6项全覆盖, 结论A确认(二因:旧二进制+全量vs限100) ⑥ speedup报告§六待v5完成后更新 **计划**:下次唤醒①继续监控piqa/hellaswag②v5完成后算Avg8+更新speedup报告§六③检查S1训练健康·📦TASK=31.2KB✓/MEMORY=29.7KB✓·未完成指令:有(v5 eval运行中)⇒WAITING:0。
+> 2026-11-08 20:28 #1716: **v5 eval监控轮·6/8done不变·报告v2.9(v4 piqa合并修正)·5 llama-server全活·S1健康iter_130000**·**动作**:① 6/8集不变(同#1715): Avg6=53.38% vs 历史53.83%(Δ=-0.45pp) ② piqa 334/3676(9.1%)·hellaswag 1777/40160(4.4%: chunk0=376/chunk1=869/chunk2=265/chunk3=267)仍运行, 5进程全活(port 8183-8187 health OK), ~16s/it ETA~15-40h ③ 报告v2.9: 修正v4 piqa合并值0.5403/n=1838(原误用part1=0.5332/n=919)+添加†脚注 ④ S1训练健康: 8×H100 100%, latest ckpt iter_130000 ⑤ 结论A不变(二因:旧二进制+全量vs限100) ⑥ 运维令6项全覆盖 **计划**:下次唤醒①继续监控piqa/hellaswag②v5完成后算Avg8+更新speedup报告§六③检查S1训练健康·📦TASK=31.2KB✓/MEMORY=29.6KB✓·未完成指令:有(v5 eval运行中)⇒WAITING:0。
+
+> 📦 §#1715（11-08 20:13, v5 eval监控轮·6/8done·报告v2.8·投影Avg8）→ daily-memories/2026-11-08.md「#1715」节；**结论**：v5 6/8不变Avg6=53.38%,报告v2.8,运维令6项全覆盖结论A确认。需要时再读。
 
 > 📦 §#1714（11-08 20:02, v5 eval监控轮·6/8done·报告v2.7·arc_easy完成）→ daily-memories/2026-11-08.md「#1714」节；**结论**：v5 6/8完成Avg6=53.38%,报告v2.7。需要时再读。
 

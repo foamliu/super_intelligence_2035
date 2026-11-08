@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>预训练全量评测均值异常诊断报告 (Avg7=37.40% vs 历史 51.5–57.9%) — 修订版</title>
-<!-- v2.8: 6/8集一致, piqa 9.1%/hellaswag 4.4%运行中, 投影Avg8~52-54%, S1训练健康iter_130000 -->
+<!-- v2.9: 6/8集不变, piqa 9.1%/hellaswag 4.4%仍运行中, v4 piqa合并修正0.5403/n=1838, S1健康iter_130000 -->
 <style>
 body{font-family:system-ui,sans-serif;max-width:1100px;margin:0 auto;padding:20px;line-height:1.6;color:#222;background:#fafafa}
 h1{color:#c0392b;border-bottom:3px solid #c0392b;padding-bottom:10px}
@@ -30,7 +30,7 @@ pre{background:#f4f4f4;padding:12px;border-radius:6px;overflow-x:auto;font-size:
 </style>
 </head>
 <body>
-<h1>🚨 预训练全量评测均值异常诊断报告 <span class="updated">（修订版 v2.8 · 2026-11-08 20:13）</span></h1>
+<h1>🚨 预训练全量评测均值异常诊断报告 <span class="updated">（修订版 v2.9 · 2026-11-08 20:3x）</span></h1>
 <p><strong>报告日期：</strong>2026-11-08　<strong>检查点：</strong>iter_112000（2B Mamba2-hybrid）<br>
 <strong>异常：</strong>本轮 v4 Avg7=37.40% vs 历史 iter_100000 Avg=54.75%（raw）/ 57.75%（harness），差 14–20 pp<br>
 <span class="updated">⬆ 修订说明：v1 报告结论为「差异 100% 来自二进制」。
@@ -38,7 +38,8 @@ v5 修复版二进制全量评测数据（boolq/sciq 已完成）证明该结论
 实际为<strong>二因叠加</strong>：①旧二进制（主要影响 sciq）+ ②全量评测 vs limit=100（影响全部任务）。</span><br>
 <span class="updated">⬆ v2.7 更新：arc_easy 全量评测完成（acc=0.6553, n=2376），6/8 集已有数据。
 v5 Avg6(acc)=53.38% vs 历史同 6 集 limit=100 Avg6(acc)=53.83%，差仅 −0.45pp——几乎完全一致！异常已被完全解释。</span><br>
-<span class="updated">⬆ v2.8 更新（20:13）：piqa 9.1%(334/3676)·hellaswag 4.4%(1777/40160) 运行中，ETA 15-40h。投影 Avg8≈52-54%（piqa≈0.70/hs≈0.35→53.2%, 接近历史 54.75%）。S1 训练健康 iter_130000/700k。</span></p>
+<span class="updated">⬆ v2.8 更新（20:13）：piqa 9.1%(334/3676)·hellaswag 4.4%(1777/40160) 运行中，ETA 15-40h。投影 Avg8≈52-54%（piqa≈0.70/hs≈0.35→53.2%, 接近历史 54.75%）。S1 训练健康 iter_130000/700k。</span>
+<span class="updated">⬆ v2.9 更新（20:3x）：监控轮——6/8 集不变（Avg6=53.38%），piqa/hellaswag 仍运行中（5 llama-server 全活）。修正 v4 piqa 合并值 0.5403/n=1838（原表误用 part1=0.5332/n=919）。结论 A 不变。</span></p>
 
 <div class="box box-green conclusion">
 <strong>结论：A. 口径差异（非真实能力下降）—— 二因叠加</strong><br><br>
@@ -84,7 +85,7 @@ v5 全量 sciq=0.842 vs 历史 limit=100 sciq=0.88（Δ=3.8pp）——均显示�
 <tr><td>arc_easy</td><td class="red">0.2618</td><td class="green">0.6553</td><td>0.5700</td><td class="green">+39.35pp</td><td class="orange">−8.53pp</td><td>2376</td></tr>
 <tr><td>boolq</td><td class="orange">0.6000</td><td class="green">0.5872</td><td>0.6700</td><td class="green">−1.3pp (微)</td><td class="orange">+8.3pp</td><td>3270</td></tr>
 <tr><td>openbookqa</td><td class="red">0.1840</td><td class="green">0.2660</td><td>0.2100</td><td class="green">+8.2pp</td><td class="orange">−5.6pp*</td><td>500</td></tr>
-<tr><td>piqa</td><td class="red">0.5332</td><td class="blue">待跑</td><td>0.7400</td><td>—</td><td>—</td><td>919</td></tr>
+<tr><td>piqa</td><td class="red">0.5403†</td><td class="blue">待跑(9.1%)</td><td>0.7400</td><td>—</td><td>—</td><td>1838</td></tr>
 <tr><td>sciq</td><td class="red">0.3160</td><td class="green">0.8420</td><td>0.8800</td><td class="green">+52.6pp (巨)</td><td class="orange">+3.8pp</td><td>1000</td></tr>
 <tr><td>winogrande</td><td class="orange">0.4964</td><td class="green">0.5485</td><td>0.6000</td><td class="green">+5.2pp</td><td class="orange">+5.2pp</td><td>1267</td></tr>
 <tr><td>hellaswag</td><td colspan="2" class="blue">v5 重启中（4 shard 并行）</td><td>0.4100</td><td colspan="3">hellaswag v5 已重启（4 shard × 16 核，port 8184-8187）</td></tr>
@@ -93,6 +94,7 @@ v5 全量 sciq=0.842 vs 历史 limit=100 sciq=0.88（Δ=3.8pp）——均显示�
 <p>* openbookqa 全量 n=500 = 数据集全部题量（无更大集合），limit=100 取前 100 题。
 v5 全量 0.266 反而<strong>高于</strong>历史 limit=100 的 0.21，说明 limit=100 对 openbookqa 不是高估而是低估——
 这进一步证明 limit=100 的偏差方向因任务而异，<strong>不能作为统一基线</strong>。</p>
+<p>† v4 piqa 分两段跑（piqa=0.5332/n=919 + piqa_part2=0.5473/n=919），合并 acc=0.5403/n=1838。v5 piqa 全量 n=1838 运行中（334/1838=18.2% doc, 9.1% request）。</p>
 
 <h3>二因分解（基于已完成的 5 个 v5 任务）</h3>
 <table>
@@ -273,7 +275,7 @@ piqa（3676 题）和 hellaswag（40168 请求）是大任务，完成需较长�
 </ol>
 </div>
 
-<h2>十二、结论 <span class="updated">（修订版 v2.8 · 6/8 集已完成）</span></h2>
+<h2>十二、结论 <span class="updated">（修订版 v2.9 · 6/8 集已完成）</span></h2>
 <div class="box box-green conclusion">
 <p><strong>结论：A. 口径差异（非真实能力下降）—— 二因叠加，因任务而异</strong></p>
 <p><strong>证据链：</strong></p>
