@@ -1,0 +1,16 @@
+[verified-full 15:36:44] resume: loaded 500 existing results
+[verified-full 15:36:44] [1/500] astropy__astropy-12907 SKIP (predicted, patch=502B)
+[verified-full 15:36:44] [2/500] PREDICT claude-code on astropy__astropy-13033
+[verified-full 15:40:47]   -> patch-produced (patch=203B wall=242.4s)
+[verified-full 15:40:47] [3/500] astropy__astropy-13236 SKIP (predicted, patch=2175B)
+[verified-full 15:40:47] [4/500] astropy__astropy-13398 SKIP (predicted, patch=0B)
+[verified-full 15:40:47] [5/500] astropy__astropy-13453 SKIP (predicted, patch=2266B)
+[verified-full 15:40:47] [6/500] astropy__astropy-13579 SKIP (predicted, patch=4421B)
+[verified-full 15:40:47] [7/500] astropy__astropy-13977 SKIP (predicted, patch=12335B)
+[verified-full 15:40:47] [8/500] PREDICT claude-code on astropy__astropy-14096
+[verified-full 15:43:50]   -> patch-produced (patch=760B wall=182.9s)
+[verified-full 15:43:50] [9/500] astropy__astropy-14182 SKIP (predicted, patch=5470B)
+[verified-full 15:43:50] [10/500] astropy__astropy-14309 SKIP (predicted, patch=1976B)
+[verified-full 15:43:50] [11/500] astropy__astropy-14365 SKIP (predicted, patch=1593B)
+[verified-full 15:43:50] [12/500] astropy__astropy-14369 SKIP (predicted, patch=0B)
+[verified-full 15:43:50] [13/500] PREDICT claude-code on astropy__astropy-14508
