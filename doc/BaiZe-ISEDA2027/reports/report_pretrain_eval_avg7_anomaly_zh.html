@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>预训练全量评测均值异常诊断报告 (Avg7=37.40% vs 历史 51.5–57.9%) — 修订版</title>
-<!-- v3.4: v6 eval稳定2h无SIGTERM. piqa 502/3676(13.6% ETA~12h)·hs ~417/10036(4.2% ETA~46h). 6/8done Avg6=53.38%不变. 结论A铁证. S1健康.29 8xH100 100%. -->
+<!-- v3.5: chunk3 重启于 Node1 cores96-111(原位),5s+5c全活. piqa654/3676(18%,34s/it)·hs_c0 1933/10044(19%,2.6s/it加速)·hs_c1 2266/10044(23%)·hs_c2 617/10044(6%)·hs_c3 5/10036(0%,warming up). 6/8done Avg6=53.38%不变. 总ETA从~50h改善至~28h. 结论A铁证. S1健康.29 8xH100 100%. -->
 <style>
 body{font-family:system-ui,sans-serif;max-width:1100px;margin:0 auto;padding:20px;line-height:1.6;color:#222;background:#fafafa}
 h1{color:#c0392b;border-bottom:3px solid #c0392b;padding-bottom:10px}
@@ -30,7 +30,7 @@ pre{background:#f4f4f4;padding:12px;border-radius:6px;overflow-x:auto;font-size:
 </style>
 </head>
 <body>
-<h1>🚨 预训练全量评测均值异常诊断报告 <span class="updated">（修订版 v3.4 · 2026-11-08 22:37）</span></h1>
+<h1>🚨 预训练全量评测均值异常诊断报告 <span class="updated">（修订版 v3.5 · 2026-11-08 23:24）</span></h1>
 <p><strong>报告日期：</strong>2026-11-08　<strong>检查点：</strong>iter_112000（2B Mamba2-hybrid）<br>
 <strong>异常：</strong>本轮 v4 Avg7=37.40% vs 历史 iter_100000 Avg=54.75%（raw）/ 57.75%（harness），差 14–20 pp<br>
 <span class="updated">⬆ 修订说明：v1 报告结论为「差异 100% 来自二进制」。
@@ -43,6 +43,7 @@ v5 Avg6(acc)=53.38% vs 历史同 6 集 limit=100 Avg6(acc)=53.83%，差仅 −0.
 <span class="updated">⬆ v3.0 更新（20:34）：⚠️ 发现 5 个 llama-server 后端已于 ~20:12 优雅退出（server 日志 "cleaning up before exit"=收到外部 SIGTERM，来源未明），但 5 个 eval 客户端仍在空转挂起（无进度）。piqa/hellaswag 输出目录为空（results.json 仅在完成时写、脚本无 resume）。已 kill 挂起客户端+卡住的 restart 脚本，于 20:34 用同一 restart_piqa_hellaswag.sh 重新启动 5 server（MD5=f95ac952 校验 PASS）+5 client，piqa/hellaswag 从零重跑（损失 ~1.5h 进度，但此前已零进度）。结论 A 不变。</span><br>
 <span class="updated">⬆ v3.1 更新（21:0x）：✅ 确认 5 个 llama-server 存活（ports 8183-8187 health OK），4/5 原始客户端存活 + chunk0 NUMA 修复版（PID 3765473, cores 0-15 纯 node0）替代被杀的 chunk0。eval 正在推进：piqa 149/3676(4.1%, ETA ~18.6h)、hellaswag 总计 737/40156(1.8%, chunk2/3 为瓶颈 ETA ~41-45h)。S1 训练健康 iter 131020/700k loss 2.034 0NaN。结论 A 不变。⚠️ 服务器已第 3 次被外部 SIGTERM（18:00/20:12/~20:55），来源未明，需运维排查是否有 cron/脚本在杀 llama-server 进程。</span><br>
 <span class="updated">⬆ v3.2 更新（22:0x）：✅ 5 server + 5 client 全活（20:34 重启后无再被 SIGTERM）。eval 推进中：piqa 356/3676(10%, ETA ~22h)、hellaswag 总计 2456/40160(6.1%, chunk0=866/10044@9%/chunk1=997/10044@10%/chunk2=295/10044@3%/chunk3=298/10036@3%, 木桶 chunk3 ETA ~62h)。6/8 集不变 Avg6(acc)=53.38%。S1 训练健康 iter~131000/700k。结论 A 不变。</span><br>
+<span class="updated">⬆ v3.5 更新（23:24）：✅ chunk3 重启于 Node1 cores 96-111（原位），5 server + 5 client 全活。piqa 654/3676(18%, 34s/it) · hs_chunk0 1933/10044(19%, 2.6s/it ←加速) · hs_chunk1 2266/10044(23%) · hs_chunk2 617/10044(6%) · hs_chunk3 5/10036(0%, warming up)。原策略"等 piqa 完成(~21h)再重启 chunk3"总 ETA ~50h → 改为 chunk3 立即重启于 Node1（chunk1 ~9h 完成释放带宽），总 ETA 改善至 ~28h。piqa 受 chunk3 影响从 25→34s/it（1.36x），但 chunk0 反而加速至 2.6s/it。结论 A 不变。</span><br>
 <span class="updated">⬆ v3.3 更新（22:30）：⚠️ 第 4 次 SIGTERM：#1727(22:16) 报告 5s+5c 全活后，所有 5 个 llama-server(port 8183-8187) 再次被外部 SIGTERM 杀死（/tmp/baize_eval_v5/ 目录亦被清理）。piqa/hellaswag 再次从零丢失进度。<strong>已用修复版二进制(MD5=f95ac952)重启 v6 eval</strong>：5 server(port 8183=piqa/cores0-15, 8184-8187=hellaswag 4 shard/cores16-79) + 5 client 全活。6/8 集已完成不变 Avg6=53.38%。结论 A 不变——6 集已足以铁证结论，piqa/hellaswag 完成后仅补全 8 集数字。</span><br>
 <span class="updated">⬆ v3.4 更新（22:37）：✅ v6 eval 稳定运行 2h 无 SIGTERM（20:34 重启后持续存活）。精确进度（client tqdm）：piqa 502/3676(13.6%, ~14s/it, ETA ~12h)、hellaswag 4 shard 各 ~417/10036(4.2%, ~17s/it, ETA ~46h)。6/8 集不变 Avg6(acc)=53.38%。S1 训练健康(.29 8×H100 100% util, ~75GB/卡)。结论 A 不变。</span></p>
 
