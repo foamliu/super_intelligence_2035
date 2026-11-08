@@ -28753,3 +28753,148 @@ LISTEN 0 512 127.0.0.1:8186 0.0.0.0:* users:(("llama-server",pid=2083722,fd=3))
 
 === 271 done ===
 ```
+
+---
+
+## RUN_ID 272 · 2026-11-08 22:54:15 · host=`whag0pgpuap12` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 272 | recon3 | $(date '+%F %T') | host=$(hostname) ==="
+SSH="ssh -o BatchMode=yes -o ConnectTimeout=6 -o StrictHostKeyChecking=no"
+$SSH 10.239.2.29 'set -u
+echo "-- eval-py args --"; grep -nE "add_argument" /tmp/baize_eval_v4/gguf_lmeval_run.py | cut -c1-150
+echo "-- hs c2/c3 full cmd --"
+ps -eo pid=,args= | awk "/[g]guf_lmeval_run\.py/ && /8186|8187/ {print \"  \" \$1 \" :: \" substr(\$0,index(\$0,\$2),650)}"
+echo "-- restart script 1-40 --"; sed -n "1,40p" /tmp/baize_eval_v5/restart_piqa_hellaswag.sh | cut -c1-200
+echo "-- restart script 41-80 --"; sed -n "41,80p" /tmp/baize_eval_v5/restart_piqa_hellaswag.sh | cut -c1-260
+echo "-- shard stats --"
+for i in 0 1 2 3; do python3 -c "import json;d=json.load(open(\"/tmp/baize_eval_v5/hs_shard${i}.json\"));print(\"  shard${i}\",len(d),d[:2],d[-2:])" 2>/dev/null; done
+echo "-- chunk logs tails --"
+D=/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/lm_eval_results/gguf_iter_112000_full_v5_correct_binary
+for f in $D/hellaswag_chunk*/log* $D/hellaswag_chunk*/*.log; do [ -f "$f" ] && { echo "  == $f"; tail -2 "$f" | cut -c1-150 | sed "s/^/    /"; }; done
+echo "-- chunk dirs --"; for d in $D/hellaswag_chunk*; do [ -d "$d" ] && { echo "  $d"; ls -l "$d" | head -4 | sed "s/^/    /"; }; done
+echo "-- load --"; cut -d" " -f1-3 /proc/loadavg'
+echo
+echo "=== 272 done ==="
+```
+
+**输出**
+```
+=== RUN_ID 272 | recon3 | 2026-11-08 22:54:15 | host=whag0pgpuap12 ===
+-- eval-py args --
+248:    ap.add_argument("--base-url", default="http://127.0.0.1:8080")
+249:    ap.add_argument("--hf-dir", required=True, help="仅用于读 eos_token_id 与元信息")
+250:    ap.add_argument("--output", required=True)
+251:    ap.add_argument("--tasks", default=DEFAULT_TASKS)
+252:    ap.add_argument("--limit", type=int, default=None)
+253:    ap.add_argument("--num-fewshot", type=int, default=0)
+254:    ap.add_argument("--parallel", type=int, default=2, help="并发 slot 数（= llama-server --parallel）")
+255:    ap.add_argument("--batch-size", type=int, default=32, help="lm_eval 每次提交的请求数")
+256:    ap.add_argument("--max-length", type=int, default=2048)
+257:    ap.add_argument("--timeout", type=int, default=600)
+258:    ap.add_argument("--gguf", default="", help="可选，仅写入 meta 便于追溯")
+259:    ap.add_argument("--log-samples", action="store_true")
+260:    ap.add_argument("--samples", default=None, help='JSON string: {"task_name": [doc_idx,...]}')
+-- hs c2/c3 full cmd --
+  2097234 :: /nas_train/app.e0031982/miniforge3/envs/py310/bin/python /tmp/baize_eval_v4/gguf_lmeval_run.py --base-url http://127.0.0.1:8186 --hf-dir /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/hf_iter_112000 --output /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/lm_eval_results/gguf_iter_112000_full_v5_correct_binary/hellaswag_chunk2 --tasks hellaswag --parallel 8 --batch-size 32 --timeout 600 --gguf /nas_train/app.e0031982/models/baize2b_gguf/bz2b-112000-f16.gguf --samples {"hellaswag":[5022,5023,5024,5025,5026,5027,5028,5029,5030,5031,5032,5033,5034,5035,5036,5037,5038,5039,5040,5041,5042,5043,5044,5045
+  3764565 :: bash -c set -u echo "-- eval-py args --"; grep -nE "add_argument" /tmp/baize_eval_v4/gguf_lmeval_run.py | cut -c1-150 echo "-- hs c2/c3 full cmd --" ps -eo pid=,args= | awk "/[g]guf_lmeval_run\.py/ && /8186|8187/ {print \"  \" \$1 \" :: \" substr(\$0,index(\$0,\$2),650)}" echo "-- restart script 1-40 --"; sed -n "1,40p" /tmp/baize_eval_v5/restart_piqa_hellaswag.sh | cut -c1-200 echo "-- restart script 41-80 --"; sed -n "41,80p" /tmp/baize_eval_v5/restart_piqa_hellaswag.sh | cut -c1-260 echo "-- shard stats --" for i in 0 1 2 3; do python3 -c "import json;d=json.load(open(\"/tmp/baize_eval_v5/hs_shard${i}.json\"));print(\"  shard${i}\",len(d),
+-- restart script 1-40 --
+#!/usr/bin/env bash
+set -euo pipefail
+export HF_DATASETS_CACHE="/nas_train/app.e0031982/hf_cache"
+export HF_HOME="/nas_train/app.e0031982/.cache"
+export HF_DATASETS_OFFLINE=1
+export HF_HUB_OFFLINE=1
+
+LLAMA_SERVER="/nas_train/app.e0031982/code/llama.cpp/build/bin/llama-server"
+GGUF="/nas_train/app.e0031982/models/baize2b_gguf/bz2b-112000-f16.gguf"
+HF_DIR="/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/hf_iter_112000"
+EVAL_PY="/tmp/baize_eval_v4/gguf_lmeval_run.py"
+MERGE_PY="/tmp/baize_eval_v4/merge_parallel_results_v2.py"
+PYTHON="/nas_train/app.e0031982/miniforge3/envs/py310/bin/python"
+OUT_BASE="/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/lm_eval_results/gguf_iter_112000_full_v5_correct_binary"
+LOG_DIR="/tmp/baize_eval_v5/logs"
+mkdir -p "$LOG_DIR"
+
+# Verify fixed binary MD5
+EXPECTED_MD5="f95ac95215a7e61a534eccba9a4ed49d"
+ACTUAL_MD5=$(md5sum "$LLAMA_SERVER" | awk '{print $1}')
+if [[ "$ACTUAL_MD5" != "$EXPECTED_MD5" ]]; then
+  echo "FATAL: MD5 mismatch expected=$EXPECTED_MD5 actual=$ACTUAL_MD5"; exit 1
+fi
+echo "[restart] 二进制校验 PASS (MD5=$ACTUAL_MD5)"
+
+# Define jobs: name:port:core_start:out_sub:samples_file
+declare -a JOBS=(
+  "piqa:8183:32:piqa:"
+  "hellaswag:8184:48:hellaswag_chunk0:/tmp/baize_eval_v5/hs_shard0.json"
+  "hellaswag:8185:64:hellaswag_chunk1:/tmp/baize_eval_v5/hs_shard1.json"
+  "hellaswag:8186:80:hellaswag_chunk2:/tmp/baize_eval_v5/hs_shard2.json"
+  "hellaswag:8187:96:hellaswag_chunk3:/tmp/baize_eval_v5/hs_shard3.json"
+)
+
+# Start servers
+echo "[restart] 启动 5 个 llama-server..."
+declare -a SPIDS
+for job in "${JOBS[@]}"; do
+  IFS=":" read -r task port core_start out_sub samples_file <<< "$job"
+  cores="${core_start}-$((core_start+15))"
+-- restart script 41-80 --
+  setsid taskset -c "$cores" "$LLAMA_SERVER" \
+    -m "$GGUF" -t 16 -tb 16 -c 16384 --parallel 8 \
+    --host 127.0.0.1 --port "$port" \
+    --no-warmup --metrics --slots --cache-prompt --temp 0 --top-k 1 --seed 1234 \
+    > "$LOG_DIR/server_${port}_${out_sub}_restart.log" 2>&1 &
+  SPIDS+=($!)
+  echo "  server: task=$task port=$port cores=$cores PID=$!"
+done
+
+# Wait for servers ready
+sleep 10
+for job in "${JOBS[@]}"; do
+  IFS=":" read -r task port core_start out_sub samples_file <<< "$job"
+  for a in $(seq 1 30); do
+    curl -s --max-time 3 "http://127.0.0.1:${port}/health" | grep -q ok && { echo "  port $port: READY"; break; }
+    sleep 5
+  done
+done
+
+# Start clients
+echo "[restart] 启动 5 个评测客户端..."
+declare -a CPIDS
+for job in "${JOBS[@]}"; do
+  IFS=":" read -r task port core_start out_sub samples_file <<< "$job"
+  out_dir="$OUT_BASE/$out_sub"; mkdir -p "$out_dir"
+  if [[ -n "$samples_file" ]]; then
+    "$PYTHON" "$EVAL_PY" --base-url "http://127.0.0.1:${port}" --hf-dir "$HF_DIR" \
+      --output "$out_dir" --tasks "$task" --parallel 8 --batch-size 32 --timeout 600 \
+      --gguf "$GGUF" --samples "$(cat "$samples_file")" \
+      > "$LOG_DIR/client_${out_sub}_restart.log" 2>&1 &
+  else
+    "$PYTHON" "$EVAL_PY" --base-url "http://127.0.0.1:${port}" --hf-dir "$HF_DIR" \
+      --output "$out_dir" --tasks "$task" --parallel 8 --batch-size 32 --timeout 600 \
+      --gguf "$GGUF" \
+      > "$LOG_DIR/client_${out_sub}_restart.log" 2>&1 &
+  fi
+  CPIDS+=($!)
+  echo "  client: task=$task port=$port PID=$!"
+done
+
+-- shard stats --
+-- chunk logs tails --
+-- chunk dirs --
+  /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/lm_eval_results/gguf_iter_112000_full_v5_correct_binary/hellaswag_chunk0
+    total 0
+  /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/lm_eval_results/gguf_iter_112000_full_v5_correct_binary/hellaswag_chunk1
+    total 0
+  /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/lm_eval_results/gguf_iter_112000_full_v5_correct_binary/hellaswag_chunk2
+    total 0
+  /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/lm_eval_results/gguf_iter_112000_full_v5_correct_binary/hellaswag_chunk3
+    total 0
+-- load --
+76.26 76.62 77.38
+
+=== 272 done ===
+```
