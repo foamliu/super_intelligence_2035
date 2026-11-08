@@ -509,6 +509,6 @@ qnm9e					parked		2026-11-08 01:58	Finesim DC convergence Q&A prose dup of uky6c
 1793794507428_dus4q	e0047527	hfeg0pkn005	33	spice_sim	parked		2026-11-08 21:5x	env probing (EMPYREAN_HOME/which aether), not task; REJECT
 1792463960005_7frw8	zqzhan	hfeg0pkn002	33	spice_sim	parked		2026-11-08 21:5x	SKILL check_and_save/schSave, wrong-shard; REJECT
 1793154955266_qw049	yixiaow	hfeg0pkn005	30	spice_sim	parked		2026-11-08 21:5x	aether W/L min constraint + sim error (如何解决=ask-fix), borderline schematic; 暂缓
-1792204349915_1g0xs	xinweif	hfeg0pkn005	28	spice_sim	parked		2026-11-08 21:5x	FineSim netlist hierarchy check debug (check_hierarchy.py); 暂缓 archive 待查
+1792204349915_1g0xs	xinweif	hfeg0pkn005	28	spice_sim	case	EDA-Eval-DesignFlow-HierarchyTrace-001	2026-11-08 22:25	FineSim netlist hierarchy check debug (check_hierarchy.py); 暂缓 archive 待查
 1793187039315_agw7c	e0046686	hfeg0pkn005	27	spice_sim	parked		2026-11-08 21:5x	autosim script dev (C++ MainWindow/onAddInstance), wrong-shard; REJECT
 1793180163422_wz7gy	e03179	hfeg0pkn002	26	spice_sim	parked		2026-11-08 21:5x	script dev (gen_bnk_va/argparse/profile_analyzer), wrong-shard; REJECT
