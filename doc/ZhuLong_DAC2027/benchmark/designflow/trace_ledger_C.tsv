@@ -440,3 +440,8 @@
 1792488450622_kc85b	kevinc	hfeg0pkn002	0		parked		2026-11-08 21:36	root-cause debug LPE失败 non-seed
 1790126403703_fj73q	e02141	hfeg0pkn001	0		parked		2026-11-08 21:36	env-recon 配置swb-python-api环境
 1793870539133_n91uu	e0047722	hfeg0pkn004	0		parked		2026-11-08 21:36	code-comprehension PDK_QA项目目录结构
+1793671576342_r677h	shaoyou	hfeg0pkn003	117	layout_aether	case	EDA-Eval-DesignFlow-PinListPortOrderExtract-001	2026-11-08 22:03	
+1793089887669_4c5ws					parked		2026-11-08 21:53	env-recon/how-to (view png/install bcompare/check version); innovus/calibre kw from assistant listing install cmds not real EDA work; 6 msgs all mode=act non-seed
+1791940707499_psbg1					parked		2026-11-08 21:53	env-recon/how-to (list skills/how spice_agent built/build agent from scratch/env.json); 47 msgs all mode=act non-seed; calibre kw from assistant prose not real DRC
+1793252859649_p5x6n					parked		2026-11-08 21:53	wrong-domain: draw cosine wave via WaveView ACE Tcl = spice_sim/waveview domain not layout; 77 msgs single user turn mode=act
+1792111744261_uxwb5					parked		2026-11-08 21:53	wrong-domain: highlight nets starting with 'net' in Schematic = schematic highlight (eda-highlight-by-name-pattern skill) not layout; 43 msgs mode=act
