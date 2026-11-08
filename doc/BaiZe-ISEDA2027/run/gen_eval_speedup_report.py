@@ -114,21 +114,25 @@ def read_live_progress():
     Falls back to orchestrator log if log files unavailable.
     Returns list of dicts or empty list."""
     import re
-    # Core binding map (updated 2026-11-08 #1634): port -> (NUMA label, cores)
+    # Core binding map (updated 2026-11-08 #1695): port -> (NUMA label, cores)
     port_info = {
-        "8080": ("N0", "0-27"),    "8084": ("N0b", "28-55"),
-        "8086": ("N1", "56-83"),   "8081": ("N1b", "84-111+HT"),
-        "8085": ("S0-HT", "112-167"), "8083": ("S1-HT", "168-183"),
+        "8080": ("N0", "112-127"),  "8081": ("N1", "128-143"),
+        "8082": ("N2", "144-159"),  "8083": ("S0-HT", "0-15"),
+        "8084": ("N0b", "160-175"), "8085": ("S0-HT2", "176-191"),
+        "8086": ("N1b", "192-207"), "8087": ("S1b", "208-223"),
     }
-    # Map output subdir -> port (from process args)
-    # #1645: chunk0a_half1(0-5019) & half2(5020-10039) replaced by chunk0_missing(0-2509)
-    #   5 running chunks cover 2510-10041; only 0-2509 missing → smaller chunk = faster
-    #   chunk0a_half2 fully redundant with chunk1a+chunk1b → not needed
+    # Map output subdir -> port (updated 2026-11-08 #1695: includes splits + gap-fill)
+    # Active 8 chunks on 8 servers + gap-filling split0 (waiting for free port)
     task_port = {
-        "hellaswag_chunk0_missing": "8080",
-        "hellaswag_chunk0b": "8085",
-        "hellaswag_chunk1a_half1": "8086", "hellaswag_chunk1a_half2": "8081",
-        "hellaswag_chunk1b_a": "8080", "hellaswag_chunk1b_b": "8084",
+        "hellaswag_chunk0_missing_split0": "—",   # gap-fill: docs 0-1757, waiting for free port
+        "hellaswag_chunk0_missing_split1": "8087", # docs 1758-2509
+        "hellaswag_chunk0b_a": "8085",              # docs 2511-3765
+        "hellaswag_chunk0b_b_split1": "8082",       # docs 3766-4393
+        "hellaswag_chunk0b_b_split2": "8083",       # docs 4394-5021
+        "hellaswag_chunk1a_half1": "8086",           # docs 5022-6277
+        "hellaswag_chunk1a_half2": "8081",           # docs 6278-7532
+        "hellaswag_chunk1b_a": "8080",               # docs 7533-8788
+        "hellaswag_chunk1b_b": "8084",               # docs 8789-10041
     }
     results = []
     # Completed tasks (from merged results.json)
