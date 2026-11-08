@@ -27766,3 +27766,55 @@ singleton_rc=0
 261
 RELAY29_FINAL_OK
 ```
+
+---
+
+## RUN_ID 264 · 2026-11-08 13:02:03 · host=`whag0pgpuap12` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 264 | enforce exactly one .29 relay | $(date '+%F %T') | host=$(hostname) ==="
+SSH="ssh -o BatchMode=yes -o ConnectTimeout=6 -o StrictHostKeyChecking=no"
+$SSH 10.239.2.29 'set -u
+S=/tmp/ops_relay_v2_29_fixed.sh
+pids(){ ps -eo pid=,args= | awk "\$2==\"bash\" && \$3 ~ /tmp.ops_relay_v2_29/ {print \$1}"; }
+echo "-- pids before --"; PB=$(pids); echo "[$PB]"; for p in $PB; do ps -o pid=,ppid=,lstart=,args= -p $p | cut -c1-170; done
+echo "-- kill --"; for p in $PB; do kill -TERM $p 2>/dev/null; done; sleep 3; for p in $PB; do kill -KILL $p 2>/dev/null; done; sleep 2
+echo "-- after kill --"; PA=$(pids); echo "[$PA]"
+echo "-- respawn watch 15s --"; sleep 15; PR=$(pids); echo "[$PR]"
+for p in $PR; do PP=$(ps -o ppid= -p $p 2>/dev/null | tr -d " "); echo "pid=$p ppid=$PP"; ps -o pid=,args= -p $PP 2>/dev/null | cut -c1-160; done
+if [ -z "$(pids)" ]; then
+  echo "-- start one --"; setsid nohup bash "$S" >>/tmp/baize_ops_relay.29.log 2>&1 < /dev/null & echo "started=$!"; sleep 4
+else
+  echo "-- someone respawned; not starting another --"
+fi
+echo "-- final --"; PF=$(pids); echo "[$PF]"; for p in $PF; do ps -o pid=,ppid=,lstart=,args= -p $p | cut -c1-170; done
+echo "-- log tail --"; tail -3 /tmp/baize_ops_relay.29.log'
+echo
+echo "=== 264 done ==="
+```
+
+**输出**
+```
+=== RUN_ID 264 | enforce exactly one .29 relay | 2026-11-08 13:02:03 | host=whag0pgpuap12 ===
+-- pids before --
+[2150408]
+2150408       1 Sun Nov  8 12:58:50 2026 bash /tmp/ops_relay_v2_29_fixed.sh
+-- kill --
+-- after kill --
+[]
+-- respawn watch 15s --
+[]
+-- start one --
+started=2514952
+-- final --
+[2514952]
+2514952 2481685 Sun Nov  8 13:02:23 2026 bash /tmp/ops_relay_v2_29_fixed.sh
+-- log tail --
+[relay-29] 2026-11-08 12:58:51 v2-29nofetch started. state=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/ops/.last_run_id.29 poll=20s
+[relay-29] RUN_ID=263 executed, exit=0
+[relay-29] 2026-11-08 13:02:24 v2-29nofetch started. state=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/ops/.last_run_id.29 poll=20s
+
+=== 264 done ===
+```
