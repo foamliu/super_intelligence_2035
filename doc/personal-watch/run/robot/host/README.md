@@ -9,7 +9,7 @@
 | 文件 | 作用 |
 |:--|:--|
 | `tutor_agent.py` | 最小闭环：题图/题文 → 识图（默认 DeepSeek 视觉）→ 分步引导（默认 DeepSeek，不泄答案，`clamp_hint()` 确定性裁剪 ≤2 句）→ Windows SAPI 出声 |
-| `tutor_server.py` | HTTP 服务（App 经 `10.0.2.2:8765` 调它）：`POST /tutor`（识图+引导，带 `tool` 字段即转工具）+ `POST /tool`（L2 工具）+ `POST /agent`（智能体多轮）+ `GET /health` |
+| `tutor_server.py` | HTTP 服务（App 经 `10.0.2.2:8765` 调它）：`POST /tutor`（识图+引导，带 `tool` 字段即转工具）+ `POST /tool`（L2 工具）+ `POST /agent`（智能体多轮）+ `POST /profile`（L3 学情合并画像）+ `POST /practice`（L3 补正样本，记录作答对错）+ `GET /health` |
 | `speech.py` | 语音链路适配层（12:20 令 §2/§3）：统一接口 `asr_stream()/tts_stream()/stop()`；端侧默认（SAPI 分句流式 + 打断 + `MockStreamingASR`），**端侧真实 ASR = `SherpaOnnxASR`（sherpa-onnx paraformer 中文离线模型）**，云端留空实现（默认 off） |
 | `normalize_math.py` | 口述→数学式纠错（12:20 令 §4）：覆盖平方/立方/根号/分之/负/运算符/关系/π/度/角/几何符号/术语等，`cn_to_int` 中文数字转换 |
 | `eval_l1.py` | L1 评测基线：文本 3 题 + 对抗探针 + **4 张题图**（算式/中文+算式/中文应用题/代数式）→ `eval/l1_baseline.json`（直接给答案率 / 识图正确率 / 首步时延 P50·P90 / 逐条后端与降级原因） |
@@ -29,16 +29,16 @@
 | `eval_l2.py` | L2 评测：5 工具真调 + 多轮一致性 + 直接给答案率 → `eval/l2_tools.json` |
 | `test_tools.py` | `tools.py` 单测（21 条：安全求值 / 红线拒变量 / 5 工具 / 注册表） |
 | `test_l2_agent.py` | `l2_agent.py` 单测（21 条：路由 / 表达式抽取 / LLM 决策解析 / 会话多轮与红线） |
-| `test_tutor_server.py` | `tutor_server.py` 单测（**17 条**：/tool 红线拒变量、题库不泄答案、错题本/报告、/agent 多轮回放、/tutor 工具路由、/profile 学情） |
+| `test_tutor_server.py` | `tutor_server.py` 单测（**20 条**：/tool 红线拒变量、题库不泄答案、错题本/报告、/agent 多轮回放、/tutor 工具路由、/profile 学情、/practice 正样本） |
 | `smoke_http.py` | HTTP 冒烟：起临时实例实测 `/health /tool /agent /profile` 四端点真实 JSON（不依赖 App/模拟器） |
-| `l3_profile.py` | **L3 学情层（第 17 轮）**：错题本 → 知识点画像（掌握等级）+ 每日/每周摘要 + 自包含 HTML；`profile_report()` 导出，本地、不上传、不泄答案 |
-| `test_l3_profile.py` | `l3_profile.py` 单测（13 条：掌握等级/时间归一/画像聚合/薄弱点/每日每周/HTML 自包含与不泄答案） |
+| `l3_profile.py` | **L3 学情层（第 17/19 轮）**：错题本（负样本）+ 练习日志（正样本，作答次数/正确率）→ `merged_profile()` 合并画像 + 每日/每周摘要 + 自包含 HTML（`build_profile_html_full`）；`mastery_from_stats()` 富化掌握等级（含「已掌握」）；本地、不上传、不泄答案 |
+| `test_l3_profile.py` | `l3_profile.py` 单测（**22 条**：掌握等级/时间归一/画像聚合/薄弱点/每日每周/HTML 自包含与不泄答案 + 正样本：练习摘要/合并画像/富化掌握/日志追加/合并 HTML） |
 
-## 单测（第 18 轮：209 passed + 1 skipped〔paraformer 未就绪时 skip〕）
+## 单测（第 19 轮：222 passed）
 
 ```powershell
 cd D:\Users\Administrator\code\super_intelligence_2035\doc\personal-watch\run\robot\host
-py -3.10 -m pytest -q                                                  # 205 passed
+py -3.10 -m pytest -q                                                  # 222 passed
 py -3.10 normalize_math.py "x的平方加三x等于零" "二分之根号三"        # 演示口述→数学式
 py -3.10 -W ignore speech.py                                          # 演示分句/合成 WAV/打断/ASR mock
 py -3.10 -W ignore smoke_http.py                                      # HTTP 冒烟（/health /tool /agent /profile）
@@ -138,19 +138,19 @@ py -3.10 -W ignore eval_l2.py              # L2 评测 → ../eval/l2_tools.json
 - **实测（第 15 轮）**：6 工具全调；直接给答案率 0；3 轮追问一致；`plot_function` PNG 20,347 字节；LLM 决策正确选 `calculator`。
 - ✅ **已接 HTTP（第 16 轮）**：`tutor_server.py` 新增 `POST /tool`（直接调工具，红线拒变量/不泄答案）、`POST /agent`（L2 多轮，确定性路由默认）、`POST /tutor` 带 `tool` 字段即转工具；App 加「换一题/记错题/报告」按钮 + 文字追问 → 均已跑通（`smoke_http.py` 实测 + `adb install` 成功 + 模拟器 UI dump 确认新按钮）。
 
-## L3 学情（知识点画像 + 每日/每周摘要 · 第 17 轮）
+## L3 学情（错题本 + 练习正样本合并画像 · 第 17/19 轮）
 
 ```powershell
 cd D:\Users\Administrator\code\super_intelligence_2035\doc\personal-watch\run\robot\host
-py -3.10 l3_profile.py                     # 自检：画像/每日/每周/HTML 全链路
+py -3.10 l3_profile.py                     # 自检：画像/每日/每周/合并画像/HTML 全链路
 py -3.10 -W ignore smoke_http.py           # 冒烟里含 POST /profile 实测 JSON
 ```
 
-- **数据来源**：错题本 `logs/wrong_book.json`（L2 `wrong_book_add` 同源，本地不上传）。
-- **能力**：`knowledge_profile()`（按知识点聚合 → 错题数/首末次出错/掌握等级「待练习/待巩固/薄弱/重点突破」）、`daily_summary()`/`weekly_summary()`（按日期/ISO 周聚合）、`build_profile_html()`（自包含中文 HTML，不泄答案、不含学生隐私）、`profile_report()`（落盘 + 返回摘要 JSON）。
-- **HTTP**：`POST /profile {html?: bool}` → `{ok, profile}`；`html=true` 另生成 `logs/profile_report.html`。
-- **App**：新增「学情」按钮 → `TutorClient.postProfile()` → 显示「错题总数/涉及知识点/薄弱点」（第 17 轮，`adb install` + 模拟器点击实测）。
-- **红线**：报告只统计自造题，不出现学生姓名/学校/照片，不泄露原题答案（`test_l3_profile.py`/`test_tutor_server.py` 断言「HTML 不含答案」）。
+- **数据来源（正负样本）**：错题本 `logs/wrong_book.json`（负样本，L2 `wrong_book_add` 同源）+ 练习日志 `logs/practice_log.json`（正样本，作答次数/正确率，本地不上传）。
+- **能力**：`knowledge_profile()`（错题口径画像）、`practice_summary()`（正样本摘要）、`merged_profile()`（**错题 + 作答合并画像**：`wrong_count/attempt_count/correct_count/correct_rate/mastery`）、`mastery_from_stats()`（富化掌握等级，新增「已掌握」）、`build_profile_html()`/`build_profile_html_full()`（自包含中文 HTML，不泄答案、不含学生隐私）、`profile_report()`/`profile_report_full()`（落盘 + 摘要 JSON）。
+- **HTTP**：`POST /profile {html?: bool}` → `{ok, profile}`（合并画像 + `total_practice` + 正样本 `knowledge_points`）；`html=true` 另生成 `logs/profile_report.html`。`POST /practice {question, correct, knowledge?, student_answer?}` → 记录一次作答对错，返回累计 `total_practice` 与合并画像摘要（第 19 轮）。
+- **App**：新增「学情」按钮 → 显示「错题总数/练习次数/涉及知识点/薄弱点/作答摘要」；新增「答对/答错」按钮 → `TutorClient.postPractice()` 记录作答（第 19 轮，`adb install` + 模拟器点击实测，见 `logs/r19_session.mp4`）。
+- **红线**：报告只统计自造题，不出现学生姓名/学校/照片，不泄露原题答案（`test_l3_profile.py`/`test_tutor_server.py` 断言「HTML 不含答案 / 画像不含学生作答原文」）。
 
 ## 端侧真实 ASR（sherpa-onnx paraformer 中文 · 第 18 轮）
 

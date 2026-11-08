@@ -177,24 +177,56 @@ def handle_tutor(body: dict):
 
 
 def handle_profile(body: dict):
-    """L3 学情：POST /profile {} -> 知识点画像 + 每日/每周摘要（可选生成 HTML）。
+    """L3 学情：POST /profile {} -> 合并画像（错题本 + 练习正样本）+ 每日/每周摘要。
 
     入 {html?: bool, out_path?: str}；出 {ok, profile}。
-    数据来自本地错题本（tools.WRONG_BOOK_PATH），不上传、不含学生隐私、不泄露答案。
+    数据来自本地错题本（tools.WRONG_BOOK_PATH）+ 练习日志（l3_profile.PRACTICE_LOG_PATH），
+    不上传、不含学生隐私、不泄露答案。正样本含作答次数/正确率（ROADMAP L3「补正样本」）。
     """
     if body.get("html") or body.get("out_path"):
-        rep = l3_profile.profile_report(out_path=body.get("out_path") or None)
+        rep = l3_profile.profile_report_full(out_path=body.get("out_path") or None)
     else:
-        items = l3_profile.load_wrong_book()
-        prof = l3_profile.knowledge_profile(items)
+        prof = l3_profile.merged_profile()
         rep = {
             "total_wrong": prof["total_wrong"],
+            "total_practice": prof["total_practice"],
             "knowledge_count": len(prof["knowledge_points"]),
             "weak_points": prof["weak_points"],
-            "daily": l3_profile.daily_summary(items),
-            "weekly": l3_profile.weekly_summary(items),
+            "knowledge_points": prof["knowledge_points"],
+            "practice": l3_profile.practice_summary(),
+            "daily": l3_profile.daily_summary(),
+            "weekly": l3_profile.weekly_summary(),
         }
     return {"ok": True, "profile": rep}, 200
+
+
+def handle_practice(body: dict):
+    """记录一次作答（正样本）：POST /practice {question, student_answer?, knowledge?, correct}。
+
+    出 {ok, entry, total_practice, profile}。练习日志只落本地、不上传、不泄答案。
+    """
+    question = (body.get("question") or "").strip()
+    if not question:
+        return {"ok": False, "error": "缺少 question"}, 400
+    entry = l3_profile.log_practice(
+        question,
+        student_answer=(body.get("student_answer") or "").strip(),
+        knowledge=(body.get("knowledge") or "").strip(),
+        correct=bool(body.get("correct")),
+    )
+    prof = l3_profile.merged_profile()
+    return {
+        "ok": True,
+        "entry": entry,
+        "total_practice": prof["total_practice"],
+        "profile": {
+            "total_wrong": prof["total_wrong"],
+            "total_practice": prof["total_practice"],
+            "knowledge_count": len(prof["knowledge_points"]),
+            "weak_points": prof["weak_points"],
+            "knowledge_points": prof["knowledge_points"],
+        },
+    }, 200
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -228,13 +260,13 @@ class Handler(BaseHTTPRequestHandler):
             self._send_json({
                 "usage": "POST /tutor {image_b64|text, history?, hint_level?, tool?, params?} · "
                          "POST /tool {tool, params} · POST /agent {question, utterance, history?} · "
-                         "POST /profile {html?}",
+                         "POST /profile {html?} · POST /practice {question, correct, knowledge?}",
                 "note": "App 端请用 http://10.0.2.2:%d/tutor" % PORT,
             })
 
     def do_POST(self):
         path = self.path.rstrip("/")
-        if path not in ("/tutor", "/tool", "/agent", "/profile"):
+        if path not in ("/tutor", "/tool", "/agent", "/profile", "/practice"):
             self._send_json({"error": "not found"}, 404)
             return
         try:
@@ -245,7 +277,8 @@ class Handler(BaseHTTPRequestHandler):
             raw = self.rfile.read(length)
             body = json.loads(raw.decode("utf-8"))
             fn = {"/tutor": handle_tutor, "/tool": handle_tool,
-                  "/agent": handle_agent, "/profile": handle_profile}[path]
+                  "/agent": handle_agent, "/profile": handle_profile,
+                  "/practice": handle_practice}[path]
             payload, status = fn(body)
             self._send_json(payload, status)
         except Exception as e:  # noqa: BLE001  服务端异常也要回 JSON，别把连接崩掉

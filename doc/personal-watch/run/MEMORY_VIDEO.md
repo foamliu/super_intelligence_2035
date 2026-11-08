@@ -287,6 +287,18 @@ ERROR_COUNT:  0
 - 回写：`host/speech.py`/`host/test_speech.py`/`host/eval_asr.py`（新建）、`host/README.md`、`INTERACTION_SPEC.md`、`ROADMAP.md`（第 18 轮）、本文件、`daily-memories-video/2026-11-08.md`。
 - commit+push（`robot:`）。
 
+## 4.18 本唤醒流水（2026-11-08 · 第 19 轮 · L3 学情补「正样本」：作答次数/正确率合并错题本）
+
+- 读任务书全文 + `robot/README.md` + `ROADMAP.md`；识别 ROADMAP「下一轮候选」#3 = L3 学情补「正样本」（当前画像只有错题单边数据）。本轮落地。ComfyUI 全程未碰（已冻结，本轮提示再次确认停用）。
+- ✅ **`host/l3_profile.py` 新增练习日志（正样本）+ 合并画像**：`PRACTICE_LOG_PATH`（`ROBOT_PRACTICE_LOG` 可覆盖）+ `load_practice_log()`/`log_practice()`（记录作答对错，落本地不上传）+ `practice_summary()`（按知识点作答次数/答对数/正确率）+ `mastery_from_stats()`（富化掌握等级，新增「已掌握」）+ `merged_profile()`（错题本负样本 + 练习正样本合并：`wrong_count/attempt_count/correct_count/correct_rate/mastery`）+ `build_profile_html_full()`/`profile_report_full()`（自包含中文 HTML，不泄答案/题干/作答原文）。
+- ✅ **`host/tutor_server.py` 新增 `POST /practice`**（`{question, correct, knowledge?, student_answer?}` → 记录作答、返回累计 `total_practice` + 合并画像）；`POST /profile` 升级为**合并画像**（错题 + 正样本，含 `total_practice`/`knowledge_points`/`practice`）。
+- ✅ **单测 +13**：`test_l3_profile.py` +9（练习摘要/合并画像/富化掌握/日志追加/合并 HTML）、`test_tutor_server.py` +3（/practice 记录+合并/不泄答案/缺 question 报错）；host 全量 **`pytest` = 222 passed**（第 18 轮 209+1 skip → 222，paraformer 已就绪）。
+- ✅ **App 接正样本**：`TutorClient.postPractice()` + `ProfileReply` 富化（`totalPractice`/`practiceSummary`）；`MainActivity`「答对/答错」按钮（→`/practice`，自动刷新学情）+「学情」显示「错题总数/练习次数/涉及知识点/薄弱点/作答摘要」；`activity_main.xml`/`strings.xml` 同步。
+- ✅ **构建 + 装机 + 端到端 + 录屏**：`assembleDebug` 成功 → `app-debug.apk` **4,120,020 字节**；`adb install -r` **Success**；模拟器点「学情」实测显示「错题总数：3 / 练习次数：5 / 涉及知识点：2 个 / 薄弱点：一元一次方程 / 作答：一元一次方程 2次/50% · 勾股定理 3次/100%」；录屏 `logs/r19_session.mp4`（18s，2,756,131 字节）。
+- 📌 **能信/不能信**：合并画像/富化掌握/不泄答案为**确定性纯函数**（单测）+ seed 脚本实测真实 JSON + App 模拟器点击端到端；`logs/wrong_book.json`/`logs/practice_log.json` 为本地自造题数据。🚫 App「答对/答错」暂以「未分类」记录知识点（LLM 知识分类未接入）；真机近场 ASR/AEC 仍待复测。
+- 回写：`host/l3_profile.py`/`host/test_l3_profile.py`/`host/tutor_server.py`/`host/test_tutor_server.py`/`host/README.md`、`app/.../TutorClient.kt`/`MainActivity.kt`/`activity_main.xml`/`strings.xml`/`app/README.md`、`ROADMAP.md`（第 19 轮）、本文件、`daily-memories-video/2026-11-08.md`。
+- commit+push（`robot:`）。
+
 ## 5. 阻塞 / 待办
 ## 5. 阻塞 / 待办
 
@@ -296,7 +308,7 @@ ERROR_COUNT:  0
 3. **下一轮候选（按优先级）**：
    1. ~~端侧真实 ASR（sherpa-onnx）接入位落地~~ ✅ **已交付（第 18 轮，paraformer 离线 + streaming-zipformer 真流式；高精度 paraformer CER 待下载完成后补测）**；
    2. `clamp_hint` 后的 full 30 会话复跑验证（第 13 轮只做了单次 smoke）；
-   3. L3 学情补「正样本」：会话/练习日志（作答次数、正确率），与错题本合并出更完整的掌握画像（当前只有错题单边数据）；
+   3. ~~L3 学情补「正样本」：会话/练习日志（作答次数、正确率），与错题本合并出更完整的掌握画像~~ ✅ **已交付（第 19 轮，练习日志 + 合并画像 + `/practice` 端点 + App「答对/答错」）**；
    4. 真机化 L0（等用户 3 条）。
 
 ## 6. 运维问答

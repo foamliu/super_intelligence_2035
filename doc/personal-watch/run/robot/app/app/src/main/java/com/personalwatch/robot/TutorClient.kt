@@ -38,9 +38,17 @@ data class AgentReply(
 
 data class ProfileReply(
     val totalWrong: Int,
+    val totalPractice: Int,
     val knowledgeCount: Int,
     val weakPoints: String,
+    val practiceSummary: String,
     val raw: String
+)
+
+data class PracticeReply(
+    val ok: Boolean,
+    val totalPractice: Int,
+    val error: String
 )
 
 object TutorClient {
@@ -174,11 +182,60 @@ object TutorClient {
                 weakList.add(wp.getJSONObject(i).optString("knowledge"))
             }
         }
+        // 正样本：从合并画像里挑作答次数 > 0 的知识点，拼成「知识点 次数/正确率」摘要
+        val practice = mutableListOf<String>()
+        val kps = p.optJSONArray("knowledge_points")
+        if (kps != null) {
+            for (i in 0 until kps.length()) {
+                val kp = kps.getJSONObject(i)
+                val attempts = kp.optInt("attempt_count", 0)
+                if (attempts > 0) {
+                    val pct = (kp.optDouble("correct_rate", 0.0) * 100).toInt()
+                    practice.add("${kp.optString("knowledge")} ${attempts}次/${pct}%")
+                }
+            }
+        }
         return ProfileReply(
             totalWrong = p.optInt("total_wrong", 0),
+            totalPractice = p.optInt("total_practice", 0),
             knowledgeCount = p.optInt("knowledge_count", 0),
             weakPoints = weakList.joinToString("、"),
+            practiceSummary = practice.joinToString(" · "),
             raw = resp
+        )
+    }
+
+    fun postPractice(
+        baseUrl: String,
+        question: String,
+        correct: Boolean,
+        knowledge: String,
+        studentAnswer: String
+    ): PracticeReply {
+        val conn = URL(baseUrl.trimEnd('/') + "/practice").openConnection() as HttpURLConnection
+        conn.requestMethod = "POST"
+        conn.doOutput = true
+        conn.connectTimeout = 30_000
+        conn.readTimeout = 30_000
+        conn.setRequestProperty("Content-Type", "application/json; charset=utf-8")
+
+        val body = JSONObject()
+        body.put("question", question)
+        body.put("correct", correct)
+        if (knowledge.isNotBlank()) body.put("knowledge", knowledge)
+        if (studentAnswer.isNotBlank()) body.put("student_answer", studentAnswer)
+
+        OutputStreamWriter(conn.outputStream, Charsets.UTF_8).use { it.write(body.toString()) }
+        val code = conn.responseCode
+        val stream = if (code in 200..299) conn.inputStream else conn.errorStream
+        val resp = stream?.bufferedReader(Charsets.UTF_8)?.use(BufferedReader::readText) ?: "{}"
+        conn.disconnect()
+
+        val o = JSONObject(resp)
+        return PracticeReply(
+            ok = o.optBoolean("ok", false),
+            totalPractice = o.optInt("total_practice", 0),
+            error = o.optString("error", "")
         )
     }
 

@@ -105,6 +105,8 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             callTool("parent_report", emptyMap())
         }
         findViewById<Button>(R.id.btnProfile).setOnClickListener { showProfile() }
+        findViewById<Button>(R.id.btnMarkRight).setOnClickListener { logPractice(true) }
+        findViewById<Button>(R.id.btnMarkWrong).setOnClickListener { logPractice(false) }
         findViewById<Button>(R.id.btnSend).setOnClickListener { sendFollowUp() }
 
         tts = TextToSpeech(this, this)
@@ -255,14 +257,45 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                     tvReply.text = buildString {
                         append("【学情画像】\n")
                         append("错题总数：").append(r.totalWrong).append("\n")
+                        append("练习次数：").append(r.totalPractice).append("\n")
                         append("涉及知识点：").append(r.knowledgeCount).append(" 个\n")
                         append("薄弱点：").append(if (r.weakPoints.isBlank()) "暂无" else r.weakPoints)
+                        if (r.practiceSummary.isNotBlank()) {
+                            append("\n作答：").append(r.practiceSummary)
+                        }
                     }
-                    setStatus("学情画像已更新（数据来自本地错题本）")
+                    setStatus("学情画像已更新（错题本 + 练习日志）")
                 }
             } catch (e: Exception) {
                 Log.e(TAG, "POST /profile 失败", e)
                 runOnUiThread { setStatus("学情查询失败：${e.message}") }
+            }
+        }
+    }
+
+    // ── L3 补正样本：作答对/错 → POST /practice ─────────────────────
+    private fun logPractice(correct: Boolean) {
+        val server = etServer.text.toString().trim()
+        val q = currentQuestion.ifBlank { history.lastOrNull()?.first ?: "" }
+        if (q.isBlank()) {
+            setStatus("先拍一道题，才能记录作答")
+            return
+        }
+        val ans = etInput.text.toString().trim()
+        cameraExecutor.execute {
+            try {
+                val r = TutorClient.postPractice(server, q, correct, knowledge = "", studentAnswer = ans)
+                runOnUiThread {
+                    if (r.ok) {
+                        setStatus("已记录「${if (correct) "答对" else "答错"}」（累计作答 ${r.totalPractice} 次）")
+                        showProfile()   // 立即刷新学情，看到正样本合并后的画像
+                    } else {
+                        setStatus("记录作答失败：${r.error}")
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "POST /practice 失败", e)
+                runOnUiThread { setStatus("记录作答失败：${e.message}") }
             }
         }
     }

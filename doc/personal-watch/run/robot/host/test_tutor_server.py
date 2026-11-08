@@ -21,6 +21,13 @@ def tmp_wrong_book(tmp_path, monkeypatch):
     return p
 
 
+@pytest.fixture
+def tmp_practice_log(tmp_path, monkeypatch):
+    p = str(tmp_path / "practice_log.json")
+    monkeypatch.setattr(TS.l3_profile, "PRACTICE_LOG_PATH", p)
+    return p
+
+
 # ── POST /tool ─────────────────────────────────────────────────────
 def test_tool_calculator():
     payload, status = TS.handle_tool({"tool": "calculator", "params": {"expr": "3*4"}})
@@ -138,7 +145,7 @@ def test_agent_replay_history(monkeypatch):
 
 
 # ── POST /profile（ROADMAP L3：知识点画像 + 每日/每周摘要）──────────
-def test_profile_summary(tmp_wrong_book):
+def test_profile_summary(tmp_wrong_book, tmp_practice_log):
     TS.handle_tool({"tool": "wrong_book_add",
                     "params": {"question": "解方程：2x+3=11", "student_answer": "x=5",
                                "knowledge": "一元一次方程"}})
@@ -149,6 +156,7 @@ def test_profile_summary(tmp_wrong_book):
     assert status == 200 and payload["ok"] is True
     prof = payload["profile"]
     assert prof["total_wrong"] == 2
+    assert prof["total_practice"] == 0
     assert prof["knowledge_count"] == 1
     assert prof["weak_points"][0]["knowledge"] == "一元一次方程"
     assert prof["weak_points"][0]["mastery"] == "薄弱"
@@ -156,7 +164,7 @@ def test_profile_summary(tmp_wrong_book):
     assert prof["weekly"]["total_weeks"] >= 1
 
 
-def test_profile_no_answer_leak(tmp_wrong_book):
+def test_profile_no_answer_leak(tmp_wrong_book, tmp_practice_log):
     TS.handle_tool({"tool": "wrong_book_add",
                     "params": {"question": "解方程：2x+3=11", "student_answer": "x=4",
                                "knowledge": "一元一次方程"}})
@@ -166,7 +174,7 @@ def test_profile_no_answer_leak(tmp_wrong_book):
     assert "x=4" not in blob      # 不泄露最终答案 / 不夹带学生错答
 
 
-def test_profile_html(tmp_wrong_book, tmp_path):
+def test_profile_html(tmp_wrong_book, tmp_practice_log, tmp_path):
     TS.handle_tool({"tool": "wrong_book_add",
                     "params": {"question": "因式分解：x²-9", "student_answer": "x(x-3)",
                                "knowledge": "因式分解"}})
@@ -180,9 +188,53 @@ def test_profile_html(tmp_wrong_book, tmp_path):
     assert "(x+3)(x-3)" not in html  # 不泄答案
 
 
-def test_profile_empty(tmp_wrong_book):
+def test_profile_empty(tmp_wrong_book, tmp_practice_log):
     payload, status = TS.handle_profile({})
     assert status == 200 and payload["ok"] is True
     assert payload["profile"]["total_wrong"] == 0
     assert payload["profile"]["weak_points"] == []
+
+
+# ── POST /practice（ROADMAP L3 补正样本：作答次数 + 正确率）────────
+def test_practice_logs_and_merges(tmp_wrong_book, tmp_practice_log):
+    # 先记 1 道错题（负样本）
+    TS.handle_tool({"tool": "wrong_book_add",
+                    "params": {"question": "解方程：2x+3=11", "student_answer": "x=5",
+                               "knowledge": "一元一次方程"}})
+    # 再记 2 次作答（正样本）：1 对 1 错，同一知识点
+    p1, s1 = TS.handle_practice({"question": "解方程：2x+3=11", "student_answer": "x=4",
+                                 "knowledge": "一元一次方程", "correct": True})
+    p2, s2 = TS.handle_practice({"question": "解方程：4x+1=9", "student_answer": "x=3",
+                                 "knowledge": "一元一次方程", "correct": False})
+    assert s1 == 200 and p1["ok"] is True
+    assert s2 == 200 and p2["ok"] is True
+    assert p1["total_practice"] == 1
+    assert p2["total_practice"] == 2
+
+    prof_payload, status = TS.handle_profile({})
+    assert status == 200
+    prof = prof_payload["profile"]
+    assert prof["total_wrong"] == 1
+    assert prof["total_practice"] == 2
+    kp = prof["knowledge_points"][0]
+    assert kp["knowledge"] == "一元一次方程"
+    assert kp["wrong_count"] == 1
+    assert kp["attempt_count"] == 2
+    assert kp["correct_count"] == 1
+    assert kp["correct_rate"] == 0.5
+
+
+def test_practice_no_answer_leak(tmp_wrong_book, tmp_practice_log):
+    TS.handle_practice({"question": "解方程：2x+3=11", "student_answer": "x=4",
+                        "knowledge": "一元一次方程", "correct": False})
+    payload, status = TS.handle_profile({})
+    assert status == 200
+    blob = json.dumps(payload["profile"], ensure_ascii=False)
+    assert "x=4" not in blob      # 画像不夹带学生作答原文 / 答案
+
+
+def test_practice_requires_question(tmp_practice_log):
+    payload, status = TS.handle_practice({})
+    assert status == 400 and payload["ok"] is False
+    assert "question" in payload["error"]
 

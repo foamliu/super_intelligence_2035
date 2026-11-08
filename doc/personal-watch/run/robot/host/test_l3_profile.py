@@ -144,3 +144,136 @@ def _write(tmp_path, items):
     with open(p, "w", encoding="utf-8") as f:
         json.dump(items, f, ensure_ascii=False)
     return p
+
+
+def _practice_items():
+    return [
+        {"question": "解方程：2x+3=11", "student_answer": "x=4",
+         "knowledge": "一元一次方程", "correct": True, "ts": "2026-11-08 20:00:00"},
+        {"question": "解方程：5x-3=2", "student_answer": "x=1",
+         "knowledge": "一元一次方程", "correct": True, "ts": "2026-11-08 20:05:00"},
+        {"question": "解方程：4x+1=9", "student_answer": "x=3",
+         "knowledge": "一元一次方程", "correct": False, "ts": "2026-11-08 20:10:00"},
+        {"question": "勾股定理：3-4-5", "student_answer": "5",
+         "knowledge": "勾股定理", "correct": True, "ts": "2026-11-08 20:15:00"},
+        {"question": "勾股定理：6-8-10", "student_answer": "10",
+         "knowledge": "勾股定理", "correct": True, "ts": "2026-11-08 20:20:00"},
+        {"question": "勾股定理：5-12-13", "student_answer": "13",
+         "knowledge": "勾股定理", "correct": True, "ts": "2026-11-08 20:25:00"},
+    ]
+
+
+def _write_practice(tmp_path, items=None):
+    p = str(tmp_path / "practice_log.json")
+    with open(p, "w", encoding="utf-8") as f:
+        json.dump(items if items is not None else _practice_items(), f, ensure_ascii=False)
+    return p
+
+
+# ── 练习日志（正样本）─────────────────────────────────────────────
+def test_practice_summary():
+    s = LP.practice_summary(_practice_items())
+    assert s["total_practice"] == 6
+    assert s["total_correct"] == 5
+    assert abs(s["overall_rate"] - 0.833) < 1e-9
+    by_k = {p["knowledge"]: p for p in s["knowledge_points"]}
+    assert by_k["一元一次方程"]["attempt_count"] == 3
+    assert by_k["一元一次方程"]["correct_count"] == 2
+    assert abs(by_k["一元一次方程"]["correct_rate"] - 0.667) < 1e-9
+    assert by_k["勾股定理"]["correct_rate"] == 1.0
+
+
+def test_practice_summary_empty():
+    s = LP.practice_summary([])
+    assert s["total_practice"] == 0 and s["overall_rate"] == 0.0
+    assert s["knowledge_points"] == []
+
+
+def test_load_practice_log_missing():
+    assert LP.load_practice_log("/nonexistent/practice.json") == []
+
+
+def test_log_practice_appends(tmp_path):
+    p = str(tmp_path / "practice.json")
+    LP.log_practice("解方程：2x+3=11", "x=4", "一元一次方程", True,
+                    ts="2026-11-08 20:00:00", path=p)
+    LP.log_practice("解方程：3x-5=10", "x=5", "", False,
+                    ts="2026-11-08 20:05:00", path=p)
+    items = LP.load_practice_log(p)
+    assert len(items) == 2
+    assert items[0]["correct"] is True
+    assert items[1]["correct"] is False
+    assert items[0]["knowledge"] == "一元一次方程"
+    assert items[1]["knowledge"] == "未分类"   # 空知识点 → 未分类
+
+
+# ── 合并掌握等级 ──────────────────────────────────────────────────
+def test_mastery_from_stats_bands():
+    assert LP.mastery_from_stats(0, 0, 0) == "待练习"
+    assert LP.mastery_from_stats(2, 0, 0) == "薄弱"       # 无正样本 → 纯错题口径
+    assert LP.mastery_from_stats(3, 0, 0) == "重点突破"
+    assert LP.mastery_from_stats(0, 4, 4) == "已掌握"     # 练 4 次全对、无错题
+    assert LP.mastery_from_stats(0, 3, 2) == "待巩固"     # 正确率 0.667
+    assert LP.mastery_from_stats(1, 4, 3) == "待巩固"     # 错 1、正确率 0.75
+    assert LP.mastery_from_stats(2, 5, 4) == "薄弱"       # 错 2
+    assert LP.mastery_from_stats(3, 3, 3) == "重点突破"   # 错 3
+    assert LP.mastery_from_stats(0, 4, 1) == "重点突破"   # 正确率 0.25 < 0.5
+    assert LP.mastery_from_stats(0, 2, 1) == "薄弱"       # 正确率 0.5 < 0.7
+
+
+# ── 合并画像 ──────────────────────────────────────────────────────
+def test_merged_profile():
+    wrong = [
+        {"question": "q1", "knowledge": "一元一次方程", "ts": "2026-11-07 20:00:00"},
+        {"question": "q2", "knowledge": "一元一次方程", "ts": "2026-11-08 09:00:00"},
+    ]
+    mp = LP.merged_profile(wrong, _practice_items())
+    assert mp["total_wrong"] == 2
+    assert mp["total_practice"] == 6
+    by_k = {p["knowledge"]: p for p in mp["knowledge_points"]}
+    assert by_k["一元一次方程"]["wrong_count"] == 2
+    assert by_k["一元一次方程"]["attempt_count"] == 3
+    assert by_k["一元一次方程"]["correct_rate"] == round(2 / 3, 3)
+    assert by_k["一元一次方程"]["mastery"] == "薄弱"   # 错 2
+    # 勾股定理：0 错 + 练 3 次全对 → 已掌握
+    assert by_k["勾股定理"]["wrong_count"] == 0
+    assert by_k["勾股定理"]["mastery"] == "已掌握"
+    weak_names = {p["knowledge"] for p in mp["weak_points"]}
+    assert "一元一次方程" in weak_names
+    assert "勾股定理" not in weak_names
+
+
+def test_merged_profile_empty():
+    mp = LP.merged_profile([], [])
+    assert mp["total_wrong"] == 0 and mp["total_practice"] == 0
+    assert mp["knowledge_points"] == [] and mp["weak_points"] == []
+
+
+# ── 合并 HTML / 报告 ──────────────────────────────────────────────
+def test_build_profile_html_full_merged():
+    wrong = [
+        {"question": "q1", "knowledge": "一元一次方程", "ts": "2026-11-07 20:00:00"},
+        {"question": "q2", "knowledge": "一元一次方程", "ts": "2026-11-08 09:00:00"},
+    ]
+    html = LP.build_profile_html_full(wrong, _practice_items())
+    assert "<!DOCTYPE html>" in html
+    assert "家教学习画像" in html
+    assert "一元一次方程" in html and "勾股定理" in html
+    assert "作答次数" in html and "正确率" in html
+    assert "已掌握" in html
+    # 不泄答案 / 不泄题干 / 不夹带学生作答原文
+    assert "x=4" not in html
+    assert "解方程" not in html
+    assert "6-8-10" not in html
+
+
+def test_profile_report_full_writes(tmp_path):
+    p = str(tmp_path / "full.html")
+    rep = LP.profile_report_full(out_path=p, wrong_path=_write(tmp_path, _items()),
+                                 practice_path=_write_practice(tmp_path))
+    assert rep["total_wrong"] == 4
+    assert rep["total_practice"] == 6
+    assert rep["knowledge_count"] == 3   # 一元一次方程 + 因式分解 + 勾股定理
+    assert os.path.isfile(p)
+    with open(p, encoding="utf-8") as f:
+        assert "<!DOCTYPE html>" in f.read()
