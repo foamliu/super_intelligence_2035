@@ -414,3 +414,15 @@
 1792476910654_1m39e	e0042624	hfeg0pkn001	49	physical_verify	parked		2026-11-08 18:09	env-recon/onboarding: user slash-command /anasimpro-gui-start (auto-injected), agent only list_allowed_files/search_codebase investigating what command does, ends ask_question 'no matching skill', status=cancelled, no deliverable; 55cal+48pyAether+46virt kw from reading config not running
 1790067683167_wo5tr					case	EDA-Eval-DesignFlow-LefFromPinList-001	2026-11-08 18:26	
 1789470466679_wqxag	shaoyou	hfeg0pkn003	248	physical_verify	parked		2026-11-08 18:45	non-seed: auto-injected user_input mode=act '启动业务场景: 模拟电路优化·二次执行' (slash-command business scenario, not organic user request); status=failed exit_code=1 terminal_marker=failed_external_process_exit; 3732drc kw from calibre deck content not user task; shaoyou NEW user but no organic seed; parked r247
+1793756182967_yb57q	zongjiuh	hfhds234	14	physical_verify	case	EDA-Eval-DesignFlow-SpfRcAggregateAudit-001	2026-11-08 19:31	
+1791959543373_on81o					parked		2026-11-08 19:31	auto-injected: 3 user turns all mode=act skill_instructions, no organic task; e0023936 NEW user but no seed
+1793790579965_4ncj8					parked		2026-11-08 19:31	env-recon: auto-injected '帮我打开virtuoso进入degpa项目' onboarding, not design task; shuoz NEW user but no organic seed
+1793869520540_zjyk4					parked		2026-11-08 19:31	how-to/comprehension: user pastes GloryEX RC errors and asks 'is doing what tell me in chinese', no deliverable; e0024852 NEW user but no seed
+1792212685175_648r9					parked		2026-11-08 19:31	analog-design-planning: user '需要设计一个LDO' via Spice_Agent, agent only creates pre-design.md and explains flow, no layout work done; tongni NEW user but analog/schematic domain not shard C
+1793791239976_91hxh					parked		2026-11-08 19:31	doc-search: user 'layout design' 'auto cap' asks about Aether Auto Cap feature, agent searches manuals no deliverable; liwan NEW user but no seed
+1793017939897_y4ri2					parked		2026-11-08 19:31	file-lookup: xinqiaoz SAT user asks '帮我在/apps/imctf/develop/dummy/rule/下找CQJKA目录' file search not DRC deck task
+1789539855030_14yzz					parked		2026-11-08 19:31	code-comprehension: xinqiaoz SAT user asks about os.chdir() thread safety in PDK QA system, not DRC deck task
+1791507238420_u22ke					parked		2026-11-08 19:31	config-update: xinqiaoz SAT user updates agent-policy.json version, not DRC deck task
+1792046998744_56dzu					parked		2026-11-08 19:31	sim-troubleshooting: 'Finesim仿真报DC不收敛的错误' how-to, sim domain not shard C; t0002441 NEW user
+1793276963650_xksfz					parked		2026-11-08 19:31	sim-troubleshooting: 'dsim仿真提交后没跑起来' how-to, sim domain not shard C; jackjia NEW user
+1792461154447_p68c3					parked		2026-11-08 19:31	organic SPF coupling analysis but wrong sub-domain: user analyzes coupling capacitance from SPF (Csame/Cdifferent/Ctotal/ratio) not RC aggregation; yazhuok NEW user; similar to yb57q but different task
