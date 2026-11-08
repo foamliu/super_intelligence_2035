@@ -25904,90 +25904,71 @@ bz2b-90000-f16.gguf
 
 ---
 
-## RUN_ID 246 · 2026-11-08 12:16:19 · host=`whag0pgpuap12` · exit=0
+## RUN_ID 247 · 2026-11-08 12:18:33 · host=`whag0pgpuap12` · exit=0
 
 **命令**
 ```bash
 set -u
-echo "=== RUN_ID 246 | eval-freeze A/B | $(date '+%F %T') | host=$(hostname) ==="
-cat > /tmp/baize_eval_freeze_ab.sh <<'EOS'
-#!/bin/bash
-set -u
-OUT=/tmp/baize_eval_freeze_ab.txt
-LOG=""
-for f in /tmp/baize_s1_baize2b_master.log /tmp/baize_s1_baize2b_worker.log; do
-  if [ -f "$f" ]; then LOG="$f"; break; fi
-done
-step(){ grep -E 'elapsed time per iteration' "$LOG" 2>/dev/null | tail -1 | sed 's/^ *//'; }
-srv_cpu(){ ps -eo pcpu=,args= | awk '/[l]lama-server/ && !/cline/ {s+=$1;n++} END{printf "srv_n=%d srv_cpu=%.0f%%",n,s}'; }
-ld(){ cut -d' ' -f1-3 /proc/loadavg; }
-
-CLI=$(ps -eo pid=,args= | awk '/gguf_lmeval_run\.py/ && !/awk/ && !/cline/ && !/bun/ {print $1}')
-echo "clients=$(echo $CLI | wc -w) pids=[$(echo $CLI)]" >>"$OUT"
-
-resume(){ for p in $CLI; do kill -CONT "$p" 2>/dev/null; done; }
-trap resume EXIT INT TERM
-
-{
-  echo "=== start $(date '+%F %T') host=$(hostname) log=$LOG ==="
-  echo "[baseline] $(step)"
-  echo "[baseline] load=$(ld) $(srv_cpu)"
-  echo "--- last 8 step lines ---"
-  grep -E 'elapsed time per iteration' "$LOG" | tail -8 | sed 's/^ *//'
-  echo "--- client stdout (size before) ---"
-  for p in $CLI; do f=$(readlink /proc/$p/fd/1 2>/dev/null); [ -n "$f" ] && echo "$p -> $f size=$(stat -c %s "$f" 2>/dev/null)"; done
-} >>"$OUT"
-
-for p in $CLI; do kill -STOP "$p" 2>/dev/null; done
-sleep 20
-
-{
-  echo "=== FROZEN $(date '+%F %T') (clients SIGSTOP only; servers/training untouched) ==="
-  for i in 0 1 2 3 4 5 6 7 8 9 10; do
-    echo "[f${i} $(date '+%H:%M:%S')] $(step) | load=$(ld) | $(srv_cpu)"
-    [ "$i" -lt 10 ] && sleep 60
-  done
-} >>"$OUT"
-
-resume
-trap - EXIT INT TERM
-sleep 5
-
-{
-  echo "=== RESUMED $(date '+%F %T') ==="
-  for i in 0 1 2 3 4 5; do
-    echo "[r${i} $(date '+%H:%M:%S')] $(step) | load=$(ld) | $(srv_cpu)"
-    [ "$i" -lt 5 ] && sleep 60
-  done
-  echo "--- client stdout (size after) ---"
-  for p in $CLI; do f=$(readlink /proc/$p/fd/1 2>/dev/null); [ -n "$f" ] && echo "$p -> $f size=$(stat -c %s "$f" 2>/dev/null)"; done
-  echo "--- client state (expect S/R, not T) ---"
-  for p in $CLI; do ps -o pid=,stat=,pcpu=,etimes= -p "$p" 2>/dev/null; done
-  echo "=== DONE $(date '+%F %T') ==="
-} >>"$OUT"
-EOS
-chmod +x /tmp/baize_eval_freeze_ab.sh
-rm -f /tmp/baize_eval_freeze_ab.txt
-setsid nohup bash /tmp/baize_eval_freeze_ab.sh >/tmp/baize_eval_freeze_ab.run.log 2>&1 < /dev/null &
-echo "detached_pid=$!"
-sleep 8
-echo "--- early result ---"
-head -40 /tmp/baize_eval_freeze_ab.txt 2>/dev/null
+echo "=== RUN_ID 247 discovery | host=$(hostname) | $(date '+%F %T') ==="
+echo "-- nproc / load --"; nproc; uptime
 echo
-echo "=== 246 dispatched; result completes ~17 min later (see RUN_ID 247) ==="
+echo "-- eval processes (top 20) --"
+ps -eo pid=,pcpu=,psr=,args= | awk '(/[l]lama-server/ || /[g]guf_lmeval_run\.py/) && !/cline/ && !/awk/ {print "  " $1 " cpu=" $2 " psr=" $3 " :: " substr($0,index($0,$4),150)}' | head -20
+echo
+echo "-- counts --"
+ps -eo args= | awk '/[l]lama-server/ && !/cline/{s++} /[g]guf_lmeval_run\.py/ && !/cline/{c++} END{printf "  servers=%d clients=%d\n",s,c}'
+echo
+echo "-- train logs --"
+for f in /tmp/baize_s1_baize2b_master.log /tmp/baize_s1_baize2b_worker.log /tmp/baize_s1_baize2b.log; do
+  if [ -f "$f" ]; then
+    echo "  FILE $f size=$(stat -c %s "$f") mtime=$(stat -c %y "$f" | cut -c1-19)"
+    grep -E 'elapsed time per iteration' "$f" | tail -3 | sed 's/^ */    /'
+  fi
+done
+echo
+echo "-- launcher / torchrun --"
+ps -eo pid=,etimes=,pcpu=,args= | awk '(/scripts\/train\.sh s1/ || /[t]orchrun/) && !/cline/ {print "  " $1 " etimes=" $2 " cpu=" $3 " :: " substr($0,index($0,$4),150)}' | head -8
+echo
+echo "-- GPU --"
+nvidia-smi --query-gpu=index,utilization.gpu,memory.used,power.draw --format=csv,noheader 2>/dev/null | sed 's/^/  /'
+echo
+echo "-- eval log files fresh (last 60min, /tmp) --"
+find /tmp -maxdepth 1 -type f -name '*.log' -mmin -60 -printf '  %TY-%Tm-%Td %TH:%TM %10s %p\n' 2>/dev/null | sort -k2 | tail -12
+echo "=== DONE 247 | $(hostname) ==="
 ```
 
 **输出**
 ```
-=== RUN_ID 246 | eval-freeze A/B | 2026-11-08 12:16:19 | host=whag0pgpuap12 ===
-detached_pid=4080276
---- early result ---
-clients=0 pids=[]
-=== start 2026-11-08 12:16:19 host=whag0pgpuap12 log= ===
-[baseline] 
-[baseline] load=25.21 24.98 24.93 srv_n=0 srv_cpu=0%
---- last 8 step lines ---
---- client stdout (size before) ---
+=== RUN_ID 247 discovery | host=whag0pgpuap12 | 2026-11-08 12:18:33 ===
+-- nproc / load --
+224
+ 12:18:33 up 281 days, 21:01,  3 users,  load average: 26.18, 25.10, 24.97
 
-=== 246 dispatched; result completes ~17 min later (see RUN_ID 247) ===
+-- eval processes (top 20) --
+
+-- counts --
+  servers=0 clients=0
+
+-- train logs --
+
+-- launcher / torchrun --
+  2612442 etimes=491234 cpu=0.1 :: /nas_train/app.e0031982/miniforge3/envs/py310/bin/python /nas_train/app.e0031982/miniforge3/envs/py310/bin/torchrun --nnodes=2 --node_rank=0 --nproc_p
+
+-- GPU --
+  0, 100 %, 75459 MiB, 688.41 W
+  1, 93 %, 75079 MiB, 690.78 W
+  2, 96 %, 75077 MiB, 689.19 W
+  3, 96 %, 74979 MiB, 680.88 W
+  4, 100 %, 75219 MiB, 687.14 W
+  5, 100 %, 74699 MiB, 686.56 W
+  6, 100 %, 74923 MiB, 688.24 W
+  7, 100 %, 75139 MiB, 691.49 W
+
+-- eval log files fresh (last 60min, /tmp) --
+  2026-11-08 12:00   32399307 /tmp/baize_vision_loop.log
+  2026-11-08 12:15     381411 /tmp/mon.log
+  2026-11-08 12:16         34 /tmp/baize_eval_freeze_ab.run.log
+  2026-11-08 12:16        580 /tmp/baize_ops_relay.12.log
+  2026-11-08 12:18      84800 /tmp/grpo_chain_relaunch.log
+=== DONE 247 | whag0pgpuap12 ===
 ```
