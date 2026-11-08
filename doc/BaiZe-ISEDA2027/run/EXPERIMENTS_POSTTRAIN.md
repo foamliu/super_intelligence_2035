@@ -6387,3 +6387,91 @@ UltraData 预分词为 megatron .bin/.idx 格式，在训练框架层通过 blen
 | HTML | `reports/report_posttrain_r57_vision_lessons_rl_risk_zh.html` | 8.4KB |
 
 **数据溯源**：EXPERIMENTS_VISION.md §21.1-§22。vision 诊断数据在 .12（本节点 .17 不可达），使用已记录数值。无伪造。
+
+---
+
+## §R58 RL Prompt 预筛分与课程策略（2026-11-08 wake106 · 零 GPU · Python 3.8+）
+
+> **R58**: 11/9 GPU 到位前最后一个预研。综合 R57（Vision GRPO std=0 教训）+ R55（D1-D6 诊断）+ R48（预注册协议），
+> 对 3347 个合成 RL prompt 做训练前预筛分，预估每个 prompt 的 GRPO 信号强度，设计三阶段课程。
+> **核心问题**：哪些 prompt 会产生 GRPO 信号（mixed pass/fail in G rollouts），哪些会导致 std=0（零梯度）？
+
+### R58.1 方法
+
+1. **Logistic 通过率模型**：对每个 prompt 估计预期 Pass@1，校准到 36% base rate。
+   - 特征：difficulty_level (L1-L5) + assertion_template (T1-T5) + num_unique_apis + techlib_dependency + return_type + lines_of_code
+   - `raw = base_rate + difficulty_mod + template_pen + api_count_pen + techlib_pen + return_type_pen + loc_pen`
+   - `pass_rate = sigmoid(5.0 * (raw - 0.5))`
+2. **分类（G=8）**：
+   - TOO_EASY: P(all pass) = p⁸ > 0.30 → p > 0.875 → 无信号
+   - SIGNAL: 0.125 ≤ p ≤ 0.875 → P(mixed) > 0.30 → 有 GRPO 信号
+   - TOO_HARD: P(all fail) = (1-p)⁸ > 0.30 → p < 0.125 → 无信号
+3. **std=0 率估算**：sum(P(all same)) / total，对标 Vision 78.7%（R57）
+
+### R58.2 实测结果
+
+| 指标 | 值 |
+|:--|--:|
+| 总 RL Prompt | 3347 |
+| **SIGNAL**（有 GRPO 信号） | **2037 (60.9%)** |
+| TOO_EASY（全过风险） | 0 (0.0%) |
+| TOO_HARD（全挂风险） | 1310 (39.1%) |
+| 预期 std=0 率（R1 二值） | **26.9%** |
+| 预期 std=0 率（R2 部分分档） | **16.2%** |
+| 信号密度（P(mixed)>0.5） | 78.8% |
+| 平均信号强度 | 73.1% |
+
+### R58.3 按难度等级分解
+
+| 难度 | 总数 | 预期通过率 | SIGNAL | TOO_EASY | TOO_HARD | 预期 std=0 (R1) |
+|:--|--:|--:|--:|--:|--:|--:|
+| L1 | 1500 | ~71% | 1500 | 0 | 0 | ~3.5% |
+| L2 | 347 | ~46% | 347 | 0 | 0 | ~7.0% |
+| L3 | 800 | ~31% | 187 | 0 | 613 | ~42.7% |
+| L4 | 500 | ~21% | 3 | 0 | 497 | ~71.0% |
+| L5 | 200 | ~11% | 0 | 0 | 200 | ~84.3% |
+
+**判读**：L1/L2 全部有信号（100%）；L3 仅 23% 有信号（77% 太难）；L4/L5 几乎全部太难（无信号）。
+→ **RL 主力应从 L1+L2 开始**，L3 信号 prompt 作为进阶，L4/L5 暂排除（等 base 提升后再纳入）。
+
+### R58.4 Vision 对照
+
+| 指标 | Vision (9.2% base) | BaiZe 估计 (36% base) | 改善 |
+|:--|--:|--:|--:|
+| std=0 率 | 78.7% | 26.9% (R1) / 16.2% (R2) | **3.4×** 信号改善 |
+| 信号比例 | 21.3% | 73.1% | 3.4× |
+
+→ BaiZe 36% base >> 9.2% → 更多组内方差 → 更少 std=0，验证 R57 判断。
+
+### R58.5 三阶段课程
+
+| 阶段 | 描述 | Prompt 数 | 预计步数 | 通过标准 |
+|:--|:--|--:|--:|:--|
+| Phase 1 Smoke | 管线验证（最易 SIGNAL） | 50 | 10 | 管线无崩溃 + avg reward > 0 |
+| Phase 2 Main | 全 SIGNAL 集（信号加权） | 2037 | 500 | held-out pass ≥ +3pp vs SFT |
+| Phase 3 Expand | base→50% 后重筛 | +1310 新信号 | — | Phase 2 held-out ≥ 50% |
+
+### R58.6 11/9 操作建议
+
+1. 基线复现后用 R55 D1-D6 分析器提取实测 pass rate，替换估计值
+2. RL Smoke 仅用 Phase 1 的 50 个 prompt，10 步验证管线
+3. RL 主训练用 2037 个 SIGNAL prompt，从 **R2 部分分档**起步（不从 R1）
+4. Step 200 检查 std=0：>60% × 3 步 → Dr.GRPO；>70% → G=12
+5. Step 500 held-out 无改善 → per-scenario 分析 → 排除 0%/100% 场景
+
+### R58.7 局限性
+
+- 预期通过率是**启发式估计**，非实测。需 11/9 基线跑完后用实测值替换。
+- Logistic 权重基于 D1-D6 诊断和领域经验标定，未经 GPU 验证。
+- L4/L5 全部判为 TOO_HARD 可能过保守——实测可能有少量 L4 有信号。
+- 分类阈值 0.30 可放宽到 0.20 以纳入更多 prompt。
+
+### R58.8 交付物
+
+| 产物 | 路径 | 大小 |
+|:--|:--|--:|
+| 分析脚本 | `run/baize_posttrain_rl_prompt_prescreen.py` | ~430 行 |
+| JSON | `run/baize_posttrain_r58_prescreen.json` | 57.3KB |
+| HTML | `reports/report_posttrain_r58_rl_prompt_prescreen_zh.html` | 8.6KB |
+
+**数据溯源**：rl_pyaether_synth_v2.jsonl（3347 records, 实测加载）· R57 Vision GRPO 数据 · R55 D1-D6 · R48 预注册。无伪造。

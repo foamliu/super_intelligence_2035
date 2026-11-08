@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>R58 RL Prompt 预筛分与课程策略 — BaiZe Post-Train</title>
+<style>
+body{font-family:-apple-system,"Segoe UI",Roboto,sans-serif;max-width:960px;margin:0 auto;padding:20px;background:#f8f9fa;color:#333;line-height:1.6}
+h1{color:#1a5276;border-bottom:3px solid #2980b9;padding-bottom:10px}
+h2{color:#2874a6;margin-top:30px;border-bottom:1px solid #bdc3c7;padding-bottom:5px}
+h3{color:#2e86c1;margin-top:20px}
+table{border-collapse:collapse;width:100%;margin:15px 0;font-size:14px}
+th,td{border:1px solid #bdc3c7;padding:8px 12px;text-align:center}
+th{background:#2c3e50;color:#fff;font-weight:600}
+tr:nth-child(even){background:#ecf0f1}
+.metric{display:inline-block;background:#e8f6f3;border:1px solid #1abc9c;border-radius:6px;padding:8px 16px;margin:5px;font-size:14px}
+.alert{background:#fdf2e9;border-left:4px solid #e67e22;padding:12px;margin:15px 0}
+.success{background:#eafaf1;border-left:4px solid #27ae60;padding:12px;margin:15px 0}
+.warning{background:#fef9e7;border-left:4px solid #f1c40f;padding:12px;margin:15px 0}
+code{background:#f4f6f7;padding:2px 6px;border-radius:3px;font-size:13px}
+.summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin:20px 0}
+.summary-card{background:#fff;border:1px solid #d5d8dc;border-radius:8px;padding:15px;text-align:center}
+.summary-card .number{font-size:28px;font-weight:700;color:#1a5276}
+.summary-card .label{font-size:13px;color:#7f8c8d;margin-top:5px}
+</style></head><body>
+<h1>R58 RL Prompt 预筛分与课程策略</h1>
+<p><strong>BaiZe Stage(ii) Post-Training</strong> · 2026-11-08 19:13 · 零 GPU · 纯 Python 3.8+</p>
+<div class="alert"><strong>背景</strong>：11/9 GPU 到位后，GRPO 训练将从 3347 个合成 RL prompt 中选题。
+R57（Vision GRPO 失败教训）揭示了 <code>std=0</code> 是 GRPO 失效的根因——
+当 G 条 rollout 全部落入同一奖励档时，advantage=0，零梯度。
+本工具在训练前预筛分每个 prompt 的预期信号强度，避免在零信号 prompt 上浪费 GPU。</div>
+<h2>1. 摘要</h2>
+<div class="summary-grid">
+<div class="summary-card"><div class="number">3347</div><div class="label">总 RL Prompt 数</div></div>
+<div class="summary-card"><div class="number" style="color:#27ae60">2037</div><div class="label">SIGNAL（有 GRPO 信号）</div></div>
+<div class="summary-card"><div class="number" style="color:#e67e22">0</div><div class="label">TOO_EASY（全过风险）</div></div>
+</div>
+<div class="summary-grid">
+<div class="summary-card"><div class="number" style="color:#c0392b">1310</div><div class="label">TOO_HARD（全挂风险）</div></div>
+<div class="summary-card"><div class="number">26.9%</div><div class="label">预期 std=0 率（R1 二值）</div></div>
+<div class="summary-card"><div class="number">78.8%</div><div class="label">信号密度（P(mixed)>0.5）</div></div>
+</div>
+<div class="success"><strong>核心结论</strong>：在 36% base rate + G=8 条件下，<strong>2037</strong> 个 prompt（60.9%）预期产生 GRPO 信号。
+预期 std=0 率 = <strong>26.9%</strong>（R1 二值臂），远低于 Vision 线的 78.7%（3.4× 信号改善），验证了 R57 的判断：BaiZe 36% base >> 9.2% → 更多组内方差 → 更少 std=0。</div>
+<h2>2. 预期通过率模型</h2>
+<p>使用 logistic 模型对每个 prompt 估计预期 Pass@1，校准到 36% base rate：</p>
+<pre style="background:#f4f6f7;padding:12px;border-radius:6px;font-size:13px">raw = base_rate + difficulty_mod + template_pen + api_count_pen + techlib_pen + return_type_pen + loc_pen
+pass_rate = sigmoid(5.0 * (raw - 0.5))</pre>
+<p>分类阈值（G=8，P(all same) > 0.30 → 排除）：</p>
+<ul><li><strong style="color:#e67e22">TOO_EASY</strong>：p > 0.875 → P(all pass) = p⁸ > 0.30 → 无信号</li><li><strong style="color:#27ae60">SIGNAL</strong>：0.125 ≤ p ≤ 0.875 → P(mixed) > 0.30 → 有信号</li><li><strong style="color:#c0392b">TOO_HARD</strong>：p < 0.125 → P(all fail) = (1-p)⁸ > 0.30 → 无信号</li></ul>
+<h2>3. 按难度等级分解</h2>
+<table><tr><th>难度</th><th>总数</th><th>预期通过率</th><th>SIGNAL</th><th>TOO_EASY</th><th>TOO_HARD</th><th>预期 std=0 (R1)</th><th>平均信号强度</th></tr><tr><td>L1</td><td>1500</td><td>72.7%</td><td>1500</td><td>0</td><td>0</td><td>7.9%</td><td>92.1%</td></tr>
+<tr><td>L2</td><td>347</td><td>41.3%</td><td>347</td><td>0</td><td>0</td><td>1.5%</td><td>98.5%</td></tr>
+<tr><td>L3</td><td>800</td><td>12.5%</td><td>190</td><td>0</td><td>610</td><td>34.7%</td><td>65.3%</td></tr>
+<tr><td>L4</td><td>500</td><td>5.0%</td><td>0</td><td>0</td><td>500</td><td>66.4%</td><td>33.6%</td></tr>
+<tr><td>L5</td><td>200</td><td>2.1%</td><td>0</td><td>0</td><td>200</td><td>84.2%</td><td>15.8%</td></tr>
+</table>
+<h2>4. 按断言模板分解</h2>
+<table><tr><th>模板</th><th>总数</th><th>预期通过率</th><th>SIGNAL</th><th>排除</th></tr><tr><td>T1_type_check</td><td>1847</td><td>66.8%</td><td>1847</td><td>0</td></tr>
+<tr><td>T3_chain_type</td><td>212</td><td>14.2%</td><td>116</td><td>96</td></tr>
+<tr><td>T4_state_verify</td><td>1088</td><td>8.7%</td><td>74</td><td>1014</td></tr>
+<tr><td>T5_behavior</td><td>200</td><td>2.1%</td><td>0</td><td>200</td></tr>
+</table>
+<h2>5. Vision 线对照（R57 数据）</h2>
+<table><tr><th>指标</th><th>Vision（9.2% base）</th><th>BaiZe 估计（36% base）</th><th>改善倍数</th></tr>
+<tr><td>Base Pass@1</td><td>9.2%</td><td>36.0%</td><td>3.9×</td></tr>
+<tr><td>std=0 率</td><td>78.7%</td><td>26.9%</td><td>—</td></tr>
+<tr><td>信号比例</td><td>21.3%</td><td>73.1%</td><td>3.4×</td></tr>
+</table>
+<div class="warning"><strong>关键区别</strong>：Vision 线 78.7% 的 std=0 组导致 GRPO v1-v4 全部失败。BaiZe 在 36% base 下预期 std=0 仅 26.9%（R1），但 L1 难度（7.9%）和 L5 难度仍需监控。建议从 <strong>R2 部分分档奖励</strong>起步（预期 std=0 仅 16.2%）。</div>
+<h2>6. 三阶段课程策略</h2>
+<h3>Phase 1: Smoke Test（管线验证）</h3>
+<table><tr><th>项目</th><th>值</th></tr>
+<tr><td>描述</td><td>Pipeline verification with easiest SIGNAL prompts</td></tr>
+<tr><td>Prompt 数</td><td>50</td></tr>
+<tr><td>预计步数</td><td>10</td></tr>
+<tr><td>难度分布</td><td>{'L1': 50}</td></tr>
+<tr><td>平均预期通过率</td><td>74.1%</td></tr>
+<tr><td>通过标准</td><td>Pipeline completes 10 steps without crash; avg reward > 0</td></tr>
+</table>
+<h3>Phase 2: Main Training（主力训练）</h3>
+<table><tr><th>项目</th><th>值</th></tr>
+<tr><td>描述</td><td>Full SIGNAL prompt set, signal-strength weighted</td></tr>
+<tr><td>Prompt 数</td><td>2037</td></tr>
+<tr><td>预计步数</td><td>500</td></tr>
+<tr><td>难度分布</td><td>{'L2': 347, 'L1': 1500, 'L3': 190}</td></tr>
+<tr><td>通过标准</td><td>Held-out pass rate improvement >= 3pp vs SFT baseline</td></tr>
+<tr><td>监控</td><td>std=0 > 60% x3 steps -> Dr.GRPO; std=0 > 70% -> G=12</td></tr>
+</table>
+<h3>Phase 3: Expansion（基线提升后扩题）</h3>
+<table><tr><th>项目</th><th>值</th></tr>
+<tr><td>新信号 prompt（base→50%）</td><td>1310</td></tr>
+<tr><td>触发条件</td><td>Phase 2 held-out pass rate >= 50%</td></tr>
+</table>
+<h2>7. 排除的 Prompt 分析</h2>
+<table><tr><th>排除类型</th><th>数量</th><th>按难度分布</th></tr>
+<tr><td>TOO_EASY</td><td>0</td><td>{}</td></tr>
+<tr><td>TOO_HARD</td><td>1310</td><td>{'L3': 610, 'L4': 500, 'L5': 200}</td></tr>
+</table>
+<h2>8. 11/9 操作建议</h2>
+<div class="success"><ol>
+<li><strong>基线复现后</strong>（~13h）：用 R55 D1-D6 分析器提取实测 pass rate，替换本工具的估计值</li>
+<li><strong>RL Smoke（Phase 1）</strong>：仅用 Phase 1 的 50 个 prompt，10 步验证管线</li>
+<li><strong>RL 主训练（Phase 2）</strong>：用全部 2037 个 SIGNAL prompt，从 <strong>R2 部分分档</strong>起步</li>
+<li><strong>Step 200 首次评估</strong>：std=0 > 60% × 3 步 → Dr.GRPO；> 70% → G=12</li>
+<li><strong>Step 500 held-out 检查</strong>：无改善 → per-scenario 分析 → 排除 0%/100% 场景</li>
+</ol></div>
+<h2>9. 方法论说明</h2>
+<div class="alert"><strong>局限性</strong>：预期通过率是<strong>启发式估计</strong>，非实测。11/9 基线跑完后需用实测值替换。Logistic 模型权重基于 D1-D6 诊断数据和领域经验标定，未经 GPU 验证。<br><strong>数据溯源</strong>：rl_pyaether_synth_v2.jsonl（3347 records）· R57 Vision GRPO · R55 D1-D6 · R48 预注册。无伪造。</div>
+<p style="text-align:center;color:#95a5a6;margin-top:40px">R58 · BaiZe Post-Train · 2026-11-08 19:13 · 零 GPU</p>
+</body></html>
