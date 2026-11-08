@@ -1,7 +1,9 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 0
 
-> 2026-11-08 21:37 #1722: **v5 eval监控轮·5s+5c全活·6/8done Avg6=53.38%不变·chunk3瓶颈27s/it ETA~3天**·**动作**:①git fetch+status(synced) ②5s health全OK(8183-8187) ③5c全活:piqa 293/3676(8%,25s/it,ETA~24h)+hs_c0 554/10044(6%,7s/it,ETA~19h)+hs_c1 717/10044(7%,4s/it,ETA~11h)+hs_c2 214/10044(2%,11s/it,ETA~31h)+hs_c3 207/10036(2%,27s/it,ETA~74h←瓶颈) ④6/8done不变Avg6=53.38%(arc_c=0.304/arc_e=0.655/boolq=0.587/obqa=0.266/sciq=0.842/wg=0.549,n=9585全量) ⑤两报告已交付:异常调查31KB结论A+speedup17KB ⑥GPU训练健康8×100%~75GB/卡 **计划**:下次唤醒①⭐确认server存活②监控eval→piqa完成后合并→hs全完成后算Avg8+更新报告③📦体积·📦TASK=31.2KB/MEMORY=31.7KB(归档1.5KB)·未完成指令:有(v5 eval运行中)⇒WAITING:0。
+> 2026-11-08 21:49 #1723: **v5 eval监控轮·5s+5c全活·6/8done Avg6=53.38%不变·chunk0 NUMA修复后最快2.3s/it·chunk2瓶颈22s/it ETA~59h**·**动作**:①git fetch+status(synced) ②5s health全OK(8183-8187) ③5c全活:piqa 315/3676(9%,31s/it,ETA~29h)+hs_c0 691/10044(7%,2.3s/it,ETA~6h←NUMA修复后最快)+hs_c1 838/10044(8%,9.6s/it,ETA~25h)+hs_c2 250/10044(2%,22s/it,ETA~59h←瓶颈)+hs_c3 246/10036(2%,17s/it,ETA~46h) ④6/8done不变Avg6=53.38% ⑤两报告已交付:异常调查31KB结论A+speedup17KB ⑥GPU训练健康8×68-100%~75GB/卡 **计划**:下次唤醒①⭐确认server存活②监控eval→hs_c0~6h先完成→piqa~29h→其余hs→算Avg8+更新报告③📦TASK=31.2KB/MEMORY=10.6KB·未完成指令:有(v5 eval运行中)⇒WAITING:0。
+
+> 📦 §#1722（11-08 21:37, v5 eval监控轮·5s+5c全活·chunk3瓶颈27s/it）→ daily-memories/2026-11-08.md「#1722」节；**结论**：5s+5c全活,Avg6=53.38%不变,chunk3=27s/it瓶颈ETA~74h。需要时再读。
 
 > 📦 §#1721（11-08 21:27, v5 eval监控轮·tqdm精确进度·hs chunk2/3木桶3x慢）→ daily-memories/2026-11-08.md「#1721」节；**结论**：5s+5c全活,Avg6=53.38%不变,chunk2/3比chunk0/1慢3x,不rebalance。需要时再读。
 
