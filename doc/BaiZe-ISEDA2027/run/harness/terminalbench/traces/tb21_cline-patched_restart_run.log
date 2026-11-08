@@ -1,0 +1,32 @@
+  89/89 Mean: 0.045 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 9:18:55 0:00:00
+terminal-bench • cline-patched
+┏━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━┓
+┃ Trials ┃ Exceptions ┃  Mean ┃
+┡━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━┩
+│     87 │         10 │ 0.045 │
+└────────┴────────────┴───────┘
+
+┏━━━━━━━━┳━━━━━━━┓
+┃ Reward ┃ Count ┃
+┡━━━━━━━━╇━━━━━━━┩
+│ 0.0    │    83 │
+│ 1.0    │     4 │
+└────────┴───────┘
+
+┏━━━━━━━━━━━━━━━━━━━┳━━━━━━━┓
+┃ Exception         ┃ Count ┃
+┡━━━━━━━━━━━━━━━━━━━╇━━━━━━━┩
+│ AgentTimeoutError │     9 │
+│ RuntimeError      │     1 │
+└───────────────────┴───────┘
+
+Job Info
+Total runtime: 9h 18m 55s
+Results written to 
+/tmp/tb21_glm53_jobs/cline-patched/2026-11-08__10-13-44/result.json
+Inspect results by running `harbor view /tmp/tb21_glm53_jobs/cline-patched`
+Share results by running `harbor upload 
+/tmp/tb21_glm53_jobs/cline-patched/2026-11-08__10-13-44`
+
+19:32:40 - LiteLLM:WARNING: get_model_cost_map.py:315 - LiteLLM: model cost map fetch attempt 1/3 failed (ConnectError fetching https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json: [Errno 101] Network is unreachable); retrying in 2.6s
+19:32:40 - LiteLLM:WARNING: get_model_cost_map.py:672 - LiteLLM: Failed to fetch remote model cost map from https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json: ConnectError fetching https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json: [Errno 101] Network is unreachable. Falling back to local backup.
