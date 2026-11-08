@@ -1302,3 +1302,23 @@ tjzn5					parked		2026-11-07 12:29	env Q&A + skill-creator usage (#352 peek weak
 1793169357173_woanw.messages.json	lorikx	hfeg0pkn001	108	waveform	case	EDA-Eval-DesignFlow-SimFailFsdbProbe-001	2026-11-08 10:24	
 1786712832784_odo3s.messages.json	e0014566	hfeg0pkn001	334	analog_context	case	EDA-Eval-DesignFlow-RsCalcCpSync-001	2026-11-08 10:57	
 1787318451519_5hrad.messages.json	e0014566	hfeg0pkn005	328	analog_context	case	EDA-Eval-DesignFlow-AutoCellRmAvPf-001	2026-11-08 11:11	
+1792395564570_r3gb7					parked		2026-11-08 11:45	wrong-shard: RTL lint + synthesis flow (.v synth), not shard D
+1782728857158_05p8p					parked		2026-11-08 11:45	non-seed: Virtuoso connection troubleshooting (env/setup, no design deliverable)
+1789887279405_ve67l					parked		2026-11-08 11:45	non-seed: execute README.md step 1 (vague intent, cosim execution)
+1790230469843_kzlkh					parked		2026-11-08 11:45	wrong-shard: DRC testpattern generator (physical_verify, shard C)
+1787122756811_pj0ax					parked		2026-11-08 11:45	dup: rscalc RTEXT+checkPoints = RsCalcChk-001 (ovo6z, same user words)
+1783580842066_09kkp					parked		2026-11-08 11:45	x
+1785932055598_55ms0					parked		2026-11-08 11:45	non-seed: powerfill resistance debug (user cites root cause=配置问题)
+1788147634807_soqbk					parked		2026-11-08 11:45	non-seed: meta read prompt_flow.md + dup rscalc dist report (vs RsDistReport-001)
+1783596713423_53n4v					parked		2026-11-08 11:45	non-seed: hello + meta read prompt_powerfill.md
+1793610069180_jq7tt					parked		2026-11-08 11:45	non-seed: dspf script arg error debug (fix-this-script)
+1792202007838_ms1ia					parked		2026-11-08 11:45	non-seed: how to connect workspace (setup question)
+1793864108921_6g756					parked		2026-11-08 11:45	non-seed: analyze circuit module working principle (Q&A, 13 msgs)
+1791954772268_0p3qp					parked		2026-11-08 11:45	non-seed: Finger Crossed Bit-line Coupling knowledge Q&A (DRAM concept)
+1790163316310_0wjop					parked		2026-11-08 11:45	non-seed: how to input Chinese (UI/setup)
+1793847299644_hu27g					parked		2026-11-08 11:45	non-seed: sim input.log exit debug (log analysis)
+1792467113057_ny0wi					parked		2026-11-08 11:45	non-seed: DDCPB test mode tutorial materials Q&A
+1791964201857_q7jyk					parked		2026-11-08 11:45	non-seed: translate EDA warning summary to Chinese (translation)
+1793079626059_uhxqp					parked		2026-11-08 11:45	non-seed: how to deploy agent on Zhulong (harness meta, 105 msgs)
+1793861357108_vagnh					parked		2026-11-08 11:45	wrong-shard: synthesis dc.tcl/Makefile dc.log error debug (digital_impl)
+1793692406403_lcg3v					parked		2026-11-08 11:45	non-seed: siliconSmart char hspice failure debug (spice_sim/characterization, borderline shard B; user cites failure)
