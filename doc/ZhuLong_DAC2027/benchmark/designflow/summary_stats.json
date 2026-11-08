@@ -24,18 +24,30 @@
   "prev_sessions": 3896,
   "scan_path": "/home/t0002965/log/ssh_eda_search_20261105_192825/summary.tsv",
   "scansync": {
-    "r226": {
-      "case_delivered": "EDA-Eval-DesignFlow-SgeStdcellPortDiagnose-001 (a2an2 johnl SGE synthesis stdcell port mismatch, digital L1-static 13 conds a-m)",
+    "r231": {
       "daily_log_20261108_lines": 2893,
       "daily_log_20261108_sessions": 2889,
       "date": "2026-11-08",
-      "finding": "r225 ON-DISK EXHAUSTION was FALSE ALARM: .cline layout changed to per-session dirs (<sid>/<sid>.messages.json), files still on disk. Verified chengleiy@hfeg0pkn005 fi203/ty6oq/hyalb/uaas3/f1fik present in new layout. Probe hfhds221-234 hosts: many fresh sessions on-disk (aocao/dsgao/bin1y/serwing/tzuo users). 158 fresh digital-keyword candidates (mc>=15) but most analog-leaning by tools col; on-disk fresh: fdnle/u0mwh/a2an2/as67p/okq91.",
+      "dedup_hosts": 42,
+      "dedup_sessions": 3896,
+      "dedup_users": 268,
+      "finding": "No new scan since 11/05 (r226). Numbers identical to r226. Daily scan log 20261108 healthy (2893 lines >100). Pool A mc15=216 unchanged.",
+      "mc100": 865,
+      "mc30": 1511,
+      "mc300": 252,
+      "new_sessions": 0,
       "no_new_scan": true,
       "pool_A_mc15": 216,
       "pool_B_mc30": 642,
       "pool_C_mc30": 935,
       "pool_D_mc30": 1168,
-      "scan_dir": "ssh_eda_search_20261105_192825"
+      "scan_dir": "ssh_eda_search_20261105_192825",
+      "shard_A_new": 0,
+      "shard_B_new": 0,
+      "shard_C_new": 0,
+      "shard_D_new": 0,
+      "total_rows": 5822,
+      "users_mc30": 224
     }
   },
   "sessions": 3896,
@@ -47,7 +59,7 @@
   },
   "source": "/home/t0002965/log/ssh_eda_search_20261105_192825/summary.tsv (11/05 scan)",
   "target_mc": 30,
-  "updated_at": "2026-11-08 09:22",
+  "updated_at": "2026-11-08 12:06",
   "users_mc100": 182,
   "users_mc30": 224,
   "users_mc300": 60,
