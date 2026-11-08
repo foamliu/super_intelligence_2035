@@ -512,18 +512,19 @@ qnm9e					parked		2026-11-08 01:58	Finesim DC convergence Q&A prose dup of uky6c
 1792204349915_1g0xs	xinweif	hfeg0pkn005	28	spice_sim	case	EDA-Eval-DesignFlow-HierarchyTrace-001	2026-11-08 22:25	FineSim netlist hierarchy check debug (check_hierarchy.py); 暂缓 archive 待查
 1793187039315_agw7c	e0046686	hfeg0pkn005	27	spice_sim	parked		2026-11-08 21:5x	autosim script dev (C++ MainWindow/onAddInstance), wrong-shard; REJECT
 1793180163422_wz7gy	e03179	hfeg0pkn002	26	spice_sim	parked		2026-11-08 21:5x	script dev (gen_bnk_va/argparse/profile_analyzer), wrong-shard; REJECT
-1790128216866_kbs81	e02141	hfeg0pkn001	13	spice_sim	parked		scout_1109_23: SWB TCAD project creation (sprocess/sdevice/svisual), not IC spice_char; REJECT wrong-shard
-1789975159435_j1gy6	rongjiez	hfeg0pkn005	12	spice_sim	parked		scout_1109_23: Perl .lib SHRINK parse; no A-faithful turn (all contain root-cause/fix-direction); REJECT
-1792570696255_obhqj	ypzheng	hfeg0pkn003	11	spice_sim	parked		scout_1109_23: U#0 "分析这个sp文件最好是逐行解析" = consulting/explanation, not design_flow deliverable; REJECT
-1793877281100_262wq	allenzh	hfeg0pkn004	9	spice_sim	parked		scout_1109_23: NMSG=2 UTURNS=1, U#0 is HSPICE banner paste only, no task; REJECT too-short
-1793770158127_wb9zm	nevinrao	hfeg0pkn001	9	spice_sim	parked		scout_1109_23: LPDDR5 burnin pattern writing (verilog), not spice_char; REJECT wrong-shard
-1791944653526_tdbc1	e0029495	hfeg0pkn002	9	spice_sim	parked		scout_1109_23: "怎么找delta" consulting on coarse-bracket .sp, not design_flow deliverable; REJECT
-1789545210038_ep9m4	lorikx	hfeg0pkn004	9	spice_sim	parked		scout_1109_23: Verilog sim FAIL analysis (sp_sram.v/tb_sp_sram.v), not spice; REJECT wrong-shard
-1789552395398_wt5s2	lorikx	hfeg0pkn004	9	spice_sim	parked		scout_1109_23: dup of ep9m4 (same user same Verilog sim FAIL task); REJECT wrong-shard
-1793786362791_uvxvv	berylwu	hfeg0pkn002	8	spice_sim	parked		scout_1109_23: job management "查看正在run的job卡死重新提交", not spice; REJECT wrong-shard
-1790659224643_m273z	t0002987	hfeg0pkn005	8	spice_sim	parked		scout_1109_23: agent logging dev "怎么增加log信息应对agent卡慢", not spice; REJECT wrong-shard
-1792724490907_5vb3f	thomasz	hfeg0pkn002	7	spice_sim	parked		scout_1109_23: PAD file generation script (Totem IR/PG), not spice_char; REJECT wrong-shard
-1793078652491_wk3wd	cliu	hfeg0pkn004	7	spice_sim	parked		scout_1109_23: vsim_report script optimization (verilog regression report), not spice; REJECT wrong-shard
-1788417639556_79j7l	shaoyou	hfeg0pkn003	6	spice_sim	parked		scout_1109_23: trivial file ops (copy .bashrc / add "hello" to file), not spice; REJECT
-1790058749132_f0qtv	t0002987	hfeg0pkn005	6	spice_sim	parked		scout_1109_23: zhulong agent client VM issues (Chinese garble/session stall), not spice; REJECT wrong-shard
-1793955925596_5cgk3	rongjiez	hfeg0pkn005	5	spice_sim	parked		scout_1109_23: waveform compare script batch -reuse param add (compare_wave_new.pl), not spice_char; REJECT wrong-shard
+1790128216866_kbs81	e02141	hfeg0pkn001	13	spice_sim	parked		scout_1109_23: SWB TCAD project creation (sprocess/sdevice/svisual), not IC spice_char; REJECT wrong-shard	
+1789975159435_j1gy6	rongjiez	hfeg0pkn005	12	spice_sim	parked		scout_1109_23: Perl .lib SHRINK parse; no A-faithful turn (all contain root-cause/fix-direction); REJECT	
+1792570696255_obhqj	ypzheng	hfeg0pkn003	11	spice_sim	parked		scout_1109_23: U#0 "分析这个sp文件最好是逐行解析" = consulting/explanation, not design_flow deliverable; REJECT	
+1793877281100_262wq	allenzh	hfeg0pkn004	9	spice_sim	parked		scout_1109_23: NMSG=2 UTURNS=1, U#0 is HSPICE banner paste only, no task; REJECT too-short	
+1793770158127_wb9zm	nevinrao	hfeg0pkn001	9	spice_sim	parked		scout_1109_23: LPDDR5 burnin pattern writing (verilog), not spice_char; REJECT wrong-shard	
+1791944653526_tdbc1	e0029495	hfeg0pkn002	9	spice_sim	parked		scout_1109_23: "怎么找delta" consulting on coarse-bracket .sp, not design_flow deliverable; REJECT	
+1789545210038_ep9m4	lorikx	hfeg0pkn004	9	spice_sim	parked		scout_1109_23: Verilog sim FAIL analysis (sp_sram.v/tb_sp_sram.v), not spice; REJECT wrong-shard	
+1789552395398_wt5s2	lorikx	hfeg0pkn004	9	spice_sim	parked		scout_1109_23: dup of ep9m4 (same user same Verilog sim FAIL task); REJECT wrong-shard	
+1793786362791_uvxvv	berylwu	hfeg0pkn002	8	spice_sim	parked		scout_1109_23: job management "查看正在run的job卡死重新提交", not spice; REJECT wrong-shard	
+1790659224643_m273z	t0002987	hfeg0pkn005	8	spice_sim	parked		scout_1109_23: agent logging dev "怎么增加log信息应对agent卡慢", not spice; REJECT wrong-shard	
+1792724490907_5vb3f	thomasz	hfeg0pkn002	7	spice_sim	parked		scout_1109_23: PAD file generation script (Totem IR/PG), not spice_char; REJECT wrong-shard	
+1793078652491_wk3wd	cliu	hfeg0pkn004	7	spice_sim	parked		scout_1109_23: vsim_report script optimization (verilog regression report), not spice; REJECT wrong-shard	
+1788417639556_79j7l	shaoyou	hfeg0pkn003	6	spice_sim	parked		scout_1109_23: trivial file ops (copy .bashrc / add "hello" to file), not spice; REJECT	
+1790058749132_f0qtv	t0002987	hfeg0pkn005	6	spice_sim	parked		scout_1109_23: zhulong agent client VM issues (Chinese garble/session stall), not spice; REJECT wrong-shard	
+1793955925596_5cgk3	rongjiez	hfeg0pkn005	5	spice_sim	parked		scout_1109_23: waveform compare script batch -reuse param add (compare_wave_new.pl), not spice_char; REJECT wrong-shard	
+1794133519350_pchuf	harrywu	hfeg0pkn002	1005	spice_sim	case	EDA-Eval-DesignFlow-ClampPwrStateExtract-001	2026-11-09 00:14	
