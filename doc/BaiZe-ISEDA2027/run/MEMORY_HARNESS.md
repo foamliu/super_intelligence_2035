@@ -4,14 +4,14 @@ WAITING: 0
 
 ## 📊 进度快照
 
-PHASE:        R1929 监控+kill+eval+报告轮·gateway 200·codex predict killed(500DONE·空patch循环)→merge+eval launched·TB-2.1用reward.txt重算(数字修正)·双报告更新R1929·CPU/MEM PASS
-已完成:       H-B✅·Gate7/7·TB报告✅·full500✅·cline专项C1-C5+报告R1785-R1929·TB4 0passed(能力)·TB-2.1 oracle5/5✅·§15:2x判据MET✅·R1789 eval 7/7DONE✅·R1804双报告交付✅·R1814-R1928 predict推进+TB-2.1并行+gateway恢复·R1929 codex kill+eval+报告更新
-当前动作:     R1929:①CPU/MEM PASS(load67/224=30%·mem797G/avail1082G·无失控>8000%) ②体积:TASK=30306B(29.6KB)/MEMORY归档后≤32KB✅ ③gateway:9092=200/9093=200 ④codex predict killed PID2024047(500/500DONE·44r/456e·is_predicted()对空patch返回False导致循环)→merge 44r→eval launched(44题·Docker运行中·astropy__astropy-12907) ⑤predict 6路alive 2405/3500:cline279(112r)·opencode327(238r)·cc482(71r)·pi209(66r)·hermes405(246r)·dsh203(83r) ⑥TB-2.1 reward.txt重算(修正):cline14p/88done·codex7p/12·opencode20p/34·cc14p/58·pi26p/70·hermes5p/54·dsh15p/22·总111p ⑦双报告更新R1929:report_harness_glm53_7way_swebench_tb_zh.html(8131B)+report_harness_tb21_7way_zh.html(7385B) ⑧cline C4:cline279(112r/167e=40.1%)·TB-2.1 cline14p/88done(15.9%)·real复产中(gateway200) ⑨未完成指令:有(§22:4x+§10:10)⇒W:0
-下一步:       ①codex eval完成后更新eval结果到报告 ②predict 6路推进至500 ③TB-2.1 cline 88/89近完成·opencode/hermes rerun待全DONE ④TB-2.1全DONE后聚合最终7路报告+可辨识性闸门(research建议)
-阻塞:         无(gateway 200·codex eval Docker运行中·6路predict alive)
+PHASE:        R1930 监控+报告轮·gateway 200·predict 2429/3500(69.4%)·real 875·TB-2.1 103p·双报告更新R1930·CPU/MEM PASS
+已完成:       H-B✅·Gate7/7·TB报告✅·full500✅·cline专项C1-C5+报告R1785-R1930·TB4 0passed(能力)·TB-2.1 oracle5/5✅·§15:2x判据MET✅·R1789 eval 7/7DONE✅·R1804双报告交付✅·R1814-R1929 predict推进+TB-2.1并行+gateway恢复+codex eval·R1930 监控+双报告更新
+当前动作:     R1930:①CPU/MEM PASS(load77/224=35%·mem804G/avail1073G·无失控>8000%) ②体积:TASK=30306B(29.6KB)/MEMORY~29KB·均≤32KB✅ ③gateway:9092=200/9093=200 ④predict 6路alive 2429/3500(69.4%):cline285(115r)·codex500DONE(44r)·opencode332(243r)·cc484(72r)·pi211(68r)·hermes410(249r)·dsh207(84r)·real=875·empty=1554 ⑤codex eval rebalance_chunk2运行中(已eval 8题·6resolved/2failed=75%) ⑥TB-2.1 aggregated(全run去重):cline15p/88·codex7p/12·opencode21p/37·cc14p/58·pi26p/70·hermes5p/54·dsh15p/22·总103p ⑦双报告更新R1930:main 8356B+tb21 7578B(gen_report_r1930.py) ⑧TB-2.1 rerun:6docker compose alive(torch-tensor-parallel/sanitize-git/install-windows/filter-js/caffe-cifar/pipeline-parallel) ⑨cline C4:cline285(115r/170e=40.4%)·TB-2.1 15p/88(17.0%)·real复产中(gateway200) ⑩未完成指令:有(§22:4x+§10:10)⇒W:0
+下一步:       ①codex eval rebalance完成后更新eval结果到报告 ②predict 6路推进至500(codex DONE·cc 484近完成) ③TB-2.1 cline 88/89·opencode 37/89·hermes 54/89 rerun推进→待全DONE ④TB-2.1全DONE后聚合最终7路报告+可辨识性闸门(research建议)
+阻塞:         无(gateway 200·6路predict alive·codex eval rebalance运行中·TB-2.1 rerun alive)
 ERROR_COUNT:  0
-  📦 体积：TASK=30306B(29.6KB) / MEMORY=~27KB(归档R1926-R1927流水→daily)·均≤32KB✅
-  🔍 cline专项小结: predict cline279(112r/167e=40.1%)·TB-2.1 cline14p/88done(15.9%)·C2 empty top1=quota(429·已恢复gateway200)·C3 resume fix✅·real复产中
+  📦 体积：TASK=30306B(29.6KB) / MEMORY=~29KB·均≤32KB✅
+  🔍 cline专项小结: predict cline285(115r/170e=40.4%)·TB-2.1 cline15p/88done(17.0%)·C2 empty top1=quota(429·已恢复gateway200)·C3 resume fix✅·real复产中(115+)
 ```
 
 > 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
@@ -38,6 +38,7 @@ ERROR_COUNT:  0
 > 📦 R1926-R1928 流水(02:35~02:55,3轮监控·gateway 200·predict 2384→2401/3500·TB-2.1 4DONE+3RUN·CPU/MEM PASS·hermes predict STALLED→RESTARTED)已归档 → daily-memories-harness/2026-11-09.md。
 
 > [03:15] R1929 监控+kill+eval+报告轮·gateway 200·codex predict killed→eval launched·TB-2.1 reward.txt重算·双报告更新·CPU/MEM PASS:①CPU/MEM PASS ②gateway:9092=200/9093=200 ③codex predict PID2024047 killed(500/500DONE·44r/456e·is_predicted()对空patch返False致循环)→merge 44r→eval launched(Docker运行中) ④predict 6路alive 2405/3500:cline279(112r)·opencode327(238r)·cc482(71r)·pi209(66r)·hermes405(246r)·dsh203(83r) ⑤TB-2.1 reward.txt重算(修正):cline14p/88·codex7p/12·opencode20p/34·cc14p/58·pi26p/70·hermes5p/54·dsh15p/22·总111p ⑥双报告R1929:main 8131B+tb21 7385B ⑦cline C4:cline279(112r/167e=40.1%)·TB-2.1 14p/88(15.9%) ⑧未完成指令:有(§22:4x+§10:10)⇒W:0
+> [03:30] R1930 监控+报告轮·gateway 200·predict 2429/3500(69.4%)·real 875·TB-2.1 103p·双报告更新R1930·CPU/MEM PASS:①CPU/MEM PASS(load77/224=35%·mem804G/avail1073G·无失控>8000%) ②体积:TASK=30306B(29.6KB)/MEMORY~29KB·均≤32KB✅ ③gateway 200 ④predict 6路alive:cline285(115r)·codex500DONE(44r)·opencode332(243r)·cc484(72r)·pi211(68r)·hermes410(249r)·dsh207(84r) ⑤codex eval rebalance_chunk2运行中(8题evalled·6res/2fail=75%) ⑥TB-2.1 aggregated(全run去重):cline15p/88·codex7p/12·opencode21p/37·cc14p/58·pi26p/70·hermes5p/54·dsh15p/22·总103p(+2 from R1929) ⑦双报告R1930:main 8356B+tb21 7578B(gen_report_r1930.py) ⑧TB-2.1 rerun 6docker compose alive ⑨cline C4:cline285(115r/170e=40.4%)·TB-2.1 15p/88(17.0%) ⑩未完成指令:有(§22:4x+§10:10)⇒W:0
 
 > [02:35] R1926 监控轮·gateway 200(9092+9093)·predict 2384/3500 real=851·TB-2.1 rerun 4DONE+3RUN·CPU/MEM PASS:①CPU load64/224·avail1.1T·harness无>8000%·top=pretrain llama-server(767%)非本线 ②体积:TASK=30306B(29.6KB)/MEMORY归档R1831-R1833后≤32KB✅ ③硬盘:/data 18%//4% ④gateway:9092=200/0.08s+9093=200/0.06s(direct=401=dummy key预期) ⑤predict 7路alive 2384/3500 real=851:cline278(112r)·codex500(44r·DONE)·opencode322(235r)·cc479(70r)·pi203(64r)·hermes403(244r)·dsh199(82r) ⑥TB-2.1 rerun 4DONE+3RUN:codex1p(88err·DONE)·opencode20p(59err·DONE)·hermes2p(36err·DONE)·dsh7p(77err·DONE)·cline5p(80d/8pend·RUN)·cc2p(21d/67pend·RUN)·pi5p(36d/52pend·RUN) ⑦cline C4:cline278(112r/166e=40.3%·gateway200复产中)·TB-2.1 cline5p ⑧未完成指令:有(§22:4x+§10:10)⇒W:0
 
