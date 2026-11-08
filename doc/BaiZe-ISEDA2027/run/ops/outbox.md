@@ -27241,3 +27241,37 @@ post    n=0
 
 === 254 done ===
 ```
+
+---
+
+## RUN_ID 255 · 2026-11-08 12:43:34 · host=`whag0pgpuap12` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 255 | debug parser | $(date '+%F %T') | host=$(hostname) ==="
+SSH="ssh -o BatchMode=yes -o ConnectTimeout=6 -o StrictHostKeyChecking=no"
+$SSH 10.239.2.29 'echo "-- analyzer section --"; sed -n "/--- step-time buckets/,/--- last 14 step lines/p" /tmp/baize_ab_analyze.txt | head -25; echo; echo "-- grep count --"; grep -c "elapsed time per iteration" /tmp/baize_s1_baize2b_master.log; echo "-- raw tail (cat -A, 200 cols) --"; grep "elapsed time per iteration" /tmp/baize_s1_baize2b_master.log | tail -2 | cut -c1-200 | cat -A; echo "-- log mtime/size --"; stat -c "%y %s" /tmp/baize_s1_baize2b_master.log'
+echo
+echo "=== 255 done ==="
+```
+
+**输出**
+```
+=== RUN_ID 255 | debug parser | 2026-11-08 12:43:34 | host=whag0pgpuap12 ===
+-- analyzer section --
+--- step-time buckets (from log) ---
+pre     n=0
+FROZEN  n=0
+post    n=0
+
+--- last 14 step lines ---
+
+-- grep count --
+0
+-- raw tail (cat -A, 200 cols) --
+-- log mtime/size --
+2026-11-08 12:43:12.902388294 +0800 853942
+
+=== 255 done ===
+```
