@@ -7,12 +7,12 @@ WAITING: 1
 
 ## 进度快照
 
-- PHASE: posttrain-wake107（2026-11-08 R59: GRPO训练动力学蒙特卡洛模拟器→baize_posttrain_grpo_dynamics_sim.py ~555行+40次模拟(10MC×4臂×200步×80prompt)+R3最优(增益+0.0134/std=0=0%)+std=0=0-1.1% vs vision 78.7%=70x改善+无作弊+Dr.GRPO未触发→R3方向「GRPO稳定性·动力学模拟」完成）
-- 已完成: P3预备✅ 7脚本；P0✅ D1–D6；P1✅ 数据盘点+PyAether语料+污染隔离；P2✅ 方案书；R1-R59✅；wake107✅ R59(GRPO动力学模拟器)
-- 当前动作: wake107 R59: ①创建baize_posttrain_grpo_dynamics_sim.py(~555行,纯Python3.8+,0依赖) ②GRPO步级模拟:G=8 rollouts/prompt,组内优势A=(r-μ)/σ,策略改进pr←clip(lr×|adv|×(mean_r-old)×10,±0.2) ③4臂奖励:R1二值/R2 4档分箱/R3 R2+工具惩罚/R4 R3+API合法性 ④三阶段课程:Phase1(50p/10s)→Phase2(2037/500s)→Phase3(+1310) ⑤作弊检测:mean_r>0.7&pass<0.3 ⑥10MC×4臂=40次模拟(200步×80prompt/步) ⑦py_compile✅+dry-run✅+full run✅ ⑧结果:R3最优(增益+0.0134,std=0=0%),std=0全臂0-1.1% vs vision 78.7%=70x改善,无作弊,Dr.GRPO未触发 ⑨JSON 946KB+HTML 19.2KB ⑩EXPERIMENTS §R59(8小节)
-- 下一步: ①11/9 GPU到位→gpu_watcher自动检测→NFS warm-up ②sglang_preflight→GO ③launch_11_9.sh steps 0-5 ④方案C:先完整基线13h→D1-D6分析→用实测pass rate替换R58/R59估计 ⑤RL smoke Phase1(50个SIGNAL prompt,10步)→校准 ⑥RL main Phase2(2037 SIGNAL prompt,从R2起步,500步) ⑦Step200检查std=0>60%→Dr.GRPO(模拟预测不太可能触发) ⑧按R48预注册+R57风险缓解+R58课程+R59动力学建议执行4臂消融 ⑨正式训练待pretrain ckpt(ETA≈2026-12-25)
+- PHASE: posttrain-wake108（2026-11-08 R60: 多轮EDA RL上下文窗口预算分析→baize_posttrain_ctx_budget_analyzer.py ~315行+103 DeepSeek轨迹实测(mean 28339 tok/任务)+5窗口投影(4096→99%截断/8192→98%/16384→82%/32768→32%/65536→3%)+KV cache预算(ctx32768 bs8=10.5GB/卡✅A40可行)+策略B工具摘要(可减60-80%user tok)+假阴性奖励量化(8192→29.4% rollout误判)+6项发射建议(RL脚本补ctx/SFT升16384/基线用32768)）
+- 已完成: P3预备✅ 7脚本；P0✅ D1–D6；P1✅ 数据盘点+PyAether语料+污染隔离；P2✅ 方案书；R1-R60✅；wake108✅ R60(上下文窗口预算)
+- 当前动作: wake108 R60: ①创建baize_posttrain_ctx_budget_analyzer.py(~315行,纯Python3.8+,0依赖) ②实测103 DeepSeek轨迹:mean 28339 tok/任务,中位23906,P90 44996,角色user 60.7%/assistant 39.3% ③5窗口投影:4096→99%截断(78.1%轮次丢失),8192→98%,16384→82%,32768→32%(10.1%),65536→3% ④KV cache:ctx32768 bs8=10.5GB,总14.58GB/卡,A40✅剩余29.42GB ⑤截断策略B(工具结果摘要,可减60-80% user tok) ⑥假阴性奖励:8192→29.4% rollout误判 ⑦6项发射建议:RL脚本补CONTEXT_LEN=32768/SFT升16384/基线用32768 ⑧py_compile✅+dry-run✅+full run✅ ⑨HTML 18.7KB(8节,0script,0外链) ⑩EXPERIMENTS §R60(8小节)
+- 下一步: ①11/9 GPU到位→gpu_watcher自动检测→NFS warm-up ②sglang_preflight→GO ③launch_11_9.sh steps 0-5 ④RL脚本补丁:添加CONTEXT_LEN=32768(R60发现当前缺失) ⑤SFT默认CONTEXT_LEN升8192→16384 ⑥方案C:先完整基线13h(用32768上下文)→D1-D6分析→用实测替换R58/R59/R60估计 ⑦RL smoke Phase1(50个SIGNAL prompt,10步)→校准 ⑧RL main Phase2(2037 SIGNAL prompt,从R2起步,500步) ⑨正式训练待pretrain ckpt(ETA≈2026-12-25)
 - 阻塞: GPU 2026-11-09既定到位(明天);P3等pretrain ckpt(ETA≈2026-12-25)
-- 未完成指令: 无（R1✅...R59✅E1✅ 全部完成）⇒ WAITING=1
+- 未完成指令: 无（R1✅...R60✅E1✅ 全部完成）⇒ WAITING=1
 
 ## 关键事实（常驻）
 
@@ -29,6 +29,7 @@ WAITING: 1
 - 🔴 **CUDA 不匹配（wake53 发现 → ✅ R25 已解决）**：系统 CUDA 驱动=12.4（nvcc 12.4.131, 驱动550.54.14），旧 vllm_venv torch=2.14.0+cu130 → `torch.cuda.is_available()=False`。✅ **R25 修复**：新建 cu124 venv `~/code/verl_cu124_venv/`（Python 3.10.22, torch 2.6.0+cu124）→ 包已确认安装（site-packages: sglang 0.4.6 + verl + flash_attn 2.7.4 + ray + flashinfer 0.2.3）。⚠️ NFS冷启动 import torch >30s（R45实测），起跑前需 warm-up。
 - 🔴 **R9 verl+SGLang 集成（wake57 发现）**：verl 原生支持 SGLang（`pip install verl[sglang]`），多轮工具调用**仅 SGLang** 支持。配置已从 vLLM 切到 SGLang（`rollout.name: sglang` + `multi_turn: True` + `mode: async`）。EDA 沙盒工具骨架 `baize_posttrain_eda_tool.py` 已创建（BaseTool 子类，dry-run✅）
 - SFT 语料：✅ v1 `sft_pyaether_corpus.jsonl`(19610对,0污染) + ✅ v2 `sft_pyaether_corpus_v2.jsonl`(19524对,64% has-args,0污染,R24) — **v2 替代 v1 用于训练**
+- 🔴 **R60 上下文窗口发现（wake108）**：DeepSeek 全 harness 轨迹平均 **28,339 tokens**（中位 23,906），是 4096 的 6.9x。4096→99%截断 / 8192→98% / 16384→82% / **32768→32%（推荐）** / 65536→3%。KV cache ctx32768 bs8 = 10.5GB/卡，A40 ✅ 可行。SFT 默认 8192 必须升级到 ≥16384；RL 脚本当前**缺失**上下文配置，需补 CONTEXT_LEN=32768。截断→假阴性奖励（8192 下约 29.4% rollout 误判）→支持从 R2 起步。
 - RL/SFT Parquet：✅ **已转换**（R10）`run/rl_pyaether_synth_v2.parquet`（3347 records, 931KB, verl RLHF 格式: prompt+reward_model+agent_name）+ `run/sft_pyaether_corpus.parquet`（19610 records, 2.7MB, verl SFT 格式: conversation+metadata）
 - 🔴 **R11 GRPO 内存校准（wake59 发现）**：当前 `gpu_memory_utilization=0.35` 在多轮 3-turn 场景下**可能 OOM**——KV cache 需 13.8GB > 分配 11.9GB。已校准为 **0.50 + max_num_seqs=12**。训练态 ~12GB/卡，剩余 ~34GB 给 SGLang。4×A40 对 2B 全参 GRPO 是充裕配置（verl 官方 3B LoRA 需 1×H100）。添加 entropy_checkpointing + entropy_chunking 优化。5 级 OOM 降级阶梯已写入 §R11。
 - 论文章节：`BaiZe-ISEDA2027/ISEDA2027/5_llm_posttrain.tex`（已写设计，结果=[TBD]）
@@ -56,8 +57,8 @@ WAITING: 1
 > 📦 wake86–wake91 (R38–R43) 已归档 → daily-memories-posttrain/2026-11-08.md（Day-1执行手册/评测分析管线/数据质量审计/Day-0集成审计/发射前排演/smoke校准器）。
 
 
-> 📦 wake92–wake104 (R44–R56) 已归档 → daily-memories-posttrain/2026-11-08.md（基线验收门/物理核验/GPU watcher/verl审计/奖励预注册/配置审计/SGLang兼容/风险登记册/调度优化/Ray patch/预发射验证/D1-D6分析/SFT混合管线）。
+> 📦 wake92–wake105 (R44–R57) 已归档 → daily-memories-posttrain/2026-11-08.md（基线验收门/物理核验/GPU watcher/verl审计/奖励预注册/配置审计/SGLang兼容/风险登记册/调度优化/Ray patch/预发射验证/D1-D6分析/SFT混合管线/Vision GRPO教训）。
 
-[wake105] R57 Vision线GRPO失败教训→BaiZe RL风险缓解手册: vision GRPO v1-v4全失败(std=0=78.7%根因)→5臂风险评估+8项风险映射+10维对比→建议从R2起步→EXPERIMENTS §R57+HTML 8.4KB。未完成指令：无⇒WAITING=1。
-[wake106] R58 RL Prompt预筛分与课程策略: 3347 prompt预筛分+2037 SIGNAL(60.9%)+预期std=0=26.9% vs vision 78.7%=3.4x+三阶段课程→baize_posttrain_rl_prompt_prescreen.py ~430行+JSON 57KB+HTML 8.6KB→EXPERIMENTS §R58。未完成指令：无⇒WAITING=1。
-[wake107] R59 GRPO训练动力学蒙特卡洛模拟器: 体积自检(TASK=24.7KB/MEMORY=29.2KB合规)→git status(## main...origin/main已同步)→R59: ①创建baize_posttrain_grpo_dynamics_sim.py(~555行,纯Python3.8+,0依赖) ②GRPO步级模拟:G=8 rollouts/prompt,组内优势A=(r-μ)/σ,策略改进pr←clip(lr×|adv|×(mean_r-old)×10,±0.2) ③4臂奖励:R1二值/R2 4档分箱/R3 R2+工具惩罚/R4 R3+API合法性 ④三阶段课程:Phase1(50p/10s)→Phase2(2037/500s)→Phase3(+1310) ⑤作弊检测:mean_r>0.7&pass<0.3 ⑥10MC×4臂=40次模拟(200步×80prompt/步) ⑦py_compile✅+dry-run✅(20sims)+full run✅(40sims) ⑧结果:R3最优(增益+0.0134,std=0=0%),std=0全臂0-1.1% vs vision 78.7%=70x改善,无作弊(全臂0%),Dr.GRPO未触发 ⑨JSON 946KB+HTML 19.2KB(8节,0script,0外链) ⑩EXPERIMENTS §R59(8小节) ⑪归档wake92-wake104到daily-memories。📦 体积：TASK≈24.7KB / MEMORY≈29KB。本轮新增调研产出：§R59 GRPO训练动力学蒙特卡洛模拟器(baize_posttrain_grpo_dynamics_sim.py ~555行+40次模拟+4臂对比+R3最优+std=0=0-1.1% vs vision 78.7%=70x改善+无作弊+Dr.GRPO未触发+课程效果+JSON 946KB+HTML 19.2KB)。未完成指令：无（R1✅...R59✅E1✅）⇒ WAITING=1。
+[wake106] R58 RL Prompt预筛分与课程策略: 3347 prompt预筛分+2037 SIGNAL(60.9%)+预期std=0=26.9% vs vision 78.7%=3.4x+三阶段课程→HTML 8.6KB→EXPERIMENTS §R58。未完成指令：无⇒WAITING=1。
+[wake107] R59 GRPO训练动力学蒙特卡洛模拟器: 40次模拟(10MC×4臂)+R3最优(增益+0.0134)+std=0=0-1.1% vs vision 78.7%=70x+无作弊+Dr.GRPO未触发→HTML 19.2KB→EXPERIMENTS §R59。未完成指令：无⇒WAITING=1。
+[wake108] R60 多轮EDA RL上下文窗口预算分析: 体积自检(TASK=24.7KB/MEMORY=9.9KB合规)→git status(## main...origin/main已同步)→R60: ①创建baize_posttrain_ctx_budget_analyzer.py(~315行,纯Python3.8+,0依赖) ②实测103 DeepSeek轨迹:mean 28339 tok/任务,中位23906,角色user 60.7%/assistant 39.3% ③5窗口投影:4096→99%截断(78.1%轮次丢失),8192→98%,16384→82%,32768→32%(10.1%),65536→3% ④KV cache:ctx32768 bs8=10.5GB,总14.58GB/卡,A40✅剩余29.42GB ⑤截断策略B(工具结果摘要,可减60-80% user tok) ⑥假阴性奖励:8192→29.4% rollout误判 ⑦6项发射建议:RL脚本补CONTEXT_LEN=32768/SFT升16384/基线用32768 ⑧py_compile✅+dry-run✅+full run✅ ⑨HTML 18.7KB(8节,0script,0外链) ⑩EXPERIMENTS §R60(8小节)。📦 体积：TASK≈24.7KB / MEMORY≈10.1KB。本轮新增调研产出：§R60 上下文窗口预算分析(baize_posttrain_ctx_budget_analyzer.py ~315行+103 DeepSeek轨迹实测+5窗口投影+KV cache预算+策略B工具摘要+假阴性奖励量化+6项发射建议+HTML 18.7KB)。未完成指令：无（R1✅...R60✅E1✅）⇒ WAITING=1。
