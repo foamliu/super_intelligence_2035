@@ -1,6 +1,6 @@
 <!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><title>BaiZe Harness · TB-2.1 · 7-way</title><style>body{font-family:"Noto Sans CJK SC","Microsoft YaHei",sans-serif;max-width:1100px;margin:0 auto;padding:20px;background:#f8f9fa;color:#333}h1{color:#1a5276;border-bottom:3px solid #2980b9;padding-bottom:10px}h2{color:#1a5276;margin-top:30px;border-left:5px solid #2980b9;padding-left:10px}table{border-collapse:collapse;width:100%;margin:15px 0}th,td{border:1px solid #ddd;padding:8px 12px;text-align:left}th{background:#2980b9;color:white}tr:nth-child(even){background:#ecf0f1}.pass{color:#27ae60;font-weight:bold}.fail{color:#e74c3c}.warn{color:#e67e22}.note{background:#fef9e7;border-left:4px solid #f39c12;padding:10px 15px;margin:15px 0}.critical{background:#fdedec;border-left:4px solid #e74c3c;padding:10px 15px;margin:15px 0}.info{background:#ebf5fb;border-left:4px solid #3498db;padding:10px 15px;margin:15px 0}.summary-box{background:#fff;border:1px solid #d5d8dc;border-radius:5px;padding:15px;margin:15px 0}.task-list{font-size:0.85em;columns:2;-webkit-columns:2}pre{background:#f4f6f7;padding:10px;border-radius:5px;overflow-x:auto}</style></head><body>
 <h1>BaiZe Harness · Terminal-Bench 2.1 · 7-way 横评报告</h1>
-<p><strong>基准</strong>：Terminal-Bench 2.1（89 题）｜ <strong>模型</strong>：glm-5.3-flash｜ <strong>并发</strong>：7-way concurrent（sequential launcher）<br><strong>轮次</strong>：R1822 · 2026-11-08 13:35｜ <strong>口径声明</strong>：TB-2.1 与 TB4 题集不同，<strong>禁止跨基准对比</strong></p>
+<p><strong>基准</strong>：Terminal-Bench 2.1（89 题）｜ <strong>模型</strong>：glm-5.3-flash｜ <strong>并发</strong>：7-way concurrent（sequential launcher）<br><strong>轮次</strong>：R1883 · 2026-11-08 13:44｜ <strong>口径声明</strong>：TB-2.1 与 TB4 题集不同，<strong>禁止跨基准对比</strong></p>
 <div class="info"><p><strong>📌 命名纪律</strong>：报告正文一律写 <code>cline</code>，不写 <code>cline-patched</code>。</p></div>
 <h2>1. Oracle 验证（5/5 铁律）</h2>
 <div class="info"><p><strong>判据</strong>：oracle 必须 5/5 才算 verifier 正常（此判据不得放宽）。</p></div>
@@ -12,13 +12,13 @@
 </table>
 <p><strong>Oracle 结果</strong>：<span class='pass'>5/5 PASSED ✅</span> — verifier 正常，可跑全量。</p>
 <h2>2. 7 路全量结果</h2>
-<table><tr><th>Harness</th><th>状态</th><th>Passed</th><th>Failed</th><th>Remaining</th></tr><tr><td>cline</td><td>运行中(102/89)</td><td class='pass'>9</td><td class='fail'>91</td><td>-13</td></tr>
-<tr><td>codex</td><td>运行中(133/89)</td><td class='pass'>7</td><td class='fail'>6</td><td>-44</td></tr>
-<tr><td>hermes</td><td>运行中(139/89)</td><td class='pass'>5</td><td class='fail'>81</td><td>-50</td></tr>
-<tr><td>opencode</td><td>运行中(54/89)</td><td class='pass'>15</td><td class='fail'>11</td><td>35</td></tr>
-<tr><td>claude-code</td><td>运行中(42/89)</td><td class='pass'>5</td><td class='fail'>14</td><td>47</td></tr>
-<tr><td>deepseek</td><td>运行中(66/89)</td><td class='pass'>11</td><td class='fail'>6</td><td>23</td></tr>
-<tr><td>pi</td><td>运行中(61/89)</td><td class='pass'>17</td><td class='fail'>36</td><td>28</td></tr>
+<table><tr><th>Harness</th><th>状态</th><th>Passed</th><th>Failed</th><th>Remaining</th></tr><tr><td>cline</td><td>运行中(106/89)</td><td class='pass'>9</td><td class='fail'>95</td><td>-17</td></tr>
+<tr><td>codex</td><td>运行中(138/89)</td><td class='pass'>7</td><td class='fail'>6</td><td>-49</td></tr>
+<tr><td>hermes</td><td>运行中(151/89)</td><td class='pass'>5</td><td class='fail'>85</td><td>-62</td></tr>
+<tr><td>opencode</td><td>运行中(55/89)</td><td class='pass'>15</td><td class='fail'>11</td><td>34</td></tr>
+<tr><td>claude-code</td><td>运行中(43/89)</td><td class='pass'>5</td><td class='fail'>14</td><td>46</td></tr>
+<tr><td>deepseek</td><td>运行中(67/89)</td><td class='pass'>11</td><td class='fail'>6</td><td>22</td></tr>
+<tr><td>pi</td><td>运行中(62/89)</td><td class='pass'>17</td><td class='fail'>37</td><td>27</td></tr>
 </table>
 <div class="summary-box">
 <h3>cline 路详细结果（唯一已完成路）</h3>
@@ -45,7 +45,7 @@
 <tr><th>维度</th><th>TB4（4.0）</th><th>TB-2.1（2.1）</th></tr>
 <tr><td>题集</td><td>66 题</td><td>89 题</td></tr>
 <tr><td>TB4 结果</td><td>66×7=462 trials，0 passed</td><td>—</td></tr>
-<tr><td>TB-2.1 结果</td><td>—</td><td>cline 7/89 passed (7.9%) · hermes 运行中(139/89), 5 pass</td></tr>
+<tr><td>TB-2.1 结果</td><td>—</td><td>cline 7/89 passed (7.9%) · hermes 运行中(151/89), 5 pass</td></tr>
 <tr><td>可比性</td><td colspan="2"><strong>🚫 不可比</strong> — 题集不同，禁止并列对比</td></tr></table>
 <p><strong>TB4 全 0 passed 根因</strong>：verifier 正常(reward=0非None)，全0为<strong>模型能力问题</strong>。</p></div>
 <h2>5. 可继承资产与已知坑</h2>
@@ -56,7 +56,7 @@
 <tr><td>可继承修复</td><td>resume 判据、cleanup_empty_patches.py、kimi→glm 代际清理</td></tr></table>
 <h2>6. 后续计划</h2>
 <div class="info"><ol>
-<li>hermes 路运行中(运行中(139/89), 5 pass)，完成后 launcher 依次启动 opencode/cc/deepseek/pi</li>
+<li>hermes 路运行中(运行中(151/89), 5 pass)，完成后 launcher 依次启动 opencode/cc/deepseek/pi</li>
 <li>codex TB-2.1 需重跑（429 已恢复）</li>
 <li>7 路全量完成后报告标注「7-way complete」</li></ol></div>
 <h2>附录 · 复算命令</h2>
@@ -67,5 +67,5 @@ for d in */; do
   [ "$rw" = "1" ] && echo "PASS: $task"
   [ "$rw" = "0" ] && echo "FAIL: $task"
 done | sort</code></pre>
-<hr><p style="text-align:center;color:#7f8c8d;font-size:0.9em">BaiZe Harness · R1822 · 2026-11-08 13:35<br>TB-2.1 / 89 题 / 7-way concurrent · glm-5.3-flash · 报告正文一律写 cline</p>
+<hr><p style="text-align:center;color:#7f8c8d;font-size:0.9em">BaiZe Harness · R1883 · 2026-11-08 13:44<br>TB-2.1 / 89 题 / 7-way concurrent · glm-5.3-flash · 报告正文一律写 cline</p>
 </body></html>
