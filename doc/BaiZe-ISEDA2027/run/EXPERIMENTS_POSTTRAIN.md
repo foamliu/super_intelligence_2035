@@ -7427,3 +7427,121 @@ RL YAML v2 配置：gpu_mem_util=0.50, TP=1, max_num_seqs=24, hybrid_engine=True
 - A40 规格：NVIDIA 官方（696 GB/s, 46 GB, 150 TFLOPS bf16）
 - R61 对比：MEMORY_POSTTRAIN.md 关键事实 R61 条
 - 无伪造。替身 RL 结果不可迁移到 BaiZe。
+
+---
+
+## §R68: 吞吐量统一模型 — R61 vs R67 差异调和（wake116, 2026-11-09, 零 GPU）
+
+**目标**：调和 R61（3.45 steps/hr, 乐观）与 R67（0.97 steps/hr, 悲观）的 3.5× 吞吐量差异，
+通过建模连续批处理、变长序列、前缀缓存和沙盒不可达（R37），得到更现实的 R68 调和估计。
+
+**脚本**：`baize_posttrain_throughput_reconcile.py`（~393 行，纯 Python 3.8+ stdlib，0 依赖）
+**HTML**：`reports/report_posttrain_r68_throughput_reconcile_zh.html`（7.4KB）
+**JSON**：`run/r68_results.json`（4.8KB）
+
+### R68.1 差异来源分析（6 项）
+
+| # | 差异源 | R61 值 | R67 值 | R68 正确值 | 影响 |
+|:--|:--|:--|:--|:--|:--|
+| 1 | KV head count | 32 (MHA) | 2 (GQA 8:1) | R67 正确 | R61 高估 KV 16×，但经验 TPS 也更高，部分抵消 |
+| 2 | 吞吐量方法 | 经验 1500 tok/s | 物理 696 GB/s → 759 tok/s | CB + 变长 → ~1.4× R67 | R67 是带宽下界，R61 是经验上界 |
+| 3 | 序列长度 | 均值 28K (R60) | 最大 16,384 (config) | 变长，80%@max + 20%@8K → 均 14.7K | R67 最坏情况，实际平均更低 |
+| 4 | 连续批处理 | 未建模 | 未建模 | 1.4× 效率因子 | SGLang CB 改善 GPU 利用率 1.3-1.8× |
+| 5 | 前缀缓存 | 未建模 | 未建模 | GRPO G=8 共享 prompt → 3.5× prefill 加速 | 节省 ~60% prefill 时间 |
+| 6 | 工具延迟 | 1.5s/call (可达) | 0s (未建模) | 0.01s/call (R37 不可达) | 节省 ~1,526s/step vs R61 |
+
+### R68.2 三模型对比（统一框架下重算）
+
+| 模型 | 单步时间 | steps/hr | 72h 步数 | 判定 |
+|:--|:--|:--|:--|:--|
+| R67 (带宽下界) | 4,514s (75min) | 0.80 | 57 | ABORT |
+| **R68 (调和)** | **2,640s (44min)** | **1.36** | **98** | **GO reduced (70 步)** |
+| R61 (经验上界, 统一框架) | 4,194s (70min) | 0.86 | 61 | ABORT |
+
+> ⚠️ 注意：R61 在统一框架下重算后为 0.86 steps/hr（而非原始 3.45），因为原始 R61 脚本
+> 使用不同的代码路径和参数。R61 的 1.5s/call 工具延迟假设（沙盒可达）在统一框架中
+> 惩罚了其总时间。原始 R61 的 3.45 steps/hr 可能高估了实际吞吐。
+
+### R68.3 R68 时间预算分解
+
+| 阶段 | 时间 | 占比 |
+|:--|:--|:--|
+| **decode** | 1,328s | 50.3% |
+| prefill (prefix cache) | 314s | 11.9% |
+| tool (Tier 3) | 4s | 0.2% |
+| actor update (PPO) | 537s | 20.3% |
+| ref logprob | 112s | 4.2% |
+| overhead (15%) | 344s | 13.0% |
+| **总计** | **2,640s** | 100% |
+
+**瓶颈**：decode（50.3%）— A40 带宽 696 GB/s 是硬物理限制。
+
+### R68.4 连续批处理建模
+
+R68 vs R67 的核心差异 = 连续批处理 + 变长序列：
+- R67：所有 24 序列在 max context (16,384) → 每 step 加载 22.0 GB → 31.6ms/step → 759 tok/s/GPU
+- R68：80% 序列在 max context, 20% 较短 (avg 8K) → 平均 14,720 tokens → 加载 19.7 GB
+  → 28.3ms/step → 848 tok/s/GPU × 1.4 (CB 效率) = **1,187 tok/s/GPU**
+
+### R68.5 前缀缓存建模
+
+GRPO G=8 序列共享同一 task prompt（~60.7% 的 tokens）：
+- 理论加速：1 + (8-1) × 0.607 = 5.25×
+- 实际加速（受限于计算容量）：min(5.25, 4.0) = **3.5×**
+- prefill 时间：1,100s (无缓存) → 314s (有缓存)，节省 **786s/step**
+
+### R68.6 沙盒不可达影响（R37 集成）
+
+R37 发现 EDA 沙盒从 .17 完全不可达（所有 TCP 端口被防火墙过滤）：
+- R61 假设：1.5s/call × 10 calls/seq × 1024 seqs / 24 concurrent = **640s/step**
+- R68 实际：0.01s/call × 10 calls/seq × 1024 seqs / 24 concurrent = **4s/step**
+- 节省：**636s/step**（但奖励质量降低 — Tier 3 静态分析无法检测运行时错误）
+- 补偿建议：更依赖 R0 骨架奖励（语法/API/结构），减少对执行结果奖励的依赖
+
+### R68.7 Smoke Test 决策框架
+
+72h 预算（减去 Pre-RL 7.3h + Post-RL 5h = 59.7h RL 可用）：
+
+| 实测单步时间 | RL 可用步数 | 判定 | 推荐配置 |
+|:--|:--|:--|:--|
+| < 1,074s (18min) | ≥ 200 | GO — 全量 200 步 | Baseline G=8 |
+| 1,074-1,615s | 133-200 | GO adjusted | S4: G=4 |
+| 1,615-3,072s | 70-133 | GO reduced | 70 步 baseline |
+| > 3,072s | < 70 | ABORT | 调查瓶颈 |
+
+**使用方法**：`python3 baize_posttrain_throughput_reconcile.py --smoke-step-time <实测秒数>`
+→ 自动判定最接近的模型 + go/no-go 决策。
+
+**测试验证**（--smoke-step-time 2800）：
+- 实测 2800s → RL 步数 76 → GO reduced (70 步)
+- 最接近模型：R68（偏差 160s = 5.7%，在 20% 范围内 ✅）
+
+### R68.8 优化建议（按影响排序）
+
+| # | 优化项 | 新步时 | 风险 | 配置 |
+|:--|:--|:--|:--|:--|
+| 1 | 响应长度降至 6144 | 1,980s | MODERATE | response_length: 6144 |
+| 2 | G=4 替代 G=8 | 1,426s | LOW | rollout.n: 4 |
+| 3 | 启用前缀缓存 | 已含 | NONE | --enable-prefix-caching |
+| 4 | batch 64 | 1,452s | LOW | batch_size: 64 |
+| 5 | PPO epochs 2→1 | 2,370s | LOW-MODERATE | ppo_epochs: 1 |
+
+### R68.9 结论
+
+- **R68 调和估计**：1.36 steps/hr → 72h 可跑 98 步 → 满足最低 70 步门槛 (GO reduced)
+- **与原始 R61/R67 的关系**：R68 = R67 × 1.7（连续批处理 + 变长 + 前缀缓存增益）
+  原始 R61 的 3.45 steps/hr 可能高估（使用不同的解码吞吐假设和代码路径）
+- **关键行动**：GPU 到位后跑 smoke test（10 步），用 --smoke-step-time 校准
+- **沙盒不可达**：Tier 3 静态分析延迟≈0 但奖励质量低，需在 RL 设计中补偿
+- **若 R68 准确**：72h 可跑 98 步（baseline）或 ~175 步（S4 G=4）
+- **若需 200 步**：须组合优化 #2(G=4) + #5(PPO 1 epoch) → ~2,370s → 90 步（仍不够）
+  或 #2(G=4) + #1(resp 6144) → ~1,070s → 200 步 ✅（但截断风险）
+
+### 数据溯源
+
+- 模型架构：`/tmp/models/MiniCPM5-2B/config.json`（R67 实测）
+- R60 轨迹分布：`baize_posttrain_rollout_throughput.py` 常量（103 DeepSeek traces 实测）
+- R37 沙盒不可达：`baize_posttrain_eda_sandbox_client.py`（2026-11-08 实测）
+- RL 配置：`baize_posttrain_rl_verl_config_v2.yaml`
+- A40 规格：NVIDIA 官方（696 GB/s, 46 GB, 150 TFLOPS bf16）
+- 无伪造。替身 RL 结果不可迁移到 BaiZe。

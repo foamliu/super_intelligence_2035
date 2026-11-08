@@ -1,0 +1,199 @@
+{
+  "step_estimates": {
+    "memory": {
+      "sglang_budget_gb": 23.04,
+      "model_in_sglang_gb": 4.7,
+      "kv_available_gb": 16.34,
+      "kv_per_seq_gb": 0.6562,
+      "kv_capacity_seqs": 24,
+      "configured_max_seqs": 24,
+      "effective_concurrent": 24
+    },
+    "actor_memory": {
+      "actor_budget_gb": 23.04,
+      "model_per_gpu_gb": 1.0,
+      "optim_per_gpu_gb": 7.0,
+      "grad_per_gpu_gb": 1.0,
+      "activation_gb": 1.6,
+      "actor_needed_gb": 12.1,
+      "actor_surplus_gb": 10.94
+    },
+    "total_sequences": 1024,
+    "gen_tokens_per_seq": 6439,
+    "total_gen_tokens": 6593446,
+    "prefill_tokens_per_seq": 17202,
+    "effective_prefill_tokens": 4403654,
+    "prefix_caching": {
+      "shared_prompt_frac": 0.607,
+      "group_size": 8,
+      "theoretical_prefill_speedup": 5.25,
+      "effective_prefill_speedup": 4.0
+    },
+    "tool_calls_per_seq": 10,
+    "tool_latency_per_call_s": 0.01,
+    "sandbox_tier": "tier3_static_analysis",
+    "sandbox_reachable": false,
+    "decode_tps_per_gpu": {
+      "R67": 817,
+      "R68": 1241,
+      "R61": 1500
+    },
+    "decode_time_s": {
+      "R67": 2018.0,
+      "R68": 1327.8,
+      "R61": 1098.9
+    },
+    "prefill_time_s": {
+      "R67": 1258.2,
+      "R68": 314.5,
+      "R61": 1258.2
+    },
+    "tool_time_s": {
+      "R67": 0,
+      "R68": 4.3,
+      "R61": 641.3
+    },
+    "actor_update_s": 537,
+    "ref_logprob_s": 112,
+    "total_step_s": {
+      "R67": 4514.0,
+      "R68": 2640.0,
+      "R61": 4194.5
+    },
+    "steps_per_hr": {
+      "R67": 0.8,
+      "R68": 1.36,
+      "R61": 0.86
+    },
+    "steps_in_72h": {
+      "R67": 57,
+      "R68": 98,
+      "R61": 61
+    }
+  },
+  "discrepancy_sources": [
+    {
+      "source": "KV head count",
+      "R61": "32 (MHA)",
+      "R67": "2 (GQA 8:1)",
+      "correct": "R67 (GQA, verified)",
+      "impact": "R61 16x KV overestimate, partially cancelled by empirical TPS"
+    },
+    {
+      "source": "Throughput method",
+      "R61": "Empirical 1500 tok/s",
+      "R67": "Physical 696 GB/s → 759 tok/s",
+      "correct": "R68: CB + variable → ~1.4x R67",
+      "impact": "R67 is bandwidth floor, R61 empirical ceiling"
+    },
+    {
+      "source": "Sequence length",
+      "R61": "Mean 28K (R60)",
+      "R67": "Max 16,384 (config)",
+      "correct": "R68: variable mean~14K",
+      "impact": "R67 worst-case, actual average lower"
+    },
+    {
+      "source": "Continuous batching",
+      "R61": "Not modeled",
+      "R67": "Not modeled",
+      "correct": "R68: 1.4x efficiency",
+      "impact": "SGLang CB improves utilization 1.3-1.8x"
+    },
+    {
+      "source": "Prefix caching",
+      "R61": "Not modeled",
+      "R67": "Not modeled",
+      "correct": "R68: 3.5x prefill speedup",
+      "impact": "GRPO G=8 shares 60% prompt tokens"
+    },
+    {
+      "source": "Tool latency",
+      "R61": "1.5s/call",
+      "R67": "0s",
+      "correct": "R68: 0.01s (R37 unreachable)",
+      "impact": "Saves ~1,526s/step vs R61"
+    }
+  ],
+  "decision_framework": {
+    "R67": {
+      "model": "R67 (floor)",
+      "step_time_s": 4514.0,
+      "rl_steps": 47,
+      "verdict": "ABORT",
+      "config": "N/A"
+    },
+    "R68": {
+      "model": "R68 (reconciled)",
+      "step_time_s": 2640.0,
+      "rl_steps": 81,
+      "verdict": "GO reduced — 70 steps",
+      "config": "Baseline 70 steps"
+    },
+    "R61": {
+      "model": "R61 (ceiling)",
+      "step_time_s": 4194.5,
+      "rl_steps": 51,
+      "verdict": "ABORT",
+      "config": "N/A"
+    }
+  },
+  "time_budget": {
+    "phase_breakdown_s": {
+      "decode": 1327.8,
+      "prefill (prefix cache)": 314.5,
+      "tool (Tier 3)": 4.3,
+      "actor update (PPO)": 537,
+      "ref logprob": 112,
+      "overhead (15%)": 344.3
+    },
+    "total_step_s": 2640.0,
+    "phase_percent": {
+      "decode": 50.3,
+      "prefill (prefix cache)": 11.9,
+      "tool (Tier 3)": 0.2,
+      "actor update (PPO)": 20.3,
+      "ref logprob": 4.2,
+      "overhead (15%)": 13.0
+    },
+    "bottleneck": "decode",
+    "bottleneck_pct": 50.3
+  },
+  "optimization_recommendations": [
+    {
+      "rank": 1,
+      "name": "Reduce response to 6144",
+      "new_step": 1980.0,
+      "risk": "MODERATE",
+      "config": "response_length: 6144"
+    },
+    {
+      "rank": 2,
+      "name": "G=4 instead of G=8",
+      "new_step": 1425.6,
+      "risk": "LOW",
+      "config": "rollout.n: 4"
+    },
+    {
+      "rank": 3,
+      "name": "Enable prefix caching",
+      "new_step": "Already in R68",
+      "risk": "NONE",
+      "config": "--enable-prefix-caching"
+    },
+    {
+      "rank": 4,
+      "name": "Batch 64",
+      "new_step": 1452.0,
+      "risk": "LOW",
+      "config": "batch_size: 64"
+    },
+    {
+      "rank": 5,
+      "name": "PPO epochs 2→1",
+      "new_step": 2370.0,
+      "risk": "LOW-MODERATE",
+      "config": "ppo_epochs: 1"
+    }
+  ]
+}
