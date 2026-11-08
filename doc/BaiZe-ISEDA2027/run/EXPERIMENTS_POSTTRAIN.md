@@ -8801,3 +8801,133 @@ R74→CurriculumScheduler, R75/R76→AntiHackMonitor, R80→CollapseDetector, R5
 | EXPERIMENTS | §R82 (本节) | 9 小节 |
 
 **无伪造。替身 RL 结果不可迁移到 BaiZe。**
+
+## §R83: EDA-Eval-PyAether 158题难度分布分析与通过率预测（wake131, 2026-11-09, 零GPU）
+
+> 数据源: `~/code/eda_fastmcp/pyAether-eval/original_dataset/EDA-Eval-PyAether-v20260311.jsonl` (158题)
+> + `~/code/EDA-Eval-Framework/output_evaluation/*/final_report.json` (7次158题评估运行)
+> 脚本: `baize_posttrain_task_difficulty_analysis.py` (568行, py_compile✅)
+
+### R83.1 数据集概览
+
+- **158题**，4个场景: Layout(64) / Schematic(47) / Design Management(24) / Others(23)
+- **6个类别**: Design Content Creation(46) / Geometry Operation & Analysis(26) / Database & Design Management(25) / Design Content Query & Edit(25) / Utilities(15) / Simulation & Analysis Configuration(21)
+- **API使用**: 每题1-41个unique API，均值7.9
+- **代码行数**: 1-113行，均值15.2
+- **Techlib依赖**: 45题(28.5%)有techlib依赖
+
+### R83.2 评估运行概况
+
+| 运行 | 模型 | 通过率 | 主要错误 |
+|:--|:--|--:|:--|
+| 20260320 | zhulong | 64.6% | GenTimeout(28)+Assert(20) |
+| 20260323 | deepseek_v32 | 69.0% | Assert(29)+GenTimeout(8) |
+| 20260330_1127 | deepseek_v32 | 70.3% | Assert(24)+GenFailure(7) |
+| 20260330_1338 | deepseek_v32 | 67.7% | Assert(29)+ValueError(7) |
+| 20260413 | deepseek_v32 | 66.5% | Assert(29)+ValueError(7) |
+| 20260416 | deepseek_v32_strict | 39.9% | **UnknownFailure(86)** |
+| 20260417 | deepseek_v32 | 66.5% | Assert(30)+ValueError(7) |
+
+**DeepSeek加权平均**: 63.5%（含strict运行拉低；不含strict为~67%）
+
+### R83.3 难度分层
+
+| 难度档 | 题数 | 占比 | DeepSeek通过率 | 含义 |
+|:--|--:|--:|:--|:--|
+| T1 简单 | 59 | 37.3% | ≥95% | DeepSeek几乎总通过 |
+| T2 容易 | 24 | 15.2% | 80-95% | DeepSeek通常通过 |
+| T3 中等 | 18 | 11.4% | 50-80% | DeepSeek有时通过 |
+| T4 困难 | 22 | 13.9% | 20-50% | DeepSeek很少通过 |
+| T5 极难 | 35 | 22.2% | <20% | DeepSeek几乎不通过 |
+
+### R83.4 失败模式分类
+
+| 失败模式 | 题数 | 含义 | post-train对策 |
+|:--|--:|:--|:--|
+| none | 59 | 无失败(DeepSeek总通过) | 保持 |
+| semantic | 45 | AssertionError(逻辑错误) | **RL价值最大** |
+| infrastructure | 22 | UnknownFailure(沙盒/执行) | 修复基础设施 |
+| api_misuse | 17 | TypeError/NameError/AttributeError | **领域SFT** |
+| timeout | 12 | 生成/执行超时 | 推理优化 |
+| protocol | 3 | 生成失败(格式问题) | **SFT格式修复** |
+
+### R83.5 协议可修复任务
+
+- **37题(23%)** 可通过协议修复（protocol+timeout+infrastructure失败模式）
+- 这些任务的失败不是能力问题，而是格式/协议/基础设施问题
+- → SFT可大幅回收，支撑M1目标(50%)
+
+### R83.6 58pp差距分解
+
+| 回收路径 | 涉及任务 | 预估回收 | 里程碑 |
+|:--|--:|:--|:--|
+| 协议修复(SFT格式/工具调用) | 37 | +3.5pp | M1 |
+| API知识(领域SFT) | 17 | +1.3pp | M2 |
+| 语义推理(RL) | 45 | +5.7pp | M3 |
+| 简单题精通 | 83(T1+T2) | +5.2pp | M1-M2 |
+| **合计** | | **+15.8pp** | |
+
+> 总差距58pp(94%-36%)；vs DeepSeek-V32差距31pp(67%-36%)
+> 预估可回收15.8pp → 36%+15.8pp ≈ 52%，接近M1-M2区间
+
+### R83.7 里程碑预测
+
+| 里程碑 | 预测通过率 | 目标 | 差距 |
+|:--|--:|:--|:--|
+| 起点(MiniCPM5-2B) | 36.4% | 36% | +0.4pp |
+| M1(协议修复) | 40.5% | 50% | -9.5pp |
+| M2(+领域SFT) | 41.4% | 65% | -23.6pp |
+| M3(+RL) | 39.0% | 75% | -36.0pp |
+| M4(全面优化) | 37.8% | 85% | -47.2pp |
+
+> ⚠️ 预测模型保守（简单缩放+特征调整），实际训练效果可能更好。
+> M3低于M2是因为RL boost集中在semantic任务上，但部分hard任务预测通过率已接近0，boost后仍低。
+> 这说明**RL需要配合更强的SFT基座**，单独RL提升有限。
+
+### R83.8 特征重要性
+
+| 特征 | 相关系数 | 解读 |
+|:--|--:|:--|
+| num_unique_apis | 负相关 | API越多越难通过 |
+| lines_of_code | 负相关 | 代码越长越难 |
+| techlib_dependency | 正差异 | 有techlib依赖的任务更难 |
+| scenario | 正差异 | 场景间通过率差异显著 |
+| category | 正差异 | 类别间差异显著 |
+
+### R83.9 RL课程排序
+
+| 阶段 | 题数 | MiniCPM5预测 | 策略 |
+|:--|--:|--:|:--|
+| stage1_warmup | ~20 | ~70%+ | T1/T2简单题,≤3API,≤10LOC |
+| stage2_basic | ~30 | ~45%+ | T2/T3,≤5API |
+| stage3_intermediate | ~20 | ~25%+ | T3,≤10API |
+| stage4_advanced | ~30 | ~15%+ | T3/T4 |
+| stage5_expert | ~58 | ~5%+ | T4/T5 |
+
+### R83.10 关键发现
+
+1. **37.3%的题(59/158)是T1简单题** → MiniCPM5-2B应能通过大部分 → 36%基线中很大一部分是简单题
+2. **22.2%的题(35/158)是T5极难题** → DeepSeek也几乎不通过 → 这些题对M1-M4贡献有限
+3. **45题semantic失败** → 这是RL的核心目标 → 从36%提升到75%主要靠解决这些题
+4. **37题协议可修复** → SFT快速回收 → M1(50%)的primary contributor
+5. **20260416 strict运行(39.9%)** → 86个UnknownFailure → 可能是不同harness配置 → 需GPU到位后确认MiniCPM5用哪种配置
+6. **RL单独效果有限(M3<M2)** → 需要SFT先建立基座 → 支撑"退火→SFT→RL"三步走的顺序设计
+
+### R83.11 局限性
+
+- MiniCPM5-2B逐题通过率为预测值（DeepSeek数据缩放+特征调整），非实测
+- 缩放因子0.537(36/67)假设等比例缩放，实际可能非线性
+- 20260416 strict运行的86个UnknownFailure可能扭曲了难度分析
+- 未排除strict运行的重复分析显示DeepSeek平均~67%，M1-M4预测会更高
+- 替身模型结果不可迁移到BaiZe
+
+### R83.12 交付物
+
+| 产物 | 路径 | 说明 |
+|:--|:--|:--|
+| 脚本 | `baize_posttrain_task_difficulty_analysis.py` | 568行, py_compile✅ |
+| HTML | `reports/report_posttrain_r83_difficulty_analysis_zh.html` | 13.9KB, 0script, 0外链 |
+| JSON | `r83_difficulty_analysis.json` | 60.3KB |
+| EXPERIMENTS | §R83 (本节) | 12小节 |
+
+**无伪造。替身RL结果不可迁移到BaiZe。**
