@@ -4,14 +4,14 @@ WAITING: 0
 
 ## 📊 进度快照
 
-PHASE:        R1914 监控轮(gateway 429 quota耗尽ETA~20:25·predict 1910/3500(54.6%)·real=776冻结·TB-2.1 3路running+4路stalled·CPU/MEM PASS)
-已完成:       H-B✅·Gate7/7·TB报告✅·full500✅·cline专项C1-C5+报告R1785-R1896·TB4 0passed(能力)·TB-2.1 oracle5/5✅·§15:2x判据MET✅·R1789 eval 7/7DONE✅·R1804双报告交付✅·R1814-R1913 predict推进+TB-2.1并行·R1913监控轮
-当前动作:     R1914:①CPU/MEM PASS(load95/92/89=pretrain llama-server非本线·本线最高cline72%=1核·mem814G/2Ti avail1Ti) ②体积:TASK=30KB(30306B)/MEMORY=32KB·均≤32KB✅ ③硬盘:/data 18%(5.8T)/ 4%(352G) ④gateway:429("本次Token额度已用完,请等待1小时24分钟10秒后重试"·ETA~20:25)·/models=200 ⑤predict 7路全alive 1910/3500(54.6%·real=776·+14files+0real sinceR1913=全empty=quota铁证):cline216(104r/112e=48.1%)·codex376(31r/345e=8.2%)·opencode269(211r/58e=78.4%best)·cc395(62r/333e=15.7%)·pi161(60r/101e=37.3%)·hermes364(237r/127e=65.1%)·dsh129(71r/58e=55.0%) ⑥TB-2.1(latest run):cline81t/4p(4.9%)·codex89t/4p(4.5%·83no-ctrf=429stalled)·opencode79t/20p(25.3%·43pend=RUN)·cc68t/9p(13.2%·36pend=RUN)·pi88t/23p(26.1%best·14pend=RUN)·hermes89t/2p(2.2%·36no-ctrf)·dsh89t/14p(15.7%·69no-ctrf=429stalled)·3路running(cline/opencode/cc/pi) ⑦报告R1896待满路后更新 ⑧research日报11-08已读 ⑨cline C4:real=104/empty=112/48.1%(quota耗尽·real冻结=infra非能力) ⑩未完成指令:有(§22:4x+§10:10)⇒W:0
-下一步:       ①监控predict 7路→每路达500(等gateway~20:25恢复后real patch应复产) ②TB-2.1:3路running+codex/hermes/dsh stalled→满路后汇总更新报告 ③待predict满后增量更新报告+重跑eval ④codex/hermes/dsh TB-2.1需确认是否需gateway恢复后重跑
-阻塞:         无(gateway 429 quota耗尽ETA~20:25·predict仍产empty文件·TB-2.1 3路alive·codex/hermes/dsh TB-2.1 stalled)
+PHASE:        R1915 监控轮(gateway 429 ETA~20:25·predict 1924/3500(54.9%)·real=776冻结·TB-2.1 4路RUN+3路done·CPU/MEM PASS)
+已完成:       H-B✅·Gate7/7·TB报告✅·full500✅·cline专项C1-C5+报告R1785-R1896·TB4 0passed(能力)·TB-2.1 oracle5/5✅·§15:2x判据MET✅·R1789 eval 7/7DONE✅·R1804双报告交付✅·R1814-R1914 predict推进+TB-2.1并行·R1914监控轮
+当前动作:     R1915:①CPU/MEM PASS(load92=pretrain·本线最高<1核·mem816G/2Ti avail1Ti) ②体积:TASK=30KB/MEMORY=32KB✅ ③硬盘:/data 18%/ 4% ④gateway:429("请等待1小时14分钟12秒"·ETA~20:25)·/models=200 ⑤predict 7路全alive 1924/3500(54.9%·real=776·+14files+0real sinceR1914=全empty=quota):cline217(104r/113e=48.1%)·codex381(31r/350e=8.1%)·opencode270(211r/59e=78.1%)·cc399(62r/337e=15.5%)·pi162(60r/102e=37.0%)·hermes365(237r/128e=65.0%)·dsh130(71r/59e=54.6%) ⑥TB-2.1(latest):pi87t/23p(26.4%best RUN)·opencode79t/20p(25.3%RUN)·dsh89t/14p(15.7%done 72err)·cc68t/9p(13.2%RUN)·cline82t/4p(4.9%RUN)·codex89t/4p(4.5%done 84err)·hermes89t/2p(2.2%done 37err)·4路RUN(cline/opencode/cc/pi)+3路done ⑦报告R1896待满路后更新 ⑧cline C4:real=104/empty=113/48.1%(quota冻结=infra) ⑨未完成指令:有(§22:4x+§10:10)⇒W:0
+下一步:       ①等gateway~20:25恢复后predict real应复产→每路达500 ②TB-2.1 4路running待完成→满路后汇总更新报告 ③待predict满后增量更新报告+重跑eval ④codex/hermes/dsh TB-2.1高err率=429→需gateway恢复后重跑
+阻塞:         无(gateway 429 ETA~20:25·predict产empty·TB-2.1 4路alive)
 ERROR_COUNT:  0
-  📦 体积：TASK=30KB(30306B) / MEMORY=32KB（均≤32KB✅·R1864-R1913已归档→daily-memories-harness/2026-11-08.md）
-  🔍 cline专项小结: predict cline216(104r/112e=48.1%·real冻结=quota)·R1789 eval cline35/46=76.1% 0 empty_patch(C3✅)·TB-2.1 cline latest 4p/81t=4.9%·C2最近empty全为empty_no_error(quota耗尽非能力)·复算:python3 -c"import json,glob;f=glob.glob('swebench_verified_full/predictions_glm53/cline-patched__*.json');r=sum(1 for x in f if (lambda d:(d[0] if isinstance(d,list) else d).get('model_patch','').strip())(json.load(open(x))));print(f'real={r} empty={len(f)-r}')"
+  📦 体积：TASK=30KB(30306B) / MEMORY=32KB（均≤32KB✅·R1864-R1914已归档→daily-memories-harness/2026-11-08.md）
+  🔍 cline专项小结: predict cline217(104r/113e=48.1%·real冻结=quota)·R1789 eval cline35/46=76.1%(C3✅)·TB-2.1 cline 4p/82t=4.9%·C2最近empty全为quota·复算:python3 -c"import json,glob;f=glob.glob('swebench_verified_full/predictions_glm53/cline-patched__*.json');r=sum(1 for x in f if (lambda d:(d[0] if isinstance(d,list) else d).get('model_patch','').strip())(json.load(open(x))));print(f'real={r} empty={len(f)-r}')"
 ```
 
 > 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
@@ -23,7 +23,9 @@ ERROR_COUNT:  0
 
 > 📦 R1913 流水(18:53,监控轮·gateway 429·predict 1896/3500·real=776·TB-2.1 5路running codex stalled·CPU/MEM PASS)已归档 → daily-memories-harness/2026-11-08.md。
 
-> [19:02] R1914 监控轮(gateway 429 quota耗尽ETA~20:25·predict 1910/3500(54.6%)·real=776冻结·TB-2.1 3路running+4路stalled·CPU/MEM PASS):①CPU/MEM PASS(load95/92/89=pretrain llama-server非本线·本线最高cline72%=1核·mem814G/2Ti avail1Ti) ②体积:TASK=30KB/MEMORY=32KB✅ ③硬盘:/data 18%/ 4% ④gateway:429("请等待1小时24分钟10秒"·ETA~20:25)·/models=200 ⑤predict 7路全alive 1910/3500(real=776·+14files+0real=全empty=quota铁证):cline216(104r/112e)·codex376(31r/345e)·opencode269(211r/58e best)·cc395(62r/333e)·pi161(60r/101e)·hermes364(237r/127e)·dsh129(71r/58e) ⑥TB-2.1(latest run精确count):cline81t/4p(4.9%)·codex89t/4p(4.5%·83no-ctrf=429stalled)·opencode79t/20p(25.3%·43pend=RUN)·cc68t/9p(13.2%·36pend=RUN)·pi88t/23p(26.1%best·14pend=RUN)·hermes89t/2p(2.2%·36no-ctrf)·dsh89t/14p(15.7%·69no-ctrf=429stalled)·3路RUN(cline/opencode/cc/pi)+codex/hermes/dsh stalled ⑦报告R1896待满路后更新 ⑧research日报11-08已读 ⑨cline C4:real=104/empty=112/48.1%(real冻结=infra非能力) ⑩归因:quota 429=infra(全empty+real+0=铁证)·TB-2.1 pass=能力·codex/hermes/dsh stalled=429=infra ⑪未完成指令:有(§22:4x+§10:10)⇒W:0
+> 📦 R1914 流水(19:02,监控轮·gateway 429·predict 1910/3500·real=776冻结·TB-2.1 4路RUN+3路stalled·CPU/MEM PASS)已归档 → daily-memories-harness/2026-11-08.md。
+
+> [19:11] R1915 监控轮(gateway 429 ETA~20:25·predict 1924/3500 real=776冻结·TB-2.1 4路RUN+3路done·CPU/MEM PASS):①CPU/MEM PASS(load92=pretrain·mem816G/2Ti avail1Ti) ②体积:TASK=30KB/MEMORY=32KB✅ ③gateway:429(ETA~20:25)·/models=200 ④predict 7路全alive 1924/3500(+14files+0real=quota):cline217(104r/113e=48.1%)·codex381(31r/350e=8.1%)·opencode270(211r/59e=78.1%)·cc399(62r/337e=15.5%)·pi162(60r/102e=37.0%)·hermes365(237r/128e=65.0%)·dsh130(71r/59e=54.6%) ⑤TB-2.1(latest精确):pi87t/23p(26.4%best RUN)·opencode79t/20p(25.3%RUN)·dsh89t/14p(15.7%done 72err)·cc68t/9p(13.2%RUN)·cline82t/4p(4.9%RUN)·codex89t/4p(4.5%done 84err)·hermes89t/2p(2.2%done 37err)·4路RUN+3路done ⑥归因:quota 429=infra(全empty+0real=铁证)·TB-2.1 pass=能力·high err=429 ⑦未完成指令:有(§22:4x+§10:10)⇒W:0
 
 > 📦 R1911 流水(18:35,监控轮·gateway quota耗尽·predict 1863/3500·real=775·TB-2.1 3DONE+4RUN·CPU/MEM PASS)已归档 → daily-memories-harness/2026-11-08.md。
 
