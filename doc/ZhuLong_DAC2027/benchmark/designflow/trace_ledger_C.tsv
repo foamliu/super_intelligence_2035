@@ -431,3 +431,12 @@
 1793240378933_kck7n	e0047434	hfeg0pnd001	87	physical_verify	parked		2026-11-08 20:07	env-recon/how-to(what GDS viewers on machine/how to launch klayout/how to use virtuoso);non-seed
 1793707420467_xqeql	kaixuanx	hfeg0pkn002	181	physical_verify	case	EDA-Eval-DesignFlow-HcellPairGen-001	2026-11-08 20:16	organic physical_verify seed:Calibre LVS/ERC(nwell without net to power)+PEX hcell缺失;agent wrote grep_erc_rule.py/check_cdl.py/find_hcell2.py(15x iter);BLOCKER:/rundata/m2701 + /proj/m2701 assets permission-denied for e0031982;final find_hcell2.py overwritten to post-sim verifier;defer synthesis next round(DEBT:1)
 1793783868972_92xei	zlhou	hfeg0pkn005	51	physical_verify	case	EDA-Eval-DesignFlow-LvsAmbiguityDiag-001	2026-11-08 20:56	
+1793792893744_ioiiw	liwan	hfeg0pkn002	157	layout_aether	case	EDA-Eval-DesignFlow-LayStructExtract-001	2026-11-08 21:36	
+1789538980408_lb3d3	lynn1y	hfeg0pkn002	0		parked		2026-11-08 21:36	mode=act skill activation DFM SPEC FILL no organic intent
+1789090752430_4xt0p	zhigangw	hfeg0pkn002	0		parked		2026-11-08 21:36	mode=act 启动业务场景 模拟电路优化 no organic intent
+1793236307554_giaze	pdsong	hfeg0pkn004	0		parked		2026-11-08 21:36	code-comprehension 分析脚本功能
+1793667682319_64ztm	e0047488	hfeg0pkn002	0		parked		2026-11-08 21:36	dup of YamlToGds-001 same user/task
+1793012120155_plwnn	pdsong	hfeg0pkn004	0		parked		2026-11-08 21:36	code-comprehension 分析lvsSvdb文件
+1792488450622_kc85b	kevinc	hfeg0pkn002	0		parked		2026-11-08 21:36	root-cause debug LPE失败 non-seed
+1790126403703_fj73q	e02141	hfeg0pkn001	0		parked		2026-11-08 21:36	env-recon 配置swb-python-api环境
+1793870539133_n91uu	e0047722	hfeg0pkn004	0		parked		2026-11-08 21:36	code-comprehension PDK_QA项目目录结构
