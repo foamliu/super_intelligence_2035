@@ -234,3 +234,5 @@
 1791871316059_iih6g	laryu	hfeg0pkn001	265	eda_other	case	EDA-Eval-DesignFlow-ViewCopyInstCount-001	2026-11-08 13:04	
 1789979923847_aq5lg.messages.json	johnl	hfeg0pkn001	131	digital	parked		2026-11-08 13:31	assistant diagnosis WRONG (claimed change_names split bus->scalar but AFTER netlist keeps output [4:0] BA bus form, 0 scalar BA_); user challenged '你确定吗 你要做实验验证' twice; no accepted gold result; not A档-eligible
 1793596522277_e4fk8.messages.json	e0045128	hfeg0pkn005	53	digital	case	EDA-Eval-DesignFlow-D2pHandoffDirGen-001	2026-11-08 13:45	
+1792488619552_mt7ua	johnl	hfeg0pkn001	773	pnr_signoff	parked		2026-11-08 13:58	innovus-dominant PR/LEF trace mc773 591msgs 2MB; U#0 broad Innovus PR task (build project+layout w/ timing) too large for 40min faithful case; session ends mid-investigation (asst still searching dbCreateRect sig when user re-sent U#11), no accepted gold; LEF sub-task U#10 excluded from A-doc (gives root cause+fix); BLOCKER③ persists
+1791943493253_tjzn5	tongfanl	hfeg0pkn004	114	verification	case	EDA-Eval-DesignFlow-VecgenPortModeAnalyze-001	2026-11-08 14:25	
