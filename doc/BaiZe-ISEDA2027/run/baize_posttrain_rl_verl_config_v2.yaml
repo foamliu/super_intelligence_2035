@@ -1,0 +1,147 @@
+# baize_posttrain_rl_verl_config_v2.yaml — verl 0.4.0 GRPO config for MiniCPM5-2B on 4×A40
+#
+# 🔴 R47 (2026-11-08): CRITICAL — This is a COMPLETE REWRITE of v1 to match
+#   verl 0.4.0's ACTUAL config interface, verified by source code audit.
+#   v1 had 5 critical bugs that would cause silent failures:
+#     BUG1: custom_reward_function was under `reward.` → must be TOP-LEVEL
+#     BUG2: algorithm.name: grpo → must be algorithm.adv_estimator: grpo
+#     BUG3: algorithm.group_size → must be actor_rollout_ref.rollout.n
+#     BUG4: multi_turn: True (bool) → must be nested dict {enable, max_turns, ...}
+#     BUG5: tool_kwargs.tools_config_file → must be multi_turn.tool_config_path
+#   See EXPERIMENTS_POSTTRAIN.md §R47 for full audit.
+#
+# ⚠️ Surrogate RL results are NOT transferable to BaiZe.
+
+# === TOP-LEVEL custom_reward_function (R47 BUG1 FIX) ===
+custom_reward_function:
+  path: baize_posttrain_reward_functions.py
+  name: compute_score
+  reward_kwargs:
+    arm: R0                    # START with R0 (skeleton, no sandbox); switch to R2 later
+    api_database: ~/code/eda_fastmcp/docs/API_INFO_MERGED_V3.json
+    auto_fallback: true        # R22: auto-switch to R0 when sandbox unavailable
+
+data:
+  tokenizer: /tmp/models/MiniCPM5-2B
+  train_files: rl_pyaether_synth_v2.parquet
+  val_files: null
+  train_batch_size: 128
+  prompt_key: prompt
+  reward_fn_key: data_source     # R47: verl default; NaiveRewardManager reads this
+  max_prompt_length: 4096
+  max_response_length: 4096
+  return_raw_chat: True
+  need_tools_kwargs: True
+  shuffle: True
+  seed: 42
+  filter_overlong_prompts: True
+  truncation: error
+  trust_remote_code: True
+
+actor_rollout_ref:
+  hybrid_engine: True
+  model:
+    path: /tmp/models/MiniCPM5-2B
+    override_config:
+      attn_implementation: flash_attention_2  # R35: flash_attn available
+    enable_gradient_checkpointing: True
+    trust_remote_code: True
+    use_remove_padding: True
+  actor:
+    strategy: fsdp
+    ppo_mini_batch_size: 32
+    ppo_micro_batch_size_per_gpu: 4
+    use_dynamic_bsz: True
+    ppo_max_token_len_per_gpu: 16384
+    grad_clip: 1.0
+    clip_ratio: 0.2
+    entropy_coeff: 0.001          # R18: prevent policy collapse
+    use_kl_loss: True            # Required for GRPO
+    kl_loss_coef: 0.02           # R18: start at 0.02
+    kl_loss_type: low_var_kl
+    ppo_epochs: 2                # R18: better sample efficiency
+    use_torch_compile: False
+    entropy_checkpointing: True  # R11: memory optimization
+    optim:
+      lr: 3.0e-6
+      lr_warmup_steps: -1
+      lr_warmup_steps_ratio: 0.0
+      min_lr_ratio: 0.0
+      warmup_style: constant
+      total_training_steps: -1
+      weight_decay: 0.01
+  ref:
+    strategy: fsdp
+    log_prob_use_dynamic_bsz: True
+    log_prob_max_token_len_per_gpu: 16384
+  rollout:
+    name: sglang                 # R9: SGLang for MiniCPM5
+    mode: async
+    temperature: 0.7
+    top_p: 0.95
+    prompt_length: 4096
+    response_length: 4096
+    gpu_memory_utilization: 0.35  # R11: conservative for A40
+    enforce_eager: True
+    load_format: dummy_dtensor
+    tensor_model_parallel_size: 1
+    max_num_batched_tokens: 8192
+    max_num_seqs: 256
+    n: 8                         # R47 BUG3 FIX: G=8 (was algorithm.group_size)
+    multi_turn:
+      enable: False              # R47: Start SINGLE-TURN (R0 skeleton, no tools)
+      max_turns: 3
+      tool_config_path: null     # R47 BUG5 FIX (was tool_kwargs.tools_config_file)
+      format: chatml
+    engine_kwargs:
+      sglang:
+        attention_backend: flashinfer
+
+reward_model:
+  enable: False                  # No external RM; using custom_reward_function
+  reward_manager: naive          # NaiveRewardManager calls compute_score per sample
+
+algorithm:
+  adv_estimator: grpo            # R47 BUG2 FIX: was `name: grpo` (doesn't exist)
+  gamma: 1.0
+  lam: 1.0
+  norm_adv_by_std_in_grpo: True
+  use_kl_in_reward: False
+  kl_penalty: kl
+  kl_ctrl:
+    type: fixed
+    kl_coef: 0.001
+    horizon: 10000
+    target_kl: 0.1
+
+critic:
+  strategy: fsdp
+  rollout_n: 8                   # Must match actor_rollout_ref.rollout.n
+
+trainer:
+  total_epochs: 1
+  total_training_steps: 2000
+  save_freq: 200
+  project_name: baize_posttrain
+  experiment_name: rl_grpo_surrogate
+  logger: ['console']
+  log_val_generations: 0
+  nnodes: 1
+  n_gpus_per_node: 4             # R47: was runtime.n_gpus (doesn't exist)
+  resume_mode: auto
+  val_before_train: False
+  test_freq: -1
+  default_local_dir: /nas_data/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize_posttrain_rl_grpo
+  max_actor_ckpt_to_keep: 3
+  device: cuda
+
+ray_init:
+  num_cpus: null
+  timeline_json_file: null
+
+smoke:
+  iters: 10
+  save_interval: 5
+  rollout_n: 4
+  train_batch_size: 16
+  output_suffix: _smoke

@@ -5354,3 +5354,117 @@ $ bash baize_posttrain_gpu_watcher.sh --warmup-only --dry-run
 - `run/baize_posttrain_gpu_watcher.sh`（~260行，bash -n PASS，3 模式 dry-run 全绿）
 - `reports/report_posttrain_r46_gpu_watcher_zh.html`（自包含，0 script，0 外链，9 节）
 - 本节（EXPERIMENTS §R46，8 小节）
+
+---
+
+## §R47 verl 0.4.0 集成兼容性审计（2026-11-08 wake95 · T-1 · 零 GPU · .17 源码级实测）
+
+> **背景**：R1-R46 全部完成后，launch 前最后一天（11/8，GPU 11/9 到位），发现一个未被覆盖的盲区——
+> 所有脚本/config 都已**逐个 dry-run 验证**，但**没有一个被对照 verl 0.4.0 的实际源码验证过接口兼容性**。
+> 本节通过对 `~/code/verl_cu124_venv/lib/python3.10/site-packages/verl/` 的源码审计，
+> 发现了 **5 个会导致 11/9 launch 静默失败或崩溃的关键 bug**。
+
+### R47.1 关键 Bug #1：`custom_reward_function` 配置层级错误
+
+**严重度**：🔴 CRITICAL — 静默失败（RL 在错误奖励上训练）
+
+| 项 | v1 config（错误） | verl 0.4.0 实际期望 |
+|:--|:--|:--|
+| 配置路径 | `reward.custom_reward_function.path` | `custom_reward_function.path`（**顶层**） |
+| 源码依据 | — | `reward.py:26`: `config.get("custom_reward_function")` |
+| 默认配置 | — | `ppo_trainer.yaml:225`: 顶层 |
+
+**影响**：verl 找不到自定义奖励函数 → 回退到 `default_compute_score`（GSM8K）→ RL 在完全不相关的奖励上训练。
+**修复**：v2 config 将 `custom_reward_function` 移到顶层，`reward` → `reward_model`。
+
+### R47.2 关键 Bug #2：GRPO 算法配置键不存在
+
+**严重度**：🔴 CRITICAL — 静默使用错误算法（GAE 代替 GRPO）
+
+| 项 | v1 config（错误） | verl 0.4.0 实际期望 |
+|:--|:--|:--|
+| 算法选择 | `algorithm.name: grpo` | `algorithm.adv_estimator: grpo` |
+| 组大小 | `algorithm.group_size: 8` | `actor_rollout_ref.rollout.n: 8` |
+| 源码 | — | `ppo_trainer.yaml:232`: `adv_estimator: gae`；`:129`: `n: 1 # > 1 for grpo` |
+
+**修复**：v2 用 `adv_estimator: grpo` + `rollout.n: 8`。
+
+### R47.3 关键 Bug #3：`verl.experimental.agent_loop.tool_parser` 不存在
+
+**严重度**：🔴 CRITICAL — wrapper 崩溃
+
+- `ls verl/experimental/` → **No such file**
+- `find verl/ -path '*tool_parser*'` → **空**
+- `find verl/ -path '*agent_loop*'` → **空**
+- verl 0.4.0 工具调用解析由 sglang `FunctionCallParser` 处理（4 个内置 parser: llama3/qwen25/mistral/deepseekv3）
+- `get_tool_call_parser_type(tokenizer)` 自动检测 parser type
+
+**影响**：`baize_posttrain_minicpm5_parser.py` import 失败 → stub 模式 → `wrapper.py` 的 `ToolParser._registry` 检查 AttributeError。
+**修复**：重写 wrapper，移除 ToolParser 依赖，添加 sglang monkey-patch（`--enable-multi-turn` 模式）。
+
+### R47.4 关键 Bug #4：`multi_turn` 配置结构错误
+
+| 项 | v1 | verl 0.4.0 |
+|:--|:--|:--|
+| multi_turn | `True`（布尔） | `{enable: True, max_turns: N, tool_config_path: "path", format: "chatml"}` |
+| 工具配置 | `tool_kwargs.tools_config_file` | `multi_turn.tool_config_path` |
+
+**修复**：v2 用嵌套字典。默认 `enable: False`（Phase 1 单轮 R0 模式）。
+
+### R47.5 关键 Bug #5：`get_tool_call_parser_type` 对 MiniCPM5 会 ValueError
+
+MiniCPM5 用 XML 格式（`<function name="...">`），不匹配 4 个内置 parser（llama3 `<|python_tag|>` / qwen25 `<tool_call>` / mistral / deepseekv3 `<｜tool▁calls▁begin｜>`）。
+多轮 RL 启动时 → `ValueError("No tool call parser found")` → 崩溃。
+**修复**：Phase 2 用 wrapper 的 `--enable-multi-turn` monkey-patch sglang enum。Phase 1 单轮不受影响。
+
+### R47.6 警告级问题
+
+| # | 问题 | v1 | verl 0.4.0 | 修复 |
+|:--|:--|:--|:--|:--|
+| W1 | `agent` 段不存在 | `agent.max_turns` 等 | 无此段 | v2 移除 |
+| W2 | `runtime` 段不存在 | `runtime.n_gpus` | `trainer.n_gpus_per_node` | v2 改键 |
+| W3 | `reward` 段名错误 | `reward.*` | `reward_model.*` | v2 改名 |
+
+### R47.7 验证正确的接口
+
+| 项 | 状态 | 源码 |
+|:--|:--|:--|
+| `compute_score(data_source, solution_str, ground_truth, extra_info, **kwargs)` | ✅ | `naive.py:67` |
+| `data.need_tools_kwargs: True` | ✅ | `rl_dataset.py:115` |
+| `data.return_raw_chat: True` | ✅ | `ppo_trainer.yaml:13` |
+| `rollout.name: sglang` | ✅ | `ppo_trainer.yaml:100` |
+| `actor.use_kl_loss: True` | ✅ | GRPO 必需 |
+
+### R47.8 修复交付物
+
+| 文件 | 改动 | 验证 |
+|:--|:--|:--|
+| `baize_posttrain_rl_verl_config_v2.yaml` | 新建：完全重写 | yaml valid ✅, 键集交叉验证 ✅ |
+| `baize_posttrain_verl_wrapper.py` | 重写：移除 ToolParser，加 sglang patch | py_compile ✅ |
+| `baize_posttrain_rl_grpo.sh` | config→v2, default arm→R0 | bash -n ✅, dry-run ✅ |
+
+### R47.9 v1→v2 配置变更对照
+
+| v1 键 | v2 键 | 原因 |
+|:--|:--|:--|
+| `reward.custom_reward_function.*` | `custom_reward_function.*`（顶层） | BUG1 |
+| `algorithm.name: grpo` | `algorithm.adv_estimator: grpo` | BUG2 |
+| `algorithm.group_size: 8` | `actor_rollout_ref.rollout.n: 8` | BUG3 |
+| `multi_turn: True` | `multi_turn: {enable: False, ...}` | BUG4 |
+| `tool_kwargs.tools_config_file` | `multi_turn.tool_config_path` | BUG5 |
+| `reward.*` | `reward_model.*` | W3 |
+| `runtime.n_gpus` | `trainer.n_gpus_per_node` | W2 |
+| `agent.*` | （移除） | W1 |
+
+### R47.10 11/9 launch 影响
+
+**Phase 1（smoke, R0 skeleton, 单轮）**：v2 config `multi_turn.enable: False` → 不触发 parser 检测 → 🟢 安全启动
+**Phase 2（多轮+沙盒）**：需额外验证 monkey-patch → ⚠️ 不阻塞 Phase 1
+
+### R47.11 交付物
+
+- `run/baize_posttrain_rl_verl_config_v2.yaml`（新建, 148行, yaml valid ✅）
+- `run/baize_posttrain_verl_wrapper.py`（重写, ~100行, py_compile ✅）
+- `run/baize_posttrain_rl_grpo.sh`（修改2行, bash -n ✅, dry-run ✅）
+- `reports/report_posttrain_r47_verl_audit_zh.html`（自包含, 0 script, 0 外链）
+- 本节（EXPERIMENTS §R47, 11小节）

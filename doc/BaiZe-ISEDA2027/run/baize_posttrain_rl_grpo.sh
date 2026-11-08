@@ -36,9 +36,9 @@ SCRIPT_DIR="$(dirname "$(realpath "${BASH_SOURCE[0]}")")"
 source "$SCRIPT_DIR/baize_posttrain_paths.sh"
 
 OUTPUT_DIR="${BAIZE_EXP_DIR}/baize_posttrain_rl_grpo"
-CONFIG_FILE="$SCRIPT_DIR/baize_posttrain_rl_verl_config.yaml"
+CONFIG_FILE="$SCRIPT_DIR/baize_posttrain_rl_verl_config_v2.yaml"  # R47: v2 fixes 5 critical bugs
 RESUME_DIR="${RESUME_DIR:-${BAIZE_MODEL_PATH}}"  # Default: MiniCPM5-2B for surrogate
-REWARD_ARM=R2
+REWARD_ARM=R0  # R47: default R0 (skeleton, no sandbox); switch to R2 when sandbox ready
 NP=4  # 4×A40 on .17
 
 DRY_RUN=0; SMOKE=0; GPU_IDS=""
