@@ -250,3 +250,5 @@
 1792499259030_r00t7	qinqinl	hfeg0pkn003	35	eda_other	case	EDA-Eval-DesignFlow-SpfsablaCountCheck-001	2026-11-08 21:55	
 1793102773959_okq91	easont	hfeg0pkn004	654	eda_other	case	EDA-Eval-DesignFlow-NetlistCompareReport-001	2026-11-08 22:38	
 1792201142166_8g8rx	jessegao	hfeg0pkn005	203	eda_other	case	EDA-Eval-DesignFlow-LdoVerifyReport-001	2026-11-08 23:09	
+1793245121084_56j3w	e0023936	hfhds201	114	eda_other	parked		2026-11-08 23:29	duplicate of WvSineWaveAnalyze-001 (sine wave gen in WaveView tcl); pivot to givdz
+1793255447731_givdz					case	EDA-Eval-DesignFlow-CdlTbGen-001	2026-11-08 23:47	
