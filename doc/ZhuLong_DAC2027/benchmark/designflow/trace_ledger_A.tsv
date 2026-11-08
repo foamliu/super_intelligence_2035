@@ -264,3 +264,5 @@
 1790126012653_7i0aj	t0002987	hfhds201	37	eda_other	case	EDA-Eval-DesignFlow-AgentCodeStructAnalyze-001	2026-11-09 05:22	
 1793252859649_p5x6n	e0023936	hfhds201	92	eda_other	case	EDA-Eval-DesignFlow-CosWaveTclGen-001	2026-11-09 05:53	
 1793006362279_0zrzc.messages.json	e0023936	hfhds201	90	eda_other	case	EDA-Eval-DesignFlow-WvCursorApiGen-001	2026-11-09 06:18	
+1793600222866_dswuv.messages.json	e0047722	hfeg0pkn004	62	eda_other	parked		2026-11-09 06:50	duplicate of WvSineWaveAnalyze-001 (sine wave gen in WaveView tcl, same user/host); pivot to next fresh
+1793006248706_v4lvu.messages.json	e0023936	hfhds201	24	eda_other	claimed		2026-11-09 07:02	
