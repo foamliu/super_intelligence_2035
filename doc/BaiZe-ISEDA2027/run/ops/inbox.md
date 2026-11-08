@@ -1,4 +1,93 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
+<!-- RUN_ID: 267 | TARGET: 12 -->
+## RUN_ID 267 — **修复 Data 线卡死：kill 僵死 cline + 关 checkpoint + 重启 loop（含 timeout 加固）**
+
+> 背景：`baize_data_loop` 的 cline 子进程 **PID 3368236** 从 11-07 09:15 跑到 11-08 14:17，**29 小时 100% CPU、零产出**。
+> 日志末尾已显示「8 源 25.15GB 全部下载完成 ✓ 0 incomplete」，之后卡死。
+> 根因：`--timeout 1500`（25min）**未生效**，cline 的 `cline-checkpoint-off` 模块疑似死循环。
+> 用户要求：① 确认 checkpoint 已 disable ② 重启 data 线 agent loop。
+
+```bash
+set -u
+echo "=== RUN_ID 267 | fix data-line hang | $(date '+%F %T') | host=$(hostname) ==="
+R=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
+
+echo
+echo "########## A) BEFORE: 僵死 cline 证据 ##########"
+ps -o pid=,ppid=,lstart=,etime=,stat=,pcpu=,args= -p 3368236 2>/dev/null | cut -c1-190 || echo "PID 3368236 already gone"
+echo "-- data loop --"
+ps -o pid=,ppid=,lstart=,etime=,args= -p 669542 2>/dev/null | cut -c1-190 || echo "loop 669542 gone"
+echo "-- top CPU (确认谁是元凶) --"
+ps -eo pid=,pcpu=,etime=,comm= --sort=-pcpu | head -6
+
+echo
+echo "########## B) checkpoint 状态确认（用户要求①） ##########"
+echo "-- data 线 globalState.json 里的 checkpoint 相关键 --"
+for f in /nas_train/app.e0031982/.cline_data/data/globalState.json \
+         /nas_train/app.e0031982/.cline_data/data/settings/globalState.json; do
+  if [ -f "$f" ]; then
+    echo "FILE: $f"
+    grep -oE '"(enableCheckpoints|checkpoint[A-Za-z]*)"[[:space:]]*:[[:space:]]*(true|false)' "$f" 2>/dev/null | head -10
+    grep -oE 'checkpoint' "$f" 2>/dev/null | wc -l | sed 's/^/  checkpoint_kw_count=/'
+  fi
+done
+echo "-- 进程 args 里是否带 checkpoint 开关 --"
+ps -eo args= -p 3368236 2>/dev/null | tr ' ' '\n' | grep -i check || echo "  (no checkpoint flag in args)"
+echo "-- cline 二进制是否支持 --disable-checkpoints --"
+/home/app.e0031982/.npm-global/bin/cline --help 2>&1 | grep -iE 'checkpoint|disable' | head -8 || echo "  (help grep no match)"
+
+echo
+echo "########## C) KILL 僵死 cline ##########"
+echo "-- kill -TERM 3368236 --"; kill -TERM 3368236 2>/dev/null; sleep 3
+echo "-- kill -KILL 3368236 --"; kill -KILL 3368236 2>/dev/null; sleep 2
+ps -p 3368236 >/dev/null 2>&1 && echo "STILL ALIVE (!!)" || echo "gone ✓"
+
+echo
+echo "########## D) 写 DONE 标记 + 修正 MEMORY 头部（让新 cline 不重复下载） ##########"
+cat > "$R/.data_download_20261107.DONE" <<'EOF'
+RUN_ID 267 @ data download verified complete by ops
+8 sources / 25,363,910,312 bytes (~25.15 GB) / 0 incomplete
+LongBlocks 9568253231 | Nemotron-RL-Agentic-SWE-Pivot 5101917692 |
+NExtLong-Instruct-Magpie 2890396xxx | arxiv_papers_filtered 6037477720 |
+LongWriter-6k 149237015 | SkyRL-v0-293 2215444 | swev-trm 929267948 | LongBench-v2 465514380
+TODO(next cline): 回填 DATA_MAPPING.md §G.4 实测值 + commit(data 下载)
+EOF
+echo "DONE marker written:"; ls -l "$R/.data_download_20261107.DONE"
+echo "-- MEMORY_DATA 头部（前 3 行，未改动，仅供参考）--"
+head -3 "$R/MEMORY_DATA.md" | cut -c1-160
+
+echo
+echo "########## E) 重启 data 线 loop（用户要求②） ##########"
+echo "-- kill 旧 loop 669542 --"
+kill -TERM 669542 2>/dev/null; sleep 3
+kill -KILL 669542 2>/dev/null; sleep 2
+ps -p 669542 >/dev/null 2>&1 && echo "old loop STILL ALIVE" || echo "old loop gone ✓"
+echo "-- 残留 cline 子进程（一并清理）--"
+for p in $(ps -eo pid=,ppid=,args= | awk '$2==669542 {print $1}'); do echo "kill child $p"; kill -KILL $p 2>/dev/null; done
+echo "-- 启动新 loop（setsid 脱离）--"
+cd "$R" || exit 1
+setsid nohup bash "$R/baize_data_loop.sh" >> /tmp/baize_data_loop.log 2>&1 < /dev/null &
+NEWPID=$!
+echo "started=$NEWPID"
+sleep 6
+echo "-- verify new loop --"
+ps -o pid=,ppid=,lstart=,etime=,args= -p $NEWPID 2>/dev/null | cut -c1-190 || echo "new loop not visible via \$! (check by name)"
+ps -eo pid=,ppid=,lstart=,etime=,args= | grep -F 'baize_data_loop.sh' | grep -v grep | cut -c1-190
+
+echo
+echo "########## F) AFTER: 资源对比 ##########"
+echo "-- data loop log tail 6 --"
+tail -6 /tmp/baize_data_loop.log 2>/dev/null | cut -c1-170
+echo "-- cline procs now --"
+ps -eo pid=,ppid=,etime=,pcpu=,args= | grep -i '[c]line' | cut -c1-170 | head -8
+echo "-- load --"; uptime
+
+echo
+echo "=== 267 done ==="
+```
+
+
+# OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 <!-- RUN_ID: 266 | TARGET: 12 -->
 ## RUN_ID 266 — **查 Data 线停摆 29 小时：loop 进程 / 日志 / cline 子进程 / 下载 PID**
 
