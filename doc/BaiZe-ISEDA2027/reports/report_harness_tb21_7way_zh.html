@@ -17,37 +17,38 @@
 <tr><td>log-summary-date-ranges</td><td class='pass'>1</td></tr>
 </table>
 <p><strong>Oracle 结果</strong>：<span class='pass'>5/5 PASSED</span> — verifier 正常，可跑全量。</p>
-<h2>2. 7 路全量结果（实时快照 · 2026-11-08 07:20）</h2>
+<h2>2. 7 路全量结果（实时快照 · 2026-11-08 08:28）</h2>
 <div class="note"><p><strong>状态</strong>：2 路已完成（cline / hermes），5 路运行中。下表为<strong>当前快照</strong>，非最终结果；7 路全量完成后将标注「7-way complete」。<br>
+<strong>⚠️ 网关 429</strong>：glm-5.3-flash 额度耗尽（等待~2h恢复），5 路运行中路暂缓，恢复后自动续跑。<br>
 <strong>时间预算声明</strong>（来自 research 日报 2611.08417）：wall-clock 预算是测量规格的一部分，TB_AGENT_TIMEOUT=3600s/题。延时可抹去高达 20pp 的 harness 差距 => 本表分数<strong>仅在统一时间预算下有效</strong>，跨时间预算对比无效。</p></div>
-<table><tr><th>Harness</th><th>状态</th><th>已跑题数</th><th>已评分</th><th>Passed</th><th>Pass%</th><th>剩余</th></tr>
-<tr><td>cline</td><td>已完成</td><td>89</td><td>88</td><td class='pass'>7</td><td>8.0%</td><td>0</td></tr>
-<tr><td>hermes</td><td>已完成</td><td>89</td><td>54</td><td class='pass'>3</td><td>5.6%</td><td>0(35 errored)</td></tr>
-<tr><td>opencode</td><td>运行中</td><td>24</td><td>13</td><td class='pass'>5</td><td>38.5%</td><td>65</td></tr>
-<tr><td>pi</td><td>运行中</td><td>23</td><td>23</td><td class='pass'>6</td><td>26.1%</td><td>66</td></tr>
-<tr><td>codex</td><td>运行中(重跑)</td><td>13</td><td>6</td><td class='pass'>2</td><td>33.3%</td><td>76</td></tr>
-<tr><td>claude-code</td><td>运行中</td><td>11</td><td>5</td><td class='pass'>3</td><td>60.0%</td><td>78</td></tr>
-<tr><td>deepseek</td><td>运行中</td><td>16</td><td>5</td><td class='pass'>3</td><td>60.0%</td><td>73</td></tr>
+<table><tr><th>Harness</th><th>状态</th><th>已评分</th><th>Passed</th><th>Pass%</th><th>剩余</th></tr>
+<tr><td>cline</td><td>已完成</td><td>90</td><td class='pass'>7</td><td>7.8%</td><td>0</td></tr>
+<tr><td>hermes</td><td>已完成</td><td>90</td><td class='pass'>3</td><td>3.3%</td><td>0</td></tr>
+<tr><td>pi</td><td>运行中</td><td>24</td><td class='pass'>6</td><td>25.0%</td><td>65</td></tr>
+<tr><td>opencode</td><td>运行中</td><td>28</td><td class='pass'>5</td><td>17.9%</td><td>61</td></tr>
+<tr><td>deepseek</td><td>运行中</td><td>29</td><td class='pass'>5</td><td>17.2%</td><td>60</td></tr>
+<tr><td>codex</td><td>运行中</td><td>39</td><td class='pass'>3</td><td>7.7%</td><td>50</td></tr>
+<tr><td>claude-code</td><td>运行中</td><td>20</td><td class='pass'>3</td><td>15.0%</td><td>69</td></tr>
 </table>
-<p><strong>合计</strong>：194 已评分 / 29 passed（14.9%）。注：运行中路为早期快照，Pass% 会随题量增加收敛。gateway 200 OK，5 路均 alive。</p>
+<p><strong>合计</strong>：320 已评分 / 32 passed（10.0%）。注：运行中路为早期快照，Pass% 会随题量增加收敛。网关 429 额度耗尽（wait~2h），恢复后 5 路自动续跑。</p>
 <div class="summary-box">
 <h3>cline 路（已完成 · 唯一满量路）</h3>
-<p><strong>完成</strong>：89/89 题｜ <strong>通过</strong>：<span class="pass">7 题（8.0%）</span>｜ <strong>失败</strong>：81 题｜ <strong>未评分</strong>：1 题</p>
+<p><strong>完成</strong>：89/89 题｜ <strong>通过</strong>：<span class="pass">7 题（7.8%）</span>｜ <strong>失败</strong>：82 题｜ <strong>已评分</strong>：90</p>
 <h4>通过的 7 题</h4><ul class='task-list'><li>bn-fit-modify</li><li>break-filter-js-from-html</li><li>build-pov-ray</li><li>prove-plus-comm</li><li>pypi-server</li><li>query-optimize</li><li>regex-chess</li></ul>
 </div>
 <div class="summary-box">
 <h3>hermes 路（已完成）</h3>
-<p><strong>完成</strong>：89/89 题｜ <strong>评分</strong>：54｜ <strong>通过</strong>：<span class="pass">3 题（5.6%）</span>｜ <strong>失败</strong>：51 题｜ <strong>errored</strong>：35 题</p>
+<p><strong>完成</strong>：89/89 题｜ <strong>评分</strong>：90｜ <strong>通过</strong>：<span class="pass">3 题（3.3%）</span>｜ <strong>失败</strong>：87 题</p>
 <h4>通过的 3 题</h4><ul><li>modernize-scientific-stack</li><li>multi-source-data-merger</li><li>openssl-selfsigned-cert</li></ul>
 </div>
 <div class="summary-box">
 <h3>运行中路已通过题（早期快照）</h3>
 <ul class='task-list'>
+<li><strong>pi(6)</strong>: break-filter-js-from-html, build-cython-ext, build-pov-ray, chess-best-move, constraints-scheduling, db-wal-recovery</li>
 <li><strong>opencode(5)</strong>: code-from-image, constraints-scheduling, crack-7z-hash, custom-memory-heap-crash, db-wal-recovery</li>
-<li><strong>pi(5)</strong>: break-filter-js-from-html, build-cython-ext, build-pov-ray, chess-best-move, constraints-scheduling</li>
-<li><strong>codex(2)</strong>: build-pov-ray, code-from-image</li>
-<li><strong>claude-code(1)</strong>: cancel-async-tasks</li>
-<li><strong>deepseek(3)</strong>: break-filter-js-from-html, build-cython-ext, constraints-scheduling</li>
+<li><strong>deepseek(5)</strong>: break-filter-js-from-html, build-cython-ext, constraints-scheduling, custom-memory-heap-crash, db-wal-recovery</li>
+<li><strong>codex(3)</strong>: build-pov-ray, code-from-image, compile-compcert</li>
+<li><strong>claude-code(3)</strong>: cancel-async-tasks, constraints-scheduling, count-dataset-tokens</li>
 </ul>
 </div>
 <h2>3. 失败归因分析</h2>
