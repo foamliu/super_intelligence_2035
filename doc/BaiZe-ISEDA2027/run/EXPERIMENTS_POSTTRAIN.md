@@ -5468,3 +5468,107 @@ MiniCPM5 用 XML 格式（`<function name="...">`），不匹配 4 个内置 par
 - `run/baize_posttrain_rl_grpo.sh`（修改2行, bash -n ✅, dry-run ✅）
 - `reports/report_posttrain_r47_verl_audit_zh.html`（自包含, 0 script, 0 外链）
 - 本节（EXPERIMENTS §R47, 11小节）
+
+---
+
+## §R48 奖励臂消融预注册协议（2026-11-08 · wake96 · 零 GPU · 纯设计+实现）
+
+> **动机**：任务书明确要求"预注册判定阈值：点估计 + 配对检验（McNemar / paired bootstrap）显著性 + 成本比 —— 必须先定后测"（总纲§9）。
+> R3 定义了 4 臂奖励（R0-R4），R18 推荐了超参，R19 覆盖了**评测层**统计功效（5-run），但**训练消融层**的预注册协议缺失。
+> 不预注册则 4 臂比较沦为事后合理化，违反预注册原则。本节填补此空白。
+
+### R48.1 消融设计（4 臂）
+
+| 臂 | 描述 | 公式 | 迭代 | 沙盒 | 阶段 |
+|:--|:--|:--|--:|:--|:--|
+| R0 | 骨架静态分析 | 0.1*syntax+0.3*api+0.2*entry+0.2*structure+0.2*test_align+0.02*format | 500 | ❌ | Phase1-smoke + Phase2-A |
+| R1 | 二值奖励 | 1.0 if all_pass else 0.0 | 500 | ✅ | Phase2-B |
+| R2 | 部分分 | 0.2*exec_ok+0.8*(passed/total) | 500 | ✅ | Phase2-C |
+| R3 | 成本敏感 | R2-0.05*(tool_calls/10) | 500 | ✅ | Phase2-D |
+
+总迭代预算：2000 iters（4 臂 × 500）。超参：LR=3e-6, KL=0.02(R0/R2/R3)/0.04(R1), group=8, clip=0.2, entropy=0.001。
+
+### R48.2 预注册指标（6 主 + 4 辅）
+
+**主要指标**：
+
+| ID | 指标 | 方向 | 阈值 |
+|:--|:--|:--|:--|
+| M1 | 最终平均奖励（末 50 iter） | ↑ | — |
+| M2 | 收敛速度（达 80% final 的 iter） | ↓ | — |
+| M3 | 评测 Pass@1 迁移（5-run × 158 任务） | ↑ | — |
+| M4 | 作弊率 | ↓ | < 5%（红线 §5.2） |
+| M5 | 奖励标准差（信号质量） | ↑ | > 0.05 |
+| M6 | 策略熵（最终） | ↑ | > 0.1（防坍缩） |
+
+**辅助指标**：S1 KL<10 | S2 grad_norm<100 | S3 response_length（监控长度作弊） | S4 GPU-h（预算内）
+
+### R48.3 决策门（4 道 · 预注册冻结）
+
+| 门 | 条件 | PASS | ADJUST | ABORT |
+|:--|:--|:--|:--|:--|
+| G1: Smoke(10it,R0) | reward>0.1 AND std>0.05 AND no OOM/NaN | 起全量 R0 | <0.1→查奖励函数；OOM→降 batch | NaN→查 grad_clip+KL；全 0→查数据+parser |
+| G2: R0 全量(500it) | M1>0.3 AND M5>0.05 AND M6>0.1 AND M4<5% | R0 可行→起沙盒臂 | M1<0.3→延至 1000；M6<0.1→加 entropy | M1 平 200+→信号不足；M4>5%→反作弊失败 |
+| G3: 沙盒臂比较 | 至少 1 臂 M1>R0_M1+0.05 | 选最优臂入 Phase3 | 无臂超 R0 5pp→延至 1000 | 全崩→沙盒故障→R0-only |
+| G4: 最终评测 | 最优臂 eval>36+3pp(McNemar p<0.05) | 可发表 | <3pp 但>0→bootstrap CI→报告趋势 | <36%→退化→查作弊/过拟合 |
+
+### R48.4 统计分析计划
+
+| 项 | 值 |
+|:--|:--|
+| 主比较 | Paired bootstrap（10,000 重采样）on per-task pass/fail |
+| 效应量 | Cohen's h（arc-sine 变换比例差） |
+| 置信区间 | 95% bootstrap CI on Pass@1 difference |
+| 显著性 | p < 0.05（双侧） |
+| 多重比较 | Bonferroni: 6 pairwise → α=0.05/6≈0.0083 |
+| McNemar | 连续校正 χ² |
+
+**最小可检测效应**：7.2pp（n=790 paired obs, α=0.05, power=0.8, baseline p=0.36）。
+→ 足以检测 M1 级改善（36%→50%=14pp），**不足以**区分小臂差（<7pp）。
+→ 论文策略：训练指标（M1/M2, 500 data points/arm）为主比较，eval 为辅。
+
+**预注册判定阈值**：
+- 臂优越：dM1>0.03 AND dM3>3pp AND CI 排除 0 AND p<0.0083
+- 臂等价：|dM1|<0.02 AND |dM3|<2pp AND CI 包含 0
+- 臂劣势：dM1<-0.03 AND dM3<-3pp
+
+### R48.5 样本量论证
+
+- 训练：500 iters/arm（GRPO 200-500 iters 收敛；250 梯度更新；64k prompts；512k rollouts）
+- 评测：5 runs × 158 tasks = 790 paired obs（min detectable = 7.2pp）
+- GPU 预算：R0=8.3h + R1=12.5h + R2=12.5h + R3=12.5h + eval=20h = **65.8 GPU-h**（预算 96h，利用率 68.5%）
+
+### R48.6 预期结果（预注册预测）
+
+| 臂 | M1 奖励 | M3 评测 | M2 收敛 | M5 std | M4 cheat | 理据 |
+|:--|:--|:--|:--|:--|:--|:--|
+| R0 | 0.35-0.50 | 38-42%(+2-6pp) | 150-250 | 0.25-0.40 | <1% | 强信号(std=0.3718)但天花板受静态分析限 |
+| R1 | 0.15-0.30 | 37-41%(+1-5pp) | 300-500 | 0.05-0.20 | <3% | 二值稀疏→2B 大面积 0→无梯度(vision 教训) |
+| R2 | 0.40-0.60 | 40-46%(+4-10pp) | 100-200 | 0.20-0.40 | <3% | R3 推荐。部分分密化信号。预期最优 |
+| R3 | 0.35-0.55 | 39-45%(+3-9pp) | 150-250 | 0.20-0.38 | <3% | 工具惩罚。reward 略低于 R2 但代码更高效 |
+
+**预测排序**：R2 > R3 > R0 > R1
+
+### R48.7 模拟验证
+
+`--simulate` 模式用预测通过率（R0=40%, R1=39%, R2=43%, R3=42%）生成 790 paired obs，运行 6 pairwise bootstrap+McNemar。
+
+模拟结果：大多数 pairwise 在 790 obs 下**不显著**（p>0.0083），仅 R1 vs R3 达到显著（d=-6.7pp, p=0.0063）。验证了"eval 层 7.2pp min detectable"的预期——**训练指标比较（500 data points）是主要分析工具，eval 是辅助**。
+
+### R48.8 与既有研究的关系
+
+| 研究 | R48 补充 |
+|:--|:--|
+| R3（奖励设计理论） | 定义 4 臂比较协议与预注册阈值 |
+| R18（GRPO 超参） | 固化超参为预注册值，不可事后调整 |
+| R19（评测统计功效） | R19 管评测层（5-run），R48 管训练消融层（4-arm） |
+| R35（对抗鲁棒性） | M4 cheat rate 对接 R35 anti-cheat |
+| R36（训练监控） | 决策门对接 R36 发散检测 |
+| R43（smoke 校准） | G1 门对接 R43 smoke test 模型 |
+| R47（verl config v2） | 超参与 v2 config 一致 |
+
+### R48.9 交付物
+
+- `run/baize_posttrain_arm_ablation_plan.py`（~545 行, py_compile ✅, --simulate ✅, --html ✅, --analyze 待 GPU 后用）
+- `reports/report_posttrain_r48_arm_ablation_prereg_zh.html`（6.7KB, 自包含, 0 script, 0 外链）
+- 本节（EXPERIMENTS §R48, 9 小节）
