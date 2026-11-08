@@ -26268,3 +26268,49 @@ analyzer_pid=2942436
 
 === 250 done; result in /tmp/baize_ab_analyze.txt on .29 after ~13 min (RUN_ID 251) ===
 ```
+
+---
+
+## RUN_ID 251 · 2026-11-08 12:28:04 · host=`whag0pgpuap12` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 251 | fetch A/B analysis | $(date '+%F %T') | host=$(hostname) ==="
+SSH="ssh -o BatchMode=yes -o ConnectTimeout=6 -o StrictHostKeyChecking=no"
+$SSH 10.239.2.29 'for i in $(seq 1 50); do if [ -f /tmp/baize_ab_analyze.txt ] && grep -q "=== END ===" /tmp/baize_ab_analyze.txt 2>/dev/null; then break; fi; sleep 10; done; echo "-- waited_iter=$i (~${i}0 s) --"; cat /tmp/baize_ab_analyze.txt 2>/dev/null; echo; echo "-- live now --"; uptime; echo "-- clients --"; ps -eo pid=,stat=,etimes=,args= | awk "/[g]guf_lmeval_run\\.py/ && !/cline/ {print \"  \" \$1 \" \" \$2 \" etimes=\" \$3}" ; echo "-- eval chunk logs (size) --"; ls -l /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/lm_eval_results/gguf_iter_112000_full_v4/hellaswag_chunk*.log 2>/dev/null | awk "{print \"  \" \$5 \" \" \$9}"'
+echo
+echo "=== 251 done ==="
+```
+
+**输出**
+```
+=== RUN_ID 251 | fetch A/B analysis | 2026-11-08 12:28:04 | host=whag0pgpuap12 ===
+-- waited_iter=50 (~500 s) --
+
+-- live now --
+ 12:36:25 up 281 days, 23:25,  5 users,  load average: 91.16, 82.35, 84.63
+-- clients --
+  323937 Ssl etimes=31220
+  323941 Ssl etimes=31220
+  340077 Ssl etimes=34654
+  1304898 Ssl etimes=16519
+  1304909 Ssl etimes=16519
+  1901699 Ssl etimes=18672
+  3922095 Ssl etimes=35163
+-- eval chunk logs (size) --
+  72071 /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/lm_eval_results/gguf_iter_112000_full_v4/hellaswag_chunk0a_half1.log
+  359715 /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/lm_eval_results/gguf_iter_112000_full_v4/hellaswag_chunk0a.log
+  238943 /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/lm_eval_results/gguf_iter_112000_full_v4/hellaswag_chunk0b_a.log
+  80079 /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/lm_eval_results/gguf_iter_112000_full_v4/hellaswag_chunk0b_b.log
+  269652 /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/lm_eval_results/gguf_iter_112000_full_v4/hellaswag_chunk0b.log
+  346772 /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/lm_eval_results/gguf_iter_112000_full_v4/hellaswag_chunk0_missing.log
+  165931 /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/lm_eval_results/gguf_iter_112000_full_v4/hellaswag_chunk1a_half1.log
+  170683 /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/lm_eval_results/gguf_iter_112000_full_v4/hellaswag_chunk1a_half2.log
+  49383 /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/lm_eval_results/gguf_iter_112000_full_v4/hellaswag_chunk1a.log
+  175233 /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/lm_eval_results/gguf_iter_112000_full_v4/hellaswag_chunk1b_a.log
+  169086 /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/lm_eval_results/gguf_iter_112000_full_v4/hellaswag_chunk1b_b.log
+  49563 /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/lm_eval_results/gguf_iter_112000_full_v4/hellaswag_chunk1b.log
+
+=== 251 done ===
+```
