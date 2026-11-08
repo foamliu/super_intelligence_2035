@@ -1,0 +1,686 @@
+{
+  "summary": {
+    "total_checkpoints": 17,
+    "action_distribution": {
+      "continue": 15,
+      "switch_arm": 1,
+      "stop": 1
+    },
+    "final_pass_rate": 0.3883,
+    "final_step": 1100,
+    "final_arm": "R1_binary",
+    "milestones": {
+      "M1": {
+        "target": 0.5,
+        "reached_step": null
+      },
+      "M2": {
+        "target": 0.65,
+        "reached_step": null
+      },
+      "M3": {
+        "target": 0.75,
+        "reached_step": null
+      },
+      "M4": {
+        "target": 0.85,
+        "reached_step": null
+      }
+    },
+    "arms_used": [
+      "R1_binary",
+      "R3_tool_penalty"
+    ],
+    "total_stops": 1,
+    "total_rollbacks": 0,
+    "total_switches": 1,
+    "total_curriculum_advances": 0
+  },
+  "decisions": [
+    {
+      "step": 0,
+      "phase": "warmup",
+      "arm": "R3_tool_penalty",
+      "avg_reward": 0.4986,
+      "reward_std": 0.1491,
+      "policy_entropy": 1.9944,
+      "kl_from_ref": 0.057,
+      "pass_rate": 0.3547,
+      "cheat_rate": 0.0004,
+      "avg_length": 17,
+      "action": "continue",
+      "reason": "All checks passed (0 watch)",
+      "n_alerts": 0,
+      "alert_levels": {
+        "watch": 0,
+        "warn": 0,
+        "stop": 0
+      }
+    },
+    {
+      "step": 50,
+      "phase": "warmup",
+      "arm": "R3_tool_penalty",
+      "avg_reward": 0.4931,
+      "reward_std": 0.1421,
+      "policy_entropy": 2.0,
+      "kl_from_ref": 0.0519,
+      "pass_rate": 0.3554,
+      "cheat_rate": 0.001,
+      "avg_length": 21,
+      "action": "continue",
+      "reason": "All checks passed (0 watch)",
+      "n_alerts": 0,
+      "alert_levels": {
+        "watch": 0,
+        "warn": 0,
+        "stop": 0
+      }
+    },
+    {
+      "step": 100,
+      "phase": "warmup",
+      "arm": "R3_tool_penalty",
+      "avg_reward": 0.5122,
+      "reward_std": 0.1248,
+      "policy_entropy": 1.74,
+      "kl_from_ref": 0.0591,
+      "pass_rate": 0.3389,
+      "cheat_rate": 0.0017,
+      "avg_length": 22,
+      "action": "continue",
+      "reason": "All checks passed (0 watch)",
+      "n_alerts": 1,
+      "alert_levels": {
+        "watch": 0,
+        "warn": 1,
+        "stop": 0
+      }
+    },
+    {
+      "step": 150,
+      "phase": "warmup",
+      "arm": "R3_tool_penalty",
+      "avg_reward": 0.5132,
+      "reward_std": 0.1276,
+      "policy_entropy": 1.8336,
+      "kl_from_ref": 0.0608,
+      "pass_rate": 0.3599,
+      "cheat_rate": 0.0047,
+      "avg_length": 19,
+      "action": "continue",
+      "reason": "All checks passed (0 watch)",
+      "n_alerts": 1,
+      "alert_levels": {
+        "watch": 0,
+        "warn": 1,
+        "stop": 0
+      }
+    },
+    {
+      "step": 200,
+      "phase": "basic",
+      "arm": "R3_tool_penalty",
+      "avg_reward": 0.5273,
+      "reward_std": 0.1163,
+      "policy_entropy": 1.6792,
+      "kl_from_ref": 0.0613,
+      "pass_rate": 0.3716,
+      "cheat_rate": 0.0006,
+      "avg_length": 18,
+      "action": "continue",
+      "reason": "All checks passed (0 watch)",
+      "n_alerts": 1,
+      "alert_levels": {
+        "watch": 0,
+        "warn": 1,
+        "stop": 0
+      }
+    },
+    {
+      "step": 250,
+      "phase": "basic",
+      "arm": "R3_tool_penalty",
+      "avg_reward": 0.5079,
+      "reward_std": 0.1145,
+      "policy_entropy": 1.6646,
+      "kl_from_ref": 0.0582,
+      "pass_rate": 0.3313,
+      "cheat_rate": 0.0022,
+      "avg_length": 19,
+      "action": "continue",
+      "reason": "All checks passed (1 watch)",
+      "n_alerts": 2,
+      "alert_levels": {
+        "watch": 1,
+        "warn": 1,
+        "stop": 0
+      }
+    },
+    {
+      "step": 300,
+      "phase": "basic",
+      "arm": "R3_tool_penalty",
+      "avg_reward": 0.5303,
+      "reward_std": 0.1076,
+      "policy_entropy": 1.6511,
+      "kl_from_ref": 0.0691,
+      "pass_rate": 0.3692,
+      "cheat_rate": 0.0039,
+      "avg_length": 22,
+      "action": "continue",
+      "reason": "All checks passed (0 watch)",
+      "n_alerts": 1,
+      "alert_levels": {
+        "watch": 0,
+        "warn": 1,
+        "stop": 0
+      }
+    },
+    {
+      "step": 350,
+      "phase": "basic",
+      "arm": "R3_tool_penalty",
+      "avg_reward": 0.537,
+      "reward_std": 0.1009,
+      "policy_entropy": 1.6182,
+      "kl_from_ref": 0.0843,
+      "pass_rate": 0.3588,
+      "cheat_rate": 0.0,
+      "avg_length": 22,
+      "action": "continue",
+      "reason": "All checks passed (1 watch)",
+      "n_alerts": 2,
+      "alert_levels": {
+        "watch": 1,
+        "warn": 1,
+        "stop": 0
+      }
+    },
+    {
+      "step": 400,
+      "phase": "basic",
+      "arm": "R3_tool_penalty",
+      "avg_reward": 0.527,
+      "reward_std": 0.0848,
+      "policy_entropy": 1.5429,
+      "kl_from_ref": 0.0741,
+      "pass_rate": 0.3786,
+      "cheat_rate": 0.0027,
+      "avg_length": 22,
+      "action": "continue",
+      "reason": "All checks passed (1 watch)",
+      "n_alerts": 2,
+      "alert_levels": {
+        "watch": 1,
+        "warn": 1,
+        "stop": 0
+      }
+    },
+    {
+      "step": 450,
+      "phase": "basic",
+      "arm": "R3_tool_penalty",
+      "avg_reward": 0.5352,
+      "reward_std": 0.0931,
+      "policy_entropy": 1.5173,
+      "kl_from_ref": 0.064,
+      "pass_rate": 0.3708,
+      "cheat_rate": 0.004,
+      "avg_length": 19,
+      "action": "continue",
+      "reason": "All checks passed (2 watch)",
+      "n_alerts": 3,
+      "alert_levels": {
+        "watch": 2,
+        "warn": 1,
+        "stop": 0
+      }
+    },
+    {
+      "step": 500,
+      "phase": "basic",
+      "arm": "R3_tool_penalty",
+      "avg_reward": 0.547,
+      "reward_std": 0.0801,
+      "policy_entropy": 1.3772,
+      "kl_from_ref": 0.0696,
+      "pass_rate": 0.3989,
+      "cheat_rate": 0.0002,
+      "avg_length": 23,
+      "action": "continue",
+      "reason": "All checks passed (0 watch)",
+      "n_alerts": 2,
+      "alert_levels": {
+        "watch": 0,
+        "warn": 2,
+        "stop": 0
+      }
+    },
+    {
+      "step": 600,
+      "phase": "core",
+      "arm": "R3_tool_penalty",
+      "avg_reward": 0.536,
+      "reward_std": 0.0714,
+      "policy_entropy": 1.4148,
+      "kl_from_ref": 0.0692,
+      "pass_rate": 0.345,
+      "cheat_rate": 0.0006,
+      "avg_length": 25,
+      "action": "continue",
+      "reason": "All checks passed (1 watch)",
+      "n_alerts": 3,
+      "alert_levels": {
+        "watch": 1,
+        "warn": 2,
+        "stop": 0
+      }
+    },
+    {
+      "step": 700,
+      "phase": "core",
+      "arm": "R3_tool_penalty",
+      "avg_reward": 0.5435,
+      "reward_std": 0.0551,
+      "policy_entropy": 1.2768,
+      "kl_from_ref": 0.0715,
+      "pass_rate": 0.3712,
+      "cheat_rate": 0.0008,
+      "avg_length": 24,
+      "action": "continue",
+      "reason": "All checks passed (0 watch)",
+      "n_alerts": 2,
+      "alert_levels": {
+        "watch": 0,
+        "warn": 2,
+        "stop": 0
+      }
+    },
+    {
+      "step": 800,
+      "phase": "core",
+      "arm": "R3_tool_penalty",
+      "avg_reward": 0.559,
+      "reward_std": 0.0537,
+      "policy_entropy": 1.1683,
+      "kl_from_ref": 0.093,
+      "pass_rate": 0.393,
+      "cheat_rate": 0.001,
+      "avg_length": 28,
+      "action": "continue",
+      "reason": "All checks passed (1 watch)",
+      "n_alerts": 3,
+      "alert_levels": {
+        "watch": 1,
+        "warn": 2,
+        "stop": 0
+      }
+    },
+    {
+      "step": 900,
+      "phase": "core",
+      "arm": "R3_tool_penalty",
+      "avg_reward": 0.5568,
+      "reward_std": 0.0574,
+      "policy_entropy": 1.0473,
+      "kl_from_ref": 0.0799,
+      "pass_rate": 0.3783,
+      "cheat_rate": 0.0009,
+      "avg_length": 22,
+      "action": "continue",
+      "reason": "All checks passed (1 watch)",
+      "n_alerts": 3,
+      "alert_levels": {
+        "watch": 1,
+        "warn": 2,
+        "stop": 0
+      }
+    },
+    {
+      "step": 1000,
+      "phase": "core",
+      "arm": "R3_tool_penalty",
+      "avg_reward": 0.5697,
+      "reward_std": 0.0332,
+      "policy_entropy": 1.0251,
+      "kl_from_ref": 0.094,
+      "pass_rate": 0.3677,
+      "cheat_rate": 0.0017,
+      "avg_length": 26,
+      "action": "switch_arm",
+      "reason": "reward_std<0.05 (advantage vanishing) -> R1 binary",
+      "n_alerts": 4,
+      "alert_levels": {
+        "watch": 2,
+        "warn": 2,
+        "stop": 0
+      }
+    },
+    {
+      "step": 1100,
+      "phase": "core",
+      "arm": "R1_binary",
+      "avg_reward": 0.4649,
+      "reward_std": 0.0411,
+      "policy_entropy": 0.845,
+      "kl_from_ref": 0.0863,
+      "pass_rate": 0.3883,
+      "cheat_rate": 0.0318,
+      "avg_length": 28,
+      "action": "stop",
+      "reason": "STOP: STOP: H5_repetition 0.2797 > 0.2500",
+      "n_alerts": 5,
+      "alert_levels": {
+        "watch": 2,
+        "warn": 2,
+        "stop": 1
+      }
+    }
+  ],
+  "gpu_day_steps": [
+    {
+      "step": 0,
+      "name": "NFS Warm-up",
+      "duration_min": 10,
+      "action": "Pre-cache model files, venv packages, data on NFS",
+      "go": [
+        "model_dir exists",
+        "venv python works",
+        "torch.cuda.is_available()=True"
+      ],
+      "script": "baize_posttrain_gpu_watcher.sh --warmup-only",
+      "risk": "R1 NFS cold start",
+      "source": "R45/R62"
+    },
+    {
+      "step": 1,
+      "name": "SGLang Serve MiniCPM5-2B",
+      "duration_min": 5,
+      "action": "Launch SGLang server with tensor parallel on 4xA40",
+      "go": [
+        "server responds /v1/models",
+        "throughput >10 req/s"
+      ],
+      "script": "baize_posttrain_launch_11_9.sh --step 1",
+      "risk": "R2 SGLang occupies GPUs",
+      "source": "R67/R69"
+    },
+    {
+      "step": 2,
+      "name": "Baseline 36% Reproduction (5-run)",
+      "duration_min": 900,
+      "action": "Run EDA-Eval-PyAether 158 tasks x 5 runs",
+      "go": [
+        "5-run mean in [30%%, 42%%]",
+        "std < 5pp",
+        "no contamination"
+      ],
+      "script": "baize_posttrain_eval.sh --runs 5",
+      "risk": "Protocol mismatch",
+      "source": "R55"
+    },
+    {
+      "step": 3,
+      "name": "D1-D6 Extraction + Failure Trajectory",
+      "duration_min": 15,
+      "action": "Extract D1-D6 from baseline traces, classify failure modes",
+      "go": [
+        "D1-D6 all computed",
+        "failure taxonomy populated"
+      ],
+      "script": "baize_posttrain_baseline_d1d6_analyzer.py",
+      "risk": "Field missing",
+      "source": "R55/R4"
+    },
+    {
+      "step": 4,
+      "name": "Contamination Gate",
+      "duration_min": 2,
+      "action": "Verify no overlap between training data and eval set",
+      "go": [
+        "0 n-gram hits",
+        "0 MinHash hits"
+      ],
+      "script": "baize_posttrain_contamination_gate.sh",
+      "risk": "False positive",
+      "source": "R2/E1"
+    },
+    {
+      "step": 5,
+      "name": "RL Smoke Test (10 iters)",
+      "duration_min": 30,
+      "action": "Run 10 GRPO iterations with R3 arm on 4xA40",
+      "go": [
+        "reward > 0",
+        "no crash",
+        "cheat_rate < 5%%",
+        "entropy > 0.5"
+      ],
+      "script": "baize_posttrain_rl_grpo.sh --reward-arm R3 --max-iters 10",
+      "risk": "R6 reward zero/R7 OOM",
+      "source": "R59/R73/R80"
+    },
+    {
+      "step": 6,
+      "name": "Full RL Training (2000 iters)",
+      "duration_min": 18000,
+      "action": "Full GRPO training with adaptive controller monitoring",
+      "go": [
+        "pass_rate trending up",
+        "no stop-level alerts",
+        "M1 (50%%) reached"
+      ],
+      "script": "baize_posttrain_rl_grpo.sh --reward-arm R3 --max-iters 2000",
+      "risk": "All R80 collapse modes",
+      "source": "R74/R80/R81"
+    }
+  ],
+  "thresholds": {
+    "collapse": {
+      "C1_cheat": {
+        "cheat_rate": [
+          0.02,
+          0.05,
+          0.1,
+          "gt"
+        ]
+      },
+      "C2_kl_explode": {
+        "kl_from_ref": [
+          1.0,
+          2.0,
+          5.0,
+          "gt"
+        ]
+      },
+      "C3_adv_vanish": {
+        "reward_std": [
+          0.05,
+          0.02,
+          0.001,
+          "lt"
+        ]
+      },
+      "C4_entropy_collapse": {
+        "policy_entropy": [
+          0.5,
+          0.3,
+          0.1,
+          "lt"
+        ]
+      },
+      "C5_grad_explode": {
+        "grad_norm": [
+          0.5,
+          1.0,
+          null,
+          "gt"
+        ]
+      },
+      "C6_reward_stall": {
+        "avg_reward_delta_50": [
+          0.001,
+          0.0005,
+          0.0,
+          "lt"
+        ]
+      },
+      "C7_length_hack": {
+        "avg_length_delta": [
+          0.3,
+          0.5,
+          1.0,
+          "gt"
+        ]
+      }
+    },
+    "antihack": {
+      "H1_api_fabrication": {
+        "metric": "fabricated_api_rate",
+        "watch": 0.02,
+        "warn": 0.05,
+        "stop": 0.1
+      },
+      "H2_assertion_bypass": {
+        "metric": "bypass_assert_rate",
+        "watch": 0.01,
+        "warn": 0.03,
+        "stop": 0.08
+      },
+      "H3_empty_solution": {
+        "metric": "empty_solution_rate",
+        "watch": 0.05,
+        "warn": 0.1,
+        "stop": 0.2
+      },
+      "H4_format_gaming": {
+        "metric": "format_only_rate",
+        "watch": 0.03,
+        "warn": 0.08,
+        "stop": 0.15
+      },
+      "H5_repetition": {
+        "metric": "repetition_rate",
+        "watch": 0.1,
+        "warn": 0.15,
+        "stop": 0.25
+      },
+      "H6_output_degen": {
+        "metric": "filler_ratio",
+        "watch": 0.15,
+        "warn": 0.25,
+        "stop": 0.4
+      }
+    }
+  },
+  "curriculum_phases": [
+    {
+      "name": "warmup",
+      "steps": [
+        0,
+        200
+      ],
+      "difficulty": "L1-L2",
+      "task_ratio": [
+        0.6,
+        0.3,
+        0.1,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "name": "basic",
+      "steps": [
+        200,
+        600
+      ],
+      "difficulty": "L2-L3",
+      "task_ratio": [
+        0.2,
+        0.4,
+        0.3,
+        0.1,
+        0.0
+      ]
+    },
+    {
+      "name": "core",
+      "steps": [
+        600,
+        1200
+      ],
+      "difficulty": "L3-L4",
+      "task_ratio": [
+        0.1,
+        0.2,
+        0.4,
+        0.2,
+        0.1
+      ]
+    },
+    {
+      "name": "advanced",
+      "steps": [
+        1200,
+        1800
+      ],
+      "difficulty": "L4-L5",
+      "task_ratio": [
+        0.0,
+        0.1,
+        0.3,
+        0.4,
+        0.2
+      ]
+    },
+    {
+      "name": "challenge",
+      "steps": [
+        1800,
+        2000
+      ],
+      "difficulty": "L4-L5",
+      "task_ratio": [
+        0.0,
+        0.0,
+        0.2,
+        0.4,
+        0.4
+      ]
+    }
+  ],
+  "arm_configs": {
+    "R0_baseline": {
+      "initial_reward": 0.4,
+      "gain_per_200": 0.001,
+      "cheat_risk": 0.0,
+      "stability": "stable"
+    },
+    "R1_binary": {
+      "initial_reward": 0.46,
+      "gain_per_200": 0.003,
+      "cheat_risk": 0.02,
+      "stability": "stable"
+    },
+    "R2_partial": {
+      "initial_reward": 0.53,
+      "gain_per_200": -0.004,
+      "cheat_risk": 0.01,
+      "stability": "risky"
+    },
+    "R3_tool_penalty": {
+      "initial_reward": 0.5,
+      "gain_per_200": 0.013,
+      "cheat_risk": 0.0,
+      "stability": "best"
+    },
+    "R4_api_legality": {
+      "initial_reward": 0.48,
+      "gain_per_200": 0.011,
+      "cheat_risk": 0.0,
+      "stability": "good"
+    }
+  }
+}

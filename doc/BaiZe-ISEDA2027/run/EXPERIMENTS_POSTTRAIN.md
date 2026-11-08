@@ -8606,3 +8606,82 @@ R75 建立了 8 类 Hack 分类法和 8 项 PreToolUse hook 规范，其中 PTU-
 - 替身模型结果不可直接迁移到 BaiZe 正式训练
 - 无伪造。蒙特卡洛仿真基于合理假设，标注为仿真投影非实测。
 - 无伪造。替身模型（MiniCPM5-2B）审计结果不可迁移到 BaiZe 正式训练。
+
+---
+
+## §R81: GPU-Day 自适应训练控制器（wake129, 2026-11-09）
+
+> **目标**：将 R1–R80 全部预研产出综合为统一的实时决策引擎 `baize_posttrain_adaptive_controller.py`，在 GPU-Day 执行中自动检测异常并做出决策。
+> **脚本**：`baize_posttrain_adaptive_controller.py`（578行，纯Python3.8+stdlib，零依赖零GPU零网络）
+
+### R81.1 控制器架构（5组件）
+
+| 组件 | 来源 | 职责 | 关键阈值 |
+|:---|:---|:---|:---|
+| CollapseDetector | R80 | 7崩溃模式×3级告警 | entropy<0.1=stop, KL>5=stop |
+| AntiHackMonitor | R75/R76 | 6 hack模式 | cheat>10%=stop |
+| CurriculumScheduler | R74 | 5阶段渐进难度 | warmup→basic→core→advanced |
+| ArmSwitcher | R59/R73 | 5奖励臂自动切换 | std<0.05→R1, cheat>5%→R4 |
+| DecisionEngine | R81 | 优先级链统一决策 | stop>rollback>switch>advance>pause>continue |
+
+### R81.2 决策优先级链（6级）
+
+1. **STOP** (P=0.99)：任意 stop 级告警
+2. **ROLLBACK** (P=0.90)：KL/grad 爆炸达 warn
+3. **SWITCH_ARM** (P=0.85)：优势消失/长度利用/作弊
+4. **ADVANCE_CURRICULUM** (P=0.80)：pass_rate 超阈值
+5. **PAUSE** (P=0.75)：3+ warn 级告警
+6. **CONTINUE** (P=0.95)：全检查通过（默认）
+
+### R81.3 GPU-Day 执行计划（7步）
+
+| Step | 名称 | 时长(min) | 脚本 |
+|:---|:---|---:|:---|
+| 0 | NFS warm-up | 30 | baize_posttrain_nfs_warmup.sh |
+| 1 | SGLang serve | 20 | baize_posttrain_sglang_serve.sh |
+| 2 | Baseline eval | 120 | baize_posttrain_baseline_eval.sh |
+| 3 | D1-D6 extract | 30 | baize_posttrain_diag_extract.sh |
+| 4 | SFT mix | 60 | baize_posttrain_sft_mix.sh |
+| 5 | Domain anneal | 120 | baize_posttrain_domain_anneal.sh |
+| 6 | Full RL | 18000 | baize_posttrain_rl_grpo.sh |
+
+**总时长**：18380 min = 306.3 h = 12.8 days
+
+### R81.4 仿真验证
+
+- 17 检查点, 最终 Pass@1: 38.8%
+- 动作分布：continue 15 / switch_arm 1 / stop 1
+- Stop 触发：step 1100, H5_repetition (0.2797 > 0.2500)
+- M1-M4 未达到（仿真提前停止）
+
+### R81.5 决策逻辑测试（8/8 PASS）
+
+| 用例 | 动作 | 触发 |
+|:---|:---|:---|
+| normal | continue | 0 alerts |
+| cheat_high | switch_arm | cheat>5% → R4 |
+| entropy_collapse | stop | entropy 0.08<0.10 |
+| kl_explode | rollback | KL 3.0>2.0 |
+| adv_vanish | switch_arm | std 0.01<0.05 → R1 |
+| length_hack | switch_arm | Δ0.8>0.5 → R1 |
+| multi_warn | switch_arm | std<0.05 |
+| ready_advance | advance | pass 72%>70% |
+
+### R81.6 产出文件
+
+- `baize_posttrain_adaptive_controller.py`（578行, 32KB）
+- `r81_adaptive_controller.json`（15.2KB）
+- `reports/report_posttrain_r81_adaptive_controller_zh.html`（8.85KB, 0script, 0外链）
+- EXPERIMENTS §R81（本节）
+
+### R81.7 研究集成图
+
+R74→CurriculumScheduler, R75/R76→AntiHackMonitor, R80→CollapseDetector, R59/R73→ArmSwitcher, R79→SFT mix, R77→Tokenizer, R55→D1-D6, R62→NFS warm-up, R67/R69→SGLang config
+
+### R81.8 局限性
+
+- 仿真简化动态；真实 GRPO 可能不同
+- 阈值基于 MiniCPM5-2B；BaiZe 需重新校准
+- 替身模型结果不可迁移到 BaiZe
+- 实时指标管道尚未端到端测试
+- 无伪造。所有阈值来自前序 R-sections 校准结果。
