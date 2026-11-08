@@ -28938,3 +28938,146 @@ echo "=== 273 done ==="
 
 === 273 done ===
 ```
+
+---
+
+## RUN_ID 274 · 2026-11-08 22:58:29 · host=`whag0pgpuap12` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 274 | v5 logs | $(date '+%F %T') | host=$(hostname) ==="
+SSH="ssh -o BatchMode=yes -o ConnectTimeout=6 -o StrictHostKeyChecking=no"
+$SSH 10.239.2.29 'set -u
+L=/tmp/baize_eval_v5/logs
+echo "-- files --"; ls -lt $L | head -12 | sed "s/^/  /"
+echo "-- progress --"
+for f in $L/*chunk*.log $L/*piqa*.log; do
+  [ -f "$f" ] || continue
+  n=$(basename "$f")
+  p=$(grep -oE "[0-9]+/[0-9]+ \[[^]]*\]" "$f" | tail -1)
+  echo "  $n :: ${p:-noprog}"
+  tail -1 "$f" | cut -c1-120 | sed "s/^/      /"
+done
+echo "-- mtimes --"; stat -c "%y %n" $L/*.log 2>/dev/null | cut -c1-100 | sed "s/^/  /"'
+echo
+echo "=== 274 done ==="
+```
+
+**输出**
+```
+=== RUN_ID 274 | v5 logs | 2026-11-08 22:58:29 | host=whag0pgpuap12 ===
+-- files --
+  total 208808
+  -rw-r----- 1 app.e0031982 app.adm 19967855 Nov  8 22:58 server_8184_hellaswag_chunk0_numa_fix.log
+  -rw-r----- 1 app.e0031982 app.adm 23971637 Nov  8 22:58 server_8185_hellaswag_chunk1_restart.log
+  -rw-r--r-- 1 app.e0031982 app.adm   126886 Nov  8 22:58 server_chunk3_numa_fix.log
+  -rw-r----- 1 app.e0031982 app.adm 17263948 Nov  8 22:58 server_8186_hellaswag_chunk2_restart.log
+  -rw-r----- 1 app.e0031982 app.adm 12224701 Nov  8 22:58 server_8183_piqa_restart.log
+  -rw-r----- 1 app.e0031982 app.adm    70862 Nov  8 22:58 client_hellaswag_chunk2_restart.log
+  -rw-r----- 1 app.e0031982 app.adm   131821 Nov  8 22:58 client_hellaswag_chunk0_numa_fix.log
+  -rw-r----- 1 app.e0031982 app.adm   152503 Nov  8 22:58 client_hellaswag_chunk1_restart.log
+  -rw-r----- 1 app.e0031982 app.adm    45094 Nov  8 22:57 client_piqa_restart.log
+  -rw-r--r-- 1 app.e0031982 app.adm    35523 Nov  8 22:57 client_hellaswag_chunk3_numa_fix.log
+  -rw-r----- 1 app.e0031982 app.adm 16504076 Nov  8 22:54 server_8187_hellaswag_chunk3_restart.log
+-- progress --
+  client_hellaswag_chunk0.log :: 382/10044 [47:53<13:53:09,  5.17s/it]
+      gguf-ll:   0%|          | 0/10044 [00:00<?, ?it/s]gguf-ll:   0%|          | 1/10044 [00:16<46:24:20, 16.63s/it]gguf-l
+  client_hellaswag_chunk0_numa_fix2.log :: 7/10044 [00:26<6:31:13,  2.34s/it]
+      gguf-ll:   0%|          | 0/10044 [00:00<?, ?it/s]gguf-ll:   0%|          | 1/10044 [00:13<38:23:02, 13.76s/it]gguf-l
+  client_hellaswag_chunk0_numa_fix.log :: 1560/10044 [2:05:02<11:00:24,  4.67s/it]
+      gguf-ll:   0%|          | 0/10044 [00:00<?, ?it/s]gguf-ll:   0%|          | 1/10044 [00:08<24:57:57,  8.95s/it]gguf-l
+  client_hellaswag_chunk0_restart.log :: 40/10044 [11:07<101:14:58, 36.44s/it]
+      gguf-ll:   0%|          | 0/10044 [00:00<?, ?it/s]gguf-ll:   0%|          | 1/10044 [02:09<360:06:45, 129.09s/it]gguf
+  client_hellaswag_chunk1.log :: 394/10044 [47:58<24:13:05,  9.03s/it]
+      gguf-ll:   0%|          | 0/10044 [00:00<?, ?it/s]gguf-ll:   0%|          | 1/10044 [00:19<53:31:47, 19.19s/it]gguf-l
+  client_hellaswag_chunk1_restart.log :: 1823/10044 [2:21:01<9:53:48,  4.33s/it]
+      gguf-ll:   0%|          | 0/10044 [00:00<?, ?it/s]gguf-ll:   0%|          | 1/10044 [00:09<26:21:10,  9.45s/it]gguf-l
+  client_hellaswag_chunk2.log :: 104/10044 [46:54<56:45:29, 20.56s/it]
+      gguf-ll:   0%|          | 0/10044 [00:00<?, ?it/s]gguf-ll:   0%|          | 1/10044 [00:58<162:57:10, 58.41s/it]gguf-
+  client_hellaswag_chunk2_restart.log :: 507/10044 [2:20:59<46:07:52, 17.41s/it]
+      gguf-ll:   0%|          | 0/10044 [00:00<?, ?it/s]gguf-ll:   0%|          | 1/10044 [00:35<98:25:51, 35.28s/it]gguf-l
+  client_hellaswag_chunk3.log :: 48/10036 [47:08<684:14:53, 246.63s/it]
+      gguf-ll:   0%|          | 0/10036 [00:00<?, ?it/s]gguf-ll:   0%|          | 1/10036 [09:30<1590:54:32, 570.73s/it]ggu
+  client_hellaswag_chunk3_numa_fix.log :: 0/10036 [00:00<?, ?it/s]
+      gguf-ll:   0%|          | 0/10036 [00:00<?, ?it/s]
+  client_hellaswag_chunk3_restart.log :: 492/10036 [2:16:43<33:30:42, 12.64s/it]
+      gguf-ll:   0%|          | 0/10036 [00:00<?, ?it/s]gguf-ll:   0%|          | 1/10036 [01:18<219:19:51, 78.68s/it]gguf-
+  server_8184_hellaswag_chunk0_numa_fix.log :: noprog
+      127.40.037.971 I slot launch_slot_: id  4 | task 36112 | processing task, is_child = 0
+  server_8184_hellaswag_chunk0_restart.log :: noprog
+      13.58.507.367 I srv    operator(): operator(): cleaning up before exit...
+  server_8185_hellaswag_chunk1_restart.log :: noprog
+      142.10.348.227 I slot get_availabl: id  4 | task -1 | selected slot by id (4)
+  server_8186_hellaswag_chunk2_restart.log :: noprog
+      142.10.153.215 I slot launch_slot_: id  4 | task 33358 | processing task, is_child = 0
+  server_8187_hellaswag_chunk3_restart.log :: noprog
+      137.50.224.879 W srv          stop: cancel task, id_task = 32633
+  server_8188_hellaswag_chunk0.log :: noprog
+      48.56.760.747 I srv    operator(): operator(): cleaning up before exit...
+  server_8189_hellaswag_chunk1.log :: noprog
+      49.00.810.384 I srv    operator(): operator(): cleaning up before exit...
+  server_8190_hellaswag_chunk2.log :: noprog
+      48.56.983.205 I srv    operator(): operator(): cleaning up before exit...
+  server_8191_hellaswag_chunk3.log :: noprog
+      48.57.136.605 I srv    operator(): operator(): cleaning up before exit...
+  server_chunk3_numa_fix.log :: noprog
+      3.13.568.756 I slot launch_slot_: id  5 | task 384 | processing task, is_child = 0
+  client_piqa_alone.log :: 10/3676 [01:07<6:27:05,  6.34s/it]
+      gguf-ll:   0%|          | 0/3676 [00:00<?, ?it/s]gguf-ll:   0%|          | 1/3676 [00:12<12:23:49, 12.14s/it]gguf-ll:
+  client_piqa.log :: 207/3676 [58:07<10:38:09, 11.04s/it]
+      gguf-ll:   0%|          | 0/3676 [00:00<?, ?it/s]gguf-ll:   0%|          | 1/3676 [00:14<14:40:30, 14.38s/it]gguf-ll:
+  client_piqa_restart.log :: 574/3676 [2:20:55<4:15:04,  4.93s/it]
+      gguf-ll:   0%|          | 0/3676 [00:00<?, ?it/s]gguf-ll:   0%|          | 1/3676 [00:10<11:07:04, 10.89s/it]gguf-ll:
+  piqa_alone_orchestration.log :: noprog
+      [piqa-alone] 启动 piqa 评测客户端...
+  server_8183_piqa_restart.log :: noprog
+      142.10.615.362 I slot get_availabl: id  1 | task -1 | selected slot by id (1)
+  server_8185_piqa.log :: noprog
+      58.59.379.005 I srv    operator(): operator(): cleaning up before exit...
+  server_8195_piqa_alone.log :: noprog
+      2.23.312.760 I srv    operator(): operator(): cleaning up before exit...
+-- mtimes --
+  2026-11-08 19:19:10.045018185 +0800 /tmp/baize_eval_v5/logs/client_arc_challenge.log
+  2026-11-08 20:02:40.011429883 +0800 /tmp/baize_eval_v5/logs/client_arc_easy.log
+  2026-11-08 18:19:39.983714887 +0800 /tmp/baize_eval_v5/logs/client_boolq.log
+  2026-11-08 17:59:49.815286900 +0800 /tmp/baize_eval_v5/logs/client_hellaswag_chunk0.log
+  2026-11-08 20:54:30.893948640 +0800 /tmp/baize_eval_v5/logs/client_hellaswag_chunk0_numa_fix2.log
+  2026-11-08 22:58:20.585467673 +0800 /tmp/baize_eval_v5/logs/client_hellaswag_chunk0_numa_fix.log
+  2026-11-08 20:48:23.547005459 +0800 /tmp/baize_eval_v5/logs/client_hellaswag_chunk0_restart.log
+  2026-11-08 18:00:01.511131662 +0800 /tmp/baize_eval_v5/logs/client_hellaswag_chunk1.log
+  2026-11-08 22:58:17.681505307 +0800 /tmp/baize_eval_v5/logs/client_hellaswag_chunk1_restart.log
+  2026-11-08 17:58:59.535954258 +0800 /tmp/baize_eval_v5/logs/client_hellaswag_chunk2.log
+  2026-11-08 22:58:21.673453573 +0800 /tmp/baize_eval_v5/logs/client_hellaswag_chunk2_restart.log
+  2026-11-08 17:59:07.975842238 +0800 /tmp/baize_eval_v5/logs/client_hellaswag_chunk3.log
+  2026-11-08 22:57:39.621998551 +0800 /tmp/baize_eval_v5/logs/client_hellaswag_chunk3_numa_fix.log
+  2026-11-08 22:54:01.040828279 +0800 /tmp/baize_eval_v5/logs/client_hellaswag_chunk3_restart.log
+  2026-11-08 18:29:11.984328874 +0800 /tmp/baize_eval_v5/logs/client_openbookqa.log
+  2026-11-08 18:12:06.837520185 +0800 /tmp/baize_eval_v5/logs/client_piqa_alone.log
+  2026-11-08 18:09:51.239304201 +0800 /tmp/baize_eval_v5/logs/client_piqa.log
+  2026-11-08 22:57:55.289795500 +0800 /tmp/baize_eval_v5/logs/client_piqa_restart.log
+  2026-11-08 18:24:34.919928883 +0800 /tmp/baize_eval_v5/logs/client_sciq.log
+  2026-11-08 18:38:38.220958709 +0800 /tmp/baize_eval_v5/logs/client_winogrande.log
+  2026-11-08 18:10:24.906857335 +0800 /tmp/baize_eval_v5/logs/piqa_alone_orchestration.log
+  2026-11-08 20:02:41.143415400 +0800 /tmp/baize_eval_v5/logs/server_8181_arc_challenge.log
+  2026-11-08 20:02:41.143415400 +0800 /tmp/baize_eval_v5/logs/server_8182_arc_easy.log
+  2026-11-08 18:39:52.455991166 +0800 /tmp/baize_eval_v5/logs/server_8183_boolq.log
+  2026-11-08 22:58:29.553351451 +0800 /tmp/baize_eval_v5/logs/server_8183_piqa_restart.log
+  2026-11-08 22:58:29.357353990 +0800 /tmp/baize_eval_v5/logs/server_8184_hellaswag_chunk0_numa_fix.lo
+  2026-11-08 20:50:17.445415980 +0800 /tmp/baize_eval_v5/logs/server_8184_hellaswag_chunk0_restart.log
+  2026-11-08 18:39:52.455991166 +0800 /tmp/baize_eval_v5/logs/server_8184_openbookqa.log
+  2026-11-08 22:58:29.285354924 +0800 /tmp/baize_eval_v5/logs/server_8185_hellaswag_chunk1_restart.log
+  2026-11-08 18:10:06.311104158 +0800 /tmp/baize_eval_v5/logs/server_8185_piqa.log
+  2026-11-08 22:58:29.089357463 +0800 /tmp/baize_eval_v5/logs/server_8186_hellaswag_chunk2_restart.log
+  2026-11-08 18:39:52.455991166 +0800 /tmp/baize_eval_v5/logs/server_8186_sciq.log
+  2026-11-08 22:54:09.160723378 +0800 /tmp/baize_eval_v5/logs/server_8187_hellaswag_chunk3_restart.log
+  2026-11-08 18:40:27.015540734 +0800 /tmp/baize_eval_v5/logs/server_8187_winogrande.log
+  2026-11-08 18:00:03.695102674 +0800 /tmp/baize_eval_v5/logs/server_8188_hellaswag_chunk0.log
+  2026-11-08 18:00:07.747048893 +0800 /tmp/baize_eval_v5/logs/server_8189_hellaswag_chunk1.log
+  2026-11-08 18:00:03.919099701 +0800 /tmp/baize_eval_v5/logs/server_8190_hellaswag_chunk2.log
+  2026-11-08 18:00:04.071097684 +0800 /tmp/baize_eval_v5/logs/server_8191_hellaswag_chunk3.log
+  2026-11-08 18:12:38.229114273 +0800 /tmp/baize_eval_v5/logs/server_8195_piqa_alone.log
+  2026-11-08 22:58:29.565351295 +0800 /tmp/baize_eval_v5/logs/server_chunk3_numa_fix.log
+
+=== 274 done ===
+```
