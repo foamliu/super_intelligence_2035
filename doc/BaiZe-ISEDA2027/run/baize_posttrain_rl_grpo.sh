@@ -114,7 +114,7 @@ VERL_ARGS=(
     --reward.arm "$REWARD_ARM"
     --trainer.save_dir "$OUTPUT_DIR"
     --trainer.log_dir "${OUTPUT_DIR}/logs"
-    --runtime.n_gpus "$NP"
+    --trainer.n_gpus_per_node "$NP"
 )
 
 # R22: Checkpoint resume — verl supports --trainer.resume_from_checkpoint

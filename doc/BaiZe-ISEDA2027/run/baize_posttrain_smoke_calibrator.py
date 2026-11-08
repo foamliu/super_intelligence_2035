@@ -317,12 +317,12 @@ def lint_config_extended(config: Dict[str, Any], result: LintResult):
     else:
         result.fail("anti_cheat.enabled must be True (red-line 5.2)")
 
-    runtime = config.get("runtime", {})
-    n_gpus = int(runtime.get("n_gpus", 0))
+    trainer = config.get("trainer", {})
+    n_gpus = int(trainer.get("n_gpus_per_node", 0))
     if n_gpus == 4:
-        result.pass_("runtime.n_gpus=4 (4xA40)")
+        result.pass_("trainer.n_gpus_per_node=4 (4xA40)")
     else:
-        result.warn(f"runtime.n_gpus={n_gpus} (expected 4)")
+        result.warn(f"trainer.n_gpus_per_node={n_gpus} (expected 4)")
 
     smoke = config.get("smoke", {})
     if int(smoke.get("iters", 0)) == 10:

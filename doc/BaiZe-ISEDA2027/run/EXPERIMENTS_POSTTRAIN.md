@@ -5714,3 +5714,103 @@ baize_posttrain_sglang_preflight.py（~157 行）执行 30 项零 GPU 静态检�
 - `run/baize_posttrain_verl_wrapper.py` BUG-W1 修复（arguments → parameters, line 75）
 - `reports/report_posttrain_r50_sglang_compat_audit_zh.html`（自包含, 0 script, 0 外链, 11 节）
 - 本节（EXPERIMENTS §R50, 10 小节）
+
+---
+
+## §R51 端到端依赖与路径一致性审计 + 统一风险登记册（2026-11-08 · wake99 · 零 GPU · 纯 Python 3.8+）
+
+> **动机**：R1–R50 产生了 30+ 脚本、2 个配置文件、多个 Python 工具，累计发现 5 个 CRITICAL bug + 多个 WARNING。各轮审计（R41 Day-0 / R42 launch / R43 config lint / R49 v2 传播）覆盖了特定子集，但**从未做过覆盖全部 30 项资产 + 全部 15 项已知风险的统一审计**。T-1（GPU 到位前一天）是做最终 go/no-go 的最后时机。
+
+### R51.1 审计范围与方法
+
+| 维度 | 方法 | 工具 |
+|:--|:--|:--|
+| 文件路径存在性 | 30 项关键资产逐项 `os.path.isdir/isfile` | `baize_posttrain_e2e_audit.py` |
+| 配置键一致性 | 扫描全部 `baize_posttrain_*.sh` 中 v1 配置模式（algorithm.name / reward.custom_reward_function / runtime.n_gpus / multi_turn:True） | 正则匹配 |
+| 脚本间依赖 | 扫描 source/call 引用构建依赖图 | 正则提取 `baize_posttrain_*.sh` 引用 |
+| 风险模式扫描 | 在 EXPERIMENTS_POSTTRAIN.md 中搜索 BUG/CRITICAL/WARNING/OOM/FALLBACK/TIMEOUT | 6 类正则 |
+| 统一风险登记册 | R1–R50 所有已识别风险结构化为 15 条目（ID/来源/描述/严重度/概率/影响/缓解/状态/阶段） | 人工汇总 |
+| GO/NO-GO 评估 | 评分公式：100 - path_fails×10 - config_fails×15 - critical_open×25 - high_open×10 | 自动计算 |
+
+### R51.2 发现的新问题（R49 遗漏的 v1 残留）
+
+| 文件 | 行 | 问题 | 修复 |
+|:--|--:|:--|:--|
+| `baize_posttrain_rl_grpo.sh` | 117 | `--runtime.n_gpus "$NP"` (v1 CLI 参数) | → `--trainer.n_gpus_per_node "$NP"` |
+| `baize_posttrain_smoke_calibrator.py` | 320-325 | `config.get("runtime", {}).get("n_gpus", 0)` (v1 YAML 键) | → `config.get("trainer", {}).get("n_gpus_per_node", 0)` |
+
+**根因**：R49 修复了 v1 YAML 文件名引用（`config.yaml` → `config_v2.yaml`），但**遗漏了 v1 CLI 参数和 Python 代码中的 v1 YAML 键名**。`--runtime.n_gpus` 是 verl CLI 覆盖参数，v2 配置中 `runtime` 段已不存在（改为 `trainer.n_gpus_per_node`），verl 0.4.0 会忽略未知段或报错。
+
+**影响**：Phase 1 smoke test 可能因 GPU 数量未正确传递而使用默认值（可能=1 而非 4），导致训练极慢但不会崩溃。Phase 2 同样受影响。
+
+**验证**：修复后 `bash -n` ✅ + `py_compile` ✅ + 重新审计 stale v1 refs = 0 ✅
+
+### R51.3 统一风险登记册（15 项）
+
+| ID | 来源 | 严重度 | 状态 | 描述 |
+|:--|:--|:--|:--|:--|
+| R-001 | R47/R50 | CRITICAL | FIXED | BUG-W1: ToolCallItem field arguments→parameters |
+| R-002 | R47 | CRITICAL | FIXED | BUG2: algorithm.name→algorithm.adv_estimator |
+| R-003 | R47 | CRITICAL | FIXED | BUG4: multi_turn:True→nested dict |
+| R-004 | R47 | CRITICAL | MITIGATED | BUG5: get_tool_call_parser_type ValueError (monkey-patch) |
+| R-005 | R11 | HIGH | MITIGATED | GPU OOM: gpu_memory_utilization 0.35→0.50 |
+| R-006 | R37 | HIGH | MITIGATED | 沙盒 TCP 端口过滤: R0 auto_fallback |
+| R-007 | R25/R45 | MEDIUM | MITIGATED | NFS 冷启动: import torch >30s |
+| R-008 | R50 | LOW | ACKNOWLEDGED | BUG-W4: parse_streaming_increment 未覆盖 |
+| R-009 | R50 | MEDIUM | OPEN | Ray worker monkey-patch 传播未验证 |
+| R-010 | R49/R51 | HIGH | FIXED | v1 配置残留: 7+1 处已修复 |
+| R-011 | R22 | MEDIUM | MITIGATED | RL 全零奖励: R0 std=0.3718 已验证 |
+| R-012 | R42 | MEDIUM | MONITORED | 基线 Pass@1 偏差: 36%±7pp 验收带 |
+| R-013 | R48 | MEDIUM | MONITORED | 奖励臂消融统计功效: 7.2pp min detectable |
+| R-014 | Surrogate | INFO | ACKNOWLEDGED | 替身模型结果不可迁移 |
+| R-015 | R38/R46 | HIGH | MONITORED | GPU 未释放: gpu_watcher 自动检测 |
+
+### R51.4 GO/NO-GO 评估
+
+| 指标 | 修复前 | 修复后 |
+|:--|--:|--:|
+| 文件路径 PASS | 30/30 | 30/30 |
+| 配置 stale v1 | 1 | 0 |
+| CRITICAL open | 0 | 0 |
+| HIGH open | 0 | 0 |
+| 评分 | 85/100 | **100/100** |
+| 决策 | GO | **GO** |
+
+### R51.5 脚本间依赖图（19 脚本，123 链接）
+
+关键依赖链：
+```
+launch_11_9.sh → paths.sh → (setup_cu124_venv.sh / preflight_check.sh / minicpm5_diag.sh /
+               contamination_gate.sh / rl_grpo.sh / baseline_gate.py / smoke_calibrator.py)
+rl_grpo.sh → paths.sh → verl_wrapper.py → sglang_preflight.py
+day1_runbook.sh → paths.sh → (preflight_check.sh / rl_grpo.sh / v2_consistency_audit.py)
+gpu_watcher.sh → paths.sh → launch_11_9.sh
+```
+
+### R51.6 Phase 1 / Phase 2 风险隔离
+
+**Phase 1（单轮 R0 skeleton, 11/9 smoke test）**：
+- 所有 CRITICAL 风险（R-001~R-004）均不影响 Phase 1（multi_turn.enable=False → 不触发 parser）
+- Phase 1 受影响风险：R-005(OOM, MITIGATED)、R-006(沙盒, MITIGATED→R0)、R-010(v1残留, FIXED)、R-011(全零奖励, MITIGATED)、R-015(GPU释放, MONITORED)
+- **结论：Phase 1 可安全启动 ✅**
+
+**Phase 2（多轮+沙盒）**：
+- R-004(CRITICAL, MITIGATED): monkey-patch 需验证
+- R-009(MEDIUM, OPEN): Ray worker 传播未验证
+- R-008(LOW, ACKNOWLEDGED): streaming parser 未覆盖
+- **结论：Phase 2 需在 Phase 1 完成后逐项验证 ⚠️**
+
+### R51.7 交付物
+
+- `run/baize_posttrain_e2e_audit.py`（361 行, 纯 Python 3.8+, py_compile ✅）
+- `run/baize_posttrain_rl_grpo.sh` 修复（line 117: runtime.n_gpus→trainer.n_gpus_per_node, bash -n ✅）
+- `run/baize_posttrain_smoke_calibrator.py` 修复（lines 320-325: runtime→trainer, py_compile ✅）
+- `reports/report_posttrain_r51_e2e_audit_risk_register_zh.html`（22.97KB, 10 节, 0 script, 0 外链, 自包含）
+- 本节（EXPERIMENTS §R51, 7 小节）
+
+### R51.8 局限性
+
+1. 风险登记册基于 R1–R50 文档记录汇总，不含未记录的潜在风险
+2. 路径检查仅覆盖已知关键资产，不含运行时生成路径（如输出目录）
+3. 配置一致性仅检查 .sh 文件中的 v1 模式，未检查 .py 文件中的所有 v1 引用（smoke_calibrator 已手动修复）
+4. 脚本依赖图基于静态文本扫描，不含动态条件分支
