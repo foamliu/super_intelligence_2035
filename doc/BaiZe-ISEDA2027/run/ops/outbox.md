@@ -26314,3 +26314,40 @@ echo "=== 251 done ==="
 
 === 251 done ===
 ```
+
+---
+
+## RUN_ID 252 · 2026-11-08 12:37:30 · host=`whag0pgpuap12` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 252 | read A/B analysis | $(date '+%F %T') | host=$(hostname) ==="
+SSH="ssh -o BatchMode=yes -o ConnectTimeout=6 -o StrictHostKeyChecking=no"
+$SSH 10.239.2.29 'echo "-- file --"; ls -l /tmp/baize_ab_analyze.txt 2>/dev/null; echo; cat /tmp/baize_ab_analyze.txt 2>/dev/null; echo; echo "-- clients now --"; ps -eo pid=,stat=,pcpu=,args= | awk "/[g]guf_lmeval_run\\.py/ && !/cline/ {print \"  \" \$1 \" \" \$2 \" \" \$3}" ; echo "-- guard watchdog --"; ps -eo pid=,stat=,args= | awk "/guard_sigcont/ && !/awk/ {print \"  \" \$1 \" \" \$2 \" \" substr(\$0,index(\$0,\$3),100)}"; echo "-- load --"; cut -d\" \" -f1-3 /proc/loadavg'
+echo
+echo "=== 252 done ==="
+```
+
+**输出**
+```
+=== RUN_ID 252 | read A/B analysis | 2026-11-08 12:37:30 | host=whag0pgpuap12 ===
+-- file --
+
+
+-- clients now --
+  323937 Ssl 0.6
+  323941 Ssl 0.6
+  340077 Ssl 0.5
+  1304898 Ssl 0.7
+  1304909 Ssl 0.5
+  1901699 Ssl 0.7
+  3922095 Ssl 0.5
+-- guard watchdog --
+  3749711 Ss bash /tmp/baize_eval_v4/guard_sigcont.sh
+-- load --
+cut: '"': No such file or directory
+89.06 82.98 84.67 48/11964 9197
+
+=== 252 done ===
+```
