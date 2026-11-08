@@ -29207,3 +29207,44 @@ gguf-ll:   0%|          | 9/10036 [02:45<47:34:33, 17.08s/it]
 
 === 275 done ===
 ```
+
+---
+
+## RUN_ID 276 · 2026-11-08 23:02:43 · host=`whag0pgpuap12` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 276 | c2/c3 progress | $(date '+%F %T') | host=$(hostname) ==="
+SSH="ssh -o BatchMode=yes -o ConnectTimeout=6 -o StrictHostKeyChecking=no"
+$SSH 10.239.2.29 'set -u
+for n in chunk2_restart chunk3_numa_fix; do
+  f=/tmp/baize_eval_v5/logs/client_hellaswag_${n}.log
+  echo "== $n =="
+  [ -f "$f" ] && tr "\r" "\n" < "$f" | grep -E "^gguf-ll:" | tail -2 | cut -c1-120 | sed "s/^/  /"
+  stat -c "  mtime=%y size=%s" "$f" 2>/dev/null
+done
+echo "-- etimes --"; ps -o pid=,etimes=,pcpu= -p 2097234,2097251 2>/dev/null
+echo "-- c2/c3 server cpu --"; ps -o pid=,pcpu=,psr= -p 2083722,2083724 2>/dev/null'
+echo
+echo "=== 276 done ==="
+```
+
+**输出**
+```
+=== RUN_ID 276 | c2/c3 progress | 2026-11-08 23:02:43 | host=whag0pgpuap12 ===
+== chunk2_restart ==
+  gguf-ll:   5%|▌         | 528/10044 [2:25:11<22:04:06,  8.35s/it]
+  gguf-ll:   5%|▌         | 529/10044 [2:25:20<22:41:55,  8.59s/it]
+  mtime=2026-11-08 23:02:43.102065502 +0800 size=72358
+== chunk3_numa_fix ==
+  gguf-ll:   0%|          | 16/10036 [04:14<26:50:49,  9.65s/it]
+  gguf-ll:   0%|          | 17/10036 [04:20<23:34:19,  8.47s/it]
+  mtime=2026-11-08 23:02:00.046623493 +0800 size=36588
+-- etimes --
+2097234    8775  0.9
+-- c2/c3 server cpu --
+2083722  758  85
+
+=== 276 done ===
+```
