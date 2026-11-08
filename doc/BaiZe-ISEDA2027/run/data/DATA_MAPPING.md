@@ -383,8 +383,8 @@
 | 批次 | shard 范围 | 预估 GB | 实测字节(B) | 文件数 | incomplete | 状态 | 证据 |
 |:---:|:---|---:|---:|---:|---:|:---|:---|
 | 样本 | part-00000 | 0.38 | 398,721,289 | 1 | 0 | ✅ 已下(质检) | `du -sb data/part-00000*.parquet` |
-| 1 | part-00000~00699 | ~289 | 242,710,242,634 (partial) | 562 parquet | 0 | 🔄 下载中(5/7 hundred DONE, hundred005 63/100, ETA~15min) | `stackv3_batch1_status.tsv`: 000-004=OK, 005=in progress |
-| 2 | part-00700~01399 | ~289 | — | — | — | ⬜ 待启动 | |
+| 1 | part-00000~00699 | ~289 | 300,228,737,438 | 700 parquet | 0 | ✅ 已完成(19:28) | `du -sb data/`+`find|wc -l`=700+`stackv3_batch1_status.tsv`: 000-006全OK |
+| 2 | part-00700~01399 | ~289 | — | — | — | 🔄 下载中(batch2) | `stackv3_batch_download.sh 2 007 013` |
 | 3 | part-01400~02099 | ~289 | — | — | — | ⬜ 待启动 | |
 | 4 | part-02100~02799 | ~289 | — | — | — | ⬜ 待启动 | |
 | 5 | part-02800~03499 | ~289 | — | — | — | ⬜ 待启动 | |
@@ -393,4 +393,25 @@
 | **合计** | 4967 shard | ~2040 | — | — | — | | 2TB 上限内 |
 
 > stats/ 目录（5 JSON, ~484 KB）已随样本下载落地，含 per-language / per-license / repo-distribution 统计。
+
+### H.5 批次1质检报告（2026-11-08 19:3x · 3 shard × 200 repos 抽样）
+
+| 项 | 值 | 证据 |
+|:---|:---|:---|
+| 实测字节 | 300,228,737,438 B (279.5 GiB) | `du -sb data/` |
+| 文件数 | 700 parquet | `find data/ -name '*.parquet' \| wc -l` = 700 |
+| .incomplete | 0 | `find . -name '*.incomplete' \| wc -l` = 0 |
+| 下载耗时 | 15:33→19:28 (~3h55m) | `stackv3_batch1_20261108_153315.log` |
+| 抽样范围 | part-00000, part-00350, part-00699（首/中/末）× 200 repos/shard = 600 repos | `/tmp/stackv3_batch1_qc3.py` |
+| 抽样文件数 | 7,099 files / 28.6 MiB content | 同上 |
+| vendor 文件 | 62 (0.9%) | `files[].is_vendor=true` |
+| >1MB 文件 | 0 (0.0%) | `files[].size_bytes > 1048576` |
+| 空仓库 | 0 | `num_files=0` |
+| **语言分布（抽样）** | PHP 18.8% · Java 12.2% · CSS 10.4% · JS 10.3% · Twig 8.2% · Markdown 6.7% · Python 4.6% · Erlang 3.8% · TSX 2.9% · HTML 2.1% · C# 1.9% · Swift 1.6% · Vue 1.6% · TS 1.1% · C++ 0.9% | `/tmp/stackv3_batch1_qc3.py` 输出 |
+| EDA 相关语言(14)占比 | 6.2% bytes（抽样） | Python/C/C++/Verilog/SV/Tcl/Makefile/CMake/Shell/MATLAB/VHDL 等 |
+| 全目标语言(32)占比 | 58.1% bytes（抽样） | 含 Java/JS/TS/Go/Rust/Scala 等 |
+| **token 估算** | ~336B tokens（全语言，按全量比例外推） | 全量 3.6T tok / 3.22 TiB 压缩 × 300.2 GB = ~336B；EDA 相关 ~91B tok |
+| 质量过滤规则 | **尚未执行**（下载后 parquet 级过滤，待 2TB 下载完成后统一做） | 见 H.3 §4 |
+
+> ⚠️ **抽样说明**：600 repos / 7,099 files 是统计抽样，置信区间较宽；语言分布与全量 stats_by_language.json 的比例有偏差（抽样中 PHP/Twig/CSS 偏高、C++/Python 偏低），属正常抽样波动。全量语言比例以 §H.2 为准。
 

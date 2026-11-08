@@ -18,18 +18,19 @@ WAITING: 1
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        🔄stack-v3-train 2TB下载 batch1进行中(PID1659589,5/7 hundred DONE+005下载中,562parquet/226GB) → WAITING=1
-已完成:       ✅85M;✅10-31报告;✅09:4x报告;✅09:2x长上下文10/10(249.48GiB);✅13:2x#2 RL报告;✅13:2x#1 B类12/12(78.73GiB);✅11-07 08:5x ROI 8源下载DONE(25.14GB/135文件/0incomplete);✅stack-v3-train结构调研DONE(8192shard/3.22TiB/EDA语言27.1%tokens)
-当前动作:     唤醒1389(2026-11-08 18:43):batch1进度巡检→①git pull(up-to-date,无新令);②batch1实测:hundred000-004(500✅)+hundred005(63/100下载中)=562parquet/242.7GB/0inc;③batch1 ETA:hundred005剩37shard@~3shard/min=~12min,然后006/007各~34min,batch1总剩~1h20m;④df:/nas_inference 28T可用(38%)≥5T红线OK;⑤PID1659589 alive(etime~3h10m,ppid=1)→更新DATA_MAPPING §H.4+心跳→commit+push→WAITING=1
-下一步:       等batch1完成(~1.5h)→du -sb+find+incomplete实测→抽样3 shard质检(语言/vendor/文件大小)→回填§H.4→commit data stackv3:→启动batch2(part-00700~01399)
-阻塞:         无(batch1后台下载中,/nas_inference 28T可用≥5T红线)
+PHASE:        🔄stack-v3-train 2TB下载 batch1✅DONE(700parquet/300.2GB/0inc)+batch2启动中(PID3244277,part-007*~013*) → WAITING=1
+已完成:       ✅85M;✅10-31报告;✅09:4x报告;✅09:2x长上下文10/10(249.48GiB);✅13:2x#2 RL报告;✅13:2x#1 B类12/12(78.73GiB);✅11-07 08:5x ROI 8源下载DONE(25.14GB/135文件/0incomplete);✅stack-v3-train结构调研DONE(8192shard/3.22TiB/EDA语言27.1%tokens);✅stack-v3-train batch1 DONE(700parquet/300.2GB/0inc/3h55m)
+当前动作:     唤醒1390(2026-11-08 19:38):batch1完成交付+batch2启动→①git pull(up-to-date,无新令);②发现batch1已自然完成(700parquet/300,228,737,438B/0inc,15:33→19:28耗时3h55m,PID1659589已退出);③batch1质检:3 shard×200repos抽样=7099files/28.6MiB,vendor0.9%,>1MB=0,空仓库=0,EDA14lang=6.2%,Target32lang=58.1%;④DATA_MAPPING §H.4 batch1行改✅+§H.5新增质检报告;⑤batch2启动:stackv3_batch_download.sh 2 007 013(PID3244277,part-007*~013*,~289GB);⑥df:/nas_inference 28T可用(39%)≥5T红线OK→commit data stackv3:→push→WAITING=1
+下一步:       等batch2完成(~4h)→du -sb+find+incomplete实测→抽样3 shard质检→回填§H.4 batch2行→commit data stackv3:→启动batch3(part-01400~02099)→累计~900GB/2TB预算45%
+阻塞:         无(batch2后台下载中,/nas_inference 28T可用≥5T红线)
 ERROR_COUNT:  11
-未完成指令:   有(10:10 stack-v3-train 2TB下载batch1进行中)→WAITING=1
+未完成指令:   有(10:10 stack-v3-train 2TB下载batch2进行中)→WAITING=1
 ```
 
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。
 
 ## 📋 本唤醒流水
+> [11-08 19:38] 唤醒1390：batch1完成交付+batch2启动→①git pull(up-to-date,无新令);②发现batch1已自然完成(PID1659589已退出,700parquet/300,228,737,438B/0inc,15:33→19:28耗时3h55m,7hundreds全OK);③batch1质检(3 shard×200repos=600repos/7099files/28.6MiB):vendor0.9%,>1MB=0,空仓库=0,EDA14lang=6.2%bytes,Target32lang=58.1%bytes,top=PHP18.8%/Java12.2%/CSS10.4%/JS10.3%;④token估算~336B(全量比例外推);⑤DATA_MAPPING §H.4 batch1行改✅+§H.5新增质检报告;⑥batch2启动:setsid bash stackv3_batch_download.sh 2 007 013(PID3244277,part-007*~013*,~289GB,~4h ETA);⑦df:/nas_inference 18T已用/28T可用(39%)≥5T红线OK;/nas_train 179T/87%→commit data stackv3:→push→WAITING=1继续监控batch2
 > [11-08 18:43] 唤醒1389：batch1进度巡检→①git pull(up-to-date,无新令);②batch1实测:hundred000-004(500✅@215.2GB)+hundred005(63/100下载中)=562parquet/242.7GB/0inc;③batch1 ETA:hundred005剩37shard@~3shard/min=~12min,006/007各~34min,batch1总剩~1h20m;④df:/nas_inference 18T已用/28T可用(38%)≥5T红线OK;/nas_train 179T/87%;⑤PID1659589 alive(etime~3h10m,ppid=1,真守护),子进程PID1344113下载part-005*;⑥status TSV:000-004=OK,005=in progress;⑦DATA_MAPPING §H.4 batch1行更新(562parquet/242.7GB/0inc);⑧体积MEMORY~40KB/TASK35KB均≤40KB无需归档→更新心跳→commit+push→WAITING=1继续监控
 > [11-08 17:3x] 唤醒1388：batch1进度巡检→①git pull(up-to-date,无新令);②research日报11-08:data线建议=仅备忘(技能画像写入ROI,中优先级,非新指令,无相关可执行新项);③batch1实测:part-000*(100✅41.7GB)+part-001*(100✅44.6GB)+part-002*(100✅43.9GB)=300 DONE@130.2GB + part-003*(34/100下载中),总334parquet/146.2GB/2inc(active下载);④batch1 ETA:剩366 shard@~3shard/min=~2h04m;⑤df:/nas_inference 18T已用/28T可用(38%)≥5T红线OK;/nas_train 179T/87%;⑥PID1659589 alive(etime~1h53m,ppid=1,真守护),子进程PID639603下载part-003*;⑦status TSV:000/001/002=OK,003=in progress;⑧DATA_MAPPING §H.4 batch1行更新(partial 146GB/334parquet);⑨体积MEMORY~40KB/TASK35KB均≤40KB无需归档→更新心跳→commit+push→WAITING=1继续监控
 > [11-08 16:3x] 唤醒1387：batch1下载进度巡检→①git fetch(代理)0behind/0ahead,git diff origin/main--TASK.md=空(无新令);②research日报2026-11-08查:data线建议=仅备忘(语料画像口径评估取舍,不要把58M结论搬2B),stack-v3-train下载已在进行中,无可执行新项纳入本轮;③batch1实测:part-000*(100files/41678764717B/0inc✅DONE)+part-001*(75/100files,75%,2inc下载中),总175files/72708143033B(72.7GB);④batch1进度:7hundreds中1DONE+1在75%+5待下,ETA~2h54m(每hundred~25min×5+part-001剩8min);⑤df:/nas_inference 17T已用/29T可用(38%)≥5T红线OK;/nas_train 179T/87%(29T);/nas_env 8.3T/84%;⑥进程PID1659589 alive(etime~56min,ppid=1,真守护),子进程hf download part-001*在跑;⑦体积MEMORY~40KB/TASK35KB均≤40KB无需归档→更新心跳→commit+push→WAITING=1继续监控batch1
