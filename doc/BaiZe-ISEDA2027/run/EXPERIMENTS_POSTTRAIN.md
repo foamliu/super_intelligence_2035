@@ -5196,3 +5196,82 @@ Failure classification:
 2. 合成数据无法测试 per-scenario 分解（需真实 dataset metadata）
 3. 卡方检验用 normal approximation（n>5 时适用，小样本可能不准）
 4. 歧义分类（Generation failure / RuntimeError）的启发式规则需在真实数据上验证
+
+---
+
+## §R45 发射前物理资产核验（2026-11-08 wake93 · T-1 · 零 GPU · .17 实测）
+
+> **目标**：11/9 GPU 到位前一天，在 .17 节点上逐项验证 launch 脚本引用的全部物理资产。
+> **方法**：文件系统级检查（ls/du/site-packages 目录列举）+ nvidia-smi + df + hostname。
+> 因 NFS 冷启动 `import torch` 耗时 >30s，改用 site-packages 目录列举确认包安装。
+
+### R45.1 模型与 Venv
+
+| 资产 | 路径 | 版本/大小 | 状态 |
+|:--|:--|:--|:--|
+| MiniCPM5-2B | /tmp/models/MiniCPM5-2B/ | 4.7GB (safetensors+config+chat_template) | ✅ |
+| cu124 venv | ~/code/verl_cu124_venv/ | Python 3.10.22 | ✅ |
+| torch | site-packages/torch | 2.6.0+cu124 (⚠️ MEMORY旧记2.4.0,实际已升级) | ✅ |
+| sglang | site-packages/sglang | 0.4.6.post1 | ✅ |
+| verl | site-packages/verl | 已安装 | ✅ |
+| flash_attn | site-packages/flash_attn | 2.7.4.post1 (含_cuda .so) | ✅ |
+| flashinfer | site-packages/flashinfer | 0.2.3 | ✅ |
+| ray | site-packages/ray | 已安装 | ✅ |
+| vllm_venv (旧) | ~/code/vllm_venv/ | torch 2.14.0+cu130, CUDA=False | ⚠️ 不可用 |
+
+### R45.2 数据与评测资产
+
+| 资产 | 路径 | 大小 | 状态 |
+|:--|:--|:--|:--|
+| RL Parquet v2 | run/rl_pyaether_synth_v2.parquet | 932K | ✅ |
+| RL JSONL v2 | run/rl_pyaether_synth_v2.jsonl | 5.4M | ✅ |
+| SFT Parquet v2 | run/sft_pyaether_corpus_v2.parquet | 3.5M | ✅ |
+| SFT Parquet v1 | run/sft_pyaether_corpus.parquet | 2.8M | ✅ (legacy) |
+| SFT JSONL v2 | run/sft_pyaether_corpus_v2.jsonl | 21M | ✅ |
+| EDA-Eval 158题 | ~/code/eda_fastmcp/pyAether-eval/original_dataset/ | 674K (158行) | ✅ |
+| run_eval.py | ~/code/eda_fastmcp/scripts/ | 39K | ✅ |
+| run_cline_script.sh | ~/code/eda_fastmcp/scripts/ | 29K | ✅ |
+| API知识库 | ~/code/eda_fastmcp/docs/API_INFO_MERGED_V3.json | 8463 API, JSON可加载 | ✅ |
+
+### R45.3 脚本与配置
+
+| 脚本/配置 | 状态 |
+|:--|:--|
+| baize_posttrain_launch_11_9.sh (7步) | ✅ |
+| baize_posttrain_setup_cu124_venv.sh | ✅ |
+| baize_posttrain_preflight_check.sh (30项) | ✅ |
+| baize_posttrain_minicpm5_diag.sh | ✅ |
+| baize_posttrain_rl_grpo.sh (bash -n, R42) | ✅ |
+| baize_posttrain_contamination_gate.sh | ✅ |
+| baize_posttrain_baseline_gate.py (py_compile, R44) | ✅ |
+| baize_posttrain_smoke_calibrator.py (R43) | ✅ |
+| baize_posttrain_rl_verl_config.yaml (lint 27/27, R43) | ✅ |
+| baize_posttrain_day0_audit.py (64PASS, R41) | ✅ |
+
+### R45.4 系统环境
+
+| 项目 | 值 | 状态 |
+|:--|:--|:--|
+| NVIDIA 驱动 | 550.54.14 (CUDA 12.4) | ✅ |
+| CUDA (nvcc) | 12.4.131 | ✅ 与 cu124 venv 匹配 |
+| / 磁盘 | 359G 可用 / 2.4T (85%) | ✅ |
+| /nas_data 磁盘 | 20T 可用 / 127T (85%) | ✅ |
+| 节点 | s0pgpuap12 (10.252.32.17) | ✅ 正确 |
+| GPU 0-7 | 8×A40 全占用 (44-45GB/46GB, SGLang Qwen3.8-27B) | ⚠️ 等11/9释放4张 |
+
+### R45.5 已知问题
+
+1. **torch import 延迟**：NFS 冷启动 >30s，包已通过 site-packages 确认。对策：起跑前 warm-up。
+2. **vllm_venv 不可用**：torch 2.14.0+cu130 与驱动 550.54.14 不兼容。必须使用 cu124 venv。
+3. **GPU 全占用**：8×A40 被 SGLang 占满，11/9 释放 4 张。
+4. **沙盒 TCP 过滤**：R37 发现端口 8664-8669 被防火墙过滤，R0 回退已配置 (R42)。
+5. **版本差异**：MEMORY 旧记 torch 2.4.0+cu124，实际为 2.6.0+cu124（setup 脚本升级）。
+
+### R45.6 判定
+
+**🟢 GO for 11/9 GPU launch**（条件：4 张 A40 按时释放）
+
+### R45.7 交付物
+
+- `reports/report_posttrain_r45_launch_verification_zh.html`（自包含, 0 script, 0 外链, 9节）
+- 本节 (EXPERIMENTS §R45, 7小节)
