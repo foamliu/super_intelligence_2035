@@ -27209,3 +27209,35 @@ clients=7 pids=[323937 323941 340077 1304898 1304909 1901699 3922095] log=/tmp/b
      1153 S     0.
 [relay] ⚠️ 输出超长，已截断到 20000 字符
 ```
+
+---
+
+## RUN_ID 254 · 2026-11-08 12:41:50 · host=`whag0pgpuap12` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 254 | buckets only | $(date '+%F %T') | host=$(hostname) ==="
+SSH="ssh -o BatchMode=yes -o ConnectTimeout=6 -o StrictHostKeyChecking=no"
+$SSH 10.239.2.29 'echo "-- buckets --"; grep -E "^[[:space:]]*(pre|FROZEN|post)[[:space:]]+n=" /tmp/baize_ab_analyze.txt; echo; echo "-- raw last steps --"; sed -n "/--- last 14 step lines ---/,/=== END ===/p" /tmp/baize_ab_analyze.txt | head -20; echo; echo "-- file size/lines --"; wc -lc /tmp/baize_ab_analyze.txt'
+echo
+echo "=== 254 done ==="
+```
+
+**输出**
+```
+=== RUN_ID 254 | buckets only | 2026-11-08 12:41:50 | host=whag0pgpuap12 ===
+-- buckets --
+pre     n=0
+FROZEN  n=0
+post    n=0
+
+-- raw last steps --
+--- last 14 step lines ---
+=== END ===
+
+-- file size/lines --
+ 3047 64030 /tmp/baize_ab_analyze.txt
+
+=== 254 done ===
+```
