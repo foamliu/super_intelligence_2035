@@ -1,7 +1,9 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 0
 
-> 2026-11-08 18:45 #1706: **v5 eval 4/8集完成·winogrande=0.549·杀3空闲server重启piqa+4hellaswag分片·报告v3更新**·**动作**:① winogrande DONE(0.5485,n=1267,二进制+5.2pp/全量vs限100+5.2pp,两因均等) ② 杀3空闲server(boolq/openbookqa/sciq已完成)+winogrande server→释放5组16核 ③ 创建restart_piqa_hellaswag.sh→piqa(port8183,cores32-47)+4 hellaswag shards(port8184-8187,cores48-111)全部READY+client运行中 ④ arc_challenge 62%(2914/4687,ETA~40min)·arc_easy 43%(4045/9501,ETA~2h) ⑤ v5 Avg4=(0.587+0.842+0.266+0.549)/4=56.1%,远高于v4的37.4%,接近历史54.75% ⑥ 报告v3已更新:winogrande加入二因分解表+Avg4=56.1% ⑦ S1健康(iter~128000/700k) **计划**:下次唤醒①查arc_challenge/piqa是否完成→补入报告②arc_easy最慢(ETA~2h)③hellaswag 4 shard并行ETA~3-4h④全部完成后算v5 Avg8·📦TASK=31.2KB✓/MEMORY=~30.9KB✓(归档0)·未完成指令:有(v5 eval运行中)⇒WAITING:0。
+> 2026-11-08 18:50 #1707: **v5 eval监控轮·4/8完成·报告v3验证完整(11节覆盖6项+结论A)·hellaswag ETA修正~22h非3-4h**·**动作**:① v5 eval全7路健康(arc_challenge76%3548/4687 ETA~25min·arc_easy54%5141/9501 ETA~1.5h·piqa2%60/3676极慢~10s/it·hellaswag4shard各~0.4%38/10036极慢~15s/it) ② 报告v3验证完整:11节覆盖运维令6项①-⑥+结论A(二因叠加,非真实下降),⑥决定性实验用iter_100000同GGUF换二进制sciq0.44→0.88铁证 ③ hellaswag ETA修正:#1706估3-4h有误,实际7server共享带宽~15s/it→~40h,arc完成后5server~8s/it→~22h ④ S1健康(iter~128000/700k,8GPU96-100%) ⑤ research日报11-08无新pretrain可执行项(eval口径已在处理) **计划**:下次唤醒①arc_challenge应已完成→补入报告②arc_easy完成后补入③piqa/hellaswag待arc完成后加速④全部完成后算v5 Avg8·📦TASK=31.2KB✓/MEMORY=~30.7KB✓(归档0)·未完成指令:有(v5 eval运行中)⇒WAITING:0。
+
+> 📦 §#1706（11-08 18:45, v5 eval 4/8集完成·winogrande=0.549·重启piqa+hellaswag·报告v3更新）→ daily-memories/2026-11-08.md「#1706」节；**结论**：v5 Avg4=56.1%确认结论A,hellaswag重启ETA需修正(3-4h→~22h)。需要时再读。
 
 > 🔑 **v5四集结果(18:45)**: boolq=0.587/sciq=0.842/openbookqa=0.266/winogrande=0.549 → **v5 Avg4=56.1%**,远高于v4 Avg7=37.4%,接近历史limit=100 Avg8=54.75%。winogrande二因均等(各+5.2pp)。报告v3已更新。
 
