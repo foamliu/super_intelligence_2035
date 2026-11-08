@@ -1363,3 +1363,4 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1793929850205_e3sf0.messages.json	ronghu	hfeg0pkn005	192	analog_context	case	EDA-Eval-DesignFlow-InstFuncDiagFix-001	2026-11-09 04:01	
 1794133519350_pchuf.messages.json	harrywu	hfeg0pkn002	728	analog_context	case	EDA-Eval-DesignFlow-ClampLeakPwrAnalyze-001	2026-11-09 04:37	
 1793348917218_h8pcp.messages.json	jinhaoli	hfeg0pkn004	156	schematic_netlist	case	EDA-Eval-DesignFlow-DqReadPathWaveDebug-001	2026-11-09 05:05	
+1792066483816_us0hd	e0039102	hfeg0pkn002	166	schematic_netlist	case	EDA-Eval-DesignFlow-RegrCaseFilter-001	2026-11-09 05:33	
