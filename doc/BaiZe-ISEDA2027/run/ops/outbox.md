@@ -27730,3 +27730,39 @@ flock -n 9 || { echo "[relay-29] another instance running, exit"; exit 0; }
 
 === 262 done ===
 ```
+
+---
+
+## RUN_ID 263 · 2026-11-08 13:00:11 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 263 | .29 relay final check | $(date '+%F %T') ==="
+echo "host=$(hostname)"
+echo "-- running instances --"
+ps -eo pid=,stat=,lstart=,args= | awk '$1 ~ /^[0-9]+$/ && $4=="bash" && $5 ~ /tmp.ops_relay_v2_29/ {print}' | head -5
+echo "-- count --"; ps -eo args= | awk '$1=="bash" && $2 ~ /tmp.ops_relay_v2_29/ {n++} END{print n+0}'
+echo "-- singleton test (should refuse and exit) --"
+timeout 5 bash /tmp/ops_relay_v2_29_fixed.sh; echo "singleton_rc=$?"
+echo "-- count after test --"; ps -eo args= | awk '$1=="bash" && $2 ~ /tmp.ops_relay_v2_29/ {n++} END{print n+0}'
+echo "-- state --"; cat /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/ops/.last_run_id.29
+echo "RELAY29_FINAL_OK"
+```
+
+**输出**
+```
+=== RUN_ID 263 | .29 relay final check | 2026-11-08 13:00:11 ===
+host=whag0pgpuap29
+-- running instances --
+-- count --
+2
+-- singleton test (should refuse and exit) --
+[relay-29] another instance running, exit
+singleton_rc=0
+-- count after test --
+2
+-- state --
+261
+RELAY29_FINAL_OK
+```
