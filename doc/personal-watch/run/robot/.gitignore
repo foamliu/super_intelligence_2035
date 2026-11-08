@@ -1,6 +1,8 @@
 # robot 线 · 运行产物不入 git
 logs/
 *.log
+*.pid
+*.err
 demo_*.wav
 eval/*.png
 eval/*.json

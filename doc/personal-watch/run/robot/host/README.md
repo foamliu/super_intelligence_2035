@@ -8,7 +8,7 @@
 
 | 文件 | 作用 |
 |:--|:--|
-| `tutor_agent.py` | 最小闭环：题图/题文 → 识图（默认 DeepSeek 视觉）→ 分步引导（默认 DeepSeek，不泄答案）→ Windows SAPI 出声 |
+| `tutor_agent.py` | 最小闭环：题图/题文 → 识图（默认 DeepSeek 视觉）→ 分步引导（默认 DeepSeek，不泄答案，`clamp_hint()` 确定性裁剪 ≤2 句）→ Windows SAPI 出声 |
 | `tutor_server.py` | HTTP 服务（App 经 `10.0.2.2:8765/tutor` 调它）；`POST /tutor` + `GET /health` |
 | `speech.py` | 语音链路适配层（12:20 令 §2/§3）：统一接口 `asr_stream()/tts_stream()/stop()`；端侧默认（SAPI 分句流式 + 打断 + `MockStreamingASR`），云端留空实现（默认 off） |
 | `normalize_math.py` | 口述→数学式纠错（12:20 令 §4）：覆盖平方/立方/根号/分之/负/运算符/关系/π/度/角/几何符号/术语等，`cn_to_int` 中文数字转换 |
@@ -19,15 +19,29 @@
 | `presence.py` | 在座检测（12:05 令 §1/§5）：单帧 320×240 + YuNet 人脸（`cv2.FaceDetectorYN`，OpenCV 5）+ 亮度阈值，三分类 person/left/unknown；帧不落盘不上传；`measure()` 连拍测帧率/耗时 |
 | `test_presence.py` | `presence.py` 单测（8 条：三分类 / 300ms 预算字段 / 模型缺失报错 / 自动找模型） |
 | `eval_presence.py` | presence 评测：PC 摄像头连拍 20 次（帧率/耗时/300ms 达标率）+ 20 张标注样本三分类准确率 → `eval/presence_pc_camera.json` |
+| `eval_interaction.py` | 11:40 令 §3 交互验收：三模式 latency / bargein / student（模拟学生 3 人设×10 轮）→ `eval/interaction_*.json` |
+| `gen_interaction_report.py` | 读 `eval/interaction_*.json` 生成自包含中文 HTML → `doc/BaiZe-ISEDA2027/reports/report_robot_hci_interaction_zh.html` |
+| `test_interaction.py` | `eval_interaction.py` 纯函数单测（10 条：归一化/分位数/红线判定/汇总/会话评分） |
+| `test_tutor_agent.py` | `clamp_hint()` 单测（7 条：≤2 句裁剪 / 删句不硬截 / 空值 / 换行分句） |
 
-## 单测（第 11 轮新增；第 12 轮加 presence）
+## 单测（第 13 轮：118 passed）
 
 ```powershell
 cd D:\Users\Administrator\code\super_intelligence_2035\doc\personal-watch\run\robot\host
-py -3.10 -m pytest test_normalize_math.py test_speech.py test_presence.py -q   # 101 passed in 0.66s
+py -3.10 -m pytest test_normalize_math.py test_speech.py test_presence.py test_interaction.py test_tutor_agent.py -q   # 118 passed in 0.73s
 py -3.10 normalize_math.py "x的平方加三x等于零" "二分之根号三"   # 演示口述→数学式
 py -3.10 -W ignore speech.py                                  # 演示分句/合成 WAV/打断/ASR mock
 ```
+
+## 交互验收（11:40 令 §3 · 第 13 轮交付）
+
+```powershell
+cd D:\Users\Administrator\code\super_intelligence_2035\doc\personal-watch\run\robot\host
+py -3.10 -W ignore eval_interaction.py --mode all          # latency + bargein + student（3 人设×10 轮）
+py -3.10 -W ignore gen_interaction_report.py               # 生成 doc/BaiZe-ISEDA2027/reports/report_robot_hci_interaction_zh.html
+```
+
+- 实测：整轮响应 P50 1.37s / P90 1.97s（n=12）；TTS 首字 P50 80.4ms（n=10）；打断 stop 信号 ~0ms（n=8）；模拟学生 3 人设×10 轮**直接给答案次数 = 0**；会话录音 91.2s。
 
 ## 在座检测（presence · 12:05 令 §1/§5）
 

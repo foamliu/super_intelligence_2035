@@ -29,6 +29,7 @@ import argparse
 import base64
 import json
 import os
+import re
 import sys
 import time
 
@@ -66,9 +67,29 @@ TUTOR_SYSTEM = (
     "3. 每次只推进【一步】，等学生回答后、根据回答对错再解锁下一步；\n"
     "4. 学生答对就肯定并进入下一步；答错就温和指出错在哪，给一个更小的提示；\n"
     "5. 不编造课本页码/定理出处；不确定就说「不确定」并给查证路径；\n"
-    "6. 语气亲切、用短句，适合被转成语音朗读。\n"
-    "你现在只输出【一步引导】，不要输出答案，也不要一口气讲完全部步骤。"
+    "6. 语气亲切、用短句；每次回复最多 2 句话，每句话不超过 20 个字，适合被转成语音朗读。\n"
+    "你现在只输出【一步引导】：最多 2 句、每句 ≤20 字，不要输出答案，也不要一口气讲完全部步骤。"
 )
+
+# 句末标点/换行（11:40 令 §1.1「每次回复 ≤2 句」的确定性裁剪分句依据）
+_SENT_END = "。！？!?；;\n"
+
+
+def clamp_hint(text: str, max_sentences: int = 2) -> str:
+    """把 LLM 引导裁剪到最多 `max_sentences` 句（11:40 令 §1.1）。
+
+    纯函数、确定性：按句末标点（。！？!?；;）与换行切句、去掉空句、保留前 N 句。
+    只做「删句」不做「硬截单句」——避免把中文半句切断导致 TTS 破音；
+    单句 ≤20 字由 TUTOR_SYSTEM 提示词 + INTERACTION_SPEC 话术模板约束。
+    （第 13 轮新增：交互验收实测发现 LLM 原始输出 3-6 句，超出「≤2 句」硬指标。）
+    """
+    if not text:
+        return ""
+    text = text.strip()
+    sentences = [s for s in re.split(r"(?<=[%s])" % re.escape(_SENT_END), text) if s.strip()]
+    if not sentences:
+        return text
+    return "".join(sentences[:max_sentences]).strip()
 
 
 def _img_b64(path: str) -> str:
@@ -265,7 +286,7 @@ def tutor_step(question: str, history=()) -> str:
     for stu, ai in history:
         msgs.append({"role": "user", "content": stu})
         msgs.append({"role": "assistant", "content": ai})
-    return chat(msgs)
+    return clamp_hint(chat(msgs))
 
 
 def speak(text: str, out_wav: str = None) -> str:

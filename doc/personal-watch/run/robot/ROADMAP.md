@@ -114,9 +114,19 @@
 - ✅ **准确率 20 标注样本 = 20/20 = 1.0**（person 8 + left 8 + unknown 4 全对）。
 - ⚠️ 样本为「无歧义」集（清晰人脸 / 明显无人风景静物 / 合成暗帧）；遮挡/逆光/侧脸/远景小脸等**难例待真人/真机复测**（16:5x 令「能信/不能信」，不把 PC 结论当真机结论）。
 
+## 第 13 轮增量（2026-11-08 · 11:40 令 §3 交互验收闭环 + `clamp_hint` 修复「输出过长」）
+
+- ✅ **11:40 令 §3 交互验收闭环**：`host/eval_interaction.py`（三模式 latency/bargein/student）+ `test_interaction.py`（10 单测）+ `gen_interaction_report.py`（自包含中文 HTML）。实测：整轮响应 **P50 1.37s / P90 1.97s**（n=12，deepseek-flash 无降级）；TTS 首字 **P50 80.4ms / P90 99.3ms**（n=10，PC SAPI）；打断 stop 信号 **~0ms** + 在途句丢弃（n=8，逻辑版）；模拟学生 3 人设×10 轮，**直接给答案次数 = 0**（redline ✅）。
+- ✅ **会话录音 91.2s（≥60s ✅）** + 转写 `eval/interaction_session_transcript.md`（git 内）+ `interaction_session_audio.wav`（git 外，体积红线 `*.wav`）。
+- ✅ **HTML 报告** `doc/BaiZe-ISEDA2027/reports/report_robot_hci_interaction_zh.html`（7.8KB，自包含：三项时延 / 打断 / 模拟学生 / 10 条可用性走查）。
+- ✅ **`tutor_agent.py` 新增 `clamp_hint()`（≤2 句裁剪）**：交互验收暴露 LLM 原始输出 3-6 句、超 11:40 令 §1.1「每次回复 ≤2 句」；新增确定性裁剪 + 强化 TUTOR_SYSTEM 提示词（≤2 句/每句≤20 字）；`test_tutor_agent.py` 7 单测；smoke 实测 DeepSeek 单步输出「先想想，怎样让 2x 单独留在等号左边？」（0.82s，1 句，无答案）。
+- ✅ **host 全量 118 passed**（81 + 12 + 8 + 10 + 7），`pytest` 全绿。
+- 🔧 **修 `gen_interaction_report.py` 两处 bug**：CSS `width:100%` 的 `%` 未转义（`ValueError: unsupported format character ';'`）；REPORT_DIR 少跳一级写错目录（`doc/personal-watch/BaiZe...` → 修正为 `doc/BaiZe...`）。`.gitignore` 补 `*.pid`/`*.err`，unstage 误入索引的运行时 `.pid`/`.err`。
+- 📌 **能信/不能信**：整轮响应 / TTS 首字（PC SAPI）/ 打断逻辑为**本机实测**；ASR 出字为 mock、当前句音频硬件中断 ≤300ms、AEC 均**待真机**（16:5x 令「能信/不能信」）。
+
 ## 下一轮候选（按优先级）
 
-1. **`eval/interaction_*.json`**（时延 / 打断 / 模拟学生 3 人设）——11:40 令 §3 交互验收（语音链路接口已就绪，可先跑逻辑版）。
-2. 题库扩到 100 题跑 L1 全量指标。
-3. 端侧真实 ASR（sherpa-onnx）接入位落地（`SherpaOnnxASR` 现为报错占位）。
+1. 题库扩到 100 题跑 L1 全量指标（`eval_l1.py` 现 4 题）。
+2. 端侧真实 ASR（sherpa-onnx）接入位落地（`SherpaOnnxASR` 现为报错占位）。
+3. `clamp_hint` 后的 full 30 会话复跑验证（本轮只做了单次 smoke）。
 4. 收用户 3 条回复 → 复验 `hdc list targets` / `adb devices`，打通真机「拍照/出声」（L0 真机化）。

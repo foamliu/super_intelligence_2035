@@ -14,8 +14,8 @@ WAITING: 0
 ## 📊 进度快照（每次唤醒必须更新）
 
 ```
-PHASE:        L0 设备通路**模拟器全通（ADB+emulator+AVD+APK 安装+App 闭环+录屏）**；L1 单题闭环达标；HCI 交互规范已交付；**可安装真 App 已跑通（22:50 令）**；**HCI 代码层（normalize_math.py 81 单测 + speech.py 12 单测）已交付（12:20 令）**；**presence.py 在座检测已交付（12:05 令）**
-已完成:       P0 ✅；路线 R3 ✅；最小 demo ✅；L1 基线 ✅；识图 4/4 ✅；给答案率 0 ✅；时延达标 ✅；INTERACTION_SPEC.md ✅；可安装 APK + 模拟器跑通一题 ✅（22:50 令·第10轮）；**normalize_math.py + speech.py 交付、93 单测全绿 ✅（12:20 令·第11轮）**；**presence.py 交付、8 单测、PC 摄像头 20 次实测 P50 33ms ≤300ms、准确率 20/20 ✅（12:05 令·第12轮）**
+PHASE:        L0 设备通路**模拟器全通（ADB+emulator+AVD+APK 安装+App 闭环+录屏）**；L1 单题闭环达标；HCI 交互规范已交付；**可安装真 App 已跑通（22:50 令）**；**HCI 代码层（normalize_math.py 81 单测 + speech.py 12 单测）已交付（12:20 令）**；**presence.py 在座检测已交付（12:05 令）**；**交互验收（11:40 令 §3）已交付（第13轮）**
+已完成:       P0 ✅；路线 R3 ✅；最小 demo ✅；L1 基线 ✅；识图 4/4 ✅；给答案率 0 ✅；时延达标 ✅；INTERACTION_SPEC.md ✅；可安装 APK + 模拟器跑通一题 ✅（22:50 令·第10轮）；**normalize_math.py + speech.py 交付、93 单测全绿 ✅（12:20 令·第11轮）**；**presence.py 交付、8 单测、PC 摄像头 20 次实测 P50 33ms ≤300ms、准确率 20/20 ✅（12:05 令·第12轮）**；**交互验收交付：eval/interaction_*.json + HTML 报告 + clamp_hint(≤2句)，整轮 P50 1.37s/P90 1.97s、给答案率 0、录音 91.2s、118 单测全绿 ✅（11:40 令·第13轮）**
 第5轮:       识图+引导切云端 DeepSeek（recognize() 签名不变 / 可降级 / 路径可见）；识图 0.5→1.0；P50 2.0s·P90 2.92s；修 headless TTS 崩溃；P0 用户清单 5→3 条
 第6轮:       按 11:10 令全链路复跑无回归——P0 四度复验、R3 维持、demo 端到端 2.95s、L1 四指标达标（识图 1.0·首步 P50 1.51s/P90 2.22s·给答案率 0）
 第7轮:       按 11:10 令全链路复跑无回归——P0 五度复验、R3 维持、demo 端到端 3.33s、L1 四指标达标（识图 4/4·首步 P50 1.6s/P90 1.78s·给答案率 0·无静默降级）
@@ -24,8 +24,9 @@ PHASE:        L0 设备通路**模拟器全通（ADB+emulator+AVD+APK 安装+App
 第10轮:      执行 22:50 令——自装工具链(adb/emulator/jdk17/gradle-8.7/镜像)+AVD；`app/` Kotlin App 构建 app-debug.apk(4.09MB)+`adb install` Success+模拟器跑通一题(选图→DeepSeek识图→引导不含答案→TTS朗读)+录屏 12.16MB；打断/朗读按钮工作
 第11轮:      执行 12:20 令 §2/§3/§4 代码交付——`normalize_math.py`(口述→数学式, 81 单测)+`speech.py`(asr_stream/tts_stream/stop, 端侧默认+打断+mock ASR, 12 单测)；`pytest` 93 passed
 第12轮:      执行 12:05 令 §1/§5 代码交付——`presence.py`(YuNet 人脸+亮度阈值三分类 person/left/unknown, 帧不落盘, 8 单测)+`eval_presence.py`+PC 摄像头 20 次实测(29.71fps/P50 33ms/P90 57ms/20-20≤300ms/准确率 20/20)；`pytest` 101 passed
-当前动作:     第 12 轮：读任务书 → 识别 22:50/12:20 令已闭环 → 按 ROADMAP「下一轮候选」交付 presence.py（12:05 令）→ YuNet 模型自举(OpenCV5 移除 CascadeClassifier/HOG) + 8 单测 + PC 摄像头 20 次实测 → 回写 MEMORY/ROADMAP/host-README/INTERACTION_SPEC + 日流水 → commit+push(robot:)
-下一步:       `eval/interaction_*.json`（时延/打断/模拟学生 3 人设，11:40 令 §3）；题库扩到 100 题；真机化（等用户 3 条）；端侧真实 ASR（sherpa-onnx）接入位落地
+第13轮:      执行 11:40 令 §3 交互验收闭环——`eval_interaction.py`(latency/bargein/student 三模式)+`test_interaction.py`(10单测)+`gen_interaction_report.py`+HTML 报告；实测整轮 P50 1.37s/P90 1.97s、TTS 首字 P50 80.4ms、打断 stop~0ms、模拟学生 3 人设×10 轮**直接给答案率 0**、录音 91.2s；暴露 LLM 输出过长(3-6句)→ 加 `clamp_hint()`(≤2句)+强化提示词(7单测)；`pytest` 118 passed
+当前动作:     第 13 轮：读任务书 → 识别 22:50/12:20/12:05 令已闭环 → 交付 11:40 令 §3 交互验收（eval_interaction.py+10单测+HTML报告）+ clamp_hint 修复输出过长 → 修 gen_interaction_report.py 两处 bug → 118 单测全绿 → 回写 MEMORY/ROADMAP/INTERACTION_SPEC + 日流水 → commit+push(robot:)
+下一步:       题库扩到 100 题跑 L1 全量；端侧真实 ASR（sherpa-onnx）接入位落地；clamp_hint 后 full 30 会话复跑验证；真机化（等用户 3 条）
 阻塞:         ⏳ 手机未连（型号/系统未知）——**只阻塞真机化，不阻塞 PC/模拟器任何工作**（adb/emulator 已自装好）；`qwen3-vl:32b` 已按 15:4x 令作废；端侧 ASR 权重未装（用 MockStreamingASR 验逻辑，不阻塞）
 ERROR_COUNT:  0
 ```
@@ -41,7 +42,7 @@ ERROR_COUNT:  0
 - **工作目录**：`run/robot/`（`P0_设备通路.md` / `ROADMAP.md` / `app/` 手机端 / `host/` PC agent / `eval/` 题库 / `proto/` mock）
 - **记录仓**：`D:\Users\Administrator\code\super_intelligence_2035\doc\personal-watch\run\`
 - **ComfyUI**：**已冻结（Disabled），不碰视频流水线**
-- **上次唤醒**：2026-11-08（第 12 轮 · 12:05 令 §1/§5：交付 `presence.py` 在座检测，101 单测全绿，PC 摄像头 20 次实测 P50 33ms ≤300ms）
+- **上次唤醒**：2026-11-08（第 13 轮 · 11:40 令 §3：交付交互验收 eval_interaction.py + HTML 报告 + clamp_hint，118 单测全绿，整轮 P50 1.37s/P90 1.97s，直接给答案率 0）
 
 ## 2. 分层目标与状态（L0-L4）
 
@@ -204,15 +205,29 @@ ERROR_COUNT:  0
 - 回写：`presence.py` + `test_presence.py` + `eval_presence.py`（新建）、`host/README.md`、`INTERACTION_SPEC.md`（§7.1 M12 + §10 交付状态）、`ROADMAP.md`（第 12 轮增量）、本文件、`daily-memories-video/2026-11-08.md`。
 - commit+push（`robot:`）。
 
+## 4.12 本唤醒流水（2026-11-08 · 第 13 轮 · 11:40 令 §3 交互验收闭环 + clamp_hint）
+
+- 读任务书全文 + `robot/README.md` + `ROADMAP.md`；识别 22:50/12:20/12:05 令已闭环（第 10/11/12 轮），本轮按 ROADMAP「下一轮候选」#1 + 11:40 令 §3 交付**交互验收**（`eval/interaction_*.json`）。ComfyUI 全程未碰（已冻结）。
+- ✅ 接续上一轮已 staging 未提交的 `host/eval_interaction.py`（latency/bargein/student 三模式）+ `test_interaction.py`（10 单测）+ `gen_interaction_report.py`：跑通并产出三个 JSON + 转写 + 91.2s 会话 TTS 录音（≥60s 达标）。
+- ✅ **实测数字（`eval/interaction_*.json`）**：整轮响应 **P50 1.37s / P90 1.97s**（n=12，deepseek-flash 无静默降级）；TTS 首字 **P50 80.4ms / P90 99.3ms**（n=10，PC SAPI）；打断 stop 信号 **~0ms** + 在途句丢弃（n=8，逻辑版）；模拟学生 3 人设×10 轮，**直接给答案次数 = 0**（redline 确定性判定 ✅）。
+- ✅ **`tutor_agent.py` 新增 `clamp_hint()`**：交互验收暴露 LLM 原始输出 3-6 句、超 11:40 令 §1.1「每次回复 ≤2 句」→ 新增确定性裁剪（≤2 句）+ 强化 TUTOR_SYSTEM 提示词（≤2 句/每句≤20 字）；`test_tutor_agent.py` 7 单测；smoke 实测 DeepSeek 单步输出「先想想，怎样让 2x 单独留在等号左边？」（0.82s，1 句，无答案）。
+- ✅ **HTML 报告** `doc/BaiZe-ISEDA2027/reports/report_robot_hci_interaction_zh.html`（7.8KB，自包含：三项时延 / 打断 / 模拟学生 / 10 条可用性走查）。
+- 🔧 **修 `gen_interaction_report.py` 两处 bug**：① CSS `width:100%` 的 `%` 未转义 → `ValueError: unsupported format character ';'`（改 `%%`）；② `REPORT_DIR` 少跳一级，把报告写进 `doc/personal-watch/BaiZe-ISEDA2027/` 错误目录（改 `../../../../BaiZe-ISEDA2027/reports`，并删掉误建目录）。`.gitignore` 补 `*.pid`/`*.err`，`git rm --cached` 撤掉误入索引的运行时 `.pid`/`.err`。
+- ✅ **host 全量 `pytest` = 118 passed**（81 + 12 + 8 + 10 + 7）。
+- 📌 **能信/不能信**：整轮响应 / TTS 首字（PC SAPI）/ 打断逻辑 = 本机实测；ASR 出字为 mock、当前句音频硬件中断 ≤300ms、AEC = **待真机**（16:5x 令「能信/不能信」，不谎称已测）。
+- 回写：`eval_interaction.py`/`test_interaction.py`/`gen_interaction_report.py`/`test_tutor_agent.py`（新建）、`tutor_agent.py`（clamp_hint）、`.gitignore`、`INTERACTION_SPEC.md`（§7.1 实测值 + §10 交付状态）、`ROADMAP.md`（第 13 轮）、本文件、`daily-memories-video/2026-11-08.md`；HTML 报告。
+- commit+push（`robot:`）。
+
 ## 5. 阻塞 / 待办
 
 1. **⏳ 等用户 2 条回复**（`P0_设备通路.md` §4）：① 手机型号/系统版本 ② 开 USB 调试并连线（adb/hdc 已由本线自装，不再需要用户装）。
    🚫 **只阻塞「真机化」，不阻塞 PC/模拟器任何工作**（16:5x 令 §5：不得再以此为由停摆）。
 2. ~~`qwen3-vl:32b` 20GB GGUF 缺失~~ → **已作废**（15:4x 令：识图走 DeepSeek，本地 `llava` 只做离线兜底）。
 3. **下一轮候选（按优先级）**：
-   1. `eval/interaction_*.json`（时延 / 打断 / 模拟学生 3 人设）——11:40 令 §3 交互验收（语音链路接口已就绪，可先跑逻辑版）；
-   2. 题库扩到 100 题跑 L1 全量指标；
-   3. 端侧真实 ASR（sherpa-onnx）接入位落地（`SherpaOnnxASR` 现为报错占位）；真机化 L0（等用户 3 条）。
+   1. 题库扩到 100 题跑 L1 全量指标（`eval_l1.py` 现 4 题）；
+   2. 端侧真实 ASR（sherpa-onnx）接入位落地（`SherpaOnnxASR` 现为报错占位）；
+   3. `clamp_hint` 后的 full 30 会话复跑验证（本轮只做了单次 smoke）；
+   4. 真机化 L0（等用户 3 条）。
 
 ## 6. 运维问答
 
