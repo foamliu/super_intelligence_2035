@@ -18,18 +18,19 @@ WAITING: 1
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        🔄stack-v3-train 2TB下载 batch1进行中(PID1659589,part-000*✅+part-001*75%+part-002~006待下,175files/72.7GB) → WAITING=1
+PHASE:        🔄stack-v3-train 2TB下载 batch1进行中(PID1659589,3/7 hundred DONE+003下载中,334parquet/146GB) → WAITING=1
 已完成:       ✅85M;✅10-31报告;✅09:4x报告;✅09:2x长上下文10/10(249.48GiB);✅13:2x#2 RL报告;✅13:2x#1 B类12/12(78.73GiB);✅11-07 08:5x ROI 8源下载DONE(25.14GB/135文件/0incomplete);✅stack-v3-train结构调研DONE(8192shard/3.22TiB/EDA语言27.1%tokens)
-当前动作:     唤醒1387(2026-11-08 16:3x):batch1下载进度巡检→①git pull(up-to-date,无新令);②research日报11-08查:data线建议=仅备忘(语料画像口径),stack-v3下载已在进行中,无可执行新项;③batch1实测:part-000*(100files/41.7GB/0inc✅DONE)+part-001*(75/100files,75%,2inc下载中),总175files/72.7GB;④batch1 ETA:剩~5hundreds(002~006)×~25min=~2h54m;⑤df:/nas_inference 29T可用(38%)≥5T红线OK;⑥进程PID1659589 alive(etime~56min)→更新心跳→commit+push→WAITING=1继续监控
-下一步:       等batch1完成(~2h54m)→du -sb+find+incomplete实测→抽样3 shard质检(语言/vendor/文件大小)→回填§H.4→commit data stackv3:→启动batch2
-阻塞:         无(batch1后台下载中,/nas_inference 29T可用≥5T红线)
+当前动作:     唤醒1388(2026-11-08 17:3x):batch1进度巡检→①git pull(up-to-date,无新令);②research日报11-08:data线建议=仅备忘(技能画像写入ROI,中优先级,非新指令),无相关可执行新项;③batch1实测:part-000*(100✅)+part-001*(100✅)+part-002*(100✅)=300 DONE@130.2GB + part-003*(34/100下载中),总334parquet/146.2GB/2inc(active);④batch1 ETA:剩366 shard@~3shard/min=~2h04m;⑤df:/nas_inference 28T可用(38%)≥5T红线OK;⑥PID1659589 alive(etime~1h53m,ppid=1)→更新DATA_MAPPING §H.4+心跳→commit+push→WAITING=1
+下一步:       等batch1完成(~2h)→du -sb+find+incomplete实测→抽样3 shard质检(语言/vendor/文件大小)→回填§H.4→commit data stackv3:→启动batch2(part-00700~01399)
+阻塞:         无(batch1后台下载中,/nas_inference 28T可用≥5T红线)
 ERROR_COUNT:  11
-未完成指令:   有(10:10 stack-v3-train 2TB下载batch1进行中 + 08:5x 8源已DONE待最终commit)→WAITING=1
+未完成指令:   有(10:10 stack-v3-train 2TB下载batch1进行中)→WAITING=1
 ```
 
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。
 
 ## 📋 本唤醒流水
+> [11-08 17:3x] 唤醒1388：batch1进度巡检→①git pull(up-to-date,无新令);②research日报11-08:data线建议=仅备忘(技能画像写入ROI评估,中优先级,非新指令,无相关可执行新项);③batch1实测:part-000*(100✅41.7GB)+part-001*(100✅44.6GB)+part-002*(100✅43.9GB)=300 DONE@130.2GB + part-003*(34/100下载中),总334parquet/146.2GB/2inc(active下载);④batch1 ETA:剩366 shard@~3shard/min=~2h04m(hundred003剩22min+004/005/006各~34min);⑤df:/nas_inference 18T已用/28T可用(38%)≥5T红线OK;/nas_train 179T/87%;⑥PID1659589 alive(etime~1h53m,ppid=1,真守护),子进程PID639603下载part-003*;⑦status TSV:000/001/002=OK,003=in progress;⑧DATA_MAPPING §H.4 batch1行更新(partial 146GB/334parquet);⑨体积MEMORY~40KB/TASK35KB均≤40KB无需归档→更新心跳→commit+push→WAITING=1继续监控
 > [11-08 16:3x] 唤醒1387：batch1下载进度巡检→①git fetch(代理)0behind/0ahead,git diff origin/main--TASK.md=空(无新令);②research日报2026-11-08查:data线建议=仅备忘(语料画像口径评估取舍,不要把58M结论搬2B),stack-v3-train下载已在进行中,无可执行新项纳入本轮;③batch1实测:part-000*(100files/41678764717B/0inc✅DONE)+part-001*(75/100files,75%,2inc下载中),总175files/72708143033B(72.7GB);④batch1进度:7hundreds中1DONE+1在75%+5待下,ETA~2h54m(每hundred~25min×5+part-001剩8min);⑤df:/nas_inference 17T已用/29T可用(38%)≥5T红线OK;/nas_train 179T/87%(29T);/nas_env 8.3T/84%;⑥进程PID1659589 alive(etime~56min,ppid=1,真守护),子进程hf download part-001*在跑;⑦体积MEMORY~40KB/TASK35KB均≤40KB无需归档→更新心跳→commit+push→WAITING=1继续监控batch1
 > [11-08 15:3x] 唤醒1386：执行10:10运维令(stack-v3-train 2TB放行)→①git pull(up-to-date);②检测到10:10新令(stack-v3-train 2TB优质子集,首批2TB上限);③HF API实测:8192 parquet shard/3.22TiB压缩(非15.9TB,15.9TB=解压内容)/11.5TB解压/avg413MiB/713语言/173M仓库;④stats/train 5个JSON下载(totals+by_language+by_license+repo_distributions);⑤样本shard part-00000质检(RG0:2689repos/26622files/185.8MB,EDA目标14语言占60.5%字节,vendor仅0.5%);⑥语言统计:EDA 11语言(Python/C/C++/Verilog/VHDL/SV/MATLAB/Tcl/Shell/Makefile/CMake)=2.44TiB解压/978.5B tok(27.1%),全目标32语言=5.29TiB/1731.8B tok(47.9%);⑦关键发现:shard不按语言分目录(language是parquet内列)→--include无法按语言筛→按运维令§2.4回退方案=顺序shard下载+parquet级过滤;⑧08:5x 8源ROI下载实测回填DATA_MAPPING §G.4(25,144,280,312B/135文件/0incomplete);⑨§H stack-v3-train完整计划写入DATA_MAPPING(H.1结构+H.2语言统计+H.3下载策略+H.4批次进度表);⑩stackv3_batch_download.sh创建(每hundred=100shard单独hf download调用,nice-n10/max-workers2/断点续传/磁盘检查);⑪batch1启动(PID1659589,part-000~006,700shard~289GB,ETA~2h);⑫df检查/nas_inference 29T可用≥5T红线OK→更新心跳→commit+push→WAITING=1监控batch1
 > [11-07 08:55] 唤醒1385：执行11-07运维令(代码语料放行ROI下载)→①git fetch(代理)0behind/0ahead;②检测到TASK.md新令(stack-v2禁下/stack-v3-train可考虑/单集<1TB放行/自排ROI);③HF API核实10候选体量(LongBlocks9.57G/Nemotron-RL-Agentic5.1G/NExtLong-Instruct2.89G/arxiv6.04G/LongWriter0.15G/SkyRL0.002G/swev-trm0.93G/LongBench-v2 0.47G/gutenberg7.63G/kl3m~16.9G);④ROI评估表(5维度)写DATA_MAPPING.md §G.1(8下载/3跳过/1报运维);⑤下载脚本roi_download_20261107.sh启动setsid后台PID1920377(nice -n10/--max-workers4/代理/断点续传);⑥LongBlocks下载中9/39~23%;⑦跳过gutenberg(冗余whole-books)+kl3m(域不匹配+tokenizer不兼容)+terminal-bench-2(401);⑧stack-v3-train(15.9TB)≥1TB报运维待批;⑨DATA_MAPPING.md §G.2跳过清单+§G.3≥1TB待批+§G.4下载登记已写;→更新心跳→commit+push→WAITING=1继续监控下载
