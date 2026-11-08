@@ -387,3 +387,13 @@
 1792497366260_giuwf.messages.json	johnl	hfeg0pkn001	24	pg_layout	parked		2026-11-08 10:29	Q&A find .lib/cells.yaml files + mtime; innovus kw from dir names not tool runs; no layout/PG deliverable
 1792371906656_jyoob.messages.json	pwma	hfeg0pkn005	147	layout_virtuoso	parked		2026-11-08 10:31	Virtuoso IC617ISR23/RHEL8.10 OA_UNSUPPORTED_PLAT launch only; subset of r230 VirtuosoStartupDiag (no libnsl/libstdc++ layers); env-recon no layout deliverable; user only 'open virtuoso'
 1793605922073_ets0m.messages.json	e0047695	hfeg0pkn005	150	layout_virtuoso	case	EDA-Eval-DesignFlow-InstM0ShapePinIdentify-001	2026-11-08 10:47	
+1782880010844_z79lb	e03179	hfeg0pkn002	64	layout_virtuoso	parked		2026-11-08 11:23	dup of r232 jzzsv SkillM1ShapeDeleteAudit (title=删除M1图形, fork of 6ktpb); SKIP
+1782879865358_6ktpb	e03179	hfeg0pkn002	64	layout_virtuoso	parked		2026-11-08 11:23	fork-parent of z79lb, same M1-delete task as r232 jzzsv; SKIP
+1793843002439_53nr3	sinanz	hfeg0pkn005	164	layout_aether	parked		2026-11-08 11:23	schematic view (aeOpenDesign schematic) full-adder stdcell instantiation; wrong shard (schematic not layout); SKIP
+1791782422113_e1ll7	steveny	hfeg0pnd001	58	layout_virtuoso	parked		2026-11-08 11:23	highlight nets in schematic view (Virtuoso SKILL but schematic); wrong shard; SKIP
+1793846988442_zhq3r	e0039669	hfeg0pkn002	147	layout_aether	parked		2026-11-08 11:23	prompt='hi' 普通对话, status=cancelled; not a real task; SKIP
+1792395640746_nce9i	colinxu	hfeg0pgn041	116	layout_virtuoso	parked		2026-11-08 11:23	pin-existence Q&A 'vddtest pin 存在吗', status=cancelled; not a runnable seed; SKIP
+1793846426867_874ye	e0044131	hfeg0pkn004	262	layout_aether	parked		2026-11-08 11:23	session file cleaned from host (only tzbss/d1yda/96crr remain); SKIP
+1793614615410_y612r	sinanz	hfeg0pkn005	264	layout_aether	parked		2026-11-08 11:23	title=DS_circuitEdit, status=failed; circuit-edit A/B comparison experiment, not organic layout; SKIP
+1793862562240_2m2ja	sinanz	hfeg0pkn005	197	layout_aether	parked		2026-11-08 11:23	title=资深全定制电路设计工程师学习Skills; same sinanz circuit-edit/Skills context as 53nr3 (schematic); SKIP
+1793859046486_1y31v	sinanz	hfeg0pkn005	122	layout_aether	parked		2026-11-08 11:23	title=我在路径.../Skills; same sinanz circuit-edit/Skills context as 53nr3 (schematic); SKIP
