@@ -27818,3 +27818,133 @@ started=2514952
 
 === 264 done ===
 ```
+
+---
+
+## RUN_ID 265 · 2026-11-08 13:26:03 · host=`whag0pgpuap12` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 265 | relay liveness probe | $(date '+%F %T') | host=$(hostname) ==="
+R=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/ops
+SSH="ssh -o BatchMode=yes -o ConnectTimeout=6 -o StrictHostKeyChecking=no"
+
+echo
+echo "########## A) LOCAL (.12) ##########"
+echo "-- hostname / now --"; hostname; date '+%F %T'
+echo "-- relay procs (ops_relay_v2) --"
+ps -eo pid=,ppid=,lstart=,stat=,args= | grep -F 'ops_relay_v2' | grep -v grep | cut -c1-190
+echo "-- relay procs count --"
+ps -eo args= | grep -F 'ops_relay_v2' | grep -v grep | wc -l
+echo "-- state files --"
+for f in .last_run_id .last_run_id.12 .last_run_id.29; do printf '%-18s ' "$f"; cat "$R/$f" 2>/dev/null | tr -d '\n'; echo; done
+echo "-- state mtime --"; stat -c '%y  %n' "$R"/.last_run_id* 2>/dev/null
+echo "-- log files --"
+ls -l /tmp/baize_ops_relay* 2>/dev/null | cut -c1-150
+echo "-- log tail (.12) --"
+tail -8 /tmp/baize_ops_relay.12.log 2>/dev/null || echo "(no .12 log)"
+
+echo
+echo "########## B) REMOTE (.29 via ssh) ##########"
+$SSH 10.239.2.29 'set -u
+echo "-- hostname / now --"; hostname; date "+%F %T"
+echo "-- relay procs --"
+ps -eo pid=,ppid=,lstart=,stat=,args= | grep -F ops_relay_v2 | grep -v grep | cut -c1-190
+echo "-- relay procs count --"
+ps -eo args= | grep -F ops_relay_v2 | grep -v grep | wc -l
+echo "-- script on disk --"
+ls -l /tmp/ops_relay_v2_29_fixed.sh /tmp/ops_relay_v2.sh 2>/dev/null
+echo "-- flock holder --"
+if [ -f /tmp/ops_relay_v2_29.lock ]; then
+  ls -l /tmp/ops_relay_v2_29.lock
+  (command -v fuser >/dev/null 2>&1 && fuser -v /tmp/ops_relay_v2_29.lock) 2>&1 | head -6
+fi
+echo "-- state --"
+cat /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/ops/.last_run_id.29 2>/dev/null
+echo "-- log tail (.29) --"
+ls -l /tmp/baize_ops_relay*.log 2>/dev/null | cut -c1-150
+tail -12 /tmp/baize_ops_relay.29.log 2>/dev/null || echo "(no .29 log)"
+echo "-- worktree HEAD --"
+cd /nas_train/app.e0031982/code/super_intelligence_2035 2>/dev/null && timeout 8 git rev-parse --short HEAD 2>&1 | head -2
+'
+echo "ssh_rc=$?"
+echo
+echo "=== 265 done ==="
+```
+
+**输出**
+```
+=== RUN_ID 265 | relay liveness probe | 2026-11-08 13:26:03 | host=whag0pgpuap12 ===
+
+########## A) LOCAL (.12) ##########
+-- hostname / now --
+whag0pgpuap12
+2026-11-08 13:26:03
+-- relay procs (ops_relay_v2) --
+ 768523 1032513 Sun Nov  8 13:26:02 2026 S    bash ./ops_relay_v2.sh
+1032513       1 Sat Oct 24 19:34:24 2026 Ss   bash ./ops_relay_v2.sh
+-- relay procs count --
+2
+-- state files --
+.last_run_id       224
+.last_run_id.12    264
+.last_run_id.29    263
+-- state mtime --
+2026-10-28 07:05:17.229769506 +0800  /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/ops/.last_run_id
+2026-11-08 13:02:28.523634368 +0800  /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/ops/.last_run_id.12
+2026-11-08 13:00:11.931271322 +0800  /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/ops/.last_run_id.29
+-- log files --
+-rw-r--r-- 1 app.e0031982 app.adm 1482 Nov  8 13:02 /tmp/baize_ops_relay.12.log
+-rw-r----- 1 app.e0031982 app.adm 5631 Oct 24 19:29 /tmp/baize_ops_relay_29.log
+-- log tail (.12) --
+[relay-12] RUN_ID=255 executed, exit=0, appended to outbox.
+[relay-12] RUN_ID=256 executed, exit=0, appended to outbox.
+[relay-12] RUN_ID=257 executed, exit=0, appended to outbox.
+[relay-12] RUN_ID=258 executed, exit=0, appended to outbox.
+[relay-12] RUN_ID=259 executed, exit=126, appended to outbox.
+[relay-12] RUN_ID=260 executed, exit=0, appended to outbox.
+[relay-12] RUN_ID=262 executed, exit=0, appended to outbox.
+[relay-12] RUN_ID=264 executed, exit=0, appended to outbox.
+
+########## B) REMOTE (.29 via ssh) ##########
+-- hostname / now --
+whag0pgpuap29
+2026-11-08 13:26:04
+-- relay procs --
+2514952       1 Sun Nov  8 13:02:23 2026 Ss   bash /tmp/ops_relay_v2_29_fixed.sh
+-- relay procs count --
+1
+-- script on disk --
+-rwxr-xr-x 1 app.e0031982 app.adm 3276 Nov  8 12:58 /tmp/ops_relay_v2_29_fixed.sh
+-- flock holder --
+-rw-r--r-- 1 app.e0031982 app.adm 0 Nov  8 13:02 /tmp/ops_relay_v2_29.lock
+Cannot stat file /proc/27637/fd/0: Permission denied
+Cannot stat file /proc/27637/fd/1: Permission denied
+Cannot stat file /proc/27637/fd/2: Permission denied
+Cannot stat file /proc/27637/fd/3: Permission denied
+Cannot stat file /proc/27637/fd/4: Permission denied
+Cannot stat file /proc/27637/fd/5: Permission denied
+-- state --
+263
+-- log tail (.29) --
+-rw-r----- 1 app.e0031982 app.adm 5671 Nov  8 13:02 /tmp/baize_ops_relay.29.log
+-rw-r----- 1 app.e0031982 app.adm 5030 Oct 24 19:34 /tmp/baize_ops_relay_29.log
+[relay-29] RUN_ID=242 executed, exit=0, appended to outbox.
+[relay-29] RUN_ID=243 executed, exit=0, appended to outbox.
+[relay-29] RUN_ID=244 executed, exit=0, appended to outbox.
+[relay-29] RUN_ID=245 executed, exit=0, appended to outbox.
+./ops_relay_v2.sh: line 77: 582119 Bus error               timeout 60 git fetch origin > /dev/null 2>&1
+./ops_relay_v2.sh: line 77: 3741106 Bus error               timeout 60 git fetch origin > /dev/null 2>&1
+[relay-29] RUN_ID=247 executed, exit=0, appended to outbox.
+[relay-29] 2026-11-08 12:54:34 v2-29nofetch started. state=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/ops/.last_run_id.29 poll=20s
+[relay-29] RUN_ID=261 executed, exit=0
+[relay-29] 2026-11-08 12:58:51 v2-29nofetch started. state=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/ops/.last_run_id.29 poll=20s
+[relay-29] RUN_ID=263 executed, exit=0
+[relay-29] 2026-11-08 13:02:24 v2-29nofetch started. state=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/ops/.last_run_id.29 poll=20s
+-- worktree HEAD --
+59cc201b3
+ssh_rc=0
+
+=== 265 done ===
+```
