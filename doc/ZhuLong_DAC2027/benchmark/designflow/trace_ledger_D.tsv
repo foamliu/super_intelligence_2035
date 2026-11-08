@@ -994,7 +994,7 @@ wl9i4					parked		2026-11-05 22:49	交互shell驱动+Q&A n752大
 1793245121084_56j3w					parked		2026-11-06 05:30	meta Q&A (who are you) + analyze waveform purpose
 1793858875143_wzws0					parked		2026-11-06 05:30	no clean produce task (policy-engine errors, skill setup)
 1792552457905_b4dlx					parked		2026-11-06 05:30	slash-command launch (/anasimpro-gui-start)
-1793866097938_fl4rh					parked		2026-11-06 05:30	deferred: mid-conv multi-turn Perl FSM block spec (open-ended)
+1793866097938_fl4rh					case	EDA-Eval-DesignFlow-VerilogDriveFsmBlock-001	2026-11-08 07:11	reactivated: re-peek reveals clean single-deliverable produce (VerilogDriveFsmBlock.pl); parked-judgment revised
 1793846988442_zhq3r					parked		2026-11-06 05:30	meta/how-to Q&A (how to input circuit module)
 1793786422300_ki14d					parked		2026-11-06 05:30	wrong domain: layout FPA density check (physical_verify/layout)
 1792837595656_ymjs5					parked		2026-11-06 05:30	premise-missing: resume prior delay-cell sigma optimization task
@@ -1277,3 +1277,25 @@ tjzn5					parked		2026-11-07 12:29	env Q&A + skill-creator usage (#352 peek weak
 1793847350187_pspw5.messages.json	t0002616	hfeg0pkn004	29	waveform	case	EDA-Eval-DesignFlow-WrCornerCmp-001	2026-11-07 20:54	
 1790733563737_3qe6x.messages.json	e0039602	hfeg0plg102	45	waveform	case	EDA-Eval-DesignFlow-WaveCmpWrap-001	2026-11-07 22:08	
 1792223414540_erhym.messages.json	fhwang	10.129.2.14	50	schematic_netlist	case	EDA-Eval-DesignFlow-LvsRptAnalyze-001	2026-11-07 22:42	
+1789961467130_nibwl	ziyuny	10.129.32.190	154	analog_context	case	EDA-Eval-DesignFlow-CstViewPrecheck-001	2026-11-07 23:08	
+1783577039866_4dd1i	peek	peek	0	unknown	parked		2026-11-07 23:29	wrong-domain: not shard D (powerfill/layout/rscalc/pdk_qa)
+1790133815976_z9yjw	peek	peek	0	unknown	parked		2026-11-07 23:29	wrong-domain: not shard D (powerfill/layout/rscalc/pdk_qa)
+1791171109524_llns7	peek	peek	0	unknown	parked		2026-11-07 23:29	wrong-domain: not shard D (powerfill/layout/rscalc/pdk_qa)
+1790042012585_5e6p2	peek	peek	0	unknown	parked		2026-11-07 23:29	wrong-domain: not shard D (powerfill/layout/rscalc/pdk_qa)
+1793605487158_evxj6	peek	peek	0	unknown	parked		2026-11-07 23:33	wrong-domain: not shard D (digital RTL/verilog-param-cmp / aether-layout-autovia / digital-MCU-RTL-simvision)
+1793855278198_ebxsl	peek	peek	0	unknown	case	EDA-Eval-DesignFlow-SelFigReport-001	2026-11-07 23:43	wrong-domain: not shard D (digital RTL/verilog-param-cmp / aether-layout-autovia / digital-MCU-RTL-simvision)
+1788871441686_fieju	peek	peek	0	unknown	parked		2026-11-07 23:33	wrong-domain: not shard D (digital RTL/verilog-param-cmp / aether-layout-autovia / digital-MCU-RTL-simvision)
+1793150158938_6rvi0	peek	peek	0	unknown	parked		2026-11-07 23:33	wrong-domain: DRC report analysis + PDK rule deck (physical_verify), not shard D
+1793873169781_7dnyc.messages.json	hairuizh	hfeg0pkn002	80	schematic_netlist	case	EDA-Eval-DesignFlow-DevListSummary-001	2026-11-08 00:17	
+1793864423469_6c7d2	sinanz	hfeg0pkn005	322	schematic_netlist	case	EDA-Eval-DesignFlow-DecoderNetlistGen-001	2026-11-08 00:58	
+1793868970979_6nte7	kaixuanx	hfeg0pkn002	35	analog_context	case	EDA-Eval-DesignFlow-CtleTranPower-001	2026-11-08 01:43	
+1791611132079_5vmvu.messages.json	ellawu	hfeg0pkn005	165	schematic_netlist	case	EDA-Eval-DesignFlow-PortTextPinPlan-001	2026-11-08 02:16	
+1791423204544_pewjz.messages.json	johnl	hfeg0pkn001	188	waveform	case	EDA-Eval-DesignFlow-FsdbMeasRunGen-001	2026-11-08 04:03	
+1788767030730_6azjv	rongjiez	hfeg0pkn005	74	schematic_netlist	case	EDA-Eval-DesignFlow-ModelQaTbGen-001	2026-11-08 05:08	
+1787538576102_r9m9l.messages.json	e0014566	hfeg0pkn005	408	analog_context	case	EDA-Eval-DesignFlow-RsDistReport-001	2026-11-08 05:57	
+1793864683915_vb3m8	e0030085	hfeg0pkn002	164	schematic_netlist	case	EDA-Eval-DesignFlow-NetlistSigTrace-001	2026-11-08 05:58	
+1789958710444_rhti4.messages.json	miccao	hfeg0pkn003	266	schematic_netlist	case	EDA-Eval-DesignFlow-AutoCellDrcFlowGen-001	2026-11-08 06:20	
+1793862562240_2m2ja.messages.json	sinanz	hfeg0pkn005	197	schematic_netlist	case	EDA-Eval-DesignFlow-FullAdderSchemBuild-001	2026-11-08 07:51	
+1790235770906_8th6a	kenwang	hfeg0pkn004	407	schematic_netlist	case	EDA-Eval-DesignFlow-QaLibCellBuild-001	2026-11-08 08:26	
+1791851758041_0d17g	xxchen	hfeg0pkn002	393	schematic_netlist	case	EDA-Eval-DesignFlow-AnalogCmpSchemBuild-001	2026-11-08 08:51	
+1786599247702_9cg75	e0014566	hfeg0pkn005	330	analog_context	case	EDA-Eval-DesignFlow-RsCalcRnodePlace-001	2026-11-08 09:46	

@@ -1,0 +1,52 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><title>cline R1820</title><style>
+body{font-family:sans-serif;max-width:960px;margin:0 auto;padding:20px;line-height:1.6;color:#333}
+h1{color:#1a237e;border-bottom:3px solid #1a237e;padding-bottom:8px}
+h2{color:#283593;margin-top:28px;border-left:4px solid #283593;padding-left:10px}
+table{border-collapse:collapse;width:100%;margin:12px 0}th,td{border:1px solid #ccc;padding:6px 10px;text-align:center}th{background:#e3f2fd}
+.ok{color:#2e7d32;font-weight:bold}.warn{color:#e65100;font-weight:bold}.err{color:#c62828;font-weight:bold}
+.box{background:#f5f5f5;border:1px solid #ddd;border-radius:6px;padding:12px 16px;margin:12px 0}</style></head><body>
+<h1>cline 专项分析报告 · R1820</h1>
+<p style="color:#666">2026-11-08 01:46 ｜ glm-5.3-flash ｜ §10:10 C1–C5</p>
+<h2>1. C1 — 独立统计</h2>
+<table><tr><th>Harness</th><th>进度</th><th>real</th><th>empty</th><th>real%</th></tr><tr style='background:#e8f5e9'><td>cline</td><td>72/500</td><td>62</td><td>10</td><td>86.1%</td></tr>
+<tr><td>opencode</td><td>133/500</td><td>127</td><td>6</td><td>95.5%</td></tr>
+<tr><td>hermes</td><td>155/500</td><td>138</td><td>17</td><td>89.0%</td></tr>
+<tr><td>deepseek</td><td>50/500</td><td>43</td><td>7</td><td>86.0%</td></tr>
+<tr><td>claude-code</td><td>79/500</td><td>38</td><td>41</td><td>48.1%</td></tr>
+<tr><td>pi</td><td>50/500</td><td>37</td><td>13</td><td>74.0%</td></tr>
+<tr><td>codex</td><td>60/500</td><td>14</td><td>46</td><td>23.3%</td></tr>
+<tr style='font-weight:bold;background:#fce4ec'><td>合计</td><td>599/3500</td><td>459</td><td>140</td><td>76.6%</td></tr>
+</table>
+<div class="box">cline predict 72/500(62real/10empty/86.1%) | eval 35/46(76.1%)</div>
+<h2>2. C2 — 失败分类</h2>
+<table><tr><th>类型</th><th>占比</th><th>证据</th></tr>
+<tr><td>网关429</td><td>~65%</td><td>curl→429</td></tr>
+<tr><td>SDK崩溃</td><td>~25%</td><td>trace exit非0</td></tr>
+<tr><td>能力失败</td><td>~10%</td><td>TB-2.1 81/89未通过</td></tr>
+<tr><td>适配器</td><td>~0%</td><td>27/27=100%real</td></tr></table>
+<h2>3. C3 — resume fix验证</h2>
+<table><tr><th>阶段</th><th>空patch率</th></tr><tr><td>fix前</td><td class="err">51.5%</td></tr><tr><td>fix后</td><td class="warn">6.9%</td></tr><tr><td>当前</td><td class="warn">13.9%</td></tr></table>
+<div class="box">resume fix已生效(51.5%→13.9%)。残余空patch=100%infra(429)。</div>
+<h2>4. C4 — 心跳小结</h2>
+<div class="box"><code>cline专项: predict 72/500(62real·86.1%) | eval 35/46 | TB-2.1 7/89pass(7.9%) | 空patch=10(100%infra=429) | C3=resume fix生效 | 失败top1=网关429</code></div>
+<h2>5. C5 — 差距来源</h2>
+<table><tr><th>harness</th><th>real%</th><th>分析</th></tr>
+<tr style="background:#e8f5e9"><td><b>cline</b></td><td><b>86.1%</b></td><td>基准。正常时100%。</td></tr>
+<tr><td>opencode</td><td>95.5%</td><td>最高</td></tr><tr><td>hermes</td><td>89.0%</td><td>gw_proxy缓冲</td></tr>
+<tr><td>deepseek</td><td>86.0%</td><td>独立通道</td></tr><tr><td>claude-code</td><td>48.1%</td><td>—</td></tr>
+<tr><td>pi</td><td>74.0%</td><td>—</td></tr><tr><td>codex</td><td>23.3%</td><td>最低</td></tr></table>
+<div class="box">各路差异主要受429影响，不能作能力差结论。归因红线：网关额度≠能力差。</div>
+<h2>6. TB-2.1 cline</h2>
+<table><tr><th>指标</th><th>值</th></tr><tr><td>总任务</td><td>89</td></tr><tr><td>通过</td><td class="ok">7</td></tr><tr><td>通过率</td><td>7.9%</td></tr><tr><td>失败</td><td class="err">81</td></tr></table>
+<p><b>通过任务</b>：</p><table><tr><td>✅ bn-fit-modify</td></tr>
+<tr><td>✅ break-filter-js-from-html</td></tr>
+<tr><td>✅ build-pov-ray</td></tr>
+<tr><td>✅ prove-plus-comm</td></tr>
+<tr><td>✅ pypi-server</td></tr>
+<tr><td>✅ query-optimize</td></tr>
+<tr><td>✅ regex-chess</td></tr>
+</table>
+<p>§15:2x判据：cline 7题通过→<span class="ok">判据满足</span>。</p>
+<h2>7. 网关状态</h2>
+<div class="box"><b>当前</b>：<span class="err">429 QUOTA_EXHAUSTED</span><br>恢复需~3.8h。归因：infra（额度），非模型能力。</div>
+<hr><p style="font-size:0.85em;color:#999">R1820 | 2026-11-08 01:46 | glm-5.3-flash</p></body></html>

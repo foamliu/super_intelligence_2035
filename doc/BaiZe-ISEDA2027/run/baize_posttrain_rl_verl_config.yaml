@@ -45,7 +45,11 @@ actor_rollout_ref:
   model:
     path: /tmp/models/MiniCPM5-2B
     override_config:
-      attn_implementation: flash_attention_2
+      # ✅ R35 (2026-11-08): flash_attn 2.7.4.post1 now compiled & importable in
+      #   verl_cu124_venv (R34 background build succeeded). Switch back to
+      #   flash_attention_2 for +10-20% training throughput vs sdpa.
+      #   Fallback: if flash_attn import fails at runtime, set to sdpa (torch native).
+      attn_implementation: flash_attention_2  # R35: flash_attn now available; sdpa as fallback
     enable_gradient_checkpointing: True
     trust_remote_code: True
     use_remove_padding: True
@@ -85,19 +89,15 @@ actor_rollout_ref:
   rollout:
     name: sglang                 # 🔴 CHANGED from vll → sglang (R8/R9)
     mode: async                  # Server-based async rollout (avoids GPU idle during sandbox)
-    multi_turn: True             # ✅ R15 verified: verl docs confirm `multi_turn: True` (boolean)
-    multi_turn_config:
-      tokenization_sanity_check_mode: strict  # 🔴 R11: delta tokenization consistency check
-      format: minicpm5           # 🔴 R16: verl's OWN ToolParser (not SGLang's) — registers "minicpm5"
-                                 #   Parses XML: <function name="..."><param name="...">value</param></function>
-                                 #   Import baize_posttrain_minicpm5_parser before training to register.
-                                 #   See EXPERIMENTS_POSTTRAIN.md §R16 for full rationale.
-      # 🔴 R20 (2026-11-07): Added missing multi-turn parameters
-      max_assistant_turns: 3     # R20-C2: CRITICAL — controls state machine loop count
-                                 #   agent.max_turns below is custom metadata, NOT read by verl
-      max_parallel_calls: 1      # R20-C4: EDA tasks require sequential API calls (no parallel)
-      max_tool_response_length: 2048  # R20-C3: truncate sandbox output to prevent context overflow
-      tool_response_truncate_side: end  # R20-C3: keep beginning of output, truncate tail
+    # R25 FIX: multi_turn is an object per verl docs section 1.1.6, not boolean + separate block
+    multi_turn:
+      enable: true
+      max_assistant_turns: 3
+      format: minicpm5
+      max_parallel_calls: 1
+      max_tool_response_length: 2048
+      tool_response_truncate_side: end
+      tokenization_sanity_check_mode: strict
     temperature: 1.0             # Training: high exploration
     top_p: 0.95
     prompt_length: 4096

@@ -1,0 +1,55 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>cline 专项报告 R1863</title><style>body{font-family:"Microsoft YaHei","Noto Sans CJK SC",sans-serif;max-width:1200px;margin:0 auto;padding:20px;background:#f5f5f5;color:#333}h1{color:#1a5276;border-bottom:3px solid #2980b9;padding-bottom:10px}h2{color:#2874a6;margin-top:30px;border-left:5px solid #3498db;padding-left:10px}table{border-collapse:collapse;width:100%;margin:10px 0;background:#fff}th,td{border:1px solid #ddd;padding:8px 12px;text-align:left}th{background:#2980b9;color:#fff}tr:nth-child(even){background:#f9f9f9}.green{color:#27ae60;font-weight:bold}.red{color:#e74c3c;font-weight:bold}.orange{color:#e67e22;font-weight:bold}.note{background:#fef9e7;border-left:4px solid #f39c12;padding:10px;margin:10px 0}.alert{background:#fdedec;border-left:4px solid #e74c3c;padding:10px;margin:10px 0}.ok{background:#eafaf1;border-left:4px solid #27ae60;padding:10px;margin:10px 0}code{background:#eee;padding:2px 6px;border-radius:3px;font-size:0.9em}</style></head><body>
+<h1>cline 专项报告 R1863</h1>
+<p>生成时间：2026-11-08 09:57 ｜ 数据来源：SWE-bench Verified predict + R1789 eval + TB-2.1 ｜ 命名纪律：正文一律 <code>cline</code></p>
+<div class="ok"><b>✅ 网关已恢复：200 OK</b><br>glm-5.3-flash 网关于 11-08 恢复 200 OK，predict 7 路已自动续跑。<br><i>此前 429 额度耗尽持续约 3.3h，期间 empty patch 增多为 infra 非能力。</i></div>
+<h2>C1 — cline 独立统计（real patch / empty patch / recent10）</h2>
+<table><tr><th>harness</th><th>文件数</th><th>real patch</th><th>empty patch</th><th>real%</th></tr>
+<tr><td>cline</td><td>223</td><td class="green">71</td><td class="red">152</td><td class="orange">32%</td></tr>
+<tr><td>codex</td><td>468</td><td class="green">16</td><td class="red">452</td><td class="red">3%</td></tr>
+<tr><td>opencode</td><td>234</td><td class="green">159</td><td class="red">75</td><td class="green">68%</td></tr>
+<tr><td>claude-code</td><td>479</td><td class="green">45</td><td class="red">434</td><td class="red">9%</td></tr>
+<tr><td>pi</td><td>166</td><td class="green">39</td><td class="red">127</td><td class="red">23%</td></tr>
+<tr><td>hermes</td><td>346</td><td class="green">164</td><td class="red">182</td><td class="orange">47%</td></tr>
+<tr><td>deepseek</td><td>143</td><td class="green">55</td><td class="red">80</td><td class="orange">38%</td></tr>
+</table>
+<h2>C1-bis — SWE-bench Verified R1789 eval 结果（部分评测）</h2>
+<div class="ok"><b>关键发现</b>：所有 7 路 eval 中 <b>empty_patch = 0</b> —— resume fix 生效确认（C3）。</div>
+<table><tr><th>harness</th><th>eval题数</th><th>resolved</th><th>empty_patch</th><th>resolve%</th></tr>
+<tr><td>cline</td><td>46</td><td class="green">35</td><td class="red">0</td><td class="orange">76.1%</td></tr>
+<tr><td>codex</td><td>8</td><td class="green">6</td><td class="red">0</td><td class="orange">75.0%</td></tr>
+<tr><td>opencode</td><td>102</td><td class="green">80</td><td class="red">0</td><td class="orange">78.4%</td></tr>
+<tr><td>claude-code</td><td>36</td><td class="green">27</td><td class="red">0</td><td class="orange">75.0%</td></tr>
+<tr><td>pi</td><td>34</td><td class="green">26</td><td class="red">0</td><td class="orange">76.5%</td></tr>
+<tr><td>hermes</td><td>131</td><td class="green">124</td><td class="red">0</td><td class="green">94.7%</td></tr>
+<tr><td>deepseek</td><td>40</td><td class="green">33</td><td class="red">0</td><td class="green">82.5%</td></tr>
+</table>
+<div class="note"><b>说明</b>：R1789 eval 为部分评测（仅对当时已有的 predict 文件跑 eval），非全量 500 题。<br><b>cline</b>：35/46=76.1% resolved，0 empty_patch，1 error（astropy-12907）。</div>
+<h2>C3 — resume fix 后空 patch 是否归零</h2>
+<div class="ok"><b>归零（eval 层面）</b><br>R1789 eval：cline 46 submitted，45 completed，<b>0 empty_patch</b>，1 error。<br>resume fix（R1733：size&gt;50B → model_patch 非空）完全生效。<br>predict 阶段仍有 empty（152/223=68%），根因：quota_blocked=4（infra）+ no_patch=148（能力）。<b>非 bug 复发</b>。</div>
+<h2>C4 — cline 专项小结（心跳行）</h2>
+<div class="note"><code>cline predict 223files(71real/152empty=32% · R1789 eval 35/46=76.1% · 0 empty_patch(C3✅) · TB-2.1 cline 90/7p(7.8%) · 失败top1=能力未产出patch(148/223=66%) · gateway 200 OK · 13易题失败=能力差(research 2611.08285)</code></div>
+<h2>C5 — 与 hermes/opencode 差距来源</h2>
+<div class="note"><b>predict real%</b>：opencode 68% &gt; hermes 47% &gt; deepseek 38% &gt; cline 32% &gt; pi 23% &gt; claude-code 9% &gt; codex 3% <br><b>eval resolve%</b>：hermes 94.7% &gt; deepseek 82.5% &gt; opencode 78.4% &gt; pi 76.5% &gt; cline 76.1% &gt; claude-code 75.0% &gt; codex 75.0% <br><b>差距来源</b>：cline vs opencode/hermes 的 predict real% 差距 = no_patch（能力），非 429。但 eval resolve% 差距较小 —— cline 产出 patch 质量与 opencode 接近，差距主要在产出率。<br><b>可检验假设</b>：cline no_patch 中部分可能因 glm-5.3-flash 下 diff 格式输出不匹配。下一步：抽查 5 个 no_patch 题 trace。</div>
+<h2>TB-2.1 reward 聚合（7 路 + oracle）</h2>
+<div class="ok"><b>oracle 5/5 ✅</b>｜ <b>口径</b>：TB-2.1 / 89 题 / 7-way concurrent（不可与 TB4 比较）</div>
+<table><tr><th>route</th><th>scored</th><th>pass</th><th>pass%</th><th>状态</th></tr>
+<tr><td>cline</td><td>90</td><td class="green">7</td><td>7.8%</td><td>DONE</td></tr>
+<tr><td>hermes</td><td>90</td><td class="green">3</td><td>3.3%</td><td>DONE</td></tr>
+<tr><td>codex</td><td>84</td><td class="green">3</td><td>3.6%</td><td>running</td></tr>
+<tr><td>deepseek</td><td>40</td><td class="green">5</td><td>12.5%</td><td>running</td></tr>
+<tr><td>opencode</td><td>35</td><td class="green">5</td><td>14.3%</td><td>running</td></tr>
+<tr><td>pi</td><td>30</td><td class="green">6</td><td>20.0%</td><td>running</td></tr>
+<tr><td>claude-code</td><td>24</td><td class="green">3</td><td>12.5%</td><td>running</td></tr>
+<tr><td><b>合计</b></td><td><b>393</b></td><td><b>32</b></td><td><b>8.1%</b></td><td></td></tr></table>
+<h2>归因总结</h2>
+<table><tr><th>现象</th><th>归因</th><th>证据</th></tr>
+<tr><td>网关 429</td><td class="orange">infra</td><td>gateway probe: 200 OK 已恢复</td></tr>
+<tr><td>cline no_patch=148</td><td>能力</td><td>quota_blocked 仅 4</td></tr>
+<tr><td>cline eval 0 empty_patch</td><td class="green">resume fix 生效</td><td>R1789 eval: empty_patch=0</td></tr>
+<tr><td>codex real%=3%</td><td class="orange">infra(429占94%)</td><td>437/464 quota-blocked</td></tr>
+<tr><td>opencode real%=68%</td><td class="green">能力(best)</td><td>quota仂4</td></tr>
+<tr><td>TB-2.1 cline 7p/90</td><td>能力</td><td>oracle 5/5 ✅</td></tr>
+<tr><td>TB4 全 0</td><td>能力</td><td>reward=0 非 None</td></tr></table>
+<h2>C5-bis — cline 在 TB-2.1 易题上的失败（research 2611.08285）</h2>
+<div class="alert"><p><b>发现</b>：cline 在 TB-2.1 的 <b>13 道易题</b>上失败（其他路至少 1 路通过）=能力差距，非 infra。</p><p><b>代表性失败</b>：</p><ul><li><b>constraints-scheduling</b>（4/7 路通过）— 最易题</li><li><b>break-filter-js-from-html</b>（3/7）— oracle 5/5 验证题</li><li><b>cancel-async-tasks</b>（1/7）— oracle 5/5 验证题</li></ul><p><b>归因红线</b>：这 13 题 = 能力差（有其他路能解），<b>不得</b>用 infra 掩盖。</p></div>
+<hr><p style="color:#7f8c8d;font-size:0.85em">R1863 · 2026-11-08 09:57 · harness 线 · 正文一律 cline · 自包含 0 外链 0 script</p></body></html>

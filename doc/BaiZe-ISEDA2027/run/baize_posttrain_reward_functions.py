@@ -522,6 +522,13 @@ def reward_r0_skeleton(solution_str, extra_info, api_db_path=None):
     total = syntax_score + api_score + ep_score + struct_score + test_score
     if check_format(solution_str):
         total += FORMAT_BONUS
+
+    # R35: Anti-gaming cap — if ALL code blocks have syntax errors (n_valid=0
+    #   AND n_total>0), the code cannot actually run. Cap reward at 0.3 to
+    #   prevent reward hacking via API-name-only responses with broken syntax.
+    if n_total > 0 and n_valid == 0:
+        total = min(total, 0.3)
+
     return max(0.0, min(total, 1.05))
 
 
@@ -560,6 +567,14 @@ def compute_score(data_source, solution_str, ground_truth, extra_info=None, **kw
     Returns:
         Float reward score.
     """
+    # R35: Guard against None/empty solution_str — verl may pass None for
+    #   empty generation or decode errors. Without this, regex operations crash.
+    if solution_str is None:
+        logger.warning("compute_score: solution_str is None, treating as empty string")
+        solution_str = ""
+    if not isinstance(solution_str, str):
+        solution_str = str(solution_str) if solution_str is not None else ""
+
     arm = kwargs.get("arm", "R2")
     api_db_path = kwargs.get(
         "api_database",

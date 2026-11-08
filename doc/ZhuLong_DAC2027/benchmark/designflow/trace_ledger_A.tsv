@@ -210,3 +210,20 @@
 1793584339937_phh7f.messages.json	e0046913	hfeg0pkn003	46	digital	case	EDA-Eval-DesignFlow-RtlHierarchyVerdiGuide-001	2026-11-07 21:29	
 1788853679600_jru44	lorikx	hfeg0pkn001	39	digital	case	EDA-Eval-DesignFlow-SocProjStructAnalyze-001	2026-11-07 22:05	
 1793751604152_9lkc1	shanliny	hfeg0pkn001	55	verification	case	EDA-Eval-DesignFlow-DriverClkTimingFix-001	2026-11-07 22:42	
+1789960601663_3pcjt	lorikx	hfeg0pkn001	32	verification	case	EDA-Eval-DesignFlow-FsdbTogglePatch-001	2026-11-07 23:24	
+1793004723258_im5c1	lorikx	hfeg0pkn001	261	verification	case	EDA-Eval-DesignFlow-VcdToFsdbMigration-001	2026-11-08 00:03	
+1793169357173_woanw	lorikx	hfeg0pkn001	108	verification	case	EDA-Eval-DesignFlow-SramVcsLogDiagnose-001	2026-11-08 00:54	
+1793932764787_i7eyp	johnl	hfeg0pkn001	39	digital	case	EDA-Eval-DesignFlow-DcScriptMigrate-001	2026-11-08 01:37	
+1793098457331_js3ur	lorikx	hfeg0pkn001	57	digital	case	EDA-Eval-DesignFlow-SramConflictDeltaPort-001	2026-11-08 02:14	
+1792149393076_8ylkn	xuluo	hfeg0pkn001	331	digital	case	EDA-Eval-DesignFlow-XyzSvEnumPort-001	2026-11-08 03:33	
+1793933023338_1uxza	johnl	hfeg0pkn001	302	pnr_signoff	case	EDA-Eval-DesignFlow-DcPolicyRemoveMigrate-001	2026-11-08 04:08	r217 daily-log fallback; 234 innovus+39 synthesis+28 netlist; pure Innovus PnR session
+1792984756089_xalsb	lorikx	hfeg0pkn001	234	verification	case	EDA-Eval-DesignFlow-MakeConvenienceTarget-001	2026-11-08 04:46	
+1793843537860_m8ma9.messages.json	e0045128	hfeg0pkn005	22	digital	case	EDA-Eval-DesignFlow-AsyncResetSyncRelease-001	2026-11-08 05:19	
+1793779465508_q9aja	adaml	hfeg0pkn002	56	eda_other	case	EDA-Eval-DesignFlow-WaveviewModuleUpdate-001	2026-11-08 05:49	
+1791946331811_4hq5t	shanliny	hfeg0pkn001	72	digital	case	EDA-Eval-DesignFlow-VecRandfailDiagnose-001	2026-11-08 06:30	
+1793672454901_bg39v	tongfanl	hfeg0pkn004	550	verification	case	EDA-Eval-DesignFlow-Ddr6WtmTbComplete-001	2026-11-08 07:12	
+1793839606322_bghqo	e0039602	hfeg0pkn004	338	digital	case	EDA-Eval-DesignFlow-TbFamilyCoverage-001	2026-11-08 07:43	
+1793946881286_z34dy	t0002965	hfhds222	88	pnr_signoff	parked		2026-11-08 08:04	session file not found on any of 4 hosts (hfhds222/230/224/pnd008) nor .75; scan 11/08 00:01 caught transient, deleted by 07:56
+1792562152582_saz5l	e0046913	hfeg0pkn003	40	digital	case	EDA-Eval-DesignFlow-LowPowerKpiGen-001	2026-11-08 08:19	
+1789972559943_a2an2	johnl	hfeg0pkn001	143	digital	case	EDA-Eval-DesignFlow-SgeStdcellPortDiagnose-001	2026-11-08 09:22	
+1793582130511_ju0g4.messages.json	e0047722	hfeg0pkn004	166	eda_other	case	EDA-Eval-DesignFlow-WvSineWaveAnalyze-001	2026-11-08 09:52	

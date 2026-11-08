@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>R38: 11/9 GPU Day-1 执行手册与发射前一致性审计</title>
+<style>
+body{font-family:system-ui,sans-serif;max-width:960px;margin:0 auto;padding:20px;line-height:1.7;color:#1a1a1a;background:#fafafa}
+h1{color:#1a3a5a;border-bottom:3px solid #1a3a5a;padding-bottom:10px}
+h2{color:#2a5a8a;border-bottom:1px solid #ccc;padding-bottom:5px;margin-top:2em}
+table{border-collapse:collapse;width:100%;margin:1em 0;font-size:14px}
+th,td{border:1px solid #ddd;padding:8px 12px;text-align:left}
+th{background:#eef5fa;font-weight:600}
+tr:nth-child(even){background:#f8f8f8}
+.pass{color:#2a8a2a;font-weight:bold}
+.timeline{border-left:3px solid #1a3a5a;padding-left:20px;margin:1em 0}
+.timeline-item{margin-bottom:1em;position:relative}
+.timeline-item:before{content:"●";position:absolute;left:-26px;color:#1a3a5a}
+.decision{background:#f0f7ff;border:1px solid #b0d0f0;border-radius:8px;padding:12px 16px;margin:1em 0}
+.decision-title{font-weight:bold;color:#1a3a5a}
+.summary-box{background:#e8f5e8;border:2px solid #4a4;border-radius:8px;padding:16px;margin:1em 0}
+.warning-box{background:#fff8e0;border:2px solid #cc8800;border-radius:8px;padding:16px;margin:1em 0}
+code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-family:monospace;font-size:0.9em}
+</style></head><body>
+
+<h1>R38: 11/9 GPU Day-1 执行手册与发射前一致性审计</h1>
+<p><strong>时间</strong>: 2026-11-08 07:32 | <strong>节点</strong>: 10.252.32.17 (.17) | <strong>状态</strong>: GPU 11/9 到位前复审</p>
+
+<div class="warning-box">
+<strong>⚠️ 重要声明</strong>: 本报告涉及的所有 RL 训练均为<strong>替身预演</strong>（MiniCPM5-2B 上的 GRPO）。其收益<strong>不可迁移</strong>到白泽模型。白泽仍在预训练（ETA≈2026-12-25）。本次仅验证方法链路 + 沉淀可复用流程。
+</div>
+
+<h2>1. 执行摘要</h2>
+<div class="summary-box">
+<p><strong>发射前一致性审计</strong>: 13 项全部通过（13 PASS / 0 FAIL / 0 WARN）。所有脚本、配置、数据、模型、环境均就绪。</p>
+<p><strong>Day-1 时间线</strong>: T+0:00 GPU释放 → T+0:45 预检 → T+1:00 SGLang+基线评测 → T+5:00 RL冒烟 → T+6:00 全量RL → T+24:00 首日完成。</p>
+<p><strong>关键决策点</strong>: 沙箱不可达→R0自动回退（R37/R22）; GPU未释放→轮询等待（不杀进程）; SGLang启动失败→降级参数或回退vLLM。</p>
+<p><strong>Day-1 成功标准</strong>: 基线36%复测启动（2-3轮完成）+ RL训练稳定跑50迭 + D1-D6实测数据落盘。</p>
+</div>
+
+<h2>2. 发射前一致性审计结果</h2>
+<p>审计工具: <code>bash baize_posttrain_day1_runbook.sh --audit</code></p>
+<table>
+<tr><th>审计项</th><th>期望值</th><th>实测值</th><th>依据</th><th>结果</th></tr>
+<tr><td>auto_fallback</td><td>true</td><td>true</td><td>R22: 沙箱不可达时自动回退R0</td><td class="pass">✅</td></tr>
+<tr><td>attn_implementation</td><td>flash_attention_2</td><td>flash_attention_2</td><td>R35: flash_attn 2.7.4.post1已编译</td><td class="pass">✅</td></tr>
+<tr><td>rollout.name</td><td>sglang</td><td>sglang</td><td>R9: MiniCPM5 XML工具调用需SGLang解析</td><td class="pass">✅</td></tr>
+<tr><td>multi_turn</td><td>True</td><td>True</td><td>R9: 多轮工具调用必需</td><td class="pass">✅</td></tr>
+<tr><td>监控脚本</td><td>存在</td><td>存在</td><td>R36: 7种发散检测P1-P7</td><td class="pass">✅</td></tr>
+<tr><td>奖励对抗测试</td><td>存在</td><td>存在</td><td>R35: 29项对抗测试全PASS</td><td class="pass">✅</td></tr>
+<tr><td>沙箱客户端</td><td>存在</td><td>存在</td><td>R37: 三层回退(HTTP/SSH/R0)</td><td class="pass">✅</td></tr>
+<tr><td>RL parquet</td><td>存在</td><td>944K (3347条)</td><td>R10: verl RLHF格式</td><td class="pass">✅</td></tr>
+<tr><td>SFT v2 JSONL</td><td>存在</td><td>21M</td><td>R24: 19524对, 0污染</td><td class="pass">✅</td></tr>
+<tr><td>EDA tools YAML</td><td>存在</td><td>存在</td><td>R15: OpenAI Function格式</td><td class="pass">✅</td></tr>
+<tr><td>MiniCPM5-2B模型</td><td>存在</td><td>4.7G /tmp/models/</td><td>本机已下载</td><td class="pass">✅</td></tr>
+<tr><td>cu124 venv</td><td>存在</td><td>存在</td><td>R25/R34: torch2.6.0+cu124</td><td class="pass">✅</td></tr>
+<tr><td>flash_attn</td><td>可导入</td><td>可导入</td><td>R34/R35: 后台编译完成</td><td class="pass">✅</td></tr>
+</table>
+<p><strong>审计结论</strong>: 全部13项通过，无临界问题。启动脚本Step 5/6使用<code>--reward-arm R2</code>，但配置中<code>auto_fallback: true</code>会在沙箱不可达时自动切换到R0（R22机制），因此不需修改启动脚本。</p>
+
+<h2>3. Day-1 时间线</h2>
+<div class="timeline">
+<div class="timeline-item"><strong>T+0:00 — GPU释放与验证</strong><br>
+验证 4×A40 已释放（nvidia-smi 查看 4张 GPU <1GB）。未释放则轮询等待（每15分钟），不杀其他进程。</div>
+<div class="timeline-item"><strong>T+0:15 — Step 0: 环境验证</strong><br>
+<code>bash baize_posttrain_setup_cu124_venv.sh --yes</code>（若已安装则跳过）。验证 torch.cuda.is_available()=True, sglang/verl/ray/flash_attn 可导入。预计 15-30 分钟。</div>
+<div class="timeline-item"><strong>T+0:45 — Step 1: 预检</strong><br>
+<code>bash baize_posttrain_preflight_check.sh</code>。期望 32+ PASS, 0 FAIL。WARN项（GPU忙/沙箱down）已知不阻塞。</div>
+<div class="timeline-item"><strong>T+1:00 — Step 2: SGLang启动 + 基线评测(36%)</strong><br>
+先跑<strong>快速模式</strong>: <code>baize_posttrain_minicpm5_diag.sh --quick</code>（10题×1轮=20-30分钟）获取 D1/D2/D6 预览。<br>
+后启<strong>全量模式</strong>: <code>baize_posttrain_minicpm5_diag.sh --full</code>（158题×5轮=15-25小时，后台运行）。<br>
+冻结协议: 158任务/Pass@1/2500s/单trace/5-run/-p 8 -n。</div>
+<div class="timeline-item"><strong>T+1:30 — Step 2b: 快速 D1-D6 提取</strong><br>从 --quick 结果提取 D1(工具合法率)/D2(调用频次)/D6(迭代轮数)，与 DeepSeek 侧对比。</div>
+<div class="timeline-item"><strong>T+4:00 — Step 3: 轨迹提取</strong><br>
+<code>baize_posttrain_minicpm5_diag.sh --extract-only</code>。从已完成的跑中提取真实 D1-D6，替换 R4 调研中的假设。</div>
+<div class="timeline-item"><strong>T+4:30 — Step 4: 污染闸门</strong><br>
+<code>bash baize_posttrain_contamination_gate.sh</code>。必须 PASS 才能进入 RL（红线 §5.1）。</div>
+<div class="timeline-item"><strong>T+5:00 — Step 5: RL 冒烟测试</strong><br>
+<code>baize_posttrain_rl_grpo.sh --smoke --reward-arm R0</code><br>
+R0（非R2）：沙箱不可达。冒烟: 10迭/group_size=4/batch=16。预计 20-40 分钟。<br>监控: reward非全零（R0 std=0.3718，R35实测）/无OOM/无NaN/cheat rate报出。</div>
+<div class="timeline-item"><strong>T+6:00 — Step 6: 全量 RL 训练</strong><br>
+<code>baize_posttrain_rl_grpo.sh --reward-arm R0</code><br>
+全量: 2000迭/group_size=8/batch=128。监控: baize_posttrain_rl_monitor.py (P1-P7)。<br>预计时长 ~11-15天（R33）。Day-1 仅验证前50迭稳定后过夜运行。</div>
+<div class="timeline-item"><strong>T+8:00 — Day-1 检查点</strong><br>
+基线: 2-3轮完成? RL: 50+迭稳定? (reward/KL/entropy/cheat rate) 全绿→过夜运行。</div>
+<div class="timeline-item"><strong>T+24:00 — Day-1 结束</strong><br>
+基线36%: 2-3轮完成。RL: ~100-150迭。D1-D6: 实测值替换假设。提交结果到 EXPERIMENTS_POSTTRAIN.md。</div>
+</div>
+
+<h2>4. 关键决策树</h2>
+<div class="decision">
+<div class="decision-title">场景1: GPU 未释放</div>
+条件: T+0:30 时仍有 8/8 GPU 忙<br>
+→ 轮询每15分钟，最多等到 T+2:00<br>
+→ 仍未释放 → 上报运维（不杀其他进程，红线）<br>
+→ GPU到位 → 重新启动时线
+</div>
+<div class="decision">
+<div class="decision-title">场景2: SGLang 启动失败</div>
+检查: 模型路径? venv有sglang? 端口8866空闲?<br>
+→ 换端口: <code>--port 8867</code><br>
+→ 降低显存: <code>--mem-fraction-static 0.75</code><br>
+→ 持续失败 → 回退 vLLM（失去工具调用解析，仅单轮）<br>
+→ 记录到日志 + 上报
+</div>
+<div class="decision">
+<div class="decision-title">场景3: RL 冒烟全零奖励</div>
+检查: reward_arm=R0? parquet加载? compute_score返回非零?<br>
+→ R0 std=0.3718 (R35实测) → 应有梯度信号<br>
+→ 若仍零 → 检查 parquet格式 + task字段
+</div>
+<div class="decision">
+<div class="decision-title">场景4: RL OOM</div>
+→ 减: ppo_micro_batch_size_per_gpu 4→2<br>
+→ 减: gpu_memory_utilization 0.35→0.25<br>
+→ 减: max_response_length 4096→2048<br>
+→ gradient_checkpointing已开启（config=True）
+</div>
+<div class="decision">
+<div class="decision-title">场景5: 监控告警 (P1-P7)</div>
+P1 KL大于10: 减lr(3e-6→1e-6), 增kl_loss_coef(0.02→0.04)<br>
+P2 reward小于0.01: 检查奖励函数, 切换arm<br>
+P3 方差小于0.01: 增entropy_coeff(0.001→0.01)<br>
+P4 熵小于0.1: 减kl_loss_coef, 增entropy_coeff<br>
+P5 梯度大于100: 减grad_clip(1.0→0.5)<br>
+P6 NaN/Inf: 停止, 减lr, 从检查点重启<br>
+P7 作弊率大于5%: 报告(不停), 收紧anti-cheat
+</div>
+
+<h2>5. 资源需求</h2>
+<table>
+<tr><th>资源</th><th>需求</th><th>现状</th><th>备注</th></tr>
+<tr><td>GPU</td><td>4×A40 (48GB/张)</td><td>8/8忙(等11/9)</td><td>释放后自动起跑</td></tr>
+<tr><td>模型</td><td>MiniCPM5-2B 4.7GB</td><td>✅ /tmp/models/</td><td>LlamaForCausalLM 42层 2048d</td></tr>
+<tr><td>环境</td><td>cu124 venv</td><td>✅ torch2.6.0+cu124</td><td>sglang/verl/ray/flash_attn全装</td></tr>
+<tr><td>RL数据</td><td>3347条合成任务</td><td>✅ 944K parquet</td><td>R10: verl RLHF格式</td></tr>
+<tr><td>SFT数据</td><td>19524对</td><td>✅ 21M JSONL</td><td>R24: 0污染</td></tr>
+<tr><td>API数据库</td><td>8463 API</td><td>✅ 18MB JSON</td><td>R4: 本地克隆</td></tr>
+<tr><td>158题数据集</td><td>评测基准</td><td>✅ 已就位</td><td>红线: 不进训练集</td></tr>
+<tr><td>沙箱</td><td>EDA执行环境</td><td>⚠️ 端口被过滤</td><td>R0自动回退(R22/R37)</td></tr>
+<tr><td>存储</td><td>~200-300GB</td><td>✅ 386G可用</td><td>P1: 存储非瓶颈</td></tr>
+</table>
+
+<h2>6. 成功标准与里程碑</h2>
+<table>
+<tr><th>里程碑</th><th>Pass@1</th><th>含义</th><th>预期达成时间</th></tr>
+<tr><td>起点</td><td>36%</td><td>MiniCPM5-2B 零适配</td><td>✅ 已实测</td></tr>
+<tr><td>M1</td><td>50%</td><td>工具协议修好(D1/D2/D6)</td><td>替身RL后期</td></tr>
+<tr><td>M2</td><td>65%</td><td>+领域退火+SFT</td><td>白泽正式训练</td></tr>
+<tr><td>M3</td><td>75%</td><td>+RL</td><td>白泽RL阶段</td></tr>
+<tr><td>M4</td><td>85%+</td><td>逼近DeepSeek-V4-Pro</td><td>惊喜级别</td></tr>
+</table>
+<p><strong>Day-1 具体目标</strong>: 不期提升Pass@1（替身预演不迁移）。目标是验证方法链路可行性 + 获取真实 D1-D6 数据。</p>
+
+<h2>7. 回滚程序</h2>
+<p>如果 Day-1 出现不可恢复的错误：</p>
+<ol>
+<li>停止所有训练进程</li>
+<li>停止 SGLang 服务</li>
+<li>保留日志: cp /tmp/baize_posttrain_rl_train.log 到备份</li>
+<li>保留检查点: 最新 checkpoint 自动保存在 save_dir</li>
+<li>从检查点重启: <code>baize_posttrain_rl_grpo.sh --reward-arm R0 --resume-ckpt path</code></li>
+<li>如果数据污染: 重跑污染闸门，不可继续训练</li>
+</ol>
+
+<h2>8. 通讯协议</h2>
+<p>与运维的通讯通过 MEMORY_POSTTRAIN.md 心跳 + git commit。</p>
+<ul>
+<li>正常运行: 每轮唤醒写心跳 + 提交</li>
+<li>出现问题: 心跳中标注问题 + 拟采措施</li>
+<li>紧急问题: 心跳 WAITING=0 + 详细问题描述 + 待运维指示</li>
+<li>日报: daily-memories-posttrain/date.md 追加记录</li>
+</ul>
+
+<h2>9. Day-1 后过渡计划</h2>
+<table>
+<tr><th>时间</th><th>任务</th><th>依赖</th></tr>
+<tr><td>Day-2~3</td><td>基线36%完成(全部5轮) + D1-D6完整报告</td><td>Day-1评测启动</td></tr>
+<tr><td>Day-3~4</td><td>RL训练稳定运行 + 首次检查点审查</td><td>Day-1冒烟通过</td></tr>
+<tr><td>Day-5~7</td><td>中期评估: 基线 vs RL后 Pass@1 对比</td><td>RL 500+迭</td></tr>
+<tr><td>Day-7+</td><td>根据替身结果调整白泽方案</td><td>替身RL初步结果</td></tr>
+<tr><td>2026-12-25+</td><td>白泽pretrain ckpt就绪 → 正式训练</td><td>pretrain收敛</td></tr>
+</table>
+
+<h2>10. R1-R37 研究成果与 Day-1 的对应关系</h2>
+<table>
+<tr><th>研究项</th><th>内容</th><th>Day-1 应用</th></tr>
+<tr><td>R1-R4</td><td>环境接口/造题/奖励/失败分类</td><td>基线评测 + D1-D6提取</td></tr>
+<tr><td>R8-R9</td><td>SGLang切换(XML工具调用)</td><td>SGLang serve + RL config</td></tr>
+<tr><td>R10</td><td>Parquet转换(verl格式)</td><td>RL数据加载</td></tr>
+<tr><td>R11</td><td>内存校准(A40不OOM)</td><td>gpu_memory_utilization=0.35</td></tr>
+<tr><td>R12</td><td>启动脚本编写</td><td>baize_posttrain_launch_11_9.sh</td></tr>
+<tr><td>R13-R14</td><td>奖励函数实现</td><td>baize_posttrain_reward_functions.py</td></tr>
+<tr><td>R15</td><td>EDA工具配置</td><td>baize_posttrain_eda_tools.yaml</td></tr>
+<tr><td>R18-R21</td><td>RL超参优化(KL/entropy/clip)</td><td>RL config参数</td></tr>
+<tr><td>R22</td><td>R0骨架回退奖励</td><td>auto_fallback=true</td></tr>
+<tr><td>R25/R34</td><td>CUDA修复 + venv安装</td><td>cu124 venv</td></tr>
+<tr><td>R33</td><td>排程估算(11-15天)</td><td>时间规划</td></tr>
+<tr><td>R35</td><td>奖励对抗测试(29项) + flash_attn</td><td>验证奖励信号有效</td></tr>
+<tr><td>R36</td><td>训练监控(7种发散检测)</td><td>baize_posttrain_rl_monitor.py</td></tr>
+<tr><td>R37</td><td>沙箱连通性分析 + 三层回退</td><td>R0作为默认奖励臂</td></tr>
+</table>
+
+<p style="text-align:center;margin-top:2em;color:#888;font-size:13px">
+R38 · 2026-11-08 · BaiZe Stage(ii) Post-Train · 替身预演方法链路验证<br>
+全部37轮研究成果已整合到此执行手册 · 审计结果: 13/13 PASS · 就绪度: 100%
+</p>
+
+</body></html>

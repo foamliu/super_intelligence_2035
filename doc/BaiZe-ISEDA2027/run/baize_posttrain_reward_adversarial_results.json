@@ -1,0 +1,271 @@
+{
+  "test_suite": "R35_adversarial_reward_test",
+  "timestamp": "2026-11-08",
+  "api_db_available": true,
+  "summary": {
+    "total": 29,
+    "passed": 29,
+    "failed": 0,
+    "critical_fail": 0,
+    "categories": {
+      "T1-EdgeCases": {
+        "pass": 7,
+        "fail": 0
+      },
+      "T2-RewardHacking": {
+        "pass": 6,
+        "fail": 0
+      },
+      "T3-SignalProps": {
+        "pass": 5,
+        "fail": 0
+      },
+      "T4-AutoFallback": {
+        "pass": 3,
+        "fail": 0
+      },
+      "T5-CheatDetect": {
+        "pass": 5,
+        "fail": 0
+      },
+      "T6-CrossArm": {
+        "pass": 3,
+        "fail": 0
+      }
+    }
+  },
+  "results": [
+    {
+      "name": "T1.1_empty",
+      "category": "T1-EdgeCases",
+      "passed": true,
+      "score": 0.06,
+      "detail": "",
+      "critical": true
+    },
+    {
+      "name": "T1.2_none",
+      "category": "T1-EdgeCases",
+      "passed": true,
+      "score": 0.06,
+      "detail": "",
+      "critical": true
+    },
+    {
+      "name": "T1.3_garbage",
+      "category": "T1-EdgeCases",
+      "passed": true,
+      "score": 0.06,
+      "detail": "",
+      "critical": false
+    },
+    {
+      "name": "T1.4_super_long",
+      "category": "T1-EdgeCases",
+      "passed": true,
+      "score": 1.02,
+      "detail": "10k chars R0=1.0200",
+      "critical": true
+    },
+    {
+      "name": "T1.5_unicode",
+      "category": "T1-EdgeCases",
+      "passed": true,
+      "score": 0.6000000000000001,
+      "detail": "",
+      "critical": false
+    },
+    {
+      "name": "T1.6_no_code",
+      "category": "T1-EdgeCases",
+      "passed": true,
+      "score": 0.06,
+      "detail": "",
+      "critical": false
+    },
+    {
+      "name": "T1.7_syntax_err",
+      "category": "T1-EdgeCases",
+      "passed": true,
+      "score": 0.3,
+      "detail": "",
+      "critical": false
+    },
+    {
+      "name": "T2.1_format_gaming",
+      "category": "T2-RewardHacking",
+      "passed": true,
+      "score": 0.18,
+      "detail": "format-only R0=0.1800 (expected <0.3)",
+      "critical": true
+    },
+    {
+      "name": "T2.2_hardcoded",
+      "category": "T2-RewardHacking",
+      "passed": true,
+      "score": 0.6000000000000001,
+      "detail": "hardcoded R0=0.6000 (no API, expected <=0.7)",
+      "critical": true
+    },
+    {
+      "name": "T2.3_copy_test",
+      "category": "T2-RewardHacking",
+      "passed": true,
+      "score": 0.24,
+      "detail": "",
+      "critical": false
+    },
+    {
+      "name": "T2.4_excessive_calls",
+      "category": "T2-RewardHacking",
+      "passed": true,
+      "score": 0.4,
+      "detail": "",
+      "critical": true
+    },
+    {
+      "name": "T2.5_zero_calls",
+      "category": "T2-RewardHacking",
+      "passed": true,
+      "score": 0.45,
+      "detail": "",
+      "critical": false
+    },
+    {
+      "name": "T2.6_hallucinated_R4",
+      "category": "T2-RewardHacking",
+      "passed": true,
+      "score": 0.4,
+      "detail": "",
+      "critical": true
+    },
+    {
+      "name": "T3.1_range_all_arms",
+      "category": "T3-SignalProps",
+      "passed": true,
+      "score": null,
+      "detail": "",
+      "critical": true
+    },
+    {
+      "name": "T3.2_variance_R0",
+      "category": "T3-SignalProps",
+      "passed": true,
+      "score": 0.3718064012359121,
+      "detail": "R0 std=0.3718 scores=['1.020', '0.660', '0.600', '0.060', '0.060']",
+      "critical": true
+    },
+    {
+      "name": "T3.3_monotonicity",
+      "category": "T3-SignalProps",
+      "passed": true,
+      "score": null,
+      "detail": "scores=['0.060', '0.060', '0.600', '1.020'] mono=True",
+      "critical": true
+    },
+    {
+      "name": "T3.4_R1_binary",
+      "category": "T3-SignalProps",
+      "passed": true,
+      "score": null,
+      "detail": "R1: full=1.0 partial=0.0 fail=0.0",
+      "critical": false
+    },
+    {
+      "name": "T3.5_R2_graduated",
+      "category": "T3-SignalProps",
+      "passed": true,
+      "score": null,
+      "detail": "R2: ['0.200', '0.400', '0.600', '0.800', '1.000'] distinct=5",
+      "critical": true
+    },
+    {
+      "name": "T4.1_autofallback",
+      "category": "T4-AutoFallback",
+      "passed": true,
+      "score": 1.02,
+      "detail": "autofb=1.0200(>0) nofb=0.0000(=0)",
+      "critical": true
+    },
+    {
+      "name": "T4.2_nofb_zero",
+      "category": "T4-AutoFallback",
+      "passed": true,
+      "score": 0.0,
+      "detail": "",
+      "critical": false
+    },
+    {
+      "name": "T4.3_no_fb_with_sandbox",
+      "category": "T4-AutoFallback",
+      "passed": true,
+      "score": 1.02,
+      "detail": "R2+sandbox+autofb=1.0200 (should use R2 not R0)",
+      "critical": true
+    },
+    {
+      "name": "T5.1_empty_ngrams",
+      "category": "T5-CheatDetect",
+      "passed": true,
+      "score": null,
+      "detail": "",
+      "critical": true
+    },
+    {
+      "name": "T5.2_empty_solution",
+      "category": "T5-CheatDetect",
+      "passed": true,
+      "score": null,
+      "detail": "",
+      "critical": false
+    },
+    {
+      "name": "T5.3_exact_copy",
+      "category": "T5-CheatDetect",
+      "passed": true,
+      "score": null,
+      "detail": "exact copy: cheat=True ratio=1.0000",
+      "critical": true
+    },
+    {
+      "name": "T5.4_clean_not_flagged",
+      "category": "T5-CheatDetect",
+      "passed": true,
+      "score": null,
+      "detail": "",
+      "critical": true
+    },
+    {
+      "name": "T5.5_short_text",
+      "category": "T5-CheatDetect",
+      "passed": true,
+      "score": null,
+      "detail": "",
+      "critical": false
+    },
+    {
+      "name": "T6.1_full_pass_high",
+      "category": "T6-CrossArm",
+      "passed": true,
+      "score": null,
+      "detail": "R1=1.020, R2=1.020, R3=1.020, R4=0.970",
+      "critical": false
+    },
+    {
+      "name": "T6.2_total_fail_zero",
+      "category": "T6-CrossArm",
+      "passed": true,
+      "score": null,
+      "detail": "",
+      "critical": false
+    },
+    {
+      "name": "T6.3_R3_le_R2",
+      "category": "T6-CrossArm",
+      "passed": true,
+      "score": null,
+      "detail": "R2=1.0200 R3=0.9700",
+      "critical": false
+    }
+  ]
+}

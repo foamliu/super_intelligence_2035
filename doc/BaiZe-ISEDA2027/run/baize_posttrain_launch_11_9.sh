@@ -121,16 +121,21 @@ if [ $STEP_START -le 4 ] && [ $STEP_END -ge 4 ]; then
     }
 fi
 
-# === STEP 5: RL smoke test (10 iters, R2 reward arm) ===
+# === STEP 5: RL smoke test (10 iters, R0 reward arm) ===
+# R42 FIX: Changed R2→R0. R37 found sandbox TCP ports filtered on .17;
+# R38 runbook recommends R0 to avoid sandbox-connect timeout in smoke test.
+# Config auto_fallback=true still guards against edge cases.
 if [ $STEP_START -le 5 ] && [ $STEP_END -ge 5 ]; then
-  run_step 5 "RL smoke test (GRPO R2, 10 iters)" \
-    "bash '$SCRIPT_DIR/baize_posttrain_rl_grpo.sh' --smoke --reward-arm R2 $GPU_FLAG" || exit $?
+  run_step 5 "RL smoke test (GRPO R0, 10 iters)" \
+    "bash '$SCRIPT_DIR/baize_posttrain_rl_grpo.sh' --smoke --reward-arm R0 $GPU_FLAG" || exit $?
 fi
 
-# === STEP 6: Full RL training (R2 reward arm, 2000 iters) ===
+# === STEP 6: Full RL training (R0 reward arm, surrogate) ===
+# R42 FIX: Changed R2→R0. Sandbox TCP filtered (R37); R38 runbook uses R0.
+# When ops opens sandbox ports, switch to R2 (auto_fallback=true in config).
 if [ $STEP_START -le 6 ] && [ $STEP_END -ge 6 ]; then
-  run_step 6 "Full RL training (GRPO R2, surrogate)" \
-    "bash '$SCRIPT_DIR/baize_posttrain_rl_grpo.sh' --reward-arm R2 $GPU_FLAG" || exit $?
+  run_step 6 "Full RL training (GRPO R0, surrogate)" \
+    "bash '$SCRIPT_DIR/baize_posttrain_rl_grpo.sh' --reward-arm R0 $GPU_FLAG" || exit $?
 fi
 
 echo ""

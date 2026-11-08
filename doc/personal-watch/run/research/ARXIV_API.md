@@ -2130,3 +2130,18 @@ python3 research/arxiv_fetch.py --query 'cat:cs.CL AND abs:"agent"' --max-result
 - **交付**：`daily/2026-11-07.html` **5/5**（**51,135 B**；含「🎯 对各线的可执行建议」6 线齐全 + `晚报变更说明（AM → PM）`；div 112/112、0 `<script>`、外链 5 abs）+ `daily/index.html`（晚报 5/5 + 覆盖 6 线）。🚫 **不发日报邮件**（10:50 用户令）。
 - **PDF 5/5**：`2611.08478` 13,593,519 B/63 页；`2611.08412` 5,692,486 B/31 页（两部分段遇 `TimeoutError` 已 Range 续传救回；08412 全文 `pdftotext` 超时→结构+`pdfinfo`+前 3 页文本）。合计 24,204,978 B ≈ 23.08 MiB，`pdf/` 不入 git。
 - **台账**：`SEEN.md` 5,638 → **5,640**（+2「收录」）⇒ **收录 316 / 候选 4,558 / 候选(RSS)507**；`papers.jsonl` 314 → **316**（`raw/update_r138.py` 幂等断言过）。
+
+### §9.139 第一百三十九轮（2026-11-08 06:00 AM · 早 3「借鉴」+ 按线建档 + 6 线建议）
+
+- **批次探针 4/4**（`raw/verify_r139.py` → `raw/2026-11-08-am-verify-r139.txt`；间隔 6s / 第 ④ 条 20s；全 `200` + `application/atom+xml; charset=utf-8` + `attempts=1`）：① `cat:cs.CL` lastUpdated 总 **124,790**、最新 `2026-11-05T18:58:17Z`（`2611.08478v1`，与 r138 逐项相同）；② `cat:cs.CL AND submittedDate:[202611060000 TO 202611102359]` **total=0**；③ 全库同区间 **total=0**；④ 广度 5 分类 **643,965**（同 r136）。⇒ **批次未刷新（仍 `2026-11-05`）**：周末（11-07 六 / 11-08 日）arXiv 不公告，按 §0.1 周末例外以最近公告批次为窗口，**如实登记「未刷新」而非「无新增」**。
+- **取数/去重**（`raw/candidates_r139.py 2026-11-05` → `raw/2026-11-08-am-candidates-r139.json`，5 条单分类各 100、间隔 ≥3.2s）：cs.CL 124,790 / cs.CV 212,479 / cs.LG 297,729 / cs.AI 211,462 / cs.SE 30,857 ⇒ 合并 **305**、与 SEEN 去重 7 ⇒ **FRESH 298**。
+- **按线建档（本轮新增做法，用户令 2026-11-07 10:50 §3.2）**：`raw/line_match_r139.py` 依六线 `MEMORY_*` 顶部阻塞构造关键词表打分 ⇒ harness **44** / designflow **31** / zhulong **27** / pretrain **21** / data **16** / vision **1**（仅 LiDAR 全波形，域不同）。
+- **早 3 篇「借鉴」**（`raw/2026-11-08-am-idlist-r139a.xml`，HTTP 200 / **8,649 B** / **1.25s**；`published` 前缀 `2026-11-05` 断言过）：
+  - `2611.08285` **Hard Issue, Weak Model, or Bad Run? Rethinking Failure Prediction for Coding Agents**（NC State University，2 位；`published=2026-11-05T16:50:11Z`；`Dext` 0.92 AUROC vs 轨迹预测器 0.62–0.63、within-issue 0.82、增益 ≈0（18/18）、2,840 runs、重复跑只救「坏跑」；5 页）
+  - `2611.08417` **Benchmarks as Software: Terminal-Bench and the Case for Continuous Benchmarks**（Stanford + Cornell，4 位；`published=2026-11-05T18:18:39Z`；89 题 ~30% 缺陷 → TB2.1 修订 28 题（89 环境 + 11 指令）、准确率 +>10pp、名次最多 3 位、ρ=0.958、**时间预算：~20pp harness gap 消失 / 30pp→5pp / 32× 扫描**、κ=0.55–0.77；24 页）
+  - `2611.07812` **Different Corpora, Different Skills? A Paired Study of Small Language Models**（Lund University，3 位；`published=2026-11-05T10:50:54Z`；10M/37M 词对齐预算、58M 蒸馏学生、5 基准族画像差异、matched exposure、蒸馏学生对照跨种子复现最干净；13 页）
+- **PDF 3/3**（`raw/pdf_range_resume_r139.py`，8 段 Range + 续传，固定 `151.101.67.42`）：`2611.08285` **176,571 B / 5 页 / 24,131 字符**、`2611.08417` **834,868 B / 24 页 / 52,581 字符**、`2611.07812` **250,053 B / 13 页 / 44,028 字符**；**首轮全 OK、零超时零续传**；合计 **1,261,492 B ≈ 1.20 MiB**（`pdf/` 已 gitignore，不入 git）。
+- **交付**：`research/daily/2026-11-08.html`（**3/5**，**41,734 B**；3 张编号卡 + 「🎯 对各线的可执行建议」**6 线齐全**（5 线有落点、vision 如实写「无」）+ 附录 A 探针 / B 取数去重选文 / C PDF / D 台账；div 67/67、table 6/6、tr 28/28、0 `<script>`、外链仅 3 条 arXiv abs）；`daily/index.html` 新增 11-08 行、标题改「论文观察日报 · 索引」、footer 最近更新。
+- **台账**：`SEEN.md` 5,640 → **5,643 行**（+3「收录」）⇒ **收录 319 / 候选 4,558 / 候选(RSS)507**；`papers.jsonl` 316 → **319**（`raw/update_r139.py`，幂等断言：每 ID 恰好 1 行、`published` 前缀 `2026-11-05`）。
+- **出口**：🚫 不发日报邮件（2026-11-07 10:50 用户令）。
+- **下一轮（2026-11-08 18:00 周日 PM）**：① 复验批次（周一 11-09 美东公告前应仍未刷新）；② 从余 **295** 条候选池按「科普」口径补 2 篇（备选：`2611.07595` Evolver / `2611.07859` CORE / `2611.07461` / `2611.07307` / `2611.07372`）；③ 日报 3/5 → 5/5 + `晚报变更说明（AM → PM）` + 分镜 `video/SCENES/11_08.html`（当日科普 TOP-1）。

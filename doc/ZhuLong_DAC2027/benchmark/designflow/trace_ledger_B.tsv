@@ -419,3 +419,39 @@ vbxlf.messages.json	jason17w	hfeg0pnd002	262	spice_sim	parked		2026-11-05 12:30	
 1792201122841_ncfk9					parked		2026-11-07 21:24	skill脚本语法 consulting Q&A
 1789644585939_3e35z	zjqiao	hfhds201	48	spice_sim	case	EDA-Eval-DesignFlow-CompressNetlist-001	2026-11-07 21:45	
 1793865966161_rkdu8	yuankong	hfhds201	85	spice_sim	case	EDA-Eval-DesignFlow-NetlistSchemInstLocate-001	2026-11-07 23:00	
+1789699043373_y91i6	ericw	hfhds201	34	characterization	case	EDA-Eval-DesignFlow-CgMeetExactlyMissWalk-001+EDA-Eval-DesignFlow-CgtMeetExactlyFilter-001	2026-11-07 23:55	同 trace 两轮:U#0=CgMeetExactlyMissWalk(meet_exactly未命中清单)+U#1=CgtMeetExactlyFilter(关键词去除过滤表,hidden B+SRE)
+1790042178493_mrmfn	ericw	hfhds201	30	characterization	case	EDA-Eval-DesignFlow-CovBinMetaExtract-001	2026-11-07 23:58	
+1794033409066_h2sri	e0030760	hfeg0pkn004	86	spice_sim	case	EDA-Eval-DesignFlow-SpDeckStructExtract-001	2026-11-08 00:38	
+1793670518248_ap4dl					parked		2026-11-08 00:42	GUI task (tkinter xval_tool), hspice counts from tool processing hspice decks, not real spice sim
+1794037498869_m5mbi					parked		2026-11-08 00:42	disk-scanner V5 optimization (scandir_find concurrency), hspice counts from scanner traversing hspice dirs, not real spice
+1791620953988_2spf5.messages.json	tongfanl	hfhds201	33	spice_sim	case	EDA-Eval-DesignFlow-WtmStructReview-001	2026-11-08 01:19	
+1793842420935_0kgye.messages.json	tongfanl	hfhds201	60	spice_sim	case	EDA-Eval-DesignFlow-PoststressTbAudit-001	2026-11-08 01:48	
+1792738969144_h0gyt.messages.json					parked		2026-11-08 01:48	meta/workflow teaching (教你我的工作流总结成文档), not spice_sim task; spice tokens from DDR6 env-check incidental
+1792049437355_nxrk2.messages.json					parked		2026-11-08 01:48	Finesim DC nonconv Q&A prose (原因及解决方案有哪些), overlaps uky6c FineSimDcConvFix-001; not a deliverable-producing task
+ea9ez					parked		2026-11-08 01:58	Finesim DC convergence Q&A prose dup of uky6c/FineSimDcConvFix-001, not design_flow deliverable
+q4473					parked		2026-11-08 01:58	Finesim DC convergence Q&A prose dup of uky6c/FineSimDcConvFix-001, not design_flow deliverable
+p9427					parked		2026-11-08 01:58	Finesim DC convergence Q&A prose dup of uky6c/FineSimDcConvFix-001, not design_flow deliverable
+qnm9e					parked		2026-11-08 01:58	Finesim DC convergence Q&A prose dup of uky6c/FineSimDcConvFix-001, not design_flow deliverable
+2ppoj					parked		2026-11-08 01:58	Finesim DC convergence Q&A prose dup of uky6c/FineSimDcConvFix-001, not design_flow deliverable
+1793670219522_sdtpg	dsgao	hfhds201	295	spice_sim	parked		2026-11-08 02:22	fails-strict-filter:spice=2/410=0.5%,synthesis/netlist-dominant
+1793084506490_ytldc	dsgao	hfhds201	175	spice_sim	parked		2026-11-08 02:22	fails-strict-filter:spice=50/574=8.7%,calibre/LVS-dominant
+1793091608908_lzt3e	e0023936	hfhds201	161	spice_sim	parked		2026-11-08 02:22	fails-strict-filter:spice=2/230=0.9%,pyAether/virtuoso-dominant
+1789723764998_zlqaz	zjqiao	hfhds201	12	spice_sim	parked		2026-11-08 02:22	non-spice-domain:netlist:11,analog:2,no-spice-keywords
+1793877732979_qyroq	shanksw	hfhds201	21	spice_sim	parked		2026-11-08 02:22	non-spice-domain:netlist:31,lvs:9,aether:8,no-spice-keywords
+1789723438003_vefeh	zjqiao	hfhds201	9	spice_sim	parked		2026-11-08 02:22	non-spice-domain:netlist:15,analog:1,no-spice-keywords
+1789633680645_racxm	ericw	hfhds201	13	spice_sim	parked		2026-11-08 02:22	non-spice-domain:analog:23,drc:8,no-spice-keywords
+1794023372474_3j03k	tongfanl	hfhds201	328	spice_sim	case	EDA-Eval-DesignFlow-StimScriptCfgLocate-001	2026-11-08 03:05	
+1793778069961_gf2ud.messages.json	tongfanl	hfhds201	231	spice_sim	case	EDA-Eval-DesignFlow-TzqlatLocate-001	2026-11-08 03:28	
+1793427492496_njt15	tongfanl	hfhds201	117	spice_sim	case	EDA-Eval-DesignFlow-DatatPrintOrderDiag-001	2026-11-08 03:53	
+1791439699810_1550c	tongfanl	hfhds201	124	spice_sim	case	EDA-Eval-DesignFlow-LoadModeOpTruncDiag-001	2026-11-08 04:24	
+1790669053939_jw8ya	tongfanl	hfhds201	22	spice_sim	case	EDA-Eval-DesignFlow-MrrTaskSignatureExtract-001	2026-11-08 05:00	
+1791963944343_p03c8	tongfanl	hfhds201	984	spice_sim	case	EDA-Eval-DesignFlow-ZqPatternTimingAnalyze-001	2026-11-08 05:36	
+1792049688397_r97bk	tongfanl	hfhds201	1	spice_sim	case	EDA-Eval-DesignFlow-WtmFileReview-001	2026-11-08 06:16	
+1793857677982_3qfwd	tongfanl	hfhds201	328	spice_sim	case	EDA-Eval-DesignFlow-WtmPatternDirReview-001	2026-11-08 06:46	
+1790998236503_95kx2	tongfanl	hfhds201	117	spice_sim	case	EDA-Eval-DesignFlow-StimOp2MisMatchDiag-001	2026-11-08 07:16	
+1791796775106_b1w28	tongfanl	hfhds201	222	spice_sim	case	EDA-Eval-DesignFlow-WriteDqPsdMappingExtract-001	2026-11-08 07:49	
+1791961682094_f1cbt	tongfanl	hfhds201	33	spice_sim	case	EDA-Eval-DesignFlow-MrSelfClearExpDiag-001	2026-11-08 08:16	
+1790146508454_t06pr	tongfanl	hfhds201	21	spice_sim	parked		2026-11-08 08:26	trace-incomplete-ends-tool_result-no-gold-standard-no-user-acceptance
+1790849679042_bjkmi	tongfanl	hfhds201	862	spice_sim	case	EDA-Eval-DesignFlow-DQSEHFlagNoEffectDiag-001	2026-11-08 08:43	
+1792201884887_c39j4	tongfanl	hfhds201	67	spice_sim	case	EDA-Eval-DesignFlow-NandfpMissingArgDiag-001	2026-11-08 09:10	
+1791191409174_reo1p	dandans	hfhds201	64	spice_sim	case	EDA-Eval-DesignFlow-MdMaskBeatZeroDiag-001	2026-11-08 09:43	
