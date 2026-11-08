@@ -5018,3 +5018,105 @@ MEMORY_POSTTRAIN.md 从 31.0KB 归档 wake75-wake85（R27-R37，11条流水）�
 ```bash
 bash baize_posttrain_launch_11_9.sh --step 0-5 --gpu-ids 0,1,2,3
 ```
+
+
+---
+
+## §R43 Day-1 Smoke Test Calibration & verl Config Lint (wake91, 2026-11-08)
+
+**目标**：为 11/9 GPU launch 后的 Day-1 smoke test（10 iter, group_size=4, batch=16, R0 reward）提供数学建模的预期值和 10 指标决策矩阵，同时对 `baize_posttrain_rl_verl_config.yaml` 做 27 项静态 lint。
+
+**产物**：`baize_posttrain_smoke_calibrator.py`（~600 行，纯 Python stdlib，无 numpy/scipy/pyyaml 依赖）
+
+### R43.1 R0 Reward 建模
+
+R0 reward 由 6 个 Bernoulli 分量组成：
+
+| 分量 | 权重 | 判定方式 |
+|:---|---:|:---|
+| syntax_valid | 0.10 | AST parse 成功 |
+| api_correct | 0.30 | API 名称在知识库中 |
+| entry_point | 0.20 | 包含 `def check(candidate)` |
+| structure | 0.20 | 代码结构（assert/return） |
+| test_alignment | 0.20 | 断言与任务对齐 |
+| format_bonus | 0.02 | 格式规范（XML/tool call） |
+| **合计** | **1.02** | verl 截断至 1.0 |
+
+每个分量的通过概率按难度 L1-L5 递减（L1 最易，L5 最难），基于 DeepSeek 侧数据外推。
+
+### R43.2 预期 Smoke Test 数值
+
+| 指标 | 预期值 |
+|:---|:---|
+| 总体 mean reward | **0.4559** |
+| 总体 std reward | **0.2773** |
+| 总 rollouts | 640（10 iter × 16 prompts × 4 group） |
+| 有效 groups | 112-136 / 160（70-85%） |
+| 预期 delta R (iter 1→10) | +0.03-0.05 |
+| 预期 KL | ~0.05-0.10 |
+| 预期 policy loss | -0.3 to -0.1 |
+
+按难度分解：
+
+| 难度 | 任务数 | 占比 | mean | std |
+|:---|---:|---:|---:|---:|
+| L1 | 1500 | 48.4% | 0.632 | 0.226 |
+| L2 | 347 | 11.2% | 0.490 | 0.229 |
+| L3 | 800 | 25.8% | 0.343 | 0.210 |
+| L4 | 500 | 16.1% | 0.216 | 0.178 |
+| L5 | 200 | 6.5% | 0.128 | 0.140 |
+
+**关键洞察**：R0 的 6 Bernoulli 分量产生离散 reward → group_size=4 时部分 group 全相同 → 被 filter_groups 丢弃 → 有效 groups 70-85%。这足够 GRPO 学习，但若 < 80 则需 ADJUST（增大 group_size）。
+
+### R43.3 verl Config Lint（27 项全 PASS）
+
+| 类别 | 检查项 | 数量 |
+|:---|:---|---:|
+| data | tokenizer 路径、train_files 存在、batch_size、context 总长、return_raw_chat、need_tools_kwargs、truncation | 7 |
+| actor | clip_ratio、kl_loss_coef、entropy_coeff、use_kl_loss、entropy_checkpointing、optim.lr | 6 |
+| rollout | name=sglang、multi_turn.enable=True、gpu_memory_utilization | 3 |
+| algorithm | name=grpo、group_size=8、filter_groups=True | 3 |
+| reward | path 存在、name=compute_score、auto_fallback=True | 3 |
+| anti_cheat | enabled=True（红线 5.2） | 1 |
+| runtime | n_gpus=4（4×A40） | 1 |
+| smoke | iters=10 | 1 |
+| launch | --reward-arm R0（R42 fix）、day1_runbook 引用 R0 | 2 |
+| **合计** | | **27** |
+
+**结果：PASS=27 WARN=0 FAIL=0** ✅
+
+### R43.4 Day-1 决策矩阵（10 指标）
+
+| # | 指标 | 预期 | PASS | ADJUST | ABORT |
+|---|:---|:---|:---|:---|:---|
+| 1 | Mean reward (R0) | ~0.456 | ≥ 0.150 | 0.100-0.150 | < 0.100 |
+| 2 | Reward std | ~0.277 | ≥ 0.05 | 0.01-0.05 | < 0.01 |
+| 3 | Effective groups | 112-136 | ≥ 112 (70%) | 80-112 | < 80 |
+| 4 | Reward trajectory | +0.03 | delta ≥ -0.02 | -0.02 to -0.05 | < -0.05 |
+| 5 | KL divergence | ~0.05 | < 0.15 | 0.15-0.30 | > 0.30 |
+| 6 | Policy loss | -0.3 | finite [-5,0] | > 0 | NaN/Inf |
+| 7 | Gradient norm | < 1.0 | < 5.0 | 5.0-10.0 | > 10.0 |
+| 8 | Cheat rate | 0% | 0.0% | N/A | > 0% |
+| 9 | Exit code | 0 | 0 | non-zero w/ fix | non-zero |
+| 10 | Wall clock | ~30 min | < 60 min | 60-90 min | > 90 min |
+
+### R43.5 使用方法
+
+```bash
+# 仅 lint
+python3 baize_posttrain_smoke_calibrator.py --lint-only
+
+# 完整校准 + HTML 报告
+python3 baize_posttrain_smoke_calibrator.py \
+  --html reports/report_posttrain_r43_smoke_calibration_zh.html
+
+# JSON 输出（供下游脚本消费）
+python3 baize_posttrain_smoke_calibrator.py --json
+```
+
+### R43.6 局限性
+
+1. 分量概率基于 DeepSeek 侧数据外推，未在 MiniCPM5-2B 上实测
+2. R0 reward 离散性：6 Bernoulli → 有限取值
+3. 10 iter 不足以收敛 —— 仅验证 pipeline，不验证性能
+4. Surrogate warning：MiniCPM5-2B RL 结果不可直接迁移到 BaiZe
