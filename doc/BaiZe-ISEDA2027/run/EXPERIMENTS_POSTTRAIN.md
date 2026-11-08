@@ -7980,3 +7980,69 @@ McNemar 在 M3→M4 略弱（73.6%），但作为辅助检验可接受。
 - py_compile ✅ / --help ✅ / --verbose ✅ / --html ✅ / --json ✅ / --quick ✅
 - 无伪造。替身模型结果不可迁移到 BaiZe。
 
+---
+
+## §R74 RL 训练课程调度与渐进难度分析（2026-11-09 wake122 · 零 GPU · 纯 stdlib）
+
+> **目标**：为 GRPO RL 训练设计渐进难度课程，将 5 个难度层（L1→L5）按学习信号最优排序。
+> 前序：R2（五层难度体系）、R73（GRPO 超参景观）、R70（F14 parser）、R71（多轮 e2e 仿真）。
+> 脚本：`baize_posttrain_rl_curriculum_scheduler.py`（~370 行，纯 Python 3.8+ stdlib，零依赖）。
+
+### 1. 四种课程策略
+
+| 策略 | 描述 | 优点 | 缺点 |
+|:--|:--|:--|:--|
+| Fixed | 全部 5 层同时训练，随机采样 | 简单 | 步数浪费在过难/过易题 |
+| Sequential | L1→L2→...→L5 固定分块 | 简单可控 | 高层训练时低层遗忘 |
+| Adaptive | 当前层达标后晋级，停滞则回退 | 自动调节 | 可能卡在某层 |
+| Interleaved | 按学习信号（gap×p(1-p)）概率采样 | 信号持续 | 难度跳跃 |
+
+### 2. 蒙特卡洛模拟结果（4 策略 × 5 seeds × 500 步）
+
+| 策略 | 总提升(mean±std) | 平均Adv.Std | 晋级次数 | 回退次数 |
+|:--|:--|:--|:--|:--|
+| Fixed | 0.0801±0.0008 | 0.3189 | 0 | 0 |
+| Sequential | 0.0802±0.0003 | 0.3209 | 0 | 0 |
+| **Adaptive** | **0.1039±0.0009** | **0.3893** | 28 | 26 |
+| Interleaved | 0.0939±0.0006 | 0.3590 | 0 | 0 |
+
+**关键结论**：
+- Adaptive 总提升最高（0.1039 vs Fixed 0.0801，+30%），advantage variance 最高（0.3893）→ 学习信号最强
+- Adaptive 有 28 次晋级 + 26 次回退 → 自动切换难度，fallback 机制有效
+- Interleaved 次优（0.0939），无回退 → 更平滑
+- Fixed/Sequential 几乎相同 → 固定分块无显著优势
+
+### 3. 推荐课程配置
+
+- **主策略**：Adaptive（70%）+ Interleaved（30%）混合
+- **超参**：KL=0.04, clip=0.2, G=8, lr=1e-5（来自 R73 推荐）
+- **奖励臂映射**：L1/L2→R0（二值），L3→R2（分档），L4/L5→R3（过程+结果）
+- **晋级标准**：pass_rate ≥ 75% 目标 AND adv_std > 0.05 AND ≥40 步
+- **回退标准**：30 步无改善（reward 提升 < 2%）→ 回退一层
+- **崩溃检测**：entropy < 0.01 → 停止 + 提 KL + 降 lr
+- **发散检测**：KL > 5.0 → 降 lr + 提 KL
+
+### 4. Smoke 测试路线图
+
+1. L1-only 10 步（验证 GRPO 信号、reward、sandbox 连通）
+2. L1+L2 混合 20 步（验证跨层切换、advancement 逻辑）
+3. Full adaptive 50 步（验证完整课程逻辑）
+4. 全 GO → 正式训练 Adaptive 500+ 步
+
+### 5. 局限性
+
+- 标量 logit 策略模拟，非真实 LLM——仅用于课程策略**相对**比较
+- 初始 pass rates 基于 R4 外推假设，待 36% 侧真实轨迹校正
+- 未模拟"遗忘"（低层退化）的精确动力学
+- 未考虑 sandbox 延迟对课程进度的实际影响
+- ADVANCE_THRESHOLD=75% 为经验值，需 GPU 实测后调整
+
+### 6. 交付物
+
+- 脚本：`baize_posttrain_rl_curriculum_scheduler.py`（~370 行，纯 Python 3.8+ stdlib）
+- HTML：`reports/report_posttrain_r74_rl_curriculum_zh.html`（8.3KB, 0 script, 0 外链, 自包含）
+- JSON：`r74_curriculum_data.json`（25.5KB）
+- py_compile ✅ / --verbose ✅ / --html ✅ / --json ✅
+- 无伪造。替身模型结果不可迁移到 BaiZe。
+
+

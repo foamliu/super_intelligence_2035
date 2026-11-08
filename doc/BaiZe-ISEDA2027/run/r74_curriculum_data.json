@@ -1,0 +1,1181 @@
+{
+  "results": [
+    {
+      "strategy": "fixed",
+      "final_pass_rates": [
+        0.7391,
+        0.5228,
+        0.3221,
+        0.1605,
+        0.0549
+      ],
+      "total_improvement": 0.0794,
+      "level_distribution": {
+        "3": 89,
+        "4": 110,
+        "0": 101,
+        "1": 93,
+        "2": 107
+      },
+      "advancements": [],
+      "fallbacks": [],
+      "avg_adv_std": 0.3148,
+      "oscillation": 0.2921,
+      "final_entropy": 0.2127,
+      "seed": 0
+    },
+    {
+      "strategy": "fixed",
+      "final_pass_rates": [
+        0.7357,
+        0.5243,
+        0.3222,
+        0.1619,
+        0.0549
+      ],
+      "total_improvement": 0.079,
+      "level_distribution": {
+        "1": 99,
+        "4": 109,
+        "3": 98,
+        "2": 110,
+        "0": 84
+      },
+      "advancements": [],
+      "fallbacks": [],
+      "avg_adv_std": 0.3109,
+      "oscillation": 0.3101,
+      "final_entropy": 0.2128,
+      "seed": 1
+    },
+    {
+      "strategy": "fixed",
+      "final_pass_rates": [
+        0.7388,
+        0.5243,
+        0.3212,
+        0.1616,
+        0.0546
+      ],
+      "total_improvement": 0.0804,
+      "level_distribution": {
+        "0": 100,
+        "4": 101,
+        "1": 100,
+        "3": 96,
+        "2": 103
+      },
+      "advancements": [],
+      "fallbacks": [],
+      "avg_adv_std": 0.3284,
+      "oscillation": 0.2606,
+      "final_entropy": 0.2118,
+      "seed": 2
+    },
+    {
+      "strategy": "fixed",
+      "final_pass_rates": [
+        0.7374,
+        0.5252,
+        0.3241,
+        0.1592,
+        0.0549
+      ],
+      "total_improvement": 0.0809,
+      "level_distribution": {
+        "1": 103,
+        "4": 109,
+        "0": 93,
+        "2": 117,
+        "3": 78
+      },
+      "advancements": [],
+      "fallbacks": [],
+      "avg_adv_std": 0.3159,
+      "oscillation": 0.3578,
+      "final_entropy": 0.2127,
+      "seed": 3
+    },
+    {
+      "strategy": "fixed",
+      "final_pass_rates": [
+        0.738,
+        0.5236,
+        0.3243,
+        0.1603,
+        0.0546
+      ],
+      "total_improvement": 0.0808,
+      "level_distribution": {
+        "1": 96,
+        "2": 118,
+        "4": 103,
+        "3": 87,
+        "0": 96
+      },
+      "advancements": [],
+      "fallbacks": [],
+      "avg_adv_std": 0.3245,
+      "oscillation": 0.2212,
+      "final_entropy": 0.2119,
+      "seed": 4
+    },
+    {
+      "strategy": "sequential",
+      "final_pass_rates": [
+        0.7386,
+        0.5246,
+        0.3204,
+        0.1619,
+        0.0544
+      ],
+      "total_improvement": 0.0799,
+      "level_distribution": {
+        "0": 100,
+        "1": 100,
+        "2": 100,
+        "3": 100,
+        "4": 100
+      },
+      "advancements": [],
+      "fallbacks": [],
+      "avg_adv_std": 0.3205,
+      "oscillation": 0.1282,
+      "final_entropy": 0.2113,
+      "seed": 0
+    },
+    {
+      "strategy": "sequential",
+      "final_pass_rates": [
+        0.7388,
+        0.5248,
+        0.3205,
+        0.1619,
+        0.0545
+      ],
+      "total_improvement": 0.0805,
+      "level_distribution": {
+        "0": 100,
+        "1": 100,
+        "2": 100,
+        "3": 100,
+        "4": 100
+      },
+      "advancements": [],
+      "fallbacks": [],
+      "avg_adv_std": 0.3207,
+      "oscillation": 0.1085,
+      "final_entropy": 0.2116,
+      "seed": 1
+    },
+    {
+      "strategy": "sequential",
+      "final_pass_rates": [
+        0.7388,
+        0.5246,
+        0.3206,
+        0.1621,
+        0.0545
+      ],
+      "total_improvement": 0.0806,
+      "level_distribution": {
+        "0": 100,
+        "1": 100,
+        "2": 100,
+        "3": 100,
+        "4": 100
+      },
+      "advancements": [],
+      "fallbacks": [],
+      "avg_adv_std": 0.3193,
+      "oscillation": 0.091,
+      "final_entropy": 0.2114,
+      "seed": 2
+    },
+    {
+      "strategy": "sequential",
+      "final_pass_rates": [
+        0.7388,
+        0.5245,
+        0.3204,
+        0.1619,
+        0.0545
+      ],
+      "total_improvement": 0.0802,
+      "level_distribution": {
+        "0": 100,
+        "1": 100,
+        "2": 100,
+        "3": 100,
+        "4": 100
+      },
+      "advancements": [],
+      "fallbacks": [],
+      "avg_adv_std": 0.327,
+      "oscillation": 0.0892,
+      "final_entropy": 0.2116,
+      "seed": 3
+    },
+    {
+      "strategy": "sequential",
+      "final_pass_rates": [
+        0.7387,
+        0.5245,
+        0.3202,
+        0.162,
+        0.0545
+      ],
+      "total_improvement": 0.08,
+      "level_distribution": {
+        "0": 100,
+        "1": 100,
+        "2": 100,
+        "3": 100,
+        "4": 100
+      },
+      "advancements": [],
+      "fallbacks": [],
+      "avg_adv_std": 0.3168,
+      "oscillation": 0.1146,
+      "final_entropy": 0.2116,
+      "seed": 4
+    },
+    {
+      "strategy": "adaptive",
+      "final_pass_rates": [
+        0.7642,
+        0.5585,
+        0.3,
+        0.15,
+        0.05
+      ],
+      "total_improvement": 0.1026,
+      "level_distribution": {
+        "0": 253,
+        "1": 247
+      },
+      "advancements": [
+        {
+          "step": 39,
+          "from": "L1_Trivial",
+          "to": "L2_Basic",
+          "pass_rate": 0.7275,
+          "target": 0.9
+        },
+        {
+          "step": 125,
+          "from": "L1_Trivial",
+          "to": "L2_Basic",
+          "pass_rate": 0.7351,
+          "target": 0.9
+        },
+        {
+          "step": 202,
+          "from": "L1_Trivial",
+          "to": "L2_Basic",
+          "pass_rate": 0.7423,
+          "target": 0.9
+        },
+        {
+          "step": 288,
+          "from": "L1_Trivial",
+          "to": "L2_Basic",
+          "pass_rate": 0.7491,
+          "target": 0.9
+        },
+        {
+          "step": 360,
+          "from": "L1_Trivial",
+          "to": "L2_Basic",
+          "pass_rate": 0.7558,
+          "target": 0.9
+        },
+        {
+          "step": 434,
+          "from": "L1_Trivial",
+          "to": "L2_Basic",
+          "pass_rate": 0.7622,
+          "target": 0.9
+        }
+      ],
+      "fallbacks": [
+        {
+          "step": 85,
+          "from": "L2_Basic",
+          "to": "L1_Trivial",
+          "reason": "stagnation",
+          "patience": 30
+        },
+        {
+          "step": 162,
+          "from": "L2_Basic",
+          "to": "L1_Trivial",
+          "reason": "stagnation",
+          "patience": 30
+        },
+        {
+          "step": 248,
+          "from": "L2_Basic",
+          "to": "L1_Trivial",
+          "reason": "stagnation",
+          "patience": 30
+        },
+        {
+          "step": 320,
+          "from": "L2_Basic",
+          "to": "L1_Trivial",
+          "reason": "stagnation",
+          "patience": 30
+        },
+        {
+          "step": 394,
+          "from": "L2_Basic",
+          "to": "L1_Trivial",
+          "reason": "stagnation",
+          "patience": 30
+        },
+        {
+          "step": 486,
+          "from": "L2_Basic",
+          "to": "L1_Trivial",
+          "reason": "stagnation",
+          "patience": 30
+        }
+      ],
+      "avg_adv_std": 0.3849,
+      "oscillation": 0.1598,
+      "final_entropy": 0.1985,
+      "seed": 0
+    },
+    {
+      "strategy": "adaptive",
+      "final_pass_rates": [
+        0.7559,
+        0.5696,
+        0.3,
+        0.15,
+        0.05
+      ],
+      "total_improvement": 0.1054,
+      "level_distribution": {
+        "0": 200,
+        "1": 300
+      },
+      "advancements": [
+        {
+          "step": 39,
+          "from": "L1_Trivial",
+          "to": "L2_Basic",
+          "pass_rate": 0.7277,
+          "target": 0.9
+        },
+        {
+          "step": 178,
+          "from": "L1_Trivial",
+          "to": "L2_Basic",
+          "pass_rate": 0.7351,
+          "target": 0.9
+        },
+        {
+          "step": 280,
+          "from": "L1_Trivial",
+          "to": "L2_Basic",
+          "pass_rate": 0.7423,
+          "target": 0.9
+        },
+        {
+          "step": 356,
+          "from": "L1_Trivial",
+          "to": "L2_Basic",
+          "pass_rate": 0.7493,
+          "target": 0.9
+        },
+        {
+          "step": 450,
+          "from": "L1_Trivial",
+          "to": "L2_Basic",
+          "pass_rate": 0.7559,
+          "target": 0.9
+        }
+      ],
+      "fallbacks": [
+        {
+          "step": 138,
+          "from": "L2_Basic",
+          "to": "L1_Trivial",
+          "reason": "stagnation",
+          "patience": 30
+        },
+        {
+          "step": 240,
+          "from": "L2_Basic",
+          "to": "L1_Trivial",
+          "reason": "stagnation",
+          "patience": 30
+        },
+        {
+          "step": 316,
+          "from": "L2_Basic",
+          "to": "L1_Trivial",
+          "reason": "stagnation",
+          "patience": 30
+        },
+        {
+          "step": 410,
+          "from": "L2_Basic",
+          "to": "L1_Trivial",
+          "reason": "stagnation",
+          "patience": 30
+        },
+        {
+          "step": 499,
+          "from": "L2_Basic",
+          "to": "L1_Trivial",
+          "reason": "stagnation",
+          "patience": 30
+        }
+      ],
+      "avg_adv_std": 0.3902,
+      "oscillation": 0.1806,
+      "final_entropy": 0.1985,
+      "seed": 1
+    },
+    {
+      "strategy": "adaptive",
+      "final_pass_rates": [
+        0.7593,
+        0.565,
+        0.3,
+        0.15,
+        0.05
+      ],
+      "total_improvement": 0.1043,
+      "level_distribution": {
+        "0": 223,
+        "1": 277
+      },
+      "advancements": [
+        {
+          "step": 39,
+          "from": "L1_Trivial",
+          "to": "L2_Basic",
+          "pass_rate": 0.7276,
+          "target": 0.9
+        },
+        {
+          "step": 129,
+          "from": "L1_Trivial",
+          "to": "L2_Basic",
+          "pass_rate": 0.7349,
+          "target": 0.9
+        },
+        {
+          "step": 245,
+          "from": "L1_Trivial",
+          "to": "L2_Basic",
+          "pass_rate": 0.7421,
+          "target": 0.9
+        },
+        {
+          "step": 334,
+          "from": "L1_Trivial",
+          "to": "L2_Basic",
+          "pass_rate": 0.7491,
+          "target": 0.9
+        },
+        {
+          "step": 441,
+          "from": "L1_Trivial",
+          "to": "L2_Basic",
+          "pass_rate": 0.7557,
+          "target": 0.9
+        }
+      ],
+      "fallbacks": [
+        {
+          "step": 89,
+          "from": "L2_Basic",
+          "to": "L1_Trivial",
+          "reason": "stagnation",
+          "patience": 30
+        },
+        {
+          "step": 205,
+          "from": "L2_Basic",
+          "to": "L1_Trivial",
+          "reason": "stagnation",
+          "patience": 30
+        },
+        {
+          "step": 294,
+          "from": "L2_Basic",
+          "to": "L1_Trivial",
+          "reason": "stagnation",
+          "patience": 30
+        },
+        {
+          "step": 401,
+          "from": "L2_Basic",
+          "to": "L1_Trivial",
+          "reason": "stagnation",
+          "patience": 30
+        },
+        {
+          "step": 476,
+          "from": "L2_Basic",
+          "to": "L1_Trivial",
+          "reason": "stagnation",
+          "patience": 30
+        }
+      ],
+      "avg_adv_std": 0.3911,
+      "oscillation": 0.24,
+      "final_entropy": 0.1985,
+      "seed": 2
+    },
+    {
+      "strategy": "adaptive",
+      "final_pass_rates": [
+        0.7621,
+        0.5613,
+        0.3,
+        0.15,
+        0.05
+      ],
+      "total_improvement": 0.1034,
+      "level_distribution": {
+        "0": 240,
+        "1": 260
+      },
+      "advancements": [
+        {
+          "step": 39,
+          "from": "L1_Trivial",
+          "to": "L2_Basic",
+          "pass_rate": 0.7277,
+          "target": 0.9
+        },
+        {
+          "step": 157,
+          "from": "L1_Trivial",
+          "to": "L2_Basic",
+          "pass_rate": 0.7352,
+          "target": 0.9
+        },
+        {
+          "step": 236,
+          "from": "L1_Trivial",
+          "to": "L2_Basic",
+          "pass_rate": 0.7424,
+          "target": 0.9
+        },
+        {
+          "step": 309,
+          "from": "L1_Trivial",
+          "to": "L2_Basic",
+          "pass_rate": 0.7493,
+          "target": 0.9
+        },
+        {
+          "step": 397,
+          "from": "L1_Trivial",
+          "to": "L2_Basic",
+          "pass_rate": 0.7558,
+          "target": 0.9
+        },
+        {
+          "step": 492,
+          "from": "L1_Trivial",
+          "to": "L2_Basic",
+          "pass_rate": 0.7621,
+          "target": 0.9
+        }
+      ],
+      "fallbacks": [
+        {
+          "step": 117,
+          "from": "L2_Basic",
+          "to": "L1_Trivial",
+          "reason": "stagnation",
+          "patience": 30
+        },
+        {
+          "step": 196,
+          "from": "L2_Basic",
+          "to": "L1_Trivial",
+          "reason": "stagnation",
+          "patience": 30
+        },
+        {
+          "step": 269,
+          "from": "L2_Basic",
+          "to": "L1_Trivial",
+          "reason": "stagnation",
+          "patience": 30
+        },
+        {
+          "step": 357,
+          "from": "L2_Basic",
+          "to": "L1_Trivial",
+          "reason": "stagnation",
+          "patience": 30
+        },
+        {
+          "step": 452,
+          "from": "L2_Basic",
+          "to": "L1_Trivial",
+          "reason": "stagnation",
+          "patience": 30
+        }
+      ],
+      "avg_adv_std": 0.3907,
+      "oscillation": 0.2626,
+      "final_entropy": 0.1985,
+      "seed": 3
+    },
+    {
+      "strategy": "adaptive",
+      "final_pass_rates": [
+        0.7624,
+        0.5612,
+        0.3,
+        0.15,
+        0.05
+      ],
+      "total_improvement": 0.1036,
+      "level_distribution": {
+        "0": 240,
+        "1": 260
+      },
+      "advancements": [
+        {
+          "step": 39,
+          "from": "L1_Trivial",
+          "to": "L2_Basic",
+          "pass_rate": 0.7275,
+          "target": 0.9
+        },
+        {
+          "step": 116,
+          "from": "L1_Trivial",
+          "to": "L2_Basic",
+          "pass_rate": 0.7351,
+          "target": 0.9
+        },
+        {
+          "step": 208,
+          "from": "L1_Trivial",
+          "to": "L2_Basic",
+          "pass_rate": 0.7424,
+          "target": 0.9
+        },
+        {
+          "step": 302,
+          "from": "L1_Trivial",
+          "to": "L2_Basic",
+          "pass_rate": 0.7494,
+          "target": 0.9
+        },
+        {
+          "step": 389,
+          "from": "L1_Trivial",
+          "to": "L2_Basic",
+          "pass_rate": 0.7561,
+          "target": 0.9
+        },
+        {
+          "step": 498,
+          "from": "L1_Trivial",
+          "to": "L2_Basic",
+          "pass_rate": 0.7624,
+          "target": 0.9
+        }
+      ],
+      "fallbacks": [
+        {
+          "step": 76,
+          "from": "L2_Basic",
+          "to": "L1_Trivial",
+          "reason": "stagnation",
+          "patience": 30
+        },
+        {
+          "step": 168,
+          "from": "L2_Basic",
+          "to": "L1_Trivial",
+          "reason": "stagnation",
+          "patience": 30
+        },
+        {
+          "step": 262,
+          "from": "L2_Basic",
+          "to": "L1_Trivial",
+          "reason": "stagnation",
+          "patience": 30
+        },
+        {
+          "step": 349,
+          "from": "L2_Basic",
+          "to": "L1_Trivial",
+          "reason": "stagnation",
+          "patience": 30
+        },
+        {
+          "step": 458,
+          "from": "L2_Basic",
+          "to": "L1_Trivial",
+          "reason": "stagnation",
+          "patience": 30
+        }
+      ],
+      "avg_adv_std": 0.3898,
+      "oscillation": 0.1911,
+      "final_entropy": 0.1985,
+      "seed": 4
+    },
+    {
+      "strategy": "interleaved",
+      "final_pass_rates": [
+        0.7334,
+        0.5391,
+        0.3295,
+        0.1609,
+        0.0513
+      ],
+      "total_improvement": 0.0942,
+      "level_distribution": {
+        "3": 91,
+        "4": 31,
+        "2": 145,
+        "1": 162,
+        "0": 71
+      },
+      "advancements": [],
+      "fallbacks": [],
+      "avg_adv_std": 0.3654,
+      "oscillation": 0.2295,
+      "final_entropy": 0.2024,
+      "seed": 0
+    },
+    {
+      "strategy": "interleaved",
+      "final_pass_rates": [
+        0.7316,
+        0.5384,
+        0.3311,
+        0.1616,
+        0.0513
+      ],
+      "total_improvement": 0.094,
+      "level_distribution": {
+        "0": 62,
+        "4": 32,
+        "1": 158,
+        "2": 152,
+        "3": 96
+      },
+      "advancements": [],
+      "fallbacks": [],
+      "avg_adv_std": 0.3612,
+      "oscillation": 0.2219,
+      "final_entropy": 0.2025,
+      "seed": 1
+    },
+    {
+      "strategy": "interleaved",
+      "final_pass_rates": [
+        0.7323,
+        0.5369,
+        0.3323,
+        0.1616,
+        0.0513
+      ],
+      "total_improvement": 0.0944,
+      "level_distribution": {
+        "4": 30,
+        "2": 158,
+        "3": 96,
+        "1": 151,
+        "0": 65
+      },
+      "advancements": [],
+      "fallbacks": [],
+      "avg_adv_std": 0.3609,
+      "oscillation": 0.3748,
+      "final_entropy": 0.2023,
+      "seed": 2
+    },
+    {
+      "strategy": "interleaved",
+      "final_pass_rates": [
+        0.7342,
+        0.5388,
+        0.329,
+        0.1611,
+        0.0512
+      ],
+      "total_improvement": 0.0943,
+      "level_distribution": {
+        "1": 160,
+        "3": 93,
+        "0": 76,
+        "2": 142,
+        "4": 29
+      },
+      "advancements": [],
+      "fallbacks": [],
+      "avg_adv_std": 0.3552,
+      "oscillation": 0.2632,
+      "final_entropy": 0.2021,
+      "seed": 3
+    },
+    {
+      "strategy": "interleaved",
+      "final_pass_rates": [
+        0.7308,
+        0.5356,
+        0.3312,
+        0.1639,
+        0.0512
+      ],
+      "total_improvement": 0.0928,
+      "level_distribution": {
+        "1": 147,
+        "3": 117,
+        "2": 151,
+        "4": 28,
+        "0": 57
+      },
+      "advancements": [],
+      "fallbacks": [],
+      "avg_adv_std": 0.3524,
+      "oscillation": 0.2965,
+      "final_entropy": 0.2021,
+      "seed": 4
+    }
+  ],
+  "summary": {
+    "fixed": {
+      "n_runs": 5,
+      "mean_imp": 0.0801,
+      "std_imp": 0.0008,
+      "mean_adv": 0.3189,
+      "per_level": [
+        {
+          "level": "L1_Trivial",
+          "mean": 0.7378,
+          "std": 0.0012,
+          "target": 0.9,
+          "gap": 0.1622
+        },
+        {
+          "level": "L2_Basic",
+          "mean": 0.524,
+          "std": 0.0008,
+          "target": 0.8,
+          "gap": 0.276
+        },
+        {
+          "level": "L3_Medium",
+          "mean": 0.3228,
+          "std": 0.0012,
+          "target": 0.65,
+          "gap": 0.3272
+        },
+        {
+          "level": "L4_Advanced",
+          "mean": 0.1607,
+          "std": 0.001,
+          "target": 0.5,
+          "gap": 0.3393
+        },
+        {
+          "level": "L5_Challenge",
+          "mean": 0.0548,
+          "std": 0.0001,
+          "target": 0.35,
+          "gap": 0.2952
+        }
+      ],
+      "n_adv": 0,
+      "n_fb": 0,
+      "avg_dist": {
+        "3": 89.6,
+        "4": 106.4,
+        "0": 94.8,
+        "1": 98.2,
+        "2": 111.0
+      }
+    },
+    "sequential": {
+      "n_runs": 5,
+      "mean_imp": 0.0802,
+      "std_imp": 0.0003,
+      "mean_adv": 0.3209,
+      "per_level": [
+        {
+          "level": "L1_Trivial",
+          "mean": 0.7387,
+          "std": 0.0001,
+          "target": 0.9,
+          "gap": 0.1613
+        },
+        {
+          "level": "L2_Basic",
+          "mean": 0.5246,
+          "std": 0.0001,
+          "target": 0.8,
+          "gap": 0.2754
+        },
+        {
+          "level": "L3_Medium",
+          "mean": 0.3204,
+          "std": 0.0001,
+          "target": 0.65,
+          "gap": 0.3296
+        },
+        {
+          "level": "L4_Advanced",
+          "mean": 0.162,
+          "std": 0.0001,
+          "target": 0.5,
+          "gap": 0.338
+        },
+        {
+          "level": "L5_Challenge",
+          "mean": 0.0545,
+          "std": 0.0,
+          "target": 0.35,
+          "gap": 0.2955
+        }
+      ],
+      "n_adv": 0,
+      "n_fb": 0,
+      "avg_dist": {
+        "0": 100.0,
+        "1": 100.0,
+        "2": 100.0,
+        "3": 100.0,
+        "4": 100.0
+      }
+    },
+    "adaptive": {
+      "n_runs": 5,
+      "mean_imp": 0.1039,
+      "std_imp": 0.0009,
+      "mean_adv": 0.3893,
+      "per_level": [
+        {
+          "level": "L1_Trivial",
+          "mean": 0.7608,
+          "std": 0.0029,
+          "target": 0.9,
+          "gap": 0.1392
+        },
+        {
+          "level": "L2_Basic",
+          "mean": 0.5631,
+          "std": 0.0038,
+          "target": 0.8,
+          "gap": 0.2369
+        },
+        {
+          "level": "L3_Medium",
+          "mean": 0.3,
+          "std": 0.0,
+          "target": 0.65,
+          "gap": 0.35
+        },
+        {
+          "level": "L4_Advanced",
+          "mean": 0.15,
+          "std": 0.0,
+          "target": 0.5,
+          "gap": 0.35
+        },
+        {
+          "level": "L5_Challenge",
+          "mean": 0.05,
+          "std": 0.0,
+          "target": 0.35,
+          "gap": 0.3
+        }
+      ],
+      "n_adv": 28,
+      "n_fb": 26,
+      "avg_dist": {
+        "0": 231.2,
+        "1": 268.8
+      }
+    },
+    "interleaved": {
+      "n_runs": 5,
+      "mean_imp": 0.0939,
+      "std_imp": 0.0006,
+      "mean_adv": 0.359,
+      "per_level": [
+        {
+          "level": "L1_Trivial",
+          "mean": 0.7325,
+          "std": 0.0012,
+          "target": 0.9,
+          "gap": 0.1675
+        },
+        {
+          "level": "L2_Basic",
+          "mean": 0.5378,
+          "std": 0.0013,
+          "target": 0.8,
+          "gap": 0.2622
+        },
+        {
+          "level": "L3_Medium",
+          "mean": 0.3306,
+          "std": 0.0012,
+          "target": 0.65,
+          "gap": 0.3194
+        },
+        {
+          "level": "L4_Advanced",
+          "mean": 0.1618,
+          "std": 0.0011,
+          "target": 0.5,
+          "gap": 0.3382
+        },
+        {
+          "level": "L5_Challenge",
+          "mean": 0.0513,
+          "std": 0.0,
+          "target": 0.35,
+          "gap": 0.2987
+        }
+      ],
+      "n_adv": 0,
+      "n_fb": 0,
+      "avg_dist": {
+        "3": 98.6,
+        "4": 30.0,
+        "2": 149.6,
+        "1": 155.6,
+        "0": 66.2
+      }
+    }
+  },
+  "schedule": [
+    {
+      "phase": 1,
+      "level": "L1_Trivial",
+      "n_tasks": 1500,
+      "min_steps": 40,
+      "max_steps": 40,
+      "advance": "pass_rate >= 68% of target (90%)",
+      "fallback": "no improvement > 2% for 30 steps",
+      "reward_arm": "R0",
+      "monitors": "pass_rate(20-step rolling), adv_std>0.05, KL<5.0, entropy>0.01, cheat_rate<0.02",
+      "go": "GO: pass>=68% AND adv_std>0.05",
+      "nogo": "NO-GO: pass<72%(regression) OR entropy<0.01"
+    },
+    {
+      "phase": 2,
+      "level": "L2_Basic",
+      "n_tasks": 1000,
+      "min_steps": 60,
+      "max_steps": 80,
+      "advance": "pass_rate >= 60% of target (80%)",
+      "fallback": "no improvement > 2% for 30 steps",
+      "reward_arm": "R0",
+      "monitors": "pass_rate(20-step rolling), adv_std>0.05, KL<5.0, entropy>0.01, cheat_rate<0.02",
+      "go": "GO: pass>=60% AND adv_std>0.05",
+      "nogo": "NO-GO: pass<50%(regression) OR entropy<0.01"
+    },
+    {
+      "phase": 3,
+      "level": "L3_Medium",
+      "n_tasks": 800,
+      "min_steps": 80,
+      "max_steps": 120,
+      "advance": "pass_rate >= 49% of target (65%)",
+      "fallback": "no improvement > 2% for 30 steps",
+      "reward_arm": "R2",
+      "monitors": "pass_rate(20-step rolling), adv_std>0.05, KL<5.0, entropy>0.01, cheat_rate<0.02",
+      "go": "GO: pass>=49% AND adv_std>0.05",
+      "nogo": "NO-GO: pass<30%(regression) OR entropy<0.01"
+    },
+    {
+      "phase": 4,
+      "level": "L4_Advanced",
+      "n_tasks": 500,
+      "min_steps": 100,
+      "max_steps": 160,
+      "advance": "pass_rate >= 38% of target (50%)",
+      "fallback": "no improvement > 2% for 30 steps",
+      "reward_arm": "R3",
+      "monitors": "pass_rate(20-step rolling), adv_std>0.05, KL<5.0, entropy>0.01, cheat_rate<0.02",
+      "go": "GO: pass>=38% AND adv_std>0.05",
+      "nogo": "NO-GO: pass<15%(regression) OR entropy<0.01"
+    },
+    {
+      "phase": 5,
+      "level": "L5_Challenge",
+      "n_tasks": 200,
+      "min_steps": 120,
+      "max_steps": 200,
+      "advance": "pass_rate >= 26% of target (35%)",
+      "fallback": "no improvement > 2% for 30 steps",
+      "reward_arm": "R3",
+      "monitors": "pass_rate(20-step rolling), adv_std>0.05, KL<5.0, entropy>0.01, cheat_rate<0.02",
+      "go": "GO: pass>=26% AND adv_std>0.05",
+      "nogo": "NO-GO: pass<5%(regression) OR entropy<0.01"
+    }
+  ],
+  "levels": [
+    {
+      "name": "L1_Trivial",
+      "n_tasks": 1500,
+      "init_pass": 0.72,
+      "target": 0.9,
+      "apis": 1,
+      "loc": "1-3"
+    },
+    {
+      "name": "L2_Basic",
+      "n_tasks": 1000,
+      "init_pass": 0.5,
+      "target": 0.8,
+      "apis": "1-2",
+      "loc": "2-5"
+    },
+    {
+      "name": "L3_Medium",
+      "n_tasks": 800,
+      "init_pass": 0.3,
+      "target": 0.65,
+      "apis": "3-5",
+      "loc": "4-10"
+    },
+    {
+      "name": "L4_Advanced",
+      "n_tasks": 500,
+      "init_pass": 0.15,
+      "target": 0.5,
+      "apis": "6-10",
+      "loc": "8-20"
+    },
+    {
+      "name": "L5_Challenge",
+      "n_tasks": 200,
+      "init_pass": 0.05,
+      "target": 0.35,
+      "apis": "10+",
+      "loc": "15+"
+    }
+  ],
+  "params": {
+    "advance_threshold": 0.75,
+    "fallback_threshold": 0.02,
+    "stagnation_patience": 30,
+    "min_steps_per_level": 40,
+    "total_steps": 500,
+    "group_size": 8
+  }
+}
