@@ -4,14 +4,14 @@ WAITING: 0
 
 ## 📊 进度快照
 
-PHASE:        R1915 监控轮(gateway 429 ETA~20:25·predict 1924/3500(54.9%)·real=776冻结·TB-2.1 4路RUN+3路done·CPU/MEM PASS)
-已完成:       H-B✅·Gate7/7·TB报告✅·full500✅·cline专项C1-C5+报告R1785-R1896·TB4 0passed(能力)·TB-2.1 oracle5/5✅·§15:2x判据MET✅·R1789 eval 7/7DONE✅·R1804双报告交付✅·R1814-R1914 predict推进+TB-2.1并行·R1914监控轮
-当前动作:     R1915:①CPU/MEM PASS(load92=pretrain·本线最高<1核·mem816G/2Ti avail1Ti) ②体积:TASK=30KB/MEMORY=32KB✅ ③硬盘:/data 18%/ 4% ④gateway:429("请等待1小时14分钟12秒"·ETA~20:25)·/models=200 ⑤predict 7路全alive 1924/3500(54.9%·real=776·+14files+0real sinceR1914=全empty=quota):cline217(104r/113e=48.1%)·codex381(31r/350e=8.1%)·opencode270(211r/59e=78.1%)·cc399(62r/337e=15.5%)·pi162(60r/102e=37.0%)·hermes365(237r/128e=65.0%)·dsh130(71r/59e=54.6%) ⑥TB-2.1(latest):pi87t/23p(26.4%best RUN)·opencode79t/20p(25.3%RUN)·dsh89t/14p(15.7%done 72err)·cc68t/9p(13.2%RUN)·cline82t/4p(4.9%RUN)·codex89t/4p(4.5%done 84err)·hermes89t/2p(2.2%done 37err)·4路RUN(cline/opencode/cc/pi)+3路done ⑦报告R1896待满路后更新 ⑧cline C4:real=104/empty=113/48.1%(quota冻结=infra) ⑨未完成指令:有(§22:4x+§10:10)⇒W:0
-下一步:       ①等gateway~20:25恢复后predict real应复产→每路达500 ②TB-2.1 4路running待完成→满路后汇总更新报告 ③待predict满后增量更新报告+重跑eval ④codex/hermes/dsh TB-2.1高err率=429→需gateway恢复后重跑
-阻塞:         无(gateway 429 ETA~20:25·predict产empty·TB-2.1 4路alive)
+PHASE:        R1916 监控轮(gateway 429 ETA~20:26·predict 1938/3500(55.4%)·real=776冻结·TB-2.1 4路RUN+3路done·pi88/89近完成·CPU/MEM PASS)
+已完成:       H-B✅·Gate7/7·TB报告✅·full500✅·cline专项C1-C5+报告R1785-R1896·TB4 0passed(能力)·TB-2.1 oracle5/5✅·§15:2x判据MET✅·R1789 eval 7/7DONE✅·R1804双报告交付✅·R1814-R1915 predict推进+TB-2.1并行·R1915监控轮
+当前动作:     R1916:①CPU/MEM PASS(load86=pretrain·本线最高<1核·mem818G/2Ti avail1Ti) ②体积:TASK=30KB/MEMORY=32KB✅ ③硬盘:/data 18%/ 4% ④gateway:429("请等待1小时4分钟54秒"·ETA~20:26)·/models=200 ⑤predict 7路全alive 1938/3500(55.4%·real=776·+14files+0real sinceR1915=全empty=quota):cline219(104r/115e=47.5%)·codex386(31r/355e=8.0%)·opencode270(211r/59e=78.1%)·cc403(62r/341e=15.4%)·pi163(60r/103e=36.8%)·hermes367(237r/130e=64.6%)·dsh130(71r/59e=54.6%) ⑥TB-2.1(precise):pi88t/23p(26.1%best RUN 1left)·opencode79t/20p(25.3%RUN 10left)·dsh89t/14p(15.7%done 68no_vr)·cc69t/9p(13.2%RUN 20left)·cline85t/11p(12.4%RUN 4left)·codex89t/7p(7.9%done 165no_vr)·hermes89t/5p(5.6%done 70no_vr)·4路RUN(cline/opencode/cc/pi)+3路done ⑦no_vr=agent失败(429)需gateway恢复后重跑 ⑧报告R1896待满路后更新 ⑨cline C4:real=104/empty=115/47.5%(quota冻结=infra)·TB-2.1 cline 11p/89t=12.4% ⑩未完成指令:有(§22:4x+§10:10)⇒W:0
+下一步:       ①等gateway~20:26恢复后predict real应复产→每路达500 ②TB-2.1 4路running待完成(pi近完成)→满路后汇总更新报告 ③codex/hermes/dsh TB-2.1 high no_vr=429→需gateway恢复后重跑 ④待predict满后增量更新报告+重跑eval
+阻塞:         无(gateway 429 ETA~20:26·predict产empty·TB-2.1 4路alive)
 ERROR_COUNT:  0
-  📦 体积：TASK=30KB(30306B) / MEMORY=32KB（均≤32KB✅·R1864-R1914已归档→daily-memories-harness/2026-11-08.md）
-  🔍 cline专项小结: predict cline217(104r/113e=48.1%·real冻结=quota)·R1789 eval cline35/46=76.1%(C3✅)·TB-2.1 cline 4p/82t=4.9%·C2最近empty全为quota·复算:python3 -c"import json,glob;f=glob.glob('swebench_verified_full/predictions_glm53/cline-patched__*.json');r=sum(1 for x in f if (lambda d:(d[0] if isinstance(d,list) else d).get('model_patch','').strip())(json.load(open(x))));print(f'real={r} empty={len(f)-r}')"
+  📦 体积：TASK=30KB(30306B) / MEMORY=32KB（均≤32KB✅·R1864-R1915已归档→daily-memories-harness/2026-11-08.md）
+  🔍 cline专项小结: predict cline219(104r/115e=47.5%·real冻结=quota)·R1789 eval cline35/46=76.1%(C3✅)·TB-2.1 cline 11p/89t=12.4%·C2最近empty全为quota·复算:python3 -c"import json,glob;f=glob.glob('swebench_verified_full/predictions_glm53/cline-patched__*.json');r=sum(1 for x in f if (lambda d:(d[0] if isinstance(d,list) else d).get('model_patch','').strip())(json.load(open(x))));print(f'real={r} empty={len(f)-r}')"
 ```
 
 > 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
