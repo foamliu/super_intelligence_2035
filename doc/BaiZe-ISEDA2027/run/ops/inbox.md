@@ -1,4 +1,58 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
+<!-- RUN_ID: 266 | TARGET: 12 -->
+## RUN_ID 266 — **查 Data 线停摆 29 小时：loop 进程 / 日志 / cline 子进程 / 下载 PID**
+
+```bash
+set -u
+echo "=== RUN_ID 266 | data-line stall diagnosis | $(date '+%F %T') | host=$(hostname) ==="
+R=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
+
+echo
+echo "########## A) loop 进程 ##########"
+echo "-- baize_data_loop --"
+ps -eo pid=,ppid=,lstart=,stat=,etime=,args= | grep -F 'baize_data_loop' | grep -v grep | cut -c1-190
+echo "-- count --"; ps -eo args= | grep -F 'baize_data_loop' | grep -v grep | wc -l
+echo "-- vision loop (对照) --"
+ps -eo pid=,ppid=,lstart=,stat=,etime=,args= | grep -F 'baize_vision_loop' | grep -v grep | cut -c1-190
+echo "-- all baize_* loop --"
+ps -eo pid=,lstart=,etime=,args= | grep -E 'baize_.*loop' | grep -v grep | cut -c1-170
+
+echo
+echo "########## B) loop 日志 ##########"
+ls -l /tmp/baize_data_loop.log /tmp/baize_*loop*.log 2>/dev/null | cut -c1-150
+echo "-- data loop log tail 25 --"
+tail -25 /tmp/baize_data_loop.log 2>/dev/null || echo "(no data loop log)"
+
+echo
+echo "########## C) cline 子进程（data 线是否在跑） ##########"
+ps -eo pid=,ppid=,lstart=,etime=,stat=,pcpu=,args= | grep -i 'cline' | grep -v grep | cut -c1-200 | head -12
+echo "-- cline count --"; ps -eo args= | grep -ci cline || true
+
+echo
+echo "########## D) 下载进程 PID 1920377 ##########"
+ps -o pid=,ppid=,lstart=,etime=,stat=,args= -p 1920377 2>/dev/null || echo "PID 1920377 NOT FOUND"
+echo "-- roi download procs --"
+ps -eo pid=,etime=,args= | grep -F 'roi_download_20261107' | grep -v grep | cut -c1-170
+echo "-- hf download / python download --"
+ps -eo pid=,etime=,args= | grep -E 'huggingface|hf_transfer|snapshot_download' | grep -v grep | cut -c1-170 | head -8
+
+echo
+echo "########## E) MEMORY_DATA 状态 ##########"
+head -3 "$R/MEMORY_DATA.md" 2>/dev/null | cut -c1-200
+echo "-- mtime --"; stat -c '%y  %n' "$R/MEMORY_DATA.md" 2>/dev/null
+echo "-- git last commit touching data --"
+cd /nas_train/app.e0031982/code/super_intelligence_2035 && timeout 10 git log -1 --format='%h %ad %s' --date=iso -- doc/BaiZe-ISEDA2027/run/MEMORY_DATA.md 2>&1 | cut -c1-180
+
+echo
+echo "########## F) 系统负载（是否被别的东西占满） ##########"
+uptime; echo "-- top cpu --"; ps -eo pid=,pcpu=,etime=,args= --sort=-pcpu | head -8 | cut -c1-170
+
+echo
+echo "=== 266 done ==="
+```
+
+
+# OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 <!-- RUN_ID: 265 | TARGET: 12 -->
 ## RUN_ID 265 — **两台 relay 存活探测：.12 本地 + .29 远端（进程/锁/日志/心跳）**
 
