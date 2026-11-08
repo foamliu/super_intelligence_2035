@@ -7612,3 +7612,73 @@ R1（源码级深化）· R3（F07/F11 影响 GRPO advantage）· R9（修正 AP
 - verl 源码：`~/code/verl_cu124_venv/.../verl/`（0.4.0 实测）
 - base_tool.py（80 行）· sglang_rollout.py（1199 行）· schemas.py · sandbox_fusion_tools.py（179 行）
 - 无伪造。替身 RL 结果不可迁移到 BaiZe。
+
+---
+
+## §R70: F14 BLOCKER 解决方案 — MiniCPM5-2B 工具调用解析器设计（wake118, 2026-11-09, 零 GPU）
+
+> **任务**：解决 R69 识别的 F14 潜在 BLOCKER — MiniCPM5-2B 的 tool_call_parser 在 verl+SGLang 集成中可能返回 None/ValueError。
+> **脚本**：`baize_posttrain_f14_parser_resolution.py`（~360 行，纯 Python 3.8+，0 依赖）
+> **补丁**：`baize_posttrain_minicpm5_parser_patch.py`（~90 行，monkey-patch SGLang + verl）
+
+### 1. F14 确认
+
+verl 0.4.0 的 `get_tool_call_parser_type(tokenizer)`（sglang_rollout.py:210-217）遍历 SGLang 的 `FunctionCallParser.ToolCallParserEnum`（4 个解析器），检查 `parser.bot_token in tokenizer.get_vocab()`。若全部不匹配，抛出 `ValueError("No tool call parser found")`。
+
+| 解析器 | bot_token | MiniCPM5-2B vocab | 匹配 |
+|:--|:--|:--|:--|
+| llama3 | `<\|python_tag\|>` | ❌ | ❌ |
+| qwen25 | `<toolcall>` | ❌ | ❌ |
+| mistral | `[TOOL_CALLS] [` | ❌ | ❌ |
+| deepseekv3 | `<｜tool▁calls▁begin｜>` | ❌ | ❌ |
+
+**F14 已确认**：4 个 bot_token 均不在 MiniCPM5-2B vocab。
+
+### 2. MiniCPM5-2B 原生工具调用 Token（23 个，从 tokenizer.json added_tokens）
+
+关键 token：`<function`(id=18), `</function>`(id=19), `<param`(id=20), `</param>`(id=21), `<tools>`(id=12), `</tools>`(id=13), `<|im_start|>`(id=130072), `<|im_end|>`(id=130073), `<|tool_call|>`(id=130077), `/think`(id=130080), `/no_think`(id=130081)
+
+### 3. 工具调用格式（chat_template.jinja 实测）
+
+```
+<function name="NAME"><param name="KEY">VALUE</param></function>
+```
+- CDATA 包裹多行/特殊字符：`<![CDATA[...]]>`
+- 工具结果注入为 user 消息：`<tool_result>...</tool_result>`
+
+### 4. 影响分析
+
+| 路径 | 受影响 | 原因 |
+|:--|:--|:--|
+| 单轮 RL | ❌ 不受影响 | tool_config_path=None 时 _initialize_tools 提前返回(line 427-428) |
+| 多轮 RL | ✅ BLOCKER | tool_config_path 非 None 时调用 get_tool_call_parser_type → ValueError |
+| Smoke | ✅ 如启用多轮 | 建议先单轮 smoke，再 patch 后多轮 smoke |
+
+### 5. 解决方案
+
+**MiniCPM5FunctionDetector**：bot=`<function`(id=18), eot=`</function>`(id=19), parser_key=`minicpm5`, CDATA ✅, 流式 ✅
+
+**Monkey-patch**：①注册到 ToolCallParserEnum["minicpm5"] ②patch get_tool_call_parser_type 优先检测 `<function`
+
+### 6. Dry-Run（5/5 通过 ✅）
+
+simple_tool_call ✅ / multi_param ✅ / cdata_content ✅ / no_tool_call ✅ / text_then_call ✅
+
+### 7. Smoke 路线图
+
+Step1: 单轮 RL smoke(不碰F14) → Step2: F14预检(`<function` in vocab) → Step3: 多轮 RL smoke(导入patch)
+
+### 8. 关联
+
+R69(F14发现→本节解决) · R9(多轮仅SGLang) · R47(YAML触发F14) · R60(多轮增加ctx) · R67/R68(多轮增加step time)
+
+### 9. 交付物
+
+`baize_posttrain_f14_parser_resolution.py`(~360行,py_compile✅) + `baize_posttrain_minicpm5_parser_patch.py`(~90行,py_compile✅) + HTML 7.5KB(0 script 0外链) + JSON 4.7KB
+
+### 10. 数据溯源
+
+- 模型：`/tmp/models/MiniCPM5-2B/`（tokenizer.json 510 tokens, chat_template.jinja 112行）
+- SGLang：`~/code/verl_cu124_venv/.../function_call_parser.py`（761行，4检测器）
+- verl：`~/code/verl_cu124_venv/.../sglang_rollout.py`（1199行，get_tool_call_parser_type line 210-217）
+- 无伪造。替身 RL 结果不可迁移到 BaiZe。
