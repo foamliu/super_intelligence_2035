@@ -96,9 +96,18 @@
 - ✅ **PC 侧 `/tutor` 服务**：`host/tutor_server.py` 监听 `0.0.0.0:8765`；`/health`=200；文本题 1.2s（deepseek-flash，无静默降级）；App 经 `10.0.2.2:8765` 联调成功。
 - 📌 **结论**：22:50 令（可安装真 App）+ 22:30/22:35/22:40 令（模拟器跑通客户端 + 自装工具链）**全部闭环**；模拟器「能信/不能信」已写入 `P1_模拟器.md` §7。
 
+## 第 11 轮增量（2026-11-08 · 交付 HCI 代码层：normalize_math.py + speech.py）
+
+- ✅ **`host/normalize_math.py`（12:20 令 §4）**：口述→数学式纠错，覆盖全部词表（平方/立方/根号/分之/负/加减乘除/等于/大于小于/π/度/角/三角形/平行/垂直/相似/全等/分母/分子/一次项/二次项/移项/合并同类项）；权威示例实测一致：`x的平方加三x等于零 → x^2+3x=0`、`二分之根号三 → √3/2`；术语「三角形/一次项/二次项/分母/分子/移项/合并同类项」不破坏（汉字数字不误转）。
+- ✅ **单测 81 条**（要求 ≥30，超标 2.7 倍）`pytest` 全绿。
+- ✅ **`host/speech.py`（12:20 令 §2/§3 + INTERACTION_SPEC §9）**：统一接口 `asr_stream()/tts_stream()/stop()`；端侧默认（Windows SAPI 分句流式 + 句间停顿 + 打断 + `MockStreamingASR` 流式 mock），云端 `CloudASR/CloudTTS` 留空实现（默认 off，构造即报「不新增语音厂商账号」），`SherpaOnnxASR` 接入位（未装权重给明确报错、不静默）。
+- ✅ **单测 12 条**（分句/打断标志/ASR 流式顺序与打断/TTS 落盘 WAV/打断丢弃在途/云端与端侧未装报错），全绿；实测 TTS 合成 48kHz WAV、打断后丢弃剩余句。
+- ✅ **实测输出**：`py -3.10 -m pytest test_normalize_math.py test_speech.py -q` → **`93 passed in 0.46s`**（81 + 12）。
+- 📌 **结论**：12:20 令 §2/§3/§4 代码交付闭环；`speech.py` 的 ASR 真实 CER / TTS 首字 / 打断 ≤300ms / AEC 均**标注待真机**（本机无端侧 ASR 权重，用 mock 只验逻辑，不谎称已测）。
+
 ## 下一轮候选（按优先级）
 
-1. **`host/speech.py`**（端侧 ASR/TTS 适配层：`asr_stream/tts_stream/stop`，端侧默认）+ **`host/normalize_math.py`**（口述→数学式纠错，≥30 单测）——11:40/11:55/12:05/12:20 的代码交付（spec 已就绪）。
-2. **`host/presence.py`**（在座检测，先 PC 摄像头跑通 + 20 次实测）。
-3. **`eval/interaction_*.json`**（时延 / 打断 / 模拟学生 3 人设）——语音链路落地后实测。
-4. 题库扩到 100 题跑 L1 全量指标；收用户 3 条回复 → 复验 `hdc list targets` / `adb devices`，打通真机「拍照/出声」（L0 真机化）。
+1. **`host/presence.py`**（在座检测，先 PC 摄像头跑通 + 20 次实测）——12:05 令 §1/§5。
+2. **`eval/interaction_*.json`**（时延 / 打断 / 模拟学生 3 人设）——11:40 令 §3 交互验收（语音链路接口已就绪，可先跑逻辑版）。
+3. 题库扩到 100 题跑 L1 全量指标。
+4. 端侧真实 ASR（sherpa-onnx）接入位落地（`SherpaOnnxASR` 现为报错占位）；收用户 3 条回复 → 复验 `hdc list targets` / `adb devices`，打通真机「拍照/出声」（L0 真机化）。

@@ -9,8 +9,22 @@
 | 文件 | 作用 |
 |:--|:--|
 | `tutor_agent.py` | 最小闭环：题图/题文 → 识图（默认 DeepSeek 视觉）→ 分步引导（默认 DeepSeek，不泄答案）→ Windows SAPI 出声 |
+| `tutor_server.py` | HTTP 服务（App 经 `10.0.2.2:8765/tutor` 调它）；`POST /tutor` + `GET /health` |
+| `speech.py` | 语音链路适配层（12:20 令 §2/§3）：统一接口 `asr_stream()/tts_stream()/stop()`；端侧默认（SAPI 分句流式 + 打断 + `MockStreamingASR`），云端留空实现（默认 off） |
+| `normalize_math.py` | 口述→数学式纠错（12:20 令 §4）：覆盖平方/立方/根号/分之/负/运算符/关系/π/度/角/几何符号/术语等，`cn_to_int` 中文数字转换 |
 | `eval_l1.py` | L1 评测基线：文本 3 题 + 对抗探针 + **4 张题图**（算式/中文+算式/中文应用题/代数式）→ `eval/l1_baseline.json`（直接给答案率 / 识图正确率 / 首步时延 P50·P90 / 逐条后端与降级原因） |
 | `probe_ds_vision.py` | DeepSeek 视觉一次性探针（读 key 不打印 key，产出 `ds_vision_probe.json`） |
+| `test_normalize_math.py` | `normalize_math.py` 单测（**81 条**，12:20 令要求 ≥30） |
+| `test_speech.py` | `speech.py` 单测（12 条：分句/打断/流式/落盘 WAV/云端与端侧未装报错） |
+
+## 单测（第 11 轮新增）
+
+```powershell
+cd D:\Users\Administrator\code\super_intelligence_2035\doc\personal-watch\run\robot\host
+py -3.10 -m pytest test_normalize_math.py test_speech.py -q   # 93 passed in 0.46s
+py -3.10 normalize_math.py "x的平方加三x等于零" "二分之根号三"   # 演示口述→数学式
+py -3.10 -W ignore speech.py                                  # 演示分句/合成 WAV/打断/ASR mock
+```
 
 ## 推理后端（11:30 / 15:4x 用户令定稿）
 

@@ -275,11 +275,11 @@ stateDiagram-v2
 
 | 交付物 | 状态 |
 |:--|:--|
-| `INTERACTION_SPEC.md`（本文件） | ✅ 本轮交付（状态机 2 图 + 状态表 10 行 + 话术 21 条 + 时延指标 13 条） |
-| `host/speech.py`（端侧 ASR/TTS 适配层） | ⬜ 下一轮（12:20 令第 2 优先） |
-| `host/presence.py`（在座检测，PC 摄像头先跑） | ⬜ 下一轮（12:05 令第 3 优先） |
-| `host/normalize_math.py`（口述→数学式，≥30 单测） | ⬜ 下一轮（12:20 令） |
-| `eval/interaction_*.json`（时延/打断/模拟学生） | ⬜ 下一轮（语音链路落地后实测） |
+| `INTERACTION_SPEC.md`（本文件） | ✅ 第 9 轮交付（状态机 2 图 + 状态表 10 行 + 话术 21 条 + 时延指标 13 条） |
+| `host/speech.py`（端侧 ASR/TTS 适配层） | ✅ **第 11 轮交付**（`asr_stream/tts_stream/stop`，端侧默认 SAPI + 打断 + mock ASR；云端留空；12 单测） |
+| `host/presence.py`（在座检测，PC 摄像头先跑） | ⬜ 下一轮（12:05 令 §1/§5） |
+| `host/normalize_math.py`（口述→数学式，≥30 单测） | ✅ **第 11 轮交付**（覆盖 12:20 令 §4 全部词表，**81 单测**） |
+| `eval/interaction_*.json`（时延/打断/模拟学生） | ⬜ 下一轮（语音链路接口已就绪，可先跑逻辑版） |
 
-> 11:40 令 §3 交互验收（录音 ≥60s / P50·P90 实测 / 打断测试 / 模拟学生 3 人设 / 10 条可用性走查）在 `speech.py` + `presence.py` 落地后执行，**本轮只定稿口径，不谎称已测**。
+> 11:40 令 §3 交互验收（录音 ≥60s / P50·P90 实测 / 打断测试 / 模拟学生 3 人设 / 10 条可用性走查）待 `presence.py` 落地后执行；`speech.py` 的 ASR 真实 CER / TTS 首字 / 打断 ≤300ms / AEC 均**标注待真机**（本机无端侧 ASR 权重，用 mock 只验逻辑，不谎称已测）。
 
