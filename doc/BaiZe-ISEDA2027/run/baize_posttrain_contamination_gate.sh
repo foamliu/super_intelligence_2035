@@ -25,8 +25,14 @@
 # 退出码：0 = 通过(0 命中,可投料)；2 = 失败(有命中,阻断训练)；3 = 闸门自身不可用(fail-safe)。
 set -uo pipefail
 
-# /nas_train 在训练机为同一 NFS 导出；本节点挂载于 /nas_data（dry-run 已验证逻辑，不依赖数据可达）。
-RUN_DIR=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
+# Auto-detect NFS root (.17 → /nas_data, .29/.12 → /nas_train)
+if [ -d "/nas_data/app.e0031982/code/super_intelligence_2035" ] && [ ! -d "/nas_train/app.e0031982/code/super_intelligence_2035" ]; then
+    RUN_DIR=/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
+elif [ -d "/nas_train/app.e0031982/code/super_intelligence_2035" ]; then
+    RUN_DIR=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
+else
+    RUN_DIR=/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
+fi
 BLACKLIST_DIR="${BLACKLIST_DIR:-$RUN_DIR/data_pipeline/blacklist}"
 CHECK_PY="$RUN_DIR/data_pipeline/check_contamination.py"
 BUILD_PY="$RUN_DIR/data_pipeline/build_blacklist.py"

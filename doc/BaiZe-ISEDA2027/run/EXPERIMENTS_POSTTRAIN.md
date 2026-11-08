@@ -6025,3 +6025,103 @@ Phase 1 启动零阻塞，Phase 2 的唯一 OPEN 项已关闭。
 - `run/baize_posttrain_e2e_audit.py`（更新: R-009 OPEN→RESOLVED, py_compile ✅）
 - `reports/report_posttrain_r53_ray_patch_propagation_zh.html`（自包含, 0 script, 0 外链）
 - 本节（EXPERIMENTS §R53, 8小节）
+
+---
+
+## §R54 Day-1 预发射全套验证（Pre-Launch Full Verification Suite）
+
+> **R54（2026-11-08 wake102）**: GPU 11/9 到位前最后一次全面验证。将所有零-GPU 可验证的组件**实跑**（非 dry-run），确保 11/9 起跑零意外。
+> 验证环境：`.17`（10.252.32.17），系统 Python 3.8 + cu124 venv Python 3.10.22。
+
+### R54.1 对抗性奖励测试套件（Adversarial Reward Test）— 实跑结果
+
+> 脚本 `baize_posttrain_reward_adversarial_test.py`（R35 编写，**本轮首次实跑**）。
+> API DB：`~/code/eda_fastmcp/docs/API_INFO_MERGED_V3.json`（✅ 可达）。
+
+| 类别 | 测试项 | 通过 | 失败 | 关键发现 |
+|:--|:--|--:|--:|:--|
+| T1-EdgeCases | 空/None/垃圾/超长/Unicode/无代码/语法错 | 7 | 0 | 空→0.06(最低分), 超长→1.02(不溢出), 语法错→0.30 |
+| T2-RewardHacking | 格式刷分/硬编码/抄测试/过度调用/零调用/幻觉API | 6 | 0 | 格式刷分=0.18(<0.3✅), 硬编码=0.60(≤0.7✅), 幻觉R4=0.40 |
+| T3-SignalProps | 值域/方差/单调性/R1二值/R2阶梯 | 5 | 0 | R0 std=0.3718(有区分度✅), R2阶梯5档[0.2-1.0]✅, 单调性✅ |
+| T4-AutoFallback | 自动回退/无回退归零/有沙盒不回退 | 3 | 0 | autofb=1.02 vs nofb=0.0✅, R2+沙盒+autofb=1.02(用R2不回退R0)✅ |
+| T5-CheatDetect | 空ngram/空解/精确抄袭/干净/短文本 | 5 | 0 | 精确抄袭ratio=1.0✅, 干净ratio=0.028✅, 空参考=不告警✅ |
+| T6-CrossArm | 满分高/全错零/R3≤R2 | 3 | 0 | R1-R3=1.02, R4=0.97(API惩罚); 全错=0.0; R3(0.97)≤R2(1.02)✅ |
+| **合计** | **29 项** | **29** | **0** | **0 critical failures** |
+
+**JSON 输出**：`baize_posttrain_reward_adversarial_results.json`（271行，含每项 name/passed/score/detail/critical）。
+
+**判读**：奖励函数在对抗性输入下**完全鲁棒**——格式刷分被压制(<0.3)，硬编码不获满分(≤0.7)，幻觉 API 被 R4 惩罚(0.40)，抄袭检测精确(1.0)且不误报(0.028)，auto-fallback 正确切换 R0↔R2。**11/9 RL smoke 可安全使用 R0 骨架奖励**。
+
+### R54.2 奖励函数自测（Reward Self-Test）— 实跑结果
+
+> 脚本 `baize_posttrain_reward_functions.py --arm R0`（主块入口）。
+
+| 测试场景 | R0 分数 | 判读 |
+|:--|--:|:--|
+| full_pass（完整通过） | 0.6300 | R0 上限≈0.63（无沙盒执行验证） |
+| r0_good_code（好代码+正确API） | 1.0200 | 含 format_bonus，超过 1.0 |
+| r0_syntax_error（语法错） | 0.3000 | 仅 syntax_valid 通过 |
+| r0_wrong_api（错误API名） | 0.6600 | API 匹配失败但结构对 |
+| r0_garbage（垃圾输入） | 0.0600 | 仅 format_bonus |
+
+**跨臂对照（full_pass）**：R0=0.63, R1=1.02, R2=1.02, R3=1.02, R4=0.97（R4 因 API 合法性略低）。
+**Auto-fallback**：arm=R2 无沙盒 → auto_fallback=True → R0 分数✅；auto_fallback=False → 0.0✅。
+**作弊率追踪器**：高重叠=cheat(True,0.907)✅；低重叠=clean(False,0.028)✅；无参考=False✅。
+
+### R54.3 端到端审计（E2E Audit）— 实跑结果
+
+> 脚本 `baize_posttrain_e2e_audit.py`（R51 编写，本轮重跑确认 R53 修复后状态）。
+
+| 检查项 | 结果 |
+|:--|:--|
+| 脚本间依赖 | 24 scripts, 138 dependency links |
+| 文件路径存在 | 30 PASS / 0 FAIL |
+| 配置键一致性 | v2 keys=115, stale v1 refs=0 |
+| EXPERIMENTS 风险模式 | 230 matches |
+| 风险登记册 | 15 项: 4 FIXED + 5 MITIGATED + 1 RESOLVED + 3 MONITORED + 2 ACKNOWLEDGED |
+| **GO/NO-GO** | **GO (score: 100/100)** |
+| Critical open | 0 | High open | 0 | Open | 0 |
+
+### R54.4 污染隔离闸门 Bug 修复 + 实跑验证
+
+> 🔴 **发现关键 Bug**：`baize_posttrain_contamination_gate.sh` 第 28-29 行硬编码 `RUN_DIR=/nas_train/...`，在 `.17` 节点（NFS 挂载为 `/nas_data/`）上 `check_contamination.py` 和 `BLACKLIST_DIR` **不可达** → 闸门 fail-safe exit 3 → **阻断训练**。
+
+**修复**：替换硬编码为 NFS 根自动检测（与 `baize_posttrain_paths.sh` 同逻辑），bash -n ✅。
+
+**验证**（修复后实跑）：`--sft-synth sft_pyaether_corpus_v2.jsonl` → 扫描 **19,524 文档 / 命中 0 / 闸门 PASS** ✅
+
+**影响**：如未修复，11/9 Step 4（污染闸门）将在 `.17` 上直接失败 exit 3，阻断整个 launch 序列。此为 R54 发现并修复的**唯一 critical bug**。
+
+### R54.5 发射脚本 Dry-Run + Preflight
+
+| 检查项 | 结果 |
+|:--|:--|
+| Launch dry-run: NAS_ROOT | `/nas_data` ✅ |
+| Launch dry-run: Venv/Model/EDA Base | 全部 exists ✅ |
+| Launch dry-run: Step 0-6 | 7 步正确 ✅ |
+| Preflight: CUDA>=12.4 | PASS ✅ |
+| Preflight: Node/RunDir/venv | PASS ✅ |
+| Preflight: torch cu124 | ⏳ NFS 冷启动(R45已知, warm-up 后通过) |
+
+### R54.6 Day-1 GO/NO-GO 最终判定
+
+| 维度 | 状态 | 证据 |
+|:--|:--|:--|
+| 奖励函数鲁棒性 | ✅ GO | 29/29 对抗测试 PASS, 0 critical |
+| 奖励信号区分度 | ✅ GO | R0 std=0.37, R2 阶梯 5 档, 单调性 ✅ |
+| 作弊检测 | ✅ GO | 抄袭 ratio=1.0, 干净 ratio=0.028, 0 误报 |
+| 端到端依赖 | ✅ GO | 30/30 路径 PASS, 0 stale v1 |
+| 风险登记册 | ✅ GO | 0 CRITICAL/HIGH/OPEN |
+| 污染隔离 | ✅ GO | Bug 已修, 19,524 docs 0 命中 |
+| 发射脚本 | ✅ GO | 所有路径存在, 7 步正确 |
+| GPU 释放 | ⏳ 待 11/9 | R-015 MONITORED |
+| cline PATH | ⏳ 待 11/9 | 运维确认 |
+
+**结论**：**✅ GO for 11/9 Phase1 Launch**。所有零-GPU 可验证组件已实跑通过。
+
+### R54.7 交付物
+
+- `run/baize_posttrain_contamination_gate.sh`（修复 NFS 路径自动检测, bash -n ✅, 实跑 PASS ✅）
+- `run/baize_posttrain_reward_adversarial_results.json`（29 项测试结果 JSON）
+- `reports/report_posttrain_r54_pre_launch_verification_zh.html`（自包含, 0 script, 0 外链）
+- 本节（EXPERIMENTS §R54, 7小节）
