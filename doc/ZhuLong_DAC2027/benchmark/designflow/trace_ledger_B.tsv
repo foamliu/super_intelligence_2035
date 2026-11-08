@@ -558,3 +558,6 @@ qnm9e					parked		2026-11-08 01:58	Finesim DC convergence Q&A prose dup of uky6c
 1793176752981_ikfrw	joeyl	hfeg0plg49	14	spice_sim	parked		2026-11-09 06:03	115msg 45-corner tr0 measure session ended mid binary-format reverse-engineering no accepted gold standard reject
 1792376948635_va4dv	alieenwu	hfeg0plg08	25	spice_sim	parked		2026-11-09 06:03	U#0 .meas ms scientific-notation config question knowledge-Q low-structureable reject
 1792139236507_7jzqb	reedchen	hfeg0plg49	2294	spice_sim	case	EDA-Eval-DesignFlow-Mt0TskewCalc-001	2026-11-09 06:57	
+1789611712575_5tdum.messages.json	mike	hfeg0plg05	3368	spice_sim	case	EDA-Eval-DesignFlow-SiInpTokenRm-001	2026-11-09 07:20	
+1792134701239_u5fy6.messages.json	reedchen	hfeg0plg49	2204	spice_sim	parked		2026-11-09 07:20	dup of Mt0TskewCalc-001 (same reedchen mt0.csv Tskew U#0, 7jzqb family)
+1792133845232_k7jwl.messages.json	reedchen	hfeg0plg49	2035	spice_sim	parked		2026-11-09 07:20	dup-family of Mt0TskewCalc-001 (reedchen Tskew session, U#0 same task; later GenSignalTrTf/GenSP turns ref external files)
