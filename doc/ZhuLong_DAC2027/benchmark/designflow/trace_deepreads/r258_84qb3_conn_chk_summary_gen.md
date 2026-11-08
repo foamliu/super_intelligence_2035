@@ -1,0 +1,26 @@
+# 深读 r258 · 1793088988568_84qb3 · xxchen@hfeg0pkn002 (10.129.2.11) · ConnChkSummaryGen
+
+- trace: `1793088988568_84qb3.messages.json` (911238 B, 263 msgs, agent=lead)
+- user: **xxchen** (NEW — 首个 case)，mc=334，kw: drc:675 calibre:191 .gds:144 cmos:123 lvs:6 pdk:1
+- 选料: sel_C_r258（.75 summary.tsv → 935 dedup mc≥30 + tool-kw → 排除 ledger 445 sids + 43 SAT users → 212 fresh，layout-affinity score=ΣLAY+calibre/virtuoso/lef/def/gds/oasis −0.6×ΣSIM）。top: 84qb3(xxchen 167calibre)。xxchen sessions dir 为 per-sid 子目录（`sessions/<sid>/<sid>.messages.json`，非平铺）——先前平铺路径 fetch 全空，nested 路径才命中。
+- 工具: 用户自建 `drcConnect` DRC 连通性检查工具（`/home/xxchen/workspace/small_tool/drcConnect/0.3/connectivity/`）+ 版本化运行目录（`ver/V2/0.3/run_N/`）。模块:
+  - `connectivity_check/config_loader.py` (9337B) — exec config 文件得 namespace
+  - `connectivity_check/graph.py` (4756B) — 连通图遍历（核心）
+  - `connectivity_check/summary.py` (9443B) — 生成 sum.rep 报告（核心）
+  - `connectivity_check/gds_gen.py` (13415B) — GDS 生成（OPC connect）
+  - `connectivity_check/automation.py` (8457B) — Calibre LVS/DRC 编排
+  - `connectivity_check/state.py` (1008B) — 全局 state
+  - `run.py` (1040B) — 入口
+- 用户真实意图（提出需求，未给根因）:
+  - U#1 (idx25, mode=act): 「允许指定多个 bottomLayer: config_multi bottomLayer, ["MT3","M0A"] connectOPC011, ["CONNECT OPC011 MT3NET","CONNECT OPC011 M0A_incore_real"], 另外 sum.rep 中的 path，每条 path 单独写一行。」→ **多 bottomLayer 支持 + sum.rep 每条 path 独立成行**
+  - U#2 (idx53, mode=act): 「当前 shields: M1A CTM : M0A->NBP; M1A CTM : M0A->TCP，应该还有一组为：M1A CTM: NBP->TCP 另外 sum.rep 中，shields 关的报告也需要每条单独占一行。」→ **shields 中间对 NBP->TCP + shields 每条独立成行**
+  - U#3 (idx86): 写脚本使用说明（英文）；U#4/U#5: 文件名/内容改英文；U#6 (idx107): 检测 FPZ PATTERN 重叠；U#8: sameNet 下 FPZ pattern 仍重叠。
+- grounding（已 scp 到 workdir ground/）:
+  - `config_multi` (1930B): `connectivity_multi = [ [connectivity, [[S,V,T1,T2,...],...], bottomLayer, [...], connectOPC011, [...], skip_via_connect, [...](opt)], ... ]` — 5 个 block
+  - `sum.rep` (2435B): 5 个 [run_N] 块，每块 `path(s)` 每条一行（续行 17 空格缩进对齐冒号）、`shields` 每条一行、`sameNet: N data group(s) [OK|HAS ERRORS]`、`diffNet: ...`、`status   : OK`
+  - `graph.py` `normalize_connectivity`: >3 层边 [S,V,T1,T2,...] 拆成 [S,V,Ti]（每目标一 3 层边）+ 每有序对 (i<j) 产 shield `S V : Ti->Tj`；≤3 层边原样
+  - `graph.py` `find_all_paths(start)`: DFS；3 层边 [S,V,T] 路径含 via V (S->V->T)，2 层边 [S,T] 路径不含 via (S->T)；via 与 node 不可重复
+  - `summary.py` `format_report`: 头 5 行（72=、title、generated、base dir、72=）→ 每 run 块 → 尾（空行+72=）；标签宽度 `  path(s)      : `、`  shields       : `，续行 17 空格；`_mode_line`: `  {label:7s}: N data group(s)  [verdict]`（verdict = HAS ERRORS 若 N>0 else OK）；status 行 `  status   : OK|DRC ERROR (...)|result file missing ...`
+- 为何 B 档（重定义为离线报告生成器）: 真实 drcConnect 工具依赖用户私有 GDS/Calibre/run 目录 + gdspy，e0031982 在 pyAether sandbox 不可访问；但 trace 的 grounding 价值在「config→连通图遍历→sum.rep 报告格式」规范提取。故重定义为 `conn_summary.py <config.json> <runs_meta.json> -o <sum.rep>`（stdlib only）：解析 JSON config（blocks: connectivity 边 + bottomLayer + connectOPC011[忽略] + skip_via_connect[忽略]）→ 每 block 用 graph.py 同款逻辑（normalize + find_all_paths 从每 bottomLayer DFS，去重）算路径 + 由 >3 层边算 shields → 按 summary.py 同款格式输出 sum.rep（头/每 run 块/尾、续行 17 空格对齐、sameNet/diffNet verdict 由计数算、status 透传 meta）。timestamp 由 config `generated` 字段定（确定性）。
+- DISTINCT from 现有 physical_verify 系: r257 GloryRcFlowSetup(flow 编排)、r256 LdrSvrfRuleGen(LDR→SVRF 规则生成)、r251 LvsAmbiguityDiag(LVS 歧义诊断)、r250 HcellPairGen(Hcell 配对)、r248 SpfRcAggregateAudit(SPF RC 审计)、r243 VssPunchRuleGen、r245 RectAspectRuleCheck、r242 SaqpIntAngleEqSplit、r241 SvrfPvrsRuleTranslate、r240 WlAdjacentPairParse、r239 DrcRuleTimeRank、r238 LayoutFloorplanGen、r237 DrcLogTeardownReport — 本案**首次 ground on DRC 连通性图遍历 + sum.rep 结构化报告生成**（normalize_connectivity 拆边 + find_all_paths DFS 含 via + shields 全有序对 + 报告格式对齐），非规则/诊断/审计/编排。
+- DEBT: 0
