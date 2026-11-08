@@ -1,0 +1,49 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>R57: Vision GRPO 失败教训 -> BaiZe RL 风险缓解手册</title>
+<style>
+body{font-family:-apple-system,"Segoe UI",Roboto,sans-serif;max-width:1200px;margin:0 auto;padding:20px;background:#f8f9fa;color:#1a1a2e;line-height:1.6}
+h1{color:#c0392b;border-bottom:3px solid #c0392b;padding-bottom:10px}
+h2{color:#2c3e50;border-bottom:2px solid #3498db;padding-bottom:5px;margin-top:30px}
+h3{color:#34495e;margin-top:20px}
+table{border-collapse:collapse;width:100%;margin:10px 0;font-size:14px}
+th{background:#2c3e50;color:white;padding:8px;text-align:left}
+td{border:1px solid #ddd;padding:6px 8px}tr:nth-child(even){background:#f2f2f2}
+.box{background:white;border-left:4px solid #3498db;padding:15px;margin:15px 0;border-radius:0 5px 5px 0}
+.danger{background:#f8d7da;border-left:4px solid #dc3545;padding:15px;margin:15px 0;border-radius:0 5px 5px 0}
+.warn{background:#fff3cd;border-left:4px solid #ffc107;padding:15px;margin:15px 0;border-radius:0 5px 5px 0}
+.rec{background:#e8f5e9;border:2px solid #4caf50;padding:20px;margin:20px 0;border-radius:8px}
+</style></head><body>
+<h1>R57: Vision 线 GRPO 失败教训 -> BaiZe RL 风险缓解手册</h1>
+<p><strong>日期</strong>: 2026-11-08 18:42:00 | <strong>来源</strong>: EXPERIMENTS_VISION.md Section 21-22 | <strong>零 GPU</strong></p>
+<div class="danger"><h3>核心结论</h3>
+<p>Vision 线 GRPO <strong>全部 4 轮失败</strong>。根因: <strong>std=0=78.7%</strong>（离散奖励+低base->全同档->零梯度）。
+<strong>连续化未解决</strong>（v3 仍 loss~0）。</p>
+<p><strong>BaiZe 优势</strong>: 36% base >> 9.2% -> R1 P(signal)=97.2% vs vision 32.0% = <strong>3.03x 更多信号</strong>。但 R1 仍有风险，<strong>必须从 R2 起步</strong>。</p></div>
+<h2>一、Vision GRPO 失败时间线</h2>
+<table><tr><th>版本</th><th>方法</th><th>基线</th><th>实验</th><th>Delta</th><th>结论</th></tr><tr><td>v1</td><td>GRPO discrete 5-tier</td><td>post-SFT 9.2%</td><td>post-GRPO 6.2%</td><td>-3.0pp</td><td>WORSE</td></tr><tr><td>v2</td><td>GRPO continuous (flip)</td><td>B=6.7%</td><td>C=11.1%</td><td>+4.4pp</td><td>NOT SIGNIFICANT (p=0.625)</td></tr><tr><td>v3</td><td>GRPO continuous (40 steps)</td><td>B=34.0%</td><td>C=25.0%</td><td>-9.0pp</td><td>WORSE (3rd negative)</td></tr><tr><td>v4</td><td>RFT/STaR</td><td>B=34.0%</td><td>C=34.0%</td><td>+0.0pp</td><td>NO CHANGE</td></tr></table>
+<h2>二、Advantage 方差诊断</h2>
+<table><tr><th>目标</th><th>n</th><th>std=0%</th><th>mean</th><th>诊断</th></tr><tr><td>rise_time</td><td>26</td><td>100.0%</td><td>-0.500</td><td>CAPABILITY GAP (needs SFT)</td></tr><tr><td>duty_cycle</td><td>22</td><td>90.9%</td><td>-0.405</td><td>NEAR NO-SIGNAL</td></tr><tr><td>amplitude</td><td>24</td><td>87.5%</td><td>0.429</td><td>NEAR SATURATION</td></tr><tr><td>period</td><td>22</td><td>31.8%</td><td>0.457</td><td>GRPO-LEARNABLE (68% signal)</td></tr></table>
+<div class="box"><p><strong>关键发现</strong>: all-zero impossible (fail=-0.5). Real problem: all-same-tier=78.7% -> advantage=0 -> zero gradient</p></div>
+<h2>三、BaiZe 奖励臂风险评估</h2>
+<table><tr><th>臂</th><th>名称</th><th>风险</th><th>分</th><th>Vision对标</th></tr><tr><td>R0</td><td>Skeleton</td><td>LOW</td><td>2</td><td>N/A</td></tr><tr><td>R1</td><td>Binary pass/fail</td><td>CRITICAL</td><td>9</td><td>v1 (EXACT match)</td></tr><tr><td>R2</td><td>Partial scores</td><td>HIGH</td><td>6</td><td>v3 continuous (partial match)</td></tr><tr><td>R3</td><td>R2+tool penalty</td><td>MEDIUM</td><td>5</td><td>v3+cost (no direct)</td></tr><tr><td>R4</td><td>R3+API legality</td><td>MEDIUM</td><td>5</td><td>v3+API (no direct)</td></tr></table>
+<div class="danger"><p><strong>R1 (Binary) = CRITICAL</strong>: 与 vision v1 完全相同失败模式。P(mixed)=97.2%, P(all-0)=2.81%。不从 R1 起步。</p></div>
+<div class="warn"><p><strong>R2 (Partial) = HIGH but recommended start</strong>: vision v3 连续仍失败，但 36% base 提供更多信号。监控 std=0 > 60% -> Dr.GRPO。</p></div>
+<h2>四、Vision 失败 -> BaiZe 风险映射</h2>
+<table><tr><th>Vision 失败</th><th>BaiZe 风险</th><th>严重度</th><th>预注册阈值</th></tr><tr><td>std=0=78.7% -> zero gradient...</td><td>R1 binary high risk; R2 partial lower but significant...</td><td>CRITICAL</td><td>std=0>60% for 3 steps -> switch arm or increase G</td></tr><tr><td>Continuous reward (v3) did NOT fix std=0...</td><td>R2 partial may not provide enough variance...</td><td>HIGH</td><td>loss<1e-4 for 5 steps -> switch to Dr.GRPO</td></tr><tr><td>Capability gap (rise_time 100% all wrong)...</td><td>Some EDA tasks 100% failure -> wasted RL budget...</td><td>HIGH</td><td>Exclude scenarios <5% or >95% pass after baseline</td></tr><tr><td>G 4->8 only -5.7pp std=0 (marginal)...</td><td>G=8 may not be enough; G=16 diminishing...</td><td>MEDIUM</td><td>std=0>70% at G=8 -> try G=12</td></tr><tr><td>RFT (v4) = no improvement...</td><td>Fallback to RFT may also fail...</td><td>LOW</td><td>Do NOT auto-fallback to RFT; report and wait</td></tr><tr><td>avgR high variance but loss~0...</td><td>Reward variance without gradient = not updating...</td><td>HIGH</td><td>avgR std>0.3 AND loss<1e-4 -> diagnose std=0</td></tr><tr><td>15 steps insufficient...</td><td>Smoke 10 iters shows nothing; need 200+...</td><td>MEDIUM</td><td>Evaluate at step 200; if no improvement by 500 -> diagnose</td></tr><tr><td>Per-target heterogeneity...</td><td>Some EDA scenarios learnable, others not...</td><td>HIGH</td><td>Weight sampling: 2x learnable, 0.5x gap scenarios</td></tr></table>
+<h2>五、预注册 RL 监控仪表盘</h2>
+<table><tr><th>指标</th><th>Vision 参考</th><th>RED 阈值</th><th>RED 动作</th></tr><tr><td>std=0 rate</td><td>78.7%</td><td>>70% for 3 steps</td><td>Switch arm or increase G</td></tr><tr><td>Loss value</td><td>~0.000038</td><td><1e-4 for 5 steps</td><td>Dr.GRPO or reward noise</td></tr><tr><td>avgR variance</td><td>-0.5->0.398->0.033</td><td>High var+no trend</td><td>Reduce LR or increase KL</td></tr><tr><td>Per-scenario pass</td><td>rise_time 0%, period 68%</td><td>0%/100% for 200 steps</td><td>Exclude scenario</td></tr><tr><td>Cheat rate</td><td>N/A</td><td>>5%</td><td>STOP; investigate hacking</td></tr><tr><td>API diversity</td><td>N/A</td><td>Decreasing for 200 steps</td><td>Reduce tool/API penalty</td></tr></table>
+<h2>六、BaiZe vs Vision 全面对比</h2>
+<table><tr><th>维度</th><th>Vision</th><th>BaiZe</th></tr><tr><td>Base model</td><td>Qwen3-VL-2B LoRA</td><td>MiniCPM5-2B full</td></tr><tr><td>Base success</td><td>9.2% (post-SFT)</td><td>36% (zero-shot)</td></tr><tr><td>Task</td><td>Waveform regression</td><td>EDA code gen + tool-use</td></tr><tr><td>Reward</td><td>5-tier->continuous (both failed)</td><td>Binary R1->Partial R2->Penalty R3/R4</td></tr><tr><td>Group size</td><td>4->8 (marginal)</td><td>8 (config)->12-16 (fallback)</td></tr><tr><td>Steps</td><td>50->40->120</td><td>2000 (planned), 10 (smoke)</td></tr><tr><td>std=0 root</td><td>Discrete+9.2%->all-same-tier</td><td>Risk: R1+36%->all-0/all-1; R2 mitigates</td></tr><tr><td>Fallback</td><td>GRPO->RFT (also failed)</td><td>R2->R3->R4->SFT aug (no RFT)</td></tr><tr><td>Anti-cheat</td><td>None</td><td>PreToolUse+cheat rate (red line)</td></tr><tr><td>Key advantage</td><td>--</td><td>36%>>9.2% + DAPO + Dr.GRPO option</td></tr></table>
+<h2>七、最终建议</h2>
+<div class="rec"><ol>
+<li><strong>从 R2 起步</strong>，不从 R1</li>
+<li><strong>监控 std=0</strong>: >60%x3步->Dr.GRPO; >70%->G=12</li>
+<li><strong>Step 500</strong>: 无改善->per-scenario分析->排除0%/100%场景</li>
+<li><strong>不回退 RFT</strong>（vision v4 证明无效）->回退 SFT 增强</li>
+<li><strong>诚实报告</strong>: RL 无效=支持「规模非瓶颈」论</li>
+</ol></div>
+<div class="box"><p><strong>交付物</strong>: baize_posttrain_vision_lessons_analyzer.py + EXPERIMENTS Section R57 + 本HTML（自包含,0script,0外链）</p>
+<p><strong>数据溯源</strong>: EXPERIMENTS_VISION.md Section 21-22。vision 诊断数据在 .12（本节点 .17 不可达），使用已记录数值。无伪造。</p></div>
+<footer><p style="text-align:center;color:#999;margin-top:30px">R57 BaiZe Stage(ii) 2026-11-08 18:42:00 零 GPU</p></footer>
+</body></html>

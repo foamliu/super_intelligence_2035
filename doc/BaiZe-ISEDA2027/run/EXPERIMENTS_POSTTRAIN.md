@@ -6288,3 +6288,102 @@ UltraData 预分词为 megatron .bin/.idx 格式，在训练框架层通过 blen
 3. 建议：GPU 后用 D1-D6 实测数据确认配比；初始用 pyaether5-10% 起跑，视效果上调
 4. S3 multi-api-chain 仅 89 条是最大短板 -> GPU 后沙盒 profiling 扩展
 5. UltraData 集成通过 blend config 实现，无需数据文件层混合
+
+---
+
+## §R57 Vision 线 GRPO 失败教训 -> BaiZe RL 风险缓解手册（2026-11-08 wake105 · 零 GPU · 跨线调研）
+
+> 对应 §用户令·2026-11-07 10:10 R3 方向「失败模式（对照 vision 线离散奖励教训）」。
+> 数据源：EXPERIMENTS_VISION.md §21.1-§22（vision 线 CPU GRPO v1-v4 + advantage 方差诊断）。
+> 交付物：`baize_posttrain_vision_lessons_analyzer.py`（~230 行，纯 Python 3.8+）+ JSON + HTML 报告。
+
+### 1. Vision 线 GRPO 失败时间线（全部 4 轮失败）
+
+| 版本 | 方法 | 基线 | 实验 | Delta | 结论 |
+|:--|:--|:--|:--|--:|:--|
+| v1 | GRPO 离散 5 档 | post-SFT 9.2% | post-GRPO 6.2% | -3.0pp | 更差（回退） |
+| v2 | GRPO 连续（方向翻转） | B=6.7% | C=11.1% | +4.4pp | 不显著（p=0.625, n=45 太小） |
+| v3 | GRPO 连续（改进设计, 40 步） | B=34.0% | C=25.0% | -9.0pp | 更差（第 3 轮连续负） |
+| v4 | RFT/STaR | B=34.0% | C=34.0% | 0.0pp | 无变化（null result） |
+
+**关键模式**：avgR 高方差（-0.5->0.398->0.033）但 loss~0 -> 策略梯度极弱 -> 模型实际未更新。连续化奖励（v3）未解决 std=0 根因。
+
+### 2. Advantage 方差诊断核心数据（§21.1-§21.2）
+
+| 指标 | G=4 (94 组) | G=8 (100 组) |
+|:--|--:|--:|
+| std=0 组（零梯度） | 78.7% | 73.0% |
+| 全 0 组 | 0.0% | 0.0% |
+| 全正一致组 | 20.2% | -- |
+| std>0 组（有信号） | 21.3% | 27.0% |
+| 判定 | PARTIAL | PARTIAL |
+
+**关键发现**：用户假设「全 0 组占多数」不成立（失败=-0.5 非 0）。真正问题是**「全同档」= 78.7%**：离散分档奖励 + 低 base 成功率 -> 4 条 rollout 落入同一档 -> advantage=0 -> 零梯度。根因 = 离散化奖励 + 低 base。
+
+**按测量目标分组**：rise_time 100% std=0（能力缺口，需 SFT 非 RL）；period 31.8% std=0（GRPO 可学，68% 有信号）；amplitude 87.5%（近饱和）；duty_cycle 90.9%（近 NO-SIGNAL）。
+
+### 3. BaiZe 奖励臂风险评估
+
+| 臂 | 名称 | 风险 | 分 | Vision 对标 |
+|:--|:--|:--|--:|:--|
+| R0 | Skeleton | LOW | 2 | N/A |
+| R1 | Binary pass/fail | **CRITICAL** | 9 | v1 离散（完全匹配失败模式） |
+| R2 | Partial scores | HIGH | 6 | v3 连续（部分匹配，仍失败但更好） |
+| R3 | R2+tool penalty | MEDIUM | 5 | v3+cost（无直接对标） |
+| R4 | R3+API legality | MEDIUM | 5 | v3+API（无直接对标） |
+
+### 4. BaiZe 信号估算（R1 binary, 36% base, G=8）
+
+- P(all-0) = 0.64^8 = 2.8%
+- P(all-1) = 0.36^8 = 0.003%
+- P(mixed signal) = 97.2%（vs vision 32.0% = **3.03x 更多信号**）
+- BaiZe 关键优势：36% base >> 9.2% -> 更多组内方差 -> 更少 std=0
+- 但 R1 仍有风险 -> 必须从 R2 起步
+
+### 5. Vision 失败 -> BaiZe 风险映射（8 项）
+
+| Vision 失败 | BaiZe 风险 | 严重度 | 预注册阈值 |
+|:--|:--|:--|:--|
+| std=0=78.7% -> 零梯度 | R1 binary 高风险 | CRITICAL | std=0>60% x3步 -> 切臂 |
+| 连续化未解决 std=0 | R2 partial 可能不够 | HIGH | loss<1e-4 x5步 -> Dr.GRPO |
+| 能力缺口(rise_time 100%) | 某 EDA 任务 100% 失败 | HIGH | 排除 <5%/>95% 场景 |
+| G 4->8 仅 -5.7pp | G=8 可能不够 | MEDIUM | std=0>70% -> G=12 |
+| RFT(v4)=无改善 | 回退 RFT 也可能失败 | LOW | 不自动回退 RFT |
+| avgR 高方差但 loss~0 | 奖励方差无梯度 | HIGH | avgR std>0.3 + loss<1e-4 |
+| 15 步不足 | smoke 10 步无信号 | MEDIUM | step 200 首次评估 |
+| 按目标异质性 | 某些场景可学某些不可 | HIGH | 加权采样 2x/0.5x |
+
+### 6. 预注册 RL 监控仪表盘（R36 扩展）
+
+新增 3 项（R36 未覆盖）：① avgR 轨迹方差（高方差+无趋势=vision v3 模式）② per-scenario pass rate（识别能力缺口 vs 可学）③ API diversity（防 R3/R4 惩罚导致工具回避）。
+
+### 7. 决策树（5 步）
+
+1. Baseline: 29-43%=GO（36%+-7pp 验收带）
+2. Smoke(10步R0): 管线完成 -> R2 真实训练
+3. Step 200: std=0+loss -> 高 std=0+loss~0=VISION 模式 -> 切 Dr.GRPO
+4. Step 500: held-out 改善 -> 0-3pp=NULL -> per-scenario 分析 -> 排除能力缺口
+5. Final: vs SFT -> 回退=VISION 式失败 -> 诚实报告 -> 支持「规模非瓶颈」论
+
+### 8. BaiZe vs Vision 全面对比（10 维）
+
+核心差异：BaiZe 36% base >> 9.2% + DAPO dynamic_sampling + Dr.GRPO option + anti-cheat + 远程沙盒（vision 是进程内）。BaiZe 回退策略 = R2->R3->R4->SFT 增强（不回退 RFT）。
+
+### 9. 核心建议
+
+1. **从 R2 起步**，不从 R1（binary = vision v1 失败模式）
+2. **监控 std=0**：>60% x 3 步 -> Dr.GRPO 变体；>70% -> 增大 G 到 12
+3. **Step 500 检查**：无改善 -> per-scenario 分析 -> 排除 0%/100% 场景 -> 加权采样
+4. **不回退 RFT**（vision v4 证明无效）-> 回退 SFT 数据增强
+5. **诚实报告**：RL 无效 = 支持「规模非瓶颈」论 -> SFT 单独达 M2 也有价值
+6. **预注册判定**：先定后测，不事后合理化
+
+### 10. 交付物
+
+| 产物 | 路径 | 大小 |
+|:--|:--|--:|
+| 分析脚本 | `run/baize_posttrain_vision_lessons_analyzer.py` | ~230 行 |
+| JSON | `run/baize_posttrain_r57_vision_lessons.json` | 8.6KB |
+| HTML | `reports/report_posttrain_r57_vision_lessons_rl_risk_zh.html` | 8.4KB |
+
+**数据溯源**：EXPERIMENTS_VISION.md §21.1-§22。vision 诊断数据在 .12（本节点 .17 不可达），使用已记录数值。无伪造。
