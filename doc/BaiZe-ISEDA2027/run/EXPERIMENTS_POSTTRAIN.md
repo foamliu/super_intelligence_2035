@@ -8201,3 +8201,81 @@ R75 建立了 8 类 Hack 分类法和 8 项 PreToolUse hook 规范，其中 PTU-
 - 评估 cheat-aware 奖励修正对 GRPO group advantage 的实际影响
 
 - 无伪造。替身模型结果不可迁移到 BaiZe 正式训练。
+
+---
+
+## §R77 MiniCPM5-2B 分词器 EDA 领域词汇覆盖分析（2026-11-09 wake125 · 零 GPU · 纯分析）
+
+### 1. 背景与目标
+
+领域退火（Domain Annealing）的有效性直接取决于分词器对领域词汇的覆盖程度。如果 EDA API 名称在分词时被切分为大量子词碎片，模型需要更多训练数据才能学会 API 名称与语义的关联。本节首次量化分析 MiniCPM5-2B 分词器对 PyAether 8,463 个 API 名称的覆盖情况。
+
+脚本：`baize_posttrain_tokenizer_coverage.py`（437 行，纯 Python 3.8+ stdlib，0 依赖；分词器加载用 `~/code/vllm_venv/bin/python` + transformers 5.20.2）。
+
+### 2. 核心发现
+
+| 指标 | EDA API 名称 | 英文基线 | EDA 术语 |
+|:--|--:|--:|--:|
+| 总数 | 8,463 | 131 | 92 |
+| 平均 tokens/词 | **5.46** | 1.05 | 1.81 |
+| 中位数 | 5 | 1 | 1 |
+| 最小/最大 | 1 / **14** | 1 / 3 | 1 / 6 |
+| 单 token 占比 | **0.1%**（10 个） | 95.4% | 50.0% |
+| 4+ tokens 占比 | **87.6%**（7,412 个） | 0% | 15.2% |
+
+**碎片化比率（API/英文）= 5.20x → SEVERE fragmentation**
+
+### 3. Token 分布
+
+| 桶 | API 数量 | 占比 |
+|:--|--:|--:|
+| 1 token | 10 | 0.1% |
+| 2 tokens | 48 | 0.6% |
+| 3 tokens | 310 | 3.7% |
+| 4 tokens | 655 | 7.7% |
+| 5-6 tokens | 3,930 | 46.4% |
+| 7-10 tokens | 3,468 | 41.0% |
+| 11+ tokens | 42 | 0.5% |
+
+### 4. 最差覆盖 API（14 tokens）
+
+| API 名称 | Token 数 | 子词分解 |
+|:--|--:|:--|
+| `MdePlatParamSweepAddSpecificPoints.getInclusionList` | 14 | M\|de\|Pl\|at\|Param\|S\|weep\|Add\|Specific\|Points\|.get\|In\|clusion\|List |
+| `MdePlatParamSweepCenterSpanPercentage.getExclusionList` | 14 | M\|de\|Pl\|at\|Param\|S\|weep\|Center\|Span\|Percentage\|.get\|Ex\|clusion\|List |
+
+### 5. 单 Token 覆盖的 API（仅 10 个）
+
+`isNaN`、`Copy`、`apply`、`car`、`cons`、`fix`、`index`、`load`、`member`、`reverse`
+
+均为通用编程术语，**无 EDA 特有 API 是单 token**。
+
+### 6. API 前缀分析
+
+| 前缀 | API 数量 | 平均 tokens/API |
+|:--|--:|--:|
+| `emy` | 4,240 | 5.24 |
+| `ae` | 950 | 4.90 |
+| `db` | 394 | 4.96 |
+| `ge` | 242 | 4.67 |
+| `le` | 185 | 6.22 |
+| `sle` | 144 | 6.35 |
+| `et` | 137 | 3.49 |
+
+`emy` 前缀（4,240 API，占 50%）是碎片化主源。`le`/`sle` 最差（6.22/6.35 tokens/API）。
+
+### 7. 对领域退火的影响
+
+**SEVERE fragmentation（5.20x）** → 建议：
+1. 退火语料量 ×3.0；退火步数 5000 → 15,000
+2. PyAether 语料占比 25% → 30%
+3. 退火语料应含完整 API 调用上下文（非孤立 API 名）
+4. SFT 数据重点覆盖 4+ token API（87.6%）
+
+### 8. 交付物
+
+- `baize_posttrain_tokenizer_coverage.py`（437 行，py_compile ✅）
+- `reports/report_posttrain_tokenizer_coverage_r77_zh.html`（11.2KB，0 script，0 外链）
+- `r77_tokenizer_coverage.json`（13.4KB）
+
+- 无伪造。替身模型（MiniCPM5-2B）分析结果不可迁移到 BaiZe 正式训练。

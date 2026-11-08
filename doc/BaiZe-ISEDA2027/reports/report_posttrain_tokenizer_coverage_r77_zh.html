@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>R77: MiniCPM5-2B 分词器 EDA 领域词汇覆盖分析</title>
+<style>
+body { font-family: -apple-system, "Segoe UI", Roboto, sans-serif; max-width: 1000px; margin: 0 auto; padding: 20px; background: #f8f9fa; color: #333; }
+h1 { color: #1a237e; border-bottom: 3px solid #1a237e; padding-bottom: 10px; }
+h2 { color: #283593; margin-top: 30px; border-left: 4px solid #5c6bc0; padding-left: 10px; }
+table { border-collapse: collapse; width: 100%; margin: 10px 0; background: white; }
+th, td { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+th { background: #e8eaf6; font-weight: 600; }
+tr:nth-child(even) { background: #f5f5f5; }
+.kpi { display: inline-block; background: #e3f2fd; border-radius: 8px; padding: 10px 20px; margin: 5px; min-width: 120px; }
+.kpi .num { font-size: 1.8em; font-weight: bold; color: #1565c0; }
+.kpi .label { font-size: 0.8em; color: #666; }
+.verdict { padding: 15px 20px; border-radius: 8px; margin: 15px 0; font-weight: 500; }
+.verdict.severe { background: #ffebee; border-left: 5px solid #c62828; color: #b71c1c; }
+.verdict.high { background: #fff3e0; border-left: 5px solid #e65100; color: #bf360c; }
+.verdict.moderate { background: #fffde7; border-left: 5px solid #f9a825; color: #f57f17; }
+.verdict.low { background: #e8f5e9; border-left: 5px solid #2e7d32; color: #1b5e20; }
+.bar { background: #5c6bc0; height: 20px; border-radius: 3px; min-width: 2px; }
+code { background: #f5f5f5; padding: 2px 6px; border-radius: 3px; font-size: 0.9em; }
+.note { background: #e3f2fd; padding: 10px 15px; border-radius: 5px; margin: 10px 0; font-size: 0.9em; }
+.footer { margin-top: 40px; padding-top: 15px; border-top: 1px solid #ddd; font-size: 0.8em; color: #999; }
+</style>
+</head>
+<body>
+<h1>R77: MiniCPM5-2B 分词器 EDA 领域词汇覆盖分析</h1>
+<p>2026-11-09 · wake125 · 零 GPU · 纯分析</p>
+<div class="note">⚠️ 替身模型（MiniCPM5-2B）分析结果不可迁移到 BaiZe 正式训练。</div>
+<h2>1. 摘要</h2>
+<p>分析 MiniCPM5-2B 分词器对 <b>8,463</b> 个 PyAether API 名称的覆盖。
+词汇表大小 <b>130,560</b>，API 平均 <b>5.46</b> tokens，
+英文基线 <b>1.05</b> tokens，碎片化比率 <b>5.2x</b>。</p>
+<div class="kpi"><div class="num">130,560</div><div class="label">词汇表</div></div>
+<div class="kpi"><div class="num">8,463</div><div class="label">API 总数</div></div>
+<div class="kpi"><div class="num">5.46</div><div class="label">平均 tokens/API</div></div>
+<div class="kpi"><div class="num">0.1%</div><div class="label">单 token 覆盖率</div></div>
+<div class="kpi"><div class="num">5.2x</div><div class="label">碎片化比率</div></div>
+<h2>2. 领域退火影响判定</h2>
+<div class="verdict severe">
+<b>SEVERE fragmentation — annealing needs significantly more data</b><br>建议数据量乘数：<b>3.0x</b>
+</div>
+<h2>3. 分词统计详情</h2>
+<table>
+<tr><th>统计项</th><th>EDA API</th><th>英文基线</th><th>EDA 术语</th></tr>
+<tr><td>总数</td><td>8,463</td><td>152</td><td>117</td></tr>
+<tr><td>平均 tokens/词</td><td>5.46</td><td>1.05</td><td>1.81</td></tr>
+<tr><td>中位数</td><td>5</td><td>1.0</td><td>2</td></tr>
+<tr><td>最小/最大</td><td>1/14</td><td>—</td><td>—</td></tr>
+<tr><td>单 token 占比</td><td>0.1%</td><td>95.4%</td><td>26.5%</td></tr>
+<tr><td>4+ tokens 占比</td><td>87.6%</td><td>—</td><td>—</td></tr>
+</table>
+<h2>4. Token 分布</h2>
+<table><tr><th>桶</th><th>数量</th><th>占比</th><th>可视化</th></tr>
+        <tr><td>1 tokens</td><td>10</td><td>0.1%</td><td><div class="bar" style="width:0.11816140848398912%"></div></td></tr>
+        <tr><td>2 tokens</td><td>180</td><td>2.1%</td><td><div class="bar" style="width:2.1269053527118045%"></div></td></tr>
+        <tr><td>3 tokens</td><td>861</td><td>10.2%</td><td><div class="bar" style="width:10.173697270471465%"></div></td></tr>
+        <tr><td>4 tokens</td><td>1626</td><td>19.2%</td><td><div class="bar" style="width:19.213045019496633%"></div></td></tr>
+        <tr><td>5-6 tokens</td><td>3687</td><td>43.6%</td><td><div class="bar" style="width:43.56611130804679%"></div></td></tr>
+        <tr><td>7-10 tokens</td><td>2019</td><td>23.9%</td><td><div class="bar" style="width:23.856788372917407%"></div></td></tr>
+        <tr><td>11+ tokens</td><td>80</td><td>0.9%</td><td><div class="bar" style="width:0.945291267871913%"></div></td></tr></table>
+<h2>5. 最差覆盖 API</h2>
+<table><tr><th>API 名称</th><th>Token 数</th><th>子词分解</th></tr>
+        <tr><td><code>MdePlatParamSweepAddSpecificPoints.getInclusionList</code></td><td>14</td><td><small>M | de | Pl | at | Param | S | weep | Add | Specific | Points | .get | In | clusion | List</small></td></tr>
+        <tr><td><code>MdePlatParamSweepCenterSpanPercentage.getExclusionList</code></td><td>14</td><td><small>M | de | Pl | at | Param | S | weep | Center | Span | Percentage | .get | Ex | clusion | List</small></td></tr>
+        <tr><td><code>MdePlatParamSweepCenterSpanPercentage.getInclusionList</code></td><td>14</td><td><small>M | de | Pl | at | Param | S | weep | Center | Span | Percentage | .get | In | clusion | List</small></td></tr>
+        <tr><td><code>MdePlatParamSweepCenterSpanPercentage.getSpanPercentageValue</code></td><td>14</td><td><small>M | de | Pl | at | Param | S | weep | Center | Span | Percentage | .get | Span | Percentage | Value</small></td></tr>
+        <tr><td><code>MdePlatParamSweepCenterSpan.getExclusionList</code></td><td>13</td><td><small>M | de | Pl | at | Param | S | weep | Center | Span | .get | Ex | clusion | List</small></td></tr>
+        <tr><td><code>MdePlatParamSweepCenterSpan.getInclusionList</code></td><td>13</td><td><small>M | de | Pl | at | Param | S | weep | Center | Span | .get | In | clusion | List</small></td></tr>
+        <tr><td><code>MdePlatParamSweepCenterSpanPercentage.getStepMode</code></td><td>13</td><td><small>M | de | Pl | at | Param | S | weep | Center | Span | Percentage | .get | Step | Mode</small></td></tr>
+        <tr><td><code>MdePlatParamSweepStartStop.getInclusionList</code></td><td>13</td><td><small>M | de | Pl | at | Param | S | weep | Start | Stop | .get | In | clusion | List</small></td></tr>
+        <tr><td><code>emyPointArrayGetConvexHullFurthestPoints</code></td><td>12</td><td><small>emy | Point | Array | Get | Con | vex | H | ull | Fur | the | st | Points</small></td></tr>
+        <tr><td><code>sleEMYEndStyleEnumToLeWireTypeEnum</code></td><td>12</td><td><small>s | le | EM | Y | End | Style | Enum | To | Le | Wire | Type | Enum</small></td></tr>
+        <tr><td><code>sleEMYSegStyleEnumToLeWireTypeEnum</code></td><td>12</td><td><small>s | le | EM | YS | eg | Style | Enum | To | Le | Wire | Type | Enum</small></td></tr>
+        <tr><td><code>sleLeWireTypeEnumToEMYEndStyleEnum</code></td><td>12</td><td><small>s | le | Le | Wire | Type | Enum | To | EM | Y | End | Style | Enum</small></td></tr>
+        <tr><td><code>sleLeWireTypeEnumToEMYSegStyleEnum</code></td><td>12</td><td><small>s | le | Le | Wire | Type | Enum | To | EM | YS | eg | Style | Enum</small></td></tr>
+        <tr><td><code>pyaecb.anpGetSimHspiceDInfo</code></td><td>12</td><td><small>py | aec | b | .an | p | Get | Sim | H | sp | ice | D | Info</small></td></tr>
+        <tr><td><code>pyaecb.cbGetSimHspiceDInfo</code></td><td>12</td><td><small>py | aec | b | .c | bG | et | Sim | H | sp | ice | D | Info</small></td></tr></table>
+<h2>6. API 前缀分析</h2>
+<table><tr><th>前缀</th><th>API 数量</th><th>平均 tokens/API</th></tr>
+        <tr><td><code>emy</code></td><td>4240</td><td>5.2</td></tr>
+        <tr><td><code>ae</code></td><td>950</td><td>4.9</td></tr>
+        <tr><td><code>db</code></td><td>394</td><td>5.0</td></tr>
+        <tr><td><code>ge</code></td><td>242</td><td>4.7</td></tr>
+        <tr><td><code>le</code></td><td>185</td><td>6.2</td></tr>
+        <tr><td><code>dm</code></td><td>158</td><td>4.8</td></tr>
+        <tr><td><code>sle</code></td><td>144</td><td>6.3</td></tr>
+        <tr><td><code>et</code></td><td>137</td><td>3.5</td></tr>
+        <tr><td><code>set</code></td><td>70</td><td>5.0</td></tr>
+        <tr><td><code>gu</code></td><td>63</td><td>3.5</td></tr>
+        <tr><td><code>tech</code></td><td>58</td><td>5.2</td></tr>
+        <tr><td><code>pyaecb</code></td><td>47</td><td>8.1</td></tr>
+        <tr><td><code>get</code></td><td>41</td><td>4.0</td></tr>
+        <tr><td><code>goa</code></td><td>37</td><td>4.9</td></tr>
+        <tr><td><code>cdf</code></td><td>35</td><td>4.1</td></tr>
+        <tr><td><code>se</code></td><td>27</td><td>6.6</td></tr>
+        <tr><td><code>ael</code></td><td>24</td><td>4.8</td></tr>
+        <tr><td><code>lsw</code></td><td>24</td><td>6.0</td></tr>
+        <tr><td><code>lib</code></td><td>16</td><td>3.4</td></tr>
+        <tr><td><code>mde</code></td><td>16</td><td>6.7</td></tr></table>
+<h2>7. 高频子词 Token</h2>
+<table><tr><th>子词</th><th>出现次数</th></tr>
+            <tr><td><code>emy</code></td><td>4270</td></tr>
+            <tr><td><code>.get</code></td><td>1242</td></tr>
+            <tr><td><code>ae</code></td><td>950</td></tr>
+            <tr><td><code>le</code></td><td>667</td></tr>
+            <tr><td><code>S</code></td><td>656</td></tr>
+            <tr><td><code>Get</code></td><td>579</td></tr>
+            <tr><td><code>.set</code></td><td>572</td></tr>
+            <tr><td><code>M</code></td><td>491</td></tr>
+            <tr><td><code>de</code></td><td>481</td></tr>
+            <tr><td><code>Def</code></td><td>472</td></tr>
+            <tr><td><code>Inst</code></td><td>458</td></tr>
+            <tr><td><code>Name</code></td><td>443</td></tr>
+            <tr><td><code>E</code></td><td>422</td></tr>
+            <tr><td><code>Layer</code></td><td>421</td></tr>
+            <tr><td><code>my</code></td><td>391</td></tr>
+            <tr><td><code>G</code></td><td>385</td></tr>
+            <tr><td><code>ui</code></td><td>367</td></tr>
+            <tr><td><code>Via</code></td><td>351</td></tr>
+            <tr><td><code>.is</code></td><td>343</td></tr>
+            <tr><td><code>Array</code></td><td>341</td></tr></table>
+<h2>8. 单 Token 覆盖 API</h2>
+<ul><li><code>isNaN</code></li><li><code>Copy</code></li><li><code>apply</code></li><li><code>car</code></li><li><code>cons</code></li><li><code>fix</code></li><li><code>index</code></li><li><code>load</code></li><li><code>member</code></li><li><code>reverse</code></li></ul>
+<h2>9. 领域退火建议</h2>
+<ol>
+<li><b>数据量调整</b>：碎片化 5.2x → 语料量 ×3.0</li>
+<li><b>退火步数</b>：基线 5000 步 → 调整为 15000 步</li>
+<li><b>PyAether 语料占比</b>：从 25% 提高到 30%（补偿碎片化）</li>
+<li><b>4+ token API</b>：7412 个（87.6%）学习成本最高，SFT 数据重点覆盖</li>
+<li><b>camelCase 模式</b>：退火语料应含完整 API 调用上下文，非孤立 API 名</li>
+</ol>
+<div class="footer"><p>R77 (2026-11-09) · Tokenizer Coverage · ⚠️ 替身模型结果不可迁移到 BaiZe</p></div>
+</body></html>
