@@ -28102,3 +28102,194 @@ env: ‘cline’: No such file or directory
 
 === 267 done ===
 ```
+
+---
+
+## RUN_ID 268 · 2026-11-08 14:39:13 · host=`whag0pgpuap12` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 268 | fix data loop PATH | $(date '+%F %T') | host=$(hostname) ==="
+R=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
+CLINE_BIN=/home/app.e0031982/.npm-global/bin
+
+echo
+echo "########## A) 当前状态复核 ##########"
+echo "-- data loop 进程 --"
+ps -eo pid=,ppid=,lstart=,etime=,args= | grep -F 'baize_data_loop.sh' | grep -v grep | cut -c1-170
+echo "-- 日志最后 6 行（应能看到 env: cline not found 循环） --"
+tail -6 /tmp/baize_data_loop.log 2>/dev/null | cut -c1-170
+echo "-- cline 实际位置 --"
+ls -l "$CLINE_BIN/cline" 2>/dev/null || echo "NOT at $CLINE_BIN"
+command -v cline 2>/dev/null || echo "not in current PATH"
+echo "-- 旧 loop 当时的 PATH（从 /proc 已不可得，仅确认二进制存在） --"
+ls -l /home/app.e0031982/.npm-global/lib/node_modules/cline/bin/ 2>/dev/null | head -5
+
+echo
+echo "########## B) checkpoint 真实配置位置（用户要求①，彻底查） ##########"
+echo "-- .cline_data 下所有 json 里含 checkpoint 的 --"
+grep -rloiE 'checkpoint' /nas_train/app.e0031982/.cline_data/data 2>/dev/null | head -10
+echo "-- 抽 value --"
+for f in $(grep -rloiE 'checkpoint' /nas_train/app.e0031982/.cline_data/data 2>/dev/null | head -5); do
+  echo "FILE: $f"
+  grep -oE '"[A-Za-z]*[Cc]heckpoint[A-Za-z]*"[[:space:]]*:[[:space:]]*[^,}]*' "$f" 2>/dev/null | head -6
+done
+echo "-- cline 版本与 help 全文（找 checkpoint 开关） --"
+"$CLINE_BIN/cline" --version 2>&1 | head -3
+"$CLINE_BIN/cline" --help 2>&1 | grep -iE 'check|resume|disable' | head -10 || echo "  (无 checkpoint 相关 CLI 开关)"
+echo "-- 结论提示：若上面全空 = 本版本无显式 checkpoint 开关，仅内部模块名 --"
+
+echo
+echo "########## C) 修 loop 脚本：加 cline 存在性检查 ##########"
+LOOP="$R/baize_data_loop.sh"
+cp -n "$LOOP" "/tmp/baize_data_loop.sh.bak.$(date +%s)" 2>/dev/null || true
+if ! grep -q 'CLINE_BIN_CHECK_V268' "$LOOP"; then
+  # 在 PATH 定义后插入 PATH 兜底 + cline 检查
+  awk '
+    /^while true; do/ && !done {
+      print "# CLINE_BIN_CHECK_V268: 保证 cline 在 PATH（setsid 重启时环境可能不全）"
+      print "export PATH=\"/home/app.e0031982/.npm-global/bin:$PATH\""
+      print "if ! command -v cline >/dev/null 2>&1; then echo \"[loop] FATAL: cline not found in PATH=$PATH\"; exit 127; fi"
+      done=1
+    }
+    { print }
+  ' "$LOOP" > /tmp/baize_data_loop.new.$$ && mv /tmp/baize_data_loop.new.$$ "$LOOP"
+  chmod +x "$LOOP"
+  echo "patched ✓"
+else
+  echo "already patched"
+fi
+echo "-- 验证补丁 --"; grep -n 'CLINE_BIN_CHECK_V268' -A2 "$LOOP" | head -6
+echo "-- 语法检查 --"; bash -n "$LOOP" && echo "syntax OK" || echo "SYNTAX ERROR"
+
+echo
+echo "########## D) 重启 loop（带正确 PATH） ##########"
+for p in $(ps -eo pid=,args= | grep -F 'baize_data_loop.sh' | grep -v grep | awk '{print $1}'); do
+  echo "kill old loop $p"; kill -TERM $p 2>/dev/null; sleep 2; kill -KILL $p 2>/dev/null
+done
+sleep 2
+echo "-- 确认已清理 --"; ps -eo pid=,args= | grep -F 'baize_data_loop.sh' | grep -v grep | cut -c1-120 || echo "none"
+echo "-- 启动新 loop --"
+cd "$R" || exit 1
+PATH="/home/app.e0031982/.npm-global/bin:$PATH" setsid nohup bash "$LOOP" >> /tmp/baize_data_loop.log 2>&1 < /dev/null &
+NEWPID=$!
+echo "started=$NEWPID"; sleep 8
+echo "-- verify --"
+ps -eo pid=,ppid=,lstart=,etime=,args= | grep -F 'baize_data_loop.sh' | grep -v grep | cut -c1-180
+
+echo
+echo "########## E) AFTER: 是否真的调起 cline ##########"
+echo "-- log tail 12（关键：应有 llmrot 选中 + cline 真正启动，无 'cline: No such file'） --"
+tail -12 /tmp/baize_data_loop.log 2>/dev/null | cut -c1-175
+echo "-- cline 进程（应出现 data 线的 cline 子进程） --"
+ps -eo pid=,ppid=,etime=,pcpu=,args= | grep -i '[c]line --data-dir /nas_train/app.e0031982/.cline_data' | cut -c1-175
+echo "-- all cline --"
+ps -eo pid=,ppid=,etime=,pcpu=,args= | grep -i '[c]line' | cut -c1-150 | head -6
+
+echo
+echo "########## F) Pretrain 速度对照（验证 CPU 争抢假设） ##########"
+echo "-- load --"; uptime; nproc
+echo "-- pretrain 进程 CPU --"
+ps -eo pid=,pcpu=,etime=,args= | grep -F 'pretrain_launcher.py' | grep -v grep | awk '{s+=$2; print $1, $2"%", $3}' | head -10
+echo "-- pretrain 合计 CPU% --"
+ps -eo pcpu=,args= | grep -F 'pretrain_launcher.py' | grep -v grep | awk '{s+=$1} END{print s"% (≈ " s/100 " cores)"}'
+
+echo
+echo "=== 268 done ==="
+```
+
+**输出**
+```
+=== RUN_ID 268 | fix data loop PATH | 2026-11-08 14:39:13 | host=whag0pgpuap12 ===
+
+########## A) 当前状态复核 ##########
+-- data loop 进程 --
+ 928949       1 Sun Nov  8 14:25:42 2026       13:30 bash /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_data_loop.sh
+-- 日志最后 6 行（应能看到 env: cline not found 循环） --
+[loop] 2026-11-08 14:25:38 WAITING=1 (async task running) → sleep 900s
+[loop] 2026-11-08 14:25:43 wake up, invoking cline ...
+[llmrot] 2026-11-08 14:25:44 优先选中 glm-5.2 #4 @ http://agi-gateway.cxmt.com/cloud/v1 (probe=200)
+env: ‘cline’: No such file or directory
+[loop] 2026-11-08 14:25:44 cline returned (exit 0), checking git sync ...
+[loop] 2026-11-08 14:25:44 WAITING=1 (async task running) → sleep 900s
+-- cline 实际位置 --
+lrwxrwxrwx 1 app.e0031982 app.adm 35 Sep  8 08:56 /home/app.e0031982/.npm-global/bin/cline -> ../lib/node_modules/cline/bin/cline
+not in current PATH
+-- 旧 loop 当时的 PATH（从 /proc 已不可得，仅确认二进制存在） --
+total 20
+-rwxr-x--- 1 app.e0031982 app.adm 8751 Sep  8 08:55 ca-certs.cjs
+-rwxr-x--- 1 app.e0031982 app.adm 4446 Sep  8 08:55 cline
+
+########## B) checkpoint 真实配置位置（用户要求①，彻底查） ##########
+-- .cline_data 下所有 json 里含 checkpoint 的 --
+-- 抽 value --
+-- cline 版本与 help 全文（找 checkpoint 开关） --
+3.0.51
+  --id <session-id>             Resume an existing session by ID
+  --update                      Check for updates and install if available
+  update [options]              Check for updates and install if available
+-- 结论提示：若上面全空 = 本版本无显式 checkpoint 开关，仅内部模块名 --
+
+########## C) 修 loop 脚本：加 cline 存在性检查 ##########
+patched ✓
+-- 验证补丁 --
+117:# CLINE_BIN_CHECK_V268: 保证 cline 在 PATH（setsid 重启时环境可能不全）
+118-export PATH="/home/app.e0031982/.npm-global/bin:$PATH"
+119-if ! command -v cline >/dev/null 2>&1; then echo "[loop] FATAL: cline not found in PATH=$PATH"; exit 127; fi
+-- 语法检查 --
+syntax OK
+
+########## D) 重启 loop（带正确 PATH） ##########
+kill old loop 928949
+-- 确认已清理 --
+-- 启动新 loop --
+started=1943222
+-- verify --
+1943222 1919365 Sun Nov  8 14:39:38 2026       00:08 bash /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_data_loop.sh
+1943382 1943222 Sun Nov  8 14:39:40 2026       00:06 node /home/app.e0031982/.npm-global/bin/cline --data-dir /nas_train/app.e0031982/.cline_data -c /nas_train/app.e0031982/code/su
+1943448 1943382 Sun Nov  8 14:39:40 2026       00:06 /home/app.e0031982/.npm-global/lib/node_modules/cline/bin/.cline --data-dir /nas_train/app.e0031982/.cline_data -c /nas_train/a
+
+########## E) AFTER: 是否真的调起 cline ##########
+-- log tail 12（关键：应有 llmrot 选中 + cline 真正启动，无 'cline: No such file'） --
+[push] ahead=0 behind=0
+[push] nothing of ours to commit.
+Everything up-to-date
+[push] push OK.
+[loop] 2026-11-08 14:25:38 WAITING=1 (async task running) → sleep 900s
+[loop] 2026-11-08 14:25:43 wake up, invoking cline ...
+[llmrot] 2026-11-08 14:25:44 优先选中 glm-5.2 #4 @ http://agi-gateway.cxmt.com/cloud/v1 (probe=200)
+env: ‘cline’: No such file or directory
+[loop] 2026-11-08 14:25:44 cline returned (exit 0), checking git sync ...
+[loop] 2026-11-08 14:25:44 WAITING=1 (async task running) → sleep 900s
+[loop] 2026-11-08 14:39:39 wake up, invoking cline ...
+[llmrot] 2026-11-08 14:39:40 优先选中 glm-5.2 #4 @ http://agi-gateway.cxmt.com/cloud/v1 (probe=200)
+-- cline 进程（应出现 data 线的 cline 子进程） --
+1943382 1943222       00:06  1.6 node /home/app.e0031982/.npm-global/bin/cline --data-dir /nas_train/app.e0031982/.cline_data -c /nas_train/app.e0031982/code/super_intelligenc
+1943448 1943382       00:06  163 /home/app.e0031982/.npm-global/lib/node_modules/cline/bin/.cline --data-dir /nas_train/app.e0031982/.cline_data -c /nas_train/app.e0031982/cod
+-- all cline --
+1943382 1943222       00:06  1.6 node /home/app.e0031982/.npm-global/bin/cline --data-dir /nas_train/app.e0031982/.cline_data -c /nas_train/app.e00319
+1943448 1943382       00:06  164 /home/app.e0031982/.npm-global/lib/node_modules/cline/bin/.cline --data-dir /nas_train/app.e0031982/.cline_data -c /n
+1954959 1943448       00:03  117 git -C /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run add --force --pathspec-from-file 
+3041408       1 64-21:21:21  2.0 /home/app.e0031982/.npm-global/lib/node_modules/cline/bin/.cline --cline-hub-daemon --cwd /nas_train/app.e0031982 --h
+
+########## F) Pretrain 速度对照（验证 CPU 争抢假设） ##########
+-- load --
+ 14:39:47 up 281 days, 23:22,  3 users,  load average: 25.25, 25.17, 25.10
+224
+-- pretrain 进程 CPU --
+2612442 0.1% 5-18:48:28
+2626131 147% 5-18:48:16
+2626132 147% 5-18:48:16
+2626133 146% 5-18:48:16
+2626134 147% 5-18:48:16
+2626135 145% 5-18:48:16
+2626136 145% 5-18:48:16
+2626137 145% 5-18:48:16
+2626138 146% 5-18:48:16
+2727575 10.0% 5-18:46:48
+-- pretrain 合计 CPU% --
+1827.8% (≈ 18.278 cores)
+
+=== 268 done ===
+```
