@@ -1,10 +1,11 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 0
 
-> 2026-11-08 18:30 #1705: **v5异常报告v2修订·3/7集v5已完成(boolq0.587/sciq0.842/openbookqa0.266)·二因结论推翻v1**·**动作**:① v5 eval(修复版二进制,全量,iter_112000)进度:boolq DONE(0.5872,n=3270)·sciq DONE(0.842,n=1000)·openbookqa DONE(0.266,n=500)·winogrande 91%(2295/2534,ETA~3min)·arc_challenge 56%(2643/4687,ETA~65min)·arc_easy 39%(3704/9501,ETA~174min)·piqa待独占重启·hellaswag待跑 ② **二因分解**:sciq二进制效应+52.6pp(主因)/全量vs限100仅3.8pp；boolq二进制效应-1.3pp(微)/全量vs限100+8.3pp(主因)；openbookqa二进制+8.2pp/全量vs限100-5.6pp(反向) ③ **v1报告「100%来自二进制」被v5 boolq数据推翻**→修订v2:二因叠加,因任务而异 ④ 报告v2已交付(22.7KB,12节,0脚本0外链),含三口径逐集对照表+二因分解表+⑥决定性实验补v5证据 ⑤ v4样本数:arc_challenge1172/arc_easy2376/boolq3270/openbookqa500/piqa919/sciq1000/winogrande1267 ⑥ 历史100k配置:全limit=100(effective=100),num_fewshot=0(zero-shot) ⑦ ⑦ S1健康(iter~128000/700k) **计划**:下次唤醒①查winogrande/arc_challenge是否完成→补入报告②arc_easy最慢(ETA~3h)③全部完成后算v5 Avg7④启动piqa_alone+hellaswag独占·📦TASK=31.2KB✓/MEMORY=~30.5KB✓(归档0)·未完成指令:有(v5 eval运行中,待出结果)⇒WAITING:0。
+> 2026-11-08 18:45 #1706: **v5 eval 4/8集完成·winogrande=0.549·杀3空闲server重启piqa+4hellaswag分片·报告v3更新**·**动作**:① winogrande DONE(0.5485,n=1267,二进制+5.2pp/全量vs限100+5.2pp,两因均等) ② 杀3空闲server(boolq/openbookqa/sciq已完成)+winogrande server→释放5组16核 ③ 创建restart_piqa_hellaswag.sh→piqa(port8183,cores32-47)+4 hellaswag shards(port8184-8187,cores48-111)全部READY+client运行中 ④ arc_challenge 62%(2914/4687,ETA~40min)·arc_easy 43%(4045/9501,ETA~2h) ⑤ v5 Avg4=(0.587+0.842+0.266+0.549)/4=56.1%,远高于v4的37.4%,接近历史54.75% ⑥ 报告v3已更新:winogrande加入二因分解表+Avg4=56.1% ⑦ S1健康(iter~128000/700k) **计划**:下次唤醒①查arc_challenge/piqa是否完成→补入报告②arc_easy最慢(ETA~2h)③hellaswag 4 shard并行ETA~3-4h④全部完成后算v5 Avg8·📦TASK=31.2KB✓/MEMORY=~30.9KB✓(归档0)·未完成指令:有(v5 eval运行中)⇒WAITING:0。
 
-> 🔑 **v5三集结果(18:30)**: boolq=0.5872/sciq=0.842/openbookqa=0.266 → **二因确认**:sciq二进制主因(+52.6pp),boolq全量vs限100主因(+8.3pp),v1「100%二进制」结论被推翻→报告v2已修订为「二因叠加,因任务而异」。
+> 🔑 **v5四集结果(18:45)**: boolq=0.587/sciq=0.842/openbookqa=0.266/winogrande=0.549 → **v5 Avg4=56.1%**,远高于v4 Avg7=37.4%,接近历史limit=100 Avg8=54.75%。winogrande二因均等(各+5.2pp)。报告v3已更新。
 
+> 📦 §#1705（11-08 18:30, v5异常报告v2修订·3集完成·二因结论）→ daily-memories/2026-11-08.md「#1705」节；**结论**：v5 boolq/sciq/openbookqa完成,二因叠加确认,报告v2已交付。需要时再读。
 > 📦 §#1704（11-08 18:14, v5 eval优化轮·杀piqa瓶颈·boolq首批结果0.5872确认二因）→ daily-memories/2026-11-08.md「#1704」节；**结论**：v5 boolq=0.5872证明binary对boolq几乎无影响,full-vs-limit100是主因,异常报告需修订为二因。需要时再读。
 
 > 📦 §#1703（11-08 18:12, v5 eval优化轮·杀4 hellaswag shard释放带宽·7非HS任务加速·运维令6项已交付）→ daily-memories/2026-11-08.md「#1703」节；**结论**：v5 eval杀掉hellaswag 4 shard释放带宽,7非HS任务推进中,运维令6项异常报告已交付。需要时再读。

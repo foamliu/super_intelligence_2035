@@ -54,7 +54,7 @@ v5 全量 sciq=0.842 vs 历史 limit=100 sciq=0.88（Δ=3.8pp）——均显示�
 <tr><th>来源</th><th>配置</th><th>结果</th></tr>
 <tr><td>历史报告（2026-11-05/06）</td><td>llama.cpp / GGUF F16 / 8 集 / limit=100 / <strong>修复后二进制</strong> / iter_100000</td><td class="green">Avg=54.75%，sciq=0.88</td></tr>
 <tr><td>本轮 v4 全量评测</td><td>llama.cpp / GGUF F16 / 7/8 集 / 全量 / <strong>未修复二进制</strong> / iter_112000</td><td class="red">Avg7=37.40%，sciq=0.316</td></tr>
-<tr><td><span class="updated">本轮 v5 全量评测（修复版）</span></td><td><span class="updated">llama.cpp / GGUF F16 / 全量 / <strong>修复后二进制</strong> / iter_112000</span></td><td class="blue"><span class="updated">3/7 集已完成：boolq=0.587, sciq=0.842, openbookqa=0.266</span></td></tr>
+<tr><td><span class="updated">本轮 v5 全量评测（修复版）</span></td><td><span class="updated">llama.cpp / GGUF F16 / 全量 / <strong>修复后二进制</strong> / iter_112000</span></td><td class="blue"><span class="updated">4/8 集已完成：boolq=0.587, sciq=0.842, openbookqa=0.266, winogrande=0.549</span></td></tr>
 </table>
 <p>差异 14–20 pp，远超 limit=100 时 ±4.5% 的 stderr。「7 集 vs 8 集」无法解释全部差异。
 <span class="updated">v5 数据证明差异来自<strong>二因叠加</strong>（旧二进制 + 全量vs限100），非单一原因。</span></p>
@@ -82,20 +82,21 @@ v5 全量 sciq=0.842 vs 历史 limit=100 sciq=0.88（Δ=3.8pp）——均显示�
 <tr><td>openbookqa</td><td class="red">0.1840</td><td class="green">0.2660</td><td>0.2100</td><td class="green">+8.2pp</td><td class="orange">−5.6pp*</td><td>500</td></tr>
 <tr><td>piqa</td><td class="red">0.5332</td><td class="blue">待跑</td><td>0.7400</td><td>—</td><td>—</td><td>919</td></tr>
 <tr><td>sciq</td><td class="red">0.3160</td><td class="green">0.8420</td><td>0.8800</td><td class="green">+52.6pp (巨)</td><td class="orange">+3.8pp</td><td>1000</td></tr>
-<tr><td>winogrande</td><td class="orange">0.4964</td><td class="blue">运行中</td><td>0.6000</td><td>—</td><td>—</td><td>1267</td></tr>
-<tr><td>hellaswag</td><td colspan="2" class="blue">未跑（被杀释放带宽）</td><td>0.4100</td><td colspan="3">hellaswag 未在本轮评测中（4 shard 被杀释放带宽给小任务）</td></tr>
-<tr><td><strong>Avg7</strong></td><td class="red">37.40%</td><td class="blue">待算</td><td class="green">52.86%</td><td colspan="3">v5 已完成 3/7 集，剩余 4 集运行中</td></tr>
+<tr><td>winogrande</td><td class="orange">0.4964</td><td class="green">0.5485</td><td>0.6000</td><td class="green">+5.2pp</td><td class="orange">+5.2pp</td><td>1267</td></tr>
+<tr><td>hellaswag</td><td colspan="2" class="blue">v5 重启中（4 shard 并行）</td><td>0.4100</td><td colspan="3">hellaswag v5 已重启（4 shard × 16 核，port 8184-8187）</td></tr>
+<tr><td><strong>Avg7</strong></td><td class="red">37.40%</td><td class="blue">待算（4/7 已完成）</td><td class="green">52.86%</td><td colspan="3">v5 已完成 4/8 集，Avg4=56.1%（acc），剩余 arc_challenge/arc_easy/piqa/hellaswag 运行中</td></tr>
 </table>
 <p>* openbookqa 全量 n=500 = 数据集全部题量（无更大集合），limit=100 取前 100 题。
 v5 全量 0.266 反而<strong>高于</strong>历史 limit=100 的 0.21，说明 limit=100 对 openbookqa 不是高估而是低估——
 这进一步证明 limit=100 的偏差方向因任务而异，<strong>不能作为统一基线</strong>。</p>
 
-<h3>二因分解（基于已完成的 3 个 v5 任务）</h3>
+<h3>二因分解（基于已完成的 4 个 v5 任务）</h3>
 <table>
 <tr><th>任务</th><th>v4→v5（二进制效应）</th><th>v5→历史（全量vs限100）</th><th>v4→历史（总差异）</th><th>主因</th></tr>
 <tr><td>sciq</td><td class="green">+52.6pp</td><td class="orange">+3.8pp</td><td>−56.4pp</td><td class="red">二进制</td></tr>
 <tr><td>boolq</td><td class="green">−1.3pp</td><td class="orange">+8.3pp</td><td>−7.0pp</td><td class="orange">全量vs限100</td></tr>
 <tr><td>openbookqa</td><td class="green">+8.2pp</td><td class="orange">−5.6pp</td><td>−2.6pp</td><td>二进制（部分）</td></tr>
+<tr><td>winogrande</td><td class="green">+5.2pp</td><td class="orange">+5.2pp</td><td>−10.4pp</td><td class="orange">两因均等</td></tr>
 </table>
 <div class="box box-yellow">
 <p><strong>关键发现：</strong>二因的影响因任务而异，<strong>不是统一的</strong>：</p>
@@ -103,8 +104,10 @@ v5 全量 0.266 反而<strong>高于</strong>历史 limit=100 的 0.21，说明 
 <li><strong>sciq</strong>：二进制是绝对主因（+52.6pp），全量vs限100 仅 3.8pp → v1 报告「100% 来自二进制」对 sciq 成立</li>
 <li><strong>boolq</strong>：二进制几乎无影响（−1.3pp < 1.5σ），全量vs限100 才是主因（+8.3pp）→ v1 报告对 boolq <strong>不成立</strong></li>
 <li><strong>openbookqa</strong>：二进制有影响（+8.2pp），但全量反而比限100 高（−5.6pp）→ 两因部分抵消</li>
+<li><strong>winogrande</strong>：二进制效应 +5.2pp 与全量vs限100 效应 +5.2pp <strong>完全均等</strong>，两因各贡献约 50%</li>
 </ul>
 <p>因此 v1 报告「差异 100% 来自二进制」的结论<strong>被 v5 数据推翻</strong>，修订为「二因叠加，因任务而异」。</p>
+<p><strong>v5 Avg4（已完成 4 集）= (0.587+0.842+0.266+0.549)/4 = 56.1%</strong>，远高于 v4 Avg7=37.40%，接近历史 limit=100 Avg8=54.75%。全量 vs limit=100 的系统性差异使 v5 全量分数略低于历史，但量级一致。</p>
 </div>
 
 <h2>三、② 每集样本数</h2>
@@ -136,10 +139,8 @@ v5 vs v4 隔离了二进制效应，v5 vs 历史隔离了全量vs限100 效应�
 <p>两轮评测均使用 num_fewshot=0（zero-shot），prompt 模板由 lm_eval 标准 task 配置提供，未做自定义修改。口径一致，非差异来源。</p>
 
 <h2>六、⑤ hellaswag 进度</h2>
-<p><span class="updated">v5 评测中 hellaswag 的 4 个分片（chunk0-3）已被主动杀掉</span>，释放内存带宽给 6 个小任务加速。
+<p><span class="updated">v5 评测中 hellaswag 的 4 个分片（chunk0-3）已重启</span>，与 piqa 一起在释放的 5 组核心上并行运行（port 8183=piqa, 8184-8187=4 hellaswag shards）。
 hellaswag 全量 = 10042 题 × 4 选项 = 40168 次请求，是最大的任务（约占总请求量的 55%）。
-在 node0 上与其它任务共享内存带宽时，hellaswag 单独跑需要 ~10+ 小时。
-计划：6 个小任务完成后，用 <code>run_piqa_alone.sh</code> 独占带宽跑 piqa，再单独跑 hellaswag。
 <strong>hellaswag 的 v5 分数待后续补入本报告。</strong></p>
 <p>历史 100k hellaswag（limit=100）：acc=0.41, acc_norm=0.50。全量 hellaswag 预计 acc 在 0.35–0.45 区间（全量通常低于 limit=100）。</p>
 
@@ -261,12 +262,14 @@ hellaswag 全量 = 10042 题 × 4 选项 = 40168 次请求，是最大的任务�
 <li>sciq：二进制 −52.6pp（主因）+ 全量vs限100 +3.8pp = 总 −56.4pp</li>
 <li>boolq：二进制 −1.3pp（微）+ 全量vs限100 +8.3pp（主因）= 总 −7.0pp</li>
 <li>openbookqa：二进制 −8.2pp + 全量vs限100 −5.6pp（反向）= 总 −2.6pp</li>
+<li>winogrande：二进制 −5.2pp + 全量vs限100 +5.2pp（均等）= 总 −10.4pp</li>
 </ul>
 <p><strong>下一步：</strong></p>
 <ul>
 <li>🚫 <strong>不需要暂停训练或回滚检查点</strong>——模型训练正常（loss 平滑无跳变）</li>
-<li>✅ v5 修复版二进制全量评测<strong>正在运行</strong>（3/7 集已完成：boolq/sciq/openbookqa；arc_challenge/arc_easy/winogrande 运行中；piqa 待独占重启）</li>
-<li>✅ 待 v5 全部完成后，计算 v5 Avg7（预计 ~45–50%，高于 v4 的 37.4%，低于历史 limit=100 的 52.9%）</li>
+<li>✅ v5 修复版二进制全量评测<strong>正在运行</strong>（4/8 集已完成：boolq/sciq/openbookqa/winogrande；arc_challenge/arc_easy/piqa/hellaswag 运行中）</li>
+<li>✅ v5 Avg4（已完成 4 集）= <strong>56.1%</strong>，远高于 v4 Avg7=37.40%，接近历史 limit=100 Avg8=54.75%——全量分数略低于 limit=100 是预期行为</li>
+<li>✅ 待 v5 全部完成后，计算 v5 Avg8（预计 ~48–53%，高于 v4 的 37.4%，低于历史 limit=100 的 54.75%）</li>
 <li>✅ 历史报告的 limit=100 分数<strong>不能直接作为全量基线</strong>——建议后续统一用全量评测</li>
 <li>✅ 在评测脚本中固化二进制路径为 <code>code/llama.cpp/build/bin/llama-server</code>（已修复）</li>
 </ul>
