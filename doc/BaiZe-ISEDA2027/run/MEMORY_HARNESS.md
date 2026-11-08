@@ -4,11 +4,11 @@ WAITING: 0
 
 ## 📊 进度快照
 
-PHASE:        R1930 监控+报告轮·gateway 200·predict 2429/3500(69.4%)·real 875·TB-2.1 103p·双报告更新R1930·CPU/MEM PASS
-已完成:       H-B✅·Gate7/7·TB报告✅·full500✅·cline专项C1-C5+报告R1785-R1930·TB4 0passed(能力)·TB-2.1 oracle5/5✅·§15:2x判据MET✅·R1789 eval 7/7DONE✅·R1804双报告交付✅·R1814-R1929 predict推进+TB-2.1并行+gateway恢复+codex eval·R1930 监控+双报告更新
-当前动作:     R1930:①CPU/MEM PASS(load77/224=35%·mem804G/avail1073G·无失控>8000%) ②体积:TASK=30306B(29.6KB)/MEMORY~29KB·均≤32KB✅ ③gateway:9092=200/9093=200 ④predict 6路alive 2429/3500(69.4%):cline285(115r)·codex500DONE(44r)·opencode332(243r)·cc484(72r)·pi211(68r)·hermes410(249r)·dsh207(84r)·real=875·empty=1554 ⑤codex eval rebalance_chunk2运行中(已eval 8题·6resolved/2failed=75%) ⑥TB-2.1 aggregated(全run去重):cline15p/88·codex7p/12·opencode21p/37·cc14p/58·pi26p/70·hermes5p/54·dsh15p/22·总103p ⑦双报告更新R1930:main 8356B+tb21 7578B(gen_report_r1930.py) ⑧TB-2.1 rerun:6docker compose alive(torch-tensor-parallel/sanitize-git/install-windows/filter-js/caffe-cifar/pipeline-parallel) ⑨cline C4:cline285(115r/170e=40.4%)·TB-2.1 15p/88(17.0%)·real复产中(gateway200) ⑩未完成指令:有(§22:4x+§10:10)⇒W:0
-下一步:       ①codex eval rebalance完成后更新eval结果到报告 ②predict 6路推进至500(codex DONE·cc 484近完成) ③TB-2.1 cline 88/89·opencode 37/89·hermes 54/89 rerun推进→待全DONE ④TB-2.1全DONE后聚合最终7路报告+可辨识性闸门(research建议)
-阻塞:         无(gateway 200·6路predict alive·codex eval rebalance运行中·TB-2.1 rerun alive)
+PHASE:        R1931 监控+报告轮·gateway 200·predict 2434/3500(69.5%)·real 879·TB-2.1 104p·双报告更新R1931·CPU/MEM PASS
+已完成:       H-B✅·Gate7/7·TB报告✅·full500✅·cline专项C1-C5+报告R1785-R1931·TB4 0passed(能力)·TB-2.1 oracle5/5✅·§15:2x判据MET✅·R1789 eval 7/7DONE✅·R1804双报告交付✅·R1814-R1930 predict推进+TB-2.1并行+gateway恢复+codex eval·R1931 监控+双报告更新
+当前动作:     R1931:①CPU/MEM PASS(load76/224=34%·mem799G/avail1100G·无失控>8000%) ②体积:TASK=30306B(29.6KB)/MEMORY~29KB·均≤32KB✅ ③gateway:9092=200/9093=200 ④predict 7路alive 2434/3500(69.5%):cline285(115r)·codex500DONE(44r)·opencode333(244r)·cc485(73r)·pi212(68r)·hermes411(250r)·dsh208(85r)·real=879·empty=1555 ⑤eval rebalance chunk2+chunk3运行中(eval结果同R1930:cline35/46·codex6/8·opencode80/102·cc27/36·pi26/34·hermes124/131·dsh33/40) ⑥TB-2.1 aggregated(reward.txt去重):cline15p/88·codex7p/12·opencode22p/38·cc14p/58·pi26p/70·hermes5p/54·dsh15p/22·总104p ⑦双报告更新R1931:main 8474B+tb21 7598B(gen_report_r1931.py) ⑧TB-2.1 rerun:7docker compose alive+tb21_rerun_errored.sh+launch_tb21 alive ⑨cline C4:cline285(115r/170e=40.4%)·TB-2.1 15p/88(17.0%)·real复产中(gateway200) ⑩未完成指令:有(§22:4x+§10:10)⇒W:0
+下一步:       ①eval rebalance完成后更新eval结果到报告 ②predict 4路推进至500(cline285·opencode333·pi212·dsh208) ③TB-2.1 rerun推进→待全DONE ④TB-2.1全DONE后聚合最终7路报告+可辨识性闸门(research建议)
+阻塞:         无(gateway 200·7路predict alive·eval rebalance运行中·TB-2.1 rerun alive)
 ERROR_COUNT:  0
   📦 体积：TASK=30306B(29.6KB) / MEMORY=~29KB·均≤32KB✅
   🔍 cline专项小结: predict cline285(115r/170e=40.4%)·TB-2.1 cline15p/88done(17.0%)·C2 empty top1=quota(429·已恢复gateway200)·C3 resume fix✅·real复产中(115+)
@@ -18,6 +18,8 @@ ERROR_COUNT:  0
 
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 ### 本唤醒流水
+
+[03:49] R1931 监控+双报告更新:CPU/MEM PASS(load76/224=34%)·gateway 200/200·predict 2434/3500(69.5%) real=879·3路DONE(codex/cc/hermes近500)·4路运行中·eval rebalance chunk2+chunk3 alive·TB-2.1 104p(rerun 7docker alive)·双报告更新R1931(gen_report_r1931.py·main 8474B+tb21 7598B)
 
 > 📦 R1912-R1916 流水(18:42~19:26,5轮监控·gateway 429·predict 1884→1938/3500·real 783→776冻结·TB-2.1 4路RUN+3路done·CPU/MEM PASS)已归档 → daily-memories-harness/2026-11-08.md。
 
