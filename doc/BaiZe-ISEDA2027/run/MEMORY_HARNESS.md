@@ -4,21 +4,23 @@ WAITING: 0
 
 ## 📊 进度快照
 
-PHASE:        R1941 监控+kill失控+三报告更新轮·gateway 200·predict 2526/3500(72.2%)·real 940·eval R1933后台RUN(claude-code 54new eval中)·TB-2.1 111unique passed·3harbor alive(cc/pi/opencode)
-已完成:       H-B✅·Gate7/7·TB报告✅·full500✅·cline专项C1-C5+报告R1785-R1941·TB4 0passed(能力)·TB-2.1 oracle5/5✅·§15:2x判据MET✅·R1789 eval 7/7DONE✅·R1804双报告交付✅·R1814-R1940 predict推进+TB-2.1并行+gateway恢复+eval重启·R1941 kill失控pytest+三报告更新+predict 2526/3500
-当前动作:     R1941:①CPU/MEM:PASS(kill前load264/224·kill后load100/224=45%·无本线>8000%) **kill失控pytest(PID672983 10028%=100核·docker kill 06a2168612)** ②体积:TASK=30306B(29.6KB)/MEMORY归档R1926-R1939后≤32KB✅ ③gateway:9092=200/9093=200 ④predict 5路alive 2526/3500(72.2%) real=940:cline294(119r)·codex500DONE(44r)·opencode344(251r)·cc500DONE(90r)·pi220(69r)·hermes443(276r)·dsh226(91r) ⑤**eval R1933:claude-code 54new eval中**(PID2642456·cline87/115·codex29/44·opencode199/249·hermes124/131·dsh33/40·cc27/36·pi26/34) ⑥TB-2.1:111unique passed(cline16·codex7·opencode24·cc15·pi29·hermes5·dsh15)·3harbor alive(cc PID1147851·pi PID1308528·opencode PID2697288) ⑦**三报告R1941**(main 9145B+tb21 8306B+cline_special 4348B) ⑧cline C4:cline294(119r/175e=40.5%)·C2 empty=429滚动+能力(recent20~35%real)·C3 resume fix✅未归零(429间歇+能力) ⑨disk /data 5.8T(18%) /(352G 4%) ⑩research 11-09 06:00未发·11-08已读 ⑪未完成指令:有(§22:4x+§10:10)⇒W:0
-下一步:       ①eval R1933后台跑完claude-code 54new→继续pi/hermes/dsh new ②predict 5路推进至500(cline294·opencode344·pi220·dsh226·hermes443) ③TB-2.1 3harbor(cc/pi/opencode)推进→待全DONE ④全DONE后聚合最终7路报告+可辨识性闸门
+PHASE:        R1942 监控+三报告更新轮·gateway 200·predict 2535/3500(72.4%)·real 940·eval R1933后台RUN(claude-code 54new eval中)·TB-2.1 111unique passed·3harbor alive(cc/pi/opencode)
+已完成:       H-B✅·Gate7/7·TB报告✅·full500✅·cline专项C1-C5+报告R1785-R1942·TB4 0passed(能力)·TB-2.1 oracle5/5✅·§15:2x判据MET✅·R1789 eval 7/7DONE✅·R1804双报告交付✅·R1814-R1941 predict推进+TB-2.1并行+gateway恢复+eval重启·R1942 predict2535/3500+三报告更新+eval R1933 opencode DONE
+当前动作:     R1942:①CPU/MEM:PASS(load85/224=38%·无本线>8000%·无>50GB) ②体积:TASK=30306B(29.6KB)/MEMORY≈27KB✅ ③gateway:9092=200/9093=200/gw=200 ④predict 5路alive 2535/3500(72.4%) real=940:cline297(119r)·codex500DONE(44r)·opencode345(251r)·cc500DONE(90r)·pi221(69r)·hermes446(276r)·dsh226(91r) ⑤**eval R1933:opencode DONE(199/248=80.2%)→claude-code 54new eval中**(cline87/114·codex29/44·opencode199/248·hermes124/131·dsh33/40·cc27/36·pi26/34) ⑥TB-2.1:111unique passed(cline16·codex7·opencode24·cc15·pi29·hermes5·dsh15)·3harbor alive(cc·pi·opencode) ⑦**三报告R1942**(main 8431B+tb21 7763B+cline_special 4348B) ⑧cline C4:cline297(119r/178e=40.1%)·C2 empty=429滚动+能力(recent20~35%real)·C3 resume fix✅未归零(429间歇+能力) ⑨disk /data 5.8T(18%) /(352G 4%) ⑩research 11-09 06:00未发·11-08已读 ⑪未完成指令:有(§22:4x+§10:10)⇒W:0
+下一步:       ①eval R1933后台跑完claude-code 54new→继续pi/hermes/dsh new ②predict 5路推进至500(cline297·opencode345·pi221·dsh226·hermes446) ③TB-2.1 3harbor(cc/pi/opencode)推进→待全DONE ④全DONE后聚合最终7路报告+可辨识性闸门
 阻塞:         无(gateway 200·5路predict alive·TB-2.1 3harbor alive·eval R1933后台RUN)
 ERROR_COUNT:  0
-  📦 体积：TASK=30306B(29.6KB) / MEMORY归档R1926-R1939后≈27KB·均≤32KB✅
-  🔍 cline专项小结: predict cline294(119r/175e=40.5%)·TB-2.1 cline16p·C2 empty=429滚动+能力(recent20~35%real)·C3 resume fix✅未归零(429间歇+能力)·real复产中(119)
+  📦 体积：TASK=30306B(29.6KB) / MEMORY≈27KB·均≤32KB✅
+  🔍 cline专项小结: predict cline297(119r/178e=40.1%)·TB-2.1 cline16p·C2 empty=429滚动+能力(recent20~35%real)·C3 resume fix✅未归零(429间歇+能力)·real复产中(119)
 ```
 
 > 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
 
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 ### 本唤醒流水
-[06:05] R1941 监控+kill失控+三报告更新:①CPU/MEM:**kill前load264/224·pytest PID672983=10028%(100核)→docker kill 06a2168612→kill后load100/224=45%**·mem807G/avail1066G·无本线>8000% ②体积:TASK=30306B(29.6KB)/MEMORY归档R1926-R1939后≤32KB✅ ③gateway:9092=200/9093=200 ④predict 5路alive 2526/3500(72.2%) real=940:cline294(119r)·codex500DONE(44r)·opencode344(251r)·cc500DONE(90r)·pi220(69r)·hermes443(276r)·dsh226(91r) ⑤**eval R1933:opencode DONE(199/249=79.9%)→claude-code 54new eval中**(PID2642456·cline87/115·codex29/44·opencode199/249·hermes124/131·dsh33/40·cc27/36·pi26/34) ⑥TB-2.1:111unique passed(cline16·codex7·opencode24·cc15·pi29·hermes5·dsh15)·3harbor alive(cc PID1147851·pi PID1308528·opencode PID2697288) ⑦**三报告R1941**(gen_report_r1941+gen_cline_special_r1941:main 9145B+tb21 8306B+cline_special 4348B) ⑧cline C4:cline294(119r/175e=40.5%)·C2 empty=429滚动+能力·C3 resume fix✅未归零 ⑨disk /data 5.8T(18%) /(352G 4%) ⑩research 11-09 06:00未发·11-08已读 ⑪未完成指令:有(§22:4x+§10:10)⇒W:0
+[06:12] R1942 监控+三报告更新:①CPU/MEM:PASS(load85/224=38%·无本线>8000%·无>50GB) ②体积:TASK=30306B(29.6KB)/MEMORY≈27KB✅ ③gateway:9092=200/9093=200/gw=200 ④predict 5路alive 2535/3500(72.4%) real=940:cline297(119r)·codex500DONE(44r)·opencode345(251r)·cc500DONE(90r)·pi221(69r)·hermes446(276r)·dsh226(91r) ⑤**eval R1933:opencode DONE(199/248=80.2%)→claude-code 54new eval中**(cline87/114·codex29/44·opencode199/248·hermes124/131·dsh33/40·cc27/36·pi26/34) ⑥TB-2.1:111unique passed(cline16·codex7·opencode24·cc15·pi29·hermes5·dsh15)·3harbor alive(cc·pi·opencode) ⑦**三报告R1942**(gen_report_r1942+gen_cline_special_r1942:main 8431B+tb21 7763B+cline_special 4348B) ⑧cline C4:cline297(119r/178e=40.1%)·C2 empty=429滚动+能力·C3 resume fix✅未归零 ⑨disk /data 5.8T(18%) /(352G 4%) ⑩research 11-09 06:00未发·11-08已读 ⑪未完成指令:有(§22:4x+§10:10)⇒W:0
+
+> 📦 R1941 流水(06:05,监控+kill失控pytest(100核)+三报告更新·predict 2526/3500·eval R1933 opencode DONE→claude-code eval中·TB-2.1 111p)已归档 → daily-memories-harness/2026-11-09.md。
 
 > 📦 R1939-R1940 流水(05:36~05:49,监控+三报告更新·predict 2514→2520/3500·eval R1933 opencode eval中·TB-2.1 3harbor alive)已归档 → daily-memories-harness/2026-11-09.md。
 
