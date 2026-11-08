@@ -5638,3 +5638,79 @@ Day-1 runbook audit: **PASS=16 FAIL=0 WARN=0** — "No critical issues. Ready fo
 - `reports/report_posttrain_r49_v2_consistency_audit_zh.html`（4.1KB, 自包含, 0 script, 0 外链）
 - 6 个脚本修复（preflight_check.sh, day1_runbook.sh, rl_grpo.sh, day0_audit.py, smoke_calibrator.py）
 - 本节（EXPERIMENTS §R49, 5 小节）
+
+## §R50 SGLang + MiniCPM5-2B 服务兼容性源码级审计（2026-11-08 · T-1 · 零 GPU · wake98）
+
+> **触发**：R47 创建 monkey-patch wrapper（baize_posttrain_verl_wrapper.py）用于 Phase 2 多轮工具调用，但从未验证。
+> 11/9 GPU 到位后若 SGLang 无法正确服务 MiniCPM5-2B 或工具调用解析失败 → RL 管线阻塞。
+> **结论**：🟢 GO — 30/30 静态检查通过，Phase 1 可直接启动；Phase 2 修复 BUG-W1 后可用。
+
+### R50.1 模型架构验证 ✅
+
+MiniCPM5-2B config.json: `architectures: ["LlamaForCausalLM"]`, `model_type: "llama"`。
+SGLang 有原生 `llama.py`（site-packages/sglang/srt/models/llama.py）→ 无需 minicpm5.py 模型实现。
+参数：42 层, hidden_size=2048, vocab_size=130560, bfloat16, rope_theta=5000000, max_position_embeddings=131072。
+
+### R50.2 Chat 模板验证 ✅
+
+模型自带 chat_template.jinja（ChatML: <|im_start|>/<|im_end|> + thinking markers + XML tool calls: <function name="..."><param>）。SGLang 从模型目录加载 chat_template → 无需在 conversation.py 注册 minicpm5。SGLang conversation.py 仅有 minicpmv/minicpmo，但 MiniCPM5 使用 Llama 架构 + 自带模板，不依赖 conversation.py。
+
+### R50.3 词汇表验证 ✅
+
+使用 vllm_venv 的 transformers.AutoTokenizer 验证 MiniCPM5-2B vocab（size=130560）：
+
+| Token | In vocab? | Purpose |
+|:--|:--|:--|
+| `<function` | True | MiniCPM5XMLDetector.bot_token |
+| `</function>` | True | MiniCPM5XMLDetector.eot_token |
+| `<|im_start|>` | True | ChatML message start |
+| `<|im_end|>` | True | ChatML message end |
+| `<|python_tag|>` | False | llama3 bot_token (won't match) |
+| `[TOOL_CALLS]` | False | mistral bot_token (won't match) |
+| `<|action_start|>` | False | other built-in (won't match) |
+
+结论: verl 的 get_tool_call_parser_type() 遍历 4 个内置解析器均不匹配 → 到达 minicpm5 → `<function` 命中 → 返回 "minicpm5"。
+
+### R50.4 BUG-W1（CRITICAL · 已修复）
+
+问题: SGLang ToolCallItem（Pydantic BaseModel, function_call_parser.py line 32）字段是 `parameters`，但 wrapper line 72 使用 `arguments=json.dumps(params)` → Pydantic ValidationError（unexpected keyword argument `arguments`）。
+修复: `arguments=` → `parameters=`（baize_posttrain_verl_wrapper.py line 75）。
+影响: 仅 Phase 2（多轮工具调用）。Phase 1（single-turn, R0 skeleton）不触发工具解析，不受影响。
+
+### R50.5 抽象方法合规性 ✅
+
+BaseFormatDetector 要求 3 个 @abstractmethod: detect_and_parse, has_tool_call, structure_info。wrapper 的 MiniCPM5XMLDetector 全部实现。
+structure_info 返回 `lambda name: StructureInfo(begin=..., end=..., trigger=...)`，与 Qwen25Detector（line 358-363）等内置实现模式一致。
+
+### R50.6 ToolCallParserEnum 注册 ✅
+
+FunctionCallParser.ToolCallParserEnum 是类级 dict（line 673）。wrapper 的 `FunctionCallParser.ToolCallParserEnum["minicpm5"] = MiniCPM5XMLDetector` 是合法操作。
+验证后 enum_keys = ['llama3', 'qwen25', 'mistral', 'deepseekv3', 'minicpm5']。
+
+### R50.7 Phase 1 安全性 ✅
+
+v2 config multi_turn.enable=False → verl sglang_rollout.py line 427 检查 `config.multi_turn.tool_config_path is None` → 跳过 tool parser 初始化 → get_tool_call_parser_type() 不被调用 → Phase 1 R0 skeleton 完全不受 monkey-patch 影响。
+
+### R50.8 Phase 2 注意事项
+
+- BUG-W4（低风险）: parse_streaming_increment 未在 MiniCPM5XMLDetector 中覆盖。基类用 _partial_json_loads（JSON 解析），不适用于 XML。verl 批量生成用 detect_and_parse（非流式），影响低。若需流式工具调用则需覆盖。
+- Ray 分布式: monkey-patch 在 wrapper 模块导入时执行（驱动进程）。verl SGLang rollout worker 可能运行在独立 Ray 进程 → 需确保补丁在所有 worker 中生效（Ray runtime_env 或 verl init_hook）。
+
+### R50.9 Pre-flight 脚本验证
+
+baize_posttrain_sglang_preflight.py（~157 行）执行 30 项零 GPU 静态检查：
+- [1] 模型文件存在（6 项: dir + 5 files）
+- [2] 架构验证（2 项: LlamaForCausalLM + model_type=llama）
+- [3] Tokenizer 词汇表（8 项: 4 必须存在 + 3 必须不存在 + load）
+- [4] SGLang function_call_parser（4 项: import + ToolCallItem fields + enum）
+- [5] Monkey-patch 测试（2 项: register + ToolCallItem construct）
+- [6] verl import（1 项）
+- [7] v2 config YAML（7 项: yaml load + 6 key checks）
+结果: 30 PASS / 0 FAIL / 0 WARN → OVERALL=GO
+
+### R50.10 交付物
+
+- `run/baize_posttrain_sglang_preflight.py`（~157 行, 30 项零 GPU 静态检查, 30/30 PASS）
+- `run/baize_posttrain_verl_wrapper.py` BUG-W1 修复（arguments → parameters, line 75）
+- `reports/report_posttrain_r50_sglang_compat_audit_zh.html`（自包含, 0 script, 0 外链, 11 节）
+- 本节（EXPERIMENTS §R50, 10 小节）

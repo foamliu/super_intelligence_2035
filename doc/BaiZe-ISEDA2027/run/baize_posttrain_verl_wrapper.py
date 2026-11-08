@@ -72,7 +72,7 @@ if ENABLE_MULTI_TURN:
                     calls.append(ToolCallItem(
                         tool_index=0,
                         name=func_name,
-                        arguments=json.dumps(params),
+                        parameters=json.dumps(params),  # R50 FIX: field is `parameters` not `arguments` (Pydantic BaseModel)
                     ))
                 normal = re.sub(pattern, '', text, flags=re.DOTALL).strip()
                 return StreamingParseResult(normal_text=normal, calls=calls)
