@@ -258,3 +258,5 @@
 1792108868745_dyijn	xinqiaoz	hfeg0pkn002	69	eda_other	case	EDA-Eval-DesignFlow-PdkQaModuleAnalyze-001	2026-11-09 01:30	
 1793070934364_gtyj5.messages.json	easont	hfeg0pkn004	592	eda_other	claimed		2026-11-09 01:49	
 1793070934364_gtyj5					parked		2026-11-09 02:01	DUP of okq91/NetlistCompareReport-001 (r247): same easont TempHalfWL workflow, same U#383 verbatim task '对比修改后的网表和原先的网表生成markdown形式的报告', same netlist_AI/netlist_pro_clean assets. r253 deepread missed this distinctness check (only checked CosimFlowAnalyze r238). Parked r254.
+1793688761923_zqew3					parked		2026-11-09 03:53	r257 daily-log fallback: rose3wang@hfeg0pkn003 mc20 netlist-dom; file MISSING on disk (rotated, only t054x/hyhxt/4a8d3 remain). Unviable.
+1792052682006_dnu1x					parked		2026-11-09 03:53	r257 daily-log fallback: e00399@hfeg0pnd007 mc12 calibre-dom(physical_verify shard C not A); file MISSING on disk (rotated). Unviable.
