@@ -27651,3 +27651,82 @@ no locks
 101.94 92.82 89.50
 RELAY29_E2E_OK
 ```
+
+---
+
+## RUN_ID 262 · 2026-11-08 12:58:46 · host=`whag0pgpuap12` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 262 | single-instance .29 relay | $(date '+%F %T') | host=$(hostname) ==="
+SSH="ssh -o BatchMode=yes -o ConnectTimeout=6 -o StrictHostKeyChecking=no"
+$SSH 10.239.2.29 'set -u
+R=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
+S=/tmp/ops_relay_v2_29_fixed.sh
+echo "-- procs before --"
+ps -eo pid=,ppid=,lstart=,args= | awk "\$2==\"bash\" && \$3 ~ /tmp.ops_relay_v2_29/ {print}"
+echo "-- dup 261 blocks in local outbox --"; grep -c "^## RUN_ID 261" $R/ops/outbox.md
+echo "-- fd1 per instance --"
+for p in $(ps -eo pid=,args= | awk "\$2==\"bash\" && \$3 ~ /tmp.ops_relay_v2_29/ {print \$1}"); do echo "  $p -> $(readlink /proc/$p/fd/1 2>/dev/null)"; done
+echo "-- stop all --"
+for p in $(ps -eo pid=,args= | awk "\$2==\"bash\" && \$3 ~ /tmp.ops_relay_v2_29/ {print \$1}"); do kill -TERM "$p" 2>/dev/null; done
+sleep 2
+for p in $(ps -eo pid=,args= | awk "\$2==\"bash\" && \$3 ~ /tmp.ops_relay_v2_29/ {print \$1}"); do kill -KILL "$p" 2>/dev/null; done
+sleep 1
+LEFT=$(ps -eo pid=,args= | awk "\$2==\"bash\" && \$3 ~ /tmp.ops_relay_v2_29/ {print \$1}" | wc -l); echo "left=$LEFT"
+echo "-- add flock singleton --"
+if command -v flock >/dev/null 2>&1; then
+  if ! grep -q "ops_relay_v2_29.lock" "$S"; then
+    sed -i "/^set -u$/a exec 9>/tmp/ops_relay_v2_29.lock\nflock -n 9 || { echo \"[relay-29] another instance running, exit\"; exit 0; }" "$S"
+  fi
+  echo "flock=yes"; head -5 "$S"
+else
+  echo "flock=NO (skip)"; head -3 "$S"
+fi
+chmod +x "$S"
+echo "-- start one --"
+setsid nohup bash "$S" >>/tmp/baize_ops_relay.29.log 2>&1 < /dev/null &
+sleep 3
+echo "-- procs after --"
+ps -eo pid=,stat=,lstart=,args= | awk "\$2!=\"\" && \$0 ~ /tmp.ops_relay_v2_29/ {print}" | head -5
+echo "-- count after --"; ps -eo args= | awk "\$1==\"bash\" && \$2 ~ /tmp.ops_relay_v2_29/ {n++} END{print n+0}"
+echo "-- log tail --"; tail -3 /tmp/baize_ops_relay.29.log
+echo "-- state --"; cat $R/ops/.last_run_id.29'
+echo
+echo "=== 262 done ==="
+```
+
+**输出**
+```
+=== RUN_ID 262 | single-instance .29 relay | 2026-11-08 12:58:46 | host=whag0pgpuap12 ===
+-- procs before --
+-- dup 261 blocks in local outbox --
+1
+-- fd1 per instance --
+  1727811 -> /tmp/baize_ops_relay.29.log
+-- stop all --
+left=0
+-- add flock singleton --
+flock=yes
+#!/bin/bash
+# BaiZe OPS RELAY v2-29nofetch — .29 专用：共享工作副本由 .12 同步，本机不做 fetch/pull
+set -u
+exec 9>/tmp/ops_relay_v2_29.lock
+flock -n 9 || { echo "[relay-29] another instance running, exit"; exit 0; }
+-- start one --
+-- procs after --
+2148571 Ss   Sun Nov  8 12:58:46 2026 bash -c set -u R=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run S=/tmp/ops_relay_v2_29_fixed.sh echo "-- procs before --" ps -eo pid=,ppid=,lstart=,args= | awk "\$2==\"bash\" && \$3 ~ /tmp.ops_relay_v2_29/ {print}" echo "-- dup 261 blocks in local outbox --"; grep -c "^## RUN_ID 261" $R/ops/outbox.md echo "-- fd1 per instance --" for p in $(ps -eo pid=,args= | awk "\$2==\"bash\" && \$3 ~ /tmp.ops_relay_v2_29/ {print \$1}"); do echo "  $p -> $(readlink /proc/$p/fd/1 2>/dev/null)"; done echo "-- stop all --" for p in $(ps -eo pid=,args= | awk "\$2==\"bash\" && \$3 ~ /tmp.ops_relay_v2_29/ {print \$1}"); do kill -TERM "$p" 2>/dev/null; done sleep 2 for p in $(ps -eo pid=,args= | awk "\$2==\"bash\" && \$3 ~ /tmp.ops_relay_v2_29/ {print \$1}"); do kill -KILL "$p" 2>/dev/null; done sleep 1 LEFT=$(ps -eo pid=,args= | awk "\$2==\"bash\" && \$3 ~ /tmp.ops_relay_v2_29/ {print \$1}" | wc -l); echo "left=$LEFT" echo "-- add flock singleton --" if command -v flock >/dev/null 2>&1; then   if ! grep -q "ops_relay_v2_29.lock" "$S"; then     sed -i "/^set -u$/a exec 9>/tmp/ops_relay_v2_29.lock\nflock -n 9 || { echo \"[relay-29] another instance running, exit\"; exit 0; }" "$S"   fi   echo "flock=yes"; head -5 "$S" else   echo "flock=NO (skip)"; head -3 "$S" fi chmod +x "$S" echo "-- start one --" setsid nohup bash "$S" >>/tmp/baize_ops_relay.29.log 2>&1 < /dev/null & sleep 3 echo "-- procs after --" ps -eo pid=,stat=,lstart=,args= | awk "\$2!=\"\" && \$0 ~ /tmp.ops_relay_v2_29/ {print}" | head -5 echo "-- count after --"; ps -eo args= | awk "\$1==\"bash\" && \$2 ~ /tmp.ops_relay_v2_29/ {n++} END{print n+0}" echo "-- log tail --"; tail -3 /tmp/baize_ops_relay.29.log echo "-- state --"; cat $R/ops/.last_run_id.29
+2150408 Ss   Sun Nov  8 12:58:50 2026 bash /tmp/ops_relay_v2_29_fixed.sh
+2161926 S    Sun Nov  8 12:58:53 2026 awk $2!="" && $0 ~ /tmp.ops_relay_v2_29/ {print}
+-- count after --
+1
+-- log tail --
+[relay-29] 2026-11-08 12:54:34 v2-29nofetch started. state=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/ops/.last_run_id.29 poll=20s
+[relay-29] RUN_ID=261 executed, exit=0
+[relay-29] 2026-11-08 12:58:51 v2-29nofetch started. state=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/ops/.last_run_id.29 poll=20s
+-- state --
+261
+
+=== 262 done ===
+```
