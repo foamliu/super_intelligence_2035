@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>预训练全量评测均值异常诊断报告 (Avg7=37.40% vs 历史 51.5–57.9%) — 修订版</title>
-<!-- v3.5: chunk3 重启于 Node1 cores96-111(原位),5s+5c全活. piqa654/3676(18%,34s/it)·hs_c0 1933/10044(19%,2.6s/it加速)·hs_c1 2266/10044(23%)·hs_c2 617/10044(6%)·hs_c3 5/10036(0%,warming up). 6/8done Avg6=53.38%不变. 总ETA从~50h改善至~28h. 结论A铁证. S1健康.29 8xH100 100%. -->
+<!-- v3.6: 5s+5c全活(8183-8187 health=ok). piqa777/3676(21%,~9s/it,ETA~7-11h)·hs_c0 2265/10044(23%,~6s/it,ETA~11-14h)·hs_c1 2600/10044(26%,~4s/it,ETA~8-10h←最快)·hs_c2 717/10044(7%,~19s/it,ETA~36-51h←瓶颈Node1跨NUMA)·hs_c3 97/10036(1%,~14s/it,ETA~14-39h). 6/8done Avg6=53.38%不变. 结论A铁证. S1健康.29 8xH100 100%. -->
 <style>
 body{font-family:system-ui,sans-serif;max-width:1100px;margin:0 auto;padding:20px;line-height:1.6;color:#222;background:#fafafa}
 h1{color:#c0392b;border-bottom:3px solid #c0392b;padding-bottom:10px}
@@ -30,7 +30,7 @@ pre{background:#f4f4f4;padding:12px;border-radius:6px;overflow-x:auto;font-size:
 </style>
 </head>
 <body>
-<h1>🚨 预训练全量评测均值异常诊断报告 <span class="updated">（修订版 v3.5 · 2026-11-08 23:24）</span></h1>
+<h1>🚨 预训练全量评测均值异常诊断报告 <span class="updated">（修订版 v3.6 · 2026-11-08 23:50）</span></h1>
 <p><strong>报告日期：</strong>2026-11-08　<strong>检查点：</strong>iter_112000（2B Mamba2-hybrid）<br>
 <strong>异常：</strong>本轮 v4 Avg7=37.40% vs 历史 iter_100000 Avg=54.75%（raw）/ 57.75%（harness），差 14–20 pp<br>
 <span class="updated">⬆ 修订说明：v1 报告结论为「差异 100% 来自二进制」。
@@ -161,11 +161,11 @@ hellaswag 全量 = 10042 题 × 4 选项 = 40168 次 loglikelihood 请求，是�
 <table>
 <tr><th>任务</th><th>port</th><th>进度</th><th>速率</th><th>ETA</th></tr>
 <tr><td>arc_easy</td><td>8182</td><td class="green">✅ 完成 (9501/9501, acc=0.6553)</td><td>—</td><td class="green">DONE</td></tr>
-<tr><td>piqa</td><td>8183</td><td>0/3676 (重启中)</td><td>~16 s/it (5路)</td><td class="red">~15h</td></tr>
-<tr><td>hellaswag chunk0</td><td>8184</td><td>0/10036 (重启中)</td><td>~15 s/it</td><td class="red">~22-40h</td></tr>
-<tr><td>hellaswag chunk1</td><td>8185</td><td>0/10044 (重启中)</td><td>~15 s/it</td><td class="red">~22-40h</td></tr>
-<tr><td>hellaswag chunk2</td><td>8186</td><td>0/10044 (重启中)</td><td>~15 s/it</td><td class="red">~22-40h</td></tr>
-<tr><td>hellaswag chunk3</td><td>8187</td><td>0/10036 (重启中)</td><td>~15 s/it</td><td class="red">~22-40h</td></tr>
+<tr><td>piqa</td><td>8183</td><td>777/3676 (21%)</td><td>~9 s/it</td><td class="red">~7-11h</td></tr>
+<tr><td>hellaswag chunk0</td><td>8184</td><td>2265/10044 (23%)</td><td>~6 s/it</td><td class="red">~11-14h</td></tr>
+<tr><td>hellaswag chunk1</td><td>8185</td><td>2600/10044 (26%)</td><td>~4 s/it</td><td class="orange">~8-10h ← 最快</td></tr>
+<tr><td>hellaswag chunk2</td><td>8186</td><td>717/10044 (7%)</td><td>~19 s/it (Node1跨NUMA)</td><td class="red">~36-51h ← 瓶颈</td></tr>
+<tr><td>hellaswag chunk3</td><td>8187</td><td>97/10036 (1%)</td><td>~14 s/it (Node1)</td><td class="red">~14-39h</td></tr>
 </table>
 <div class="box box-red">
 <p><strong>⚠️ 20:34 事故记录：</strong>上一轮 piqa/hellaswag（#1706 于 18:25 启动）的 5 个 llama-server 后端在 ~20:12 收到外部 SIGTERM 优雅退出（server 日志 "cleaning up before exit"），但 5 个 eval 客户端未感知、继续空转挂起。#1716(20:28) 心跳误报"5 server 全活"（实际已死）。因脚本无 resume、输出目录为空，20:34 kill 挂起进程后从零重跑，损失 ~1.5h。SIGTERM 来源未明（疑似某次唤醒的清理操作或外部脚本），<strong>下次唤醒须首要确认 server 存活</strong>。</p>
