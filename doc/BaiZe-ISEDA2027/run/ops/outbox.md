@@ -25901,3 +25901,93 @@ bz2b-90000-f16.gguf
 
 === DONE 245 ===
 ```
+
+---
+
+## RUN_ID 246 · 2026-11-08 12:16:19 · host=`whag0pgpuap12` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 246 | eval-freeze A/B | $(date '+%F %T') | host=$(hostname) ==="
+cat > /tmp/baize_eval_freeze_ab.sh <<'EOS'
+#!/bin/bash
+set -u
+OUT=/tmp/baize_eval_freeze_ab.txt
+LOG=""
+for f in /tmp/baize_s1_baize2b_master.log /tmp/baize_s1_baize2b_worker.log; do
+  if [ -f "$f" ]; then LOG="$f"; break; fi
+done
+step(){ grep -E 'elapsed time per iteration' "$LOG" 2>/dev/null | tail -1 | sed 's/^ *//'; }
+srv_cpu(){ ps -eo pcpu=,args= | awk '/[l]lama-server/ && !/cline/ {s+=$1;n++} END{printf "srv_n=%d srv_cpu=%.0f%%",n,s}'; }
+ld(){ cut -d' ' -f1-3 /proc/loadavg; }
+
+CLI=$(ps -eo pid=,args= | awk '/gguf_lmeval_run\.py/ && !/awk/ && !/cline/ && !/bun/ {print $1}')
+echo "clients=$(echo $CLI | wc -w) pids=[$(echo $CLI)]" >>"$OUT"
+
+resume(){ for p in $CLI; do kill -CONT "$p" 2>/dev/null; done; }
+trap resume EXIT INT TERM
+
+{
+  echo "=== start $(date '+%F %T') host=$(hostname) log=$LOG ==="
+  echo "[baseline] $(step)"
+  echo "[baseline] load=$(ld) $(srv_cpu)"
+  echo "--- last 8 step lines ---"
+  grep -E 'elapsed time per iteration' "$LOG" | tail -8 | sed 's/^ *//'
+  echo "--- client stdout (size before) ---"
+  for p in $CLI; do f=$(readlink /proc/$p/fd/1 2>/dev/null); [ -n "$f" ] && echo "$p -> $f size=$(stat -c %s "$f" 2>/dev/null)"; done
+} >>"$OUT"
+
+for p in $CLI; do kill -STOP "$p" 2>/dev/null; done
+sleep 20
+
+{
+  echo "=== FROZEN $(date '+%F %T') (clients SIGSTOP only; servers/training untouched) ==="
+  for i in 0 1 2 3 4 5 6 7 8 9 10; do
+    echo "[f${i} $(date '+%H:%M:%S')] $(step) | load=$(ld) | $(srv_cpu)"
+    [ "$i" -lt 10 ] && sleep 60
+  done
+} >>"$OUT"
+
+resume
+trap - EXIT INT TERM
+sleep 5
+
+{
+  echo "=== RESUMED $(date '+%F %T') ==="
+  for i in 0 1 2 3 4 5; do
+    echo "[r${i} $(date '+%H:%M:%S')] $(step) | load=$(ld) | $(srv_cpu)"
+    [ "$i" -lt 5 ] && sleep 60
+  done
+  echo "--- client stdout (size after) ---"
+  for p in $CLI; do f=$(readlink /proc/$p/fd/1 2>/dev/null); [ -n "$f" ] && echo "$p -> $f size=$(stat -c %s "$f" 2>/dev/null)"; done
+  echo "--- client state (expect S/R, not T) ---"
+  for p in $CLI; do ps -o pid=,stat=,pcpu=,etimes= -p "$p" 2>/dev/null; done
+  echo "=== DONE $(date '+%F %T') ==="
+} >>"$OUT"
+EOS
+chmod +x /tmp/baize_eval_freeze_ab.sh
+rm -f /tmp/baize_eval_freeze_ab.txt
+setsid nohup bash /tmp/baize_eval_freeze_ab.sh >/tmp/baize_eval_freeze_ab.run.log 2>&1 < /dev/null &
+echo "detached_pid=$!"
+sleep 8
+echo "--- early result ---"
+head -40 /tmp/baize_eval_freeze_ab.txt 2>/dev/null
+echo
+echo "=== 246 dispatched; result completes ~17 min later (see RUN_ID 247) ==="
+```
+
+**输出**
+```
+=== RUN_ID 246 | eval-freeze A/B | 2026-11-08 12:16:19 | host=whag0pgpuap12 ===
+detached_pid=4080276
+--- early result ---
+clients=0 pids=[]
+=== start 2026-11-08 12:16:19 host=whag0pgpuap12 log= ===
+[baseline] 
+[baseline] load=25.21 24.98 24.93 srv_n=0 srv_cpu=0%
+--- last 8 step lines ---
+--- client stdout (size before) ---
+
+=== 246 dispatched; result completes ~17 min later (see RUN_ID 247) ===
+```
