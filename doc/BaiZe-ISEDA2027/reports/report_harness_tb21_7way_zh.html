@@ -17,7 +17,7 @@
 <tr><td>log-summary-date-ranges</td><td class='pass'>1</td></tr>
 </table>
 <p><strong>Oracle 结果</strong>：<span class='pass'>5/5 PASSED</span> — verifier 正常，可跑全量。</p>
-<h2>2. 7 路全量结果（实时快照 · 2026-11-08 08:36）</h2>
+<h2>2. 7 路全量结果（实时快照 · 2026-11-08 08:54）</h2>
 <div class="note"><p><strong>状态</strong>：2 路已完成（cline / hermes），5 路运行中。下表为<strong>当前快照</strong>，非最终结果；7 路全量完成后将标注「7-way complete」。<br>
 <strong>✅ 网关已恢复</strong>：glm-5.3-flash 网关于 11-08 恢复 <strong>200 OK</strong>（curl /v1/models=200），5 路运行中自动续跑。<br>
 <strong>时间预算声明</strong>（来自 research 日报 2611.08417）：wall-clock 预算是测量规格的一部分，TB_AGENT_TIMEOUT=3600s/题。延时可抹去高达 20pp 的 harness 差距 => 本表分数<strong>仅在统一时间预算下有效</strong>，跨时间预算对比无效。<br>
@@ -25,13 +25,13 @@
 <table><tr><th>Harness</th><th>状态</th><th>已评分</th><th>Passed</th><th>Pass%</th><th>超时</th><th>均时</th><th>剩余</th></tr>
 <tr><td>cline</td><td>已完成</td><td>90</td><td class='pass'>7</td><td>7.8%</td><td>0</td><td>196s</td><td>0</td></tr>
 <tr><td>hermes</td><td>已完成</td><td>90</td><td class='pass'>3</td><td>3.3%</td><td>0</td><td>65s</td><td>0</td></tr>
-<tr><td>pi</td><td>运行中</td><td>25</td><td class='pass'>6</td><td>24.0%</td><td>0</td><td>246s</td><td>64</td></tr>
-<tr><td>opencode</td><td>运行中</td><td>29</td><td class='pass'>5</td><td>17.2%</td><td>0</td><td>627s</td><td>60</td></tr>
-<tr><td>deepseek</td><td>运行中</td><td>30</td><td class='pass'>5</td><td>16.7%</td><td>0</td><td>511s</td><td>59</td></tr>
-<tr><td>codex</td><td>运行中</td><td>45</td><td class='pass'>3</td><td>6.7%</td><td>1</td><td>244s</td><td>44</td></tr>
+<tr><td>pi</td><td>运行中</td><td>26</td><td class='pass'>6</td><td>23.1%</td><td>0</td><td>246s</td><td>63</td></tr>
+<tr><td>opencode</td><td>运行中</td><td>30</td><td class='pass'>5</td><td>16.7%</td><td>0</td><td>627s</td><td>59</td></tr>
+<tr><td>deepseek</td><td>运行中</td><td>32</td><td class='pass'>5</td><td>15.6%</td><td>0</td><td>511s</td><td>57</td></tr>
+<tr><td>codex</td><td>运行中(rerun)</td><td>52</td><td class='pass'>3</td><td>5.8%</td><td>1</td><td>244s</td><td>37</td></tr>
 <tr><td>claude-code</td><td>运行中</td><td>21</td><td class='pass'>3</td><td>14.3%</td><td>0</td><td>483s</td><td>68</td></tr>
 </table>
-<p><strong>合计</strong>：330 已评分 / 32 passed（9.7%）。注：运行中路为早期快照，Pass% 会随题量增加收敛。网关已恢复 200 OK，5 路自动续跑。<br>
+<p><strong>合计</strong>：341 已评分 / 32 passed（9.4%）。注：运行中路为早期快照，Pass% 会随题量增加收敛。网关已恢复 200 OK，5 路自动续跑。<br>
 <strong>超时归因</strong>：仅 codex 有 1 次超时（>3500s），其余 0 超时。hermes 均时仅 65s（极快），其低 pass 率更可能是<strong>能力问题</strong>（快速放弃）而非超时。</p>
 <div class="summary-box">
 <h3>cline 路（已完成 · 唯一满量路）</h3>
@@ -129,5 +129,5 @@ for h in sorted(os.listdir(JOBS)):
         if open(rf).read().strip() in ("1","1.0"): passed+=1
     print(f"{h:22s} scored={scored:4d} passed={passed:3d}")
 EOF</code></pre>
-<hr><p style="text-align:center;color:#7f8c8d;font-size:0.9em">BaiZe Harness · R1857 · 2026-11-08 08:36<br>TB-2.1 / 89 题 / 7-way concurrent · glm-5.3-flash · 报告正文一律写 cline<br>2 路完成 + 5 路运行中 = 快照非最终 · 时间预算 3600s/题 · single-run · 网关已恢复 200 OK</p>
+<hr><p style="text-align:center;color:#7f8c8d;font-size:0.9em">BaiZe Harness · R1858 · 2026-11-08 08:54<br>TB-2.1 / 89 题 / 7-way concurrent · glm-5.3-flash · 报告正文一律写 cline<br>2 路完成 + 5 路运行中 = 快照非最终 · 时间预算 3600s/题 · single-run · 网关已恢复 200 OK</p>
 </body></html>
