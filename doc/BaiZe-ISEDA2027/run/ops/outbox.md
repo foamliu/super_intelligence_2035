@@ -28500,3 +28500,152 @@ drwxr-x--- 4 app.e0031982 app.adm 4096 Sep  8 08:55 /home/app.e0031982/.npm-glob
 
 === 269 done ===
 ```
+
+---
+
+## RUN_ID 270 · 2026-11-08 22:50:01 · host=`whag0pgpuap12` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 270 | recon v5 eval | $(date '+%F %T') | host=$(hostname) ==="
+SSH="ssh -o BatchMode=yes -o ConnectTimeout=6 -o StrictHostKeyChecking=no"
+$SSH 10.239.2.29 'set -u
+echo "-- lscpu --"; lscpu | grep -E "^CPU\(s\)|^Model name|^NUMA node" | cut -c1-140
+echo "-- servers --"
+ps -eo pid=,psr=,pcpu=,etimes=,args= | awk "/[l]lama-server/ && !/cline/ {print \"  \" \$1 \" psr=\" \$2 \" cpu=\" \$3 \" et=\" \$4 \" :: \" substr(\$0,index(\$0,\$5),120)}"
+echo "-- clients --"
+ps -eo pid=,psr=,pcpu=,etimes=,args= | awk "/[g]guf_lmeval_run\.py/ && !/cline/ {print \"  \" \$1 \" psr=\" \$2 \" cpu=\" \$3 \" et=\" \$4 \" :: \" substr(\$0,index(\$0,\$5),170)}"
+echo "-- affinity --"
+for p in $(ps -eo pid=,args= | awk "/[l]lama-server|[g]guf_lmeval_run\.py/ && !/cline/ {print \$1}"); do
+  echo "  pid=$p cpus=$(grep Cpus_allowed_list /proc/$p/status 2>/dev/null | cut -f2) mems=$(grep Mems_allowed_list /proc/$p/status 2>/dev/null | cut -f2)"
+done
+echo "-- v5 dir --"; ls -l /tmp/baize_eval_v5/ 2>/dev/null | head -12
+echo "-- launch script (1-60) --"; sed -n "1,60p" /tmp/baize_eval_v5/baize_eval_v5_correct.sh 2>/dev/null | cut -c1-170
+echo "-- chunk logs --"
+D=/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/lm_eval_results/gguf_iter_112000_full_v5_correct_binary
+ls -l $D/*.log 2>/dev/null | awk "{print \"  \" \$5 \" \" \$9}"
+echo "-- tails --"
+for f in $D/hellaswag_chunk0*.log $D/hellaswag_chunk1*.log $D/hellaswag_chunk2*.log $D/hellaswag_chunk3*.log; do
+  [ -f "$f" ] && { echo "  == $(basename $f)"; tail -2 "$f" | cut -c1-170 | sed "s/^/    /"; }
+done
+echo "-- watchers --"; ps -eo pid=,args= | awk "/redistribute|watcher|rebalance/ && !/cline/ {print \"  \" \$1 \" \" substr(\$0,index(\$0,\$2),130)}" | head -8
+echo "-- load --"; cut -d" " -f1-3 /proc/loadavg'
+echo
+echo "=== 270 done ==="
+```
+
+**输出**
+```
+=== RUN_ID 270 | recon v5 eval | 2026-11-08 22:50:01 | host=whag0pgpuap12 ===
+-- lscpu --
+CPU(s):                               224
+Model name:                           Intel(R) Xeon(R) Platinum 8480+
+NUMA node(s):                         2
+NUMA node0 CPU(s):                    0-55,112-167
+NUMA node1 CPU(s):                    56-111,168-223
+-- servers --
+  2083715 psr=37 cpu=463 et=8023 :: /nas_train/app.e0031982/code/llama.cpp/build/bin/llama-server -m /nas_train/app.e0031982/models/baize2b_gguf/bz2b-112000
+  2083721 psr=79 cpu=734 et=8023 :: /nas_train/app.e0031982/code/llama.cpp/build/bin/llama-server -m /nas_train/app.e0031982/models/baize2b_gguf/bz2b-112000
+  2083722 psr=87 cpu=757 et=8023 :: /nas_train/app.e0031982/code/llama.cpp/build/bin/llama-server -m /nas_train/app.e0031982/models/baize2b_gguf/bz2b-112000
+  2083724 psr=106 cpu=773 et=8023 :: /nas_train/app.e0031982/code/llama.cpp/build/bin/llama-server -m /nas_train/app.e0031982/models/baize2b_gguf/bz2b-112000
+  3596298 psr=8 cpu=761 et=7152 :: /nas_train/app.e0031982/code/llama.cpp/build/bin/llama-server -m /nas_train/app.e0031982/models/baize2b_gguf/bz2b-112000
+-- clients --
+  2097184 psr=116 cpu=0.7 et=8013 :: /nas_train/app.e0031982/miniforge3/envs/py310/bin/python /tmp/baize_eval_v4/gguf_lmeval_run.py --base-url http://127.0.0.1:8183 --hf-dir /nas_train/app.e0031982/code/BaiZ
+  2097209 psr=185 cpu=1.0 et=8013 :: /nas_train/app.e0031982/miniforge3/envs/py310/bin/python /tmp/baize_eval_v4/gguf_lmeval_run.py --base-url http://127.0.0.1:8185 --hf-dir /nas_train/app.e0031982/code/BaiZ
+  2097234 psr=182 cpu=0.9 et=8013 :: /nas_train/app.e0031982/miniforge3/envs/py310/bin/python /tmp/baize_eval_v4/gguf_lmeval_run.py --base-url http://127.0.0.1:8186 --hf-dir /nas_train/app.e0031982/code/BaiZ
+  2097251 psr=196 cpu=0.9 et=8013 :: /nas_train/app.e0031982/miniforge3/envs/py310/bin/python /tmp/baize_eval_v4/gguf_lmeval_run.py --base-url http://127.0.0.1:8187 --hf-dir /nas_train/app.e0031982/code/BaiZ
+  3765473 psr=130 cpu=1.2 et=7050 :: /nas_train/app.e0031982/miniforge3/envs/py310/bin/python /tmp/baize_eval_v4/gguf_lmeval_run.py --base-url http://127.0.0.1:8184 --hf-dir /nas_train/app.e0031982/code/BaiZ
+-- affinity --
+  pid=2083715 cpus=32-47 mems=0-1
+  pid=2083721 cpus=64-79 mems=0-1
+  pid=2083722 cpus=80-95 mems=0-1
+  pid=2083724 cpus=96-111 mems=0-1
+  pid=2097184 cpus=0-223 mems=0-1
+  pid=2097209 cpus=0-223 mems=0-1
+  pid=2097234 cpus=0-223 mems=0-1
+  pid=2097251 cpus=0-223 mems=0-1
+  pid=3596298 cpus=0-15 mems=0-1
+  pid=3765473 cpus=0-223 mems=0-1
+-- v5 dir --
+total 96
+-rwxr-x--- 1 app.e0031982 app.adm  5683 Nov  8 17:10 baize_eval_v5_correct.sh
+-rw-r----- 1 app.e0031982 app.adm 11460 Nov  8 17:11 hs_shard0.json
+-rw-r----- 1 app.e0031982 app.adm 12570 Nov  8 17:11 hs_shard1.json
+-rw-r----- 1 app.e0031982 app.adm 12570 Nov  8 17:11 hs_shard2.json
+-rw-r----- 1 app.e0031982 app.adm 12602 Nov  8 17:11 hs_shard3.json
+drwxr-x--- 2 app.e0031982 app.adm  4096 Nov  8 20:53 logs
+-rw-r----- 1 app.e0031982 app.adm   801 Nov  8 20:36 relaunch_2034.log
+-rw-r----- 1 app.e0031982 app.adm   801 Nov  8 18:41 restart_main.log
+-rwxr-x--- 1 app.e0031982 app.adm  3684 Nov  8 18:40 restart_piqa_hellaswag.sh
+-rwxr-xr-x 1 app.e0031982 app.adm  2937 Nov  8 18:02 run_hellaswag_only.sh
+-rwxr-x--- 1 app.e0031982 app.adm  2270 Nov  8 18:10 run_piqa_alone.sh
+-- launch script (1-60) --
+#!/usr/bin/env bash
+# -*- coding: utf-8 -*-
+# baize_eval_v5_correct.sh — 全量 8 集评测（修复版二进制 + 任务级多进程并行）
+# 修复 vs v4：用 code/llama.cpp 修复版二进制(commit 5dc38db00) + 11路任务并行 + HF离线
+set -euo pipefail
+
+# ── HF 离线环境（与 v4 同口径）──
+export HF_DATASETS_CACHE="/nas_train/app.e0031982/hf_cache"
+export HF_HOME="/nas_train/app.e0031982/.cache"
+export HF_DATASETS_OFFLINE=1
+export HF_HUB_OFFLINE=1
+
+LLAMA_SERVER="/nas_train/app.e0031982/code/llama.cpp/build/bin/llama-server"
+GGUF="/nas_train/app.e0031982/models/baize2b_gguf/bz2b-112000-f16.gguf"
+HF_DIR="/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/hf_iter_112000"
+EVAL_PY="/tmp/baize_eval_v4/gguf_lmeval_run.py"
+MERGE_PY="/tmp/baize_eval_v4/merge_parallel_results_v2.py"
+PYTHON="/nas_train/app.e0031982/miniforge3/envs/py310/bin/python"
+OUT_BASE="/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/lm_eval_results/gguf_iter_112000_full_v5_correct_binary"
+LOG_DIR="/tmp/baize_eval_v5/logs"
+mkdir -p "$OUT_BASE" "$LOG_DIR"
+
+EXPECTED_MD5="f95ac95215a7e61a534eccba9a4ed49d"
+ACTUAL_MD5=$(md5sum "$LLAMA_SERVER" | awk '{print $1}')
+if [[ "$ACTUAL_MD5" != "$EXPECTED_MD5" ]]; then
+  echo "FATAL: MD5 mismatch expected=$EXPECTED_MD5 actual=$ACTUAL_MD5"; exit 1
+fi
+echo "[v5] 二进制校验 PASS (MD5=$ACTUAL_MD5, commit 5dc38db00)"
+
+# 生成 hellaswag 4 shard sample 列表 (10042 docs, 拆4份, 紧凑JSON无空格)
+$PYTHON -c "
+import json
+total=10042; sz=(total+3)//4
+for i in range(4):
+    s=i*sz; e=min((i+1)*sz,total)
+    with open(f'/tmp/baize_eval_v5/hs_shard{i}.json','w') as f:
+        json.dump({'hellaswag':list(range(s,e))},f,separators=(',',':'))
+    print(f'  hs_shard{i}: docs {s}-{e-1} ({e-s} docs)')
+"
+
+declare -a JOBS=(
+  "arc_challenge:8181:0:arc_challenge:-"
+  "arc_easy:8182:16:arc_easy:-"
+  "boolq:8183:32:boolq:-"
+  "openbookqa:8184:48:openbookqa:-"
+  "piqa:8185:64:piqa:-"
+  "sciq:8186:80:sciq:-"
+  "winogrande:8187:96:winogrande:-"
+  "hellaswag:8188:112:hellaswag_chunk0:/tmp/baize_eval_v5/hs_shard0.json"
+  "hellaswag:8189:128:hellaswag_chunk1:/tmp/baize_eval_v5/hs_shard1.json"
+  "hellaswag:8190:144:hellaswag_chunk2:/tmp/baize_eval_v5/hs_shard2.json"
+  "hellaswag:8191:160:hellaswag_chunk3:/tmp/baize_eval_v5/hs_shard3.json"
+)
+
+echo "[v5] 启动 ${#JOBS[@]} 个 llama-server（各 16 线程，CPU-pinned）..."
+declare -a SERVER_PIDS
+for job in "${JOBS[@]}"; do
+  IFS=':' read -r task port core_start out_sub samples_file <<< "$job"
+  cores="${core_start}-$((core_start + 15))"
+  setsid taskset -c "$cores" "$LLAMA_SERVER" \
+-- chunk logs --
+-- tails --
+-- watchers --
+-- load --
+83.85 79.47 78.35
+
+=== 270 done ===
+```
