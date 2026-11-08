@@ -244,3 +244,5 @@
 1793953398904_e5my5					parked		2026-11-08 16:57	SELF-LEAK: U#0 contains our benchmark spec_mac4.md (Digital-010 case). t0002965 ran cline with our own case spec. Circular/contaminated, not a legitimate fresh trace.
 1791448973775_f8g40	rongjiez	hfeg0pkn005	27	eda_other	case	EDA-Eval-DesignFlow-RefactorInnovAnalyze-001	2026-11-08 18:10	
 1791946337611_a5eou.messages.json	shanliny	hfeg0pkn001	72	verification	case	EDA-Eval-DesignFlow-VecTimingXDiagnose-001	2026-11-08 19:48	
+1793681040407_u0mwh	t0002614	hfeg0pkn001	165	eda_other	case	EDA-Eval-DesignFlow-HspiceTbStructAnalyze-001	2026-11-08 20:20	
+1789451741660_7uwtz					parked		2026-11-08 20:07	templated '启动业务场景: 仿真与验证' exploration; assistant only enumerated available sim tools (spectre/hspice/finesim/vcs), no real user task/deliverable/gold; thin 55 msgs; not A-faithful eligible
