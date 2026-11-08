@@ -4,14 +4,14 @@ WAITING: 0
 
 ## 📊 进度快照
 
-PHASE:        R1888 监控轮(gateway 429持续ETA~15:25·predict 1591/3500(45.5%)·TB-2.1 721result/367reward/69passed·7路predict全alive·7路harbor alive·CPU/MEM PASS·research日报11-08已读)
-已完成:       H-B✅·Gate7/7·TB报告✅·full500✅·cline专项C1-C5+报告R1785-R1886·TB4 0passed(能力)·TB-2.1 oracle5/5✅·§15:2x判据MET✅·R1789 eval 7/7DONE✅·R1804双报告交付✅·R1814-R1887 predict推进+TB-2.1并行·R1888 监控轮(predict1591/3500·TB-2.1 721result/69passed·gateway 429持续ETA~15:25)
-当前动作:     R1888:①CPU/MEM PASS(load78/224=35%·无本线失控>80核·top=pretrain非本线·mem799G/2015G available1083G) ②体积:TASK=30KB(30306B)/MEMORY=29KB·均≤32KB✅ ③硬盘:/data 18%(5.8T余)/ 4%(352G余) ④gateway 429确认("请等待47分钟11秒后重试"ETA~15:25·infra非能力) ⑤predict 7路全alive 1591/3500(45.5%·+6sinceR1887 all empty=429铁证·real冻结662=429铁证):cline190(92r/98e=48.7%)·codex322(25r/297e=7.8%)·opencode235(186r/49e=79.1%best)·cc290(49r/241e=16.9%)·pi128(47r/81e=37.0%)·hermes312(200r/112e=64.3%)·dsh114(63r/51e=55.3%) ⑥R1789 eval 7/7✅ ALL 0 empty_patch(C3✅) ⑦TB-2.1 721result.json(+16)/367reward(+8)/69passed(+0=429blocks):pi17p·opencode15p·dsh11p·cline9p·codex7p·cc5p·hermes5p·oracle5/5✅·7路harbor alive ⑧报告R1886仍current(real未变·429期无新real patch) ⑨research日报11-08已读 ⑩cline C2:429+能力+其他=100% ⑪未完成指令:有(§22:4x+§10:10)⇒W:0
+PHASE:        R1889 监控轮(gateway 429持续ETA~15:25·predict 1603/3500(45.8%)·TB-2.1 763result/78passed·7路predict全alive·7路harbor alive·CPU/MEM PASS·research日报11-08已读)
+已完成:       H-B✅·Gate7/7·TB报告✅·full500✅·cline专项C1-C5+报告R1785-R1886·TB4 0passed(能力)·TB-2.1 oracle5/5✅·§15:2x判据MET✅·R1789 eval 7/7DONE✅·R1804双报告交付✅·R1814-R1888 predict推进+TB-2.1并行·R1889 监控轮(predict1603/3500·TB-2.1 763result/78passed·gateway 429持续ETA~15:25)
+当前动作:     R1889:①CPU/MEM PASS(load78/224=35%·无本线失控>80核·top=pretrain非本线·mem804G/2015G available1079G) ②体积:TASK=30KB(30306B)/MEMORY=29KB·均≤32KB✅ ③硬盘:/data 18%(5.8T余)/ 4%(352G余) ④gateway 429确认("请等待40分钟20秒后重试"ETA~15:25·infra非能力) ⑤predict 7路全alive 1603/3500(45.8%·+12sinceR1888 all empty=429铁证·real冻结662=429铁证):cline192(92r/100e=47.9%)·codex327(25r/302e=7.6%)·opencode236(186r/50e=78.8%best)·cc290(49r/241e=16.9%)·pi129(47r/82e=36.4%)·hermes314(200r/114e=63.7%)·dsh115(63r/52e=54.8%) ⑥R1789 eval 7/7✅ ALL 0 empty_patch(C3✅) ⑦TB-2.1 763result(+42)/78passed(+9):pi17p·opencode15p·dsh11p·cline9p·codex7p·cc5p·hermes5p·oracle5/5✅·7路harbor alive ⑧报告R1886仍current(real未变·429期无新real patch) ⑨research日报11-08已读(06:08·下次18:00) ⑩cline C2:429+能力+其他=100% ⑪未完成指令:有(§22:4x+§10:10)⇒W:0
 下一步:       ①监控predict 7路→每路达500(gateway 429→待~15:25重置后加速·real将复产) ②TB-2.1:7路running→待gateway恢复后加速→全完成汇总7路reward ③待predict满后增量更新报告+重跑eval ④codex低real%=能力循环诊断(429期暂缓) ⑤research日报建议:TB-2.1报告补wall-clock/timeout列(中优先·纳入未来计划·来自research日报2026-11-08)
-阻塞:         无(gateway 429额度耗尽ETA~15:25·TB-2.1 721result/69passed·7路predict全alive·7路harbor alive·429为infra非阻塞·待gateway恢复自动加速)
+阻塞:         无(gateway 429额度耗尽ETA~15:25·TB-2.1 763result/78passed·7路predict全alive·7路harbor alive·429为infra非阻塞·待gateway恢复自动加速)
 ERROR_COUNT:  0
-  📦 体积：TASK=30KB(30306B) / MEMORY=29KB（均≤32KB✅·R1864-R1887已归档→daily-memories-harness/2026-11-08.md）
-  🔍 cline专项小结: predict cline190(92r/98e=48.7%·real冻结=429·q429=0)·R1789 eval cline35/46=76.1% 0 empty_patch(C3✅)·TB-2.1 cline9passed(131result/127reward)·失败top1=能力(98e=51.6%无patch·gateway200时27/27=100%real=能力铁证)·复算:python3 -c"import json,glob;f=glob.glob('predictions_glm53/cline-patched__*.json');r=sum(1 for x in f if (lambda d:(d[0] if isinstance(d,list) else d).get('model_patch','').strip())(json.load(open(x))));print(f'real={r} empty={len(f)-r}')"
+  📦 体积：TASK=30KB(30306B) / MEMORY=29KB（均≤32KB✅·R1864-R1888已归档→daily-memories-harness/2026-11-08.md）
+  🔍 cline专项小结: predict cline192(92r/100e=47.9%·real冻结=429·q429=0)·R1789 eval cline35/46=76.1% 0 empty_patch(C3✅)·TB-2.1 cline9passed(135result)·失败top1=能力(100e=52.1%无patch·gateway200时27/27=100%real=能力铁证)·复算:python3 -c"import json,glob;f=glob.glob('swebench_verified_full/predictions_glm53/cline-patched__*.json');r=sum(1 for x in f if (lambda d:(d[0] if isinstance(d,list) else d).get('model_patch','').strip())(json.load(open(x))));print(f'real={r} empty={len(f)-r}')"
 ```
 
 > 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
@@ -20,9 +20,9 @@ ERROR_COUNT:  0
 ### 本唤醒流水
 
 
-> [14:38] R1888 监控轮(gateway 429持续ETA~15:25·predict 1591/3500(45.5%·+6 all empty=429铁证)·TB-2.1 721result/367reward/69passed(+0=429blocks)·7路predict全alive·7路harbor alive·CPU/MEM PASS):①CPU/MEM PASS(load78/224=35%·无失控>80核·top=pretrain非本线·mem799G/2015G avail1083G) ②体积:TASK=30KB/MEMORY=29KB·均≤32KB✅ ③硬盘:/data 18%·/ 4% ④gateway 429确认("请等待47分钟11秒后重试"ETA~15:25·infra) ⑤predict 7路alive 1591/3500(45.5%·+6 all empty·real冻结662=429铁证):cline190(92r/98e)·codex322(25r/297e)·opencode235(186r/49e)·cc290(49r/241e)·pi128(47r/81e)·hermes312(200r/112e)·dsh114(63r/51e) ⑥TB-2.1 721result(+16)/367reward(+8)/69passed(+0=429blocks):pi17p·opencode15p·dsh11p·cline9p·codex7p·cc5p·hermes5p·oracle5/5✅·7路harbor alive ⑦报告R1886仍current(real未变) ⑧cline专项C4:real=92/empty=98/失败top1=能力 ⑨未完成指令:有(§22:4x+§10:10)⇒W:0
+> [14:44] R1889 监控轮(gateway 429持续ETA~15:25·predict 1603/3500(45.8%·+12 all empty=429铁证)·TB-2.1 763result/78passed(+9)·7路predict全alive·7路harbor alive·CPU/MEM PASS):①CPU/MEM PASS(load78/224=35%·无失控>80核·top=pretrain非本线·mem804G/2015G avail1079G) ②体积:TASK=30KB/MEMORY=29KB·均≤32KB✅ ③硬盘:/data 18%·/ 4% ④gateway 429确认("请等待40分钟20秒后重试"ETA~15:25·infra) ⑤predict 7路alive 1603/3500(45.8%·+12 all empty·real冻结662=429铁证):cline192(92r/100e)·codex327(25r/302e)·opencode236(186r/50e)·cc290(49r/241e)·pi129(47r/82e)·hermes314(200r/114e)·dsh115(63r/52e) ⑥TB-2.1 763result(+42)/78passed(+9):pi17p·opencode15p·dsh11p·cline9p·codex7p·cc5p·hermes5p·oracle5/5✅·7路harbor alive ⑦报告R1886仍current(real未变) ⑧cline专项C4:real=92/empty=100/失败top1=能力 ⑨research日报11-08已读(06:08·下次18:00) ⑩未完成指令:有(§22:4x+§10:10)⇒W:0
 
-> 📦 R1887 流水(14:31,监控轮,gateway 429,predict 1585/3500,TB-2.1 705result/69passed)已归档 → daily-memories-harness/2026-11-08.md。结论：gateway 429·predict 45.3%·TB-2.1 69p·R1887监控轮。需要时再读。
+> 📦 R1888 流水(14:38,监控轮,gateway 429,predict 1591/3500,TB-2.1 721result/69passed)已归档 → daily-memories-harness/2026-11-08.md。结论：gateway 429·predict 45.5%·TB-2.1 69p·R1888监控轮。需要时再读。
 
 > 📦 R1886 流水(14:22,监控+三报告刷新,gateway 429,predict 1576/3500,TB-2.1 272s/62p,三报告R1886)已归档 → daily-memories-harness/2026-11-08.md。结论：gateway 429·predict 45.0%·TB-2.1 62p·三报告R1886交付。需要时再读。
 
