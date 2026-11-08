@@ -447,3 +447,4 @@
 1792111744261_uxwb5					parked		2026-11-08 21:53	wrong-domain: highlight nets starting with 'net' in Schematic = schematic highlight (eda-highlight-by-name-pattern skill) not layout; 43 msgs mode=act
 1793857741122_genvz	adaml	hfeg0pkn002	183	layout_aether	case	EDA-Eval-DesignFlow-EmyCdlNetlistExtract-001	2026-11-08 22:55	
 1793861227844_poh36	m1wang	hfeg0pkn002	398	layout_aether	case	EDA-Eval-DesignFlow-CmMaOpTableGen-001	2026-11-08 23:30	
+1790154228796_wp6o1	yzwang	hfeg0pkn001	174	physical_verify	case	EDA-Eval-DesignFlow-LdrSvrfRuleGen-001	2026-11-09 00:03	
