@@ -32,65 +32,23 @@ if ENABLE_MULTI_TURN:
     sys.argv.remove("--enable-multi-turn")
 
 # === Phase 2: Monkey-patch sglang for MiniCPM5 XML tool calls ===
+# R53: Use standalone module baize_posttrain_sglang_patch.py for patch logic.
+#   This enables .pth-file-based propagation to Ray workers (R-009 resolution).
+#   The .pth file in venv site-packages auto-imports the patch module when
+#   BAIZE_SGLANG_PATCH=1 is set. Ray runtime_env propagates this env var.
 if ENABLE_MULTI_TURN:
     try:
-        from sglang.srt.function_call_parser import (
-            FunctionCallParser, BaseFormatDetector,
-            StreamingParseResult, ToolCallItem,
-        )
-        from sglang.srt.openai_api.protocol import Tool
-
-        class MiniCPM5XMLDetector(BaseFormatDetector):
-            """Detector for MiniCPM5-2B XML-format tool calls.
-
-            MiniCPM5 uses:
-              <function name="get_weather">
-                <param name="city">北京</param>
-              </function>
-            """
-            def __init__(self):
-                super().__init__()
-                self.bot_token = "<function"
-                self.eot_token = "</function>"
-
-            def has_tool_call(self, text: str) -> bool:
-                return "<function name=" in text
-
-            def detect_and_parse(self, text: str, tools: List[Tool]) -> StreamingParseResult:
-                if "<function name=" not in text:
-                    return StreamingParseResult(normal_text=text, calls=[])
-                pattern = r'<function\s+name="([^"]+)">(.*?)</function>'
-                matches = re.findall(pattern, text, re.DOTALL)
-                calls = []
-                for func_name, body in matches:
-                    params = {}
-                    param_pattern = r'<param\s+name="([^"]+)">(.*?)</param>'
-                    for pname, pval in re.findall(param_pattern, body, re.DOTALL):
-                        if pval.strip().startswith("<![CDATA["):
-                            pval = pval.strip()[9:-3]
-                        params[pname] = pval.strip()
-                    calls.append(ToolCallItem(
-                        tool_index=0,
-                        name=func_name,
-                        parameters=json.dumps(params),  # R50 FIX: field is `parameters` not `arguments` (Pydantic BaseModel)
-                    ))
-                normal = re.sub(pattern, '', text, flags=re.DOTALL).strip()
-                return StreamingParseResult(normal_text=normal, calls=calls)
-
-            def structure_info(self):
-                from sglang.srt.function_call_parser import StructureInfo
-                return lambda name: StructureInfo(
-                    begin=f'<function name="{name}">',
-                    end="</function>",
-                    trigger="<function",
-                )
-
-        # Register in sglang's enum
-        FunctionCallParser.ToolCallParserEnum["minicpm5"] = MiniCPM5XMLDetector
-        print(f"[wrapper] MiniCPM5 XML parser registered in sglang ToolCallParserEnum",
-              flush=True)
-    except Exception as e:
-        print(f"[wrapper] WARNING: Failed to register MiniCPM5 parser: {e}", flush=True)
+        import baize_posttrain_sglang_patch as _patch
+        if _patch.apply_patch():
+            print(f"[wrapper] MiniCPM5 XML parser registered via baize_posttrain_sglang_patch "
+                  f"(pid={os.getpid()})", flush=True)
+        else:
+            print(f"[wrapper] WARNING: Patch failed: {_patch.get_error()}", flush=True)
+            print("[wrapper] Multi-turn tool calls will not work!", flush=True)
+        # Also set env var so any Ray workers spawned by this process inherit it
+        os.environ["BAIZE_SGLANG_PATCH"] = "1"
+    except ImportError as e:
+        print(f"[wrapper] WARNING: Cannot import baize_posttrain_sglang_patch: {e}", flush=True)
         print("[wrapper] Multi-turn tool calls will not work!", flush=True)
 else:
     print("[wrapper] Single-turn mode (R0 skeleton, no tool parser needed)", flush=True)

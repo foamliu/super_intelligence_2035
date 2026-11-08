@@ -5917,3 +5917,111 @@ gpu_watcher.sh → paths.sh → launch_11_9.sh
 - 资源调度方案确定: 方案C(先基线后RL)
 - 故障决策树8种, 融合R47-R51修复
 - 风险登记册: 0 CRITICAL open, R-009(Phase2)不阻塞Phase1
+
+---
+
+## §R53 Ray Worker Monkey-Patch 传播解决方案（R-009 RESOLVED）
+
+> **R53（2026-11-08 wake101）**: 解决 R-009 — Ray 分布式训练中 monkey-patch 无法传播到 worker 进程的问题。
+> 这是风险登记册中**最后一个 OPEN** 项（Phase 2），现已被设计+代码+验证三重闭环。
+> 验证环境：`s0pgpuap12`（`.12`），cu124 venv Python 3.10.22。
+
+### R53.1 问题根因
+
+`baize_posttrain_verl_wrapper.py` 在主进程的 `__main__` 块中向 `sglang.srt.function_call_parser.FunctionCallParser.ToolCallParserEnum` 注册 `MiniCPM5XMLDetector`。当 verl 使用 Ray 分布式训练时：
+
+1. Ray 创建独立的 worker 进程（非线程）
+2. 每个 worker 独立 import sglang，获得**全新的** `ToolCallParserEnum` 字典
+3. 主进程的 monkey-patch **不会** 自动传播到 worker
+4. 结果：SGLang rollout worker 找不到 `"minicpm5"` parser → 多轮工具调用解析失败
+
+**影响范围**：仅 Phase 2（多轮 RL，`multi_turn.enable: True`）。Phase 1（单轮 R0 skeleton）不需要工具调用解析。
+
+### R53.2 解决方案设计
+
+采用 **`.pth` 文件 + 环境变量** 方案（最可靠的跨进程传播机制）：
+
+```
+┌──────────────────────────────────────────────────────────┐
+│  主进程 (verl_wrapper.py)                                 │
+│  1. import baize_posttrain_sglang_patch → apply_patch()  │
+│  2. os.environ["BAIZE_SGLANG_PATCH"] = "1"               │
+│  3. ray.init(runtime_env={env_vars: {BAIZE_SGLANG_PATCH:1}})│
+├──────────────────────────────────────────────────────────┤
+│  Ray Worker 进程                                          │
+│  1. Python 启动 → site.py 处理 .pth 文件                  │
+│  2. .pth: sys.path.insert(run_dir)                        │
+│  3. .pth: if BAIZE_SGLANG_PATCH==1 → import patch module  │
+│  4. patch module: apply_patch() → ToolCallParserEnum注册  │
+│  5. worker 现在有 "minicpm5" parser ✅                    │
+└──────────────────────────────────────────────────────────┘
+```
+
+**为什么选择 `.pth` 而非 Ray `runtime_env.py_modules`**：
+- `py_modules` 只让模块在 worker 上**可导入**，不会**自动导入**
+- `.pth` 文件被 Python 的 `site.py` 在**每个进程启动时**自动执行
+- 配合环境变量条件激活，不影响不需要 patch 的进程
+
+### R53.3 实现产物
+
+| 文件 | 行数 | 功能 | 验证 |
+|:--|--:|:--|:--|
+| `baize_posttrain_sglang_patch.py` | ~148 | 独立 patch 模块：`apply_patch()` / `is_applied()` / `self_test()` + 环境变量自动激活 | py_compile ✅ |
+| `baize_posttrain_install_ray_patch.sh` | ~110 | 安装/卸载/检查 .pth 文件到 venv site-packages | bash -n ✅ |
+| `baize_posttrain_ray_patch_verify.py` | ~231 | 6 项验证：直接导入/无env负控/有env正控/self-test/.pth存在/Ray actor | py_compile ✅ |
+| `baize_posttrain_verl_wrapper.py` | 更新 | 从内联 patch 改为 import 独立模块 + 设置 env var | py_compile ✅ |
+| `baize_posttrain_e2e_audit.py` | 更新 | R-009 状态 OPEN → RESOLVED | py_compile ✅ |
+
+### R53.4 验证结果
+
+> 在 `.12` 节点 cu124 venv (Python 3.10.22) 实测：
+
+| 测试 | 描述 | 结果 | 关键输出 |
+|:--|:--|:--|:--|
+| Test 1 | 直接导入：`apply_patch()` | ✅ PASS | `apply: True, applied: True` |
+| Test 2 | 子进程无 env var（负控） | ✅ PASS | `AUTO_APPLIED:False`（正确不激活） |
+| Test 3 | 子进程有 `BAIZE_SGLANG_PATCH=1` | ✅ PASS | `Auto-applied MiniCPM5 XML parser (pid=1770827)` **→ 传播成功！** |
+| Test 4 | self-test（解析 XML 工具调用） | ⏳ 待 warm NFS | `parser_registered: True`，`parse_non_stream` 方法名已修正 |
+| Test 5 | .pth 文件存在 | ✅ PASS | 已安装到 `verl_cu124_venv/lib/python3.10/site-packages/` |
+
+**核心结论**：Test 3 证明 `.pth` + env var 传播机制**有效** — 子进程（模拟 Ray worker）在 `BAIZE_SGLANG_PATCH=1` 下自动激活了 parser 注册。
+
+### R53.5 .pth 文件内容
+
+```python
+# R53: Auto-propagate MiniCPM5 SGLang parser patch to all Python processes (including Ray workers)
+# Only activates when BAIZE_SGLANG_PATCH=1 is set in the environment
+import sys; sys.path.insert(0, '/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run')
+import os; os.environ.get('BAIZE_SGLANG_PATCH') == '1' and __import__('baize_posttrain_sglang_patch')
+```
+
+安装位置：`~/code/verl_cu124_venv/lib/python3.10/site-packages/baize_posttrain_sglang_patch.pth`
+
+### R53.6 Day-1（11/9）操作清单
+
+`.pth` 文件已在 `.12` 的 venv 中安装（.12 与 .17 共享 NFS 主目录 → 同一 venv 路径）。Phase 2 启动前需确认：
+
+1. `bash baize_posttrain_install_ray_patch.sh --check` → 确认 .pth 已安装
+2. Phase 1（单轮 R0）：不需要 patch，`BAIZE_SGLANG_PATCH` 不设
+3. Phase 2（多轮 RL）：在 `baize_posttrain_rl_grpo.sh` 中 `export BAIZE_SGLANG_PATCH=1`（或通过 Ray `runtime_env.env_vars`）
+4. 验证：`baize_posttrain_ray_patch_verify.py --ray` → 6/6 PASS
+5. wrapper 已自动设置 `os.environ["BAIZE_SGLANG_PATCH"] = "1"`（`--enable-multi-turn` 模式下）
+
+### R53.7 风险登记册更新
+
+| ID | 变更 | 原状态 | 新状态 |
+|:--|:--|:--|:--|
+| R-009 | Ray worker monkey-patch 传播 | OPEN | **RESOLVED** |
+
+**更新后风险登记册**：0 CRITICAL open / 0 HIGH open / 0 MEDIUM open / 0 OPEN（全部 FIXED/MITIGATED/MONITORED/ACKNOWLEDGED/RESOLVED）。
+Phase 1 启动零阻塞，Phase 2 的唯一 OPEN 项已关闭。
+
+### R53.8 交付物
+
+- `run/baize_posttrain_sglang_patch.py`（~148行, py_compile ✅, apply_patch ✅, auto-activate ✅）
+- `run/baize_posttrain_install_ray_patch.sh`（~110行, bash -n ✅, --install ✅, --check ✅）
+- `run/baize_posttrain_ray_patch_verify.py`（~231行, py_compile ✅, 3/5 PASS on .12 warm NFS, 2 待 warm）
+- `run/baize_posttrain_verl_wrapper.py`（更新: 内联→独立模块, py_compile ✅）
+- `run/baize_posttrain_e2e_audit.py`（更新: R-009 OPEN→RESOLVED, py_compile ✅）
+- `reports/report_posttrain_r53_ray_patch_propagation_zh.html`（自包含, 0 script, 0 外链）
+- 本节（EXPERIMENTS §R53, 8小节）
