@@ -6878,3 +6878,119 @@ python3 baize_posttrain_day1_diag.py \
 | JSON 结果（GO 场景测试） | `/tmp/test_diag.json` | ~2KB |
 
 **数据溯源**：R45 NFS cold start 实测 · R43 smoke calibrator · R57 Vision GRPO 失败模式（std=0 78.7%, loss~0, reward variance） · R36 RL monitor 指标 · R38 Day-1 runbook step 阈值 · R60/R61 上下文窗口 + 吞吐量约束 · §5.2 anti-cheat 红线。无伪造。替身 RL 结果（MiniCPM5-2B）不可直接迁移到 BaiZe。
+
+---
+
+## §R63 Post-RL Evaluation Pipeline + 72h Guardian（2026-11-08 wake111 · 零 GPU · Python 3.8+ stdlib + Bash）
+
+> **动机**：`baize_posttrain_launch_11_9.sh` 有 Step 0-6（venv → preflight → baseline eval → D1-D6 → contamination gate → RL smoke → full RL），但**缺少 Step 7：RL 训练后的评测 + 统计比较**。且 72h 无人工值守运行需要墙钟预算执行器。R63 填补这两个空白。
+
+### 1. 识别的空白
+
+| 空白 | 现状 | R63 解决方案 |
+|:--|:--|:--|
+| Step 7 post-RL 评测 | `baize_posttrain_eval.sh` + `eval_analysis.py` 存在但未链接到 launch 序列 | `baize_posttrain_post_rl_pipeline.sh` 链接全部步骤 |
+| 最佳检查点选择 | verl `save_interval=200` 存多个 ckpt，无自动选择逻辑 | `baize_posttrain_ckpt_selector.py` 按训练日志 reward/cheat/std=0 排序 |
+| 72h 墙钟预算 | 无预算执行器，RL 可能超时未评测 | `baize_posttrain_72h_guardian.sh` 带心跳 + 看门狗 + 自动评测触发 |
+
+### 2. baize_posttrain_ckpt_selector.py（~312 行，纯 Python 3.8+ stdlib）
+
+**功能**：从 verl checkpoint 目录 + 训练日志中选择最佳检查点。
+
+**选择逻辑**：
+1. **排除**（任一命中即排除）：
+   - NaN/Inf 出现在日志窗口 → 排除（R36）
+   - OOM 出现在日志窗口 → 排除（R36）
+   - avg_reward < 0.01 → 排除（reward collapse, R36）
+   - avg_std_zero_pct > 80% → 排除（R57 Vision: 78.7%）
+   - avg_cheat_rate > 5% → 排除（§5.2 红线）
+2. **排序**（排除后的有效检查点）：
+   - 主键：avg_reward 降序
+   - 次键：avg_cheat_rate 升序
+   - 末键：step 降序（最新优先）
+3. **窗口**：每个检查点取其 step 之前 last_n=20 个日志步骤的平均值
+
+**日志解析**（复用 R36/R62 regex）：
+- `step`, `reward_mean`, `reward_std`, `cheat_rate`, `kl_loss`, `entropy`, `grad_norm`, `std_zero_pct`
+- NaN/Inf/OOM 模式检测
+
+**输出**：
+- JSON（供 pipeline 消费）：selected path + valid/excluded 列表
+- HTML（自包含，0 script，0 外链）：检查点表格 + 质量阈值 + 后续管线说明
+
+**测试验证**：
+| 场景 | 输入 | 结果 |
+|:--|:--|:--|
+| Dry-run | 10 步模拟数据 + 2 ckpt | step 50 selected, 1 valid, 1 excluded ✅ |
+| HTML 生成 | 同上 | 2.7KB HTML 生成成功 ✅ |
+| py_compile | — | OK ✅ |
+
+### 3. baize_posttrain_post_rl_pipeline.sh（~90 行 Bash）
+
+**Step 7a-d 链**：
+| Step | 脚本 | 功能 |
+|:--|:--|:--|
+| 7a | `baize_posttrain_ckpt_selector.py` | 从 RL 输出目录选最佳 ckpt → JSON + HTML |
+| 7b | `baize_posttrain_eval.sh` | SGLang serve + 158-case eval (5-run, 2500s, -p 8 -n) |
+| 7c | `baize_posttrain_eval_analysis.py` | McNemar + paired bootstrap vs baseline → HTML |
+| 7d | `baize_posttrain_baseline_gate.py` | M1-M4 里程碑检查 → HTML |
+
+**参数**：`--rl-dir`, `--baseline-dir`, `--quick`, `--gpu-ids`, `--dry-run`
+**测试**：`bash -n` ✅ · `--dry-run` 全链打印 ✅
+
+### 4. baize_posttrain_72h_guardian.sh（~180 行 Bash）
+
+**功能**：包装完整 11/9 发射序列 + 墙钟预算管理。
+
+| 组件 | 说明 |
+|:--|:--|
+| 心跳 | 每 5 分钟写 `guardian_heartbeat.txt`（status/elapsed/remaining/pid） |
+| 看门狗 | 每 60s 检查墙钟；T-4h 标记 eval_window；T-0 SIGTERM RL 进程 |
+| Phase 1 | `launch_11_9.sh --step 0-6`（或 `--skip-venv` 跳过 step 0） |
+| Phase 2 | `post_rl_pipeline.sh`（剩余 >1h 时自动触发） |
+| 清理 | trap EXIT：停心跳 + 停看门狗 + 写 final 状态 |
+
+**参数**：`--budget 72h`, `--gpu-ids`, `--launch-steps`, `--skip-venv`, `--dry-run`
+**测试**：`bash -n` ✅ · `--dry-run` 打印完整执行计划 ✅
+
+### 5. 完整 11/9 发射序列（更新后）
+
+| Step | 脚本 | 功能 | 耗时估计 |
+|:--|:--|:--|:--|
+| 0 | setup_cu124_venv.sh | venv 设置 | ~10min |
+| 1 | preflight_check.sh | 环境检查 | ~2min |
+| 2 | minicpm5_diag.sh | SGLang serve + baseline 36% eval | ~4-6h |
+| 3 | minicpm5_diag.sh --extract | D1-D6 失败轨迹提取 | ~20min |
+| 4 | contamination_gate.sh | 污染隔离门 | ~5min |
+| 5 | rl_grpo.sh --smoke | RL smoke (10 iters) | ~37min |
+| 6 | rl_grpo.sh | Full RL training | ~6-72h |
+| **7a** | **ckpt_selector.py** | **最佳检查点选择** | **~1min** |
+| **7b** | **eval.sh** | **158-case 5-run eval** | **~4-6h** |
+| **7c** | **eval_analysis.py** | **McNemar + bootstrap** | **~5min** |
+| **7d** | **baseline_gate.py** | **M1-M4 里程碑** | **~1min** |
+
+### 6. 使用方法（11/9 GPU 到位后）
+
+```bash
+# 方式 A：手动逐步执行（推荐首次使用）
+bash baize_posttrain_launch_11_9.sh --step 0-6 --gpu-ids 0,1,2,3
+# RL 完成后：
+bash baize_posttrain_post_rl_pipeline.sh --gpu-ids 0,1,2,3
+
+# 方式 B：72h 自动执行（无人工值守）
+bash baize_posttrain_72h_guardian.sh --budget 72h --gpu-ids 0,1,2,3 --skip-venv
+
+# 查看心跳（外部监控）
+cat /path/to/guardian_heartbeat.txt
+```
+
+### 7. 交付物
+
+| 产物 | 路径 | 行数 |
+|:--|:--|:--|
+| 检查点选择器 | `run/baize_posttrain_ckpt_selector.py` | ~312 |
+| Post-RL 评测管线 | `run/baize_posttrain_post_rl_pipeline.sh` | ~90 |
+| 72h 墙钟守护器 | `run/baize_posttrain_72h_guardian.sh` | ~180 |
+| HTML 报告 | `reports/report_posttrain_r63_post_rl_pipeline_zh.html` | ~8KB |
+
+**数据溯源**：R36 (RL monitor 阈值) · R48 (reward arm 预注册) · R57 (Vision std=0 78.7% 教训) · R59 (GRPO dynamics) · R62 (Day-1 diagnostic classifier) · §5.2 (anti-cheat 红线) · launch_11_9.sh (steps 0-6) · eval_analysis.py (McNemar/bootstrap) · baseline_gate.py (M1-M4). 无伪造。替身 RL 结果不可迁移到 BaiZe。
