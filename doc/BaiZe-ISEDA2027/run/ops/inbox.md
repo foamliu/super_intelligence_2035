@@ -1,4 +1,82 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
+<!-- RUN_ID: 269 | TARGET: 12 -->
+## RUN_ID 269 — **核实 cline 源码级 checkpoint 修改：检查 /nas_train/app.e0031982/harness/cline 仓库**
+
+> 用户指出：cline 关闭 checkpoint 需要改源码，`/nas_train/app.e0031982/harness/cline` 这个仓库已经改过并重装，
+> 所以当前版本理论上已是 checkpoint-off。本令核实：① 仓库是否存在/有无 patch ② 当前运行的 cline 二进制是否来自该仓库
+> ③ checkpoint 代码是否真的被禁用。
+
+```bash
+set -u
+echo "=== RUN_ID 269 | verify cline source patch | $(date '+%F %T') | host=$(hostname) ==="
+H=/nas_train/app.e0031982/harness/cline
+
+echo
+echo "########## A) 仓库是否存在 ##########"
+ls -ld "$H" 2>/dev/null || echo "NOT FOUND: $H"
+if [ -d "$H" ]; then
+  echo "-- top level --"; ls -la "$H" 2>/dev/null | head -20
+  echo "-- git remote/branch --"
+  cd "$H" 2>/dev/null && { git remote -v 2>/dev/null | head -4; git log -1 --format='HEAD=%h %ad %s' --date=iso 2>/dev/null; }
+  echo "-- git status（是否有本地改动）--"
+  cd "$H" 2>/dev/null && git status --porcelain 2>/dev/null | head -20
+  echo "-- git diff 统计（未提交的改动）--"
+  cd "$H" 2>/dev/null && git diff --stat 2>/dev/null | tail -15
+fi
+
+echo
+echo "########## B) checkpoint 相关源码是否被改 ##########"
+if [ -d "$H" ]; then
+  echo "-- grep checkpoint 源码文件（排除 node_modules）--"
+  grep -rlniE 'checkpoint' "$H" --include='*.ts' --include='*.tsx' --include='*.js' \
+       --exclude-dir=node_modules --exclude-dir=.git --exclude-dir=dist --exclude-dir=out 2>/dev/null | head -20
+  echo "-- 关键：是否有 shadow git / checkpoint 初始化被注释或强制 false --"
+  grep -rniE 'enableCheckpoints|checkpoint.*false|CHECKPOINT' "$H" \
+       --include='*.ts' --include='*.tsx' \
+       --exclude-dir=node_modules --exclude-dir=.git 2>/dev/null | head -20
+fi
+
+echo
+echo "########## C) 当前运行的 cline 是哪个构建 ##########"
+echo "-- which/realpath --"
+ls -l /home/app.e0031982/.npm-global/bin/cline 2>/dev/null
+readlink -f /home/app.e0031982/.npm-global/bin/cline 2>/dev/null
+echo "-- 已安装包版本与来源 --"
+cat /home/app.e0031982/.npm-global/lib/node_modules/cline/package.json 2>/dev/null \
+  | grep -E '"(name|version|_resolved|_from)"' | head -8
+echo "-- 安装目录是否软链到 harness/cline --"
+ls -ld /home/app.e0031982/.npm-global/lib/node_modules/cline 2>/dev/null
+readlink -f /home/app.e0031982/.npm-global/lib/node_modules/cline 2>/dev/null
+echo "-- 二进制文件时间 vs 源码 mtime（判断是否重装过）--"
+stat -c '%y  %n' /home/app.e0031982/.npm-global/lib/node_modules/cline/package.json 2>/dev/null
+stat -c '%y  %n' "$H" 2>/dev/null
+
+echo
+echo "########## D) 运行时实证：checkpoint 是否真的被跳过 ##########"
+echo "-- 当前 data cline 进程（新 loop 起的）--"
+ps -eo pid=,ppid=,lstart=,etime=,pcpu=,args= | grep -i '[c]line --data-dir /nas_train/app.e0031982/.cline_data' | cut -c1-185
+echo "-- data 线日志里 checkpoint 相关行（近期）--"
+grep -iE 'checkpoint' /tmp/baize_data_loop.log 2>/dev/null | tail -8 || echo "  (日志无 checkpoint 字样 = 很可能已禁用)"
+echo "-- 其他线日志对照 --"
+for L in /tmp/baize_vision_loop.log /tmp/baize_harness_loop.log /tmp/baize_pretrain_loop.log; do
+  [ -f "$L" ] || continue
+  n=$(grep -ciE 'checkpoint' "$L" 2>/dev/null || echo 0)
+  echo "  $L  checkpoint_lines=$n  mtime=$(stat -c '%y' "$L" 2>/dev/null | cut -c1-19)"
+done
+
+echo
+echo "########## E) shadow git 目录（checkpoint 的副产物）是否仍在写 ##########"
+echo "-- .cline_data 下是否有 checkpoints/shadow git --"
+find /nas_train/app.e0031982/.cline_data -maxdepth 4 -type d \( -name '*checkpoint*' -o -name '*shadow*' \) 2>/dev/null | head -10
+echo "-- 近 1 小时内被修改的 checkpoint 痕迹 --"
+find /nas_train/app.e0031982/.cline_data -maxdepth 5 -newermt '-60 minutes' -type d 2>/dev/null | grep -iE 'checkpoint|shadow' | head -10 || echo "  (无近期改动)"
+
+echo
+echo "=== 269 done ==="
+```
+
+
+# OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 <!-- RUN_ID: 268 | TARGET: 12 -->
 ## RUN_ID 268 — **修 RUN_ID 267 引入的 PATH 丢失：data loop 重启后找不到 cline（空转 15min/次）**
 
