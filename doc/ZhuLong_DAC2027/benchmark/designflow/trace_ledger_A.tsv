@@ -257,3 +257,4 @@
 1793858909531_b9fua.messages.json	e0039102	hfeg0pkn002	34	eda_other	case	EDA-Eval-DesignFlow-AutoTmscanScriptAnalyze-001	2026-11-09 00:53	
 1792108868745_dyijn	xinqiaoz	hfeg0pkn002	69	eda_other	case	EDA-Eval-DesignFlow-PdkQaModuleAnalyze-001	2026-11-09 01:30	
 1793070934364_gtyj5.messages.json	easont	hfeg0pkn004	592	eda_other	claimed		2026-11-09 01:49	
+1793070934364_gtyj5					parked		2026-11-09 02:01	DUP of okq91/NetlistCompareReport-001 (r247): same easont TempHalfWL workflow, same U#383 verbatim task '对比修改后的网表和原先的网表生成markdown形式的报告', same netlist_AI/netlist_pro_clean assets. r253 deepread missed this distinctness check (only checked CosimFlowAnalyze r238). Parked r254.
