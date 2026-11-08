@@ -29081,3 +29081,129 @@ echo "=== 274 done ==="
 
 === 274 done ===
 ```
+
+---
+
+## RUN_ID 275 · 2026-11-08 23:00:37 · host=`whag0pgpuap12` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 275 | samples logic | $(date '+%F %T') | host=$(hostname) ==="
+SSH="ssh -o BatchMode=yes -o ConnectTimeout=6 -o StrictHostKeyChecking=no"
+$SSH 10.239.2.29 'set -u
+P=/tmp/baize_eval_v4/gguf_lmeval_run.py
+echo "-- samples refs --"; grep -nE "samples|filter|select\(|limit" $P | cut -c1-150 | head -24
+echo "-- code 260-330 --"; sed -n "260,330p" $P | cut -c1-180
+echo "-- chunk2 last progress --"; f=/tmp/baize_eval_v5/logs/client_hellaswag_chunk2_restart.log; tr "\r" "\n" < "$f" | grep -E "^gguf-ll:" | tail -3 | cut -c1-130
+echo "-- chunk3 last progress --"; f=/tmp/baize_eval_v5/logs/client_hellaswag_chunk3_numa_fix.log; tr "\r" "\n" < "$f" | grep -E "^gguf-ll:" | tail -3 | cut -c1-130
+echo "-- clients etime --"; ps -o pid=,etimes=,args= -p 2097234,2097251 2>/dev/null | cut -c1-90'
+echo
+echo "=== 275 done ==="
+```
+
+**输出**
+```
+=== RUN_ID 275 | samples logic | 2026-11-08 23:00:37 | host=whag0pgpuap12 ===
+-- samples refs --
+24:      [--limit 100] [--parallel 2] [--batch-size 32]
+202:            limit = self.max_prompt_tokens or self._max_length
+203:            if len(ctx_ids) + len(cont_ids) > limit:
+204:                keep = max(0, limit - len(cont_ids))
+252:    ap.add_argument("--limit", type=int, default=None)
+259:    ap.add_argument("--log-samples", action="store_true")
+260:    ap.add_argument("--samples", default=None, help='JSON string: {"task_name": [doc_idx,...]}')
+263:    samples_dict = None
+264:    if args.samples:
+265:        samples_dict = json.loads(args.samples)
+266:        print(f"[gguf] samples={samples_dict}", file=sys.stderr)
+281:    print(f"[gguf] tasks={task_list} limit={args.limit} parallel={args.parallel}", file=sys.stderr)
+287:        limit=args.limit,
+288:        samples=samples_dict,
+290:        log_samples=args.log_samples,
+306:        "limit": args.limit,
+-- code 260-330 --
+    ap.add_argument("--samples", default=None, help='JSON string: {"task_name": [doc_idx,...]}')
+    args = ap.parse_args()
+
+    samples_dict = None
+    if args.samples:
+        samples_dict = json.loads(args.samples)
+        print(f"[gguf] samples={samples_dict}", file=sys.stderr)
+
+    task_list = [t.strip() for t in args.tasks.split(",") if t.strip()]
+    os.makedirs(args.output, exist_ok=True)
+
+    lm = GGUFServerLM(
+        base_url=args.base_url,
+        eot_token_id=read_eot_token_id(args.hf_dir),
+        parallel=args.parallel,
+        max_length=args.max_length,
+        timeout=args.timeout,
+        batch_size=args.batch_size,
+    )
+
+    print(f"[gguf] base_url={args.base_url}", file=sys.stderr)
+    print(f"[gguf] tasks={task_list} limit={args.limit} parallel={args.parallel}", file=sys.stderr)
+    t0 = time.time()
+    results = simple_evaluate(
+        model=lm,
+        tasks=task_list,
+        num_fewshot=args.num_fewshot,
+        limit=args.limit,
+        samples=samples_dict,
+        batch_size=args.batch_size,
+        log_samples=args.log_samples,
+    )
+    elapsed = time.time() - t0
+    if not results:
+        raise SystemExit("FAIL: simple_evaluate 返回空结果")
+
+    result_file = os.path.join(args.output, "results.json")
+    with open(result_file, "w", encoding="utf-8") as f:
+        json.dump(results, f, indent=2, ensure_ascii=False, default=str)
+
+    meta = {
+        "backend": "llama.cpp/llama-server (logit_bias teacher forcing)",
+        "base_url": args.base_url,
+        "hf_dir": args.hf_dir,
+        "gguf": args.gguf,
+        "tasks": task_list,
+        "limit": args.limit,
+        "num_fewshot": args.num_fewshot,
+        "parallel": args.parallel,
+        "batch_size": args.batch_size,
+        "max_length": args.max_length,
+        "n_token_requests": lm.n_token_requests,
+        "n_docs_scored": lm.n_docs,
+        "n_truncated_docs": lm.n_truncated,
+        "elapsed_sec": round(elapsed, 2),
+        "sec_per_token_request": (
+            round(elapsed / lm.n_token_requests, 4) if lm.n_token_requests else None
+        ),
+        "generated_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+    }
+    with open(os.path.join(args.output, "meta.json"), "w", encoding="utf-8") as f:
+        json.dump(meta, f, indent=2, ensure_ascii=False)
+
+    print("\n" + "=" * 64, file=sys.stderr)
+    print("EVALUATION RESULTS SUMMARY (GGUF/llama.cpp)", file=sys.stderr)
+    print("=" * 64, file=sys.stderr)
+    for task, tv in results.get("results", {}).items():
+        for metric, value in tv.items():
+            if metric.startswith("_"):
+                continue
+            if isinstance(value, (int, float)):
+-- chunk2 last progress --
+gguf-ll:   5%|▌         | 513/10044 [2:22:37<34:23:11, 12.99s/it]
+gguf-ll:   5%|▌         | 514/10044 [2:22:46<31:11:34, 11.78s/it]
+gguf-ll:   5%|▌         | 515/10044 [2:22:58<31:14:15, 11.80s/it]
+-- chunk3 last progress --
+gguf-ll:   0%|          | 7/10036 [01:57<23:37:49,  8.48s/it]
+gguf-ll:   0%|          | 8/10036 [02:17<33:45:29, 12.12s/it]
+gguf-ll:   0%|          | 9/10036 [02:45<47:34:33, 17.08s/it]
+-- clients etime --
+2097234    8648 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python /tmp/baize_eval_v
+
+=== 275 done ===
+```
