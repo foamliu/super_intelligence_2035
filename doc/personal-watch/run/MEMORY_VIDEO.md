@@ -14,8 +14,8 @@ WAITING: 0
 ## 📊 进度快照（每次唤醒必须更新）
 
 ```
-PHASE:        L0 设备通路**模拟器全通（ADB+emulator+AVD+APK 安装+App 闭环+录屏）**；L1 单题闭环达标；HCI 交互规范已交付；**可安装真 App 已跑通（22:50 令）**；**HCI 代码层（normalize_math.py 81 单测 + speech.py 12 单测）已交付（12:20 令）**；**presence.py 在座检测已交付（12:05 令）**；**交互验收（11:40 令 §3）已交付（第13轮）**；**L1 全量 100 题 + 泄露检测误报修复（第14轮）**；**L2 智能体工具层（5 工具 + 会话编排 + LLM 工具决策）已交付（第15轮）**；**L2 工具/智能体已接 HTTP+App（/tool + /agent 端点 + App 换一题/记错题/报告/追问 + APK 装机成功）已交付（第16轮）**；**L3 学情层（l3_profile.py 知识点画像+每日/每周摘要+自包含 HTML + POST /profile 端点 + App「学情」按钮）已交付（第17轮）**
-已完成:       P0 ✅；路线 R3 ✅；最小 demo ✅；L1 基线 ✅；识图 4/4 ✅；给答案率 0 ✅；时延达标 ✅；INTERACTION_SPEC.md ✅；可安装 APK + 模拟器跑通一题 ✅（22:50 令·第10轮）；**normalize_math.py + speech.py 交付、93 单测全绿 ✅（12:20 令·第11轮）**；**presence.py 交付、8 单测、PC 摄像头 20 次实测 P50 33ms ≤300ms、准确率 20/20 ✅（12:05 令·第12轮）**；**交互验收交付：eval/interaction_*.json + HTML 报告 + clamp_hint(≤2句)，整轮 P50 1.37s/P90 1.97s、给答案率 0、录音 91.2s、118 单测全绿 ✅（11:40 令·第13轮）**；**100 题题库(question_bank.py)+leak_check 修复+L1 全量评测（给答案率 0·识图 20/20·P50 1.16s/P90 2.07s）、133 单测全绿 ✅（第14轮）**；**L2 智能体：tools.py(5工具)+l2_agent.py(会话/路由/LLM决策)+eval_l2.py，6 工具全调·给答案率 0·3 轮一致·175 单测全绿 ✅（第15轮）**；**L2→HTTP/App：/tool+/agent 端点+App 换一题/记错题/报告/追问+APK 装机成功（4.11MB·adb install Success·UI dump 确认）、188 单测全绿 ✅（第16轮）**；**L3 学情：l3_profile.py（知识点画像+每日/每周摘要+自包含 HTML）+POST /profile 端点+App「学情」按钮+模拟器点击实测（错题总数 2·薄弱点一元一次方程）、205 单测全绿 ✅（第17轮）**
+PHASE:        L0 设备通路**模拟器全通（ADB+emulator+AVD+APK 安装+App 闭环+录屏）**；L1 单题闭环达标；HCI 交互规范已交付；**可安装真 App 已跑通（22:50 令）**；**HCI 代码层（normalize_math.py 81 单测 + speech.py 12 单测）已交付（12:20 令）**；**presence.py 在座检测已交付（12:05 令）**；**交互验收（11:40 令 §3）已交付（第13轮）**；**L1 全量 100 题 + 泄露检测误报修复（第14轮）**；**L2 智能体工具层（5 工具 + 会话编排 + LLM 工具决策）已交付（第15轮）**；**L2 工具/智能体已接 HTTP+App（/tool + /agent 端点 + App 换一题/记错题/报告/追问 + APK 装机成功）已交付（第16轮）**；**L3 学情层（l3_profile.py 知识点画像+每日/每周摘要+自包含 HTML + POST /profile 端点 + App「学情」按钮）已交付（第17轮）**；**端侧真实 ASR 落地（SherpaOnnxASR paraformer 离线 + StreamingSherpaOnnxASR streaming-zipformer 真流式 + eval_asr.py CER 实测，第18轮）**
+已完成:       P0 ✅；路线 R3 ✅；最小 demo ✅；L1 基线 ✅；识图 4/4 ✅；给答案率 0 ✅；时延达标 ✅；INTERACTION_SPEC.md ✅；可安装 APK + 模拟器跑通一题 ✅（22:50 令·第10轮）；**normalize_math.py + speech.py 交付、93 单测全绿 ✅（12:20 令·第11轮）**；**presence.py 交付、8 单测、PC 摄像头 20 次实测 P50 33ms ≤300ms、准确率 20/20 ✅（12:05 令·第12轮）**；**交互验收交付：eval/interaction_*.json + HTML 报告 + clamp_hint(≤2句)，整轮 P50 1.37s/P90 1.97s、给答案率 0、录音 91.2s、118 单测全绿 ✅（11:40 令·第13轮）**；**100 题题库(question_bank.py)+leak_check 修复+L1 全量评测（给答案率 0·识图 20/20·P50 1.16s/P90 2.07s）、133 单测全绿 ✅（第14轮）**；**L2 智能体：tools.py(5工具)+l2_agent.py(会话/路由/LLM决策)+eval_l2.py，6 工具全调·给答案率 0·3 轮一致·175 单测全绿 ✅（第15轮）**；**L2→HTTP/App：/tool+/agent 端点+App 换一题/记错题/报告/追问+APK 装机成功（4.11MB·adb install Success·UI dump 确认）、188 单测全绿 ✅（第16轮）**；**L3 学情：l3_profile.py（知识点画像+每日/每周摘要+自包含 HTML）+POST /profile 端点+App「学情」按钮+模拟器点击实测（错题总数 2·薄弱点一元一次方程）、205 单测全绿 ✅（第17轮）**；**端侧真实 ASR：SherpaOnnxASR(paraformer 离线)+StreamingSherpaOnnxASR(zipformer 真流式)+eval_asr.py（流式 CER mean 0.302·延迟 0.03-0.08s·中间结果逐字增长）、209 单测全绿 ✅（第18轮）**
 第5轮:       识图+引导切云端 DeepSeek（recognize() 签名不变 / 可降级 / 路径可见）；识图 0.5→1.0；P50 2.0s·P90 2.92s；修 headless TTS 崩溃；P0 用户清单 5→3 条
 第6轮:       按 11:10 令全链路复跑无回归——P0 四度复验、R3 维持、demo 端到端 2.95s、L1 四指标达标（识图 1.0·首步 P50 1.51s/P90 2.22s·给答案率 0）
 第7轮:       按 11:10 令全链路复跑无回归——P0 五度复验、R3 维持、demo 端到端 3.33s、L1 四指标达标（识图 4/4·首步 P50 1.6s/P90 1.78s·给答案率 0·无静默降级）
@@ -272,13 +272,29 @@ ERROR_COUNT:  0
 - 回写：`host/l3_profile.py`/`host/test_l3_profile.py`（新建）、`host/tutor_server.py`/`host/test_tutor_server.py`/`host/smoke_http.py`、`host/README.md`、`app/.../TutorClient.kt`/`MainActivity.kt`/`activity_main.xml`/`strings.xml`、`app/README.md`、`ROADMAP.md`（第 17 轮）、本文件、`daily-memories-video/2026-11-08.md`。
 - commit+push（`robot:`）。
 
+## 4.17 本唤醒流水（2026-11-08 · 第 18 轮 · 端侧真实 ASR 落地：sherpa-onnx 离线 + 真流式）
+
+- 读任务书全文 + `robot/README.md` + `ROADMAP.md`；识别 ROADMAP「下一轮候选」#1 = 端侧真实 ASR（sherpa-onnx）接入位落地（`SherpaOnnxASR` 现为报错占位），是 12:20 令「端侧为主」最后一环。本轮落地。ComfyUI 全程未碰（已冻结，本轮提示再次确认停用）。
+- ✅ **`host/speech.py` `SherpaOnnxASR` 报错占位 → 真实离线识别**：`sherpa_onnx.OfflineRecognizer.from_paraformer`（中文离线，16kHz）→ `transcribe(samples,sr)` / `transcribe_file(wav)` / `stream(wav, chunk_ms)`（前缀增量模拟流式中间结果，如实标注「非真流式」）。
+- ✅ **`host/speech.py` 新增 `StreamingSherpaOnnxASR`（真流式）**：`sherpa_onnx.OnlineRecognizer.from_transducer`（streaming-zipformer 中文）→ `stream(wav, chunk_ms)` 逐块喂入、逐块 yield 增长中间结果；`transcribe_file()` 整段。修复 1 处 bug：sherpa-onnx 2.0.1 `get_result()` 返回 str（非 `.text`），用 `hasattr` 兼容。
+- ✅ **`host/speech.py` 新增 `load_wav_mono()` / `_resample_linear()`**：任意 WAV（含 48k 立体声）→ 16kHz mono float32。
+- ✅ **`host/eval_asr.py`**：SAPI TTS 合成 8 条已知中文（6 自然句 + 2 数学口述）→ 两引擎识别 → CER；产出 `eval/asr_streaming_zipformer_zh.json`（离线 paraformer 未就绪则 skip）。
+- ✅ **模型落地（hf-mirror，直连 GitHub releases 超时）**：流式 `streaming-zipformer-zh-14M`（encoder 21,621,684 + decoder 7,509,745 + joiner 1,795,562 + tokens 48,697 字节，~31MB）已就绪；离线 `paraformer-zh`（`model.int8.onnx` 243,371,218 字节）后台下载中。
+- ✅ **流式 CER 实测（真实输出）**：streaming-zipformer mean_cer=0.302 / easy_mean_cer=0.297，单条延迟 0.03–0.08s，中间结果逐字增长（`我们→我们先→我们先把→…`）。⚠️ 14M 小模型精度偏低，属「真流式落地」证据；高精度待 paraformer 离线下载完成补测。
+- ✅ **`test_speech.py` 增测**：模型缺失报错×2 / WAV 读取 16k / 48k→16k 重采样 / 真实识别（离线+流式，skipif 模型在位时跑）。
+- ✅ **host 全量 `pytest` = 209 passed + 1 skipped**（205 → +4 新增）。
+- 📌 **能信/不能信**：CER 为「SAPI 合成语音回读」字错率（PC 端端侧真实推理证据，非估算）；真机麦克风近场 CER / 流式首字延迟 / AEC 待真机复测。🚫 14M 流式模型精度低；离线 paraformer 本轮未跑（下载中）。
+- 回写：`host/speech.py`/`host/test_speech.py`/`host/eval_asr.py`（新建）、`host/README.md`、`INTERACTION_SPEC.md`、`ROADMAP.md`（第 18 轮）、本文件、`daily-memories-video/2026-11-08.md`。
+- commit+push（`robot:`）。
+
+## 5. 阻塞 / 待办
 ## 5. 阻塞 / 待办
 
 1. **⏳ 等用户 2 条回复**（`P0_设备通路.md` §4）：① 手机型号/系统版本 ② 开 USB 调试并连线（adb/hdc 已由本线自装，不再需要用户装）。
    🚫 **只阻塞「真机化」，不阻塞 PC/模拟器任何工作**（16:5x 令 §5：不得再以此为由停摆）。
 2. ~~`qwen3-vl:32b` 20GB GGUF 缺失~~ → **已作废**（15:4x 令：识图走 DeepSeek，本地 `llava` 只做离线兜底）。
 3. **下一轮候选（按优先级）**：
-   1. 端侧真实 ASR（sherpa-onnx）接入位落地（`SherpaOnnxASR` 现为报错占位）——12:20 令「端侧为主」最后一环；
+   1. ~~端侧真实 ASR（sherpa-onnx）接入位落地~~ ✅ **已交付（第 18 轮，paraformer 离线 + streaming-zipformer 真流式；高精度 paraformer CER 待下载完成后补测）**；
    2. `clamp_hint` 后的 full 30 会话复跑验证（第 13 轮只做了单次 smoke）；
    3. L3 学情补「正样本」：会话/练习日志（作答次数、正确率），与错题本合并出更完整的掌握画像（当前只有错题单边数据）；
    4. 真机化 L0（等用户 3 条）。

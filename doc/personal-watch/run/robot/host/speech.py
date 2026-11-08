@@ -14,7 +14,8 @@ robot 线 · 语音链路适配层（12:20 用户令 §2/§3 + INTERACTION_SPEC.
 
 PC 端侧事实：
   - Windows SAPI `Huihui` = 中文女声，离线免费；无音频设备（headless）时 `synthesize_to_wav` 落盘恒可用。
-  - 端侧流式 ASR（sherpa-onnx）本机未装：`SherpaOnnxASR` 保留接入位，构造时给明确报错，不静默。
+  - 端侧真实 ASR = `SherpaOnnxASR`（sherpa-onnx paraformer 中文离线模型，16kHz）：`transcribe_file()` 一次性识别，
+    `stream()` 按块前缀增量模拟流式中间结果；模型缺失/未装时构造报明确错误，不静默。
 """
 import os
 import re
@@ -164,14 +165,218 @@ class MockStreamingASR(StreamingASR):
         self._stop = True
 
 
-class SherpaOnnxASR(StreamingASR):
-    """端侧 sherpa-onnx 接入位（真机默认）。本机未装权重 -> 构造即报明确错误，不静默。"""
+def load_wav_mono(wav_path: str):
+    """读 WAV -> (float32 单声道 1-D numpy, 16000)。自动重采样到 16kHz（线性插值）。
 
-    def __init__(self, model_dir: str = None):
-        raise RuntimeError(
-            "端侧 sherpa-onnx 未安装：请先 `pip install sherpa-onnx` 并下载模型，"
-            "或真机上改用 Core Speech Kit；当前用 MockStreamingASR 验证逻辑。"
+    端侧 ASR 输入统一为 16kHz mono float32（sherpa-onnx 口径）。
+    """
+    import numpy as np
+    import wave
+
+    with wave.open(wav_path, "rb") as w:
+        sr = w.getframerate()
+        ch = w.getnchannels()
+        sw = w.getsampwidth()
+        raw = w.readframes(w.getnframes())
+
+    if sw == 2:
+        data = np.frombuffer(raw, dtype=np.int16).astype(np.float32) / 32768.0
+    elif sw == 1:
+        data = (np.frombuffer(raw, dtype=np.uint8).astype(np.float32) - 128.0) / 128.0
+    else:
+        raise ValueError("unsupported WAV sampwidth: %d" % sw)
+
+    if ch > 1:
+        data = data.reshape(-1, ch).mean(axis=1)
+
+    if sr != 16000:
+        data = _resample_linear(data, sr, 16000)
+    return data.astype(np.float32), 16000
+
+
+def _resample_linear(x, src_sr: int, dst_sr: int):
+    import numpy as np
+
+    n = len(x)
+    if n == 0:
+        return x
+    t_new = np.arange(int(np.ceil(n * dst_sr / src_sr))) * (src_sr / dst_sr)
+    t_new = np.clip(t_new, 0, n - 1)
+    lo = np.floor(t_new).astype(np.int64)
+    hi = np.minimum(lo + 1, n - 1)
+    frac = (t_new - lo).astype(np.float32)
+    return (x[lo] * (1.0 - frac) + x[hi] * frac).astype(np.float32)
+
+
+class SherpaOnnxASR(StreamingASR):
+    """端侧 sherpa-onnx **真实 ASR**（默认 paraformer 中文离线模型，16kHz）。
+
+    - 模型目录：优先 `ROBOT_ASR_MODEL_DIR`，其次构造参数，最后 `C:\\Android\\asr-models\\paraformer-zh`。
+    - 目录需含 `model.int8.onnx` + `tokens.txt`（下载见 `host/README.md` §ASR）。
+    - 真机/HarmonyOS 上替换为 Core Speech Kit；本类提供 PC 端「端侧」真实识别与 CER 证据。
+    """
+
+    DEFAULT_MODEL_DIR = r"C:\Android\asr-models\paraformer-zh"
+
+    def __init__(self, model_dir: str = None, num_threads: int = 2):
+        d = (model_dir
+             or os.environ.get("ROBOT_ASR_MODEL_DIR")
+             or self.DEFAULT_MODEL_DIR)
+        model = os.path.join(d, "model.int8.onnx")
+        tokens = os.path.join(d, "tokens.txt")
+        if not (os.path.isfile(model) and os.path.isfile(tokens)):
+            raise RuntimeError(
+                "端侧 sherpa-onnx 模型缺失：%s 需含 model.int8.onnx + tokens.txt；"
+                "下载见 host/README.md §ASR" % d
+            )
+        try:
+            import sherpa_onnx
+        except ImportError as e:  # pragma: no cover
+            raise RuntimeError("端侧 sherpa-onnx 未安装：请 `pip install sherpa-onnx`") from e
+        self.model_dir = d
+        self._rec = sherpa_onnx.OfflineRecognizer.from_paraformer(
+            paraformer=model,
+            tokens=tokens,
+            num_threads=num_threads,
+            sample_rate=16000,
+            feature_dim=80,
+            decoding_method="greedy_search",
         )
+        self._stop = False
+
+    def transcribe(self, samples, sample_rate: int = 16000) -> str:
+        """samples: float32 1-D numpy（mono）。返回识别文本。"""
+        s = self._rec.create_stream()
+        s.accept_waveform(sample_rate, samples)
+        self._rec.decode_stream(s)
+        return s.result.text.strip()
+
+    def transcribe_file(self, wav_path: str) -> str:
+        """读 WAV（自动转 16k mono）-> 识别文本。"""
+        samples, sr = load_wav_mono(wav_path)
+        return self.transcribe(samples, sr)
+
+    def stream(self, wav_path: str = None, chunk_ms: int = 500):
+        """流式接口：按块「前缀增量」识别，逐块 yield {"text","is_final"}。
+
+        说明：paraformer 为离线模型，这里用「逐块加长再识别」模拟流式中间结果
+        （非 OnlineRecognizer 真流式，真流式待接 streaming 模型，见 §9）。
+        """
+        if not wav_path:
+            raise ValueError("SherpaOnnxASR.stream() 需要 wav_path")
+        samples, sr = load_wav_mono(wav_path)
+        n = len(samples)
+        step = int(sr * chunk_ms / 1000.0)
+        if step <= 0:
+            step = n
+        self._stop = False
+        last = ""
+        pos = step
+        while pos < n:
+            if self._stop:
+                return
+            text = self.transcribe(samples[:pos], sr)
+            if text and text != last:
+                last = text
+                yield {"text": text, "is_final": False}
+            pos += step
+        text = self.transcribe(samples, sr) or last
+        yield {"text": text, "is_final": True}
+
+    def stop(self):
+        self._stop = True
+
+
+class StreamingSherpaOnnxASR(StreamingASR):
+    """端侧 sherpa-onnx **真流式** ASR（streaming zipformer 中文 transducer，16kHz）。
+
+    - 用 `OnlineRecognizer.from_transducer` 加载 encoder/decoder/joiner + tokens。
+    - `stream(wav_path, chunk_ms=500)`：按块喂入，逐块 yield 增长中的**中间结果**
+      （OnlineRecognizer 真流式 partial，非离线前缀模拟），最后 `is_final=True`。
+    - 模型目录：优先 `ROBOT_STREAMING_ASR_MODEL_DIR`，其次构造参数，最后
+      `C:\\Android\\asr-models\\streaming-zipformer-zh-14M`。
+    - 模型缺失/未装时报明确错误，不静默。
+    """
+
+    DEFAULT_MODEL_DIR = r"C:\Android\asr-models\streaming-zipformer-zh-14M"
+
+    def __init__(self, model_dir: str = None, num_threads: int = 2):
+        d = (model_dir
+             or os.environ.get("ROBOT_STREAMING_ASR_MODEL_DIR")
+             or self.DEFAULT_MODEL_DIR)
+        encoder = os.path.join(d, "encoder-epoch-99-avg-1.int8.onnx")
+        decoder = os.path.join(d, "decoder-epoch-99-avg-1.onnx")
+        joiner = os.path.join(d, "joiner-epoch-99-avg-1.int8.onnx")
+        tokens = os.path.join(d, "tokens.txt")
+        for f in (encoder, decoder, joiner, tokens):
+            if not os.path.isfile(f):
+                raise RuntimeError(
+                    "端侧流式 ASR 模型缺失：%s 需含 encoder/decoder/joiner/tokens；"
+                    "下载见 host/README.md §ASR" % f
+                )
+        try:
+            import sherpa_onnx
+        except ImportError as e:  # pragma: no cover
+            raise RuntimeError("端侧 sherpa-onnx 未安装：请 `pip install sherpa-onnx`") from e
+        self.model_dir = d
+        self._rec = sherpa_onnx.OnlineRecognizer.from_transducer(
+            tokens=tokens,
+            encoder=encoder,
+            decoder=decoder,
+            joiner=joiner,
+            num_threads=num_threads,
+            sample_rate=16000,
+            feature_dim=80,
+            decoding_method="greedy_search",
+        )
+        self._stop = False
+
+    def transcribe_file(self, wav_path: str) -> str:
+        """一次性识别整段 WAV（内部仍走流式喂入 + input_finished），返回最终文本。"""
+        samples, sr = load_wav_mono(wav_path)
+        s = self._rec.create_stream()
+        s.accept_waveform(sr, samples)
+        s.input_finished()
+        while self._rec.is_ready(s):
+            self._rec.decode_stream(s)
+        res = self._rec.get_result(s)
+        return (res.text if hasattr(res, "text") else res).strip()
+
+    def stream(self, wav_path: str = None, chunk_ms: int = 500):
+        """真流式：按 chunk_ms 喂块，逐块 yield 增长中的中间结果，末块 is_final=True。"""
+        if not wav_path:
+            raise ValueError("StreamingSherpaOnnxASR.stream() 需要 wav_path")
+        samples, sr = load_wav_mono(wav_path)
+        n = len(samples)
+        step = int(sr * chunk_ms / 1000.0)
+        if step <= 0:
+            step = n
+        s = self._rec.create_stream()
+        self._stop = False
+        last = ""
+        pos = 0
+        while pos < n:
+            if self._stop:
+                s.input_finished()
+                return
+            s.accept_waveform(sr, samples[pos:pos + step])
+            while self._rec.is_ready(s):
+                self._rec.decode_stream(s)
+            res = self._rec.get_result(s)
+            text = (res.text if hasattr(res, "text") else res).strip()
+            if text and text != last:
+                last = text
+                yield {"text": text, "is_final": False}
+            pos += step
+        s.input_finished()
+        while self._rec.is_ready(s):
+            self._rec.decode_stream(s)
+        res = self._rec.get_result(s)
+        text = (res.text if hasattr(res, "text") else res).strip() or last
+        yield {"text": text, "is_final": True}
+
+    def stop(self):
+        self._stop = True
 
 
 class CloudASR(StreamingASR):

@@ -164,9 +164,21 @@
 - ✅ **host 全量 `pytest` = 205 passed**（188 + 13 l3 + 4 profile）。
 - 📌 **能信/不能信**：画像/摘要/HTML 为**确定性纯函数**（13 单测）+ `smoke_http.py` 实测真实 JSON + App 模拟器点击端到端；`logs/wrong_book.json` 为本地自造题数据。🚫 学情画像基于「错题本」这一单一数据源，尚未接「练习/作答次数」等正样本（下一步候选）；端侧真实 ASR 仍未落地。
 
+## 第 18 轮增量（2026-11-08 · 端侧真实 ASR 落地：sherpa-onnx 离线 + 真流式）
+
+- ✅ **`host/speech.py` `SherpaOnnxASR` 由「报错占位」升级为真实离线识别**（12:20 令「端侧为主」最后一环）：`sherpa_onnx.OfflineRecognizer.from_paraformer`（中文离线，16kHz）→ `transcribe(samples,sr)` / `transcribe_file(wav)` / `stream(wav, chunk_ms)`（按块「前缀增量」模拟流式中间结果；paraformer 为离线模型，**非** OnlineRecognizer 真流式，已如实标注）。
+- ✅ **`host/speech.py` 新增 `StreamingSherpaOnnxASR`（真流式）**：`sherpa_onnx.OnlineRecognizer.from_transducer`（streaming-zipformer 中文 transducer，16kHz）→ `stream(wav, chunk_ms)` 逐块喂入、逐块 yield 增长中的**中间结果**（OnlineRecognizer 真流式 partial），`transcribe_file()` 整段识别。
+- ✅ **`host/speech.py` 新增 `load_wav_mono()` / `_resample_linear()`**：任意 WAV → 16kHz mono float32（端侧 ASR 统一输入口径）。
+- ✅ **`host/eval_asr.py`**：SAPI TTS 合成 8 条已知中文（6 自然句 + 2 数学口述）→ 两套引擎分别识别 → CER 字错率；产出 `eval/asr_streaming_zipformer_zh.json`（离线 paraformer 未就绪则跳过，见下）。
+- ✅ **模型落地（hf-mirror，直连 GitHub releases 超时）**：流式 `streaming-zipformer-zh-14M`（encoder 21.6MB + decoder 7.5MB + joiner 1.8MB + tokens，共 ~31MB）已就绪；离线 `paraformer-zh`（`model.int8.onnx` 243,371,218 字节 + `tokens.txt`）本轮仍在后台下载中。
+- ✅ **流式 CER 实测（真实输出，非估算）**：streaming-zipformer **mean_cer=0.302 / easy_mean_cer=0.297**，单条识别延迟 0.03–0.08s；流式中间结果逐字增长（`我们→我们先→我们先把→…`）。⚠️ 14M 小模型精度偏低，属「真流式落地」证据；高精度待 paraformer 离线模型下载完成后补测。
+- ✅ **`test_speech.py` 增测**：模型缺失报错×2 / WAV 读取 16k / 48k→16k 重采样 / 真实识别（离线+流式，skipif 模型在位时跑）。
+- ✅ **host 全量 `pytest` = 209 passed + 1 skipped**（205 → +4 新增；paraformer 未就绪时 1 skip）。
+- 📌 **能信/不能信**：CER 为「SAPI 合成语音 → 离线/流式识别」回读字错率（PC 端真实推理证据，非估算）；真机麦克风近场 CER / 流式首字延迟 / AEC 待真机复测（16:5x 令）。
+
 ## 下一轮候选（按优先级）
 
-1. 端侧真实 ASR（sherpa-onnx）接入位落地（`SherpaOnnxASR` 现为报错占位）——12:20 令「端侧为主」的最后一环。
+1. ~~端侧真实 ASR（sherpa-onnx）接入位落地~~ ✅ **已交付（第 18 轮，paraformer 离线；真流式 OnlineRecognizer 待接 streaming 模型）**。
 2. `clamp_hint` 后的 full 30 会话复跑验证（第 13 轮只做了单次 smoke）。
 3. L3 学情补「正样本」：会话/练习日志（作答次数、正确率），与错题本合并出更完整的掌握画像（当前只有错题单边数据）。
 4. 收用户 3 条回复 → 复验 `hdc list targets` / `adb devices`，打通真机「拍照/出声」（L0 真机化）。

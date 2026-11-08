@@ -7,7 +7,8 @@ import pytest
 
 import speech
 from speech import (asr_stream, split_sentences, stop, reset_stop, tts_stream,
-                    MockStreamingASR, CloudASR, CloudTTS, SherpaOnnxASR)
+                    MockStreamingASR, CloudASR, CloudTTS, SherpaOnnxASR,
+                    StreamingSherpaOnnxASR, load_wav_mono, synthesize_to_wav)
 
 
 # ── 分句 ────────────────────────────────────────────────────────────────
@@ -71,9 +72,79 @@ def test_cloud_tts_off():
         CloudTTS()
 
 
-def test_sherpa_stub_informative():
+def test_sherpa_missing_model_raises(tmp_path):
+    """模型缺失时构造必须报明确错误，不静默（无参默认目录在本机存在时另测真实识别）。"""
     with pytest.raises(RuntimeError):
-        SherpaOnnxASR()
+        SherpaOnnxASR(model_dir=str(tmp_path / "no_such_dir"))
+
+
+# ── WAV 读取 / 重采样（端侧 ASR 输入预处理）─────────────────────────────────
+def test_load_wav_mono_16k(tmp_path):
+    import numpy as np
+    import wave
+    wav = str(tmp_path / "t.wav")
+    sr = 16000
+    x = (np.sin(2 * np.pi * 440 * np.arange(sr) / sr) * 20000).astype(np.int16)
+    with wave.open(wav, "wb") as w:
+        w.setnchannels(1)
+        w.setsampwidth(2)
+        w.setframerate(sr)
+        w.writeframes(x.tobytes())
+    samples, out_sr = load_wav_mono(wav)
+    assert out_sr == 16000
+    assert samples.dtype == np.float32
+    assert samples.ndim == 1
+    assert len(samples) == sr
+
+
+def test_load_wav_mono_resamples_48k_to_16k(tmp_path):
+    import numpy as np
+    import wave
+    wav = str(tmp_path / "t48.wav")
+    sr = 48000
+    x = (np.sin(2 * np.pi * 440 * np.arange(sr) / sr) * 20000).astype(np.int16)
+    with wave.open(wav, "wb") as w:
+        w.setnchannels(2)
+        w.setsampwidth(2)
+        w.setframerate(sr)
+        w.writeframes(np.column_stack([x, x]).reshape(-1).tobytes())
+    samples, out_sr = load_wav_mono(wav)
+    assert out_sr == 16000
+    assert abs(len(samples) - sr // 3) <= 2  # 48k -> 16k 约 1/3 长度
+
+
+# ── 端侧真实 ASR（模型在场时端到端；无模型时 skip）──────────────────────────
+_MODEL_DIR = r"C:\Android\asr-models\paraformer-zh"
+
+
+@pytest.mark.skipif(not (os.path.isfile(os.path.join(_MODEL_DIR, "model.int8.onnx"))
+                          and os.path.isfile(os.path.join(_MODEL_DIR, "tokens.txt"))),
+                    reason="端侧 ASR 模型未下载完整（host/README.md §ASR）")
+def test_sherpa_real_transcribe(tmp_path):
+    asr = SherpaOnnxASR(model_dir=_MODEL_DIR, num_threads=2)
+    wav = str(tmp_path / "t.wav")
+    synthesize_to_wav("负二加五等于三。", wav)
+    text = asr.transcribe_file(wav)
+    assert isinstance(text, str) and len(text.strip()) > 0
+
+
+# ── 端侧真流式 ASR（streaming zipformer transducer）────────────────────────
+_STREAMING_MODEL_DIR = r"C:\Android\asr-models\streaming-zipformer-zh-14M"
+
+
+def test_streaming_sherpa_missing_model_raises(tmp_path):
+    with pytest.raises(RuntimeError):
+        StreamingSherpaOnnxASR(model_dir=str(tmp_path / "no_such_dir"))
+
+
+@pytest.mark.skipif(not os.path.isfile(os.path.join(_STREAMING_MODEL_DIR, "encoder-epoch-99-avg-1.int8.onnx")),
+                    reason="端侧流式 ASR 模型未下载（host/README.md §ASR）")
+def test_streaming_sherpa_real(tmp_path):
+    asr = StreamingSherpaOnnxASR(model_dir=_STREAMING_MODEL_DIR, num_threads=2)
+    wav = str(tmp_path / "t.wav")
+    synthesize_to_wav("等腰三角形的两个底角相等。", wav)
+    text = asr.transcribe_file(wav)
+    assert isinstance(text, str) and len(text.strip()) > 0
 
 
 # ── TTS 分句流式 + 落盘产物（可证伪的「出声」）──────────────────────────────

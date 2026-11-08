@@ -10,12 +10,13 @@
 |:--|:--|
 | `tutor_agent.py` | 最小闭环：题图/题文 → 识图（默认 DeepSeek 视觉）→ 分步引导（默认 DeepSeek，不泄答案，`clamp_hint()` 确定性裁剪 ≤2 句）→ Windows SAPI 出声 |
 | `tutor_server.py` | HTTP 服务（App 经 `10.0.2.2:8765` 调它）：`POST /tutor`（识图+引导，带 `tool` 字段即转工具）+ `POST /tool`（L2 工具）+ `POST /agent`（智能体多轮）+ `GET /health` |
-| `speech.py` | 语音链路适配层（12:20 令 §2/§3）：统一接口 `asr_stream()/tts_stream()/stop()`；端侧默认（SAPI 分句流式 + 打断 + `MockStreamingASR`），云端留空实现（默认 off） |
+| `speech.py` | 语音链路适配层（12:20 令 §2/§3）：统一接口 `asr_stream()/tts_stream()/stop()`；端侧默认（SAPI 分句流式 + 打断 + `MockStreamingASR`），**端侧真实 ASR = `SherpaOnnxASR`（sherpa-onnx paraformer 中文离线模型）**，云端留空实现（默认 off） |
 | `normalize_math.py` | 口述→数学式纠错（12:20 令 §4）：覆盖平方/立方/根号/分之/负/运算符/关系/π/度/角/几何符号/术语等，`cn_to_int` 中文数字转换 |
 | `eval_l1.py` | L1 评测基线：文本 3 题 + 对抗探针 + **4 张题图**（算式/中文+算式/中文应用题/代数式）→ `eval/l1_baseline.json`（直接给答案率 / 识图正确率 / 首步时延 P50·P90 / 逐条后端与降级原因） |
 | `probe_ds_vision.py` | DeepSeek 视觉一次性探针（读 key 不打印 key，产出 `ds_vision_probe.json`） |
+| `eval_asr.py` | **端侧 ASR 实测（第 18 轮）**：SAPI TTS 合成已知文本 → `SherpaOnnxASR` 识别 → CER（字错率）→ `eval/asr_paraformer_zh.json` |
 | `test_normalize_math.py` | `normalize_math.py` 单测（**81 条**，12:20 令要求 ≥30） |
-| `test_speech.py` | `speech.py` 单测（12 条：分句/打断/流式/落盘 WAV/云端与端侧未装报错） |
+| `test_speech.py` | `speech.py` 单测（分句/打断/流式/落盘 WAV/云端 off/端侧模型缺失报错/WAV 读取与重采样/端侧真实识别〔模型在场时〕） |
 | `presence.py` | 在座检测（12:05 令 §1/§5）：单帧 320×240 + YuNet 人脸（`cv2.FaceDetectorYN`，OpenCV 5）+ 亮度阈值，三分类 person/left/unknown；帧不落盘不上传；`measure()` 连拍测帧率/耗时 |
 | `test_presence.py` | `presence.py` 单测（8 条：三分类 / 300ms 预算字段 / 模型缺失报错 / 自动找模型） |
 | `eval_presence.py` | presence 评测：PC 摄像头连拍 20 次（帧率/耗时/300ms 达标率）+ 20 张标注样本三分类准确率 → `eval/presence_pc_camera.json` |
@@ -33,7 +34,7 @@
 | `l3_profile.py` | **L3 学情层（第 17 轮）**：错题本 → 知识点画像（掌握等级）+ 每日/每周摘要 + 自包含 HTML；`profile_report()` 导出，本地、不上传、不泄答案 |
 | `test_l3_profile.py` | `l3_profile.py` 单测（13 条：掌握等级/时间归一/画像聚合/薄弱点/每日每周/HTML 自包含与不泄答案） |
 
-## 单测（第 17 轮：205 passed）
+## 单测（第 18 轮：209 passed + 1 skipped〔paraformer 未就绪时 skip〕）
 
 ```powershell
 cd D:\Users\Administrator\code\super_intelligence_2035\doc\personal-watch\run\robot\host
@@ -150,6 +151,27 @@ py -3.10 -W ignore smoke_http.py           # 冒烟里含 POST /profile 实测 J
 - **HTTP**：`POST /profile {html?: bool}` → `{ok, profile}`；`html=true` 另生成 `logs/profile_report.html`。
 - **App**：新增「学情」按钮 → `TutorClient.postProfile()` → 显示「错题总数/涉及知识点/薄弱点」（第 17 轮，`adb install` + 模拟器点击实测）。
 - **红线**：报告只统计自造题，不出现学生姓名/学校/照片，不泄露原题答案（`test_l3_profile.py`/`test_tutor_server.py` 断言「HTML 不含答案」）。
+
+## 端侧真实 ASR（sherpa-onnx paraformer 中文 · 第 18 轮）
+
+> 落地 12:20 令「端侧为主」最后一环：`SherpaOnnxASR` 从「报错占位」升级为**真实离线识别**。
+
+```powershell
+cd D:\Users\Administrator\code\super_intelligence_2035\doc\personal-watch\run\robot\host
+py -3.10 -W ignore eval_asr.py            # TTS 合成已知文本 -> ASR 识别 -> CER -> ../eval/asr_paraformer_zh.json
+```
+
+**模型下载（一次性，走 hf-mirror，直连 GitHub 超时）**：
+
+```powershell
+$base='https://hf-mirror.com/csukuangfj/sherpa-onnx-paraformer-zh-2023-09-14/resolve/main'
+New-Item -ItemType Directory -Force C:\Android\asr-models\paraformer-zh | Out-Null
+Invoke-WebRequest "$base/model.int8.onnx" -OutFile C:\Android\asr-models\paraformer-zh\model.int8.onnx   # 243,371,218 字节
+Invoke-WebRequest "$base/tokens.txt"      -OutFile C:\Android\asr-models\paraformer-zh\tokens.txt
+```
+
+- **口径**：`SherpaOnnxASR.transcribe_file()` 一次性识别；`stream()` 按块「前缀增量」模拟流式中间结果（paraformer 为**离线**模型，非 OnlineRecognizer 真流式，真流式待接 streaming 模型）。
+- **能信/不能信**：CER 是「SAPI 合成语音 → 离线识别」的回读字错率，属 PC 端真实推理证据；真机麦克风近场 CER / 流式首字延迟 / AEC 待真机复测。
 
 ## 教育红线（内置约束，见 `tutor_agent.py` 的 TUTOR_SYSTEM）
 

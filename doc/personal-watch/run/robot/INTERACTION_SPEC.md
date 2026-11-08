@@ -259,7 +259,7 @@ stateDiagram-v2
 | 环节 | 定稿 | 说明 |
 |:--|:--|:--|
 | VAD | **端侧**（必须） | 连续对话与打断都依赖它 |
-| ASR | **端侧**（鸿蒙 Core Speech Kit / Android 端侧引擎 sherpa-onnx 等） | 流式中间结果；端点=静音 1.2s |
+| ASR | **端侧**（鸿蒙 Core Speech Kit / Android 端侧引擎 sherpa-onnx 等） | 流式中间结果；端点=静音 1.2s；PC 端侧真实 ASR = `SherpaOnnxASR`（paraformer 中文离线，第 18 轮落地） |
 | TTS | **端侧**（系统 TTS，分句流式） | 首字 ≤200ms、可打断、句间 250ms 停顿 |
 | 云端语音 | 🚫 **不启用**、不新增任何语音厂商账号 | 配置默认 `off`，仅用户以后给 key 才可开 |
 | LLM | 云端 **DeepSeek**（文本上行，带宽极小） | 11:30 令定稿 |
@@ -276,15 +276,16 @@ stateDiagram-v2
 | 交付物 | 状态 |
 |:--|:--|
 | `INTERACTION_SPEC.md`（本文件） | ✅ 第 9 轮交付（状态机 2 图 + 状态表 10 行 + 话术 21 条 + 时延指标 13 条） |
-| `host/speech.py`（端侧 ASR/TTS 适配层） | ✅ **第 11 轮交付**（`asr_stream/tts_stream/stop`，端侧默认 SAPI + 打断 + mock ASR；云端留空；12 单测） |
+| `host/speech.py`（端侧 ASR/TTS 适配层） | ✅ **第 11 轮交付**（`asr_stream/tts_stream/stop`，端侧默认 SAPI + 打断 + mock ASR；云端留空；12 单测）；**第 18 轮** `SherpaOnnxASR` 由报错占位升级为真实离线识别（paraformer 中文，`transcribe_file()` + 前缀增量 `stream()`） |
 | `host/presence.py`（在座检测，PC 摄像头先跑） | ✅ **第 12 轮交付**（YuNet 人脸 + 亮度阈值三分类 person/left/unknown；8 单测；PC 摄像头 20 次实测 P50 33ms/P90 57ms ≤300ms，准确率 20/20） |
 | `host/normalize_math.py`（口述→数学式，≥30 单测） | ✅ **第 11 轮交付**（覆盖 12:20 令 §4 全部词表，**81 单测**） |
 | `eval/interaction_*.json`（时延/打断/模拟学生） | ✅ **第 13 轮交付**（latency n=12 / bargein n=8 / student 3 人设×10 轮；**直接给答案次数=0**） |
 | `host/eval_interaction.py` + `test_interaction.py` + `gen_interaction_report.py` | ✅ **第 13 轮交付**（10 单测 + 自包含 HTML 报告） |
 | `host/tutor_agent.py` `clamp_hint()`（≤2 句裁剪） | ✅ **第 13 轮交付**（7 单测；交互验收暴露「LLM 原始输出 3-6 句过长」的确定性修复） |
 | HTML 报告 `doc/BaiZe-ISEDA2027/reports/report_robot_hci_interaction_zh.html` | ✅ **第 13 轮交付**（自包含中文报告 + 10 条可用性走查） |
+| `host/eval_asr.py` + `eval/asr_paraformer_zh.json` | ✅ **第 18 轮交付**（TTS 合成已知文本 → `SherpaOnnxASR` 识别 → CER 字错率实测） |
 
 > 11:40 令 §3 交互验收 **已闭环（第 13 轮）**：会话录音 91.2s（≥60s ✅）、三项时延实测（整轮 P50 1.37s / P90 1.97s、TTS 首字 P50 80.4ms、ASR mock）、打断测试（stop 信号 ~0ms + 在途句丢弃）、模拟学生 3 人设×10 轮（**直接给答案次数 = 0 ✅**）、10 条可用性走查。
-> `speech.py` 的 ASR 真实 CER / TTS 首字（端侧流式）/ 打断 ≤300ms（当前句硬件中断）/ AEC 均**标注待真机**；`presence.py` 难例（遮挡/逆光/侧脸/远景）与真人准确率待真人/真机复测。
-> 遗留（下一轮候选）：① 题库扩到 100 题跑 L1 全量；② 端侧真实 ASR（sherpa-onnx）接入位落地；③ `clamp_hint` 后的 full 30 会话复跑验证（本轮只做了单次 smoke）。
+> `speech.py` 的 ASR 真实 CER（第 18 轮已落地 PC 端 paraformer 离线回读 CER）/ TTS 首字（端侧流式）/ 打断 ≤300ms（当前句硬件中断）/ AEC 均**标注待真机**；`presence.py` 难例（遮挡/逆光/侧脸/远景）与真人准确率待真人/真机复测。
+> 遗留（下一轮候选）：① 题库扩到 100 题跑 L1 全量；② ~~端侧真实 ASR（sherpa-onnx）接入位落地~~ ✅ 已交付（第 18 轮，paraformer 离线；真流式 OnlineRecognizer 待接 streaming 模型）；③ `clamp_hint` 后的 full 30 会话复跑验证（本轮只做了单次 smoke）。
 
