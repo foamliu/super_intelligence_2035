@@ -25972,3 +25972,103 @@ echo "=== DONE 247 | $(hostname) ==="
   2026-11-08 12:18      84800 /tmp/grpo_chain_relaunch.log
 === DONE 247 | whag0pgpuap12 ===
 ```
+
+---
+
+## RUN_ID 247 · 2026-11-08 12:18:42 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 247 discovery | host=$(hostname) | $(date '+%F %T') ==="
+echo "-- nproc / load --"; nproc; uptime
+echo
+echo "-- eval processes (top 20) --"
+ps -eo pid=,pcpu=,psr=,args= | awk '(/[l]lama-server/ || /[g]guf_lmeval_run\.py/) && !/cline/ && !/awk/ {print "  " $1 " cpu=" $2 " psr=" $3 " :: " substr($0,index($0,$4),150)}' | head -20
+echo
+echo "-- counts --"
+ps -eo args= | awk '/[l]lama-server/ && !/cline/{s++} /[g]guf_lmeval_run\.py/ && !/cline/{c++} END{printf "  servers=%d clients=%d\n",s,c}'
+echo
+echo "-- train logs --"
+for f in /tmp/baize_s1_baize2b_master.log /tmp/baize_s1_baize2b_worker.log /tmp/baize_s1_baize2b.log; do
+  if [ -f "$f" ]; then
+    echo "  FILE $f size=$(stat -c %s "$f") mtime=$(stat -c %y "$f" | cut -c1-19)"
+    grep -E 'elapsed time per iteration' "$f" | tail -3 | sed 's/^ */    /'
+  fi
+done
+echo
+echo "-- launcher / torchrun --"
+ps -eo pid=,etimes=,pcpu=,args= | awk '(/scripts\/train\.sh s1/ || /[t]orchrun/) && !/cline/ {print "  " $1 " etimes=" $2 " cpu=" $3 " :: " substr($0,index($0,$4),150)}' | head -8
+echo
+echo "-- GPU --"
+nvidia-smi --query-gpu=index,utilization.gpu,memory.used,power.draw --format=csv,noheader 2>/dev/null | sed 's/^/  /'
+echo
+echo "-- eval log files fresh (last 60min, /tmp) --"
+find /tmp -maxdepth 1 -type f -name '*.log' -mmin -60 -printf '  %TY-%Tm-%Td %TH:%TM %10s %p\n' 2>/dev/null | sort -k2 | tail -12
+echo "=== DONE 247 | $(hostname) ==="
+```
+
+**输出**
+```
+=== RUN_ID 247 discovery | host=whag0pgpuap29 | 2026-11-08 12:18:42 ===
+-- nproc / load --
+224
+ 12:18:42 up 281 days, 23:08,  5 users,  load average: 83.69, 94.11, 95.65
+
+-- eval processes (top 20) --
+  306315 cpu=676 psr=80 :: /nas_train/app.e0031982/tools/llama.cpp/build/bin/llama-server -m /nas_train/app.e0031982/models/baize2b_gguf/bz2b-112000-f16.gguf -t 16 -tb 16 -c 163
+  315946 cpu=687 psr=20 :: /nas_train/app.e0031982/tools/llama.cpp/build/bin/llama-server -m /nas_train/app.e0031982/models/baize2b_gguf/bz2b-112000-f16.gguf -t 16 -tb 16 -c 163
+  322881 cpu=676 psr=73 :: /nas_train/app.e0031982/tools/llama.cpp/build/bin/llama-server -m /nas_train/app.e0031982/models/baize2b_gguf/bz2b-112000-f16.gguf -t 16 -tb 16 -c 163
+  323937 cpu=0.6 psr=194 :: /nas_train/app.e0031982/miniforge3/envs/py310/bin/python /tmp/baize_eval_v4/gguf_lmeval_run.py --base-url http://127.0.0.1:8086 --hf-dir /nas_train/ap
+  323941 cpu=0.6 psr=140 :: /nas_train/app.e0031982/miniforge3/envs/py310/bin/python /tmp/baize_eval_v4/gguf_lmeval_run.py --base-url http://127.0.0.1:8081 --hf-dir /nas_train/ap
+  328444 cpu=658 psr=48 :: /nas_train/app.e0031982/tools/llama.cpp/build/bin/llama-server -m /nas_train/app.e0031982/models/baize2b_gguf/bz2b-112000-f16.gguf -t 16 -tb 16 -c 163
+  340077 cpu=0.5 psr=160 :: /nas_train/app.e0031982/miniforge3/envs/py310/bin/python /tmp/baize_eval_v4/gguf_lmeval_run.py --base-url http://127.0.0.1:8084 --hf-dir /nas_train/ap
+  349784 cpu=649 psr=8 :: /nas_train/app.e0031982/tools/llama.cpp/build/bin/llama-server -m /nas_train/app.e0031982/models/baize2b_gguf/bz2b-112000-f16.gguf -t 16 -tb 16 -c 163
+  1286766 cpu=674 psr=32 :: /nas_train/app.e0031982/tools/llama.cpp/build/bin/llama-server -m /nas_train/app.e0031982/models/baize2b_gguf/bz2b-112000-f16.gguf -t 16 -tb 16 -c 163
+  1304898 cpu=0.7 psr=184 :: /nas_train/app.e0031982/miniforge3/envs/py310/bin/python /tmp/baize_eval_v4/gguf_lmeval_run.py --base-url http://127.0.0.1:8085 --hf-dir /nas_train/ap
+  1304909 cpu=0.6 psr=144 :: /nas_train/app.e0031982/miniforge3/envs/py310/bin/python /tmp/baize_eval_v4/gguf_lmeval_run.py --base-url http://127.0.0.1:8082 --hf-dir /nas_train/ap
+  1863709 cpu=646 psr=110 :: /nas_train/app.e0031982/tools/llama.cpp/build/bin/llama-server -m /nas_train/app.e0031982/models/baize2b_gguf/bz2b-112000-f16.gguf -t 16 -tb 16 -c 163
+  1901699 cpu=0.7 psr=212 :: /nas_train/app.e0031982/miniforge3/envs/py310/bin/python /tmp/baize_eval_v4/gguf_lmeval_run.py --base-url http://127.0.0.1:8087 --hf-dir /nas_train/ap
+  3922095 cpu=0.6 psr=126 :: /nas_train/app.e0031982/miniforge3/envs/py310/bin/python /tmp/baize_eval_v4/gguf_lmeval_run.py --base-url http://127.0.0.1:8080 --hf-dir /nas_train/ap
+
+-- counts --
+  servers=7 clients=7
+
+-- train logs --
+  FILE /tmp/baize_s1_baize2b_master.log size=852950 mtime=2026-11-08 12:18:17
+  FILE /tmp/baize_s1_baize2b_worker.log size=2451510 mtime=2026-11-08 12:18:17
+    [2026-11-08 12:15:27] iteration   126960/  700000 | consumed samples:     32501760 | elapsed time per iteration (ms): 7965.9 | learning rate: 1.000000E-03 | global batch size:   256 | lm loss: 2.038810E+00 | loss scale: 1.0 | grad norm: 0.098 | number of skipped iterations:   0 | number of nan iterations:   0 |
+    [2026-11-08 12:16:49] iteration   126970/  700000 | consumed samples:     32504320 | elapsed time per iteration (ms): 8154.8 | learning rate: 1.000000E-03 | global batch size:   256 | lm loss: 2.035493E+00 | loss scale: 1.0 | grad norm: 0.094 | number of skipped iterations:   0 | number of nan iterations:   0 |
+    [2026-11-08 12:18:17] iteration   126980/  700000 | consumed samples:     32506880 | elapsed time per iteration (ms): 8804.2 | learning rate: 1.000000E-03 | global batch size:   256 | lm loss: 2.037569E+00 | loss scale: 1.0 | grad norm: 0.117 | number of skipped iterations:   0 | number of nan iterations:   0 |
+  FILE /tmp/baize_s1_baize2b.log size=3383 mtime=2026-11-02 19:51:19
+
+-- launcher / torchrun --
+  4163528 etimes=491246 cpu=0.0 :: bash scripts/train.sh s1 --nodes 2
+  4163745 etimes=491243 cpu=0.0 :: ssh -n -o StrictHostKeyChecking=no -o ServerAliveInterval=30 -o BatchMode=yes 10.239.2.12 ulimit -n 65536 && cd /nas_train/app.e0031982/code/BaiZe-ISE
+  4177347 etimes=491233 cpu=0.1 :: /nas_train/app.e0031982/miniforge3/envs/py310/bin/python /nas_train/app.e0031982/miniforge3/envs/py310/bin/torchrun --nnodes=2 --node_rank=1 --nproc_p
+
+-- GPU --
+  0, 100 %, 74939 MiB, 685.31 W
+  1, 100 %, 74961 MiB, 634.09 W
+  2, 94 %, 74841 MiB, 617.13 W
+  3, 56 %, 75161 MiB, 617.78 W
+  4, 100 %, 75141 MiB, 614.27 W
+  5, 100 %, 74961 MiB, 634.40 W
+  6, 100 %, 75221 MiB, 640.94 W
+  7, 88 %, 74961 MiB, 549.68 W
+
+-- eval log files fresh (last 60min, /tmp) --
+  2026-11-08 11:49      60620 /tmp/rtfull.log
+  2026-11-08 11:55        568 /tmp/rtfull1.log
+  2026-11-08 12:05      22172 /tmp/sweb_deepseek_predict_r1740.log
+  2026-11-08 12:18 1905506471 /tmp/dsh_sse_forwarded.log
+  2026-11-08 12:18    2451510 /tmp/baize_s1_baize2b_worker.log
+  2026-11-08 12:18  277717373 /tmp/dsh_proxy_requests.log
+  2026-11-08 12:18  329469431 /tmp/gw_proxy_debug.log
+  2026-11-08 12:18   71694036 /tmp/baize_pretrain_loop.log
+  2026-11-08 12:18     852950 /tmp/baize_s1_baize2b_master.log
+  2026-11-08 12:18   87424471 /tmp/baize_harness_loop.log
+  2026-11-08 12:18    8808062 /tmp/gw_proxy_glm53_full500.log
+  2026-11-08 12:18    9079272 /tmp/gw_proxy_dsh_glm53_full500.log
+=== DONE 247 | whag0pgpuap29 ===
+```
