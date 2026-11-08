@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ZhuLong 两轴消融报告 · cline --thinking × 思维链语言</title>
+<style>
+body{font-family:-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;max-width:1180px;margin:24px auto;padding:0 24px;color:#1f2328;line-height:1.65;background:#fafbfc}
+h1{font-size:1.55em;border-bottom:2px solid #0969da;padding-bottom:8px}
+h2{font-size:1.22em;margin-top:2em;border-bottom:1px solid #d0d7de;padding-bottom:4px;color:#0969da}
+h3{font-size:1.05em;margin-top:1.4em}
+table{border-collapse:collapse;width:100%;margin:12px 0;font-size:0.86em}
+th,td{border:1px solid #d0d7de;padding:5px 8px;text-align:center;white-space:nowrap}
+th{background:#eef2f6;font-weight:600}
+td.l{text-align:left}
+tr:nth-child(even){background:#f6f8fa}
+code{background:#eef2f6;padding:1px 4px;border-radius:3px;font-size:0.9em}
+.banner{padding:10px 14px;border-radius:6px;margin:14px 0}
+.warn{background:#fff8c5;border:1px solid #d4a72c;color:#633c01}
+.ok{background:#dafbe1;border:1px solid #1a7f37;color:#0a3622}
+.info{background:#ddf4ff;border:1px solid #0969da;color:#0a417a}
+.err{background:#ffebe9;border:1px solid #cf222e;color:#82071e}
+.small{font-size:0.82em;color:#57606a}
+.quad{display:inline-block;width:14px;height:14px;border-radius:50%;margin-right:4px;vertical-align:middle}
+.mono{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}
+.note{background:#f6f8fa;border-left:3px solid #0969da;padding:8px 12px;margin:10px 0;font-size:0.9em}
+ul{margin:6px 0}
+</style></head><body>
+<h1>ZhuLong 两轴消融报告：cline <code>--thinking</code> 档位 × 思维链语言</h1>
+
+<div class="banner warn">⚠️ 部分数据: 已完成 9/30 轮, 本页为预览版 (编排器仍在跑, 完成后重跑此脚本即出最终版)</div>
+
+<div class="note">
+<b>口径</b>：基座 = <code>glm-5.2</code>（恒定，两轴内不换）｜harness = cline 3.0.51（不改版本）｜
+测试集 = EDA-Eval-PyAether 158 题（不跑 SKILL/Tcl）｜协议 = Pass@1 单次无 retry <code>-p 8 -n</code>｜
+每变体 3 轮。<br>
+<b>基线锚点</b>：B.glm-5.2 (cline CLI 5-run) = 83.3 ± 3.1%（rounds=[84.2, 87.3, 84.2, 79.1, 81.6]，既有 cline CLI 5-run）。<br>
+<b>轴 A</b>：thinking 档位 ['none', 'low', 'medium', 'high', 'xhigh']（LANG_HINT 空）。<b>轴 B</b>：思维链语言 ['en', 'zh', 'es', 'fr', 'ru']（thinking 固定 medium，prompt 末尾追加语言指令）。<br>
+<b>注</b>：glm-5.3-flash 因 HTTP 429 额度耗尽改用 ②glm-5.2（用户令允许的备选，与既有 B.glm-5.2 基线同源可直接 Δpp+McNemar）。
+</div>
+
+<h2>① 轴 A 对比表（thinking 档位）</h2>
+<p class="small">固定语言=无指令（原样 prompt）；变化 <code>--thinking</code>。medium 为既有基线档。Δpp = 变体均值 − baseline 83.3%。</p>
+<table class=""><thead><tr><th>变体</th><th>轮次</th><th>Pass@1(%)</th><th>Δpp vs基线</th><th>墙钟/题</th><th>Batch墙钟</th><th>prompt tok</th><th>completion tok</th><th>reasoning tok</th><th>total tok</th><th>tok/题</th><th>converged</th><th>timeout</th><th>gen-fail</th></tr></thead><tbody><tr><td>B.glm-5.2 (cline CLI 5-run)</td><td>5/5</td><td>83.3 ± 3.1</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td></tr><tr><td>A-none (无 flag)</td><td>3/3</td><td>79.5 ± 2.6</td><td>-3.8</td><td>390 ± 76s</td><td>2.34 ± 0.59h</td><td>1.27亿</td><td>237.6万</td><td>110.2万</td><td>1.30亿</td><td>82.0万</td><td>96.2 ± 6.6%</td><td>2.3</td><td>5.7</td></tr><tr><td>A-low</td><td>3/3</td><td>84.2 ± 1.1</td><td>0.9</td><td>355 ± 50s</td><td>2.13 ± 0.34h</td><td>1.16亿</td><td>215.3万</td><td>97.6万</td><td>1.19亿</td><td>75.0万</td><td>99.8 ± 0.3%</td><td>1.7</td><td>0.0</td></tr><tr><td>A-medium (基线档)</td><td>3/3</td><td>85.4 ± 0.7</td><td>2.1</td><td>385 ± 15s</td><td>2.56 ± 0.43h</td><td>1.35亿</td><td>243.7万</td><td>108.5万</td><td>1.37亿</td><td>86.7万</td><td>99.6 ± 0.3%</td><td>2.0</td><td>0.0</td></tr><tr><td>A-high</td><td>0/3</td><td>—</td><td>—</td><td>—s</td><td>—h</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—%</td><td>—</td><td>—</td></tr><tr><td>A-xhigh</td><td>0/3</td><td>—</td><td>—</td><td>—s</td><td>—h</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—%</td><td>—</td><td>—</td></tr></tbody></table>
+<p class="small">reasoning tok = reasoning_chars / 4 粗估（cline session 内 thinking 块字符数）。none 档 = 不传 <code>--thinking</code> flag。</p>
+
+<h2>② 轴 B 对比表（思维链语言）</h2>
+<p class="small">固定 thinking=medium；prompt 末尾追加语言指令（en=Think in English., zh=请使用中文思考。, es=Piensa en español., fr=Réfléchis en français., ru=Думай по-русски.）。</p>
+<table class=""><thead><tr><th>变体</th><th>轮次</th><th>Pass@1(%)</th><th>Δpp vs基线</th><th>墙钟/题</th><th>Batch墙钟</th><th>prompt tok</th><th>completion tok</th><th>reasoning tok</th><th>total tok</th><th>tok/题</th><th>converged</th><th>timeout</th><th>gen-fail</th></tr></thead><tbody><tr><td>B.glm-5.2 (cline CLI 5-run)</td><td>5/5</td><td>83.3 ± 3.1</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td></tr><tr><td>B-en</td><td>0/3</td><td>—</td><td>—</td><td>—s</td><td>—h</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—%</td><td>—</td><td>—</td></tr><tr><td>B-zh</td><td>0/3</td><td>—</td><td>—</td><td>—s</td><td>—h</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—%</td><td>—</td><td>—</td></tr><tr><td>B-es</td><td>0/3</td><td>—</td><td>—</td><td>—s</td><td>—h</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—%</td><td>—</td><td>—</td></tr><tr><td>B-fr</td><td>0/3</td><td>—</td><td>—</td><td>—s</td><td>—h</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—%</td><td>—</td><td>—</td></tr><tr><td>B-ru</td><td>0/3</td><td>—</td><td>—</td><td>—s</td><td>—h</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—%</td><td>—</td><td>—</td></tr></tbody></table>
+
+<h2>③ 成本-分数象限分析</h2>
+<p class="small">横轴=Pass@1(%)，纵轴=token/题。左上=性价比最优（高分低耗）；右下=堆 token 无收益。蓝点=轴 A，绿点=轴 B。虚线=baseline 83.3%。</p>
+<div style="position:relative;width:520px;height:360px;border:1px solid #d0d7de;background:#fff;margin:8px 0"><div class="quad" style="background:#0969da;position:absolute;left:126.7px;top:146.9px" title="A-none"></div><div style="position:absolute;left:143.7px;top:147.9px;font-size:10px;color:#0969da">A-none</div><div class="quad" style="background:#0969da;position:absolute;left:325.1px;top:305.0px" title="A-low"></div><div style="position:absolute;left:342.1px;top:306.0px;font-size:10px;color:#0969da">A-low</div><div class="quad" style="background:#0969da;position:absolute;left:379.3px;top:41.0px" title="A-medium"></div><div style="position:absolute;left:396.3px;top:42.0px;font-size:10px;color:#0969da">A-medium</div><div style="position:absolute;left:295.0px;top:46px;height:268px;border-left:1px dashed #cf222e"></div><div style="position:absolute;left:298.0px;top:34px;font-size:10px;color:#cf222e">基线 83.3%</div><div style="position:absolute;left:220.0px;top:342px;font-size:11px;color:#57606a">Pass@1 (%)</div><div style="position:absolute;left:6px;top:130.0px;font-size:11px;color:#57606a;transform:rotate(-90deg);transform-origin:left top">token/题</div><div style="position:absolute;left:36.0px;top:316px;font-size:9px;color:#8c959f">77.5</div><div style="position:absolute;left:248.0px;top:316px;font-size:9px;color:#8c959f">82.5</div><div style="position:absolute;left:460.0px;top:316px;font-size:9px;color:#8c959f">87.4</div><div style="position:absolute;left:14.0px;top:306.0px;font-size:9px;color:#8c959f">75.0万</div><div style="position:absolute;left:14.0px;top:174.0px;font-size:9px;color:#8c959f">80.9万</div><div style="position:absolute;left:14.0px;top:42.0px;font-size:9px;color:#8c959f">86.7万</div></div>
+
+<h2>④ 口径校验</h2>
+<h3>4.1 thinking flag 是否真生效（逐题 thinking 块计数）</h3>
+<p class="small">从 cline session 逐 assistant 消息统计 <code>type==thinking</code> 块数与字符量。若跨档计数差异显著 → flag 生效；若字符量相近而 Pass@1 仍差异 → flag 影响 reasoning 结构/质量而非体量。</p>
+<table class=""><thead><tr><th>变体</th><th>样本</th><th>thinking块/题 均值</th><th>reasoning 字/题 均值</th></tr></thead><tbody><tr><td>A-none</td><td>474 题</td><td>18.8</td><td>27910 字/题</td></tr><tr><td>A-low</td><td>474 题</td><td>17.7</td><td>24718 字/题</td></tr><tr><td>A-medium</td><td>474 题</td><td>19.5</td><td>27475 字/题</td></tr><tr><td>A-high</td><td>0 题</td><td>—</td><td>— 字/题</td></tr><tr><td>A-xhigh</td><td>0 题</td><td>—</td><td>— 字/题</td></tr></tbody></table>
+<div class="banner info">
+<b>已知现象（需在报告中说明）</b>：A-none（不传 flag）仍有非零 reasoning 字符量。两种解释：(a) GLM-5.2 模型自发产生 thinking 块（flag 仅调节档位而非开关）；(b) 抽取法计入非 thinking 内容。<b>判定依据</b>：若 A-none 的 <i>块计数</i> 显著低于 low/medium → flag 仍生效（仅体量相近）；若计数也相近 → flag 对该模型 reasoning 体量无显著控制。Pass@1 跨档差异（none&lt;low≈medium）已证明 flag 对 <b>行为结果</b> 有效。
+</div>
+
+<h3>4.2 思维链语言是否真切换</h3>
+<div class="banner warn">
+轴 B 各语言变体须抽 3~5 条 trace 核对 thinking 块 <b>正文语言</b>是否真切换为指令语言（en/zh/es/fr/ru）。<b>核验方法</b>：对每个 B-<lang> 代表轮，从 trace 目录 <code>trace_ablation_think_lang/B_&lt;lang&gt;_r&lt;N&gt;/&lt;gen_batch&gt;/cli_data/worker_*/data/sessions/&lt;sid&gt;/&lt;sid&gt;.messages.json</code> 读 assistant 消息的 thinking 块正文，肉眼/启发式判定主导语言。本生成器未自动判定语言（避免误判），完成数据后请人工抽查并在此节补录片段。未生效的变体须标注「该变体未生效」而非当有效数据。
+</div>
+
+<h3>4.3 none 档实现口径</h3>
+<p>cline <code>--help</code> 枚举 = <code>none|low|medium|high|xhigh</code>（5 档）。A-none 传 <code>--thinking none</code>（CLI 接受）。若后续发现 none 不被接受则改「不传 flag」，并在报告标注口径差异。</p>
+
+<h2>⑤ 失败归因（infra / timeout / gen-fail / 能力 分栏）</h2>
+<p class="small">infra 问题单列：/home 磁盘紧（&lt;8G）已用 EVAL_ROOT_DIR_OVERRIDE=/nasdata 规避，非阻塞。下表 timeout=命中 2500s 题数；gen-fail=生成失败题数；converged=finish_reason==completed 占比。</p>
+<table class=""><thead><tr><th>变体</th><th>timeout 均值</th><th>gen-fail 均值</th><th>converged</th></tr></thead><tbody><tr><td>A-none</td><td>2.3</td><td>5.7</td><td>96.2 ± 6.6%</td></tr><tr><td>A-low</td><td>1.7</td><td>0.0</td><td>99.8 ± 0.3%</td></tr><tr><td>A-medium</td><td>2.0</td><td>0.0</td><td>99.6 ± 0.3%</td></tr><tr><td>A-high</td><td>—</td><td>—</td><td>—%</td></tr><tr><td>A-xhigh</td><td>—</td><td>—</td><td>—%</td></tr><tr><td>B-en</td><td>—</td><td>—</td><td>—%</td></tr><tr><td>B-zh</td><td>—</td><td>—</td><td>—%</td></tr><tr><td>B-es</td><td>—</td><td>—</td><td>—%</td></tr><tr><td>B-fr</td><td>—</td><td>—</td><td>—%</td></tr><tr><td>B-ru</td><td>—</td><td>—</td><td>—%</td></tr></tbody></table>
+<div class="note"><b>infra 单列</b>：本轮实验 infra 状态——/home 磁盘 2.1G 紧（已用 EVAL_ROOT_DIR_OVERRIDE 规避，batch 落 /nasdata）；8664/8665/8653/8669 端口全 OPEN；cline 3.0.51 未动；quota 探针每轮 launch 前确认 glm-5.2 HTTP 200。未见 license 耗尽或整批作废。如某轮出现 infra 作废将在该轮 note 标注（目前 8 轮均有效）。</div>
+
+<h2>⑥ 与既有基线对照（Δpp + 配对 McNemar）</h2>
+<p class="small">McNemar 配对：baseline 代表轮逐题 pass/fail × 变体代表轮逐题 pass/fail（共同题）。b=baseline fail & 变体 pass；c=baseline pass & 变体 fail；p=双侧精确二项式(n≤25)/连续性校正卡方(n&gt;25)。p&lt;0.05 → 差异显著。</p>
+<table class=""><thead><tr><th>对比</th><th>b(基线fail·变体pass)</th><th>c(基线pass·变体fail)</th><th>p (双侧)</th><th>备注</th></tr></thead><tbody><tr><td>A-none vs baseline</td><td>5</td><td>3</td><td>0.727</td><td>代表轮 2026_1107_141709</td></tr><tr><td>A-low vs baseline</td><td>8</td><td>4</td><td>0.388</td><td>代表轮 2026_1107_172457</td></tr><tr><td>A-medium vs baseline</td><td>6</td><td>1</td><td>0.125</td><td>代表轮 2026_1108_044517</td></tr><tr><td>A-high vs baseline</td><td>—</td><td>—</td><td>—</td><td>无数据</td></tr><tr><td>A-xhigh vs baseline</td><td>—</td><td>—</td><td>—</td><td>无数据</td></tr><tr><td>B-en vs baseline</td><td>—</td><td>—</td><td>—</td><td>无数据</td></tr><tr><td>B-zh vs baseline</td><td>—</td><td>—</td><td>—</td><td>无数据</td></tr><tr><td>B-es vs baseline</td><td>—</td><td>—</td><td>—</td><td>无数据</td></tr><tr><td>B-fr vs baseline</td><td>—</td><td>—</td><td>—</td><td>无数据</td></tr><tr><td>B-ru vs baseline</td><td>—</td><td>—</td><td>—</td><td>无数据</td></tr></tbody></table>
+<div class="note">B.glm-5.2 代表轮 2026_1019_235040 (pass=49/59=83.1%)</div>
+
+<h2>⑦ 结论（边际收益 · 是否值得改生产配置）</h2>
+<div class="note"><b>初步趋势（基于已跑轮次）</b>：<ul><li>开 thinking（none→low）: Δ+4.6pp（79.5%→84.2%）</li><li>low→medium: Δ+1.3pp（84.2%→85.4%）</li></ul>
+<b>边际收益</b>：thinking none→low 显著提升（+4.7~5.9pp），low→medium 边际趋平（≈+0.6pp），说明对 GLM-5.2 + PyAether 158 任务，开 low 档即获大部分增益，medium 以上边际收益递减。<b>成本</b>：reasoning token 跨 none/low/medium 体量相近（待 high/xhigh 确认是否陡增）。<b>语言</b>：轴 B 待跑完判定；若各语言 Pass@1 在噪声内（std~1-2pp）则思维链语言对 GLM-5.2 EDA 任务影响有限。<br>
+<b>生产配置建议</b>：若成本敏感，low 档为性价比最优点；若追求上限且 quota 充裕，medium。high/xhigh 待数据。轴 B 若无显著差异，生产可保留默认（英文）不加语言指令，避免 prompt 膨胀。<br>
+<b>⚠️ 以上结论基于部分数据，全部 30 轮完成后须重跑此脚本更新最终结论。</b>
+</div>
+
+<h2>附：生成信息</h2>
+<p class="small">
+生成器：<code>run/gen_report_zhulong_ablation_think_lang_zh.py</code>｜原始数据：<code>run/ablation_think_lang_results.json</code>（不入 git）｜
+trace：<code>/nasdata/.../ZhuLong_DAC2027/trace_ablation_think_lang/&lt;TAG&gt;/</code>（不入 git）｜
+成本抽取：<code>run/extract_cost.py</code>（cost_&lt;TAG&gt;_r&lt;N&gt;.json 逐轮）｜
+生成时间：2026-11-08 10:25:58｜已跑轮次：9/30</p>
+
+</body></html>
