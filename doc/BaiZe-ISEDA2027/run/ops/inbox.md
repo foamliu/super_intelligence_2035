@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
-<!-- RUN_ID: 265 | TARGET: 12 -->
-## RUN_ID 265 — **侦察 v5 eval：chunk0–3 的端口/亲和性/进度 + v5 启动脚本**（只读）
+<!-- RUN_ID: 270 | TARGET: 12 -->
+## RUN_ID 270 — **侦察 v5 eval：chunk0–3 的端口/亲和性/进度 + v5 启动脚本**（只读）
 
 > 背景：v5 eval 中 piqa + hs chunk0/1/2/3 并行；chunk0 NUMA 修复后 2.3 s/it，chunk2/3 约 22–27 s/it。
 > 目标：拿到可复制的命令行与 CPU/NUMA 现状，设计 chunk2/3 的 NUMA 重绑 + 速率均衡拆分。
@@ -8,7 +8,7 @@
 
 ```bash
 set -u
-echo "=== RUN_ID 265 | recon v5 eval | $(date '+%F %T') | host=$(hostname) ==="
+echo "=== RUN_ID 270 | recon v5 eval | $(date '+%F %T') | host=$(hostname) ==="
 SSH="ssh -o BatchMode=yes -o ConnectTimeout=6 -o StrictHostKeyChecking=no"
 $SSH 10.239.2.29 'set -u
 echo "-- lscpu --"; lscpu | grep -E "^CPU\(s\)|^Model name|^NUMA node" | cut -c1-140
@@ -32,5 +32,5 @@ done
 echo "-- watchers --"; ps -eo pid=,args= | awk "/redistribute|watcher|rebalance/ && !/cline/ {print \"  \" \$1 \" \" substr(\$0,index(\$0,\$2),130)}" | head -8
 echo "-- load --"; cut -d" " -f1-3 /proc/loadavg'
 echo
-echo "=== 265 done ==="
+echo "=== 270 done ==="
 ```
