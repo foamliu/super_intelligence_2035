@@ -1,0 +1,5 @@
+[verified-full 07:06:44] resume: loaded 288 existing results
+[verified-full 07:06:44] [1/500] astropy__astropy-12907 SKIP (predicted, patch=2501B)
+[verified-full 07:06:44] [2/500] astropy__astropy-13033 SKIP (predicted, patch=7073B)
+[verified-full 07:06:44] [3/500] astropy__astropy-13236 SKIP (predicted, patch=5339B)
+[verified-full 07:06:44] [4/500] PREDICT deepseek-harness on astropy__astropy-13398
