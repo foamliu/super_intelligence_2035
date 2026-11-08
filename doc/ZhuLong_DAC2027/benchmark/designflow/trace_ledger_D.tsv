@@ -940,7 +940,7 @@ wl9i4					parked		2026-11-05 22:49	交互shell驱动+Q&A n752大
 1789693148853_0tfi2					parked		2026-11-06 04:12	gibberish U#0(zl -cli)+premise-heavy PDK
 1790076032381_j7a18					parked		2026-11-06 04:12	root-cause debug(诊断原因一致不符预期)
 1789536024808_tbi28					parked		2026-11-06 04:12	how-to Q&A(virtuoso滚轮缩放)
-1793155079677_gnmu0					parked		2026-11-06 04:12	trivial(nihai/open hspice)
+1793155079677_gnmu0					case	EDA-Eval-DesignFlow-SramButterfly-001	2026-11-08 13:15	#401 交付: SRAM 6T 蝴蝶曲线/SNM 表征 (e0030760@hfeg0pkn002 mc102, U[28]仿真SRAM蝴蝶曲线试一下); .75 HSPICE V-2023.12-SP1-1 真跑自验 ref 16/16 PASS (A SNM 0.3062053/B 0.4366261), 7 neg FAIL NEG_RC=0, §4.9 三假 FAIL; B档 L2 faithful, k=16; anaconda py3.8.8
 1793070915218_ppdrt					parked		2026-11-06 04:12	analysis Q&A(哪些cell可加速)+skill-tagged vam-agent
 1788746263950_bxdtw					parked		2026-11-06 04:12	scenario launcher(启动业务场景DRC/LVS)+DRC domain
 1792143047821_67dfc					parked		2026-11-06 04:12	doc-summary produce(readme)weak for check+off-domain
@@ -1330,3 +1330,4 @@ uhir2	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 rmlwy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 peek: calibre-heavy shard C or too-thin pyAether (mc high but tool-use count low); D fresh pool exhausted
 0w5tl	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 peek: calibre-heavy shard C or too-thin pyAether (mc high but tool-use count low); D fresh pool exhausted
 yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 peek: calibre-heavy shard C or too-thin pyAether (mc high but tool-use count low); D fresh pool exhausted
+1793866732639_cr42l.messages.json	johnl	hfeg0pkn001	43	schematic_netlist	case	EDA-Eval-DesignFlow-PrimeLibFlowAnalyze-001	2026-11-08 13:21	
