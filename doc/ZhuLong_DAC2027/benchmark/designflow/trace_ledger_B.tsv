@@ -535,3 +535,14 @@ qnm9e					parked		2026-11-08 01:58	Finesim DC convergence Q&A prose dup of uky6c
 1791522635010_ikvky	clarawu	hfeg0pkn004	277	spice_sim	parked		2026-11-09 01:19	wrong-shard gvim vimrc config
 1792375467654_hs5zf	mwxi	hfhds228	35	spice_sim	parked		2026-11-09 01:19	unreachable SSH no-file
 1794143556321_ejp6w	yuchens	hfeg0pkn004	549	characterization	case	EDA-Eval-DesignFlow-NetlistStructDiff-001	2026-11-09 01:58	
+1793756085396_bam0b	jiangbaol	hfeg0pkn001	182	spice_sim	parked		2026-11-09 02:25	dup DupSubcktDefDiag-001+ProbeFailDiag-001 / U#3 measure no gold std
+1793849491055_xnnyg	jiangbaol	hfeg0pkn001	182	spice_sim	parked		2026-11-09 02:25	same as bam0b dup of DupSubcktDefDiag+ProbeFailDiag
+1791813446865_vw7dp	colinxu	hfeg0pkn002	201	characterization	parked		2026-11-09 02:25	vague topcell-add-pin premise-missing + pyAether layout wrong-shard
+1793186301719_rk0ur	jkxu	hfeg0pkn002	115	spice_sim	parked		2026-11-09 02:25	xrun compile hang debug wrong-shard digital
+1792827698500_ggjcv	jkxu	hfeg0pkn002	104	spice_sim	parked		2026-11-09 02:25	xrun digital sim wrong-shard
+1793088244027_l09bt	colinxu	hfeg0pkn002	47	characterization	parked		2026-11-09 02:25	Aether cell query wrong-shard layout
+1793277537589_ext1v	jackjia	hfeg0pkn001	70	spice_sim	parked		2026-11-09 02:25	vague FineSim write-leveling stimulus guidance no verifiable deliverable
+1792829965577_rser7	jkxu	hfeg0pkn002	995	spice_sim	parked		2026-11-09 02:25	SDF/PT digital timing wrong-shard
+1793705943594_wwbs3	jkxu	hfeg0pkn002	501	spice_sim	parked		2026-11-09 02:25	Python ModuleNotFoundError env wrong-shard
+1792827081154_d810y	jackjia	hfeg0pkn001	240	spice_sim	parked		2026-11-09 02:25	low-quality scatter 飞线/Verdi/FSDB/Aether-version 52 turns
+1793237499232_nph58	jkxu	hfeg0pkn002	639	spice_sim	parked		2026-11-09 02:25	xrun digital sim perf wrong-shard
