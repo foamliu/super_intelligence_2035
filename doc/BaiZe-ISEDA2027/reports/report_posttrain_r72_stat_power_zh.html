@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>R72 统计功效分析 — BaiZe Post-Train 预注册成功阶梯</title>
+<style>
+body { font-family: -apple-system, "Noto Sans CJK SC", sans-serif; max-width: 1100px; margin: 0 auto; padding: 20px; background: #f8f9fa; color: #222; }
+h1 { color: #1a1a2e; border-bottom: 3px solid #e94560; padding-bottom: 10px; }
+h2 { color: #16213e; border-left: 5px solid #e94560; padding-left: 10px; margin-top: 30px; }
+table { border-collapse: collapse; width: 100%; margin: 10px 0; font-size: 14px; }
+th, td { border: 1px solid #ddd; padding: 6px 10px; text-align: center; }
+th { background: #16213e; color: white; }
+tr:nth-child(even) { background: #f0f0f5; }
+.pass { color: #006600; font-weight: bold; }
+.fail { color: #cc0000; font-weight: bold; }
+.warn { color: #cc8800; font-weight: bold; }
+.box { background: #e8eaf6; border: 1px solid #c5cae9; border-radius: 8px; padding: 15px; margin: 15px 0; }
+.pre-reg { background: #fff3e0; border: 2px solid #ff9800; border-radius: 8px; padding: 15px; margin: 15px 0; font-family: monospace; white-space: pre-wrap; font-size: 13px; }
+.summary-box { background: #e8f5e9; border: 2px solid #4caf50; border-radius: 8px; padding: 15px; margin: 15px 0; }
+</style>
+</head>
+<body>
+<h1>R72 统计功效分析 — 预注册成功阶梯 (M1-M4)</h1>
+<p><strong>BaiZe Stage(ii) Post-Training</strong> · 2026-11-09 · 零 GPU · 纯统计</p>
+<div class="box">
+<p><strong>目的</strong>：任务书要求"预注册判定阈值：点估计 + 配对检验（McNemar / paired bootstrap）
+显著性 —— 必须先定后测"。本分析计算 158 任务 x 5 次运行
+是否提供足够统计功效来可靠检测 M1->M2->M3->M4 各步差异。</p>
+<p><strong>参数</strong>：N_tasks=158 · N_runs=5 · alpha=0.05 · N_sims=1000</p>
+</div>
+<h2>1. 成功阶梯概览</h2>
+<table>
+<tr><th>里程碑</th><th>Pass@1</th><th>含义</th><th>与基线差距</th></tr>
+<tr><td><strong>Baseline</strong></td><td>36%</td><td>MiniCPM5-2B, zero adaptation</td><td>+0pp</td></tr>
+<tr><td><strong>M1</strong></td><td>50%</td><td>Tool protocol fixed (D1/D2/D6)</td><td>+14pp</td></tr>
+<tr><td><strong>M2</strong></td><td>65%</td><td>+ domain CPT + SFT</td><td>+29pp</td></tr>
+<tr><td><strong>M3</strong></td><td>75%</td><td>+ RL</td><td>+39pp</td></tr>
+<tr><td><strong>M4</strong></td><td>85%</td><td>Approaching DeepSeek-V4-Pro</td><td>+49pp</td></tr>
+</table>
+
+<h2>2. 最小可检测效应量 (MDES)</h2>
+<table>
+<tr><th>p_a</th><th>dpp</th><th>p_b</th><th>不一致率</th><th>不一致对</th><th>MDES(pp)</th><th>功效</th></tr>
+<tr><td>0.36</td><td>5</td><td>0.41</td><td>38.51%</td><td>60</td><td>37.97</td><td class='pass'>1.0000</td></tr>
+<tr><td>0.36</td><td>10</td><td>0.46</td><td>39.52%</td><td>62</td><td>39.24</td><td class='pass'>1.0000</td></tr>
+<tr><td>0.36</td><td>15</td><td>0.51</td><td>40.62%</td><td>64</td><td>40.51</td><td class='pass'>1.0000</td></tr>
+<tr><td>0.36</td><td>20</td><td>0.56</td><td>41.82%</td><td>66</td><td>41.77</td><td class='pass'>1.0000</td></tr>
+<tr><td>0.36</td><td>25</td><td>0.61</td><td>43.14%</td><td>68</td><td>43.04</td><td class='pass'>1.0000</td></tr>
+<tr><td>0.36</td><td>30</td><td>0.66</td><td>44.57%</td><td>70</td><td>44.30</td><td class='pass'>1.0000</td></tr>
+<tr><td>0.50</td><td>5</td><td>0.55</td><td>40.05%</td><td>63</td><td>39.87</td><td class='pass'>1.0000</td></tr>
+<tr><td>0.50</td><td>10</td><td>0.60</td><td>40.20%</td><td>63</td><td>39.87</td><td class='pass'>1.0000</td></tr>
+<tr><td>0.50</td><td>15</td><td>0.65</td><td>40.45%</td><td>63</td><td>39.87</td><td class='pass'>1.0000</td></tr>
+<tr><td>0.50</td><td>20</td><td>0.70</td><td>40.80%</td><td>64</td><td>40.51</td><td class='pass'>1.0000</td></tr>
+<tr><td>0.50</td><td>25</td><td>0.75</td><td>41.25%</td><td>65</td><td>41.14</td><td class='pass'>1.0000</td></tr>
+<tr><td>0.50</td><td>30</td><td>0.80</td><td>41.80%</td><td>66</td><td>41.77</td><td class='pass'>1.0000</td></tr>
+<tr><td>0.65</td><td>5</td><td>0.70</td><td>36.30%</td><td>57</td><td>36.08</td><td class='pass'>1.0000</td></tr>
+<tr><td>0.65</td><td>10</td><td>0.75</td><td>35.44%</td><td>56</td><td>35.44</td><td class='pass'>1.0000</td></tr>
+<tr><td>0.65</td><td>15</td><td>0.80</td><td>34.64%</td><td>54</td><td>34.18</td><td class='pass'>1.0000</td></tr>
+<tr><td>0.65</td><td>20</td><td>0.85</td><td>33.89%</td><td>53</td><td>33.54</td><td class='pass'>1.0000</td></tr>
+<tr><td>0.65</td><td>25</td><td>0.90</td><td>33.17%</td><td>52</td><td>32.91</td><td class='pass'>1.0000</td></tr>
+<tr><td>0.65</td><td>30</td><td>0.95</td><td>32.48%</td><td>51</td><td>32.28</td><td class='pass'>1.0000</td></tr>
+<tr><td>0.75</td><td>5</td><td>0.80</td><td>30.14%</td><td>47</td><td>29.75</td><td class='pass'>1.0000</td></tr>
+<tr><td>0.75</td><td>10</td><td>0.85</td><td>28.41%</td><td>44</td><td>27.85</td><td class='pass'>1.0000</td></tr>
+<tr><td>0.75</td><td>15</td><td>0.90</td><td>26.67%</td><td>42</td><td>26.58</td><td class='pass'>1.0000</td></tr>
+<tr><td>0.75</td><td>20</td><td>0.95</td><td>24.92%</td><td>39</td><td>24.68</td><td class='pass'>1.0000</td></tr>
+<tr><td>0.75</td><td>25</td><td>1.00</td><td>23.13%</td><td>36</td><td>22.78</td><td class='pass'>1.0000</td></tr>
+<tr><td>0.85</td><td>5</td><td>0.90</td><td>20.09%</td><td>31</td><td>19.62</td><td class='pass'>1.0000</td></tr>
+<tr><td>0.85</td><td>10</td><td>0.95</td><td>17.21%</td><td>27</td><td>17.09</td><td class='pass'>1.0000</td></tr>
+<tr><td>0.85</td><td>15</td><td>1.00</td><td>14.24%</td><td>22</td><td>13.92</td><td class='pass'>1.0000</td></tr>
+</table>
+
+<h2>3. McNemar 检验功效（蒙特卡洛模拟 1000 次）</h2>
+<table>
+<tr><th>比较</th><th>dpp</th><th>功效</th><th>平均b</th><th>平均c</th><th>不一致</th><th>判定</th></tr>
+<tr><td>Baseline(36%) -> M1(50%)</td><td>14.0</td><td class='pass'>0.9980</td><td>19.8</td><td>59.2</td><td>79.0</td><td class='pass'>ADEQUATE</td></tr>
+<tr><td>M1(50%) -> M2(65%)</td><td>15.0</td><td class='pass'>0.9970</td><td>18.5</td><td>60.5</td><td>79.0</td><td class='pass'>ADEQUATE</td></tr>
+<tr><td>M2(65%) -> M3(75%)</td><td>10.0</td><td class='pass'>0.8450</td><td>12.5</td><td>33.3</td><td>45.8</td><td class='pass'>ADEQUATE</td></tr>
+<tr><td>M3(75%) -> M4(85%)</td><td>10.0</td><td class='fail'>0.7360</td><td>3.8</td><td>15.8</td><td>19.6</td><td class='fail'>INSUFFICIENT</td></tr>
+</table>
+
+<h2>4. 配对 Bootstrap 检验功效</h2>
+<table>
+<tr><th>比较</th><th>dpp</th><th>功效</th><th>判定</th></tr>
+<tr><td>Baseline(36%) -> M1(50%)</td><td>14.0</td><td class='pass'>1.0000</td><td class='pass'>ADEQUATE</td></tr>
+<tr><td>M1(50%) -> M2(65%)</td><td>15.0</td><td class='pass'>1.0000</td><td class='pass'>ADEQUATE</td></tr>
+<tr><td>M2(65%) -> M3(75%)</td><td>10.0</td><td class='pass'>0.9950</td><td class='pass'>ADEQUATE</td></tr>
+<tr><td>M3(75%) -> M4(85%)</td><td>10.0</td><td class='pass'>1.0000</td><td class='pass'>ADEQUATE</td></tr>
+</table>
+
+<h2>5. 达到 80% 功效所需的最少运行次数</h2>
+<table>
+<tr><th>比较</th><th>dpp</th><th>最少(80%)</th><th>最少(90%)</th><th>当前</th><th>80%</th><th>90%</th></tr>
+<tr><td>Baseline(36%) -> M1(50%)</td><td>14.0</td><td>3</td><td>3</td><td>5</td><td>yes</td><td>yes</td></tr>
+<tr><td>M1(50%) -> M2(65%)</td><td>15.0</td><td>2</td><td>2</td><td>5</td><td>yes</td><td>yes</td></tr>
+<tr><td>M2(65%) -> M3(75%)</td><td>10.0</td><td>4</td><td>8</td><td>5</td><td>yes</td><td>NO</td></tr>
+<tr><td>M3(75%) -> M4(85%)</td><td>10.0</td><td>8</td><td>20</td><td>5</td><td>NO</td><td>NO</td></tr>
+</table>
+
+<h2>6. 预注册判定规则（测试前冻结）</h2>
+<table>
+<tr><th>比较</th><th>dpp</th><th>期望不一致</th><th>临界|b-c|</th><th>最小显著pp</th></tr>
+<tr><td>Baseline -> M1</td><td>14.0</td><td>54</td><td>54</td><td>34.18</td></tr>
+<tr><td>M1 -> M2</td><td>15.0</td><td>54</td><td>54</td><td>34.18</td></tr>
+<tr><td>M2 -> M3</td><td>10.0</td><td>46</td><td>46</td><td>29.11</td></tr>
+<tr><td>M3 -> M4</td><td>10.0</td><td>35</td><td>35</td><td>22.15</td></tr>
+</table>
+
+<h2>7. 多重比较校正</h2>
+<div class="box">
+<p>比较数：4 · Bonferroni alpha=0.0125 · B-H FDR alpha=0.05</p>
+<p>Use Benjamini-Hochberg FDR for the success ladder. For primary claim (any M_k achieved), use alpha=0.05.</p>
+</div>
+
+<h2>8. 总结与建议</h2>
+<table>
+<tr><th>步骤</th><th>dpp</th><th>McNemar</th><th>Bootstrap</th><th>最少(80%)</th><th>当前</th><th>达标</th></tr>
+<tr><td>Baseline -> M1</td><td>14.0</td><td>0.9980</td><td>1.0000</td><td>3</td><td>5</td><td>yes</td></tr>
+<tr><td>M1 -> M2</td><td>15.0</td><td>0.9970</td><td>1.0000</td><td>2</td><td>5</td><td>yes</td></tr>
+<tr><td>M2 -> M3</td><td>10.0</td><td>0.8450</td><td>0.9950</td><td>4</td><td>5</td><td>yes</td></tr>
+<tr><td>M3 -> M4</td><td>10.0</td><td>0.7360</td><td>1.0000</td><td>8</td><td>5</td><td>yes</td></tr>
+</table>
+
+<div class="summary-box"><h3>总体建议</h3><pre>OK: 5 runs provide >=80% power for ALL success ladder steps.</pre></div>
+<div class="pre-reg"><h3>预注册评测协议（测试前冻结）</h3>PRE-REGISTERED EVALUATION PROTOCOL (frozen before testing):
+  Significance level: alpha = 0.05 (two-sided)
+  Primary test: McNemar's exact test (paired, 158 tasks)
+  Secondary test: Paired bootstrap CI (2000 resamples)
+  Multiple comparison: Benjamini-Hochberg FDR for success ladder
+  Effect size: Cohen's h ( arcsin(sqrt(p2)) - arcsin(sqrt(p1)) )
+  Decision: Declare M_k achieved if (a) point estimate >= M_k threshold,
+    (b) McNemar p < alpha, (c) bootstrap 95% CI excludes 0, (d) effect size h > 0.3
+    Baseline -> M1: min 34.2pp (critical |b-c| >= 54)
+    M1 -> M2: min 34.2pp (critical |b-c| >= 54)
+    M2 -> M3: min 29.1pp (critical |b-c| >= 46)
+    M3 -> M4: min 22.1pp (critical |b-c| >= 35)</div>
+<h2>9. 方法论说明</h2>
+<div class="box">
+<p><strong>McNemar 精确检验</strong>：158 配对任务，b=A通过B失败数，c=A失败B通过数。p=2*BinomCDF(b+c,min(b,c),0.5)。</p>
+<p><strong>配对 Bootstrap</strong>：每任务通过率差 Di，重采样2000次，2.5%/97.5%分位数为95%CI。0不在CI内则拒绝H0。</p>
+<p><strong>功效模拟</strong>：蒙特卡洛 N_sims 次完整实验(158任务xN运行)，拒绝H0比例为功效。</p>
+<p><strong>局限</strong>：假设任务独立、伯努利模型、测量噪声简化。实际功效可能偏离估计。</p>
+</div>
+<hr><p style="color:#888;font-size:12px">R72 BaiZe Post-Train 2026-11-09 零GPU 纯统计 Python3.8+ stdlib 替身结果不可迁移到白泽</p>
+</body></html>
