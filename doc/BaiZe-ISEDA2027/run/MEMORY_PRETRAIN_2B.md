@@ -1,7 +1,9 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 0
 
-> 2026-11-08 20:02 #1714: **v5 eval监控轮·6/8done Avg6=53.38% vs 历史53.83%(Δ=-0.45pp!)·arc_easy完成acc=0.6553·报告v2.7·运维令6项全覆盖结论A确认**·**动作**:① 6/8集完成: arc_challenge=0.3038/arc_easy=0.6553/boolq=0.5872/openbookqa=0.266/sciq=0.842/winogrande=0.5485 → Avg6(acc)=53.38%, 历史同6集limit=100 Avg6=53.83%, Δ=-0.45pp几乎一致! ② arc_easy完成(9501/9501, elapsed=10281s, acc=0.6553, acc_norm=0.5758, n=2376) ③ piqa8.5%(312/3676)~30s/it ETA~28h·hellaswag chunk0=243(2.4%)/chunk1=833(8.3%)/chunk2=250(2.5%)/chunk3=250(2.5%)极慢 ④ 报告v2.7: arc_easy结果补入+Avg6=53.38%+逐集对照表6集+二因分解含arc_easy(二进制-39.35pp主因) ⑤ 运维令6项全覆盖 ⑥ 结论A确认:二因(旧二进制sciq-52.6pp+arc_easy-39.35pp主因 + 全量vs限100 boolq-8.3pp/winogrande-5.2pp主因), loss平滑无退化 ⑦ speedup报告§六含v4旧二进制分数待v5完成后更新 **计划**:下次唤醒①piqa/hellaswag极慢待带宽释放②v5全部完成后算Avg8+更新speedup报告§六·📦TASK=31.2KB✓/MEMORY=29.5KB✓·未完成指令:有(v5 eval运行中)⇒WAITING:0。
+> 2026-11-08 20:13 #1715: **v5 eval监控轮·6/8done不变·报告v2.8(进度+投影Avg8)·S1健康iter_130000·运维令6项全覆盖结论A确认**·**动作**:① 6/8集完成(同#1714): Avg6(acc)=53.38% vs 历史53.83%(Δ=-0.45pp) ② piqa 9.1%(334/3676)~16s/it ETA~15h·hellaswag 4.4%(1777/40160: chunk0=376/chunk1=869/chunk2=265/chunk3=267)极慢 ③ 报告v2.8: 修正line60(5/8→6/8)+进度更新+投影Avg8≈52-54%(piqa≈0.70/hs≈0.35→53.2%) ④ S1训练健康: 8×H100 96-100%, latest ckpt iter_130000(19:02) ⑤ 运维令6项全覆盖, 结论A确认(二因:旧二进制+全量vs限100) ⑥ speedup报告§六待v5完成后更新 **计划**:下次唤醒①继续监控piqa/hellaswag②v5完成后算Avg8+更新speedup报告§六③检查S1训练健康·📦TASK=31.2KB✓/MEMORY=29.7KB✓·未完成指令:有(v5 eval运行中)⇒WAITING:0。
+
+> 📦 §#1714（11-08 20:02, v5 eval监控轮·6/8done·报告v2.7·arc_easy完成）→ daily-memories/2026-11-08.md「#1714」节；**结论**：v5 6/8完成Avg6=53.38%,报告v2.7。需要时再读。
 
 > 📦 §#1713（11-08 19:49, v5 eval监控轮·5/8done·报告v2.5·吞吐瓶颈说明）→ daily-memories/2026-11-08.md「#1713」节；**结论**：v5 5/8完成Avg5=50.95%,报告v2.5更新hellaswag shard表+吞吐瓶颈说明。需要时再读。
 
