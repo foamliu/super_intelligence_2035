@@ -383,7 +383,7 @@
 | 批次 | shard 范围 | 预估 GB | 实测字节(B) | 文件数 | incomplete | 状态 | 证据 |
 |:---:|:---|---:|---:|---:|---:|:---|:---|
 | 样本 | part-00000 | 0.38 | 398,721,289 | 1 | 0 | ✅ 已下(质检) | `du -sb data/part-00000*.parquet` |
-| 1 | part-00000~00699 | ~289 | 146,185,436,285 (partial) | 334 parquet | 2 (active) | 🔄 下载中(3/7 hundred DONE, ETA~2h) | `stackv3_batch1_status.tsv`: 000/001/002=OK, 003=downloading |
+| 1 | part-00000~00699 | ~289 | 242,710,242,634 (partial) | 562 parquet | 0 | 🔄 下载中(5/7 hundred DONE, hundred005 63/100, ETA~15min) | `stackv3_batch1_status.tsv`: 000-004=OK, 005=in progress |
 | 2 | part-00700~01399 | ~289 | — | — | — | ⬜ 待启动 | |
 | 3 | part-01400~02099 | ~289 | — | — | — | ⬜ 待启动 | |
 | 4 | part-02100~02799 | ~289 | — | — | — | ⬜ 待启动 | |
