@@ -385,12 +385,12 @@
 | 样本 | part-00000 | 0.38 | 398,721,289 | 1 | 0 | ✅ 已下(质检) | `du -sb data/part-00000*.parquet` |
 | 1 | part-00000~00699 | ~289 | 300,228,737,438 | 700 parquet | 0 | ✅ 已完成(19:28) | `du -sb data/`+`find|wc -l`=700+`stackv3_batch1_status.tsv`: 000-006全OK |
 | 2 | part-00700~01399 | ~289 | 304,571,250,135 | 700 parquet | 0 | ✅ 已完成(23:50) | batch2 delta; cumulative 604,799,987,573 B; `stackv3_batch2_status.tsv`: 007-013全OK |
-| 3 | part-01400~02099 | ~289 | — | — | — | 🔄 下载中(batch3) | `stackv3_batch_download.sh 3 014 020` |
-| 4 | part-02100~02799 | ~289 | — | — | — | ⬜ 待启动 | |
+| 3 | part-01400~02099 | ~289 | 304,759,951,372 | 700 parquet | 0 | ✅ 已完成(04:35) | batch3 delta; cumulative 909,559,938,945 B; `stackv3_batch3_status.tsv`: 014-020全OK |
+| 4 | part-02100~02799 | ~289 | — | — | — | 🔄 下载中(batch4,05:20起) | `stackv3_batch_download.sh 4 021 027` |
 | 5 | part-02800~03499 | ~289 | — | — | — | ⬜ 待启动 | |
 | 6 | part-03500~04199 | ~289 | — | — | — | ⬜ 待启动 | |
 | 7 | part-04200~04966 | ~316 | — | — | — | ⬜ 待启动(末批,凑满2TB) | |
-| **累计(b1+b2)** | 1400 shard | ~605 | 604,799,987,573 | 1400 parquet | 0 | 30% of 2TB | batch1+batch2 实测; 2TB预算余 ~1.37TB |
+| **累计(b1+b2+b3)** | 2100 shard | ~910 | 909,559,938,945 | 2100 parquet | 0 | 45% of 2TB | batch1+batch2+batch3 实测; 2TB预算余 ~1.09TB |
 
 > stats/ 目录（5 JSON, ~484 KB）已随样本下载落地，含 per-language / per-license / repo-distribution 统计。
 
@@ -436,4 +436,26 @@
 | 质量过滤规则 | **尚未执行**（下载后 parquet 级过滤，待 2TB 下载完成后统一做） | 见 H.3 §4 |
 
 > ⚠️ **批次对比**：batch2 抽样中 Python 占比 19.2% **显著高于** batch1 的 4.6%（PHP/Twig 在 batch2 中退出 top15），说明后续 shard 的 Python 仓库密度更高——对 EDA 代码补料有利。EDA(14) 23.0% vs batch1 6.2% 也明显提升。
+
+### H.7 批次3质检报告（2026-11-09 05:2x · 3 shard × 200 repos 抽样）
+
+| 项 | 值 | 证据 |
+|:---|:---|:---|
+| 实测字节(batch3 delta) | 304,759,951,372 B (283.8 GiB) | `stackv3_batch3_status.tsv`: 909,559,938,945 - 604,799,987,573 |
+| 实测字节(累计 b1+b2+b3) | 909,559,938,945 B (847.7 GiB) | `du -sb data/` |
+| 文件数(累计) | 2100 parquet | `find data/ -name '*.parquet' \| wc -l` = 2100 |
+| .incomplete | 0 | `find . -name '*.incomplete' \| wc -l` = 0 |
+| 下载耗时 | 00:30→04:35 (~4h05m) | `stackv3_batch3_20261109_003048.log` |
+| 抽样范围 | part-01400, part-01750, part-02099（首/中/末）× 200 repos/shard = 600 repos | `/tmp/stackv3_batch3_qc3.py` |
+| 抽样文件数 | 5,992 files / 18.1 MiB content | 同上 |
+| vendor 文件 | 71 (1.2%) | `files[].is_vendor=true` |
+| >1MB 文件 | 0 (0.0%) | `files[].size_bytes > 1048576` |
+| 空仓库 | 0 | `num_files=0` |
+| **语言分布（抽样 top15）** | Java 15.8% · Markdown 14.0% · JS 8.7% · Python 6.4% · TS 5.9% · C 5.2% · JSON 4.7% · TSX 4.4% · RMarkdown 4.3% · CSS 3.4% · C++ 3.3% · Dart 3.3% · Vue 2.9% · C# 2.4% · Jupyter 2.4% | `/tmp/stackv3_batch3_qc3.py` 输出 |
+| EDA 相关语言(14)占比 | 15.8% bytes（抽样） | Python/C/C++/Verilog/SV/Tcl/Makefile/CMake/Shell/MATLAB/VHDL 等 |
+| 全目标语言(32)占比 | 57.2% bytes（抽样） | 含 Java/JS/TS/Go/Rust/Scala 等 |
+| **token 估算** | ~310B tokens（batch3，按全量比例外推: 3.6T÷3.22TiB×304.8GB） | 累计 b1+b2+b3 ~926B tokens |
+| 质量过滤规则 | **尚未执行**（下载后 parquet 级过滤，待 2TB 下载完成后统一做） | 见 H.3 §4 |
+
+> ⚠️ **批次对比**：batch3 Python 占比 6.4% 回落至 batch1(4.6%)与batch2(19.2%)之间，Java(15.8%)重回榜首；C 5.2%/C++ 3.3% 较前两批稳定。EDA(14) 15.8% 介于 batch1(6.2%)与batch2(23.0%)之间，说明 shard 间语言密度波动较大——三批合计 EDA 相关占比约 ~15%。Vendor 1.2% 持续低位，>1MB 大文件 0，质量稳定。
 
