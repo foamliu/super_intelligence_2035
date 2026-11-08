@@ -7090,3 +7090,108 @@ R60 发现 DeepSeek 轨迹 avg 28K tok/任务，ctx=8192 截断率 98%。建议�
 | EXPERIMENTS | `EXPERIMENTS_POSTTRAIN.md §R64` | 9 小节 |
 
 **数据溯源**：R6 (SFT 方案) · R56 (数据混合管线) · R60 (上下文窗口 28K tok) · R61 (发射补丁 ctx→16384) · DATA_MAPPING (数据规模) · §5.1/§5.2 (红线) · §4 (成功阶梯 M1-M4). 无伪造。替身预演结果不可迁移到 BaiZe。
+
+---
+
+## §R65 72h 替身 RL 活动投影与自适应停止边界（2026-11-08 wake113 · 零 GPU · Python 3.8+ stdlib）
+
+> **R65**：综合 R59（GRPO 动力学 MC 模拟）、R61（吞吐量投影）、R58（prompt 预筛分）、R64（SFT→RL 交接），
+> 为 11/9 GPU 到位后的 72h 替身 RL 活动提供**逐步定量投影**和**自适应停止边界**（类临床试验设计）。
+> 核心问题：200 步 RL 内 Pass@1 能达到哪个里程碑？何时该停止？什么算成功？
+
+### R65.1 方法
+
+1. **奖励轨迹模拟**：200 MC runs × R3_tool_penalty 臂 × 205 步（72h 预算上限）。
+   模型：`r(t) = r₀ + gain × (1 - exp(-t/τ)) + N(0, σ)`，r₀=0.498, gain=+0.0134, τ=80, σ=0.008。
+2. **Transfer Function**：训练奖励 → 评测 Pass@1。
+   `eval = train_reward × ratio(step)`，ratio: 0.72 → 0.90（渐近），τ=120 步。
+   校准锚点：t=0 时 train=0.498 (R3), eval=36% → ratio=0.72 ✓。
+3. **里程碑跨越概率**：对 M1-M4 计算 P(eval Pass@1 ≥ target | step)。
+4. **自适应停止边界**：5 个检查点（step 25/50/100/150/200），每点计算 P5/P50/P95 + P(达 M1|终)。
+5. **时间预算**：72h = Pre-RL(7.3h) + RL(59.7h → 205步) + Post-RL(5h) = 71.7h。
+6. **成功标准**：8 项（4 critical）— 基线复现 + smoke 过 + RL 不 abort + 无作弊 + 管线全跑。
+
+### R65.2 核心结果
+
+| 指标 | 值 | 判读 |
+|:--|:--|:--|
+| 最大步数 | 205 | 72h 预算 × 3.45 steps/hr - Pre/Post RL |
+| 训练奖励 P50 (step 1) | 0.4982 | 与 R59 初始值一致 |
+| 训练奖励 P50 (step 205) | 0.5108 | 增益 +0.0126（R59 实测 +0.0134） |
+| **Eval Pass@1 P50 (step 205)** | **44.3%** | **低于 M1(50%)**，与 R59 "200步不足以收敛" 一致 |
+| M1 跨越概率 (step 205) | 0.0% | 200 步内无法达到 50% |
+| M2/M3/M4 跨越概率 | 0.0% | 更远 |
+| 总活动时间 | 70.3h / 72h | ✅ 在预算内 |
+| Transfer ratio (step 205) | 0.847 | 训练→评测域差距仍然显著 |
+
+### R65.3 自适应停止边界
+
+| Step | 墙钟 | Reward P50 | Eval P50 | P(达M1\|终) | 建议动作 |
+|:--|:--|:--|:--|:--|:--|
+| 25 | 14.5h | 0.5008 | 37.8% | 0% | FUTILE — P(M1)<5%, 但仅 25 步过早判断 |
+| 50 | 21.8h | 0.5051 | 39.5% | 0% | FUTILE — P(M1)<5%, 考虑是否继续 |
+| 100 | 36.3h | 0.5081 | 41.8% | 0% | FUTILE — P(M1)<5%, 继续到 200 步验证管线 |
+| 150 | 50.8h | 0.5095 | 43.2% | 0% | FUTILE — P(M1)<5%, 准备 post-RL 评测 |
+| 200 | 65.3h | 0.5098 | 44.1% | 0% | FUTILE — 达不到 M1, 进入 Step 7 评测 |
+
+**判读**：所有检查点均显示 P(达 M1)=0%。这**不意味着活动无价值**——替身预演的核心目标是
+**验证 RL 管线端到端可跑**（成功标准 S1-S3/S6/S8），非追求 Pass@1 数字。
+44.3% vs 36% 基线 = +8.3pp 提升（若有），仍是有价值的管线验证信号。
+
+### R65.4 Transfer Function 敏感性
+
+Transfer function 是最大的不确定性来源：
+- **乐观假设**（ratio→0.90 快）：200 步可能达 48-50%（接近 M1）
+- **保守假设**（ratio→0.72 恒定）：200 步仅 37%（无提升）
+- **当前模型**（ratio 0.72→0.847）：200 步 44.3%
+
+**11/9 实测校准**：Step 2 基线 eval 后，用实测 36% + 训练奖励初始值校准 ratio_init。
+Step 50 后用实测 reward vs eval 更新 transfer function 参数。
+
+### R65.5 活动成功标准
+
+| ID | 标准 | 阈值 | 重要性 |
+|:--|:--|:--|:--|
+| S1 | 基线复现 | 33%-39% | critical |
+| S2 | Smoke 过 | GO/WARN | critical |
+| S3 | RL 不 abort | ≥150/200 步 | critical |
+| S4 | 有学习信号 | Final > initial + 0.005 | high |
+| S5 | std=0 受控 | < 30% (vs Vision 78.7%) | high |
+| S6 | 无作弊 | cheat < 5% (红线) | critical |
+| S7 | 评测有提升 | ΔPass@1 > 0 | medium |
+| S8 | 管线全跑 | Steps 0-7d | high |
+
+**最低成功** = S1 + S2 + S3 + S6 + S8（验证管线 + 无安全事故）。
+**理想成功** = +S4 + S5 + S7（有学习信号 + 受控 + 评测提升）。
+
+### R65.6 与前序研究的关联
+
+| 来源 | 贡献 | 本节使用 |
+|:--|:--|:--|
+| R58 | 3347 prompt, 2037 SIGNAL (60.9%) | 训练 prompt 池规模 |
+| R59 | GRPO MC, R3 最优 (+0.0134) | 奖励轨迹投影参数 |
+| R60 | ctx≥16384 (28K tok 轨迹) | ctx=16384 配置依据 |
+| R61 | 3.45 steps/hr (ctx16384 hybrid) | 步数→时间映射 |
+| R62 | 12-check 诊断分类器 | 安全监控阈值 |
+| R63 | Post-RL 评测管线 + 72h guardian | Step 7 + 墙钟预算 |
+| R64 | SFT→RL 交接协议 | RL 热启动参数 |
+| R57 | Vision std=0 78.7% 教训 | std=0 监控阈值 |
+
+### R65.7 局限性
+
+- 奖励轨迹模型是简化指数曲线（非真实策略梯度）；R59 已注明绝对增益不可信，相对比较有参考价值。
+- Transfer function 是最大不确定性：ratio_init/ratio_asymptote/tau 均为假设，需 11/9 实测校准。
+- 200 MC runs 的 P5/P95 置信带宽度 ~0.016，对里程碑跨越概率的精度有限。
+- 自适应停止边界的 "FUTILE" 判定基于 P(达 M1)<5%，但替身目标非追求 M1——"FUTILE" 仅指 M1 不可达，非指活动无价值。
+- 72h 时间预算的 Pre-RL 5h（baseline eval）可能偏差 ±1h，影响 RL 可用步数。
+
+### R65.8 交付物
+
+| 产物 | 路径 | 说明 |
+|:--|:--|:--|
+| 投影脚本 | `run/baize_posttrain_campaign_projection.py` | ~403 行，纯 Python 3.8+ stdlib |
+| HTML 报告 | `reports/report_posttrain_r65_campaign_projection_zh.html` | 11.6KB，8 节，0 script，0 外链 |
+| JSON 数据 | `run/r65_campaign_projection.json` | 16.5KB，全量结果 |
+| EXPERIMENTS | `EXPERIMENTS_POSTTRAIN.md §R65` | 8 小节（本节） |
+
+**数据溯源**：R59 (GRPO MC sim) · R61 (throughput) · R58 (prompt screening) · R64 (SFT→RL handoff) · R57 (Vision lessons) · R62 (diagnostic classifier) · R63 (post-RL pipeline) · §5.1/§5.2 (红线) · §4 (成功阶梯 M1-M4). 无伪造。替身 RL 结果不可迁移到 BaiZe。
