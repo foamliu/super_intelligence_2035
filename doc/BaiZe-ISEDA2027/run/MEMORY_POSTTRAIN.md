@@ -10,10 +10,11 @@ WAITING: 0
 - PHASE: posttrain-wake122（2026-11-09 R74: RL训练课程调度与渐进难度→4策略×5seeds×500步蒙特卡洛→Adaptive最优(imp=0.1039,adv=0.3893)→推荐Adaptive70%+Interleaved30%+Go/No-Go框架→HTML 8.3KB+JSON 25.5KB+EXPERIMENTS §R74）
 - 已完成: P3预备✅ 8脚本；P0✅ D1–D6；P1✅ 数据盘点+PyAether语料+污染隔离；P2✅ 方案书；R1-R74✅；wake122✅ R74(RL课程调度)
 - 当前动作: wake122 R74: baize_posttrain_rl_curriculum_scheduler.py(~370行,纯stdlib). 4策略(Fixed/Sequential/Adaptive/Interleaved)×5seeds×500步. Adaptive总提升0.1039最高(+30%vs Fixed),adv_std=0.3893最高,28晋级+26回退. 推荐Adaptive70%+Interleaved30%混合. 奖励臂映射L1/L2→R0,L3→R2,L4/L5→R3. Go/No-Go框架:晋级pass≥75%目标+adv_std>0.05+≥40步;回退30步无改善;崩溃entropy<0.01;发散KL>5.0. Smoke: L1(10步)→L1+L2(20步)→adaptive(50步). py_compile✅+--verbose✅+--html✅(8.3KB)+--json✅(25.5KB). EXPERIMENTS §R74(6小节).
-- 下一步: ①GPU释放→gpu_watcher自动触发→steps1-5 ②单轮smoke(10步,KL=0.04,clip=0.2,G=8,lr=1e-5) ③F14预检→多轮smoke(导入patch) ④正式训练待pretrain ckpt(ETA≈2026-12-25)
-- 阻塞: GPU 0/8free(11/9既定到位,gpu_watcher PID2022305等待中,iteration#124);P3等pretrain ckpt(ETA≈2026-12-25)
+- 下一步: ①🔴补推git(ahead 1,push 2次超时) ②GPU释放→gpu_watcher自动触发→steps1-5 ③单轮smoke(10步,KL=0.04,clip=0.2,G=8,lr=1e-5) ④F14预检→多轮smoke(导入patch) ⑤正式训练待pretrain ckpt(ETA≈2026-12-25)
+- 阻塞: GPU 0/8free(11/9既定到位,gpu_watcher PID2022305等待中,iteration#124);git push 2次超时(ahead 1,下次第一件事补推);P3等pretrain ckpt(ETA≈2026-12-25)
 - 本轮新增调研产出: R74 RL训练课程调度与渐进难度分析（baize_posttrain_rl_curriculum_scheduler.py ~370行 + 4策略×5seeds蒙特卡洛 + Adaptive最优(imp=0.1039) + Go/No-Go框架 + 奖励臂映射 + HTML 8.3KB + JSON 25.5KB + EXPERIMENTS §R74）
 - 未完成指令: 🔴用户令2026-11-07(GPU未到位,需持续产出调研) ⇒ WAITING=0
+- ⚠️ git push 失败2次(网络超时),ahead 1,下次唤醒第一件事补推
 
 ## 关键事实（常驻）
 
