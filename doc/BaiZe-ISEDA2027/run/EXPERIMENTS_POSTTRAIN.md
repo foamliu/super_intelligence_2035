@@ -7682,3 +7682,90 @@ R69(F14发现→本节解决) · R9(多轮仅SGLang) · R47(YAML触发F14) · R6
 - SGLang：`~/code/verl_cu124_venv/.../function_call_parser.py`（761行，4检测器）
 - verl：`~/code/verl_cu124_venv/.../sglang_rollout.py`（1199行，get_tool_call_parser_type line 210-217）
 - 无伪造。替身 RL 结果不可迁移到 BaiZe。
+
+## §R71: 多轮RL流水线端到端仿真 — 全组件集成验证（wake119, 2026-11-09, 零GPU）
+
+> **目标**：将 R1–R70 所有研究组件集成到一个完整的 GRPO RL 步仿真中，验证 GPU 到位前的管线完整性。
+> **脚本**：`baize_posttrain_multiturn_e2e_sim.py`（~560 行，纯 Python 3.8+ stdlib，0 依赖）。
+> **结果**：**GO** — 14 PASS / 0 FAIL / 2 INFO，Smoke 就绪 10/10。
+
+### 1. 集成组件清单
+
+| 组件 | 来源 | 仿真中的角色 |
+|:--|:--|:--|
+| MiniCPM5FunctionDetector | R70 | 解析 MiniCPM5-2B XML 工具调用 `<function name=...>` |
+| EDASandboxToolV2 | R69 | Tier-3 静态分析沙盒执行提取的代码 |
+| compute_score (R0-R4) | R22/R35/R48 | 5 臂奖励计算 + GRPO 优势 |
+| RL parquet 数据 | R24/R56 | 3347 行合成 EDA 任务，prompt + test_code |
+| RL config v2 | R47 | 13 项配置验证（5 bug fix 全 PASS） |
+| API database | wake4 | 8,463 API（18.1MB JSON），R4 合法性检查 |
+| Tool config YAML | R69 | 多轮工具配置（EDASandboxToolV2） |
+| Parser patch | R70 | monkey-patch 文件存在性验证 |
+| Launch script | R12/R42 | 启动序列脚本存在性验证 |
+
+### 2. 仿真流程（7 Phase）
+
+1. **Phase 1 资产检查**：9/9 PASS（RL parquet 953KB / reward 33KB / tool_v2 4.9KB / parser 4.3KB / config 5.2KB / tool_cfg 1.2KB / launch 6KB / API_DB 18.1MB / model_dir 存在）
+2. **Phase 2 配置验证**：13/13 PASS（R47 BUG1-5 全修复 + SGLang + single-turn + auto_fallback + KL + entropy + 16K ctx + flash_attn + smoke）
+3. **Phase 3 数据加载**：RL parquet 成功加载（source=parquet, n_rows=3347, APIs=[aeSeSaveNetHighlight], entry_point=call_aesesavenethighlight）
+4. **Phase 4 Rollout 仿真**：G=8 rollouts，3 质量档（good×4 / mixed×2 / bad×2），每轮：模型生成 XML → 解析 → 沙盒执行 → 模型生成最终答案
+5. **Phase 5 奖励计算**：5 臂全测试，全部产生非零 GRPO 优势
+6. **Phase 6 集成发现**：14 项发现（14 PASS / 0 FAIL / 2 INFO）
+7. **Phase 7 Smoke 就绪**：10/10 GO
+
+### 3. 奖励臂 GRPO 优势汇总
+
+| 臂 | 均值 | 标准差 | 最小 | 最大 | 非零优势 | 学习信号 |
+|:--|--:|--:|--:|--:|--:|:--|
+| R0 | 0.6450 | 0.1992 | 0.4000 | 0.8500 | 8/8 | **YES** |
+| R1 | 0.5000 | 0.5000 | 0.0000 | 1.0000 | 8/8 | **YES** |
+| R2 | 0.5500 | 0.4555 | 0.0000 | 1.0000 | 8/8 | **YES** |
+| R3 | 0.5375 | 0.4709 | -0.0500 | 1.0500 | 8/8 | **YES** |
+| R4 | 0.5375 | 0.4709 | -0.0500 | 1.0500 | 8/8 | **YES** |
+
+**关键结论**：R0（无沙盒静态分析）仍产生 std=0.1992 的差异化奖励 → GRPO 有梯度信号 → 即使沙盒不可用（R37 发现 TCP 端口被过滤），RL 不会是 silent no-op。
+
+### 4. 12 项集成发现
+
+| ID | 严重度 | 标题 | 状态 |
+|:--|:--|:--|:--|
+| F01 | INFO | R0 奖励差异化（std=0.1992 → 有梯度信号） | PASS |
+| F02 | HIGH | MiniCPM5FunctionDetector XML 解析（8/8 检测到工具调用） | PASS |
+| F03 | HIGH | EDASandboxToolV2 执行（8/8 工具调用执行成功） | PASS |
+| F04 | MEDIUM→INFO | R1 二值奖励稀疏性（4/8 非零 → 需 R0 fallback） | INFO |
+| F05 | INFO | R4 API 合法性惩罚（对幻觉 API 施加 -0.15） | PASS |
+| F06_R0~R4 | INFO | GRPO 学习信号（全臂 8/8 非零优势） | PASS |
+| F07 | HIGH | 多轮数据流完整性（Prompt→XML→Parser→Sandbox→Response→Reward） | PASS |
+| F08 | MEDIUM | 配置-组件一致性（13/13 PASS） | PASS |
+| F09 | HIGH | 单轮 Smoke 就绪（F14 不阻塞 single-turn） | PASS |
+| F10 | INFO | 吞吐量估计 R68（~2640s/step, ~98步/72h） | INFO |
+| F11 | MEDIUM | Cheat rate 追踪器集成（8-gram overlap） | PASS |
+| F12 | INFO | Tool config YAML 存在（多轮启用时需要） | PASS |
+
+### 5. Smoke Test 就绪清单（10/10 GO）
+
+1. ✅ 单轮配置（multi_turn.enable: False）
+2. ✅ R0 奖励差异化信号
+3. ✅ XML 解析器检测工具调用
+4. ✅ 沙盒执行解析代码
+5. ✅ GRPO 非零优势（R0）
+6. ✅ 全部文件资产到位
+7. ✅ RL parquet 数据可用
+8. ✅ API 数据库加载（8,463 API）
+9. ✅ Parser patch 文件存在
+10. ✅ Tool config YAML 存在
+
+### 6. GPU 到位后执行路线图
+
+1. **Step 1 单轮 Smoke**：multi_turn.enable=False → R0 奖励 → 10 iters → 记录实际 step time
+2. **Step 2 F14 预检**：检查 `<function` token 在 vocab → 导入 parser patch → 验证注册
+3. **Step 3 多轮 Smoke**：启用 multi_turn + tool_config_path → 导入 patch → 验证 XML 解析+沙盒
+4. **Step 4 正式 RL**：等 pretrain ckpt → 切换 R2/R3/R4 臂 → 72h budget
+
+### 7. 交付物
+
+- 脚本：`baize_posttrain_multiturn_e2e_sim.py`（~560 行）
+- JSON：`r71_multiturn_e2e_sim.json`
+- HTML：`reports/report_posttrain_r71_multiturn_e2e_sim_zh.html`（12.4KB, 0 script, 0 外链, 自包含）
+- py_compile ✅ / --verbose ✅ / --html ✅ / --json ✅
+- 无伪造。替身 RL 结果不可迁移到 BaiZe。

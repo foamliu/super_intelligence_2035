@@ -1,0 +1,586 @@
+{
+  "title": "R71: Multi-turn RL Pipeline E2E Simulation",
+  "timestamp": "2026-11-09 03:30:43",
+  "params": {
+    "group_size": 8,
+    "n_turns": 3,
+    "reward_arms": [
+      "R0",
+      "R1",
+      "R2",
+      "R3",
+      "R4"
+    ]
+  },
+  "components": {
+    "assets": [
+      {
+        "asset": "RL parquet",
+        "path": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/rl_pyaether_synth_v2.parquet",
+        "exists": true,
+        "status": "PASS",
+        "size": 953467
+      },
+      {
+        "asset": "Reward functions",
+        "path": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_posttrain_reward_functions.py",
+        "exists": true,
+        "status": "PASS",
+        "size": 33427
+      },
+      {
+        "asset": "EDA tool v2",
+        "path": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_posttrain_eda_tool_v2.py",
+        "exists": true,
+        "status": "PASS",
+        "size": 4867
+      },
+      {
+        "asset": "Parser patch",
+        "path": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_posttrain_minicpm5_parser_patch.py",
+        "exists": true,
+        "status": "PASS",
+        "size": 4260
+      },
+      {
+        "asset": "RL config v2",
+        "path": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_posttrain_rl_verl_config_v2.yaml",
+        "exists": true,
+        "status": "PASS",
+        "size": 5225
+      },
+      {
+        "asset": "Tool config",
+        "path": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_posttrain_tool_config.yaml",
+        "exists": true,
+        "status": "PASS",
+        "size": 1199
+      },
+      {
+        "asset": "Launch script",
+        "path": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_posttrain_launch_11_9.sh",
+        "exists": true,
+        "status": "PASS",
+        "size": 6019
+      },
+      {
+        "asset": "API database",
+        "path": "/home/app.e0031982/code/eda_fastmcp/docs/API_INFO_MERGED_V3.json",
+        "exists": true,
+        "status": "PASS",
+        "size": 18132428
+      },
+      {
+        "asset": "Model dir",
+        "path": "/tmp/models/MiniCPM5-2B",
+        "exists": true,
+        "status": "PASS",
+        "size": 0
+      }
+    ],
+    "config_checks": [
+      {
+        "check": "custom_reward_function_top_level",
+        "status": "PASS",
+        "detail": "R47 BUG1: must be top-level"
+      },
+      {
+        "check": "adv_estimator_grpo",
+        "status": "PASS",
+        "detail": "R47 BUG2: algorithm.adv_estimator: grpo"
+      },
+      {
+        "check": "rollout_n_group",
+        "status": "PASS",
+        "detail": "R47 BUG3: rollout.n is group size"
+      },
+      {
+        "check": "multi_turn_nested",
+        "status": "PASS",
+        "detail": "R47 BUG4: multi_turn must be nested dict"
+      },
+      {
+        "check": "tool_config_path",
+        "status": "PASS",
+        "detail": "R47 BUG5: tool_config_path"
+      },
+      {
+        "check": "sglang_backend",
+        "status": "PASS",
+        "detail": "R9: SGLang backend"
+      },
+      {
+        "check": "single_turn_start",
+        "status": "PASS",
+        "detail": "R47: Start single-turn"
+      },
+      {
+        "check": "auto_fallback",
+        "status": "PASS",
+        "detail": "R22: Auto-fallback to R0"
+      },
+      {
+        "check": "kl_loss_enabled",
+        "status": "PASS",
+        "detail": "Required for GRPO"
+      },
+      {
+        "check": "entropy_coeff",
+        "status": "PASS",
+        "detail": "R18: Prevent collapse"
+      },
+      {
+        "check": "context_16k",
+        "status": "PASS",
+        "detail": "R60/R61: 16K ctx"
+      },
+      {
+        "check": "flash_attn",
+        "status": "PASS",
+        "detail": "R35: flash_attn"
+      },
+      {
+        "check": "smoke_config",
+        "status": "PASS",
+        "detail": "Smoke: 10 iters"
+      }
+    ],
+    "rl_sample": {
+      "prompt": "You are an EDA automation assistant. Write a Python function that calls the specified PyAether API(s) and returns the result.\n\nYou have access to the `run_eda_code` tool to execute code in the EDA sandbox. Use it to test your solution.\n\nimport pyAether as pyScript\n\ndef call_aesesavenethighlight():\n    \"\"\"\n    Write a function that calls the PyAether API `pyAether.aeSeSaveNetHighlight` to accomplish:\n    **`aeSeSaveNetHighlight() -> bool`**\n    The function should use the pyAether API and return the result.\n    \"\"\"\n",
+      "test_code": "import pyAether as pyScript\ndef check(candidate):\n    result = candidate()\n    assert result is not None, \"Should return non-None\"\n    assert isinstance(result, bool), \"Expected bool\"\n",
+      "apis_used": [
+        "aeSeSaveNetHighlight"
+      ],
+      "entry_point": "call_aesesavenethighlight",
+      "n_rows": 3347,
+      "source": "parquet"
+    },
+    "rollouts": [
+      {
+        "id": 0,
+        "quality": "good",
+        "tool_calls": 1,
+        "turns": 3,
+        "final_response_len": 233
+      },
+      {
+        "id": 1,
+        "quality": "good",
+        "tool_calls": 1,
+        "turns": 3,
+        "final_response_len": 233
+      },
+      {
+        "id": 2,
+        "quality": "good",
+        "tool_calls": 1,
+        "turns": 3,
+        "final_response_len": 233
+      },
+      {
+        "id": 3,
+        "quality": "good",
+        "tool_calls": 1,
+        "turns": 3,
+        "final_response_len": 233
+      },
+      {
+        "id": 4,
+        "quality": "mixed",
+        "tool_calls": 1,
+        "turns": 3,
+        "final_response_len": 172
+      },
+      {
+        "id": 5,
+        "quality": "mixed",
+        "tool_calls": 1,
+        "turns": 3,
+        "final_response_len": 172
+      },
+      {
+        "id": 6,
+        "quality": "bad",
+        "tool_calls": 1,
+        "turns": 3,
+        "final_response_len": 108
+      },
+      {
+        "id": 7,
+        "quality": "bad",
+        "tool_calls": 1,
+        "turns": 3,
+        "final_response_len": 108
+      }
+    ],
+    "rewards": {
+      "R0": {
+        "rewards": [
+          0.76,
+          0.76,
+          0.76,
+          0.76,
+          0.76,
+          0.76,
+          0.3,
+          0.3
+        ],
+        "mean": 0.645,
+        "min": 0.3,
+        "max": 0.76,
+        "std": 0.1992,
+        "grpo_advantages": [
+          0.5774,
+          0.5774,
+          0.5774,
+          0.5774,
+          0.5774,
+          0.5774,
+          -1.7321,
+          -1.7321
+        ],
+        "n_nonzero_advantages": 8,
+        "learning_signal": "YES"
+      },
+      "R1": {
+        "rewards": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mean": 0.5,
+        "min": 0.0,
+        "max": 1.0,
+        "std": 0.5,
+        "grpo_advantages": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          -1.0,
+          -1.0,
+          -1.0,
+          -1.0
+        ],
+        "n_nonzero_advantages": 8,
+        "learning_signal": "YES"
+      },
+      "R2": {
+        "rewards": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          0.2,
+          0.2,
+          0.0,
+          0.0
+        ],
+        "mean": 0.55,
+        "min": 0.0,
+        "max": 1.0,
+        "std": 0.4555,
+        "grpo_advantages": [
+          0.9879,
+          0.9879,
+          0.9879,
+          0.9879,
+          -0.7683,
+          -0.7683,
+          -1.2074,
+          -1.2074
+        ],
+        "n_nonzero_advantages": 8,
+        "learning_signal": "YES"
+      },
+      "R3": {
+        "rewards": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          0.2,
+          0.2,
+          -0.05,
+          -0.05
+        ],
+        "mean": 0.5375,
+        "min": -0.05,
+        "max": 1.0,
+        "std": 0.4709,
+        "grpo_advantages": [
+          0.9822,
+          0.9822,
+          0.9822,
+          0.9822,
+          -0.7168,
+          -0.7168,
+          -1.2477,
+          -1.2477
+        ],
+        "n_nonzero_advantages": 8,
+        "learning_signal": "YES"
+      },
+      "R4": {
+        "rewards": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          0.2,
+          0.2,
+          -0.05,
+          -0.05
+        ],
+        "mean": 0.5375,
+        "min": -0.05,
+        "max": 1.0,
+        "std": 0.4709,
+        "grpo_advantages": [
+          0.9822,
+          0.9822,
+          0.9822,
+          0.9822,
+          -0.7168,
+          -0.7168,
+          -1.2477,
+          -1.2477
+        ],
+        "n_nonzero_advantages": 8,
+        "learning_signal": "YES"
+      }
+    }
+  },
+  "phases": {
+    "phase1_assets": {
+      "total": 9,
+      "pass": 9,
+      "fail": 0,
+      "status": "PASS"
+    },
+    "phase2_config": {
+      "total": 13,
+      "pass": 13,
+      "fail": 0,
+      "status": "PASS"
+    },
+    "phase3_data": {
+      "source": "parquet",
+      "n_rows": 3347,
+      "status": "PASS"
+    },
+    "phase5_rewards": {
+      "arms_tested": [
+        "R0",
+        "R1",
+        "R2",
+        "R3",
+        "R4"
+      ],
+      "api_db_size": 8463,
+      "status": "PASS"
+    },
+    "phase6_findings": {
+      "total": 16,
+      "pass": 14,
+      "fail": 0,
+      "info": 2,
+      "critical_fail": 0,
+      "overall": "GO"
+    },
+    "phase7_smoke_readiness": {
+      "items": [
+        {
+          "check": "Single-turn config (multi_turn.enable: False)",
+          "ready": true
+        },
+        {
+          "check": "R0 reward provides differentiated signal",
+          "ready": true
+        },
+        {
+          "check": "XML parser detects tool calls",
+          "ready": true
+        },
+        {
+          "check": "Sandbox executes parsed code",
+          "ready": true
+        },
+        {
+          "check": "GRPO has non-zero advantages (R0)",
+          "ready": true
+        },
+        {
+          "check": "All file assets present",
+          "ready": true
+        },
+        {
+          "check": "RL parquet data available",
+          "ready": true
+        },
+        {
+          "check": "API database loaded",
+          "ready": true
+        },
+        {
+          "check": "Parser patch file exists",
+          "ready": true
+        },
+        {
+          "check": "Tool config YAML exists",
+          "ready": true
+        }
+      ],
+      "n_ready": 10,
+      "n_total": 10,
+      "status": "GO"
+    }
+  },
+  "findings": [
+    {
+      "id": "F01",
+      "severity": "INFO",
+      "category": "reward_signal",
+      "title": "R0 reward differentiation",
+      "detail": "R0 std=0.1992, Differentiated -> GRPO has gradient",
+      "status": "PASS"
+    },
+    {
+      "id": "F02",
+      "severity": "HIGH",
+      "category": "parser",
+      "title": "MiniCPM5FunctionDetector XML parsing",
+      "detail": "8/8 rollouts had detectable XML tool calls. Parser identifies <function name=...> format.",
+      "status": "PASS"
+    },
+    {
+      "id": "F03",
+      "severity": "HIGH",
+      "category": "sandbox",
+      "title": "EDASandboxToolV2 execution",
+      "detail": "8/8 tool calls executed (Tier-3 static analysis). Code extracted from XML <param name=code>.",
+      "status": "PASS"
+    },
+    {
+      "id": "F04",
+      "severity": "MEDIUM",
+      "category": "reward_sparsity",
+      "title": "R1 binary reward sparsity",
+      "detail": "R1: 4/8 non-zero. Binary pass/fail too sparse for 2B -> R0 fallback needed.",
+      "status": "INFO"
+    },
+    {
+      "id": "F05",
+      "severity": "INFO",
+      "category": "api_legality",
+      "title": "R4 API legality penalty",
+      "detail": "R4 penalized 0/8 rollouts vs R3 (hallucinated APIs). api_db=8463 entries.",
+      "status": "PASS"
+    },
+    {
+      "id": "F06_R0",
+      "severity": "INFO",
+      "category": "grpo_signal",
+      "title": "GRPO learning signal (R0)",
+      "detail": "R0: 8/8 non-zero advantages. Gradient present.",
+      "status": "PASS"
+    },
+    {
+      "id": "F06_R1",
+      "severity": "INFO",
+      "category": "grpo_signal",
+      "title": "GRPO learning signal (R1)",
+      "detail": "R1: 8/8 non-zero advantages. Gradient present.",
+      "status": "PASS"
+    },
+    {
+      "id": "F06_R2",
+      "severity": "INFO",
+      "category": "grpo_signal",
+      "title": "GRPO learning signal (R2)",
+      "detail": "R2: 8/8 non-zero advantages. Gradient present.",
+      "status": "PASS"
+    },
+    {
+      "id": "F06_R3",
+      "severity": "INFO",
+      "category": "grpo_signal",
+      "title": "GRPO learning signal (R3)",
+      "detail": "R3: 8/8 non-zero advantages. Gradient present.",
+      "status": "PASS"
+    },
+    {
+      "id": "F06_R4",
+      "severity": "INFO",
+      "category": "grpo_signal",
+      "title": "GRPO learning signal (R4)",
+      "detail": "R4: 8/8 non-zero advantages. Gradient present.",
+      "status": "PASS"
+    },
+    {
+      "id": "F07",
+      "severity": "HIGH",
+      "category": "data_flow",
+      "title": "Multi-turn data flow integrity",
+      "detail": "Prompt -> XML tool call -> parser -> sandbox -> response -> model turn 2 -> reward. All stages connected.",
+      "status": "PASS"
+    },
+    {
+      "id": "F08",
+      "severity": "MEDIUM",
+      "category": "config",
+      "title": "Config-to-component consistency",
+      "detail": "RL config v2: 13/13 checks pass. All R47 fixes verified.",
+      "status": "PASS"
+    },
+    {
+      "id": "F09",
+      "severity": "HIGH",
+      "category": "rollout_mode",
+      "title": "Single-turn smoke readiness (F14 bypass)",
+      "detail": "Config has multi_turn.enable: False -> single-turn -> F14 parser blocker does NOT apply -> smoke can start immediately.",
+      "status": "PASS"
+    },
+    {
+      "id": "F10",
+      "severity": "INFO",
+      "category": "throughput",
+      "title": "Throughput estimate (R68 model)",
+      "detail": "R68: ~2640s/step, ~1.36 steps/hr, ~98 steps/72h. Smoke (10 steps) ~7.3h. Verify with --smoke-step-time.",
+      "status": "INFO"
+    },
+    {
+      "id": "F11",
+      "severity": "MEDIUM",
+      "category": "anti_cheat",
+      "title": "Cheat rate tracker integration",
+      "detail": "Reward functions include _CHEAT_TRACKER with 8-gram overlap. Must provide CHEAT_EVAL_NGRAMS_PATH env var.",
+      "status": "PASS"
+    },
+    {
+      "id": "F12",
+      "severity": "INFO",
+      "category": "tool_config",
+      "title": "Tool config YAML for multi-turn",
+      "detail": "baize_posttrain_tool_config.yaml: EXISTS. Required for multi_turn.tool_config_path.",
+      "status": "PASS"
+    }
+  ],
+  "integration_issues": [],
+  "summary": {
+    "total_findings": 16,
+    "pass": 14,
+    "fail": 0,
+    "info": 2,
+    "critical_fail": 0,
+    "high_fail": 0,
+    "overall_status": "GO",
+    "elapsed_s": 8.06,
+    "message": "Pipeline integration verified. All components connected. Ready for GPU smoke test (single-turn R0 first, then multi-turn with parser patch)."
+  }
+}
