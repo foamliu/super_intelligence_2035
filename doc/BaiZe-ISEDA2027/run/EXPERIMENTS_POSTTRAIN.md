@@ -5120,3 +5120,79 @@ python3 baize_posttrain_smoke_calibrator.py --json
 2. R0 reward 离散性：6 Bernoulli → 有限取值
 3. 10 iter 不足以收敛 —— 仅验证 pipeline，不验证性能
 4. Surrogate warning：MiniCPM5-2B RL 结果不可直接迁移到 BaiZe
+
+---
+
+## §R44 Day-1 基线复现验收门 & 真实失败轨迹分类器（2026-11-08 · 零 GPU · 纯 Python 3.8+ · wake92）
+
+> 对应 §用户令·2026-11-07 10:10 R4 方向延续：Day-1 GPU 到位后第一件事 = 复测 36% 基线 + 采集真实失败轨迹。
+> 本轮创建验收门脚本，**预注册验收标准**（在见到真实数据前冻结），遵循任务书 §5 红线 5「预注册：先定后测」。
+
+### R44.1 预注册验收带
+
+| 判定 | Pass@1 范围 | 含义 |
+|:--|:--|:--|
+| GO | [29%, 43%] = 36% ± 7pp | 基线复现成功，进入 smoke test |
+| CONDITIONAL | [24%, 29%) ∪ (43%, 48%] | 需调查偏差原因再决定 |
+| NO-GO | <24% 或 >48% | 基线异常，先 debug |
+
+依据：n=158 二项分布 SE = sqrt(0.36×0.64/158) ≈ 3.8pp；95% Wilson CI 半宽 ≈ 7.5pp → 取整 7pp。
+
+### R44.2 五条决策规则
+
+1. **验收带**：mean Pass@1 ∈ [29%, 43%] → GO；[24%, 48%] 外 → NO-GO
+2. **运行次数**：≥5 → GO；3-4 → CONDITIONAL；<3 → NO-GO
+3. **任务覆盖**：≥150/158 → GO；100-149 → CONDITIONAL；<100 → NO-GO
+4. **稳定性**：std ≤ 0.10 → GO；>0.10 → CONDITIONAL
+5. **合理性**：total_failures=0 → NO-GO（数据异常）
+6. **二项检验**：p<0.05 → CONDITIONAL（与 36% 锚点显著偏离）
+
+### R44.3 R4 五分类法实现
+
+将 error_type 字符串映射到五分类：
+- SYN（语法错）：SyntaxError, IndentationError, Parse failed
+- API（API误用）：TypeError, ValueError, AttributeError, NameError, ImportError, KeyError, IndexError
+- LOG（逻辑错）：AssertionError, Unknown Failure
+- TMO（超时）：Generation timeout, Timeout
+- DEP（缺依赖）：ModuleNotFoundError, FileNotFoundError
+- 歧义处理：Generation failure → 按 gen_status 分流（failure→SYN, 否则→API）；RuntimeError → 按内容分流（含 module/import→DEP, 否则→API）
+
+### R44.4 参考分布对比
+
+内置三个参考分布（来源 EXPERIMENTS §R4）：
+- DeepSeek 强模型（71.5% 最优轮）：LOG 66.7% > API 20.7% > TMO 14.3% > SYN 1.5% > DEP 0.2%
+- 弱模型 aether_coder（10%）：API 65.5% > LOG 25.6% > SYN 4.7% > DEP 4.7%
+- R4 预测 36% MiniCPM5-2B：API 45% > LOG 25% > TMO 15% > DEP 7% > SYN 5%
+
+卡方检验：实测 vs DeepSeek 参考分布的拟合优度。
+
+### R44.5 Dry-Run 验证结果
+
+```
+Pass@1: 35.8% ± 0.0368 (5 runs, 158/158 tasks)
+Decision: GO
+Binomial test p: 0.9841 (no significant deviation from 36%)
+
+Failure classification:
+  SYN: 86 (17.0%)  [predicted: 5.0%]
+  API: 224 (44.2%)  [predicted: 45.0%] ← close match!
+  LOG: 116 (22.9%)  [predicted: 25.0%]
+  TMO: 40 (7.9%)   [predicted: 15.0%]
+  DEP: 41 (8.1%)   [predicted: 7.0%]
+```
+
+注：合成数据 SYN 偏高因 error_pool 中 Generation failure 占比高（被分到 SYN）；真实数据预期 SYN 更低。
+
+### R44.6 交付物
+
+- `baize_posttrain_baseline_gate.py`（32KB, ~710 行, 纯 Python 3.8+, 0 第三方依赖）
+- `reports/report_posttrain_r44_baseline_gate_zh.html`（5.8KB, 9 节, 0 script, 0 外链）
+- py_compile ✅ + dry-run ✅ + --html ✅ + --json-out ✅
+- 11/9 用法：`python3 baize_posttrain_baseline_gate.py --dir <5run_results> --html reports/report_posttrain_r44_baseline_gate_zh.html`
+
+### R44.7 局限性
+
+1. 验收带基于 binomial SE，未考虑 5-run 间的系统性偏差（如随机种子效应）
+2. 合成数据无法测试 per-scenario 分解（需真实 dataset metadata）
+3. 卡方检验用 normal approximation（n>5 时适用，小样本可能不准）
+4. 歧义分类（Generation failure / RuntimeError）的启发式规则需在真实数据上验证
