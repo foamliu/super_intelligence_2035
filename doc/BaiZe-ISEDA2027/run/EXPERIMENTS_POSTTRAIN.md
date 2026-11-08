@@ -7277,3 +7277,153 @@ Step 50 后用实测 reward vs eval 更新 transfer function 参数。
 | EXPERIMENTS | `EXPERIMENTS_POSTTRAIN.md §R66` | 7 小节（本节） |
 
 **数据溯源**：R12 (launch sequence) · R46 (gpu_watcher) · R60 (ctx=32768 recommendation) · R61 (ctx=16384 + hybrid throughput) · R62 (day1 diagnostic) · R65 (72h projection) · §4 (成功阶梯). 无伪造。替身 RL 结果不可迁移到 BaiZe。
+
+---
+
+## §R67 SGLang 服务配置审计 + A40 吞吐量优化分析（2026-11-09 wake115 · 零 GPU · 纯计算）
+
+> **背景**：11/9 GPU 到位日，GPU 尚未释放（0/8 free，SGLang Qwen3.8-27B 占用全部 8 卡）。
+> gpu_watcher PID2022305 运行中（iteration #17，elapsed 1920s/86400s max）。
+> 本轮产出 R67：基于 A40 硬件规格和 MiniCPM5-2B 模型架构的 SGLang 吞吐量定量分析。
+>
+> **脚本**：`baize_posttrain_sglang_throughput_analysis.py`（~338 行，纯 Python3.8+stdlib，0 依赖）
+> **HTML**：`reports/report_posttrain_r67_sglang_throughput_zh.html`（6.7KB，0 script，0 外链）
+> **JSON**：`run/r67_results.json`
+
+### 1. 模型架构与 GQA 优势
+
+MiniCPM5-2B (LlamaForCausalLM) 使用 **GQA (Grouped Query Attention)**：
+- num_attention_heads=16, **num_key_value_heads=2** → GQA 8:1 压缩
+- head_dim=128, 42 层, bf16
+
+| 指标 | GQA (当前) | 标准 MHA | 压缩比 |
+|:--|:--|:--|:--|
+| 每 token KV cache | 42.0 KB | 336.0 KB | 8.0× |
+| ctx=16384 单序列 KV | 721.6 MB | 5,529.6 MB | 8.0× |
+| ctx=32768 单序列 KV | 1,443.2 MB | 11,059.2 MB | 8.0× |
+
+**结论**：GQA 使 KV cache 仅为 MHA 的 1/8。ctx=32768 下单序列仅 1.4GB，TP=1 无需跨 GPU 切分模型。
+
+### 2. 内存预算分析 (Hybrid Engine)
+
+RL YAML v2 配置：gpu_mem_util=0.50, TP=1, max_num_seqs=24, hybrid_engine=True
+
+| 组件 | 分配 | 详情 |
+|:--|:--|:--|
+| SGLang 预算 | 23.03 GB | 0.50 × 46.07 GB |
+| Actor 预算 | 23.03 GB | 46.07 - 23.03 |
+| 模型 in SGLang | 4.70 GB | MiniCPM5-2B (TP=1 全量) |
+| KV 可用 | 18.33 GB | 23.03 - 4.70 |
+| 单序列 KV (ctx=16384) | 721.6 MB | GQA 优势 |
+| KV 容量上限 | 26 序列 | 18.33 / 0.722 |
+| 配置 max_num_seqs | 24 | YAML 值 |
+| **有效并发** | **24** | min(26, 24) — 良好匹配 |
+| Actor 分片模型 | 1.18 GB | 4.7/4 |
+| Actor 优化器 | 2.35 GB | 2×1.18 |
+| Actor 激活 | 1.60 GB | gradient checkpointing |
+| **Actor 余量** | **17.90 GB** | ✅ 充足 |
+
+**结论**：当前 gpu_mem_util=0.50 给 actor 留了 17.90 GB 余量（仅需 ~5.13 GB），可安全上调至 0.65。但 S1 场景测试显示上调收益仅 ~0%（带宽瓶颈，非 KV 容量瓶颈）。
+
+### 3. A40 内存带宽瓶颈（核心发现）
+
+**A40 规格**：696 GB/s 内存带宽（H100=3350 GB/s，仅 21%）
+
+解码阶段每 step 加载：模型权重 (4.7GB) + 所有并发序列的 KV cache
+
+| 并发序列 | 每 step 加载 | 每 step 耗时 | 吞吐 (tok/s/GPU) | 相对增益 |
+|:--|:--|:--|:--|:--|
+| 8 | 10.47 GB | 15.0 ms | 532 | 1.00× |
+| 16 | 15.84 GB | 22.8 ms | 702 | 1.32× |
+| **24** | **22.00 GB** | **31.6 ms** | **759** | **1.43×** |
+| 32 | 27.77 GB | 39.9 ms | 801 | 1.50× |
+| 48 | 39.30 GB | 56.5 ms | 849 | 1.59× |
+| 64 | 50.83 GB | 73.0 ms | 876 | 1.65× |
+
+**结论**：从 8→24 序列，吞吐仅增加 1.43×。从 24→64 序列，仅增加 1.15×。**边际递减明显** — A40 的 696 GB/s 带宽是硬物理限制。增加 max_num_seqs 收益极小。
+
+### 4. RL 单步时间估算
+
+| 阶段 | 时间 | 说明 |
+|:--|:--|:--|
+| Rollout 生成 (decode) | ~3,055s | 1,048,576 tokens @ 3,092 tok/s (4 GPU) |
+| Prompt 处理 (prefill) | ~0.5s | 计算密集，快 |
+| Actor 更新 (PPO) | ~537s | 8 steps × 2 epochs |
+| Ref logprob | ~112s | 1 forward pass |
+| 开销 (~15%) | ~555s | SGLang 同步等 |
+| **单步总计** | **~3,699s** | **~62 分钟/步** |
+
+| 指标 | 值 | 说明 |
+|:--|:--|:--|
+| 每步序列数 | 1,024 | batch=128 × G=8 |
+| 每步生成 tokens | 1,048,576 | 1024 × 8192 |
+| **每小时步数** | **0.97** | |
+| **72h 总步数** | **70** | |
+
+### 5. 与 R61 的差异分析
+
+| 来源 | steps/hr | 72h 步数 | 假设吞吐/GPU |
+|:--|:--|:--|:--|
+| R61 (wake109) | 3.45 | 248 | ~1,809 tok/s |
+| R67 (本轮) | 0.97 | 70 | ~773 tok/s |
+| 差异 | 3.5× | 3.5× | 2.3× |
+
+**差异原因**：
+1. R61 可能使用了更乐观的 A40 吞吐估计（假设更好的批处理效率）
+2. 本分析使用严格的带宽模型（最坏情况：所有序列在 max context）
+3. 实际吞吐在两者之间——SGLang 的连续批处理和 paged attention 会改善平均情况
+4. **关键**：实际吞吐必须在 smoke test 中测量，两种估计都有不确定性
+5. R65 的 200 步目标在 R67 估计下需要 ~205h（超出 72h），在 R61 估计下需 ~58h（可行）
+
+**行动建议**：smoke test（10 步）中记录实际 step time，用于校准后续规划。
+
+### 6. 优化场景对比
+
+| 场景 | 变化 | steps/hr | 72h 步数 | 瓶颈 |
+|:--|:--|:--|:--|:--|
+| **Baseline (v2)** | 当前 | 0.97 | 70 | A40 带宽 696 GB/s |
+| S1: mem_util=0.65 | max_seqs ↑ | 0.97 | 70 | 带宽瓶颈，收益 ~0% |
+| S2: batch=64 | 半量 rollout | 1.95 | 140 | 更快步数，但需 2× 步数 |
+| S3: resp=4096 | ctx=12288 | 2.09 | 151 | 截断风险 (R60: 8192→98%) |
+| S4: G=4 | 小组 | 1.85 | 133 | GRPO 方差增大 |
+| S5: Combined | b64+G4+r6144 | 5.14 | 370 | 最佳吞吐，最低效率 |
+
+**推荐**：保持 Baseline。如步数不足，S4 (G=4) 是最佳折中（2× 步数，方差可接受）。S5 虽快但 truncation 风险高。
+
+### 7. 评测时间与关键路径
+
+| 阶段 | 时间 |
+|:--|:--|
+| Quick baseline (10×1) | 11.5 min |
+| RL smoke (10 步) | 10.3 h |
+| RL 200 步 | 205.5 h |
+| Post-RL full eval (158×5) | 15.2 h |
+| **总计** | **231.4 h** (⚠️ 超出 72h) |
+
+**关键发现**：在 R67 的吞吐估计下，200 步 RL + full eval 无法在 72h 内完成。
+**建议**：
+1. Baseline 用 quick 模式（11.5 min），省 15h
+2. 主 RL 步数从 200 降至 70（72h 内可行的步数）
+3. Post-RL eval 用 full 5-run（15.2h，必须做）
+4. 或采用 S4 (G=4)：133 步/72h，比 baseline 的 70 步多 90%
+
+### 8. SGLang 配置审计 (diag 脚本 vs RL YAML)
+
+| 参数 | diag 脚本 | RL YAML v2 | 审计 |
+|:--|:--|:--|:--|
+| port | 8866 | verl 管理 | ✅ 无冲突 (8098/8099 被占) |
+| context_length | 32768 | 16384 | ✅ diag 单轮 32K, RL 多轮 16K |
+| mem_fraction | 0.85 | 0.50 | ✅ diag 独占可高, RL 共享需低 |
+| TP | 1 | 1 | ✅ 4.7GB 无需 TP |
+| attention_backend | 未指定 | flashinfer | ⚠️ diag 建议显式指定 |
+
+**审计结论**：配置一致且合理。建议 diag 脚本显式添加 `--attention-backend flashinfer`。
+
+### 数据溯源
+
+- 模型架构：`/tmp/models/MiniCPM5-2B/config.json`（实测读取）
+- RL 配置：`baize_posttrain_rl_verl_config_v2.yaml`（实测读取）
+- diag 配置：`baize_posttrain_minicpm5_diag.sh`（实测读取）
+- A40 规格：NVIDIA 官方（696 GB/s, 46 GB, 150 TFLOPS bf16）
+- R61 对比：MEMORY_POSTTRAIN.md 关键事实 R61 条
+- 无伪造。替身 RL 结果不可迁移到 BaiZe。
