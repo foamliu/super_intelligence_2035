@@ -27821,130 +27821,138 @@ started=2514952
 
 ---
 
-## RUN_ID 265 · 2026-11-08 13:26:03 · host=`whag0pgpuap12` · exit=0
+## RUN_ID 266 · 2026-11-08 14:17:05 · host=`whag0pgpuap12` · exit=0
 
 **命令**
 ```bash
 set -u
-echo "=== RUN_ID 265 | relay liveness probe | $(date '+%F %T') | host=$(hostname) ==="
-R=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/ops
-SSH="ssh -o BatchMode=yes -o ConnectTimeout=6 -o StrictHostKeyChecking=no"
+echo "=== RUN_ID 266 | data-line stall diagnosis | $(date '+%F %T') | host=$(hostname) ==="
+R=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
 
 echo
-echo "########## A) LOCAL (.12) ##########"
-echo "-- hostname / now --"; hostname; date '+%F %T'
-echo "-- relay procs (ops_relay_v2) --"
-ps -eo pid=,ppid=,lstart=,stat=,args= | grep -F 'ops_relay_v2' | grep -v grep | cut -c1-190
-echo "-- relay procs count --"
-ps -eo args= | grep -F 'ops_relay_v2' | grep -v grep | wc -l
-echo "-- state files --"
-for f in .last_run_id .last_run_id.12 .last_run_id.29; do printf '%-18s ' "$f"; cat "$R/$f" 2>/dev/null | tr -d '\n'; echo; done
-echo "-- state mtime --"; stat -c '%y  %n' "$R"/.last_run_id* 2>/dev/null
-echo "-- log files --"
-ls -l /tmp/baize_ops_relay* 2>/dev/null | cut -c1-150
-echo "-- log tail (.12) --"
-tail -8 /tmp/baize_ops_relay.12.log 2>/dev/null || echo "(no .12 log)"
+echo "########## A) loop 进程 ##########"
+echo "-- baize_data_loop --"
+ps -eo pid=,ppid=,lstart=,stat=,etime=,args= | grep -F 'baize_data_loop' | grep -v grep | cut -c1-190
+echo "-- count --"; ps -eo args= | grep -F 'baize_data_loop' | grep -v grep | wc -l
+echo "-- vision loop (对照) --"
+ps -eo pid=,ppid=,lstart=,stat=,etime=,args= | grep -F 'baize_vision_loop' | grep -v grep | cut -c1-190
+echo "-- all baize_* loop --"
+ps -eo pid=,lstart=,etime=,args= | grep -E 'baize_.*loop' | grep -v grep | cut -c1-170
 
 echo
-echo "########## B) REMOTE (.29 via ssh) ##########"
-$SSH 10.239.2.29 'set -u
-echo "-- hostname / now --"; hostname; date "+%F %T"
-echo "-- relay procs --"
-ps -eo pid=,ppid=,lstart=,stat=,args= | grep -F ops_relay_v2 | grep -v grep | cut -c1-190
-echo "-- relay procs count --"
-ps -eo args= | grep -F ops_relay_v2 | grep -v grep | wc -l
-echo "-- script on disk --"
-ls -l /tmp/ops_relay_v2_29_fixed.sh /tmp/ops_relay_v2.sh 2>/dev/null
-echo "-- flock holder --"
-if [ -f /tmp/ops_relay_v2_29.lock ]; then
-  ls -l /tmp/ops_relay_v2_29.lock
-  (command -v fuser >/dev/null 2>&1 && fuser -v /tmp/ops_relay_v2_29.lock) 2>&1 | head -6
-fi
-echo "-- state --"
-cat /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/ops/.last_run_id.29 2>/dev/null
-echo "-- log tail (.29) --"
-ls -l /tmp/baize_ops_relay*.log 2>/dev/null | cut -c1-150
-tail -12 /tmp/baize_ops_relay.29.log 2>/dev/null || echo "(no .29 log)"
-echo "-- worktree HEAD --"
-cd /nas_train/app.e0031982/code/super_intelligence_2035 2>/dev/null && timeout 8 git rev-parse --short HEAD 2>&1 | head -2
-'
-echo "ssh_rc=$?"
+echo "########## B) loop 日志 ##########"
+ls -l /tmp/baize_data_loop.log /tmp/baize_*loop*.log 2>/dev/null | cut -c1-150
+echo "-- data loop log tail 25 --"
+tail -25 /tmp/baize_data_loop.log 2>/dev/null || echo "(no data loop log)"
+
 echo
-echo "=== 265 done ==="
+echo "########## C) cline 子进程（data 线是否在跑） ##########"
+ps -eo pid=,ppid=,lstart=,etime=,stat=,pcpu=,args= | grep -i 'cline' | grep -v grep | cut -c1-200 | head -12
+echo "-- cline count --"; ps -eo args= | grep -ci cline || true
+
+echo
+echo "########## D) 下载进程 PID 1920377 ##########"
+ps -o pid=,ppid=,lstart=,etime=,stat=,args= -p 1920377 2>/dev/null || echo "PID 1920377 NOT FOUND"
+echo "-- roi download procs --"
+ps -eo pid=,etime=,args= | grep -F 'roi_download_20261107' | grep -v grep | cut -c1-170
+echo "-- hf download / python download --"
+ps -eo pid=,etime=,args= | grep -E 'huggingface|hf_transfer|snapshot_download' | grep -v grep | cut -c1-170 | head -8
+
+echo
+echo "########## E) MEMORY_DATA 状态 ##########"
+head -3 "$R/MEMORY_DATA.md" 2>/dev/null | cut -c1-200
+echo "-- mtime --"; stat -c '%y  %n' "$R/MEMORY_DATA.md" 2>/dev/null
+echo "-- git last commit touching data --"
+cd /nas_train/app.e0031982/code/super_intelligence_2035 && timeout 10 git log -1 --format='%h %ad %s' --date=iso -- doc/BaiZe-ISEDA2027/run/MEMORY_DATA.md 2>&1 | cut -c1-180
+
+echo
+echo "########## F) 系统负载（是否被别的东西占满） ##########"
+uptime; echo "-- top cpu --"; ps -eo pid=,pcpu=,etime=,args= --sort=-pcpu | head -8 | cut -c1-170
+
+echo
+echo "=== 266 done ==="
 ```
 
 **输出**
 ```
-=== RUN_ID 265 | relay liveness probe | 2026-11-08 13:26:03 | host=whag0pgpuap12 ===
+=== RUN_ID 266 | data-line stall diagnosis | 2026-11-08 14:17:05 | host=whag0pgpuap12 ===
 
-########## A) LOCAL (.12) ##########
--- hostname / now --
-whag0pgpuap12
-2026-11-08 13:26:03
--- relay procs (ops_relay_v2) --
- 768523 1032513 Sun Nov  8 13:26:02 2026 S    bash ./ops_relay_v2.sh
-1032513       1 Sat Oct 24 19:34:24 2026 Ss   bash ./ops_relay_v2.sh
--- relay procs count --
+########## A) loop 进程 ##########
+-- baize_data_loop --
+ 669542       1 Thu Oct 29 09:09:46 2026 Ss   10-05:07:19 bash /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_data_loop.sh
+3368236  669542 Sat Nov  7 09:15:31 2026 Rl    1-05:01:34 cline --data-dir /nas_train/app.e0031982/.cline_data -c /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
+-- count --
 2
--- state files --
-.last_run_id       224
-.last_run_id.12    264
-.last_run_id.29    263
--- state mtime --
-2026-10-28 07:05:17.229769506 +0800  /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/ops/.last_run_id
-2026-11-08 13:02:28.523634368 +0800  /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/ops/.last_run_id.12
-2026-11-08 13:00:11.931271322 +0800  /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/ops/.last_run_id.29
--- log files --
--rw-r--r-- 1 app.e0031982 app.adm 1482 Nov  8 13:02 /tmp/baize_ops_relay.12.log
--rw-r----- 1 app.e0031982 app.adm 5631 Oct 24 19:29 /tmp/baize_ops_relay_29.log
--- log tail (.12) --
-[relay-12] RUN_ID=255 executed, exit=0, appended to outbox.
-[relay-12] RUN_ID=256 executed, exit=0, appended to outbox.
-[relay-12] RUN_ID=257 executed, exit=0, appended to outbox.
-[relay-12] RUN_ID=258 executed, exit=0, appended to outbox.
-[relay-12] RUN_ID=259 executed, exit=126, appended to outbox.
-[relay-12] RUN_ID=260 executed, exit=0, appended to outbox.
-[relay-12] RUN_ID=262 executed, exit=0, appended to outbox.
-[relay-12] RUN_ID=264 executed, exit=0, appended to outbox.
+-- vision loop (对照) --
+ 669545       1 Thu Oct 29 09:09:46 2026 Ss   10-05:07:19 bash /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_vision_loop.sh
+-- all baize_* loop --
+ 669542 Thu Oct 29 09:09:46 2026 10-05:07:19 bash /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_data_loop.sh
+ 669545 Thu Oct 29 09:09:46 2026 10-05:07:19 bash /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_vision_loop.sh
+3368236 Sat Nov  7 09:15:31 2026  1-05:01:34 cline --data-dir /nas_train/app.e0031982/.cline_data -c /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2
 
-########## B) REMOTE (.29 via ssh) ##########
--- hostname / now --
-whag0pgpuap29
-2026-11-08 13:26:04
--- relay procs --
-2514952       1 Sun Nov  8 13:02:23 2026 Ss   bash /tmp/ops_relay_v2_29_fixed.sh
--- relay procs count --
-1
--- script on disk --
--rwxr-xr-x 1 app.e0031982 app.adm 3276 Nov  8 12:58 /tmp/ops_relay_v2_29_fixed.sh
--- flock holder --
--rw-r--r-- 1 app.e0031982 app.adm 0 Nov  8 13:02 /tmp/ops_relay_v2_29.lock
-Cannot stat file /proc/27637/fd/0: Permission denied
-Cannot stat file /proc/27637/fd/1: Permission denied
-Cannot stat file /proc/27637/fd/2: Permission denied
-Cannot stat file /proc/27637/fd/3: Permission denied
-Cannot stat file /proc/27637/fd/4: Permission denied
-Cannot stat file /proc/27637/fd/5: Permission denied
--- state --
-263
--- log tail (.29) --
--rw-r----- 1 app.e0031982 app.adm 5671 Nov  8 13:02 /tmp/baize_ops_relay.29.log
--rw-r----- 1 app.e0031982 app.adm 5030 Oct 24 19:34 /tmp/baize_ops_relay_29.log
-[relay-29] RUN_ID=242 executed, exit=0, appended to outbox.
-[relay-29] RUN_ID=243 executed, exit=0, appended to outbox.
-[relay-29] RUN_ID=244 executed, exit=0, appended to outbox.
-[relay-29] RUN_ID=245 executed, exit=0, appended to outbox.
-./ops_relay_v2.sh: line 77: 582119 Bus error               timeout 60 git fetch origin > /dev/null 2>&1
-./ops_relay_v2.sh: line 77: 3741106 Bus error               timeout 60 git fetch origin > /dev/null 2>&1
-[relay-29] RUN_ID=247 executed, exit=0, appended to outbox.
-[relay-29] 2026-11-08 12:54:34 v2-29nofetch started. state=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/ops/.last_run_id.29 poll=20s
-[relay-29] RUN_ID=261 executed, exit=0
-[relay-29] 2026-11-08 12:58:51 v2-29nofetch started. state=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/ops/.last_run_id.29 poll=20s
-[relay-29] RUN_ID=263 executed, exit=0
-[relay-29] 2026-11-08 13:02:24 v2-29nofetch started. state=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/ops/.last_run_id.29 poll=20s
--- worktree HEAD --
-59cc201b3
-ssh_rc=0
+########## B) loop 日志 ##########
+-rw-r----- 1 app.e0031982 app.adm 29616809 Nov  7 09:19 /tmp/baize_data_loop.log
+-rw-r----- 1 app.e0031982 app.adm 29616809 Nov  7 09:19 /tmp/baize_data_loop.log
+-rw-r----- 1 app.e0031982 app.adm  1645260 Oct 24 23:46 /tmp/baize_pretrain_loop.log
+-rw-r----- 1 app.e0031982 app.adm 32504921 Nov  8 14:10 /tmp/baize_vision_loop.log
+-- data loop log tail 25 --
+      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)
 
-=== 265 done ===
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / glm-5.2): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)
+      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)
+      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)
+
+   [90m⎿ [0m[2m=== du -sb per source === utter-project/LongBlocks|118|9568253231|0 nvidia/Ne... (+3 more)[0m
+[36m[search_codebase][0m L3.*86.*code.*10.*math.*4, code.*ratio.*19|19%.*code|code.*19, EXPERIMENTS_PRETRAIN_2B, stack-v3-train|stack_v3|stack...
+   [90m⎿ [0m[2mFound 100 results for pattern: code.*ratio.*19|19%.*code|code.*19 Searched 38...[0m
+[2m[thinking] [0m[2mI[0m[2m now have all[0m[2m the download[0m[2m verification data[0m[2m. Let me summarize[0m[2m:
+
+**[0m[2mDownload verification ([0m[2mdu[0m[2m -sb +[0m[2m find | wc -[0m[2ml + .in[0m[2mcomplete):**
+1[0m[2m. utter[0m[2m-project/LongBlocks[0m[2m: 118[0m[2m files, 9[0m[2m,568,[0m[2m253,23[0m[2m1 bytes, [0m[2m0 incomplete ✓[0m[2m
+2. n[0m[2mvidia/Nemotron[0m[2m-RL-Ag[0m[2mentic-SWE-P[0m[2mivot-v1:[0m[2m 10 files,[0m[2m 5,101[0m[2m,917,[0m[2m692 bytes,[0m[2m 0 incomplete ✓[0m[2m
+3. c[0m[2maskcsg/N[0m[2mExtLong-Instruct[0m[2m-dataset-Mag[0m[2mpie-L[0m[2mlama-3.[0m[2m3-Pro-1[0m[2mM-v0.[0m[2m1: 211[0m[2m files, 2[0m[2m,890,[0m[2m396,88[0m[2m2 bytes, [0m[2m0 incomplete ✓
+[0m[2m4. common-p[0m[2mile/arxiv_p[0m[2mapers_filtered: [0m[2m31 files, [0m[2m6,037[0m[2m,477,[0m[2m720 bytes, [0m[2m0 incomplete ✓
+[0m[2m5. THUD[0m[2mM/LongWriter[0m[2m-6k:[0m[2m 10 files,[0m[2m 149,23[0m[2m7,015[0m[2m bytes, 0[0m[2m incomplete ✓
+6[0m[2m. NovaSky-A[0m[2mI/SkyRL[0m[2m-v0-29[0m[2m3-data: [0m[2m10 files, [0m[2m2,215,[0m[2m444 bytes,[0m[2m 0 incomplete ✓[0m[2m
+7. N[0m[2methraaaaa81[0m[2m/swev[0m[2m-trm-trajectories[0m[2m-25models:[0m[2m 13 files,[0m[2m 929,[0m[2m267,9[0m[2m48 bytes, [0m[2m0 incomplete ✓
+[0m[2m8. zai[0m[2m-org/LongB[0m[2mench-v2:[0m[2m 10 files,[0m[2m 465,[0m[2m514,380[0m[2m bytes, 0[0m[2m incomplete ✓
+
+Total[0m[2m: ~[0m[2m25,[0m[2m36[0m[2m3[0m[2m,9[0m[2m10[0m[2m,3[0m[2m12 bytes[0m[2m ≈ 25.[0m[2m15[0m[2m GB.[0m[2m All 8 sources[0m[2m verified[0m[2m clean[0m[2m.
+
+Note[0m[2m: the file counts[0m[2m differ from the download[0m[2m log ([0m[2me.g.[0m[2m LongBlocks:[0m[2m log[0m[2m says 39[0m[2m,[0m[2m du[0m[2m says 118[0m[2m)[0m[2m because[0m[2m `[0m[2mfind` includes files[0m[2m inside[0m[2m `.[0m[2mcache/h[0m[2muggingface/download[0m
+########## C) cline 子进程（data 线是否在跑） ##########
+3041408       1 Fri Sep  4 17:18:25 2026 64-20:58:40 Ssl   2.0 /home/app.e0031982/.npm-global/lib/node_modules/cline/bin/.cline --cline-hub-daemon --cwd /nas_train/app.e0031982 --host 127.0.0.1 --port
+3368236  669542 Sat Nov  7 09:15:31 2026  1-05:01:34 Rl    100 cline --data-dir /nas_train/app.e0031982/.cline_data -c /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run --au
+-- cline count --
+3
+
+########## D) 下载进程 PID 1920377 ##########
+PID 1920377 NOT FOUND
+-- roi download procs --
+-- hf download / python download --
+3368236  1-05:01:34 cline --data-dir /nas_train/app.e0031982/.cline_data -c /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run --auto-approve tr
+
+########## E) MEMORY_DATA 状态 ##########
+# MEMORY_DATA.md — BaiZe 正式训练数据准备 · 运行时状态
+
+WAITING: 1
+-- mtime --
+2026-11-07 13:47:17.172250706 +0800  /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/MEMORY_DATA.md
+-- git last commit touching data --
+5a67caabf 2026-11-07 08:59:27 +0800 data 下载: 11-07运维令代码语料ROI下载(8源~25GB后台PID1920377)+DATA_MAPPING.md §G ROI评估表+下载脚本
+
+########## F) 系统负载（是否被别的东西占满） ##########
+ 14:17:07 up 281 days, 22:59,  3 users,  load average: 28.28, 25.84, 25.27
+-- top cpu --
+2626132  147  5-18:25:36 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name baize2b --dir /nas_train/app.e0031982/code/
+2626131  147  5-18:25:36 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name baize2b --dir /nas_train/app.e0031982/code/
+2626134  147  5-18:25:36 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name baize2b --dir /nas_train/app.e0031982/code/
+2626133  146  5-18:25:36 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name baize2b --dir /nas_train/app.e0031982/code/
+2626138  146  5-18:25:36 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name baize2b --dir /nas_train/app.e0031982/code/
+2626137  145  5-18:25:36 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name baize2b --dir /nas_train/app.e0031982/code/
+2626135  145  5-18:25:36 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name baize2b --dir /nas_train/app.e0031982/code/
+2626136  145  5-18:25:36 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name baize2b --dir /nas_train/app.e0031982/code/
+
+=== 266 done ===
 ```
