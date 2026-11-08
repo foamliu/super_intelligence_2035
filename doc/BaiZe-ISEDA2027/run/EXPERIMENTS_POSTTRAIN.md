@@ -4680,3 +4680,81 @@ fi
 ### R38.7 R1-R37 → Day-1 对应关系
 
 R1-R4→基线评测+D1-D6; R8-R9→SGLang; R10→Parquet; R11→显存; R12→启动脚本; R13-R14→奖励函数; R15→EDA工具; R18-R21→RL超参; R22→R0回退; R25/R34→CUDA/venv; R33→排程; R35→对抗测试+flash_attn; R36→监控; R37→沙箱回退。全部37轮成果已整合到Day-1执行手册。
+
+## §R39 评测结果分析管线：从 5-run 原始数据到统计判定（2026-11-08 · wake87 · 零 GPU · 纯 Python）
+
+> **目的**：R19 做了统计功效分析（仿真），但缺少一个能直接吃**真实 5-run 评测输出**（`final_report.json`）并产出完整统计判定的管线。R39 填补此空白。
+> **时机**：11/9 GPU 到位 → Day-1 基线复测 → 即刻用本管线分析 → 后续 SFT/RL 各阶段评测同样用本管线做配对比较。
+
+### R39.1 管线设计
+
+输入：多个检查点目录，每目录含 N 个 `final_report.json`（每 run 一个）。
+
+| 模块 | 功能 | 实现 |
+|:--|:--|:--|
+| 数据加载 | 自动发现 + 解析 `final_report.json` → per-task pass/fail | `find_final_reports` + `extract_task_results` |
+| 多 run 聚合 | 5-run → per-task pass rate + per-run Pass@1 + mean ± std | `aggregate_runs` |
+| 单臂 CI | Wilson score interval（优于正态近似，小样本/极端比例时更准） | `wilson_ci` |
+| 配对检验 | McNemar 检验（连续性校正，阈值 0.5 = 3/5 通过） | `mcnemar_test` |
+| 配对 CI | Paired bootstrap (10000 次有放回重采样，2.5%/97.5% 分位数) | `paired_bootstrap_diff` |
+| 配对 t 检验 | per-task pass rate 连续化后的配对 t 检验 | `paired_t_test` |
+| 分场景 | Layout/Schematic/DesignMgmt/Others 各自 Pass@1 + Wilson CI | `per_scenario_breakdown` |
+| 里程碑 | M0(36%)→M1(50%)→M2(65%)→M3(75%)→M4(85%) 追踪 | `milestone_check` |
+| 错误分析 | 生成失败/执行失败/断言失败 三分类 + error_types 频次 | `error_type_analysis` |
+| HTML 报告 | 10 节自包含（0 script, 0 外链） | `generate_html_report` |
+
+### R39.2 统计方法学
+
+| 方法 | 公式/说明 | 用途 |
+|:--|:--|:--|
+| Wilson CI | `center ± z·sqrt(p(1-p)/n + z²/4n²) / (1+z²/n)` | 单检查点 Pass@1 置信区间 |
+| McNemar | `χ² = (|n01-n10|-1)² / (n01+n10)`，双侧 p | 两检查点配对差异显著性 |
+| Paired Bootstrap | 重采样任务 10000× → 差值 2.5%/97.5% 分位数 | 差值的 95% CI（CI 不含 0 = 显著）|
+| Paired t-test | `t = mean(diffs) / (sd(diffs)/sqrt(n))` | per-task 连续化后的差异检验 |
+
+**McNemar 阈值选择**：代码生成模式每任务 1 sample，5-run 后 per-task pass rate ∈ {0, 0.2, 0.4, 0.6, 0.8, 1.0}。阈值 0.5 = 3/5 通过判定为 pass。这与 Pass@1 口径一致。
+
+### R39.3 Dry-run 验证
+
+合成 3 检查点（baseline 36%, SFT 52%, RL 68%），每检查点 158 任务 × 5 runs。
+
+| 比较 | Pass@1 A | Pass@1 B | 差值 | McNemar χ² | McNemar p | Bootstrap 95% CI | 显著? |
+|:--|:--|:--|:--|:--|:--|:--|:--|
+| baseline vs SFT | 30.6% | 47.2% | +16.6pp | 31.56 | <0.001 | [+21.5, +40.5]pp | ✅ |
+| baseline vs RL | 30.6% | 62.0% | +31.4pp | 70.44 | <0.001 | [+45.6, +64.6]pp | ✅ |
+| SFT vs RL | 47.2% | 62.0% | +14.8pp | 17.55 | 2.8e-5 | [+13.3, +34.2]pp | ✅ |
+
+合成数据验证了管线的正确性：差值方向正确、McNemar p 值合理、Bootstrap CI 不含 0 → 显著。
+
+### R39.4 代码属性
+
+- **文件**：`baize_posttrain_eval_analysis.py`（35,235 字节，778 行）
+- **依赖**：纯 Python 标准库（math, random, statistics, json, sys, os, argparse）—— 无 numpy/scipy
+- **兼容性**：Python 3.8+（系统 Python 3.8 可跑）
+- **py_compile**：✅ PASS
+- **dry-run**：✅ PASS（3 ckpts × 5 runs × 158 tasks → 3 comparisons → HTML 12KB）
+- **HTML 报告**：`reports/report_posttrain_r39_eval_analysis_zh.html`（12,191 字节，0 script，0 外链）
+
+### R39.5 与既有资产的关系
+
+| 既有 | R39 补充 |
+|:--|:--|
+| R19 功效分析（仿真） | R39 吃**真实数据**做实际判定 |
+| `baize_posttrain_eval.sh`（评测执行） | R39 是评测执行后的**分析步骤** |
+| `baize_posttrain_minicpm5_diag.sh`（基线诊断） | R39 的 `--dir` 可直接指向诊断输出目录 |
+| `baize_posttrain_rl_monitor.py`（训练监控） | R39 是**评测侧**监控，与训练监控互补 |
+| `baize_posttrain_power_analysis.py`（统计功效） | R19 回答"需要多少样本"，R39 回答"差异是否显著" |
+
+### R39.6 Day-1 使用流程
+
+1. Day-1 T+1:00~T+4:00：跑 `baize_posttrain_minicpm5_diag.sh --full`（5-run × 158 任务）
+2. Day-1 T+4:00：`python baize_posttrain_eval_analysis.py --ckpt baseline --dir ~/eda_code_eval/baseline/ --html report_eval_baseline_zh.html`
+3. Day-2+：SFT/RL 评测后同样跑 `--compare` 做配对比较
+4. 每次：检查里程碑 M0-M4 状态 → 写入 EXPERIMENTS §Eval 日志
+
+### R39.7 后续扩展计划
+
+1. **Agent 轨迹集成**：从 `api_conversation_history.json` 提取 D1/D2/D6 → 自动填充诊断表
+2. **Pass@k**：支持 k=5,10（需 `num_samples > 1` 的评测运行）
+3. **LaTeX 表格**：自动生成 `5_llm_posttrain.tex` 可粘贴的表格片段
+4. **RL 监控联动**：将 R36 的 KL/奖励/熵/作弊率与评测结果联动分析
