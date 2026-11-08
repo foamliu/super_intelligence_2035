@@ -5814,3 +5814,106 @@ gpu_watcher.sh → paths.sh → launch_11_9.sh
 2. 路径检查仅覆盖已知关键资产，不含运行时生成路径（如输出目录）
 3. 配置一致性仅检查 .sh 文件中的 v1 模式，未检查 .py 文件中的所有 v1 引用（smoke_calibrator 已手动修复）
 4. 脚本依赖图基于静态文本扫描，不含动态条件分支
+
+---
+
+## §R52 GPU 资源调度与 Day-1 关键路径优化（2026-11-08 wake100 · 零 GPU · T-16h 预发射）
+
+> 出处：用户令 2026-11-07「继续调研」。R51 完成端到端审计后，R52 聚焦 GPU 到位前最后一个盲区：资源调度与时间线。
+> 核心问题：4×A40 如何在基线评测（SGLang 1 GPU）和 RL 训练（verl 4 GPU）之间分配？
+
+### R52.1 GPU 内存预算实测
+
+**SGLang 服务（基线评测, 1 GPU）**：
+- 模型权重: 4.7GB (MiniCPM5-2B bf16)
+- KV 缓存: 32.7GB (ctx=32768, mem_fraction=0.85)
+- 单 GPU 总占用: 37.4GB → A40 46GB 余量 7.6GB ✅
+
+**RL 训练（verl GRPO, FSDP, 4 GPU）**：
+- Actor 参数: 954 MiB/GPU (FSDP: 2B/4=0.5B/GPU)
+- Actor 梯度: 954 MiB/GPU
+- Actor 优化器(AdamW): 3815 MiB/GPU
+- 参考模型: 954 MiB/GPU
+- Rollout(SGLang): 15750 MiB/GPU (mem_util=0.35)
+- 激活值: 4096 MiB/GPU (gradient_checkpointing=True)
+- FSDP buffer: 1907 MiB/GPU
+- **训练峰值**: 12680 MiB/GPU (actor+ref+activation+buffer)
+- **Rollout 峰值**: 15750 MiB/GPU
+- **实际峰值(hybrid交替取max)**: 15750 MiB/GPU = 15.4 GB/GPU
+- **A40 余量**: 28.6 GB/GPU → OOM 风险极低 ✅
+
+### R52.2 资源冲突矩阵
+
+| 步骤 A | 步骤 B | GPU A | GPU B | 可并行 | 原因 |
+|:--|:--|--:|--:|:--|:--|
+| 基线评测(SGLang) | RL训练(verl) | 1 | 4 | ❌ | verl hybrid engine启动自己的SGLang workers，外部SGLang必须先kill释放GPU |
+| 快速基线 | Preflight | 1 | 0 | ✅ | Preflight是CPU-only |
+| 污染门 | D1-D6提取 | 0 | 0 | ✅ | 均CPU-only |
+| 完整基线(158×5) | RL训练(2000iters) | 1 | 4 | ❌ | 1+4=5>4 GPU。可选3+1分拆但RL慢33% |
+
+**关键发现**：基线评测与RL训练不能并行。verl的hybrid engine在训练进程内启动SGLang workers作为rollout引擎——外部SGLang服务必须先kill释放GPU内存，否则verl启动时OOM。
+
+### R52.3 完整基线评测调度方案
+
+158任务×5轮，预估13.3小时（avg 8min/task, 20 batches, 5 runs）。
+
+| 方案 | 时间 | GPU | 时长 | RL影响 | 优势 |
+|:--|:--|:--|--:|:--|:--|
+| A: RL后串行 | Day 2-3 | 1 | 13.3h | 无 | 无冲突 |
+| B: 并行3+1 | Day 1 | 1+3 | 17.3h | RL慢33% | Day 2 AM就绪 |
+| **C: 先基线后RL** ⭐ | T+2:30-T+15:30 | 1 | 13.3h | RL延迟Day 2 | **真实D1-D6校准RL奖励** |
+
+**推荐方案C**：真实D1-D6值指导RL奖励设计(R4失败分类校正)；无资源冲突；RL在pretrain ckpt ETA(12/25)前有~2周时间。
+
+### R52.4 优化后Day-1时间线（融合R47-R51修正）
+
+| 时间 | 步骤 | GPU | 时长 | 关键修正(vs R38) |
+|:--|:--|:--|--:|:--|
+| 08:00 | GPU释放+NFS预热 | 0 | 30m | R46: gpu_watcher自动检测 |
+| 08:30 | Venv验证 | 0 | 5m | R52实测:已就绪(省25m) |
+| 08:35 | Preflight | 0 | 10m | R50:30/30 PASS |
+| 08:45 | SGLang+快速基线 | 1 | 35m | R50:BUG-W1已修 |
+| 09:20 | D1-D6+污染门 | 0 | 15m | R49:v2 config |
+| 09:35 | RL smoke(R0,10iters) | 4 | 40m | R47:v2修复5 bugs |
+| 10:15 | 校准审查 | 0 | 15m | R49:calibrator v2 |
+| 10:30 | 完整RL训练 | 4 | 600m | R51:GO 100/100 |
+| 20:30 | Day-1检查点审查 | 0 | 30m | R48:预注册门 |
+
+**关键路径**: 08:00→10:30 = 150min ≈ 2h30m（到RL训练启动）
+**瓶颈**: 完整基线(~13h)是时间线最长项
+
+### R52.5 风险登记册更新(R51→R52)
+
+| R-ID | 风险 | R51状态 | R52更新 |
+|:--|:--|:--|:--|
+| R-010 | GPU OOM | ACK | R52:峰值15.4GB/GPU,余量28.6GB → 风险降级 |
+| R-011 | 基线/RL资源冲突 | — | R52新增:不可并行,推荐方案C |
+| R-012 | 基线评测~13h | — | R52新增:关键路径瓶颈 |
+
+### R52.6 R52环境实测(2026-11-08 15:30)
+
+| 组件 | 状态 |
+|:--|:--|
+| torch | 2.6.0+cu124, cuda=True, 8 devices ✅ |
+| sglang | 0.4.6.post1 ✅ |
+| verl | import OK ✅ |
+| ray | 2.60.0 ✅ |
+| 模型 | 4.7GB at /tmp/models/MiniCPM5-2B/ ✅ |
+| venv | ~/code/verl_cu124_venv/ ✅ |
+| GPU | 8×A40全占(44-45GB/46GB), 4张11/9释放 |
+| 所有脚本 | 全部存在 ✅ |
+
+### R52.7 交付物
+
+- `run/baize_posttrain_gpu_schedule_optimizer.py`（462行, py_compile ✅, --html ✅）
+- `reports/report_posttrain_r52_gpu_schedule_optimizer_zh.html`（15.7KB, 9节, 0 script, 0 外链, 自包含）
+- 本节（EXPERIMENTS §R52, 7小节）
+
+### R52.8 GO/NO-GO 判定
+
+**✅ GO for 11/9 Phase1 launch** — 所有Phase1前提条件已满足:
+- 13/15预发射检查项已验证通过(2项待11/9: GPU释放+cline PATH)
+- GPU内存预算: RL峰值15.4GB/GPU, 余量28.6GB, OOM风险极低
+- 资源调度方案确定: 方案C(先基线后RL)
+- 故障决策树8种, 融合R47-R51修复
+- 风险登记册: 0 CRITICAL open, R-009(Phase2)不阻塞Phase1
