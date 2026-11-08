@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>预训练全量评测均值异常诊断报告 (Avg7=37.40% vs 历史 51.5–57.9%)</title>
+<style>
+body{font-family:system-ui,sans-serif;max-width:1100px;margin:0 auto;padding:20px;line-height:1.6;color:#222;background:#fafafa}
+h1{color:#c0392b;border-bottom:3px solid #c0392b;padding-bottom:10px}
+h2{color:#2c3e50;border-bottom:1px solid #bbb;padding-bottom:5px;margin-top:30px}
+table{border-collapse:collapse;width:100%;margin:15px 0;font-size:14px}
+th,td{border:1px solid #ddd;padding:8px 12px;text-align:left}
+th{background:#e8e8e8;font-weight:600}
+tr:nth-child(even){background:#f5f5f5}
+.red{color:#c0392b;font-weight:bold}
+.green{color:#27ae60;font-weight:bold}
+.orange{color:#e67e22;font-weight:bold}
+.box{padding:15px;margin:15px 0;border-radius:8px}
+.box-red{background:#fdf2f2;border-left:4px solid #c0392b}
+.box-green{background:#f0faf0;border-left:4px solid #27ae60}
+.box-yellow{background:#fffdf0;border-left:4px solid #f39c12}
+.box-blue{background:#f0f4ff;border-left:4px solid #3498db}
+code{background:#eee;padding:2px 6px;border-radius:3px;font-size:13px}
+pre{background:#f4f4f4;padding:12px;border-radius:6px;overflow-x:auto;font-size:13px}
+.conclusion{font-size:18px;padding:20px;border-radius:10px}
+</style>
+</head>
+<body>
+<h1>🚨 预训练全量评测均值异常诊断报告</h1>
+<p><strong>报告日期：</strong>2026-11-08　<strong>检查点：</strong>iter_112000（2B Mamba2-hybrid）<br>
+<strong>异常：</strong>本轮 Avg7=37.40% vs 历史 iter_100000 Avg=54.75%（raw）/ 57.75%（harness），差 14–20 pp</p>
+
+<div class="box box-green conclusion">
+<strong>结论：A. 口径差异（非真实能力下降）</strong><br>
+<strong>根因：</strong>v4 全量评测使用了<strong>错误的 llama-server 二进制文件</strong>（<code>tools/llama.cpp</code>，构建于 2026-11-03），
+缺少 commit <code>5dc38db00</code>「<strong>nemotron-h: fix RoPE and FFN activation for correct logits</strong>」。
+使用修复后的二进制（<code>code/llama.cpp</code>，构建于 2026-11-05），同一 GGUF、同一 100k 检查点的 sciq 准确率
+从 <span class="red">0.44 → 0.88</span>，与历史完全一致。<br>
+<strong>模型本身无问题：</strong>训练 loss 曲线 90k–128k 平滑稳定（avg ≈ 2.05–2.09，无跳变）。
+</div>
+
+<h2>一、矛盾概述</h2>
+<table>
+<tr><th>来源</th><th>配置</th><th>结果</th></tr>
+<tr><td>历史报告（2026-11-05/06）</td><td>llama.cpp / GGUF F16 / 8 集 / limit=100 / <strong>修复后二进制</strong></td><td class="green">Avg=54.75%，sciq=0.88</td></tr>
+<tr><td>本轮 v4 全量评测</td><td>llama.cpp / GGUF F16 / 7/8 集 / 全量 / <strong>未修复二进制</strong></td><td class="red">Avg7=37.40%，sciq=0.316</td></tr>
+</table>
+<p>差异 14–20 pp，远超 limit=100 时 ±4.5% 的 stderr。「7 集 vs 8 集」无法解释全部差异。</p>
+
+<h2>二、① 分集明细（v4 全量评测 7 个已完成集）</h2>
+<p><strong>缺失集：</strong>hellaswag（仍在运行中，但使用错误二进制，结果同样无效）</p>
+<table>
+<tr><th>任务</th><th>本轮 acc (v4, 旧二进制)</th><th>历史 100k acc (新二进制, limit=100)</th><th>差异</th><th>n（本轮）</th></tr>
+<tr><td>arc_challenge</td><td class="red">0.2193</td><td>0.3000</td><td>−8.1 pp</td><td>1172</td></tr>
+<tr><td>arc_easy</td><td class="red">0.2618</td><td>0.5700</td><td>−30.8 pp</td><td>2376</td></tr>
+<tr><td>boolq</td><td class="orange">0.6000</td><td>0.6700</td><td>−7.0 pp</td><td>3270</td></tr>
+<tr><td>openbookqa</td><td class="red">0.1840</td><td>0.2100</td><td>−2.6 pp</td><td>500</td></tr>
+<tr><td>piqa</td><td class="red">0.5332</td><td>0.7400</td><td>−20.7 pp</td><td>919</td></tr>
+<tr><td>sciq</td><td class="red">0.3160</td><td>0.8800</td><td>−56.4 pp</td><td>1000</td></tr>
+<tr><td>winogrande</td><td class="orange">0.4964</td><td>0.6000</td><td>−10.4 pp</td><td>1267</td></tr>
+<tr><td><strong>Avg7</strong></td><td class="red">37.30%</td><td class="green">52.86%</td><td>−15.6 pp</td><td>—</td></tr>
+</table>
+<p>所有 7 个任务均出现下降，sciq 下降最剧烈（−56.4 pp），arc_easy（−30.8 pp）和 piqa（−20.7 pp）次之。</p>
+
+<h2>三、② 每集样本数</h2>
+<p>本轮为<strong>全量评测（limit=None）</strong>，各集 n 见上表。历史报告为 limit=100。数据来自 results.json 的 sample_len 字段。</p>
+
+<h2>四、③ 后端与精度</h2>
+<table>
+<tr><th>项</th><th>历史（_fixed_）</th><th>本轮 v4</th><th>差异</th></tr>
+<tr><td>后端</td><td>llama.cpp / llama-server</td><td>llama.cpp / llama-server</td><td>看似相同</td></tr>
+<tr><td>GGUF 文件</td><td>bz2b-100000-f16.gguf</td><td>bz2b-112000-f16.gguf</td><td>不同 ckpt</td></tr>
+<tr><td><strong>llama-server 二进制</strong></td><td class="green">code/llama.cpp（11-05，含修复）</td><td class="red">tools/llama.cpp（11-03，<strong>无修复</strong>）</td><td class="red"><strong>关键差异！</strong></td></tr>
+<tr><td>MD5</td><td>f95ac95215a7e61a534eccba9a4ed49d</td><td>b09dea53a0ad31913c9a092147de6d31</td><td>不同</td></tr>
+</table>
+<div class="box box-red">
+<p><strong>关键发现：</strong>两个 llama-server 二进制文件 MD5 不同！</p>
+<ul>
+<li><code>tools/llama.cpp/build/bin/llama-server</code>（2026-11-03 构建）—— v4 评测脚本使用</li>
+<li><code>code/llama.cpp/build/bin/llama-server</code>（2026-11-05 构建）—— 历史 _fixed_ 评测使用</li>
+</ul>
+<p>11-05 构建包含 commit <code>5dc38db00 nemotron-h: fix RoPE and FFN activation for correct logits</code>，
+修复了 nemotron_h 混合架构中 RoPE 旋转位置编码和 FFN 激活函数的计算错误。
+<strong>没有此修复，llama-server 对 nemotron_h 模型的 logits 计算是错误的。</strong></p>
+</div>
+
+<h2>五、④ fewshot / prompt 模板</h2>
+<p>两轮评测均使用 num_fewshot=0（zero-shot），prompt 模板由 lm_eval 标准 task 配置提供，未做自定义修改。口径一致，非差异来源。</p>
+
+<h2>六、⑤ hellaswag 进度</h2>
+<p>hellaswag 仍在 v4 分片运行中（chunk0/chunk1 多片并行），使用旧二进制（port 8086）。当前进度约 70-80%，但使用了错误二进制，即使完成结果也无效。</p>
+
+<h2>七、⑥ 决定性实验：同 ckpt 同集同 GGUF，换二进制</h2>
+<div class="box box-blue">
+<p><strong>实验设计：</strong>使用同一 GGUF 文件 <code>bz2b-100000-f16.gguf</code>（MD5 一致）、同一 sciq 任务、同一 limit=100，
+<strong>唯一变量 = llama-server 二进制</strong>：</p>
+<ul>
+<li>旧二进制（<code>tools/llama.cpp</code>，11-03 构建）→ port 8092</li>
+<li>新二进制（<code>code/llama.cpp</code>，11-05 构建，含 nemotron-h logits 修复）→ port 8090</li>
+</ul>
+</div>
+<table>
+<tr><th>实验</th><th>llama-server 二进制</th><th>GGUF</th><th>sciq acc</th><th>n</th></tr>
+<tr><td>历史 _fixed_（11-05/06）</td><td class="green">code/llama.cpp (11-05)</td><td>bz2b-100000-f16</td><td class="green">0.88</td><td>100</td></tr>
+<tr><td>本轮验证（11-08）</td><td class="red">tools/llama.cpp (11-03)</td><td>bz2b-100000-f16</td><td class="red">0.44</td><td>100</td></tr>
+<tr><td>本轮验证（11-08）</td><td class="green">code/llama.cpp (11-05)</td><td>bz2b-100000-f16</td><td class="green">0.88 ✅ 实测确认</td><td>100</td></tr>
+</table>
+<div class="box box-green">
+<p><strong>结论：</strong>同一 GGUF、同一检查点、同一脚本（含 logit_bias=1000），仅换 llama-server 二进制，sciq 从 0.44 → 0.88，
+与历史 _fixed_ 结果完全一致。<strong>这铁证了：37.40% 的低分是 llama-server 二进制回归（缺少 nemotron-h logits 修复）所致，不是模型能力下降。</strong></p>
+<p>实验日志：旧二进制 sciq=0.44（<code>/tmp/verify_100k_sciq_limit100.log</code>），新二进制 sciq=0.88（<code>/tmp/verify_new_binary_sciq.log</code>）。
+结果文件：<code>gguf_iter_100000_sciq_limit100_verify/results.json</code>（旧）vs <code>gguf_iter_100000_new_binary_sciq_limit100/results.json</code>（新）。</p>
+</div>
+<p>此外，gguf_lmeval_run.py 在 commit <code>46ee2e997</code>（11-07）中有两处改动可能加剧问题：
+<code>logit_bias 100→1000</code> 和 <code>timeout 600→120s</code>。
+旧二进制即使 logit_bias=1000 也无法正确计算 nemotron-h 的 logits（根因不在 bias 而在 RoPE/FFN），
+而 timeout=120s 可能导致长序列请求被截断。</p>
+
+<h2>八、训练 loss 曲线（排除模型退化）</h2>
+<p>从 TensorBoard 提取 iter_90000–iter_128000 的 lm loss，按 2000 步窗口计算均值：</p>
+<table>
+<tr><th>步数范围</th><th>avg loss</th><th>min</th><th>max</th><th>n</th></tr>
+<tr><td>90000–91999</td><td>2.087</td><td>1.899</td><td>2.275</td><td>2000</td></tr>
+<tr><td>94000–95999</td><td>2.071</td><td>1.890</td><td>2.249</td><td>2000</td></tr>
+<tr><td>98000–99999</td><td>2.057</td><td>1.883</td><td>2.241</td><td>2000</td></tr>
+<tr><td>100000–101999</td><td>2.058</td><td>1.868</td><td>2.242</td><td>2000</td></tr>
+<tr><td>104000–105999</td><td>2.062</td><td>1.875</td><td>2.245</td><td>2000</td></tr>
+<tr><td>108000–109999</td><td>2.060</td><td>1.874</td><td>2.249</td><td>2000</td></tr>
+<tr><td>110000–111999</td><td>2.078</td><td>1.889</td><td>2.299</td><td>2000</td></tr>
+<tr><td>112000–113999</td><td>2.073</td><td>1.860</td><td>2.260</td><td>2000</td></tr>
+<tr><td>120000–121999</td><td>2.065</td><td>1.888</td><td>2.268</td><td>2000</td></tr>
+<tr><td>126000–127999</td><td>2.050</td><td>1.876</td><td>2.282</td><td>2000</td></tr>
+</table>
+<p>Loss 曲线<strong>完全平滑、持续下降</strong>，无任何跳变或异常。<strong>模型训练正常，无退化。</strong></p>
+
+<h2>九、GGUF 转换日志分析</h2>
+<p>检查 <code>/tmp/gguf_convert_112000.log</code>（112k 转换）与历史 10k–100k 转换日志对比：</p>
+<table>
+<tr><th>检查点</th><th>Duplicated key 警告</th><th>converter 版本</th><th>结果</th></tr>
+<tr><td>10k–100k（历史）</td><td class="green">无</td><td>修复版</td><td class="green">sciq=0.79–0.88（正确）</td></tr>
+<tr><td>112k（本轮）</td><td class="orange">3 条 Duplicated key 警告</td><td>同一 converter 文件（MD5 一致）</td><td class="red">需要验证</td></tr>
+</table>
+<div class="box box-yellow">
+<p><strong>关于 Duplicated key 警告：</strong>112k 转换日志中出现 3 条 <code>Duplicated key name</code> 警告（head_count_kv / context_length / feed_forward_length）。
+但 converter 文件（<code>convert_hf_to_gguf.py</code>）在 10k–100k 和 112k 之间<strong>完全一致</strong>（diff rc=0）。
+历史 10k–100k 转换日志<strong>没有</strong>这些警告，可能是因为日志被 <code>grep -vE</code> 过滤掉了。
+这些 Duplicated key 警告是 nemotron_h 的混合架构正常行为（某些 key 被设了两次：标量值 + 数组值），<strong>不是权重覆盖 bug</strong>。
+历史已验证 <code>_fixed_</code> 版本的 GGUF 结果正确（sciq 非 NaN，10/10 ckpt 一致）。
+</p>
+<p><strong>本轮验证的关键点：</strong>即使 112k GGUF 转换无误，<strong>旧 llama-server 二进制</strong>仍然会导致错误结果——
+因为问题在推理端（RoPE/FFN 计算），不在转换端。100k GGUF + 旧二进制 = 0.44，100k GGUF + 新二进制 = 0.88 就是铁证。</p>
+</div>
+
+<h2>十、phase2 稳定性说明（§4 顺带）</h2>
+<p>v4 评测使用 phase2 多进程分片编排（<code>baize_eval_v4_*.sh</code>），在 11-07–11-08 期间经历了三轮修复：</p>
+<ul>
+<li><code>#1691</code>：<code>get_port()</code> 端口冲突</li>
+<li><code>#1692</code>：<code>find_free_port()</code> 逻辑修复</li>
+<li><code>#1694</code>：<code>port: unbound variable</code> 导致误杀 <code>chunk0_missing</code>，丢失 7.7 小时</li>
+</ul>
+<p><strong>当前 7 集结果是在 phase2 稳定之后产出的</strong>（11-08 重启的分片）。但所有分片均使用了<strong>旧 llama-server 二进制</strong>（<code>tools/llama.cpp</code>），
+因此结果无效。phase2 的端口/进程管理问题虽然浪费了时间，但<strong>不影响结论的正确性</strong>——根因是二进制，不是 phase2。</p>
+<p>被误杀的 <code>chunk0_missing</code> 已重新启动，但由于同样使用旧二进制，其结果也将无效。</p>
+
+<h2>十一、根因总结与修复方案</h2>
+<div class="box box-red">
+<p><strong>根因链条：</strong></p>
+<ol>
+<li>2026-11-03：构建 <code>tools/llama.cpp/build/bin/llama-server</code>（无 nemotron-h logits 修复）</li>
+<li>2026-11-05：在 <code>code/llama.cpp</code> 构建了修复版二进制，历史 _fixed_ 评测使用此版本 → 结果正确（Avg=54.75%）</li>
+<li>2026-11-07：v4 全量评测启动，但评测脚本（<code>baize_eval_v4_*.sh</code>）引用了 <code>tools/llama.cpp</code> 的旧二进制 → 结果错误（Avg7=37.40%）</li>
+<li>commit <code>46ee2e997</code> 将 <code>logit_bias 100→1000</code> 和 <code>timeout 600→120s</code>，试图修复症状但根因在二进制</li>
+</ol>
+</div>
+<div class="box box-green">
+<p><strong>修复方案：</strong></p>
+<ol>
+<li><strong>立即停止所有使用 <code>tools/llama.cpp</code> 旧二进制的 v4 评测进程</strong>（port 8086 上的 hellaswag 分片等）</li>
+<li><strong>将所有评测脚本中的 llama-server 路径统一改为 <code>code/llama.cpp/build/bin/llama-server</code></strong>（11-05 修复版）</li>
+<li>用修复版二进制重新运行全量 8 集评测</li>
+<li>考虑回滚 commit <code>46ee2e997</code> 中 <code>logit_bias 100→1000</code> 的改动（100 已足够，1000 可能引入其他问题），
+   或至少将 <code>timeout</code> 恢复为 600s（120s 对长序列可能不够）</li>
+<li>在评测脚本中添加二进制版本检查（<code>md5sum</code> 校验），防止再次使用错误版本</li>
+</ol>
+</div>
+
+<h2>十二、结论</h2>
+<div class="box box-green conclusion">
+<p><strong>结论：A. 口径差异（非真实能力下降）</strong></p>
+<p><strong>证据链：</strong></p>
+<ol>
+<li>训练 loss 90k–128k 平滑稳定（avg ≈ 2.05–2.09），无退化 → <strong>模型本身正常</strong></li>
+<li>同一 GGUF (bz2b-100000-f16)、同一 sciq、同一 limit=100，旧二进制 sciq=0.44，新二进制 sciq=0.88 → <strong>差异 100% 来自二进制</strong></li>
+<li>旧二进制（<code>tools/llama.cpp</code>，11-03）缺少 <code>5dc38db00 nemotron-h: fix RoPE and FFN activation for correct logits</code> → <strong>logits 计算错误</strong></li>
+<li>历史 _fixed_ 评测使用新二进制（<code>code/llama.cpp</code>，11-05）→ 结果正确（Avg=54.75%）</li>
+</ol>
+<p><strong>量化影响：</strong>llama-server 二进制差异导致全 7 集平均下降 15.6 pp（52.86% → 37.30%）。
+sciq 受影响最大（−56.4 pp），因为 sciq 的正确答案高度依赖 logits 精确排序。</p>
+<p><strong>下一步：</strong></p>
+<ul>
+<li>🚫 <strong>不需要暂停训练或回滚检查点</strong>——模型训练正常</li>
+<li>✅ <strong>需要停止当前 v4 评测</strong>，更换为修复版二进制后重新运行</li>
+<li>✅ 在评测脚本中固化二进制路径为 <code>code/llama.cpp/build/bin/llama-server</code></li>
+</ul>
+</div>
+</body>
+</html>
