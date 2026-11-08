@@ -9,7 +9,7 @@
 | 文件 | 作用 |
 |:--|:--|
 | `tutor_agent.py` | 最小闭环：题图/题文 → 识图（默认 DeepSeek 视觉）→ 分步引导（默认 DeepSeek，不泄答案，`clamp_hint()` 确定性裁剪 ≤2 句）→ Windows SAPI 出声 |
-| `tutor_server.py` | HTTP 服务（App 经 `10.0.2.2:8765/tutor` 调它）；`POST /tutor` + `GET /health` |
+| `tutor_server.py` | HTTP 服务（App 经 `10.0.2.2:8765` 调它）：`POST /tutor`（识图+引导，带 `tool` 字段即转工具）+ `POST /tool`（L2 工具）+ `POST /agent`（智能体多轮）+ `GET /health` |
 | `speech.py` | 语音链路适配层（12:20 令 §2/§3）：统一接口 `asr_stream()/tts_stream()/stop()`；端侧默认（SAPI 分句流式 + 打断 + `MockStreamingASR`），云端留空实现（默认 off） |
 | `normalize_math.py` | 口述→数学式纠错（12:20 令 §4）：覆盖平方/立方/根号/分之/负/运算符/关系/π/度/角/几何符号/术语等，`cn_to_int` 中文数字转换 |
 | `eval_l1.py` | L1 评测基线：文本 3 题 + 对抗探针 + **4 张题图**（算式/中文+算式/中文应用题/代数式）→ `eval/l1_baseline.json`（直接给答案率 / 识图正确率 / 首步时延 P50·P90 / 逐条后端与降级原因） |
@@ -28,14 +28,17 @@
 | `eval_l2.py` | L2 评测：5 工具真调 + 多轮一致性 + 直接给答案率 → `eval/l2_tools.json` |
 | `test_tools.py` | `tools.py` 单测（21 条：安全求值 / 红线拒变量 / 5 工具 / 注册表） |
 | `test_l2_agent.py` | `l2_agent.py` 单测（21 条：路由 / 表达式抽取 / LLM 决策解析 / 会话多轮与红线） |
+| `test_tutor_server.py` | `tutor_server.py` 单测（**13 条**：/tool 红线拒变量、题库不泄答案、错题本/报告、/agent 多轮回放、/tutor 工具路由） |
+| `smoke_http.py` | HTTP 冒烟：起临时实例实测 `/health /tool /agent` 三端点真实 JSON（不依赖 App/模拟器） |
 
-## 单测（第 15 轮：175 passed）
+## 单测（第 16 轮：188 passed）
 
 ```powershell
 cd D:\Users\Administrator\code\super_intelligence_2035\doc\personal-watch\run\robot\host
-py -3.10 -m pytest test_normalize_math.py test_speech.py test_presence.py test_interaction.py test_tutor_agent.py test_leak_check.py test_question_bank.py test_tools.py test_l2_agent.py -q   # 175 passed
-py -3.10 normalize_math.py "x的平方加三x等于零" "二分之根号三"   # 演示口述→数学式
-py -3.10 -W ignore speech.py                                  # 演示分句/合成 WAV/打断/ASR mock
+py -3.10 -m pytest -q                                                  # 188 passed
+py -3.10 normalize_math.py "x的平方加三x等于零" "二分之根号三"        # 演示口述→数学式
+py -3.10 -W ignore speech.py                                          # 演示分句/合成 WAV/打断/ASR mock
+py -3.10 -W ignore smoke_http.py                                      # HTTP 冒烟（/health /tool /agent）
 ```
 
 ## 交互验收（11:40 令 §3 · 第 13 轮交付）
@@ -130,7 +133,7 @@ py -3.10 -W ignore eval_l2.py              # L2 评测 → ../eval/l2_tools.json
 - **5 工具**：`calculator`（AST 白名单、拒变量→不代解方程）/ `question_bank_lookup`（只回题干不泄答案）/ `wrong_book_add|list`（本地错题本）/ `parent_report`（本地 HTML）/ `plot_function`（函数图像 PNG）。
 - **智能体骨架**：`route_tool()` 确定性路由（离线）+ `decide_tool_llm()`（DeepSeek 选工具，失败回退路由）+ `L2Session`（一道题多轮会话，工具轮与引导历史分离）。
 - **实测（第 15 轮）**：6 工具全调；直接给答案率 0；3 轮追问一致；`plot_function` PNG 20,347 字节；LLM 决策正确选 `calculator`。
-- 🚫 **待接**：工具层尚未接进 App/HTTP（`/tutor` 暂无 `tool`/`params`），下一轮做。
+- ✅ **已接 HTTP（第 16 轮）**：`tutor_server.py` 新增 `POST /tool`（直接调工具，红线拒变量/不泄答案）、`POST /agent`（L2 多轮，确定性路由默认）、`POST /tutor` 带 `tool` 字段即转工具；App 加「换一题/记错题/报告」按钮 + 文字追问 → 均已跑通（`smoke_http.py` 实测 + `adb install` 成功 + 模拟器 UI dump 确认新按钮）。
 
 ## 教育红线（内置约束，见 `tutor_agent.py` 的 TUTOR_SYSTEM）
 

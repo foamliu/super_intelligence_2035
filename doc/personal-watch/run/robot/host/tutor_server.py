@@ -3,9 +3,14 @@
 """
 robot 线 · PC 侧家教 HTTP 服务（Android App 通过 http://10.0.2.2:PORT 调它）
 
-接口（11:30 用户令统一 POST /tutor 口径 + 11:40 令流式/打断扩展点）：
-  POST /tutor   入 {image_b64?, text?, student_ctx?, history?, hint_level?}
+接口（11:30 用户令统一 POST /tutor 口径 + 11:40 令流式/打断扩展点 + ROADMAP #1 L2 工具接 HTTP）：
+  POST /tutor   入 {image_b64?, text?, student_ctx?, history?, hint_level?, tool?, params?}
                 出 {reply_text, tts_text, step, hint_level, needs, question_text, vision, tutor, latency_s}
+                若带 tool 字段 → 直接调用 L2 工具（等价 POST /tool）。
+  POST /tool    入 {tool, params}  出 {ok, tool, result, reply, latency_s}
+                工具 = calculator / question_bank / wrong_book_add / wrong_book_list / parent_report / plot_function
+  POST /agent   入 {question, utterance, history?, knowledge?, use_llm?}
+                出 {kind: tool|guide, tool, tool_result, reply, latency_s}   （L2 智能体多轮，确定性路由默认，可选 LLM 决策）
   GET  /health  健康检查 {ok, version, backends}
   GET  /        使用说明
 
@@ -27,6 +32,8 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import tutor_agent  # noqa: E402  复用 recognize_ex / tutor_step / LAST_*_TRACE
+import tools       # noqa: E402  L2 工具层（ROADMAP #1）
+import l2_agent    # noqa: E402  L2 智能体编排（/agent 多轮）
 
 PORT = int(os.environ.get("ROBOT_TUTOR_PORT", "8765"))
 HOST = os.environ.get("ROBOT_TUTOR_HOST", "0.0.0.0")
@@ -50,8 +57,83 @@ def _b64_to_tmpfile(b64: str) -> str:
     return path
 
 
+def _tool_reply(name: str, result: dict) -> str:
+    """把工具结果翻译成给学生的口语化一句（≤2 句、不泄答案，口径同 l2_agent._tool_reply）。"""
+    if name == "calculator":
+        return "验算结果是 %s。你自己核一下对不对？" % result["result"]
+    if name == "question_bank":
+        qs = result.get("questions") or []
+        if not qs:
+            return "没找到同类题，换个关键词试试？"
+        return "给你一道同类题练练：%s 你先试试，做完告诉我。" % qs[0]["question"]
+    if name == "wrong_book_add":
+        return "已记入错题本，现在共 %d 道。我们回头一起复盘。" % result["total"]
+    if name == "wrong_book_list":
+        return "错题本里共有 %d 道，记得定期复习。" % result["total"]
+    if name == "parent_report":
+        return "学习报告已生成，共 %d 道错题。" % result["total_wrong"]
+    if name == "plot_function":
+        return "函数图像画好了，可以看图想一想走势。"
+    return "好的，已处理。"
+
+
+def handle_tool(body: dict):
+    """直接调用 L2 工具（POST /tool 或 POST /tutor 带 tool 字段）。返回 (payload, http_status)。
+
+    教育红线：calculator 拒绝含变量表达式（防代解方程）；题库/错题本列表剥离 answer/leak。
+    """
+    t0 = time.time()
+    name = (body.get("tool") or "").strip()
+    params = body.get("params") or {}
+    if not name:
+        return {"ok": False, "error": "缺少 tool 字段"}, 400
+    try:
+        result = tools.call_tool(name, params)
+        return {
+            "ok": True,
+            "tool": name,
+            "result": result,
+            "reply": _tool_reply(name, result),
+            "latency_s": round(time.time() - t0, 3),
+        }, 200
+    except tools.ToolError as e:
+        # 工具拒绝（红线封堵 / 参数非法）——不是服务端错误，正常回 JSON 给 App 显示
+        return {"ok": False, "tool": name, "error": str(e)}, 200
+    except Exception as e:  # noqa: BLE001
+        return {"ok": False, "tool": name, "error": str(e)}, 500
+
+
+def handle_agent(body: dict):
+    """智能体多轮：POST /agent {question, utterance, history?, knowledge?, use_llm?}。
+
+    返回 {kind: tool|guide, tool, tool_result, reply, latency_s}。
+    默认确定性路由（use_llm=False，离线可用）；use_llm=True 时先让 DeepSeek 选工具、失败回退路由。
+    """
+    t0 = time.time()
+    question = (body.get("question") or "").strip()
+    utterance = (body.get("utterance") or "").strip()
+    if not question or not utterance:
+        return {"error": "需要 question 与 utterance"}, 400
+    session = l2_agent.L2Session(
+        question,
+        knowledge=body.get("knowledge") or "",
+        use_llm=bool(body.get("use_llm")),
+    )
+    for s, a in (body.get("history") or []):   # 回放历史，重建多轮上下文
+        session.history.append((s, a))
+    r = session.respond(utterance)
+    r["latency_s"] = round(time.time() - t0, 3)
+    return r, 200
+
+
 def handle_tutor(body: dict):
-    """核心：{image_b64|text} -> 识图 -> 分步引导。返回 (payload, http_status)。"""
+    """核心：{image_b64|text} -> 识图 -> 分步引导。返回 (payload, http_status)。
+
+    ROADMAP #1：带 tool 字段时直接路由到 L2 工具（等价 POST /tool）。
+    """
+    if (body.get("tool") or "").strip():
+        return handle_tool(body)
+
     t0 = time.time()
     image_b64 = (body.get("image_b64") or "").strip()
     text = (body.get("text") or "").strip()
@@ -120,12 +202,14 @@ class Handler(BaseHTTPRequestHandler):
             })
         else:
             self._send_json({
-                "usage": "POST /tutor  {image_b64 | text, history?, hint_level?}",
+                "usage": "POST /tutor {image_b64|text, history?, hint_level?, tool?, params?} · "
+                         "POST /tool {tool, params} · POST /agent {question, utterance, history?}",
                 "note": "App 端请用 http://10.0.2.2:%d/tutor" % PORT,
             })
 
     def do_POST(self):
-        if self.path.rstrip("/") != "/tutor":
+        path = self.path.rstrip("/")
+        if path not in ("/tutor", "/tool", "/agent"):
             self._send_json({"error": "not found"}, 404)
             return
         try:
@@ -135,7 +219,8 @@ class Handler(BaseHTTPRequestHandler):
                 return
             raw = self.rfile.read(length)
             body = json.loads(raw.decode("utf-8"))
-            payload, status = handle_tutor(body)
+            fn = {"/tutor": handle_tutor, "/tool": handle_tool, "/agent": handle_agent}[path]
+            payload, status = fn(body)
             self._send_json(payload, status)
         except Exception as e:  # noqa: BLE001  服务端异常也要回 JSON，别把连接崩掉
             self._send_json({"error": str(e), "trace": traceback.format_exc()[-500:]}, 500)

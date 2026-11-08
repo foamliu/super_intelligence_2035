@@ -38,6 +38,7 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private lateinit var tvStatus: TextView
     private lateinit var tvReply: TextView
     private lateinit var etServer: EditText
+    private lateinit var etInput: EditText
     private lateinit var previewView: PreviewView
 
     private var imageCapture: ImageCapture? = null
@@ -45,7 +46,9 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private var tts: TextToSpeech? = null
     private var ttsReady = false
     private var currentTtsText: String = ""
+    private var currentQuestion: String = ""
     private val history = mutableListOf<Pair<String, String>>()
+    private val followUps = mutableListOf<Pair<String, String>>()
 
     private val pickImage =
         registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
@@ -72,6 +75,7 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         tvStatus = findViewById(R.id.tvStatus)
         tvReply = findViewById(R.id.tvReply)
         etServer = findViewById(R.id.etServer)
+        etInput = findViewById(R.id.etInput)
         previewView = findViewById(R.id.previewView)
         cameraExecutor = Executors.newSingleThreadExecutor()
 
@@ -85,6 +89,22 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         findViewById<Button>(R.id.btnSpeak).setOnClickListener { speakCurrent() }
         findViewById<Button>(R.id.btnStop).setOnClickListener { stopSpeaking() }
         findViewById<Button>(R.id.btnHealth).setOnClickListener { checkHealth() }
+        findViewById<Button>(R.id.btnNext).setOnClickListener {
+            callTool("question_bank", mapOf("subject" to "", "keyword" to ""))
+        }
+        findViewById<Button>(R.id.btnWrong).setOnClickListener {
+            val q = currentQuestion.ifBlank { history.lastOrNull()?.first ?: "" }
+            if (q.isBlank()) {
+                setStatus("先拍一道题，才能记错题")
+            } else {
+                val ans = etInput.text.toString().trim().ifBlank { "（标记为错题）" }
+                callTool("wrong_book_add", mapOf("question" to q, "student_answer" to ans))
+            }
+        }
+        findViewById<Button>(R.id.btnReport).setOnClickListener {
+            callTool("parent_report", emptyMap())
+        }
+        findViewById<Button>(R.id.btnSend).setOnClickListener { sendFollowUp() }
 
         tts = TextToSpeech(this, this)
 
@@ -169,7 +189,9 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                         append(reply.replyText)
                     }
                     currentTtsText = reply.ttsText
+                    currentQuestion = q
                     history.add(q to reply.replyText)
+                    followUps.clear()
                     val lat = reply.latencyS?.let { " · ${it}s" } ?: ""
                     setStatus("引导就绪${lat}（点「朗读」出声）")
                     speakCurrent()
@@ -192,6 +214,83 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 runOnUiThread { setStatus("连接正常：$r") }
             } catch (e: Exception) {
                 runOnUiThread { setStatus("连接失败：${e.message}") }
+            }
+        }
+    }
+
+    // ── L2 工具（换一题 / 记错题 / 报告）→ POST /tool ──────────────
+    private fun callTool(tool: String, params: Map<String, String>) {
+        val server = etServer.text.toString().trim()
+        cameraExecutor.execute {
+            try {
+                val r = TutorClient.postTool(server, tool, params)
+                runOnUiThread {
+                    if (r.ok) {
+                        tvReply.text = buildString {
+                            append("【工具·").append(tool).append("】\n")
+                            append(r.reply)
+                        }
+                        currentTtsText = r.reply
+                        setStatus("工具已处理（点「朗读」出声）")
+                        speakCurrent()
+                    } else {
+                        setStatus("工具拒绝：${r.error}")
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "POST /tool 失败", e)
+                runOnUiThread { setStatus("工具调用失败：${e.message}") }
+            }
+        }
+    }
+
+    // ── 追问（文字多轮）→ POST /agent ──────────────────────────────
+    private fun sendFollowUp() {
+        val server = etServer.text.toString().trim()
+        val text = etInput.text.toString().trim()
+        if (text.isBlank()) {
+            setStatus("先输入一句话再发送")
+            return
+        }
+        val q = currentQuestion.ifBlank { history.lastOrNull()?.first ?: "" }
+        if (q.isBlank()) {
+            // 无题干上下文：当作一道新的文字题走 /tutor
+            cameraExecutor.execute {
+                try {
+                    val reply = TutorClient.postTutor(server, imageB64 = null, text = text, history = history)
+                    runOnUiThread {
+                        currentQuestion = reply.questionText ?: text
+                        history.add((reply.questionText ?: text) to reply.replyText)
+                        followUps.clear()
+                        tvReply.text = reply.replyText
+                        currentTtsText = reply.ttsText
+                        etInput.setText("")
+                        setStatus("文字题已回应")
+                        speakCurrent()
+                    }
+                } catch (e: Exception) {
+                    runOnUiThread { setStatus("发送失败：${e.message}") }
+                }
+            }
+            return
+        }
+        cameraExecutor.execute {
+            try {
+                val r = TutorClient.postAgent(server, q, text, followUps)
+                runOnUiThread {
+                    tvReply.text = buildString {
+                        append("【追问】").append(text).append("\n\n")
+                        append(r.reply)
+                    }
+                    currentTtsText = r.reply
+                    followUps.add(text to r.reply)
+                    etInput.setText("")
+                    setStatus("已回应追问（点「朗读」出声）")
+                    speakCurrent()
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "POST /agent 失败", e)
+                runOnUiThread { setStatus("追问失败：${e.message}") }
             }
         }
     }

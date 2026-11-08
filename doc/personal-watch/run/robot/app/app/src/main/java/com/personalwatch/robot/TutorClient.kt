@@ -22,6 +22,20 @@ data class TutorReply(
     val raw: String
 )
 
+data class ToolReply(
+    val ok: Boolean,
+    val reply: String,
+    val error: String,
+    val raw: String
+)
+
+data class AgentReply(
+    val kind: String,
+    val tool: String?,
+    val reply: String,
+    val raw: String
+)
+
 object TutorClient {
 
     fun postTutor(
@@ -63,6 +77,71 @@ object TutorClient {
         val resp = conn.inputStream?.bufferedReader(Charsets.UTF_8)?.use(BufferedReader::readText) ?: "{}"
         conn.disconnect()
         return "HTTP $code $resp"
+    }
+
+    fun postTool(baseUrl: String, tool: String, params: Map<String, String>): ToolReply {
+        val conn = URL(baseUrl.trimEnd('/') + "/tool").openConnection() as HttpURLConnection
+        conn.requestMethod = "POST"
+        conn.doOutput = true
+        conn.connectTimeout = 30_000
+        conn.readTimeout = 30_000
+        conn.setRequestProperty("Content-Type", "application/json; charset=utf-8")
+
+        val body = JSONObject()
+        body.put("tool", tool)
+        val p = JSONObject()
+        for ((k, v) in params) p.put(k, v)
+        body.put("params", p)
+
+        OutputStreamWriter(conn.outputStream, Charsets.UTF_8).use { it.write(body.toString()) }
+        val code = conn.responseCode
+        val stream = if (code in 200..299) conn.inputStream else conn.errorStream
+        val resp = stream?.bufferedReader(Charsets.UTF_8)?.use(BufferedReader::readText) ?: "{}"
+        conn.disconnect()
+        val o = JSONObject(resp)
+        return ToolReply(
+            ok = o.optBoolean("ok", false),
+            reply = o.optString("reply", ""),
+            error = o.optString("error", ""),
+            raw = resp
+        )
+    }
+
+    fun postAgent(
+        baseUrl: String,
+        question: String,
+        utterance: String,
+        history: List<Pair<String, String>> = emptyList()
+    ): AgentReply {
+        val conn = URL(baseUrl.trimEnd('/') + "/agent").openConnection() as HttpURLConnection
+        conn.requestMethod = "POST"
+        conn.doOutput = true
+        conn.connectTimeout = 30_000
+        conn.readTimeout = 90_000
+        conn.setRequestProperty("Content-Type", "application/json; charset=utf-8")
+
+        val body = JSONObject()
+        body.put("question", question)
+        body.put("utterance", utterance)
+        body.put("use_llm", false)   // 确定性路由优先，离线可用
+        val hist = JSONArray()
+        for ((s, a) in history) {
+            hist.put(JSONArray().put(s).put(a))
+        }
+        body.put("history", hist)
+
+        OutputStreamWriter(conn.outputStream, Charsets.UTF_8).use { it.write(body.toString()) }
+        val code = conn.responseCode
+        val stream = if (code in 200..299) conn.inputStream else conn.errorStream
+        val resp = stream?.bufferedReader(Charsets.UTF_8)?.use(BufferedReader::readText) ?: "{}"
+        conn.disconnect()
+        val o = JSONObject(resp)
+        return AgentReply(
+            kind = o.optString("kind", "guide"),
+            tool = if (o.has("tool") && !o.isNull("tool")) o.optString("tool") else null,
+            reply = o.optString("reply", o.optString("error", "")),
+            raw = resp
+        )
     }
 
     private fun parse(json: String): TutorReply {

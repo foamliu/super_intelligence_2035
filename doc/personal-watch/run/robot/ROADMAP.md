@@ -7,7 +7,7 @@
 |:--|:--|:--|:--|
 | L0 设备通路 | 手机与开发机连通：装包/截屏/拍照/出声 | 各一条命令拿到真实产物 | 🟢 **模拟器全通**（ADB+emulator+AVD+APK 安装+App 闭环+录屏，第10轮）；真机仍待用户 3 条（P0 §4） |
 | L1 单题闭环 | 拍题 → 识图 → 结构化 → LLM 分步引导 → TTS | 20 题 ≥15 题识别正确，引导不含答案 | 🟢 **100 题全量达标（第 14 轮）**：识图 20/20=1.0、首步 P50 1.16s/P90 2.07s、直接给答案率 0、无静默降级 |
-| L2 智能体 | 工具调用：题库/错题本/计算器/绘图/家长报告；多轮不丢上下文 | 5 工具可调，3 轮追问一致 | 🟢 **5 工具可调（第 15 轮）**：6 工具全调、直接给答案率 0、3 轮追问一致、LLM 工具决策正确；175 单测 |
+| L2 智能体 | 工具调用：题库/错题本/计算器/绘图/家长报告；多轮不丢上下文 | 5 工具可调，3 轮追问一致 | 🟢 **5 工具可调 + 已接 HTTP/App（第 15/16 轮）**：6 工具全调、直接给答案率 0、3 轮追问一致、LLM 工具决策正确；`/tool` `/agent` 端点 + App「换一题/记错题/报告/追问」；188 单测 |
 | L3 学情 | 错题本 + 知识点画像 + 每日/每周摘要，本地存储 | 数据落本地，可导出 HTML | ⬜ |
 | L4 形态 | 桌面实体机器人（需硬件） | 待用户确认 | ⬜（形态口径：自家 8 年级女儿用的桌面端，见 12:05 令） |
 
@@ -141,9 +141,21 @@
 - 🔧 修 3 处 bug：绘图路由未抽表达式、工具轮次污染引导历史（幻觉「没有等号」）、`\w` 匹配中文多抽「的」。
 - 📌 **能信/不能信**：5 工具/路由/红线封堵为确定性纯函数（42 单测）；引导多轮 + LLM 工具决策为本机实测（deepseek-flash）。🚫 工具层未接进 App/HTTP（`/tutor` 暂无工具参数），待下一轮。
 
+## 第 16 轮增量（2026-11-08 · L2 工具/智能体接进 HTTP + App）
+
+- ✅ **`tutor_server.py` 新增两个端点 + 一处路由**（ROADMAP #1「`/tutor` 增加 `tool`/`params`，App 加换一题/记错题/报告入口」）：
+  - `POST /tool {tool, params}`：直接调用 5 工具，`ToolError`（红线拒变量/参数非法）→ `{ok:false, error}`（HTTP 200，业务拒绝非服务端错误）；calculator 拒变量、题库/错题本列表剥离 answer/leak。
+  - `POST /agent {question, utterance, history?, use_llm?}`：L2 智能体多轮，默认确定性路由（离线），可选 DeepSeek 工具决策；回放 history 重建多轮上下文。
+  - `POST /tutor` 带 `tool` 字段即转工具（等价 `/tool`）。
+- ✅ **`test_tutor_server.py` 13 单测** + `smoke_http.py`（起临时实例实测 `/health /tool /agent` 真实 JSON）。修复 1 处 bug：`do_POST` 路由字典键漏 `/` 前缀导致 `KeyError: '/tool'`（`path` 保留前导斜杠）。
+- ✅ **App 接工具/追问**：`TutorClient.postTool/postAgent`；`MainActivity` 加「换一题/记错题/报告」三按钮（→`/tool`）+ 文字追问输入框 +「发送」（→`/agent`，无题干时回退 `/tutor` 文字题）；`activity_main.xml` + `strings.xml` 同步。
+- ✅ **构建 + 装机验证**：`assembleDebug` 成功 → `app-debug.apk` **4,112,860 字节**；`adb install -r` **Success**；`am start` 启动 + `uiautomator dump` 确认「换一题/记错题/报告/发送/追问」UI 元素在位。
+- ✅ **host 全量 `pytest` = 188 passed**（175 + 13 新增）。
+- 📌 **能信/不能信**：`/tool` `/agent` 的确定性路由 / 红线封堵 / 不泄答案为**确定性纯函数**（13 单测）+ `smoke_http.py` 实测真实 JSON；App 侧为**装机 + UI dump 验证**（未在模拟器内端到端点按钮触发 DeepSeek，因本轮 ComfyUI 停用 + 不引入真实学生数据，工具链路已在 host 侧跑通）。🚫 端侧真实 ASR 仍未落地。
+
 ## 下一轮候选（按优先级）
 
-1. L2 工具接进 App/HTTP：`/tutor` 增加 `tool`/`params`，App 加「换一题/记错题/报告」入口。
-2. 端侧真实 ASR（sherpa-onnx）接入位落地（`SherpaOnnxASR` 现为报错占位）。
-3. `clamp_hint` 后的 full 30 会话复跑验证（第 13 轮只做了单次 smoke）。
+1. 端侧真实 ASR（sherpa-onnx）接入位落地（`SherpaOnnxASR` 现为报错占位）——12:20 令「端侧为主」的最后一环。
+2. `clamp_hint` 后的 full 30 会话复跑验证（第 13 轮只做了单次 smoke）。
+3. L3 学情：错题本 + 知识点画像 + 每日/每周摘要，本地存储、可导出 HTML（工具已备 wrong_book/parent_report，缺定时聚合与画像）。
 4. 收用户 3 条回复 → 复验 `hdc list targets` / `adb devices`，打通真机「拍照/出声」（L0 真机化）。

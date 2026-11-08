@@ -4,6 +4,11 @@
     <string name="btn_pick">选图</string>
     <string name="btn_speak">朗读</string>
     <string name="btn_stop">打断</string>
+    <string name="btn_next">换一题</string>
+    <string name="btn_wrong">记错题</string>
+    <string name="btn_report">报告</string>
+    <string name="btn_send">发送</string>
+    <string name="input_hint">追问 / 输入一句话（如：帮我算 3×4）</string>
     <string name="server_hint">服务地址（模拟器用 10.0.2.2:8765）</string>
     <string name="status_idle">待机：拍一道题，或点「选图」。</string>
 </resources>

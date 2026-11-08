@@ -9,6 +9,10 @@
 拍照 / 选图 -> 降采样 -> base64 -> `POST http://10.0.2.2:8765/tutor`（PC 侧 `host/tutor_server.py`）
 -> 收到 `{reply_text, tts_text, question_text, ...}` -> 屏幕显示 + 系统 TTS 朗读 -> 「打断」按钮停播。
 
+第 16 轮新增 **L2 工具 / 追问**（对应 host 侧 `POST /tool`、`POST /agent`）：
+- 「换一题」→ `/tool question_bank`；「记错题」→ `/tool wrong_book_add`；「报告」→ `/tool parent_report`；
+- 文字输入框 + 「发送」→ `/agent`（多轮追问，无题干时回退 `/tutor` 文字题）。
+
 ## 技术栈
 
 | 项 | 选型 |
