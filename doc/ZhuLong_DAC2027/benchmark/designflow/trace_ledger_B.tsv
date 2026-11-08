@@ -473,3 +473,21 @@ qnm9e					parked		2026-11-08 01:58	Finesim DC convergence Q&A prose dup of uky6c
 1793849641832_97ksq	jiangbaol	hfeg0pkn004	905	spice_sim	case	EDA-Eval-DesignFlow-DupSubcktDefDiag-001	2026-11-08 19:21	
 1793585029552_gcziu	jhhu	hfeg0pkn004	50	characterization	case	EDA-Eval-DesignFlow-SisInstGenSupplyGlobal-001	2026-11-08 19:44	
 1793869755608_ho5p2	jiangbaol	hfeg0pkn004	97	spice_sim	case	EDA-Eval-DesignFlow-ProbeFailDiag-001	2026-11-08 20:15	
+1793596868413_1comp					parked		2026-11-08 20:41	scout_1108_20: pkn004 e0045369 ZQ Cal circuit-struct HTML report, non-spice (schematic-struct), REJECT shard B
+1792998659148_31lou					parked		2026-11-08 20:41	scout_1108_20: pkn004 claire1l techlef routing-rules summary, layout/physical, REJECT shard B
+1793775672932_5j455					parked		2026-11-08 20:41	scout_1108_20: pkn004 e0047722 DRC_QA.md test-runner+diff report, physical_verify, REJECT shard B
+1793957377461_s9bc9					parked		2026-11-08 20:41	scout_1108_20: pkn004 e0039602 netlist block-rename skill, schematic_netlist, REJECT shard B
+1793687763129_30a1n					parked		2026-11-08 20:41	scout_1108_20: pkn004 jcgu SDL Group Generator layout matching, layout, REJECT shard B
+1793164782733_wp528					parked		2026-11-08 20:41	scout_1108_20: pkn004 laryu DRC POLY_DENORFILL rule explain, physical_verify, REJECT shard B
+1793863694561_o6c4k					parked		2026-11-08 20:41	scout_1108_20: pkn004 jcgu calibre DRC/LVS labs usage, physical_verify, REJECT shard B
+1793696115600_i3fk2					parked		2026-11-08 20:41	scout_1108_20: pkn004 leozhao DRC wl_adjacent deck run+parse, physical_verify, REJECT shard B
+1793161602607_0i3r5					parked		2026-11-08 20:41	scout_1108_20: pkn004 my7li aether crash troubleshooting, env-issue non-deliverable, REJECT
+1792132080120_htbqn					parked		2026-11-08 20:41	scout_1108_20: pkn004 tabtao sdf_ss.log Warning filter, log-processing, REJECT shard B
+1793839606322_bghqo					parked		2026-11-08 20:41	scout_1108_20: pkn004 e0039602 tb_family stdcell netlist check+rewrite, schematic_netlist, REJECT shard B
+1791444783469_mwoue					parked		2026-11-08 20:41	scout_1108_20: pkn003 miccao DRC deck modify from DFIM report, physical_verify, REJECT shard B
+1791963281932_4a852					parked		2026-11-08 20:41	scout_1108_20: pkn004 e0039602 netlist cell->simlib_base.sv mapping, schematic_netlist, REJECT shard B
+1789895218929_1xhgy					parked		2026-11-08 20:41	scout_1108_20: pkn003 miccao AutoCell TCL flow gen (stdcell), layout/tcl, REJECT shard B
+1793794350956_fi203					parked		2026-11-08 20:41	scout_1108_20: pkn005 chengleiy innovus project analysis, APR/innovus, REJECT shard B
+1789545344007_xchvr					parked		2026-11-08 20:41	scout_1108_20: pkn005 ellawu calibre STIcmp.rule OPEN1 LVS error, physical_verify, REJECT shard B
+1793260065712_n78nn					parked		2026-11-08 20:41	scout_1108_20: pkn005 t0003117 eval user netlist_extract skill, REJECT eval user
+1793684384632_6dmno					parked		2026-11-08 20:41	scout_1108_20: pkn005 t0003117 eval user netlist_extract skill, REJECT eval user
