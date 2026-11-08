@@ -548,3 +548,8 @@ qnm9e					parked		2026-11-08 01:58	Finesim DC convergence Q&A prose dup of uky6c
 1793237499232_nph58	jkxu	hfeg0pkn002	639	spice_sim	parked		2026-11-09 02:25	xrun digital sim perf wrong-shard
 1792399658249_w4b6q	e0029495	hfeg0pkn002	66	spice_sim	case	EDA-Eval-DesignFlow-Mt0MetastabDiag-001	2026-11-09 05:02	
 1787298390313_xylsf	e0014566	hfeg0pkn001	24	characterization	parked		2026-11-09 05:02	wrong-shard: Virtuoso CDS.log analysis (layout domain), spice ratio 0.417 from keyword overlap only
+1791945700744_chg46	reedchen	hfeg0pkn002	134	spice_sim	case	EDA-Eval-DesignFlow-SpTemplateOpt-001	2026-11-09 05:33	
+1793586740418_bcyev					parked		2026-11-09 05:35	7 裸文件路径 premise-missing reject
+1793667785681_e328y					parked		2026-11-09 05:35	3 裸路径+5 premise-missing reject
+1791541959267_govo3					parked		2026-11-09 05:35	sentaurus TCAD wrong-shard reject
+1792052702538_olvgd					parked		2026-11-09 05:35	$DATA1 重复+mt0 知识问答 low-structurable reject
