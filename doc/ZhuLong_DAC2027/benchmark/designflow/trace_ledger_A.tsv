@@ -247,3 +247,4 @@
 1793681040407_u0mwh	t0002614	hfeg0pkn001	165	eda_other	case	EDA-Eval-DesignFlow-HspiceTbStructAnalyze-001	2026-11-08 20:20	
 1789451741660_7uwtz					parked		2026-11-08 20:07	templated '启动业务场景: 仿真与验证' exploration; assistant only enumerated available sim tools (spectre/hspice/finesim/vcs), no real user task/deliverable/gold; thin 55 msgs; not A-faithful eligible
 1792986549258_5vo44	rongtaoy	hfeg0pkn001	154	eda_other	case	EDA-Eval-DesignFlow-SacapSignalMissingDiagnose-001	2026-11-08 21:08	
+1792499259030_r00t7	qinqinl	hfeg0pkn003	35	eda_other	claimed		2026-11-08 21:23	
