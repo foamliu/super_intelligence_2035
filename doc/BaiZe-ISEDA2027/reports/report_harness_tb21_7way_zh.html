@@ -1,12 +1,12 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>TB-2.1 7-way R1895</title><style>body{font-family:"Noto Sans CJK SC","Microsoft YaHei",sans-serif;max-width:1100px;margin:0 auto;padding:20px;background:#f8f9fa;color:#333}h1{color:#1a5276;border-bottom:3px solid #2980b9;padding-bottom:10px}h2{color:#1a5276;margin-top:30px;border-left:5px solid #2980b9;padding-left:10px}table{border-collapse:collapse;width:100%;margin:15px 0}th,td{border:1px solid #ddd;padding:8px 12px;text-align:left}th{background:#2980b9;color:#fff}tr:nth-child(even){background:#f2f2f2}.pass{color:#27ae60;font-weight:bold}.fail{color:#e74c3c}.critical{background:#fdf2f2;border:1px solid #e74c3c;border-radius:5px;padding:15px;margin:15px 0}.info{background:#eaf2f8;border:1px solid #2980b9;border-radius:5px;padding:15px;margin:15px 0}.summary-box{background:#fefefe;border:2px solid #2980b9;border-radius:8px;padding:20px;margin:20px 0}ul.task-list{columns:2;-webkit-columns:2}pre{background:#f4f4f4;padding:10px;border-radius:5px;overflow-x:auto}</style></head><body>
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>TB-2.1 7-way R1896</title><style>body{font-family:"Noto Sans CJK SC","Microsoft YaHei",sans-serif;max-width:1100px;margin:0 auto;padding:20px;background:#f8f9fa;color:#333}h1{color:#1a5276;border-bottom:3px solid #2980b9;padding-bottom:10px}h2{color:#1a5276;margin-top:30px;border-left:5px solid #2980b9;padding-left:10px}table{border-collapse:collapse;width:100%;margin:15px 0}th,td{border:1px solid #ddd;padding:8px 12px;text-align:left}th{background:#2980b9;color:#fff}tr:nth-child(even){background:#f2f2f2}.pass{color:#27ae60;font-weight:bold}.fail{color:#e74c3c}.critical{background:#fdf2f2;border:1px solid #e74c3c;border-radius:5px;padding:15px;margin:15px 0}.info{background:#eaf2f8;border:1px solid #2980b9;border-radius:5px;padding:15px;margin:15px 0}.summary-box{background:#fefefe;border:2px solid #2980b9;border-radius:8px;padding:20px;margin:20px 0}ul.task-list{columns:2;-webkit-columns:2}pre{background:#f4f4f4;padding:10px;border-radius:5px;overflow-x:auto}</style></head><body>
 <h1>Terminal-Bench 2.1 · 7-harness 横评报告</h1>
 <div class="info"><p><strong>口径</strong>：TB-2.1 / 89 题 / 7-way concurrent · glm-5.3-flash · 禁止与 TB4 并列对比。</p>
-<p><strong>命名</strong>：正文一律写 cline。 <strong>时间</strong>：2026-11-08 16:08 · R1895</p></div>
+<p><strong>命名</strong>：正文一律写 cline。 <strong>时间</strong>：2026-11-08 16:22 · R1896</p></div>
 <h2>1. Oracle 验证（5/5）</h2>
 <table><tr><th>Task</th><th>Reward</th></tr><tr><td>bn-fit-modify</td><td class='pass'>1</td></tr><tr><td>break-filter-js-from-html</td><td class='pass'>1</td></tr><tr><td>cancel-async-tasks</td><td class='pass'>1</td></tr><tr><td>fix-git</td><td class='pass'>1</td></tr><tr><td>log-summary-date-ranges</td><td class='pass'>1</td></tr></table>
 <p><strong>Oracle</strong>：<span class='pass'>5/5 PASSED ✅</span> — verifier 正常。</p>
 <h2>2. 7 路全量结果</h2>
-<table><tr><th>Harness</th><th>状态</th><th>Passed</th><th>Failed</th><th>Errored</th><th>Remaining</th><th>Best Run</th></tr><tr><td>cline</td><td>已完成</td><td class='pass'>7</td><td class='fail'>81</td><td>1</td><td>0</td><td><small>2026-11-07__16-11-32</small></td></tr><tr><td>codex</td><td>已完成</td><td class='pass'>4</td><td class='fail'>2</td><td>83</td><td>0</td><td><small>2026-11-08__10-13-44</small></td></tr><tr><td>hermes</td><td>已完成</td><td class='pass'>3</td><td class='fail'>51</td><td>35</td><td>0</td><td><small>2026-11-07__23-28-03</small></td></tr><tr><td>opencode</td><td>运行中(66/89)</td><td class='pass'>17</td><td class='fail'>12</td><td>36</td><td>23</td><td><small>2026-11-08__03-14-03</small></td></tr><tr><td>claude-code</td><td>运行中(52/89)</td><td class='pass'>5</td><td class='fail'>18</td><td>28</td><td>37</td><td><small>2026-11-08__05-50-09</small></td></tr><tr><td>deepseek</td><td>运行中(84/89)</td><td class='pass'>12</td><td class='fail'>6</td><td>65</td><td>5</td><td><small>2026-11-08__05-50-09</small></td></tr><tr><td>pi</td><td>运行中(74/89)</td><td class='pass'>18</td><td class='fail'>45</td><td>10</td><td>15</td><td><small>2026-11-08__05-50-09</small></td></tr></table>
+<table><tr><th>Harness</th><th>状态</th><th>Passed</th><th>Failed</th><th>Errored</th><th>Remaining</th><th>Best Run</th></tr><tr><td>cline</td><td>已完成</td><td class='pass'>7</td><td class='fail'>81</td><td>1</td><td>0</td><td><small>2026-11-07__16-11-32</small></td></tr><tr><td>codex</td><td>已完成</td><td class='pass'>4</td><td class='fail'>2</td><td>83</td><td>0</td><td><small>2026-11-08__10-13-44</small></td></tr><tr><td>hermes</td><td>已完成</td><td class='pass'>3</td><td class='fail'>51</td><td>35</td><td>0</td><td><small>2026-11-07__23-28-03</small></td></tr><tr><td>opencode</td><td>运行中(68/89)</td><td class='pass'>17</td><td class='fail'>12</td><td>38</td><td>21</td><td><small>2026-11-08__03-14-03</small></td></tr><tr><td>claude-code</td><td>运行中(53/89)</td><td class='pass'>5</td><td class='fail'>19</td><td>28</td><td>36</td><td><small>2026-11-08__05-50-09</small></td></tr><tr><td>deepseek</td><td>运行中(84/89)</td><td class='pass'>12</td><td class='fail'>6</td><td>65</td><td>5</td><td><small>2026-11-08__05-50-09</small></td></tr><tr><td>pi</td><td>运行中(74/89)</td><td class='pass'>18</td><td class='fail'>45</td><td>10</td><td>15</td><td><small>2026-11-08__05-50-09</small></td></tr></table>
 <div class="summary-box"><p><strong>总计</strong>：66 passed · 3 路完成 · 4 路运行中</p></div>
 <h2>3. 各路通过题目</h2>
 <table><tr><th>Harness</th><th>Passed</th><th>题目</th></tr><tr><td>cline</td><td class='pass'>7</td><td><small>bn-fit-modify, break-filter-js-from-html, build-pov-ray, prove-plus-comm, pypi-server, query-optimize, regex-chess</small></td></tr>
@@ -21,25 +21,25 @@
 <div class="summary-box"><p><strong>运行</strong>：2026-11-07__16-11-32 ｜ <strong>完成</strong>：89/89 ｜ <strong>通过</strong>：<span class="pass">7（7.9%）</span></p>
 <h4>✅ 通过 7 题</h4><ul class='task-list'><li>bn-fit-modify</li><li>break-filter-js-from-html</li><li>build-pov-ray</li><li>prove-plus-comm</li><li>pypi-server</li><li>query-optimize</li><li>regex-chess</li></ul></div>
 <h2>5. 失败归因</h2>
-<div class="critical"><p><strong>网关 429</strong>（已恢复 200）：影响 codex(83 RuntimeError)、hermes(35 ExitCodeError)。<strong>429 不得写成能力结论。</strong></p></div>
+<div class="critical"><p><strong>网关已恢复 200</strong>（此前 429 额度耗尽影响 codex/hermes 首轮）。codex 重跑仍 84/89 RuntimeError("Codex exited with code 1") = 适配器/agent 级失败。<strong>429 不得写成能力结论；agent 退出码 1 也不得写成模型能力。</strong></p></div>
 <div class="info"><ul>
-<li><strong>codex</strong>：83 RuntimeError(429) + 1 timeout → 89/89, 4 passed</li>
-<li><strong>hermes</strong>：35 NonZeroAgentExitCodeError(pip install 失败) + 2 timeout → 89/89, 2 passed</li>
-<li><strong>opencode</strong>：36 RuntimeError + 7 timeout → 64/89 运行中, 16 passed</li>
-<li><strong>claude-code</strong>：27 RuntimeError + 12 timeout → 50/89 运行中, 5 passed</li>
-<li><strong>pi</strong>：13 timeout + 9 RuntimeError → 69/89 运行中, 17 passed</li>
-<li><strong>deepseek</strong>：30 ExitCodeError + 35 RuntimeError + 3 timeout → 83/89 运行中, 12 passed</li>
-<li><strong>cline</strong>：6 timeout + 1 RuntimeError → 89/89, 7 passed（最佳）</li>
+<li><strong>codex</strong>：84 RuntimeError("Codex exited with code 1") + 6 evaluated → best 4p/6(重跑已完成15:03)。错误=agent 适配器级，非 429。</li>
+<li><strong>hermes</strong>：37 NonZeroAgentExitCodeError + 54 evaluated → best 3p/54(重跑已完成14:45)。</li>
+<li><strong>opencode</strong>：29/89 运行中, 17 passed（58.6% = 7 路最高通过率）</li>
+<li><strong>claude-code</strong>：23/89 运行中, 5 passed</li>
+<li><strong>pi</strong>：63/89 运行中, 18 passed（7 路最高通过数）</li>
+<li><strong>deepseek</strong>：18/89 运行中, 12 passed</li>
+<li><strong>cline</strong>：best 7p/88(首轮) + restart 4p/64 运行中。6 timeout + 1 RuntimeError。</li>
 </ul></div>
 <h2>6. TB4 vs TB-2.1 不可比性</h2>
 <div class="critical"><table>
 <tr><th>维度</th><th>TB4</th><th>TB-2.1</th></tr>
 <tr><td>题集</td><td>66 题</td><td>89 题</td></tr>
-<tr><td>结果</td><td>462 trials, 0 passed</td><td>cline 7p · pi 17p · opencode 16p · deepseek 12p · codex 4p · hermes 2p</td></tr>
+<tr><td>结果</td><td>462 trials, 0 passed</td><td>cline 7p · pi 18p · opencode 17p · deepseek 12p · codex 4p · hermes 3p</td></tr>
 <tr><td>可比性</td><td colspan="2"><strong>🚫 不可比</strong></td></tr></table>
 <p>TB4 全 0 = 模型能力问题（R1743 确认，verifier 正常 reward=0）。</p></div>
 <h2>7. 后续</h2>
-<div class="info"><ol><li>5 路运行中 → 待完成后汇总 7 路</li><li>codex/hermes 错误率高(429 期间) → 恢复后可重跑</li><li>research 日报建议：补算题目难度分作归因基线（中优先）</li></ol></div>
+<div class="info"><ol><li>5 路运行中(cline-restart/opencode/claude-code/deepseek/pi) → 待完成后汇总 7 路</li><li>codex 84 RuntimeError("Codex exited with code 1") = agent 适配器级失败，需诊断 codex CLI 在 TB 容器内的退出根因（非 429、非模型能力）</li><li>research 日报建议(11-08)：超时与判错分开统计(高优先·来自research日报2026-11-08)·补算题目难度分(中)·hermes35 no-reward抽10题重跑</li></ol></div>
 <h2>附录 · 复算命令</h2>
 <pre><code>for h in cline-patched codex hermes opencode claude-code deepseek-harness pi; do
   for run in /tmp/tb21_glm53_jobs/$h/2026-11-*/; do
@@ -47,5 +47,5 @@
     echo "$h/$(basename $run): passed=$p"
   done
 done</code></pre>
-<hr><p style="text-align:center;color:#7f8c8d;font-size:0.9em">BaiZe Harness · R1895 · 2026-11-08 16:08<br>TB-2.1 / 89 题 / 7-way concurrent · glm-5.3-flash · 报告正文一律写 cline</p>
+<hr><p style="text-align:center;color:#7f8c8d;font-size:0.9em">BaiZe Harness · R1896 · 2026-11-08 16:22<br>TB-2.1 / 89 题 / 7-way concurrent · glm-5.3-flash · 报告正文一律写 cline</p>
 </body></html>
