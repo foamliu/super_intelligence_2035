@@ -23,12 +23,17 @@
 | `gen_interaction_report.py` | 读 `eval/interaction_*.json` 生成自包含中文 HTML → `doc/BaiZe-ISEDA2027/reports/report_robot_hci_interaction_zh.html` |
 | `test_interaction.py` | `eval_interaction.py` 纯函数单测（10 条：归一化/分位数/红线判定/汇总/会话评分） |
 | `test_tutor_agent.py` | `clamp_hint()` 单测（7 条：≤2 句裁剪 / 删句不硬截 / 空值 / 换行分句） |
+| `tools.py` | **L2 工具集（第 15 轮）**：5 工具——计算器（AST 白名单安全求值、拒变量）/ 题库（剥离答案）/ 错题本 / 家长报告 / 函数绘图；`tool_spec()`/`call_tool()` 注册表 |
+| `l2_agent.py` | **L2 智能体编排（第 15 轮）**：`route_tool()` 确定性路由 + `decide_tool_llm()`（DeepSeek 选工具）+ `L2Session` 多轮会话（工具轮与引导历史分离） |
+| `eval_l2.py` | L2 评测：5 工具真调 + 多轮一致性 + 直接给答案率 → `eval/l2_tools.json` |
+| `test_tools.py` | `tools.py` 单测（21 条：安全求值 / 红线拒变量 / 5 工具 / 注册表） |
+| `test_l2_agent.py` | `l2_agent.py` 单测（21 条：路由 / 表达式抽取 / LLM 决策解析 / 会话多轮与红线） |
 
-## 单测（第 13 轮：118 passed）
+## 单测（第 15 轮：175 passed）
 
 ```powershell
 cd D:\Users\Administrator\code\super_intelligence_2035\doc\personal-watch\run\robot\host
-py -3.10 -m pytest test_normalize_math.py test_speech.py test_presence.py test_interaction.py test_tutor_agent.py -q   # 118 passed in 0.73s
+py -3.10 -m pytest test_normalize_math.py test_speech.py test_presence.py test_interaction.py test_tutor_agent.py test_leak_check.py test_question_bank.py test_tools.py test_l2_agent.py -q   # 175 passed
 py -3.10 normalize_math.py "x的平方加三x等于零" "二分之根号三"   # 演示口述→数学式
 py -3.10 -W ignore speech.py                                  # 演示分句/合成 WAV/打断/ASR mock
 ```
@@ -112,6 +117,20 @@ py -3.10 -W ignore eval_l1.py --vision-backend ollama --tutor-backend ollama `
 2. **识图正确率**（4 张题图，算式用数学骨架、中文题干用字符相似度 ≥0.9）；
 3. **首步时延 P50 / P90**（11:40 令硬指标 P50≤2.5s / P90≤4s）；
 4. **每条 OCR 的真实后端 + 降级原因**（`ocr_fallback_count`）。
+
+## L2 智能体（工具调用 · 第 15 轮）
+
+```powershell
+cd D:\Users\Administrator\code\super_intelligence_2035\doc\personal-watch\run\robot\host
+py -3.10 tools.py                          # 工具自检：calculator/question_bank/拒变量
+py -3.10 -W ignore l2_agent.py             # 会话编排离线演示（6 条学生话 → 工具/引导）
+py -3.10 -W ignore eval_l2.py              # L2 评测 → ../eval/l2_tools.json
+```
+
+- **5 工具**：`calculator`（AST 白名单、拒变量→不代解方程）/ `question_bank_lookup`（只回题干不泄答案）/ `wrong_book_add|list`（本地错题本）/ `parent_report`（本地 HTML）/ `plot_function`（函数图像 PNG）。
+- **智能体骨架**：`route_tool()` 确定性路由（离线）+ `decide_tool_llm()`（DeepSeek 选工具，失败回退路由）+ `L2Session`（一道题多轮会话，工具轮与引导历史分离）。
+- **实测（第 15 轮）**：6 工具全调；直接给答案率 0；3 轮追问一致；`plot_function` PNG 20,347 字节；LLM 决策正确选 `calculator`。
+- 🚫 **待接**：工具层尚未接进 App/HTTP（`/tutor` 暂无 `tool`/`params`），下一轮做。
 
 ## 教育红线（内置约束，见 `tutor_agent.py` 的 TUTOR_SYSTEM）
 

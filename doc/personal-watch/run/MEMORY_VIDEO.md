@@ -14,8 +14,8 @@ WAITING: 0
 ## 📊 进度快照（每次唤醒必须更新）
 
 ```
-PHASE:        L0 设备通路**模拟器全通（ADB+emulator+AVD+APK 安装+App 闭环+录屏）**；L1 单题闭环达标；HCI 交互规范已交付；**可安装真 App 已跑通（22:50 令）**；**HCI 代码层（normalize_math.py 81 单测 + speech.py 12 单测）已交付（12:20 令）**；**presence.py 在座检测已交付（12:05 令）**；**交互验收（11:40 令 §3）已交付（第13轮）**；**L1 全量 100 题 + 泄露检测误报修复（第14轮）**
-已完成:       P0 ✅；路线 R3 ✅；最小 demo ✅；L1 基线 ✅；识图 4/4 ✅；给答案率 0 ✅；时延达标 ✅；INTERACTION_SPEC.md ✅；可安装 APK + 模拟器跑通一题 ✅（22:50 令·第10轮）；**normalize_math.py + speech.py 交付、93 单测全绿 ✅（12:20 令·第11轮）**；**presence.py 交付、8 单测、PC 摄像头 20 次实测 P50 33ms ≤300ms、准确率 20/20 ✅（12:05 令·第12轮）**；**交互验收交付：eval/interaction_*.json + HTML 报告 + clamp_hint(≤2句)，整轮 P50 1.37s/P90 1.97s、给答案率 0、录音 91.2s、118 单测全绿 ✅（11:40 令·第13轮）**；**100 题题库(question_bank.py)+leak_check 修复+L1 全量评测（给答案率 0·识图 20/20·P50 1.16s/P90 2.07s）、133 单测全绿 ✅（第14轮）**
+PHASE:        L0 设备通路**模拟器全通（ADB+emulator+AVD+APK 安装+App 闭环+录屏）**；L1 单题闭环达标；HCI 交互规范已交付；**可安装真 App 已跑通（22:50 令）**；**HCI 代码层（normalize_math.py 81 单测 + speech.py 12 单测）已交付（12:20 令）**；**presence.py 在座检测已交付（12:05 令）**；**交互验收（11:40 令 §3）已交付（第13轮）**；**L1 全量 100 题 + 泄露检测误报修复（第14轮）**；**L2 智能体工具层（5 工具：计算器/题库/错题本/家长报告/绘图 + 会话编排 + LLM 工具决策）已交付（第15轮）**
+已完成:       P0 ✅；路线 R3 ✅；最小 demo ✅；L1 基线 ✅；识图 4/4 ✅；给答案率 0 ✅；时延达标 ✅；INTERACTION_SPEC.md ✅；可安装 APK + 模拟器跑通一题 ✅（22:50 令·第10轮）；**normalize_math.py + speech.py 交付、93 单测全绿 ✅（12:20 令·第11轮）**；**presence.py 交付、8 单测、PC 摄像头 20 次实测 P50 33ms ≤300ms、准确率 20/20 ✅（12:05 令·第12轮）**；**交互验收交付：eval/interaction_*.json + HTML 报告 + clamp_hint(≤2句)，整轮 P50 1.37s/P90 1.97s、给答案率 0、录音 91.2s、118 单测全绿 ✅（11:40 令·第13轮）**；**100 题题库(question_bank.py)+leak_check 修复+L1 全量评测（给答案率 0·识图 20/20·P50 1.16s/P90 2.07s）、133 单测全绿 ✅（第14轮）**；**L2 智能体：tools.py(5工具)+l2_agent.py(会话/路由/LLM决策)+eval_l2.py，6 工具全调·给答案率 0·3 轮一致·175 单测全绿 ✅（第15轮）**
 第5轮:       识图+引导切云端 DeepSeek（recognize() 签名不变 / 可降级 / 路径可见）；识图 0.5→1.0；P50 2.0s·P90 2.92s；修 headless TTS 崩溃；P0 用户清单 5→3 条
 第6轮:       按 11:10 令全链路复跑无回归——P0 四度复验、R3 维持、demo 端到端 2.95s、L1 四指标达标（识图 1.0·首步 P50 1.51s/P90 2.22s·给答案率 0）
 第7轮:       按 11:10 令全链路复跑无回归——P0 五度复验、R3 维持、demo 端到端 3.33s、L1 四指标达标（识图 4/4·首步 P50 1.6s/P90 1.78s·给答案率 0·无静默降级）
@@ -26,8 +26,9 @@ PHASE:        L0 设备通路**模拟器全通（ADB+emulator+AVD+APK 安装+App
 第12轮:      执行 12:05 令 §1/§5 代码交付——`presence.py`(YuNet 人脸+亮度阈值三分类 person/left/unknown, 帧不落盘, 8 单测)+`eval_presence.py`+PC 摄像头 20 次实测(29.71fps/P50 33ms/P90 57ms/20-20≤300ms/准确率 20/20)；`pytest` 101 passed
 第13轮:      执行 11:40 令 §3 交互验收闭环——`eval_interaction.py`(latency/bargein/student 三模式)+`test_interaction.py`(10单测)+`gen_interaction_report.py`+HTML 报告；实测整轮 P50 1.37s/P90 1.97s、TTS 首字 P50 80.4ms、打断 stop~0ms、模拟学生 3 人设×10 轮**直接给答案率 0**、录音 91.2s；暴露 LLM 输出过长(3-6句)→ 加 `clamp_hint()`(≤2句)+强化提示词(7单测)；`pytest` 118 passed
 第14轮:      执行 ROADMAP「下一轮候选」#1——重建 100 题题库 question_bank.py(数学60+物理20+英语20)+修复泄露检测误报 leak_check.py(词边界+复述题干不算泄露)+eval_l1_full.py 全量评测(220 次 deepseek-flash)：给答案率 0、识图 20/20、P50 1.16s/P90 2.07s；`pytest` 133 passed
-当前动作:     第 14 轮：读任务书 → 识别上一轮(未提交)l1_full.json 已生成但 question_bank.py 丢失 + leak_rate=0.02 → 定位为英文短答案子串/复述选项误报 → 重建题库 + leak_check 修复(10单测) + eval_l1_full.py 全量 100 题实测给答案率 0 → 133 单测全绿 → 回写 MEMORY/ROADMAP + 日流水 → commit+push(robot:)
-下一步:       端侧真实 ASR（sherpa-onnx）接入位落地；clamp_hint 后 full 30 会话复跑验证；真机化（等用户 3 条）
+第15轮:      执行 ROADMAP L2 智能体——`tools.py`(5 工具：计算器 AST 白名单/题库/错题本/家长报告/绘图)+`l2_agent.py`(确定性路由+LLM 工具决策+L2Session 多轮会话)+`eval_l2.py` 评测：6 工具全调、给答案率 0、3 轮追问一致、绘图 PNG 20KB、LLM 决策选 calculator 正确；`pytest` 175 passed
+当前动作:     第 15 轮：读任务书 → 识别 L2 智能体（5 工具可调）为下一层增量 → 新增 tools.py/l2_agent.py/eval_l2.py + 单测 → 修复 3 处（绘图未抽表达式、工具轮次污染引导历史导致「没有等号」幻觉、`\w` 匹配中文导致表达式多抽「的」）→ 175 单测全绿 + eval_l2 实测 → 回写 MEMORY/ROADMAP/日流水 → commit+push(robot:)
+下一步:       端侧真实 ASR（sherpa-onnx）接入位落地；L2 工具接进 App/HTTP（/tutor 支持工具参数）；clamp_hint 后 full 30 会话复跑验证；真机化（等用户 3 条）
 阻塞:         ⏳ 手机未连（型号/系统未知）——**只阻塞真机化，不阻塞 PC/模拟器任何工作**（adb/emulator 已自装好）；`qwen3-vl:32b` 已按 15:4x 令作废；端侧 ASR 权重未装（用 MockStreamingASR 验逻辑，不阻塞）
 ERROR_COUNT:  0
 ```
@@ -231,15 +232,28 @@ ERROR_COUNT:  0
 - 回写：`eval/question_bank.py`/`host/leak_check.py`/`host/eval_l1_full.py`/`host/test_leak_check.py`/`host/test_question_bank.py`（新建）、`eval/sample_questions.md`、`ROADMAP.md`（第 14 轮）、本文件、`daily-memories-video/2026-11-08.md`。
 - commit+push（`robot:`）。
 
+## 4.14 本唤醒流水（2026-11-08 · 第 15 轮 · L2 智能体工具层落地）
+
+- 读任务书全文 + `robot/README.md` + `ROADMAP.md`；识别 22:50/12:20/12:05/11:40 令均已闭环（第 10-14 轮），L0/L1/HCI 全部交付，唯一未交付的是 **ROADMAP L2 智能体（5 工具可调）**。本轮落地 L2。ComfyUI 全程未碰（已冻结）。
+- ✅ **`host/tools.py`（5 工具 + 注册表）**：`calculator`（**AST 白名单**安全求值，🚫 不用 `eval`，拒绝变量→封堵「代解方程」）、`question_bank_lookup`（检索 `eval/question_bank.py` 100 题，**剥离 answer/leak** 只回题干）、`wrong_book_add/list`（本地 JSON 错题本，不上传）、`parent_report`（自包含中文 HTML，本地）、`plot_function`（matplotlib Agg 画 y=f(x)）。`tool_spec()/call_tool()` 供 LLM 决策与评测共用。
+- ✅ **`host/l2_agent.py`（智能体编排层）**：`route_tool()` 确定性意图路由（离线可用）+ `decide_tool_llm()` 让 DeepSeek 从工具清单选工具（智能体主路径，失败回退路由）+ `L2Session` 维持一道题多轮会话。**关键修复**：工具轮次与引导历史分离（`history` 只喂 `tutor_step`，`tool_log` 单独记）——否则工具问答污染引导上下文，实测出现过「2x+3 没有等号」的幻觉。
+- ✅ **`host/eval_l2.py` 实测**（`eval/l2_tools.json`）：**6 工具全调**（含 wrong_book_list）；**直接给答案率 = 0**（3 轮追问 + 「算方程解」红线封堵均不含答案）；**多轮 3 轮一致**（`history_len=3`，不再被工具轮污染）；`plot_function` 产出真实 PNG（20,347 字节）；`llm_tool_decision` 实测 DeepSeek 正确选 `calculator`（params `{"expr":"6*7"}`）。
+- ✅ **host 全量 `pytest` = 175 passed**（原 133 + test_tools 21 + test_l2_agent 21）。
+- 🔧 **本轮修 3 处 bug**：① 绘图路由未抽表达式 → `_extract_func()`；② 工具轮次混入引导历史 → 引导上下文幻觉；③ `\w` 默认匹配中文 → 表达式多抽「的」→ 改 `[0-9a-zA-Z...]` 显式 ASCII 字符类。另有 HTML 模板 `width:100%` 的 `%` 未转义（`%%`）。
+- 📌 **能信/不能信**：5 工具 / 路由 / 红线封堵为**确定性纯函数**（42 单测）；`eval_l2.json` 的引导多轮与 LLM 工具决策为本机实测（deepseek-flash）。🚫 工具层目前只在 host 内跑，**未接进 App/HTTP**（`/tutor` 暂不支持工具参数），待下一轮接入。
+- 回写：`host/tools.py`/`host/l2_agent.py`/`host/eval_l2.py`/`host/test_tools.py`/`host/test_l2_agent.py`（新建）、`host/README.md`、`ROADMAP.md`（第 15 轮）、本文件、`daily-memories-video/2026-11-08.md`。
+- commit+push（`robot:`）。
+
 ## 5. 阻塞 / 待办
 
 1. **⏳ 等用户 2 条回复**（`P0_设备通路.md` §4）：① 手机型号/系统版本 ② 开 USB 调试并连线（adb/hdc 已由本线自装，不再需要用户装）。
    🚫 **只阻塞「真机化」，不阻塞 PC/模拟器任何工作**（16:5x 令 §5：不得再以此为由停摆）。
 2. ~~`qwen3-vl:32b` 20GB GGUF 缺失~~ → **已作废**（15:4x 令：识图走 DeepSeek，本地 `llava` 只做离线兜底）。
 3. **下一轮候选（按优先级）**：
-   1. 端侧真实 ASR（sherpa-onnx）接入位落地（`SherpaOnnxASR` 现为报错占位）；
-   2. `clamp_hint` 后的 full 30 会话复跑验证（第 13 轮只做了单次 smoke）；
-   3. 真机化 L0（等用户 3 条）。
+   1. L2 工具接进 App/HTTP：`/tutor` 增加工具参数（`tool`/`params`），App 加「换一题/记错题/报告」入口；
+   2. 端侧真实 ASR（sherpa-onnx）接入位落地（`SherpaOnnxASR` 现为报错占位）；
+   3. `clamp_hint` 后的 full 30 会话复跑验证（第 13 轮只做了单次 smoke）；
+   4. 真机化 L0（等用户 3 条）。
 
 ## 6. 运维问答
 
