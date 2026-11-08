@@ -6189,3 +6189,102 @@ python baize_posttrain_baseline_d1d6_analyzer.py \\
 ```
 
 \u2192 \u4ea7\u51fa\uff1aD1-D6 \u5b8c\u6574\u5bf9\u7167 + gap \u5206\u89e3 + HTML \u62a5\u544a\uff0c\u66ff\u4ee3\u6b64\u524d P0 \u7684 \u201c\u274c not on this node\u201d \u5047\u8bbe\u5916\u63a8\u3002
+
+---
+
+## §R56 SFT 数据混合管线 (SFT Data Mixing Pipeline)（2026-11-08 wake104 · 零 GPU · Python 3.8+）
+
+> **任务**：填补 `baize_posttrain_sft.sh` 配方骨架与训练就绪数据之间的空白——
+> 将 PyAether SFT 语料 (JSONL) 与 UltraData SFT 数据 (预分词 megatron) 组合为统一训练方案。
+> **脚本**：`run/baize_posttrain_sft_data_mixer.py`（~550 行，纯 Python 3.8+，零第三方依赖）
+
+### 1. PyAether SFT 语料分析（实测）
+
+| 维度 | 值 |
+|:--|:--|
+| 总样本 | 19,524 |
+| 总估算 token | ~4M（chars/4 启发式） |
+| 平均 token/样本 | 209.5 |
+| P95 token | 340 |
+| 最大 token | ~1k |
+| 长度分布 | 100% < 512 token（极短，所有 context-len 均无需截断） |
+
+按类型：S1_doc_to_code 8012 | S2_api_lookup 8012 | S3_multi_api_chain 89 | S4_error_recovery 3411
+按质量：high 11733 | medium 701 | low 7090
+
+### 2. 混合方案（4 种预注册策略）
+
+| 策略 | agent% | general% | pyaether% | 描述 |
+|:--|--:|--:|--:|:--|
+| agent50:general30:pyaether20 | 50 | 30 | 20 | 默认（baize_posttrain_sft.sh） |
+| pyaether40:agent35:general25 | 35 | 25 | 40 | 领域重推 M2 |
+| agent40:general40:pyaether20 | 40 | 40 | 20 | 均衡 |
+| pyaether60:agent25:general15 | 25 | 15 | 60 | 领域极限消融 |
+
+目标总 token ~3.15B（3000 steps x GBS=128 x seq=8192）。
+- agent 50% -> ~1572M tok（UltraData-SFT-Agent-2609: 5.97B tok 可用，充足）
+- general 30% -> ~943M tok（UltraData-SFT-2605: 18.89B tok 可用，充足）
+- pyaether 20% -> ~629M tok（PyAether 仅 ~4M tok -> 需上采样 ~157x）
+
+### 3. PyAether 上采样策略
+
+语料仅 ~4M tok 远不足以满足 20% 配比目标（~629M tok）。策略：
+- high tier 优先 3x 重复（11,733 条 high-quality）
+- medium 2x, low 1x（避免低质量稀释）
+- S3 multi-api-chain 仅 89 条 -> GPU 后用沙盒 profiling 扩展
+- 上采样后仍不足 -> 降配比至 pyaether5-10%（GPU 后用真实 D1-D6 数据确认）
+
+### 4. verl SFT 格式转换
+
+PyAether JSONL -> verl SFT conversation 格式（list[dict] message turns）：
+```
+[{"role":"system","content":"You are an EDA automation assistant..."},
+ {"role":"user","content":"Read the following PyAether API documentation..."},
+ {"role":"assistant","content":"```python\\nimport pyAether as pyScript\\n...```"}]
+```
+每条记录包含 conversation + metadata（pair_id, type, api_used, source, quality_tier）。
+
+### 5. UltraData 集成策略
+
+UltraData 预分词为 megatron .bin/.idx 格式，在训练框架层通过 blend weight 混合（非数据文件层）。
+- 生成 `sft_blend_config.yaml`：指定 agent/general/pyaether 三个源的路径和权重
+- UltraData 路径在 .29/.12 NFS（不在 .17 本机，但共享 NFS 可达）
+
+### 6. 上下文长度处理
+
+- PyAether 样本极短（全部 < 512 token）-> 任何 context-len 均无需截断
+- UltraData agent 轨迹可能极长（D3: avg 45.6 消息/轨迹）-> 建议 SFT context >= 8192
+- 截断策略 keep_system_completion：保留 system+assistant 完整，截断 user 中段
+- 支持 keep_head_tail 和 drop_system 备选策略
+
+### 7. 污染隔离
+
+- 评测 API 黑名单加载 + 与 PyAether SFT 语料 API 集合求交
+- 实测：0 污染命中（与 R24/R45/R54 验证一致）
+- 红线：158 任务的 prompt + 函数签名 + 断言代码绝对不能进训练集
+
+### 8. 交付物与验证
+
+| 交付物 | 路径 | 大小 | 验证 |
+|:--|:--|--:|:--|
+| 混合管线脚本 | run/baize_posttrain_sft_data_mixer.py | ~22KB | py_compile OK |
+| verl SFT JSONL | run/sft_mixed_output.jsonl | 26.1MB / 19,524 records | 格式验证 OK (3 turns, 5 metadata keys) |
+| Blend config | run/sft_blend_config.yaml | ~600B | 3 sources + training hyperparams |
+| HTML 报告 | reports/report_posttrain_r56_sft_mix_zh.html | 6.9KB | 10 节, 0 script, 0 外链 |
+
+### 9. 与 R1-R4 协同
+
+| 调研 | 与 R56 的关联 |
+|:--|:--|
+| R1 (EDA 环境 RL) | R56 的 SFT 数据为 RL 提供 ckpt 起点 |
+| R2 (PyAether 造题) | R56 的 SFT 语料来自 R2 的 PyAether API 知识库 |
+| R3 (GRPO 奖励) | R56 的 SFT 是 RL 前置步骤；SFT 质量决定 RL 起始点 |
+| R4 (失败模式) | D4 执行报错 74% -> SFT 语料优先注入 API 领域知识（R56 的 S1/S2 对） |
+
+### 10. 关键结论
+
+1. PyAether SFT 语料极短（~4M tok, avg 209 tok/sample）-> 上下文长度非瓶颈
+2. 语料量不足（4M vs 629M target）-> 需大幅上采样或降低配比
+3. 建议：GPU 后用 D1-D6 实测数据确认配比；初始用 pyaether5-10% 起跑，视效果上调
+4. S3 multi-api-chain 仅 89 条是最大短板 -> GPU 后沙盒 profiling 扩展
+5. UltraData 集成通过 blend config 实现，无需数据文件层混合
