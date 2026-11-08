@@ -24,14 +24,14 @@
   "prev_sessions": 5822,
   "scan_path": "/home/t0002965/log/ssh_eda_search_20261105_192825/summary.tsv",
   "scansync": {
-    "r255": {
+    "r256": {
       "daily_log_20261109_lines": 2893,
       "daily_log_healthy": true,
       "date": "2026-11-09",
       "dedup_hosts": 42,
       "dedup_sessions": 3896,
       "dedup_users": 268,
-      "finding": "No new scan since 11/05 (r251/r236/r254 identical). Daily scan log 20261109 healthy (2893 lines >100). Pool A mc15 dedup=216 unchanged (340 rows). BLOCKER3 persists: shard A digital/eda_other/verif/pnr candidate pool exhausted under 11/05 scan; daily-log fallback 0 strong-digital-tool hits, broad hits all in 4-shard ledger or analog/tiny/DUP.",
+      "finding": "No new scan since 11/05 (r255/r251/r236 identical). Daily scan log 20261109 healthy (2893 lines). pool_A_mc15 dedup=216 unchanged. BLOCKER3 reconfirmed r256: shard A digital/eda_other/verif/pnr candidate pool exhausted under 11/05 scan; top-6 high-mc not-in-A sessions (aneeo/m2vah/58vqx/7rzyf/cgqd1/n91pk) all verified in B/C/D ledgers as layout/physical_verify/characterization/schematic_netlist (shard B/C/D domains), 0 belong to shard A domains.",
       "mc100": 865,
       "mc30": 1511,
       "mc300": 252,
@@ -55,7 +55,7 @@
   },
   "source": "/home/t0002965/log/ssh_eda_search_20261105_192825/summary.tsv (11/05 scan)",
   "target_mc": 30,
-  "updated_at": "2026-11-09 02:28",
+  "updated_at": "2026-11-09 02:56",
   "users_mc100": 182,
   "users_mc30": 224,
   "users_mc300": 60,
