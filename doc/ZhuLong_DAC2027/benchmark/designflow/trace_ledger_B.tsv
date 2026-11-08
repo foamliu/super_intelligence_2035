@@ -492,3 +492,23 @@ qnm9e					parked		2026-11-08 01:58	Finesim DC convergence Q&A prose dup of uky6c
 1793260065712_n78nn					parked		2026-11-08 20:41	scout_1108_20: pkn005 t0003117 eval user netlist_extract skill, REJECT eval user
 1793684384632_6dmno					parked		2026-11-08 20:41	scout_1108_20: pkn005 t0003117 eval user netlist_extract skill, REJECT eval user
 1793174925139_f0vya	e0030760	hfeg0pkn001	1107	characterization	case	EDA-Eval-DesignFlow-Sram6tTbBuild-001	2026-11-08 21:15	
+1792493511731_624js	johnl	hfeg0pkn001	113	spice_sim	parked		2026-11-08 21:5x	continuation 会话总结(resume 75msgs), U#0=Context summary not clean task; REJECT
+1793858875143_wzws0	adaml	hfeg0pkn002	89	spice_sim	parked		2026-11-08 21:5x	empty trace (8KB NMSG0), adaml skill-creator user; REJECT
+1792560658830_jvnvb	jinsongl	hfeg0pkn005	68	spice_sim	parked		2026-11-08 21:5x	netlist compare debug (head/wc/mkdir), not clean task-statement; REJECT
+1793771550244_nlf6u	e0044979	hfeg0pkn001	66	spice_sim	parked		2026-11-08 21:5x	FineSim detect_prep log debug, U#=cat log + testbench-needs-.include root-cause; 暂缓 archive 待查
+1793192893935_poa8g	yixiaow	hfeg0pkn005	56	spice_sim	parked		2026-11-08 21:5x	simulation-output-not-found debug, grep/find first turns; REJECT
+1789984306992_4vmtg	bin1y	hfeg0pkn002	50	spice_sim	parked		2026-11-08 21:5x	grep netlist vblhh debug, not clean task; REJECT
+1792398316632_497nv	thomasz	hfeg0pkn002	49	spice_sim	parked		2026-11-08 21:5x	SKILL Switch.*View/schSave, wrong-shard (schematic skill); REJECT
+1792386812545_n2isr	tongni	hfeg0pkn001	49	spice_sim	parked		2026-11-08 21:5x	incomplete trace: 5 user prompt strings only (netlistHeader/SUBCKT AG_Vcc2scALDOAct/只生成.sp框架), no assistant work/gold standard; REJECT
+1793324531319_9o809	e0047722	hfeg0pkn001	45	spice_sim	parked		2026-11-08 21:5x	aether launch (启动Aether/launch_aether), wrong-shard; REJECT
+1792489769571_ch2cw	johnl	hfeg0pkn001	42	spice_sim	parked		2026-11-08 21:5x	env probing (ls/id/proj-link), not task; REJECT
+1793952218730_ph95k	e0017832	hfeg0pkn001	41	spice_sim	parked		2026-11-08 21:5x	aether launch (打开aether/aether_v2), wrong-shard; REJECT
+1793623698314_n7w6c	yuyingc	hfeg0pkn001	37	spice_sim	parked		2026-11-08 21:5x	FineSim cmos_spf vs cmos_array_spf senb.sp diff debug, U#=diff cmd; 暂缓 archive 待查
+1793083455289_1ujhs	yuyingc	hfeg0pkn001	36	spice_sim	parked		2026-11-08 21:5x	ssh between machines networking, wrong-domain; REJECT
+1792399916731_00i9f	alan3zh	hfeg0pkn001	35	spice_sim	parked		2026-11-08 21:5x	APR innovus power.globals, wrong-shard; REJECT
+1793794507428_dus4q	e0047527	hfeg0pkn005	33	spice_sim	parked		2026-11-08 21:5x	env probing (EMPYREAN_HOME/which aether), not task; REJECT
+1792463960005_7frw8	zqzhan	hfeg0pkn002	33	spice_sim	parked		2026-11-08 21:5x	SKILL check_and_save/schSave, wrong-shard; REJECT
+1793154955266_qw049	yixiaow	hfeg0pkn005	30	spice_sim	parked		2026-11-08 21:5x	aether W/L min constraint + sim error (如何解决=ask-fix), borderline schematic; 暂缓
+1792204349915_1g0xs	xinweif	hfeg0pkn005	28	spice_sim	parked		2026-11-08 21:5x	FineSim netlist hierarchy check debug (check_hierarchy.py); 暂缓 archive 待查
+1793187039315_agw7c	e0046686	hfeg0pkn005	27	spice_sim	parked		2026-11-08 21:5x	autosim script dev (C++ MainWindow/onAddInstance), wrong-shard; REJECT
+1793180163422_wz7gy	e03179	hfeg0pkn002	26	spice_sim	parked		2026-11-08 21:5x	script dev (gen_bnk_va/argparse/profile_analyzer), wrong-shard; REJECT
