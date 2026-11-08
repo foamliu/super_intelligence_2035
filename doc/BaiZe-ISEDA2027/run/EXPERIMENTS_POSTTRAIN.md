@@ -4945,3 +4945,76 @@ R1-R4→基线评测+D1-D6; R8-R9→SGLang; R10→Parquet; R11→显存; R12→�
 ```bash
 bash baize_posttrain_launch_11_9.sh --step 0-5 --gpu-ids 0,1,2,3
 ```
+
+---
+
+## §R42 发射前最终排演：launch脚本R2→R0修复 + dry-run全绿 + R38审计13/13 PASS（2026-11-08 · 零 GPU · wake90）
+
+### R42.1 发现的关键不一致
+
+**问题**：`baize_posttrain_launch_11_9.sh` 的 step 5（smoke test）和 step 6（full training）使用 `--reward-arm R2`，但：
+- **R37**（wake85）实测：EDA沙盒 TCP 端口 8664-8669 全部被防火墙过滤，SSH 到 10.251.36.15 也超时
+- **R38**（wake86）Day-1 runbook 明确写：`--reward-arm R0`，并标注 "R0 (not R2): sandbox unreachable per R37"
+- verl config 的 `auto_fallback: true` 虽能在 R2 沙盒不可达时自动回退到 R0，但每次尝试连接沙盒→超时→回退会增加不必要的延迟（smoke test 尤其影响大）
+
+**影响评估**：
+- 如果不修：smoke test 每个 rollout 会先尝试沙盒连接→超时→auto_fallback→R0。10 iters × 16 prompts × ~30s 超时 = ~80min 额外延迟（smoke test 本应 20-40min）
+- 修复后：直接用 R0（skeleton 静态分析），无沙盒等待，smoke test 恢复 20-40min 预期
+
+### R42.2 修复内容
+
+**文件**：`baize_posttrain_launch_11_9.sh` lines 124-138
+
+| 步骤 | 修复前 | 修复后 | 理由 |
+|:--|:--|:--|:--|
+| Step 5 (smoke) | `--reward-arm R2` | `--reward-arm R0` | R37: 沙盒TCP过滤；R38 runbook: R0；避免超时延迟 |
+| Step 6 (full) | `--reward-arm R2` | `--reward-arm R0` | 同上；ops开放端口后可手动切回R2 |
+
+添加了 R42 FIX 注释，说明修复原因和回退条件（"When ops opens sandbox ports, switch to R2"）。
+
+### R42.3 验证结果
+
+**bash -n**：✅ 语法正确
+
+**dry-run 输出**（`bash baize_posttrain_launch_11_9.sh --dry-run`）：
+```
+STEP 5: RL smoke test (GRPO R0, 10 iters)
+  [dry-run] Would run: ... --smoke --reward-arm R0
+STEP 6: Full RL training (GRPO R0, surrogate)
+  [dry-run] Would run: ... --reward-arm R0
+```
+7 步全部打印正确配方 ✅
+
+**R38 一致性审计**（`bash baize_posttrain_day1_runbook.sh --audit`）：
+```
+Smoke test arm: R0 (R37: sandbox down, auto_fallback=true -> R0 fallback)
+Full train arm: R0 (same auto_fallback applies)
+auto_fallback: true ✅
+attn_implementation: flash_attention_2 ✅ (R35)
+rollout.name: sglang ✅ (R9)
+multi_turn: True ✅ (R9)
+Audit Summary: PASS=13  FAIL=0  WARN=0
+No critical issues. Ready for 11/9.
+```
+
+### R42.4 git 同步状态确认
+
+wake89 记录 "push超时" 但实际 `git log --oneline origin/main` 显示 commit `4e2db6312`（R41）已在 origin/main HEAD → **push 实际已成功**，超时是 NFS 网络延迟导致确认信号未返回的误报。本轮无需补推。
+
+### R42.5 体积归档
+
+MEMORY_POSTTRAIN.md 从 31.0KB 归档 wake75-wake85（R27-R37，11条流水）到 `daily-memories-posttrain/2026-11-08.md` → 降至 13.5KB，远低于 32KB 上限。
+
+### R42.6 结论
+
+**发射前最终排演结论：🟢 GO for 11/9 GPU launch.**
+
+唯一修复项（R2→R0）已完成并验证。launch脚本、runbook、config三者现在完全一致：
+- launch step5/6: `--reward-arm R0` ✅
+- runbook timeline: `--reward-arm R0` ✅
+- config `auto_fallback: true` 作为兜底 ✅
+
+11/9 GPU释放后直接执行：
+```bash
+bash baize_posttrain_launch_11_9.sh --step 0-5 --gpu-ids 0,1,2,3
+```
