@@ -1,4 +1,104 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
+<!-- RUN_ID: 268 | TARGET: 12 -->
+## RUN_ID 268 — **修 RUN_ID 267 引入的 PATH 丢失：data loop 重启后找不到 cline（空转 15min/次）**
+
+> 267 已 kill 僵死 cline 并重启 loop（新 PID 928949），但启动时未继承 PATH →
+> 日志 `env: 'cline': No such file or directory`，且 loop 误判 `exit 0` → 每 900s 空转一次。
+> 本令：① 确认 checkpoint 真实配置位置 ② 带正确 PATH 重启 loop ③ 给 loop 加 cline 存在性检查。
+
+```bash
+set -u
+echo "=== RUN_ID 268 | fix data loop PATH | $(date '+%F %T') | host=$(hostname) ==="
+R=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
+CLINE_BIN=/home/app.e0031982/.npm-global/bin
+
+echo
+echo "########## A) 当前状态复核 ##########"
+echo "-- data loop 进程 --"
+ps -eo pid=,ppid=,lstart=,etime=,args= | grep -F 'baize_data_loop.sh' | grep -v grep | cut -c1-170
+echo "-- 日志最后 6 行（应能看到 env: cline not found 循环） --"
+tail -6 /tmp/baize_data_loop.log 2>/dev/null | cut -c1-170
+echo "-- cline 实际位置 --"
+ls -l "$CLINE_BIN/cline" 2>/dev/null || echo "NOT at $CLINE_BIN"
+command -v cline 2>/dev/null || echo "not in current PATH"
+echo "-- 旧 loop 当时的 PATH（从 /proc 已不可得，仅确认二进制存在） --"
+ls -l /home/app.e0031982/.npm-global/lib/node_modules/cline/bin/ 2>/dev/null | head -5
+
+echo
+echo "########## B) checkpoint 真实配置位置（用户要求①，彻底查） ##########"
+echo "-- .cline_data 下所有 json 里含 checkpoint 的 --"
+grep -rloiE 'checkpoint' /nas_train/app.e0031982/.cline_data/data 2>/dev/null | head -10
+echo "-- 抽 value --"
+for f in $(grep -rloiE 'checkpoint' /nas_train/app.e0031982/.cline_data/data 2>/dev/null | head -5); do
+  echo "FILE: $f"
+  grep -oE '"[A-Za-z]*[Cc]heckpoint[A-Za-z]*"[[:space:]]*:[[:space:]]*[^,}]*' "$f" 2>/dev/null | head -6
+done
+echo "-- cline 版本与 help 全文（找 checkpoint 开关） --"
+"$CLINE_BIN/cline" --version 2>&1 | head -3
+"$CLINE_BIN/cline" --help 2>&1 | grep -iE 'check|resume|disable' | head -10 || echo "  (无 checkpoint 相关 CLI 开关)"
+echo "-- 结论提示：若上面全空 = 本版本无显式 checkpoint 开关，仅内部模块名 --"
+
+echo
+echo "########## C) 修 loop 脚本：加 cline 存在性检查 ##########"
+LOOP="$R/baize_data_loop.sh"
+cp -n "$LOOP" "/tmp/baize_data_loop.sh.bak.$(date +%s)" 2>/dev/null || true
+if ! grep -q 'CLINE_BIN_CHECK_V268' "$LOOP"; then
+  # 在 PATH 定义后插入 PATH 兜底 + cline 检查
+  awk '
+    /^while true; do/ && !done {
+      print "# CLINE_BIN_CHECK_V268: 保证 cline 在 PATH（setsid 重启时环境可能不全）"
+      print "export PATH=\"/home/app.e0031982/.npm-global/bin:$PATH\""
+      print "if ! command -v cline >/dev/null 2>&1; then echo \"[loop] FATAL: cline not found in PATH=$PATH\"; exit 127; fi"
+      done=1
+    }
+    { print }
+  ' "$LOOP" > /tmp/baize_data_loop.new.$$ && mv /tmp/baize_data_loop.new.$$ "$LOOP"
+  chmod +x "$LOOP"
+  echo "patched ✓"
+else
+  echo "already patched"
+fi
+echo "-- 验证补丁 --"; grep -n 'CLINE_BIN_CHECK_V268' -A2 "$LOOP" | head -6
+echo "-- 语法检查 --"; bash -n "$LOOP" && echo "syntax OK" || echo "SYNTAX ERROR"
+
+echo
+echo "########## D) 重启 loop（带正确 PATH） ##########"
+for p in $(ps -eo pid=,args= | grep -F 'baize_data_loop.sh' | grep -v grep | awk '{print $1}'); do
+  echo "kill old loop $p"; kill -TERM $p 2>/dev/null; sleep 2; kill -KILL $p 2>/dev/null
+done
+sleep 2
+echo "-- 确认已清理 --"; ps -eo pid=,args= | grep -F 'baize_data_loop.sh' | grep -v grep | cut -c1-120 || echo "none"
+echo "-- 启动新 loop --"
+cd "$R" || exit 1
+PATH="/home/app.e0031982/.npm-global/bin:$PATH" setsid nohup bash "$LOOP" >> /tmp/baize_data_loop.log 2>&1 < /dev/null &
+NEWPID=$!
+echo "started=$NEWPID"; sleep 8
+echo "-- verify --"
+ps -eo pid=,ppid=,lstart=,etime=,args= | grep -F 'baize_data_loop.sh' | grep -v grep | cut -c1-180
+
+echo
+echo "########## E) AFTER: 是否真的调起 cline ##########"
+echo "-- log tail 12（关键：应有 llmrot 选中 + cline 真正启动，无 'cline: No such file'） --"
+tail -12 /tmp/baize_data_loop.log 2>/dev/null | cut -c1-175
+echo "-- cline 进程（应出现 data 线的 cline 子进程） --"
+ps -eo pid=,ppid=,etime=,pcpu=,args= | grep -i '[c]line --data-dir /nas_train/app.e0031982/.cline_data' | cut -c1-175
+echo "-- all cline --"
+ps -eo pid=,ppid=,etime=,pcpu=,args= | grep -i '[c]line' | cut -c1-150 | head -6
+
+echo
+echo "########## F) Pretrain 速度对照（验证 CPU 争抢假设） ##########"
+echo "-- load --"; uptime; nproc
+echo "-- pretrain 进程 CPU --"
+ps -eo pid=,pcpu=,etime=,args= | grep -F 'pretrain_launcher.py' | grep -v grep | awk '{s+=$2; print $1, $2"%", $3}' | head -10
+echo "-- pretrain 合计 CPU% --"
+ps -eo pcpu=,args= | grep -F 'pretrain_launcher.py' | grep -v grep | awk '{s+=$1} END{print s"% (≈ " s/100 " cores)"}'
+
+echo
+echo "=== 268 done ==="
+```
+
+
+# OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 <!-- RUN_ID: 267 | TARGET: 12 -->
 ## RUN_ID 267 — **修复 Data 线卡死：kill 僵死 cline + 关 checkpoint + 重启 loop（含 timeout 加固）**
 
