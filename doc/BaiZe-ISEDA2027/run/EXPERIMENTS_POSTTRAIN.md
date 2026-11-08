@@ -8685,3 +8685,119 @@ R74→CurriculumScheduler, R75/R76→AntiHackMonitor, R80→CollapseDetector, R5
 - 替身模型结果不可迁移到 BaiZe
 - 实时指标管道尚未端到端测试
 - 无伪造。所有阈值来自前序 R-sections 校准结果。
+
+---
+
+## §R82: 多日 RL 训练崩溃恢复与检查点策略（wake130, 2026-11-09, 零 GPU）
+
+> **目标**：R80 检测崩溃、R81 做决策，但无人规划 12.8 天 RL 运行中崩溃后的操作恢复。
+> 本节填补：检查点频率优化、磁盘预算、恢复协议、蒙特卡洛崩溃仿真。
+> **脚本**：`baize_posttrain_crash_recovery.py`（752 行，纯 Python 3.8+ stdlib，0 依赖）。
+
+### R82.1 崩溃场景库（12 种）
+
+| ID | 名称 | 类别 | 严重度 | 概率/h | 检测延迟 | 恢复成本 | 进度损失 | 自动恢复 |
+|:--|:--|:--|:--|--:|--:|--:|--:|:--|
+| C01 | GPU OOM (rollout) | hardware | MEDIUM | 0.008 | 0.5m | 15m | 0% | YES |
+| C02 | NFS stall | network | MEDIUM | 0.012 | 2.0m | 30m | 0% | YES |
+| C03 | SGLang crash | software | HIGH | 0.006 | 1.0m | 20m | 0% | YES |
+| C04 | Ray worker death | software | HIGH | 0.010 | 0.5m | 25m | 0% | YES |
+| C05 | Checkpoint corruption | data | CRITICAL | 0.002 | 5.0m | 45m | 100% | NO |
+| C06 | GRPO collapse (R80) | software | HIGH | 0.015 | 3.0m | 40m | 50% | NO |
+| C07 | Disk full | hardware | HIGH | 0.003 | 1.0m | 20m | 0% | YES |
+| C08 | Power failure | hardware | CRITICAL | 0.001 | 10.0m | 60m | 100% | NO |
+| C09 | Sandbox timeout | software | LOW | 0.020 | 2.5m | 10m | 0% | YES |
+| C10 | Reward hacking | software | HIGH | 0.005 | 2.0m | 30m | 30% | NO |
+| C11 | OOM (training) | hardware | MEDIUM | 0.004 | 0.5m | 15m | 0% | YES |
+| C12 | Human intervention | human | LOW | 0.002 | 0.0m | 120m | 0% | NO |
+
+- **总崩溃率**: 0.088/h（平均每 ~11h 一次崩溃）
+- **可自动恢复**: 7/12
+- **CRITICAL**: 2 种（C05 检查点损坏、C08 断电）
+
+### R82.2 检查点频率优化
+
+> 模型: MiniCPM5-2B (2B), 每检查点 ~12.5GB (model+optimizer+state)
+
+| 频率(步) | 检查点数 | 峰值存储 | 预算内 | 开销% | 总成本(min) |
+|--:|--:|--:|:--|--:|--:|
+| 1 | 200 | 62.5GB | ✅ | 7.13% | 1375 |
+| **2** | **100** | **62.5GB** | **✅** | **3.56%** | **840** |
+| 5 | 40 | 62.5GB | ✅ | 1.42% | 1041 |
+| 10 | 20 | 62.5GB | ✅ | 0.71% | 1316 |
+| 20 | 10 | 62.5GB | ✅ | 0.36% | 1843 |
+| 50 | 4 | 50.0GB | ✅ | 0.14% | 3111 |
+
+**最优**: 每 2 步检查点（峰值 62.5GB，开销 3.56%，总成本 840min）。
+原因：崩溃率高（0.088/h），频繁检查点可最小化进度损失。
+
+### R82.3 蒙特卡洛崩溃仿真（1000 次）
+
+| 指标 | P5 | P50 | P95 | Mean | Max |
+|:--|--:|--:|--:|--:|--:|
+| 墙钟 (min) | 6300 | 6360 | 6744 | 6397 | 8232 |
+| 墙钟 (h) | 105.0 | 106.0 | 112.4 | 106.6 | 137.2 |
+| 开销 (%) | 2.0 | 6.0 | 12.4 | 6.6 | 37.2 |
+| 崩溃数 | 5 | 9 | 14 | 8.8 | 23 |
+
+**关键发现**:
+- P50 墙钟 106h（基线 100h + 6h 恢复开销）
+- P50 开销仅 6.0%（崩溃恢复可控）
+- P95 最坏情况 112.4h（+12.4% 开销）
+- 最频繁崩溃: C09 sandbox timeout > C06 GRPO collapse > C02 NFS stall
+
+### R82.4 磁盘预算投影
+
+| 项目 | 值 |
+|:--|--:|
+| 检查点大小 | 12.5GB |
+| 峰值检查点存储 (keep 5) | 62.5GB |
+| 开销存储 (模型+数据+日志) | 9.7GB |
+| **总峰值** | **72.2GB** |
+| / 可用 | 386GB |
+| /nas_data 可用 | 20TB |
+
+**结论**: 存储非瓶颈。检查点存 /nas_data（20TB 可用），峰值仅 72.2GB。
+
+### R82.5 检查点验证协议
+
+**双写策略**: 先写 /tmp（本地 SSD），验证后复制到 /nas_data（NFS）。
+- 主存储: `/nas_data/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/ckpts/`
+- 备份: `/tmp/baize_ckpts/`
+- 验证: SHA256 模型权重 + 元数据完整性
+- 恢复: 最新损坏则回退到上一个有效检查点
+
+### R82.6 优雅停机与恢复协议
+
+**恢复步骤**: GPU 检查(2m) → NFS 预热(30m) → SGLang 启动(5m) → Ray 启动(3m) → 检查点查找验证(5m) → 检查点加载(10m) = **总恢复 55min**
+
+### R82.7 与前序研究关联
+
+| 来源 | 贡献 | 本节使用 |
+|:--|:--|:--|
+| R57 | Vision GRPO 失败教训 | C04 Ray worker death |
+| R62 | NFS warm-up 诊断 | C02 NFS stall 恢复 |
+| R65 | 72h RL 投影 | 基础运行时间参数 |
+| R73 | GRPO 超参景观 | C06 崩溃恢复超参调整 |
+| R75/R76 | 反作弊框架 | C10 奖励作弊检测 |
+| R80 | GRPO 崩溃分类法 (7 模式) | C06 崩溃场景 |
+| R81 | 自适应控制器 (6 级决策) | C06/C10 恢复触发 |
+
+### R82.8 局限性
+
+- 崩溃概率基于文献和经验估计，非实测；11/9 GPU 到位后需用真实轨迹校正
+- 蒙特卡洛仿真假设崩溃独立；实际中可能有关联
+- 检查点大小基于 2B 模型；BaiZe 正式模型需重新计算
+- 恢复时间为估计值；实际取决于 NFS 状态、GPU 可用性
+- 替身模型 (MiniCPM5-2B) 结果不可迁移到 BaiZe
+
+### R82.9 交付物
+
+| 产物 | 路径 | 说明 |
+|:--|:--|:--|
+| 脚本 | `baize_posttrain_crash_recovery.py` | 752 行, py_compile✅ |
+| HTML | `reports/report_posttrain_r82_crash_recovery_zh.html` | 14.2KB, 0 script, 0 外链 |
+| JSON | `r82_crash_recovery.json` | 23.8KB |
+| EXPERIMENTS | §R82 (本节) | 9 小节 |
+
+**无伪造。替身 RL 结果不可迁移到 BaiZe。**
