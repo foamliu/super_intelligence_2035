@@ -26191,3 +26191,80 @@ clients=7 pids=[323937 323941 340077 1304898 1304909 1901699 3922095] log=/tmp/b
 
 === 249 done; full result ~18 min later in /tmp/baize_eval_freeze_ab29.txt on .29 ===
 ```
+
+---
+
+## RUN_ID 250 · 2026-11-08 12:25:58 · host=`whag0pgpuap12` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 250 | deploy post-hoc analyzer to .29 | $(date '+%F %T') | host=$(hostname) ==="
+SSH="ssh -o BatchMode=yes -o ConnectTimeout=6 -o StrictHostKeyChecking=no"
+$SSH 10.239.2.29 'cat > /tmp/baize_ab_analyze.sh' <<'EOS30'
+#!/bin/bash
+set -u
+sleep 800
+OUT=/tmp/baize_ab_analyze.txt
+LOG=/tmp/baize_s1_baize2b_master.log
+[ -f "$LOG" ] || LOG=/tmp/baize_s1_baize2b_worker.log
+{
+echo "=== analyze $(date '+%F %T') host=$(hostname) log=$LOG ==="
+echo "--- freeze sampler file ---"
+cat /tmp/baize_eval_freeze_ab29.txt 2>/dev/null
+echo
+echo "--- step-time buckets (from log) ---"
+grep -E 'elapsed time per iteration' "$LOG" | tail -500 | awk '
+{
+  ts=$0; sub(/^[ \t]*\[/,"",ts); sub(/\].*/,"",ts);
+  hh=substr(ts,12,8);
+  it=""; if (match($0, /iteration +[0-9]+\//)) { it=substr($0,RSTART,RLENGTH); gsub(/[^0-9]/,"",it) }
+  ms=""; if (match($0, /\(ms\): [0-9.]+/)) { ms=substr($0,RSTART+6,RLENGTH-6) }
+  if (ms=="") next;
+  tag="other";
+  if (hh>="12:12:00" && hh<"12:23:40") tag="pre";
+  else if (hh>="12:24:00" && hh<="12:33:40") tag="FROZEN";
+  else if (hh>="12:34:00") tag="post";
+  if (tag!="other") { n[tag]++; s[tag]+=ms; if (!(tag in mn) || ms<mn[tag]) mn[tag]=ms; if (ms>mx[tag]) mx[tag]=ms; last[tag]=ms }
+}
+END{
+  split("pre FROZEN post",ord," ");
+  for(i=1;i<=3;i++){ t=ord[i]; if(n[t]>0) printf "%-7s n=%3d mean=%.1f ms min=%.1f max=%.1f last=%.1f\n", t, n[t], s[t]/n[t], mn[t], mx[t], last[t]; else printf "%-7s n=0\n", t }
+}'
+echo
+echo "--- last 14 step lines ---"
+grep -E 'elapsed time per iteration' "$LOG" | tail -14 | sed -E 's/^[[:space:]]*\[([^]]+)\].*iteration +([0-9]+)\/.*\(ms\): ([0-9.]+).*/  t=\1 it=\2 ms=\3/'
+echo "=== END ==="
+} > "$OUT" 2>&1
+EOS30
+$SSH 10.239.2.29 'chmod +x /tmp/baize_ab_analyze.sh; rm -f /tmp/baize_ab_analyze.txt; setsid nohup bash /tmp/baize_ab_analyze.sh >/dev/null 2>&1 < /dev/null & echo analyzer_pid=$!'
+echo
+echo "[interim] freeze sampler tail:"
+$SSH 10.239.2.29 'tail -14 /tmp/baize_eval_freeze_ab29.txt 2>/dev/null'
+echo
+echo "=== 250 done; result in /tmp/baize_ab_analyze.txt on .29 after ~13 min (RUN_ID 251) ==="
+```
+
+**输出**
+```
+=== RUN_ID 250 | deploy post-hoc analyzer to .29 | 2026-11-08 12:25:58 | host=whag0pgpuap12 ===
+analyzer_pid=2942436
+
+[interim] freeze sampler tail:
+[baseline] 
+[baseline] load=98.37 98.05 96.91 srv_n=7 srv_cpu=4665%
+--- last 8 step lines ---
+--- client stdout (size before) ---
+  323937 -> /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/lm_eval_results/gguf_iter_112000_full_v4/hellaswag_chunk1a_half1.log size=164406
+  323941 -> /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/lm_eval_results/gguf_iter_112000_full_v4/hellaswag_chunk1a_half2.log size=169234
+  340077 -> /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/lm_eval_results/gguf_iter_112000_full_v4/hellaswag_chunk1b_b.log size=167789
+  1304898 -> /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/lm_eval_results/gguf_iter_112000_full_v4/hellaswag_chunk0b_a.log size=237348
+  1304909 -> /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/lm_eval_results/gguf_iter_112000_full_v4/hellaswag_chunk0b_b.log size=78900
+  1901699 -> /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/lm_eval_results/gguf_iter_112000_full_v4/hellaswag_chunk0_missing.log size=340063
+  3922095 -> /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/lm_eval_results/gguf_iter_112000_full_v4/hellaswag_chunk1b_a.log size=173937
+=== FROZEN 2026-11-08 12:24:07 (clients SIGSTOP only) ===
+[f0 12:24:07]  | load=84.23 94.79 95.87 | srv_n=7 srv_cpu=4662%
+[f1 12:25:07]  | load=58.20 84.98 92.40 | srv_n=7 srv_cpu=4651%
+
+=== 250 done; result in /tmp/baize_ab_analyze.txt on .29 after ~13 min (RUN_ID 251) ===
+```
