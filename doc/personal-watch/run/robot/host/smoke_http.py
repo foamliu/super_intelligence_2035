@@ -73,6 +73,9 @@ def main():
                                             "utterance": "帮我算 3×4 等于多少"}),
                      ensure_ascii=False))
 
+    print("\n== /profile 学情画像（L3）==")
+    print(json.dumps(_post(base, "/profile", {}), ensure_ascii=False))
+
     srv.shutdown()
     srv.server_close()
     print("\nsmoke done (port %d)" % port)

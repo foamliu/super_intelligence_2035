@@ -8,7 +8,7 @@
 | L0 设备通路 | 手机与开发机连通：装包/截屏/拍照/出声 | 各一条命令拿到真实产物 | 🟢 **模拟器全通**（ADB+emulator+AVD+APK 安装+App 闭环+录屏，第10轮）；真机仍待用户 3 条（P0 §4） |
 | L1 单题闭环 | 拍题 → 识图 → 结构化 → LLM 分步引导 → TTS | 20 题 ≥15 题识别正确，引导不含答案 | 🟢 **100 题全量达标（第 14 轮）**：识图 20/20=1.0、首步 P50 1.16s/P90 2.07s、直接给答案率 0、无静默降级 |
 | L2 智能体 | 工具调用：题库/错题本/计算器/绘图/家长报告；多轮不丢上下文 | 5 工具可调，3 轮追问一致 | 🟢 **5 工具可调 + 已接 HTTP/App（第 15/16 轮）**：6 工具全调、直接给答案率 0、3 轮追问一致、LLM 工具决策正确；`/tool` `/agent` 端点 + App「换一题/记错题/报告/追问」；188 单测 |
-| L3 学情 | 错题本 + 知识点画像 + 每日/每周摘要，本地存储 | 数据落本地，可导出 HTML | ⬜ |
+| L3 学情 | 错题本 + 知识点画像 + 每日/每周摘要，本地存储 | 数据落本地，可导出 HTML | 🟢 **已交付（第 17 轮）**：`l3_profile.py` + `POST /profile` 端点 + App「学情」按钮；错题本画像/每日每周/HTML 全通，205 单测 |
 | L4 形态 | 桌面实体机器人（需硬件） | 待用户确认 | ⬜（形态口径：自家 8 年级女儿用的桌面端，见 12:05 令） |
 
 ## 本轮增量（2026-11-07 · 第 1 轮）
@@ -153,9 +153,20 @@
 - ✅ **host 全量 `pytest` = 188 passed**（175 + 13 新增）。
 - 📌 **能信/不能信**：`/tool` `/agent` 的确定性路由 / 红线封堵 / 不泄答案为**确定性纯函数**（13 单测）+ `smoke_http.py` 实测真实 JSON；App 侧为**装机 + UI dump 验证**（未在模拟器内端到端点按钮触发 DeepSeek，因本轮 ComfyUI 停用 + 不引入真实学生数据，工具链路已在 host 侧跑通）。🚫 端侧真实 ASR 仍未落地。
 
+## 第 17 轮增量（2026-11-08 · L3 学情层落地 + 接 HTTP/App）
+
+- ✅ **`host/l3_profile.py`（L3 学情层）**：错题本（`tools.WRONG_BOOK_PATH` 同源，本地不上传）→ `knowledge_profile()`（按知识点聚合 → 错题数/首末次出错/掌握等级「待练习/待巩固/薄弱/重点突破」）+ `daily_summary()`/`weekly_summary()`（按日期/ISO 周聚合）+ `build_profile_html()`（**自包含**中文 HTML，不泄答案、不含学生隐私）+ `profile_report()`（落盘 + 返回摘要 JSON）。复用 `tools.WRONG_BOOK_PATH`（动态引用，可被 monkeypatch/`ROBOT_WRONG_BOOK` 覆盖）。
+- ✅ **`host/tutor_server.py` 新增 `POST /profile`**：`{html?: bool, out_path?: str}` → `{ok, profile}`（知识点画像 + 每日/每周摘要）；`html=true` 另生成 `logs/profile_report.html`。
+- ✅ **`host/test_l3_profile.py` 13 单测** + `test_tutor_server.py` 增 4 单测（/profile 摘要/不泄答案/HTML/空）。
+- ✅ **App 接学情**：`TutorClient.postProfile()` + `MainActivity`「学情」按钮（→`/profile`，显示错题总数/涉及知识点/薄弱点）；`activity_main.xml` + `strings.xml` 同步。
+- ✅ **构建 + 装机 + 端到端**：`assembleDebug` 成功 → `app-debug.apk` **4,115,732 字节**；`adb install -r` **Success**；`uiautomator dump` 确认「学情」按钮在位；**模拟器点击「学情」实测** → 显示「错题总数：2 / 涉及知识点：1 个 / 薄弱点：一元一次方程」。
+- 🔧 **清 stale server**：发现前几轮遗留两个 `tutor_server.py` 进程仍占 `0.0.0.0:8765`（旧代码无 `/profile`，导致 App 点「学情」拿到 404 回显 0）→ `netstat` 定位 PID 后 `Stop-Process`，端口释放后复测通过（学情正确显示 2）。
+- ✅ **host 全量 `pytest` = 205 passed**（188 + 13 l3 + 4 profile）。
+- 📌 **能信/不能信**：画像/摘要/HTML 为**确定性纯函数**（13 单测）+ `smoke_http.py` 实测真实 JSON + App 模拟器点击端到端；`logs/wrong_book.json` 为本地自造题数据。🚫 学情画像基于「错题本」这一单一数据源，尚未接「练习/作答次数」等正样本（下一步候选）；端侧真实 ASR 仍未落地。
+
 ## 下一轮候选（按优先级）
 
 1. 端侧真实 ASR（sherpa-onnx）接入位落地（`SherpaOnnxASR` 现为报错占位）——12:20 令「端侧为主」的最后一环。
 2. `clamp_hint` 后的 full 30 会话复跑验证（第 13 轮只做了单次 smoke）。
-3. L3 学情：错题本 + 知识点画像 + 每日/每周摘要，本地存储、可导出 HTML（工具已备 wrong_book/parent_report，缺定时聚合与画像）。
+3. L3 学情补「正样本」：会话/练习日志（作答次数、正确率），与错题本合并出更完整的掌握画像（当前只有错题单边数据）。
 4. 收用户 3 条回复 → 复验 `hdc list targets` / `adb devices`，打通真机「拍照/出声」（L0 真机化）。

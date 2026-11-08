@@ -14,8 +14,8 @@ WAITING: 0
 ## 📊 进度快照（每次唤醒必须更新）
 
 ```
-PHASE:        L0 设备通路**模拟器全通（ADB+emulator+AVD+APK 安装+App 闭环+录屏）**；L1 单题闭环达标；HCI 交互规范已交付；**可安装真 App 已跑通（22:50 令）**；**HCI 代码层（normalize_math.py 81 单测 + speech.py 12 单测）已交付（12:20 令）**；**presence.py 在座检测已交付（12:05 令）**；**交互验收（11:40 令 §3）已交付（第13轮）**；**L1 全量 100 题 + 泄露检测误报修复（第14轮）**；**L2 智能体工具层（5 工具 + 会话编排 + LLM 工具决策）已交付（第15轮）**；**L2 工具/智能体已接 HTTP+App（/tool + /agent 端点 + App 换一题/记错题/报告/追问 + APK 装机成功）已交付（第16轮）**
-已完成:       P0 ✅；路线 R3 ✅；最小 demo ✅；L1 基线 ✅；识图 4/4 ✅；给答案率 0 ✅；时延达标 ✅；INTERACTION_SPEC.md ✅；可安装 APK + 模拟器跑通一题 ✅（22:50 令·第10轮）；**normalize_math.py + speech.py 交付、93 单测全绿 ✅（12:20 令·第11轮）**；**presence.py 交付、8 单测、PC 摄像头 20 次实测 P50 33ms ≤300ms、准确率 20/20 ✅（12:05 令·第12轮）**；**交互验收交付：eval/interaction_*.json + HTML 报告 + clamp_hint(≤2句)，整轮 P50 1.37s/P90 1.97s、给答案率 0、录音 91.2s、118 单测全绿 ✅（11:40 令·第13轮）**；**100 题题库(question_bank.py)+leak_check 修复+L1 全量评测（给答案率 0·识图 20/20·P50 1.16s/P90 2.07s）、133 单测全绿 ✅（第14轮）**；**L2 智能体：tools.py(5工具)+l2_agent.py(会话/路由/LLM决策)+eval_l2.py，6 工具全调·给答案率 0·3 轮一致·175 单测全绿 ✅（第15轮）**；**L2→HTTP/App：/tool+/agent 端点+App 换一题/记错题/报告/追问+APK 装机成功（4.11MB·adb install Success·UI dump 确认）、188 单测全绿 ✅（第16轮）**
+PHASE:        L0 设备通路**模拟器全通（ADB+emulator+AVD+APK 安装+App 闭环+录屏）**；L1 单题闭环达标；HCI 交互规范已交付；**可安装真 App 已跑通（22:50 令）**；**HCI 代码层（normalize_math.py 81 单测 + speech.py 12 单测）已交付（12:20 令）**；**presence.py 在座检测已交付（12:05 令）**；**交互验收（11:40 令 §3）已交付（第13轮）**；**L1 全量 100 题 + 泄露检测误报修复（第14轮）**；**L2 智能体工具层（5 工具 + 会话编排 + LLM 工具决策）已交付（第15轮）**；**L2 工具/智能体已接 HTTP+App（/tool + /agent 端点 + App 换一题/记错题/报告/追问 + APK 装机成功）已交付（第16轮）**；**L3 学情层（l3_profile.py 知识点画像+每日/每周摘要+自包含 HTML + POST /profile 端点 + App「学情」按钮）已交付（第17轮）**
+已完成:       P0 ✅；路线 R3 ✅；最小 demo ✅；L1 基线 ✅；识图 4/4 ✅；给答案率 0 ✅；时延达标 ✅；INTERACTION_SPEC.md ✅；可安装 APK + 模拟器跑通一题 ✅（22:50 令·第10轮）；**normalize_math.py + speech.py 交付、93 单测全绿 ✅（12:20 令·第11轮）**；**presence.py 交付、8 单测、PC 摄像头 20 次实测 P50 33ms ≤300ms、准确率 20/20 ✅（12:05 令·第12轮）**；**交互验收交付：eval/interaction_*.json + HTML 报告 + clamp_hint(≤2句)，整轮 P50 1.37s/P90 1.97s、给答案率 0、录音 91.2s、118 单测全绿 ✅（11:40 令·第13轮）**；**100 题题库(question_bank.py)+leak_check 修复+L1 全量评测（给答案率 0·识图 20/20·P50 1.16s/P90 2.07s）、133 单测全绿 ✅（第14轮）**；**L2 智能体：tools.py(5工具)+l2_agent.py(会话/路由/LLM决策)+eval_l2.py，6 工具全调·给答案率 0·3 轮一致·175 单测全绿 ✅（第15轮）**；**L2→HTTP/App：/tool+/agent 端点+App 换一题/记错题/报告/追问+APK 装机成功（4.11MB·adb install Success·UI dump 确认）、188 单测全绿 ✅（第16轮）**；**L3 学情：l3_profile.py（知识点画像+每日/每周摘要+自包含 HTML）+POST /profile 端点+App「学情」按钮+模拟器点击实测（错题总数 2·薄弱点一元一次方程）、205 单测全绿 ✅（第17轮）**
 第5轮:       识图+引导切云端 DeepSeek（recognize() 签名不变 / 可降级 / 路径可见）；识图 0.5→1.0；P50 2.0s·P90 2.92s；修 headless TTS 崩溃；P0 用户清单 5→3 条
 第6轮:       按 11:10 令全链路复跑无回归——P0 四度复验、R3 维持、demo 端到端 2.95s、L1 四指标达标（识图 1.0·首步 P50 1.51s/P90 2.22s·给答案率 0）
 第7轮:       按 11:10 令全链路复跑无回归——P0 五度复验、R3 维持、demo 端到端 3.33s、L1 四指标达标（识图 4/4·首步 P50 1.6s/P90 1.78s·给答案率 0·无静默降级）
@@ -28,8 +28,9 @@ PHASE:        L0 设备通路**模拟器全通（ADB+emulator+AVD+APK 安装+App
 第14轮:      执行 ROADMAP「下一轮候选」#1——重建 100 题题库 question_bank.py(数学60+物理20+英语20)+修复泄露检测误报 leak_check.py(词边界+复述题干不算泄露)+eval_l1_full.py 全量评测(220 次 deepseek-flash)：给答案率 0、识图 20/20、P50 1.16s/P90 2.07s；`pytest` 133 passed
 第15轮:      执行 ROADMAP L2 智能体——`tools.py`(5 工具：计算器 AST 白名单/题库/错题本/家长报告/绘图)+`l2_agent.py`(确定性路由+LLM 工具决策+L2Session 多轮会话)+`eval_l2.py` 评测：6 工具全调、给答案率 0、3 轮追问一致、绘图 PNG 20KB、LLM 决策选 calculator 正确；`pytest` 175 passed
 第16轮:      执行 ROADMAP #1（L2 工具接进 App/HTTP）——`tutor_server.py` 新增 `/tool`+`/agent` 端点 + `/tutor` 带 `tool` 字段即转工具；`test_tutor_server.py` 13 单测 + `smoke_http.py` 实测；App 加「换一题/记错题/报告」按钮 + 文字追问（`TutorClient.postTool/postAgent`）；`assembleDebug`→APK 4,112,860 字节 + `adb install -r` Success + `uiautomator dump` 确认新按钮；`pytest` 188 passed
-当前动作:     第 16 轮：读任务书 → 识别 ROADMAP #1「L2 工具接进 App/HTTP」为下一增量 → 改 `tutor_server.py`(/tool+/agent+/tutor 路由) + 13 单测 + smoke_http 实测 → 修 1 处 bug（do_POST 路由字典键漏 `/` 前缀 → KeyError）→ App 加三工具按钮+追问（TutorClient/MainActivity/layout/strings）→ assembleDebug + adb install + UI dump → 188 单测全绿 → 回写 MEMORY/ROADMAP/README/日流水 → commit+push(robot:)
-下一步:       端侧真实 ASR（sherpa-onnx）接入位落地；clamp_hint 后 full 30 会话复跑验证；L3 学情（错题本+知识点画像+每日/每周摘要，本地导出 HTML）；真机化（等用户 3 条）
+第17轮:      执行 ROADMAP L3 学情——`l3_profile.py`(知识点画像/每日每周摘要/自包含HTML)+`tutor_server.py` 新增 `POST /profile`+`test_l3_profile.py` 13 单测+App「学情」按钮(`TutorClient.postProfile`)+`assembleDebug`→APK 4,115,732 字节+`adb install -r` Success+模拟器点击实测(错题总数2·薄弱点一元一次方程)；清 stale server 2 个(占 8765 旧代码无 /profile)；`pytest` 205 passed
+当前动作:     第 17 轮：读任务书 → 识别 ROADMAP L3 学情(⬜)为下一增量 → 写 `l3_profile.py`(画像/摘要/HTML) + 13 单测 → 接 `POST /profile` + 4 单测 → App「学情」按钮 → assembleDebug + adb install + UI dump + 模拟器点击实测 → 清 stale server → 205 单测全绿 → 回写 → commit+push(robot:)
+下一步:       端侧真实 ASR（sherpa-onnx）接入位落地；clamp_hint 后 full 30 会话复跑验证；L3 学情补「正样本」（会话/练习日志合并掌握画像）；真机化（等用户 3 条）
 阻塞:         ⏳ 手机未连（型号/系统未知）——**只阻塞真机化，不阻塞 PC/模拟器任何工作**（adb/emulator 已自装好）；`qwen3-vl:32b` 已按 15:4x 令作废；端侧 ASR 权重未装（用 MockStreamingASR 验逻辑，不阻塞）
 ERROR_COUNT:  0
 ```
@@ -45,7 +46,7 @@ ERROR_COUNT:  0
 - **工作目录**：`run/robot/`（`P0_设备通路.md` / `ROADMAP.md` / `app/` 手机端 / `host/` PC agent / `eval/` 题库 / `proto/` mock）
 - **记录仓**：`D:\Users\Administrator\code\super_intelligence_2035\doc\personal-watch\run\`
 - **ComfyUI**：**已冻结（Disabled），不碰视频流水线**
-- **上次唤醒**：2026-11-08（第 16 轮 · L2 工具/智能体接进 HTTP+App：`/tool`+`/agent` 端点、App 换一题/记错题/报告/追问、APK 装机成功、188 单测全绿）
+- **上次唤醒**：2026-11-08（第 17 轮 · L3 学情层落地：`l3_profile.py` 知识点画像+每日/每周摘要+自包含 HTML、`POST /profile` 端点、App「学情」按钮、APK 装机+模拟器点击实测、205 单测全绿）
 
 ## 2. 分层目标与状态（L0-L4）
 
@@ -54,7 +55,7 @@ ERROR_COUNT:  0
 | L0 设备通路 | 手机与开发机连通 | 装包/截屏/拍照/出声各一条命令真实产物 | 🟡 PC mock 全通；真机待用户 3 条（P0 §4） |
 | L1 单题闭环 | 拍题→识图→结构化→LLM 分步引导→TTS | 20 题 ≥15 识别正确，引导不含答案 | 🟢 4/4 识图 · P50 2.0s/P90 2.92s · 直接给答案率 0（题库待扩到 100 题） |
 | L2 智能体 | 工具调用/多轮追问 | 5 工具可调、3 轮一致 | 🟢 5 工具 + 多轮一致（第15轮）；**已接 HTTP/App（/tool+/agent+App 换一题/记错题/报告/追问，第16轮）** |
-| L3 学情 | 错题本+画像+家长摘要 | 本地可导出 HTML | ⬜ |
+| L3 学情 | 错题本+画像+每日/每周摘要 | 本地可导出 HTML | 🟢 **已交付（第17轮）**：l3_profile.py + POST /profile + App「学情」按钮；画像/摘要/HTML 全通，205 单测 |
 | L4 形态 | 桌面实体机器人 | 待用户确认 | ⬜（口径：自家 8 年级女儿用的桌面端 · 12:05 令） |
 
 ## 3. 关键事实（本线技术栈 · 实测）
@@ -257,6 +258,20 @@ ERROR_COUNT:  0
 - 回写：`host/tutor_server.py`/`host/test_tutor_server.py`/`host/smoke_http.py`（新建）、`host/README.md`、`app/.../TutorClient.kt`/`MainActivity.kt`/`activity_main.xml`/`strings.xml`、`app/README.md`、`ROADMAP.md`（第 16 轮）、本文件、`daily-memories-video/2026-11-08.md`。
 - commit+push（`robot:`）。
 
+## 4.16 本唤醒流水（2026-11-08 · 第 17 轮 · L3 学情层落地 + 接 HTTP/App）
+
+- 读任务书全文 + `robot/README.md` + `ROADMAP.md`；识别 22:50/12:20/12:05/11:40 令均已闭环（第 10-16 轮），L0/L1/L2/HCI 已交付，唯一 ⬜ 是 **ROADMAP L3 学情（知识点画像 + 每日/每周摘要 + 可导出 HTML）**。本轮落地 L3 并接 HTTP/App。ComfyUI 全程未碰（已冻结）。
+- ✅ **`host/l3_profile.py`（L3 学情层）**：错题本（`tools.WRONG_BOOK_PATH` 同源，本地不上传）→ `knowledge_profile()`（按知识点聚合 → 错题数/首末次出错/掌握等级「待练习/待巩固/薄弱/重点突破」）、`daily_summary()`/`weekly_summary()`（按日期/ISO 周聚合）、`build_profile_html()`（自包含中文 HTML，不泄答案/不含隐私）、`profile_report()`（落盘 + 摘要 JSON）。复用 `tools.WRONG_BOOK_PATH`（动态引用，可被 `ROBOT_WRONG_BOOK`/monkeypatch 覆盖）。
+- ✅ **`tutor_server.py` 新增 `POST /profile {html?: bool}`** → `{ok, profile}`（知识点画像 + 每日/每周摘要）；`html=true` 另生成 `logs/profile_report.html`。
+- ✅ **`test_l3_profile.py` 13 单测** + `test_tutor_server.py` 增 4 单测（/profile 摘要/不泄答案/HTML/空）。
+- ✅ **App 接学情**：`TutorClient.postProfile()` + `MainActivity`「学情」按钮（→`/profile`，显示错题总数/涉及知识点/薄弱点）；`activity_main.xml` + `strings.xml` 同步。
+- ✅ **构建 + 装机 + 端到端**：`assembleDebug` 成功 → `app-debug.apk` **4,115,732 字节**；`adb install -r` **Success**；`uiautomator dump` 确认「学情」按钮；**模拟器点击「学情」实测** → 显示「错题总数：2 / 涉及知识点：1 个 / 薄弱点：一元一次方程」。
+- 🔧 **清 stale server**：前几轮遗留 2 个 `tutor_server.py` 进程仍占 `0.0.0.0:8765`（旧代码无 `/profile`，App 点「学情」拿到 404 回显 0）→ `netstat -ano | Select-String ':8765'` 定位 PID → `Stop-Process` → 端口释放后复测通过。
+- ✅ **host 全量 `pytest` = 205 passed**（188 + 13 + 4）。
+- 📌 **能信/不能信**：画像/摘要/HTML 为确定性纯函数（13 单测）+ `smoke_http.py` 实测真实 JSON + App 模拟器点击端到端；`logs/wrong_book.json` 为本地自造题数据。🚫 画像基于「错题本」单边数据（缺正样本「练习/作答」）；端侧真实 ASR 仍未落地。
+- 回写：`host/l3_profile.py`/`host/test_l3_profile.py`（新建）、`host/tutor_server.py`/`host/test_tutor_server.py`/`host/smoke_http.py`、`host/README.md`、`app/.../TutorClient.kt`/`MainActivity.kt`/`activity_main.xml`/`strings.xml`、`app/README.md`、`ROADMAP.md`（第 17 轮）、本文件、`daily-memories-video/2026-11-08.md`。
+- commit+push（`robot:`）。
+
 ## 5. 阻塞 / 待办
 
 1. **⏳ 等用户 2 条回复**（`P0_设备通路.md` §4）：① 手机型号/系统版本 ② 开 USB 调试并连线（adb/hdc 已由本线自装，不再需要用户装）。
@@ -265,7 +280,7 @@ ERROR_COUNT:  0
 3. **下一轮候选（按优先级）**：
    1. 端侧真实 ASR（sherpa-onnx）接入位落地（`SherpaOnnxASR` 现为报错占位）——12:20 令「端侧为主」最后一环；
    2. `clamp_hint` 后的 full 30 会话复跑验证（第 13 轮只做了单次 smoke）；
-   3. L3 学情：错题本 + 知识点画像 + 每日/每周摘要，本地存储、可导出 HTML（工具已备 wrong_book/parent_report，缺定时聚合与画像）；
+   3. L3 学情补「正样本」：会话/练习日志（作答次数、正确率），与错题本合并出更完整的掌握画像（当前只有错题单边数据）；
    4. 真机化 L0（等用户 3 条）。
 
 ## 6. 运维问答

@@ -13,6 +13,9 @@
 - 「换一题」→ `/tool question_bank`；「记错题」→ `/tool wrong_book_add`；「报告」→ `/tool parent_report`；
 - 文字输入框 + 「发送」→ `/agent`（多轮追问，无题干时回退 `/tutor` 文字题）。
 
+第 17 轮新增 **L3 学情**（对应 host 侧 `POST /profile`）：
+- 「学情」→ `/profile`，显示「错题总数 / 涉及知识点 / 薄弱点」（本地错题本画像，不上传、不泄答案）。
+
 ## 技术栈
 
 | 项 | 选型 |

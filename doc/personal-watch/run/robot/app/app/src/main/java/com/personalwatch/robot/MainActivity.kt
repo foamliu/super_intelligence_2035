@@ -104,6 +104,7 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         findViewById<Button>(R.id.btnReport).setOnClickListener {
             callTool("parent_report", emptyMap())
         }
+        findViewById<Button>(R.id.btnProfile).setOnClickListener { showProfile() }
         findViewById<Button>(R.id.btnSend).setOnClickListener { sendFollowUp() }
 
         tts = TextToSpeech(this, this)
@@ -240,6 +241,28 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             } catch (e: Exception) {
                 Log.e(TAG, "POST /tool 失败", e)
                 runOnUiThread { setStatus("工具调用失败：${e.message}") }
+            }
+        }
+    }
+
+    // ── L3 学情画像 → POST /profile ────────────────────────────────
+    private fun showProfile() {
+        val server = etServer.text.toString().trim()
+        cameraExecutor.execute {
+            try {
+                val r = TutorClient.postProfile(server)
+                runOnUiThread {
+                    tvReply.text = buildString {
+                        append("【学情画像】\n")
+                        append("错题总数：").append(r.totalWrong).append("\n")
+                        append("涉及知识点：").append(r.knowledgeCount).append(" 个\n")
+                        append("薄弱点：").append(if (r.weakPoints.isBlank()) "暂无" else r.weakPoints)
+                    }
+                    setStatus("学情画像已更新（数据来自本地错题本）")
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "POST /profile 失败", e)
+                runOnUiThread { setStatus("学情查询失败：${e.message}") }
             }
         }
     }

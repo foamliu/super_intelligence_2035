@@ -28,17 +28,19 @@
 | `eval_l2.py` | L2 评测：5 工具真调 + 多轮一致性 + 直接给答案率 → `eval/l2_tools.json` |
 | `test_tools.py` | `tools.py` 单测（21 条：安全求值 / 红线拒变量 / 5 工具 / 注册表） |
 | `test_l2_agent.py` | `l2_agent.py` 单测（21 条：路由 / 表达式抽取 / LLM 决策解析 / 会话多轮与红线） |
-| `test_tutor_server.py` | `tutor_server.py` 单测（**13 条**：/tool 红线拒变量、题库不泄答案、错题本/报告、/agent 多轮回放、/tutor 工具路由） |
-| `smoke_http.py` | HTTP 冒烟：起临时实例实测 `/health /tool /agent` 三端点真实 JSON（不依赖 App/模拟器） |
+| `test_tutor_server.py` | `tutor_server.py` 单测（**17 条**：/tool 红线拒变量、题库不泄答案、错题本/报告、/agent 多轮回放、/tutor 工具路由、/profile 学情） |
+| `smoke_http.py` | HTTP 冒烟：起临时实例实测 `/health /tool /agent /profile` 四端点真实 JSON（不依赖 App/模拟器） |
+| `l3_profile.py` | **L3 学情层（第 17 轮）**：错题本 → 知识点画像（掌握等级）+ 每日/每周摘要 + 自包含 HTML；`profile_report()` 导出，本地、不上传、不泄答案 |
+| `test_l3_profile.py` | `l3_profile.py` 单测（13 条：掌握等级/时间归一/画像聚合/薄弱点/每日每周/HTML 自包含与不泄答案） |
 
-## 单测（第 16 轮：188 passed）
+## 单测（第 17 轮：205 passed）
 
 ```powershell
 cd D:\Users\Administrator\code\super_intelligence_2035\doc\personal-watch\run\robot\host
-py -3.10 -m pytest -q                                                  # 188 passed
+py -3.10 -m pytest -q                                                  # 205 passed
 py -3.10 normalize_math.py "x的平方加三x等于零" "二分之根号三"        # 演示口述→数学式
 py -3.10 -W ignore speech.py                                          # 演示分句/合成 WAV/打断/ASR mock
-py -3.10 -W ignore smoke_http.py                                      # HTTP 冒烟（/health /tool /agent）
+py -3.10 -W ignore smoke_http.py                                      # HTTP 冒烟（/health /tool /agent /profile）
 ```
 
 ## 交互验收（11:40 令 §3 · 第 13 轮交付）
@@ -134,6 +136,20 @@ py -3.10 -W ignore eval_l2.py              # L2 评测 → ../eval/l2_tools.json
 - **智能体骨架**：`route_tool()` 确定性路由（离线）+ `decide_tool_llm()`（DeepSeek 选工具，失败回退路由）+ `L2Session`（一道题多轮会话，工具轮与引导历史分离）。
 - **实测（第 15 轮）**：6 工具全调；直接给答案率 0；3 轮追问一致；`plot_function` PNG 20,347 字节；LLM 决策正确选 `calculator`。
 - ✅ **已接 HTTP（第 16 轮）**：`tutor_server.py` 新增 `POST /tool`（直接调工具，红线拒变量/不泄答案）、`POST /agent`（L2 多轮，确定性路由默认）、`POST /tutor` 带 `tool` 字段即转工具；App 加「换一题/记错题/报告」按钮 + 文字追问 → 均已跑通（`smoke_http.py` 实测 + `adb install` 成功 + 模拟器 UI dump 确认新按钮）。
+
+## L3 学情（知识点画像 + 每日/每周摘要 · 第 17 轮）
+
+```powershell
+cd D:\Users\Administrator\code\super_intelligence_2035\doc\personal-watch\run\robot\host
+py -3.10 l3_profile.py                     # 自检：画像/每日/每周/HTML 全链路
+py -3.10 -W ignore smoke_http.py           # 冒烟里含 POST /profile 实测 JSON
+```
+
+- **数据来源**：错题本 `logs/wrong_book.json`（L2 `wrong_book_add` 同源，本地不上传）。
+- **能力**：`knowledge_profile()`（按知识点聚合 → 错题数/首末次出错/掌握等级「待练习/待巩固/薄弱/重点突破」）、`daily_summary()`/`weekly_summary()`（按日期/ISO 周聚合）、`build_profile_html()`（自包含中文 HTML，不泄答案、不含学生隐私）、`profile_report()`（落盘 + 返回摘要 JSON）。
+- **HTTP**：`POST /profile {html?: bool}` → `{ok, profile}`；`html=true` 另生成 `logs/profile_report.html`。
+- **App**：新增「学情」按钮 → `TutorClient.postProfile()` → 显示「错题总数/涉及知识点/薄弱点」（第 17 轮，`adb install` + 模拟器点击实测）。
+- **红线**：报告只统计自造题，不出现学生姓名/学校/照片，不泄露原题答案（`test_l3_profile.py`/`test_tutor_server.py` 断言「HTML 不含答案」）。
 
 ## 教育红线（内置约束，见 `tutor_agent.py` 的 TUTOR_SYSTEM）
 

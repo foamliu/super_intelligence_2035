@@ -7,6 +7,7 @@
     <string name="btn_next">换一题</string>
     <string name="btn_wrong">记错题</string>
     <string name="btn_report">报告</string>
+    <string name="btn_profile">学情</string>
     <string name="btn_send">发送</string>
     <string name="input_hint">追问 / 输入一句话（如：帮我算 3×4）</string>
     <string name="server_hint">服务地址（模拟器用 10.0.2.2:8765）</string>

@@ -36,6 +36,13 @@ data class AgentReply(
     val raw: String
 )
 
+data class ProfileReply(
+    val totalWrong: Int,
+    val knowledgeCount: Int,
+    val weakPoints: String,
+    val raw: String
+)
+
 object TutorClient {
 
     fun postTutor(
@@ -140,6 +147,37 @@ object TutorClient {
             kind = o.optString("kind", "guide"),
             tool = if (o.has("tool") && !o.isNull("tool")) o.optString("tool") else null,
             reply = o.optString("reply", o.optString("error", "")),
+            raw = resp
+        )
+    }
+
+    fun postProfile(baseUrl: String): ProfileReply {
+        val conn = URL(baseUrl.trimEnd('/') + "/profile").openConnection() as HttpURLConnection
+        conn.requestMethod = "POST"
+        conn.doOutput = true
+        conn.connectTimeout = 30_000
+        conn.readTimeout = 30_000
+        conn.setRequestProperty("Content-Type", "application/json; charset=utf-8")
+
+        OutputStreamWriter(conn.outputStream, Charsets.UTF_8).use { it.write("{}") }
+        val code = conn.responseCode
+        val stream = if (code in 200..299) conn.inputStream else conn.errorStream
+        val resp = stream?.bufferedReader(Charsets.UTF_8)?.use(BufferedReader::readText) ?: "{}"
+        conn.disconnect()
+
+        val o = JSONObject(resp)
+        val p = o.optJSONObject("profile") ?: JSONObject()
+        val weakList = mutableListOf<String>()
+        val wp = p.optJSONArray("weak_points")
+        if (wp != null) {
+            for (i in 0 until wp.length()) {
+                weakList.add(wp.getJSONObject(i).optString("knowledge"))
+            }
+        }
+        return ProfileReply(
+            totalWrong = p.optInt("total_wrong", 0),
+            knowledgeCount = p.optInt("knowledge_count", 0),
+            weakPoints = weakList.joinToString("、"),
             raw = resp
         )
     }

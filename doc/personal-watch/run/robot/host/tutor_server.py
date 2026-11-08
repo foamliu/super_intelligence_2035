@@ -11,6 +11,8 @@ robot 线 · PC 侧家教 HTTP 服务（Android App 通过 http://10.0.2.2:PORT 
                 工具 = calculator / question_bank / wrong_book_add / wrong_book_list / parent_report / plot_function
   POST /agent   入 {question, utterance, history?, knowledge?, use_llm?}
                 出 {kind: tool|guide, tool, tool_result, reply, latency_s}   （L2 智能体多轮，确定性路由默认，可选 LLM 决策）
+  POST /profile 入 {html?: bool, out_path?: str}
+                出 {ok, profile}   （L3 学情：知识点画像 + 每日/每周摘要；html=true 另生成 HTML）
   GET  /health  健康检查 {ok, version, backends}
   GET  /        使用说明
 
@@ -34,6 +36,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import tutor_agent  # noqa: E402  复用 recognize_ex / tutor_step / LAST_*_TRACE
 import tools       # noqa: E402  L2 工具层（ROADMAP #1）
 import l2_agent    # noqa: E402  L2 智能体编排（/agent 多轮）
+import l3_profile  # noqa: E402  L3 学情层（知识点画像 + 每日/每周摘要，ROADMAP L3）
 
 PORT = int(os.environ.get("ROBOT_TUTOR_PORT", "8765"))
 HOST = os.environ.get("ROBOT_TUTOR_HOST", "0.0.0.0")
@@ -173,6 +176,27 @@ def handle_tutor(body: dict):
                 pass
 
 
+def handle_profile(body: dict):
+    """L3 学情：POST /profile {} -> 知识点画像 + 每日/每周摘要（可选生成 HTML）。
+
+    入 {html?: bool, out_path?: str}；出 {ok, profile}。
+    数据来自本地错题本（tools.WRONG_BOOK_PATH），不上传、不含学生隐私、不泄露答案。
+    """
+    if body.get("html") or body.get("out_path"):
+        rep = l3_profile.profile_report(out_path=body.get("out_path") or None)
+    else:
+        items = l3_profile.load_wrong_book()
+        prof = l3_profile.knowledge_profile(items)
+        rep = {
+            "total_wrong": prof["total_wrong"],
+            "knowledge_count": len(prof["knowledge_points"]),
+            "weak_points": prof["weak_points"],
+            "daily": l3_profile.daily_summary(items),
+            "weekly": l3_profile.weekly_summary(items),
+        }
+    return {"ok": True, "profile": rep}, 200
+
+
 class Handler(BaseHTTPRequestHandler):
     server_version = "robot-tutor/1.0"
 
@@ -203,13 +227,14 @@ class Handler(BaseHTTPRequestHandler):
         else:
             self._send_json({
                 "usage": "POST /tutor {image_b64|text, history?, hint_level?, tool?, params?} · "
-                         "POST /tool {tool, params} · POST /agent {question, utterance, history?}",
+                         "POST /tool {tool, params} · POST /agent {question, utterance, history?} · "
+                         "POST /profile {html?}",
                 "note": "App 端请用 http://10.0.2.2:%d/tutor" % PORT,
             })
 
     def do_POST(self):
         path = self.path.rstrip("/")
-        if path not in ("/tutor", "/tool", "/agent"):
+        if path not in ("/tutor", "/tool", "/agent", "/profile"):
             self._send_json({"error": "not found"}, 404)
             return
         try:
@@ -219,7 +244,8 @@ class Handler(BaseHTTPRequestHandler):
                 return
             raw = self.rfile.read(length)
             body = json.loads(raw.decode("utf-8"))
-            fn = {"/tutor": handle_tutor, "/tool": handle_tool, "/agent": handle_agent}[path]
+            fn = {"/tutor": handle_tutor, "/tool": handle_tool,
+                  "/agent": handle_agent, "/profile": handle_profile}[path]
             payload, status = fn(body)
             self._send_json(payload, status)
         except Exception as e:  # noqa: BLE001  服务端异常也要回 JSON，别把连接崩掉

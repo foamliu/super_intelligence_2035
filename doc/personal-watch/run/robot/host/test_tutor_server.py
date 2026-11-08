@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """tutor_server.py 单测（ROADMAP #1：L2 工具/智能体接 HTTP —— /tool、/agent、/tutor 工具路由）。"""
+import json
 import os
 import sys
 
@@ -134,3 +135,54 @@ def test_agent_replay_history(monkeypatch):
     assert status == 200 and payload["kind"] == "guide"
     assert seen["n"] == 2  # 两轮历史已回放进上下文
     assert "第3轮引导" in payload["reply"]
+
+
+# ── POST /profile（ROADMAP L3：知识点画像 + 每日/每周摘要）──────────
+def test_profile_summary(tmp_wrong_book):
+    TS.handle_tool({"tool": "wrong_book_add",
+                    "params": {"question": "解方程：2x+3=11", "student_answer": "x=5",
+                               "knowledge": "一元一次方程"}})
+    TS.handle_tool({"tool": "wrong_book_add",
+                    "params": {"question": "解方程：3x-5=10", "student_answer": "x=6",
+                               "knowledge": "一元一次方程"}})
+    payload, status = TS.handle_profile({})
+    assert status == 200 and payload["ok"] is True
+    prof = payload["profile"]
+    assert prof["total_wrong"] == 2
+    assert prof["knowledge_count"] == 1
+    assert prof["weak_points"][0]["knowledge"] == "一元一次方程"
+    assert prof["weak_points"][0]["mastery"] == "薄弱"
+    assert prof["daily"]["total_days"] >= 1
+    assert prof["weekly"]["total_weeks"] >= 1
+
+
+def test_profile_no_answer_leak(tmp_wrong_book):
+    TS.handle_tool({"tool": "wrong_book_add",
+                    "params": {"question": "解方程：2x+3=11", "student_answer": "x=4",
+                               "knowledge": "一元一次方程"}})
+    payload, status = TS.handle_profile({})
+    assert status == 200
+    blob = json.dumps(payload["profile"], ensure_ascii=False)
+    assert "x=4" not in blob      # 不泄露最终答案 / 不夹带学生错答
+
+
+def test_profile_html(tmp_wrong_book, tmp_path):
+    TS.handle_tool({"tool": "wrong_book_add",
+                    "params": {"question": "因式分解：x²-9", "student_answer": "x(x-3)",
+                               "knowledge": "因式分解"}})
+    out = str(tmp_path / "profile.html")
+    payload, status = TS.handle_profile({"html": True, "out_path": out})
+    assert status == 200 and payload["ok"] is True
+    assert os.path.isfile(out)
+    with open(out, encoding="utf-8") as f:
+        html = f.read()
+    assert "<!DOCTYPE html>" in html and "家教学习画像" in html
+    assert "(x+3)(x-3)" not in html  # 不泄答案
+
+
+def test_profile_empty(tmp_wrong_book):
+    payload, status = TS.handle_profile({})
+    assert status == 200 and payload["ok"] is True
+    assert payload["profile"]["total_wrong"] == 0
+    assert payload["profile"]["weak_points"] == []
+
