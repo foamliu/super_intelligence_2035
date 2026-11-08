@@ -18,18 +18,19 @@ WAITING: 1
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        🔄stack-v3-train 2TB下载 batch1✅DONE(700parquet/300.2GB/0inc)+batch2进行中(hundred013 50/100,582GB/1350parquet/2inc,ETA~23:50) → WAITING=1
-已完成:       ✅85M;✅10-31报告;✅09:4x报告;✅09:2x长上下文10/10(249.48GiB);✅13:2x#2 RL报告;✅13:2x#1 B类12/12(78.73GiB);✅11-07 08:5x ROI 8源下载DONE(25.14GB/135文件/0incomplete);✅stack-v3-train结构调研DONE(8192shard/3.22TiB/EDA语言27.1%tokens);✅stack-v3-train batch1 DONE(700parquet/300.2GB/0inc/3h55m)
-当前动作:     唤醒1394(2026-11-08 23:32):batch2进度巡检→①git pull(up-to-date,无新令);②research日报11-08已阅(同1393):data线建议=技能画像写入ROI,仅备忘非新指令;③batch2实测:1350parquet/582,198,202,775B(582GB)/2inc,hundred007-012全OK(600✅)+hundred013(50/100下载中,~20.7s/shard);④PID3244277(bash,etime~227min)alive+PID1824807(hf download part-013*,etime~17min)alive;⑤batch2 ETA:hundred013剩50shard@~20.7s≈~17min→~23:50完成;⑥df:/nas_inference 18T已用/28T可用(39%)≥5T红线OK;/nas_train 179T/87%→更新心跳→commit+push→WAITING=1
-下一步:       等batch2完成(~17min,ETA~23:50)→du -sb+find+incomplete实测→抽样3 shard质检→回填§H.4 batch2行→commit data stackv3:→启动batch3(part-014*~020*)→累计~813GB/2TB预算41%
-阻塞:         无(batch2后台下载中,/nas_inference 28T可用≥5T红线)
+PHASE:        🔄stack-v3-train 2TB下载 batch1✅DONE(300.2GB)+batch2✅DONE(304.6GB/累计604.8GB/1400parquet/0inc)+batch3进行中(part-014*~020*) → WAITING=1
+已完成:       ✅85M;✅10-31报告;✅09:4x报告;✅09:2x长上下文10/10(249.48GiB);✅13:2x#2 RL报告;✅13:2x#1 B类12/12(78.73GiB);✅11-07 08:5x ROI 8源下载DONE(25.14GB/135文件/0incomplete);✅stack-v3-train结构调研DONE(8192shard/3.22TiB/EDA语言27.1%tokens);✅stack-v3-train batch1 DONE(700parquet/300.2GB/0inc/3h55m);✅batch2 DONE(700parquet/304.6GB delta/累计604.8GB/0inc/QC:Python19.2%/EDA23%)
+当前动作:     唤醒1395(2026-11-09 00:3x):batch2完成→①QC 3shard抽样(Python19.2%/EDA23%/vendor1.5%/0空repo/0inc)→②回填§H.4+§H.6→③启动batch3(part-014*~020*,PID3064136)→④df:/nas_inference 18T/28T可用(39%)≥5T→⑤更新心跳→commit data stackv3:→WAITING=1
+下一步:       等batch3完成(~4h,ETA~04:30)→du+find+incomplete实测→QC抽样→回填§H.4 batch3行→commit→启动batch4→累计~905GB/2TB预算45%
+阻塞:         无(batch3后台下载中,/nas_inference 28T可用≥5T红线)
 ERROR_COUNT:  11
-未完成指令:   有(10:10 stack-v3-train 2TB下载batch2进行中)→WAITING=1
+未完成指令:   有(10:10 stack-v3-train 2TB下载batch3进行中)→WAITING=1
 ```
 
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。
 
 ## 📋 本唤醒流水
+> [11-09 00:3x] 唤醒1395：batch2完成→交付+启动batch3→①git pull(up-to-date,无新data令);②research日报11-08已阅:data线建议=技能画像写入ROI,仅备忘非新指令;③batch2实测:1400parquet/604,799,987,573B(604.8GB累计)/0inc,batch2_status.tsv 007-013全OK(700shard全OK,failed=0);④无活跃下载进程→batch2已FINISH(23:50);⑤batch2 QC:3shard×200repos=600repos抽样,Python19.2%/Java17.8%/JS15.4%,EDA(14)=23.0%bytes(↑batch1 6.2%),Target(32)=65.1%,vendor80(1.5%),>1MB=1(0.0%),空repo=0;⑥token估算~310B(batch2)/~616B(累计b1+b2);⑦DATA_MAPPING.md §H.4 batch2行回填✅+§H.6 batch2 QC报告新增✅;⑧启动batch3(part-014*~020*,PID3064136,7hundreds≈300GB);⑨df:/nas_inference 18T/28T可用(39%)≥5T红线OK;/nas_train 179T/87%;⑩体积MEMORY~27KB/TASK~35KB均≤40KB→commit data stackv3:→WAITING=1监控batch3
 > [11-08 23:32] 唤醒1394：batch2进度巡检→①git pull(up-to-date,无新data令);②research日报11-08已阅(同1393):data线建议=技能画像写入ROI评估,仅备忘非新指令;③batch2实测:1350parquet/582,198,202,775B(582GB)/2inc(active下载),hundred007-012全OK(600✅)+hundred013(50/100下载中,~20.7s/shard);④进程核验:PID3244277(bash stackv3_batch_download.sh,etime~227min)alive+PID1824807(hf download part-013*,etime~17min)alive,ppid链正确;⑤batch2 ETA:hundred013剩50shard@~20.7s≈~17min→~23:50完成;⑥df:/nas_inference 18T已用/28T可用(39%)≥5T红线OK;/nas_train 179T/87%;⑦体积MEMORY~26KB/TASK~35KB均≤40KB无需归档→更新心跳→commit+push→WAITING=1继续监控batch2
 > [11-08 22:35] 唤醒1393：batch2进度巡检→①git pull(up-to-date,无新data令);②research日报11-08已阅(同1392):data线建议=dual-metric重叠度(AST结构指纹+5-gram)+技能画像,仅备忘非新指令;③batch2实测:1186parquet/513,104,263,772B(478GB)/2inc,hundred007-010全OK(400✅)+hundred011(87/100下载中,~23s/shard),012-013未开始;④进程核验:PID3244277(bash stackv3_batch_download.sh,etime~169min)alive+PID629760(hf download part-011*,etime~33min)alive,ppid链正确;⑤batch2 ETA:hundred011剩13shard@~23s≈5min+hundred012-013各~38min≈~1.3h→~23:56完成;⑥df:/nas_inference 18T已用/28T可用(39%)≥5T红线OK;/nas_train 179T/87%;⑦体积MEMORY~25.5KB/TASK~35KB均≤40KB无需归档→更新心跳→commit+push→WAITING=1继续监控batch2
 > [11-08 21:39] 唤醒1392：batch2进度巡检→①git pull(fast-forward 42ed8fb8b,无新data令);②research日报11-08已阅(同1391):data线建议=dual-metric重叠度(AST结构指纹+5-gram)用于batch1质检,仅备忘非新指令;③batch2实测:1031parquet/442,490,965,113B(442.5GB)/1inc,hundred007-009全OK(300✅)+hundred010(32/100下载中),011-013未开始;④进程核验:PID3244277(bash stackv3_batch_download.sh,etime~114min)alive+PID2372381(hf download part-010*,etime~10min)alive,ppid链正确;⑤batch2 ETA:hundred010剩68shard@~20s≈~23min+hundred011-013各~33min≈~2h→~23:40完成;⑥df:/nas_inference 18T已用/28T可用(39%)≥5T红线OK;/nas_train 179T/87%;⑦体积MEMORY~24KB/TASK~48KB(TASK>40KB但归档不优先于交付,批次完成后归档)→更新心跳→commit+push→WAITING=1继续监控batch2
