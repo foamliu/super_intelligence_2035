@@ -16,15 +16,35 @@
 | `probe_ds_vision.py` | DeepSeek 视觉一次性探针（读 key 不打印 key，产出 `ds_vision_probe.json`） |
 | `test_normalize_math.py` | `normalize_math.py` 单测（**81 条**，12:20 令要求 ≥30） |
 | `test_speech.py` | `speech.py` 单测（12 条：分句/打断/流式/落盘 WAV/云端与端侧未装报错） |
+| `presence.py` | 在座检测（12:05 令 §1/§5）：单帧 320×240 + YuNet 人脸（`cv2.FaceDetectorYN`，OpenCV 5）+ 亮度阈值，三分类 person/left/unknown；帧不落盘不上传；`measure()` 连拍测帧率/耗时 |
+| `test_presence.py` | `presence.py` 单测（8 条：三分类 / 300ms 预算字段 / 模型缺失报错 / 自动找模型） |
+| `eval_presence.py` | presence 评测：PC 摄像头连拍 20 次（帧率/耗时/300ms 达标率）+ 20 张标注样本三分类准确率 → `eval/presence_pc_camera.json` |
 
-## 单测（第 11 轮新增）
+## 单测（第 11 轮新增；第 12 轮加 presence）
 
 ```powershell
 cd D:\Users\Administrator\code\super_intelligence_2035\doc\personal-watch\run\robot\host
-py -3.10 -m pytest test_normalize_math.py test_speech.py -q   # 93 passed in 0.46s
+py -3.10 -m pytest test_normalize_math.py test_speech.py test_presence.py -q   # 101 passed in 0.66s
 py -3.10 normalize_math.py "x的平方加三x等于零" "二分之根号三"   # 演示口述→数学式
 py -3.10 -W ignore speech.py                                  # 演示分句/合成 WAV/打断/ASR mock
 ```
+
+## 在座检测（presence · 12:05 令 §1/§5）
+
+```powershell
+cd D:\Users\Administrator\code\super_intelligence_2035\doc\personal-watch\run\robot\host
+py -3.10 -W ignore presence.py --measure            # 单帧 + 连拍 20 次（帧率/耗时）
+py -3.10 eval_presence.py                           # 连拍 20 次 + 20 标注样本准确率 -> ../eval/presence_pc_camera.json
+```
+
+- **三分类**：`person`（YuNet 检出人脸）/ `left`（无人）/ `unknown`（太暗/无帧/坏帧）。
+- **实测（PC 摄像头，Logitech 046D，20 次）**：帧率 **29.71 fps**；单次抓帧+检测 **P50 33.0ms / P90 57.4ms / max 66.4ms**，**20/20 达标 ≤300ms**（12:05 令 §1 硬指标）。
+- **准确率（20 标注样本）**：**20/20 = 1.0**（person 8 + left 8 + unknown 4 全对）。
+- ⚠️ 样本为「无歧义」集（清晰人脸 / 明显无人风景静物 / 合成暗帧）；遮挡/逆光/侧脸/远景小脸等**难例待真人/真机复测**（16:5x 令「能信/不能信」）。
+- **模型**：`models/face_detection_yunet_2023mar.onnx`（OpenCV Zoo YuNet，Apache-2.0，232KB）。OpenCV 5.0 已移除 CascadeClassifier/HOGDescriptor，故用 YuNet；缺模型时报明确 RuntimeError，不静默。
+  - ⚠️ 模型权重 `*.onnx` 按 `run/.gitignore` 体积红线**不入库**，新环境需拉取：
+    `curl.exe -sL -o models/face_detection_yunet_2023mar.onnx https://huggingface.co/opencv/face_detection_yunet/resolve/main/face_detection_yunet_2023mar.onnx`
+- **约束**：帧端侧处理、立即丢弃不落盘不上传；`speak` 态绝不抓帧、检测频率 ≤1 次/90s 由**调用方**调度（本模块只提供 `grab()`，不内部循环）。
 
 ## 推理后端（11:30 / 15:4x 用户令定稿）
 
