@@ -1,6 +1,8 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 0
 
+> 2026-11-08 22:45 #1730: **v6 eval监控轮·5s+5c全活·精确进度piqa14%/hs9.7%·chunk0 NUMA修复后最快·报告v3.4不变**·**动作**:①git fetch+status(synced,only vision/harness in-flight) ②确认5 llama-server(port8183-8187)全活health=ok×5 ③确认5 eval client全活(piqa PID2097184+hs_c0 PID3765473+hs_c1 PID2097209+hs_c2 PID2097234+hs_c3 PID2097251) ④精确进度(tqdm):piqa 528/3676(14%,17.6s/it,ETA~15h)·hs_c0 1386/10044(14%,3.4s/it,ETA~8h←NUMA修复后最快)·hs_c1 1620/10044(16%,4.2s/it,ETA~10h)·hs_c2 447/10044(4%,11.6s/it,ETA~31h)·hs_c3 445/10036(4%,12.7s/it,ETA~34h←瓶颈)·hs总计3898/40160(9.7%) ⑤6/8done不变Avg6(acc)=53.38%(arc_c=0.304/arc_e=0.655/boolq=0.587/obqa=0.266/sciq=0.842/wg=0.549,n=9585全量) ⑥异常报告v3.4(24.6KB)已验证全6项覆盖+结论A(口径差异:旧二进制bug+全量vs限100) ⑦speedup报告17.3KB不变 ⑧训练.29健康8×H100 95-100%util~75GB/卡 **计划**:下次唤醒①确认5s+5c存活②监控piqa/hs进度(piqa~15h,hs瓶颈chunk3~34h)③piqa完成后合并7集④全部8集完成后更新报告终版⑤📦TASK=31.2KB/MEMORY=12.8KB·未完成指令:有(v6 eval运行中)⇒WAITING:0。
+
 > 📦 §#1727（11-08 22:16, v5 eval监控轮·5s+5c全活·6/8done Avg6=53.38%·hs_chunk3=70h瓶颈）→ daily-memories/2026-11-08.md「#1727」节；**结论**：5s+5c全活(后被第4次SIGTERM杀死),Avg6=53.38%不变,报告v3.2已交付结论A。需要时再读。
 
 > 📦 §#1728（11-08 22:30, v6 eval重启轮·第4次SIGTERM后重建·5s+5c全活·6/8done Avg6=53.38%不变·结论A铁证）→ daily-memories/2026-11-08.md「#1728」节；**结论**：v6重启5s+5c全活,Avg6=53.38%不变,报告v3.3已交付。需要时再读。
