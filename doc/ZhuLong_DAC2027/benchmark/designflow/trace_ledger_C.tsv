@@ -397,3 +397,6 @@
 1793614615410_y612r	sinanz	hfeg0pkn005	264	layout_aether	parked		2026-11-08 11:23	title=DS_circuitEdit, status=failed; circuit-edit A/B comparison experiment, not organic layout; SKIP
 1793862562240_2m2ja	sinanz	hfeg0pkn005	197	layout_aether	parked		2026-11-08 11:23	title=资深全定制电路设计工程师学习Skills; same sinanz circuit-edit/Skills context as 53nr3 (schematic); SKIP
 1793859046486_1y31v	sinanz	hfeg0pkn005	122	layout_aether	parked		2026-11-08 11:23	title=我在路径.../Skills; same sinanz circuit-edit/Skills context as 53nr3 (schematic); SKIP
+1792552343391_748ox	johnl	hfeg0pkn001	226	physical_verify	parked		2026-11-08 11:55	cross-shard dup: =shard A EDA-Eval-DesignFlow-CdlBodyMapFix-001 (same session 748ox johnl, CdlVbnBulkRemap-001 also same); r235 caught mid-build
+1790046970076_ym81m	lizwen	hfeg0pkn002	138	physical_verify	parked		2026-11-08 11:55	skill-def session 'DRC Testpattern Generator' (not organic user task; spec-style prompt); topic-overlap risk with QaWidthPatternGen/DrcQaWidthTypeGeom/SwitchGatedSpacePatternGen; r236 distinctness eval
+1790055693266_i2k9v	lizwen	hfeg0pkn002	81	physical_verify	parked		2026-11-08 11:55	skill-def 'DRC Testpattern Generator' sibling of ym81m; same dup-risk; r236 eval
