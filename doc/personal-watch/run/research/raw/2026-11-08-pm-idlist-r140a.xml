@@ -1,0 +1,109 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<feed xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/" xmlns:arxiv="http://arxiv.org/schemas/atom" xmlns="http://www.w3.org/2005/Atom">
+  <id>https://arxiv.org/api/5ysFHcStghxC3H0A9EW26dIR6zw</id>
+  <title>arXiv Query: search_query=&amp;id_list=2611.07920,2611.08469,2611.07891,2611.08085&amp;start=0&amp;max_results=4</title>
+  <updated>2026-11-08T10:02:51Z</updated>
+  <link href="https://arxiv.org/api/query?search_query=&amp;start=0&amp;max_results=4&amp;id_list=2611.07920,2611.08469,2611.07891,2611.08085" type="application/atom+xml"/>
+  <opensearch:itemsPerPage>4</opensearch:itemsPerPage>
+  <opensearch:totalResults>4</opensearch:totalResults>
+  <opensearch:startIndex>0</opensearch:startIndex>
+  <entry>
+    <id>http://arxiv.org/abs/2611.07920v1</id>
+    <title>How Finite Brains Generalize Without Bound: Spatial Memory as a Universal Computer</title>
+    <updated>2026-11-05T12:30:06Z</updated>
+    <link href="https://arxiv.org/abs/2611.07920v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2611.07920v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>A child who learns to add small numbers adds numbers of any length. LSTMs and Transformers trained on short sequences fail on longer ones. We trace the difference to what a learner reads when it decides. A position, a count or a time keeps taking new values as the input grows: it is a coordinate, and a learner that reads one meets in every long input values its experience never covered. Whether two things are the same has the same two answers at every size: it is a coincidence, and a learner that reads only coincidences finds in a long input nothing that short inputs lacked, so finite experience fixes its rule for every size. The memory carries the size of the input and the rule stays finite, and this determines the memory a generalizing brain can have: a memory that grows while what the learner reads of it stays finite has to look the same from every place, so it is made of cycles, and the past is reached by asking what happened when the cycles last stood where they stand now. The cycles are the grid modules, the cells that detect their return the place cells, the records the hippocampal index; a prefrontal controller moves the cycles and never sees them. Reading only coincidences costs no power: what finite experience fixes in such a learner is what Turing machines compute in step with their input, which is why a circuit that evolved to find the way home can learn arithmetic and grammar. In a network of neurons this machine of cycles is the dynamics seen through its symmetry, and symbols are its invariants. Trained on strings up to 40 symbols, the machine is at least 99% correct, on average over lengths 41 to 500, on nine of fifteen benchmark tasks, five of them tasks that no LSTM or Transformer solves; given new cycles after training it reverses strings of 15,015 symbols without error and fails beyond that on the curve the theory predicts; and its controllers run unchanged on neurons.</summary>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-11-05T12:30:06Z</published>
+    <arxiv:comment>57 pages, including appendices</arxiv:comment>
+    <arxiv:primary_category term="cs.AI"/>
+    <author>
+      <name>Yuhang He</name>
+    </author>
+    <author>
+      <name>Si Wu</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2611.07891v1</id>
+    <title>When Bigger Becomes Brittle: Why Compression Hurts More as Language Models Scale</title>
+    <updated>2026-11-05T12:11:13Z</updated>
+    <link href="https://arxiv.org/abs/2611.07891v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2611.07891v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Quantization and pruning reduce the cost of deploying language models, but their effects are usually reported as benchmark scores. Such scores record only the loss that remains at the output. Inside the model, compression damages some components more than others, and the rest of the network can partly compensate. The observed loss therefore reflects both the damage and this compensation, which benchmark scores cannot separate. How the two combine, and whether their balance changes with model size, remains unclear. We study this compensation for in-context retrieval, a capability carried by a small, identifiable set of attention heads. To separate the two, the expected loss from ablating these heads is decomposed exactly into the part restored by the rest of the network, attributed to the components responsible, and the part that reaches the output. This decomposition is then compared across model sizes. For damage of comparable size, smaller models restore most of the loss, whereas larger models retain most of it, because the compensating responses offset less of it as models grow. Compressing the heads produces the same pattern. Compression that is nearly harmless in small models can therefore be costly in large ones.</summary>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-11-05T12:11:13Z</published>
+    <arxiv:primary_category term="cs.AI"/>
+    <author>
+      <name>Gautam Gupta</name>
+    </author>
+    <author>
+      <name>Dikshant Kukreja</name>
+    </author>
+    <author>
+      <name>Unique Kumar</name>
+    </author>
+    <author>
+      <name>Avni Mittal</name>
+    </author>
+    <author>
+      <name>Deepanshu Dabas</name>
+    </author>
+    <author>
+      <name>Kshitij Sah</name>
+    </author>
+    <author>
+      <name>Erik Cambria</name>
+    </author>
+    <author>
+      <name>Rajiv Ratn Shah</name>
+    </author>
+    <author>
+      <name>Zhengkui Wang</name>
+    </author>
+    <author>
+      <name>Avinash Anand</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2611.08469v1</id>
+    <title>Same Behavior, Different Mechanism: What Finite Experiments Can Certify About Integrated Information</title>
+    <updated>2026-11-05T18:55:31Z</updated>
+    <link href="https://arxiv.org/abs/2611.08469v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2611.08469v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Interpretability, AI auditing and assessments of machine consciousness increasingly rest on mechanism-level quantities: functionals of a system's causal transition law that describe how it computes, not what it outputs. Experiments see that law only through finite, partial and noisy interventions. We ask when such a quantity is identifiable from an experiment's access, continuous in the mechanism and certifiable from finite data, and answer exactly for a deliberately demanding case - the integrated information $\varphi$ of integrated information theory - in stochastic networks of four and five units with known ground truth. Behavior can be silent: a recurrent and a feed-forward network with identical input-output laws at their response delay carry 0.28 and 0 bits, yet internal recordings separate them within 4-53 trials. Partial access can be just as blind: in our examples, units left out of a one-step recording impose precision floors of 0.30-1.02 bits that no sample size lowers, and in all-but-self parity networks, recordings of any length see several hidden units only through the product of their fidelities - a symmetry that one intervention broke in exact checks. The measure has sharp edges: because $\varphi$ selects a partition, and the cause and effect it specifies, by one criterion and reports another, infinitesimal changes of mechanism that cross an edge change it by 25-100% at 99% of the edges we found in random networks, and about 1% of surrogate models that fit interventional data almost perfectly misreport it by more than 20%. One-sided claims survive: the same data certify a lower bound on both sides of an edge, and we prove $\varphi&gt;1.004$ bits throughout a 64-dimensional region of mechanisms and certify it from about $10^7$ controlled transitions with false-certificate probability at most $α$. Measurability is thus a design question with computable answers.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="q-bio.NC" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-11-05T18:55:31Z</published>
+    <arxiv:comment>30 pages, 7 figures. Code available as ancillary files</arxiv:comment>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Linqian Wu</name>
+    </author>
+    <author>
+      <name>Diaoxuan He</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2611.08085v1</id>
+    <title>Linguistic boundaries emerge from pressure-constrained processing dynamics</title>
+    <updated>2026-11-05T14:33:00Z</updated>
+    <link href="https://arxiv.org/abs/2611.08085v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2611.08085v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Human cognition organizes continuous experience into bounded units while maintaining continuity across them. Linguistic elements are also organized into bounded structural units such as words and phrases, with sentence marking the final bound of a grammatical construction process. How do such boundaries emerge? We propose boundaries emerge from interacting demands to maintain unresolved dependencies, integrate completed relations, and update semantic context, with structural completion allowing but not determining closure. First, in a generative simulation without predefined boundary positions or constituent labels, these demands produced sentence-like segment-length distributions and distinct characteristic timescales, with structural completion allowing but not determining closure. Near boundaries, unresolved dependency load declined, integration cost peaked, and accumulated pressure reset. Then, we tested whether same demands predicted human listeners' boundary choices during comprehension. Listeners were more likely to mark boundaries with fewer unresolved dependencies, higher integration cost and semantic mismatch, and elevated preceding memory load, beyond syntactic and prosodic cues. Third, in naturalistic self-paced reading, sentence-final slowing coincided with declining memory load and increasing integration cost and semantic mismatch, broadly consistent with the simulation. Processing same narratives with a large language model revealed increased local intrinsic dimensionality and straighter hidden-state trajectories at sentence endings, followed by larger representational updates. Boundary explained additional variation in reading time and hidden-state geometry beyond processing demands, but considerably less in next-token surprisal. Together, these findings suggest linguistic boundaries emerge as discrete manifestations of transitions in continuous processing dynamics.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-11-05T14:33:00Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Rui He</name>
+    </author>
+    <author>
+      <name>Philipp Homan</name>
+    </author>
+    <author>
+      <name>Wolfram Hinzen</name>
+    </author>
+  </entry>
+</feed>

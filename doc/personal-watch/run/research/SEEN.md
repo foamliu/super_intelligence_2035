@@ -5641,3 +5641,5 @@
 | 2026-11-08 | 2611.08285 | Hard Issue, Weak Model, or Bad Run? Rethinking Failure Prediction for Coding Agents | cs.SE | 收录 |
 | 2026-11-08 | 2611.08417 | Benchmarks as Software: Terminal-Bench and the Case for Continuous Benchmarks | cs.AI | 收录 |
 | 2026-11-08 | 2611.07812 | Different Corpora, Different Skills? A Paired Study of Small Language Models | cs.CL | 收录 |
+| 2026-11-08 | 2611.07920 | How Finite Brains Generalize Without Bound: Spatial Memory as a Universal Computer | cs.AI | 收录 |
+| 2026-11-08 | 2611.08469 | Same Behavior, Different Mechanism: What Finite Experiments Can Certify About Integrated Information | cs.LG | 收录 |

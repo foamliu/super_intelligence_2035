@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>《论文两分钟》分镜脚本 · 2026-11-08 · 为什么孩子学加法能举一反三，大模型却不行</title>
+<style>
+  :root { --primary:#123a63; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700; --kp:#0d9488;
+          --bg:#f6f7fb; --card:#fff; --border:#d8dee9; --text:#1f2328; --muted:#556070; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+         color:var(--text); background:var(--bg); line-height:1.7; font-size:15px; }
+  .wrap { max-width:1100px; margin:0 auto; padding:32px 20px 80px; }
+  header.hero { background:linear-gradient(135deg,#0f2027 0%,#134e4a 55%,#0d9488 100%); color:#fff; border-radius:14px;
+                padding:30px 32px; margin-bottom:22px; box-shadow:0 8px 24px rgba(15,32,39,.26); }
+  header.hero h1 { margin:0 0 6px; font-size:23px; letter-spacing:.3px; }
+  header.hero .sub { font-size:15px; opacity:.96; }
+  header.hero .meta { margin-top:14px; font-size:13px; opacity:.94; display:flex; flex-wrap:wrap; gap:8px 18px; }
+  header.hero .meta span { background:rgba(255,255,255,.18); border-radius:999px; padding:2px 12px; }
+  .disc { margin-top:14px; font-size:12.5px; background:rgba(0,0,0,.22); border-radius:8px; padding:8px 12px; opacity:.96; }
+  h2.sec { font-size:19px; margin:34px 0 12px; padding-bottom:8px; border-bottom:2px solid var(--border); }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:18px 22px; margin:16px 0;
+          box-shadow:0 1px 3px rgba(27,31,36,.06); }
+  .row { display:flex; gap:10px; margin:7px 0; font-size:14px; }
+  .row .k { flex:0 0 116px; color:var(--muted); font-weight:600; }
+  .row .v { flex:1; }
+  .orig { font-style:italic; color:#0f4c47; }
+  code { background:#eef0f7; border:1px solid #dfe3ee; border-radius:5px; padding:1px 6px;
+         font-family:Consolas,Menlo,monospace; font-size:12.5px; color:#0f4c47; }
+  table { border-collapse:collapse; width:100%; margin:12px 0; font-size:13px; background:var(--card); }
+  th,td { border:1px solid var(--border); padding:8px 10px; text-align:left; vertical-align:top; }
+  th { background:#e6f7f4; color:#0f4c47; font-weight:600; }
+  tr:nth-child(even) td { background:#f8fcfb; }
+  .shot-no { display:inline-flex; align-items:center; justify-content:center; width:24px; height:24px;
+             border-radius:50%; background:#0d9488; color:#fff; font-size:13px; font-weight:700; }
+  .vo { color:#0b3b38; }
+  .note { background:#fff8ef; border:1px solid #f0d9b5; border-left:4px solid var(--warn); border-radius:8px;
+          padding:10px 16px; font-size:13px; color:#6a4a00; }
+  .ok-box { background:#f0fff4; border:1px solid #b7f0c5; border-left:4px solid var(--ok); border-radius:8px;
+            padding:10px 16px; font-size:13px; }
+  ul,ol { margin:6px 0; padding-left:20px; } li { margin:3px 0; }
+  a { color:var(--accent); word-break:break-all; }
+  footer { margin-top:44px; padding-top:16px; border-top:1px solid var(--border); color:var(--muted); font-size:12.5px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+  <h1>《论文两分钟》分镜脚本 · 2026-11-08</h1>
+  <div class="sub">今日 TOP-1：<b>为什么孩子学加法能举一反三，大模型却不行</b> · 论文解读（非官方 · 非结论）· 总时长 <b>120s</b> · 口播字数见页脚（脚本实测纯汉字数，按 210–220 字/分）</div>
+  <div class="meta">
+    <span>📅 日期：2026-11-08（CST）</span>
+    <span>🎬 期号：SCENES/11_08</span>
+    <span>📄 来源：arXiv <code>2611.07920</code></span>
+    <span>🏷 口径：科普（大众看得懂 + 有传播力）</span>
+  </div>
+  <div class="disc">
+    ⚠️ 本页是<b>分镜脚本</b>（纸面阶段），不是成片；<b>V3（真正生成视频）未启动</b>（工具链待确认）。<br>
+    所有数字均出自论文摘要 / 正文，<b>作者自报、本线未复现</b>；原题照抄不改写；画面全部自绘 / 自生成，<b>不使用论文原图</b>。
+  </div>
+</header>
+<h2 class="sec">🎯 选题说明：为什么从今天 5 篇里挑它</h2>
+<div class="card">
+  <div class="row"><div class="k">论文原题</div><div class="v"><span class="orig">How Finite Brains Generalize Without Bound: Spatial Memory as a Universal Computer</span></div></div>
+  <div class="row"><div class="k">作者 / 机构</div><div class="v">Yuhang He · Si Wu（<b>2 位</b>；北京大学心理与认知科学学院 / IDG 麦戈文脑研究所 / 北大-清华生命科学联合中心 / 定量生物学中心 / 机器感知教育部重点实验室）</div></div>
+  <div class="row"><div class="k">arXiv</div><div class="v"><a href="https://arxiv.org/abs/2611.07920">https://arxiv.org/abs/2611.07920</a>（<code>cs.AI</code>；首次提交 <b>2026-11-05</b>；PDF 57 页）</div></div>
+  <div class="row"><div class="k">一句话</div><div class="v">人和大模型的差别可能只有一条：<b>决策那一刻，你读的是「坐标」还是「巧合」</b>——只读巧合，有限经验就能管到任意长度；于是记忆只能是「一圈一圈的格子」，这正是大脑里的<b>网格细胞</b>。</div></div>
+  <div class="row"><div class="k">为什么选它</div><div class="v">
+    <ol>
+      <li><b>大众能懂</b>：开头就是每个人都能验证的事——孩子会加小数，就会加任意位数的数；而 AI 在短句上训练，句子一长就崩。</li>
+      <li><b>有传播力</b>：「只让模型判断两个东西一样不一样，居然不损失算力」是天然的反差结论；结尾「一万五千零一十五个符号」是可截图的大数字，画面感也强（一圈格子绕圈走、走回原地）。</li>
+      <li><b>可讲清</b>：全篇只用「坐标 vs 巧合」两个词就能讲完，不必搬 57 页数学（证明只在结尾作为证据提一句）。</li>
+      <li><b>有真实来源</b>：arXiv ID + 官方 abs 链接 + 57 页 PDF（本线已落地并校验字节 / 页数 / 可解析），所有数字可回查。</li>
+    </ol>
+    <b>同日其它 4 篇为何不做</b>：早报 3 篇（coding agent 失败预测 / 基准维护债 / 小模型语料配对）都是方法论，几乎无可视化画面，做成两分钟只会变成念 PPT；晚报另一篇 <code>2611.08469</code>（行为一样 ≠ 机制一样、AI 意识能不能测）话题更热，但核心是「可识别性 + 精度地板 + 度量悬崖」三条抽象边界，两分钟内很难让普通观众「看见」——留作后续期号备选。
+  </div></div>
+</div>
+<h2 class="sec">🎬 分镜表（5 镜 / 120s）</h2>
+<table>
+  <tr><th style="width:44px;">镜</th><th style="width:72px;">时间轴</th><th style="width:76px;">段落</th><th>口播文案</th><th>画面（自绘 / 自生成）</th><th style="width:150px;">屏幕文字 / 字幕</th><th style="width:160px;">音效 / BGM</th></tr>
+  <tr>
+    <td><span class="shot-no">1</span></td>
+    <td>0–10s</td>
+    <td>钩子</td>
+    <td class="vo">一个只学过一位数加法的孩子，能把一百位的数加起来。可一个语言模型，句子长一点，就崩了。为什么？</td>
+    <td>①左边：小孩在纸上写 7+8，镜头一拉远，纸上出现一长串一百位数字，他照样往下算；②右边：对话框里短句被逐字拉长，模型输出变成乱码（自绘矢量，不用论文原图）；③两边中间浮出大问号。</td>
+    <td>人：越用越会<br>模型：越长越崩<br><b>为什么？</b></td>
+    <td>铅笔「沙沙」两下；右侧乱码配轻微电流噪声；BGM 极低起</td>
+  </tr>
+  <tr>
+    <td><span class="shot-no">2</span></td>
+    <td>10–30s</td>
+    <td>问题</td>
+    <td class="vo">作者说，差别在决策那一刻：它到底在读什么。位置、计数、时间，这些数字会随着输入变长，不断变成新的值。一旦碰上训练时没见过的值，它就只能瞎猜。</td>
+    <td>①一个「决策点」特写：输入一串符号，箭头分出两个读数框；②左框写「第 37 个」，数字随输入增长不断跳动、越界变红；③右框写「这两个一样吗？→ 是 / 否」，答案永远只有两种；④越界瞬间画面抖一下。</td>
+    <td>读<b>坐标</b>：位置 / 计数 / 时间<br>→ 越长，越是没见过的值<br>读<b>巧合</b>：一样？不一样？</td>
+    <td>数字跳动「嗒嗒」加速；越界「嗡」一声；BGM 停半拍留白</td>
+  </tr>
+  <tr>
+    <td><span class="shot-no">3</span></td>
+    <td>30–80s</td>
+    <td>方法</td>
+    <td class="vo">但有一类信息不一样：两个东西是不是同一个，答案在哪个长度上都一样。只读这种「一样不一样」，就永远碰不到没学过的东西。更妙的是，这样并不损失算力——它能算的，正好是计算机一步步算得出的那些事。于是记忆只需要管一件事：记住输入有多长。推论很硬：这段记忆从任何位置看都必须一样，它只能是一圈一圈的格子。这正是大鼠大脑里的网格细胞；检测「回到原地」的细胞叫位置细胞，记下经历的是海马。</td>
+    <td>①左右对照：左边「一样吗」问句在长度 5、50、500 时答案始终不变（绿色恒定）；右边「第几个」的数字一路飙红；②画面切到「记忆」示意：一个不断变长的磁带，被压成一个短指针；③俯视一个圆形跑道，一个人在格子上绕圈，绕到某格时亮一下（自绘网格细胞）；④三张小图并列标「网格细胞 / 位置细胞 / 海马」，右下角小字「神经科学对应为作者解释性映射」。</td>
+    <td>只读「一样不一样」<br>→ 不损失算力<br>记忆只记「有多长」<br>⇒ 只能是一圈圈的格子<br>＝<b>网格细胞</b></td>
+    <td>恒定答案处「叮」（每次相同音高）；磁带压缩「嘶」；绕圈脚步「嗒、嗒、嗒」匀速；BGM 中段渐入</td>
+  </tr>
+  <tr>
+    <td><span class="shot-no">4</span></td>
+    <td>80–105s</td>
+    <td>结果</td>
+    <td class="vo">在四十个符号以内训练之后，十五个任务里有九个，到四十一到五百的长度上还有九成九以上的正确率；其中五个任务，循环网络和 Transformer 一个都解不出。给它新的格子，它能把一万五千零一十五个符号倒背出来。</td>
+    <td>①一张成绩表逐行点亮：15 行里 9 行打勾（标「≥99%」），其余 6 行打叉（标「未成功」）；②旁边两根小柱：LSTM / Transformer 在这 5 个任务上是 0（自绘，标「作者自报」）；③画面切到一长条符号串快速反向排列，计数器一路滚到 15,015，随后在「15,016」处第一次报错（对应论文的失败曲线）。</td>
+    <td>15 个任务 → <b>9 个 ≥99%</b><br>长度 <b>41–500</b><br>反转 <b>15,015</b> 个符号<br>（第 15,016 个首次失败）</td>
+    <td>勾选「叮」×9、叉号「噗」×6；计数器滚轮「咔咔」；首次报错「咔」一声停住；BGM 抬 2 dB</td>
+  </tr>
+  <tr>
+    <td><span class="shot-no">5</span></td>
+    <td>105–120s</td>
+    <td>意义 / 展望</td>
+    <td class="vo">当然，它只在符号任务上验证过，四十五次里有十五次没成功。但那句反直觉的话值得记住：要举一反三，也许不是记住更多，而是只记该记的一点点。</td>
+    <td>①画面退回开头的孩子与那段乱码，两者并排；②孩子那边亮起一圈格子，乱码那边仍是长句；③屏幕中央出现一行字，随后淡出；④结尾定格在论文标题与 arXiv 号（自绘版式，不用论文原图）。</td>
+    <td>不是记更多<br>而是只记该记的那一点点<br><i>How Finite Brains Generalize Without Bound</i><br>arXiv:2611.07920</td>
+    <td>BGM 收到只剩一个持续音；结尾「叮」一次；静音 0.5s 后结束</td>
+  </tr>
+
+</table>
+<h2 class="sec">📏 口播与节奏（脚本实测）</h2>
+<div class="card">
+  <table>
+    <tr><th>镜</th><th>时间轴</th><th>段落</th><th>纯汉字数</th><th>语速（字/分）</th><th>备注</th></tr>
+    <tr><td>1</td><td>0–10s</td><td>钩子</td><td>41</td><td>246</td><td>语速偏快，靠「为什么？」处停顿拉节奏</td></tr>
+    <tr><td>2</td><td>10–30s</td><td>问题</td><td>60</td><td>180</td><td>正好，配合数字跳动</td></tr>
+    <tr><td>3</td><td>30–80s</td><td>方法</td><td>166</td><td>199</td><td>最重的一段，画面需分 4 小节跟住</td></tr>
+    <tr><td>4</td><td>80–105s</td><td>结果</td><td>84</td><td>202</td><td>数字多，念到「十五千零一十五」时放慢</td></tr>
+    <tr><td>5</td><td>105–120s</td><td>意义 / 展望</td><td>59</td><td>236</td><td>偏快；成片时可延到 122–125s 收尾</td></tr>
+    <tr><td colspan="3"><b>合计</b></td><td><b>411</b></td><td><b>≈205（总 120s）</b></td><td>在 350–450 字 / 180–220 字/分区间内</td></tr>
+  </table>
+  <div class="note" style="margin-top:10px;">实测方式：脚本内 <code>&lt;td class="vo"&gt;</code> 文本按 Unicode 汉字区间 <code>[\u4e00-\u9fff]</code> 计数（不含标点、数字、英文），可用同法复核。</div>
+</div>
+
+<h2 class="sec">🧭 制作与合规说明</h2>
+<div class="card">
+  <div class="row"><div class="k">画面来源</div><div class="v">全部<b>自绘 / 自生成</b>（矢量示意、柱状图、圆形跑道动画的俯视示意）。<b>不使用论文原图</b>；论文里的图（如螺旋 / 网格示意）只作为理解参考，不复刻其像素。</div></div>
+  <div class="row"><div class="k">数字出处</div><div class="v">均来自论文摘要与正文：<b>≤40 符号训练</b>、<b>15 任务中 9 个在长度 41–500 上 ≥99%</b>、<b>5 个任务 LSTM/Transformer 全败</b>、<b>零错反转 15,015 符号</b>、<b>45 次运行 23 首成功 / 7 重试 / 15 全败</b>、<b>训练 12,000 步、批量 32、长度 1–40 均匀采样</b>。本线已落地 PDF（57 页 / 227,575 字符）并逐条回查。</div></div>
+  <div class="row"><div class="k">不夸大（红线）</div><div class="v">口播里<b>不出现</b>「SOTA / 颠覆 / 突破 / 通用智能已解决」；「泛化到任意长度」严格限定在<b>论文的离散符号任务</b>范围内，并在镜 5 明说「只在符号任务上验证过、45 次里 15 次没成功」。<b>神经科学对应（网格细胞 / 位置细胞 / 海马）在画面上标注为「作者的解释性映射」，不是实测结论。</b></div></div>
+  <div class="row"><div class="k">标注</div><div class="v">成片与简介须写明「<b>论文解读 · 非官方 · 非结论</b>」，并在简介给出原题（英文照抄）+ 作者 / 机构 + <a href="https://arxiv.org/abs/2611.07920">arXiv abs 链接</a>。</div></div>
+  <div class="row"><div class="k">平台 / 栏目</div><div class="v">栏目名由本线自起（避免与已有「两分钟论文」频道混淆）；发布由用户本人执行（B站 / 抖音账号与实名在用户侧）。</div></div>
+</div>
+
+<h2 class="sec">⚠️ 边界与后续</h2>
+<div class="card" style="font-size:13.5px;">
+  <ul>
+    <li><b>规模边界</b>：论文全部实验是<b>小规模离散符号任务</b>（12,000 步 / 批量 32 / 训练长度 1–40），未在自然语言或 2B 级预训练上验证 —— 做视频时<b>不能</b>说成「大模型长度外推已被解决」。</li>
+    <li><b>成功率边界</b>：45 次基准运行中 <b>23 次首次成功、7 次重试后成功、15 次始终未成功</b>（即那 5 个任务上本方法也全灭）。镜 4 已用「9 打勾 / 6 打叉」如实呈现。</li>
+    <li><b>解释性边界</b>：与网格细胞 / 位置细胞 / 海马的对应是<b>作者的理论映射</b>；本文不是神经科学实验论文。</li>
+    <li><b>V3 未启动</b>：本页仅到分镜脚本（V1/V2 阶段）；真正生成视频（TTS / 文生图 / 剪辑）需先确认工具链，<b>未获确认不擅自生成或发布成片</b>。</li>
+    <li><b>来源声明</b>：一切数字<b>作者自报、本线未复现</b>；如需引用请以 <a href="https://arxiv.org/abs/2611.07920">arXiv:2611.07920</a> 原文为准。</li>
+  </ul>
+</div>
+
+<footer>
+  research 线 · 《论文两分钟》分镜脚本 <code>research/video/SCENES/11_08.html</code> · 2026-11-08（CST）· 当日 TOP-1 = <code>2611.07920</code>（本日科普 TOP-1）·
+  口播实测 <b>411</b> 汉字 ≈ 120s · 自包含单文件（内联 CSS · 零 <code>&lt;script&gt;</code> · 离线可开）· 索引 <code>SCENES/index.html</code>
+</footer>
+</div>
+</body>
+</html>

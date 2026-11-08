@@ -2145,3 +2145,18 @@ python3 research/arxiv_fetch.py --query 'cat:cs.CL AND abs:"agent"' --max-result
 - **台账**：`SEEN.md` 5,640 → **5,643 行**（+3「收录」）⇒ **收录 319 / 候选 4,558 / 候选(RSS)507**；`papers.jsonl` 316 → **319**（`raw/update_r139.py`，幂等断言：每 ID 恰好 1 行、`published` 前缀 `2026-11-05`）。
 - **出口**：🚫 不发日报邮件（2026-11-07 10:50 用户令）。
 - **下一轮（2026-11-08 18:00 周日 PM）**：① 复验批次（周一 11-09 美东公告前应仍未刷新）；② 从余 **295** 条候选池按「科普」口径补 2 篇（备选：`2611.07595` Evolver / `2611.07859` CORE / `2611.07461` / `2611.07307` / `2611.07372`）；③ 日报 3/5 → 5/5 + `晚报变更说明（AM → PM）` + 分镜 `video/SCENES/11_08.html`（当日科普 TOP-1）。
+
+### §9.140 第一百四十轮（2026-11-08 18:00 PM · 晚 2「科普」+ 5/5 收口 + 分镜 11_08）
+
+- **批次探针 4/4**（`raw/verify_r140.py` → `raw/2026-11-08-pm-verify-r140.txt`；`submittedDate` 区间顺延 `202611070000 TO 202611112359`；间隔 6s / 第 ④ 条 20s；全 `200` + `application/atom+xml; charset=utf-8` + `attempts=1`）：① `cat:cs.CL` lastUpdated 总 **124,790**、最新 `2026-11-05T18:58:17Z`（`2611.08478v1`，与 AM 逐项相同）；② `cat:cs.CL AND submittedDate:[20261107…]` **total=0**；③ 全库同区间 **total=0**；④ 广度 5 分类 **643,965**（同 AM）。⇒ **仍未刷新（`2026-11-05`）**：本地 18:00 = 美东 11-08 05:00（周日），arXiv 周日不公告。
+- **取数策略**：批次未刷新 ⇒ **不重跑 5 分类取数**（复用 AM `raw/2026-11-08-am-candidates-r139.json`：合并 305 / 去重 7 / FRESH **298**，扣掉早报 3 篇 ⇒ 余 **295**），只跑 `id_list` 权威复核。
+- **`id_list` 4/4**：`raw/2026-11-08-pm-idlist-r140a.xml`（HTTP 200 / `application/atom+xml` / **11,385 B / 1.55s**）；入选 `2611.07920` / `2611.08469`，备选 `2611.07891` / `2611.08085`（均 `published` 前缀 `2026-11-05`，断言过）。
+- **晚 2「科普」**：
+  - `2611.07920` **How Finite Brains Generalize Without Bound: Spatial Memory as a Universal Computer**（cs.AI，Peking University，2 位；`published=2026-11-05T12:30:06Z`；距唤醒 ≈69.5h；读坐标 vs 读巧合；15 任务 9 个 ≥99%（长度 41–500）、5 个任务 LSTM/Transformer 全败、零错反转 15,015 符号、45 次运行 23/7/15；57 页 / 227,575 字符）→ **本日科普 TOP-1**（分镜 `video/SCENES/11_08.html`）
+  - `2611.08469` **Same Behavior, Different Mechanism: What Finite Experiments Can Certify About Integrated Information**（cs.LG，Waterloo + Perimeter + Debrecen，2 位；`published=2026-11-05T18:55:31Z`；距唤醒 ≈63.1h；φ 0.28 vs 0 bit / 4–53 次内部分辨 / 精度地板 0.30–1.02 bit / 跨边界 25–100%（99% 边）/ 1% 替代模型误报 >20% / 单侧证书 φ>1.004 bit @64 维、约 10^7 次转移；30 页 / 92,173 字符）
+  - **备选未选**：`2611.07891` When Bigger Becomes Brittle（越大越脆，传播力强但两分钟讲不清「损伤 vs 补偿」且无公开关键数字）、`2611.08085` 语言边界压力动力学（大众门槛高）、`2611.08262` 模拟视角几何、`2611.07867` PlayGen2。
+- **PDF 2/2**（`raw/pdf_range_resume_r140.py`，8 段 Range + 续传，固定 `151.101.67.42`）：`2611.07920` **1,229,651 B / 57 页 / 227,575 字符**、`2611.08469` **1,204,455 B / 30 页 / 92,173 字符**；**首轮 8 段全 OK、零超时零续传**；sha256 `24dbd875…cabb76` / `da690e01…90cfac`；`etag_match=False`（base64 口径不可比，非校验失败）。当日 5 篇合计 **3,695,598 B ≈ 3.52 MiB**，`pdf/` 不入 git。
+- **交付**：`daily/2026-11-08.html` **3/5 → 5/5**（**70,990 B**；5 卡；建议节 = 表 A（AM 9 条）+ 表 B（PM 12 条）= **21 条 / 6 线齐全**；PM 让 **vision 从「无」变「有 1 条」**；附录 A 两张探针表 / B AM+PM 选文 / C PDF 5/5 / D 台账；`晚报变更说明（AM → PM）` 9 条；div 110/110、table 9/9、tr 45/45、0 `<script>`、外链 5 条 abs）+ `daily/index.html`（11-08 行 → 晚报 5/5）+ `video/SCENES/11_08.html`（16,830 B；5 镜 / 120s；口播 **411** 汉字；div 39/39、0 `<script>`、外链 3 条 abs）+ `SCENES/index.html`。
+- **台账**：`SEEN.md` 5,643 → **5,645 行**（+2「收录」）⇒ **收录 321 / 候选 4,558 / 候选(RSS)507**；`papers.jsonl` 319 → **321**（`raw/update_r140.py`；幂等断言：每 ID 恰好 1 行、`published` 前缀 `2026-11-05`）。
+- **出口**：🚫 未发任何日报邮件（2026-11-07 10:50 用户令：唯一出口 = `daily/<date>.html` + `daily/index.html`）。
+- **下一轮（2026-11-09 06:00 周一 AM）**：批次预计推进到 `2026-11-06`（周一美东 09:00 公告）；早 3「借鉴」从余 **293** 条 + 新批次选；PDF 3/3；新建 `daily/2026-11-09.html`（3/5）。
