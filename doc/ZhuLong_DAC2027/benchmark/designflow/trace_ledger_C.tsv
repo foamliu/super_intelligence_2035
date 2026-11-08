@@ -409,3 +409,7 @@
 1793607379592_t4gfl	joyc	hfeg0pkn005	270	physical_verify	case	EDA-Eval-DesignFlow-SaqpIntAngleEqSplit-001	2026-11-08 16:27	
 1793776902021_xvnac	laryu	hfeg0pkn001	139	physical_verify	case	EDA-Eval-DesignFlow-VssPunchRuleGen-001	2026-11-08 17:05	
 1791963569790_794ce	lipingy	hfeg0pkn003	179	physical_verify	case	EDA-Eval-DesignFlow-RectAspectRuleCheck-001	2026-11-08 17:52	
+1793167986392_7bqnr	oshen	hfeg0plg36	125	pg_layout	claimed		2026-11-08 18:02	
+1789894067947_9lbfz	iceyma	hfeg0pkn005	46	physical_verify	parked		2026-11-08 18:07	code-comprehension: user asks '解析PVPRO.main脚本+优化建议', gold=prose analysis report of pvpro.main(Python)+runlpe(Perl), no runnable deliverable, violates §4.2 subprocess-on-B; 192cal kw from reading calibre code not running
+1792476910654_1m39e	e0042624	hfeg0pkn001	49	physical_verify	parked		2026-11-08 18:09	env-recon/onboarding: user slash-command /anasimpro-gui-start (auto-injected), agent only list_allowed_files/search_codebase investigating what command does, ends ask_question 'no matching skill', status=cancelled, no deliverable; 55cal+48pyAether+46virt kw from reading config not running
+1790067683167_wo5tr					case	EDA-Eval-DesignFlow-LefFromPinList-001	2026-11-08 18:26	
