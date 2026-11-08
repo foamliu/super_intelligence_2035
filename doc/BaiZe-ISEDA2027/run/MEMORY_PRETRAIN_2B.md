@@ -1,7 +1,10 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 0
 
-> 2026-11-08 17:52 #1702: **v5 eval 监控轮(~38min)·全11路健康·0/11完成·openbookqa 56%最近ETA~30min·sciq 45% ETA~46min**·**动作**:① v5 eval(修复版二进制MD5=f95ac952,iter_112000)11/11 server+client健康(0 error),0/11完成,进度@38min:openbookqa 1115/2000(56%,ETA~30min最先)·boolq 3025/6540(46%,ETA~44min)·sciq 1804/4000(45%,ETA~46min)·winogrande 991/2534(39%,ETA~59min)·arc_challenge 860/4687(18%,ETA~2.8h)·arc_easy 1165/9501(12%,ETA~4.5h)·piqa 143/3676(4%,ETA~5.5h极慢5.9s/it)·hellaswag 4shard 47-309/10044(0-3%,ETA~35h极慢)② 无任务完成→无法kill server或收集分数③ **运维令(11-08 15:3x)6项已全部交付**(同#1701):异常报告15.5KB结论A+speedup报告15.8KB④ S1健康:8 GPU 53-100%,iter~128000/700k,ckpt iter_128000@14:35⑤ **计划**:下次唤醒①查openbookqa/sciq/boolq是否完成→收集首批v5正确分数(预期sciq~0.88验证结论A)②kill已完成任务server(端口8184/8186/8183)释放带宽加速piqa/hellaswag·📦TASK=31.2KB✓/MEMORY=31.1KB✓(归档0.7KB→daily #1700+#1701)·未完成指令:有(v5 eval运行中,待出结果)⇒WAITING:0。
+> 2026-11-08 18:12 #1703: **v5 eval优化轮(~46min)·杀4 hellaswag shard释放带宽·7非HS任务加速·运维令6项已交付**·**动作**:① v5 eval(修复版二进制MD5=f95ac952,iter_112000)@46min进度:openbookqa 62%ETA~19min·boolq 58%ETA~26min·sciq 56%ETA~47min·winogrande 48%ETA~1h·arc_challenge 24%ETA~1h·arc_easy 16%ETA~2.5h·piqa 4%ETA~18h(带宽争抢)② hellaswag 4 shard极慢(chunk3 114.9s/it ETA 319h!)→**杀掉全部4 hellaswag client+server(端口8188-8191,仅0-4%损失可忽略)**释放64核+4服务器带宽给7非HS任务③ 创建run_hellaswag_only.sh(待7任务完成后单独重启HS)④ 运维令(11-08 15:3x)6项已全部交付(#1696报告15.5KB结论A)⑤ S1健康:8 GPU 100%,iter~128000/700k⑥ **计划**:下次唤醒①查openbookqa/boolq/sciq是否完成→收集首批v5正确分数(预期sciq~0.88验证结论A)②若7非HS任务全完成→合并results.json+启动run_hellaswag_only.sh③更新异常报告补入v5正确分数·📦TASK=31.2KB✓/MEMORY=30.3KB✓(归档0)·未完成指令:有(v5 eval运行中,待出结果)⇒WAITING:0。
+
+> 📦 §#1702（11-08 17:52, v5 eval监控轮·全11路健康·0/11完成·openbookqa最近ETA~30min）→ daily-memories/2026-11-08.md「#1702」节；**结论**：v5 eval 11/11健康0/11完成,运维令6项异常报告+speedup报告均已交付。需要时再读。
+
 
 > 📦 §#1701（11-08 17:42, v5 eval监控轮·全11路健康·0/11完成·运维令6项报告均已交付）→ daily-memories/2026-11-08.md「#1701」节；**结论**：v5 eval 11/11健康0/11完成,运维令6项异常报告+speedup报告均已交付。需要时再读。
 > 📦 §#1700（11-08 17:33, v5 eval监控轮·全11路健康·0/11完成·小任务即将出首批结果）→ daily-memories/2026-11-08.md「#1700」节；**结论**：v5 eval 11/11健康0/11完成,带宽争抢piqa/hellaswag极慢,异常报告12节确认完整。需要时再读。
