@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>预训练全量评测均值异常诊断报告 (Avg7=37.40% vs 历史 51.5–57.9%) — 修订版 v4.1</title>
-<!-- v4.2: Latest progress@07:08: piqa 2548/3676(69%,6.76s/it,ETA~2.1h→~09:15)·hs_c0 7647/10044(76%,3.12s/it,ETA~2.1h→~09:15,~2h后触发chunk3 rebalance)·hs_c1 4337/10044(43%,13.94s/it,ETA~22h)·hs_c2 2187/10044(22%,28.46s/it,ETA~62h←bottleneck,rebalance watcher待piqa完成→迁8183 NUMA0降至~7s/it)·hs_c3 143/10036(1%,14.29s/it,ETA~39h,rebalance watcher待c0完成→迁8184 NUMA0降至~5s/it). 5s+5c全活(health=200×5). 6/8done Avg6(acc)=53.38%≈历史53.83%差-0.45pp. 结论A铁证(口径差异:旧二进制+全量vs限100). S1健康 iter_134000/700k 8xH100. rebalance后全8集完成ETA≈Nov10~01:00. -->
+<!-- v4.3: Latest progress@07:14: piqa 2578/3676(70%,~7-25s/it变,ETA~3h→~10:15)·hs_c0 7717/10044(77%,~2-8s/it,ETA~3h→~10:30,完成后触发chunk3 rebalance→8184 NUMA0)·hs_c1 4360/10044(43%,~9-23s/it,ETA~18-37h)·hs_c2 2210/10044(22%,~10-37s/it,ETA~28-56h,rebalance watcher PID130575待piqa完成→迁8183 NUMA0降至~5s/it)·hs_c3 160/10036(1.6%,~11-51s/it,ETA~50-140h,rebalance watcher PID1312093待c0完成→迁8184 NUMA0降至~5s/it). 5s+5c全活(health=200×5,ports 8183-8187). 2 rebalance watcher存活. 6/8done Avg6(acc)=53.38%≈历史53.83%差-0.45pp. 结论A铁证(口径差异:旧二进制+全量vs限100). S1健康 PID146283 iter_134000/700k 8xH100. rebalance后全8集完成ETA≈Nov10~01:00-07:00. -->
 <style>
 body{font-family:system-ui,sans-serif;max-width:1100px;margin:0 auto;padding:20px;line-height:1.6;color:#222;background:#fafafa}
 h1{color:#c0392b;border-bottom:3px solid #c0392b;padding-bottom:10px}
