@@ -1300,3 +1300,5 @@ tjzn5					parked		2026-11-07 12:29	env Q&A + skill-creator usage (#352 peek weak
 1791851758041_0d17g	xxchen	hfeg0pkn002	393	schematic_netlist	case	EDA-Eval-DesignFlow-AnalogCmpSchemBuild-001	2026-11-08 08:51	
 1786599247702_9cg75	e0014566	hfeg0pkn005	330	analog_context	case	EDA-Eval-DesignFlow-RsCalcRnodePlace-001	2026-11-08 09:46	
 1793169357173_woanw.messages.json	lorikx	hfeg0pkn001	108	waveform	case	EDA-Eval-DesignFlow-SimFailFsdbProbe-001	2026-11-08 10:24	
+1786712832784_odo3s.messages.json	e0014566	hfeg0pkn001	334	analog_context	case	EDA-Eval-DesignFlow-RsCalcCpSync-001	2026-11-08 10:57	
+1787318451519_5hrad.messages.json	e0014566	hfeg0pkn005	328	analog_context	claimed		2026-11-08 10:57	
