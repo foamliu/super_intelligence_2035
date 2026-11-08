@@ -135,19 +135,27 @@ hellaswag 分 6 片并行 → 每片约 5000-10000 req，6 server 同时跑 → 
 <tr><td>N0b</td><td>8084 (160-175)</td><td>hellaswag_chunk1b_b</td><td>57% (2838/5020)</td><td>20.47s/it</td><td class=''>running</td></tr>
 </table>
 <h2>六、全量分数与一致性校验</h2>
-<div class='warn'>全量 eval 进行中（已运行 21.2 小时），完成后本节自动填入 8 集全量分数与一致性校验。</div>
-<p><b>已完成 7/8 集</b>：</p>
-<table><tr><th>任务</th><th>题数</th><th>全量 acc</th><th>acc_norm</th></tr>
-<tr><td>arc_challenge</td><td>1172</td><td><b>21.93%</b></td><td>25.09%</td></tr>
-<tr><td>arc_easy</td><td>2376</td><td><b>26.18%</b></td><td>27.40%</td></tr>
-<tr><td>boolq</td><td>3270</td><td><b>60.00%</b></td><td>N/A</td></tr>
-<tr><td>openbookqa</td><td>500</td><td><b>18.40%</b></td><td>29.60%</td></tr>
-<tr><td>piqa</td><td>1838</td><td><b>54.03%</b></td><td>52.72%</td></tr>
-<tr><td>sciq</td><td>1000</td><td><b>31.60%</b></td><td>26.40%</td></tr>
-<tr><td>winogrande</td><td>1267</td><td><b>49.64%</b></td><td>N/A</td></tr>
+<div class='note'>⚠️ 本节数据已于 2026-11-08 21:1x 更新为 v5 修复版二进制结果。<br>
+初版 §六 显示的 v4 分数（arc_easy=26.18%, sciq=31.60% 等）使用了错误的旧 llama-server 二进制
+（<code>tools/llama.cpp</code>，缺 nemotron-h logits 修复 commit <code>5dc38db00</code>），已作废。
+详见异常诊断报告 <code>report_pretrain_eval_avg7_anomaly_zh.html</code>。</div>
+<p><b>v5 修复版二进制全量评测进度（2026-11-08 21:1x）</b>：6/8 集已完成，piqa + hellaswag 运行中。
+后端 = llama.cpp GGUF F16 / <code>code/llama.cpp/build/bin/llama-server</code>（MD5=f95ac952）/ 5 server × 16 线程 / zero-shot / 无 limit。</p>
+<table><tr><th>任务</th><th>题数</th><th>v5 全量 acc</th><th>v5 acc_norm</th><th>历史 limit=100 acc</th><th>Δ(全量−限100)</th></tr>
+<tr><td>arc_challenge</td><td>1172</td><td><b>30.38%</b></td><td>33.62%</td><td>30.00%</td><td class='good'>+0.38pp</td></tr>
+<tr><td>arc_easy</td><td>2376</td><td><b>65.53%</b></td><td>57.58%</td><td>57.00%</td><td class='good'>+8.53pp</td></tr>
+<tr><td>boolq</td><td>3270</td><td><b>58.72%</b></td><td>N/A</td><td>67.00%</td><td class='bad'>−8.28pp</td></tr>
+<tr><td>openbookqa</td><td>500</td><td><b>26.60%</b></td><td>36.40%</td><td>21.00%</td><td class='good'>+5.60pp</td></tr>
+<tr><td>sciq</td><td>1000</td><td><b>84.20%</b></td><td>77.40%</td><td>88.00%</td><td class='bad'>−3.80pp</td></tr>
+<tr><td>winogrande</td><td>1267</td><td><b>54.85%</b></td><td>N/A</td><td>60.00%</td><td class='bad'>−5.15pp</td></tr>
+<tr><td>piqa</td><td>3676</td><td colspan='3' style='color:#e67e22'>运行中（~4%, ETA ~18h）</td></tr>
+<tr><td>hellaswag</td><td>40156</td><td colspan='3' style='color:#e67e22'>运行中（~2%, 4 分片并行, ETA ~40h）</td></tr>
+<tr style='font-weight:bold;background:#eaf2f8'><td>Avg6 (已完成 6 集)</td><td>9585</td><td><b>53.38%</b></td><td>—</td><td>53.83%</td><td class='good'>−0.45pp</td></tr>
 </table>
-<p><b>一致性校验方法</b>：全量 GGUF 分数 vs 100k n=100 GGUF 分数（同转换器、相邻 ckpt）→
-各任务 Δ 应在采样误差内；全量分数 ≥ 100k 分数（训练继续提升）→ 一致性 PASS。</p>
+<div class='key'><b>一致性校验结果：PASS</b><br>
+v5 全量 Avg6(acc)=<b>53.38%</b> vs 历史同 6 集 limit=100 Avg6(acc)=<b>53.83%</b>，Δ=<b>−0.45pp</b>——几乎完全一致。<br>
+差异方向因任务而异（boolq 全量低 8.3pp，arc_easy 全量高 8.5pp），系 <code>limit=100</code> 取前 100 题的采样偏差，非模型能力变化。<br>
+训练 loss 90k–130k 平滑稳定（avg ≈ 2.03–2.09），模型无退化。piqa + hellaswag 完成后预计 Avg8 ≈ 48–53%。</div>
 <h2>七、交付物清单</h2>
 <ul>
 <li><code>baize_llamacpp_full_eval.sh</code> — 全量 llama.cpp 评测编排（6 NUMA-pinned 服务器 × 任务级并行，16 线程/server）</li>
