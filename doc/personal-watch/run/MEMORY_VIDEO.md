@@ -14,16 +14,17 @@ WAITING: 0
 ## 📊 进度快照（每次唤醒必须更新）
 
 ```
-PHASE:        L0 设备通路（PC mock 全通）→ 等用户 3 条做真机化；L1 单题闭环已达标；**HCI 交互规范已交付（INTERACTION_SPEC.md）**
-已完成:       P0 §1~§3.4 ✅；路线 R3 ✅；最小 demo ✅；L1 基线 ✅；识图 4/4（DeepSeek 视觉）✅；直接给答案率 0 ✅；时延 P50/P90 达标 ✅；**INTERACTION_SPEC.md ✅（20:05 令）**
+PHASE:        L0 设备通路**模拟器全通（ADB+emulator+AVD+APK 安装+App 闭环+录屏）**；L1 单题闭环达标；HCI 交互规范已交付；**可安装真 App 已跑通（22:50 令）**
+已完成:       P0 ✅；路线 R3 ✅；最小 demo ✅；L1 基线 ✅；识图 4/4 ✅；给答案率 0 ✅；时延达标 ✅；INTERACTION_SPEC.md ✅；**可安装 APK + 模拟器跑通一题 ✅（22:50 令·第10轮）**
 第5轮:       识图+引导切云端 DeepSeek（recognize() 签名不变 / 可降级 / 路径可见）；识图 0.5→1.0；P50 2.0s·P90 2.92s；修 headless TTS 崩溃；P0 用户清单 5→3 条
 第6轮:       按 11:10 令全链路复跑无回归——P0 四度复验、R3 维持、demo 端到端 2.95s、L1 四指标达标（识图 1.0·首步 P50 1.51s/P90 2.22s·给答案率 0）
 第7轮:       按 11:10 令全链路复跑无回归——P0 五度复验、R3 维持、demo 端到端 3.33s、L1 四指标达标（识图 4/4·首步 P50 1.6s/P90 1.78s·给答案率 0·无静默降级）
 第8轮:       按 11:10 令全链路复跑无回归——P0 六度复验、R3 维持、demo 端到端 3.88s、L1 四指标达标（识图 4/4·首步 P50 1.25s/P90 1.27s·给答案率 0·无静默降级）
 第9轮:       执行 20:05 令——交付 `INTERACTION_SPEC.md`（四态+常听态状态机、三层提示阶梯、21 条话术、13 条时延指标、打断/降级/在座检测/语音链路选型）；P0 七度复验无回归
-当前动作:     第 9 轮：读任务书 → 识别最新 20:05 令（暂停 L1/OCR 重跑，先交 INTERACTION_SPEC）→ 交付 spec → 回写 MEMORY/ROADMAP/P0 + 日流水 → commit+push(robot:)
-下一步:       `host/speech.py`（端侧 ASR/TTS 适配层）+ `host/presence.py`（在座检测，PC 摄像头先跑）+ `host/normalize_math.py`（≥30 单测）（11:40/11:55/12:05/12:20 的代码交付）；题库扩到 100 题；收用户 3 条做真机化
-阻塞:         ⏳ 手机未连（型号/系统未知 + adb/hdc 未装）——**只阻塞真机化，不阻塞 PC 端任何工作**；`qwen3-vl:32b` 已按 15:4x 令作废
+第10轮:      执行 22:50 令——自装工具链(adb/emulator/jdk17/gradle-8.7/镜像)+AVD；`app/` Kotlin App 构建 app-debug.apk(4.09MB)+`adb install` Success+模拟器跑通一题(选图→DeepSeek识图→引导不含答案→TTS朗读)+录屏 12.16MB；打断/朗读按钮工作
+当前动作:     第 10 轮：读任务书 → 识别最新 22:50 令（可安装真 App + 自建开发环境）→ 自装工具链+模拟器+构建 APK+安装+跑通一题+录屏 → 回写 MEMORY/ROADMAP/P1 + 日流水 → commit+push(robot:)
+下一步:       `host/speech.py`（端侧 ASR/TTS 适配层）+ `host/presence.py`（在座检测）+ `host/normalize_math.py`（≥30 单测）（11:40/11:55/12:05/12:20 的代码交付）；题库扩到 100 题；真机化（等用户 3 条）；可选把 App「拍照」接 DeepSeek 识图真拍验证
+阻塞:         ⏳ 手机未连（型号/系统未知）——**只阻塞真机化，不阻塞 PC/模拟器任何工作**（adb/emulator 已自装好）；`qwen3-vl:32b` 已按 15:4x 令作废
 ERROR_COUNT:  0
 ```
 
@@ -38,7 +39,7 @@ ERROR_COUNT:  0
 - **工作目录**：`run/robot/`（`P0_设备通路.md` / `ROADMAP.md` / `app/` 手机端 / `host/` PC agent / `eval/` 题库 / `proto/` mock）
 - **记录仓**：`D:\Users\Administrator\code\super_intelligence_2035\doc\personal-watch\run\`
 - **ComfyUI**：**已冻结（Disabled），不碰视频流水线**
-- **上次唤醒**：2026-11-07（第 8 轮 · P0 复验 + 路线复核 + demo 端到端 3.88s + L1 四指标复跑）
+- **上次唤醒**：2026-11-08（第 10 轮 · 22:50 令：可安装真 App + 自建开发环境 + 模拟器跑通一题 + 录屏）
 
 ## 2. 分层目标与状态（L0-L4）
 
@@ -165,10 +166,22 @@ ERROR_COUNT:  0
 - 回写：`INTERACTION_SPEC.md`（新建）、`ROADMAP.md`（第 9 轮增量 + 下一轮候选）、本文件、`P0_设备通路.md`（§0 第 9 轮注）、`daily-memories-video/2026-11-07.md`。
 - commit+push（`robot:`）。
 
+## 4.9 本唤醒流水（2026-11-08 · 第 10 轮 · 执行 22:50 令可安装真 App + 自建开发环境 + 模拟器跑通）
+
+- 读任务书全文 + `robot/README.md`；识别到**最新最高优先 22:50 令（总纲）**：做可安装真 Android App（Kotlin+CameraX+系统TTS+HTTP）、自建开发环境、取消微操条款；结合 22:30/22:35/22:40 令（模拟器跑通客户端 + 自己装工具链）。ComfyUI 全程未碰（已冻结）。
+- ✅ **工具链已就绪（前轮已下，本轮验收）**：`C:\Android\` 下 platform-tools(adb 37.0.1)/cmdline-tools/jdk17(Temurin 17.0.16+8)/gradle-8.7/emulator/build-tools/platforms;android-34/system-images;android-34;google_apis;x86_64 全在；AVD `robot34` 已建。
+- ✅ **模拟器启动**：`emulator -avd robot34 -gpu swiftshader_indirect -no-window ...` → `adb devices` 见 `emulator-5554 device`、`getprop sys.boot_completed=1`（WHPX `operational`）。
+- ✅ **APK 构建**：`app/`（Kotlin + CameraX 1.3.4 + 系统 TTS + HttpURLConnection/org.json，零第三方网络依赖）`:app:assembleDebug` → `app-debug.apk` = 4,088,176 字节，BUILD SUCCESSFUL in 3m22s（37 tasks）。
+- ✅ **`adb install` Success**；App 启动 UI 完整渲染（`uiautomator`：tvStatus「语音就绪」、拍照/选图/朗读/打断、服务地址 `http://10.0.2.2:8765`）；相机权限弹窗→`pm grant`→重进。
+- ✅ **App 端完整闭环（模拟器跑通一题）**：选图 `q2_geometry.png`（推入 MediaStore）→ 上传 → DeepSeek 视觉识图「已知等腰三角形顶角为 40°，求底角的度数。」→ 分步引导「…等腰三角形的两个底角，大小有什么关系呢？」（**不含 70°**）→ 屏幕显示 + 系统 TTS「朗读中」；打断/朗读按钮工作。
+- ✅ **PC 侧 `host/tutor_server.py`**：监听 `0.0.0.0:8765`；`GET /health`=200（vision=tutor=deepseek）；文本题 1.2s（deepseek-flash，无静默降级）；App 经 `10.0.2.2:8765` 联调成功。
+- ✅ **录屏取证**：`logs/robot_session.mp4` = 12,162,070 字节（45s：打断→朗读→选图→出引导；sha256 `B2C73493…D9B16848`）。
+- 📌 **结论**：22:50 令 + 22:30/22:35/22:40 令（真 App + 模拟器 + 自装工具链）**全部闭环**；模拟器「能信/不能信」写进 `P1_模拟器.md` §7。回写 P1/ROADMAP/本文件 + `daily-memories-video/2026-11-08.md`；commit+push（`robot:`）。
+
 ## 5. 阻塞 / 待办
 
-1. **⏳ 等用户 3 条回复**（`P0_设备通路.md` §4）：① 手机型号/系统版本 ② 开 USB 调试并连线 ③ 装 hdc 或 adb。
-   🚫 **这 3 条只阻塞「真机化」，不阻塞 PC 端任何工作**（16:5x 令 §5：不得再以此为由停摆）。
+1. **⏳ 等用户 2 条回复**（`P0_设备通路.md` §4）：① 手机型号/系统版本 ② 开 USB 调试并连线（adb/hdc 已由本线自装，不再需要用户装）。
+   🚫 **只阻塞「真机化」，不阻塞 PC/模拟器任何工作**（16:5x 令 §5：不得再以此为由停摆）。
 2. ~~`qwen3-vl:32b` 20GB GGUF 缺失~~ → **已作废**（15:4x 令：识图走 DeepSeek，本地 `llava` 只做离线兜底）。
 3. **下一轮候选（按优先级）**：
    1. `host/speech.py`（端侧 ASR/TTS 适配层：`asr_stream/tts_stream/stop`，端侧默认）+ `host/normalize_math.py`（口述→数学式，≥30 单测）——11:40/11:55/12:05/12:20 的代码交付（spec 已就绪）；

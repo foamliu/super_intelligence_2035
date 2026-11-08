@@ -1,0 +1,9 @@
+# Android 构建产物不入 git
+build/
+.gradle/
+app/build/
+local.properties
+*.iml
+.idea/
+captures/
+.DS_Store

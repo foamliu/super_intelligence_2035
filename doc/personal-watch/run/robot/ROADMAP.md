@@ -5,7 +5,7 @@
 
 | 层 | 目标 | 判据 | 状态 |
 |:--|:--|:--|:--|
-| L0 设备通路 | 手机与开发机连通：装包/截屏/拍照/出声 | 各一条命令拿到真实产物 | 🟡 PC mock 全通（识图/引导/TTS 真产物）；真机待用户 3 条（P0 §4） |
+| L0 设备通路 | 手机与开发机连通：装包/截屏/拍照/出声 | 各一条命令拿到真实产物 | 🟢 **模拟器全通**（ADB+emulator+AVD+APK 安装+App 闭环+录屏，第10轮）；真机仍待用户 3 条（P0 §4） |
 | L1 单题闭环 | 拍题 → 识图 → 结构化 → LLM 分步引导 → TTS | 20 题 ≥15 题识别正确，引导不含答案 | 🟢 4/4 识图正确（DeepSeek）、P50 2.0s/P90 2.92s、直接给答案率 0；**题库仍是 4 题，待扩到 100 题** |
 | L2 智能体 | 工具调用：题库/错题本/计算器/绘图/家长报告；多轮不丢上下文 | 5 工具可调，3 轮追问一致 | ⬜ 仅验过 2 轮一问一答（不丢上下文、不泄答案） |
 | L3 学情 | 错题本 + 知识点画像 + 每日/每周摘要，本地存储 | 数据落本地，可导出 HTML | ⬜ |
@@ -84,6 +84,17 @@
 - ✅ **`INTERACTION_SPEC.md` 交付（20:05 令本轮唯一交付）**：四态状态机 + 常听 `ambient` + 异常态（`clarify`/`encourage`/`presence`/`idle`/`muted`），状态机 2 图（ASCII 29 行 + mermaid 17 行）+ 状态表 10 行；三层提示阶梯 L1/L2/L3（禁跳级、禁给答案）；**话术模板 21 条**；**时延指标 13 条**（P50≤2.5s/P90≤4s/打断≤300ms/静默 6s→10s 等）；打断协议、静默/超时/降级矩阵、在座检测（presence）、语音链路端侧定稿。
 - ✅ **P0 七度复验（真实命令）**：`adb`/`hdc` 仍未装（`Get-Command` 均 `$null`）、`ANDROID_HOME` 空、USB `VID` 无华为 `12D1`（仅 `30FA`/`046D`/`1A2C`/`8087`）——与第 8 轮一致、无回归。
 - 📌 **结论**：HCI 规范的「设计/口径」已定稿；代码（speech.py/presence.py/normalize_math.py）与实测验收留待下一轮，本轮不谎称已测。11:10 令（P0→路线→demo）维持闭环，不再重复复跑。
+
+## 第 10 轮增量（2026-11-08 · 执行 22:50 令：可安装真 App + 自建开发环境 + 模拟器跑通）
+
+- ✅ **自建开发环境落地（真实命令）**：`C:\Android\` 下 `platform-tools`(adb 37.0.1) + `cmdline-tools` + `jdk17`(Temurin 17.0.16+8) + `gradle-8.7` + `emulator` + `build-tools` + `platforms;android-34` + `system-images;android-34;google_apis;x86_64` 全在；AVD `robot34` 已建（`emulator -list-avds` → `robot34`）。
+- ✅ **模拟器启动 + 验收**：`emulator -avd robot34 -gpu swiftshader_indirect -no-window ...` → `adb devices` 见 `emulator-5554 device`，`getprop sys.boot_completed=1`（WHPX 硬件加速 `operational`）。
+- ✅ **APK 构建**：`app/`（Kotlin + CameraX + 系统 TTS + HttpURLConnection，零第三方网络依赖）`:app:assembleDebug` → `app-debug.apk` = 4,088,176 字节，BUILD SUCCESSFUL in 3m22s。
+- ✅ **`adb install` Success** + App 启动 UI 完整渲染（`uiautomator` 见 tvStatus「语音就绪」/ 拍照/选图/朗读/打断 / 服务地址 `http://10.0.2.2:8765`）。
+- ✅ **App 端完整闭环（模拟器内跑通一题）**：选图 `q2_geometry.png` → 上传 → DeepSeek 视觉识图「已知等腰三角形顶角为 40°，求底角的度数。」→ 分步引导「…等腰三角形的两个底角，大小有什么关系呢？」（**不含 70°**）→ 屏幕显示 + 系统 TTS「朗读中」。打断/朗读按钮工作。
+- ✅ **录屏取证**：`logs/robot_session.mp4` = 12,162,070 字节（45s；打断→朗读→选图→出引导）。
+- ✅ **PC 侧 `/tutor` 服务**：`host/tutor_server.py` 监听 `0.0.0.0:8765`；`/health`=200；文本题 1.2s（deepseek-flash，无静默降级）；App 经 `10.0.2.2:8765` 联调成功。
+- 📌 **结论**：22:50 令（可安装真 App）+ 22:30/22:35/22:40 令（模拟器跑通客户端 + 自装工具链）**全部闭环**；模拟器「能信/不能信」已写入 `P1_模拟器.md` §7。
 
 ## 下一轮候选（按优先级）
 
