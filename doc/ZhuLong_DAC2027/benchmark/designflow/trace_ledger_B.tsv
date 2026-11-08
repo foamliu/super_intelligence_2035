@@ -503,7 +503,7 @@ qnm9e					parked		2026-11-08 01:58	Finesim DC convergence Q&A prose dup of uky6c
 1793324531319_9o809	e0047722	hfeg0pkn001	45	spice_sim	parked		2026-11-08 21:5x	aether launch (启动Aether/launch_aether), wrong-shard; REJECT
 1792489769571_ch2cw	johnl	hfeg0pkn001	42	spice_sim	parked		2026-11-08 21:5x	env probing (ls/id/proj-link), not task; REJECT
 1793952218730_ph95k	e0017832	hfeg0pkn001	41	spice_sim	parked		2026-11-08 21:5x	aether launch (打开aether/aether_v2), wrong-shard; REJECT
-1793623698314_n7w6c	yuyingc	hfeg0pkn001	37	spice_sim	parked		2026-11-08 21:5x	FineSim cmos_spf vs cmos_array_spf senb.sp diff debug, U#=diff cmd; 暂缓 archive 待查
+1793623698314_n7w6c	yuyingc	hfeg0pkn001	37	spice_sim	case	EDA-Eval-DesignFlow-SaCoreMosLocate-001	2026-11-08 22:54	FineSim SA sense-amp core MOS locator (yuyingc n7w6c U#38); A-faithful L1 k=15; archived=CLEAN
 1793083455289_1ujhs	yuyingc	hfeg0pkn001	36	spice_sim	parked		2026-11-08 21:5x	ssh between machines networking, wrong-domain; REJECT
 1792399916731_00i9f	alan3zh	hfeg0pkn001	35	spice_sim	parked		2026-11-08 21:5x	APR innovus power.globals, wrong-shard; REJECT
 1793794507428_dus4q	e0047527	hfeg0pkn005	33	spice_sim	parked		2026-11-08 21:5x	env probing (EMPYREAN_HOME/which aether), not task; REJECT
