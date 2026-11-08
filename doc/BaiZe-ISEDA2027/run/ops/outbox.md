@@ -26072,3 +26072,122 @@ echo "=== DONE 247 | $(hostname) ==="
   2026-11-08 12:18    9079272 /tmp/gw_proxy_dsh_glm53_full500.log
 === DONE 247 | whag0pgpuap29 ===
 ```
+
+---
+
+## RUN_ID 249 · 2026-11-08 12:23:45 · host=`whag0pgpuap12` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 249 | dispatch A/B to .29 via ssh from .12 | $(date '+%F %T') | host=$(hostname) ==="
+SSH="ssh -o BatchMode=yes -o ConnectTimeout=6 -o StrictHostKeyChecking=no"
+if $SSH 10.239.2.29 'hostname' >/dev/null 2>&1; then
+  echo "[ssh .29] OK"
+  $SSH 10.239.2.29 'hostname; echo "-- relay proc --"; pgrep -af "ops_relay_v2.sh" | cut -c1-140; echo "-- relay log tail --"; tail -6 /tmp/baize_ops_relay.29.log 2>/dev/null; echo "-- state --"; cat /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/ops/.last_run_id.29 2>/dev/null'
+  echo
+  echo "[deploy freeze script to .29]"
+  $SSH 10.239.2.29 'cat > /tmp/baize_eval_freeze_ab29.sh' <<'EOS29'
+#!/bin/bash
+set -u
+OUT=/tmp/baize_eval_freeze_ab29.txt
+LOG=/tmp/baize_s1_baize2b_master.log
+[ -f "$LOG" ] || LOG=/tmp/baize_s1_baize2b_worker.log
+step(){ grep -E 'elapsed time per iteration' "$LOG" 2>/dev/null | tail -1 | sed -E 's/^\[([^]]+)\].*iteration +([0-9]+)\/.*\(ms\): ([0-9.]+).*/t=\1 it=\2 ms=\3/'; }
+srv_cpu(){ ps -eo pcpu=,args= | awk '/[l]lama-server/ && !/cline/ {s+=$1;n++} END{printf "srv_n=%d srv_cpu=%.0f%%",n,s}'; }
+ld(){ cut -d' ' -f1-3 /proc/loadavg; }
+
+CLI=$(ps -eo pid=,args= | awk '/[g]guf_lmeval_run\.py/ && !/awk/ && !/cline/ && !/bun/ {print $1}')
+N=$(echo $CLI | wc -w)
+echo "clients=$N pids=[$(echo $CLI)] log=$LOG" >>"$OUT"
+if [ "$N" -eq 0 ]; then echo "NO_CLIENTS -> abort" >>"$OUT"; exit 0; fi
+
+resume(){ for p in $CLI; do kill -CONT "$p" 2>/dev/null; done; }
+trap resume EXIT INT TERM
+
+{
+  echo "=== start $(date '+%F %T') host=$(hostname) ==="
+  echo "[baseline] $(step)"
+  echo "[baseline] load=$(ld) $(srv_cpu)"
+  echo "--- last 8 step lines ---"
+  grep -E 'elapsed time per iteration' "$LOG" | tail -8 | sed -E 's/^\[([^]]+)\].*iteration +([0-9]+)\/.*\(ms\): ([0-9.]+).*/  t=\1 it=\2 ms=\3/'
+  echo "--- client stdout (size before) ---"
+  for p in $CLI; do f=$(readlink /proc/$p/fd/1 2>/dev/null); [ -n "$f" ] && echo "  $p -> $f size=$(stat -c %s "$f" 2>/dev/null)"; done
+} >>"$OUT"
+
+for p in $CLI; do kill -STOP "$p" 2>/dev/null; done
+sleep 20
+
+{
+  echo "=== FROZEN $(date '+%F %T') (clients SIGSTOP only) ==="
+  for i in 0 1 2 3 4 5 6 7 8 9 10; do
+    echo "[f${i} $(date '+%H:%M:%S')] $(step) | load=$(ld) | $(srv_cpu)"
+    [ "$i" -lt 10 ] && sleep 60
+  done
+} >>"$OUT"
+
+resume
+trap - EXIT INT TERM
+sleep 5
+
+{
+  echo "=== RESUMED $(date '+%F %T') ==="
+  for i in 0 1 2 3 4 5; do
+    echo "[r${i} $(date '+%H:%M:%S')] $(step) | load=$(ld) | $(srv_cpu)"
+    [ "$i" -lt 5 ] && sleep 60
+  done
+  echo "--- client stdout (size after) ---"
+  for p in $CLI; do f=$(readlink /proc/$p/fd/1 2>/dev/null); [ -n "$f" ] && echo "  $p -> $f size=$(stat -c %s "$f" 2>/dev/null)"; done
+  echo "--- client state (expect S, not T) ---"
+  for p in $CLI; do ps -o pid=,stat=,pcpu=,etimes= -p "$p" 2>/dev/null | sed 's/^/  /'; done
+  echo "--- servers alive ---"
+  ps -eo pid=,stat=,pcpu= -C llama-server 2>/dev/null | sed 's/^/  /'
+  echo "=== DONE $(date '+%F %T') ==="
+} >>"$OUT"
+EOS29
+  $SSH 10.239.2.29 'chmod +x /tmp/baize_eval_freeze_ab29.sh; rm -f /tmp/baize_eval_freeze_ab29.txt; setsid nohup bash /tmp/baize_eval_freeze_ab29.sh >/tmp/baize_eval_freeze_ab29.run.log 2>&1 < /dev/null & echo detached_pid=$!; sleep 8; echo "-- early --"; head -30 /tmp/baize_eval_freeze_ab29.txt 2>/dev/null'
+else
+  echo "[ssh .29] FAILED (BatchMode/ConnectTimeout)"
+  echo "-- .12 relay alive? --"; pgrep -af "ops_relay_v2.sh" | cut -c1-140
+fi
+echo
+echo "=== 249 done; full result ~18 min later in /tmp/baize_eval_freeze_ab29.txt on .29 ==="
+```
+
+**输出**
+```
+=== RUN_ID 249 | dispatch A/B to .29 via ssh from .12 | 2026-11-08 12:23:45 | host=whag0pgpuap12 ===
+[ssh .29] OK
+whag0pgpuap29
+-- relay proc --
+2259598 bash ./ops_relay_v2.sh
+2679473 bash -c hostname; echo "-- relay proc --"; pgrep -af "ops_relay_v2.sh" | cut -c1-140; echo "-- relay log tail --"; tail -6 /tmp/baiz
+-- relay log tail --
+[relay-29] RUN_ID=243 executed, exit=0, appended to outbox.
+[relay-29] RUN_ID=244 executed, exit=0, appended to outbox.
+[relay-29] RUN_ID=245 executed, exit=0, appended to outbox.
+./ops_relay_v2.sh: line 77: 582119 Bus error               timeout 60 git fetch origin > /dev/null 2>&1
+./ops_relay_v2.sh: line 77: 3741106 Bus error               timeout 60 git fetch origin > /dev/null 2>&1
+[relay-29] RUN_ID=247 executed, exit=0, appended to outbox.
+-- state --
+247
+
+[deploy freeze script to .29]
+detached_pid=2683472
+-- early --
+clients=7 pids=[323937 323941 340077 1304898 1304909 1901699 3922095] log=/tmp/baize_s1_baize2b_master.log
+=== start 2026-11-08 12:23:46 host=whag0pgpuap29 ===
+[baseline] 
+[baseline] load=98.37 98.05 96.91 srv_n=7 srv_cpu=4665%
+--- last 8 step lines ---
+--- client stdout (size before) ---
+  323937 -> /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/lm_eval_results/gguf_iter_112000_full_v4/hellaswag_chunk1a_half1.log size=164406
+  323941 -> /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/lm_eval_results/gguf_iter_112000_full_v4/hellaswag_chunk1a_half2.log size=169234
+  340077 -> /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/lm_eval_results/gguf_iter_112000_full_v4/hellaswag_chunk1b_b.log size=167789
+  1304898 -> /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/lm_eval_results/gguf_iter_112000_full_v4/hellaswag_chunk0b_a.log size=237348
+  1304909 -> /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/lm_eval_results/gguf_iter_112000_full_v4/hellaswag_chunk0b_b.log size=78900
+  1901699 -> /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/lm_eval_results/gguf_iter_112000_full_v4/hellaswag_chunk0_missing.log size=340063
+  3922095 -> /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/lm_eval_results/gguf_iter_112000_full_v4/hellaswag_chunk1b_a.log size=173937
+
+=== 249 done; full result ~18 min later in /tmp/baize_eval_freeze_ab29.txt on .29 ===
+```
