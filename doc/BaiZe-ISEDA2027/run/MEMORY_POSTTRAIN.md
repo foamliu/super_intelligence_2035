@@ -14,7 +14,7 @@ WAITING: 0
 - 阻塞: GPU 0/8free(root SGLang Qwen3.8-27B占全8卡44-45GB 0%util,运行自Sep17,11/9已过仍未释放);沙箱10.129.32.75全端口FILTERED;Docker无权限;P3等pretrain ckpt(ETA≈2026-12-25)
 - 本轮新增调研产出: R129 错误恢复奖励塑形R5 process reward layer(517行+R5公式+7轨迹原型验证+GRPO LEARNABLE+G=8 8/8非零优势+antigame+efficiency+verl集成+EXPERIMENTS §R129）
 - 未完成指令: 🔴用户令2026-11-07(GPU未到位,需持续产出调研) ⇒ WAITING=0
-- git: commit⏳(本轮待提交) push⏳(上轮f08399a8已push✅,本轮待push)
+- git: commit✅(291483acb) push✅(683c2ee8e, rebase+push✅)
 
 ## 关键事实（常驻）
 
