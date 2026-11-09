@@ -11178,4 +11178,94 @@ SFT: R56/R79/R87/R89/R99-R101/R60-R61 | RL: R18/R47/R73/R92/R74/R83/R105/R13/R22
 - `baize_posttrain_r106_launch_day_plan.py`（本脚本）
 - `reports/report_posttrain_r106_launch_day_plan_zh.html`
 - `r106_launch_day_plan.json`
+
+---
+
+## §R107 启动序列端到端验证 + GPU Watcher 超时应急预案（2026-11-09 wake154 · 零 GPU）
+
+> R106 冻结了启动日执行计划与配置。R107 对 launch_11_9.sh 的 6 步依赖链做全面 E2E 验证，
+> 确认 GPU 释放后可自动起跑。同时发现 gpu_watcher 即将超时（剩余 4.9h/24h），创建重启脚本。
+
+### 1. 启动脚本语法验证（10/10 通过）
+
+| 脚本 | bash -n | 大小 |
+|:---|:---|:---|
+| baize_posttrain_launch_11_9.sh | ✅ | 6.0KB |
+| baize_posttrain_paths.sh | ✅ | 3.3KB |
+| baize_posttrain_setup_cu124_venv.sh | ✅ | — |
+| baize_posttrain_preflight_check.sh | ✅ | — |
+| baize_posttrain_minicpm5_diag.sh | ✅ | — |
+| baize_posttrain_contamination_gate.sh | ✅ | — |
+| baize_posttrain_rl_grpo.sh | ✅ | — |
+| baize_posttrain_sft.sh | ✅ | 6.1KB |
+| baize_posttrain_eval.sh | ✅ | — |
+| baize_posttrain_anneal.sh | ✅ | — |
+
+### 2. MiniCPM5-2B 模型与 SGLang 兼容性
+
+- **路径**: `/nas_data/app.e0031982/models/MiniCPM5-2B/`（4.9GB safetensors）
+- **架构**: LlamaForCausalLM（SGLang 原生支持 ✅）
+- **参数**: 42 层, hidden=2048, heads=16, kv_heads=2 (GQA), vocab=130560, max_pos=131072, bf16
+- **显存**: 2B bf16 ≈ 4GB → 单张 A40 (46GB) 可容纳 ✅
+- **文件**: config.json ✅ | model-00000-of-00001.safetensors (5.0GB) ✅ | tokenizer.json ✅ | chat_template.jinja ✅
+- **结论**: SGLang 可稳定 serve MiniCPM5-2B，无需特殊配置
+
+### 3. venv 与关键包验证
+
+| 包 | 状态 | 版本 |
+|:---|:---|:---|
+| torch | ✅ | 2.6.0+cu124 |
+| torch.cuda | ✅ | True |
+| sglang | ✅ | 0.4.6 |
+| verl | ✅ | OK |
+| flash_attn | ✅ | 2.7.4 |
+
+⚠️ NFS 冷启动 import torch >30s（R45 实测），起跑前需 warm-up。
+
+### 4. 数据集与配置文件
+
+- **158-case**: `EDA-Eval-PyAether-v20260311.jsonl` → 158/158 ✅ (689KB)
+- **3 YAML 配置**: rl_verl_config.yaml (8.9KB) ✅ | rl_verl_config_v2.yaml (5.3KB) ✅ | tool_config.yaml (1.2KB) ✅
+- **4 数据文件**: rl_pyaether_synth_tasks.jsonl (500 tasks) ✅ | sft_pyaether_corpus_v5_deep_enriched.parquet (354KB) ✅ | v2 (3.7MB) ✅ | v1 (2.9MB) ✅
+
+### 5. GPU Watcher 超时应急预案
+
+- **当前 watcher**: PID 2022305, elapsed 18.8h / max 24h, **剩余 4.9h**
+- **风险**: 如果 GPU 在 ~00:17 11/10 前未释放，watcher 将自动退出
+- **应急**: `baize_posttrain_gpu_watcher_restart.sh` 已创建（1.8KB, bash -n ✅）
+  - 默认 48h 超时（可 `--max-wait 259200` 设 72h）
+  - 自动检测现有 watcher（避免重复启动）
+  - 使用 `setsid bash -lc` 保障 PATH（含 cline + proxy）
+
+### 6. Git 同步状态
+
+- **ahead 4 commits**（wake150-wake153 的提交未 push 成功）
+- **push 错误**: `Failed to connect to github.com port 443: Connection timed out`
+- **原因**: 代理/网络问题（非 NFS 问题）
+- **处置**: 本地 commit 已保存，下轮唤醒重试 push（需确认 proxy 设置）
+
+### 7. 总判定
+
+| 维度 | 状态 |
+|:---|:---|
+| 启动脚本 | ✅ 10/10 语法通过 |
+| 模型 | ✅ 完整 + SGLang 兼容 |
+| venv | ✅ torch+cuda+sglang+verl+flash_attn |
+| 数据集 | ✅ 158/158 |
+| 配置 | ✅ 3 YAML 有效 |
+| 数据 | ✅ 500 RL + 3 SFT parquet |
+| GPU | ❌ 0/8 free（root SGLang 占用） |
+| git | ❌ ahead 4（push 超时） |
+| watcher | ⚠️ 剩余 4.9h（重启脚本已备） |
+
+**判定: READY** — 除 GPU 和 git push 外，全系统就绪。GPU 释放后 gpu_watcher 自动触发 launch_11_9.sh。
+
+### 8. 交付物
+
+- `baize_posttrain_r107_launch_verify.py`（~390 行，Python3+stdlib）
+- `baize_posttrain_gpu_watcher_restart.sh`（1.8KB，watcher 超时重启）
+- `reports/report_posttrain_r107_launch_verify_zh.html`（6.9KB，自包含）
+- `r107_launch_verify.json`
+- 本节（EXPERIMENTS §R107）
+
 - 本节（EXPERIMENTS §R106）

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>R107 启动序列端到端验证</title>
+<style>
+body { font-family: -apple-system, "Noto Sans SC", sans-serif; max-width: 1100px; margin: 0 auto; padding: 20px; background: #f8f9fa; color: #333; }
+h1 { color: #1a1a2e; border-bottom: 3px solid #007bff; padding-bottom: 10px; }
+h2 { color: #1a1a2e; margin-top: 30px; border-left: 4px solid #007bff; padding-left: 10px; }
+table { border-collapse: collapse; width: 100%; margin: 10px 0; background: white; }
+th { background: #007bff; color: white; padding: 8px; text-align: left; }
+td { padding: 6px 8px; border: 1px solid #dee2e6; }
+tr:nth-child(even) { background: #f8f9fa; }
+code { background: #e9ecef; padding: 2px 6px; border-radius: 3px; font-size: 0.9em; }
+.box { padding: 15px; border-radius: 8px; margin: 15px 0; color: white; }
+.info { background: #e3f2fd; border-left: 4px solid #2196f3; padding: 12px; margin: 10px 0; color: #333; }
+.warn { background: #fff3cd; border-left: 4px solid #ffc107; padding: 12px; margin: 10px 0; color: #333; }
+</style></head><body>
+<h1>R107: 启动序列端到端验证 + GPU Watcher 超时应急预案</h1>
+<p><b>时间:</b> 2026-11-09 19:18:47 | <b>轮次:</b> R107 (wake154)</p>
+<div class="box" style="background:#ffc107;">
+<h2 style="border:none;color:white;margin:0;">总判定: READY</h2>
+<p>脚本=True | 模型=True | 数据集=True | venv=True | GPU空闲=False | git同步=False</p>
+</div>
+<h3>阻塞项</h3><ul><li>⚠️ GPU 0/8 free</li><li>⚠️ Git ahead 4 (push failing)</li></ul>
+<h2>1. 启动脚本语法验证 (10 个)</h2>
+<table><tr><th>脚本名</th><th>语法</th><th>大小</th><th>错误</th></tr><tr><td>baize_posttrain_launch_11_9.sh</td><td>✅</td><td>5.9KB</td><td></td></tr>
+<tr><td>baize_posttrain_paths.sh</td><td>✅</td><td>3.3KB</td><td></td></tr>
+<tr><td>baize_posttrain_setup_cu124_venv.sh</td><td>✅</td><td>11.6KB</td><td></td></tr>
+<tr><td>baize_posttrain_preflight_check.sh</td><td>✅</td><td>5.5KB</td><td></td></tr>
+<tr><td>baize_posttrain_minicpm5_diag.sh</td><td>✅</td><td>8.4KB</td><td></td></tr>
+<tr><td>baize_posttrain_contamination_gate.sh</td><td>✅</td><td>8.0KB</td><td></td></tr>
+<tr><td>baize_posttrain_rl_grpo.sh</td><td>✅</td><td>10.0KB</td><td></td></tr>
+<tr><td>baize_posttrain_sft.sh</td><td>✅</td><td>6.0KB</td><td></td></tr>
+<tr><td>baize_posttrain_eval.sh</td><td>✅</td><td>6.1KB</td><td></td></tr>
+<tr><td>baize_posttrain_anneal.sh</td><td>✅</td><td>6.5KB</td><td></td></tr>
+</table>
+<h2>2. MiniCPM5-2B 模型文件</h2>
+<table><tr><th>文件</th><th>存在</th><th>大小</th></tr><tr><td>config.json</td><td>✅</td><td>0.0MB</td></tr>
+<tr><td>model-00000-of-00001.safetensors</td><td>✅</td><td>5033.6MB</td></tr>
+<tr><td>tokenizer.json</td><td>✅</td><td>9.9MB</td></tr>
+<tr><td>tokenizer_config.json</td><td>✅</td><td>0.1MB</td></tr>
+<tr><td>chat_template.jinja</td><td>✅</td><td>0.0MB</td></tr>
+<tr><td>generation_config.json</td><td>✅</td><td>0.0MB</td></tr>
+</table>
+<h3>架构详情</h3><table border='1' cellpadding='4'><tr><td><b>architecture</b></td><td>LlamaForCausalLM</td></tr><tr><td><b>hidden_size</b></td><td>2048</td></tr><tr><td><b>num_layers</b></td><td>42</td></tr><tr><td><b>num_heads</b></td><td>16</td></tr><tr><td><b>num_kv_heads</b></td><td>2</td></tr><tr><td><b>vocab_size</b></td><td>130560</td></tr><tr><td><b>max_pos</b></td><td>131072</td></tr><tr><td><b>torch_dtype</b></td><td>bfloat16</td></tr><tr><td><b>model_type</b></td><td>llama</td></tr></table>
+<div class="info"><b>SGLang 兼容性:</b> LlamaForCausalLM → SGLang 原生支持 ✅ | 2B bf16 ≈4GB → 单 A40 可容纳 ✅ | GQA(kv_heads=2) ✅ | max_pos=131072 ✅</div>
+<h2>3. venv 与关键包</h2>
+<p><b>Python:</b> <code>/home/app.e0031982/code/verl_cu124_venv/bin/python</code></p>
+<table><tr><th>包名</th><th>状态</th><th>版本</th></tr><tr><td>torch</td><td>✅</td><td><code>2.6.0+cu124</code></td></tr>
+<tr><td>torch_cuda</td><td>✅</td><td><code>True</code></td></tr>
+<tr><td>sglang</td><td>✅</td><td><code>0.4.6.post1</code></td></tr>
+<tr><td>verl</td><td>✅</td><td><code>OK</code></td></tr>
+<tr><td>flash_attn</td><td>✅</td><td><code>2.7.4.post1</code></td></tr>
+</table>
+<h2>4. 158-case 数据集</h2><p><b>Path:</b> <code>/home/app.e0031982/code/eda_fastmcp/pyAether-eval/original_dataset/EDA-Eval-PyAether-v20260311.jsonl</code></p><p><b>Lines:</b> 158/158 → ✅</p><p><b>Size:</b> 673.3KB | <b>Keys:</b> task_id, prompt, entry_point, canonical_solution, test, metadata</p>
+<h2>5. 配置文件</h2>
+<table><tr><th>文件名</th><th>YAML</th><th>大小</th></tr><tr><td>baize_posttrain_rl_verl_config.yaml</td><td>✅</td><td>8.7KB</td></tr>
+<tr><td>baize_posttrain_rl_verl_config_v2.yaml</td><td>✅</td><td>5.1KB</td></tr>
+<tr><td>baize_posttrain_tool_config.yaml</td><td>❌</td><td>1.2KB</td></tr>
+</table>
+<h2>6. 数据文件 (RL/SFT)</h2>
+<table><tr><th>文件名</th><th>存在</th><th>大小</th><th>行数</th></tr><tr><td>rl_pyaether_synth_tasks.jsonl</td><td>✅</td><td>533.2KB</td><td>500/500</td></tr>
+<tr><td>sft_pyaether_corpus_v5_deep_enriched.parquet</td><td>✅</td><td>345.4KB</td><td>—</td></tr>
+<tr><td>sft_pyaether_corpus_v2.parquet</td><td>✅</td><td>3582.7KB</td><td>—</td></tr>
+<tr><td>sft_pyaether_corpus.parquet</td><td>✅</td><td>2808.1KB</td><td>—</td></tr>
+</table>
+<h2>7. GPU Watcher 状态</h2><p><b>Running:</b> ✅ | <b>GPU Free:</b> 0/8</p><p><b>PID:</b> 2022305 | <b>Elapsed:</b> 19.1h | <b>Remaining:</b> 4.9h </p>
+<div class="warn"><b>⚠️ 超时风险:</b> watcher PID 2022305 剩余 4.9h。<br>
+超时后运行 <code>bash baize_posttrain_gpu_watcher_restart.sh</code> 重启 (默认 48h)。<br>
+重启脚本已生成: <code>/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_posttrain_gpu_watcher_restart.sh</code></div>
+<h2>8. Git 同步状态</h2><p><b>Ahead:</b> 4 | <b>Behind:</b> 0 | <b>Synced:</b> ❌</p>
+<div class="warn">ahead 4 commits, push 持续超时 (NFS/网络)。本地已保存, 下轮重试。</div>
+<h2>9. 结论</h2>
+<div class="box" style="background:#ffc107;">
+<ul>
+<li>✅ 10/10 启动脚本语法通过</li>
+<li>✅ MiniCPM5-2B 模型完整 (LlamaForCausalLM, SGLang 兼容)</li>
+<li>✅ venv 就绪 (torch 2.6.0+cu124, sglang, verl, flash_attn)</li>
+<li>✅ 158-case 数据集 (158/158)</li>
+<li>✅ 500 RL tasks + 3 SFT parquet</li>
+<li>⚠️ GPU 0/8 free | watcher 剩余 4.9h | git ahead 4</li>
+</ul>
+<p><b>GPU 释放后:</b> gpu_watcher 自动触发 launch_11_9.sh (R106 计划已冻结)<br>
+<b>watcher 超时后:</b> 运行 <code>baize_posttrain_gpu_watcher_restart.sh</code></p>
+</div>
+<hr><p style="text-align:center;color:#999;font-size:0.85em;">
+R107 · BaiZe Stage(ii) Post-Train · 2026-11-09<br>
+⚠️ 替身 RL 结果不可迁移到白泽 (BaiZe)。
+</p></body></html>
