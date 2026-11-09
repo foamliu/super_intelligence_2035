@@ -562,3 +562,7 @@ qnm9e					parked		2026-11-08 01:58	Finesim DC convergence Q&A prose dup of uky6c
 1792134701239_u5fy6.messages.json	reedchen	hfeg0plg49	2204	spice_sim	parked		2026-11-09 07:20	dup of Mt0TskewCalc-001 (same reedchen mt0.csv Tskew U#0, 7jzqb family)
 1792133845232_k7jwl.messages.json	reedchen	hfeg0plg49	2035	spice_sim	parked		2026-11-09 07:20	dup-family of Mt0TskewCalc-001 (reedchen Tskew session, U#0 same task; later GenSignalTrTf/GenSP turns ref external files)
 1793080793153_16izn.messages.json	e03179	hfeg0plg15	78	spice_sim	case	EDA-Eval-DesignFlow-VamRecoCellReplace-001	2026-11-09 08:03	VAM cell replacement query (peek CLEAN @06:4x, U#1 goal-stating)
+1793775649853_zns2p	shanmei	hfeg0plg53	2853	spice_sim	case	EDA-Eval-DesignFlow-SimProgressCheck-001	2026-11-09 08:28	
+1793148627756_flxzl	e03179	hfeg0plg15	1548	spice_sim	parked		2026-11-09 08:28	dup: U#1 = VamRecoCellReplace-001 同 VAM cell 替换查询同路径 Golden008
+1792215728595_u7a72	jiuzhou	hfeg0plg52	2173	spice_sim	parked		2026-11-09 08:28	vague: U#0 'open the aging simulation' 过于含糊，assistant 仅找到目录后 ask_question，session sigterm 无金标准
+1791511922122_hwbr5	e0017484	hfeg0plg08	1560	spice_sim	parked		2026-11-09 08:28	peeked-viable-future: U#0 DDR6 .fsdb 命令提取→assistant 定位 .rpt.die0 含解码命令序列，诊断型任务可作未来 case 需 .rpt.die0 真实文件
