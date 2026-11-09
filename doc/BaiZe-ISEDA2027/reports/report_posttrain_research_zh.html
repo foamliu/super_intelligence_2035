@@ -3,63 +3,119 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>R113 Data Transfer Plan — BaiZe Post-Train</title>
+<title>BaiZe Post-Train 研究状态汇总</title>
 <style>
-body { font-family: sans-serif; max-width: 960px; margin: 0 auto; padding: 20px; background: #f8f9fa; }
-h1 { color: #1a73e8; border-bottom: 3px solid #1a73e8; padding-bottom: 10px; }
-h2 { border-left: 4px solid #1a73e8; padding-left: 10px; }
-table { border-collapse: collapse; width: 100%; margin: 10px 0; font-size: 14px; }
-th, td { border: 1px solid #ddd; padding: 8px; }
-th { background: #1a73e8; color: white; }
-tr:nth-child(even) { background: #f1f3f4; }
-.box { padding: 12px 16px; border-radius: 8px; margin: 10px 0; }
-.box-info { background: #e8f0fe; border: 1px solid #c2d7fc; }
-.box-err { background: #fce8e6; border: 1px solid #f3c4c0; }
-.box-ok { background: #e6f4ea; border: 1px solid #b8e0c4; }
-.box-warn { background: #fef7e0; border: 1px solid #fde293; }
-code { background: #f1f3f4; padding: 2px 6px; border-radius: 3px; }
-.card { display: inline-block; background: white; border: 1px solid #ddd; border-radius: 8px; padding: 15px; margin: 5px; text-align: center; min-width: 120px; }
-.num { font-size: 28px; font-weight: 700; } .lbl { font-size: 12px; color: #666; }
+body{font-family:sans-serif;max-width:960px;margin:0 auto;padding:20px;background:#f8f9fa}
+h1{color:#1a73e8;border-bottom:3px solid #1a73e8;padding-bottom:10px}
+h2{border-left:4px solid #1a73e8;padding-left:10px;margin-top:30px}
+table{border-collapse:collapse;width:100%;margin:10px 0;font-size:14px}
+th,td{border:1px solid #ddd;padding:8px}th{background:#1a73e8;color:white}
+tr:nth-child(even){background:#f1f3f4}
+.box{padding:12px 16px;border-radius:8px;margin:10px 0}
+.box-info{background:#e8f0fe;border:1px solid #c2d7fc}
+.box-err{background:#fce8e6;border:1px solid #f3c4c0}
+.box-ok{background:#e6f4ea;border:1px solid #b8e0c4}
+.box-warn{background:#fef7e0;border:1px solid #fde293}
+code{background:#f1f3f4;padding:2px 6px;border-radius:3px}
+.card{display:inline-block;background:white;border:1px solid #ddd;border-radius:8px;padding:15px;margin:5px;text-align:center;min-width:120px}
+.num{font-size:28px;font-weight:700}.lbl{font-size:12px;color:#666}
 </style>
 </head>
 <body>
-<h1>R113 数据传输方案与路径修复</h1>
-<p>时间：2026-11-09 21:48:47 · 节点：.17 · NAS_ROOT：/nas_data</p>
-<div class="box box-info">R112 发现 37 处路径问题。R113 系统化审计 /nas_train 引用，修复硬编码，生成 rsync 传输脚本。</div>
+<h1>BaiZe Stage(ii) Post-Train 研究状态汇总</h1>
+<p>时间：2026-11-09 23:45 · 节点：10.252.32.17 · 轮次：R118 (wake165)</p>
+<div class="box box-warn">⚠️ 替身警告：所有替身实验使用 Qwen3.8-27B (root SGLang)，结果<b>不可迁移到 BaiZe (MiniCPM5-2B)</b>。趋势有参考价值，具体数值不可直接引用。</div>
 
-<h2>1. 扫描摘要</h2>
+<h2>1. 总体状态</h2>
 <div>
-<div class="card"><div class="num">83</div><div class="lbl">总引用</div></div>
-<div class="card"><div class="num">49</div><div class="lbl">硬编码</div></div>
-<div class="card"><div class="num">20</div><div class="lbl">自动检测</div></div>
-<div class="card"><div class="num">14</div><div class="lbl">注释</div></div>
+<div class="card"><div class="num">0/8</div><div class="lbl">GPU 空闲</div></div>
+<div class="card"><div class="num">R118</div><div class="lbl">当前轮次</div></div>
+<div class="card"><div class="num">118</div><div class="lbl">调研轮次</div></div>
+<div class="card"><div class="num">12-25</div><div class="lbl">pretrain ETA</div></div>
 </div>
+<div class="box box-err">GPU 全被 root SGLang Qwen3.8-27B 占用（8×A40, 44-45GB, 运行自 Sep17, 53天）。11/9 分配 4 张给 post-train 的计划尚未执行。</div>
 
-<h2>2. 硬编码修复</h2>
-<div class="box box-ok">状态：Replaced 2 hardcoded /nas_train nfs_path with NAS_ROOT auto-detection</div>
-<table><tr><th>文件</th><th>行</th><th>内容</th></tr><tr><td><code>baize_posttrain_loop.sh</code></td><td>25</td><td><code>GIT_ROOT="$(git -C "$SCRIPT_DIR" rev-parse --show-toplevel 2>/dev/null || echo '/nas_train/app.e0031982/code/super_intel</code></td></tr><tr><td><code>baize_posttrain_paths.sh</code></td><td>30</td><td><code>echo "⚠️ Cannot detect NFS root — neither /nas_data nor /nas_train has expected structure" >&2</code></td></tr><tr><td><code>baize_posttrain_r111_launch_consistency_audit.py</code></td><td>169</td><td><code>paths = [("/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/sft_agent_ultradata_2609","agent_2609_nas_train"),</code></td></tr><tr><td><code>baize_posttrain_r111_launch_consistency_audit.py</code></td><td>170</td><td><code>("/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/sft_ultradata_2605","general_2605_nas_train"),</code></td></tr><tr><td><code>baize_posttrain_r111_launch_consistency_audit.py</code></td><td>196</td><td><code>items.append({"id":"DAT-03","cat":"SFT通用数据","check":"UltraData在.17可达","status":"PASS" if sg["any_available"] else "WARN"</code></td></tr><tr><td><code>baize_posttrain_r111_launch_consistency_audit.py</code></td><td>282</td><td><code><div class="warn"><strong>⚠️ CFG-04</strong>：blend配置用<code>/nas_train/...</code>路径，.17上NFS为<code>/nas_data</code>。SFT通用数</code></td></tr><tr><td><code>baize_posttrain_r112_path_audit.py</code></td><td>5</td><td><code>1. Hardcoded /nas_train references (won't work on .17)</code></td></tr><tr><td><code>baize_posttrain_r112_path_audit.py</code></td><td>59</td><td><code>if '/nas_train' in line and 'PATHS' not in fname.upper():</code></td></tr><tr><td><code>baize_posttrain_r112_path_audit.py</code></td><td>132</td><td><code>for mp in ['/nas_data', '/nas_train', '/nas_inference', '/nas_env']:</code></td></tr><tr><td><code>baize_posttrain_r112_path_audit.py</code></td><td>164</td><td><code>"description": f"{len(nas_train_hi)} HIGH /nas_train refs in configs",</code></td></tr><tr><td><code>baize_posttrain_r112_path_audit.py</code></td><td>165</td><td><code>"mitigation": "Replace /nas_train with /nas_data in YAML configs; .sh files already use paths.sh auto-detection"})</code></td></tr><tr><td><code>baize_posttrain_r112_path_audit.py</code></td><td>177</td><td><code>if "/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/" in fixed:</code></td></tr><tr><td><code>baize_posttrain_r112_path_audit.py</code></td><td>178</td><td><code>fixed = fixed.replace("/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/",</code></td></tr><tr><td><code>baize_posttrain_r112_path_audit.py</code></td><td>180</td><td><code>fixes.append("CFG-04: Fixed /nas_train -> /nas_data in sft_blend_config.yaml data paths")</code></td></tr><tr><td><code>baize_posttrain_r112_path_audit.py</code></td><td>282</td><td><code><p><strong>关键发现</strong>：.17 的 <code>/nas_data</code> NFS（10.251.28.110:/train）与 .29/.12 的共享 NFS（<code>/nas_train</code></code></td></tr><tr><td><code>baize_posttrain_r112_path_audit.py</code></td><td>289</td><td><code><p>共 {len(path_issues)} 处（{len(nas_train_hi)} HIGH /nas_train）。</p></code></td></tr><tr><td><code>baize_posttrain_r112_path_audit.py</code></td><td>313</td><td><code><li><strong>CFG-04 已修复</strong>：sft_blend_config.yaml 中 /nas_train -> /nas_data。但数据目录在 .17 上不存在（仅有 nemo_experiments/），需在</code></td></tr><tr><td><code>baize_posttrain_r112_path_audit.py</code></td><td>330</td><td><code>print(f"Path issues:      {len(path_issues)} ({len(nas_train_hi)} HIGH /nas_train)")</code></td></tr><tr><td><code>baize_posttrain_r113_data_transfer_plan.py</code></td><td>5</td><td><code>R112 found 37 path issues (31 HIGH /nas_train). This script:</code></td></tr><tr><td><code>baize_posttrain_r113_data_transfer_plan.py</code></td><td>6</td><td><code>1. SYSTEMATIC AUDIT of all /nas_train refs (COMMENT/AUTO_DETECT/HARDCODED)</code></td></tr><tr><td><code>baize_posttrain_r113_data_transfer_plan.py</code></td><td>29</td><td><code>("SFT Agent (2609)","/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/sft_agent_ultradata_2609",23.89,"SFT"),</code></td></tr><tr><td><code>baize_posttrain_r113_data_transfer_plan.py</code></td><td>30</td><td><code>("SFT General (2605)","/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/sft_ultradata_2605",75.87,"SFT"),</code></td></tr><tr><td><code>baize_posttrain_r113_data_transfer_plan.py</code></td><td>31</td><td><code>("Anneal Domain","/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/pyAether_api_anneal",None,"Anneal"),</code></td></tr><tr><td><code>baize_posttrain_r113_data_transfer_plan.py</code></td><td>32</td><td><code>("Anneal Web","/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/mix_base",None,"Anneal"),</code></td></tr><tr><td><code>baize_posttrain_r113_data_transfer_plan.py</code></td><td>33</td><td><code>("Anneal Code","/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/full_ultradata_code_l3",None,"Anneal"),</code></td></tr><tr><td><code>baize_posttrain_r113_data_transfer_plan.py</code></td><td>34</td><td><code>("Anneal Math","/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/full_ultradata_math_l3",None,"Anneal"),</code></td></tr><tr><td><code>baize_posttrain_r113_data_transfer_plan.py</code></td><td>35</td><td><code>("Tokenizer","/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/tokenizer_eod",None,"All"),</code></td></tr><tr><td><code>baize_posttrain_r113_data_transfer_plan.py</code></td><td>36</td><td><code>("Pretrain ckpt","/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/step_700000",None,"Anneal+SFT"),</code></td></tr><tr><td><code>baize_posttrain_r113_data_transfer_plan.py</code></td><td>46</td><td><code>r'if\s+.*Path\s*\(\s*["\']/nas_train', r'elif\s+.*Path\s*\(\s*["\']/nas_train',</code></td></tr><tr><td><code>baize_posttrain_r113_data_transfer_plan.py</code></td><td>47</td><td><code>r'if\s+.*\[.*-d.*"/nas_train', r'elif\s+.*\[.*-d.*"/nas_train',</code></td></tr><tr><td><code>baize_posttrain_r113_data_transfer_plan.py</code></td><td>54</td><td><code>r'"nfs_path"\s*:\s*"/nas_train', r"'nfs_path'\s*:\s*'/nas_train",</code></td></tr><tr><td><code>baize_posttrain_r113_data_transfer_plan.py</code></td><td>55</td><td><code>r'"path"\s*:\s*"/nas_train', r"'path'\s*:\s*'/nas_train",</code></td></tr><tr><td><code>baize_posttrain_r113_data_transfer_plan.py</code></td><td>56</td><td><code>r'path:\s*"/nas_train', r"path:\s*'/nas_train",</code></td></tr><tr><td><code>baize_posttrain_r113_data_transfer_plan.py</code></td><td>61</td><td><code>if '"/nas_train/' in stripped or "'/nas_train/" in stripped:</code></td></tr><tr><td><code>baize_posttrain_r113_data_transfer_plan.py</code></td><td>65</td><td><code>if '/nas_train' in stripped:</code></td></tr><tr><td><code>baize_posttrain_r113_data_transfer_plan.py</code></td><td>82</td><td><code>if "/nas_train" in line:</code></td></tr><tr><td><code>baize_posttrain_r113_data_transfer_plan.py</code></td><td>91</td><td><code>path_17 = path_29_12.replace("/nas_train/", "/nas_data/", 1) if path_29_12.startswith("/nas_train/") else path_29_12</code></td></tr><tr><td><code>baize_posttrain_r113_data_transfer_plan.py</code></td><td>113</td><td><code>'"nfs_path": "/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/sft_ultradata_2605"',</code></td></tr><tr><td><code>baize_posttrain_r113_data_transfer_plan.py</code></td><td>116</td><td><code>'"nfs_path": "/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/sft_agent_ultradata_2609"',</code></td></tr><tr><td><code>baize_posttrain_r113_data_transfer_plan.py</code></td><td>134</td><td><code>return {"fixed": True, "changes": 2, "details": "Replaced 2 hardcoded /nas_train nfs_path with NAS_ROOT auto-detection"}</code></td></tr><tr><td><code>baize_posttrain_r113_data_transfer_plan.py</code></td><td>151</td><td><code>SRC_BASE="/nas_train/app.e0031982/code/BaiZe-ISEDA2027"</code></td></tr><tr><td><code>baize_posttrain_r113_data_transfer_plan.py</code></td><td>277</td><td><code><div class="box box-info">R112 发现 37 处路径问题。R113 系统化审计 /nas_train 引用，修复硬编码，生成 rsync 传输脚本。</div></code></td></tr><tr><td><code>baize_posttrain_r113_data_transfer_plan.py</code></td><td>298</td><td><code>.29:/nas_train → .17:/nas_data · ~100GB @ 1Gbps ≈ 15min</div></code></td></tr><tr><td><code>baize_posttrain_r113_data_transfer_plan.py</code></td><td>328</td><td><code>print("\n[1/5] Scanning /nas_train references...")</code></td></tr><tr><td><code>baize_posttrain_r91_gpu_readiness_audit.py</code></td><td>18</td><td><code>NAS_ROOT = "/nas_data" if Path("/nas_data/app.e0031982/code/super_intelligence_2035").exists() else "/nas_train"</code></td></tr><tr><td><code>baize_posttrain_r95_readiness_fix.py</code></td><td>14</td><td><code>NAS_ROOT = "/nas_data" if Path("/nas_data/app.e0031982/code/super_intelligence_2035").exists() else "/nas_train"</code></td></tr><tr><td><code>baize_posttrain_r96_launch_validation.py</code></td><td>24</td><td><code>NAS_ROOT = "/nas_data" if Path("/nas_data/app.e0031982/code/super_intelligence_2035").exists() else "/nas_train"</code></td></tr><tr><td><code>baize_posttrain_sft_data_mixer.py</code></td><td>77</td><td><code>"nfs_path": "/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/sft_ultradata_2605",</code></td></tr><tr><td><code>baize_posttrain_sft_data_mixer.py</code></td><td>85</td><td><code>"nfs_path": "/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/sft_agent_ultradata_2609",</code></td></tr></table>
+<h2>2. 核心研究结论</h2>
+<h3>R116: API 覆盖率评分零区分度（R2 方向）</h3>
+<div class="box box-err">150题×8采样=1200条真实模型输出，API 覆盖率评分给出 <b>100% pass@8, std≈0, 0% 非零方差</b>。GRPO 无学习信号。根因：prompt 显式命名所有 API → 模型只需 return pyScript.X() → trivially 通过。</div>
 
-<h2>3. 数据可用性</h2>
-<table><tr><th>数据</th><th>阶段</th><th>存在</th><th>.bin/.idx</th><th>需传输</th><th>大小</th></tr>
-<tr><td>SFT Agent (2609)</td><td>SFT</td><td>MISS</td><td>MISS</td><td>YES</td><td>23.89GB</td></tr><tr><td>SFT General (2605)</td><td>SFT</td><td>MISS</td><td>MISS</td><td>YES</td><td>75.87GB</td></tr><tr><td>Anneal Domain</td><td>Anneal</td><td>MISS</td><td>MISS</td><td>YES</td><td>TBD</td></tr><tr><td>Anneal Web</td><td>Anneal</td><td>MISS</td><td>MISS</td><td>YES</td><td>TBD</td></tr><tr><td>Anneal Code</td><td>Anneal</td><td>MISS</td><td>MISS</td><td>YES</td><td>TBD</td></tr><tr><td>Anneal Math</td><td>Anneal</td><td>MISS</td><td>MISS</td><td>YES</td><td>TBD</td></tr><tr><td>Tokenizer</td><td>All</td><td>MISS</td><td>MISS</td><td>YES</td><td>TBD</td></tr><tr><td>Pretrain ckpt</td><td>Anneal+SFT</td><td>MISS</td><td>MISS</td><td>NO</td><td>TBD</td></tr><tr><td>MiniCPM5-2B</td><td>Eval</td><td>OK</td><td>MISS</td><td>NO</td><td>4.7GB</td></tr><tr><td>EDA-Eval 158-case</td><td>Eval</td><td>OK</td><td>MISS</td><td>NO</td><td>TBD</td></tr></table>
-<div class="box box-err">7 项需传输（~99.76 GB）。脚本：baize_posttrain_data_transfer.sh</div>
+<h3>R117: R0++ 增强静态分析奖励（R1+R3 方向）</h3>
+<div class="box box-ok">设计 5 维 AST 评分：api_coverage(0.2) + ast_call_verified(0.3) + return_path(0.25) + arg_plausibility(0.15) - hardcode_penalty(0.1)。500 题合成 good/bad 变体验证：<b>GOOD SEPARATION</b>（good=0.9 vs bad=0.0-0.49, gap>0.4）。</div>
 
-<h2>4. 传输脚本</h2>
-<div class="box box-ok">已生成 baize_posttrain_data_transfer.sh (--check/--dry-run/--sft/--anneal/--verify)<br>
-.29:/nas_train → .17:/nas_data · ~100GB @ 1Gbps ≈ 15min</div>
+<h3>R118: R0++ GRPO 学习信号实证（R3 方向）⭐ 最新</h3>
+<div class="box box-ok">用 R0++ 重新评分 R116 的 2400 条真实模型输出（NO-DOCS + WITH-DOCS 各 1200）：</div>
+<table>
+<tr><th>指标</th><th>NO-DOCS R0++</th><th>NO-DOCS R0</th><th>WITH-DOCS R0++</th></tr>
+<tr><td>非零方差任务比例</td><td><b>50.0%</b></td><td>0.0%</td><td><b>55.3%</b></td></tr>
+<tr><td>组内 std 均值</td><td>0.0993</td><td>0.0000</td><td>0.1026</td></tr>
+<tr><td>平均奖励</td><td>0.4606</td><td>1.0000</td><td>0.3902</td></tr>
+<tr><td>advantage 非零比例</td><td>0.4992</td><td>0.0000</td><td>0.5533</td></tr>
+<tr><td>改善倍数</td><td><b>75x</b></td><td>—</td><td><b>∞</b></td></tr>
+<tr><td>Reward hacking 检出</td><td>70 (5.8%)</td><td>0</td><td>27 (2.3%)</td></tr>
+</table>
 
-<h2>5. 影响</h2>
-<div class="box box-warn"><strong>RL</strong>：不受影响。数据在本地。</div>
-<div class="box box-err"><strong>SFT/退火</strong>：受阻，需传输。但依赖 pretrain ckpt (ETA 2026-12-25)，窗口充足。</div>
+<h3>难度梯度分析（NO-DOCS）</h3>
+<table>
+<tr><th>层级</th><th>API数</th><th>任务数</th><th>R0++均值</th><th>R0++std</th><th>非零方差%</th><th>AdvFrac</th><th>GRPO信号</th></tr>
+<tr><td>L1</td><td>1</td><td>30</td><td>0.8527</td><td>0.0282</td><td>23.3%</td><td>0.2333</td><td>弱（饱和）</td></tr>
+<tr><td>L2</td><td>1-2</td><td>30</td><td>0.8771</td><td>0.0194</td><td>10.0%</td><td>0.1000</td><td>极弱</td></tr>
+<tr><td><b>L3</b></td><td><b>3-5</b></td><td><b>30</b></td><td><b>0.3925</b></td><td><b>0.1525</b></td><td><b>93.3%</b></td><td><b>0.9292</b></td><td><b>⭐黄金区间</b></td></tr>
+<tr><td>L4</td><td>6-10</td><td>30</td><td>0.1151</td><td>0.1656</td><td>66.7%</td><td>0.6667</td><td>良好</td></tr>
+<tr><td>L5</td><td>10+</td><td>30</td><td>0.0656</td><td>0.1305</td><td>56.7%</td><td>0.5667</td><td>中等（过难）</td></tr>
+</table>
+<div class="box box-info"><b>关键洞察</b>：L3（3-5 APIs）是 GRPO 黄金区间——93.3% 任务有非零方差，advantage 非零率 93%。RL 课程应从 L3 起步。</div>
 
-<h2>6. 结论</h2>
+<h2>3. R0++ 维度分解（NO-DOCS, 1200 样本）</h2>
+<table>
+<tr><th>维度</th><th>平均值</th><th>说明</th></tr>
+<tr><td>syntax_ok</td><td>62.3%</td><td>37.7% 语法错误（R0 完全忽略）</td></tr>
+<tr><td>api_coverage</td><td>0.6203</td><td>62% API 被提及（文本层面）</td></tr>
+<tr><td>ast_call_verified</td><td>0.4754</td><td>48% API 在 AST 调用中验证</td></tr>
+<tr><td>return_path</td><td>0.4133</td><td>41% 返回路径正确使用 API（最低）</td></tr>
+<tr><td>arg_plausibility</td><td>0.6233</td><td>62% 带参数 API 调用提供参数</td></tr>
+<tr><td>hardcode_detected</td><td>5.8%</td><td>硬编码检出率</td></tr>
+</table>
+
+<h2>4. 研究方向完成度</h2>
+<table>
+<tr><th>方向</th><th>状态</th><th>关键结论</th></tr>
+<tr><td>R1: EDA 交互式 RL</td><td>✅ 回答</td><td>沙箱不可达→R0++ 作为 Phase 1 过渡；verl 集成 3 阶段设计完成</td></tr>
+<tr><td>R2: PyAether 造题与难度分层</td><td>✅ 回答</td><td>API 覆盖率评分零区分度→需执行正确性评分；规则分层+pass@8 均证实</td></tr>
+<tr><td>R3: 奖励设计与 GRPO 稳定性</td><td>✅ 实证</td><td>R0++ 50% 非零方差 vs R0 0%；L3 黄金区间 93%；hardcode_penalty 有效</td></tr>
+<tr><td>R4: 35% 侧失败模式分类</td><td>⬜ 等 GPU</td><td>DeepSeek 侧已完成（D1-D6 实测）；MiniCPM5-2B 侧需 GPU 后采集真实轨迹</td></tr>
+</table>
+
+<h2>5. 对 RL 训练的直接指导</h2>
 <div class="box box-info">
 <ol>
-<li>修复 sft_data_mixer.py 2 处硬编码 → NAS_ROOT ✅</li>
-<li>传输脚本已生成 ✅</li>
-<li>RL 不受阻，GPU 到位即可启动</li>
-<li>SFT/退火数据在 ckpt 窗口传输</li>
-<li>剩余 14 注释 + 20 自动检测 = 良性</li>
+<li><b>奖励函数</b>：R0++ 确认为 Phase 1 可用奖励。50% 非零方差率虽非完美，但比 R0 的 0% 是质的飞跃。</li>
+<li><b>课程学习</b>：从 L3（3-5 APIs）起步，这是 GRPO 信号最强的区间。</li>
+<li><b>难度过滤</b>：GRPO 训练前应过滤 std=0 的任务（剩余 50%），避免浪费 rollout 预算。</li>
+<li><b>Hacking 监控</b>：R0++ 的 hardcode_penalty 有效，但 5.8% hacking 率需在训练中持续监控。</li>
+<li><b>上下文长度</b>：WITH-DOCS 语法错误率更高（更长 prompt），SFT 阶段需平衡文档长度与准确率。</li>
 </ol>
 </div>
-</body></html>
+
+<h2>6. 阻塞项与下一步</h2>
+<div class="box box-err">
+<ul>
+<li><b>GPU</b>：0/8 free。root SGLang Qwen3.8-27B 占全 8 卡（运行 53 天）。watcher PID2709455 轮询中。</li>
+<li><b>沙箱</b>：10.129.32.75 全端口 FILTERED。执行正确性奖励 BLOCKED。</li>
+<li><b>pretrain ckpt</b>：ETA≈2026-12-25（iter 112400/700000）。</li>
+</ul>
+</div>
+<div class="box box-ok">
+<b>GPU 到位后第一件事</b>：vllm serve MiniCPM5-2B → 复测 36% 基线（5-run）→ 采集真实失败轨迹 → R0++ pass@8 profiling → 起第一轮 EDA 交互式 RL（替身预演）。
+</div>
+
+<h2>7. 交付物清单</h2>
+<table>
+<tr><th>轮次</th><th>脚本</th><th>JSON</th><th>EXPERIMENTS</th></tr>
+<tr><td>R116</td><td>baize_posttrain_r116_pass8_profiling.py (360行)</td><td>1.6MB (NO+WITH-DOCS)</td><td>§R116</td></tr>
+<tr><td>R117</td><td>baize_posttrain_r117_exec_reward_arch.py (200行)</td><td>182KB</td><td>§R117</td></tr>
+<tr><td>R118</td><td>baize_posttrain_r118_r0pp_grpo_signal.py (335行)</td><td>1.19MB</td><td>§R118</td></tr>
+</table>
+
+<p style="color:#666;font-size:12px;margin-top:40px">BaiZe-ISEDA2027 Post-Train Agent · 2026-11-09 · 本报告为滚动更新，原地覆盖</p>
+</body>
+</html>
