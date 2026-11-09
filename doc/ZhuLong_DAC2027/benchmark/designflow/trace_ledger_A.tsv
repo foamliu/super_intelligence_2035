@@ -297,3 +297,15 @@
 1794129973388_q54e4	tongfanl	hfhds201	14	eda_other	parked		2026-11-09 22:36	diagnostic: 为啥报这个错 cornerStr uninitialized, 14msgs analysis not produce-task
 1793927271206_0ekf9.messages.json	e0030085	hfeg0pkn002	352	eda_other	case	EDA-Eval-DesignFlow-DftTestmaxLaunchFlow-001	2026-11-10 00:06	
 1793865788118_b7otd.messages.json	xy1zhang	hfeg0plg70	360	verification	case	EDA-Eval-DesignFlow-SvTbBugFix-001	2026-11-10 01:03	
+1793092177260_yseg9.messages.json	fernandoy	hfeg0plg76	343	verification	parked		2026-11-10 01:53	r295 deepread: resumed UVM sim context-summary 836msgs/3.2MB, not A-faithful (USER#0=context state), too large to synthesize
+1792551877743_4i1w4.messages.json	fernandoy	hfeg0plg76	329	verification	parked		2026-11-10 01:53	r295: sibling of yseg9 resumed UVM 801msgs/3MB, same project
+1793762019450_22gh5.messages.json	e0039102	hfeg0plg74	106	eda_other	parked		2026-11-10 01:53	r295 peek: USER#0=告诉我配置思路 run_regr analysis-only Q&A, not produce-task
+1793770222949_u5daf.messages.json	e0039102	hfeg0plg74	112	eda_other	parked		2026-11-10 01:53	r295 peek: sibling of 22gh5 same analysis task
+1793079745856_epy3m.messages.json	t0002470	hfeg0plg101	139	verification	parked		2026-11-10 01:53	r295 peek: resumed context-summary, USER asks 能否只预编译coverage + find指令序列 analysis/search, not produce
+1791961260627_mejpi.messages.json	e13zhang	hfeg0pgn012	207	verification	parked		2026-11-10 01:53	r295 peek: USER#0=分析RTL+check是否有补充 analysis-only, not produce-task
+1792480126204_y737t.messages.json	e13zhang	hfeg0pgn012	139	verification	parked		2026-11-10 01:53	r295 peek: USER#0=7.2GHz时钟 Q&A + Makefile compile error debug, not produce-task
+1790600533401_vnze7.messages.json	clwang	hfeg0pkn005	165	eda_other	parked		2026-11-10 01:53	r295 peek: USER#0=拆分10GB xrun.log成20份 trivial log-split, verilog keyword from log content not real digital
+1793779533537_k7668.messages.json	e0039602	hfeg0pkn002	307	verification	parked		2026-11-10 01:53	r295 deepread: verilog_lib_trans_v2 tb fix, USER#4/#40/#73 3-turn evolved complex task needs xrun+actual files, too complex to parameterize for check.py
+1793692750441_cydnq.messages.json	e0039602	hfeg0pkn002	422	eda_other	parked		2026-11-10 01:53	r295 peek: USER#0=告诉我tb_family作用 analysis Q&A, same verilog_lib_trans project
+1793937823141_zdo8r.messages.json	t0002038	hfeg0plg86	585	eda_other	parked		2026-11-10 01:53	r295: aether:1035/transistor:818/pyaether:427 schematic = analog/layout WRONG SHARD (C), rtl:45 minor
+1794010590146_aqtdv.messages.json	xinqiaoz	hfeg0pkn005	358	pnr_signoff	parked		2026-11-10 01:53	r295: pdk:1067/drc:253/calibre:50 = calibre DRC WRONG SHARD (C), rtl:40 minor

@@ -454,6 +454,31 @@
       "mc30": 2247,
       "hosts": 696,
       "shard_A_jsonl": 190
+    },
+    "r295": {
+      "ts": "2026-11-10T01:55:00+08:00",
+      "date": "2026-11-10",
+      "round_type": "case-selection + park (0 new case; pool-quality bottleneck per r292 finding)",
+      "scan_dir": "ssh_eda_search_20261109_224902",
+      "scan_path": "/home/t0002965/log/ssh_eda_search_20261109_224902/summary.tsv",
+      "scan_confirmed": "no new scan since r292 full rescan (mc30_dedup=2247, dedup=5999, users=512, hosts=696 unchanged)",
+      "daily_log_20261110_lines": 2981,
+      "daily_log_healthy": true,
+      "candidate_selection": "file-based filter on .75 (cand_r295.txt, $6 raw keyword, dedup by session, mc>=15, digital keywords) -> 1617 cand -> all-shard excl (2127 entries A/B/C/D) -> 521 un-ledgered -> 136 digital-dominant (dig>ana, dig>50)",
+      "peeked": 10,
+      "classification": {
+        "resumed_context_summary_huge": 4,
+        "analysis_only_qa": 4,
+        "complex_multistep": 1,
+        "trivial_log_split": 1,
+        "wrong_shard_analog_calibre": 2
+      },
+      "clean_produce_task": 0,
+      "finding": "r295 confirms r292 finding: clean shard-A digital produce-tasks are SCARCE even in 521 un-ledgered / 136 digital-dominant pool. Peeked 10 top candidates: fernandoy 4 sessions (yseg9/4i1w4/tsn3o/hzyu6) = resumed UVM sim context-summary 800msgs/3MB each (not A-faithful, too large); e0039102 22gh5/u5daf = run_regr config analysis Q&A; epy3m = resumed analysis (coverage precompile + pattern search); mejpi = RTL check analysis; y737t = 7.2GHz clock Q&A + Makefile debug; vnze7 = split 10GB xrun.log (trivial, verilog keyword from log content); k7668 = verilog_lib_trans_v2 tb fix (USER#4/#40/#73 3-turn evolved, needs xrun+actual files, too complex to parameterize); cydnq = tb_family analysis Q&A; zdo8r = aether/schematic WRONG SHARD C; aqtdv = calibre DRC WRONG SHARD C. e02141 sessions (synopsys:1000-2128) re-classified as HSPICE analog characterization (cmos/bandgap/mosfet/hspice) = shard B not digital. KEY INSIGHT: 'synopsys' keyword is NOISY for shard A (often HSPICE not Design Compiler); 'verilog' keyword often from simulation logs not RTL produce. Parked all 12 evaluated (ledger 299->311). 0 case this round.",
+      "parked_count": 12,
+      "shard_A_new_this_round": 0,
+      "mc30": 2247,
+      "hosts": 696
     }
   },
   "sessions": 38082,
@@ -465,7 +490,7 @@
   },
   "source": "/home/t0002965/log/ssh_eda_search_20261105_192825/summary.tsv (11/05 scan)",
   "target_mc": 30,
-  "updated_at": "2026-11-10T01:10:00+08:00",
+  "updated_at": "2026-11-10T01:55:00+08:00",
   "users_mc100": 182,
   "users_mc30": 401,
   "users_mc300": 60,
