@@ -277,3 +277,4 @@
 1793098169771_pvx74	lorikx	hfeg0pkn001	29	digital	case	EDA-Eval-DesignFlow-RwConflictBackstop-001	2026-11-09 15:33	B-档 digital code-fix (sp_2pram.v rw_conflict backstop insert line2573); golden=on-disk post-fix; deepread done, case-build queued r276
 1793098161450_74bnn	lorikx	10.129.2.10	29	digital	parked		2026-11-09 16:02	redundant dup of pvx74/RwConflictBackstop-001 (same user lorikx, same task '请阅读 MODEL_FIX.diff+CONFLICT_QX_BUG_REPORT.md 对 sp_2pram.v 修复', same ts 1793097776146, editor targets sp_2pram.v)
 1793097775623_cwx19	lorikx	10.129.2.10	29	digital	parked		2026-11-09 16:02	redundant dup of pvx74/RwConflictBackstop-001 (same user lorikx, same task, same ts, editor targets sp_2pram.v)
+1791944224191_6i6lk	jason17w	hfeg0pnd002	536	verification	case	EDA-Eval-DesignFlow-VerilogrunPreserve-001	2026-11-09 16:50	
