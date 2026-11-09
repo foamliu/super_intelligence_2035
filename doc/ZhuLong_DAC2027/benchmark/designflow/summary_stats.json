@@ -206,15 +206,34 @@
       "finding": "16th consecutive mgmt round, LATEST_SCAN still 11/05 (no new scan since r268). Daily log 20261109 healthy 2893 lines unchanged; strong-digital-tool (verdi/vcs/verilog/rtl/dc_shell/formality/primetime/pt_shell/design_compiler/sdc/systemverilog/vivado/yosys/openroad) hits 0 for 11/06-11/09; innovus 184 all ledgered. PIVOT method (fresh-window find -newermt 2026-11-06 on 6 active hosts 10.129.2.10-14 + 10.129.32.75): 356 fresh sessions, 126 un-ledgered after 4-shard excl filter. Probed digital-marker counts: top=e0039602 r2yjr(268)/pzo6g(214)/rv1g2(214)/jt7be(192); kannik 1hei0(199)=DDR5 verilog netlist power-signal hierarchy expand produce-task (USER#last) -> case PowerPlanSignalExpand-001 (B-档, L1, k=16). 1hei0 golden=generate_svwf.py parameterized cross-product (bank 64 + array 32 = 96 svwf signal-add lines); hidden B=异构配置(5 sel/7 bg/3 region) -> 112 lines.",
       "case_delivered": "EDA-Eval-DesignFlow-PowerPlanSignalExpand-001 (verification, B-档, k=16)",
       "shard_A_new_this_round": 1
+    },
+    "r289": {
+      "ts": "2026-11-09T22:10:00+08:00",
+      "date": "2026-11-09",
+      "latest_scan": "ssh_eda_search_20261105_192825",
+      "no_new_scan_rounds": 16,
+      "round_type": "case (PIVOT fresh-window, r283-r289 streak = 7 case rounds)",
+      "daily_log_20261109_lines": 2893,
+      "daily_log_healthy": true,
+      "pool_mc15_shardA": 216,
+      "fresh_window_method": "find -newermt '2026-11-07 00:00:00' on hfhds201 (.75 local, per-user targeted)",
+      "fresh_sessions_hfhds201": 39,
+      "fresh_unledgered_probe": "top NEW e0023936 sessions probed: 0o6q1(200 waveview/sx_create+sx_measure)=REDUNDANT wv-dataeye-measure skill-exec dup of r288 6ajm4 (same USER#4 task sslvht_10667 v(dq) eye VREF sweep), skip; mpmdp(195 waveview/178 fsdb/95 sx_open)=viable WaveView prop-delay produce-task -> claimed+case; 8lqkt/ed6ve/6zlya='给 M1.W.1 的 bad 加 bad_2grid L_shape'=layout shard C siblings, skip; q4f45=eda-license-guard plugin dev (TypeScript/bun)=skip; uxc45=execute wv-dataeye-measure SKILL.md=skill-exec ops, skip; 0nnlr(virtuoso/schematic)=analog shard C/D, skip; mpmdp markers=tcl108/waveview195/fsdb178/sx_open95/sx_create85/sx_measure66/sx_query18/verdi13",
+      "case_delivered": "EDA-Eval-DesignFlow-WvPropDelayMeasure-001 (eda_other, B-synthesized produce-task, L1-static+subprocess, k=15) — e0023936 mpmdp WaveView ACE tPHL/tPLH propagation-delay TCL-script generator",
+      "finding": "r289 reused r283-r288 PIVOT (fresh-window find -newermt on hfhds201). 39 fresh sessions >=11/07. Probed top NEW e0023936 sessions: 0o6q1 redundant skill-exec dup of r288 (same eye VREF task), 8lqkt/ed6ve/6zlya layout L_shape siblings (shard C), q4f45 plugin dev skip, uxc45 skill-exec skip. mpmdp(195 waveview markers, sx_create/sx_measure/sx_open) = viable WaveView prop-delay produce-task: USER pasted GUI tutorial (load .tr0, v(in)/v(out), Measurement Tool Delay tPHL/tPLH @0.55V) + '帮我打开你生成的文件'; agent delivered measure_inverter_delay.tcl (extract_inverter_window + measure_inverter_delay procs using sx_open_sim_file_read/sx_find_wave_in_file/sx_open_sim_file_write/sx_save_signal/sx_close_sim_file/sx_meas_delay). B-synthesized (U1 is pasted tutorial giving method, not clean A-faithful): deliverable=gen_propdelay_measure.py (spec-driven generator -> measure_<circuit>.tcl); A=spec_a.json(inverter/v(in)/v(out)/vth0.55/win1e-9-1.5e-9)+prompt+tutorial+task_brief; hidden B=spec_b.json(buffer/v(a)/v(y)/vth0.45/win5e-10-2e-09/buf_sim.tr0). check.py 15 conds a-o, ref PASS 15/15, 4 negs + 3 §4.9 fakes all FAIL NEG_RC=0. Paper: Ntasks 931->937 (A188/B212/C271/D266), App A breakdown synced; PAPER_SKIP(no latexmk) — latexmk not installed, pdf not regenerated.",
+      "shard_A_new_this_round": 1
     }
   },
   "sessions": 5822,
   "shard_mc": {
-    "C": 15
+    "A": 15,
+    "B": 30,
+    "C": 30,
+    "D": 30
   },
   "source": "/home/t0002965/log/ssh_eda_search_20261105_192825/summary.tsv (11/05 scan)",
   "target_mc": 30,
-  "updated_at": "2026-11-09T21:10:00+08:00",
+  "updated_at": "2026-11-09T22:10:00+08:00",
   "users_mc100": 182,
   "users_mc30": 224,
   "users_mc300": 60,
