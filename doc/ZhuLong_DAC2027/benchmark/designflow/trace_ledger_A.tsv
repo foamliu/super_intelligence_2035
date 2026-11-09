@@ -288,3 +288,4 @@
 1793931435256_j9oap	e0046913	hfeg0pkn003	214	verification	case	EDA-Eval-DesignFlow-FmRtl2RtlDemo-001	2026-11-09 19:44	r285: e0046913 FM rtl2rtl demo selection -> gen_rtl2rtl_demo.py spec-driven ref/pass/fail/tb generator, 14 conds (a-n), booth_code A / data_align B
 1794035176106_1hei0	kannik	hfeg0pkn001	199	verification	case	EDA-Eval-DesignFlow-PowerPlanSignalExpand-001	2026-11-09 20:19	
 1792658417629_znzyh	mike	hfhds201	421	verification	case	EDA-Eval-DesignFlow-VcsBoostLinkFix-001	2026-11-09 20:52	
+1794201834116_6ajm4	e0023936	hfhds201	74	eda_other	case	EDA-Eval-DesignFlow-WvDataeyeMeasure-001	2026-11-09 21:27	
