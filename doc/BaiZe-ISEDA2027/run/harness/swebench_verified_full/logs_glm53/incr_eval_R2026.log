@@ -1,0 +1,6 @@
+
+============================================================
+=== cline-patched: incr_eval R2026 ===
+  cline-patched: 46 new instances to eval (total real preds: 153, already evaluated: 108)
+  [02:02:32] cline-patched: merged 153 -> predictions_glm53/predictions_cline-patched_glm53.json
+  [02:02:32] cline-patched: launching eval (workers=1, timeout=1800, 46 instances)...
