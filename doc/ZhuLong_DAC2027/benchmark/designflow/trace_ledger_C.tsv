@@ -499,3 +499,7 @@
 1794210366563_2wp18.messages.json					parked		2026-11-09 16:02	r281 borderline-park: LVS Error(20043) net-short diagnostic (GSAEB shorted GSAE_BCK), 38msgs 2 real turns thin; user cites error=A-disqualify; potential B-synth LVS-short parser but thin; e0044131
 1793963596117_aftvk					case	EDA-Eval-DesignFlow-StdcellLayoutPlanGen-001	2026-11-09 16:42	
 1794205462149_hc9mk					case	EDA-Eval-DesignFlow-DrcRulePkgConvert-001	2026-11-09 17:28	
+1793794507428_dus4q					parked		2026-11-09 19:09	r285 deepread: e0047527 newbie Q&A (what is aether/how to use eda) + locale/encoding troubleshooting (zh_CN.UTF-8/gedit/xterm) + 1 schematic task (反相器原理图=myLib) = wrong-shard D; 144 tool_use mostly run_approved_command troubleshooting; REJECT
+1793161126345_sls03					parked		2026-11-09 19:09	r285 deepread: my7li 79msgs 4user-turns all setup reconnaissance (确认工程/新建目录drgqazl/确认层次工程名), no produce-task deliverable; 39 tool_use editor+run_approved_command setup; REJECT not-a-seed
+1787887644598_cpnbc					parked		2026-11-09 19:09	r285 deepread: e02141 223msgs Sentaurus TCAD session (Synopsys sprocess/sdevice vertical GAA NMOS deck setup, Applications_Library explore) = wrong-shard (TCAD device sim not layout); virtuoso kw only from copied zl_eda_virtuoso.il skill file; REJECT
+1793840726858_8fudf					parked		2026-11-09 19:09	r285 deepread: e0045260 21msgs 1user-turn how-to (virtuoso cell1/cell2 layer display per-cell LPP visibility 怎么设置), assistant only research 5search_apis+2read_files no deliverable; classic prose/how-to REJECT
