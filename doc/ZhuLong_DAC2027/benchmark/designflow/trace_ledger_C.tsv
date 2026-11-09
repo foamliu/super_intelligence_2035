@@ -561,3 +561,4 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked		2026-11-09 20:39	RAG-looku
 1791965068024_x89mp	lizwen	hfeg0pkn002	169	physical_verify	parked		2026-11-10 02:20	r299: failed, wrong-shard web-dev (HTML UI export for PV platform), calibre kw from HTML content
 1792055918399_guf1d	minjiex	hfeg0plg90	97	physical_verify	parked		2026-11-10 02:20	r299: cancelled, trivial prompt=你好, A-rule2 fail
 1794213257272_e0taz	e0039122	hfeg0plg53	170	layout_aether	parked		2026-11-10 02:20	r299: idle, capability Q&A prompt=你可以使用Aether吗, no produce-task
+1793937823141_zdo8r	t0002038	hfeg0plg90	585	layout_aether	case	EDA-Eval-DesignFlow-TrMatchHelperGen-001	2026-11-10 04:11	
