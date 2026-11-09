@@ -732,3 +732,4 @@ qnm9e					parked		2026-11-08 01:58	Finesim DC convergence Q&A prose dup of uky6c
 1793188714775_8nyrm	e0044587	hfeg0pkn004	1	spice_sim	parked		2026-11-09 19:29	1109cron-diff: pyAether-dominant(11) wrong-shard D
 1793169071103_vafrf	e0039602	hfeg0pkn004	1	spice_sim	parked		2026-11-09 19:29	1109cron-diff: 1hspice trivial
 1793103814409_kxeno	e0044587	hfeg0pkn004	1	spice_sim	parked		2026-11-09 19:29	1109cron-diff: 1hspice+1calibre trivial
+1789901478183_k9dnd	kenwang	hfeg0pkn004	33	spice_sim	parked		2026-11-09 19:50	1109-1936 repeek FIXED-script: 140+msgs real session but Python env/module debug (PYTHONHOME/LD_LIBRARY_PATH setup_offline.sh) = wrong-shard eda_other not spice; hspice kw48 from .bashrc module-load context
