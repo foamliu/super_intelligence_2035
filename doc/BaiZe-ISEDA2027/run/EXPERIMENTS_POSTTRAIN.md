@@ -12109,3 +12109,86 @@ Contamination gate: CLEAR
 - `reports/report_posttrain_pass8_profiling_r116_nodocs_zh.html` (10KB, 自包含)
 - `reports/report_posttrain_pass8_profiling_r116_withdocs_zh.html` (10KB, 自包含)
 - 本节 (EXPERIMENTS §R116)
+
+---
+
+## §R117 执行正确性奖励架构——R0++ 增强静态分析奖励 + verl 集成设计（R1+R3 方向 · 零 GPU）
+
+> **背景**：R116 发现 API 覆盖率评分零区分度（所有层级 100% pass）→ 需执行正确性评分。但 EDA 沙箱（10.129.32.75）从 .17 不可达（所有 TCP 端口被防火墙过滤）。
+> **R117 解决**：设计 R0++ 增强静态分析奖励，在无沙箱条件下提供有区分度的连续奖励信号。
+
+### 1. 沙箱连通性复查（2026-11-09 23:20）
+
+| 端口 | 状态 |
+|:--|:--|
+| 8667 | FILTERED |
+| 8669 | FILTERED |
+| 8664 | FILTERED |
+| 8665 | FILTERED |
+| 8653 | FILTERED |
+| 8668 | FILTERED |
+
+- ICMP 可达（0.5ms），所有 TCP 端口 FILTERED → 与 R37（2026-11-08）一致
+- **结论**：执行正确性奖励 BLOCKED，直到防火墙开放或本地部署沙箱
+
+### 2. R0++ 增强静态分析奖励设计
+
+> R0（基线）：API 覆盖率 = 必需 API 在代码文本中被提及的比例。问题：`return pyScript.X()` 提及 X → 100% → 零区分度。
+
+**R0++ 五维评分**（AST 级别，无需沙箱）：
+
+| 维度 | 权重 | 描述 |
+|:--|--:|:--|
+| api_coverage | 0.20 | R0 基线：必需 API 在文本中被提及 |
+| ast_call_verified | 0.30 | API 作为 Call 节点出现在函数体 AST 中（非仅字符串提及）|
+| return_path | 0.25 | return 语句引用 API 调用结果（非硬编码字面量）|
+| arg_plausibility | 0.15 | 带参数的 API 调用时，参数是否存在 |
+| hardcode_penalty | -0.10 | 检测 `return True/False/None/[]` 无 API 调用 → 扣分 |
+
+**奖励公式**：`R0++ = 0.20*cov + 0.30*call + 0.25*ret + 0.15*arg - 0.10*hardcode`
+
+### 3. 区分度验证（500 题全量）
+
+| 变体 | mean | std | min | max | gap (good - bad) |
+|:--|--:|--:|--:|--:|--:|
+| **good** (canonical) | 0.900 | 0.000 | 0.900 | 0.900 | — |
+| bad_hardcode (return True) | 0.072 | 0.066 | 0.000 | 0.325 | **0.828** |
+| bad_no_return (API called, return None) | 0.488 | 0.213 | 0.192 | 0.675 | **0.412** |
+| bad_syntax (syntax error) | 0.000 | 0.000 | 0.000 | 0.000 | **0.900** |
+| bad_wrong_api (wrong API name) | 0.486 | 0.129 | 0.317 | 0.600 | **0.414** |
+| bad_empty (pass only) | 0.086 | 0.078 | 0.000 | 0.350 | **0.814** |
+
+**判定**：**GOOD SEPARATION** — 所有 gap > 0.1（最小 gap=0.412）
+
+**对比 R0（API 覆盖率）**：R116 实测 R0 给所有变体 100% → spread=0.004 → POOR。R0++ 给 good=0.9 vs bad=0.0-0.49 → spread=0.9 → GOOD。
+
+### 4. 对 GRPO 的关键意义
+
+- R0 提供二值信号（0 或 1）→ GRPO group 内方差 ≈ 0 → 无学习信号（R116 证实）
+- R0++ 提供连续 [0, 1] 信号 → GRPO group 内方差 > 0 → **有学习信号**
+- 预期 std=0 比例：R0++ 约 15-25%（vs R0 的 95%+）
+- **关键改进**：即使无沙箱，R0++ 也能为 GRPO 提供有效的学习信号
+
+### 5. verl 集成设计（三阶段）
+
+| 阶段 | 条件 | 奖励 |
+|:--|:--|:--|
+| Phase 1（当前）| 沙箱不可达 | R0++ 静态分析 only |
+| Phase 2（沙箱可用）| 防火墙开放 | 0.3*R0++ + 0.7*execution_score |
+| Phase 3（理想）| 本地 Docker | 0.3*R0++ + 0.7*execution_score, sub-second |
+
+**execution_score**：pass=1.0, assertion_fail=0.3, import_error=0.1, runtime_error=0.05, timeout=0.02, syntax_error=0.0
+
+**calc_reward 伪代码**：R0++ 先跑 → reward < 0.2 跳过沙盒 → 沙箱执行 → 0.3*R0++ + 0.7*exec → 超时回退 R0++
+
+### 6. R1/R3 回答
+
+**R1（环境接口）**：沙箱从 .17 不可达（6 端口全 FILTERED）。替代方案：①申请开放防火墙 ②本地 Docker 部署 ③R0++ 静态分析作为 Phase 1 过渡方案。当前推荐 R0++。
+
+**R3（奖励设计）**：R0++ 解决了 R0 的零区分度问题（GOOD SEPARATION, gap > 0.4）。连续信号避免 std=0 主导。hardcode_penalty 抑制 H2 shortcut exploit。分阶段混合（R0++ → R0++*0.3 + exec*0.7）避免 reward collapse。
+
+### 交付物
+
+- `baize_posttrain_r117_exec_reward_arch.py` (~200 行, py_compile OK)
+- `r117_exec_reward_arch.json` (182KB, 500 题完整结果)
+- 本节 (EXPERIMENTS §R117)
