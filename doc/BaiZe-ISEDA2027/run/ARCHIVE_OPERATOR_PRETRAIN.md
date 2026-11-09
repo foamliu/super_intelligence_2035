@@ -4051,3 +4051,19 @@ commit `pretrain 项目:`。✅ 已完成：commit e1c6be4 pushed, 28 files（�
 **④ 纪律**：`CUDA_VISIBLE_DEVICES=""` 全程、`nice -n 19`、线程数取空闲核但**两机 CPU ≤80%**；🚫 不碰 GPU / S1 训练 / vision / data / harness；🚫 禁止 `pkill python` 或宽泛 kill（只 kill 自己的 llama-server 端口）；结果 JSON 按硬约束**不入库**（`.gitignore` 已覆盖）；commit `pretrain eval:`；心跳写 `未完成指令：有` ⇒ `WAITING: 0`，直到 v2 报告交付。
 
 > **完成标记**：10/10 ckpt 全出 ⇒ 标 `✅ 10点已交付`；100k 未出时只能标 `⏳ 60–90k 已交付 / 100k pending`，且 `WAITING: 0`。
+
+---
+
+## 归档 2026-11-09（11-08 异常调查 + 11-07 提速两块，报告均已交付）
+
+### 🚨 运维令 · 2026-11-08 15:3x（全量 eval 均值 37.40% 与历史 51.5–57.9% 严重不符 —— 必须查清）· 用户直令 · 最高优先
+
+> **用户原话**：「pretrain 全量均值这么低吗，比原来大幅降低。」「需要安排 pretrain 查一下。不是测了就算。」
+
+> **结论**：✅ 报告 `reports/report_pretrain_eval_avg7_anomaly_zh.html`（50KB，commit a660871b3）已交付。**结论 A（口径差异）**：37.40% 系 stale aggregate `results.json` 缺 piqa 导致低估；补全 piqa 后 **Avg7=55.96%**，与历史 56.71% 仅差 -0.75pp（在 limit=100 ±4.5% stderr 内）。分集对照、口径差异说明、phase2 稳定性说明均含于报告。
+
+### ⚡ 运维令 · 2026-11-07 15:2x（全量 eval 提速：llama.cpp 回归 + 任务级多进程并行）· 用户直令 · 最高优先
+
+> **用户原话**：「pretrain 全量 eval 需要时间这么久吗？已经使用 llama.cpp 了吗？线程并发多一点有帮助吗」
+
+> **结论**：✅ 报告 `reports/report_pretrain_cpu_eval_speedup_zh.html`（17KB，commit 08dfed490 前已交付）已交付。llama.cpp `_fixed_` 版本精度回归通过（Δacc≈0），7× 提速已用于万整数 ckpt limit=100 评测（运维令 11-09 口径）。任务级多进程并行方案已评估但木桶效应（hellaswag 占 40%+ 请求）打折，当前采用单 server 串行（-t 4, nice 19）以保护训练吞吐。
