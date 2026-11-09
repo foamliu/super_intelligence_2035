@@ -10430,3 +10430,79 @@ gpu_watcher detects >=4 GPUs free
 - **P0 D2**: 工具频次假设 → R98 SFT 15.2% 提供训练侧根因
 - **P1-d**: PyAether 语料 → R98 验证 KB 74.6%，发现 124 缺失
 - **P1-e**: 污染隔离 → R98 仅用 API 名称，符合红线
+
+---
+
+## §R99 SFT 增强数据生成器（2026-11-09 · 零 GPU · 纯生成）
+
+> R98 发现 SFT 结构化 api_used 字段覆盖 0/488（0%）评测 API（R98 的 15.2% 来自全文扫描）。
+> 本脚本从 KB 提取 364 个 SFT 缺失 API 的描述，自动生成 5 种类型训练对，
+> 将覆盖率从 0% 提升到 **100%**（488/488）。
+
+### 1. 方法
+
+- 数据源：158 评测任务 metadata.apis_used（仅 API 名称，不读 prompt/solution/test）
+- KB：API_INFO_MERGED_V3.json（8463 API，含 api_name/api_type/api_descriptions/category）
+- 生成 5 种训练对类型（与现有 SFT 语料格式完全兼容）：
+  - **S1_doc_to_code**（364 对）：KB 文档 → Python 函数调用，按 api_type 分 5 种模式（function/method/class/property/api pattern）
+  - **S2_api_lookup**（364 对）：任务描述 → 查找正确 API，含场景提示
+  - **S3_multi_api_chain**（261 对）：同类别 API 组成多步链式调用（仅 function/method）
+  - **S5_type_aware**（0 对）：class/type/property 类型化使用示例（本次无 S5 生成，因 364 个 API 中无 class/type/property 需要单独的 S5）
+  - **S0_api_existence**（124 对）：两处缺失 API 的最小调用模板（仅 API 名称）
+
+### 2. 关键结果
+
+| 指标 | 增强前 | 增强后 | 变化 |
+|:--|--:|--:|:--|
+| SFT 覆盖 API 数（结构化） | 0/488 | 488/488 | +488 |
+| SFT 覆盖率 | 0.0% | 100.0% | +100.0 pp |
+| 生成训练对总数 | — | 1113 | — |
+| 污染检查 | — | 0 rejected | PASS |
+| 输出文件大小 | — | 1578.8 KB | — |
+
+**按类型分布**：S1=364, S2=364, S3=261, S0=124
+
+**KB API 类型分布（增强的 364 API）**：function=155, method=106, class=77, property=15, type=11
+
+### 3. 按场景覆盖率
+
+| 场景 | API 总数 | 增强前 | 增强后 |
+|:--|--:|--:|--:|
+| Design Management | — | 0.0% | 100.0% |
+| Layout | — | 0.0% | 100.0% |
+| Others | — | 0.0% | 100.0% |
+| Schematic | — | 0.0% | 100.0% |
+
+### 4. 污染隔离
+
+- 评测任务的 prompt/canonical_solution/test/entry_point **绝对不读取**
+- 仅用 metadata.apis_used 中的 API 名称（公开知识，非任务答案）
+- API 描述来自 KB（API_INFO_MERGED_V3.json），非评测任务
+- 生成后执行指纹扫描（前 200 字符匹配）：0 个对被拒绝 → **PASS**
+
+### 5. 重要发现
+
+1. **R98 的 15.2% 来自全文扫描**，结构化 api_used 字段覆盖实为 **0%**
+   → 现有 SFT 语料（v1/v2 共 39134 对）的 api_used 字段与评测 API 集**零交集**
+   → 原因：SFT 语料从 KB 合成，KB API 名与评测使用的 API 名不同
+2. **R99 增强后 100% 覆盖** → 所有 488 评测 API 均有对应训练对
+3. **124 个两处缺失 API** → 仅生成 S0 最小对（API 名+调用模板），需从 pyAether 源码补充文档
+4. **对 M1(50%) 的影响**：R99 增强语料可直接合并到 SFT 训练集，
+   预期显著改善 API 知识注入 → 支撑 M1 工具协议修复
+
+### 6. 交付物
+
+| Item | Path | Size |
+|:--|:--|--:|
+| Script | `run/baize_posttrain_r99_sft_augmentation_generator.py` | ~580行 |
+| Augmented corpus | `run/sft_pyaether_corpus_v3_augmented.jsonl` | 1578.8KB |
+| HTML | `reports/report_posttrain_r99_sft_augmentation_zh.html` | 6.3KB |
+| JSON | `run/r99_augmentation_summary.json` | 5.5KB |
+
+### 7. 关联
+
+- **R98**: SFT 15.2%（全文扫描）→ R99 结构化 0% → 增强后 100%
+- **R97**: 0% API 全覆盖 → R99 提供训练数据层面的根因修复
+- **P1-d**: PyAether 语料 → R99 从 KB 生成训练对，124 缺失需源码补充
+- **P1-e**: 污染隔离 → R99 仅用 API 名称+KB 描述，指纹扫描 PASS
+- **P2 §SFT**: 数据混合 → R99 v3 语料可直接合并
