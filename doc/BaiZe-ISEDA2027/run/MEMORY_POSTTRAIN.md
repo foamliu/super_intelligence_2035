@@ -7,12 +7,12 @@ WAITING: 0
 
 ## 进度快照
 
-- PHASE: posttrain-wake134（2026-11-09 R86: E2E管线时间线MC模拟→6步×2000sim→P50=19.0d/P90=20.4d/P95=20.7d→ISEDA WITHIN_WINDOW✅(37d窗口,100%可行)→RL关键路径63.7%→敏感性RL35.5%+Buffer30.6%+GPU27.3%→HTML 5.3KB+JSON 3.7KB+EXPERIMENTS §R86）
-- 已完成: P3预备✅ 8脚本；P0✅ D1–D6；P1✅ 数据盘点+PyAether语料+污染隔离；P2✅ 方案书；R1-R86✅；wake133✅ R85(奖励臂比较动力学)；wake134✅ R86(E2E管线时间线MC)
-- 当前动作: wake134 R86: baize_posttrain_e2e_timeline.py(438行). 6步(GPU+Setup/Anneal/SFT/RL/GRPO/Eval/Buffer)×2000MC. 核心发现: P50=455.3h(19.0d)/P90=489.3h(20.4d), ISEDA WITHIN_WINDOW(37d窗口,100%可行), RL关键路径(63.7%), 敏感性RL35.5%+Buffer30.6%+GPU释放27.3%. 优化建议: 最大化沙盒并发32+合并RL阶段+并行评测+跳过退火. py_compile✅+--verbose✅+--html✅(5.3KB,0script,0外链)+--json✅(3.7KB). EXPERIMENTS §R86.
-- 下一步: ①GPU释放→gpu_watcher自动触发→steps0-6 ②SGLang serve MiniCPM5-2B→复测36%基线(5-run) ③采集真实失败轨迹替换R4假设+D1-D6假设+R83预测+R84沙盒时间+R85 pass rate+R86时间估计 ④用实测数据校准R86时间线模型 ⑤正式训练待pretrain ckpt(ETA≈2026-12-25)
-- 阻塞: GPU 0/8free(11/9既定到位,SGLang Qwen3.8-27B占全8卡0%util,gpu_watcher iteration#244+等待中,不杀进程);P3等pretrain ckpt(ETA≈2026-12-25)
-- 本轮新增调研产出: R86 E2E管线时间线MC模拟（baize_posttrain_e2e_timeline.py 438行 + 6步×2000MC + P50=19.0d/P90=20.4d + ISEDA WITHIN_WINDOW 100%可行 + RL关键路径63.7% + 敏感性分析 + 崩溃统计mean22.7 + 优化建议6条 + HTML 5.3KB + JSON 3.7KB + EXPERIMENTS §R86）
+- PHASE: posttrain-wake135（2026-11-09 R87: SFT检查点选择与RL就绪门设计→7策略×4混合×4臂×2000MC=224000仿真→balanced最优(final=0.5782,collapse=1.30%)→过拟合是RL崩溃最强风险因子(12.7x)→eval Pass@1是最强RL终点预测因子(r=+0.57)→就绪门STRONG_GO P(M1)=98.1%→最优检查点step1200-1800→HTML 10.5KB+JSON 5KB+EXPERIMENTS §R87）
+- 已完成: P3预备✅ 8脚本；P0✅ D1–D6；P1✅ 数据盘点+PyAether语料+污染隔离；P2✅ 方案书；R1-R87✅；wake134✅ R86(E2E管线时间线MC)；wake135✅ R87(SFT检查点选择与RL就绪门)
+- 当前动作: wake135 R87: baize_posttrain_sft_ckpt_selector.py(~560行). 7策略(latest/best_eval/lowest_loss/best_tool/balanced/early_stop/anti_overfit)×4数据混合×4奖励臂×2000MC. 核心发现: balanced策略最优风险调整(final=0.5782,collapse=1.30%), best_eval最高final但collapse=10.92%, latest最差(collapse=22.95%). 过拟合是RL崩溃最强风险因子(12.7x), eval Pass@1是最强RL终点预测因子(r=+0.57). 就绪门STRONG_GO P(M1)=98.1% vs NO_GO 89.0%. 最优检查点step1200-1800(72.9%占比). py_compile✅+--verbose✅+--html✅(10.5KB,0script,0外链)+--json✅(5KB). EXPERIMENTS §R87.
+- 下一步: ①GPU释放→gpu_watcher自动触发→steps0-6 ②SGLang serve MiniCPM5-2B→复测36%基线(5-run) ③采集真实失败轨迹替换R4假设+D1-D6假设+R83-R87预测 ④用实测数据校准R87检查点选择模型 ⑤正式训练待pretrain ckpt(ETA≈2026-12-25)
+- 阻塞: GPU 0/8free(11/9既定到位,SGLang Qwen3.8-27B占全8卡0%util,gpu_watcher iteration#267+等待中,不杀进程);P3等pretrain ckpt(ETA≈2026-12-25)
+- 本轮新增调研产出: R87 SFT检查点选择与RL就绪门设计（baize_posttrain_sft_ckpt_selector.py ~560行 + 7策略×224000仿真 + balanced最优collapse=1.30% + 过拟合12.7x崩溃风险因子 + eval r=+0.57最强预测 + 就绪门STRONG_GO P(M1)=98.1% + 最优step1200-1800 + HTML 10.5KB + JSON 5KB + EXPERIMENTS §R87）
 - 未完成指令: 🔴用户令2026-11-07(GPU未到位,需持续产出调研) ⇒ WAITING=0
 
 ## 关键事实（常驻）
