@@ -1,0 +1,202 @@
+{
+  "round": "R121",
+  "direction": "R1",
+  "date": "2026-11-10T00:51:49.638361",
+  "findings": {
+    "docker": {
+      "docker_available": true,
+      "docker_version": "Docker version 24.0.7, build 24.0.7-0ubuntu2~20.04.1",
+      "docker_accessible": false,
+      "docker_error": "permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock: Get \"http://%2Fvar%2Frun%2Fdocker.sock/v1.24/containers/json\": dial unix /var/run/docker.sock: connect: permission denied",
+      "dockerfile_exists": true,
+      "feasible": false
+    },
+    "local_mcp_server": {
+      "system_python": "3.8.10",
+      "verl_venv_python": "Python 3.10.22",
+      "mcp_imports_sys": {
+        "tools.search_apis": {
+          "importable": false,
+          "error": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n  File \"/home/app.e0031982/code/eda_fastmcp/tools/search_apis.py\", line 3, i"
+        },
+        "server.rag_server.query_knowledge": {
+          "importable": false,
+          "error": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n  File \"/home/app.e0031982/code/eda_fastmcp/server/rag_server/query_knowledg"
+        }
+      },
+      "chromadb_sys": {
+        "installed": false,
+        "version": ""
+      },
+      "chromadb_verl": {
+        "installed": false,
+        "version": ""
+      },
+      "blocking_issues": [
+        "Python 3.8: dict[str,str] needs 3.9+",
+        "chromadb not installed"
+      ],
+      "feasible_with_chromadb_install": true
+    },
+    "local_api_kb": {
+      "api_info_merged_v3": {
+        "num_apis": 8463,
+        "size_mb": 17.3,
+        "sample_keys": [
+          "aeAddDesignMapping",
+          "aeAddHighLightCircle",
+          "aeAddHighLightEllipse"
+        ],
+        "fields": [
+          "api_name",
+          "api_type",
+          "api_descriptions",
+          "category"
+        ]
+      },
+      "api_summary_v3": {
+        "num_entries": 4049,
+        "size_kb": 530.2
+      },
+      "func_all_v3": {
+        "num_entries": 748,
+        "size_mb": 1.8
+      },
+      "other_docs": {
+        "API_INFO_MERGED.json": 9249694,
+        "API_INFO_MERGED_V2.json": 5979254,
+        "API_INFO_MERGED_V3.json": 18132428,
+        "abbreviation_map.yaml": 17614,
+        "api_categories.jsonl": 308716,
+        "api_classes.jsonl": 2258461,
+        "api_functions.jsonl": 3614366,
+        "api_inheritances.json": 9611,
+        "api_methods.jsonl": 2387542,
+        "api_patch.json": 354954
+      },
+      "kb_files": {
+        ".recall_api.pid": 7,
+        ".recall_api.port": 5,
+        ".recall_local.pid": 7,
+        ".recall_local.port": 5,
+        "README.md": 3529,
+        "api_summary_api_only.json": 296435,
+        "api_summary_description_api.json": 487822,
+        "api_summary_v1.json": 164252,
+        "api_summary_v2.json": 144201,
+        "api_summary_v3.json": 542920
+      }
+    }
+  },
+  "recommendations": [
+    {
+      "pri": "P0",
+      "action": "Request ops to open firewall: 10.129.32.75 ports 8664,8665,8653,8669 from .17",
+      "impact": "Enables M3 (75%) — real execution feedback for RL"
+    },
+    {
+      "pri": "P1",
+      "action": "Alternatively: request Docker group membership on .17 for local sandbox",
+      "impact": "Self-hosted sandbox, no network dependency"
+    },
+    {
+      "pri": "P2",
+      "action": "Build lightweight local API search tool (no chromadb)",
+      "impact": "RL agent queries 8,463 APIs locally with <5ms",
+      "status": "Design complete"
+    },
+    {
+      "pri": "P3",
+      "action": "Install chromadb in verl_cu124_venv (Python 3.10) for full MCP server",
+      "impact": "Semantic API search (better than keyword)"
+    },
+    {
+      "pri": "P4",
+      "action": "If firewall opens: configure SANDBOX_HOST + restart MCP server",
+      "impact": "Full execution-based reward for RL"
+    }
+  ],
+  "local_api_search": {
+    "approach": "keyword_based_no_vector_db",
+    "data_source": "API_INFO_MERGED_V3.json (8,463 APIs)",
+    "index_method": "inverted index on api_name + api_descriptions",
+    "load_time_s": 0.5,
+    "memory_mb": 25.9,
+    "search_latency_ms": 5,
+    "test_queries": {
+      "layout": 29,
+      "schematic": 10,
+      "design": 313,
+      "net": 373,
+      "cell": 188,
+      "pin": 135,
+      "wire": 26,
+      "route": 95
+    },
+    "mcp_compatibility": {
+      "search_apis": "REPLACEABLE — keyword search",
+      "get_api_details": "REPLACEABLE — dict lookup",
+      "run_code": "NOT REPLACEABLE — needs remote sandbox",
+      "probe_pyAether_code": "NOT REPLACEABLE — needs remote sandbox"
+    }
+  },
+  "impact_on_rl": {
+    "current_state": {
+      "sandbox_executable": false,
+      "ssh_tunnel": false,
+      "docker_local": false,
+      "local_mcp": false,
+      "local_api_kb": true,
+      "r0pp_static_reward": true
+    },
+    "reward_arms": {
+      "R0_binary": {
+        "feasible": true,
+        "signal": "LOW (0% nonzero variance)",
+        "rec": "Baseline only"
+      },
+      "R0pp_5dim": {
+        "feasible": true,
+        "signal": "GOOD (50% nonzero variance)",
+        "rec": "PRIMARY Phase 1"
+      },
+      "R2_execution": {
+        "feasible": false,
+        "signal": "BEST",
+        "rec": "BLOCKED — needs sandbox",
+        "blocker": "All TCP FILTERED, SSH FILTERED, Docker no perm"
+      },
+      "R3_R2_penalty": {
+        "feasible": false,
+        "signal": "BEST",
+        "rec": "BLOCKED — depends on R2"
+      },
+      "R4_R3_legality": {
+        "feasible": true,
+        "signal": "GOOD",
+        "rec": "R0++ + API legality from local KB (8,463 APIs)"
+      }
+    },
+    "recommended_phase1": "R0pp + API legality (R4-style without execution)",
+    "recommended_phase2": "0.3*R0pp + 0.7*execution (when sandbox available)",
+    "rl_tools": {
+      "api_search": "YES — local keyword search on 8,463 APIs",
+      "api_detail": "YES — JSON lookup",
+      "code_execution": "NO — sandbox unreachable"
+    },
+    "key_insight": "RL agent CAN learn API usage patterns (which APIs, how to structure args) via R0++ + local API KB, but CANNOT learn from execution feedback. Sufficient for M1(50%) and partial M2(65%), but M3(75%) requires sandbox access."
+  },
+  "summary": {
+    "key_findings": [
+      "Sandbox 10.129.32.75: ICMP reachable(0.787ms), ALL 7 TCP ports FILTERED (SSH=22, sandbox=8664-8669,8653)",
+      "SSH tunnel NOT feasible (port 22 filtered) — eliminates tunnel approach",
+      "Docker available(v24.0.7) but NO permission — eliminates local Docker deployment",
+      "MCP server NOT runnable on Python 3.8 (dict[str,str] needs 3.9+); verl venv 3.10 could work but chromadb missing",
+      "Local API KB AVAILABLE: API_INFO_MERGED_V3.json(8,463 APIs,18MB) + api_summary_v3.json(4,049 entries)",
+      "Lightweight API search designed: keyword-based, no chromadb, <5ms, Python 3.8+",
+      "R0++ static reward is ONLY feasible reward without sandbox; sufficient for M1(50%)+partial M2(65%)",
+      "R4-style reward (R0++ + API legality from local KB) feasible NOW"
+    ],
+    "conclusion": "Sandbox completely blocked from .17. R0++ + local API KB is ONLY path for Phase 1 RL. M3(75%) requires ops to open firewall or grant Docker access."
+  }
+}

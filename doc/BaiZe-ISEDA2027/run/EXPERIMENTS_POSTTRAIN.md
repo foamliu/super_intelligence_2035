@@ -12508,4 +12508,91 @@ R0++ 的 hardcode_penalty 成功捕获了这些 case：hacking 样本获得 0.3-
 - `baize_posttrain_r120_sft_recipe_optimization.py`（~460 行, py_compile ✅, smoke ✅）
 - `r120_sft_recipe_results.json`（15.3KB, 8 节完整分析结果）
 - 本节（EXPERIMENTS §R120）
+## §R121 EDA 沙箱连通性调查 + 本地 API 知识库替代方案（R1 方向 · 零 GPU · 2026-11-10 wake168）
+
+> **背景**：R1(wake48)设计了交互式 RL 方案(SSH/隧道/本地克隆)，R37(wake88)发现沙箱 10.129.32.75 全端口 FILTERED，R117(wake164)设计了 R0++ 静态奖励作为回退。但从未调查过：(a) SSH 隧道可行性，(b) 本地 MCP 服务器，(c) 无 chromadb 的轻量本地 API 搜索。
+
+### 1. 沙箱连通性——完整探测
+
+| 指标 | 结果 |
+|:--|:--|
+| ICMP ping | ✅ 可达 (0.787ms) |
+| TCP 端口 22 (SSH) | ❌ FILTERED（超时） |
+| TCP 端口 8664/8665/8653/8669 (sandbox) | ❌ ALL FILTERED |
+| SSH 隧道可行性 | ❌ 不可行（端口 22 被过滤） |
+
+**结论**：R1 设计的 SSH 隧道方案被完全排除——不仅沙箱端口被过滤，SSH 端口也被过滤。
+
+### 2. Docker——本地沙箱部署
+
+| 指标 | 结果 |
+|:--|:--|
+| Docker 可用 | ✅ v24.0.7 |
+| Docker 可访问 | ❌ permission denied (docker.sock) |
+| Dockerfile 存在 | ✅ `~/code/eda_fastmcp/Dockerfile` |
+| 可行性 | ❌ 无 Docker 权限，无法部署 |
+
+### 3. 本地 MCP 服务器
+
+| 指标 | 结果 |
+|:--|:--|
+| 系统 Python | 3.8.10（`dict[str,str]` 语法不支持，需 3.9+） |
+| verl venv Python | 3.10.22（语法兼容） |
+| chromadb（系统） | ❌ 未安装 |
+| chromadb（verl venv） | ❌ 未安装 |
+| MCP 服务器可运行 | ❌ 当前不可行（Python 版本 + chromadb 缺失） |
+| 安装 chromadb 后可行 | ✅ 可在 verl venv (Python 3.10) 中 pip install |
+
+### 4. 本地 API 知识库——无需 MCP 即可用
+
+| 文件 | 内容 | 大小 |
+|:--|:--|:--|
+| `docs/API_INFO_MERGED_V3.json` | 8,463 个 API（name/type/description/params/returns） | 17.3 MB |
+| `kb/api_summary_v3.json` | 4,049 条 API 摘要 | 530 KB |
+| `docs/func_all_v3.json` | 748 个函数定义 | 1.8 MB |
+
+### 5. 轻量本地 API 搜索设计（无 chromadb）
+
+- **方法**：基于关键词的倒排索引（api_name + api_descriptions）
+- **加载时间**：~0.5s | **内存**：~26MB | **搜索延迟**：<5ms
+- **关键词搜索测试**：layout→29, schematic→10, design→313, net→373, cell→188, pin→135, wire→26, route→95
+- **MCP 工具兼容性**：
+  - `search_apis` ✅ 可替代（关键词搜索）
+  - `get_api_details` ✅ 可替代（JSON dict 查找）
+  - `run_code` ❌ 不可替代（需远程沙箱）
+  - `probe_pyAether_code` ❌ 不可替代（需远程沙箱）
+
+### 6. 对 RL 奖励设计的影响
+
+| 奖励臂 | 可行 | 信号质量 | 建议 |
+|:--|:--|:--|:--|
+| R0 二值 | ✅ | LOW (0% nonzero variance) | 仅基线 |
+| R0++ 五维静态 | ✅ | GOOD (50% nonzero variance) | **Phase 1 主力** |
+| R2 执行 | ❌ | BEST | BLOCKED — 需沙箱 |
+| R3 R2+惩罚 | ❌ | BEST | BLOCKED — 依赖 R2 |
+| R4 R3+API合法 | ✅ | GOOD | **R0++ + 本地 API KB 验证** |
+
+**推荐**：
+- Phase 1：R0++ + API 合法性（R4 风格，无需沙箱执行）
+- Phase 2：0.3×R0++ + 0.7×执行（沙箱可用时）
+
+**关键洞察**：RL agent 能通过 R0++ + 本地 API KB 学习 API 使用模式（选哪些 API、如何组织参数），但无法从执行反馈中学习。这对 M1(50%) 和部分 M2(65%) 足够，但 M3(75%) 需要沙箱访问。
+
+### 7. 行动计划
+
+| 优先级 | 行动 | 影响 |
+|:--|:--|:--|
+| P0 | 请求运维开放防火墙：10.129.32.75 端口 8664,8665,8653,8669 从 .17 | 启用 M3(75%) — 真实执行反馈 |
+| P1 | 替代：请求 Docker 组权限在 .17 本地部署沙箱 | 自托管，无网络依赖 |
+| P2 | 构建轻量本地 API 搜索工具（无 chromadb） | RL agent 本地查询 8,463 API，<5ms |
+| P3 | 在 verl_cu124_venv (Python 3.10) 安装 chromadb | 语义 API 搜索（优于关键词） |
+| P4 | 防火墙开放后：配置 SANDBOX_HOST + 重启 MCP | 完整执行奖励 |
+
+### 交付物
+
+- `baize_posttrain_r121_sandbox_connectivity.py`（~220 行, py_compile ✅, 运行 ✅）
+- `r121_sandbox_connectivity_results.json`（7.1 KB, 完整调查数据）
+- 本节（EXPERIMENTS §R121）
+
+
 
