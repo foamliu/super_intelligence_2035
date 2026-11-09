@@ -747,3 +747,4 @@ qnm9e					parked		2026-11-08 01:58	Finesim DC convergence Q&A prose dup of uky6c
 1793955137675_xgfh1	curryxu	hfeg0pkn001	51	spice_sim	parked		2026-11-10 00:39	REJECT consulting (finesim time-step-too-small 报错诊断), no produce deliverable, wrong-type
 1793928990578_ltkg1	curryxu	hfeg0pkn001	229	spice_sim	case	EDA-Eval-DesignFlow-FifoDelayOptDiag-001	2026-11-10 01:09	
 1793957358059_v5icx.messages.json	yanxvwei	hfeg0pkn002	71	spice_sim	case	EDA-Eval-DesignFlow-QueueCorePolicyPatch-001	2026-11-10 01:38	
+1793690145277_z7n9b	curryxu	hfeg0pkn001	172	spice_sim	case	EDA-Eval-DesignFlow-FifoStimulusGen-001	2026-11-10 02:18	
