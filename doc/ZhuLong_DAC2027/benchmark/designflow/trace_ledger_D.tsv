@@ -1394,3 +1394,4 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1789628116508_kxmzc	rongtaoy	hfeg0pkn001	150	analog_context	case	EDA-Eval-DesignFlow-SacapBl2blCompare-001	2026-11-09 22:22	analog_context B-grade synthesized; sacap_compare.py SA BL2BL top-N+diff+run-scripts; 12 conds a-l; 5 negs NEG_RC=0
 1791797848827_mac8s	e0014036	hfeg0pkn004	114	schematic_netlist	case	EDA-Eval-DesignFlow-NlHierLoc-001	2026-11-09 23:03	
 1793865688745_h12nr	mike	hfeg0pkn003	32	schematic_netlist	case	EDA-Eval-DesignFlow-PwlStimulusBuilder-001	2026-11-09 23:41	
+1793605193788_j26fe	e0039602	hfeg0plg103	460	schematic_netlist	case	EDA-Eval-DesignFlow-StdcellRerunCollect-001	2026-11-10 00:13	
