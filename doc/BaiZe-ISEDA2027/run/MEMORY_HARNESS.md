@@ -4,21 +4,22 @@ WAITING: 0
 
 ## 📊 进度快照
 
-PHASE:        R1977 7way报告重生成(10290B→11598B)+cline专项r1977(空patch数据更正:0→4/140)+deepseek9093已恢复200+7路predict alive 1141
-已完成:       H-B✅·Gate7/7·TB报告✅·full500✅·cline专项C1-C5+报告R1785-R1977·TB4 0passed(能力)·TB-2.1 oracle5/5✅·§15:2x判据MET✅·R1789 eval 7/7DONE✅·R1804双报告交付✅·R1969-R1976 gateway恢复+incr_eval推进·R1977 7way报告全量重生成+空patch数据更正(R1976误报0→正确4/140=sphinx-doc能力)
-当前动作:     R1977:①CPU/MEM PASS(load42/224·mem738G/2015G) ②gateway ALL 200(agi-gateway+9092+9093·deepseek9093已恢复✅) ③predict 7路alive=1141total(cline140·codex51·opencode292·cc132·pi98·hermes311·dsh116) ④glm53 eval(独立):cline102/132(77.3%)·codex23/36(63.9%)·opencode119/146(81.5%)·cc44/54(81.5%)·pi25/34(73.5%)·hermes273/299(91.3%)·dsh50/65(76.9%)·infra=0 ALL✅ ⑤数据更正:R1976称cline空patch=0系验证命令bug(对list调.get静默失败)→正确=4/140=2.9%(均sphinx-doc·能力/适配器·非infra) ⑥real/empty:cline136/4·codex47/4·opencode292/0·cc123/9·pi94/4·hermes308/3·dsh114/2 ⑦TB-2.1:1176trials/160passed(7路·oracle5/5✅) ⑧7way报告重生成(11598B·5section全)+cline专项r1977(5646B) ⑨未完成指令:有(§22:4x+§10:10)⇒W:0
-下一步:       ①predict 7路继续推进至500(gateway 200) ②新predictions累积后跑incr_eval ③TB-2.1继续推进 ④全DONE后聚合最终7路报告 ⑤统计cline在sphinx-doc子集pass rate验证偏弱假设
+PHASE:        R1978 incr_eval 7路215missing启动+cline专项r1978(C2=100%能力,0 infra)+TB-2.1 1193trials/161passed+predict 7路alive 1145
+已完成:       H-B✅·Gate7/7·TB报告✅·full500✅·cline专项C1-C5+报告R1785-R1978·TB4 0passed(能力)·TB-2.1 oracle5/5✅·§15:2x判据MET✅·R1789 eval 7/7DONE✅·R1804双报告交付✅·R1969-R1977 gateway恢复+incr_eval推进·R1978 incr_eval 7route(215missing)启动
+当前动作:     R1978:①CPU/MEM PASS(load45/224·mem737G/2015G) ②gateway ALL 200(agi-gateway+9092+9093) ③predict 7路alive=1145total(cline141·codex51·opencode292·cc133·pi99·hermes313·dsh117) ④real/empty:cline137/4·codex47/4·opencode292/0·cc124/9·pi94/5·hermes309/4·dsh114/3 ⑤incr_eval R1978启动(7路215missing:cc69·pi60·dsh48·opencode20·hermes11·cline5·codex2·max_workers=4·sequential·cline4/5done) ⑥cline C2=30failed=100%能力(0 timeout/0 error/0 infra) ⑦TB-2.1:1193trials/161passed(pi42·opencode40·cc25·dsh21·cline19·codex8·hermes6) ⑧cline专项r1978报告(6234B) ⑨未完成指令:有(§22:4x+§10:10)⇒W:0
+下一步:       ①incr_eval R1978完成后再跑一轮(新predictions) ②predict 7路继续推进至500 ③TB-2.1继续推进 ④全DONE后聚合最终7路报告 ⑤统计cline在sphinx-doc子集pass rate验证偏弱假设
 阻塞:         无(gateway 200)
 ERROR_COUNT:  0
-  📦 体积：TASK=30306B(29.6KB) / MEMORY=29126B(28.4KB)（无需归档）
-  🔍 cline专项小结: predict 140/500(136r/4e=97.1%real·空patch=4/140=2.9%·更正R1976误报0)·eval 102/132(77.3%·infra=0)·TB-2.1 269done/19pass·C3 resume fix✅(empty 51.5%→2.9%·未完全归零·剩sphinx-doc能力)·7路alive·gateway 200 ALL✅·失败top1=能力(30/132有patch未resolve·infra=0)
+  📦 体积：TASK=30306B(29.6KB) / MEMORY=29581B(28.9KB)（无需归档）
+  🔍 cline专项小结: predict 141/500(137r/4e=97.2%real·空patch=4/141=2.8%·均sphinx-doc)·eval 102/132(77.3%·incr_eval 5 running·infra=0)·C2=30failed=100%能力(0 timeout/error/infra)·TB-2.1 260done/19pass·C3 resume fix✅(empty 51.5%→2.8%·未归零·剩sphinx-doc能力)·7路alive·gateway 200 ALL✅·失败top1=能力(30有patch未resolve)
 ```
 
 > 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
 
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 ### 本唤醒流水
-[14:30] R1977 7way报告重生成+cline专项r1977(空patch数据更正):①CPU/MEM PASS(load42/224·mem738G/2015G) ②gateway ALL 200(agi-gateway+9092+9093·deepseek9093已恢复✅) ③predict 7路alive=1141total(cline140·codex51·opencode292·cc132·pi98·hermes311·dsh116) ④glm53独立eval:cline102/132(77.3%)·codex23/36(63.9%)·opencode119/146(81.5%)·cc44/54(81.5%)·pi25/34(73.5%)·hermes273/299(91.3%)·dsh50/65(76.9%)·infra=0 ALL✅(归因红线满足) ⑤⚠️数据更正:R1976称cline空patch=0系验证命令bug(对list调.get()静默失败)→正确=4/140=2.9%(均sphinx-doc:8551/8721/9230/9258·能力/适配器·非infra·网关200) ⑥real/empty全量:cline136/4·codex47/4·opencode292/0·cc123/9·pi94/4·hermes308/3·dsh114/2 ⑦TB-2.1:1176trials/160passed(7路·oracle5/5✅·cline269/19·codex15/8·opencode76/38·cc93/24·pi139/42·hermes160/6·dsh29/21) ⑧7way报告重生成report_harness_glm53_7way_swebench_tb_zh.html=11598B(5section全:①eval矩阵②predict③kimi对照④TB版本⑤归因infra单列)+cline专项r1977=5646B ⑨生成器gen_report_glm53_7way_swebench_tb_r1977.py(动态读数据·可复算) ⑩未完成指令:有(§22:4x+§10:10)⇒W:0
+[14:55] R1978 incr_eval 7route启动+cline专项r1978(C2=100%能力)+TB-2.1重新计数:①CPU/MEM PASS(load45/224·mem737G/2015G·无失控) ②gateway ALL 200(agi-gateway+9092+9093) ③predict 7路alive=1145total(cline141·codex51·opencode292·cc133·pi99·hermes313·dsh117) ④real/empty:cline137/4·codex47/4·opencode292/0·cc124/9·pi94/5·hermes309/4·dsh114/3 ⑤incr_eval R1978启动(7路215missing:cc69·pi60·dsh48·opencode20·hermes11·cline5·codex2·max_workers=4·sequential·cline4/5done in ~50s·script=incr_eval_7route_R1978.sh) ⑥cline C2分类:30failed=100%能力(0 timeout/0 error/0 infra·失败top3=astropy-13236/13398·django-10999) ⑦TB-2.1重新计数(_count_tb21_glm53_R1978.py):1193trials/161passed(pi42·opencode40·cc25·dsh21·cline19·codex8·hermes6·errors:cc51/opencode13/pi12/cline12) ⑧cline专项r1978报告(6234B·含TB-2.1全7路对比表) ⑨未完成指令:有(§22:4x+§10:10)⇒W:0
+> 📦 [14:30] R1977 流水已归档 → daily-memories-harness/2026-11-09.md。结论：7way报告重生成+cline专项r1977(空patch数据更正0→4/140=sphinx-doc能力)+deepseek9093恢复200。需要时再读。
 > 📦 [14:10] R1976 流水已归档 → daily-memories-harness/2026-11-09.md。结论：监控轮+cline专项r1976(空patch误报0·已R1977更正)+incr_eval R1975 DONE。需要时再读。
 > 📦 [13:55] R1975 流水已归档 → daily-memories-harness/2026-11-09.md。结论：eval全量regen(7路)+incr_eval R1975(3missing DONE)+cline专项r1975(空patch 2/137=1.5%)。需要时再读。
 > 📦 [13:13] R1973 流水已归档 → daily-memories-harness/2026-11-09.md。结论：CPU kill(sklearn 178核)+incr_eval R1972推进(cline DONE→codex)+gateway QUOTA_EXHAUSTED。需要时再读。
