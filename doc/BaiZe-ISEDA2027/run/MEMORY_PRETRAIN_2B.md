@@ -1,8 +1,9 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 0
 
-> 2026-11-09 10:57 #1800: **v6 eval监控+chunk1/chunk2崩溃检测+重启轮·Avg7=55.96%不变·结论A不变·报告v5.3**·**动作**:①git fetch(behind=0) ②🔴诊断:串行watcher(PID1023065)日志显示chunk1 client@10:49退出→但tqdm日志显示chunk1仅5213/10044(52%)=崩溃非完成!chunk2(8183)同时消失(2695/10044=27%崩溃).两chunk输出目录空(gguf_lmeval_run.py无resume,仅完成时写results.json).watcher误判chunk1"完成"→已启动chunk3于NUMA1(8185) ③✅修复:新脚本restart_chunk1_then_chunk2.sh在NUMA0(port8184,cores0-15)重启chunk1(PID1726927,~7s/it,ETA~5h)→chunk1完成后串行重启chunk2→最后等chunk3完成→merge 4 chunk.当前2路并行:chunk1(NUMA0)+chunk3(NUMA1)各独占1NUMA=最优 ④进度@10:57:chunk1=9/10044(刚启动,~7s/it)/chunk3=9/10036(~10s/it)/chunk2=待chunk1完成 ⑤2 server(8184/8185)+2 client全活+2 watcher(旧serial PID1023065+新restart PID1714991) ⑥Avg7=55.96%不变(7集完成) ⑦报告v5.3已更新48.6KB(补崩溃诊断box+进度表更新+chunk crash/restart详情) ⑧训练健康latest ckpt iter_136000 ⑨📦TASK=31.2KB/MEMORY=31.4KB(归档#1796+#1799→daily,省~3KB)·未完成指令:有(运维令15:3x待hellaswag全4chunk完成补Avg8终版)⇒WAITING:0。
+> 2026-11-09 11:15 #1801: **v6 eval监控+NUMA诊断+报告v5.4轮·Avg7=55.96%不变·结论A不变**·**动作**:①git fetch(behind=0) ②📊NUMA诊断:numa_maps确认chunk1/chunk3共享同一mmap'd GGUF,page cache N0=546441/N1=408735(57%/43%).chunk1 CPU4(NUMA0)→43%远程=快(~3-6s/it,65/10044);chunk3 CPU67(NUMA1)→57%远程=慢2-3x(~7-19s/it avg~13,92/10036).因page cache共享无法独立优化 ③✅报告v5.4更新50.1KB:补NUMA诊断+ETA修正(chunk3~36h→Nov11~05:00=瓶颈,v5.3原估Nov9~21:00过于乐观)+进度表更新 ④2 server(8184/8185)+2 client全活(chunk1 PID1726927+chunk3 PID959143)+2 watcher ⑤Avg7=55.96%不变(7集完成:arc_c=0.304/arc_e=0.655/boolq=0.587/obqa=0.266/piqa=0.714/sciq=0.842/wgr=0.549) ⑥训练健康iter_136000/700k,8×H100 100%util ⑦📦TASK=34.6KB/MEMORY=31.0KB(删#1750-#1762共13条旧指针→daily已存)·未完成指令:有(运维令15:3x待hellaswag全4chunk完成补Avg8终版)⇒WAITING:0。
 
+> 📦 #1800（11-09 10:57, v6 eval监控+chunk1/chunk2崩溃检测+重启轮·Avg7=55.96%不变·报告v5.3）已归档 → daily-memories/2026-11-09.md「#1800」节；**结论**：chunk1/chunk2崩溃@10:49,watcher误判→重启chunk1于NUMA0+chunk3于NUMA1,2路并行各独占1NUMA。需要时再读。
 > 📦 #1799（11-09 10:22, v6 eval监控轮·✅hellaswag chunk0完成@10:15·投影Avg8≈53.87%·报告v5.1）已归档 → daily-memories/2026-11-09.md「#1799」节；**结论**：chunk0完成acc=0.3923,投影Avg8(acc)=53.87%接近历史54.75%,结论A铁证加强。需要时再读。
 
 > 📦 #1798（11-09 10:09, v6 eval监控+NUMA串行优化轮·chunk0=98.8%即将完成·报告v5.0）已归档 → daily-memories/2026-11-09.md「#1798」节；**结论**：NUMA串行方案实施,chunk0即将完成,Avg7不变,结论A不变。需要时再读。
@@ -45,19 +46,7 @@ WAITING: 0
 > 📦 #1765（11-09 03:53, v6 eval监控轮·6/8done·piqa破50%·全部推进无停滞）已归档 → daily-memories/2026-11-09.md；**结论**：6/8done Avg6=53.38%不变,piqa50%全部推进无停滞,异常调查报告v4.1已交付(结论A)。需要时再读。
 > 📦 #1764（11-09 03:47, v6 eval监控轮·5s+5c全活·6/8done·piqa 49.5%·全部推进无停滞）已归档 → daily-memories/2026-11-09.md；**结论**：5s+5c全活,6/8done Avg6=53.38%不变,piqa49.5%全部推进无停滞,异常调查报告v4.1已交付(结论A)。需要时再读。
 > 📦 #1763（11-09 03:42, v6 eval监控轮·5s+5c全活·6/8done·piqa破49%·全部推进无停滞）已归档 → daily-memories/2026-11-09.md；**结论**：5s+5c全活,6/8done Avg6=53.38%不变,piqa49%全部推进无停滞,异常调查报告v4.1已交付(结论A)。需要时再读。
-> 📦 #1762（11-09 03:31, v6 eval监控轮·5s+5c全活·6/8done·piqa 48%·全部推进无停滞）已归档 → daily-memories/2026-11-09.md；**结论**：5s+5c全活,6/8done Avg6=53.38%不变,piqa48%全部推进无停滞,异常调查报告v4.1已交付(结论A)。需要时再读。
-> 📦 #1761（11-09 03:24, v6 eval监控轮·5s+5c全活·6/8done·piqa破47%）已归档 → daily-memories/2026-11-09.md；**结论**：5s+5c全活,6/8done Avg6=53.38%不变,piqa47%全部推进无停滞,异常调查报告v4.1已交付(结论A)。需要时再读。
-> 📦 #1760（11-09 03:18, v6 eval监控轮·5s+5c全活·6/8done·chunk0破50%）已归档 → daily-memories/2026-11-09.md；**结论**：5s+5c全活,6/8done Avg6=53.38%不变,chunk0破50%,全部推进无停滞。需要时再读。
-> 📦 #1759（11-09 03:15, v6 eval监控轮·报告v4.1进度更新）已归档 → daily-memories/2026-11-09.md；**结论**：5s+5c全活,6/8done Avg6=53.38%不变,报告v4.1已更新(结论A),全部推进无停滞。需要时再读。
-> 📦 #1758（11-09 03:08, v6 eval监控轮·chunk2 rebalance watcher启动）已归档 → daily-memories/2026-11-09.md；**结论**：5s+5c全活,6/8done Avg6=53.38%不变,chunk2 rebalance watcher启动(待piqa完成→迁快核省~12h),全部推进无停滞。需要时再读。
-> 📦 #1757（11-09 02:52, v6 eval监控轮·报告v4.0更新）已归档 → daily-memories/2026-11-09.md；**结论**：5s+5c全活,6/8done Avg6=53.38%不变,异常调查报告v4.0已更新(37KB结论A),全部推进无停滞。需要时再读。
-> 📦 #1756（11-09 03:00, v6 eval监控轮·5s+5c全活·6/8done Avg6=53.38%不变·异常调查已完成）已归档 → daily-memories/2026-11-09.md；**结论**：5s+5c全活,6/8done Avg6=53.38%不变,异常调查交付物已完成(报告36KB+结论A),全部推进无停滞。需要时再读。
-> 📦 #1755（11-09 02:37, v6 eval监控轮·异常调查交付物确认完成）已归档 → daily-memories/2026-11-09.md；**结论**：5s+5c全活,6/8done Avg6=53.38%不变(results.json已验证),异常调查交付物已完成,全部推进无停滞。需要时再读。
-> 📦 #1754（11-09 02:30, v6 eval监控轮·异常调查交付物确认完成）已归档 → daily-memories/2026-11-09.md；**结论**：5s+5c全活,6/8done Avg6=53.38%不变,异常调查交付物已完成(报告+结论A+v4/v5逐集对照铁证),训练健康。需要时再读。
-> 📦 #1753（11-09 02:14, v6 eval监控轮）已归档 → daily-memories/2026-11-09.md；**结论**：5s+5c全活,6/8done Avg6=53.38%不变,全部推进无停滞,rebalance watcher v2活。需要时再读。
-> 📦 #1752（11-09 02:08, v6 eval监控轮）已归档 → daily-memories/2026-11-09.md；**结论**：5s+5c全活,6/8done Avg6=53.38%不变,全部推进无停滞。需要时再读。
-> 📦 #1751（11-09 02:03, v6 eval监控轮·rebalance watcher升级）已归档 → daily-memories/2026-11-09.md；**结论**：5s+5c全活,6/8done Avg6=53.38%不变,rebalance watcher从等piqa升级为等chunk0(省1h),全部推进无停滞。需要时再读。
-> 📦 #1750（11-09 01:49, v6 eval监控轮）已归档 → daily-memories/2026-11-09.md；**结论**：5s+5c全活,6/8done Avg6=53.38%不变,全部推进无停滞。需要时再读。
+> 📦 #1762–#1750（11-09 01:49–03:31, 共13轮v6 eval监控·6/8done Avg6=53.38%不变·异常调查已完成结论A）已归档 → daily-memories/2026-11-09.md；**结论**：13轮监控均5s+5c全活无停滞,Avg6=53.38%不变,异常调查交付物已完成(报告+结论A),piqa/chunk0逐步推进。需要时再读。
 > 📦 #1749（11-09 01:45, v6 eval监控轮+归档）已归档 → daily-memories/2026-11-09.md；**结论**：5s+5c全活,6/8done不变,归档#1735-37释放3.3KB。需要时再读。
 > 📦 #1748（11-09 01:37, v6 eval监控轮）已归档 → daily-memories/2026-11-09.md；**结论**：5s+5c全活,6/8done Avg6=53.38%不变,全部推进无停滞,报告v3.8已交付。需要时再读。
 > 📦 #1747（11-09 01:31, v6 eval监控轮）已归档 → daily-memories/2026-11-09.md；**结论**：5s+5c全活,6/8done Avg6=53.38%不变,全部推进无停滞,报告v3.8覆盖6项全。需要时再读。
