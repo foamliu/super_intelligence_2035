@@ -1384,4 +1384,4 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1789535827580_4fbwo.messages.json	mike	hfeg0pkn003	70	schematic_netlist	case	EDA-Eval-DesignFlow-VscForceInsert-001	2026-11-09 16:10	
 1793672902894_7k3iq.messages.json	thomas1w	hfeg0pkn005	133	schematic_netlist	case	EDA-Eval-DesignFlow-NetlistBroadcastFlow-001	2026-11-09 17:26	broadcast flow analyzer, B-grade synthesized L2 k=11
 1793017826309_9umav	ziyuny	hfeg0pkn002	126	analog_context	parked		2026-11-09 17:54	wrong-domain: Aether API reverse-engineering report task, not design_flow
-1791944841251_nex3t	jie23z	hfeg0pkn002	134	schematic_netlist	claimed		2026-11-09 17:54	
+1791944841251_nex3t	jie23z	hfeg0pkn002	134	schematic_netlist	case	EDA-Eval-DesignFlow-InvSpiceSim-001	2026-11-09 18:13	
