@@ -123,7 +123,29 @@
       "updated_at": "2026-11-09 13:25",
       "users_mc30": 224
     },
-    "updated_at": "2026-11-09 13:25"
+    "updated_at": "2026-11-09T14:30:00+08:00",
+    "r274": {
+      "date": "2026-11-09",
+      "scan_dir": "ssh_eda_search_20261105_192825",
+      "dedup_sessions": 3896,
+      "mc30": 1511,
+      "users_mc30": 224,
+      "shard_A_pool_mc15": 216,
+      "shard_B_pool_mc30": 642,
+      "shard_C_pool_mc30": 935,
+      "shard_D_pool_mc30": 1168,
+      "new_sessions": 0,
+      "no_new_scan": true,
+      "daily_log_20261109_lines": 2893,
+      "daily_log_healthy": true,
+      "daily_log_20261107_lines": 2916,
+      "daily_log_20261108_lines": 2893,
+      "shard_A_pool_fresh": 65,
+      "shard_A_pool_fresh_digital_accessible": 0,
+      "finding": "7th consecutive mgmt round (r268-r274), no new scan since 11/05. Daily log 20261109 healthy 2893 lines (unchanged since r268). Raw pool mc>=15+shardA tools=340, ledger claimed 275 (178 case + 97 parked), fresh=65. Keyword re-rank found 3 strong fresh digital candidates from e0046913 (hfeg0pkn003=10.129.2.12): 8uaii(mc145 icc2:345 rtl:253 verilog:129 dc_shell:33), vxorx(mc159 rtl:2340 verilog:642), qo3pd(mc39 verilog:1055 icc2:20 dc_shell:9). ALL THREE have session files PURGED from live host 10.129.2.12 (ls: No such file). Also 7bg20(fxian mc221 verilog:658) file missing on 10.129.2.11. Pool exhaustion now at DEEPER level: fresh candidates analog-dominated by tool markers, AND the few keyword-strong digital candidates have files deleted post-scan. Need new scan to recapture digital sessions before purge. Management-only round, no case delivered.",
+      "digital_purge_confirmed": true,
+      "updated_at": "2026-11-09T14:30:00+08:00"
+    }
   },
   "sessions": 5822,
   "shard_mc": {
