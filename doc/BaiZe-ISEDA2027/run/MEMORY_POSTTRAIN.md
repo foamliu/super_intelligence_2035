@@ -7,12 +7,12 @@ WAITING: 0
 
 ## 进度快照
 
-- PHASE: posttrain-wake156（2026-11-09 R109: 奖励设计与GRPO稳定性分析——Vision失败教训/R0→R2分阶段混合/G=8最优/作弊抑制/KL=0.02依据/9指标仪表盘✅）
-- 已完成: P3预备✅；P0✅；P1✅；P2✅；R1-R109✅；wake155✅ R108(数据管线审计)；wake156✅ R109(奖励设计/GRPO稳定性)
-- 当前动作: wake156 R109: baize_posttrain_r109_reward_grpo_stability.py(291行,7节). ①Vision离散奖励失败分析(std=0 78.7%→零梯度,KL=0.001→崩溃,平坦损失,奖励黑客) ②R0→R2分阶段混合(Phase1:R0 only 0-500→Phase2:R0×0.7+R2×0.3 500-1500→Phase3:R0×0.3+R2×0.7 1500+) ③G=8最优(22.3GB无OOM,std=0仅5.8%@p=0.3,~7100步/48h) ④作弊抑制(长度/格式/API记忆/最小努力/空输出) ⑤KL=0.02(20×Vision的0.001),clip=0.2(PPO标准),entropy=0.001依据 ⑥9指标仪表盘(reward_mean/std/kl/entropy/grad_norm/clip_fraction/cheat_rate/response_length/std0_dominance带WARN/CRITICAL) ⑦总结10条建议. JSON+HTML 12.5KB+EXPERIMENTS §R109.
-- 下一步: ①GPU释放→gpu_watcher自动触发launch_11_9.sh ②R110+: 继续调研(R4失败模式分类 或 R5训练脚本最终检查) ③正式训练待pretrain ckpt(ETA≈2026-12-25)
-- 阻塞: GPU 0/8free(root SGLang Qwen3.8-27B占全8卡);git ahead push超时(github.com:443 timeout,proxy问题);P3等pretrain ckpt(ETA≈2026-12-25)
-- 本轮新增调研产出: R109 奖励设计与GRPO稳定性分析(291行 + 7节分析 + Vision失败4模式 + R0→R2三阶段混合 + G=8最优论证 + 5类作弊抑制 + KL/clip/entropy取值依据 + 9指标仪表盘 + 10条建议 + JSON + HTML 12.5KB + EXPERIMENTS §R109）
+- PHASE: posttrain-wake157（2026-11-09 R110: 失败模式分类法——6类F1-F6/DeepSeek 610失败实测/MiniCPM5投影/6条自动分类规则✅）
+- 已完成: P3预备✅；P0✅；P1✅；P2✅；R1-R110✅；wake156✅ R109(奖励设计/GRPO稳定性)；wake157✅ R110(失败模式分类法)
+- 当前动作: wake157 R110: baize_posttrain_r110_failure_mode_taxonomy.py(~350行,10节). ①6类分类法F1-F6(语法/API误用/缺依赖/超时/逻辑/未知) ②DeepSeek侧610失败实测(F5逻辑50%/F6未知22.6%/F2 API误用13.3%/F4超时12.5%) ③场景分析(Schematic52.9%/Layout55.9%→SFT优先) ④类别分析(Design Content Creation38.1%最大痛点) ⑤techlib分析(no 68.6% vs with 43.1%→25.5pp差距) ⑥LOC分析(1-3行80.4%→16+行32.7%强负相关) ⑦Top失败API(EmyLPPHeader.getLayerNum等100%失败) ⑧MiniCPM5投影(F2×2.5/F5×1.8偏移权重→998失败中F2+F5占69.5%) ⑨6条regex自动分类规则(R-F1~R-F6) ⑩58pp可回收估计18-29pp→54-65%(M1-M2). JSON 34.6KB+HTML 13.2KB+EXPERIMENTS §R110.
+- 下一步: ①GPU释放→gpu_watcher自动触发launch_11_9.sh ②R111+: 继续调研(R5训练脚本最终检查 或 SFT数据配比优化) ③正式训练待pretrain ckpt(ETA≈2026-12-25)
+- 阻塞: GPU 0/8free(root SGLang Qwen3.8-27B占全8卡,运行自Sep17);git push超时(github.com:443 timeout);P3等pretrain ckpt(ETA≈2026-12-25)
+- 本轮新增调研产出: R110 失败模式分类法(~350行 + 6类F1-F6 + DeepSeek 610失败实测 + 20全harness错误轨迹 + 场景/类别/techlib/LOC分析 + MiniCPM5投影(偏移权重) + 6条自动分类规则 + 58pp可回收估计 + JSON 34.6KB + HTML 13.2KB + EXPERIMENTS §R110）
 - 未完成指令: 🔴用户令2026-11-07(GPU未到位,需持续产出调研) ⇒ WAITING=0
 
 ## 关键事实（常驻）
@@ -93,3 +93,7 @@ WAITING: 0
 [wake154] R107 启动序列E2E验证+watcher超时应急预案: 见 daily-memories-posttrain/2026-11-09.md（10/10脚本语法通过+模型SGLang兼容+venv验证+158case+3YAML+4数据+watcher剩余4.9h+重启脚本+HTML 6.9KB）。
 
 [wake155] R108 SFT/RL数据管线端到端审计: 体积自检(TASK=24.7KB/MEMORY=30.2KB→归档wake149-152后合规)→GPU检查:0/8free(root SGLang Qwen3.8-27B占全8卡44-45GB 0%util,watcher PID2022305 iteration#579 elapsed19.3h/24h 剩余~4.7h)→R108: ①baize_posttrain_r108_data_pipeline_audit.py(336行,Python3+pandas+pyarrow) ②实际加载所有parquet:RL 3347行(prompt/reward_model/agent_name),SFT 40327行(3版本,conversation列,含contamination_check) ③污染检查(红线§5.1):158评测prompt指纹×3347 RL=0逐字命中✅PASS+API重叠4个(预期同库) ④RL prompt token:mean=172.5/median=149/max=274/over_8192=0→无超长风险 ⑤YAML 3文件路径全验证✅ ⑥模型完整(safetensors+config+tokenizer+chat_template) ⑦Issue:RL缺data_source列(列名reward_model)→需改verl config reward_fn_key ⑧判定:CONDITIONAL(1 issue). py_compile✅+全量✅+HTML 10.9KB+JSON✅+EXPERIMENTS §R108. 📦 体积：TASK≈24.7KB / MEMORY≈25KB(归档wake149-152→指针)。本轮新增调研产出：§R108 数据管线端到端审计(336行 + 3347 RL任务 + 40327 SFT行 + 污染0命中✅ + RL缺data_source列发现 + YAML全验证 + 模型完整 + HTML 10.9KB + JSON + EXPERIMENTS §R108）。未完成指令：🔴用户令2026-11-07(GPU未到位,需持续产出调研) ⇒ WAITING=0。git push超时(ahead4 behind12,github.com:443 connection timeout)。
+
+[wake156] R109 奖励设计与GRPO稳定性: 见 daily-memories-posttrain/2026-11-09.md（Vision离散奖励4失败模式+R0→R2三阶段混合+G=8最优+5类作弊抑制+KL=0.02+9指标仪表盘+HTML 12.5KB）。
+
+[wake157] R110 失败模式分类法: 体积自检(TASK=24.7KB/MEMORY≈22.5KB合规)→GPU检查:0/8free(root SGLang Qwen3.8-27B占全8卡44-45GB 0%util,运行自Sep17)→R110: ①baize_posttrain_r110_failure_mode_taxonomy.py(~350行,Python3+stdlib,0依赖) ②6类分类法F1-F6(语法/API误用/缺依赖/超时/逻辑/未知) ③DeepSeek侧12报告1559任务运行:Pass 949(60.9%)/Fail 610(39.1%) ④失败分布:F5逻辑305(50%)/F6未知138(22.6%)/F2 API误用81(13.3%)/F4超时76(12.5%)/F1语法8(1.3%)/F3缺依赖2(0.3%) ⑤场景:Schematic52.9%<Layout55.9%<DesignMgmt72%<Others85% ⑥类别:DesignContentCreation38.1%最大痛点 ⑦techlib:no 68.6% vs with 43.1%→25.5pp差距 ⑧LOC:1-3行80.4%→16+行32.7%强负相关 ⑨Top失败API:EmyLPPHeader.getLayerNum等100%失败 ⑩MiniCPM5投影(F2×2.5/F5×1.8偏移权重→998失败中F2+F5占69.5%) ⑪20全harness错误轨迹:F3占35%(7/20) ⑫6条regex自动分类规则(R-F1~R-F6) ⑬58pp可回收18-29pp→54-65%(M1-M2). py_compile✅+--smoke✅+全量✅+JSON 34.6KB+HTML 13.2KB+EXPERIMENTS §R110. 📦 体积：TASK≈24.7KB / MEMORY≈24KB。本轮新增调研产出：§R110 失败模式分类法(~350行 + 6类F1-F6 + DeepSeek 610失败实测 + 20全harness错误轨迹 + 场景/类别/techlib/LOC分析 + MiniCPM5投影(偏移权重) + 6条自动分类规则 + 58pp可回收估计 + JSON 34.6KB + HTML 13.2KB + EXPERIMENTS §R110）。未完成指令：🔴用户令2026-11-07(GPU未到位,需持续产出调研) ⇒ WAITING=0。

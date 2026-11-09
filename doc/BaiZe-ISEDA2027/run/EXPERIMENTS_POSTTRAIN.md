@@ -11446,3 +11446,124 @@ MiniCPM5-2B 模型路径完整：model-00000-of-00001.safetensors + config.json 
 - `r109_reward_grpo_stability.json`
 - `reports/report_posttrain_r109_reward_grpo_stability_zh.html`（12.5KB）
 - 本节（EXPERIMENTS §R109）
+
+---
+
+## §R110 失败模式分类法（R4 方向 · 零 GPU · 2026-11-09）
+
+> **目标**：从 DeepSeek 94% 侧真实失败数据出发，按 API 类别/错误类型建六类失败分类法（F1-F6），投影到 MiniCPM5-2B 36% 基线。等 GPU 后用真实轨迹校正。
+> **数据源**：① `~/code/EDA-Eval-Framework/output_evaluation/*/final_report.json`（12 报告，1559 任务运行）② 158-case 数据集 metadata ③ `cline_trace_v1_3/cline_trace_error_case/`（20 个全 harness 失败轨迹）。
+> **脚本**：`baize_posttrain_r110_failure_mode_taxonomy.py`（~350 行，Python3+stdlib，零依赖）。
+
+### 1. 六类失败分类法（F1-F6）
+
+| 类别 | 名称 | 原始错误类型 | SFT 修复 | RL 修复 |
+|:--|:--|:--|:--|:--|
+| F1_syntax | 语法错误 | SyntaxError, Parse failed, IndentationError | Low | Low |
+| F2_api_misuse | API 误用 | TypeError, AttributeError, NameError, NotImplementedError | **High** | Medium |
+| F3_missing_dep | 缺依赖 | ModuleNotFoundError, ImportError, ConnectionError | Low | Low |
+| F4_timeout | 超时 | Generation timeout, Timeout | Low | Medium |
+| F5_logic | 逻辑错误 | AssertionError, ValueError, RuntimeError | Medium | **High** |
+| F6_unknown | 未知失败 | Unknown Failure, Generation failure, SystemError | Medium | Medium |
+
+### 2. DeepSeek 侧失败分布（实测，610 次失败）
+
+| 类别 | 失败数 | 占比 | 主要原始类型 |
+|:--|--:|--:|:--|
+| F5_logic | 305 | 50.0% | AssertionError 254 + ValueError 31 + RuntimeError 20 |
+| F6_unknown | 138 | 22.6% | Unknown Failure 100 + Generation failure 35 |
+| F2_api_misuse | 81 | 13.3% | TypeError 34 + AttributeError 31 + NameError 13 |
+| F4_timeout | 76 | 12.5% | Generation timeout 70 + Timeout 6 |
+| F1_syntax | 8 | 1.3% | SyntaxError 4 + Parse failed 4 |
+| F3_missing_dep | 2 | 0.3% | ModuleNotFoundError 1 + ConnectionError 1 |
+
+**核心发现**：F5 逻辑错误占 50%（AssertionError 为主），F2 API 误用占 13.3% → SFT 首要目标，F4 超时 12.5% → RL 长度惩罚。
+
+### 3. 按场景/类别/Techlib/LOC 的失败分布
+
+**场景**：Schematic 52.9% < Layout 55.9% < Design Management 72.0% < Others 85.0%（Unknown 26.1%）
+→ Schematic + Layout 占 70% 且通过率最低 → SFT 数据配比优先
+
+**类别**：Design Content Creation 38.1% < Design Content Query & Edit 47.2% < Database & Design Mgmt 72.6% < Geometry Op 76.7% < Utilities 84.8% < Sim & Analysis 85.3%
+→ Design Content Creation 是最大痛点（467 次运行，38.1% 通过率）
+
+**Techlib**：no_techlib 68.6% vs with_techlib 43.1% → 25.5pp 差距 → 退火语料需覆盖 techlib API
+
+**LOC**：1-3 行 80.4% > 4-8 行 71.3% > 9-15 行 59.9% > 16+ 行 32.7% → LOC 与通过率强负相关 → RL 课程从短任务起步
+
+### 4. 失败率最高的 API（100% 失败率）
+
+- `EmyLPPHeader.getLayerNum`: 9/9 (100%)
+- `EmyLPPHeader.getPurposeNum`: 9/9 (100%)
+- `EmyLPPHeader.getTech`: 9/9 (100%)
+- `emyTech`: 9/9 (100%)
+- `NTL_INDEX_FORMAT_USE_UNDERLINE`: 8/8 (100%)
+
+→ LPP/tech 相关 API 是高频失败点，需在 SFT 语料中重点覆盖
+
+### 5. MiniCPM5-2B 36% 投影（偏移权重，待 GPU 校正）
+
+| 类别 | DeepSeek | MiniCPM5 投影 | 偏移权重 |
+|:--|--:|--:|--:|
+| F1_syntax | 8 | 11 | 1.5× |
+| F2_api_misuse | 81 | **186** | 2.5× |
+| F3_missing_dep | 2 | 1 | 1.0× |
+| F4_timeout | 76 | **140** | 2.0× |
+| F5_logic | 305 | **508** | 1.8× |
+| F6_unknown | 138 | 152 | 1.2× |
+
+**投影逻辑**：弱模型在 API 误用（×2.5）和逻辑错误（×1.8）上权重更高。MiniCPM5-2B 的 998 次失败中，F2+F5 占 694（69.5%），是 SFT+RL 的主要回收目标。
+
+### 6. 全 Harness 错误轨迹分析（20 案例）
+
+| 分类 | 数量 |
+|:--|--:|
+| F3_missing_dep | 7 |
+| F5_logic | 5 |
+| F2_api_misuse | 4 |
+| F1_syntax | 2 |
+| F4_timeout | 1 |
+| F6_unknown | 1 |
+
+→ 全 harness 模式下 F3 缺依赖占 35%（7/20），与代码生成模式（0.3%）差异极大 → harness 模式更依赖环境
+
+### 7. 自动分类规则（R-F1 ~ R-F6，GPU 后校正用）
+
+6 条 regex 规则可直接用于 MiniCPM5-2B 失败轨迹自动分类：
+- R-F1: `SyntaxError|IndentationError|Parse failed`
+- R-F2: `TypeError|AttributeError|NameError`（子类：F2a 幻觉 API / F2b 参数错 / F2c 属性错）
+- R-F3: `ModuleNotFoundError|ImportError`
+- R-F4: `timeout|timed out|TimeoutError`
+- R-F5: `AssertionError|ValueError|RuntimeError`（子类：F5a 断言 / F5b 值 / F5c 运行时）
+- R-F6: `Unknown Failure|Generation failure|SystemError`
+
+### 8. 58 pp 可回收估计
+
+| 类别 | 可回收 pp | 方法 |
+|:--|--:|:--|
+| F2 API 误用 | 8-12 pp | SFT: API 文档+签名+调用示例 |
+| F5 逻辑错误 | 5-8 pp | RL(GRPO): 生成→执行→改闭环 |
+| F4 超时 | 2-3 pp | RL: 惩罚冗长输出 + 长度上限 |
+| F1 语法 | 1-2 pp | SFT: 干净代码格式 |
+| F3 缺依赖 | 0-1 pp | 环境修复，非训练 |
+| F6 未知 | 2-4 pp | 需真实轨迹细化 |
+| **合计** | **18-29 pp** | 36% → 54-65%（M1-M2 区间）|
+
+### 9. 对 Post-Train 三步的侧重建议
+
+- **领域退火**：重点补 techlib 相关 API（EmyLPPHeader/emyTech）+ Schematic/Layout 类 API 参考
+- **SFT**：① API 文档→代码训练对（F2 修复，8-12pp）② 工具调用轨迹（search→get_details→run_code）③ CoT 推理链（F5 部分修复）
+- **RL(GRPO)**：① F5 逻辑错误为主（assert 失败→改代码闭环，5-8pp）② F4 超时惩罚 ③ F2 子类 F2b（参数错→查文档→修正）
+
+### 10. 未闭合
+
+- MiniCPM5-2B 36% 侧真实失败轨迹未实测（GPU 仍 0/8 free，root SGLang 占全 8 卡）
+- 上述投影基于 DeepSeek 侧数据 + 偏移权重假设，非实测对照
+- GPU 到位后第一件事：用 R-F1~R-F6 规则分类真实轨迹，校正偏移权重
+
+### 交付物
+
+- `baize_posttrain_r110_failure_mode_taxonomy.py`（~350 行）
+- `r110_failure_taxonomy.json`（/tmp，34.6KB）
+- `reports/report_posttrain_r110_failure_taxonomy_zh.html`（13.2KB）
+- 本节（EXPERIMENTS §R110）
