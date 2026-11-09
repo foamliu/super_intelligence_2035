@@ -86,16 +86,21 @@ for h in HARNESSES:
         resolved = []
         unresolved = []
         errored = []
-        for rf in glob.glob(f'{results_dir}/*.json'):
+        # BUG FIX (R2056): report.json is at {results_dir}/{model}/{instance_id}/report.json
+        # and format is {instance_id: {resolved: bool, errored: bool, ...}} (nested dict)
+        for rf in glob.glob(f'{results_dir}/*/*/report.json'):
             try:
                 rd = json.load(open(rf))
-                iid = rd.get('instance_id', os.path.basename(rf).replace('.json', ''))
-                if rd.get('resolved', False):
-                    resolved.append(iid)
-                elif rd.get('errored', False):
-                    errored.append(iid)
-                else:
-                    unresolved.append(iid)
+                if isinstance(rd, dict):
+                    for iid, info in rd.items():
+                        if not isinstance(info, dict):
+                            continue
+                        if info.get('resolved', False):
+                            resolved.append(iid)
+                        elif info.get('errored', False):
+                            errored.append(iid)
+                        else:
+                            unresolved.append(iid)
             except:
                 pass
         # Merge with existing eval results
