@@ -27,7 +27,7 @@ data:
   val_files: null
   train_batch_size: 128
   prompt_key: prompt
-  reward_fn_key: data_source     # R47: verl default; NaiveRewardManager reads this
+  reward_fn_key: reward_model      # R108 FIX: was data_source (verl default), but RL parquet column is named reward_model
   max_prompt_length: 8192           # R61: was 4096; prompts avg 17K tok user-side, 8K captures most
   max_response_length: 8192         # R61: was 4096; total ctx=16384 (R60 found 28K avg → 16K captures 82%)
   return_raw_chat: True
