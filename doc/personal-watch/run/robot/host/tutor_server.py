@@ -16,6 +16,11 @@ robot 线 · PC 侧家教 HTTP 服务（Android App 通过 http://10.0.2.2:PORT 
   GET  /health  健康检查 {ok, version, backends}
   GET  /        使用说明
 
+> ⚠️ 本文件是 **HTTP** 服务（保留 `POST /tutor` 兼容）。**WebSocket 流式会话服务**（11:40 令 §5 #2）
+> 见同目录 `ws_session.py`（流式 ASR 接入位 / 流式 TTS 分句 / 打断协议 / 会话状态机，默认端口 8766）。
+> 两者复用同一 `tutor_agent`/`speech`/`vad`，App 可并存使用。
+
+
 推理后端复用 host/tutor_agent.py（识图/引导默认云端 DeepSeek `deepseek-flash`，
 断网/无 key 自动降级本机 ollama，降级路径写在返回里、绝不静默，见 15:4x 令 §2.2）。
 

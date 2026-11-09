@@ -37,8 +37,11 @@
 | `test_l3_profile.py` | `l3_profile.py` 单测（**22 条**：掌握等级/时间归一/画像聚合/薄弱点/每日每周/HTML 自包含与不泄答案 + 正样本：练习摘要/合并画像/富化掌握/日志追加/合并 HTML） |
 | `knowledge.py` | **知识点自动分类（第 21 轮）**：`classify_knowledge_local()` 确定性关键词分类（纯函数、无网络，100 题 100/100）+ `classify_knowledge()`（LLM DeepSeek 主路径 + 本地兜底，trace 里 `fallback` 非空即降级，不静默）+ `_normalize()`（学科名/废话→未分类）；供 `POST /practice` 自动补知识点 |
 | `test_knowledge.py` | `knowledge.py` 单测（**44 条**：本地分类参数化 + 未分类兜底 + 归一化 + LLM ok/判不出/报错三路降级 + 空值） |
+| `ws_session.py` | **WebSocket 流式会话服务（第 23 轮，补齐 11:40 令 §5 #2）**：`TutorSession`（会话编排核心，同步可测）+ `WsTutorServer`（asyncio，每连接一会话）；流式 ASR 接入位（`asr_partial`/`asr_final`/`audio_chunk`）+ 流式 TTS 分句（`tts_sentence` 逐句下行）+ 打断协议（`barge_in` 停播/丢弃在途/翻转 listen）+ 会话状态机（复用 `vad.SessionState`）+ 静音真关麦 + wait_student 3s→ambient。`--mock` 用确定性引导（不联网） |
+| `ws_client.py` | WebSocket 参考客户端：`--demo` 跑完整协议（握手/免唤醒/一轮/打断/静音），`--eval N` 跑 N 轮实测时延（P50/P90）→ JSON |
+| `test_ws_session.py` | `ws_session.py` 单测（**18 条**：状态机 / 流式分句 index·total / 打断丢弃在途 / 静音真关麦 / 多轮上下文 / tutor 失败显式报错 / idle→ambient） |
 
-## 单测（第 21 轮：285 passed）
+## 单测（第 23 轮：311 passed）
 
 ```powershell
 cd D:\Users\Administrator\code\super_intelligence_2035\doc\personal-watch\run\robot\host
@@ -177,6 +180,26 @@ Invoke-WebRequest "$base/tokens.txt"      -OutFile C:\Android\asr-models\parafor
 
 - **口径**：`SherpaOnnxASR.transcribe_file()` 一次性识别；`stream()` 按块「前缀增量」模拟流式中间结果（paraformer 为**离线**模型，非 OnlineRecognizer 真流式，真流式待接 streaming 模型）。
 - **能信/不能信**：CER 是「SAPI 合成语音 → 离线识别」的回读字错率，属 PC 端真实推理证据；真机麦克风近场 CER / 流式首字延迟 / AEC 待真机复测。
+
+## WebSocket 流式会话服务（11:40 令 §5 #2 · 第 23 轮）
+
+> 补齐此前唯一未交付的用户令代码项：`tutor_server.py` 只有 HTTP，本服务提供**双向流式**会话端点
+> （流式 ASR 接入位 / 流式 TTS 分句 / 打断协议 / 会话状态机），把 INTERACTION_SPEC §3/§6/§9 落到一条长连接。
+
+```powershell
+cd D:\Users\Administrator\code\super_intelligence_2035\doc\personal-watch\run\robot\host
+py -3.10 ws_session.py --mock                    # 确定性 mock 引导（演示/评测，不联网）
+# 另开一个终端：
+py -3.10 ws_client.py ws://127.0.0.1:8766 --demo                       # 完整协议演示
+py -3.10 ws_client.py ws://127.0.0.1:8766 --eval 12 --out ..\eval\ws_session.json   # 时延评测
+```
+
+- **协议（JSON 文本帧）**：上行 `hello` / `asr_partial`（流式中间结果）/ `asr_final`（端点转写→触发一轮）/ `audio_chunk`（原始 PCM 接入位）/ `barge_in`（打断）/ `mute`·`unmute` / `reset`；下行 `state`（状态可见）/ `meta` / `asr` / `hint` / `tts_sentence`（逐句）/ `done` / `stopped` / `error`。
+- **状态机**：复用 `vad.SessionState`（ambient/listen/think/speak/wait_student/muted），每次流转都发 `state`；`wait_student` 3s 无输入自动回 `ambient`（不追问轰炸）。
+- **打断**：`speak` 态收到 `barge_in` → 停播 + 丢弃在途剩余句 + 翻转 `listen`；主循环是唯一 emitter，`_stream_turn` 只检查 stop 事件退出（避免竞态/重复下发）。
+- **静音真关麦**：`muted` 态丢弃所有输入（`asr_partial`/`asr_final`/`audio_chunk`/`barge_in`），仅 `unmute`/`reset` 可改状态。
+- **实测（第 23 轮）**：mock hint 时延 P50 **1ms**；真实 DeepSeek hint 时延 **2.01s**（≤2.5s ✅），引导「先看看这个方程，你打算先做什么？…」**不含答案** ✅；打断停播时延 **1ms**（真机 ≤300ms 待复测）；`eval/ws_session_mock.json` 12 轮 P50/P90 落盘。
+- **能信/不能信**：状态机流转、流式分句、打断丢弃在途、静音真关麦为协议级可验证证据；🚫 真实声学打断（AEC）、首字出声、近场 CER 待真机复测（与 HTTP 线同口径）。
 
 ## 教育红线（内置约束，见 `tutor_agent.py` 的 TUTOR_SYSTEM）
 

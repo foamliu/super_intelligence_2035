@@ -211,6 +211,19 @@
 - 📌 **能信/不能信**：clamp ≤2句+≤20字为确定性纯函数（单测全绿）+ full 30 会话 DeepSeek 实测（answer_leaks=0、clamp 118/118）为可验证证据；🚫 学生角色由 DeepSeek 扮演（LLM 非确定）、真机近场 ASR/AEC/首字时延待真机复测。
 - 回写：`host/tutor_agent.py`/`test_tutor_agent.py`、`INTERACTION_SPEC.md`（§10）、`ROADMAP.md`、`MEMORY_VIDEO.md`、`daily-memories-video/2026-11-09.md`。
 
+## 第 23 轮增量（2026-11-09 · 补齐 11:40 令 §5 #2「WebSocket 流式会话服务」）
+
+- ✅ **`host/ws_session.py`（WebSocket 流式会话服务）**：`TutorSession`（会话编排核心，同步、无 IO、可确定性单测）+ `WsTutorServer`（asyncio，每连接一会话，唯一 sender + executor 跑同步 LLM + 单 emitter 打断避免竞态）。协议：上行 `hello/asr_partial/asr_final/audio_chunk/barge_in/mute/unmute/reset`，下行 `state/meta/asr/hint/tts_sentence/done/stopped/error`。落地 INTERACTION_SPEC §3 状态机（复用 `vad.SessionState`）/ §6 打断（停播 + 丢弃在途 + 翻转 listen）/ §9 语音链路（流式 TTS 分句 + 句间 250ms + wait_student 3s→ambient）。
+- ✅ **`host/test_ws_session.py` 18 单测**：状态机 happy path / 流式分句 index·total / 打断丢弃在途句 / 静音真关麦（muted 丢弃 asr_partial·audio_chunk·barge_in）/ 多轮上下文（首轮建题干、后续 append history）/ tutor 失败显式报错 / idle→ambient。
+- ✅ **`host/ws_client.py`（参考客户端）**：`--demo` 完整协议演示 + `--eval N` 实测时延 P50/P90。
+- ✅ **实测**：mock hint 时延 P50 **1ms**（12 轮）；**真实 DeepSeek** 引导「先看看这个方程，你打算先做什么？说说你的第一步想法吧。」**不含答案** ✅、hint 时延 **2.01s**（≤2.5s ✅）；打断停播时延 **1ms**；`eval/ws_session_mock.json` 12 轮 P50/P90 落盘；host 全量 **`pytest` = 311 passed**（293 → +18）。
+- 📌 **能信/不能信**：状态机流转、流式分句、打断丢弃在途、静音真关麦为协议级可验证证据；🚫 真实声学打断（AEC 自听回声）、首字出声、近场 CER 待真机复测（模拟器无真实人声输入，同 HTTP 线口径）。
+- 回写：`host/ws_session.py`/`test_ws_session.py`/`ws_client.py`、`host/tutor_server.py`（docstring 标注 WS 端点）、`host/README.md`、`INTERACTION_SPEC.md`（§10）、`ROADMAP.md`、`MEMORY_VIDEO.md`、`daily-memories-video/2026-11-09.md`。
+
+## 下一轮候选（按优先级）
+
+1. 收用户 3 条回复 → 复验 `hdc list targets` / `adb devices`，打通真机「拍照/出声」（L0 真机化）。
+
 ## 下一轮候选（按优先级）
 
 1. 收用户 3 条回复 → 复验 `hdc list targets` / `adb devices`，打通真机「拍照/出声」（L0 真机化）。
