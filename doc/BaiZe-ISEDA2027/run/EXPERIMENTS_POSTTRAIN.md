@@ -13149,3 +13149,92 @@ v2 config 保留用于单轮 R0 baseline 对照。
 | 本节（EXPERIMENTS §R126） | — | — | ✅ |
 | P5 | 正式训练待 pretrain ckpt（ETA≈2026-12-25） | pretrain |
 
+
+---
+
+## §R127 SFT Golden Trajectory Synthesizer（2026-11-10 wake174 · 零 GPU · 替身分析）
+
+> **目标**：将 103 条 DeepSeek 黄金轨迹的**工具使用策略**转化为 SFT 训练对，**不泄漏 158 题评测集**。
+> **核心洞察（R126）**：99% 黄金轨迹含执行错误但成功恢复 → SFT 应**教授工具使用策略**（search→detail→run→fix），**不教授具体题目答案**。
+> **方法论**：Pattern Extraction → Contamination Check → Synthetic Trajectory Generation。
+> ⚠️ 替身分析结果**不可迁移到白泽**。
+
+### 1. 架构
+
+| 组件 | 职责 |
+|:--|:--|
+| `ContaminationChecker` | 加载 158 题，按 prompt hash / entry_point / API 集合做三重隔离检查 |
+| `TrajectoryPatternExtractor` | 从 103 条黄金轨迹提取工具序列 n-gram、API 共现、错误恢复映射、搜索查询模式 |
+| `APIKnowledgeBase` | 加载 8463 个 API 元数据（API_INFO_MERGED_V3.json），按 94 个类别索引 |
+| `SyntheticTrajectoryGenerator` | 用安全 API + 黄金模式生成 3 类 SFT 对（A/B/C），每对多轮 chat 格式 |
+
+### 2. 模式提取结果
+
+| 指标 | 值 |
+|:--|:--|
+| 黄金轨迹数 | 103 |
+| 总工具调用 | 1,475 |
+| 含错误的结果 | 927（62.8%） |
+| 错误恢复次数 | 544 |
+| API 使用示例 | 40 |
+| 搜索查询模式 | 573 |
+| 对话模板 | 103 |
+
+**Top 2-gram 工具序列**（验证 R126 发现）：
+
+| 序列 | 次数 | 含义 |
+|:--|--:|:--|
+| search_apis → get_api_details | 348 | 黄金模式第一步：搜到 API 后立即查详情 |
+| run_code → run_code | 346 | 迭代：写代码→改代码→再跑 |
+| get_api_details → search_apis | 235 | 查详情后发现不对，回去重新搜 |
+
+### 3. 污染隔离
+
+| 检查维度 | 方法 | 结果 |
+|:--|:--|:--|
+| Prompt hash | MD5 匹配 158 题 prompt | 0 命中 |
+| Entry point | 函数名匹配 155 个 eval entry_point | 0 命中 |
+| API 集合 | 代码中 API 集合 == 某题 canonical_solution API 集合 | 0 命中 |
+| 安全 API 池 | 8463 总 API - 116 eval API = **8347 安全 API** | ✅ |
+
+### 4. SFT 对生成
+
+| 类型 | 模式 | 数量 | 描述 |
+|:--|:--|--:|:--|
+| A_api_usage | search→detail→run | 100 | 单 API 探索：搜→查→写→跑（黄金模式） |
+| B_error_recovery | search→run(err)→detail→run(ok) | 50 | 错误恢复：先错→查文档→修正→成功 |
+| C_multi_api | detail×N→run | 50 | 多 API 链式调用：查 N 个 API→组合实现 |
+| **合计** | | **200** | |
+
+- 唯一 API 覆盖：**269** 个（超出 R126 的 205 目标 ✅）
+- 每对消息轮数：Type A = 9, Type B = 13, Type C = 7+2N
+- 格式：OpenAI chat format（system/user/assistant），兼容 MiniCPM5-2B SFT
+- 污染检查：**0 失败（ALL PASSED）** ✅
+
+### 5. 输出文件
+
+| 文件 | 大小 | 状态 |
+|:--|--:|:--|
+| `baize_posttrain_r127_sft_trajectory_synthesizer.py` | 455 行 ~20KB | py_compile ✅ |
+| `r127_sft_synthetic_trajectories.jsonl` | 525KB, 200 对 | ✅ 0 污染 |
+| `r127_synthesis_report.json` | ~2KB | 完整报告 |
+
+### 6. 与已有 SFT 语料的关系
+
+| 语料 | 来源 | 特点 | 与 R127 互补性 |
+|:--|:--|:--|:--|
+| `sft_pyaether_corpus_v5_deep_enriched.jsonl` | API 文档→代码（单轮） | doc-to-code 合成对 | R127 提供**多轮 agentic 轨迹**（含工具调用+错误恢复） |
+| UltraData-SFT-2605（319G） | 通用指令 | 通用能力 | R127 提供**EDA 领域专用**轨迹 |
+| UltraData-SFT-Agent-2609（51G） | agentic 指令 | 通用 agent 能力 | R127 提供**PyAether 工具**特定轨迹 |
+
+**建议混合比**（正式训练时）：通用 60% / agentic 20% / PyAether doc-to-code 10% / **R127 多轮轨迹 10%**
+
+### 7. 关键结论
+
+1. **8347 个安全 API** 远超 SFT 覆盖需求（R126 目标 205），容量不是瓶颈
+2. **黄金模式 search→detail→run** 被验证为最强模式（348/1475 = 23.6%），SFT 应重点教授
+3. **错误恢复是核心信号**：99% 黄金轨迹含错误 → SFT Type B 对教授"犯错→查文档→修正"闭环
+4. **污染隔离可行**：三重检查（hash/entry_point/API集合）零泄漏
+5. **269 个 API 覆盖**（>R126 的 205 目标），满足 SFT 领域覆盖需求
+6. R127 语料与 v5 doc-to-code 语料**互补**：v5 教单 API 调用，R127 教多轮工具策略
+
