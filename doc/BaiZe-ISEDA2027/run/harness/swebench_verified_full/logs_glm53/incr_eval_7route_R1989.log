@@ -1,0 +1,27 @@
+=== incr_eval_7route R1989 START Mon Nov  9 06:27:40 PM CST 2026 ===
+[Mon Nov  9 06:27:40 PM CST 2026] === cline-patched: 1 missing instances to eval ===
+[Mon Nov  9 06:27:40 PM CST 2026] === merge cline-patched predictions ===
+cline-patched: 141 real patches merged
+[Mon Nov  9 06:27:40 PM CST 2026] === cline-patched eval START 1 missing instances ===
+Running 1 instances...
+  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [00:24<00:00, 24.20s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:24<00:00, 24.20s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:24<00:00, 24.20s/it]
+All instances run.
+Total instances: 1
+Instances submitted: 1
+Instances completed: 1
+Instances incomplete: 0
+Instances resolved: 1
+Instances unresolved: 0
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 2
+Unremoved images: 1
+Report written to cline-glm-5.3-flash.verified_full_glm53_cline-patched_R1933.json
+[Mon Nov  9 06:28:09 PM CST 2026] === cline-patched eval DONE ===
+[Mon Nov  9 06:28:09 PM CST 2026] === regenerate eval report for cline-patched ===
+cline-patched: 107 resolved / 34 failed / 141 evaluated / 16 no_patch
+[Mon Nov  9 06:28:10 PM CST 2026] === cline-patched report regenerated ===
+[Mon Nov  9 06:28:10 PM CST 2026] === codex: 4 missing instances to eval ===
+[Mon Nov  9 06:28:10 PM CST 2026] === merge codex predictions ===
