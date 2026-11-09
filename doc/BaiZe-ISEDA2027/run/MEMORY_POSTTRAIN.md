@@ -14,7 +14,7 @@ WAITING: 0
 - 阻塞: GPU 0/8free(SGLang Qwen3.8-27B占全8卡44-45GB 0%util,11/9已过仍未释放);领域语料4.5M tok过小→需扩至≥100M;P3等pretrain ckpt(ETA≈2026-12-25)
 - 本轮新增调研产出: R136 领域退火课程设计+遗忘风险分析(⚠️559x过拟合发现+遗忘k=5校准2.8pp+5臂消融+6吸收度量+7ckpt策略+过/欠退火预警+管线衔接+解决方案4方案+EXPERIMENTS §R136+r136_domain_anneal_report.json 19.3KB）
 - 未完成指令: 🔴用户令2026-11-07(GPU未到位,需持续产出调研) ⇒ WAITING=0
-- git: commit pending(wake183)
+- git: commit 53dcc7793✅ push超时(network timeout,下轮补推)
 
 ## 关键事实（常驻）
 
