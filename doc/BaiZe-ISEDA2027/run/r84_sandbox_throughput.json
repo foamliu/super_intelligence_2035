@@ -1,0 +1,272 @@
+{
+  "r84_id": "R84",
+  "timestamp": "2026-11-09T08:01:36.397311",
+  "data_source": "/home/app.e0031982/code/eda_fastmcp/pyAether-eval/cline_cli_trace/cline_trace_v1_3/cline_trace",
+  "n_traces": 103,
+  "n_dataset_tasks": 158,
+  "patterns": {
+    "total_tool_calls": 1481,
+    "n_tasks": 103,
+    "type_distribution": {
+      "search_apis": 579,
+      "run_pyAether_code_tool": 516,
+      "get_api_details": 386
+    },
+    "avg_calls_per_type_per_task": {
+      "search_apis": 5.621359223300971,
+      "run_pyAether_code_tool": 5.009708737864078,
+      "get_api_details": 3.7475728155339807
+    },
+    "calls_per_task": {
+      "mean": 14.37864077669903,
+      "median": 13,
+      "min": 1,
+      "max": 41,
+      "stdev": 8.871762325595201
+    },
+    "common_first_3": {
+      "('search_apis', 'get_api_details', 'search_apis')": 40,
+      "('search_apis', 'search_apis', 'search_apis')": 24,
+      "('search_apis', 'search_apis', 'get_api_details')": 21,
+      "('search_apis', 'get_api_details', 'run_pyAether_code_tool')": 15,
+      "('search_apis', 'get_api_details', 'get_api_details')": 2
+    },
+    "n_unique_queries": 527,
+    "query_samples": [
+      "get all library names",
+      "get library",
+      "bus definition string signal bits unique count",
+      "emyString create constructor",
+      "emyNameSpace create constructor",
+      "create namespace get default",
+      "emyNameSpace constructor",
+      "emyCdbaNS emyNativeNS",
+      "timestamp to date year month day conversion",
+      "validate path exists directory file system"
+    ],
+    "n_apis_get": {
+      "mean": 1.5155440414507773,
+      "median": 1.0,
+      "min": 1,
+      "max": 6
+    },
+    "error_rate_by_type": {
+      "search_apis": 0.015544041450777202,
+      "get_api_details": 0.0051813471502590676,
+      "run_pyAether_code_tool": 0.998062015503876
+    },
+    "result_len": {
+      "mean": 312.8235294117647,
+      "median": 291,
+      "p90": 292
+    }
+  },
+  "timing": {
+    "n_with_timing": 95,
+    "task_duration_s": {
+      "mean": 118.2402947368421,
+      "median": 99.02,
+      "min": 2.853,
+      "max": 507.308,
+      "p90": 219.999,
+      "stdev": 88.33484188199162
+    },
+    "per_call_s": {
+      "mean": 8.53906225703124,
+      "median": 8.154300000000001,
+      "min": 0.71325,
+      "max": 20.60490909090909
+    },
+    "per_turn_s": {
+      "mean": 4.828374560348498,
+      "median": 4.6288709677419355
+    },
+    "avg_prompt_tok": 623586.6504854369,
+    "avg_comp_tok": 12675.242718446601,
+    "total_prompt": 64229425,
+    "total_comp": 1305550
+  },
+  "throughput": {
+    "sb_times": {
+      "search_apis": 1.0,
+      "get_api_details": 0.5,
+      "run_pyAether_code_tool": 8.0
+    },
+    "tot_sb_per_task": 47.6,
+    "n_run_per_task": 5.0,
+    "n_search_per_task": 5.6,
+    "n_get_per_task": 3.7,
+    "ds_llm_per_task": 75.2,
+    "mcp5_batch_per_task": 12.2,
+    "mcp5_inter_per_task": 122.4,
+    "max_conc_sb": 32,
+    "max_conc_gpu": 47,
+    "kv_per_req_gb": 2.62,
+    "tot_kv_gb": 124.1,
+    "conc_table": [
+      {
+        "concurrency": 1,
+        "eff_sb": 1,
+        "eff_gpu": 1,
+        "bottleneck": "sandbox",
+        "sb_tp": 0.021,
+        "gpu_tp": 0.0755,
+        "actual_tp": 0.021,
+        "rph": 75.7,
+        "sph": 0.07,
+        "train_days": 1691.5
+      },
+      {
+        "concurrency": 2,
+        "eff_sb": 2,
+        "eff_gpu": 2,
+        "bottleneck": "sandbox",
+        "sb_tp": 0.042,
+        "gpu_tp": 0.151,
+        "actual_tp": 0.042,
+        "rph": 151.3,
+        "sph": 0.15,
+        "train_days": 845.7
+      },
+      {
+        "concurrency": 4,
+        "eff_sb": 4,
+        "eff_gpu": 4,
+        "bottleneck": "sandbox",
+        "sb_tp": 0.0841,
+        "gpu_tp": 0.302,
+        "actual_tp": 0.0841,
+        "rph": 302.7,
+        "sph": 0.3,
+        "train_days": 422.9
+      },
+      {
+        "concurrency": 8,
+        "eff_sb": 8,
+        "eff_gpu": 8,
+        "bottleneck": "sandbox",
+        "sb_tp": 0.1682,
+        "gpu_tp": 0.604,
+        "actual_tp": 0.1682,
+        "rph": 605.4,
+        "sph": 0.59,
+        "train_days": 211.4
+      },
+      {
+        "concurrency": 16,
+        "eff_sb": 16,
+        "eff_gpu": 16,
+        "bottleneck": "sandbox",
+        "sb_tp": 0.3363,
+        "gpu_tp": 1.2081,
+        "actual_tp": 0.3363,
+        "rph": 1210.8,
+        "sph": 1.18,
+        "train_days": 105.7
+      },
+      {
+        "concurrency": 32,
+        "eff_sb": 32,
+        "eff_gpu": 32,
+        "bottleneck": "sandbox",
+        "sb_tp": 0.6727,
+        "gpu_tp": 2.4161,
+        "actual_tp": 0.6727,
+        "rph": 2421.6,
+        "sph": 2.36,
+        "train_days": 52.9
+      },
+      {
+        "concurrency": 64,
+        "eff_sb": 32,
+        "eff_gpu": 47,
+        "bottleneck": "sandbox",
+        "sb_tp": 0.6727,
+        "gpu_tp": 3.5487,
+        "actual_tp": 0.6727,
+        "rph": 2421.6,
+        "sph": 2.36,
+        "train_days": 52.9
+      }
+    ],
+    "opt_conc": 32
+  },
+  "budget": {
+    "rollout_budget_s": 59.8,
+    "rl_timeout_s": 300,
+    "eff_rollout_s": 59.8,
+    "group_s": 77.7,
+    "step_s": 311.0,
+    "opt_conc": 32,
+    "opt_rph": 2421.6,
+    "opt_sph": 2.36,
+    "total_steps": 3000,
+    "phases": [
+      {
+        "phase": "warmup",
+        "steps": 200,
+        "desc": "Low difficulty, short ctx",
+        "hours": 17.3,
+        "days": 0.72
+      },
+      {
+        "phase": "basic",
+        "steps": 500,
+        "desc": "Single API, simple assert",
+        "hours": 43.2,
+        "days": 1.8
+      },
+      {
+        "phase": "intermediate",
+        "steps": 800,
+        "desc": "2-3 API chains",
+        "hours": 69.1,
+        "days": 2.88
+      },
+      {
+        "phase": "advanced",
+        "steps": 800,
+        "desc": "6-10 API, techlib",
+        "hours": 69.1,
+        "days": 2.88
+      },
+      {
+        "phase": "expert",
+        "steps": 700,
+        "desc": "10+ API, complex workflow",
+        "hours": 60.5,
+        "days": 2.52
+      }
+    ],
+    "base_hours": 259.2,
+    "base_days": 10.8,
+    "exp_crashes": 22.8,
+    "crash_hours": 20.9,
+    "ckpt_hours": 9.2,
+    "tot_hours": 289.3,
+    "tot_days": 12.06,
+    "gpu_days": 12.06
+  },
+  "decision": {
+    "rollout_verdict": "FEASIBLE",
+    "time_verdict": "WITHIN_WINDOW",
+    "gpu_days": 12.06,
+    "opt_conc": 32,
+    "bottleneck": "sandbox_limited",
+    "key_nums": {
+      "avg_calls_per_task": 14.4,
+      "avg_task_dur_s": 118.2,
+      "sandbox_time_per_task_s": 59.8,
+      "steps_per_hour": 2.36,
+      "total_train_days": 12.06
+    },
+    "recs": [
+      "Use concurrency=32 for optimal throughput",
+      "Set RL timeout to 300s per rollout (5 min)",
+      "Checkpoint every 2 steps (R82: 3.56% overhead, optimal)",
+      "Allocate 13 GPU-days for full RL",
+      "Monitor sandbox CPU; if <80%, increase concurrency",
+      "Pre-warm NFS 30 min before starting"
+    ]
+  }
+}

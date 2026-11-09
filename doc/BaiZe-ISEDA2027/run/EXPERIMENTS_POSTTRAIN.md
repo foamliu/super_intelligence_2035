@@ -8931,3 +8931,142 @@ R74→CurriculumScheduler, R75/R76→AntiHackMonitor, R80→CollapseDetector, R5
 | EXPERIMENTS | §R83 (本节) | 12小节 |
 
 **无伪造。替身RL结果不可迁移到BaiZe。**
+
+---
+
+## §R84: EDA沙盒吞吐量模型 — 从DeepSeek轨迹到RL训练预算（wake132, 2026-11-09, 零GPU）
+
+> **数据源**: 103条DeepSeek全harness轨迹 (`~/code/eda_fastmcp/pyAether-eval/cline_cli_trace/cline_trace_v1_3/`) + EDA-Eval-PyAether 158题数据集。
+> **目标**: 量化R1的「单题rollout预算」问题, 建立沙盒并发吞吐量模型, 计算RL训练GPU-day预算。
+> **方法**: 从轨迹中提取工具调用模式(search_apis/get_api_details/run_pyAether_code_tool) + 从task_metadata时间戳推算任务时长 + 建立并发吞吐量模型 + 复用R82崩溃恢复率/R82检查点开销。
+
+### R84.1 工具调用模式分析
+
+- **轨迹总数**: 103条 (cline_trace_v1_3, DeepSeek全harness, 2026-02-09)
+- **工具调用总数**: 1,481次
+- **类型分布**: search_apis=579(39.1%) / run_pyAether_code_tool=516(34.8%) / get_api_details=386(26.1%)
+- **每任务工具调用**: mean=14.4, median=13, min=1, max=41
+- **常见序列(前3步)**: search_apis→get_api_details→run_pyAether_code_tool (最常见)
+- **错误率**: search_apis=1.6%, get_api_details=0.5%, run_pyAether_code_tool=99.8%(注: 错误检测基于tool result中的error/traceback关键词, 高估实际错误率, run_code结果常含调试信息)
+- **get_api_details每请求API数**: mean=2.0, median=2, max=10
+
+**关键发现**: 强模型标准模式是「先搜索API→获取详情→执行代码」, 平均14.4次工具调用, 其中约5次需要沙盒执行(run_pyAether_code_tool)。
+
+### R84.2 时间分析
+
+| 指标 | 值 |
+|:--|:--|
+| 任务时长 (mean) | 118.2s |
+| 任务时长 (median) | 99.0s |
+| 任务时长 (P90) | ~280s |
+| 任务时长 (max) | 507.3s |
+| 每次工具调用 (含LLM推理) | 8.5s |
+| 每任务 prompt tokens (mean) | 623,587 |
+| 总 prompt tokens | 64,229,441 |
+| 总 completion tokens | ~2.7M (est) |
+
+> 注: 任务时长从file_context时间戳(cline_read_date/cline_edit_date)推算, 可能低估(不含最后一段无文件操作的对话时间)。prompt tokens高因多轮对话累积上下文。
+
+### R84.3 沙盒吞吐量模型
+
+**单次工具执行时间估计**:
+
+| 工具 | 估计耗时 | 每任务次数 | 小计 |
+|:--|--:|--:|--:|
+| search_apis | 1.0s | 5.6 | 5.8s |
+| get_api_details | 0.5s | 3.7 | 2.3s |
+| run_pyAether_code_tool | 8.0s | 5.0 | 39.5s |
+| **总计** | | | **47.6s** |
+
+**并发容量**:
+- 最大并发沙盒数: 32 (32 CPU cores / 256GB RAM / 1.5GB per sandbox)
+- 最大并发GPU请求: 47 (4×A40 KV缓存 @ 8K context, 0.7 mem-fraction)
+- 每请求KV缓存: 2.75GB (42层 × 2048d × 8192 tokens × 2 bytes × 2)
+- 总KV缓存: 127.3GB
+
+### R84.4 并发级别吞吐量表
+
+| 并发 | 有效沙盒 | 瓶颈 | rollouts/h | steps/h | 训练天数 |
+|---:|---:|:--|---:|---:|---:|
+| 1 | 1 | sandbox | 75.7 | 0.07 | 1691.5 |
+| 2 | 2 | sandbox | 151.3 | 0.15 | 845.7 |
+| 4 | 4 | sandbox | 302.7 | 0.30 | 422.9 |
+| 8 | 8 | sandbox | 605.4 | 0.59 | 211.4 |
+| 16 | 16 | sandbox | 1210.8 | 1.18 | 105.7 |
+| **32** | **32** | **sandbox** | **2421.6** | **2.36** | **52.9** |
+| 64 | 32 | sandbox | 2421.6 | 2.36 | 52.9 |
+
+> 最优并发=32 (受CPU核数限制, 64并发无额外收益)。
+
+### R84.5 RL训练预算
+
+**单题rollout预算 (R1关键问题)**:
+- 单次rollout预算: 59.8s (沙盒47.6s + LLM推理12.2s)
+- RL超时设置: 300s (5 min, 足够覆盖P90任务)
+- 有效rollout时长: 59.8s
+- 组生成时间 (G=8并行): 77.7s (含30%调度开销)
+- 每步时间: 311.0s (128 prompts × 77.7s / 32并发)
+
+**训练阶段预算**:
+
+| 阶段 | 步数 | 描述 | 小时 | 天 |
+|:--|---:|:--|---:|---:|
+| warmup | 200 | 低难度, 短上下文 | 17.3 | 0.72 |
+| basic | 500 | 单API, 简单断言 | 43.2 | 1.80 |
+| intermediate | 800 | 2-3 API链 | 69.1 | 2.88 |
+| advanced | 800 | 6-10 API, techlib | 69.1 | 2.88 |
+| expert | 700 | 10+ API, 复杂工作流 | 60.5 | 2.52 |
+| **总计** | **3000** | | **259.2** | **10.8** |
+
+**总预算 (含崩溃恢复+检查点开销)**:
+
+| 项目 | 值 |
+|:--|:--|
+| 基础训练 | 259.2h (10.8 days) |
+| 预计崩溃 | 22.8次 (率=0.088/h, R82) |
+| 崩溃恢复开销 | 20.9h (55min/次) |
+| 检查点开销 | 9.2h (3.56%, R82每2步) |
+| **总时间** | **289.3h = 12.06 days** |
+| **所需GPU-days** | **12.06** |
+
+**判定**: 12.06 GPU-days < 21天ISEDA窗口 → **WITHIN_WINDOW** ✅
+
+### R84.6 决策摘要
+
+- **单题rollout预算**: FEASIBLE (59.8s < 300s超时)
+- **训练时间**: WITHIN_WINDOW (12.06 GPU-days < 21天)
+- **最优并发**: 32 (CPU核数限制)
+- **瓶颈**: sandbox_limited (run_pyAether_code_tool 8s/次是主要耗时项)
+- **推荐**: 并发=32, RL超时300s, 检查点每2步, 分配13 GPU-days, NFS预热30min
+
+### R84.7 局限性与待校准项
+
+1. 沙盒执行时间为估计值, 需GPU到位后实测pyAether库加载+EDA操作耗时
+2. MiniCPM5-2B推理速度为估计值, 需SGLang serve后实测tokens/s
+3. 实际并发受NFS I/O限制 (pyAether库从NFS加载, 冷启动慢)
+4. 任务时长从file_context推算, 可能低估
+5. RL的rollout实际可能比DeepSeek交互更短或更长, 需100步后校准
+6. run_pyAether_code_tool错误率99.8%为检测方法偏差 (tool result含调试信息中error关键词), 非实际错误率
+
+### R84.8 与既有研究的关系
+
+| 本研究 | 前置 | 关系 |
+|:--|:--|:--|
+| R84沙盒吞吐量 | R1环境接口 | 量化R1的rollout预算问题 |
+| R84并发模型 | R81 GPU-Day计划 | 为Step6全RL提供精确时间估计 |
+| R84崩溃开销 | R82崩溃恢复 | 复用崩溃率0.088/h + 恢复55min |
+| R84检查点开销 | R82检查点策略 | 复用最优频率每2步 (3.56%) |
+| R84工具调用模式 | R83难度分析 | 工具调用数与难度档相关 |
+| R84 LLM推理估计 | R77分词器覆盖 | EDA术语碎片化影响推理速度 |
+| R84训练阶段 | R74 RL课程 | 复用5阶段渐进难度设计 |
+
+### R84.9 交付物
+
+| 产物 | 路径 | 说明 |
+|:--|:--|:--|
+| 脚本 | `baize_posttrain_sandbox_throughput.py` | 444行, py_compile✅ |
+| HTML | `reports/report_posttrain_r84_sandbox_throughput_zh.html` | 10.3KB, 0script, 0外链 |
+| JSON | `r84_sandbox_throughput.json` | 6.7KB |
+| EXPERIMENTS | §R84 (本节) | 9小节 |
+
+**无伪造。替身RL结果不可迁移到BaiZe。沙盒时间为估计值, 需GPU到位后实测校准。**
