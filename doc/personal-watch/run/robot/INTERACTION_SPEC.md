@@ -281,7 +281,7 @@ stateDiagram-v2
 | `host/normalize_math.py`（口述→数学式，≥30 单测） | ✅ **第 11 轮交付**（覆盖 12:20 令 §4 全部词表，**81 单测**） |
 | `eval/interaction_*.json`（时延/打断/模拟学生） | ✅ **第 13 轮交付**（latency n=12 / bargein n=8 / student 3 人设×10 轮；**直接给答案次数=0**） |
 | `host/eval_interaction.py` + `test_interaction.py` + `gen_interaction_report.py` | ✅ **第 13 轮交付**（10 单测 + 自包含 HTML 报告） |
-| `host/tutor_agent.py` `clamp_hint()`（≤2 句裁剪） | ✅ **第 13 轮交付**（7 单测；交互验收暴露「LLM 原始输出 3-6 句过长」的确定性修复） |
+| `host/tutor_agent.py` `clamp_hint()`（≤2 句裁剪） | ✅ **第 13 轮交付**（7 单测；交互验收暴露「LLM 原始输出 3-6 句过长」的确定性修复）；**第 22 轮补「每句 ≤20 字」确定性裁剪（`_cap_sentence`）+4 单测 + full 30 会话复跑验证** |
 | HTML 报告 `doc/BaiZe-ISEDA2027/reports/report_robot_hci_interaction_zh.html` | ✅ **第 13 轮交付**（自包含中文报告 + 10 条可用性走查） |
 | `host/eval_asr.py` + `eval/asr_paraformer_zh.json` | ✅ **第 18 轮交付**（TTS 合成已知文本 → `SherpaOnnxASR` 识别 → CER 字错率实测） |
 | `host/vad.py`（端侧 VAD）+ App 语音打断/静音/常听 | ✅ **第 20 轮交付**（VAD 纯函数 16 单测：能量/端点 1.2s/打断 debounce/静音真关麦/状态机；App `MicVad.kt` AudioRecord 端侧 VAD + 语音打断 + 静音真关麦 + 状态指示；APK 4,124,752 字节 + 模拟器跑通一题 + 录屏） |

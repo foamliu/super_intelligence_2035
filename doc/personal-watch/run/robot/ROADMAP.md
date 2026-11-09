@@ -202,8 +202,16 @@
 - 📌 **能信/不能信**：本地关键词分类（100 题 100/100）+ LLM 分类（DeepSeek 实测返回正确标签）+ App 状态栏/学情端到端为**可验证证据**；🚫 分类「准确性」对任意真实/变形题干仍以 LLM 为主、本地关键词为兜底，未做超出题库的准确率回归；真机近场 ASR/AEC 仍待复测。
 - 回写：`host/knowledge.py`/`test_knowledge.py`、`host/tutor_server.py`/`test_tutor_server.py`、`app/.../TutorClient.kt`/`MainActivity.kt`、`host/README.md`、`app/README.md`、`ROADMAP.md`、`INTERACTION_SPEC.md`、`MEMORY_VIDEO.md`、`daily-memories-video/2026-11-09.md`。
 
+## 第 22 轮增量（2026-11-09 · ROADMAP「下一轮候选 #1」：clamp_hint 后的 full 30 会话复跑验证）
+
+- ✅ **`host/tutor_agent.py` `clamp_hint` 补「每句 ≤20 字」确定性裁剪**：新增 `_cap_sentence()`（超 20 字先在软停顿「，、：」处断句、**优先保「句首 + 句尾问句」**；整句无软停顿才硬截到 20 字并尽量保句末标点）；`clamp_hint()` 增 `max_chars=20` 参数。此前只做「≤2 句」裁剪（第 13 轮），未约束每句长度（INTERACTION_SPEC §2.1「每句 ≤20 字」硬指标）。
+- ✅ **`host/test_tutor_agent.py` +4 单测**：软停顿断句保句尾问句 / 冒号断句保问题 / 无软停顿硬截保标点 / 多句逐句 ≤20 字。
+- ✅ **`eval_interaction.py --mode student --rounds 10` full 30 会话复跑（deepseek 双后端）**：`answer_leaks=0` ✅红线、`clamp 118/118 全合规（≤2句且每句≤20字）`；cannot_do 卡死 0.9/解出 0.1、careless 解出 0.7、wants_answer 拒答 39 次/被拒后继续率 0.872。
+- ✅ **host 全量 `pytest` = 293 passed**（285 → 293）。
+- 📌 **能信/不能信**：clamp ≤2句+≤20字为确定性纯函数（单测全绿）+ full 30 会话 DeepSeek 实测（answer_leaks=0、clamp 118/118）为可验证证据；🚫 学生角色由 DeepSeek 扮演（LLM 非确定）、真机近场 ASR/AEC/首字时延待真机复测。
+- 回写：`host/tutor_agent.py`/`test_tutor_agent.py`、`INTERACTION_SPEC.md`（§10）、`ROADMAP.md`、`MEMORY_VIDEO.md`、`daily-memories-video/2026-11-09.md`。
+
 ## 下一轮候选（按优先级）
 
-1. `clamp_hint` 后的 full 30 会话复跑验证（第 13 轮只做了单次 smoke）。
-2. 收用户 3 条回复 → 复验 `hdc list targets` / `adb devices`，打通真机「拍照/出声」（L0 真机化）。
+1. 收用户 3 条回复 → 复验 `hdc list targets` / `adb devices`，打通真机「拍照/出声」（L0 真机化）。
 

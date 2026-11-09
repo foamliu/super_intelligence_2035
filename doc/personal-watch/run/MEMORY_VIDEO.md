@@ -14,8 +14,8 @@ WAITING: 0
 ## 📊 进度快照（每次唤醒必须更新）
 
 ```
-PHASE:        L0 设备通路**模拟器全通（ADB+emulator+AVD+APK 安装+App 闭环+录屏）**；L1 单题闭环达标；HCI 交互规范已交付；**可安装真 App 已跑通（22:50 令）**；**HCI 代码层（normalize_math.py 81 单测 + speech.py 12 单测）已交付（12:20 令）**；**presence.py 在座检测已交付（12:05 令）**；**交互验收（11:40 令 §3）已交付（第13轮）**；**L1 全量 100 题 + 泄露检测误报修复（第14轮）**；**L2 智能体工具层（5 工具 + 会话编排 + LLM 工具决策）已交付（第15轮）**；**L2 工具/智能体已接 HTTP+App（/tool + /agent 端点 + App 换一题/记错题/报告/追问 + APK 装机成功）已交付（第16轮）**；**L3 学情层（l3_profile.py 知识点画像+每日/每周摘要+自包含 HTML + POST /profile 端点 + App「学情」按钮）已交付（第17轮）**；**端侧真实 ASR 落地（SherpaOnnxASR paraformer 离线 + StreamingSherpaOnnxASR streaming-zipformer 真流式 + eval_asr.py CER 实测，第18轮）**；**L3 正样本（练习日志+合并画像+/practice 端点+App 答对/答错，第19轮）**；**端侧 VAD + App 语音打断/静音真关麦/常听（第20轮）**；**知识点自动分类（knowledge.py LLM+本地兜底 + POST /practice 自动补知识点 + App 显示分类，第21轮）**
-已完成:       P0 ✅；路线 R3 ✅；最小 demo ✅；L1 基线 ✅；识图 4/4 ✅；给答案率 0 ✅；时延达标 ✅；INTERACTION_SPEC.md ✅；可安装 APK + 模拟器跑通一题 ✅（22:50 令·第10轮）；**normalize_math.py + speech.py 交付、93 单测全绿 ✅（12:20 令·第11轮）**；**presence.py 交付、8 单测、PC 摄像头 20 次实测 P50 33ms ≤300ms、准确率 20/20 ✅（12:05 令·第12轮）**；**交互验收交付：eval/interaction_*.json + HTML 报告 + clamp_hint(≤2句)，整轮 P50 1.37s/P90 1.97s、给答案率 0、录音 91.2s、118 单测全绿 ✅（11:40 令·第13轮）**；**100 题题库(question_bank.py)+leak_check 修复+L1 全量评测（给答案率 0·识图 20/20·P50 1.16s/P90 2.07s）、133 单测全绿 ✅（第14轮）**；**L2 智能体：tools.py(5工具)+l2_agent.py(会话/路由/LLM决策)+eval_l2.py，6 工具全调·给答案率 0·3 轮一致·175 单测全绿 ✅（第15轮）**；**L2→HTTP/App：/tool+/agent 端点+App 换一题/记错题/报告/追问+APK 装机成功（4.11MB·adb install Success·UI dump 确认）、188 单测全绿 ✅（第16轮）**；**L3 学情：l3_profile.py（知识点画像+每日/每周摘要+自包含 HTML）+POST /profile 端点+App「学情」按钮+模拟器点击实测（错题总数 2·薄弱点一元一次方程）、205 单测全绿 ✅（第17轮）**；**端侧真实 ASR：SherpaOnnxASR(paraformer 离线)+StreamingSherpaOnnxASR(zipformer 真流式)+eval_asr.py（流式 CER mean 0.302·延迟 0.03-0.08s·中间结果逐字增长）、209 单测全绿 ✅（第18轮）**；**L3 正样本：练习日志+合并画像（作答次数/正确率/掌握等级）+POST /practice 端点+App「答对/答错」按钮+模拟器点击实测（错题3·练习5·知识点2·薄弱点一元一次方程）、222 单测全绿 ✅（第19轮）**；**端侧 VAD+App 语音打断/静音真关麦/常听态（vad.py 16 单测+MicVad.kt+RECORD_AUDIO）、APK 4,124,752 字节+模拟器跑通一题、238 单测全绿 ✅（第20轮）**；**知识点自动分类：knowledge.py（本地关键词 100 题 100/100+LLM DeepSeek 主路径/本地兜底）+POST /practice 自动补知识点+App 状态栏显示分类、APK 4,157,236 字节+模拟器答对→「知识点：一元一次方程」、285 单测全绿 ✅（第21轮）**
+PHASE:        L0 设备通路**模拟器全通（ADB+emulator+AVD+APK 安装+App 闭环+录屏）**；L1 单题闭环达标；HCI 交互规范已交付；**可安装真 App 已跑通（22:50 令）**；**HCI 代码层（normalize_math.py 81 单测 + speech.py 12 单测）已交付（12:20 令）**；**presence.py 在座检测已交付（12:05 令）**；**交互验收（11:40 令 §3）已交付（第13轮）**；**L1 全量 100 题 + 泄露检测误报修复（第14轮）**；**L2 智能体工具层（5 工具 + 会话编排 + LLM 工具决策）已交付（第15轮）**；**L2 工具/智能体已接 HTTP+App（/tool + /agent 端点 + App 换一题/记错题/报告/追问 + APK 装机成功）已交付（第16轮）**；**L3 学情层（l3_profile.py 知识点画像+每日/每周摘要+自包含 HTML + POST /profile 端点 + App「学情」按钮）已交付（第17轮）**；**端侧真实 ASR 落地（SherpaOnnxASR paraformer 离线 + StreamingSherpaOnnxASR streaming-zipformer 真流式 + eval_asr.py CER 实测，第18轮）**；**L3 正样本（练习日志+合并画像+/practice 端点+App 答对/答错，第19轮）**；**端侧 VAD + App 语音打断/静音真关麦/常听（第20轮）**；**知识点自动分类（knowledge.py LLM+本地兜底 + POST /practice 自动补知识点 + App 显示分类，第21轮）**；**clamp_hint 补「每句≤20字」确定性裁剪 + full 30 会话复跑验证（第22轮）**
+已完成:       P0 ✅；路线 R3 ✅；最小 demo ✅；L1 基线 ✅；识图 4/4 ✅；给答案率 0 ✅；时延达标 ✅；INTERACTION_SPEC.md ✅；可安装 APK + 模拟器跑通一题 ✅（22:50 令·第10轮）；**normalize_math.py + speech.py 交付、93 单测全绿 ✅（12:20 令·第11轮）**；**presence.py 交付、8 单测、PC 摄像头 20 次实测 P50 33ms ≤300ms、准确率 20/20 ✅（12:05 令·第12轮）**；**交互验收交付：eval/interaction_*.json + HTML 报告 + clamp_hint(≤2句)，整轮 P50 1.37s/P90 1.97s、给答案率 0、录音 91.2s、118 单测全绿 ✅（11:40 令·第13轮）**；**100 题题库(question_bank.py)+leak_check 修复+L1 全量评测（给答案率 0·识图 20/20·P50 1.16s/P90 2.07s）、133 单测全绿 ✅（第14轮）**；**L2 智能体：tools.py(5工具)+l2_agent.py(会话/路由/LLM决策)+eval_l2.py，6 工具全调·给答案率 0·3 轮一致·175 单测全绿 ✅（第15轮）**；**L2→HTTP/App：/tool+/agent 端点+App 换一题/记错题/报告/追问+APK 装机成功（4.11MB·adb install Success·UI dump 确认）、188 单测全绿 ✅（第16轮）**；**L3 学情：l3_profile.py（知识点画像+每日/每周摘要+自包含 HTML）+POST /profile 端点+App「学情」按钮+模拟器点击实测（错题总数 2·薄弱点一元一次方程）、205 单测全绿 ✅（第17轮）**；**端侧真实 ASR：SherpaOnnxASR(paraformer 离线)+StreamingSherpaOnnxASR(zipformer 真流式)+eval_asr.py（流式 CER mean 0.302·延迟 0.03-0.08s·中间结果逐字增长）、209 单测全绿 ✅（第18轮）**；**L3 正样本：练习日志+合并画像（作答次数/正确率/掌握等级）+POST /practice 端点+App「答对/答错」按钮+模拟器点击实测（错题3·练习5·知识点2·薄弱点一元一次方程）、222 单测全绿 ✅（第19轮）**；**端侧 VAD+App 语音打断/静音真关麦/常听态（vad.py 16 单测+MicVad.kt+RECORD_AUDIO）、APK 4,124,752 字节+模拟器跑通一题、238 单测全绿 ✅（第20轮）**；**知识点自动分类：knowledge.py（本地关键词 100 题 100/100+LLM DeepSeek 主路径/本地兜底）+POST /practice 自动补知识点+App 状态栏显示分类、APK 4,157,236 字节+模拟器答对→「知识点：一元一次方程」、285 单测全绿 ✅（第21轮）**；**clamp_hint 补「每句≤20字」确定性裁剪 + full 30 会话复跑（answer_leaks=0·clamp 118/118 全合规）+4 单测、293 单测全绿 ✅（第22轮）**
 第5轮:       识图+引导切云端 DeepSeek（recognize() 签名不变 / 可降级 / 路径可见）；识图 0.5→1.0；P50 2.0s·P90 2.92s；修 headless TTS 崩溃；P0 用户清单 5→3 条
 第6轮:       按 11:10 令全链路复跑无回归——P0 四度复验、R3 维持、demo 端到端 2.95s、L1 四指标达标（识图 1.0·首步 P50 1.51s/P90 2.22s·给答案率 0）
 第7轮:       按 11:10 令全链路复跑无回归——P0 五度复验、R3 维持、demo 端到端 3.33s、L1 四指标达标（识图 4/4·首步 P50 1.6s/P90 1.78s·给答案率 0·无静默降级）
@@ -33,8 +33,9 @@ PHASE:        L0 设备通路**模拟器全通（ADB+emulator+AVD+APK 安装+App
 第19轮:      执行 ROADMAP L3 学情补「正样本」——`l3_profile.py` 练习日志(作答对错)+合并画像(错题负样本+练习正样本·正确率/掌握等级)+`POST /practice` 端点+App「答对/答错」按钮；APK 4,120,020 字节+adb install+模拟器点「学情」实测(错题3·练习5·知识点2·薄弱点一元一次方程)；`pytest` 222 passed
 第20轮:      执行 22:50 令「打断可用」——`host/vad.py`(端侧 VAD 纯函数：能量/端点1.2s/打断debounce/静音真关麦/状态机)+16 单测；App 端 `MicVad.kt`(AudioRecord 端侧 VAD)+语音打断(barge-in)+静音真关麦+状态指示(常听/听/说/静音)+Manifest RECORD_AUDIO；APK 4,124,752 字节+adb install Success+模拟器跑通一题(文字题 2x+3=11→DeepSeek 引导不含答案→状态「说」→打断「听」→静音「静音」)+录屏 r20_session.mp4(4.4MB)；`pytest` 238 passed
 第21轮:      执行 ROADMAP「下一轮候选 #5」——`host/knowledge.py`(知识点自动分类：`classify_knowledge_local` 确定性关键词 100 题 100/100 + `classify_knowledge` LLM DeepSeek 主路径/本地兜底 + `_normalize` 学科名→未分类)+44 单测；`tutor_server.py` `POST /practice` 缺 knowledge 自动补(出参加 knowledge+classify)+3 单测；App `TutorClient.PracticeReply` 加 knowledge+状态栏「已记录「答对」· 知识点：xx」；APK 4,157,236 字节+adb install Success+模拟器文字题 5x-3=12 答对→「知识点：一元一次方程(累计10次)」+学情「一元一次方程 6次/83%·勾股定理 4次/100%」+录屏 r21_session.mp4(20.3MB)；`pytest` 285 passed
-当前动作:     第 20 轮：读任务书 → 识别 22:50 令「打断可用」为下一增量 → 写 `host/vad.py`+16 单测 → App `MicVad.kt`+语音打断+静音+状态机 → assembleDebug+adb install+模拟器跑通一题+录屏 → 238 单测全绿 → 回写 → commit+push(robot:)
-下一步:       clamp_hint 后 full 30 会话复跑验证；App「答对/答错」知识点自动分类（LLM）；真机化（等用户 2 条）
+第22轮:      执行 ROADMAP「下一轮候选 #1」——`tutor_agent.py` `clamp_hint` 补「每句≤20字」确定性裁剪（`_cap_sentence`：软停顿断句保句尾问句 / 无软停顿硬截保句末标点）+4 单测；`eval_interaction.py --mode student --rounds 10` full 30 会话复跑（deepseek 双后端）：**answer_leaks=0 · clamp 118/118 全合规（≤2句且每句≤20字）** · cannot_do 卡死 0.9 / careless 解出 0.7 / wants_answer 拒答 39 次·被拒后继续率 0.872；`pytest` 293 passed
+当前动作:     第 22 轮：读任务书 → 识别 ROADMAP「下一轮候选 #1」clamp_hint 后 full 30 会话复跑为下一增量 → `tutor_agent.py` clamp_hint 补「每句≤20字」确定性裁剪 +4 单测 → full 30 会话复跑（answer_leaks=0·clamp 118/118）→ 293 单测全绿 → 回写 → commit+push(robot:)
+下一步:       真机化 L0（等用户 2 条：手机型号/系统版本 + 开 USB 调试连线）
 阻塞:         ⏳ 手机未连（型号/系统未知）——**只阻塞真机化，不阻塞 PC/模拟器任何工作**（adb/emulator 已自装好）；语音打断/静音/常听态已落地（真机 AEC/首字时延/近场 CER 待真机复测）
 ERROR_COUNT:  0
 ```
@@ -325,6 +326,17 @@ ERROR_COUNT:  0
 - 回写：`host/knowledge.py`/`test_knowledge.py`、`host/tutor_server.py`/`test_tutor_server.py`、`app/.../TutorClient.kt`/`MainActivity.kt`、`host/README.md`、`app/README.md`、`ROADMAP.md`（第 21 轮）、`INTERACTION_SPEC.md`、本文件、`daily-memories-video/2026-11-09.md`。
 - commit+push（`robot:`）。
 
+## 4.21 本唤醒流水（2026-11-09 · 第 22 轮 · ROADMAP「下一轮候选 #1」：clamp_hint 后的 full 30 会话复跑验证）
+
+- 读任务书全文 + `robot/README.md` + `ROADMAP.md` + `INTERACTION_SPEC.md`；识别 ROADMAP 剩余候选 #1「`clamp_hint` 后的 full 30 会话复跑验证（第 13 轮只做了单次 smoke）」。此前 `clamp_hint()` 只做「≤2 句」裁剪，未约束「每句 ≤20 字」（INTERACTION_SPEC §2.1 硬指标）；full 复跑发现 LLM 原始输出存在单句超 20 字。本轮补确定性「每句 ≤20 字」裁剪 + full 30 会话复跑。ComfyUI 全程未碰（已冻结）；手机未连走 PC mock（DeepSeek 双后端）。
+- ✅ **`host/tutor_agent.py` `clamp_hint` 补「每句 ≤20 字」确定性裁剪**：新增 `_cap_sentence()`（超 20 字先在软停顿「，、：」处断句、**优先保「句首 + 句尾问句」**；整句无软停顿才硬截到 20 字并尽量保句末标点）；`clamp_hint()` 增 `max_chars=20` 参数，对保留的每句再压到 ≤20 字。
+- ✅ **`host/test_tutor_agent.py` +4 单测**：软停顿断句保句尾问句 / 冒号断句保问题 / 无软停顿硬截保标点 / 多句逐句 ≤20 字。
+- ✅ **`eval_interaction.py --mode student --rounds 10` full 30 会话复跑（deepseek tutor + student）**：`answer_leaks_total=0`（pass ✅红线）、`clamp_total_turns=118 / clamp_ok=118 / clamp_over_2_sentences=0 / clamp_over_20_chars=0`（全合规）；cannot_do 卡死 0.9/解出 0.1、careless 解出 0.7/卡死 0.3、wants_answer 拒答 39 次/被拒后继续率 0.872。
+- ✅ **host 全量 `pytest` = 293 passed**（285 → 293）。
+- 📌 **能信/不能信**：`clamp_hint` ≤2句+≤20字为确定性纯函数（单测全绿）+ full 30 会话 DeepSeek 实测（answer_leaks=0、clamp 118/118）为可验证证据；🚫 学生角色由 DeepSeek 扮演（LLM 非确定，报告标注）、真机近场 ASR/AEC/首字时延仍待真机复测。
+- 回写：`host/tutor_agent.py`/`host/test_tutor_agent.py`、`INTERACTION_SPEC.md`（§10）、`ROADMAP.md`（第 22 轮）、本文件、`daily-memories-video/2026-11-09.md`。
+- commit+push（`robot:`）。
+
 ## 5. 阻塞 / 待办
 
 1. **⏳ 等用户 2 条回复**（`P0_设备通路.md` §4）：① 手机型号/系统版本 ② 开 USB 调试并连线（adb/hdc 已由本线自装，不再需要用户装）。
@@ -333,7 +345,7 @@ ERROR_COUNT:  0
 3. **下一轮候选（按优先级）**：
    1. ~~端侧真实 ASR（sherpa-onnx）接入位落地~~ ✅ **已交付（第 18 轮，paraformer 离线 + streaming-zipformer 真流式）**；
    2. ~~22:50 令「打断可用」（语音打断/静音真关麦/常听态 + 端侧 VAD）~~ ✅ **已交付（第 20 轮，`vad.py` + App `MicVad.kt` 语音打断/静音/常听）**；
-   3. `clamp_hint` 后的 full 30 会话复跑验证（第 13 轮只做了单次 smoke）；
+   3. ~~`clamp_hint` 后的 full 30 会话复跑验证（第 13 轮只做了单次 smoke）~~ ✅ **已交付（第 22 轮，`clamp_hint` 补「每句≤20字」确定性裁剪 + full 30 会话复跑 answer_leaks=0·clamp 118/118）**；
    4. ~~L3 学情补「正样本」~~ ✅ **已交付（第 19 轮，练习日志 + 合并画像 + `/practice` 端点 + App「答对/答错」）**；
    5. ~~App「答对/答错」知识点自动分类（LLM）~~ ✅ **已交付（第 21 轮，`knowledge.py` LLM+本地兜底 + `POST /practice` 自动补 + App 状态栏显示分类）**；
    6. 真机化 L0（等用户 2 条）。
