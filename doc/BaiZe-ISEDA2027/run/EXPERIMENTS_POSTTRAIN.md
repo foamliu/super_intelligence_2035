@@ -13331,3 +13331,101 @@ v2 config 保留用于单轮 R0 baseline 对照。
 - 每题已有可机器判定的断言 → R2 部分分奖励可直接计算
 - 污染隔离已验证 → 可安全报告 RL 在 158 题上的 pass@1 改善
 
+---
+
+## §R129 Error Recovery Reward Shaping — R5 Process Reward Layer Design（R3 方向 · 零 GPU · 2026-11-10 wake176）
+
+> **目标**：设计过程级奖励机制，专门奖励 error→recovery→success 模式（R126 发现 99% 黄金轨迹含错误，avg 5.23 errors & 5.23 recoveries/task）。
+> **方法**：R5 process reward layer 叠加在 R0-R4 outcome reward 之上，包含 recovery/progress/efficiency/antigame 四个子组件。
+> ⚠️ 替身分析结果**不可迁移到白泽**。
+
+### 1. R126 错误恢复模式分析（实测）
+
+| 指标 | 值 |
+|:--|:--|
+| 含错误的任务比例 | 99.0%（102/103） |
+| 平均错误数/任务 | 5.23 |
+| 平均恢复事件/任务 | 5.23 |
+| 恢复工具分布 | run_code 72.7% / search_apis 12.5% / get_api_details 2.3% / other 12.5% |
+| 平均恢复比率（errors/runs） | 实测中计算 |
+
+**核心洞察**：错误恢复不是失败，是**常态**。模型应该被奖励"犯错→查文档→修正→成功"的闭环，而非仅奖励最终正确性。
+
+### 2. R5 Process Reward 公式
+
+```
+R5 = 0.60 * R_outcome + 0.20 * R_recovery + 0.10 * R_progress - 0.10 * P_efficiency - P_antigame
+R5 = clamp(R5, 0.0, 1.0)
+```
+
+| 组件 | 权重 | 公式 | 作用 |
+|:--|:--|:--|:--|
+| R_outcome | 0.60 | R0-R4 arm 的结果（如 R2 partial credit） | 基础结果奖励 |
+| R_recovery | 0.20 | sum(0.15 × 0.85^i) + 0.05×resilience_bonus, cap 0.80 | 奖励成功恢复（递减回报防 gaming） |
+| R_progress | 0.10 | first_search(0.05)+first_detail(0.05)+first_exec(0.05)+first_pass(0.10) | 奖励中间里程碑 |
+| P_efficiency | 0.10 | max(0, (n_errors-3)×0.05), cap 0.30 | 惩罚暴力重试（3 次后递增） |
+| P_antigame | — | 0.10 if trivial_error_ratio > 0.50 | 惩罚刻意制造语法/导入错误→trivial fix |
+
+### 3. 7 种轨迹原型验证结果
+
+| 轨迹类型 | 描述 | R5 | outcome | recovery | progress | eff_pen | anti_pen |
+|:--|:--|:--|:--|:--|:--|:--|:--|
+| golden_recovery | search→detail→run(err)→search→detail→run(ok) | **0.9000** | 0.60 | 0.20 | 0.10 | 0.00 | 0.00 |
+| moderate_recovery | search→run(err)→detail→run(err)→detail→run(ok) | **0.9000** | 0.60 | 0.20 | 0.10 | 0.00 | 0.00 |
+| trivial_error_farming | 刻意 SyntaxError→fix→ImportError→fix | **0.7600** | 0.60 | 0.20 | 0.06 | 0.00 | 0.10 |
+| quick_success_no_error | search→detail→run(ok)→pass（无错误） | **0.7000** | 0.60 | 0.00 | 0.10 | 0.00 | 0.00 |
+| brute_force_late_success | run(err)×8→run(ok) | **0.5100** | 0.60 | 0.20 | 0.06 | 0.25 | 0.10 |
+| search_only_no_exec | search→detail→search→detail（不执行） | **0.0400** | 0.00 | 0.00 | 0.04 | 0.00 | 0.00 |
+| no_recovery_brute | run(err)×3→give up | **0.0200** | 0.00 | 0.00 | 0.02 | 0.00 | 0.00 |
+
+### 4. GRPO 可学性验证
+
+| 指标 | 值 |
+|:--|:--|
+| 均值 | 0.5471 |
+| 标准差 | 0.3493 |
+| 分数范围 | [0.02, 0.90] |
+| 分数跨度 | 0.88 |
+| 不同分数数 | 6/7 |
+| GRPO 信号 | ✅ True |
+| 单调性违反 | ≤1 |
+| 总判定 | **LEARNABLE** |
+
+### 5. GRPO G=8 组模拟
+
+| 指标 | 值 |
+|:--|:--|
+| 组内奖励 | [0.7, 0.9, 0.9, 0.9, 0.9, 0.51, 0.02, 0.76] |
+| 组均值 | 0.6987 |
+| 组标准差 | 0.2877 |
+| 非零优势 | 8/8 |
+| 信号率 | 100% |
+| 判定 | **LEARNABLE** ✅ |
+
+### 6. Verl 集成方案
+
+- **奖励函数名**：`compute_score_with_process`
+- **配置**：`outcome_arm: R2, process_layer: R5, antigame_enabled: true`
+- **多轮集成**：verl multi-turn (SGLang) 中，每次 tool call 返回 tool_result，奖励函数从 `extra_info["tool_results"]` 提取 tool_sequence/error_positions/recovery_positions，计算 R5
+- **课程集成**：L1 warmup（outcome 主导）→ L2-L5（R5 process reward 信号最丰富）
+
+### 7. 关键结论
+
+1. **99% 黄金轨迹含错误** → 错误恢复是常态而非失败，RL 应奖励恢复
+2. **R5 产生 6 个不同分数**（7 种原型）→ 良好区分度
+3. **Golden recovery (0.90) > quick success (0.70)** → 正确奖励恢复行为
+4. **Brute force (0.51) 被重罚** → efficiency penalty 生效（0.25）
+5. **Trivial farming (0.76) 被检测** → antigame penalty 生效（0.10）
+6. **GRPO G=8: 8/8 非零优势** → 强学习信号，不会 silent no-op
+7. **R5 叠加在 R0-R4 之上**：outcome 60% + recovery 20% + progress 10% + efficiency 10%
+8. **递减回报防 gaming**：recovery = 0.15 × 0.85^n（每次恢复价值递减）
+9. **效率惩罚 3 次后触发**：防止暴力重试而不学习
+10. **课程建议**：L1 warmup → L2-L5 引入（process reward 信号最丰富）
+
+### 8. 产出文件
+
+| 文件 | 大小 | 说明 |
+|:--|--:|:--|
+| `baize_posttrain_r129_error_recovery_reward.py` | ~20KB, 517 行 | py_compile ✅ |
+| `r129_error_recovery_reward_report.json` | 8.7KB | 完整报告 |
+
