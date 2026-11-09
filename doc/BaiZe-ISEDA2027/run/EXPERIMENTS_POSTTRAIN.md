@@ -13429,3 +13429,131 @@ R5 = clamp(R5, 0.0, 1.0)
 | `baize_posttrain_r129_error_recovery_reward.py` | ~20KB, 517 行 | py_compile ✅ |
 | `r129_error_recovery_reward_report.json` | 8.7KB | 完整报告 |
 
+---
+
+## §R130 GRPO Curriculum Integration with R5 Process Reward（R3/R4 方向 · 零 GPU · 2026-11-10 wake177）
+
+> **目标**：将 R74（Adaptive 课程策略）、R128（3,347 验证任务）、R129（R5 过程奖励）三项研究成果整合为一份**可执行的 5 阶段 GRPO 训练计划**，附带 verl 兼容配置、防遗忘 replay buffer、阶段过渡准则、墙钟预算。
+> **前序**：R2（五层难度）→ R73（GRPO 超参景观）→ R74（课程策略对比）→ R128（任务质量审计）→ R129（R5 过程奖励）。
+> **脚本**：`baize_posttrain_r130_curriculum_integration.py`（635 行，纯 Python 3.8+ stdlib，零依赖）。
+> ⚠️ 替身分析结果**不可迁移到 BaiZe**。
+
+### 1. 5 阶段课程设计
+
+| 阶段 | 名称 | 难度层 | 步数 | 奖励臂 | R5 | Replay | lr | 过渡准则 |
+|:--|:--|:--|--:|:--|:--|--:|:--|:--|
+| 0 | Warmup | L1 | 50 | R0 | OFF | 0% | 1e-5 | pass≥70%, steps≥30, adv_std>0.05 |
+| 1 | Foundation | L1+L2 | 100 | R2 | ON | 15% | 1e-5 | pass≥60%, steps≥60, adv_std>0.05 |
+| 2 | Development | L2+L3 | 150 | R2 | ON | 20% | 8e-6 | pass≥50%, steps≥80, adv_std>0.05 |
+| 3 | Refinement | L3+L4 | 150 | R3 | ON | 25% | 5e-6 | pass≥40%, steps≥80, adv_std>0.05 |
+| 4 | Mastery | L4+L5 | 100 | R3 | ON | 30% | 3e-6 | FINAL → 158-task eval |
+| **合计** | | | **550** | | | | | |
+
+**设计原理**：
+- **Phase 0 (Warmup)**：仅 L1，R0 二值奖励，验证管道连通性（GRPO 信号、沙盒响应、奖励计算）。不引入 R5，隔离管道问题 vs 奖励问题。
+- **Phase 1 (Foundation)**：引入 L2 + R5 recovery 信号（0.20 权重）。从 R126 知 99% 黄金轨迹含错误 → recovery 是核心能力，尽早教授。
+- **Phase 2 (Development)**：加入 L3，R5 全组件（recovery+progress+efficiency）。lr 降至 8e-6（任务变难，防发散）。
+- **Phase 3 (Refinement)**：加入 L4 + techlib 依赖。切换到 R3 奖励臂（API 合法性 + 过程）。**全面反作弊启用**（R75 H1-H8 检测）。
+- **Phase 4 (Mastery)**：L5 最难层。lr 降至 3e-6（精调）。30% replay 防遗忘。最终 → 158-task EDA-Eval 评测。
+
+### 2. 蒙特卡洛模拟结果（550 GRPO groups, G=8, R5 from Phase 1）
+
+| 阶段 | avg_reward | avg_adv_std | signal_rate | learnable% | L_improvement |
+|:--|:--|:--|:--|:--|:--|
+| 0 Warmup | 0.7200 | 0.3972 | 0.9200 | 92.0% | L1: +0.158 |
+| 1 Foundation | 0.4483 | 0.2323 | 1.0000 | 97.0% | L1: +0.080, L2: +0.303 |
+| 2 Development | 0.3938 | 0.2515 | 1.0000 | 100.0% | L2: +0.043, L3: +0.364 |
+| 3 Refinement | 0.3621 | 0.2535 | 0.9975 | 99.3% | L3: +0.028, L4: +0.256 |
+| 4 Mastery | 0.3280 | 0.2593 | 1.0000 | 98.0% | L4: +0.033, L5: +0.090 |
+| **Overall** | — | — | **0.9920** | **98.2%** | — |
+
+**关键发现**：
+1. **98.2% learnable rate**：几乎所有 GRPO group 都有 ≥2 个不同奖励值 → 非零优势 → 有效学习信号
+2. **signal_rate 0.992**：平均 99.2% 的 rollout 有非零优势 → 不会 silent no-op（对比 Vision 线 R57 教训）
+3. **R5 效果显著**：Phase 0（R5 OFF）learnable=92%，Phase 1+（R5 ON）提升至 97-100% → R5 过程奖励增加奖励多样性
+4. **难度递进有效**：每阶段目标层的 pass rate 显著提升（L2 +30pp, L3 +36pp, L4 +26pp）
+5. **adv_std 稳定**：0.23-0.40 范围，无趋零（不会 silent no-op）也无爆炸（不会不稳定）
+
+### 3. 防遗忘 Replay Buffer 设计
+
+| 阶段 | 训练层 | Replay 比例 | Replay 来源 | 可用任务数 |
+|:--|:--|--:|:--|--:|
+| 0 Warmup | L1 | 0% | — | 0 |
+| 1 Foundation | L1+L2 | 15%→0%* | — | 0 |
+| 2 Development | L2+L3 | 20% | L1 | 1500 |
+| 3 Refinement | L3+L4 | 25% | L1+L2 | 1847 |
+| 4 Mastery | L4+L5 | 30% | L1+L2+L3 | 2647 |
+
+*Phase 1 的 L1 是当前训练层，无更易层可 replay → 实际 replay=0%。Replay 从 Phase 2 开始生效。
+
+**设计原理**：
+- Replay 比例递增（0%→30%）：随课程推进，遗忘风险增大，replay 需求增加
+- Replay 来源：所有比当前训练层更易的层，按任务数比例分配
+- 采样策略：epsilon-greedy（以 replay_ratio 概率从 prior levels 采样，否则从当前层 adaptive 采样）
+
+### 4. 过渡准则与安全检查
+
+每阶段过渡需同时满足：
+1. **pass_rate ≥ 阈值**（Phase 0: 70% → Phase 3: 40%，随难度递减）
+2. **steps ≥ 最小步数**（30-80 步，防止过早跳级）
+3. **adv_std > 0.05**（确保学习信号不消失）
+
+**安全检查**（R74 Adaptive 机制）：
+| 检查 | 阈值 | 动作 |
+|:--|:--|:--|
+| 崩溃检测 | entropy < 0.01 | 停止训练，提 KL，降 lr |
+| 发散检测 | KL > 5.0 | 降 lr，提 KL |
+| 停滞检测 | 30 步 < 2% 改善 | 回退一层 20 步，再重试 |
+| 作弊检测 | cheat > 5% | ALERT；CRITICAL hack → ABORT |
+
+### 5. 墙钟预算（沙盒约束，非 GPU 约束）
+
+| 阶段 | 组数 | 平均轮次 | 单组时间 | 总时间 |
+|:--|--:|--:|--:|--:|
+| 0 Warmup | 50 | 4 | 0.6s | 0.03h |
+| 1 Foundation | 100 | 5 | 1.0s | 0.07h |
+| 2 Development | 150 | 7 | 1.4s | 0.15h |
+| 3 Refinement | 150 | 9 | 1.8s | 0.19h |
+| 4 Mastery | 100 | 11 | 2.2s | 0.16h |
+| **合计** | 550 | — | — | **0.60h** |
+
+> ⚠️ 此为**沙盒时延**估计（4 并发，run_code ~500ms/call）。**未含 LLM 生成时间**（A40 上 MiniCPM5-2B ~2-5s/turn）。实际墙钟 = 沙盒时间 + LLM 生成时间 × 组数 × 轮次。GPU 后需重新估算。
+
+### 6. Verl 兼容配置
+
+生成 YAML 配置（2,513 chars），包含：
+- `rollout.name: sglang` + `multi_turn: true` + `mode: async`（R9 修正后的配置）
+- `reward.function: compute_score_with_process`（R129 R5 集成）
+- `curriculum:` 5 阶段，每阶段独立 levels/steps/reward_arm/replay_ratio/lr
+- `anti_cheat:` PTU hook + cheat rate report + critical hack abort
+- `sandbox:` local/ssh_tunnel + parallel=4 + api_whitelist + call_ordering
+- `eval:` 158-task / 5-run / 2500s / fresh_context（冻结协议）
+
+### 7. 与既有研究的关系
+
+| 既有研究 | R130 整合方式 |
+|:--|:--|
+| R74 Adaptive 课程 | 采用 Adaptive 策略作为 Phase 1+ 的采样策略 |
+| R73 GRPO 超参 | KL=0.04, clip=0.2, G=8 作为基础配置 |
+| R128 3347 验证任务 | 作为训练数据源，按 L1-L5 分层使用 |
+| R129 R5 过程奖励 | Phase 1+ 启用，recovery+progress+efficiency+antigame |
+| R75 反作弊框架 | Phase 3+ 全面启用（cheat rate < 5%） |
+| R126 黄金轨迹分析 | 99% 含错误 → Phase 1 即引入 recovery 信号 |
+| R125 rollout 模拟器 | 架构兼容（SGLang multi-turn + sandbox） |
+
+### 8. 局限性
+
+1. **标量 logit 策略模拟**：非真实 LLM，仅用于课程策略**相对**比较
+2. **初始 pass rates 为外推假设**：待 GPU 后用真实 MiniCPM5-2B 轨迹校正
+3. **墙钟预算未含 LLM 生成时间**：实际训练时间将显著更长
+4. **Replay buffer 未模拟精确遗忘动力学**：仅设计了采样比例
+5. **Phase 1 replay=15% 实际无效**：L1 在当前训练层中，无更易层可 replay
+6. **过渡阈值为经验值**：需 GPU 实测后调整
+
+### 9. 产出文件
+
+| 文件 | 大小 | 说明 |
+|:--|--:|:--|
+| `baize_posttrain_r130_curriculum_integration.py` | ~26KB, 635 行 | py_compile ✅ |
+| `r130_curriculum_report.json` | 29.0KB | 完整报告（含 verl config） |
+
