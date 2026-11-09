@@ -14,7 +14,7 @@ WAITING: 0
 - 阻塞: GPU 0/8free(SGLang Qwen3.8-27B占全8卡44-45GB 0%util,11/9已过仍未释放);P3等pretrain ckpt(ETA≈2026-12-25)
 - 本轮新增调研产出: R140 GRPO Group Size分析(Monte Carlo 126配置+3 advantage类型比较+动态采样G=8仅3.2%浪费+温度T=0.7最优+per-arm G推荐R1→8/R2→4/R3→6/R4→8+RL预算78h 314GPU-h 10.9%+推荐引擎评分+8关键发现+EXPERIMENTS §R140+r140_grpo_group_size_report.json 37.5KB）
 - 未完成指令: 🔴用户令2026-11-07(GPU未到位,需持续产出调研) ⇒ WAITING=0
-- git: synced (27ede23a4), no ahead/behind
+- git: commit d54176715 ahead 1, push超时(网络),loop兜底补推
 
 ## 关键事实（常驻）
 
