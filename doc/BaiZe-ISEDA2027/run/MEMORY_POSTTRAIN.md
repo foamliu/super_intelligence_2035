@@ -14,7 +14,7 @@ WAITING: 0
 - 阻塞: GPU 0/8free(SGLang Qwen3.8-27B占全8卡44-45GB 0%util,11/9已过仍未释放);P3等pretrain ckpt(ETA≈2026-12-25)
 - 本轮新增调研产出: R141 Multi-Turn Rollout Scheduling分析(离散事件仿真+沙盒并发1-32扫描+批大小1-32组扫描+早停3策略+max_turns 2-10+死锁风险矩阵+verl async集成9要点+推荐SC=G=8+早停节省13.8%+RL吞吐666R/hr+EXPERIMENTS §R141+r141_rollout_scheduler_report.json 14KB）
 - 未完成指令: 🔴用户令2026-11-07(GPU未到位,需持续产出调研) ⇒ WAITING=0
-- git: synced(9ff883504 11-10 06:59)
+- git: commit 3bb5d00e8 ahead 1, push超时(网络),loop兜底补推
 
 ## 关键事实（常驻）
 
