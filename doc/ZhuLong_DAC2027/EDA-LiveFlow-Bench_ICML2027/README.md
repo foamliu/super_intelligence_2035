@@ -7,23 +7,51 @@
 - Paper: 2027-01-22
 
 ## 文件结构
+
+结构遵循 ML 会议惯例（参考 SWE-bench, ICLR 2024）：**Related Work 放在结果之后，Appendix 是命名 section 而非单个 "Appendix" 章节，包含 ICML 强制的 Ethics + Reproducibility Statement**。
+
 ```
 EDA-LiveFlow-Bench_ICML2027/
 ├── main.tex                  # 主文件（ICML 2027 模板）
 ├── references.bib            # 参考文献
-├── sections/
+├── sections/                 # 主体章节（计入 8 页限制）
 │   ├── 0_abstract.tex        # 摘要
-│   ├── 1_intro.tex           # 引言（问题动机 + 贡献）
-│   ├── 2_related.tex         # 相关工作（RTLLM/VerilogEval/FlowFixer/SWE-bench）
-│   ├── 3_benchmark.tex       # Benchmark 构建（数据源 + task schema + domain 覆盖 + 评测协议）
-│   ├── 4_method.tex          # Agent 系统 + 评测 harness + 防泄题 + EDA 桥
-│   ├── 5_experiments.tex     # 实验（RQ1 orchestration ceiling / RQ2 domain gap / RQ3 model scaling）
-│   ├── 6_analysis.tex        # 分析（failure taxonomy + grounding depth + 分布分析 + threats）
-│   ├── 7_conclusion.tex      # 结论 + future work
-│   └── 8_appendix.tex        # 附录（task example + keyword filters + full results）
-├── figures/                  # 图表（pipeline, grounding depth, domain distribution）
+│   ├── 1_intro.tex           # §1 引言
+│   ├── 2_benchmark.tex       # §2 Benchmark Construction（数据源 + task schema + domain + 评测指标）
+│   ├── 3_harness.tex         # §3 Agent System and Evaluation Harness（Cline + MCP + 防泄题 + EDA 桥）
+│   ├── 4_experiments.tex     # §4 Experiments（RQ1/RQ2/RQ3 + 主结果）
+│   ├── 5_analysis.tex        # §5 Analysis（failure taxonomy + grounding depth + 分布 + threats）
+│   ├── 6_related.tex         # §6 Related Work（★ 放结果后，ML 惯例）
+│   ├── 7_conclusion.tex      # §7 Discussion and Conclusion
+│   ├── 8_ethics.tex          # Ethics Statement（★ ICML 强制）
+│   └── 9_reproducibility.tex # Reproducibility Statement（★ ICML 期望）
+├── appendix/                 # 附录（不计入页数，放 references 之后）
+│   ├── A_benchmark_details.tex   # App. A Benchmark Details（task example + scan pipeline + keywords + full distribution）
+│   ├── B_additional_results.tex  # App. B Additional Results（full per-domain + per-model + failure-by-domain + token cost）
+│   └── C_experimental_details.tex # App. C Experimental Details（cline config + API + hook impl + judge impl + open-source roadmap）
+├── figures/                  # 图表
 └── README.md                 # 本文件
 ```
+
+## 结构对照（vs. SWE-bench ICLR 2024）
+
+| SWE-bench (ICLR 2024) | EDA-LiveFlow-Bench (ICML 2027) | 说明 |
+|---|---|---|
+| 1 Introduction | §1 Introduction | |
+| 2 SWE-bench (Construction/Task/Features/Lite) | §2 Benchmark Construction + §3 Evaluation Harness | 拆成 benchmark 本体 + harness 两节 |
+| 3 SWE-Llama (作者方法) | — | 我们没有自研模型，harness 即方法 |
+| 4 Experimental Setup | §4 Experiments (含 setup) | setup 并入 experiments |
+| 5 Results | §4 Experiments (含 results) | |
+| 6 Related Work ★ | §6 Related Work ★ | **放在结果后**（ML 惯例，非 §2）|
+| 7 Discussion | §7 Discussion and Conclusion | 合并 |
+| 8 Ethics Statement ★ | Ethics Statement ★ | **ICML 强制** |
+| 9 Reproducibility Statement ★ | Reproducibility Statement ★ | **ICML 期望** |
+| App. A Benchmark Details | App. A Benchmark Details | task example + 构建细节 |
+| App. B Training Details | — | 无自研模型 |
+| App. C Additional Results | App. B Additional Results | |
+| App. D Experimental Details | App. C Experimental Details | hook/judge/API 配置 |
+| App. E Societal Impact | 合并进 Ethics | |
+| App. F In-depth Analysis | — | 后续可补 |
 
 ## 编译
 ```bash
@@ -58,4 +86,4 @@ pdflatex main && bibtex main && pdflatex main && pdflatex main
 - [ ] 画 domain distribution 饼图 (Figure 3)
 - [ ] 补完整的 failure taxonomy 统计
 - [ ] 更新 domain 分布表到 863 cases
-- [ ] 附录补完整 task example
+- [ ] 附录 A 补完整 task example

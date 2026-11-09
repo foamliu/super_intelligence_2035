@@ -83,11 +83,11 @@ verification & 14 & A \\
 \end{table}
 % 注：表格数字基于 11/06 快照（462 cases），最终版更新到 863。
 
-\subsection{Evaluation Protocol}
+\subsection{Evaluation Metric and Protocol}
 \label{sec:eval-protocol}
 
-\textbf{Pass@1.} One trace per task: the agent may iterate within the trace (multiple tool calls) but is never restarted. A 2400-second timeout per task.
+\textbf{Pass@1.} One trace per task: the agent may iterate within the trace (multiple tool calls) but is never restarted. A 2400-second timeout per task. A task passes iff \emph{all} $k \geq 8$ assertions in the reference \texttt{check.py} hold.
 
-\textbf{Anti-leakage.} A \texttt{PreToolUse} hook enforces a tool whitelist, blocks shell/code-search tools, and confines file access to a fresh working directory. Critically, the hook \emph{blocks access} to \texttt{check.py}, \texttt{reference/}, and any hidden answer files---the agent cannot read the answer key. The judge runs in a separate directory after the agent finishes.
+\textbf{Execution-based scoring.} The reference judge unpacks \texttt{submit.zip} into a fresh workdir and runs assertions against the deliverable, using only Python standard library (no EDA license required for judging). Each assertion is documented in the \texttt{test\_rationale} field as ``k 条断言：①…②…'' for interpretability.
 
-\textbf{Judge.} For each task, a reference \texttt{check.py} unpacks \texttt{submit.zip} into a workdir and runs $\geq 8$ assertions (the \texttt{test\_rationale} field specifies each assertion as ``k 条断言：①…②…''). A task passes only if \emph{all} assertions hold. The judge uses only Python standard library (no EDA license required), ensuring reproducibility.
+The full evaluation harness---including the agent system, MCP bridge, anti-leakage hook, and judge implementation---is described in Section~\ref{sec:harness} (main text) and Appendix~\ref{sec:experimental-details} (implementation details).

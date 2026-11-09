@@ -1,0 +1,14 @@
+\section*{Ethics Statement}
+\label{sec:ethics}
+
+% ICML 强制要求。讨论数据来源伦理、潜在双重用途、隐私保护。
+
+\textbf{Data provenance and consent.} \bench{} is derived from real user interaction traces of IC design engineers using the Cline coding agent on their workstations. The trace collection was conducted as part of routine infrastructure monitoring of an internal engineering environment, with the knowledge and consent of the engineering organization. No personally identifying information (PII) beyond usernames is retained; usernames are preserved for reproducibility and trace-back but are internal corporate identifiers, not public identities. All API keys, tokens, and passwords found in session logs are masked before task curation.
+
+\textbf{Proprietary data and tools.} All tasks use commercial EDA tools (Empyrean Aether, Cadence Virtuoso, Synopsys) accessed through a licensed EDA server. The benchmark release includes task specifications, prompts, and reference assertions, but \emph{not} the proprietary tool licenses, PDK files, or design data. External users must provide their own EDA licenses to reproduce results. This limits reproducibility in open settings; we discuss this trade-off in Appendix~\ref{sec:repro-details} and propose an open-source-EDA extension as future work.
+
+\textbf{Dual-use considerations.} The benchmark measures agent capability on EDA design flows. Improvements on \bench{} could accelerate chip design automation, with broad societal benefit (faster semiconductors, lower design cost). We do not foresee direct dual-use risks: the benchmark does not expose classified designs, does not target security-critical circuits, and the evaluated capability (writing EDA glue scripts) is a general engineering skill, not a weaponizable capability.
+
+\textbf{Labor impact.} Benchmarks that measure automation of engineering tasks may be used to justify workforce reductions. We emphasize that \bench{} measures \emph{agent capability on flow orchestration}, which at 28\% Pass@1 is far below the threshold for autonomous replacement of engineers. The benchmark is intended to \emph{guide capability development}, not to evaluate individual engineers. We discourage using \bench{} results for personnel evaluation.
+
+\textbf{Bias and representation.} The domain distribution reflects the usage patterns of one engineering organization, which may not represent the global EDA community. Analog/mixed-signal and physical-verification tasks are over-represented; digital-synthesis tasks are under-represented. Consumers of the benchmark should weight domain-specific results rather than aggregate scores alone.

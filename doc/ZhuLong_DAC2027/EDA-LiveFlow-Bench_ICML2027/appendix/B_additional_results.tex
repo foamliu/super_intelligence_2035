@@ -1,0 +1,70 @@
+\section{Additional Results}
+\label{sec:additional-results}
+
+% 附录 B：扩展实验结果（参考 SWE-bench Appendix C "Additional Results"）
+
+\subsection{Full Per-Domain Results}
+\label{sec:full-per-domain}
+
+[TODO: 全 863 cases 按 13 domain 分的 Pass@1 表。当前仅 89 条 / 4 domain，最终版扩到全量。]
+
+\begin{table}[ht]
+\centering
+\small
+\caption{Full Pass@1 (\%) by domain (target: all 13 domains, 863 tasks).}
+\label{tab:full-domain-results}
+\begin{tabular}{@{}lcc@{}}
+\toprule
+\textbf{Domain} & \textbf{Tasks} & \textbf{Pass@1 (\%)} \\
+\midrule
+schematic\_netlist & 72 & --- \\
+spice\_sim & 72 & --- \\
+physical\_verify & 61 & --- \\
+layout\_aether & 35 & --- \\
+layout\_virtuoso & 33 & --- \\
+waveform & 33 & --- \\
+analog\_context & 30 & --- \\
+characterization & 25 & --- \\
+digital & 24 & 0.0 \\
+pg\_layout & 23 & --- \\
+pnr\_signoff & 23 & 18.8 \\
+eda\_other & 17 & 28.6 \\
+verification & 14 & 80.0 \\
+\midrule
+\textbf{Total} & \textbf{462+} & \textbf{28.1 (partial)} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Per-Model Results}
+\label{sec:per-model}
+
+[TODO: 多模型对比。当前仅 DeepSeek-V4-Pro 有数据。GLM-5.2 / Kimi-K2.6 / DeepSeek-V4-Flash 待补。]
+
+\begin{table}[ht]
+\centering
+\small
+\caption{Pass@1 (\%) by model backbone.}
+\label{tab:per-model}
+\begin{tabular}{@{}lc@{}}
+\toprule
+\textbf{Backbone} & \textbf{Pass@1 (\%)} \\
+\midrule
+DeepSeek-V4-Pro & 28.1 \\
+GLM-5.2 & --- \\
+Kimi-K2.6 & --- \\
+DeepSeek-V4-Flash & --- \\
+Doubao-Seed-2.0-Pro & --- \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Failure Taxonomy by Domain}
+\label{sec:failure-by-domain}
+
+[TODO: 按 domain 分的 failure category（no-output / partial-output / format）堆叠柱状图 + 表格。当前数据：overall 60/25/15，digital 100/0/0。]
+
+\subsection{Token Usage and Cost Analysis}
+\label{sec:token-cost}
+
+[TODO: 每 task 的平均 input/output token、平均 tool call 数、平均 wall-clock 时间。从 status.jsonl 统计。]

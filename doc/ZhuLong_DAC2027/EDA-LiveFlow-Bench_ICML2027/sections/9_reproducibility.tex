@@ -1,0 +1,25 @@
+\section*{Reproducibility Statement}
+\label{sec:reproducibility}
+
+% ICML 期望。说明代码/数据/模型/harness 的可复现性。
+
+We are committed to reproducible research. The following artifacts will be released:
+
+\textbf{Benchmark tasks.} All 863 task specifications (prompts, input assets, reference assertions, \texttt{check.py} judges, \texttt{test\_rationale} fields) will be released in JSONL format with per-task unique identifiers. The release includes the full domain distribution, shard assignment, and \texttt{trace\_source} attribution (host, user, session file, message count, real task summary).
+
+\textbf{Evaluation harness.} The \texttt{run\_one.sh} / \texttt{run\_batch.sh} harnesses, the \texttt{PreToolUse} anti-leakage hook, and the MCP bridge configuration will be released as open-source scripts. The harness is agent-agnostic: any coding agent that supports MCP and shell hooks can be evaluated.
+
+\textbf{Model configurations.} All evaluated models (DeepSeek-V4-Pro, GLM-5.2, Kimi-K2.6) are accessed via an OpenAI-compatible API gateway. We release the exact \texttt{providers.json} configuration (with API keys masked), the thinking-budget setting (\texttt{thinking=low}), the per-task timeout (2400s), and the auto-approve policy.
+
+\textbf{Experimental logs.} Full \texttt{status.jsonl} records (verdict, duration, hook blocks, token usage per task) will be released for all reported runs, enabling replication of every reported number.
+
+\textbf{Statistical methodology.} We report Pass@1 (single trace per task). For aggregate scores, we report both raw counts and percentages. Confidence intervals are computed via Wilson score intervals at 95\% confidence.
+
+\textbf{Limitations on reproducibility.} Full reproduction requires commercial EDA tool licenses (Empyrean Aether, Cadence Virtuoso, Synopsys) and access to the specific PDKs used in the original traces. We provide:
+\begin{itemize}
+    \item A \emph{judge-only mode} that runs \texttt{check.py} against a pre-packaged \texttt{submit.zip}, enabling verification of any agent's deliverables without live EDA tools.
+    \item A \emph{mock-EDA mode} where the MCP bridge returns canned tool outputs, enabling harness testing without licenses.
+    \item A roadmap for an open-source-EDA extension (Yosys, OpenROAD, Magic) as future work (Appendix~\ref{sec:repro-details}).
+\end{itemize}
+
+All artifacts, code, and logs will be available at the anonymous repository linked in the camera-ready version.

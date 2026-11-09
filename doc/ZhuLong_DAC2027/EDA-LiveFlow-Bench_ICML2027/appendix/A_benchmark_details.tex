@@ -1,0 +1,59 @@
+\section{Benchmark Details}
+\label{sec:benchmark-details}
+
+% 附录 A：benchmark 构建细节（参考 SWE-bench Appendix A "Benchmark Details"）
+
+\subsection{Task Example}
+\label{sec:task-example}
+
+[TODO: 完整展示一个 task 的 prompt + assets + check.py + test\_rationale。建议选一个中等难度的 schematic\_netlist case，展示 design\_flow 契约的全貌。]
+
+\subsection{Scan Pipeline Details}
+\label{sec:scan-pipeline}
+
+We systematically scanned 698 engineering workstations via SSH, searching session files for EDA-keyword matches. Sessions are ranked by match-count (mc)---the number of lines hitting any EDA keyword. The mc $\geq 30$ threshold yields 1{,}511 candidate sessions from 226 unique users.
+
+\textbf{Two-stage prefilter.} A rule-based stage rejects sessions with $< 3$ EDA tool invocations or $> 50\%$ permission-denied lines. A 0.8B LLM classifier (Qwen3.5-0.8B-Q8\_0, CPU) performs a binary is\_design\_flow classification. End-to-end cost is $\sim$1.1s/call at 73 tok/s. On the full 1{,}369-session candidate pool, the prefilter rejects 0\%---confirming that mc $\geq 30$ sessions are almost universally genuine EDA work.
+
+\subsection{Domain Keyword Filters}
+\label{sec:keyword-filters}
+
+Table~\ref{tab:keywords} lists the EDA keywords used for session scanning and shard assignment. Shard A uses an expanded keyword set (synthesis, synopsys, tcl, verilog, systemverilog, rtl, sdc, vivado, yosys, openroad) and a relaxed mc threshold ($\geq 15$) to capture digital-front tasks that use cline less intensively.
+
+\begin{table}[ht]
+\centering
+\small
+\caption{EDA keyword filters by shard.}
+\label{tab:keywords}
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Shard} & \textbf{mc threshold} & \textbf{Keywords} \\
+\midrule
+A & $\geq 15$ & verdi, vcs, dc\_shell, innovus, primetime, synthesis, tcl, verilog, rtl \\
+B & $\geq 30$ & hspice, finesim, siliconsmart, spectre, ngspice, simulator, spice \\
+C & $\geq 30$ & calibre, virtuoso, aether, ipcustom, layout, lvs, drc \\
+D & $\geq 30$ & waveview, cosmos, skill, netlist, spiros, spectrum, analog, schematic \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Full Domain Distribution}
+\label{sec:full-distribution}
+
+[TODO: 完整 863 cases 的 domain 分布表 + 用户/主机分布。当前数据：A:176 B:200 C:260 D:249 = 863 cases, 226 去重用户, 13 domain。]
+
+\subsection{Task Schema Specification}
+\label{sec:task-schema-spec}
+
+Each task is a JSONL record with the following fields:
+\begin{itemize}
+    \item \texttt{id}: unique task identifier (shard-prefixed, e.g., \texttt{A-001}).
+    \item \texttt{mode}: always \texttt{design\_flow}.
+    \item \texttt{prompt}: natural-language task description.
+    \item \texttt{assets}: list of input file paths (copied into the workdir).
+    \item \texttt{entry\_point}: \texttt{outputs/submit.zip}.
+    \item \texttt{test}: \texttt{check(deliverable, workdir)} function specification.
+    \item \texttt{test\_rationale}: human-readable assertion list in ``k 条断言：①…②…'' format ($k \geq 8$).
+    \item \texttt{trace\_source}: \{host, user, session\_file, session\_msgs, real\_task\_summary\}.
+    \item \texttt{domain}: one of 13 EDA domains (Section~\ref{sec:domain-coverage}).
+\end{itemize}

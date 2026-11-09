@@ -7,6 +7,11 @@
 % 放在本目录下即可编译。
 %
 % 编译：pdflatex main && bibtex main && pdflatex main && pdflatex main
+%
+% 结构遵循 ML 会议惯例（参考 SWE-bench, ICLR 2024）：
+%   Intro → Benchmark → Harness → Experiments → Analysis → Related Work → Conclusion → Ethics/Reproducibility
+%   References → Appendix A/B/C
+% 注意：Related Work 放在结果之后（非 IEEE 期刊惯例的 §2）。
 
 \documentclass{article}
 
@@ -47,23 +52,29 @@
 
 \maketitle
 
-% ===== 各章节 =====
+% ===== 主体章节（按 ML 会议惯例排序）=====
 \input{sections/0_abstract}
 \input{sections/1_intro}
-\input{sections/2_related}
-\input{sections/3_benchmark}
-\input{sections/4_method}
-\input{sections/5_experiments}
-\input{sections/6_analysis}
+\input{sections/2_benchmark}
+\input{sections/3_harness}
+\input{sections/4_experiments}
+\input{sections/5_analysis}
+\input{sections/6_related}      % Related Work 放结果后（ML 惯例）
 \input{sections/7_conclusion}
+
+% ===== Ethics + Reproducibility（ICML 强制）=====
+\input{sections/8_ethics}
+\input{sections/9_reproducibility}
 
 % ===== 参考文献 =====
 \bibliographystyle{icml2027}
 \bibliography{references}
 
-% ===== 附录 (不计入页数限制) =====
+% ===== 附录（不计入页数限制，放在 references 之后）=====
 \newpage
 \appendix
-\input{sections/8_appendix}
+\input{appendix/A_benchmark_details}
+\input{appendix/B_additional_results}
+\input{appendix/C_experimental_details}
 
 \end{document}

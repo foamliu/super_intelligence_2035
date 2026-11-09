@@ -1,5 +1,8 @@
-\section{Analysis and Discussion}
+\section{Analysis}
 \label{sec:analysis}
+
+% 注：原 "Analysis and Discussion" 拆分——本节聚焦实证分析（failure taxonomy / grounding depth / distribution），
+% "Discussion" 内容移到 §\ref{sec:conclusion} 的 Conclusion 部分。
 
 \subsection{Failure Taxonomy}
 \label{sec:failure-taxonomy}
@@ -26,7 +29,7 @@ We define \emph{grounding depth} as the minimum number of live EDA tool calls ne
 \begin{figure}[ht]
 \centering
 % \includegraphics[width=\linewidth]{grounding_depth.pdf}
-\fbox{\parbox{0.9\linewidth}{\centering [Figure: Pass@1 vs.\ grounding depth — monotone decreasing, 80\% at depth 1--2, 0\% at depth 6+]}}
+\fbox{\parbox{0.9\linewidth}{\centering [Figure: Pass@1 vs.\ grounding depth --- monotone decreasing, 80\% at depth 1--2, 0\% at depth 6+]}}
 \caption{Pass@1 decreases monotonically with tool-chain grounding depth. The gap is not closed by model scaling, indicating a grounding bottleneck.}
 \label{fig:grounding-depth}
 \end{figure}
@@ -34,10 +37,10 @@ We define \emph{grounding depth} as the minimum number of live EDA tool calls ne
 \subsection{Distribution Analysis}
 \label{sec:distribution}
 
-\bench's domain distribution reflects real engineering practice: schematic/netlist and SPICE simulation dominate (analog/mixed-signal design), while digital synthesis and verification are underrepresented---not because they are less important, but because digital engineers use cline less frequently (they work in IDEs and command-line flows). This is a \emph{feature} of trace-based benchmark construction: the distribution reflects actual agent usage patterns, not synthetic task design. We discuss implications for benchmark balance in Section~\ref{sec:limitations}.
+\bench's domain distribution reflects real engineering practice: schematic/netlist and SPICE simulation dominate (analog/mixed-signal design), while digital synthesis and verification are underrepresented---not because they are less important, but because digital engineers use cline less frequently (they work in IDEs and command-line flows). This is a \emph{feature} of trace-based benchmark construction: the distribution reflects actual agent usage patterns, not synthetic task design. We discuss implications for benchmark balance in Section~\ref{sec:threats}.
 
 \subsection{Threats to Validity}
-\label{sec:limitations}
+\label{sec:threats}
 
 \textbf{Domain imbalance.} The benchmark over-represents analog/layout domains (top 3 domains = 43\%) and under-represents digital/verification (10\%). This reflects real usage but may bias aggregate metrics toward analog-friendly capabilities.
 
