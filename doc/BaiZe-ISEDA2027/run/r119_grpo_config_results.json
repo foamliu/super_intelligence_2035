@@ -1,0 +1,483 @@
+{
+  "meta": {
+    "round": "R119",
+    "title": "GRPO Configuration Optimization from R118",
+    "timestamp": "2026-11-10 00:05:27",
+    "zero_gpu": true,
+    "surrogate_warning": "Surrogate results NOT transferable to BaiZe"
+  },
+  "r118_signal": {
+    "overall_nonzero_variance_fraction": 0.5,
+    "by_difficulty": {
+      "L1": {
+        "nonzero_var_frac": 0.23,
+        "mean_reward": 0.85,
+        "std_reward": 0.08
+      },
+      "L2": {
+        "nonzero_var_frac": 0.1,
+        "mean_reward": 0.82,
+        "std_reward": 0.06
+      },
+      "L3": {
+        "nonzero_var_frac": 0.933,
+        "mean_reward": 0.46,
+        "std_reward": 0.099
+      },
+      "L4": {
+        "nonzero_var_frac": 0.67,
+        "mean_reward": 0.12,
+        "std_reward": 0.07
+      },
+      "L5": {
+        "nonzero_var_frac": 0.57,
+        "mean_reward": 0.07,
+        "std_reward": 0.05
+      }
+    },
+    "hacking_rate": {
+      "no_docs": 0.058,
+      "with_docs": 0.023
+    }
+  },
+  "current_config": {
+    "group_size": 8,
+    "clip_ratio": 0.2,
+    "kl_loss_coef": 0.02,
+    "entropy_coeff": 0.001,
+    "lr": 3e-06,
+    "temperature": 0.7,
+    "total_steps": 2000,
+    "train_batch_size": 128,
+    "max_prompt_length": 8192,
+    "max_response_length": 8192,
+    "n_gpus": 4,
+    "steps_per_hour": 3.45
+  },
+  "1_group_size": {
+    "title": "1. Group Size Optimization (from R118 50% signal rate)",
+    "results": [
+      {
+        "G": 4,
+        "p_signal": 0.293,
+        "waste_fraction": 0.707,
+        "rollouts_per_step": 512,
+        "useful_rollouts_per_step": 149,
+        "steps_per_hour": 6.9,
+        "effective_steps_per_hour": 2.02,
+        "total_seqs_needed": 512,
+        "feasible": true,
+        "feasible_note": "FEASIBLE",
+        "adjusted_batch_size": 128,
+        "efficiency_score": 2.02
+      },
+      {
+        "G": 6,
+        "p_signal": 0.405,
+        "waste_fraction": 0.595,
+        "rollouts_per_step": 768,
+        "useful_rollouts_per_step": 311,
+        "steps_per_hour": 4.6,
+        "effective_steps_per_hour": 1.86,
+        "total_seqs_needed": 768,
+        "feasible": true,
+        "feasible_note": "FEASIBLE",
+        "adjusted_batch_size": 128,
+        "efficiency_score": 1.86
+      },
+      {
+        "G": 8,
+        "p_signal": 0.5,
+        "waste_fraction": 0.5,
+        "rollouts_per_step": 1024,
+        "useful_rollouts_per_step": 512,
+        "steps_per_hour": 3.45,
+        "effective_steps_per_hour": 1.73,
+        "total_seqs_needed": 1024,
+        "feasible": true,
+        "feasible_note": "FEASIBLE",
+        "adjusted_batch_size": 128,
+        "efficiency_score": 1.73
+      },
+      {
+        "G": 12,
+        "p_signal": 0.646,
+        "waste_fraction": 0.354,
+        "rollouts_per_step": 1536,
+        "useful_rollouts_per_step": 992,
+        "steps_per_hour": 2.3,
+        "effective_steps_per_hour": 1.49,
+        "total_seqs_needed": 1536,
+        "feasible": true,
+        "feasible_note": "FEASIBLE",
+        "adjusted_batch_size": 128,
+        "efficiency_score": 1.49
+      },
+      {
+        "G": 16,
+        "p_signal": 0.75,
+        "waste_fraction": 0.25,
+        "rollouts_per_step": 2048,
+        "useful_rollouts_per_step": 1536,
+        "steps_per_hour": 1.73,
+        "effective_steps_per_hour": 1.29,
+        "total_seqs_needed": 2048,
+        "feasible": true,
+        "feasible_note": "FEASIBLE",
+        "adjusted_batch_size": 128,
+        "efficiency_score": 1.29
+      },
+      {
+        "G": 24,
+        "p_signal": 0.875,
+        "waste_fraction": 0.125,
+        "rollouts_per_step": 3072,
+        "useful_rollouts_per_step": 2688,
+        "steps_per_hour": 1.15,
+        "effective_steps_per_hour": 1.01,
+        "total_seqs_needed": 96,
+        "feasible": false,
+        "feasible_note": "INFEASIBLE at bs=128 -> adjust bs=4",
+        "adjusted_batch_size": 4,
+        "efficiency_score": 1.01
+      },
+      {
+        "G": 32,
+        "p_signal": 0.938,
+        "waste_fraction": 0.062,
+        "rollouts_per_step": 4096,
+        "useful_rollouts_per_step": 3840,
+        "steps_per_hour": 0.86,
+        "effective_steps_per_hour": 0.81,
+        "total_seqs_needed": 96,
+        "feasible": false,
+        "feasible_note": "INFEASIBLE at bs=128 -> adjust bs=3",
+        "adjusted_batch_size": 3,
+        "efficiency_score": 0.81
+      }
+    ],
+    "recommendation": {
+      "optimal_G": 4,
+      "rationale": "G=4 maximizes effective steps/hr (2.02/hr) while feasible.",
+      "improvement": "G=4 gives 0.6x signal rate vs G=8",
+      "batch_size_adjustment": 128
+    }
+  },
+  "2_dynamic_filtering": {
+    "title": "2. Dynamic Task Filtering (DAPO-style zero-advantage skipping)",
+    "waste_fraction": 0.5,
+    "net_time_reduction": 0.2,
+    "effective_speedup": "1.25x",
+    "with_filtering_same_time": {
+      "effective_steps": 2500
+    },
+    "with_filtering_same_steps": {
+      "hours_saved": 115.9
+    },
+    "per_difficulty": {
+      "L1": {
+        "nonzero_var_frac": 0.23,
+        "waste_fraction": 0.77,
+        "time_savings": 0.308,
+        "useful_for_rl": false
+      },
+      "L2": {
+        "nonzero_var_frac": 0.1,
+        "waste_fraction": 0.9,
+        "time_savings": 0.36,
+        "useful_for_rl": false
+      },
+      "L3": {
+        "nonzero_var_frac": 0.933,
+        "waste_fraction": 0.067,
+        "time_savings": 0.027,
+        "useful_for_rl": true
+      },
+      "L4": {
+        "nonzero_var_frac": 0.67,
+        "waste_fraction": 0.33,
+        "time_savings": 0.132,
+        "useful_for_rl": true
+      },
+      "L5": {
+        "nonzero_var_frac": 0.57,
+        "waste_fraction": 0.43,
+        "time_savings": 0.172,
+        "useful_for_rl": true
+      }
+    },
+    "recommendation": {
+      "enable_filtering": true,
+      "verl_config_key": "algorithm.filter_groups_with_zero_advantage: True",
+      "rationale": "20% time reduction. L1/L2 waste 77%/90% -> max savings. L3 waste 7% -> minimal savings."
+    }
+  },
+  "3_curriculum": {
+    "title": "3. RL Curriculum Schedule (from R118 difficulty analysis)",
+    "total_steps": 200,
+    "phases": [
+      {
+        "phase": "Phase 1: L3-only (golden zone)",
+        "n_steps": 80,
+        "difficulty_mix": {
+          "L3": 1.0
+        },
+        "expected_signal_rate": 0.933,
+        "rationale": "L3 has 93.3% non-zero variance -> max learning signal per step."
+      },
+      {
+        "phase": "Phase 2: L3+L4 (introduce hard)",
+        "n_steps": 60,
+        "difficulty_mix": {
+          "L3": 0.6,
+          "L4": 0.4
+        },
+        "expected_signal_rate": 0.8,
+        "rationale": "After L3 converges (reward >0.65), introduce L4 (67% signal)."
+      },
+      {
+        "phase": "Phase 3: L3+L4+L5 (full difficulty)",
+        "n_steps": 40,
+        "difficulty_mix": {
+          "L3": 0.4,
+          "L4": 0.35,
+          "L5": 0.25
+        },
+        "expected_signal_rate": 0.72,
+        "rationale": "Introduce L5 (57% signal). Hardest tasks test compositional API usage."
+      },
+      {
+        "phase": "Phase 4: Mixed (all levels)",
+        "n_steps": 20,
+        "difficulty_mix": {
+          "L1": 0.1,
+          "L2": 0.1,
+          "L3": 0.35,
+          "L4": 0.25,
+          "L5": 0.2
+        },
+        "expected_signal_rate": 0.65,
+        "rationale": "Add L1-L2 to prevent catastrophic forgetting. Stabilize all levels."
+      }
+    ],
+    "overall_effective_signal_rate": 0.822,
+    "effective_useful_steps": 164,
+    "transition_criteria": {
+      "phase1_to_2": "L3 mean reward > 0.65 for 20 consecutive steps, OR step 80",
+      "phase2_to_3": "L4 mean reward > 0.25 for 20 consecutive steps, OR step 140",
+      "early_termination": "If reward regression > 0.10 for 30 steps -> rollback + LR*0.5"
+    },
+    "recommendation": {
+      "start_difficulty": "L3-only",
+      "rationale": "L3 golden zone (93.3% signal) maximizes early learning efficiency.",
+      "pre_filter_rollout": "Phase 1: only sample L3 tasks -> saves rollout compute too."
+    }
+  },
+  "4_temperature": {
+    "title": "4. Rollout Temperature Optimization",
+    "results": [
+      {
+        "temperature": 0.3,
+        "p_signal": 0.246,
+        "mean_reward": 0.646,
+        "syntax_ok_rate": 0.803,
+        "effective_signal": 0.198
+      },
+      {
+        "temperature": 0.5,
+        "p_signal": 0.411,
+        "mean_reward": 0.526,
+        "syntax_ok_rate": 0.689,
+        "effective_signal": 0.283
+      },
+      {
+        "temperature": 0.6,
+        "p_signal": 0.493,
+        "mean_reward": 0.489,
+        "syntax_ok_rate": 0.652,
+        "effective_signal": 0.322
+      },
+      {
+        "temperature": 0.7,
+        "p_signal": 0.575,
+        "mean_reward": 0.46,
+        "syntax_ok_rate": 0.623,
+        "effective_signal": 0.358
+      },
+      {
+        "temperature": 0.8,
+        "p_signal": 0.657,
+        "mean_reward": 0.436,
+        "syntax_ok_rate": 0.599,
+        "effective_signal": 0.393
+      },
+      {
+        "temperature": 0.9,
+        "p_signal": 0.739,
+        "mean_reward": 0.416,
+        "syntax_ok_rate": 0.578,
+        "effective_signal": 0.427
+      },
+      {
+        "temperature": 1.0,
+        "p_signal": 0.821,
+        "mean_reward": 0.399,
+        "syntax_ok_rate": 0.56,
+        "effective_signal": 0.46
+      },
+      {
+        "temperature": 1.2,
+        "p_signal": 0.986,
+        "mean_reward": 0.371,
+        "syntax_ok_rate": 0.53,
+        "effective_signal": 0.522
+      },
+      {
+        "temperature": 1.5,
+        "p_signal": 1.0,
+        "mean_reward": 0.339,
+        "syntax_ok_rate": 0.496,
+        "effective_signal": 0.496
+      }
+    ],
+    "recommendation": {
+      "optimal_temp": 1.2,
+      "rationale": "T=1.2 maximizes effective signal (0.522) = p_signal x syntax_ok.",
+      "improvement": "1.46x effective signal",
+      "caveat": "Model-based estimate. Must validate with 2B model empirically."
+    }
+  },
+  "5_compute_budget": {
+    "title": "5. Compute Budget Analysis (72h RL window)",
+    "scenarios": {
+      "baseline_no_filter": {
+        "total_steps": 248,
+        "effective_useful_steps": 124
+      },
+      "with_dapo_filtering": {
+        "total_steps": 310,
+        "effective_useful_steps": 155
+      },
+      "with_curriculum_p1": {
+        "total_steps": 248,
+        "effective_useful_steps": 231
+      },
+      "combined": {
+        "total_steps": 310,
+        "effective_useful_steps": 254
+      }
+    },
+    "recommendation": {
+      "target_steps": 200,
+      "achievable": true,
+      "effective_useful_steps": 254,
+      "rationale": "Combined DAPO+curriculum: 254 effective steps in 72h (2.0x vs baseline)."
+    }
+  },
+  "6_config_patch": {
+    "title": "6. Concrete Config Patch for baize_posttrain_rl_verl_config_v2.yaml",
+    "changes": [
+      {
+        "key": "actor_rollout_ref.rollout.n",
+        "current": 8,
+        "recommended": 8,
+        "rationale": "G=8 near-optimal for feasible memory. Keep with DAPO filtering."
+      },
+      {
+        "key": "algorithm.filter_groups_with_zero_advantage",
+        "current": false,
+        "recommended": true,
+        "rationale": "Skip PPO update on zero-advantage groups. 20% time savings."
+      },
+      {
+        "key": "actor_rollout_ref.rollout.temperature",
+        "current": 0.7,
+        "recommended": 0.8,
+        "rationale": "T=0.8 gives ~1.15x effective signal. Validate with 2B model."
+      },
+      {
+        "key": "data.train_batch_size",
+        "current": 128,
+        "recommended": 96,
+        "rationale": "Reduce for memory headroom with G=8 (768 vs 1024 seqs)."
+      },
+      {
+        "key": "actor_rollout_ref.actor.kl_loss_coef",
+        "current": 0.02,
+        "recommended": 0.02,
+        "rationale": "R18: KL=0.02 correct for 2B (20x vision). Monitor KL>1.0->LR*0.5."
+      },
+      {
+        "key": "actor_rollout_ref.actor.clip_ratio",
+        "current": 0.2,
+        "recommended": 0.2,
+        "rationale": "Standard PPO clip. R0++ continuous [0,1] -> 0.2 appropriate."
+      },
+      {
+        "key": "actor_rollout_ref.actor.optim.lr",
+        "current": "3.0e-6",
+        "recommended": "3.0e-6",
+        "rationale": "Conservative LR for 2B full-param GRPO. Vision 1e-6 too low."
+      },
+      {
+        "key": "custom_reward_function.reward_kwargs.arm",
+        "current": "R0",
+        "recommended": "R0pp",
+        "rationale": "R0++ (5-dim AST) instead of R0 (API coverage). 50% non-zero variance."
+      },
+      {
+        "key": "trainer.total_training_steps",
+        "current": 2000,
+        "recommended": 200,
+        "rationale": "R61: 200 steps in 72h achievable. 2000 would take ~24 days."
+      },
+      {
+        "key": "data.difficulty_aware_sampling",
+        "current": "uniform",
+        "recommended": "curriculum_v1",
+        "rationale": "Phase 1: L3-only (93.3% signal). Progressive difficulty intro."
+      }
+    ]
+  },
+  "7_risks": {
+    "title": "7. Risk Mitigation (from R109 + R118 + Vision lessons)",
+    "risks": [
+      {
+        "risk": "Zero-advantage dominance (50%)",
+        "severity": "HIGH",
+        "mitigation": "1. DAPO filtering 2. L3-only Phase 1 3. R0++ continuous 4. Alert if >70% for 20 steps",
+        "source": "R118 + Vision R57"
+      },
+      {
+        "risk": "Reward hacking (5.8%)",
+        "severity": "MEDIUM",
+        "mitigation": "1. R0++ hardcode_penalty 2. Report cheat rate/20 steps 3. >15% -> increase penalty",
+        "source": "R118"
+      },
+      {
+        "risk": "KL divergence explosion",
+        "severity": "MEDIUM",
+        "mitigation": "1. KL=0.02 2. Monitor/step 3. KL>1.0->LR*0.5 4. KL>2.0->pause+checkpoint",
+        "source": "R109 + Vision v3"
+      },
+      {
+        "risk": "Catastrophic forgetting (L1-L2)",
+        "severity": "LOW",
+        "mitigation": "Phase 4 adds L1-L2. Eval full 158-case every 50 steps.",
+        "source": "Standard RL concern"
+      },
+      {
+        "risk": "Curriculum transition failure",
+        "severity": "MEDIUM",
+        "mitigation": "Reward threshold criteria. L4<0.10 after 30 steps -> extend Phase 1 +20 steps.",
+        "source": "R118 L4 difficulty"
+      },
+      {
+        "risk": "Temperature too high -> syntax degradation",
+        "severity": "LOW",
+        "mitigation": "Start T=0.8. syntax_ok<50% for 10 steps -> reduce to 0.7.",
+        "source": "R118 dimension analysis"
+      }
+    ]
+  }
+}
