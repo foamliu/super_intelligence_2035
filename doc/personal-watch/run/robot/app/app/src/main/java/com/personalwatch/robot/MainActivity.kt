@@ -40,6 +40,7 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private lateinit var etServer: EditText
     private lateinit var etInput: EditText
     private lateinit var previewView: PreviewView
+    private lateinit var tvState: TextView
 
     private var imageCapture: ImageCapture? = null
     private lateinit var cameraExecutor: ExecutorService
@@ -49,6 +50,10 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private var currentQuestion: String = ""
     private val history = mutableListOf<Pair<String, String>>()
     private val followUps = mutableListOf<Pair<String, String>>()
+
+    private var micVad: MicVad? = null
+    private var muted = false
+    private var speaking = false
 
     private val pickImage =
         registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
@@ -68,12 +73,24 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             if (granted) startCamera() else setStatus("未授予相机权限，可用「选图」模式")
         }
 
+    private val requestAudioPermission =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+            if (granted) {
+                micVad?.start()
+                setState("常听")
+                setStatus("麦克风就绪（常听态：朗读中说话即可打断）")
+            } else {
+                setStatus("未授予麦克风权限，语音打断不可用（仍可点「打断」按钮）")
+            }
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         tvStatus = findViewById(R.id.tvStatus)
         tvReply = findViewById(R.id.tvReply)
+        tvState = findViewById(R.id.tvState)
         etServer = findViewById(R.id.etServer)
         etInput = findViewById(R.id.etInput)
         previewView = findViewById(R.id.previewView)
@@ -108,6 +125,7 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         findViewById<Button>(R.id.btnMarkRight).setOnClickListener { logPractice(true) }
         findViewById<Button>(R.id.btnMarkWrong).setOnClickListener { logPractice(false) }
         findViewById<Button>(R.id.btnSend).setOnClickListener { sendFollowUp() }
+        findViewById<Button>(R.id.btnMute).setOnClickListener { toggleMute() }
 
         tts = TextToSpeech(this, this)
 
@@ -118,6 +136,8 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         } else {
             requestPermission.launch(Manifest.permission.CAMERA)
         }
+
+        setupMic()
     }
 
     // ── 相机（CameraX）────────────────────────────────────────────
@@ -367,18 +387,67 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             if (currentTtsText.isBlank()) setStatus("还没有可朗读的引导")
             return
         }
+        if (muted) {
+            setStatus("已静音，解除静音后才能朗读")
+            return
+        }
         tts?.speak(currentTtsText, TextToSpeech.QUEUE_FLUSH, null, "tutor_tts")
-        setStatus("朗读中…（点「打断」可停）")
+        speaking = true
+        setState("说")
+        setStatus("朗读中…（说话或点「打断」可停）")
     }
 
     private fun stopSpeaking() {
         tts?.stop()
+        speaking = false
+        setState("听")
         setStatus("已打断（停播）。可继续追问或拍新题。")
+    }
+
+    // ── 常听 + 语音打断（barge-in）+ 静音真关麦 ────────────────────────
+    private fun setupMic() {
+        micVad = MicVad(
+            onSpeechDetected = {
+                runOnUiThread {
+                    if (speaking) stopSpeaking()  // 语音打断：朗读中检测到人声 -> 停播
+                }
+            },
+            onMicError = { msg ->
+                runOnUiThread { setStatus("麦克风不可用，仅文字模式：$msg") }
+            }
+        )
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
+            == PackageManager.PERMISSION_GRANTED
+        ) {
+            micVad?.start()
+            setState("常听")
+        } else {
+            requestAudioPermission.launch(Manifest.permission.RECORD_AUDIO)
+        }
+    }
+
+    private fun toggleMute() {
+        muted = !muted
+        if (muted) {
+            tts?.stop()
+            speaking = false
+            micVad?.stop()  // 真关麦：释放 AudioRecord，不是软件忽略
+            setState("静音")
+            setStatus("已静音（麦克风已关闭）")
+        } else {
+            setState("常听")
+            setStatus("已解除静音（恢复监听）")
+            micVad?.start()
+        }
     }
 
     // ── 工具 ─────────────────────────────────────────────────────
     private fun setStatus(s: String) {
         tvStatus.text = s
+    }
+
+    private fun setState(s: String) {
+        tvState.text = "状态：$s"
     }
 
     private fun readBytes(uri: Uri): ByteArray? {
@@ -416,6 +485,7 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         super.onDestroy()
         tts?.stop()
         tts?.shutdown()
+        micVad?.stop()
         cameraExecutor.shutdown()
     }
 

@@ -29,9 +29,12 @@ PHASE:        L0 设备通路**模拟器全通（ADB+emulator+AVD+APK 安装+App
 第15轮:      执行 ROADMAP L2 智能体——`tools.py`(5 工具：计算器 AST 白名单/题库/错题本/家长报告/绘图)+`l2_agent.py`(确定性路由+LLM 工具决策+L2Session 多轮会话)+`eval_l2.py` 评测：6 工具全调、给答案率 0、3 轮追问一致、绘图 PNG 20KB、LLM 决策选 calculator 正确；`pytest` 175 passed
 第16轮:      执行 ROADMAP #1（L2 工具接进 App/HTTP）——`tutor_server.py` 新增 `/tool`+`/agent` 端点 + `/tutor` 带 `tool` 字段即转工具；`test_tutor_server.py` 13 单测 + `smoke_http.py` 实测；App 加「换一题/记错题/报告」按钮 + 文字追问（`TutorClient.postTool/postAgent`）；`assembleDebug`→APK 4,112,860 字节 + `adb install -r` Success + `uiautomator dump` 确认新按钮；`pytest` 188 passed
 第17轮:      执行 ROADMAP L3 学情——`l3_profile.py`(知识点画像/每日每周摘要/自包含HTML)+`tutor_server.py` 新增 `POST /profile`+`test_l3_profile.py` 13 单测+App「学情」按钮(`TutorClient.postProfile`)+`assembleDebug`→APK 4,115,732 字节+`adb install -r` Success+模拟器点击实测(错题总数2·薄弱点一元一次方程)；清 stale server 2 个(占 8765 旧代码无 /profile)；`pytest` 205 passed
-当前动作:     第 17 轮：读任务书 → 识别 ROADMAP L3 学情(⬜)为下一增量 → 写 `l3_profile.py`(画像/摘要/HTML) + 13 单测 → 接 `POST /profile` + 4 单测 → App「学情」按钮 → assembleDebug + adb install + UI dump + 模拟器点击实测 → 清 stale server → 205 单测全绿 → 回写 → commit+push(robot:)
-下一步:       端侧真实 ASR（sherpa-onnx）接入位落地；clamp_hint 后 full 30 会话复跑验证；L3 学情补「正样本」（会话/练习日志合并掌握画像）；真机化（等用户 3 条）
-阻塞:         ⏳ 手机未连（型号/系统未知）——**只阻塞真机化，不阻塞 PC/模拟器任何工作**（adb/emulator 已自装好）；`qwen3-vl:32b` 已按 15:4x 令作废；端侧 ASR 权重未装（用 MockStreamingASR 验逻辑，不阻塞）
+第18轮:      执行 ROADMAP「下一轮候选」#1——端侧真实 ASR 落地：`speech.py` `SherpaOnnxASR`(paraformer 中文离线)+`StreamingSherpaOnnxASR`(streaming-zipformer 真流式)+`eval_asr.py`(流式 CER mean 0.302·延迟 0.03-0.08s·中间结果逐字增长)；模型落 hf-mirror(streaming ~31MB·paraformer 243MB 就绪)；`pytest` 209+1skip passed
+第19轮:      执行 ROADMAP L3 学情补「正样本」——`l3_profile.py` 练习日志(作答对错)+合并画像(错题负样本+练习正样本·正确率/掌握等级)+`POST /practice` 端点+App「答对/答错」按钮；APK 4,120,020 字节+adb install+模拟器点「学情」实测(错题3·练习5·知识点2·薄弱点一元一次方程)；`pytest` 222 passed
+第20轮:      执行 22:50 令「打断可用」——`host/vad.py`(端侧 VAD 纯函数：能量/端点1.2s/打断debounce/静音真关麦/状态机)+16 单测；App 端 `MicVad.kt`(AudioRecord 端侧 VAD)+语音打断(barge-in)+静音真关麦+状态指示(常听/听/说/静音)+Manifest RECORD_AUDIO；APK 4,124,752 字节+adb install Success+模拟器跑通一题(文字题 2x+3=11→DeepSeek 引导不含答案→状态「说」→打断「听」→静音「静音」)+录屏 r20_session.mp4(4.4MB)；`pytest` 238 passed
+当前动作:     第 20 轮：读任务书 → 识别 22:50 令「打断可用」为下一增量 → 写 `host/vad.py`+16 单测 → App `MicVad.kt`+语音打断+静音+状态机 → assembleDebug+adb install+模拟器跑通一题+录屏 → 238 单测全绿 → 回写 → commit+push(robot:)
+下一步:       clamp_hint 后 full 30 会话复跑验证；App「答对/答错」知识点自动分类（LLM）；真机化（等用户 2 条）
+阻塞:         ⏳ 手机未连（型号/系统未知）——**只阻塞真机化，不阻塞 PC/模拟器任何工作**（adb/emulator 已自装好）；语音打断/静音/常听态已落地（真机 AEC/首字时延/近场 CER 待真机复测）
 ERROR_COUNT:  0
 ```
 
@@ -46,7 +49,7 @@ ERROR_COUNT:  0
 - **工作目录**：`run/robot/`（`P0_设备通路.md` / `ROADMAP.md` / `app/` 手机端 / `host/` PC agent / `eval/` 题库 / `proto/` mock）
 - **记录仓**：`D:\Users\Administrator\code\super_intelligence_2035\doc\personal-watch\run\`
 - **ComfyUI**：**已冻结（Disabled），不碰视频流水线**
-- **上次唤醒**：2026-11-08（第 17 轮 · L3 学情层落地：`l3_profile.py` 知识点画像+每日/每周摘要+自包含 HTML、`POST /profile` 端点、App「学情」按钮、APK 装机+模拟器点击实测、205 单测全绿）
+- **上次唤醒**：2026-11-09（第 20 轮 · 22:50 令「打断可用」落地：`host/vad.py` 端侧 VAD + App `MicVad.kt` 语音打断/静音真关麦/常听态指示、APK 4,124,752 字节装机+模拟器跑通一题、238 单测全绿）
 
 ## 2. 分层目标与状态（L0-L4）
 
@@ -299,17 +302,27 @@ ERROR_COUNT:  0
 - 回写：`host/l3_profile.py`/`host/test_l3_profile.py`/`host/tutor_server.py`/`host/test_tutor_server.py`/`host/README.md`、`app/.../TutorClient.kt`/`MainActivity.kt`/`activity_main.xml`/`strings.xml`/`app/README.md`、`ROADMAP.md`（第 19 轮）、本文件、`daily-memories-video/2026-11-08.md`。
 - commit+push（`robot:`）。
 
-## 5. 阻塞 / 待办
+## 4.19 本唤醒流水（2026-11-09 · 第 20 轮 · 22:50 令「打断可用」：端侧 VAD + App 语音打断/静音/常听）
+
+- 读任务书全文 + `robot/README.md` + `ROADMAP.md`；识别 22:50 令里程碑最后一项「打断可用」仍只有按钮打断（手动），缺「语音打断 + 静音真关麦 + 常听态」，且 INTERACTION_SPEC §9「VAD 端侧」无独立代码。本轮落地。ComfyUI 全程未碰（已冻结）。
+- ✅ **`host/vad.py`（端侧 VAD 纯函数）**：`rms`/`rms_db`、`EndpointDetector`（静音 ≥1.2s 端点）、`BargeInDetector`（连续 2 帧超阈 + hangover；单帧尖峰不触发）、`MuteGate`（静音真关麦）、`SessionController`（状态机 ambient/listen/think/speak/wait_student/muted）。16 单测；host 全量 **238 passed**（222 → +16）。
+- ✅ **App 端语音打断 + 静音真关麦 + 常听态指示**：新增 `MicVad.kt`（`AudioRecord` 16kHz 端侧 VAD，`start()/stop()`，无麦克风/无权限优雅降级不崩溃）；`MainActivity` 状态指示 +「静音」按钮（真关麦=释放 AudioRecord）+ 语音打断（朗读中检测到人声 → `stopSpeaking()`）；`AndroidManifest.xml` 加 `RECORD_AUDIO`；`activity_main.xml`/`strings.xml` 同步。
+- ✅ **构建 + 装机 + 端到端 + 录屏**：`assembleDebug` 成功 → `app-debug.apk` **4,124,752 字节**；`adb install -r` **Success**；模拟器跑通一题（文字题 `2x+3=11` → DeepSeek 引导「我们一起来看看这道题。你觉得第一步该先动哪个数呢？」**不含答案 x=4** ✅红线 → 状态「说」→ 打断「听」→ 静音「静音」→ 解除「常听」）；录屏 `logs/r20_session.mp4`（4,431,529 字节）+ 截图 `logs/r20_app_launch.png`。
+- 📌 **能信/不能信**：VAD 纯逻辑（16 单测）+ App 状态机 UI 流转 + 文字题端到端为可验证证据；🚫 真实声学语音打断（AEC 自听回声）、首字时延、近场 CER 待真机/真麦克风复测（模拟器无真实人声输入）。
+- 回写：`host/vad.py`/`host/test_vad.py`、`app/.../MicVad.kt`/`MainActivity.kt`/`AndroidManifest.xml`/`activity_main.xml`/`strings.xml`/`app/README.md`、`ROADMAP.md`（第 20 轮）、`INTERACTION_SPEC.md`、本文件、`daily-memories-video/2026-11-09.md`。
+- commit+push（`robot:`）。
+
 ## 5. 阻塞 / 待办
 
 1. **⏳ 等用户 2 条回复**（`P0_设备通路.md` §4）：① 手机型号/系统版本 ② 开 USB 调试并连线（adb/hdc 已由本线自装，不再需要用户装）。
    🚫 **只阻塞「真机化」，不阻塞 PC/模拟器任何工作**（16:5x 令 §5：不得再以此为由停摆）。
 2. ~~`qwen3-vl:32b` 20GB GGUF 缺失~~ → **已作废**（15:4x 令：识图走 DeepSeek，本地 `llava` 只做离线兜底）。
 3. **下一轮候选（按优先级）**：
-   1. ~~端侧真实 ASR（sherpa-onnx）接入位落地~~ ✅ **已交付（第 18 轮，paraformer 离线 + streaming-zipformer 真流式；高精度 paraformer CER 待下载完成后补测）**；
-   2. `clamp_hint` 后的 full 30 会话复跑验证（第 13 轮只做了单次 smoke）；
-   3. ~~L3 学情补「正样本」：会话/练习日志（作答次数、正确率），与错题本合并出更完整的掌握画像~~ ✅ **已交付（第 19 轮，练习日志 + 合并画像 + `/practice` 端点 + App「答对/答错」）**；
-   4. 真机化 L0（等用户 3 条）。
+   1. ~~端侧真实 ASR（sherpa-onnx）接入位落地~~ ✅ **已交付（第 18 轮，paraformer 离线 + streaming-zipformer 真流式）**；
+   2. ~~22:50 令「打断可用」（语音打断/静音真关麦/常听态 + 端侧 VAD）~~ ✅ **已交付（第 20 轮，`vad.py` + App `MicVad.kt` 语音打断/静音/常听）**；
+   3. `clamp_hint` 后的 full 30 会话复跑验证（第 13 轮只做了单次 smoke）；
+   4. ~~L3 学情补「正样本」~~ ✅ **已交付（第 19 轮，练习日志 + 合并画像 + `/practice` 端点 + App「答对/答错」）**；
+   5. App「答对/答错」知识点自动分类（LLM）；真机化 L0（等用户 2 条）。
 
 ## 6. 运维问答
 

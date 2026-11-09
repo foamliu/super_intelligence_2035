@@ -185,6 +185,13 @@
 - ✅ **构建 + 装机 + 端到端 + 录屏**：`assembleDebug` 成功 → `app-debug.apk` **4,120,020 字节**；`adb install -r` **Success**；模拟器点「学情」实测显示「错题总数：3 / 练习次数：5 / 涉及知识点：2 个 / 薄弱点：一元一次方程 / 作答：一元一次方程 2次/50% · 勾股定理 3次/100%」；录屏 `logs/r19_session.mp4`（18s，2,756,131 字节）。
 - 📌 **能信/不能信**：合并画像/富化掌握/不泄答案为**确定性纯函数**（22+3 单测）+ seed 脚本实测真实 JSON + App 模拟器点击端到端；`logs/wrong_book.json`/`logs/practice_log.json` 为本地自造题数据。🚫 App「答对/答错」暂以「未分类」记录知识点（LLM 知识分类未接入）；真机近场 ASR/AEC 仍待复测。
 
+## 第 20 轮增量（2026-11-09 · 22:50 令「打断可用」：端侧 VAD + App 语音打断/静音/常听）
+
+- ✅ **`host/vad.py`（端侧 VAD 纯函数）**：`rms()`/`rms_db()` 能量、`EndpointDetector`（静音 ≥1.2s 端点）、`BargeInDetector`（连续 2 帧超阈 + hangover 防误触发/单帧尖峰不触发）、`MuteGate`（静音真关麦=丢弃所有输入）、`SessionController`（INTERACTION_SPEC §3 状态机 ambient/listen/think/speak/wait_student/muted）。**16 单测**，host 全量 **238 passed**。
+- ✅ **App 端语音打断（barge-in）+ 静音真关麦 + 常听态指示**：新增 `MicVad.kt`（`AudioRecord` 16kHz 端侧 VAD：能量阈值 + debounce，`start()/stop()`，无麦克风/无权限优雅降级不崩溃）；`MainActivity` 加状态指示（常听/听/说/静音）+「静音」按钮（`toggleMute()` 真关麦=释放 AudioRecord）+ 语音打断（朗读中检测到人声 → `stopSpeaking()`）；`AndroidManifest.xml` 加 `RECORD_AUDIO`；`activity_main.xml`/`strings.xml` 同步。
+- ✅ **构建 + 装机 + 端到端 + 录屏**：`assembleDebug` 成功 → `app-debug.apk` **4,124,752 字节**；`adb install -r` **Success**；模拟器跑通一题（文字题 `2x+3=11` → DeepSeek 引导「我们一起来看看这道题。你觉得第一步该先动哪个数呢？」**不含答案 x=4** ✅红线 → 状态「说」→ 打断「听」→ 静音「静音」→ 解除「常听」）；录屏 `logs/r20_session.mp4`（4,431,529 字节）+ 截图 `logs/r20_app_launch.png`。
+- 📌 **能信/不能信**：VAD 纯逻辑（16 单测）+ App 状态机 UI 流转 + 文字题端到端为**可验证证据**；🚫 真实声学语音打断（AEC 自听回声）、首字时延、近场 CER 待真机/真麦克风复测（模拟器无真实人声输入）。
+
 ## 下一轮候选（按优先级）
 
 1. ~~端侧真实 ASR（sherpa-onnx）接入位落地~~ ✅ **已交付（第 18 轮，paraformer 离线；真流式 OnlineRecognizer 待接 streaming 模型）**。

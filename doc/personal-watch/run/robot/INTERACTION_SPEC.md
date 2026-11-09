@@ -284,6 +284,7 @@ stateDiagram-v2
 | `host/tutor_agent.py` `clamp_hint()`（≤2 句裁剪） | ✅ **第 13 轮交付**（7 单测；交互验收暴露「LLM 原始输出 3-6 句过长」的确定性修复） |
 | HTML 报告 `doc/BaiZe-ISEDA2027/reports/report_robot_hci_interaction_zh.html` | ✅ **第 13 轮交付**（自包含中文报告 + 10 条可用性走查） |
 | `host/eval_asr.py` + `eval/asr_paraformer_zh.json` | ✅ **第 18 轮交付**（TTS 合成已知文本 → `SherpaOnnxASR` 识别 → CER 字错率实测） |
+| `host/vad.py`（端侧 VAD）+ App 语音打断/静音/常听 | ✅ **第 20 轮交付**（VAD 纯函数 16 单测：能量/端点 1.2s/打断 debounce/静音真关麦/状态机；App `MicVad.kt` AudioRecord 端侧 VAD + 语音打断 + 静音真关麦 + 状态指示；APK 4,124,752 字节 + 模拟器跑通一题 + 录屏） |
 
 > 11:40 令 §3 交互验收 **已闭环（第 13 轮）**：会话录音 91.2s（≥60s ✅）、三项时延实测（整轮 P50 1.37s / P90 1.97s、TTS 首字 P50 80.4ms、ASR mock）、打断测试（stop 信号 ~0ms + 在途句丢弃）、模拟学生 3 人设×10 轮（**直接给答案次数 = 0 ✅**）、10 条可用性走查。
 > `speech.py` 的 ASR 真实 CER（第 18 轮已落地 PC 端 paraformer 离线回读 CER）/ TTS 首字（端侧流式）/ 打断 ≤300ms（当前句硬件中断）/ AEC 均**标注待真机**；`presence.py` 难例（遮挡/逆光/侧脸/远景）与真人准确率待真人/真机复测。

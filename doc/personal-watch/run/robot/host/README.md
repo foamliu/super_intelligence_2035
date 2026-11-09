@@ -15,6 +15,8 @@
 | `eval_l1.py` | L1 评测基线：文本 3 题 + 对抗探针 + **4 张题图**（算式/中文+算式/中文应用题/代数式）→ `eval/l1_baseline.json`（直接给答案率 / 识图正确率 / 首步时延 P50·P90 / 逐条后端与降级原因） |
 | `probe_ds_vision.py` | DeepSeek 视觉一次性探针（读 key 不打印 key，产出 `ds_vision_probe.json`） |
 | `eval_asr.py` | **端侧 ASR 实测（第 18 轮）**：SAPI TTS 合成已知文本 → `SherpaOnnxASR` 识别 → CER（字错率）→ `eval/asr_paraformer_zh.json` |
+| `vad.py` | **端侧 VAD 纯函数（第 20 轮）**：`rms`/`rms_db` 能量、`EndpointDetector`（静音 ≥1.2s 端点）、`BargeInDetector`（打断 debounce + hangover）、`MuteGate`（静音真关麦）、`SessionController`（INTERACTION_SPEC §3 状态机） |
+| `test_vad.py` | `vad.py` 单测（16 条：能量/端点 1.2s/打断 debounce/hangover/静音真关麦/状态机 happy path + barge_in + muted） |
 | `test_normalize_math.py` | `normalize_math.py` 单测（**81 条**，12:20 令要求 ≥30） |
 | `test_speech.py` | `speech.py` 单测（分句/打断/流式/落盘 WAV/云端 off/端侧模型缺失报错/WAV 读取与重采样/端侧真实识别〔模型在场时〕） |
 | `presence.py` | 在座检测（12:05 令 §1/§5）：单帧 320×240 + YuNet 人脸（`cv2.FaceDetectorYN`，OpenCV 5）+ 亮度阈值，三分类 person/left/unknown；帧不落盘不上传；`measure()` 连拍测帧率/耗时 |
@@ -34,7 +36,7 @@
 | `l3_profile.py` | **L3 学情层（第 17/19 轮）**：错题本（负样本）+ 练习日志（正样本，作答次数/正确率）→ `merged_profile()` 合并画像 + 每日/每周摘要 + 自包含 HTML（`build_profile_html_full`）；`mastery_from_stats()` 富化掌握等级（含「已掌握」）；本地、不上传、不泄答案 |
 | `test_l3_profile.py` | `l3_profile.py` 单测（**22 条**：掌握等级/时间归一/画像聚合/薄弱点/每日每周/HTML 自包含与不泄答案 + 正样本：练习摘要/合并画像/富化掌握/日志追加/合并 HTML） |
 
-## 单测（第 19 轮：222 passed）
+## 单测（第 20 轮：238 passed）
 
 ```powershell
 cd D:\Users\Administrator\code\super_intelligence_2035\doc\personal-watch\run\robot\host

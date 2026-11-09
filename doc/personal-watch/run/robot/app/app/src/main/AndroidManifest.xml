@@ -4,6 +4,8 @@
     <!-- 拍照 / 选图 需要相机；上传题图到本机 PC 服务需要网络 -->
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- 语音打断（barge-in）需要麦克风；静音按钮 = 真关麦 -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
     <!-- CameraX 要求声明相机特性，但 required=false 让无相机设备也能装（纯选图模式） -->
     <uses-feature android:name="android.hardware.camera.any" android:required="false" />
