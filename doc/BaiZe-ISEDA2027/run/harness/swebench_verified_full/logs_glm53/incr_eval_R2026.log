@@ -12,3 +12,11 @@
   codex: 36 new instances to eval (total real preds: 69, already evaluated: 34)
   [02:53:19] codex: merged 69 -> predictions_glm53/predictions_codex_glm53.json
   [02:53:19] codex: launching eval (workers=1, timeout=1800, 36 instances)...
+  [03:29:53] codex: eval done rc=0 (log: logs/eval_incr_verified_full_glm53_codex_R2026.log)
+  [03:29:53] codex: eval summary updated: 33/34 resolved (97.1%)
+
+============================================================
+=== opencode: incr_eval R2026 ===
+  opencode: 97 new instances to eval (total real preds: 340, already evaluated: 244)
+  [03:29:53] opencode: merged 340 -> predictions_glm53/predictions_opencode_glm53.json
+  [03:29:53] opencode: launching eval (workers=1, timeout=1800, 97 instances)...
