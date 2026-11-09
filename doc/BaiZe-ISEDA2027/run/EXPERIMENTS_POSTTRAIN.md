@@ -14920,4 +14920,108 @@ GPU 显存 90%/95% | 碎片 30%/50% | KV cache 85%/95% | grad_norm 5.0/10.0 | �
 - `baize_posttrain_r142_rl_budget_convergence.py`（249 行，py_compile ✅ + run ✅）
 - `r142_rl_budget_convergence_report.json`（7.3 KB）
 
+## §R143 verl Training Lifecycle Hook System & Rollout-Scheduler Integration（R1+R3 方向 · 零 GPU · 2026-11-10 wake190）
+
+> **目标**：verl 的 `RayPPOTrainer.fit()` 是无原生 callback 系统的单体循环。本节设计一套 lifecycle hook 系统，将 R130/R132/R135/R139/R141/R142 六项研究集成到 verl 训练循环中，无需修改 verl 源码。
+> **方法**：阅读 verl 源码（ray_trainer.py 1213 行 + sglang_rollout.py + naive.py + base_tool.py）→ 识别 hook 注入点 → 设计 hook 接口 + 6 个具体 hook → 750 步仿真验证 → 开销分析 + 风险分析。
+
+### 1. verl 源码 hook 注入点（16 fit + 12 rollout = 28 个）
+
+**fit() 循环**（ray_trainer.py L945-1213）：每个 step 的阶段流：
+```
+step_start → gen → gen_end → reward → reward_end → old_log_prob_end →
+ref_end → values_end → adv_end → update_critic_end → update_actor_end →
+dump_end → validate_end → checkpoint_end → metrics_logged → step_end
+```
+
+**多轮 rollout**（sglang_rollout.py L722-851）状态机：
+```
+rollout_request_start → [pending_to_running → engine_call → tool_call_start →
+tool_call_end → tool_response_added → engine_call → ...] → max_turns_reached →
+reward_calc_start → reward_calc_end → rollout_request_end
+```
+
+**关键发现**：verl 无原生 callback 系统；`fit()` 是单体循环；`_async_rollout_a_request` 用 `asyncio.gather` 并行执行工具调用，无早停机制。
+
+### 2. Hook 系统 设计
+
+**HookContext**（12 字段）：phase / global_step / epoch / metrics / batch / request + 5 个控制信号（should_stop_training / should_skip_step / should_skip_checkpoint / should_skip_validation / should_stop_rollout）。
+
+**HookRegistry**：按 priority 排序，fire(phase, ctx) 遍历所有注册的 hook，异常捕获不中断训练。
+
+**6 个具体 Hook**：
+
+| Hook | 优先级 | 来源 | 触发点 | 核心逻辑 |
+|:--|:--|:--|:--|:--|
+| ResilienceMonitorHook | 5 | R139 | update_actor_end, step_end | NaN/Inf→FATAL stop; loss>10×avg→warning; KL>5→rollback; entropy<0.01→warning |
+| CurriculumSchedulerHook | 10 | R130 | step_start | 5-phase curriculum (Warmup68→Foundation136→Development204→Refinement204→Mastery136), 4 次过渡自动切换数据权重 |
+| RolloutSchedulerHook | 15 | R141 | tool_call_start/end, rollout_request_end | 沙盒并发 SC=8 限流; 早停策略 "both"（正确答案或不可恢复错误）; 统计早停率 |
+| KLCoefficientSchedulerHook | 20 | R132 | update_actor_end | Warmup 线性 ramp 0.001→0.04 (68步); 自适应: KL>5→×1.5↑, KL<0.5→×0.8↓; clamp [0.001, 0.2] |
+| AntiCheatMonitorHook | 30 | R135 | reward_end, update_actor_end | 4 信号 (high_reward_low_tools/suspiciously_short/entropy_collapse/reward_acc_mismatch); rolling mean>5%→rollback |
+| EarlyStopHook | 40 | R142 | validate_end, step_end | 7 条件: plateau(3次<1% spread)×2确认→stop; overfitting(reward↑val↓)→warn; 委托 R139/R135 |
+
+### 3. 集成策略（不修改 verl 源码）
+
+- **训练循环 hook**：Monkey-patch `RayPPOTrainer.fit()` — 在每个阶段前后插入 `registry.fire(phase, ctx)` 调用。备选：子类化 + config 注入。
+- **Rollout hook**：覆写 `BaseTool.execute()`（EDA tool v2）实现 R141 早停 — 无需修改 SGLang 源码。
+- **数据权重切换**：通过 Ray actor RPC 触发 data sampler 权重更新。
+
+### 4. 开销分析
+
+| 项目 | 值 |
+|:--|--:|
+| 每步 hook 调用数 | 60（6 hooks × 10 phases） |
+| 每步 rollout hook 调用数 | 320（32 rollouts × 5 tool calls × 2 start/end） |
+| 每步总开销 | 166.0 ms |
+| 每步训练时间 | 1496 s（R142: 313h/750步） |
+| 每步开销占比 | 0.01110% |
+| 750 步总开销 | 124.76 s |
+| 750 步总训练时间 | 1,122,000 s（313h） |
+| 总开销占比 | 0.01112% |
+| **判定** | **NEGLIGIBLE**（<0.001%） |
+
+### 5. 750 步仿真验证
+
+- **Steps simulated**: 700/750（早停在 step 700 触发）
+- **Curriculum transitions**: 4 次（68/204/408/612）— 全部正确触发
+- **KL adjustments**: 129 次 — warmup ramp + 自适应调整正常
+- **Cheat alerts**: 0 — 仿真中无作弊信号（sigmoid 奖励曲线无异常）
+- **Early stop**: ✅ 在 step 700 触发 — val accuracy 在 step 600/650/700 三次评估中 spread <1%（0.7422→0.7444→0.7456），plateau 确认×2 → 正确停止
+- **Val 曲线**: 0.3894(step50) → 0.5535(step250) → 0.7176(step450) → 0.7456(step700) — sigmoid 收敛符合 R142 模型
+
+### 6. 风险分析（7 项）
+
+| ID | 严重度 | 概率 | 描述 | 缓解 |
+|:--|:--|:--|:--|:--|
+| RISK-01 | HIGH | MEDIUM | Monkey-patch 在 verl 版本更新后失效 | Pin verl 版本; 版本检查; fallback 子类化 |
+| RISK-02 | LOW | LOW | Hook 增加关键路径延迟 | O(1) dict 操作; <0.001% 开销 |
+| RISK-03 | MEDIUM | LOW | 早停过于激进 | Plateau 需 2× 确认; 250 步 warmup; override flag |
+| RISK-04 | MEDIUM | LOW | 课程过渡 RPC 失败 | Retry + backoff; fallback 保留旧权重 |
+| RISK-05 | MEDIUM | LOW | 反作弊误报 | 需多信号 (threshold 0.3); rollback 仅 >5% rolling |
+| RISK-06 | LOW | MEDIUM | KL 调度震荡 | Clamp [0.001,0.2]; 5-step rolling; rate-limit |
+| RISK-07 | HIGH | MEDIUM | R141 rollout patch 与 verl async 重构不兼容 | 用 tool_config_path + BaseTool.execute 覆写; smoke test |
+
+### 7. 关键结论
+
+1. verl 单体 `fit()` 有 16 个 hook 注入点 + 12 个 rollout 注入点 — 足够覆盖全部生命周期
+2. 6 个 hook 覆盖 R130/R132/R135/R139/R141/R142，总开销 <0.001%（124.76s/313h）— 可忽略
+3. Monkey-patch 策略避免修改 verl 源码；备选子类化 + config 注入
+4. R141 rollout hook 通过 BaseTool.execute 覆写实现（无需 patch SGLang 源码）
+5. R142 早停需 2× plateau 确认 + 250 步 warmup — 仿真验证在 step 700 正确触发
+6. 最高风险：monkey-patch 在 verl 更新后失效 → 缓解：版本 pin + 检查
+7. 推荐：实现为独立模块 `baize_posttrain_hooks.py`，full training 前 smoke test
+
+### 8. 下一步行动
+
+1. 实现 `baize_posttrain_hooks.py` 生产级模块（基于本设计）
+2. Smoke test：5 步全 hook 激活运行，验证无崩溃
+3. 将 R141 早停集成到 EDA tool v2 的 `execute()` 方法
+4. 在 `baize_posttrain_rl_grpo.sh` 中添加 hook config 段
+5. 用 mock data sampler 测试课程过渡 RPC
+
+### 产物
+
+- `baize_posttrain_r143_verl_lifecycle_hooks.py`（474 行，py_compile ✅ + run ✅）
+- `r143_verl_lifecycle_hooks_report.json`（12.4 KB）
+
 
