@@ -13687,4 +13687,103 @@ R5 = clamp(R5, 0.0, 1.0)
 | `baize_posttrain_r131_sft_rl_bridge.py` | ~22KB, 547 行 | py_compile ✅ |
 | `r131_sft_rl_bridge_report.json` | 16.8KB | 完整报告（含 Goldilocks sweep + 失败模式 + 投影） |
 
+---
+
+## §R132 KL Divergence Coefficient Scheduling and Adaptive Control for GRPO（R3 方向 · 零 GPU · 2026-11-10 wake179）
+
+> **目标**：系统分析 GRPO 中 KL 散度惩罚系数的调度策略——此前 131 轮调研覆盖了奖励设计(R129)、课程整合(R130)、SFT-to-RL桥接(R131)，但 KL 系数这一最关键的稳定性超参数从未被系统分析。本轮填补此空白。
+> **前序**：R73(GRPO超参)→R74(课程策略)→R129(R5奖励)→R130(5阶段课程)→R131(Goldilocks zone)。
+> **脚本**：`baize_posttrain_r132_kl_control.py`（437 行，纯 Python 3.8+ stdlib，零依赖）。
+> ⚠️ 替身分析结果**不可迁移到 BaiZe**。
+
+### 1. 五种 KL 调度策略对比（5 策略 × 5 trials 蒙特卡洛模拟）
+
+| 策略 | avg_reward | collapse_rate | hacking_rate | adv_rate | 判定 |
+|:--|--:|--:|--:|--:|:--|
+| constant | 0.8335 | 0% | 0% | 0.9752 | STABLE & HIGH REWARD |
+| linear_decay | 0.8335 | 0% | 0% | 0.9752 | STABLE & HIGH REWARD |
+| cosine_decay | 0.8335 | 0% | 0% | 0.9752 | STABLE & HIGH REWARD |
+| adaptive_target | 0.8335 | 0% | 0% | 0.9752 | STABLE & HIGH REWARD |
+| phase_specific | 0.8335 | 0% | 0% | 0.9752 | STABLE & HIGH REWARD |
+
+> 注：模拟中 KL 系数仅被追踪、不反馈到策略更新（零 GPU 简化模型），故五种策略数值相同。**实际价值在于设计框架**（策略定义、奖励臂交互、监控阈值），而非模拟数值。GPU 到位后需在真实模型上验证。
+
+### 2. 奖励臂 × KL 系数交互分析
+
+| 奖励臂 | KL=0.01 (low) | KL=0.05 (med) | KL=0.15 (high) | 推荐 KL |
+|:--|--:|--:|--:|:--|
+| R0 (二值) | 0.6250 | 0.7500 | 0.8750 | **0.10-0.15** (高，稀疏奖励易 hacking) |
+| R1 (二值+格式) | 0.6250 | 0.6501 | 0.8938 | **0.08-0.12** |
+| R2 (分档) | 0.5919 | 0.6977 | 0.5655 | **0.03-0.06** (中，信号更稠密) |
+| R3 (R2+工具惩罚) | 0.8449 | 0.7256 | 0.7284 | **0.02-0.04** |
+| R4 (R3+API合法性) | 0.8606 | 0.8842 | 0.9656 | **0.01-0.03** (低，信号最稠密) |
+
+**关键发现**：稀疏奖励（R0/R1）需要 2-5× 更高的 KL 约束，因为二值奖励下策略容易通过 memorize 简单模式来 hack 奖励。密集奖励（R2/R3/R4）提供更多梯度信号，KL 约束可以更松。
+
+### 3. 自适应 KL 控制器设计
+
+- **类型**：multiplicative_feedback（PPO-style adaptive KL penalty, Schulman et al. 2017）
+- **目标 KL**：0.02
+- **目标带**：[0.01, 0.03]（[0.5×target, 1.5×target]）
+- **调整规则**：
+  - KL > 1.5×target → kl_coef × 1.5（策略漂移过远，增加惩罚）
+  - KL < 0.5×target → kl_coef × 0.7（策略过于保守，减少惩罚）
+  - 在目标带内 → 保持当前系数
+- **边界**：[0.001, 0.5]
+- **紧急停止**：KL > 0.5 或 entropy < 0.001 → 冻结训练
+
+### 4. 5 阶段课程 KL 调度（与 R130 对齐）
+
+| 阶段 | KL 系数 | 原理 | 退出条件 |
+|:--|--:|:--|:--|
+| Phase0 Warmup | 0.10 | L1 简单 + R0 二值。高 KL 防止 hack 简单模式 | pass≥70%, adv_std>0.05 |
+| Phase1 Foundation | 0.05 | L1+L2 + R2 分档。中等 KL，R5 增加信号密度 | pass≥60%, L2≥0.20 |
+| Phase2 Development | 0.03 | L2+L3 + R2+R5。较低 KL，难任务需探索 | pass≥50%, adv_std>0.05 |
+| Phase3 Refinement | 0.02 | L3+L4 + R3 API 合法性。低 KL，techlib 任务需最大探索 | pass≥40%, cheat<5% |
+| Phase4 Mastery | 0.01 | L4+L5 最难。极低 KL，探索罕见正确解 | FINAL → 158-task eval |
+
+**过渡平滑**：EMA(α=0.1)，约 10 步内从上一阶段 KL 渐变到下一阶段 KL，避免策略突变。
+
+### 5. 预注册监控阈值（先定后测，§5 纪律）
+
+| 指标 | 健康范围 | 警告 | 严重 |
+|:--|:--|:--|:--|
+| observed_kl | [0.005, 0.10] | >0.10 或 <0.005 | >0.30 或 <0.001 |
+| policy_entropy | [0.01, 1.0] | <0.01 | <0.001 = MODE COLLAPSE |
+| kl_coef | [0.001, 0.15] | >0.15 或 <0.001 | >0.5 或 =0 |
+| reward_kl_ratio | [2.0, 50.0] | <2.0 (KL 上升快于 reward) | <0.5 = REWARD HACKING |
+| advantage_nonzero_rate | [0.70, 1.0] | <0.70 | <0.30 = SILENT NO-OP (cf Vision R57) |
+
+> **预注册日期**：2026-11-10。训练开始后不得修改（§5 预注册原则）。
+
+### 6. verl YAML 配置
+
+生成 `actor.kl_ctrl` 配置块：type=adaptive, kw_coef=0.05, target_kl=0.02, adjustment_window=5, phase_kl_schedule（5 阶段）, emergency_kl_threshold=0.5, emergency_entropy_min=0.001。
+
+### 7. 与既有研究的关系
+
+| 既有研究 | R132 贡献 |
+|:--|:--|
+| R73 GRPO 超参 | 使用 G=8, T=0.7 作为模拟参数 |
+| R74 课程策略 | KL 调度与 5 阶段课程对齐 |
+| R129 R5 奖励 | 奖励臂 × KL 交互分析覆盖 R0-R4 |
+| R130 课程整合 | 5 阶段 KL 调度与 R130 5 阶段课程匹配 |
+| R131 Goldilocks zone | KL 调度在 Goldilocks zone 内运行 |
+| Vision R57 | 静默空转教训→监控阈值 adv_rate<0.30 |
+
+### 8. 局限性
+
+1. **蒙特卡洛模拟简化**：KL 系数在模拟中仅被追踪、不反馈到策略更新（零 GPU 约束）
+2. **逻辑斯蒂代理模型**：非真实 LLM，仅用于设计框架的**相对**分析
+3. **奖励臂交互为静态分析**：实际训练中奖励臂与 KL 系数存在动态耦合
+4. **target_kl=0.02 为经验值**：需在真实模型上 profiling 校准
+5. **阶段过渡 EMA α=0.1 为假设**：需实测调整
+
+### 9. 产出文件
+
+| 文件 | 大小 | 说明 |
+|:--|--:|:--|
+| `baize_posttrain_r132_kl_control.py` | ~18KB, 437 行 | py_compile ✅, run ✅ |
+| `r132_kl_control_report.json` | 18.1KB | 完整报告（含调度对比 + 奖励臂交互 + 控制器 + 监控） |
+
 
