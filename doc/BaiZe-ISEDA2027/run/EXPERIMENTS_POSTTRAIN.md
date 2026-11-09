@@ -14157,3 +14157,113 @@ reward:
 3. **H09 依赖 verl 服务端**：context manipulation 的检测不只靠 detector，还需 verl 强制 server-side tool execution
 4. **分类法可能扩展**：真实 MiniCPM5-2B 失败轨迹收集后可能发现新 mode
 
+---
+
+## §R136 Domain Annealing Curriculum Design & Forgetting Risk Analysis（R1+R3 交叉 · 零 GPU · 2026-11-10 wake183）
+
+> **核心发现**：⚠️ 领域语料库（4.5M tok）相对于退火 token 预算（8.39B）**严重不足**——30% blend × 4000 步 = **559x 重复**，远超安全阈值（<10x），将导致**严重过拟合**。遗忘风险反而**低**（retention 97.2%, forget ≈2.8pp）。建议：扩大领域语料至 ≥100M tok，或大幅降低 domain blend / 步数。
+
+### 1. Token 预算分析
+
+| 参数 | 值 | 说明 |
+|:--|--:|:--|
+| 总退火 token | 8.389B | 4000 步 × GBS 512 × seq 4096 |
+| domain (30%) | 2,516.58M tok | PyAether API 参考文档 |
+| **domain 重复** | **559x** | 2,516M / 4.5M = 559 次重复 ⚠️ |
+| web (50%) | 4,194.30M tok | 通用混合 |
+| code (12%) | 1,006.63M tok | 代码 |
+| math (8%) | 671.09M tok | 数学 |
+
+> **关键问题**：4.5M tok 的领域语料在 30% blend 下被重复 559 次。文献表明 >10x 重复即开始过拟合，>100x 会导致严重的记忆化(memorization)而非泛化。
+
+### 2. Blend 比例敏感性
+
+| 配置 | domain% | epochs | 重复风险 | 综合评分 | 判定 |
+|:--|--:|:--|:--|--:|:--|
+| conservative | 15% | 280x | high | 0.438 | RISKY |
+| moderate_low | 20% | 373x | high | 0.556 | ACCEPTABLE |
+| **default** | **30%** | **559x** | **high** | **0.750** | ACCEPTABLE |
+| aggressive | 40% | 746x | high | 0.500 | ACCEPTABLE |
+| heavy_domain | 50% | 932x | high | 0.292 | RISKY |
+
+> ⚠️ **所有配置的 epochs 都 >100x** — 4.5M tok 语料在任何合理的 blend 比例下都会严重过拟合。**根本问题是语料太小，不是 blend 比例**。
+
+### 3. 步数分析
+
+| 步数 | domain epochs | 吸收率 | 净收益 | 判定 |
+|--:|:--|--:|--:|:--|
+| 1000 | 140x | 0.487 | 0.473 | OVER-ANNEAL |
+| 2000 | 280x | 0.736 | 0.694 | OVER-ANNEAL |
+| **4000** | **559x** | **0.931** | **0.824** | OVER-ANNEAL |
+| 6000 | 839x | 0.982 | 0.813 | OVER-ANNEAL |
+| 8000 | 1118x | 0.995 | 0.768 | OVER-ANNEAL |
+| 12000 | 1678x | 1.000 | 0.657 | OVER-ANNEAL |
+
+> 即使最少的 1000 步也有 140x 重复。**在 4.5M tok 语料下，不存在安全的步数配置**。
+
+### 4. 灾难性遗忘风险（k=5 校准）
+
+| 配置 | anneal/pretrain 比 | retention | forgetting |
+|:--|--:|--:|--:|
+| 默认 (d30%, 4000步) | 0.571% | 97.2% | 2.82 pp |
+| d15% | 0.571% | 98.6% | 1.41 pp |
+| d50% | 0.571% | 94.0% | 6.01 pp |
+
+> k=5（2B 模型持续预训练校准值）：遗忘风险 **低**（<3pp at default）。**真正的风险不是遗忘，而是过拟合**。
+
+### 5. 解决方案建议
+
+| 方案 | domain tok | blend | steps | epochs | 可行性 |
+|:--|--:|--:|--:|--:|:--|
+| **A: 扩大语料** | ≥100M | 30% | 4000 | ≤25x | ⭐ 推荐（需 data 线协助） |
+| B: 降 blend | 4.5M | 0.5% | 4000 | ~9x | 可行但 domain 注入极少 |
+| C: 降步数 | 4.5M | 30% | 50 | ~7x | 可行但吸收不足 |
+| D: 混合 | 4.5M | 2% | 500 | ~6x | 折中方案 |
+
+> **推荐方案 A**：将领域语料从 4.5M tok 扩展到 ≥100M tok（加入 EDA 工具文档全文、HDL 源码、EDA 论文/手册、SKILL 完整知识库），使 30% blend × 4000 步 = ≤25x 重复（可接受）。
+
+### 6. 消融设计
+
+| 臂 | 退火 | SFT | RL | 预期 pass@1 | GPU-h |
+|:--|:--|:--|:--|:--|--:|
+| A: anneal→SFT→RL | ✓ | ✓ | ✓ | 65-75% (M2-M3) | 176 |
+| B: SFT→RL (对照) | ✗ | ✓ | ✓ | 60-70% (M2 lower) | 144 |
+| C: anneal→SFT | ✓ | ✓ | ✗ | 55-65% (M1-M2) | 80 |
+| D: SFT only | ✗ | ✓ | ✗ | 50-60% (M1) | 48 |
+| E: anneal only | ✓ | ✗ | ✗ | 39-44% | 32 |
+
+> 关键比较 A vs B（退火贡献，预注册 ≥2pp + McNemar p<0.05）。最小集 A/B/D 共 368 GPU-h。
+
+### 7. 领域知识吸收度量
+
+6 项指标（3 项零 GPU 可测）：domain PPL（≥30% 降低）、API 识别率（≥50%）、API 签名补全（≥30%）、zero-shot pass@1（≥3pp，需 GPU）、通用 benchmark 保留（≥97%）、embedding drift（cosine ≥0.90）。验收门：must_pass 3 项 + abort 3 条件。
+
+### 8. Checkpoint 选择
+
+保存 7 个 checkpoint（step 0/1000/2000/3000/3500/3800/4000，~28GB），按 domain PPL + 通用保留率选择最佳。decay 阶段（3600-4000）是 LR 退火结晶期，最可能是 sweet spot。
+
+### 9. 过退火 vs 欠退火
+
+- **过退火**（当前最大风险）：通用 benchmark 降 >5pp / domain PPL 低但 pass@1 不升 / 输出领域刻板化 → 缩减步数/blend/LR
+- **欠退火**：domain PPL 降 <15% / API 识别 <30% → 增加步数/blend/LR
+- 预警：step 100（domain PPL ≥10% 降, 通用 ≤2% 升）、step 200（≥20% 降）、step 400（≥30% 降 + API ≥50%）
+
+### 10. 管线衔接
+
+退火(27h) → SFT(12h, ctx=8192 full FT) → RL(72h, ctx=16384 GRPO G=8) → eval(3h)。总 ~7 天, 258 GPU-h (9.6% 预算)。关键衔接点：anneal→SFT（选最佳通用保留 ckpt）、SFT→RL（R131 Goldilocks [0.20,0.48]）、RL→eval（R135 anti-cheat）。
+
+### 11. 产出文件
+
+| 文件 | 大小 | 说明 |
+|:--|--:|:--|
+| `baize_posttrain_r136_domain_anneal_curriculum.py` | ~12KB | py_compile ✅, run ✅ |
+| `r136_domain_anneal_report.json` | 19.3KB | 完整 JSON 报告 |
+
+### 12. 局限性
+
+1. 遗忘模型 k=5 为经验校准，真实行为需实测
+2. 领域语料 4.5M tok 为估计值，实际分词后可能不同
+3. 吞吐量 2.5 steps/min 未实测
+4. 吸收饱和曲线为启发式，需真实 PPL 数据校准
+5. 无 GPU 无法验证吸收指标
+

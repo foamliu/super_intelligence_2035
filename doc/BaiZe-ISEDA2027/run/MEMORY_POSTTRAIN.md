@@ -7,14 +7,14 @@ WAITING: 0
 
 ## 进度快照
 
-- PHASE: posttrain-wake182（2026-11-10 R135: 12-mode reward hacking分类法+6-layer防御矩阵+检测器F1=1.000(12hacking+3legit,0误报)+cheat rate报告协议(每20步,per-mode/per-difficulty/per-arm)+verl集成compute_score_with_anticheat+预注册M3<5%/M4<2%(与R133一致)+H08新发现(tool_call_padding)）
-- 已完成: P3预备✅；P0✅；P1✅；P2✅；R1-R135✅；wake181✅ R134(SFT ablation)；wake182✅ R135(reward hacking taxonomy)
-- 当前动作: wake182 R135: ①baize_posttrain_r135_reward_hacking_taxonomy.py(537行,py_compile✅+run✅) ②12-mode分类法:output=5/process=4/tool=2/context=1,critical=3/high=3/medium=5/low=1 ③检测器仿真:15轨迹(12hack+3legit),TP=12/FP=0/TN=3/FN=0,F1=1.000 ④6-layer防御矩阵:L0(hook)+L1(AST)+L2(behavioral/stat)+L3(reward penalty)+L4(cheat monitor)+L5(test strong)+L6(difficulty aware) ⑤cheat rate协议:每20步,5指标,abort>10% ⑥verl YAML:compute_score_with_anticheat+penalties{crit:1.0/high:0.5/med:0.2/low:0.15} ⑦H08新发现:tool_call_padding(重复调同API) ⑧与R133预注册一致:M3<5%/M4<2%. EXPERIMENTS §R135
-- 下一步: ①GPU释放→vLLM serve MiniCPM5-2B复测36%基线(5-run) ②真实MiniCPM5-2B rollout替换合成轨迹校准R135检测器 ③R4失败模式分类法(等真实轨迹) ④SFT语料最终混合比确认 ⑤正式训练待pretrain ckpt(ETA≈2026-12-25)
-- 阻塞: GPU 0/8free(SGLang Qwen3.8-27B占全8卡44-45GB 0%util,11/9已过仍未释放);沙箱10.129.32.75全端口FILTERED;Docker无权限;P3等pretrain ckpt(ETA≈2026-12-25)
-- 本轮新增调研产出: R135 12-mode reward hacking分类法+6-layer防御矩阵+检测器F1=1.000+cheat rate报告协议+verl集成+H08新发现(537行+EXPERIMENTS §R135+r135_reward_hacking_report.json 33.9KB）
+- PHASE: posttrain-wake183（2026-11-10 R136: 领域退火课程设计+遗忘风险分析 — ⚠️关键发现:4.5M tok领域语料×30%blend×4000步=559x重复→严重过拟合;遗忘反而低(k=5,retention97.2%,forget2.8pp);建议扩大语料至≥100M tok或大幅降blend/步数;5臂消融设计A-E;6项吸收度量;7ckpt选择策略;过/欠退火预警step100/200/400;管线7天258GPU-h(9.6%)）
+- 已完成: P3预备✅；P0✅；P1✅；P2✅；R1-R136✅；wake182✅ R135(reward hacking)；wake183✅ R136(domain anneal curriculum)
+- 当前动作: wake183 R136: ①baize_posttrain_r136_domain_anneal_curriculum.py(py_compile✅+run✅) ②⚠️核心发现:4.5M tok领域语料×30%blend×4000步=559x重复→严重过拟合(>10x安全阈值) ③遗忘风险k=5校准:retention=97.2%,forget=2.82pp(低)→真正风险是过拟合不是遗忘 ④5臂消融A-E(anneal+SFT+RL/SFT+RL/anneal+SFT/SFT/anneal-only),A vs B预注册≥2pp+McNemar ⑤6项吸收度量(3项零GPU:domain PPL/API识别/签名补全) ⑥7ckpt选择(0/1k/2k/3k/3.5k/3.8k/4k,decay阶段sweet spot) ⑦过退火5症状/欠退火4症状+step100/200/400预警 ⑧管线:退火27h→SFT12h→RL72h→eval3h=~7天258GPU-h(9.6%) ⑨解决方案:扩大语料≥100M tok(推荐)/降blend 0.5%/降步数50/混合2%×500. EXPERIMENTS §R136
+- 下一步: ①GPU释放→vLLM serve MiniCPM5-2B复测36%基线(5-run) ②真实MiniCPM5-2B rollout替换合成轨迹校准检测器 ③R4失败模式分类法(等真实轨迹) ④领域语料扩大方案落实(需data线协助,加EDA文档/HDL源码/SKILL库) ⑤正式训练待pretrain ckpt(ETA≈2026-12-25)
+- 阻塞: GPU 0/8free(SGLang Qwen3.8-27B占全8卡44-45GB 0%util,11/9已过仍未释放);领域语料4.5M tok过小→需扩至≥100M;P3等pretrain ckpt(ETA≈2026-12-25)
+- 本轮新增调研产出: R136 领域退火课程设计+遗忘风险分析(⚠️559x过拟合发现+遗忘k=5校准2.8pp+5臂消融+6吸收度量+7ckpt策略+过/欠退火预警+管线衔接+解决方案4方案+EXPERIMENTS §R136+r136_domain_anneal_report.json 19.3KB）
 - 未完成指令: 🔴用户令2026-11-07(GPU未到位,需持续产出调研) ⇒ WAITING=0
-- git: commit pending(wake182)
+- git: commit pending(wake183)
 
 ## 关键事实（常驻）
 
@@ -108,3 +108,5 @@ WAITING: 0
 [wake180] R133 统计评测框架McNemar+bootstrap+功效+预注册阈值: 体积自检(TASK≈26KB/MEMORY≈26KB合规)→GPU检查:0/8free(8×A40全被SGLang Qwen3.8-27B占用44-45GB 0%util,11/9已过仍未释放)→R133: ①baize_posttrain_r133_eval_stats.py(490行,py_compile✅+run✅) ②McNemar:精确二项(discordant≤25)+卡方连续性校正(erfc) ③Paired bootstrap:10000重采样,百分位95%/99%CI ④功效分析(3000sims):14pp→power=0.976✅,10pp→0.794临界,5pp→0.253不足 ⑤最小样本量:正态近似M1(14pp)需195(偏保守),蒙特卡洛5-run聚合后0.976充足 ⑥Holm step-down多样本校正(M1-M4家族,推荐>Bonferroni) ⑦预注册判定阈值FROZEN 2026-11-10:M1 α=0.05/95%CI/std≤8pp;M2同;M3+cheat<5%;M4 α=0.01/99%CI/std≤6pp/cheat<2% ⑧Cohen's h:M1=0.284medium/M2=0.589large/M3=0.807very_large/M4=1.059very_large ⑨5-run稳定性:mean3.38pp/P95 5.61pp/P99 6.57pp<8pp阈值✅ ⑩成本:194 GPU-h/2688可用(7.2%util)→预算充裕. EXPERIMENTS §R133. r133_eval_stats_report.json(12.4KB). 📦 体积：TASK≈26KB / MEMORY≈27KB。本轮新增调研产出：§R133 统计评测框架(490行+McNemar配对检验+paired bootstrap CI+功效分析14pp→0.976+最小样本量+Holm多样本校正+预注册M1-M4判定阈值FROZEN+Cohen's h+5-run稳定性3.38pp+成本194GPU-h/7.2%+EXPERIMENTS §R133）。未完成指令：🔴用户令2026-11-07(GPU未到位,需持续产出调研) ⇒ WAITING=0。
 
 [wake182] R135 12-mode reward hacking分类法+防御矩阵: 体积自检(TASK≈26KB/MEMORY≈27KB合规)→GPU:0/8free→R135: ①baize_posttrain_r135_reward_hacking_taxonomy.py(537行,py_compile✅+run✅) ②12-mode分类法:H01-H12,output=5/process=4/tool=2/context=1,critical=3/high=3/medium=5/low=1 ③12检测器,15轨迹仿真:TP=12/FP=0/TN=3/FN=0/F1=1.000 ④6-layer防御矩阵:L0-L6,每mode被2-3层覆盖 ⑤cheat rate协议:每20步,5指标,abort>10% ⑥预注册M3 cheat<5%/M4 cheat<2% FROZEN(与R133一致) ⑦verl YAML:compute_score_with_anticheat ⑧H08新发现:tool_call_padding. EXPERIMENTS §R135. r135_reward_hacking_report.json(33.9KB). 📦 体积：TASK≈26KB / MEMORY≈28KB。本轮新增调研产出：§R135 12-mode reward hacking分类法+6-layer防御矩阵+检测器F1=1.000+cheat rate报告协议+verl集成+H08新发现。未完成指令：🔴用户令2026-11-07(GPU未到位,需持续产出调研) ⇒ WAITING=0。
+
+[wake183] R136 领域退火课程设计+遗忘风险分析: 体积自检(TASK≈26KB/MEMORY≈28KB合规)→GPU:0/8free(8×A40全被SGLang Qwen3.8-27B占用44-45GB 0%util,11/9已过仍未释放)→R136: ①baize_posttrain_r136_domain_anneal_curriculum.py(py_compile✅+run✅) ②⚠️核心发现:4.5M tok领域语料×30%blend×4000步=559x重复→严重过拟合(>10x安全阈值) ③遗忘风险k=5校准:retention=97.2%,forget=2.82pp(低)→真正风险是过拟合不是遗忘 ④5臂消融A-E,关键A vs B预注册≥2pp+McNemar ⑤6项吸收度量(3项零GPU:domain PPL/API识别/签名补全) ⑥7ckpt选择(0/1k/2k/3k/3.5k/3.8k/4k,decay阶段sweet spot) ⑦过退火5症状/欠退火4症状+step100/200/400预警 ⑧管线:退火27h→SFT12h→RL72h→eval3h=~7天258GPU-h(9.6%) ⑨解决方案:扩大语料≥100M tok(推荐)/降blend 0.5%/降步数50/混合2%×500. EXPERIMENTS §R136. r136_domain_anneal_report.json(19.3KB). 📦 体积：TASK≈26KB / MEMORY≈28KB。本轮新增调研产出：§R136 领域退火课程设计+遗忘风险分析(⚠️559x过拟合发现+遗忘k=5校准2.8pp+5臂消融+6吸收度量+7ckpt策略+过/欠退火预警+管线衔接+解决方案4方案+EXPERIMENTS §R136）。未完成指令：🔴用户令2026-11-07(GPU未到位,需持续产出调研) ⇒ WAITING=0。

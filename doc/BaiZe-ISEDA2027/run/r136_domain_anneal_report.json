@@ -1,0 +1,773 @@
+{
+  "meta": {
+    "round": "R136",
+    "wake": "wake183",
+    "title": "Domain Annealing Curriculum Design & Forgetting Risk Analysis",
+    "direction": "R1+R3",
+    "paper_section": "§5.1",
+    "timestamp": "2026-11-10 05:37:17",
+    "gpu_required": false,
+    "model": "BaiZe-2B",
+    "arch": "mamba2"
+  },
+  "baseline": {
+    "steps": 4000,
+    "seq": 4096,
+    "gbs": 512,
+    "lr": 0.0005,
+    "min_lr": 1e-05,
+    "blend": {
+      "domain": 30,
+      "web": 50,
+      "code": 12,
+      "math": 8
+    },
+    "domain_corpus_tok": 4500000,
+    "pretrain_tok_T": 1.468
+  },
+  "1_token_budget": {
+    "total_tokens": 8388608000,
+    "total_tokens_B": 8.389,
+    "per_domain": {
+      "domain": {
+        "pct": 30,
+        "tokens": 2516582400,
+        "tokens_M": 2516.58
+      },
+      "web": {
+        "pct": 50,
+        "tokens": 4194304000,
+        "tokens_M": 4194.3
+      },
+      "code": {
+        "pct": 12,
+        "tokens": 1006632960,
+        "tokens_M": 1006.63
+      },
+      "math": {
+        "pct": 8,
+        "tokens": 671088640,
+        "tokens_M": 671.09
+      }
+    },
+    "domain_epochs_low": 762.6,
+    "domain_epochs_high": 559.24
+  },
+  "2_blend_sensitivity": {
+    "blends": [
+      {
+        "name": "conservative",
+        "blend": {
+          "domain": 15,
+          "web": 55,
+          "code": 18,
+          "math": 12
+        },
+        "domain_tokens_M": 1258.29,
+        "domain_epochs": "381.3-279.62x",
+        "forget_risk": 0.25,
+        "absorption_score": 0.5,
+        "overall_score": 0.438,
+        "repeat_risk": "high",
+        "verdict": "RISKY"
+      },
+      {
+        "name": "moderate_low",
+        "blend": {
+          "domain": 20,
+          "web": 52,
+          "code": 14,
+          "math": 14
+        },
+        "domain_tokens_M": 1677.72,
+        "domain_epochs": "508.4-372.83x",
+        "forget_risk": 0.333,
+        "absorption_score": 0.667,
+        "overall_score": 0.556,
+        "repeat_risk": "high",
+        "verdict": "ACCEPTABLE"
+      },
+      {
+        "name": "default",
+        "blend": {
+          "domain": 30,
+          "web": 50,
+          "code": 12,
+          "math": 8
+        },
+        "domain_tokens_M": 2516.58,
+        "domain_epochs": "762.6-559.24x",
+        "forget_risk": 0.5,
+        "absorption_score": 1.0,
+        "overall_score": 0.75,
+        "repeat_risk": "high",
+        "verdict": "ACCEPTABLE"
+      },
+      {
+        "name": "aggressive",
+        "blend": {
+          "domain": 40,
+          "web": 40,
+          "code": 12,
+          "math": 8
+        },
+        "domain_tokens_M": 3355.44,
+        "domain_epochs": "1016.8-745.65x",
+        "forget_risk": 0.667,
+        "absorption_score": 0.75,
+        "overall_score": 0.5,
+        "repeat_risk": "high",
+        "verdict": "ACCEPTABLE"
+      },
+      {
+        "name": "heavy_domain",
+        "blend": {
+          "domain": 50,
+          "web": 30,
+          "code": 12,
+          "math": 8
+        },
+        "domain_tokens_M": 4194.3,
+        "domain_epochs": "1271.0-932.07x",
+        "forget_risk": 0.833,
+        "absorption_score": 0.5,
+        "overall_score": 0.292,
+        "repeat_risk": "high",
+        "verdict": "RISKY"
+      }
+    ],
+    "recommended": "default"
+  },
+  "3_step_count": {
+    "step_options": [
+      {
+        "steps": 1000,
+        "total_tokens_B": 2.097,
+        "domain_tokens_M": 629.15,
+        "domain_epochs": "190.65-139.81x",
+        "wsd_split": "warmup=100 stable=700 decay=200",
+        "absorption": 0.487,
+        "forget_risk": 0.071,
+        "net_benefit": 0.473,
+        "wallclock_hours": 6.7,
+        "gpu_hours": 26.7,
+        "verdict": "OVER-ANNEAL"
+      },
+      {
+        "steps": 2000,
+        "total_tokens_B": 4.194,
+        "domain_tokens_M": 1258.29,
+        "domain_epochs": "381.3-279.62x",
+        "wsd_split": "warmup=100 stable=1700 decay=200",
+        "absorption": 0.736,
+        "forget_risk": 0.143,
+        "net_benefit": 0.694,
+        "wallclock_hours": 13.3,
+        "gpu_hours": 53.3,
+        "verdict": "OVER-ANNEAL"
+      },
+      {
+        "steps": 4000,
+        "total_tokens_B": 8.389,
+        "domain_tokens_M": 2516.58,
+        "domain_epochs": "762.6-559.24x",
+        "wsd_split": "warmup=200 stable=3400 decay=400",
+        "absorption": 0.931,
+        "forget_risk": 0.286,
+        "net_benefit": 0.824,
+        "wallclock_hours": 26.7,
+        "gpu_hours": 106.7,
+        "verdict": "OVER-ANNEAL"
+      },
+      {
+        "steps": 6000,
+        "total_tokens_B": 12.583,
+        "domain_tokens_M": 3774.87,
+        "domain_epochs": "1143.9-838.86x",
+        "wsd_split": "warmup=300 stable=5100 decay=600",
+        "absorption": 0.982,
+        "forget_risk": 0.429,
+        "net_benefit": 0.813,
+        "wallclock_hours": 40.0,
+        "gpu_hours": 160.0,
+        "verdict": "OVER-ANNEAL"
+      },
+      {
+        "steps": 8000,
+        "total_tokens_B": 16.777,
+        "domain_tokens_M": 5033.16,
+        "domain_epochs": "1525.2-1118.48x",
+        "wsd_split": "warmup=400 stable=6800 decay=800",
+        "absorption": 0.995,
+        "forget_risk": 0.571,
+        "net_benefit": 0.768,
+        "wallclock_hours": 53.3,
+        "gpu_hours": 213.3,
+        "verdict": "OVER-ANNEAL"
+      },
+      {
+        "steps": 12000,
+        "total_tokens_B": 25.166,
+        "domain_tokens_M": 7549.75,
+        "domain_epochs": "2287.8-1677.72x",
+        "wsd_split": "warmup=600 stable=10200 decay=1200",
+        "absorption": 1.0,
+        "forget_risk": 0.857,
+        "net_benefit": 0.657,
+        "wallclock_hours": 80.0,
+        "gpu_hours": 320.0,
+        "verdict": "OVER-ANNEAL"
+      }
+    ],
+    "recommended": 4000
+  },
+  "4_wsd_schedule": {
+    "schedules": [
+      {
+        "name": "default",
+        "lr": 0.0005,
+        "min_lr": 1e-05,
+        "lr_ratio": 50.0,
+        "lr_vs_pretrain": 1.0,
+        "curve": "WSD(w200→s3400→d400)",
+        "risks": [
+          "balanced"
+        ],
+        "verdict": "RECOMMENDED"
+      },
+      {
+        "name": "low_lr",
+        "lr": 0.0003,
+        "min_lr": 5e-06,
+        "lr_ratio": 60.0,
+        "lr_vs_pretrain": 0.6,
+        "curve": "WSD(w200→s3400→d400)",
+        "risks": [
+          "balanced"
+        ],
+        "verdict": "ACCEPTABLE"
+      },
+      {
+        "name": "high_lr",
+        "lr": 0.0008,
+        "min_lr": 2e-05,
+        "lr_ratio": 40.0,
+        "lr_vs_pretrain": 1.6,
+        "curve": "WSD(w200→s3200→d600)",
+        "risks": [
+          "high LR instability"
+        ],
+        "verdict": "RISKY"
+      },
+      {
+        "name": "long_warmup",
+        "lr": 0.0005,
+        "min_lr": 1e-05,
+        "lr_ratio": 50.0,
+        "lr_vs_pretrain": 1.0,
+        "curve": "WSD(w400→s3200→d400)",
+        "risks": [
+          "balanced"
+        ],
+        "verdict": "ACCEPTABLE"
+      },
+      {
+        "name": "long_decay",
+        "lr": 0.0005,
+        "min_lr": 1e-05,
+        "lr_ratio": 50.0,
+        "lr_vs_pretrain": 1.0,
+        "curve": "WSD(w200→s3000→d800)",
+        "risks": [
+          "balanced"
+        ],
+        "verdict": "ACCEPTABLE"
+      },
+      {
+        "name": "cosine_fallback",
+        "lr": 0.0004,
+        "min_lr": 1e-05,
+        "lr_ratio": 40.0,
+        "lr_vs_pretrain": 0.8,
+        "curve": "cosine",
+        "risks": [
+          "balanced"
+        ],
+        "verdict": "ACCEPTABLE"
+      }
+    ],
+    "recommended": "default"
+  },
+  "5_forgetting_risk": {
+    "anneal_ratio_pct": 0.571,
+    "default_retention": 0.9718,
+    "default_forgetting_pp": 2.82,
+    "retention_vs_domain_pct": [
+      {
+        "domain_pct": 15,
+        "retention": 0.9858,
+        "forgetting_pp": 1.42
+      },
+      {
+        "domain_pct": 20,
+        "retention": 0.9811,
+        "forgetting_pp": 1.89
+      },
+      {
+        "domain_pct": 30,
+        "retention": 0.9718,
+        "forgetting_pp": 2.82
+      },
+      {
+        "domain_pct": 40,
+        "retention": 0.9626,
+        "forgetting_pp": 3.74
+      },
+      {
+        "domain_pct": 50,
+        "retention": 0.9535,
+        "forgetting_pp": 4.65
+      }
+    ],
+    "retention_vs_steps": [
+      {
+        "steps": 1000,
+        "retention": 0.9929,
+        "forgetting_pp": 0.71
+      },
+      {
+        "steps": 2000,
+        "retention": 0.9858,
+        "forgetting_pp": 1.42
+      },
+      {
+        "steps": 4000,
+        "retention": 0.9718,
+        "forgetting_pp": 2.82
+      },
+      {
+        "steps": 6000,
+        "retention": 0.958,
+        "forgetting_pp": 4.2
+      },
+      {
+        "steps": 8000,
+        "retention": 0.9445,
+        "forgetting_pp": 5.55
+      },
+      {
+        "steps": 12000,
+        "retention": 0.9179,
+        "forgetting_pp": 8.21
+      }
+    ],
+    "mitigations": [
+      {
+        "strategy": "Keep 50%+ web in blend",
+        "effect": "continuous general exposure",
+        "risk": "low"
+      },
+      {
+        "strategy": "Lower LR (3e-4)",
+        "effect": "smaller parameter shifts",
+        "risk": "low (slower)"
+      },
+      {
+        "strategy": "Shorter annealing (2000 steps)",
+        "effect": "less exposure",
+        "risk": "medium"
+      },
+      {
+        "strategy": "L2 reg to pretrain weights",
+        "effect": "penalize drift",
+        "risk": "low"
+      },
+      {
+        "strategy": "Post-anneal benchmarks",
+        "effect": "detect forgetting",
+        "risk": "low",
+        "benchmarks": [
+          "MMLU",
+          "HumanEval",
+          "GSM8K"
+        ]
+      }
+    ],
+    "key_insight": "At default (d=30%,4000s,LR=5e-4): ratio=0.57% → retention=97.2% (forget=2.8pp). Safe (<5pp)."
+  },
+  "6_absorption_metrics": {
+    "metrics": [
+      {
+        "metric": "Domain perplexity",
+        "priority": "PRIMARY",
+        "method": "PPL on held-out 10% API_INFO_MERGED",
+        "threshold": "≥30% reduction",
+        "cost": "zero GPU ~5min"
+      },
+      {
+        "metric": "API name recognition",
+        "priority": "PRIMARY",
+        "method": "Prompt 'List EDA APIs' → count correct",
+        "threshold": "≥50% of top-100",
+        "cost": "zero GPU ~10min"
+      },
+      {
+        "metric": "API signature completion",
+        "priority": "SECONDARY",
+        "method": "Given name → complete signature",
+        "threshold": "≥30% on 50 APIs",
+        "cost": "zero GPU ~15min"
+      },
+      {
+        "metric": "Zero-shot pass@1",
+        "priority": "DEFINITIVE",
+        "method": "158-task eval no tools 5-run",
+        "threshold": "≥3pp improvement",
+        "cost": "GPU ~2h"
+      },
+      {
+        "metric": "General benchmark retention",
+        "priority": "SAFETY",
+        "method": "MMLU/HumanEval/GSM8K",
+        "threshold": "retention ≥97%",
+        "cost": "GPU ~1h"
+      },
+      {
+        "metric": "Embedding drift",
+        "priority": "DIAGNOSTIC",
+        "method": "Cosine sim of hidden states",
+        "threshold": "cosine ≥0.90",
+        "cost": "zero GPU ~5min"
+      }
+    ],
+    "acceptance_gate": {
+      "must_pass": [
+        "Domain PPL ≥30% drop",
+        "General retention ≥97%",
+        "Embedding cosine ≥0.90"
+      ],
+      "should_pass": [
+        "API recognition ≥50%",
+        "API signature ≥30%",
+        "Zero-shot ≥3pp"
+      ],
+      "abort": [
+        "General drop >5pp → reduce domain%/steps",
+        "Domain PPL no improve → check data",
+        "Loss diverges → reduce LR"
+      ]
+    }
+  },
+  "7_ablation_design": {
+    "arms": [
+      {
+        "arm": "A: anneal→SFT→RL",
+        "anneal": true,
+        "sft": true,
+        "rl": true,
+        "expected": "65-75%",
+        "gpu_h": 176
+      },
+      {
+        "arm": "B: SFT→RL (no anneal)",
+        "anneal": false,
+        "sft": true,
+        "rl": true,
+        "expected": "60-70%",
+        "gpu_h": 144
+      },
+      {
+        "arm": "C: anneal→SFT (no RL)",
+        "anneal": true,
+        "sft": true,
+        "rl": false,
+        "expected": "55-65%",
+        "gpu_h": 80
+      },
+      {
+        "arm": "D: SFT only",
+        "anneal": false,
+        "sft": true,
+        "rl": false,
+        "expected": "50-60%",
+        "gpu_h": 48
+      },
+      {
+        "arm": "E: anneal only",
+        "anneal": true,
+        "sft": false,
+        "rl": false,
+        "expected": "39-44%",
+        "gpu_h": 32
+      }
+    ],
+    "comparisons": [
+      {
+        "comp": "A vs B",
+        "q": "Does annealing help?",
+        "metric": "pass@1(A)-pass@1(B)",
+        "expected": "3-8pp",
+        "threshold": "≥2pp AND McNemar p<0.05",
+        "if_met": "Worth 32 GPU-h",
+        "if_not": "Skip annealing"
+      },
+      {
+        "comp": "E vs baseline",
+        "q": "Annealing alone?",
+        "metric": "pass@1(E)-0.36",
+        "expected": "3-8pp",
+        "threshold": "≥2pp",
+        "if_met": "Injects domain knowledge",
+        "if_not": "Insufficient alone"
+      },
+      {
+        "comp": "A vs C",
+        "q": "Does RL help?",
+        "metric": "pass@1(A)-pass@1(C)",
+        "expected": "8-15pp",
+        "threshold": "≥5pp AND p<0.05",
+        "if_met": "RL critical M3+",
+        "if_not": "SFT ceiling M2"
+      },
+      {
+        "comp": "C vs D",
+        "q": "Annealing helps SFT?",
+        "metric": "pass@1(C)-pass@1(D)",
+        "expected": "3-5pp",
+        "threshold": "≥2pp",
+        "if_met": "Improves SFT",
+        "if_not": "SFT subsumes"
+      }
+    ],
+    "total_gpu_hours": 480,
+    "budget_pct": 17.9,
+    "recommended_arms": [
+      "A",
+      "B",
+      "D"
+    ],
+    "note": "A,B,D minimal for key comparisons"
+  },
+  "8_checkpoint_selection": {
+    "save_points": [
+      {
+        "step": 0,
+        "phase": "warmup",
+        "lr": 0.0,
+        "domain_tok_M": 0.0,
+        "domain_epochs": 0.0
+      },
+      {
+        "step": 400,
+        "phase": "stable",
+        "lr": 0.0005,
+        "domain_tok_M": 251.66,
+        "domain_epochs": 55.92
+      },
+      {
+        "step": 800,
+        "phase": "stable",
+        "lr": 0.0005,
+        "domain_tok_M": 503.32,
+        "domain_epochs": 111.85
+      },
+      {
+        "step": 1200,
+        "phase": "stable",
+        "lr": 0.0005,
+        "domain_tok_M": 754.97,
+        "domain_epochs": 167.77
+      },
+      {
+        "step": 1600,
+        "phase": "stable",
+        "lr": 0.0005,
+        "domain_tok_M": 1006.63,
+        "domain_epochs": 223.7
+      },
+      {
+        "step": 2000,
+        "phase": "stable",
+        "lr": 0.0005,
+        "domain_tok_M": 1258.29,
+        "domain_epochs": 279.62
+      },
+      {
+        "step": 2400,
+        "phase": "stable",
+        "lr": 0.0005,
+        "domain_tok_M": 1509.95,
+        "domain_epochs": 335.54
+      },
+      {
+        "step": 2800,
+        "phase": "stable",
+        "lr": 0.0005,
+        "domain_tok_M": 1761.61,
+        "domain_epochs": 391.47
+      },
+      {
+        "step": 3200,
+        "phase": "stable",
+        "lr": 0.0005,
+        "domain_tok_M": 2013.27,
+        "domain_epochs": 447.39
+      },
+      {
+        "step": 3600,
+        "phase": "stable",
+        "lr": 0.0005,
+        "domain_tok_M": 2264.92,
+        "domain_epochs": 503.32
+      },
+      {
+        "step": 4000,
+        "phase": "decay",
+        "lr": 3.4e-05,
+        "domain_tok_M": 2516.58,
+        "domain_epochs": 559.24
+      }
+    ],
+    "strategy": {
+      "recommended": "Save 7 ckpts: 0,1000,2000,3000,3500,3800,4000",
+      "method": [
+        "1.Domain PPL per ckpt",
+        "2.General benchmark per ckpt",
+        "3.Select best PPL+<3pp drop",
+        "4.Fallback: final step 4000"
+      ],
+      "risk": "Decay phase 3600-4000 is crystallization sweet spot",
+      "disk": "28GB for 7 ckpts"
+    }
+  },
+  "9_over_under_anneal": {
+    "over_anneal": {
+      "symptoms": [
+        "General benchmark drops >5pp",
+        "Domain PPL low but pass@1 no improve",
+        "Domain-stereotyped outputs",
+        "Eval pass@1 plateaus",
+        "Embedding drift >0.15"
+      ],
+      "causes": [
+        ">6000 steps",
+        "domain >40%",
+        "LR >6e-4",
+        "corpus too small"
+      ],
+      "remedy": "Reduce to 2000 steps,domain=20%,LR=3e-4"
+    },
+    "under_anneal": {
+      "symptoms": [
+        "Domain PPL drop <15%",
+        "API recognition <30%",
+        "pass@1 improve <2pp",
+        "SFT same as pretrain"
+      ],
+      "causes": [
+        "<1000 steps",
+        "LR <2e-4",
+        "domain <15%"
+      ],
+      "remedy": "Increase to 6000 steps,domain=40%,LR=6e-4"
+    },
+    "early_warning": {
+      "step_1000": {
+        "domain_ppl_drop": "≥10%",
+        "general_ppl": "≤2% increase",
+        "if_fail": "increase LR/domain%"
+      },
+      "step_2000": {
+        "domain_ppl_drop": "≥20%",
+        "general_ppl": "≤3%",
+        "if_fail": "adjust domain% or steps"
+      },
+      "step_4000": {
+        "domain_ppl_drop": "≥30%",
+        "general_ppl": "≤4%",
+        "api_recog": "≥50%",
+        "if_fail": "select best intermediate ckpt"
+      }
+    }
+  },
+  "10_pipeline_integration": {
+    "pipeline": {
+      "step0_anneal": {
+        "input": "pretrain S1 ckpt",
+        "output": "anneal ckpt",
+        "duration": "~27h",
+        "gpu_h": 108,
+        "validation": "domain PPL ≥30% + general ≥97%"
+      },
+      "step1_sft": {
+        "input": "anneal ckpt",
+        "output": "SFT ckpt",
+        "duration": "~12h",
+        "gpu_h": 48,
+        "ctx": 8192,
+        "method": "full FT (R134)"
+      },
+      "step2_rl": {
+        "input": "SFT ckpt",
+        "output": "RL ckpt",
+        "duration": "~72h",
+        "gpu_h": 96,
+        "ctx": 16384,
+        "method": "GRPO G=8 4-arm",
+        "anti_cheat": "R135",
+        "kl": "R132"
+      },
+      "step3_eval": {
+        "input": "RL/SFT/anneal ckpt",
+        "output": "pass@1 5-run",
+        "duration": "~3h",
+        "gpu_h": 3,
+        "stats": "R133"
+      }
+    },
+    "integration_points": [
+      {
+        "point": "anneal→SFT",
+        "risk": "over-fitted anneal→SFT struggles",
+        "mitigation": "select ckpt with best general retention"
+      },
+      {
+        "point": "SFT→RL",
+        "risk": "pass@1>0.48→GRPO no learning",
+        "mitigation": "R131 Goldilocks [0.20,0.48]"
+      },
+      {
+        "point": "RL→eval",
+        "risk": "reward hacking",
+        "mitigation": "R135 6-layer defense"
+      }
+    ],
+    "timeline": {
+      "anneal": "Day 1-2(27h)",
+      "sft": "Day 2-3(12h)",
+      "rl": "Day 3-6(72h)",
+      "eval": "Day 6-7(6h)",
+      "total": "~7 days",
+      "gpu_budget": "258 GPU-h (9.6%)"
+    }
+  },
+  "key_conclusions": [
+    "1. ⚠️ CRITICAL: domain corpus (4.5M tok) vs 30% blend × 4000 steps = 559x repetition → severe overfitting risk",
+    "2. Default 4000 steps: absorption=0.93, but over-repetition (559x) far exceeds safe <10x threshold",
+    "3. WSD default (LR=5e-4) matches pretrain → stable resume, proven schedule",
+    "4. Forgetting risk LOW with k=5: retention ≥97.2% (forget <3pp) at default — over-repetition is bigger risk",
+    "5. ⚠️ RECOMMENDATION: Either (a) expand domain corpus to ≥100M tok, (b) reduce domain blend to 1-2%, or (c) reduce steps to 200-500",
+    "6. Ablation A vs B is key: pre-registered ≥2pp AND McNemar p<0.05",
+    "7. Checkpoint: save 7, select by PPL+retention; decay phase sweet spot",
+    "8. Pipeline: 7 days, 258 GPU-h (9.6%) — within constraints",
+    "9. Annealing contribution 3-8pp (consistent with core conclusion) IF over-repetition is resolved",
+    "10. Early warning at step 100/200 enables course correction; with 4.5M corpus, monitor at step 100"
+  ],
+  "limitations": [
+    "1. Forgetting model theoretical (exp decay), real may differ",
+    "2. Domain corpus 4.5M tok estimated",
+    "3. Throughput 2.5 steps/min unverified",
+    "4. Absorption curve heuristic",
+    "5. Cannot validate without GPU"
+  ]
+}
