@@ -6,14 +6,14 @@
 
 Unlike synthetic benchmarks constructed by task authors, \bench{} is built from \emph{real user interaction traces}---actual multi-turn sessions where IC design engineers used the Cline~\cite{cline2026} coding agent to solve design-flow problems in a production environment. We systematically scanned 698 engineering workstations, identified sessions containing EDA-related tool interactions, and curated tasks from the most representative ones.
 
-\textbf{Scan pipeline.} We grep session files for EDA-keyword matches (hspice, spectre, calibre, virtuoso, aether, innovus, pt\_shell, dc\_shell, netlist, schematic, etc.) and rank sessions by \emph{match-count} (mc)---the number of lines hitting any EDA keyword. Sessions with mc $\geq 30$ yield 1{,}511 candidates from 226 unique users. A two-stage prefilter (rule-based + 0.8B LLM classifier) filters non-design-flow sessions (Q\&A, permission-denied, tool-not-found), with 0\% rejection rate---confirming that mc $\geq 30$ sessions are almost universally genuine EDA work.
+\textbf{Scan pipeline.} We grep session files for EDA-keyword matches (hspice, spectre, calibre, virtuoso, aether, innovus, pt\_shell, dc\_shell, netlist, schematic, etc.) and rank sessions by \emph{match-count} (mc)---the number of lines hitting any EDA keyword. Sessions with mc $\geq 30$ yield 1{,}511 candidates from 224 unique users. A two-stage prefilter (rule-based + 0.8B LLM classifier) filters non-design-flow sessions (Q\&A, permission-denied, tool-not-found), with 0\% rejection rate---confirming that mc $\geq 30$ sessions are almost universally genuine EDA work.
 
 \textbf{Trace attribution.} Each task records \texttt{trace\_source} (host, user, session\_file, session\_msgs, real\_task\_summary), enabling trace-back to the original engineer's workflow. User identifiers are preserved (not hashed) for reproducibility, with only API keys/tokens masked.
 
 \subsection{Task Schema: The \mode{} Contract}
 \label{sec:task-schema}
 
-All 863 tasks follow a unified \mode{} contract (Table~\ref{tab:task-schema}):
+All 920 tasks follow a unified \mode{} contract (Table~\ref{tab:task-schema}):
 
 \begin{itemize}
     \item \textbf{Prompt}: A natural-language task description derived from the real user's intent, reformulated to be self-contained (no assumed context from the original session).
@@ -81,13 +81,13 @@ verification & 14 & A \\
 \bottomrule
 \end{tabular}
 \end{table}
-% 注：表格数字基于 11/06 快照（462 cases），最终版更新到 863。
+% NOTE: table numbers are the 2026-11-06 snapshot (462 cases); the current release (2026-11-09) has 920 cases.
 
 \subsection{Evaluation Metric and Protocol}
 \label{sec:eval-protocol}
 
 \textbf{Pass@1.} One trace per task: the agent may iterate within the trace (multiple tool calls) but is never restarted. A 2400-second timeout per task. A task passes iff \emph{all} $k \geq 8$ assertions in the reference \texttt{check.py} hold.
 
-\textbf{Execution-based scoring.} The reference judge unpacks \texttt{submit.zip} into a fresh workdir and runs assertions against the deliverable, using only Python standard library (no EDA license required for judging). Each assertion is documented in the \texttt{test\_rationale} field as ``k 条断言：①…②…'' for interpretability.
+\textbf{Execution-based scoring.} The reference judge unpacks \texttt{submit.zip} into a fresh workdir and runs assertions against the deliverable, using only Python standard library (no EDA license required for judging). Each assertion is documented in the \texttt{test\_rationale} field as ``k assertions: (1), (2), ...'' for interpretability.
 
 The full evaluation harness---including the agent system, MCP bridge, anti-leakage hook, and judge implementation---is described in Section~\ref{sec:harness} (main text) and Appendix~\ref{sec:experimental-details} (implementation details).

@@ -376,3 +376,39 @@ git add -- benchmarks/EDA-Eval-DesignFlow/EDA-Eval-DesignFlow_A.jsonl \
            benchmarks/EDA-Eval-DesignFlow/assets benchmarks/EDA-Eval-DesignFlow/reference
 git commit -m "designflow shard A #<轮次>: <一句话>" && git push origin master
 ```
+
+---
+
+## 附加职责（2026-11-09 运维令）：ICML 2027 论文维护
+
+路径：`doc/ZhuLong_DAC2027/EDA-LiveFlow-Bench_ICML2027/`
+
+### A. 编译（每轮必过）
+
+```bash
+cd doc/ZhuLong_DAC2027/EDA-LiveFlow-Bench_ICML2027
+latexmk -pdf -interaction=nonstopmode main.tex   # 必须 0 error；当前 10 页
+```
+
+- ICML 2027 Author Kit 未发布，暂用仓库自带 `icml2026.sty/.bst`；拿到 2027 kit 后替换文件并改 `\usepackage{icml2026}` / `\bibliographystyle{icml2026}`。
+- `main.tex` 必须用 **ICML 2026+ 接口**：`\twocolumn[... \icmltitle / icmlauthorlist / icmlaffiliation / icmlkeywords ...]` + `\printAffiliationsAndNotice{}`；禁止旧接口 `\icmlrunning` / `\maketitle`。
+- **正文禁止非 ASCII**（中文 / em dash / 箭头等）：pdflatex 无 CJK 字体，会 fatal；注释也建议写英文。
+- 若报 `pcrr7t.tfm not found`：`tlmgr install courier`。
+- 生成物：`main.pdf` 随提交；aux/log/bbl 已在 `.gitignore`。
+
+### B. 内容刷新（每轮或 case 有增减时）
+
+- 任务总数 = A+B+C+D：**2026-11-09 = A:177 B:210 C:270 D:263 = 920**。
+- 生产扫描口径：**42 hosts / 5,822 sessions / 268 users (mc≥15) / 224 users (mc≥30) / mc30 = 1,511 / dedup = 3,896**。
+- 资产规模（survey）：**698 workstations / 2,850 users / 52,698 session files / 24,085 IC-EDA matched**。
+- 领域数：**13**（论文口径；survey 的 11 类是更粗分类）。
+- 评测样本：**48 cases / 4 domains**（`benchmark/designflow/cline_eval/`），最终扩到全量。
+- 同步位置：摘要、§1 Intro、§2 Benchmark、§4 Experiments、§7 Conclusion、§9 Reproducibility、App A/B/C、README。
+- 数字来源优先级：`benchmark/designflow/summary_stats.json`（scan/users/mc30）> 各 shard MEMORY 的 ledger 计数 > 论文旧值（禁止沿用旧值）。
+
+### C. 交付
+
+- `main.pdf` 必须重新生成并随提交（10 页；0 undefined citation）。
+- 提交信息：`paper: refresh stats (<date>, N=<total>)`。
+- 若 case 计数未变，只做编译回归，不必改数字。
+

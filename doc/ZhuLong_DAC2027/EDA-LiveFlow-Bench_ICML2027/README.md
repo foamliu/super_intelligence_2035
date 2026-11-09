@@ -62,7 +62,7 @@ pdflatex main && bibtex main && pdflatex main && pdflatex main
 
 ## 核心论点
 1. **问题**：现有 EDA LLM benchmark 只评单函数代码生成或开源 flow 修复，没人评多步设计流编排
-2. **贡献**：EDA-LiveFlow-Bench — 863 任务、13 domain、226 真实用户、65 台工作站，从真实 Cline 交互轨迹构建
+2. **贡献**：EDA-LiveFlow-Bench — 920 任务、13 domain、268 真实用户、42 台工作站，从真实 Cline 交互轨迹构建
 3. **方法**：design_flow 契约（submit.zip 交付件）、执行式判分（≥8 断言）、PreToolUse 防泄题 hook
 4. **结果**：最佳系统仅 28% Pass@1（远低于单脚本 EDA bench 的 76%），说明多步编排更难
 5. **分析**：verification 80% 最易、digital 0% 最难，差距来自 tool-chain grounding depth 非 model size
@@ -70,7 +70,7 @@ pdflatex main && bibtex main && pdflatex main && pdflatex main
 ## 与 DAC 2027 论文（ZhuLong）的区别
 | | DAC 2027 (ZhuLong) | ICML 2027 (EDA-LiveFlow-Bench) |
 |---|---|---|
-| **Benchmark** | EDA-Scripting-Bench (449 tasks, 单脚本) | EDA-LiveFlow-Bench (863 tasks, 多步编排) |
+| **Benchmark** | EDA-Scripting-Bench (449 tasks, 单脚本) | EDA-LiveFlow-Bench (920 tasks, 多步编排) |
 | **Task mode** | 单函数代码生成 | design_flow (submit.zip 交付件) |
 | **数据来源** | 厂商文档 + 专家构造 | 真实用户 Cline 交互轨迹 |
 | **核心论点** | observation fidelity 是 binding 约束 | tool-chain grounding depth 是 binding 约束 |
@@ -79,11 +79,11 @@ pdflatex main && bibtex main && pdflatex main && pdflatex main
 
 ## 待补内容
 - [ ] 下载 ICML 2027 官方 style 文件 (icml2027.sty / icml2027.bst)
-- [ ] 扩 cline eval 到全 863 cases（当前仅 89 条，4 domain）
+- [ ] 扩 cline eval 到全 920 cases（当前仅 48 条，4 domain）
 - [ ] 补多模型对比数据 (GLM-5.2 / Kimi-K2.6 / DeepSeek-V4-Flash)
 - [ ] 画 pipeline 图 (Figure 1)
 - [ ] 画 grounding depth vs Pass@1 图 (Figure 2)
 - [ ] 画 domain distribution 饼图 (Figure 3)
 - [ ] 补完整的 failure taxonomy 统计
-- [ ] 更新 domain 分布表到 863 cases
+- [ ] 更新 domain 分布表到 920 cases
 - [ ] 附录 A 补完整 task example

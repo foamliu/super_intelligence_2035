@@ -15,8 +15,10 @@
 
 \documentclass{article}
 
-% ICML 2027 style (submitted = 匿名审稿)
-\usepackage[submitted]{icml2027} % camera-ready: [accepted]
+% ICML 2027 Author Kit 尚未发布；当前使用仓库自带的 icml2026.sty/.bst（接口一致）。
+% 拿到 2027 kit 后：把 icml2026.sty/.bst 换成 icml2027.*，并同步改本行与 \bibliographystyle。
+\usepackage{hyperref}
+\usepackage{icml2026}
 
 % 基础包
 \usepackage{amsmath,amssymb}
@@ -24,7 +26,6 @@
 \usepackage{booktabs}
 \usepackage{algorithm}
 \usepackage{algorithmic}
-\usepackage{hyperref}
 \usepackage{xspace}
 \usepackage{multirow}
 
@@ -38,19 +39,28 @@
 % 图表路径
 \graphicspath{{figures/}}
 
-% ===== 标题与作者 =====
-\icmltitle{EDA-LiveFlow-Bench: Benchmarking LLM Agents on Real-World Circuit Design Flow Orchestration}
-
-\icmltitlerunning{EDA-LiveFlow-Bench}
-
-% 双盲：匿名作者
-\icmlauthor{Anonymous}{}
-
-\icmlrunning{EDA-LiveFlow-Bench}
-
+% ===== 标题与作者（ICML 2026+ 接口：twocolumn + icmlauthorlist）=====
 \begin{document}
 
-\maketitle
+\twocolumn[
+  \icmltitle{EDA-LiveFlow-Bench: Benchmarking LLM Agents on Real-World Circuit Design Flow Orchestration}
+
+  \icmltitlerunning{EDA-LiveFlow-Bench}
+
+  % 双盲：不写真实作者；样式在非 accepted 模式下不显示
+  \begin{icmlauthorlist}
+    \icmlauthor{Anonymous Submission}{anon}
+  \end{icmlauthorlist}
+
+  \icmlaffiliation{anon}{Anonymous Institution}
+
+  \icmlcorrespondingauthor{Anonymous Submission}{anonymous@example.org}
+
+  \icmlkeywords{EDA, LLM agents, benchmark, design flow, tool orchestration}
+
+  \vskip 0.3in
+]
+\printAffiliationsAndNotice{}
 
 % ===== 主体章节（按 ML 会议惯例排序）=====
 \input{sections/0_abstract}
@@ -67,7 +77,7 @@
 \input{sections/9_reproducibility}
 
 % ===== 参考文献 =====
-\bibliographystyle{icml2027}
+\bibliographystyle{icml2026}
 \bibliography{references}
 
 % ===== 附录（不计入页数限制，放在 references 之后）=====

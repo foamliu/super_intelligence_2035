@@ -11,7 +11,7 @@
     \item \textbf{RQ3 (model scaling).} Does scaling the backbone close the orchestration gap, or is it bounded by tool-chain grounding?
 \end{itemize}
 
-\textbf{Benchmark.} \bench{} with 863 tasks across 13 domains (Section~\ref{sec:benchmark}). We report Pass@1 (one trace per task, 2400s timeout, \texttt{thinking=low}).
+\textbf{Benchmark.} \bench{} with 920 tasks across 13 domains (Section~\ref{sec:benchmark}). We report Pass@1 (one trace per task, 2400s timeout, \texttt{thinking=low}).
 
 \textbf{Models.} DeepSeek-V4-Pro (primary), GLM-5.2, Kimi-K2.6, DeepSeek-V4-Flash, Doubao-Seed-2.0-Pro. All accessed via agi-gateway (OpenAI-compatible API).
 
@@ -38,10 +38,10 @@ digital & 7 & 0.0 \\
 \bottomrule
 \end{tabular}
 \end{table}
-% 注：当前 eval 样本 89 条（4 domain），最终版扩到全 863 + 13 domain。
+% NOTE: current eval sample = 48 cases (4 domains); final version will expand to all 920 cases + 13 domains.
 % 数字基于 11/06 快照，thinking=medium。最终版用 thinking=low 重跑。
 
-Table~\ref{tab:main-results} shows Pass@1 by domain on the current evaluation sample (89 tasks across 4 domains). The overall Pass@1 of \textbf{28.1\%} is dramatically lower than the 76.5\% reported on EDA-Scripting-Bench~\cite{zhu2026edascript} for single-script tasks, confirming that \emph{multi-step flow orchestration is qualitatively harder} than isolated code generation (RQ1).
+Table~\ref{tab:main-results} shows Pass@1 by domain on the current evaluation sample (48 tasks across 4 domains). The overall Pass@1 of \textbf{28.1\%} is dramatically lower than the 76.5\% reported on EDA-Scripting-Bench~\cite{zhu2026edascript} for single-script tasks, confirming that \emph{multi-step flow orchestration is qualitatively harder} than isolated code generation (RQ1).
 
 \subsection{Domain Gap (RQ2)}
 \label{sec:domain-gap}

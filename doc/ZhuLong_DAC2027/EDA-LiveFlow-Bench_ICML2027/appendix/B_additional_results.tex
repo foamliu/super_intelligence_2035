@@ -6,12 +6,12 @@
 \subsection{Full Per-Domain Results}
 \label{sec:full-per-domain}
 
-[TODO: 全 863 cases 按 13 domain 分的 Pass@1 表。当前仅 89 条 / 4 domain，最终版扩到全量。]
+[TODO: full Pass@1 table for all 920 cases across 13 domains. Current evaluation: 48 cases / 4 domains; the final version will cover the full set.]
 
 \begin{table}[ht]
 \centering
 \small
-\caption{Full Pass@1 (\%) by domain (target: all 13 domains, 863 tasks).}
+\caption{Full Pass@1 (\%) by domain (target: all 13 domains, 920 tasks).}
 \label{tab:full-domain-results}
 \begin{tabular}{@{}lcc@{}}
 \toprule
@@ -39,7 +39,7 @@ verification & 14 & 80.0 \\
 \subsection{Per-Model Results}
 \label{sec:per-model}
 
-[TODO: 多模型对比。当前仅 DeepSeek-V4-Pro 有数据。GLM-5.2 / Kimi-K2.6 / DeepSeek-V4-Flash 待补。]
+[TODO: multi-model comparison. Currently only DeepSeek-V4-Pro has data; GLM-5.2 / Kimi-K2.6 / DeepSeek-V4-Flash are pending.]
 
 \begin{table}[ht]
 \centering
@@ -62,9 +62,9 @@ Doubao-Seed-2.0-Pro & --- \\
 \subsection{Failure Taxonomy by Domain}
 \label{sec:failure-by-domain}
 
-[TODO: 按 domain 分的 failure category（no-output / partial-output / format）堆叠柱状图 + 表格。当前数据：overall 60/25/15，digital 100/0/0。]
+[TODO: failure-category breakdown by domain (no-output / partial-output / format), stacked bar chart + table. Current data: overall 60/25/15; digital 100/0/0.]
 
 \subsection{Token Usage and Cost Analysis}
 \label{sec:token-cost}
 
-[TODO: 每 task 的平均 input/output token、平均 tool call 数、平均 wall-clock 时间。从 status.jsonl 统计。]
+[TODO: per-task average input/output tokens, average number of tool calls, and average wall-clock time, computed from status.jsonl.]
