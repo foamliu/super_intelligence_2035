@@ -464,3 +464,14 @@
 1793584942223_nrkph	alan3zh	hfeg0pkn001	92	pg_layout	case	EDA-Eval-DesignFlow-PpFlowSetupGen-001	2026-11-09 07:40	
 1791516327546_gfccq					parked		2026-11-09 08:10	r270 non-seed: e0042624 NEW user, virtuoso147但实为custom_design_skill安装/加载会话(U0 cd skill repo; U15 install; U27 skip-show; U29 load skill), 非layout设计任务, harness/skill-mgmt
 1793775927024_1stc5					parked		2026-11-09 08:10	r270 non-seed: shaoyou, innovus36但实为WaveView FSDB波形分析(U0 计算信号v(Vb)平均值→waveview-fsdb-reader skill), sim/waveview域非pg_layout
+1793842357080_knbkz	legendd	hfeg0pkn002	688	layout_aether	claimed		2026-11-09 08:32	
+1793782993086_d1yda					parked		2026-11-09 08:32	prose how-to(华大aether如何批量copy cell到目标文件夹); 1 user turn 18msgs; agent answers w/ docs no runnable artifact; violates 4.2/4.3 same-class as 4ys8e/iacrk
+1789536472827_nwhe2					parked		2026-11-09 08:32	U0='zl -cli'(7chars typo/CLI invoke); 1 user turn 26msgs; too thin/ambiguous; agent only list_allowed_files/read_files exploring
+1789717866261_vhb6i					parked		2026-11-09 08:32	perf-diagnosis: U0 asks why pyaether-script slower than skill-script (gives symptom asks root-cause); diagnosis/explanation task no runnable build deliverable; hard to make 8+cond check
+1792652163775_i6fn6					parked		2026-11-09 08:32	env-recon: U0='你能获取到当前我打开的aether进程吗'+U10'你检查的范围是什么我已经开了aether GUI'; process-discovery/harness task not layout design; thin deliverable
+1792043637880_ajcab					parked		2026-11-09 08:32	duplicate schematic-highlight: U37='帮我高亮当前schematic中所有的line使用不同的颜色区分' = same theme+same user(e0023936) as parked 1vto1; overlaps eda-highlight-by-name-pattern skill; schematic-domain not layout; 5 prior parked siblings
+1785910754851_j98ua					parked		2026-11-09 08:32	sim/scenario-launch: U0='启动场景 模拟电路优化'+U84'我在virtuoso'+U86'setup_dc_sweep()'; analog-circuit-optimization DC-sweep setup in virtuoso = sim/schematic not layout; wrong shard
+1785390178118_ewjnc					parked		2026-11-09 08:32	vague-analysis: U2='请你帮忙分析下你连接到的layout 路径.../austin_rscalc2/testa'; open-ended 'analyze' no specific deliverable; hard to define 8+ independent check conditions
+1783422292753_zh4of					parked		2026-11-09 08:32	duplicate autovia: U0=run run_autovia_agent.il+troubleshoot+solidify-to-executable-steps; same user(e0014566) same theme as AutoViaGen-001(6mdxh)+AutoViaPFAudit-001(9fg5t); 5 prior parked autovia siblings
+1785487939572_csrxv					parked		2026-11-09 08:32	harness-bridge-test: U0='agent 跟 Virtuoso 连接的桥接是通的嘛写一个测试脚本测试一下'; env-recon/bridge-connectivity test not layout design; wrong type
+1785416279062_uu38v					parked		2026-11-09 08:32	harness-bridge-test: U0 identical to csrxv (agent-Virtuoso bridge connectivity test); env-recon not layout; wrong type
