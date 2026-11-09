@@ -13921,4 +13921,123 @@ R5 = clamp(R5, 0.0, 1.0)
 | `baize_posttrain_r133_eval_stats.py` | ~20KB, 490 行 | py_compile ✅, run ✅ |
 | `r133_eval_stats_report.json` | 12.4KB | 完整报告（含功效/样本量/校正/阈值/成本） |
 
+---
+
+## §R134 SFT Ablation Design: LoRA vs Full FT × Data Mix × Context Length（2026-11-10 · 零 GPU · 预注册设计）
+
+> **动机**：P2 方案书 §3.4 明确要求「LoRA vs 全参」和「上下文长度 4096 vs 8192 vs 16384」消融，但此前无量化设计。R134 填补此空白：为 SFT 阶段提供**预注册的因子消融方案**，含内存可行性验证、分数因子设计（8 runs vs 18 full）、GPU 预算、冻结判定规则。
+> **预注册冻结日期**：2026-11-10。所有阈值先定后测，不因结果修改。
+
+### 1. 因子与水平
+
+| 因子 | 水平数 | 水平值 | 理由 |
+|:--|:--:|:--|:--|
+| FT 方法 | 2 | LoRA r=64 attn_mlp / Full FT (FSDP) | P2 核心问题 |
+| 数据混合 | 3 | agent_heavy / balanced / domain_heavy | 对应 M1(50%)/M2(65%) 目标 |
+| 上下文长度 | 3 | 4096 / 8192 / 16384 | P2 明确要求 |
+
+> 全因子 = 2×3×3 = 18 runs；分数因子设计 = **8 runs**（56% reduction）。
+
+### 2. 内存可行性（4×A40, 42GB usable/GPU, bf16, gradient checkpointing）
+
+**Full FT (FSDP)**：
+
+| ctx_len | max_mbs | total GiB/GPU | fits | headroom |
+|--:|--:|--:|:--|--:|
+| 4096 | 64 | 33.3 | ✅ | 8.7 GiB |
+| 8192 | 42 | 41.3 | ✅ | 0.7 GiB |
+| 16384 | 21 | 41.3 | ✅ | 0.7 GiB |
+
+**LoRA r=64 (DDP)**：
+
+| ctx_len | max_mbs | total GiB/GPU | fits | headroom | LoRA params |
+|--:|--:|--:|:--|--:|--:|
+| 4096 | 64 | 30.8 | ✅ | 11.2 GiB | 100.5M (5.0%) |
+| 8192 | 45 | 41.3 | ✅ | 0.7 GiB | 100.5M (5.0%) |
+| 16384 | 22 | 40.5 | ✅ | 1.5 GiB | 100.5M (5.0%) |
+
+> **结论**：Full FT 和 LoRA 均可在 4×A40 上运行到 ctx=8192（95% 覆盖率）。LoRA 在 ctx=4096 有更大 headroom（11.2 vs 8.7 GiB），在 ctx=8192/16384 两者差异很小（因 activation 主导）。
+
+### 3. LoRA 配置分析
+
+| rank | alpha | target | params(M) | param% | quality |
+|--:|--:|:--|--:|--:|:--|
+| 8 | 16 | attn_only | 4.3 | 0.22% | format/style |
+| 8 | 16 | attn_mlp | 12.6 | 0.63% | format/style |
+| 32 | 64 | attn_mlp | 50.2 | 2.51% | balanced |
+| **64** | **128** | **attn_mlp** | **100.5** | **5.02%** | **balanced ★ RECOMMENDED** |
+| 128 | 256 | attn_mlp | 200.9 | 10.05% | diminishing returns |
+
+> LoRA r=64 α=128 attn_mlp = 100.5M trainable params (5% of 2B)。A=rank×in, B=out×rank, per-module = rank×(in+out)。
+
+### 4. 上下文长度覆盖率
+
+| ctx_len | coverage | truncation | throughput | 判读 |
+|--:|--:|:--|--:|:--|
+| 4096 | 80% | 20% | 2078 tok/s | 丢失 error-recovery 尾部 |
+| 8192 | 95% | 5% | 2078 tok/s | 可接受，主推荐 |
+| 16384 | 99% | 1% | 2078 tok/s | 近全覆盖，但 4× memory |
+
+### 5. 8-Run 分数因子设计
+
+| Run | data_mix | ft_method | ctx_len | train+eval(h) | GPU-h | role |
+|:--|:--|:--|--:|--:|--:|:--|
+| A1 | agent_heavy | lora_r64 | 4096 | 2.2 | 9 | 最廉价：LoRA+短 ctx+agent→M1 快速探查 |
+| A2 | agent_heavy | full_ft | 8192 | 4.7 | 19 | M1 主候选：full FT+8K+agent heavy |
+| A3 | balanced | lora_r64 | 8192 | 2.7 | 11 | LoRA+8K+balanced→LoRA 质量上限 |
+| A4 | balanced | full_ft | 8192 | 4.7 | 19 | Full FT+8K+balanced→主 SFT 候选 |
+| A5 | domain_heavy | full_ft | 8192 | 4.7 | 19 | M2 方向：full FT+8K+domain |
+| A6 | domain_heavy | lora_r64 | 16384 | 3.7 | 15 | LoRA+16K+domain→极限 LoRA |
+| A7 | balanced | full_ft | 4096 | 3.7 | 15 | ctx 短对照：full FT+4K+balanced |
+| A8 | domain_heavy | full_ft | 16384 | 4.7 | 19 | ctx 长对照：full FT+16K+domain |
+| **Total** | | | | **~31 wallclock** | **132** | 8 runs |
+
+> Full factorial 18 runs vs fractional 8 runs = 56% reduction。总 GPU-hours = 132（含 eval）。
+
+### 6. GPU 时间预算
+
+| 类别 | GPU-h | % | 说明 |
+|:--|--:|--:|:--|
+| 主训练 | 194 | 7.2% | Annealing(32)+SFT(48)+RL(96)+eval(3)+baseline(3)+reward_abl(12) |
+| SFT 消融 | 132 | 4.9% | 8 fractional factorial runs |
+| Contingency | 65 | 2.4% | 20% buffer |
+| **Total** | **404** | **15.0%** | Remaining: 2284 GPU-h → **budget ample** |
+
+### 7. 预注册判定规则（FROZEN 2026-11-10）
+
+| Rule | Question | Comparison | Threshold | If Met | If Not Met |
+|:--|:--|:--|:--|:--|:--|
+| AB-1 | LoRA vs Full FT | A2/A4 vs A1/A3 (same mix & ctx) | FT−LoRA ≥ 3pp AND McNemar p<0.05 | Use full FT | Use LoRA (saves ~50% GPU) |
+| AB-2 | 8K vs 4K | A4 (8K) vs A7 (4K) | 8K−4K ≥ 2pp AND p<0.05 | Use 8K | Use 4K (faster) |
+| AB-3 | 16K vs 8K | A8 (16K) vs A5 (8K) | 16K−8K ≥ 2pp AND p<0.05 | Consider 16K for RL | Use 8K (not worth 4× memory) |
+| AB-4 | agent_heavy vs balanced for M1 | A2 vs A4 | agent−balanced ≥ 2pp for M1 | agent_heavy for M1 | balanced (better M1→M2) |
+| AB-5 | domain_heavy vs balanced for M2 | A5 vs A4 | domain−balanced ≥ 3pp AND p<0.05 | domain_heavy for M2 | balanced (avoid forgetting) |
+| AB-6 | LoRA×ctx interaction | (A6−A3) vs (A8−A5) | |interaction| ≥ 2pp | Report interaction | Treat independently |
+
+### 8. Verl/Transformers 集成路径
+
+| 路径 | 框架 | 配置 | 优势 | 风险 |
+|:--|:--|:--|:--|:--|
+| SFT+LoRA | transformers+peft | LoraConfig(r=64, α=128, target=attn_mlp) | 快速迭代数据混合 | 可能不如 full FT 注入深度知识 |
+| SFT+Full FT | transformers+FSDP | FULL_SHARD, bf16 | 最佳质量上限 | 慢、更多内存 |
+| RL from LoRA | merge→verl SGLang | merge_and_unload()→serve | 可用 LoRA 结果 | verl 不原生支持 LoRA rollout |
+| RL from Full FT | direct→verl SGLang | ckpt→serve | 原生路径 | 无 |
+
+> **推荐**：先跑消融（AB-1），若 LoRA 在 3pp 内则用 LoRA 快速迭代数据混合，最后用 full FT 跑最佳混合。
+
+### 9. 产出文件
+
+| 文件 | 大小 | 说明 |
+|:--|--:|:--|
+| `baize_posttrain_r134_sft_ablation_design.py` | ~22KB, 539 行 | py_compile ✅, run ✅ |
+| `r134_sft_ablation_report.json` | 16.1KB | 完整 JSON 报告（含内存/LoRA/ctx/ablation/budget/rules/verl） |
+
+### 10. 局限性
+
+1. **替身模型**：MiniCPM5-2B 作为 2B 替身，BaiZe-2B 实际架构可能不同
+2. **内存模型为估算**：FSDP sharding + gradient checkpointing 的实际开销需 profiling 校准
+3. **吞吐量假设**：2078 tok/s 基于 A40 bf16 理论 FLOPS，实际受 NCCL/数据加载影响
+4. **分数因子设计未验证混淆结构**：8-run 设计的主效应可估，但二阶交互可能部分混淆
+5. **预注册阈值基于先验**：3pp/2pp 阈值参考 R133 功效分析，但消融比较的统计功效未单独计算
+
 

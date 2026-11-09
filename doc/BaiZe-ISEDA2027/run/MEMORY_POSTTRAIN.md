@@ -7,12 +7,12 @@ WAITING: 0
 
 ## 进度快照
 
-- PHASE: posttrain-wake180（2026-11-10 R133: 统计评测框架——McNemar配对检验(精确二项+卡方),paired bootstrap CI(10000重采样),功效分析(3000 sims,14pp→power=0.976),最小样本量,Holm多样本校正,预注册M1-M4判定阈值(FROZEN 2026-11-10),Cohen's h效应量,5-run稳定性(std~3.38pp<8pp),成本效益(194 GPU-h/7.2%util)）
-- 已完成: P3预备✅；P0✅；P1✅；P2✅；R1-R133✅；wake179✅ R132(KL control)；wake180✅ R133(eval stats)
-- 当前动作: wake180 R133: ①baize_posttrain_r133_eval_stats.py(490行,py_compile✅+run✅) ②McNemar:精确二项(discordant≤25)+卡方连续性校正 ③Paired bootstrap:10000重采样,百分位95%/99%CI ④功效:14pp→0.976,10pp→0.794临界,5pp→0.253不足 ⑤最小样本量:正态近似M1需195(偏保守),蒙特卡洛5-run聚合后充足 ⑥Holm step-down(M1-M4家族) ⑦预注册阈值FROZEN:M1 α=0.05/95%CI/std≤8pp;M4 α=0.01/99%CI/std≤6pp/cheat<2% ⑧Cohen's h:M1=0.284medium/M2=0.589large/M3=0.807very_large/M4=1.059very_large ⑨5-run稳定性:mean3.38pp/P99 6.57pp<8pp阈值✅ ⑩成本:194 GPU-h/2688可用(7.2%)→预算充裕. EXPERIMENTS §R133
+- PHASE: posttrain-wake181（2026-11-10 R134: SFT消融设计——LoRA r=64(100.5M,5%params) vs Full FT内存可行性验证(4×A40,ctx8192均fit),上下文4096/8192/16384覆盖率(80/95/99%),8-run分数因子设计(vs18全因子,56%减少),GPU预算404/2688=15%,6条预注册判定规则AB-1~AB-6 FROZEN 2026-11-10,verl集成路径）
+- 已完成: P3预备✅；P0✅；P1✅；P2✅；R1-R134✅；wake180✅ R133(eval stats)；wake181✅ R134(SFT ablation design)
+- 当前动作: wake181 R134: ①baize_posttrain_r134_sft_ablation_design.py(539行,py_compile✅+run✅) ②内存分析:Full FT(FSDP)ctx8192 mbs=42 41.3GiB✅;LoRA(DDP)ctx8192 mbs=45 41.3GiB✅ ③LoRA参数修正:rank×(in+out)非2×rank×in×out→r64attn_mlp=100.5M(5%) ④ctx覆盖率:4K=80%/8K=95%/16K=99% ⑤8-run分数因子:A1-A8,总132GPU-h ⑥GPU预算:主194+消融132+contingency65=404/2688=15% ⑦6条预注册规则AB-1~AB-6 FROZEN ⑧verl路径:SFT→LoRA/Full→RL merge/direct. EXPERIMENTS §R134
 - 下一步: ①GPU释放→vLLM serve MiniCPM5-2B复测36%基线(5-run) ②真实MiniCPM5-2B rollout替换R125 MockModel ③统计框架在真实数据上验证 ④SFT语料最终混合比确认(通用60%/agentic20%/v5 10%/R127 10%) ⑤正式训练待pretrain ckpt(ETA≈2026-12-25)
 - 阻塞: GPU 0/8free(SGLang Qwen3.8-27B占全8卡44-45GB 0%util,11/9已过仍未释放);沙箱10.129.32.75全端口FILTERED;Docker无权限;P3等pretrain ckpt(ETA≈2026-12-25)
-- 本轮新增调研产出: R133 统计评测框架(490行+McNemar配对检验+paired bootstrap CI+功效分析14pp→0.976+最小样本量+Holm多样本校正+预注册M1-M4判定阈值FROZEN+Cohen's h+5-run稳定性3.38pp+成本194GPU-h/7.2%+EXPERIMENTS §R133）
+- 本轮新增调研产出: R134 SFT消融设计(539行+内存可行性+LoRA配置分析+ctx覆盖率+8-run分数因子+GPU预算404/2688=15%+6条预注册规则AB-1~AB-6 FROZEN+verl集成路径+EXPERIMENTS §R134）
 - 未完成指令: 🔴用户令2026-11-07(GPU未到位,需持续产出调研) ⇒ WAITING=0
 - git: commit✅ push✅(2f64730ec, rebase+push after remote advance)
 
