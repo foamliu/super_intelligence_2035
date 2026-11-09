@@ -562,3 +562,25 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked		2026-11-09 20:39	RAG-looku
 1792055918399_guf1d	minjiex	hfeg0plg90	97	physical_verify	parked		2026-11-10 02:20	r299: cancelled, trivial prompt=你好, A-rule2 fail
 1794213257272_e0taz	e0039122	hfeg0plg53	170	layout_aether	parked		2026-11-10 02:20	r299: idle, capability Q&A prompt=你可以使用Aether吗, no produce-task
 1793937823141_zdo8r	t0002038	hfeg0plg90	585	layout_aether	case	EDA-Eval-DesignFlow-TrMatchHelperGen-001	2026-11-10 04:11	
+1791611768210_xnqkp					parked		2026-11-10 04:54	r312 data-analysis on aether crash CSV (wrong-shard, not layout)
+1793094734633_bn62m					parked		2026-11-10 04:54	r312 pex-fail diagnose-fix (no clean produce deliverable)
+1793015068991_s8p63					parked		2026-11-10 04:54	r312 aether-launcher skill-enable (not produce)
+1793760799765_jj71x					parked		2026-11-10 04:54	r312 drc-exit255 diagnose-fix (no clean deliverable)
+1794209380351_1bu1m					parked		2026-11-10 04:54	r312 failed exit=1 no accepted gold
+1791795346613_15rw7					parked		2026-11-10 04:54	r312 cancelled skill-enable aether (not produce)
+1792980238183_sh05n					parked		2026-11-10 04:54	r312 failed meta-question no gold
+1792744504374_xpor0					parked		2026-11-10 04:54	r312 stress-test consume-280k-token (not produce)
+1793346955766_iz8r1					parked		2026-11-10 04:54	r312 idle how-to aether-load-script (no gold)
+1793353206916_oj58x					parked		2026-11-10 04:54	r312 empty prompt resume session (not seedable)
+1793791758551_nd56k					parked		2026-11-10 04:54	r312 cancelled launcher command (not produce)
+1794201560065_efk6e					parked		2026-11-10 04:54	r312 idle netlist-diff compare (shard D)
+1792215728595_u7a72					parked		2026-11-10 04:54	r312 cancelled open-aging-sim (not produce)
+1793760446684_bbei1					parked		2026-11-10 04:54	r312 idle digital netlist-diff (shard D)
+1791858774096_1hq6h					parked		2026-11-10 04:54	r312 LSF-queue-error diagnose-fix (not produce)
+1793672454901_bg39v					parked		2026-11-10 04:54	r312 cancelled verilog-stimulus vecgen (shard A/D)
+1791944071628_pwhqb					parked		2026-11-10 04:54	r312 cancelled empty prompt (not seedable)
+1788871441686_fieju					parked		2026-11-10 04:54	r312 failed 3D-NAND MCU logic verilog (shard A/D)
+1790057385284_xpsbw					parked		2026-11-10 04:54	r312 failed skill-loader ddr5-coverage (not produce)
+1793322259360_bisir					parked		2026-11-10 04:54	r312 failed virtuoso-spiceIn (failed no gold)
+1791463574990_um5we					parked		2026-11-10 04:54	r312 completed verilog-stimulus seed-pattern (shard A/D)
+1790849679042_bjkmi					parked		2026-11-10 04:54	r312 failed verilog-stimulus diag (shard A/D)
