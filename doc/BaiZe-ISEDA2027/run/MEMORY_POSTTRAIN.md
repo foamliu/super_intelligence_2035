@@ -14,7 +14,7 @@ WAITING: 0
 - 阻塞: GPU 0/8free(root SGLang Qwen3.8-27B占全8卡44-45GB 0%util,运行自Sep17,11/9已过仍未释放);沙箱10.129.32.75全端口FILTERED;Docker无权限;P3等pretrain ckpt(ETA≈2026-12-25)
 - 本轮新增调研产出: R123 EDA Tool V3统一四工具管线(baize_posttrain_eda_tool_v3.py 501行 + 4个BaseTool子类 + 单例LocalAPISearch集成 + AST增强静态分析(apis_called/verified/legality→R0++) + e2e dry-run 8/8 PASS + tool_config_v3.yaml 107行 + EXPERIMENTS §R123）
 - 未完成指令: 🔴用户令2026-11-07(GPU未到位,需持续产出调研) ⇒ WAITING=0
-- git: pending（本轮待提交）
+- git: commit✅(c1dc8b303 01:32) push✅(proxy=172.19.92.25:13128,rebase后1 commit pushed,no ahead/behind)
 
 ## 关键事实（常驻）
 
