@@ -621,4 +621,4 @@ qnm9e					parked		2026-11-08 01:58	Finesim DC convergence Q&A prose dup of uky6c
 1789696540475_wqcki	shaoyou	hfeg0pkn003	4	spice_sim	parked		2026-11-09 12:49	spice4/13=31% peek: AnaSim工具启动 spice假阳性
 1792842218809_1yo6b	jkxu	hfeg0pkn002	4	spice_sim	parked		2026-11-09 12:49	spice4/13=31% peek: bsub作业监控 spice假阳性
 1794191339271_hx61r.messages.json	jingc	hfeg0pkn001	9	spice_sim	case	EDA-Eval-DesignFlow-NetlistDiffBankLogic-001	2026-11-09 13:32	
-1794202410355_ps4q9	yifansun	hfeg0pkn001	3	spice_sim	claimed		2026-11-09 14:16	
+1794202410355_ps4q9	yifansun	hfeg0pkn001	3	spice_sim	case	EDA-Eval-DesignFlow-Mt0ParseFix-001	2026-11-09 14:30	
