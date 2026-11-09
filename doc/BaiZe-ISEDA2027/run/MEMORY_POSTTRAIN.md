@@ -7,12 +7,12 @@ WAITING: 0
 
 ## 进度快照
 
-- PHASE: posttrain-wake157（2026-11-09 R110: 失败模式分类法——6类F1-F6/DeepSeek 610失败实测/MiniCPM5投影/6条自动分类规则✅）
-- 已完成: P3预备✅；P0✅；P1✅；P2✅；R1-R110✅；wake156✅ R109(奖励设计/GRPO稳定性)；wake157✅ R110(失败模式分类法)
-- 当前动作: wake157 R110: baize_posttrain_r110_failure_mode_taxonomy.py(~350行,10节). ①6类分类法F1-F6(语法/API误用/缺依赖/超时/逻辑/未知) ②DeepSeek侧610失败实测(F5逻辑50%/F6未知22.6%/F2 API误用13.3%/F4超时12.5%) ③场景分析(Schematic52.9%/Layout55.9%→SFT优先) ④类别分析(Design Content Creation38.1%最大痛点) ⑤techlib分析(no 68.6% vs with 43.1%→25.5pp差距) ⑥LOC分析(1-3行80.4%→16+行32.7%强负相关) ⑦Top失败API(EmyLPPHeader.getLayerNum等100%失败) ⑧MiniCPM5投影(F2×2.5/F5×1.8偏移权重→998失败中F2+F5占69.5%) ⑨6条regex自动分类规则(R-F1~R-F6) ⑩58pp可回收估计18-29pp→54-65%(M1-M2). JSON 34.6KB+HTML 13.2KB+EXPERIMENTS §R110.
-- 下一步: ①GPU释放→gpu_watcher自动触发launch_11_9.sh ②R111+: 继续调研(R5训练脚本最终检查 或 SFT数据配比优化) ③正式训练待pretrain ckpt(ETA≈2026-12-25)
+- PHASE: posttrain-wake158（2026-11-09 R111: 启动前配置一致性审计——15项go/no-go矩阵,10PASS/3WARN/2BLOCK✅）
+- 已完成: P3预备✅；P0✅；P1✅；P2✅；R1-R111✅；wake157✅ R110(失败模式分类法)；wake158✅ R111(启动前配置一致性审计)
+- 当前动作: wake158 R111: baize_posttrain_r111_launch_consistency_audit.py(364行,12检查项). ①12 shell脚本bash -n全通过✅ ②模型文件NAS完整(8/8,4.7GB safetensors)✅ ③RL parquet 3347rows/cols=[prompt,reward_model,agent_name]✅ ④R108修复确认(reward_fn_key=reward_model)✅ ⑤SFT parquet 19610rows✅ ⑥评测资产全存在(driver+scorer+158集)✅ ⑦cu124 venv:verl=0.4.0/sglang=0.4.6.post1/torch=2.6.0+cu124/flash_attn=2.7.4.post1/ray=2.60.0/flashinfer=0.2.3✅ ⑧上下文一致(SFT=16384/RL=16384)✅ ⑨污染隔离gate.sh语法通过✅ ⑩GPU watcher运行中(PID2022305,poll=120s)✅. ⚠️3 WARN:CFG-03(sft_blend_config context_len=8192过期)/CFG-04(/nas_train路径.17不可达)/DAT-03(UltraData不在.17). 🔴GPU 0/8free(root SGLang Qwen3.8-27B占全8卡). JSON+HTML 22.7KB+EXPERIMENTS §R111.
+- 下一步: ①GPU释放→watcher自动触发launch_11_9.sh(steps 1-5) ②R112+: 继续调研(SFT数据配比优化 或 RL课程R110校准) ③正式训练待pretrain ckpt(ETA≈2026-12-25)
 - 阻塞: GPU 0/8free(root SGLang Qwen3.8-27B占全8卡,运行自Sep17);git push超时(github.com:443 timeout);P3等pretrain ckpt(ETA≈2026-12-25)
-- 本轮新增调研产出: R110 失败模式分类法(~350行 + 6类F1-F6 + DeepSeek 610失败实测 + 20全harness错误轨迹 + 场景/类别/techlib/LOC分析 + MiniCPM5投影(偏移权重) + 6条自动分类规则 + 58pp可回收估计 + JSON 34.6KB + HTML 13.2KB + EXPERIMENTS §R110）
+- 本轮新增调研产出: R111 启动前配置一致性审计(364行 + 15项go/no-go矩阵 + 12脚本bash-n + 8模型文件 + RL/SFT parquet schema + 5 YAML配置 + venv 6包验证 + 奖励函数导入 + GPU状态 + 污染隔离 + watcher + 3 WARN发现(CFG-03/CFG-04/DAT-03) + JSON + HTML 22.7KB + EXPERIMENTS §R111）
 - 未完成指令: 🔴用户令2026-11-07(GPU未到位,需持续产出调研) ⇒ WAITING=0
 
 ## 关键事实（常驻）
@@ -96,4 +96,6 @@ WAITING: 0
 
 [wake156] R109 奖励设计与GRPO稳定性: 见 daily-memories-posttrain/2026-11-09.md（Vision离散奖励4失败模式+R0→R2三阶段混合+G=8最优+5类作弊抑制+KL=0.02+9指标仪表盘+HTML 12.5KB）。
 
-[wake157] R110 失败模式分类法: 体积自检(TASK=24.7KB/MEMORY≈22.5KB合规)→GPU检查:0/8free(root SGLang Qwen3.8-27B占全8卡44-45GB 0%util,运行自Sep17)→R110: ①baize_posttrain_r110_failure_mode_taxonomy.py(~350行,Python3+stdlib,0依赖) ②6类分类法F1-F6(语法/API误用/缺依赖/超时/逻辑/未知) ③DeepSeek侧12报告1559任务运行:Pass 949(60.9%)/Fail 610(39.1%) ④失败分布:F5逻辑305(50%)/F6未知138(22.6%)/F2 API误用81(13.3%)/F4超时76(12.5%)/F1语法8(1.3%)/F3缺依赖2(0.3%) ⑤场景:Schematic52.9%<Layout55.9%<DesignMgmt72%<Others85% ⑥类别:DesignContentCreation38.1%最大痛点 ⑦techlib:no 68.6% vs with 43.1%→25.5pp差距 ⑧LOC:1-3行80.4%→16+行32.7%强负相关 ⑨Top失败API:EmyLPPHeader.getLayerNum等100%失败 ⑩MiniCPM5投影(F2×2.5/F5×1.8偏移权重→998失败中F2+F5占69.5%) ⑪20全harness错误轨迹:F3占35%(7/20) ⑫6条regex自动分类规则(R-F1~R-F6) ⑬58pp可回收18-29pp→54-65%(M1-M2). py_compile✅+--smoke✅+全量✅+JSON 34.6KB+HTML 13.2KB+EXPERIMENTS §R110. 📦 体积：TASK≈24.7KB / MEMORY≈24KB。本轮新增调研产出：§R110 失败模式分类法(~350行 + 6类F1-F6 + DeepSeek 610失败实测 + 20全harness错误轨迹 + 场景/类别/techlib/LOC分析 + MiniCPM5投影(偏移权重) + 6条自动分类规则 + 58pp可回收估计 + JSON 34.6KB + HTML 13.2KB + EXPERIMENTS §R110）。未完成指令：🔴用户令2026-11-07(GPU未到位,需持续产出调研) ⇒ WAITING=0。
+[wake157] R110 失败模式分类法: 见 daily-memories-posttrain/2026-11-09.md（6类F1-F6+DeepSeek 610失败实测+MiniCPM5投影+6条regex自动分类规则+18-29pp可回收+HTML 13.2KB）。
+
+[wake158] R111 启动前配置一致性审计: 体积自检(TASK=24.7KB/MEMORY≈24KB合规)→GPU检查:0/8free(root SGLang Qwen3.8-27B占全8卡44-45GB 0%util,运行自Sep17,gpu_watcher PID2022305 poll=120s)→R111: ①baize_posttrain_r111_launch_consistency_audit.py(364行,Python3+stdlib,0依赖) ②15项go/no-go矩阵:SCR/MDL/DAT/EVL/ENV/RWD/CFG/GPU/CNT/OPS ③12 shell脚本bash -n全通过✅ ④模型文件NAS完整(8/8,4.7GB safetensors)✅ ⑤RL parquet 3347rows/cols=[prompt,reward_model,agent_name]✅ ⑥R108修复确认(reward_fn_key=reward_model)✅ ⑦SFT parquet 19610rows✅ ⑧评测资产全存在(driver+scorer+158集)✅ ⑨cu124 venv:verl=0.4.0/sglang=0.4.6.post1/torch=2.6.0+cu124/flash_attn=2.7.4.post1/ray=2.60.0/flashinfer=0.2.3✅ ⑩上下文一致(SFT=16384/RL=16384)✅ ⑪污染隔离gate.sh语法通过✅ ⑫GPU watcher运行中✅. ⚠️3 WARN:CFG-03(sft_blend_config context_len=8192过期)/CFG-04(/nas_train路径.17不可达)/DAT-03(UltraData不在.17). 🔴GPU 0/8free. RWD-01 TIMEOUT假阴性(venv冷启动import>60s,首次热运行已PASS). py_compile✅+全量✅+JSON✅+HTML 22.7KB+EXPERIMENTS §R111. 📦 体积：TASK≈24.7KB / MEMORY≈25KB。本轮新增调研产出：§R111 启动前配置一致性审计(364行 + 15项go/no-go矩阵 + 10PASS/3WARN/2BLOCK + 12脚本bash-n + 8模型文件 + RL/SFT parquet schema + venv 6包验证 + 3 WARN发现 + JSON + HTML 22.7KB + EXPERIMENTS §R111）。未完成指令：🔴用户令2026-11-07(GPU未到位,需持续产出调研) ⇒ WAITING=0。

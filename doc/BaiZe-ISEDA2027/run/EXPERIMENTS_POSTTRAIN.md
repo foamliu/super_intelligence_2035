@@ -11567,3 +11567,82 @@ MiniCPM5-2B 模型路径完整：model-00000-of-00001.safetensors + config.json 
 - `r110_failure_taxonomy.json`（/tmp，34.6KB）
 - `reports/report_posttrain_r110_failure_taxonomy_zh.html`（13.2KB）
 - 本节（EXPERIMENTS §R110）
+
+---
+
+## §R111 启动前配置一致性审计（11/9 GPU 到位日 · 零 GPU · 2026-11-09）
+
+> **目标**：在 11/9 GPU 分配日，对所有训练/评测脚本、YAML 配置、数据文件、模型、环境进行端到端一致性审计，产出 go/no-go 就绪矩阵。
+> **脚本**：`baize_posttrain_r111_launch_consistency_audit.py`（364 行，Python3+stdlib）。
+> **输出**：`r111_launch_audit.json` + `reports/report_posttrain_r111_launch_audit_zh.html`（22.7KB）。
+
+### 1. 就绪矩阵（15 项检查）
+
+| ID | 类别 | 检查项 | 状态 | 阻塞 | 详情 |
+|:--|:--|:--|:--|:--|:--|
+| SCR-01 | 脚本语法 | 12 shell bash -n | ✅ PASS | 🔴 | 12/12 passed |
+| MDL-01 | 模型文件 | MiniCPM5-2B NAS 完整 | ✅ PASS | 🔴 | 8/8 files (4.7GB safetensors) |
+| DAT-01 | RL 数据 | RL parquet 3347 rows | ✅ PASS | 🔴 | cols=[prompt, reward_model, agent_name] |
+| DAT-02 | SFT 数据 | SFT parquet 19610 rows | ✅ PASS | 🟡 | cols=[conversation, pair_id, type, api_used, contamination_check] |
+| DAT-03 | SFT 通用数据 | UltraData 在 .17 可达 | ⚠️ WARN | 🟡 | /nas_train 和 /nas_data 上均不存在 |
+| EVL-01 | 评测资产 | driver+scorer+158 集 | ✅ PASS | 🔴 | 全部存在于 ~/code/eda_fastmcp/ |
+| ENV-01 | 训练环境 | cu124 venv | ✅ PASS | 🔴 | verl=0.4.0, sglang=0.4.6.post1, torch=2.6.0+cu124, flash_attn=2.7.4.post1, ray=2.60.0, flashinfer=0.2.3 |
+| RWD-01 | 奖励函数 | reward_functions 导入 | ⚠️ TIMEOUT | 🔴 | 假阴性：venv 冷启动 import >60s，首次运行已验证 PASS |
+| CFG-01 | RL 配置 | reward_fn_key=reward_model (R108) | ✅ PASS | 🔴 | R108 修复已确认应用 |
+| CFG-02 | 上下文一致性 | SFT ctx=16384 vs RL ctx=16384 | ✅ PASS | 🟡 | R60/R61 升级已应用到脚本和配置 |
+| CFG-03 | SFT Blend | sft_blend_config context_len | ⚠️ WARN | 🟡 | context_len=8192（过期，应 16384） |
+| CFG-04 | SFT Blend 路径 | blend 数据路径在 .17 可达 | ⚠️ WARN | 🟡 | /nas_train 路径在 .17 不存在 |
+| GPU-01 | GPU 状态 | ≥4 A40 空闲 | 🔴 BLOCKED | 🔴 | 0/8 free（root SGLang Qwen3.8-27B 占全 8 卡） |
+| CNT-01 | 污染隔离 | contamination_gate.sh | ✅ PASS | 🔴 | exists + syntax OK |
+| OPS-01 | 运维脚本 | GPU watcher 运行中 | ✅ PASS | 🟡 | PID 2022305, poll=120s, launch steps 1-5 |
+
+**总计**：PASS=10, WARN=3, BLOCKING=2（RWD-01 假阴性 + GPU-01 等待释放）
+
+### 2. 关键发现
+
+#### 2.1 ✅ 已确认就绪（10 项 PASS）
+
+- **12 个 shell 脚本**全部通过 `bash -n`：anneal / sft / rl_grpo / eval / launch_11_9 / preflight / gpu_watcher / contamination_gate / minicpm5_diag / day1_runbook / 72h_guardian / paths
+- **模型文件**完整在 NAS `/nas_data/app.e0031982/models/MiniCPM5-2B/`：5GB safetensors + config + tokenizer + chat_template
+- **RL parquet**：3347 rows，cols=[prompt, reward_model, agent_name]——R108 修复（reward_fn_key=reward_model）已确认在 verl config v2 中应用
+- **SFT parquet**：19610 rows，cols=[conversation, pair_id, type, api_used, contamination_check]
+- **评测资产**全在 `~/code/eda_fastmcp/`：driver (run_cline_script.sh) + scorer (run_eval.py) + 158-case dataset
+- **cu124 venv**：verl=0.4.0, sglang=0.4.6.post1, torch=2.6.0+cu124, cuda=True, flash_attn=2.7.4.post1, ray=2.60.0, flashinfer=0.2.3
+- **上下文长度一致**：SFT script CONTEXT_LEN=16384（R61 升级），RL config max_prompt=8192 + max_response=8192（total 16384）
+- **污染隔离**：contamination_gate.sh 存在且语法通过
+- **GPU watcher**：运行中（PID 2022305, poll=120s, launch steps 1-5, log 到 nemo_experiments/gpu_watcher_11_9.log）
+
+#### 2.2 ⚠️ 非阻塞警告（3 项 WARN）
+
+- **CFG-03**：`sft_blend_config.yaml` 中 `context_len: 8192` 已过期。R60/R61 已将 SFT 脚本默认值升级为 16384，但自动生成的 blend 配置未同步。**不影响 11/9 RL-only 替身预演**（SFT 脚本的 --context-len 参数覆盖 blend 配置值），但正式 SFT 前需更新。
+- **CFG-04**：`sft_blend_config.yaml` 中 agent/general 数据路径使用 `/nas_train/...`，但 .17 节点上 NFS 挂载为 `/nas_data`，`/nas_train` 不可用。UltraData-SFT-2605 (通用) 和 UltraData-SFT-Agent-2609 (agent) 在 .17 上均不可达。**不影响 11/9 RL-only 替身预演**，正式 SFT 前需从 .29/.12 复制或跨挂载。
+- **DAT-03**：同 CFG-04——SFT 通用/agent 数据不在 .17 上。
+
+#### 2.3 🔴 阻塞项（2 项）
+
+- **RWD-01**（假阴性）：奖励函数导入检查超时（venv 冷启动 import torch >60s）。首次运行（venv 热）已验证 `compute_score` 可正常导入。**非真实阻塞**。
+- **GPU-01**：0/8 GPUs free，root SGLang Qwen3.8-27B 仍占用全 8 卡（44-45GB/46GB, 0% util, 运行自 Sep17）。GPU watcher 正在轮询等待释放。
+
+### 3. 修复建议
+
+| 优先级 | 修复项 | 方法 | 影响 |
+|:--|:--|:--|:--|
+| P0 | GPU 释放 | 等待运维释放 4 卡；watcher 自动检测并触发 launch | 阻塞 11/9 启动 |
+| P1 | CFG-03 | 更新 sft_blend_config.yaml context_len 8192→16384 | 正式 SFT 前 |
+| P1 | CFG-04/DAT-03 | SFT 通用数据从 .29/.12 复制到 .17 或跨挂载 NFS | 正式 SFT 前 |
+| P2 | RWD-01 | venv 预热后再跑审计，或增加超时到 120s | 审计工具改进 |
+
+### 4. GPU Watcher 状态
+
+- PID: 2022305
+- 脚本: `baize_posttrain_gpu_watcher.sh --poll-interval 120 --launch-steps 1-5`
+- 日志: `/nas_data/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/gpu_watcher_11_9.log`
+- 行为: 每 120s 检查 GPU，≥4 卡 free (≥40GB each) → NFS warm-up → 自动触发 `baize_posttrain_launch_11_9.sh --step 1-5`
+- 启动序列: preflight → SGLang serve + baseline eval → D1-D6 提取 → contamination gate → RL smoke test
+
+### 5. 交付物
+
+- `baize_posttrain_r111_launch_consistency_audit.py`（364 行）
+- `r111_launch_audit.json`（完整审计数据）
+- `reports/report_posttrain_r111_launch_audit_zh.html`（22.7KB，自包含，0 script，0 外链）
+- 本节（EXPERIMENTS §R111）

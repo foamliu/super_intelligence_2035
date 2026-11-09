@@ -19,7 +19,7 @@ sft_blend:
 
 # Training hyperparameters (from baize_posttrain_sft.sh):
 training:
-  context_len: 8192
+  context_len: 16384  # R60/R61 升级: 8192→16384
   gbs: 128
   mbs: 1
   iters: 3000

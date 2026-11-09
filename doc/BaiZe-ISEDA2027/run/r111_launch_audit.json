@@ -1,0 +1,502 @@
+{
+  "audit": {
+    "timestamp": "2026-11-09T21:06:18.832398",
+    "node": "s0pgpuap12",
+    "nas_root": "/nas_data",
+    "scripts": [
+      {
+        "path": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_posttrain_anneal.sh",
+        "exists": true,
+        "syntax_ok": true,
+        "output": ""
+      },
+      {
+        "path": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_posttrain_sft.sh",
+        "exists": true,
+        "syntax_ok": true,
+        "output": ""
+      },
+      {
+        "path": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_posttrain_rl_grpo.sh",
+        "exists": true,
+        "syntax_ok": true,
+        "output": ""
+      },
+      {
+        "path": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_posttrain_eval.sh",
+        "exists": true,
+        "syntax_ok": true,
+        "output": ""
+      },
+      {
+        "path": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_posttrain_launch_11_9.sh",
+        "exists": true,
+        "syntax_ok": true,
+        "output": ""
+      },
+      {
+        "path": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_posttrain_preflight_check.sh",
+        "exists": true,
+        "syntax_ok": true,
+        "output": ""
+      },
+      {
+        "path": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_posttrain_gpu_watcher.sh",
+        "exists": true,
+        "syntax_ok": true,
+        "output": ""
+      },
+      {
+        "path": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_posttrain_contamination_gate.sh",
+        "exists": true,
+        "syntax_ok": true,
+        "output": ""
+      },
+      {
+        "path": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_posttrain_minicpm5_diag.sh",
+        "exists": true,
+        "syntax_ok": true,
+        "output": ""
+      },
+      {
+        "path": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_posttrain_day1_runbook.sh",
+        "exists": true,
+        "syntax_ok": true,
+        "output": ""
+      },
+      {
+        "path": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_posttrain_72h_guardian.sh",
+        "exists": true,
+        "syntax_ok": true,
+        "output": ""
+      },
+      {
+        "path": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_posttrain_paths.sh",
+        "exists": true,
+        "syntax_ok": true,
+        "output": ""
+      }
+    ],
+    "yaml_configs": {
+      "baize_posttrain_rl_verl_config.yaml": {
+        "path": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_posttrain_rl_verl_config.yaml",
+        "exists": true,
+        "context_len": null,
+        "model_path": null,
+        "reward_arm": "R2",
+        "reward_fn_key": null,
+        "data_paths": [
+          "/nas_data/app.e0031982/models/MiniCPM5-2B",
+          "baize_posttrain_reward_functions.py  # R21: fixed relative path (was run/baize_posttrain_reward_functions.py)"
+        ]
+      },
+      "baize_posttrain_rl_verl_config_v2.yaml": {
+        "path": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_posttrain_rl_verl_config_v2.yaml",
+        "exists": true,
+        "context_len": null,
+        "model_path": null,
+        "reward_arm": "R0",
+        "reward_fn_key": "reward_model",
+        "data_paths": [
+          "/nas_data/app.e0031982/models/MiniCPM5-2B"
+        ]
+      },
+      "sft_blend_config.yaml": {
+        "path": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/sft_blend_config.yaml",
+        "exists": true,
+        "context_len": "8192",
+        "model_path": null,
+        "reward_arm": null,
+        "reward_fn_key": null,
+        "data_paths": [
+          "/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/sft_agent_ultradata_2609",
+          "/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/sft_ultradata_2605",
+          "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/sft_mixed_output.jsonl"
+        ]
+      },
+      "baize_posttrain_tool_config.yaml": {
+        "path": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_posttrain_tool_config.yaml",
+        "exists": true,
+        "context_len": null,
+        "model_path": null,
+        "reward_arm": null,
+        "reward_fn_key": null,
+        "data_paths": []
+      },
+      "baize_posttrain_eda_tools.yaml": {
+        "path": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_posttrain_eda_tools.yaml",
+        "exists": true,
+        "context_len": null,
+        "model_path": null,
+        "reward_arm": null,
+        "reward_fn_key": null,
+        "data_paths": []
+      }
+    },
+    "model_files": {
+      "config.json": {
+        "label": "config.json",
+        "path": "/nas_data/app.e0031982/models/MiniCPM5-2B/config.json",
+        "exists": true,
+        "size_bytes": 704,
+        "size_human": "704.0B"
+      },
+      "model-00000-of-00001.safetensors": {
+        "label": "model-00000-of-00001.safetensors",
+        "path": "/nas_data/app.e0031982/models/MiniCPM5-2B/model-00000-of-00001.safetensors",
+        "exists": true,
+        "size_bytes": 5033557096,
+        "size_human": "4.7GB"
+      },
+      "model.safetensors.index.json": {
+        "label": "model.safetensors.index.json",
+        "path": "/nas_data/app.e0031982/models/MiniCPM5-2B/model.safetensors.index.json",
+        "exists": true,
+        "size_bytes": 31378,
+        "size_human": "30.6KB"
+      },
+      "tokenizer.json": {
+        "label": "tokenizer.json",
+        "path": "/nas_data/app.e0031982/models/MiniCPM5-2B/tokenizer.json",
+        "exists": true,
+        "size_bytes": 9894271,
+        "size_human": "9.4MB"
+      },
+      "tokenizer_config.json": {
+        "label": "tokenizer_config.json",
+        "path": "/nas_data/app.e0031982/models/MiniCPM5-2B/tokenizer_config.json",
+        "exists": true,
+        "size_bytes": 94391,
+        "size_human": "92.2KB"
+      },
+      "special_tokens_map.json": {
+        "label": "special_tokens_map.json",
+        "path": "/nas_data/app.e0031982/models/MiniCPM5-2B/special_tokens_map.json",
+        "exists": true,
+        "size_bytes": 551,
+        "size_human": "551.0B"
+      },
+      "chat_template.jinja": {
+        "label": "chat_template.jinja",
+        "path": "/nas_data/app.e0031982/models/MiniCPM5-2B/chat_template.jinja",
+        "exists": true,
+        "size_bytes": 5435,
+        "size_human": "5.3KB"
+      },
+      "generation_config.json": {
+        "label": "generation_config.json",
+        "path": "/nas_data/app.e0031982/models/MiniCPM5-2B/generation_config.json",
+        "exists": true,
+        "size_bytes": 213,
+        "size_human": "213.0B"
+      }
+    },
+    "rl_parquet": {
+      "path": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/rl_pyaether_synth_v2.parquet",
+      "exists": true,
+      "columns": [
+        "prompt",
+        "reward_model",
+        "agent_name"
+      ],
+      "rows": 3347,
+      "size_bytes": 953467,
+      "error": ""
+    },
+    "sft_parquet": {
+      "path": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/sft_pyaether_corpus.parquet",
+      "exists": true,
+      "columns": [
+        "conversation",
+        "pair_id",
+        "type",
+        "api_used",
+        "contamination_check"
+      ],
+      "rows": 19610,
+      "size_bytes": 2875497,
+      "error": ""
+    },
+    "eval_assets": {
+      "driver": {
+        "label": "driver",
+        "path": "/home/app.e0031982/code/eda_fastmcp/scripts/run_cline_script.sh",
+        "exists": true,
+        "size_bytes": 29415,
+        "size_human": "28.7KB"
+      },
+      "scorer": {
+        "label": "scorer",
+        "path": "/home/app.e0031982/code/eda_fastmcp/scripts/run_eval.py",
+        "exists": true,
+        "size_bytes": 39781,
+        "size_human": "38.8KB"
+      },
+      "dataset": {
+        "label": "dataset",
+        "path": "/home/app.e0031982/code/eda_fastmcp/pyAether-eval/original_dataset/EDA-Eval-PyAether-v20260311.jsonl",
+        "exists": true,
+        "size_bytes": 689461,
+        "size_human": "673.3KB"
+      }
+    },
+    "venv": {
+      "venv_py": "/home/app.e0031982/code/verl_cu124_venv/bin/python",
+      "exists": true,
+      "packages": {
+        "verl": "0.4.0",
+        "sglang": "0.4.6.post1",
+        "torch": "2.6.0+cu124",
+        "cuda": "True",
+        "flash_attn": "2.7.4.post1",
+        "ray": "2.60.0",
+        "flashinfer": "0.2.3"
+      },
+      "error": ""
+    },
+    "reward_functions": {
+      "module": "baize_posttrain_reward_functions",
+      "exists": true,
+      "imports_ok": false,
+      "error": "TIMEOUT"
+    },
+    "gpu": {
+      "total_gpus": 8,
+      "free_gpus": 0,
+      "details": [
+        {
+          "gpu": "0",
+          "used_mib": 45554,
+          "total_mib": 46068,
+          "free_mib": 514,
+          "util_pct": 0,
+          "is_free": false
+        },
+        {
+          "gpu": "1",
+          "used_mib": 44533,
+          "total_mib": 46068,
+          "free_mib": 1535,
+          "util_pct": 0,
+          "is_free": false
+        },
+        {
+          "gpu": "2",
+          "used_mib": 44533,
+          "total_mib": 46068,
+          "free_mib": 1535,
+          "util_pct": 0,
+          "is_free": false
+        },
+        {
+          "gpu": "3",
+          "used_mib": 44533,
+          "total_mib": 46068,
+          "free_mib": 1535,
+          "util_pct": 0,
+          "is_free": false
+        },
+        {
+          "gpu": "4",
+          "used_mib": 45512,
+          "total_mib": 46068,
+          "free_mib": 556,
+          "util_pct": 0,
+          "is_free": false
+        },
+        {
+          "gpu": "5",
+          "used_mib": 44629,
+          "total_mib": 46068,
+          "free_mib": 1439,
+          "util_pct": 0,
+          "is_free": false
+        },
+        {
+          "gpu": "6",
+          "used_mib": 44633,
+          "total_mib": 46068,
+          "free_mib": 1435,
+          "util_pct": 0,
+          "is_free": false
+        },
+        {
+          "gpu": "7",
+          "used_mib": 44631,
+          "total_mib": 46068,
+          "free_mib": 1437,
+          "util_pct": 0,
+          "is_free": false
+        }
+      ],
+      "error": ""
+    },
+    "watcher": {
+      "running": true,
+      "processes": [
+        "app.e00+ 2022305  0.0  0.0   7028  3460 ?        Ss   00:14   0:08 bash /nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_posttrain_gpu_watcher.sh --poll-interval 120 --launch-steps 1-5 --log /nas_data/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/gpu_watcher_11_9.log"
+      ]
+    },
+    "contamination": {
+      "path": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_posttrain_contamination_gate.sh",
+      "exists": true,
+      "syntax_ok": true
+    },
+    "sft_data_on_node": {
+      "paths": [
+        {
+          "label": "agent_2609_nas_train",
+          "path": "/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/sft_agent_ultradata_2609",
+          "exists": false,
+          "size_bytes": 0,
+          "size_human": "N/A"
+        },
+        {
+          "label": "general_2605_nas_train",
+          "path": "/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/sft_ultradata_2605",
+          "exists": false,
+          "size_bytes": 0,
+          "size_human": "N/A"
+        },
+        {
+          "label": "agent_2609_nas_root",
+          "path": "/nas_data/app.e0031982/code/BaiZe-ISEDA2027/data/sft_agent_ultradata_2609",
+          "exists": false,
+          "size_bytes": 0,
+          "size_human": "N/A"
+        },
+        {
+          "label": "general_2605_nas_root",
+          "path": "/nas_data/app.e0031982/code/BaiZe-ISEDA2027/data/sft_ultradata_2605",
+          "exists": false,
+          "size_bytes": 0,
+          "size_human": "N/A"
+        }
+      ],
+      "any_available": false
+    }
+  },
+  "matrix": [
+    {
+      "id": "SCR-01",
+      "cat": "脚本语法",
+      "check": "12 shell bash -n",
+      "status": "PASS",
+      "detail": "12/12",
+      "blocking": true
+    },
+    {
+      "id": "MDL-01",
+      "cat": "模型文件",
+      "check": "MiniCPM5-2B NAS完整",
+      "status": "PASS",
+      "detail": "8/8",
+      "blocking": true
+    },
+    {
+      "id": "DAT-01",
+      "cat": "RL数据",
+      "check": "RL parquet 3347 rows",
+      "status": "PASS",
+      "detail": "rows=3347,cols=['prompt', 'reward_model', 'agent_name']",
+      "blocking": true
+    },
+    {
+      "id": "DAT-02",
+      "cat": "SFT数据",
+      "check": "SFT parquet 19610 rows",
+      "status": "PASS",
+      "detail": "rows=19610",
+      "blocking": false
+    },
+    {
+      "id": "DAT-03",
+      "cat": "SFT通用数据",
+      "check": "UltraData在.17可达",
+      "status": "WARN",
+      "detail": ".17不存在(/nas_train不可用)",
+      "blocking": false
+    },
+    {
+      "id": "EVL-01",
+      "cat": "评测资产",
+      "check": "driver+scorer+158集",
+      "status": "PASS",
+      "detail": "driver=Y,scorer=Y,dataset=Y",
+      "blocking": true
+    },
+    {
+      "id": "ENV-01",
+      "cat": "训练环境",
+      "check": "cu124 venv verl=0.4.0",
+      "status": "PASS",
+      "detail": "sglang=0.4.6.post1,torch=2.6.0+cu124",
+      "blocking": true
+    },
+    {
+      "id": "RWD-01",
+      "cat": "奖励函数",
+      "check": "reward_functions导入",
+      "status": "FAIL",
+      "detail": "TIMEOUT",
+      "blocking": true
+    },
+    {
+      "id": "CFG-01",
+      "cat": "RL配置",
+      "check": "reward_fn_key=reward_model(R108)",
+      "status": "PASS",
+      "detail": "reward_fn_key=reward_model",
+      "blocking": true
+    },
+    {
+      "id": "CFG-02",
+      "cat": "上下文一致性",
+      "check": "SFT ctx=16384 vs RL ctx=16384",
+      "status": "PASS",
+      "detail": "SFT script=16384, RL config prompt+response=16384",
+      "blocking": false
+    },
+    {
+      "id": "CFG-03",
+      "cat": "SFT Blend",
+      "check": "sft_blend_config context_len",
+      "status": "WARN",
+      "detail": "context_len=8192(应16384)",
+      "blocking": false
+    },
+    {
+      "id": "CFG-04",
+      "cat": "SFT Blend路径",
+      "check": "blend数据路径在.17可达",
+      "status": "WARN",
+      "detail": "MISSING:/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/sft_agent_ultradata_2609;MISSING:/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/sft_ultradata_2605",
+      "blocking": false
+    },
+    {
+      "id": "GPU-01",
+      "cat": "GPU状态",
+      "check": ">=4 A40空闲(0/8)",
+      "status": "BLOCKED",
+      "detail": "free=0,total=8",
+      "blocking": true
+    },
+    {
+      "id": "CNT-01",
+      "cat": "污染隔离",
+      "check": "contamination_gate.sh",
+      "status": "PASS",
+      "detail": "exists=True,syntax=True",
+      "blocking": true
+    },
+    {
+      "id": "OPS-01",
+      "cat": "运维脚本",
+      "check": "GPU watcher运行中",
+      "status": "PASS",
+      "detail": "运行中",
+      "blocking": false
+    }
+  ],
+  "overall": "NO-GO"
+}
