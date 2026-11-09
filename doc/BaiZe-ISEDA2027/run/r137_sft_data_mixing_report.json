@@ -1,0 +1,220 @@
+
+======================================================================
+1. TOKEN BUDGET ANALYSIS
+======================================================================
+
+  Source                                  Tokens  Avail
+  ------------------------------ --------------- ------
+  UltraData-SFT-2605                      20.97B      Y
+  UltraData-SFT-Agent-2609                 5.97B      Y
+  B-class-agentic                            N/A      N
+  PyAether-API-corpus                       4.5M      Y
+  PyAether-SFT-synthetic                   20.2M      Y
+  DeepSeek-trace-derived                    0.9M      Y
+  Code-Math-auxiliary                        N/A      N
+  TOTAL                          26.97B
+
+======================================================================
+2. DATA MIXING STRATEGY DESIGN (6 strategies)
+======================================================================
+
+  A_general_heavy: General-Heavy Baseline
+    80% general, domain via anneal+RL | Risk: May not reach M1 | Expected: M0.5-M1 (42-50%)
+    Target: 10.0B | Epochs over general: 0.48
+
+  B_balanced: Balanced Mix (Recommended)
+    50% general + 30% agentic + 20% domain | Risk: Moderate | Expected: M1-M2 (50-65%)
+    Target: 10.0B | Epochs over general: 0.48
+
+  C_domain_focused: Domain-Focused
+    30% general, 50% domain. Risk: forgetting | Risk: Forgetting general capabilities | Expected: M1-M2 but may lose general ability
+    Target: 8.0B | Epochs over general: 0.38
+
+  D_agentic_heavy: Agentic-Heavy
+    50% agentic to fix D1/D2/D6 | Risk: General quality may degrade | Expected: M1, strong protocol weak domain
+    Target: 10.0B | Epochs over general: 0.48
+
+  E_curriculum: Progressive Curriculum (3-phase)
+    Phase1 general -> Phase2 +agentic -> Phase3 +domain | Risk: 3x checkpoint management | Expected: M1-M2, best generalization
+    Target: 10.0B | Epochs over general: 0.48
+
+  F_gold_distill: Gold-Standard Distillation
+    30% DeepSeek traces via augmentation | Risk: 103 traces -> overfitting (cf R136) | Expected: M1 if augmentation works
+    Target: 6.0B | Epochs over general: 0.29
+
+======================================================================
+3. EPOCH & OVER-REPETITION (cf R136: 559x)
+======================================================================
+
+  Safe<10.0x  Warn>50.0x  Crit>100.0x
+
+  Strat        Source                            Alloc      Avail      Rep   St
+  ------------ ---------------------------- ---------- ---------- -------- ----
+  A_general_he UltraData-SFT-2605                8.00B     20.97B    0.4x   OK
+  A_general_he UltraData-SFT-Agent-2609          1.50B      5.97B    0.3x   OK
+  A_general_he PyAether-SFT-synthetic             300M        20M   14.9x   WN
+  A_general_he DeepSeek-trace-derived             200M         1M  212.9x   FT
+  A_general_he PyAether-API-corpus                  0M         4M    0.0x   OK
+  B_balanced   UltraData-SFT-2605                5.00B     20.97B    0.2x   OK
+  B_balanced   UltraData-SFT-Agent-2609          3.00B      5.97B    0.5x   OK
+  B_balanced   PyAether-SFT-synthetic            1000M        20M   49.6x   WN
+  B_balanced   DeepSeek-trace-derived             500M         1M  532.3x   FT
+  B_balanced   PyAether-API-corpus                500M         4M  111.1x   FT
+  C_domain_foc UltraData-SFT-2605                2.40B     20.97B    0.1x   OK
+  C_domain_foc UltraData-SFT-Agent-2609          2.00B      5.97B    0.3x   OK
+  C_domain_foc PyAether-SFT-synthetic            2.00B        20M   99.2x   CR
+  C_domain_foc DeepSeek-trace-derived             800M         1M  851.6x   FT
+  C_domain_foc PyAether-API-corpus                800M         4M  177.8x   FT
+  D_agentic_he UltraData-SFT-2605                3.50B     20.97B    0.2x   OK
+  D_agentic_he UltraData-SFT-Agent-2609          5.00B      5.97B    0.8x   OK
+  D_agentic_he PyAether-SFT-synthetic             800M        20M   39.7x   WN
+  D_agentic_he DeepSeek-trace-derived             500M         1M  532.3x   FT
+  D_agentic_he PyAether-API-corpus                200M         4M   44.4x   WN
+  E_curriculum UltraData-SFT-2605               5.00B    20.97B    0.2x   OK
+  E_curriculum UltraData-SFT-2605               1.20B    20.97B    0.1x   OK
+  E_curriculum UltraData-SFT-Agent-2609         1.80B     5.97B    0.3x   OK
+  E_curriculum UltraData-SFT-2605               0.40B    20.97B    0.0x   OK
+  E_curriculum UltraData-SFT-Agent-2609         0.60B     5.97B    0.1x   OK
+  E_curriculum PyAether-SFT-synthetic           0.60B     0.02B   29.8x   WN
+  E_curriculum DeepSeek-trace-derived           0.30B     0.00B  319.4x   FT
+  E_curriculum PyAether-API-corpus              0.10B     0.00B   22.2x   WN
+  F_gold_disti UltraData-SFT-2605                1.80B     20.97B    0.1x   OK
+  F_gold_disti UltraData-SFT-Agent-2609          1.20B      5.97B    0.2x   OK
+  F_gold_disti DeepSeek-trace-derived            1.80B         1M 1916.2x   FT
+  F_gold_disti PyAether-SFT-synthetic             900M        20M   44.6x   WN
+  F_gold_disti PyAether-API-corpus                300M         4M   66.7x   CR
+
+  Warnings: 10
+    A_general_heavy/DeepSeek-trace-derived: 212.9x
+    B_balanced/DeepSeek-trace-derived: 532.3x
+    B_balanced/PyAether-API-corpus: 111.1x
+    C_domain_focused/PyAether-SFT-synthetic: 99.2x
+    C_domain_focused/DeepSeek-trace-derived: 851.6x
+    C_domain_focused/PyAether-API-corpus: 177.8x
+    D_agentic_heavy/DeepSeek-trace-derived: 532.3x
+    E_curriculum/DeepSeek-trace-derived: 319.4x
+    F_gold_distill/DeepSeek-trace-derived: 1916.2x
+    F_gold_distill/PyAether-API-corpus: 66.7x
+
+======================================================================
+4. QUALITY FILTERING PIPELINE
+======================================================================
+  Step 1: Format Validation
+  Step 2: Length Filtering
+  Step 3: Deduplication (MinHash)
+  Step 4: Contamination Check (RED LINE)
+  Step 5: Quality Scoring
+  Step 6: Domain Tagging
+  Step 7: Augmentation
+
+  Retention: 61.2% | Drop: 39%
+
+======================================================================
+5. CURRICULUM ORDERING
+======================================================================
+  Stage-Based: 3 phases with gates
+  Interleaved: Uniform mix
+  Progressive Interleaved: Hybrid, recommended
+
+  RECOMMENDATION: Progressive Interleaved
+
+======================================================================
+6. DEEPSEEK TRACE DISTILLATION
+======================================================================
+
+  103 traces, ~0.9M tokens
+    1x oversample: 1M tokens, rep=1x OK
+    5x oversample: 5M tokens, rep=5x OK
+    10x oversample: 9M tokens, rep=10x WARN
+    20x oversample: 19M tokens, rep=20x WARN
+    50x oversample: 47M tokens, rep=50x CRIT
+
+  RECOMMENDED: API substitution(2-3x) + Trace truncation(3-5x) = 6-15x
+    103 -> 600-1500 pairs, ~6-15M tokens, rep=1x (no oversampling)
+
+======================================================================
+7. RL IMPACT (R131 Goldilocks)
+======================================================================
+
+  Goldilocks: P(pass) in [0.3, 0.7]
+    A_general_heavy: P=42% -> Sweet spot
+    B_balanced: P=65% -> Sweet spot
+    C_domain_focused: P=65% -> Sweet spot
+    D_agentic_heavy: P=50% -> Sweet spot
+    E_curriculum: P=65% -> Sweet spot
+    F_gold_distill: P=50% -> Sweet spot
+
+  KEY: B and E in Goldilocks zone
+
+======================================================================
+8. PRE-REGISTERED EVALUATION PLAN
+======================================================================
+
+  Primary: Pass@1 (5-run mean+std) | Test: McNemar + bootstrap
+    Gate1: Format >90%
+    Gate2: M1 >=50%
+    Gate3: General retention >=85%
+    Gate4: Goldilocks 0.3-0.7
+
+  SELECTION: 1.B_balanced(PRIMARY) 2.E_curriculum(ALT) 3.A_general(BASELINE)
+
+======================================================================
+9. GPU BUDGET (4xA40)
+======================================================================
+
+  Throughput: 4,363 tok/s (0.02B/h)
+
+  Strat                    Tokens     Wall    GPU-h
+  -------------------- ---------- -------- --------
+  A_general_heavy          10.0B  636.6h 2546.5h
+  B_balanced               10.0B  636.6h 2546.5h
+  C_domain_focused          8.0B  509.3h 2037.2h
+  D_agentic_heavy          10.0B  636.6h 2546.5h
+  E_curriculum             10.0B  636.6h 2546.5h
+  F_gold_distill            6.0B  382.0h 1527.9h
+
+  3-strategy+eval: 8956.1 GPU-h (333.2% monthly)
+
+======================================================================
+10. CONTAMINATION ISOLATION (RED LINE)
+======================================================================
+
+  DeepSeek 103 tasks overlap 158 eval = 65.2%
+  CRITICAL: Traces for eval tasks CANNOT be SFT data
+  Use only for pattern extraction + augmented templates
+
+======================================================================
+11. SUMMARY & RECOMMENDATIONS
+======================================================================
+
+  R137: SFT Data Mixing Strategy & Curriculum Design
+  Available: 26.97B tokens
+  6 strategies: B_balanced(REC) E_curriculum(ALT) A_general(BASE)
+  Over-repetition warnings: 10
+  Quality pipeline retention: 61%
+  DeepSeek: 103 -> 600-1500 augmented pairs (6-15x, not oversampling)
+  RL: B and E in Goldilocks zone (P=0.3-0.7)
+  GPU: 8956 GPU-h (333.2% monthly)
+  Contamination: 103/158 eval overlap -> traces CANNOT be direct SFT
+  RECOMMENDATIONS: 1.B+Progressive 2.A baseline 3.E alternative
+  
+{
+  "round": "R137",
+  "title": "SFT Data Mixing Strategy",
+  "budget_tokens": 26965602860.0,
+  "strategies": {
+    "A_general_heavy": "General-Heavy Baseline",
+    "B_balanced": "Balanced Mix (Recommended)",
+    "C_domain_focused": "Domain-Focused",
+    "D_agentic_heavy": "Agentic-Heavy",
+    "E_curriculum": "Progressive Curriculum (3-phase)",
+    "F_gold_distill": "Gold-Standard Distillation"
+  },
+  "repetition_warnings": 10,
+  "quality_retention": 0.6124749120000001,
+  "gpu_hours": 8956.086070791953,
+  "summary": {
+    "round": "R137",
+    "recommended": "B_balanced + Progressive Interleaved"
+  }
+}

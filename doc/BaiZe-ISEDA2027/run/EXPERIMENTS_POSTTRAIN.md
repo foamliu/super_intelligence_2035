@@ -14267,3 +14267,116 @@ reward:
 4. 吸收饱和曲线为启发式，需真实 PPL 数据校准
 5. 无 GPU 无法验证吸收指标
 
+## §R137 SFT Data Mixing Strategy & Curriculum Design（R2/R3 交叉 · 零 GPU · 2026-11-10 wake184）
+
+> **动机**：R134 覆盖了 SFT 消融*设计*（LoRA vs Full FT × data mix × ctx length factorial），但实际的*数据混合策略*——哪些数据源以什么比例组合、什么顺序——从未被系统分析。R137 填补此空白。
+> **前序**：R2（五层难度）→ R108（数据管线审计）→ R131（SFT-to-RL Goldilocks）→ R134（SFT 消融设计）→ R136（领域退火课程，559x 过拟合发现）。
+
+### 1. Token 预算分析
+
+| 数据源 | Tokens | 可用 | 说明 |
+|:--|--:|:--|:--|
+| UltraData-SFT-2605 | 20.97B | ✅ | 通用指令 SFT，已分词镜像 |
+| UltraData-SFT-Agent-2609 | 5.97B | ✅ | Agentic 工具使用 SFT，已分词 |
+| PyAether-API-corpus | 4.5M | ✅ | API 参考文档（8,463 API） |
+| PyAether-SFT-synthetic | 20.2M | ✅ | 合成 SFT 对（40,327 行 × ~500 tok） |
+| DeepSeek-trace-derived | 0.9M | ✅ | DeepSeek 全 harness 轨迹（103 任务） |
+| B-class-agentic | N/A | ❌ | /nas_inference 未挂载 .17 |
+| Code-Math-auxiliary | N/A | ❌ | 需 data 线协助 |
+| **合计（可用）** | **26.97B** | | |
+
+### 2. 六种混合策略（A–F）
+
+| 策略 | 名称 | 混合比（general/agentic/domain） | 目标 tokens | 预期 Pass@1 | RL 信号 |
+|:--|:--|:--|--:|:--|:--|
+| A | General-Heavy Baseline | 80/15/5 | 10B | 42-50% | 偏低 |
+| **B** | **Balanced (推荐)** | **50/30/20** | **10B** | **50-65%** | **Sweet spot** |
+| C | Domain-Focused | 30/50/20 | 8B | 50-65% | Sweet spot，但遗忘风险 |
+| D | Agentic-Heavy | 35/50/15 | 10B | ~50% | Sweet spot，域知识弱 |
+| E | Progressive 3-phase | 渐进 | 10B | 50-65% | Sweet spot |
+| F | Gold Distillation | 30/20/50 | 6B | 50% | 过拟合风险 |
+
+### 3. 过重复分析（cf R136: 559x 警告）
+
+- 安全阈值 <10x；警告 >50x；危险 >100x（R136 发现 559x）
+- **DeepSeek 轨迹**：仅 0.9M tok，任何>5x 的过采样即超安全阈值
+  - 10x oversample = 9M tok → rep=10x (边界)
+  - 50x oversample = 45M tok → rep=50x (警告)
+  - 100x oversample = 90M tok → rep=100x (危险)
+- **PyAether 合成对**：20.2M tok，10B 策略中 10% = 1B → rep=49.5x (接近警告)
+- **PyAether API 文档**：4.5M tok，10B 策略中 5% = 500M → rep=111x (危险！)
+  - ⚠️ 策略 B 的 5% API corpus 分配 = 500M tok / 4.5M 可用 = 111x 重复
+  - **解决方案**：API corpus 应通过领域退火注入（cf R136），不放入 SFT
+- **推荐**：对稀缺源使用**增强**（augmentation）而非过采样（oversampling）
+
+### 4. 质量过滤管线（7 步）
+
+| 步骤 | 名称 | 方法 | 预估丢弃率 |
+|:--|:--|:--|--:|
+| 1 | 格式验证 | JSON schema + role 交替 | 1-3% |
+| 2 | 长度过滤 | Token 计数 P1-P99 截断 | 5-10% |
+| 3 | 去重 | MinHash LSH Jaccard>0.8 | 10-20% |
+| 4 | **污染检查 (红线)** | 158-case 指纹匹配 | <0.1% |
+| 5 | 质量评分 | 启发式 + reward model top-80% | 15-25% |
+| 6 | 领域标注 | 关键词+嵌入聚类 | 0% |
+| 7 | 增强 | DeepSeek 轨迹 5-10x 扩展 | N/A |
+
+- 累计保留率：~44.5%（即 ~55.5% 原始数据被过滤）
+
+### 5. 课程排序
+
+| 方法 | 描述 | 遗忘风险 | 推荐 |
+|:--|:--|:--|:--|
+| Stage-Based | 3 阶段（通用→agentic→域） | 低 | 策略 E |
+| Interleaved | 均匀混合 | 中 | 策略 A-D |
+| **Progressive Interleaved** | 均匀起步，渐增域比例 | **低-中** | **策略 B+twist** |
+
+### 6. DeepSeek 轨迹蒸馏
+
+- 103 任务 × avg 45.6 消息 × ~200 tok/msg = ~0.9M tok
+- **增强策略**（非过采样）：
+  - API 替换（2-3x）：同类 API 语义等价替换
+  - 轨迹截取（3-5x）：部分轨迹用于工具协议学习
+  - 合计 6-15x → 600-1500 SFT 对，~6-15M tok，rep=1x
+- ⚠️ **污染**：103/158 = 65.2% 评测任务有 DeepSeek 轨迹
+  - **评测任务轨迹不可直接作为 SFT 数据**
+  - 仅用于模式提取 + 增强模板
+
+### 7. RL 影响（R131 Goldilocks）
+
+- R131 Goldilocks zone：P(pass) ∈ [0.3, 0.7]
+- 策略 B 和 E 预测落入 sweet spot → 最优 RL 初始化
+- 策略 C 风险：P(pass) 可能 >0.7 → RL 信号减弱
+- 策略 A 风险：P(pass) 可能 <0.3 → RL 难以 bootstrap
+
+### 8. 预注册评测计划（FROZEN 2026-11-10）
+
+- 主要指标：EDA-Eval-PyAether Pass@1（5-run mean±std）
+- 统计检验：McNemar (R133) + paired bootstrap CI
+- α=0.05 (M1), α=0.01 (M2+)
+- 4 个 Go/No-Go gate：
+  1. 格式合法率 >90%
+  2. M1 ≥50% Pass@1
+  3. 通用能力保留 ≥85% baseline
+  4. RL Goldilocks 0.3 ≤ P(pass) ≤ 0.7
+- 策略选择：1.B_balanced (PRIMARY) 2.E_curriculum (ALT) 3.A_general (BASE)
+
+### 9. GPU 预算
+
+- 4×A40，MFU=0.35，吞吐量 ~5,820 tok/s (~20.9B tok/h)
+- 3 策略 suite（A+B+E）+ 3 次评测
+- 总计 ~185 GPU-h（占月度预算 2688 GPU-h 的 6.9%）
+- 预算充裕，可扩展至 5-6 策略
+
+### 10. ⚠️ 关键发现与风险
+
+1. **API corpus 重复风险**：策略 B 的 5% API corpus = 500M/4.5M = 111x 重复 → API 文档应通过退火注入，不放入 SFT
+2. **DeepSeek 污染**：65.2% 评测任务有轨迹 → 不可直接用作 SFT
+3. **过拟合-遗忘权衡**：R136 发现退火阶段过拟合风险 > 遗忘风险（retention 97.2%）；SFT 阶段需验证相同结论
+4. **增强 > 过采样**：对稀缺源（DeepSeek traces, API corpus）必须用增强而非简单重复
+
+### 产物
+
+- `baize_posttrain_r137_sft_data_mixing.py`（235 行，py_compile ✅ + run ✅）
+- `r137_sft_data_mixing_report.json`（10KB）
+

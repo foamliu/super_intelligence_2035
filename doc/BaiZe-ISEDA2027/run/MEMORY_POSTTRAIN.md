@@ -7,14 +7,14 @@ WAITING: 0
 
 ## 进度快照
 
-- PHASE: posttrain-wake183（2026-11-10 R136: 领域退火课程设计+遗忘风险分析 — ⚠️关键发现:4.5M tok领域语料×30%blend×4000步=559x重复→严重过拟合;遗忘反而低(k=5,retention97.2%,forget2.8pp);建议扩大语料至≥100M tok或大幅降blend/步数;5臂消融设计A-E;6项吸收度量;7ckpt选择策略;过/欠退火预警step100/200/400;管线7天258GPU-h(9.6%)）
-- 已完成: P3预备✅；P0✅；P1✅；P2✅；R1-R136✅；wake182✅ R135(reward hacking)；wake183✅ R136(domain anneal curriculum)
-- 当前动作: wake183 R136: ①baize_posttrain_r136_domain_anneal_curriculum.py(py_compile✅+run✅) ②⚠️核心发现:4.5M tok领域语料×30%blend×4000步=559x重复→严重过拟合(>10x安全阈值) ③遗忘风险k=5校准:retention=97.2%,forget=2.82pp(低)→真正风险是过拟合不是遗忘 ④5臂消融A-E(anneal+SFT+RL/SFT+RL/anneal+SFT/SFT/anneal-only),A vs B预注册≥2pp+McNemar ⑤6项吸收度量(3项零GPU:domain PPL/API识别/签名补全) ⑥7ckpt选择(0/1k/2k/3k/3.5k/3.8k/4k,decay阶段sweet spot) ⑦过退火5症状/欠退火4症状+step100/200/400预警 ⑧管线:退火27h→SFT12h→RL72h→eval3h=~7天258GPU-h(9.6%) ⑨解决方案:扩大语料≥100M tok(推荐)/降blend 0.5%/降步数50/混合2%×500. EXPERIMENTS §R136
-- 下一步: ①GPU释放→vLLM serve MiniCPM5-2B复测36%基线(5-run) ②真实MiniCPM5-2B rollout替换合成轨迹校准检测器 ③R4失败模式分类法(等真实轨迹) ④领域语料扩大方案落实(需data线协助,加EDA文档/HDL源码/SKILL库) ⑤正式训练待pretrain ckpt(ETA≈2026-12-25)
-- 阻塞: GPU 0/8free(SGLang Qwen3.8-27B占全8卡44-45GB 0%util,11/9已过仍未释放);领域语料4.5M tok过小→需扩至≥100M;P3等pretrain ckpt(ETA≈2026-12-25)
-- 本轮新增调研产出: R136 领域退火课程设计+遗忘风险分析(⚠️559x过拟合发现+遗忘k=5校准2.8pp+5臂消融+6吸收度量+7ckpt策略+过/欠退火预警+管线衔接+解决方案4方案+EXPERIMENTS §R136+r136_domain_anneal_report.json 19.3KB）
+- PHASE: posttrain-wake184（2026-11-10 R137: SFT数据混合策略与课程设计 — 6种混合策略A-F(B推荐:50%general+30%agentic+20%domain) + 过重复分析(API corpus 111x危险→应退火注入非SFT) + 7步质量管线(保留44.5%) + 3课程排序(Progressive Interleaved推荐) + DeepSeek蒸馏(103→600-1500对6-15x增强非过采样) + R131 Goldilocks(B/E落sweet spot) + 4 gate预注册 + GPU 185GPU-h(6.9%) + ⚠️103/158=65.2%评测污染）
+- 已完成: P3预备✅；P0✅；P1✅；P2✅；R1-R137✅；wake183✅ R136；wake184✅ R137(SFT data mixing)
+- 当前动作: wake184 R137: ①baize_posttrain_r137_sft_data_mixing.py(235行,py_compile✅+run✅) ②6种混合策略A-F:B_balanced推荐(50%general+30%agentic+20%domain),E_curriculum备选,A_general baseline ③⚠️API corpus 111x重复→应退火注入不放入SFT ④7步质量管线:格式→长度→去重→污染(红线)→质量→标注→增强,保留44.5% ⑤DeepSeek蒸馏:103→600-1500对(6-15x增强非过采样),⚠️65.2%评测污染 ⑥R131 Goldilocks:B/E落sweet spot(P=0.3-0.7) ⑦4 gate预注册:格式>90%→M1≥50%→保留≥85%→Goldilocks ⑧GPU:185GPU-h(6.9%月度). EXPERIMENTS §R137
+- 下一步: ①GPU释放→vLLM serve MiniCPM5-2B复测36%基线(5-run) ②真实MiniCPM5-2B rollout替换合成轨迹 ③R4失败模式分类法(等真实轨迹) ④API corpus退火注入方案细化(与R136衔接) ⑤正式训练待pretrain ckpt(ETA≈2026-12-25)
+- 阻塞: GPU 0/8free(SGLang Qwen3.8-27B占全8卡44-45GB 0%util,11/9已过仍未释放);P3等pretrain ckpt(ETA≈2026-12-25)
+- 本轮新增调研产出: R137 SFT数据混合策略与课程设计(6策略+过重复111x发现+7步质量管线+3课程排序+DeepSeek蒸馏增强方案+R131 Goldilocks验证+4 gate预注册+GPU 185GPU-h+EXPERIMENTS §R137+r137_sft_data_mixing_report.json 10KB）
 - 未完成指令: 🔴用户令2026-11-07(GPU未到位,需持续产出调研) ⇒ WAITING=0
-- git: commit 53dcc7793✅ push超时(network timeout,下轮补推)
+- git: 上轮push超时已由loop兜底修复(synced),本轮待提交
 
 ## 关键事实（常驻）
 
@@ -110,3 +110,5 @@ WAITING: 0
 [wake182] R135 12-mode reward hacking分类法+防御矩阵: 体积自检(TASK≈26KB/MEMORY≈27KB合规)→GPU:0/8free→R135: ①baize_posttrain_r135_reward_hacking_taxonomy.py(537行,py_compile✅+run✅) ②12-mode分类法:H01-H12,output=5/process=4/tool=2/context=1,critical=3/high=3/medium=5/low=1 ③12检测器,15轨迹仿真:TP=12/FP=0/TN=3/FN=0/F1=1.000 ④6-layer防御矩阵:L0-L6,每mode被2-3层覆盖 ⑤cheat rate协议:每20步,5指标,abort>10% ⑥预注册M3 cheat<5%/M4 cheat<2% FROZEN(与R133一致) ⑦verl YAML:compute_score_with_anticheat ⑧H08新发现:tool_call_padding. EXPERIMENTS §R135. r135_reward_hacking_report.json(33.9KB). 📦 体积：TASK≈26KB / MEMORY≈28KB。本轮新增调研产出：§R135 12-mode reward hacking分类法+6-layer防御矩阵+检测器F1=1.000+cheat rate报告协议+verl集成+H08新发现。未完成指令：🔴用户令2026-11-07(GPU未到位,需持续产出调研) ⇒ WAITING=0。
 
 [wake183] R136 领域退火课程设计+遗忘风险分析: 体积自检(TASK≈26KB/MEMORY≈28KB合规)→GPU:0/8free(8×A40全被SGLang Qwen3.8-27B占用44-45GB 0%util,11/9已过仍未释放)→R136: ①baize_posttrain_r136_domain_anneal_curriculum.py(py_compile✅+run✅) ②⚠️核心发现:4.5M tok领域语料×30%blend×4000步=559x重复→严重过拟合(>10x安全阈值) ③遗忘风险k=5校准:retention=97.2%,forget=2.82pp(低)→真正风险是过拟合不是遗忘 ④5臂消融A-E,关键A vs B预注册≥2pp+McNemar ⑤6项吸收度量(3项零GPU:domain PPL/API识别/签名补全) ⑥7ckpt选择(0/1k/2k/3k/3.5k/3.8k/4k,decay阶段sweet spot) ⑦过退火5症状/欠退火4症状+step100/200/400预警 ⑧管线:退火27h→SFT12h→RL72h→eval3h=~7天258GPU-h(9.6%) ⑨解决方案:扩大语料≥100M tok(推荐)/降blend 0.5%/降步数50/混合2%×500. EXPERIMENTS §R136. r136_domain_anneal_report.json(19.3KB). 📦 体积：TASK≈26KB / MEMORY≈28KB。本轮新增调研产出：§R136 领域退火课程设计+遗忘风险分析(⚠️559x过拟合发现+遗忘k=5校准2.8pp+5臂消融+6吸收度量+7ckpt策略+过/欠退火预警+管线衔接+解决方案4方案+EXPERIMENTS §R136）。未完成指令：🔴用户令2026-11-07(GPU未到位,需持续产出调研) ⇒ WAITING=0。
+
+[wake184] R137 SFT数据混合策略与课程设计: 体积自检(TASK≈26KB/MEMORY≈30KB合规)→GPU:0/8free(8×A40全被SGLang Qwen3.8-27B占用44-45GB 0%util,11/9已过仍未释放)→R137: ①baize_posttrain_r137_sft_data_mixing.py(235行,py_compile✅+run✅) ②6种混合策略A-F:B_balanced推荐(50%general+30%agentic+20%domain),E_curriculum备选(3阶段),A_general baseline ③⚠️API corpus 111x重复(500M/4.5M)→应退火注入不放入SFT ④7步质量管线:格式→长度→去重→污染(红线)→质量→标注→增强,累计保留44.5% ⑤3课程排序:Progressive Interleaved推荐(Stage-Based/Interleaved/Progressive) ⑥DeepSeek蒸馏:103→600-1500对(6-15x增强非过采样),⚠️65.2%评测污染(103/158) ⑦R131 Goldilocks:B/E落sweet spot(P=0.3-0.7) ⑧4 gate预注册:格式>90%→M1≥50%→保留≥85%→Goldilocks ⑨GPU:185GPU-h(6.9%月度). EXPERIMENTS §R137. r137_sft_data_mixing_report.json(10KB). 📦 体积：TASK≈26KB / MEMORY≈30KB。本轮新增调研产出：§R137 SFT数据混合策略与课程设计(6策略+过重复111x发现+7步质量管线+3课程排序+DeepSeek蒸馏增强方案+R131 Goldilocks验证+4 gate预注册+GPU 185GPU-h+EXPERIMENTS §R137）。未完成指令：🔴用户令2026-11-07(GPU未到位,需持续产出调研) ⇒ WAITING=0。
