@@ -4,14 +4,14 @@ WAITING: 0
 
 ## 📊 进度快照
 
-PHASE:        R1950 监控+三报告更新轮·gateway 200·predict 2618/3500(74.8%)·eval R1933 incr_eval RUN(hermes eval中148new)·TB-2.1 116unique passed·3harbor alive
-已完成:       H-B✅·Gate7/7·TB报告✅·full500✅·cline专项C1-C5+报告R1785-R1950·TB4 0passed(能力)·TB-2.1 oracle5/5✅·§15:2x判据MET✅·R1789 eval 7/7DONE✅·R1804双报告交付✅·R1814-R1949 predict推进+TB-2.1并行+gateway恢复+eval重启·R1949 CPU失控kill+三报告·R1950监控+三报告更新(predict 2618/3500·eval R1933 hermes eval中·TB-2.1 116p)
-当前动作:     R1950:①CPU/MEM:PASS(load 77↓·无本线>8000%·最高=git fetch 197%+pytest 172%(eval容器内)·mem804G/avail1T) ②体积:TASK=30306B(29.6KB)/MEMORY=29569B(28.9KB)✅ ③gateway:9092=200/9093=200/gw=200 ④predict 2618/3500(74.8%) real=989:cline303(122r/181e)·codex500DONE(44r)·opencode354(257r)·cc500DONE(94r)·pi242(83r)·hermes458(284r)·dsh261(105r)·6路alive(cline/hermes在hard实例timeout内) ⑤**eval R1933:incr_eval RUN**(cline87/115·codex29/44·opencode199/249·cc71/90·pi51/69 DONE✅·hermes 148new RUNNING·dsh pending) ⑥TB-2.1:116unique passed(cline16·codex7·opencode27·cc17·pi29·hermes5·dsh15)·3harbor alive(cc·pi·opencode) ⑦**三报告R1950**(main 9149B+tb21 8411B+cline_special 4865B) ⑧cline C4:cline303(122r/181e=40.3%)·C2 empty=429滚动+能力·C3 resume fix✅未归零 ⑨disk /data 5.8T(18%) / 352G(4%) ⑩未完成指令:有(§22:4x+§10:10)⇒W:0
-下一步:       ①eval R1933 incr_eval跑完hermes(148new)→继续dsh eval ②predict 5路推进至500(cline303·opencode354·pi242·dsh261·hermes458) ③TB-2.1 3harbor(cc/pi/opencode)推进→待全DONE ④全DONE后聚合最终7路报告+可辨识性闸门
-阻塞:         无(gateway 200·6路predict alive·TB-2.1 3harbor alive·eval R1933 incr_eval运行中)
+PHASE:        R1951 监控+三报告更新轮·gateway 200·predict 2621/3500(74.9%)·eval R1933 hermes eval RUN(n=279/459)·dsh eval RUN·TB-2.1 118total passed·3harbor alive
+已完成:       H-B✅·Gate7/7·TB报告✅·full500✅·cline专项C1-C5+报告R1785-R1951·TB4 0passed(能力)·TB-2.1 oracle5/5✅·§15:2x判据MET✅·R1789 eval 7/7DONE✅·R1804双报告交付✅·R1814-R1950 predict推进+TB-2.1并行+gateway恢复+eval重启·R1949 CPU失控kill+三报告·R1950-R1951监控+三报告更新(predict 2621/3500·eval R1933 hermes+dsh eval中·TB-2.1 118p)
+当前动作:     R1951:①CPU/MEM:PASS(load 81/224=36%·无本线>8000%·最高=git fetch 198%+pytest 102%(eval容器内)·pretrain llama-server 817%非本线·mem807G/avail1066G) ②体积:TASK=30306B(29.6KB)/MEMORY=29205B(28.5KB)✅ ③gateway:GATEWAY_OK·9092=200/9093=200 ④predict 2621/3500(74.9%) real=990 empty=1631:cline303(122r/181e)·codex500DONE(44r)·opencode354(257r)·cc500DONE(94r)·pi242(83r)·hermes459(285r)·dsh263(105r)·5路alive ⑤**eval R1933:hermes eval RUN**(n=279 resolved=258 92.5%·cline87/115·codex29/44·opencode199/249·cc71/90·pi51/69 DONE✅·dsh eval RUN R1933) ⑥TB-2.1:118total passed(cline88/89 16p·codex12/89 7p·opencode52/89 29p·cc62/89 17p·pi79/89 29p·hermes54/89 5p·dsh22/89 15p)·3harbor alive(cc·pi·opencode) ⑦**三报告R1951**(main 9149B+tb21 8447B+cline_special 4349B) ⑧cline C4:cline303(122r/181e=40.3%)·C2 empty=429滚动+能力·C3 resume fix✅未归零 ⑨disk /data 5.8T(18%) / 352G(4%) ⑩未完成指令:有(§22:4x+§10:10)⇒W:0
+下一步:       ①eval R1933 hermes eval跑完(n=279→459)→dsh eval R1933完成 ②predict 5路推进至500(cline303·opencode354·pi242·dsh263·hermes459) ③TB-2.1 3harbor(cc/pi/opencode)推进→待全DONE ④全DONE后聚合最终7路报告+可辨识性闸门
+阻塞:         无(gateway 200·5路predict alive·TB-2.1 3harbor alive·eval R1933 hermes+dsh eval运行中)
 ERROR_COUNT:  0
-  📦 体积：TASK=30306B(29.6KB) / MEMORY=29569B(28.9KB)·均≤32KB✅
-  🔍 cline专项小结: predict cline303(122r/181e=40.3%)·TB-2.1 cline16p(18.2%)·C2 empty=429滚动+能力·C3 resume fix✅未归零(429间歇+能力)·real复产中(122)
+  📦 体积：TASK=30306B(29.6KB) / MEMORY=29205B(28.5KB)·均≤32KB✅
+  🔍 cline专项小结: predict cline303(122r/181e=40.3%)·TB-2.1 cline88/89 16p(18.2%)·C2 empty=429滚动+能力·C3 resume fix✅未归零(429间歇+能力)·real复产中(122)
 ```
 
 > 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
