@@ -177,6 +177,22 @@
       "note": "16th consecutive mgmt round with no new scan. r283 PIVOT method (fresh-window direct scan find -newermt on active hosts) reused on hfhds201: 29 sessions >=11/07, probed top 9 by size for digital markers. ericw/u5ihf strongest (2686 verilog) but analysis-only (BURST_ORD detailed analysis, no produce). ynbai/1qlnn (1117 verilog) = viable produce-task: parse sim.saved.total DDR5 sim-vector list, complete missing 5 corners per case, output supplemented-only lines to .more. B-synthesized case delivered (real input perm-denied on .75 as e0031982; reconstructed representative A + hidden B with 8 cases / 13 supplemented lines incl constructed-suffix cases). check.py 14 conds a-n, ref PASS 14/14, 4 negs + 3 fakes all FAIL NEG_RC=0. pkn001-005 ssh via getent failed (no DNS), hfhds201 only host scanned this round.",
       "ts": "2026-11-09T18:50:00+08:00"
     },
+    "r287": {
+      "ts": "2026-11-09T21:10:00+08:00",
+      "date": "2026-11-09",
+      "latest_scan": "ssh_eda_search_20261105_192825",
+      "no_new_scan_rounds": 16,
+      "consecutive_mgmt_round": "r268-r282 (15 mgmt) + r283-r287 (5 PIVOT fresh-window case rounds)",
+      "daily_log_20261109_lines": 2893,
+      "daily_log_healthy": true,
+      "pool_mc15_shardA": 216,
+      "fresh_window_method": "find -newermt '2026-11-07 00:00:00' on hfhds201 (.75 local, per-user targeted to avoid full-/home scan timeout)",
+      "fresh_sessions_hfhds201": 42,
+      "fresh_unledgered_probe": "top 10 by size probed for digital markers: e0023936 uxowi(pyAether16+hspice2=analog shard C/D), dandans oclzn(pyAether3=analog, B parked ops), dandans ifj1a(netlist194+verilog4, B parked spice), mike znzyh(vcs421+verdi23+verilog10=STRONG digital, B parked kw=0 non-spice -> shard A reclaim), mike fl4rh(netlist1216+vcs660+verilog533=D case VerilogDriveFsmBlock already), zjqiao afkmz(verilog226+vsim7=analysis-only Q&A sim_setup folder, skip), ynbai ls7n4(B case DelayedBmatrixSched already), e0023936 6ajm4/16yrv(verdi5/2=analog), tongfanl gwm47(netlist10+verilog2=locate task)",
+      "case_delivered": "EDA-Eval-DesignFlow-VcsBoostLinkFix-001 (verification, B-档 synthesized, L1-static+subprocess, k=14) — mike znzyh build_d6.sh VCS/boost link-fix produce-task",
+      "finding": "r287 reused r283-r286 PIVOT (fresh-window find -newermt on active hosts). hfhds201 local scan (per-user targeted, full /home find times out at 120s): 42 fresh sessions >=11/07. Probed top 10 un-ledgered by size for digital markers. zjqiao afkmz(verilog226)=analysis-only sim_setup Q&A, skip. mike znzyh(vcs421)=STRONG digital VCS link-fix produce-task: USER#0 'build_d6.sh all编译不过去, 用之前的build/run skill看看咋解决' (A-faithful, user reports problem not root cause). Agent diagnosed ld: cannot find -lboost_program_options (binutils ld doesn't read LD_LIBRARY_PATH at link time), fixed by injecting BOOST_LD='-L $COSIM_DIR/tools' via makefile LIBPATH. Real build_d6.sh in /ai_sandbox/dscqa perm-denied -> B-档: deliverable=fix_build_script.py (parse error_log cannot-find -l<lib>, locate lib in tools_listing, parse makefile LIBPATH/BOOST_LIB_PATH var, inject -L guard + patch model make line); A=build_d6.sh(pre-fix)+error_log+tools_listing+prompt(USER#0 verbatim)+task_brief; hidden B=异构(cosim_cxsh/-lboost_system/sw/tools/FW_BUILD-DRAMC_INIT-ARCHMODEL/BOOST_LIB_PATH). check.py 14 conds a-n, ref PASS 14/14, 4 negs+3 §4.9 fakes all FAIL NEG_RC=0. Cross-shard: znzyh was parked by shard B as 'kw=0 non-spice' (=not their domain), legitimate shard A reclaim. pkn001-005 ssh loop timed out (DNS getent fails, direct-IP ssh per-host slow); hfhds201 only host scanned this round.",
+      "shard_A_new_this_round": 1
+    },
     "r285": {
       "date": "2026-11-09",
       "consecutive_mgmt_round": "r268-r285 (16th no-new-scan)",
@@ -198,7 +214,7 @@
   },
   "source": "/home/t0002965/log/ssh_eda_search_20261105_192825/summary.tsv (11/05 scan)",
   "target_mc": 30,
-  "updated_at": "2026-11-09T20:30:00+08:00",
+  "updated_at": "2026-11-09T21:10:00+08:00",
   "users_mc100": 182,
   "users_mc30": 224,
   "users_mc300": 60,
