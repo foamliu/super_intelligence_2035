@@ -161,6 +161,21 @@
       "case_delivered": "EDA-Eval-DesignFlow-X8FusePatternGen-001 (verification, A-faithful, L1-static, k=14) — nevinrao 08l4v X8 fuse pattern produce-task",
       "finding": "r283 PIVOT: after 15 consecutive mgmt rounds (r268-r282) declaring digital pool exhausted via stale 11/05 scan + daily cron log, shard A adopted shard B's fresh-window direct scan (find -newermt on active hosts). Scanned 6 hosts (hfhds201+pkn001-005), found 412 fresh sessions (post-11/06), 210 un-ledgered. Digital-marker grep on targeted users: e0046913@pkn003 has NEW post-purge sessions (j9oap=214 digital markers, ayxhy=90, 5or9z=97) — strong digital (icc2/rtl/verilog/synthesis). nevinrao@pkn001 08l4v(150, 1.96MB) = CLEAN A-faithful verilog pattern produce-task (X8 fuse) -> delivered. cliu z9zx7(84), tongfanl zm0zw(77) remain as future candidates. xxchen LOW digital (skip). 1 case delivered (08l4v), breaking the 15-round mgmt-only streak.",
       "future_candidates": "e0046913 j9oap(214,FM rtl2rtl demo select=consulting)/5or9z(97,FM Makefile debug)/ayxhy(90), cliu z9zx7(84,verilog), tongfanl zm0zw(77,xmsim vecgen), nevinrao vbmpm(147)"
+    },
+    "r284": {
+      "case_delivered": "EDA-Eval-DesignFlow-SimSavedTotalComplete-001 (verification, B-synthesized, L1-static+subprocess, k=14)",
+      "consecutive_mgmt": "r268-r284 (16th no-new-scan; r283/r284 used fresh-window direct scan to find digital)",
+      "daily_log_20261109_lines": 2893,
+      "daily_log_healthy": true,
+      "date": "2026-11-09",
+      "latest_scan": "ssh_eda_search_20261105_192825",
+      "no_new_scan_rounds": 16,
+      "shard_A_pool_mc15": 216,
+      "fresh_window_method": "find -newermt '2026-11-07 00:00:00' on hfhds201 (10.129.32.75)",
+      "fresh_window_sessions_hfhds201": 29,
+      "fresh_digital_strong": "ynbai 1qlnn (1117 verilog) claimed+case; ericw u5ihf (2686 verilog) = analysis-only Q&A (BURST_ORD); tongfanl 3j03k/zm0zw/q54e4 = locate/find tasks; dsgao a75vy = finesim SPICE (shard B/D)",
+      "note": "16th consecutive mgmt round with no new scan. r283 PIVOT method (fresh-window direct scan find -newermt on active hosts) reused on hfhds201: 29 sessions >=11/07, probed top 9 by size for digital markers. ericw/u5ihf strongest (2686 verilog) but analysis-only (BURST_ORD detailed analysis, no produce). ynbai/1qlnn (1117 verilog) = viable produce-task: parse sim.saved.total DDR5 sim-vector list, complete missing 5 corners per case, output supplemented-only lines to .more. B-synthesized case delivered (real input perm-denied on .75 as e0031982; reconstructed representative A + hidden B with 8 cases / 13 supplemented lines incl constructed-suffix cases). check.py 14 conds a-n, ref PASS 14/14, 4 negs + 3 fakes all FAIL NEG_RC=0. pkn001-005 ssh via getent failed (no DNS), hfhds201 only host scanned this round.",
+      "ts": "2026-11-09T18:50:00+08:00"
     }
   },
   "sessions": 5822,
