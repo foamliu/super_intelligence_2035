@@ -530,3 +530,5 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked		2026-11-09 20:39	RAG-looku
 1791770038834_74bb5	xxchen	hfeg0pkn002	215	layout_aether	case	EDA-Eval-DesignFlow-QaPatternPlanGen-001	2026-11-09 21:49	
 1793927576271_5zvj0	xxchen	10.129.2.13	46	layout_aether	parked		2026-11-09 22:15	cancelled mid-investigation (status=cancelled at 01:49); U#9 diagnose-fix DNW_O_006_00 CHECK1/CHECK2 but user never confirmed/accepted fix (先告诉我修改方案我确认后再改); no accepted gold per §A rule4; heavy thematic overlap with r290 QaPatternPlanGen (same xxchen + DRC_pattern_tool/QA pcell family)
 1786540588830_0y973	e0014566	10.129.2.10	101	layout_aether	parked		2026-11-09 22:15	failed (status=failed); 18 msgs 1 user turn recon how-to (我记得之前在austin_rscalc2/testa上手动加过RNODE看看之前加的方式) = look-up-prior-method not produce-task; no deliverable
+1794202805254_7b6qy					parked		2026-11-09 22:55	r293 peek: status=idle (e0039120 DRVcase), no accepted gold, §A rule4 fail; reachable on 10.129.2.11
+1794204930558_vgi1y					parked		2026-11-09 22:55	r293 peek: status=idle (e0047600 gds_tiling), no accepted gold, §A rule4 fail; reachable on 10.129.2.11
