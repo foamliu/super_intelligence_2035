@@ -491,4 +491,4 @@
 1794032822083_qty8f	xiwang	hfeg0pkn002	422	pg_layout	case	EDA-Eval-DesignFlow-PdFloorplanGen-001	2026-11-09 12:00	
 1794035650061_tmx27	xiwang	hfeg0pkn002	0	layout_aether	case	EDA-Eval-DesignFlow-EccDsaLocate-001	2026-11-09 13:09	
 1791783189298_t2hnp	steveny	hfeg0pnd001	336	layout_virtuoso	case	EDA-Eval-DesignFlow-SchNetPrefixHilightGen-001	2026-11-09 14:04	
-1792552971568_dnkz8	johnl	hfeg0pkn001	146	physical_verify	claimed		2026-11-09 14:39	
+1792552971568_dnkz8	johnl	hfeg0pkn001	146	physical_verify	case	EDA-Eval-DesignFlow-PexRccCdlPortMapFix-001	2026-11-09 15:26	
