@@ -18,10 +18,10 @@ WAITING: 1
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        🔄stack-v3-train 2TB下载 batch1✅+batch2✅+batch3✅+batch4✅+batch5✅(累计1,517GB/3500parquet/0inc)+batch6进行中(035✅036✅037✅/038@81-100下载中,039-041待下) → WAITING=1
+PHASE:        🔄stack-v3-train 2TB下载 batch1✅+batch2✅+batch3✅+batch4✅+batch5✅(累计1,517GB/3500parquet/0inc)+batch6进行中(035✅036✅037✅038✅/039@81-100下载中,040-041待下) → WAITING=1
 已完成:       ✅85M;✅10-31报告;✅09:4x报告;✅09:2x长上下文10/10(249.48GiB);✅13:2x#2 RL报告;✅13:2x#1 B类12/12(78.73GiB);✅11-07 ROI 8源DONE(25.14GB/135文件/0inc);✅stack-v3-train调研DONE(8192shard/EDA语言27.1%);✅batch1-5 DONE(累计1,517GB/3500parquet/0inc);✅batch5 QC(Java16.1%/JS10.5%/C++8.2%/Py7.8%/EDA20.1%)
-当前动作:     唤醒1411(2026-11-09 17:1x):batch6进度巡检→①git fetch origin(代理,0ahead/0behind,运维无新令);②batch6进度:hundred035✅036✅037✅全DONE(各100parquet)+hundred038@81/100下载中(~19s/it,ETA~6min),039-041待下;③du -sb=1,675,556,536,886B(1.676TB累计)/3877parquet/2inc(038在途非阻塞);④PID3084288 alive(hf download part-038*,nice=10,etimes~1505s);⑤df:/nas_inference 19T/27T可用(41%)≥5T红线OK;⑥2TB预算83.8%已用(1.676TB/2TB),余0.324TB→batch6完(~1.807TB)后batch7(042~045,4hundreds~164GB)凑~1,990GB≈2TB;⑦research日报11-09已阅(丢弃漏斗建议已纳注2TB复盘);⑧体积MEMORY~18KB/TASK~35KB均≤40KB无需归档→commit data stackv3:→WAITING=1
-下一步:       等batch6完成(038剩~19files@~19s≈6min+039-041剩3hundreds@~33min≈~1.7h,ETA~19:0x)→du+find+incomplete实测→QC抽样3 shard→回填§H.10 batch6质检报告→commit→启动batch7(042~045,4hundreds~164GB)→累计~1,990GB≈2TB达标→ROI复盘(含research日报「丢弃漏斗」建议:每级过滤记输入/输出/丢弃率/原因)
+当前动作:     唤醒1412(2026-11-09 18:1x):batch6进度巡检→①git fetch origin(代理,origin/main+1(harness非本线),运维无新data令);②batch6进度:hundred035✅036✅037✅038✅全DONE(各100parquet)+hundred039@81/100下载中(part-03979,~19s/it,ETA~6min),040-041待下;③du -sb=1,720,792,612,130B(1.721TB累计)/3980parquet/2inc(0B stubs非阻塞);④PID1255226 alive(hf download part-039*,nice=10,etimes~3031s);⑤df:/nas_inference 19T/27T可用(41%)≥5T红线OK;⑥2TB预算86%已用(1.721TB/2TB),余0.279TB→batch6完(~1.813TB)后batch7(042~045,4hundreds~168GB)凑~1,981GB≈2TB;⑦research日报11-09已阅(丢弃漏斗建议已纳注2TB复盘);⑧体积MEMORY~19KB/TASK~35KB均≤40KB无需归档→commit data stackv3:→WAITING=1
+下一步:       等batch6完成(039剩~19files@~19s≈6min+040+041剩2hundreds@~33min≈~1.1h,ETA~19:3x)→du+find+incomplete实测→QC抽样3 shard→回填§H.10 batch6质检报告→commit→启动batch7(042~045,4hundreds~168GB)→累计~1,981GB≈2TB达标→ROI复盘(含research日报「丢弃漏斗」建议:每级过滤记输入/输出/丢弃率/原因)
 阻塞:         无(batch6后台下载中,/nas_inference 27T可用≥5T红线)
 ERROR_COUNT:  11
 未完成指令:   有(10:10 stack-v3-train 2TB下载batch6进行中)→WAITING=1
@@ -30,6 +30,8 @@ ERROR_COUNT:  11
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。
 
 ## 📋 本唤醒流水
+> [11-09 18:1x] 唤醒1412：batch6进度巡检→①git fetch origin(代理,origin/main+1=harness r1988非本线,运维无新data令);②batch6进度:hundred035✅036✅037✅038✅全DONE(各100parquet/400parquet batch6已完成)+hundred039@81/100下载中(part-03979,~19s/it,ETA~6min),040-041待下;③du -sb=1,720,792,612,130B(1.721TB累计)/3980parquet/2inc(0B stubs非阻塞);④PID1255226 alive(hf download part-039*,nice=10,etimes~3031s~50min);⑤df:/nas_inference 19T/27T可用(41%)≥5T红线OK;⑥2TB预算86%已用(1.721TB/2TB),余0.279TB;⑦速率~100parquet/hr(~42GB/hr),batch6 ETA~19:3x;⑧体积MEMORY~19KB/TASK~35KB均≤40KB无需归档→commit data stackv3:→WAITING=1继续监控batch6
+
 > [11-09 17:1x] 唤醒1411：batch6进度巡检→①git fetch origin(代理,gc.log+loose objects warning非阻塞,0ahead/0behind);git diff origin/main--BAIZE_DATA_TASK.md=空(运维无新令);②batch6进度:hundred035✅036✅037✅全DONE(各100parquet/1,643,510,225,328B累计)+hundred038@81/100下载中(~19s/it,ETA~6min),039-041待下;③du -sb=1,675,556,536,886B(1.676TB累计)/3877parquet/2inc(038在途非阻塞);④PID3084288 alive(hf download part-038*,nice=10,etimes~1505s);⑤df:/nas_inference 19T/27T可用(41%)≥5T红线OK;⑥2TB预算83.8%已用(1.676TB/2TB),余0.324TB;⑦体积MEMORY~18KB/TASK~35KB均≤40KB无需归档→commit data stackv3:→WAITING=1继续监控batch6
 
 > [11-09 16:1x] 唤醒1410：batch6进度巡检→①git fetch origin(代理,gc.log+loose objects warning非阻塞,0ahead/0behind);git diff origin/main--BAIZE_DATA_TASK.md=空(运维无新令);②batch6进度:hundred035✅DONE(100parquet/1,559,762,533,192B累计)+hundred036@81/100下载中(~20s/it,ETA~6min),037-041待下;③du -sb=1,592,819,356,101B(1.593TB累计)/3678parquet/2inc(036在途非阻塞);④进程核验:PID2525411(hf download part-036*,nice=10,etimes~1552s)alive,batch6脚本PID alive;⑤df:/nas_inference 19T已用/27T可用(41%)≥5T红线OK;/nas_train 180T/87%;⑥2TB预算79.7%已用(1.593TB/2TB),余0.407TB→batch6完成后batch7(042~045,4hundreds~173GB)凑~1,990GB≈2TB;⑦research日报11-09已阅(丢弃漏斗建议已纳注2TB复盘,本轮不执行);⑧体积MEMORY40.3KB>40KB→归档唤醒1389-1404旧流水(16轮batch1-4巡检)→commit data stackv3:→WAITING=1继续监控batch6
