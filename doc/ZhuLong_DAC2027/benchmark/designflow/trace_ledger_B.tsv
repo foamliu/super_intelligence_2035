@@ -761,3 +761,5 @@ qnm9e					parked		2026-11-08 01:58	Finesim DC convergence Q&A prose dup of uky6c
 1793775927024_1stc5	shaoyou	hfeg0pkn001	36	spice_sim	parked		2026-11-10 03:06	innovus-dominant PnR (innovus=12/hspice=8), tiny 'calc avg v(Vb)' measure question; borderline/wrong-shard low-priority
 1794192133796_quioy	daiweilu	hfhds209	102	spice_sim	case	EDA-Eval-DesignFlow-NetlistSigTraceVerify-001	2026-11-10 04:02	
 1793947529316_ie8du.messages.json	declanzh	hfeg0plg97	172	spice_sim	case	EDA-Eval-DesignFlow-Mt0FolderAggStat-001	2026-11-10 04:34	
+1793705585219_k1vy6	hauserz	hfeg0pkn006	131	spice_sim	case	EDA-Eval-DesignFlow-PwlFormatConvert-001	2026-11-10 06:09	
+1793942940446_q3y71	declanzh	hfeg0pkn005	96	spice_sim	parked		2026-11-10 06:15	dup ie8du same .mt0 aggregation task (U#2/U#24/U#66/U#122 verbatim same)
