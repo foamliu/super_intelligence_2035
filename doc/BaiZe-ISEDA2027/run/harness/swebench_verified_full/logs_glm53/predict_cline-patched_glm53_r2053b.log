@@ -10,3 +10,7 @@
 [verified-full 07:00:46]   -> no-patch (patch=0B wall=358.9s)
 [verified-full 07:00:46] [8/500] astropy__astropy-14096 SKIP (predicted, patch=3207B)
 [verified-full 07:00:46] [9/500] PREDICT cline on astropy__astropy-14182
+[verified-full 07:06:47]   -> no-patch (patch=0B wall=360.6s)
+[verified-full 07:06:47] [10/500] PREDICT cline on astropy__astropy-14309
+[verified-full 07:12:47]   -> no-patch (patch=0B wall=359.9s)
+[verified-full 07:12:47] [11/500] PREDICT cline on astropy__astropy-14365
