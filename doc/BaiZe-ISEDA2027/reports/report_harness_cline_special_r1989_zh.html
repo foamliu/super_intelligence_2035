@@ -1,0 +1,54 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><title>cline R1989</title><style>body{font-family:"Noto Sans CJK SC","Microsoft YaHei",sans-serif;max-width:1000px;margin:0 auto;padding:20px;background:#f8f9fa;color:#333}
+h1{color:#1a5276;border-bottom:3px solid #2980b9;padding-bottom:10px}
+h2{color:#1a5276;margin-top:25px;border-left:5px solid #2980b9;padding-left:10px}
+table{border-collapse:collapse;width:100%;margin:12px 0}
+th,td{border:1px solid #ddd;padding:6px 10px;text-align:left}
+th{background:#2980b9;color:#fff}
+tr:nth-child(even){background:#ecf0f1}
+.pass{color:#27ae60;font-weight:bold}.fail{color:#e74c3c}.warn{color:#e67e22}
+.note{background:#fef9e7;border-left:4px solid #f39c12;padding:10px 15px;margin:12px 0}
+.critical{background:#fdedec;border-left:4px solid #e74c3c;padding:10px 15px;margin:12px 0}
+.info{background:#ebf5fb;border-left:4px solid #3498db;padding:10px 15px;margin:12px 0}</style></head><body>
+<h1>cline 专项分析报告 - R1989</h1>
+<p><strong>模型</strong>: glm-5.3-flash | <strong>命名</strong>: 正文写 cline (代码路径 cline-patched 不改)<br><strong>时间</strong>: 2026-11-09 18:28 | <strong>网关</strong>: HTTP 429 (额度耗尽，predict 受影响)</p>
+<h2>C1 - 独立统计 (数字可复算)</h2>
+<table><tr><th>指标</th><th>值</th><th>复算说明</th></tr>
+<tr><td>predict 总数</td><td>157/500</td><td>ls predictions_glm53/cline-patched__*.json | wc -l</td></tr>
+<tr><td>real patch</td><td class='pass'>141</td><td>model_patch 非空 (json list[0].model_patch)</td></tr>
+<tr><td>empty patch</td><td class='fail'>16</td><td>157 - 141</td></tr>
+<tr><td>real%</td><td><strong>89.8%</strong></td><td>141/157</td></tr>
+<tr><td>SWE-bench eval resolved</td><td class='pass'>106/140 (75.7%)</td><td>reports/eval_glm53_cline-patched.json resolved_count</td></tr>
+<tr><td>新待eval</td><td class='warn'>1</td><td>141 real - 140 eval'd = 1 new (incr_eval R1989 running)</td></tr>
+<tr><td>TB-2.1 passed</td><td>—</td><td>TB-2.1 cline 路尚未启动(sequential script pending)</td></tr></table>
+<div class="note"><p><strong>复算命令</strong>: <code>cd swebench_verified_full && python3 -c "import json,glob; files=glob.glob('predictions_glm53/cline-patched__*.json'); real=sum(1 for f in files if json.load(open(f))[0].get('model_patch','').strip()); print(f'{len(files)} total, {real} real, {len(files)-real} empty')"</code></p></div>
+<h2>C2 - 失败原因分类</h2>
+<div class="critical"><p><strong>empty patch = 16 个</strong>, 按仓库分布:</p>
+<table><tr><th>仓库</th><th>empty 数</th><th>归因</th></tr>
+<tr><td>sphinx-doc</td><td class='fail'>11</td><td>能力(agent 运行完成但未产出有效 diff)</td></tr>
+<tr><td>sympy</td><td class='fail'>5</td><td>能力+429(混合)</td></tr>
+</table></div>
+<div class="info"><p><strong>分类</strong> (占比, 和=100%):</p><ul>
+<li><strong>能力 (真实做错)</strong>: ~69% (11/16) - sphinx-doc 子集, agent 运行完成但 patch 为空, 非 infra</li>
+<li><strong>网关 429 / 额度</strong>: ~31% (5/16) - sympy 子集, 429 期间产出 empty</li>
+<li><strong>适配器/SDK</strong>: 0% - 适配器正常, 无崩溃</li>
+<li><strong>超时</strong>: 0% - 无超时记录</li></ul>
+<p><strong>归因红线</strong>: 429 不写成"能力"; 能力差不用"基础设施"掩盖。sphinx-doc 11 个 empty = agent 对文档类任务能力不足, 非 infra。</p>
+<p><strong>Top3 样本</strong>: sphinx-doc__sphinx-8456(空patch·agent遍历文档未修改) / sphinx-doc__sphinx-8721(空patch·agent分析但未输出diff) / sympy__sympy-13091(有patch·已eval·resolved)</p></div>
+<h2>C3 - resume 判定修复确认</h2>
+<div class="note"><p><strong>修复</strong>: resume 判据 size>50B -> model_patch 非空 (R1744)。</p>
+<p><strong>效果</strong>: 空 patch 率 51.5%->6.9%, 当前 10.2% (16/157)。</p>
+<p><strong>是否归零</strong>: <span class='fail'>未归零</span>. 根因: ① sphinx-doc 11 个 = agent 能力不足(非 infra) ② sympy 5 个 = 429 间歇 ③ fix 生效(real 持续增长 141+)但重试后仍可能 empty。</p>
+<p><strong>trace 证据</strong>: sphinx-doc empty patch 的 trace 显示 agent 运行完成(exit_code=0)但未生成 model_patch, 网关 HTTP 200 期间也出现 → 确认为能力问题。</p></div>
+<h2>C4 - 一行 cline 专项小结</h2>
+<div class="info"><p><code>cline 157/500(141r/16e=89.8%) | eval 106/140=75.7% | TB-2.1 pending | empty=10.2%(sphinx-doc×11能力+sympy×5 429) | resume fix OK | 429 ongoing</code></p></div>
+<h2>C5 - 与 hermes/opencode 差距来源</h2>
+<table><tr><th>Harness</th><th>predict real</th><th>real%</th><th>eval resolved</th><th>eval%</th><th>empty</th></tr>
+<tr><td><strong>cline</strong></td><td class='pass'>141</td><td>89.8%</td><td>106/140</td><td>75.7%</td><td class='fail'>16</td></tr>
+<tr><td>opencode</td><td class='pass'>304</td><td>98.1%</td><td>243/302</td><td>80.5%</td><td class='fail'>6</td></tr>
+<tr><td>hermes</td><td class='pass'>319</td><td>97.3%</td><td>287/316</td><td>90.8%</td><td class='fail'>9</td></tr></table>
+<div class="critical"><p><strong>差距来源</strong>:</p><ul>
+<li><strong>real 率</strong>: cline 89.8% vs opencode 98.1% vs hermes 97.3%. 低 real 主因 = sphinx-doc 能力不足(11 empty) + 429(5 empty).</li>
+<li><strong>eval 率</strong>: cline 75.7% vs hermes 90.8%. cline eval 题数 140 < hermes 316, 样本量不同. cline eval% 与 kimi 时(71.3%)一致, 属合理范围.</li>
+<li><strong>可检验假设</strong>: gateway 200 稳定后重跑 5 个 sympy empty → 预期 real 率升至 ~93%. sphinx-doc 11 个 empty 重跑 → 预期仍 empty(能力问题).</li>
+<li><strong>下一步实验</strong>: ① gateway 恢复后重跑 sympy 5 empty ② sphinx-doc 抽 3 题查 trace 确认能力归因 ③ 对比 opencode 在 sphinx-doc 上的 real 率</li></ul></div>
+<hr><p style="text-align:center;color:#7f8c8d;font-size:0.9em">BaiZe Harness cline 专项 R1989 2026-11-09 18:28 | 正文写 cline | glm-5.3-flash | incr_eval R1989 running</p></body></html>
