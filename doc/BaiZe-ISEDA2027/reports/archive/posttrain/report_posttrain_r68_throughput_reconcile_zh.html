@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>R68 吞吐量统一模型</title>
+<style>
+body{font-family:-apple-system,"Segoe UI",Roboto,sans-serif;max-width:1100px;margin:0 auto;padding:20px;background:#f5f5f5;color:#333}
+h1{color:#2c3e50;border-bottom:3px solid #2ecc71;padding-bottom:10px}
+h2{color:#2c3e50;margin-top:32px;border-left:4px solid #3498db;padding-left:12px}
+table{border-collapse:collapse;width:100%;margin:12px 0;background:white;box-shadow:0 1px 3px rgba(0,0,0,0.1)}
+th{background:#2c3e50;color:white;padding:10px 12px;text-align:left;font-size:14px}
+td{padding:8px 12px;border-bottom:1px solid #ecf0f1;font-size:13px}
+.summary-box{background:white;border-radius:8px;padding:20px;margin:16px 0;box-shadow:0 2px 8px rgba(0,0,0,0.1)}
+.key-finding{background:#e8f6f3;border-left:4px solid #1abc9c;padding:12px 16px;margin:8px 0;border-radius:0 4px 4px 0}
+.warning{background:#fdf2e9;border-left:4px solid #e67e22;padding:12px 16px;margin:8px 0;border-radius:0 4px 4px 0}
+.disclaimer{background:#fadbd8;padding:10px 16px;border-radius:4px;margin-top:20px;font-size:13px}
+code{background:#ecf0f1;padding:2px 6px;border-radius:3px;font-size:13px}
+</style></head><body>
+<h1>R68: 吞吐量统一模型 — R61 vs R67 差异调和</h1>
+<p style="color:#7f8c8d">wake116 · 2026-11-09 · 零 GPU 纯分析 · 替身模型 MiniCPM5-2B</p>
+<div class="summary-box"><h3>摘要</h3>
+<p>R67 发现 A40 带宽瓶颈导致 0.97 steps/hr（72h 仅 70 步），与 R61 的 3.45 steps/hr 差异 3.5×。
+本轮通过建模连续批处理、变长序列、前缀缓存和沙盒不可达（R37），统一调和三个模型。</p>
+<div class="key-finding"><strong>R68 调和估计</strong>：单步 ≈ 2,640.0s →
+1.36 steps/hr → 72h 可跑 <strong>98 步</strong></div>
+<div class="warning"><strong>差异根源</strong>：R61 误用 MHA(32 KV heads) vs R67 正确 GQA(2 KV heads)；
+R67 假设所有序列最大上下文 vs 实际平均~14K；R61 假设沙盒可达(1.5s/call) vs R37 证明不可达(~0.01s/call)。
+连续批处理贡献 1.4× 增益，前缀缓存节省 ~60% prefill 时间。</div></div>
+<h2>1. 差异来源分析</h2>
+<table><tr><th>差异源</th><th>R61</th><th>R67</th><th>R68 正确值</th></tr><tr><td>KV head count</td><td style='color:#e74c3c'>32 (MHA)</td><td style='color:#3498db'>2 (GQA 8:1)</td><td style='color:#2ecc71'>R67 (GQA, verified)</td></tr><tr><td>Throughput method</td><td style='color:#e74c3c'>Empirical 1500 tok/s</td><td style='color:#3498db'>Physical 696 GB/s → 759 tok/s</td><td style='color:#2ecc71'>R68: CB + variable → ~1.4x R67</td></tr><tr><td>Sequence length</td><td style='color:#e74c3c'>Mean 28K (R60)</td><td style='color:#3498db'>Max 16,384 (config)</td><td style='color:#2ecc71'>R68: variable mean~14K</td></tr><tr><td>Continuous batching</td><td style='color:#e74c3c'>Not modeled</td><td style='color:#3498db'>Not modeled</td><td style='color:#2ecc71'>R68: 1.4x efficiency</td></tr><tr><td>Prefix caching</td><td style='color:#e74c3c'>Not modeled</td><td style='color:#3498db'>Not modeled</td><td style='color:#2ecc71'>R68: 3.5x prefill speedup</td></tr><tr><td>Tool latency</td><td style='color:#e74c3c'>1.5s/call</td><td style='color:#3498db'>0s</td><td style='color:#2ecc71'>R68: 0.01s (R37 unreachable)</td></tr></table>
+<h2>2. 三模型吞吐量对比</h2>
+<table><tr><th>模型</th><th>单步时间</th><th>steps/hr</th><th>72h 步数</th></tr><tr style='background:#e74c3c20'><td><strong style='color:#e74c3c'>R67 (带宽下界)</strong></td><td>4,514.0s (75min)</td><td>0.8</td><td>57</td></tr><tr style='background:#2ecc7120'><td><strong style='color:#2ecc71'>R68 (统一模型)</strong></td><td>2,640.0s (44min)</td><td>1.36</td><td>98</td></tr><tr style='background:#3498db20'><td><strong style='color:#3498db'>R61 (经验上界)</strong></td><td>4,194.5s (70min)</td><td>0.86</td><td>61</td></tr></table>
+<h2>3. 时间预算分解（R68）</h2>
+<div class="key-finding">瓶颈：<strong>decode</strong>（50.3%）</div>
+<table><tr><th>阶段</th><th>时间</th><th>占比</th><th>可视化</th></tr><tr><td>decode</td><td>1,327.8s</td><td>50.3%</td><td><div style='background:#3498db;height:20px;width:150.89999999999998px;border-radius:4px'></div></td></tr><tr><td>prefill (prefix cache)</td><td>314.5s</td><td>11.9%</td><td><div style='background:#3498db;height:20px;width:35.7px;border-radius:4px'></div></td></tr><tr><td>tool (Tier 3)</td><td>4.3s</td><td>0.2%</td><td><div style='background:#3498db;height:20px;width:0.6000000000000001px;border-radius:4px'></div></td></tr><tr><td>actor update (PPO)</td><td>537s</td><td>20.3%</td><td><div style='background:#3498db;height:20px;width:60.900000000000006px;border-radius:4px'></div></td></tr><tr><td>ref logprob</td><td>112s</td><td>4.2%</td><td><div style='background:#3498db;height:20px;width:12.600000000000001px;border-radius:4px'></div></td></tr><tr><td>overhead (15%)</td><td>344.3s</td><td>13.0%</td><td><div style='background:#3498db;height:20px;width:39.0px;border-radius:4px'></div></td></tr>
+<tr style="font-weight:bold;background:#ecf0f1"><td>总计</td><td>2,640.0s</td><td>100%</td><td></td></tr></table>
+<h2>4. Smoke Test 决策框架</h2>
+
+<table><tr><th>模型</th><th>单步时间</th><th>RL 步数</th><th>判定</th><th>配置</th></tr><tr><td><strong>R67 (floor)</strong></td><td>4,514.0s</td><td>47</td><td style='color:#e74c3c'><strong>ABORT</strong></td><td>N/A</td></tr><tr><td><strong>R68 (reconciled)</strong></td><td>2,640.0s</td><td>81</td><td style='color:#2ecc71'><strong>GO reduced — 70 steps</strong></td><td>Baseline 70 steps</td></tr><tr><td><strong>R61 (ceiling)</strong></td><td>4,194.5s</td><td>51</td><td style='color:#e74c3c'><strong>ABORT</strong></td><td>N/A</td></tr></table>
+<div class="key-finding"><strong>使用方法</strong>：GPU 到位后跑 smoke test，运行
+<code>python3 baize_posttrain_throughput_reconcile.py --smoke-step-time &lt;秒&gt;</code> 获取校准决策。</div>
+<h2>5. 优化建议</h2>
+<table><tr><th>#</th><th>优化项</th><th>新步时</th><th>风险</th></tr><tr><td><strong>#1</strong></td><td>Reduce response to 6144</td><td>1980.0s</td><td style='color:#e74c3c'>MODERATE</td></tr><tr><td><strong>#2</strong></td><td>G=4 instead of G=8</td><td>1425.6s</td><td style='color:#f39c12'>LOW</td></tr><tr><td><strong>#3</strong></td><td>Enable prefix caching</td><td>Already in R68s</td><td style='color:#2ecc71'>NONE</td></tr><tr><td><strong>#4</strong></td><td>Batch 64</td><td>1452.0s</td><td style='color:#f39c12'>LOW</td></tr><tr><td><strong>#5</strong></td><td>PPO epochs 2→1</td><td>2370.0s</td><td style='color:#e74c3c'>LOW-MODERATE</td></tr></table>
+<h2>6. 结论</h2>
+<div class="key-finding">
+<p><strong>R68 调和估计</strong>：1.36 steps/hr → 72h 98 步。
+介于 R67(57) 和 R61(61) 之间。</p>
+<p><strong>关键行动</strong>：GPU 到位后跑 smoke test 校准。若实测在 R68 ±20% 内，R68 模型可信。</p>
+<p><strong>沙盒不可达</strong>：R37 证明 EDA 沙盒从 .17 不可达。Tier 3 静态分析用于奖励，延迟≈0，
+但奖励质量较低 — 需在 RL 设计中补偿。</p></div>
+<div class="disclaimer">⚠️ 替身模型(MiniCPM5-2B) RL 结果<strong>不可迁移</strong>到 BaiZe。仅用于验证管线可行性和校准吞吐量。</div>
+</body></html>

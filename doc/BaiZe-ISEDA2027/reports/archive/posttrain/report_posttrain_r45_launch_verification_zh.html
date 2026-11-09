@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>R45 发射前物理资产核验 — BaiZe Post-Train 11/9 GPU 到位 T-1</title>
+<style>
+body{font-family:system-ui,sans-serif;max-width:960px;margin:0 auto;padding:20px;line-height:1.6;color:#222;background:#f8f8f8}
+h1{color:#1a3c5e;border-bottom:3px solid #1a3c5e;padding-bottom:8px}
+h2{color:#25588a;border-left:4px solid #25588a;padding-left:10px;margin-top:30px}
+table{border-collapse:collapse;width:100%;margin:12px 0;font-size:14px}
+th,td{border:1px solid #ccc;padding:6px 10px;text-align:left}
+th{background:#e8eef5;font-weight:600}
+tr:nth-child(even){background:#f5f5f5}
+.pass{color:#1a7d1a;font-weight:bold}.warn{color:#e65100;font-weight:bold}
+.box{border-radius:8px;padding:16px;margin:16px 0}
+.go{background:#e8f5e9;border:1px solid #66bb6a}
+.warn-b{background:#fff3e0;border:1px solid #ffa726}
+.sum{background:#e3f2fd;border:1px solid #90caf9}
+.cl{background:#f3e5f5;border:1px solid #ce93d8}
+.cl ol{padding-left:20px}.cl li{margin:8px 0}
+pre{background:#1e1e1e;color:#d4d4d4;padding:12px;border-radius:6px;overflow-x:auto;font-size:13px}
+.foot{margin-top:40px;padding-top:12px;border-top:1px solid #ccc;color:#666;font-size:12px}
+</style>
+</head>
+<body>
+<h1>R45 发射前物理资产核验 — BaiZe Post-Train 11/9 GPU 到位 T-1</h1>
+<p><strong>日期</strong>：2026-11-08 11:30 CST · <strong>节点</strong>：10.252.32.17 · <strong>轮次</strong>：wake93 / R45</p>
+
+<div class="sum box">
+<strong>结论</strong>：所有发射所需物理资产已确认存在。唯一阻塞 = GPU 尚未释放（11/9 分配 4 张 A40）。
+<strong>判定：🟢 GO for 11/9 launch（条件：4 张 A40 按时释放）</strong>
+</div>
+
+<h2>1. 核验方法</h2>
+<p>在 .17 节点上逐项验证 launch 脚本引用的全部路径。采用文件系统级检查（ls/du/site-packages 目录列举），
+因 NFS 冷启动下 import torch 耗时 &gt;30s（包已确认安装，见 §5）。</p>
+
+<h2>2. 模型与 Venv</h2>
+<table>
+<tr><th>资产</th><th>路径/版本</th><th>状态</th></tr>
+<tr><td>MiniCPM5-2B</td><td>/tmp/models/MiniCPM5-2B/ (4.7GB)</td><td class="pass">✅</td></tr>
+<tr><td>cu124 venv</td><td>~/code/verl_cu124_venv/ Python 3.10.22</td><td class="pass">✅</td></tr>
+<tr><td>— torch</td><td>2.6.0+cu124 (MEMORY旧记2.4.0,已升级)</td><td class="pass">✅</td></tr>
+<tr><td>— sglang</td><td>0.4.6.post1</td><td class="pass">✅</td></tr>
+<tr><td>— verl</td><td>已安装</td><td class="pass">✅</td></tr>
+<tr><td>— flash_attn</td><td>2.7.4.post1 (含cuda .so)</td><td class="pass">✅</td></tr>
+<tr><td>— flashinfer</td><td>0.2.3</td><td class="pass">✅</td></tr>
+<tr><td>— ray</td><td>已安装</td><td class="pass">✅</td></tr>
+<tr><td>vllm_venv (旧)</td><td>torch 2.14.0+cu130 CUDA=False</td><td class="warn">⚠️ 不可用</td></tr>
+</table>
+<div class="warn-b box">
+<strong>⚠️</strong> 旧 vllm_venv 的 cu130 与驱动 550.54.14 不兼容。<strong>必须使用 cu124 venv</strong>。
+</div>
+
+<h2>3. 数据与评测资产</h2>
+<table>
+<tr><th>资产</th><th>大小</th><th>状态</th></tr>
+<tr><td>RL Parquet v2</td><td>932K</td><td class="pass">✅</td></tr>
+<tr><td>RL JSONL v2</td><td>5.4M</td><td class="pass">✅</td></tr>
+<tr><td>SFT Parquet v2</td><td>3.5M</td><td class="pass">✅</td></tr>
+<tr><td>SFT JSONL v2</td><td>21M</td><td class="pass">✅</td></tr>
+<tr><td>EDA-Eval 158题</td><td>674K (158行)</td><td class="pass">✅</td></tr>
+<tr><td>run_eval.py</td><td>39K</td><td class="pass">✅</td></tr>
+<tr><td>run_cline_script.sh</td><td>29K</td><td class="pass">✅</td></tr>
+<tr><td>API知识库</td><td>8463 API</td><td class="pass">✅ JSON可加载</td></tr>
+</table>
+
+<h2>4. 脚本与配置</h2>
+<table>
+<tr><th>脚本</th><th>状态</th></tr>
+<tr><td>launch_11_9.sh (7步)</td><td class="pass">✅</td></tr>
+<tr><td>setup_cu124_venv.sh</td><td class="pass">✅</td></tr>
+<tr><td>preflight_check.sh (30项)</td><td class="pass">✅</td></tr>
+<tr><td>minicpm5_diag.sh</td><td class="pass">✅</td></tr>
+<tr><td>rl_grpo.sh (bash -n)</td><td class="pass">✅ R42</td></tr>
+<tr><td>contamination_gate.sh</td><td class="pass">✅</td></tr>
+<tr><td>baseline_gate.py (py_compile)</td><td class="pass">✅ R44</td></tr>
+<tr><td>smoke_calibrator.py</td><td class="pass">✅ R43</td></tr>
+<tr><td>rl_verl_config.yaml (lint 27/27)</td><td class="pass">✅ R43</td></tr>
+<tr><td>day0_audit.py (64PASS)</td><td class="pass">✅ R41</td></tr>
+</table>
+
+<h2>5. 已知问题</h2>
+<div class="warn-b box">
+<p><strong>5.1 torch import 延迟</strong>：NFS冷启动 &gt;30s。包已通过site-packages确认。
+对策：起跑前 warm-up <code>python -c 'import torch;import sglang;import verl;print("OK")'</code></p>
+<p><strong>5.2 GPU全占用</strong>：8×A40 被 SGLang Qwen3.8-27B 占满。11/9 释放 4 张。</p>
+<p><strong>5.3 沙盒TCP过滤</strong>：R37发现端口8664-8669被防火墙过滤。R0回退已配置(R42修复)。</p>
+</div>
+
+<h2>6. 系统环境</h2>
+<table>
+<tr><th>项目</th><th>值</th><th>状态</th></tr>
+<tr><td>NVIDIA驱动</td><td>550.54.14</td><td class="pass">✅ CUDA12.4</td></tr>
+<tr><td>/ 可用</td><td>359G/2.4T</td><td class="pass">✅</td></tr>
+<tr><td>/nas_data 可用</td><td>20T/127T</td><td class="pass">✅</td></tr>
+<tr><td>节点</td><td>10.252.32.17</td><td class="pass">✅</td></tr>
+</table>
+
+<h2>7. 11/9 发射日操作清单</h2>
+<div class="cl box">
+<ol>
+<li><strong>确认GPU释放</strong>：nvidia-smi → ≥4张 &lt;1GB</li>
+<li><strong>Warm-up</strong>：cu124 venv import torch/sglang/verl</li>
+<li><strong>预检</strong>：bash baize_posttrain_preflight_check.sh</li>
+<li><strong>发射</strong>：bash baize_posttrain_launch_11_9.sh --step 1-5 --gpu-ids 0,1,2,3
+  <ul><li>Step1: 预检 | Step2: SGLang serve+36%基线复测 | Step3: D1-D6提取</li>
+  <li>Step4: 污染闸门 | Step5: RL smoke test (R0, 10iters)</li></ul></li>
+<li><strong>基线判定</strong>：baseline_gate.py → GO/COND/NO-GO</li>
+<li><strong>Smoke判定</strong>：R43决策矩阵(10指标×3级) → GO/ADJUST/ABORT</li>
+<li><strong>双GO → Step6</strong>：全量RL训练</li>
+<li><strong>监控</strong>：rl_monitor.py 观察 reward/KL/loss/cheat_rate</li>
+</ol>
+</div>
+
+<h2>8. R1-R45 成果汇总</h2>
+<table>
+<tr><th>阶段</th><th>成果</th><th>就绪</th></tr>
+<tr><td>P0 诊断</td><td>D1-D6 + 58pp差距分解</td><td class="pass">✅</td></tr>
+<tr><td>P1 数据</td><td>19610+3347对, 0污染</td><td class="pass">✅</td></tr>
+<tr><td>P2 方案</td><td>三步方案+M1-M4预注册</td><td class="pass">✅</td></tr>
+<tr><td>P3 预备</td><td>7脚本骨架</td><td class="pass">✅</td></tr>
+<tr><td>R1-R44</td><td>45项调研覆盖全维度</td><td class="pass">✅</td></tr>
+<tr><td>R45</td><td>物理资产全核验 → 🟢GO</td><td class="pass">✅</td></tr>
+</table>
+
+<h2>9. 结论</h2>
+<div class="go box">
+<p><strong>🟢 GO for 11/9 GPU launch</strong></p>
+<p>所有资产已就位。R1-R45 共45项调研覆盖方法链路/数据/污染隔离/奖励/GRPO/评测/失败分类/排演/验收门全部维度。
+11/9 GPU到位后可直接执行7步发射序列。</p>
+<p><strong>⚠️ 替身RL收益不可迁移到白泽</strong>。本次仅验证方法链路+沉淀可复用流程。</p>
+</div>
+
+<div class="foot">
+<p>R45 · wake93 · 2026-11-08 · 节点 10.252.32.17 · 0 script · 0 外链</p>
+</div>
+</body>
+</html>

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>R93: Baseline Trajectory Analysis (SMOKE MODE)</title>
+<style>body{font-family:sans-serif;max-width:1200px;margin:0 auto;padding:20px;line-height:1.6;color:#333}
+h1{color:#1a5276;border-bottom:3px solid #2980b9;padding-bottom:10px}h2{color:#2874a6;margin-top:30px}
+table{margin:10px 0;font-size:14px}th{background:#2980b9;color:white}tr:nth-child(even){background:#f2f2f2}
+.ok{background:#d4edda;padding:10px;border-radius:5px;border-left:4px solid #28a745}
+.box{background:#eaf2f8;border-radius:8px;padding:15px;margin:15px 0}</style></head>
+<body><h1>R93: MiniCPM5-2B Baseline Trajectory Analysis Pipeline (SMOKE MODE)</h1>
+<p>Time: 2026-11-09 11:48:04 | Model: DeepSeek (SMOKE stand-in) | Traces: 123</p>
+<div class="box"><p>SMOKE MODE: Using DeepSeek traces to validate pipeline.</p></div>
+<h2>D1 Tool Call Legal Rate</h2><table border=1 cellpadding=6><tr style='background:#e8e8e8'><th>Metric</th><th>Value</th></tr>
+<tr><td>Legal rate (proxy)</td><td><b>1.0</b></td></tr><tr><td>Success traces</td><td>103</td></tr>
+<tr><td>Error traces</td><td>20</td></tr><tr><td>Success rate</td><td>83.7%</td></tr></table>
+<h2>D2 Tool Call Frequency</h2><table border=1 cellpadding=6><tr style='background:#e8e8e8'><th>Metric</th><th>Value</th></tr>
+<tr><td>Avg tool calls/task</td><td><b>22.88</b></td></tr></table>
+<h3>Top-10 Tools</h3><table border=1 cellpadding=6><tr style='background:#e8e8e8'><th>Tool</th><th>Calls</th><th>Per task</th></tr><tr><td>search_apis</td><td>764</td><td>6.2</td></tr><tr><td>run_pyAether_code_tool</td><td>622</td><td>5.1</td></tr><tr><td>get_api_details</td><td>507</td><td>4.1</td></tr><tr><td>execute_command</td><td>261</td><td>2.1</td></tr><tr><td>write_to_file</td><td>251</td><td>2.0</td></tr><tr><td>list_files</td><td>215</td><td>1.7</td></tr><tr><td>read_file</td><td>104</td><td>0.8</td></tr><tr><td>attempt_completion</td><td>84</td><td>0.7</td></tr><tr><td>search_files</td><td>6</td><td>0.0</td></tr></table>
+<h2>D3 Timeout Ratio</h2><table border=1 cellpadding=6><tr style='background:#e8e8e8'><th>Metric</th><th>Value</th></tr>
+<tr><td>Timeout ratio</td><td><b>0.0407</b></td></tr><tr><td>Avg turns</td><td>48.0</td></tr>
+<tr><td>P90 turns</td><td>92</td></tr><tr><td>P90 max msg len</td><td>9733</td></tr></table>
+<h2>D4 Failure Breakdown</h2><table border=1 cellpadding=6><tr style='background:#e8e8e8'><th>Mode</th><th>Description</th><th>Count</th><th>Ratio</th></tr><tr><td>logic_error</td><td>Assertion failed / wrong return value</td><td>495</td><td>74.8%</td></tr><tr><td>import_error</td><td>Import/Module not found</td><td>62</td><td>9.4%</td></tr><tr><td>type_error</td><td>TypeError / attribute access error</td><td>49</td><td>7.4%</td></tr><tr><td>missing_dependency</td><td>techlib / external dependency missing</td><td>31</td><td>4.7%</td></tr><tr><td>timeout</td><td>Too many iterations without convergence</td><td>18</td><td>2.7%</td></tr><tr><td>syntax_error</td><td>Python syntax error in generated code</td><td>6</td><td>0.9%</td></tr><tr><td>incomplete</td><td>Task not completed / model gave up</td><td>1</td><td>0.2%</td></tr></table>
+<h2>D5 Per-Scenario Pass Rate</h2><table border=1 cellpadding=6><tr style='background:#e8e8e8'><th>Scenario</th><th>Pass</th><th>Fail</th><th>Total</th><th>Rate</th></tr><tr><td>Design Management</td><td>21</td><td>3</td><td>24</td><td>87.5%</td></tr><tr><td>Schematic</td><td>27</td><td>4</td><td>31</td><td>87.1%</td></tr><tr><td>Others</td><td>21</td><td>5</td><td>26</td><td>80.8%</td></tr><tr><td>Layout</td><td>34</td><td>8</td><td>42</td><td>81.0%</td></tr></table>
+<h2>D6 Iteration Distribution</h2><table border=1 cellpadding=6><tr style='background:#e8e8e8'><th>Stat</th><th>Value</th></tr>
+<tr><td>Avg iterations</td><td><b>2.12</b></td></tr><tr><td>Median</td><td>2</td></tr>
+<tr><td>P25</td><td>1</td></tr><tr><td>P75</td><td>2</td></tr>
+<tr><td>P90</td><td>4</td></tr><tr><td>Max</td><td>14</td></tr>
+<tr><td>Avg unique tools</td><td>7.3</td></tr></table>
+
+<h2>Pipeline Readiness</h2><div class="ok"><p><b>READY</b>. When GPU freed: 1) sglang serve MiniCPM5-2B 2) cline auth 3) run 158-case eval 4) re-run this script with --trace-dir</p></div>
+<h2>Links to Prior Research</h2><ul><li>R88: DeepSeek failure analysis (reuses classification)</li><li>R89: Success patterns (comparison target)</li>
+<li>R90: SFT curriculum (D1/D2 low confirms SFT priority)</li><li>R92: GRPO HP (D6 low confirms RL convergence efficiency)</li>
+<li>P0 D: Fills MiniCPM5-2B side gap</li></ul>
+<hr><p style="color:#888;font-size:12px">R93 | BaiZe Stage(ii) | 2026-11-09 11:48:04 | Python 3.8+ stdlib | 0 script | 0 external | Surrogate RL not transferable to BaiZe</p>
+</body></html>

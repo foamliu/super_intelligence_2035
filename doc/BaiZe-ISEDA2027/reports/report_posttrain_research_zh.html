@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>R113 Data Transfer Plan — BaiZe Post-Train</title>
+<style>
+body { font-family: sans-serif; max-width: 960px; margin: 0 auto; padding: 20px; background: #f8f9fa; }
+h1 { color: #1a73e8; border-bottom: 3px solid #1a73e8; padding-bottom: 10px; }
+h2 { border-left: 4px solid #1a73e8; padding-left: 10px; }
+table { border-collapse: collapse; width: 100%; margin: 10px 0; font-size: 14px; }
+th, td { border: 1px solid #ddd; padding: 8px; }
+th { background: #1a73e8; color: white; }
+tr:nth-child(even) { background: #f1f3f4; }
+.box { padding: 12px 16px; border-radius: 8px; margin: 10px 0; }
+.box-info { background: #e8f0fe; border: 1px solid #c2d7fc; }
+.box-err { background: #fce8e6; border: 1px solid #f3c4c0; }
+.box-ok { background: #e6f4ea; border: 1px solid #b8e0c4; }
+.box-warn { background: #fef7e0; border: 1px solid #fde293; }
+code { background: #f1f3f4; padding: 2px 6px; border-radius: 3px; }
+.card { display: inline-block; background: white; border: 1px solid #ddd; border-radius: 8px; padding: 15px; margin: 5px; text-align: center; min-width: 120px; }
+.num { font-size: 28px; font-weight: 700; } .lbl { font-size: 12px; color: #666; }
+</style>
+</head>
+<body>
+<h1>R113 数据传输方案与路径修复</h1>
+<p>时间：2026-11-09 21:48:47 · 节点：.17 · NAS_ROOT：/nas_data</p>
+<div class="box box-info">R112 发现 37 处路径问题。R113 系统化审计 /nas_train 引用，修复硬编码，生成 rsync 传输脚本。</div>
+
+<h2>1. 扫描摘要</h2>
+<div>
+<div class="card"><div class="num">83</div><div class="lbl">总引用</div></div>
+<div class="card"><div class="num">49</div><div class="lbl">硬编码</div></div>
+<div class="card"><div class="num">20</div><div class="lbl">自动检测</div></div>
+<div class="card"><div class="num">14</div><div class="lbl">注释</div></div>
+</div>
+
+<h2>2. 硬编码修复</h2>
+<div class="box box-ok">状态：Replaced 2 hardcoded /nas_train nfs_path with NAS_ROOT auto-detection</div>
+<table><tr><th>文件</th><th>行</th><th>内容</th></tr><tr><td><code>baize_posttrain_loop.sh</code></td><td>25</td><td><code>GIT_ROOT="$(git -C "$SCRIPT_DIR" rev-parse --show-toplevel 2>/dev/null || echo '/nas_train/app.e0031982/code/super_intel</code></td></tr><tr><td><code>baize_posttrain_paths.sh</code></td><td>30</td><td><code>echo "⚠️ Cannot detect NFS root — neither /nas_data nor /nas_train has expected structure" >&2</code></td></tr><tr><td><code>baize_posttrain_r111_launch_consistency_audit.py</code></td><td>169</td><td><code>paths = [("/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/sft_agent_ultradata_2609","agent_2609_nas_train"),</code></td></tr><tr><td><code>baize_posttrain_r111_launch_consistency_audit.py</code></td><td>170</td><td><code>("/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/sft_ultradata_2605","general_2605_nas_train"),</code></td></tr><tr><td><code>baize_posttrain_r111_launch_consistency_audit.py</code></td><td>196</td><td><code>items.append({"id":"DAT-03","cat":"SFT通用数据","check":"UltraData在.17可达","status":"PASS" if sg["any_available"] else "WARN"</code></td></tr><tr><td><code>baize_posttrain_r111_launch_consistency_audit.py</code></td><td>282</td><td><code><div class="warn"><strong>⚠️ CFG-04</strong>：blend配置用<code>/nas_train/...</code>路径，.17上NFS为<code>/nas_data</code>。SFT通用数</code></td></tr><tr><td><code>baize_posttrain_r112_path_audit.py</code></td><td>5</td><td><code>1. Hardcoded /nas_train references (won't work on .17)</code></td></tr><tr><td><code>baize_posttrain_r112_path_audit.py</code></td><td>59</td><td><code>if '/nas_train' in line and 'PATHS' not in fname.upper():</code></td></tr><tr><td><code>baize_posttrain_r112_path_audit.py</code></td><td>132</td><td><code>for mp in ['/nas_data', '/nas_train', '/nas_inference', '/nas_env']:</code></td></tr><tr><td><code>baize_posttrain_r112_path_audit.py</code></td><td>164</td><td><code>"description": f"{len(nas_train_hi)} HIGH /nas_train refs in configs",</code></td></tr><tr><td><code>baize_posttrain_r112_path_audit.py</code></td><td>165</td><td><code>"mitigation": "Replace /nas_train with /nas_data in YAML configs; .sh files already use paths.sh auto-detection"})</code></td></tr><tr><td><code>baize_posttrain_r112_path_audit.py</code></td><td>177</td><td><code>if "/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/" in fixed:</code></td></tr><tr><td><code>baize_posttrain_r112_path_audit.py</code></td><td>178</td><td><code>fixed = fixed.replace("/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/",</code></td></tr><tr><td><code>baize_posttrain_r112_path_audit.py</code></td><td>180</td><td><code>fixes.append("CFG-04: Fixed /nas_train -> /nas_data in sft_blend_config.yaml data paths")</code></td></tr><tr><td><code>baize_posttrain_r112_path_audit.py</code></td><td>282</td><td><code><p><strong>关键发现</strong>：.17 的 <code>/nas_data</code> NFS（10.251.28.110:/train）与 .29/.12 的共享 NFS（<code>/nas_train</code></code></td></tr><tr><td><code>baize_posttrain_r112_path_audit.py</code></td><td>289</td><td><code><p>共 {len(path_issues)} 处（{len(nas_train_hi)} HIGH /nas_train）。</p></code></td></tr><tr><td><code>baize_posttrain_r112_path_audit.py</code></td><td>313</td><td><code><li><strong>CFG-04 已修复</strong>：sft_blend_config.yaml 中 /nas_train -> /nas_data。但数据目录在 .17 上不存在（仅有 nemo_experiments/），需在</code></td></tr><tr><td><code>baize_posttrain_r112_path_audit.py</code></td><td>330</td><td><code>print(f"Path issues:      {len(path_issues)} ({len(nas_train_hi)} HIGH /nas_train)")</code></td></tr><tr><td><code>baize_posttrain_r113_data_transfer_plan.py</code></td><td>5</td><td><code>R112 found 37 path issues (31 HIGH /nas_train). This script:</code></td></tr><tr><td><code>baize_posttrain_r113_data_transfer_plan.py</code></td><td>6</td><td><code>1. SYSTEMATIC AUDIT of all /nas_train refs (COMMENT/AUTO_DETECT/HARDCODED)</code></td></tr><tr><td><code>baize_posttrain_r113_data_transfer_plan.py</code></td><td>29</td><td><code>("SFT Agent (2609)","/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/sft_agent_ultradata_2609",23.89,"SFT"),</code></td></tr><tr><td><code>baize_posttrain_r113_data_transfer_plan.py</code></td><td>30</td><td><code>("SFT General (2605)","/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/sft_ultradata_2605",75.87,"SFT"),</code></td></tr><tr><td><code>baize_posttrain_r113_data_transfer_plan.py</code></td><td>31</td><td><code>("Anneal Domain","/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/pyAether_api_anneal",None,"Anneal"),</code></td></tr><tr><td><code>baize_posttrain_r113_data_transfer_plan.py</code></td><td>32</td><td><code>("Anneal Web","/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/mix_base",None,"Anneal"),</code></td></tr><tr><td><code>baize_posttrain_r113_data_transfer_plan.py</code></td><td>33</td><td><code>("Anneal Code","/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/full_ultradata_code_l3",None,"Anneal"),</code></td></tr><tr><td><code>baize_posttrain_r113_data_transfer_plan.py</code></td><td>34</td><td><code>("Anneal Math","/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/full_ultradata_math_l3",None,"Anneal"),</code></td></tr><tr><td><code>baize_posttrain_r113_data_transfer_plan.py</code></td><td>35</td><td><code>("Tokenizer","/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/tokenizer_eod",None,"All"),</code></td></tr><tr><td><code>baize_posttrain_r113_data_transfer_plan.py</code></td><td>36</td><td><code>("Pretrain ckpt","/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/step_700000",None,"Anneal+SFT"),</code></td></tr><tr><td><code>baize_posttrain_r113_data_transfer_plan.py</code></td><td>46</td><td><code>r'if\s+.*Path\s*\(\s*["\']/nas_train', r'elif\s+.*Path\s*\(\s*["\']/nas_train',</code></td></tr><tr><td><code>baize_posttrain_r113_data_transfer_plan.py</code></td><td>47</td><td><code>r'if\s+.*\[.*-d.*"/nas_train', r'elif\s+.*\[.*-d.*"/nas_train',</code></td></tr><tr><td><code>baize_posttrain_r113_data_transfer_plan.py</code></td><td>54</td><td><code>r'"nfs_path"\s*:\s*"/nas_train', r"'nfs_path'\s*:\s*'/nas_train",</code></td></tr><tr><td><code>baize_posttrain_r113_data_transfer_plan.py</code></td><td>55</td><td><code>r'"path"\s*:\s*"/nas_train', r"'path'\s*:\s*'/nas_train",</code></td></tr><tr><td><code>baize_posttrain_r113_data_transfer_plan.py</code></td><td>56</td><td><code>r'path:\s*"/nas_train', r"path:\s*'/nas_train",</code></td></tr><tr><td><code>baize_posttrain_r113_data_transfer_plan.py</code></td><td>61</td><td><code>if '"/nas_train/' in stripped or "'/nas_train/" in stripped:</code></td></tr><tr><td><code>baize_posttrain_r113_data_transfer_plan.py</code></td><td>65</td><td><code>if '/nas_train' in stripped:</code></td></tr><tr><td><code>baize_posttrain_r113_data_transfer_plan.py</code></td><td>82</td><td><code>if "/nas_train" in line:</code></td></tr><tr><td><code>baize_posttrain_r113_data_transfer_plan.py</code></td><td>91</td><td><code>path_17 = path_29_12.replace("/nas_train/", "/nas_data/", 1) if path_29_12.startswith("/nas_train/") else path_29_12</code></td></tr><tr><td><code>baize_posttrain_r113_data_transfer_plan.py</code></td><td>113</td><td><code>'"nfs_path": "/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/sft_ultradata_2605"',</code></td></tr><tr><td><code>baize_posttrain_r113_data_transfer_plan.py</code></td><td>116</td><td><code>'"nfs_path": "/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/sft_agent_ultradata_2609"',</code></td></tr><tr><td><code>baize_posttrain_r113_data_transfer_plan.py</code></td><td>134</td><td><code>return {"fixed": True, "changes": 2, "details": "Replaced 2 hardcoded /nas_train nfs_path with NAS_ROOT auto-detection"}</code></td></tr><tr><td><code>baize_posttrain_r113_data_transfer_plan.py</code></td><td>151</td><td><code>SRC_BASE="/nas_train/app.e0031982/code/BaiZe-ISEDA2027"</code></td></tr><tr><td><code>baize_posttrain_r113_data_transfer_plan.py</code></td><td>277</td><td><code><div class="box box-info">R112 发现 37 处路径问题。R113 系统化审计 /nas_train 引用，修复硬编码，生成 rsync 传输脚本。</div></code></td></tr><tr><td><code>baize_posttrain_r113_data_transfer_plan.py</code></td><td>298</td><td><code>.29:/nas_train → .17:/nas_data · ~100GB @ 1Gbps ≈ 15min</div></code></td></tr><tr><td><code>baize_posttrain_r113_data_transfer_plan.py</code></td><td>328</td><td><code>print("\n[1/5] Scanning /nas_train references...")</code></td></tr><tr><td><code>baize_posttrain_r91_gpu_readiness_audit.py</code></td><td>18</td><td><code>NAS_ROOT = "/nas_data" if Path("/nas_data/app.e0031982/code/super_intelligence_2035").exists() else "/nas_train"</code></td></tr><tr><td><code>baize_posttrain_r95_readiness_fix.py</code></td><td>14</td><td><code>NAS_ROOT = "/nas_data" if Path("/nas_data/app.e0031982/code/super_intelligence_2035").exists() else "/nas_train"</code></td></tr><tr><td><code>baize_posttrain_r96_launch_validation.py</code></td><td>24</td><td><code>NAS_ROOT = "/nas_data" if Path("/nas_data/app.e0031982/code/super_intelligence_2035").exists() else "/nas_train"</code></td></tr><tr><td><code>baize_posttrain_sft_data_mixer.py</code></td><td>77</td><td><code>"nfs_path": "/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/sft_ultradata_2605",</code></td></tr><tr><td><code>baize_posttrain_sft_data_mixer.py</code></td><td>85</td><td><code>"nfs_path": "/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/sft_agent_ultradata_2609",</code></td></tr></table>
+
+<h2>3. 数据可用性</h2>
+<table><tr><th>数据</th><th>阶段</th><th>存在</th><th>.bin/.idx</th><th>需传输</th><th>大小</th></tr>
+<tr><td>SFT Agent (2609)</td><td>SFT</td><td>MISS</td><td>MISS</td><td>YES</td><td>23.89GB</td></tr><tr><td>SFT General (2605)</td><td>SFT</td><td>MISS</td><td>MISS</td><td>YES</td><td>75.87GB</td></tr><tr><td>Anneal Domain</td><td>Anneal</td><td>MISS</td><td>MISS</td><td>YES</td><td>TBD</td></tr><tr><td>Anneal Web</td><td>Anneal</td><td>MISS</td><td>MISS</td><td>YES</td><td>TBD</td></tr><tr><td>Anneal Code</td><td>Anneal</td><td>MISS</td><td>MISS</td><td>YES</td><td>TBD</td></tr><tr><td>Anneal Math</td><td>Anneal</td><td>MISS</td><td>MISS</td><td>YES</td><td>TBD</td></tr><tr><td>Tokenizer</td><td>All</td><td>MISS</td><td>MISS</td><td>YES</td><td>TBD</td></tr><tr><td>Pretrain ckpt</td><td>Anneal+SFT</td><td>MISS</td><td>MISS</td><td>NO</td><td>TBD</td></tr><tr><td>MiniCPM5-2B</td><td>Eval</td><td>OK</td><td>MISS</td><td>NO</td><td>4.7GB</td></tr><tr><td>EDA-Eval 158-case</td><td>Eval</td><td>OK</td><td>MISS</td><td>NO</td><td>TBD</td></tr></table>
+<div class="box box-err">7 项需传输（~99.76 GB）。脚本：baize_posttrain_data_transfer.sh</div>
+
+<h2>4. 传输脚本</h2>
+<div class="box box-ok">已生成 baize_posttrain_data_transfer.sh (--check/--dry-run/--sft/--anneal/--verify)<br>
+.29:/nas_train → .17:/nas_data · ~100GB @ 1Gbps ≈ 15min</div>
+
+<h2>5. 影响</h2>
+<div class="box box-warn"><strong>RL</strong>：不受影响。数据在本地。</div>
+<div class="box box-err"><strong>SFT/退火</strong>：受阻，需传输。但依赖 pretrain ckpt (ETA 2026-12-25)，窗口充足。</div>
+
+<h2>6. 结论</h2>
+<div class="box box-info">
+<ol>
+<li>修复 sft_data_mixer.py 2 处硬编码 → NAS_ROOT ✅</li>
+<li>传输脚本已生成 ✅</li>
+<li>RL 不受阻，GPU 到位即可启动</li>
+<li>SFT/退火数据在 ckpt 窗口传输</li>
+<li>剩余 14 注释 + 20 自动检测 = 良性</li>
+</ol>
+</div>
+</body></html>

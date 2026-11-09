@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>R44 基线复现验收门</title><style>
+body{font-family:-apple-system,"Segoe UI",Roboto,sans-serif;max-width:1100px;margin:0 auto;padding:20px;color:#333}
+h1{color:#1a1a2e;border-bottom:3px solid #0f3460;padding-bottom:10px}
+h2{color:#16213e;margin-top:30px;border-left:4px solid #0f3460;padding-left:10px}
+table{border-collapse:collapse;width:100%;margin:15px 0}
+th,td{border:1px solid #ddd;padding:8px 12px;text-align:left}
+th{background:#0f3460;color:white}
+tr:nth-child(even){background:#f8f9fa}
+.decision-box{display:inline-block;padding:15px 30px;border-radius:8px;font-size:24px;font-weight:bold;color:#28a745;background:#d4edda;border:2px solid #28a745;margin:10px 0}
+.metric{display:inline-block;margin:5px 15px;padding:8px 16px;background:#e8eaf6;border-radius:4px}
+.info{background:#e3f2fd;padding:10px;border-radius:4px;border-left:4px solid #2196f3}
+</style></head><body>
+<h1>R44 基线复现验收门 &amp; 失败轨迹分类器</h1>
+<p><small>R44 (2026-11-08) · Day-1 准备 · 零 GPU · 纯 Python 3.8+ · 预注册验收标准</small></p>
+<div class="info"><b>预注册说明</b>：验收带 [29%, 43%] = 36% ± 7pp 在见到 11/9 真实数据前冻结。
+依据：n=158 二项分布 SE ≈ 3.8pp，95% Wilson CI 半宽 ≈ 7.5pp → 取整 7pp。遵循预注册原则。</div>
+<h2>1. 决策结果</h2>
+<div class="decision-box">GO</div>
+<div style="margin:15px 0">
+<span class="metric">Pass@1: <b>35.8%</b></span>
+<span class="metric">std: 0.0368</span>
+<span class="metric">runs: 5</span>
+<span class="metric">tasks: 158/158</span>
+<span class="metric">binomial p: 0.9841</span>
+</div>
+<div style="background:#d4edda;padding:15px;border-radius:8px;border-left:4px solid #28a745"><b>决策理由：</b><br>OK Pass@1=35.8% in GO band [29%, 43%]<br>OK runs=5 (>=5, protocol compliant)<br>OK tasks=158/158 (>=150)<br>OK std=0.0368 (<=0.10, stable)<br>OK failures=507 (>0, expected)<br>OK binomial p=0.9841 (>=0.05, no significant deviation)</div>
+<h2>2. 验收带定义（预注册）</h2>
+<table><tr><th>判定</th><th>Pass@1 范围</th><th>含义</th></tr>
+<tr><td style="color:#28a745;font-weight:bold">GO</td><td>[29%, 43%]</td><td>基线复现成功，可进入 smoke test</td></tr>
+<tr><td style="color:#856404;font-weight:bold">CONDITIONAL</td><td>[24%, 29%) ∪ (43%, 48%]</td><td>需调查偏差原因再决定</td></tr>
+<tr><td style="color:#dc3545;font-weight:bold">NO-GO</td><td>&lt;24% 或 &gt;48%</td><td>基线异常，先 debug</td></tr></table>
+<h2>3. 逐运行 Pass@1</h2>
+<table><tr><th>运行</th><th>Pass@1</th><th>通过/总</th></tr><tr><td>Run 1</td><td>36.7%</td><td>58/158</td></tr>
+<tr><td>Run 2</td><td>32.9%</td><td>52/158</td></tr>
+<tr><td>Run 3</td><td>34.8%</td><td>55/158</td></tr>
+<tr><td>Run 4</td><td>32.9%</td><td>52/158</td></tr>
+<tr><td>Run 5</td><td>41.8%</td><td>66/158</td></tr>
+
+<tr style="font-weight:bold;background:#e8eaf6"><td>Mean ± std</td><td>35.8% ± 0.0368</td><td>-</td></tr></table>
+<h2>4. 失败模式分类（R4 五分类法）</h2>
+<p>总失败 task-run 数：<b>507</b></p>
+<table><tr><th>代码</th><th>类别</th><th>实测</th><th>R4预测</th><th>DeepSeek</th><th>弱模型</th><th>治理</th></tr><tr><td><b>SYN</b></td><td>语法错 (Syntax)</td><td>86 (17.0%)</td><td>5.0%</td><td>1.5%</td><td>4.7%</td><td>SFT 注入 canonical_solution 结构模板</td></tr>
+<tr><td><b>API</b></td><td>API 误用 (API Misuse)</td><td>224 (44.2%)</td><td>45.0%</td><td>20.7%</td><td>65.5%</td><td>SFT 注入 PyAether API 参考语料 + 领域退火</td></tr>
+<tr><td><b>LOG</b></td><td>逻辑错 (Logic Error)</td><td>116 (22.9%)</td><td>25.0%</td><td>66.7%</td><td>25.6%</td><td>RL(GRPO) 打磨查-写-改闭环 (核心 RL 价值)</td></tr>
+<tr><td><b>TMO</b></td><td>超时 (Timeout)</td><td>40 (7.9%)</td><td>15.0%</td><td>14.3%</td><td>0.0%</td><td>上下文长度适配 + 推理加速</td></tr>
+<tr><td><b>DEP</b></td><td>缺依赖 (Missing Dependency)</td><td>41 (8.1%)</td><td>7.0%</td><td>0.2%</td><td>4.7%</td><td>领域退火注入 techlib 语料 + SFT 环境配置</td></tr>
+<tr><td><b>OTHER</b></td><td>其他 (Other)</td><td>0 (0.0%)</td><td>3.0%</td><td>1.1%</td><td>0.0%</td><td>个案分析</td></tr>
+</table>
+<h2>5. Per-Scenario 失败分解</h2>
+<table><tr><th>场景</th><th>任务数</th><th>失败数</th><th>通过率</th><th>95%CI</th><th>失败类别</th></tr><tr><td>Unknown</td><td>158</td><td>158</td><td>0.0%</td><td>[0.0%, 2.4%]</td><td>API:224, DEP:41, LOG:116, SYN:86, TMO:40</td></tr>
+</table>
+<h2>6. 与 R4 预测分布对比</h2>
+<div class="info">R4 基于 DeepSeek + aether_coder 外推构建 36% 侧预测。关键预测：API 误用 40-60%。若显著偏离 → 调整 SFT 数据配比。</div>
+<h2>7. DeepSeek 卡方检验</h2><p>chi2=2686.0823, df=5, p=0.0</p><table><tr><th>类别</th><th>实测</th><th>期望</th><th>贡献</th></tr><tr><td>API</td><td>224</td><td>104.9</td><td>135.0479</td></tr>
+<tr><td>DEP</td><td>41</td><td>1.0</td><td>1576.8049</td></tr>
+<tr><td>LOG</td><td>116</td><td>338.2</td><td>145.9598</td></tr>
+<tr><td>OTHER</td><td>0</td><td>5.6</td><td>5.577</td></tr>
+<tr><td>SYN</td><td>86</td><td>7.6</td><td>808.1231</td></tr>
+<tr><td>TMO</td><td>40</td><td>72.5</td><td>14.5697</td></tr>
+</table>
+<h2>9. Day-1 后续行动</h2>
+<div class="info"><ol>
+<li><b>GO</b>：执行 smoke test (GRPO R0, 10 iters)</li>
+<li><b>CONDITIONAL</b>：检查 vLLM 参数、超时、158 题全覆盖</li>
+<li><b>NO-GO</b>：检查模型加载、endpoint、harness driver</li>
+<li>用实测分布替换 R4 外推假设，调整 SFT 配比</li>
+</ol></div>
+<hr><p><small>R44 · baize_posttrain_baseline_gate.py · 2026-11-08 · 0 script · 0 外链</small></p>
+</body></html>

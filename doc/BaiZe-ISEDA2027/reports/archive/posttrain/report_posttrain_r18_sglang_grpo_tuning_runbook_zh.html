@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>R18 SGLang 服务器调参 + GRPO 超参深度分析 + 11/9 启动运行手册</title>
+<style>
+body{font-family:system-ui,-apple-system,sans-serif;max-width:960px;margin:0 auto;padding:20px;line-height:1.6;color:#222;background:#fafafa}
+h1{color:#1a3a5a;border-bottom:3px solid #1a3a5a;padding-bottom:8px}
+h2{color:#2a5a8a;margin-top:2em;border-bottom:1px solid #ccc;padding-bottom:4px}
+h3{color:#3a6a9a;margin-top:1.5em}
+table{border-collapse:collapse;width:100%;margin:1em 0;font-size:0.9em}
+th,td{border:1px solid #ccc;padding:6px 10px;text-align:left}
+th{background:#e8eef4;font-weight:600}
+tr:nth-child(even){background:#f4f8fc}
+code{background:#eef;padding:1px 4px;border-radius:3px;font-size:0.88em}
+.red{color:#c0392b;font-weight:bold}
+.green{color:#27ae60}
+.yellow{color:#e67e22}
+.note{background:#fffde7;border-left:4px solid #fbc02d;padding:8px 12px;margin:1em 0}
+.warn{background:#fff0f0;border-left:4px solid #e74c3c;padding:8px 12px;margin:1em 0}
+.ok{background:#f0fff0;border-left:4px solid #27ae60;padding:8px 12px;margin:1em 0}
+</style>
+</head>
+<body>
+<h1>R18: SGLang 服务器调参 + GRPO 超参深度分析 + 11/9 启动运行手册</h1>
+<p><strong>日期</strong>：2026-11-07 wake66 | <strong>类型</strong>：零 GPU web 调研 + 配置审计</p>
+<div class="note"><strong>来源</strong>：SGLang 官方超参数调优文档 | GRPO 调参指南 (emergentmind 2025.12) | CSDN 小模型蒸馏 (2026.06) | verl v0.7 blog | GitHub verl MODIFICATION_GUIDE</div>
+
+<h2>1. SGLang 服务器调参（4×A40 48GB）</h2>
+<h3>1.1 内存分配（R17 GQA 修正后）</h3>
+<table>
+<tr><th>组件</th><th>大小</th><th>说明</th></tr>
+<tr><td>模型权重 (bf16)</td><td>4.7 GB</td><td>2B × 2 bytes</td></tr>
+<tr><td>KV cache (12 seqs, 8192 ctx)</td><td>4.1 GB</td><td>42 layers × 2 KV heads × 128 dim × 2 × 2 = 42 KB/token</td></tr>
+<tr><td>激活值 + CUDA graph</td><td>5–8 GB</td><td>SGLang 官方建议</td></tr>
+<tr><td><strong>推理总计</strong></td><td>~14–17 GB</td><td>gpu_memory_utilization=0.50 → 24GB</td></tr>
+<tr><td><strong>训练侧 (FSDP)</strong></td><td>~20–24 GB</td><td>2B × 3 / 4 GPUs ≈ 6–8GB/GPU</td></tr>
+<tr><td><strong>合计</strong></td><td>~34–41 GB / 48 GB</td><td>余量 7–14 GB ✅</td></tr>
+</table>
+
+<h3>1.2 调参建议</h3>
+<table>
+<tr><th>参数</th><th>当前值</th><th>建议值</th><th>理由</th></tr>
+<tr><td>gpu_memory_utilization</td><td>0.50</td><td><strong>保持 0.50</strong></td><td>co-located safety；KV cache 仅 4.1GB</td></tr>
+<tr><td>max_num_seqs</td><td>12</td><td><strong>smoke:12 → full:24</strong></td><td>24 seqs 仅 8.2GB KV，余量充足</td></tr>
+<tr><td>enforce_eager</td><td>True</td><td><strong>smoke:True → full:False</strong></td><td>eager 禁 CUDA graph 损失 ~30-40% 吞吐</td></tr>
+<tr><td>schedule_conservativeness</td><td>默认~1.0</td><td><strong>0.5</strong></td><td>RL rollout 多短序列，默认偏保守</td></tr>
+<tr><td>chunked_prefill_size</td><td>默认8192</td><td><strong>4096</strong></td><td>多轮 tool call 累积 prompt 较长</td></tr>
+<tr><td>--stop-token-ids</td><td>未设</td><td class="red"><strong>1,130073</strong></td><td>R17 P0: EOS 多令牌需同时识别</td></tr>
+<tr><td>temperature</td><td>verl默认</td><td><strong>1.0</strong></td><td>GRPO 推荐 T≈1.0</td></tr>
+</table>
+
+<div class="warn">
+<strong>🔴 新发现：diag 脚本 --tool-call-parser minicpm5 将失败</strong><br>
+SGLang pip 发行版（0.5.6.post3）不含 minicpm5 parser，但 diag 脚本仍使用此参数。<br>
+<strong>修复</strong>：① 移除该参数，cline 自行解析 XML；② 改用 --tool-call-parser hermes；③ cherry-pick SGLang main parser。
+</div>
+
+<h2>2. GRPO 超参数深度分析</h2>
+<table>
+<tr><th>超参数</th><th>当前值</th><th>文献推荐</th><th>评估</th><th>建议</th></tr>
+<tr><td>lr (actor)</td><td>1.0e-6</td><td>2–5×10⁻⁶</td><td class="yellow">⚠️偏低</td><td>smoke 后提到 <strong>3.0e-6</strong></td></tr>
+<tr><td>kl_loss_coef</td><td>0.04</td><td>0.01–0.04</td><td class="green">✅上限</td><td>full 可降到 <strong>0.02</strong></td></tr>
+<tr><td>clip_ratio</td><td>0.2</td><td>0.2</td><td class="green">✅最优</td><td>保持</td></tr>
+<tr><td>group_size (G)</td><td>8</td><td>8</td><td class="green">✅最优</td><td>保持</td></tr>
+<tr><td>ppo_epochs</td><td>1</td><td>1–3</td><td class="green">✅保守</td><td>full 可试 <strong>2</strong></td></tr>
+<tr><td>entropy_coeff</td><td>0.0</td><td>0.0–0.01</td><td class="yellow">⚠️零</td><td>full 加 <strong>0.001</strong></td></tr>
+</table>
+<p><strong>关键逻辑</strong>：lr 1e-6→3e-6（防止误判 RL 无效）；KL 分阶段 0.04→0.02→0.01；entropy 0→0.001 防坍缩；ppo_epochs 1→2 提高利用率。</p>
+
+<h2>3. 11/9 Launch Day Runbook</h2>
+<table>
+<tr><th>步骤</th><th>内容</th><th>时间</th><th>Go/No-Go</th><th>失败回退</th></tr>
+<tr><td>0</td><td>setup_cu124_venv.sh --yes</td><td>15-30 min</td><td>torch.cuda.is_available()=True</td><td>检查 CUDA</td></tr>
+<tr><td>1</td><td>preflight_check.sh</td><td>2 min</td><td>PASS>0, FAIL=0</td><td>逐项排查</td></tr>
+<tr><td>2a</td><td>SGLang serve</td><td>3-5 min</td><td>curl /v1/models 返回</td><td>检查日志</td></tr>
+<tr><td>2b</td><td>Quick eval (10 tasks)</td><td>20-40 min</td><td>≥3/10 有输出</td><td>检查 auth+tunnel</td></tr>
+<tr><td>2c</td><td>D1-D6 提取</td><td>5 min</td><td>JSON 非 null</td><td>trace_reader 兼容</td></tr>
+<tr><td>3</td><td>Full eval (158×5)</td><td class="red">8-40 h</td><td>Pass@1 ≈ 36% ± 5pp</td><td>偏移→查 prompt/口径</td></tr>
+<tr><td>4</td><td>Contamination gate</td><td>2 min</td><td>0 命中</td><td>有命中→停手</td></tr>
+<tr><td>5</td><td>RL smoke (10 iters)</td><td>30-60 min</td><td>reward mean > 0.1</td><td>全 0→查奖励函数</td></tr>
+<tr><td>6</td><td>Full RL (2000 iters)</td><td class="red">12-24 h</td><td>reward 上升 + cheat<5%</td><td>下降→降 lr</td></tr>
+</table>
+<div class="ok"><strong>建议</strong>：11/9 先跑 quick 路径（Step 0-2b+5）验证全链路 ≈1.5h；11/10 起 full eval；11/11+ 起 full RL。</div>
+
+<h3>3.1 首验清单（8 项）</h3>
+<table>
+<tr><th>#</th><th>验证项</th><th>预期</th><th>失败处理</th></tr>
+<tr><td>V1</td><td>CUDA 可用</td><td>True</td><td>重装 torch cu124</td></tr>
+<tr><td>V2</td><td>SGLang 启动</td><td>返回 minicpm5-2b</td><td>检查日志</td></tr>
+<tr><td>V3</td><td>EOS 停止</td><td>在 im_end 停止</td><td>加 --stop-token-ids 130073</td></tr>
+<tr><td>V4</td><td>Tool call 格式</td><td>含 function XML</td><td>移除 --tool-call-parser</td></tr>
+<tr><td>V5</td><td>cline auth</td><td>成功</td><td>检查 cline 版本</td></tr>
+<tr><td>V6</td><td>verl import</td><td>无报错</td><td>检查 PYTHONPATH</td></tr>
+<tr><td>V7</td><td>GRPO smoke reward</td><td>mean > 0.1</td><td>检查奖励函数+数据</td></tr>
+<tr><td>V8</td><td>cheat_rate</td><td>< 5%</td><td>加 anti-cheat</td></tr>
+</table>
+
+<h2>4. 配置修正清单</h2>
+<table>
+<tr><th>文件</th><th>改动</th><th>优先级</th><th>时机</th></tr>
+<tr><td>diag.sh</td><td>移除 --tool-call-parser minicpm5；加 --stop-token-ids 1,130073；加 --schedule-conservativeness 0.5</td><td class="red">P0</td><td>11/9 前</td></tr>
+<tr><td>verl_config.yaml</td><td>加 stop_token_ids: [1,130073]；加 temperature: 1.0；加 schedule_conservativeness: 0.5</td><td class="red">P0</td><td>11/9 前</td></tr>
+<tr><td>verl_config.yaml</td><td>lr: 1e-6→3e-6；entropy_coeff: 0→0.001</td><td class="yellow">P1</td><td>smoke 后</td></tr>
+<tr><td>verl_config.yaml</td><td>max_num_seqs: 12→24；enforce_eager: True→False</td><td class="green">P2</td><td>full 前</td></tr>
+<tr><td>verl_config.yaml</td><td>kl_loss_coef: 0.04→0.02；ppo_epochs: 1→2</td><td class="green">P3</td><td>中期</td></tr>
+</table>
+
+<h2>5. 残余风险</h2>
+<ol>
+<li>SGLang 0.5.6.post3 + MiniCPM5 tokenizer 510 added tokens 映射可能有差异。缓解：V2 验证。</li>
+<li>verl v0.7 server mode 行为变化（移除 SPMD rollout）。缓解：pip show verl 看版本对照文档。</li>
+<li>chat_template + need_tools_kwargs 双重注入。缓解：V4 检查。</li>
+<li>thinking 模式消耗 response 预算。缓解：enable_thinking: false。</li>
+<li>flash-attn 编译失败。缓解：fallback sdpa。</li>
+</ol>
+
+<h2>6. 与 R1–R17 的关系</h2>
+<table>
+<tr><th>既有发现</th><th>R18 贡献</th></tr>
+<tr><td>R11/R17 KV cache 修正</td><td>据此建议 max_num_seqs 12→24</td></tr>
+<tr><td>R15 SGLang parser 不可用</td><td>发现 diag 脚本仍引用，给修复方案</td></tr>
+<tr><td>R16 verl 独立 ToolParser</td><td>确认 RL 路径不受影响</td></tr>
+<tr><td>R17 EOS 多令牌</td><td>给出具体 --stop-token-ids 参数</td></tr>
+<tr><td>R11 GRPO lr=1e-6</td><td>对照文献建议提到 3e-6</td></tr>
+<tr><td>R12 launch 6 步</td><td>补充时间预算 + Go/No-Go + 回退</td></tr>
+</table>
+
+<div class="note">⚠️ 替身 RL（MiniCPM5-2B）结果不可迁移到白泽。本次仅验证方法链路 + 沉淀可复用流程。</div>
+<p style="text-align:center;color:#888;margin-top:2em">R18 · 2026-11-07 · BaiZe Post-Train · 0 script · 0 外链 · 自包含</p>
+</body>
+</html>

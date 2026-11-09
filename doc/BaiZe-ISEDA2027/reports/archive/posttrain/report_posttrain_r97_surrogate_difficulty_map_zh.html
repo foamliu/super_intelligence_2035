@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>R97 替身难度图谱 — 50题EDA-Eval-PyAether代码生成</title>
+<style>
+body { font-family: -apple-system, "Noto Sans SC", sans-serif; max-width: 960px; margin: 0 auto; padding: 20px; background: #f8f9fa; color: #333; }
+h1 { color: #1a5276; border-bottom: 3px solid #3498db; padding-bottom: 10px; }
+h2 { color: #2c3e50; margin-top: 30px; }
+table { border-collapse: collapse; width: 100%; margin: 10px 0; }
+th, td { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+th { background: #2c3e50; color: white; }
+tr:nth-child(even) { background: #f2f2f2; }
+.warn { background: #fff3cd; padding: 10px; border-radius: 5px; border-left: 4px solid #ffc107; margin: 10px 0; }
+.info { background: #d1ecf1; padding: 10px; border-radius: 5px; border-left: 4px solid #17a2b8; margin: 10px 0; }
+.metric { display: inline-block; background: #e8f4f8; padding: 8px 16px; margin: 4px; border-radius: 8px; }
+.metric strong { font-size: 1.4em; color: #2c3e50; }
+</style></head><body>
+<h1>R97 替身难度图谱 — 50题 EDA-Eval-PyAether 纯代码生成</h1>
+<div class="warn"><strong>WARNING</strong>: Qwen3.8-27B results NOT transferable to BaiZe (MiniCPM5-2B). Surrogate test only validates pipeline + provides strong-model-no-tools reference.</div>
+<h2>1. 概要</h2>
+<div>
+<span class="metric">任务数: <strong>50</strong></span>
+<span class="metric">有效任务: <strong>50</strong></span>
+<span class="metric">语法正确: <strong>50</strong> (100.0%)</span>
+<span class="metric">平均耗时: <strong>2.2s</strong></span>
+<span class="metric">平均tokens: <strong>692</strong></span>
+<span class="metric">平均LOC: <strong>27.1</strong></span>
+</div>
+<h2>2. 失败模式分布</h2>
+<table><tr><th>失败模式</th><th>数量</th><th>占比</th></tr><tr><td>partial_api_usage</td><td>33</td><td>66.0%</td></tr><tr><td>no_api_usage</td><td>17</td><td>34.0%</td></tr></table>
+<div class="info"><ul>
+<li><code>potential_pass</code> = 语法正确+全部API出现（可能通过，需执行验证）</li>
+<li><code>no_api_usage</code> = 语法正确但未使用所需API -> 工具必需型任务</li>
+<li><code>partial_api_usage</code> = 仅使用部分API -> 需要API查找能力</li>
+<li><code>syntax_error</code> = 语法错误 -> 代码生成能力问题</li>
+</ul></div>
+<h2>3. API 覆盖率分布</h2><div style='margin:4px 0'><span style='display:inline-block;width:60px'>0%</span><span style='display:inline-block;width:30px;text-align:right'>17</span><div style='display:inline-block;background:#4CAF50;height:14px;width:34.0%;vertical-align:middle;margin-left:8px'></div></div><div style='margin:4px 0'><span style='display:inline-block;width:60px'>1-50%</span><span style='display:inline-block;width:30px;text-align:right'>27</span><div style='display:inline-block;background:#4CAF50;height:14px;width:54.0%;vertical-align:middle;margin-left:8px'></div></div><div style='margin:4px 0'><span style='display:inline-block;width:60px'>51-99%</span><span style='display:inline-block;width:30px;text-align:right'>6</span><div style='display:inline-block;background:#4CAF50;height:14px;width:12.0%;vertical-align:middle;margin-left:8px'></div></div><div style='margin:4px 0'><span style='display:inline-block;width:60px'>100%</span><span style='display:inline-block;width:30px;text-align:right'>0</span><div style='display:inline-block;background:#4CAF50;height:14px;width:0.0%;vertical-align:middle;margin-left:8px'></div></div>
+<div class="info"><strong>17</strong> 个任务语法正确但API覆盖0% -> 工具必需型。<strong>0</strong> 个任务API全覆盖 -> 可能纯逻辑型。</div>
+<h2>4. 按场景统计</h2>
+<table><tr><th>场景</th><th>任务数</th><th>语法正确</th><th>API全覆盖</th><th>可能通过</th></tr><tr><td>Design Management</td><td>11</td><td>11 (100%)</td><td>0 (0%)</td><td>0 (0%)</td></tr><tr><td>Layout</td><td>16</td><td>16 (100%)</td><td>0 (0%)</td><td>0 (0%)</td></tr><tr><td>Others</td><td>6</td><td>6 (100%)</td><td>0 (0%)</td><td>0 (0%)</td></tr><tr><td>Schematic</td><td>17</td><td>17 (100%)</td><td>0 (0%)</td><td>0 (0%)</td></tr></table>
+<h2>5. 按类别统计</h2>
+<table><tr><th>类别</th><th>任务数</th><th>语法正确</th><th>API全覆盖</th></tr><tr><td>Database & Design Management</td><td>8</td><td>8 (100%)</td><td>0 (0%)</td></tr><tr><td>Design Content Creation</td><td>10</td><td>10 (100%)</td><td>0 (0%)</td></tr><tr><td>Design Content Query & Edit</td><td>7</td><td>7 (100%)</td><td>0 (0%)</td></tr><tr><td>Geometry Operation & Analysis</td><td>12</td><td>12 (100%)</td><td>0 (0%)</td></tr><tr><td>Simulation & Analysis Configuration</td><td>7</td><td>7 (100%)</td><td>0 (0%)</td></tr><tr><td>Utilities</td><td>6</td><td>6 (100%)</td><td>0 (0%)</td></tr></table>
+<h2>6. 按 API 数量分箱</h2>
+<table><tr><th>API数/题</th><th>任务数</th><th>语法正确</th><th>API全覆盖</th></tr><tr><td>1</td><td>3</td><td>3 (100%)</td><td>0 (0%)</td></tr><tr><td>2-3</td><td>13</td><td>13 (100%)</td><td>0 (0%)</td></tr><tr><td>4-5</td><td>10</td><td>10 (100%)</td><td>0 (0%)</td></tr><tr><td>6-10</td><td>22</td><td>22 (100%)</td><td>0 (0%)</td></tr><tr><td>10+</td><td>2</td><td>2 (100%)</td><td>0 (0%)</td></tr></table>
+<div class="info">API数量越多 -> API覆盖率越低 -> 证实多API任务需要工具调用。支撑R2难度分层。</div>
+<h2>7. Techlib 依赖对比</h2>
+<table><tr><th>techlib</th><th>任务数</th><th>语法正确</th><th>API全覆盖</th></tr>
+<tr><td>无依赖</td><td>46</td><td>46</td><td>0</td></tr>
+<tr><td>有依赖</td><td>4</td><td>4</td><td>0</td></tr></table>
+<h2>8. 工具必需型 vs 纯逻辑型</h2>
+<div class="info"><strong>工具必需型 (17 个)</strong>：语法正确但完全不使用所需API。需SFT注入API知识+工具调用能力。ID: EDA-Eval-PyAether-003, EDA-Eval-PyAether-005, EDA-Eval-PyAether-006, EDA-Eval-PyAether-007, EDA-Eval-PyAether-008, EDA-Eval-PyAether-012, EDA-Eval-PyAether-017, EDA-Eval-PyAether-018, EDA-Eval-PyAether-019, EDA-Eval-PyAether-020 ...</div>
+<div class="info"><strong>纯逻辑型 (0 个)</strong>：语法正确且API全覆盖。对SFT/RL收益最小。ID:  </div>
+<h2>9. 对 Post-Train 三步的启示</h2>
+<div class="info"><ol>
+<li><strong>领域退火</strong>：注入pyAether API文档 -> 模型知道API名称 -> 提升API覆盖率 -> M1(50%)关键驱动</li>
+<li><strong>SFT</strong>：DeepSeek成功轨迹API使用模式 -> 教模型何时用哪个API -> M2(65%)</li>
+<li><strong>RL(GRPO)</strong>：多API串联+执行反馈闭环 -> M3(75%)。工具必需型任务是RL核心素材</li>
+</ol></div>
+<h2>10. 局限性</h2>
+<ul><li>替身模型 Qwen3.8-27B != MiniCPM5-2B，结果不可迁移</li><li>纯代码生成 != full harness（无工具调用、无迭代）</li><li>API覆盖率 != Pass@1（可能有逻辑错误）</li><li>50题样本可能不代表全部158题分布</li><li>无执行验证，potential_pass是上界估计</li></ul>
+<h2>11. 与前序研究关联</h2>
+<ul><li><strong>R94</strong>: 3题smoke -> R97扩展至50题</li><li><strong>R83</strong>: 规则难度分层 -> R97实证校验</li><li><strong>R88</strong>: DeepSeek失败分析 -> R97无工具侧对照</li><li><strong>R93</strong>: MiniCPM5-2B基线轨迹分析 -> GPU释放后替换</li><li><strong>P0 D1-D6</strong>: D2工具频次假设 -> R97 API覆盖率间接验证</li></ul>
+<p style="color:#999;font-size:0.8em;margin-top:30px">Generated: 2026-11-09 13:32:58 | R97 | Surrogate: Qwen3.8-27B via SGLang</p>
+</body></html>

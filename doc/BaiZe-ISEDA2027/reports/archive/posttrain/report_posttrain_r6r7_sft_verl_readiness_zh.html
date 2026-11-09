@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaiZe Post-Train R6+R7 深度调研：SFT 方案设计 + verl 环境预检</title>
+<style>
+body{font-family:system-ui,sans-serif;max-width:960px;margin:0 auto;padding:20px;line-height:1.6;color:#222}
+h1{color:#1a5276;border-bottom:3px solid #2980b9;padding-bottom:10px}
+h2{color:#2874a6;margin-top:30px;border-left:4px solid #3498db;padding-left:10px}
+h3{color:#1f618d;margin-top:20px}
+table{border-collapse:collapse;width:100%;margin:10px 0;font-size:14px}
+th,td{border:1px solid #ddd;padding:8px;text-align:left}
+th{background:#eaf2f8;font-weight:bold}
+tr:nth-child(even){background:#f8f9fa}
+code{background:#f0f0f0;padding:2px 6px;border-radius:3px;font-size:13px}
+pre{background:#2c3e50;color:#ecf0f1;padding:15px;border-radius:5px;overflow-x:auto;font-size:13px}
+.critical{background:#fdf2e9;border:1px solid #e74c3c;padding:15px;border-radius:5px;margin:15px 0}
+.ok{background:#eafaf1;border:1px solid #27ae60;padding:10px;border-radius:5px}
+.tag{display:inline-block;padding:2px 8px;border-radius:10px;font-size:12px;color:#fff}
+.tag-s1{background:#3498db}.tag-s2{background:#2ecc71}.tag-s3{background:#e67e22}.tag-s4{background:#9b59b6}
+.summary{background:#eaf2f8;padding:15px;border-radius:5px;margin:15px 0}
+</style>
+</head>
+<body>
+<h1>BaiZe Post-Train R6+R7 深度调研报告</h1>
+<p><strong>日期</strong>：2026-11-07 wake53 | <strong>GPU</strong>：零 GPU 调研 | <strong>交付物</strong>：§R6 SFT 深度方案 + §R7 verl 环境预检</p>
+<div class="summary">
+<h3>📋 摘要</h3>
+<p>本轮在 R1-R5+E1 全部完成的基础上，深入调研两个关键缺口：<strong>R6 SFT 阶段深度方案设计</strong>和 <strong>R7 verl 环境预检 + 11/9 启动就绪清单</strong>。</p>
+<p><strong>关键发现</strong>：🔴 vllm_venv 的 torch 2.14.0+cu130 与系统 CUDA 12.4 驱动不匹配，<code>torch.cuda.is_available()=False</code> —— 11/9 前必须新建 cu124 兼容环境。</p>
+<p><strong>新增产出</strong>：SFT 语料合成脚本 + 19610 对 SFT 训练对（18.8MB，0 污染）+ verl 安装/启动完整方案。</p>
+</div>
+<h2>§R6 SFT 阶段深度方案设计</h2>
+<h3>1. 数据混合策略</h3>
+<table>
+<tr><th>数据源</th><th>规模</th><th>角色</th><th>占比</th><th>理由</th></tr>
+<tr><td>UltraData-SFT-2605</td><td>18.89B tok</td><td>通用能力保持</td><td>35%</td><td>防领域过拟合</td></tr>
+<tr><td>UltraData-SFT-Agent-2609</td><td>5.97B tok</td><td>工具调用能力</td><td>30%</td><td>D1/D2 工具调用不足</td></tr>
+<tr><td>PyAether SFT 合成语料</td><td>~19610 对</td><td>领域 API 知识</td><td>25%</td><td>D4 显示 74% 执行报错</td></tr>
+<tr><td>错误恢复 SFT (S4)</td><td>~3411 对</td><td>自纠错闭环</td><td>10%</td><td>D6 显示迭代不足</td></tr>
+</table>
+<p><strong>混合策略</strong>：按轮次交错；PyAether 过采样（温度=2.0）；短对 packing，长轨迹不 pack。</p>
+<h3>2. PyAether SFT 语料合成（✅ 已执行）</h3>
+<p>脚本：<code>baize_posttrain_gen_sft_corpus.py</code> | 产出：<code>sft_pyaether_corpus.jsonl</code>（19610 对，18.8MB）</p>
+<table>
+<tr><th>类型</th><th>描述</th><th>数量</th><th>作用</th></tr>
+<tr><td><span class="tag tag-s1">S1</span> doc-to-code</td><td>API 文档→调用代码</td><td>8012</td><td>教「读文档写代码」</td></tr>
+<tr><td><span class="tag tag-s2">S2</span> api-lookup</td><td>任务+4选项→选API</td><td>8098</td><td>教「选对API」</td></tr>
+<tr><td><span class="tag tag-s3">S3</span> multi-api-chain</td><td>多步→API链</td><td>89</td><td>教「API串联」</td></tr>
+<tr><td><span class="tag tag-s4">S4</span> error-recovery</td><td>错误代码→修正</td><td>3411</td><td>教「自纠错」</td></tr>
+<tr><td><strong>合计</strong></td><td></td><td><strong>19610</strong></td><td>0 污染</td></tr>
+</table>
+<h3>3. 上下文长度 + LoRA vs 全参</h3>
+<p><strong>上下文</strong>：SFT context_len=8192（覆盖95%+轨迹）；超长截断保留尾部。</p>
+<table>
+<tr><th>维度</th><th>全参</th><th>LoRA (r=64)</th></tr>
+<tr><td>可训练参数</td><td>2B (100%)</td><td>~50M (2.5%)</td></tr>
+<tr><td>显存(训练)</td><td>~40GB</td><td>~12GB</td></tr>
+<tr><td>领域注入</td><td>深度</td><td>浅层</td></tr>
+<tr><td>灾难性遗忘</td><td>高风险</td><td>低风险</td></tr>
+</table>
+<p><strong>建议</strong>：替身用 LoRA；白泽用全参。超参：LR=2e-5(全参)/1e-4(LoRA), WSD, GBS=128, MBS=1, bf16_mixed, 3000步。</p>
+<h3>4. 课程学习</h3>
+<table>
+<tr><th>阶段</th><th>步数</th><th>数据</th><th>目标</th></tr>
+<tr><td>Warmup</td><td>0-200</td><td>通用指令</td><td>适应SFT格式</td></tr>
+<tr><td>Phase1</td><td>200-800</td><td>+S1</td><td>API知识注入</td></tr>
+<tr><td>Phase2</td><td>800-1500</td><td>+S2+S3+agentic</td><td>工具选择+链式</td></tr>
+<tr><td>Phase3</td><td>1500-2500</td><td>+S4</td><td>闭环自纠错</td></tr>
+<tr><td>Decay</td><td>2500-3000</td><td>全混合+decay</td><td>稳定收敛</td></tr>
+</table>
+<h2>§R7 verl 环境预检 + 11/9 启动就绪</h2>
+<div class="critical">
+<h3>🔴 CRITICAL：CUDA 版本不匹配</h3>
+<ul>
+<li>系统 CUDA 驱动：<strong>12.4</strong>（nvidia-smi: 550.54.14, nvcc: 12.4.131）</li>
+<li>vllm_venv torch：<strong>2.14.0+cu130</strong>（CUDA 13.0）</li>
+<li>结果：<code>torch.cuda.is_available() = False</code></li>
+</ul>
+<p><strong>解决方案</strong>：新建 cu124 venv</p>
+<pre>python3 -m venv ~/code/verl_venv
+source ~/code/verl_venv/bin/activate
+pip install torch==2.4.0 --index-url https://download.pytorch.org/whl/cu124
+pip install verl ray vllm transformers accelerate flash-attn</pre>
+</div>
+<h3>verl 依赖清单</h3>
+<table>
+<tr><th>依赖</th><th>当前</th><th>需要</th><th>版本</th></tr>
+<tr><td>torch</td><td>❌ cu130</td><td>cu124</td><td>2.4.0+cu124</td></tr>
+<tr><td>verl</td><td>❌</td><td>源码</td><td>≥0.3.0</td></tr>
+<tr><td>ray</td><td>❌</td><td>pip</td><td>≥2.41.0</td></tr>
+<tr><td>vllm</td><td>⚠️ cu130</td><td>cu124</td><td>≥0.8.2</td></tr>
+<tr><td>accelerate</td><td>❌</td><td>pip</td><td>latest</td></tr>
+<tr><td>flash-attn</td><td>❌</td><td>pip</td><td>latest</td></tr>
+</table>
+<h3>11/9 启动序列</h3>
+<pre># Step 0 (零GPU, 11/8): 新建 verl_venv + 安装依赖
+# Step 1 (GPU释放): 验证 torch.cuda.is_available()=True
+# Step 2: vllm serve /tmp/models/MiniCPM5-2B --tp 2 --port 8000
+# Step 3: 评测158题(5-run)
+# Step 4: 采集真实失败轨迹
+# Step 5: API沙盒profiling(补L2)
+# Step 6: 起第一轮EDA RL(--smoke起步)</pre>
+<h3>风险与缓解</h3>
+<table>
+<tr><th>风险</th><th>概率</th><th>缓解</th></tr>
+<tr><td>cu124与verl不兼容</td><td>低</td><td>verl文档支持cu124</td></tr>
+<tr><td>vLLM版本冲突</td><td>中</td><td>锁定vllm==0.6.3</td></tr>
+<tr><td>flash-attn编译失败</td><td>中</td><td>fallback sdpa</td></tr>
+<tr><td>显存不足</td><td>低</td><td>R5已预算92GB/184GB</td></tr>
+<tr><td>SGLang不释放GPU</td><td>中</td><td>需运维协调</td></tr>
+</table>
+<h2>调研覆盖总览</h2>
+<table>
+<tr><th>编号</th><th>方向</th><th>状态</th><th>交付物</th></tr>
+<tr><td>R1</td><td>EDA环境RL</td><td class="ok">✅</td><td>§R1+HTML</td></tr>
+<tr><td>R2</td><td>造题与难度分层</td><td class="ok">✅</td><td>§R2+HTML</td></tr>
+<tr><td>R3</td><td>奖励与GRPO</td><td class="ok">✅</td><td>§R3+HTML</td></tr>
+<tr><td>R4</td><td>失败模式分类</td><td class="ok">✅</td><td>§R4+HTML</td></tr>
+<tr><td>R5</td><td>RL框架选型</td><td class="ok">✅</td><td>§R5+YAML</td></tr>
+<tr><td>R6</td><td>SFT深度方案</td><td class="ok">✅</td><td>§R6+19610对SFT语料</td></tr>
+<tr><td>R7</td><td>verl环境预检</td><td class="ok">✅</td><td>§R7+启动序列</td></tr>
+<tr><td>E1</td><td>合成题生成</td><td class="ok">✅</td><td>3347题</td></tr>
+</table>
+<h2>迁移性分析</h2>
+<p>✅ SFT数据配比/课程结构/verl框架/沙盒集成/奖励逻辑均可复用 | 🚫 分数不可迁移</p>
+<hr>
+<p style="color:#666;font-size:12px">BaiZe Stage(ii) Post-Train | wake53 | 2026-11-07 | 自包含·0 script·0 外链</p>
+</body>
+</html>

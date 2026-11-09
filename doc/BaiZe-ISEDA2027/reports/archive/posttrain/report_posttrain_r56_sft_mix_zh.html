@@ -1,0 +1,104 @@
+<!DOCTYPE html><html lang='zh-CN'><head><meta charset='UTF-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0'>
+<title>R56 SFT 数据混合管线 - BaiZe Stage(ii)</title><style>
+body{font-family:system-ui,sans-serif;max-width:1100px;margin:0 auto;padding:20px;background:#f8f9fa;color:#333;line-height:1.6;}
+h1{color:#1a5276;border-bottom:3px solid #2980b9;padding-bottom:10px;}
+h2{color:#2c3e50;margin-top:30px;border-bottom:1px solid #bdc3c7;padding-bottom:5px;}
+table{border-collapse:collapse;width:100%;margin:15px 0;background:#fff;}
+th,td{border:1px solid #ddd;padding:8px 12px;text-align:left;}
+th{background:#2980b9;color:#fff;}
+tr:nth-child(even){background:#f2f2f2;}
+.kpi{display:inline-block;background:#e8f4f8;border:1px solid #b8daff;border-radius:6px;padding:10px 20px;margin:5px 10px 5px 0;}
+.kpi .num{font-size:1.4em;font-weight:700;color:#2980b9;}
+.kpi .lbl{font-size:0.85em;color:#666;}
+.warn{background:#fff3cd;border:1px solid #ffeaa7;border-radius:6px;padding:12px;margin:10px 0;}
+.ok{background:#d4edda;border:1px solid #c3e6cb;border-radius:6px;padding:12px;margin:10px 0;}
+.danger{background:#f8d7da;border:1px solid #f5c6cb;border-radius:6px;padding:12px;margin:10px 0;}
+code{background:#f1f2f6;padding:2px 6px;border-radius:3px;font-size:0.9em;}
+</style></head><body>
+<h1>R56: SFT 数据混合管线 (SFT Data Mixing Pipeline)</h1>
+<p><strong>BaiZe Stage(ii) Post-Training</strong> - 领域退火 -> SFT -> RLVR-GRPO</p>
+<p>生成时间: 2026-11-08 18:08:25 - 零 GPU - R56</p>
+<div>
+<div class='kpi'><span class='num'>19524</span><br><span class='lbl'>PyAether SFT 样本</span></div>
+<div class='kpi'><span class='num'>~4M</span><br><span class='lbl'>估算 token</span></div>
+<div class='kpi'><span class='num'>~210</span><br><span class='lbl'>平均 tok/样本</span></div>
+<div class='kpi'><span class='num'>&#9989; 0</span><br><span class='lbl'>污染命中</span></div>
+</div>
+<h2>1. 研究背景</h2>
+<p>SFT (Step 1) 是领域退火后第一个训练步骤。当前 <code>baize_posttrain_sft.sh</code> 有配比配置 但<b>缺乏可执行的数据混合管线</b>。R56 填补此空白。</p>
+<h2>2. PyAether SFT 语料分析</h2>
+<h3>2.1 按类型分布</h3>
+<table><tr><th>类型</th><th>描述</th><th>数量</th><th>占比</th></tr>
+<tr><td><code>S1_doc_to_code</code></td><td>API doc -> Python function calling that API</td><td>8012</td><td>41.0%</td></tr>
+<tr><td><code>S2_api_lookup</code></td><td>API name -> doc lookup / signature recall</td><td>8012</td><td>41.0%</td></tr>
+<tr><td><code>S4_error_recovery</code></td><td>Error -> fix -> retry pattern</td><td>3411</td><td>17.5%</td></tr>
+<tr><td><code>S3_multi_api_chain</code></td><td>Multiple APIs chained in sequence</td><td>89</td><td>0.5%</td></tr>
+</table>
+<h3>2.2 按质量层级</h3>
+<table><tr><th>层级</th><th>数量</th><th>占比</th></tr>
+<tr><td>high</td><td>11733</td><td>60.1%</td></tr>
+<tr><td>low</td><td>7090</td><td>36.3%</td></tr>
+<tr><td>medium</td><td>701</td><td>3.6%</td></tr>
+</table>
+<h3>2.3 Token 估算</h3>
+<table><tr><th>指标</th><th>值</th></tr>
+<tr><td>总估算 token</td><td>~4M</td></tr>
+<tr><td>平均</td><td>209.5</td></tr>
+<tr><td>中位数</td><td>172</td></tr>
+<tr><td>P95</td><td>340</td></tr>
+<tr><td>最大</td><td>442</td></tr>
+</table>
+<h3>2.4 长度分桶</h3>
+<table><tr><th>Token 范围</th><th>样本数</th><th>占比</th><th>Ctx 4k?</th><th>Ctx 8k?</th></tr>
+<tr><td><512</td><td>19524</td><td>100.0%</td><td>&#9989;</td><td>&#9989;</td></tr>
+<tr><td>512-1k</td><td>0</td><td>0.0%</td><td>&#9989;</td><td>&#9989;</td></tr>
+<tr><td>1k-2k</td><td>0</td><td>0.0%</td><td>&#9989;</td><td>&#9989;</td></tr>
+<tr><td>2k-4k</td><td>0</td><td>0.0%</td><td>&#9989;</td><td>&#9989;</td></tr>
+<tr><td>4k-8k</td><td>0</td><td>0.0%</td><td>&#9888;</td><td>&#9989;</td></tr>
+<tr><td>>8k</td><td>0</td><td>0.0%</td><td>&#9888;</td><td>&#9888;</td></tr>
+</table>
+<h2>3. 混合方案 (agent50:general30:pyaether20)</h2>
+<p>Default from baize_posttrain_sft.sh - agentic-heavy</p>
+<table><tr><th>数据源</th><th>占比</th><th>目标 token</th><th>可用</th><th>格式</th></tr>
+<tr><td><strong>agent</strong></td><td>50%</td><td>~1572M</td><td>5,970,000,000</td><td>megatron .bin/.idx (pre-tokenized)</td></tr>
+<tr><td><strong>general</strong></td><td>30%</td><td>~943M</td><td>18,890,000,000</td><td>megatron .bin/.idx (pre-tokenized)</td></tr>
+<tr><td><strong>pyaether</strong></td><td>20%</td><td>~629M</td><td>4,091,246</td><td>JSONL -> verl SFT conversation</td></tr>
+</table>
+<h2>4. 上下文长度处理</h2>
+<p>目标: <strong>8192</strong></p>
+<div class='ok'>超 4096: 0 (0.0%)</div>
+<p>截断策略: <code>keep_system_completion</code> - 保留 system+assistant, 截断 user 中段。</p>
+<h2>5. 污染隔离闸门</h2>
+<div class='ok'>&#9989; 零污染命中。</div>
+<h2>6. UltraData 集成</h2>
+<table><tr><th>数据源</th><th>格式</th><th>磁盘</th><th>Token</th><th>路径</th></tr>
+<tr><td>UltraData-SFT-2605</td><td>megatron .bin/.idx (pre-tokenized)</td><td>75.87 GB</td><td>~18B</td><td><code>/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/sft_ultradata_2605</code></td></tr>
+<tr><td>UltraData-SFT-Agent-2609</td><td>megatron .bin/.idx (pre-tokenized)</td><td>23.89 GB</td><td>~5B</td><td><code>/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/sft_agent_ultradata_2609</code></td></tr>
+</table>
+<h2>7. PyAether 上采样策略</h2>
+<div class='warn'>需上采样 ~153.8x (源 4M -> 目标 629M tok)</div>
+<ul><li>high tier 优先 (3x)</li><li>medium 2x, low 1x</li><li>S3 仅 89 条待 GPU 扩展</li></ul>
+<h2>8. verl SFT 格式</h2>
+<pre style='background:#f4f4f4;padding:12px;border-radius:6px;font-size:0.85em;'>
+[{"role":"system","content":"You are an EDA assistant..."},
+ {"role":"user","content":"Read API doc..."},
+ {"role":"assistant","content":"```python\n...```"}]
+</pre>
+<h2>9. 执行计划</h2>
+<table><tr><th>阶段</th><th>内容</th><th>GPU?</th><th>时机</th></tr>
+<tr><td>E1</td><td>JSONL->verl SFT + blend config</td><td>否</td><td>11/8</td></tr>
+<tr><td>E2</td><td>基线评测 -> D1-D6 -> 确认配比</td><td>是</td><td>11/9</td></tr>
+<tr><td>E3</td><td>退火后起跑 SFT</td><td>是</td><td>12/25+</td></tr>
+<tr><td>E4</td><td>消融: ctx 4096/8192/16384</td><td>是</td><td>SFT后</td></tr>
+</table>
+<h2>10. 风险与缓解</h2>
+<table><tr><th>风险</th><th>概率</th><th>缓解</th></tr>
+<tr><td>PyAether 语料小 (~4M tok)</td><td>高</td><td>上采样 + GPU 后扩展</td></tr>
+<tr><td>agent 轨迹超长</td><td>高</td><td>ctx>=8192; 截断策略</td></tr>
+<tr><td>低质量对稀释 (low=7090)</td><td>中</td><td>质量加权采样</td></tr>
+<tr><td>S3 仅 89 条</td><td>高</td><td>GPU 后沙盒扩展</td></tr>
+<tr><td>污染泄漏</td><td>低</td><td>contamination gate 全检</td></tr>
+</table>
+<hr><p style='color:#999;font-size:0.85em;'>R56 - BaiZe Stage(ii) - SFT Data Mixing Pipeline - Zero GPU</p>
+</body></html>

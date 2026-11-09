@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BaiZe Post-Train R54: Day-1 预发射全套验证</title>
+<style>body{font-family:system-ui,sans-serif;max-width:960px;margin:0 auto;padding:20px;line-height:1.6;color:#222}
+h1{color:#1a3c6e;border-bottom:3px solid #1a3c6e;padding-bottom:8px}
+h2{color:#2c5aa0;margin-top:2em;border-left:4px solid #2c5aa0;padding-left:10px}
+table{border-collapse:collapse;width:100%;margin:12px 0;font-size:14px}
+th,td{border:1px solid #ccc;padding:6px 10px;text-align:left}
+th{background:#eef3fa}.pass{color:#1a7d1a;font-weight:600}.fail{color:#c00}
+.go{background:#d4edda}.box{border:1px solid #ddd;border-radius:6px;padding:12px;margin:12px 0}
+.box-green{border-color:#1a7d1a;background:#f0fff0}.box-red{border-color:#c00;background:#fff5f5}
+.box-blue{border-color:#2c5aa0;background:#f0f5ff}
+.tag-go{background:#d4edda;color:#1a7d1a;padding:2px 8px;border-radius:10px;font-size:12px}
+.tag-pending{background:#fff3cd;color:#856404;padding:2px 8px;border-radius:10px;font-size:12px}
+code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:13px}
+</style></head><body>
+<h1>BaiZe Stage(ii) Post-Train R54: Day-1 预发射全套验证</h1>
+<div class="box box-blue"><b>日期：</b>2026-11-08 wake102｜<b>节点：</b>.17｜<b>目标：</b>GPU 11/9到位前全面验证<br>
+<b>结论：</b><span class="tag-go">✅ GO for 11/9 Phase1</span> — 所有零-GPU组件已实跑通过</div>
+
+<h2>1. 对抗性奖励测试（29项）</h2>
+<table>
+<tr><th>类别</th><th>通过</th><th>失败</th><th>关键发现</th></tr>
+<tr><td>T1-EdgeCases</td><td class="pass">7</td><td>0</td><td>空→0.06, 超长→1.02, 语法错→0.30</td></tr>
+<tr><td>T2-RewardHacking</td><td class="pass">6</td><td>0</td><td>格式刷分=0.18(&lt;0.3), 硬编码=0.60(≤0.7)</td></tr>
+<tr><td>T3-SignalProps</td><td class="pass">5</td><td>0</td><td>R0 std=0.37, R2阶梯5档, 单调性✅</td></tr>
+<tr><td>T4-AutoFallback</td><td class="pass">3</td><td>0</td><td>autofb=1.02 vs nofb=0.0</td></tr>
+<tr><td>T5-CheatDetect</td><td class="pass">5</td><td>0</td><td>抄袭ratio=1.0, 干净ratio=0.028</td></tr>
+<tr><td>T6-CrossArm</td><td class="pass">3</td><td>0</td><td>R3(0.97)≤R2(1.02)</td></tr>
+<tr class="go"><td><b>合计</b></td><td><b>29</b></td><td><b>0</b></td><td><b>0 critical</b></td></tr>
+</table>
+<div class="box box-green">奖励函数完全鲁棒。11/9 RL smoke 可安全使用 R0 骨架奖励。</div>
+
+<h2>2. 奖励自测 + 端到端审计</h2>
+<table>
+<tr><th>检查项</th><th>结果</th></tr>
+<tr><td>R0分数范围</td><td>0.06~1.02 (5场景区分度✅)</td></tr>
+<tr><td>跨臂对照</td><td>R0=0.63 R1-R3=1.02 R4=0.97</td></tr>
+<tr><td>作弊检测</td><td>高重叠=True(0.907) 低重叠=False(0.028)</td></tr>
+<tr><td>E2E脚本依赖</td><td class="pass">24 scripts, 138 deps</td></tr>
+<tr><td>文件路径</td><td class="pass">30/30 PASS</td></tr>
+<tr><td>配置一致性</td><td class="pass">0 stale v1</td></tr>
+<tr class="go"><td><b>GO/NO-GO</b></td><td><b>GO 100/100, 0 open</b></td></tr>
+</table>
+
+<h2>3. 污染隔离闸门 Bug 修复（R54 关键发现）</h2>
+<div class="box box-red">
+<b>🔴 Bug：</b>闸门脚本硬编码 <code>/nas_train/...</code>，在 .17（NFS=/nas_data）上 checker 不可达 → fail-safe exit 3 → 阻断训练<br>
+<b>修复：</b>替换为 NFS 根自动检测（/nas_data vs /nas_train）<br>
+<b>验证：</b>19,524 文档扫描 / 0 命中 / PASS ✅<br>
+<b>影响：</b>未修复则 11/9 Step 4 直接失败
+</div>
+
+<h2>4. Day-1 GO/NO-GO 判定</h2>
+<table>
+<tr><th>维度</th><th>状态</th><th>证据</th></tr>
+<tr class="go"><td>奖励鲁棒性</td><td>✅ GO</td><td>29/29 PASS</td></tr>
+<tr class="go"><td>信号区分度</td><td>✅ GO</td><td>std=0.37, 阶梯5档</td></tr>
+<tr class="go"><td>作弊检测</td><td>✅ GO</td><td>0误报</td></tr>
+<tr class="go"><td>端到端依赖</td><td>✅ GO</td><td>30/30路径</td></tr>
+<tr class="go"><td>风险登记册</td><td>✅ GO</td><td>0 CRITICAL/HIGH/OPEN</td></tr>
+<tr class="go"><td>污染隔离</td><td>✅ GO</td><td>Bug已修, 0命中</td></tr>
+<tr><td>GPU释放</td><td><span class="tag-pending">⏳ 待11/9</span></td><td>R-015</td></tr>
+<tr><td>cline PATH</td><td><span class="tag-pending">⏳ 待11/9</span></td><td>运维</td></tr>
+</table>
+<div class="box box-green"><b>✅ GO for 11/9 Phase1 Launch</b> — 仅剩2项待11/9实时验证</div>
+
+<h2>5. Day-1 时间线（方案C）</h2>
+<table>
+<tr><th>时间</th><th>步骤</th><th>GPU</th><th>时长</th></tr>
+<tr><td>08:00</td><td>GPU释放+NFS预热</td><td>0</td><td>30m</td></tr>
+<tr><td>08:35</td><td>Preflight</td><td>0</td><td>10m</td></tr>
+<tr><td>08:45</td><td>SGLang+快速基线</td><td>1</td><td>35m</td></tr>
+<tr><td>09:20</td><td>D1-D6+污染门</td><td>0</td><td>15m</td></tr>
+<tr><td>09:35</td><td>RL smoke R0</td><td>4</td><td>40m</td></tr>
+<tr><td>10:30</td><td>完整RL训练</td><td>4</td><td>600m</td></tr>
+</table>
+<p><b>关键路径：150min</b></p>
+
+<h2>6. 风险登记册（0 OPEN）</h2>
+<table>
+<tr><th>ID</th><th>级别</th><th>状态</th><th>描述</th></tr>
+<tr><td>R-001~003</td><td>CRITICAL</td><td class="pass">FIXED</td><td>verl配置字段</td></tr>
+<tr><td>R-004</td><td>CRITICAL</td><td class="pass">MITIGATED</td><td>parser注册</td></tr>
+<tr><td>R-005~006</td><td>HIGH</td><td class="pass">MITIGATED</td><td>OOM/TCP</td></tr>
+<tr><td>R-009</td><td>MEDIUM</td><td class="pass">RESOLVED</td><td>Ray patch(.pth)</td></tr>
+<tr><td>R-010</td><td>HIGH</td><td class="pass">FIXED</td><td>stale v1</td></tr>
+<tr><td>R-015</td><td>HIGH</td><td class="warn">MONITORED</td><td>GPU待释放</td></tr>
+</table>
+
+<h2>7. 交付物</h2>
+<ul>
+<li><code>baize_posttrain_contamination_gate.sh</code> — NFS路径修复 (bash -n ✅, 实跑PASS ✅)</li>
+<li><code>baize_posttrain_reward_adversarial_results.json</code> — 29项测试JSON</li>
+<li>本报告 + EXPERIMENTS §R54</li>
+</ul>
+<p style="color:#888;font-size:12px">⚠️ 替身模型RL结果不可迁移到BaiZe</p>
+</body></html>

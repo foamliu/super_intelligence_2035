@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>R9: verl + SGLang 集成调研 — 解决推理后端矛盾</title>
+<style>
+body{font-family:system-ui,sans-serif;max-width:900px;margin:0 auto;padding:20px;line-height:1.6;color:#333}
+h1{color:#1a5276;border-bottom:3px solid #2980b9;padding-bottom:10px}
+h2{color:#2874a6;margin-top:30px;border-left:4px solid #3498db;padding-left:10px}
+h3{color:#2e86c1}
+table{border-collapse:collapse;width:100%;margin:15px 0;font-size:14px}
+th,td{border:1px solid #ddd;padding:8px 12px;text-align:left}
+th{background:#ebf5fb;font-weight:bold}
+tr:nth-child(even){background:#f9f9f9}
+.code{background:#f4f6f7;border:1px solid #d5dbdb;border-radius:4px;padding:10px;font-family:monospace;font-size:13px;overflow-x:auto;margin:10px 0}
+.highlight{background:#fef9e7;border-left:4px solid #f39c12;padding:10px;margin:15px 0}
+.critical{background:#fdedec;border-left:4px solid #e74c3c;padding:10px;margin:15px 0}
+.ok{color:#27ae60;font-weight:bold}.warn{color:#e67e22;font-weight:bold}.bad{color:#e74c3c;font-weight:bold}
+.tag{display:inline-block;padding:2px 8px;border-radius:3px;font-size:12px;font-weight:bold;margin:0 2px}
+.tag-new{background:#e8f8f5;color:#1abc9c}.tag-chg{background:#fef9e7;color:#e67e22}.tag-ok{background:#eafaf1;color:#27ae60}
+</style></head><body>
+<h1>R9: verl + SGLang 集成调研</h1>
+<p><strong>日期</strong>：2026-11-07 · <strong>阶段</strong>：零 GPU 预研（等待 11/9 GPU） · <strong>检索词</strong>：verl SGLang inference backend, verl multi-turn rollout, verl tool calling</p>
+
+<div class="critical"><strong>⚠️ 警告</strong>：替身 RL 收益<strong>不可迁移</strong>到白泽。本次仅验证方法链路 + 沉淀可复用流程。</div>
+
+<h2>1. 核心发现：verl 原生支持 SGLang</h2>
+<p>R5 选定 verl（默认 vLLM 后端），R8 发现 MiniCPM5-2B 工具调用是 XML 格式，必须用 SGLang。调研确认：<strong>verl 将 SGLang 与 vLLM 并列为两大推理后端</strong>，且<strong>多轮工具调用（multi-turn rollout）仅 SGLang 支持</strong>。</p>
+<table>
+<tr><th>维度</th><th>结论</th></tr>
+<tr><td>SGLang 推理后端</td><td class="ok">✅ 原生支持</td></tr>
+<tr><td>安装</td><td><code>pip install verl[sglang]</code></td></tr>
+<tr><td>多轮工具调用</td><td class="ok">✅ 仅 SGLang（vLLM 不支持 multi_turn）</td></tr>
+<tr><td>配置</td><td><code>rollout.name: "sglang"</code> + <code>multi_turn: True</code></td></tr>
+<tr><td>异步 rollout</td><td><code>rollout.mode: async</code> + <code>return_raw_chat: True</code></td></tr>
+<tr><td>自定义工具</td><td>实现 <code>BaseTool</code> 子类 + YAML 配置</td></tr>
+</table>
+
+<h2>2. 多轮 Rollout 架构与 EDA 沙盒契合</h2>
+<p>verl Agentic RL 采用 Client-Server 架构，三组件对应 EDA 场景：</p>
+<table>
+<tr><th>组件</th><th>verl 角色</th><th>EDA 场景</th></tr>
+<tr><td>AgentLoop</td><td>Client：Agent 循环</td><td>模型→读 API→写代码→调 run_eda_code</td></tr>
+<tr><td>LLMServerClient</td><td>推理网关（token 级 generate）</td><td>SGLang server（含 minicpm5 parser）</td></tr>
+<tr><td>AsyncServer</td><td>Server：连接推理引擎 DP 组</td><td>每个 A40 一个 SGLang 实例</td></tr>
+</table>
+<div class="highlight"><strong>关键设计</strong>：Client-Server 间用 token 级 generate（非 Chat API），确保 EDA 工具返回文本与 LLM 生成 token 的正确对应。<strong>异步 rollout</strong>让 GPU 在等沙盒返回时不空转——对 SSH 隧道延迟场景至关重要。</div>
+
+<h2>3. 配置变更（R5 → R9）</h2>
+<table>
+<tr><th>配置项</th><th>R5（旧）</th><th>R9（新）</th><th>理由</th></tr>
+<tr><td>rollout.name</td><td>vllm</td><td><span class="tag tag-chg">sglang</span></td><td>R8: XML 工具解析</td></tr>
+<tr><td>rollout.multi_turn</td><td>—</td><td><span class="tag tag-new">True</span></td><td>多轮工具调用</td></tr>
+<tr><td>rollout.mode</td><td>—</td><td><span class="tag tag-new">async</span></td><td>避免沙盒延迟 GPU 空转</td></tr>
+<tr><td>tool_call_parser</td><td>—</td><td><span class="tag tag-new">minicpm5</span></td><td>SGLang 内置 parser</td></tr>
+<tr><td>return_raw_chat</td><td>—</td><td><span class="tag tag-new">True</span></td><td>async 必需</td></tr>
+<tr><td>安装</td><td>verl</td><td><span class="tag tag-chg">verl[sglang]</span></td><td>SGLang 后端依赖</td></tr>
+</table>
+
+<h2>4. EDA 沙盒工具骨架</h2>
+<p>已创建 <code>baize_posttrain_eda_tool.py</code>（BaseTool 子类）+ <code>baize_posttrain_eda_tools.yaml</code>（工具配置）：</p>
+<div class="code">class EDASandboxTool(BaseTool):
+    async def create(self):    # 建立 SSH 隧道
+    async def execute(self, code, host):  # 执行代码→返回 result
+    async def release(self):  # 关闭隧道
+
+# 奖励计算（4 臂）
+compute_r2_reward()  # exec(0.2) + assert(0.2 each) + pass(1.0)
+compute_r3_reward()  # R2 + tool_call_penalty
+compute_r4_reward()  # R3 + API_legality</div>
+<p class="ok">✅ dry-run 通过（skeleton 模式，SSH 执行待 11/9+ 隧道就绪）</p>
+
+<h2>5. Delta-based Tokenization</h2>
+<p>verl 多轮训练只优化 assistant 生成的 token（工具返回文本不进 loss）：</p>
+<div class="code">prev = tokenizer.apply_chat_template(messages[:i], add_generation_prompt=True)
+curr = tokenizer.apply_chat_template(messages[:i+1], add_generation_prompt=False)
+token_ids += tokenizer.encode(curr[len(prev):])  # 只 tokenize delta
+loss_mask += [1] * len(delta_tokens)  # 只 mask assistant token</div>
+
+<h2>6. 数据集适配需求</h2>
+<div class="highlight">verl 要求数据为 <strong>parquet</strong> 格式 + <code>agent_name</code> 字段。现有 <code>rl_pyaether_synth_v2.jsonl</code>（3347 题）需转换：加 <code>agent_name: "tool_agent_loop"</code> + JSONL→parquet。</div>
+
+<h2>7. 风险矩阵</h2>
+<table>
+<tr><th>风险</th><th>概率</th><th>缓解</th></tr>
+<tr><td>SGLang+verl 版本兼容</td><td class="warn">中</td><td>smoke 模式先验证（10 iters, G=4）</td></tr>
+<tr><td>minicpm5 parser 不可用</td><td class="ok">低</td><td>verl 文档确认 SGLang 支持 parser 透传</td></tr>
+<tr><td>SSH 隧道延迟超时</td><td class="warn">中</td><td>task_timeout=2500s + sandbox_concurrency=8</td></tr>
+<tr><td>数据集缺 agent_name</td><td class="bad">高</td><td>11/9 加转换脚本（零 GPU）</td></tr>
+</table>
+
+<h2>8. 11/9 启动序列更新</h2>
+<table>
+<tr><th>步骤</th><th>R8 版本</th><th>R9 更新</th></tr>
+<tr><td>Step0</td><td>新建 cu124 venv</td><td>安装 <code>verl[sglang]</code>（setup 脚本已更新）</td></tr>
+<tr><td>Step2a</td><td>SGLang serve</td><td>不变</td></tr>
+<tr><td>Step6</td><td>verl RL 起跑</td><td>配置已切到 SGLang + multi_turn + async</td></tr>
+</table>
+
+<h2>9. 交付物</h2>
+<table>
+<tr><th>文件</th><th>状态</th></tr>
+<tr><td>baize_posttrain_rl_verl_config.yaml（更新）</td><td class="ok">✅ YAML 语法通过</td></tr>
+<tr><td>baize_posttrain_eda_tools.yaml（新建）</td><td class="ok">✅ YAML 语法通过</td></tr>
+<tr><td>baize_posttrain_eda_tool.py（新建）</td><td class="ok">✅ dry-run 通过</td></tr>
+<tr><td>baize_posttrain_setup_cu124_venv.sh（更新）</td><td class="ok">✅ bash -n 通过</td></tr>
+<tr><td>EXPERIMENTS_POSTTRAIN.md §R9</td><td class="ok">✅ 10 小节</td></tr>
+</table>
+
+<h2>10. 数据来源</h2>
+<ul style="font-size:13px">
+<li>verl 官方文档: verl.readthedocs.io (Agentic RL, Multi-turn, Config) — 2026-11-07</li>
+<li>CSDN verl 训练指南: blog.csdn.net/gitblog_00818 — 2026-11-07</li>
+<li>verl Agentic RL 全指南: hqwc.cn/a/1763761 — 2026-11-07</li>
+</ul>
+</body></html>
