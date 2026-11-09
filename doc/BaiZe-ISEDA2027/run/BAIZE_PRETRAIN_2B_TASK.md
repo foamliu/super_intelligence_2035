@@ -108,6 +108,22 @@
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### [运维令] 2026-11-09 10:0x（**每满万整数 ckpt 做 8 集常识评测（limit=100）持续刷新同一报告 · 不得影响训练吞吐**）· 用户直令 · 最高优先
+
+> 用户原话（2026-11-09）四点：①已认识到全量评测 8 集会影响吞吐 ②评测回退到每集 limit 100 ③每满万整数检查点做 8 集常识推理评测（每集 limit 100）④结果刷新同一个中文 HTML 报告（表格+折线图）。⑤评测仍保持 CPU+llamacpp(server) 维持 7× 提速。
+
+**① 铁律（最高优先，先于评测本身）**：🚫 **评测不得拖训练吞吐**。训练 S1 当前 ~584–600K tok/s（16 卡满载），任何评测进程若把 step time 拉高（>7.4s/step）即视为越界：llama-server 用低线程（`-t 4` 或更低）+ `nice -n 19`，且**每次只跑 1 个 ckpt**（单 server + 单 client，串行），🚫 禁止像 11-09 那样 7 个 llama-server 并行（那就是吞吐 613K→560K 的根因）。每轮唤醒先看训练日志 step time，若 >7.4s 立即降载/暂停评测。
+
+**② 评测口径（与历史基线完全一致，勿改）**：8 集 / zero-shot / **`limit=100`** / GGUF F16 / 修复后二进制（build 5dc38db00 或 PR 合并后的 master）。任务集 = `arc_challenge,arc_easy,boolq,hellaswag,openbookqa,piqa,sciq,winogrande`。后端 = `llama-server` + lm_eval `local-completions`/`gguf`（`-t 4`、`nice 19`、串行单 ckpt）。
+
+**③ 待评测点**：**所有满万整数 ckpt**。已评完成 1w–10w（`gguf_iter_{10k..100k}_fixed_8set` 10/10 在）。**本轮补齐 11w/12w/13w**（iter_110000/120000/130000，均已在盘），之后每逢新的万整数 ckpt 落盘即补评（14w/15w/… 自动跟进，每新 ckpt 出现就评一次并刷新报告）。
+
+**④ 评测流程（每 ckpt）**：export_hf（若该 iter 无 HF 导出）→ 转 GGUF F16 → `llama-server` 起服 → lm_eval 8 集 limit=100 → results.json 落 `gguf_iter_<iter>_fixed_8set/` → 杀 server（歇 CPU）。
+
+**⑤ 报告刷新（同一文件，增量追加）**：结果并入 `reports/report_pretrain_llamacpp_scaling_zh.html`（或 60k_100k 版同文件，二选一固定），含：① 全 ckpt × 8 集表格（新增行）② Avg + 逐集折线图（x=iter，log 轴，叠加 700k 外推 + Xmodel-2 参照）③ 700k 对数拟合预测（R² 随点增多重算）。
+
+**⑥ 纪律**：不碰 GPU（`CUDA_VISIBLE_DEVICES=""`）；🚫 禁止 `pkill python`/宽泛 kill（杀 server 只用 `kill <PID>`）；不碰 vision/data/harness；commit `pretrain eval:`；心跳写 `未完成指令：有` ⇒ `WAITING: 0` 直到本轮 11w/12w/13w 三 ckpt 补评+报告刷新完成。
+
 > 📦 **历史基线（§0 与 §1⑥ 的对照源）** —— 2026-11-05/06 llama.cpp 8 集能力曲线两批已合并归档 → `run/ARCHIVE_OPERATOR_PRETRAIN.md`「归档 2026-11-06 第一批」+「2026-11-05 第七批」。**结论**：① 10/10 ckpt(10k–100k) 全评测，10 点 harness Avg `51.50→52.00→53.00→55.12→54.25→54.25→56.00→57.00→57.88→57.75%`；② 100k 双口径 **harness 57.75% / raw 54.75%**；③ 700k 对数拟合 **62.8% / R²=0.860**（幂律发散 pred 161% 已判退化）；④ `sciq` 全恢复非 NaN（证实 sciq=0 系 HF/bf16 路径问题，非 ckpt 权重）；⑤ **口径 = 8 集 / zero-shot / `limit=100` / GGUF F16 / `-t 8`**；⑥ 结果落盘 `gguf_iter_{10k..100k}_fixed_8set/results.json` 10/10 全在；生成器 `gen_llamacpp_scaling_report.py`（TARGET_ITERS=10 动态）。**⚠️ 本轮 37.40% 必须与此表同口径比对。**
 
 
