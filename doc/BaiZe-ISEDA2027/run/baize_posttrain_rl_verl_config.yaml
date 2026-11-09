@@ -21,7 +21,7 @@
 # See EXPERIMENTS_POSTTRAIN.md §R5 (design) and §R9 (SGLang integration) for rationale.
 
 data:
-  tokenizer: /tmp/models/MiniCPM5-2B
+  tokenizer: /nas_data/app.e0031982/models/MiniCPM5-2B
   train_files: rl_pyaether_synth_v2.parquet  # ✅ R10: 3347 tasks, 931KB, verl RLHF parquet (R21: fixed relative path)
   val_files: null
   train_batch_size: 128          # G=8 × 16 prompts per iter
@@ -43,7 +43,7 @@ actor_rollout_ref:
   hybrid_engine: True             # Training and inference share same GPUs (3D-HybridEngine)
 
   model:
-    path: /tmp/models/MiniCPM5-2B
+    path: /nas_data/app.e0031982/models/MiniCPM5-2B
     override_config:
       # ✅ R35 (2026-11-08): flash_attn 2.7.4.post1 now compiled & importable in
       #   verl_cu124_venv (R34 background build succeeded). Switch back to

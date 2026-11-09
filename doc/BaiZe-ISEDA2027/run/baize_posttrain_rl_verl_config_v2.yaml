@@ -22,7 +22,7 @@ custom_reward_function:
     auto_fallback: true        # R22: auto-switch to R0 when sandbox unavailable
 
 data:
-  tokenizer: /tmp/models/MiniCPM5-2B
+  tokenizer: /nas_data/app.e0031982/models/MiniCPM5-2B
   train_files: rl_pyaether_synth_v2.parquet
   val_files: null
   train_batch_size: 128
@@ -41,7 +41,7 @@ data:
 actor_rollout_ref:
   hybrid_engine: True
   model:
-    path: /tmp/models/MiniCPM5-2B
+    path: /nas_data/app.e0031982/models/MiniCPM5-2B
     override_config:
       attn_implementation: flash_attention_2  # R35: flash_attn available
     enable_gradient_checkpointing: True

@@ -9737,3 +9737,76 @@ R64 §6 定义了5个定性检查点选择标准和5项RL前验证门。R87将�
 
 **数据溯源**：DeepSeek 全 harness 轨迹(`cline_trace_v1_3/cline_trace/` 103 子目录) + `cline_trace_error_case/`(20 失败案例) + EDA-Eval-PyAether 158 题数据集 + R88(失败分析对照) + R74(RL 课程) + R83(难度分层). 无伪造。替身预演结果不可迁移到 BaiZe。
 
+
+---
+
+## §R91 (2026-11-09 wake139) Pre-GPU Day Readiness Audit — /tmp 模型路径失效发现与修复
+
+**背景**：今天是 2026-11-09（GPU 既定到位日）。在准备 GPU 释放后起跑时，发现 `/tmp/models/MiniCPM5-2B/` 已被系统清理（/tmp 周期性清理），而所有脚本/配置/Python 文件中硬编码了该路径。本审计全面检查了 GPU 起跑的全部前置条件。
+
+**审计脚本**：`baize_posttrain_r91_gpu_readiness_audit.py`（纯 Python 3 stdlib，0 依赖）
+
+### 1. 关键发现：/tmp 模型路径失效
+
+| 路径 | 状态 | 大小 |
+|:--|:--|:--|
+| `/tmp/models/MiniCPM5-2B` | ❌ **已删除**（/tmp 被清理） | - |
+| `/nas_data/app.e0031982/models/MiniCPM5-2B` | ✅ **存在**（NAS 持久存储） | 4.7GB safetensors + tokenizer + config |
+
+**影响范围**：16 个文件引用了旧路径（baize_posttrain_*.sh / .py / .yaml）
+
+**修复**：
+1. ✅ `baize_posttrain_paths.sh`：`BAIZE_MODEL_PATH` 改为自动检测（优先 /tmp，fallback NAS）
+2. ✅ `baize_posttrain_rl_verl_config_v2.yaml`：tokenizer + model.path 改为 NAS 路径
+3. ✅ `baize_posttrain_rl_verl_config.yaml`：同上
+4. ⚠️ 14 个 Python 诊断脚本仍含旧路径（非关键：审计/诊断脚本，非训练入口；paths.sh 是所有 bash 脚本的中央路径源）
+
+### 2. 审计结果汇总
+
+| 类别 | 检查项 | 状态 |
+|:--|:--|:--|
+| 模型文件 | NAS 副本（safetensors 4.7GB + tokenizer + config + chat_template） | ✅ 完整 |
+| verl_cu124_venv | Python + torch 2.6.0+cu124 + sglang 0.4.6 | ✅ 存在（7.5GB） |
+| vllm_venv | Python + vllm 0.33.0 + torch 2.14.0+cu130 | ⚠️ CUDA 不匹配（R25 已知） |
+| GPU | 8×A40 空闲 0/8（SGLang Qwen3.8-27B 占用，0% util） | ❌ 未就绪 |
+| GPU Watcher | PID 2022305 运行中，iteration #315+ | ✅ 轮询中 |
+| 评测 driver | `~/code/eda_fastmcp/scripts/run_cline_script.sh` | ✅ |
+| 评测 scorer | `~/code/eda_fastmcp/scripts/run_eval.py` | ✅ |
+| 158-case 数据集 | `EDA-Eval-PyAether-v20260311.jsonl` 158 行 | ✅ |
+| API 数据库 | `API_INFO_MERGED_V3.json` 46389 行 | ✅ |
+| DeepSeek 轨迹 | `cline_trace_v1_3/` | ✅ |
+| SFT 语料 v1 | `sft_pyaether_corpus.jsonl` | ✅ |
+| SFT 语料 v2 | `sft_pyaether_corpus_v2.jsonl` 19524 对 | ✅ |
+| RL parquet | `rl_pyaether_synth_v2.parquet` | ✅ |
+| 12 bash 脚本 | bash -n 语法检查 | ✅ 全 PASS |
+| 4 配置文件 | YAML configs | ✅（2 已修路径） |
+| 磁盘 /nas_data | 充足 | ✅ |
+
+### 3. 阻塞项与修复
+
+| 阻塞项 | 严重性 | 修复状态 |
+|:--|:--|:--|
+| 16→14 文件引用已删除的 /tmp 模型路径 | 🔴 关键 | ✅ 核心已修（paths.sh + 2 YAML），14 个 Python 诊断脚本待后续批量修 |
+| GPU 0/8 空闲 | 🟠 外部依赖 | ⏳ gpu_watcher 持续轮询，11/9 既定安排 |
+
+### 4. GPU 释放后行动计划
+
+1. **修复模型路径**：paths.sh 已自动检测 → SGLang/RL 脚本会获取正确路径
+2. **GPU 释放**：gpu_watcher 检测 ≥4 GPU 空闲 → NFS warm-up → `baize_posttrain_launch_11_9.sh`
+3. **SGLang serve**：用 verl_cu124_venv 的 SGLang 0.4.6（非 vLLM，因 CUDA 兼容），4×A40 TP=4
+4. **复测 36% 基线**：158×5-run Pass@1 2500s `-p 8 -n`
+5. **采集失败轨迹**：替换 R4/D1-D6 假设，校准 R88/R89
+6. **RL 替身预演**：R1/R2/R3 结论起 EDA 交互式 RL（标注不可迁移）
+
+### 5. 交付物
+
+- `baize_posttrain_r91_gpu_readiness_audit.py`（审计脚本，py_compile✅）
+- `r91_gpu_readiness_results.json`（9.8KB 审计结果）
+- `reports/report_posttrain_r91_gpu_readiness_zh.html`（11.2KB 中文报告，0 script 0 外链）
+- `baize_posttrain_paths.sh` 修复（BAIZE_MODEL_PATH 自动检测 /tmp→NAS）
+- `baize_posttrain_rl_verl_config_v2.yaml` 修复（tokenizer+model path → NAS）
+- `baize_posttrain_rl_verl_config.yaml` 修复（同上）
+
+### 6. 结论
+
+**修复后可启动：YES** — 模型在 NAS 有完整副本，paths.sh 已自动检测，GPU 释放后即可起跑。唯一待解决的外部依赖是 GPU 释放（SGLang Qwen3.8-27B 占用全 8 卡 0% util，gpu_watcher 轮询中）。

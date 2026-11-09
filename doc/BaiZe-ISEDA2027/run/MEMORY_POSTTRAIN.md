@@ -7,12 +7,12 @@ WAITING: 0
 
 ## 进度快照
 
-- PHASE: posttrain-wake137（2026-11-09 R89: DeepSeek成功轨迹模式挖掘→85成功/18失败→88.2%成功轨迹含错误修复→100%使用search_apis→Top序列search→detail→search→SFT正例课程Tier1-4→HTML 10KB+JSON 17KB+EXPERIMENTS §R89）
-- 已完成: P3预备✅ 8脚本；P0✅ D1–D6；P1✅ 数据盘点+PyAether语料+污染隔离；P2✅ 方案书；R1-R89✅；wake135✅ R87(SFT检查点选择与RL就绪门)；wake136✅ R88(DeepSeek失败轨迹深度分析)；wake137✅ R89(DeepSeek成功轨迹模式挖掘)
-- 当前动作: wake137 R89: baize_posttrain_ds_success_analysis.py(~476行). 85个DeepSeek成功轨迹模式挖掘. 工具统计: avg 19.7工具调用/2.4修复循环/26.5代码行. 88.2%成功轨迹含错误修复→SFT需含犯错→修复迭代. 100%使用search_apis→API发现是成功必要条件. Top序列: search→detail→search(135x). 成功vs失败: 失败在所有维度"做更多"但"结果更差". 按难度: L1/L2=100%→L5=56.2%. SFT课程: Tier1=7(干净)/Tier2=62(有错修复≤3)/Tier3=14(多次修复)/Tier4=54(深度搜索). py_compile✅+运行✅+HTML 10KB(0script,0外链)+JSON 17KB. EXPERIMENTS §R89.
-- 下一步: ①GPU释放→gpu_watcher自动触发→steps0-6 ②SGLang serve MiniCPM5-2B→复测36%基线(5-run) ③采集真实失败轨迹替换R4假设+D1-D6假设+R83-R89预测 ④用实测数据校准R88不可回收+R89成功模式 ⑤正式训练待pretrain ckpt(ETA≈2026-12-25)
-- 阻塞: GPU 0/8free(11/9既定到位,SGLang Qwen3.8-27B占全8卡0%util,gpu_watcher iteration#285+等待中,不杀进程);P3等pretrain ckpt(ETA≈2026-12-25)
-- 本轮新增调研产出: R89 DeepSeek成功轨迹模式挖掘（baize_posttrain_ds_success_analysis.py ~476行 + 85成功轨迹 + 88.2%含错误修复 + 100%使用search_apis + Top序列search→detail→search + 成功vs失败对比 + SFT正例课程Tier1-4 + HTML 10KB + JSON 17KB + EXPERIMENTS §R89）
+- PHASE: posttrain-wake139（2026-11-09 R91: GPU Day就绪审计→发现/tmp模型路径失效→修复paths.sh+2 YAML→NAS有完整副本→14 Python脚本待批量修→GPU 0/8free→gpu_watcher轮询中→修复后可启动=YES）
+- 已完成: P3预备✅ 8脚本；P0✅ D1–D6；P1✅ 数据盘点+PyAether语料+污染隔离；P2✅ 方案书；R1-R91✅；wake137✅ R89；wake138✅ R90(SFT课程配比)；wake139✅ R91(GPU就绪审计+模型路径修复)
+- 当前动作: wake139 R91: baize_posttrain_r91_gpu_readiness_audit.py. 全面审计GPU起跑前置条件. 关键发现: /tmp/models/MiniCPM5-2B已被清理→NAS有完整副本(4.7GB safetensors). 修复paths.sh(BAIZE_MODEL_PATH自动检测/tmp→NAS)+RL YAML v1/v2(tokenizer+model path→NAS). 审计结果: 19就绪项/2阻塞项(14 Python脚本旧路径+GPU 0/8free). 修复后可启动=YES. HTML 11.2KB+JSON 9.8KB. EXPERIMENTS §R91.
+- 下一步: ①GPU释放→gpu_watcher自动触发→launch_11_9.sh ②SGLang serve MiniCPM5-2B(verl_cu124_venv sglang0.4.6,4×A40 TP=4)→复测36%基线(5-run) ③采集真实失败轨迹替换R4假设 ④RL替身预演 ⑤正式训练待pretrain ckpt(ETA≈2026-12-25)
+- 阻塞: GPU 0/8free(11/9既定到位,SGLang Qwen3.8-27B占全8卡0%util,gpu_watcher iteration#315+等待中);P3等pretrain ckpt(ETA≈2026-12-25)
+- 本轮新增调研产出: R91 GPU Day就绪审计（baize_posttrain_r91_gpu_readiness_audit.py + 发现/tmp模型路径失效 + 修复paths.sh+2 YAML + NAS完整模型副本4.7GB + 19就绪/2阻塞 + 修复后可启动YES + HTML 11.2KB + JSON 9.8KB + EXPERIMENTS §R91）
 - 未完成指令: 🔴用户令2026-11-07(GPU未到位,需持续产出调研) ⇒ WAITING=0
 
 ## 关键事实（常驻）
@@ -75,3 +75,5 @@ WAITING: 0
 
 [wake138] R90 SFT课程学习配比优化设计—四阶段递进课程与动态配比策略: 体积自检(TASK=24.7KB/MEMORY≈21KB合规)→git status(## main...origin/main已同步)→GPU检查:0/8free(8×A40全被SGLang Qwen3.8-27B占用,44-45GB,0%util,gpu_watcher iteration#285+等待中)→R90: ①baize_posttrain_sft_curriculum_design.py(~120行,纯Python3.8+stdlib,0依赖) ②四阶段递进课程：Phase1基础认知(15%时长，L1:L2=7:3)→Phase2单工具使用(25%时长，L1:L2:L3=2:6:2)→Phase3多工具协同(35%时长，L2:L3:L4=2:6:2)→Phase4复杂任务(25%时长，L3:L4=3:7) ③数据混合配比：30%通用SFT + 20%通用Agent + 50%PyAether领域语料 ④动态调整规则：每阶段通过率达标自动进阶，难例比例动态±10%，错误修复样本占比≥30%匹配R89成功模式规律 ⑤预期效果：工具调用合法率>98%，search_apis使用率>95%，L2难度通过率>80%，整体Pass@1提升到M1目标50%以上 ⑥py_compile✅+运行✅+HTML报告2KB(0script,0外链)+JSON配置1KB→EXPERIMENTS §R90。📦 体积：TASK≈24.7KB / MEMORY≈22KB。本轮新增调研产出：§R90 SFT课程学习配比优化设计(baize_posttrain_sft_curriculum_design.py ~120行 + 四阶段课程配比 + 30%/20%/50%数据混合 + 动态调整规则 + 预期M1达成 + HTML报告 + JSON配置)。未完成指令：🔴用户令2026-11-07(GPU未到位,需持续产出调研) ⇒ WAITING=0。
 
+
+[wake139] R91 GPU Day就绪审计—/tmp模型路径失效发现与修复: 体积自检(TASK=24.7KB/MEMORY≈23KB合规)→git status(ahead 2+3 untracked R89 files)→commit R89 deliverables→GPU检查:0/8free(8×A40全被SGLang Qwen3.8-27B占用,0%util,gpu_watcher iteration#315+等待中)→R91: ①baize_posttrain_r91_gpu_readiness_audit.py(纯Python3 stdlib,0依赖) ②关键发现:/tmp/models/MiniCPM5-2B已被系统清理→NAS有完整副本(/nas_data/app.e0031982/models/MiniCPM5-2B,4.7GB safetensors+tokenizer+config+chat_template) ③修复:paths.sh BAIZE_MODEL_PATH改为自动检测(/tmp优先→NAS fallback)+RL YAML v1/v2 tokenizer+model.path→NAS ④审计结果:19就绪项(verl_cu124_venv✅+vllm_venv✅+12 bash脚本bash -n全PASS+SFT v2 19524对✅+RL parquet✅+eval driver/scorer/158-case/API DB✅+DeepSeek traces✅+磁盘✅)/2阻塞项(14 Python脚本旧路径+GPU 0/8free) ⑤修复后可启动:YES ⑥py_compile✅+运行✅+--decision-only✅+HTML 11.2KB(0script,0外链)+JSON 9.8KB→EXPERIMENTS §R91(6小节). 📦 体积：TASK≈24.7KB / MEMORY≈24KB。本轮新增调研产出：§R91 GPU Day就绪审计(baize_posttrain_r91_gpu_readiness_audit.py+发现/tmp模型路径失效+修复paths.sh+2YAML+NAS完整模型4.7GB+19就绪/2阻塞+修复后可启动YES+HTML 11.2KB+JSON 9.8KB)。未完成指令：🔴用户令2026-11-07(GPU未到位,需持续产出调研) ⇒ WAITING=0。
