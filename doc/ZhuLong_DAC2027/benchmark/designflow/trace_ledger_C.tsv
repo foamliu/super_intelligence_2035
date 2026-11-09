@@ -603,3 +603,4 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked		2026-11-09 20:39	RAG-looku
 1794227785944_i555n	e0046913	hfeg0pkn003	38	verification	parked		2026-11-10 05:43	wrong-shard A: formal verification fm log interpret (status=idle)
 1794227337092_vuj95	marryma	hfeg0pkn002	128	layout_aether	parked		2026-11-10 05:43	how-to find layout: 'find SA/SWD layouts' (status=running, no accepted gold, recon not produce)
 1794224138220_25gxe	ziyuny	hfeg0pnd002	69	misc	parked		2026-11-10 05:43	how-to Q&A: 'can you see history of session id' (status=idle)
+1793791417073_tro04	jiaqis	hfeg0plg09	125	physical_verify	case	EDA-Eval-DesignFlow-DrcVsDrmRuleAudit-001	2026-11-10 06:36	
