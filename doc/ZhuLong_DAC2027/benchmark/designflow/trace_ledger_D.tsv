@@ -1386,4 +1386,4 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1793017826309_9umav	ziyuny	hfeg0pkn002	126	analog_context	parked		2026-11-09 17:54	wrong-domain: Aether API reverse-engineering report task, not design_flow
 1791944841251_nex3t	jie23z	hfeg0pkn002	134	schematic_netlist	case	EDA-Eval-DesignFlow-InvSpiceSim-001	2026-11-09 18:13	
 1788919426197_cjcn7.messages.json	ming1w	hfeg0pkn005	164	waveform	case	EDA-Eval-DesignFlow-SaNPTrannoiseFix-001	2026-11-09 18:37	
-1793857124040_5i5bo	zqzhan	hfeg0pkn002	155	analog_context	claimed		2026-11-09 19:03	
+1793857124040_5i5bo	zqzhan	hfeg0pkn002	155	analog_context	case	EDA-Eval-DesignFlow-TwoStepOcNetlistAudit-001	2026-11-09 19:15	
