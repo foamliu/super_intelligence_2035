@@ -7,12 +7,12 @@ WAITING: 0
 
 ## 进度快照
 
-- PHASE: posttrain-wake136（2026-11-09 R88: DeepSeek失败轨迹深度分析→103任务20失败→logic_error 65%为主→不可回收12/部分6/可回收2→天花板Pass@1=85.4%→M4恰在天花板边缘→RL课程L3-L4为主战场→HTML 11.4KB+JSON 20KB+EXPERIMENTS §R88）
-- 已完成: P3预备✅ 8脚本；P0✅ D1–D6；P1✅ 数据盘点+PyAether语料+污染隔离；P2✅ 方案书；R1-R88✅；wake135✅ R87(SFT检查点选择与RL就绪门)；wake136✅ R88(DeepSeek失败轨迹深度分析)
-- 当前动作: wake136 R88: baize_posttrain_ds_failure_analysis.py(~425行). 20个DeepSeek失败案例对话轨迹分析. 失败模式: logic_error=13(65%),api_misuse=3(15%),import_error=2(10%),type_error=1,timeout=1. 可回收性: irreducible=12(60%),partially=6(30%),avoidable=2(10%). 天花板Pass@1(158题)=85.4%→M4目标在天花板边缘. RL课程: L3_medium=7,L4_advanced=11,L5_challenge=2(无L1/L2失败). 场景: Layout 8/64=12.5%最高. py_compile✅+运行✅+HTML 11.4KB(0script,0外链)+JSON 20KB. EXPERIMENTS §R88.
-- 下一步: ①GPU释放→gpu_watcher自动触发→steps0-6 ②SGLang serve MiniCPM5-2B→复测36%基线(5-run) ③采集真实失败轨迹替换R4假设+D1-D6假设+R83-R88预测 ④用实测数据校准R88不可回收判定 ⑤正式训练待pretrain ckpt(ETA≈2026-12-25)
+- PHASE: posttrain-wake137（2026-11-09 R89: DeepSeek成功轨迹模式挖掘→85成功/18失败→88.2%成功轨迹含错误修复→100%使用search_apis→Top序列search→detail→search→SFT正例课程Tier1-4→HTML 10KB+JSON 17KB+EXPERIMENTS §R89）
+- 已完成: P3预备✅ 8脚本；P0✅ D1–D6；P1✅ 数据盘点+PyAether语料+污染隔离；P2✅ 方案书；R1-R89✅；wake135✅ R87(SFT检查点选择与RL就绪门)；wake136✅ R88(DeepSeek失败轨迹深度分析)；wake137✅ R89(DeepSeek成功轨迹模式挖掘)
+- 当前动作: wake137 R89: baize_posttrain_ds_success_analysis.py(~476行). 85个DeepSeek成功轨迹模式挖掘. 工具统计: avg 19.7工具调用/2.4修复循环/26.5代码行. 88.2%成功轨迹含错误修复→SFT需含犯错→修复迭代. 100%使用search_apis→API发现是成功必要条件. Top序列: search→detail→search(135x). 成功vs失败: 失败在所有维度"做更多"但"结果更差". 按难度: L1/L2=100%→L5=56.2%. SFT课程: Tier1=7(干净)/Tier2=62(有错修复≤3)/Tier3=14(多次修复)/Tier4=54(深度搜索). py_compile✅+运行✅+HTML 10KB(0script,0外链)+JSON 17KB. EXPERIMENTS §R89.
+- 下一步: ①GPU释放→gpu_watcher自动触发→steps0-6 ②SGLang serve MiniCPM5-2B→复测36%基线(5-run) ③采集真实失败轨迹替换R4假设+D1-D6假设+R83-R89预测 ④用实测数据校准R88不可回收+R89成功模式 ⑤正式训练待pretrain ckpt(ETA≈2026-12-25)
 - 阻塞: GPU 0/8free(11/9既定到位,SGLang Qwen3.8-27B占全8卡0%util,gpu_watcher iteration#285+等待中,不杀进程);P3等pretrain ckpt(ETA≈2026-12-25)
-- 本轮新增调研产出: R88 DeepSeek失败轨迹深度分析（baize_posttrain_ds_failure_analysis.py ~425行 + 20失败案例 + logic_error 65% + 不可回收12/部分6/可回收2 + 天花板85.4% + M4天花板边缘 + RL课程L3-L4 + HTML 11.4KB + JSON 20KB + EXPERIMENTS §R88）
+- 本轮新增调研产出: R89 DeepSeek成功轨迹模式挖掘（baize_posttrain_ds_success_analysis.py ~476行 + 85成功轨迹 + 88.2%含错误修复 + 100%使用search_apis + Top序列search→detail→search + 成功vs失败对比 + SFT正例课程Tier1-4 + HTML 10KB + JSON 17KB + EXPERIMENTS §R89）
 - 未完成指令: 🔴用户令2026-11-07(GPU未到位,需持续产出调研) ⇒ WAITING=0
 
 ## 关键事实（常驻）
