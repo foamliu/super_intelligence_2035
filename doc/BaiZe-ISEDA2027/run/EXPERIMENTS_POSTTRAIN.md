@@ -13039,4 +13039,113 @@ v2 config 保留用于单轮 R0 baseline 对照。
 | P3 | 扩大到 158 全量任务模拟（当前 20 tasks 已足够验证） | 无 |
 | P4 | 真实 MiniCPM5-2B rollout 替换 MockModel | GPU |
 | P5 | 正式训练待 pretrain ckpt（ETA≈2026-12-25） | pretrain |
+| ✅ P2 | `get_api_details` 格式修复（R126 wake173） | 已完成 |
+
+## §R126 DeepSeek 黄金轨迹深度分析 + get_api_details 修复（R3/R4 方向 · 零 GPU · 2026-11-10 wake173）
+
+> **背景**：R125 端到端模拟器验证通过（MOSTLY_READY），但遗留两个待办：① `get_api_details` 在 r125 中的格式 bug（传 string 应传 list）；② 缺乏对 94% 侧 DeepSeek 真实轨迹的深度模式分析。本轮完成两项。
+>
+> **数据源**：`~/code/eda_fastmcp/pyAether-eval/cline_cli_trace/cline_trace_v1_3/cline_trace/` 共 103 个任务轨迹，每个含 `api_conversation_history.json`（user/assistant 消息交替，assistant 文本内嵌 `<use_mcp_tool>` XML 块）。
+
+### 1. get_api_details 格式修复
+
+**Bug**：`r125_rollout_simulator.py` L462 调用 `searcher.get_api_details(apis_short[0])` 传入 **string**，但 `get_api_details` 遍历 `api_list` 逐字符迭代 → 全部返回 unknown。
+
+**修复**：改为 `searcher.get_api_details([apis_short[0]])` 并取 `details_list[0]`。验证：`get_api_details(['dbGetAllLibs'])` → `api_type=function` ✅
+
+### 2. 对话结构统计（103 轨迹）
+
+| 指标 | mean | median | min | max | std |
+|:--|--:|--:|--:|--:|--:|
+| 消息总数/任务 | 45.64 | 43 | 6 | 98 | 20.54 |
+| assistant 轮次 | 22.67 | 21 | 3 | 49 | 10.30 |
+| 工具调用/任务 | 14.32 | 13 | 1 | 41 | 8.84 |
+| 代码块/任务 | 0.56 | 0 | 0 | 4 | 0.83 |
+| thinking 块/任务 | 0.99 | 1 | 0 | 2 | 0.33 |
+| thinking 字符/任务 | 574.7 | 361 | 0 | 1930 | 439.5 |
+| 估计上下文 token | 5705 | 5375 | 750 | 12250 | 2567 |
+
+**SFT 上下文长度建议**：**16384**（p90≈9000 token，max≈12250）。与 R120 SFT 配方 Phase1=16K 一致，验证了该选择。
+
+### 3. 工具使用频率
+
+| 工具 | 调用总数 | 平均/任务 | 占比 |
+|:--|--:|--:|--:|
+| search_apis | 573 | 5.56 | 38.8% |
+| run_pyAether_code_tool | 516 | 5.01 | 35.0% |
+| get_api_details | 386 | 3.75 | 26.2% |
+| **合计** | **1475** | **14.32** | |
+
+**对比 D2（§D 诊断）**：DeepSeek 全 harness 14.32 次/任务。若 MiniCPM5-2B 36% 侧 <5 次/任务 → SFT 可修（D2 假设验证）。
+
+### 4. 工具序列模式（48 种 unique pattern）
+
+| 序列 | 任务数 | 占比 |
+|:--|--:|--:|
+| search→detail→run | 20 | 19.4% |
+| search→detail→search→detail→run | 16 | 15.5% |
+| search→detail→search→run | 7 | 6.8% |
+| search→detail→search→detail→search→detail→run | 6 | 5.8% |
+| search→detail→search→detail→search→run | 5 | 4.9% |
+
+**核心发现**：**黄金模式 = 迭代式搜索-查询-执行**。19.4% 的任务一轮 search→detail→run 即完成；15.5% 需两轮；更复杂的任务需 3-4 轮。所有 103 轨迹均以 `run_pyAether_code_tool` 结尾。
+
+### 5. 错误恢复分析（关键发现）
+
+| 指标 | 值 |
+|:--|:--|
+| 有错误的任务比例 | **99.0%**（102/103） |
+| 平均错误数/任务 | 5.23 |
+| 恢复工具分布 | run_code:280, search_apis:68, get_api_details:11 |
+
+**🎯 重大发现**：**99% 的黄金轨迹包含错误**！DeepSeek 94% Pass@1 的任务在执行过程中也会频繁出错（平均 5.2 次），但能通过 re-run（280 次）或 re-search（68 次）恢复。
+
+**对 RL 奖励设计的直接影响**：
+- 🚫 **不应惩罚中间错误**——错误是正常探索的一部分
+- ✅ **应奖励「成功恢复」**——从错误中修正到正确的轨迹
+- ✅ **中间奖励**：正确工具调用序列（search→detail→run）本身值得部分奖励
+- ✅ R0++ 的 5 分量设计（syntax+api+entry_point+structure+test_alignment）与此一致——不依赖执行结果，关注最终代码质量
+
+### 6. API 使用分布
+
+| 指标 | 值 |
+|:--|:--|
+| 使用的 unique API 数 | **205** |
+| 平均 unique API/任务 | 3.63 |
+| Top 5 | emyString(23), emyInitAether(13), emyDesign(12), emyPointArray(9), emyPointF(8) |
+
+**对 SFT 领域语料的指导**：PyAether 退火/SFT 语料应至少覆盖这 205 个 API。当前 API_INFO_MERGED_V3.json 有 8463 个 API，覆盖率 2.4%——但 205 个 API 覆盖了 103 个任务的全部需求，说明长尾 API 使用极少。
+
+### 7. 代码结构
+
+| 指标 | 值 |
+|:--|:--|
+| 最终代码 LOC mean | 4.34 |
+| 最终代码 LOC max | 22 |
+| 含 import pyAether | 25.2% |
+| 含 def entry_point | 27.2% |
+
+**发现**：解决方案代码极短（avg 4 行），且大部分不含 import/def——因为 DeepSeek 使用 `run_pyAether_code_tool` 执行代码片段而非写入文件。这与 158-case 评测的 `candidate()` 函数格式不同，SFT 数据生成需适配。
+
+### 8. 对 SFT/RL 设计的综合建议
+
+| 维度 | 建议 | 依据 |
+|:--|:--|:--|
+| SFT 上下文长度 | 16384（Phase1）→ 4096（Phase2 域退火） | p90≈9000 tok，max≈12250 |
+| SFT 黄金轨迹模板 | search→detail→run（可多轮迭代） | 19.4% 一轮，35% 两轮 |
+| SFT 工具调用密度 | ≥10 calls/task | DeepSeek avg=14.3，MiniCPM5 预计<5 |
+| RL 奖励策略 | **不惩罚中间错误；奖励成功恢复** | 99% 黄金轨迹有错误 |
+| RL 中间奖励 | 正确工具序列可获部分分 | search→detail→run 模式占主导 |
+| SFT API 覆盖 | ≥205 unique API | 103 任务实际使用集 |
+| 代码长度期望 | avg 4-10 LOC | 不奖励冗长代码 |
+
+### 9. 交付物
+
+| 文件 | 行数 | 大小 | 状态 |
+|:--|--:|--:|:--|
+| `baize_posttrain_r126_deepseek_trajectory_analysis.py` | 495 | ~22KB | py_compile ✅ + 103 traces ✅ |
+| `r126_trajectory_analysis_results.json` | — | 277KB | 完整结果 JSON |
+| `baize_posttrain_r125_rollout_simulator.py`（修复） | 559 | ~27KB | get_api_details fix ✅ |
+| 本节（EXPERIMENTS §R126） | — | — | ✅ |
+| P5 | 正式训练待 pretrain ckpt（ETA≈2026-12-25） | pretrain |
 

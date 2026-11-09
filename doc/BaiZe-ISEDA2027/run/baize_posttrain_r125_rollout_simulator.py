@@ -459,7 +459,8 @@ class PipelineRunner:
                 "first_result": sr[0]["api_name"] if sr else None}
             if apis_short:
                 t2 = time.time()
-                details = searcher.get_api_details(apis_short[0])
+                details_list = searcher.get_api_details([apis_short[0]])
+                details = details_list[0] if details_list else {}
                 results["get_api_details"] = {"api_name": apis_short[0],
                     "found": details.get("api_type", "unknown") != "unknown",
                     "api_type": details.get("api_type", "unknown"),
