@@ -1402,3 +1402,4 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1793957377461_s9bc9	e0039602	hfeg0plg103	391	schematic_netlist	case	EDA-Eval-DesignFlow-StdcellDetConvert-001	2026-11-10 03:01	
 1794185877917_jkvft	jinhaoli	hfeg0pkn004	390	schematic_netlist	case	EDA-Eval-DesignFlow-NetlistSignalHierTrace-001	2026-11-10 03:30	deepread jkvft: DDR5 DRAM top netlist verilog.ddr5.drgqx.1106 signal connectivity hierarchy trace (45 cm1_* test-mode signals, 37MB netlist top WOWTOP 3826 modules); synthesized NetlistSignalHierTrace-001 B-grade
 1793839606322_bghqo.messages.json	e0039602	hfeg0pkn002	386	schematic_netlist	case	EDA-Eval-DesignFlow-TbFamilyResultVerify-001	2026-11-10 03:57	
+1794206448451_z4swx	xuelianf	hfeg0plg102	214	waveform	case	EDA-Eval-DesignFlow-SmBisecMarginCalc-001	2026-11-10 04:33	
