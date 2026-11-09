@@ -1,0 +1,79 @@
+=== incr_eval_7route R1978 START Mon Nov  9 02:51:15 PM CST 2026 ===
+[Mon Nov  9 02:51:15 PM CST 2026] === cline-patched: 5 missing instances to eval ===
+[Mon Nov  9 02:51:15 PM CST 2026] === merge cline-patched predictions ===
+cline-patched: 137 real patches merged
+[Mon Nov  9 02:51:15 PM CST 2026] === cline-patched eval START 5 missing instances ===
+Running 5 instances...
+  0%|          | 0/5 [00:00<?, ?it/s] 20%|██        | 1/5 [00:25<01:40, 25.03s/it]1 ran successfully, 0 failed:  20%|██        | 1/5 [00:25<01:40, 25.03s/it]1 ran successfully, 0 failed:  40%|████      | 2/5 [00:26<00:39, 13.24s/it]2 ran successfully, 0 failed:  40%|████      | 2/5 [00:26<00:39, 13.24s/it]2 ran successfully, 0 failed:  60%|██████    | 3/5 [00:27<00:18,  9.09s/it]3 ran successfully, 0 failed:  60%|██████    | 3/5 [00:27<00:18,  9.09s/it]3 ran successfully, 0 failed:  80%|████████  | 4/5 [00:49<00:12, 12.46s/it]4 ran successfully, 0 failed:  80%|████████  | 4/5 [00:49<00:12, 12.46s/it]4 ran successfully, 0 failed: 100%|██████████| 5/5 [18:43<00:00, 224.76s/it]5 ran successfully, 0 failed: 100%|██████████| 5/5 [18:43<00:00, 224.76s/it]5 ran successfully, 0 failed: 100%|██████████| 5/5 [18:43<00:00, 224.76s/it]
+All instances run.
+Total instances: 5
+Instances submitted: 5
+Instances completed: 5
+Instances incomplete: 0
+Instances resolved: 1
+Instances unresolved: 4
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 1
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 2
+Unremoved images: 5
+Report written to cline-glm-5.3-flash.verified_full_glm53_cline-patched_R1933.json
+[Mon Nov  9 03:10:05 PM CST 2026] === cline-patched eval DONE ===
+[Mon Nov  9 03:10:05 PM CST 2026] === regenerate eval report for cline-patched ===
+cline-patched: 103 resolved / 34 failed / 137 evaluated
+[Mon Nov  9 03:10:05 PM CST 2026] === cline-patched report regenerated ===
+[Mon Nov  9 03:10:05 PM CST 2026] === codex: 2 missing instances to eval ===
+[Mon Nov  9 03:10:05 PM CST 2026] === merge codex predictions ===
+codex: 47 real patches merged
+[Mon Nov  9 03:10:05 PM CST 2026] === codex eval START 2 missing instances ===
+Running 2 instances...
+  0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [02:09<02:09, 129.34s/it]1 ran successfully, 0 failed:  50%|█████     | 1/2 [02:09<02:09, 129.34s/it]1 ran successfully, 0 failed: 100%|██████████| 2/2 [02:13<00:00, 66.67s/it] 2 ran successfully, 0 failed: 100%|██████████| 2/2 [02:13<00:00, 66.67s/it]2 ran successfully, 0 failed: 100%|██████████| 2/2 [02:13<00:00, 66.67s/it]
+All instances run.
+Total instances: 2
+Instances submitted: 2
+Instances completed: 2
+Instances incomplete: 0
+Instances resolved: 2
+Instances unresolved: 0
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 0
+Unremoved images: 2
+Report written to codex-glm-5.3-flash.verified_full_glm53_codex_R1933.json
+[Mon Nov  9 03:12:24 PM CST 2026] === codex eval DONE ===
+[Mon Nov  9 03:12:24 PM CST 2026] === regenerate eval report for codex ===
+codex: 31 resolved / 16 failed / 47 evaluated
+[Mon Nov  9 03:12:24 PM CST 2026] === codex report regenerated ===
+[Mon Nov  9 03:12:24 PM CST 2026] === opencode: 20 missing instances to eval ===
+[Mon Nov  9 03:12:24 PM CST 2026] === merge opencode predictions ===
+opencode: 293 real patches merged
+[Mon Nov  9 03:12:24 PM CST 2026] === opencode eval START 20 missing instances ===
+Running 20 instances...
+  0%|          | 0/20 [00:00<?, ?it/s]  5%|▌         | 1/20 [01:05<20:52, 65.92s/it]1 ran successfully, 0 failed:   5%|▌         | 1/20 [01:05<20:52, 65.92s/it]1 ran successfully, 0 failed:  10%|█         | 2/20 [01:06<09:54, 33.02s/it]2 ran successfully, 0 failed:  10%|█         | 2/20 [01:06<09:54, 33.02s/it]2 ran successfully, 0 failed:  15%|█▌        | 3/20 [01:06<06:15, 22.09s/it]3 ran successfully, 0 failed:  15%|█▌        | 3/20 [01:06<06:15, 22.09s/it]3 ran successfully, 0 failed:  20%|██        | 4/20 [01:33<06:13, 23.34s/it]4 ran successfully, 0 failed:  20%|██        | 4/20 [01:33<06:13, 23.34s/it]4 ran successfully, 0 failed:  25%|██▌       | 5/20 [01:34<04:42, 18.82s/it]5 ran successfully, 0 failed:  25%|██▌       | 5/20 [01:34<04:42, 18.82s/it]5 ran successfully, 0 failed:  30%|███       | 6/20 [01:34<03:40, 15.78s/it]6 ran successfully, 0 failed:  30%|███       | 6/20 [01:34<03:40, 15.78s/it]6 ran successfully, 0 failed:  35%|███▌      | 7/20 [01:38<03:03, 14.08s/it]7 ran successfully, 0 failed:  35%|███▌      | 7/20 [01:38<03:03, 14.08s/it]7 ran successfully, 0 failed:  40%|████      | 8/20 [02:00<03:00, 15.04s/it]8 ran successfully, 0 failed:  40%|████      | 8/20 [02:00<03:00, 15.04s/it]8 ran successfully, 0 failed:  45%|████▌     | 9/20 [02:00<02:27, 13.44s/it]9 ran successfully, 0 failed:  45%|████▌     | 9/20 [02:00<02:27, 13.44s/it]9 ran successfully, 0 failed:  50%|█████     | 10/20 [02:02<02:02, 12.23s/it]10 ran successfully, 0 failed:  50%|█████     | 10/20 [02:02<02:02, 12.23s/it]10 ran successfully, 0 failed:  55%|█████▌    | 11/20 [02:07<01:44, 11.57s/it]11 ran successfully, 0 failed:  55%|█████▌    | 11/20 [02:07<01:44, 11.57s/it]11 ran successfully, 0 failed:  60%|██████    | 12/20 [02:27<01:38, 12.32s/it]12 ran successfully, 0 failed:  60%|██████    | 12/20 [02:27<01:38, 12.32s/it]12 ran successfully, 0 failed:  65%|██████▌   | 13/20 [02:28<01:19, 11.40s/it]13 ran successfully, 0 failed:  65%|██████▌   | 13/20 [02:28<01:19, 11.40s/it]13 ran successfully, 0 failed:  70%|███████   | 14/20 [02:28<01:03, 10.60s/it]14 ran successfully, 0 failed:  70%|███████   | 14/20 [02:28<01:03, 10.60s/it]14 ran successfully, 0 failed:  75%|███████▌  | 15/20 [02:32<00:50, 10.19s/it]15 ran successfully, 0 failed:  75%|███████▌  | 15/20 [02:32<00:50, 10.19s/it]15 ran successfully, 0 failed:  80%|████████  | 16/20 [02:54<00:43, 10.92s/it]16 ran successfully, 0 failed:  80%|████████  | 16/20 [02:54<00:43, 10.92s/it]17 ran successfully, 0 failed:  85%|████████▌ | 17/20 [02:54<00:30, 10.28s/it]17 ran successfully, 0 failed:  90%|█████████ | 18/20 [02:56<00:19,  9.78s/it]18 ran successfully, 0 failed:  90%|█████████ | 18/20 [02:56<00:19,  9.78s/it]19 ran successfully, 0 failed:  95%|█████████▌| 19/20 [03:01<00:09,  9.53s/it]19 ran successfully, 0 failed:  95%|█████████▌| 19/20 [03:11<00:10, 10.05s/it]19 ran successfully, 0 failed: 100%|██████████| 20/20 [03:54<00:00, 11.71s/it]20 ran successfully, 0 failed: 100%|██████████| 20/20 [03:54<00:00, 11.71s/it]20 ran successfully, 0 failed: 100%|██████████| 20/20 [03:54<00:00, 11.71s/it]
+All instances run.
+Total instances: 20
+Instances submitted: 20
+Instances completed: 20
+Instances incomplete: 0
+Instances resolved: 15
+Instances unresolved: 5
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 1
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 0
+Unremoved images: 20
+Report written to opencode-glm-5.3-flash.verified_full_glm53_opencode_R1933.json
+[Mon Nov  9 03:16:24 PM CST 2026] === opencode eval DONE ===
+[Mon Nov  9 03:16:24 PM CST 2026] === regenerate eval report for opencode ===
+opencode: 234 resolved / 58 failed / 292 evaluated
+[Mon Nov  9 03:16:24 PM CST 2026] === opencode report regenerated ===
+[Mon Nov  9 03:16:24 PM CST 2026] === claude-code: 69 missing instances to eval ===
+[Mon Nov  9 03:16:24 PM CST 2026] === merge claude-code predictions ===
+claude-code: 124 real patches merged
+[Mon Nov  9 03:16:24 PM CST 2026] === claude-code eval START 69 missing instances ===
+Running 69 instances...
+  0%|          | 0/69 [00:00<?, ?it/s]
