@@ -1,5 +1,20 @@
 # BAIZE_HARNESS_TASK.md
 
+> 🚨 **报告生成纪律（2026-11-09 用户令 · 最高优先 · 覆盖 C5 的旧实现）**
+> **背景**：`reports/` 已堆积 **37 个 `report_harness_cline_special_r*.html`** + **185 个 `gen_*r*.py`** 复制脚本（每轮 ~7KB / ~10KB）。用户明确：**不要生成垃圾报告**。旧 C5 写的是"已有则增量更新"，**不是**每轮新建文件。
+> 1) **常规监控轮禁止**新建 `report_harness_*_rXXXX.html`，也禁止复制新的 `gen_*_rXXXX.py`。
+> 2) 只维护 **两个固定文件**（原地覆盖，不带 r 后缀）：
+>    - `reports/report_harness_glm53_7way_swebench_tb_zh.html`
+>    - `reports/report_harness_cline_special_zh.html`
+> 3) 只维护 **两个固定生成器**（`ROUND=R20xx python3 ...` 把轮次写进正文，不要复制脚本）：
+>    - `run/harness/gen_report_glm53_7way.py`
+>    - `run/harness/gen_cline_special.py`
+> 4) 允许新增一次性报告的**唯一**条件：用户明确要求，或里程碑（eval 全 DONE / predict 每路满 500 / TB-2.1 全 89）。此时文件名写里程碑，不写 rXXXX。
+> 5) 日常轮只写 `MEMORY_HARNESS.md` 心跳 + `daily-memories-harness/` 一行（C4 的 cline 小结），**不产出 HTML**。
+> 6) 历史文件已归档到 `reports/archive/harness_cline_special/` 与 `run/harness/archive/`；🚫 不要再往主目录新增。
+> 违反本条 = 未执行本令。
+
+
 ### 📌 常驻 · 论文观察日报（research 线产出 · 2026-11-07 用户令）
 
 > 索引：`doc/personal-watch/run/research/daily/index.html`｜最新一期：`doc/personal-watch/run/research/daily/<日期>.html`
@@ -77,7 +92,7 @@
 | C2 | **失败原因分类**（适配器 / 网关额度 429 / 上游 5xx / 能力 / 超时 / 格式不可解析 / 环境依赖），逐条可追溯到 trace 文件 | 分类占比之和 = 100%，留 top3 样本原文 |
 | C3 | 确认 R1733 定位的 resume 判定问题修复后，**cline 空 patch 是否归零** | 未归零必须给根因证据（trace + 日志行） |
 | C4 | 每轮心跳含**一行 cline 专项小结**（real/empty/失败 top1） | 缺该行视为未执行本令 |
-| C5 | cline 专题 HTML 报告（已有则增量更新），写清与 hermes/opencode 的差距来源 | 报告在 `reports/`，自包含、0 外链 |
+| C5 | cline 专题 HTML 报告：固定文件 `reports/report_harness_cline_special_zh.html` **原地覆盖**（🚫 禁止 `_rXXXX` 新文件），写清与 hermes/opencode 的差距来源 | 报告在 `reports/`，自包含、0 外链 |
 
 > 📛 命名纪律照旧：报告正文一律写 `cline`，禁止任何 `cline-patched` 变体。
 
