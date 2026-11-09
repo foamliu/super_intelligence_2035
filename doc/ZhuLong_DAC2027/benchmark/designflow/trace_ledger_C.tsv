@@ -548,10 +548,12 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked		2026-11-09 20:39	RAG-looku
 1793879392010_hyalb	chengleiy	hfeg0plg15	114	physical_verify	parked		2026-11-10 01:09	r296 idle, diagnose LVS-QA license-hang (read log explain), not produce, no gold
 1793843123624_u65cq	e0047472	hfeg0plg99	189	physical_verify	parked		2026-11-10 01:09	r296 idle, pinyin how-to (innovus query dummy cmd), not produce
 1794216319185_lvu4r	hktklin	hfeg0plg87	1	layout_virtuoso	parked		2026-11-10 01:27	r298: same trivial sed as r297 d5x87/w5ajz; failed exit=1; non-seed
-1793858875143_wzws0	adaml	hfeg0pkn002	5542	physical_verify	parked		2026-11-10 01:39	r298 deepread REJECT: 990msg/25UI sprawling multi-task (runtime LVS via LSF/PDK non-sandbox-reproducible + SKILL.md prose §4.2/4.3 viol + heavy user diag U1/U2/U15 + 8/25 ai-skill-optimizer meta). 四模式 conclusions precise but task(U0=跑LVS产lvs.rep)!=runnable deliverable, A-faithful break. Only COMPLETED in fresh-trace-log top80 NEW. SAT re-confirm
+1793858875143_wzws0	adaml	hfeg0pkn002	5542	physical_verify	parked		2026-11-10 01:48	r298 REJECT: adaml skill-builder multi-task session (990 msgs calibre-lvs skill iterate blcnand3GFx1/bufGSx64/bufGFLx24), mc=2-4 below threshold (ledger mc=5542 was keywords-col misread), gold=evolving skill doc already embedded in prompt skill_instructions block, AVOID_USER confirmed
 1794021094674_ds1vt	xinqiaoz	hfeg0pkn002			parked		2026-11-10 01:39	r298: idle-handoff
 1794017030283_ob5f7	xinqiaoz	hfeg0pkn002			parked		2026-11-10 01:39	r298: idle-handoff
 1794192534501_fju0e	xinqiaoz	hfeg0pkn002			parked		2026-11-10 01:39	r298: idle-handoff
 1793000520129_g37na	xinqiaoz	hfeg0pkn002			parked		2026-11-10 01:39	r298: failed-drcqa
 1792480534403_xgfip	xinqiaoz	hfeg0pkn002			parked		2026-11-10 01:39	r298: failed-handoff
 1793706326923_qiqs7	alan3zh	hfeg0pkn002			parked		2026-11-10 01:39	r298: idle-empty
+1793088659672_4lwqr	e0047472	hfeg0plg53	225	pg_layout	parked		2026-11-10 01:48	r298 REJECT: prompt='hi' (not 提出需求, A rule2 fail), cwd=/home/e0047472 home-dir exploration, e0047472 already-seen (u65cq r296 idle how-to), terminal=failed_external_process_exit reconciler, 1.44MB multi-task over 8d
+1794193951052_zg8vo	e0047695	hfeg0pkn001	329	pg_layout	parked		2026-11-10 01:48	r298 REJECT: status=failed exit_code=1 (A rule4 no accepted gold), verilog:140 mixing
