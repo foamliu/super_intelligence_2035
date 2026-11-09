@@ -138,3 +138,17 @@
 ## 归档批次 r307（2026-11-10 03:20）— 为 r307 让体积归档 r306 verbose 全文（r307 复核维持自然饱和）
 
 - **轮(306) 选料筛选轮 · 0 case · DEBT:1 ✓ —— shard C 自然饱和维持（15 连 0）** —— r305 计划执行（与 r305 同档仅 +8min 无新数据，复核维持）：① **.75 复核 03:13**：/home/t0002965/log/ 下仍 3 个 scan dir（20261028_174426/20261105_192825/20261109_224902），无 ssh_eda_search_20261110*；eda_trace_20261110.log 2981 lines mtime Nov10 00:01 493415B 与 r305 同档无日内增量 → 0 viable；11-11 00:00 cron rescan 距 03:13 约 21h，本轮 40min 预算无法等。② **ledger next**：trace_ledger.py --shard C next 排除全部 563 ledgered sid（awk 候选池 0 命中），stats case 274/parked 288/claimed 1/deepread 0，jsonl_C 273 行不变；与 r299-r305 池顶全 ledgered 结论一致。③ **rewrite_queue.tsv 全 16 条 done**（断言闸门 274/274 达标，无 incomplete 待修）。④ **research 日报**：最新 11-09（11-10 06:00 早报本地 03:13 未生成），designflow 三建议=check.py 质量改进参考非新 case 指令。⑤ **结论**：无新 scan + 日志 0 viable + 池顶全 ledgered + 无运维新指令 + rewrite_queue 清空 → shard C 自然饱和**维持**（15 连 0，274 case 4 domain 均 ≥37：layout_aether 69 / layout_virtuoso 61 / pg_layout 37 / physical_verify 100）。台账 ledger 563 不变，jsonl_C 273 行不变，候选池快照无需再刷。**r307 计划**：① 等 11-11 00:00 cron rescan 完成后用新 summary.tsv 重扫 mc≥30 shard-C layout 候选（排除 563 ledgered）；② 若新池仍 0 clean COMPLETED seed → 正式 close shard C（274 case 收尾转维护态）；③ 若运维下达 check.py 质量改进指令 → 按 research 日报 11-09 三建议逐族改 check.py 比较函数。r305/r304 verbose 已归档 MEMORY_C_archive.md（批次 r306）。
+
+---
+
+## 归档批次 r309（MEMORY_C 体积维护）
+
+### 轮(308) 选料筛选轮 · 0 case · DEBT:1 ✓ —— shard C 自然饱和维持（17 连 0）【已归档，MEMORY_C 留 1 行指针】
+
+r307 计划执行（①等 11-11 00:00 cron，复核维持）：
+1. **.75 复核 03:35**：/home/t0002965/log/ 下仍 3 个 scan dir（20261028_174426/20261105_192825/20261109_224902），无 ssh_eda_search_20261110* / 20261111*；eda_trace_20261110.log 493415B mtime Nov10 00:01 与 r307 同档无日内增量 → 0 viable；无 eda_trace_20261111.log；11-11 00:00 cron rescan 距 03:35 约 20.4h，本轮 40min 预算无法等。
+2. **ledger next**：trace_ledger.py --shard C next 排除全部 1373 ledgered sid（load() 全 shard 合计），awk 候选池 top3=ukkn7(mc1627)/w4x70(mc1575)/x4b0p(mc1508) 全在排除集（ledger_C 行 224/162/184）→ 0 命中；stats case 274/parked 288/claimed 1/deepread 0，jsonl_C 273 行不变；与 r299-r307 池顶全 ledgered 结论一致。
+3. **rewrite_queue.tsv 全 16 条 done**（断言闸门 274/274 达标，无 incomplete 待修）。
+4. **research 日报**：最新 11-09（index.html mtime Nov9 06:10，11-10 06:00 早报本地 03:35 未生成），designflow 三建议=check.py 质量改进参考非新 case 指令。
+5. **结论**：无新 scan + 日志 0 viable + 池顶全 ledgered + 无运维新指令 + rewrite_queue 清空 → shard C 自然饱和**维持**（17 连 0，274 case 4 domain 均 ≥37：layout_aether 69 / layout_virtuoso 61 / pg_layout 37 / physical_verify 100）。台账 ledger 1373 不变，jsonl_C 273 行不变，候选池快照无需再刷。
+6. **r309 计划**：① 等 11-11 00:00 cron rescan 完成后用新 summary.tsv 重扫 mc≥30 shard-C layout 候选（排除 1373 ledgered）；② 若新池仍 0 clean COMPLETED seed → 正式 close shard C（274 case 收尾转维护态）；③ 若运维下达 check.py 质量改进指令 → 按 research 日报 11-09（或 11-10 早报若生成）三建议逐族改 check.py 比较函数 + rewrite_queue 加失败分类列。
