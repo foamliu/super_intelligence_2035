@@ -5,3 +5,5 @@
 [verified-full 03:10:47] [4/500] astropy__astropy-13398 SKIP (predicted, patch=31274B)
 [verified-full 03:10:47] [5/500] astropy__astropy-13453 SKIP (predicted, patch=2408B)
 [verified-full 03:10:47] [6/500] PREDICT claude-code on astropy__astropy-13579
+[verified-full 03:40:48]   -> no-patch (patch=0B wall=1800.7s)
+[verified-full 03:40:48] [7/500] PREDICT claude-code on astropy__astropy-13977
