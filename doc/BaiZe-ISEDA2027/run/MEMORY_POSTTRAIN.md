@@ -14,6 +14,7 @@ WAITING: 0
 - 阻塞: GPU 0/8free(root SGLang Qwen3.8-27B占全8卡44-45GB 0%util,运行自Sep17);沙箱10.129.32.75全端口FILTERED(SSH+TCP);Docker无权限;P3等pretrain ckpt(ETA≈2026-12-25)
 - 本轮新增调研产出: R121 EDA沙箱连通性完整调查(~220行 + 8节调查 + SSH隧道排除 + Docker排除 + MCP服务器排除 + 本地API KB(8463 API)可用确认 + 轻量关键词搜索设计 + RL奖励臂可行性矩阵 + 5项行动计划 + JSON 7.1KB + EXPERIMENTS §R121）
 - 未完成指令: 🔴用户令2026-11-07(GPU未到位,需持续产出调研) ⇒ WAITING=0
+- git: commit✅(6f24f17d2 00:57) push超时(ahead2 behind6,网络timeout)→下次唤醒第一件事补推
 
 ## 关键事实（常驻）
 
