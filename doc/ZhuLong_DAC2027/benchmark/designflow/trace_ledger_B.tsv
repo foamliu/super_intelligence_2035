@@ -696,3 +696,16 @@ qnm9e					parked		2026-11-08 01:58	Finesim DC convergence Q&A prose dup of uky6c
 1794212560696_wl4dj	e0043182	hfeg0pkn001	8	spice_sim	parked		2026-11-09 17:45	windows-seclog powershell non-EDA
 1794212622727_s5b5x	rongjiez	hfeg0pkn004	8	spice_sim	parked		2026-11-09 17:45	fresh-kw0 trivial
 1793688761923_zqew3	rose3wang	hfeg0pkn003	8	spice_sim	parked		2026-11-09 17:45	gzip-cmd trivial file-op
+1794207576508_08l4v	nevinrao	hfeg0pkn001	20	spice_sim	parked		2026-11-09 18:05	verilog fuse X8 pattern gen wrong-shard(A/digital)
+1794215806676_ut1oo	tongni	hfeg0pkn001	285	spice_sim	parked		2026-11-09 18:05	R1-R2-R3-R4 netlist structural check wrong-shard(D/schematic_netlist) + skill-script-modification session
+1794215537758_5or9z	e0046913	hfeg0pkn003	0	spice_sim	parked		2026-11-09 18:05	formal verification fm_r2r Makefile analysis wrong-shard(A/verification)
+1794216342754_bmka4	xinqiaoz	hfeg0pkn002	0	spice_sim	parked		2026-11-09 18:05	handoff-resume session not-clean-produce
+1794215654325_wto50	ruisongs	hfeg0pkn001	0	spice_sim	parked		2026-11-09 18:05	xcelium shm file copy wrong-shard(A/verilog-sim)
+1794217617190_gwqrp	e0045488	hfeg0pkn004	0	spice_sim	parked		2026-11-09 18:06	emcheck file analysis consulting non-produce
+1794216992024_cv75g	zhenglu	hfeg0pkn004	0	spice_sim	parked		2026-11-09 18:06	trivial greeting session
+1794215592923_ukr0g	ellawu	hfeg0pkn005	0	spice_sim	parked		2026-11-09 18:06	trivial small session 5KB
+1794217754949_0r0uq	t0002802	hfeg0pkn005	0	spice_sim	parked		2026-11-09 18:06	trivial small session 5KB
+1794217616311_703eg	t0002802	hfeg0pkn005	0	spice_sim	parked		2026-11-09 18:06	trivial small session 5KB
+1794216319185_lvu4r	hktklin	hfeg0pkn004	0	spice_sim	parked		2026-11-09 18:06	trivial small session 5KB
+1794216750374_d5x87	hktklin	hfeg0pkn004	0	spice_sim	parked		2026-11-09 18:06	trivial small session 4KB
+1794215816873_l3qi7	rose3wang	hfeg0pkn003	0	spice_sim	parked		2026-11-09 18:06	trivial small session 5KB
