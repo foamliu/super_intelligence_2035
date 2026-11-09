@@ -524,6 +524,30 @@
       "trace": "1793241722276_abtf1 (lorikx@hfeg0pkn004, mc132) -> case",
       "finding": "r300 = abtf1 full deepread + case build (DEBT from r299 CLEARED). scansync r300: no new scan (still r292 ssh_eda_search_20261109_224902, mc30=2247/dedup=5999/users=401/hosts=696 unchanged), daily log 20261110 healthy 2981 lines. abtf1 deepread (136msgs/1.6MB): USER#1 clean A-faithful produce-task 'sim下的仿真 最新一次有10个error请检查并修改代码'; root cause = VCS V2001 parser IPD on 10 output realtime dbg_* ports; fix = -sverilog in VCS_FLAGS+CR_ABSORB_VCS_FLAGS + FAULT_ARGS +defect_bit->+defect_bit_left + sp_sram.v comment. Case = spec-driven generator gen_vcs_ipd_fix.py (14 conds a-n), gold PASS 14/14 + 4 negs FAIL + 3 fakes FAIL. A.jsonl 191->192. shard A clean digital A-faithful produce still scarce (4th confirmation r295/r296/r299/r300): abtf1 was the only clean produce in the 274-fresh pool; strong-digital marker noisy.",
       "updated_at": "2026-11-10T04:35:00+08:00"
+    },
+    "r301": {
+      "date": "2026-11-10",
+      "ts": "2026-11-10T04:45:00+08:00",
+      "round_type": "management (BLOCKED: eda_flow execution backend outage)",
+      "scan_dir": "ssh_eda_search_20261109_224902 (assumed unchanged, could not verify)",
+      "scan_confirmed": "COULD NOT VERIFY — run_commands/run_code both down",
+      "case_delivered": "none (external blocker)",
+      "shard_A_new_this_round": 0,
+      "shard_A_jsonl": 192,
+      "blocker": {
+        "type": "eda_flow execution backend outage",
+        "run_commands": "exit_code -1, duration_ms 0, stdout = wrapper script text only (command never executes); verified across 2 sessions + 6 attempts including minimal 'pwd; echo OK' and file-redirect probes; workdir stays empty after redirect commands",
+        "run_code": "MCP tool run_code timed out (pyAether backend unreachable), both normal and probe=true",
+        "file_ops_ok": "write_file/read_file/list_files all work within session workdir (open_session succeeds, workdir created)",
+        "consequence": "cannot run scansync (needs run_commands on .75 to check scan dir / daily log / stats), cannot query candidates from summary.tsv (awk on .75), cannot deepread traces (scp from remote hosts needs ssh via run_commands), cannot build/verify a case",
+        "workdir_sandbox": "read_file/list_files sandboxed to session workdir only — cannot access /home/t0002965/log/summary.tsv ('path outside allowed prefixes')",
+        "classification": "TRUE external blocker per TASK §6.6 — sandbox execution path down, not a pool/logic issue"
+      },
+      "pool_state_cached": "per r299 assessment (last successful scansync): 274 truly-fresh mc>=15 dig>wrong candidates; abtf1 (the only clean A-faithful produce) was delivered r300; remaining top fresh were all parked (tsn3o/hzyu6 too-big resumed UVM, r2yjr/pzo6g/rv1g2 borderline shard C LVS, c4vkj code-merge parked). shard A clean digital A-faithful produce scarcity confirmed 4x (r295/r296/r299/r300). Even with .75 restored, next clean produce requires fresh-window scanning (also needs run_commands).",
+      "finding": "r301 BLOCKED by eda_flow execution backend outage. run_commands (bashpool) returns exit_code -1 / duration 0ms / never executes (stdout = wrapper script source, not output); run_code (pyAether) times out. File ops (write/read/list) within session workdir still function, but are sandboxed — cannot reach /home/t0002965/log summary.tsv or scp traces from remote hosts. Could not run scansync management task (scan dir / daily log / mc stats all need run_commands). Could not query candidates, deepread, or build a case. r292 full rescan numbers (mc30=2247/dedup=5999/users=401/hosts=696) assumed unchanged but UNVERIFIED this round. Per r299 cached assessment, pool was already mined of clean produce-tasks (abtf1 delivered r300; 4x scarcity confirmation). WAITING: 1 (true external blocker per §6.6). Next round: retry eda_flow execution; once restored, run scansync + fresh-window scan for new digital candidates (post-r292 pool may have new sessions created 11/09-11/10).",
+      "mc30": 2247,
+      "hosts": 696,
+      "updated_at": "2026-11-10T04:45:00+08:00"
     }
   },
   "sessions": 38082,
@@ -535,7 +559,7 @@
   },
   "source": "/home/t0002965/log/ssh_eda_search_20261105_192825/summary.tsv (11/05 scan)",
   "target_mc": 30,
-  "updated_at": "2026-11-10T04:30:00+08:00",
+  "updated_at": "2026-11-10T04:45:00+08:00",
   "users_mc100": 182,
   "users_mc30": 401,
   "users_mc300": 60,
