@@ -14,7 +14,7 @@ WAITING: 0
 - 阻塞: GPU 0/8free(root SGLang Qwen3.8-27B占全8卡44-45GB 0%util,运行自Sep17,11/9已过仍未释放);沙箱10.129.32.75全端口FILTERED;Docker无权限;P3等pretrain ckpt(ETA≈2026-12-25)
 - 本轮新增调研产出: R126 DeepSeek黄金轨迹深度分析(495行 + 103轨迹 + 8维度统计 + 99%错误恢复发现 + 48种工具序列模式 + 205 API覆盖集 + 上下文16384验证 + SFT/RL 7项综合建议 + get_api_details bug修复 + EXPERIMENTS §R126)
 - 未完成指令: 🔴用户令2026-11-07(GPU未到位,需持续产出调研) ⇒ WAITING=0
-- git: commit✅(1db26a9aa 01:47) push✅(rebase后1 commit pushed,no ahead/behind)
+- git: commit✅(0b40fe431 02:20) push❌(2次timeout,网络问题,下次唤醒第一件事补推)
 
 ## 关键事实（常驻）
 
