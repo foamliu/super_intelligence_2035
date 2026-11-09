@@ -584,3 +584,17 @@ qnm9e					parked		2026-11-08 01:58	Finesim DC convergence Q&A prose dup of uky6c
 1793956475658_jatet.messages.json	e0024852	hfeg0pkn004	618	spice_sim	parked		2026-11-09 09:46	wrong-shard(layout/calibre/schematic)or-vague
 1794187865687_6dvs5	reedchen	hfeg0pkn002	47	spice_sim	case	EDA-Eval-DesignFlow-PostSimUncommentFix-001	2026-11-09 10:23	
 1793941691690_z3tqe	reedchen	hfeg0pkn002	69	spice_sim	case	EDA-Eval-DesignFlow-MultiPvtSpGenBuild-001	2026-11-09 11:08	
+1793951758493_60sod.messages.json	thomasz	hfeg0pkn001	118	spice_sim	parked		2026-11-09 11:41	U0 gvim edit task not design-flow
+1793927271206_0ekf9.messages.json	e0030085	hfeg0pkn002	98	spice_sim	parked		2026-11-09 11:42	testMAX demo = digital/test domain shard A
+1794193758706_gwm47.messages.json	tongfanl	hfeg0pkn002	86	spice_sim	parked		2026-11-09 11:42	U0 FineSim job-status query diagnostic not produce-task
+1793955920680_cp2b9.messages.json	rongjiez	hfeg0pkn005	78	spice_sim	parked		2026-11-09 11:42	waveform compare_wave -reuse edit = shard D
+1793954326710_ud392.messages.json	rongjiez	hfeg0pkn005	78	spice_sim	parked		2026-11-09 11:42	dup cp2b9 waveform edit = shard D
+1790064740875_kjw6u.messages.json	johnl	hfeg0pkn001	132	spice_sim	parked		2026-11-09 11:42	U0 git init file-op not design-flow
+1792497102583_70jmd.messages.json	johnl	hfeg0pkn001	127	spice_sim	parked		2026-11-09 11:42	U0 find .lib files file-op
+1793777097935_fgz7v.messages.json	e0046686	hfeg0pkn001	106	characterization	parked		2026-11-09 11:42	U0 @TASKS/TASK rev_cali req-analysis L1 assets perm-denied no in-trace deliverable
+1793672369557_fx2mf.messages.json	johnl	hfeg0pkn001	104	spice_sim	parked		2026-11-09 11:42	U0 explain matrix-run files diagnostic
+1792220867806_o9dcl.messages.json	e0014566	hfeg0pkn001	101	spice_sim	parked		2026-11-09 11:42	U0 ask-eda nanospice precision consulting
+1792223380722_d4yrg.messages.json	e0014566	hfeg0pkn005	84	spice_sim	parked		2026-11-09 11:42	dup o9dcl consulting
+1793603977814_gobna.messages.json	steveny	hfeg0pkn005	107	spice_sim	parked		2026-11-09 11:42	U0 introduce finesim consulting
+1792138312431_6i68m.messages.json	e0042624	hfeg0pkn005	64	spice_sim	parked		2026-11-09 11:42	U0 skill_instructions paste no explicit user produce-turn
+1792541695111_m40h5.messages.json	e0042624	hfeg0pkn005	60	spice_sim	parked		2026-11-09 11:42	U0 show runcodeGuard config consulting
