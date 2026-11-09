@@ -557,3 +557,7 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked		2026-11-09 20:39	RAG-looku
 1793706326923_qiqs7	alan3zh	hfeg0pkn002			parked		2026-11-10 01:39	r298: idle-empty
 1793088659672_4lwqr	e0047472	hfeg0plg53	225	pg_layout	parked		2026-11-10 01:48	r298 REJECT: prompt='hi' (not 提出需求, A rule2 fail), cwd=/home/e0047472 home-dir exploration, e0047472 already-seen (u65cq r296 idle how-to), terminal=failed_external_process_exit reconciler, 1.44MB multi-task over 8d
 1794193951052_zg8vo	e0047695	hfeg0pkn001	329	pg_layout	parked		2026-11-10 01:48	r298 REJECT: status=failed exit_code=1 (A rule4 no accepted gold), verilog:140 mixing
+1794190927249_42mhi	xflin	hfeg0plg52	128	layout_virtuoso	parked		2026-11-10 02:20	r299: how-to Q&A (pcell instance array), idle, prose gold, §4.2/4.3 fail
+1791965068024_x89mp	lizwen	hfeg0pkn002	169	physical_verify	parked		2026-11-10 02:20	r299: failed, wrong-shard web-dev (HTML UI export for PV platform), calibre kw from HTML content
+1792055918399_guf1d	minjiex	hfeg0plg90	97	physical_verify	parked		2026-11-10 02:20	r299: cancelled, trivial prompt=你好, A-rule2 fail
+1794213257272_e0taz	e0039122	hfeg0plg53	170	layout_aether	parked		2026-11-10 02:20	r299: idle, capability Q&A prompt=你可以使用Aether吗, no produce-task
