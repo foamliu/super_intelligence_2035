@@ -61,7 +61,7 @@
       "updated_at": "2026-11-09T16:10:00+08:00",
       "users_mc30": 224
     },
-    "updated_at": "2026-11-09T16:50:00+08:00",
+    "updated_at": "2026-11-09T17:15:00+08:00",
     "r279": {
       "ts": "2026-11-09T16:50:00+08:00",
       "latest_scan": "ssh_eda_search_20261105_192825",
@@ -75,6 +75,23 @@
       "fresh_strong_digital_keywordcol": "jason17w 6 sessions (verilog:3800-4030, drc:2648-2740) at hfeg0pnd002(10.129.32.190) — 6i6lk claimed+case, 5 remain fresh",
       "case_delivered": "EDA-Eval-DesignFlow-VerilogrunPreserve-001 (verification, B-synthesized, L1-static+subprocess)",
       "note": "12th consecutive management round r268-r279 with no new scan. Keyword-column search (col6) found strong digital candidates missed by tool-column filter (col7): jason17w@hfeg0pnd002 sessions have verilog:3800-4030 in keywords but only netlist+virtuoso in tools. 6i6lk(mc536,825msgs,3MB) deepread+case delivered. 5 sibling jason17w sessions remain fresh candidates."
+    },
+    "r280": {
+      "ts": "2026-11-09T17:15:00+08:00",
+      "latest_scan": "ssh_eda_search_20261105_192825",
+      "no_new_scan_rounds": 13,
+      "consecutive_mgmt": "r268-r280 (13th)",
+      "daily_log_1109_lines": 2893,
+      "daily_log_healthy": true,
+      "pool_mc15_toolcol": 340,
+      "ledger_sessions": 285,
+      "fresh_toolcol": 55,
+      "fresh_strong_digital_toolcol_mc15": 0,
+      "fresh_strong_digital_keywordcol": 0,
+      "daily_log_digital_hits_1106_1109": "0 (verdi/vcs/dc_shell/verilint/formality/primetime/pt_shell/design_compiler + verilog/rtl/sdc/systemverilog/vivado/yosys/openroad all 0)",
+      "jason17w_siblings": "5 (lc81i/b460k/xh3mj/xm22u/pwhqb) parked redundant — same conversation as 6i6lk (ts_first=1791686049546 identical), verilogrun task at msg286 identical, tail=simdiag-cli skill+GUI refresh+tmp throwaway diagnosis scripts (not viable design_flow deliverable)",
+      "case_delivered": "none (mgmt round, 13th consecutive)",
+      "note": "13th consecutive management round r268-r280, no new scan. 5 jason17w sibling sessions (found via keyword-column in r279) deepread: all 5 are resumed/continuations of the SAME conversation as 6i6lk (identical ts_first=1791686049546, identical verilogrun task at msg286). Tail content (simdiag-cli skill creation, vps GUI refresh, throwaway tmp diagnosis scripts) not viable as design_flow deliverable. All 5 parked redundant. Daily log 11/06-11/09 = 0 verification-tool AND 0 verilog/rtl/sdc hits. synthesis/innovus hits in daily log are all already-ledgered analog sessions (z34dy/wn9jo/e5my5/uiqz1). shard A digital pool EXHAUSTED, awaiting new scan to capture digital sessions before post-scan purge."
     }
   },
   "sessions": 5822,
@@ -86,7 +103,7 @@
   },
   "source": "/home/t0002965/log/ssh_eda_search_20261105_192825/summary.tsv (11/05 scan)",
   "target_mc": 30,
-  "updated_at": "2026-11-09 16:50",
+  "updated_at": "2026-11-09 17:15",
   "users_mc100": 182,
   "users_mc30": 224,
   "users_mc300": 60,
