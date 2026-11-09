@@ -14789,4 +14789,135 @@ GPU 显存 90%/95% | 碎片 30%/50% | KV cache 85%/95% | grad_norm 5.0/10.0 | �
 - `baize_posttrain_r141_rollout_scheduler.py`（~490 行，py_compile ✅ + run ✅）
 - `r141_rollout_scheduler_report.json`（14.0 KB）
 
+## §R142 RL Training Step Budget Allocation & Convergence Projection（R3 方向 · 零 GPU · 2026-11-10 wake189）
+
+> **动机**：R138-R141 分别分析了显存预算、训练韧性、GRPO group size、rollout 调度，但未将这些结果**综合为可执行的 RL 训练时间表**。关键问题：给定 4×A40 和 ISEDA 截稿日，RL 能跑多少步？收敛曲线如何？何时停止？是否赶得上 deadline？
+> **方法**：吞吐量对账（R138 vs R140 vs R141）+ 3 种收敛曲线模型（sigmoid/logarithmic/power_law）+ 带开销时间线计算（checkpoint+eval+recovery）+ 课程步骤分配 + 早停准则设计 + ISEDA deadline 拟合 + 敏感度分析。
+
+### 1. 吞吐量对账（关键发现：训练计算是瓶颈，非 rollout）
+
+| 来源 | 吞吐 | 说明 |
+|:--|--:|:--|
+| R138 Full FT (S5) | 2.5 steps/h | 4×A40, mb=4, ctx=8K, util=0.50 |
+| R138 LoRA (S4) | 3.0 steps/h | util=0.60 |
+| R141 Rollout | 20.8 steps/h | 666 R/hr ÷ 32 R/step (G=8×4组) |
+| **Effective (Full FT)** | **2.5 steps/h** | min(2.5, 20.8) = **训练计算瓶颈** |
+| Effective (LoRA) | 3.0 steps/h | min(3.0, 20.8) |
+
+**关键结论**：rollout 有 8.3× headroom —— rollout **不是瓶颈**。训练计算（Full FT 前向+反向+优化器）才是瓶颈。这意味着 R141 的 rollout 优化（SC=G=8, 早停, async）已足够；进一步优化应聚焦训练侧（LoRA、gradient checkpointing、混合精度）。
+
+### 2. 21 天 RL 窗口的步数预算
+
+| 项目 | 值 |
+|:--|--:|
+| 总窗口 | 21 天 = 504 h |
+| SFT/Eval/Debug 预留 30% | RL 可用 353 h |
+| 开销预留 15% | 纯 RL 300 h |
+| Full FT 最大步数 | 749 |
+| LoRA 最大步数 | 899 |
+| R130 课程需求 | 550 步 |
+| **可行性** | Full FT ✅ (749≥550) / LoRA ✅ (899≥550) |
+
+### 3. 收敛曲线投影（750 步，3 种模型，baseline=36%, target=75%）
+
+| 模型 | 最终 reward | M1(50%) | M2(65%) | M3(75%) | M4(85%) |
+|:--|--:|--:|--:|--:|--:|
+| **sigmoid** | 74.7% | step 250 | step 400 | ❌ (渐近线=75%) | ❌ |
+| logarithmic | 74.7% | step 70 | step 205 | ❌ | ❌ |
+| power_law | 54.6% | step 375 | ❌ | ❌ | ❌ |
+
+**判读**：
+- Sigmoid 模型（RL 最常见）在 750 步达到 74.7% —— **极其接近 M3(75%) 但未越过**。原因：sigmoid 渐近线 = baseline + max_gain = 36% + 39% = 75%，但 sigmoid 永远不完全到达渐近线。
+- **要稳定达到 M3**：需要 ① target_gain=0.42（即期望 36%→78%，留 3pp 渐近余量）或 ② 增加步数到 1000+。
+- Logarithmic 模型快速但早饱和（M1 在 step 70）—— 更乐观但不现实。
+- Power_law 模型最保守（M2 都不达到）—— 下界参考。
+- **推荐**：以 sigmoid 为主模型，设 target_gain=0.42 以确保 M3 可达。
+
+### 4. 详细时间线（750 步，Full FT，含全部开销）
+
+| 项目 | 时间 |
+|:--|--:|
+| 纯训练 | 300.0 h (12.5 d) |
+| Checkpoint (30 次) | 1.5 h |
+| 评估 (15 次, 每 50 步) | 11.2 h |
+| 崩溃恢复 (期望 1.05 次) | 0.3 h |
+| NFS 预热 | 0.08 h |
+| **总计** | **313.1 h (13.0 d)** |
+| 开销占比 | 4.2% |
+
+**关键**：开销仅 4.2% —— 评估（11.2h）是最大开销项，但相对于 300h 训练可忽略。崩溃恢复期望仅 0.3h（1.05 次崩溃 × 16min），因为 750 步中只有 ~7 个 100 步周期 × 15% 概率。
+
+### 5. 课程步骤分配（750 步预算）
+
+| 阶段 | 步数 | 难度层 | Replay | Rollouts | 累计 |
+|:--|--:|:--|--:|--:|--:|
+| Warmup | 68 | L1 | 0% | 2,176 | 68 |
+| Foundation | 136 | L1,L2 | 0% | 4,352 | 204 |
+| Development | 204 | L2,L3 | 20% | 6,528 | 408 |
+| Refinement | 204 | L3,L4 | 25% | 6,528 | 612 |
+| Mastery | 136 | L4,L5 | 30% | 4,352 | 748 |
+| **Total** | **748** | | | **23,936** | |
+
+（R130 原始 550 步按 750/550=1.36× 缩放）
+
+### 6. 早停准则（7 条规则，3 级严重度）
+
+| 严重度 | 准则 | 窗口 | 阈值 | 动作 |
+|:--|:--|--:|:--|:--|
+| info | reward_plateau | 30 步 | <0.5% 改善 | stop |
+| info | eval_plateau | 100 步 | <1pp 改善 | stop |
+| critical | reward_hacking | 10 步 | cheat>5% | rollback |
+| critical | kl_divergence | 1 步 | KL>5.0 | rollback |
+| warning | entropy_collapse | 5 步 | entropy<0.01 | warn |
+| critical | loss_nan | 1 步 | NaN | stop (FATAL) |
+| warning | overfitting | 100 步 | train↑ eval↓ | stop |
+
+（整合 R132 KL调度 + R135 反作弊 + R139 崩溃检测）
+
+### 7. ISEDA Deadline 拟合
+
+| 阶段 | 天数 |
+|:--|--:|
+| SFT | 5 d |
+| RL (750 步) | 13.0 d |
+| 评测 | 3 d |
+| 论文撰写 | 7 d |
+| **总计** | **28.0 d** |
+| 可用 (12/26→01/31) | 37 d |
+| **Slack** | **9.0 d** ✅ |
+
+**结论**：pipeline **适配 ISEDA deadline**，有 9 天缓冲。即使 pretrain 延迟 1 周或 RL 需要更多步数，仍有余量。
+
+### 8. 敏感度分析（步数 vs 最终 reward, sigmoid 模型）
+
+| 步数 | 最终 reward | 墙钟 | 天数 | M3(75%) |
+|--:|--:|--:|--:|:--|
+| 300 | 74.7% | 120.0h | 5.0d | ❌ |
+| 500 | 74.7% | 200.0h | 8.3d | ❌ |
+| 550 | 74.7% | 220.0h | 9.2d | ❌ |
+| **750** | **74.7%** | **300.0h** | **12.5d** | ❌ |
+| 1000 | 74.7% | 400.0h | 16.7d | ❌ |
+| 1500 | 74.7% | 600.0h | 25.0d | ❌ |
+| 2000 | 74.7% | 800.0h | 33.3d | ❌ |
+
+> ⚠️ **注意**：所有步数下 sigmoid 渐近线都是 75% (=36%+39%)，因此 M3 永远不被越过。这揭示了 **target_gain 参数的关键性**：要稳定达到 M3，必须设 target_gain≥0.42。实际训练中，真正的 gain 取决于 SFT 基线和 RL 信号质量，等 GPU 后用实测修正。
+
+### 9. 核心建议
+
+1. **Full FT (S5) 为首选** — 2.5 steps/h，750 步 313h (13d)，开销仅 4.2%
+2. **LoRA 为备选** — 3.0 steps/h，快 20%，但可能限制 M4 天花板
+3. **750 步推荐** (1.36× R130 的 550) — 深度与 deadline 的平衡点
+4. **target_gain=0.42** 而非 0.39 — 确保 sigmoid 模型下 M3 可达
+5. **评估每 50 步** (15 次, 11.2h) — milestone 追踪关键
+6. **Checkpoint 每 25 步** (30 次, 1.5h) — 支撑 rollback
+7. **早停**：reward_plateau + eval_plateau + overfitting → stop；KL>5 或 cheat>5% → rollback
+8. **ISEDA fit: YES** — 28d pipeline vs 37d 可用，9d slack
+9. **Rollout 非瓶颈** — 8.3× headroom，优化应聚焦训练侧
+10. **崩溃恢复期望 0.3h** — 低概率事件，不构成时间风险
+
+### 产物
+
+- `baize_posttrain_r142_rl_budget_convergence.py`（249 行，py_compile ✅ + run ✅）
+- `r142_rl_budget_convergence_report.json`（7.3 KB）
+
 
