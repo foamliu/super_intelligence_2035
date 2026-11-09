@@ -386,11 +386,11 @@
 | 1 | part-00000~00699 | ~289 | 300,228,737,438 | 700 parquet | 0 | ✅ 已完成(19:28) | `du -sb data/`+`find|wc -l`=700+`stackv3_batch1_status.tsv`: 000-006全OK |
 | 2 | part-00700~01399 | ~289 | 304,571,250,135 | 700 parquet | 0 | ✅ 已完成(23:50) | batch2 delta; cumulative 604,799,987,573 B; `stackv3_batch2_status.tsv`: 007-013全OK |
 | 3 | part-01400~02099 | ~289 | 304,759,951,372 | 700 parquet | 0 | ✅ 已完成(04:35) | batch3 delta; cumulative 909,559,938,945 B; `stackv3_batch3_status.tsv`: 014-020全OK |
-| 4 | part-02100~02799 | ~289 | 217,828,886,009*(进行中) | 506* parquet | 2* | 🔄 下载中(batch4,hundred021-025✅,026进行中6/100) | `stackv3_batch4_status.tsv`: 021-025全OK;du -sb=1,127,388,824,954累计 |
+| 4 | part-02100~02799 | ~289 | 295,103,446,763*(进行中) | 2779* parquet(含b1-b3 2100) | 2* | 🔄 下载中(batch4,hundred021-026✅DONE,027进行中81/100) | `stackv3_batch4_status.tsv`: 021-026全OK;du -sb=1,204,663,385,708累计;delta=1,204,663,385,708-909,559,938,945 |
 | 5 | part-02800~03499 | ~289 | — | — | — | ⬜ 待启动 | |
 | 6 | part-03500~04199 | ~289 | — | — | — | ⬜ 待启动 | |
 | 7 | part-04200~04966 | ~316 | — | — | — | ⬜ 待启动(末批,凑满2TB) | |
-| **累计(b1+b2+b3+b4*)** | 2606* shard | ~1128 | 1,127,388,824,954* | 2606* parquet | 2* | 53% of 2TB | b1+b2+b3实测+b4进行中(hundred021-025✅,026进行中); 2TB预算余 ~0.87TB |
+| **累计(b1+b2+b3+b4*)** | 2779* shard | ~1128 | 1,204,663,385,708* | 2779* parquet | 2* | 60% of 2TB | b1+b2+b3实测+b4进行中(hundred021-026✅,027进行中81/100); 2TB预算余 ~0.80TB |
 
 > stats/ 目录（5 JSON, ~484 KB）已随样本下载落地，含 per-language / per-license / repo-distribution 统计。
 
