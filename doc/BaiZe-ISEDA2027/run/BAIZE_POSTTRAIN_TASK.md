@@ -1,5 +1,15 @@
 # BAIZE_POSTTRAIN_TASK.md
 
+> 🚨 **报告生成纪律（2026-11-09 用户令 · 最高优先 · 覆盖“每轮产出 HTML”）**
+> **背景**：`reports/` 已堆积 **105 个 `report_posttrain_r*.html`**（1.16MB），其中 r104 一轮就有 2 份；用户明确不要垃圾报告。
+> 1) **常规研究轮禁止**新建 `report_posttrain_rXXXX_*.html`；日常产出写 `EXPERIMENTS_POSTTRAIN.md` 新节 + `MEMORY_POSTTRAIN.md` 心跳 + `daily-memories-posttrain/` 一行即可（“实质内容”不等于“一份 HTML”）。
+> 2) 只维护 **一个滚动报告**（原地覆盖）：`reports/report_posttrain_research_zh.html`（汇总当前研究状态/结论）。
+> 3) 仅以下里程碑允许一次性报告：GPU 到位 / launch 成功 / smoke 结果 / 主 RL 开始或结束 / 评测结果 / 用户明确要求；文件名写里程碑，不写 rXXXX。
+> 4) 🚫 不得把 HTML 放进 `run/`（现有 `run/baize_posttrain_r*_report.html` 已归档到 `run/archive/posttrain/`）。
+> 5) 历史 105 份已归档到 `reports/archive/posttrain/`；不要再往主目录新增。
+> 违反本条 = 未执行本令。
+
+
 > BaiZe Stage(ii) LLM Post-Training 任务书 —— 领域退火 / SFT / RLVR-GRPO 三步走 + EDA-Eval-PyAether 评测。
 > 论文章节：`BaiZe-ISEDA2027/ISEDA2027/5_llm_posttrain.tex`。
 > 本文件为**只读指令文件**，agent 禁止修改本文件。所有运行时状态写入 `MEMORY_POSTTRAIN.md`、`EXPERIMENTS_POSTTRAIN.md` 和 `daily-memories-posttrain/`。
@@ -31,7 +41,7 @@
 
 #### 1. 11-07 -> 11-09 的主任务 = 深入调研（不是例行巡检）
 
-每轮唤醒必须至少产出**一项实质内容**并落盘，从下列任选（鼓励都做）：
+每轮唤醒必须至少产出**一项实质内容**并落盘，从下列任选（鼓励都做）：（🚨 注意：**不是每轮一份 HTML 报告**；HTML 按顶部「报告生成纪律」执行，日常产出写 EXPERIMENTS/MEMORY 即可）
 
 | 编号 | 调研方向 | 必须回答的问题 |
 |:--|:--|:--|
