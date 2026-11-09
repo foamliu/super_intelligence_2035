@@ -195,6 +195,7 @@ class ClineDriver:
             "-m", UNIFIED_MODEL,
             "-k", self.api_key,
             "--auto-approve", "true",
+            "--compaction", "basic",
             "--json",
             instance["problem_statement"],
         ]
