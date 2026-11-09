@@ -272,3 +272,4 @@
 1789904654090_nzxx2.messages.json	ziyuny	hfeg0pnd002	44	eda_other	case	EDA-Eval-DesignFlow-GgFlowReport-001	2026-11-09 09:43	
 1793240332278_86t8o.messages.json	rose3wang	hfeg0pkn003	278	digital	case		2026-11-09 10:28	
 1793929852342_5jgp2.messages.json	lorikx	hfeg0pkn004	8	digital	case	EDA-Eval-DesignFlow-FiMergeVcs-001	2026-11-09 11:32	
+1793932600947_c5gwq	johnl	hfeg0pkn001	306	digital	parked		2026-11-09 12:30	A-faithful infeasible: golden=hand-migrated DC scripts (run_dc.sh bsub fqueue3_analog + run_dc_local.sh module-load + synth.tcl */* cell-policy/gtech-exclude + SPPR-removed timing_constraints.tcl + setup.sh) with A-specific hardcoded values; cannot satisfy §4.1/§4.2 hidden-B cross-input (golden not parameterized, would fail B-run). Needs B-档 reformulation as migration-program deliverable (see trace_deepreads/c5gwq_johnl_dc_migrate.md). daily-log find (mc306, 174msgs, 685KB, digital/synthesis dominant).
