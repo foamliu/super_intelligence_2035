@@ -753,3 +753,9 @@ qnm9e					parked		2026-11-08 01:58	Finesim DC convergence Q&A prose dup of uky6c
 1793690069825_hf9ve					parked		2026-11-10 02:42	dup of z7n9b: same opening msg_mvzznb7t_1/ts as wp5jq (curryxu FIFO_TOP)
 1793935312458_x1iee					parked		2026-11-10 02:42	near-dup of v5icx: yanxvwei anasim_pro runsim_control Run-button consultation, overlaps QueueCorePolicyPatch
 1793600081315_ns5cm					parked		2026-11-10 02:42	diagnostic consultation: e0024852 parse_md0.py Iwrite=0.000uA why, fuzzy produce deliverable
+1793184099494_v6u6m	e0024852	hfeg0pkn002	839	spice_sim	parked		2026-11-10 03:06	FineSim DSPF error diagnostic (e0024852, same as roz_nq); all user turns 'the error is X how to fix' fuzzy deliverable, no produce-task
+1793589408208_roznq	e0024852	hfeg0pkn002	553	spice_sim	parked		2026-11-10 03:06	SRAM bitcell PEX metric diagnostic (peeked 01:45 round); fuzzy deliverable reject
+1793089704959_am99r	e0029308	hfeg0pkn002	339	spice_sim	parked		2026-11-10 03:06	OP analysis consultation (series-MOS operating point) + job-status diagnostic; consultation not produce-task
+1792461218411_hojhc	aocao	hfhds222	126	characterization	parked		2026-11-10 03:06	Verilog sim-speed debug (decqa wave_mirror), digital/synthesis tools; wrong shard B (not spice)
+1794202630733_2ze9s	zhililu	hfeg0pkn002	83	spice_sim	parked		2026-11-10 03:06	where-is-netlist-path consultation (virtuoso pre-sim netlist locate); consultation not produce-task
+1793775927024_1stc5	shaoyou	hfeg0pkn001	36	spice_sim	parked		2026-11-10 03:06	innovus-dominant PnR (innovus=12/hspice=8), tiny 'calc avg v(Vb)' measure question; borderline/wrong-shard low-priority
