@@ -14,7 +14,7 @@ WAITING: 0
 - 阻塞: GPU 0/8free(SGLang Qwen3.8-27B占全8卡44-45GB 0%util,11/9已过仍未释放);沙箱10.129.32.75全端口FILTERED;Docker无权限;P3等pretrain ckpt(ETA≈2026-12-25)
 - 本轮新增调研产出: R133 统计评测框架(490行+McNemar配对检验+paired bootstrap CI+功效分析14pp→0.976+最小样本量+Holm多样本校正+预注册M1-M4判定阈值FROZEN+Cohen's h+5-run稳定性3.38pp+成本194GPU-h/7.2%+EXPERIMENTS §R133）
 - 未完成指令: 🔴用户令2026-11-07(GPU未到位,需持续产出调研) ⇒ WAITING=0
-- git: 待本轮提交
+- git: commit✅ push✅(2f64730ec, rebase+push after remote advance)
 
 ## 关键事实（常驻）
 
