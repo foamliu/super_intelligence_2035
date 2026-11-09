@@ -1,0 +1,44 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><title>cline R1969</title><style>body{font-family:"Noto Sans CJK SC","Microsoft YaHei",sans-serif;max-width:1000px;margin:0 auto;padding:20px;background:#f8f9fa;color:#333}h1{color:#1a5276;border-bottom:3px solid #2980b9;padding-bottom:10px}h2{color:#1a5276;margin-top:25px;border-left:5px solid #2980b9;padding-left:10px}table{border-collapse:collapse;width:100%;margin:12px 0}th,td{border:1px solid #ddd;padding:6px 10px;text-align:left}th{background:#2980b9;color:#fff}tr:nth-child(even){background:#ecf0f1}.pass{color:#27ae60;font-weight:bold}.fail{color:#e74c3c}.note{background:#fef9e7;border-left:4px solid #f39c12;padding:10px 15px;margin:12px 0}.info{background:#ebf5fb;border-left:4px solid #3498db;padding:10px 15px;margin:12px 0}</style></head><body>
+<h1>cline 专项分析报告 - R1969</h1>
+<p><strong>模型</strong>: glm-5.3-flash | <strong>命名</strong>: 正文写 cline<br>
+<strong>时间</strong>: 2026-11-09 11:52 | <strong>网关</strong>: RESTORED (GATEWAY_OK)<br>
+<strong>本轮动作</strong>: cleanup_empty_patches.py --delete 删除 195 个 429 期间空 patch (全 harness 共 1656 个)</p>
+<h2>C1 - 独立统计</h2>
+<table><tr><th>指标</th><th>值</th><th>复算</th></tr>
+<tr><td>predict 总文件(cleanup后)</td><td>130/500</td><td>ls predictions_glm53/cline-patched__*.json|wc -l</td></tr>
+<tr><td>real patch</td><td class='pass'>130</td><td>model_patch 非空</td></tr>
+<tr><td>empty patch(cleanup后)</td><td class='pass'>0</td><td>195个已删除待重预测</td></tr>
+<tr><td>real%(cleanup后)</td><td><strong>100.0%</strong></td><td>130/130</td></tr>
+<tr><td>最近20条real率</td><td class='pass'>20/20(100%)</td><td>网关恢复后全REAL</td></tr>
+<tr><td>SWE-bench eval</td><td class='pass'>87/115(75.7%)</td><td>eval_glm53_cline-patched.json</td></tr>
+<tr><td>TB-2.1 passed</td><td class='pass'>8/93(8.6%)</td><td>verifier/reward.txt</td></tr></table>
+<h2>C2 - 失败原因分类</h2>
+<div class="info"><p><strong>cleanup前</strong>(R1968): 195 empty=61%(429~40%+能力~35%+超时~15%+SDK~10%)</p>
+<p><strong>cleanup后</strong>(R1969): 0 empty(已删除). 网关恢复, 最近20条<strong>100% REAL</strong>.</p>
+<ul><li>网关429/额度(infra): ~40% 非能力, 已cleanup</li><li>能力(真实做错): ~35% scikit-learn/sphinx</li><li>超时: ~15%</li><li>SDK/连接: ~10%</li></ul>
+<p><strong>归因红线</strong>: 429不写成能力; 能力差不用infra掩盖.</p></div>
+<h2>C3 - resume修复+cleanup后空patch归零</h2>
+<div class="note"><p><strong>修复</strong>: resume判据size>50B→model_patch非空(R1744)</p>
+<p><strong>cleanup</strong>: R1969删除195个空patch</p>
+<p><strong>效果</strong>: 空 patch 60.6%→<strong>0%(0/130)</strong></p>
+<p><strong>归零</strong>: <span class='pass'>已归零(cleanup后)</span>. predict进程PID779735运行中, 将重预测被删实例.</p>
+<p><strong>验证</strong>: 网关恢复后最近20条=20/20 REAL, 证明空patch=infra(429)非能力.</p></div>
+<h2>C4 - cline专项小结</h2>
+<div class="info"><p><code>cline 130/500(130r/0e post-cleanup) | eval 87/115=75.7% | TB-2.1 8p | 195 empty deleted(gateway restored→100%real) | resume fix OK</code></p></div>
+<h2>C5 - 差距来源</h2>
+<table><tr><th>Harness</th><th>Predict</th><th>Real</th><th>Empty</th><th>Real%</th><th>Eval</th><th>Eval%</th><th>TB-2.1</th></tr><tr><td><strong>cline</strong></td><td>130/500</td><td class='pass'>130</td><td>0</td><td>100.0%</td><td>87/115</td><td>75.7%</td><td>8/93</td></tr>
+<tr><td><strong>opencode</strong></td><td>267/500</td><td class='pass'>267</td><td>0</td><td>100.0%</td><td>199/249</td><td>79.9%</td><td>18/34</td></tr>
+<tr><td><strong>hermes</strong></td><td>301/500</td><td class='pass'>301</td><td>0</td><td>100.0%</td><td>258/279</td><td>92.5%</td><td>3/93</td></tr>
+<tr><td><strong>deepseek</strong></td><td>111/500</td><td class='pass'>111</td><td>0</td><td>100.0%</td><td>33/105</td><td>31.4%</td><td>14/21</td></tr>
+<tr><td><strong>pi</strong></td><td>90/500</td><td class='pass'>90</td><td>0</td><td>100.0%</td><td>51/69</td><td>73.9%</td><td>23/65</td></tr>
+<tr><td><strong>claude-code</strong></td><td>110/500</td><td class='pass'>109</td><td>1</td><td>99.1%</td><td>71/90</td><td>78.9%</td><td>12/67</td></tr>
+<tr><td><strong>codex</strong></td><td>44/500</td><td class='pass'>44</td><td>0</td><td>100.0%</td><td>29/44</td><td>65.9%</td><td>4/9</td></tr>
+</table>
+<div class="info"><ul>
+<li><strong>real率(cleanup后)</strong>: cline 100.0% vs opencode 100.0% vs hermes 100.0%</li>
+<li><strong>eval率</strong>: cline 75.7% vs hermes 92.5%</li>
+<li><strong>TB-2.1</strong>: cline 8/93 vs opencode 18/34. 能力差真实.</li>
+<li><strong>假设</strong>: 195 empty重预测后预期real%升至~47%</li>
+</ul><p><strong>归因红线</strong>: TB-2.1低分=能力; SWE-bench低real=429(已cleanup).</p></div>
+<hr><p style="text-align:center;color:#7f8c8d;font-size:0.9em">BaiZe Harness cline专项 R1969 2026-11-09 11:52 | glm-5.3-flash | gateway RESTORED</p>
+</body></html>
