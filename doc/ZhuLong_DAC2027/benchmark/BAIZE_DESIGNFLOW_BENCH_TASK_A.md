@@ -1,5 +1,13 @@
 # BAIZE_DESIGNFLOW_BENCH_TASK.md — 设计流 Benchmark 任务书（2026-10-30 重构版）
 
+> 🎯 **本轮最高优先（2026-11-09 用户令 · 优先于常规选料）**：**全量 trace 重扫 + mc 阈值下调评估**
+> 1) **全量重扫**：停止依赖 11/05 的 stale `summary.tsv`，也不要只做 fresh-window。对目标机群执行一次**全量 `ssh_eda_search`**（或等价全盘 `find`），重新生成 `summary.tsv`。记录：扫描主机数、成功/失败、耗时、去重后 session 数、按 mc 的分布。
+> 2) **mc 阈值表**：对 Shard A 的域（digital / verification / pnr_signoff / eda_other）分别统计 **mc≥30 / 25 / 20 / 15 / 10 / 5** 的：session 数、unique users、un-ledgered、digital-marker 命中数。
+> 3) **可行性评估**：每个阈值取 top-N（≤20）做 peek，统计 **clean produce-task / analysis-only / wrong-shard / trivial** 比例；给出"最低可用阈值"建议 + 预计新增 case 数。
+> 4) **交付**：`summary_stats.json.scansync` 写 r291 条目（含 `threshold_table`）、更新 `MEMORY_DESIGNFLOW_A.md`、`EXPERIMENTS_DESIGNFLOW.md` 新增一节；**不要新建 HTML 报告**（报告纪律）。
+> 5) **护栏**：只读扫描；不动其他 shard ledger；拒绝必须写理由；A-faithful produce-task 优先。
+
+
 > ⛳ **每轮收尾必做（2026-11-09 运维令 · 论文维护）**
 > 1) 编译回归（≤2 min）：`cd doc/ZhuLong_DAC2027/EDA-LiveFlow-Bench_ICML2027 && latexmk -pdf -interaction=nonstopmode main.tex` → 必须 **0 error**；本机无 latexmk 则记录 `PAPER_SKIP(no latexmk)` 后继续。
 > 2) 数字同步：任务总数唯一事实源 = `main.tex` 的 `\newcommand{\Ntasks}{931}`（当前 **931 = A185 + B211 + C271 + D264**）。若本轮 A/B/C/D 任一 jsonl 有增减：改 `\Ntasks` 一行 + 文末 App A 的分项，然后重新生成并提交 `main.pdf`。

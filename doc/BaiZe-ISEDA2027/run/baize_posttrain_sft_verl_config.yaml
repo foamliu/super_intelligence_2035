@@ -5,7 +5,7 @@
 data:
   train_batch_size: 128
   micro_batch_size_per_gpu: 2
-  train_files: sft_pyaether_corpus_v2.parquet  # R115 fix: was sft_blended_v1.parquet (never created)
+  train_files: sft_blended_v1.parquet
   val_files: null
   multiturn:
     enable: true
