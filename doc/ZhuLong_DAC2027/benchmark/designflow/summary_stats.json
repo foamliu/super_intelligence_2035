@@ -61,7 +61,7 @@
       "updated_at": "2026-11-09T16:10:00+08:00",
       "users_mc30": 224
     },
-    "updated_at": "2026-11-09T17:15:00+08:00",
+    "updated_at": "2026-11-09T18:10:00+08:00",
     "r279": {
       "ts": "2026-11-09T16:50:00+08:00",
       "latest_scan": "ssh_eda_search_20261105_192825",
@@ -92,6 +92,29 @@
       "jason17w_siblings": "5 (lc81i/b460k/xh3mj/xm22u/pwhqb) parked redundant — same conversation as 6i6lk (ts_first=1791686049546 identical), verilogrun task at msg286 identical, tail=simdiag-cli skill+GUI refresh+tmp throwaway diagnosis scripts (not viable design_flow deliverable)",
       "case_delivered": "none (mgmt round, 13th consecutive)",
       "note": "13th consecutive management round r268-r280, no new scan. 5 jason17w sibling sessions (found via keyword-column in r279) deepread: all 5 are resumed/continuations of the SAME conversation as 6i6lk (identical ts_first=1791686049546, identical verilogrun task at msg286). Tail content (simdiag-cli skill creation, vps GUI refresh, throwaway tmp diagnosis scripts) not viable as design_flow deliverable. All 5 parked redundant. Daily log 11/06-11/09 = 0 verification-tool AND 0 verilog/rtl/sdc hits. synthesis/innovus hits in daily log are all already-ledgered analog sessions (z34dy/wn9jo/e5my5/uiqz1). shard A digital pool EXHAUSTED, awaiting new scan to capture digital sessions before post-scan purge."
+    },
+    "r281": {
+      "ts": "2026-11-09T18:10:00+08:00",
+      "latest_scan": "ssh_eda_search_20261105_192825",
+      "no_new_scan_rounds": 14,
+      "consecutive_mgmt_round": "r268-r281 (14th)",
+      "daily_log_1109_lines": 2893,
+      "daily_log_1106_lines": 2899,
+      "daily_log_1107_lines": 2916,
+      "daily_log_1108_lines": 2893,
+      "daily_log_healthy": true,
+      "daily_log_1109_digital_tool_hits": 184,
+      "daily_log_1109_digital_tool_breakdown": "innovus=184 (all other digital tools verdi/vcs/dc_shell/verilint/formality/primetime/pt_shell/design_compiler=0); 184 innovus lines are mostly already-ledgered t0002965 sessions z34dy/wn9jo, plus e00399 dnu1x(ledgered); negligible 1-innovus analog sessions (agw7c/3h21t/kck7n)",
+      "pool_mc15": 340,
+      "ledger_sessions": 279,
+      "fresh_toolcol": 87,
+      "fresh_strong_digital_toolcol_mc15": 0,
+      "daily_log_fresh": 1842,
+      "daily_log_postscan_fresh": 213,
+      "daily_log_postscan_fresh_digital": 0,
+      "postscan_probe": "Probed top pyAether-scripting postscan candidates aftvk(jieran@10.129.2.13, 2.8MB, 623 msgs, bufLVCKx24 schematic netlist + cellview/pin/rect creation = layout shard C) and ejp6w(yuchens@10.129.2.13, 2.1MB, 230 msgs, matleveltb_CBCC schematic netlist + simulation = shard D/B). Both analog, NOT eda_other digital. New cline stores sessions as <id>/<id>.messages.json nested dir structure (flat-path ls misses them).",
+      "finding": "14th consecutive mgmt round r268-r281. LATEST_SCAN still 11/05 ssh_eda_search_20261105_192825 (no new scan since r268, 14 rounds). Daily log 20261109 healthy 2893 lines unchanged (11/06=2899/11/07=2916/11/08=2893/11/09=2893). pool_mc15_toolcol=340 (raw awk, .75), ledger_sessions=279, fresh_toolcol=87 (file-based filter, awk regex-length-limit bypass), fresh_strong_digital_toolcol_mc15=0 (verdi/vcs/dc_shell/verilint/formality/primetime/pt_shell/design_compiler). Daily log 11/09 has 184 innovus hits BUT all are already-ledgered t0002965 sessions (z34dy/wn9jo) + e00399 dnu1x(ledgered); all other digital tools=0. Daily log fresh=1842 (today), postscan fresh (created 11/06-11/09, not in 11/05 scan)=213, ALL analog-dominated (schematic/cellview/netlist/calibre/virtuoso/hspice/pyAether layout/shard C/D/B). Probed top pyAether-scripting postscan candidates aftvk+ejp6w = analog schematic/netlist/simulation, NOT eda_other digital. New cline nested <id>/<id>.messages.json dir structure confirmed. Mgmt round, 0 case. shard A digital pool EXHAUSTED (14th consecutive), awaiting new scan to capture digital sessions before post-scan purge.",
+      "case_delivered": "none (management round, 14th consecutive pool exhaustion)"
     }
   },
   "sessions": 5822,
