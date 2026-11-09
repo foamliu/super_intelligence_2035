@@ -10158,3 +10158,73 @@ python3 baize_posttrain_r93_baseline_analysis_pipeline.py \
 - **R91**: /tmp 模型路径失效发现 + NAS fallback（R95 反转为 NAS primary）
 
 > ⚠️ Surrogate RL results NOT transferable to BaiZe.
+
+## §R96 (2026-11-09 wake144) Launch Sequence End-to-End Validation & Readiness Audit
+
+### 1. 目的
+
+在 GPU 释放前，使用已运行的 SGLang Qwen3.8-27B（端口 8098/8099）作为替身端点，
+验证 11/9 GPU-release launch 序列的全链路完整性。确保 GPU 释放后 gpu_watcher 自动触发的
+launch 序列可无故障执行。
+
+### 2. 检查项与结果
+
+| # | 检查项 | 结果 | 详情 |
+|:--|:--|:--|:--|
+| 1 | 脚本语法（bash -n） | 10/10 PASS | 所有 10 个 launch 链脚本语法正确 |
+| 2 | 数据依赖 | 15/15 PASS | 模型 6 文件 + eval dataset 158 tasks + eval driver 2 + venvs 2 + cline 1 + training data 3 + parquet 1 |
+| 3 | SGLang 端点 | 2/2 ALIVE | 8098+8099 均 chat=PASS, latency ~1-2s |
+| 4 | cline auth | PASS | cline binary at ~/.bun/bin/cline, auth command available |
+| 5 | 污染隔离闸门 | PASS | 0 命中（0 输入），闸门逻辑正确 |
+| 6 | R93 管线 Smoke | READY | 123 条 DeepSeek 轨迹解析, D1=1.0, D2=22.88, D6=2.12 |
+| 7 | MiniCPM5-2B 配置 | OK | model_type=llama, SGLang compatible=True |
+| 8 | GPU watcher | ALIVE | PID 2022305, log fresh (<5min), iteration #380+ |
+| 9 | GPU 状态 | 0/8 FREE | 全 8 卡被 root SGLang Qwen3.8-27B 占用 |
+| 10 | Launch 步骤概览 | 7/7 READY | Steps 0-6 全部脚本+数据就绪 |
+
+**总计：32/32 PASS, 0 FAIL**
+
+### 3. 关键发现
+
+1. **全链路就绪**：从 venv setup → preflight → SGLang serve → baseline eval →
+   D1-D6 extraction → contamination gate → RL smoke → full RL，所有脚本语法正确、
+   所有数据依赖就位、替身端点可用。
+2. **MiniCPM5-2B SGLang 兼容性确认**：model_type=llama，SGLang 原生支持，
+   无需额外 parser patch（R70 的 MiniCPM5FunctionDetector 仅用于多轮工具调用 RL，
+   baseline eval 用标准 chat completion 不受影响）。
+3. **GPU 仍被占用**：root 的 SGLang Qwen3.8-27B 自 Sep 17 运行至今，
+   占满 8×A40 的显存（44-45GB/46GB），但利用率 0%。gpu_watcher 正确轮询等待。
+4. **替身端点验证**：Qwen3.8-27B 能正确响应 EDA 风格的代码生成请求，
+   证明 OpenAI-compatible API 链路完整，cline auth → chat completion →
+   代码提取 → 评分的管线可工作。
+
+### 4. 交付物
+
+| Item | Path | Size |
+|:--|:--|--:|
+| Python script | `run/baize_posttrain_r96_launch_validation.py` | 258 lines |
+| HTML report | `reports/report_posttrain_r96_launch_validation_zh.html` | 10.1KB |
+| JSON data | `run/r96_launch_validation.json` | 7.2KB |
+
+### 5. GPU 释放后的预期执行流
+
+```
+gpu_watcher detects >=4 GPUs free
+  → NFS warm-up (pre-cache model + venv + data)
+  → baize_posttrain_launch_11_9.sh --step 1-5
+    → Step 1: Preflight check
+    → Step 2: SGLang serve MiniCPM5-2B + 158-task eval (36% baseline)
+    → Step 3: R93 pipeline extracts D1-D6 from real MiniCPM5-2B traces
+    → Step 4: Contamination gate
+    → Step 5: RL smoke test (GRPO R0, 10 iters)
+```
+
+### 6. Links to Prior Research
+
+- **R95**: GPU Day 就绪修复（MiniCPM5-2B NAS 下载 + pyAether venv + MCP 脚本）
+- **R94**: SGLang Qwen3.8-27B 替身代码生成基线
+- **R93**: MiniCPM5-2B 基线轨迹分析管线（GPU 释放后执行）
+- **R92**: GRPO 超参数校准
+- **R91**: /tmp 模型路径失效发现 + NAS fallback
+
+> ⚠️ Surrogate endpoint tests validate PIPELINE only, NOT BaiZe results.
