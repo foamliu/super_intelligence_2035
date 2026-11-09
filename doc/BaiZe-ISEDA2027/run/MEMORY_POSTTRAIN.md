@@ -7,12 +7,12 @@ WAITING: 0
 
 ## 进度快照
 
-- PHASE: posttrain-wake160（2026-11-09 R113: 数据传输方案与路径修复——83引用扫描,2硬编码修复(sft_data_mixer.py),rsync传输脚本生成,7项数据需传输✅）
-- 已完成: P3预备✅；P0✅；P1✅；P2✅；R1-R113✅；wake159✅ R112(路径审计)；wake160✅ R113(数据传输方案+路径修复)
-- 当前动作: wake160 R113: baize_posttrain_r113_data_transfer_plan.py(~370行). ①83 /nas_train引用扫描(49 HARDCODED/20 AUTO/14 COMMENT)✅ ②sft_data_mixer.py 2处硬编码修复(nfs_path→NAS_ROOT自动检测)✅ py_compile+dry-run✅ ③baize_posttrain_data_transfer.sh生成(3205B,bash-n✅,rsync .29→.17)✅ ④数据可用性矩阵(7项需传输:SFT/退火/tokenizer不在.17)✅ ⑤RL不受影响(RL parquet在本地)✅ ⑥SFT/退火受阻(依赖pretrain ckpt,窗口充足)✅. JSON 25KB+HTML 13.6KB+EXPERIMENTS §R113.
-- 下一步: ①GPU释放→watcher自动触发launch_11_9.sh ②R114+: 继续调研(数据传输脚本实际测试 或 RL启动前最终dry-run 或 SFT parquet→megatron格式转换方案) ③正式训练待pretrain ckpt(ETA≈2026-12-25)
-- 阻塞: GPU 0/8free(root SGLang Qwen3.8-27B占全8卡,运行自Sep17);P3等pretrain ckpt(ETA≈2026-12-25)
-- 本轮新增调研产出: R113 数据传输方案与路径修复(~370行 + 83引用扫描 + 2硬编码修复(sft_data_mixer.py) + rsync传输脚本(baize_posttrain_data_transfer.sh) + 7项数据可用性矩阵 + JSON 25KB + HTML 13.6KB + EXPERIMENTS §R113）
+- PHASE: posttrain-wake161（2026-11-09 R114: SFT框架决策(verl FSDP SFT)+数据格式管线设计+gpu_watcher延长7天——PyAether parquet直接兼容,UltraData需JSONL→parquet转换,SFT配置YAML已生成✅）
+- 已完成: P3预备✅；P0✅；P1✅；P2✅；R1-R114✅；wake160✅ R113(数据传输方案)；wake161✅ R114(SFT框架+数据管线+gpu_watcher延长)
+- 当前动作: wake161 R114: baize_posttrain_r114_sft_framework_pipeline.py(~310行). ①verl SFT框架决策:verl 0.4.0 FSDP SFT Trainer(零安装,统一RL,直接parquet,multi-turn+LoRA+FSDP)✅ ②数据兼容:PyAether parquet 'conversation'列=verl MultiTurnSFTDataset格式(直接兼容,无需转换)✅ ③SFT配置YAML生成(baize_posttrain_sft_verl_config.yaml,1.5KB,YAML解析✅)✅ ④数据混合管线(agent50:general30:pyaether20,~97K行)✅ ⑤JSONL→parquet转换器设计✅ ⑥gpu_watcher延长:kill旧(24h超时)→重启PID2709455 max-wait=604800s(7天)✅. py_compile✅+JSON✅+HTML 8.5KB+EXPERIMENTS §R114.
+- 下一步: ①GPU释放→watcher(7天)自动触发launch_11_9.sh ②R115+: 实现baize_posttrain_jsonl_to_parquet.py转换器 或 RL启动前最终dry-run ③正式训练待pretrain ckpt(ETA≈2026-12-25)
+- 阻塞: GPU 0/8free(root SGLang Qwen3.8-27B占全8卡,运行自Sep17,watcher PID2709455轮询中);P3等pretrain ckpt(ETA≈2026-12-25)
+- 本轮新增调研产出: R114 SFT框架决策+数据格式管线设计(~310行 + verl FSDP SFT决策 + PyAether parquet直接兼容发现 + SFT配置YAML(baize_posttrain_sft_verl_config.yaml) + 50:30:20混合管线 + JSONL→parquet转换器设计 + gpu_watcher延长7天 + JSON + HTML 8.5KB + EXPERIMENTS §R114）
 - 未完成指令: 🔴用户令2026-11-07(GPU未到位,需持续产出调研) ⇒ WAITING=0
 
 ## 关键事实（常驻）
@@ -103,3 +103,5 @@ WAITING: 0
 [wake159] R112 路径与数据可用性审计: 见 daily-memories-posttrain/2026-11-09.md（117文件扫描+37路径问题+2修复CFG-03/04+NFS独立存储确认+4缓解措施+HTML 19.7KB）。
 
 [wake160] R113 数据传输方案与路径修复: 体积自检(TASK=24.7KB/MEMORY≈24.6KB合规)→GPU检查:0/8free(root SGLang Qwen3.8-27B占全8卡44-45GB 0%util,运行自Sep17)→git:in sync(## main...origin/main)→R113: ①baize_posttrain_r113_data_transfer_plan.py(~370行,Python3 stdlib) ②83 /nas_train引用扫描:49 HARDCODED/20 AUTO_DETECT/14 COMMENT ③sft_data_mixer.py 2处硬编码修复(nfs_path /nas_train→os.path.join(NAS_ROOT,...))✅ py_compile✅ dry-run✅(19524 samples,contam CLEAR) ④baize_posttrain_data_transfer.sh生成(3205B,rsync .29→.17,bash-n✅,--check/--dry-run/--sft/--anneal/--verify) ⑤数据可用性矩阵:7项需传输(SFT Agent 23.89GB+SFT General 75.87GB+退火4项+tokenizer),MiniCPM5-2B✅+EDA-Eval✅在本地 ⑥RL不受影响(RL parquet 3347行在.17)✅ ⑦SFT/退火受阻但依赖pretrain ckpt(ETA 2026-12-25)窗口充足. py_compile✅+bash-n✅+JSON 25KB+HTML 13.6KB+EXPERIMENTS §R113. 📦 体积：TASK≈24.7KB / MEMORY≈25.3KB。本轮新增调研产出：§R113 数据传输方案与路径修复(~370行 + 83引用扫描 + 2硬编码修复 + rsync传输脚本 + 7项数据矩阵 + JSON 25KB + HTML 13.6KB + EXPERIMENTS §R113）。未完成指令：🔴用户令2026-11-07(GPU未到位,需持续产出调研) ⇒ WAITING=0。
+
+[wake161] R114 SFT训练框架决策+数据格式管线设计+gpu_watcher延长: 体积自检(TASK=24.7KB/MEMORY≈25.8KB合规)→GPU检查:0/8free(root SGLang Qwen3.8-27B占全8卡44-45GB 0%util,运行自Sep17)→git:in sync(## main...origin/main)→gpu_watcher:旧PID2022305 max-wait=86400s将过期→kill→重启PID2709455 max-wait=604800s(7天)✅→R114: ①baize_posttrain_r114_sft_framework_pipeline.py(~310行) ②verl SFT框架决策:verl 0.4.0 FSDP SFT Trainer(fsdp_sft_trainer.py+MultiTurnSFTDataset,已在cu124 venv)✅ ③数据兼容:PyAether parquet 'conversation'列=verl MultiTurnSFTDataset格式(messages_key=conversation,直接兼容,无需转换)✅ ④baize_posttrain_sft_verl_config.yaml生成(1.5KB,max_length=16384,lr=2e-5,wsd,4×A40,YAML解析✅)✅ ⑤数据混合agent50:general30:pyaether20(~97K行)✅ ⑥JSONL→parquet转换器设计(baize_posttrain_jsonl_to_parquet.py待创建)✅ ⑦TRL/Megatron均未安装→verl为唯一选择✅. py_compile✅+JSON✅+HTML 8.5KB(0script,0外链)+EXPERIMENTS §R114. 📦 体积：TASK≈24.7KB / MEMORY≈25.8KB。本轮新增调研产出：§R114 SFT框架决策+数据格式管线(~310行 + verl FSDP SFT决策 + PyAether直接兼容 + SFT配置YAML + 50:30:20混合管线 + JSONL转换器设计 + gpu_watcher延长7天 + JSON + HTML 8.5KB + EXPERIMENTS §R114）。未完成指令：🔴用户令2026-11-07(GPU未到位,需持续产出调研) ⇒ WAITING=0。

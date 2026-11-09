@@ -11810,3 +11810,96 @@ MiniCPM5-2B 模型路径完整：model-00000-of-00001.safetensors + config.json 
 - `reports/report_posttrain_r113_data_transfer_zh.html`（13.6KB，自包含，0 script，0 外链）
 - 本节（EXPERIMENTS §R113）
 - 修复：`baize_posttrain_sft_data_mixer.py`（2 处硬编码 → NAS_ROOT 自动检测）
+
+---
+
+## §R114 SFT 训练框架决策 + 数据格式管线设计（wake161 · 2026-11-09 · 零 GPU）
+
+> **研究编号**: R114 | **唤醒**: wake161 | **时间**: 2026-11-09 22:09
+> **GPU 状态**: 0/8 free (root SGLang Qwen3.8-27B, 自 Sep17)
+> **gpu_watcher**: 已重启 PID 2709455, max-wait=604800s (7 天)
+
+### 1. SFT 框架决策
+
+| 框架 | 可用 | 评价 |
+|:--|:--|:--|
+| **verl 0.4.0 FSDP SFT** | ✅ | **RECOMMENDED** — 零安装, 统一 RL, 直接 parquet, multi-turn, LoRA, FSDP, WSD |
+| TRL (HuggingFace) | ❌ | venv 未安装 |
+| Megatron-LM | ❌ | 未安装, 需 MEGATRON 格式数据 |
+| Custom sft_launcher.py | ⚠️ 占位 | baize_posttrain_sft.sh 中为 placeholder |
+
+**决策**: 使用 verl 0.4.0 FSDP SFT Trainer (`fsdp_sft_trainer.py`), 已在 cu124 venv 中安装。
+
+### 2. 数据格式兼容性
+
+| 数据源 | 格式 | verl 兼容 | 转换 |
+|:--|:--|:--|:--|
+| PyAether SFT v2 (19,524 行) | parquet 'conversation' 列 | ✅ 直接兼容 | 无需 |
+| PyAether SFT v5 (1,193 行) | parquet 'conversation' 列 | ✅ 直接兼容 | 无需 |
+| UltraData-Agent-2609 | JSONL (50 shard) | ❌ 需转换 | JSONL→parquet |
+| UltraData-General-2605 | JSONL (1504 文件) | ❌ 需转换 | JSONL→parquet |
+
+**关键发现**: verl `MultiTurnSFTDataset` 接受 parquet with `messages_key` 列 (list of {role, content} dicts)。我们的 SFT v2 parquet `conversation` 列格式完全匹配, 配置 `multiturn.messages_key: conversation` 即可直接使用。
+
+### 3. SFT 配置设计
+
+已生成 `baize_posttrain_sft_verl_config.yaml` (1.5KB, YAML 解析 ✅):
+
+| 参数 | 值 | 理由 |
+|:--|:--|:--|
+| multiturn.enable | true | 多轮对话 |
+| messages_key | conversation | 匹配 parquet 列名 |
+| max_length | 16384 | R60: 16K captures 82% |
+| truncation | left | 保留近期上下文 |
+| train_batch_size | 128 | GBS=128 |
+| micro_batch_size_per_gpu | 2 | 2B×16K→~20GB, fits A40 |
+| model_dtype | bf16 | A40 支持 |
+| gradient_checkpointing | true | 省显存 |
+| lora_rank | 0 (full FT) | 主实验; 消融 lora=64 |
+| lr | 2e-5 | 2B SFT 标准 |
+| lr_scheduler | wsd | 与 pretrain 一致 |
+| total_epochs | 3 | SFT 标准 |
+| n_gpus_per_node | 4 | 4×A40 |
+
+### 4. 数据混合管线
+
+**混合比例**: agent50:general30:pyaether20
+
+| 数据源 | 权重 | 预估行数 |
+|:--|:--|:--|
+| PyAether SFT v2 | 20% | 19,524 (全量) |
+| UltraData-Agent-2609 | 50% | ~48,810 (采样) |
+| UltraData-General-2605 | 30% | ~29,286 (采样) |
+| **总计** | 100% | ~97,620 |
+
+**管线步骤**: ①传输UltraData(.29→.17) ②JSONL→parquet转换 ③50:30:20采样 ④拼接sft_blended_v1.parquet ⑤污染隔离门 ⑥verl dry-load验证
+
+### 5. JSONL→Parquet 转换器设计
+
+- **脚本**: `baize_posttrain_jsonl_to_parquet.py` (待创建)
+- **输入**: UltraData JSONL (多 schema: 'messages'/'conversations')
+- **输出**: parquet 'conversation' column (list of {role, content})
+- **关键逻辑**: 流式读取; 格式归一化; 超长过滤(>16384 tok); source tag; 分片写入
+- **预估时间**: General 319G → ~30-60 min CPU
+
+### 6. GPU Watcher 延长
+
+- **问题**: 原 watcher max-wait=86400s (24h), 将于 ~00:14 (11/10) 过期
+- **处置**: kill 旧 watcher (PID 2022305), 重启 PID 2709455, max-wait=604800s (7 天)
+- **验证**: iteration #1, 日志正常, poll=120s
+- **自动启动**: GPU 释放 (≥4 卡 ≥40000MiB) → watcher 自动触发 launch_11_9.sh --step 1-5
+
+### 7. 交付物
+
+- `baize_posttrain_r114_sft_framework_pipeline.py` (~310 行, Python3, py_compile ✅)
+- `baize_posttrain_sft_verl_config.yaml` (1.5KB, YAML 解析 ✅)
+- `baize_posttrain_r114_results.json` (JSON 摘要)
+- `reports/report_posttrain_r114_sft_framework_pipeline_zh.html` (8.5KB, 0 script, 0 外链)
+- 本节 (EXPERIMENTS §R114)
+
+### 8. 下一步 (R115+)
+
+1. 实现 `baize_posttrain_jsonl_to_parquet.py` 转换器
+2. GPU 释放后: launch_11_9.sh step 2 (baseline eval) + step 5 (RL smoke)
+3. 正式 SFT: 等 pretrain ckpt (ETA 2026-12-25) + UltraData 传输
+4. 更新 `baize_posttrain_sft.sh` 调用 verl SFT trainer (替换 placeholder)

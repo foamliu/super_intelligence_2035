@@ -1,0 +1,63 @@
+{
+  "research_id": "R114",
+  "wake": "wake161",
+  "timestamp": "2026-11-09T22:10:32.510818",
+  "gpu_status": "0/8 free",
+  "gpu_watcher": "PID 2709455, max-wait=604800s",
+  "framework": "verl 0.4.0 FSDP SFT",
+  "sft_config": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_posttrain_sft_verl_config.yaml",
+  "blend_ratio": "agent50:general30:pyaether20",
+  "data_summaries": {
+    "SFT PyAether v2": {
+      "path": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/sft_pyaether_corpus_v2.parquet",
+      "exists": true,
+      "rows": 19524,
+      "columns": [
+        "conversation",
+        "pair_id",
+        "type",
+        "api_used",
+        "contamination_check"
+      ],
+      "size_mb": 3.5,
+      "conv_type": "ndarray",
+      "conv_length": 3,
+      "conv_msg_keys": [
+        "role",
+        "content"
+      ],
+      "conv_first_role": "system"
+    },
+    "SFT PyAether v5": {
+      "path": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/sft_pyaether_corpus_v5_deep_enriched.parquet",
+      "exists": true,
+      "rows": 1193,
+      "columns": [
+        "conversation",
+        "pair_id",
+        "type",
+        "api_used",
+        "contamination_check"
+      ],
+      "size_mb": 0.34,
+      "conv_type": "ndarray",
+      "conv_length": 3,
+      "conv_msg_keys": [
+        "role",
+        "content"
+      ],
+      "conv_first_role": "system"
+    },
+    "RL PyAether v2": {
+      "path": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/rl_pyaether_synth_v2.parquet",
+      "exists": true,
+      "rows": 3347,
+      "columns": [
+        "prompt",
+        "reward_model",
+        "agent_name"
+      ],
+      "size_mb": 0.91
+    }
+  }
+}
