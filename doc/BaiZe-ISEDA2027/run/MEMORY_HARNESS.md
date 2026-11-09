@@ -8,7 +8,7 @@ PHASE:        R2012 监控轮(gateway QUOTA_EXHAUSTED→reset~02:24)+predict 7�
 已完成:       H-B✅·Gate7/7·TB报告✅·full500✅·cline专项C1-C5+报告R1785-R2004·TB4 0passed(能力)·TB-2.1 oracle5/5✅·§15:2x判据MET✅·R1789 eval 7/7DONE✅·R1804双报告交付✅·R1969-R2011 incr_eval推进+双报告·R2009 CPU KILL(175核)+R2010-R2011 监控干净+不产出HTML+gateway 200→R2012 QUOTA_EXHAUSTED
 当前动作:     R2012:①CPU PASS(无harness进程>8000%·top=git 199%≈2核·load 41/44/60递降) ②MEM PASS(735G used/2015G·1135G avail) ③gateway QUOTA_EXHAUSTED(/models=200但chat/completions=本次Token额度已用完,请等待2小时53分钟4秒后重试→reset~02:24) ④predict 7路alive但stuck on 429(individual: cline175·codex94·opencode344·cc189·pi136·hermes348·dsh137=1423/3500=40.7%) ⑤incr_eval R1992:cline/codex/opencode/cc DONE+pi RUNNING(52inst·PID978706)+hermes/dsh pending ⑥TB-2.1 harbor alive(7路)全stuck on 429(0 new trials) ⑦日常轮不产出HTML(11-09报告纪律) ⑧disk:/data 5.8T(18%)·/ 352G(4%) ⑨research日报11-09:Evolver(token-24%经验资产)+ReproBridge(证据审计)→参考非指令 ⑩未完成指令:有(§22:4x+§10:10)⇒W:0
 下一步:       ①等gateway quota reset(~02:24)→predict 7路自动resume→推进至500 ②incr_eval R1992 pi完成→hermes/dsh eval→merge ③TB-2.1等quota reset→harbor自动resume→推进至89 ④全DONE后聚合最终7路报告 ⑤cline empty 18个均sphinx-doc/sympy(能力)→trace分析确认
-阻塞:         gateway QUOTA_EXHAUSTED(reset~02:24)·predict/TB-2.1全stuck on 429·等quota reset自动恢复(不kill进程)·git push 503(代理暂不可用)→下轮首事补推
+阻塞:         gateway QUOTA_EXHAUSTED(reset~02:24)·predict/TB-2.1全stuck on 429·等quota reset自动恢复(不kill进程)
 ERROR_COUNT:  0
   📦 体积：TASK=31.0KB / MEMORY=14.6KB（均在32KB限内·无归档）
   🔍 cline专项小结: predict individual=175(merged=143 stale)·eval incr_R1992 cline DONE+cc DONE+pi running·C2=100%能力(infra=0·当前429=网关额度非能力)·C3 resume fix✅(51.5%→0% merged post-cleanup·18 empties=能力)·7路predict alive+TB-2.1 harbor alive·gateway QUOTA_EXHAUSTED·失败top1=网关额度耗尽(429)·TB-2.1(harbor alive但stuck 429)
