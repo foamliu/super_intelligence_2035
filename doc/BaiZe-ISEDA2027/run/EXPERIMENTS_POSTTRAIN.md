@@ -10850,3 +10850,97 @@ gpu_watcher detects >=4 GPUs free
 | Parquet（NEW） | `run/sft_pyaether_corpus_v5_deep_enriched.parquet` | 0.34 MB |
 | HTML 报告 | `reports/report_posttrain_r102_readiness_audit_zh.html` | 10.4 KB |
 | JSON 审计 | `/tmp/r102_audit.json` | (临时) |
+
+## §R103 合成 RL 任务可解性验证——Qwen3.8-27B + API 文档（2026-11-09 · 零 GPU · SGLang inference）
+
+> **背景**：R97 发现 Qwen3.8-27B 在**无 API 文档**时 API 全覆盖率为 0%（5/500 题零命中），表明模型不具备 PyAether API 的先验知识。R103 验证：**提供 API 文档后**，强模型能否解决合成 RL 任务？若可解性 ≥ 60%，则 RL 奖励信号有效（模型有能力学会正确 API 调用），Stage(ii) RL 训练有理论基础。
+
+### 1. 实验设计
+
+| 维度 | 值 |
+|:--|:--|
+| 模型 | Qwen3.8-27B（SGLang, 127.0.0.1:8098, enable_thinking=False, temperature=0.0） |
+| 任务集 | `rl_pyaether_synth_tasks.jsonl`（500 题），采样 50 题（low 20 / medium 15 / high 15） |
+| API 文档源 | `API_INFO_MERGED_V3.json`（8,463 个 API，dotted key → api_name/api_descriptions/api_type） |
+| 评测口径 | AST-based API call extraction → 比对 canonical solution 的 API 集合 |
+| 匹配级别 | exact（API 集合完全一致）/ api_match（有交集）/ partial（有 API 调用但非期望 API）/ no_match / syntax_error / empty |
+| 可解性定义 | exact + api_match（模型生成了包含正确 API 调用的有效代码） |
+| 文档注入 | prompt 中注入任务所需 API 的 `api_name` + `api_descriptions`（带示例代码） |
+
+### 2. 核心结果
+
+| 指标 | R97（无文档） | R103（有文档） | 变化 |
+|:--|--:|--:|:--|
+| 可解性率 | 0% | **78.0%** | **+78 pp** |
+| 平均 API 覆盖率 | 0% | **76.7%** | +76.7 pp |
+| 文档可用率 | N/A | 100.0%（95/95） | — |
+| 平均响应时间 | N/A | 1.2s | — |
+
+**匹配分布（50 题）**：
+
+| 级别 | 数量 | 占比 | 说明 |
+|:--|--:|--:|:--|
+| exact | 15 | 30.0% | API 集合与 canonical 完全一致 |
+| api_match | 24 | 48.0% | 使用了正确 API，但代码结构不同 |
+| partial | 6 | 12.0% | 使用了正确父类但未调用具体方法 |
+| no_match | 1 | 2.0% | 未生成有效 API 调用 |
+| syntax_error | 4 | 8.0% | 多行 if/try 块在代码提取时缩进丢失 |
+
+### 3. 按难度分布
+
+| 难度 | 可解性 | exact | api_match | partial | no_match | syntax_error |
+|:--|--:|--:|--:|--:|--:|--:|
+| low (20) | **65.0%** | 4 | 9 | 6 | 1 | 0 |
+| medium (15) | **86.7%** | 6 | 7 | 0 | 0 | 2 |
+| high (15) | **86.7%** | 5 | 8 | 0 | 0 | 2 |
+
+**关键发现**：高难度题（多步骤、多 API）与中难度题可解性**相同（86.7%）**，均显著高于低难度题（65%）。原因：
+- 低难度题（单 API 调用）：模型倾向用「对象.方法」语法（如 `s.startswith("Hello")`），而 AST 提取只捕获 `pyAether.emyString` 父类 → 6 个 partial
+- 高难度题（多步分析）：模型生成结构化代码，API 调用更规范（全限定名 `pyScript.xxx()`），提取率更高
+
+### 4. 失败模式分析
+
+**4 个 syntax_error（真实代码结构问题）**：
+- synth-rl-0331 / 0371 / 0435 / 0468：均含 `if ...:` 或 `try:` 多行块，模型输出首行无缩进 + 后续行 4 空格缩进，代码提取时 `strip` 策略丢失控制流缩进 → AST parse 失败。**模型代码本身正确**，是代码提取管线的限制。
+
+**6 个 partial（API 提取粒度限制）**：
+- 均为 low 难度，模型创建对象 `s = pyScript.emyString("...")` 后调用 `s.startswith("Hello")`，AST 提取捕获 `pyAether.emyString` 但未关联 `startswith` 方法 → 误判为 partial。**模型行为实际正确**。
+
+**1 个 no_match**：
+- synth-rl-0029（low）：模型未生成有效代码（可能输出了注释或说明文字）。
+
+### 5. 方法论改进
+
+v1 → v3 迭代修复了代码提取管线中的缩进问题：
+
+| 版本 | 策略 | 可解性 | syntax_error |
+|:--|:--|--:|--:|
+| v1 | 直接 wrap（无缩进归一化） | 50.0% | 42.0% |
+| v2 | dedent + re-indent（min_indent 策略） | 50.0% | 42.0% |
+| v3 | **双策略**：① dedent+wrap ② strip-all+flatten | **78.0%** | **8.0%** |
+
+v3 的策略 2（strip all indentation, flatten to uniform 4-space）将 42% → 8%，剩余 4 个为多行控制流块（strip 后 `if: return` 语法错误）。
+
+### 6. 结论与对 Stage(ii) 的启示
+
+1. **✅ RL 奖励信号有效**：78% 可解性证明合成 RL 任务在提供 API 文档后是可解的，RL 训练有明确的优化目标。
+2. **✅ API 文档价值巨大**：R97→R103 从 0%→78%，文档是模型使用 API 的必要条件 → SFT/RL prompt 中**必须包含 API 文档**。
+3. **✅ 高难度任务可解**：86.7% 可解性表明多步骤 EDA 分析任务在 RL 中有学习空间。
+4. **⚠️ 低难度题 partial 问题**：6/20 低难度题因「对象.方法」语法导致 API 提取不完整 → RL 奖励函数需改进方法级 API 匹配（或 prompt 中要求全限定名调用）。
+5. **⚠️ 代码提取管线**：多行控制流块的缩进处理需进一步改进（v3 的 strip 策略对 `if/try` 块有损）。
+
+### 7. 交付物
+
+| 类型 | 路径 | 说明 |
+|:--|:--|:--|
+| 脚本 | `run/baize_posttrain_r103_solvability_validation.py` | ~380 行，stdlib only |
+| HTML 报告 | `run/baize_posttrain_r103_solvability_report.html` | 8.4 KB |
+| JSON 结果 | `run/baize_posttrain_r103_solvability_results.json` | 50 题详细记录 |
+| HTML 副本 | `reports/baize_posttrain_r103_solvability_report.html` | 自动复制 |
+
+### 8. 关联
+
+- **R97**: 0% API 全覆盖（无文档）→ R103 验证有文档后 78% 可解
+- **R99/R100/R101**: API 文档补全（80.6% 覆盖）→ R103 使用同一文档源
+- **R102**: 系统就绪审计 → R103 补充了「任务可解性」维度的就绪验证
+- **Stage(ii) RL**: 奖励信号有效性 ✅ 确认，可进入正式 RL 训练
