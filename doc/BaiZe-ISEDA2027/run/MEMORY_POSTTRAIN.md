@@ -14,7 +14,7 @@ WAITING: 0
 - 阻塞: GPU 0/8free(SGLang Qwen3.8-27B占全8卡44-45GB 0%util,11/9已过仍未释放);P3等pretrain ckpt(ETA≈2026-12-25)
 - 本轮新增调研产出: R138 verl Hybrid Engine GPU显存预算(⚠️S1 OOM -6.18GB发现+S5安全+11.43GB+96配置OOM矩阵64/96+LoRA全安全+KV 168KB/token+吞吐估算+5级回退决策树FROZEN+4步OOM恢复+6项监控阈值FROZEN+v3 config修正建议+EXPERIMENTS §R138+r138_gpu_memory_budget_report.json 52.2KB）
 - 未完成指令: 🔴用户令2026-11-07(GPU未到位,需持续产出调研) ⇒ WAITING=0
-- git: synced,本轮待提交
+- git: commit 807a94090 ahead 1, push超时(网络),loop兜底补推
 
 ## 关键事实（常驻）
 
