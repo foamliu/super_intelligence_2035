@@ -41,12 +41,12 @@ tr:nth-child(even){background:#ecf0f1}
 <h2>C5 - 与 hermes/opencode 差距来源</h2>
 <table><tr><th>Harness</th><th>predict real</th><th>real%</th><th>eval resolved</th><th>eval%</th></tr>
 <tr><td><strong>cline</strong></td><td class='pass'>126</td><td>40.3%</td><td>87/115</td><td>75.7%</td></tr>
-<tr><td>opencode</td><td>262</td><td>72.8%</td><td>199/249</td><td>79.9%</td></tr>
+<tr><td>opencode</td><td>263</td><td>72.9%</td><td>199/249</td><td>79.9%</td></tr>
 <tr><td>hermes</td><td>297</td><td>62.9%</td><td>258/279</td><td>92.5%</td></tr></table>
 <div class="critical"><p><strong>差距来源</strong>:</p><ul>
-<li><strong>real 率</strong>: cline 40.3% vs opencode 72.8% vs hermes 62.9%. 低 real 主因=429 empty + scikit-learn 能力不足.</li>
+<li><strong>real 率</strong>: cline 40.3% vs opencode 72.9% vs hermes 62.9%. 低 real 主因=429 empty + scikit-learn 能力不足.</li>
 <li><strong>eval 率</strong>: cline 75.7% vs hermes 92.5%. cline eval 题数 115 >> hermes 279. cline eval% 合理 (kimi 时 71.3%).</li>
 <li><strong>假设</strong>: gateway 200 稳定后重跑 187 empty, 预期 real 率升至 ~55-60%.</li></ul></div>
 <h2>后续实验</h2>
 <div class="info"><ol><li>gateway 200 稳定后重跑 cline empty -> 验证 429 归因</li><li>scikit-learn empty 抽样查 trace -> 能力 vs 超时</li><li>research 11-08: 补算题目难度参考分 (Dext)</li></ol></div>
-<hr><p style="text-align:center;color:#7f8c8d;font-size:0.9em">BaiZe Harness cline 专项 R1960 2026-11-09 09:50 | 正文写 cline | glm-5.3-flash</p></body></html>
+<hr><p style="text-align:center;color:#7f8c8d;font-size:0.9em">BaiZe Harness cline 专项 R1961 2026-11-09 09:50 | 正文写 cline | glm-5.3-flash</p></body></html>
