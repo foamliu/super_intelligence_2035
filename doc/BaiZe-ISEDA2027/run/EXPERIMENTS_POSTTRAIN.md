@@ -10712,3 +10712,141 @@ gpu_watcher detects >=4 GPUs free
 - **R98 根因修复进展**：R98 发现 SFT 结构化覆盖 0/488，R99→R100→R101 将覆盖率提升到 100%，且 80.6% 的 API 有实质文档
 - **SFT 训练影响**：v5 语料 1193 对可直接合并到 UltraData-SFT，34 个 S0 最小对（仅说"该 API 存在"）对训练影响极小
 - **GPU 就绪后**：用真实 MiniCPM5-2B 轨迹校正 P0 D1-D6 假设值仍是最重要的后续步骤
+
+---
+
+## §R102 Launch Readiness Audit + SFT v5 Parquet Conversion（2026-11-09 wake150 · 零 GPU）
+
+> **任务**：GPU 到位前最终就绪审计——将 SFT v5 语料转为 verl parquet 格式，验证 RL parquet，审计全部 11 个启动脚本 + verl config + 模型文件 + 评测数据集 + GPU 状态。
+> **脚本**：`run/baize_posttrain_r102_readiness_audit.py`（436 行，Python3，pyarrow/pandas 依赖 verl venv）
+> **产出**：`run/sft_pyaether_corpus_v5_deep_enriched.parquet`（NEW，0.34MB）+ `reports/report_posttrain_r102_readiness_audit_zh.html`（10.4KB）
+
+### 1. SFT v5 Parquet 转换（NEW deliverable）
+
+| 维度 | 值 |
+|:--|:--|
+| 输入 | `sft_pyaether_corpus_v5_deep_enriched.jsonl`（1193 对，1708.1KB） |
+| 输出 | `sft_pyaether_corpus_v5_deep_enriched.parquet`（0.34MB，snappy 压缩） |
+| 行数 | 1193（0 parse errors） |
+| Schema | conversation（list&lt;struct&lt;role,content&gt;&gt;）, pair_id, type, api_used, contamination_check |
+| 训练对类型 | S1_doc_to_code, S2_api_lookup, S3_multi_api_chain, S5_source_*, S6_*, S0_api_existence（9 种） |
+| 格式兼容 | 与 v2 parquet schema 一致（`conversation` 列），可直接接入 verl SFT trainer |
+
+### 2. RL Parquet 验证
+
+| 维度 | 值 |
+|:--|:--|
+| 文件 | `rl_pyaether_synth_v2.parquet`（0.91MB） |
+| 行数 | 3347 |
+| Schema | prompt（list&lt;struct&gt;&gt;）, reward_model（struct&lt;test_code,canonical_solution,entry_point,metadata&gt;）, agent_name |
+| Issues | 0（无 null prompt、无 null reward_model、格式正确） |
+| verl 兼容 | ✅ `data.train_files` 路径存在，`prompt_key: prompt` 匹配 |
+
+### 3. 启动脚本审计（bash -n）
+
+| 脚本 | 状态 | 行数 |
+|:--|:--|:--|
+| baize_posttrain_setup_cu124_venv.sh | ✅ PASS | 246 |
+| baize_posttrain_preflight_check.sh | ✅ PASS | 123 |
+| baize_posttrain_minicpm5_diag.sh | ✅ PASS | 195 |
+| baize_posttrain_contamination_gate.sh | ✅ PASS | 137 |
+| baize_posttrain_rl_grpo.sh | ✅ PASS | 210 |
+| baize_posttrain_sft.sh | ✅ PASS | 120 |
+| baize_posttrain_anneal.sh | ✅ PASS | 125 |
+| baize_posttrain_eval.sh | ✅ PASS | 130 |
+| baize_posttrain_paths.sh | ✅ PASS | 68 |
+| baize_posttrain_gpu_watcher.sh | ✅ PASS | 264 |
+| baize_posttrain_launch_11_9.sh | ✅ PASS | 147 |
+
+**结论**：11/11 脚本全部通过语法检查。
+
+### 4. verl Config v2 审计
+
+| 参数 | 值 | 状态 |
+|:--|:--|:--|
+| algorithm | grpo | ✅ |
+| rollout_engine | sglang | ✅ |
+| group_size (n) | 8 | ✅ |
+| max_prompt_length | 8192 | ✅ |
+| max_response_length | 8192 | ✅ |
+| multi_turn.enable | False | ✅（R0 skeleton 模式，单轮） |
+| total_training_steps | 2000 | ✅ |
+| n_gpus_per_node | 4 | ✅ |
+| reward_arm | R0 | ✅（skeleton，无沙盒） |
+| lr | 3.0e-6 | ✅ |
+| kl_loss_coef | 0.02 | ✅ |
+| clip_ratio | 0.2 | ✅ |
+| gpu_memory_utilization | 0.50 | ✅ |
+
+**路径检查**（6/6 全部存在）：
+- model.path → `/nas_data/app.e0031982/models/MiniCPM5-2B` ✅
+- data.tokenizer → 同上 ✅
+- data.train_files → `rl_pyaether_synth_v2.parquet` ✅
+- reward.path → `baize_posttrain_reward_functions.py` ✅
+- reward.api_database → `~/code/eda_fastmcp/docs/API_INFO_MERGED_V3.json` ✅
+- trainer.output_dir → 已创建 ✅
+
+### 5. 模型文件审计
+
+| 文件 | 存在 | 大小 |
+|:--|:--|:--|
+| config.json | ✅ | 0.001 MB |
+| model-00000-of-00001.safetensors | ✅ | 4799.18 MB |
+| model.safetensors.index.json | ✅ | 0.03 MB |
+| tokenizer.json | ✅ | 9.43 MB |
+| tokenizer_config.json | ✅ | 0.09 MB |
+| special_tokens_map.json | ✅ | 0.001 MB |
+| chat_template.jinja | ✅ | 0.005 MB |
+
+**总计**：4.7 GB，7/7 文件完整。模型已从 /tmp（易失）迁移到 `/nas_data/app.e0031982/models/MiniCPM5-2B`（NAS 持久存储）。
+
+### 6. 评测数据集验证
+
+- 158 任务 ✅（Layout 64 / Schematic 47 / Design Mgmt 24 / Others 23）
+- 文件大小：验证通过
+
+### 7. 数据文件清单（11/11 present）
+
+| 文件 | 存在 | 大小 |
+|:--|:--|:--|
+| sft_pyaether_corpus_v5_deep_enriched.jsonl | ✅ | 1668.2 KB |
+| **sft_pyaether_corpus_v5_deep_enriched.parquet** | ✅ **NEW** | 345.4 KB |
+| sft_pyaether_corpus_v2.parquet | ✅ | (legacy) |
+| rl_pyaether_synth_v2.jsonl | ✅ | (3347 tasks) |
+| rl_pyaether_synth_v2.parquet | ✅ | 931.5 KB |
+| baize_posttrain_contamination_gate.sh | ✅ | |
+| baize_posttrain_reward_functions.py | ✅ | |
+| baize_posttrain_eda_tool_v2.py | ✅ | |
+| baize_posttrain_tool_config.yaml | ✅ | |
+| baize_posttrain_rl_verl_config_v2.yaml | ✅ | |
+| baize_posttrain_minicpm5_parser.py | ✅ | |
+
+### 8. GPU 状态
+
+- 0/8 GPU free（root SGLang Qwen3.8-27B 占全 8 卡，44-45GB/卡）
+- gpu_watcher PID 2022305 运行中（iteration #465+，elapsed ~15.5h / 24h max）
+- 到位条件：≥4 卡 free + ≥40GB free/卡 → 自动触发 launch_11_9.sh Steps 0-6
+
+### 9. 就绪判定
+
+| 检查项 | 状态 |
+|:--|:--|
+| SFT v5 parquet（verl 格式） | ✅ READY |
+| RL v2 parquet（verl 格式） | ✅ READY |
+| 启动脚本（11/11 bash -n） | ✅ READY |
+| verl config v2（0 issues） | ✅ READY |
+| MiniCPM5-2B 模型（7/7 files） | ✅ READY |
+| 评测数据集（158 tasks） | ✅ READY |
+| 污染隔离脚本 | ✅ READY |
+| GPU（0/8 free） | ❌ BLOCKED |
+
+**结论**：除 GPU 外，所有系统就绪。gpu_watcher 将在 GPU 释放后自动触发完整启动序列（Steps 0-6: venv setup → preflight → SGLang serve + 36% baseline → D1-D6 extraction → contamination gate → RL smoke → full RL）。
+
+### 10. 交付物
+
+| 类型 | 路径 | 大小 |
+|:--|:--|:--|
+| 脚本 | `run/baize_posttrain_r102_readiness_audit.py` | 436 行 |
+| Parquet（NEW） | `run/sft_pyaether_corpus_v5_deep_enriched.parquet` | 0.34 MB |
+| HTML 报告 | `reports/report_posttrain_r102_readiness_audit_zh.html` | 10.4 KB |
+| JSON 审计 | `/tmp/r102_audit.json` | (临时) |
