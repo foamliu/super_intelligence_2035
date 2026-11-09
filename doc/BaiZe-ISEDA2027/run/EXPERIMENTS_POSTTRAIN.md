@@ -12044,18 +12044,24 @@ Contamination gate: CLEAR
 - **Monotonic decrease (L1→L5)**: NO
 - **唯一非满分**: L3 task synth-v2-L3-02593 (5 APIs): 7/8 pass, p@1=0.88, p@8=1.00
 
-### 4. 结果：条件 A（WITH API docs, smoke test 25 题, 耗时 ~2min）
+### 4. 结果：条件 A（WITH API docs, 150 题, 1200 调用, 耗时 16.1min）
 
-> smoke test 已确认与条件 B 完全一致：ALL tiers 100% pass@1/pass@4/pass@8。
-> 全量 150 题运行仍在后台进行（结果预期与 smoke 一致）。
+| 难度 | API数 | 题数 | pass@1 | pass@4 | pass@8 | 语法率 | API覆盖 | p@1标准差 | 零通过 | 全通过 | 区分度 |
+|:--|:--|--:|--:|--:|--:|--:|--:|--:|--:|--:|:--|
+| L1 | 1 | 30 | 1.00 | 1.00 | 1.00 | 100.0% | 100.0% | 0.000 | 0 | 30 | LOW_CEILING |
+| L2 | 1 | 30 | 1.00 | 1.00 | 1.00 | 100.0% | 100.0% | 0.000 | 0 | 30 | LOW_CEILING |
+| L3 | 3-5 | 30 | 0.97 | 0.99 | 1.00 | 96.7% | 100.0% | 0.137 | 0 | 27 | LOW_CEILING |
+| L4 | 6-10 | 30 | 1.00 | 1.00 | 1.00 | 100.0% | 100.0% | 0.000 | 0 | 30 | LOW_CEILING |
+| L5 | 10 | 30 | 0.93 | 0.96 | 0.97 | 93.3% | 100.0% | 0.221 | 1 | 26 | LOW_CEILING |
 
-| 难度 | 题数 | pass@1 | pass@8 | 区分度 |
-|:--|--:|--:|--:|:--|
-| L1 | 5 | 1.00 | 1.00 | LOW_CEILING |
-| L2 | 5 | 1.00 | 1.00 | LOW_CEILING |
-| L3 | 5 | 1.00 | 1.00 | LOW_CEILING |
-| L4 | 5 | 1.00 | 1.00 | LOW_CEILING |
-| L5 | 5 | 1.00 | 1.00 | LOW_CEILING |
+- **Spread (max-min pass@1)**: 0.0667 → POOR separation (略优于 NO-DOCS 的 0.0042)
+- **Monotonic decrease (L1→L5)**: NO
+- **L5 pass@8=0.97** (唯一 pass@8 < 1.00 的层级, 1 题零通过)
+
+**反直觉发现**：WITH API docs 条件下 L5 pass@1 (93%) **低于** NO-DOCS (100%)。可能原因：
+- API 文档使 prompt 显著变长 → 上下文处理负担增加
+- 模型尝试更"忠实"地跟随文档 → 更多语法错误 (L5 语法率 93.3% vs NO-DOCS 100%)
+- 文档在 prompt 已含 API 名时增加噪声而非信号
 
 ### 5. 根因分析
 
@@ -12066,7 +12072,7 @@ Contamination gate: CLEAR
 3. **替身模型足够强**：Qwen3.8-27B 即使不看文档也能根据 prompt 中给出的 API 名写出正确的调用代码
 4. **断言模板太简单**：大部分 L1/L2 任务用 T1_type_check（只检查返回类型），不检查返回值
 
-**API 文档对 pass@k 无影响**：条件 A（有文档）和条件 B（无文档）结果完全一致，说明 prompt 中已有的 API 名信息已足够模型解题。
+**API 文档对 pass@k 的影响（反直觉）**：条件 A（有文档）和条件 B（无文档）在 L1-L4 上完全一致（100% pass@1），但 **L5 在 WITH-DOCS 下 pass@1 从 100% 降至 93%**。API 文档在简单任务上无影响，但在复杂任务上**反而增加噪声**（更长 prompt → 更多语法错误），不支持"文档有助于解题"的假设。
 
 ### 6. 对 RL 训练的关键启示
 
@@ -12098,6 +12104,8 @@ Contamination gate: CLEAR
 ### 9. 交付物
 
 - `baize_posttrain_r116_pass8_profiling.py` (~360 行, Python3 stdlib, py_compile ✅)
-- `r116_pass8_profiling_nodocs.json` (790KB, 150 题 × 8 样本完整结果)
+- `r116_pass8_profiling_nodocs.json` (790KB, NO-DOCS 150 题 × 8 样本完整结果)
+- `r116_pass8_profiling_withdocs.json` (820KB, WITH-DOCS 150 题 × 8 样本完整结果)
 - `reports/report_posttrain_pass8_profiling_r116_nodocs_zh.html` (10KB, 自包含)
+- `reports/report_posttrain_pass8_profiling_r116_withdocs_zh.html` (10KB, 自包含)
 - 本节 (EXPERIMENTS §R116)
