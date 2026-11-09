@@ -8,6 +8,7 @@
 body{font-family:sans-serif;max-width:960px;margin:0 auto;padding:20px;background:#f8f9fa}
 h1{color:#1a73e8;border-bottom:3px solid #1a73e8;padding-bottom:10px}
 h2{border-left:4px solid #1a73e8;padding-left:10px;margin-top:30px}
+h3{color:#333;margin-top:20px}
 table{border-collapse:collapse;width:100%;margin:10px 0;font-size:14px}
 th,td{border:1px solid #ddd;padding:8px}th{background:#1a73e8;color:white}
 tr:nth-child(even){background:#f1f3f4}
@@ -23,99 +24,100 @@ code{background:#f1f3f4;padding:2px 6px;border-radius:3px}
 </head>
 <body>
 <h1>BaiZe Stage(ii) Post-Train 研究状态汇总</h1>
-<p>时间：2026-11-09 23:45 · 节点：10.252.32.17 · 轮次：R118 (wake165)</p>
-<div class="box box-warn">⚠️ 替身警告：所有替身实验使用 Qwen3.8-27B (root SGLang)，结果<b>不可迁移到 BaiZe (MiniCPM5-2B)</b>。趋势有参考价值，具体数值不可直接引用。</div>
+<p>时间：2026-11-10 03:55 · 节点：10.252.32.17 · 轮次：R131 (wake178) · 131 轮调研</p>
+<div class="box box-warn">⚠️ 替身警告：所有零 GPU 调研使用代理模型/模拟，结果<b>不可迁移到 BaiZe (MiniCPM5-2B)</b>。趋势有参考价值，具体数值需 GPU 后用真实模型校正。</div>
 
 <h2>1. 总体状态</h2>
 <div>
 <div class="card"><div class="num">0/8</div><div class="lbl">GPU 空闲</div></div>
-<div class="card"><div class="num">R118</div><div class="lbl">当前轮次</div></div>
-<div class="card"><div class="num">118</div><div class="lbl">调研轮次</div></div>
+<div class="card"><div class="num">R131</div><div class="lbl">当前轮次</div></div>
+<div class="card"><div class="num">131</div><div class="lbl">总调研轮次</div></div>
 <div class="card"><div class="num">12-25</div><div class="lbl">pretrain ETA</div></div>
 </div>
-<div class="box box-err">GPU 全被 root SGLang Qwen3.8-27B 占用（8×A40, 44-45GB, 运行自 Sep17, 53天）。11/9 分配 4 张给 post-train 的计划尚未执行。</div>
+<div class="box box-err">GPU 全被 root SGLang Qwen3.8-27B 占用（8×A40, 44-45GB, 0% util, 运行自 Sep17, 54天）。11/9 分配 4 张给 post-train 的计划尚未执行。</div>
 
-<h2>2. 核心研究结论</h2>
-<h3>R116: API 覆盖率评分零区分度（R2 方向）</h3>
-<div class="box box-err">150题×8采样=1200条真实模型输出，API 覆盖率评分给出 <b>100% pass@8, std≈0, 0% 非零方差</b>。GRPO 无学习信号。根因：prompt 显式命名所有 API → 模型只需 return pyScript.X() → trivially 通过。</div>
+<h2>2. 核心研究结论（最新 → 最早）</h2>
 
-<h3>R117: R0++ 增强静态分析奖励（R1+R3 方向）</h3>
-<div class="box box-ok">设计 5 维 AST 评分：api_coverage(0.2) + ast_call_verified(0.3) + return_path(0.25) + arg_plausibility(0.15) - hardcode_penalty(0.1)。500 题合成 good/bad 变体验证：<b>GOOD SEPARATION</b>（good=0.9 vs bad=0.0-0.49, gap>0.4）。</div>
-
-<h3>R118: R0++ GRPO 学习信号实证（R3 方向）⭐ 最新</h3>
-<div class="box box-ok">用 R0++ 重新评分 R116 的 2400 条真实模型输出（NO-DOCS + WITH-DOCS 各 1200）：</div>
+<h3>R131: SFT-to-RL 桥接 Goldilocks Zone 分析 ⭐ 最新</h3>
+<div class="box box-ok">SFT 质量与 RL 可学性是<b>非单调</b>关系。Goldilocks zone：SFT 太低→GRPO 全零组（无法 bootstrap），太高→全一组（方差=0→无信号）。</div>
 <table>
-<tr><th>指标</th><th>NO-DOCS R0++</th><th>NO-DOCS R0</th><th>WITH-DOCS R0++</th></tr>
-<tr><td>非零方差任务比例</td><td><b>50.0%</b></td><td>0.0%</td><td><b>55.3%</b></td></tr>
-<tr><td>组内 std 均值</td><td>0.0993</td><td>0.0000</td><td>0.1026</td></tr>
-<tr><td>平均奖励</td><td>0.4606</td><td>1.0000</td><td>0.3902</td></tr>
-<tr><td>advantage 非零比例</td><td>0.4992</td><td>0.0000</td><td>0.5533</td></tr>
-<tr><td>改善倍数</td><td><b>75x</b></td><td>—</td><td><b>∞</b></td></tr>
-<tr><td>Reward hacking 检出</td><td>70 (5.8%)</td><td>0</td><td>27 (2.3%)</td></tr>
+<tr><th>层级</th><th>难度</th><th>Peak SFT</th><th>Goldilocks 区间</th><th>宽度</th></tr>
+<tr><td>L1 Trivial</td><td>0.350</td><td>0.340</td><td>[0.20, 0.48]</td><td>0.28</td></tr>
+<tr><td>L2 Basic</td><td>0.550</td><td>0.600</td><td>[0.40, 0.70]</td><td>0.30</td></tr>
+<tr><td>L3 Medium</td><td>0.750</td><td>0.760</td><td>[0.60, 0.88]</td><td>0.28</td></tr>
+<tr><td>L4 Advanced</td><td>0.880</td><td>0.880</td><td>[0.74, 1.00]</td><td>0.26</td></tr>
+<tr><td>L5 Challenge</td><td>0.950</td><td>0.940</td><td>[0.80, 1.00]</td><td>0.20</td></tr>
 </table>
+<div class="box box-info">
+<b>预注册 SFT checkpoint 选择准则</b>（测试前冻结）：<br>
+主指标: L1 pass@1 ∈ [0.20, 0.48] | 4 次要检查: L2≥0.20 / GRPO方差≥0.15 / 合法率≥90% / val loss 平台<br>
+4 红旗: pass>0.90 (GRPO崩溃) / pass<0.30 (无法bootstrap) / L2<0.10 (无迁移) / 方差<0.05 (静默空转)<br>
+5 阶段 RL 投影: SFT 0.55 → Phase 0-4 → 0.843 (接近 M4=85%)<br>
+敏感性分析: 最优起点 0.35 (RL 改善+0.423), 但需 ≥0.30 才能 bootstrap
+</div>
 
-<h3>难度梯度分析（NO-DOCS）</h3>
-<table>
-<tr><th>层级</th><th>API数</th><th>任务数</th><th>R0++均值</th><th>R0++std</th><th>非零方差%</th><th>AdvFrac</th><th>GRPO信号</th></tr>
-<tr><td>L1</td><td>1</td><td>30</td><td>0.8527</td><td>0.0282</td><td>23.3%</td><td>0.2333</td><td>弱（饱和）</td></tr>
-<tr><td>L2</td><td>1-2</td><td>30</td><td>0.8771</td><td>0.0194</td><td>10.0%</td><td>0.1000</td><td>极弱</td></tr>
-<tr><td><b>L3</b></td><td><b>3-5</b></td><td><b>30</b></td><td><b>0.3925</b></td><td><b>0.1525</b></td><td><b>93.3%</b></td><td><b>0.9292</b></td><td><b>⭐黄金区间</b></td></tr>
-<tr><td>L4</td><td>6-10</td><td>30</td><td>0.1151</td><td>0.1656</td><td>66.7%</td><td>0.6667</td><td>良好</td></tr>
-<tr><td>L5</td><td>10+</td><td>30</td><td>0.0656</td><td>0.1305</td><td>56.7%</td><td>0.5667</td><td>中等（过难）</td></tr>
-</table>
-<div class="box box-info"><b>关键洞察</b>：L3（3-5 APIs）是 GRPO 黄金区间——93.3% 任务有非零方差，advantage 非零率 93%。RL 课程应从 L3 起步。</div>
+<h3>R130: GRPO 课程整合 R5 过程奖励</h3>
+<div class="box box-ok">5 阶段训练计划 (550 步): Warmup→Foundation→Development→Refinement→Mastery。98.2% 可学率, signal_rate=0.992。防遗忘 replay 0→30%。verl YAML 配置 2513 chars。</div>
 
-<h2>3. R0++ 维度分解（NO-DOCS, 1200 样本）</h2>
-<table>
-<tr><th>维度</th><th>平均值</th><th>说明</th></tr>
-<tr><td>syntax_ok</td><td>62.3%</td><td>37.7% 语法错误（R0 完全忽略）</td></tr>
-<tr><td>api_coverage</td><td>0.6203</td><td>62% API 被提及（文本层面）</td></tr>
-<tr><td>ast_call_verified</td><td>0.4754</td><td>48% API 在 AST 调用中验证</td></tr>
-<tr><td>return_path</td><td>0.4133</td><td>41% 返回路径正确使用 API（最低）</td></tr>
-<tr><td>arg_plausibility</td><td>0.6233</td><td>62% 带参数 API 调用提供参数</td></tr>
-<tr><td>hardcode_detected</td><td>5.8%</td><td>硬编码检出率</td></tr>
-</table>
+<h3>R129: 错误恢复奖励塑形 R5 Process Reward</h3>
+<div class="box box-ok">R5 = 0.60×outcome + 0.20×recovery + 0.10×progress - 0.10×efficiency - antigame。7 轨迹原型验证: golden=0.90 > brute=0.51 > no_recovery=0.02。GRPO G=8 全 8 组非零优势。</div>
 
-<h2>4. 研究方向完成度</h2>
+<h3>R128: 3347 合成 RL 任务六维静态质量审计</h3>
+<div class="box box-ok">V1-V6 六维验证全部 100% 通过。solvability score=1.0。污染隔离 0 命中。API 覆盖 70.1%。</div>
+
+<h3>R127: SFT 黄金轨迹合成器</h3>
+<div class="box box-ok">从 103 条 DeepSeek 轨迹提取模式 → 合成 200 对 SFT 数据 (3 类: API usage / error recovery / multi-API)。269 unique API 覆盖。0 污染。525KB JSONL。</div>
+
+<h3>R118: R0++ GRPO 学习信号实证</h3>
+<div class="box box-ok">R0++ 50% 非零方差 vs R0 0%。L3 (3-5 APIs) 是 GRPO 黄金区间 (93.3% 非零方差)。hardcode_penalty 有效 (5.8% 检出)。</div>
+
+<h2>3. 研究方向完成度</h2>
 <table>
 <tr><th>方向</th><th>状态</th><th>关键结论</th></tr>
-<tr><td>R1: EDA 交互式 RL</td><td>✅ 回答</td><td>沙箱不可达→R0++ 作为 Phase 1 过渡；verl 集成 3 阶段设计完成</td></tr>
-<tr><td>R2: PyAether 造题与难度分层</td><td>✅ 回答</td><td>API 覆盖率评分零区分度→需执行正确性评分；规则分层+pass@8 均证实</td></tr>
-<tr><td>R3: 奖励设计与 GRPO 稳定性</td><td>✅ 实证</td><td>R0++ 50% 非零方差 vs R0 0%；L3 黄金区间 93%；hardcode_penalty 有效</td></tr>
-<tr><td>R4: 35% 侧失败模式分类</td><td>⬜ 等 GPU</td><td>DeepSeek 侧已完成（D1-D6 实测）；MiniCPM5-2B 侧需 GPU 后采集真实轨迹</td></tr>
+<tr><td>R1: EDA 交互式 RL</td><td>✅ 回答</td><td>沙箱不可达→R0++ 过渡; verl+SGLang 集成; MiniCPM5 parser patch; 多轮工具调用设计完成</td></tr>
+<tr><td>R2: PyAether 造题与难度分层</td><td>✅ 回答</td><td>500→3347 题扩展; 五层难度 L1-L5; 五维评分公式; 五模板断言; 六维质量审计 100% 通过</td></tr>
+<tr><td>R3: 奖励设计与 GRPO 稳定性</td><td>✅ 实证</td><td>R0→R0++→R2→R3→R5 进化; 4 臂奖励设计; GRPO 超参景观; 课程策略; Goldilocks zone</td></tr>
+<tr><td>R4: 35% 侧失败模式分类</td><td>⬜ 等 GPU</td><td>DeepSeek 侧 D1-D6 实测完成; MiniCPM5-2B 侧需 GPU 后采集真实轨迹</td></tr>
 </table>
 
-<h2>5. 对 RL 训练的直接指导</h2>
+<h2>4. 对训练的直接指导</h2>
 <div class="box box-info">
 <ol>
-<li><b>奖励函数</b>：R0++ 确认为 Phase 1 可用奖励。50% 非零方差率虽非完美，但比 R0 的 0% 是质的飞跃。</li>
-<li><b>课程学习</b>：从 L3（3-5 APIs）起步，这是 GRPO 信号最强的区间。</li>
-<li><b>难度过滤</b>：GRPO 训练前应过滤 std=0 的任务（剩余 50%），避免浪费 rollout 预算。</li>
-<li><b>Hacking 监控</b>：R0++ 的 hardcode_penalty 有效，但 5.8% hacking 率需在训练中持续监控。</li>
-<li><b>上下文长度</b>：WITH-DOCS 语法错误率更高（更长 prompt），SFT 阶段需平衡文档长度与准确率。</li>
+<li><b>SFT 目标</b>：L1 pass@1 ∈ [0.20, 0.48] (Goldilocks zone)。太低无法 bootstrap RL，太高导致 GRPO 信号崩溃。</li>
+<li><b>RL 课程</b>：5 阶段 (R130), 从 L1 Warmup → L4+L5 Mastery, 550 步, 98.2% 可学率。</li>
+<li><b>奖励</b>：R5 process reward (R129), outcome 60% + recovery 20% + progress 10% - efficiency 10% - antigame。</li>
+<li><b>RL 数据</b>：3347 验证任务 (R128), 六维审计 100% 通过, 难度分层 L1-L5。</li>
+<li><b>SFT 数据</b>：v5 语料 + R127 合成轨迹 (200 对) + 通用 60% / agentic 20% / v5 10% / R127 10%。</li>
+<li><b>预注册</b>：SFT checkpoint 选择准则 (4 红旗 4 次要), 成功阶梯 M1-M4, McNemar/paired bootstrap 统计检验 (R72)。</li>
+<li><b>反作弊</b>：R75 八维检测框架, PreToolUse hook, cheat rate 报告。</li>
 </ol>
 </div>
 
-<h2>6. 阻塞项与下一步</h2>
+<h2>5. 阻塞项与下一步</h2>
 <div class="box box-err">
 <ul>
-<li><b>GPU</b>：0/8 free。root SGLang Qwen3.8-27B 占全 8 卡（运行 53 天）。watcher PID2709455 轮询中。</li>
+<li><b>GPU</b>：0/8 free。root SGLang Qwen3.8-27B 占全 8 卡（运行 54 天, 0% util）。11/9 已过仍未释放。</li>
 <li><b>沙箱</b>：10.129.32.75 全端口 FILTERED。执行正确性奖励 BLOCKED。</li>
-<li><b>pretrain ckpt</b>：ETA≈2026-12-25（iter 112400/700000）。</li>
+<li><b>pretrain ckpt</b>：ETA≈2026-12-25（iter ~112400/700000）。</li>
 </ul>
 </div>
 <div class="box box-ok">
-<b>GPU 到位后第一件事</b>：vllm serve MiniCPM5-2B → 复测 36% 基线（5-run）→ 采集真实失败轨迹 → R0++ pass@8 profiling → 起第一轮 EDA 交互式 RL（替身预演）。
+<b>GPU 到位后第一件事</b>：vllm serve MiniCPM5-2B → 复测 36% 基线 (5-run) → 采集真实失败轨迹 → Goldilocks zone 实测验证 → R5 真实轨迹验证 → 起第一轮 EDA 交互式 RL。
 </div>
 
-<h2>7. 交付物清单</h2>
+<h2>6. 交付物清单（近 14 轮）</h2>
 <table>
-<tr><th>轮次</th><th>脚本</th><th>JSON</th><th>EXPERIMENTS</th></tr>
-<tr><td>R116</td><td>baize_posttrain_r116_pass8_profiling.py (360行)</td><td>1.6MB (NO+WITH-DOCS)</td><td>§R116</td></tr>
-<tr><td>R117</td><td>baize_posttrain_r117_exec_reward_arch.py (200行)</td><td>182KB</td><td>§R117</td></tr>
-<tr><td>R118</td><td>baize_posttrain_r118_r0pp_grpo_signal.py (335行)</td><td>1.19MB</td><td>§R118</td></tr>
+<tr><th>轮次</th><th>脚本</th><th>关键产出</th></tr>
+<tr><td>R131</td><td>baize_posttrain_r131_sft_rl_bridge.py (547行)</td><td>Goldilocks zone 5 层 + 预注册选择准则 + 失败模式 + RL 投影</td></tr>
+<tr><td>R130</td><td>baize_posttrain_r130_curriculum_integration.py (635行)</td><td>5 阶段课程 + 550 组模拟 + verl YAML</td></tr>
+<tr><td>R129</td><td>baize_posttrain_r129_error_recovery_reward.py (517行)</td><td>R5 奖励公式 + 7 轨迹原型 + GRPO 验证</td></tr>
+<tr><td>R128</td><td>baize_posttrain_r128_solvability_verifier.py (416行)</td><td>3347 题六维审计 + verified JSONL 5.7MB</td></tr>
+<tr><td>R127</td><td>baize_posttrain_r127_sft_trajectory_synthesizer.py (455行)</td><td>200 对合成 SFT + 269 API 覆盖 + 0 污染</td></tr>
+<tr><td>R126</td><td>baize_posttrain_r126_failure_trajectory_analyzer.py</td><td>103 轨迹 + 8 维度 + 99% 错误恢复发现</td></tr>
+<tr><td>R118</td><td>baize_posttrain_r118_r0pp_grpo_signal.py (335行)</td><td>R0++ GRPO 信号实证 + 难度梯度分析</td></tr>
+<tr><td>R72</td><td>baize_posttrain_stat_power_analysis.py (615行)</td><td>McNemar + paired bootstrap + 功效分析 + M1-M4 预注册</td></tr>
 </table>
 
-<p style="color:#666;font-size:12px;margin-top:40px">BaiZe-ISEDA2027 Post-Train Agent · 2026-11-09 · 本报告为滚动更新，原地覆盖</p>
+<p style="color:#666;font-size:12px;margin-top:40px">BaiZe-ISEDA2027 Post-Train Agent · 2026-11-10 R131 · 本报告为滚动更新，原地覆盖</p>
 </body>
 </html>

@@ -14,7 +14,7 @@ WAITING: 0
 - 阻塞: GPU 0/8free(root SGLang Qwen3.8-27B占全8卡44-45GB 0%util,11/9已过仍未释放);沙箱10.129.32.75全端口FILTERED;Docker无权限;P3等pretrain ckpt(ETA≈2026-12-25)
 - 本轮新增调研产出: R131 SFT-to-RL桥接分析(547行+Goldilocks zone 5层+预注册选择准则4红旗4次要+失败模式4类+温度效应+跨层迁移+5阶段RL投影0.55→0.843+敏感性分析10点+verl YAML+EXPERIMENTS §R131）
 - 未完成指令: 🔴用户令2026-11-07(GPU未到位,需持续产出调研) ⇒ WAITING=0
-- git: commit✅(27cbb431c) push⚠️(上轮超时,ahead 1,本轮补推)
+- git: commit✅(31724efb5) push✅(proxy+rebase+push,3commits补推成功)
 
 ## 关键事实（常驻）
 
