@@ -46,6 +46,17 @@ from collections import Counter
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 
+# R113: Auto-detect NAS_ROOT (same as baize_posttrain_paths.sh)
+from pathlib import Path as _Path
+if _Path("/nas_data/app.e0031982/code/super_intelligence_2035").exists() and \
+   not _Path("/nas_train/app.e0031982/code/super_intelligence_2035").exists():
+    NAS_ROOT = "/nas_data"
+elif _Path("/nas_train/app.e0031982/code/super_intelligence_2035").exists():
+    NAS_ROOT = "/nas_train"
+else:
+    NAS_ROOT = "/nas_data"
+
+
 PYAETHER_SFT_JSONL = os.path.join(SCRIPT_DIR, "sft_pyaether_corpus_v2.jsonl")
 EVAL_DATASET = os.path.expanduser(
     "~/code/eda_fastmcp/pyAether-eval/original_dataset/EDA-Eval-PyAether-v20260311.jsonl")
@@ -74,7 +85,7 @@ ULTRADATA_ESTIMATES = {
         "disk_size": "75.87 GB",
         "token_count": 18_890_000_000,
         "num_shards": 1504,
-        "nfs_path": "/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/sft_ultradata_2605",
+        "nfs_path": os.path.join(NAS_ROOT, "app.e0031982/code/BaiZe-ISEDA2027/data/sft_ultradata_2605"),
     },
     "agent": {
         "source": "UltraData-SFT-Agent-2609",
@@ -82,7 +93,7 @@ ULTRADATA_ESTIMATES = {
         "disk_size": "23.89 GB",
         "token_count": 5_970_000_000,
         "num_shards": 50,
-        "nfs_path": "/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/sft_agent_ultradata_2609",
+        "nfs_path": os.path.join(NAS_ROOT, "app.e0031982/code/BaiZe-ISEDA2027/data/sft_agent_ultradata_2609"),
     },
 }
 

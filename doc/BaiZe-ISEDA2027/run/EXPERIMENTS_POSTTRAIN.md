@@ -11719,3 +11719,94 @@ MiniCPM5-2B 模型路径完整：model-00000-of-00001.safetensors + config.json 
 - `r112_path_audit.json`（完整审计数据）
 - `reports/report_posttrain_r112_path_audit_zh.html`（19.7KB，自包含，0 script，0 外链）
 - 本节（EXPERIMENTS §R112）
+
+---
+
+## §R113 数据传输方案与路径修复（2026-11-09 · 零 GPU · R112 后续）
+
+> R112 发现 37 处路径问题（31 HIGH /nas_train）。R113 系统化审计全部 /nas_train 引用，修复实际硬编码路径，生成 rsync 数据传输脚本。
+
+### 1. /nas_train 引用系统化审计
+
+脚本 `baize_posttrain_r113_data_transfer_plan.py`（~370 行，Python3 stdlib，0 依赖）。
+
+扫描范围：所有 `baize_posttrain_*.{sh,py,yaml,json}` + `sft_blend_config.yaml` + `sft_curriculum_config.json`。
+
+| 类别 | 数量 | 说明 |
+|:--|--:|:--|
+| 总引用 | 83 | 所有包含 `/nas_train` 的行 |
+| HARDCODED | 49 | 含 `/nas_train/` 路径值的行（含审计脚本中的路径检查） |
+| AUTO_DETECT | 20 | if/elif 检查 /nas_train 存在性的正确模式 |
+| COMMENT | 14 | 注释行（良性） |
+
+> 注：49 "HARDCODED" 中，绝大多数在审计/研究脚本（r111/r112 等）中**合法引用** /nas_train 作为检查目标（"检查 .29/.12 上的路径是否存在"），非训练脚本中的数据路径。**实际需修复的硬编码**仅 `baize_posttrain_sft_data_mixer.py` 的 2 处 `nfs_path` 字段。
+
+### 2. 硬编码路径修复
+
+**文件**：`baize_posttrain_sft_data_mixer.py`
+
+| 修复项 | 修复前 | 修复后 |
+|:--|:--|:--|
+| 行 88 | `"nfs_path": "/nas_train/.../sft_ultradata_2605"` | `"nfs_path": os.path.join(NAS_ROOT, ".../sft_ultradata_2605")` |
+| 行 96 | `"nfs_path": "/nas_train/.../sft_agent_ultradata_2609"` | `"nfs_path": os.path.join(NAS_ROOT, ".../sft_agent_ultradata_2609")` |
+| 行 49-57 | 无 NAS_ROOT | 新增 NAS_ROOT 自动检测（同 paths.sh 模式） |
+
+验证：`py_compile` ✅ + `--dry-run` ✅（19524 samples, contamination CLEAR）。
+
+### 3. 数据可用性矩阵（.17 实测）
+
+| 数据 | 阶段 | .17 存在 | .bin/.idx | 需传输 | 大小 |
+|:--|:--|:--|:--|:--|--:|
+| SFT Agent (2609) | SFT | ❌ | ❌ | 是 | 23.89 GB |
+| SFT General (2605) | SFT | ❌ | ❌ | 是 | 75.87 GB |
+| Anneal Domain | Anneal | ❌ | ❌ | 是 | TBD |
+| Anneal Web | Anneal | ❌ | ❌ | 是 | TBD |
+| Anneal Code | Anneal | ❌ | ❌ | 是 | TBD |
+| Anneal Math | Anneal | ❌ | ❌ | 是 | TBD |
+| Tokenizer | All | ❌ | ❌ | 是 | TBD |
+| Pretrain ckpt | Anneal+SFT | ❌(.17) | — | 否(等pretrain) | — |
+| MiniCPM5-2B | Eval | ✅ | — | 否 | 4.7 GB |
+| EDA-Eval 158-case | Eval | ✅ | — | 否 | — |
+
+**7 项需传输**（SFT + 退火数据 + tokenizer），估计总量 ~100 GB（仅 SFT 已知大小）。
+
+### 4. 数据传输脚本
+
+**文件**：`baize_posttrain_data_transfer.sh`（3205 bytes，`bash -n` ✅）
+
+功能：
+- `--check`：SSH 探测 .29 源端数据是否存在
+- `--dry-run`：rsync dry-run 预演
+- `--sft`：传输 SFT 数据（Agent 23.89GB + General 75.87GB）
+- `--anneal`：传输退火数据（PyAether/mix_base/code/math/tokenizer）
+- `--verify`：传输后校验 .bin/.idx 文件完整性
+
+传输路径：`10.239.2.29:/nas_train/.../data/` → `.17:/nas_data/.../data/`
+预估时间：100GB @ 1Gbps ≈ 15min；@ 100Mbps ≈ 2.5h
+目标空间：/nas_data 20TB 可用，充足。
+
+### 5. 对训练流水线影响
+
+| 阶段 | 影响 | 说明 |
+|:--|:--|:--|
+| **RL（11/9 GPU 到位后第一件事）** | ✅ 不受影响 | RL parquet（3347行）已在 .17 本地，模型在 /nas_data/models/MiniCPM5-2B，venv 就绪 |
+| **SFT** | 🔴 受阻 | UltraData .bin/.idx 不在 .17，需 `baize_posttrain_data_transfer.sh --sft` 传输。但依赖 pretrain ckpt（ETA 2026-12-25），窗口充足 |
+| **退火** | 🔴 受阻 | 同上，退火数据也需传输。同样依赖 pretrain ckpt |
+
+### 6. 路径架构总结
+
+- `.17` 用 `/nas_data`（10.251.28.110:/train，127T，独立 NFS）
+- `.29/.12` 用 `/nas_train`（共享 NFS，同一块盘）
+- 两者是**不同的物理存储**，不互通
+- 所有训练脚本（.sh）已通过 `baize_posttrain_paths.sh` 自动适配
+- 关键 .py 文件（sft_data_mixer.py）已通过 R113 修复为 NAS_ROOT 自动检测
+- YAML 配置（sft_blend_config.yaml）已在 R112 修复为 /nas_data
+
+### 7. 交付物
+
+- `baize_posttrain_r113_data_transfer_plan.py`（~370 行，Python3 stdlib）
+- `baize_posttrain_data_transfer.sh`（3205 bytes，rsync 传输脚本，bash -n ✅）
+- `baize_posttrain_r113_report.json`（25KB，完整审计数据）
+- `reports/report_posttrain_r113_data_transfer_zh.html`（13.6KB，自包含，0 script，0 外链）
+- 本节（EXPERIMENTS §R113）
+- 修复：`baize_posttrain_sft_data_mixer.py`（2 处硬编码 → NAS_ROOT 自动检测）
