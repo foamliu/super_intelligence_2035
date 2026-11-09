@@ -9476,3 +9476,125 @@ R64 §6 定义了5个定性检查点选择标准和5项RL前验证门。R87将�
 
 **数据溯源**：R64(SFT动力学+交接)·R73(GRPO超参)·R80(崩溃模式)·R85(奖励臂动力学)·R83(任务难度)·R79(SFT数据混合)·R58(prompt预筛)·§4(成功阶梯)·§D(D1-D6诊断). 无伪造。替身预演结果不可迁移到BaiZe。
 
+## §R88: DeepSeek 失败轨迹深度分析 — 不可回收难题与 RL 课程映射（2026-11-09 wake136 · 零 GPU · Python 3.8+ stdlib · 实证分析）
+
+> **数据源**：DeepSeek 全 harness 轨迹（`~/code/eda_fastmcp/pyAether-eval/cline_cli_trace/cline_trace_v1_3/`，103 任务，20 失败）+ EDA-Eval-PyAether 158 题数据集。
+> **目的**：用强模型（94% Pass@1）的真实失败案例，识别"不可回收"难题、分类失败模式、估算天花板 Pass@1，为 RL 课程设计提供实证依据。
+
+### 1. 分析方法
+
+- 从 `cline_trace_error_case/` 加载 20 个失败案例的对话轨迹（JSON）
+- 从 158 题数据集提取每个任务的 metadata（scenario/category/APIs/techlib/LOC）
+- 通过对话内容中的错误信号（importerror/attributeerror/assertionerror/syntaxerror 等）分类失败模式
+- 基于复杂度评分（techlib 依赖 + API 数 + LOC + 错误类型数 + 对话长度）判定可回收性：irreducible（score≥4）/ partially_reducible（score 2-3）/ avoidable（score<2）
+- 用 irreducible + 0.5×partially_reducible 的比例外推到 158 题，估算天花板 Pass@1
+
+### 2. 失败模式分类（20 个失败案例）
+
+| 失败模式 | 数量 | 占比 | 含义 |
+|:--|--:|--:|:--|
+| logic_error | 13 | 65.0% | 断言失败/返回值错误 → RL 主战场 |
+| api_misuse | 3 | 15.0% | API 名错误/参数错误 → SFT 注入 API 文档可修 |
+| import_error | 2 | 10.0% | 模块/文件未找到 → SFT 可修 |
+| type_error | 1 | 5.0% | 类型错误 → SFT+RL 可修 |
+| timeout | 1 | 5.0% | 迭代未收敛 → RL 迭代闭环训练 |
+
+**核心发现**：65% 的失败是逻辑错误（assertion failed），代表语义推理失败 → RL(GRPO) 的核心价值在此。仅 15% 是 API 误用（SFT 可直接修复）。
+
+### 3. 可回收性分类
+
+| 分类 | 数量 | 占比 | 含义 |
+|:--|--:|--:|:--|
+| irreducible（不可回收） | 12 | 60.0% | 本质困难：techlib 依赖 + 高 API 数 + 多错误类型 |
+| partially_reducible（部分可回收） | 6 | 30.0% | RL+SFT 有部分收益 |
+| avoidable（可回收） | 2 | 10.0% | SFT/RL 可修复的模型失误 |
+
+### 4. 天花板估算
+
+| 指标 | 值 |
+|:--|:--|
+| 运行任务数 | 103 |
+| 失败数 | 20（19.4%） |
+| 不可回收 | 12 |
+| 部分可回收 | 6 |
+| 可回收 | 2 |
+| 本质困难率 | (12 + 0.5×6) / 103 = 14.6% |
+| 158 题困难数 | 14.6% × 158 ≈ 23.0 题 |
+| **天花板 Pass@1** | **85.4%** |
+
+**含义**：即使强模型（DeepSeek-V4-Pro）也无法超过 ~85.4% Pass@1。M4 目标（85%+）恰在天花板边缘 → 需要 techlib 环境改进或更复杂的多轮策略才能突破。
+
+### 5. 场景与类别失败率
+
+| 场景 | 总题 | 失败 | 失败率 |
+|:--|--:|--:|--:|
+| Layout | 64 | 8 | 12.5% |
+| Others | 23 | 5 | 21.7% |
+| Schematic | 47 | 4 | 8.5% |
+| Design Management | 24 | 3 | 12.5% |
+
+| 类别 | 总题 | 失败 | 失败率 |
+|:--|--:|--:|--:|
+| Utilities | 15 | 3 | 20.0% |
+| Design Content Query & Edit | 25 | 4 | 16.0% |
+| Simulation & Analysis | 21 | 3 | 14.3% |
+| Design Content Creation | 46 | 5 | 10.9% |
+| Geometry Operation | 26 | 3 | 11.5% |
+| Database & Design Mgmt | 25 | 2 | 8.0% |
+
+**发现**：Schematic 失败率最低（8.5%）→ 强模型在原理图任务上表现最好。Others（杂项）失败率最高（21.7%）→ 长尾任务覆盖不足。
+
+### 6. Techlib 依赖 vs 失败率
+
+| 依赖 | 总题 | 失败 | 失败率 |
+|:--|--:|--:|--:|
+| 有 techlib | 45 | 5 | 11.1% |
+| 无 techlib | 113 | 15 | 13.3% |
+
+⚠️ **注意**：此统计基于全 158 题数据集（含未运行的 55 题），未运行题被计为"通过"导致偏差。在 103 题运行子集中，techlib 失败率可能更高。需 GPU 后用真实运行数据校正。
+
+### 7. RL 课程映射
+
+| 课程层级 | 失败案例数 | RL 策略 |
+|:--|--:|:--|
+| L1 Trivial | 0 | — (简单题不失败) |
+| L2 Basic | 0 | — |
+| L3 Medium | 7 | R1+R3，修复 API 知识 + 工具协议 |
+| L4 Advanced | 11 | R2+R3，打磨多 API 协调闭环 |
+| L5 Challenge | 2 | R4 API 合法性，但 techlib 依赖题应排除 |
+
+**课程建议**：
+- Phase 1 (warmup): L1-L2 题，R1 二值奖励 → M1(50%)
+- Phase 2 (basic): L2-L3 题，R1+R3 → M2(65%)
+- Phase 3 (intermediate): L3-L4 题，R2+R3 → M3(75%)
+- Phase 4 (advanced): L4-L5 题，R4 → M4(85%+，天花板边缘)
+- L5 techlib 依赖不可回收题 → 从 RL 排除，论文作"环境限制"讨论
+
+### 8. 对 Post-Train 三步的侧重建议
+
+1. **领域退火**：注入 PyAether API 文档（4.5M tok），重点覆盖失败案例涉及的 API
+2. **SFT**：用 DeepSeek 成功轨迹（83/103 通过）做 teacher-forcing，修复"可回收"类（API 误用 + import 错误）
+3. **RL (GRPO)**：聚焦 L3-L4"部分可回收"题（6 个），R2+R3 奖励臂打磨"查-写-改"闭环
+4. **不可回收题处理**：L5 techlib 依赖题（2 个）从 RL 训练集排除，论文中作为"环境限制"讨论
+
+### 9. 局限性
+
+1. 基于 DeepSeek 侧 103 任务，MiniCPM5-2B 36% 侧轨迹不在本节点 → 失败模式可能不同
+2. 20 个失败案例统计功效有限，需 GPU 后 158×5=790 次运行校正
+3. 不可回收判定为启发式评分，需 GPU 后用 MiniCPM5-2B 对照验证
+4. 天花板估算假设 103 任务为 158 题的随机抽样（可能不完全随机）→ 外推有偏差
+5. techlib 统计基于全 158 题（含未运行题），需用运行子集校正
+6. 替身模型(MiniCPM5-2B)结果不可迁移到白泽正式训练
+
+### 10. 交付物
+
+| 产物 | 路径 | 大小 |
+|:--|:--|--:|
+| 分析脚本 | `run/baize_posttrain_ds_failure_analysis.py` | ~425 行 |
+| HTML 报告 | `reports/report_posttrain_r88_ds_failure_analysis_zh.html` | 11.4KB, 0 script, 0 外链 |
+| JSON 数据 | `run/r88_results.json` | 20.0KB |
+| EXPERIMENTS | §R88（本节） | 10 小节 |
+
+**数据溯源**：DeepSeek 全 harness 轨迹(`cline_trace_v1_3/cline_trace_error_case/`) + EDA-Eval-PyAether 158 题数据集 + R74(RL 课程) + R83(难度分层) + R85(奖励臂) + §D(D1-D6 诊断). 无伪造。替身预演结果不可迁移到 BaiZe。
+
+

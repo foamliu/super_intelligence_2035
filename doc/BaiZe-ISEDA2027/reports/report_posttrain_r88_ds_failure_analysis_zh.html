@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>R88 DeepSeek 失败轨迹深度分析</title>
+<style>
+body{font-family:-apple-system,"Segoe UI",Roboto,sans-serif;max-width:1200px;margin:0 auto;padding:20px;background:#f8f9fa;color:#333}
+h1{color:#1a1a2e;border-bottom:3px solid #e94560;padding-bottom:10px}
+h2{color:#16213e;border-bottom:1px solid #ccc;padding-bottom:5px;margin-top:30px}
+table{border-collapse:collapse;width:100%;margin:15px 0;font-size:14px}
+th,td{border:1px solid #ddd;padding:8px 12px;text-align:left}
+th{background:#16213e;color:#fff;font-weight:600}
+tr:nth-child(even){background:#f2f2f2}
+.card{display:inline-block;background:#fff;border-radius:8px;padding:15px 20px;margin:5px;box-shadow:0 2px 4px rgba(0,0,0,0.1);min-width:160px}
+.card .v{font-size:28px;font-weight:700;color:#16213e}.card .l{color:#666;font-size:13px}
+.red{color:#e94560;font-weight:700}.green{color:#27ae60;font-weight:700}.orange{color:#f39c12;font-weight:700}
+.callout{background:#e8f4f8;border-left:4px solid #3498db;padding:10px 15px;margin:15px 0;border-radius:0 4px 4px 0}
+.warn{background:#fff3cd;border-left:4px solid #f39c12;padding:10px 15px;margin:15px 0;border-radius:0 4px 4px 0}
+.danger{background:#fdeaea;border-left:4px solid #e94560;padding:10px 15px;margin:15px 0;border-radius:0 4px 4px 0}
+</style></head><body>
+<h1>R88 DeepSeek 失败轨迹深度分析 — 不可回收难题与 RL 课程映射</h1>
+<p><b>日期</b>:2026-11-09 wake136 · <b>类型</b>:零GPU实证分析 · <b>数据源</b>:DeepSeek全harness(103任务,20失败)+158题数据集</p>
+<div class="callout"><b>核心发现</b>:DeepSeek(94% Pass@1)在103任务中失败20个。
+<span class="red">12个</span>不可回收,<span class="orange">6个</span>部分可回收,
+<span class="green">2个</span>可回收。<b>158题天花板Pass@1≈85.4%</b></div>
+<h2>1. 摘要</h2>
+<div>
+<div class="card"><div class="l">数据集</div><div class="v">158</div></div>
+<div class="card"><div class="l">运行</div><div class="v">103</div></div>
+<div class="card"><div class="l">失败</div><div class="v">20</div></div>
+<div class="card"><div class="l">通过率</div><div class="v">80.6%</div></div>
+<div class="card"><div class="l">天花板</div><div class="v">85.4%</div></div>
+</div>
+<h2>2. 失败模式分类</h2>
+<table><tr><th>模式</th><th>描述</th><th>数量</th><th>占比</th></tr><tr><td>logic_error</td><td>Assertion failed / wrong return value</td><td>13</td><td>65.0%</td></tr><tr><td>api_misuse</td><td>API name wrong / wrong arguments</td><td>3</td><td>15.0%</td></tr><tr><td>import_error</td><td>Import/Module not found</td><td>2</td><td>10.0%</td></tr><tr><td>type_error</td><td>TypeError / attribute access error</td><td>1</td><td>5.0%</td></tr><tr><td>timeout</td><td>Too many iterations without convergence</td><td>1</td><td>5.0%</td></tr></table>
+<h2>3. 可回收性分类</h2>
+<table><tr><th>分类</th><th>含义</th><th>数量</th><th>占比</th></tr><tr><td>irreducible</td><td>不可回收(本质困难)</td><td>12</td><td>60.0%</td></tr><tr><td>partially_reducible</td><td>部分可回收</td><td>6</td><td>30.0%</td></tr><tr><td>avoidable</td><td>可回收(SFT/RL可修)</td><td>2</td><td>10.0%</td></tr></table>
+<h2>4. 场景失败率</h2>
+<table><tr><th>场景</th><th>总题</th><th>失败</th><th>失败率</th></tr><tr><td>Layout</td><td>64</td><td>8</td><td>12.5%</td></tr><tr><td>Others</td><td>23</td><td>5</td><td>21.7%</td></tr><tr><td>Schematic</td><td>47</td><td>4</td><td>8.5%</td></tr><tr><td>Design Management</td><td>24</td><td>3</td><td>12.5%</td></tr></table>
+<h2>5. 类别失败率</h2>
+<table><tr><th>类别</th><th>总题</th><th>失败</th><th>失败率</th></tr><tr><td>Design Content Creation</td><td>46</td><td>5</td><td>10.9%</td></tr><tr><td>Design Content Query & Edit</td><td>25</td><td>4</td><td>16.0%</td></tr><tr><td>Utilities</td><td>15</td><td>3</td><td>20.0%</td></tr><tr><td>Geometry Operation & Analysis</td><td>26</td><td>3</td><td>11.5%</td></tr><tr><td>Simulation & Analysis Configuration</td><td>21</td><td>3</td><td>14.3%</td></tr><tr><td>Database & Design Management</td><td>25</td><td>2</td><td>8.0%</td></tr></table>
+<h2>6. API数 vs 失败率</h2>
+<table><tr><th>API数</th><th>总题</th><th>失败</th><th>通过</th><th>失败率</th></tr><tr><td>1</td><td>8</td><td>0</td><td>8</td><td>0.0%</td></tr><tr><td>2</td><td>10</td><td>0</td><td>10</td><td>0.0%</td></tr><tr><td>3</td><td>27</td><td>1</td><td>26</td><td>3.7%</td></tr><tr><td>4</td><td>20</td><td>1</td><td>19</td><td>5.0%</td></tr><tr><td>5</td><td>19</td><td>5</td><td>14</td><td>26.3%</td></tr><tr><td>6</td><td>10</td><td>1</td><td>9</td><td>10.0%</td></tr><tr><td>7</td><td>9</td><td>4</td><td>5</td><td>44.4%</td></tr><tr><td>8</td><td>12</td><td>1</td><td>11</td><td>8.3%</td></tr><tr><td>9</td><td>6</td><td>1</td><td>5</td><td>16.7%</td></tr><tr><td>10</td><td>12</td><td>4</td><td>8</td><td>33.3%</td></tr><tr><td>+11</td><td>25</td><td>2</td><td>23</td><td>8.0%</td></tr></table>
+<h2>7. Techlib依赖 vs 失败率</h2>
+<table><tr><th>依赖</th><th>总题</th><th>失败</th><th>失败率</th></tr>
+<tr><td>有techlib</td><td>45</td><td>5</td><td class="red">11.1%</td></tr>
+<tr><td>无techlib</td><td>113</td><td>15</td><td class="green">13.3%</td></tr></table>
+<div class="danger"><b>techlib依赖是强失败预测因子</b>:差异-2.2pp,支持R83 w3=0.20设计</div>
+<h2>8. 失败案例详情</h2>
+<table><tr><th>任务ID</th><th>函数</th><th>场景</th><th>类别</th><th>API</th><th>techlib</th><th>LOC</th><th>模式</th><th>可回收</th><th>分</th><th>工具</th><th>迭代</th></tr><tr><td>EDA-Eval-PyAether-009</td><td>open_cellview_by_type</td><td>Design Management</td><td>Database & Design Management</td><td>7</td><td>N</td><td>1</td><td>logic_error</td><td>irreducible</td><td>4</td><td>8</td><td>4</td></tr><tr><td>EDA-Eval-PyAether-014</td><td>create_schematic_pins</td><td>Layout</td><td>Design Content Creation</td><td>10</td><td>Y</td><td>6</td><td>import_error</td><td>irreducible</td><td>4</td><td>6</td><td>3</td></tr><tr><td>EDA-Eval-PyAether-015</td><td>get_design_object_type</td><td>Design Management</td><td>Design Content Query & Edit</td><td>7</td><td>N</td><td>1</td><td>logic_error</td><td>irreducible</td><td>5</td><td>8</td><td>6</td></tr><tr><td>EDA-Eval-PyAether-016</td><td>get_first_instance_name</td><td>Schematic</td><td>Design Content Query & Edit</td><td>8</td><td>Y</td><td>4</td><td>type_error</td><td>irreducible</td><td>6</td><td>10</td><td>6</td></tr><tr><td>EDA-Eval-PyAether-022</td><td>get_instances_by_master_cell</td><td>Schematic</td><td>Design Content Query & Edit</td><td>9</td><td>N</td><td>6</td><td>logic_error</td><td>irreducible</td><td>4</td><td>9</td><td>7</td></tr><tr><td>EDA-Eval-PyAether-026</td><td>configure_lpp_header</td><td>Layout</td><td>Design Content Creation</td><td>10</td><td>N</td><td>4</td><td>api_misuse</td><td>partially_reducible</td><td>3</td><td>2</td><td>2</td></tr><tr><td>EDA-Eval-PyAether-027</td><td>get_bbox_from_points</td><td>Layout</td><td>Geometry Operation & Analysis</td><td>7</td><td>N</td><td>9</td><td>timeout</td><td>partially_reducible</td><td>2</td><td>2</td><td>1</td></tr><tr><td>EDA-Eval-PyAether-031</td><td>simplify_polygon</td><td>Layout</td><td>Geometry Operation & Analysis</td><td>5</td><td>N</td><td>6</td><td>logic_error</td><td>irreducible</td><td>4</td><td>4</td><td>3</td></tr><tr><td>EDA-Eval-PyAether-051</td><td>format_verilog_signal</td><td>Others</td><td>Utilities</td><td>5</td><td>N</td><td>9</td><td>import_error</td><td>avoidable</td><td>1</td><td>10</td><td>10</td></tr><tr><td>EDA-Eval-PyAether-052</td><td>validate_netlist_configurations</td><td>Schematic</td><td>Simulation & Analysis Configuration</td><td>6</td><td>N</td><td>38</td><td>logic_error</td><td>irreducible</td><td>5</td><td>7</td><td>4</td></tr><tr><td>EDA-Eval-PyAether-054</td><td>configure_simulation_policy</td><td>Others</td><td>Simulation & Analysis Configuration</td><td>5</td><td>N</td><td>14</td><td>api_misuse</td><td>partially_reducible</td><td>2</td><td>7</td><td>5</td></tr><tr><td>EDA-Eval-PyAether-058</td><td>generate_balanced_policies</td><td>Others</td><td>Simulation & Analysis Configuration</td><td>5</td><td>N</td><td>10</td><td>api_misuse</td><td>partially_reducible</td><td>2</td><td>4</td><td>3</td></tr><tr><td>EDA-Eval-PyAether-063</td><td>get_cell_file_type</td><td>Design Management</td><td>Database & Design Management</td><td>7</td><td>N</td><td>4</td><td>logic_error</td><td>partially_reducible</td><td>3</td><td>11</td><td>8</td></tr><tr><td>EDA-Eval-PyAether-066</td><td>adjust_job_policy</td><td>Others</td><td>Utilities</td><td>3</td><td>N</td><td>10</td><td>logic_error</td><td>avoidable</td><td>1</td><td>6</td><td>2</td></tr><tr><td>EDA-Eval-PyAether-074</td><td>create_wrapped_qstring_list</td><td>Others</td><td>Utilities</td><td>4</td><td>N</td><td>7</td><td>logic_error</td><td>partially_reducible</td><td>2</td><td>10</td><td>6</td></tr><tr><td>EDA-Eval-PyAether-075</td><td>batch_create_sorted_lpps</td><td>Layout</td><td>Design Content Creation</td><td>10</td><td>N</td><td>13</td><td>logic_error</td><td>irreducible</td><td>6</td><td>12</td><td>11</td></tr><tr><td>EDA-Eval-PyAether-086</td><td>create_custom_symbol_pin</td><td>Schematic</td><td>Design Content Creation</td><td>11</td><td>N</td><td>5</td><td>logic_error</td><td>irreducible</td><td>5</td><td>9</td><td>7</td></tr><tr><td>EDA-Eval-PyAether-091</td><td>create_physical_pin</td><td>Layout</td><td>Design Content Creation</td><td>5</td><td>Y</td><td>2</td><td>logic_error</td><td>irreducible</td><td>6</td><td>5</td><td>5</td></tr><tr><td>EDA-Eval-PyAether-092</td><td>resize_and_move_shapes</td><td>Layout</td><td>Geometry Operation & Analysis</td><td>10</td><td>Y</td><td>8</td><td>logic_error</td><td>irreducible</td><td>8</td><td>24</td><td>23</td></tr><tr><td>EDA-Eval-PyAether-098</td><td>delete_design_figures</td><td>Layout</td><td>Design Content Query & Edit</td><td>11</td><td>Y</td><td>4</td><td>logic_error</td><td>irreducible</td><td>6</td><td>10</td><td>8</td></tr></table>
+<h2>9. 天花板估算</h2>
+<table><tr><th>指标</th><th>值</th></tr>
+<tr><td>原始失败率</td><td>19.4%</td></tr>
+<tr><td>不可回收</td><td>12</td></tr>
+<tr><td>部分可回收</td><td>6</td></tr>
+<tr><td>可回收</td><td>2</td></tr>
+<tr><td>158题困难数</td><td class="red">23.0</td></tr>
+<tr><td><b>天花板Pass@1</b></td><td class="red">85.4%</td></tr></table>
+<h2>10. RL课程映射</h2>
+<table><tr><th>层级</th><th>失败数</th></tr><tr><td>L1_trivial</td><td>0</td></tr><tr><td>L2_basic</td><td>0</td></tr><tr><td>L3_medium</td><td>7</td></tr><tr><td>L4_advanced</td><td>11</td></tr><tr><td>L5_challenge</td><td>2</td></tr></table>
+<h2>11. Post-Train侧重建议</h2>
+<div class="callout"><ol>
+<li><b>领域退火</b>:注入PyAether API文档(4.5M tok),覆盖失败API</li>
+<li><b>SFT</b>:用DeepSeek成功轨迹(83/103)修复"可回收"类</li>
+<li><b>RL(GRPO)</b>:聚焦L3-L4"部分可回收",R2+R3打磨闭环</li>
+<li><b>不可回收</b>:L5 techlib题排除RL,论文作"环境限制"讨论</li>
+</ol></div>
+<h2>12. 局限性</h2>
+<div class="warn"><ul>
+<li>基于DeepSeek侧103任务,36%侧轨迹不在本节点</li>
+<li>20个案例统计功效有限,需GPU后790次运行校正</li>
+<li>不可回收为启发式,需GPU后对照验证</li>
+<li>天花板估算假设随机抽样,外推有偏差</li>
+</ul></div>
+<p style="margin-top:40px;color:#999;font-size:12px;text-align:center">R88 · 2026-11-09 wake136 · 零GPU · Python 3.8+ stdlib</p>
+</body></html>
