@@ -507,6 +507,23 @@
       "paper": "pdflatex compile check (this round)",
       "mc30": 2247,
       "hosts": 696
+    },
+    "r300": {
+      "date": "2026-11-10",
+      "scan_dir": "ssh_eda_search_20261109_224902",
+      "no_new_scan": true,
+      "consecutive_mgmt_round": "r299-r300 (still r292 scan, 2nd since full rescan)",
+      "mc30": 2247,
+      "dedup_sessions": 5999,
+      "users_mc30": 401,
+      "hosts": 696,
+      "daily_log_20261110_lines": 2981,
+      "daily_log_healthy": true,
+      "new_sessions": 0,
+      "case_delivered": "EDA-Eval-DesignFlow-VcsIpdSverilogFix-001 (verification, A-faithful, L1-static, k=14)",
+      "trace": "1793241722276_abtf1 (lorikx@hfeg0pkn004, mc132) -> case",
+      "finding": "r300 = abtf1 full deepread + case build (DEBT from r299 CLEARED). scansync r300: no new scan (still r292 ssh_eda_search_20261109_224902, mc30=2247/dedup=5999/users=401/hosts=696 unchanged), daily log 20261110 healthy 2981 lines. abtf1 deepread (136msgs/1.6MB): USER#1 clean A-faithful produce-task 'sim下的仿真 最新一次有10个error请检查并修改代码'; root cause = VCS V2001 parser IPD on 10 output realtime dbg_* ports; fix = -sverilog in VCS_FLAGS+CR_ABSORB_VCS_FLAGS + FAULT_ARGS +defect_bit->+defect_bit_left + sp_sram.v comment. Case = spec-driven generator gen_vcs_ipd_fix.py (14 conds a-n), gold PASS 14/14 + 4 negs FAIL + 3 fakes FAIL. A.jsonl 191->192. shard A clean digital A-faithful produce still scarce (4th confirmation r295/r296/r299/r300): abtf1 was the only clean produce in the 274-fresh pool; strong-digital marker noisy.",
+      "updated_at": "2026-11-10T04:35:00+08:00"
     }
   },
   "sessions": 38082,

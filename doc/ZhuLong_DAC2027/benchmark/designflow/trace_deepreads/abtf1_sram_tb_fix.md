@@ -33,3 +33,11 @@
 
 ## Ledger status
 - claimed in trace_ledger_A.tsv at r299 (status=claimed, domain=verification).
+
+## r300 case build (DONE 2026-11-10)
+- Full deepread of 136 msgs: USER#1 (idx=0) 逐字「sim下的仿真 最新一次有10个error，请检查并修改代码」= clean A-faithful produce-task (提出需求未给根因 ✓). USER#25 = paste of tb_sram_sp.sv v7.0 header (file context, not a demand). 其余 user turns = "继续" nudges.
+- Root cause (assistant tool chain): VCS 默认 V2001 parser 对 sp_sram.v 的 10 个 `output realtime dbg_*` ANSI 端口报 `Error-[IPD] Identifier previously declared` (IPD); 经 /tmp/vcs_ipd_test 最小复现确认 `output realtime`/`output real` 触发 IPD, `output integer`/`output reg` 不触发.
+- Fix (3 edits): ① sim/Makefile + inst_sim/Makefile 的 VCS_FLAGS 与 CR_ABSORB_VCS_FLAGS 加 `-sverilog` (切 SV parser 清 10 IPD 错误); ② FAULT_ARGS 由 `+defect_bit` 改 `+defect_bit_left` (默认 + 6 个 fi/cm1 target 调用), 与 RTL defect_bit_left 实现对齐; ③ rtl/sp_sram.v 行 1019-1025 加注释说明 IPD bug + -sverilog fix. 验证: cm1_all 全回归 PASS (compile rc=0, 0 errors).
+- Case design (spec-driven-generator, matching SvTbBugFix-001 pattern): **EDA-Eval-DesignFlow-VcsIpdSverilogFix-001** (verification, A-faithful, L1-static, k=14). Generator gen_vcs_ipd_fix.py 按 spec 产 fixed Makefile + ipd_fix_notes.md: 两个编译变量块都插 flag_to_add, FAULT_ARGS 默认+各 fi/cm1 target 都用 fault_args_new, 头注释含 IPD/ipd_error_count/dbg_port_prefix/dbg_port_total. A=spec_a faithful (lorikx/CXMT_SPSRAM_1028_v21/-sverilog/10 IPD/dbg_/30 ports/+defect_bit→+defect_bit_left/6 fi targets); hidden B=spec_b isomorphic (w0047129/CXMT_SPSRAM_2048_v33/14 IPD/tdbg_/42 ports/+defect_bit→+defect_bit_right/cm1_all_64x16).
+- check.py 14 条断言 a-n; 自验: gold PASS 14/14 + 4 negatives (noop/hardcode_a/stub/keep_bug) 全 FAIL + §4.9 (a空壳 b print-only c core-deleted) 全 FAIL. 断言闸门 k_rationale=k_check=14≥8 ✓. test_sha8=bcfba184 test==disk check.py ✓.
+- 追加 EDA-Eval-DesignFlow_A.jsonl (191→192); ledger mark abtf1→case (case_id=VcsIpdSverilogFix-001). 泄漏隔离 OK (assets 无 check.py/reference/jsonl/test).
