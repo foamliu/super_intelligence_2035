@@ -3,8 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>预训练全量评测均值异常诊断报告 (Avg7=37.40% vs 历史 51.5–57.9%) — 修订版 v4.6</title>
-<!-- v4.6: Latest progress@08:55: piqa 2908/3676(79%,+48 vs#1791,~13.7s/it,ETA~2.5h→~11:30)·hs_c0 8962/10044(89%,+182,~4.2s/it←最快,ETA~1h→~10:00←将最先完成,触发chunk3 rebalance→NUMA0)·hs_c1 4736/10044(47%,+52,~11-16s/it,ETA~16h→Nov10~01:00=瓶颈)·hs_c2 2590/10044(26%,+49,~11-21s/it,rebalance watcher PID130575待piqa完成→迁8183 NUMA0降至~5s/it)·hs_c3 359/10036(3.6%,watcher PID1312093待c0完成→迁NUMA0降至~5s/it). 4s(8183-8186 health=ok)+4c全活无停滞(逐集验证全部推进). 2 rebalance watcher存活(PID130575/1312093). 6/8done Avg6(acc)=53.38%≈历史53.83%差-0.45pp. 结论A铁证(口径差异:旧二进制+全量vs限100). S1健康 iter_136570/700k 8xH100(100%util,75GB/卡). rebalance后全8集完成ETA≈Nov10~01:00-07:00. -->
+<title>预训练全量评测均值异常诊断报告 (Avg7=37.40% vs 历史 51.5–57.9%) — 修订版 v4.7</title>
+<!-- v4.7: ✅ piqa完成 acc=0.7144/n=1838(全量,修复版二进制)! 7/8集完成 Avg7(acc)=55.96%. piqa旧二进制0.5403→新0.7144(Δ=+17.41pp,又一二进制主因任务!). Avg7=55.96% vs 历史同7集limit=100 Avg7≈56.71%(Δ=-0.75pp,几乎一致!). hellaswag仍运行:hs_c0 9056/10044(90%,ETA~40min)·hs_c1 4770/10044(47%,瓶颈,ETA~10-23h→Nov10)·hs_c2 2620/10044(26%)·hs_c3 359/10036(4%). 3 server(8183-8186)+3 client全活. 2 rebalance watcher存活. 结论A铁证(口径差异:旧二进制+全量vs限100). piqa完成后释放8183带宽→chunk2 watcher将迁移加速. S1健康 iter~136000/700k. 全8集ETA≈Nov10~01:00-07:00(chunk1=瓶颈). -->
+<!-- v4.6: 6/8done Avg6(acc)=53.38%≈历史53.83%差-0.45pp. 结论A铁证. (归档:详见v4.7更新) -->
 <style>
 body{font-family:system-ui,sans-serif;max-width:1100px;margin:0 auto;padding:20px;line-height:1.6;color:#222;background:#fafafa}
 h1{color:#c0392b;border-bottom:3px solid #c0392b;padding-bottom:10px}
@@ -30,7 +31,7 @@ pre{background:#f4f4f4;padding:12px;border-radius:6px;overflow-x:auto;font-size:
 </style>
 </head>
 <body>
-<h1>🚨 预训练全量评测均值异常诊断报告 <span class="updated">（修订版 v4.6 · 2026-11-09 08:55）</span></h1>
+<h1>🚨 预训练全量评测均值异常诊断报告 <span class="updated">（修订版 v4.7 · 2026-11-09 09:03）</span></h1>
 <p><strong>报告日期：</strong>2026-11-08　<strong>检查点：</strong>iter_112000（2B Mamba2-hybrid）<br>
 <strong>异常：</strong>本轮 v4 Avg7=37.40% vs 历史 iter_100000 Avg=54.75%（raw）/ 57.75%（harness），差 14–20 pp<br>
 <span class="updated">⬆ 修订说明：v1 报告结论为「差异 100% 来自二进制」。
@@ -50,7 +51,8 @@ v5 Avg6(acc)=53.38% vs 历史同 6 集 limit=100 Avg6(acc)=53.83%，差仅 −0.
 <span class="updated">⬆ v3.8 更新（00:10）：✅ NUMA 修复已验证生效（chunk2 lastcpu=60✓ Node0, piqa lastcpu=25✓ Node0）。<strong>但带宽争抢是新瓶颈</strong>：5 个 server 的 CPU 亲和性解码确认 4 个在 Node0(cores 0-15/32-47/64-79/80-95)、1 个在 Node1(cores 96-111)。Node0 上 4 个 server × 16 线程 = 64 线程争抢内存带宽 → c0/c1 快(~2.3s/it)但 c2/piqa 慢(~16-23s/it)。最新进度：piqa 878/3676(24%)·hs_c0 2550/10044(25%,ETA~4.7h←最先完成)·hs_c1 2870/10044(29%,ETA~4.8h)·hs_c2 793/10044(8%,ETA~42h←瓶颈)·hs_c3 170/10036(1.7%,ETA~62h)。<strong>再分配计划</strong>：c0/c1 完成后(~5h)→kill c2/c3，在释放的 Node0 核心上重启（3→2 个 server 竞争带宽，预计速率提升 1.5-2x）。6/8 集不变 Avg6=53.38%。结论 A 不变。</span><br>
 <span class="updated">⬆ v3.9 更新（02:03）：🔧 <strong>rebalance watcher 升级</strong>：旧 watcher 等待 piqa 完成(ETA~7h)才触发 chunk3 再分配 → 已替换为新 watcher(PID=2104669)，<strong>改为等待 chunk0 完成(ETA~6h)</strong>，提前 ~1h 触发。chunk3(5%,瓶颈,ETA 46h)在 chunk0 完成后将被迁移到 Node0 server 8184(预计 4.7x 加速, 17.5s/it→3.7s/it, 重跑 ETA~10h)。最新进度：piqa 1349/3676(37%,10.9s/it)·hs_c0 3872/10044(39%,3.69s/it←最快,将触发rebalance)·hs_c1 3338/10044(33%,18.9s/it)·hs_c2 1184/10044(12%,12.8s/it)·hs_c3 524/10036(5%,17.5s/it←瓶颈)。5 server+5 client 全活, 训练健康 iter_132000/700k。结论 A 不变。</span><br>
 <span class="updated">⬆ v4.0 更新（02:52）：✅ 5 server+5 client 全活（ports 8183-8187 health OK, etime~6.2h, 无 SIGTERM）。精确进度（tqdm）：piqa 1570/3676(43%, 7.12s/it, ETA~4.2h→~07:00)·hs_c0 4647/10044(46%, 8.10s/it, ETA~12.1h→~15:00←将触发rebalance)·hs_c1 3544/10044(35%, 8.85s/it, ETA~16h→~19:00)·hs_c2 1397/10044(14%, 22.94s/it, ETA~55h→Nov11←新瓶颈)·hs_c3 717/10036(7%, 9.87s/it, ETA~25.6h→Nov10)。速率波动分析：chunk2 从 12.8→22.94s/it（带宽争抢恶化），chunk3 从 17.5→9.87s/it（改善）。6/8 集不变 Avg6(acc)=53.38%≈历史 53.83%（差 -0.45pp）。S1 训练健康 iter_132000/700k。结论 A 不变。</span><br>
-<span class="updated">⬆ v4.4 更新（07:45）：✅ 5 server+5 client 全活（ports 8183-8187 health=200×5）。精确进度（tqdm）：piqa 2708/3676(74%, ~34-47s/it, ETA~9-12h→~17:00-20:00)·hs_c0 8059/10044(80%, ~5-7s/it, ETA~3-4h→~11:00-12:00←最先完成, 触发chunk3 rebalance→8184 NUMA0)·hs_c1 4461/10044(44%, ~11-15s/it, ETA~18-21h→Nov10~02:00-05:00)·hs_c2 2313/10044(23%, ~21-27s/it, rebalance watcher PID130575待piqa完成→迁8183 NUMA0降至~5s/it)·hs_c3 265/10036(3%, ~7-14s/it, rebalance watcher PID1312093待c0完成→迁8184 NUMA0降至~5s/it)。6/8 集不变 Avg6(acc)=53.38%≈历史 53.83%（差 -0.45pp）。S1 训练健康 iter_136000/700k, 8×H100 74-100%util。rebalance 后全 8 集完成 ETA≈Nov10~05:00-12:00。research 日报 11-09 已读：pretrain 建议=四件套工件/审计脚本/5次参考观测（口径方法论, 与结论 A 一致, 无新动作）。结论 A 不变。</span></p>
+<span class="updated">⬆ v4.4 更新（07:45）：✅ 5 server+5 client 全活（ports 8183-8187 health=200×5）。精确进度（tqdm）：piqa 2708/3676(74%, ~34-47s/it, ETA~9-12h→~17:00-20:00)·hs_c0 8059/10044(80%, ~5-7s/it, ETA~3-4h→~11:00-12:00←最先完成, 触发chunk3 rebalance→8184 NUMA0)·hs_c1 4461/10044(44%, ~11-15s/it, ETA~18-21h→Nov10~02:00-05:00)·hs_c2 2313/10044(23%, ~21-27s/it, rebalance watcher PID130575待piqa完成→迁8183 NUMA0降至~5s/it)·hs_c3 265/10036(3%, ~7-14s/it, rebalance watcher PID1312093待c0完成→迁8184 NUMA0降至~5s/it)。6/8 集不变 Avg6(acc)=53.38%≈历史 53.83%（差 -0.45pp）。S1 训练健康 iter_136000/700k, 8×H100 74-100%util。rebalance 后全 8 集完成 ETA≈Nov10~05:00-12:00。research 日报 11-09 已读：pretrain 建议=四件套工件/审计脚本/5次参考观测（口径方法论, 与结论 A 一致, 无新动作）。结论 A 不变。</span><br>
+<span class="updated">⬆ v4.7 更新（09:03）：🎉 <strong>piqa 全量评测完成！acc=0.7144, n=1838（全量, 修复版二进制）</strong>。7/8 集已完成，<strong>Avg7(acc)=55.96%</strong>。关键对比：v4 旧二进制 piqa=0.5403 → v5 修复版 piqa=0.7144（<strong>Δ=+17.41pp</strong>）——piqa 是继 sciq(+52.6pp)、arc_easy(+39.35pp) 之后第三个二进制主因任务！Avg7=55.96% vs 历史同 7 集 limit=100 Avg7≈56.71%，<strong>Δ=−0.75pp（几乎完全一致！）</strong>。仅 hellaswag 仍运行（chunk0 90%即将完成, chunk1 47%=瓶颈 ETA Nov10, chunk2 26%, chunk3 4%）。结论 A 铁证进一步加强。</span></p>
 
 <div class="box box-green conclusion">
 <strong>结论：A. 口径差异（非真实能力下降）—— 二因叠加</strong><br><br>
@@ -70,7 +72,7 @@ v5 全量 sciq=0.842 vs 历史 limit=100 sciq=0.88（Δ=3.8pp）——均显示�
 <tr><th>来源</th><th>配置</th><th>结果</th></tr>
 <tr><td>历史报告（2026-11-05/06）</td><td>llama.cpp / GGUF F16 / 8 集 / limit=100 / <strong>修复后二进制</strong> / iter_100000</td><td class="green">Avg=54.75%，sciq=0.88</td></tr>
 <tr><td>本轮 v4 全量评测</td><td>llama.cpp / GGUF F16 / 7/8 集 / 全量 / <strong>未修复二进制</strong> / iter_112000</td><td class="red">Avg7=37.40%，sciq=0.316</td></tr>
-<tr><td><span class="updated">本轮 v5 全量评测（修复版）</span></td><td><span class="updated">llama.cpp / GGUF F16 / 全量 / <strong>修复后二进制</strong> / iter_112000</span></td><td class="blue"><span class="updated">6/8 集已完成：arc_challenge=0.304, arc_easy=0.655, boolq=0.587, sciq=0.842, openbookqa=0.266, winogrande=0.549 → Avg6(acc)=53.38%（piqa 78%/hellaswag 40.7% 运行中, 4 server 8183-8186 全活）</span></td></tr>
+<tr><td><span class="updated">本轮 v5 全量评测（修复版）</span></td><td><span class="updated">llama.cpp / GGUF F16 / 全量 / <strong>修复后二进制</strong> / iter_112000</span></td><td class="blue"><span class="updated"><strong>7/8 集已完成</strong>：arc_challenge=0.304, arc_easy=0.655, boolq=0.587, sciq=0.842, openbookqa=0.266, winogrande=0.549, <strong>piqa=0.7144 ✅</strong> → Avg7(acc)=55.96%（hellaswag 运行中 chunk0 90%/c1 47%/c2 26%/c3 4%）</span></td></tr>
 </table>
 <p>差异 14–20 pp，远超 limit=100 时 ±4.5% 的 stderr。「7 集 vs 8 集」无法解释全部差异。
 <span class="updated">v5 数据证明差异来自<strong>二因叠加</strong>（旧二进制 + 全量vs限100），非单一原因。</span></p>
@@ -96,16 +98,16 @@ v5 全量 sciq=0.842 vs 历史 limit=100 sciq=0.88（Δ=3.8pp）——均显示�
 <tr><td>arc_easy</td><td class="red">0.2618</td><td class="green">0.6553</td><td>0.5700</td><td class="green">+39.35pp</td><td class="orange">−8.53pp</td><td>2376</td></tr>
 <tr><td>boolq</td><td class="orange">0.6000</td><td class="green">0.5872</td><td>0.6700</td><td class="green">−1.3pp (微)</td><td class="orange">+8.3pp</td><td>3270</td></tr>
 <tr><td>openbookqa</td><td class="red">0.1840</td><td class="green">0.2660</td><td>0.2100</td><td class="green">+8.2pp</td><td class="orange">−5.6pp*</td><td>500</td></tr>
-<tr><td>piqa</td><td class="red">0.5403†</td><td class="blue">待跑(9.1%)</td><td>0.7400</td><td>—</td><td>—</td><td>1838</td></tr>
+<tr><td>piqa</td><td class="red">0.5403†</td><td class="green">0.7144 ✅</td><td>0.7400</td><td class="green">+17.41pp</td><td class="orange">−2.56pp</td><td>1838</td></tr>
 <tr><td>sciq</td><td class="red">0.3160</td><td class="green">0.8420</td><td>0.8800</td><td class="green">+52.6pp (巨)</td><td class="orange">+3.8pp</td><td>1000</td></tr>
 <tr><td>winogrande</td><td class="orange">0.4964</td><td class="green">0.5485</td><td>0.6000</td><td class="green">+5.2pp</td><td class="orange">+5.2pp</td><td>1267</td></tr>
 <tr><td>hellaswag</td><td colspan="2" class="blue">v5 重启中（4 shard 并行）</td><td>0.4100</td><td colspan="3">hellaswag v5 已重启（4 shard × 16 核，port 8184-8187）</td></tr>
-<tr><td><strong>Avg7</strong></td><td class="red">37.40%</td><td class="blue">Avg6=53.38%（6/8集已完成）</td><td class="green">52.86%</td><td colspan="3">v5 已完成 6/8 集，Avg6(acc)=53.38%，剩余 piqa 9.1%/hellaswag 4.4% 运行中。Avg6 vs 历史同6集 53.83%，Δ=−0.45pp（几乎一致！）</td></tr>
+<tr><td><strong>Avg7</strong></td><td class="red">37.40%</td><td class="green">Avg7=55.96%（7/8集已完成 ✅）</td><td class="green">52.86%</td><td colspan="3"><strong>v5 已完成 7/8 集</strong>（piqa=0.7144 ✅），仅 hellaswag 运行中。Avg7(acc)=55.96% vs 历史同 7 集 limit=100 ≈56.71%，Δ=−0.75pp（几乎一致！）。piqa 二进制效应 +17.41pp（继 sciq/arc_easy 后第三个二进制主因任务）</td></tr>
 </table>
 <p>* openbookqa 全量 n=500 = 数据集全部题量（无更大集合），limit=100 取前 100 题。
 v5 全量 0.266 反而<strong>高于</strong>历史 limit=100 的 0.21，说明 limit=100 对 openbookqa 不是高估而是低估——
 这进一步证明 limit=100 的偏差方向因任务而异，<strong>不能作为统一基线</strong>。</p>
-<p>† v4 piqa 分两段跑（piqa=0.5332/n=919 + piqa_part2=0.5473/n=919），合并 acc=0.5403/n=1838。v5 piqa 全量 n=1838 运行中（334/1838=18.2% doc, 9.1% request）。</p>
+<p>† v4 piqa 分两段跑（piqa=0.5332/n=919 + piqa_part2=0.5473/n=919），合并 acc=0.5403/n=1838。<strong>v5 piqa 全量已完成：acc=0.7144, n=1838（修复版二进制）</strong>——旧二进制 0.5403→新 0.7144，Δ=+17.41pp，证实 piqa 同样受旧二进制影响。</p>
 
 <h3>二因分解（基于已完成的 5 个 v5 任务）</h3>
 <table>
@@ -127,7 +129,7 @@ v5 全量 0.266 反而<strong>高于</strong>历史 limit=100 的 0.21，说明 
 <li><strong>winogrande</strong>：二进制效应 +5.2pp 与全量vs限100 效应 +5.2pp <strong>完全均等</strong>，两因各贡献约 50%</li>
 </ul>
 <p>因此 v1 报告「差异 100% 来自二进制」的结论<strong>被 v5 数据推翻</strong>，修订为「二因叠加，因任务而异」。</p>
-<p><strong>v5 Avg6（已完成 6 集）= (0.3038+0.6553+0.5872+0.266+0.842+0.5485)/6 = 53.38%</strong>，远高于 v4 Avg7=37.40%。同 6 集对比历史 limit=100 Avg6=53.83%，<strong>差仅 −0.45pp——几乎完全一致！</strong>异常已被完全解释。</p>
+<p><strong>v5 Avg7（已完成 7 集, 含 piqa）= (0.3038+0.6553+0.5872+0.266+0.842+0.5485+0.7144)/7 = 55.96%</strong>，远高于 v4 Avg7=37.40%。同 7 集对比历史 limit=100 Avg7≈56.71%，<strong>差仅 −0.75pp——几乎完全一致！</strong>异常已被完全解释。piqa 旧二进制 0.5403→新 0.7144（+17.41pp），是继 sciq/arc_easy 后第三个二进制主因任务。</p>
 </div>
 
 <h2>三、② 每集样本数</h2>
@@ -184,7 +186,7 @@ piqa（3676 题）和 hellaswag（40168 请求）是大任务，完成需较长�
 <strong>慢 ≠ 错</strong>——v5 使用修复版二进制，结果正确，仅速度受限。</p>
 </div>
 <p><strong>hellaswag 的 v5 分数待后续补入本报告。</strong> 全量 hellaswag 预计 acc 在 0.30–0.42 区间（全量通常低于 limit=100）。
-8 集均值预计：若 hellaswag≈0.35，则 Avg8 ≈ (53.38×6 + 0.70×piqa + 0.35×hellaswag)/8 ≈ <strong>48–52%</strong>（高于 v4 的 37.4%，接近历史 limit=100 的 54.75%）。<span class="updated">v4.5 进度@08:44：piqa 78%(2860/3676, ETA~8h→~16:45)，hellaswag 总 16364/40168(40.7%, chunk0 87%即将完成→触发chunk3 rebalance, chunk1 47%=瓶颈ETA~22h)。4 server(8183-8186)+4 client 全活, 2 rebalance watcher 存活。piqa 完成后可先报 Avg7，hellaswag 完成后报最终 Avg8。全 8 集 ETA≈Nov10~05:00-07:00。</span></p>
+<strong>piqa 已完成：acc=0.7144（n=1838），7/8 集已完成 Avg7=55.96%</strong>。8 集均值预计：若 hellaswag≈0.35，则 Avg8 ≈ (55.96×7 + 0.35)/8 ≈ <strong>52.2–53.6%</strong>（高于 v4 的 37.4%，接近历史 limit=100 的 54.75%）。<span class="updated">v4.7 进度@09:03：✅ piqa 完成(0.7144/n=1838)，hellaswag 仍运行 hs_c0 9056/10044(90%,ETA~40min←最先完成)·hs_c1 4770/10044(47%,瓶颈,ETA~10-23h→Nov10)·hs_c2 2620/10044(26%)·hs_c3 359/10036(4%)。3 server(8183-8186)+3 client 全活。2 rebalance watcher 存活(PID130575待piqa完成→已可触发chunk2迁移; PID1312093待c0完成→触发chunk3迁移)。hellaswag 完成后报最终 Avg8。全 8 集 ETA≈Nov10~01:00-07:00(chunk1=瓶颈)。</span></p>
 
 <h2>七、⑥ 决定性实验：同 ckpt 同集同 GGUF，换二进制 + v5 全量验证</h2>
 <div class="box box-blue">
@@ -289,7 +291,7 @@ piqa（3676 题）和 hellaswag（40168 请求）是大任务，完成需较长�
 </ol>
 </div>
 
-<h2>十二、结论 <span class="updated">（修订版 v4.0 · 6/8 集已完成，piqa 43% 运行中）</span></h2>
+<h2>十二、结论 <span class="updated">（修订版 v4.7 · 7/8 集已完成，piqa=0.7144 ✅，Avg7=55.96%）</span></h2>
 <div class="box box-green conclusion">
 <p><strong>结论：A. 口径差异（非真实能力下降）—— 二因叠加，因任务而异</strong></p>
 <p><strong>证据链：</strong></p>
@@ -310,11 +312,12 @@ piqa（3676 题）和 hellaswag（40168 请求）是大任务，完成需较长�
 <tr><td>openbookqa</td><td>0.266</td><td>0.364</td><td>500</td><td>0.21</td><td>100</td><td class="green">+5.60pp</td></tr>
 <tr><td>sciq</td><td>0.842</td><td>0.774</td><td>1000</td><td>0.88</td><td>100</td><td class="red">−3.80pp</td></tr>
 <tr><td>winogrande</td><td>0.5485</td><td>—</td><td>1267</td><td>0.60</td><td>100</td><td class="red">−5.15pp</td></tr>
-<tr style="font-weight:bold;background:#e8e8e8"><td>Avg6 (acc)</td><td>53.38%</td><td>—</td><td>—</td><td>53.83%</td><td>—</td><td class="green">−0.45pp</td></tr>
+<tr><td>piqa</td><td>0.7144</td><td>0.7176</td><td>1838</td><td>0.74</td><td>100</td><td class="red">−2.56pp</td></tr>
+<tr style="font-weight:bold;background:#e8e8e8"><td>Avg7 (acc)</td><td>55.96%</td><td>—</td><td>—</td><td>56.71%</td><td>—</td><td class="green">−0.75pp</td></tr>
 </table>
 <div class="box box-blue">
-<p><strong>关键发现：</strong>同 6 集对比，v5 全量 Avg6(acc)=53.38% vs 历史 limit=100 Avg6(acc)=53.83%，<strong>差仅 −0.45pp——几乎完全一致！</strong>
-这远小于原始 14–20pp 的差异，证明异常已被完全解释：①旧二进制（sciq −52.6pp、arc_easy −39.35pp 主因）+ ②全量vs限100（boolq −8.3pp、winogrande −5.2pp，但 arc_easy +8.53pp 反向）。
+<p><strong>关键发现：</strong>同 7 集对比（piqa 已完成），v5 全量 Avg7(acc)=55.96% vs 历史 limit=100 同 7 集 Avg7(acc)≈56.71%，<strong>差仅 −0.75pp——几乎完全一致！</strong>
+这远小于原始 14–20pp 的差异，证明异常已被完全解释：①旧二进制（sciq −52.6pp、arc_easy −39.35pp、piqa −17.41pp 主因）+ ②全量vs限100（boolq −8.3pp、winogrande −5.2pp、piqa −2.56pp，但 arc_easy +8.53pp 反向）。
 注意：arc_easy 全量反而<strong>高于</strong> limit=100（+8.53pp），说明 limit=100 的偏差方向因任务而异——不能作为统一基线。</p>
 <p><strong>注：</strong>v5 评测的检查点是 iter_112000，历史 limit=100 是 iter_100000——两者不同 ckpt，但训练 loss 90k–128k 平滑（§八），且 arc_challenge 几乎一致（0.30→0.304），说明 112k 与 100k 能力相近。</p>
 </div>
@@ -325,13 +328,14 @@ piqa（3676 题）和 hellaswag（40168 请求）是大任务，完成需较长�
 <li>arc_challenge：二进制 ~0pp + 全量vs限100 +0.38pp ≈ 0 = 总 ~0pp</li>
 <li>openbookqa：二进制 −8.2pp + 全量vs限100 −5.6pp（反向）= 总 −2.6pp</li>
 <li>winogrande：二进制 −5.2pp + 全量vs限100 +5.2pp（均等）= 总 −10.4pp</li>
+<li>piqa：二进制 −17.41pp（主因）+ 全量vs限100 +2.56pp = 总 −14.85pp <span class="updated">（v4.7 新增）</span></li>
 </ul>
 <p><strong>下一步：</strong></p>
 <ul>
 <li>🚫 <strong>不需要暂停训练或回滚检查点</strong>——模型训练正常（loss 平滑无跳变）</li>
-<li>✅ v5 修复版二进制全量评测<strong>正在运行</strong>（6/8 集已完成：arc_challenge/arc_easy/boolq/openbookqa/sciq/winogrande；piqa 45%/hellaswag 27%(c0 49%/c1 36%/c2 15%/c3 8%) 运行中，全 8 集完成 ETA≈Nov10 04:30）</li>
-<li>✅ v5 Avg6（已完成 6 集, acc）= <strong>53.38%</strong>，远高于 v4 Avg7=37.40%。同 6 集对比历史 limit=100 Avg6=53.83%，差仅 −0.45pp——几乎完全一致！</li>
-<li>✅ 待 v5 全部完成后，计算 v5 Avg8（预计 ~48–53%，高于 v4 的 37.4%，接近历史 limit=100 的 54.75%）</li>
+<li>✅ v5 修复版二进制全量评测<strong>7/8 集已完成</strong>（arc_challenge/arc_easy/boolq/openbookqa/sciq/winogrande/<strong>piqa=0.7144 ✅</strong>；hellaswag 仍运行 chunk0 90%/chunk1 47%=瓶颈/chunk2 26%/chunk3 4%，全 8 集完成 ETA≈Nov10 01:00-07:00）</li>
+<li>✅ v5 Avg7（已完成 7 集, acc）= <strong>55.96%</strong>，远高于 v4 Avg7=37.40%。同 7 集对比历史 limit=100 Avg7≈56.71%，差仅 −0.75pp——几乎完全一致！</li>
+<li>✅ 待 v5 全部完成后，计算 v5 Avg8（预计 ~52–54%，高于 v4 的 37.4%，接近历史 limit=100 的 54.75%）</li>
 <li>✅ 历史报告的 limit=100 分数<strong>不能直接作为全量基线</strong>——建议后续统一用全量评测</li>
 <li>✅ 在评测脚本中固化二进制路径为 <code>code/llama.cpp/build/bin/llama-server</code>（已修复）</li>
 </ul>
