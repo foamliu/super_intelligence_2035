@@ -498,3 +498,4 @@
 1794131904136_0rtkh.messages.json					parked		2026-11-09 16:02	r281 reject: editor(99)/read_files(88)/run_approved_command(36) software-dev session, layout kw incidental, not EDA-tool; jkxu NEW
 1794210366563_2wp18.messages.json					parked		2026-11-09 16:02	r281 borderline-park: LVS Error(20043) net-short diagnostic (GSAEB shorted GSAE_BCK), 38msgs 2 real turns thin; user cites error=A-disqualify; potential B-synth LVS-short parser but thin; e0044131
 1793963596117_aftvk					case	EDA-Eval-DesignFlow-StdcellLayoutPlanGen-001	2026-11-09 16:42	
+1794205462149_hc9mk					case	EDA-Eval-DesignFlow-DrcRulePkgConvert-001	2026-11-09 17:28	
