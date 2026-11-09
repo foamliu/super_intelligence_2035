@@ -481,3 +481,10 @@
 1789983891289_tatnx					parked		2026-11-09 10:12	REJECT r274: 217msgs RsCalc+AutoVia+PowerFill resistance-reduction flow (prompt_flow.md prewritten skill-execution); overlaps r265 RscalcBsubPollRunner + r268 RscalcRtextRnodePlan; complex multi-tool skill-run
 1793933023338_1uxza					parked		2026-11-09 10:12	REJECT r274: 72msgs PrimeLib/DC-shell synthesis + .lib/.db library characterization + rowred behavioral rebuild; synthesis-domain NOT pg_layout (innovus234 cron count = noise)
 1792465819194_r75ux					parked		2026-11-09 10:12	REJECT r274: 49msgs prose-how-to/knowledge Q&A (AND-metal-poly meaning, SVRF INTERNAL syntax, dbOpenCellViewByType properties, LVS virtual-label warning, SPF MOSFET params); no computational build delivery
+1787136689541_6bje0.messages.json					parked		2026-11-09 10:28	REJECT r275: overlaps RsCalcChkPtGen-001 (same virtuoso-rtext-checkpoint-designer skill) + RsCalcCkPtAudit-001 + RsCalcFlowOrch-001; deliverable=markdown flow-doc editing (prose-y borderline §4.2/§4.3); e0014566 covered user
+1790156510392_22tx1.messages.json					parked		2026-11-09 10:30	REJECT r275: fragmented multi-turn env-debug/handoff session (639 msgs archive+active); user turns = license/env debugging ('AI工具执行层怎么会突然坏了'/python3.7 wrapper) + prose Q&A (MT2 mark layer) + continuation context; no clean single-turn verifiable task; e0014566 covered
+1793788828764_coodr	yqlu	hfeg0pkn005	2195	physical_verify	case	EDA-Eval-DesignFlow-ConnPriorityDupCheck-001	2026-11-09 11:23	
+1783056984013_albb5					parked		2026-11-09 11:23	prose-how-to thin 1 real turn, e0014566 saturated
+1793266625005_uaas3					parked		2026-11-09 11:23	context-restore continuation PROJECT_STATE.md dump, no clean single-turn seed
+1788746263950_bxdtw					parked		2026-11-09 11:23	DRC-hang diagnostic thin 2 turns, overlaps r237/r259/r266 DRC-log cases
+1792397054964_fz05e					parked		2026-11-09 11:23	schematic pin-insert domain wrong-shard (shard D)
