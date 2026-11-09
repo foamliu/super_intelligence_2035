@@ -14677,3 +14677,116 @@ GPU 显存 90%/95% | 碎片 30%/50% | KV cache 85%/95% | grad_norm 5.0/10.0 | �
 - `baize_posttrain_r140_grpo_group_size.py`（~420 行，py_compile ✅ + run ✅）
 - `r140_grpo_group_size_report.json`（37.5 KB）
 
+## §R141 Multi-Turn Rollout Scheduling & Sandbox Concurrency Optimization（R1+R3 方向 · 零 GPU · 2026-11-10 wake188）
+
+> **动机**：多轮 EDA RL 的 rollout 涉及 SGLang 推理 ↔ 沙盒执行的交替循环。调度策略直接影响 RL 吞吐和训练稳定性。此前 R67 分析了 SGLang 吞吐，R138 分析了显存预算，但未系统分析多轮 rollout 的调度、沙盒并发、早停与死锁风险。
+> **方法**：离散事件仿真（SGLang 推理 + 沙盒执行交替模拟）+ 解析吞吐估算 + 扫参（沙盒并发 1-32 / 批大小 1-32 组 / max_turns 2-10 / 早停策略 3 种）+ 死锁风险矩阵。
+
+### 1. 单次 Rollout 延迟模型
+
+| 轮数 | 延迟(s) | 组成 |
+|:--|--:|:--|
+| 2 | 6.1 | 推理 3.7s + 沙盒 2.5s × 2 |
+| 4 | 12.3 | 推理 7.4s + 沙盒 5.0s × 4 |
+| 6 | 18.4 | 推理 11.0s + 沙盒 7.5s × 6 |
+| 8 | 24.6 | 推理 14.7s + 沙盒 10.0s × 8 |
+
+（4×A40 有效吞吐 3400 tok/s，1500 tok/轮，overhead 1.3×）
+
+### 2. 沙盒并发扫描（G=8, max_turns=6）
+
+| SC | 墙钟(s) | R/hr | 推理利用率 | 沙盒利用率 | 早停数 |
+|:--|--:|--:|--:|--:|--:|
+| 1 | 119.8 | 246.6 | 0.187 | **0.813** | 2.7 |
+| 2 | 84.0 | 350.3 | 0.266 | 0.734 | 2.7 |
+| 4 | 60.0 | 492.1 | 0.373 | 0.627 | 2.7 |
+| 6 | 53.8 | 545.9 | 0.415 | 0.585 | 2.7 |
+| **8** | **44.6** | **652.2** | **0.499** | **0.501** | 2.7 |
+| 12+ | 44.6 | 652.2 | 0.499 | 0.501 | 2.7 |
+
+**关键**：SC < G 时沙盒成为瓶颈（SC=1 → 81% 沙盒利用率，吞吐仅 247 R/hr）；SC ≥ G=8 后无额外增益（全部 rollout 一批完成）。**推荐 SC = G = 8**。
+
+### 3. 批大小（并发 prompt 组数）扫描
+
+| 组数 | Rollouts | 并发数 | 墙钟(s) | R/hr |
+|:--|--:|--:|--:|--:|
+| 1 | 8 | 8 | 44.6 | 652.2 |
+| 2 | 16 | 16 | 80.2 | 728.7 |
+| 4 | 32 | 24 | 195.6 | 589.3 |
+| 8 | 64 | 24 | 352.5 | 653.7 |
+| 16 | 128 | 24 | 676.8 | 681.7 |
+| 32 | 256 | 24 | 1298.6 | 710.2 |
+
+**判读**：2 组并发时吞吐最优（729 R/hr），因 SGLang 批处理效率随并发度提升。4 组受 max_num_seqs=24 限制被截断。实际推荐 2-4 组/步（verl train_batch_size=128 即 16 组/步，SGLang 内部分批处理）。
+
+### 4. 早停策略分析
+
+| 策略 | 墙钟(s) | 早停数 | 平均轮数 | 节省 |
+|:--|--:|--:|--:|--:|
+| no_early_stop | 50.6 | 0.0 | 6.0 | — |
+| correct_only | 47.0 | 1.2 | 5.4 | 7.1% |
+| **both** | **43.6** | **3.0** | **4.7** | **13.8%** |
+
+**推荐**：启用 both（all-correct after turn 2 + all-wrong after turn 3），节省 13.8% 墙钟，平均 4.7 轮（vs 6.0 max）。信息损失极小：all-correct 的 group 已无梯度信号，all-wrong 同理。
+
+### 5. Max Turns 分析
+
+| MaxT | 墙钟(s) | 实际轮数 | R/hr | 轮效率 |
+|:--|--:|--:|--:|--:|
+| 2 | 16.0 | 2.0 | 1799.7 | 1.000 |
+| 4 | 30.5 | 3.5 | 948.2 | 0.885 |
+| **6** | **44.6** | **4.9** | **652.2** | **0.812** |
+| 8 | 58.0 | 6.2 | 504.3 | 0.776 |
+| 10 | 71.6 | 7.5 | 409.5 | 0.754 |
+
+**推荐 max_turns=6**：轮效率 81.2%，与 R60 实测的 DeepSeek 轨迹分布一致（82% 轨迹 ≤6 轮）。降到 4 轮节省 33% 但丢失 18% 多轮覆盖。
+
+### 6. 全量 RL 训练吞吐估算
+
+| 指标 | 值 |
+|:--|:--|
+| 吞吐 | 666.0 rollouts/hr |
+| 总 rollouts | 80,000（含动态采样开销 82,400） |
+| 墙钟 | 123.7h (5.16d) |
+| GPU-h | 494.9 |
+| 月度占比 | 17.2% |
+
+> 注：此估算基于仿真参数（1500 tok/轮，density=0.35），与 R140 的 78h 估算有差异——R140 用 1750 tok/rollout 单轮估算，此处用多轮（平均 4.9 轮 × 1500 tok/轮）。实际吞吐取决于真实轨迹长度，等 GPU 后用实测修正。
+
+### 7. 死锁与停滞风险
+
+| 风险 | 严重度 | 条件 | 缓解 |
+|:--|:--|:--|:--|
+| 沙盒队列堆积 | HIGH | SC < batch_size | SC ≥ batch_size |
+| SGLang OOM | CRITICAL | max_seqs=32 ctx=32768 → 49.8GB | max_seqs=16 + ctx=16384 |
+| 工具超时级联 | MEDIUM | tool_latency > 60s | 监控超时率 >10% → 降 code_length |
+| NFS 冷启动 | LOW | 首次访问 API 数据库 | 预热 30min |
+
+**核心结论**：死锁风险 LOW — verl async 模式通过 asyncio 事件循环协调 SGLang ↔ 沙盒，不存在经典死锁（无循环等待）。主要风险是沙盒超时级联和 OOM。
+
+### 8. 推荐最优配置
+
+| 类别 | 参数 |
+|:--|:--|
+| SGLang | max_num_seqs=16, ctx=16384, mem_util=0.50, TP=1, T=0.7 |
+| Rollout | G=8, max_turns=6, 4 组/步, 动态采样 |
+| 沙盒 | 并发=8, timeout=60s, code_length≤5000, tier=3 |
+| 早停 | all-correct after turn 2, all-wrong after turn 3 |
+| 训练 | 2000 steps, save_freq=200, ppo_epochs=2, lr=3e-6 |
+| verl | async, sglang, multi_turn=True, chatml |
+
+### 9. verl 集成要点
+
+1. verl async 模式使用 SGLang async API：`generate()` 非阻塞
+2. 工具调用通过 `asyncio.gather()` 并行派发到沙盒
+3. Rollout manager 维护活跃序列池；完成的序列从队列补充，不阻塞推理
+4. 关键配置：`rollout.mode=async`, `rollout.name=sglang`, `multi_turn.enable=True`
+5. 沙盒工具（EDASandboxToolV3）须 async 兼容（`async def execute`）
+6. verl 内部处理批处理——用户只需设 `n`（group_size）和 `train_batch_size`
+
+### 产物
+
+- `baize_posttrain_r141_rollout_scheduler.py`（~490 行，py_compile ✅ + run ✅）
+- `r141_rollout_scheduler_report.json`（14.0 KB）
+
+
