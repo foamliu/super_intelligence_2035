@@ -12374,3 +12374,138 @@ R0++ 的 hardcode_penalty 成功捕获了这些 case：hacking 样本获得 0.3-
 - `baize_posttrain_r119_grpo_config_optimization.py`（~360 行, py_compile OK）
 - `r119_grpo_config_results.json`（14.3KB, 7 节完整分析结果）
 - 本节（EXPERIMENTS §R119）
+
+## §R120 SFT 训练超参配方与数据混合优化设计（R1+R3 方向 · 零 GPU · 2026-11-10 wake167）
+
+> **目的**：R114 确定了 SFT 框架（verl FSDP），但超参全为占位值（LR=2e-5, 3 epochs, 50:30:20 mix, 16K ctx）。本节从 D1-D6 诊断 + R60 轨迹统计 + R61 吞吐量分析 + R115 数据管线验证出发，系统推导 SFT 的数据混合比例、LR 调度、上下文窗口、打包策略、SFT→RL 过渡准则，输出可直接应用的 config patch。
+> **数据源**：D1-D6（§D）、R60（DeepSeek 轨迹 28,339 tok avg）、R61（4×A40 吞吐量）、R115（PyAether v2 = 19,524 对, ~4M tok, mean=209.5）、DATA_MAPPING（UltraData-SFT-2605 = 18.89B tok, Agent-2609 = 5.97B tok）。
+> ⚠️ **替身警告**：基于 DeepSeek 轨迹数据 + 诊断外推。具体数值需 GPU 后用 MiniCPM5-2B 验证。
+
+### 1. 数据组成分析与极不平衡发现
+
+| 数据源 | Tokens | 格式 | 在 .17? | 平均序列长度 | 角色 |
+|:--|--:|:--|:--|:--|:--|
+| UltraData-SFT-2605 (general) | 18.89B | megatron .bin/.idx | ❌ 需传输 | 512 | 通用指令+推理 |
+| UltraData-SFT-Agent-2609 (agentic) | 5.97B | megatron .bin/.idx | ❌ 需传输 | 2048 | 工具使用+多轮 |
+| PyAether-SFT-v2 (domain) | 4.0M | parquet (conversation) | ✅ | 210 | EDA API 知识 |
+
+**关键发现**：PyAether 仅占总 token 的 **0.016%**。若用 50:30:20 按体积混合，PyAether 需重复 **33.3x** 才能占 20% → **SEVERE 过拟合风险**。
+**结论**：单阶段混合不可行 → **必须用两阶段 SFT**。
+
+### 2. 数据混合比例（D1-D6 证据驱动）
+
+| 诊断项 | 权重 | 映射到的数据 |
+|:--|--:|:--|
+| D1 工具合法率 (0.63) | 0.15 | agentic |
+| D2 工具频次 (14.32) | 0.15 | agentic |
+| D3 超时 (0%) | 0.05 | general |
+| D4 执行报错 (74%) | 0.30 | **PyAether** |
+| D5 场景难度 | 0.20 | **PyAether** |
+| D6 迭代轮数 (5.01) | 0.15 | agentic |
+
+**原始比例**：agent=45%, pyaether=50%, general=5%。但 PyAether 仅 4M tokens → 用两阶段实现：
+
+| 阶段 | 混合比 | 目标 tokens | PyAether 重复 | LR | Epochs |
+|:--|:--|--:|:--|:--|--:|
+| **Phase 1 (broad)** | agent 45% + general 40% + pyaether 15% | 500M | 3x (cap) | 2e-5 | 1 |
+| **Phase 2 (domain)** | pyaether 70% + agent 20% + general 10% | 50M | ~8.75x | 5e-6 | 5 |
+
+**过拟合缓解**：Phase 1 PyAether 上限 3x；Phase 2 用 10x 低 LR；Phase 2 含 10% general 作正则锚；监控 held-out eval loss。
+
+### 3. LR 调度（从 pretrain 校准）
+
+| 参数 | Phase 1 | Phase 2 |
+|:--|:--|:--|
+| LR (peak) | 2e-5 | 5e-6 |
+| min LR | 2e-6 | 5e-7 |
+| Steps | 238 | 95 |
+| Warmup (3%/5%) | 7 | 5 |
+| Stable (60%/50%) | 143 | 47 |
+| Decay | 88 | 43 |
+| Effective LR | 1.63e-5 | 3.85e-6 |
+| Schedule | WSD | WSD (shorter warmup) |
+
+**依据**：Phase 1 LR=2e-5 = 15x 低于 pretrain peak (3e-4)，标准 SFT 比例（参考 LLaMA-2）。Phase 2 LR=5e-6 = 4x 低于 Phase 1，防止灾难性遗忘。
+
+### 4. 上下文窗口 VRAM 与吞吐量分析
+
+**模型静态显存**：2B params + Adam optimizer + gradients, FSDP 4-way = ~6GB/GPU。
+**梯度检查点**：节省 ~70% 激活显存。
+
+| 上下文 | MBS/GPU | 总显存/GPU | 适配 4×A40? | 估算 steps/hr |
+|--:|--:|--:|:--|--:|
+| 4096 | 8 | ~7.1GB | ✅ | ~27.6 |
+| 8192 | 4 | ~7.9GB | ✅ | ~13.8 |
+| 16384 | 2 | ~9.5GB | ✅ | ~6.9 |
+| 32768 | 1 | ~12.7GB | ✅ | ~3.5 |
+
+**R60 轨迹覆盖率**（含工具结果截断）：
+- 4096: 56.3% | 8192: 100% | 16384: 100% | 32768: 100%
+
+**推荐**：Phase 1 = 16384（覆盖 82% 轨迹 with 截断, agent 数据较长）；Phase 2 = 4096（PyAether 数据 avg 210 tokens, 4K 是 20x 余量, 最大化吞吐量）。
+
+### 5. 打包策略与 Loss Masking
+
+**打包分析**：
+
+| 上下文 | 数据源 | 序列/包 | 利用率 |
+|:--|:--|--:|:--|
+| 4K | PyAether (210 tok) | 19 | 97.4% |
+| 4K | General (512 tok) | 8 | 95.3% |
+| 16K | Agent (2048 tok) | 8 | 99.2% |
+
+**Loss Masking**：`response_only_loss` — 仅在 assistant 轮次计算 loss（verl MultiTurnSFTDataset 内建支持，`messages_key='conversation'`）。Mask user/system/tool_result；compute loss on assistant/tool_call。
+
+**Attention Masking**：`document_boundary_attention` — 打包序列不跨文档边界 attend（`use_remove_padding=true` + per-doc position_ids reset）。
+
+### 6. SFT→RL 过渡准则
+
+**主要准则**：EDA-Eval-PyAether Pass@1 (5-run mean) >= 50%（M1 目标，从 36% 基线提升 +14pp）。
+
+**次要准则（必须全部满足）**：
+1. Tool-call 格式合法率 >= 90%（D1 基线 63%）
+2. 生成代码 API 覆盖率 >= 80%
+3. Held-out eval loss <= 1.2x train loss（过拟合检测）
+4. 训练 loss 收敛（plateau 50 steps, slope < 0.001）
+5. 语法正确率 >= 70%（R118 基线 ~60%）
+
+**中间评测计划**：step 0/50/100/150/200 各做 20-case subset eval（~15min/次），step 200 做 full 158-case 5-run（~4h）。
+
+**失败模式**：过拟合（停 SFT 用最优 ckpt）、灾难性遗忘（降低 PyAether 权重）、格式崩塌（降低 LR 重启）、无改善（检查数据管线）。
+
+### 7. 训练时间估算（4×A40）
+
+| 阶段 | Tokens | Ctx | GBS | Steps | Steps/hr | 时间 |
+|:--|--:|--:|--:|--:|--:|--:|
+| Phase 1 | 500M | 16384 | 128 | 238 | 5.2 | 45.8h |
+| Phase 2 | 50M | 4096 | 64 | 190 | 20.0 | 9.5h |
+| Eval | — | — | — | — | — | 5.0h |
+| **总计** | | | | | | **60.3h (2.5 天)** |
+
+✅ 适配 3 周训练窗口（Dec 25 - Jan 15）。
+
+### 8. Config Patch（baize_posttrain_sft_verl_config.yaml）
+
+| # | 配置项 | 当前值 | 推荐值 | 理由 |
+|--:|:--|:--|:--|:--|
+| 1 | `data.train_files` | sft_blended_v1.parquet (不存在) | sft_phase1_blended.parquet | R115 发现文件不存在 |
+| 2 | `data.max_length` | 16384 | 16384(P1)/4096(P2) | Phase 2 PyAether 短序列 |
+| 3 | `data.train_batch_size` | 128 | 64(P1)/128(P2) | 16K ctx 需小 batch |
+| 4 | `data.micro_batch_size_per_gpu` | 2 | 1(P1)/8(P2) | VRAM 约束 |
+| 5 | `optim.lr` | 2e-5 | 2e-5(P1)/5e-6(P2) | Phase 2 防遗忘 |
+| 6 | `trainer.total_epochs` | 3 | 1(P1)/5(P2) | 两阶段分离 |
+| 7 | `trainer.total_training_steps` | 3000 | 238(P1)/95(P2) | 实际步数 |
+| 8 | `trainer.save_freq` | 300 | 50(P1)/20(P2) | 频繁存 ckpt |
+| 9 | `trainer.test_freq` | -1 | 50(P1)/20(P2) | 中间评测 |
+| 10 | `NEW: data_packing` | N/A | enable=true | 短序列 19x 打包 |
+| 11 | `NEW: two_phase` | single | phase1+phase2 | 分离广度与领域 |
+
+**需创建文件**：`baize_posttrain_sft_verl_config_phase1.yaml` + `baize_posttrain_sft_verl_config_phase2.yaml`
+**需生成数据**：`sft_phase1_blended.parquet` + `sft_phase2_domain.parquet`
+
+### 交付物
+
+- `baize_posttrain_r120_sft_recipe_optimization.py`（~460 行, py_compile ✅, smoke ✅）
+- `r120_sft_recipe_results.json`（15.3KB, 8 节完整分析结果）
+- 本节（EXPERIMENTS §R120）
+

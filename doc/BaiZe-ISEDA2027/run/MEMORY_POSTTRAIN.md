@@ -7,12 +7,12 @@ WAITING: 0
 
 ## 进度快照
 
-- PHASE: posttrain-wake166（2026-11-10 R119: GRPO配置优化——从R118实证信号推导最优group_size/DAPO动态过滤/RL课程/温度/计算预算,10项配置patch,254有效步/72h vs 124基线）
-- 已完成: P3预备✅；P0✅；P1✅；P2✅；R1-R119✅；wake165✅ R118；wake166✅ R119(GRPO config optimization)
-- 当前动作: wake166 R119: baize_posttrain_r119_grpo_config_optimization.py(~360行). 7节分析: ①Group Size: G=4吞吐最优(eff=2.02/hr)但G=8+DAPO+课程更实用(50%信号+1.25x加速) ②DAPO动态过滤: 1.25x加速,20%时间节省,PPO跳过std=0组 ③RL课程4阶段: L3-only(40%步,93%信号)→L3+L4(30%,80%)→L3+L4+L5(20%,72%)→mixed(10%,65%),总82.2%信号 ④温度: T=1.2信号最优(1.46x)但T=0.8实用(syntax>60%) ⑤计算预算: 组合DAPO+课程=254有效步/72h vs 124基线(2.0x) ⑥10项配置patch(arm R0→R0pp, steps 2000→200, batch 128→96, temp 0.7→0.8, DAPO on, curriculum on) ⑦6项风险缓解. JSON 14.3KB+EXPERIMENTS §R119. py_compile✅
-- 下一步: ①GPU释放→watcher触发launch ②等GPU用MiniCPM5-2B验证R0++ pass@8(2B在L1-L2可能也有方差) ③RL课程从L3起步 ④应用R119配置patch到verl config ⑤正式训练待pretrain ckpt(ETA≈2026-12-25)
+- PHASE: posttrain-wake167（2026-11-10 R120: SFT训练超参配方与数据混合优化——两阶段SFT设计,PyAether仅0.016%总token→单阶段混合33x过拟合→Phase1广度+Phase2领域,11项config patch,总60h/2.5天适配3周窗口）
+- 已完成: P3预备✅；P0✅；P1✅；P2✅；R1-R120✅；wake166✅ R119；wake167✅ R120(SFT recipe optimization)
+- 当前动作: wake167 R120: baize_posttrain_r120_sft_recipe_optimization.py(~460行). 8节分析: ①数据组成:PyAether仅0.016%总token(4M/24.9B),50:30:20混合需33x重复→SEVERE过拟合 ②数据混合(D1-D6驱动):D4(74%执行报错)+D5→PyAether应占50%信号,两阶段:Phase1 agent45%+general40%+pyaether15%(3x cap) / Phase2 pyaether70%+agent20%+general10% ③LR调度:Phase1=2e-5(15x低于pretrain peak)/Phase2=5e-6(4x低于P1防遗忘),WSD ④上下文:Phase1=16K(覆盖82%轨迹with截断)/Phase2=4K(PyAether avg210tok,20x余量) ⑤打包:PyAether 19x打包4K→97.4%利用率,response_only_loss ⑥SFT→RL过渡:Pass@1≥50%+tool合法率≥90%+eval_loss≤1.2x+语法≥70%,中间评测step 0/50/100/150/200 ⑦训练时间:Phase1 45.8h+Phase2 9.5h+eval 5h=60.3h(2.5天),适配3周窗口 ⑧11项config patch. JSON 15.3KB+EXPERIMENTS §R120. py_compile✅+smoke✅
+- 下一步: ①GPU释放→watcher触发launch ②传输UltraData从.29到.17(75.87GB+23.89GB) ③生成sft_phase1_blended.parquet+sft_phase2_domain.parquet ④创建phase1/phase2 verl config YAMLs ⑤正式训练待pretrain ckpt(ETA≈2026-12-25)
 - 阻塞: GPU 0/8free(root SGLang Qwen3.8-27B占全8卡44-45GB 0%util,运行自Sep17);沙箱全端口FILTERED;P3等pretrain ckpt(ETA≈2026-12-25)
-- 本轮新增调研产出: R119 GRPO配置优化(~360行 + 7节分析 + group size/DAPO/课程/温度/预算 + 10项配置patch + 254有效步vs124基线 + JSON 14.3KB + EXPERIMENTS §R119）
+- 本轮新增调研产出: R120 SFT训练超参配方与数据混合优化(~460行 + 8节分析 + 两阶段SFT设计 + PyAether极不平衡发现(0.016%) + D1-D6驱动混合比 + LR/ctx/打包/过渡准则 + 11项config patch + 60h/2.5天 + JSON 15.3KB + EXPERIMENTS §R120）
 - 未完成指令: 🔴用户令2026-11-07(GPU未到位,需持续产出调研) ⇒ WAITING=0
 
 ## 关键事实（常驻）
@@ -99,3 +99,5 @@ WAITING: 0
 [wake165] R118 R0++ GRPO信号实证: 2400条真实rollout再评分,50%非零方差vs R0 0%(75x改善),L3黄金区间93.3%,L1-L2饱和(23%/10%),L4-L5过难(67%/57%). JSON 1.19MB+EXPERIMENTS §R118.
 
 [wake166] R119 GRPO配置优化: 体积自检(TASK≈26KB/MEMORY≈14.8KB归档后合规)→GPU检查:0/8free(root SGLang Qwen3.8-27B占全8卡44-45GB 0%util,运行自Sep17)→MEMORY归档:wake143-wake162(R95-R115)→指针→R119: ①baize_posttrain_r119_grpo_config_optimization.py(~360行,py_compile✅+smoke✅) ②Group Size: G=4吞吐最优(eff=2.02/hr)但G=8+DAPO更实用(50%信号+1.25x加速) ③DAPO动态过滤: 1.25x加速,20%时间节省,verl filter_groups_with_zero_advantage ④RL课程4阶段: L3-only(80步,93%信号)→L3+L4(60步,80%)→L3+L4+L5(40步,72%)→mixed(20步,65%),总82.2%信号 ⑤温度: T=1.2信号最优但T=0.8实用(syntax>60%) ⑥计算预算: DAPO+课程=254有效步/72h vs 124基线(2.0x) ⑦10项配置patch: arm R0→R0pp, steps 2000→200, batch 128→96, temp 0.7→0.8, DAPO on, curriculum on ⑧6项风险缓解. JSON 14.3KB+EXPERIMENTS §R119. py_compile✅. 📦 体积：TASK≈26KB / MEMORY≈16KB。本轮新增调研产出：§R119 GRPO配置优化(~360行 + 7节分析 + group size/DAPO/课程/温度/预算 + 10项配置patch + 254有效步vs124基线 + 6项风险 + JSON 14.3KB + EXPERIMENTS §R119）。未完成指令：🔴用户令2026-11-07(GPU未到位,需持续产出调研) ⇒ WAITING=0。
+
+[wake167] R120 SFT训练超参配方与数据混合优化: 体积自检(TASK≈26KB/MEMORY≈16KB合规)→GPU检查:0/8free(root SGLang Qwen3.8-27B占全8卡44-45GB 0%util,运行自Sep17)→R120: ①baize_posttrain_r120_sft_recipe_optimization.py(~460行,py_compile✅+smoke✅) ②数据组成:PyAether仅0.016%总token(4M/24.9B)→50:30:20混合需33x重复→SEVERE过拟合 ③D1-D6驱动混合:D4(74%执行报错)+D5→PyAether应占50%信号→两阶段:Phase1 agent45%+general40%+pyaether15%(3x cap,500M tok,ctx16K,LR2e-5,1epoch) / Phase2 pyaether70%+agent20%+general10%(50M tok,ctx4K,LR5e-6,5epoch) ④LR:Phase1=2e-5(15x低于pretrain)/Phase2=5e-6(4x低于P1防遗忘),WSD ⑤上下文:P1=16K(82%轨迹覆盖率)/P2=4K(PyAether avg210tok,19x打包→97.4%利用率) ⑥打包:response_only_loss+document_boundary_attention ⑦SFT→RL过渡:Pass@1≥50%+tool合法率≥90%+eval_loss≤1.2x+语法≥70%,中间评测step0/50/100/150/200 ⑧训练时间:Phase1 45.8h+Phase2 9.5h+eval 5h=60.3h(2.5天),适配3周窗口 ⑨11项config patch. JSON 15.3KB+EXPERIMENTS §R120. 📦 体积：TASK≈26KB / MEMORY≈18KB。本轮新增调研产出：§R120 SFT训练超参配方与数据混合优化(~460行 + 8节分析 + 两阶段SFT设计 + PyAether极不平衡发现(0.016%) + D1-D6驱动混合比 + LR/ctx/打包/过渡准则 + 11项config patch + 60h/2.5天 + JSON 15.3KB + EXPERIMENTS §R120）。未完成指令：🔴用户令2026-11-07(GPU未到位,需持续产出调研) ⇒ WAITING=0。

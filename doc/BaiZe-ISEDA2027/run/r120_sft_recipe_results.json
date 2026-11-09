@@ -1,0 +1,564 @@
+{
+  "metadata": {
+    "round": "R120",
+    "wake": "wake167",
+    "date": "2026-11-10",
+    "research_direction": "R1+R3 (SFT recipe as RL foundation)",
+    "gpu_available": false,
+    "surrogate_warning": "Based on DeepSeek trajectory data + diagnostic extrapolation."
+  },
+  "section1_data_composition": {
+    "data_sources": {
+      "UltraData-SFT-2605 (general)": {
+        "tokens": 18890000000.0,
+        "format": "megatron .bin/.idx",
+        "available_on_17": false,
+        "transfer_needed": true,
+        "estimated_transfer_hours": 4.0,
+        "avg_seq_length": 512,
+        "role": "general instruction following + reasoning"
+      },
+      "UltraData-SFT-Agent-2609 (agentic)": {
+        "tokens": 5970000000.0,
+        "format": "megatron .bin/.idx",
+        "available_on_17": false,
+        "transfer_needed": true,
+        "estimated_transfer_hours": 1.3,
+        "avg_seq_length": 2048,
+        "role": "tool-use + multi-turn agentic patterns"
+      },
+      "PyAether-SFT-v2 (domain)": {
+        "tokens": 4000000.0,
+        "format": "parquet (conversation)",
+        "available_on_17": true,
+        "transfer_needed": false,
+        "avg_seq_length": 210,
+        "role": "EDA API knowledge + tool-call format"
+      }
+    },
+    "total_tokens": 24864000000.0,
+    "proportions": {
+      "UltraData-SFT-2605 (general)": 0.7597329472329473,
+      "UltraData-SFT-Agent-2609 (agentic)": 0.2401061776061776,
+      "PyAether-SFT-v2 (domain)": 0.00016087516087516087
+    },
+    "pyaether_fraction_natural": 0.00016087516087516087,
+    "mix_by_volume_target": {
+      "agent": 0.5,
+      "general": 0.3,
+      "pyaether": 0.2
+    },
+    "target_sft_tokens": 2000000000.0,
+    "tokens_per_epoch": 666666666.6666666,
+    "pyaether_repetitions_for_20pct": 33.33333333333333,
+    "pyaether_max_reps": 5,
+    "pyaether_effective_tokens_capped": 20000000.0,
+    "overfitting_risk": "SEVERE",
+    "recommendation": "two_phase_sft"
+  },
+  "section2_data_mixing": {
+    "diagnostic_weights": {
+      "D1_tool_legality": 0.15,
+      "D2_tool_frequency": 0.15,
+      "D3_timeout": 0.05,
+      "D4_execution_errors": 0.3,
+      "D5_scenario_difficulty": 0.2,
+      "D6_iteration_loops": 0.15
+    },
+    "raw_ratios": {
+      "agentic": 0.44999999999999996,
+      "pyaether": 0.5,
+      "general": 0.05
+    },
+    "raw_ratios_interpretation": "PyAether should be 50% of training signal, but only 0.016% of data -> must up-sample + two-phase",
+    "two_phase_design": {
+      "phase1_broad": {
+        "mix": {
+          "agent": 0.45,
+          "general": 0.4,
+          "pyaether": 0.15
+        },
+        "target_tokens": 500000000.0,
+        "pyaether_reps_capped": 3,
+        "purpose": "Broad capability: tool-use + general reasoning + domain primer",
+        "epochs": 1,
+        "lr": "2e-5"
+      },
+      "phase2_domain": {
+        "mix": {
+          "agent": 0.2,
+          "general": 0.1,
+          "pyaether": 0.7
+        },
+        "target_tokens": 50000000.0,
+        "pyaether_reps": "8.8x",
+        "purpose": "Domain intensification: deep API knowledge + format stabilization",
+        "epochs": 5,
+        "lr": "5e-6"
+      }
+    },
+    "overfitting_mitigation": [
+      "Cap PyAether repetitions at 3x in phase 1 (broad)",
+      "Use 5x in phase 2 (domain) with 10x lower LR",
+      "Add general data (10%) in phase 2 as regularization anchor",
+      "Monitor held-out PyAether eval loss: if train-down eval-up -> stop",
+      "Dropout 0.1 on SFT + weight decay 0.01"
+    ]
+  },
+  "section3_lr_schedule": {
+    "pretrain_peak_lr": 0.0003,
+    "sft_to_pretrain_ratio": "0.0667x (~15x lower)",
+    "phase1": {
+      "lr": 2e-05,
+      "min_lr": 2e-06,
+      "steps": 238,
+      "warmup": 7,
+      "stable": 142,
+      "decay": 89,
+      "effective_lr": 1.6340336134453784e-05,
+      "schedule": "WSD"
+    },
+    "phase2": {
+      "lr": 5e-06,
+      "min_lr": 5e-07,
+      "steps": 95,
+      "warmup": 4,
+      "stable": 47,
+      "decay": 44,
+      "effective_lr": 3.852631578947369e-06,
+      "schedule": "WSD with shorter warmup"
+    },
+    "rationale": [
+      "Phase 1 LR=2e-5 = 15x below pretrain peak",
+      "Phase 2 LR=5e-6 = 4x below phase 1 (domain fine-tuning)",
+      "WSD schedule reused from pretrain (proven stable)",
+      "Phase 1: 238 steps",
+      "Phase 2: 95 steps"
+    ]
+  },
+  "section4_context_length": {
+    "r60_stats": {
+      "deepseek_mean_tokens": 28339,
+      "deepseek_median_tokens": 23906,
+      "user_fraction": 0.607,
+      "assistant_fraction": 0.393
+    },
+    "static_per_gpu_mib": 6144,
+    "context_options": [
+      {
+        "ctx": 4096,
+        "mbs": 1,
+        "total_mib": 6194,
+        "fits": true,
+        "est_steps_hr": 6.9,
+        "gbs": 4
+      },
+      {
+        "ctx": 4096,
+        "mbs": 2,
+        "total_mib": 6245,
+        "fits": true,
+        "est_steps_hr": 13.8,
+        "gbs": 8
+      },
+      {
+        "ctx": 4096,
+        "mbs": 4,
+        "total_mib": 6346,
+        "fits": true,
+        "est_steps_hr": 27.6,
+        "gbs": 16
+      },
+      {
+        "ctx": 4096,
+        "mbs": 8,
+        "total_mib": 6547,
+        "fits": true,
+        "est_steps_hr": 55.2,
+        "gbs": 32
+      },
+      {
+        "ctx": 8192,
+        "mbs": 1,
+        "total_mib": 6245,
+        "fits": true,
+        "est_steps_hr": 3.5,
+        "gbs": 4
+      },
+      {
+        "ctx": 8192,
+        "mbs": 2,
+        "total_mib": 6346,
+        "fits": true,
+        "est_steps_hr": 6.9,
+        "gbs": 8
+      },
+      {
+        "ctx": 8192,
+        "mbs": 4,
+        "total_mib": 6547,
+        "fits": true,
+        "est_steps_hr": 13.8,
+        "gbs": 16
+      },
+      {
+        "ctx": 8192,
+        "mbs": 8,
+        "total_mib": 6950,
+        "fits": true,
+        "est_steps_hr": 27.6,
+        "gbs": 32
+      },
+      {
+        "ctx": 16384,
+        "mbs": 1,
+        "total_mib": 6346,
+        "fits": true,
+        "est_steps_hr": 1.7,
+        "gbs": 4
+      },
+      {
+        "ctx": 16384,
+        "mbs": 2,
+        "total_mib": 6547,
+        "fits": true,
+        "est_steps_hr": 3.5,
+        "gbs": 8
+      },
+      {
+        "ctx": 16384,
+        "mbs": 4,
+        "total_mib": 6950,
+        "fits": true,
+        "est_steps_hr": 6.9,
+        "gbs": 16
+      },
+      {
+        "ctx": 16384,
+        "mbs": 8,
+        "total_mib": 7757,
+        "fits": true,
+        "est_steps_hr": 13.8,
+        "gbs": 32
+      },
+      {
+        "ctx": 32768,
+        "mbs": 1,
+        "total_mib": 6547,
+        "fits": true,
+        "est_steps_hr": 0.9,
+        "gbs": 4
+      },
+      {
+        "ctx": 32768,
+        "mbs": 2,
+        "total_mib": 6950,
+        "fits": true,
+        "est_steps_hr": 1.7,
+        "gbs": 8
+      },
+      {
+        "ctx": 32768,
+        "mbs": 4,
+        "total_mib": 7757,
+        "fits": true,
+        "est_steps_hr": 3.5,
+        "gbs": 16
+      },
+      {
+        "ctx": 32768,
+        "mbs": 8,
+        "total_mib": 9370,
+        "fits": true,
+        "est_steps_hr": 6.9,
+        "gbs": 32
+      }
+    ],
+    "coverage_table": {
+      "4096": {
+        "raw": "100.0%",
+        "truncated": "100.0%"
+      },
+      "8192": {
+        "raw": "100.0%",
+        "truncated": "100.0%"
+      },
+      "16384": {
+        "raw": "100.0%",
+        "truncated": "100.0%"
+      },
+      "32768": {
+        "raw": "86.5%",
+        "truncated": "55.0%"
+      }
+    },
+    "pyaether_stats": {
+      "mean_tokens": 210,
+      "p95": 340,
+      "optimal_ctx": 4096
+    },
+    "recommendation": {
+      "phase1_ctx": 16384,
+      "phase1_rationale": "Covers 82% of trajectories with truncation (R60)",
+      "phase2_ctx": 4096,
+      "phase2_rationale": "PyAether data avg 210 tokens, 4096 maximizes throughput"
+    }
+  },
+  "section5_packing_strategy": {
+    "data_lengths": {
+      "pyaether": {
+        "mean": 210,
+        "p95": 340,
+        "max": 512
+      },
+      "general": {
+        "mean": 512,
+        "p95": 1024,
+        "max": 2048
+      },
+      "agent": {
+        "mean": 2048,
+        "p95": 4096,
+        "max": 8192
+      }
+    },
+    "packing_results": {
+      "4k_pyaether": {
+        "seqs_per_pack": 19,
+        "util": "97.4%"
+      },
+      "4k_general": {
+        "seqs_per_pack": 8,
+        "util": "100.0%"
+      },
+      "4k_agent": {
+        "seqs_per_pack": 2,
+        "util": "100.0%"
+      },
+      "8k_pyaether": {
+        "seqs_per_pack": 39,
+        "util": "100.0%"
+      },
+      "8k_general": {
+        "seqs_per_pack": 16,
+        "util": "100.0%"
+      },
+      "8k_agent": {
+        "seqs_per_pack": 4,
+        "util": "100.0%"
+      },
+      "16k_pyaether": {
+        "seqs_per_pack": 78,
+        "util": "100.0%"
+      },
+      "16k_general": {
+        "seqs_per_pack": 32,
+        "util": "100.0%"
+      },
+      "16k_agent": {
+        "seqs_per_pack": 8,
+        "util": "100.0%"
+      }
+    },
+    "loss_masking": {
+      "strategy": "response_only_loss",
+      "verl_config": "data.multiturn.enable=true, loss on assistant only",
+      "mask_targets": [
+        "user",
+        "system",
+        "tool_result"
+      ],
+      "compute_loss_on": [
+        "assistant",
+        "tool_call"
+      ],
+      "rationale": "Only assistant turns contain target behavior"
+    },
+    "attention_masking": {
+      "strategy": "document_boundary_attention",
+      "verl_config": "use_remove_padding=true + position_ids reset per doc",
+      "benefit": "2-5x throughput for short sequences"
+    },
+    "recommendation": {
+      "phase1": "Pack to 16384 (agent+general, ~8x for general)",
+      "phase2": "Pack to 4096 (PyAether, ~19x per pack, 99% util)",
+      "loss_masking": "response_only (verl built-in)",
+      "attention": "document_boundary (use_remove_padding=true)"
+    }
+  },
+  "section6_sft_to_rl_transition": {
+    "sft_success_criteria": {
+      "primary": {
+        "metric": "EDA-Eval-PyAether Pass@1 (5-run mean)",
+        "threshold": ">= 50%",
+        "baseline": "36%",
+        "improvement_needed": "+14pp"
+      },
+      "secondary": [
+        {
+          "metric": "Tool-call format legality",
+          "threshold": ">= 90%",
+          "baseline": "63% (D1)"
+        },
+        {
+          "metric": "API coverage in generated code",
+          "threshold": ">= 80%"
+        },
+        {
+          "metric": "Held-out SFT eval loss",
+          "threshold": "<= 1.2x train loss"
+        },
+        {
+          "metric": "SFT train loss convergence",
+          "threshold": "Plateau 50 steps (slope<0.001)"
+        },
+        {
+          "metric": "Syntax correctness",
+          "threshold": ">= 70%",
+          "baseline": "~60% (R118)"
+        }
+      ]
+    },
+    "failure_modes": {
+      "overfitting": {
+        "symptom": "Train loss down but eval loss up",
+        "response": "Stop SFT, use best ckpt"
+      },
+      "catastrophic_forgetting": {
+        "symptom": "General capability degraded >5pp",
+        "response": "Reduce PyAether weight, lower LR"
+      },
+      "format_collapse": {
+        "symptom": "Tool-call legality <50% after 100 steps",
+        "response": "Reduce LR to 1e-5, restart"
+      },
+      "no_improvement": {
+        "symptom": "Pass@1 stays at 36% after 200 steps",
+        "response": "Check data quality, pipeline"
+      }
+    },
+    "eval_schedule": {
+      "step_0": "Baseline 20-case subset (pre-SFT reference)",
+      "step_50": "Quick check 20-case (if <38%, check pipeline)",
+      "step_100": "Intermediate 20-case + tool legality (if <45%, adjust mix)",
+      "step_150": "Pre-transition 20-case (if >=48%, prepare full eval)",
+      "step_200": "Full 158-case 5-run (go/no-go for RL)",
+      "eval_cost": "~15min for 20-case 1-run vs ~4h for 158-case 5-run"
+    },
+    "transition_decision": {
+      "go_to_rl": "Pass@1>=50% AND tool_legality>=90% AND eval_loss<=1.2x AND syntax>=70%",
+      "continue_sft": "Pass@1 in [42%,50%) AND improving -> +50 steps",
+      "stop_debug": "Pass@1 < 42% after 200 steps -> data/pipeline issue",
+      "emergency": "Any failure mode triggered -> stop, diagnose"
+    }
+  },
+  "section7_training_time": {
+    "phase1": {
+      "tokens": 500000000.0,
+      "ctx": 16384,
+      "gbs": 128,
+      "steps": 238,
+      "steps_hr": 5.2,
+      "hours": 45.8
+    },
+    "phase2": {
+      "tokens": 50000000.0,
+      "ctx": 4096,
+      "gbs": 64,
+      "steps": 190,
+      "steps_hr": 20.0,
+      "hours": 9.5
+    },
+    "total_train_hours": 55.3,
+    "total_eval_hours": 5.0,
+    "grand_total_hours": 60.3,
+    "grand_total_days": 2.5,
+    "fits_3week_window": true
+  },
+  "section8_config_patch": {
+    "patch_items": [
+      {
+        "key": "data.train_files",
+        "current": "sft_blended_v1.parquet (missing)",
+        "recommended": "sft_phase1_blended.parquet (to generate)"
+      },
+      {
+        "key": "data.max_length",
+        "current": "16384",
+        "recommended": "16384 (phase1) / 4096 (phase2)"
+      },
+      {
+        "key": "data.train_batch_size",
+        "current": "128",
+        "recommended": "64 (phase1, 16K) / 128 (phase2, 4K)"
+      },
+      {
+        "key": "data.micro_batch_size_per_gpu",
+        "current": "2",
+        "recommended": "1 (phase1) / 8 (phase2)"
+      },
+      {
+        "key": "optim.lr",
+        "current": "2e-5",
+        "recommended": "2e-5 (phase1) / 5e-6 (phase2)"
+      },
+      {
+        "key": "trainer.total_epochs",
+        "current": "3",
+        "recommended": "1 (phase1) / 5 (phase2)"
+      },
+      {
+        "key": "trainer.total_training_steps",
+        "current": "3000",
+        "recommended": "238 (phase1) / 95 (phase2)"
+      },
+      {
+        "key": "trainer.save_freq",
+        "current": "300",
+        "recommended": "50 (phase1) / 20 (phase2)"
+      },
+      {
+        "key": "trainer.test_freq",
+        "current": "-1",
+        "recommended": "50 (phase1) / 20 (phase2)"
+      },
+      {
+        "key": "NEW: data_packing",
+        "current": "N/A",
+        "recommended": "enable=true"
+      },
+      {
+        "key": "NEW: two_phase",
+        "current": "single",
+        "recommended": "phase1 + phase2 (separate configs)"
+      }
+    ],
+    "config_files_to_create": [
+      "baize_posttrain_sft_verl_config_phase1.yaml",
+      "baize_posttrain_sft_verl_config_phase2.yaml"
+    ],
+    "data_files_to_generate": [
+      "sft_phase1_blended.parquet (UltraData 40% + Agent 45% + PyAether 15% 3x cap)",
+      "sft_phase2_domain.parquet (PyAether 70% + Agent 20% + General 10%)"
+    ]
+  },
+  "summary": {
+    "key_findings": [
+      "PyAether is 0.016% of total SFT tokens -> MUST use two-phase SFT",
+      "D4 (74% exec errors) + D5 -> PyAether should be 50% of training signal",
+      "Phase 1: agent 45% + general 40% + pyaether 15%, ctx=16K, LR=2e-5, 1 epoch, ~238 steps",
+      "Phase 2: pyaether 70% + agent 20% + general 10%, ctx=4K, LR=5e-6, 5 epochs, ~95 steps",
+      "Packing: PyAether (210 tok) packs 19x into 4K -> 99% utilization",
+      "SFT->RL: Pass@1>=50% AND tool_legality>=90% AND eval_loss<=1.2x AND syntax>=70%",
+      "Total SFT: ~56h (2.3 days) -> fits 3-week window",
+      "11 config items to patch, 2 new configs, 2 new data files"
+    ],
+    "next_actions": [
+      "1. Transfer UltraData from .29 to .17",
+      "2. Convert megatron to verl parquet",
+      "3. Generate blended parquets",
+      "4. Create phase1/phase2 config YAMLs",
+      "5. Wait for pretrain ckpt (ETA ~2026-12-25)"
+    ]
+  }
+}
