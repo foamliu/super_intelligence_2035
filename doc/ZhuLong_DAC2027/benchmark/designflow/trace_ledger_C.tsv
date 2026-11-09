@@ -475,3 +475,4 @@
 1783422292753_zh4of					parked		2026-11-09 08:32	duplicate autovia: U0=run run_autovia_agent.il+troubleshoot+solidify-to-executable-steps; same user(e0014566) same theme as AutoViaGen-001(6mdxh)+AutoViaPFAudit-001(9fg5t); 5 prior parked autovia siblings
 1785487939572_csrxv					parked		2026-11-09 08:32	harness-bridge-test: U0='agent 跟 Virtuoso 连接的桥接是通的嘛写一个测试脚本测试一下'; env-recon/bridge-connectivity test not layout design; wrong type
 1785416279062_uu38v					parked		2026-11-09 08:32	harness-bridge-test: U0 identical to csrxv (agent-Virtuoso bridge connectivity test); env-recon not layout; wrong type
+1793322661521_d3ytc	zhiguo1w	hfeg0pkn001	59	physical_verify	case	EDA-Eval-DesignFlow-DummyRuleCfgParse-001	2026-11-09 09:29	
