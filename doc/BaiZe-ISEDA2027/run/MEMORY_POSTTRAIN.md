@@ -14,7 +14,7 @@ WAITING: 0
 - 阻塞: GPU 0/8free(root SGLang Qwen3.8-27B占全8卡44-45GB 0%util,运行自Sep17);沙箱10.129.32.75全端口FILTERED(SSH+TCP);Docker无权限;P3等pretrain ckpt(ETA≈2026-12-25)
 - 本轮新增调研产出: R122 轻量级本地API搜索工具(~440行 + LocalAPISearch类 + BM25索引(8463API,27426tokens) + 三函数实现(search_apis/get_api_details/search_apis_by_keyword) + smoke 14/14 + benchmark(search_apis mean2.18ms/p9921.9ms,get_api_details mean0.018ms) + EDA-Eval 20/20覆盖 + 3/3API命中 + MCP对比(功能等效/延迟降25-100x) + RL集成路径 + EXPERIMENTS §R122）
 - 未完成指令: 🔴用户令2026-11-07(GPU未到位,需持续产出调研) ⇒ WAITING=0
-- git: wake169 commit pending(补推wake168的3 ahead)
+- git: commit✅(0663cfed5 01:13) push✅(proxy=172.19.92.25:13128,rebase后4 commits pushed,no ahead/behind)
 
 ## 关键事实（常驻）
 
