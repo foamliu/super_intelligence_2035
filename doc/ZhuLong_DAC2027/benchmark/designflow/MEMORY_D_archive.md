@@ -192,3 +192,6 @@
 
 
 
+
+## 归档批次 2101 (2026-11-09 #451 轮归档)
+- #447 流水全文：交付 NetlistBroadcastFlow-001（7k3iq thomas1w@hfeg0pkn005 mc=133 · schematic_netlist B-grade synthesized L2 k=11 · byte-sync sha 743383d2 size 3078 · D.jsonl 259→260）。并会话交付：LPDDR5 DDGOA 网表广播流分析，agent grep 追 BroadcastFuseTestBit die-level fuse 测试位广播链 → 抽成 broadcast_analyzer.py <netlist.v> <report.json> 解析门级网表识别广播 stem/顶层/生成点/叶子注入/消费者/回读。A=netlist_A.v(WOWTOP/BroadcastFuseTestBit/CMCenterR aoi21/AF_FsBroadcastflagInChannel)，B=netlist_B.v(DDR5TOP/BroadcastScanTestBit/ScanCenterL oai21/AF_ScanflagInject and2) 命名空间全不同。11 条 a-k 断言 + 反硬编码 A 跑全字段==A 且 !=B + 3-seed md5。自验 ref PASS 11/11 + neg n_distinct 全 FAIL。
