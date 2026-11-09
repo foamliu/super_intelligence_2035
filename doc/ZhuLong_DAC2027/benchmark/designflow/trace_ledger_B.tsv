@@ -709,9 +709,26 @@ qnm9e					parked		2026-11-08 01:58	Finesim DC convergence Q&A prose dup of uky6c
 1794216319185_lvu4r	hktklin	hfeg0pkn004	0	spice_sim	parked		2026-11-09 18:06	trivial small session 5KB
 1794216750374_d5x87	hktklin	hfeg0pkn004	0	spice_sim	parked		2026-11-09 18:06	trivial small session 4KB
 1794215816873_l3qi7	rose3wang	hfeg0pkn003	0	spice_sim	parked		2026-11-09 18:06	trivial small session 5KB
-1794217104209_s97ck.messages.json	tongni	hfeg0pkn001	160	spice_sim	parked		2026-11-09 18:37	spice_sim CLEAN R1-R4 netlist-check produce-task (tongni, sim-sp-gen skill, 20msgs); BLOCKED on attachment access: netlist at /proj/dscqa + /rundata/dscqa both permission-denied for e0031982 (tongni-owned); trace has complete R1-R4 gold report (R1 9cells/vcc+vdd1+vss, R2 net027 bidir invLx8-invMx2, R3 no-fanout-violation, R4 2PASS/17SHORT spare); revisit if readable netlist copy found
+1794217104209_s97ck.messages.json	tongni	hfeg0pkn001	160	spice_sim	case	EDA-Eval-DesignFlow-R1R4NetlistCheck-001	2026-11-09 19:03	spice_sim CLEAN R1-R4 netlist-check produce-task (tongni, sim-sp-gen skill, 20msgs); BLOCKED on attachment access: netlist at /proj/dscqa + /rundata/dscqa both permission-denied for e0031982 (tongni-owned); trace has complete R1-R4 gold report (R1 9cells/vcc+vdd1+vss, R2 net027 bidir invLx8-invMx2, R3 no-fanout-violation, R4 2PASS/17SHORT spare); revisit if readable netlist copy found
 1794201867852_u5ihf.messages.json					parked		2026-11-09 18:37	wrong-shard A: verilog testbench BURST_ORD signal analysis in FineSim stimulus (ericw, 160msgs, 1 user-turn); digital/verification not spice_char
 1794193951052_zg8vo.messages.json					parked		2026-11-09 18:37	wrong-shard C: disable virtuoso layout mouse-drag器件功能 via cdsenv (e0047695, 236msgs); layout_virtuoso not spice_char
 1794205389348_ina0a.messages.json					parked		2026-11-09 18:37	wrong-shard: Totem IR / Aplmmx power-integrity probe-mapping debug (thomasz, 70msgs); not spice_sim/characterization
 1794202571966_v87lq.messages.json					parked		2026-11-09 18:37	characterization L1 weak: Solido high-sigma MC analysis Q&A (e0030760, 164msgs, 13 user-turns); first turn=file-mgmt, main turn=explanation not produce-task; A-faithful gold=analysis-explanation hard to frame as submit.zip deliverable with >=8 conds
 1794212520599_jw3rv.messages.json					parked		2026-11-09 18:37	spice_sim L1 small: HSPICE netlist diff diagnosis why netlist can't operate (vincentz, 25msgs, 2 user-turns, only read_files); diagnosis single-rootcause hard to reach >=8 independent conds
+1793674432523_cpvbl	e0039602	hfeg0pkn004	9	spice_sim	parked		2026-11-09 19:29	1109cron-diff peek: 6msg trivial no-user-text; calibre-dominant wrong-shard C
+1791425249788_4ldaa	colinxu	hfeg0pkn002	6	spice_sim	parked		2026-11-09 19:29	1109cron-diff: virtuoso-dominant(25) wrong-shard D, not peeked
+1793778171219_tq83u	e0046686	hfeg0pkn005	5	spice_sim	parked		2026-11-09 19:29	1109cron-diff: 316netlist+5hspice but NFS-flaky unreadable on pkn005
+1794133038396_0nnlr	e0023936	hfeg0pkn004	3	spice_sim	parked		2026-11-09 19:29	1109cron-diff: virtuoso/schematic-dominant wrong-shard D
+1791795684242_lxy78	e0039602	hfeg0pkn004	3	spice_sim	parked		2026-11-09 19:29	1109cron-diff peek: 6msg trivial no-user-text reject
+1794125570732_twmgl	e0023936	hfeg0pkn004	2	spice_sim	parked		2026-11-09 19:29	1109cron-diff: 4msg-class trivial low-spice
+1794124556477_6mnn7	e0023936	hfeg0pkn004	2	spice_sim	parked		2026-11-09 19:29	1109cron-diff: schematic/virtuoso-dominant wrong-shard D
+1793955833843_7hcwf	e0039602	hfeg0pkn004	2	spice_sim	parked		2026-11-09 19:29	1109cron-diff: 2hspice+1calibre trivial
+1793951773950_guxvg	e0047722	hfeg0pkn001	2	spice_sim	parked		2026-11-09 19:29	1109cron-diff: pyAether-dominant(68) wrong-shard D/aether
+1793760816185_ahiez	e0046686	hfeg0pkn005	2	spice_sim	parked		2026-11-09 19:29	1109cron-diff: 2netlist+2hspice trivial
+1794045295255_m9zo4	legendd	hfeg0pkn002	1	spice_sim	parked		2026-11-09 19:29	1109cron-diff: virtuoso/schematic-dominant wrong-shard D
+1794044717680_q5znu	thomasz	hfeg0pkn001	1	spice_sim	parked		2026-11-09 19:29	1109cron-diff peek: 6msg trivial no-user-text reject; calibre-dominant
+1793925634338_7qzdr	e0046686	hfeg0pkn005	1	spice_sim	parked		2026-11-09 19:29	1109cron-diff: 36netlist+1hspice low-spice pkn005-flaky
+1793619261390_uyqhw	e0039602	hfeg0pkn004	1	spice_sim	parked		2026-11-09 19:29	1109cron-diff peek: 6msg trivial no-user-text reject; pyAether-dominant
+1793188714775_8nyrm	e0044587	hfeg0pkn004	1	spice_sim	parked		2026-11-09 19:29	1109cron-diff: pyAether-dominant(11) wrong-shard D
+1793169071103_vafrf	e0039602	hfeg0pkn004	1	spice_sim	parked		2026-11-09 19:29	1109cron-diff: 1hspice trivial
+1793103814409_kxeno	e0044587	hfeg0pkn004	1	spice_sim	parked		2026-11-09 19:29	1109cron-diff: 1hspice+1calibre trivial

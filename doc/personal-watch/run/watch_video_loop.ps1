@@ -21,7 +21,7 @@
 param(
     [int]$IntervalSec = 3600,          # 唤醒间隔（秒）；默认每小时（**对齐整点**）
     [int]$ClineTimeout = 3300,         # 单次 cline 上限（秒）≈ 55 min（留出 git 同步时间）
-    [string]$Model = 'deepseek-v4-pro',  # 2026-11-07: 用户提供新 key；v4-pro 推理更强（视觉实验由项目内 probe_ds_vision.py 单独调）
+    [string]$Model = 'deepseek-flash',  # 2026-11-09: 用户令切 flash（官方 ID；deepseek-v4-flash 非官方、API 实测不支持）；flash 支持 text+image，pro 仅 text
     [string]$Provider = 'deepseek',    # cline -P；deepseek 条目 key 实测可用
     [string]$Thinking = 'medium',      # none|low|medium|high|xhigh（空 = provider 默认）
     [switch]$Once,                     # 只跑一轮后退出（调试）
