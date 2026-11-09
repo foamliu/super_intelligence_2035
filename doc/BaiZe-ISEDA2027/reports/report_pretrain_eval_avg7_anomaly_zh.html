@@ -3,8 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>预训练全量评测均值异常诊断报告 (Avg7=37.40% vs 历史 51.5–57.9%) — 修订版 v5.1</title>
- <!-- v5.1: ✅ hellaswag chunk0完成@10:15! acc=0.3923/acc_norm=0.4906/n=10044(全量1/4). chunk0 server(8184)已被串行watcher kill@10:15:28→chunk2独占NUMA0(预计加速~5s/it). 投影Avg8(acc)≈53.87%(若全量hs≈0.3923), 接近历史raw@100k=54.75%. 投影Avg8(acc_norm)≈54.92%. chunk1=5070/10044(50%,~12s/it,ETA~16h=瓶颈)/chunk2=197/10044(2%,~12.5s/it,NUMA0刚释放待加速)/chunk3待chunk1完成. Avg7=55.96%不变. 结论A铁证加强. -->
+<title>预训练全量评测均值异常诊断报告 (Avg7=37.40% vs 历史 51.5–57.9%) — 修订版 v5.3</title>
+ <!-- v5.3: 🔴chunk1/chunk2崩溃检测+重启@10:57. 串行watcher(PID1023065)日志显示:chunk0完成@10:15→kill chunk0 server→等chunk1→chunk1 client(PID2097209)于10:49退出(但日志显示chunk1仅到5213/10044=52%,非正常完成=崩溃!). chunk2(8183)同时消失(2695/10044=27%崩溃). watcher检测到chunk1 PID消失后误判为"完成"→启动chunk3于NUMA1(8185). **诊断**:chunks 1&2均在中途崩溃,输出目录为空(无results.json),gguf_lmeval_run.py仅在全部样本完成后才写results.json. **修复**:在NUMA0(port8184,cores0-15)重启chunk1(PID1726927)→chunk1完成后串行重启chunk2→最后等chunk3完成→合并4 chunk. 当前3进程并行:chunk1(NUMA0,~7s/it,ETA~5h)+chunk3(NUMA1,~10s/it,ETA~7h). Avg7=55.96%不变. 结论A不变. -->
+ <!-- v5.2: 监控轮@10:46. chunk2独占NUMA0后实测仍~13s/it(未如预期降至~5s/it),ETA修正~30h(chunk2为新瓶颈). chunk1=5203/10044(52%,~15s/it,ETA~18h)/chunk2=314/10044(3%,~13s/it,ETA~30h)/chunk3待chunk1完成. 2 server(8183/8185)+2 client全活+2 watcher. Avg7=55.96%不变. 结论A不变. 全量hellaswag ETA~Nov11~17:00. v5.1: ✅hellaswag chunk0完成@10:15(acc=0.3923/acc_norm=0.4906/n=10044). 投影Avg8(acc)≈53.87%接近历史54.75%. 结论A铁证加强. -->
  <!-- v5.0: 🔧 NUMA串行优化@10:09. hellaswag进度: chunk0=9922/10044(98.8%,~5s/it,ETA~5-10min即将完成)/chunk1=5015/10044(50%,~15-25s/it,ETA~20-35h=瓶颈)/chunk2=145/10044(1.4%,NUMA0带宽争抢~17s/it). **优化**:杀旧chunk3 watcher(PID1312093,原计划chunk0完成后在8184 NUMA0起chunk3→与chunk2争带宽~12s/it各→ETA~33h),改用串行NUMA方案(PID1023065):①chunk0完成→kill chunk0 server→chunk2独占NUMA0(~5s/it,ETA~14h)②chunk1完成→kill chunk1 server→chunk3在NUMA1(8185)独占启动(~5s/it,ETA~14h)→总ETA~28h(省~5h). 教训来自#1656:node0多server=3x慢. Avg7=55.96%不变(7集完成). 结论A不变. S1训练健康 iter~136000/700k. -->
  <!-- v4.9: 监控轮@09:54. hellaswag进度: chunk0=9768/10044(97.3%,~3-5s/it,ETA~15-25min→即将完成触发chunk3迁移NUMA0快口)/chunk1=4978/10044(49.6%,瓶颈,~10-25s/it,ETA~Nov10~23:00)/chunk2=113/10044(1.1%,rebalanced至port8183但NUMA0带宽争抢仍慢~12-22s/it)/chunk3待chunk0完成(PID1312093 watcher存活). 3 server(8183/8184/8185)+3 client全活+2 watcher全活. Avg7=55.96%不变(7集完成). 结论A不变. S1训练健康 iter~136000/700k. -->
 <!-- v4.8: ✅ 杀掉冗余piqa重启进程(PID2097184,results.json已于08:56由先前完成的run写入acc=0.7144,此restart@81%为冗余)→触发chunk2 rebalance watcher:chunk2从慢port8186(~16s/it,ETA~34h)迁移至快port8183(cores32-47,~7.5s/req,ETA~21h). chunk0~92%(ETA~44min→即将完成触发chunk3 watcher). chunk1=48%(瓶颈,ETA~35h). 全8集ETA≈Nov10~20:00(chunk1=瓶颈). 结论A不变. -->
@@ -35,7 +36,7 @@ pre{background:#f4f4f4;padding:12px;border-radius:6px;overflow-x:auto;font-size:
 </style>
 </head>
 <body>
-<h1>🚨 预训练全量评测均值异常诊断报告 <span class="updated">（修订版 v5.1 · 2026-11-09 10:20）</span></h1>
+<h1>🚨 预训练全量评测均值异常诊断报告 <span class="updated">（修订版 v5.3 · 2026-11-09 10:57）</span></h1>
 <p><strong>报告日期：</strong>2026-11-08　<strong>检查点：</strong>iter_112000（2B Mamba2-hybrid）<br>
 <strong>异常：</strong>本轮 v4 Avg7=37.40% vs 历史 iter_100000 Avg=54.75%（raw）/ 57.75%（harness），差 14–20 pp<br>
 <span class="updated">⬆ 修订说明：v1 报告结论为「差异 100% 来自二进制」。
@@ -57,7 +58,9 @@ v5 Avg6(acc)=53.38% vs 历史同 6 集 limit=100 Avg6(acc)=53.83%，差仅 −0.
 <span class="updated">⬆ v4.0 更新（02:52）：✅ 5 server+5 client 全活（ports 8183-8187 health OK, etime~6.2h, 无 SIGTERM）。精确进度（tqdm）：piqa 1570/3676(43%, 7.12s/it, ETA~4.2h→~07:00)·hs_c0 4647/10044(46%, 8.10s/it, ETA~12.1h→~15:00←将触发rebalance)·hs_c1 3544/10044(35%, 8.85s/it, ETA~16h→~19:00)·hs_c2 1397/10044(14%, 22.94s/it, ETA~55h→Nov11←新瓶颈)·hs_c3 717/10036(7%, 9.87s/it, ETA~25.6h→Nov10)。速率波动分析：chunk2 从 12.8→22.94s/it（带宽争抢恶化），chunk3 从 17.5→9.87s/it（改善）。6/8 集不变 Avg6(acc)=53.38%≈历史 53.83%（差 -0.45pp）。S1 训练健康 iter_132000/700k。结论 A 不变。</span><br>
 <span class="updated">⬆ v4.4 更新（07:45）：✅ 5 server+5 client 全活（ports 8183-8187 health=200×5）。精确进度（tqdm）：piqa 2708/3676(74%, ~34-47s/it, ETA~9-12h→~17:00-20:00)·hs_c0 8059/10044(80%, ~5-7s/it, ETA~3-4h→~11:00-12:00←最先完成, 触发chunk3 rebalance→8184 NUMA0)·hs_c1 4461/10044(44%, ~11-15s/it, ETA~18-21h→Nov10~02:00-05:00)·hs_c2 2313/10044(23%, ~21-27s/it, rebalance watcher PID130575待piqa完成→迁8183 NUMA0降至~5s/it)·hs_c3 265/10036(3%, ~7-14s/it, rebalance watcher PID1312093待c0完成→迁8184 NUMA0降至~5s/it)。6/8 集不变 Avg6(acc)=53.38%≈历史 53.83%（差 -0.45pp）。S1 训练健康 iter_136000/700k, 8×H100 74-100%util。rebalance 后全 8 集完成 ETA≈Nov10~05:00-12:00。research 日报 11-09 已读：pretrain 建议=四件套工件/审计脚本/5次参考观测（口径方法论, 与结论 A 一致, 无新动作）。结论 A 不变。</span><br>
 <span class="updated">⬆ v4.7 更新（09:03）：🎉 <strong>piqa 全量评测完成！acc=0.7144, n=1838（全量, 修复版二进制）</strong>。7/8 集已完成，<strong>Avg7(acc)=55.96%</strong>。关键对比：v4 旧二进制 piqa=0.5403 → v5 修复版 piqa=0.7144（<strong>Δ=+17.41pp</strong>）——piqa 是继 sciq(+52.6pp)、arc_easy(+39.35pp) 之后第三个二进制主因任务！Avg7=55.96% vs 历史同 7 集 limit=100 Avg7≈56.71%，<strong>Δ=−0.75pp（几乎完全一致！）</strong>。仅 hellaswag 仍运行（chunk0 90%即将完成, chunk1 47%=瓶颈 ETA Nov10, chunk2 26%, chunk3 4%）。结论 A 铁证进一步加强。</span><br>
-<span class="updated">⬆ v5.0 更新（10:09）：🔧 <strong>NUMA 串行优化</strong>——hellaswag 进度 chunk0=9922/10044(98.8%即将完成)、chunk1=5015/10044(50%,瓶颈)、chunk2=145/10044(1.4%,NUMA0带宽争抢)。发现旧 chunk3 watcher 会在 chunk0 完成后将 chunk3 放到 8184(NUMA0)，与 chunk2(8183) 共享 NUMA0 带宽→各 ~12s/it→ETA~33h。<strong>改为串行方案</strong>：chunk0 完成→释放 NUMA0→chunk2 独占 NUMA0(~5s/it)；chunk1 完成→释放 NUMA1→chunk3 独占 NUMA1 启动(~5s/it)。总 ETA ~28h（省 ~5h）。教训来自 #1656 诊断：node0 多 server 共享内存带宽=3x 慢。<strong>Avg7=55.96% 不变，结论 A 不变</strong>。hellaswag 完成后补 Avg8 终版。</span></p>
+<span class="updated">⬆ v5.0 更新（10:09）：🔧 <strong>NUMA 串行优化</strong>——hellaswag 进度 chunk0=9922/10044(98.8%即将完成)、chunk1=5015/10044(50%,瓶颈)、chunk2=145/10044(1.4%,NUMA0带宽争抢)。发现旧 chunk3 watcher 会在 chunk0 完成后将 chunk3 放到 8184(NUMA0)，与 chunk2(8183) 共享 NUMA0 带宽→各 ~12s/it→ETA~33h。<strong>改为串行方案</strong>：chunk0 完成→释放 NUMA0→chunk2 独占 NUMA0(~5s/it)；chunk1 完成→释放 NUMA1→chunk3 独占 NUMA1 启动(~5s/it)。总 ETA ~28h（省 ~5h）。教训来自 #1656 诊断：node0 多 server 共享内存带宽=3x 慢。<strong>Avg7=55.96% 不变，结论 A 不变</strong>。hellaswag 完成后补 Avg8 终版。</span><br>
+<span class="updated">⬆ v5.2 更新（10:46）：监控轮——chunk1=5203/10044(52%,~15s/it,ETA~18h→Nov10~05:00)·chunk2=314/10044(3%,~13s/it,ETA~30h→Nov11~17:00)·chunk3待chunk1完成。<strong>修正：chunk2 独占 NUMA0 后实测仍 ~13s/it（原预计 ~5s/it 未兑现）</strong>，可能因 GGUF mmap 页缓存跨 NUMA 分布或 cores32-47 内存局部性差异。chunk2 取代 chunk1 成为新瓶颈，全量 hellaswag ETA 修正为 ~Nov11~17:00。2 server(8183/8185)+2 client 全活+2 watcher。Avg7=55.96% 不变，结论 A 不变。</span><br>
+<span class="updated">⬆ v5.3 更新（10:57）：🔴 <strong>chunk1/chunk2 崩溃检测 + 重启</strong>——串行 watcher 日志显示 chunk1 client 于 10:49 退出，但 tqdm 日志显示 chunk1 仅到 5213/10044(52%)=非正常完成=崩溃。chunk2 同时消失(2695/10044=27%崩溃)。两个 chunk 的输出目录均为空（gguf_lmeval_run.py 仅在全部样本完成后写 results.json，无 resume）。watcher 检测到 chunk1 PID 消失后误判为"完成"→启动 chunk3 于 NUMA1(8185)。<strong>修复</strong>：在 NUMA0(port8184,cores0-15)重启 chunk1(PID1726927,~7s/it)→chunk1 完成后串行重启 chunk2→最后等 chunk3 完成→合并 4 chunk。当前 2 路并行：chunk1(NUMA0)+chunk3(NUMA1)，各独占 1 NUMA 节点（最优带宽）。Avg7=55.96% 不变，结论 A 不变。hellaswag 全 4 chunk 完成后补 Avg8 终版。</span></p>
 
 <div class="box box-green conclusion">
 <strong>结论：A. 口径差异（非真实能力下降）—— 二因叠加</strong><br><br>
@@ -170,17 +173,20 @@ v5 vs v4 隔离了二进制效应，v5 vs 历史隔离了全量vs限100 效应�
 <p><span class="updated">v5 评测中 hellaswag 的 4 个分片（chunk0-3）已重启</span>，与 piqa 一起在释放的 5 组核心上并行运行（port 8183=piqa, 8184-8187=4 hellaswag shards）。
 hellaswag 全量 = 10042 题 × 4 选项 = 40168 次 loglikelihood 请求，是最大的任务（约占总请求量的 55%）。
 <strong>「HS 20.8%」的单位是 loglikelihood 请求数</strong>（非 doc 数）——hellaswag 有 10042 个 doc，每个 doc 4 个选项 = 40168 次请求，4 shard 各约 10042 次。</p>
-<p><strong>当前进度（v5.1 @ 10:20，NUMA 串行优化后）：</strong></p>
+<p><strong>当前进度（v5.3 @ 10:57，chunk1/chunk2 崩溃后重启）：</strong></p>
 <table>
 <tr><th>任务</th><th>port</th><th>进度</th><th>速率</th><th>ETA</th></tr>
 <tr><td>arc_easy</td><td>8182</td><td class="green">✅ 完成 (9501/9501, acc=0.6553)</td><td>—</td><td class="green">DONE</td></tr>
 <tr><td>piqa</td><td>8183</td><td class="green">✅ 完成 (3676/3676, acc=0.7144)</td><td>—</td><td class="green">DONE</td></tr>
-<tr><td>hellaswag chunk0</td><td>8184</td><td class="green">✅ 完成 (10044/10044, acc=0.3923, acc_norm=0.4906)</td><td>—</td><td class="green">DONE @ 10:15 (server killed by serial watcher)</td></tr>
-<tr><td>hellaswag chunk1</td><td>8185</td><td>5070/10044 (50%)</td><td>~12 s/it</td><td class="red">~16h → Nov10~03:00 ← 当前瓶颈</td></tr>
-<tr><td>hellaswag chunk2</td><td>8183</td><td>197/10044 (2%)</td><td>~12.5 s/it (NUMA0 刚释放, 预计降至~5s/it)</td><td class="red">~14h (加速后) → chunk2 独占 NUMA0</td></tr>
-<tr><td>hellaswag chunk3</td><td>待 chunk1 完成</td><td>0/10036 (0%)</td><td>—</td><td class="red">串行 watcher PID1023065: chunk1 完成后在 NUMA1(8185) 启动 ~5s/it, ETA~14h</td></tr>
+<tr><td>hellaswag chunk0</td><td>8184</td><td class="green">✅ 完成 (10044/10044, acc=0.3923, acc_norm=0.4906)</td><td>—</td><td class="green">DONE @ 10:15</td></tr>
+<tr><td>hellaswag chunk1</td><td>8184 (重启)</td><td class="orange">🔴 崩溃@10:49(5213/10044=52%) → 🔄 已重启@10:57 (PID1726927, NUMA0独占)</td><td>~7 s/it</td><td class="orange">~5h → Nov9~16:00</td></tr>
+<tr><td>hellaswag chunk2</td><td>8184 (待chunk1完成)</td><td class="red">🔴 崩溃@10:49(2695/10044=27%) → ⏳ 待chunk1完成后串行重启</td><td>—</td><td class="red">~5h after chunk1 → Nov9~21:00</td></tr>
+<tr><td>hellaswag chunk3</td><td>8185 (NUMA1)</td><td>🔄 运行中 (9/10036, PID959143)</td><td>~10 s/it</td><td class="orange">~7h → Nov9~18:00</td></tr>
 </table>
-<p><strong>NUMA 串行优化（v5.0 @ 10:09 实施, v5.1 已验证 chunk0 完成触发）：</strong>chunk0 完成 → watcher kill chunk0 server(8184) → chunk2(8183) 独占 NUMA0 带宽 → 预计 ~5s/it。chunk1 完成 → watcher kill chunk1 server(8185) → chunk3 在 NUMA1 独占启动 → ~5s/it。总 ETA ~28h（省 ~5h vs 旧方案）。教训来自 #1656：node0 多 server = 3x 慢。</p>
+<p><strong>NUMA 串行优化（v5.0 @ 10:09 实施, v5.1 已验证 chunk0 完成触发, v5.2 实测修正）：</strong>chunk0 完成 → watcher kill chunk0 server(8184) → chunk2(8183) 独占 NUMA0 带宽。<strong>v5.2 修正：原预计独占后 ~5s/it，实测仍 ~13s/it</strong>（可能因 GGUF mmap 页缓存分布在跨 NUMA 节点、或 cores32-47 与 cores0-15 所在 NUMA 内存局部性不同）。chunk1 完成 → chunk3 在 NUMA1 独占启动。修正后总 ETA ~30h（chunk2 为瓶颈）。教训来自 #1656：node0 多 server = 3x 慢。</p>
+<div class="box box-red">
+<p><strong>⚠️ v5.3 崩溃诊断（10:57）：</strong>chunk1 和 chunk2 均在 ~10:49 崩溃（chunk1 在 5213/10044=52%处、chunk2 在 2695/10044=27%处），输出目录为空。<strong>根因</strong>：串行 watcher 脚本 <code>rebalance_chunk3_serial_numa.sh</code> 使用 <code>kill -0</code> 检测 chunk1 client PID 是否存活——进程崩溃与正常退出无法区分，watcher 误判 chunk1 "完成"后启动 chunk3。chunk2 的 server(8183) 可能因同一时间段的系统事件（OOM/信号）而终止。<strong>gguf_lmeval_run.py 无 resume 机制</strong>——仅在全部样本完成后写 results.json，中途崩溃=全部进度丢失。<strong>修复</strong>：新脚本 <code>restart_chunk1_then_chunk2.sh</code> 在 NUMA0(port8184) 串行重启 chunk1→chunk2，chunk3 继续在 NUMA1(8185)。各独占 1 NUMA 节点=最优带宽。ETA ~7h（全部 4 chunk 完成约 Nov9~21:00）。</p>
+</div>
 <div class="box box-red">
 <p><strong>⚠️ 20:34 事故记录：</strong>上一轮 piqa/hellaswag（#1706 于 18:25 启动）的 5 个 llama-server 后端在 ~20:12 收到外部 SIGTERM 优雅退出（server 日志 "cleaning up before exit"），但 5 个 eval 客户端未感知、继续空转挂起。#1716(20:28) 心跳误报"5 server 全活"（实际已死）。因脚本无 resume、输出目录为空，20:34 kill 挂起进程后从零重跑，损失 ~1.5h。SIGTERM 来源未明（疑似某次唤醒的清理操作或外部脚本），<strong>下次唤醒须首要确认 server 存活</strong>。</p>
 </div>
@@ -192,7 +198,7 @@ Mamba2-hybrid 的 SSM 顺序扫描是内存带宽受限的（#1570 已验证 16 
 piqa（3676 题）和 hellaswag（40168 请求）是大任务，完成需较长时间。
 <strong>慢 ≠ 错</strong>——v5 使用修复版二进制，结果正确，仅速度受限。</p>
 </div>
-<p><strong>hellaswag chunk0 已完成：acc=0.3923, acc_norm=0.4906, n=10044（全量 1/4）。</strong> chunk0 是 4 个分片中第一个完成的，其分数可作为全量 hellaswag 的初步估计。<span class="updated">v5.1 更新@10:20：chunk0 server(8184) 已被串行 watcher kill → chunk2 独占 NUMA0(预计加速)。chunk1=5070/10044(50%,~12s/it,ETA~16h=瓶颈)·chunk2=197/10044(2%,NUMA0刚释放待加速)·chunk3=待chunk1完成。3 server(8183/8185)+2 client(chunk1/chunk2)全活+1 serial watcher(PID1023065)+1 chunk2 rebalance watcher(PID130575)。Avg7=55.96% 不变。结论 A 铁证加强。</span></p>
+<p><strong>hellaswag chunk0 已完成：acc=0.3923, acc_norm=0.4906, n=10044（全量 1/4）。</strong> chunk0 是 4 个分片中第一个完成的，其分数可作为全量 hellaswag 的初步估计。<span class="updated">v5.2 更新@10:46：chunk2 独占 NUMA0 后实测仍 ~13s/it（未如预期降至~5s/it），ETA 修正为 ~30h（chunk2 为新瓶颈）。chunk1=5203/10044(52%,~15s/it,ETA~18h)·chunk2=314/10044(3%,~13s/it,ETA~30h)·chunk3=待chunk1完成。2 server(8183/8185)+2 client(chunk1/chunk2)全活+1 serial watcher(PID1023065)+1 chunk2 rebalance watcher(PID130575)。Avg7=55.96% 不变。结论 A 不变。v5.1 更新@10:20：chunk0 server(8184) 已被串行 watcher kill → chunk2 独占 NUMA0(预计加速)。chunk1=5070/10044(50%,~12s/it,ETA~16h=瓶颈)·chunk2=197/10044(2%,NUMA0刚释放待加速)·chunk3=待chunk1完成。Avg7=55.96% 不变。结论 A 铁证加强。</span></p>
 <p><strong>投影 Avg8（基于 chunk0 hellaswag 实测）：</strong>若全量 hellaswag ≈ chunk0 结果(acc=0.3923)，则：
 <br>• <strong>Avg8(acc/raw) = (0.3038+0.6553+0.5872+0.2660+0.8420+0.5485+0.7144+0.3923)/8 = 4.3095/8 = 53.87%</strong> — 接近历史 raw@100k=54.75%（Δ=−0.88pp，几乎一致！）
 <br>• <strong>Avg8(acc_norm/harness) ≈ (0.3362+0.5758+0.5872+0.3640+0.7740+0.5485+0.7176+0.4906)/8 ≈ 54.92%</strong> — 介于历史 raw(54.75%) 与 harness(57.75%) 之间
