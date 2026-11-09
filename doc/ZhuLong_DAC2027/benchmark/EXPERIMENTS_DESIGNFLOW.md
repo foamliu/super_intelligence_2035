@@ -1,5 +1,42 @@
 # EXPERIMENTS — Design-Flow Benchmark
 
+## EXP-FR1 全量 trace 重扫 + mc 阈值下调评估（2026-11-09 r292，用户直令）
+
+**背景**：r268-r291 连续 17 轮管理轮判定 shard A digital produce-task 候选池 EXHAUSTED，全部依赖 11/05 的 `ssh_eda_search_20261105_192825/summary.tsv`（42 hosts / 3896 sessions / mc30=1511）。用户直令：对目标机群执行全量重扫，评估 mc 阈值下调可行性。
+
+**方法**：
+- 在 .75 经 eda_flow run_commands 跑 `probe_remote.sh` over 全 698 IPs（`/home/t0002965/ssh_auth_ok.txt`），`xargs -P 50 -n1 bash -c '... exit 0'`，每 host 300s timeout。
+- **关键修复**：每 host `exit 0` 强制返回 0，防止 xargs 在首个 ssh status-255（不可达 host）时 abort。
+- 输出落 `/home/t0002965/log/ssh_eda_search_20261109_224902/summary.tsv`（7-col：ip host user session_file match_count keywords tools）。
+- mc 阈值表：本地 `threshold_analysis_pool.py` 读 shard A pool（3089 dedup sessions，放宽 filter）× 4-shard ledger（excl=2492），按 mc≥30/25/20/15/10/5 统计 sessions/unique_users/un_ledgered/digital_strong/strong_unledgered。
+- 可行性 peek：ssh 读 top-14 un-ledgered strong-digital sessions（按 mc 降序）首 1-2 条 user message，人工分类 clean-produce / borderline / analysis-only / wrong-shard / trivial。
+
+**结果**：
+1. **全量重扫覆盖**：696/698 hosts reported（vs 11/05 的 42），38082 rows，dedup_sessions=5999（+2103），users=512（+244），mc30=2247（+736），new_sessions_vs_1105=2164。
+2. **根因**：11/05 扫描 + `daily_eda_scan.sh` 的 xargs **无 `exit 0`**，ssh 遇不可达 host 返 255 → xargs 立即 abort，覆盖截到 ~42 hosts（abort 前的并行窗口）。此前 17 轮"EXHAUSTED"是 **42-host 覆盖假象**，非真枯竭。
+3. **mc 阈值表**（shard A pool 3089 sess）：
+
+| mc≥ | sessions | unique_users | un_ledgered | digital_strong | strong_unledgered |
+|----|----|----|----|----|----|
+| 30 | 1944 | 376 | 924 | 139 | 26 |
+| 25 | 2041 | 388 | 988 | 139 | 26 |
+| 20 | 2148 | 396 | 1077 | 150 | 32 |
+| 15 | 2279 | 409 | 1191 | 160 | 38 |
+| 10 | 2428 | 420 | 1313 | 173 | 44 |
+| 5 | 2637 | 444 | 1496 | 186 | 54 |
+
+4. **可行性 peek（n=14）**：clean produce-task=0(0%)，borderline=3(21%)，analysis-only=2(14%)，wrong-shard=8(57%)，trivial=2(14%)。borderline 候选：0ekf9(mc352, testMax DFT demo)、qxaiv/5ze4m(Perl 脚本优化)。wrong-shard 主因：strong-digital marker（verdi/vcs/innovus）噪声大——calibre/virtuoso/SPICE/AMS 会话顺带提 innovus/vcs（wb03t mc698=SpiceAgent CTLE 模拟，l36g5=同，zg8vo/nd56k=virtuoso layout，hfv5q/7z9re=calibre DRC，8uaii=lib PG/LVS，kqelc=ADE/AMS sim）。
+
+**结论与建议**：
+- **最低可用阈值=mc≥15（保持现状）**。降到 mc≥10/5 仅 +1313/+1496 un-ledgered 但质量递减（更多 trivial/analysis）。
+- **瓶颈不在 mc 阈值，在 filter 质量**：strong-digital marker 57% wrong-shard。应排除纯 calibre/virtuoso/spice/AMS 即使提 innovus/vcs，优先 verilog/rtl/sdc/systemverilog/synthesis 为 DOMINANT keyword 的会话。
+- **预计新增 case=10-20**（mc≥15 的 1191 un-ledgered × ~1-2% deepread yield；3/14 borderline ≈ 21% × 62 strong_unledgered ≈ 13 borderline，~半数成 case ≈ 6；加上非 strong 的放宽 filter pool 有 verilog/rtl/tcl produce-task 未触 strong marker）。
+- **运维行动**：把 `exit 0` 修复应用到 `/home/t0002965/log/daily_eda_scan.sh` 的 xargs，让 daily cron 覆盖全 698 hosts（当前被 abort-on-255 截到 ~42）。
+
+**交付**：`summary_stats.json.scansync.r292`（含 scan_stats / threshold_table_shardA / feasibility_peek / recommendation）+ scan_path/mc30=2247/hosts=696 更新；MEMORY_DESIGNFLOW_A.md r292 心跳；本节。🚫 不新建 HTML 报告（报告纪律）。
+
+---
+
 ## 已归档（→ ARCHIVE_OPERATOR_DESIGNFLOW.md 归档批次 1，2026-10-28 第10轮）
 - EXP-01 8092 MCP 协议探查 → 8092=RESEARCH-MCP-SERVER，无 exec/ssh。
 - EXP-02 .75 SSH 连通性 → ping 通但 Permission denied，无免密。

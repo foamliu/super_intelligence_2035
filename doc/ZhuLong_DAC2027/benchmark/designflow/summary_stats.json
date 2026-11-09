@@ -12,17 +12,17 @@
     "20261103": 365
   },
   "generated": "2026-11-06T08:40:00+08:00",
-  "hits_total": 5822,
-  "hosts": 42,
-  "mc100": 865,
+  "hits_total": 38082,
+  "hosts": 696,
+  "mc100": 1244,
   "mc1000": 8,
-  "mc30": 1511,
-  "mc300": 252,
+  "mc30": 2247,
+  "mc300": 317,
   "mc500": 281,
-  "note": "11/06 升级到 11/05 新扫描 (ssh_eda_search_20261105_192825)。新扫描 dedup_sessions=3896, mc30=1511 (vs 旧扫描 1369, +142), 新增 session 514 个。shard A 11/06 放宽过滤词 (+synthesis/synopsys/tcl/verilog/systemverilog/rtl/sdc/vivado/yosys/openroad) + 降 mc>=15, 候选池 53→216 (3x)。各 shard 新增候选: A+92 B+200 C+247 D+383。旧扫描路径保留在 prev_scan_path 用于新增对比。",
-  "prev_scan_path": "/home/t0002965/log/ssh_eda_search_20261028_174426/summary.tsv",
+  "note": "11/09 22:49 FULL RESCAN (ssh_eda_search_20261109_224902): fixed xargs abort-on-255 bug (added 'exit 0' per host) -> recovered 696/698 hosts (vs 11/05's 42-host coverage). dedup_sessions=5999 (+2103 vs 11/05 3896), users=512 (+244), mc30=2247 (+736), new_sessions_vs_1105=2164. Root cause: daily_eda_scan.sh + 11/05 scan used xargs WITHOUT exit-0, aborting on first unreachable host (status 255), capping at ~42 hosts (parallel window). shard_A_pool_mc15=2393, B=1013, C=2035, D=1928. threshold_table in scansync.r292.",
+  "prev_scan_path": "/home/t0002965/log/ssh_eda_search_20261105_192825/summary.tsv",
   "prev_sessions": 5822,
-  "scan_path": "/home/t0002965/log/ssh_eda_search_20261105_192825",
+  "scan_path": "/home/t0002965/log/ssh_eda_search_20261109_224902/summary.tsv",
   "scansync": {
     "r277": {
       "consecutive_mgmt_round": "r268-r277 (10th)",
@@ -143,24 +143,23 @@
       "ts": "2026-11-09T18:30:00+08:00",
       "users_mc30": 224
     },
-    "updated_at": "2026-11-09T22:35:00+08:00",
     "r283": {
-      "ts": "2026-11-09T18:20:00+08:00",
-      "latest_scan": "ssh_eda_search_20261105_192825",
-      "no_new_scan_rounds": 16,
+      "case_delivered": "EDA-Eval-DesignFlow-X8FusePatternGen-001 (verification, A-faithful, L1-static, k=14) — nevinrao 08l4v X8 fuse pattern produce-task",
       "consecutive_mgmt_round": "r268-r282 (15 mgmt) + r283 (PIVOT to fresh-window scan)",
       "daily_log_1109_lines": 2893,
       "daily_log_1109_mtime": "2026-11-09 00:00:59 (unchanged, cron daily)",
       "daily_log_1110_exists": false,
       "daily_log_healthy": true,
-      "pivot": "r283 pivoted shard A from stale-11/05-scan + daily-cron-log checks (15 rounds exhausted) to fresh-window DIRECT scan (find -newermt '2026-11-06 00:00:00' on active hosts pkn001-005/hfhds201), like shard B's rescan approach",
-      "fresh_window_hosts_scanned": "hfhds201(.75 local) + pkn001(10.129.2.10) + pkn002(10.129.2.11) + pkn003(10.129.2.12) + pkn004(10.129.2.13) + pkn005(10.129.2.14)",
+      "digital_marker_grep_targets": "e0046913@pkn003 (j9oap=214/ayxhy=90/5or9z=97 NEW post-purge), cliu@pkn004 (z9zx7=84), tongfanl@pkn001 (zm0zw=77/q54e4=10/gwm47=2), nevinrao@pkn001 (08l4v=150/vbmpm=147), xxchen@pkn001 (LOW, skip)",
+      "finding": "r283 PIVOT: after 15 consecutive mgmt rounds (r268-r282) declaring digital pool exhausted via stale 11/05 scan + daily cron log, shard A adopted shard B's fresh-window direct scan (find -newermt on active hosts). Scanned 6 hosts (hfhds201+pkn001-005), found 412 fresh sessions (post-11/06), 210 un-ledgered. Digital-marker grep on targeted users: e0046913@pkn003 has NEW post-purge sessions (j9oap=214 digital markers, ayxhy=90, 5or9z=97) — strong digital (icc2/rtl/verilog/synthesis). nevinrao@pkn001 08l4v(150, 1.96MB) = CLEAN A-faithful verilog pattern produce-task (X8 fuse) -> delivered. cliu z9zx7(84), tongfanl zm0zw(77) remain as future candidates. xxchen LOW digital (skip). 1 case delivered (08l4v), breaking the 15-round mgmt-only streak.",
       "fresh_sessions_total": 412,
       "fresh_unledgered": 210,
-      "digital_marker_grep_targets": "e0046913@pkn003 (j9oap=214/ayxhy=90/5or9z=97 NEW post-purge), cliu@pkn004 (z9zx7=84), tongfanl@pkn001 (zm0zw=77/q54e4=10/gwm47=2), nevinrao@pkn001 (08l4v=150/vbmpm=147), xxchen@pkn001 (LOW, skip)",
-      "case_delivered": "EDA-Eval-DesignFlow-X8FusePatternGen-001 (verification, A-faithful, L1-static, k=14) — nevinrao 08l4v X8 fuse pattern produce-task",
-      "finding": "r283 PIVOT: after 15 consecutive mgmt rounds (r268-r282) declaring digital pool exhausted via stale 11/05 scan + daily cron log, shard A adopted shard B's fresh-window direct scan (find -newermt on active hosts). Scanned 6 hosts (hfhds201+pkn001-005), found 412 fresh sessions (post-11/06), 210 un-ledgered. Digital-marker grep on targeted users: e0046913@pkn003 has NEW post-purge sessions (j9oap=214 digital markers, ayxhy=90, 5or9z=97) — strong digital (icc2/rtl/verilog/synthesis). nevinrao@pkn001 08l4v(150, 1.96MB) = CLEAN A-faithful verilog pattern produce-task (X8 fuse) -> delivered. cliu z9zx7(84), tongfanl zm0zw(77) remain as future candidates. xxchen LOW digital (skip). 1 case delivered (08l4v), breaking the 15-round mgmt-only streak.",
-      "future_candidates": "e0046913 j9oap(214,FM rtl2rtl demo select=consulting)/5or9z(97,FM Makefile debug)/ayxhy(90), cliu z9zx7(84,verilog), tongfanl zm0zw(77,xmsim vecgen), nevinrao vbmpm(147)"
+      "fresh_window_hosts_scanned": "hfhds201(.75 local) + pkn001(10.129.2.10) + pkn002(10.129.2.11) + pkn003(10.129.2.12) + pkn004(10.129.2.13) + pkn005(10.129.2.14)",
+      "future_candidates": "e0046913 j9oap(214,FM rtl2rtl demo select=consulting)/5or9z(97,FM Makefile debug)/ayxhy(90), cliu z9zx7(84,verilog), tongfanl zm0zw(77,xmsim vecgen), nevinrao vbmpm(147)",
+      "latest_scan": "ssh_eda_search_20261105_192825",
+      "no_new_scan_rounds": 16,
+      "pivot": "r283 pivoted shard A from stale-11/05-scan + daily-cron-log checks (15 rounds exhausted) to fresh-window DIRECT scan (find -newermt '2026-11-06 00:00:00' on active hosts pkn001-005/hfhds201), like shard B's rescan approach",
+      "ts": "2026-11-09T18:20:00+08:00"
     },
     "r284": {
       "case_delivered": "EDA-Eval-DesignFlow-SimSavedTotalComplete-001 (verification, B-synthesized, L1-static+subprocess, k=14)",
@@ -168,94 +167,248 @@
       "daily_log_20261109_lines": 2893,
       "daily_log_healthy": true,
       "date": "2026-11-09",
-      "latest_scan": "ssh_eda_search_20261105_192825",
-      "no_new_scan_rounds": 16,
-      "shard_A_pool_mc15": 216,
+      "fresh_digital_strong": "ynbai 1qlnn (1117 verilog) claimed+case; ericw u5ihf (2686 verilog) = analysis-only Q&A (BURST_ORD); tongfanl 3j03k/zm0zw/q54e4 = locate/find tasks; dsgao a75vy = finesim SPICE (shard B/D)",
       "fresh_window_method": "find -newermt '2026-11-07 00:00:00' on hfhds201 (10.129.32.75)",
       "fresh_window_sessions_hfhds201": 29,
-      "fresh_digital_strong": "ynbai 1qlnn (1117 verilog) claimed+case; ericw u5ihf (2686 verilog) = analysis-only Q&A (BURST_ORD); tongfanl 3j03k/zm0zw/q54e4 = locate/find tasks; dsgao a75vy = finesim SPICE (shard B/D)",
-      "note": "16th consecutive mgmt round with no new scan. r283 PIVOT method (fresh-window direct scan find -newermt on active hosts) reused on hfhds201: 29 sessions >=11/07, probed top 9 by size for digital markers. ericw/u5ihf strongest (2686 verilog) but analysis-only (BURST_ORD detailed analysis, no produce). ynbai/1qlnn (1117 verilog) = viable produce-task: parse sim.saved.total DDR5 sim-vector list, complete missing 5 corners per case, output supplemented-only lines to .more. B-synthesized case delivered (real input perm-denied on .75 as e0031982; reconstructed representative A + hidden B with 8 cases / 13 supplemented lines incl constructed-suffix cases). check.py 14 conds a-n, ref PASS 14/14, 4 negs + 3 fakes all FAIL NEG_RC=0. pkn001-005 ssh via getent failed (no DNS), hfhds201 only host scanned this round.",
-      "ts": "2026-11-09T18:50:00+08:00"
-    },
-    "r287": {
-      "ts": "2026-11-09T21:10:00+08:00",
-      "date": "2026-11-09",
       "latest_scan": "ssh_eda_search_20261105_192825",
       "no_new_scan_rounds": 16,
+      "note": "16th consecutive mgmt round with no new scan. r283 PIVOT method (fresh-window direct scan find -newermt on active hosts) reused on hfhds201: 29 sessions >=11/07, probed top 9 by size for digital markers. ericw/u5ihf strongest (2686 verilog) but analysis-only (BURST_ORD detailed analysis, no produce). ynbai/1qlnn (1117 verilog) = viable produce-task: parse sim.saved.total DDR5 sim-vector list, complete missing 5 corners per case, output supplemented-only lines to .more. B-synthesized case delivered (real input perm-denied on .75 as e0031982; reconstructed representative A + hidden B with 8 cases / 13 supplemented lines incl constructed-suffix cases). check.py 14 conds a-n, ref PASS 14/14, 4 negs + 3 fakes all FAIL NEG_RC=0. pkn001-005 ssh via getent failed (no DNS), hfhds201 only host scanned this round.",
+      "shard_A_pool_mc15": 216,
+      "ts": "2026-11-09T18:50:00+08:00"
+    },
+    "r285": {
+      "LATEST_SCAN": "/home/t0002965/log/ssh_eda_search_20261105_192825",
+      "case_delivered": "EDA-Eval-DesignFlow-PowerPlanSignalExpand-001 (verification, B-档, k=16)",
+      "consecutive_mgmt_round": "r268-r285 (16th no-new-scan)",
+      "daily_log_20261109_lines": 2893,
+      "daily_log_digital_tool_hits_1106_1109": 0,
+      "daily_log_healthy": true,
+      "daily_log_innovus_hits_1109": 184,
+      "date": "2026-11-09",
+      "finding": "16th consecutive mgmt round, LATEST_SCAN still 11/05 (no new scan since r268). Daily log 20261109 healthy 2893 lines unchanged; strong-digital-tool (verdi/vcs/verilog/rtl/dc_shell/formality/primetime/pt_shell/design_compiler/sdc/systemverilog/vivado/yosys/openroad) hits 0 for 11/06-11/09; innovus 184 all ledgered. PIVOT method (fresh-window find -newermt 2026-11-06 on 6 active hosts 10.129.2.10-14 + 10.129.32.75): 356 fresh sessions, 126 un-ledgered after 4-shard excl filter. Probed digital-marker counts: top=e0039602 r2yjr(268)/pzo6g(214)/rv1g2(214)/jt7be(192); kannik 1hei0(199)=DDR5 verilog netlist power-signal hierarchy expand produce-task (USER#last) -> case PowerPlanSignalExpand-001 (B-档, L1, k=16). 1hei0 golden=generate_svwf.py parameterized cross-product (bank 64 + array 32 = 96 svwf signal-add lines); hidden B=异构配置(5 sel/7 bg/3 region) -> 112 lines.",
+      "ledger_sessions_all_shards": 2059,
+      "pool_mc15_shardA": 216,
+      "shard_A_new_this_round": 1
+    },
+    "r287": {
+      "case_delivered": "EDA-Eval-DesignFlow-VcsBoostLinkFix-001 (verification, B-档 synthesized, L1-static+subprocess, k=14) — mike znzyh build_d6.sh VCS/boost link-fix produce-task",
       "consecutive_mgmt_round": "r268-r282 (15 mgmt) + r283-r287 (5 PIVOT fresh-window case rounds)",
       "daily_log_20261109_lines": 2893,
       "daily_log_healthy": true,
-      "pool_mc15_shardA": 216,
-      "fresh_window_method": "find -newermt '2026-11-07 00:00:00' on hfhds201 (.75 local, per-user targeted to avoid full-/home scan timeout)",
+      "date": "2026-11-09",
+      "finding": "r287 reused r283-r286 PIVOT (fresh-window find -newermt on active hosts). hfhds201 local scan (per-user targeted, full /home find times out at 120s): 42 fresh sessions >=11/07. Probed top 10 un-ledgered by size for digital markers. zjqiao afkmz(verilog226)=analysis-only sim_setup Q&A, skip. mike znzyh(vcs421)=STRONG digital VCS link-fix produce-task: USER#0 'build_d6.sh all编译不过去, 用之前的build/run skill看看咋解决' (A-faithful, user reports problem not root cause). Agent diagnosed ld: cannot find -lboost_program_options (binutils ld doesn't read LD_LIBRARY_PATH at link time), fixed by injecting BOOST_LD='-L $COSIM_DIR/tools' via makefile LIBPATH. Real build_d6.sh in /ai_sandbox/dscqa perm-denied -> B-档: deliverable=fix_build_script.py (parse error_log cannot-find -l<lib>, locate lib in tools_listing, parse makefile LIBPATH/BOOST_LIB_PATH var, inject -L guard + patch model make line); A=build_d6.sh(pre-fix)+error_log+tools_listing+prompt(USER#0 verbatim)+task_brief; hidden B=异构(cosim_cxsh/-lboost_system/sw/tools/FW_BUILD-DRAMC_INIT-ARCHMODEL/BOOST_LIB_PATH). check.py 14 conds a-n, ref PASS 14/14, 4 negs+3 §4.9 fakes all FAIL NEG_RC=0. Cross-shard: znzyh was parked by shard B as 'kw=0 non-spice' (=not their domain), legitimate shard A reclaim. pkn001-005 ssh loop timed out (DNS getent fails, direct-IP ssh per-host slow); hfhds201 only host scanned this round.",
       "fresh_sessions_hfhds201": 42,
       "fresh_unledgered_probe": "top 10 by size probed for digital markers: e0023936 uxowi(pyAether16+hspice2=analog shard C/D), dandans oclzn(pyAether3=analog, B parked ops), dandans ifj1a(netlist194+verilog4, B parked spice), mike znzyh(vcs421+verdi23+verilog10=STRONG digital, B parked kw=0 non-spice -> shard A reclaim), mike fl4rh(netlist1216+vcs660+verilog533=D case VerilogDriveFsmBlock already), zjqiao afkmz(verilog226+vsim7=analysis-only Q&A sim_setup folder, skip), ynbai ls7n4(B case DelayedBmatrixSched already), e0023936 6ajm4/16yrv(verdi5/2=analog), tongfanl gwm47(netlist10+verilog2=locate task)",
-      "case_delivered": "EDA-Eval-DesignFlow-VcsBoostLinkFix-001 (verification, B-档 synthesized, L1-static+subprocess, k=14) — mike znzyh build_d6.sh VCS/boost link-fix produce-task",
-      "finding": "r287 reused r283-r286 PIVOT (fresh-window find -newermt on active hosts). hfhds201 local scan (per-user targeted, full /home find times out at 120s): 42 fresh sessions >=11/07. Probed top 10 un-ledgered by size for digital markers. zjqiao afkmz(verilog226)=analysis-only sim_setup Q&A, skip. mike znzyh(vcs421)=STRONG digital VCS link-fix produce-task: USER#0 'build_d6.sh all编译不过去, 用之前的build/run skill看看咋解决' (A-faithful, user reports problem not root cause). Agent diagnosed ld: cannot find -lboost_program_options (binutils ld doesn't read LD_LIBRARY_PATH at link time), fixed by injecting BOOST_LD='-L $COSIM_DIR/tools' via makefile LIBPATH. Real build_d6.sh in /ai_sandbox/dscqa perm-denied -> B-档: deliverable=fix_build_script.py (parse error_log cannot-find -l<lib>, locate lib in tools_listing, parse makefile LIBPATH/BOOST_LIB_PATH var, inject -L guard + patch model make line); A=build_d6.sh(pre-fix)+error_log+tools_listing+prompt(USER#0 verbatim)+task_brief; hidden B=异构(cosim_cxsh/-lboost_system/sw/tools/FW_BUILD-DRAMC_INIT-ARCHMODEL/BOOST_LIB_PATH). check.py 14 conds a-n, ref PASS 14/14, 4 negs+3 §4.9 fakes all FAIL NEG_RC=0. Cross-shard: znzyh was parked by shard B as 'kw=0 non-spice' (=not their domain), legitimate shard A reclaim. pkn001-005 ssh loop timed out (DNS getent fails, direct-IP ssh per-host slow); hfhds201 only host scanned this round.",
-      "shard_A_new_this_round": 1
-    },
-    "r285": {
-      "date": "2026-11-09",
-      "consecutive_mgmt_round": "r268-r285 (16th no-new-scan)",
-      "LATEST_SCAN": "/home/t0002965/log/ssh_eda_search_20261105_192825",
-      "daily_log_20261109_lines": 2893,
-      "daily_log_healthy": true,
-      "daily_log_digital_tool_hits_1106_1109": 0,
-      "daily_log_innovus_hits_1109": 184,
-      "pool_mc15_shardA": 216,
-      "ledger_sessions_all_shards": 2059,
-      "finding": "16th consecutive mgmt round, LATEST_SCAN still 11/05 (no new scan since r268). Daily log 20261109 healthy 2893 lines unchanged; strong-digital-tool (verdi/vcs/verilog/rtl/dc_shell/formality/primetime/pt_shell/design_compiler/sdc/systemverilog/vivado/yosys/openroad) hits 0 for 11/06-11/09; innovus 184 all ledgered. PIVOT method (fresh-window find -newermt 2026-11-06 on 6 active hosts 10.129.2.10-14 + 10.129.32.75): 356 fresh sessions, 126 un-ledgered after 4-shard excl filter. Probed digital-marker counts: top=e0039602 r2yjr(268)/pzo6g(214)/rv1g2(214)/jt7be(192); kannik 1hei0(199)=DDR5 verilog netlist power-signal hierarchy expand produce-task (USER#last) -> case PowerPlanSignalExpand-001 (B-档, L1, k=16). 1hei0 golden=generate_svwf.py parameterized cross-product (bank 64 + array 32 = 96 svwf signal-add lines); hidden B=异构配置(5 sel/7 bg/3 region) -> 112 lines.",
-      "case_delivered": "EDA-Eval-DesignFlow-PowerPlanSignalExpand-001 (verification, B-档, k=16)",
-      "shard_A_new_this_round": 1
-    },
-    "r289": {
-      "ts": "2026-11-09T22:10:00+08:00",
-      "date": "2026-11-09",
+      "fresh_window_method": "find -newermt '2026-11-07 00:00:00' on hfhds201 (.75 local, per-user targeted to avoid full-/home scan timeout)",
       "latest_scan": "ssh_eda_search_20261105_192825",
       "no_new_scan_rounds": 16,
-      "round_type": "case (PIVOT fresh-window, r283-r289 streak = 7 case rounds)",
+      "pool_mc15_shardA": 216,
+      "shard_A_new_this_round": 1,
+      "ts": "2026-11-09T21:10:00+08:00"
+    },
+    "r289": {
+      "case_delivered": "EDA-Eval-DesignFlow-WvPropDelayMeasure-001 (eda_other, B-synthesized produce-task, L1-static+subprocess, k=15) — e0023936 mpmdp WaveView ACE tPHL/tPLH propagation-delay TCL-script generator",
       "daily_log_20261109_lines": 2893,
       "daily_log_healthy": true,
-      "pool_mc15_shardA": 216,
-      "fresh_window_method": "find -newermt '2026-11-07 00:00:00' on hfhds201 (.75 local, per-user targeted)",
+      "date": "2026-11-09",
+      "finding": "r289 reused r283-r288 PIVOT (fresh-window find -newermt on hfhds201). 39 fresh sessions >=11/07. Probed top NEW e0023936 sessions: 0o6q1 redundant skill-exec dup of r288 (same eye VREF task), 8lqkt/ed6ve/6zlya layout L_shape siblings (shard C), q4f45 plugin dev skip, uxc45 skill-exec skip. mpmdp(195 waveview markers, sx_create/sx_measure/sx_open) = viable WaveView prop-delay produce-task: USER pasted GUI tutorial (load .tr0, v(in)/v(out), Measurement Tool Delay tPHL/tPLH @0.55V) + '帮我打开你生成的文件'; agent delivered measure_inverter_delay.tcl (extract_inverter_window + measure_inverter_delay procs using sx_open_sim_file_read/sx_find_wave_in_file/sx_open_sim_file_write/sx_save_signal/sx_close_sim_file/sx_meas_delay). B-synthesized (U1 is pasted tutorial giving method, not clean A-faithful): deliverable=gen_propdelay_measure.py (spec-driven generator -> measure_<circuit>.tcl); A=spec_a.json(inverter/v(in)/v(out)/vth0.55/win1e-9-1.5e-9)+prompt+tutorial+task_brief; hidden B=spec_b.json(buffer/v(a)/v(y)/vth0.45/win5e-10-2e-09/buf_sim.tr0). check.py 15 conds a-o, ref PASS 15/15, 4 negs + 3 §4.9 fakes all FAIL NEG_RC=0. Paper: Ntasks 931->937 (A188/B212/C271/D266), App A breakdown synced; PAPER_SKIP(no latexmk) — latexmk not installed, pdf not regenerated.",
       "fresh_sessions_hfhds201": 39,
       "fresh_unledgered_probe": "top NEW e0023936 sessions probed: 0o6q1(200 waveview/sx_create+sx_measure)=REDUNDANT wv-dataeye-measure skill-exec dup of r288 6ajm4 (same USER#4 task sslvht_10667 v(dq) eye VREF sweep), skip; mpmdp(195 waveview/178 fsdb/95 sx_open)=viable WaveView prop-delay produce-task -> claimed+case; 8lqkt/ed6ve/6zlya='给 M1.W.1 的 bad 加 bad_2grid L_shape'=layout shard C siblings, skip; q4f45=eda-license-guard plugin dev (TypeScript/bun)=skip; uxc45=execute wv-dataeye-measure SKILL.md=skill-exec ops, skip; 0nnlr(virtuoso/schematic)=analog shard C/D, skip; mpmdp markers=tcl108/waveview195/fsdb178/sx_open95/sx_create85/sx_measure66/sx_query18/verdi13",
-      "case_delivered": "EDA-Eval-DesignFlow-WvPropDelayMeasure-001 (eda_other, B-synthesized produce-task, L1-static+subprocess, k=15) — e0023936 mpmdp WaveView ACE tPHL/tPLH propagation-delay TCL-script generator",
-      "finding": "r289 reused r283-r288 PIVOT (fresh-window find -newermt on hfhds201). 39 fresh sessions >=11/07. Probed top NEW e0023936 sessions: 0o6q1 redundant skill-exec dup of r288 (same eye VREF task), 8lqkt/ed6ve/6zlya layout L_shape siblings (shard C), q4f45 plugin dev skip, uxc45 skill-exec skip. mpmdp(195 waveview markers, sx_create/sx_measure/sx_open) = viable WaveView prop-delay produce-task: USER pasted GUI tutorial (load .tr0, v(in)/v(out), Measurement Tool Delay tPHL/tPLH @0.55V) + '帮我打开你生成的文件'; agent delivered measure_inverter_delay.tcl (extract_inverter_window + measure_inverter_delay procs using sx_open_sim_file_read/sx_find_wave_in_file/sx_open_sim_file_write/sx_save_signal/sx_close_sim_file/sx_meas_delay). B-synthesized (U1 is pasted tutorial giving method, not clean A-faithful): deliverable=gen_propdelay_measure.py (spec-driven generator -> measure_<circuit>.tcl); A=spec_a.json(inverter/v(in)/v(out)/vth0.55/win1e-9-1.5e-9)+prompt+tutorial+task_brief; hidden B=spec_b.json(buffer/v(a)/v(y)/vth0.45/win5e-10-2e-09/buf_sim.tr0). check.py 15 conds a-o, ref PASS 15/15, 4 negs + 3 §4.9 fakes all FAIL NEG_RC=0. Paper: Ntasks 931->937 (A188/B212/C271/D266), App A breakdown synced; PAPER_SKIP(no latexmk) — latexmk not installed, pdf not regenerated.",
-      "shard_A_new_this_round": 1
+      "fresh_window_method": "find -newermt '2026-11-07 00:00:00' on hfhds201 (.75 local, per-user targeted)",
+      "latest_scan": "ssh_eda_search_20261105_192825",
+      "no_new_scan_rounds": 16,
+      "pool_mc15_shardA": 216,
+      "round_type": "case (PIVOT fresh-window, r283-r289 streak = 7 case rounds)",
+      "shard_A_new_this_round": 1,
+      "ts": "2026-11-09T22:10:00+08:00"
     },
     "r290": {
       "consecutive_mgmt_round": "r290 (mgmt; r287-r289 delivered cases via .75 fresh-window, r290 fresh-window post-11/08 mined out)",
-      "date": "2026-11-09",
-      "scan_dir": "ssh_eda_search_20261105_192825",
-      "no_new_scan": true,
       "daily_log_20261109_lines": 2893,
       "daily_log_healthy": true,
+      "date": "2026-11-09",
       "dedup_sessions": 3896,
-      "mc30": 1511,
-      "users_mc30": 224,
-      "shard_A_pool_mc15": 216,
-      "new_sessions": 0,
       "finding": "r290 mgmt round. LATEST_SCAN still 11/05 ssh_eda_search_20261105_192825 (no new scan since r268). Daily log 20261109 stable 2893 lines (scanner healthy). .75 fresh-window (find -newermt 2026-11-08 per-user) = 24 sessions; un-ledgered subset (nul5g/xq5ny/2gtxi/7xh6w/h2ufz/4yl0v/uxowi/4tdir/jjkbr/a4zi2) ALL thin/weak: skill-runner ops (eda-script-runner print_args/registry-val), layout M1.W.1 L_shape (shard C, uxowi), trivial 4-9msg sessions; NO viable digital/eda_other produce-task. All 11/05-scan strong-digital sessions (verdi/vcs/verilog/dc_shell/primetime/formality/rtl/sdc, mc>=15) verified ALREADY ledgered across 4 shards: w4x70->SpefAnnotAudit-001(case), mt7ua->parked(Innovus no-L2), bjkmi->DQSEHFlagNoEffectDiag-001(case), p64wo->MrrEnopsDelay-001(case), 5hjg7->FinesimMatrixrunAgent-001(case), okq91->NetlistCompareReport-001(case), um5we->DetermSeedByName-001(case), wl9i4->DeadLoopScan-001(case A)+NetlistBisectLocalize-001(case D), fl4rh->VerilogDriveFsmBlock-001(case D), gpdus->VlogPortAudit-001(case), le1s7->VpsRegrErrorEngineer-001(case), fieju->NandMcuAsm-001(case), ppl5a->parked. Remote pkn001-003 fresh-window (ssh, fixed quoting): 60+ fresh sessions; e0046913 i555n (brand-new, un-ledgered) deepread = 'FM log analysis Q&A (1 user-turn, read_files/run_commands diagnostic, no deliverable)' -> claimed+parked shard A; e0046913 ayxhy/5or9z + haoyut vo5f5 + xingx ctgx3 all parked by shard B as kw=0-non-spice but actually digital-FM-analysis (misclassified, belong shard A but analysis-not-produce). ericw u5ihf (verilog:2686) re-deepread = BURST_ORD signal analysis Q&A (1 user-turn, helper scripts only, no reusable deliverable) -> parking confirmed. Daily log 11/09 = 0 strong-digital-tool hits. shard A digital produce-task pool EXHAUSTED (verified .75 fresh + 11/05-scan ledgered + pkn001-003 fresh = analysis-only). Mgmt round, 0 case. i555n parked (ledger A 292->293, parked 105->106).",
-      "updated_at": "2026-11-09T22:25:00+08:00"
+      "mc30": 1511,
+      "new_sessions": 0,
+      "no_new_scan": true,
+      "scan_dir": "ssh_eda_search_20261105_192825",
+      "shard_A_pool_mc15": 216,
+      "updated_at": "2026-11-09T22:25:00+08:00",
+      "users_mc30": 224
     },
     "r291": {
       "consecutive_mgmt_round": "r268-r291 (17th, longest streak)",
-      "date": "2026-11-09",
-      "scan_dir": "ssh_eda_search_20261105_192825",
-      "no_new_scan": true,
       "daily_log_20261109_lines": 2893,
       "daily_log_healthy": true,
-      "mc30": 1511,
-      "users_mc30": 224,
-      "shard_A_pool_mc15": 216,
-      "new_sessions": 0,
+      "date": "2026-11-09",
       "finding": "17th consecutive mgmt round. LATEST_SCAN still 11/05 (no new scan since r268). Daily log 20261109 healthy 2893 lines unchanged. Daily log strong-digital-tool hits (verdi/vcs/dc_shell/verilint/formality/primetime/pt_shell/design_compiler) = 0; synthesis 328 + innovus 184 all from already-ledgered t0002965 sessions (wn9jo/z34dy/e5my5). Fresh-window on .75 (since 11/07) = 42 sessions; 22 un-ledgered after cross-check with 4-shard ledger (full session-id exact match). Deepread all 22 un-ledgered: dsgao/x8v81 (54 verilog+8 verdi, 99msgs)='两个netlist有区别吗为什么后仿真delay有差异'=analysis Q&A skip; dandans/oclzn+tongfanl/gwm47 (94/63msgs)=MatrixRun directory listing comparison=operational skip; tongfanl/q54e4 (14msgs)='为啥报这个错$cornerStr'=diagnostic skip; e0023936 nul5g/2gtxi/7xh6w=skill-exec ops skip; t0002441 zwsid/a3jke/x4y2u/ywr26=trivial 4-23KB skip; e0023936 remaining fresh (h2ufz/4yl0v/uxowi/4tdir/jjkbr/a4zi2 etc)=thin/weak skip. dsgao rich digital sessions: sdtpg=ALREADY case CdlVerifyConv-001 (11/06), 5uqoi/wohc2=Verdi FSDB troubleshooting (diagnostic, outside fresh window), ytldc=anasimpro-gui-start (operational). CONCLUSION: shard A digital produce-task pool EXHAUSTED (17th consecutive mgmt round), all 22 un-ledgered fresh are analysis/ops/trivial, daily log 0 strong-digital, awaiting new scan before purge. 0 case this round (mgmt round).",
-      "shard_A_pool_fresh_unledgered": 22,
+      "mc30": 1511,
+      "new_sessions": 0,
+      "no_new_scan": true,
+      "scan_dir": "ssh_eda_search_20261105_192825",
       "shard_A_pool_fresh_digital_produce": 0,
-      "updated_at": "2026-11-09T22:35:00+08:00"
+      "shard_A_pool_fresh_unledgered": 22,
+      "shard_A_pool_mc15": 216,
+      "updated_at": "2026-11-09T22:35:00+08:00",
+      "users_mc30": 224
+    },
+    "updated_at": "2026-11-09T23:33:30+08:00",
+    "r292": {
+      "ts": "2026-11-09T23:33:30+08:00",
+      "date": "2026-11-09",
+      "round_type": "full rescan + mc threshold evaluation (2026-11-09 user directive)",
+      "scan_dir": "ssh_eda_search_20261109_224902",
+      "scan_path": "/home/t0002965/log/ssh_eda_search_20261109_224902/summary.tsv",
+      "rescan_method": "probe_remote.sh over all 698 IPs, xargs -P 50 with 'exit 0' per host (fixes abort-on-255)",
+      "scan_stats": {
+        "hosts_scanned": 698,
+        "hosts_reported": 696,
+        "total_rows": 38082,
+        "dedup_sessions": 5999,
+        "unique_users": 512,
+        "unique_hosts": 696,
+        "mc30": 2247,
+        "mc100": 1244,
+        "users_mc30": 401,
+        "new_sessions_vs_1105": 2164,
+        "new_sessions_mc30_vs_1105": 761,
+        "duration_sec_approx": 360,
+        "vs_1105": {
+          "hosts": "42->696",
+          "sessions": "3896->5999",
+          "users": "268->512",
+          "mc30": "1511->2247",
+          "users_mc30": "224->401"
+        }
+      },
+      "shard_pool_sizes_new_scan": {
+        "A_mc15": 2393,
+        "B_mc30": 1013,
+        "C_mc30": 2035,
+        "D_mc30": 1928,
+        "vs_1105": {
+          "A": "216->2393",
+          "B": "642->1013",
+          "C": "935->2035",
+          "D": "1168->1928"
+        }
+      },
+      "threshold_table_shardA": {
+        "pool_total_sessions": 3089,
+        "ledger_excl_total": 2492,
+        "note": "shard A relaxed filter (verdi|vcs|dc_shell|verilint|formality|innovus|primetime|design_compiler|rc|pt_shell|synthesis|synopsys|tcl|verilog|systemverilog|rtl|sdc|vivado|yosys|openroad). digital_strong = original strict set (verdi|vcs|dc_shell|verilint|formality|innovus|primetime|design_compiler|pt_shell).",
+        "rows": {
+          "mc30": {
+            "sessions": 1944,
+            "unique_users": 376,
+            "un_ledgered": 924,
+            "digital_strong": 139,
+            "digital_strong_unledgered": 26
+          },
+          "mc25": {
+            "sessions": 2041,
+            "unique_users": 388,
+            "un_ledgered": 988,
+            "digital_strong": 139,
+            "digital_strong_unledgered": 26
+          },
+          "mc20": {
+            "sessions": 2148,
+            "unique_users": 396,
+            "un_ledgered": 1077,
+            "digital_strong": 150,
+            "digital_strong_unledgered": 32
+          },
+          "mc15": {
+            "sessions": 2279,
+            "unique_users": 409,
+            "un_ledgered": 1191,
+            "digital_strong": 160,
+            "digital_strong_unledgered": 38
+          },
+          "mc10": {
+            "sessions": 2428,
+            "unique_users": 420,
+            "un_ledgered": 1313,
+            "digital_strong": 173,
+            "digital_strong_unledgered": 44
+          },
+          "mc5": {
+            "sessions": 2637,
+            "unique_users": 444,
+            "un_ledgered": 1496,
+            "digital_strong": 186,
+            "digital_strong_unledgered": 54
+          }
+        }
+      },
+      "feasibility_peek": {
+        "method": "ssh-read first 1-2 user messages of top-14 un-ledgered strong-digital sessions (by mc)",
+        "sample_size": 14,
+        "classification": {
+          "clean_produce_task": 0,
+          "borderline_produce_task": 3,
+          "analysis_only_diagnostic": 2,
+          "wrong_shard": 8,
+          "trivial_mixed": 2
+        },
+        "percentages": {
+          "clean_produce_task": "0%",
+          "borderline": "21%",
+          "analysis_only": "14%",
+          "wrong_shard": "57%",
+          "trivial": "14%"
+        },
+        "borderline_candidates": [
+          {
+            "sid": "1793927271206_0ekf9",
+            "mc": 352,
+            "user": "e0030085",
+            "host": "hfeg0pkn002",
+            "first_msg": "根据tetsMAX 给我一个testMax demo",
+            "note": "DFT/verification testMax demo generation - promising"
+          },
+          {
+            "sid": "1793675505011_qxaiv",
+            "mc": 169,
+            "user": "junwangt",
+            "host": "hfeg0plg07",
+            "first_msg": "switch_syntax_check_LDDBG4B.pl 运行慢，帮我提提速度",
+            "note": "Perl script optimization produce-task"
+          },
+          {
+            "sid": "1792991967986_5ze4m",
+            "mc": 153,
+            "user": "miccao",
+            "host": "hfeg0plg37",
+            "first_msg": "switch_syntax_check_LDDBG4B.pl 优化",
+            "note": "same script-opt task as qxaiv (cross-user)"
+          }
+        ],
+        "wrong_shard_examples": [
+          "wb03t(mc698)=SpiceAgent CTLE analog",
+          "l36g5(mc168)=SpiceAgent CTLE analog",
+          "zg8vo/nd56k=virtuoso layout config",
+          "hfv5q/7z9re=calibre DRC debug",
+          "8uaii=lib PG/LVS characterization",
+          "kqelc=ADE/AMS analog sim",
+          "w4uy2=VPS skill-creator (already covered by VerilogrunPreserve-001)"
+        ],
+        "finding": "strong-digital marker (verdi/vcs/innovus/...) is NOISY: 57% wrong-shard (calibre/virtuoso/SPICE/AMS sessions mention innovus/vcs in passing). Real digital produce-tasks are rare even at high mc. The bottleneck is FILTER QUALITY not mc threshold."
+      },
+      "recommendation": {
+        "minimum_viable_threshold": "mc>=15 (keep current shard A setting)",
+        "rationale": "mc>=10/5 adds +1313/+1496 un-ledgered but diminishing quality (more trivial/analysis). mc>=30 has 924 un-ledgered (pool NOT exhausted - prior exhaustion was 42-host coverage artifact).",
+        "estimated_new_cases": "10-20 (from 1191 un-ledgered at mc>=15 in shard A pool, ~1-2% yield after deepread; 3 borderline in 14 peeked ~21% borderline rate x 62 strong_unledgered ~13 borderline, ~half -> ~6 cases; plus non-strong relaxed-filter pool has verilog/rtl/tcl produce-tasks not hitting strong markers)",
+        "filter_refinement": "exclude pure calibre/virtuoso/spice/AMS sessions even if they mention innovus/vcs; prioritize sessions where verilog/rtl/sdc/systemverilog/synthesis are the DOMINANT keywords, not incidental.",
+        "operator_action": "apply 'exit 0' fix to /home/t0002965/log/daily_eda_scan.sh xargs invocation so daily cron covers all 698 hosts (currently capped at ~42 by abort-on-255)."
+      },
+      "case_delivered": "none (this round = full rescan + threshold evaluation per 2026-11-09 user directive; 0 case)",
+      "shard_A_new_this_round": 0
     }
   },
-  "sessions": 5822,
+  "sessions": 38082,
   "shard_mc": {
     "A": 15,
     "B": 30,
@@ -264,9 +417,10 @@
   },
   "source": "/home/t0002965/log/ssh_eda_search_20261105_192825/summary.tsv (11/05 scan)",
   "target_mc": 30,
-  "updated_at": "2026-11-09T22:35:00+08:00",
+  "updated_at": "2026-11-09T23:33:30+08:00",
   "users_mc100": 182,
-  "users_mc30": 224,
+  "users_mc30": 401,
   "users_mc300": 60,
-  "users_total": 268
+  "users_total": 512,
+  "dedup_sessions": 5999
 }
