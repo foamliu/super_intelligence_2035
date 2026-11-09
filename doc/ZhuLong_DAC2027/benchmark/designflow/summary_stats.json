@@ -19,7 +19,7 @@
  "mc30": 2247,
  "mc300": 317,
  "mc500": 281,
- "note": "11/09 22:49 FULL RESCAN (ssh_eda_search_20261109_224902): fixed xargs abort-on-255 bug (added 'exit 0' per host) -> recovered 696/698 hosts (vs 11/05's 42-host coverage). dedup_sessions=5999 (+2103 vs 11/05 3896), users=512 (+244), mc30=2247 (+736), new_sessions_vs_1105=2164. Root cause: daily_eda_scan.sh + 11/05 scan used xargs WITHOUT exit-0, aborting on first unreachable host (status 255), capping at ~42 hosts (parallel window). shard_A_pool_mc15=2393, B=1013, C=2035, D=1928. threshold_table in scansync.r292.",
+ "note": "11/09 22:49 FULL RESCAN (ssh_eda_search_20261109_224902): fixed xargs abort-on-255 bug -> 696/698 hosts. dedup_sessions=5999, users=512, mc30=2247. r305: bhcla case delivered (eda_other, SpfCouplingParser-001), A.jsonl=194, covered=193.",
  "prev_scan_path": "/home/t0002965/log/ssh_eda_search_20261105_192825/summary.tsv",
  "prev_sessions": 5822,
  "scan_path": "/home/t0002965/log/ssh_eda_search_20261109_224902/summary.tsv",
@@ -601,7 +601,16 @@
    "scan_confirmed": "YES via pyAether MCP (10th consecutive no-new-scan r293-r303)",
    "eda_flow_status": "STILL DOWN — run_commands exit_code -1 / duration_ms 0 / stdout=wrapper-text-only (retested r303 session 'pwd;echo OK'); run_code times out",
    "pyAether_status": "UP — runs on .75 as t0002997; reads .75 FS (scan files, daily logs, AND /home/*/.cline/data/sessions local session files); CANNOT ssh to 698 remote hosts",
-   "scan_stats": {"latest":"ssh_eda_search_20261109_224902","rows":38082,"dedup_sessions":5999,"users":512,"hosts":696,"mc30_rows":13989,"mc100_rows":8456,"mc300_rows":1691},
+   "scan_stats": {
+    "latest": "ssh_eda_search_20261109_224902",
+    "rows": 38082,
+    "dedup_sessions": 5999,
+    "users": 512,
+    "hosts": 696,
+    "mc30_rows": 13989,
+    "mc100_rows": 8456,
+    "mc300_rows": 1691
+   },
    "no_new_scan": true,
    "consecutive_mgmt_round": "r293-r303 (10th consecutive no-new-scan since r292 full rescan)",
    "mc30": 2247,
@@ -619,7 +628,10 @@
    "r302_correction": "r302 claimed '.75-local sessions ALL cleaned up (0 .messages.json)' was WRONG: 4579 messages files EXIST on .75 now (newest 11-09 22:17, just before r292 scan 22:49). pyAether CAN read these local session files. This recovered the deepread path that r302 wrongly closed.",
    "deepread_path_used": "pyAether reads .75-local /home/*/.cline/data/sessions (517 .75-local rows in r292 scan; cross-checked vs 4-shard ledger 2158 suffixes -> 48 digital candidates -> 10 un-ledgered -> peeked 8 first-user-msgs -> 5fpod = clean A-faithful produce)",
    "scarcity_reconfirmation": "shard A clean digital A-faithful produce SCARCE confirmed 6th time (r295/r296/r299/r300/r302/r303): of 10 un-ledgered .75-local digital candidates, only 5fpod is clean produce; rest are analysis/Q&A/debug/explain.",
-   "blocker_partial": {"type":"eda_flow execution backend outage (run_commands/run_code) persists r301-r303","deepread_workaround":"pyAether reading .75-local session files BYPASSES the eda_flow outage for .75-host sessions (517 of 5999 dedup). Remote-host (698) sessions still inaccessible (need ssh as e0031982 via eda_flow)."},
+   "blocker_partial": {
+    "type": "eda_flow execution backend outage (run_commands/run_code) persists r301-r303",
+    "deepread_workaround": "pyAether reading .75-local session files BYPASSES the eda_flow outage for .75-host sessions (517 of 5999 dedup). Remote-host (698) sessions still inaccessible (need ssh as e0031982 via eda_flow)."
+   },
    "finding": "10th consecutive round. scansync CONFIRMED via pyAether: latest scan unchanged (r292, mc30=2247/dedup=5999/users=401/hosts=696). Daily log 20261110 healthy 2981 lines, strong-digital hits=0. eda_flow run_commands/run_code STILL DOWN (r301 blocker persists, 3rd consecutive round). KEY CORRECTION: r302 wrongly claimed .75-local sessions cleaned up — actually 4579 messages files exist on .75; pyAether CAN read them -> deepread path RECOVERED. 5fpod (tongfanl mc134) = clean A-faithful produce (USER#2 configure bankskew vecgen scripts from 1014_bankskew ref folder). Case BankskewVecgenCfg-001 delivered (spec-driven-generator, L1-static, k=19, ref PASS 19/19 + 7 negs FAIL). A.jsonl 192->193. scarcity confirmed 6th time. WAITING: 0.",
    "updated_at": "2026-11-10T05:45:00+08:00"
   },
@@ -629,7 +641,16 @@
    "round_type": "deepread + design (DEBT:1; eda_flow RECOVERED after r301-r303 outage; fresh-window remote scan; 0 new case, case build deferred to r305 per §3 >2MB exception)",
    "scan_dir": "ssh_eda_search_20261109_224902 (CONFIRMED via eda_flow run_commands, backend recovered)",
    "eda_flow_status": "RECOVERED - run_commands exit_code 0 real stdout (pwd/ls/awk/ssh/scp all work); run_code pyAether up. Outage r301-r303 (3 rounds) ended r304.",
-   "scan_stats": {"latest":"ssh_eda_search_20261109_224902","rows":38083,"dedup_sessions":5999,"mc30":2245,"mc100":1243,"mc300":316,"users_mc30":401,"hosts":696},
+   "scan_stats": {
+    "latest": "ssh_eda_search_20261109_224902",
+    "rows": 38083,
+    "dedup_sessions": 5999,
+    "mc30": 2245,
+    "mc100": 1243,
+    "mc300": 316,
+    "users_mc30": 401,
+    "hosts": 696
+   },
    "no_new_scan": true,
    "consecutive_mgmt_round": "r293-r304 (11th consecutive no-new-scan since r292 full rescan)",
    "daily_log_20261110_lines": 2981,
@@ -640,10 +661,55 @@
    "case_delivered": "none (DEBT:1 deepread+design; case build deferred to r305 per §3 >2MB exception)",
    "trace_claimed": "1794190176104_bhcla (ray1lei@hfeg0pkn004, mc=111 real/post-scan, eda_other PEX SPF coupling parser) - claimed, deepread complete, design complete",
    "scarcity_reconfirmation": "shard A clean digital A-faithful produce SCARCE confirmed 7th time (r295/r296/r299/r300/r302/r303/r304): ALL 31 digital-dominant (dig>=50, dig>ana, mc>=15) r292-scan candidates LEDGERED across 4 shards; .75-local digital un-ledgered pool mined (r303 delivered last clean produce 5fpod); strong-digital marker noisy (57% wrong-shard per r292). Viable candidates now require fresh-window remote scan (eda_flow ssh).",
-   "fresh_window_scan": {"method":"ssh pkn001-005 + .75 local; find .messages.json -newermt 2026-11-08; cross-ref 4-shard ledgers (2162 suffixes)","hosts_scanned":6,"fresh_sessions_total":"249 (47+88+18+63+33+.75 49)","un_ledgered_fresh":5,"un_ledgered_classification":{"bhcla":"ray1lei@pkn004 mc111 314msgs 2.75MB = CLEAN A-faithful produce (SPF .spf_CC coupling data -> CSV parser skill, eda_other PEX) -> CLAIMED+DEEPREAD","ouzip":"xxchen@.75 DRC_pattern_tool = shard C physical_verify resumed -> skip","uxowi":"e0023936@pkn004 11MB layout = shard C too big -> skip","nbcav":"e0043182@pkn003 Windows PowerShell login-log = NOT EDA -> skip","z1924":"e0043182@pkn003 = dup of nbcav -> skip"}},
-   "debt": {"type":"DEBT:1 case build deferred","reason":"trace 2.75MB >2MB qualifies §3 exception; insufficient time for quality 8+cond case+negatives+selftest","next_round":"r305 MUST build bhcla case first (no consecutive deepread-only per §3)"},
+   "fresh_window_scan": {
+    "method": "ssh pkn001-005 + .75 local; find .messages.json -newermt 2026-11-08; cross-ref 4-shard ledgers (2162 suffixes)",
+    "hosts_scanned": 6,
+    "fresh_sessions_total": "249 (47+88+18+63+33+.75 49)",
+    "un_ledgered_fresh": 5,
+    "un_ledgered_classification": {
+     "bhcla": "ray1lei@pkn004 mc111 314msgs 2.75MB = CLEAN A-faithful produce (SPF .spf_CC coupling data -> CSV parser skill, eda_other PEX) -> CLAIMED+DEEPREAD",
+     "ouzip": "xxchen@.75 DRC_pattern_tool = shard C physical_verify resumed -> skip",
+     "uxowi": "e0023936@pkn004 11MB layout = shard C too big -> skip",
+     "nbcav": "e0043182@pkn003 Windows PowerShell login-log = NOT EDA -> skip",
+     "z1924": "e0043182@pkn003 = dup of nbcav -> skip"
+    }
+   },
+   "debt": {
+    "type": "DEBT:1 case build deferred",
+    "reason": "trace 2.75MB >2MB qualifies §3 exception; insufficient time for quality 8+cond case+negatives+selftest",
+    "next_round": "r305 MUST build bhcla case first (no consecutive deepread-only per §3)"
+   },
    "finding": "eda_flow RECOVERED (r301-r303 outage ended). scansync: latest scan unchanged r292 (mc30=2245/dedup=5999/hosts=696), daily log 20261110 healthy 2981. Digital-dominant pool (dig>=50 dig>ana mc>=15) = 31 sessions ALL LEDGERED (7th scarcity confirmation). Fresh-window remote scan found 5 un-ledgered; only bhcla (ray1lei SPF coupling parser, eda_other) is clean A-faithful produce. bhcla deepread+design complete; DEBT:1 case build deferred to r305 (§3 >2MB exception). 0 case this round. WAITING: 0.",
    "updated_at": "2026-11-10T06:30:00+08:00"
+  },
+  "r305": {
+   "date": "2026-11-10",
+   "ts": "2026-11-10T06:40:00+08:00",
+   "round_type": "case-build (DEBT clearance)",
+   "scan_dir": "ssh_eda_search_20261109_224902",
+   "eda_flow_status": "OK (run_commands exit 0)",
+   "no_new_scan": true,
+   "consecutive_no_new_scan": "r293-r305 (13th)",
+   "scan_stats": {
+    "mc30": 2247,
+    "dedup_sessions": 5999,
+    "users": 401,
+    "hosts": 696,
+    "summary_lines": 38083,
+    "unique_users_col": 4272
+   },
+   "daily_log_20261110_lines": 2981,
+   "daily_log_healthy": true,
+   "case_delivered": "EDA-Eval-DesignFlow-SpfCouplingParser-001",
+   "case_domain": "eda_other",
+   "case_track": "A-faithful produce-task",
+   "case_k": 16,
+   "case_test_sha8": "d3d520e3",
+   "a_jsonl_count": 194,
+   "covered": 193,
+   "covered_eda_other": 47,
+   "debt_cleared": "r304 DEBT:1 (bhcla build) -> r305 CLEARED",
+   "finding": "r305 = DEBT CLEARANCE: built case EDA-Eval-DesignFlow-SpfCouplingParser-001 (bhcla, eda_other, A-faithful produce-task, L1-static). r304 deepread+design -> r305 build per §3 (no consecutive deepread-only). spec-driven-generator + static-verification (matches BankskewVecgenCfg-001/CkmuxXlsxExport-001): deliverable=gen_spf_coupling_parser.py + spec_a.json; check.py runs gen on hidden spec_b -> emits parse_spf_cc.py -> runs parser on hidden sample_b.spf_CC -> independently recomputes SABL summary CSV (16 cols). 16 conditions a-p. Self-verify: gold PASS 16/16 + 4 negatives + 3 §4.9 fakes ALL FAIL. k_rationale=k_check=16>=8. A=spec_a faithful (msax256_cp10/msax196_cp07, 4 Sa_BLa signals); hidden B=spec_b isomorphic (msax128_cp03/msax512_cp11, 6 signals). ledger mark bhcla->case. scansync r305: LATEST_SCAN still r292 (38083 lines), daily log 20261110 healthy 2981 lines, 13th consecutive no-new-scan. eda_other 46->47."
   }
  },
  "sessions": 38082,
