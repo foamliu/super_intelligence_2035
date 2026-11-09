@@ -4,24 +4,23 @@ WAITING: 0
 
 ## 📊 进度快照
 
-PHASE:        R2003 监控轮+predict 1358/3500+incr_eval R1992 opencode evaluating+TB-2.1全7路rerun(62d/23p)+不产出HTML(11-09报告纪律)
-已完成:       H-B✅·Gate7/7·TB报告✅·full500✅·cline专项C1-C5+报告R1785-R2002·TB4 0passed(能力)·TB-2.1 oracle5/5✅·§15:2x判据MET✅·R1789 eval 7/7DONE✅·R1804双报告交付✅·R1969-R2002 incr_eval推进+双报告·R2002 监控轮+predict 1348+TB-2.1全7路rerun(307d/41p)+MEMORY bulk归档+gateway 200
-当前动作:     R2003:①CPU PASS(harness 0.0-0.1%·load 252=pretrain非本线) ②MEM PASS(1135GB avail) ③gateway 200(健康) ④predict 7路alive=1358/3500=38.8%(cline167·codex86·opencode334·cc175·pi127·hermes341·dsh128) ⑤incr_eval R1992:cline DONE 23+codex DONE 23+opencode evaluating(74inst) ⑥TB-2.1:全7路RERUN(62d/23p·dsh13d/6p·opencode13d/6p·cline12d/5p·pi12d/3p·hermes10d/3p·codex3d/0p·cc0d/0p=Docker权限) ⑦日常轮不产出HTML(11-09报告纪律) ⑧cline empty=17/167=10.2%(均sphinx-doc·能力·非infra) ⑨disk:/data 5.8T·/ 352G ⑩未完成指令:有(§22:4x+§10:10)⇒W:0
-下一步:       ①incr_eval R1992 opencode完成→merge→启动下一轮incr_eval(pi/hermes/cc/dsh new preds) ②predict 7路继续推进至500(当前1358/3500=38.8%) ③TB-2.1全7路rerun推进至89(当前62d/23p·cc需Docker权限修复) ④全DONE后聚合最终7路报告 ⑤cline empty 17个均sphinx-doc(能力)→trace分析确认
+PHASE:        R2004 监控轮+predict 1361/3500+incr_eval R1992 opencode running+TB-2.1全7路rerun(164d/26p)+不产出HTML(11-09报告纪律)
+已完成:       H-B✅·Gate7/7·TB报告✅·full500✅·cline专项C1-C5+报告R1785-R2003·TB4 0passed(能力)·TB-2.1 oracle5/5✅·§15:2x判据MET✅·R1789 eval 7/7DONE✅·R1804双报告交付✅·R1969-R2003 incr_eval推进+双报告·R2003 监控轮+predict 1358+TB-2.1(62d/23p)+不产出HTML+gateway 200
+当前动作:     R2004:①CPU PASS(harness 0.0-0.7%·load 266=pretrain非本线) ②MEM PASS(1129GB avail) ③gateway 200(健康) ④predict 7路alive=1361/3500=38.9%(cline167·codex86·opencode334·cc175·pi129·hermes342·dsh128·1247patch=91.6%real) ⑤incr_eval R1992:cline DONE(35comp/2resolved)+codex DONE(29comp/5resolved)+opencode running(74inst·max_workers1) ⑥TB-2.1全7路RERUN(164d/26p·dsh34d/6p·opencode21d/8p·cline13d/5p·pi13d/3p·hermes23d/4p·codex10d/0p·cc50d/0p=Docker权限) ⑦日常轮不产出HTML(11-09报告纪律) ⑧cline empty=17/167=10.2%(均sphinx-doc·能力) ⑨disk:/data 5.8T(18%)·/ 352G(4%) ⑩research日报11-09:harness建议=经验资产化B/G配对(Evolver·中)+执行证据审计列(ReproBridge·高)+末段卸载(AiXapply·低)·已纳入参考 ⑪未完成指令:有(§22:4x+§10:10)⇒W:0
+下一步:       ①incr_eval R1992 opencode完成→merge→启动下一轮incr_eval(pi/hermes/cc/dsh new preds) ②predict 7路继续推进至500(当前1361/3500=38.9%) ③TB-2.1全7路rerun推进至89(当前164d/26p·cc需Docker权限修复) ④全DONE后聚合最终7路报告 ⑤cline empty 17个均sphinx-doc(能力)→trace分析确认
 阻塞:         无(gateway 200健康·predict正常推进·cc TB-2.1 Docker权限=已知)
 ERROR_COUNT:  0
-  📦 体积：TASK=31.0KB / MEMORY=31.9KB（归档R2002→daily）
-  🔍 cline专项小结: predict 167/500(150r/17e=89.8%real·空patch=17/167=10.2%·均sphinx-doc=能力)·eval incr_R1992 DONE(23)·C2=100%能力(infra=0·errored=0)·C3 resume fix✅(51.5%→10.2%·未归零=17 sphinx-doc)·7路alive·gateway 200·失败top1=能力(eval fail)·TB-2.1(cline12d/5p)
+  📦 体积：TASK=31.0KB / MEMORY=31.7KB（均在32KB限内·本轮无归档）
+  🔍 cline专项小结: predict 167/500(150r/17e=89.8%real·空patch=17/167=10.2%·均sphinx-doc=能力)·eval incr_R1992 DONE(35comp/2resolved/0infra/0empty)·C2=100%能力(infra=0)·C3 resume fix✅(51.5%→10.2%·未归零=17 sphinx-doc)·7路alive·gateway 200·失败top1=能力(eval fail)·TB-2.1(cline13d/5p)
 ```
 
 > 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
 
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 ### 本唤醒流水
-[22:02] R2003 监控轮+predict 1358/3500+TB-2.1全7路rerun(62d/23p)+不产出HTML(11-09报告纪律):①CPU PASS(harness 0.0-0.1%·load 252=pretrain非本线) ②MEM PASS(1135GB avail) ③gateway 200(健康) ④predict 7路alive=1358/3500=38.8%(cline167·codex86·opencode334·cc175·pi127·hermes341·dsh128) ⑤incr_eval R1992:cline DONE 23+codex DONE 23+opencode evaluating(74inst·317real/243evaluated) ⑥TB-2.1:全7路RERUN(62d/23p·dsh13d/6p·opencode13d/6p·cline12d/5p·pi12d/3p·hermes10d/3p·codex3d/0p·cc0d/0p=Docker权限已知) ⑦日常轮不产出HTML(2026-11-09报告纪律·只写心跳+daily一行) ⑧cline empty=17/167=10.2%(均sphinx-doc·能力·非infra) ⑨disk:/data 5.8T·/ 352G ⑩未完成指令:有(§22:4x+§10:10)⇒W:0
+[22:09] R2004 监控轮+predict 1361/3500+TB-2.1全7路rerun(164d/26p)+不产出HTML(11-09报告纪律):①CPU PASS(harness 0.0-0.7%·load 266=pretrain非本线) ②MEM PASS(1129GB avail) ③gateway 200(健康) ④predict 7路alive=1361/3500=38.9%(cline167·codex86·opencode334·cc175·pi129·hermes342·dsh128·1247patch=91.6%real) ⑤incr_eval R1992:cline DONE(35comp/2resolved)+codex DONE(29comp/5resolved)+opencode running(74inst·max_workers1) ⑥TB-2.1全7路RERUN(164d/26p·dsh34d/6p·opencode21d/8p·cline13d/5p·pi13d/3p·hermes23d/4p·codex10d/0p·cc50d/0p=Docker权限已知) ⑦日常轮不产出HTML(2026-11-09报告纪律·只写心跳+daily一行) ⑧cline empty=17/167=10.2%(均sphinx-doc·能力·非infra) ⑨disk:/data 5.8T(18%)·/ 352G(4%) ⑩research日报11-09:harness建议=经验资产化B/G配对(Evolver·中)+执行证据审计列(ReproBridge·高)+末段卸载(AiXapply·低)·已纳入参考 ⑪未完成指令:有(§22:4x+§10:10)⇒W:0
+> 📦 [22:02] R2003 流水已归档 → daily-memories-harness/2026-11-09.md。结论：监控轮+predict 1358+TB-2.1全7路rerun(62d/23p)+不产出HTML+gateway 200。需要时再读。
 > 📦 [21:39] R2001 流水已归档 → daily-memories-harness/2026-11-09.md。结论：监控轮+predict 1341+TB-2.1全7路rerun(177d/39p)+双报告r2001+gateway 200。需要时再读。
-> 📦 [17:05] R1985 流水已归档 → daily-memories-harness/2026-11-09.md。结论：监控轮+双报告r1985+predict 1200+eval未变(全量regen@16:24)。需要时再读。
-> 📦 [17:36] R1986 流水已归档 → daily-memories-harness/2026-11-09.md。结论：incr_eval 31inst全7路DONE+双报告r1986+predict 1223。需要时再读。
 > 📦 [17:54] R1987 流水已归档 → daily-memories-harness/2026-11-09.md。结论：incr_eval 11inst 4路DONE+双报告r1987+predict 1229。需要时再读。
 > 📦 [18:10] R1988 流水已归档 → daily-memories-harness/2026-11-09.md。结论：incr_eval 8new running+双报告r1988+predict 1232+gateway 200。需要时再读。
 > 📦 [18:28] R1989 流水已归档 → daily-memories-harness/2026-11-09.md。结论：incr_eval 21new running(cline1 DONE→107/141)+双报告r1989+predict 1244+gateway 429。需要时再读。
