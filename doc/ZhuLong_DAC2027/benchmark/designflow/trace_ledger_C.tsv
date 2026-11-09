@@ -489,3 +489,4 @@
 1788746263950_bxdtw					parked		2026-11-09 11:23	DRC-hang diagnostic thin 2 turns, overlaps r237/r259/r266 DRC-log cases
 1792397054964_fz05e					parked		2026-11-09 11:23	schematic pin-insert domain wrong-shard (shard D)
 1794032822083_qty8f	xiwang	hfeg0pkn002	422	pg_layout	case	EDA-Eval-DesignFlow-PdFloorplanGen-001	2026-11-09 12:00	
+1794035650061_tmx27	xiwang	hfeg0pkn002	0	layout_aether	case	EDA-Eval-DesignFlow-EccDsaLocate-001	2026-11-09 13:09	
