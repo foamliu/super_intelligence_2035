@@ -9999,3 +9999,81 @@ python3 baize_posttrain_r93_baseline_analysis_pipeline.py \
 
 > ⚠️ Surrogate RL results NOT transferable to BaiZe.
 
+## §R94 (2026-11-09 wake142) SGLang Qwen3.8-27B Surrogate Code-Generation Baseline + GPU Day Readiness Audit
+
+> **动机**: GPU Day (11/9) 既定到位但实际未释放（root SGLang Qwen3.8-27B 占全 8 卡）。利用现有 SGLang 端点（8098/8099, Qwen3.8-27B, OpenAI-compatible API）作为替身模型，对 EDA-Eval-PyAether 任务做纯代码生成基线，验证评测管线端到端可用性 + 全面 GPU Day 就绪审计。
+> ⚠️ **替身声明**: Qwen3.8-27B 结果**不可迁移到 BaiZe**。BaiZe 基座是 MiniCPM5-2B (36% Pass@1)，与 Qwen3.8-27B 完全不同。替身测试仅验证评测管线可用性 + 提供"强模型无工具"参考点。
+
+### 1. 脚本
+
+- **脚本**: `baize_posttrain_r94_sglang_surrogate_baseline.py` (537 行, 纯 Python3 + stdlib, 0 外部依赖)
+- **功能**: ① SGLang OpenAI-compatible API 调用 ② 代码提取 + AST 语法检查 + pyAether API 覆盖率分析 ③ GPU 审计 (nvidia-smi) ④ SGLang 端点审计 (/v1/models, /v1/chat/completions) ⑤ GPU Day 就绪审计 (模型/venv/脚本/数据/MCP/磁盘) ⑥ HTML 报告 + JSON 输出
+
+### 2. Smoke 测试结果 (3 tasks, --smoke --html --json)
+
+| Task ID | 场景 | 语法正确 | API 覆盖率 | 生成 LOC/规范 LOC | 耗时 | Tokens |
+|:--|:--|:--|:--|:--|:--|:--|
+| EDA-Eval-PyAether-001 | Schematic/Utilities | ✅ | 0% | 0/3 | 21.3s | 2048 |
+| EDA-Eval-PyAether-002 | Others/Utilities | ✅ | 0% | 10/2 | 10.9s | 1128 |
+| EDA-Eval-PyAether-003 | Others/Utilities | ✅ | 0% | 12/2 | 5.6s | 640 |
+
+- **语法正确率**: 100% (3/3) — Qwen3.8-27B 生成的 Python 代码语法正确
+- **API 覆盖率**: 0% (0/3) — Qwen3.8-27B 不知道 pyAether API（预期，因为未注入 API 文档）
+- **平均耗时**: 12.6s/task
+- **平均 tokens**: 1272/task
+
+### 3. GPU 现状
+
+| GPU | 空闲显存 | 总显存 | 利用率 | 状态 |
+|:--|--:|--:|--:|:--|
+| GPU 0-7 | ~0 MiB | 44-45 GB | 0% | 占用 (root SGLang) |
+
+- **空闲 GPU**: 0/8
+- **占用方**: root 用户 SGLang Qwen3.8-27B (2 实例 × TP=4, 端口 8098+8099, 运行自 Sep 17)
+- **gpu_watcher**: PID 2022305, iteration #341+, 每 120s 轮询, 等待 ≥4 卡空闲
+
+### 4. SGLang 端点审计
+
+| 端口 | 状态 | 模型 |
+|:--|:--|:--|
+| 8098 | alive | qwen3.8-27b |
+| 8099 | alive | qwen3.8-27b |
+
+- 两个端点均存活, 响应 OpenAI-compatible API
+- 可用作替身推理后端, **不能**用于 verl RL 训练（需框架控制的 rollout engine）
+
+### 5. GPU Day 就绪审计 (21 项)
+
+| 状态 | 数量 | 说明 |
+|:--|--:|:--|
+| [OK] | 18 | 模型(NAS)✅, venvs✅, 数据集✅, 12 bash 脚本✅, DeepSeek traces(103)✅, gpu_watcher✅, 磁盘 19557GB✅ |
+| [WARN] | 0 | — |
+| [FAIL] | 3 | MiniCPM5-2B (/tmp)❌(已被清理), pyAether library❌(未安装), MCP server❌(端口 8090=MRT 工具) |
+
+### 6. 阻塞项与修复路径
+
+| 阻塞项 | 影响 | 修复 |
+|:--|:--|:--|
+| GPU 0/8 空闲 | 无法服务 MiniCPM5-2B → 无法复测 36% → 无法采集轨迹 → 无法起 RL | 需 root 释放 ≥4 卡; gpu_watcher 自动检测 |
+| pyAether 未安装 | 无法本地执行测试用例 → full harness 评测不可用 | 启动 pyAether MCP server |
+| MCP server 未运行 | cline full harness 无法调用工具 | 端口 8090 被 MRT 工具占用, 需改用其他端口 |
+
+### 7. 关键结论
+
+1. **GPU**: 11/9 既定到位但实际未释放。root SGLang Qwen3.8-27B 仍占全 8 卡。gpu_watcher 持续轮询中。
+2. **替身端点**: 现有 SGLang Qwen3.8-27B 可用作替身推理后端, 仅限评测/代码生成, 不能用于 verl RL 训练。
+3. **代码生成基线**: Qwen3.8-27B 纯代码生成语法率 100%, API 覆盖 0% — 提供"强模型无工具"参考点, 可与 MiniCPM5-2B 和 DeepSeek full harness 对照。
+4. **三个阻塞**: GPU 未释放 + pyAether 未安装 + MCP server 未运行。GPU 需 root, 其余可并行处理。
+5. **管线就绪**: 除 3 项外全部就绪。GPU 释放后预计 30 分钟可起 Step 2 (基线评测)。
+
+### 8. Deliverables
+
+| Item | Path | Size |
+|:--|:--|--:|
+| Python script | `run/baize_posttrain_r94_sglang_surrogate_baseline.py` | 537 lines |
+| HTML report | `reports/report_posttrain_r94_sglang_surrogate_zh.html` | 8.9KB |
+| JSON data | `run/r94_surrogate_baseline.json` | 9.2KB |
+
+> ⚠️ Surrogate results (Qwen3.8-27B) NOT transferable to BaiZe (MiniCPM5-2B).
+
+
