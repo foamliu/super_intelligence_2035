@@ -1,0 +1,675 @@
+=== incr_eval_7route R1987 START Mon Nov  9 05:48:29 PM CST 2026 ===
+[Mon Nov  9 05:48:29 PM CST 2026] === cline-patched: 1 missing instances to eval ===
+[Mon Nov  9 05:48:29 PM CST 2026] === merge cline-patched predictions ===
+cline-patched: 140 real patches merged
+[Mon Nov  9 05:48:29 PM CST 2026] === cline-patched eval START 1 missing instances ===
+Running 1 instances...
+  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [00:22<00:00, 22.37s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:22<00:00, 22.37s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:22<00:00, 22.37s/it]
+All instances run.
+Total instances: 1
+Instances submitted: 1
+Instances completed: 1
+Instances incomplete: 0
+Instances resolved: 1
+Instances unresolved: 0
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 2
+Unremoved images: 1
+Report written to cline-glm-5.3-flash.verified_full_glm53_cline-patched_R1933.json
+[Mon Nov  9 05:48:57 PM CST 2026] === cline-patched eval DONE ===
+[Mon Nov  9 05:48:57 PM CST 2026] === regenerate eval report for cline-patched ===
+cline-patched: 106 resolved / 34 failed / 140 evaluated / 16 no_patch
+[Mon Nov  9 05:48:57 PM CST 2026] === cline-patched report regenerated ===
+[Mon Nov  9 05:48:57 PM CST 2026] === codex: 2 missing instances to eval ===
+[Mon Nov  9 05:48:57 PM CST 2026] === merge codex predictions ===
+codex: 55 real patches merged
+[Mon Nov  9 05:48:57 PM CST 2026] === codex eval START 2 missing instances ===
+Running 2 instances...
+  0%|          | 0/2 [00:00<?, ?it/s]=== incr_eval_7route R1987 START Mon Nov  9 05:49:12 PM CST 2026 ===
+[Mon Nov  9 05:49:12 PM CST 2026] === cline-patched: 1 missing instances to eval ===
+[Mon Nov  9 05:49:12 PM CST 2026] === merge cline-patched predictions ===
+cline-patched: 140 real patches merged
+[Mon Nov  9 05:49:12 PM CST 2026] === cline-patched eval START 1 missing instances ===
+1 instances already run, skipping...
+No instances to run.
+Total instances: 1
+Instances submitted: 1
+Instances completed: 1
+Instances incomplete: 0
+Instances resolved: 1
+Instances unresolved: 0
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 2
+Unremoved images: 1
+Report written to cline-glm-5.3-flash.verified_full_glm53_cline-patched_R1933.json
+[Mon Nov  9 05:49:16 PM CST 2026] === cline-patched eval DONE ===
+[Mon Nov  9 05:49:16 PM CST 2026] === regenerate eval report for cline-patched ===
+cline-patched: 106 resolved / 34 failed / 140 evaluated / 16 no_patch
+[Mon Nov  9 05:49:16 PM CST 2026] === cline-patched report regenerated ===
+[Mon Nov  9 05:49:16 PM CST 2026] === codex: 2 missing instances to eval ===
+[Mon Nov  9 05:49:16 PM CST 2026] === merge codex predictions ===
+codex: 55 real patches merged
+[Mon Nov  9 05:49:16 PM CST 2026] === codex eval START 2 missing instances ===
+Running 2 instances...
+  0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [00:23<00:23, 23.64s/it]1 ran successfully, 0 failed:  50%|█████     | 1/2 [00:23<00:23, 23.64s/it]1 ran successfully, 0 failed: 100%|██████████| 2/2 [00:26<00:00, 13.27s/it]2 ran successfully, 0 failed: 100%|██████████| 2/2 [00:26<00:00, 13.27s/it]2 ran successfully, 0 failed: 100%|██████████| 2/2 [00:26<00:00, 13.27s/it]
+All instances run.
+Total instances: 2
+Instances submitted: 2
+Instances completed: 2
+Instances incomplete: 0
+Instances resolved: 0
+Instances unresolved: 2
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 0
+Unremoved images: 2
+Report written to codex-glm-5.3-flash.verified_full_glm53_codex_R1933.json
+[Mon Nov  9 05:49:46 PM CST 2026] === codex eval DONE ===
+[Mon Nov  9 05:49:46 PM CST 2026] === regenerate eval report for codex ===
+codex: 33 resolved / 21 failed / 54 evaluated / 8 no_patch
+[Mon Nov  9 05:49:47 PM CST 2026] === codex report regenerated ===
+[Mon Nov  9 05:49:47 PM CST 2026] === opencode: 5 missing instances to eval ===
+[Mon Nov  9 05:49:47 PM CST 2026] === merge opencode predictions ===
+opencode: 302 real patches merged
+[Mon Nov  9 05:49:47 PM CST 2026] === opencode eval START 5 missing instances ===
+Running 5 instances...
+  0%|          | 0/5 [00:00<?, ?it/s] 20%|██        | 1/5 [00:25<01:42, 25.51s/it]1 ran successfully, 0 failed:  20%|██        | 1/5 [00:25<01:42, 25.51s/it]1 ran successfully, 0 failed:  40%|████      | 2/5 [00:28<00:42, 14.21s/it]2 ran successfully, 0 failed:  40%|████      | 2/5 [00:28<00:42, 14.21s/it]2 ran successfully, 0 failed:  60%|██████    | 3/5 [00:30<00:20, 10.19s/it]3 ran successfully, 0 failed:  60%|██████    | 3/5 [00:30<00:20, 10.19s/it]3 ran successfully, 0 failed:  80%|████████  | 4/5 [00:40<00:10, 10.21s/it]4 ran successfully, 0 failed:  80%|████████  | 4/5 [00:40<00:10, 10.21s/it]4 ran successfully, 0 failed: 100%|██████████| 5/5 [01:06<00:00, 13.21s/it]5 ran successfully, 0 failed: 100%|██████████| 5/5 [01:06<00:00, 13.21s/it]5 ran successfully, 0 failed: 100%|██████████| 5/5 [01:06<00:00, 13.21s/it]
+All instances run.
+Total instances: 5
+Instances submitted: 5
+Instances completed: 5
+Instances incomplete: 0
+Instances resolved: 4
+Instances unresolved: 1
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 0
+Unremoved images: 5
+Report written to opencode-glm-5.3-flash.verified_full_glm53_opencode_R1933.json
+[Mon Nov  9 05:50:58 PM CST 2026] === opencode eval DONE ===
+[Mon Nov  9 05:50:58 PM CST 2026] === regenerate eval report for opencode ===
+opencode: 243 resolved / 59 failed / 302 evaluated / 6 no_patch
+[Mon Nov  9 05:50:58 PM CST 2026] === opencode report regenerated ===
+[Mon Nov  9 05:50:58 PM CST 2026] === claude-code: no missing IDs file, skip ===
+[Mon Nov  9 05:50:58 PM CST 2026] === pi: no missing IDs file, skip ===
+[Mon Nov  9 05:50:58 PM CST 2026] === hermes: 3 missing instances to eval ===
+[Mon Nov  9 05:50:58 PM CST 2026] === merge hermes predictions ===
+hermes: 318 real patches merged
+[Mon Nov  9 05:50:58 PM CST 2026] === hermes eval START 3 missing instances ===
+Running 3 instances...
+  0%|          | 0/3 [00:00<?, ?it/s] 33%|███▎      | 1/3 [00:19<00:38, 19.33s/it]1 ran successfully, 0 failed:  33%|███▎      | 1/3 [00:19<00:38, 19.33s/it]1 ran successfully, 0 failed:  67%|██████▋   | 2/3 [00:20<00:10, 10.08s/it]2 ran successfully, 0 failed:  67%|██████▋   | 2/3 [00:20<00:10, 10.08s/it]2 ran successfully, 0 failed: 100%|██████████| 3/3 [00:41<00:00, 13.73s/it]3 ran successfully, 0 failed: 100%|██████████| 3/3 [00:41<00:00, 13.73s/it]3 ran successfully, 0 failed: 100%|██████████| 3/3 [00:41<00:00, 13.73s/it]
+Error in evaluation for django__django-14631: >>>>> Patch Apply Failed:
+patching file django/forms/formsets.py
+Reversed (or previously applied) patch detected!  Skipping patch.
+2 out of 2 hunks ignored -- saving rejects to file django/forms/formsets.py.rej
+patching file docs/releases/4.0.txt
+Hunk #1 succeeded at 224 with fuzz 2 (offset 6 lines).
+patching file docs/topics/forms/index.txt
+Hunk #1 succeeded at 638 (offset 22 lines).
+patching file tests/forms_tests/tests/test_formsets.py
+Reversed (or previously applied) patch detected!  Skipping patch.
+1 out of 1 hunk ignored -- saving rejects to file tests/forms_tests/tests/test_formsets.py.rej
+
+Check (logs/run_evaluation/verified_full_glm53_hermes_R1933/hermes-glm-5.3-flash/django__django-14631/run_instance.log) for more information.
+Error in evaluation for django__django-14725: >>>>> Patch Apply Failed:
+patching file .github/CODE_OF_CONDUCT.md
+patching file .github/workflows/docs.yml
+patching file .github/workflows/linters.yml
+patching file .github/workflows/tests.yml
+patching file .pre-commit-config.yaml
+patching file .readthedocs.yml
+patching file AUTHORS
+patching file LICENSE.python
+patching file README.rst
+patching file django/__init__.py
+patching file django/apps/config.py
+patching file django/apps/registry.py
+patching file django/conf/__init__.py
+patching file django/conf/global_settings.py
+patching file django/conf/locale/__init__.py
+patching file django/conf/locale/ar/LC_MESSAGES/django.mo
+patching file django/conf/locale/ar/LC_MESSAGES/django.po
+patching file django/conf/locale/be/LC_MESSAGES/django.mo
+patching file django/conf/locale/be/LC_MESSAGES/django.po
+patching file django/conf/locale/br/LC_MESSAGES/django.mo
+patching file django/conf/locale/br/LC_MESSAGES/django.po
+patching file django/conf/locale/ca/LC_MESSAGES/django.mo
+patching file django/conf/locale/ca/LC_MESSAGES/django.po
+patching file django/conf/locale/da/LC_MESSAGES/django.mo
+patching file django/conf/locale/da/LC_MESSAGES/django.po
+patching file django/conf/locale/de/LC_MESSAGES/django.mo
+patching file django/conf/locale/de/LC_MESSAGES/django.po
+patching file django/conf/locale/dsb/LC_MESSAGES/django.mo
+patching file django/conf/locale/dsb/LC_MESSAGES/django.po
+patching file django/conf/locale/el/LC_MESSAGES/django.mo
+patching file django/conf/locale/el/LC_MESSAGES/django.po
+patching file django/conf/locale/en/LC_MESSAGES/django.po
+patching file django/conf/locale/en/formats.py
+patching file django/conf/locale/en_AU/LC_MESSAGES/django.mo
+patching file django/conf/locale/en_AU/LC_MESSAGES/django.po
+patching file django/conf/locale/es/LC_MESSAGES/django.mo
+patching file django/conf/locale/es/LC_MESSAGES/django.po
+patching file django/conf/locale/es_AR/LC_MESSAGES/django.mo
+patching file django/conf/locale/es_AR/LC_MESSAGES/django.po
+patching file django/conf/locale/et/LC_MESSAGES/django.mo
+patching file django/conf/locale/et/LC_MESSAGES/django.po
+patching file django/conf/locale/fa/LC_MESSAGES/django.mo
+patching file django/conf/locale/fa/LC_MESSAGES/django.po
+patching file django/conf/locale/fi/LC_MESSAGES/django.mo
+patching file django/conf/locale/fi/LC_MESSAGES/django.po
+patching file django/conf/locale/fr/LC_MESSAGES/django.mo
+patching file django/conf/locale/fr/LC_MESSAGES/django.po
+patching file django/conf/locale/gd/LC_MESSAGES/django.mo
+patching file django/conf/locale/gd/LC_MESSAGES/django.po
+patching file django/conf/locale/he/LC_MESSAGES/django.mo
+patching file django/conf/locale/he/LC_MESSAGES/django.po
+patching file django/conf/locale/hsb/LC_MESSAGES/django.mo
+patching file django/conf/locale/hsb/LC_MESSAGES/django.po
+patching file django/conf/locale/ia/LC_MESSAGES/django.mo
+patching file django/conf/locale/ia/LC_MESSAGES/django.po
+patching file django/conf/locale/id/LC_MESSAGES/django.mo
+patching file django/conf/locale/id/LC_MESSAGES/django.po
+patching file django/conf/locale/is/LC_MESSAGES/django.mo
+patching file django/conf/locale/is/LC_MESSAGES/django.po
+patching file django/conf/locale/it/LC_MESSAGES/django.mo
+patching file django/conf/locale/it/LC_MESSAGES/django.po
+patching file django/conf/locale/ja/LC_MESSAGES/django.mo
+patching file django/conf/locale/ja/LC_MESSAGES/django.po
+patching file django/conf/locale/ko/LC_MESSAGES/django.mo
+patching file django/conf/locale/ko/LC_MESSAGES/django.po
+patching file django/conf/locale/ky/LC_MESSAGES/django.mo
+patching file django/conf/locale/ky/LC_MESSAGES/django.po
+patching file django/conf/locale/lt/LC_MESSAGES/django.mo
+patching file django/conf/locale/lt/LC_MESSAGES/django.po
+patching file django/conf/locale/lv/LC_MESSAGES/django.mo
+patching file django/conf/locale/lv/LC_MESSAGES/django.po
+patching file django/conf/locale/ml/LC_MESSAGES/django.mo
+patching file django/conf/locale/ml/LC_MESSAGES/django.po
+patching file django/conf/locale/ms/LC_MESSAGES/django.mo
+Not deleting file django/conf/locale/ms/LC_MESSAGES/django.mo as content differs from patch
+patching file django/conf/locale/ms/LC_MESSAGES/django.po
+patching file django/conf/locale/ms/__init__.py
+patching file django/conf/locale/ms/formats.py
+patching file django/conf/locale/nn/LC_MESSAGES/django.mo
+patching file django/conf/locale/nn/LC_MESSAGES/django.po
+patching file django/conf/locale/pl/LC_MESSAGES/django.mo
+patching file django/conf/locale/pl/LC_MESSAGES/django.po
+patching file django/conf/locale/pt_BR/LC_MESSAGES/django.mo
+patching file django/conf/locale/pt_BR/LC_MESSAGES/django.po
+patching file django/conf/locale/ru/LC_MESSAGES/django.mo
+patching file django/conf/locale/ru/LC_MESSAGES/django.po
+patching file django/conf/locale/sk/LC_MESSAGES/django.mo
+patching file django/conf/locale/sk/LC_MESSAGES/django.po
+patching file django/conf/locale/sq/LC_MESSAGES/django.mo
+patching file django/conf/locale/sq/LC_MESSAGES/django.po
+patching file django/conf/locale/sr/LC_MESSAGES/django.mo
+patching file django/conf/locale/sr/LC_MESSAGES/django.po
+patching file django/conf/locale/sr_Latn/LC_MESSAGES/django.mo
+patching file django/conf/locale/sr_Latn/LC_MESSAGES/django.po
+patching file django/conf/locale/sv/LC_MESSAGES/django.mo
+patching file django/conf/locale/sv/LC_MESSAGES/django.po
+patching file django/conf/locale/tk/LC_MESSAGES/django.mo
+patching file django/conf/locale/tk/LC_MESSAGES/django.po
+patching file django/conf/locale/tr/LC_MESSAGES/django.mo
+patching file django/conf/locale/tr/LC_MESSAGES/django.po
+patching file django/conf/locale/uk/LC_MESSAGES/django.mo
+patching file django/conf/locale/uk/LC_MESSAGES/django.po
+patching file django/conf/locale/zh_Hans/LC_MESSAGES/django.mo
+patching file django/conf/locale/zh_Hans/LC_MESSAGES/django.po
+patching file django/conf/project_template/project_name/settings.py-tpl
+patching file django/contrib/admin/actions.py
+patching file django/contrib/admin/filters.py
+patching file django/contrib/admin/helpers.py
+patching file django/contrib/admin/locale/ar/LC_MESSAGES/django.mo
+patching file django/contrib/admin/locale/ar/LC_MESSAGES/django.po
+patching file django/contrib/admin/locale/ar/LC_MESSAGES/djangojs.mo
+patching file django/contrib/admin/locale/ar/LC_MESSAGES/djangojs.po
+patching file django/contrib/admin/locale/be/LC_MESSAGES/django.mo
+patching file django/contrib/admin/locale/be/LC_MESSAGES/django.po
+patching file django/contrib/admin/locale/ca/LC_MESSAGES/django.mo
+patching file django/contrib/admin/locale/ca/LC_MESSAGES/django.po
+patching file django/contrib/admin/locale/ca/LC_MESSAGES/djangojs.mo
+patching file django/contrib/admin/locale/ca/LC_MESSAGES/djangojs.po
+patching file django/contrib/admin/locale/de/LC_MESSAGES/django.mo
+patching file django/contrib/admin/locale/de/LC_MESSAGES/django.po
+patching file django/contrib/admin/locale/de/LC_MESSAGES/djangojs.mo
+patching file django/contrib/admin/locale/de/LC_MESSAGES/djangojs.po
+patching file django/contrib/admin/locale/el/LC_MESSAGES/djangojs.mo
+patching file django/contrib/admin/locale/el/LC_MESSAGES/djangojs.po
+patching file django/contrib/admin/locale/en/LC_MESSAGES/django.po
+patching file django/contrib/admin/locale/en_AU/LC_MESSAGES/django.mo
+patching file django/contrib/admin/locale/en_AU/LC_MESSAGES/django.po
+patching file django/contrib/admin/locale/en_AU/LC_MESSAGES/djangojs.mo
+patching file django/contrib/admin/locale/en_AU/LC_MESSAGES/djangojs.po
+patching file django/contrib/admin/locale/es/LC_MESSAGES/django.mo
+patching file django/contrib/admin/locale/es/LC_MESSAGES/django.po
+patching file django/contrib/admin/locale/es_AR/LC_MESSAGES/django.mo
+patching file django/contrib/admin/locale/es_AR/LC_MESSAGES/django.po
+patching file django/contrib/admin/locale/fa/LC_MESSAGES/django.mo
+patching file django/contrib/admin/locale/fa/LC_MESSAGES/django.po
+patching file django/contrib/admin/locale/fi/LC_MESSAGES/django.mo
+patching file django/contrib/admin/locale/fi/LC_MESSAGES/django.po
+patching file django/contrib/admin/locale/fi/LC_MESSAGES/djangojs.mo
+patching file django/contrib/admin/locale/fi/LC_MESSAGES/djangojs.po
+patching file django/contrib/admin/locale/fr/LC_MESSAGES/django.mo
+patching file django/contrib/admin/locale/fr/LC_MESSAGES/django.po
+patching file django/contrib/admin/locale/gd/LC_MESSAGES/django.mo
+patching file django/contrib/admin/locale/gd/LC_MESSAGES/django.po
+patching file django/contrib/admin/locale/gd/LC_MESSAGES/djangojs.mo
+patching file django/contrib/admin/locale/gd/LC_MESSAGES/djangojs.po
+patching file django/contrib/admin/locale/gl/LC_MESSAGES/django.mo
+patching file django/contrib/admin/locale/gl/LC_MESSAGES/django.po
+patching file django/contrib/admin/locale/he/LC_MESSAGES/django.mo
+patching file django/contrib/admin/locale/he/LC_MESSAGES/django.po
+patching file django/contrib/admin/locale/he/LC_MESSAGES/djangojs.mo
+patching file django/contrib/admin/locale/he/LC_MESSAGES/djangojs.po
+patching file django/contrib/admin/locale/hsb/LC_MESSAGES/django.mo
+patching file django/contrib/admin/locale/hsb/LC_MESSAGES/django.po
+patching file django/contrib/admin/locale/id/LC_MESSAGES/django.mo
+patching file django/contrib/admin/locale/id/LC_MESSAGES/django.po
+patching file django/contrib/admin/locale/id/LC_MESSAGES/djangojs.mo
+patching file django/contrib/admin/locale/id/LC_MESSAGES/djangojs.po
+patching file django/contrib/admin/locale/is/LC_MESSAGES/djangojs.mo
+patching file django/contrib/admin/locale/is/LC_MESSAGES/djangojs.po
+patching file django/contrib/admin/locale/it/LC_MESSAGES/django.mo
+patching file django/contrib/admin/locale/it/LC_MESSAGES/django.po
+patching file django/contrib/admin/locale/ja/LC_MESSAGES/django.mo
+patching file django/contrib/admin/locale/ja/LC_MESSAGES/django.po
+patching file django/contrib/admin/locale/ja/LC_MESSAGES/djangojs.mo
+patching file django/contrib/admin/locale/ja/LC_MESSAGES/djangojs.po
+patching file django/contrib/admin/locale/kn/LC_MESSAGES/django.po
+patching file django/contrib/admin/locale/ko/LC_MESSAGES/django.mo
+patching file django/contrib/admin/locale/ko/LC_MESSAGES/django.po
+patching file django/contrib/admin/locale/ko/LC_MESSAGES/djangojs.mo
+patching file django/contrib/admin/locale/ko/LC_MESSAGES/djangojs.po
+patching file django/contrib/admin/locale/ky/LC_MESSAGES/django.mo
+patching file django/contrib/admin/locale/ky/LC_MESSAGES/django.po
+patching file django/contrib/admin/locale/lv/LC_MESSAGES/django.mo
+patching file django/contrib/admin/locale/lv/LC_MESSAGES/django.po
+patching file django/contrib/admin/locale/mk/LC_MESSAGES/django.mo
+patching file django/contrib/admin/locale/mk/LC_MESSAGES/django.po
+patching file django/contrib/admin/locale/mk/LC_MESSAGES/djangojs.mo
+patching file django/contrib/admin/locale/mk/LC_MESSAGES/djangojs.po
+patching file django/contrib/admin/locale/mn/LC_MESSAGES/django.mo
+patching file django/contrib/admin/locale/mn/LC_MESSAGES/django.po
+patching file django/contrib/admin/locale/ms/LC_MESSAGES/django.mo
+Not deleting file django/contrib/admin/locale/ms/LC_MESSAGES/django.mo as content differs from patch
+patching file django/contrib/admin/locale/ms/LC_MESSAGES/django.po
+patching file django/contrib/admin/locale/ms/LC_MESSAGES/djangojs.mo
+Not deleting file django/contrib/admin/locale/ms/LC_MESSAGES/djangojs.mo as content differs from patch
+patching file django/contrib/admin/locale/ms/LC_MESSAGES/djangojs.po
+patching file django/contrib/admin/locale/ne/LC_MESSAGES/django.mo
+patching file django/contrib/admin/locale/ne/LC_MESSAGES/django.po
+patching file django/contrib/admin/locale/nn/LC_MESSAGES/django.mo
+patching file django/contrib/admin/locale/nn/LC_MESSAGES/django.po
+patching file django/contrib/admin/locale/nn/LC_MESSAGES/djangojs.mo
+patching file django/contrib/admin/locale/nn/LC_MESSAGES/djangojs.po
+patching file django/contrib/admin/locale/pa/LC_MESSAGES/django.mo
+patching file django/contrib/admin/locale/pa/LC_MESSAGES/django.po
+patching file django/contrib/admin/locale/pa/LC_MESSAGES/djangojs.mo
+patching file django/contrib/admin/locale/pa/LC_MESSAGES/djangojs.po
+patching file django/contrib/admin/locale/pl/LC_MESSAGES/django.mo
+patching file django/contrib/admin/locale/pl/LC_MESSAGES/django.po
+patching file django/contrib/admin/locale/sk/LC_MESSAGES/django.mo
+patching file django/contrib/admin/locale/sk/LC_MESSAGES/django.po
+patching file django/contrib/admin/locale/sk/LC_MESSAGES/djangojs.mo
+patching file django/contrib/admin/locale/sk/LC_MESSAGES/djangojs.po
+patching file django/contrib/admin/locale/uk/LC_MESSAGES/django.mo
+patching file django/contrib/admin/locale/uk/LC_MESSAGES/django.po
+patching file django/contrib/admin/locale/uk/LC_MESSAGES/djangojs.mo
+patching file django/contrib/admin/locale/uk/LC_MESSAGES/djangojs.po
+patching file django/contrib/admin/locale/zh_Hans/LC_MESSAGES/django.mo
+patching file django/contrib/admin/locale/zh_Hans/LC_MESSAGES/django.po
+patching file django/contrib/admin/options.py
+patching file django/contrib/admin/sites.py
+patching file django/contrib/admin/static/admin/css/base.css
+patching file django/contrib/admin/static/admin/css/changelists.css
+patching file django/contrib/admin/static/admin/css/dark_mode.css
+patching file django/contrib/admin/static/admin/css/forms.css
+patching file django/contrib/admin/static/admin/css/responsive.css
+patching file django/contrib/admin/static/admin/css/rtl.css
+patching file django/contrib/admin/static/admin/css/widgets.css
+patching file django/contrib/admin/static/admin/js/SelectFilter2.js
+patching file django/contrib/admin/static/admin/js/actions.js
+patching file django/contrib/admin/static/admin/js/admin/RelatedObjectLookups.js
+patching file django/contrib/admin/static/admin/js/inlines.js
+patching file django/contrib/admin/static/admin/js/nav_sidebar.js
+patching file django/contrib/admin/static/admin/js/prepopulate_init.js
+patching file django/contrib/admin/static/admin/js/vendor/jquery/LICENSE.txt
+patching file django/contrib/admin/static/admin/js/vendor/jquery/jquery.js
+patching file django/contrib/admin/static/admin/js/vendor/jquery/jquery.min.js
+patching file django/contrib/admin/templates/admin/app_list.html
+patching file django/contrib/admin/templates/admin/auth/user/change_password.html
+patching file django/contrib/admin/templates/admin/base.html
+patching file django/contrib/admin/templates/admin/change_form.html
+patching file django/contrib/admin/templates/admin/change_list.html
+patching file django/contrib/admin/templates/admin/edit_inline/tabular.html
+patching file django/contrib/admin/templates/admin/filter.html
+patching file django/contrib/admin/templates/admin/index.html
+patching file django/contrib/admin/templates/admin/login.html
+patching file django/contrib/admin/templates/admin/nav_sidebar.html
+patching file django/contrib/admin/templates/admin/object_history.html
+patching file django/contrib/admin/templates/registration/logged_out.html
+patching file django/contrib/admin/templates/registration/password_change_form.html
+patching file django/contrib/admin/templates/registration/password_reset_confirm.html
+patching file django/contrib/admin/templates/registration/password_reset_form.html
+patching file django/contrib/admin/templatetags/admin_list.py
+patching file django/contrib/admin/templatetags/admin_modify.py
+patching file django/contrib/admin/tests.py
+patching file django/contrib/admin/utils.py
+patching file django/contrib/admin/views/autocomplete.py
+patching file django/contrib/admin/widgets.py
+patching file django/contrib/admindocs/locale/af/LC_MESSAGES/django.mo
+patching file django/contrib/admindocs/locale/af/LC_MESSAGES/django.po
+patching file django/contrib/admindocs/locale/ar/LC_MESSAGES/django.mo
+patching file django/contrib/admindocs/locale/ar/LC_MESSAGES/django.po
+patching file django/contrib/admindocs/locale/ca/LC_MESSAGES/django.mo
+patching file django/contrib/admindocs/locale/ca/LC_MESSAGES/django.po
+patching file django/contrib/admindocs/locale/de/LC_MESSAGES/django.mo
+patching file django/contrib/admindocs/locale/de/LC_MESSAGES/django.po
+patching file django/contrib/admindocs/locale/el/LC_MESSAGES/django.mo
+patching file django/contrib/admindocs/locale/el/LC_MESSAGES/django.po
+patching file django/contrib/admindocs/locale/et/LC_MESSAGES/django.mo
+patching file django/contrib/admindocs/locale/et/LC_MESSAGES/django.po
+patching file django/contrib/admindocs/locale/gd/LC_MESSAGES/django.mo
+patching file django/contrib/admindocs/locale/gd/LC_MESSAGES/django.po
+patching file django/contrib/admindocs/locale/he/LC_MESSAGES/django.mo
+patching file django/contrib/admindocs/locale/he/LC_MESSAGES/django.po
+patching file django/contrib/admindocs/locale/id/LC_MESSAGES/django.mo
+patching file django/contrib/admindocs/locale/id/LC_MESSAGES/django.po
+patching file django/contrib/admindocs/locale/kn/LC_MESSAGES/django.po
+patching file django/contrib/admindocs/locale/ko/LC_MESSAGES/django.mo
+patching file django/contrib/admindocs/locale/ko/LC_MESSAGES/django.po
+patching file django/contrib/admindocs/locale/ms/LC_MESSAGES/django.mo
+Not deleting file django/contrib/admindocs/locale/ms/LC_MESSAGES/django.mo as content differs from patch
+patching file django/contrib/admindocs/locale/ms/LC_MESSAGES/django.po
+patching file django/contrib/admindocs/locale/nn/LC_MESSAGES/django.mo
+patching file django/contrib/admindocs/locale/nn/LC_MESSAGES/django.po
+patching file django/contrib/admindocs/locale/sk/LC_MESSAGES/django.mo
+patching file django/contrib/admindocs/locale/sk/LC_MESSAGES/django.po
+patching file django/contrib/admindocs/locale/sv/LC_MESSAGES/django.mo
+patching file django/contrib/admindocs/locale/sv/LC_MESSAGES/django.po
+patching file django/contrib/admindocs/utils.py
+patching file django/contrib/admindocs/views.py
+patching file django/contrib/auth/backends.py
+patching file django/contrib/auth/hashers.py
+patching file django/contrib/auth/locale/ar/LC_MESSAGES/django.mo
+patching file django/contrib/auth/locale/ar/LC_MESSAGES/django.po
+patching file django/contrib/auth/locale/be/LC_MESSAGES/django.mo
+patching file django/contrib/auth/locale/be/LC_MESSAGES/django.po
+patching file django/contrib/auth/locale/bs/LC_MESSAGES/django.mo
+patching file django/contrib/auth/locale/bs/LC_MESSAGES/django.po
+patching file django/contrib/auth/locale/ca/LC_MESSAGES/django.mo
+patching file django/contrib/auth/locale/ca/LC_MESSAGES/django.po
+patching file django/contrib/auth/locale/da/LC_MESSAGES/django.mo
+patching file django/contrib/auth/locale/da/LC_MESSAGES/django.po
+patching file django/contrib/auth/locale/de/LC_MESSAGES/django.mo
+patching file django/contrib/auth/locale/de/LC_MESSAGES/django.po
+patching file django/contrib/auth/locale/dsb/LC_MESSAGES/django.mo
+patching file django/contrib/auth/locale/dsb/LC_MESSAGES/django.po
+patching file django/contrib/auth/locale/el/LC_MESSAGES/django.mo
+patching file django/contrib/auth/locale/el/LC_MESSAGES/django.po
+patching file django/contrib/auth/locale/en/LC_MESSAGES/django.po
+patching file django/contrib/auth/locale/en_AU/LC_MESSAGES/django.mo
+patching file django/contrib/auth/locale/en_AU/LC_MESSAGES/django.po
+patching file django/contrib/auth/locale/es/LC_MESSAGES/django.mo
+patching file django/contrib/auth/locale/es/LC_MESSAGES/django.po
+patching file django/contrib/auth/locale/es_AR/LC_MESSAGES/django.mo
+patching file django/contrib/auth/locale/es_AR/LC_MESSAGES/django.po
+patching file django/contrib/auth/locale/fa/LC_MESSAGES/django.mo
+patching file django/contrib/auth/locale/fa/LC_MESSAGES/django.po
+patching file django/contrib/auth/locale/fi/LC_MESSAGES/django.mo
+patching file django/contrib/auth/locale/fi/LC_MESSAGES/django.po
+patching file django/contrib/auth/locale/fr/LC_MESSAGES/django.mo
+patching file django/contrib/auth/locale/fr/LC_MESSAGES/django.po
+patching file django/contrib/auth/locale/gd/LC_MESSAGES/django.mo
+patching file django/contrib/auth/locale/gd/LC_MESSAGES/django.po
+patching file django/contrib/auth/locale/hsb/LC_MESSAGES/django.mo
+patching file django/contrib/auth/locale/hsb/LC_MESSAGES/django.po
+patching file django/contrib/auth/locale/ia/LC_MESSAGES/django.mo
+patching file django/contrib/auth/locale/ia/LC_MESSAGES/django.po
+patching file django/contrib/auth/locale/it/LC_MESSAGES/django.mo
+patching file django/contrib/auth/locale/it/LC_MESSAGES/django.po
+patching file django/contrib/auth/locale/ja/LC_MESSAGES/django.mo
+patching file django/contrib/auth/locale/ja/LC_MESSAGES/django.po
+patching file django/contrib/auth/locale/kn/LC_MESSAGES/django.po
+patching file django/contrib/auth/locale/ko/LC_MESSAGES/django.mo
+patching file django/contrib/auth/locale/ko/LC_MESSAGES/django.po
+patching file django/contrib/auth/locale/ky/LC_MESSAGES/django.mo
+patching file django/contrib/auth/locale/ky/LC_MESSAGES/django.po
+patching file django/contrib/auth/locale/lv/LC_MESSAGES/django.mo
+patching file django/contrib/auth/locale/lv/LC_MESSAGES/django.po
+patching file django/contrib/auth/locale/ms/LC_MESSAGES/django.mo
+Not deleting file django/contrib/auth/locale/ms/LC_MESSAGES/django.mo as content differs from patch
+patching file django/contrib/auth/locale/ms/LC_MESSAGES/django.po
+patching file django/contrib/auth/locale/nn/LC_MESSAGES/django.mo
+patching file django/contrib/auth/locale/nn/LC_MESSAGES/django.po
+patching file django/contrib/auth/locale/pl/LC_MESSAGES/django.mo
+patching file django/contrib/auth/locale/pl/LC_MESSAGES/django.po
+patching file django/contrib/auth/locale/sk/LC_MESSAGES/django.mo
+patching file django/contrib/auth/locale/sk/LC_MESSAGES/django.po
+patching file django/contrib/auth/locale/sr/LC_MESSAGES/django.mo
+patching file django/contrib/auth/locale/sr/LC_MESSAGES/django.po
+patching file django/contrib/auth/locale/sr_Latn/LC_MESSAGES/django.mo
+patching file django/contrib/auth/locale/sr_Latn/LC_MESSAGES/django.po
+patching file django/contrib/auth/locale/tr/LC_MESSAGES/django.mo
+patching file django/contrib/auth/locale/tr/LC_MESSAGES/django.po
+patching file django/contrib/auth/locale/uk/LC_MESSAGES/django.mo
+patching file django/contrib/auth/locale/uk/LC_MESSAGES/django.po
+patching file django/contrib/auth/locale/zh_Hans/LC_MESSAGES/django.mo
+patching file django/contrib/auth/locale/zh_Hans/LC_MESSAGES/django.po
+patching file django/contrib/auth/management/commands/createsuperuser.py
+patching file django/contrib/auth/middleware.py
+patching file django/contrib/auth/models.py
+patching file django/contrib/auth/password_validation.py
+patching file django/contrib/auth/views.py
+patching file django/contrib/contenttypes/fields.py
+patching file django/contrib/contenttypes/locale/ka/LC_MESSAGES/django.po
+patching file django/contrib/contenttypes/locale/kn/LC_MESSAGES/django.po
+patching file django/contrib/contenttypes/locale/ms/LC_MESSAGES/django.mo
+Not deleting file django/contrib/contenttypes/locale/ms/LC_MESSAGES/django.mo as content differs from patch
+patching file django/contrib/contenttypes/locale/ms/LC_MESSAGES/django.po
+patching file django/contrib/contenttypes/locale/nn/LC_MESSAGES/django.mo
+patching file django/contrib/contenttypes/locale/nn/LC_MESSAGES/django.po
+patching file django/contrib/contenttypes/locale/sk/LC_MESSAGES/django.mo
+patching file django/contrib/contenttypes/locale/sk/LC_MESSAGES/django.po
+patching file django/contrib/contenttypes/management/commands/remove_stale_contenttypes.py
+patching file django/contrib/flatpages/locale/el/LC_MESSAGES/django.mo
+patching file django/contrib/flatpages/locale/el/LC_MESSAGES/django.po
+patching file django/contrib/flatpages/locale/en_AU/LC_MESSAGES/django.mo
+patching file django/contrib/flatpages/locale/en_AU/LC_MESSAGES/django.po
+patching file django/contrib/flatpages/locale/ka/LC_MESSAGES/django.po
+patching file django/contrib/flatpages/locale/kn/LC_MESSAGES/django.po
+patching file django/contrib/flatpages/locale/ms/LC_MESSAGES/django.mo
+Not deleting file django/contrib/flatpages/locale/ms/LC_MESSAGES/django.mo as content differs from patch
+patching file django/contrib/flatpages/locale/ms/LC_MESSAGES/django.po
+patching file django/contrib/flatpages/locale/nn/LC_MESSAGES/django.mo
+patching file django/contrib/flatpages/locale/nn/LC_MESSAGES/django.po
+patching file django/contrib/flatpages/locale/sk/LC_MESSAGES/django.mo
+patching file django/contrib/flatpages/locale/sk/LC_MESSAGES/django.po
+patching file django/contrib/gis/admin/__init__.py
+patching file django/contrib/gis/admin/options.py
+patching file django/contrib/gis/db/backends/mysql/introspection.py
+patching file django/contrib/gis/db/backends/mysql/operations.py
+patching file django/contrib/gis/db/backends/mysql/schema.py
+patching file django/contrib/gis/db/backends/oracle/features.py
+patching file django/contrib/gis/db/backends/oracle/schema.py
+patching file django/contrib/gis/db/backends/postgis/adapter.py
+patching file django/contrib/gis/db/models/proxy.py
+patching file django/contrib/gis/gdal/datasource.py
+patching file django/contrib/gis/gdal/driver.py
+patching file django/contrib/gis/gdal/envelope.py
+patching file django/contrib/gis/gdal/error.py
+patching file django/contrib/gis/gdal/feature.py
+patching file django/contrib/gis/gdal/field.py
+patching file django/contrib/gis/gdal/geometries.py
+patching file django/contrib/gis/gdal/layer.py
+patching file django/contrib/gis/gdal/libgdal.py
+patching file django/contrib/gis/gdal/prototypes/ds.py
+patching file django/contrib/gis/gdal/prototypes/raster.py
+patching file django/contrib/gis/gdal/prototypes/srs.py
+patching file django/contrib/gis/gdal/raster/const.py
+patching file django/contrib/gis/gdal/srs.py
+patching file django/contrib/gis/geoip2/__init__.py
+patching file django/contrib/gis/geoip2/base.py
+patching file django/contrib/gis/geometry.py
+patching file django/contrib/gis/geos/collections.py
+patching file django/contrib/gis/geos/geometry.py
+patching file django/contrib/gis/geos/libgeos.py
+patching file django/contrib/gis/geos/polygon.py
+patching file django/contrib/gis/locale/el/LC_MESSAGES/django.mo
+patching file django/contrib/gis/locale/el/LC_MESSAGES/django.po
+patching file django/contrib/gis/locale/ka/LC_MESSAGES/django.po
+patching file django/contrib/gis/locale/kk/LC_MESSAGES/django.po
+patching file django/contrib/gis/locale/kn/LC_MESSAGES/django.po
+patching file django/contrib/gis/locale/ms/LC_MESSAGES/django.mo
+Not deleting file django/contrib/gis/locale/ms/LC_MESSAGES/django.mo as content differs from patch
+patching file django/contrib/gis/locale/ms/LC_MESSAGES/django.po
+patching file django/contrib/postgres/locale/en_AU/LC_MESSAGES/django.mo
+Not deleting file django/contrib/postgres/locale/en_AU/LC_MESSAGES/django.mo as content differs from patch
+patching file django/contrib/postgres/locale/en_AU/LC_MESSAGES/django.po
+patching file django/contrib/postgres/locale/ms/LC_MESSAGES/django.mo
+Not deleting file django/contrib/postgres/locale/ms/LC_MESSAGES/django.mo as content differs from patch
+patching file django/contrib/postgres/locale/ms/LC_MESSAGES/django.po
+patching file django/contrib/postgres/locale/nn/LC_MESSAGES/django.mo
+Not deleting file django/contrib/postgres/locale/nn/LC_MESSAGES/django.mo as content differs from patch
+patching file django/contrib/postgres/locale/nn/LC_MESSAGES/django.po
+patching file django/contrib/redirects/locale/ms/LC_MESSAGES/django.mo
+Not deleting file django/contrib/redirects/locale/ms/LC_MESSAGES/django.mo as content differs from patch
+patching file django/contrib/redirects/locale/ms/LC_MESSAGES/django.po
+patching file django/contrib/sessions/locale/ms/LC_MESSAGES/django.mo
+Not deleting file django/contrib/sessions/locale/ms/LC_MESSAGES/django.mo as content differs from patch
+patching file django/contrib/sessions/locale/ms/LC_MESSAGES/django.po
+patching file django/contrib/sites/locale/ms/LC_MESSAGES/django.mo
+Not deleting file django/contrib/sites/locale/ms/LC_MESSAGES/django.mo as content differs from patch
+patching file django/contrib/sites/locale/ms/LC_MESSAGES/django.po
+patching file django/core/cache/backends/redis.py
+patching file django/db/backends/sqlite3/_functions.py
+patching file django/forms/jinja2/django/forms/attrs.html
+patching file django/forms/jinja2/django/forms/default.html
+patching file django/forms/jinja2/django/forms/errors/dict/default.html
+patching file django/forms/jinja2/django/forms/errors/dict/text.txt
+patching file django/forms/jinja2/django/forms/errors/dict/ul.html
+patching file django/forms/jinja2/django/forms/errors/list/default.html
+patching file django/forms/jinja2/django/forms/errors/list/text.txt
+patching file django/forms/jinja2/django/forms/errors/list/ul.html
+patching file django/forms/jinja2/django/forms/formsets/default.html
+patching file django/forms/jinja2/django/forms/formsets/p.html
+patching file django/forms/jinja2/django/forms/formsets/table.html
+patching file django/forms/jinja2/django/forms/formsets/ul.html
+patching file django/forms/jinja2/django/forms/label.html
+patching file django/forms/jinja2/django/forms/p.html
+patching file django/forms/jinja2/django/forms/table.html
+patching file django/forms/jinja2/django/forms/ul.html
+patching file django/forms/templates/django/forms/attrs.html
+patching file django/forms/templates/django/forms/default.html
+patching file django/forms/templates/django/forms/errors/dict/default.html
+patching file django/forms/templates/django/forms/errors/dict/text.txt
+patching file django/forms/templates/django/forms/errors/dict/ul.html
+patching file django/forms/templates/django/forms/errors/list/default.html
+patching file django/forms/templates/django/forms/errors/list/text.txt
+patching file django/forms/templates/django/forms/errors/list/ul.html
+patching file django/forms/templates/django/forms/formsets/default.html
+patching file django/forms/templates/django/forms/formsets/p.html
+patching file django/forms/templates/django/forms/formsets/table.html
+patching file django/forms/templates/django/forms/formsets/ul.html
+patching file django/forms/templates/django/forms/label.html
+patching file django/forms/templates/django/forms/p.html
+patching file django/forms/templates/django/forms/table.html
+patching file django/forms/templates/django/forms/ul.html
+patching file docs/ref/contrib/admin/filters.txt
+patching file docs/releases/2.2.25.txt
+patching file docs/releases/2.2.26.txt
+patching file docs/releases/2.2.27.txt
+patching file docs/releases/3.1.14.txt
+patching file docs/releases/3.2.10.txt
+patching file docs/releases/3.2.11.txt
+patching file docs/releases/3.2.12.txt
+patching file docs/releases/3.2.7.txt
+patching file docs/releases/3.2.8.txt
+patching file docs/releases/3.2.9.txt
+patching file docs/releases/4.0.1.txt
+patching file docs/releases/4.0.2.txt
+patching file docs/releases/4.1.txt
+patching file tests/admin_scripts/custom_templates/project_template/.hidden/render.py
+patching file tests/admin_scripts/management/commands/suppress_base_options_command.py
+patching file tests/backends/sqlite/test_functions.py
+patching file tests/cache/tests_async.py
+patching file tests/check_framework/template_test_apps/__init__.py
+patching file tests/check_framework/template_test_apps/different_tags_app/__init__.py
+patching file tests/check_framework/template_test_apps/different_tags_app/apps.py
+patching file tests/check_framework/template_test_apps/different_tags_app/templatetags/__init__.py
+patching file tests/check_framework/template_test_apps/different_tags_app/templatetags/different_tags.py
+patching file tests/check_framework/template_test_apps/same_tags_app_1/__init__.py
+patching file tests/check_framework/template_test_apps/same_tags_app_1/apps.py
+patching file tests/check_framework/template_test_apps/same_tags_app_1/templatetags/__init__.py
+patching file tests/check_framework/template_test_apps/same_tags_app_1/templatetags/same_tags.py
+patching file tests/check_framework/template_test_apps/same_tags_app_2/__init__.py
+patching file tests/check_framework/template_test_apps/same_tags_app_2/apps.py
+patching file tests/check_framework/template_test_apps/same_tags_app_2/templatetags/__init__.py
+patching file tests/check_framework/template_test_apps/same_tags_app_2/templatetags/same_tags.py
+patching file tests/deprecation/test_csrf_cookie_masked.py
+patching file tests/deprecation/test_use_l10n.py
+patching file tests/forms_tests/templates/forms_tests/cyclic_context_boundfield_render.html
+patching file tests/forms_tests/templates/forms_tests/error.html
+patching file tests/forms_tests/templates/forms_tests/form_snippet.html
+patching file tests/forms_tests/templates/forms_tests/legend_test.html
+patching file tests/forms_tests/templatetags/__init__.py
+patching file tests/forms_tests/templatetags/tags.py
+patching file tests/forms_tests/tests/test_deprecation_forms.py
+patching file tests/gis_tests/geoadmin_deprecated/__init__.py
+patching file tests/gis_tests/geoadmin_deprecated/admin.py
+patching file tests/gis_tests/geoadmin_deprecated/models.py
+patching file tests/gis_tests/geoadmin_deprecated/tests.py
+patching file tests/gis_tests/geoadmin_deprecated/urls.py
+patching file tests/i18n/unchanged/__init__.py
+patching file tests/i18n/unchanged/locale/de/LC_MESSAGES/django.po.tmp
+patching file tests/i18n/unchanged/models.py.tmp
+patching file tests/migrations/test_migrations_manual_porting/0001_initial.py
+patching file tests/migrations/test_migrations_manual_porting/0002_second.py
+patching file tests/migrations/test_migrations_manual_porting/__init__.py
+patching file tests/migrations/test_migrations_squashed_no_replaces/0001_squashed_0002.py
+patching file tests/migrations/test_migrations_squashed_no_replaces/__init__.py
+patching file tests/queries/test_sqlcompiler.py
+patching file tests/sitemaps_tests/templates/custom_sitemap_lastmod_index.xml
+patching file tests/sitemaps_tests/urls/sitemap_only.py
+patching file tests/staticfiles_tests/project/documents/cached/source_map.css
+patching file tests/staticfiles_tests/project/documents/cached/source_map.css.map
+patching file tests/staticfiles_tests/project/documents/cached/source_map_sensitive.css
+patching file tests/test_runner_apps/failures/__init__.py
+patching file tests/test_runner_apps/failures/tests_failures.py
+patching file tests/user_commands/management/commands/mutually_exclusive_required_with_same_dest.py
+patching file tests/utils_tests/deconstructible_classes.py
+patching file tests/utils_tests/test_deconstruct.py
+
+Check (logs/run_evaluation/verified_full_glm53_hermes_R1933/hermes-glm-5.3-flash/django__django-14725/run_instance.log) for more information.
+All instances run.
+Total instances: 3
+Instances submitted: 3
+Instances completed: 1
+Instances incomplete: 0
+Instances resolved: 1
+Instances unresolved: 0
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 2
+Unstopped containers: 0
+Unremoved images: 3
+Report written to hermes-glm-5.3-flash.verified_full_glm53_hermes_R1933.json
+[Mon Nov  9 05:51:45 PM CST 2026] === hermes eval DONE ===
+[Mon Nov  9 05:51:45 PM CST 2026] === regenerate eval report for hermes ===
+hermes: 287 resolved / 29 failed / 316 evaluated / 7 no_patch
+[Mon Nov  9 05:51:45 PM CST 2026] === hermes report regenerated ===
+[Mon Nov  9 05:51:45 PM CST 2026] === deepseek-harness: no missing IDs file, skip ===
+=== incr_eval_7route R1987 DONE Mon Nov  9 05:51:45 PM CST 2026 ===
