@@ -143,7 +143,7 @@
       "ts": "2026-11-09T18:30:00+08:00",
       "users_mc30": 224
     },
-    "updated_at": "2026-11-09T18:30:00+08:00",
+    "updated_at": "2026-11-09T22:25:00+08:00",
     "r283": {
       "ts": "2026-11-09T18:20:00+08:00",
       "latest_scan": "ssh_eda_search_20261105_192825",
@@ -222,6 +222,21 @@
       "case_delivered": "EDA-Eval-DesignFlow-WvPropDelayMeasure-001 (eda_other, B-synthesized produce-task, L1-static+subprocess, k=15) — e0023936 mpmdp WaveView ACE tPHL/tPLH propagation-delay TCL-script generator",
       "finding": "r289 reused r283-r288 PIVOT (fresh-window find -newermt on hfhds201). 39 fresh sessions >=11/07. Probed top NEW e0023936 sessions: 0o6q1 redundant skill-exec dup of r288 (same eye VREF task), 8lqkt/ed6ve/6zlya layout L_shape siblings (shard C), q4f45 plugin dev skip, uxc45 skill-exec skip. mpmdp(195 waveview markers, sx_create/sx_measure/sx_open) = viable WaveView prop-delay produce-task: USER pasted GUI tutorial (load .tr0, v(in)/v(out), Measurement Tool Delay tPHL/tPLH @0.55V) + '帮我打开你生成的文件'; agent delivered measure_inverter_delay.tcl (extract_inverter_window + measure_inverter_delay procs using sx_open_sim_file_read/sx_find_wave_in_file/sx_open_sim_file_write/sx_save_signal/sx_close_sim_file/sx_meas_delay). B-synthesized (U1 is pasted tutorial giving method, not clean A-faithful): deliverable=gen_propdelay_measure.py (spec-driven generator -> measure_<circuit>.tcl); A=spec_a.json(inverter/v(in)/v(out)/vth0.55/win1e-9-1.5e-9)+prompt+tutorial+task_brief; hidden B=spec_b.json(buffer/v(a)/v(y)/vth0.45/win5e-10-2e-09/buf_sim.tr0). check.py 15 conds a-o, ref PASS 15/15, 4 negs + 3 §4.9 fakes all FAIL NEG_RC=0. Paper: Ntasks 931->937 (A188/B212/C271/D266), App A breakdown synced; PAPER_SKIP(no latexmk) — latexmk not installed, pdf not regenerated.",
       "shard_A_new_this_round": 1
+    },
+    "r290": {
+      "consecutive_mgmt_round": "r290 (mgmt; r287-r289 delivered cases via .75 fresh-window, r290 fresh-window post-11/08 mined out)",
+      "date": "2026-11-09",
+      "scan_dir": "ssh_eda_search_20261105_192825",
+      "no_new_scan": true,
+      "daily_log_20261109_lines": 2893,
+      "daily_log_healthy": true,
+      "dedup_sessions": 3896,
+      "mc30": 1511,
+      "users_mc30": 224,
+      "shard_A_pool_mc15": 216,
+      "new_sessions": 0,
+      "finding": "r290 mgmt round. LATEST_SCAN still 11/05 ssh_eda_search_20261105_192825 (no new scan since r268). Daily log 20261109 stable 2893 lines (scanner healthy). .75 fresh-window (find -newermt 2026-11-08 per-user) = 24 sessions; un-ledgered subset (nul5g/xq5ny/2gtxi/7xh6w/h2ufz/4yl0v/uxowi/4tdir/jjkbr/a4zi2) ALL thin/weak: skill-runner ops (eda-script-runner print_args/registry-val), layout M1.W.1 L_shape (shard C, uxowi), trivial 4-9msg sessions; NO viable digital/eda_other produce-task. All 11/05-scan strong-digital sessions (verdi/vcs/verilog/dc_shell/primetime/formality/rtl/sdc, mc>=15) verified ALREADY ledgered across 4 shards: w4x70->SpefAnnotAudit-001(case), mt7ua->parked(Innovus no-L2), bjkmi->DQSEHFlagNoEffectDiag-001(case), p64wo->MrrEnopsDelay-001(case), 5hjg7->FinesimMatrixrunAgent-001(case), okq91->NetlistCompareReport-001(case), um5we->DetermSeedByName-001(case), wl9i4->DeadLoopScan-001(case A)+NetlistBisectLocalize-001(case D), fl4rh->VerilogDriveFsmBlock-001(case D), gpdus->VlogPortAudit-001(case), le1s7->VpsRegrErrorEngineer-001(case), fieju->NandMcuAsm-001(case), ppl5a->parked. Remote pkn001-003 fresh-window (ssh, fixed quoting): 60+ fresh sessions; e0046913 i555n (brand-new, un-ledgered) deepread = 'FM log analysis Q&A (1 user-turn, read_files/run_commands diagnostic, no deliverable)' -> claimed+parked shard A; e0046913 ayxhy/5or9z + haoyut vo5f5 + xingx ctgx3 all parked by shard B as kw=0-non-spice but actually digital-FM-analysis (misclassified, belong shard A but analysis-not-produce). ericw u5ihf (verilog:2686) re-deepread = BURST_ORD signal analysis Q&A (1 user-turn, helper scripts only, no reusable deliverable) -> parking confirmed. Daily log 11/09 = 0 strong-digital-tool hits. shard A digital produce-task pool EXHAUSTED (verified .75 fresh + 11/05-scan ledgered + pkn001-003 fresh = analysis-only). Mgmt round, 0 case. i555n parked (ledger A 292->293, parked 105->106).",
+      "updated_at": "2026-11-09T22:25:00+08:00"
     }
   },
   "sessions": 5822,
@@ -233,7 +248,7 @@
   },
   "source": "/home/t0002965/log/ssh_eda_search_20261105_192825/summary.tsv (11/05 scan)",
   "target_mc": 30,
-  "updated_at": "2026-11-09T22:10:00+08:00",
+  "updated_at": "2026-11-09T22:25:00+08:00",
   "users_mc100": 182,
   "users_mc30": 224,
   "users_mc300": 60,
