@@ -14380,3 +14380,86 @@ reward:
 - `baize_posttrain_r137_sft_data_mixing.py`（235 行，py_compile ✅ + run ✅）
 - `r137_sft_data_mixing_report.json`（10KB）
 
+---
+
+## §R138 verl Hybrid Engine GPU Memory Budgeting & Resource Partitioning for 4×A40（R1/R3 交叉 · 零 GPU · 2026-11-10 wake185）
+
+> **动机**：v3 verl config 设置 `gpu_memory_utilization: 0.50` + `ppo_micro_batch_size_per_gpu: 4` + `hybrid_engine: True`，但从未做过显存预算验证。R138 做完整显存建模 + OOM 风险矩阵 + 预注册回退决策树。
+> **脚本**：`baize_posttrain_r138_gpu_memory_budget.py`（376 行，py_compile ✅ + run ✅）。
+> ⚠️ 替身分析结果**不可迁移到 BaiZe**。
+
+### 1. 架构参数（显存建模基础）
+
+| 参数 | 值 | KV cache/token | 172,032 B (168.0 KB) | bf16 权重 4.00GB | FSDP/4: 1.00GB/GPU |
+
+### 2. 关键发现：S1（当前 v3 config）将 OOM
+
+| 策略 | 模式 | util | mb | ctx | 需要 | 可用 | 余量 | OOM? |
+|:--|:--|--:|--:|--:|--:|--:|--:|:--|
+| **S1** | full_ft | 0.50 | 4 | 16K | 45.88 | 39.70 | **-6.18** | **❌** |
+| **S5** | full_ft | 0.50 | 4 | 8K | 28.27 | 39.70 | **+11.43** | **✅** |
+| S6 | full_ft | 0.45 | 2 | 16K | 31.79 | 39.70 | +7.91 | ✅ |
+| S3 | lora | 0.50 | 4 | 16K | 39.20 | 39.70 | +0.50 | ✅极紧 |
+| S4 | lora | 0.60 | 4 | 16K | 39.20 | 39.70 | +0.50 | ✅极紧 |
+| S8 | dedicated 2+2 | — | 4 | 16K | 33.29 | 46.00 | +12.71 | ✅ |
+
+**⚠️ 当前 v3 config（S1）在 hybrid engine 下将 OOM 6.18GB。必须修改。**
+
+### 3. OOM 根因
+
+Phase 2 (training): SGLang 权重(4GB)+overhead(1.5GB) 驻留 → 训练可用=46-4-1.5-0.8=39.7GB。
+Full FT actor(mb=4,16K)=37.29GB + ref=8.60GB = 45.88GB > 39.70GB。
+根因：activations 在 mb=4×16K 时 28.19GB（42 层 checkpoint boundary）。
+
+### 4. OOM 风险矩阵（96 配置）
+
+| | OK | OOM_TRAIN | OOM_BOTH | Total |
+|:--|--:|--:|--:|--:|
+| full_ft | 16 | 28 | 4 | 48 |
+| lora | 48 | 0 | 0 | 48 |
+| **Total** | **64** | **28** | **4** | **96** |
+
+LoRA 在所有 48 种配置下都不会 OOM。Full FT 仅 16/48 安全（全部要求 ctx≤8K 或 mb≤2）。
+
+### 5. KV Cache 分析
+
+| util | KV 预算 | 最大 tokens | 16K 并发 | 8K 并发 |
+|--:|--:|--:|--:|--:|
+| 0.40 | 12.1GB | 70,335 | 4 | 8 |
+| 0.50 | 16.7GB | 97,074 | 5 | 11 |
+| 0.60 | 21.3GB | 123,814 | 7 | 15 |
+
+### 6. 吞吐量估算
+
+| 策略 | steps/h | 2000 steps (h) |
+|:--|--:|--:|
+| S5 (full FT, 8K) | 2.5 | 785.0 |
+| S4 (LoRA, 16K, 0.60) | 3.0 | 663.9 |
+| S6 (full FT, mb=2, 16K) | 2.3 | 871.3 |
+
+### 7. 预注册回退决策树（FROZEN 2026-11-10）
+
+S1(full,0.50,mb4,16K)=OOM → S5(full,0.50,mb4,8K)=OK → S6(full,0.45,mb2,16K)=OK → S3(lora,0.50,mb4,16K)=OK → S8(dedicated 2+2) → halt
+
+### 8. OOM 恢复协议（4 步）
+
+| OOM# | 动作 |
+|--:|:--|
+| 1 | mb 减半(4→2)，从 ckpt 重启 |
+| 2 | max_response_length 8192→4096 |
+| 3 | gpu_memory_utilization 0.50→0.40 |
+| 4 | 停止，dump 显存报告，报警 |
+
+### 9. 监控阈值（FROZEN 2026-11-10）
+
+GPU 显存 90%/95% | 碎片 30%/50% | KV cache 85%/95% | grad_norm 5.0/10.0 | 超时率 10%/25% | OOM 1/3
+
+### 10. v3 config 修正建议
+
+保持 util=0.50, mb=4, ctx=8192（已是 S5 安全区）。建议 max_num_seqs 24→16（留余量）。
+
+### 产物
+
+- `baize_posttrain_r138_gpu_memory_budget.py`（376 行，py_compile ✅ + run ✅）
+- `r138_gpu_memory_budget_report.json`（52.2 KB）
+
