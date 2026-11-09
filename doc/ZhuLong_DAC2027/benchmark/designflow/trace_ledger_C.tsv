@@ -547,3 +547,5 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked		2026-11-09 20:39	RAG-looku
 1794209602601_w5ajz	hktklin	hfeg0plg87	56	layout_virtuoso	parked		2026-11-10 01:09	r296 completed but same trivial sed task as d5x87 (same user hktklin), topic overlap
 1793879392010_hyalb	chengleiy	hfeg0plg15	114	physical_verify	parked		2026-11-10 01:09	r296 idle, diagnose LVS-QA license-hang (read log explain), not produce, no gold
 1793843123624_u65cq	e0047472	hfeg0plg99	189	physical_verify	parked		2026-11-10 01:09	r296 idle, pinyin how-to (innovus query dummy cmd), not produce
+1794216319185_lvu4r	hktklin	hfeg0plg87	1	layout_virtuoso	parked		2026-11-10 01:27	r298: same trivial sed as r297 d5x87/w5ajz; failed exit=1; non-seed
+1793858875143_wzws0	adaml	hfeg0pkn002	5542	physical_verify	claimed		2026-11-10 01:34	r298 deepread: calibre-lvs HLMC22nm completed exit=0, only COMPLETED in fresh-trace-log top80 NEW
