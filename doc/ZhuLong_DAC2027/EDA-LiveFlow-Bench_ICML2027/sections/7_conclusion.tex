@@ -3,7 +3,7 @@
 
 % 注：原 §7 仅 Conclusion，现合并 Discussion 内容（SWE-bench 惯例：Discussion 单独成节或与 Conclusion 合并）。
 
-We presented \bench, the first benchmark for LLM agents on multi-step circuit design flow orchestration, built from 928 real user interaction traces across 13 EDA domains. Our evaluation reveals a striking finding: while LLM agents achieve 76\% on single-script EDA tasks, they achieve only 28\% on multi-step flow orchestration---a gap driven by tool-chain grounding depth, not model size. The domain gap (80\% for verification vs.\ 0\% for digital synthesis) shows that current agents excel at text-in/text-out tasks but fail when deep tool interaction is required.
+We presented \bench, the first benchmark for LLM agents on multi-step circuit design flow orchestration, built from \Ntasks{} real user interaction traces across 13 EDA domains. Our evaluation reveals a striking finding: while LLM agents achieve 76\% on single-script EDA tasks, they achieve only 28\% on multi-step flow orchestration---a gap driven by tool-chain grounding depth, not model size. The domain gap (80\% for verification vs.\ 0\% for digital synthesis) shows that current agents excel at text-in/text-out tasks but fail when deep tool interaction is required.
 
 \textbf{Implications.} The grounding-depth bottleneck suggests two research directions: (i) \emph{retrieval-augmented tool use}, where the agent retrieves tool documentation and prior execution traces to ground its tool calls, and (ii) \emph{execution-feedback loops}, where intermediate tool outputs are explicitly fed back as context. Neither is fully solved by scaling the backbone alone. Our benchmark provides a testbed for evaluating such interventions.
 

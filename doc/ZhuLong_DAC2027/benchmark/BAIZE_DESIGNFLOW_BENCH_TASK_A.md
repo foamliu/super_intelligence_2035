@@ -1,5 +1,12 @@
 # BAIZE_DESIGNFLOW_BENCH_TASK.md — 设计流 Benchmark 任务书（2026-10-30 重构版）
 
+> ⛳ **每轮收尾必做（2026-11-09 运维令 · 论文维护）**
+> 1) 编译回归（≤2 min）：`cd doc/ZhuLong_DAC2027/EDA-LiveFlow-Bench_ICML2027 && latexmk -pdf -interaction=nonstopmode main.tex` → 必须 **0 error**；本机无 latexmk 则记录 `PAPER_SKIP(no latexmk)` 后继续。
+> 2) 数字同步：任务总数唯一事实源 = `main.tex` 的 `\newcommand{\Ntasks}{931}`（当前 **931 = A185 + B211 + C271 + D264**）。若本轮 A/B/C/D 任一 jsonl 有增减：改 `\Ntasks` 一行 + 文末 App A 的分项，然后重新生成并提交 `main.pdf`。
+> 3) 记录：在 MEMORY/daily 写 `paper: compile OK, N=931, pdf=10p` 或 `PAPER_SKIP(no latexmk)`。
+> 基线提交：`4b7ed6331`（结构/接口已修好；**不要重写结构**，只做回归与数字同步）。
+
+
 ### 📌 常驻 · 论文观察日报（research 线产出 · 2026-11-07 用户令）
 
 > 索引：`doc/personal-watch/run/research/daily/index.html`｜最新一期：`doc/personal-watch/run/research/daily/<日期>.html`

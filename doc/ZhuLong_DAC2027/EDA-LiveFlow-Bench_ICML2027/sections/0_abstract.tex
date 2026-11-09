@@ -1,14 +1,14 @@
 \begin{abstract}
 Circuit design engineers spend most of their time orchestrating multi-step design flows---schematic capture, SPICE simulation, layout, DRC/LVS verification, timing signoff---where closed EDA tools refuse to interoperate and the only recourse is hand-written glue scripts.
 Existing LLM benchmarks for EDA focus on single-function code generation (RTLLM, VerilogEval) or open-source RTL-to-GDS repair (FlowFixer-EDA), but none evaluate the \emph{agentic orchestration} of complete design flows with live commercial EDA tools.
-We present \bench, a benchmark of \textbf{928 tasks} spanning \textbf{13 EDA design domains} (from schematic/netlist to physical verification, SPICE simulation, and digital synthesis), each derived from \textbf{real user interaction traces} of 268 engineers across 42 workstations using the Cline coding agent in production.
+We present \bench, a benchmark of \textbf{\Ntasks{} tasks} spanning \textbf{13 EDA design domains} (from schematic/netlist to physical verification, SPICE simulation, and digital synthesis), each derived from \textbf{real user interaction traces} of 268 engineers across 42 workstations using the Cline coding agent in production.
 Each task follows a unified \mode{} contract: the agent must produce a deliverable package (\texttt{submit.zip}) by orchestrating remote EDA tools through an MCP bridge, with execution-based scoring against $\geq 8$ assertions per task and a \texttt{PreToolUse} hook that prevents answer leakage.
 We evaluate multiple frontier LLMs (DeepSeek-V4-Pro, GLM-5.2, Kimi-K2.6) under a controlled cline harness, finding that the best system achieves only \textbf{28\% Pass@1}---far below the 76\% seen on single-script EDA benchmarks---revealing that \emph{multi-step flow orchestration} is a qualitatively harder agentic capability than isolated code generation.
 We further analyze failure patterns across domains, finding that verification tasks (testbench writing) are easiest (80\% pass) while digital synthesis tasks are hardest (0\% pass), and that the gap is driven by \emph{tool-chain grounding depth}, not model size alone.
 \end{abstract}
 % 摘要要点：
 % 1. 问题：现有 EDA LLM benchmark 只评单函数代码生成或开源 flow 修复，没人评多步设计流编排
-% 2. Contribution: EDA-LiveFlow-Bench -- 928 tasks, 13 domains, 268 users, 42 workstations
+% 2. Contribution: EDA-LiveFlow-Bench -- \Ntasks{} tasks, 13 domains, 268 users, 42 workstations
 % 3. 方法：从真实 Cline 交互轨迹构建，design_flow 契约，执行式判分，防泄题 hook
 % 4. 结果：最佳系统仅 28% Pass@1（远低于单脚本 EDA bench 的 76%），说明多步编排更难
 % 5. 分析：verification 80% 最易、digital 0% 最难，差距来自 tool-chain grounding depth 非 model size
