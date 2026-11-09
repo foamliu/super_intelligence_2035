@@ -176,6 +176,17 @@
       "fresh_digital_strong": "ynbai 1qlnn (1117 verilog) claimed+case; ericw u5ihf (2686 verilog) = analysis-only Q&A (BURST_ORD); tongfanl 3j03k/zm0zw/q54e4 = locate/find tasks; dsgao a75vy = finesim SPICE (shard B/D)",
       "note": "16th consecutive mgmt round with no new scan. r283 PIVOT method (fresh-window direct scan find -newermt on active hosts) reused on hfhds201: 29 sessions >=11/07, probed top 9 by size for digital markers. ericw/u5ihf strongest (2686 verilog) but analysis-only (BURST_ORD detailed analysis, no produce). ynbai/1qlnn (1117 verilog) = viable produce-task: parse sim.saved.total DDR5 sim-vector list, complete missing 5 corners per case, output supplemented-only lines to .more. B-synthesized case delivered (real input perm-denied on .75 as e0031982; reconstructed representative A + hidden B with 8 cases / 13 supplemented lines incl constructed-suffix cases). check.py 14 conds a-n, ref PASS 14/14, 4 negs + 3 fakes all FAIL NEG_RC=0. pkn001-005 ssh via getent failed (no DNS), hfhds201 only host scanned this round.",
       "ts": "2026-11-09T18:50:00+08:00"
+    },
+    "r285": {
+      "consecutive_mgmt_round": "r268-r285 (17th, but r285 delivered a case via fresh-window PIVOT)",
+      "daily_log_20261109_lines": 2893,
+      "daily_log_healthy": true,
+      "LATEST_SCAN": "/home/t0002965/log/ssh_eda_search_20261105_192825",
+      "latest_scan_unchanged_consecutive": 17,
+      "new_sessions": 0,
+      "method": "fresh-window direct scan (find -newermt '2026-11-07' on hfhds201+pkn001-005), reused r283/r284 PIVOT",
+      "case_delivered": "EDA-Eval-DesignFlow-FmRtl2RtlDemo-001 (j9oap, e0046913, verification, mc214)",
+      "note": "LATEST_SCAN 仍 11/05 第17连续无新扫描; fresh-window PIVOT 直扫找到 j9oap FM rtl2rtl demo produce-task, 出 case"
     }
   },
   "sessions": 5822,
