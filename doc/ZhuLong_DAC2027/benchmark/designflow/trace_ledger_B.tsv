@@ -502,7 +502,7 @@ qnm9e					parked		2026-11-08 01:58	Finesim DC convergence Q&A prose dup of uky6c
 1792386812545_n2isr	tongni	hfeg0pkn001	49	spice_sim	parked		2026-11-08 21:5x	incomplete trace: 5 user prompt strings only (netlistHeader/SUBCKT AG_Vcc2scALDOAct/只生成.sp框架), no assistant work/gold standard; REJECT
 1793324531319_9o809	e0047722	hfeg0pkn001	45	spice_sim	parked		2026-11-08 21:5x	aether launch (启动Aether/launch_aether), wrong-shard; REJECT
 1792489769571_ch2cw	johnl	hfeg0pkn001	42	spice_sim	parked		2026-11-08 21:5x	env probing (ls/id/proj-link), not task; REJECT
-1793952218730_ph95k	e0017832	hfeg0pkn001	41	spice_sim	parked		2026-11-08 21:5x	aether launch (打开aether/aether_v2), wrong-shard; REJECT
+1793952218730_ph95k	e0017832	hfeg0pkn001	41	spice_sim	parked		2026-11-09 17:45	open-aether-adv wrong-shard(layout/C)
 1793623698314_n7w6c	yuyingc	hfeg0pkn001	37	spice_sim	case	EDA-Eval-DesignFlow-SaCoreMosLocate-001	2026-11-08 22:54	FineSim SA sense-amp core MOS locator (yuyingc n7w6c U#38); A-faithful L1 k=15; archived=CLEAN
 1793083455289_1ujhs	yuyingc	hfeg0pkn001	36	spice_sim	parked		2026-11-08 21:5x	ssh between machines networking, wrong-domain; REJECT
 1792399916731_00i9f	alan3zh	hfeg0pkn001	35	spice_sim	parked		2026-11-08 21:5x	APR innovus power.globals, wrong-shard; REJECT
@@ -651,7 +651,7 @@ qnm9e					parked		2026-11-08 01:58	Finesim DC convergence Q&A prose dup of uky6c
 1794205533893_16yrv	e0023936	hfeg0pkn004	0	spice_sim	parked		2026-11-09 16:07	kw=0 non-spice, fresh 15:30
 1792634547955_wzkye	gracew	hfeg0pkn004	0	spice_sim	parked		2026-11-09 16:07	kw=0 non-spice, fresh 15:30
 1793771746058_2c126	gracew	hfeg0pkn004	0	spice_sim	parked		2026-11-09 16:07	kw=0 non-spice, fresh 15:30
-1794185877917_jkvft	jinhaoli	hfeg0pkn004	0	spice_sim	parked		2026-11-09 16:07	kw=0 non-spice, fresh 15:30
+1794185877917_jkvft	jinhaoli	hfeg0pkn004	0	spice_sim	parked		2026-11-09 17:45	verilog-netlist signal-connectivity wrong-shard(A)
 1793783668558_b6rfa	t0002805	hfeg0pkn004	0	spice_sim	parked		2026-11-09 16:07	kw=0 non-spice, fresh 15:30
 1793877308530_kzwvo	e0014036	hfeg0pkn005	0	spice_sim	parked		2026-11-09 16:07	kw=0 non-spice, fresh 15:30
 1793870649495_xxlek	rongjiez	hfeg0pkn005	0	spice_sim	parked		2026-11-09 16:07	kw=0 non-spice, fresh 15:30
@@ -683,3 +683,16 @@ qnm9e					parked		2026-11-08 01:58	Finesim DC convergence Q&A prose dup of uky6c
 1793783668558_b6rfa.messages.json	rescan1109_1617	hfeg0pkn001	0	non_spice	parked		2026-11-09 16:52	11-09 16:17 fresh-window peek: kw=0 non-spice or low-kw/trivial, reject
 1793877308530_kzwvo.messages.json	rescan1109_1617	hfeg0pkn001	0	non_spice	parked		2026-11-09 16:52	11-09 16:17 fresh-window peek: kw=0 non-spice or low-kw/trivial, reject
 1793870649495_xxlek.messages.json	rescan1109_1617	hfeg0pkn001	0	non_spice	parked		2026-11-09 16:52	11-09 16:17 fresh-window peek: kw=0 non-spice or low-kw/trivial, reject
+1793946809755_zao50	yanxvwei	hfeg0pkn002	8	spice_sim	case	EDA-Eval-DesignFlow-FinesimOptionExtend-001	2026-11-09 17:44	
+1794143890547_lnkot	jackjia	hfeg0pkn002	8	spice_sim	parked		2026-11-09 17:45	vague-opener 桥接了吗
+1793619124342_usjrp	ruisongs	hfeg0pkn002	8	spice_sim	parked		2026-11-09 17:45	verilog-ODT-errcheck wrong-shard(digital/A)
+1794202378967_ihvqf	xinqiaoz	hfeg0pkn002	8	spice_sim	parked		2026-11-09 17:45	handoff-resume not-clean-produce
+1794213041594_yhfm0	xinqiaoz	hfeg0pkn002	8	spice_sim	parked		2026-11-09 17:45	handoff-resume not-clean-produce
+1793587957934_hupl6	yanxvwei	hfeg0pkn002	8	spice_sim	parked		2026-11-09 17:45	tcl-source how-to Q&A
+1794187969151_dhy10	e0046686	hfeg0pkn001	8	spice_sim	parked		2026-11-09 17:45	rev_cali analysis-only no-produce 305msg
+1794190076806_fj81a	tongni	hfeg0pkn001	8	spice_sim	parked		2026-11-09 17:45	session-resume context-summary opener
+1794099712365_olheg	ellawu	hfeg0pkn001	8	spice_sim	parked		2026-11-09 17:45	SVRF-calibre wrong-shard(phys-verify/C)
+1794205462149_hc9mk	xxchen	hfeg0pkn001	8	spice_sim	parked		2026-11-09 17:45	DRC-tool-analysis wrong-shard(phys-verify/C)
+1794212560696_wl4dj	e0043182	hfeg0pkn001	8	spice_sim	parked		2026-11-09 17:45	windows-seclog powershell non-EDA
+1794212622727_s5b5x	rongjiez	hfeg0pkn004	8	spice_sim	parked		2026-11-09 17:45	fresh-kw0 trivial
+1793688761923_zqew3	rose3wang	hfeg0pkn003	8	spice_sim	parked		2026-11-09 17:45	gzip-cmd trivial file-op
