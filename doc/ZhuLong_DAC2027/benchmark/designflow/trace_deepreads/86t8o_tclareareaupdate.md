@@ -45,10 +45,11 @@ PENDCAP_X 15.045×109.905=1653.520725; PFILL1D_X 0.969×109.905=106.497945;
 PRCLAMPC_X 36.862×33.99=1252.939380; PTOD12UD4D_X 49.98×109.905=5493.051900;
 PVDD1CDG_X 74.715×109.905=8211.552075; PVDD2POC_X 38.964×109.905=4282.338420; ...
 
-## case 合成 (TclAreaUpdate-001, eda_other, A档, L2-static, 14 conds)
-- 资产 A: sizes_A.csv(16 cells 子集, 真 X/Y) + template_A.tcl(16 PDCAP-style 块, OLD area 待更新)
-- 泛化 deliverable: update_area.py (通用, 双格式, look-ahead 1-4)
-- hidden B: 40nm-style 9 cells(FILL/DECAP/CORNER/TIE/ICG) 不同 X/Y + 2 个不在 CSV(welltie/filler_keep 保留) + CORNER name 在 -attrs 后第2行(测续行 look-ahead) + DECAP 带 pad_cell/bond_pads(测非area属性保留)
-- hidden B_direct: cell,area 格式 3 cells(测双格式)
-- check.py 14 conds(a-n): 含 zip/运行/X*Y/全匹配/非area保留/结构/CSV外不变/look-ahead/反硬编/双格式/输出存在/float合法/3-seed行序无关
-- 自验: ref PASS 14/14 + 3 negs(naive_noop/hardcode42/nowrite)全 FAIL NEG_RC=0; 断言闸门 k=14 PASS; jsonl test==disk check.py sha f20713a10ecb sync
+## case 合成 (TclAreaUpdate-001, digital/eda_other, A档 faithful, L1-static+subprocess, 16 conds)
+**最终版 (r273, 2026-11-09 收尾 DEBT 修复)**: 选取 USER#0-2 子任务(cell,area CSV 直读, 非 USER#72 X*Y) — 因 USER#0-2 cell,area 格式可程序化、可 hidden-B 跨输入泛化; USER#72 X*Y 亦可但首版 X*Y 资产与 cell,area check.py 不一致已被弃。
+- 资产 A: cell_area_a.csv(cell,area 两列: PDCAP=12.000, PFILL005D_X=3.555) + template_verbose_v1_a.tcl(9 cell 块 set_cell_define/-attrs " area <old>"/cell 名, 含 PVDD2POC_X/Y 多属性 + PDCAP/PFILL005D_X 目标 + PFILL005D_Y 同值异名守卫 + PRCLAMPC_X/PRCLAMPP_X 同值异名守卫 + PFILL01D_X/Y + PFILL1D_X/Y, trace-faithful 重建)
+- 泛化 deliverable: update_tcl_area.py (csv.DictReader 建 cell->area 映射 -> ATTRS_RE 匹配 -attrs " area <num>" -> find_cell_name 向后 1-4 行定位 -> re.sub 替换 area 保留同行其它属性 -> -o 输出或原地写回; 仅 Python 标准库)
+- hidden B: cell_area_b.csv(cell,area: PRCLAMPC_X=42.0, PFILL1D_X=88.8, PFILL01D_X=7.77) 同模板跑 -> 测跨输入泛化(非硬编 A); 另 CSV_C(PDCAP,99.999) 反 area 值硬编
+- check.py 16 conds(a-p): a zip 仅含 update_tcl_area.py / b py_compile / c A exit0+输出 / d PDCAP 369.729549->12.000 / e PFILL005D_X 5.6051->3.555 / f PFILL005D_Y 保持 5.6051(反 naive 全局值替换) / g PFILL01D_X 保持 11.2103(CSV 外不变) / h PVDD2POC_Y 多属性保留 / i 恰好 2 行差异 / j 行数一致 / k -o 源不变 / l B PRCLAMPC_X->42.0 / m B PFILL1D_X->88.8 / n B PFILL01D_X->7.77 / o B 不改 A cell 且 PRCLAMPP_X 不变(按 cell 名泛化) / p 反硬编 PDCAP,99.999->99.999
+- 自验(r273): ref PASS 16/16 + 3 negs(neg1_noop->d / neg2_hardcode->d / neg3_nowrite->c)全 FAIL NEG_RC=0 + §4.9 三假(fake_empty->c / fake_print->d / fake_core->d)全 FAIL; 断言闸门 k_rationale=k_check=16>=8 PASS; jsonl test==disk check.py sha 62d13e33c58a sync
+- r273 DEBT 修复说明: 本 case 11/06 首版(X*Y 14 conds) 与 11/09 重建(cell,area 16 conds) 半成品状态遗留 — check.py 已升 16 conds 但 reference_submit.zip 仍含旧 update_area.py、jsonl test/rationale/attachments 仍是旧 X*Y 14 conds、negative_selftest 仍按 update_area.py 打包且直接传 bytes 给 check()(类型不符)、shard A jsonl 存在重复行(line86 旧版 + line178 新版)。r273 全部修复: 重生 reference_submit.zip(update_tcl_area.py)、改 negative_selftest(写 temp 文件传路径 + 打包 update_tcl_area.py)、jsonl test/rationale/attachments 同步 16 conds、去重(保留 line178 Nov9 版 删 line86 旧版)、删 stale 资产(sizes_A.csv/template_A.tcl/update_area.py)、ledger 86t8o mark case+case_id。
