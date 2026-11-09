@@ -1391,3 +1391,4 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1791806895348_xyqtl.messages.json	taodu	hfeg0pkn005	77	schematic_netlist	case	EDA-Eval-DesignFlow-NlchkNetlistAudit-001	2026-11-09 20:46	
 1791354199272_3kgd5	rongjiez	hfeg0pkn005	50	schematic_netlist	parked		2026-11-09 21:15	GUI dialog refactoring (Qt/C++ PostInstanceEditDialog removal), not core netlist/SPICE design-flow; unfit for D
 1792460001779_paosw	kaixuanx	hfeg0pkn002	31	waveform	case	EDA-Eval-DesignFlow-FsdbGrpCornerNav-001	2026-11-09 21:31	waveform B-grade synthesized L2 k=12; fsdb.grp parser + corner nav TCL generator
+1789628116508_kxmzc	rongtaoy	hfeg0pkn001	150	analog_context	case	EDA-Eval-DesignFlow-SacapBl2blCompare-001	2026-11-09 22:22	analog_context B-grade synthesized; sacap_compare.py SA BL2BL top-N+diff+run-scripts; 12 conds a-l; 5 negs NEG_RC=0
