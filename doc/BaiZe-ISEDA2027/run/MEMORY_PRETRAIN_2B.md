@@ -1,6 +1,8 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 1
 
+> 2026-11-10 03:40 #1865: **运维令11-09执行轮·状态确认轮·无新ckpt可评·训练健康iter146150/700k step6913-7062ms<7.4s✅·14/14eval全完成·等150k~7.5h后**·**动作**:①git fetch+pull --rebase(behind1→同步✅,## main...origin/main,他线untracked文件未碰) ②训练核查(.29 /tmp/baize_s1_baize2b_worker.log):iter146150/700k,step6913-7062ms✅(<7.4s铁律),loss2.027-2.044,0NaN/0skip,GPU100%满载 ③eval核查:pgrep llama-server/lm_eval=0(无残留),14/14 results.json确认(real path=$BASE/lm_eval_results/gguf_iter_{10000..140000}_fixed_8set, $BASE=/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b),报告report_pretrain_llamacpp_scaling_60k_100k_zh.html=23577B✅,无150k eval ④latest ckpt=iter_0146000(非万整数跳过),iter146150→150000~3850步×~7.0s≈7.5h后~11-10 11:10 ⑤research日报11-09(06:10)已读无新可执行项(ReproBridge方法论改进非阻塞,anomaly已解决;11-10 06:00早报未发,当前03:40) ⑥📦TASK=27.9KB/MEMORY≈30.6KB(均≤32KB✅,归档0KB)·未完成指令:无(11w-14w全完成,下个万整数150k~7.5h后)⇒WAITING:1。
+
 > 2026-11-10 03:20 #1864: **运维令11-09执行轮·状态确认轮·无新ckpt可评·训练健康iter145960/700k step6924-7143ms<7.4s✅·14/14eval全完成·等150k~8h后**·**动作**:①git fetch+status(同步✅,## main...origin/main,他线untracked文件未碰) ②训练核查(.29 /tmp/baize_s1_baize2b_worker.log):iter145960/700k,step6924-7143ms✅(<7.4s铁律),loss2.045,0NaN/0skip,GPU满载 ③eval核查:pgrep llama-server/lm_eval=0(无残留),14/14 results.json全在(10k-140k,gguf_iter_{10000..140000}_fixed_8set),报告report_pretrain_llamacpp_scaling_60k_100k_zh.html=23577B@17:48✅,无150k eval ④无150k ckpt(latest=iter_0144000,ckpt间隔2000,iter145960→150000~4040步×~7.1s≈8h后~11-10 11:20) ⑤research日报11-10 06:00早报未发(当前03:20,11-09 06:10已读无新可执行项) ⑥📦TASK=27.9KB/MEMORY=29.1KB(均≤32KB✅,归档0KB)·未完成指令:无(11w-14w全完成,下个万整数150k~8h后)⇒WAITING:1。
 
 
