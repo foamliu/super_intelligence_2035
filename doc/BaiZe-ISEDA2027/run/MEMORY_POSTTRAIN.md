@@ -14,7 +14,7 @@ WAITING: 0
 - 阻塞: GPU 0/8free(root SGLang Qwen3.8-27B占全8卡44-45GB 0%util,运行自Sep17,11/9已过仍未释放);沙箱10.129.32.75全端口FILTERED;Docker无权限;P3等pretrain ckpt(ETA≈2026-12-25)
 - 本轮新增调研产出: R124 dotted-path API mapping fix + v3 verl config + R0++ integration(_extract_dotted_path AST重建 + KB验证修复 + reward 4函数修复 + v3 config multi_turn+4工具 + 集成测试29/29 PASS + v3 e2e 8/8 + EXPERIMENTS §R124）
 - 未完成指令: 🔴用户令2026-11-07(GPU未到位,需持续产出调研) ⇒ WAITING=0
-- git: pending（本轮提交中）
+- git: commit✅(1db26a9aa 01:47) push✅(rebase后1 commit pushed,no ahead/behind)
 
 ## 关键事实（常驻）
 
