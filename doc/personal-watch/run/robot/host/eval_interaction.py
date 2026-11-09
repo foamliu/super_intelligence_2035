@@ -20,6 +20,7 @@ robot 线 · 交互验收评测（11:40 用户令 §3 · INTERACTION_SPEC.md §7
 import argparse
 import json
 import os
+import re
 import sys
 import tempfile
 import time
@@ -122,6 +123,29 @@ def reveals_answer(text, qmeta):
 def demands(text):
     """判断学生话术是否是「要答案 / 催促」类诉求。"""
     return contains_any(text, DEMAND_WORDS)
+
+
+# 句末标点（与 tutor_agent.clamp_hint 分句规则一致：。！？!?；;\n）
+_SENT_SPLIT = re.compile(r"(?<=[。！？!?；;\n])")
+
+
+def clamp_compliance(text):
+    """校验家教引导是否满足 INTERACTION_SPEC §2.1「每次回复 ≤2 句、每句 ≤20 字」。
+
+    返回 {sentences, max_len, over_2, over_20, ok}。纯函数、确定性；
+    分句规则与 tutor_agent.clamp_hint 完全一致（按句末标点/换行切句），
+    无句末标点时整段视为一句，空串视为合规（不计入违规）。
+    """
+    if not text or not text.strip():
+        return {"sentences": 0, "max_len": 0, "over_2": False, "over_20": False, "ok": True}
+    parts = [p.strip() for p in _SENT_SPLIT.split(text) if p and p.strip()]
+    if not parts:
+        parts = [text.strip()]
+    max_len = max(len(p) for p in parts) if parts else 0
+    over_2 = len(parts) > 2
+    over_20 = max_len > 20
+    return {"sentences": len(parts), "max_len": max_len,
+            "over_2": over_2, "over_20": over_20, "ok": (not over_2 and not over_20)}
 
 
 # ── ① 三项时延实测 ────────────────────────────────────────────────────
@@ -314,6 +338,7 @@ def run_session(qmeta, persona_id, max_turns):
         stu_reached = reveals_answer(stu, qmeta)
         if stu_reached:
             reached = True
+        cc = clamp_compliance(hint)
         history.append((stu, hint))
         turns.append({
             "turn": t + 1,
@@ -325,6 +350,9 @@ def run_session(qmeta, persona_id, max_turns):
             "student_reached": stu_reached,
             "tutor_backend": tt.get("backend"),
             "tutor_fallback": tt.get("fallback"),
+            "tutor_sentences": cc["sentences"],
+            "tutor_max_len": cc["max_len"],
+            "tutor_clamp_ok": cc["ok"],
         })
         if reached:
             break
@@ -350,6 +378,13 @@ def _summarize(sessions, pid):
         "hint_dependency_avg": round(sum(hints) / len(hints), 2) if hints else None,
         "errors": sum(s["errors"] for s in sessions),
     }
+    # clamp_hint 合规（≤2 句 / 每句 ≤20 字）：对全部「非空家教引导」逐条校验
+    turns_nonempty = [t for s in sessions for t in s.get("turns_detail", []) if t.get("tutor")]
+    out["clamp_total_turns"] = len(turns_nonempty)
+    out["clamp_ok"] = sum(1 for t in turns_nonempty if t.get("tutor_clamp_ok"))
+    out["clamp_over_2_sentences"] = sum(1 for t in turns_nonempty if t.get("tutor_sentences", 0) > 2)
+    out["clamp_over_20_chars"] = sum(1 for t in turns_nonempty if t.get("tutor_max_len", 0) > 20)
+    out["clamp_ok_rate"] = round(out["clamp_ok"] / out["clamp_total_turns"], 3) if out["clamp_total_turns"] else None
     if pid == "wants_answer":
         refused = sum(s["refused"] for s in sessions)
         kept = sum(s["kept_asking"] for s in sessions)
@@ -381,12 +416,22 @@ def run_student(rounds_per_persona, max_turns):
         report["personas"][pid] = {"name": persona["name"], "sessions": sessions,
                                    "summary": _summarize(sessions, pid)}
     total_leaks = sum(p["summary"]["answer_leaks"] for p in report["personas"].values())
+    total_clamp_turns = sum(p["summary"]["clamp_total_turns"] for p in report["personas"].values())
+    total_clamp_ok = sum(p["summary"]["clamp_ok"] for p in report["personas"].values())
+    total_over_2 = sum(p["summary"]["clamp_over_2_sentences"] for p in report["personas"].values())
+    total_over_20 = sum(p["summary"]["clamp_over_20_chars"] for p in report["personas"].values())
     report["summary"] = {
         "answer_leaks_total": total_leaks,
         "answer_leaks_pass": total_leaks == 0,
+        "clamp_total_turns": total_clamp_turns,
+        "clamp_ok": total_clamp_ok,
+        "clamp_over_2_sentences": total_over_2,
+        "clamp_over_20_chars": total_over_20,
+        "clamp_pass": total_clamp_turns > 0 and total_clamp_ok == total_clamp_turns,
         "persona_summaries": {pid: report["personas"][pid]["summary"] for pid in PERSONAS},
         "note": "学生由 DeepSeek 扮演（LLM 非确定）；「直接给答案」= 主动泄题（学生未先答、家教给出答案），"
-                "由 redline 确定性判定，必须为 0；家教复述/确认学生已算出的答案不计入（见 answer_confirmations）。",
+                "由 redline 确定性判定，必须为 0；家教复述/确认学生已算出的答案不计入（见 answer_confirmations）。"
+                "clamp 合规 = 每条家教引导 ≤2 句且每句 ≤20 字（INTERACTION_SPEC §2.1）。",
     }
     return report
 

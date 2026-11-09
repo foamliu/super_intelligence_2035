@@ -39,6 +39,37 @@ def test_demands():
     assert not ei.demands("我想先移项试试")
 
 
+def test_clamp_compliance_two_short_sentences_ok():
+    cc = ei.clamp_compliance("先想想第一步做什么？试试两边同时做同一个运算。")
+    assert cc["sentences"] == 2
+    assert cc["ok"] is True
+
+
+def test_clamp_compliance_over_2_sentences():
+    cc = ei.clamp_compliance("先看题。想一想第一步？再说你的想法。")
+    assert cc["over_2"] is True
+    assert cc["ok"] is False
+
+
+def test_clamp_compliance_over_20_chars():
+    cc = ei.clamp_compliance("这是一个超过二十个字的很长很长的引导句子它在检查会不会被判超长。")
+    assert cc["over_20"] is True
+    assert cc["ok"] is False
+
+
+def test_clamp_compliance_empty_is_ok():
+    cc = ei.clamp_compliance("")
+    assert cc["ok"] is True
+    assert cc["sentences"] == 0
+
+
+def test_clamp_compliance_no_punct_single_sentence():
+    cc = ei.clamp_compliance("先移项")
+    assert cc["sentences"] == 1
+    assert cc["max_len"] == 3
+    assert cc["ok"] is True
+
+
 def test_summarize_counts_leaks_and_stuck():
     sess = [
         {"reached": True, "leaked": 0, "turns": 2, "errors": 0, "refused": 0, "kept_asking": 0},

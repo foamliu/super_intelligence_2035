@@ -134,11 +134,22 @@ def build():
             "<p class='headline'>直接给答案次数 = <b>%s</b>（红线，必须 0）%s</p>"
             "<table><tr><th>人设</th><th>平均轮数</th><th>卡死率</th><th>提示依赖度</th>"
             "<th>直接给答案次数</th><th>解出率</th><th>备注</th></tr>%s</table>"
+            "<h3>③-a clamp_hint 合规（每次回复 ≤2 句、每句 ≤20 字）</h3>"
+            "<table><tr><th>项</th><th>值</th></tr>"
+            "<tr><td>全部家教引导条数</td><td>%s</td></tr>"
+            "<tr><td>合规（≤2 句 &amp; 每句 ≤20 字）条数</td><td>%s</td></tr>"
+            "<tr><td>超 2 句条数</td><td>%s</td></tr>"
+            "<tr><td>单句超 20 字条数</td><td>%s</td></tr>"
+            "<tr><td>clamp 合规判定</td><td>%s</td></tr>"
+            "</table>"
             "<p class='note'>学生由 DeepSeek 扮演（LLM 非确定，多次跑可能不同）；"
             "「直接给答案」由 redline 确定性判定，必须为 0。%s</p>"
         ) % (
             stu.get('rounds_per_persona'), ss.get('answer_leaks_total'),
-            _badge(ss.get('answer_leaks_pass')), persona_cells, _e(ss.get('note', '')),
+            _badge(ss.get('answer_leaks_pass')), persona_cells,
+            _fmt(ss.get('clamp_total_turns')), _fmt(ss.get('clamp_ok')),
+            _fmt(ss.get('clamp_over_2_sentences')), _fmt(ss.get('clamp_over_20_chars')),
+            _badge(ss.get('clamp_pass')), _e(ss.get('note', '')),
         )
     else:
         stu_rows = "<p class='note'>（student 数据缺失或尚未生成）</p>"
