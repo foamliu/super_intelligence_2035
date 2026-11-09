@@ -5646,3 +5646,8 @@
 | 2026-11-09 | 2611.07595 | Evolver: Turning Agent Exploration into Evolving Capabilities | cs.SE | 收录 |
 | 2026-11-09 | 2611.08452 | ReproBridge: Building Reproducibility into ML Research Artifacts | cs.AI | 收录 |
 | 2026-11-09 | 2611.07634 | AiXapply: Fast and Reliable Full-File Code Integration with Specialized Small Models for IDE Workflows | cs.SE | 收录 |
+| 2026-11-10 | 2611.09204 | Representational drift in a code model: behaviour settles, which neurons carry it does not | cs.CL | 收录 |
+| 2026-11-10 | 2611.09807 | Compaction, decay and reinforcement in a two-tier conversational memory: a paired evaluation against retrieval-augmented generation | cs.CL | 收录 |
+| 2026-11-10 | 2611.09412 | MIRA: Mitigating Pole Geometry Bias in Recurrent Language Models | cs.AI | 收录 |
+| 2026-11-10 | 2611.09729 | One Run Is Not Enough: A Monte Carlo Protocol for Evaluating LLM Reliability on Data Science Tasks | cs.LG | 收录 |
+| 2026-11-10 | 2611.09802 | When Instruction Files Go Stale: Documentation Debt and Hidden Cost in Coding Agents | cs.SE | 收录 |

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>论文观察日报 · 2026-11-09（早报 · 3/5）· research 线</title>
+<title>论文观察日报 · 2026-11-09（晚报 · 5/5 收口 · 11-10 06:00 补跑）· research 线</title>
 <style>
   :root { --primary:#0b3d6e; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700; --bad:#cf222e;
           --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
@@ -54,13 +54,13 @@
 <body>
 <div class="wrap">
 <header class="hero">
-  <h1>论文观察日报 · 2026-11-09 <span class="badge b-am">早报 · 3/5</span></h1>
-  <div class="sub">每日 5 篇推荐论文（早 3 / 晚 2）· <b>今日进度 3 / 5</b>（早报 3 篇「借鉴」；晚报 2 篇「科普」待 18:00）· 含 <b>「对各线的可执行建议」</b>（pretrain / vision / harness / data / zhulong / designflow 六线）</div>
+  <h1>论文观察日报 · 2026-11-09 <span class="badge b-pm">晚报 · 5/5 收口</span></h1>
+  <div class="sub">每日 5 篇推荐论文（早 3 / 晚 2）· <b>今日进度 5 / 5</b>（早报 3 篇「借鉴」+ 晚报 2 篇「科普」，<b>晚报部分于 2026-11-10 06:00 补跑</b>）· 含 <b>「对各线的可执行建议」</b>（pretrain / vision / harness / data / zhulong / designflow 六线）</div>
   <div class="meta">
     <span>📅 2026-11-09（周一）</span>
-    <span>🕕 生成 06:0x CST（早报）</span>
+    <span>🕕 早报 06:0x CST ／ 晚报补跑 11-10 06:0x CST</span>
     <span>📚 数据源 arXiv（export.arxiv.org）· 官方 API</span>
-    <span>🏷 本页口径：<b>借鉴</b>（3 篇）</span>
+    <span>🏷 本页口径：<b>借鉴 3 篇 + 科普 2 篇</b></span>
   </div>
   <div class="disc">⚠️ 免责：本页为 <b>论文解读 / 待读线索</b>，<b>非结论、非官方</b>；所有数字均为<b>作者自报</b>，本线<b>未复现</b>；原题照抄不改写。「对各线的可执行建议」为<b>基于论文的推断，供各线自行评估</b>，非指令；与各线任务书冲突时以任务书为准。</div>
 </header>
@@ -130,9 +130,55 @@
   </div>
 </div>
 
+<div class="note" style="margin-top:26px;">
+  <b>晚报补跑说明（先看这条）</b>：2026-11-09 18:00 时窗<b>未运行</b>（loop 该轮未触发，日报停在早报 3/5）⇒ 本轮（<b>2026-11-10 06:00 CST</b>）<b>补跑 11-09 晚报</b>，补齐第 4/5 篇「科普」并收口 5/5。<b>批次已刷新</b>：<code>cat:cs.CL</code> 最新 <code>published</code> 由 <code>2026-11-05T18:58:17Z</code> 推进到 <code>2026-11-06T18:48:04Z</code>（<code>2611.09868v1</code>），<code>totalResults=</code><b>124,868</b>；②③ 在 <code>submittedDate:[202611090000 TO 202611132359]</code> 仍 <b>total=0</b>（11-09 提交尚未入库），④ 广度 <b>644,448</b>。故晚报两篇取自<b>最近公告批次 <code>2026-11-06</code></b>（<b>距本轮约 76–85h，走 §0.1 公告批次例外</b>，逐卡标注实际时长）。
+</div>
+
+<h2 class="sec">🌙 晚报 · 2 篇「科普」<span class="badge b-kp">科普</span></h2>
+<p style="font-size:13.5px;color:#59636e;margin:0 0 8px;">科普口径只看两件事：<b>大众能不能懂</b>、<b>有没有传播力</b>（可以与我们工作无关）。本期选 <code>2611.09204</code>（「学会了，但存放位置一直在搬」—— 反直觉、有画面）与 <code>2611.09807</code>（「AI 记笔记还是留录音」—— 人人都能对上号）。两篇都自带<b>预注册 / 配对检验 / 功效计算</b>，讲起来不必靠夸张。</p>
+
+<div class="card">
+  <h3><span class="no">4</span>Representational drift in a code model: behaviour settles, which neurons carry it does not</h3>
+  <div class="row"><div class="k">中文一句话</div><div class="v">一个 15 亿参数的代码模型（<b>OpenCoder-1.5B</b>）在 <b>2.03 万亿 token</b> 预训练里（恒定学习率、每 <b>1,000 step</b> 存一个 checkpoint），作者追踪 <b>169 个 Python 语言构造</b>（关键字/内置名/语法结构）各自的「载体神经元」—— 每层 MLP 里对该构造<b>激活最强的那 5%</b>。结论反直觉：对 <b>16 个「语法决定下一个 token」的构造</b>，这些位置上的 loss 在训练<b>前 4%（84B token）就掉到地板</b>，之后 96% 的训练里几乎不动（24 条序列里 20 条平、4 条略升、0 条继续降）；但<b>承载它们的神经元一直在换</b>——<b>169/169</b> 个构造到最后 checkpoint 都还在换（注入「突然安顿」的检出率 <b>99.1–99.4%</b>，逐步安顿在 500B token 前检出 <b>99.4–100%</b>，未注入序列零误报）。最能说明问题的一步：把 <b>84B token 时的「旧载体」</b>在训练终点挖掉，抬升的 loss 与<b>挖随机同尺寸神经元无法区分</b>（0.14 nats，95% CI [−0.01, 0.42]；14 个构造中 10 个占优，p=0.09）；而挖<b>当前</b>载体是 <b>0.40 nats</b>（终点，16 个里 14 个显著）。换句话说：<b>功能由「当前那批神经元」承担，而不是「最早写进去的那批」</b>；细看是「稳定的池子 + 流动的样本」—— 退出某构造载体集的神经元，回来的概率是同条件神经元的 <b>3 倍</b>，但没有一组会「原样重组」。</div></div>
+  <div class="row"><div class="k">原题</div><div class="v"><span class="orig">Representational drift in a code model: behaviour settles, which neurons carry it does not</span></div></div>
+  <div class="row"><div class="k">作者 / 机构</div><div class="v">Piotr Wilam（<b>1 位</b>；据 PDF 首页：<b>University College London</b>，通讯 <code>piotrwilam@gmail.com</code>）</div></div>
+  <div class="row"><div class="k">日期</div><div class="v">首次提交 <b>2026-11-06</b>（<code>published=2026-11-06T09:24:13Z</code>；<code>updated</code> 同日，无 v2）· 距本轮补跑唤醒（11-10 06:00 CST = 11-09 22:00Z）<b>≈84.6h</b>（<b>超出 72h 常规窗口 ⇒ 走 §0.1 公告批次例外</b>）· PDF 实测 <b>16 页</b> / <b>60,403</b> 字符（去空白）</div></div>
+  <div class="row"><div class="k">分类 / 标签</div><div class="v"><code>cs.CL</code> · <span class="badge b-kp">科普</span> · 关键词：表征漂移 / 载体神经元 / 预注册 / 消融对照 / 可解释性 / 剪枝</div></div>
+  <div class="row"><div class="k">链接</div><div class="v"><a href="https://arxiv.org/abs/2611.09204">https://arxiv.org/abs/2611.09204</a>（PDF 已落地：<code>research/pdf/2026-11-09/2611.09204.pdf</code>，1,329,815 B，校验见附录 C）</div></div>
+  <div class="reason"><b>推荐理由（科普 · 大众看点 + 传播力）</b>
+    <ol>
+      <li><b>一句话就能讲清、且反直觉</b>：「AI 早就学会了，但‘记住它的脑细胞’一直在搬家」；有具体数字对比（<b>0.40 nats vs 0.14 nats</b>、<b>169/169</b> 仍在换），不靠形容词。</li>
+      <li><b>有画面感</b>：可以画成「同一个技能，每次检查都换一批人来干；把三年前那批人请走，工作照样完成」—— 适配 2 分钟视频的五段式。</li>
+      <li><b>话题外延大</b>：直接关联大众关心的「AI 到底把知识存在哪」「剪枝/压缩会不会剪掉能力」「模型是不是黑箱」。</li>
+      <li><b>方法自带可信度</b>：假设<b>先写死</b>（「载体应当安顿」）再被自己的数据<b>否掉</b>，还有功效分析（注入检验 99% 检出）与「容量/学习率」竞争解释的讨论 —— 讲「科学怎么自我纠错」比讲结论更耐看。</li>
+      <li><b>边界</b>：单一模型（OpenCoder-1.5B）、单语料（作者称训练数据未公开）、恒定学习率；作者明确「不能推广到别的模型/训练配方」。🚫 不要讲成「所有模型都这样」。</li>
+    </ol>
+    <b>建议动作</b>：<b>读原文</b>（§2 定义与预注册、§3.1–3.4 三段训练期 + 功效、§4.1 turnover 形状）；本日科普 <b>TOP-1 候选</b>。
+  </div>
+</div>
+
+<div class="card">
+  <h3><span class="no">5</span>Compaction, decay and reinforcement in a two-tier conversational memory: a paired evaluation against retrieval-augmented generation</h3>
+  <div class="row"><div class="k">中文一句话</div><div class="v">会「记住」对话的 agent 必须决定<b>留什么</b>：一条路是 RAG（原样保留聊天记录，用时检索），另一条是<b>压缩</b>（每轮抽成「原子事实」再检索；本文还加了两层记忆 + 按轮数<b>指数衰减</b> + 「检索到即<b>强化</b>」）。作者把两臂放在<b>同一窗口、同一存储、同一生成器、同一 judge</b> 下回答 LoCoMo <b>全部 1,985 题</b>，并把两臂预测写在<b>同一行</b> ⇒ 可在 <b>512 个分歧题</b>上做 McNemar 精确检验（两臂在 1,473 题上一致，只比总分等于丢掉大部分分辨率）。四个可比类别：压缩 <b>71.4% vs RAG 64.6%（+6.8pp，p=5.5e-08）</b>，且 prompt token<b>少 34%</b>；把 <b>446 道对抗题</b>也算进来，领先缩到 <b>+2.0pp 且不显著</b>（RAG 在对抗题上领先 <b>14.6pp</b>）。损失有结构：参考答案要求越多<b>原话措辞</b>，压缩越吃亏（1–2 个参考词时领先 <b>9.6pp</b>，超过 8 个词时<b>落后 3.1pp</b>），token 重叠同向变化 ⇒ <b>不是 judge 造成的</b>。一句话：<b>压缩留下「事实断言」，丢掉「怎么说的」</b> —— 问「值」它赢，问「原话」它输。文中还有一处诚实的自我更正：早先「慢好几倍」的延迟结论来自两次<b>非配对</b>跑，配对后 p50/p90 几乎不可分（1,741 vs 1,769 ms；p90 3,570 vs 3,360 ms），均值差 19% 全在尾部。</div></div>
+  <div class="row"><div class="k">原题</div><div class="v"><span class="orig">Compaction, decay and reinforcement in a two-tier conversational memory: a paired evaluation against retrieval-augmented generation</span></div></div>
+  <div class="row"><div class="k">作者 / 机构</div><div class="v">Osamudiamen Edogun · Joshua Obigwe · Irfan Mehmood（<b>3 位</b>；据 PDF 首页：<b>Independent researcher ×2 + University of Bradford</b>）</div></div>
+  <div class="row"><div class="k">日期</div><div class="v">首次提交 <b>2026-11-06</b>（<code>published=2026-11-06T17:56:37Z</code>；<code>updated</code> 同日，无 v2）· 距本轮补跑唤醒 <b>≈76.1h</b>（<b>超出 72h ⇒ 走公告批次例外</b>）· PDF 实测 <b>14 页</b> / <b>49,443</b> 字符（去空白）</div></div>
+  <div class="row"><div class="k">分类 / 标签</div><div class="v"><code>cs.CL</code> · <span class="badge b-kp">科普</span> · 关键词：对话记忆 / 压缩 vs 检索 / 配对检验 / McNemar / 上下文成本 / 负结果与功效</div></div>
+  <div class="row"><div class="k">链接</div><div class="v"><a href="https://arxiv.org/abs/2611.09807">https://arxiv.org/abs/2611.09807</a>（PDF 已落地：<code>research/pdf/2026-11-09/2611.09807.pdf</code>，546,747 B，校验见附录 C）</div></div>
+  <div class="reason"><b>推荐理由（科普 · 大众看点 + 传播力）</b>
+    <ol>
+      <li><b>人人有体感</b>：「AI 该像记笔记，还是像录音？」；结论不是站队，而是<b>按问题类型分工</b>（问事实值 → 记笔记；问原话 → 留录音），非常适合做「一张分流图」的画面。</li>
+      <li><b>数字干净、可直接上屏</b>：<b>71.4 vs 64.6</b>、<b>+6.8pp（p=5.5e-08）</b>、<b>−34% token</b>、对抗题 <b>−14.6pp</b>、措辞阈值 <b>+9.6pp → −3.1pp</b>。</li>
+      <li><b>有「翻车—纠正」的叙事</b>：作者公开四个<b>负结果</b>（含功效计算）并撤回自己「慢好几倍」的延迟结论 —— 适合讲「配对实验为什么重要」。</li>
+      <li><b>边界</b>：LoCoMo 是<b>合成</b>长对话；judge 是模型判分（未做人工双评）；压缩臂的事实抽取质量依赖抽取器（十段对话抽出 <b>8,276</b> 条事实 / <b>11,902</b> 条链接）；对抗类别定义与常见文献不同（文中专门解释）。🚫 不要讲成「压缩一定更好」。</li>
+    </ol>
+    <b>建议动作</b>：<b>读原文</b>（§4.2 配对协议、§5.3 按类别/措辞的梯度、§5.5 延迟自更正、§5.6 四个负结果）。
+  </div>
+</div>
+
 <h2 class="sec">🎯 对各线的可执行建议（pretrain / vision / harness / data / zhulong / designflow）</h2>
 <div class="note">
-  <b>说明</b>：依据均取自本页今日 <b>3 篇</b>（arXiv ID + 摘要/正文关键数字，作者自报、本线未复现）；「建议动作」为<b>基于论文的推断</b>，供各线自行评估，<b>不构成新指令</b>；与各线任务书冲突时以任务书为准。某线本期确无对口论文时，如实写「本线本期无新增可用建议」。各线当轮状态取自其 <code>MEMORY_*</code> 顶部快照 + 任务书运维指令区（<b>2026-11-09 05:5x 实读</b>）。<b>本期 6 线均有落点</b>（无「无建议」行）。
+  <b>说明</b>：依据均取自本页今日 <b>5 篇</b>（arXiv ID + 摘要/正文关键数字，作者自报、本线未复现）；「建议动作」为<b>基于论文的推断</b>，供各线自行评估，<b>不构成新指令</b>；与各线任务书冲突时以任务书为准。某线本期确无对口论文时，如实写「本线本期无新增可用建议」。各线当轮状态取自其 <code>MEMORY_*</code> 顶部快照 + 任务书运维指令区（<b>2026-11-10 06:0x 实读</b>）。<b>表 A</b> = 早报 3 篇「借鉴」的落点；<b>表 B</b> = 晚报 2 篇「科普」新增/补充的落点。<b>6 线两表合计均有落点</b>（表 B 中 data 为「无新增可用建议」）。
 </div>
 <table>
   <tr><th>线</th><th>建议动作</th><th>依据（arXiv ID + 关键数字）</th><th>预期收益</th><th>成本</th><th>优先级</th></tr>
@@ -190,6 +236,69 @@
   </tr>
 </table>
 
+<h3 style="font-size:16px;margin:26px 0 6px;">表 B · 晚报 2 篇「科普」对六线的新增/补充落点</h3>
+<table>
+  <tr><th>线</th><th>建议动作</th><th>依据（arXiv ID + 关键数字）</th><th>预期收益</th><th>成本</th><th>优先级</th></tr>
+  <tr>
+    <td><b>pretrain</b><br><span style="font-size:12px;color:#59636e;">训练 iter≈147.1k/700k 健康（step 6.9–7.2s &lt; 7.4s 铁律）、14/14 eval 全完成、等 150k ckpt（≈11:10）；运维令：每满万整数 ckpt 做 8 集常识评测</span></td>
+    <td>① <b>行为曲线与内部曲线分两套记</b>：每个万整数 ckpt 既记 8 集分数，也记「该集是否属语法/格式决定型（loss 早已触底）」的标注；<b>不把已饱和集的持平读成「后期没进步」、也不把微升读成「能力增长」</b>。② <b>任何内部诊断（探针/神经元/注意力）只在被评估的那个 ckpt 上重测</b>，🚫 不得引用早期 ckpt 的探针结论外推（本文：84B token 的载体在 2T 时挖掉，与随机无异）。③ 报告加一句「行为平稳 ≠ 表征平稳」的口径声明。</td>
+    <td><code>2611.09204</code>（<b>169/169</b> 构造的载体到最后 checkpoint 仍在换；挖 84B「旧载体」= <b>0.14 nats，n.s.</b>（p=0.09）vs 挖当前载体 <b>0.40 nats</b>；16 个语法决定型构造的 loss 在<b>前 4%</b> 触底）</td>
+    <td>避免把「早饱和」当「能力提升」写进报告；内部诊断结论不会与行为结论互相打脸。</td>
+    <td>报告加列 0.5h；若加 probe 需 1 次前向（可与 eval 同批，不占额外机时）</td>
+    <td>中</td>
+  </tr>
+  <tr>
+    <td><b>vision</b><br><span style="font-size:12px;color:#59636e;">v5 已获统计显著（A16%→B37%→C53%，McNemar p=0.0009），全 CPU；GPU 仍被 pretrain 占满；待令推进 v6</span></td>
+    <td>① 若 v6 报告要用「内部表征」解释奖励为何有效（探针/注意力/激活），<b>在 v6 最终 ckpt 上重做一遍</b>，并把 v5 的 probe 结果标为「历史 ckpt」。② 结论里把「行为提升（rel_err 中位数）」与「表征稳定（probe 一致性）」<b>分开写</b>，不要用一个指标兼任两者。</td>
+    <td><code>2611.09204</code>（同一构造的行为在 4% 训练处定型，但表征到 2T 仍未定型；「稳定的池子 + 流动的样本」，退出者回归率 <b>3×</b>）</td>
+    <td>v6 报告的解释链更硬；避免用「表征稳定」当作训练收敛证据。</td>
+    <td>1 次 probe 脚本 ≈1h（CPU，.12/.29 可跑）</td>
+    <td>低</td>
+  </tr>
+  <tr>
+    <td><b>harness</b><br><span style="font-size:12px;color:#59636e;">SWE-bench predict 1818/3500（51.9%）、gateway 配额耗尽→空转产 empty；TB-2.1 516t/46p；incr_eval 多路 ~99%</span></td>
+    <td>① <b>上下文/记忆策略按子任务类型路由</b>：对「取具体值」类（时间、版本号、端口、路径、计数）用<b>压缩式记忆</b>（抽成原子事实存起来再检索）；对「复述原话/引用日志」类<b>保留原始片段</b>并在检索命中后回填原文（hydrate）。依据是本文的<b>结构性分界</b>：值类压缩赢、原话类输。② 成本/预算表<b>按类别给胜/负</b>，不只给总分（聚合会把 −14.6pp 的类别回退藏起来）。</td>
+    <td><code>2611.09807</code>（4 类 +6.8pp（p=5.5e-08）、prompt token <b>−34%</b>；加入 446 道对抗题后仅 +2.0pp 不显著（该类 <b>−14.6pp</b>）；参考词 1–2 时 <b>+9.6pp</b>、&gt;8 时 <b>−3.1pp</b>）</td>
+    <td>同样 token 预算下少犯「记了事实但丢措辞」的错；报告不再用总分掩盖类别回退。</td>
+    <td>记忆模块加「类型路由」≈0.5 天（不动在跑的 7 路并发/评测）</td>
+    <td>中</td>
+  </tr>
+  <tr>
+    <td><b>data</b><br><span style="font-size:12px;color:#59636e;"><code>stack-v3-train</code> 2TB 子集已全 DONE（1.85TiB），进入过滤 + 分词；<code>DATA_MAPPING.md</code>/<code>INDEX.tsv</code> 为路径台账</span></td>
+    <td><b>本线本期无新增可用建议</b>（晚报 2 篇为表征/对话记忆主题，与配比·去污染·代码质量筛无直接接口）。可继续沿用表 A 的「丢弃漏斗 + 偏差声明」与 r141 的「一致性/可解性两级过滤」。</td>
+    <td>—</td><td>—</td><td>—</td><td>—</td>
+  </tr>
+  <tr>
+    <td><b>zhulong</b><br><span style="font-size:12px;color:#59636e;">两轴消融 19/30：轴 A 完成（none 79.5 / low 84.2 / medium 85.4 / high 85.4 / xhigh 82.3）；B_en 3/3 = 80.0±4.5；B_zh r1 跑中；报告须含分数 + 成本（墙钟/token）</span></td>
+    <td>① <b>成本/延迟改报分位数</b>：p50 / p90 / p99 + 最大值，别只报均值（本文均值差 19% 全部来自尾部：p99 28,348 vs 12,149 ms，两侧 max 都 ~93.8s 是供应商重试）。② <b>Δpp 用配对比较</b>（同题同 harness、两臂写在同一行，做 McNemar/配对检验），不要拿两次独立跑的均值相减。③ 每个 cell 报 3 轮的 sd；「均值差 &lt; 3 轮 sd」的结论标 <code>pending</code>。</td>
+    <td><code>2611.09807</code>（配对后 512 个分歧题做 McNemar；p50 1,741 vs 1,769、p90 3,570 vs 3,360、p99 28,348 vs 12,149 ⇒ 均值不可用；作者据此撤回自己「慢数倍」的旧结论）</td>
+    <td>成本表不再被尾部污染；Δpp 结论与方差自洽，对外口径可辩护。</td>
+    <td>分析脚本 ~0.3 天（不动在跑的 B_zh eval）</td>
+    <td>高</td>
+  </tr>
+  <tr>
+    <td><b>designflow</b><br><span style="font-size:12px;color:#59636e;">shard A 193 case；shard C 饱和 22 连 0；B/D 被 .75 命令后端阻塞；断言闸门 <code>k≥8</code> + rationale 对账</span></td>
+    <td>① <b>通过率按「域 / 难度 / case 族」分层报</b>，不只报总通过率（本文总分 +6.8pp 同时掩盖了一个类别 <b>−14.6pp</b> 的反向）。② 每条失败补一列<b>归因</b>：判分口径（格式/等价差异、judge 偏差）vs 真实做错 —— 与 <code>rewrite_queue.tsv</code> 的修复动作绑定。</td>
+    <td><code>2611.09807</code>（聚合掩盖类别反向；按参考词数分层 <b>+9.6pp → −3.1pp</b>，同一系统在两类问题上符号相反）</td>
+    <td>避免「总通过率上升但某域退化」被漏掉；闸门修复有据可依。</td>
+    <td>报告加两列 ~1h（不阻塞造题）</td>
+    <td>中</td>
+  </tr>
+
+</table>
+
+<h2 class="sec">📝 晚报变更说明（AM → PM）</h2>
+<div class="note">
+  <ol>
+    <li><b>页头</b>：标识 <b>早报 · 3/5</b> → <b>晚报 · 5/5 收口</b>；进度 3/5 → <b>5/5</b>；meta 增「早报 06:0x / 晚报补跑 11-10 06:0x」；口径行改为「借鉴 3 篇 + 科普 2 篇」。<b>为什么</b>：11-09 18:00 轮未运行，本轮补跑收口，时间如实标注（不伪造成 18:00 生成）。</li>
+    <li><b>新增第 4/5 篇</b>：<code>2611.09204</code>（表征漂移：行为早定型、载体一直换）与 <code>2611.09807</code>（压缩式记忆 vs RAG 原话检索，配对检验）—— 均取 <code>2026-11-06</code> 公告批次，逐卡标注 <b>84.6h / 76.1h</b>，走 §0.1 公告批次例外。<b>为什么选这两篇</b>：科普口径要「大众能懂 + 有传播力」，两篇都有反直觉结论与干净数字，且各自带方法学护栏。</li>
+    <li><b>建议节</b>：说明由「本页 3 篇」改为「本页 5 篇」，新增 <b>表 B</b>（晚报 2 篇 → 六线）。<b>data 明写「本线本期无新增可用建议」</b>（不凑数）。<b>为什么</b>：用户令要求 6 线齐全，且不得把无关论文硬塞。</li>
+    <li><b>附录 C</b>：PDF 校验 3/3 → <b>5/5</b>（新增 <code>2611.09204</code> 16 页、<code>2611.09807</code> 14 页）。<b>为什么</b>：晚报两篇也必须落地可核验。</li>
+    <li><b>附录 D</b>：台账 <code>SEEN.md</code> 324 → <b>329</b>、<code>papers.jsonl</code> 324 → <b>329</b>（+5，含本日早 3）；当日进度 3/5 → <b>5/5</b>；<code>daily/index.html</code> 该行由「早报 3/5」改为「晚报 5/5」。<b>为什么</b>：补跑的两篇必须进台账，否则下一轮会重复收录。</li>
+    <li><b>自检</b>：口径从「当天 3/5」改为「5/5」；补跑两篇同样过 <code>HTTP 200</code> + <code>atom+xml</code> + 真实 <code>published</code> + 去重（与 <code>SEEN.md</code>/<code>papers.jsonl</code>/近 7 天 <code>daily/</code> 无重复）。</li>
+  </ol>
+</div>
+
 <h2 class="sec">附录 A · 本轮检索式与命中数（可核验）</h2>
 <table>
   <tr><th>#</th><th>检索式</th><th>totalResults</th><th>返回 / 最新 published</th><th>判定</th></tr>
@@ -217,31 +326,33 @@
 </table>
 <p style="font-size:13px;color:#59636e;"><b>未选但强对口的候选（留作晚报/后续，不凑数）</b>：<code>2611.08237</code> Terminal-style Mathematical Modeling Bench（「单向打分不惩罚超越参考 + 硬闸门把不可行答案清零 + 6 类可判定不变量 + 624 条 Lean 4 义务 + 多参考面板」，对 designflow 造题闸门极对口，但今日额度 3 篇已满）；<code>2611.07859</code> CORE（免训练 harness：由粗到细检索 + 上下文管理 + 抑制重复片段，对 harness 的 context compaction 对口）；<code>2611.07461</code> HEELO（agent-native primitives 组合 harness：TB-4.0 37.3%→55.5%、TB-2.0 60.0%→72.2%、ToolBench 55.8%→75.1%、GAIA 45.6%→58.3%）；<code>2611.07372</code> EnvOpt（环境优化：Haiku 4.5 成本 −72.7% / pass +14.34%）；<code>2611.07453</code> Latency-Aware Adaptive Best-of-N（把延迟计入测试时计算成本，对 zhulong 成本口径亦相关）。</p>
 
-<h2 class="sec">附录 C · PDF 落地校验（3/3）</h2>
+<h2 class="sec">附录 C · PDF 落地校验（5/5）</h2>
 <table>
   <tr><th>arXiv ID</th><th>字节数</th><th>页数</th><th>字符数（去空白）</th><th>sha256（前 16）</th><th>结构校验</th></tr>
   <tr><td><code>2611.07595</code></td><td>1,841,226</td><td>12</td><td>35,224</td><td><code>4037148ffdcd7306</code></td><td><code>%PDF-</code> 头 + <code>%%EOF</code> + 字节 == <code>Content-Range</code> total + <code>pdftotext</code> 可解析 ✅</td></tr>
   <tr><td><code>2611.08452</code></td><td>4,303,903</td><td>38</td><td>113,403</td><td><code>abf9ad39b5873123</code></td><td>同上 ✅</td></tr>
   <tr><td><code>2611.07634</code></td><td>1,287,154</td><td>11</td><td>49,247</td><td><code>0c13e60e276f8d99</code></td><td>同上 ✅</td></tr>
+  <tr><td><code>2611.09204</code></td><td>1,329,815</td><td>16</td><td>60,403</td><td><code>b1e2e3d1ae0869f0</code></td><td>同上 ✅（晚报补跑）</td></tr>
+  <tr><td><code>2611.09807</code></td><td>546,747</td><td>14</td><td>49,443</td><td><code>a517c1118855d515</code></td><td>同上 ✅（晚报补跑）</td></tr>
 </table>
-<p style="font-size:13px;color:#59636e;">合计 <b>7,432,283 B ≈ 7.09 MiB</b>（单篇均 &lt; 5 MB，但 <code>research/pdf/</code> 按体积红线<b>一律不入 git</b>）；下载器 <code>research/raw/pdf_range_resume_r141.py</code>（8 段 Range + 断点续传，固定边缘 IP <code>151.101.67.42</code>），<b>3/3 首轮 8 段全 OK、零超时零续传</b>。<b>不声称哈希一致</b>：CDN 的 <code>ETag</code> 虽标注 <code>sha256:</code>，但与落地文件哈希<b>不同</b>（口径不可比），故只声称上述结构校验 + 字节数一致。</p>
+<p style="font-size:13px;color:#59636e;">早报 3 篇合计 <b>7,432,283 B</b>，晚报补跑 2 篇合计 <b>1,876,562 B</b>，全期 <b>5/5 = 9,308,845 B ≈ 8.88 MiB</b>（单篇均 &lt; 5 MB，但 <code>research/pdf/</code> 按体积红线<b>一律不入 git</b>）；下载器 <code>research/raw/pdf_range_resume_r142.py</code>（8 段 Range + 断点续传，固定边缘 IP <code>151.101.67.42</code>），<b>5/5 首轮 8 段全 OK、零超时零续传</b>。<b>不声称哈希一致</b>：CDN 的 <code>ETag</code> 虽标注 <code>sha256:</code>，但与落地文件哈希<b>不同</b>（口径不可比），故只声称上述结构校验 + 字节数一致。</p>
 
 <h2 class="sec">附录 D · 台账与当日进度</h2>
 <table>
   <tr><th>项</th><th>本轮前</th><th>本轮后</th><th>说明</th></tr>
-  <tr><td><code>SEEN.md</code></td><td>5,645 行（收录 321 / 候选 4,558 / 候选(RSS) 507）</td><td><b>5,648 行（收录 324）</b></td><td>+3「收录」；幂等断言：每个 ID 恰好 1 行</td></tr>
-  <tr><td><code>papers.jsonl</code></td><td>321</td><td><b>324</b></td><td><code>raw/update_r141.py</code> 断言：仅追加、无重复、<code>published</code> 前缀 <code>2026-11-05</code></td></tr>
-  <tr><td><code>daily/2026-11-09.html</code></td><td>—</td><td><b>本期（3/5）</b></td><td>3 卡 + 六线建议 + 附录 A/B/C/D；0 <code>&lt;script&gt;</code>、外链仅 3 条 arXiv abs</td></tr>
-  <tr><td><code>daily/index.html</code></td><td>最新 = 11-08 晚报 5/5</td><td><b>新增 11-09 行（早报 3/5）</b></td><td>按日倒序；footer 最近更新同步</td></tr>
+  <tr><td><code>SEEN.md</code></td><td>5,645 行（收录 321 / 候选 4,558 / 候选(RSS) 507）</td><td><b>5,653 行（收录 329）</b></td><td>+5「收录」（早 3 + 晚报补 2）；幂等断言：每个 ID 恰好 1 行</td></tr>
+  <tr><td><code>papers.jsonl</code></td><td>321</td><td><b>329</b></td><td><code>raw/update_r142.py</code> 断言：仅追加、无重复、<code>published</code> 前缀 <code>2026-11-06</code>（晚报补 2 篇）</td></tr>
+  <tr><td><code>daily/2026-11-09.html</code></td><td>3/5（早报）</td><td><b>本期（5/5 收口）</b></td><td>5 卡 + 六线建议（表 A 3 篇 / 表 B 2 篇）+ 晚报变更说明 + 附录 A/B/C/D；0 <code>&lt;script&gt;</code>、外链仅 5 条 arXiv abs</td></tr>
+  <tr><td><code>daily/index.html</code></td><td>11-09 行 = 早报 3/5</td><td><b>11-09 行改晚报 5/5 + 新增 11-10 行</b></td><td>按日倒序；footer 最近更新同步</td></tr>
   <tr><td>出口</td><td>—</td><td><b>HTML（无邮件）</b></td><td>🚫 未发任何日报邮件（2026-11-07 10:50 用户令：唯一出口 = <code>daily/&lt;date&gt;.html</code> + <code>daily/index.html</code>）</td></tr>
 </table>
 <div class="ok-box" style="margin-top:14px;">
-  <b>本期口径自检</b>：① 当天合计 <b>3 / 5</b>（早 3，晚报 2 篇待 18:00）—— 未凑数、未放宽入账判据；② 3 篇均实测 <code>HTTP 200</code> + <code>application/atom+xml</code> + 真实 <code>published</code>（<b>200 ≠ 有料</b> 已校验）；③ 与 <code>SEEN.md</code> / <code>papers.jsonl</code> / <code>TOP_K.jsonl</code> / 近 7 天 <code>daily/</code> <b>无重复</b>；④ 3 篇均<b>超出 72h 常规窗口</b>，已按 §0.1「周末 / 周一早间公告批次例外」登记并逐卡标注实际时长（<b>不写成「无新增」</b>）；⑤ 建议节 <b>6 线齐全</b>（pretrain / vision / harness / data / zhulong / designflow），每条含「动作 + 依据 + 收益 + 成本 + 优先级」。
+  <b>本期口径自检</b>：① 当天合计 <b>5 / 5</b>（早 3「借鉴」+ 晚 2「科普」，晚报于 11-10 06:0x 补跑收口）—— 未凑数、未放宽入账判据；② 5 篇均实测 <code>HTTP 200</code> + <code>application/atom+xml</code> + 真实 <code>published</code>（<b>200 ≠ 有料</b> 已校验）；③ 与 <code>SEEN.md</code> / <code>papers.jsonl</code> / <code>TOP_K.jsonl</code> / 近 7 天 <code>daily/</code> <b>无重复</b>；④ 5 篇均<b>超出 72h 常规窗口</b>（早 3 为 75–86h、晚 2 为 76–85h），已按 §0.1「周末/公告批次例外」登记并逐卡标注实际时长（<b>不写成「无新增」</b>）；⑤ 建议节 <b>6 线齐全</b>（表 A + 表 B，每条含「动作 + 依据 + 收益 + 成本 + 优先级」；表 B 中 data 如实写「本线本期无新增可用建议」）。
 </div>
 
 <footer>
-  research 线 · 论文观察日报 <b>2026-11-09（早报 · 3/5）</b> ｜ 生成：2026-11-09 06:0x CST ｜ 数据源：arXiv 官方 API（<code>export.arxiv.org</code>）｜ 入口索引：<code>research/daily/index.html</code><br>
-  下一轮：<b>2026-11-09 18:00 CST（晚报）</b>——补 2 篇「科普」→ 当日 5/5 收口 + <code>晚报变更说明（AM → PM）</code> + 分镜 <code>research/video/SCENES/11_09.html</code>。<br>
+  research 线 · 论文观察日报 <b>2026-11-09（晚报 · 5/5 收口 · 11-10 06:0x 补跑）</b> ｜ 数据源：arXiv 官方 API（<code>export.arxiv.org</code>）｜ 入口索引：<code>research/daily/index.html</code><br>
+  下一期：<b>2026-11-10 早报（3/5）</b>——同轮已产出 <code>daily/2026-11-10.html</code>（批次 <code>2026-11-06</code>）+ 六线建议；11-10 晚报（2/5）待 18:00 时窗。<br>
   ⚠️ 本页为论文解读 / 待读线索，<b>非结论、非官方</b>；数字均为作者自报、本线未复现；「对各线的可执行建议」为基于论文的推断，<b>非指令</b>。
 </footer>
 </div>

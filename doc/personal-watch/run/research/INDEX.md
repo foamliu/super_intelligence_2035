@@ -475,3 +475,25 @@
 
 > **下一轮（2026-11-09 18:00 周一 PM）**：① 复验批次（本地 09:00 公告后预计推进到 `2026-11-06`，判刷新看「最新 `published` 前移 + ① 总量」；若已刷新则需重跑 5 分类取数）；② 晚 2「科普」从余 **290** 条 + 新批次选（备选 `2611.08237` TB-MathModel / `2611.07859` CORE / `2611.07461` HEELO / `2611.07372` EnvOpt / `2611.07453` Latency-Aware Best-of-N）；③ 日报 3/5 → 5/5 + `晚报变更说明（AM → PM）`；④ 分镜 `video/SCENES/11_09.html`（当日科普 TOP-1）；⑤ 维持出口 = HTML。
 
+> **批次复核（`raw/verify_r142.py` → `raw/2026-11-10-am-verify-r142.txt`，4/4 `200` + `application/atom+xml; charset=utf-8`、全 `attempts=1`；区间顺延 `202611090000 TO 202611132359`）**：① `cat:cs.CL` **124,868**、最新 **`2026-11-06T18:48:04Z`**（`2611.09868v1`）；② `cat:cs.CL AND submittedDate:[20261109…]` **0**；③ 全库同区间 **0**；④ 广度 **644,448** ⇒ **已刷新**（r141：124,790 / `2026-11-05` / 643,965）。
+
+> **取数**：`raw/candidates_r142.py`（单分类各 100 条，合并去重，`published ≥ 2026-11-06`）：cs.CL 124,868 / cs.CV 212,596 / cs.LG 297,942 / cs.AI 211,682 / cs.SE 30,885 ⇒ **merged 298 / seen 0 / fresh 298**；`id_list` **5/5**（`raw/2026-11-10-am-idlist-r142a.xml`，12,791 B / 1.29s）。
+
+> **补跑 11-09 晚报（2 篇「科普」，11-09 18:00 轮未运行 ⇒ 当日 3/5 → 5/5）**：
+> ① `2611.09204` **Representational drift in a code model: behaviour settles, which neurons carry it does not**（cs.CL，UCL，1 位；`published=2026-11-06T09:24:13Z`；≈84.6h；16 页 / 60,403 字符；169 构造 × 2.03T token；16 个语法决定型构造 loss 前 4% 触底；**169/169** 载体到最后仍变（注入检出 99.1–99.4%）；挖 84B 旧载体 0.14 nats n.s.（p=0.09）vs 当前 0.40 nats；退出者回归 3×）
+> ② `2611.09807` **Compaction, decay and reinforcement in a two-tier conversational memory**（cs.CL，Independent ×2 + Bradford，3 位；`published=2026-11-06T17:56:37Z`；≈76.1h；14 页 / 49,443 字符；LoCoMo 1,985 题同窗配对，512 分歧做 McNemar：4 类 **+6.8pp（p=5.5e-08）**、token **−34%**；五类含对抗仅 +2.0pp 不显著（对抗 −14.6pp）；参考词 1–2 时 +9.6pp、>8 时 −3.1pp；延迟 p99 28,348 vs 12,149 ms）
+
+> **11-10 早报（3 篇「借鉴」）**：
+> ① `2611.09412` **MIRA: Mitigating Pole Geometry Bias in Recurrent Language Models**（cs.AI，Galway/Laval/Mila/UC Merced，5 位；`published=2026-11-06T12:44:53Z`；≈81.3h；63 页 / 117,158 字符；Mamba/RWKV/RetNet = IIR，极点在实轴 = 架构偏置；MIRA-S 0.14B、训练 512 → 评测 32,768 仍最低 PPL；32K 前向 11.37 ms、8.36M tok/s；4.13×/1.32×/2.15×/2.85×；吞吐 6.41×/2.20×/1.02×/1.28×；K=2 > K=1）
+> ② `2611.09729` **One Run Is Not Enough**（cs.LG，Edinburgh，3 位；`published=2026-11-06T17:06:21Z`；≈76.9h；15 页 / 38,144 字符；DS-QA 100 题/16 数据集/3 难度、三层指标；每题 100 次重复（41 题子集、GPT-4o、T=1）：不稳定度 0%→66%→81%，单题 0.99–1.00；指标相关 ≤0.30；词/ token 啰嗦比幂律斜率 1.01）
+> ③ `2611.09802` **When Instruction Files Go Stale**（cs.SE，NC State，4 位；`published=2026-11-06T17:54:01Z`；≈76.1h；11 页 / 54,204 字符；732 条轨迹；78/80 走旧路；6 次/120k vs 更正 4 次/78k vs 删除 5 次/100k；19/40 检查未跑测试；0 次修复指令）
+
+> **交付**：`daily/2026-11-09.html` **3/5 → 5/5**（补 2 卡 + 表 B 六线 + `晚报变更说明（AM → PM）`；div 109/109、table 8/8、tr 42/42、td 170/170、0 `<script>`）+ `daily/2026-11-10.html`（**3/5**；3 卡 + 六线建议 + 附录 A/B/C/D）+ `daily/index.html`（11-09 改 5/5、新增 11-10、footer 同步）。
+
+> **PDF 5/5**（`raw/pdf_range_resume_r142.py`，8 段 Range + 续传）：3,766,708 / 1,506,127 / 304,170 / 1,329,815 / 546,747 B ⇒ **7,453,567 B ≈ 7.11 MiB**（首轮全 OK、零续传；`pdf/` 不入 git；etag 标 sha256 但与落地哈希不符 ⇒ 只声称结构校验）。
+
+> **台账**：`SEEN.md` 5,648 → **5,653 行** ⇒ 收录 **329** / 候选 4,558 / 候选(RSS) 507；`papers.jsonl` 324 → **329**（`raw/update_r142.py`，幂等断言：每 ID 1 行、`published` 前缀 `2026-11-06`）。🚫 未发任何日报邮件。
+
+> **累计（截至 2026-11-10 第一百四十二轮 · AM · 11-09 晚报补跑 5/5 + 11-10 早报 3/5）**：收录 **329 篇** / 候选 **4,558** + 候选(RSS) **507** / `SEEN.md` **5,653 行** / 当日日报 11-09 **5/5**、11-10 **3/5**。
+
+> **下一轮（2026-11-10 18:00 周二 PM）**：① 复验批次（若推进到 `2026-11-09` 则重跑 5 分类取数）；② 晚 2「科普」（备选 `2611.08946` Flex-RSI / `2611.09825` BitDecoding-FP4 / `2611.09722` FOSCAR / `2611.09457` LLM 标注审计）；③ 11-10 日报 3/5 → 5/5 + `晚报变更说明（AM → PM）`；④ 分镜 `video/SCENES/11_10.html`。

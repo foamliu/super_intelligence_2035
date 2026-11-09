@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>论文观察日报 · 2026-11-10（早报 · 3/5）· research 线</title>
+<style>
+  :root { --primary:#0b3d6e; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700; --bad:#cf222e;
+          --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+         color:var(--text); background:var(--bg); line-height:1.7; font-size:15px; }
+  .wrap { max-width:1040px; margin:0 auto; padding:32px 20px 80px; }
+  header.hero { background:linear-gradient(135deg,#0b3d6e 0%,#1f6feb 100%); color:#fff; border-radius:14px;
+                padding:30px 32px; margin-bottom:22px; box-shadow:0 8px 24px rgba(11,61,110,.18); }
+  header.hero h1 { margin:0 0 6px; font-size:24px; letter-spacing:.3px; }
+  header.hero .sub { font-size:15px; opacity:.95; }
+  header.hero .meta { margin-top:14px; font-size:13px; opacity:.9; display:flex; flex-wrap:wrap; gap:8px 18px; }
+  header.hero .meta span { background:rgba(255,255,255,.14); border-radius:999px; padding:2px 12px; }
+  .disc { margin-top:14px; font-size:12.5px; background:rgba(0,0,0,.18); border-radius:8px; padding:8px 12px; opacity:.95; }
+  .badge { display:inline-block; padding:1px 10px; border-radius:999px; font-size:12.5px; font-weight:700; vertical-align:middle; }
+  .b-am { background:#e6f4ea; color:#0b6b2f; }
+  .b-pm { background:#ddf4ff; color:#0b3d6e; }
+  .b-jz { background:#dafbe1; color:var(--ok); } .b-kp { background:#ffeef8; color:#a3238e; }
+  .progress { margin-top:8px; font-size:13.5px; }
+  h2.sec { font-size:19px; margin:34px 0 12px; padding-bottom:8px; border-bottom:2px solid var(--border); }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:18px 22px; margin:16px 0;
+          box-shadow:0 1px 3px rgba(27,31,36,.06); }
+  .card h3 { margin:0 0 4px; font-size:17px; line-height:1.45; }
+  .card .no { display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px; margin-right:8px;
+              border-radius:50%; background:var(--accent); color:#fff; font-size:14px; font-weight:700; vertical-align:middle; }
+  .row { display:flex; gap:10px; margin:7px 0; font-size:14px; }
+  .row .k { flex:0 0 108px; color:var(--muted); font-weight:600; }
+  .row .v { flex:1; }
+  .orig { font-style:italic; color:#0b3d6e; }
+  code { background:#eef1f4; border:1px solid #e1e4e8; border-radius:5px; padding:1px 6px;
+         font-family:Consolas,Menlo,monospace; font-size:12.5px; color:#0b3d6e; }
+  a { color:var(--accent); word-break:break-all; }
+  .reason { background:#f0f6ff; border:1px solid #cfe0f5; border-left:4px solid var(--accent); border-radius:8px;
+            padding:10px 14px; margin-top:10px; font-size:13.5px; }
+  table { border-collapse:collapse; width:100%; margin:12px 0; font-size:13px; background:var(--card); }
+  th,td { border:1px solid var(--border); padding:7px 10px; text-align:left; vertical-align:top; }
+  th { background:#eef3f8; color:var(--primary); font-weight:600; }
+  tr:nth-child(even) td { background:#fafbfc; }
+  .note { background:#fff8ef; border:1px solid #f0d9b5; border-left:4px solid var(--warn); border-radius:8px;
+          padding:10px 16px; font-size:13px; color:#6a4a00; }
+  .ok-box { background:#f0fff4; border:1px solid #b7f0c5; border-left:4px solid var(--ok); border-radius:8px;
+            padding:10px 16px; font-size:13px; }
+  footer { margin-top:44px; padding-top:16px; border-top:1px solid var(--border);
+           color:var(--muted); font-size:12.5px; }
+  ul,ol { margin:6px 0; padding-left:20px; } li { margin:3px 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+  <h1>论文观察日报 · 2026-11-10 <span class="badge b-am">早报 · 3/5</span></h1>
+  <div class="sub">每日 5 篇推荐论文（早 3 / 晚 2）· <b>今日进度 3 / 5</b>（早报 3 篇「借鉴」；晚报 2 篇「科普」待 18:00）· 含 <b>「对各线的可执行建议」</b>（pretrain / vision / harness / data / zhulong / designflow 六线）</div>
+  <div class="meta">
+    <span>📅 2026-11-10（周二）</span>
+    <span>🕕 生成 06:0x CST（早报）</span>
+    <span>📚 数据源 arXiv（export.arxiv.org）· 官方 API</span>
+    <span>🏷 本页口径：<b>借鉴</b>（3 篇）</span>
+  </div>
+  <div class="disc">⚠️ 免责：本页为 <b>论文解读 / 待读线索</b>，<b>非结论、非官方</b>；所有数字均为<b>作者自报</b>，本线<b>未复现</b>；原题照抄不改写。「对各线的可执行建议」为<b>基于论文的推断，供各线自行评估</b>，非指令；与各线任务书冲突时以任务书为准。</div>
+</header>
+
+<div class="note">
+  <b>批次状态（先看这条）</b>：本轮 4 条独立探针 <b>4/4</b> <code>status=200</code> + <code>application/atom+xml; charset=utf-8</code>、全部 <code>attempts=1</code> —— ① <code>cat:cs.CL</code> <code>totalResults=</code><b>124,868</b>、最新 <code>published</code> 已推进到 <code>2026-11-06T18:48:04Z</code>（<code>2611.09868v1</code> CodeQuant2）；② <code>cat:cs.CL AND submittedDate:[202611090000 TO 202611132359]</code> → <b>total=0</b>；③ 全库同区间 → <b>total=0</b>（11-09 提交尚未入库）；④ 广度 5 分类 → <b>644,448</b>。与 r141（11-09 早报，批次仍 <code>2026-11-05</code>、总量 124,790、广度 643,965）相比 <b>批次已刷新</b> ⇒ 本轮取<b>最近公告批次 <code>2026-11-06</code></b>，三篇距本轮唤醒 <b>76.1–81.3h</b>（<b>超出 72h 常规窗口 ⇒ 走 §0.1 公告批次例外</b>，逐卡标注实际时长，<b>不写成「无新增」</b>）。
+</div>
+
+<h2 class="sec">☀️ 早报 · 3 篇「借鉴」<span class="badge b-jz">借鉴</span></h2>
+<p style="font-size:13.5px;color:#59636e;margin:0 0 8px;">本轮按「<b>离各线当轮阻塞有多近</b>」选文（2026-11-07 用户令：日报要能被各线 agent 直接执行），三篇分别对准三类<b>正在付出的成本</b>：<b>① 架构选型只能靠试的成本</b>（<code>2611.09412</code> MIRA：把 Mamba/RWKV/RetNet 统一看成 IIR 滤波器，指出「极点被压在实轴」的架构偏置，并给 32K 上下文 11.37 ms / 8.36M tok/s）→ <b>pretrain（Mamba2-hybrid 2B）</b>；<b>② 单次/3 轮数字就下结论的成本</b>（<code>2611.09729</code> One Run Is Not Enough：每题重复 100 次的 Monte Carlo 协议，hard 题不稳定度可达 1.00 = 抛硬币）→ <b>zhulong / pretrain / vision</b>；<b>③ 指令文件过期导致的隐性重复成本</b>（<code>2611.09802</code> Instruction Files Go Stale：过期测试命令每次多 2 次 tool call、19/40「修完的检查」其实没跑测试，而任务成功率看不出来）→ <b>harness / data / designflow / pretrain</b>。三篇均属 <code>2026-11-06</code> 公告批次（<b>公告批次例外，见上方说明</b>）。</p>
+
+<div class="card">
+  <h3><span class="no">1</span>MIRA: Mitigating Pole Geometry Bias in Recurrent Language Models</h3>
+  <div class="row"><div class="k">中文一句话</div><div class="v">作者把 Mamba（选择性 SSM）、RWKV、RetNet 这类「Transformer 的线性时间替代者」统一刻画成 <b>IIR（无限脉冲响应）滤波器</b>：它们能表示哪些<b>时间模式</b>，由传递函数的<b>零极点几何</b>决定。但为了换并行度，这些架构的参数化结构常把<b>极点压在实轴上</b>（只留实数极点）⇒ 丢掉了复共轭极点对应的<b>振荡/周期模式</b>，这是一种<b>架构层面的偏置</b>。作者借一般 IIR 的 <b>lattice–ladder</b> 实现提出 <b>MIRA</b>：每个 block 用 lattice–ladder 结构实现<b>高阶 IIR</b>，同时表示实极点与复共轭极点，并保持<b>线性时间</b>与<b>可分块并行</b>（相邻时刻的仿射算子可结合 ⇒ 可在 chunk 边界拼接状态）。实验：预训练 <b>MIRA-S</b>（12 层、宽 768、<b>0.14B</b>，训练上下文仅 <b>512</b> token），在 FineWeb-Edu 上<b>全程 PPL 低于</b> Mamba-1(S6)/Mamba-2(SSD)/RWKV-6/RWKV-7 且 next-token 准确率更高；把评测上下文拉到 <b>32,768</b>（训练长度的 <b>64×</b>）仍保持最低 PPL，并与带 RoPE 的 MHA「match or improve」（含 YaRN 版对照）；专用 CUDA kernel 在 <b>32K</b> 下前向 <b>11.37 ms</b>（相对 MHA+FlashAttention / Mamba S6 / RWKV-6 / RWKV-7 为 <b>4.13× / 1.32× / 2.15× / 2.85×</b>），吞吐 <b>8.36M tok/s</b>（<b>6.41× / 2.20× / 1.02× / 1.28×</b>）。消融还给出两个可迁移的经验：lattice 阶 <b>K=2</b>（即允许一对复极点）比 K=1（纯实极点）PPL 更低；状态写入门控瓶颈取 <b>d<sub>r</sub>=d/8</b> 最低。</div></div>
+  <div class="row"><div class="k">原题</div><div class="v"><span class="orig">MIRA: Mitigating Pole Geometry Bias in Recurrent Language Models</span></div></div>
+  <div class="row"><div class="k">作者 / 机构</div><div class="v">Róisín Luo · Ihsan Ullah · Christian Gagné · Dong Li · Karyn Morrissey（<b>5 位</b>；据 PDF 首页：<b>University of Galway</b> · Research Ireland–D-REAL · <b>Université Laval (IID)</b> · Canada–CIFAR AI Chair · <b>Mila</b> · PASA Lab, <b>UC Merced</b>；代码 <code>roisincrtai.github.io/official-mira-llm/</code>）</div></div>
+  <div class="row"><div class="k">日期</div><div class="v">首次提交 <b>2026-11-06</b>（<code>published=2026-11-06T12:44:53Z</code>；<code>updated</code> 同日，无 v2）· 距本轮唤醒（11-10 06:00 CST = 11-09 22:00Z）<b>≈81.3h</b>（<b>超出 72h 常规窗口 ⇒ 走 §0.1 公告批次例外</b>）· PDF 实测 <b>63 页</b> / <b>117,158</b> 字符（去空白）</div></div>
+  <div class="row"><div class="k">分类 / 标签</div><div class="v"><code>cs.AI</code> · <span class="badge b-jz">借鉴</span> · 关键词：线性时间架构 / SSM / 极点几何 / IIR / lattice–ladder / 长上下文外推 / 吞吐</div></div>
+  <div class="row"><div class="k">链接</div><div class="v"><a href="https://arxiv.org/abs/2611.09412">https://arxiv.org/abs/2611.09412</a>（PDF 已落地：<code>research/pdf/2026-11-10/2611.09412.pdf</code>，3,766,708 B，校验见附录 C）</div></div>
+  <div class="reason"><b>推荐理由（借鉴 · 与 pretrain 的 Mamba2-hybrid 架构直接对口 / 与 vision 的长序列波形建模侧向相关）</b>
+    <ol>
+      <li><b>给 pretrain 一把「架构诊断尺」</b>：本线跑的是 Mamba2-hybrid 2B。文中方法可以<b>直接从已有权重</b>算出每层的极点（由 A / Δ 的参数化推出），画<b>实部-虚部散点/直方图</b>——若极点几乎都贴在实轴，就说明这层只能表达「单调衰减/累积」，表达不了「周期振荡」，这正好能解释<b>长上下文里周期性/重复结构</b>的弱点（本线 128K 诊断已有此疑点）。</li>
+      <li><b>提供「不靠位置编码外推」的第二条路</b>：本线长上下文目前靠 RoPE/温度/YaRN 类外推；本文的思路是<b>在状态空间里把时间模式备齐</b>（复极点），训练 512 上下文、评测 32K 仍有最低 PPL。二者不冲突，可作为一个对照假设写进架构实验计划。</li>
+      <li><b>成本量级可直接引用</b>：32K 单次前向 11.37 ms、8.36M tok/s、相对 Mamba S6 1.32× 速度/2.20× 吞吐 —— 说明「加复极点」不是以吞吐为代价；本线若评估「换 block 结构」可用这三个数做上限估计。</li>
+      <li><b>边界（必须写清）</b>：① <b>0.14B / 12 层 / 单语料 FineWeb-Edu / 训练上下文 512</b>，规模远小于本线 2B，<b>不能直接外推收益</b>；② 吞吐来自<b>专用 CUDA kernel + RTX A6000</b>，与本线 Ascend/昇腾或 llama.cpp 路径不可比；③ 作者自报、本线未复现，代码虽给出主页链接但本线未跑。</li>
+    </ol>
+    <b>建议动作</b>：<b>读原文</b>（§2 IIR/极点几何、§3 lattice–ladder 与分块结合律、§4 表格 2 与 Fig.5 吞吐、附录 A.1 消融）+ <b>试跑</b>：见「pretrain」建议（极点分布诊断，只读权重、不改训练）。
+  </div>
+</div>
+
+<div class="card">
+  <h3><span class="no">2</span>One Run Is Not Enough: A Monte Carlo Protocol for Evaluating LLM Reliability on Data Science Tasks</h3>
+  <div class="row"><div class="k">中文一句话</div><div class="v">作者指出：只报「一次跑多少分」的评测，<b>分不清「能力不足」与「这次恰好抽到好/坏样本」</b>。他们做了 <b>DS-QA</b>：<b>100 道</b>大学课程级数据科学题，覆盖 <b>16 个数据集</b>、9 个维度（数据理解/清洗/描述统计/可视化/统计模型/假设检验…）、<b>3 个难度</b>；配三层指标（通用属性：运行时长、啰嗦度、文本相似度；粗粒度：准确率、代码可执行性、完整度；任务特定共 <b>35 项</b>）。核心做法是 <b>Monte Carlo 协议</b>：同一题在相同条件下重复 <b>100 次</b>（评测子集 <b>41 题</b>，GPT-4o 等 OpenAI 模型，temperature=1），用分数的<b>标准差（不稳定度）</b>看可靠性。结果：不稳定度<b>随难度上升</b>；GPT-4o 在 Data Pre-processing 上 easy <b>0%</b>、medium <b>66%</b>、hard <b>81%</b>；Data Visualisation 的 medium 不稳定度达 <b>0.99</b>、Supervised Learning 的 hard 达 <b>1.00</b> ⇒ <b>同一题重复跑近乎抛硬币</b>。指标间相关普遍很弱（|r| ≤ <b>0.30</b>）⇒ 不冗余；啰嗦度上「词啰嗦比 +0.1 ⇒ token 啰嗦比 +0.013」（log-log 斜率 <b>1.01</b>，95% CI [0.95, 1.07]，Spearman <b>0.953</b>）；此外 GPT-4.1-mini 在温度 &gt;1 时更容易出现随机漂移。</div></div>
+  <div class="row"><div class="k">原题</div><div class="v"><span class="orig">One Run Is Not Enough: A Monte Carlo Protocol for Evaluating LLM Reliability on Data Science Tasks</span></div></div>
+  <div class="row"><div class="k">作者 / 机构</div><div class="v">Wenqi Ni · Ozan Evkaya · Miguel de Carvalho（<b>3 位</b>；据 PDF 首页：<b>University of Edinburgh</b>；代码 <code>github.com/niwq15/LLM-DS-Reliability</code>）</div></div>
+  <div class="row"><div class="k">日期</div><div class="v">首次提交 <b>2026-11-06</b>（<code>published=2026-11-06T17:06:21Z</code>；<code>updated</code> 同日，无 v2）· 距本轮唤醒 <b>≈76.9h</b>（<b>超出 72h ⇒ 走公告批次例外</b>）· PDF 实测 <b>15 页</b> / <b>38,144</b> 字符（去空白）</div></div>
+  <div class="row"><div class="k">分类 / 标签</div><div class="v"><code>cs.LG</code> · <span class="badge b-jz">借鉴</span> · 关键词：评测可靠性 / Monte Carlo / 重复运行方差 / 分层指标 / 成本与啰嗦度</div></div>
+  <div class="row"><div class="k">链接</div><div class="v"><a href="https://arxiv.org/abs/2611.09729">https://arxiv.org/abs/2611.09729</a>（PDF 已落地：<code>research/pdf/2026-11-10/2611.09729.pdf</code>，1,506,127 B，校验见附录 C）</div></div>
+  <div class="reason"><b>推荐理由（借鉴 · 与 zhulong 的「每变体 3 轮」直接对口 / 与 pretrain 的「单次 8 集 eval」直接对口 / 与 vision 的「小样本显著性」侧向相关）</b>
+    <ol>
+      <li><b>zhulong 当前就在用 3 轮下结论</b>：A_high 与 A_medium <b>均值同为 85.4%</b> 但方差差 4×，A_xhigh 三轮 82.9/81.0/… 波动明显。本文给出的判据是「<b>先估不稳定度，再谈均值差</b>」：hard 题不稳定度可以到 <b>1.00</b>，意味着 3 轮均值差 2pp 完全可能是噪声。可直接把「不稳定度 + 95% CI + 配对检验」搬进报告。</li>
+      <li><b>pretrain 的 8 集 eval 是单次测量</b>：本线正为「37.40% vs 历史 51.5–57.9%」做归因。本文提示第三类原因：<b>同一 ckpt 的重跑噪声</b>（尤其 hard/长尾子集）。用 3–5 次重跑给出 sd 与区间，比继续争论口径更快收敛。</li>
+      <li><b>vision 的 p=0.0009 如何守住</b>：McNemar 是对的，但它假设「每条样本的判定稳定」；若同一 ckpt 换 seed 重跑会翻转大量样本，显著性的含义就要重写。本文给的做法（重复 N 次 + 报翻转率）可直接加在 v6 报告里。</li>
+      <li><b>边界</b>：① 主实验只用了 <b>41 题子集</b>、OpenAI 模型、数据科学任务，<b>不能把 0.99/1.00 直接搬到 EDA 评测</b>（协议可移植，数值不可移植）；② 不稳定度定义与温度设置只扫了有限组合；③ 作者自报、本线未复现。</li>
+    </ol>
+    <b>建议动作</b>：<b>读原文</b>（§4 三层指标、§5.1 不稳定度分布、§5.4 温度效应）+ <b>试跑</b>：见「zhulong」「pretrain」「vision」建议。
+  </div>
+</div>
+
+<div class="card">
+  <h3><span class="no">3</span>When Instruction Files Go Stale: Documentation Debt and Hidden Cost in Coding Agents</h3>
+  <div class="row"><div class="k">中文一句话</div><div class="v">像 Claude Code 这样的 coding agent，每个 session 都会读仓库里的<b>指令文件</b>（<code>AGENTS.md</code> / <code>CLAUDE.md</code>，也叫 context/agent 配置文件）。这些文件会随代码演进<b>过期</b>（例如测试目录搬了，文件还指旧路径）—— 作者把它定义为<b>文档债</b>，利息就是<b>每一次后续 session 都要付的额外操作</b>。他们在 3 个活跃开源仓库里各取 <b>1 条真实过期指令</b>（① 测试命令 ② 代码位置 ③ 添加组件的流程），把代码与任务固定，只把该指令改成 <b>3 个版本</b>（保持过期 / 更正到当前路径 / 删除），用 <b>2 个模型</b>（Claude Haiku 5.5、Sonnet 5.5；Claude Code 2.1.316）× <b>22 个维护任务</b> × 5–7 次重复，分析 <b>732 条轨迹</b>的<b>逐次 tool call</b>。结果：<b>是否走旧路径取决于「任务会不会把 agent 领到那一行」</b>——测试命令在 <b>80 次过期跑里 78 次</b>走了旧路，流程类约 <b>2/3</b>，代码位置类 <b>0 次</b>。代价在 Sonnet 的测试命令上可见：<b>过期 6 次 tool call / 120k token</b> vs <b>更正 4 次 / 78k</b> vs <b>删除 5 次 / 100k</b>（过期比更正多约 1/3 调用）。最隐蔽的是<b>「失败伪装成成功」</b>：旧命令找不到测试，但输出被 <code>tail</code> 管道，调用仍返回成功 —— Sonnet 的 <b>40 次过期跑里有 19 次</b>「修完后的第一次检查」<b>其实没跑任何测试</b>。而<b>任务成功率几乎不变</b>（每个版本都把 bug 修好了），并且<b>没有任何一次</b>去修那条过期指令（即使 agent 注意到文件里还有别的过期内容）。</div></div>
+  <div class="row"><div class="k">原题</div><div class="v"><span class="orig">When Instruction Files Go Stale: Documentation Debt and Hidden Cost in Coding Agents</span></div></div>
+  <div class="row"><div class="k">作者 / 机构</div><div class="v">Tural Mehtiyev · Biruk Tadesse · Lawrence Arkoh · Wesley Assunção（<b>4 位</b>；据 PDF 首页：<b>North Carolina State University</b>）</div></div>
+  <div class="row"><div class="k">日期</div><div class="v">首次提交 <b>2026-11-06</b>（<code>published=2026-11-06T17:54:01Z</code>；<code>updated</code> 同日，无 v2）· 距本轮唤醒 <b>≈76.1h</b>（<b>超出 72h ⇒ 走公告批次例外</b>）· PDF 实测 <b>11 页</b> / <b>54,204</b> 字符（去空白）</div></div>
+  <div class="row"><div class="k">分类 / 标签</div><div class="v"><code>cs.SE</code> · <span class="badge b-jz">借鉴</span> · 关键词：AGENTS.md / CLAUDE.md / 文档债 / 指令过期 / 轨迹级评测 / tool call 成本 / 静默失败</div></div>
+  <div class="row"><div class="k">链接</div><div class="v"><a href="https://arxiv.org/abs/2611.09802">https://arxiv.org/abs/2611.09802</a>（PDF 已落地：<code>research/pdf/2026-11-10/2611.09802.pdf</code>，304,170 B，校验见附录 C）</div></div>
+  <div class="reason"><b>推荐理由（借鉴 · 与 harness 的「指令/配置/证据审计」直接对口 / 与 data 的路径台账、designflow 的 case brief、pretrain 的 MEMORY 路径侧向直接对口）</b>
+    <ol>
+      <li><b>我们的每条线都在付这种利息</b>：各线 <code>AGENTS.md</code> / 任务书 / <code>MEMORY_*</code> 顶部都是「每个 session 必读」的指令文件，里面写着大量<b>具体路径与命令</b>（<code>/tmp/…</code>、<code>/nas_env/…</code>、<code>.12/.29</code>、docker / ssh 命令）。data 线刚把 5 个源迁到 <code>/nas_env</code> 并删了源；designflow 的 case brief 来自历史 trace；pretrain 的 MEMORY 记录了大量 ckpt 路径 —— 任意一处过期，后续每次 session 都在为它付 tool call。</li>
+      <li><b>「PASS 不等于检查跑过」可直接对上当前问题</b>：harness 现在有 429 quota → <b>empty</b> 空跑，pipeline 若只看退出码/尾部输出，就会把「没跑」记成「跑完」；本文的 <b>19/40</b> 就是同型事故。给出的护栏很具体：<b>检查输出里是否真的出现测试计数/断言行</b>。</li>
+      <li><b>「更正 > 删除」是可执行的政策</b>：更正 <b>4 次 / 78k</b> 优于删除 <b>5 次 / 100k</b>（删掉后 agent 还得自己摸索怎么跑）。这条直接决定 designflow / data 处理失效路径时该改还是该删。</li>
+      <li><b>边界</b>：① 只研究 <b>3 条</b>真实过期指令、<b>22 个</b>任务，样本小、且都是「曾经正确、后来过期」（不含「从来就错」）；② 两个模型<b>同族</b>（Haiku/Sonnet 5.5）且都在 Claude Code 2.1.316，<b>不能直接推广到 cline/opencode/pi 等 7 路</b>；③ 作者自报、本线未复现。</li>
+    </ol>
+    <b>建议动作</b>：<b>读原文</b>（§III RQ1–RQ3、Fig.1 三臂对照、§V 实用教训）+ <b>试跑</b>：见「harness」「data」「designflow」「pretrain」建议（都是一次性只读审计，不动在跑的进程）。
+  </div>
+</div>
+
+
+<h2 class="sec">🎯 对各线的可执行建议（pretrain / vision / harness / data / zhulong / designflow）</h2>
+<div class="note">
+  <b>说明</b>：依据均取自本页今日 <b>3 篇</b>（arXiv ID + 摘要/正文关键数字，作者自报、本线未复现）；「建议动作」为<b>基于论文的推断</b>，供各线自行评估，<b>不构成新指令</b>；与各线任务书冲突时以任务书为准。某线本期确无对口论文时，如实写「本线本期无新增可用建议」。各线当轮状态取自其 <code>MEMORY_*</code> 顶部快照 + 任务书运维指令区（<b>2026-11-10 06:0x 实读</b>）。<b>本期 6 线均有落点</b>（无「无建议」行）。
+</div>
+<table>
+  <tr><th>线</th><th>建议动作</th><th>依据（arXiv ID + 关键数字）</th><th>预期收益</th><th>成本</th><th>优先级</th></tr>
+  <tr>
+    <td><b>pretrain</b><br><span style="font-size:12px;color:#59636e;">训练 iter≈147.1k/700k 健康（step 6.9–7.2s &lt; 7.4s）、14/14 eval 全完成、等 150k ckpt（≈11:10）；架构 = Mamba2-hybrid 2B；运维令：每满万整数 ckpt 做 8 集常识评测（limit=100）</span></td>
+    <td>① <b>极点几何诊断（只读权重，不改训练）</b>：从现有 Mamba2 层的 <code>A_log</code>/<code>dt</code> 参数化反解每层极点，输出<b>实部-虚部散点 + |Im|/|Re| 直方图</b>；若 |Im|≈0 占绝对多数 ⇒ 该层只能表达单调衰减，长上下文里的<b>周期/重复结构</b>天然吃亏（正好对上 128K 诊断的疑点）。② <b>给 eval 加「重跑噪声」一节</b>：对 2–3 个关键集（hellaswag / piqa）用同一 ckpt 重跑 <b>3–5 次</b>（不同 chunk 顺序/线程绑定），报 sd 与 95% CI；把「37.40% vs 51.5–57.9%」的差异先与噪声底比一遍。③ 顺带做一次<b>指令文件 staleness 审计</b>（见 harness 行）：<code>MEMORY_PRETRAIN_2B.md</code> 顶部写满 <code>/tmp</code>、<code>/nas_train</code> 路径，失效的<b>更正</b>而不是删。</td>
+    <td><code>2611.09412</code>（极点被压在实轴 = 架构偏置；K=2 复极点比 K=1 纯实极点 PPL 更低；训练 512 / 评测 32,768 仍最低 PPL）+ <code>2611.09729</code>（每题 100 次重复：hard 题不稳定度可达 <b>1.00</b>、easy 0%）+ <code>2611.09802</code>（过期指令每次多 ~2 次 tool call）</td>
+    <td>架构选型从「只能试」变成「先看极点再决定要不要试」；eval 差异先扣掉噪声底，减少口径争论；文档债不再复利。</td>
+    <td>① 脚本 0.5 天（CPU 即可，不动训练）② 3–5 次重跑 ≈ 数小时（可与下个 ckpt 的 8 集评测合并）③ 审计 1h</td>
+    <td>① 中 ② 高 ③ 中</td>
+  </tr>
+  <tr>
+    <td><b>vision</b><br><span style="font-size:12px;color:#59636e;">阶段 2 交付 v5（A16%→B37%→C53%、McNemar p=0.0009、cheat_rate=0）；全 CPU；GPU 仍被 pretrain 占满；待令推进 v6</span></td>
+    <td>① <b>给显著性加「稳定性前提」</b>：同一 v5/v6 ckpt 用不同 seed（或温度）重复 <b>3 次</b>，统计<b>每条样本判定的翻转率</b>；翻转率 &gt;10% 的样本单列，<b>不计入能力结论</b>。② 报告里写明：单次 A/B 的 Δ 若小于重复噪声，则标 <code>pending</code>（本文 hard 题不稳定度 <b>1.00</b>，说明「一次跑赢」不足以支撑能力结论）。</td>
+    <td><code>2611.09729</code>（Monte Carlo 100 次/题；不稳定度随难度升：easy 0% → medium 66% → hard 81%；Data Viz medium <b>0.99</b>、Supervised hard <b>1.00</b>）</td>
+    <td>p=0.0009 的结论不会被「其实每次跑都不同」推翻；v6 报告的口径更硬。</td>
+    <td>3× 推理（2 万样本 ×3）≈1 天（.12/.29 CPU，可夜间跑）</td>
+    <td>中</td>
+  </tr>
+  <tr>
+    <td><b>harness</b><br><span style="font-size:12px;color:#59636e;">SWE-bench predict 1818/3500（51.9%）；gateway <b>quota exhausted</b> → 空转产 empty（~07:25 恢复）；TB-2.1 516t/46p；incr_eval 多路 97–99%；7 routes alive</span></td>
+    <td>① <b>做一次「指令文件 staleness 审计」</b>：逐个仓库检查 <code>AGENTS.md</code> / <code>CLAUDE.md</code> 里的命令与路径，用只读探针（<code>ls</code> / <code>--help</code> / <code>which</code>）验证是否仍有效，产出失效清单；<b>失效项按「更正」处理，不要删</b>（文中更正 4 次/78k 优于删除 5 次/100k）。② <b>加「静默失败」守卫</b>：任何「跑测试/跑评测」的步骤，必须从输出里解析到<b>测试计数或断言行</b>才判 PASS，否则记 <code>silent-pass</code>（本文 40 次过期跑里 19 次「修完后的检查」根本没跑测试）。③ <b>empty 一律显式失败</b>：429 quota 导致的空输出必须在日志里写 <code>EMPTY/QUOTA</code>，禁止被 <code>tail</code>/管道/退出码吞掉；报告加列「tool calls / tokens / 旧路径操作数」，不只看 pass rate。</td>
+    <td><code>2611.09802</code>（<b>78/80</b> 过期跑走了旧路；Sonnet 过期 <b>6 次调用/120k token</b> vs 更正 <b>4 次/78k</b> vs 删除 <b>5 次/100k</b>；<b>19/40</b> 首次检查未跑测试；<b>0 次</b>修复指令文件；任务成功率几乎不变）</td>
+    <td>① 把「quota 耗尽 → empty」这类<b>失败伪装成成功</b>从根上堵住；② 减少重复 tool call 与 token；③ pass 可审计（对应本线一直在做的证据链）。</td>
+    <td>① 审计脚本 ~2h（只读，不动 7 路）② 守卫脚本 ~2h ③ 报告加列 1h</td>
+    <td>高</td>
+  </tr>
+  <tr>
+    <td><b>data</b><br><span style="font-size:12px;color:#59636e;"><code>stack-v3-train</code> 2TB 全 DONE（1.85TiB）；5 源已迁 <code>/nas_env</code> 且<b>源文件已删</b>；<code>DATA_MAPPING.md</code> / <code>INDEX.tsv</code> / 软链接为路径台账</span></td>
+    <td>① <b>路径台账 staleness 审计</b>：逐条验证 <code>DATA_MAPPING.md</code> §H.11/§H.12 与 <code>INDEX.tsv</code> 里写的路径、<code>tokenized/</code> 软链目标是否仍可解析（只 <code>stat</code>/<code>readlink</code>，不读大文件）；失效项<b>改成当前路径</b>，并在报告里注明「已更正 + 日期」。② 在 QC 报告里把「字节数达标」与「文档指向正确」分成两行，后者作为交付门槛之一。</td>
+    <td><code>2611.09802</code>（文档债的利息按<b>每次 session</b> 复利；更正优于删除；「任务成功」掩盖了额外操作）</td>
+    <td>后续 agent（含本线自己）不再按旧路径找数据，减少「数据在但文档指错」的重复排查。</td>
+    <td>审计脚本 ~1h（只 stat/readlink，不占带宽）</td>
+    <td>中</td>
+  </tr>
+  <tr>
+    <td><b>zhulong</b><br><span style="font-size:12px;color:#59636e;">两轴消融 19/30：轴 A 完成（none 79.5±2.6 / low 84.2±1.1 / medium 85.4±0.7 / high 85.4±2.7 / xhigh 82.3±1.1，倒 U）；B_en 3/3 = 80.0±4.5；B_zh r1 跑中；报告须含分数 + 成本</span></td>
+    <td>① <b>每个 cell 从 3 轮加到 ≥5 轮</b>（或对 40–60 题子集跑 10 轮），报<b>不稳定度 = sd/mean</b> 与 95% CI；② 「均值差 &lt; 重复噪声」的 cell 标 <code>pending</code>，<b>不给排序结论</b>（A_high 与 A_medium 均值同为 85.4，但 sd 差 4×）；③ 报告里写清温度/随机性与轮次，成本同时给 <b>token 与墙钟</b>（本文显示 token 啰嗦度随提示变长有稳定幂律：斜率 1.01）。</td>
+    <td><code>2611.09729</code>（100 次重复/题；不稳定度 easy <b>0%</b> → medium <b>66%</b> → hard <b>81%</b>；单题可达 <b>0.99–1.00</b>；指标间相关 ≤0.30 ⇒ 需多维报告）</td>
+    <td>「low≈medium、high 只增方差、xhigh 回落」这类结论从「均值猜测」变成「带噪声底的判断」；对外汇报更抗质疑。</td>
+    <td>追加 2 轮 × 30 cell 的 API 成本（按现有预算排期；不动在跑的 B_zh r1）</td>
+    <td>高</td>
+  </tr>
+  <tr>
+    <td><b>designflow</b><br><span style="font-size:12px;color:#59636e;">shard A 193 case；shard C 饱和 22 连 0（ledger 605：case 275 / parked 330）；shard B/D 被 <code>.75</code> 命令后端阻塞（<code>run_commands</code> exit −1、<code>run_code</code> 超时）；断言闸门 <code>k≥8</code></span></td>
+    <td>① <b>case brief 的命令/路径做「可执行性探针」</b>：造题前对 brief 里每条命令只读试跑一次；失效的<b>更正到当前路径</b>（文中更正 4 次/78k 优于删除 5 次/100k），并在 <code>rewrite_queue.tsv</code> 记「stale → corrected」。② <b>自验加「静默通过」检查</b>：必须解析到「跑了 k 条断言」的证据行才算 PASS；对当前 <code>.75</code> 的 <code>exit_code=-1 + 仅回显 wrapper</code> 情形，一律判 <code>silent-pass</code> 并计入后端故障统计（本文 19/40 首次检查没跑测试）。③ 失败统计分「任务没做成」与「检查没执行」两类。</td>
+    <td><code>2611.09802</code>（过期指令 → 虚假成功；<b>19/40</b> 检查未执行；<b>0 次</b> 修复底层文件；三臂对照 stale/corrected/removed）</td>
+    <td>直接对上当前「命令不执行但返回」的后端故障；避免把「检查没跑」算成「case 通过」。</td>
+    <td>探针 + 解析 ~1 天（与 rewrite_queue 并行，不阻塞造题）</td>
+    <td>高</td>
+  </tr>
+</table>
+
+<h2 class="sec">附录 A · 本轮检索式与命中数（可核验）</h2>
+<table>
+  <tr><th>#</th><th>检索式</th><th>totalResults</th><th>返回 / 最新 published</th><th>判定</th></tr>
+  <tr><td>①</td><td><code>cat:cs.CL</code> · <code>sortBy=lastUpdatedDate</code></td><td><b>124,868</b></td><td>5 条；最新 <code>2026-11-06T18:48:04Z</code>（<code>2611.09868v1</code> CodeQuant2）</td><td><b>已刷新</b>（r141 为 124,790 / 11-05）</td></tr>
+  <tr><td>②</td><td><code>cat:cs.CL AND submittedDate:[202611090000 TO 202611132359]</code></td><td><b>0</b></td><td>0 条</td><td>11-09 提交尚未入库，合日历</td></tr>
+  <tr><td>③</td><td><code>submittedDate:[202611090000 TO 202611132359]</code>（全库）</td><td><b>0</b></td><td>0 条</td><td>同上</td></tr>
+  <tr><td>④</td><td><code>cat:cs.CL OR cs.CV OR cs.SE OR cs.AI OR cs.LG</code>（广度）</td><td><b>644,448</b></td><td>3 条；最新 <code>2026-11-06T18:59:57Z</code>（<code>2611.09894v1</code> Video-Coder）</td><td>较 r141 的 643,965 增加 483</td></tr>
+</table>
+<p style="font-size:13px;color:#59636e;">候选池（`raw/candidates_r142.py`，单分类各取最新 100 条、合并去重、只留 <code>published ≥ 2026-11-06</code>）：<code>cs.CL</code> 124,868 / <code>cs.CV</code> 212,596 / <code>cs.LG</code> 297,942 / <code>cs.AI</code> 211,682 / <code>cs.SE</code> 30,885（均 <code>200</code> + <code>atom+xml</code>、<code>n=100</code>）⇒ <b>merged 298 / seen 0 / fresh 298</b>（本批新入库，故零重复）。<code>id_list</code> 复核 <b>5/5</b>（<code>raw/2026-11-10-am-idlist-r142a.xml</code>：200 / <code>application/atom+xml</code> / 12,791 B / 1.29s）。</p>
+
+<h2 class="sec">附录 B · 取数、去重与选文（3 篇）</h2>
+<table>
+  <tr><th>#</th><th>arXiv ID · 简称</th><th>分类</th><th>published</th><th>距唤醒</th><th>落点线</th></tr>
+  <tr><td>1</td><td><code>2611.09412</code> MIRA</td><td>cs.AI</td><td>2026-11-06T12:44:53Z</td><td>≈81.3h（例外）</td><td>pretrain（主）· vision（侧）</td></tr>
+  <tr><td>2</td><td><code>2611.09729</code> One Run Is Not Enough</td><td>cs.LG</td><td>2026-11-06T17:06:21Z</td><td>≈76.9h（例外）</td><td>zhulong（主）· pretrain · vision</td></tr>
+  <tr><td>3</td><td><code>2611.09802</code> Instruction Files Go Stale</td><td>cs.SE</td><td>2026-11-06T17:54:01Z</td><td>≈76.1h（例外）</td><td>harness（主）· data · designflow · pretrain</td></tr>
+</table>
+<p style="font-size:13px;color:#59636e;"><b>未选但强对口的候选（留作后续，不凑数）</b>：<code>2611.08946</code> Flex-RSI（harness 自改进基准：固定预算下 executor 改方案、improver 改 harness 本身；<b>改 harness 本身贡献增益</b>，对 harness 线极对口，但今日额度 3 篇已满）；<code>2611.09807</code> 压缩式对话记忆 vs RAG（已于同轮补进 <code>daily/2026-11-09.html</code> 晚报）；<code>2611.09204</code> 表征漂移（同上补进 11-09 晚报）；<code>2611.09825</code> BitDecoding-FP4（原生 FP4 KV cache 解码，对 pretrain 推理吞吐侧向）；<code>2611.09722</code> FOSCAR（2/4-bit KV cache decode attention 仿射折叠）；<code>2611.09457</code> Definitions, Label Names, or Demonstrations?（LLM 标注到底听谁的：定义 vs 标签名 vs 示例，对 data 的标注质量与 designflow 的判分有效性侧向）。</p>
+
+<h2 class="sec">附录 C · PDF 落地校验（3/3）</h2>
+<table>
+  <tr><th>arXiv ID</th><th>字节数</th><th>页数</th><th>字符数（去空白）</th><th>sha256（前 16）</th><th>结构校验</th></tr>
+  <tr><td><code>2611.09412</code></td><td>3,766,708</td><td>63</td><td>117,158</td><td><code>55d33803a96b874d</code></td><td><code>%PDF-</code> 头 + <code>%%EOF</code> + 字节 == <code>Content-Range</code> total + <code>pdftotext</code> 可解析 ✅</td></tr>
+  <tr><td><code>2611.09729</code></td><td>1,506,127</td><td>15</td><td>38,144</td><td><code>2dde15ba7949686b</code></td><td>同上 ✅</td></tr>
+  <tr><td><code>2611.09802</code></td><td>304,170</td><td>11</td><td>54,204</td><td><code>fbb3f21f91696bfa</code></td><td>同上 ✅</td></tr>
+</table>
+<p style="font-size:13px;color:#59636e;">合计 <b>5,577,005 B ≈ 5.32 MiB</b>（单篇均 &lt; 5 MB，但 <code>research/pdf/</code> 按体积红线<b>一律不入 git</b>）；下载器 <code>research/raw/pdf_range_resume_r142.py</code>（8 段 Range + 断点续传，固定边缘 IP <code>151.101.67.42</code>），<b>3/3 首轮 8 段全 OK、零超时零续传</b>。<b>不声称哈希一致</b>：CDN 的 <code>ETag</code> 虽标注 <code>sha256:</code>，但与落地文件哈希<b>不同</b>（口径不可比），故只声称结构校验 + 字节数一致。</p>
+
+<h2 class="sec">附录 D · 台账与当日进度</h2>
+<table>
+  <tr><th>项</th><th>本轮前</th><th>本轮后</th><th>说明</th></tr>
+  <tr><td><code>SEEN.md</code></td><td>5,648 行（收录 324 / 候选 4,558 / 候选(RSS) 507）</td><td><b>5,653 行（收录 329）</b></td><td>+5（11-09 晚报补 2 + 11-10 早报 3）；幂等断言：每 ID 恰好 1 行</td></tr>
+  <tr><td><code>papers.jsonl</code></td><td>324</td><td><b>329</b></td><td><code>raw/update_r142.py</code> 断言：仅追加、无重复、<code>published</code> 前缀 <code>2026-11-06</code></td></tr>
+  <tr><td><code>daily/2026-11-10.html</code></td><td>—</td><td><b>本期（3/5）</b></td><td>3 卡 + 六线建议 + 附录 A/B/C/D；0 <code>&lt;script&gt;</code>、外链仅 3 条 arXiv abs</td></tr>
+  <tr><td><code>daily/index.html</code></td><td>最新 = 11-09 早报 3/5</td><td><b>11-09 改 5/5 + 新增 11-10 行（3/5）</b></td><td>按日倒序；footer 最近更新同步</td></tr>
+  <tr><td>出口</td><td>—</td><td><b>HTML（无邮件）</b></td><td>🚫 未发任何日报邮件（2026-11-07 10:50 用户令：唯一出口 = <code>daily/&lt;date&gt;.html</code> + <code>daily/index.html</code>）</td></tr>
+</table>
+<div class="ok-box" style="margin-top:14px;">
+  <b>本期口径自检</b>：① 当天合计 <b>3 / 5</b>（早 3「借鉴」；晚报 2 篇待 18:00）—— 未凑数、未放宽入账判据；② 3 篇均实测 <code>HTTP 200</code> + <code>application/atom+xml</code> + 真实 <code>published</code>（<b>200 ≠ 有料</b> 已校验）；③ 与 <code>SEEN.md</code> / <code>papers.jsonl</code> / <code>TOP_K.jsonl</code> / 近 7 天 <code>daily/</code> <b>无重复</b>；④ 3 篇均<b>超出 72h 常规窗口</b>（76.1–81.3h），按 §0.1 公告批次例外登记并逐卡标注（<b>不写成「无新增」</b>）；⑤ 建议节 <b>6 线齐全</b>（pretrain / vision / harness / data / zhulong / designflow），每条含「动作 + 依据 + 收益 + 成本 + 优先级」。同轮另补跑 <code>daily/2026-11-09.html</code> 晚报至 5/5。
+</div>
+
+<footer>
+  research 线 · 论文观察日报 <b>2026-11-10（早报 · 3/5）</b> ｜ 生成：2026-11-10 06:0x CST ｜ 数据源：arXiv 官方 API（<code>export.arxiv.org</code>）｜ 入口索引：<code>research/daily/index.html</code><br>
+  下一轮：<b>2026-11-10 18:00 CST（晚报）</b>——补 2 篇「科普」→ 当日 5/5 收口 + <code>晚报变更说明（AM → PM）</code>；同轮已补跑 11-09 晚报（见 <code>daily/2026-11-09.html</code>）。<br>
+  ⚠️ 本页为论文解读 / 待读线索，<b>非结论、非官方</b>；数字均为作者自报、本线未复现；「对各线的可执行建议」为基于论文的推断，<b>非指令</b>。
+</footer>
+</div>
+</body>
+</html>
+
