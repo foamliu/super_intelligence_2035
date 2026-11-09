@@ -509,3 +509,16 @@
 1792067800928_1b60m					parked		2026-11-09 19:57	r286 peek: colinxu@pkn002 66msgs 3user-turns (现在是什么cell/我想把这个cell删了新建一个/现在是什么cell); thin cell-delete+recreate; only 3 turns insufficient for >=8-cond deliverable; REJECT thin
 1793100948216_wzpd1					parked		2026-11-09 19:57	r286 peek: colinxu@pkn002 35msgs 1user-turn (帮我查看当前打开的virtuoso cell); recon/view not produce-task no deliverable; REJECT not-a-seed
 1790143887151_qoq1g					parked		2026-11-09 19:57	r286 peek: steveny@pnd001 38msgs 2user-turns (讲解一下 .../test_layout_rscalc_flow_19/prompt_flow.md + filepath); code-comprehension/explain not produce-task; REJECT how-to-explain
+bpcwa	e0027537	hfeg0pkn002	122	physical_verify	parked		2026-11-09 20:39	consulting-QA Vpgint/vint relationship 1-turn RAG-only
+i0izd	e0048306	hfeg0pkn003	234	physical_verify	parked		2026-11-09 20:39	skill-writing+pinyin learning+schematic consulting
+jdpmg	e0029495	hfeg0pkn001	19	physical_verify	parked		2026-11-09 20:39	anasimpro-gui-start slash-command recon
+q7wqo	t0002062	hfeg0pkn004	34	physical_verify	parked		2026-11-09 20:39	rscalc-fail-diag-root-cause+argusdrc-how-to A-disqualify
+x8mdt	e0042624	hfeg0pkn001	31	physical_verify	parked		2026-11-09 20:39	harness-policy-mcp-recon 8-show-me turns
+yltpy	e0042624	hfeg0pkn001	20	physical_verify	parked		2026-11-09 20:39	scp-git-skill-deploy-ops+policy-recon
+gaz6r	jaceyx	hfeg0pkn002	96	physical_verify	parked		2026-11-09 20:39	ITF-inline-data-concept-QA RAG-how-to no-deliverable
+1xqgw	steveny	hfeg0pnd001	754	physical_verify	parked		2026-11-09 20:39	rscalc-reproduction-review-overlaps-tatnx continuation-note
+hxh3n	colinxu	hfeg0pkn002	733	physical_verify	parked		2026-11-09 20:39	view-cell+add-pin+schematic colinxu-recon-pattern
+ccxtr	colinxu	hfeg0pkn002	206	physical_verify	parked		2026-11-09 20:39	view-current-circuit 1-turn recon
+yzifo	colinxu	hfeg0pkn002	85	physical_verify	parked		2026-11-09 20:39	view-current-cell 1-turn recon
+gx19a	steveny	hfeg0pnd001	146	physical_verify	parked		2026-11-09 20:39	RAG-lookup-skill-design-interface how-to
+5331g	colinxu	hfeg0pkn002	230	physical_verify	parked		2026-11-09 20:39	schematic-add-delete-TESTPIN net-zero shard-D+harness-recon
