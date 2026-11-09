@@ -1,0 +1,795 @@
+{
+  "meta": {
+    "ts": "2026-11-09",
+    "prompts": 3347,
+    "G": 8,
+    "steps": 500,
+    "seeds": 5,
+    "elapsed": 4.104051351547241
+  },
+  "agg": {
+    "R1": {
+      "wsd": 0.9094711682103376,
+      "wsz": 0.0905288317896624,
+      "imp": 0.0,
+      "eff": 0.42276279786437093
+    },
+    "R2": {
+      "wsd": 0.8491186136838961,
+      "wsz": 0.15088138631610398,
+      "imp": -6.636005256241778,
+      "eff": 0.31856544755459265
+    },
+    "R3": {
+      "wsd": 0.9976097998207349,
+      "wsz": 0.0023902001792650155,
+      "imp": 9.69119579500657,
+      "eff": 0.31202670484734374
+    },
+    "R4": {
+      "wsd": 0.9778906483417986,
+      "wsz": 0.022109351658201364,
+      "imp": 7.522996057818664,
+      "eff": 0.3105019695148643
+    }
+  },
+  "signal": {
+    "R1_L1": {
+      "arm": "R1",
+      "tier": "L1",
+      "n": 1500,
+      "sig_count": 1408,
+      "sig_density": 0.9386666666666666,
+      "std_zero": 0.06133333333333335,
+      "mean_reward": 0.6953333333333334,
+      "mean_std": 0.43984374830128936,
+      "mean_cheat": 0.0505,
+      "eff_sig": 0.43984374830128936,
+      "adv_dist": {
+        "pos": 7608,
+        "neg": 3656,
+        "zero": 736
+      },
+      "r_range": [
+        0.0,
+        1.0
+      ],
+      "r_mean": 0.6953333333333334,
+      "pass_obs": 0.7140833333333333
+    },
+    "R1_L2": {
+      "arm": "R1",
+      "tier": "L2",
+      "n": 347,
+      "sig_count": 341,
+      "sig_density": 0.9827089337175793,
+      "std_zero": 0.01729106628242072,
+      "mean_reward": 0.44488472622478387,
+      "mean_std": 0.4859016274855428,
+      "mean_cheat": 0.051152737752161385,
+      "eff_sig": 0.4859016274855428,
+      "adv_dist": {
+        "pos": 1211,
+        "neg": 1517,
+        "zero": 48
+      },
+      "r_range": [
+        0.0,
+        1.0
+      ],
+      "r_mean": 0.44488472622478387,
+      "pass_obs": 0.45677233429394815
+    },
+    "R1_L3": {
+      "arm": "R1",
+      "tier": "L3",
+      "n": 800,
+      "sig_count": 763,
+      "sig_density": 0.95375,
+      "std_zero": 0.04625000000000001,
+      "mean_reward": 0.30625,
+      "mean_std": 0.4479642111659222,
+      "mean_cheat": 0.0525,
+      "eff_sig": 0.4479642111659222,
+      "adv_dist": {
+        "pos": 1960,
+        "neg": 4144,
+        "zero": 296
+      },
+      "r_range": [
+        0.0,
+        1.0
+      ],
+      "r_mean": 0.30625,
+      "pass_obs": 0.315625
+    },
+    "R1_L4": {
+      "arm": "R1",
+      "tier": "L4",
+      "n": 500,
+      "sig_count": 424,
+      "sig_density": 0.848,
+      "std_zero": 0.15200000000000002,
+      "mean_reward": 0.211,
+      "mean_std": 0.3705017608277097,
+      "mean_cheat": 0.048,
+      "eff_sig": 0.3705017608277097,
+      "adv_dist": {
+        "pos": 844,
+        "neg": 2548,
+        "zero": 608
+      },
+      "r_range": [
+        0.0,
+        1.0
+      ],
+      "r_mean": 0.211,
+      "pass_obs": 0.2155
+    },
+    "R1_L5": {
+      "arm": "R1",
+      "tier": "L5",
+      "n": 200,
+      "sig_count": 108,
+      "sig_density": 0.54,
+      "std_zero": 0.45999999999999996,
+      "mean_reward": 0.099375,
+      "mean_std": 0.2149567395801966,
+      "mean_cheat": 0.04875,
+      "eff_sig": 0.2149567395801966,
+      "adv_dist": {
+        "pos": 159,
+        "neg": 705,
+        "zero": 736
+      },
+      "r_range": [
+        0.0,
+        1.0
+      ],
+      "r_mean": 0.099375,
+      "pass_obs": 0.101875
+    },
+    "R2_L1": {
+      "arm": "R2",
+      "tier": "L1",
+      "n": 1500,
+      "sig_count": 1018,
+      "sig_density": 0.6786666666666666,
+      "std_zero": 0.32133333333333336,
+      "mean_reward": 0.9137604166666666,
+      "mean_std": 0.18780634686417885,
+      "mean_cheat": 0.049166666666666664,
+      "eff_sig": 0.18780634686417885,
+      "adv_dist": {
+        "pos": 6593,
+        "neg": 1508,
+        "zero": 3899
+      },
+      "r_range": [
+        0.0,
+        1.0
+      ],
+      "r_mean": 0.9137604166666666,
+      "pass_obs": 0.7025
+    },
+    "R2_L2": {
+      "arm": "R2",
+      "tier": "L2",
+      "n": 347,
+      "sig_count": 334,
+      "sig_density": 0.962536023054755,
+      "std_zero": 0.03746397694524495,
+      "mean_reward": 0.7547505403458213,
+      "mean_std": 0.3705290717506982,
+      "mean_cheat": 0.05475504322766571,
+      "eff_sig": 0.3705290717506982,
+      "adv_dist": {
+        "pos": 1821,
+        "neg": 807,
+        "zero": 148
+      },
+      "r_range": [
+        0.0,
+        1.0
+      ],
+      "r_mean": 0.7547505403458213,
+      "pass_obs": 0.4596541786743516
+    },
+    "R2_L3": {
+      "arm": "R2",
+      "tier": "L3",
+      "n": 800,
+      "sig_count": 796,
+      "sig_density": 0.995,
+      "std_zero": 0.0050000000000000044,
+      "mean_reward": 0.596533203125,
+      "mean_std": 0.4407372372410283,
+      "mean_cheat": 0.055625,
+      "eff_sig": 0.4407372372410283,
+      "adv_dist": {
+        "pos": 3545,
+        "neg": 2659,
+        "zero": 196
+      },
+      "r_range": [
+        0.0,
+        1.0
+      ],
+      "r_mean": 0.596533203125,
+      "pass_obs": 0.315
+    },
+    "R2_L4": {
+      "arm": "R2",
+      "tier": "L4",
+      "n": 500,
+      "sig_count": 499,
+      "sig_density": 0.998,
+      "std_zero": 0.0020000000000000018,
+      "mean_reward": 0.4551875,
+      "mean_std": 0.45260371942843053,
+      "mean_cheat": 0.0515,
+      "eff_sig": 0.45260371942843053,
+      "adv_dist": {
+        "pos": 1789,
+        "neg": 2084,
+        "zero": 127
+      },
+      "r_range": [
+        0.0,
+        1.0
+      ],
+      "r_mean": 0.4551875,
+      "pass_obs": 0.2135
+    },
+    "R2_L5": {
+      "arm": "R2",
+      "tier": "L5",
+      "n": 200,
+      "sig_count": 195,
+      "sig_density": 0.975,
+      "std_zero": 0.025000000000000022,
+      "mean_reward": 0.2648828125,
+      "mean_std": 0.3853189763221156,
+      "mean_cheat": 0.0525,
+      "eff_sig": 0.3853189763221156,
+      "adv_dist": {
+        "pos": 486,
+        "neg": 1035,
+        "zero": 79
+      },
+      "r_range": [
+        0.0,
+        1.0
+      ],
+      "r_mean": 0.2648828125,
+      "pass_obs": 0.110625
+    },
+    "R3_L1": {
+      "arm": "R3",
+      "tier": "L1",
+      "n": 1500,
+      "sig_count": 1500,
+      "sig_density": 1.0,
+      "std_zero": 0.0,
+      "mean_reward": 0.890701736111111,
+      "mean_std": 0.18629252671792812,
+      "mean_cheat": 0.04716666666666667,
+      "eff_sig": 0.18629252671792812,
+      "adv_dist": {
+        "pos": 8262,
+        "neg": 3254,
+        "zero": 484
+      },
+      "r_range": [
+        0.0,
+        1.0
+      ],
+      "r_mean": 0.8907017361111125,
+      "pass_obs": 0.71975
+    },
+    "R3_L2": {
+      "arm": "R3",
+      "tier": "L2",
+      "n": 347,
+      "sig_count": 347,
+      "sig_density": 1.0,
+      "std_zero": 0.0,
+      "mean_reward": 0.7343153368155617,
+      "mean_std": 0.3660453920253061,
+      "mean_cheat": 0.04502881844380403,
+      "eff_sig": 0.3660453920253061,
+      "adv_dist": {
+        "pos": 1884,
+        "neg": 829,
+        "zero": 63
+      },
+      "r_range": [
+        0.0,
+        1.0
+      ],
+      "r_mean": 0.7343153368155733,
+      "pass_obs": 0.45821325648414984
+    },
+    "R3_L3": {
+      "arm": "R3",
+      "tier": "L3",
+      "n": 800,
+      "sig_count": 800,
+      "sig_density": 1.0,
+      "std_zero": 0.0,
+      "mean_reward": 0.5869589355468748,
+      "mean_std": 0.42739446529577835,
+      "mean_cheat": 0.04859375,
+      "eff_sig": 0.42739446529577835,
+      "adv_dist": {
+        "pos": 3575,
+        "neg": 2651,
+        "zero": 174
+      },
+      "r_range": [
+        0.0,
+        1.0
+      ],
+      "r_mean": 0.5869589355468647,
+      "pass_obs": 0.31078125
+    },
+    "R3_L4": {
+      "arm": "R3",
+      "tier": "L4",
+      "n": 500,
+      "sig_count": 500,
+      "sig_density": 1.0,
+      "std_zero": 0.0,
+      "mean_reward": 0.4443739583333335,
+      "mean_std": 0.44439998241967765,
+      "mean_cheat": 0.04825,
+      "eff_sig": 0.44439998241967765,
+      "adv_dist": {
+        "pos": 1763,
+        "neg": 2117,
+        "zero": 120
+      },
+      "r_range": [
+        0.0,
+        1.0
+      ],
+      "r_mean": 0.4443739583333358,
+      "pass_obs": 0.2115
+    },
+    "R3_L5": {
+      "arm": "R3",
+      "tier": "L5",
+      "n": 200,
+      "sig_count": 192,
+      "sig_density": 0.96,
+      "std_zero": 0.040000000000000036,
+      "mean_reward": 0.25254287109375,
+      "mean_std": 0.36890638283962246,
+      "mean_cheat": 0.0525,
+      "eff_sig": 0.36890638283962246,
+      "adv_dist": {
+        "pos": 470,
+        "neg": 1036,
+        "zero": 94
+      },
+      "r_range": [
+        0.0,
+        1.0
+      ],
+      "r_mean": 0.2525428710937501,
+      "pass_obs": 0.104375
+    },
+    "R4_L1": {
+      "arm": "R4",
+      "tier": "L1",
+      "n": 1500,
+      "sig_count": 1427,
+      "sig_density": 0.9513333333333334,
+      "std_zero": 0.048666666666666636,
+      "mean_reward": 0.9108993055555556,
+      "mean_std": 0.18650152625787042,
+      "mean_cheat": 0.044583333333333336,
+      "eff_sig": 0.18650152625787042,
+      "adv_dist": {
+        "pos": 8897,
+        "neg": 2350,
+        "zero": 753
+      },
+      "r_range": [
+        0.0,
+        1.0
+      ],
+      "r_mean": 0.9108993055555613,
+      "pass_obs": 0.70725
+    },
+    "R4_L2": {
+      "arm": "R4",
+      "tier": "L2",
+      "n": 347,
+      "sig_count": 346,
+      "sig_density": 0.9971181556195965,
+      "std_zero": 0.0028818443804035088,
+      "mean_reward": 0.7546048721181563,
+      "mean_std": 0.3559750100125372,
+      "mean_cheat": 0.051152737752161385,
+      "eff_sig": 0.3559750100125372,
+      "adv_dist": {
+        "pos": 1879,
+        "neg": 821,
+        "zero": 76
+      },
+      "r_range": [
+        0.0,
+        1.0
+      ],
+      "r_mean": 0.7546048721181557,
+      "pass_obs": 0.4564121037463977
+    },
+    "R4_L3": {
+      "arm": "R4",
+      "tier": "L3",
+      "n": 800,
+      "sig_count": 800,
+      "sig_density": 1.0,
+      "std_zero": 0.0,
+      "mean_reward": 0.5990184082031242,
+      "mean_std": 0.42751184337453535,
+      "mean_cheat": 0.05546875,
+      "eff_sig": 0.42751184337453535,
+      "adv_dist": {
+        "pos": 3575,
+        "neg": 2689,
+        "zero": 136
+      },
+      "r_range": [
+        0.0,
+        1.0
+      ],
+      "r_mean": 0.599018408203131,
+      "pass_obs": 0.31171875
+    },
+    "R4_L4": {
+      "arm": "R4",
+      "tier": "L4",
+      "n": 500,
+      "sig_count": 500,
+      "sig_density": 1.0,
+      "std_zero": 0.0,
+      "mean_reward": 0.4504130729166665,
+      "mean_std": 0.4359478944285563,
+      "mean_cheat": 0.0455,
+      "eff_sig": 0.4359478944285563,
+      "adv_dist": {
+        "pos": 1759,
+        "neg": 2137,
+        "zero": 104
+      },
+      "r_range": [
+        0.0,
+        1.0
+      ],
+      "r_mean": 0.45041307291666144,
+      "pass_obs": 0.21075
+    },
+    "R4_L5": {
+      "arm": "R4",
+      "tier": "L5",
+      "n": 200,
+      "sig_count": 200,
+      "sig_density": 1.0,
+      "std_zero": 0.0,
+      "mean_reward": 0.2800549804687502,
+      "mean_std": 0.37995526095594206,
+      "mean_cheat": 0.05125,
+      "eff_sig": 0.37995526095594206,
+      "adv_dist": {
+        "pos": 509,
+        "neg": 1047,
+        "zero": 44
+      },
+      "r_range": [
+        0.0,
+        1.0
+      ],
+      "r_mean": 0.28005498046875166,
+      "pass_obs": 0.115
+    }
+  },
+  "learn": {
+    "R1_L1": {
+      "arm": "R1",
+      "tier": "L1",
+      "n_steps": 500,
+      "n_seeds": 5,
+      "init_pass": 0.71,
+      "final_pass_mean": 0.9047656454960791,
+      "final_pass_std": 6.047374681030781e-05,
+      "final_r_mean": 0.84375,
+      "improve_mean": 0.19476564549607905,
+      "improve_std": 6.047374681030781e-05,
+      "collapse_risk": 0.0328,
+      "early_sig": 0.9279999999999999,
+      "late_sig": 0.6449999999999999,
+      "sig_decay": 0.28300000000000003
+    },
+    "R1_L2": {
+      "arm": "R1",
+      "tier": "L2",
+      "n_steps": 500,
+      "n_seeds": 5,
+      "init_pass": 0.46,
+      "final_pass_mean": 0.7335387091785739,
+      "final_pass_std": 0.0,
+      "final_r_mean": 0.75,
+      "improve_mean": 0.27353870917857387,
+      "improve_std": 0.0,
+      "collapse_risk": 0.0,
+      "early_sig": 0.9885000000000002,
+      "late_sig": 0.9335000000000001,
+      "sig_decay": 0.05500000000000005
+    },
+    "R1_L3": {
+      "arm": "R1",
+      "tier": "L3",
+      "n_steps": 500,
+      "n_seeds": 5,
+      "init_pass": 0.31,
+      "final_pass_mean": 0.6075665878476184,
+      "final_pass_std": 0.0,
+      "final_r_mean": 0.60625,
+      "improve_mean": 0.2975665878476184,
+      "improve_std": 0.0,
+      "collapse_risk": 0.0,
+      "early_sig": 0.961,
+      "late_sig": 0.9845,
+      "sig_decay": -0.023500000000000076
+    },
+    "R2_L1": {
+      "arm": "R2",
+      "tier": "L1",
+      "n_steps": 500,
+      "n_seeds": 5,
+      "init_pass": 0.71,
+      "final_pass_mean": 0.9302049388001759,
+      "final_pass_std": 0.00017100135861126958,
+      "final_r_mean": 0.957421875,
+      "improve_mean": 0.22020493880017583,
+      "improve_std": 0.00017100135861126958,
+      "collapse_risk": 0.3444,
+      "early_sig": 0.6425,
+      "late_sig": 0.4325,
+      "sig_decay": 0.20999999999999996
+    },
+    "R2_L2": {
+      "arm": "R2",
+      "tier": "L2",
+      "n_steps": 500,
+      "n_seeds": 5,
+      "init_pass": 0.46,
+      "final_pass_mean": 0.8062013951276373,
+      "final_pass_std": 1.1102230246251565e-16,
+      "final_r_mean": 0.859765625,
+      "improve_mean": 0.3462013951276374,
+      "improve_std": 0.0,
+      "collapse_risk": 0.0076,
+      "early_sig": 0.9545,
+      "late_sig": 0.738,
+      "sig_decay": 0.21650000000000003
+    },
+    "R2_L3": {
+      "arm": "R2",
+      "tier": "L3",
+      "n_steps": 500,
+      "n_seeds": 5,
+      "init_pass": 0.31,
+      "final_pass_mean": 0.6995928582238102,
+      "final_pass_std": 0.0,
+      "final_r_mean": 0.7818359375,
+      "improve_mean": 0.38959285822381023,
+      "improve_std": 0.0,
+      "collapse_risk": 0.0,
+      "early_sig": 0.9975000000000002,
+      "late_sig": 0.9015000000000001,
+      "sig_decay": 0.09600000000000009
+    },
+    "R3_L1": {
+      "arm": "R3",
+      "tier": "L1",
+      "n_steps": 500,
+      "n_seeds": 5,
+      "init_pass": 0.71,
+      "final_pass_mean": 0.9258640086975267,
+      "final_pass_std": 1.1102230246251565e-16,
+      "final_r_mean": 0.9258333333333333,
+      "improve_mean": 0.2158640086975269,
+      "improve_std": 2.7755575615628914e-17,
+      "collapse_risk": 0.0,
+      "early_sig": 1.0,
+      "late_sig": 1.0,
+      "sig_decay": 0.0
+    },
+    "R3_L2": {
+      "arm": "R3",
+      "tier": "L2",
+      "n_steps": 500,
+      "n_seeds": 5,
+      "init_pass": 0.46,
+      "final_pass_mean": 0.7907150699052654,
+      "final_pass_std": 0.0,
+      "final_r_mean": 0.8608281249999999,
+      "improve_mean": 0.3307150699052654,
+      "improve_std": 0.0,
+      "collapse_risk": 0.0,
+      "early_sig": 1.0,
+      "late_sig": 1.0,
+      "sig_decay": 0.0
+    },
+    "R3_L3": {
+      "arm": "R3",
+      "tier": "L3",
+      "n_steps": 500,
+      "n_seeds": 5,
+      "init_pass": 0.31,
+      "final_pass_mean": 0.6792072425160727,
+      "final_pass_std": 0.0,
+      "final_r_mean": 0.7678203124999999,
+      "improve_mean": 0.3692072425160727,
+      "improve_std": 0.0,
+      "collapse_risk": 0.0,
+      "early_sig": 1.0,
+      "late_sig": 1.0,
+      "sig_decay": 0.0
+    },
+    "R4_L1": {
+      "arm": "R4",
+      "tier": "L1",
+      "n_steps": 500,
+      "n_seeds": 5,
+      "init_pass": 0.71,
+      "final_pass_mean": 0.9341218579425876,
+      "final_pass_std": 1.1102230246251565e-16,
+      "final_r_mean": 0.9496614583333335,
+      "improve_mean": 0.22412185794258752,
+      "improve_std": 2.7755575615628914e-17,
+      "collapse_risk": 0.0,
+      "early_sig": 0.9605,
+      "late_sig": 0.9349999999999999,
+      "sig_decay": 0.025500000000000078
+    },
+    "R4_L2": {
+      "arm": "R4",
+      "tier": "L2",
+      "n_steps": 500,
+      "n_seeds": 5,
+      "init_pass": 0.46,
+      "final_pass_mean": 0.8201847939385305,
+      "final_pass_std": 1.1102230246251565e-16,
+      "final_r_mean": 0.8608437500000001,
+      "improve_mean": 0.36018479393853037,
+      "improve_std": 0.0,
+      "collapse_risk": 0.0,
+      "early_sig": 0.998,
+      "late_sig": 0.991,
+      "sig_decay": 0.007000000000000006
+    },
+    "R4_L3": {
+      "arm": "R4",
+      "tier": "L3",
+      "n_steps": 500,
+      "n_seeds": 5,
+      "init_pass": 0.31,
+      "final_pass_mean": 0.718446656699563,
+      "final_pass_std": 0.0,
+      "final_r_mean": 0.790390625,
+      "improve_mean": 0.408446656699563,
+      "improve_std": 0.0,
+      "collapse_risk": 0.0,
+      "early_sig": 1.0,
+      "late_sig": 0.998,
+      "sig_decay": 0.0020000000000000018
+    }
+  },
+  "strategy": {
+    "phases": [
+      {
+        "phase": "Phase1 Smoke(0-10)",
+        "arm": "R1",
+        "tiers": "L1 only(50 easiest)",
+        "rationale": "Binary for pipeline validation. Unambiguous signal.",
+        "go": "avg_r>0,no crash,cheat<5%"
+      },
+      {
+        "phase": "Phase2 Foundation(10-200)",
+        "arm": "R3",
+        "tiers": "L1+L2(1847)",
+        "rationale": "R3 tool penalty has highest signal density(99.8%), almost eliminates std=0",
+        "go": "held-out Pass@1>=+3pp"
+      },
+      {
+        "phase": "Phase3 Refinement(200-500)",
+        "arm": "R4",
+        "tiers": "L1+L2+L3(187 signal)",
+        "rationale": "API legality bonus shapes tool quality after base competence.",
+        "go": "held-out>=M1 or plateau>50"
+      },
+      {
+        "phase": "Phase4 Expansion(500+)",
+        "arm": "R2",
+        "tiers": "Re-screened L3+L4",
+        "rationale": "Return to R2 for expansion. R4 bonus may hack at scale.",
+        "go": "per-tier,stop if cheat>5%"
+      }
+    ],
+    "transition_rules": [
+      {
+        "trigger": "std=0>60% for 3 steps",
+        "action": "R1->R2"
+      },
+      {
+        "trigger": "cheat>5%",
+        "action": "R4->R3"
+      },
+      {
+        "trigger": "cheat>10%",
+        "action": "R3->R2"
+      },
+      {
+        "trigger": "entropy<0.3",
+        "action": "G=8->12"
+      },
+      {
+        "trigger": "plateau>50 steps",
+        "action": "advance phase or re-screen"
+      }
+    ],
+    "tier_recs": {
+      "L1": {
+        "best": "R1",
+        "reason": "High pass(71%),binary sufficient"
+      },
+      "L2": {
+        "best": "R2",
+        "reason": "Moderate(46%),partial fills gap"
+      },
+      "L3": {
+        "best": "R2",
+        "reason": "Low(31%),partial essential"
+      },
+      "L4": {
+        "best": "R4",
+        "reason": "Very low(21%),need richest signal"
+      },
+      "L5": {
+        "best": "R2",
+        "reason": "Extreme(11%),R4 may hack"
+      }
+    }
+  },
+  "vision": {
+    "vision": {
+      "base": 0.092,
+      "std0": 0.787,
+      "sig": 0.213,
+      "outcome": "GRPO collapsed, no learning"
+    },
+    "baize_r1": {
+      "base": 0.36,
+      "std0": 0.269,
+      "sig": 0.731,
+      "outcome": "3.4x signal improvement"
+    },
+    "baize_r2": {
+      "base": 0.36,
+      "std0": 0.162,
+      "sig": 0.838,
+      "outcome": "39.8% reduction in zero-gradient"
+    },
+    "baize_r4": {
+      "base": 0.36,
+      "std0": 0.15,
+      "sig": 0.85,
+      "outcome": "Marginal gain, new hack risk"
+    },
+    "insight": "Vision failure(78.7% std=0) was base rate problem(9.2%), not reward design. BaiZe 36% base changes signal landscape. R2 is biggest improvement over R1. R3/R4 marginal gain but new hacking risks."
+  }
+}
