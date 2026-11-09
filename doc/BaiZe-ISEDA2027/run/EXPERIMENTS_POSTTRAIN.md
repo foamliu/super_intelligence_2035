@@ -14463,3 +14463,111 @@ GPU 显存 90%/95% | 碎片 30%/50% | KV cache 85%/95% | grad_norm 5.0/10.0 | �
 - `baize_posttrain_r138_gpu_memory_budget.py`（376 行，py_compile ✅ + run ✅）
 - `r138_gpu_memory_budget_report.json`（52.2 KB）
 
+
+## §R139 RL Training Resilience Framework — Checkpoint Strategy, Collapse Detection & Recovery Protocols（R1/R3 交叉 · 零 GPU · 2026-11-10 wake186）
+
+> **动机**：R138 解决了 GPU 显存 OOM 预防，但 RL 训练**运行中**的故障检测、检查点管理、崩溃恢复尚无系统设计。本轮补齐这一关键缺口。
+> **构建于**：R132（KL 调度）→ C2 检测；R135（reward hacking）→ C1 检测；R138（GPU 监控阈值）→ 系统指标复用。
+
+### 1. 检查点策略
+
+| 模式 | 单次大小 | 说明 |
+|:--|--:|:--|
+| Full FT | **22.35 GB** | model 7.45 GiB + optimizer(Adam) 14.9 GiB + scheduler/RNG/meta 0.002 GiB |
+| LoRA (r=64) | **0.45 GB** | adapter 0.149 GiB + optimizer 0.30 GiB — 50× 更小 |
+
+**调度（2000 步）**：
+- Phase 1（step 10-100）：每 25 步，保留最近 3 → 调试早期崩溃
+- Phase 2（step 150-1550）：每 50 步，保留最近 5 → 稳定训练期
+- Phase 3（step 1550-2000）：每 25 步，保留最近 5 → 精细最佳 ckpt
+- 特殊：`best_reward`（仅 model 7.45GB，永久保留）+ `pre_collapse`（完整 22.35GB，永久保留）
+
+**存储预算**：
+| 模式 | 峰值存储 | NFS 占比 |
+|:--|--:|--:|
+| Full FT | 320.4 GB | 1.88% (of 17TB) |
+| LoRA | 6.4 GB | 0.038% |
+
+→ **存储非瓶颈**（R136 已确认 /nas_data 20TB 可用 85%）。
+
+### 2. 崩溃检测（6 模式）
+
+| ID | 名称 | 检测指标 | 警告阈值 | 临界阈值 | 级别 |
+|:--|:--|:--|:--|:--|:--|
+| C1 | Reward Hacking 升级 | cheat_rate + reward↑但 exec_success↓ | cheat>5% 或分歧 | cheat>10% 或分歧>5pp | CRITICAL |
+| C2 | KL 散度爆炸 | kl_div + entropy | kl>0.15 或 entropy<0.3×init | kl>0.30 或 entropy<0.1×init 或单调增30步 | CRITICAL |
+| C3 | 策略熵坍塌 | entropy + rollout_diversity | entropy<0.5×init 或 diversity<0.3 | entropy<0.1×init 或 diversity<0.1持续20步 | WARNING |
+| C4 | Loss 爆炸/NaN | loss + grad_norm + NaN | loss>5×rolling 或 grad>5.0 | loss=NaN 或 grad>10.0 | **FATAL** |
+| C5 | 奖励分布漂移 | reward_mean + reward_std | 偏移>2σ/50步 或 std→0 | std<0.01 持续30步 或 偏移>3σ/30步 | WARNING |
+| C6 | 梯度停滞 | grad_norm + reward_delta | grad<0.01/50步 或 Δr<0.001/100步 | grad<0.001/100步 且 Δr<0.0001 | WARNING |
+
+### 3. 恢复协议
+
+| 模式 | 级别 | 自动回滚 | 关键动作 | 恢复时间 |
+|:--|:--|:--|:--|:--|
+| C1 | WARNING | ❌ | 增加反作弊频率 + 记录 R0++ 分解 | 监控 |
+| C1 | CRITICAL | ✅ | ABORT + 回滚 best_reward + KL×2 + 反作弊阈值 5%→2% | 2-4h |
+| C2 | WARNING | ❌ | KL coef×1.5 + LR×0.5 | <30min |
+| C2 | CRITICAL | ✅ | 回滚 + KL reset 0.04 + LR 50% + 跳过当前 batch | 1-2h |
+| C3 | WARNING | ❌ | entropy_coef×2 + 温度 0.7→0.9 + 熵奖励 | <30min |
+| C4 | **FATAL** | ✅ | **立即 HALT** + 不保存损坏 ckpt + 回滚 + grad clip 0.5 + LR 25% | 1-3h |
+| C5 | WARNING | ❌ | 检查课程切换 + 增大 rollout group 8→16 | <1h |
+| C6 | WARNING | ❌ | LR×1.5 + 检查调度器衰减 + 可能 warm restart | <1h |
+
+### 4. 仿真验证
+
+| 场景 | 崩溃注入步 | 首次检测步 | 检测延迟 | 结果 |
+|:--|--:|--:|--:|:--|
+| healthy（基线） | 无 | 无 | — | ✅ 0 false positives |
+| kl_explosion | 250 | 272 | 22 步 | ✅ WARNING→CRITICAL, HALTED |
+| entropy_collapse | 200 | 206 | 6 步 | ✅ WARNING, continued |
+| loss_nan | 300 | 303 | 3 步 | ✅ FATAL, HALTED |
+| reward_hacking | 150 | 162 | 12 步 | ✅ WARNING→CRITICAL, HALTED |
+| gradient_stagnation | 200 | 213 | 13 步 | ✅ WARNING, continued |
+
+**结论**：所有 5 种崩溃类型均在 3-22 步内被检测到；健康基线 0 假阳性。
+
+### 5. 恢复协议
+
+- **verl 恢复机制**：`--trainer.resume_from_checkpoint <dir>`
+- **恢复内容**：model weights + optimizer state + LR scheduler + RNG states + training metadata
+- **不恢复**：SGLang server state（需重启）、rollout cache（需重新生成）、Ray cluster（需重新初始化）
+- **恢复前检查（7 项）**：ckpt 完整性 / 模型架构 / 训练配置 / GPU 可用 / SGLang 加载 / 沙盒连通 / 日志
+- **恢复后验证（5 项）**：5 次 eval rollout 奖励匹配 / KL<0.10 / entropy>0.3×init / grad_norm∈[0.01,5.0] / 任一失败则不恢复
+- **总恢复开销**：11-22 min（ckpt load 2-5min + SGLang restart 3-5min + Ray reinit 1-2min + verification 5-10min）
+
+### 6. 监控仪表盘
+
+**18 项指标**（3 类）：
+- 训练核心（7）：reward_mean/std, entropy, kl, grad_norm, loss, learning_rate
+- RL 特定（5）：cheat_rate, rollout_diversity, exec_success_rate, rollout_throughput, sandbox_latency_p50/p99
+- 系统资源（6）：gpu_mem_used/fragmentation, kv_cache_usage, grad_norm_clip_freq, advantage_signal_rate
+
+**告警机制**：CPU-only watchdog 进程（非 GPU），10s 轮询，评估阈值，写入 alerts log + FATAL 时 touch HALT 文件。
+**可视化**：Matplotlib 离线 post-run（无实时仪表盘，避免 GPU 争用）。
+
+### 7. verl 集成
+
+| 组件 | 方式 |
+|:--|:--|
+| 检查点保存 | `trainer.save_interval=50`（main）/ `5`（smoke）+ best_reward + pre_collapse |
+| 指标采集 | verl callback `on_step_end/on_checkpoint/on_rollout_batch_end/on_train_batch_end` |
+| 告警监控 | `baize_posttrain_alert_watchdog.py`（CPU 后台进程，10s 轮询） |
+| 自动回滚 | `baize_posttrain_rollback.sh`（kill verl + restart with --resume-ckpt） |
+
+### 8. 关键发现
+
+1. **F1**：Full FT ckpt=22.35GB vs LoRA=0.45GB → LoRA 50× 更小，支持激进检查点频率
+2. **F2**：峰值存储 Full FT=320GB=1.88% NFS → 存储非瓶颈
+3. **F3**：6 种崩溃模式覆盖 RL 训练主要故障路径（reward hacking / KL / entropy / NaN / drift / stagnation）
+4. **F4**：仿真验证全部 5 种崩溃在 3-22 步内检出，0 假阳性
+5. **F5**：FATAL(C4)=立即 halt+回滚；CRITICAL(C1/C2)=回滚；WARNING(C3/C5/C6)=在飞调整
+6. **F6**：恢复开销 11-22min，7+5 项检查确保安全重启
+7. **F7**：18 项监控指标，CPU-only watchdog 不争用 GPU
+8. **F8**：LoRA 模式下每 10 步检查点 = 4.5GB/h → smoke test 阶段推荐
+
+### 产物
+
+- `baize_posttrain_r139_training_resilience.py`（~400 行，py_compile ✅ + run ✅）
+- `r139_training_resilience_report.json`（124.4 KB）
+

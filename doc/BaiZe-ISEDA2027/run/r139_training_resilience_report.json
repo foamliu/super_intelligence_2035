@@ -1,0 +1,4812 @@
+{
+  "round": 139,
+  "title": "RL Training Resilience Framework",
+  "date": "2026-11-10",
+  "wake": 186,
+  "gpu_status": "0/8 free (SGLang Qwen3.8-27B, 0% util)",
+  "zero_gpu": true,
+  "builds_on": [
+    "R132",
+    "R135",
+    "R138"
+  ],
+  "checkpoint_strategy": {
+    "full_ft_size": {
+      "model_weights_gb": 7.451,
+      "optimizer_state_gb": 14.901,
+      "scheduler_rng_meta_gb": 0.002,
+      "total_gb": 22.354
+    },
+    "lora_size": {
+      "adapter_weights_gb": 0.149,
+      "optimizer_state_gb": 0.298,
+      "total_gb": 0.449
+    },
+    "schedule_count": 54,
+    "schedule": [
+      {
+        "name": "early_step10",
+        "trigger": "step_10",
+        "retention": "keep_latest_3"
+      },
+      {
+        "name": "early_step25",
+        "trigger": "step_25",
+        "retention": "keep_latest_3"
+      },
+      {
+        "name": "early_step50",
+        "trigger": "step_50",
+        "retention": "keep_latest_3"
+      },
+      {
+        "name": "early_step75",
+        "trigger": "step_75",
+        "retention": "keep_latest_3"
+      },
+      {
+        "name": "early_step100",
+        "trigger": "step_100",
+        "retention": "keep_latest_3"
+      },
+      {
+        "name": "main_step150",
+        "trigger": "step_150",
+        "retention": "keep_latest_5"
+      },
+      {
+        "name": "main_step200",
+        "trigger": "step_200",
+        "retention": "keep_latest_5"
+      },
+      {
+        "name": "main_step250",
+        "trigger": "step_250",
+        "retention": "keep_latest_5"
+      },
+      {
+        "name": "main_step300",
+        "trigger": "step_300",
+        "retention": "keep_latest_5"
+      },
+      {
+        "name": "main_step350",
+        "trigger": "step_350",
+        "retention": "keep_latest_5"
+      },
+      {
+        "name": "main_step400",
+        "trigger": "step_400",
+        "retention": "keep_latest_5"
+      },
+      {
+        "name": "main_step450",
+        "trigger": "step_450",
+        "retention": "keep_latest_5"
+      },
+      {
+        "name": "main_step500",
+        "trigger": "step_500",
+        "retention": "keep_latest_5"
+      },
+      {
+        "name": "main_step550",
+        "trigger": "step_550",
+        "retention": "keep_latest_5"
+      },
+      {
+        "name": "main_step600",
+        "trigger": "step_600",
+        "retention": "keep_latest_5"
+      },
+      {
+        "name": "main_step650",
+        "trigger": "step_650",
+        "retention": "keep_latest_5"
+      },
+      {
+        "name": "main_step700",
+        "trigger": "step_700",
+        "retention": "keep_latest_5"
+      },
+      {
+        "name": "main_step750",
+        "trigger": "step_750",
+        "retention": "keep_latest_5"
+      },
+      {
+        "name": "main_step800",
+        "trigger": "step_800",
+        "retention": "keep_latest_5"
+      },
+      {
+        "name": "main_step850",
+        "trigger": "step_850",
+        "retention": "keep_latest_5"
+      },
+      {
+        "name": "main_step900",
+        "trigger": "step_900",
+        "retention": "keep_latest_5"
+      },
+      {
+        "name": "main_step950",
+        "trigger": "step_950",
+        "retention": "keep_latest_5"
+      },
+      {
+        "name": "main_step1000",
+        "trigger": "step_1000",
+        "retention": "keep_latest_5"
+      },
+      {
+        "name": "main_step1050",
+        "trigger": "step_1050",
+        "retention": "keep_latest_5"
+      },
+      {
+        "name": "main_step1100",
+        "trigger": "step_1100",
+        "retention": "keep_latest_5"
+      },
+      {
+        "name": "main_step1150",
+        "trigger": "step_1150",
+        "retention": "keep_latest_5"
+      },
+      {
+        "name": "main_step1200",
+        "trigger": "step_1200",
+        "retention": "keep_latest_5"
+      },
+      {
+        "name": "main_step1250",
+        "trigger": "step_1250",
+        "retention": "keep_latest_5"
+      },
+      {
+        "name": "main_step1300",
+        "trigger": "step_1300",
+        "retention": "keep_latest_5"
+      },
+      {
+        "name": "main_step1350",
+        "trigger": "step_1350",
+        "retention": "keep_latest_5"
+      },
+      {
+        "name": "main_step1400",
+        "trigger": "step_1400",
+        "retention": "keep_latest_5"
+      },
+      {
+        "name": "main_step1450",
+        "trigger": "step_1450",
+        "retention": "keep_latest_5"
+      },
+      {
+        "name": "main_step1500",
+        "trigger": "step_1500",
+        "retention": "keep_latest_5"
+      },
+      {
+        "name": "late_step1550",
+        "trigger": "step_1550",
+        "retention": "keep_latest_5"
+      },
+      {
+        "name": "late_step1575",
+        "trigger": "step_1575",
+        "retention": "keep_latest_5"
+      },
+      {
+        "name": "late_step1600",
+        "trigger": "step_1600",
+        "retention": "keep_latest_5"
+      },
+      {
+        "name": "late_step1625",
+        "trigger": "step_1625",
+        "retention": "keep_latest_5"
+      },
+      {
+        "name": "late_step1650",
+        "trigger": "step_1650",
+        "retention": "keep_latest_5"
+      },
+      {
+        "name": "late_step1675",
+        "trigger": "step_1675",
+        "retention": "keep_latest_5"
+      },
+      {
+        "name": "late_step1700",
+        "trigger": "step_1700",
+        "retention": "keep_latest_5"
+      },
+      {
+        "name": "late_step1725",
+        "trigger": "step_1725",
+        "retention": "keep_latest_5"
+      },
+      {
+        "name": "late_step1750",
+        "trigger": "step_1750",
+        "retention": "keep_latest_5"
+      },
+      {
+        "name": "late_step1775",
+        "trigger": "step_1775",
+        "retention": "keep_latest_5"
+      },
+      {
+        "name": "late_step1800",
+        "trigger": "step_1800",
+        "retention": "keep_latest_5"
+      },
+      {
+        "name": "late_step1825",
+        "trigger": "step_1825",
+        "retention": "keep_latest_5"
+      },
+      {
+        "name": "late_step1850",
+        "trigger": "step_1850",
+        "retention": "keep_latest_5"
+      },
+      {
+        "name": "late_step1875",
+        "trigger": "step_1875",
+        "retention": "keep_latest_5"
+      },
+      {
+        "name": "late_step1900",
+        "trigger": "step_1900",
+        "retention": "keep_latest_5"
+      },
+      {
+        "name": "late_step1925",
+        "trigger": "step_1925",
+        "retention": "keep_latest_5"
+      },
+      {
+        "name": "late_step1950",
+        "trigger": "step_1950",
+        "retention": "keep_latest_5"
+      },
+      {
+        "name": "late_step1975",
+        "trigger": "step_1975",
+        "retention": "keep_latest_5"
+      },
+      {
+        "name": "late_step2000",
+        "trigger": "step_2000",
+        "retention": "keep_latest_5"
+      },
+      {
+        "name": "best_reward",
+        "trigger": "reward_improvement",
+        "retention": "permanent"
+      },
+      {
+        "name": "pre_collapse",
+        "trigger": "collapse_detected",
+        "retention": "permanent"
+      }
+    ],
+    "storage_full_ft": {
+      "ft_mode": "full",
+      "per_checkpoint_gb": 22.35,
+      "rotating_storage_gb": 290.6,
+      "permanent_storage_gb": 29.8,
+      "total_peak_storage_gb": 320.41,
+      "nfs_available_gb": 17000.0,
+      "storage_fraction_pct": 1.88475
+    },
+    "storage_lora": {
+      "ft_mode": "lora",
+      "per_checkpoint_gb": 0.45,
+      "rotating_storage_gb": 5.84,
+      "permanent_storage_gb": 0.6,
+      "total_peak_storage_gb": 6.43,
+      "nfs_available_gb": 17000.0,
+      "storage_fraction_pct": 0.03785
+    }
+  },
+  "collapse_modes": [
+    {
+      "mode_id": "C1",
+      "name": "Reward Hacking Escalation",
+      "description": "Model exploits reward loopholes; reward up but quality down",
+      "detection_metric": "cheat_rate + reward-vs-exec_success divergence",
+      "warning_threshold": "cheat_rate>5% OR reward UP but exec_success DOWN over 20 steps",
+      "critical_threshold": "cheat_rate>10% OR divergence>5pp over 50 steps",
+      "alert_level": "CRITICAL",
+      "detection_window": "20-50 steps",
+      "false_positive_risk": "LOW (R135 F1=1.0)",
+      "related": "R135, R133"
+    },
+    {
+      "mode_id": "C2",
+      "name": "KL Divergence Explosion",
+      "description": "Policy drifts too far from reference; KL penalty insufficient",
+      "detection_metric": "kl_divergence + policy_entropy",
+      "warning_threshold": "kl>0.15 OR entropy<0.3x_initial",
+      "critical_threshold": "kl>0.30 OR entropy<0.1x_initial OR kl monotonic increase 30 steps",
+      "alert_level": "CRITICAL",
+      "detection_window": "10-30 steps",
+      "false_positive_risk": "MEDIUM (require monotonic for critical)",
+      "related": "R132"
+    },
+    {
+      "mode_id": "C3",
+      "name": "Policy Entropy Collapse",
+      "description": "Policy becomes deterministic; GRPO advantage=0; stuck in local optimum",
+      "detection_metric": "policy_entropy + rollout_diversity",
+      "warning_threshold": "entropy<0.5x_initial OR diversity<0.3",
+      "critical_threshold": "entropy<0.1x_initial OR diversity<0.1 for 20 steps",
+      "alert_level": "WARNING",
+      "detection_window": "20 steps",
+      "false_positive_risk": "LOW (diversity metric reduces FP)",
+      "related": "R119, R131"
+    },
+    {
+      "mode_id": "C4",
+      "name": "Loss Spike / NaN",
+      "description": "Gradient explosion or numerical instability; NaN propagates",
+      "detection_metric": "loss_value + grad_norm + NaN check",
+      "warning_threshold": "loss>5x_rolling_mean OR grad_norm>5.0",
+      "critical_threshold": "loss=NaN OR grad_norm>10.0 OR loss>10x_rolling_mean",
+      "alert_level": "FATAL",
+      "detection_window": "1-3 steps",
+      "false_positive_risk": "VERY LOW (NaN unambiguous)",
+      "related": "R138 (grad_norm 5/10), R132"
+    },
+    {
+      "mode_id": "C5",
+      "name": "Reward Distribution Drift",
+      "description": "Reward mean shifts without quality improvement; or reward_std->0",
+      "detection_metric": "reward_mean + reward_std + skewness",
+      "warning_threshold": "reward_mean shifts>2sigma in 50 steps OR reward_std->0",
+      "critical_threshold": "reward_std<0.01 for 30 steps OR shift>3sigma in 30 steps",
+      "alert_level": "WARNING",
+      "detection_window": "30-50 steps",
+      "false_positive_risk": "MEDIUM (curriculum changes can shift)",
+      "related": "R130, R129, R118"
+    },
+    {
+      "mode_id": "C6",
+      "name": "Gradient Stagnation",
+      "description": "Gradients vanish; model stops learning; LR too low or init too strong",
+      "detection_metric": "grad_norm + reward_delta",
+      "warning_threshold": "grad_norm<0.01 for 50 steps OR reward_delta<0.001 for 100 steps",
+      "critical_threshold": "grad_norm<0.001 for 100 steps AND reward_delta<0.0001",
+      "alert_level": "WARNING",
+      "detection_window": "50-100 steps",
+      "false_positive_risk": "MEDIUM (confuse with convergence)",
+      "related": "R131, R119"
+    }
+  ],
+  "recovery_protocols": [
+    {
+      "collapse_mode": "C1",
+      "level": "WARNING",
+      "actions": [
+        "Log trajectories for inspection",
+        "Increase anti-cheat freq 10->5 steps",
+        "Record R0++ decomposition"
+      ],
+      "auto_rollback": false,
+      "notify": true,
+      "recovery_time": "N/A (monitoring)",
+      "success_criteria": "cheat_rate<5% within 50 steps"
+    },
+    {
+      "collapse_mode": "C1",
+      "level": "CRITICAL",
+      "actions": [
+        "ABORT training",
+        "Save pre_collapse ckpt",
+        "Log last 50 steps trajectories",
+        "Rollback to best_reward",
+        "Increase KL coef x2",
+        "Restart with anti-cheat threshold 5%->2%"
+      ],
+      "auto_rollback": true,
+      "notify": true,
+      "recovery_time": "2-4h",
+      "success_criteria": "cheat_rate<2% for 100 steps"
+    },
+    {
+      "collapse_mode": "C2",
+      "level": "WARNING",
+      "actions": [
+        "Increase KL coef x1.5",
+        "Reduce LR x0.5",
+        "Log KL trajectory"
+      ],
+      "auto_rollback": false,
+      "notify": true,
+      "recovery_time": "<30min",
+      "success_criteria": "KL<0.10 within 20 steps"
+    },
+    {
+      "collapse_mode": "C2",
+      "level": "CRITICAL",
+      "actions": [
+        "Rollback to last good ckpt (KL<0.10)",
+        "Reset KL coef to 0.04",
+        "Reduce LR to 50%",
+        "Skip current batch"
+      ],
+      "auto_rollback": true,
+      "notify": true,
+      "recovery_time": "1-2h",
+      "success_criteria": "KL<0.05 for 30 steps, entropy>0.3x_initial"
+    },
+    {
+      "collapse_mode": "C3",
+      "level": "WARNING",
+      "actions": [
+        "Increase entropy coef x2 (max 0.05)",
+        "Increase temperature 0.7->0.9",
+        "Add entropy bonus to reward",
+        "Log diversity metrics"
+      ],
+      "auto_rollback": false,
+      "notify": true,
+      "recovery_time": "<30min",
+      "success_criteria": "entropy>0.3x_initial within 30 steps"
+    },
+    {
+      "collapse_mode": "C4",
+      "level": "FATAL",
+      "actions": [
+        "IMMEDIATE HALT",
+        "Do NOT save corrupted ckpt",
+        "Rollback to last good",
+        "Enable grad clipping max_norm=0.5",
+        "Reduce LR to 25%",
+        "Check for data issues",
+        "Resume with safer settings"
+      ],
+      "auto_rollback": true,
+      "notify": true,
+      "recovery_time": "1-3h",
+      "success_criteria": "No NaN for 50 steps, loss within 2x rolling mean"
+    },
+    {
+      "collapse_mode": "C5",
+      "level": "WARNING",
+      "actions": [
+        "Check if curriculum phase changed",
+        "Log reward histogram",
+        "Increase rollout group 8->16",
+        "Check R0++ for bugs"
+      ],
+      "auto_rollback": false,
+      "notify": true,
+      "recovery_time": "<1h",
+      "success_criteria": "reward_std>0.05 within 50 steps"
+    },
+    {
+      "collapse_mode": "C6",
+      "level": "WARNING",
+      "actions": [
+        "Increase LR x1.5 (max 1e-6)",
+        "Check LR scheduler decay",
+        "Consider warm restart if near end",
+        "Log per-layer grad stats"
+      ],
+      "auto_rollback": false,
+      "notify": true,
+      "recovery_time": "<1h",
+      "success_criteria": "grad_norm>0.05 AND reward_delta>0.001 for 30 steps"
+    }
+  ],
+  "simulation_results": {
+    "healthy": {
+      "collapse_type": "none",
+      "collapse_step": 999,
+      "total_steps": 500,
+      "detections": [],
+      "detection_count": 0,
+      "first_detection_step": null,
+      "detection_delay": null,
+      "halted": false
+    },
+    "kl_explosion": {
+      "collapse_type": "kl_explosion",
+      "collapse_step": 250,
+      "total_steps": 276,
+      "detections": [
+        {
+          "step": 272,
+          "mode": "C2",
+          "level": "WARNING",
+          "metric": "kl=0.2297>0.15",
+          "action": "KL coef x1.5"
+        },
+        {
+          "step": 276,
+          "mode": "C2",
+          "level": "CRITICAL",
+          "metric": "kl=0.3015>0.30 monotonic",
+          "action": "rollback+KL reset"
+        }
+      ],
+      "detection_count": 2,
+      "first_detection_step": 272,
+      "detection_delay": 22,
+      "halted": true
+    },
+    "entropy_collapse": {
+      "collapse_type": "entropy_collapse",
+      "collapse_step": 200,
+      "total_steps": 500,
+      "detections": [
+        {
+          "step": 206,
+          "mode": "C3",
+          "level": "WARNING",
+          "metric": "entropy=0.7000<0.5x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 217,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.1500<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 218,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.1000<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 219,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0500<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 220,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 221,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 222,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 223,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 224,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 225,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 226,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 227,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 228,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 229,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 230,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 231,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 232,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 233,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 234,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 235,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 236,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 237,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 238,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 239,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 240,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 241,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 242,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 243,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 244,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 245,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 246,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 247,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 248,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 249,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 250,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 251,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 252,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 253,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 254,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 255,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 256,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 257,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 258,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 259,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 260,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 261,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 262,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 263,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 264,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 265,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 266,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 267,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 268,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 269,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 270,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 271,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 272,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 273,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 274,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 275,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 276,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 277,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 278,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 279,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 280,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 281,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 282,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 283,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 284,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 285,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 286,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 287,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 288,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 289,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 290,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 291,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 292,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 293,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 294,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 295,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 296,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 297,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 298,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 299,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 300,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 301,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 302,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 303,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 304,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 305,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 306,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 307,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 308,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 309,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 310,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 311,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 312,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 313,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 314,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 315,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 316,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 317,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 318,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 319,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 320,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 321,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 322,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 323,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 324,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 325,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 326,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 327,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 328,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 329,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 330,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 331,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 332,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 333,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 334,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 335,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 336,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 337,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 338,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 339,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 340,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 341,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 342,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 343,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 344,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 345,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 346,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 347,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 348,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 349,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 350,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 351,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 352,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 353,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 354,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 355,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 356,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 357,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 358,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 359,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 360,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 361,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 362,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 363,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 364,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 365,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 366,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 367,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 368,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 369,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 370,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 371,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 372,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 373,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 374,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 375,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 376,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 377,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 378,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 379,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 380,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 381,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 382,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 383,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 384,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 385,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 386,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 387,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 388,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 389,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 390,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 391,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 392,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 393,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 394,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 395,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 396,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 397,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 398,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 399,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 400,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 401,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 402,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 403,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 404,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 405,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 406,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 407,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 408,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 409,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 410,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 411,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 412,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 413,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 414,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 415,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 416,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 417,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 418,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 419,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 420,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 421,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 422,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 423,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 424,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 425,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 426,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 427,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 428,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 429,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 430,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 431,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 432,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 433,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 434,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 435,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 436,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 437,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 438,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 439,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 440,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 441,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 442,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 443,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 444,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 445,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 446,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 447,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 448,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 449,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 450,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 451,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 452,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 453,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 454,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 455,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 456,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 457,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 458,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 459,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 460,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 461,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 462,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 463,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 464,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 465,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 466,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 467,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 468,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 469,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 470,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 471,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 472,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 473,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 474,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 475,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 476,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 477,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 478,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 479,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 480,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 481,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 482,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 483,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 484,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 485,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 486,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 487,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 488,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 489,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 490,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 491,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 492,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 493,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 494,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 495,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 496,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 497,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 498,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 499,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        },
+        {
+          "step": 500,
+          "mode": "C3",
+          "level": "CRITICAL",
+          "metric": "entropy=0.0100<0.1x",
+          "action": "entropy_coef x2"
+        }
+      ],
+      "detection_count": 285,
+      "first_detection_step": 206,
+      "detection_delay": 6,
+      "halted": false
+    },
+    "loss_nan": {
+      "collapse_type": "loss_nan",
+      "collapse_step": 300,
+      "total_steps": 303,
+      "detections": [
+        {
+          "step": 303,
+          "mode": "C4",
+          "level": "FATAL",
+          "metric": "loss=NaN",
+          "action": "HALT+rollback"
+        }
+      ],
+      "detection_count": 1,
+      "first_detection_step": 303,
+      "detection_delay": 3,
+      "halted": true
+    },
+    "reward_hacking": {
+      "collapse_type": "reward_hacking",
+      "collapse_step": 150,
+      "total_steps": 169,
+      "detections": [
+        {
+          "step": 162,
+          "mode": "C1",
+          "level": "WARNING",
+          "metric": "cheat=0.0700>5%, exec declining",
+          "action": "increase anti-cheat"
+        },
+        {
+          "step": 169,
+          "mode": "C1",
+          "level": "CRITICAL",
+          "metric": "cheat=0.1050>10%, exec declining",
+          "action": "ABORT+rollback"
+        }
+      ],
+      "detection_count": 2,
+      "first_detection_step": 162,
+      "detection_delay": 12,
+      "halted": true
+    },
+    "gradient_stagnation": {
+      "collapse_type": "gradient_stagnation",
+      "collapse_step": 200,
+      "total_steps": 500,
+      "detections": [
+        {
+          "step": 213,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000914",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 214,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000264",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 215,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000258",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 216,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000324",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 217,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000948",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 218,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000424",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 219,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000120",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 220,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000038",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 222,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000424",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 223,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000306",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 224,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000230",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 225,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000520",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 226,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000018",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 227,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000526",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 228,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000768",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 229,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000460",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 230,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000064",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 231,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000682",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 232,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000634",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 233,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000048",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 235,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000618",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 236,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000330",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 237,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000268",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 238,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000200",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 239,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000620",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 240,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000180",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 242,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000210",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 243,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000934",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 244,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000094",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 245,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000602",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 246,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000010",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 247,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000068",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 248,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000118",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 249,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 250,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 251,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 252,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 253,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 254,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 255,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 256,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 257,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 258,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 259,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 260,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 261,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 262,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 263,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 264,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 265,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 266,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 267,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 268,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 269,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 270,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 271,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 272,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 273,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 274,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 275,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 276,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 277,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 278,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 279,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 280,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 281,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 282,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 283,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 284,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 285,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 286,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 287,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 288,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 289,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 290,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 291,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 292,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 293,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 294,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 295,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 296,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 297,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 298,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 299,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 300,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 301,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 302,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 303,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 304,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 305,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 306,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 307,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 308,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 309,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 310,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 311,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 312,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 313,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 314,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 315,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 316,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 317,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 318,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 319,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 320,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 321,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 322,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 323,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 324,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 325,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 326,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 327,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 328,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 329,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 330,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 331,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 332,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 333,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 334,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 335,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 336,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 337,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 338,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 339,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 340,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 341,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 342,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 343,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 344,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 345,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 346,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 347,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 348,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 349,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 350,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 351,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 352,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 353,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 354,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 355,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 356,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 357,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 358,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 359,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 360,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 361,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 362,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 363,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 364,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 365,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 366,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 367,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 368,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 369,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 370,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 371,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 372,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 373,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 374,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 375,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 376,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 377,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 378,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 379,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 380,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 381,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 382,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 383,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 384,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 385,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 386,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 387,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 388,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 389,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 390,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 391,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 392,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 393,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 394,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 395,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 396,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 397,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 398,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 399,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 400,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 401,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 402,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 403,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 404,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 405,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 406,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 407,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 408,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 409,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 410,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 411,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 412,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 413,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 414,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 415,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 416,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 417,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 418,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 419,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 420,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 421,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 422,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 423,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 424,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 425,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 426,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 427,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 428,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 429,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 430,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 431,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 432,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 433,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 434,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 435,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 436,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 437,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 438,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 439,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 440,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 441,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 442,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 443,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 444,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 445,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 446,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 447,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 448,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 449,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 450,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 451,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 452,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 453,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 454,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 455,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 456,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 457,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 458,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 459,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 460,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 461,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 462,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 463,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 464,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 465,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 466,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 467,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 468,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 469,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 470,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 471,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 472,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 473,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 474,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 475,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 476,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 477,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 478,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 479,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 480,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 481,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 482,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 483,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 484,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 485,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 486,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 487,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 488,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 489,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 490,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 491,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 492,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 493,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 494,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 495,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 496,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 497,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 498,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 499,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        },
+        {
+          "step": 500,
+          "mode": "C6",
+          "level": "WARNING",
+          "metric": "grad=0.0010<0.01, r_delta=0.000000",
+          "action": "LR x1.5"
+        }
+      ],
+      "detection_count": 285,
+      "first_detection_step": 213,
+      "detection_delay": 13,
+      "halted": false
+    }
+  },
+  "resume_protocol": {
+    "verl_flag": "--trainer.resume_from_checkpoint <dir>",
+    "restored": [
+      "model weights",
+      "optimizer state",
+      "LR scheduler",
+      "RNG states",
+      "training metadata"
+    ],
+    "not_restored": [
+      "SGLang server state",
+      "Rollout cache",
+      "Ray cluster state"
+    ],
+    "pre_resume_checks": [
+      "1. Verify checkpoint directory integrity",
+      "2. Verify model architecture matches",
+      "3. Verify training config matches",
+      "4. Verify GPU availability (>=4 A40 free)",
+      "5. Verify SGLang can load checkpoint",
+      "6. Verify EDA sandbox reachable",
+      "7. Log resume event"
+    ],
+    "post_resume_verification": [
+      "1. Run 5 eval rollouts - verify reward matches pre-collapse",
+      "2. Check KL<0.10",
+      "3. Check entropy>0.3x_initial",
+      "4. Check grad_norm in [0.01,5.0]",
+      "5. If any fail: DO NOT resume"
+    ],
+    "timing": {
+      "checkpoint_load": "2-5min",
+      "sglang_restart": "3-5min",
+      "ray_reinit": "1-2min",
+      "verification": "5-10min",
+      "total_overhead": "11-22min"
+    }
+  },
+  "monitoring_dashboard": {
+    "metrics": [
+      {
+        "name": "reward_mean",
+        "source": "verl",
+        "freq": "per_step",
+        "alert": "C5"
+      },
+      {
+        "name": "reward_std",
+        "source": "verl",
+        "freq": "per_step",
+        "alert": "C5"
+      },
+      {
+        "name": "policy_entropy",
+        "source": "verl",
+        "freq": "per_step",
+        "alert": "C3"
+      },
+      {
+        "name": "kl_divergence",
+        "source": "verl",
+        "freq": "per_step",
+        "alert": "C2"
+      },
+      {
+        "name": "grad_norm",
+        "source": "verl",
+        "freq": "per_step",
+        "alert": "C4/C6"
+      },
+      {
+        "name": "loss",
+        "source": "verl",
+        "freq": "per_step",
+        "alert": "C4"
+      },
+      {
+        "name": "learning_rate",
+        "source": "scheduler",
+        "freq": "per_step",
+        "alert": "info"
+      },
+      {
+        "name": "cheat_rate",
+        "source": "anti-cheat R135",
+        "freq": "per_20_steps",
+        "alert": "C1"
+      },
+      {
+        "name": "rollout_diversity",
+        "source": "rollout engine",
+        "freq": "per_step",
+        "alert": "C3"
+      },
+      {
+        "name": "exec_success_rate",
+        "source": "sandbox",
+        "freq": "per_step",
+        "alert": "C1"
+      },
+      {
+        "name": "rollout_throughput",
+        "source": "rollout engine",
+        "freq": "per_step",
+        "alert": "perf"
+      },
+      {
+        "name": "sandbox_latency_p50",
+        "source": "sandbox",
+        "freq": "per_step",
+        "alert": "perf"
+      },
+      {
+        "name": "sandbox_latency_p99",
+        "source": "sandbox",
+        "freq": "per_step",
+        "alert": "perf"
+      },
+      {
+        "name": "gpu_mem_used",
+        "source": "nvidia-smi",
+        "freq": "per_10s",
+        "alert": "R138 90/95%"
+      },
+      {
+        "name": "gpu_mem_fragmentation",
+        "source": "torch",
+        "freq": "per_10s",
+        "alert": "R138 30/50%"
+      },
+      {
+        "name": "kv_cache_usage",
+        "source": "sglang",
+        "freq": "per_10s",
+        "alert": "R138 85/95%"
+      },
+      {
+        "name": "grad_norm_clip_freq",
+        "source": "verl",
+        "freq": "per_step",
+        "alert": "C4"
+      },
+      {
+        "name": "advantage_signal_rate",
+        "source": "verl",
+        "freq": "per_step",
+        "alert": "C5"
+      }
+    ],
+    "total_metrics": 18,
+    "logging": "JSON lines to /nas_data/.../outputs/posttrain/rl_grpo/metrics/",
+    "visualization": "Matplotlib offline post-run (no live dashboard to avoid GPU contention)",
+    "alerting": "CPU-only watchdog reads metrics JSON, evaluates thresholds, writes alerts log",
+    "alert_levels": {
+      "INFO": "log",
+      "WARNING": "log+in-flight adjust",
+      "CRITICAL": "log+auto-rollback+notify",
+      "FATAL": "log+halt+rollback+notify"
+    }
+  },
+  "verl_integration": {
+    "checkpoint_config": {
+      "yaml_key": "trainer.save_interval",
+      "main": 50,
+      "smoke": 5,
+      "additional": [
+        "best_reward",
+        "pre_collapse"
+      ]
+    },
+    "monitoring_hooks": {
+      "verl_callback": "MetricsLogger",
+      "custom_callback": "baize_posttrain_resilience_callback.py (to create)",
+      "hook_points": [
+        "on_step_end",
+        "on_checkpoint",
+        "on_rollout_batch_end",
+        "on_train_batch_end"
+      ]
+    },
+    "alert_watchdog": {
+      "script": "baize_posttrain_alert_watchdog.py",
+      "mode": "background CPU",
+      "poll_interval": "10s",
+      "action": "write alerts log + touch HALT file if FATAL"
+    },
+    "rollback": {
+      "method": "kill verl + restart with --resume-ckpt",
+      "script": "baize_posttrain_rollback.sh",
+      "tracking": "checkpoint_log.json"
+    }
+  },
+  "key_findings": [
+    "F1: Full FT ckpt=23.8GB (model 7.8+opt 15.6); LoRA=0.47GB — 50x smaller",
+    "F2: Peak storage Full FT=335GB=0.017% NFS — storage NOT a bottleneck",
+    "F3: 6 collapse modes: C1 reward hacking, C2 KL explosion, C3 entropy collapse, C4 loss NaN, C5 reward drift, C6 gradient stagnation",
+    "F4: All 5 collapse types detected in simulation within 1-30 steps; 0 false positives on healthy baseline",
+    "F5: FATAL(C4)=immediate halt+rollback; CRITICAL(C1/C2)=rollback; WARNING(C3/C5/C6)=in-flight adjustment",
+    "F6: Resume overhead=11-22min (ckpt load+SGLang restart+Ray reinit+verification); 7 pre+5 post checks",
+    "F7: 18 monitoring metrics (7 training+5 RL-specific+6 system); CPU-only watchdog, no GPU contention",
+    "F8: LoRA enables aggressive checkpointing (every 10 steps=4.7GB/h) — recommended for smoke test"
+  ],
+  "recommendations": [
+    "R1: save_interval=50 main, 5 smoke (already in script)",
+    "R2: Create baize_posttrain_resilience_callback.py as verl callback",
+    "R3: Create baize_posttrain_alert_watchdog.py as CPU background process",
+    "R4: Create baize_posttrain_rollback.sh for auto rollback",
+    "R5: Pre-allocate ckpt dir on NFS",
+    "R6: Smoke test: LoRA mode for frequent checkpointing",
+    "R7: First 100 steps: extra-frequent checkpoints (every 25)",
+    "R8: best_reward saves model-only (7.8GB) to minimize permanent storage"
+  ]
+}
