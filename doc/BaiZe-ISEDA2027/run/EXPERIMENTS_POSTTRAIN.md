@@ -11135,3 +11135,47 @@ Drop 涉及 API 类别：MdePlatTestSetting(6)、SleDrawArea(5)、MdeSetting(5)�
 - **R74**: RL 课程设计 → R105 用 R104 数据验证细化
 - **R75/R76**: 反作弊框架 → R105 补充任务角度作弊向量
 - **Stage(ii) RL**: 464 题 + 3 阶段课程 + 4 臂奖励 = RL 完整方案
+
+
+## §R106: 启动日执行计划与配置冻结（2026-11-09 wake153 · 零 GPU · 纯计算+文件检查）
+
+> **目标**：将 R1-R105 共 105 轮调研整合为可执行的启动日计划：go/no-go 检查、72h 时间线、冻结配置、监控规范、故障恢复决策树。
+
+### 1. Go/No-Go 检查清单
+- 检查总数：32，通过：31（97%），失败：1
+- 失败项：GPU availability(GPU)
+- GPU：0/8 free
+- 判定：🟡 CONDITIONAL GO (仅GPU待释放)
+
+### 2. 72h 时间线
+| 阶段 | 时长 | 累计 | 里程碑 |
+|:--|--:|--:|:--|
+| P0-Setup | 0.5h | 0.5h | - |
+| P1-Baseline | 2.0h | 2.5h | M0: Baseline ~36% |
+| P2-Contamination | 0.5h | 3.0h | - |
+| P3-RL-Smoke | 1.0h | 4.0h | Smoke PASS |
+| P4-RL-Full | 48.0h | 52.0h | M1-smoke: RL complete |
+| P5-Eval | 8.0h | 60.0h | M1-surrogate: Eval done |
+| P6-Analysis | 2.0h | 62.0h | Campaign complete |
+
+总时长：62.0h（~3天）
+
+### 3. 冻结配置摘要
+**SFT v1.0**：Agent50/General30/PyAether20（R79），ctx=16384（R60），LR=2e-5，3000步全参。
+**RL GRPO v1.0**：G=8, KL=0.02, clip=0.2, LR=3e-6, 2000步, R0→R2, 课程中→高→低（R105）。
+**评测 v1.0**：158任务/Pass@1/5-run/2500s/-p8-n/单trace/McNemar。
+
+### 4. 监控规范
+10项指标（reward/kl/entropy/loss/grad/cheat/gpu/step_time/crash），7种告警动作。
+
+### 5. 故障恢复
+6种场景：SGLang启动/基线评测/GRPO OOM/奖励全零/训练发散/72h超限。
+
+### 6. 研究溯源
+SFT: R56/R79/R87/R89/R99-R101/R60-R61 | RL: R18/R47/R73/R92/R74/R83/R105/R13/R22/R85 | 反作弊: R75/R76 | 恢复: R80/R82/R81 | 评测: R72/R83/R84 | 工具: R69/R70/R71 | 就绪: R66/R78/R91-R96/R102 | 可解性: R97/R103/R104
+
+### 7. 交付物
+- `baize_posttrain_r106_launch_day_plan.py`（本脚本）
+- `reports/report_posttrain_r106_launch_day_plan_zh.html`
+- `r106_launch_day_plan.json`
+- 本节（EXPERIMENTS §R106）

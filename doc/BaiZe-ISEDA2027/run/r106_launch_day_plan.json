@@ -1,0 +1,775 @@
+{
+  "r106": {
+    "timestamp": "2026-11-09T18:38:50.479895",
+    "checks": [
+      {
+        "category": "Model",
+        "label": "MiniCPM5-2B model",
+        "path": "/nas_data/app.e0031982/models/MiniCPM5-2B",
+        "exists": true,
+        "is_dir": true,
+        "ok": true
+      },
+      {
+        "category": "Model",
+        "label": "  config.json",
+        "path": "/nas_data/app.e0031982/models/MiniCPM5-2B/config.json",
+        "exists": true,
+        "size_bytes": 704,
+        "size_human": "704.0B",
+        "ok": true
+      },
+      {
+        "category": "Model",
+        "label": "  tokenizer.json",
+        "path": "/nas_data/app.e0031982/models/MiniCPM5-2B/tokenizer.json",
+        "exists": true,
+        "size_bytes": 9894271,
+        "size_human": "9.4MB",
+        "ok": true
+      },
+      {
+        "category": "Model",
+        "label": "  tokenizer_config.json",
+        "path": "/nas_data/app.e0031982/models/MiniCPM5-2B/tokenizer_config.json",
+        "exists": true,
+        "size_bytes": 94391,
+        "size_human": "92.2KB",
+        "ok": true
+      },
+      {
+        "category": "Model",
+        "label": "  model.safetensors.index.json",
+        "path": "/nas_data/app.e0031982/models/MiniCPM5-2B/model.safetensors.index.json",
+        "exists": true,
+        "size_bytes": 31378,
+        "size_human": "30.6KB",
+        "ok": true
+      },
+      {
+        "category": "Model",
+        "label": "  chat_template.jinja",
+        "path": "/nas_data/app.e0031982/models/MiniCPM5-2B/chat_template.jinja",
+        "exists": true,
+        "size_bytes": 5435,
+        "size_human": "5.3KB",
+        "ok": true
+      },
+      {
+        "category": "EDA Env",
+        "label": "eda_fastmcp clone",
+        "path": "/home/app.e0031982/code/eda_fastmcp",
+        "exists": true,
+        "is_dir": true,
+        "ok": true
+      },
+      {
+        "category": "EDA Env",
+        "label": "158-case dataset",
+        "path": "/home/app.e0031982/code/eda_fastmcp/pyAether-eval/original_dataset/EDA-Eval-PyAether-v20260311.jsonl",
+        "exists": true,
+        "size_bytes": 689461,
+        "size_human": "673.3KB",
+        "ok": true
+      },
+      {
+        "category": "EDA Env",
+        "label": "Eval script",
+        "path": "/home/app.e0031982/code/eda_fastmcp/scripts/run_eval.py",
+        "exists": true,
+        "size_bytes": 39781,
+        "size_human": "38.8KB",
+        "ok": true
+      },
+      {
+        "category": "EDA Env",
+        "label": "Driver script",
+        "path": "/home/app.e0031982/code/eda_fastmcp/scripts/run_cline_script.sh",
+        "exists": true,
+        "size_bytes": 29415,
+        "size_human": "28.7KB",
+        "ok": true
+      },
+      {
+        "category": "EDA Env",
+        "label": "API database (8463 APIs)",
+        "path": "/home/app.e0031982/code/eda_fastmcp/docs/API_INFO_MERGED_V3.json",
+        "exists": true,
+        "size_bytes": 18132428,
+        "size_human": "17.3MB",
+        "ok": true
+      },
+      {
+        "category": "Venv",
+        "label": "verl cu124 venv python",
+        "path": "/home/app.e0031982/code/verl_cu124_venv/bin/python",
+        "exists": true,
+        "size_bytes": 17275576,
+        "size_human": "16.5MB",
+        "ok": true
+      },
+      {
+        "category": "Venv",
+        "label": "venv lib dir",
+        "path": "/home/app.e0031982/code/verl_cu124_venv/lib",
+        "exists": true,
+        "is_dir": true,
+        "ok": true
+      },
+      {
+        "category": "Data",
+        "label": "SFT PyAether v5 parquet",
+        "path": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/sft_pyaether_corpus_v5_deep_enriched.parquet",
+        "exists": true,
+        "size_bytes": 353656,
+        "size_human": "345.4KB",
+        "ok": true
+      },
+      {
+        "category": "Data",
+        "label": "RL synth tasks (500)",
+        "path": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/rl_pyaether_synth_tasks.jsonl",
+        "exists": true,
+        "size_bytes": 545996,
+        "size_human": "533.2KB",
+        "ok": true
+      },
+      {
+        "category": "Data",
+        "label": "SFT PyAether v2 parquet (fallback)",
+        "path": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/sft_pyaether_corpus_v2.parquet",
+        "exists": true,
+        "size_bytes": 3668677,
+        "size_human": "3.5MB",
+        "ok": true
+      },
+      {
+        "category": "Config",
+        "label": "RL verl config v2",
+        "path": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_posttrain_rl_verl_config_v2.yaml",
+        "exists": true,
+        "size_bytes": 5261,
+        "size_human": "5.1KB",
+        "ok": true
+      },
+      {
+        "category": "Config",
+        "label": "SFT blend config",
+        "path": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/sft_blend_config.yaml",
+        "exists": true,
+        "size_bytes": 884,
+        "size_human": "884.0B",
+        "ok": true
+      },
+      {
+        "category": "Config",
+        "label": "Tool config",
+        "path": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_posttrain_tool_config.yaml",
+        "exists": true,
+        "size_bytes": 1199,
+        "size_human": "1.2KB",
+        "ok": true
+      },
+      {
+        "category": "Script",
+        "name": "baize_posttrain_launch_11_9.sh",
+        "path": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_posttrain_launch_11_9.sh",
+        "ok": true,
+        "error": ""
+      },
+      {
+        "category": "Script",
+        "name": "baize_posttrain_setup_cu124_venv.sh",
+        "path": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_posttrain_setup_cu124_venv.sh",
+        "ok": true,
+        "error": ""
+      },
+      {
+        "category": "Script",
+        "name": "baize_posttrain_preflight_check.sh",
+        "path": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_posttrain_preflight_check.sh",
+        "ok": true,
+        "error": ""
+      },
+      {
+        "category": "Script",
+        "name": "baize_posttrain_minicpm5_diag.sh",
+        "path": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_posttrain_minicpm5_diag.sh",
+        "ok": true,
+        "error": ""
+      },
+      {
+        "category": "Script",
+        "name": "baize_posttrain_contamination_gate.sh",
+        "path": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_posttrain_contamination_gate.sh",
+        "ok": true,
+        "error": ""
+      },
+      {
+        "category": "Script",
+        "name": "baize_posttrain_rl_grpo.sh",
+        "path": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_posttrain_rl_grpo.sh",
+        "ok": true,
+        "error": ""
+      },
+      {
+        "category": "Script",
+        "name": "baize_posttrain_sft.sh",
+        "path": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_posttrain_sft.sh",
+        "ok": true,
+        "error": ""
+      },
+      {
+        "category": "Script",
+        "name": "baize_posttrain_anneal.sh",
+        "path": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_posttrain_anneal.sh",
+        "ok": true,
+        "error": ""
+      },
+      {
+        "category": "Script",
+        "name": "baize_posttrain_eval.sh",
+        "path": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_posttrain_eval.sh",
+        "ok": true,
+        "error": ""
+      },
+      {
+        "category": "Script",
+        "name": "baize_posttrain_gpu_watcher.sh",
+        "path": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_posttrain_gpu_watcher.sh",
+        "ok": true,
+        "error": ""
+      },
+      {
+        "category": "Script",
+        "name": "baize_posttrain_paths.sh",
+        "path": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_posttrain_paths.sh",
+        "ok": true,
+        "error": ""
+      },
+      {
+        "category": "GPU",
+        "name": "GPU availability",
+        "ok": false,
+        "detail": "0/8 free"
+      },
+      {
+        "category": "Watcher",
+        "name": "gpu_watcher process",
+        "ok": true,
+        "detail": "alive"
+      }
+    ],
+    "gpu_info": {
+      "available": false,
+      "free_count": 0,
+      "total": 8,
+      "gpus": [
+        {
+          "id": "0",
+          "used_mib": 45554,
+          "total_mib": 46068,
+          "free_mib": 514,
+          "util_pct": 0,
+          "free": false
+        },
+        {
+          "id": "1",
+          "used_mib": 44533,
+          "total_mib": 46068,
+          "free_mib": 1535,
+          "util_pct": 0,
+          "free": false
+        },
+        {
+          "id": "2",
+          "used_mib": 44533,
+          "total_mib": 46068,
+          "free_mib": 1535,
+          "util_pct": 0,
+          "free": false
+        },
+        {
+          "id": "3",
+          "used_mib": 44533,
+          "total_mib": 46068,
+          "free_mib": 1535,
+          "util_pct": 0,
+          "free": false
+        },
+        {
+          "id": "4",
+          "used_mib": 45144,
+          "total_mib": 46068,
+          "free_mib": 924,
+          "util_pct": 0,
+          "free": false
+        },
+        {
+          "id": "5",
+          "used_mib": 44629,
+          "total_mib": 46068,
+          "free_mib": 1439,
+          "util_pct": 0,
+          "free": false
+        },
+        {
+          "id": "6",
+          "used_mib": 44633,
+          "total_mib": 46068,
+          "free_mib": 1435,
+          "util_pct": 0,
+          "free": false
+        },
+        {
+          "id": "7",
+          "used_mib": 44631,
+          "total_mib": 46068,
+          "free_mib": 1437,
+          "util_pct": 0,
+          "free": false
+        }
+      ]
+    },
+    "timeline": {
+      "gpu_status": "GPU NOT YET FREE (0/8) — watcher polling",
+      "t0": "2026-11-09 18:38",
+      "total_duration_h": 62.0,
+      "phases": [
+        {
+          "phase": "P0-Setup",
+          "duration_h": 0.5,
+          "steps": [
+            "Step 0: Setup cu124 venv",
+            "Step 1: Preflight check"
+          ],
+          "gates": [
+            "All preflight pass",
+            "Venv has torch+sglang+verl"
+          ],
+          "decision": "If preflight fails → fix before proceeding",
+          "start": "11-09 18:38",
+          "end": "11-09 19:08",
+          "cumulative_h": 0.5
+        },
+        {
+          "phase": "P1-Baseline",
+          "duration_h": 2.0,
+          "steps": [
+            "Step 2: SGLang serve MiniCPM5-2B 4xA40",
+            "Baseline eval: 158 tasks 5-run Pass@1 2500s",
+            "Step 3: Extract D1-D6"
+          ],
+          "gates": [
+            "SGLang responds",
+            "Pass@1 in [30%,42%]",
+            "D1-D6 saved"
+          ],
+          "decision": "If baseline <30% or >42% → investigate",
+          "milestone": "M0: Baseline ~36%",
+          "start": "11-09 19:08",
+          "end": "11-09 21:08",
+          "cumulative_h": 2.5
+        },
+        {
+          "phase": "P2-Contamination",
+          "duration_h": 0.5,
+          "steps": [
+            "Step 4: Contamination gate"
+          ],
+          "gates": [
+            "0 contamination hits"
+          ],
+          "decision": "If contamination → STOP",
+          "start": "11-09 21:08",
+          "end": "11-09 21:38",
+          "cumulative_h": 3.0
+        },
+        {
+          "phase": "P3-RL-Smoke",
+          "duration_h": 1.0,
+          "steps": [
+            "Step 5: RL smoke (GRPO R0, 10 iters)"
+          ],
+          "gates": [
+            "10 iters complete",
+            "Reward > 0",
+            "Loss finite",
+            "GPU stable"
+          ],
+          "decision": "If smoke fails → debug",
+          "milestone": "Smoke PASS",
+          "start": "11-09 21:38",
+          "end": "11-09 22:38",
+          "cumulative_h": 4.0
+        },
+        {
+          "phase": "P4-RL-Full",
+          "duration_h": 48.0,
+          "steps": [
+            "Step 6: Full RL (GRPO R0, 2000 steps)",
+            "P1 medium(144,0-500)",
+            "P2 +high(68,500-1000)",
+            "P3 +low(252,1000-2000)",
+            "Checkpoint every 200"
+          ],
+          "gates": [
+            "Reward >base+0.1 by 500",
+            "KL<1.0",
+            "Entropy>0.01",
+            "Cheat<5%"
+          ],
+          "decision": "If stagnant → adjust LR/curriculum",
+          "milestone": "M1-smoke: RL complete",
+          "start": "11-09 22:38",
+          "end": "11-11 22:38",
+          "cumulative_h": 52.0
+        },
+        {
+          "phase": "P5-Eval",
+          "duration_h": 8.0,
+          "steps": [
+            "Eval RL ckpt 158 tasks 5-run",
+            "Paired McNemar vs baseline"
+          ],
+          "gates": [
+            "5-run mean±std",
+            "p-value computed"
+          ],
+          "milestone": "M1-surrogate: Eval done",
+          "start": "11-11 22:38",
+          "end": "11-12 06:38",
+          "cumulative_h": 60.0
+        },
+        {
+          "phase": "P6-Analysis",
+          "duration_h": 2.0,
+          "steps": [
+            "Aggregate",
+            "D1-D6 before/after",
+            "Failure mode shifts",
+            "Final report"
+          ],
+          "gates": [
+            "Report complete"
+          ],
+          "milestone": "Campaign complete",
+          "start": "11-12 06:38",
+          "end": "11-12 08:38",
+          "cumulative_h": 62.0
+        }
+      ]
+    },
+    "configs": {
+      "sft_recipe": {
+        "name": "BaiZe SFT v1.0 (frozen 2026-11-09)",
+        "data_mixture": {
+          "agent": {
+            "source": "UltraData-SFT-Agent-2609",
+            "weight_pct": 50,
+            "tokens": "~5.97B"
+          },
+          "general": {
+            "source": "UltraData-SFT-2605",
+            "weight_pct": 30,
+            "tokens": "~18.89B"
+          },
+          "pyaether": {
+            "source": "sft_pyaether_v5.parquet",
+            "weight_pct": 20,
+            "tokens": "~0.5M"
+          }
+        },
+        "hyperparams": {
+          "context_len": 16384,
+          "gbs": 128,
+          "mbs": 1,
+          "iters": 3000,
+          "warmup": 100,
+          "decay": 300,
+          "lr": "2e-5",
+          "min_lr": "1e-6",
+          "save_interval": 300,
+          "ft_mode": "full",
+          "tool_traces": true
+        },
+        "rationale": {
+          "context_len": "R60: 16K captures 82%; R61: 32K infeasible",
+          "data_mix": "R79: MC 18000 trials optimal",
+          "lr": "Standard SFT LR for 2B",
+          "iters": "3000x128=384K samples"
+        },
+        "gates": {
+          "pre": "Contamination pass + ckpt available",
+          "mid": "Loss down at 300; no NaN at 600",
+          "post": "Eval >=45%",
+          "ckpt": "R87: best eval not last"
+        }
+      },
+      "rl_recipe": {
+        "name": "BaiZe RL GRPO v1.0 (frozen 2026-11-09)",
+        "hyperparams": {
+          "group_size": 8,
+          "ppo_mini_batch": 32,
+          "ppo_micro": 4,
+          "ppo_epochs": 2,
+          "clip": 0.2,
+          "kl_coef": 0.02,
+          "entropy": 0.001,
+          "lr": "3e-6",
+          "total_steps": 2000,
+          "save_freq": 200,
+          "max_prompt": 8192,
+          "max_response": 8192,
+          "gpu_mem_util": 0.5,
+          "n_gpus": 4
+        },
+        "reward_arms": {
+          "R0": {
+            "name": "Skeleton",
+            "active": true,
+            "desc": "API match + syntax, no exec"
+          },
+          "R1": {
+            "name": "Binary",
+            "active": false,
+            "desc": "Execute, pass/fail"
+          },
+          "R2": {
+            "name": "Partial",
+            "active": false,
+            "desc": "Partial credit"
+          },
+          "R3": {
+            "name": "R2+penalty",
+            "active": false,
+            "desc": "R2 + tool call penalty"
+          },
+          "R4": {
+            "name": "R3+legality",
+            "active": false,
+            "desc": "R3 + API legality bonus"
+          }
+        },
+        "curriculum": {
+          "phase1": {
+            "steps": "0-500",
+            "tasks": "medium(144)",
+            "solvable": "96%"
+          },
+          "phase2": {
+            "steps": "500-1000",
+            "tasks": "+high(68)",
+            "solvable": "97.1%"
+          },
+          "phase3": {
+            "steps": "1000-2000",
+            "tasks": "+low(252)",
+            "solvable": "90%"
+          }
+        },
+        "anti_cheat": {
+          "vectors": [
+            "partial_gaming(25)",
+            "api_memorize(med)",
+            "empty(low)",
+            "syntax_only(low)"
+          ],
+          "threshold": "<5%"
+        },
+        "rationale": {
+          "group_size": "R92: G=8",
+          "kl": "R18: 0.02; R80: >1.0 collapse",
+          "clip": "R73: [0.1,0.3]",
+          "lr": "R92: 3e-6 DS stats",
+          "curriculum": "R105: med->high->low"
+        },
+        "gates": {
+          "pre": "SFT ckpt + contamination + sandbox",
+          "mid500": "Reward>base+0.1; KL<1.0; cheat<5%",
+          "post": "Eval 158; McNemar"
+        }
+      },
+      "eval_protocol": {
+        "name": "EDA-Eval-PyAether Frozen v1.0",
+        "dataset": "158 tasks",
+        "metric": "Pass@1",
+        "runs": 5,
+        "timeout": 2500,
+        "parallel": "-p 8 -n",
+        "single_trace": true,
+        "stats": "mean±std; McNemar/bootstrap",
+        "red_lines": [
+          "158/Pass@1/2500s/single-trace/5-run/-p8-n FROZEN",
+          "Contamination before every eval",
+          "Report cheat_rate"
+        ]
+      },
+      "success_ladder": {
+        "M0": {
+          "pass1": "36%",
+          "desc": "Baseline",
+          "status": "measured"
+        },
+        "M1": {
+          "pass1": "50%",
+          "desc": "Tool protocol fixed",
+          "status": "target_surrogate"
+        },
+        "M2": {
+          "pass1": "65%",
+          "desc": "+Domain+SFT",
+          "status": "target_real"
+        },
+        "M3": {
+          "pass1": "75%",
+          "desc": "+RL",
+          "status": "target_real"
+        },
+        "M4": {
+          "pass1": "85%+",
+          "desc": "Approaching DS",
+          "status": "stretch"
+        }
+      }
+    },
+    "monitoring": {
+      "metrics": [
+        {
+          "name": "reward_mean",
+          "freq": "step",
+          "alert": "flatline>50",
+          "threshold": ">base+0.1 by 500"
+        },
+        {
+          "name": "reward_std",
+          "freq": "step",
+          "alert": "->0",
+          "threshold": ">0.01"
+        },
+        {
+          "name": "kl_divergence",
+          "freq": "step",
+          "alert": ">1.0",
+          "threshold": "<1.0"
+        },
+        {
+          "name": "entropy",
+          "freq": "step",
+          "alert": "<0.001",
+          "threshold": ">0.01"
+        },
+        {
+          "name": "loss",
+          "freq": "step",
+          "alert": "NaN/Inf",
+          "threshold": "finite"
+        },
+        {
+          "name": "grad_norm",
+          "freq": "step",
+          "alert": ">10",
+          "threshold": "<10"
+        },
+        {
+          "name": "cheat_rate",
+          "freq": "200 steps",
+          "alert": ">5%",
+          "threshold": "<5%"
+        },
+        {
+          "name": "gpu_memory",
+          "freq": "100 steps",
+          "alert": "OOM",
+          "threshold": "<46GB"
+        },
+        {
+          "name": "step_time",
+          "freq": "step",
+          "alert": ">180s",
+          "threshold": "<120s"
+        },
+        {
+          "name": "crash_count",
+          "freq": "continuous",
+          "alert": ">3/200",
+          "threshold": "0"
+        }
+      ],
+      "alert_actions": {
+        "reward_flatline": "Check curriculum; LR warmup restart",
+        "kl_collapse": "kl_coef->0.05; LR->1e-6",
+        "entropy_degenerate": "entropy->0.01; temp->0.9",
+        "cheat_high": "Switch to R3",
+        "grad_explosion": "LR-=50%",
+        "oom": "micro_batch->2; seqs->12",
+        "crash": "R82 auto-recovery"
+      }
+    },
+    "recovery": {
+      "scenarios": [
+        {
+          "scenario": "SGLang won't start",
+          "symptoms": "Port not responding",
+          "fix": [
+            "Kill stale procs",
+            "Use cu124 venv",
+            "gpu_mem_util=0.35"
+          ],
+          "escalate": "Manual --debug launch"
+        },
+        {
+          "scenario": "Baseline eval crashes",
+          "symptoms": "Eval exits non-zero",
+          "fix": [
+            "-p 4",
+            "timeout 3600s",
+            "Single task first"
+          ],
+          "escalate": "Check pyAether import"
+        },
+        {
+          "scenario": "GRPO OOM",
+          "symptoms": "CUDA OOM",
+          "fix": [
+            "micro_batch->2",
+            "seqs->8",
+            "ctx->8192",
+            "grad_checkpointing"
+          ],
+          "escalate": "Use LoRA"
+        },
+        {
+          "scenario": "Reward all-zero",
+          "symptoms": "reward_mean=0 >20 steps",
+          "fix": [
+            "Verify R70 parser",
+            "Check entry_point",
+            "R0 verbose"
+          ],
+          "escalate": "Debug single sample"
+        },
+        {
+          "scenario": "Training diverges",
+          "symptoms": "Loss NaN/Inf",
+          "fix": [
+            "Resume last good ckpt",
+            "LR-=50%",
+            "grad_clip->2.0"
+          ],
+          "escalate": "If 3x → stop, investigate data"
+        },
+        {
+          "scenario": "72h exceeded",
+          "symptoms": "Not converged",
+          "fix": [
+            "Stop at best ckpt",
+            "Partial results",
+            "Document lessons"
+          ],
+          "escalate": "Report to operator"
+        }
+      ]
+    }
+  }
+}
