@@ -566,3 +566,12 @@ qnm9e					parked		2026-11-08 01:58	Finesim DC convergence Q&A prose dup of uky6c
 1793148627756_flxzl	e03179	hfeg0plg15	1548	spice_sim	parked		2026-11-09 08:28	dup: U#1 = VamRecoCellReplace-001 同 VAM cell 替换查询同路径 Golden008
 1792215728595_u7a72	jiuzhou	hfeg0plg52	2173	spice_sim	parked		2026-11-09 08:28	vague: U#0 'open the aging simulation' 过于含糊，assistant 仅找到目录后 ask_question，session sigterm 无金标准
 1791511922122_hwbr5	e0017484	hfeg0plg08	1560	spice_sim	parked		2026-11-09 08:28	peeked-viable-future: U#0 DDR6 .fsdb 命令提取→assistant 定位 .rpt.die0 含解码命令序列，诊断型任务可作未来 case 需 .rpt.die0 真实文件
+1790840542058_430uk	mike	hfeg0plg05	1117	spice_sim	case	EDA-Eval-DesignFlow-TranStimSync-001	2026-11-09 09:34	spice_sim FineSim .tran stop sync; U#2 A-faithful; 14 conds; ref PASS 4 negs FAIL; appended jsonl line 201
+1793953494729_nmz6w	hairuizh	hfeg0plg52	1129	characterization	parked		2026-11-09 09:34	char inv-tb build+sim+mt0reorg; tech-model dep, multi-turn context, reject
+1792738292906_icpw2	yanxvwei	hfeg0plg52	1005	spice_sim	parked		2026-11-09 09:34	perl script edit, code-editing paradigm, reject
+1788353164910_sxtgo	rongjiez	hfeg0plg52	977	spice_sim	parked		2026-11-09 09:34	qt cpp jobmonitor editing, code-editing paradigm, reject
+1794144259461_ifj1a	dandans	hfeg0plg05	595	spice_sim	parked		2026-11-09 09:34	lsf live job monitoring, not self-contained, reject
+1791612109523_qv65m	mike	hfeg0plg05	486	spice_sim	parked		2026-11-09 09:34	env build/run reconstruction, no computational golden, reject
+1793327181609_04txc	peeked	hfeg0plg52	0	spice_sim	parked		2026-11-09 09:34	peeked reject (see deepread/round notes)
+1793322259360_bisir	peeked	hfeg0plg52	0	spice_sim	parked		2026-11-09 09:34	peeked reject (see deepread/round notes)
+1789908324813_f0jns	peeked	hfeg0plg52	0	spice_sim	parked		2026-11-09 09:34	peeked reject (see deepread/round notes)
