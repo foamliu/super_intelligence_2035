@@ -12715,3 +12715,95 @@ def tool_search_by_keyword(query: str, top_k: int = 5) -> list[dict]:
 | P3 | GPU 释放后用真实 rollout 查询测试搜索质量 | GPU |
 | P4 | 请求运维开放沙箱防火墙 → 启用 run_code/probe | 运维 |
 
+---
+
+## §R123 EDA Tool V3 — 统一四工具管线 + LocalAPISearch 集成（R1 方向 · 零 GPU · 2026-11-10 wake170）
+
+> **背景**：R122 构建了 `LocalAPISearch`（纯 Python 8463 API 搜索），R122 P1 行动 = 集成到 EDA tool。
+> 本轮将 v2（单工具 `run_code`）升级为 v3（四工具统一管线），匹配真实 EDA harness MCP 工具集。
+>
+> **交付物**：
+> - `baize_posttrain_eda_tool_v3.py`（501 行 / 22.2KB）
+> - `baize_posttrain_tool_config_v3.yaml`（107 行 / 3.6KB）
+> - py_compile ✅ + e2e dry-run 8/8 PASS ✅
+
+### 1. 四工具架构
+
+| 工具类 | 对应 MCP 工具 | 功能 | 搜索后端 | 奖励 |
+|:--|:--|:--|:--|:--|
+| `EDASearchAPIsTool` | `search_apis` | BM25 关键词搜索 8463 API | LocalAPISearch.search_apis | 0.0（信息性） |
+| `EDAGetAPIDetailsTool` | `get_api_details` | 按 API 名直查完整文档 | LocalAPISearch.get_api_details | 0.0 |
+| `EDASearchByKeywordTool` | `search_apis_by_keyword` | camelCase + BM25 混合搜索 | LocalAPISearch.search_apis_by_keyword | 0.0 |
+| `EDARunCodeTool` | `run_code` | 静态分析（tier 3）或沙盒（tier 1/2） | AST 提取 + KB 验证 | R0++ 输入 |
+
+**设计要点**：
+- 单例 `LocalAPISearch`：所有搜索工具共享一个实例（一次加载 ~0.8s，8463 API / 17.3MB），避免重复初始化
+- `_get_searcher()` 惰性加载：首次调用时初始化，后续直接返回缓存实例
+- `EDARunCodeTool._static_analysis()` 增强：不仅做语法检查，还用 AST 提取所有函数调用名，与 API KB 交叉验证 → 输出 `apis_called` / `apis_verified` / `api_legality` → 直接喂给 R117 R0++ 奖励的 `call_verified` 维度
+- 所有 4 个工具均匹配 verl 0.4.0 `BaseTool` API 约定（`__init__(config, tool_schema)` → `create()` → `execute()` → `calc_reward()` → `release()`）
+- `create()` 返回 `str`（instance_id），`execute()` 返回 `Tuple[str, float, dict]`（JSON 序列化响应，奖励，元数据）—— 修复 v1 的 F01-F03 API 不匹配
+
+### 2. E2E Dry-Run 结果
+
+**模拟完整 RL rollout 工具调用序列**：`search_apis` → `get_api_details` → `run_code`(static) → `search_apis_by_keyword` → `run_code`(syntax error)
+
+| 步骤 | 操作 | 结果 | 延迟 |
+|:--|:--|:--|:--|
+| 1 | 初始化 4 个工具 | 全部 OK | — |
+| 2 | `search_apis('get current design')` | 3 results | 0.80s（含首次 KB 加载） |
+| 3 | `get_api_details(['emyDesign.setCp'])` | 1 result (found=0, class.method 不在 KB) | 0.00s |
+| 4 | `run_code(pyScript emyDesign.setCp())` | syntax_ok=True, apis_called=['setCp','print'], legality=0.00 | 0.006s |
+| 5 | `search_apis_by_keyword('CV')` | 5 results (dbCompressPtsByCV 等) | 0.002s |
+| 6 | `run_code(syntax error)` | syntax_ok=False, error detected | — |
+| 7 | release all | OK | — |
+
+**8/8 检查全通过**：search 返回结果 ✅ / get_api_details 返回结果 ✅ / run_code 语法检查 ✅ / AST API 提取 ✅ / keyword 搜索 ✅ / 语法错误检测 ✅ / execute() 返回类型=str ✅ / create() 返回类型=str ✅
+
+### 3. R0++ 奖励集成
+
+`EDARunCodeTool._static_analysis()` 的 AST 分析直接产出 R0++ 奖励所需维度：
+
+| R0++ 维度 | 数据来源 | 计算 |
+|:--|:--|:--|
+| `syntax_ok` | `compile()` 语法检查 | 0/1 二值 |
+| `apis_called` | AST `ast.Call` 遍历 | 函数名列表 |
+| `apis_verified` | `LocalAPISearch.get_api_details()` 交叉验证 | KB 中存在的 API |
+| `api_legality` | `len(verified) / len(called)` | 0.0–1.0 连续值 |
+
+**注意**：`api_legality=0.00` 在 dry-run 中是因为 `setCp` 是 `emyDesign` 类的方法（`pyScript.emyDesign.setCp()`），AST 提取为 `setCp`，但 KB 中存为 `emyDesign.setCp`。正式 RL 中需处理 `module.class.method` → KB 查找的映射（R0++ 奖励函数中已有此逻辑，R117 §3）。
+
+### 4. 工具配置 YAML
+
+`baize_posttrain_tool_config_v3.yaml` 定义 4 个工具的 verl schema：
+- 每个工具有独立的 `class_name` / `tool_schema`（OpenAI function 格式）/ `config`
+- 搜索类工具 config 含 `search_top_k` / `search_similarity_threshold` / `keyword_top_k`
+- `run_code` config 含 `sandbox_endpoint` / `max_code_length` / `timeout` / `tier`
+
+### 5. 与 v2 的对比
+
+| 维度 | v2（单工具） | v3（四工具） |
+|:--|:--|:--|
+| 工具数量 | 1（run_code） | 4（search_apis + get_api_details + search_apis_by_keyword + run_code） |
+| API 搜索 | 无 | ✅ LocalAPISearch 集成 |
+| 静态分析 | 仅语法检查 | 语法检查 + AST API 提取 + KB 交叉验证 |
+| R0++ 输入 | 无 | ✅ syntax_ok + apis_called + apis_verified + api_legality |
+| KB 加载 | 无 | 单例惰性加载（0.8s 一次） |
+| verl API 匹配 | ✅（R69 修复） | ✅（继承 v2 修复 + 新增 3 工具） |
+| 配置文件 | `baize_posttrain_tool_config.yaml` | `baize_posttrain_tool_config_v3.yaml`（4 工具） |
+
+### 6. 已知限制
+
+1. **无沙盒执行**：`run_code` 仅做静态分析（tier 3）。真实代码执行需沙盒（R121：端口 FILTERED）。→ R0++ 为当前唯一可行奖励臂。
+2. **class.method 映射**：AST 提取 `pyScript.emyDesign.setCp()` → `setCp`，但 KB 存为 `emyDesign.setCp`。→ 需在 R0++ 奖励函数中做 `module.class.method` → KB name 的映射（R117 已设计）。
+3. **Python 3.8 兼容**：系统 Python 3.8，`from __future__ import annotations` 使类型注解可用；`dict[str, Any]` 在注解中可用但运行时不可用（dry-run 中未触发）。
+4. **首次加载延迟**：首次 `search_apis` 调用含 KB 加载 ~0.8s；后续调用 <5ms（R122 benchmark 已验证）。RL rollout 中可预热。
+
+### 7. 后续行动
+
+| 优先级 | 行动 | 依赖 |
+|:--|:--|:--|
+| P1 | 在 verl config 中引用 v3 YAML 替换 v2 | GPU 释放 |
+| P2 | 用真实 MiniCPM5-2B rollout 测试工具调用序列 | GPU |
+| P3 | 集成 R0++ 奖励函数到 verl reward model | R117 + GPU |
+| P4 | 沙盒可用时切换 run_code tier 3→1 | 运维开放防火墙 |
+

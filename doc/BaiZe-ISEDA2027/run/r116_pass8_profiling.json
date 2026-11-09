@@ -1,0 +1,2075 @@
+{
+  "overall": {
+    "total_tasks": 25,
+    "total_api_calls": 200,
+    "elapsed_sec": 114.7,
+    "model": "qwen3.8-27b",
+    "temperature": 0.7,
+    "n_samples": 8,
+    "surrogate_warning": "Qwen3.8-27B surrogate NOT transferable to BaiZe"
+  },
+  "tier_stats": {
+    "L1": {
+      "n_tasks": 5,
+      "avg_pass@1": 1.0,
+      "avg_pass@4": 1.0,
+      "avg_pass@8": 1.0,
+      "avg_syntax_rate": 1.0,
+      "avg_api_coverage": 1.0,
+      "pass@1_std": 0.0,
+      "n_zero_pass": 0,
+      "n_full_pass": 5,
+      "discriminability": "LOW_CEILING"
+    },
+    "L2": {
+      "n_tasks": 5,
+      "avg_pass@1": 1.0,
+      "avg_pass@4": 1.0,
+      "avg_pass@8": 1.0,
+      "avg_syntax_rate": 1.0,
+      "avg_api_coverage": 1.0,
+      "pass@1_std": 0.0,
+      "n_zero_pass": 0,
+      "n_full_pass": 5,
+      "discriminability": "LOW_CEILING"
+    },
+    "L3": {
+      "n_tasks": 5,
+      "avg_pass@1": 1.0,
+      "avg_pass@4": 1.0,
+      "avg_pass@8": 1.0,
+      "avg_syntax_rate": 1.0,
+      "avg_api_coverage": 1.0,
+      "pass@1_std": 0.0,
+      "n_zero_pass": 0,
+      "n_full_pass": 5,
+      "discriminability": "LOW_CEILING"
+    },
+    "L4": {
+      "n_tasks": 5,
+      "avg_pass@1": 1.0,
+      "avg_pass@4": 1.0,
+      "avg_pass@8": 1.0,
+      "avg_syntax_rate": 1.0,
+      "avg_api_coverage": 1.0,
+      "pass@1_std": 0.0,
+      "n_zero_pass": 0,
+      "n_full_pass": 5,
+      "discriminability": "LOW_CEILING"
+    },
+    "L5": {
+      "n_tasks": 5,
+      "avg_pass@1": 1.0,
+      "avg_pass@4": 1.0,
+      "avg_pass@8": 1.0,
+      "avg_syntax_rate": 1.0,
+      "avg_api_coverage": 1.0,
+      "pass@1_std": 0.0,
+      "n_zero_pass": 0,
+      "n_full_pass": 5,
+      "discriminability": "LOW_CEILING"
+    }
+  },
+  "task_results": [
+    {
+      "task_id": "synth-v2-L1-01309",
+      "difficulty": "L1",
+      "num_apis": 1,
+      "assertion_template": "T1_type_check",
+      "n_samples": 8,
+      "n_pass": 8,
+      "n_syntax_ok": 8,
+      "avg_api_coverage": 1.0,
+      "pass@1": 1.0,
+      "pass@4": 1.0,
+      "pass@8": 1.0,
+      "elapsed": 1.7,
+      "samples": [
+        {
+          "code": "def call_sleaction_isneedextract(checkOpt=True):\n    \"\"\"\n    Write a function that calls the PyAether API `pyAether.SleAction.isNeedExtract` to accomplish:\n    **`SleAction.isNeedExtract() -> bool`**\n    The function should use the pyAether API and return the result.\n    \"\"\"\n    sle_action = pyScript.SleAction.getDefaultAction()\n    return sle_action.isNeedExtract(checkOpt=checkOpt)",
+          "tokens": 108,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_sleaction_isneedextract(check_opt: bool = True) -> bool:\n    \"\"\"\n    Write a function that calls the PyAether API `pyAether.SleAction.isNeedExtract` to accomplish:\n    **`SleAction.isNeedExtract() -> bool`**\n    The function should use the pyAether API and return the result.\n    \"\"\"\n    return pyScript.SleAction.isNeedExtract(check_opt)",
+          "tokens": 109,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_sleaction_isneedextract(sle_action, check_opt=True):\n    \"\"\"\n    Calls the PyAether API `pyAether.SleAction.isNeedExtract` to determine whether\n    extraction from SDL is needed.\n\n    Parameters:\n    sle_action: An instance of SleAction object.\n    check_opt: Optional bool parameter, defaults to True. Specifies the result of checkOpt.\n\n    Returns:\n    bool: Whether to need to extract from SDL.\n    \"\"\"\n    return sle_action.isNeedExtract(check_opt)",
+          "tokens": 121,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_sleaction_isneedextract(check_opt=True):\n    \"\"\"\n    Calls the PyAether API `pyAether.SleAction.isNeedExtract` to determine\n    whether extraction from SDL is needed.\n\n    Parameters:\n    check_opt (bool): Optional parameter, default is True. Specifies the result of checkOpt.\n\n    Returns:\n    bool: Whether to need to extract from SDL.\n    \"\"\"\n    sle_action = pyScript.SleAction.getDefaultAction()\n    return sle_action.isNeedExtract(checkOpt=check_opt)",
+          "tokens": 122,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_sleaction_isneedextract(check_opt: bool = True) -> bool:\n    \"\"\"\n    Write a function that calls the PyAether API `pyAether.SleAction.isNeedExtract` to accomplish:\n    **`SleAction.isNeedExtract() -> bool`**\n    The function should use the pyAether API and return the result.\n    \"\"\"\n    cv = pyScript.aeGetCurDesign()\n    gu = pyScript.aeGetDaByCV(cv)\n    gu_action = pyScript.GuAction.getDefaultAction()\n    sle_action = gu_action.getSleAction()\n    return sle",
+          "tokens": 159,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_sleaction_isneedextract(sle_action, check_opt=True):\n    \"\"\"\n    Calls the PyAether API `pyAether.SleAction.isNeedExtract` to determine whether extraction is needed from SDL.\n\n    Parameters:\n    sle_action: An instance of pyAether.SleAction.\n    check_opt: A boolean flag specifying the result of checkOpt. Defaults to True.\n\n    Returns:\n    bool: The result of whether extraction is needed from SDL.\n    \"\"\"\n    return sle_action.isNeedExtract(check_opt)",
+          "tokens": 123,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_sleaction_isneedextract(checkOpt: bool = True) -> bool:\n    \"\"\"\n    Calls the PyAether API `pyAether.SleAction.isNeedExtract` to determine\n    whether extraction from SDL is needed.\n    \n    Parameters:\n    checkOpt (bool): Optional flag to specify the result of checkOpt. Defaults to True.\n    \n    Returns:\n    bool: The result indicating whether extraction from SDL is needed.\n    \"\"\"\n    sle_action = pyScript.SleAction.getDefaultAction()\n    return sle_action.isNeedExtract(checkOpt)",
+          "tokens": 129,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_sleaction_isneedextract(sle_action, check_opt=True):\n    \"\"\"\n    Call the PyAether API `pyAether.SleAction.isNeedExtract` to determine\n    whether extraction from SDL is needed.\n\n    Parameters:\n    - sle_action: An instance of pyAether.SleAction.\n    - check_opt: A boolean indicating whether to perform the check optimization. Defaults to True.\n\n    Returns:\n    - A boolean indicating whether extraction from SDL is needed.\n    \"\"\"\n    return sle_action.isNeedExtract(check_opt)",
+          "tokens": 126,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "task_id": "synth-v2-L1-00228",
+      "difficulty": "L1",
+      "num_apis": 1,
+      "assertion_template": "T1_type_check",
+      "n_samples": 8,
+      "n_pass": 8,
+      "n_syntax_ok": 8,
+      "avg_api_coverage": 1.0,
+      "pass@1": 1.0,
+      "pass@4": 1.0,
+      "pass@8": 1.0,
+      "elapsed": 1.3,
+      "samples": [
+        {
+          "code": "import pyAether as pyScript\n\ndef call_gedisplayfixedmenu():\n    \"\"\"\n    Write a function that calls the PyAether API `pyAether.geDisplayFixedMenu` to accomplish:\n    **`geDisplayFixedMenu() -> bool`**\n    The function should use the pyAether API and return the result.\n    \"\"\"\n    return pyScript.geDisplayFixedMenu()",
+          "tokens": 91,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_gedisplayfixedmenu(menu, location):\n    \"\"\"\n    Write a function that calls the PyAether API `pyAether.geDisplayFixedMenu` to accomplish:\n    **`geDisplayFixedMenu() -> bool`**\n    The function should use the pyAether API and return the result.\n    \"\"\"\n    return pyScript.geDisplayFixedMenu(menu, location)",
+          "tokens": 89,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_gedisplayfixedmenu():\n    \"\"\"\n    Write a function that calls the PyAether API `pyAether.geDisplayFixedMenu` to accomplish:\n    **`geDisplayFixedMenu() -> bool`**\n    The function should use the pyAether API and return the result.\n    \"\"\"\n    def call_gedisplayfixedmenu(menu, location):\n        return pyScript.geDisplayFixedMenu(menu, location)\n    return call_gedisplayfixedmenu",
+          "tokens": 116,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_gedisplayfixedmenu(menu: pyScript.aeFixMenuWidget, location: pyScript.emyString) -> bool:\n    \"\"\"\n    Write a function that calls the PyAether API `pyAether.geDisplayFixedMenu` to accomplish:\n    **`geDisplayFixedMenu() -> bool`**\n    The function should use the pyAether API and return the result.\n    \"\"\"\n    return pyScript.geDisplayFixedMenu(menu=menu, location=location)",
+          "tokens": 118,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_gedisplayfixedmenu(menu: pyAether.aeFixMenuWidget, location: pyAether.emyString) -> bool:\n    \"\"\"\n    Write a function that calls the PyAether API `pyAether.geDisplayFixedMenu` to accomplish:\n    **`geDisplayFixedMenu() -> bool`**\n    The function should use the pyAether API and return the result.\n    \"\"\"\n    return pyScript.geDisplayFixedMenu(menu, location)",
+          "tokens": 108,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_gedisplayfixedmenu(menu, location):\n    \"\"\"\n    Calls the PyAether API `pyAether.geDisplayFixedMenu` to display a fixed menu.\n    \n    Parameters:\n    menu (aeFixMenuWidget): The menu widget to be displayed.\n    location (emyString): The location where the menu should be displayed.\n    \n    Returns:\n    bool: True if the menu is displayed, False otherwise.\n    \"\"\"\n    return pyScript.geDisplayFixedMenu(menu, location)",
+          "tokens": 115,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_gedisplayfixedmenu(menu, location):\n    \"\"\"\n    Call the PyAether API `pyAether.geDisplayFixedMenu` to display a fixed menu.\n    \n    Parameters:\n    - menu: aeFixMenuWidget - The menu widget to be displayed.\n    - location: emyString - The location where the menu should be displayed.\n    \n    Returns:\n    - bool: True if the menu is displayed successfully.\n    \"\"\"\n    return pyScript.geDisplayFixedMenu(menu, location)",
+          "tokens": 117,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_gedisplayfixedmenu(menu, location):\n    \"\"\"\n    Calls the PyAether API `pyAether.geDisplayFixedMenu` to display a fixed menu.\n    \n    Parameters:\n    menu (aeFixMenuWidget): The menu widget to be displayed.\n    location (emyString): The location where the menu is added (\"left\", \"right\", \"top\", \"bottom\", \"topLeft\", \"topRight\", \"bottomLeft\", \"bottomRight\").\n    \n    Returns:\n    bool: True if the menu is displayed.\n    \"\"\"\n    return pyScript.geDisplayFixedMenu(menu, location)",
+          "tokens": 138,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "task_id": "synth-v2-L1-00051",
+      "difficulty": "L1",
+      "num_apis": 1,
+      "assertion_template": "T1_type_check",
+      "n_samples": 8,
+      "n_pass": 8,
+      "n_syntax_ok": 8,
+      "avg_api_coverage": 1.0,
+      "pass@1": 1.0,
+      "pass@4": 1.0,
+      "pass@8": 1.0,
+      "elapsed": 2.1,
+      "samples": [
+        {
+          "code": "import pyAether as pyScript\n\ndef call_goalayeroutside(aLayer1, aLayer2, result):\n    \"\"\"\n    Write a function that calls the PyAether API `pyAether.goaLayerOutside` to accomplish:\n    **`goaLayerOutside() -> bool`**\n    The function should use the pyAether API and return the result.\n    \"\"\"\n    return pyScript.goaLayerOutside(aLayer1, aLayer2, result)",
+          "tokens": 107,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_goalayeroutside(aLayer1, aLayer2, result):\n    \"\"\"\n    Write a function that calls the PyAether API `pyAether.goaLayerOutside` to accomplish:\n    **`goaLayerOutside() -> bool`**\n    The function should use the pyAether API and return the result.\n    \"\"\"\n    return pyScript.goaLayerOutside(aLayer1, aLayer2, result)",
+          "tokens": 107,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_goalayeroutside(aLayer1, aLayer2, result):\n    \"\"\"\n    Write a function that calls the PyAether API `pyAether.goaLayerOutside` to accomplish:\n    **`goaLayerOutside() -> bool`**\n    The function should use the pyAether API and return the result.\n    \"\"\"\n    return pyScript.goaLayerOutside(aLayer1, aLayer2, result)",
+          "tokens": 99,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_goalayeroutside(aLayer1, aLayer2, result):\n    \"\"\"\n    Write a function that calls the PyAether API `pyAether.goaLayerOutside` to accomplish:\n    **`goaLayerOutside() -> bool`**\n    The function should use the pyAether API and return the result.\n    \"\"\"\n    return pyScript.goaLayerOutside(aLayer1, aLayer2, result)",
+          "tokens": 99,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_goalayeroutside(aLayer1, aLayer2, result):\n    \"\"\"\n    Write a function that calls the PyAether API `pyAether.goaLayerOutside` to accomplish:\n    **`goaLayerOutside() -> bool`**\n    The function should use the pyAether API and return the result.\n    \"\"\"\n    return pyScript.goaLayerOutside(aLayer1, aLayer2, result)",
+          "tokens": 99,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_goalayeroutside():\n    \"\"\"\n    Write a function that calls the PyAether API `pyAether.goaLayerOutside` to accomplish:\n    **`goaLayerOutside() -> bool`**\n    The function should use the pyAether API and return the result.\n    \"\"\"\n    aLayer1 = pyScript.goaLayer()\n    aLayer2 = pyScript.goaLayer()\n    result = pyScript.goaLayer()\n    return pyScript.goaLayerOutside(aLayer1, aLayer2, result)",
+          "tokens": 132,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_goalayeroutside():\n    \"\"\"\n    Write a function that calls the PyAether API `pyAether.goaLayerOutside` to accomplish:\n    **`goaLayerOutside() -> bool`**\n    The function should use the pyAether API and return the result.\n    \"\"\"\n    # Create placeholder goaLayer objects for aLayer1, aLayer2, and result\n    aLayer1 = pyScript.goaLayer()\n    aLayer2 = pyScript.goaLayer()\n    result = pyScript.goaLayer()\n    \n    # Call the API function\n    out = pyScript.goaLayerOutside(aLayer1, aLayer2,",
+          "tokens": 158,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_goalayeroutside():\n    \"\"\"\n    Write a function that calls the PyAether API `pyAether.goaLayerOutside` to accomplish:\n    **`goaLayerOutside() -> bool`**\n    The function should use the pyAether API and return the result.\n    \"\"\"\n    # Create or get the necessary goaLayer objects\n    # Since the API requires aLayer1, aLayer2, and result, we need to create them\n    # For a generic implementation, we'll create empty layers or use existing ones\n    \n    # Creat",
+          "tokens": 213,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "task_id": "synth-v2-L1-00563",
+      "difficulty": "L1",
+      "num_apis": 1,
+      "assertion_template": "T1_type_check",
+      "n_samples": 8,
+      "n_pass": 8,
+      "n_syntax_ok": 8,
+      "avg_api_coverage": 1.0,
+      "pass@1": 1.0,
+      "pass@4": 1.0,
+      "pass@8": 1.0,
+      "elapsed": 1.2,
+      "samples": [
+        {
+          "code": "import pyAether as pyScript\n\ndef call_aesetcolpatls():\n    \"\"\"\n    Write a function that calls the PyAether API `pyAether.aeSetColPatLS` to accomplish:\n    **`aeSetColPatLS() -> bool`**\n    The function should use the pyAether API and return the result.\n    \"\"\"\n    return pyScript.aeSetColPatLS()",
+          "tokens": 96,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_aesetcolpatls():\n    \"\"\"\n    Write a function that calls the PyAether API `pyAether.aeSetColPatLS` to accomplish:\n    **`aeSetColPatLS() -> bool`**\n    The function should use the pyAether API and return the result.\n    \"\"\"\n    return pyScript.aeSetColPatLS()",
+          "tokens": 96,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_aesetcolpatls():\n    \"\"\"\n    Write a function that calls the PyAether API `pyAether.aeSetColPatLS` to accomplish:\n    **`aeSetColPatLS() -> bool`**\n    The function should use the pyAether API and return the result.\n    \"\"\"\n    return pyScript.aeSetColPatLS()",
+          "tokens": 96,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_aesetcolpatls(layerSet=\"\", layerUsed=True, visAll=True):\n    \"\"\"\n    Write a function that calls the PyAether API `pyAether.aeSetColPatLS` to accomplish:\n    **`aeSetColPatLS() -> bool`**\n    The function should use the pyAether API and return the result.\n    \"\"\"\n    return pyScript.aeSetColPatLS(layerSet=layerSet, layerUsed=layerUsed, visAll=visAll)",
+          "tokens": 115,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_aesetcolpatls(layerSet=\"\", layerUsed=True, visAll=True):\n    \"\"\"\n    Write a function that calls the PyAether API `pyAether.aeSetColPatLS` to accomplish:\n    **`aeSetColPatLS() -> bool`**\n    The function should use the pyAether API and return the result.\n    \"\"\"\n    return pyScript.aeSetColPatLS(layerSet=layerSet, layerUsed=layerUsed, visAll=visAll)",
+          "tokens": 115,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_aesetcolpatls(layerSet: str = \"\", layerUsed: bool = True, visAll: bool = True) -> bool:\n    \"\"\"\n    Write a function that calls the PyAether API `pyAether.aeSetColPatLS` to accomplish:\n    **`aeSetColPatLS() -> bool`**\n    The function should use the pyAether API and return the result.\n    \"\"\"\n    return pyScript.aeSetColPatLS(layerSet=layerSet, layerUsed=layerUsed, visAll=visAll)",
+          "tokens": 135,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_aesetcolpatls(layerSet: str = \"\", layerUsed: bool = True, visAll: bool = True) -> bool:\n    \"\"\"\n    Write a function that calls the PyAether API `pyAether.aeSetColPatLS` to accomplish:\n    **`aeSetColPatLS() -> bool`**\n    The function should use the pyAether API and return the result.\n    \"\"\"\n    return pyScript.aeSetColPatLS(layerSet=layerSet, layerUsed=layerUsed, visAll=visAll)",
+          "tokens": 135,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_aesetcolpatls(layerSet: str = \"\", layerUsed: bool = True, visAll: bool = True) -> bool:\n    \"\"\"\n    Write a function that calls the PyAether API `pyAether.aeSetColPatLS` to accomplish:\n    **`aeSetColPatLS() -> bool`**\n    The function should use the pyAether API and return the result.\n    \"\"\"\n    return pyScript.aeSetColPatLS(layerSet=layerSet, layerUsed=layerUsed, visAll=visAll)",
+          "tokens": 135,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "task_id": "synth-v2-L1-00501",
+      "difficulty": "L1",
+      "num_apis": 1,
+      "assertion_template": "T1_type_check",
+      "n_samples": 8,
+      "n_pass": 8,
+      "n_syntax_ok": 8,
+      "avg_api_coverage": 1.0,
+      "pass@1": 1.0,
+      "pass@4": 1.0,
+      "pass@8": 1.0,
+      "elapsed": 1.0,
+      "samples": [
+        {
+          "code": "def call_emypointarrayisclosed(pa):\n    \"\"\"\n    Write a function that calls the PyAether API `pyAether.emyPointArrayIsClosed` to accomplish:\n    **`emyPointArrayIsClosed() -> emyBoolean`**\n    The function should use the pyAether API and return the result.\n    \"\"\"\n    return pyScript.emyPointArrayIsClosed(pa)",
+          "tokens": 92,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_emypointarrayisclosed(pa):\n    \"\"\"\n    Write a function that calls the PyAether API `pyAether.emyPointArrayIsClosed` to accomplish:\n    **`emyPointArrayIsClosed() -> emyBoolean`**\n    The function should use the pyAether API and return the result.\n    \"\"\"\n    return pyScript.emyPointArrayIsClosed(pa)",
+          "tokens": 92,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_emypointarrayisclosed(pa):\n    \"\"\"\n    Write a function that calls the PyAether API `pyAether.emyPointArrayIsClosed` to accomplish:\n    **`emyPointArrayIsClosed() -> emyBoolean`**\n    The function should use the pyAether API and return the result.\n    \"\"\"\n    import pyAether as pyScript\n    return pyScript.emyPointArrayIsClosed(pa)",
+          "tokens": 101,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_emypointarrayisclosed(pa):\n    \"\"\"\n    Write a function that calls the PyAether API `pyAether.emyPointArrayIsClosed` to accomplish:\n    **`emyPointArrayIsClosed() -> emyBoolean`**\n    The function should use the pyAether API and return the result.\n    \"\"\"\n    return pyScript.emyPointArrayIsClosed(pa)",
+          "tokens": 100,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_emypointarrayisclosed(pa):\n    \"\"\"\n    Write a function that calls the PyAether API `pyAether.emyPointArrayIsClosed` to accomplish:\n    **`emyPointArrayIsClosed() -> emyBoolean`**\n    The function should use the pyAether API and return the result.\n    \"\"\"\n    return pyScript.emyPointArrayIsClosed(pa)",
+          "tokens": 100,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_emypointarrayisclosed(pa):\n    \"\"\"\n    Write a function that calls the PyAether API `pyAether.emyPointArrayIsClosed` to accomplish:\n    **`emyPointArrayIsClosed() -> emyBoolean`**\n    The function should use the pyAether API and return the result.\n    \"\"\"\n    return pyScript.emyPointArrayIsClosed(pa)",
+          "tokens": 100,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_emypointarrayisclosed(pa):\n    \"\"\"\n    Write a function that calls the PyAether API `pyAether.emyPointArrayIsClosed` to accomplish:\n    **`emyPointArrayIsClosed() -> emyBoolean`**\n    The function should use the pyAether API and return the result.\n    \"\"\"\n    return pyScript.emyPointArrayIsClosed(pa)",
+          "tokens": 100,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_emypointarrayisclosed(pa):\n    \"\"\"\n    Write a function that calls the PyAether API `pyAether.emyPointArrayIsClosed` to accomplish:\n    **`emyPointArrayIsClosed() -> emyBoolean`**\n    The function should use the pyAether API and return the result.\n    \"\"\"\n    return pyScript.emyPointArrayIsClosed(pa)",
+          "tokens": 100,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "task_id": "synth-v2-L2-01614",
+      "difficulty": "L2",
+      "num_apis": 1,
+      "assertion_template": "T1_type_check",
+      "n_samples": 8,
+      "n_pass": 8,
+      "n_syntax_ok": 8,
+      "avg_api_coverage": 1.0,
+      "pass@1": 1.0,
+      "pass@4": 1.0,
+      "pass@8": 1.0,
+      "elapsed": 1.1,
+      "samples": [
+        {
+          "code": "import pyAether as pyScript\n\ndef call_dbcreategroup():\n    \"\"\"\n    Write a function that calls the PyAether API `pyAether.dbCreateGroup` to accomplish:\n    **`dbCreateGroup() -> emyObject`**\n    The function should use the pyAether API and return the result.\n    \"\"\"\n    return pyScript.dbCreateGroup()",
+          "tokens": 89,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_dbcreategroup(cv, name, groupType=\"set\", ordered=False, uniqueName=True):\n    \"\"\"\n    Write a function that calls the PyAether API `pyAether.dbCreateGroup` to accomplish:\n    **`dbCreateGroup() -> emyObject`**\n    The function should use the pyAether API and return the result.\n    \"\"\"\n    return pyScript.dbCreateGroup(cv=cv, name=name, groupType=groupType, ordered=ordered, uniqueName=uniqueName)",
+          "tokens": 117,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_dbcreategroup(cv, name, groupType=\"set\", ordered=False, uniqueName=True):\n    \"\"\"\n    Write a function that calls the PyAether API `pyAether.dbCreateGroup` to accomplish:\n    **`dbCreateGroup() -> emyObject`**\n    The function should use the pyAether API and return the result.\n    \"\"\"\n    return pyScript.dbCreateGroup(cv=cv, name=name, groupType=groupType, ordered=ordered, uniqueName=uniqueName)",
+          "tokens": 117,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_dbcreategroup(cv, name, groupType=\"set\", ordered=False, uniqueName=True):\n    \"\"\"\n    Write a function that calls the PyAether API `pyAether.dbCreateGroup` to accomplish:\n    **`dbCreateGroup() -> emyObject`**\n    The function should use the pyAether API and return the result.\n    \"\"\"\n    return pyScript.dbCreateGroup(cv, name, groupType=groupType, ordered=ordered, uniqueName=uniqueName)",
+          "tokens": 115,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_dbcreategroup(cv, name, groupType=\"set\", ordered=False, uniqueName=True):\n    \"\"\"\n    Write a function that calls the PyAether API `pyAether.dbCreateGroup` to accomplish:\n    **`dbCreateGroup() -> emyObject`**\n    The function should use the pyAether API and return the result.\n    \"\"\"\n    return pyScript.dbCreateGroup(cv, name, groupType=groupType, ordered=ordered, uniqueName=uniqueName)",
+          "tokens": 115,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_dbcreategroup(cv, name, groupType=\"set\", ordered=False, uniqueName=True):\n    \"\"\"\n    Write a function that calls the PyAether API `pyAether.dbCreateGroup` to accomplish:\n    **`dbCreateGroup() -> emyObject`**\n    The function should use the pyAether API and return the result.\n    \"\"\"\n    return pyScript.dbCreateGroup(cv=cv, name=name, groupType=groupType, ordered=ordered, uniqueName=uniqueName)",
+          "tokens": 117,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_dbcreategroup(cv, name, groupType=\"set\", ordered=False, uniqueName=True):\n    \"\"\"\n    Write a function that calls the PyAether API `pyAether.dbCreateGroup` to accomplish:\n    **`dbCreateGroup() -> emyObject`**\n    The function should use the pyAether API and return the result.\n    \"\"\"\n    return pyScript.dbCreateGroup(cv=cv, name=name, groupType=groupType, ordered=ordered, uniqueName=uniqueName)",
+          "tokens": 117,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_dbcreategroup(cv, name, groupType=\"set\", ordered=False, uniqueName=True):\n    \"\"\"\n    Write a function that calls the PyAether API `pyAether.dbCreateGroup` to accomplish:\n    **`dbCreateGroup() -> emyObject`**\n    The function should use the pyAether API and return the result.\n    \"\"\"\n    return pyScript.dbCreateGroup(cv, name, groupType=groupType, ordered=ordered, uniqueName=uniqueName)",
+          "tokens": 123,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "task_id": "synth-v2-L2-01571",
+      "difficulty": "L2",
+      "num_apis": 1,
+      "assertion_template": "T1_type_check",
+      "n_samples": 8,
+      "n_pass": 8,
+      "n_syntax_ok": 8,
+      "avg_api_coverage": 1.0,
+      "pass@1": 1.0,
+      "pass@4": 1.0,
+      "pass@8": 1.0,
+      "elapsed": 3.4,
+      "samples": [
+        {
+          "code": "def call_aecreatemltextfield():\n    \"\"\"\n    Write a function that calls the PyAether API `pyAether.aeCreateMLTextField` to accomplish:\n    **`aeCreateMLTextField() -> aeBaseTextField`**\n    The function should use the pyAether API and return the result.\n    \"\"\"\n    return pyScript.aeCreateMLTextField()",
+          "tokens": 88,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_aecreatemltextfield():\n    \"\"\"\n    Write a function that calls the PyAether API `pyAether.aeCreateMLTextField` to accomplish:\n    **`aeCreateMLTextField() -> aeBaseTextField`**\n    The function should use the pyAether API and return the result.\n    \"\"\"\n    return pyScript.aeCreateMLTextField()",
+          "tokens": 96,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_aecreatemltextfield():\n    \"\"\"\n    Write a function that calls the PyAether API `pyAether.aeCreateMLTextField` to accomplish:\n    **`aeCreateMLTextField() -> aeBaseTextField`**\n    The function should use the pyAether API and return the result.\n    \"\"\"\n    return pyScript.aeCreateMLTextField(fieldName=\"defaultFieldName\")",
+          "tokens": 92,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_aecreatemltextfield():\n    \"\"\"\n    Write a function that calls the PyAether API `pyAether.aeCreateMLTextField` to accomplish:\n    **`aeCreateMLTextField() -> aeBaseTextField`**\n    The function should use the pyAether API and return the result.\n    \"\"\"\n    return pyScript.aeCreateMLTextField(fieldName=\"fieldName\")",
+          "tokens": 99,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_aecreatemltextfield():\n    \"\"\"\n    Write a function that calls the PyAether API `pyAether.aeCreateMLTextField` to accomplish:\n    **`aeCreateMLTextField() -> aeBaseTextField`**\n    The function should use the pyAether API and return the result.\n    \"\"\"\n    return pyScript.aeCreateMLTextField(fieldName=\"fieldName\", prompt=\"\", value=\"\", defValue=\"\", hasVerticalScrollbar=True, hasHorizontalScrollbar=True, enableWordWrap=False, editable=True, enabled=True, isInv",
+          "tokens": 143,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_aecreatemltextfield():\n    \"\"\"\n    Write a function that calls the PyAether API `pyAether.aeCreateMLTextField` to accomplish:\n    **`aeCreateMLTextField() -> aeBaseTextField`**\n    The function should use the pyAether API and return the result.\n    \"\"\"\n    return pyScript.aeCreateMLTextField(\n        fieldName=\"fieldName\",\n        prompt=\"\",\n        value=\"\",\n        defValue=\"\",\n        hasVerticalScrollbar=True,\n        hasHorizontalScrollbar=True,\n        enableWordWrap=False,\n      ",
+          "tokens": 164,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_aecreatemltextfield():\n    \"\"\"\n    Write a function that calls the PyAether API `pyAether.aeCreateMLTextField` to accomplish:\n    **`aeCreateMLTextField() -> aeBaseTextField`**\n    The function should use the pyAether API and return the result.\n    \"\"\"\n    return pyScript.aeCreateMLTextField(\n        fieldName=\"fieldName\",\n        prompt=\"\",\n        value=\"\",\n        defValue=\"\",\n        hasVerticalScrollbar=True,\n        hasHorizontalScrollbar=True,\n       ",
+          "tokens": 172,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_aecreatemltextfield(fieldName: pyScript.emyString,\n                             prompt: pyScript.emyString = '',\n                             value: pyScript.emyString = '',\n                             defValue: pyScript.emyString = '',\n                             hasVerticalScrollbar: bool = True,\n                             hasHorizontalScrollbar: bool = True,\n                             enableWordWrap: bool = False,\n                             editab",
+          "tokens": 339,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "task_id": "synth-v2-L2-01552",
+      "difficulty": "L2",
+      "num_apis": 1,
+      "assertion_template": "T1_type_check",
+      "n_samples": 8,
+      "n_pass": 8,
+      "n_syntax_ok": 8,
+      "avg_api_coverage": 1.0,
+      "pass@1": 1.0,
+      "pass@4": 1.0,
+      "pass@8": 1.0,
+      "elapsed": 1.7,
+      "samples": [
+        {
+          "code": "import pyAether as pyScript\n\ndef call_emyinstreplacecreate():\n    \"\"\"\n    Write a function that calls the PyAether API `pyAether.emyInstReplaceCreate` to accomplish:\n    **`emyInstReplaceCreate() -> emyInst`**\n    The function should use the pyAether API and return the result.\n    \"\"\"\n    return pyScript.emyInstReplaceCreate()",
+          "tokens": 95,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_emyinstreplacecreate():\n    \"\"\"\n    Write a function that calls the PyAether API `pyAether.emyInstReplaceCreate` to accomplish:\n    **`emyInstReplaceCreate() -> emyInst`**\n    The function should use the pyAether API and return the result.\n    \"\"\"\n    return pyScript.emyInstReplaceCreate(None, None, None, None)",
+          "tokens": 102,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_emyinstreplacecreate(inst, name, is_array, msg=None):\n    \"\"\"\n    Write a function that calls the PyAether API `pyAether.emyInstReplaceCreate` to accomplish:\n    **`emyInstReplaceCreate() -> emyInst`**\n    The function should use the pyAether API and return the result.\n    \"\"\"\n    return pyScript.emyInstReplaceCreate(inst, name, is_array, msg)",
+          "tokens": 112,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_emyinstreplacecreate(inst, name, is_array, msg=None):\n    \"\"\"\n    Write a function that calls the PyAether API `pyAether.emyInstReplaceCreate` to accomplish:\n    **`emyInstReplaceCreate() -> emyInst`**\n    The function should use the pyAether API and return the result.\n    \"\"\"\n    return pyScript.emyInstReplaceCreate(inst, name, is_array, msg)",
+          "tokens": 104,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_emyinstreplacecreate(inst, name, is_array, msg=None):\n    \"\"\"\n    Write a function that calls the PyAether API `pyAether.emyInstReplaceCreate` to accomplish:\n    **`emyInstReplaceCreate() -> emyInst`**\n    The function should use the pyAether API and return the result.\n    \"\"\"\n    result = pyScript.emyInstReplaceCreate(inst, name, is_array, msg)\n    return result",
+          "tokens": 109,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_emyinstreplacecreate(inst, name, is_array, msg=None):\n    \"\"\"\n    Write a function that calls the PyAether API `pyAether.emyInstReplaceCreate` to accomplish:\n    **`emyInstReplaceCreate() -> emyInst`**\n    The function should use the pyAether API and return the result.\n    \"\"\"\n    return pyScript.emyInstReplaceCreate(inst=inst, name=name, isArray=is_array, msg=msg)",
+          "tokens": 109,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_emyinstreplacecreate(inst, name, is_array, msg=None):\n    \"\"\"\n    Write a function that calls the PyAether API `pyAether.emyInstReplaceCreate` to accomplish:\n    **`emyInstReplaceCreate() -> emyInst`**\n    The function should use the pyAether API and return the result.\n    \"\"\"\n    return pyScript.emyInstReplaceCreate(inst=inst, name=name, isArray=is_array, msg=msg)",
+          "tokens": 117,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_emyinstreplacecreate():\n    \"\"\"\n    Write a function that calls the PyAether API `pyAether.emyInstReplaceCreate` to accomplish:\n    **`emyInstReplaceCreate() -> emyInst`**\n    The function should use the pyAether API and return the result.\n    \"\"\"\n    inst = pyScript.emyInst()\n    name = pyScript.emySimpleName()\n    is_array = pyScript.emyBoolean()\n    msg = None\n    result = pyScript.emyInstReplaceCreate(inst, name, is_array, msg)\n    return result",
+          "tokens": 144,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "task_id": "synth-v2-L2-01846",
+      "difficulty": "L2",
+      "num_apis": 1,
+      "assertion_template": "T1_type_check",
+      "n_samples": 8,
+      "n_pass": 8,
+      "n_syntax_ok": 8,
+      "avg_api_coverage": 1.0,
+      "pass@1": 1.0,
+      "pass@4": 1.0,
+      "pass@8": 1.0,
+      "elapsed": 1.7,
+      "samples": [
+        {
+          "code": "import pyAether as pyScript\n\ndef call_emyengfactor_operator():\n    \"\"\"\n    Write a function that calls the PyAether API `pyAether.emyEngFactor.operator` to accomplish:\n    **`emyEngFactor.operator() -> emyEngFactor`**\n    The function should use the pyAether API and return the result.\n    \"\"\"\n    src = pyScript.emyEngFactor()\n    caller = pyScript.emyEngFactor()\n    result = caller.operator(src)\n    return result",
+          "tokens": 119,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_emyengfactor_operator():\n    \"\"\"\n    Write a function that calls the PyAether API `pyAether.emyEngFactor.operator` to accomplish:\n    **`emyEngFactor.operator() -> emyEngFactor`**\n    The function should use the pyAether API and return the result.\n    \"\"\"\n    def operator(src):\n        return pyScript.emyEngFactor.operator(src)\n    return operator",
+          "tokens": 107,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_emyengfactor_operator():\n    \"\"\"\n    Write a function that calls the PyAether API `pyAether.emyEngFactor.operator` to accomplish:\n    **`emyEngFactor.operator() -> emyEngFactor`**\n    The function should use the pyAether API and return the result.\n    \"\"\"\n    src = pyScript.emyEngFactor()\n    out = src.operator(src)\n    return out",
+          "tokens": 100,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_emyengfactor_operator():\n    \"\"\"\n    Write a function that calls the PyAether API `pyAether.emyEngFactor.operator` to accomplish:\n    **`emyEngFactor.operator() -> emyEngFactor`**\n    The function should use the pyAether API and return the result.\n    \"\"\"\n    import pyAether as pyScript\n    \n    # Create a source emyEngFactor object\n    src = pyScript.emyEngFactor()\n    \n    # Create a caller emyEngFactor object\n    caller = pyScript.emyEngFactor()\n    \n    # Call the operator method to",
+          "tokens": 157,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_emyengfactor_operator():\n    \"\"\"\n    Write a function that calls the PyAether API `pyAether.emyEngFactor.operator` to accomplish:\n    **`emyEngFactor.operator() -> emyEngFactor`**\n    The function should use the pyAether API and return the result.\n    \"\"\"\n    # Create a src emyEngFactor object\n    src = pyScript.emyEngFactor()\n    \n    # Create the caller emyEngFactor object\n    caller = pyScript.emyEngFactor()\n    \n    # Call the operator method to assign t",
+          "tokens": 159,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_emyengfactor_operator():\n    \"\"\"\n    Write a function that calls the PyAether API `pyAether.emyEngFactor.operator` to accomplish:\n    **`emyEngFactor.operator() -> emyEngFactor`**\n    The function should use the pyAether API and return the result.\n    \"\"\"\n    # Create a source emyEngFactor object\n    src = pyScript.emyEngFactor()\n    # Create a caller emyEngFactor object\n    caller = pyScript.emyEngFactor()\n    # Call the operator method to assign the factor",
+          "tokens": 156,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_emyengfactor_operator():\n    \"\"\"\n    Write a function that calls the PyAether API `pyAether.emyEngFactor.operator` to accomplish:\n    **`emyEngFactor.operator() -> emyEngFactor`**\n    The function should use the pyAether API and return the result.\n    \"\"\"\n    # Create source and caller emyEngFactor objects\n    src = pyScript.emyEngFactor()\n    caller = pyScript.emyEngFactor()\n    \n    # Call the operator method to assign src's factor to caller\n    result = c",
+          "tokens": 147,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_emyengfactor_operator():\n    \"\"\"\n    Write a function that calls the PyAether API `pyAether.emyEngFactor.operator` to accomplish:\n    **`emyEngFactor.operator() -> emyEngFactor`**\n    The function should use the pyAether API and return the result.\n    \"\"\"\n    import pyAether as pyScript\n\n    # Create source emyEngFactor object\n    src = pyScript.emyEngFactor()\n\n    # Create target emyEngFactor object\n    target = pyScript.emyEngFactor()\n\n    # Call operator to assign factor from src to ",
+          "tokens": 152,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "task_id": "synth-v2-L2-01779",
+      "difficulty": "L2",
+      "num_apis": 1,
+      "assertion_template": "T1_type_check",
+      "n_samples": 8,
+      "n_pass": 8,
+      "n_syntax_ok": 8,
+      "avg_api_coverage": 1.0,
+      "pass@1": 1.0,
+      "pass@4": 1.0,
+      "pass@8": 1.0,
+      "elapsed": 1.4,
+      "samples": [
+        {
+          "code": "def call_gefindtoolbar(name, windowId):\n    \"\"\"\n    Write a function that calls the PyAether API `pyAether.geFindToolbar` to accomplish:\n    **`geFindToolbar() -> aeToolBar`**\n    The function should use the pyAether API and return the result.\n    \"\"\"\n    return pyScript.geFindToolbar(name, windowId)",
+          "tokens": 87,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_gefindtoolbar(name, windowId):\n    \"\"\"\n    Write a function that calls the PyAether API `pyAether.geFindToolbar` to accomplish:\n    **`geFindToolbar() -> aeToolBar`**\n    The function should use the pyAether API and return the result.\n    \"\"\"\n    return pyScript.geFindToolbar(name, windowId)",
+          "tokens": 87,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_gefindtoolbar(name, windowId):\n    \"\"\"\n    Write a function that calls the PyAether API `pyAether.geFindToolbar` to accomplish:\n    **`geFindToolbar() -> aeToolBar`**\n    The function should use the pyAether API and return the result.\n    \"\"\"\n    return pyScript.geFindToolbar(name, windowId)",
+          "tokens": 95,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_gefindtoolbar(name, windowId):\n    \"\"\"\n    Write a function that calls the PyAether API `pyAether.geFindToolbar` to accomplish:\n    **`geFindToolbar() -> aeToolBar`**\n    The function should use the pyAether API and return the result.\n    \"\"\"\n    return pyScript.geFindToolbar(name, windowId)",
+          "tokens": 87,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_gefindtoolbar(name, windowId):\n    \"\"\"\n    Write a function that calls the PyAether API `pyAether.geFindToolbar` to accomplish:\n    **`geFindToolbar() -> aeToolBar`**\n    The function should use the pyAether API and return the result.\n    \"\"\"\n    return pyScript.geFindToolbar(name, windowId)",
+          "tokens": 95,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_gefindtoolbar(name: str, windowId: int):\n    \"\"\"\n    Write a function that calls the PyAether API `pyAether.geFindToolbar` to accomplish:\n    **`geFindToolbar() -> aeToolBar`**\n    The function should use the pyAether API and return the result.\n    \"\"\"\n    return pyScript.geFindToolbar(name, windowId)",
+          "tokens": 99,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_gefindtoolbar(name: str, windowId: int):\n    \"\"\"\n    Write a function that calls the PyAether API `pyAether.geFindToolbar` to accomplish:\n    **`geFindToolbar() -> aeToolBar`**\n    The function should use the pyAether API and return the result.\n    \"\"\"\n    return pyScript.geFindToolbar(name, windowId)",
+          "tokens": 99,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_gefindtoolbar(name: str, windowId: int):\n    \"\"\"\n    Calls the PyAether API `pyAether.geFindToolbar` to find a toolbar by its object name from a specific window.\n    \n    Parameters:\n    - name (str): The object name of the toolbar to find.\n    - windowId (int): The window index (da index).\n    \n    Returns:\n    - aeToolBar or None: The found toolbar, or None if not found.\n    \"\"\"\n    return pyScript.geFindToolbar(name, windowId)",
+          "tokens": 127,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "task_id": "synth-v2-L3-01936",
+      "difficulty": "L3",
+      "num_apis": 5,
+      "assertion_template": "T4_state_verify",
+      "n_samples": 8,
+      "n_pass": 8,
+      "n_syntax_ok": 8,
+      "avg_api_coverage": 1.0,
+      "pass@1": 1.0,
+      "pass@4": 1.0,
+      "pass@8": 1.0,
+      "elapsed": 9.7,
+      "samples": [
+        {
+          "code": "def call_multi_aemessageboxcancel_n5():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.aeMessageBoxCancel`\n    2. `pyAether.geGetTree`\n    3. `pyAether.geCreateTabField -> aeTabWidget`\n    4. `pyAether.geDesignDataRegisterCB -> bool`\n    5. `pyAether.aeMessageBoxOK`\n    The function should call each API and return a tuple containing each result in order.\n    \"\"\"\n    # 1. aeMessageBoxCancel\n    result1 = pyScrip",
+          "tokens": 285,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_multi_aemessageboxcancel_n5():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.aeMessageBoxCancel`\n    2. `pyAether.geGetTree`\n    3. `pyAether.geCreateTabField -> aeTabWidget`\n    4. `pyAether.geDesignDataRegisterCB -> bool`\n    5. `pyAether.aeMessageBoxOK`\n    The function should call each API and return a tuple containing each result in order.\n    \"\"\"\n    # Placeholder arguments for API calls\n    mes",
+          "tokens": 268,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_multi_aemessageboxcancel_n5():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.aeMessageBoxCancel`\n    2. `pyAether.geGetTree`\n    3. `pyAether.geCreateTabField -> aeTabWidget`\n    4. `pyAether.geDesignDataRegisterCB -> bool`\n    5. `pyAether.aeMessageBoxOK`\n    The function should call each API and return a tuple containing each result in order.\n    \"\"\"\n    # Placeholder values for required parameters\n",
+          "tokens": 325,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_multi_aemessageboxcancel_n5():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.aeMessageBoxCancel`\n    2. `pyAether.geGetTree`\n    3. `pyAether.geCreateTabField -> aeTabWidget`\n    4. `pyAether.geDesignDataRegisterCB -> bool`\n    5. `pyAether.aeMessageBoxOK`\n    The function should call each API and return a tuple containing each result in order.\n    \"\"\"\n    # Using placeholder values for the required p",
+          "tokens": 374,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_multi_aemessageboxcancel_n5():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.aeMessageBoxCancel`\n    2. `pyAether.geGetTree`\n    3. `pyAether.geCreateTabField -> aeTabWidget`\n    4. `pyAether.geDesignDataRegisterCB -> bool`\n    5. `pyAether.aeMessageBoxOK`\n    The function should call each API and return a tuple containing each result in order.\n    \"\"\"\n    # 1. Call aeMessageBoxCancel\n    # We need a ",
+          "tokens": 478,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_multi_aemessageboxcancel_n5():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.aeMessageBoxCancel`\n    2. `pyAether.geGetTree`\n    3. `pyAether.geCreateTabField -> aeTabWidget`\n    4. `pyAether.geDesignDataRegisterCB -> bool`\n    5. `pyAether.aeMessageBoxOK`\n    The function should call each API and return a tuple containing each result in order.\n    \"\"\"\n    # Create a messa",
+          "tokens": 500,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_multi_aemessageboxcancel_n5():\n    # 1. pyAether.aeMessageBoxCancel\n    # Requires a messageBox object. Since we don't have one in scope, we'll use None or a placeholder.\n    # However, looking at the API, it expects a shared_ptr_aeMessageDialog.\n    # We'll call it with a dummy/None value as per typical test stubs if no context is given,\n    # but strictly speaking, we need an object. Let's assume we pass None or a mock.\n    # Given the instruction \"calls the following PyAether APIs in",
+          "tokens": 421,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_multi_aemessageboxcancel_n5():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.aeMessageBoxCancel`\n    2. `pyAether.geGetTree`\n    3. `pyAether.geCreateTabField -> aeTabWidget`\n    4. `pyAether.geDesignDataRegisterCB -> bool`\n    5. `pyAether.aeMessageBoxOK`\n    The function should call each API and return a tuple containing each result in order.\n    \"\"\"\n    # 1. aeMessageBoxCancel\n    # We need a messa",
+          "tokens": 733,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "task_id": "synth-v2-L3-02451",
+      "difficulty": "L3",
+      "num_apis": 5,
+      "assertion_template": "T4_state_verify",
+      "n_samples": 8,
+      "n_pass": 8,
+      "n_syntax_ok": 8,
+      "avg_api_coverage": 1.0,
+      "pass@1": 1.0,
+      "pass@4": 1.0,
+      "pass@8": 1.0,
+      "elapsed": 7.5,
+      "samples": [
+        {
+          "code": "import pyAether as pyScript\n\ndef call_multi_emytext_isdrafting_n5():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.emyText.isDrafting`\n    2. `pyAether.emyObject.getType`\n    3. `pyAether.emyPhysicalLayer.getMaterial`\n    4. `pyAether.emyVectorInstDef.getBitOrder`\n    5. `pyAether.emyBlock.getLPPHeaders`\n    The function should call each API and return a tuple containing each result in order.\n    \"\"\"\n    resul",
+          "tokens": 244,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_multi_emytext_isdrafting_n5():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.emyText.isDrafting`\n    2. `pyAether.emyObject.getType`\n    3. `pyAether.emyPhysicalLayer.getMaterial`\n    4. `pyAether.emyVectorInstDef.getBitOrder`\n    5. `pyAether.emyBlock.getLPPHeaders`\n    The function should call each API and return a tuple containing each result in order.\n    \"\"\"\n    result1 = pyScript.emyText.isDraft",
+          "tokens": 236,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_multi_emytext_isdrafting_n5():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.emyText.isDrafting`\n    2. `pyAether.emyObject.getType`\n    3. `pyAether.emyPhysicalLayer.getMaterial`\n    4. `pyAether.emyVectorInstDef.getBitOrder`\n    5. `pyAether.emyBlock.getLPPHeaders`\n    The function should call each API and return a tuple containing each result in order.\n    \"\"\"\n    import pyAether\n    \n    result1 =",
+          "tokens": 248,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_multi_emytext_isdrafting_n5():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.emyText.isDrafting`\n    2. `pyAether.emyObject.getType`\n    3. `pyAether.emyPhysicalLayer.getMaterial`\n    4. `pyAether.emyVectorInstDef.getBitOrder`\n    5. `pyAether.emyBlock.getLPPHeaders`\n    The function should call each API and return a tuple containing each result in order.\n    \"\"\"\n    text_",
+          "tokens": 286,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_multi_emytext_isdrafting_n5():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.emyText.isDrafting`\n    2. `pyAether.emyObject.getType`\n    3. `pyAether.emyPhysicalLayer.getMaterial`\n    4. `pyAether.emyVectorInstDef.getBitOrder`\n    5. `pyAether.emyBlock.getLPPHeaders`\n    The function should call each API and return a tuple containing each result in order.\n    \"\"\"\n    # Cre",
+          "tokens": 328,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_multi_emytext_isdrafting_n5():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.emyText.isDrafting`\n    2. `pyAether.emyObject.getType`\n    3. `pyAether.emyPhysicalLayer.getMaterial`\n    4. `pyAether.emyVectorInstDef.getBitOrder`\n    5. `pyAether.emyBlock.getLPPHeaders`\n    The function should call each API and return a tuple containing each result in order.\n    \"\"\"\n    # Ins",
+          "tokens": 387,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_multi_emytext_isdrafting_n5():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.emyText.isDrafting`\n    2. `pyAether.emyObject.getType`\n    3. `pyAether.emyPhysicalLayer.getMaterial`\n    4. `pyAether.emyVectorInstDef.getBitOrder`\n    5. `pyAether.emyBlock.getLPPHeaders`\n    The function should call each API and return a tuple containing each result in order.\n    \"\"\"\n    # Sin",
+          "tokens": 449,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_multi_emytext_isdrafting_n5():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.emyText.isDrafting`\n    2. `pyAether.emyObject.getType`\n    3. `pyAether.emyPhysicalLayer.getMaterial`\n    4. `pyAether.emyVectorInstDef.getBitOrder`\n    5. `pyAether.emyBlock.getLPPHeaders`\n    The function should call each API and return a tuple containing each result in order.\n    \"\"\"\n    # Not",
+          "tokens": 806,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "task_id": "synth-v2-L3-02279",
+      "difficulty": "L3",
+      "num_apis": 5,
+      "assertion_template": "T4_state_verify",
+      "n_samples": 8,
+      "n_pass": 8,
+      "n_syntax_ok": 8,
+      "avg_api_coverage": 1.0,
+      "pass@1": 1.0,
+      "pass@4": 1.0,
+      "pass@8": 1.0,
+      "elapsed": 4.4,
+      "samples": [
+        {
+          "code": "def call_multi_emyshapeismicrowaveobject_n5(pShape, index, arg1, arg2, arg3, clEm):\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.EmyShapeIsMicrowaveObject -> emyBoolean`\n    2. `pyAether.emyMaskColorGetLockMask -> EmyLPPMaskColorEnum`\n    3. `pyAether.setLogicLayerNumName`\n    4. `pyAether.emyIsLockMaskColor`\n    5. `pyAether.EmyShapeIsMPPMember -> emyBoolean`\n    The function should call each API and return ",
+          "tokens": 289,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_multi_emyshapeismicrowaveobject_n5():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.EmyShapeIsMicrowaveObject -> emyBoolean`\n    2. `pyAether.emyMaskColorGetLockMask -> EmyLPPMaskColorEnum`\n    3. `pyAether.setLogicLayerNumName`\n    4. `pyAether.emyIsLockMaskColor`\n    5. `pyAether.EmyShapeIsMPPMember -> emyBoolean`\n    The function should call each API and return a tuple containing each result in ord",
+          "tokens": 337,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_multi_emyshapeismicrowaveobject_n5():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.EmyShapeIsMicrowaveObject -> emyBoolean`\n    2. `pyAether.emyMaskColorGetLockMask -> EmyLPPMaskColorEnum`\n    3. `pyAether.setLogicLayerNumName`\n    4. `pyAether.emyIsLockMaskColor`\n    5. `pyAether.EmyShapeIsMPPMember -> emyBoolean`\n    The function should call each API and return a tuple containing each result in ord",
+          "tokens": 342,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_multi_emyshapeismicrowaveobject_n5():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.EmyShapeIsMicrowaveObject -> emyBoolean`\n    2. `pyAether.emyMaskColorGetLockMask -> EmyLPPMaskColorEnum`\n    3. `pyAether.setLogicLayerNumName`\n    4. `pyAether.emyIsLockMaskColor`\n    5. `pyAether.EmyShapeIsMPPMember -> emyBoolean`\n    The function should call each API and return a tuple containing each result in ord",
+          "tokens": 343,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_multi_emyshapeismicrowaveobject_n5():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.EmyShapeIsMicrowaveObject -> emyBoolean`\n    2. `pyAether.emyMaskColorGetLockMask -> EmyLPPMaskColorEnum`\n    3. `pyAether.setLogicLayerNumName`\n    4. `pyAether.emyIsLockMaskColor`\n    5. `pyAether.EmyShapeIsMPPMember -> emyBoolean`\n    The function should call each API and return a tuple ",
+          "tokens": 431,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_multi_emyshapeismicrowaveobject_n5():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.EmyShapeIsMicrowaveObject -> emyBoolean`\n    2. `pyAether.emyMaskColorGetLockMask -> EmyLPPMaskColorEnum`\n    3. `pyAether.setLogicLayerNumName`\n    4. `pyAether.emyIsLockMaskColor`\n    5. `pyAether.EmyShapeIsMPPMember -> emyBoolean`\n    The function should call each API and return a tuple containing each result in ord",
+          "tokens": 471,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_multi_emyshapeismicrowaveobject_n5():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.EmyShapeIsMicrowaveObject -> emyBoolean`\n    2. `pyAether.emyMaskColorGetLockMask -> EmyLPPMaskColorEnum`\n    3. `pyAether.setLogicLayerNumName`\n    4. `pyAether.emyIsLockMaskColor`\n    5. `pyAether.EmyShapeIsMPPMember -> emyBoolean`\n    The function should call each API and return a tuple ",
+          "tokens": 443,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_multi_emyshapeismicrowaveobject_n5():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.EmyShapeIsMicrowaveObject -> emyBoolean`\n    2. `pyAether.emyMaskColorGetLockMask -> EmyLPPMaskColorEnum`\n    3. `pyAether.setLogicLayerNumName`\n    4. `pyAether.emyIsLockMaskColor`\n    5. `pyAether.EmyShapeIsMPPMember -> emyBoolean`\n    The function should call each API and return a tuple ",
+          "tokens": 503,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "task_id": "synth-v2-L3-01879",
+      "difficulty": "L3",
+      "num_apis": 3,
+      "assertion_template": "T3_chain_type",
+      "n_samples": 8,
+      "n_pass": 8,
+      "n_syntax_ok": 8,
+      "avg_api_coverage": 1.0,
+      "pass@1": 1.0,
+      "pass@4": 1.0,
+      "pass@8": 1.0,
+      "elapsed": 1.6,
+      "samples": [
+        {
+          "code": "def call_multi_aeclosewindow_n3():\n    result1 = pyScript.aeCloseWindow(1)\n    result2 = pyScript.aeSetObjVisible(\"Shapes\", True)\n    result3 = pyScript.pnlSetConfig(\"config\", \"value\", \"LSW\")\n    return (result1, result2, result3)",
+          "tokens": 80,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_multi_aeclosewindow_n3():\n    result1 = pyScript.aeCloseWindow(1)\n    result2 = pyScript.aeSetObjVisible(\"Shapes\", True)\n    result3 = pyScript.pnlSetConfig(\"configName\", \"configValue\", \"LSW\")\n    return (result1, result2, result3)",
+          "tokens": 82,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_multi_aeclosewindow_n3():\n    result1 = pyScript.aeCloseWindow(1)\n    result2 = pyScript.aeSetObjVisible(\"Shapes\", True)\n    result3 = pyScript.pnlSetConfig(\"configName\", \"configValue\", \"LSW\")\n    return (result1, result2, result3)",
+          "tokens": 82,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_multi_aeclosewindow_n3():\n    result1 = pyScript.aeCloseWindow(1)\n    result2 = pyScript.aeSetObjVisible(\"Shapes\", True)\n    result3 = pyScript.pnlSetConfig(\"configName\", \"configValue\", \"LSW\")\n    return (result1, result2, result3)",
+          "tokens": 82,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_multi_aeclosewindow_n3():\n    result1 = pyScript.aeCloseWindow(0)\n    result2 = pyScript.aeSetObjVisible(\"Shapes\", True)\n    result3 = pyScript.pnlSetConfig(\"configName\", \"configValue\", \"LSW\")\n    return (result1, result2, result3)",
+          "tokens": 82,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_multi_aeclosewindow_n3():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.aeCloseWindow`\n    2. `pyAether.aeSetObjVisible`\n    3. `pyAether.pnlSetConfig -> bool`\n    The function should call each API and return a tuple containing each result in order.\n    \"\"\"\n    result1 = pyScript.aeCloseWindow(1)\n    result2 = pyScript.aeSetObjVisible(\"Shapes\", True)\n    result3 = pyScript.pnlSetConfig(\"configName\", \"",
+          "tokens": 173,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_multi_aeclosewindow_n3():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.aeCloseWindow`\n    2. `pyAether.aeSetObjVisible`\n    3. `pyAether.pnlSetConfig -> bool`\n    The function should call each API and return a tuple containing each result in order.\n    \"\"\"\n    result1 = pyScript.aeCloseWindow(1)\n    result2 = pyScript.aeSetObjVisible(\"Shapes\", True)\n    result3 = pyScript.pnlSetConfig(\"config\", \"valu",
+          "tokens": 171,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_multi_aeclosewindow_n3():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.aeCloseWindow`\n    2. `pyAether.aeSetObjVisible`\n    3. `pyAether.pnlSetConfig -> bool`\n    The function should call each API and return a tuple containing each result in order.\n    \"\"\"\n    result1 = pyScript.aeCloseWindow(1)\n    result2 = pyScript.aeSetObjVisible(\"Shapes\", True)\n    result3 = pyScript",
+          "tokens": 181,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "task_id": "synth-v2-L3-01877",
+      "difficulty": "L3",
+      "num_apis": 4,
+      "assertion_template": "T4_state_verify",
+      "n_samples": 8,
+      "n_pass": 8,
+      "n_syntax_ok": 8,
+      "avg_api_coverage": 1.0,
+      "pass@1": 1.0,
+      "pass@4": 1.0,
+      "pass@8": 1.0,
+      "elapsed": 5.9,
+      "samples": [
+        {
+          "code": "def call_multi_aehicreateinstfromsch_n4():\n    result1 = pyScript.aeHiCreateInstFromSch()\n    result2 = pyScript.aeSetConnRef()\n    result3 = pyScript.aeGuiSdlUnGroupDevice(None)\n    result4 = pyScript.aeGuiSdlDeviceFold(None, None)\n    return (result1, result2, result3, result4)",
+          "tokens": 98,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_multi_aehicreateinstfromsch_n4():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.aeHiCreateInstFromSch -> :`\n    2. `pyAether.aeSetConnRef -> bool`\n    3. `pyAether.aeGuiSdlUnGroupDevice`\n    4. `pyAether.aeGuiSdlDeviceFold`\n    The function should call each API and return a tuple containing each result in order.\n    \"\"\"\n    result1 = pyScript.aeHiCreateInstFromSch()\n    re",
+          "tokens": 224,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_multi_aehicreateinstfromsch_n4():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.aeHiCreateInstFromSch -> :`\n    2. `pyAether.aeSetConnRef -> bool`\n    3. `pyAether.aeGuiSdlUnGroupDevice`\n    4. `pyAether.aeGuiSdlDeviceFold`\n    The function should call each API and return a tuple containing each result in order.\n    \"\"\"\n    result1 = pyScript.aeHiCreateInstFromSch()\n    result2 = pyScript.aeSetConnRef",
+          "tokens": 231,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_multi_aehicreateinstfromsch_n4():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.aeHiCreateInstFromSch -> :`\n    2. `pyAether.aeSetConnRef -> bool`\n    3. `pyAether.aeGuiSdlUnGroupDevice`\n    4. `pyAether.aeGuiSdlDeviceFold`\n    The function should call each API and return a tuple containing each result in order.\n    \"\"\"\n    result1 = pyScript.aeHiCreateInstFromSch()\n    re",
+          "tokens": 239,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_multi_aehicreateinstfromsch_n4():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.aeHiCreateInstFromSch -> :`\n    2. `pyAether.aeSetConnRef -> bool`\n    3. `pyAether.aeGuiSdlUnGroupDevice`\n    4. `pyAether.aeGuiSdlDeviceFold`\n    The function should call each API and return a tuple containing each result in order.\n    \"\"\"\n    result1 = pyScript.aeHiCreateInstFromSch()\n    result2 = pyScript.aeSetConnRef",
+          "tokens": 245,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_multi_aehicreateinstfromsch_n4():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.aeHiCreateInstFromSch -> :`\n    2. `pyAether.aeSetConnRef -> bool`\n    3. `pyAether.aeGuiSdlUnGroupDevice`\n    4. `pyAether.aeGuiSdlDeviceFold`\n    The function should call each API and return a tuple containing each result in order.\n    \"\"\"\n    import pyAether as pyScript\n    \n    # Call the APIs in sequence\n    result1 =",
+          "tokens": 275,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_multi_aehicreateinstfromsch_n4():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.aeHiCreateInstFromSch -> :`\n    2. `pyAether.aeSetConnRef -> bool`\n    3. `pyAether.aeGuiSdlUnGroupDevice`\n    4. `pyAether.aeGuiSdlDeviceFold`\n    The function should call each API and return a tuple containing each result in order.\n    \"\"\"\n    result1 = pyScript.aeHiCreateInstFromSch()\n    result2 = pyScript.aeSetConnRef",
+          "tokens": 288,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_multi_aehicreateinstfromsch_n4():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.aeHiCreateInstFromSch -> :`\n    2. `pyAether.aeSetConnRef -> bool`\n    3. `pyAether.aeGuiSdlUnGroupDevice`\n    4. `pyAether.aeGuiSdlDeviceFold`\n    The function should call each API and return a tuple containing each result in order.\n    \"\"\"\n    # Call the APIs with appropriate default/example ",
+          "tokens": 495,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "task_id": "synth-v2-L4-02694",
+      "difficulty": "L4",
+      "num_apis": 8,
+      "assertion_template": "T4_state_verify",
+      "n_samples": 8,
+      "n_pass": 8,
+      "n_syntax_ok": 8,
+      "avg_api_coverage": 1.0,
+      "pass@1": 1.0,
+      "pass@4": 1.0,
+      "pass@8": 1.0,
+      "elapsed": 6.5,
+      "samples": [
+        {
+          "code": "import pyAether as pyScript\n\ndef call_multi_dbarea_n8():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.dbArea -> float`\n    2. `pyAether.dbDeleteAllNet -> bool``\n    3. `pyAether.dbRemoveFigFromFigGp -> bool`\n    4. `pyAether.dbPcmUnabut -> bool`\n    5. `pyAether.dbLayerGen`\n    6. `pyAether.dbLayerNoHoles`\n    7. `pyAether.dbFindNetByName -> emyNet`\n    8. `pyAether.dbGetShapeColorMask`\n    The function shoul",
+          "tokens": 469,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_multi_dbarea_n8():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.dbArea -> float`\n    2. `pyAether.dbDeleteAllNet -> bool``\n    3. `pyAether.dbRemoveFigFromFigGp -> bool`\n    4. `pyAether.dbPcmUnabut -> bool`\n    5. `pyAether.dbLayerGen`\n    6. `pyAether.dbLayerNoHoles`\n    7. `pyAether.dbFindNetByName -> emyNet`\n    8. `pyAether.dbGetShapeColorMask`\n    The function shoul",
+          "tokens": 521,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_multi_dbarea_n8():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.dbArea -> float`\n    2. `pyAether.dbDeleteAllNet -> bool`\n    3. `pyAether.dbRemoveFigFromFigGp -> bool`\n    4. `pyAether.dbPcmUnabut -> bool`\n    5. `pyAether.dbLayerGen`\n    6. `pyAether.dbLayerNoHoles`\n    7. `pyAether.dbFindNetByName -> emyNet`\n    8. `pyAether.dbGetShapeColorMask`\n    The function should",
+          "tokens": 552,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_multi_dbarea_n8():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.dbArea -> float`\n    2. `pyAether.dbDeleteAllNet -> bool`\n    3. `pyAether.dbRemoveFigFromFigGp -> bool`\n    4. `pyAether.dbPcmUnabut -> bool`\n    5. `pyAether.dbLayerGen`\n    6. `pyAether.dbLayerNoHoles`\n    7. `pyAether.dbFindNetByName -> emyNet`\n    8. `pyAether.dbGetShapeColorMask`\n    The function should call each API and return a t",
+          "tokens": 604,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_multi_dbarea_n8():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.dbArea -> float`\n    2. `pyAether.dbDeleteAllNet -> bool``\n    3. `pyAether.dbRemoveFigFromFigGp -> bool`\n    4. `pyAether.dbPcmUnabut -> bool`\n    5. `pyAether.dbLayerGen`\n    6. `pyAether.dbLayerNoHoles`\n    7. `pyAether.dbFindNetByName -> emyNet`\n    8. `pyAether.dbGetShapeColorMask`\n    The function shoul",
+          "tokens": 597,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_multi_dbarea_n8():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.dbArea -> float`\n    2. `pyAether.dbDeleteAllNet -> bool``\n    3. `pyAether.dbRemoveFigFromFigGp -> bool`\n    4. `pyAether.dbPcmUnabut -> bool`\n    5. `pyAether.dbLayerGen`\n    6. `pyAether.dbLayerNoHoles`\n    7. `pyAether.dbFindNetByName -> emyNet`\n    8. `pyAether.dbGetShapeColorMask`\n    The function should call each API and return a ",
+          "tokens": 661,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_multi_dbarea_n8():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.dbArea -> float`\n    2. `pyAether.dbDeleteAllNet -> bool``\n    3. `pyAether.dbRemoveFigFromFigGp -> bool`\n    4. `pyAether.dbPcmUnabut -> bool`\n    5. `pyAether.dbLayerGen`\n    6. `pyAether.dbLayerNoHoles`\n    7. `pyAether.dbFindNetByName -> emyNet`\n    8. `pyAether.dbGetShapeColorMask`\n    The function should call each API and return a ",
+          "tokens": 780,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_multi_dbarea_n8():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.dbArea -> float`\n    2. `pyAether.dbDeleteAllNet -> bool`\n    3. `pyAether.dbRemoveFigFromFigGp -> bool`\n    4. `pyAether.dbPcmUnabut -> bool`\n    5. `pyAether.dbLayerGen`\n    6. `pyAether.dbLayerNoHoles`\n    7. `pyAether.dbFindNetByName -> emyNet`\n    8. `pyAether.dbGetShapeColorMask`\n    The function should",
+          "tokens": 673,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "task_id": "synth-v2-L4-02758",
+      "difficulty": "L4",
+      "num_apis": 6,
+      "assertion_template": "T4_state_verify",
+      "n_samples": 8,
+      "n_pass": 8,
+      "n_syntax_ok": 8,
+      "avg_api_coverage": 1.0,
+      "pass@1": 1.0,
+      "pass@4": 1.0,
+      "pass@8": 1.0,
+      "elapsed": 4.5,
+      "samples": [
+        {
+          "code": "def call_multi_emyfilenormalize_n6():\n    # 1. emyFileNormalize\n    result1 = pyScript.emyFileNormalize(\"test_file.txt\")\n    \n    # 2. emyInstGetParam\n    inst = pyScript.emyInst()\n    param_name = pyScript.emyString(\"param\")\n    param = pyScript.emyParam()\n    result2 = pyScript.emyInstGetParam(inst, param_name, param)\n    \n    # 3. emyPropNewByParam\n    obj = pyScript.emyObject()\n    result3 = pyScript.emyPropNewByParam(param, obj)\n    \n    # 4. emyFileGetExeFullPath\n    exe_name = \"python\"\n  ",
+          "tokens": 305,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_multi_emyfilenormalize_n6():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.emyFileNormalize`\n    2. `pyAether.emyInstGetParam -> emyBoolean`\n    3. `pyAether.emyPropNewByParam -> emyProp`\n    4. `pyAether.emyFileGetExeFullPath -> bool`\n    5. `pyAether.getGroupDesign -> emyDesign`\n    6. `pyAether.emySegmentNearContain -> emyBoolean`\n    The function should call each API a",
+          "tokens": 467,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_multi_emyfilenormalize_n6():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.emyFileNormalize`\n    2. `pyAether.emyInstGetParam -> emyBoolean`\n    3. `pyAether.emyPropNewByParam -> emyProp`\n    4. `pyAether.emyFileGetExeFullPath -> bool`\n    5. `pyAether.getGroupDesign -> emyDesign`\n    6. `pyAether.emySegmentNearContain -> emyBoolean`\n    The function should call each API a",
+          "tokens": 467,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_multi_emyfilenormalize_n6():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.emyFileNormalize`\n    2. `pyAether.emyInstGetParam -> emyBoolean`\n    3. `pyAether.emyPropNewByParam -> emyProp`\n    4. `pyAether.emyFileGetExeFullPath -> bool`\n    5. `pyAether.getGroupDesign -> emyDesign`\n    6. `pyAether.emySegmentNearContain -> emyBoolean`\n    The function should call each API a",
+          "tokens": 476,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_multi_emyfilenormalize_n6():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.emyFileNormalize`\n    2. `pyAether.emyInstGetParam -> emyBoolean`\n    3. `pyAether.emyPropNewByParam -> emyProp`\n    4. `pyAether.emyFileGetExeFullPath -> bool`\n    5. `pyAether.getGroupDesign -> emyDesign`\n    6. `pyAether.emySegmentNearContain -> emyBoolean`\n    The function should call each API a",
+          "tokens": 470,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_multi_emyfilenormalize_n6():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.emyFileNormalize`\n    2. `pyAether.emyInstGetParam -> emyBoolean`\n    3. `pyAether.emyPropNewByParam -> emyProp`\n    4. `pyAether.emyFileGetExeFullPath -> bool`\n    5. `pyAether.getGroupDesign -> emyDesign`\n    6. `pyAether.emySegmentNearContain -> emyBoolean`\n    The function should call each API a",
+          "tokens": 478,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_multi_emyfilenormalize_n6():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.emyFileNormalize`\n    2. `pyAether.emyInstGetParam -> emyBoolean`\n    3. `pyAether.emyPropNewByParam -> emyProp`\n    4. `pyAether.emyFileGetExeFullPath -> bool`\n    5. `pyAether.getGroupDesign -> emyDesign`\n    6. `pyAether.emySegmentNearContain -> emyBoolean`\n    The function should call each API a",
+          "tokens": 490,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_multi_emyfilenormalize_n6():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.emyFileNormalize`\n    2. `pyAether.emyInstGetParam -> emyBoolean`\n    3. `pyAether.emyPropNewByParam -> emyProp`\n    4. `pyAether.emyFileGetExeFullPath -> bool`\n    5. `pyAether.getGroupDesign -> emyDesign`\n    6. `pyAether.emySegmentNearContain -> emyBoolean`\n    The function should call each API a",
+          "tokens": 494,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "task_id": "synth-v2-L4-02766",
+      "difficulty": "L4",
+      "num_apis": 6,
+      "assertion_template": "T4_state_verify",
+      "n_samples": 8,
+      "n_pass": 8,
+      "n_syntax_ok": 8,
+      "avg_api_coverage": 1.0,
+      "pass@1": 1.0,
+      "pass@4": 1.0,
+      "pass@8": 1.0,
+      "elapsed": 6.5,
+      "samples": [
+        {
+          "code": "def call_multi_emynetgetautovalidname_n6():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.emyNetGetAutoValidName`\n    2. `pyAether.emyConstraintGetDualIntValue`\n    3. `pyAether.emyRouteGetBeginPathSeg -> emyPathSeg`\n    4. `pyAether.sleDesignIsCascadeCell -> emyBoolean`\n    5. `pyAether.emyGroupLeaderObjectGetAllFollowers -> emyUInt4`\n    6. `pyAether.emyObjectGetProp -> emyProp`\n    The function should call ",
+          "tokens": 383,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_multi_emynetgetautovalidname_n6():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.emyNetGetAutoValidName`\n    2. `pyAether.emyConstraintGetDualIntValue`\n    3. `pyAether.emyRouteGetBeginPathSeg -> emyPathSeg`\n    4. `pyAether.sleDesignIsCascadeCell -> emyBoolean`\n    5. `pyAether.emyGroupLeaderObjectGetAllFollowers -> emyUInt4`\n    6. `pyAether.emyObjectGetProp -> emyProp`\n    The function should call ",
+          "tokens": 459,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_multi_emynetgetautovalidname_n6():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.emyNetGetAutoValidName`\n    2. `pyAether.emyConstraintGetDualIntValue`\n    3. `pyAether.emyRouteGetBeginPathSeg -> emyPathSeg`\n    4. `pyAether.sleDesignIsCascadeCell -> emyBoolean`\n    5. `pyAether.emyGroupLeaderObjectGetAllFollowers -> emyUInt4`\n    6. `pyAether.emyObjectGetProp -> emyProp`\n",
+          "tokens": 470,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_multi_emynetgetautovalidname_n6():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.emyNetGetAutoValidName`\n    2. `pyAether.emyConstraintGetDualIntValue`\n    3. `pyAether.emyRouteGetBeginPathSeg -> emyPathSeg`\n    4. `pyAether.sleDesignIsCascadeCell -> emyBoolean`\n    5. `pyAether.emyGroupLeaderObjectGetAllFollowers -> emyUInt4`\n    6. `pyAether.emyObjectGetProp -> emyProp`\n    The function should call ",
+          "tokens": 465,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_multi_emynetgetautovalidname_n6():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.emyNetGetAutoValidName`\n    2. `pyAether.emyConstraintGetDualIntValue`\n    3. `pyAether.emyRouteGetBeginPathSeg -> emyPathSeg`\n    4. `pyAether.sleDesignIsCascadeCell -> emyBoolean`\n    5. `pyAether.emyGroupLeaderObjectGetAllFollowers -> emyUInt4`\n    6. `pyAether.emyObjectGetProp -> emyProp`\n    The function should call ",
+          "tokens": 465,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_multi_emynetgetautovalidname_n6():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.emyNetGetAutoValidName`\n    2. `pyAether.emyConstraintGetDualIntValue`\n    3. `pyAether.emyRouteGetBeginPathSeg -> emyPathSeg`\n    4. `pyAether.sleDesignIsCascadeCell -> emyBoolean`\n    5. `pyAether.emyGroupLeaderObjectGetAllFollowers -> emyUInt4`\n    6. `pyAether.emyObjectGetProp -> emyProp`\n    The function should call ",
+          "tokens": 542,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_multi_emynetgetautovalidname_n6():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.emyNetGetAutoValidName`\n    2. `pyAether.emyConstraintGetDualIntValue`\n    3. `pyAether.emyRouteGetBeginPathSeg -> emyPathSeg`\n    4. `pyAether.sleDesignIsCascadeCell -> emyBoolean`\n    5. `pyAether.emyGroupLeaderObjectGetAllFollowers -> emyUInt4`\n    6. `pyAether.emyObjectGetProp -> emyProp`\n    The function should call ",
+          "tokens": 627,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_multi_emynetgetautovalidname_n6():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.emyNetGetAutoValidName`\n    2. `pyAether.emyConstraintGetDualIntValue`\n    3. `pyAether.emyRouteGetBeginPathSeg -> emyPathSeg`\n    4. `pyAether.sleDesignIsCascadeCell -> emyBoolean`\n    5. `pyAether.emyGroupLeaderObjectGetAllFollowers -> emyUInt4`\n    6. `pyAether.emyObjectGetProp -> emyProp`\n",
+          "tokens": 552,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "task_id": "synth-v2-L4-02905",
+      "difficulty": "L4",
+      "num_apis": 8,
+      "assertion_template": "T4_state_verify",
+      "n_samples": 8,
+      "n_pass": 8,
+      "n_syntax_ok": 8,
+      "avg_api_coverage": 1.0,
+      "pass@1": 1.0,
+      "pass@4": 1.0,
+      "pass@8": 1.0,
+      "elapsed": 4.1,
+      "samples": [
+        {
+          "code": "def call_multi_aeunregsaveauthchecktrigger_n8(da, point, refTop, dx, dy, scale):\n    result1 = pyScript.aeUnRegSaveAuthCheckTrigger()\n    result2 = pyScript.aeGetCurrentIncompleteNetFilter(da=da)\n    result3 = pyScript.aeZoomByArea(point=point, refTop=refTop)\n    result4 = pyScript.aeMoveCursor(dx=dx, dy=dy)\n    result5 = pyScript.aeScaleMagnifier(scale=scale)\n    result6 = pyScript.aeHasLibPathEditor()\n    result7 = pyScript.aeUnsetSelProtection()\n    result8 = pyScript.aeUnhighlightProtected()",
+          "tokens": 191,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_multi_aeunregsaveauthchecktrigger_n8():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.aeUnRegSaveAuthCheckTrigger -> bool`\n    2. `pyAether.aeGetCurrentIncompleteNetFilter -> pySleIncompleteNetsFilter`\n    3. `pyAether.aeZoomByArea -> bool``\n    4. `pyAether.aeMoveCursor -> bool`\n    5. `pyAether.aeScaleMagnifier -> bool`\n    6. `pyAether.aeHasLibPathEditor -> bool`\n    7.",
+          "tokens": 412,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_multi_aeunregsaveauthchecktrigger_n8():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.aeUnRegSaveAuthCheckTrigger -> bool`\n    2. `pyAether.aeGetCurrentIncompleteNetFilter -> pySleIncompleteNetsFilter`\n    3. `pyAether.aeZoomByArea -> bool``\n    4. `pyAether.aeMoveCursor -> bool`\n    5. `pyAether.aeScaleMagnifier -> bool`\n    6. `pyAether.aeHasLibPathEditor -> bool`\n    7. `pyAether.aeUnsetSelProtecti",
+          "tokens": 411,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_multi_aeunregsaveauthchecktrigger_n8():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.aeUnRegSaveAuthCheckTrigger -> bool`\n    2. `pyAether.aeGetCurrentIncompleteNetFilter -> pySleIncompleteNetsFilter`\n    3. `pyAether.aeZoomByArea -> bool``\n    4. `pyAether.aeMoveCursor -> bool`\n    5. `pyAether.aeScaleMagnifier -> bool`\n    6. `pyAether.aeHasLibPathEditor -> bool`\n    7. `pyAether.aeUnsetSelProtecti",
+          "tokens": 417,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_multi_aeunregsaveauthchecktrigger_n8():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.aeUnRegSaveAuthCheckTrigger -> bool`\n    2. `pyAether.aeGetCurrentIncompleteNetFilter -> pySleIncompleteNetsFilter`\n    3. `pyAether.aeZoomByArea -> bool`\n    4. `pyAether.aeMoveCursor -> bool`\n    5. `pyAether.aeScaleMagnifier -> bool`\n    6. `pyAether.aeHasLibPathEditor -> bool`\n    7. `pyAether.aeUnsetSelProtectio",
+          "tokens": 421,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_multi_aeunregsaveauthchecktrigger_n8():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.aeUnRegSaveAuthCheckTrigger -> bool`\n    2. `pyAether.aeGetCurrentIncompleteNetFilter -> pySleIncompleteNetsFilter`\n    3. `pyAether.aeZoomByArea -> bool``\n    4. `pyAether.aeMoveCursor -> bool`\n    5. `pyAether.aeScaleMagnifier -> bool`\n    6. `pyAether.aeHasLibPathEditor -> bool`\n    7.",
+          "tokens": 512,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_multi_aeunregsaveauthchecktrigger_n8():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.aeUnRegSaveAuthCheckTrigger -> bool`\n    2. `pyAether.aeGetCurrentIncompleteNetFilter -> pySleIncompleteNetsFilter`\n    3. `pyAether.aeZoomByArea -> bool``\n    4. `pyAether.aeMoveCursor -> bool`\n    5. `pyAether.aeScaleMagnifier -> bool`\n    6. `pyAether.aeHasLibPathEditor -> bool`\n    7. `pyAether.aeUnsetSelProtecti",
+          "tokens": 528,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_multi_aeunregsaveauthchecktrigger_n8():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.aeUnRegSaveAuthCheckTrigger -> bool`\n    2. `pyAether.aeGetCurrentIncompleteNetFilter -> pySleIncompleteNetsFilter`\n    3. `pyAether.aeZoomByArea -> bool`\n    4. `pyAether.aeMoveCursor -> bool`\n    5. `pyAether.aeScaleMagnifier -> bool`\n    6. `pyAether.aeHasLibPathEditor -> bool`\n    7. `pyAether.aeUnsetSelProtectio",
+          "tokens": 517,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "task_id": "synth-v2-L4-02955",
+      "difficulty": "L4",
+      "num_apis": 7,
+      "assertion_template": "T4_state_verify",
+      "n_samples": 8,
+      "n_pass": 8,
+      "n_syntax_ok": 8,
+      "avg_api_coverage": 1.0,
+      "pass@1": 1.0,
+      "pass@4": 1.0,
+      "pass@8": 1.0,
+      "elapsed": 5.2,
+      "samples": [
+        {
+          "code": "def call_multi_aedisplaymenu_n7():\n    result1 = pyScript.aeDisplayMenu(menu=None)\n    result2 = pyScript.aeSetCallbackStatus(form=None, status=True)\n    result3 = pyScript.aeDisplayUserDBox(name=\"TestBox\")\n    result4 = pyScript.aeReportDeselectItem(reportField=None, itemIndex=0)\n    result5 = pyScript.aeFindToolbar(objName=\"TestToolbar\", windowId=0)\n    result6 = pyScript.aeCreateFormButton(name=\"TestButton\")\n    result7 = pyScript.aeCreateAction(name=\"TestAction\", callback=None, actionList=[]",
+          "tokens": 175,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_multi_aedisplaymenu_n7():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.aeDisplayMenu`\n    2. `pyAether.aeSetCallbackStatus -> bool`\n    3. `pyAether.aeDisplayUserDBox -> int`\n    4. `pyAether.aeReportDeselectItem -> bool`\n    5. `pyAether.aeFindToolbar -> aeToolBar`\n    6. `pyAether.aeCreateFormButton -> aePushButton`\n    7. `pyAether.aeCreateAction`\n    The function should call each API and return a",
+          "tokens": 379,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_multi_aedisplaymenu_n7():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.aeDisplayMenu`\n    2. `pyAether.aeSetCallbackStatus -> bool`\n    3. `pyAether.aeDisplayUserDBox -> int`\n    4. `pyAether.aeReportDeselectItem -> bool`\n    5. `pyAether.aeFindToolbar -> aeToolBar`\n    6. `pyAether.aeCreateFormButton -> aePushButton`\n    7. `pyAether.aeCreateAction`\n    The function shou",
+          "tokens": 402,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_multi_aedisplaymenu_n7():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.aeDisplayMenu`\n    2. `pyAether.aeSetCallbackStatus -> bool`\n    3. `pyAether.aeDisplayUserDBox -> int`\n    4. `pyAether.aeReportDeselectItem -> bool`\n    5. `pyAether.aeFindToolbar -> aeToolBar`\n    6. `pyAether.aeCreateFormButton -> aePushButton`\n    7. `pyAether.aeCreateAction`\n    The function should call each API and return a",
+          "tokens": 410,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_multi_aedisplaymenu_n7():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.aeDisplayMenu`\n    2. `pyAether.aeSetCallbackStatus -> bool`\n    3. `pyAether.aeDisplayUserDBox -> int`\n    4. `pyAether.aeReportDeselectItem -> bool`\n    5. `pyAether.aeFindToolbar -> aeToolBar`\n    6. `pyAether.aeCreateFormButton -> aePushButton`\n    7. `pyAether.aeCreateAction`\n    The function should call each API and return a",
+          "tokens": 426,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_multi_aedisplaymenu_n7():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.aeDisplayMenu`\n    2. `pyAether.aeSetCallbackStatus -> bool`\n    3. `pyAether.aeDisplayUserDBox -> int`\n    4. `pyAether.aeReportDeselectItem -> bool`\n    5. `pyAether.aeFindToolbar -> aeToolBar`\n    6. `pyAether.aeCreateFormButton -> aePushButton`\n    7. `pyAether.aeCreateAction`\n    The function shou",
+          "tokens": 432,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_multi_aedisplaymenu_n7():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.aeDisplayMenu`\n    2. `pyAether.aeSetCallbackStatus -> bool`\n    3. `pyAether.aeDisplayUserDBox -> int`\n    4. `pyAether.aeReportDeselectItem -> bool`\n    5. `pyAether.aeFindToolbar -> aeToolBar`\n    6. `pyAether.aeCreateFormButton -> aePushButton`\n    7. `pyAether.aeCreateAction`\n    The function should call each API and return a",
+          "tokens": 530,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_multi_aedisplaymenu_n7():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.aeDisplayMenu`\n    2. `pyAether.aeSetCallbackStatus -> bool`\n    3. `pyAether.aeDisplayUserDBox -> int`\n    4. `pyAether.aeReportDeselectItem -> bool`\n    5. `pyAether.aeFindToolbar -> aeToolBar`\n    6. `pyAether.aeCreateFormButton -> aePushButton`\n    7. `pyAether.aeCreateAction`\n    The function should call each API and return a",
+          "tokens": 811,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "task_id": "synth-v2-L5-03153",
+      "difficulty": "L5",
+      "num_apis": 10,
+      "assertion_template": "T5_behavior",
+      "n_samples": 8,
+      "n_pass": 8,
+      "n_syntax_ok": 8,
+      "avg_api_coverage": 1.0,
+      "pass@1": 1.0,
+      "pass@4": 1.0,
+      "pass@8": 1.0,
+      "elapsed": 7.4,
+      "samples": [
+        {
+          "code": "import pyAether as pyScript\n\ndef call_multi_dbgethiertree_n10():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.dbGetHierTree -> dict`\n    2. `pyAether.emyLibDefList.save`\n    3. `pyAether.aeZoomToPoint -> bool`\n    4. `pyAether.pcColinearPointsEx -> bool`\n    5. `pyAether.SleDrawArea.dbuToUU -> emyDouble`\n    6. `pyAether.emyDesignUuToDBU -> emyInt4`\n    7. `pyAether.dbCrtNetExpr`\n    8. `pyAether.emyShape.tra",
+          "tokens": 811,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_multi_dbgethiertree_n10():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.dbGetHierTree -> dict`\n    2. `pyAether.emyLibDefList.save`\n    3. `pyAether.aeZoomToPoint -> bool`\n    4. `pyAether.pcColinearPointsEx -> bool`\n    5. `pyAether.SleDrawArea.dbuToUU -> emyDouble`\n    6. `pyAether.emyDesignUuToDBU -> emyInt4`\n    7. `pyAether.dbCrtNetExpr`\n    8. `pyAether.emyShape.tra",
+          "tokens": 823,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_multi_dbgethiertree_n10():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.dbGetHierTree -> dict`\n    2. `pyAether.emyLibDefList.save`\n    3. `pyAether.aeZoomToPoint -> bool`\n    4. `pyAether.pcColinearPointsEx -> bool`\n    5. `pyAether.SleDrawArea.dbuToUU -> emyDouble`\n    6. `pyAether.emyDesignUuToDBU -> emyInt4`\n    7. `pyAether.dbCrtNetExpr`\n    8. `pyAether.emyShape.tra",
+          "tokens": 846,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_multi_dbgethiertree_n10():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.dbGetHierTree -> dict`\n    2. `pyAether.emyLibDefList.save`\n    3. `pyAether.aeZoomToPoint -> bool`\n    4. `pyAether.pcColinearPointsEx -> bool`\n    5. `pyAether.SleDrawArea.dbuToUU -> emyDouble`\n    6. `pyAether.emyDesignUuToDBU -> emyInt4`\n    7. `pyAether.dbCrtNetExpr`\n    8. `pyAether.emyShape.tra",
+          "tokens": 860,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_multi_dbgethiertree_n10():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.dbGetHierTree -> dict`\n    2. `pyAether.emyLibDefList.save`\n    3. `pyAether.aeZoomToPoint -> bool`\n    4. `pyAether.pcColinearPointsEx -> bool`\n    5. `pyAether.SleDrawArea.dbuToUU -> emyDouble`\n    6. `pyAether.emyDesignUuToDBU -> emyInt4`\n    7. `pyAether.dbCrtNetExpr`\n    8. `pyAether.emyShape.tra",
+          "tokens": 858,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_multi_dbgethiertree_n10():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.dbGetHierTree -> dict`\n    2. `pyAether.emyLibDefList.save`\n    3. `pyAether.aeZoomToPoint -> bool`\n    4. `pyAether.pcColinearPointsEx -> bool`\n    5. `pyAether.SleDrawArea.dbuToUU -> emyDouble`\n    6. `pyAether.emyDesignUuToDBU -> emyInt4`\n    7. `pyAether.dbCrtNetExpr`\n    8. `pyAether.emyShape.transform`\n    9. `pyAether.emyV",
+          "tokens": 860,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_multi_dbgethiertree_n10():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.dbGetHierTree -> dict`\n    2. `pyAether.emyLibDefList.save`\n    3. `pyAether.aeZoomToPoint -> bool`\n    4. `pyAether.pcColinearPointsEx -> bool`\n    5. `pyAether.SleDrawArea.dbuToUU -> emyDouble`\n    6. `pyAether.emyDesignUuToDBU -> emyInt4`\n    7. `pyAether.dbCrtNetExpr`\n    8. `pyAether.emyShape.tra",
+          "tokens": 874,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_multi_dbgethiertree_n10():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.dbGetHierTree -> dict`\n    2. `pyAether.emyLibDefList.save`\n    3. `pyAether.aeZoomToPoint -> bool`\n    4. `pyAether.pcColinearPointsEx -> bool`\n    5. `pyAether.SleDrawArea.dbuToUU -> emyDouble`\n    6. `pyAether.emyDesignUuToDBU -> emyInt4`\n    7. `pyAether.dbCrtNetExpr`\n    8. `pyAether.emyShape.tra",
+          "tokens": 890,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "task_id": "synth-v2-L5-03290",
+      "difficulty": "L5",
+      "num_apis": 10,
+      "assertion_template": "T5_behavior",
+      "n_samples": 8,
+      "n_pass": 8,
+      "n_syntax_ok": 8,
+      "avg_api_coverage": 1.0,
+      "pass@1": 1.0,
+      "pass@4": 1.0,
+      "pass@8": 1.0,
+      "elapsed": 12.8,
+      "samples": [
+        {
+          "code": "import pyAether as pyScript\n\ndef call_multi_emyarc_calcarc_n10():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.emyArc.calcArc`\n    2. `pyAether.emyPointArrayP3ToArcline -> emyBoolean`\n    3. `pyAether.emyConstraintParamDef.destroy`\n    4. `pyAether.emyInstIsLCV -> emyBoolean`\n    5. `pyAether.emyLPPHeader.getLayerNum`\n    6. `pyAether.sleGuiCopy`\n    7. `pyAether.emyPRBoundary.getIOBox`\n    8. `pyAether.lswGu",
+          "tokens": 705,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_multi_emyarc_calcarc_n10():\n    # 1. pyAether.emyArc.calcArc\n    # Using the 4-argument version for simplicity\n    ellipse_bbox = pyScript.emyBox()\n    bbox = pyScript.emyBox()\n    start_angle = pyScript.emyDouble(0.0)\n    stop_angle = pyScript.emyDouble(1.0)\n    result1 = pyScript.emyArc.calcArc(ellipse_bbox, bbox, start_angle, stop_angle)\n    \n    # 2. pyAether.emyPointArrayP3ToArcline\n    result_arr = pyScript.emyPointArray()\n    start_point = pyScript.emyPoint()\n    end_point = pySc",
+          "tokens": 641,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_multi_emyarc_calcarc_n10():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.emyArc.calcArc`\n    2. `pyAether.emyPointArrayP3ToArcline -> emyBoolean`\n    3. `pyAether.emyConstraintParamDef.destroy`\n    4. `pyAether.emyInstIsLCV -> emyBoolean`\n    5. `pyAether.emyLPPHeader.getLayerNum`\n    6. `pyAether.sleGuiCopy`\n    7. `pyAether.emyPRBoundary.getIOBox`\n    8. `pyAether.lswGuiSaveLayerStatus`\n    9. `pyA",
+          "tokens": 775,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_multi_emyarc_calcarc_n10():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.emyArc.calcArc`\n    2. `pyAether.emyPointArrayP3ToArcline -> emyBoolean`\n    3. `pyAether.emyConstraintParamDef.destroy`\n    4. `pyAether.emyInstIsLCV -> emyBoolean`\n    5. `pyAether.emyLPPHeader.getLayerNum`\n    6. `pyAether.sleGuiCopy`\n    7. `pyAether.emyPRBoundary.getIOBox`\n    8. `pyAether.lswGu",
+          "tokens": 808,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_multi_emyarc_calcarc_n10():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.emyArc.calcArc`\n    2. `pyAether.emyPointArrayP3ToArcline -> emyBoolean`\n    3. `pyAether.emyConstraintParamDef.destroy`\n    4. `pyAether.emyInstIsLCV -> emyBoolean`\n    5. `pyAether.emyLPPHeader.getLayerNum`\n    6. `pyAether.sleGuiCopy`\n    7. `pyAether.emyPRBoundary.getIOBox`\n    8. `pyAether.lswGu",
+          "tokens": 861,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_multi_emyarc_calcarc_n10():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.emyArc.calcArc`\n    2. `pyAether.emyPointArrayP3ToArcline -> emyBoolean`\n    3. `pyAether.emyConstraintParamDef.destroy`\n    4. `pyAether.emyInstIsLCV -> emyBoolean`\n    5. `pyAether.emyLPPHeader.getLayerNum`\n    6. `pyAether.sleGuiCopy`\n    7. `pyAether.emyPRBoundary.getIOBox`\n    8. `pyAether.lswGuiSaveLayerStatus`\n    9. `pyA",
+          "tokens": 900,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_multi_emyarc_calcarc_n10():\n    # 1. pyAether.emyArc.calcArc\n    # Using the overloaded version with 3 points\n    result1 = pyScript.emyArc.calcArc(p1=None, p2=None, p3=None, ellipseBBox=None, startAngle=0.0, stopAngle=0.0)\n    \n    # 2. pyAether.emyPointArrayP3ToArcline\n    result2 = pyScript.emyPointArrayP3ToArcline(result=None, start=None, end=None, middle=None, sides=0)\n    \n    # 3. pyAether.emyConstraintParamDef.destroy\n    # Need an instance to call destroy on. Assuming a dummy i",
+          "tokens": 942,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_multi_emyarc_calcarc_n10():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.emyArc.calcArc`\n    2. `pyAether.emyPointArrayP3ToArcline -> emyBoolean`\n    3. `pyAether.emyConstraintParamDef.destroy`\n    4. `pyAether.emyInstIsLCV -> emyBoolean`\n    5. `pyAether.emyLPPHeader.getLayerNum`\n    6. `pyAether.sleGuiCopy`\n    7. `pyAether.emyPRBoundary.getIOBox`\n    8. `pyAether.lswGu",
+          "tokens": 1397,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "task_id": "synth-v2-L5-03197",
+      "difficulty": "L5",
+      "num_apis": 10,
+      "assertion_template": "T5_behavior",
+      "n_samples": 8,
+      "n_pass": 8,
+      "n_syntax_ok": 8,
+      "avg_api_coverage": 1.0,
+      "pass@1": 1.0,
+      "pass@4": 1.0,
+      "pass@8": 1.0,
+      "elapsed": 8.8,
+      "samples": [
+        {
+          "code": "def call_multi_etfiletimemodified_n10():\n    # 1. etFileTimeModified\n    result1 = pyScript.etFileTimeModified(\"loadstring.py\")\n    \n    # 2. dbTransformBBox3X\n    bbox = pyScript.emyBoxF((0, 0), (5, 5))\n    trans = pyScript.emyTransformF((0, 0), \"R0\")\n    result2 = pyScript.dbTransformBBox3X(bbox, trans, 1)\n    \n    # 3. emyLibDefListMem.moveAfter\n    lib_def_list_mem = pyScript.emyLibDefListMem()\n    member = pyScript.emyLibDefListMem()\n    result3 = lib_def_list_mem.moveAfter(member)\n    \n   ",
+          "tokens": 555,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_multi_etfiletimemodified_n10():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.etFileTimeModified`\n    2. `pyAether.dbTransformBBox3X`\n    3. `pyAether.emyLibDefListMem.moveAfter`\n    4. `pyAether.setNavTreeViewSelectChange`\n    5. `pyAether.seGuiStartSDL`\n    6. `pyAether.emyBitTerm.setRouteMethod`\n    7. `pyAether.emyVectorInstDef.find`\n    8. `pyAether.SleDrawArea.getDispDepth -> emyUInt4`\n    9. `p",
+          "tokens": 627,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_multi_etfiletimemodified_n10():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.etFileTimeModified`\n    2. `pyAether.dbTransformBBox3X`\n    3. `pyAether.emyLibDefListMem.moveAfter`\n    4. `pyAether.setNavTreeViewSelectChange`\n    5. `pyAether.seGuiStartSDL`\n    6. `pyAether.emyBitTerm.setRouteMethod`\n    7. `pyAether.emyVectorInstDef.find`\n    8. `pyAether.SleDrawArea.getDis",
+          "tokens": 782,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_multi_etfiletimemodified_n10():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.etFileTimeModified`\n    2. `pyAether.dbTransformBBox3X`\n    3. `pyAether.emyLibDefListMem.moveAfter`\n    4. `pyAether.setNavTreeViewSelectChange`\n    5. `pyAether.seGuiStartSDL`\n    6. `pyAether.emyBitTerm.setRouteMethod`\n    7. `pyAether.emyVectorInstDef.find`\n    8. `pyAether.SleDrawArea.getDis",
+          "tokens": 772,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_multi_etfiletimemodified_n10():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.etFileTimeModified`\n    2. `pyAether.dbTransformBBox3X`\n    3. `pyAether.emyLibDefListMem.moveAfter`\n    4. `pyAether.setNavTreeViewSelectChange`\n    5. `pyAether.seGuiStartSDL`\n    6. `pyAether.emyBitTerm.setRouteMethod`\n    7. `pyAether.emyVectorInstDef.find`\n    8. `pyAether.SleDrawArea.getDis",
+          "tokens": 827,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_multi_etfiletimemodified_n10():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.etFileTimeModified`\n    2. `pyAether.dbTransformBBox3X`\n    3. `pyAether.emyLibDefListMem.moveAfter`\n    4. `pyAether.setNavTreeViewSelectChange`\n    5. `pyAether.seGuiStartSDL`\n    6. `pyAether.emyBitTerm.setRouteMethod`\n    7. `pyAether.emyVectorInstDef.find`\n    8. `pyAether.SleDrawArea.getDispDepth -> emyUInt4`\n    9. `p",
+          "tokens": 854,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_multi_etfiletimemodified_n10():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.etFileTimeModified`\n    2. `pyAether.dbTransformBBox3X`\n    3. `pyAether.emyLibDefListMem.moveAfter`\n    4. `pyAether.setNavTreeViewSelectChange`\n    5. `pyAether.seGuiStartSDL`\n    6. `pyAether.emyBitTerm.setRouteMethod`\n    7. `pyAether.emyVectorInstDef.find`\n    8. `pyAether.SleDrawArea.getDis",
+          "tokens": 921,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_multi_etfiletimemodified_n10():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.etFileTimeModified`\n    2. `pyAether.dbTransformBBox3X`\n    3. `pyAether.emyLibDefListMem.moveAfter`\n    4. `pyAether.setNavTreeViewSelectChange`\n    5. `pyAether.seGuiStartSDL`\n    6. `pyAether.emyBitTerm.setRouteMethod`\n    7. `pyAether.emyVectorInstDef.find`\n    8. `pyAether.SleDrawArea.getDispDepth -> emyUInt4`\n    9. `p",
+          "tokens": 1004,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "task_id": "synth-v2-L5-03330",
+      "difficulty": "L5",
+      "num_apis": 10,
+      "assertion_template": "T5_behavior",
+      "n_samples": 8,
+      "n_pass": 8,
+      "n_syntax_ok": 8,
+      "avg_api_coverage": 1.0,
+      "pass@1": 1.0,
+      "pass@4": 1.0,
+      "pass@8": 1.0,
+      "elapsed": 7.7,
+      "samples": [
+        {
+          "code": "import pyAether as pyScript\n\ndef call_multi_leguitaplayerselview_n10():\n    result1 = pyScript.leGuiTapLayerSelView(index=0)\n    result2 = pyScript.emySegStyle.getEndStyle()\n    result3 = pyScript.leGuiLayoutLevel2()\n    result4 = pyScript.pyaecb.cbGetCurRefDesign()\n    result5 = pyScript.emyRef.getHeader()\n    point = pyScript.emyPoint()\n    result6 = pyScript.GuDrawArea.getPressPos(point=point)\n    result7 = pyScript.SleDrawArea.isSelBoxInWindow()\n    result8 = pyScript.dbPolygonToTrap(fig=Non",
+          "tokens": 225,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_multi_leguitaplayerselview_n10():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.leGuiTapLayerSelView`\n    2. `pyAether.emySegStyle.getEndStyle`\n    3. `pyAether.leGuiLayoutLevel2`\n    4. `pyAether.pyaecb.cbGetCurRefDesign -> const`\n    5. `pyAether.emyRef.getHeader`\n    6. `pyAether.GuDrawArea.getPressPos`\n    7. `pyAether.SleDrawArea.isSelBoxInWindow -> emyBoolean`\n    8.",
+          "tokens": 674,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_multi_leguitaplayerselview_n10():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.leGuiTapLayerSelView`\n    2. `pyAether.emySegStyle.getEndStyle`\n    3. `pyAether.leGuiLayoutLevel2`\n    4. `pyAether.pyaecb.cbGetCurRefDesign -> const`\n    5. `pyAether.emyRef.getHeader`\n    6. `pyAether.GuDrawArea.getPressPos`\n    7. `pyAether.SleDrawArea.isSelBoxInWindow -> emyBoolean`\n    8.",
+          "tokens": 677,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_multi_leguitaplayerselview_n10():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.leGuiTapLayerSelView`\n    2. `pyAether.emySegStyle.getEndStyle`\n    3. `pyAether.leGuiLayoutLevel2`\n    4. `pyAether.pyaecb.cbGetCurRefDesign -> const`\n    5. `pyAether.emyRef.getHeader`\n    6. `pyAether.GuDrawArea.getPressPos`\n    7. `pyAether.SleDrawArea.isSelBoxInWindow -> emyBoolean`\n    8. `pyAether.dbPolygonToTrap`\n ",
+          "tokens": 705,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_multi_leguitaplayerselview_n10():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.leGuiTapLayerSelView`\n    2. `pyAether.emySegStyle.getEndStyle`\n    3. `pyAether.leGuiLayoutLevel2`\n    4. `pyAether.pyaecb.cbGetCurRefDesign -> const`\n    5. `pyAether.emyRef.getHeader`\n    6. `pyAether.GuDrawArea.getPressPos`\n    7. `pyAether.SleDrawArea.isSelBoxInWindow -> emyBoolean`\n    8. `pyAether.dbPolygonToTrap`\n ",
+          "tokens": 713,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_multi_leguitaplayerselview_n10():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.leGuiTapLayerSelView`\n    2. `pyAether.emySegStyle.getEndStyle`\n    3. `pyAether.leGuiLayoutLevel2`\n    4. `pyAether.pyaecb.cbGetCurRefDesign -> const`\n    5. `pyAether.emyRef.getHeader`\n    6. `pyAether.GuDrawArea.getPressPos`\n    7. `pyAether.SleDrawArea.isSelBoxInWindow -> emyBoolean`\n    8. `pyAether.dbPolygonToTrap`\n ",
+          "tokens": 733,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_multi_leguitaplayerselview_n10():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.leGuiTapLayerSelView`\n    2. `pyAether.emySegStyle.getEndStyle`\n    3. `pyAether.leGuiLayoutLevel2`\n    4. `pyAether.pyaecb.cbGetCurRefDesign -> const`\n    5. `pyAether.emyRef.getHeader`\n    6. `pyAether.GuDrawArea.getPressPos`\n    7. `pyAether.SleDrawArea.isSelBoxInWindow -> emyBoolean`\n    8. `pyAether.dbPolygonToTrap`\n ",
+          "tokens": 745,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_multi_leguitaplayerselview_n10():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.leGuiTapLayerSelView`\n    2. `pyAether.emySegStyle.getEndStyle`\n    3. `pyAether.leGuiLayoutLevel2`\n    4. `pyAether.pyaecb.cbGetCurRefDesign -> const`\n    5. `pyAether.emyRef.getHeader`\n    6. `pyAether.GuDrawArea.getPressPos`\n    7. `pyAether.SleDrawArea.isSelBoxInWindow -> emyBoolean`\n    8.",
+          "tokens": 1100,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "task_id": "synth-v2-L5-03313",
+      "difficulty": "L5",
+      "num_apis": 10,
+      "assertion_template": "T5_behavior",
+      "n_samples": 8,
+      "n_pass": 8,
+      "n_syntax_ok": 8,
+      "avg_api_coverage": 1.0,
+      "pass@1": 1.0,
+      "pass@4": 1.0,
+      "pass@8": 1.0,
+      "elapsed": 5.6,
+      "samples": [
+        {
+          "code": "def call_multi_emypingetpinfigs_n10():\n    import pyAether as pyScript\n\n    # 1. emyPinGetPinFigs\n    pPin = pyScript.emyPin()\n    pinFigs = pyScript.emyArray_p_emyBlockObject()\n    result1 = pyScript.emyPinGetPinFigs(pPin, pinFigs)\n\n    # 2. emyConstraintGroup.destroy\n    constraintGroup = pyScript.emyConstraintGroup()\n    result2 = constraintGroup.destroy()\n\n    # 3. emyAntennaData.setDiff\n    antennaData = pyScript.emyAntennaData()\n    diff = pyScript.emyAntennaAreaArray()\n    result3 = anten",
+          "tokens": 529,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_multi_emypingetpinfigs_n10():\n    # 1. pyAether.emyPinGetPinFigs\n    pPin = pyScript.emyPin()\n    pinFigs = pyScript.emyArray_p_emyBlockObject()\n    result1 = pyScript.emyPinGetPinFigs(pPin, pinFigs)\n\n    # 2. pyAether.emyConstraintGroup.destroy\n    constraint_group = pyScript.emyConstraintGroup()\n    result2 = constraint_group.destroy()\n\n    # 3. pyAether.emyAntennaData.setDiff\n    antenna_data = pyScript.emyAntennaData()\n    diff = pyScript.emyAntennaAreaArray()\n    result3 = antenna_",
+          "tokens": 552,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_multi_emypingetpinfigs_n10():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.emyPinGetPinFigs`\n    2. `pyAether.emyConstraintGroup.destroy`\n    3. `pyAether.emyAntennaData.setDiff`\n    4. `pyAether.aeTreeRemoveItem -> emyBoolean`\n    5. `pyAether.emyViaParam.setOriginOffset`\n    6. `pyAether.dbHasMarker -> bool`\n    7. `pyAether.emyInterpolateType.getName`\n    8. `pyAether.",
+          "tokens": 617,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "def call_multi_emypingetpinfigs_n10():\n    # 1. pyAether.emyPinGetPinFigs\n    pPin = None  # Placeholder for emyPin object\n    pinFigs = None  # Placeholder for emyArray_p_emyBlockObject\n    result1 = pyScript.emyPinGetPinFigs(pPin, pinFigs)\n    \n    # 2. pyAether.emyConstraintGroup.destroy\n    constraintGroup = None  # Placeholder for emyConstraintGroup object\n    result2 = constraintGroup.destroy()\n    \n    # 3. pyAether.emyAntennaData.setDiff\n    antennaData = None  # Placeholder for emyAnten",
+          "tokens": 619,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_multi_emypingetpinfigs_n10():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.emyPinGetPinFigs`\n    2. `pyAether.emyConstraintGroup.destroy`\n    3. `pyAether.emyAntennaData.setDiff`\n    4. `pyAether.aeTreeRemoveItem -> emyBoolean`\n    5. `pyAether.emyViaParam.setOriginOffset`\n    6. `pyAether.dbHasMarker -> bool`\n    7. `pyAether.emyInterpolateType.getName`\n    8. `pyAether.",
+          "tokens": 651,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_multi_emypingetpinfigs_n10():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.emyPinGetPinFigs`\n    2. `pyAether.emyConstraintGroup.destroy`\n    3. `pyAether.emyAntennaData.setDiff`\n    4. `pyAether.aeTreeRemoveItem -> emyBoolean`\n    5. `pyAether.emyViaParam.setOriginOffset`\n    6. `pyAether.dbHasMarker -> bool`\n    7. `pyAether.emyInterpolateType.getName`\n    8. `pyAether.",
+          "tokens": 651,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_multi_emypingetpinfigs_n10():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.emyPinGetPinFigs`\n    2. `pyAether.emyConstraintGroup.destroy`\n    3. `pyAether.emyAntennaData.setDiff`\n    4. `pyAether.aeTreeRemoveItem -> emyBoolean`\n    5. `pyAether.emyViaParam.setOriginOffset`\n    6. `pyAether.dbHasMarker -> bool`\n    7. `pyAether.emyInterpolateType.getName`\n    8. `pyAether.",
+          "tokens": 667,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "code": "import pyAether as pyScript\n\ndef call_multi_emypingetpinfigs_n10():\n    \"\"\"\n    Write a function that calls the following PyAether APIs in sequence and returns a tuple of all results:\n    1. `pyAether.emyPinGetPinFigs`\n    2. `pyAether.emyConstraintGroup.destroy`\n    3. `pyAether.emyAntennaData.setDiff`\n    4. `pyAether.aeTreeRemoveItem -> emyBoolean`\n    5. `pyAether.emyViaParam.setOriginOffset`\n    6. `pyAether.dbHasMarker -> bool`\n    7. `pyAether.emyInterpolateType.getName`\n    8. `pyAether.",
+          "tokens": 814,
+          "syntax_ok": true,
+          "api_coverage": 1.0,
+          "passed": true,
+          "error": null
+        }
+      ]
+    }
+  ]
+}

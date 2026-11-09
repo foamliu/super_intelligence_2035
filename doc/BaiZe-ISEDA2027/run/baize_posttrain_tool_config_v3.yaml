@@ -1,0 +1,107 @@
+# baize_posttrain_tool_config_v3.yaml -- verl 0.4.0 tool config for EDA tools
+# R123 (2026-11-10): Unified 4-tool suite integrating R122 LocalAPISearch.
+# Replaces baize_posttrain_tool_config.yaml (v2, single tool).
+# Surrogate RL results are NOT transferable to BaiZe.
+
+tools:
+  # 1. search_apis -- BM25 keyword search over 8463 pyAether APIs
+  - class_name: baize_posttrain_eda_tool_v3.EDASearchAPIsTool
+    tool_schema:
+      type: function
+      function:
+        name: search_apis
+        description: >
+          Search EDA/pyAether APIs by natural-language query.
+          Returns top-k matching APIs with similarity scores, names,
+          short descriptions, and categories.
+        parameters:
+          type: object
+          properties:
+            query:
+              type: string
+              description: Natural-language search query for EDA APIs
+            top_k:
+              type: integer
+              description: Number of results to return (default 5)
+              default: 5
+            lang:
+              type: string
+              description: API language prefix (default pyAether)
+              default: pyAether
+          required: [query]
+    config:
+      search_top_k: 5
+      search_similarity_threshold: 0.1
+
+  # 2. get_api_details -- direct lookup by API name
+  - class_name: baize_posttrain_eda_tool_v3.EDAGetAPIDetailsTool
+    tool_schema:
+      type: function
+      function:
+        name: get_api_details
+        description: >
+          Get full API documentation by API name(s).
+          Returns complete api_info entries including parameters,
+          return types, and detailed descriptions.
+        parameters:
+          type: object
+          properties:
+            api_list:
+              type: array
+              items:
+                type: string
+              description: List of API names to look up
+            lang:
+              type: string
+              default: pyAether
+          required: [api_list]
+    config: {}
+
+  # 3. search_apis_by_keyword -- camelCase + BM25 hybrid search
+  - class_name: baize_posttrain_eda_tool_v3.EDASearchByKeywordTool
+    tool_schema:
+      type: function
+      function:
+        name: search_apis_by_keyword
+        description: >
+          Search EDA APIs by keyword using camelCase token matching
+          combined with BM25 scoring. Better for partial name matching.
+        parameters:
+          type: object
+          properties:
+            query:
+              type: string
+              description: Keyword to search for in API names
+            top_k:
+              type: integer
+              default: 5
+            lang:
+              type: string
+              default: pyAether
+          required: [query]
+    config:
+      keyword_top_k: 5
+
+  # 4. run_code -- static analysis (tier 3, no sandbox)
+  - class_name: baize_posttrain_eda_tool_v3.EDARunCodeTool
+    tool_schema:
+      type: function
+      function:
+        name: run_code
+        description: >
+          Execute Python code in the EDA (pyAether) environment.
+          Currently operates in tier-3 static analysis mode (syntax check
+          + AST-based API call extraction). When sandbox is available,
+          will execute code remotely.
+        parameters:
+          type: object
+          properties:
+            code:
+              type: string
+              description: Python code to execute in the EDA environment
+          required: [code]
+    config:
+      sandbox_endpoint: tier3_static_analysis
+      max_code_length: 5000
+      timeout: 60
+      tier: 3
