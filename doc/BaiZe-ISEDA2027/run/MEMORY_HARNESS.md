@@ -4,21 +4,22 @@ WAITING: 0
 
 ## 📊 进度快照
 
-PHASE:        R1972 CPU失控kill+eval报告重生成(全run扫描)+incr_eval_6route R1972启动(297missing)+cline专项r1972
-已完成:       H-B✅·Gate7/7·TB报告✅·full500✅·cline专项C1-C5+报告R1785-R1972·TB4 0passed(能力)·TB-2.1 oracle5/5✅·§15:2x判据MET✅·R1789 eval 7/7DONE✅·R1804双报告交付✅·R1969 gateway恢复+cleanup 1656空patch·R1971 incr_eval_6route启动(360new)·R1972 CPU失控kill+eval全run扫描重生成+incr_eval R1972(297missing)+cline专项r1972报告
-当前动作:     R1972:①CPU/MEM:PASS(load 45/224=20%·kill sklearn pytest 160核→docker kill dc731ba13128→load 247→45) ②gateway:✅ALL 200(9092+9093+upstream) ③predict 7路alive:cline136·codex46·opencode284·cc118·pi93·hermes306·dsh115=1098total·1089real·9empty·99.2%real ④eval MERGED(全run扫描):cline369/492(75.0%)·codex293/376(77.9%)·opencode415/498(83.3%)·cc294/375(78.4%)·pi336/464(72.4%)·hermes346/381(90.8%)·dsh227/280(81.1%)=2280/2966=76.9% ⑤incr_eval_6route R1972 STARTED:297missing(cline1+codex9+opencode126+cc57+pi56+dsh48) ⑥TB-2.1 passed:cline19/260·codex8/186·opencode36/82·cc24/158·pi42/152·hermes6/233·dsh21/108=150/1179=12.7% ⑦cline专项r1972报告交付 ⑧未完成指令:有(§22:4x predict未满500+§10:10 cline专项)⇒W:0
-下一步:       ①incr_eval_6route R1972完成后检查6路resolved更新 ②predict 7路继续推进至500 ③TB-2.1 harbor alive推进 ④全DONE后聚合最终7路报告(report_harness_glm53_7way_swebench_tb_zh.html) ⑤research建议11-09:Evolver经验资产(低,后续)
-阻塞:         无(gateway ALL 200·incr_eval R1972 running·7路alive)
+PHASE:        R1973 CPU失控kill(sklearn 178核)+incr_eval R1972推进(cline DONE→codex 9missing)+gateway QUOTA_EXHAUSTED+cline专项r1973
+已完成:       H-B✅·Gate7/7·TB报告✅·full500✅·cline专项C1-C5+报告R1785-R1972·TB4 0passed(能力)·TB-2.1 oracle5/5✅·§15:2x判据MET✅·R1789 eval 7/7DONE✅·R1804双报告交付✅·R1969 gateway恢复·R1972 CPU kill+incr_eval R1972启动·R1973 CPU kill(sklearn 178核)+incr_eval R1972推进
+当前动作:     R1973:①CPU失控kill:sklearn pytest 17883%CPU(178核) in container d91b0a81982f→sg docker docker kill→load 255→172 ②gateway:QUOTA_EXHAUSTED(/models=200但chat/completions blocked) ③predict 7路alive:cline136·codex46·opencode285·cc120·pi94·hermes308·dsh116=1105total·1093real·12empty·98.9%real ④eval(glm53 runs):cline102/132(77.3%)·codex29/45(64.4%)·opencode199/248(80.2%)·cc71/90(78.9%)·pi51/68(75.0%)·hermes273/299(91.3%)·dsh83/105(79.0%) ⑤incr_eval_6route R1972 RUNNING:cline DONE(102/132)→codex 9missing STARTED ⑥TB-2.1 ctrf:cline19/251·codex8/15·opencode36/71·cc24/91·pi42/135·hermes6/156·dsh21/29 ⑦TB-2.1 harbor alive:cc+opencode ⑧未完成指令:有(§22:4x predict未满500+§10:10 cline专项)⇒W:0
+下一步:       ①incr_eval_6route R1972 codex→opencode→cc→pi→dsh推进 ②predict 7路继续推进至500(gateway quota恢复后) ③TB-2.1 harbor alive推进(cc+opencode) ④全DONE后聚合最终7路报告 ⑤research建议11-09:Evolver经验资产(低,后续)
+阻塞:         gateway QUOTA_EXHAUSTED(chat/completions blocked·predict可能减速)
 ERROR_COUNT:  0
-  📦 体积：TASK=30306B(29.6KB) / MEMORY=待测（归档R1970→daily）
-  🔍 cline专项小结: predict 136/500(135r/1e=99.3%real)·eval 369/492(75.0%)·TB-2.1 19/260=7.3%·C3 resume fix✅+cleanup✅基本归零(1合理空)·incr_eval R1972 running(297missing)·7路alive·gateway ALL 200·失败top1=能力(25.0%)
+  📦 体积：TASK=30306B(29.6KB) / MEMORY=28413B(27.7KB)（归档R1972→daily）
+  🔍 cline专项小结: predict 136/500(135r/1e=99.3%real)·eval 102/132(77.3%)·TB-2.1 19/251=7.6%·C3 resume fix✅(1合理空)·incr_eval R1972(cline DONE)·7路alive·gateway QUOTA_EXHAUSTED·失败top1=gateway 429额度(infra非能力)
 ```
 
 > 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
 
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 ### 本唤醒流水
-[12:55] R1972 CPU失控kill+eval全run扫描重生成+incr_eval_6route R1972启动(297missing)+cline专项r1972:①CPU失控:sklearn pytest 160核→docker kill dc731ba13128→load 247→45,CPU 81.5%→5.7% ②eval报告重生成(全run扫描所有report.json):cline369/492·codex293/376·opencode415/498·cc294/375·pi336/464·hermes346/381·dsh227/280=2280/2966=76.9% ③incr_eval_6route R1972 STARTED:297missing(cline1+codex9+opencode126+cc57+pi56+dsh48) ④predict 7路alive=1098total·1089real·9empty·99.2%real ⑤TB-2.1:150/1179=12.7% ⑥cline专项r1972报告交付 ⑦未完成指令:有(§22:4x+§10:10)⇒W:0
+[13:13] R1973 CPU失控kill(sklearn 178核)+incr_eval R1972推进(cline DONE→codex)+gateway QUOTA_EXHAUSTED:①CPU失控:sklearn pytest 17883%CPU(178核) in container d91b0a81982f→sg docker docker kill→load 255→172 ②gateway:QUOTA_EXHAUSTED(/models=200但chat/completions blocked) ③predict 7路alive=1105total·1093real·12empty·98.9%real(cline136·codex46·opencode285·cc120·pi94·hermes308·dsh116) ④eval(glm53):cline102/132(77.3%)·codex29/45(64.4%)·opencode199/248(80.2%)·cc71/90(78.9%)·pi51/68(75.0%)·hermes273/299(91.3%)·dsh83/105(79.0%) ⑤incr_eval R1972:cline DONE→codex 9missing STARTED ⑥TB-2.1 ctrf:cline19/251·codex8/15·opencode36/71·cc24/91·pi42/135·hermes6/156·dsh21/29 ⑦harbor alive:cc+opencode ⑧未完成指令:有(§22:4x+§10:10)⇒W:0
+> 📦 [12:55] R1972 流水已归档 → daily-memories-harness/2026-11-09.md。结论：CPU kill(sklearn 160核)+eval全run扫描重生成(2280/2966=76.9%)+incr_eval R1972启动(297missing)+cline专项r1972报告。需要时再读。
 > 📦 [12:17] R1970 流水已归档 → daily-memories-harness/2026-11-09.md。结论：codex predict RESTARTED+incr_eval_hermes DONE(149/168)+eval merge 7/7DONE+cline专项r1970。需要时再读。
 > 📦 [11:50] R1969 流水已归档 → daily-memories-harness/2026-11-09.md。结论：gateway RESTORED+cleanup 1656空patch+7路复产real+cline专项r1969+TB-2.1 152p。需要时再读。
 > 📦 [11:32] R1968 流水已归档 → daily-memories-harness/2026-11-09.md。结论：gateway QUOTA EXHAUSTED发现(/models=200但/chat/completions=CURL_FAILED)·predict 2702/3500 real=1047 empty=1655·cline专项r1968报告·TB-2.1 124passed。需要时再读。
