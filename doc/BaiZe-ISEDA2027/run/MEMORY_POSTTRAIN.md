@@ -11,7 +11,7 @@ WAITING: 0
 - 已完成: P3预备✅ 11脚本；P0✅ D1–D6；P1✅ 数据盘点+PyAether语料+污染隔离；P2✅ 方案书；R1-R105✅；wake151✅ R103；wake152✅ R104(全量500题)+R105(RL课程)
 - 当前动作: wake152 R104+R105: ①R104: baize_posttrain_r104_method_level_api_full500.py(~700行)+r104_method_level_match.py(~600行). 全量500题评测. 第一版75.6%(378keep),第二版改进匹配后92.8%(464keep/36drop). 匹配分布:api_match319+exact145+partial28+no_match7+syntax_error1. 方法级改进:变量追踪75个var.method调用,35题改善. ②R105: baize_posttrain_r105_rl_curriculum.py(~210行). RL课程3阶段:Phase1中难度144题(96%可解/43步)→Phase2+高难度68题(97.1%/50步)→Phase3+低难度252题(90%/50步). 72h共144步(保守2步/h). 奖励信号:中98.7%clarity/高98.6%/低91.1%. 反作弊4向量(partial_gaming高风险25题). drop仅36题(7.2%,版图/仿真域API缺失). py_compile✅+smoke✅+全量✅+HTML 6.4KB+JSON 9.1KB→EXPERIMENTS §R104+§R105.
 - 下一步: ①GPU释放→gpu_watcher自动触发launch_11_9.sh Steps 0-6 ②R106+: RL超参校准(GRPO group_size/KL/clip)或SFT数据增强 ③R2 PyAether任务扩展到2k-5k ④正式训练待pretrain ckpt(ETA≈2026-12-25)
-- 阻塞: GPU 0/8free(root SGLang Qwen3.8-27B占全8卡,gpu_watcher PID2022305 iteration#530+ polling);P3等pretrain ckpt(ETA≈2026-12-25)
+- 阻塞: GPU 0/8free(root SGLang Qwen3.8-27B占全8卡,gpu_watcher PID2022305 iteration#530+ polling);P3等pretrain ckpt(ETA≈2026-12-25);⚠️push超时2次(commit bdac2208f已本地保存,下轮第一件事补推)
 - 本轮新增调研产出: R104 全量500题方法级API评测(~700+~600行 + 92.8%可解率 + 464keep/36drop + 方法级变量追踪75调用/35题改善 + HTML 11.6KB + JSON 913KB + EXPERIMENTS §R104) + R105 RL课程设计(~210行 + 3阶段中→高→低 + 72h144步 + 奖励信号分析 + 4反作弊向量 + HTML 6.4KB + JSON 9.1KB + EXPERIMENTS §R105)
 - 未完成指令: 🔴用户令2026-11-07(GPU未到位,需持续产出调研) ⇒ WAITING=0
 
