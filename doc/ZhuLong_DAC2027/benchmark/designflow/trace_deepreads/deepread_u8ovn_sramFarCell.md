@@ -1,0 +1,21 @@
+# deepread: 1793062149793_u8ovn (t0002616 @ hfeg0pkn004, mc126)
+
+- session: 95 msgs / 1.9MB / 1 real user turn (U#0). eda_other (SRAM mixed-signal netlist analysis).
+- U#0 逐字原文: `为我分析使用这个电路仿真计算 tCS（WL on → VSN 90%，D0） 和 WR_Time（BLa/b cross → VSN 95%）应该选取哪个cell` + attached netlist (Mat_Testbench_revised, 12504 行/1.08MB, AETHER-SE hspice, user=houweip)。
+- A-faithful 合格: 纯提需求, 未给根因/修法。
+- assistant 工具链: read_files / run_commands(grep) / search_codebase / skills(aether-tool-qa) 追网表层次 + 位线 R_BL 链 + CTCon 跨半; 25 assistant text blocks, 末尾给出最终结论。
+- 金标准 (assistant 最终结论, 人工复核网表行号确认):
+  - 顶层层次 XI0(Mat_SC_Mat_revised) → XI_Mat0 → XI_SubmatSldL_first → One_submat_LBL → XI_kcellx32mdl_{T,M,B}_{idx}
+  - SA 入口: blsel_withcap XI19 (行3183) 把 CBL_Target<23..16> 接到 **LBL1_T_R_Tar** (顶段 T, 近半 LBL1)。
+  - LBL1 半 R_BL 链 (r243..r237): T→M→B, 末段 LBL1_B_R_Tar。
+  - CTCon (r133/r134, 行2533/2550): LBL0_T_L_Tar ↔ CTConLBL_Tar ↔ LBL1_T_R_Tar —— **LBL0 半经 CTCon 更远**。
+  - LBL0 半 R_BL 链 (r205..r200): T→M→B, 末段 LBL0_B_L_Tar (net243)。
+  - cell 实例 (far half LBL0, far col LWL0_R): XI_kcellx32mdl_T_4(顶,LWL0_R_TopTar) / M_4(中,LWL0_R_MidTar) / B_4(底 net243,LWL0_R_BotTar)。
+  - **最远 cell = xi0.xi_mat0.xi_submatsldl_first.xi_kcellx32mdl_b_4.cc02** (cc02=BL0/WL2=D0), **WL 触发 = lwl0_r_bottar<2>** (LWL0_R_BotTar<2>)。
+  - 修正后 .meas: tCS0 (trig WL cross / targ VSN @ VCS_90P) + WR_Time (trig BLa,b cross / targ VSN @ VCS_95P)。
+- 合成: SramFarCellSelect-001 (eda_other, A-faithful, L2-static+subprocess)。
+  - 交付 = analyze_farthest_cell.py (通用网表分析器, CLI --netlist --config, stdout JSON); 解析 blsel 入口 tier+half → farthest tier (T↔B 反端) → 找 XI_kcellx32mdl_<tier>_<idx> 实例 (BL half≠SA half=远半) → 取 WL 信号 (远列+远层后缀+wl idx) → 拼 .meas。
+  - A 资产 = netlist_a.sp (verbatim 结构骨架提取自真实 12504 行网表) + prompt.txt (U#0 原文) + task_brief.md + config_a.json。
+  - 隐藏 B = netlist_b.sp (SA 入口翻到底段 B → 最远 tier=T, 远半 LBLa/LBLb 重命名) + config_b; 隐藏 Bp = netlist_bp.sp (远列 LWL1_R + idx 6/3 → b_6/bottar<3>) + config_bp。
+  - check.py 15 conds a-o (B 主跑 + Bp 反硬编码 + A 交叉校验 + 源码无 A 字面量); REF PASS 15/15; 4 negative 全 FAIL (3 distinct failsets); 3 degraded (empty/print-only/strip-core) 全 FAIL。
+  - k_rationale == k_check == 15 ≥ 8 闸门 PASS。

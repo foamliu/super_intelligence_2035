@@ -266,3 +266,4 @@
 1793006362279_0zrzc.messages.json	e0023936	hfhds201	90	eda_other	case	EDA-Eval-DesignFlow-WvCursorApiGen-001	2026-11-09 06:18	
 1793600222866_dswuv.messages.json	e0047722	hfeg0pkn004	62	eda_other	parked		2026-11-09 06:50	duplicate of WvSineWaveAnalyze-001 (sine wave gen in WaveView tcl, same user/host); pivot to next fresh
 1793006248706_v4lvu.messages.json	e0023936	hfhds201	24	eda_other	case	EDA-Eval-DesignFlow-PyAetherCurDesignApi-001	2026-11-09 07:12	
+1793062149793_u8ovn.messages.json	t0002616	hfeg0pkn004	126	eda_other	case	EDA-Eval-DesignFlow-SramFarCellSelect-001	2026-11-09 07:57	
