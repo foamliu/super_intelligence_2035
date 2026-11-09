@@ -12807,3 +12807,96 @@ def tool_search_by_keyword(query: str, top_k: int = 5) -> list[dict]:
 | P3 | 集成 R0++ 奖励函数到 verl reward model | R117 + GPU |
 | P4 | 沙盒可用时切换 run_code tier 3→1 | 运维开放防火墙 |
 
+
+## §R124 Dotted-Path API Mapping Fix + v3 Verl Config + R0++ Integration（2026-11-10 · 零 GPU · 实测 29/29 PASS）
+
+> **出处**：R123 已知限制 #2「class.method 映射」—— AST 提取 `setCp` 但 KB 存为 `emyDesign.setCp` → `api_legality=0.0`。
+> **目标**：修复 dotted-path 映射 bug，创建 v3 verl RL config（multi-turn + 4 工具 + R0++），端到端验证完整管线。
+> **状态**：✅ 全部完成 · py_compile ✅ · 集成测试 29/29 PASS · v3 e2e dry-run 8/8 PASS。
+
+### 1. 问题诊断
+
+R123 `EDARunCodeTool._static_analysis()` 从 AST 提取 API 调用名时，对 `pyScript.emyDesign.setCp()` 只取 `func.attr` = `setCp`，但 API KB（`API_INFO_MERGED_V3.json`）存储格式为 `emyDesign.setCp`（`class.method`）→ KB 查找失败 → `apis_verified=[]` → `api_legality=0.0`。
+
+同一问题也存在于 `baize_posttrain_reward_functions.py`：
+- `_PYTHON_API_PATTERN = re.compile(r"(?:pyScript|pyAether)\.(\w+)\s*\(")` 只捕获一级属性
+- `_check_api_usage()` 同上
+- `reward_r4_api_legality()` 只查短名
+- `_check_structure()` 同上
+
+### 2. 修复方案
+
+#### 2a. `baize_posttrain_eda_tool_v3.py` — AST dotted-path 重建
+
+新增 `_extract_dotted_path(node)` 静态方法：遍历 AST `Attribute` 链，重建完整 dotted path（剥离 `pyScript`/`pyAether` 根）。
+
+```
+pyScript.emyDesign.setCp() → AST: Call(func=Attribute(attr='setCp',
+  value=Attribute(attr='emyDesign', value=Name(id='pyScript'))))
+→ _extract_dotted_path → "emyDesign.setCp"
+```
+
+`_static_analysis()` 改为同时提取 dotted name 和 short name，KB 验证时先查 dotted（`emyDesign.setCp`），再回退查 short（`setCp`）。
+
+同时修复 KB 验证判据：`get_api_details()` 返回 `api_type='unknown'` 表示未找到（不是 `found` 键），修正检查条件为 `api_type != 'unknown'`。
+
+#### 2b. `baize_posttrain_reward_functions.py` — Regex + 4 函数修复
+
+| 修复点 | 旧 | 新 |
+|:--|:--|:--|
+| `_PYTHON_API_PATTERN` | `r"(?:pyScript\|pyAether)\.(\w+)\s*\("` | `r"(?:pyScript\|pyAether)\.([a-zA-Z_]\w*(?:\.[a-zA-Z_]\w*)*)\s*\("` |
+| `_check_api_usage()` | 只匹配一级 `\w+` | 用新 regex + 同时记录 dotted 和 short |
+| `reward_r4_api_legality()` | 只查 `call_name in api_db` | 查 `call_name` 和 `short_name` 两者 |
+| `_check_structure()` | 旧 regex 两段式 | 新 dotted-path regex |
+
+### 3. v3 Verl RL Config（`baize_posttrain_rl_verl_config_v3.yaml`）
+
+v2 → v3 关键变更：
+
+| 维度 | v2 | v3 |
+|:--|:--|:--|
+| `multi_turn.enable` | `False`（单轮） | **`True`**（多轮工具交互） |
+| `multi_turn.max_turns` | 3 | **6**（search→details→keyword→code→fix→code） |
+| `multi_turn.tool_config_path` | `null` | **`baize_posttrain_tool_config_v3.yaml`**（4 工具） |
+| `multi_turn.format` | `chatml` | `chatml`（不变） |
+| `reward_kwargs.arm` | `R0` | `R0`（R0++ with dotted-path fix） |
+| `experiment_name` | `rl_grpo_surrogate` | `rl_grpo_v3_multiturn` |
+| `default-local_dir` | `.../baize_posttrain_rl_grpo` | `.../baize_posttrain_rl_grpo_v3` |
+
+v2 config 保留用于单轮 R0 baseline 对照。
+
+### 4. 集成测试（`baize_posttrain_r124_integration_test.py`，225 行）
+
+6 组测试，29 项检查，全部 PASS（0.88s）：
+
+| 组 | 测试内容 | 检查数 | 结果 |
+|:--|:--|:--|:--|
+| Test 1 | `_extract_dotted_path()` 重建 6 种调用模式 | 6 | ✅ 6/6 |
+| Test 2 | `_static_analysis()` KB 验证（dotted+single+error） | 5 | ✅ 5/5 |
+| Test 3 | `_PYTHON_API_PATTERN` regex + `extract_tool_calls` | 5 | ✅ 5/5 |
+| Test 4 | `reward_r0_skeleton` dotted-path 代码评分 | 2 | ✅ 2/2 |
+| Test 5 | v3 verl config 字段验证 | 7 | ✅ 7/7 |
+| Test 6 | 端到端管线（tool→static→reward） | 4 | ✅ 4/4 |
+
+**关键验证结果**：
+- `pyScript.emyDesign.setCp()` → `apis_called=['emyDesign.setCp']`, `apis_verified=['emyDesign.setCp']` → **legality=0.50**（`print` 不在 KB 拉低）
+- e2e: `pyScript.emyDesign.setCp()` + `pyScript.aeGetCurDesign()` → `apis_verified=['emyDesign.setCp', 'aeGetCurDesign']` → **legality=1.00** ✅
+- R0 reward: good response=0.92, bad response=0.10 → 梯度信号有效
+
+### 5. 交付物
+
+| 文件 | 行数 | 大小 | 状态 |
+|:--|--:|--:|:--|
+| `baize_posttrain_eda_tool_v3.py`（修改） | ~540 | ~23KB | py_compile ✅ + e2e dry-run 8/8 ✅ |
+| `baize_posttrain_reward_functions.py`（修改） | ~660 | ~28KB | py_compile ✅ |
+| `baize_posttrain_rl_verl_config_v3.yaml`（新建） | 149 | ~5.5KB | YAML valid ✅ |
+| `baize_posttrain_r124_integration_test.py`（新建） | 225 | ~8KB | py_compile ✅ + 29/29 PASS ✅ |
+
+### 6. 对 RL 训练的影响
+
+**修复前**（R123）：`pyScript.emyDesign.setCp()` → `api_legality=0.0` → R0++ reward 的 `api_correct` 分量 = 0 → GRPO 无 API 合法性梯度信号 → 模型不会因正确使用 API 获得奖励。
+
+**修复后**（R124）：`pyScript.emyDesign.setCp()` → `api_legality=1.0` → R0++ reward 正确给予 API 合法性奖励 → GRPO 有梯度信号 → 模型学会使用正确的 API 调用模式。
+
+**影响面**：8463 个 API 中约 1652 个是 `class.method` 格式（D1 API 分级数据）→ 修复前这些 API 的调用全部被误判为 illegal → 修复后 R0++ 的 `api_correct` 分量对 ~20% 的 API 调用从 0 变为正确值。
+

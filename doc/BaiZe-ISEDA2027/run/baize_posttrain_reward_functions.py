@@ -234,10 +234,18 @@ def _load_api_database(api_db_path: str) -> set:
 # Tool call extraction from trajectory text
 # ---------------------------------------------------------------------------
 _TOOL_CALL_PATTERN = re.compile(r"<function>\s*(\w+)\s*</function>", re.IGNORECASE)
-_PYTHON_API_PATTERN = re.compile(r"(?:pyScript|pyAether)\.(\w+)\s*\(")
+# R124 FIX: Capture dotted paths like pyScript.emyDesign.setCp() → "emyDesign.setCp"
+#   Also still capture single-level pyScript.aeGetCurDesign() → "aeGetCurDesign"
+_PYTHON_API_PATTERN = re.compile(r"(?:pyScript|pyAether)\.([a-zA-Z_]\w*(?:\.[a-zA-Z_]\w*)*)\s*\(")
 
 
 def extract_tool_calls(solution_str: str) -> list:
+    """Extract tool/API call names from the model's response text.
+
+    R124 FIX: Now captures dotted paths (``emyDesign.setCp``) from
+    ``pyScript.emyDesign.setCp()`` patterns, not just the first-level
+    attribute.  Falls back to short name for backwards compatibility.
+    """
     """Extract tool/API call names from the model's response trajectory."""
     calls = []
     calls.extend(_TOOL_CALL_PATTERN.findall(solution_str))
@@ -318,17 +326,25 @@ def reward_r3_tool_penalty(r2_score, tool_calls):
 
 
 def reward_r4_api_legality(r3_score, tool_calls, api_db_path):
-    """R4: R3 + API legality check."""
+    """R4: R3 + API legality check.
+
+    R124 FIX: Now checks both the full dotted name (``emyDesign.setCp``) and
+    the short name (``setCp``) against the API database, so that
+    ``pyScript.emyDesign.setCp()`` is correctly recognized as a valid API.
+    """
     api_db = _load_api_database(api_db_path)
     if not api_db:
         return r3_score
     penalty = 0.0
     for call_name in tool_calls:
-        if call_name not in api_db:
-            if re.match(r"^[a-z][a-zA-Z0-9_]*$", call_name):
-                penalty += UNKNOWN_API_PENALTY
-            else:
-                penalty += HALLUCINATED_API_PENALTY
+        # R124: try full dotted name first, then short name
+        short_name = call_name.split(".")[-1] if "." in call_name else call_name
+        if call_name in api_db or short_name in api_db:
+            continue  # Valid API (either dotted or short form found)
+        if re.match(r"^[a-z][a-zA-Z0-9_]*$", call_name):
+            penalty += UNKNOWN_API_PENALTY
+        else:
+            penalty += HALLUCINATED_API_PENALTY
     return r3_score + penalty
 
 
@@ -382,17 +398,29 @@ def _check_syntax(code_blocks):
 
 
 def _check_api_usage(solution_str, apis_used):
-    """Check if the model's code references the expected APIs."""
+    """Check if the model's code references the expected APIs.
+
+    R124 FIX: Now handles dotted paths (``pyScript.emyDesign.setCp()``).
+    Both the full dotted name and the short (last-segment) name are checked
+    against the expected API list.
+    """
     if not apis_used:
         return 0.5, 0, 0
     expected_apis = set()
+    expected_apis_full = set()  # R124: keep full dotted names too
     for api in apis_used:
         if isinstance(api, str):
+            expected_apis_full.add(api)
             name = api.split(".")[-1] if "." in api else api
             expected_apis.add(name)
     found_apis = set()
-    for m in re.finditer(r"(?:pyScript|pyAether)\.(\w+)\s*\(", solution_str):
-        found_apis.add(m.group(1))
+    # R124: _PYTHON_API_PATTERN now captures dotted paths
+    for m in _PYTHON_API_PATTERN.finditer(solution_str):
+        full = m.group(1)
+        found_apis.add(full)
+        # Also add the short name for backwards-compatible matching
+        short = full.split(".")[-1] if "." in full else full
+        found_apis.add(short)
     for m in re.finditer(r'<function\s+name="([^"]+)"', solution_str):
         found_apis.add(m.group(1))
     for name in expected_apis:
@@ -433,13 +461,22 @@ def _check_structure(solution_str, canonical_solution):
         score += 0.3
         details.append("has_import")
     if canonical_solution:
-        canon_calls = re.findall(r'pyScript\.(\w+)\s*\(|pyAether\.(\w+)\s*\(',
-                                 canonical_solution)
-        canon_apis = set(c[0] or c[1] for c in canon_calls if c[0] or c[1])
+        # R124 FIX: use _PYTHON_API_PATTERN (now captures dotted paths)
+        canon_calls = re.findall(
+            r"(?:pyScript|pyAether)\.([a-zA-Z_]\w*(?:\.[a-zA-Z_]\w*)*)\s*\(",
+            canonical_solution)
+        canon_apis = set()
+        for c in canon_calls:
+            canon_apis.add(c)
+            canon_apis.add(c.split(".")[-1])  # also add short name
         if canon_apis:
-            model_calls = set(re.findall(r'pyScript\.(\w+)\s*\(|pyAether\.(\w+)\s*\(',
-                                          main_code))
-            model_apis = set(c[0] or c[1] for c in model_calls if c[0] or c[1])
+            model_calls = set(re.findall(
+                r"(?:pyScript|pyAether)\.([a-zA-Z_]\w*(?:\.[a-zA-Z_]\w*)*)\s*\(",
+                main_code))
+            model_apis = set()
+            for c in model_calls:
+                model_apis.add(c)
+                model_apis.add(c.split(".")[-1])
             overlap = len(canon_apis & model_apis)
             if overlap > 0:
                 score += 0.3 * (overlap / len(canon_apis))

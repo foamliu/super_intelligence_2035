@@ -292,11 +292,43 @@ class EDARunCodeTool(BaseTool):
         except Exception as e:
             return (json.dumps({"error": str(e)}), 0.0, {"error": str(e)})
 
+    @staticmethod
+    def _extract_dotted_path(node: Any) -> str:
+        """R124 FIX: Reconstruct full dotted path from AST call node.
+
+        For ``pyScript.emyDesign.setCp()`` the AST is:
+            Call(func=Attribute(attr='setCp',
+                 value=Attribute(attr='emyDesign',
+                 value=Name(id='pyScript'))))
+
+        This method walks the chain and returns ``emyDesign.setCp`` (stripping
+        the pyScript / pyAether root).  For a bare ``print()`` call it returns
+        ``print``.  For ``pyScript.aeGetCurDesign()`` it returns
+        ``aeGetCurDesign``.
+        """
+        import ast as _ast
+        parts: List[str] = []
+        cur = node
+        while isinstance(cur, _ast.Attribute):
+            parts.append(cur.attr)
+            cur = cur.value
+        if isinstance(cur, _ast.Name):
+            parts.append(cur.id)
+        parts.reverse()
+        # Strip the pyScript / pyAether root (first element)
+        if len(parts) >= 2 and parts[0] in ("pyScript", "pyAether", "py"):
+            parts = parts[1:]
+        return ".".join(parts)
+
     def _static_analysis(self, code: str) -> dict:
         """Tier-3 static analysis: syntax check + AST API call extraction.
 
         This is the R0++ reward input: extracts function calls that look like
         pyAether API calls (camelCase names matching KB entries).
+
+        R124 FIX: Now reconstructs dotted paths (``emyDesign.setCp``) so that
+        ``api_legality`` is computed correctly against the KB which stores
+        names as ``class.method``.
         """
         result = {"response": "", "error_log": "", "print_log": "",
                   "result": None, "syntax_ok": False, "apis_called": []}
@@ -314,21 +346,36 @@ class EDARunCodeTool(BaseTool):
             import ast
             tree = ast.parse(code)
             api_names: List[str] = []
+            api_short_names: List[str] = []  # short (last-segment) names
             for node in ast.walk(tree):
                 if isinstance(node, ast.Call):
                     func = node.func
                     if isinstance(func, ast.Name):
+                        # Bare function call: print(), len(), etc.
                         api_names.append(func.id)
+                        api_short_names.append(func.id)
                     elif isinstance(func, ast.Attribute):
-                        api_names.append(func.attr)
+                        dotted = self._extract_dotted_path(func)
+                        api_names.append(dotted)
+                        api_short_names.append(func.attr)
             # Verify against API KB if available
+            # R124 FIX: try both the dotted name AND the short name
             verified_apis: List[str] = []
             try:
                 searcher = _get_searcher()
-                for name in api_names:
-                    details = searcher.get_api_details([name])
-                    if details and details[0].get("found", False):
-                        verified_apis.append(name)
+                for dotted, short in zip(api_names, api_short_names):
+                    found = False
+                    # Try dotted name first (e.g. "emyDesign.setCp")
+                    details = searcher.get_api_details([dotted])
+                    if details and details[0].get("api_type", "unknown") != "unknown":
+                        verified_apis.append(dotted)
+                        found = True
+                    if not found and dotted != short:
+                        # Fall back to short name (e.g. "aeGetCurDesign")
+                        details = searcher.get_api_details([short])
+                        if details and details[0].get("api_type", "unknown") != "unknown":
+                            verified_apis.append(short)
+                            found = True
             except Exception:
                 pass  # KB not available, just return raw names
             result["apis_called"] = api_names
