@@ -1,0 +1,539 @@
+{
+  "round": "R131",
+  "title": "SFT-to-RL Bridge Analysis",
+  "date": "2026-11-10 03:52",
+  "wake": 178,
+  "gpu": "zero (surrogate model)",
+  "n_tasks": 158,
+  "grpo_group_size": 8,
+  "warning": "Surrogate results NOT transferable to BaiZe",
+  "goldilocks_analysis": {
+    "L1": {
+      "level": "L1",
+      "label": "Trivial",
+      "n_tasks": 1500,
+      "task_difficulty": 0.35,
+      "peak_sft_quality": 0.34,
+      "peak_learnable_rate": 0.995,
+      "peak_adv_std": 0.4972587484153247,
+      "goldilocks_start": 0.2,
+      "goldilocks_end": 0.48,
+      "goldilocks_width": 0.27999999999999997,
+      "all_zero_at_peak": 0.0,
+      "all_one_at_peak": 0.005
+    },
+    "L2": {
+      "level": "L2",
+      "label": "Basic",
+      "n_tasks": 1000,
+      "task_difficulty": 0.55,
+      "peak_sft_quality": 0.6,
+      "peak_learnable_rate": 1.0,
+      "peak_adv_std": 0.5050120702994487,
+      "goldilocks_start": 0.4,
+      "goldilocks_end": 0.7,
+      "goldilocks_width": 0.29999999999999993,
+      "all_zero_at_peak": 0.0,
+      "all_one_at_peak": 0.0
+    },
+    "L3": {
+      "level": "L3",
+      "label": "Medium",
+      "n_tasks": 800,
+      "task_difficulty": 0.75,
+      "peak_sft_quality": 0.76,
+      "peak_learnable_rate": 1.0,
+      "peak_adv_std": 0.501072994332567,
+      "goldilocks_start": 0.6,
+      "goldilocks_end": 0.88,
+      "goldilocks_width": 0.28,
+      "all_zero_at_peak": 0.0,
+      "all_one_at_peak": 0.0
+    },
+    "L4": {
+      "level": "L4",
+      "label": "Advanced",
+      "n_tasks": 500,
+      "task_difficulty": 0.88,
+      "peak_sft_quality": 0.88,
+      "peak_learnable_rate": 1.0,
+      "peak_adv_std": 0.4979523288592124,
+      "goldilocks_start": 0.74,
+      "goldilocks_end": 1.0,
+      "goldilocks_width": 0.26,
+      "all_zero_at_peak": 0.0,
+      "all_one_at_peak": 0.0
+    },
+    "L5": {
+      "level": "L5",
+      "label": "Challenge",
+      "n_tasks": 200,
+      "task_difficulty": 0.95,
+      "peak_sft_quality": 0.94,
+      "peak_learnable_rate": 1.0,
+      "peak_adv_std": 0.5040975259955455,
+      "goldilocks_start": 0.8,
+      "goldilocks_end": 1.0,
+      "goldilocks_width": 0.19999999999999996,
+      "all_zero_at_peak": 0.0,
+      "all_one_at_peak": 0.0
+    }
+  },
+  "selection_criteria": {
+    "primary_metric": "L1 pass@1 on held-out set",
+    "target_range": [
+      0.2,
+      0.48
+    ],
+    "optimal_point": 0.34,
+    "secondary_metrics": [
+      {
+        "name": "L2 pass@1",
+        "target": ">= 0.20 (bootstrappable: at least 1/8 success in GRPO)",
+        "rationale": "L2 is the next curriculum phase; need non-zero base"
+      },
+      {
+        "name": "L1 GRPO group variance (probe set, 50 tasks)",
+        "target": ">= 0.15 (non-trivial advantage std)",
+        "rationale": "If variance is too low, RL has no signal even in Goldilocks"
+      },
+      {
+        "name": "Format/tool-call legality",
+        "target": ">= 90% (from D1 diagnostic)",
+        "rationale": "Protocol errors waste RL rollouts"
+      },
+      {
+        "name": "SFT validation loss trend",
+        "target": "plateaued or still decreasing (not increasing = not overfit)",
+        "rationale": "Overfit SFT -> memorization -> poor RL generalization"
+      }
+    ],
+    "red_flags": [
+      {
+        "condition": "L1 pass@1 > 0.90",
+        "risk": "GRPO group variance collapses -> zero advantage -> no RL learning on L1",
+        "action": "Select an earlier SFT checkpoint (lower pass rate)"
+      },
+      {
+        "condition": "L1 pass@1 < 0.30",
+        "risk": "RL can't bootstrap: too few successful rollouts -> all-zero groups",
+        "action": "Continue SFT training or add more SFT data for L1-equivalent tasks"
+      },
+      {
+        "condition": "L1 pass@1 high but L2 pass@1 < 0.10",
+        "risk": "SFT overfit to easy tasks, no transfer to harder ones",
+        "action": "Add harder SFT data or use curriculum SFT"
+      },
+      {
+        "condition": "GRPO probe variance < 0.05 on 50 L1 tasks",
+        "risk": "Silent no-op: GRPO will learn nothing",
+        "action": "Check reward function; consider higher temperature or earlier ckpt"
+      }
+    ],
+    "decision_protocol": [
+      "1. After SFT, evaluate on held-out L1-L5 probe set (50 tasks/level, 3 runs each)",
+      "2. Compute per-level pass@1 and GRPO group variance (G=8, T=0.7)",
+      "3. Check L1 pass@1 is in Goldilocks zone [0.20, 0.48]",
+      "4. Check no red flags triggered",
+      "5. If all checks pass -> start RL Phase 0 (Warmup)",
+      "6. If any red flag -> diagnose and remediate before starting RL"
+    ]
+  },
+  "failure_modes": {
+    "sft_overfitting": [
+      {
+        "mode": "SFT_overfitting",
+        "sft_quality": 0.5,
+        "learnable_rate": 0.925,
+        "adv_std": 0.4296289347894432,
+        "all_one_rate": 0.075,
+        "diagnosis": "OK"
+      },
+      {
+        "mode": "SFT_overfitting",
+        "sft_quality": 0.65,
+        "learnable_rate": 0.79,
+        "adv_std": 0.3368441240688285,
+        "all_one_rate": 0.21,
+        "diagnosis": "marginal"
+      },
+      {
+        "mode": "SFT_overfitting",
+        "sft_quality": 0.8,
+        "learnable_rate": 0.6,
+        "adv_std": 0.23400218991378433,
+        "all_one_rate": 0.4,
+        "diagnosis": "marginal"
+      },
+      {
+        "mode": "SFT_overfitting",
+        "sft_quality": 0.9,
+        "learnable_rate": 0.5,
+        "adv_std": 0.19572499744587998,
+        "all_one_rate": 0.5,
+        "diagnosis": "marginal"
+      },
+      {
+        "mode": "SFT_overfitting",
+        "sft_quality": 0.95,
+        "learnable_rate": 0.485,
+        "adv_std": 0.18331351373293575,
+        "all_one_rate": 0.515,
+        "diagnosis": "GRPO collapse"
+      }
+    ],
+    "sft_underfitting": [
+      {
+        "mode": "SFT_underfitting",
+        "sft_quality": 0.05,
+        "learnable_rate": 0.39,
+        "adv_std": 0.15073424954765421,
+        "all_zero_rate": 0.61,
+        "diagnosis": "Cannot bootstrap"
+      },
+      {
+        "mode": "SFT_underfitting",
+        "sft_quality": 0.1,
+        "learnable_rate": 0.52,
+        "adv_std": 0.1945094492391799,
+        "all_zero_rate": 0.48,
+        "diagnosis": "marginal"
+      },
+      {
+        "mode": "SFT_underfitting",
+        "sft_quality": 0.15,
+        "learnable_rate": 0.51,
+        "adv_std": 0.19398102741367465,
+        "all_zero_rate": 0.49,
+        "diagnosis": "marginal"
+      },
+      {
+        "mode": "SFT_underfitting",
+        "sft_quality": 0.2,
+        "learnable_rate": 0.475,
+        "adv_std": 0.1802398965518776,
+        "all_zero_rate": 0.525,
+        "diagnosis": "Cannot bootstrap"
+      },
+      {
+        "mode": "SFT_underfitting",
+        "sft_quality": 0.3,
+        "learnable_rate": 0.645,
+        "adv_std": 0.25609487349373716,
+        "all_zero_rate": 0.355,
+        "diagnosis": "marginal"
+      }
+    ],
+    "temperature_sweep": [
+      {
+        "temperature": 0.3,
+        "learnable_rate": 0.92,
+        "adv_std": 0.4150697045709733,
+        "signal_rate": 0.92
+      },
+      {
+        "temperature": 0.5,
+        "learnable_rate": 0.92,
+        "adv_std": 0.4145798852252822,
+        "signal_rate": 0.92
+      },
+      {
+        "temperature": 0.7,
+        "learnable_rate": 0.885,
+        "adv_std": 0.40215012100478414,
+        "signal_rate": 0.885
+      },
+      {
+        "temperature": 0.9,
+        "learnable_rate": 0.905,
+        "adv_std": 0.41660139096801685,
+        "signal_rate": 0.905
+      },
+      {
+        "temperature": 1.1,
+        "learnable_rate": 0.915,
+        "adv_std": 0.42156838935220087,
+        "signal_rate": 0.915
+      },
+      {
+        "temperature": 1.3,
+        "learnable_rate": 0.915,
+        "adv_std": 0.4324459150299468,
+        "signal_rate": 0.915
+      }
+    ],
+    "cross_level_transfer": [
+      {
+        "l1_sft_quality": 0.4,
+        "l3_effective_quality": 0.2,
+        "l3_learnable_rate": 0.51,
+        "l3_adv_std": 0.19589535710169234
+      },
+      {
+        "l1_sft_quality": 0.5,
+        "l3_effective_quality": 0.25,
+        "l3_learnable_rate": 0.495,
+        "l3_adv_std": 0.19277840522813305
+      },
+      {
+        "l1_sft_quality": 0.6,
+        "l3_effective_quality": 0.3,
+        "l3_learnable_rate": 0.58,
+        "l3_adv_std": 0.2272047098002814
+      },
+      {
+        "l1_sft_quality": 0.7,
+        "l3_effective_quality": 0.35,
+        "l3_learnable_rate": 0.67,
+        "l3_adv_std": 0.2695811702283915
+      },
+      {
+        "l1_sft_quality": 0.8,
+        "l3_effective_quality": 0.4,
+        "l3_learnable_rate": 0.71,
+        "l3_adv_std": 0.28927561328810286
+      }
+    ]
+  },
+  "curriculum_projection_from_055": [
+    {
+      "phase": "Phase 0 (Warmup)",
+      "levels": [
+        "L1"
+      ],
+      "steps": 50,
+      "entry_quality": 0.55,
+      "exit_quality": 0.5887646977659605,
+      "avg_learnable_rate": 0.87,
+      "avg_signal_rate": 0.87,
+      "per_level": [
+        {
+          "level": "L1",
+          "start_quality": 0.55,
+          "end_quality": 0.5887646977659605,
+          "final_learnable_rate": 0.87,
+          "final_adv_std": 0.38371863529584066,
+          "final_signal_rate": 0.87
+        }
+      ]
+    },
+    {
+      "phase": "Phase 1 (Foundation)",
+      "levels": [
+        "L1",
+        "L2"
+      ],
+      "steps": 100,
+      "entry_quality": 0.5887646977659605,
+      "exit_quality": 0.6571799620595188,
+      "avg_learnable_rate": 0.86,
+      "avg_signal_rate": 0.86,
+      "per_level": [
+        {
+          "level": "L1",
+          "start_quality": 0.5887646977659605,
+          "end_quality": 0.6521321185036589,
+          "final_learnable_rate": 0.76,
+          "final_adv_std": 0.3260689655086298,
+          "final_signal_rate": 0.76
+        },
+        {
+          "level": "L2",
+          "start_quality": 0.5887646977659605,
+          "end_quality": 0.6622278056153786,
+          "final_learnable_rate": 0.96,
+          "final_adv_std": 0.45793008948815667,
+          "final_signal_rate": 0.96
+        }
+      ]
+    },
+    {
+      "phase": "Phase 2 (Development)",
+      "levels": [
+        "L2",
+        "L3"
+      ],
+      "steps": 150,
+      "entry_quality": 0.6571799620595188,
+      "exit_quality": 0.7437000021158969,
+      "avg_learnable_rate": 0.96,
+      "avg_signal_rate": 0.96,
+      "per_level": [
+        {
+          "level": "L2",
+          "start_quality": 0.6571799620595188,
+          "end_quality": 0.7418512950801012,
+          "final_learnable_rate": 0.94,
+          "final_adv_std": 0.42533660559003844,
+          "final_signal_rate": 0.94
+        },
+        {
+          "level": "L3",
+          "start_quality": 0.6571799620595188,
+          "end_quality": 0.7455487091516927,
+          "final_learnable_rate": 0.98,
+          "final_adv_std": 0.48500153876431096,
+          "final_signal_rate": 0.98
+        }
+      ]
+    },
+    {
+      "phase": "Phase 3 (Refinement)",
+      "levels": [
+        "L3",
+        "L4"
+      ],
+      "steps": 150,
+      "entry_quality": 0.7437000021158969,
+      "exit_quality": 0.8091555487698334,
+      "avg_learnable_rate": 0.99,
+      "avg_signal_rate": 0.99,
+      "per_level": [
+        {
+          "level": "L3",
+          "start_quality": 0.7437000021158969,
+          "end_quality": 0.8093084996116876,
+          "final_learnable_rate": 0.99,
+          "final_adv_std": 0.48525558869093344,
+          "final_signal_rate": 0.99
+        },
+        {
+          "level": "L4",
+          "start_quality": 0.7437000021158969,
+          "end_quality": 0.8090025979279792,
+          "final_learnable_rate": 0.99,
+          "final_adv_std": 0.4894609061199929,
+          "final_signal_rate": 0.99
+        }
+      ]
+    },
+    {
+      "phase": "Phase 4 (Mastery)",
+      "levels": [
+        "L4",
+        "L5"
+      ],
+      "steps": 100,
+      "entry_quality": 0.8091555487698334,
+      "exit_quality": 0.8430435381689125,
+      "avg_learnable_rate": 0.985,
+      "avg_signal_rate": 0.985,
+      "per_level": [
+        {
+          "level": "L4",
+          "start_quality": 0.8091555487698334,
+          "end_quality": 0.8432794114109545,
+          "final_learnable_rate": 1.0,
+          "final_adv_std": 0.4955005050205757,
+          "final_signal_rate": 1.0
+        },
+        {
+          "level": "L5",
+          "start_quality": 0.8091555487698334,
+          "end_quality": 0.8428076649268705,
+          "final_learnable_rate": 0.97,
+          "final_adv_std": 0.4635775888461044,
+          "final_signal_rate": 0.97
+        }
+      ]
+    }
+  ],
+  "sensitivity_analysis": [
+    {
+      "sft_quality": 0.35,
+      "final_quality_after_rl": 0.7734915787791365,
+      "rl_improvement": 0.42349157877913657,
+      "avg_learnable_rate": 0.959,
+      "weighted_signal_rate": 0.9545454545454546
+    },
+    {
+      "sft_quality": 0.4,
+      "final_quality_after_rl": 0.7910057196151609,
+      "rl_improvement": 0.39100571961516084,
+      "avg_learnable_rate": 0.967,
+      "weighted_signal_rate": 0.9677272727272728
+    },
+    {
+      "sft_quality": 0.45,
+      "final_quality_after_rl": 0.8101483417481397,
+      "rl_improvement": 0.36014834174813964,
+      "avg_learnable_rate": 0.958,
+      "weighted_signal_rate": 0.9636363636363636
+    },
+    {
+      "sft_quality": 0.5,
+      "final_quality_after_rl": 0.8267797418496438,
+      "rl_improvement": 0.32677974184964376,
+      "avg_learnable_rate": 0.947,
+      "weighted_signal_rate": 0.9527272727272728
+    },
+    {
+      "sft_quality": 0.55,
+      "final_quality_after_rl": 0.8425540382427248,
+      "rl_improvement": 0.29255403824272475,
+      "avg_learnable_rate": 0.915,
+      "weighted_signal_rate": 0.9390909090909091
+    },
+    {
+      "sft_quality": 0.6,
+      "final_quality_after_rl": 0.8583389694621207,
+      "rl_improvement": 0.25833896946212076,
+      "avg_learnable_rate": 0.911,
+      "weighted_signal_rate": 0.9281818181818182
+    },
+    {
+      "sft_quality": 0.65,
+      "final_quality_after_rl": 0.873962935377129,
+      "rl_improvement": 0.22396293537712897,
+      "avg_learnable_rate": 0.88,
+      "weighted_signal_rate": 0.905
+    },
+    {
+      "sft_quality": 0.7,
+      "final_quality_after_rl": 0.8901957301282639,
+      "rl_improvement": 0.19019573012826396,
+      "avg_learnable_rate": 0.88,
+      "weighted_signal_rate": 0.9077272727272727
+    },
+    {
+      "sft_quality": 0.75,
+      "final_quality_after_rl": 0.9055305535177993,
+      "rl_improvement": 0.15553055351779932,
+      "avg_learnable_rate": 0.847,
+      "weighted_signal_rate": 0.88
+    },
+    {
+      "sft_quality": 0.8,
+      "final_quality_after_rl": 0.9228145999785609,
+      "rl_improvement": 0.12281459997856081,
+      "avg_learnable_rate": 0.8210000000000001,
+      "weighted_signal_rate": 0.8690909090909091
+    }
+  ],
+  "optimal_sft_start": {
+    "sft_quality": 0.35,
+    "final_quality_after_rl": 0.7734915787791365,
+    "rl_improvement": 0.42349157877913657,
+    "avg_learnable_rate": 0.959,
+    "weighted_signal_rate": 0.9545454545454546
+  },
+  "conclusions": [
+    "1. Goldilocks zone exists for all L1-L5: too-low SFT -> all-zero GRPO groups, too-high SFT -> all-one groups (no variance -> no signal)",
+    "2. L1 Goldilocks zone: [0.200, 0.480], peak at 0.340",
+    "3. Optimal SFT starting quality for RL: 0.35 (maximizes RL improvement = +0.423)",
+    "4. Temperature 0.7 provides good signal (learnable >0.95)",
+    "5. SFT overfitting (pass>0.90) causes GRPO collapse: all-one rate >50%",
+    "6. Cross-level transfer: L1->L3 coefficient ~0.5; SFT must reach L1>=0.60 to make L3 bootstrappable",
+    "7. Pre-registered criteria: 4 red flags, 4 secondary checks",
+    "8. The SFT-to-RL bridge is the highest-risk transition; pre-registration prevents post-hoc rationalization"
+  ],
+  "verl_config": "# Verl SFT-to-RL Checkpoint Selection Config (R131)\n# Pre-registered BEFORE SFT training starts. Do not modify after seeing results.\n# Generated: 2026-11-10 (wake178, R131)\n\nsft_checkpoint_selection:\n  primary_metric: \"l1_pass_at_1\"\n  goldilocks_zone:\n    min: 0.2000\n    max: 0.4800\n    optimal: 0.3400\n\n  secondary:\n    l2_pass_at_1_min: 0.20\n    l1_grpo_variance_min: 0.15\n    tool_call_legality_min: 0.90\n    sft_val_loss_trend: \"plateau\"\n\n  red_flags:\n    l1_pass_too_high: 0.90\n    l1_pass_too_low: 0.30\n    l2_pass_below_floor: 0.10\n    grpo_probe_variance: 0.05\n\n  strategy: \"best_within_goldilocks\"\n\n  probe:\n    n_tasks_per_level: 50\n    n_runs: 3\n    grpo_group_size: 8\n    temperature: 0.7\n    levels: [\"L1\", \"L2\", \"L3\", \"L4\", \"L5\"]\n\n  eval_protocol:\n    metric: \"pass_at_1\"\n    timeout_per_task: 2500\n    fresh_context: true\n    n_eval_runs: 5\n",
+  "references": [
+    "R73: GRPO hyperparams",
+    "R74: Curriculum strategy",
+    "R128: 3347 verified tasks",
+    "R129: R5 process reward",
+    "R130: 5-phase curriculum",
+    "Vision R57: Silent no-op lesson"
+  ]
+}

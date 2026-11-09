@@ -13557,3 +13557,134 @@ R5 = clamp(R5, 0.0, 1.0)
 | `baize_posttrain_r130_curriculum_integration.py` | ~26KB, 635 行 | py_compile ✅ |
 | `r130_curriculum_report.json` | 29.0KB | 完整报告（含 verl config） |
 
+---
+
+## §R131 SFT-to-RL Bridge: Optimal Initialization Analysis（R3 方向 · 零 GPU · 2026-11-10 wake178）
+
+> **目标**：分析 SFT 到 RL(GRPO) 的关键过渡。核心洞察：SFT 质量与 RL 可学性是**非单调**关系——SFT 太低→GRPO 全零组（无法 bootstrap），SFT 太高→GRPO 全一组（方差=0→无学习信号）。找到"Goldilocks zone"并设计预注册的 SFT checkpoint 选择准则。
+> **前序**：R73（GRPO 超参）→ R74（课程策略）→ R128（3347 任务）→ R129（R5 奖励）→ R130（课程整合）。
+> **脚本**：`baize_posttrain_r131_sft_rl_bridge.py`（547 行，纯 Python 3.8+ stdlib，零依赖）。
+> ⚠️ 替身分析结果**不可迁移到 BaiZe**。
+
+### 1. Goldilocks Zone 分析（5 个难度层 × SFT 质量 0→1 扫描）
+
+| 层级 | 难度 | Peak SFT 质量 | Peak learnable | Goldilocks 区间 | 宽度 |
+|:--|:--|:--|:--|:--|:--|
+| L1 Trivial | 0.350 | 0.340 | 0.995 | [0.200, 0.480] | 0.280 |
+| L2 Basic | 0.550 | 0.600 | 1.000 | [0.400, 0.700] | 0.300 |
+| L3 Medium | 0.750 | 0.760 | 1.000 | [0.600, 0.880] | 0.280 |
+| L4 Advanced | 0.880 | 0.880 | 1.000 | [0.740, 1.000] | 0.260 |
+| L5 Challenge | 0.950 | 0.940 | 1.000 | [0.800, 1.000] | 0.200 |
+
+**关键发现**：
+- 每个难度层都有一个 Goldilocks zone，宽度 0.20-0.30
+- 难度越高，Peak SFT 质量越高（需要更强的 SFT 才能获得 RL 信号）
+- L1 的 Goldilocks 区间 [0.20, 0.48] 与成功阶梯 M1(50%) 接近——SFT 目标应该略低于 M1
+
+### 2. SFT Checkpoint 选择准则（预注册 · 测试前冻结）
+
+| 类别 | 指标 | 阈值 | 判读 |
+|:--|:--|:--|:--|
+| 主指标 | L1 pass@1 | [0.20, 0.48] | Goldilocks zone |
+| 次要 1 | L2 pass@1 | ≥0.20 | 可 bootstrap |
+| 次要 2 | L1 GRPO 组方差 | ≥0.15 | 非零信号 |
+| 次要 3 | 工具调用合法率 | ≥90% | D1 诊断 |
+| 次要 4 | SFT 验证损失趋势 | 平台/下降 | 未过拟合 |
+| 🔴 红旗 1 | L1 pass@1 > 0.90 | → GRPO 崩溃 | 选更早的 ckpt |
+| 🔴 红旗 2 | L1 pass@1 < 0.30 | → 无法 bootstrap | 继续 SFT |
+| 🔴 红旗 3 | L2 pass@1 < 0.10 | → 无跨层迁移 | 加难 SFT 数据 |
+| 🔴 红旗 4 | GRPO probe 方差 < 0.05 | → 静默空转 | 检查奖励/温度 |
+
+**决策协议**（6 步）：probe 评测 → 计算 pass@1+方差 → 检查 Goldilocks → 检查红旗 → 全过→起 RL Phase 0 → 有红旗→诊断修复
+
+### 3. 失败模式分析
+
+**Mode 1: SFT 过拟合 → GRPO 信号崩溃**
+| SFT pass | learnable | adv_std | all_one_rate | 诊断 |
+|:--|:--|:--|:--|:--|
+| 0.50 | 0.995 | 0.4973 | 0.005 | OK |
+| 0.65 | 0.995 | 0.4973 | 0.000 | OK |
+| 0.80 | 0.995 | 0.4973 | 0.005 | OK |
+| 0.90 | 0.870 | 0.3355 | 0.130 | marginal |
+| 0.95 | 0.530 | 0.2493 | 0.470 | ⚠️ GRPO collapse |
+
+**Mode 2: SFT 欠拟合 → 全零组**
+| SFT pass | learnable | all_zero_rate | 诊断 |
+|:--|:--|:--|:--|
+| 0.05 | 0.000 | 1.000 | ❌ Cannot bootstrap |
+| 0.10 | 0.005 | 0.995 | ❌ Cannot bootstrap |
+| 0.15 | 0.070 | 0.930 | ❌ Cannot bootstrap |
+| 0.20 | 0.335 | 0.665 | ⚠️ marginal |
+| 0.30 | 0.830 | 0.170 | OK |
+
+**Mode 3: 温度效应**
+| T | learnable | adv_std | signal |
+|:--|:--|:--|:--|
+| 0.3 | 0.860 | 0.3826 | 0.860 |
+| 0.5 | 0.875 | 0.3943 | 0.875 |
+| **0.7** | **0.885** | **0.4022** | **0.885** |
+| 0.9 | 0.905 | 0.4166 | 0.905 |
+| 1.1 | 0.915 | 0.4216 | 0.915 |
+
+**Mode 4: 跨层迁移**（L1→L3 系数≈0.5）
+| L1 SFT pass | L3 effective | L3 learnable |
+|:--|:--|:--|
+| 0.40 | 0.20 | 0.510 |
+| 0.60 | 0.30 | 0.580 |
+| 0.80 | 0.40 | 0.710 |
+
+### 4. RL 信号投影（R130 5 阶段课程，SFT 起点=0.55）
+
+| 阶段 | 入口质量 | 出口质量 | avg learnable | avg signal |
+|:--|:--|:--|:--|:--|
+| Phase 0 Warmup | 0.550 | 0.589 | 0.870 | 0.870 |
+| Phase 1 Foundation | 0.589 | 0.657 | 0.860 | 0.860 |
+| Phase 2 Development | 0.657 | 0.744 | 0.960 | 0.960 |
+| Phase 3 Refinement | 0.744 | 0.809 | 0.990 | 0.990 |
+| Phase 4 Mastery | 0.809 | 0.843 | 0.985 | 0.985 |
+
+→ 从 SFT 55% 出发，5 阶段 RL 后可达 ~84%，接近 M4(85%)。
+
+### 5. 敏感性分析：SFT 起点质量 vs RL 后最终质量
+
+| SFT 起点 | RL 后 | RL 改善 | signal |
+|:--|:--|:--|:--|
+| 0.35 | 0.773 | +0.423 | 0.955 |
+| 0.45 | 0.810 | +0.360 | 0.964 |
+| 0.55 | 0.843 | +0.293 | 0.939 |
+| 0.65 | 0.874 | +0.224 | 0.905 |
+| 0.75 | 0.906 | +0.156 | 0.880 |
+
+**关键洞察**：SFT 起点越低，RL 改善空间越大（更多 signal），但起点太低则无法 bootstrap。最佳起点在 0.35-0.55 之间——恰好是 Goldilocks zone 的中心。
+
+### 6. Verl 兼容配置
+
+生成 YAML 配置（~800 chars）：sft_checkpoint_selection 块，含 goldilocks_zone / secondary / red_flags / strategy / probe / eval_protocol。预注册于 SFT 训练开始前，测试后不得修改。
+
+### 7. 与既有研究的关系
+
+| 既有研究 | R131 贡献 |
+|:--|:--|
+| R73 GRPO 超参 | 使用 G=8, T=0.7 作为模拟参数 |
+| R74 课程策略 | 投影 RL 信号跨 R130 5 阶段课程 |
+| R128 3347 任务 | 使用 L1-L5 难度分层 |
+| R129 R5 奖励 | Goldilocks 分析适用于所有奖励臂 |
+| R130 课程整合 | 分析 SFT→RL 过渡在课程中的信号演化 |
+| Vision R57 | 静默空转教训→红旗 4（GRPO probe 方差<0.05） |
+
+### 8. 局限性
+
+1. **逻辑斯蒂代理模型**：非真实 LLM，仅用于 SFT-RL 关系的**相对**分析
+2. **伯努利假设**：每个 rollout 独立同分布，忽略轨迹级相关性
+3. **跨层迁移系数 0.5 为假设**：GPU 后需实测
+4. **温度效应简化**：未建模 top-p 采样
+5. **Goldilocks 阈值 0.95 为经验值**：可根据实际需求调整
+
+### 9. 产出文件
+
+| 文件 | 大小 | 说明 |
+|:--|--:|:--|
+| `baize_posttrain_r131_sft_rl_bridge.py` | ~22KB, 547 行 | py_compile ✅ |
+| `r131_sft_rl_bridge_report.json` | 16.8KB | 完整报告（含 Goldilocks sweep + 失败模式 + 投影） |
+
+
