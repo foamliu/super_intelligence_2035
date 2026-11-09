@@ -1399,3 +1399,4 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1793937823141_zdo8r	t0002038	hfeg0plg86	585	analog_context	case	EDA-Eval-DesignFlow-TrMatchHelper-001	2026-11-10 01:05	
 1793755896858_9dytw	e0039602	hfeg0plg103	446	schematic_netlist	case	EDA-Eval-DesignFlow-StdcellStatusPartition-001	2026-11-10 01:35	
 1793861310425_dmk4f	sinanz	hfeg0pkn005	100	schematic_netlist	case	EDA-Eval-DesignFlow-StdcellFullAdderBuild-001	2026-11-10 02:23	
+1793957377461_s9bc9	e0039602	hfeg0plg103	391	schematic_netlist	case	EDA-Eval-DesignFlow-StdcellDetConvert-001	2026-11-10 03:01	
