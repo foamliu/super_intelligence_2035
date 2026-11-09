@@ -1382,4 +1382,4 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1792497319115_a6f6r	jinsongl	hfeg0pkn005	204	analog_context	case	EDA-Eval-DesignFlow-NmosBulkVoltCheck-001	2026-11-09 14:18	
 1793971631579_gvexo	kerwind	hfeg0pkn002	135	schematic_netlist	case	EDA-Eval-DesignFlow-TimingMeasFileGen-001	2026-11-09 15:06	
 1789535827580_4fbwo.messages.json	mike	hfeg0pkn003	70	schematic_netlist	case	EDA-Eval-DesignFlow-VscForceInsert-001	2026-11-09 16:10	
-1793672902894_7k3iq.messages.json	thomas1w	hfeg0pkn005	133	schematic_netlist	claimed		2026-11-09 16:51	
+1793672902894_7k3iq.messages.json	thomas1w	hfeg0pkn005	133	schematic_netlist	case	EDA-Eval-DesignFlow-NetlistBroadcastFlow-001	2026-11-09 17:26	broadcast flow analyzer, B-grade synthesized L2 k=11
