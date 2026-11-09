@@ -70,7 +70,7 @@ pdflatex main && bibtex main && pdflatex main && pdflatex main
 ## 与 DAC 2027 论文（ZhuLong）的区别
 | | DAC 2027 (ZhuLong) | ICML 2027 (EDA-LiveFlow-Bench) |
 |---|---|---|
-| **Benchmark** | EDA-Scripting-Bench (449 tasks, 单脚本) | EDA-LiveFlow-Bench (920 tasks, 多步编排) |
+| **Benchmark** | EDA-Scripting-Bench (449 tasks, 单脚本) | EDA-LiveFlow-Bench (928 tasks, 多步编排) |
 | **Task mode** | 单函数代码生成 | design_flow (submit.zip 交付件) |
 | **数据来源** | 厂商文档 + 专家构造 | 真实用户 Cline 交互轨迹 |
 | **核心论点** | observation fidelity 是 binding 约束 | tool-chain grounding depth 是 binding 约束 |
@@ -79,11 +79,11 @@ pdflatex main && bibtex main && pdflatex main && pdflatex main
 
 ## 待补内容
 - [ ] 下载 ICML 2027 官方 style 文件 (icml2027.sty / icml2027.bst)
-- [ ] 扩 cline eval 到全 920 cases（当前仅 48 条，4 domain）
+- [ ] 扩 cline eval 到全 928 cases（当前仅 48 条，4 domain）
 - [ ] 补多模型对比数据 (GLM-5.2 / Kimi-K2.6 / DeepSeek-V4-Flash)
 - [ ] 画 pipeline 图 (Figure 1)
 - [ ] 画 grounding depth vs Pass@1 图 (Figure 2)
 - [ ] 画 domain distribution 饼图 (Figure 3)
 - [ ] 补完整的 failure taxonomy 统计
-- [ ] 更新 domain 分布表到 920 cases
+- [ ] 更新 domain 分布表到 928 cases
 - [ ] 附录 A 补完整 task example

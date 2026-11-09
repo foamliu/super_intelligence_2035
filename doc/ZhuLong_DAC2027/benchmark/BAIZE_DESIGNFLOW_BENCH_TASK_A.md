@@ -398,7 +398,7 @@ latexmk -pdf -interaction=nonstopmode main.tex   # 必须 0 error；当前 10 �
 
 ### B. 内容刷新（每轮或 case 有增减时）
 
-- 任务总数 = A+B+C+D：**2026-11-09 = A:177 B:210 C:270 D:263 = 920**。
+- 任务总数 = A+B+C+D：**2026-11-09 = A:184 B:210 C:271 D:263 = 928**。
 - 生产扫描口径：**42 hosts / 5,822 sessions / 268 users (mc≥15) / 224 users (mc≥30) / mc30 = 1,511 / dedup = 3,896**。
 - 资产规模（survey）：**698 workstations / 2,850 users / 52,698 session files / 24,085 IC-EDA matched**。
 - 领域数：**13**（论文口径；survey 的 11 类是更粗分类）。
