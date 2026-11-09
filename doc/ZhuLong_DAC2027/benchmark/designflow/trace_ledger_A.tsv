@@ -291,3 +291,7 @@
 1794201834116_6ajm4	e0023936	hfhds201	74	eda_other	case	EDA-Eval-DesignFlow-WvDataeyeMeasure-001	2026-11-09 21:27	
 1794120938612_mpmdp	e0023936	hfhds201	195	eda_other	case	EDA-Eval-DesignFlow-WvPropDelayMeasure-001	2026-11-09 21:53	
 1794227785944_i555n	e0046913	hfeg0pkn003	0	verification	parked		2026-11-09 22:14	FM log analysis Q&A (解读fm log情况), 23msgs/121KB, 1 user-turn diagnostic not produce-task; e0046913 fresh sessions i555n/5or9z/ayxhy all FM-log-analysis-dominated, j9oap was only produce-task
+1793945103405_x8v81	dsgao	hfhds201	99	eda_other	parked		2026-11-09 22:36	analysis Q&A: 两个netlist有区别吗为什么后仿真delay有差异, not produce-task
+1794221830421_oclzn	dandans	hfhds201	94	eda_other	parked		2026-11-09 22:36	MatrixRun directory listing comparison, operational not produce-task
+1794193758706_gwm47	tongfanl	hfhds201	63	eda_other	parked		2026-11-09 22:36	MatrixRun dir listing comparison dup of oclzn, operational not produce-task
+1794129973388_q54e4	tongfanl	hfhds201	14	eda_other	parked		2026-11-09 22:36	diagnostic: 为啥报这个错 cornerStr uninitialized, 14msgs analysis not produce-task
