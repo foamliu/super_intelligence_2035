@@ -607,3 +607,16 @@ qnm9e					parked		2026-11-08 01:58	Finesim DC convergence Q&A prose dup of uky6c
 1793616198613_fefaj.messages.json	shaoyou	hfeg0pkn003	10	spice_sim	parked		2026-11-09 12:08	L1 ask-eda consulting (Nanospice 仿真精度); tools innovus/netlist 主导=wrong-shard A; spice ratio low
 1791515463198_50mu7.messages.json	e0042624	hfeg0pkn001	85	spice_sim	parked		2026-11-09 12:08	explore others skill repo (SpiceAgent_Skill); aether:881/calibre/lvs 主导=wrong-shard C; old 10-16
 1793103984386_j3ohg	jkxu	hfeg0pkn002	13	spice_sim	parked		2026-11-09 12:24	relax spice>=5 un-ledgered peek: U#0='你好' greeting, no produce-task; tools=list_allowed_files/read_files/search_codebase (zero spice exec); cron spice marker=content-keyword false positive
+1792571833890_u6nxo	bowenguo	hfeg0pnd001	3	spice_sim	parked		2026-11-09 12:49	spice3/3=100% peek: CSV→report 3msgs零工具 session未展开 非spice
+1793685492215_twnbr	adaml	hfeg0pkn002	3	spice_sim	parked		2026-11-09 12:49	spice3/3=100% peek: sim-report-writer skill输出格式配置 非produce-task
+1792031228311_sbmcj	e0023936	hfeg0pkn004	4	spice_sim	parked		2026-11-09 12:49	spice4/6=67% peek: AnasimPro GUI启动 非spice
+1792392597029_q92x8	e0046686	hfeg0pkn005	4	spice_sim	parked		2026-11-09 12:49	spice4/6=67% peek: git版本排障 spice假阳性
+1793870006104_003q6	shaoyou	hfeg0pkn003	4	spice_sim	parked		2026-11-09 12:49	spice4/6=67% peek: bashrc分析 spice假阳性
+1792660894966_ukk5v	mike	hfeg0pkn003	4	spice_sim	parked		2026-11-09 12:49	spice4/7=57% peek: DDR6 SystemC/VCS build-fix 440msgs wrong-shard(digital/verification) spice假阳性(路径含finesim)
+1790585671436_vatpl	e0014566	hfeg0pkn001	4	spice_sim	parked		2026-11-09 12:49	spice4/8=50% peek: 裸hi问候 spice假阳性
+1790578790015_xcbxf	t0002987	hfeg0pkn005	4	spice_sim	parked		2026-11-09 12:49	spice4/8=50% peek: shell命令检查 spice假阳性
+1790581856569_4qohy	e02141	hfeg0pkn001	3	spice_sim	parked		2026-11-09 12:49	spice3/8=38% peek: swb-python-api配置 spice假阳性
+1790586030024_lf7lw	e02141	hfeg0pkn001	3	spice_sim	parked		2026-11-09 12:49	spice3/8=38% peek: swb-python-api配置(同4qohy) spice假阳性
+1789898322144_yhqp5	mike	hfeg0pkn003	3	spice_sim	parked		2026-11-09 12:49	spice3/9=33% peek: nishi nage裸问候片段 spice假阳性
+1789696540475_wqcki	shaoyou	hfeg0pkn003	4	spice_sim	parked		2026-11-09 12:49	spice4/13=31% peek: AnaSim工具启动 spice假阳性
+1792842218809_1yo6b	jkxu	hfeg0pkn002	4	spice_sim	parked		2026-11-09 12:49	spice4/13=31% peek: bsub作业监控 spice假阳性
