@@ -11903,3 +11903,201 @@ MiniCPM5-2B 模型路径完整：model-00000-of-00001.safetensors + config.json 
 2. GPU 释放后: launch_11_9.sh step 2 (baseline eval) + step 5 (RL smoke)
 3. 正式 SFT: 等 pretrain ckpt (ETA 2026-12-25) + UltraData 传输
 4. 更新 `baize_posttrain_sft.sh` 调用 verl SFT trainer (替换 placeholder)
+
+---
+
+## §R115 预启动数据管线端到端验证 + SFT 配置修复（2026-11-09 · 零 GPU）
+
+> **背景**：R114 确定了 verl FSDP SFT 框架并生成了配置 YAML，但未验证配置与实际数据文件的引用一致性。本轮做了完整的端到端管线验证，发现并修复了一个会导致 SFT 启动失败的配置错误。
+
+### 1. 关键发现：SFT 配置引用了不存在的文件 [已修复]
+
+| 配置文件 | `train_files` 值 | 文件是否存在 | 状态 |
+|:--|:--|:--|:--|
+| `baize_posttrain_rl_verl_config_v2.yaml` | `rl_pyaether_synth_v2.parquet` | ✅ 存在 (932K, 3347 行) | PASS |
+| `baize_posttrain_sft_verl_config.yaml` | `sft_blended_v1.parquet` | ❌ **不存在** | **FAIL → 已修复** |
+
+**修复**：`train_files: sft_blended_v1.parquet` → `train_files: sft_pyaether_corpus_v2.parquet`
+
+**原因分析**：R114 设计了 50:30:20 混合管线 (agent:general:pyaether)，但 `sft_blended_v1.parquet` 从未被生成：
+- PyAether 部分 (20%): JSONL 已就绪，parquet 已生成 (`sft_pyaether_corpus_v2.parquet`, 19524 行)
+- UltraData 部分 (80%): megatron `.bin/.idx` 格式在 `.29` NFS 上，`.17` 不可达，且 verl FSDP SFT 需要单一 parquet 文件（不支持 megatron blend）
+- **结论**：完整 blend parquet 生成需先传输 UltraData 到 .17 并转换为 verl 格式（依赖数据传输 + pretrain ckpt 窗口）
+- **当前修复**：SFT 配置指向已有的 PyAether-only parquet，足以支撑替身 RL 预演的 SFT 验证
+
+### 2. Parquet Schema 验证（通过 cu124 venv Python）
+
+| Parquet 文件 | 行数 | 列名 | verl 期望列 | 状态 |
+|:--|--:|:--|:--|:--|
+| `rl_pyaether_synth_v2.parquet` | 3,347 | prompt, reward_model, agent_name | prompt, reward_model, agent_name | ✅ PASS |
+| `sft_pyaether_corpus_v2.parquet` | 19,524 | conversation, pair_id, type, api_used, contamination_check | conversation (messages_key) | ✅ PASS |
+
+### 3. JSONL→Parquet 转换器验证
+
+> **R114 §5 写「待创建」，但实际已存在于 R10 版本。本轮验证其可用性。**
+
+| 模式 | 输入 | 输出 | Python | 结果 |
+|:--|:--|:--|:--|:--|
+| RL dry-run | `rl_pyaether_synth_v2.jsonl` | — | cu124 venv | ✅ 3347 tasks converted |
+| SFT dry-run | `sft_pyaether_corpus_v2.jsonl` | — | cu124 venv | ✅ 19524 pairs converted |
+| RL dry-run | 同上 | — | system python3 (3.8) | ❌ pyarrow not installed |
+| SFT dry-run | 同上 | — | system python3 (3.8) | ❌ pyarrow not installed |
+
+**关键约束**：`baize_posttrain_jsonl_to_parquet.py` 依赖 pyarrow（仅 cu124 venv 有，版本 25.0.1）。**所有数据转换必须用 `~/code/verl_cu124_venv/bin/python`**，不能用系统 python3。
+
+### 4. cu124 Venv 依赖验证
+
+| 包 | 版本 | 状态 |
+|:--|:--|:--|
+| pyarrow | 25.0.1 | ✅ |
+| verl | 0.4.0 | ✅ |
+| sglang | 0.4.6.post1 | ✅ |
+| torch | 2.6.0+cu124 | ✅ |
+| flash_attn | 2.7.4.post1 | ✅ |
+| ray | 2.60.0 | ✅ |
+| torch.cuda.is_available | True | ✅ |
+
+⚠️ NFS 冷启动 import torch >30s（R45 实测），起跑前需 warm-up。
+
+### 5. Bash 脚本语法验证（bash -n）
+
+全部 10 个 shell 脚本通过 `bash -n`：rl_grpo ✅, sft ✅, eval ✅, anneal ✅, launch_11_9 ✅, preflight ✅, contam_gate ✅, gpu_watcher ✅, minicpm5_diag ✅, data_transfer ✅
+
+### 6. SFT Data Mixer Dry-Run
+
+```
+Mix: agent50:general30:pyaether20 | Ctx: 8192
+Loaded 19524 records | Tokens: ~4M | Mean: 209.5 | P95: 340
+Contamination gate: CLEAR
+```
+
+### 7. Launch Script Dry-Run
+
+7 步全部正确打印：Step 0 (venv setup) → Step 1 (preflight) → Step 2 (SGLang serve + baseline) → Step 3 (D1-D6 extract) → Step 4 (contamination gate) → Step 5 (RL smoke) → Step 6 (full RL)
+
+### 8. GPU 状态
+
+- 0/8 free（root SGLang Qwen3.8-27B 占全 8 卡 44-45GB，运行自 Sep17）
+- gpu_watcher 运行中 (PID 2709455, max-wait=604800s/7天)
+- GPU 释放 (≥4 卡 ≥40000MiB) → watcher 自动触发 `launch_11_9.sh --step 1-5`
+
+### 9. 汇总矩阵
+
+| 检查项 | 状态 | 备注 |
+|:--|:--|:--|
+| RL config ↔ parquet | ✅ PASS | 3347 行，schema 正确 |
+| SFT config ↔ parquet | ✅ FIXED | 原引用不存在 → 已改为 sft_pyaether_corpus_v2.parquet |
+| Parquet schemas | ✅ PASS | RL 3 列 + SFT 5 列均匹配 verl 期望 |
+| JSONL→Parquet 转换器 | ✅ PASS | 需用 cu124 venv Python |
+| cu124 venv 依赖 | ✅ PASS | 6 包全 + CUDA True |
+| Bash 脚本语法 | ✅ PASS | 10/10 |
+| 评测资产 | ✅ PASS | 158-case + driver + scorer + model |
+| GPU | ❌ 0/8 free | watcher 轮询中 |
+| SFT 完整 blend | ⚠️ BLOCKED | UltraData 在 .29 NFS，需传输后转换 |
+
+### 10. 交付物
+
+- `baize_posttrain_r115_pipeline_verify.py` (~270 行, Python3 stdlib, py_compile ✅)
+- `baize_posttrain_sft_verl_config.yaml` 修复 (train_files 指向已存在文件)
+- 本节 (EXPERIMENTS §R115)
+
+---
+
+## §R116 Pass@8 难度分层经验验证（R2 方向 · 零 GPU · 2026-11-09 · 复用 root SGLang）
+
+> **对应 §用户令·2026-11-07 R2 方向**：pass@8 profiling vs 规则分层 + 每档题的区分度证据
+> ⚠️ **替身警告**：结果来自 Qwen3.8-27B（root SGLang port 8098），**不可迁移到 BaiZe (MiniCPM5-2B)**。
+
+### 1. 实验目的
+
+回答 R2 的核心问题：
+- 规则分层（按 API 数量 L1-L5）是否产生有意义的难度梯度？
+- pass@8 profiling 能否校准或替代规则分层？
+- 每个难度档的区分度证据是什么？
+
+### 2. 实验设计
+
+| 参数 | 值 |
+|:--|:--|
+| 替身模型 | Qwen3.8-27B (root SGLang, 端口 8098/8099, tp=4) |
+| 温度 | 0.7 (pass@k 需要多样性) |
+| 每题采样数 | 8 (pass@1/4/8) |
+| 并发 | 8 (ThreadPoolExecutor) |
+| 每层采样 | 30 题 (L1-L5 各 30, 共 150 题) |
+| 总 API 调用 | 150 × 8 = 1200 |
+| 评分标准 | 语法正确(ast.parse) + 全部必需 API 出现在生成代码中 = pass |
+| pass@k 公式 | `1 - C(n-c, k) / C(n, k)` (标准组合公式) |
+| 条件 A | WITH API docs（prompt 含 API 参考文档） |
+| 条件 B | NO API docs（prompt 不含 API 文档, 更难） |
+
+### 3. 结果：条件 B（NO API docs, 150 题, 1200 调用, 耗时 ~7min）
+
+| 难度 | API数 | 题数 | pass@1 | pass@4 | pass@8 | 语法率 | API覆盖 | p@1标准差 | 零通过 | 全通过 | 区分度 |
+|:--|:--|--:|--:|--:|--:|--:|--:|--:|--:|--:|:--|
+| L1 | 1 | 30 | 1.00 | 1.00 | 1.00 | 100.0% | 100.0% | 0.000 | 0 | 30 | LOW_CEILING |
+| L2 | 1 | 30 | 1.00 | 1.00 | 1.00 | 100.0% | 100.0% | 0.000 | 0 | 30 | LOW_CEILING |
+| L3 | 3-5 | 30 | 1.00 | 1.00 | 1.00 | 99.6% | 100.0% | 0.022 | 0 | 29 | LOW_CEILING |
+| L4 | 6-10 | 30 | 1.00 | 1.00 | 1.00 | 100.0% | 100.0% | 0.000 | 0 | 30 | LOW_CEILING |
+| L5 | 10 | 30 | 1.00 | 1.00 | 1.00 | 100.0% | 100.0% | 0.000 | 0 | 30 | LOW_CEILING |
+
+- **Spread (max-min pass@1)**: 0.0042 → POOR separation
+- **Monotonic decrease (L1→L5)**: NO
+- **唯一非满分**: L3 task synth-v2-L3-02593 (5 APIs): 7/8 pass, p@1=0.88, p@8=1.00
+
+### 4. 结果：条件 A（WITH API docs, smoke test 25 题, 耗时 ~2min）
+
+> smoke test 已确认与条件 B 完全一致：ALL tiers 100% pass@1/pass@4/pass@8。
+> 全量 150 题运行仍在后台进行（结果预期与 smoke 一致）。
+
+| 难度 | 题数 | pass@1 | pass@8 | 区分度 |
+|:--|--:|--:|--:|:--|
+| L1 | 5 | 1.00 | 1.00 | LOW_CEILING |
+| L2 | 5 | 1.00 | 1.00 | LOW_CEILING |
+| L3 | 5 | 1.00 | 1.00 | LOW_CEILING |
+| L4 | 5 | 1.00 | 1.00 | LOW_CEILING |
+| L5 | 5 | 1.00 | 1.00 | LOW_CEILING |
+
+### 5. 根因分析
+
+**为什么所有层级都 100% pass？**
+
+1. **Prompt 显式命名所有必需 API**：合成任务的 prompt 直接写明 "Write a function that calls the PyAether API `pyAether.X.Y`"，模型只需写 `return pyScript.X.Y()` 即可覆盖该 API
+2. **API 覆盖率 != 执行正确性**：评分只检查"API 名是否出现在代码中"，不检查"代码是否实际可执行且返回正确结果"
+3. **替身模型足够强**：Qwen3.8-27B 即使不看文档也能根据 prompt 中给出的 API 名写出正确的调用代码
+4. **断言模板太简单**：大部分 L1/L2 任务用 T1_type_check（只检查返回类型），不检查返回值
+
+**API 文档对 pass@k 无影响**：条件 A（有文档）和条件 B（无文档）结果完全一致，说明 prompt 中已有的 API 名信息已足够模型解题。
+
+### 6. 对 RL 训练的关键启示
+
+| 发现 | 影响 | 建议 |
+|:--|:--|:--|
+| API 覆盖率评分零区分度 | RL 奖励不能用 API 覆盖率 | **必须用执行正确性作为奖励信号** |
+| 规则分层（API 数量）无梯度 | L1-L5 难度划分在 API 覆盖率评分下无意义 | 等 GPU 后用 MiniCPM5-2B + 执行评分重新分层 |
+| Prompt 命名 API 使题太简单 | 模型不需推理即可"通过" | RL 训练时考虑：① 隐藏 API 名 ② 更复杂断言 ③ 多步推理 |
+| pass@8 ≈ pass@1 | 多次采样无增益 | GRPO group 内方差≈0 → 无学习信号 → 需要更难的任务 |
+| 1/150 题有非满分 | 存在极少量噪声 | 不影响整体结论 |
+
+### 7. R2 问题回答
+
+**问**：「pass@8 profiling 还是规则分层？每档题的区分度证据？」
+
+**答**：
+1. **规则分层（按 API 数量 L1-L5）在 API 覆盖率评分下零区分度** → 所有层级 100% pass@1，LOW_CEILING
+2. **pass@8 profiling 确认了规则分层的无效性** → pass@8 ≈ pass@1，多次采样无增益
+3. **两者均不可用的根因**：评分方法（API 覆盖率）而非分层方法（规则 vs profiling）是瓶颈
+4. **正确路径**：① 等 GPU 后用 MiniCPM5-2B 做执行正确性评分的 pass@8 profiling ② 将 RL 奖励从 API 覆盖率改为执行正确性 ③ 对执行评分下的 pass@1 重新分层
+
+### 8. 局限性
+
+- 替身 Qwen3.8-27B ≠ MiniCPM5-2B，MiniCPM5-2B 可能无法 trivially 达到 100% API 覆盖（需 GPU 验证）
+- 评分基于 API 覆盖率而非执行正确性（pyAether 环境未在 .17 可用）
+- 每层 30 题采样可能不代表全部 3347 题
+- 无工具调用/迭代（纯代码生成 vs full harness）
+
+### 9. 交付物
+
+- `baize_posttrain_r116_pass8_profiling.py` (~360 行, Python3 stdlib, py_compile ✅)
+- `r116_pass8_profiling_nodocs.json` (790KB, 150 题 × 8 样本完整结果)
+- `reports/report_posttrain_pass8_profiling_r116_nodocs_zh.html` (10KB, 自包含)
+- 本节 (EXPERIMENTS §R116)
