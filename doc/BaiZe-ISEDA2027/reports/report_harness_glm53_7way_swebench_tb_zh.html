@@ -7,22 +7,22 @@
 <div class="info">
 <p><strong>模型</strong>：glm-5.3-flash（网关 HTTP 200 ✅）</p>
 <p><strong>7 路</strong>：cline / codex / opencode / claude-code / pi / hermes / deepseek</p>
-<p><strong>生成时间</strong>：2026-11-09 20:45（R1997）</p>
-<p><strong>状态</strong>：predict 1306/3500=37.3%（7路alive）；eval incr R1997 运行中（269 new）；TB-2.1 3路完成+3路运行+1路重启</p>
+<p><strong>生成时间</strong>：2026-11-09 20:57（R1998）</p>
+<p><strong>状态</strong>：predict 1315/3500=37.6%（7路alive）；eval incr R1998 运行中（269 new）；TB-2.1 3路完成+3路运行+1路重启</p>
 </div>
 <div class="note"><p><strong>资源自检</strong>：CPU 45/224=20% ✅；内存 1139GB avail ✅；磁盘 /data 5.8T + / 352G ✅；网关 200 ✅</p></div>
 
 <h2>1. SWE-bench Verified · 7 路 Predict</h2>
 <table><tr><th>#</th><th>Harness</th><th>Predict</th><th>Real</th><th>Empty</th><th>Real%</th></tr>
 <tr><td>1</td><td>cline</td><td>163/500</td><td class='pass'>146</td><td class='fail'>17</td><td>89.6%</td></tr>
-<tr><td>2</td><td>codex</td><td>73/500</td><td class='pass'>62</td><td class='fail'>11</td><td>84.9%</td></tr>
-<tr><td>3</td><td>opencode</td><td>326/500</td><td class='pass'>317</td><td class='fail'>9</td><td>97.2%</td></tr>
+<tr><td>2</td><td>codex</td><td>76/500</td><td class='pass'>64</td><td class='fail'>12</td><td>84.2%</td></tr>
+<tr><td>3</td><td>opencode</td><td>328/500</td><td class='pass'>319</td><td class='fail'>9</td><td>97.3%</td></tr>
 <tr><td>4</td><td>claude-code</td><td>167/500</td><td class='pass'>141</td><td class='fail'>26</td><td>84.4%</td></tr>
-<tr><td>5</td><td>pi</td><td>117/500</td><td class='pass'>107</td><td class='fail'>10</td><td>91.5%</td></tr>
+<tr><td>5</td><td>pi</td><td>119/500</td><td class='pass'>109</td><td class='fail'>10</td><td>91.6%</td></tr>
 <tr><td>6</td><td>hermes</td><td>337/500</td><td class='pass'>324</td><td class='fail'>13</td><td>96.1%</td></tr>
-<tr><td>7</td><td>deepseek</td><td>123/500</td><td class='pass'>119</td><td class='fail'>4</td><td>96.7%</td></tr>
+<tr><td>7</td><td>deepseek</td><td>125/500</td><td class='pass'>121</td><td class='fail'>4</td><td>96.8%</td></tr>
 </table>
-<div class="note"><p><strong>合计</strong>：1306/3500=37.3%，real=1216，empty=90。Empty 主因=429额度期+sphinx-doc能力放弃。</p></div>
+<div class="note"><p><strong>合计</strong>：1315/3500=37.6%，real=1224，empty=91。Empty 主因=429额度期+sphinx-doc能力放弃。</p></div>
 
 <h2>2. SWE-bench Verified · 7 路 Eval 矩阵</h2>
 <table><tr><th>#</th><th>Harness</th><th>Eval N</th><th>Resolved</th><th>Unresolved</th><th>Errored</th><th>Rate</th><th>状态</th></tr>
@@ -36,7 +36,7 @@
 </table>
 <div class="info"><ul>
 <li>hermes 90.8%领先(287/316)，opencode 80.5%(243/302)，deepseek 77.6%(90/116)</li>
-<li>incr_eval R1997 正在评估 codex 29 new (cline DONE 107/108)</li>
+<li>incr_eval R1992 opencode running (cline DONE 107/108, codex DONE 33/34)</li>
 <li>当前为中间值，最终需等500题全完成</li>
 </ul></div>
 
@@ -58,13 +58,13 @@
 <h3>4.2 TB-2.1 — 进行中</h3>
 <div class="info"><p>口径：TB-2.1/89题/7-way（与TB4不可比）。Oracle 5/5 ✅。§15:2x判据MET ✅</p></div>
 <table><tr><th>Harness</th><th>已完成</th><th>Passed</th><th>Errored</th><th>Remaining</th><th>通过率</th><th>状态</th></tr>
-<tr><td>cline</td><td>4/89</td><td class='pass'>1</td><td class='fail'>1</td><td>85</td><td><strong>1.1%</strong></td><td>🔄 运行中</td></tr>
+<tr><td>cline</td><td>5/89</td><td class='pass'>2</td><td class='fail'>1</td><td>84</td><td><strong>2.2%</strong></td><td>🔄 运行中</td></tr>
 <tr><td>codex</td><td>2/89</td><td class='pass'>0</td><td class='fail'>1</td><td>87</td><td><strong>0.0%</strong></td><td>🔄 运行中</td></tr>
 <tr><td>opencode</td><td>108/89</td><td class='pass'>26</td><td class='fail'>33</td><td>0</td><td><strong>29.2%</strong></td><td>🔄 运行中</td></tr>
-<tr><td>claude-code</td><td>40/89</td><td class='pass'>0</td><td class='fail'>20</td><td>49</td><td><strong>0.0%</strong></td><td>🔄 运行中</td></tr>
-<tr><td>pi</td><td>4/89</td><td class='pass'>2</td><td class='fail'>0</td><td>85</td><td><strong>2.2%</strong></td><td>🔄 运行中</td></tr>
-<tr><td>hermes</td><td>4/89</td><td class='pass'>1</td><td class='fail'>1</td><td>85</td><td><strong>1.1%</strong></td><td>🔄 运行中</td></tr>
-<tr><td>deepseek</td><td>31/89</td><td class='pass'>3</td><td class='fail'>14</td><td>58</td><td><strong>3.4%</strong></td><td>🔄 运行中</td></tr>
+<tr><td>claude-code</td><td>48/89</td><td class='pass'>0</td><td class='fail'>24</td><td>41</td><td><strong>0.0%</strong></td><td>🔄 运行中</td></tr>
+<tr><td>pi</td><td>6/89</td><td class='pass'>2</td><td class='fail'>1</td><td>83</td><td><strong>2.2%</strong></td><td>🔄 运行中</td></tr>
+<tr><td>hermes</td><td>11/89</td><td class='pass'>1</td><td class='fail'>4</td><td>78</td><td><strong>1.1%</strong></td><td>🔄 运行中</td></tr>
+<tr><td>deepseek</td><td>33/89</td><td class='pass'>3</td><td class='fail'>15</td><td>56</td><td><strong>3.4%</strong></td><td>🔄 运行中</td></tr>
 </table>
 <div class="note"><p>cline(4/87)、codex(4/6+84err)、hermes(2/54)已完成；opencode(~34%)、deepseek(2/11)运行中；claude-code已重启(docker之前down)；pi待启动。codex 84 errored=适配器/docker环境(infra)。</p></div>
 
@@ -97,12 +97,12 @@
 
 <h2>9. 后续计划</h2>
 <div class="info"><ol>
-<li>predict 7路推进至500(当前1306/3500=37.3%)</li>
-<li>incr_eval R1997: 269 new评估中</li>
+<li>predict 7路推进至500(当前1315/3500=37.6%)</li>
+<li>incr_eval R1998: opencode 74 new评估中</li>
 <li>TB-2.1: opencode+deepseek运行中，claude-code已重启，pi待启动</li>
 <li>全DONE后聚合最终报告+cline sphinx-doc trace分析</li>
 </ol></div>
 
 <hr><p style="text-align:center;color:#7f8c8d;font-size:0.9em">
-BaiZe Harness · R1997 · 2026-11-09 20:45<br>glm-5.3-flash · SWE-bench Verified 500 + TB-2.1 89 · 7-way · 报告正文一律写 cline
+BaiZe Harness · R1998 · 2026-11-09 20:57<br>glm-5.3-flash · SWE-bench Verified 500 + TB-2.1 89 · 7-way · 报告正文一律写 cline
 </p></body></html>
