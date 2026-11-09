@@ -11,7 +11,7 @@ tr:nth-child(even){background:#ecf0f1}
 .info{background:#ebf5fb;border-left:4px solid #3498db;padding:10px 15px;margin:15px 0}
 .summary-box{background:#fefefe;border:2px solid #2980b9;border-radius:8px;padding:15px;margin:15px 0}</style></head><body>
 <h1>BaiZe Harness 横评报告 · glm-5.3-flash · 7-way</h1>
-<p><strong>模型</strong>：glm-5.3-flash｜<strong>7路</strong>：cline/codex/opencode/claude-code/pi/hermes/deepseek<br><strong>基准</strong>：SWE-bench Verified 500 + TB-2.1 89<br><strong>轮次</strong>：R1960 · 2026-11-09 09:50｜<strong>网关</strong>：HTTP 200 ✅</p>
+<p><strong>模型</strong>：glm-5.3-flash｜<strong>7路</strong>：cline/codex/opencode/claude-code/pi/hermes/deepseek<br><strong>基准</strong>：SWE-bench Verified 500 + TB-2.1 89<br><strong>轮次</strong>：R1961 · 2026-11-09 10:00｜<strong>网关</strong>：HTTP 200 ✅</p>
 <div class="info"><p><strong>命名纪律</strong>：正文一律写 cline，不写 cline-patched。</p></div>
 <h2>1. SWE-bench eval（中间增量）</h2>
 <table><tr><th>Harness</th><th>eval题数</th><th>resolved</th><th>failed</th><th>infra</th><th>通过率</th><th>状态</th></tr>
@@ -25,13 +25,13 @@ tr:nth-child(even){background:#ecf0f1}
 </table>
 <div class="note"><p>eval题数随predict real patch增量推进。R1933 eval后台运行中(cline 115已eval 87resolved→codex 36新→续其余路)。eval题数=已eval的real patch数，非predict总数。</p></div>
 <h2>2. predict进度（7路运行中）</h2>
-<p><strong>总进度</strong>：2675/3500(76.4%)｜<strong>网关</strong>：200 ✅｜<strong>real</strong>：1034｜<strong>empty</strong>：1641</p>
+<p><strong>总进度</strong>：2677/3500(76.5%)｜<strong>网关</strong>：200 ✅｜<strong>real</strong>：1038｜<strong>empty</strong>：1639</p>
 <table><tr><th>Harness</th><th>进度</th><th>real</th><th>empty</th><th>real%</th><th>状态</th></tr>
 <tr><td>cline</td><td>313/500</td><td class='pass'>126</td><td class='fail'>187</td><td><strong>40.3%</strong></td><td>运行中</td></tr>
 <tr><td>codex</td><td>500/500</td><td class='pass'>44</td><td class='fail'>456</td><td><strong>8.8%</strong></td><td>DONE</td></tr>
-<tr><td>opencode</td><td>360/500</td><td class='pass'>262</td><td class='fail'>98</td><td><strong>72.8%</strong></td><td>运行中</td></tr>
-<tr><td>claude-code</td><td>500/500</td><td class='pass'>106</td><td class='fail'>394</td><td><strong>21.2%</strong></td><td>DONE</td></tr>
-<tr><td>pi</td><td>252/500</td><td class='pass'>88</td><td class='fail'>164</td><td><strong>34.9%</strong></td><td>运行中</td></tr>
+<tr><td>opencode</td><td>361/500</td><td class='pass'>263</td><td class='fail'>98</td><td><strong>72.9%</strong></td><td>运行中</td></tr>
+<tr><td>claude-code</td><td>500/500</td><td class='pass'>108</td><td class='fail'>392</td><td><strong>21.6%</strong></td><td>DONE</td></tr>
+<tr><td>pi</td><td>253/500</td><td class='pass'>89</td><td class='fail'>164</td><td><strong>35.2%</strong></td><td>运行中</td></tr>
 <tr><td>hermes</td><td>472/500</td><td class='pass'>297</td><td class='fail'>175</td><td><strong>62.9%</strong></td><td>运行中</td></tr>
 <tr><td>deepseek</td><td>278/500</td><td class='pass'>111</td><td class='fail'>167</td><td><strong>39.9%</strong></td><td>运行中</td></tr>
 </table>
@@ -40,9 +40,9 @@ tr:nth-child(even){background:#ecf0f1}
 <table><tr><th>Harness</th><th>kimi predict</th><th>kimi eval</th><th>glm53</th></tr>
 <tr><td>cline</td><td>356/500</td><td>35/46</td><td>313/500 interim</td></tr>
 <tr><td>codex</td><td>291/500</td><td>6/8</td><td>500/500 interim</td></tr>
-<tr><td>opencode</td><td>401/500</td><td>80/102</td><td>360/500 interim</td></tr>
+<tr><td>opencode</td><td>401/500</td><td>80/102</td><td>361/500 interim</td></tr>
 <tr><td>claude-code</td><td>273/500</td><td>27/36</td><td>500/500 interim</td></tr>
-<tr><td>pi</td><td>333/500</td><td>26/34</td><td>252/500 interim</td></tr>
+<tr><td>pi</td><td>333/500</td><td>26/34</td><td>253/500 interim</td></tr>
 <tr><td>hermes</td><td>184/500</td><td>124/131</td><td>472/500 interim</td></tr>
 <tr><td>deepseek</td><td>212/500</td><td>33/40</td><td>278/500 interim</td></tr>
 </table>
@@ -56,11 +56,11 @@ tr:nth-child(even){background:#ecf0f1}
 <tr><td>codex</td><td>12/89</td><td class='pass'>7</td><td class='fail'>5</td><td>77</td><td><strong>58.3%</strong></td></tr>
 <tr><td>opencode</td><td>56/89</td><td class='pass'>31</td><td class='fail'>25</td><td>33</td><td><strong>55.4%</strong></td></tr>
 <tr><td>claude-code</td><td>63/89</td><td class='pass'>19</td><td class='fail'>44</td><td>26</td><td><strong>30.2%</strong></td></tr>
-<tr><td>pi</td><td>79/89</td><td class='pass'>29</td><td class='fail'>50</td><td>10</td><td><strong>36.7%</strong></td></tr>
+<tr><td>pi</td><td>80/89</td><td class='pass'>30</td><td class='fail'>50</td><td>9</td><td><strong>37.5%</strong></td></tr>
 <tr><td>hermes</td><td>54/89</td><td class='pass'>5</td><td class='fail'>49</td><td>35</td><td><strong>9.3%</strong></td></tr>
 <tr><td>deepseek</td><td>22/89</td><td class='pass'>15</td><td class='fail'>7</td><td>67</td><td><strong>68.2%</strong></td></tr>
 </table>
-<div class="summary-box"><p>TB-2.1总通过：122 passed｜最高：pi 29p · opencode 31p · deepseek 15p</p></div>
+<div class="summary-box"><p>TB-2.1总通过：123 passed｜最高：pi 30p · opencode 31p · deepseek 15p</p></div>
 <h2>5. 失败归因(infra单列)</h2>
 <table><tr><th>类型</th><th>描述</th><th>归因</th></tr>
 <tr><td>网关429</td><td>已恢复200</td><td class='warn'>infra(已恢复)</td></tr>
@@ -75,7 +75,7 @@ tr:nth-child(even){background:#ecf0f1}
 <li><strong>C2</strong>：空patch=100%infra(429 65%+SDK崩溃25%+连接6%)；适配器正常27/27=100%real</li>
 <li><strong>C3</strong>：resume fix后空patch 51.5%→6.9%→59.7%(187/313)。gateway 200后real复产中(126+)。</li>
 <li><strong>C4</strong>：real=126/empty=187/失败top1=429(infra·已恢复200)</li>
-<li><strong>C5</strong>：report_harness_cline_trace_analysis_zh.html·更新至R1960</li>
+<li><strong>C5</strong>：report_harness_cline_trace_analysis_zh.html·更新至R1961</li>
 </ul></div>
 <h2>8. 后续</h2>
 <div class="info"><ol><li>SWE-bench eval R1933后台推进中(cline 87 resolved=75.7%)·6路predict推进至500</li><li>TB-2.1: rerun DONE(hermes/codex/deepseek 02:21)·4路harbor(cline/opencode/cc/pi)运行中→待全DONE汇总</li><li>research建议(11-08): 超时与判错分开统计·可辨识性闸门·hermes 5pass抽10题重跑验证</li><li>codex TB-2.1: 84 RuntimeError=agent适配器级失败</li></ol></div>
@@ -84,4 +84,4 @@ tr:nth-child(even){background:#ecf0f1}
 python3 -c "import json,glob;f=glob.glob('cline-patched__*.json');r=sum(1 for x in f if (lambda d:(d[0] if isinstance(d,list) else d).get('model_patch','').strip())(json.load(open(x))));print(f'real={r} empty={len(f)-r}')"
 
 TB-2.1: python3 -c "import glob;rs=glob.glob('/tmp/tb21_glm53_jobs/cline-patched/**/reward.txt',recursive=True);p=sum(1 for f in rs if open(f).read().strip()=='1');print(f'passed={p}')"</pre>
-<hr><p style="text-align:center;color:#7f8c8d;font-size:0.9em">BaiZe Harness · R1960 · 2026-11-09 09:50<br>glm-5.3-flash · SWE-bench Verified 500 + TB-2.1 89 · 7-way · 正文一律写 cline</p></body></html>
+<hr><p style="text-align:center;color:#7f8c8d;font-size:0.9em">BaiZe Harness · R1961 · 2026-11-09 10:00<br>glm-5.3-flash · SWE-bench Verified 500 + TB-2.1 89 · 7-way · 正文一律写 cline</p></body></html>
