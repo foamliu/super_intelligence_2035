@@ -437,6 +437,23 @@
       "shard_A_new_this_round": 1,
       "mc30": 2247,
       "hosts": 696
+    },
+    "r294": {
+      "ts": "2026-11-10T01:30:00+08:00",
+      "date": "2026-11-10",
+      "round_type": "duplicate-detection + ledger-sync + scansync mgmt (0 new case)",
+      "scan_dir": "ssh_eda_search_20261109_224902",
+      "scan_path": "/home/t0002965/log/ssh_eda_search_20261109_224902/summary.tsv",
+      "scan_confirmed": "no new scan since r292 full rescan (mc30=2247, dedup=5999, users=512, hosts=696 unchanged)",
+      "daily_log_20261110_lines": 2981,
+      "daily_log_healthy": true,
+      "finding": "r294 race condition: this session claimed b7otd (xy1zhang@hfeg0plg70, mc360, verification) and built a full case EDA-Eval-DesignFlow-SvReadsigBugfix-001 (gen_readsig_fix.py spec-driven SV bugfix generator, 14 conds, ref PASS + 4 negs + 3 fakes all FAIL), but a PARALLEL shard-A session had ALREADY delivered b7otd as EDA-Eval-DesignFlow-SvTbBugFix-001 (committed b67a0319 @01:04, A.jsonl 189->190, ledger marked case @01:03). SvReadsigBugfix-001 is a DUPLICATE TRACE (same b7otd) -> DISCARDED (untracked dirs removed, never appended to jsonl). b7otd trace now correctly has ONE case (SvTbBugFix-001). Ledger already synced by parallel run. Lesson: parallel shard-A sessions racing on the same claimed trace -> add lock/check jsonl-before-synthesize. scansync: scan current (r292 rescan), daily log 20261110 healthy 2981 lines, no new scan. 0 new case this round (duplicate discarded).",
+      "duplicate_discarded": "EDA-Eval-DesignFlow-SvReadsigBugfix-001 (same trace b7otd as SvTbBugFix-001; built complete but discarded pre-jsonl)",
+      "b7otd_case": "EDA-Eval-DesignFlow-SvTbBugFix-001 (delivered by parallel run, ledger-marked)",
+      "shard_A_new_this_round": 0,
+      "mc30": 2247,
+      "hosts": 696,
+      "shard_A_jsonl": 190
     }
   },
   "sessions": 38082,
