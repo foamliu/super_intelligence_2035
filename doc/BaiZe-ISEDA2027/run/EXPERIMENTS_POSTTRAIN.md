@@ -9919,3 +9919,83 @@ R64 §6 定义了5个定性检查点选择标准和5项RL前验证门。R87将�
 - No additional tuning needed for first RL run
 - Recommendation: run 50 steps, then check advantage distribution, truncation rate, cheat rate before adjusting
 - Substitute model (MiniCPM5-2B) RL results NOT transferable to BaiZe formal training
+
+---
+
+## §R93 (2026-11-09 wake141) MiniCPM5-2B Baseline Trajectory Analysis Pipeline — Ready-to-Execute D1-D6 + Failure Classification
+
+> **Goal**: Fill the P0 gap (D1-D6 MiniCPM5-2B side was "❌ 轨迹不在本节点") and support user instruction §4.2 ("采集真实失败轨迹，用实测替换 R4 调研中的假设").
+> **Method**: Zero GPU. Pure Python 3.8+ stdlib. Parses cline trace directories, computes D1-D6, classifies failures (extends R88), generates comparison framework.
+> **Smoke validated**: Using existing DeepSeek traces (123 traces, 103 success + 20 error).
+
+### 1. Pipeline Architecture
+
+- **Script**: `baize_posttrain_r93_baseline_analysis_pipeline.py` (463 lines)
+- **Input**: cline trace directory (with `cline_trace/` and `cline_trace_error_case/` subdirs)
+- **Parsing**: Handles cline XML-style tool calls (`<use_mcp_tool><tool_name>...`, `<list_files>`, `<write_to_file>`, etc.) + user-message tool results (`[tool_name for '...'] Result:...`)
+- **Task ID normalization**: Extracts from Working Directory path, normalizes `EDA-Eval-PyAether_012` → `EDA-Eval-PyAether-012` to match dataset
+- **Output**: HTML report (self-contained, 0 script, 0 external) + JSON data
+- **Modes**: `--smoke` (DeepSeek traces as stand-in), `--trace-dir <path>` (real MiniCPM5-2B traces), `--compare-dir <ref>` (comparison), `--decision-only`, `--verbose`
+
+### 2. Smoke Test Results (DeepSeek traces as stand-in)
+
+| Metric | Value | Notes |
+|:--|:--|:--|
+| Traces parsed | 123 (103 success, 20 error) | Matches known DeepSeek 83.7% pass rate |
+| D1 Tool call legal rate | 1.0 (100%) | All traces have parseable tool calls |
+| D2 Tool call frequency | 22.88/task | Top: search_apis(764), run_pyAether_code_tool(622), get_api_details(507) |
+| D3 Timeout ratio | 4.07% | Low — long context not primary bottleneck |
+| D4 Failure breakdown | 7 modes | logic_error 74.8%, import_error 9.4%, type_error 7.4%, missing_dep 4.7%, timeout 2.7% |
+| D5 Per-scenario pass | 4 scenarios | Design Mgmt 87.5%, Schematic 87.1%, Layout 81.0%, Others 80.8% |
+| D6 Avg iterations | 2.12 (median 2, P90 4, max 14) | Code execution → fix cycles |
+| Avg turns | 48.0 (P90 92) | Consistent with R60/R92 |
+| Avg unique tools | 7.3 | Consistent with R92 (6.3) |
+
+### 3. Comparison Framework
+
+- Computes D1/D2/D3/D6 diff between baseline (MiniCPM5-2B) and reference (DeepSeek)
+- Estimates "protocol recoverable" pp from D1/D2/D6 gaps:
+  - D1 < -0.1 → +15 pp (SFT can fix tool protocol)
+  - D2 < -3 → +10 pp (SFT can fix tool usage habit)
+  - D6 < -2 → +5 pp (RL can improve feedback loop)
+- Real capability gap = 58 - protocol recoverable
+- **Note**: These are heuristic estimates; actual recovery depends on training quality
+
+### 4. Execution When GPU Available
+
+```
+# 1. Serve MiniCPM5-2B
+sglang serve --model-path /nas_data/app.e0031982/models/MiniCPM5-2B --tp 4 --port 8099
+
+# 2. Auth cline
+cline auth -p openai -k dummy -b http://localhost:8099 -m MiniCPM5-2B
+
+# 3. Run 158-case eval (produces traces)
+~/code/eda_fastmcp/scripts/run_cline_script.sh
+
+# 4. Analyze traces
+python3 baize_posttrain_r93_baseline_analysis_pipeline.py \
+  --trace-dir <new_trace_dir> \
+  --model-name MiniCPM5-2B \
+  --compare-dir ~/code/eda_fastmcp/pyAether-eval/cline_cli_trace/cline_trace_v1_3 \
+  --html --json
+```
+
+### 5. Links to Prior Research
+
+- **R88**: Reuses failure classification framework (logic_error, import_error, etc.)
+- **R89**: Success pattern comparison target
+- **R90**: D1/D2 low values will confirm SFT curriculum priority
+- **R92**: D6 low values will confirm RL convergence efficiency reward design
+- **P0 §D**: Directly fills the "❌ 轨迹不在本节点" gap for MiniCPM5-2B side
+
+### 6. Deliverables
+
+| Item | Path | Size |
+|:--|:--|--:|
+| Python script | `run/baize_posttrain_r93_baseline_analysis_pipeline.py` | 463 lines |
+| HTML report (smoke) | `reports/report_posttrain_r93_baseline_analysis_zh.html` | 4.8KB |
+| JSON data (smoke) | `run/r93_baseline_analysis.json` | 2.5KB |
+
+> ⚠️ Surrogate RL results NOT transferable to BaiZe.
+
