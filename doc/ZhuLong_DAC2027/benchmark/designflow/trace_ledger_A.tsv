@@ -296,4 +296,4 @@
 1794193758706_gwm47	tongfanl	hfhds201	63	eda_other	parked		2026-11-09 22:36	MatrixRun dir listing comparison dup of oclzn, operational not produce-task
 1794129973388_q54e4	tongfanl	hfhds201	14	eda_other	parked		2026-11-09 22:36	diagnostic: 为啥报这个错 cornerStr uninitialized, 14msgs analysis not produce-task
 1793927271206_0ekf9.messages.json	e0030085	hfeg0pkn002	352	eda_other	case	EDA-Eval-DesignFlow-DftTestmaxLaunchFlow-001	2026-11-10 00:06	
-1793865788118_b7otd.messages.json	xy1zhang	hfeg0plg70	360	verification	claimed		2026-11-10 00:33	
+1793865788118_b7otd.messages.json	xy1zhang	hfeg0plg70	360	verification	case	EDA-Eval-DesignFlow-SvTbBugFix-001	2026-11-10 01:03	

@@ -253,6 +253,22 @@
       "updated_at": "2026-11-09T22:35:00+08:00",
       "users_mc30": 224
     },
+    "r294": {
+      "ts": "2026-11-10T01:10:00+08:00",
+      "date": "2026-11-10",
+      "round_type": "case (A-faithful produce-task, post-r292 rescan, verification domain)",
+      "scan_dir": "ssh_eda_search_20261109_224902",
+      "scan_path": "/home/t0002965/log/ssh_eda_search_20261109_224902/summary.tsv",
+      "finding": "r294 = 2nd case round after r292 full-rescan. Candidate selection: file-based filter (cand_dig_r294.txt uploaded to .75, bypasses awk regex length limit) on 11/09 scan summary.tsv, using $6 raw keyword:count pairs (NOT $7 reformatted, which is misleading — e.g. 0ekf9 shows hspice in $7 but synopsys:2253/verilog:259 in $6). 80 digital candidates -> 6 un-ledgered across all 4 shards (all-shard exclusion 2112 entries). Peeked my769(analog wrong-shard), 9dytw(verilog_lib_trans skill, viable but complex), b7otd(clean SV testbench bugfix). Selected b7otd (xy1zhang@hfeg0plg70=10.129.2.13, mc360, verilog:799/systemverilog:26). Deepread b7otd.json (1.6MB, 241 msgs, 128 user turns): USER#78/msg140 逐字「阅读我的 .../cmds_readsig/ 位置的所有代码，帮我分析我的代码的错误，提出修改意见。根据你的修改意见，写出修改版本，就在 ...cmds_readsig/ 位置下新建一个文件夹，不要修改我的文件」= A-faithful produce-task (提出代码审查+修复产出需求未给根因 ✓). Assistant 阅 cmds_readsig/ 19 .v + ReadSig/ 后在 cmds_readsig_fixed/ 新建文件夹产修复版+README审查报告(8 bug), 实际仅 3 文件真正改动: TM_ReadSig_auto.v(2 处恒真 if(1)begin→if(~toggled)begin + compare 段漏 dq_compare.err_cnt++), TM_ReadSig_old.v(task末 model_compare_disable→model_compare_enable), TM_ReadSig.v(typo). Case EDA-Eval-DesignFlow-SvTbBugFix-001 delivered (verification, A-faithful, L1-static, k=14). 金标准=gen_sv_bugfix.py(spec驱动bugfix生成器, CLI python3 gen_sv_bugfix.py spec.json outdir, 参数化 test_mode_addr/task/toggle_var/compare_obj/err_cnt_field/force_path/compare_mode_arg/num_compare_iters/num_toggle_checks); A=spec_a.json(faithful golden xy1zhang/cmds_readsig/TM_READSIG/TM_ReadSig_auto+toggled/dq_compare.err_cnt/I_BCenterDQ_695...ZqOscEnt_2/16 iters + TM_ReadSig_old/all/8 iters)+original/*.v(2文件带bug)+prompt(USER#78逐字+说明)+task_brief; hidden B=spec_b.json(异构 w0021888/cmds_rdpattern/TM_READPATTERN/TM_RdPattern_auto+tdq_toggled/rd_cmp.errors/I_DQ_840...ZqCalEnt_3/12 iters + TM_RdPattern_old/full/6 iters). check.py 14 conds a-n. Self-verify: ref PASS 14/14, 4 negatives(noop/hardcode_a/stub/keep_bug) ALL FAIL NEG_RC=0. Appended A jsonl 189->190. trace_ledger mark b7otd->case(case_id=SvTbBugFix-001).",
+      "case_delivered": "EDA-Eval-DesignFlow-SvTbBugFix-001",
+      "case_k": 14,
+      "case_domain": "verification",
+      "case_track": "faithful",
+      "shard_A_new_this_round": 1,
+      "mc30": 2247,
+      "hosts": 696,
+      "candidate_filter_note": "key discovery: $7 (reformatted tool col) is misleading for digital filtering; $6 raw keyword:count pairs are the truth source. file-based filter on .75 bypasses awk regex length limit. all-shard ledger exclusion (2112 entries A/B/C/D) needed to find truly un-ledgered candidates."
+    },
     "updated_at": "2026-11-10T00:10:00+08:00",
     "r292": {
       "ts": "2026-11-09T23:33:30+08:00",
@@ -432,7 +448,7 @@
   },
   "source": "/home/t0002965/log/ssh_eda_search_20261105_192825/summary.tsv (11/05 scan)",
   "target_mc": 30,
-  "updated_at": "2026-11-09T23:33:30+08:00",
+  "updated_at": "2026-11-10T01:10:00+08:00",
   "users_mc100": 182,
   "users_mc30": 401,
   "users_mc300": 60,
