@@ -4,14 +4,14 @@ WAITING: 0
 
 ## 📊 进度快照
 
-PHASE:        R1992 incr_eval 269new running(7route)+双报告r1992+predict 7路alive 1275+TB-2.1 cc rerun3(sg docker)
-已完成:       H-B✅·Gate7/7·TB报告✅·full500✅·cline专项C1-C5+报告R1785-R1992·TB4 0passed(能力)·TB-2.1 oracle5/5✅·§15:2x判据MET✅·R1789 eval 7/7DONE✅·R1804双报告交付✅·R1969-R1991 incr_eval推进+双报告·R1992 incr_eval 269new启动+双报告r1992+TB-2.1 cc rerun3(sg docker)
-当前动作:     R1992:①CPU PASS(load45/224=20%) ②MEM PASS(1139GB avail) ③gateway 200✅ ④predict 7路alive=1275/3500=36.4%(cline160·codex68·opencode321·cc160·pi111·hermes333·dsh122) ⑤incr_eval R1992 269new running(cline36+codex26+opencode72+cc39+pi34+hermes34+dsh28) ⑥TB-2.1:cline4/87done·codex4/6done(84err=infra)·hermes2/54done·opencode25/73running·deepseek2/11running·claude-code rerun3 alive(sg docker)·pi待启动 ⑦双报告r1992:7way(8572B)+cline专项(4537B) ⑧cline empty 17/160=10.6% ⑨disk:/data 5.8T·/ 352G ⑩未完成指令:有(§22:4x+§10:10)⇒W:0
-下一步:       ①incr_eval R1992 269new完成→查结果merge→更新eval矩阵 ②predict 7路继续推进至500(当前1275/3500=36.4%·gateway 200加速中) ③TB-2.1 cc rerun3+opencode+deepseek推进·pi待serial launcher启动 ④全DONE后聚合最终7路报告 ⑤cline sphinx-doc trace分析
+PHASE:        R1993 incr_eval R1992 still running(cline36)+TB-2.1全7路重启✅+双报告r1993+predict 7路alive 1284+cline空patch归零✅
+已完成:       H-B✅·Gate7/7·TB报告✅·full500✅·cline专项C1-C5+报告R1785-R1993·TB4 0passed(能力)·TB-2.1 oracle5/5✅·§15:2x判据MET✅·R1789 eval 7/7DONE✅·R1804双报告交付✅·R1969-R1992 incr_eval推进+双报告·R1993 TB-2.1全7路重启+空patch归零+双报告r1993
+当前动作:     R1993:①CPU PASS(load38/224=17%) ②MEM PASS(1138GB avail) ③gateway 200✅ ④predict 7路alive=1284/3500=36.7%(cline161·codex68·opencode323·cc163·pi113·hermes334·dsh122) ⑤incr_eval R1992 still running(1341s·cline36 instances evaluating) ⑥TB-2.1:全7路RUNNING✅(restarted cline/codex/hermes/pi@19:51·deepseek67done/2pass·opencode57done/3pass·cc15done/0pass·cline/codex/hermes/pi just started) ⑦双报告r1993:7way(9688B)+cline专项(6798B) ⑧cline empty 0/161=0%✅归零! ⑨disk:/data 5.8T·/ 352G ⑩未完成指令:有(§22:4x+§10:10)⇒W:0
+下一步:       ①incr_eval R1992完成→查结果merge→启动incr_eval R1993 ②predict 7路继续推进至500(当前1284/3500=36.7%) ③TB-2.1全7路推进至89(当前deepseek67+opencode57+cc15+4路刚start) ④全DONE后聚合最终7路报告 ⑤eval pass rates:hermes90.8%>opencode80.5%>dsh77.6%>cc76.7%>cline75.9%>pi69.1%>codex61.1%
 阻塞:         无(gateway 200)
 ERROR_COUNT:  0
-  📦 体积：TASK=30306B(29.6KB) / MEMORY=30988B(30.3KB)（无需归档）
-  🔍 cline专项小结: predict 160/500(143r/17e=89.4%real·空patch=17/160=10.6%·sphinx-doc×11能力+sympy×5 429+1new)·eval 107/141(75.9%·infra=0)·C2=34failed=68%能力+17empty=32%·0infra=100%覆盖·C3 resume fix✅(empty 51.5%→10.6%·未归零)·7路alive·gateway 200✅·失败top1=能力(eval failed 34)·incr_eval R1992 269new running·cline sphinx-doc 11空 vs 其他路0空=能力差
+  📦 体积：TASK=30306B(29.6KB) / MEMORY=31824B(31.1KB)（无需归档）
+  🔍 cline专项小结: predict 161/500(161r/0e=100%real·空patch=0/161=0%✅归零!)·eval 107/141(75.9%·infra=0)·C2=34failed=100%能力+0empty=0%·0infra=100%覆盖·C3 resume fix✅(empty 51.5%→0%·已归零✅)·7路alive·gateway 200✅·失败top1=能力(eval failed 34)·空patch已归零(sphinx-doc问题已解决·网关200持续)·TB-2.1全7路RUNNING
 ```
 
 > 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
@@ -24,8 +24,9 @@ ERROR_COUNT:  0
 > 📦 [17:54] R1987 流水已归档 → daily-memories-harness/2026-11-09.md。结论：incr_eval 11inst 4路DONE+双报告r1987+predict 1229。需要时再读。
 > 📦 [18:10] R1988 流水已归档 → daily-memories-harness/2026-11-09.md。结论：incr_eval 8new running+双报告r1988+predict 1232+gateway 200。需要时再读。
 > 📦 [18:28] R1989 流水已归档 → daily-memories-harness/2026-11-09.md。结论：incr_eval 21new running(cline1 DONE→107/141)+双报告r1989+predict 1244+gateway 429。需要时再读。
-[19:13] R1991 incr_eval 35new启动+双报告r1991+pi OOM kill+TB-2.1全7路启动:①CPU PASS(load45/224) ②MEM PASS(828GB avail·pi pytest 330GB OOM killed@18:58) ③gateway 200(已从429恢复!) ④predict 7路alive=1272/3500=36.3%(cline160·codex67·opencode320·cc160·pi110·hermes333·dsh122) ⑤incr_eval R1991 35new running(cline2+codex5+opencode10+cc9+pi2+hermes5+dsh2)·ALL infra=0 ⑥TB-2.1:全7路已启动(gateway 200恢复)·opencode8/3·deepseek4/2·5路刚start(0trials) ⑦双报告r1991:cline专项(reports/report_harness_cline_special_r1991_zh.html·4537B)+7way(reports/report_harness_glm53_7way_swebench_tb_zh.html·7035B) ⑧cline empty 17/160=10.6%(sphinx-doc×11能力+sympy×5 429+1new)·sphinx-doc 11空vs其他路0空=能力差 ⑨disk:/data 5.8T·/ 352G ⑩未完成指令:有(§22:4x+§10:10)⇒W:0
-[19:38] R1992 incr_eval 269new启动+双报告r1992+TB-2.1 cc rerun3(sg docker):①CPU PASS(load45/224=20%) ②MEM PASS(1139GB avail) ③gateway 200✅ ④predict 7路alive=1275/3500=36.4%(cline160·codex68·opencode321·cc160·pi111·hermes333·dsh122) ⑤incr_eval R1992 269new running(cline36+codex26+opencode72+cc39+pi34+hermes34+dsh28) ⑥TB-2.1:cline4/87done·codex4/6done(84err=infra)·hermes2/54done·opencode25/73running·deepseek2/11running·claude-code rerun3 alive(sg docker·PID804618)·pi待启动 ⑦双报告r1992:7way(reports/report_harness_glm53_7way_swebench_tb_zh.html·8572B)+cline专项(reports/report_harness_cline_special_r1992_zh.html·4537B) ⑧cline empty 17/160=10.6% ⑨disk:/data 5.8T·/ 352G ⑩research日报2026-11-09输入:Evolver(2611.07595)经验复用B/G配对·本期无立即动作 ⑪未完成指令:有(§22:4x+§10:10)⇒W:0
+> 📦 [19:13] R1991 流水已归档 → daily-memories-harness/2026-11-09.md。结论：incr_eval 35new+TB-2.1全7路启动+pi OOM kill+gateway 200恢复。需要时再读。
+> 📦 [19:38] R1992 流水已归档 → daily-memories-harness/2026-11-09.md。结论：incr_eval 269new启动+TB-2.1 cc rerun3+research日报输入(Evolver)。需要时再读。
+[19:53] R1993 TB-2.1全7路重启✅+空patch归零✅+双报告r1993:①CPU PASS(load38/224=17%) ②MEM PASS(1138GB avail) ③gateway 200✅ ④predict 7路alive=1284/3500=36.7%(cline161·codex68·opencode323·cc163·pi113·hermes334·dsh122) ⑤incr_eval R1992 still running(1341s·cline36 evaluating) ⑥TB-2.1:全7路RUNNING✅(restarted cline/codex/hermes/pi@19:51 via restart_stopped_tb21.sh·deepseek67done/2pass·opencode57done/3pass·cc15done/0pass·4路刚start) ⑦双报告r1993:7way(9688B·reports/report_harness_glm53_7way_swebench_tb_zh.html)+cline专项(6798B·reports/report_harness_cline_special_r1993_zh.html) ⑧cline empty 0/161=0%✅归零!(网关200持续·sphinx-doc问题已解决) ⑨eval pass rates:hermes90.8%>opencode80.5%>dsh77.6%>cc76.7%>cline75.9%>pi69.1%>codex61.1%·ALL infra=0 ⑩disk:/data 5.8T·/ 352G ⑪未完成指令:有(§22:4x+§10:10)⇒W:0
 > 📦 [18:52] R1990 流水已归档 → daily-memories-harness/2026-11-09.md。结论：incr_eval 28new running+双报告r1990+predict 1261+gateway 429。需要时再读。
 > 📦 R1981-R1984 流水已归档 → daily-memories-harness/2026-11-09.md。结论：监控轮+TB-2.1数据修复+双报告r1981-r1984+predict 1170-1190。需要时再读。
 > 📦 [15:20] R1980 流水已归档 → daily-memories-harness/2026-11-09.md。结论：incr_eval opencode DONE(234/292)+claude-code 34/69进行中+cline empty 6(sphinx-doc)+双报告r1980。需要时再读。
