@@ -483,6 +483,30 @@
       "paper": "PAPER_SKIP(no latexmk); \\Ntasks updated 953->961 (A191 B221 C273 D276); App A breakdown updated",
       "mc30": 2247,
       "hosts": 696
+    },
+    "r299": {
+      "ts": "2026-11-10T04:30:00+08:00",
+      "date": "2026-11-10",
+      "round_type": "management + candidate assessment (0 new case; pool-quality bottleneck confirmed)",
+      "scan_dir": "ssh_eda_search_20261109_224902",
+      "scan_confirmed": "no new scan since r292 full rescan (mc30=2247, dedup=5999, users=512, hosts=696 unchanged); daily log 20261110 healthy 2981 lines",
+      "case_delivered": "none (management round)",
+      "candidate_assessment": {
+        "method": "filter summary.tsv mc>=15, dig>wrong, dig>=50, dedup-by-session, exclude all 4 shard ledgers (2015 unique suffixes)",
+        "truly_fresh_count": 274,
+        "top_fresh_digital": [
+          "tsn3o/hzyu6 (fernandoy, mc327/326, synopsys:2260 rtl:1593) - PARKED r295 (resumed UVM context-summary, too big, not A-faithful)",
+          "r2yjr/pzo6g/rv1g2 (e0039602, mc287/269/249, verilog+netlist+lvs) - borderline shard C (LVS), not clean digital",
+          "abtf1 (lorikx, mc132, rtl:611 verilog:427 synopsys:255, wrong=2) - CLAIMED for deepread; U#0='sim下的仿真最新一次有10个error请检查并修改代码' = clean A-faithful produce-task (SRAM TB fix)",
+          "c4vkj (lorikx, mc82, verilog:166 rtl:155 synopsys:33) - PARKED; U#0=merge fault-inject code into sp_2pram.v; code-merge semantics hard to parameterize"
+        ],
+        "finding": "shard A clean digital produce-task scarcity CONFIRMED AGAIN (r295/r296/r299): of 274 fresh dig>wrong candidates, top ones are either fernandoy(parked-too-big) or e0039602 netlist/LVS(borderline-C) or lorikx SRAM-project(already has 8 cases). The strong-digital marker (verdi/vcs/innovus) is noisy; 'verilog' keyword often comes from sim log content not RTL produce. Pool is NOT exhausted (274 fresh) but clean A-faithful digital produce-tasks are rare. abtf1 (claimed) is the best viable fresh candidate for next round case build."
+      },
+      "shard_A_new_this_round": 0,
+      "shard_A_jsonl": 191,
+      "paper": "pdflatex compile check (this round)",
+      "mc30": 2247,
+      "hosts": 696
     }
   },
   "sessions": 38082,
@@ -494,7 +518,7 @@
   },
   "source": "/home/t0002965/log/ssh_eda_search_20261105_192825/summary.tsv (11/05 scan)",
   "target_mc": 30,
-  "updated_at": "2026-11-10T03:30:00+08:00",
+  "updated_at": "2026-11-10T04:30:00+08:00",
   "users_mc100": 182,
   "users_mc30": 401,
   "users_mc300": 60,
