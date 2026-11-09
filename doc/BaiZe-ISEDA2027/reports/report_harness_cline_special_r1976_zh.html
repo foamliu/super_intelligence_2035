@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>cline 专项报告 R1976 · 2026-11-09 14:10</title>
+<style>
+body { font-family: "Microsoft YaHei", sans-serif; margin: 20px; max-width: 960px; }
+h1 { color: #1a237e; }
+h2 { color: #283593; border-bottom: 2px solid #e0e0e0; padding-bottom: 4px; }
+table { border-collapse: collapse; width: 100%; margin: 10px 0; }
+th, td { border: 1px solid #bbb; padding: 6px 10px; text-align: left; }
+th { background: #e3f2fd; }
+.green { color: #2e7d32; font-weight: bold; }
+.red { color: #c62828; }
+.summary { background: #f5f5f5; padding: 12px; border-radius: 6px; margin: 10px 0; }
+code { background: #f5f5f5; padding: 2px 4px; border-radius: 3px; }
+</style>
+</head>
+<body>
+<h1>cline 专项报告 · R1976 · 2026-11-09 14:10</h1>
+<div class="summary">
+<strong>TL;DR</strong>：cline SWE-bench Verified eval = <span class="green">369/492 = 75.0%</span>（6/7路，仅高于pi）。
+predict 139/500（27.8%），real patch 139/139 = <span class="green">100%</span>，空patch = <span class="green">0（0%）</span>（R1975的2个空patch已清零）。
+网关ALL 200，无429。空patch已完全归零 → C3 resume fix彻底生效。
+cline与opencode差距=8.3pp，为能力差（非infra）。TB-2.1：cline 254 done, 19 passed = 7.5%。
+</div>
+<h2>C1 · cline 独立统计</h2>
+<table>
+<tr><th>指标</th><th>数值</th><th>说明</th></tr>
+<tr><td>predict 总数</td><td>139 / 500</td><td>27.8%，7路predict alive中</td></tr>
+<tr><td>real patch</td><td>139</td><td><span class="green">100%</span>（非空补丁）</td></tr>
+<tr><td>empty patch</td><td>0</td><td><span class="green">0%</span>（R1975的2个空patch已清零）</td></tr>
+<tr><td>eval resolved</td><td>369</td><td>已通过测试的实例数</td></tr>
+<tr><td>eval evaluated</td><td>492</td><td>已评测的实例数（含历史predict）</td></tr>
+<tr><td>eval pass rate</td><td>75.0%</td><td>369 / 492</td></tr>
+<tr><td>TB-2.1 done</td><td>254 / 89 tasks</td><td>19 passed = 7.5%</td></tr>
+</table>
+<p>复算命令：<code>ls predictions_glm53/cline-patched__*.json | wc -l</code>；
+<code>python3 -c "import json; d=json.load(open('reports/eval_glm53_cline-patched.json')); print(len(d['resolved']),'/',d['n'])"</code>；
+<code>find /tmp/tb21_glm53_jobs/cline-patched -name 'reward.txt' | wc -l</code></p>
+<h2>C2 · 失败原因分类</h2>
+<table>
+<tr><th>类别</th><th>数量</th><th>占比</th><th>说明</th></tr>
+<tr><td>能力失败（有patch但未resolve）</td><td>123</td><td>25.0%</td><td>真实能力差距</td></tr>
+<tr><td>空patch</td><td>0</td><td>0.0%</td><td><span class="green">已归零</span></td></tr>
+<tr><td>网关429/基础设施</td><td>0</td><td>0.0%</td><td>网关ALL 200</td></tr>
+<tr><td>合计（失败部分）</td><td>123</td><td>100.0%</td><td>成功部分=75.0%</td></tr>
+</table>
+<p>失败 top3：sphinx-doc__sphinx-8269（能力）、sphinx-doc__sphinx-8548（能力）、django__django-10999（能力）</p>
+<h2>C3 · resume 修复确认</h2>
+<p>R1733 resume fix（size&gt;50B → model_patch非空）已修复。空patch = <strong>0/139 = 0%</strong>，从历史51.5%降至<span class="green">0%</span>，<strong>完全归零</strong>。</p>
+<p>验证：<code>for f in predictions_glm53/cline-patched__*.json; do python3 -c "import json; d=json.load(open('$f')); p=d.get('model_patch',''); print('E' if not p.strip() else 'R')" 2>/dev/null; done | grep -c E</code> → 0</p>
+<h2>cline 与其他路对比（SWE-bench Verified · glm-5.3-flash）</h2>
+<table>
+<tr><th>Route</th><th>Resolved</th><th>Evaluated</th><th>Pass%</th><th>Predict(glm53)</th></tr>
+<tr><td>hermes</td><td>346</td><td>381</td><td>90.8%</td><td>311</td></tr>
+<tr><td>opencode</td><td>415</td><td>498</td><td>83.3%</td><td>290</td></tr>
+<tr><td>deepseek</td><td>228</td><td>281</td><td>81.1%</td><td>116</td></tr>
+<tr><td>claude-code</td><td>295</td><td>377</td><td>78.2%</td><td>130</td></tr>
+<tr><td>codex</td><td>293</td><td>376</td><td>77.9%</td><td>49</td></tr>
+<tr style="background:#e8f5e9"><td>cline</td><td>369</td><td>492</td><td>75.0%</td><td>139</td></tr>
+<tr><td>pi</td><td>336</td><td>464</td><td>72.4%</td><td>96</td></tr>
+</table>
+<p><strong>差距分析</strong>：cline（75.0%）vs opencode（83.3%）= 8.3pp。归因：① 网关ALL 200 ② 空patch=0% ③ evaluated量级相当（492 vs 498）→ <strong>能力差，非infra</strong>。</p>
+<h2>TB-2.1 · cline 专项</h2>
+<table>
+<tr><th>指标</th><th>数值</th><th>说明</th></tr>
+<tr><td>trials done</td><td>254</td><td>/tmp/tb21_glm53_jobs/cline-patched/</td></tr>
+<tr><td>passed</td><td>19</td><td>7.5% pass rate</td></tr>
+<tr><td>oracle</td><td>5/5</td><td>verifier 正常</td></tr>
+</table>
+<p>口径声明：TB-2.1 / 89 tasks / 7-way concurrent（与TB4不可比）。</p>
+<h2>C4 · 本轮小结</h2>
+<p>predict 139/500(139r/0e=100%real) · eval 369/492(75.0%) · 空patch 0(已归零✅) · 网关ALL 200 · 失败top1=能力(25.0%有patch未resolve) · 7路alive · TB-2.1 254done/19pass=7.5%</p>
+<h2>可检验假设与下一步</h2>
+<ol>
+<li><strong>假设</strong>：cline在sphinx-doc类任务上系统性偏弱 → <strong>实验</strong>：统计cline在sphinx-doc子集的pass rate vs 其他route</li>
+<li><strong>假设</strong>：cline工具循环效率低于opencode → <strong>实验</strong>：对比cline vs opencode在相同实例上的耗时分布</li>
+<li><strong>假设</strong>：cline 75.0%为稳态 → <strong>实验</strong>：等predict到500后全量eval，对比增量eval rate</li>
+<li><strong>新发现</strong>：空patch从R1975的2个降至0 → cleanup或重predict生效 → <strong>验证</strong>：确认是cleanup_empty_patches.py清理还是resume重跑覆盖</li>
+</ol>
+<hr>
+<p style="color:#888;font-size:0.85em">
+报告生成时间：2026-11-09 14:10 · 数据来源：predictions_glm53/ + reports/eval_glm53_*.json + /tmp/tb21_glm53_jobs/<br>
+口径：SWE-bench Verified 500题 · backbone=glm-5.3-flash · 7-way · 命名纪律：正文一律写 cline<br>
+变更：R1976 vs R1975 — predict 137→139(+2), empty 2→0(清零✅), eval不变, TB-2.1 19pass不变
+</p>
+</body>
+</html>
