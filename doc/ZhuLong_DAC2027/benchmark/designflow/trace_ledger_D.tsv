@@ -1374,3 +1374,5 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1793683605769_xt9ag.messages.json	e0045144	hfeg0pkn002	301	schematic_netlist	case	EDA-Eval-DesignFlow-VconnConsistCheck-001	2026-11-09 09:13	
 1793605487158_evxj6.messages.json	xuluo	hfeg0pkn001	333	schematic_netlist	case	EDA-Eval-DesignFlow-VparamDeadAudit-001	2026-11-09 09:55	
 1793240429367_jrjm6.messages.json	ghyang	hfeg0pkn003	62	schematic_netlist	case	EDA-Eval-DesignFlow-TempParamReforge-001	2026-11-09 10:26	
+1793671576342_r677h	shaoyou	hfeg0pkn003	117	schematic_netlist	case	EDA-Eval-DesignFlow-PinListExtract-001	2026-11-09 11:46	B-grade synthesized SPICE .SUBCKT port-list parser; 16 assertions; 6 negatives NEG_RC=0; ref PASS
+1792743512849_1nuuf.messages.json	victorq	hfeg0pkn002	49	schematic_netlist	case	EDA-Eval-DesignFlow-BlConnEquivCheck-001	2026-11-09 11:49	
