@@ -8,7 +8,7 @@
 | L0 设备通路 | 手机与开发机连通：装包/截屏/拍照/出声 | 各一条命令拿到真实产物 | 🟢 **模拟器全通**（ADB+emulator+AVD+APK 安装+App 闭环+录屏，第10轮）；真机仍待用户 3 条（P0 §4） |
 | L1 单题闭环 | 拍题 → 识图 → 结构化 → LLM 分步引导 → TTS | 20 题 ≥15 题识别正确，引导不含答案 | 🟢 **100 题全量达标（第 14 轮）**：识图 20/20=1.0、首步 P50 1.16s/P90 2.07s、直接给答案率 0、无静默降级 |
 | L2 智能体 | 工具调用：题库/错题本/计算器/绘图/家长报告；多轮不丢上下文 | 5 工具可调，3 轮追问一致 | 🟢 **5 工具可调 + 已接 HTTP/App（第 15/16 轮）**：6 工具全调、直接给答案率 0、3 轮追问一致、LLM 工具决策正确；`/tool` `/agent` 端点 + App「换一题/记错题/报告/追问」；188 单测 |
-| L3 学情 | 错题本 + 知识点画像 + 每日/每周摘要，本地存储 | 数据落本地，可导出 HTML | 🟢 **已交付（第 17 轮）**：`l3_profile.py` + `POST /profile` 端点 + App「学情」按钮；错题本画像/每日每周/HTML 全通，205 单测 |
+| L3 学情 | 错题本 + 知识点画像 + 每日/每周摘要，本地存储 | 数据落本地，可导出 HTML | 🟢 **已交付（第 17/19/21 轮）**：`l3_profile.py` + `POST /profile`/`POST /practice` 端点 + App「学情/答对/答错」；错题本画像/每日每周/HTML 全通；**第 21 轮补「知识点自动分类（LLM + 本地兜底）」，答对/答错不再记「未分类」** |
 | L4 形态 | 桌面实体机器人（需硬件） | 待用户确认 | ⬜（形态口径：自家 8 年级女儿用的桌面端，见 12:05 令） |
 
 ## 本轮增量（2026-11-07 · 第 1 轮）
@@ -192,9 +192,18 @@
 - ✅ **构建 + 装机 + 端到端 + 录屏**：`assembleDebug` 成功 → `app-debug.apk` **4,124,752 字节**；`adb install -r` **Success**；模拟器跑通一题（文字题 `2x+3=11` → DeepSeek 引导「我们一起来看看这道题。你觉得第一步该先动哪个数呢？」**不含答案 x=4** ✅红线 → 状态「说」→ 打断「听」→ 静音「静音」→ 解除「常听」）；录屏 `logs/r20_session.mp4`（4,431,529 字节）+ 截图 `logs/r20_app_launch.png`。
 - 📌 **能信/不能信**：VAD 纯逻辑（16 单测）+ App 状态机 UI 流转 + 文字题端到端为**可验证证据**；🚫 真实声学语音打断（AEC 自听回声）、首字时延、近场 CER 待真机/真麦克风复测（模拟器无真实人声输入）。
 
+## 第 21 轮增量（2026-11-09 · ROADMAP「下一轮候选 #5」：App 答对/答错「知识点自动分类」）
+
+- ✅ **`host/knowledge.py`（知识点自动分类，LLM + 本地兜底）**：`classify_knowledge_local()` 确定性关键词分类（纯函数、无网络，**100 题全对 100/100**，覆盖 61 类知识点）+ `classify_knowledge()`（主路径云端 DeepSeek 分类、失败/判不出自动降级本地关键词，trace 里 `fallback` 非空即降级，🚫 不静默）+ `_normalize()`（LLM 输出归一，学科名「数学/物理」与整句废话一律落「未分类」，不瞎猜）。
+- ✅ **`host/tutor_server.py` 接自动分类**：`POST /practice` 在 `knowledge` 缺省时调用 `knowledge.classify_knowledge()`，出参新增 `knowledge` + `classify`（分类 trace）——此前一律记「未分类」，现在能进知识点画像。
+- ✅ **App 显示分类结果**：`TutorClient.kt` `PracticeReply` 增 `knowledge`；`MainActivity` 答对/答错后状态栏显示「已记录「答对」· 知识点：一元一次方程（累计作答 N 次）」（`showProfile(keepStatus=true)` 刷新学情不覆盖该状态）。
+- ✅ **单测 +47**：`test_knowledge.py`（44 条：31 本地分类参数化 + 未分类兜底 + 归一化 + LLM ok/判不出/报错三路降级 + 空值）+ `test_tutor_server.py` +3（/practice 自动分类 / 显式 knowledge 不触发分类 / 不泄答案）；host 全量 **`pytest` = 285 passed**（第 20 轮 238 → 285）。
+- ✅ **构建 + 装机 + 端到端 + 录屏**：`assembleDebug` 成功 → `app-debug.apk` **4,157,236 字节**；`adb install -r` **Success**；模拟器文字题 `5x-3=12` → 答对 → 状态栏「已记录「答对」· 知识点：一元一次方程（累计作答 10 次）」+ 学情「作答：一元一次方程 6次/83% · 勾股定理 4次/100%」；录屏 `logs/r21_session.mp4`（20,301,907 字节）+ 截图 `logs/r21_mark.png`（344,168 字节）。
+- 📌 **能信/不能信**：本地关键词分类（100 题 100/100）+ LLM 分类（DeepSeek 实测返回正确标签）+ App 状态栏/学情端到端为**可验证证据**；🚫 分类「准确性」对任意真实/变形题干仍以 LLM 为主、本地关键词为兜底，未做超出题库的准确率回归；真机近场 ASR/AEC 仍待复测。
+- 回写：`host/knowledge.py`/`test_knowledge.py`、`host/tutor_server.py`/`test_tutor_server.py`、`app/.../TutorClient.kt`/`MainActivity.kt`、`host/README.md`、`app/README.md`、`ROADMAP.md`、`INTERACTION_SPEC.md`、`MEMORY_VIDEO.md`、`daily-memories-video/2026-11-09.md`。
+
 ## 下一轮候选（按优先级）
 
-1. ~~端侧真实 ASR（sherpa-onnx）接入位落地~~ ✅ **已交付（第 18 轮，paraformer 离线；真流式 OnlineRecognizer 待接 streaming 模型）**。
-2. `clamp_hint` 后的 full 30 会话复跑验证（第 13 轮只做了单次 smoke）。
-3. ~~L3 学情补「正样本」：会话/练习日志（作答次数、正确率），与错题本合并出更完整的掌握画像~~ ✅ **已交付（第 19 轮，练习日志 + 合并画像 + `/practice` 端点 + App「答对/答错」）**。
-4. 收用户 3 条回复 → 复验 `hdc list targets` / `adb devices`，打通真机「拍照/出声」（L0 真机化）。
+1. `clamp_hint` 后的 full 30 会话复跑验证（第 13 轮只做了单次 smoke）。
+2. 收用户 3 条回复 → 复验 `hdc list targets` / `adb devices`，打通真机「拍照/出声」（L0 真机化）。
+

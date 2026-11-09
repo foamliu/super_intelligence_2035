@@ -238,3 +238,43 @@ def test_practice_requires_question(tmp_practice_log):
     assert status == 400 and payload["ok"] is False
     assert "question" in payload["error"]
 
+
+# ── POST /practice 知识点自动分类（ROADMAP「下一轮候选 #5」）────────
+def test_practice_autoclassify(monkeypatch, tmp_practice_log):
+    # 不带 knowledge -> 服务端自动分类（LLM 优先；这里 mock 掉 LLM，返回确定性标签）
+    monkeypatch.setattr(
+        TS.knowledge, "classify_knowledge",
+        lambda q: ("勾股定理", {"backend": "deepseek", "kind": "llm", "fallback": None}),
+    )
+    payload, status = TS.handle_practice(
+        {"question": "直角三角形两条直角边分别为 3 和 4，求斜边", "correct": True})
+    assert status == 200 and payload["ok"] is True
+    assert payload["knowledge"] == "勾股定理"          # 不再是「未分类」
+    assert payload["entry"]["knowledge"] == "勾股定理"
+    assert payload["classify"]["fallback"] is None
+
+
+def test_practice_keeps_explicit_knowledge(monkeypatch, tmp_practice_log):
+    # 带 knowledge 时不触发自动分类（分类器被调用即视为失败）
+    def _boom(q):
+        raise AssertionError("显式 knowledge 不应再调分类器")
+    monkeypatch.setattr(TS.knowledge, "classify_knowledge", _boom)
+    payload, status = TS.handle_practice(
+        {"question": "解方程：2x+3=11", "knowledge": "一元一次方程", "correct": True})
+    assert status == 200 and payload["ok"] is True
+    assert payload["knowledge"] == "一元一次方程"
+    assert payload["classify"] is None
+
+
+def test_practice_autoclassify_no_answer_leak(monkeypatch, tmp_practice_log):
+    monkeypatch.setattr(
+        TS.knowledge, "classify_knowledge",
+        lambda q: ("一元一次方程", {"backend": "local", "kind": "local"}),
+    )
+    TS.handle_practice({"question": "解方程：2x+3=11", "student_answer": "x=4",
+                        "correct": False})
+    prof_payload, status = TS.handle_profile({})
+    assert status == 200
+    assert "x=4" not in json.dumps(prof_payload["profile"], ensure_ascii=False)
+
+

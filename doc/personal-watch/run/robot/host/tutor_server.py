@@ -37,6 +37,7 @@ import tutor_agent  # noqa: E402  复用 recognize_ex / tutor_step / LAST_*_TRAC
 import tools       # noqa: E402  L2 工具层（ROADMAP #1）
 import l2_agent    # noqa: E402  L2 智能体编排（/agent 多轮）
 import l3_profile  # noqa: E402  L3 学情层（知识点画像 + 每日/每周摘要，ROADMAP L3）
+import knowledge   # noqa: E402  知识点自动分类（LLM + 本地兜底，ROADMAP「下一轮候选 #5」）
 
 PORT = int(os.environ.get("ROBOT_TUTOR_PORT", "8765"))
 HOST = os.environ.get("ROBOT_TUTOR_HOST", "0.0.0.0")
@@ -203,21 +204,29 @@ def handle_profile(body: dict):
 def handle_practice(body: dict):
     """记录一次作答（正样本）：POST /practice {question, student_answer?, knowledge?, correct}。
 
-    出 {ok, entry, total_practice, profile}。练习日志只落本地、不上传、不泄答案。
+    出 {ok, entry, knowledge, classify, total_practice, profile}。练习日志只落本地、
+    不上传、不泄答案。`knowledge` 缺省时用 knowledge.classify_knowledge() 自动分类
+    （LLM 优先、本地关键词兜底，绝不静默降级）——此前一律记成「未分类」。
     """
     question = (body.get("question") or "").strip()
     if not question:
         return {"ok": False, "error": "缺少 question"}, 400
+    knowledge_label = (body.get("knowledge") or "").strip()
+    classify_trace = None
+    if not knowledge_label:
+        knowledge_label, classify_trace = knowledge.classify_knowledge(question)
     entry = l3_profile.log_practice(
         question,
         student_answer=(body.get("student_answer") or "").strip(),
-        knowledge=(body.get("knowledge") or "").strip(),
+        knowledge=knowledge_label,
         correct=bool(body.get("correct")),
     )
     prof = l3_profile.merged_profile()
     return {
         "ok": True,
         "entry": entry,
+        "knowledge": entry["knowledge"],
+        "classify": classify_trace,
         "total_practice": prof["total_practice"],
         "profile": {
             "total_wrong": prof["total_wrong"],

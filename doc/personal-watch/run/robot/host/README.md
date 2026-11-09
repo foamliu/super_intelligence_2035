@@ -35,14 +35,17 @@
 | `smoke_http.py` | HTTP 冒烟：起临时实例实测 `/health /tool /agent /profile` 四端点真实 JSON（不依赖 App/模拟器） |
 | `l3_profile.py` | **L3 学情层（第 17/19 轮）**：错题本（负样本）+ 练习日志（正样本，作答次数/正确率）→ `merged_profile()` 合并画像 + 每日/每周摘要 + 自包含 HTML（`build_profile_html_full`）；`mastery_from_stats()` 富化掌握等级（含「已掌握」）；本地、不上传、不泄答案 |
 | `test_l3_profile.py` | `l3_profile.py` 单测（**22 条**：掌握等级/时间归一/画像聚合/薄弱点/每日每周/HTML 自包含与不泄答案 + 正样本：练习摘要/合并画像/富化掌握/日志追加/合并 HTML） |
+| `knowledge.py` | **知识点自动分类（第 21 轮）**：`classify_knowledge_local()` 确定性关键词分类（纯函数、无网络，100 题 100/100）+ `classify_knowledge()`（LLM DeepSeek 主路径 + 本地兜底，trace 里 `fallback` 非空即降级，不静默）+ `_normalize()`（学科名/废话→未分类）；供 `POST /practice` 自动补知识点 |
+| `test_knowledge.py` | `knowledge.py` 单测（**44 条**：本地分类参数化 + 未分类兜底 + 归一化 + LLM ok/判不出/报错三路降级 + 空值） |
 
-## 单测（第 20 轮：238 passed）
+## 单测（第 21 轮：285 passed）
 
 ```powershell
 cd D:\Users\Administrator\code\super_intelligence_2035\doc\personal-watch\run\robot\host
-py -3.10 -m pytest -q                                                  # 222 passed
+py -3.10 -m pytest -q                                                  # 285 passed
 py -3.10 normalize_math.py "x的平方加三x等于零" "二分之根号三"        # 演示口述→数学式
 py -3.10 -W ignore speech.py                                          # 演示分句/合成 WAV/打断/ASR mock
+py -3.10 -W ignore knowledge.py                                       # 演示本地关键词分类 + LLM 分类
 py -3.10 -W ignore smoke_http.py                                      # HTTP 冒烟（/health /tool /agent /profile）
 ```
 

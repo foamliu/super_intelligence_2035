@@ -48,6 +48,7 @@ data class ProfileReply(
 data class PracticeReply(
     val ok: Boolean,
     val totalPractice: Int,
+    val knowledge: String,
     val error: String
 )
 
@@ -232,9 +233,11 @@ object TutorClient {
         conn.disconnect()
 
         val o = JSONObject(resp)
+        val entry = o.optJSONObject("entry") ?: JSONObject()
         return PracticeReply(
             ok = o.optBoolean("ok", false),
             totalPractice = o.optInt("total_practice", 0),
+            knowledge = entry.optString("knowledge", o.optString("knowledge", "")),
             error = o.optString("error", "")
         )
     }

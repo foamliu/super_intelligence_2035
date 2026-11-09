@@ -25,6 +25,11 @@
 - 「静音」按钮 = 真关麦（释放 AudioRecord），不是软件忽略；
 - 顶部状态指示（常听/听/说/静音）对齐 INTERACTION_SPEC §3 状态机；需 `RECORD_AUDIO` 权限。
 
+第 21 轮新增 **知识点自动分类显示**（对应 host 侧 `knowledge.py`）：
+- 「答对」「答错」→ `/practice` 不带 `knowledge` 时，服务端自动分类（LLM 优先、本地关键词兜底）；
+- 状态栏显示「已记录「答对」· 知识点：一元一次方程（累计作答 N 次）」，学情画像同步刷新、不覆盖该状态；
+- `TutorClient.PracticeReply` 新增 `knowledge` 字段。
+
 ## 技术栈
 
 | 项 | 选型 |

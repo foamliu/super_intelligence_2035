@@ -268,7 +268,7 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     }
 
     // ── L3 学情画像 → POST /profile ────────────────────────────────
-    private fun showProfile() {
+    private fun showProfile(keepStatus: Boolean = false) {
         val server = etServer.text.toString().trim()
         cameraExecutor.execute {
             try {
@@ -284,11 +284,11 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                             append("\n作答：").append(r.practiceSummary)
                         }
                     }
-                    setStatus("学情画像已更新（错题本 + 练习日志）")
+                    if (!keepStatus) setStatus("学情画像已更新（错题本 + 练习日志）")
                 }
             } catch (e: Exception) {
                 Log.e(TAG, "POST /profile 失败", e)
-                runOnUiThread { setStatus("学情查询失败：${e.message}") }
+                if (!keepStatus) runOnUiThread { setStatus("学情查询失败：${e.message}") }
             }
         }
     }
@@ -307,8 +307,10 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 val r = TutorClient.postPractice(server, q, correct, knowledge = "", studentAnswer = ans)
                 runOnUiThread {
                     if (r.ok) {
-                        setStatus("已记录「${if (correct) "答对" else "答错"}」（累计作答 ${r.totalPractice} 次）")
-                        showProfile()   // 立即刷新学情，看到正样本合并后的画像
+                        val kp = if (r.knowledge.isNotBlank()) r.knowledge else "未分类"
+                        // 知识点自动分类结果写进状态栏；学情画像同步刷新到 tvReply。
+                        setStatus("已记录「${if (correct) "答对" else "答错"}」· 知识点：$kp（累计作答 ${r.totalPractice} 次）")
+                        showProfile(keepStatus = true)
                     } else {
                         setStatus("记录作答失败：${r.error}")
                     }
