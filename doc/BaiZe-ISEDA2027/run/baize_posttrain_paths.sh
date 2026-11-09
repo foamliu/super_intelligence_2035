@@ -43,12 +43,13 @@ export BAIZE_VENV_PY="${BAIZE_VENV_DIR}/bin/python"
 
 # === Model and EDA paths (local to .17) ===
 # R91 fix: /tmp was cleaned, model now on NAS persistent storage
-if [ -d "/tmp/models/MiniCPM5-2B" ]; then
-    export BAIZE_MODEL_PATH="/tmp/models/MiniCPM5-2B"
-elif [ -d "${NAS_ROOT}/app.e0031982/models/MiniCPM5-2B" ]; then
+# R95 fix: NAS is now PRIMARY (persistent), /tmp is fallback
+if [ -d "${NAS_ROOT}/app.e0031982/models/MiniCPM5-2B" ]; then
     export BAIZE_MODEL_PATH="${NAS_ROOT}/app.e0031982/models/MiniCPM5-2B"
+elif [ -d "/tmp/models/MiniCPM5-2B" ]; then
+    export BAIZE_MODEL_PATH="/tmp/models/MiniCPM5-2B"
 else
-    export BAIZE_MODEL_PATH="/tmp/models/MiniCPM5-2B"  # fallback
+    export BAIZE_MODEL_PATH="${NAS_ROOT}/app.e0031982/models/MiniCPM5-2B"
 fi
 export BAIZE_EDA_BASE="${HOME}/code/eda_fastmcp"
 

@@ -10077,3 +10077,84 @@ python3 baize_posttrain_r93_baseline_analysis_pipeline.py \
 > ⚠️ Surrogate results (Qwen3.8-27B) NOT transferable to BaiZe (MiniCPM5-2B).
 
 
+
+## §R95 (2026-11-09 wake143) GPU Day Launch Readiness Fix
+
+> **动机**: R94 审计发现 3 个 FAIL 项阻碍 GPU Day 启动：①MiniCPM5-2B /tmp 被清理 ②pyAether 未安装 ③MCP 端口 8090 被 MRT 占用。R95 逐项修复。
+> ⚠️ **替身声明**: MiniCPM5-2B 相关结果不可迁移到 BaiZe。
+
+### 1. Fix-1: MiniCPM5-2B 重新下载到 NAS 持久路径
+
+- **问题**: `/tmp/models/MiniCPM5-2B/` 被系统清理（/tmp 是 ephemeral）
+- **方案**: 使用 verl_cu124_venv 的 huggingface_hub + HF 镜像下载到 NAS
+- **结果**: ✅ 完成
+  - 路径: `/nas_data/app.e0031982/models/MiniCPM5-2B/`
+  - 文件: `model-00000-of-00001.safetensors` (4.8GB / 5033557096 bytes)
+  - 附加: `config.json`, `chat_template.jinja`, `generation_config.json`, `model.safetensors.index.json`
+  - HF 镜像: `https://hf-mirror.com`（环境变量 `HF_ENDPOINT`）
+
+### 2. Fix-2: pyAether (eda_fastmcp) venv 创建与依赖安装
+
+- **问题**: eda_fastmcp 需要 Python ≥3.13，系统 Python 仅 3.8.10
+- **方案**: 使用 `uv venv --python 3.13` 创建独立 venv
+- **结果**: ✅ 完成
+  - venv 路径: `~/code/pyaether_venv/`
+  - Python: 3.13.14 (uv 管理，路径 `~/.local/share/uv/python/cpython-3.13-linux-x86_64-gnu/`)
+  - 依赖安装: 12 个依赖（aiohttp, langchain, langchain-openai, mcp, opentelemetry-*, requests）
+  - 网络修复: 直连 pypi.org / mirrors.aliyun.com 超时 → 通过代理 `http://172.19.92.25:13128` + aliyun mirror 成功
+  - **关键发现**: eda_fastmcp 是 flat-layout（多顶层包: kb/logs/Rules/server/skills/prompts/memory_bank），setuptools 自动发现失败 → 改用 **PYTHONPATH 方式**运行（`PYTHONPATH=~/code/eda_fastmcp python main.py`），`import server` ✅ 成功
+
+### 3. Fix-3: 参数化 MCP 服务器启动脚本
+
+- **问题**: MCP 默认端口 8090 被 MRT 工具占用
+- **方案**: 创建参数化启动脚本，使用 EDA_MCP_PORT 环境变量配置端口
+- **结果**: ✅ 完成
+  - 脚本: `baize_posttrain_mcp_server.sh`
+  - 默认端口: 8091（避免 8090/MRT）
+  - 服务器配置: `EDA_MCP_PORT`（默认 19999）+ `EDA_MCP_HOST`（默认 0.0.0.0）+ `EDA_MCP_TRANSPORT`（默认 sse）
+  - 运行方式: `PYTHONPATH=$EDA_BASE $PYAETHER_PY main.py`（非 pip install）
+  - 功能: start / check / kill / help
+  - bash -n ✅
+
+### 4. Fix-4: paths.sh NAS 优先更新
+
+- **问题**: R91 修复中 paths.sh 以 /tmp 为优先路径，NAS 为 fallback
+- **方案**: 反转优先级，NAS 为 primary，/tmp 为 fallback
+- **结果**: ✅ 完成
+  - R91: `/tmp` → NAS → `/tmp` fallback
+  - R95: NAS → `/tmp` → NAS fallback（NAS 持久路径优先）
+
+### 5. 审计结果 (20 项)
+
+| 状态 | 数量 | 说明 |
+|:--|--:|:--|
+| OK | 17 | 模型 NAS✅, 下载✅, eda_fastmcp 源码✅, pyAether venv✅, dataset 158✅, verl/vllm venv✅, 6 bash 脚本✅, GPU watcher✅, NAS 磁盘✅, 端口 8091✅ |
+| WARN | 1 | eda_fastmcp 不能 pip install（flat-layout），但 PYTHONPATH 方式 import server ✅ |
+| FAIL | 2 | MiniCPM5-2B /tmp 清理（预期，用 NAS 替代）+ 端口 8090 MRT 占用（预期，用 8091 替代） |
+
+### 6. 网络环境发现
+
+- .17 节点直连 pypi.org / mirrors.aliyun.com: **超时**（network restricted）
+- 通过代理 `http://172.19.92.25:13128`: ✅ 可达 mirrors.aliyun.com
+- HF 镜像 `https://hf-mirror.com`: ✅ 可达（MiniCPM5-2B 下载成功）
+- pip.conf 已配置 aliyun mirror（但 uv 不读 pip.conf，需 `UV_INDEX_URL` 环境变量）
+
+### 7. 交付物
+
+| Item | Path | Size |
+|:--|:--|--:|
+| Python script | `run/baize_posttrain_r95_readiness_fix.py` | 292 lines |
+| MCP launch script | `run/baize_posttrain_mcp_server.sh` | 119 lines |
+| HTML report | `reports/report_posttrain_r95_readiness_fix_zh.html` | 8.6KB |
+| JSON data | `run/r95_readiness_fix.json` | 3.4KB |
+| MiniCPM5-2B model | `/nas_data/app.e0031982/models/MiniCPM5-2B/` | 4.8GB |
+| pyAether venv | `~/code/pyaether_venv/` (Python 3.13.14) | ~200MB |
+
+### 8. Links to Prior Research
+
+- **R94**: 3 FAIL 发现（本 R95 的修复目标）
+- **R93**: MiniCPM5-2B 基线轨迹分析管线（GPU 释放后执行）
+- **R92**: GRPO 超参数校准（12 项数据驱动）
+- **R91**: /tmp 模型路径失效发现 + NAS fallback（R95 反转为 NAS primary）
+
+> ⚠️ Surrogate RL results NOT transferable to BaiZe.
