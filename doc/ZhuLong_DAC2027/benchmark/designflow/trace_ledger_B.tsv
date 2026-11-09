@@ -598,3 +598,11 @@ qnm9e					parked		2026-11-08 01:58	Finesim DC convergence Q&A prose dup of uky6c
 1793603977814_gobna.messages.json	steveny	hfeg0pkn005	107	spice_sim	parked		2026-11-09 11:42	U0 introduce finesim consulting
 1792138312431_6i68m.messages.json	e0042624	hfeg0pkn005	64	spice_sim	parked		2026-11-09 11:42	U0 skill_instructions paste no explicit user produce-turn
 1792541695111_m40h5.messages.json	e0042624	hfeg0pkn005	60	spice_sim	parked		2026-11-09 11:42	U0 show runcodeGuard config consulting
+1790216933447_e5opy	jason17w	hfeg0pnd002	16	spice_sim	parked		2026-11-09 12:04	L1 workflow-doc paste (DDR run-regression skill doc, not user produce-task); wrong-shard A(digital); old 09-24; spice ratio 6%
+1793583717674_opbrl	jinsongl	hfeg0pkn005	15	spice_sim	parked		2026-11-09 12:04	L1 explain-code-logic (erc_ai_signoff tools); wrong-shard C(ERC); spice ratio 5%
+1793843108682_lgbx4	thomasz	hfeg0pkn002	16	spice_sim	parked		2026-11-09 12:04	L1 read-log diagnostic (FineSim pvt.log explain); no produce deliverable; spice ratio 4%
+1793860510641_abico	e0030760	hfeg0pkn004	19	spice_sim	parked		2026-11-09 12:04	L1 explain-schematic-port-function; no produce deliverable; spice ratio 6%
+1793949156546_i6kg9	t0002607	hfeg0pkn005	28	spice_sim	parked		2026-11-09 12:04	L1 meta-consulting (how to show circuit); no produce deliverable; fresh 11-09 but not produce-task; spice ratio 6%
+1793941518837_i4kkz	e0044979	hfeg0pkn001	20	spice_sim	parked		2026-11-09 12:04	L1 consulting (peeked prior round); no produce deliverable; spice ratio 7%
+1793616198613_fefaj.messages.json	shaoyou	hfeg0pkn003	10	spice_sim	parked		2026-11-09 12:08	L1 ask-eda consulting (Nanospice 仿真精度); tools innovus/netlist 主导=wrong-shard A; spice ratio low
+1791515463198_50mu7.messages.json	e0042624	hfeg0pkn001	85	spice_sim	parked		2026-11-09 12:08	explore others skill repo (SpiceAgent_Skill); aether:881/calibre/lvs 主导=wrong-shard C; old 10-16
