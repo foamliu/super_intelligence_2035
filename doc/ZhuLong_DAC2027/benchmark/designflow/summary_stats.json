@@ -622,6 +622,28 @@
    "blocker_partial": {"type":"eda_flow execution backend outage (run_commands/run_code) persists r301-r303","deepread_workaround":"pyAether reading .75-local session files BYPASSES the eda_flow outage for .75-host sessions (517 of 5999 dedup). Remote-host (698) sessions still inaccessible (need ssh as e0031982 via eda_flow)."},
    "finding": "10th consecutive round. scansync CONFIRMED via pyAether: latest scan unchanged (r292, mc30=2247/dedup=5999/users=401/hosts=696). Daily log 20261110 healthy 2981 lines, strong-digital hits=0. eda_flow run_commands/run_code STILL DOWN (r301 blocker persists, 3rd consecutive round). KEY CORRECTION: r302 wrongly claimed .75-local sessions cleaned up — actually 4579 messages files exist on .75; pyAether CAN read them -> deepread path RECOVERED. 5fpod (tongfanl mc134) = clean A-faithful produce (USER#2 configure bankskew vecgen scripts from 1014_bankskew ref folder). Case BankskewVecgenCfg-001 delivered (spec-driven-generator, L1-static, k=19, ref PASS 19/19 + 7 negs FAIL). A.jsonl 192->193. scarcity confirmed 6th time. WAITING: 0.",
    "updated_at": "2026-11-10T05:45:00+08:00"
+  },
+  "r304": {
+   "date": "2026-11-10",
+   "ts": "2026-11-10T06:30:00+08:00",
+   "round_type": "deepread + design (DEBT:1; eda_flow RECOVERED after r301-r303 outage; fresh-window remote scan; 0 new case, case build deferred to r305 per §3 >2MB exception)",
+   "scan_dir": "ssh_eda_search_20261109_224902 (CONFIRMED via eda_flow run_commands, backend recovered)",
+   "eda_flow_status": "RECOVERED - run_commands exit_code 0 real stdout (pwd/ls/awk/ssh/scp all work); run_code pyAether up. Outage r301-r303 (3 rounds) ended r304.",
+   "scan_stats": {"latest":"ssh_eda_search_20261109_224902","rows":38083,"dedup_sessions":5999,"mc30":2245,"mc100":1243,"mc300":316,"users_mc30":401,"hosts":696},
+   "no_new_scan": true,
+   "consecutive_mgmt_round": "r293-r304 (11th consecutive no-new-scan since r292 full rescan)",
+   "daily_log_20261110_lines": 2981,
+   "daily_log_healthy": true,
+   "new_sessions": 0,
+   "shard_A_new_this_round": 0,
+   "shard_A_jsonl": 193,
+   "case_delivered": "none (DEBT:1 deepread+design; case build deferred to r305 per §3 >2MB exception)",
+   "trace_claimed": "1794190176104_bhcla (ray1lei@hfeg0pkn004, mc=111 real/post-scan, eda_other PEX SPF coupling parser) - claimed, deepread complete, design complete",
+   "scarcity_reconfirmation": "shard A clean digital A-faithful produce SCARCE confirmed 7th time (r295/r296/r299/r300/r302/r303/r304): ALL 31 digital-dominant (dig>=50, dig>ana, mc>=15) r292-scan candidates LEDGERED across 4 shards; .75-local digital un-ledgered pool mined (r303 delivered last clean produce 5fpod); strong-digital marker noisy (57% wrong-shard per r292). Viable candidates now require fresh-window remote scan (eda_flow ssh).",
+   "fresh_window_scan": {"method":"ssh pkn001-005 + .75 local; find .messages.json -newermt 2026-11-08; cross-ref 4-shard ledgers (2162 suffixes)","hosts_scanned":6,"fresh_sessions_total":"249 (47+88+18+63+33+.75 49)","un_ledgered_fresh":5,"un_ledgered_classification":{"bhcla":"ray1lei@pkn004 mc111 314msgs 2.75MB = CLEAN A-faithful produce (SPF .spf_CC coupling data -> CSV parser skill, eda_other PEX) -> CLAIMED+DEEPREAD","ouzip":"xxchen@.75 DRC_pattern_tool = shard C physical_verify resumed -> skip","uxowi":"e0023936@pkn004 11MB layout = shard C too big -> skip","nbcav":"e0043182@pkn003 Windows PowerShell login-log = NOT EDA -> skip","z1924":"e0043182@pkn003 = dup of nbcav -> skip"}},
+   "debt": {"type":"DEBT:1 case build deferred","reason":"trace 2.75MB >2MB qualifies §3 exception; insufficient time for quality 8+cond case+negatives+selftest","next_round":"r305 MUST build bhcla case first (no consecutive deepread-only per §3)"},
+   "finding": "eda_flow RECOVERED (r301-r303 outage ended). scansync: latest scan unchanged r292 (mc30=2245/dedup=5999/hosts=696), daily log 20261110 healthy 2981. Digital-dominant pool (dig>=50 dig>ana mc>=15) = 31 sessions ALL LEDGERED (7th scarcity confirmation). Fresh-window remote scan found 5 un-ledgered; only bhcla (ray1lei SPF coupling parser, eda_other) is clean A-faithful produce. bhcla deepread+design complete; DEBT:1 case build deferred to r305 (§3 >2MB exception). 0 case this round. WAITING: 0.",
+   "updated_at": "2026-11-10T06:30:00+08:00"
   }
  },
  "sessions": 38082,

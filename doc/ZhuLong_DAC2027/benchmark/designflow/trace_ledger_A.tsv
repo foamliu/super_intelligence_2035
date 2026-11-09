@@ -313,3 +313,4 @@
 1793241722276_abtf1	lorikx	hfeg0pkn004	132	verification	case	EDA-Eval-DesignFlow-VcsIpdSverilogFix-001	2026-11-10 04:30	
 1793933365155_c4vkj					parked		2026-11-10 04:07	lorikx SRAM project; U#0=merge fault-inject code into sp_2pram.v; clean produce-task but code-merge semantics hard to parameterize for spec-driven-generator check; defer
 1792222798503_5fpod	tongfanl	hfeg0plg72	134	digital	case	EDA-Eval-DesignFlow-BankskewVecgenCfg-001	2026-11-10 05:46	
+1794190176104_bhcla.messages.json	ray1lei	hfeg0pkn004	0	eda_other	claimed		2026-11-10 06:15	
