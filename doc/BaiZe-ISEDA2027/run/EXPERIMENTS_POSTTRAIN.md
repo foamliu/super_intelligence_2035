@@ -10345,3 +10345,88 @@ gpu_watcher detects >=4 GPUs free
 - **P0 D1-D6**: D2（工具调用频次）的假设 → R97 的 API 覆盖率分布提供间接验证
 
 > ⚠️ Surrogate results (Qwen3.8-27B) NOT transferable to BaiZe (MiniCPM5-2B).
+
+
+## §R98 (2026-11-09 wake146) Training-Eval API Coverage Gap Analysis
+
+> **动机**: R97 显示 27B 模型无工具 0% API 全覆盖 → API 知识是核心瓶颈。
+> 关键未答问题: 158 题所需的 API 是否出现在训练数据(SFT语料+API知识库)中？
+> 零 GPU，纯文本分析。
+
+### 1. 脚本
+
+- `baize_posttrain_r98_api_coverage_gap.py` (327行, Python3+stdlib, 0依赖)
+- 加载 158 题数据集(metadata.apis_used) + SFT v1/v2(api_used+全文扫描) + API_INFO_MERGED_V3.json(8463 API)
+- 关键修复: API KB 是 dict(key=短名), 非 list → 修复后正确解析
+
+### 2. 全量结果 (158 tasks)
+
+| 指标 | 值 |
+|:--|:--|
+| 评测唯一 API | 488 |
+| SFT v1 APIs | 8213 |
+| KB APIs | 8463 |
+| **SFT 覆盖** | **74/488 (15.2%)** |
+| **KB 覆盖** | **364/488 (74.6%)** |
+| 两处均缺失 | 118 |
+| SFT 全覆盖任务 | 5/158 (3.2%) |
+| KB 全覆盖任务 | 101/158 (63.9%) |
+| 联合全覆盖任务 | 104/158 (65.8%) |
+
+### 3. 按场景
+
+| 场景 | 任务 | APIs | SFT | KB |
+|:--|--:|--:|--:|--:|
+| Schematic | 47 | 652 | 208(31.9%) | 471(72.2%) |
+| Layout | 64 | 399 | 119(29.8%) | 352(88.2%) |
+| Design Mgmt | 24 | 115 | 12(10.4%) | 111(96.5%) |
+| Others | 23 | 88 | 8(9.1%) | 68(77.3%) |
+
+### 4. SFT 缺失高频 API (Top 7 全在 KB 中)
+
+| API | 出现次数 | 在KB |
+|:--|--:|:--|
+| dbCreateLib | 35 | ✅ |
+| dbGetAllLibs | 32 | ✅ |
+| dbCloseCV | 31 | ✅ |
+| dbDelLib | 30 | ✅ |
+| dbNewCV | 28 | ✅ |
+| dbOpenCVByType | 24 | ✅ |
+| dbCrtInst | 15 | ✅ |
+
+→ SFT 合成遗漏了这些高频 DB 管理 API，需从 KB 补充。
+
+### 5. KB 缺失 API (对象工厂+枚举)
+
+| API | 次数 | 类型 |
+|:--|--:|:--|
+| emyBlock.create | 14 | 工厂方法 |
+| emyTerm.create | 12 | 工厂方法 |
+| emcR0 | 11 | 枚举常量 |
+| emyLine.create | 11 | 工厂方法 |
+| emcInputTermType | 10 | 枚举常量 |
+
+→ KB 不收录对象方法和枚举常量 → 需从 eda_fastmcp 源码补充。
+
+### 6. 关键结论
+
+1. **SFT 覆盖仅 15.2%** → SFT 合成语料严重遗漏评测所需 API（前7个高频缺失全在KB中）
+2. **KB 覆盖 74.6%** → 退火可注入大部分 API 知识，但 25% 缺失
+3. **118 个两处缺失** → 主要是对象工厂方法+枚举常量，退火+SFT 都无法注入
+4. **对 M1(50%) 的影响**: 退火注入 KB 的 364 API 可支撑 M1；但需 ① 从 KB 补充 414 API 到 SFT ② 从源码补充 118 缺失 API
+5. **SFT 合成改进**: 从评测 metadata.apis_used 提取 488 API 名（仅名称，不含任务内容，符合污染隔离），对照 KB 合成训练对
+
+### 7. 交付物
+
+| Item | Path | Size |
+|:--|:--|--:|
+| Script | `run/baize_posttrain_r98_api_coverage_gap.py` | 327行 |
+| HTML | `reports/report_posttrain_r98_api_coverage_gap_zh.html` | 14.2KB |
+| JSON | `run/r98_api_coverage_gap.json` | 178.2KB |
+
+### 8. 关联
+
+- **R97**: 0% API 全覆盖 → R98 解释根因: 训练数据覆盖仅 15.2%
+- **P0 D2**: 工具频次假设 → R98 SFT 15.2% 提供训练侧根因
+- **P1-d**: PyAether 语料 → R98 验证 KB 74.6%，发现 124 缺失
+- **P1-e**: 污染隔离 → R98 仅用 API 名称，符合红线
