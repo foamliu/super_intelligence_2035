@@ -14,7 +14,7 @@ WAITING: 0
 - 阻塞: GPU 0/8free(SGLang Qwen3.8-27B占全8卡44-45GB 0%util,11/9已过仍未释放);沙箱10.129.32.75全端口FILTERED;Docker无权限;P3等pretrain ckpt(ETA≈2026-12-25)
 - 本轮新增调研产出: R134 SFT消融设计(539行+内存可行性+LoRA配置分析+ctx覆盖率+8-run分数因子+GPU预算404/2688=15%+6条预注册规则AB-1~AB-6 FROZEN+verl集成路径+EXPERIMENTS §R134）
 - 未完成指令: 🔴用户令2026-11-07(GPU未到位,需持续产出调研) ⇒ WAITING=0
-- git: commit✅ push✅(2f64730ec, rebase+push after remote advance)
+- git: commit✅ push✅(d1e63e83b, rebase+push after remote advance)
 
 ## 关键事实（常驻）
 
