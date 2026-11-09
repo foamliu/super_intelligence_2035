@@ -41,4 +41,6 @@ dependencies {
     implementation("androidx.camera:camera-camera2:1.3.4")
     implementation("androidx.camera:camera-lifecycle:1.3.4")
     implementation("androidx.camera:camera-view:1.3.4")
+    // WebSocket 流式会话客户端（11:40 令 §5 #2 的 App 端落地；Maven Central 免费开源，无需账号）
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
 }

@@ -287,6 +287,7 @@ stateDiagram-v2
 | `host/vad.py`（端侧 VAD）+ App 语音打断/静音/常听 | ✅ **第 20 轮交付**（VAD 纯函数 16 单测：能量/端点 1.2s/打断 debounce/静音真关麦/状态机；App `MicVad.kt` AudioRecord 端侧 VAD + 语音打断 + 静音真关麦 + 状态指示；APK 4,124,752 字节 + 模拟器跑通一题 + 录屏） |
 | `host/knowledge.py`（知识点自动分类）+ App 答对/答错显示分类 | ✅ **第 21 轮交付**（`classify_knowledge_local` 关键词分类 100 题 100/100 + `classify_knowledge` LLM DeepSeek 主路径/本地兜底 + `_normalize` 学科名→未分类；`POST /practice` 缺 knowledge 时自动补；App 状态栏「已记录「答对」· 知识点：xx」+ 学情合并画像；44+3 单测；APK 4,157,236 字节 + 模拟器跑通 + 录屏） |
 | `host/ws_session.py` + `ws_client.py`（**WebSocket 流式会话服务**） | ✅ **第 23 轮交付**（11:40 令 §5 #2：流式 ASR 接入位 `asr_partial/asr_final/audio_chunk` + 流式 TTS 分句 `tts_sentence` + 打断协议 `barge_in` 停播/丢弃在途/翻转 listen + 会话状态机复用 `vad.SessionState` + 静音真关麦 + wait_student 3s→ambient；18 单测；mock hint P50 1ms / 真实 DeepSeek 2.01s / 打断停播 1ms；`eval/ws_session_mock.json` 12 轮 P50/P90） |
+| `app/.../WsTutorClient.kt` + App「流式会话」按钮（**WS 协议 App 端落地**） | ✅ **第 24 轮交付**（OkHttp 客户端对齐 `ws_session.py` 协议：流式 TTS 逐句朗读 `tts_sentence` / 打断 `barge_in` / 静音真关麦 `mute` / 状态可见 `state`；文字「发送」走 `asr_final`；模拟器端到端 `ws://10.0.2.2:8766` 实测 + 录屏；`app-debug.apk` 7,679,375 字节） |
 
 
 > 11:40 令 §3 交互验收 **已闭环（第 13 轮）**：会话录音 91.2s（≥60s ✅）、三项时延实测（整轮 P50 1.37s / P90 1.97s、TTS 首字 P50 80.4ms、ASR mock）、打断测试（stop 信号 ~0ms + 在途句丢弃）、模拟学生 3 人设×10 轮（**直接给答案次数 = 0 ✅**）、10 条可用性走查。

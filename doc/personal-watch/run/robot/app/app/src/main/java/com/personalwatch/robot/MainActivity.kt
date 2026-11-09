@@ -14,6 +14,7 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import org.json.JSONObject
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
@@ -54,6 +55,8 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private var micVad: MicVad? = null
     private var muted = false
     private var speaking = false
+    private var ws: WsTutorClient? = null
+    private var wsMode = false
 
     private val pickImage =
         registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
@@ -126,6 +129,7 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         findViewById<Button>(R.id.btnMarkWrong).setOnClickListener { logPractice(false) }
         findViewById<Button>(R.id.btnSend).setOnClickListener { sendFollowUp() }
         findViewById<Button>(R.id.btnMute).setOnClickListener { toggleMute() }
+        findViewById<Button>(R.id.btnWs).setOnClickListener { toggleWs() }
 
         tts = TextToSpeech(this, this)
 
@@ -324,6 +328,10 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
     // ── 追问（文字多轮）→ POST /agent ──────────────────────────────
     private fun sendFollowUp() {
+        if (wsMode) {
+            sendTextViaWs()
+            return
+        }
         val server = etServer.text.toString().trim()
         val text = etInput.text.toString().trim()
         if (text.isBlank()) {
@@ -402,6 +410,7 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private fun stopSpeaking() {
         tts?.stop()
         speaking = false
+        ws?.sendBargeIn() // WS 流式：下发 barge_in（服务端丢弃在途句 + 翻转 listen）
         setState("听")
         setStatus("已打断（停播）。可继续追问或拍新题。")
     }
@@ -434,13 +443,138 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             tts?.stop()
             speaking = false
             micVad?.stop()  // 真关麦：释放 AudioRecord，不是软件忽略
+            ws?.sendMute()  // WS：下发 mute（服务端丢弃后续输入）
             setState("静音")
             setStatus("已静音（麦克风已关闭）")
         } else {
+            ws?.sendUnmute()
             setState("常听")
             setStatus("已解除静音（恢复监听）")
             micVad?.start()
         }
+    }
+
+    // ── WebSocket 流式会话（11:40 令 §5 #2 的 App 端落地）────────────
+    private fun deriveWsUrl(): String {
+        val server = etServer.text.toString().trim()
+        if (server.startsWith("ws://") || server.startsWith("wss://")) return server
+        // 默认：HTTP 服务在 8765，WS 流式会话在 8766（同主机 10.0.2.2）
+        return server.replaceFirst("http://", "ws://")
+            .replaceFirst("https://", "wss://")
+            .let { if (it.endsWith(":8765")) it.removeSuffix(":8765") + ":8766" else it }
+    }
+
+    private fun toggleWs() {
+        if (wsMode) {
+            wsMode = false
+            ws?.close()
+            ws = null
+            setStatus("已断开流式会话（回到 HTTP 模式）")
+            setState("常听")
+            return
+        }
+        val url = deriveWsUrl()
+        setStatus("正在连接流式会话 $url …")
+        val w = WsTutorClient(object : WsTutorClient.Listener {
+            override fun onOpen() {
+                runOnUiThread { setStatus("流式会话已连接（握手已发）") }
+            }
+            override fun onMessage(type: String, obj: JSONObject) {
+                runOnUiThread { onWsMessage(type, obj) }
+            }
+            override fun onClosed(code: Int, reason: String) {
+                runOnUiThread {
+                    wsMode = false
+                    ws = null
+                    setStatus("流式会话已断开（$code）")
+                }
+            }
+            override fun onFailure(msg: String) {
+                runOnUiThread {
+                    wsMode = false
+                    ws = null
+                    setStatus("流式会话连接失败：$msg")
+                }
+            }
+        })
+        ws = w
+        w.connect(url)
+        wsMode = true
+    }
+
+    private fun onWsMessage(type: String, obj: JSONObject) {
+        when (type) {
+            "meta" -> setStatus("流式会话就绪 · vision=${obj.optString("vision", "?")} tutor=${obj.optString("tutor", "?")}")
+            "state" -> setState(stateLabel(obj.optString("state", "")))
+            "asr" -> {
+                val text = obj.optString("text", "")
+                setStatus(if (obj.optBoolean("is_final", false)) "转写：$text" else "识别中… $text")
+            }
+            "hint" -> {
+                val reply = obj.optString("reply_text", "")
+                val ttsText = obj.optString("tts_text", reply)
+                val lat = obj.optDouble("latency_s", 0.0)
+                tvReply.text = buildString {
+                    if (currentQuestion.isNotBlank()) {
+                        append("【题干】").append(currentQuestion).append("\n\n")
+                    }
+                    append(reply)
+                }
+                currentTtsText = ttsText
+                tts?.stop()   // 清空旧朗读，准备逐句流式
+                speaking = false
+                setStatus("引导就绪 · ${lat}s（流式 TTS 逐句朗读）")
+            }
+            "tts_sentence" -> {
+                val text = obj.optString("text", "")
+                val idx = obj.optInt("index", 0)
+                val total = obj.optInt("total", 0)
+                if (!muted && text.isNotBlank() && ttsReady) {
+                    tts?.speak(text, TextToSpeech.QUEUE_ADD, null, "ws_tts_$idx")
+                    speaking = true
+                }
+                setState("说")
+                setStatus("朗读中 $idx/$total：$text")
+            }
+            "done" -> {
+                speaking = false
+                setStatus("引导完成。可继续追问，或拍新题。")
+            }
+            "stopped" -> {
+                speaking = false
+                tts?.stop()
+                setStatus("已打断（停播 + 丢弃在途句）")
+            }
+            "error" -> setStatus("服务端错误：${obj.optString("message", "")}")
+        }
+    }
+
+    private fun stateLabel(s: String): String = when (s) {
+        "ambient" -> "常听"
+        "listen" -> "听"
+        "think" -> "想"
+        "speak" -> "说"
+        "wait_student" -> "等学生"
+        "muted" -> "静音"
+        "idle" -> "空闲"
+        else -> s
+    }
+
+    private fun sendTextViaWs() {
+        val text = etInput.text.toString().trim()
+        if (text.isBlank()) {
+            setStatus("先输入一句话再发送")
+            return
+        }
+        val conn = ws
+        if (conn == null || !conn.connected) {
+            setStatus("流式会话未连接，先点「流式会话」")
+            return
+        }
+        if (currentQuestion.isBlank()) currentQuestion = text
+        etInput.setText("")
+        conn.sendAsrFinal(text)
+        setStatus("已发送（流式）：$text")
     }
 
     // ── 工具 ─────────────────────────────────────────────────────

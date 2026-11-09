@@ -30,6 +30,10 @@
 - 状态栏显示「已记录「答对」· 知识点：一元一次方程（累计作答 N 次）」，学情画像同步刷新、不覆盖该状态；
 - `TutorClient.PracticeReply` 新增 `knowledge` 字段。
 
+第 24 轮新增 **WebSocket 流式会话（App 端）**（对应 host 侧 `ws_session.py`）：
+- 新增 `WsTutorClient.kt`（OkHttp WebSocket 客户端，对齐 WS 协议：上行 `hello/asr_partial/asr_final/barge_in/mute/unmute`，下行 `state/meta/asr/hint/tts_sentence/done/stopped/error`）；
+- `MainActivity` 新增「流式会话」按钮（`toggleWs()`）：文字「发送」走 `asr_final` 流式引导 + 逐句 TTS（1/2·2/2），打断/语音打断走 `barge_in`，静音走 `mute/unmute` 并真关麦；服务地址 `http://10.0.2.2:8765` 自动推导 `ws://10.0.2.2:8766`。
+
 ## 技术栈
 
 | 项 | 选型 |
@@ -39,7 +43,7 @@
 | SDK | compileSdk 34 / minSdk 26 / targetSdk 34 |
 | 相机 | CameraX 1.3.4（拍照 / 预览） |
 | 选图 | Activity Result `GetContent` |
-| 网络 | 系统 `HttpURLConnection` + `org.json`（零第三方依赖） |
+| 网络 | 系统 `HttpURLConnection` + `org.json`（HTTP）；OkHttp 4.12.0（WebSocket 流式会话） |
 | TTS | 系统 `TextToSpeech`（端侧，中文 `Locale.CHINA`，可 `stop()` 打断） |
 
 ## 目录
@@ -51,7 +55,7 @@ app/
     ├── build.gradle.kts
     └── src/main/
         ├── AndroidManifest.xml
-        ├── java/com/personalwatch/robot/MainActivity.kt / TutorClient.kt
+        ├── java/com/personalwatch/robot/MainActivity.kt / TutorClient.kt / WsTutorClient.kt / MicVad.kt
         └── res/ (layout / values / drawable / mipmap)
 ```
 

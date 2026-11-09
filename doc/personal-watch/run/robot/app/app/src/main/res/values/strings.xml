@@ -12,6 +12,7 @@
     <string name="btn_mark_right">答对</string>
     <string name="btn_mark_wrong">答错</string>
     <string name="btn_send">发送</string>
+    <string name="btn_ws">流式会话</string>
     <string name="input_hint">追问 / 输入一句话（如：帮我算 3×4）</string>
     <string name="server_hint">服务地址（模拟器用 10.0.2.2:8765）</string>
     <string name="status_idle">待机：拍一道题，或点「选图」。</string>

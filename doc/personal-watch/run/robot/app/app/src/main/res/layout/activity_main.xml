@@ -43,6 +43,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="测连" />
+
+        <Button
+            android:id="@+id/btnWs"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="@string/btn_ws" />
     </LinearLayout>
 
     <androidx.camera.view.PreviewView

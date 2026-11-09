@@ -220,11 +220,16 @@
 - 📌 **能信/不能信**：状态机流转、流式分句、打断丢弃在途、静音真关麦为协议级可验证证据；🚫 真实声学打断（AEC 自听回声）、首字出声、近场 CER 待真机复测（模拟器无真实人声输入，同 HTTP 线口径）。
 - 回写：`host/ws_session.py`/`test_ws_session.py`/`ws_client.py`、`host/tutor_server.py`（docstring 标注 WS 端点）、`host/README.md`、`INTERACTION_SPEC.md`（§10）、`ROADMAP.md`、`MEMORY_VIDEO.md`、`daily-memories-video/2026-11-09.md`。
 
+## 第 24 轮增量（2026-11-09 · 把 WebSocket 流式会话协议接到 Android App）
+
+- ✅ **App 端 WebSocket 流式会话客户端落地（11:40 令 §5 #2 的 App 端）**：此前 `ws_session.py` 只有 Python 参考客户端 `ws_client.py`，App 仍只走 HTTP 一次性 POST。本轮新增 `app/.../WsTutorClient.kt`（OkHttp，对齐 WS 协议）+ `MainActivity`「流式会话」按钮（`toggleWs()`：`http://10.0.2.2:8765` → `ws://10.0.2.2:8766`；`meta` 显示后端、`state` 落 tvState、`hint` 显示引导、`tts_sentence` 逐句流式朗读、打断/静音映射 `barge_in`/`mute`）+ `build.gradle.kts` 加 `okhttp:4.12.0` + `activity_main.xml`/`strings.xml` 加按钮。
+- ✅ **构建 + 装机 + 模拟器端到端 + 录屏**：`assembleDebug` BUILD SUCCESSFUL → `app-debug.apk` **7,679,375 字节**（4.16MB→7.68MB）；`adb install -r` **Success**；模拟器「流式会话」连 `ws://10.0.2.2:8766`（mock）→ meta `vision=deepseek tutor=deepseek` → 文字题 `2x3` 经 `asr_final` → 引导「我们先不急着算。你觉得第一步该动哪一项？」回显 `tvReply`（**不含答案** ✅）→ 静音 → `状态：静音`；录屏 `logs/r24_session.mp4`（30s，6.16MB）+ 截图 4 张 + `uiautomator` dump。
+- ✅ **协议级复验**：`ws_client.py --demo`（mock）全协议跑通（握手/免唤醒/流式 TTS 1/2/打断 stopped/静音 muted）；host 全量 `pytest` = **311 passed**（App 改动无 Python 回归）。
+- 📌 **能信/不能信**：WS 协议帧收发、状态机 UI 流转、流式 TTS 逐句、打断丢弃在途、静音真关麦为协议级证据（App uiautomator 实测 + Python demo + 录屏）；🚫 真实声学打断（AEC）、端侧 ASR CER、TTS 首字时延待真机；照片识图（vision）不在 WS 文本协议内，仍走 HTTP `/tutor`。
+- 回写：`app/.../WsTutorClient.kt`（新）、`MainActivity.kt`/`app/build.gradle.kts`/`activity_main.xml`/`strings.xml`、`app/README.md`、`P1_模拟器.md`、`INTERACTION_SPEC.md`（§10）、`ROADMAP.md`、`MEMORY_VIDEO.md`、`daily-memories-video/2026-11-09.md`。
+
 ## 下一轮候选（按优先级）
 
 1. 收用户 3 条回复 → 复验 `hdc list targets` / `adb devices`，打通真机「拍照/出声」（L0 真机化）。
-
-## 下一轮候选（按优先级）
-
-1. 收用户 3 条回复 → 复验 `hdc list targets` / `adb devices`，打通真机「拍照/出声」（L0 真机化）。
+2. App 端接端侧 ASR（sherpa-onnx Android 版）→ 把 `MicVad` 能量 VAD 升级为「语音→文本」真流式，喂 WS `asr_partial/asr_final`（替代当前文字/按钮输入）。
 
