@@ -253,7 +253,7 @@
       "updated_at": "2026-11-09T22:35:00+08:00",
       "users_mc30": 224
     },
-    "updated_at": "2026-11-09T23:33:30+08:00",
+    "updated_at": "2026-11-10T00:10:00+08:00",
     "r292": {
       "ts": "2026-11-09T23:33:30+08:00",
       "date": "2026-11-09",
@@ -406,6 +406,21 @@
       },
       "case_delivered": "none (this round = full rescan + threshold evaluation per 2026-11-09 user directive; 0 case)",
       "shard_A_new_this_round": 0
+    },
+    "r293": {
+      "ts": "2026-11-10T00:10:00+08:00",
+      "date": "2026-11-10",
+      "round_type": "case (A-faithful produce-task, post-r292 rescan)",
+      "scan_dir": "ssh_eda_search_20261109_224902",
+      "scan_path": "/home/t0002965/log/ssh_eda_search_20261109_224902/summary.tsv",
+      "finding": "r293 = first case-making round after r292 full-rescan. Candidate selection: r292 strong_unledgered.tsv re-examined with keyword-column truth (not just strong-marker). 0ekf9 (e0030085@hfeg0pkn002, mc352, synopsys:2253/rtl:409/verilog:259/vhdl:148/dc_shell:61) = ONLY truly digital-dominant un-ledgered candidate; qxaiv/5ze4m (r292 borderline) re-classified as DRC/calibre (shard C, not digital). Deepread 0ekf9 (412 msgs, 1.23MB): USER#2 'testMax demo' + USER#3 '完整启动脚本/环境变量' = A-faithful produce-task (提出需求未给根因). Assistant built DFT TestMAX launch flow with graceful tool-fallback (setup_env.sh + run_full_flow.sh + run/run_dft.sh + run/sim_filelist.f + run_sim.py). Case EDA-Eval-DesignFlow-DftTestmaxLaunchFlow-001 delivered (eda_other, A-faithful, L1-static+L2-subprocess, k=16). Self-verify: ref PASS 16/16, 4 negatives ALL FAIL, 3 §4.9 fakes ALL FAIL. Appended A jsonl 188->189. trace_ledger mark 0ekf9->case.",
+      "case_delivered": "EDA-Eval-DesignFlow-DftTestmaxLaunchFlow-001",
+      "case_k": 16,
+      "case_domain": "eda_other",
+      "case_track": "faithful",
+      "shard_A_new_this_round": 1,
+      "mc30": 2247,
+      "hosts": 696
     }
   },
   "sessions": 38082,
