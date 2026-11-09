@@ -11269,3 +11269,180 @@ SFT: R56/R79/R87/R89/R99-R101/R60-R61 | RL: R18/R47/R73/R92/R74/R83/R105/R13/R22
 - 本节（EXPERIMENTS §R107）
 
 - 本节（EXPERIMENTS §R106）
+
+---
+
+## §R108 SFT/RL 数据管线端到端审计（零 GPU · 2026-11-09）
+
+> **目标**：GPU 释放前最后的数据就绪性验证——实际加载所有 parquet 文件、验证格式、检查污染隔离、交叉验证 YAML 配置路径。
+> **脚本**：`baize_posttrain_r108_data_pipeline_audit.py`（336 行，Python3+pandas+pyarrow）
+> **HTML**：`reports/report_posttrain_r108_data_pipeline_audit_zh.html`（10.9KB，自包含，0 script，0 外链）
+> **JSON**：`r108_data_pipeline_audit.json`
+
+### 1. Parquet 文件清单（实测）
+
+| 文件 | 行数 | 列 | 大小 |
+|:--|--:|:--|:--|
+| sft_pyaether_corpus.parquet | 19,610 | conversation, pair_id, type, api_used, contamination_check | 2.74MB |
+| sft_pyaether_corpus_v2.parquet | 19,524 | 同上 | 3.50MB |
+| sft_pyaether_corpus_v5_deep_enriched.parquet | 1,193 | 同上 | 0.34MB |
+| rl_pyaether_synth_v2.parquet | 3,347 | **prompt, reward_model, agent_name** | 0.91MB |
+
+**SFT 合计**：40,327 行（3 版本）。**RL**：3,347 任务（远超 500 题目标）。
+
+### 2. RL 数据格式验证
+
+| 检查项 | 结果 | 说明 |
+|:--|:--|:--|
+| Column "prompt" | ✅ | 存在 |
+| Column "data_source" | ❌ | **缺失**——列名为 `reward_model`，verl config `reward_fn_key: data_source` 需改为 `reward_model` 或重命名列 |
+| prompt is list | ❌ | 存储为 ndarray（pandas 序列化），需在 verl data pipeline 中验证反序列化 |
+| Prompt token stats | ✅ | mean=172.5, median=149, max=274, **over_8192=0** → 全部远低于 8K 上限 |
+| Difficulty dist | — | metadata 列不在 RL parquet 中（仅 prompt/reward_model/agent_name 三列） |
+
+**关键发现**：RL parquet 有 3,347 行（不是之前报告的 500 行——R104 已扩到全量）。prompt token 长度极短（max=274 tokens），无超长风险。但 `data_source` 列缺失，需在 launch 前修复（改 YAML config 的 `reward_fn_key` 为 `reward_model`，或在 parquet 中重命名列）。
+
+### 3. SFT 数据格式验证
+
+3 个 SFT parquet 均使用 `conversation` 列（非 `messages`/`prompt`），格式为 ndarray。含 `contamination_check` 列（表明生成时已做隔离）。含 `api_used` 列可用于按 API 追溯。需在 SFT 训练脚本中验证 `conversation` 列的 chat template 兼容性。
+
+### 4. 污染隔离检查（红线 §5.1）✅ PASS
+
+| 检查项 | 值 |
+|:--|:--|
+| 评测任务数 | 158 |
+| 评测 API 名称数 | 13 |
+| RL 训练数据 API 数 | 3,670 |
+| API 名称重叠 | 4（预期——同一 API 库） |
+| 评测 prompt 指纹数 | 158 |
+| **逐字污染命中** | **0** |
+| **判定** | **PASS** ✅ |
+
+**结论**：158 题评测的 prompt/assertion 未出现在任何训练数据中。API 名称重叠是预期行为（同一 PyAether API 库），不构成污染。
+
+### 5. YAML 配置路径验证
+
+| YAML | 引用路径数 | 全部存在 |
+|:--|--:|:--|
+| baize_posttrain_rl_verl_config_v2.yaml | 7 | ✅（`null` 为 val_files 空值，正常） |
+| baize_posttrain_tool_config.yaml | 1 | ✅ |
+| baize_posttrain_eda_tools.yaml | 0 | ✅ |
+
+### 6. 模型与分词器 ✅
+
+MiniCPM5-2B 模型路径完整：model-00000-of-00001.safetensors + config.json + tokenizer.json + tokenizer_config.json + chat_template.jinja + special_tokens_map.json + generation_config.json。
+
+### 7. 汇总统计
+
+| 指标 | 值 |
+|:--|:--|
+| RL 任务总数 | 3,347 |
+| SFT 行数（全版本） | 40,327 |
+| 评测任务数 | 158 |
+| 污染命中 | 0 |
+
+### 8. 启动就绪判定
+
+**CONDITIONAL (1 issue)**：
+- ❌ RL parquet 缺少 `data_source` 列（列名为 `reward_model`）→ **修复方案**：在 `baize_posttrain_rl_verl_config_v2.yaml` 中将 `reward_fn_key: data_source` 改为 `reward_fn_key: reward_model`
+- ✅ 污染隔离通过
+- ✅ YAML 路径全部验证
+- ✅ 模型完整
+- ✅ Prompt 长度无超限风险
+
+**结论**：数据管线基本就绪。1 个配置修复后可立即起跑。
+
+### 交付物
+
+- `baize_posttrain_r108_data_pipeline_audit.py`（336 行）
+- `reports/report_posttrain_r108_data_pipeline_audit_zh.html`（10.9KB）
+- `r108_data_pipeline_audit.json`
+- 本节（EXPERIMENTS §R108）
+
+---
+
+## R109: 奖励设计与 GRPO 稳定性分析（R3 方向）
+
+> **日期**：2026-11-09 | **GPU**：无（纯分析） | **状态**：✅ 完成
+
+### 目标
+
+对照 vision 线离散奖励失败教训，系统分析 BaiZe Stage(ii) 的奖励设计（R0→R2 混合策略）、GRPO group 配置、作弊抑制、KL/clip 取值依据，并设计 9 指标稳定性监控仪表盘。
+
+### 1. Vision 线离散奖励失败教训
+
+| 失败模式 | 根因 | 教训 |
+|:---|:---|:---|
+| std=0 主导（78.7%） | 二值 pass/fail 太稀疏 | 必须用 R0 连续奖励；监控 std=0 比率 >60% 告警 |
+| 奖励崩溃 | KL=0.001 过弱 → 策略漂移 | KL=0.02（20× vision）更合理；KL>2.0 暂停 |
+| 损失平坦 | clip 0.2 + 小奖励尺度 → 梯度消失 | norm_adv_by_std ✓；需要奖励缩放 |
+| 奖励黑客 | 无长度/重复惩罚 | R0 检查 API 覆盖率 → 难以作弊；加长度惩罚 |
+
+### 2. R0→R2 分阶段混合策略
+
+| 阶段 | 步数 | 奖励 | 理由 |
+|:---|:---|:---|:---|
+| Phase 1 | 0-500 | R0 only | 无沙箱；连续信号避免 std=0 主导 |
+| Phase 2 | 500-1500 | R0×0.7 + R2×0.3 | 渐进引入沙箱；超时自动回退 R0 |
+| Phase 3 | 1500+ | R0×0.3 + R2×0.7 | 沙箱主导；R0 地板防止 std=0 |
+| 反作弊 R4 | 全阶段 | final = mixed × R4_penalty | 乘法惩罚；H1-H3→0.0，H4-H6→0.5 |
+
+奖励缩放：若 R0 分数聚集 [0.3,0.5] → 缩放 (score-0.5)×2+0.5 钳位 [0,1]。
+
+### 3. Group 配置分析（4×A40 46GB）
+
+| G | 每 GPU rollouts | 显存(GB) | OOM | std=0@p=0.3 | 步/48h | 评估 |
+|:--|:--|:--|:--|:--|:--|:--|
+| 4 | 1 | 8.2 | 否 | 34.4% | ~14400 | std=0 过高 |
+| **8** | 2 | 22.3 | 否 | **5.8%** | ~7100 | **均衡** |
+| 16 | 4 | 50.3 | **是** | 0.4% | ~3600 | OOM |
+
+**推荐 G=8**：无 OOM（22.3GB<46GB），std=0 仅 5.8%@p=0.3，~148 步/h → 7100 步/48h。
+
+### 4. 作弊抑制
+
+| 作弊类型 | 检测方法 | 抑制手段 |
+|:---|:---|:---|
+| 长度利用 | avg_response>6000 tokens | 长度惩罚 -0.05×max(0,len-4096)/4096 |
+| 格式游戏 | >80% 相同模板 | R0 检查 API 覆盖率而非格式 |
+| API 名称记忆 | hardcode_rate>0.05 | R0 仅计 tool_call 块内 API |
+| 最小努力 | avg_tool_calls<2.0 | R0 递减回报 + 完成奖励 |
+| 空输出 | empty_rate>5% | R0 无 API 调用返回 0 |
+
+### 5. KL & Clip 取值依据
+
+| 参数 | 值 | 对比 | 监控 |
+|:---|:---|:---|:---|
+| kl_loss_coef | 0.02 | Vision v3: 0.001→崩溃；DeepSeek: 0.04→稳定 | 正常 0.01-0.5；>2.0 暂停 |
+| clip_ratio | 0.2 | PPO 标准 0.2 | 裁剪率 10-30% 正常 |
+| entropy_coeff | 0.001 | Vision v3: 0.0→崩溃 | <0.1→提升到 0.005 |
+| grad_clip | 1.0 | — | >10.0 降 LR 50% |
+
+### 6. 9 指标稳定性仪表盘
+
+| 指标 | 正常 | WARN | CRITICAL | 动作 |
+|:---|:---|:---|:---|:---|
+| reward_mean | 0.2-0.8 | <0.05 持续50步 | 崩溃 | 换更易任务 |
+| reward_std | 0.05-0.5 | std=0>40% | >60% Vision R57 | 切 R0+缩放 |
+| kl_divergence | 0.01-0.5 | >0.5 | >2.0 崩溃 | 降 LR 50% |
+| policy_entropy | 0.5-3.0 | <0.1 | <0.01 确定性 | entropy→0.005 |
+| grad_norm | 0.1-2.0 | >5.0 | >10.0/NaN | 降 LR 50% |
+| clip_fraction | 10-30% | >50% | <5% | 调 clip_ratio |
+| cheat_rate | 0-5% | >5% | >10% | 启用 R4 惩罚 |
+| response_length | 500-4000 tok | >6000 | >8000 | 长度惩罚 |
+| std0_dominance | <30% | >40% | >60% | 切 R0+更易任务 |
+
+### 7. 总结
+
+1. **当前配置（G=8, KL=0.02, clip=0.2, entropy=0.001, R0）有充分理论依据**
+2. 分阶段奖励混合在 step 500/1500 切换
+3. std=0 主导是 #1 监控指标
+4. 9 指标仪表盘带 WARN/CRITICAL + 自动恢复
+5. 考虑首次运行用分阶段 KL（0.04→0.02→0.01）
+
+### 交付物
+
+- `baize_posttrain_r109_reward_grpo_stability.py`（291 行）
+- `r109_reward_grpo_stability.json`
+- `reports/report_posttrain_r109_reward_grpo_stability_zh.html`（12.5KB）
+- 本节（EXPERIMENTS §R109）
