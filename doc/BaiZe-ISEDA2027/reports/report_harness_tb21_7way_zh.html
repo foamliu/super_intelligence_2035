@@ -1,16 +1,18 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><title>TB-2.1 7way R1969</title><style>body{font-family:"Noto Sans CJK SC","Microsoft YaHei",sans-serif;max-width:1000px;margin:0 auto;padding:20px;background:#f8f9fa;color:#333}h1{color:#1a5276;border-bottom:3px solid #2980b9;padding-bottom:10px}h2{color:#1a5276;margin-top:25px;border-left:5px solid #2980b9;padding-left:10px}table{border-collapse:collapse;width:100%;margin:12px 0}th,td{border:1px solid #ddd;padding:6px 10px;text-align:left}th{background:#2980b9;color:#fff}tr:nth-child(even){background:#ecf0f1}.pass{color:#27ae60;font-weight:bold}.fail{color:#e74c3c}.info{background:#ebf5fb;border-left:4px solid #3498db;padding:10px 15px;margin:12px 0}</style></head><body>
-<h1>Terminal-Bench 2.1 · 7路横评 - R1969</h1>
-<p><strong>模型</strong>: glm-5.3-flash | <strong>时间</strong>: 2026-11-09 11:53 | <strong>网关</strong>: RESTORED<br><strong>口径声明</strong>: TB-2.1 / 89题 / 7-way concurrent (<strong>不可与TB4比较</strong>) | oracle 5/5 ✅</p>
-<h2>TB-2.1 7路矩阵 (best-run)</h2>
-<table><tr><th>Harness</th><th>Passed/Done</th><th>Pass%</th></tr><tr><td><strong>cline</strong></td><td>8/93</td><td class="pass">8.6%</td></tr>
-<tr><td><strong>codex</strong></td><td>4/9</td><td class="pass">44.4%</td></tr>
-<tr><td><strong>opencode</strong></td><td>18/34</td><td class="pass">52.9%</td></tr>
-<tr><td><strong>claude-code</strong></td><td>12/67</td><td class="pass">17.9%</td></tr>
-<tr><td><strong>pi</strong></td><td>23/65</td><td class="pass">35.4%</td></tr>
-<tr><td><strong>hermes</strong></td><td>3/93</td><td class="pass">3.2%</td></tr>
-<tr><td><strong>deepseek</strong></td><td>14/21</td><td class="pass">66.7%</td></tr>
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><title>TB-2.1 7way R1982</title><style>body{font-family:"Noto Sans CJK SC","Microsoft YaHei",sans-serif;max-width:1000px;margin:0 auto;padding:20px;background:#f8f9fa;color:#333}h1{color:#1a5276;border-bottom:3px solid #2980b9;padding-bottom:10px}h2{color:#1a5276;margin-top:25px;border-left:5px solid #2980b9;padding-left:10px}table{border-collapse:collapse;width:100%;margin:12px 0}th,td{border:1px solid #ddd;padding:6px 10px;text-align:left}th{background:#2980b9;color:#fff}tr:nth-child(even){background:#ecf0f1}.pass{color:#27ae60;font-weight:bold}.fail{color:#e74c3c}.info{background:#ebf5fb;border-left:4px solid #3498db;padding:10px 15px;margin:12px 0}</style></head><body>
+<h1>Terminal-Bench 2.1 · 7路横评 - R1982</h1>
+<p><strong>模型</strong>: glm-5.3-flash | <strong>时间</strong>: 2026-11-09 16:04 | <strong>网关</strong>: ALL 200<br><strong>口径声明</strong>: TB-2.1 / 89题 / 7-way concurrent (<strong>不可与TB4比较</strong>) | oracle 5/5 ✅</p>
+<h2>TB-2.1 7路矩阵</h2>
+<table><tr><th>Harness</th><th>Passed</th><th>Done(trials)</th><th>Pass%</th><th>Errors</th></tr>
+<tr><td><strong>pi</strong></td><td>42</td><td>152</td><td class="pass">27.6%</td><td>12</td></tr>
+<tr><td><strong>opencode</strong></td><td>40</td><td>93</td><td class="pass">43.0%</td><td>15</td></tr>
+<tr><td><strong>deepseek</strong></td><td>21</td><td>108</td><td class="pass">19.4%</td><td>0</td></tr>
+<tr><td><strong>claude-code</strong></td><td>25</td><td>165</td><td class="pass">15.2%</td><td>51</td></tr>
+<tr><td><strong>cline</strong></td><td>19</td><td>260</td><td class="pass">7.3%</td><td>12</td></tr>
+<tr><td><strong>codex</strong></td><td>8</td><td>186</td><td class="pass">4.3%</td><td>3</td></tr>
+<tr><td><strong>hermes</strong></td><td>6</td><td>233</td><td class="pass">2.6%</td><td>2</td></tr>
 </table>
+<p><strong>总计</strong>: 161 passed / 1197 trials (7-way concurrent, 仍在运行中)</p>
 <div class="info"><p><strong>不可比性说明</strong>: TB-2.1与TB4题集不同(89题 vs 66题), 不可跨基准比较. TB4全0=能力(verifier已运行). TB-2.1 oracle 5/5证明verifier正常.</p>
-<p><strong>空patch归因</strong>: 429 vs 合理失败 — 网关恢复后重预测验证中.</p></div>
-<hr><p style="text-align:center;color:#7f8c8d;font-size:0.9em">BaiZe Harness TB-2.1 7way R1969 2026-11-09 11:53 | glm-5.3-flash | 正文写cline</p>
+<p><strong>注</strong>: trials含重试/多轮; 各路进度不同(done数差异大). errors=适配器/超时/环境错误(非能力). 网关ALL 200, 非429.</p></div>
+<hr><p style="text-align:center;color:#7f8c8d;font-size:0.9em">BaiZe Harness TB-2.1 7way R1982 2026-11-09 16:04 | glm-5.3-flash | 正文写cline | 数据源: _count_tb21_glm53_R1978.py</p>
 </body></html>

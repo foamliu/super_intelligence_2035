@@ -491,4 +491,9 @@
 1794032822083_qty8f	xiwang	hfeg0pkn002	422	pg_layout	case	EDA-Eval-DesignFlow-PdFloorplanGen-001	2026-11-09 12:00	
 1794035650061_tmx27	xiwang	hfeg0pkn002	0	layout_aether	case	EDA-Eval-DesignFlow-EccDsaLocate-001	2026-11-09 13:09	
 1791783189298_t2hnp	steveny	hfeg0pnd001	336	layout_virtuoso	case	EDA-Eval-DesignFlow-SchNetPrefixHilightGen-001	2026-11-09 14:04	
-1792552971568_dnkz8	johnl	hfeg0pkn001	146	physical_verify	claimed		2026-11-09 14:39	
+1792552971568_dnkz8	johnl	hfeg0pkn001	146	physical_verify	case	EDA-Eval-DesignFlow-PexRccCdlPortMapFix-001	2026-11-09 15:26	
+1793963596117_aftvk.messages.json	jieran	hfeg0pkn004	14	layout_aether	claimed		2026-11-09 16:02	
+1794143890547_lnkot.messages.json					parked		2026-11-09 16:02	r281 reject: fragmented multi-topic (HTML flower gen + datapath arch decomposition + open/close circuits), not clean single-turn produce-task; jackjia NEW
+1793089704959_am99r.messages.json					parked		2026-11-09 16:02	r281 reject: op-amp DC operating-point analysis + sim-job hang diagnostic, schematic/sim domain wrong-shard (D); e0029308
+1794131904136_0rtkh.messages.json					parked		2026-11-09 16:02	r281 reject: editor(99)/read_files(88)/run_approved_command(36) software-dev session, layout kw incidental, not EDA-tool; jkxu NEW
+1794210366563_2wp18.messages.json					parked		2026-11-09 16:02	r281 borderline-park: LVS Error(20043) net-short diagnostic (GSAEB shorted GSAE_BCK), 38msgs 2 real turns thin; user cites error=A-disqualify; potential B-synth LVS-short parser but thin; e0044131

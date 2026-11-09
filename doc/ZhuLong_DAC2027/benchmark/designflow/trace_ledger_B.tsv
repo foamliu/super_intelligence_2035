@@ -623,3 +623,36 @@ qnm9e					parked		2026-11-08 01:58	Finesim DC convergence Q&A prose dup of uky6c
 1794191339271_hx61r.messages.json	jingc	hfeg0pkn001	9	spice_sim	case	EDA-Eval-DesignFlow-NetlistDiffBankLogic-001	2026-11-09 13:32	
 1794202410355_ps4q9	yifansun	hfeg0pkn001	3	spice_sim	case	EDA-Eval-DesignFlow-Mt0ParseFix-001	2026-11-09 14:30	
 1794187811534_0218t					case	EDA-Eval-DesignFlow-SimResultDirRestruct-001	2026-11-09 15:17	
+1793931435256_j9oap	e0046913	hfeg0pkn003	0	spice_sim	parked		2026-11-09 15:42	kw=0 non-spice, fresh 13:40
+1794206645292_ayxhy	e0046913	hfeg0pkn003	0	spice_sim	parked		2026-11-09 15:42	kw=0 non-spice, fresh 13:40
+1794202811512_vo5f5	haoyut	hfeg0pkn003	0	spice_sim	parked		2026-11-09 15:42	kw=0 non-spice, fresh 13:40
+1793942802617_75n4g	jingjiew	hfeg0pkn003	0	spice_sim	parked		2026-11-09 15:42	kw=0 non-spice, fresh 13:40
+1792658417629_znzyh	mike	hfeg0pkn003	0	spice_sim	parked		2026-11-09 15:42	kw=0 non-spice, fresh 13:40
+1793866097938_fl4rh	mike	hfeg0pkn003	0	spice_sim	parked		2026-11-09 15:42	kw=0 non-spice, fresh 13:40
+1794191443800_6miad	t0003060	hfeg0pkn003	2	spice_sim	parked		2026-11-09 15:42	kw=2 text-summarization(Fanout汇报), no produce
+1793420479620_ctgx3	xingx	hfeg0pkn003	0	spice_sim	parked		2026-11-09 15:42	kw=0 non-spice, fresh 13:40
+1794192282188_aqlzm	mwxi	hfhds228	1	spice_sim	parked		2026-11-09 15:42	kw=1 session-resume(m5mbi continuation)+data-analysis workspace, wrong-domain
+1794209380351_1bu1m	e0044131	hfeg0pkn001	1	spice_sim	parked		2026-11-09 16:07	kw=1 non-spice-dominant, fresh 15:30
+1794210366563_2wp18	e0044131	hfeg0pkn001	1	spice_sim	parked		2026-11-09 16:07	kw=1 non-spice-dominant, fresh 15:30
+1793953276084_x88fx	eric1ch	hfeg0pkn001	0	spice_sim	parked		2026-11-09 16:07	kw=0 non-spice, fresh 15:30
+1794209199793_kol7l	jmgu	hfeg0pkn001	1	spice_sim	parked		2026-11-09 16:07	kw=1 non-spice-dominant, fresh 15:30
+1794201477543_rlkv0	jolinz	hfeg0pkn001	0	spice_sim	parked		2026-11-09 16:07	kw=0 non-spice, fresh 15:30
+1794189717347_1yqtd	lein	hfeg0pkn001	0	spice_sim	parked		2026-11-09 16:07	kw=0 non-spice, fresh 15:30
+1794202683816_jlyr6	zhiguo1w	hfeg0pkn001	0	spice_sim	parked		2026-11-09 16:07	kw=0 non-spice, fresh 15:30
+1794205452473_ve5ya	e0029495	hfeg0pkn002	0	spice_sim	parked		2026-11-09 16:07	kw=0 non-spice, fresh 15:30
+1794203361928_17trm	e0039602	hfeg0pkn002	0	spice_sim	parked		2026-11-09 16:07	kw=0 non-spice, fresh 15:30
+1794204930558_vgi1y	e0047600	hfeg0pkn002	0	spice_sim	parked		2026-11-09 16:07	kw=0 non-spice, fresh 15:30
+1793927511932_p9dvv	e0048255	hfeg0pkn002	0	spice_sim	parked		2026-11-09 16:07	kw=0 non-spice, fresh 15:30
+1794210761770_t9j7w	owench	hfeg0pkn002	24	spice_sim	parked		2026-11-09 16:07	kw=24 reject: jigeshixing PDK model analysis(分析这个model/都有哪些管子), vague consulting+multi-turn-dep(这部分 refs prior ctx), L1 parse no spice-run, gold=prose inventory ambiguous
+1794209737398_a5mxr	ruminji	hfeg0pkn002	6	spice_sim	parked		2026-11-09 16:07	kw=6 reject: 仿真ac怎么语句=Q&A consulting(RAG api search x40), no produce-task
+1794197643242_8b0og	xinqiaoz	hfeg0pkn002	0	spice_sim	parked		2026-11-09 16:07	kw=0 non-spice, fresh 15:30
+1794209742408_8aer9	xinqiaoz	hfeg0pkn002	0	spice_sim	parked		2026-11-09 16:07	kw=0 non-spice(85KB trivial), fresh 15:30
+1794210829621_i1no4	cong3li	hfeg0pkn004	0	spice_sim	parked		2026-11-09 16:07	kw=0 non-spice(12KB trivial), fresh 15:30
+1794205533893_16yrv	e0023936	hfeg0pkn004	0	spice_sim	parked		2026-11-09 16:07	kw=0 non-spice, fresh 15:30
+1792634547955_wzkye	gracew	hfeg0pkn004	0	spice_sim	parked		2026-11-09 16:07	kw=0 non-spice, fresh 15:30
+1793771746058_2c126	gracew	hfeg0pkn004	0	spice_sim	parked		2026-11-09 16:07	kw=0 non-spice, fresh 15:30
+1794185877917_jkvft	jinhaoli	hfeg0pkn004	0	spice_sim	parked		2026-11-09 16:07	kw=0 non-spice, fresh 15:30
+1793783668558_b6rfa	t0002805	hfeg0pkn004	0	spice_sim	parked		2026-11-09 16:07	kw=0 non-spice, fresh 15:30
+1793877308530_kzwvo	e0014036	hfeg0pkn005	0	spice_sim	parked		2026-11-09 16:07	kw=0 non-spice, fresh 15:30
+1793870649495_xxlek	rongjiez	hfeg0pkn005	0	spice_sim	parked		2026-11-09 16:07	kw=0 non-spice, fresh 15:30
+1794210513201_rx7v2	t0002802	hfeg0pkn005	17	spice_sim	parked		2026-11-09 16:07	kw=17 reject: 帮我检查这个文件中说了什么(FineSim lsf_job_error.log)=explanation/diagnostic, no produce-task, L1 read-log
