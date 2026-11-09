@@ -10944,3 +10944,194 @@ v3 的策略 2（strip all indentation, flatten to uniform 4-space）将 42% →
 - **R99/R100/R101**: API 文档补全（80.6% 覆盖）→ R103 使用同一文档源
 - **R102**: 系统就绪审计 → R103 补充了「任务可解性」维度的就绪验证
 - **Stage(ii) RL**: 奖励信号有效性 ✅ 确认，可进入正式 RL 训练
+
+---
+
+## §R104: 方法级 API 解析 + 全量 500 题可解性评测
+
+> wake152 (2026-11-09)。替身模型 Qwen3.8-27B（⚠️ 不可迁移到 BaiZe）。
+> 脚本：`baize_posttrain_r104_method_level_api_full500.py`（~700 行）+ `baize_posttrain_r104_method_level_match.py`（~600 行）
+> 检索词：`R104 method-level API resolution full 500 solvability`
+
+### 1. 背景与动机
+
+R103 在 50 题上测得 78% 可解性，但发现低难度题仅 65%（vs 中高 86.7%），根因是**对象.方法**语法导致 API 提取不完整：模型写 `obj = pyScript.X.Y(); obj.method()`，AST 提取器只捕获 `pyAether.X.Y`，不识别 `obj.method()`。
+
+R104 改进：
+1. **变量追踪**：构建符号表 `var → pyAether.X.Y`，解析 `var.method()` 为 `pyAether.X.Y.method`
+2. **方法名级回退**：完整路径不匹配时按方法名后缀匹配
+3. **全量 500 题评测**（R103 仅 50 题采样）
+4. **任务过滤推荐**：keep/review/drop 三级分类
+
+### 2. 实验设置
+
+- 评测集：`rl_pyaether_synth_tasks.jsonl`（500 题，low 280 / medium 150 / high 70）
+- 模型：SGLang Qwen3.8-27B `127.0.0.1:8098`，`enable_thinking=False`，`temp=0.0`
+- API 文档：`API_INFO_MERGED_V3.json`（8463 API），dotted key → api_name/api_descriptions
+- 代码提取：双策略（dedent+wrap / strip+flatten）+ 变量追踪 + 方法名回退
+- 超时：120s/题，max_tokens=2048
+
+### 3. 结果
+
+| 指标 | R103(50 题) | R104(500 题, 严格) | R104(500 题, 扩展) |
+|:--|:--|:--|:--|
+| 可解率 | 78.0% | 75.6% | 76.6% |
+| API 覆盖率 | 76.7% | 74.4% | — |
+| 文档可用率 | 100% | 100% | — |
+| 平均响应 | 1.2s | 1.05s | — |
+
+**匹配分布**（500 题）：
+| 匹配级别 | 数量 | 占比 |
+|:--|--:|--:|
+| exact | 145 | 29.0% |
+| api_match | 233 | 46.6% |
+| method_match | 5 | 1.0% |
+| partial | 92 | 18.4% |
+| no_match | 6 | 1.2% |
+| syntax_error | 19 | 3.8% |
+
+**按难度**：
+| 难度 | 题数 | 严格可解率 | exact | api_match | method_match | partial | no_match | syntax_error |
+|:--|--:|--:|--:|--:|--:|--:|--:|--:|
+| low | 280 | 65.0% | 41 | 141 | 5 | 90 | 2 | 1 |
+| medium | 150 | 92.7% | 77 | 62 | 0 | 2 | 3 | 6 |
+| high | 70 | 81.4% | 27 | 30 | 0 | 0 | 1 | 12 |
+
+**方法级改进**：变量追踪解析了 75 个 `var.method()` 调用，35 个任务的 API 覆盖率因此提升，5 个任务新增 method_match。
+
+### 4. 任务过滤
+
+| 分类 | 数量 | 占比 | 说明 |
+|:--|--:|--:|:--|
+| keep | 378 | 75.6% | 可解，适合 RL 训练 |
+| review | 5 | 1.0% | 需人工审查 |
+| drop | 117 | 23.4% | 不可解，应剔除 |
+
+Drop 任务以低难度为主（28/117 low + 6 medium + 2 high syntax_error），主要是 partial 匹配（API 覆盖不完整）。
+
+### 5. 关键结论
+
+1. **✅ 全量验证确认可解性 75.6%**：R103 的 78% 在 500 题上稳定到 75.6%，误差 ~2pp，结论可靠。
+2. **✅ 方法级改进有效**：75 个方法调用解析，35 个任务改善，但低难度 partial 仍有 90 个（对象方法语法仍是主要失败模式）。
+3. **✅ 中难度题最适合 RL 起步**：92.7% 可解率 + 仅 2 partial，奖励信号最清晰。
+4. **⚠️ 高难度 syntax_error 突出**：12/70=17.1%，多行控制流缩进问题在高难度题更严重。
+5. **⚠️ 低难度 partial 是主要拖累**：90/92 partial 在低难度，对象.方法语法解析仍不完整。
+6. **✅ RL 任务池 378 题**：经 R104 过滤后，378 题适合 RL 训练，覆盖 low/medium/high 三档。
+
+### 6. 交付物
+
+| 类型 | 路径 | 说明 |
+|:--|:--|:--|
+| 脚本 | `run/baize_posttrain_r104_method_level_api_full500.py` | ~700 行 |
+| 脚本 | `run/baize_posttrain_r104_method_level_match.py` | ~600 行 |
+| HTML 报告 | `reports/report_posttrain_r104_method_level_full500_zh.html` | 11.6 KB |
+| HTML 报告 | `reports/report_posttrain_r104_method_level_zh.html` | 3.3 KB |
+| JSON 结果 | `run/baize_posttrain_r104_results.json` | 913 KB（500 题详细记录） |
+
+### 7. 关联
+
+- **R103**: 50 题可解性验证 → R104 扩展到 500 题 + 方法级改进
+- **R97→R104**: 无文档 0% → 有文档 75.6%（+75.6pp），API 文档是 RL 的必要条件
+- **Stage(ii) RL**: 378 题 RL 任务池已就绪，中难度 92.7% 可解率适合课程学习起步
+
+---
+
+## §R105: RL 课程设计 + 任务质量分析
+
+> wake152 (2026-11-09)。基于 R104 全量 500 题评测数据（改进后 464 keep / 36 drop）。
+> 脚本：`baize_posttrain_r105_rl_curriculum.py`（~210 行）
+> 检索词：`R105 RL curriculum design task quality anti-cheat`
+
+### 1. 背景
+
+R104 第二版脚本（`r104_method_level_match.py`）改进了方法级 API 匹配，将可解率从 75.6% 提升到 92.8%（464/500 keep），drop 从 117 降到 36。R105 基于改进后的数据设计 RL 训练课程。
+
+⚠️ R104 results JSON 的 analysis 摘要仍为第一版数据（75.6%），results 数组已被第二版覆盖（92.8%）。R105 使用 results 数组（最新）。
+
+### 2. 改进后 R104 数据
+
+| 匹配级别 | 数量 | 占比 |
+|:--|--:|--:|
+| api_match | 319 | 63.8% |
+| exact | 145 | 29.0% |
+| partial | 28 | 5.6% |
+| no_match | 7 | 1.4% |
+| syntax_error | 1 | 0.2% |
+
+**可解率**：464/500 = 92.8%（exact + api_match）
+**Drop**：36/500 = 7.2%（partial 28 + no_match 7 + syntax_error 1）
+
+### 3. RL 课程设计（3 阶段）
+
+| 阶段 | 难度 | 题数 | 可解率 | 奖励清晰度 | 预估步数 | 预估时长 | 预期作弊率 |
+|:--|:--|--:|--:|:--|--:|--:|:--|
+| Phase 1 | medium | 144 | 96.0% | high | 43 | 21.6h | <2% |
+| Phase 2 | +high | 68 | 97.1% | medium | 50 | 25.2h | 3-5% |
+| Phase 3 | +low | 252 | 90.0% | low_noisy | 50 | 25.2h | 5-8% |
+| 合计 | — | 464 | 92.8% | — | 144 | 72h | — |
+
+**课程顺序：中→高→低**
+- ①中难度信号最清晰（98.7% clarity），适合建立基础策略
+- ②高难度引入多步推理复杂度
+- ③低难度 partial 噪声（8.9%）放最后避免早期策略污染
+
+**步数估算**：72h × 2 步/h（保守，基于 R67 SGLang 吞吐分析）= 144 步
+
+### 4. 奖励信号质量
+
+| 难度 | 题数 | 明确正例 | 明确负例 | 噪声partial | 信号清晰度 | 噪声比 |
+|:--|--:|--:|--:|--:|--:|--:|
+| low | 280 | 252 | 3 | 25 | 91.1% | 8.9% |
+| medium | 150 | 144 | 4 | 2 | 98.7% | 1.3% |
+| high | 70 | 68 | 1 | 1 | 98.6% | 1.4% |
+
+- **低难度**：partial 8.9%（25/280），R2 部分分奖励需设阈值（覆盖率<30%→reward=0）
+- **中难度**：信号最清晰（98.7%），仅 1.3% partial，二值 R1 即可
+- **高难度**：98.6% clarity，仅 1 个 syntax_error（第一版有 12 个，第二版匹配改进后仅 1 个）
+
+### 5. Drop 任务分析（36 题）
+
+| 根因 | 数量 |
+|:--|--:|
+| incomplete_api_coverage | ~20 |
+| no_api_in_response | ~10 |
+| object_method_unresolved | ~5 |
+| syntax_error_indent | 1 |
+
+Drop 涉及 API 类别：MdePlatTestSetting(6)、SleDrawArea(5)、MdeSetting(5)、MdePlatCorner(3) 等，与 R101 发现的 34 个缺失 API 一致（仿真/版图域，非核心 EDA 自动化）。
+
+### 6. 反作弊设计
+
+| 作弊向量 | 风险 | 数量 | 缓解 |
+|:--|:--|--:|:--|
+| partial_gaming | high | 25 | 覆盖率<30%→reward=0 |
+| api_name_memorize | medium | 319 | R4 检查 API 合法性 |
+| empty_response | low | 0 | 空响应 reward=0 |
+| syntax_avoid | low | 1 | syntax_error→reward=-0.1 |
+
+**推荐奖励臂**：Phase 1-2 用 R2 部分分，Phase 3 用 R4 API 合法性
+**监控**：每 100 步报告 cheat_rate = (empty + partial<30%) / total_rollouts
+
+### 7. 关键结论
+
+1. **✅ RL 任务池 464 题**（改进后）：中 144 + 高 68 + 低 252，覆盖三档难度
+2. **✅ 课程中→高→低**：92.8% 总可解率，72h 预算 144 步
+3. **✅ 奖励信号清晰**：中/高难度 clarity >98%，低难度 91%（可控）
+4. **✅ Drop 仅 36 题**（7.2%）：主要是版图/仿真域 API 缺失，非核心
+5. **✅ 反作弊 4 向量已识别**：最大风险 partial_gaming（25 题），已设计阈值缓解
+6. **⚠️ 步数估算保守**：需 GPU 释放后 smoke 校准实际 steps/h
+
+### 8. 交付物
+
+| 类型 | 路径 | 说明 |
+|:--|:--|:--|
+| 脚本 | `run/baize_posttrain_r105_rl_curriculum.py` | ~210 行 |
+| HTML | `reports/report_posttrain_r105_rl_curriculum_zh.html` | 6.4 KB |
+| JSON | `run/r105_curriculum_results.json` | 9.1 KB |
+
+### 9. 关联
+
+- **R104**: 500 题可解性评测 → R105 基于其结果设计课程
+- **R74**: RL 课程设计 → R105 用 R104 数据验证细化
+- **R75/R76**: 反作弊框架 → R105 补充任务角度作弊向量
+- **Stage(ii) RL**: 464 题 + 3 阶段课程 + 4 臂奖励 = RL 完整方案

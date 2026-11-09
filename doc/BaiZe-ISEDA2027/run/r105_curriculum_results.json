@@ -1,0 +1,367 @@
+{
+  "drop": {
+    "total": 36,
+    "by_diff": {
+      "low": 28,
+      "medium": 6,
+      "high": 2
+    },
+    "by_match": {
+      "no_match": 7,
+      "partial": 28,
+      "syntax_error": 1
+    },
+    "api_cats": {
+      "MdePlatTestSetting": 6,
+      "SleDrawArea": 5,
+      "MdeSetting": 5,
+      "MdePlatCorner": 3,
+      "GuDrawArea": 2,
+      "emyBusNet": 1,
+      "emyOccInst": 1,
+      "MdeCorner": 1,
+      "dmViewFileObj": 1,
+      "emyNet": 1,
+      "MdePlatSetting": 1,
+      "dmLibObj": 1,
+      "SleAction": 1,
+      "emyConstraintGroup": 1,
+      "MdeSpeCorner": 1
+    },
+    "root_causes": {
+      "no_api_in_response": 7,
+      "incomplete_api_coverage": 24,
+      "object_method_unresolved": 4,
+      "syntax_error_indent": 1
+    },
+    "samples": [
+      {
+        "task_id": "synth-rl-0002",
+        "diff": "low",
+        "ml": "no_match",
+        "apis": [
+          "pyAether.emyBusNet.getStop"
+        ],
+        "code": "# Create a sample emyBusNet object (assuming we need to instantiate one)\n    # Since the exact constructor is not provided, we'll assume a typical usage pattern\n    # where we might have a busNet obje"
+      },
+      {
+        "task_id": "synth-rl-0022",
+        "diff": "low",
+        "ml": "partial",
+        "apis": [
+          "pyAether.SleDrawArea.getFitDepth"
+        ],
+        "code": "ae = pyScript.emyString(\"-adv\")\n    pyScript.emyInitAether(ae)\n    pyScript.aeOpenDesign(\"test\", \"test\", \"layout\")\n    gu = pyScript.aeGetActiveDa()\n    result = gu.down_cast().getFitDepth()\n    retur"
+      },
+      {
+        "task_id": "synth-rl-0029",
+        "diff": "low",
+        "ml": "no_match",
+        "apis": [
+          "pyAether.emyOccInst.getInstTerms"
+        ],
+        "code": "# Create a dummy emyOccInst object to call getInstTerms on\n    # Since we don't have a real instance, we'll use the API as documented\n    # The function should call getInstTerms with default filterFla"
+      },
+      {
+        "task_id": "synth-rl-0038",
+        "diff": "low",
+        "ml": "partial",
+        "apis": [
+          "pyAether.MdeCorner.changeTemperature"
+        ],
+        "code": "mde = pyScript.MdeSession.open(\"testLib\", \"testCell\", \"state\")\n    setting = mde.getSetting()\n    mdeCorner = setting.getCorner(\"Nominal\")\n    result = mdeCorner.changeTemperature(\"25\")\n    return res"
+      },
+      {
+        "task_id": "synth-rl-0056",
+        "diff": "low",
+        "ml": "partial",
+        "apis": [
+          "pyAether.MdePlatCorner.isValid"
+        ],
+        "code": "mde = pyScript.MdePlatSession.open(\"testLib\", \"testCell\", \"platform\")\n    setting = mde.getSetting()\n    corner = setting.getCorner(\"C1\")\n    return corner.isValid()"
+      },
+      {
+        "task_id": "synth-rl-0072",
+        "diff": "low",
+        "ml": "partial",
+        "apis": [
+          "pyAether.dmViewFileObj.getView"
+        ],
+        "code": "view = pyScript.dmGetObj(\"test\", \"test\", \"layout\")\n    viewfile = view.files[0]\n    return viewfile.getView()"
+      },
+      {
+        "task_id": "synth-rl-0077",
+        "diff": "low",
+        "ml": "partial",
+        "apis": [
+          "pyAether.emyNet.getTerms"
+        ],
+        "code": "cv = pyScript.dbOpenCV(\"test\", \"test\")\n    net = pyScript.dbCrtNet(cv, \"test_net\")\n    terms = net.getTerms()\n    return terms"
+      },
+      {
+        "task_id": "synth-rl-0095",
+        "diff": "low",
+        "ml": "partial",
+        "apis": [
+          "pyAether.MdeSetting.outputExists"
+        ],
+        "code": "mde = pyScript.MdeSession.open(\"testLib\", \"testCell\", \"state\")\n    setting = mde.getSetting()\n    result = setting.outputExists(\"corner_max\")\n    return result"
+      },
+      {
+        "task_id": "synth-rl-0097",
+        "diff": "low",
+        "ml": "partial",
+        "apis": [
+          "pyAether.SleDrawArea.getCrossSize"
+        ],
+        "code": "ae = pyScript.emyString(\"-adv\")\n    pyScript.emyInitAether(ae)\n    pyScript.aeOpenDesign(\"test\", \"test\", \"layout\")\n    gu = pyScript.aeGetActiveDa()\n    result = gu.down_cast().getCrossSize()\n    retu"
+      },
+      {
+        "task_id": "synth-rl-0112",
+        "diff": "low",
+        "ml": "partial",
+        "apis": [
+          "pyAether.MdePlatSetting.isGlobalParametersTurnedOn"
+        ],
+        "code": "mde = pyScript.MdePlatSession.open(\"testLib\", \"testCell\", \"platform\")\n    setting = mde.getSetting()\n    result = setting.isGlobalParametersTurnedOn()\n    return result"
+      }
+    ]
+  },
+  "curriculum": {
+    "total_keep": 464,
+    "order": [
+      "phase1_medium",
+      "phase2_add_high",
+      "phase3_add_low"
+    ],
+    "total_steps": 144,
+    "total_hours": 72,
+    "steps_per_hr": 2.0,
+    "split": {
+      "phase1_medium": 0.3,
+      "phase2_add_high": 0.35,
+      "phase3_add_low": 0.35
+    },
+    "phase1_medium": {
+      "tasks": 144,
+      "solvability": 0.927,
+      "clarity": "high",
+      "cheat": "<2%",
+      "steps": 43,
+      "hours": 21.599999999999998
+    },
+    "phase2_add_high": {
+      "tasks": 68,
+      "solvability": 0.814,
+      "clarity": "medium",
+      "cheat": "3-5%",
+      "steps": 50,
+      "hours": 25.2
+    },
+    "phase3_add_low": {
+      "tasks": 252,
+      "solvability": 0.65,
+      "clarity": "low_noisy",
+      "cheat": "5-8%",
+      "steps": 50,
+      "hours": 25.2
+    },
+    "rationale": "中→高→低：①中难度92.7%可解率最高，信号最清晰；②高难度引入多步推理；③低难度partial多(90/280)放最后避免早期策略污染"
+  },
+  "reward": {
+    "low": {
+      "total": 280,
+      "clear_pos": 252,
+      "clear_neg": 3,
+      "noisy": 25,
+      "clarity": 0.911,
+      "noise": 0.089,
+      "note": "partial占32%，R2部分分奖励需设阈值(覆盖率<30%→reward=0)"
+    },
+    "medium": {
+      "total": 150,
+      "clear_pos": 144,
+      "clear_neg": 4,
+      "noisy": 2,
+      "clarity": 0.987,
+      "noise": 0.013,
+      "note": "信号最清晰，仅1.3%partial，二值R1即可"
+    },
+    "high": {
+      "total": 70,
+      "clear_pos": 68,
+      "clear_neg": 1,
+      "noisy": 1,
+      "clarity": 0.986,
+      "noise": 0.014,
+      "note": "17.1%syntax_error，建议R3格式惩罚臂"
+    }
+  },
+  "coverage": [
+    {
+      "cat": "pyaecb",
+      "total": 30,
+      "keep": 30,
+      "drop": 0,
+      "rate": 1.0
+    },
+    {
+      "cat": "emyDesign",
+      "total": 7,
+      "keep": 7,
+      "drop": 0,
+      "rate": 1.0
+    },
+    {
+      "cat": "EmyParamDef",
+      "total": 6,
+      "keep": 6,
+      "drop": 0,
+      "rate": 1.0
+    },
+    {
+      "cat": "MdeSetting",
+      "total": 6,
+      "keep": 1,
+      "drop": 5,
+      "rate": 0.167
+    },
+    {
+      "cat": "MdePlatTestSetting",
+      "total": 6,
+      "keep": 0,
+      "drop": 6,
+      "rate": 0.0
+    },
+    {
+      "cat": "emyBlock",
+      "total": 5,
+      "keep": 5,
+      "drop": 0,
+      "rate": 1.0
+    },
+    {
+      "cat": "SleDrawArea",
+      "total": 5,
+      "keep": 0,
+      "drop": 5,
+      "rate": 0.0
+    },
+    {
+      "cat": "emyTech",
+      "total": 3,
+      "keep": 3,
+      "drop": 0,
+      "rate": 1.0
+    },
+    {
+      "cat": "MdePlatCorner",
+      "total": 3,
+      "keep": 0,
+      "drop": 3,
+      "rate": 0.0
+    },
+    {
+      "cat": "emyFSComponent",
+      "total": 3,
+      "keep": 3,
+      "drop": 0,
+      "rate": 1.0
+    },
+    {
+      "cat": "MdePlatSetting",
+      "total": 3,
+      "keep": 2,
+      "drop": 1,
+      "rate": 0.667
+    },
+    {
+      "cat": "emyLib",
+      "total": 3,
+      "keep": 3,
+      "drop": 0,
+      "rate": 1.0
+    },
+    {
+      "cat": "emyVia",
+      "total": 2,
+      "keep": 2,
+      "drop": 0,
+      "rate": 1.0
+    },
+    {
+      "cat": "EmyCDFSimType",
+      "total": 2,
+      "keep": 1,
+      "drop": 1,
+      "rate": 0.5
+    },
+    {
+      "cat": "emyGroup",
+      "total": 2,
+      "keep": 2,
+      "drop": 0,
+      "rate": 1.0
+    },
+    {
+      "cat": "emyCellViewExt",
+      "total": 2,
+      "keep": 2,
+      "drop": 0,
+      "rate": 1.0
+    },
+    {
+      "cat": "emyNet",
+      "total": 2,
+      "keep": 1,
+      "drop": 1,
+      "rate": 0.5
+    },
+    {
+      "cat": "emyObject",
+      "total": 2,
+      "keep": 2,
+      "drop": 0,
+      "rate": 1.0
+    },
+    {
+      "cat": "emyViaParam",
+      "total": 2,
+      "keep": 2,
+      "drop": 0,
+      "rate": 1.0
+    },
+    {
+      "cat": "emyFigGroup",
+      "total": 2,
+      "keep": 2,
+      "drop": 0,
+      "rate": 1.0
+    }
+  ],
+  "anti_cheat": {
+    "vectors": [
+      {
+        "vector": "api_name_memorize",
+        "risk": "medium",
+        "count": 319,
+        "fix": "R4检查API合法性"
+      },
+      {
+        "vector": "partial_gaming",
+        "risk": "high",
+        "count": 25,
+        "fix": "覆盖率<30%→reward=0"
+      },
+      {
+        "vector": "syntax_avoid",
+        "risk": "low",
+        "count": 1,
+        "fix": "syntax_error→reward=-0.1"
+      }
+    ],
+    "reward_arm": "R2(部分分)for phase1-2, R4(API合法性)for phase3",
+    "monitor": "每100步报告cheat_rate=(empty+partial<30%)/total",
+    "hook": "PreToolUse hook全程启用"
+  }
+}
