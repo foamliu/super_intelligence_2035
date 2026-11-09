@@ -561,3 +561,4 @@ qnm9e					parked		2026-11-08 01:58	Finesim DC convergence Q&A prose dup of uky6c
 1789611712575_5tdum.messages.json	mike	hfeg0plg05	3368	spice_sim	case	EDA-Eval-DesignFlow-SiInpTokenRm-001	2026-11-09 07:20	
 1792134701239_u5fy6.messages.json	reedchen	hfeg0plg49	2204	spice_sim	parked		2026-11-09 07:20	dup of Mt0TskewCalc-001 (same reedchen mt0.csv Tskew U#0, 7jzqb family)
 1792133845232_k7jwl.messages.json	reedchen	hfeg0plg49	2035	spice_sim	parked		2026-11-09 07:20	dup-family of Mt0TskewCalc-001 (reedchen Tskew session, U#0 same task; later GenSignalTrTf/GenSP turns ref external files)
+1793080793153_16izn.messages.json	e03179	hfeg0plg15	78	spice_sim	case	EDA-Eval-DesignFlow-VamRecoCellReplace-001	2026-11-09 08:03	VAM cell replacement query (peek CLEAN @06:4x, U#1 goal-stating)
