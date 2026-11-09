@@ -1,0 +1,734 @@
+{
+  "timestamp": "2026-11-09T15:05:17.116996",
+  "stats": {
+    "total_apis": 124,
+    "found_count": 64,
+    "not_found_count": 60,
+    "s5_pairs_generated": 128,
+    "v4_total_pairs": 1177,
+    "contamination_rejected": 0,
+    "source_distribution": {
+      "api_classes.jsonl": 56,
+      "pyAether_API_Docstring.md": 8
+    },
+    "type_distribution": {
+      "other": {
+        "total": 23,
+        "found": 8,
+        "not_found": 15
+      },
+      "class": {
+        "total": 25,
+        "found": 0,
+        "not_found": 25
+      },
+      "enum_constant": {
+        "total": 21,
+        "found": 21,
+        "not_found": 0
+      },
+      "method": {
+        "total": 48,
+        "found": 28,
+        "not_found": 20
+      },
+      "factory_method": {
+        "total": 7,
+        "found": 7,
+        "not_found": 0
+      }
+    }
+  },
+  "found_apis": [
+    {
+      "api": "EmyLPPHeader.create",
+      "type": "factory_method",
+      "found_in": [
+        "api_classes.jsonl"
+      ]
+    },
+    {
+      "api": "EmyLPPHeader.getLayerNum",
+      "type": "method",
+      "found_in": [
+        "api_classes.jsonl"
+      ]
+    },
+    {
+      "api": "EmyLPPHeader.getMaskNum",
+      "type": "method",
+      "found_in": [
+        "api_classes.jsonl"
+      ]
+    },
+    {
+      "api": "EmyLPPHeader.getPriority",
+      "type": "method",
+      "found_in": [
+        "api_classes.jsonl"
+      ]
+    },
+    {
+      "api": "EmyLPPHeader.getPurposeNum",
+      "type": "method",
+      "found_in": [
+        "api_classes.jsonl"
+      ]
+    },
+    {
+      "api": "EmyLPPHeader.getTech",
+      "type": "method",
+      "found_in": [
+        "api_classes.jsonl"
+      ]
+    },
+    {
+      "api": "EmyLPPHeader.isFilled",
+      "type": "method",
+      "found_in": [
+        "api_classes.jsonl"
+      ]
+    },
+    {
+      "api": "EmyLPPHeader.setFilled",
+      "type": "method",
+      "found_in": [
+        "api_classes.jsonl"
+      ]
+    },
+    {
+      "api": "EmyLPPHeader.setMaskNum",
+      "type": "method",
+      "found_in": [
+        "api_classes.jsonl"
+      ]
+    },
+    {
+      "api": "EmyLPPHeader.setPacketName",
+      "type": "method",
+      "found_in": [
+        "api_classes.jsonl"
+      ]
+    },
+    {
+      "api": "EmyLPPHeader.setPriority",
+      "type": "method",
+      "found_in": [
+        "api_classes.jsonl"
+      ]
+    },
+    {
+      "api": "EmyNtlUtil.checkViewList",
+      "type": "method",
+      "found_in": [
+        "api_classes.jsonl"
+      ]
+    },
+    {
+      "api": "MdePlatDonauJobPolicy.setMaxJobNum",
+      "type": "method",
+      "found_in": [
+        "api_classes.jsonl"
+      ]
+    },
+    {
+      "api": "MdePlatLSFJobPolicy.setMaxJobNum",
+      "type": "method",
+      "found_in": [
+        "api_classes.jsonl"
+      ]
+    },
+    {
+      "api": "MdePlatOGEJobPolicy.setMaxJobNum",
+      "type": "method",
+      "found_in": [
+        "api_classes.jsonl"
+      ]
+    },
+    {
+      "api": "MdePlatParamSweepAddSpecificPoints.getExclusionList",
+      "type": "method",
+      "found_in": [
+        "api_classes.jsonl"
+      ]
+    },
+    {
+      "api": "MdePlatParamSweepCenterSpan.getCenterValue",
+      "type": "method",
+      "found_in": [
+        "api_classes.jsonl"
+      ]
+    },
+    {
+      "api": "MdeSpeOutput.exprType",
+      "type": "method",
+      "found_in": [
+        "api_classes.jsonl"
+      ]
+    },
+    {
+      "api": "MdeSpeOutput.plot",
+      "type": "method",
+      "found_in": [
+        "api_classes.jsonl"
+      ]
+    },
+    {
+      "api": "MdeSpeOutput.save",
+      "type": "method",
+      "found_in": [
+        "api_classes.jsonl"
+      ]
+    },
+    {
+      "api": "MdeTranAnalysis.setAccuracyLevel",
+      "type": "method",
+      "found_in": [
+        "api_classes.jsonl"
+      ]
+    },
+    {
+      "api": "aeIpcProcess.readline",
+      "type": "method",
+      "found_in": [
+        "api_classes.jsonl"
+      ]
+    },
+    {
+      "api": "aeIpcProcess.wait",
+      "type": "method",
+      "found_in": [
+        "api_classes.jsonl"
+      ]
+    },
+    {
+      "api": "aeMenuItemCallBack",
+      "type": "other",
+      "found_in": [
+        "pyAether_API_Docstring.md"
+      ]
+    },
+    {
+      "api": "aeToggleCallBack",
+      "type": "other",
+      "found_in": [
+        "pyAether_API_Docstring.md"
+      ]
+    },
+    {
+      "api": "dbCV",
+      "type": "other",
+      "found_in": [
+        "pyAether_API_Docstring.md"
+      ]
+    },
+    {
+      "api": "dbInst",
+      "type": "other",
+      "found_in": [
+        "pyAether_API_Docstring.md"
+      ]
+    },
+    {
+      "api": "dbTraverseTriggerFunc",
+      "type": "other",
+      "found_in": [
+        "pyAether_API_Docstring.md"
+      ]
+    },
+    {
+      "api": "emcCenterCenterTextAlign",
+      "type": "enum_constant",
+      "found_in": [
+        "api_classes.jsonl"
+      ]
+    },
+    {
+      "api": "emcCenterLeftTextAlign",
+      "type": "enum_constant",
+      "found_in": [
+        "api_classes.jsonl"
+      ]
+    },
+    {
+      "api": "emcCenterRightTextAlign",
+      "type": "enum_constant",
+      "found_in": [
+        "api_classes.jsonl"
+      ]
+    },
+    {
+      "api": "emcGroundSigType",
+      "type": "enum_constant",
+      "found_in": [
+        "api_classes.jsonl"
+      ]
+    },
+    {
+      "api": "emcInheritFromTopBlock",
+      "type": "enum_constant",
+      "found_in": [
+        "api_classes.jsonl"
+      ]
+    },
+    {
+      "api": "emcInputOutputTermType",
+      "type": "enum_constant",
+      "found_in": [
+        "api_classes.jsonl"
+      ]
+    },
+    {
+      "api": "emcInputTermType",
+      "type": "enum_constant",
+      "found_in": [
+        "api_classes.jsonl"
+      ]
+    },
+    {
+      "api": "emcLowerLeftTextAlign",
+      "type": "enum_constant",
+      "found_in": [
+        "api_classes.jsonl"
+      ]
+    },
+    {
+      "api": "emcMY",
+      "type": "enum_constant",
+      "found_in": [
+        "api_classes.jsonl"
+      ]
+    },
+    {
+      "api": "emcNonePlacementStatus",
+      "type": "enum_constant",
+      "found_in": [
+        "api_classes.jsonl"
+      ]
+    },
+    {
+      "api": "emcOutputTermType",
+      "type": "enum_constant",
+      "found_in": [
+        "api_classes.jsonl"
+      ]
+    },
+    {
+      "api": "emcPowerSigType",
+      "type": "enum_constant",
+      "found_in": [
+        "api_classes.jsonl"
+      ]
+    },
+    {
+      "api": "emcR0",
+      "type": "enum_constant",
+      "found_in": [
+        "api_classes.jsonl"
+      ]
+    },
+    {
+      "api": "emcR180",
+      "type": "enum_constant",
+      "found_in": [
+        "api_classes.jsonl"
+      ]
+    },
+    {
+      "api": "emcR270",
+      "type": "enum_constant",
+      "found_in": [
+        "api_classes.jsonl"
+      ]
+    },
+    {
+      "api": "emcR90",
+      "type": "enum_constant",
+      "found_in": [
+        "api_classes.jsonl"
+      ]
+    },
+    {
+      "api": "emcSchematicSymbol",
+      "type": "enum_constant",
+      "found_in": [
+        "api_classes.jsonl"
+      ]
+    },
+    {
+      "api": "emcSignalSigType",
+      "type": "enum_constant",
+      "found_in": [
+        "api_classes.jsonl"
+      ]
+    },
+    {
+      "api": "emcStickFont",
+      "type": "enum_constant",
+      "found_in": [
+        "api_classes.jsonl"
+      ]
+    },
+    {
+      "api": "emcUpperLeftTextAlign",
+      "type": "enum_constant",
+      "found_in": [
+        "api_classes.jsonl"
+      ]
+    },
+    {
+      "api": "emcValueTextDisplayFormat",
+      "type": "enum_constant",
+      "found_in": [
+        "api_classes.jsonl"
+      ]
+    },
+    {
+      "api": "emyArray_emyUInt4",
+      "type": "other",
+      "found_in": [
+        "pyAether_API_Docstring.md"
+      ]
+    },
+    {
+      "api": "emyArray_p_emyPointArray",
+      "type": "other",
+      "found_in": [
+        "pyAether_API_Docstring.md"
+      ]
+    },
+    {
+      "api": "emyAttrDisplay.create",
+      "type": "factory_method",
+      "found_in": [
+        "api_classes.jsonl"
+      ]
+    },
+    {
+      "api": "emyBlock.create",
+      "type": "factory_method",
+      "found_in": [
+        "api_classes.jsonl"
+      ]
+    },
+    {
+      "api": "emyLine.create",
+      "type": "factory_method",
+      "found_in": [
+        "api_classes.jsonl"
+      ]
+    },
+    {
+      "api": "emyNet.create",
+      "type": "factory_method",
+      "found_in": [
+        "api_classes.jsonl"
+      ]
+    },
+    {
+      "api": "emyPointArrayF.append",
+      "type": "method",
+      "found_in": [
+        "api_classes.jsonl"
+      ]
+    },
+    {
+      "api": "emyTerm.create",
+      "type": "factory_method",
+      "found_in": [
+        "api_classes.jsonl"
+      ]
+    },
+    {
+      "api": "emyText.create",
+      "type": "factory_method",
+      "found_in": [
+        "api_classes.jsonl"
+      ]
+    },
+    {
+      "api": "emyTransformF.concat",
+      "type": "method",
+      "found_in": [
+        "api_classes.jsonl"
+      ]
+    },
+    {
+      "api": "emyTransformF.getXOffset",
+      "type": "method",
+      "found_in": [
+        "api_classes.jsonl"
+      ]
+    },
+    {
+      "api": "emyTransformF.getYOffset",
+      "type": "method",
+      "found_in": [
+        "api_classes.jsonl"
+      ]
+    },
+    {
+      "api": "emyTransformF.invert",
+      "type": "method",
+      "found_in": [
+        "api_classes.jsonl"
+      ]
+    },
+    {
+      "api": "emyTransformF.orient",
+      "type": "method",
+      "found_in": [
+        "api_classes.jsonl"
+      ]
+    },
+    {
+      "api": "pyQTStrLineEditCallBack",
+      "type": "other",
+      "found_in": [
+        "pyAether_API_Docstring.md"
+      ]
+    }
+  ],
+  "not_found_apis": [
+    {
+      "api": "CColor",
+      "type": "class"
+    },
+    {
+      "api": "CString",
+      "type": "class"
+    },
+    {
+      "api": "CString.value",
+      "type": "method"
+    },
+    {
+      "api": "CStringList",
+      "type": "class"
+    },
+    {
+      "api": "CStringList.at",
+      "type": "method"
+    },
+    {
+      "api": "GuCartPolyLine.getLinePattern",
+      "type": "method"
+    },
+    {
+      "api": "GuCartPolyLine.getLineWidth",
+      "type": "method"
+    },
+    {
+      "api": "GuCartPolyLine.setLineColor",
+      "type": "method"
+    },
+    {
+      "api": "GuCartPolyLine.setLinePattern",
+      "type": "method"
+    },
+    {
+      "api": "GuCartPolyLine.setLineWidth",
+      "type": "method"
+    },
+    {
+      "api": "MDE_SWEEP_RANGE_CENTER_SPAN",
+      "type": "class"
+    },
+    {
+      "api": "MDE_SWEEP_RANGE_START_STOP",
+      "type": "class"
+    },
+    {
+      "api": "MDE_SWEEP_TYPE_LINEAR",
+      "type": "class"
+    },
+    {
+      "api": "MDE_SWEEP_TYPE_LINEAR_STEP_SIZE",
+      "type": "class"
+    },
+    {
+      "api": "MDE_SWEEP_TYPE_LOG",
+      "type": "class"
+    },
+    {
+      "api": "MDE_SWEEP_TYPE_LOG_NUM_STEP",
+      "type": "class"
+    },
+    {
+      "api": "MDE_SWEEP_VARIABLE_DESIGN_VARIABLE",
+      "type": "class"
+    },
+    {
+      "api": "MDE_SWEEP_VARIABLE_MODEL_PARAMETER",
+      "type": "class"
+    },
+    {
+      "api": "MDE_TRAN_ACC_LEVEL_CONSERVATIVE",
+      "type": "class"
+    },
+    {
+      "api": "MDE_TRAN_ACC_LEVEL_LIBERAL",
+      "type": "class"
+    },
+    {
+      "api": "MdeSweepRange",
+      "type": "class"
+    },
+    {
+      "api": "MdeSweepType",
+      "type": "class"
+    },
+    {
+      "api": "MdeSweepType.stepMode",
+      "type": "method"
+    },
+    {
+      "api": "MdeSweepVariable",
+      "type": "class"
+    },
+    {
+      "api": "NTL_INDEX_FORMAT_ORIGIN",
+      "type": "class"
+    },
+    {
+      "api": "NTL_INDEX_FORMAT_USE_BRACKET",
+      "type": "class"
+    },
+    {
+      "api": "NTL_INDEX_FORMAT_USE_UNDERLINE",
+      "type": "class"
+    },
+    {
+      "api": "PVM_EXPAND_ALL",
+      "type": "class"
+    },
+    {
+      "api": "PVM_UPDATE_DESTLIB_MODE",
+      "type": "class"
+    },
+    {
+      "api": "SLE_GOA_AND",
+      "type": "class"
+    },
+    {
+      "api": "SLE_LE_WIRE_EXTEND",
+      "type": "class"
+    },
+    {
+      "api": "SLE_LE_WIRE_VARIABLE",
+      "type": "class"
+    },
+    {
+      "api": "SleLeWireTypeEnum",
+      "type": "class"
+    },
+    {
+      "api": "aeBaseAppFormCallBack",
+      "type": "other"
+    },
+    {
+      "api": "aeCrtHBoxLayout",
+      "type": "other"
+    },
+    {
+      "api": "dbObject",
+      "type": "other"
+    },
+    {
+      "api": "dbTraverseTriggerFunc.__init__",
+      "type": "method"
+    },
+    {
+      "api": "dbTraverseTriggerFunc.funcCb",
+      "type": "method"
+    },
+    {
+      "api": "dmGetObj.files",
+      "type": "method"
+    },
+    {
+      "api": "emvPurposeNumberDrawing",
+      "type": "other"
+    },
+    {
+      "api": "emyArray_p_emyVia",
+      "type": "other"
+    },
+    {
+      "api": "emyGetLayerNumByName",
+      "type": "other"
+    },
+    {
+      "api": "emyGetPurposeNumByName",
+      "type": "other"
+    },
+    {
+      "api": "emyInitDb",
+      "type": "other"
+    },
+    {
+      "api": "emyInitQuery",
+      "type": "other"
+    },
+    {
+      "api": "emyInitTcl",
+      "type": "other"
+    },
+    {
+      "api": "emyLine.addToNet",
+      "type": "method"
+    },
+    {
+      "api": "emyLine.addToPin",
+      "type": "method"
+    },
+    {
+      "api": "emyPin.addToPin",
+      "type": "method"
+    },
+    {
+      "api": "emyPointArray.append",
+      "type": "method"
+    },
+    {
+      "api": "emyRect.addToPin",
+      "type": "method"
+    },
+    {
+      "api": "emyScalarInst.addToPin",
+      "type": "method"
+    },
+    {
+      "api": "emyStringArray.append",
+      "type": "method"
+    },
+    {
+      "api": "smash_option",
+      "type": "other"
+    },
+    {
+      "api": "smash_option.m_smashPyCell",
+      "type": "method"
+    },
+    {
+      "api": "smash_option.m_smashVia",
+      "type": "method"
+    },
+    {
+      "api": "tm_mday",
+      "type": "other"
+    },
+    {
+      "api": "tm_mon",
+      "type": "other"
+    },
+    {
+      "api": "tm_year",
+      "type": "other"
+    },
+    {
+      "api": "vector2D_emyPointF",
+      "type": "other"
+    }
+  ]
+}

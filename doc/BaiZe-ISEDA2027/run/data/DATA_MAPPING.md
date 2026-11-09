@@ -387,10 +387,10 @@
 | 2 | part-00700~01399 | ~289 | 304,571,250,135 | 700 parquet | 0 | ✅ 已完成(23:50) | batch2 delta; cumulative 604,799,987,573 B; `stackv3_batch2_status.tsv`: 007-013全OK |
 | 3 | part-01400~02099 | ~289 | 304,759,951,372 | 700 parquet | 0 | ✅ 已完成(04:35) | batch3 delta; cumulative 909,559,938,945 B; `stackv3_batch3_status.tsv`: 014-020全OK |
 | 4 | part-02100~02799 | ~289 | 304,095,658,670 | 700 parquet | 0 | ✅ 已完成(09:20) | batch4 delta; cumulative 1,213,655,597,615 B; `stackv3_batch4_status.tsv`: 021-027全OK |
-| 5 | part-02800~03499 | ~289 | — | — | — | 🔄 下载中(batch5,启动10:12) | `stackv3_batch5_launch.log` |
-| 6 | part-03500~04199 | ~289 | — | — | — | ⬜ 待启动 | |
-| 7 | part-04200~04966 | ~316 | — | — | — | ⬜ 待启动(末批,凑满2TB) | |
-| **累计(b1+b2+b3+b4)** | 2800 shard | ~1158 | 1,213,655,597,615 | 2800 parquet | 0 | 57% of 2TB | b1+b2+b3+b4全实测; 2TB预算余 ~0.85TB |
+| 5 | part-02800~03499 | ~303 | 303,379,488,262 | 700 parquet | 0 | ✅ 已完成(14:48) | batch5 delta; cumulative 1,517,035,085,877 B; `stackv3_batch5_status.tsv`: 028-034全OK |
+| 6 | part-03500~04199 | ~303 | — | — | — | 🔄 下载中(batch6,启动15:0x) | `stackv3_batch6_launch.log` |
+| 7 | part-04200~04599 | ~173 | — | — | — | ⬜ 待启动(末批,凑满2TB) | 4 hundreds ~173GB → 累计~1,990GB≈2TB |
+| **累计(b1+b2+b3+b4+b5)** | 3500 shard | ~1517 | 1,517,035,085,877 | 3500 parquet | 0 | 76% of 2TB | b1+b2+b3+b4+b5全实测; 2TB预算余 ~0.483TB |
 
 > stats/ 目录（5 JSON, ~484 KB）已随样本下载落地，含 per-language / per-license / repo-distribution 统计。
 
@@ -480,4 +480,26 @@
 | 质量过滤规则 | **尚未执行**（下载后 parquet 级过滤，待 2TB 下载完成后统一做） | 见 H.3 §4 |
 
 > ⚠️ **批次对比**：batch4 Java 23.1% 仍是榜首（与 batch3 的 15.8% 比继续偏高），Python 7.3% 回升略高于 batch1(4.6%)/batch3(6.4%)但低于 batch2(19.2%)。C++ 6.1%/C 4.3% 较前批稳定提升，EDA(14) 18.2% 与 batch2(23.0%)/batch3(15.8%) 在同一区间。四批合计 EDA 相关约 ~16%。Vendor 0.9% 与 batch1/batch3 持平低位，>1MB 大文件 0，空仓库 0，质量持续稳定。累计 1,213.7 GB = 2TB 预算的 57%，余 ~0.85TB 空间，已启动 batch5。
+
+### H.9 批次5质检报告（2026-11-09 15:0x · 3 shard × 200 repos 抽样）
+
+| 项 | 值 | 证据 |
+|:---|:---|:---|
+| 实测字节(batch5 delta) | 303,379,488,262 B (282.6 GiB) | `stackv3_batch5_status.tsv`: 1,517,035,085,877 - 1,213,655,597,615 |
+| 实测字节(累计 b1+b2+b3+b4+b5) | 1,517,035,085,877 B (1,412.9 GiB ≈ 1.38 TiB) | `du -sb data/` |
+| 文件数(累计) | 3500 parquet | `find data/ -name '*.parquet' \| wc -l` = 3500 |
+| .incomplete | 0 | `find . -name '*.incomplete' \| wc -l` = 0 |
+| 下载耗时 | 10:15→14:48 (~4h33m) | `stackv3_batch5_20261109_101506.log` |
+| 抽样范围 | part-02800, part-03150, part-03499（首/中/末）× 200 repos/shard = 600 repos | `/tmp/stackv3_batch5_qc3.py` |
+| 抽样文件数 | 11,233 files / 21.6 MiB content | 同上 |
+| vendor 文件 | 69 (0.6%) | `files[].is_vendor=true` |
+| >1MB 文件 | 0 (0.0%) | `files[].size_bytes > 1048576` |
+| 空仓库 | 0 | `num_files=0` |
+| **语言分布（抽样 top15）** | Java 16.1% · JS 10.5% · C++ 8.2% · Python 7.8% · Markdown 6.6% · TSX 6.0% · TS 5.9% · JSON 4.6% · Dart 4.3% · CSS 3.9% · ObjC 3.8% · Jupyter 3.6% · C# 2.7% · Vue 2.6% · PHP 2.4% | `/tmp/stackv3_batch5_qc3.py` 输出 |
+| EDA 相关语言(14)占比 | 20.1% bytes（抽样） | Python/C/C++/Verilog/SV/Tcl/Makefile/CMake/Shell/MATLAB/VHDL 等 |
+| 全目标语言(32)占比 | 63.7% bytes（抽样） | 含 Java/JS/TS/Go/Rust/Scala 等 |
+| **token 估算** | ~310B tokens（batch5，按全量比例外推: 3.6T÷3.22TiB×303.4GB） | 累计 b1+b2+b3+b4+b5 ~1,546B tokens |
+| 质量过滤规则 | **尚未执行**（下载后 parquet 级过滤，待 2TB 下载完成后统一做） | 见 H.3 §4 |
+
+> ⚠️ **批次对比**：batch5 Java 16.1% 回落至 batch3(15.8%)水平（batch4 为 23.1%），JS 10.5% 升至 top2（前批 5.0%），C++ 8.2% 为五批最高（batch1~4: 0.9%/2.6%/3.3%/6.1%），Python 7.8% 与 batch4(7.3%)持平。EDA(14) 20.1% 略高于 batch4(18.2%)，五批合计 EDA 相关约 ~17%。Vendor 0.6% 持续低位，>1MB 大文件 0，空仓库 0，质量持续稳定。累计 1,517.0 GB = 2TB 预算的 76%，余 ~0.483TB 空间，已启动 batch6（part-035~041）。
 

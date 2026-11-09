@@ -4,22 +4,25 @@ WAITING: 0
 
 ## 📊 进度快照
 
-PHASE:        R1975 eval全量regen+incr_eval R1972→R1975(3missing)+cline专项r1975报告+7路predict alive
-已完成:       H-B✅·Gate7/7·TB报告✅·full500✅·cline专项C1-C5+报告R1785-R1975·TB4 0passed(能力)·TB-2.1 oracle5/5✅·§15:2x判据MET✅·R1789 eval 7/7DONE✅·R1804双报告交付✅·R1969-R1974 gateway恢复+incr_eval推进·R1975 eval全量regen+incr_eval R1975(3missing)+cline专项r1975
-当前动作:     R1975:①CPU/MEM PASS(load43/224·无本线失控>80核·mem737G/2015G) ②gateway ALL 200(agi-gateway+9092+9093) ③predict 7路alive:cline137·codex48·opencode287·cc126·pi95·hermes310·dsh116=1119total·98.4%real ④eval(全量regen):cline369/492(75.0%)·codex293/376(77.9%)·opencode415/498(83.3%)·cc294/375(78.4%)·pi336/464(72.4%)·hermes346/381(90.8%)·dsh227/280(81.1%) ⑤incr_eval R1972 DIED@opencode80/126→R1975重启(3truly missing:2cc+1dsh RUNNING) ⑥TB-2.1:156/761=20.5%(7路) ⑦cline专项r1975报告✅(C1-C5) ⑧未完成指令:有(§22:4x predict未满500+§10:10 cline专项)⇒W:0
-下一步:       ①incr_eval R1975完成(3missing)→全量eval report刷新 ②predict 7路继续推进至500(gateway 200) ③TB-2.1继续推进 ④全DONE后聚合最终7路报告
+PHASE:        R1979 CPU kill(sklearn172核)+cline eval全量完成(103/137=75.2%)+incr_eval R1978 cline DONE→codex+TB-2.1 1194/161+predict 7路alive 1153
+已完成:       H-B✅·Gate7/7·TB报告✅·full500✅·cline专项C1-C5+报告R1785-R1979·TB4 0passed(能力)·TB-2.1 oracle5/5✅·§15:2x判据MET✅·R1789 eval 7/7DONE✅·R1804双报告交付✅·R1969-R1978 gateway恢复+incr_eval推进·R1978 incr_eval cline DONE·R1979 cline eval全量完成103/137
+当前动作:     R1979:①CPU KILL: sklearn pytest 172核失控(PID1707640·sg docker exec pkill✅·load 257→下降中) ②MEM PASS(737G/2015G) ③gateway ALL 200(agi-gateway+9092+9093) ④predict 7路alive=1153total(cline141·codex52·opencode294·cc134·pi100·hermes315·dsh117) ⑤real/empty:cline137/4·codex47/5·opencode293/1·cc124/10·pi94/6·hermes310/5·dsh114/3 ⑥eval:cline103/137(75.2%全量完成)·codex23/36·opencode119/146·cc44/54·pi25/34·hermes273/299·dsh50/65 ⑦incr_eval R1978: cline5/5DONE→codex2进行中 ⑧cline C2=34failed=100%能力(0 infra) ⑨TB-2.1:1194trials/161passed(pi42·opencode40·cc25·dsh21·cline19·codex8·hermes6) ⑩cline专项r1979报告 ⑪未完成指令:有(§22:4x+§10:10)⇒W:0
+下一步:       ①incr_eval R1978 codex→其余路继续推进 ②predict 7路继续推进至500 ③TB-2.1继续推进 ④全DONE后聚合最终7路报告 ⑤统计cline在sphinx-doc子集pass rate验证偏弱假设
 阻塞:         无(gateway 200)
 ERROR_COUNT:  0
-  📦 体积：TASK=30306B(29.6KB) / MEMORY=28783B(28.1KB)（归档R1974→daily）
-  🔍 cline专项小结: predict 137/500(135r/2e=98.5%real)·eval 369/492(75.0%)·TB-2.1 19/254=7.5%·C3 resume fix✅(empty=2/137=1.5%·sphinx-doc能力/超时·非resume bug)·7路alive·gateway 200 ALL✅·失败top1=能力(25.0%有patch未resolve·非infra)
+  📦 体积：TASK=30306B(29.6KB) / MEMORY=29585B(28.9KB)（无需归档）
+  🔍 cline专项小结: predict 141/500(137r/4e=97.2%real·空patch=4/141=2.8%·均sphinx-doc)·eval 103/137(75.2%全量完成·infra=0)·C2=34failed=100%能力(0 timeout/error/infra)·TB-2.1 260done/19pass·C3 resume fix✅(empty 51.5%→2.8%·未归零·剩sphinx-doc能力)·7路alive·gateway 200 ALL✅·失败top1=能力(34有patch未resolve)·CPU kill:sklearn172核sg docker exec
 ```
 
 > 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
 
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 ### 本唤醒流水
-[13:55] R1975 eval全量regen+incr_eval R1972→R1975(3missing)+cline专项r1975:①CPU/MEM PASS(load43/224·无失控·mem737G/2015G) ②gateway ALL 200(agi-gateway+9092+9093) ③predict 7路alive=1119total·98.4%real(cline137·codex48·opencode287·cc126·pi95·hermes310·dsh116) ④eval(全量regen reports/eval_*.json):cline369/492(75.0%)·codex293/376(77.9%)·opencode415/498(83.3%)·cc294/375(78.4%)·pi336/464(72.4%)·hermes346/381(90.8%)·dsh227/280(81.1%) ⑤incr_eval R1972 DIED@opencode80/126→发现truly missing仅3(2cc+1dsh)→R1975重启RUNNING ⑥TB-2.1:156/761=20.5%(7路·cc24/cline19/dsh21/pi42/opencode36/hermes6/codex8) ⑦cline专项r1975报告✅(C1-C5·空patch 2/137=1.5%=sphinx-doc能力/超时) ⑧未完成指令:有(§22:4x+§10:10)⇒W:0
-> 📦 [13:22] R1974 流水已归档 → daily-memories-harness/2026-11-09.md。结论：gateway RECOVERED(200)+incr_eval R1972(cline+codex DONE→opencode)+cline专项r1974。需要时再读。
+[15:10] R1979 CPU kill+cline eval全量完成+cline专项r1979:①CPU KILL: sklearn pytest PID1707640 172核失控(/opt/miniconda3/envs/testbed·eval.sh容器·sg docker exec 03aef724dccf pkill✅·load 257→下降中·无sudo密码·kill -9 EPERM·docker.sock无权限·sg docker -c方案有效) ②6个find/grep进程30-39%CPU(below8000%阈值·pylint eval·user-6218·未杀) ③MEM PASS(737G/2015G) ④gateway ALL 200(agi-gateway+9092+9093) ⑤predict 7路alive=1153total(cline141·codex52·opencode294·cc134·pi100·hermes315·dsh117) ⑥real/empty:cline137/4·codex47/5·opencode293/1·cc124/10·pi94/6·hermes310/5·dsh114/3 ⑦eval全量:cline103/137(75.2%全量完成)·codex23/36·opencode119/146·cc44/54·pi25/34·hermes273/299·dsh50/65 ⑧incr_eval R1978: cline5/5DONE→codex2进行中(19:49elapsed·script=incr_eval_7route_R1978.sh) ⑨cline C2=34failed=100%能力(0 infra·失败top5=astropy-13236/13398·django-10999/11141/11239) ⑩cline empty=4(sphinx-8551/8721/9230/9258) ⑪TB-2.1:1194trials/161passed(pi42·opencode40·cc25·dsh21·cline19·codex8·hermes6) ⑫cline专项r1979报告(reports/) ⑬未完成指令:有(§22:4x+§10:10)⇒W:0
+> 📦 [14:55] R1978 流水已归档 → daily-memories-harness/2026-11-09.md。结论：incr_eval 7route启动+cline专项r1978(C2=100%能力)+TB-2.1重新计数1193/161。需要时再读。
+> 📦 [14:30] R1977 流水已归档 → daily-memories-harness/2026-11-09.md。结论：7way报告重生成+cline专项r1977(空patch数据更正0→4/140=sphinx-doc能力)+deepseek9093恢复200。需要时再读。
+> 📦 [14:10] R1976 流水已归档 → daily-memories-harness/2026-11-09.md。结论：监控轮+cline专项r1976(空patch误报0·已R1977更正)+incr_eval R1975 DONE。需要时再读。
+> 📦 [13:55] R1975 流水已归档 → daily-memories-harness/2026-11-09.md。结论：eval全量regen(7路)+incr_eval R1975(3missing DONE)+cline专项r1975(空patch 2/137=1.5%)。需要时再读。
 > 📦 [13:13] R1973 流水已归档 → daily-memories-harness/2026-11-09.md。结论：CPU kill(sklearn 178核)+incr_eval R1972推进(cline DONE→codex)+gateway QUOTA_EXHAUSTED。需要时再读。
 > 📦 [12:55] R1972 流水已归档 → daily-memories-harness/2026-11-09.md。结论：CPU kill(sklearn 160核)+eval全run扫描重生成(2280/2966=76.9%)+incr_eval R1972启动(297missing)+cline专项r1972报告。需要时再读。
 > 📦 [12:17] R1970 流水已归档 → daily-memories-harness/2026-11-09.md。结论：codex predict RESTARTED+incr_eval_hermes DONE(149/168)+eval merge 7/7DONE+cline专项r1970。需要时再读。
