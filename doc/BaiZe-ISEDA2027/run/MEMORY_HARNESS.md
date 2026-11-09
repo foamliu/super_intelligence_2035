@@ -4,21 +4,22 @@ WAITING: 0
 
 ## 📊 进度快照
 
-PHASE:        R1970 codex predict RESTARTED(产real patch)+incr_eval_hermes running+7路alive+cline专项r1970
-已完成:       H-B✅·Gate7/7·TB报告✅·full500✅·cline专项C1-C5+报告R1785-R1970·TB4 0passed(能力)·TB-2.1 oracle5/5✅·§15:2x判据MET✅·R1789 eval 7/7DONE✅·R1804双报告交付✅·R1969 gateway恢复+cleanup 1656空patch·R1970 codex重启+incr_eval_hermes启动+cline专项r1970报告
-当前动作:     R1970:①CPU/MEM:PASS(load 43/224=19%·swebench eval 16.5%·无>8000%) ②体积:TASK=30306B(29.6KB)/MEMORY=待确认 ③gateway:✅RESTORED(gw_proxy 9092 HTTP 200·直连upstream 401但proxy正常) ④codex predict RESTARTED(PID1100981·首题astropy-13033=6368B REAL·45/500) ⑤predict 7路alive:cline132·codex45·opencode273·cc110·pi91·hermes301·dsh112=1064real ⑥eval R1933:7/7DONE(728total)·incr_eval_hermes R1970 running(22new·4/22done) ⑦TB-2.1:152p·oracle5/5✅ ⑧disk /data 5.8T(18%) / 352G(4%) ⑨全进程健康 ⑩未完成指令:有(§22:4x predict未满500+§10:10 cline专项)⇒W:0
-下一步:       ①incr_eval_hermes完成后检查resolved更新 ②predict 7路继续推进至500 ③对其他6路也跑incr_eval(共~113new) ④TB-2.1 harbor alive推进至89题 ⑤全DONE后聚合最终7路报告 ⑥research建议11-09:报告加执行证据审计列(高)
-阻塞:         无(gateway恢复·codex重启产real·incr_eval running)
+PHASE:        R1971 incr_eval_6route R1971 running(360new)+7路alive+cline专项r1971+TB-2.1 passed更新
+已完成:       H-B✅·Gate7/7·TB报告✅·full500✅·cline专项C1-C5+报告R1785-R1971·TB4 0passed(能力)·TB-2.1 oracle5/5✅·§15:2x判据MET✅·R1789 eval 7/7DONE✅·R1804双报告交付✅·R1969 gateway恢复+cleanup 1656空patch·R1970 codex重启+incr_eval_hermes DONE·R1971 incr_eval_6route启动(360new)+cline专项r1971报告
+当前动作:     R1971:①CPU/MEM:PASS(load 47/224=21%·无>8000%) ②体积:TASK=30306B(29.6KB)/MEMORY=28302B(27.6KB)✅均≤32KB ③gateway:✅ALL 200(9092+9093+upstream) ④predict 7路alive:cline134·codex45·opencode273·cc112·pi92·hermes303·dsh114=1073total·1067real·6empty·99.4%real ⑤eval MERGED:cline87/114(76.3%)·codex29/44(65.9%)·opencode199/248(80.2%)·cc71/90(78.9%)·pi51/68(75.0%)·hermes273/299(91.3%)·dsh83/105(79.0%)=793/968=81.9% ⑥incr_eval_6route R1971 STARTED:360new(cline64+codex9+opencode126+cc57+pi56+dsh48)·cline-patched eval 37/64 at 12:38 ⑦TB-2.1 passed:cline19/260·codex8/186·opencode36/82·cc24/156·pi42/152·hermes6/233·dsh21/108 ⑧disk /data 5.8T(18%) / 352G(4%) ⑨cline专项r1971报告交付(含执行证据审计列·research日报11-09建议已落实) ⑩未完成指令:有(§22:4x predict未满500+§10:10 cline专项)⇒W:0
+下一步:       ①incr_eval_6route完成后检查6路resolved更新 ②predict 7路继续推进至500 ③TB-2.1 harbor alive推进 ④全DONE后聚合最终7路报告(report_harness_glm53_7way_swebench_tb_zh.html) ⑤research建议11-09:Evolver经验资产(低,后续)
+阻塞:         无(gateway ALL 200·incr_eval running·7路alive)
 ERROR_COUNT:  0
-  📦 体积：TASK=30306B(29.6KB) / MEMORY=待确认(归档R1969+R1964+R1963→daily)
-  🔍 cline专项小结: predict 132/500(132r/1e=99.2%real)·eval 87/115(75.7%)·TB-2.1 8p/93·C3 resume fix✅+cleanup✅基本归零(1合理空)·codex RESTARTED(45r/0e,real patch!)·7路alive·gateway OK
+  📦 体积：TASK=30306B(29.6KB) / MEMORY=28302B(27.6KB)（归档R1970→daily）
+  🔍 cline专项小结: predict 134/500(133r/1e=99.3%real)·eval 87/114(76.3%)·TB-2.1 19/260=7.3%·C3 resume fix✅+cleanup✅基本归零(1合理空)·incr_eval R1971 running(360new)·7路alive·gateway ALL 200·失败top1=能力(23.7%)
 ```
 
 > 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
 
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 ### 本唤醒流水
-[12:17] R1970 codex predict RESTARTED+incr_eval_hermes+eval merge R1789+R1933+cline专项r1970:①CPU/MEM:PASS(load 43/224=19%·swebench eval 16.5%·无>8000%) ②体积:TASK=30306B(29.6KB)/MEMORY=28908B(28.2KB)✅均≤32KB ③gateway:✅RESTORED(gw_proxy 9092 HTTP 200 0.12s·gw_proxy PID2058948/2058952 alive 2.5d) ④codex predict RESTARTED(PID1100981·首题astropy-13033=patch-produced 6368B wall=115.9s✅·45/500·config.toml→gw_proxy 9092 OK) ⑤predict 7路alive·total=1068·real=1064·empty=4·real%=99.6% ⑥eval MERGED R1789+R1933(修正split-dir bug):7/7DONE·cline87/114(76.3%)·codex29/44(65.9%)·opencode199/248(80.2%)·cc71/90(78.9%)·pi51/68(75.0%)·hermes273/299(91.3%)·dsh83/105(79.0%)=793total resolved ⑦TB-2.1:152p·oracle5/5✅ ⑧disk /data 5.8T(18%) / 352G(4%) ⑨cline专项r1970报告交付:C1=132/500(132r/1e=99.2%)·C5=7路eval%全75-91%·deepseek 31.4%→79.0%(merge修正) ⑩未完成指令:有(§22:4x predict未满500+§10:10 cline专项)⇒W:0
+[12:35] R1971 incr_eval_6route R1971启动(360new)+cline专项r1971+TB-2.1 passed更新:①CPU/MEM:PASS(load 47/224=21%) ②体积:TASK=30306B/MEMORY=28302B✅ ③gateway:✅ALL 200(9092+9093+upstream) ④predict 7路alive=1073total·1067real·6empty·99.4%real ⑤eval MERGED:793/968=81.9% ⑥incr_eval_6route R1971 STARTED:360new(cline64+codex9+opencode126+cc57+pi56+dsh48) ⑦TB-2.1 passed:cline19/260·opencode36/82·pi42/152·cc24/156·dsh21/108·hermes6/233·codex8/186 ⑧cline专项r1971报告交付(含执行证据审计列·research日报11-09建议已落实) ⑨未完成指令:有(§22:4x+§10:10)⇒W:0
+> 📦 [12:17] R1970 流水已归档 → daily-memories-harness/2026-11-09.md。结论：codex predict RESTARTED+incr_eval_hermes DONE(149/168)+eval merge 7/7DONE+cline专项r1970。需要时再读。
 > 📦 [11:50] R1969 流水已归档 → daily-memories-harness/2026-11-09.md。结论：gateway RESTORED+cleanup 1656空patch+7路复产real+cline专项r1969+TB-2.1 152p。需要时再读。
 > 📦 [11:32] R1968 流水已归档 → daily-memories-harness/2026-11-09.md。结论：gateway QUOTA EXHAUSTED发现(/models=200但/chat/completions=CURL_FAILED)·predict 2702/3500 real=1047 empty=1655·cline专项r1968报告·TB-2.1 124passed。需要时再读。
 > 📦 [11:20] R1967 流水已归档 → daily-memories-harness/2026-11-09.md。结论：gateway HTTP200确认·predict 2694/3500·cline专项r1967报告·TB-2.1 152p/1165trials。需要时再读。
