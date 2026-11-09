@@ -539,3 +539,11 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked		2026-11-09 20:39	RAG-looku
 1793949237063_wsxpm.messages.json	ruifan	hfeg0plg36	400	layout_virtuoso	parked		2026-11-09 23:13	fork/sibling of 3hw3m (claimed r294), same headless-latch-skill task, topic overlap
 1793953739742_3hw3m					case	EDA-Eval-DesignFlow-HeadlessLatchSkillGen-001	2026-11-09 23:59	
 1794203850332_onym6	hktklin	hfeg0plg87	87	layout_virtuoso	case	EDA-Eval-DesignFlow-PcellCyclicMerge-001	2026-11-10 01:03	
+1793796472971_q71j8	kevin1d	hfeg0plg104	94	layout_aether	parked		2026-11-10 01:09	r296 cancelled, auto-place spacer, no accepted gold (A rule4)
+1790928288602_o6pnp	e0014566	hfeg0plg58	60	layout_virtuoso	parked		2026-11-10 01:09	r296 failed, analyze-skill how-to not produce
+1783577975924_z161m	e0014566	hfeg0plg58	51	layout_virtuoso	parked		2026-11-10 01:09	r296 failed, read-prompt-md vague
+1783075932652_ixy31	e0014566	hfeg0plg58	43	layout_virtuoso	parked		2026-11-10 01:09	r296 failed, read-usage-prompt vague
+1794216750374_d5x87	hktklin	hfeg0plg87	332	layout_virtuoso	parked		2026-11-10 01:09	r296 completed but trivial sed (tap_p->lacaa_common, del _SKILL on SKILL files); dbCreateRect counts from file CONTENT not layout creation; too easy L1, not 20-30% target
+1794209602601_w5ajz	hktklin	hfeg0plg87	56	layout_virtuoso	parked		2026-11-10 01:09	r296 completed but same trivial sed task as d5x87 (same user hktklin), topic overlap
+1793879392010_hyalb	chengleiy	hfeg0plg15	114	physical_verify	parked		2026-11-10 01:09	r296 idle, diagnose LVS-QA license-hang (read log explain), not produce, no gold
+1793843123624_u65cq	e0047472	hfeg0plg99	189	physical_verify	parked		2026-11-10 01:09	r296 idle, pinyin how-to (innovus query dummy cmd), not produce
