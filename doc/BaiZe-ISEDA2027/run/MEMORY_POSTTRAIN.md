@@ -7,12 +7,12 @@ WAITING: 0
 
 ## 进度快照
 
-- PHASE: posttrain-wake158（2026-11-09 R111: 启动前配置一致性审计——15项go/no-go矩阵,10PASS/3WARN/2BLOCK✅）
-- 已完成: P3预备✅；P0✅；P1✅；P2✅；R1-R111✅；wake157✅ R110(失败模式分类法)；wake158✅ R111(启动前配置一致性审计)
-- 当前动作: wake158 R111: baize_posttrain_r111_launch_consistency_audit.py(364行,12检查项). ①12 shell脚本bash -n全通过✅ ②模型文件NAS完整(8/8,4.7GB safetensors)✅ ③RL parquet 3347rows/cols=[prompt,reward_model,agent_name]✅ ④R108修复确认(reward_fn_key=reward_model)✅ ⑤SFT parquet 19610rows✅ ⑥评测资产全存在(driver+scorer+158集)✅ ⑦cu124 venv:verl=0.4.0/sglang=0.4.6.post1/torch=2.6.0+cu124/flash_attn=2.7.4.post1/ray=2.60.0/flashinfer=0.2.3✅ ⑧上下文一致(SFT=16384/RL=16384)✅ ⑨污染隔离gate.sh语法通过✅ ⑩GPU watcher运行中(PID2022305,poll=120s)✅. ⚠️3 WARN:CFG-03(sft_blend_config context_len=8192过期)/CFG-04(/nas_train路径.17不可达)/DAT-03(UltraData不在.17). 🔴GPU 0/8free(root SGLang Qwen3.8-27B占全8卡). JSON+HTML 22.7KB+EXPERIMENTS §R111.
-- 下一步: ①GPU释放→watcher自动触发launch_11_9.sh(steps 1-5) ②R112+: 继续调研(SFT数据配比优化 或 RL课程R110校准) ③正式训练待pretrain ckpt(ETA≈2026-12-25)
-- 阻塞: GPU 0/8free(root SGLang Qwen3.8-27B占全8卡,运行自Sep17);git push超时(github.com:443 timeout);P3等pretrain ckpt(ETA≈2026-12-25)
-- 本轮新增调研产出: R111 启动前配置一致性审计(364行 + 15项go/no-go矩阵 + 12脚本bash-n + 8模型文件 + RL/SFT parquet schema + 5 YAML配置 + venv 6包验证 + 奖励函数导入 + GPU状态 + 污染隔离 + watcher + 3 WARN发现(CFG-03/CFG-04/DAT-03) + JSON + HTML 22.7KB + EXPERIMENTS §R111）
+- PHASE: posttrain-wake159（2026-11-09 R112: 路径与数据可用性审计——117文件扫描,37路径问题,2修复(CFG-03+CFG-04),8缺失数据,4缓解措施✅）
+- 已完成: P3预备✅；P0✅；P1✅；P2✅；R1-R112✅；wake158✅ R111(启动前审计)；wake159✅ R112(路径与数据可用性审计+CFG-03/04修复)
+- 当前动作: wake159 R112: baize_posttrain_r112_path_audit.py(~280行). ①117文件扫描✅ ②37路径问题(31 HIGH /nas_train)✅ ③CFG-03修复(sft_blend_config.yaml注释8192→16384)✅ ④CFG-04修复(sft_blend_config.yaml /nas_train→/nas_data)✅ ⑤18数据路径检查(8缺失)✅ ⑥上下文长度一致(SFT=16384/RL=16384)✅ ⑦NFS确认(.17 /nas_data=10.251.28.110:/train,与.29/.12独立存储)✅ ⑧4缓解措施(3 BLOCKER:SFT/ANNEAL数据传输+模型路径;1 HIGH:路径修复)✅ ⑨GPU 0/8free✅. JSON+HTML 19.7KB+EXPERIMENTS §R112.
+- 下一步: ①GPU释放→watcher自动触发launch_11_9.sh ②R113+: 继续调研(.py文件/nas_train引用逐个修复 或 SFT数据传输方案细化 或 数据传输rsync脚本) ③正式训练待pretrain ckpt(ETA≈2026-12-25)
+- 阻塞: GPU 0/8free(root SGLang Qwen3.8-27B占全8卡,运行自Sep17);P3等pretrain ckpt(ETA≈2026-12-25)
+- 本轮新增调研产出: R112 路径与数据可用性审计(~280行 + 117文件扫描 + 37路径问题 + 2修复(CFG-03+CFG-04) + 18数据路径检查 + NFS独立存储确认 + 4缓解措施 + JSON + HTML 19.7KB + EXPERIMENTS §R112）
 - 未完成指令: 🔴用户令2026-11-07(GPU未到位,需持续产出调研) ⇒ WAITING=0
 
 ## 关键事实（常驻）
@@ -99,3 +99,5 @@ WAITING: 0
 [wake157] R110 失败模式分类法: 见 daily-memories-posttrain/2026-11-09.md（6类F1-F6+DeepSeek 610失败实测+MiniCPM5投影+6条regex自动分类规则+18-29pp可回收+HTML 13.2KB）。
 
 [wake158] R111 启动前配置一致性审计: 体积自检(TASK=24.7KB/MEMORY≈24KB合规)→GPU检查:0/8free(root SGLang Qwen3.8-27B占全8卡44-45GB 0%util,运行自Sep17,gpu_watcher PID2022305 poll=120s)→R111: ①baize_posttrain_r111_launch_consistency_audit.py(364行,Python3+stdlib,0依赖) ②15项go/no-go矩阵:SCR/MDL/DAT/EVL/ENV/RWD/CFG/GPU/CNT/OPS ③12 shell脚本bash -n全通过✅ ④模型文件NAS完整(8/8,4.7GB safetensors)✅ ⑤RL parquet 3347rows/cols=[prompt,reward_model,agent_name]✅ ⑥R108修复确认(reward_fn_key=reward_model)✅ ⑦SFT parquet 19610rows✅ ⑧评测资产全存在(driver+scorer+158集)✅ ⑨cu124 venv:verl=0.4.0/sglang=0.4.6.post1/torch=2.6.0+cu124/flash_attn=2.7.4.post1/ray=2.60.0/flashinfer=0.2.3✅ ⑩上下文一致(SFT=16384/RL=16384)✅ ⑪污染隔离gate.sh语法通过✅ ⑫GPU watcher运行中✅. ⚠️3 WARN:CFG-03(sft_blend_config context_len=8192过期)/CFG-04(/nas_train路径.17不可达)/DAT-03(UltraData不在.17). 🔴GPU 0/8free. RWD-01 TIMEOUT假阴性(venv冷启动import>60s,首次热运行已PASS). py_compile✅+全量✅+JSON✅+HTML 22.7KB+EXPERIMENTS §R111. 📦 体积：TASK≈24.7KB / MEMORY≈25KB。本轮新增调研产出：§R111 启动前配置一致性审计(364行 + 15项go/no-go矩阵 + 10PASS/3WARN/2BLOCK + 12脚本bash-n + 8模型文件 + RL/SFT parquet schema + venv 6包验证 + 3 WARN发现 + JSON + HTML 22.7KB + EXPERIMENTS §R111）。未完成指令：🔴用户令2026-11-07(GPU未到位,需持续产出调研) ⇒ WAITING=0。
+
+[wake159] R112 路径与数据可用性审计: 体积自检(TASK=24.7KB/MEMORY≈24.6KB合规)→GPU检查:0/8free(root SGLang Qwen3.8-27B占全8卡95-97%util,运行自Sep17)→R112: ①baize_posttrain_r112_path_audit.py(~280行,Python3 stdlib) ②117文件扫描:37路径问题(31 HIGH /nas_train) ③CFG-03修复✅(sft_blend_config.yaml注释8192→16384) ④CFG-04修复✅(sft_blend_config.yaml /nas_train→/nas_data) ⑤18数据路径检查:8缺失(SFT/ANNEAL .bin/.idx在.29/.12,MODEL/EVAL/ENV路径未找到) ⑥上下文长度一致✅(SFT=16384/RL=16384) ⑦NFS确认:.17 /nas_data=10.251.28.110:/train(127T),与.29/.12 /nas_train独立存储;/nas_inference+/nas_env未挂载 ⑧4缓解措施(3 BLOCKER:SFT/ANNEAL数据传输+模型路径;1 HIGH:路径修复). py_compile✅+全量✅+JSON✅+HTML 19.7KB+EXPERIMENTS §R112. 📦 体积：TASK≈24.7KB / MEMORY≈25KB。本轮新增调研产出：§R112 路径与数据可用性审计(~280行 + 117文件扫描 + 37路径问题 + 2修复(CFG-03+CFG-04) + 18数据路径 + NFS独立存储确认 + 4缓解措施 + JSON + HTML 19.7KB + EXPERIMENTS §R112）。未完成指令：🔴用户令2026-11-07(GPU未到位,需持续产出调研) ⇒ WAITING=0。

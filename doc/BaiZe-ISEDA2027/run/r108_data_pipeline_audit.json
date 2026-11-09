@@ -1,0 +1,297 @@
+{
+  "title": "R108: SFT/RL Data Pipeline Audit",
+  "timestamp": "2026-11-09",
+  "sections": [
+    {
+      "title": "1. Parquet File Inventory",
+      "items": [
+        {
+          "path": "sft_pyaether_corpus.parquet",
+          "exists": true,
+          "size_mb": 2.74,
+          "rows": 19610,
+          "columns": [
+            "conversation",
+            "pair_id",
+            "type",
+            "api_used",
+            "contamination_check"
+          ],
+          "null_counts": {}
+        },
+        {
+          "path": "sft_pyaether_corpus_v2.parquet",
+          "exists": true,
+          "size_mb": 3.5,
+          "rows": 19524,
+          "columns": [
+            "conversation",
+            "pair_id",
+            "type",
+            "api_used",
+            "contamination_check"
+          ],
+          "null_counts": {}
+        },
+        {
+          "path": "sft_pyaether_corpus_v5_deep_enriched.parquet",
+          "exists": true,
+          "size_mb": 0.34,
+          "rows": 1193,
+          "columns": [
+            "conversation",
+            "pair_id",
+            "type",
+            "api_used",
+            "contamination_check"
+          ],
+          "null_counts": {}
+        },
+        {
+          "path": "rl_pyaether_synth_v2.parquet",
+          "exists": true,
+          "size_mb": 0.91,
+          "rows": 3347,
+          "columns": [
+            "prompt",
+            "reward_model",
+            "agent_name"
+          ],
+          "null_counts": {}
+        }
+      ]
+    },
+    {
+      "title": "2. RL Data Format Validation",
+      "items": [
+        {
+          "check": "Column \"prompt\"",
+          "pass": true
+        },
+        {
+          "check": "Column \"data_source\"",
+          "pass": false
+        },
+        {
+          "check": "prompt is list",
+          "pass": false
+        },
+        {
+          "check": "Prompt token stats",
+          "pass": true,
+          "detail": {
+            "count": 3347,
+            "mean": 172.5,
+            "median": 149,
+            "max": 274,
+            "over_8192": 0
+          }
+        },
+        {
+          "check": "Difficulty dist",
+          "pass": true,
+          "detail": {}
+        }
+      ]
+    },
+    {
+      "title": "3. SFT Data Format Validation",
+      "items": [
+        {
+          "file": "sft_pyaether_corpus.parquet",
+          "rows": 19610,
+          "columns": [
+            "conversation",
+            "pair_id",
+            "type",
+            "api_used",
+            "contamination_check"
+          ],
+          "msg_cols": [
+            "conversation"
+          ],
+          "format": "ndarray"
+        },
+        {
+          "file": "sft_pyaether_corpus_v2.parquet",
+          "rows": 19524,
+          "columns": [
+            "conversation",
+            "pair_id",
+            "type",
+            "api_used",
+            "contamination_check"
+          ],
+          "msg_cols": [
+            "conversation"
+          ],
+          "format": "ndarray"
+        },
+        {
+          "file": "sft_pyaether_corpus_v5_deep_enriched.parquet",
+          "rows": 1193,
+          "columns": [
+            "conversation",
+            "pair_id",
+            "type",
+            "api_used",
+            "contamination_check"
+          ],
+          "msg_cols": [
+            "conversation"
+          ],
+          "format": "ndarray"
+        }
+      ]
+    },
+    {
+      "title": "4. Contamination Isolation Check (RED LINE)",
+      "items": [
+        {
+          "eval_tasks": 158
+        },
+        {
+          "eval_api_names": 13,
+          "sample": [
+            "pyAether.CStringList",
+            "pyAether.EmyNtlUtil",
+            "pyAether.MdeDcAnalysis",
+            "pyAether.MdeResult",
+            "pyAether.MdeSpeOutput",
+            "pyAether.dbRegTraverseTrigger",
+            "pyAether.dbResize",
+            "pyAether.dbTraverseDesignWithCB",
+            "pyAether.dbTraverseTriggerFunc",
+            "pyAether.emyDesign",
+            "pyAether.emyInitDb",
+            "pyAether.emyUnixNS",
+            "pyAether.mdeRegisterEventCallbacks"
+          ]
+        },
+        {
+          "rl_apis": 3670,
+          "api_overlap": 4,
+          "note": "API overlap expected (same library)"
+        },
+        {
+          "eval_fingerprints": 158,
+          "verbatim_contamination": 0,
+          "verdict": "PASS"
+        }
+      ]
+    },
+    {
+      "title": "5. YAML Config Path Validation",
+      "items": [
+        {
+          "file": "baize_posttrain_rl_verl_config_v2.yaml",
+          "exists": true,
+          "referenced_paths": 7,
+          "path_checks": [
+            {
+              "path": "baize_posttrain_reward_functions.py",
+              "exists": true
+            },
+            {
+              "path": "~/code/eda_fastmcp/docs/API_INFO_MERGED_V3.json",
+              "exists": true
+            },
+            {
+              "path": "/nas_data/app.e0031982/models/MiniCPM5-2B",
+              "exists": true
+            },
+            {
+              "path": "rl_pyaether_synth_v2.parquet",
+              "exists": true
+            },
+            {
+              "path": "null",
+              "exists": false
+            },
+            {
+              "path": "/nas_data/app.e0031982/models/MiniCPM5-2B",
+              "exists": true
+            },
+            {
+              "path": "null     # R47 BUG5 FIX (was tool_kwargs.tools_config_file)",
+              "exists": false
+            }
+          ]
+        },
+        {
+          "file": "baize_posttrain_tool_config.yaml",
+          "exists": true,
+          "referenced_paths": 1,
+          "path_checks": [
+            {
+              "path": "~/code/eda_fastmcp/docs/API_INFO_MERGED_V3.json",
+              "exists": true
+            }
+          ]
+        },
+        {
+          "file": "baize_posttrain_eda_tools.yaml",
+          "exists": true,
+          "referenced_paths": 0,
+          "path_checks": []
+        }
+      ]
+    },
+    {
+      "title": "6. Model & Tokenizer Check",
+      "items": [
+        {
+          "path": "/nas_data/app.e0031982/models/MiniCPM5-2B",
+          "exists": true,
+          "files": [
+            ".cache",
+            "model-00000-of-00001.safetensors",
+            "README-cn.md",
+            "chat_template.jinja",
+            "model.safetensors.index.json",
+            "generation_config.json",
+            ".gitattributes",
+            "special_tokens_map.json",
+            "config.json",
+            "README.md",
+            "tokenizer.json",
+            "tokenizer_config.json"
+          ],
+          "has_safetensors": true,
+          "has_config": true,
+          "has_tokenizer": true
+        }
+      ]
+    },
+    {
+      "title": "7. Summary Statistics",
+      "items": [
+        {
+          "rl_total_tasks": 3347,
+          "sft_total_all_versions": 40327,
+          "eval_total_tasks": 158
+        }
+      ]
+    },
+    {
+      "title": "8. Launch Readiness Verdict",
+      "items": [
+        {
+          "verdict": "CONDITIONAL (1 issues)",
+          "issues": [
+            "RL missing: data_source"
+          ]
+        }
+      ]
+    }
+  ],
+  "verdict": "CONDITIONAL (1 issues)",
+  "issues": [
+    "RL missing: data_source"
+  ],
+  "stats": {
+    "rl_total_tasks": 3347,
+    "sft_total_all_versions": 40327,
+    "eval_total_tasks": 158
+  }
+}

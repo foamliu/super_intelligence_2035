@@ -3,14 +3,14 @@
 # Generated: 2026-11-08 18:08:25
 # Mix strategy: agent50:general30:pyaether20
 # Target total tokens: ~3B
-# Context length: 8192
+# Context length: 16384 (R60/R61)
 
 sft_blend:
   agent:
-    path: "/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/sft_agent_ultradata_2609"
+    path: "/nas_data/app.e0031982/code/BaiZe-ISEDA2027/data/sft_agent_ultradata_2609"
     weight: 50  # % of total tokens
   general:
-    path: "/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/sft_ultradata_2605"
+    path: "/nas_data/app.e0031982/code/BaiZe-ISEDA2027/data/sft_ultradata_2605"
     weight: 30  # % of total tokens
   pyaether:
     path: "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/sft_mixed_output.jsonl"

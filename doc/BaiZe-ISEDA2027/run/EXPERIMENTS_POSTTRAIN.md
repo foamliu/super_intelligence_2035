@@ -11646,3 +11646,76 @@ MiniCPM5-2B 模型路径完整：model-00000-of-00001.safetensors + config.json 
 - `r111_launch_audit.json`（完整审计数据）
 - `reports/report_posttrain_r111_launch_audit_zh.html`（22.7KB，自包含，0 script，0 外链）
 - 本节（EXPERIMENTS §R111）
+
+---
+
+## §R112 — 路径与数据可用性审计（wake159, 2026-11-09 21:28）
+
+**背景**：R111 启动前一致性审计发现 3 个 WARN（CFG-03/CFG-04/DAT-03）。R112 对全部 posttrain 文件做系统性路径审计，修复配置问题，并量化数据可用性缺口。
+
+**脚本**：`baize_posttrain_r112_path_audit.py`（~280 行，Python3 stdlib，0 依赖）
+
+### 1. 扫描结果
+
+| 指标 | 值 |
+|:--|--:|
+| 扫描文件数 | 117 |
+| 路径问题总数 | 37（31 HIGH /nas_train） |
+| HIGH /nas_train 引用 | 31（分布在 baize_posttrain_*.py / .yaml） |
+| 缺失数据路径 | 8 |
+| 上下文长度不一致 | 0 ✅ |
+| GPU 空闲 | 0/8 🔴 |
+| 已应用修复 | 2（CFG-03 + CFG-04） |
+
+### 2. 已应用修复
+
+1. **CFG-03 ✅**：`sft_blend_config.yaml` 行6 注释 `# Context length: 8192` → `# Context length: 16384 (R60/R61)`。实际 `context_len: 16384` 值早已正确（R61 已修），仅头部注释过期。
+2. **CFG-04 ✅**：`sft_blend_config.yaml` 行10/13 数据路径 `/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/` → `/nas_data/app.e0031982/code/BaiZe-ISEDA2027/data/`。Shell 脚本已通过 `baize_posttrain_paths.sh` 自动检测 NAS_ROOT，无需手动改。
+
+### 3. NFS 挂载状态（.17 确认）
+
+| 挂载点 | 存在 | 来源 |
+|:--|:--|:--|
+| `/nas_data` | ✅ | 10.251.28.110:/train（127T，85% 使用） |
+| `/nas_train` | ⚠️ 本地目录 | /dev/mapper/ubuntu--vg（2.4T，85%）— **非 NFS**，非 .29/.12 共享存储 |
+| `/nas_inference` | ❌ | 未挂载 |
+| `/nas_env` | ❌ | 未挂载 |
+
+**关键发现**：.17 的 `/nas_data` 与 .29/.12 的 `/nas_train` 是**两块完全独立的存储**。UltraData SFT 分词数据（.bin/.idx）在 .29/.12 上生成，.17 无法直接访问。
+
+### 4. 数据可用性（18 路径检查）
+
+| 类别 | 存在 | 缺失 | 说明 |
+|:--|:--|:--|:--|
+| SFT | 2 | 4 | sft_pyaether_v5.parquet ✅ + sft_pyaether_v4.parquet ✅；UltraData .bin/.idx ❌（在.29/.12）|
+| ANNEAL | 0 | 3 | mix_base/code_l3/math_l3 全缺失（在.29/.12）|
+| MODEL | 0 | 2 | MiniCPM5-2B 在 NAS 和 /tmp 均未找到 ⚠️ |
+| EVAL | 0 | 3 | eda_fastmcp clone/driver/scorer/158集 全缺失 ⚠️ |
+| RL | 1 | 0 | rl_pyaether_synth_v2.parquet ✅ |
+| ENV | 0 | 1 | verl_cu124_venv ❌ ⚠️ |
+
+⚠️ 注意：MODEL/EVAL/ENV 缺失可能是因为这些在 /tmp 或 ~/code 下，而当前可能被清理或在不同用户 home。需在 GPU 释放后、launch 前确认。
+
+### 5. 上下文长度一致性
+
+| 文件 | 发现的值 | 目标 | 状态 |
+|:--|:--|:--|:--|
+| sft_blend_config.yaml | [16384] | 16384 | ✅ OK |
+| baize_posttrain_rl_verl_config_v2.yaml | [8192, 16384] | 16384 | ✅ OK (prompt=8192+response=8192=16384) |
+| baize_posttrain_sft.sh | [16384] | 16384 | ✅ OK |
+
+### 6. 缓解措施
+
+| 优先级 | 类别 | 描述 | 缓解 |
+|:--|:--|:--|:--|
+| BLOCKER | SFT_DATA_TRANSFER | UltraData SFT .bin/.idx 在 .29/.12，.17 无法访问 | (a) rsync 传输 (b) .17 重新分词 (c) 仅用 .17 上 SFT parquet 做 PyAether SFT |
+| BLOCKER | ANNEAL_DATA_TRANSFER | 退火数据在 .29/.12 | pretrain 等待期传输；替身实验跳过 |
+| BLOCKER | MODEL_PATH | MiniCPM5-2B 未在预期路径 | 重新下载或 rsync |
+| HIGH | PATH_FIX | 31 HIGH /nas_train 引用 | YAML 已修复；.sh 已用 paths.sh；.py 中的引用需逐个检查 |
+
+### 7. 交付物
+
+- `baize_posttrain_r112_path_audit.py`（~280 行）
+- `r112_path_audit.json`（完整审计数据）
+- `reports/report_posttrain_r112_path_audit_zh.html`（19.7KB，自包含，0 script，0 外链）
+- 本节（EXPERIMENTS §R112）
