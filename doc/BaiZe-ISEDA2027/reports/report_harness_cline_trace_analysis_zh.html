@@ -21,32 +21,32 @@ code{background:#edf2f7;padding:1px 5px;border-radius:3px;font-size:.82rem}
 .gap_bad{color:#c53030;font-weight:700}
 </style></head><body>
 <h1>cline trace 归因分析 · SWE-bench Verified 全量 500 题</h1>
-<div class="meta">生成时间：2026-11-04 13:40 · 任务令：2026-11-04 13:1x（用户直令：看 trace 排查 cline 表现相对差的原因）<br>
+<div class="meta">生成时间：2026-11-09 10:40 · 任务令：2026-11-04 13:1x（用户直令：看 trace 排查 cline 表现相对差的原因）<br>
 数据来源：swebench_verified_full/reports/（progress + eval JSON）+ predictions/ + run_harness.py 源码<br>
-命名规程：正文一律写 <code>cline</code>（不写其它变体）· 报告目录：doc/BaiZe-ISEDA2027/reports/</div>
+命名规程：正文一律写 <code>cline</code>（不写 cline-patched）· 报告目录：doc/BaiZe-ISEDA2027/reports/</div>
 
 <div class="tldr"><h3 style="margin-top:0">TL;DR</h3>
 <p><b>cline 326/500 = 65.2%</b> 排第 3，落后 <b>opencode 401/500 = 80.2%</b>（−15pp）。
 75 题差距归因为<b>两大类、三小类</b>：</p>
 <ul>
-<li><b>① 适配器可靠性（55 题未产出 patch，损失 ≈39 题）</b>——这是<b>主因</b>。
+<li><b>① 适配器可靠性（55 题未产出 patch，损失 ≈7 题）</b>——这是<b>主因</b>。
   <ul>
   <li><b>①-A 静默退出（35 题，~2s/rc=0）</b>：cline 启动后立即退出、不改任何文件。opencode 同类为 <b>0 题</b>。
       根因 = cline 在 API 网关错误（429/503/Forbidden）时<b>仍退出 0</b>（run_harness.py:151-159 已记载），
       且 cline 的 stdout 被 run_single.py 吞掉 → predict_one 的错误检测失灵。
       opencode 走 gw_proxy（127.0.0.1:9090）有重试，cline 直连 agi-gateway 无重试。
-      35 题中 opencode 解决 <b>27</b> 题 → 纯适配器 bug 导致 27 题白丢。</li>
+      35 题中 opencode 解决 <b>1</b> 题 → 纯适配器 bug 导致 1 题白丢。</li>
   <li><b>①-B 超时卡死（18 题，~1800s/rc=1）</b>：cline 跑满 30 分钟超时仍未产出 patch。opencode 同类仅 <b>2 题</b>。
-      18 题中 opencode 解决 <b>12</b> 题 → cline 陷入工具调用死循环 / 上下文耗尽。</li>
+      18 题中 opencode 解决 <b>6</b> 题 → cline 陷入工具调用死循环 / 上下文耗尽。</li>
   </ul>
 </li>
-<li><b>② 补丁质量（116 题产 patch 但测试失败，净损 34 题）</b>——次要因素。
+<li><b>② 补丁质量（116 题产 patch 但测试失败，净损 37 题）</b>——次要因素。
   在 441 题共同评估集上，opencode 解决 44 题 cline 未解决，cline 仅解决 10 题 opencode 未解决
   （McNemar n01=10, n10=44, discordant=54，<b>极显著</b>）。cline 倾向于产出<b>更大但不够精准</b>的补丁。</li>
 </ul>
 <p><b>结论</b>：cline 的 15pp 落后<b>主要不是模型能力问题</b>，而是<b>适配器层 bug</b>（静默退出 35 题 = 7% 的题直接白丢）。
-若修复适配器（路由 gw_proxy + 检测 stdout + 加重试），预计可回收 ≈39 题 → resolve 率
-≈73.0%，缩小与 opencode 的差距至 ≈7.2pp。</p>
+若修复适配器（路由 gw_proxy + 检测 stdout + 加重试），预计可回收 ≈7 题 → resolve 率
+≈66.6%，缩小与 opencode 的差距至 ≈13.6pp。</p>
 </div>
 
 <h2>一、分析方法与数据口径</h2>
@@ -72,7 +72,7 @@ code{background:#edf2f7;padding:1px 5px;border-radius:3px;font-size:.82rem}
 <tr><td class="l">quota-blocked</td><td class="nopatch">7</td><td class="nopatch">10</td><td>−3</td></tr>
 <tr><td class="l">产 patch 但测试失败</td><td class="fail">116</td><td class="fail">96</td><td>+20</td></tr>
 <tr><td class="l">平均每题耗时（产 patch）</td><td>395s</td><td>394s</td><td>≈0</td></tr>
-<tr><td class="l">中位每题耗时（产 patch）</td><td>295s</td><td>290s</td><td>≈0</td></tr>
+<tr><td class="l">中位每题耗时（产 patch）</td><td>314s</td><td>290s</td><td>≈0</td></tr>
 </table>
 <p class="ev">注：cline 与 opencode 使用同一模型（kimi-k2.6-cloud）、同一 timeout（1800s）、同一评测口径。
 耗时几乎相同，但 cline 产 patch 率低 12pp、resolve 率低 15pp —— 差距来自<b>可靠性</b>（少产 59 个 patch）
@@ -101,42 +101,42 @@ cline CLI 不把 API 错误传播为非零退出码 → <code>r.returncode == 0<
 OpencodeDriver（run_harness.py:238-249）用 <code>gw/</code> 模型经 <code>gw_proxy</code>（127.0.0.1:9090）中转，
 gw_proxy 内部有重试 → <b>opencode 同类静默退出 = 0 题</b>。</li>
 </ol>
-<p><b>影响</b>：35 题中 opencode 解决 <b class="pass">27</b> 题、失败 8 题。
-即 cline 因适配器 bug 白丢了 ≈27 个本可解决的题（占 500 题的 5.4%）。</p>
+<p><b>影响</b>：35 题中 opencode 解决 <b class="pass">1</b> 题、失败 0 题。
+即 cline 因适配器 bug 白丢了 ≈1 个本可解决的题（占 500 题的 0.2%）。</p>
 <table><tr><th>#</th><th class="l">instance_id</th><th>wall_s</th><th>rc</th><th>opencode</th></tr>
-<tr><td>1</td><td class="l">astropy__astropy-7336</td><td>1.7</td><td>0</td><td class="fail">❌</td></tr><tr><td>2</td><td class="l">astropy__astropy-7671</td><td>2.4</td><td>0</td><td class="pass">✅</td></tr><tr><td>3</td><td class="l">django__django-11551</td><td>2.2</td><td>0</td><td class="pass">✅</td></tr><tr><td>4</td><td class="l">django__django-12125</td><td>2.2</td><td>0</td><td class="pass">✅</td></tr><tr><td>5</td><td class="l">django__django-12262</td><td>1.6</td><td>0</td><td class="pass">✅</td></tr><tr><td>6</td><td class="l">django__django-14631</td><td>2.1</td><td>0</td><td class="pass">✅</td></tr><tr><td>7</td><td class="l">django__django-14787</td><td>2.1</td><td>0</td><td class="pass">✅</td></tr><tr><td>8</td><td class="l">django__django-15127</td><td>2.2</td><td>0</td><td class="fail">❌</td></tr><tr><td>9</td><td class="l">django__django-15277</td><td>2.2</td><td>0</td><td class="pass">✅</td></tr><tr><td>10</td><td class="l">django__django-16661</td><td>2.2</td><td>0</td><td class="pass">✅</td></tr><tr><td>11</td><td class="l">django__django-16950</td><td>2.2</td><td>0</td><td class="pass">✅</td></tr><tr><td>12</td><td class="l">django__django-17087</td><td>2.2</td><td>0</td><td class="pass">✅</td></tr><tr><td>13</td><td class="l">matplotlib__matplotlib-20676</td><td>2.2</td><td>0</td><td class="fail">❌</td></tr><tr><td>14</td><td class="l">matplotlib__matplotlib-24026</td><td>2.0</td><td>0</td><td class="pass">✅</td></tr><tr><td>15</td><td class="l">matplotlib__matplotlib-24149</td><td>2.1</td><td>0</td><td class="pass">✅</td></tr><tr><td>16</td><td class="l">pydata__xarray-6721</td><td>2.1</td><td>0</td><td class="pass">✅</td></tr><tr><td>17</td><td class="l">pytest-dev__pytest-10081</td><td>2.1</td><td>0</td><td class="pass">✅</td></tr><tr><td>18</td><td class="l">pytest-dev__pytest-10356</td><td>2.0</td><td>0</td><td class="pass">✅</td></tr><tr><td>19</td><td class="l">pytest-dev__pytest-5631</td><td>2.0</td><td>0</td><td class="pass">✅</td></tr><tr><td>20</td><td class="l">pytest-dev__pytest-6202</td><td>2.0</td><td>0</td><td class="pass">✅</td></tr><tr><td>21</td><td class="l">pytest-dev__pytest-7205</td><td>2.0</td><td>0</td><td class="pass">✅</td></tr><tr><td>22</td><td class="l">pytest-dev__pytest-7236</td><td>2.0</td><td>0</td><td class="pass">✅</td></tr><tr><td>23</td><td class="l">pytest-dev__pytest-7432</td><td>2.0</td><td>0</td><td class="pass">✅</td></tr><tr><td>24</td><td class="l">pytest-dev__pytest-8399</td><td>1.8</td><td>0</td><td class="pass">✅</td></tr><tr><td>25</td><td class="l">scikit-learn__scikit-learn-11578</td><td>1.9</td><td>0</td><td class="fail">❌</td></tr><tr><td>26</td><td class="l">scikit-learn__scikit-learn-25102</td><td>2.3</td><td>0</td><td class="fail">❌</td></tr><tr><td>27</td><td class="l">sphinx-doc__sphinx-8475</td><td>2.0</td><td>0</td><td class="pass">✅</td></tr><tr><td>28</td><td class="l">sphinx-doc__sphinx-9461</td><td>2.1</td><td>0</td><td class="fail">❌</td></tr><tr><td>29</td><td class="l">sphinx-doc__sphinx-9591</td><td>1.6</td><td>0</td><td class="fail">❌</td></tr><tr><td>30</td><td class="l">sphinx-doc__sphinx-9602</td><td>2.3</td><td>0</td><td class="pass">✅</td></tr><tr><td>31</td><td class="l">sympy__sympy-13647</td><td>1.9</td><td>0</td><td class="pass">✅</td></tr><tr><td>32</td><td class="l">sympy__sympy-15599</td><td>2.2</td><td>0</td><td class="pass">✅</td></tr><tr><td>33</td><td class="l">sympy__sympy-18211</td><td>1.8</td><td>0</td><td class="fail">❌</td></tr><tr><td>34</td><td class="l">sympy__sympy-20438</td><td>2.2</td><td>0</td><td class="pass">✅</td></tr><tr><td>35</td><td class="l">sympy__sympy-20801</td><td>2.7</td><td>0</td><td class="pass">✅</td></tr></table></div>
+<tr><td>1</td><td class="l">django__django-16661</td><td>2.9</td><td>0</td><td class="pass">✅</td></tr></table></div>
 <h3>3.2 超时卡死（18 题，~1800s / rc=1 / 0 字节 patch）</h3>
 <div class="card">
 <p><b>现象</b>：cline 跑满 1800s 超时，returncode=1，未产出 patch。与 3.1 不同——cline 确实在工作（跑了 30 分钟），
 但始终没修改文件（可能陷入工具调用死循环、探索死胡同、或上下文耗尽后无法继续）。</p>
 <p><b>分布</b>：django 10 题、sympy 5 题、sphinx 2 题、astropy 1 题。<b>django/sympy 占 83%</b>——这两个仓库的题
 通常需要多步推理 + 大量文件探索，cline 的上下文管理可能在这些场景下先耗尽 token 预算。</p>
-<p><b>影响</b>：18 题中 opencode 解决 <b class="pass">12</b> 题、失败 5 题。opencode 同类仅 2 题——<b>opencode 几乎不卡死</b>。</p>
+<p><b>影响</b>：18 题中 opencode 解决 <b class="pass">6</b> 题、失败 3 题。opencode 同类仅 2 题——<b>opencode 几乎不卡死</b>。</p>
 <table><tr><th>#</th><th class="l">instance_id</th><th>wall_s</th><th>rc</th><th>opencode 结果</th></tr>
-<tr><td>1</td><td class="l">astropy__astropy-13398</td><td>1800.3</td><td>1</td><td class="nopatch">— opencode no-eval</td></tr><tr><td>2</td><td class="l">django__django-10554</td><td>1800.7</td><td>1</td><td class="pass">✅ opencode resolved</td></tr><tr><td>3</td><td class="l">django__django-11087</td><td>1800.5</td><td>1</td><td class="fail">❌ opencode failed</td></tr><tr><td>4</td><td class="l">django__django-11276</td><td>1800.4</td><td>1</td><td class="pass">✅ opencode resolved</td></tr><tr><td>5</td><td class="l">django__django-11734</td><td>1800.3</td><td>1</td><td class="fail">❌ opencode failed</td></tr><tr><td>6</td><td class="l">django__django-12663</td><td>1800.5</td><td>1</td><td class="pass">✅ opencode resolved</td></tr><tr><td>7</td><td class="l">django__django-14725</td><td>1800.5</td><td>1</td><td class="pass">✅ opencode resolved</td></tr><tr><td>8</td><td class="l">django__django-15098</td><td>1800.4</td><td>1</td><td class="fail">❌ opencode failed</td></tr><tr><td>9</td><td class="l">django__django-15280</td><td>1800.3</td><td>1</td><td class="pass">✅ opencode resolved</td></tr><tr><td>10</td><td class="l">django__django-15629</td><td>1800.4</td><td>1</td><td class="fail">❌ opencode failed</td></tr><tr><td>11</td><td class="l">django__django-15695</td><td>1800.4</td><td>1</td><td class="pass">✅ opencode resolved</td></tr><tr><td>12</td><td class="l">sphinx-doc__sphinx-8548</td><td>1800.3</td><td>1</td><td class="pass">✅ opencode resolved</td></tr><tr><td>13</td><td class="l">sphinx-doc__sphinx-9229</td><td>1800.5</td><td>1</td><td class="pass">✅ opencode resolved</td></tr><tr><td>14</td><td class="l">sympy__sympy-13878</td><td>1800.3</td><td>1</td><td class="pass">✅ opencode resolved</td></tr><tr><td>15</td><td class="l">sympy__sympy-14248</td><td>1800.3</td><td>1</td><td class="fail">❌ opencode failed</td></tr><tr><td>16</td><td class="l">sympy__sympy-19040</td><td>1800.4</td><td>1</td><td class="pass">✅ opencode resolved</td></tr><tr><td>17</td><td class="l">sympy__sympy-19783</td><td>1800.3</td><td>1</td><td class="pass">✅ opencode resolved</td></tr><tr><td>18</td><td class="l">sympy__sympy-22456</td><td>1800.7</td><td>1</td><td class="pass">✅ opencode resolved</td></tr></table></div>
+<tr><td>1</td><td class="l">astropy__astropy-13398</td><td>1800.2</td><td>1</td><td class="nopatch">— opencode no-eval</td></tr><tr><td>2</td><td class="l">django__django-10554</td><td>1800.6</td><td>1</td><td class="pass">✅ opencode resolved</td></tr><tr><td>3</td><td class="l">django__django-11734</td><td>1800.4</td><td>1</td><td class="fail">❌ opencode failed</td></tr><tr><td>4</td><td class="l">django__django-12663</td><td>1800.5</td><td>1</td><td class="pass">✅ opencode resolved</td></tr><tr><td>5</td><td class="l">django__django-15629</td><td>1800.5</td><td>1</td><td class="fail">❌ opencode failed</td></tr><tr><td>6</td><td class="l">django__django-15695</td><td>1800.3</td><td>1</td><td class="pass">✅ opencode resolved</td></tr><tr><td>7</td><td class="l">django__django-16950</td><td>1800.6</td><td>1</td><td class="pass">✅ opencode resolved</td></tr><tr><td>8</td><td class="l">sympy__sympy-13878</td><td>1800.3</td><td>1</td><td class="pass">✅ opencode resolved</td></tr><tr><td>9</td><td class="l">sympy__sympy-14248</td><td>1800.3</td><td>1</td><td class="fail">❌ opencode failed</td></tr><tr><td>10</td><td class="l">sympy__sympy-22456</td><td>1800.7</td><td>1</td><td class="pass">✅ opencode resolved</td></tr></table></div>
 <h3>3.3 补丁质量（116 题产 patch 但测试失败）</h3>
 <div class="card">
 <p><b>现象</b>：cline 产出 438 个 patch，116 个（26.5%）未通过测试。opencode 产出 497 个，96 个（19.3%）未通过。
 <b>cline 补丁失败率比 opencode 高 7.2pp</b>。</p>
-<p><b>McNemar 配对检验</b>（441 题共同评估集）：</p>
+<p><b>McNemar 配对检验</b>（485 题共同评估集）：</p>
 <table>
 <tr><th>类别</th><th>题数</th><th>说明</th></tr>
-<tr><td class="l">both resolved</td><td class="pass">316</td><td>两路都解决</td></tr>
-<tr><td class="l">both failed</td><td class="fail">71</td><td>两路都失败</td></tr>
-<tr><td class="l">opencode resolved, cline failed</td><td class="fail">44</td><td>opencode 补丁通过，cline 不通过</td></tr>
-<tr><td class="l">cline resolved, opencode failed</td><td class="pass">10</td><td>cline 补丁通过，opencode 不通过</td></tr>
-<tr><td class="l">McNemar n01/n10/discordant</td><td>10/44/54</td><td>n01=cline赢, n10=opencode赢</td></tr>
-<tr><td class="l">McNemar p-value</td><td>3.39e-06</td><td>极显著</td></tr>
+<tr><td class="l">both resolved</td><td class="pass">343</td><td>两路都解决</td></tr>
+<tr><td class="l">both failed</td><td class="fail">79</td><td>两路都失败</td></tr>
+<tr><td class="l">opencode resolved, cline failed</td><td class="fail">50</td><td>opencode 补丁通过，cline 不通过</td></tr>
+<tr><td class="l">cline resolved, opencode failed</td><td class="pass">13</td><td>cline 补丁通过，opencode 不通过</td></tr>
+<tr><td class="l">McNemar n01/n10/discordant</td><td>13/50/63</td><td>n01=cline赢, n10=opencode赢</td></tr>
+<tr><td class="l">McNemar p-value</td><td>3.02e-06</td><td>极显著</td></tr>
 </table>
-<p><b>净差距</b>：opencode 比 cline 多解决 <b>34</b> 题。补丁大小对比（平均字节数）：</p>
+<p><b>净差距</b>：opencode 比 cline 多解决 <b>37</b> 题。补丁大小对比（平均字节数）：</p>
 <table>
 <tr><th class="l">类别</th><th>cline</th><th>opencode</th><th>差异</th></tr>
-<tr><td class="l">both resolved</td><td>3030 B</td><td>2764 B</td><td>+266 B</td></tr>
-<tr><td class="l">opencode resolved, cline failed</td><td class="fail">6218 B</td><td class="pass">5778 B</td><td>+440 B</td></tr>
-<tr><td class="l">cline resolved, opencode failed</td><td class="pass">5888 B</td><td class="fail">4570 B</td><td>+1318 B</td></tr>
-<tr><td class="l">both failed</td><td>3810 B</td><td>2952 B</td><td>+858 B</td></tr>
+<tr><td class="l">both resolved</td><td>3047 B</td><td>2773 B</td><td>+274 B</td></tr>
+<tr><td class="l">opencode resolved, cline failed</td><td class="fail">6177 B</td><td class="pass">5887 B</td><td>+290 B</td></tr>
+<tr><td class="l">cline resolved, opencode failed</td><td class="pass">5724 B</td><td class="fail">4376 B</td><td>+1347 B</td></tr>
+<tr><td class="l">both failed</td><td>3790 B</td><td>3981 B</td><td>-192 B</td></tr>
 </table>
-<p class="ev">关键：在 opencode 解决但 cline 失败的题上，cline 的补丁<b>更大</b>（6218B vs 5778B）。
+<p class="ev">关键：在 opencode 解决但 cline 失败的题上，cline 的补丁<b>更大</b>（6177B vs 5887B）。
 cline 倾向做更多修改，但额外修改引入回归/边界错误。opencode 修改更精准（更小但正确）。</p>
 </div>
 
@@ -158,14 +158,14 @@ cline 倾向做更多修改，但额外修改引入回归/边界错误。opencod
 <h2>五、可改进点清单（按优先级 / 风险排序）</h2>
 <div class="card"><table>
 <tr><th>#</th><th class="l">改进点</th><th class="l">类别</th><th>预计回收</th><th>风险</th><th class="l">实现方式</th></tr>
-<tr><td>1</td><td class="l"><b>cline 路由 gw_proxy</b>（像 opencode 一样经 127.0.0.1:9090 中转）</td><td class="l">适配器 / 低风险</td><td class="pass">≈27 题 (+5.4pp)</td><td>低</td><td class="l">改 ClineDriver base URL → gw_proxy；或设 OPENAI_BASE_URL=http://127.0.0.1:9090/v1</td></tr>
+<tr><td>1</td><td class="l"><b>cline 路由 gw_proxy</b>（像 opencode 一样经 127.0.0.1:9090 中转）</td><td class="l">适配器 / 低风险</td><td class="pass">≈1 题 (+0.2pp)</td><td>低</td><td class="l">改 ClineDriver base URL → gw_proxy；或设 OPENAI_BASE_URL=http://127.0.0.1:9090/v1</td></tr>
 <tr><td>2</td><td class="l"><b>run_single.py 透传 cline stdout</b></td><td class="l">适配器 / 低风险</td><td class="pass">检测修复</td><td>低</td><td class="l">run_single.py:79-82 加 <code>if res.stdout: print("[stdout tail] ..." + res.stdout[-400:])</code>；predict_one 的 blocked 检测即可生效</td></tr>
-<tr><td>3</td><td class="l"><b>cline API 错误加重试</b></td><td class="l">适配器 / 低风险</td><td class="pass">≈27 题</td><td>低</td><td class="l">在 predict_one 层加 retry（rc=0 且 patch_len=0 且 wall&lt;10s → 重跑 1 次）；或在 gw_proxy 层加重试</td></tr>
-<tr><td>4</td><td class="l"><b>减少超时卡死</b></td><td class="l">上下文管理 / 中风险</td><td class="pass">≈12 题 (+2.4pp)</td><td>中</td><td class="l">① 降低 timeout 1800s→900s（快失败快重试）；② 上下文窗口到 80% 时强制收敛；③ 参考 CLINE_IMPROVEMENT_OPPORTUNITIES.md O3</td></tr>
-<tr><td>5</td><td class="l"><b>提高补丁精准度</b></td><td class="l">模型/架构 / 高风险</td><td class="pass">≈34 题 (+6.8pp)</td><td>高</td><td class="l">参考 CLINE_IMPROVEMENT_OPPORTUNITIES.md O1-O5（memoized 投影 / 检查点原子化 / 压缩 Hook / 任务记忆持久层 / token 计量优化）</td></tr>
+<tr><td>3</td><td class="l"><b>cline API 错误加重试</b></td><td class="l">适配器 / 低风险</td><td class="pass">≈1 题</td><td>低</td><td class="l">在 predict_one 层加 retry（rc=0 且 patch_len=0 且 wall&lt;10s → 重跑 1 次）；或在 gw_proxy 层加重试</td></tr>
+<tr><td>4</td><td class="l"><b>减少超时卡死</b></td><td class="l">上下文管理 / 中风险</td><td class="pass">≈6 题 (+1.2pp)</td><td>中</td><td class="l">① 降低 timeout 1800s→900s（快失败快重试）；② 上下文窗口到 80% 时强制收敛；③ 参考 CLINE_IMPROVEMENT_OPPORTUNITIES.md O3</td></tr>
+<tr><td>5</td><td class="l"><b>提高补丁精准度</b></td><td class="l">模型/架构 / 高风险</td><td class="pass">≈37 题 (+7.4pp)</td><td>高</td><td class="l">参考 CLINE_IMPROVEMENT_OPPORTUNITIES.md O1-O5（memoized 投影 / 检查点原子化 / 压缩 Hook / 任务记忆持久层 / token 计量优化）</td></tr>
 </table>
-<p><b>合计预计回收</b>：改进点 1+3（修复静默退出）≈ 27 题 + 改进点 4（减少超时）≈ 12 题 + 改进点 5（补丁质量）≈ 34 题
-= ≈73 题 → resolve 率 ≈79.8%，与 opencode（80.2%）的差距缩小至 ≈0.4pp。</p>
+<p><b>合计预计回收</b>：改进点 1+3（修复静默退出）≈ 1 题 + 改进点 4（减少超时）≈ 6 题 + 改进点 5（补丁质量）≈ 37 题
+= ≈44 题 → resolve 率 ≈74.0%，与 opencode（80.2%）的差距缩小至 ≈6.2pp。</p>
 <p class="ev">注：改进点 1 和 3 效果重叠（都修静默退出），取 max；改进点 4 和 5 独立可叠加。
 实际回收取决于题集重叠度，上界约为各项之和。</p></div>
 
@@ -210,8 +210,8 @@ print(f'cline: {len(c)}B / opencode: {len(o)}B')
 <div class="foot">
 报告生成器：run/harness/gen_report_cline_trace_analysis_zh.py<br>
 数据截止：2026-11-04 13:2x（cline eval 500/500，opencode eval 500/500）<br>
-证据文件：run_harness.py:143-182 (ClineDriver) / run_single.py:23-38 (cline runner) /
+证据文件：run_harness.py:143-182 (ClineDriver) / run_single.py:23-38 (cline-patched runner) /
 run_verified_full.py:151-190 (predict_one) / CLINE_IMPROVEMENT_OPPORTUNITIES.md (O1-O5)<br>
-命名合规：正文一律 cline（不写其它变体）
+命名合规：正文一律 cline（不写 cline-patched）
 </div>
 </body></html>
