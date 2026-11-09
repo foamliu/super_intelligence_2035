@@ -1,0 +1,69 @@
+% ICML 2027 submission — EDA-LiveFlow-Bench
+% 双盲投稿：使用 [submitted] 选项（匿名）
+% camera-ready 时改为 [accepted] 并填作者信息
+%
+% 需要的 style 文件（从 icml.cc 下载 Author Kit 2027）：
+%   icml2027.sty, icml2027.bst, fancyhdr.sty
+% 放在本目录下即可编译。
+%
+% 编译：pdflatex main && bibtex main && pdflatex main && pdflatex main
+
+\documentclass{article}
+
+% ICML 2027 style (submitted = 匿名审稿)
+\usepackage[submitted]{icml2027} % camera-ready: [accepted]
+
+% 基础包
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{hyperref}
+\usepackage{xspace}
+\usepackage{multirow}
+
+% 宏定义
+\newcommand{\bench}{EDA-LiveFlow-Bench\xspace}
+\newcommand{\mode}{design\_flow\xspace}
+\newcommand{\eg}{e.g.,\xspace}
+\newcommand{\ie}{i.e.,\xspace}
+\newcommand{\etal}{\textit{et al.}\xspace}
+
+% 图表路径
+\graphicspath{{figures/}}
+
+% ===== 标题与作者 =====
+\icmltitle{EDA-LiveFlow-Bench: Benchmarking LLM Agents on Real-World Circuit Design Flow Orchestration}
+
+\icmltitlerunning{EDA-LiveFlow-Bench}
+
+% 双盲：匿名作者
+\icmlauthor{Anonymous}{}
+
+\icmlrunning{EDA-LiveFlow-Bench}
+
+\begin{document}
+
+\maketitle
+
+% ===== 各章节 =====
+\input{sections/0_abstract}
+\input{sections/1_intro}
+\input{sections/2_related}
+\input{sections/3_benchmark}
+\input{sections/4_method}
+\input{sections/5_experiments}
+\input{sections/6_analysis}
+\input{sections/7_conclusion}
+
+% ===== 参考文献 =====
+\bibliographystyle{icml2027}
+\bibliography{references}
+
+% ===== 附录 (不计入页数限制) =====
+\newpage
+\appendix
+\input{sections/8_appendix}
+
+\end{document}

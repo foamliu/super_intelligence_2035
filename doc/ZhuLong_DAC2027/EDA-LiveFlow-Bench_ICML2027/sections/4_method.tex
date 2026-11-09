@@ -1,0 +1,61 @@
+\section{Agent System and Evaluation Harness}
+\label{sec:method}
+
+\subsection{System Under Test: Cline Agent}
+\label{sec:cline-agent}
+
+The system under test (SUT) is Cline v3.0.51~\cite{cline2026}, an open-source coding agent that provides:
+\begin{itemize}
+    \item \textbf{File tools}: \texttt{read\_file}, \texttt{write\_to\_file} for local workspace access.
+    \item \textbf{MCP bridge}: EDA tools are exposed via the \texttt{eda\_flow} MCP server (port 18891), providing \texttt{open\_session}, \texttt{run\_commands}, \texttt{run\_code}, \texttt{read\_file}, \texttt{write\_file}, \texttt{list\_files}.
+    \item \textbf{Thinking modes}: \texttt{low}/\texttt{medium}/\texttt{high} reasoning budget (we use \texttt{low} as default).
+    \item \textbf{Auto-approve}: All tool calls are auto-approved (no human-in-the-loop).
+\end{itemize}
+
+\subsection{Evaluation Harness Architecture}
+\label{sec:harness}
+
+The evaluation harness (\texttt{run\_one.sh} / \texttt{run\_batch.sh}) implements the following pipeline (Figure~\ref{fig:pipeline}):
+
+\begin{enumerate}
+    \item \textbf{Deploy hook}: Copy \texttt{PreToolUse} hook to \texttt{\textasciitilde/.cline/hooks/}, configure scope to the evaluation workdir root.
+    \item \textbf{Prepare workdir}: Create a fresh workdir, copy task assets (input files, task brief), verify no answer leakage (check.py/reference/ absent).
+    \item \textbf{Run agent}: Launch cline with the task prompt, model, and thinking budget. The agent reads \texttt{prompt.txt}, calls EDA tools via MCP, and writes deliverables to \texttt{outputs/}.
+    \item \textbf{Package}: After agent exit, the harness packages \texttt{outputs/} into \texttt{submit.zip} (the agent never runs zip---it only writes files).
+    \item \textbf{Judge}: In a separate directory, unpack \texttt{submit.zip} and run \texttt{check.py} with the deliverable and a fresh workdir.
+    \item \textbf{Record}: Append result to \texttt{status.jsonl} (verdict, duration, hook blocks, token usage).
+\end{enumerate}
+
+\begin{figure}[ht]
+\centering
+% \includegraphics[width=\linewidth]{pipeline.pdf}
+\fbox{\parbox{0.9\linewidth}{\centering [Figure: Evaluation pipeline — task assets $\to$ cline agent + MCP bridge $\to$ EDA server $\to$ deliverable $\to$ judge (separate) $\to$ verdict]}}
+\caption{Evaluation pipeline. The agent operates in an isolated workdir with EDA tools accessible only via MCP. The judge runs in a separate directory after agent completion.}
+\label{fig:pipeline}
+\end{figure}
+
+\subsection{Anti-Leakage Protocol}
+\label{sec:anti-leakage}
+
+Answer leakage---the agent reading the answer key directly---is the single largest threat to benchmark validity. We enforce isolation through three layers:
+
+\begin{itemize}
+    \item \textbf{Filesystem isolation}: The workdir contains only task assets and \texttt{prompt.txt}. The reference \texttt{check.py} and \texttt{reference/} directory are never copied into the workdir.
+    \item \textbf{PreToolUse hook}: A shell hook intercepts every tool call and blocks access to paths matching \texttt{check.py}, \texttt{\_check.py}, \texttt{reference/}, \texttt{hidden/}, and any file outside the workdir. Blocked calls return ``ACCESS RESTRICTED'' to the agent.
+    \item \textbf{Scope management}: The hook scope is set to the evaluation workdir root, ensuring concurrent evaluations don't cross-access.
+\end{itemize}
+
+We verify isolation by counting \texttt{ACCESS RESTRICTED} events in each session log (\texttt{hook\_blocks} field in \texttt{status.jsonl}).
+
+\subsection{EDA Server Bridge}
+\label{sec:eda-bridge}
+
+The EDA server (10.129.32.75) provides:
+\begin{itemize}
+    \item \textbf{Session management}: \texttt{open\_session} creates an isolated workdir; \texttt{close\_session} archives and removes it.
+    \item \textbf{Command execution}: \texttt{run\_commands} runs shell/EDA commands in the session workdir (bash -lc).
+    \item \textbf{Code execution}: \texttt{run\_code} executes pyAether/SKILL/Tcl code in the appropriate EDA interpreter.
+    \item \textbf{File I/O}: \texttt{read\_file}/\texttt{write\_file} for EDA-side file access.
+\end{itemize}
+
+The agent must call \texttt{open\_session} first to obtain a workdir, then pass it to all subsequent calls. This mirrors real EDA workflow patterns where engineers open a design session before running tools.

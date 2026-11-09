@@ -1,0 +1,93 @@
+\section{Benchmark Construction}
+\label{sec:benchmark}
+
+\subsection{Data Source: Real User Interaction Traces}
+\label{sec:data-source}
+
+Unlike synthetic benchmarks constructed by task authors, \bench{} is built from \emph{real user interaction traces}---actual multi-turn sessions where IC design engineers used the Cline~\cite{cline2026} coding agent to solve design-flow problems in a production environment. We systematically scanned 698 engineering workstations, identified sessions containing EDA-related tool interactions, and curated tasks from the most representative ones.
+
+\textbf{Scan pipeline.} We grep session files for EDA-keyword matches (hspice, spectre, calibre, virtuoso, aether, innovus, pt\_shell, dc\_shell, netlist, schematic, etc.) and rank sessions by \emph{match-count} (mc)---the number of lines hitting any EDA keyword. Sessions with mc $\geq 30$ yield 1{,}511 candidates from 226 unique users. A two-stage prefilter (rule-based + 0.8B LLM classifier) filters non-design-flow sessions (Q\&A, permission-denied, tool-not-found), with 0\% rejection rate---confirming that mc $\geq 30$ sessions are almost universally genuine EDA work.
+
+\textbf{Trace attribution.} Each task records \texttt{trace\_source} (host, user, session\_file, session\_msgs, real\_task\_summary), enabling trace-back to the original engineer's workflow. User identifiers are preserved (not hashed) for reproducibility, with only API keys/tokens masked.
+
+\subsection{Task Schema: The \mode{} Contract}
+\label{sec:task-schema}
+
+All 863 tasks follow a unified \mode{} contract (Table~\ref{tab:task-schema}):
+
+\begin{itemize}
+    \item \textbf{Prompt}: A natural-language task description derived from the real user's intent, reformulated to be self-contained (no assumed context from the original session).
+    \item \textbf{Assets}: Input files (RTL fragments, simulation logs, technology files, spec documents) that the agent reads locally.
+    \item \textbf{Entry point}: \texttt{outputs/submit.zip}---the agent must write deliverable files under \texttt{outputs/} and the harness packages them into \texttt{submit.zip}.
+    \item \textbf{Test}: A two-parameter check function \texttt{check(deliverable, workdir)} that unpacks the deliverable and runs $\geq 8$ assertions.
+    \item \textbf{No lang/host}: Unlike single-script benchmarks, the task does not specify a language or runtime---the agent must infer the appropriate tool chain from the task description.
+\end{itemize}
+
+\begin{table}[ht]
+\centering
+\small
+\caption{Task schema comparison: single-script vs.\ design\_flow.}
+\label{tab:task-schema}
+\begin{tabular}{@{}lll@{}}
+\toprule
+ & \textbf{Single-script} (EDA-Scripting-Bench) & \textbf{Design-flow} (\bench) \\
+\midrule
+Entry point & function return value & \texttt{outputs/submit.zip} \\
+Tool interaction & single \texttt{run\_code} & multi-step MCP orchestration \\
+Deliverable & one code file & multi-file package \\
+Assertions & function-level & deliverable-level ($\geq 8$) \\
+Lang/host specified & yes (pyAether/SKILL/Tcl) & no (agent infers) \\
+Steps & 1--3 tool calls & 5--20+ tool calls \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Domain Coverage}
+\label{sec:domain-coverage}
+
+\bench{} spans 13 EDA design domains (Table~\ref{tab:domain-distribution}), organized into 4 shards by area:
+
+\begin{itemize}
+    \item \textbf{Shard A (Digital front)}: digital (24), verification (14), pnr\_signoff (23), eda\_other (17)
+    \item \textbf{Shard B (SPICE/characterization)}: spice\_sim (49), characterization (23)
+    \item \textbf{Shard C (Physical/layout)}: physical\_verify (52), layout\_aether (27), layout\_virtuoso (24), pg\_layout (17)
+    \item \textbf{Shard D (Schematic/netlist/analog)}: schematic\_netlist (59), waveform (23), analog\_context (23)
+\end{itemize}
+
+\begin{table}[ht]
+\centering
+\small
+\caption{Domain distribution in \bench.}
+\label{tab:domain-distribution}
+\begin{tabular}{@{}lrl@{}}
+\toprule
+\textbf{Domain} & \textbf{Tasks} & \textbf{Shard} \\
+\midrule
+schematic\_netlist & 72 & D \\
+spice\_sim & 72 & B \\
+physical\_verify & 61 & C \\
+layout\_aether & 35 & C \\
+layout\_virtuoso & 33 & C \\
+waveform & 33 & D \\
+analog\_context & 30 & D \\
+characterization & 25 & B \\
+digital & 24 & A \\
+pg\_layout & 23 & C \\
+pnr\_signoff & 23 & A \\
+eda\_other & 17 & A \\
+verification & 14 & A \\
+\midrule
+\textbf{Total} & \textbf{462} & \\
+\bottomrule
+\end{tabular}
+\end{table}
+% 注：表格数字基于 11/06 快照（462 cases），最终版更新到 863。
+
+\subsection{Evaluation Protocol}
+\label{sec:eval-protocol}
+
+\textbf{Pass@1.} One trace per task: the agent may iterate within the trace (multiple tool calls) but is never restarted. A 2400-second timeout per task.
+
+\textbf{Anti-leakage.} A \texttt{PreToolUse} hook enforces a tool whitelist, blocks shell/code-search tools, and confines file access to a fresh working directory. Critically, the hook \emph{blocks access} to \texttt{check.py}, \texttt{reference/}, and any hidden answer files---the agent cannot read the answer key. The judge runs in a separate directory after the agent finishes.
+
+\textbf{Judge.} For each task, a reference \texttt{check.py} unpacks \texttt{submit.zip} into a workdir and runs $\geq 8$ assertions (the \texttt{test\_rationale} field specifies each assertion as ``k 条断言：①…②…''). A task passes only if \emph{all} assertions hold. The judge uses only Python standard library (no EDA license required), ensuring reproducibility.

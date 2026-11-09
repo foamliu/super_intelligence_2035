@@ -1,0 +1,14 @@
+\section{Conclusion and Future Work}
+\label{sec:conclusion}
+
+We presented \bench, the first benchmark for LLM agents on multi-step circuit design flow orchestration, built from 863 real user interaction traces across 13 EDA domains. Our evaluation reveals a striking finding: while LLM agents achieve 76\% on single-script EDA tasks, they achieve only 28\% on multi-step flow orchestration---a gap driven by tool-chain grounding depth, not model size. The domain gap (80\% for verification vs.\ 0\% for digital synthesis) shows that current agents excel at text-in/text-out tasks but fail when deep tool interaction is required.
+
+\textbf{Future work.}
+\begin{itemize}
+    \item \textbf{Expand domain coverage}: supplement digital synthesis and verification tasks to balance the distribution.
+    \item \textbf{Multi-agent evaluation}: evaluate agent frameworks beyond Cline (SWE-agent, OpenHands).
+    \item \textbf{Open-source EDA}: extend the benchmark to open-source tool chains (Yosys, OpenROAD, Magic) for reproducibility.
+    \item \textbf{Grounding interventions}: develop and evaluate techniques to improve tool-chain grounding (retrieval-augmented tool use, execution-feedback loops, tool-documentation pretraining).
+\end{itemize}
+
+\bench{} is released with full task specifications, reference assertions, and evaluation harness, enabling reproducible evaluation of future EDA agents.

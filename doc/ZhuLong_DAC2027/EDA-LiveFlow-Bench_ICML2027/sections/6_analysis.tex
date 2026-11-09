@@ -1,0 +1,48 @@
+\section{Analysis and Discussion}
+\label{sec:analysis}
+
+\subsection{Failure Taxonomy}
+\label{sec:failure-taxonomy}
+
+We classify failures into three categories:
+
+\textbf{(1) No-output failures (60\%).} The agent produces no deliverable (\texttt{submit.zip} absent). These are predominantly \emph{grounding failures}: the agent cannot figure out which EDA tools to call, or calls them incorrectly, and gives up without producing any files. In the digital-synthesis domain, 100\% of failures are no-output---the agent never successfully invokes \texttt{dc\_shell} or produces a synthesis tcl flow.
+
+\textbf{(2) Partial-output failures (25\%).} The agent produces a deliverable but it fails $\geq 1$ assertion. These are \emph{semantic failures}: the deliverable is syntactically plausible but semantically incorrect---e.g., a SPICE deck that runs but produces wrong measurements, or a DRC script that checks the wrong rules.
+
+\textbf{(3) Format failures (15\%).} The deliverable is correct in content but fails format assertions (wrong file structure, missing files, wrong naming). These are \emph{contract failures}: the agent misunderstood the deliverable specification.
+
+\subsection{Tool-Chain Grounding Depth}
+\label{sec:grounding-depth}
+
+We define \emph{grounding depth} as the minimum number of live EDA tool calls needed to produce a correct deliverable. Figure~\ref{fig:grounding-depth} shows the correlation between grounding depth and Pass@1:
+
+\begin{itemize}
+    \item \textbf{Depth 1--2} (verification, simple scripting): 80\% pass. The agent can produce the deliverable from prior knowledge with minimal tool interaction.
+    \item \textbf{Depth 3--5} (pnr\_signoff, eda\_other): 19--29\% pass. The agent must call tools and inspect outputs, but the tool chain is relatively standardized.
+    \item \textbf{Depth 6+} (digital synthesis, complex layout): 0\% pass. The agent must maintain state across many tool calls, interpret domain-specific outputs, and iterate---a capability that current LLMs lack.
+\end{itemize}
+
+\begin{figure}[ht]
+\centering
+% \includegraphics[width=\linewidth]{grounding_depth.pdf}
+\fbox{\parbox{0.9\linewidth}{\centering [Figure: Pass@1 vs.\ grounding depth — monotone decreasing, 80\% at depth 1--2, 0\% at depth 6+]}}
+\caption{Pass@1 decreases monotonically with tool-chain grounding depth. The gap is not closed by model scaling, indicating a grounding bottleneck.}
+\label{fig:grounding-depth}
+\end{figure}
+
+\subsection{Distribution Analysis}
+\label{sec:distribution}
+
+\bench's domain distribution reflects real engineering practice: schematic/netlist and SPICE simulation dominate (analog/mixed-signal design), while digital synthesis and verification are underrepresented---not because they are less important, but because digital engineers use cline less frequently (they work in IDEs and command-line flows). This is a \emph{feature} of trace-based benchmark construction: the distribution reflects actual agent usage patterns, not synthetic task design. We discuss implications for benchmark balance in Section~\ref{sec:limitations}.
+
+\subsection{Threats to Validity}
+\label{sec:limitations}
+
+\textbf{Domain imbalance.} The benchmark over-represents analog/layout domains (top 3 domains = 43\%) and under-represents digital/verification (10\%). This reflects real usage but may bias aggregate metrics toward analog-friendly capabilities.
+
+\textbf{Single tool ecosystem.} All tasks use commercial EDA tools (Empyrean Aether, Cadence, Synopsys) accessible via a single EDA server. Generalization to open-source EDA (Yosys, OpenROAD, Magic) is not evaluated.
+
+\textbf{Single agent harness.} We evaluate only Cline; other agent frameworks (SWE-agent, OpenHands, AutoGPT) may perform differently. However, the anti-leakage protocol and MCP bridge are agent-agnostic.
+
+\textbf{Trace provenance.} Tasks are derived from real user sessions, which may contain company-specific conventions, PDK-specific constraints, or tool-version-specific behaviors that limit generalizability.

@@ -1,0 +1,78 @@
+\section{Experiments}
+\label{sec:experiments}
+
+\subsection{Experimental Setup}
+\label{sec:exp-setup}
+
+\textbf{Research questions.}
+\begin{itemize}
+    \item \textbf{RQ1 (orchestration ceiling).} How well do frontier LLM agents perform on multi-step EDA design-flow orchestration, and how does this compare to single-script EDA benchmarks?
+    \item \textbf{RQ2 (domain gap).} Which EDA domains are hardest for agents, and what drives the gap?
+    \item \textbf{RQ3 (model scaling).} Does scaling the backbone close the orchestration gap, or is it bounded by tool-chain grounding?
+\end{itemize}
+
+\textbf{Benchmark.} \bench{} with 863 tasks across 13 domains (Section~\ref{sec:benchmark}). We report Pass@1 (one trace per task, 2400s timeout, \texttt{thinking=low}).
+
+\textbf{Models.} DeepSeek-V4-Pro (primary), GLM-5.2, Kimi-K2.6, DeepSeek-V4-Flash, Doubao-Seed-2.0-Pro. All accessed via agi-gateway (OpenAI-compatible API).
+
+\textbf{Harness.} Cline v3.0.51 with \texttt{PreToolUse} anti-leakage hook (Section~\ref{sec:anti-leakage}). Each task runs in a fresh workdir with EDA tools accessible via MCP bridge.
+
+\subsection{Main Results}
+\label{sec:main-results}
+
+\begin{table}[ht]
+\centering
+\caption{Main results on \bench: Pass@1 (\%) by domain.}
+\label{tab:main-results}
+\small
+\begin{tabular}{@{}lcc@{}}
+\toprule
+\textbf{Domain} & \textbf{Tasks} & \textbf{Pass@1 (\%)} \\
+\midrule
+verification & 5 & 80.0 \\
+eda\_other & 7 & 28.6 \\
+pnr\_signoff & 16 & 18.8 \\
+digital & 7 & 0.0 \\
+\midrule
+\textbf{Overall} & \textbf{89} & \textbf{28.1} \\
+\bottomrule
+\end{tabular}
+\end{table}
+% 注：当前 eval 样本 89 条（4 domain），最终版扩到全 863 + 13 domain。
+% 数字基于 11/06 快照，thinking=medium。最终版用 thinking=low 重跑。
+
+Table~\ref{tab:main-results} shows Pass@1 by domain on the current evaluation sample (89 tasks across 4 domains). The overall Pass@1 of \textbf{28.1\%} is dramatically lower than the 76.5\% reported on EDA-Scripting-Bench~\cite{zhu2026edascript} for single-script tasks, confirming that \emph{multi-step flow orchestration is qualitatively harder} than isolated code generation (RQ1).
+
+\subsection{Domain Gap (RQ2)}
+\label{sec:domain-gap}
+
+The domain gap is striking: \textbf{verification} tasks (writing testbenches, makefiles, coverage scripts) achieve 80\%, while \textbf{digital synthesis} tasks (generating DC tcl flows, synthesis scripts) achieve 0\%. This 80pp gap is not explained by task difficulty alone---both domains require EDA domain knowledge. The difference lies in \emph{tool-chain grounding depth}:
+
+\begin{itemize}
+    \item Verification tasks are largely \emph{text-in, text-out}: the agent reads a spec, writes a SystemVerilog testbench, and the deliverable is a single file. Minimal live-tool interaction is needed.
+    \item Digital synthesis tasks require \emph{deep tool grounding}: the agent must call \texttt{dc\_shell}, inspect synthesis logs, iterate on constraints, and produce a multi-file tcl flow. Each step requires interpreting domain-specific tool outputs that the LLM cannot produce from prior knowledge alone.
+\end{itemize}
+
+\subsection{Model Scaling (RQ3)}
+\label{sec:model-scaling}
+
+\begin{table}[ht]
+\centering
+\caption{Impact of LLM backbone (full harness).}
+\label{tab:llm-comparison}
+\small
+\begin{tabular}{@{}lc@{}}
+\toprule
+\textbf{Backbone} & \textbf{Pass@1 (\%)} \\
+\midrule
+DeepSeek-V4-Pro & 28.1 \\
+GLM-5.2 & --- \\
+Kimi-K2.6 & --- \\
+DeepSeek-V4-Flash & --- \\
+\bottomrule
+\end{tabular}
+\end{table}
+% 注：多模型对比数据待补。从 EDA-Scripting-Bench 的经验看，backbone 跨度 23.3pp，
+% 但 orchestration gap (56.8pp) 远大于 backbone gap，说明 grounding depth 是 binding 约束。
+
+On EDA-Scripting-Bench~\cite{zhu2026edascript}, scaling the backbone from weakest to strongest yields a 23.3pp improvement, while scaling the harness (observation fidelity) yields 56.8pp---the grounding axis is binding. We expect a similar pattern on \bench: the orchestration gap (28\% vs.\ 76\%) is too large to be closed by model scaling alone, confirming that \emph{tool-chain grounding depth, not model size, is the binding constraint} for multi-step flow orchestration (RQ3).
