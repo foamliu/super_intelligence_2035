@@ -1,0 +1,274 @@
+{
+  "meta": {
+    "experiment": "R92",
+    "description": "GRPO HP Calibration from DeepSeek Trajectory Statistics",
+    "wake": 140,
+    "date": "2026-11-09",
+    "gpu": false,
+    "data_source": "/home/app.e0031982/code/eda_fastmcp/pyAether-eval/cline_cli_trace/cline_trace_v1_3",
+    "n_traces": 123,
+    "n_success": 103,
+    "n_error": 20
+  },
+  "distributions": [
+    {
+      "label": "total_trajectory_tokens",
+      "n": 123,
+      "mean": 31402.9,
+      "stdev": 26607.0,
+      "median": 25334,
+      "min": 1587,
+      "max": 184757,
+      "p25": 17913.0,
+      "p75": 36426.5,
+      "p90": 46583.0,
+      "p95": 61824.6,
+      "p99": 169300.0
+    },
+    {
+      "label": "n_messages",
+      "n": 123,
+      "mean": 48.0,
+      "stdev": 22.6,
+      "median": 45,
+      "min": 6,
+      "max": 98,
+      "p25": 30.5,
+      "p75": 58.0,
+      "p90": 91.2,
+      "p95": 94.0,
+      "p99": 97.8
+    },
+    {
+      "label": "n_turns",
+      "n": 123,
+      "mean": 23.9,
+      "stdev": 11.3,
+      "median": 22,
+      "min": 3,
+      "max": 49,
+      "p25": 15.0,
+      "p75": 29.0,
+      "p90": 45.6,
+      "p95": 47.0,
+      "p99": 48.8
+    },
+    {
+      "label": "tool_calls_per_task",
+      "n": 123,
+      "mean": 30.5,
+      "stdev": 13.2,
+      "median": 28,
+      "min": 12,
+      "max": 80,
+      "p25": 22.0,
+      "p75": 34.0,
+      "p90": 51.2,
+      "p95": 57.0,
+      "p99": 71.0
+    },
+    {
+      "label": "unique_tools_per_task",
+      "n": 123,
+      "mean": 6.3,
+      "stdev": 0.8,
+      "median": 6,
+      "min": 4,
+      "max": 7,
+      "p25": 6.0,
+      "p75": 7.0,
+      "p90": 7.0,
+      "p95": 7.0,
+      "p99": 7.0
+    },
+    {
+      "label": "max_assistant_msg_tokens",
+      "n": 123,
+      "mean": 1801.8,
+      "stdev": 645.3,
+      "median": 1668,
+      "min": 198,
+      "max": 3637,
+      "p25": 1382.0,
+      "p75": 2101.0,
+      "p90": 2763.0,
+      "p95": 3090.8,
+      "p99": 3627.3
+    },
+    {
+      "label": "mean_assistant_msg_tokens",
+      "n": 123,
+      "mean": 495.7,
+      "stdev": 149.3,
+      "median": 480.7,
+      "min": 151.0,
+      "max": 944.6666666666666,
+      "p25": 379.8,
+      "p75": 596.3,
+      "p90": 691.4,
+      "p95": 741.0,
+      "p99": 810.4
+    },
+    {
+      "label": "error_indicators",
+      "n": 123,
+      "mean": 42.7,
+      "stdev": 57.7,
+      "median": 24,
+      "min": 0,
+      "max": 383,
+      "p25": 10.0,
+      "p75": 53.5,
+      "p90": 93.6,
+      "p95": 123.4,
+      "p99": 341.2
+    }
+  ],
+  "discriminative_analysis": [
+    {
+      "feature": "Turns",
+      "key": "n_turns",
+      "success_mean": 22.7,
+      "failure_mean": 30.1,
+      "success_median": 21,
+      "failure_median": 27.5,
+      "cohen_d": -0.601,
+      "direction": "failure > success",
+      "effect_size": "medium"
+    },
+    {
+      "feature": "Tool Calls",
+      "key": "tool_calls",
+      "success_mean": 29.2,
+      "failure_mean": 37.5,
+      "success_median": 27,
+      "failure_median": 31.5,
+      "cohen_d": -0.599,
+      "direction": "failure > success",
+      "effect_size": "medium"
+    },
+    {
+      "feature": "Total Tokens",
+      "key": "total_tokens_est",
+      "success_mean": 29053.0,
+      "failure_mean": 43504.7,
+      "success_median": 24312,
+      "failure_median": 34652.0,
+      "cohen_d": -0.435,
+      "direction": "failure > success",
+      "effect_size": "small"
+    },
+    {
+      "feature": "Max Assistant Msg Tokens",
+      "key": "max_assistant_msg_tokens",
+      "success_mean": 1775.2,
+      "failure_mean": 1938.5,
+      "success_median": 1644,
+      "failure_median": 1826.0,
+      "cohen_d": -0.24,
+      "direction": "failure > success",
+      "effect_size": "small"
+    },
+    {
+      "feature": "Unique Tools",
+      "key": "n_unique_tools",
+      "success_mean": 6.4,
+      "failure_mean": 6.2,
+      "success_median": 6,
+      "failure_median": 6.0,
+      "cohen_d": 0.238,
+      "direction": "success > failure",
+      "effect_size": "small"
+    },
+    {
+      "feature": "Error Indicators",
+      "key": "error_indicators",
+      "success_mean": 39.8,
+      "failure_mean": 57.5,
+      "success_median": 24,
+      "failure_median": 23.0,
+      "cohen_d": -0.252,
+      "direction": "failure > success",
+      "effect_size": "small"
+    }
+  ],
+  "recommendations": {
+    "max_new_tokens": 2816,
+    "context_window": 16384,
+    "max_turns": 46,
+    "rollout_tool_budget": 52,
+    "group_size_binary": 8,
+    "group_size_partial": 4,
+    "temperature": {
+      "initial": 0.9,
+      "anneal_to": 0.6000000000000001,
+      "schedule": "linear_decay_over_training"
+    },
+    "kl_coefficient": {
+      "initial": 0.01,
+      "target": 0.05,
+      "warmup_steps": 20,
+      "schedule": "linear_warmup"
+    },
+    "clip_range": [
+      0.2,
+      0.2
+    ],
+    "learning_rate": {
+      "initial": 5e-06,
+      "warmup_steps": 10,
+      "decay": "cosine",
+      "min_lr": 5.000000000000001e-07
+    },
+    "rollout_timeout_s": 1368,
+    "reward_scale": {
+      "R1_binary": {
+        "values": [
+          0,
+          1
+        ],
+        "signal_density": 0.325
+      },
+      "R2_partial": {
+        "values": "0.0-1.0 step 0.1",
+        "signal_density": 0.488
+      },
+      "R3_R2_plus_penalty": "R2 - 0.1 * (n_tool_calls / max_tool_calls)",
+      "R4_R3_plus_api_legality": "R3 + 0.05 * api_call_legal_rate"
+    },
+    "batch_prompts": 3,
+    "total_seqs_per_step": 24,
+    "success_rate": 0.8374,
+    "error_recovery_rate": 0.9675
+  },
+  "top_tools": [
+    [
+      "search_apis",
+      1091
+    ],
+    [
+      "get_api_details",
+      808
+    ],
+    [
+      "execute_command",
+      522
+    ],
+    [
+      "write_to_file",
+      502
+    ],
+    [
+      "list_files",
+      430
+    ],
+    [
+      "read_file",
+      208
+    ],
+    [
+      "attempt_completion",
+      193
+    ]
+  ]
+}
