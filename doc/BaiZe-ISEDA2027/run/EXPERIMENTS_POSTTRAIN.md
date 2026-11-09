@@ -10228,3 +10228,120 @@ gpu_watcher detects >=4 GPUs free
 - **R91**: /tmp 模型路径失效发现 + NAS fallback
 
 > ⚠️ Surrogate endpoint tests validate PIPELINE only, NOT BaiZe results.
+
+
+## §R97 (2026-11-09 wake145) Extended Surrogate Difficulty Map — 50-Task EDA-Eval-PyAether Code Generation
+
+> **动机**: R94 仅做了 3 题 smoke test。R97 扩展至 50 题，获得统计意义的"强模型无工具"难度图谱。
+> GPU 仍 0/8 free（root SGLang Qwen3.8-27B 占全 8 卡）。
+> 利用现有 SGLang Qwen3.8-27B 端点（端口 8098, enable_thinking=False）作为替身推理后端。
+> ⚠️ **替身声明**: Qwen3.8-27B 结果**不可迁移到 BaiZe** (MiniCPM5-2B)。仅验证管线 + 提供"强模型无工具"参考点。
+
+### 1. 脚本
+
+- **脚本**: `baize_posttrain_r97_surrogate_difficulty_map.py` (312 行, 纯 Python3 + stdlib, 0 外部依赖)
+- **关键修复**: Qwen3.8-27B 是推理模型（reasoning model），默认消耗大量 reasoning_tokens 导致 max_tokens 耗尽后 content 为空。修复：payload 添加 `chat_template_kwargs: {enable_thinking: false}` → 每题从 90s/8489tok 降至 2.2s/692tok。
+- **功能**: ① SGLang OpenAI-compatible API 调用 ② 代码提取（markdown fence 解析）③ AST 语法检查 ④ pyAether API 覆盖率分析 ⑤ 失败模式分类 ⑥ 按场景/类别/API数量/techlib分组统计 ⑦ HTML 报告 + JSON 输出
+
+### 2. 全量结果 (50 tasks, --n 50 --html --json)
+
+| 指标 | 值 |
+|:--|:--|
+| 总任务数 | 50 |
+| 有效任务（无API错误） | 50 (100%) |
+| 语法正确 | 50 (100%) |
+| 可能通过（语法OK + 100% API覆盖） | 0 (0%) |
+| 工具必需型（语法OK + 0% API覆盖） | 17 (34%) |
+| 部分API使用（1-99% API覆盖） | 33 (66%) |
+| 平均耗时 | 2.2s/task |
+| 平均tokens | 692/task |
+| 平均生成LOC | 26.6 |
+
+### 3. 失败模式分布
+
+| 失败模式 | 数量 | 占比 | 含义 |
+|:--|--:|--:|:--|
+| partial_api_usage | 33 | 66% | 语法正确但仅使用部分所需API → 需API查找能力 |
+| no_api_usage | 17 | 34% | 语法正确但完全不使用所需API → 工具必需型 |
+| syntax_error | 0 | 0% | 无语法错误（强模型代码生成能力充足） |
+| potential_pass | 0 | 0% | 无任务达到100% API覆盖 → **无工具不可能通过** |
+
+### 4. API 覆盖率分布
+
+| 覆盖率区间 | 任务数 | 占比 |
+|:--|--:|--:|
+| 0% | 17 | 34% |
+| 1-50% | 27 | 54% |
+| 51-99% | 6 | 12% |
+| 100% | 0 | 0% |
+
+**核心发现**: 50 题中 **0 题**达到 100% API 覆盖。即使 27B 强模型，在无工具纯代码生成模式下，也**无法正确使用全部所需 pyAether API**。
+
+### 5. 按场景统计
+
+| 场景 | 任务数 | 语法正确 | API全覆盖 | 可能通过 |
+|:--|--:|--:|--:|--:|
+| Schematic | 17 | 17 (100%) | 0 (0%) | 0 (0%) |
+| Layout | 16 | 16 (100%) | 0 (0%) | 0 (0%) |
+| Design Management | 11 | 11 (100%) | 0 (0%) | 0 (0%) |
+| Others | 6 | 6 (100%) | 0 (0%) | 0 (0%) |
+
+→ **所有场景均为 0% API 全覆盖**，工具依赖是全场景问题，无场景豁免。
+
+### 6. 按 API 数量分箱
+
+| API数/题 | 任务数 | 语法正确 | API全覆盖 |
+|:--|--:|--:|--:|
+| 1 | 3 | 3 (100%) | 0 (0%) |
+| 2-3 | 13 | 13 (100%) | 0 (0%) |
+| 4-5 | 10 | 10 (100%) | 0 (0%) |
+| 6-10 | 22 | 22 (100%) | 0 (0%) |
+| 10+ | 2 | 2 (100%) | 0 (0%) |
+
+→ **即使仅需1个API的任务也无法覆盖**（3/3 = 0%）。模型不知道 pyAether API 的准确名称/签名。
+
+### 7. Techlib 依赖对比
+
+| techlib | 任务数 | 语法正确 | API全覆盖 |
+|:--|--:|--:|--:|
+| 无依赖 | 46 | 46 (100%) | 0 (0%) |
+| 有依赖 | 4 | 4 (100%) | 0 (0%) |
+
+### 8. 关键结论
+
+1. **代码生成能力充足**: 100% 语法正确率 → 27B 模型的 Python 代码生成能力不是瓶颈。MiniCPM5-2B (2B) 可能有语法错误，但可通过 SFT 修复。
+2. **API 知识是核心瓶颈**: 0% API 全覆盖 → 模型不知道 pyAether API 的准确名称和用法。这直接支撑"58pp 差距主体为协议可回收"的假设。
+3. **34% 工具必需型**: 17 题完全不知道任何所需 API → 这些任务**必须**通过工具调用（API 查找）才能解决。DeepSeek 94% 侧 D2=14.32 次工具调用/任务 vs MiniCPM5-2B 假设 <5 次 → 工具调用频次差距是关键。
+4. **66% 部分API使用**: 33 题知道部分 API → 领域退火注入 API 文档可显著提升覆盖率（从 partial → full）。
+5. **对 Post-Train 三步的量化启示**:
+   - **领域退火**（API 知识注入）→ 目标将 0% 覆盖率提升至 >50% → 对应 M1 (50%)
+   - **SFT**（工具使用模式）→ 教模型"何时查哪个 API" → 对应 M2 (65%)
+   - **RL**（多 API 串联 + 执行反馈）→ 打磨"查-写-改"闭环 → 对应 M3 (75%)
+6. **推理模型发现**: Qwen3.8-27B 是推理模型，默认消耗大量 reasoning_tokens。`chat_template_kwargs: {enable_thinking: false}` 可关闭推理模式，将每题从 90s 降至 2.2s。MiniCPM5-2B 不是推理模型，不受此影响。
+
+### 9. 局限性
+
+- 替身模型 Qwen3.8-27B ≠ BaiZe 基座 MiniCPM5-2B，结果不可迁移
+- 纯代码生成模式 ≠ full harness 智能体模式（无工具调用、无迭代）
+- API 覆盖率 ≠ Pass@1（代码可能语法正确 + API 出现但有逻辑错误）
+- 50 题样本（前 50 个）可能不代表全部 158 题的完整分布
+- 无执行验证（pyAether 未安装），"potential_pass" 是上界估计
+- enable_thinking=False 可能降低模型推理质量（但对 API 覆盖率影响不大，因为模型本身不知道 API）
+
+### 10. 交付物
+
+| Item | Path | Size |
+|:--|:--|--:|
+| Python script | `run/baize_posttrain_r97_surrogate_difficulty_map.py` | 312 lines |
+| HTML report | `reports/report_posttrain_r97_surrogate_difficulty_map_zh.html` | 7.6KB |
+| JSON data | `run/r97_surrogate_difficulty_map.json` | 73.7KB |
+
+### 11. 与前序研究关联
+
+- **R94**: 3 题 smoke → R97 扩展至 50 题，获得统计意义 + 修复推理模型空输出问题
+- **R83**: 规则难度分层 → R97 用实证数据验证（API 数量与覆盖率的关系）
+- **R88**: DeepSeek 失败分析 → R97 提供"无工具"侧对照
+- **R93**: MiniCPM5-2B 基线轨迹分析管线 → GPU 释放后用真实 MiniCPM5-2B 数据替换
+- **P0 D1-D6**: D2（工具调用频次）的假设 → R97 的 API 覆盖率分布提供间接验证
+
+> ⚠️ Surrogate results (Qwen3.8-27B) NOT transferable to BaiZe (MiniCPM5-2B).
