@@ -24,6 +24,26 @@
   "prev_sessions": 5822,
   "scan_path": "/home/t0002965/log/ssh_eda_search_20261105_192825",
   "scansync": {
+    "r278": {
+      "consecutive_mgmt_round": "r268-r278 (11th)",
+      "daily_log_20261109_lines": 2893,
+      "daily_log_20261106_lines": 2899,
+      "daily_log_20261107_lines": 2916,
+      "daily_log_20261108_lines": 2893,
+      "daily_log_healthy": true,
+      "date": "2026-11-09",
+      "finding": "11th consecutive mgmt round. LATEST_SCAN still 11/05 ssh_eda_search_20261105_192825 (no new scan since r268, 11 rounds). Daily log stable 11/06=2899 11/07=2916 11/08=2893 11/09=2893 lines (scanner healthy). shard_A_pool_mc15=216 (raw awk, .75), fresh≈87-92 (file-based filter; 274/278 ledger sessions uploaded to .75 workdir as excl set, awk regex-length-limit bypass). fresh_strong_digital_mc15=0 AND fresh_strong_digital_mc5=0 (verilog/rtl/vcs/verdi/formality/primetime/dc_shell/verilint/pt_shell/design_compiler/sdc/systemverilog/vivado/yosys/openroad). ALL fresh are analog-dominated: t0aom(654)/dek1i(592) easont netlist1972/schematic776 + 2 synthesis; wzws0(305) adaml virtuoso/calibre; n1njg/cx74r/8p3tb jessegao netlist/schematic/pyAether; kck7n(87) calibre/virtuoso=shard C; 50mu7(85) e0042624=OpenCode dev skip; p5x6n(92) e0023936 virtuoso+tcl+pyAether (multi-host dup x5); jd1wq(64) cellview. Daily log 11/06-11/09 = 0 verification-tool hits. No newer scan dir exists (only 11/05 + 10/28). Mgmt round, 0 case. shard A digital pool EXHAUSTED, awaiting new scan to capture digital sessions before post-scan purge.",
+      "mc30": 2199,
+      "mc30_dedup": 1511,
+      "new_sessions": 0,
+      "no_new_scan": true,
+      "scan_dir": "ssh_eda_search_20261105_192825",
+      "shard_A_pool_fresh": 87,
+      "shard_A_pool_fresh_digital_strong": 0,
+      "shard_A_pool_mc15": 216,
+      "updated_at": "2026-11-09T16:20:00+08:00",
+      "users_mc30": 224
+    },
     "r277": {
       "consecutive_mgmt_round": "r268-r277 (10th)",
       "daily_log_20261109_lines": 2893,
@@ -41,7 +61,7 @@
       "updated_at": "2026-11-09T16:10:00+08:00",
       "users_mc30": 224
     },
-    "updated_at": "2026-11-09T16:10:00+08:00"
+    "updated_at": "2026-11-09T16:20:00+08:00"
   },
   "sessions": 5822,
   "shard_mc": {
@@ -52,7 +72,7 @@
   },
   "source": "/home/t0002965/log/ssh_eda_search_20261105_192825/summary.tsv (11/05 scan)",
   "target_mc": 30,
-  "updated_at": "2026-11-09 16:02",
+  "updated_at": "2026-11-09 16:20",
   "users_mc100": 182,
   "users_mc30": 224,
   "users_mc300": 60,
