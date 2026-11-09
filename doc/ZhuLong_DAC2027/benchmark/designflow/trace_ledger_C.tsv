@@ -464,7 +464,7 @@
 1793584942223_nrkph	alan3zh	hfeg0pkn001	92	pg_layout	case	EDA-Eval-DesignFlow-PpFlowSetupGen-001	2026-11-09 07:40	
 1791516327546_gfccq					parked		2026-11-09 08:10	r270 non-seed: e0042624 NEW user, virtuoso147但实为custom_design_skill安装/加载会话(U0 cd skill repo; U15 install; U27 skip-show; U29 load skill), 非layout设计任务, harness/skill-mgmt
 1793775927024_1stc5					parked		2026-11-09 08:10	r270 non-seed: shaoyou, innovus36但实为WaveView FSDB波形分析(U0 计算信号v(Vb)平均值→waveview-fsdb-reader skill), sim/waveview域非pg_layout
-1793842357080_knbkz	legendd	hfeg0pkn002	688	layout_aether	claimed		2026-11-09 08:32	
+1793842357080_knbkz	legendd	hfeg0pkn002	688	layout_aether	case	EDA-Eval-DesignFlow-LayoutAnalyzeReport-001	2026-11-09 08:51	
 1793782993086_d1yda					parked		2026-11-09 08:32	prose how-to(华大aether如何批量copy cell到目标文件夹); 1 user turn 18msgs; agent answers w/ docs no runnable artifact; violates 4.2/4.3 same-class as 4ys8e/iacrk
 1789536472827_nwhe2					parked		2026-11-09 08:32	U0='zl -cli'(7chars typo/CLI invoke); 1 user turn 26msgs; too thin/ambiguous; agent only list_allowed_files/read_files exploring
 1789717866261_vhb6i					parked		2026-11-09 08:32	perf-diagnosis: U0 asks why pyaether-script slower than skill-script (gives symptom asks root-cause); diagnosis/explanation task no runnable build deliverable; hard to make 8+cond check
