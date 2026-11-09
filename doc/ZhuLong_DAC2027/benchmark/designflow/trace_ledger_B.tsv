@@ -575,3 +575,10 @@ qnm9e					parked		2026-11-08 01:58	Finesim DC convergence Q&A prose dup of uky6c
 1793327181609_04txc	peeked	hfeg0plg52	0	spice_sim	parked		2026-11-09 09:34	peeked reject (see deepread/round notes)
 1793322259360_bisir	peeked	hfeg0plg52	0	spice_sim	parked		2026-11-09 09:34	peeked reject (see deepread/round notes)
 1789908324813_f0jns	peeked	hfeg0plg52	0	spice_sim	parked		2026-11-09 09:34	peeked reject (see deepread/round notes)
+1793944907619_ddo96.messages.json	e0024852	hfeg0pkn004	218	spice_sim	case	EDA-Eval-DesignFlow-SharedLibDeployFix-001	2026-11-09 09:46	
+1788941364124_2lp7f.messages.json	ruifan	hfeg0plg36	81	spice_sim	parked		2026-11-09 09:46	wrong-shard(layout/calibre/schematic)or-vague
+1793071146917_b5nzb.messages.json	ruifan	hfeg0plg36	49	spice_sim	parked		2026-11-09 09:46	wrong-shard(layout/calibre/schematic)or-vague
+1789958710444_rhti4.messages.json	miccao	hfeg0plg37	266	spice_sim	parked		2026-11-09 09:46	wrong-shard(layout/calibre/schematic)or-vague
+1789092579396_tgs17.messages.json	miccao	hfeg0plg37	395	spice_sim	parked		2026-11-09 09:46	wrong-shard(layout/calibre/schematic)or-vague
+1793942997034_oejtz.messages.json	adaml	hfeg0pkn004	24901	spice_sim	parked		2026-11-09 09:46	wrong-shard(layout/calibre/schematic)or-vague
+1793956475658_jatet.messages.json	e0024852	hfeg0pkn004	618	spice_sim	parked		2026-11-09 09:46	wrong-shard(layout/calibre/schematic)or-vague
