@@ -763,3 +763,7 @@ qnm9e					parked		2026-11-08 01:58	Finesim DC convergence Q&A prose dup of uky6c
 1793947529316_ie8du.messages.json	declanzh	hfeg0plg97	172	spice_sim	case	EDA-Eval-DesignFlow-Mt0FolderAggStat-001	2026-11-10 04:34	
 1793705585219_k1vy6	hauserz	hfeg0pkn006	131	spice_sim	case	EDA-Eval-DesignFlow-PwlFormatConvert-001	2026-11-10 06:09	
 1793942940446_q3y71	declanzh	hfeg0pkn005	96	spice_sim	parked		2026-11-10 06:15	dup ie8du same .mt0 aggregation task (U#2/U#24/U#66/U#122 verbatim same)
+1793942454477_whc3n	zanezang	hfeg0plg57	154	spice_sim	case	EDA-Eval-DesignFlow-MosDcGuiTool-001	2026-11-10 06:45	
+1793184099494_4v4nf	wenwenl	hfeg0plg74	122	spice_sim	parked		2026-11-10 06:45	session file GC'd on plg74 (dir+flat both missing), unreachable
+1792549549929_j0t84	zhukaic	hfeg0plg58	87	spice_sim	parked		2026-11-10 06:45	single user turn, output target=workspace.cxmt.com web URL, deliverable un-verifiable; aether_skill ota_2stg_sim
+1793843116422_qzva9	thqu	hfeahpc503	253	spice_sim	parked		2026-11-10 06:45	U#0 consultative (TECHLIB ntn vth how-to-check), not produce-task; evolves to IV curve consult
