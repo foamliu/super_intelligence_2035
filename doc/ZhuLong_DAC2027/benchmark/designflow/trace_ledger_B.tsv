@@ -748,3 +748,8 @@ qnm9e					parked		2026-11-08 01:58	Finesim DC convergence Q&A prose dup of uky6c
 1793928990578_ltkg1	curryxu	hfeg0pkn001	229	spice_sim	case	EDA-Eval-DesignFlow-FifoDelayOptDiag-001	2026-11-10 01:09	
 1793957358059_v5icx.messages.json	yanxvwei	hfeg0pkn002	71	spice_sim	case	EDA-Eval-DesignFlow-QueueCorePolicyPatch-001	2026-11-10 01:38	
 1793690145277_z7n9b	curryxu	hfeg0pkn001	172	spice_sim	case	EDA-Eval-DesignFlow-FifoStimulusGen-001	2026-11-10 02:18	
+1792630397654_fyfm9	yanxvwei	hfeg0pkn002	54	characterization	case	EDA-Eval-DesignFlow-ShmooCfgParser-001	2026-11-10 02:42	
+1793668052150_wp5jq					parked		2026-11-10 02:42	dup of z7n9b: verbatim same U#0 (curryxu FIFO_TOP spice_tb_stimulus)
+1793690069825_hf9ve					parked		2026-11-10 02:42	dup of z7n9b: same opening msg_mvzznb7t_1/ts as wp5jq (curryxu FIFO_TOP)
+1793935312458_x1iee					parked		2026-11-10 02:42	near-dup of v5icx: yanxvwei anasim_pro runsim_control Run-button consultation, overlaps QueueCorePolicyPatch
+1793600081315_ns5cm					parked		2026-11-10 02:42	diagnostic consultation: e0024852 parse_md0.py Iwrite=0.000uA why, fuzzy produce deliverable
