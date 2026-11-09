@@ -462,3 +462,5 @@
 1793621923074_i9chj	alan3zh	hfeg0pkn001	121	pg_layout	case	EDA-Eval-DesignFlow-InnovusImpsr1253Diag-001	2026-11-09 06:48	
 1786504317615_fkprl	e0014566	hfeg0pkn005	640	layout_virtuoso	case	EDA-Eval-DesignFlow-RscalcRtextRnodePlan-001	2026-11-09 07:09	
 1793584942223_nrkph	alan3zh	hfeg0pkn001	92	pg_layout	case	EDA-Eval-DesignFlow-PpFlowSetupGen-001	2026-11-09 07:40	
+1791516327546_gfccq					parked		2026-11-09 08:10	r270 non-seed: e0042624 NEW user, virtuoso147但实为custom_design_skill安装/加载会话(U0 cd skill repo; U15 install; U27 skip-show; U29 load skill), 非layout设计任务, harness/skill-mgmt
+1793775927024_1stc5					parked		2026-11-09 08:10	r270 non-seed: shaoyou, innovus36但实为WaveView FSDB波形分析(U0 计算信号v(Vb)平均值→waveview-fsdb-reader skill), sim/waveview域非pg_layout
