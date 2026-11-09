@@ -739,3 +739,4 @@ qnm9e					parked		2026-11-08 01:58	Finesim DC convergence Q&A prose dup of uky6c
 1794225375454_btflh	e0024852	pkn004	16	spice_sim	case	EDA-Eval-DesignFlow-DspfFloatLayerDiag-001	2026-11-09 21:06	
 1794226772548_iyl1p.messages.json	e0024852	hfeg0pkn002	0	spice_sim	parked		2026-11-09 22:12	wrong-shard: U#1=layout_aether GDS via_optim_gds.py rewrite (shard C); U#3=hd_CH252_bitcell.dspf add layer/location but session ended at assistant clarifying question, NO user-accepted gold standard. e0024852 continuation of btflh(dspf). fresh-window 21:00+ find.
 1793880969509_yez2i	declanzh	hfeg0pkn005	58	spice_sim	case	EDA-Eval-DesignFlow-Mt0PvrefAbsGroupStat-001	2026-11-09 22:56	
+1792389569188_qry8l	joeyl	hfeg0pkn004	34	spice_sim	case	EDA-Eval-DesignFlow-TrimSweepSpGen-001	2026-11-09 23:46	
