@@ -73,15 +73,54 @@ TUTOR_SYSTEM = (
 
 # 句末标点/换行（11:40 令 §1.1「每次回复 ≤2 句」的确定性裁剪分句依据）
 _SENT_END = "。！？!?；;\n"
+# 软停顿：可在这些标点处断句而不破坏 TTS 语义（用于「每句 ≤20 字」的确定性裁剪）
+_SOFT_PAUSE = "，、：,"
 
 
-def clamp_hint(text: str, max_sentences: int = 2) -> str:
-    """把 LLM 引导裁剪到最多 `max_sentences` 句（11:40 令 §1.1）。
+def _cap_sentence(s: str, max_chars: int = 20) -> str:
+    """把单个句子压到 ≤max_chars（INTERACTION_SPEC §2.1「每句 ≤20 字」）。
 
-    纯函数、确定性：按句末标点（。！？!?；;）与换行切句、去掉空句、保留前 N 句。
-    只做「删句」不做「硬截单句」——避免把中文半句切断导致 TTS 破音；
-    单句 ≤20 字由 TUTOR_SYSTEM 提示词 + INTERACTION_SPEC 话术模板约束。
-    （第 13 轮新增：交互验收实测发现 LLM 原始输出 3-6 句，超出「≤2 句」硬指标。）
+    确定性、优先保语义：
+    - ≤max_chars 原样返回；
+    - 超过时先在软停顿（，、：）处断句，**优先保「句首 + 句尾问句」**——
+      家教「下一步小问」通常在句尾，裁掉的是中间细节，不丢问题；
+    - 仅当整句无软停顿可切时才硬截到 max_chars，并尽量保留句末标点（避免 TTS 破音）。
+    """
+    s = (s or "").strip()
+    if len(s) <= max_chars:
+        return s
+    parts = [p for p in re.split(r"(?<=[%s])" % re.escape(_SOFT_PAUSE), s) if p.strip()]
+    if len(parts) <= 1:
+        # 无软停顿：硬截到 max_chars，保留结尾句末标点
+        tail = s[-1] if s[-1] in "。！？!?" else ""
+        return s[: max_chars - len(tail)] + tail
+    tail = parts[-1]
+    keep_tail = bool(re.search(r"[。！？!?]$", tail)) and len(tail) <= max_chars
+    if keep_tail:
+        budget = max_chars - len(tail)
+        head = ""
+        for p in parts[:-1]:
+            if len(head) + len(p) <= budget:
+                head += p
+            else:
+                break
+        return (head + tail).strip()
+    out = ""
+    for p in parts:
+        if len(out) + len(p) <= max_chars:
+            out += p
+        else:
+            break
+    return (out.rstrip(_SOFT_PAUSE) or s[:max_chars]).strip()
+
+
+def clamp_hint(text: str, max_sentences: int = 2, max_chars: int = 20) -> str:
+    """把 LLM 引导裁剪到最多 `max_sentences` 句、每句 ≤`max_chars` 字（11:40 令 §1.1）。
+
+    纯函数、确定性：按句末标点（。！？!?；;）与换行切句、去掉空句、保留前 N 句，
+    再对每一句按软停顿（，、：）压到 ≤max_chars（见 `_cap_sentence`）。
+    （第 13 轮新增 ≤2 句裁剪；第 22 轮补「每句 ≤20 字」确定性裁剪——
+    全量 30 会话复跑发现 LLM 原始输出 15% 单句超 20 字。）
     """
     if not text:
         return ""
@@ -89,7 +128,7 @@ def clamp_hint(text: str, max_sentences: int = 2) -> str:
     sentences = [s for s in re.split(r"(?<=[%s])" % re.escape(_SENT_END), text) if s.strip()]
     if not sentences:
         return text
-    return "".join(sentences[:max_sentences]).strip()
+    return "".join(_cap_sentence(s, max_chars) for s in sentences[:max_sentences]).strip()
 
 
 def _img_b64(path: str) -> str:
