@@ -4,13 +4,13 @@ WAITING: 0
 
 ## 📊 进度快照
 
-PHASE:        R1955 监控+三报告更新轮·gateway 200·predict 2654/3500(75.8%)·eval R1933 7/7DONE·TB-2.1 121total passed·3harbor alive·research日报11-09已读
-已完成:       H-B✅·Gate7/7·TB报告✅·full500✅·cline专项C1-C5+报告R1785-R1955·TB4 0passed(能力)·TB-2.1 oracle5/5✅·§15:2x判据MET✅·R1789 eval 7/7DONE✅·R1804双报告交付✅·R1814-R1954 predict推进+TB-2.1并行+eval重启+重复进程清理·R1955监控+三报告更新+research日报读取
-当前动作:     R1955:①CPU/MEM:PASS(load 67/224=30%·无本线>8000%·mem正常) ②体积:TASK=30306B(29.6KB)/MEMORY≈30.2KB✅ ③gateway:direct=200·gw9092=200·gw9093=200✅ ④predict 2654/3500(75.8%) real=1020 empty=1634:cline307(125r/182e)·codex500DONE(44r)·opencode356(258r/98e)·cc500DONE(103r)·pi246(85r/161e)·hermes469(294r/175e)·dsh276(111r/165e)·5路alive ⑤eval R1933:7/7 DONE(cline87/115·codex29/44·opencode199/249·cc71/90·pi51/69·hermes258/279·dsh33/105) ⑥TB-2.1:121total passed(cline88/89 16p·codex12/89 7p·opencode55/89 31p·cc63/89 18p·pi79/89 29p·hermes54/89 5p·dsh22/89 15p)·3harbor alive(cc·pi·opencode)·oracle5/5✅ ⑦三报告R1955(main 8439B+tb21 7971B+cline_special 4349B) ⑧research日报11-09:harness建议=Evolver经验资产+ReproBridge证据审计→纳入后续计划 ⑨disk /data 5.8T(18%) / 352G(4%) ⑩未完成指令:有(§22:4x predict未满500+§10:10)⇒W:0
-下一步:       ①predict 5路推进至500(cline307·opencode356·pi246·dsh276·hermes469) ②增量eval待predict更多完成后触发 ③TB-2.1 3harbor(cc/pi/opencode)推进→待全DONE ④全DONE后聚合最终7路报告+可辨识性闸门 ⑤research建议:成功轨迹建经验资产库(B/G配对)
+PHASE:        R1956 监控+三报告更新+deepseek orphan清理·gateway 200·predict 2657/3500(75.9%)·eval R1933 7/7DONE·TB-2.1 121total passed·3harbor alive
+已完成:       H-B✅·Gate7/7·TB报告✅·full500✅·cline专项C1-C5+报告R1785-R1956·TB4 0passed(能力)·TB-2.1 oracle5/5✅·§15:2x判据MET✅·R1789 eval 7/7DONE✅·R1804双报告交付✅·R1814-R1955 predict推进+TB-2.1并行+eval重启+重复进程清理·R1956监控+三报告更新+deepseek orphan清理
+当前动作:     R1956:①CPU/MEM:PASS(load 59/224=26%·无本线>8000%·mem788G/avail1085G) ②体积:TASK=30306B(29.6KB)/MEMORY=29760B(29.1KB)✅ ③gateway:direct=200·gw9092=200·gw9093=200✅ ④predict 2657/3500(75.9%) real=1020 empty=1637:cline307(125r/182e)·codex500DONE(44r)·opencode356(258r/98e)·cc500DONE(103r)·pi247(85r/162e)·hermes469(294r/175e)·dsh278(111r/167e)·5路alive ⑤eval R1933:7/7 DONE ⑥TB-2.1:121total passed(同R1955)·3harbor alive(cc·pi·opencode)·oracle5/5✅ ⑦三报告R1956(main 9153B+tb21 8514B+cline_special 4865B) ⑧deepseek orphan PID2075669(django-11477,42min>30min timeout,无output)+child已kill-9✅ ⑨disk /data 5.8T(18%) / 352G(4%) ⑩未完成指令:有(§22:4x predict未满500+§10:10)⇒W:0
+下一步:       ①predict 5路推进至500(cline307·opencode356·pi247·dsh278·hermes469) ②增量eval待predict更多完成后触发 ③TB-2.1 3harbor(cc/pi/opencode)推进→待全DONE ④全DONE后聚合最终7路报告+可辨识性闸门 ⑤research建议:成功轨迹建经验资产库(B/G配对)
 阻塞:         无(gateway 200·5路predict alive·TB-2.1 3harbor alive·eval R1933 7/7DONE✅)
 ERROR_COUNT:  0
-  📦 体积：TASK=30306B(29.6KB) / MEMORY≈30.2KB·均≤32KB✅
+  📦 体积：TASK=30306B(29.6KB) / MEMORY=29760B(29.1KB)·均≤32KB✅
   🔍 cline专项小结: predict cline307/500(125r/182e=40.7%)·eval 87/115=75.7%·TB-2.1 16p(18.2%)·C2 empty=429滚动+能力·C3 resume fix✅未归零(429间歇+能力)·real复产中(125)
 ```
 
@@ -18,7 +18,9 @@ ERROR_COUNT:  0
 
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 ### 本唤醒流水
-[08:45] R1955 监控+三报告更新+research日报读取:①CPU/MEM:PASS(load 67/224=30%·无本线>8000%·无>50GB RSS) ②体积:TASK=30306B(29.6KB)/MEMORY≈30.2KB✅ ③gateway:direct=200·gw9092=200·gw9093=200✅ ④predict 2654/3500(75.8%) real=1020 empty=1634:cline307(125r/182e)·codex500DONE(44r)·opencode356(258r/98e)·cc500DONE(103r)·pi246(85r/161e)·hermes469(294r/175e)·dsh276(111r/165e)·5路alive ⑤eval R1933:7/7 DONE(cline87/115·codex29/44·opencode199/249·cc71/90·pi51/69·hermes258/279·dsh33/105) ⑥TB-2.1:121total passed(cline88/89 16p·codex12/89 7p·opencode55/89 31p·cc63/89 18p·pi79/89 29p·hermes54/89 5p·dsh22/89 15p)·3harbor alive(cc·pi·opencode)·oracle5/5✅ ⑦三报告R1955(gen_report_r1955+gen_cline_special_r1955:main 8439B+tb21 7971B+cline_special 4349B) ⑧research日报11-09:harness建议=Evolver(2611.07595,经验资产+4.38pp/-24.24%token)+ReproBridge(2611.08452,证据审计)→纳入后续计划,非本轮可执行 ⑨进程健康·deepseek orphaned child PID2075669(django-11477,~29min)自然超时中 ⑩disk /data 5.8T(18%) / 352G(4%) ⑪未完成指令:有(§22:4x+§10:10)⇒W:0
+[08:57] R1956 监控+三报告更新+deepseek orphan清理:①CPU/MEM:PASS(load 59/224=26%·无本线>8000%·mem788G/avail1085G) ②体积:TASK=30306B(29.6KB)/MEMORY=29760B(29.1KB)✅ ③gateway:direct=200·gw9092=200·gw9093=200✅ ④predict 2657/3500(75.9%) real=1020 empty=1637:cline307(125r/182e)·codex500DONE(44r)·opencode356(258r/98e)·cc500DONE(103r)·pi247(85r/162e)·hermes469(294r/175e)·dsh278(111r/167e)·5路alive ⑤eval R1933:7/7 DONE ⑥TB-2.1:121total passed(同R1955)·3harbor alive(cc·pi·opencode)·oracle5/5✅ ⑦三报告R1956(gen_report_r1956+gen_cline_special_r1956+gen_report_tb21_r1896:main 9153B+tb21 8514B+cline_special 4865B) ⑧**deepseek orphan PID2075669(django-11477,42min>30min timeout,无output)+child PID2075911已kill-9✅** ⑨disk /data 5.8T(18%) / 352G(4%) ⑩未完成指令:有(§22:4x+§10:10)⇒W:0
+
+> 📦 R1955 流水(08:45,监控+三报告更新+research日报读取·predict 2654/3500·TB-2.1 121p)已归档 → daily-memories-harness/2026-11-09.md。**关键**:research日报11-09建议=Evolver经验资产+ReproBridge证据审计·deepseek orphan PID2075669已在R1956清理。需要时再读。
 
 > 📦 R1953-R1954 流水(08:18~08:30,监控+重复进程清理+三报告更新)已归档 → daily-memories-harness/2026-11-09.md。**关键**:R1954清理hermes-old+deepseek-new-parent重复进程·eval R1933 7/7DONE·predict 2646/3500·TB-2.1 121p。需要时再读。
 
