@@ -14,7 +14,7 @@ WAITING: 0
 - 阻塞: GPU 0/8free(root SGLang Qwen3.8-27B占全8卡44-45GB 0%util,运行自Sep17,11/9已过仍未释放);沙箱10.129.32.75全端口FILTERED;Docker无权限;P3等pretrain ckpt(ETA≈2026-12-25)
 - 本轮新增调研产出: R130 GRPO课程整合R5过程奖励(635行+5阶段训练计划+550组模拟98.2%可学+防遗忘replay+过渡准则+安全检查+墙钟预算+verl YAML配置+EXPERIMENTS §R130）
 - 未完成指令: 🔴用户令2026-11-07(GPU未到位,需持续产出调研) ⇒ WAITING=0
-- git: commit✅(291483acb) push✅(683c2ee8e, rebase+push✅)
+- git: commit✅(94b909e7f) push⚠️(2次超时,ahead 1,待loop兜底/下轮补推)
 
 ## 关键事实（常驻）
 
