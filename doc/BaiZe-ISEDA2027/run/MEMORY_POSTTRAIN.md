@@ -11,7 +11,7 @@ WAITING: 0
 - 已完成: P3预备✅；P0✅；P1✅；P2✅；R1-R112✅；wake158✅ R111(启动前审计)；wake159✅ R112(路径与数据可用性审计+CFG-03/04修复)
 - 当前动作: wake159 R112: baize_posttrain_r112_path_audit.py(~280行). ①117文件扫描✅ ②37路径问题(31 HIGH /nas_train)✅ ③CFG-03修复(sft_blend_config.yaml注释8192→16384)✅ ④CFG-04修复(sft_blend_config.yaml /nas_train→/nas_data)✅ ⑤18数据路径检查(8缺失)✅ ⑥上下文长度一致(SFT=16384/RL=16384)✅ ⑦NFS确认(.17 /nas_data=10.251.28.110:/train,与.29/.12独立存储)✅ ⑧4缓解措施(3 BLOCKER:SFT/ANNEAL数据传输+模型路径;1 HIGH:路径修复)✅ ⑨GPU 0/8free✅. JSON+HTML 19.7KB+EXPERIMENTS §R112.
 - 下一步: ①GPU释放→watcher自动触发launch_11_9.sh ②R113+: 继续调研(.py文件/nas_train引用逐个修复 或 SFT数据传输方案细化 或 数据传输rsync脚本) ③正式训练待pretrain ckpt(ETA≈2026-12-25)
-- 阻塞: GPU 0/8free(root SGLang Qwen3.8-27B占全8卡,运行自Sep17);P3等pretrain ckpt(ETA≈2026-12-25)
+- 阻塞: GPU 0/8free(root SGLang Qwen3.8-27B占全8卡,运行自Sep17);git push超时(github.com:443 timeout,commit已ahead 1,下次唤醒第一件事补推);P3等pretrain ckpt(ETA≈2026-12-25)
 - 本轮新增调研产出: R112 路径与数据可用性审计(~280行 + 117文件扫描 + 37路径问题 + 2修复(CFG-03+CFG-04) + 18数据路径检查 + NFS独立存储确认 + 4缓解措施 + JSON + HTML 19.7KB + EXPERIMENTS §R112）
 - 未完成指令: 🔴用户令2026-11-07(GPU未到位,需持续产出调研) ⇒ WAITING=0
 
