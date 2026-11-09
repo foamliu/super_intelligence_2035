@@ -4,3 +4,11 @@
   cline-patched: 46 new instances to eval (total real preds: 153, already evaluated: 108)
   [02:02:32] cline-patched: merged 153 -> predictions_glm53/predictions_cline-patched_glm53.json
   [02:02:32] cline-patched: launching eval (workers=1, timeout=1800, 46 instances)...
+  [02:53:19] cline-patched: eval done rc=0 (log: logs/eval_incr_verified_full_glm53_cline-patched_R2026.log)
+  [02:53:19] cline-patched: eval summary updated: 107/108 resolved (99.1%)
+
+============================================================
+=== codex: incr_eval R2026 ===
+  codex: 36 new instances to eval (total real preds: 69, already evaluated: 34)
+  [02:53:19] codex: merged 69 -> predictions_glm53/predictions_codex_glm53.json
+  [02:53:19] codex: launching eval (workers=1, timeout=1800, 36 instances)...

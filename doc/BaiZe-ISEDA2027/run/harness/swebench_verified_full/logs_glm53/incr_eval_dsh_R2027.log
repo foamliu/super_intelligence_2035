@@ -4,3 +4,7 @@
   deepseek-harness: 37 new instances to eval (total real preds: 127, already evaluated: 91)
   [02:14:59] deepseek-harness: merged 127 -> predictions_glm53/predictions_deepseek-harness_glm53.json
   [02:14:59] deepseek-harness: launching eval (workers=1, timeout=1800, 37 instances)...
+  [02:54:22] deepseek-harness: eval done rc=0 (log: logs/eval_incr_verified_full_glm53_deepseek-harness_R2027.log)
+  [02:54:22] deepseek-harness: eval summary updated: 90/91 resolved (98.9%)
+
+R2027 incr_eval complete in 2363s (39.4min)
