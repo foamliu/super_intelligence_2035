@@ -811,3 +811,5 @@ kakcd	kenwang	hfeg017216808192	5	non_spice	parked		2026-11-10 09:06	DRC rule dev
 1793843475842_f5coc	renfengc	hfeg0plg53	107	spice_sim	case	EDA-Eval-DesignFlow-CaSkewEdgeStat-001	2026-11-10 11:52	
 1793586031652_f2xzx	ryanren	hfeg0plg53	186	analog_context	parked		2026-11-10 11:52	wrong-shard: actual domain analog_context (circuit report from .fsdb+netlist) -> shard D, not spice_sim
 1794206448451_z4swx	xuelianf	hfeg0pkn002	214	spice_sim	case	EDA-Eval-DesignFlow-BisecMt0SmCalc-001	2026-11-10 12:23	
+1793273304598_nunyc.messages.json	reneeg	hfeg0plg53	117	spice_sim	case	EDA-Eval-DesignFlow-ProbeStimFromSx-001	2026-11-10 12:47	
+1792544257107_ui4d7.messages.json	curryxu	hfeg0plg99	83	spice_sim	parked		2026-11-10 12:47	peek全diagnostic/consultation(netlist为何保持高电平),非produce-task,reject
