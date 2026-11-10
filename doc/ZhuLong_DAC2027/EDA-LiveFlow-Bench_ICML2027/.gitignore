@@ -19,3 +19,4 @@ figures/.venv/
 
 # mermaid npm cache
 figures/node_modules/
+figures/*_preview*.png
