@@ -47,7 +47,9 @@ NP=8; TP=1; PORT=29820; NAME="posttrain_anneal"
 
 # ============ 领域退火数据 blend（权重=占比%，总和=100） ============
 # 领域(PyAether API/EDA doc/HDL) 30% : 通用 web 50% : code 12% : math 8%
-# ⚠️ 领域语料 pyAether_api_anneal 为占位（待 P1-d 调研 + data 线分词后填实）。
+# 领域语料源（R153, 2026-11-11）：pyAether_api_anneal_corpus.jsonl（400 API docs / ~696K tok / 3.48MB，
+#   由 baize_posttrain_build_anneal_corpus.py 从 R148 API-ref JSONL 展平；污染闸门 400 扫描/0 命中 PASS）。
+#   DOMAIN_DATA 仍指向 data 线分词产物（.bin/.idx mcore 格式）；源 JSONL → 分词 是 data 线待办。
 DOMAIN_DATA="${DATA}/pyAether_api_anneal"
 WEB_DATA="${DATA}/mix_base"
 CODE_DATA="${DATA}/full_ultradata_code_l3"

@@ -16175,3 +16175,46 @@ Process 3557214 has 36.30 GiB memory in use.
   4. 正式训练待 pretrain ckpt（ETA≈2026-12-25）
 
 ---
+## §R153 — PyAether Domain Annealing Corpus 构建 + 污染闸门 PASS（wake222, 2026-11-11, 零 GPU · CPU）
+
+> **目标**：将 R148 API-ref JSONL（400 entries）展平为领域退火**源语料**（plain-text，one doc per API），供 `baize_posttrain_anneal.sh` domain blend（domain30:web50:code12:math8）投料。完成 MEMORY「下一步①」。
+
+### 1. 构建脚本
+
+- 产物：`run/baize_posttrain_build_anneal_corpus.py`（`py_compile` ✅）
+- 输入：`pyAether_api_ref_488.jsonl`（365 static）+ `pyAether_api_ref_mcp_enriched.jsonl`（35 MCP）
+- 逻辑：按 `api_name` 去重（static 优先，mcp 补 35 not-found）→ 每条展平为带 header 的纯文本 doc（`# PyAether API Reference: <name>` + api_name/api_type/category/source + api_descriptions 原文）→ 写 JSONL（field=`text`，供 check_contamination.py 逐 doc 扫描）
+
+### 2. 产物统计
+
+| 指标 | 值 |
+|:--|--:|
+| dedup docs | 400（static 365 + mcp-only 35）|
+| total_chars | 2,573,892 |
+| ~tokens (chars/3.7) | ~695.6K |
+| 文件大小 | 3.48 MB |
+| 输出 | `run/pyAether_api_anneal_corpus.jsonl` |
+
+- 注：~696K tok 含 header 开销（R148 原始 api_descriptions ~626K tok + 400×header ~70K tok）；仍为小规模高质量领域语料，退火 domain30 配比需上采样（在 blend/分词层处理，不在源语料层）。
+
+### 3. 污染隔离闸门（红线 §5.1）
+
+- 命令：`bash baize_posttrain_contamination_gate.sh --anneal-corpus pyAether_api_anneal_corpus.jsonl --out /tmp/pt_anneal_gate_R153.md`
+- 黑名单：6 快照并集 536 任务（含 v20260311 的 158）
+- 结果：**扫描 400 / 命中 0 → ✅ PASS（可投料）**
+- 依据：corpus = API 参考文档（签名/参数/返回/示例）= 任务的「来源材料」，非 task 的 prompt/assert/canonical_solution；按 API 名隔离 ✅
+- 报告：`/tmp/pt_anneal_gate_R153.md`
+
+### 4. anneal 脚本更新
+
+- `baize_posttrain_anneal.sh` L50-52 注释更新：标注领域语料源 = `pyAether_api_anneal_corpus.jsonl`（R153）、400 docs/~696K tok/闸门 PASS。
+- `DOMAIN_DATA="${DATA}/pyAether_api_anneal"` 仍指向 data 线分词产物（.bin/.idx mcore）；**源 JSONL → 分词 是 data 线待办**（已记边界，避免重 I/O 撞 pretrain 训练）。
+
+### 5. 边界与下一步
+
+- **边界**：源语料 JSONL 已就绪 + 闸门 PASS；分词为 mcore .bin/.idx 是 data 线任务。
+- **退火配比**：domain30 = 696K tok 上采样至 ~2.52B tok（30% × 8.4B），上采样倍率 ≈ 3600×（WSD 退火标准做法：小规模高质量语料高倍上采样，见 §R64 退火配比敏感性）。
+- **下一步**：① 提 data 线分词需求（pyAether_api_anneal_corpus.jsonl → mcore .bin/.idx，写入 MEMORY 边界行）② GPU 释放（停 GPU5-7 serve）→ SFT surrogate ③ 沙盒恢复 → Phase1 评测 ④ 正式训练待 pretrain ckpt（ETA≈2026-12-25）。
+
+---
+
