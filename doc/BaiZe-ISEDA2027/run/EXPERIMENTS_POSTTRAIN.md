@@ -16218,3 +16218,87 @@ Process 3557214 has 36.30 GiB memory in use.
 
 ---
 
+## §R154 — Phase 2 Surrogate SFT Launch Script (verl FSDP) + Train/Val Split（wake223, 2026-11-11, 零 GPU · CPU）
+
+> **目标**：将 Phase 2 替身 SFT 从「骨架」推进到「GPU 释放即可一键启动」的可执行状态。现有 `baize_posttrain_sft.sh` 是 BaiZe (Mamba2) 骨架（mcore .bin/.idx + 占位 sft_launcher.py），与替身 SFT（MiniCPM5-2B Llama-arch + verl parquet）完全不同。本节交付**替身专用的 verl FSDP SFT 启动脚本 + 数据 prep 脚本**。
+
+### 1. 缺口识别
+
+| 维度 | baize_posttrain_sft.sh（BaiZe 真实） | 本节新增（替身） |
+|:--|:--|:--|
+| 模型 | BaiZe Mamba2（待 pretrain ckpt） | MiniCPM5-2B（LlamaForCausalLM, 已在 .17） |
+| 框架 | mcore torchrun + sft_launcher.py（占位） | verl 0.4.0 FSDP2 SFT（fsdp_sft_trainer.py） |
+| 数据格式 | mcore .bin/.idx | parquet（conversation 列, MultiTurnSFTDataset） |
+| 数据源 | UltraData mcore 分词 | R152 统一 parquet（1725 pairs, gate PASS） |
+| GPU | 8×H100（NP=8） | 2×A40（GPU6-7, FSDP2） |
+| 依赖 | pretrain ckpt（ETA≈2026-12-25） | 无（MiniCPM5-2B 已就绪，GPU 释放即可跑） |
+
+### 2. verl FSDP SFT 依赖验证（.17 verl_cu124_venv）
+
+| 组件 | 版本 | 状态 |
+|:--|:--|:--|
+| verl | 0.4.0 | ✅ |
+| torch | 2.6.0+cu124 | ✅ CUDA available |
+| transformers | 4.51.1 | ✅（verl venv；vLLM venv 独立用 4.49.0） |
+| flash_attn | 2.7.4.post1 | ✅ |
+| peft | 0.21.2 | ✅ LoRA 支持 |
+| tensordict | — | ✅ |
+| pyarrow | 25.0.1 | ✅ parquet 读写 |
+| torchrun | — | ✅ `$HOME/code/verl_cu124_venv/bin/torchrun` |
+
+- verl SFT 入口：`python -m verl.trainer.fsdp_spt_trainer`（hydra config `sft_trainer.yaml`）
+- 多轮数据集：`MultiTurnSFTDataset`，读 `messages_key` 列（默认 `messages`），调 `tokenizer.apply_chat_template`，loss mask 仅 assistant turn
+- ckpt 保存：HF safetensors 格式（`global_step_N/`），可直接 `vllm serve`
+
+### 3. 数据 prep 脚本
+
+- 产物：`run/baize_posttrain_sft_surrogate_prep.py`（`py_compile` ✅）
+- 功能：将 R152 统一 parquet（1725 rows）确定性 90/10 split → train/val，可选 upsample
+- 验证：
+  - train=1553 rows / val=172 rows
+  - train∩val pair_id overlap = **0**（无泄漏 ✅）
+  - 所有 conversation 为 user→assistant 单轮（2 turns，roles={user,assistant}）
+  - char_len: median=1004 / p95=544 / max=6477（est_tok max~2159）→ `max_length=2048` 覆盖 ~95%，`truncation=right` 兜底超长
+  - 输出：`sft_surrogate_train.parquet`（960KB）/ `sft_surrogate_val.parquet`（109KB）
+  - `--dry-run` 打印 split 计划不写盘 ✅
+
+### 4. 启动脚本
+
+- 产物：`run/baize_posttrain_sft_surrogate.sh`（`bash -n` ✅, 9387 bytes）
+- 模式：`--dry-run`（打印配方+检查依赖）/ `--prep-only`（只做 split）/ `--smoke`（1 epoch, save_freq=5）/ 默认（full SFT）
+- 关键超参：
+  - model: MiniCPM5-2B, FSDP2, bf16, gradient_checkpointing=True
+  - data: multiturn.enable=true, messages_key=conversation, max_length=2048, truncation=right
+  - batch: global=64, micro/GPU=4（2B+2048 on 48GB A40 → grad_accum=8）
+  - optim: lr=1e-5, cosine, warmup_ratio=0.1, betas=[0.9,0.95], wd=0.01, clip_grad=1.0
+  - trainer: 3 epochs, save_freq=20, logger=[console]（wandb disabled）
+  - ft_mode: full（默认）/ lora（rank=64, alpha=128 可切换）
+- GPU-busy guard：检查目标 GPU used<1GB，否则退出（不 kill 任何进程，遵守 17:10 占位令）
+- `--dry-run` 实测输出：torchrun ✅ / model ✅ / verl+flash_attn+peft ✅ / src parquet 804KB ✅
+
+### 5. 红线遵守
+
+- **污染隔离**：source parquet = R152（已过 gate, 1725 docs / 0 命中）；prep 脚本**不新增/不合成**任何数据，仅 re-split → 零新增污染风险 ✅
+- **不 kill 健康进程**：GPU-busy guard 只读 `nvidia-smi`，不发 kill 信号 ✅
+- **替身标注**：脚本 recipe + 结尾输出均标注「替身预演，收益不可迁移到 BaiZe」✅
+
+### 6. 执行路径（GPU 释放后）
+
+```bash
+# 1. 停 GPU5-7 vLLM serve（需运维令或沙盒恢复后）
+# 2. 一键启动替身 SFT
+bash baize_posttrain_sft_surrogate.sh
+# 3. SFT ckpt → vLLM serve
+CUDA_VISIBLE_DEVICES=6 /tmp/vllm_venv/bin/python -m vllm.entrypoints.openai.api_server \
+  --model sft_surrogate_runs/minicpm5_pyaether_v1/global_step_<N> --port 8096 ...
+# 4. EDA-Eval 前后对比（baize_posttrain_eval.sh）
+```
+
+### 7. 边界与下一步
+
+- **本节交付**：替身 SFT 启动脚本 + 数据 prep + 依赖验证 + train/val split（0 泄漏）。GPU 释放即可跑。
+- **仍阻塞**：GPU6-7 被 17:10 serve 占位（沙盒未通）；沙盒未通 → Phase1 评测也阻塞。
+- **下一步**：① 沙盒恢复 → 停 serve → 跑替身 SFT（smoke 先验证管线）② SFT ckpt → EDA-Eval 前后对比 ③ data 线分词需求（退火源语料）④ 正式训练待 pretrain ckpt
+
+---
+

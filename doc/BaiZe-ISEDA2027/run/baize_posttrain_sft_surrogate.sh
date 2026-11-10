@@ -1,140 +1,246 @@
 #!/usr/bin/env bash
-# baize_posttrain_sft_surrogate.sh - Phase 2: MiniCPM5-2B surrogate SFT wrapper
-# ⚠️ SURROGATE experiment - gains NOT transferable to BaiZe.
-# Uses GPU 6-7 (2x A40 48GB) for full fine-tuning.
+# baize_posttrain_sft_surrogate.sh — Phase 2 surrogate SFT launch (verl FSDP)
+#
+# Purpose: End-to-end SFT validation on MiniCPM5-2B (2B, Llama-arch, Apache 2.0)
+#          as a BaiZe surrogate, using the R152 unified PyAether SFT parquet
+#          (1725 pairs, ~650K tok). Validates the SFT recipe before BaiZe ckpt.
+#
+# Framework: verl 0.4.0 FSDP SFT trainer (fsdp_sft_trainer.py, hydra config).
+#   - MultiTurnSFTDataset reads `conversation` column (messages_key=conversation).
+#   - Loss masked to assistant turns only.
+#   - Checkpoint saved as HF format (safetensors) — directly vLLM-serveable.
+#
+# GPU: 2×A40 (indices 6,7 by default), FSDP2 across 2 GPUs.
+#   Per 2026-11-10 13:40 user order: "GPU6-7 训练".
+#   Per 2026-11-10 17:10 user order: GPU5-7 occupied by vLLM serve until
+#   sandbox tunnel restored. GPU-busy guard prevents launching on occupied GPUs.
+#
+# Red lines: source parquet gate PASS (R150/R151, 0 hits); no new data added.
+#   Report must label results "替身预演，收益不可迁移到 BaiZe".
+#
 # Usage:
-#   bash baize_posttrain_sft_surrogate.sh --dry-run
-#   bash baize_posttrain_sft_surrogate.sh --smoke
-#   bash baize_posttrain_sft_surrogate.sh
+#   bash baize_posttrain_sft_surrogate.sh --dry-run     # print recipe only
+#   bash baize_posttrain_sft_surrogate.sh --prep-only   # create train/val split
+#   bash baize_posttrain_sft_surrogate.sh --smoke       # tiny run (5 steps)
+#   bash baize_posttrain_sft_surrogate.sh               # full SFT
+#   GPUS="4,5" bash baize_posttrain_sft_surrogate.sh    # override GPU set
 set -uo pipefail
-SCRIPT_DIR="$(cd "$(dirname "$(realpath "${BASH_SOURCE[0]}")")" && pwd)"
-PY="$HOME/code/verl_cu124_venv/bin/python"
-MODEL="/nas_data/app.e0031982/models/MiniCPM5-2B"
-DATA="$SCRIPT_DIR/sft_pyaether_corpus_v2.jsonl"
-OUTPUT="/nas_data/app.e0031982/models/MiniCPM5-2B-SFT-surrogate"
-GPU_IDS="6,7"
-MAX_LEN=1024
-BATCH=1
-GRAD_ACCUM=16
-LR=2e-5
-EPOCHS=3.0
-WARMUP=50
-SAVE_STEPS=200
-DRY_RUN=0
-SMOKE=0
-CLEAN_GPU=0
-GPU_WAIT_TIMEOUT=120
+
+SCRIPT_DIR="$(dirname "$(realpath "${BASH_SOURCE[0]}")")"
+
+# ============ paths ============
+VERL_PY="$HOME/code/verl_cu124_venv/bin/python"
+VERL_TORCHRUN="$HOME/code/verl_cu124_venv/bin/torchrun"
+MODEL_PATH="/nas_data/app.e0031982/models/MiniCPM5-2B"
+SRC_PARQUET="$SCRIPT_DIR/sft_pyaether_corpus_unified_v5v6v7.parquet"
+TRAIN_PARQUET="$SCRIPT_DIR/sft_surrogate_train.parquet"
+VAL_PARQUET="$SCRIPT_DIR/sft_surrogate_val.parquet"
+OUTPUT_DIR="$SCRIPT_DIR/sft_surrogate_runs/minicpm5_pyaether_v1"
+HYDRA_DIR="/tmp/baize_sft_surrogate_hydra"
+LOG_FILE="/tmp/baize_posttrain_sft_surrogate.log"
+
+# ============ GPU config ============
+GPUS="${GPUS:-6,7}"
+NGPU=$(echo "$GPUS" | tr ',' '\n' | wc -l)
+
+# ============ training hyperparams ============
+MAX_LENGTH=2048
+TRAIN_BATCH=64
+MICRO_BATCH=4
+TOTAL_EPOCHS=3
+LR=1e-5
+WARMUP_RATIO=0.1
+SAVE_FREQ=20
+TEST_FREQ=-1
+SEED=42
+GRAD_CKPT=1
+UPSAMPLE=1
+FT_MODE=full
+LORA_RANK=64
+LORA_ALPHA=128
+
+# ============ mode switches ============
+DRY_RUN=0; SMOKE=0; PREP_ONLY=0
 while [ $# -gt 0 ]; do
   case "$1" in
     --dry-run) DRY_RUN=1 ;;
     --smoke) SMOKE=1 ;;
-    --gpu) GPU_IDS="$2"; shift ;;
-    --output) OUTPUT="$2"; shift ;;
-    --epochs) EPOCHS="$2"; shift ;;
+    --prep-only) PREP_ONLY=1 ;;
+    --gpus) GPUS="$2"; shift; NGPU=$(echo "$GPUS" | tr ',' '\n' | wc -l) ;;
+    --epochs) TOTAL_EPOCHS="$2"; shift ;;
     --lr) LR="$2"; shift ;;
-    --max-len) MAX_LEN="$2"; shift ;;
-    --save-steps) SAVE_STEPS="$2"; shift ;;
-    --clean-gpu) CLEAN_GPU=1 ;;
-    --gpu-wait-timeout) GPU_WAIT_TIMEOUT="$2"; shift ;;
-    -h|--help)
-      echo "Usage: $0 [--dry-run] [--smoke] [--gpu 6,7] [--output DIR] [--epochs N]"
-      echo "          [--lr F] [--max-len N] [--save-steps N] [--clean-gpu] [--gpu-wait-timeout S]"
-      echo "  --clean-gpu          Kill stale processes on target GPUs before training (fix 1)"
-      echo "  --gpu-wait-timeout S Wait up to S seconds for GPU VRAM to free (default 120, fix 4)"
-      exit 0 ;;
-    *) echo "Unknown: $1" ;;
+    --max-length) MAX_LENGTH="$2"; shift ;;
+    --batch) TRAIN_BATCH="$2"; shift ;;
+    --micro-batch) MICRO_BATCH="$2"; shift ;;
+    --upsample) UPSAMPLE="$2"; shift ;;
+    --ft-mode) FT_MODE="$2"; shift ;;
+    --lora-rank) LORA_RANK="$2"; shift ;;
+    *) echo "unknown arg: $1" ;;
   esac
   shift
 done
-echo "===== Phase 2: MiniCPM5-2B SURROGATE SFT ====="
-echo "  model      : $MODEL"
-echo "  data       : $DATA"
-echo "  output     : $OUTPUT"
-echo "  GPUs       : $GPU_IDS"
-echo "  max_len    : $MAX_LEN"
-echo "  batch      : ${BATCH} x grad_accum ${GRAD_ACCUM}"
-echo "  lr         : $LR (cosine, warmup ${WARMUP})"
-echo "  save_steps : $SAVE_STEPS (crash-resilient: wake194 crash@step95 lost all w/ save_steps=500)"
-echo "  epochs     : $EPOCHS"
-echo "  clean_gpu  : $CLEAN_GPU (fix1: kill stale procs)"
-echo "  gpu_wait   : ${GPU_WAIT_TIMEOUT}s (fix4: wait VRAM<1GB)"
-echo "  NCCL       : P2P_DISABLE=1 IB_DISABLE=1 (fix2: A40 no-NVLink)"
-echo "  mode       : $([ $DRY_RUN = 1 ] && echo DRY-RUN || ([ $SMOKE = 1 ] && echo SMOKE || echo TRAIN))"
-echo "  ⚠️ SURROGATE: gains NOT transferable to BaiZe"
-echo "===== END RECIPE ====="
-[ $DRY_RUN = 1 ] && { echo "[dry-run] Recipe printed, not executing."; exit 0; }
 
-# --- Fix 1: Force-clean stale processes on target GPUs ---
-if [ $CLEAN_GPU = 1 ]; then
-  echo "[fix1] --clean-gpu: scanning target GPU(s) [$GPU_IDS] for stale processes..."
-  I_OLD="$IFS"; IFS=','; read -ra GPU_ARR <<< "$GPU_IDS"; IFS="$I_OLD"
-  STALE_FOUND=0
-  for gi in "${GPU_ARR[@]}"; do
-    PIDS=$(nvidia-smi --query-compute-apps=pid,gpu_uuid --format=csv,noheader 2>/dev/null)
-    TARGET_UUID=$(nvidia-smi --query-gpu=index,uuid --format=csv,noheader 2>/dev/null | awk -F', ' -v g="$gi" '$1==g{print $2}')
-    [ -z "$TARGET_UUID" ] && continue
-    for line in $PIDS; do
-      p=$(echo "$line" | awk -F',' '{print $1}' | xargs)
-      u=$(echo "$line" | awk -F',' '{print $2}' | xargs)
-      [ "$u" = "$TARGET_UUID" ] && {
-        pname=$(ps -p "$p" -o args= 2>/dev/null | head -c 80)
-        echo "  GPU $gi PID $p: $pname"
-        echo "  -> kill -9 $p"
-        kill -9 "$p" 2>/dev/null
-        STALE_FOUND=1
-      }
-    done
-  done
-  [ $STALE_FOUND = 0 ] && echo "  No stale processes found." || echo "  Stale processes killed. Waiting for VRAM release..."
+# ============ recipe print ============
+print_recipe() {
+  cat <<EOF
+===== BaiZe Phase 2 Surrogate SFT — RECIPE @ $(date '+%F %T') =====
+  mode            : $([ $DRY_RUN = 1 ] && echo DRY-RUN || ([ $SMOKE = 1 ] && echo SMOKE || echo TRAIN))
+  surrogate note  : 替身预演，收益不可迁移到 BaiZe (MiniCPM5-2B Llama-arch != BaiZe Mamba2)
+  model           : $MODEL_PATH (MiniCPM5-2B, 2B, LlamaForCausalLM)
+  framework       : verl 0.4.0 FSDP2 SFT (fsdp_sft_trainer.py)
+  GPUs            : $GPUS ($NGPU x A40)
+  data.train      : $TRAIN_PARQUET
+  data.val        : $VAL_PARQUET
+  data.src        : $SRC_PARQUET (R152, 1725 pairs, gate PASS)
+  data.upsample   : x$UPSAMPLE
+  max_length      : $MAX_LENGTH
+  batch           : global=$TRAIN_BATCH  micro/GPU=$MICRO_BATCH
+  epochs          : $TOTAL_EPOCHS
+  lr              : $LR (cosine, warmup_ratio=$WARMUP_RATIO)
+  ft_mode         : $FT_MODE  (lora_rank=$LORA_RANK lora_alpha=$LORA_ALPHA)
+  grad_checkpoint : $GRAD_CKPT
+  save_freq       : $SAVE_FREQ steps
+  output_dir      : $OUTPUT_DIR
+  log             : $LOG_FILE
+  red line        : source parquet gate PASS (R150/R151 0 hits); no new data added
+===== END RECIPE =====
+EOF
+}
+
+# ============ step 1: data prep ============
+prep_data() {
+  if [ -f "$TRAIN_PARQUET" ] && [ -f "$VAL_PARQUET" ]; then
+    echo "[prep] train/val parquet already exist, skipping split."
+    return 0
+  fi
+  if [ ! -f "$SRC_PARQUET" ]; then
+    echo "ERROR: source parquet not found: $SRC_PARQUET"
+    echo "       Run R152 merge first: baize_posttrain_merge_v5v6.py --parquet"
+    exit 1
+  fi
+  echo "[prep] splitting $SRC_PARQUET -> train/val (90/10, seed=$SEED, upsample=x$UPSAMPLE)"
+  "$VERL_PY" "$SCRIPT_DIR/baize_posttrain_sft_surrogate_prep.py" \
+    --src "$SRC_PARQUET" \
+    --out-dir "$SCRIPT_DIR" \
+    --val-ratio 0.1 \
+    --upsample "$UPSAMPLE" \
+    --seed "$SEED" || { echo "ERROR: data prep failed"; exit 1; }
+}
+
+# ============ dry-run ============
+if [ $DRY_RUN = 1 ]; then
+  print_recipe
+  echo ""
+  echo "[dry-run] checking prerequisites (no training launched)..."
+  [ -x "$VERL_TORCHRUN" ] && echo "  torchrun: $VERL_TORCHRUN OK" || echo "  torchrun: NOT FOUND"
+  [ -d "$MODEL_PATH" ] && echo "  model: $MODEL_PATH OK" || echo "  model: NOT FOUND"
+  "$VERL_PY" -c 'import verl, flash_attn, peft; print("  verl+flash_attn+peft: OK")' 2>/dev/null || echo "  verl deps: MISSING"
+  [ -f "$SRC_PARQUET" ] && echo "  src parquet: OK ($(wc -c < "$SRC_PARQUET") bytes)" || echo "  src parquet: NOT FOUND"
+  echo "[dry-run] recipe printed. Run --prep-only to create train/val, or remove --dry-run to train."
+  exit 0
 fi
 
-# --- Fix 4: GPU idle wait loop (wait for VRAM <1GB on all target GPUs) ---
-echo "[fix4] Waiting for GPU(s) [$GPU_IDS] VRAM <1GB (timeout=${GPU_WAIT_TIMEOUT}s)..."
-WAITED=0
-while [ $WAITED -lt $GPU_WAIT_TIMEOUT ]; do
-  GPU_BUSY=$(nvidia-smi --query-gpu=index,memory.used --format=csv,noheader 2>/dev/null | \
-    awk -F', ' -v gpus="$GPU_IDS" 'BEGIN{split(gpus,a,","); for(i in a) want[a[i]]=1} {gsub(/[^0-9]/,"",$2); if($2+0>1000 && want[$1]) print $1}' | tr '\n' ',' | sed 's/,$//')
-  [ -z "$GPU_BUSY" ] && break
-  [ $((WAITED % 10)) = 0 ] && echo "  ...GPU $GPU_BUSY still busy (waited ${WAITED}s)"
-  sleep 5
-  WAITED=$((WAITED + 5))
+# ============ prep-only ============
+if [ $PREP_ONLY = 1 ]; then
+  prep_data
+  echo "[prep-only] done. train=$TRAIN_PARQUET val=$VAL_PARQUET"
+  exit 0
+fi
+
+# ============ real run prerequisites ============
+print_recipe
+echo ""
+[ -x "$VERL_TORCHRUN" ] || { echo "ERROR: torchrun not found: $VERL_TORCHRUN"; exit 1; }
+[ -d "$MODEL_PATH" ] || { echo "ERROR: model not found: $MODEL_PATH"; exit 1; }
+prep_data
+[ -f "$TRAIN_PARQUET" ] || { echo "ERROR: train parquet missing after prep"; exit 1; }
+[ -f "$VAL_PARQUET" ] || { echo "ERROR: val parquet missing after prep"; exit 1; }
+
+# GPU busy guard
+echo "[guard] checking GPU $GPUS are free..."
+GPU_LIST=$(echo "$GPUS" | tr ',' ' ')
+BUSY=""
+for gi in $GPU_LIST; do
+  used=$(nvidia-smi --query-gpu=memory.used --format=csv,noheader,nounits -i "$gi" 2>/dev/null | tr -d ' ')
+  if [ "${used:-0}" -gt 1000 ]; then BUSY="$BUSY $gi(${used}MiB)"; fi
 done
-if [ -n "$GPU_BUSY" ]; then
-  echo "ERROR: GPU $GPU_BUSY still busy (>1GB) after ${GPU_WAIT_TIMEOUT}s. Aborting."
-  echo "  Hint: pass --clean-gpu to kill stale processes, or --gpu-wait-timeout to extend wait."
+if [ -n "$BUSY" ]; then
+  echo "ERROR: GPU$BUSY is occupied (used > 1GB)."
+  echo "       Per 2026-11-10 17:10 user order, GPU5-7 may hold vLLM serve."
+  echo "       Wait for sandbox restore, stop serve, re-run. Or: GPUS=\"<free>\" bash $0"
   exit 1
 fi
-echo "  GPU(s) [$GPU_IDS] idle (<1GB VRAM). Proceeding."
+echo "[guard] GPU $GPUS all free OK"
 
-[ -f "$MODEL/config.json" ] || { echo "ERROR: Model not found: $MODEL"; exit 1; }
-[ -f "$DATA" ] || { echo "ERROR: Data not found: $DATA"; exit 1; }
+if [ $SMOKE = 1 ]; then
+  TOTAL_EPOCHS=1; SAVE_FREQ=5; OUTPUT_DIR="${OUTPUT_DIR}_smoke"
+  echo "[smoke] epochs=1 save_freq=5 output=$OUTPUT_DIR"
+fi
 
-# --- Environment (fix 2: NCCL for A40 no-NVLink DDP) ---
+LORA_CFG="model.lora_rank=0"
+if [ "$FT_MODE" = "lora" ]; then
+  LORA_CFG="model.lora_rank=$LORA_RANK model.lora_alpha=$LORA_ALPHA"
+  echo "[config] LoRA enabled: rank=$LORA_RANK alpha=$LORA_ALPHA"
+fi
+GC_CFG="model.enable_gradient_checkpointing=$([ $GRAD_CKPT = 1 ] && echo True || echo False)"
+
+# ============ launch verl FSDP SFT ============
+mkdir -p "$OUTPUT_DIR" "$HYDRA_DIR"
+export CUDA_VISIBLE_DEVICES="$GPUS"
 export HF_HOME="/tmp/hf_home"
 export HF_MODULES_CACHE="/tmp/hf_home/modules"
 export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
-export TOKENIZERS_PARALLELISM=false
-export NCCL_P2P_DISABLE=1        # fix2: A40 has no NVLink, P2P can hang DDP init
-export NCCL_IB_DISABLE=1         # A40 consumer GPUs: no IB, avoid NET fallback
-export NCCL_DEBUG=WARN
-SMOKE_FLAG=""
-[ $SMOKE = 1 ] && SMOKE_FLAG="--smoke"
-export CUDA_VISIBLE_DEVICES="$GPU_IDS"
-echo "Launching with accelerate (num_processes=$(echo $GPU_IDS | tr ',' '\n' | wc -l))..."
-"$PY" -m accelerate.commands.launch \
-    --num_processes "$(echo $GPU_IDS | tr ',' '\n' | wc -l)" \
-    "$SCRIPT_DIR/baize_posttrain_sft_surrogate.py" \
-    --model_path "$MODEL" \
-    --data_path "$DATA" \
-    --output_dir "$OUTPUT" \
-    --max_len "$MAX_LEN" \
-    --per_device_batch_size "$BATCH" \
-    --grad_accum "$GRAD_ACCUM" \
-    --lr "$LR" \
-    --warmup_steps "$WARMUP" \
-    --num_epochs "$EPOCHS" \
-    --save_steps "$SAVE_STEPS" \
-    $SMOKE_FLAG
-RC=$?
-echo "===== SFT COMPLETE rc=$RC ====="
+export TORCH_NCCL_ASYNC_ERROR_HANDLING=1
+export TOKENIZERS_PARALLELISM=true
+export WANDB_MODE=disabled
+
+echo ""
+echo "===== Surrogate SFT START @ $(date '+%F %T') =====" | tee "$LOG_FILE"
+
+"$VERL_TORCHRUN" --nproc_per_node="$NGPU" --master_addr=127.0.0.1 --master_port=29830 \
+  -m verl.trainer.fsdp_sft_trainer \
+  --config-name sft_trainer \
+  data.train_files="$TRAIN_PARQUET" \
+  data.val_files="$VAL_PARQUET" \
+  data.train_batch_size="$TRAIN_BATCH" \
+  data.micro_batch_size_per_gpu="$MICRO_BATCH" \
+  data.max_length="$MAX_LENGTH" \
+  data.truncation=right \
+  data.multiturn.enable=true \
+  data.multiturn.messages_key=conversation \
+  model.partial_pretrain="$MODEL_PATH" \
+  model.trust_remote_code=true \
+  $GC_CFG \
+  model.fsdp_config.model_dtype=bf16 \
+  model.strategy=fsdp2 \
+  $LORA_CFG \
+  optim.lr="$LR" \
+  optim.betas='[0.9,0.95]' \
+  optim.weight_decay=0.01 \
+  optim.warmup_steps_ratio="$WARMUP_RATIO" \
+  optim.clip_grad=1.0 \
+  optim.lr_scheduler=cosine \
+  trainer.total_epochs="$TOTAL_EPOCHS" \
+  trainer.save_freq="$SAVE_FREQ" \
+  trainer.test_freq="$TEST_FREQ" \
+  trainer.n_gpus_per_node="$NGPU" \
+  trainer.nnodes=1 \
+  trainer.logger='[console]' \
+  trainer.project_name=baize_posttrain_sft_surrogate \
+  trainer.experiment_name=minicpm5_pyaether_v1 \
+  trainer.default_local_dir="$OUTPUT_DIR" \
+  trainer.seed="$SEED" \
+  hydra.run.dir="$HYDRA_DIR" \
+  hydra.output_subdir=null \
+  2>&1 | tee -a "$LOG_FILE"
+
+RC=${PIPESTATUS[0]}
+echo "  rc=$RC" | tee -a "$LOG_FILE"
+echo "===== Surrogate SFT END @ $(date '+%F %T') rc=$RC =====" | tee -a "$LOG_FILE"
+if [ $RC -eq 0 ]; then
+  echo ""
+  echo "SFT complete. Checkpoint: $OUTPUT_DIR/global_step_*"
+  echo "   Next: serve SFT ckpt with vLLM, then run EDA-Eval (baize_posttrain_eval.sh)."
+  echo "   Report results as: 替身预演，收益不可迁移到 BaiZe"
+fi
 exit $RC
