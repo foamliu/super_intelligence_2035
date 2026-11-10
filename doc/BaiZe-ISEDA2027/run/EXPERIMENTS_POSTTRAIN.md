@@ -15112,4 +15112,121 @@ install_hooks(trainer, config_path="baize_posttrain_hooks_config.yaml")
 2. 在 verl_cu124_venv 中 import 测试（NFS 冷启动 warm-up）
 3. 将 hooks config 路径加入 `baize_posttrain_rl_grpo.sh`
 4. R145 选题：R1-R4 矩阵中下一个未覆盖方向
+
+---
+
+## §R145 — SFT-to-RL Transfer Dynamics: Predicting RL Convergence Ceiling from SFT Initialization Properties
+
+> **方向**：R3（reward design & GRPO stability）
+> **日期**：2026-11-10 wake192 · 零 GPU · 纯仿真分析
+> **脚本**：`baize_posttrain_r145_sft_rl_transfer.py`（405 行，py_compile ✅ + run ✅）
+> **报告**：`r145_sft_rl_transfer_report.json`（26.4KB）
+
+### 动机
+
+R131 分析了「何时开始 RL」（SFT-to-RL bridge），R142 投影了 RL 收敛（750 步 sigmoid 模型），
+但都假设了一个固定的 SFT 初始化。**什么 SFT 属性预测 RL 改进上限？** 这个问题没有系统回答。
+R134 设计了 SFT 消融（LoRA vs Full FT × 数据混合 × 上下文长度），但未涉及**为 RL 优化的 SFT 停止准则**。
+
+本节填补这一空白：给定 SFT checkpoint 的属性 X，RL 改进上限是多少？哪些 SFT 属性最重要？
+
+### Q1: SFT pass@1 阈值
+
+GRPO 优势信号质量 = P(≥1 成功 in group) × binary_var × group_effect。
+当 pass@1 < 10%（G=8）时，>95% 的 group 全零奖励 → 无学习信号。
+**结论**：SFT pass@1 ≥ 10% 即可启动 RL（阈值很低），但越高信号越强。
+
+### Q2: 传递曲线（SFT pass@1 → RL ceiling）
+
+| SFT pass@1 | R1 ceiling | R2 ceiling | R3 ceiling | R4 ceiling | productive |
+|:---|:---|:---|:---|:---|:---|
+| 30% | 40.5% | 42.4% | 41.8% | 41.4% | ✓ |
+| 35% | 52.0% | 55.0% | 54.0% | 53.4% | ✓ |
+| 40% | 58.6% | 61.9% | 60.8% | 60.1% | ✓ |
+| 45% | 64.7% | 67.9% | 67.0% | 66.3% | ✓ |
+| 50% | 69.0% | 69.0% | 69.0% | 69.0% | ✓ |
+| 55-65% | 70-72% | 70-72% | 70-72% | 70-72% | ✓ |
+| 70-95% | 73-79% | 73-79% | 73-79% | 73-79% | ✓ |
+
+**关键发现**：R2（部分奖励）在低 pass@1 区间（30-50%）始终领先 R1 约 2-5pp。
+当 pass@1 ≥ 50% 时，domain ceiling 成为主导约束，各 reward arm 趋同。
+
+### Q3: SFT 过拟合对 RL 的影响
+
+| 场景 | 过拟合 gap | penalty | RL ceiling | RL improvement |
+|:---|:---|:---|:---|:---|
+| healthy | 0.15 | 1.00 | 74.5% | +24.5pp |
+| moderate | 0.35 | 0.90 | 73.5% | +23.5pp |
+| significant | 0.60 | 0.75 | 69.6% | +19.6pp |
+| severe | 1.05 | 0.50 | 63.0% | +13.1pp |
+| extreme | 1.48 | 0.50 | 63.0% | +13.1pp |
+
+**结论**：严重过拟合（gap>1.0）将 RL ceiling 削减约 50%（penalty=0.5）。
+健康 SFT（gap<0.3）无惩罚。中等过拟合（0.3-0.6）损失约 10%。
+
+### Q4: 指标敏感性分析（按影响排序）
+
+| 排名 | 指标 | 敏感度范围 | min ceiling | max ceiling |
+|:---|:---|:---|:---|:---|
+| 1 | **domain_coverage** | 23.6% | 52.5% | 76.1% |
+| 2 | pass_at_1 | 15.0% | 59.5% | 74.5% |
+| 3 | policy_entropy | 14.1% | 60.4% | 74.5% |
+| 4 | tool_call_compliance | 9.1% | 65.4% | 74.5% |
+| 5 | context_utilization | 3.6% | 70.9% | 74.5% |
+| 6 | cot_quality | 2.2% | 72.3% | 74.5% |
+
+**关键发现**：**domain_coverage 是影响 RL ceiling 最大的 SFT 指标**（23.6% 范围），
+超过 pass_at_1（15.0%）和 policy_entropy（14.1%）。这意味着领域知识覆盖度是 RL 改进的
+关键瓶颈——模型不会用的 API，RL 也学不会（因为没有正面 rollout 信号）。
+
+### Q5: RL 优化的 SFT 停止准则
+
+仿真 SFT 轨迹（2000 步，pass@1 sigmoid 36%→65%，entropy exp 衰减 2.5→0.5）：
+- RL 最优停止 = step 2000（pass@1=64.2%，ceiling=81.2%）
+- max pass@1 停止 = step 2000（pass@1=64.2%，ceiling=81.2%）
+- **gap = +0.0%**
+
+**结论**：在健康过拟合区间内，RL 优化的 SFT 停止点与 pass@1 最大化停止点一致。
+entropy 探索优势在 domain ceiling 约束下不构成主导因素。
+仅在严重过拟合场景下，提前停止才可能有优势。
+
+### 成功阶梯映射
+
+| 里程碑 | 目标 pass@1 | 所需最低 SFT pass@1 | 可达 |
+|:---|:---|:---|:---|
+| 起点 | 36% | 26% | ✓ |
+| M1 | 50% | 34% | ✓ |
+| M2 | 65% | 43% | ✓ |
+| M3 | 75% | 78% | ✓ |
+| **M4** | **85%** | **N/A** | **✗** |
+
+**关键发现**：M4（85%）在本模型中不可达——domain ceiling 上限约 79%。
+M3（75%）需要 SFT≥78%，意味着 M3 主要是 SFT 成就，而非 RL 贡献。
+RL 的最大贡献区间在 SFT 34%-50% → M1-M2 层级。
+
+### 与前序研究的关联
+
+| 前序 | 关联 |
+|:---|:---|
+| R131（SFT-to-RL bridge） | 本节回答了「什么 SFT 属性决定 RL 上限」，R131 回答「何时开始 RL」 |
+| R134（SFT 消融设计） | domain_coverage 敏感度最高 → SFT 数据混合应优先覆盖 EDA API 广度 |
+| R142（RL 收敛投影） | 本节为 R142 的 sigmoid 模型提供了 SFT 初始化敏感度维度 |
+| R140（GRPO group size） | Q1 阈值分析可与 R140 的 G 选择结合：G=8 时阈值 10%，G=16 时更低 |
+
+### 实践建议
+
+1. **SFT 数据策略**：优先 API 覆盖广度（domain_coverage 是 #1 指标），而非深度
+2. **SFT 停止准则**：在健康过拟合区间（gap<0.3），直接最大化 pass@1 即可
+3. **RL 启动条件**：SFT pass@1 ≥ 34% 即可启动 RL 并期望达到 M1（50%）
+4. **Reward arm 选择**：R2（部分奖励）在 SFT pass@1 < 50% 时优势最明显
+5. **M3 策略**：75% 主要靠 SFT（需 78% SFT pass@1），RL 贡献有限
+6. **M4 不可达性**：domain ceiling 限制 RL 上限约 79%，M4 需要其他手段（更大模型/更好数据）
+
+### R145 同步交付：verl hooks 集成 + import 测试
+
+1. **verl_cu124_venv import 测试** ✅：torch 2.6.0+cu124 CUDA=True, verl OK, sglang OK
+2. **baize_posttrain_verl_wrapper.py hooks 集成** ✅：添加 `--hooks-config` 参数，
+   class-level monkey-patch `RayPPOTrainer.fit`，自动在 `fit()` 前调用 `install_hooks()`
+3. **baize_posttrain_rl_grpo.sh hooks 集成** ✅：添加 `--hooks`/`--no-hooks`/`--hooks-config` 参数，
+   dry-run 显示 hooks 状态，bash -n ✅，dry-run ✅
 5. 正式训练待 pretrain ckpt（ETA≈2026-12-25）

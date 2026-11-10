@@ -44,6 +44,8 @@ NP=4  # 4×A40 on .17
 DRY_RUN=0; SMOKE=0; GPU_IDS=""
 RESUME_CKPT=""  # R22: verl checkpoint resume path (different from --resume which is model path)
 MONITOR=1       # R22: enable monitoring hooks by default
+HOOKS=1         # R145: enable training lifecycle hooks by default
+HOOKS_CONFIG="$SCRIPT_DIR/baize_posttrain_hooks_config.yaml"  # R145: hooks config path
 while [ $# -gt 0 ]; do
   case "$1" in
     --dry-run) DRY_RUN=1 ;; --smoke) SMOKE=1 ;;
@@ -53,6 +55,8 @@ while [ $# -gt 0 ]; do
     --config) CONFIG_FILE="$2"; shift ;;
     --gpu-ids) GPU_IDS="$2"; shift ;;
     --no-monitor) MONITOR=0 ;;  # R22: disable monitoring
+    --no-hooks) HOOKS=0 ;;  # R145: disable training lifecycle hooks
+    --hooks-config) HOOKS_CONFIG="$2"; shift ;;  # R145: custom hooks config path
     *) echo "未知参数: $1" ;;
   esac
   shift
@@ -72,6 +76,7 @@ cat <<EOF
   inference backend : SGLang (R16: verl ToolParser handles XML tool calls, not SGLang)
   n_gpus            : ${NP} (4×A40 48GB)
   anti-cheat        : PreToolUse hook 全程启用，逐字节一致；报告 cheat rate
+  training hooks    : $([ "$HOOKS" = 1 ] && echo "ENABLED (6 hooks, config: ${HOOKS_CONFIG##*/})" || echo "DISABLED (--no-hooks)")
   red line          : RL 任务 ≠ EDA-Eval-PyAether 158 题（污染隔离 §5.1）
   warning           : 替身 RL 结果不可迁移到白泽（surrogate rehearsal only）
 ===== END RECIPE =====
@@ -116,6 +121,14 @@ VERL_ARGS=(
     --trainer.log_dir "${OUTPUT_DIR}/logs"
     --trainer.n_gpus_per_node "$NP"
 )
+
+# R145: Pass hooks config to wrapper (wrapper strips it before passing to verl)
+if [ "$HOOKS" = 1 ] && [ -f "$HOOKS_CONFIG" ]; then
+    VERL_ARGS+=(--hooks-config "$HOOKS_CONFIG")
+    echo "[rl] R145: Training lifecycle hooks ENABLED (config: $HOOKS_CONFIG)"
+elif [ "$HOOKS" = 1 ]; then
+    echo "[rl] R145: ⚠️ Hooks enabled but config not found at $HOOKS_CONFIG — hooks will use defaults"
+fi
 
 # R22: Checkpoint resume — verl supports --trainer.resume_from_checkpoint
 if [ -n "$RESUME_CKPT" ]; then

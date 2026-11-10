@@ -53,6 +53,41 @@ if ENABLE_MULTI_TURN:
 else:
     print("[wrapper] Single-turn mode (R0 skeleton, no tool parser needed)", flush=True)
 
+# === R145: Hooks integration (class-level monkey-patch) ===
+#   If --hooks-config <path> is in argv, patch RayPPOTrainer.fit at the class
+#   level so that when verl creates an instance and calls fit(), hooks are
+#   automatically installed. This avoids needing to intercept trainer creation.
+HOOKS_CONFIG_PATH = None
+if "--hooks-config" in sys.argv:
+    idx = sys.argv.index("--hooks-config")
+    if idx + 1 < len(sys.argv):
+        HOOKS_CONFIG_PATH = sys.argv[idx + 1]
+        sys.argv.pop(idx)  # remove --hooks-config
+        sys.argv.pop(idx)  # remove the path value
+        print(f"[wrapper] Hooks config: {HOOKS_CONFIG_PATH}", flush=True)
+
+if HOOKS_CONFIG_PATH:
+    try:
+        from baize_posttrain_hooks import install_hooks
+        from verl.trainer.ppo.ray_trainer import RayPPOTrainer
+        _orig_fit_cls = RayPPOTrainer.fit
+
+        def _auto_hook_fit(self, *args, **kwargs):
+            """Class-level patch: install hooks on this instance, then call original fit."""
+            print(f"[wrapper] Auto-installing hooks into RayPPOTrainer instance "
+                  f"(config={HOOKS_CONFIG_PATH})", flush=True)
+            install_hooks(self, config_path=HOOKS_CONFIG_PATH)
+            return _orig_fit_cls(self, *args, **kwargs)
+
+        RayPPOTrainer.fit = _auto_hook_fit
+        print(f"[wrapper] RayPPOTrainer.fit class-level patch installed "
+              f"(6 hooks, config={HOOKS_CONFIG_PATH})", flush=True)
+    except ImportError as e:
+        print(f"[wrapper] WARNING: Cannot import hooks module or RayPPOTrainer: {e}",
+              flush=True)
+        print("[wrapper] Hooks will NOT be active. Training continues without hooks.",
+              flush=True)
+
 # === Launch verl's main_ppo entry point ===
 try:
     from verl.trainer.main_ppo import main as verl_main
