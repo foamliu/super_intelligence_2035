@@ -25,8 +25,8 @@
   "prev_sessions": 38082,
   "scan_path": "/home/t0002965/log/ssh_eda_search_20261109_224902/summary.tsv",
   "scansync": {
-    "round": "r360",
-    "consecutive_no_new_scan": "r293-r360 (67th)",
+    "round": "r361",
+    "consecutive_no_new_scan": "r293-r361 (68th)",
     "scan_dir": "/home/t0002965/log/ssh_eda_search_20261109_224902",
     "summary_tsv_rows": 38082,
     "dedup_sessions": 5999,
@@ -41,7 +41,7 @@
     "new_sessions": 0,
     "daily_log_20261111_lines": 2545,
     "daily_log_20261111_sessions": 2541,
-    "updated_at": "2026-11-11T07:15:00+08:00"
+    "updated_at": "2026-11-11T08:05:00+08:00"
   },
   "sessions": 38082,
   "shard_mc": {
