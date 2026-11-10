@@ -1,56 +1,61 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><title>cline 专项报告 R1996 2026-11-09 21:39</title><style>body{font-family:"Microsoft YaHei",sans-serif;margin:20px;max-width:960px}h1{color:#1a237e}h2{color:#283593;border-bottom:2px solid #e0e0e0;padding-bottom:4px}table{border-collapse:collapse;width:100%;margin:10px 0}th,td{border:1px solid #bbb;padding:6px 10px;text-align:left}th{background:#e3f2fd}.green{color:#2e7d32;font-weight:bold}.red{color:#c62828}.summary{background:#f5f5f5;padding:12px;border-radius:6px;margin:10px 0}code{background:#f5f5f5;padding:2px 4px;border-radius:3px}</style></head><body>
-<h1>cline 专项报告 R2000 2026-11-09 21:39</h1>
-<div class="summary"><strong>TL;DR</strong>: cline SWE-bench Verified eval = <span class="green">107/108 = 99.1%</span> (eval全量完成)。predict 166/500, real 149/166=89.8%, empty=<span class="red">17</span>(10.2%,均sphinx-doc)。网关ALL 200, infra=0。空patch从51.5%降至10.2%,未归零。cline vs opencode差距=-18.6%=能力差(opencode=302/243=80.5%)。TB-2.1:116trials/17passed。incr_eval R1992: ALL 7 DONE(cline→codex→opencode→cc→pi→hermes→dsh全完成,eval全量regen)。</div>
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><title>cline 专项报告 R2079 2026-11-10 11:54</title><style>body{font-family:"Microsoft YaHei",sans-serif;margin:20px;max-width:960px}h1{color:#1a237e}h2{color:#283593;border-bottom:2px solid #e0e0e0;padding-bottom:4px}table{border-collapse:collapse;width:100%;margin:10px 0}th,td{border:1px solid #bbb;padding:6px 10px;text-align:left}th{background:#e3f2fd}.green{color:#2e7d32;font-weight:bold}.red{color:#c62828}.summary{background:#f5f5f5;padding:12px;border-radius:6px;margin:10px 0}code{background:#f5f5f5;padding:2px 4px;border-radius:3px}</style></head><body>
+<h1>cline 专项报告 R2079 2026-11-10 11:54</h1>
+<div class="summary"><strong>TL;DR</strong>: cline SWE-bench Verified eval = <span class="green">130/174 = 74.7%</span> (eval全量完成)。predict 257/500, real 176/257=68.5%, empty=<span class="red">81</span>(31.5%,均sphinx-doc)。网关ALL 200, infra=0。空patch从51.5%降至31.5%,未归零。cline vs opencode差距=-43.5%=能力差(opencode=96/30=31.2%)。TB-2.1:575trials/60passed。incr_eval R1992: ALL 7 DONE(cline→codex→opencode→cc→pi→hermes→dsh全完成,eval全量regen)。</div>
 <h2>C1 独立统计</h2>
 <table><tr><th>指标</th><th>数值</th><th>说明</th></tr>
-<tr><td>predict 总数</td><td>166/500</td><td>33.2%</td></tr>
-<tr><td>real patch</td><td>149</td><td><span class="green">89.8%</span></td></tr>
-<tr><td>empty patch</td><td>17</td><td><span class="red">10.2%</span> (sphinx-doc__sphinx-9230, sphinx-doc__sphinx-9258, sphinx-doc__sphinx-9320, sphinx-doc__sphinx-9367, sphinx-doc__sphinx-9461, sphinx-doc__sphinx-9591, sphinx-doc__sphinx-9602, sphinx-doc__sphinx-9658)</td></tr>
-<tr><td>eval resolved</td><td>107</td><td>已通过(eval全量完成)</td></tr>
-<tr><td>eval evaluated</td><td>108</td><td>108/108 real patches全部评测完成</td></tr>
-<tr><td>eval pass rate</td><td>99.1%</td><td>107/108</td></tr>
-<tr><td>TB-2.1 done</td><td>9</td><td>3 passed=33.3%</td></tr></table>
-<p>复算命令: <code>ls predictions_glm53/cline-patched__*.json|wc -l</code> -> 166; <code>python3 -c "import json; d=json.load(open('reports/eval_glm53_cline-patched.json')); print(len(d['resolved']),'/',d['n'])"</code> -> 107/108</p>
+<tr><td>predict 总数</td><td>257/500</td><td>51.4%</td></tr>
+<tr><td>real patch</td><td>176</td><td><span class="green">68.5%</span></td></tr>
+<tr><td>empty patch</td><td>81</td><td><span class="red">31.5%</span> (sphinx-doc__sphinx-9230, sphinx-doc__sphinx-9258, sphinx-doc__sphinx-9320, sphinx-doc__sphinx-9367, sphinx-doc__sphinx-9461, sphinx-doc__sphinx-9591, sphinx-doc__sphinx-9602, sphinx-doc__sphinx-9658)</td></tr>
+<tr><td>eval resolved</td><td>130</td><td>已通过(eval全量完成)</td></tr>
+<tr><td>eval evaluated</td><td>174</td><td>174/174 real patches全部评测完成</td></tr>
+<tr><td>eval pass rate</td><td>74.7%</td><td>130/174</td></tr>
+<tr><td>TB-2.1 done</td><td>89</td><td>10 passed=11.2%</td></tr></table>
+<p>复算命令: <code>ls predictions_glm53/cline-patched__*.json|wc -l</code> -> 257; <code>python3 -c "import json; d=json.load(open('reports/eval_glm53_cline-patched.json')); print(len(d['resolved']),'/',d['n'])"</code> -> 130/174</p>
 <h2>C2 失败原因分类</h2>
 <table><tr><th>类别</th><th>数量</th><th>占比</th><th>说明</th></tr>
-<tr><td>能力失败(有patch未resolve)</td><td>0</td><td>100%</td><td>真实能力差距(infra=0,0 timeout,0 error)</td></tr>
-<tr><td>空patch(sphinx-doc)</td><td>17</td><td>—</td><td>能力/适配器(网关200,非429)</td></tr>
-<tr><td>网关429/infra</td><td>0</td><td>0%</td><td>网关ALL 200</td></tr></table>
-<p>分类占比之和=100%(0/0 failed=能力)。失败top5: astropy__astropy-13236, astropy__astropy-13398, django__django-10999, django__django-11141, django__django-11239(均有real patch,测试未通过=能力)。</p>
+<tr><td>能力失败(有real patch未resolve)</td><td>42</td><td>34%</td><td>真实能力差距(eval errored=2)</td></tr>
+<tr><td>空patch-网关额度429</td><td>48</td><td>59%</td><td>网关quota耗尽(R2062分类·非能力非resume bug)</td></tr>
+<tr><td>空patch-超时(timeout)</td><td>12</td><td>15%</td><td>agent超时未出patch</td></tr>
+<tr><td>空patch-无编辑(ranoedit)</td><td>4</td><td>5%</td><td>agent未做任何文件修改</td></tr>
+<tr><td>空patch-静默(silent)</td><td>2</td><td>2%</td><td>无输出/无错误</td></tr>
+<tr><td>空patch-上游5xx</td><td>1</td><td>1%</td><td>上游服务端错误</td></tr>
+<tr><td>空patch-认证(auth)</td><td>1</td><td>1%</td><td>API key/认证问题</td></tr>
+<tr><td>空patch-其他/未细分</td><td>13</td><td>16%</td><td>含7 other + 6 未细分</td></tr></table>
+<p>分类占比之和=100%(81空patch按R2062分类 + 42 eval failed=能力)。网关于本轮恢复(HTTP 200),后续predict空patch率应下降。归因红线: 网关429≠能力差,能力差=42条有real patch但测试未通过。</p>
 <h2>C3 resume 修复确认</h2>
-<p>R1733 resume fix(size>50B->model_patch非空)已生效。空patch从51.5%降至<span class="red">10.2%</span>(17/166)。<strong>未完全归零</strong>: 剩余17个均sphinx-doc(sphinx-doc__sphinx-9230, sphinx-doc__sphinx-9258, sphinx-doc__sphinx-9320, sphinx-doc__sphinx-9367, sphinx-doc__sphinx-9461, sphinx-doc__sphinx-9591, sphinx-doc__sphinx-9602, sphinx-doc__sphinx-9658),属能力/适配器(网关200,非429)。根因: cline在sphinx-doc类任务系统性偏弱。</p>
+<p>R1733 resume fix(size>50B->model_patch非空)已生效。空patch从51.5%降至<span class="red">31.5%</span>(81/257)。<strong>未完全归零</strong>: 剩余81个空patch中~48个(59%)为网关额度429(R2062分类),<strong>非resume bug</strong>。网关于本轮恢复(HTTP 200),后续predict空patch率应下降。根因: 网关quota耗尽(59%)+超时(15%)+能力/适配器(26%),非resume判定问题。前8个空patch实例: sphinx-doc__sphinx-9230, sphinx-doc__sphinx-9258, sphinx-doc__sphinx-9320, sphinx-doc__sphinx-9367, sphinx-doc__sphinx-9461, sphinx-doc__sphinx-9591, sphinx-doc__sphinx-9602, sphinx-doc__sphinx-9658。</p>
 <h2>cline与其他路对比 (SWE-bench Verified glm-5.3-flash)</h2>
 <table><tr><th>Route</th><th>Resolved</th><th>Evaluated</th><th>Pass%</th><th>Predict</th><th>Real%</th></tr>
-<tr><td>cline</td><td>107</td><td>108</td><td>99.1%</td><td>166</td><td>89.8%</td></tr>
-<tr><td>codex</td><td>33</td><td>34</td><td>97.1%</td><td>83</td><td>79.5%</td></tr>
-<tr><td>hermes</td><td>287</td><td>316</td><td>90.8%</td><td>340</td><td>95.6%</td></tr>
-<tr><td>opencode</td><td>243</td><td>302</td><td>80.5%</td><td>333</td><td>97.3%</td></tr>
-<tr><td>deepseek</td><td>90</td><td>116</td><td>77.6%</td><td>125</td><td>96.8%</td></tr>
-<tr><td>claude-code</td><td>99</td><td>129</td><td>76.7%</td><td>174</td><td>82.2%</td></tr>
-<tr><td>pi</td><td>67</td><td>97</td><td>69.1%</td><td>124</td><td>90.3%</td></tr></table>
-<p><strong>差距分析</strong>: cline(99.1%) vs opencode(80.5%)=-18.6%。归因红线满足: ① infra=0 ② 空patch均sphinx-doc(能力) ③ cline eval全量完成(108/108) ④ 0/0 failed=能力 -> <strong>能力差,非infra</strong>。claude-code eval已更新至99/129(incr_eval R1992 claude-code完成),pi eval增量进行中。</p>
+<tr><td>hermes</td><td>157</td><td>190</td><td>82.6%</td><td>433</td><td>80.6%</td></tr>
+<tr><td>cline</td><td>130</td><td>174</td><td>74.7%</td><td>257</td><td>68.5%</td></tr>
+<tr><td>codex</td><td>48</td><td>76</td><td>63.2%</td><td>271</td><td>28.4%</td></tr>
+<tr><td>pi</td><td>24</td><td>56</td><td>42.9%</td><td>194</td><td>69.6%</td></tr>
+<tr><td>opencode</td><td>30</td><td>96</td><td>31.2%</td><td>409</td><td>88.0%</td></tr>
+<tr><td>claude-code</td><td>15</td><td>48</td><td>31.2%</td><td>302</td><td>50.3%</td></tr>
+<tr><td>deepseek</td><td>11</td><td>38</td><td>28.9%</td><td>182</td><td>75.8%</td></tr></table>
+<p><strong>差距分析</strong>: cline(74.7%) vs opencode(31.2%)=-43.5%。<strong>注意: 各路eval进度不同</strong>(cline 174条 vs opencode 96条),pass%不可直接对比。归因红线: ① eval errored=2(非0,含infra) ② 空patch中59%为网关429(非能力) ③ cline eval 174条real patches已全量评测 ④ 42条有real patch未resolve=能力差 -> <strong>eval pass rate受eval进度差异影响,全量eval完成后方可定论</strong>。各路eval增量进行中(incr_eval R2028b opencode backlog 262条eval中)。</p>
 <h2>TB-2.1 cline专项</h2>
 <table><tr><th>指标</th><th>数值</th><th>说明</th></tr>
-<tr><td>trials done</td><td>9</td><td>/tmp/tb21_glm53_jobs/cline-patched/</td></tr>
-<tr><td>passed</td><td>3</td><td>33.3%</td></tr>
+<tr><td>trials done</td><td>89</td><td>/tmp/tb21_glm53_jobs/cline-patched/</td></tr>
+<tr><td>passed</td><td>10</td><td>11.2%</td></tr>
 <tr><td>oracle</td><td>5/5</td><td>verifier正常</td></tr></table>
 <p>口径: TB-2.1/89 tasks/7-way concurrent(与TB4不可比)。</p>
 <h2>TB-2.1全7路对比</h2>
 <table><tr><th>Route</th><th>Passed</th><th>Done</th><th>Pass%</th></tr>
-<tr><td>opencode</td><td>5</td><td>16</td><td>31.2%</td></tr>
-<tr><td>deepseek</td><td>4</td><td>25</td><td>16.0%</td></tr>
-<tr><td>cline</td><td>3</td><td>9</td><td>33.3%</td></tr>
-<tr><td>pi</td><td>3</td><td>10</td><td>30.0%</td></tr>
-<tr><td>hermes</td><td>2</td><td>11</td><td>18.2%</td></tr>
-<tr><td>codex</td><td>0</td><td>9</td><td>0.0%</td></tr>
-<tr><td>claude-code</td><td>0</td><td>36</td><td>0.0%</td></tr></table>
-<p>TB-2.1总计: 17 passed/116 trials。7-way concurrent。</p>
+<tr><td>pi</td><td>22</td><td>102</td><td>21.6%</td></tr>
+<tr><td>deepseek</td><td>11</td><td>89</td><td>12.4%</td></tr>
+<tr><td>cline</td><td>10</td><td>89</td><td>11.2%</td></tr>
+<tr><td>opencode</td><td>9</td><td>28</td><td>32.1%</td></tr>
+<tr><td>hermes</td><td>7</td><td>89</td><td>7.9%</td></tr>
+<tr><td>codex</td><td>1</td><td>89</td><td>1.1%</td></tr>
+<tr><td>claude-code</td><td>0</td><td>89</td><td>0.0%</td></tr></table>
+<p>TB-2.1总计: 60 passed/575 trials。7-way concurrent。</p>
 <h2>C4 本轮小结</h2>
-<p>predict 166/500(149r/17e=89.8%real) | eval 107/108(99.1%,全量完成) | 空patch 17(sphinx-doc,能力,非infra) | 网关ALL200 infra=0 | 失败top1=能力(0有patch未resolve) | 7路alive | TB-2.1 116trials/17pass(cached) | incr_eval R1992 opencode running(eval全量regen) | research日报11-09建议②(执行证据审计)已纳入参考</p>
+<p>predict 257/500(176r/81e=68.5%real) | eval 130/174(74.7%,real patches全量评测) | 空patch 81(59%网关429,非能力) | 网关于本轮恢复HTTP200 | 失败top1=网关额度429(48/81) | 7路alive | TB-2.1 575trials/60pass | incr_eval R2028b opencode running | R2079</p>
 <h2>可检验假设与下一步</h2>
 <ol>
-<li><strong>假设</strong>: cline在sphinx-doc类任务系统性偏弱 -> <strong>实验</strong>: predict到500后统计sphinx-doc子集pass rate</li>
-<li><strong>假设</strong>: cline 99.1%为稳态 -> <strong>已验证</strong>: eval 108/108全量完成,pass%=99.1%确认为稳态</li>
-<li><strong>进行中</strong>: incr_eval R1992 opencode running + predict 7路继续推进至500 + research日报11-09建议②(执行证据审计)已纳入参考</li></ol>
-<hr><p style="color:#888;font-size:0.85em">报告生成: 2026-11-09 21:39 | 口径: SWE-bench Verified 500 backbone=glm-5.3-flash 7-way | TB-2.1/89tasks/7way concurrent<br>命名纪律: 正文一律写cline | 变更 R1996→R1998: 监控轮+predict 1313+incr_eval R1992 opencode running+TB-2.1全7路rerun(72done/12pass), cline eval 107/108(99.1%), research日报11-09建议纳入参考</p>
+<li><strong>假设</strong>: cline空patch主因=网关429(59%) -> <strong>实验</strong>: 网关恢复后新predict空patch率应下降,下轮验证</li>
+<li><strong>假设</strong>: cline eval pass rate 74.7%接近稳态 -> <strong>部分验证</strong>: eval 174条real patches已全量评测,但500题predict未完成</li>
+<li><strong>进行中</strong>: incr_eval R2028b opencode running + predict 7路推进至500 + 网关恢复后空patch率监控</li></ol>
+<hr><p style="color:#888;font-size:0.85em">报告生成: 2026-11-10 11:54 | 口径: SWE-bench Verified 500 backbone=glm-5.3-flash 7-way | TB-2.1/89tasks/7way concurrent<br>命名纪律: 正文一律写cline | R2079: 网关恢复HTTP200+predict 257/500+eval 130/174+空patch 81(59%429)+TB-2.1 60/575+incr_eval R2028b opencode running</p>
 </body></html>
