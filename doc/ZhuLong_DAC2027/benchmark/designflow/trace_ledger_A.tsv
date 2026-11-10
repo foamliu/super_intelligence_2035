@@ -329,3 +329,4 @@
 1793268918911_brnqb	e02141	hfeg0plg56	717	digital	parked		2026-11-10 14:38	r316 wrong-shard: Sentaurus TCAD (synopsys=sentaurus device sim, kw cmos/.gds/bandgap/mosfet), not digital front-end. e02141 cluster (cwq7f/1wvdl/f6x1i/hgqho/l1u7n/yiohr/ckiw9/o0dm6) same TCAD pattern
 1792902413837_3p5vl	alanji	hfeg0plg99	275	digital	parked		2026-11-10 14:38	r316 analysis-only how-to: 'package变量如何在DUT和TB之间传递值' = how-to question, not produce/diagnosis
 1792033394584_xd7ut	tongfanl	hfhds201	277	digital	parked		2026-11-10 14:38	r316 analysis-only: '帮我分析下这个环境并回答WTM模式write是否发到array' = analysis question, not produce/diagnosis
+1793972832447_zxb65	thomas1w	hfeg0pjn100	133	verification	claimed		2026-11-10 15:20	
