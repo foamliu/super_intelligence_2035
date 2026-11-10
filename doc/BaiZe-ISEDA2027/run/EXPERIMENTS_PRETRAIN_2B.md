@@ -874,4 +874,41 @@ ssh 10.239.2.29 'cat /proc/146283/fd/1 | tail -30'
 - §4.7 sec:ckpt-scaling: 不存在 ✅
 - 📦 TASK=22.5KB ✅ / MEMORY≈19.2KB ✅
 
+---
+
+### 论文 §4.6 刷新 #1937 (2026-11-11 03:55)
+
+**取数命令**:
+```bash
+ssh 10.239.2.29 'tail -n 30 /proc/146283/fd/1 2>/dev/null'
+# fd=1 → /tmp/baize_s1_baize2b_worker.log (deleted), still open via /proc
+ssh 10.239.2.29 'nvidia-smi --query-gpu=utilization.gpu,memory.used --format=csv,noheader'
+```
+
+**实测训练数据** (2026-11-11 03:51:38):
+- iter 158,380 / 700,000 (22.6%)
+- 末 9 步 step time: 7001-7286 ms (均 7097 ms, 均 < 7.4s ✅)
+- loss: 2.004-2.029 (avg ≈ 2.013, 论文取 ≈2.02)
+- 0 NaN, 0 skipped iterations ✅
+- GPU 8 卡 83-100% util / ~75 GB each
+
+**tok/s 计算**:
+- 4,194,304 / 7.097s = 590,915 ≈ 591K (前轮 598K → 微降 -7K)
+
+**论文改动**:
+- §4.6 (4_llm_pretrain.tex line 109): iter 158,160 → 158,380, tok/s 598K → 591K (loss ≈2.02 不变)
+- abstract (0_abstract.tex line 14): 同步 158,160 → 158,380, 598K → 591K
+- tab:prod-budget (line 122): "158k done" 不变 (158,380 rounds to 158k)
+- wall-clock: ≈57d 不变 (700k × 4,194,304 / 591K = 57.5d)
+- tab:prod-budget total (line 126): ≈60.5d 不变
+
+**编译结果**:
+- `latexmk -pdf -interaction=nonstopmode main.tex` → 0 errors, 0 undefined, 0 warnings
+- main.pdf: 5 pages, 228,460 bytes
+
+**护栏检查**:
+- grep benchmark 数字 (ARC/HellaSwag/PIQA/BoolQ/OpenBookQA/SciQ/Winogrande/ckpt-scaling/zero-shot) in ISEDA2027/ + main.tex: 0 命中 ✅
+- §4.7 sec:ckpt-scaling: 不存在 ✅
+- 📦 TASK=22.5KB ✅ / MEMORY≈19.5KB ✅
+
 
