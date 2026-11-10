@@ -1436,3 +1436,4 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1791782242441_8rxb1	steveny	hfeg0pnd001	47	schematic_netlist	case	EDA-Eval-DesignFlow-NetPrefixHighlight-001	2026-11-11 04:30	
 1793762204059_2v098.messages.json	daiweilu	hfeg0pjn100	110	schematic_netlist	case	EDA-Eval-DesignFlow-DriverTrace-001	2026-11-11 05:42	
 1793091372339_bjl02	harrywu	hfeg0plg99	90	analog_context	case	EDA-Eval-DesignFlow-ParallelMeasFanout-001	2026-11-11 06:12	
+1793755053336_lc2c6	qunzhu	hfeg0plg101	29	schematic_netlist	case	EDA-Eval-DesignFlow-SchemExplodeLabel-001	2026-11-11 06:51	MOS打散+net打标;.sch合成;k=13;schematic_netlist;B-grade
