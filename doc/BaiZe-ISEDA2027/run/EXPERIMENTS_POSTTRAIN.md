@@ -7337,3 +7337,72 @@ P3 正式 BaiZe SFT（pretrain ckpt 就绪后，ETA≈2026-12-25）按 `baize_po
 - 数据溯源：本节所有路径/挂载/字节数来自 .17 本机 `mount`/`ls`/`test -d` 实测 + `DATA_MAPPING.md`（data 线单一事实源）引用。无伪造。
 
 
+## §R167 (2026-11-11 wake236) vLLM Serve-Health Sentinel + Auto-Restart Guard (零 GPU · CPU)
+
+### 1. 动机与问题
+
+17:10 用户令要求 GPU 5/6/7 被 vLLM serve MiniCPM5-2B 占位（端口 8097/8096/8095），
+防止 GPU 被挪用。但 agent 仅在每次唤醒（~15 min 间隔）时检查 serve 健康。
+**若 serve 进程在两次唤醒之间崩溃，GPU 变空闲，在下次唤醒前无人发现、无人重启 →
+占位失效、GPU 可能被挪用**。
+
+已有的 `baize_posttrain_sandbox_watcher.sh` 只监控沙盒 TCP 端口恢复，
+**不检查 serve 健康、不重启 serve**。需一个独立的 serve-health 哨兵填补此缺口。
+
+### 2. 方案
+
+新建 `baize_posttrain_serve_sentinel.sh`（~200 行）：
+
+| 功能 | 说明 |
+|:--|:--|
+| 5 端点健康探测 | `curl /v1/models` 探测 8095-8099 全部 5 端点 |
+| GPU 5/6/7 自动重启 | 崩溃时用 17:10 指令的**精确命令模板**重启（CUDA_VISIBLE_DEVICES + HF_HOME + vLLM venv + --gpu-memory-utilization 0.85 + --max-model-len 32768） |
+| GPU 4 alert-only | Phase1 评测 serve，默认不自动重启（`RESTART_GPU4=1` 可开） |
+| GPU 0-3 硬护栏 | **永不重启** root SGLang Qwen3.8-27B :8099（`if gpu >= 0 && gpu <= 3` 直接 reject） |
+| 残留进程清理 | 重启前 `nvidia-smi --query-compute-apps` 检测 GPU 残留 PID → `kill -9` → sleep 3s |
+| 重启验证 | 启动后每 10s 探测，最多等 120s 确认 serve 回 UP |
+| 模式 | `--check-once` / `--status` / `--dry-run` / `--watch` / `--watch --auto-restart` |
+| 日志 | `/tmp/posttrain_serve_sentinel.log`（时间戳 + poll# + RESTART/UP/FAIL 记录） |
+| 哨兵标志 | `/tmp/posttrain_serve_sentinel.flag`（PID + poll# + 心跳时间） |
+
+### 3. 验证
+
+- `bash -n` ✅（语法检查通过）
+- `--help` ✅（打印用法）
+- `--check-once` ✅（5 端点全 UP：GPU5 8097 UP / GPU6 8096 UP / GPU7 8095 UP / GPU4 8098 UP / GPU0 8099 UP）
+- `--dry-run` ✅（打印 config + 探测 + 不重启）
+- `--status` ✅（config + flag + 进程列表 + 健康表）
+- 硬护栏验证：endpoint 表中 GPU 0-3 `RESTARTABLE=0`，`restart_serve()` 内 `if gpu >= 0 && gpu <= 3` 直接 reject → **不可能误重启 root serve**
+
+### 4. 与已有脚本的关系
+
+| 脚本 | 职责 | 关系 |
+|:--|:--|:--|
+| `baize_posttrain_sandbox_watcher.sh` | 沙盒 TCP 恢复 → 自动起 Phase1 | **不查 serve**，互补 |
+| `baize_posttrain_serve_teardown.sh` | 沙盒恢复后拆除 GPU5/6/7 占位 serve | **拆除**，本脚本是**维持** |
+| `baize_posttrain_serve_sentinel.sh` (R167) | serve 健康 → 崩溃自动重启 GPU5/6/7 | **新增**，填补唤醒间隙 |
+
+三者协作：sentinel 维持占位 → 沙盒恢复 watcher 起 Phase1 → teardown 拆占位 → pipeline 跑 SFT/RL。
+
+### 5. 部署方式
+
+```bash
+# 前台观察模式（仅告警，不自动重启）
+bash baize_posttrain_serve_sentinel.sh --watch
+
+# 后台自动重启模式（推荐）
+nohup bash baize_posttrain_serve_sentinel.sh --watch --auto-restart \
+  > /tmp/posttrain_serve_sentinel.nohup 2>&1 &
+```
+
+⚠️ **本轮不启动 watch 模式**（agent 退出后进程会被 loop 脚本回收风险 + 需运维确认）。
+脚本已就绪、已验证，沙盒恢复后或运维许可时可 `nohup` 启动。
+
+### 6. 边界与纪律
+
+- 仅写本线文件（`baize_posttrain_serve_sentinel.sh` + EXPERIMENTS §R167 + MEMORY 心跳）。
+- 红线：不碰 GPU 0-3；不碰 158 任务数据；不启动训练。
+- 硬护栏：`restart_serve()` 内 GPU 0-3 拒绝逻辑 + endpoint 表 `RESTARTABLE` 标志双重保护。
+- 17:10 令要求持续占位 → 本脚本提供**无人值守自动重启**能力，直接服务该令。
+
+
