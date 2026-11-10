@@ -554,7 +554,7 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked		2026-11-09 20:39	RAG-looku
 1793000520129_g37na	xinqiaoz	hfeg0pkn002			parked		2026-11-10 01:39	r298: failed-drcqa
 1792480534403_xgfip	xinqiaoz	hfeg0pkn002			parked		2026-11-10 01:39	r298: failed-handoff
 1793706326923_qiqs7	alan3zh	hfeg0pkn002			parked		2026-11-10 01:39	r298: idle-empty
-1793088659672_4lwqr	e0047472	hfeg0plg53	225	pg_layout	parked		2026-11-10 01:48	r298 REJECT: prompt='hi' (not 提出需求, A rule2 fail), cwd=/home/e0047472 home-dir exploration, e0047472 already-seen (u65cq r296 idle how-to), terminal=failed_external_process_exit reconciler, 1.44MB multi-task over 8d
+1793088659672_4lwqr	e0047472	hfeg0plg53	225	pg_layout	parked		2026-11-10 13:42	completed-non-EDA-vim-NERDtree-troubleshoot
 1794193951052_zg8vo	e0047695	hfeg0pkn001	329	pg_layout	parked		2026-11-10 01:48	r298 REJECT: status=failed exit_code=1 (A rule4 no accepted gold), verilog:140 mixing
 1794190927249_42mhi	xflin	hfeg0plg52	128	layout_virtuoso	parked		2026-11-10 02:20	r299: how-to Q&A (pcell instance array), idle, prose gold, §4.2/4.3 fail
 1791965068024_x89mp	lizwen	hfeg0pkn002	169	physical_verify	parked		2026-11-10 02:20	r299: failed, wrong-shard web-dev (HTML UI export for PV platform), calibre kw from HTML content
@@ -580,7 +580,7 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked		2026-11-09 20:39	RAG-looku
 1791944071628_pwhqb					parked		2026-11-10 04:54	r312 cancelled empty prompt (not seedable)
 1788871441686_fieju					parked		2026-11-10 04:54	r312 failed 3D-NAND MCU logic verilog (shard A/D)
 1790057385284_xpsbw					parked		2026-11-10 04:54	r312 failed skill-loader ddr5-coverage (not produce)
-1793322259360_bisir					parked		2026-11-10 04:54	r312 failed virtuoso-spiceIn (failed no gold)
+1793322259360_bisir					parked		2026-11-10 13:42	failed-spiceIn-skill-troubleshoot
 1791463574990_um5we					parked		2026-11-10 04:54	r312 completed verilog-stimulus seed-pattern (shard A/D)
 1790849679042_bjkmi					parked		2026-11-10 04:54	r312 failed verilog-stimulus diag (shard A/D)
 1791958525711_f1fik.messages.json	chengleiy	hfeg0pkn005	594	physical_verify	parked		2026-11-10 05:08	r313 peek(via pyAether NFS home read): chengleiy prompt=请阅读/home/chengleiy/scripts所有脚本理解功能与关系 = recon/explain doc task NOT produce-task; status=failed exit1; REJECT not-produce-task+failed
@@ -613,3 +613,14 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked		2026-11-09 20:39	RAG-looku
 1789545001824_x0t2m	ethanw	hfhds201	145	physical_verify	case	EDA-Eval-DesignFlow-NetlistMatchCkGen-001	2026-11-10 11:09	
 1789713877959_wuhci	miccao	hfeg0plg37	40	physical_verify	case	EDA-Eval-DesignFlow-BatchLvlGdsCmp-001	2026-11-10 12:06	r326 BatchLvlGdsCmp-001 physical_verify L1 faithful k=12 a-l delivered
 1793795067989_0pfvw.messages.json	hybeaml	hfeg0plg88	76	layout_aether	case	EDA-Eval-DesignFlow-LayerSoloBindkeyGen-001	2026-11-10 12:49	
+1794191825241_k9nnk.messages.json	gokuguo	hfeg0plg53	123	layout_virtuoso	case	EDA-Eval-DesignFlow-RunsetPairCmpGen-001	2026-11-10 13:30	r328 RunsetPairCmpGen-001 layout_virtuoso L1 faithful k=14 a-n delivered
+1790219463471_6zy8a	e0041123	hfeg0pjn049	98	physical_verify	parked		2026-11-10 13:42	completed-skilldev-DRC-testpattern-muddied-gold-launcher-script
+1792391697681_a4w9c	thomasz	hfeg0pfn060	132	physical_verify	parked		2026-11-10 13:42	diagnose-log-stuck-no-deliverable
+1792400577461_8u3iw	thomasz	hfeg0pfn060	114	physical_verify	parked		2026-11-10 13:42	compare-paths-no-script-written-inline-only
+1793338660647_cwyot	sierraw	hfeg0plg09	72	physical_verify	parked		2026-11-10 13:42	idle-PEX-SPF-cap-trend-env-broken-no-accepted-gold
+1793946450751_yfce1	hktklin	hfeg0plg87	102	layout_virtuoso	parked		2026-11-10 13:42	trivial-single-string-replace-tap_p-lacaa-weak-check
+1792052564350_a6gif	panruan	hfeg0plg52	111	physical_verify	parked		2026-11-10 13:42	consultation-parse-DRC-rules-Q-and-A-multi-turn-no-clean-gold
+1790487462826_wb03t	cwei	hfeg0plg93	698	layout_virtuoso	parked		2026-11-10 13:42	completed-wrong-shard-spice-CTLE-design-shard-D
+1790147076382_6udy2	lizwen	hfeg0pkn003	130	physical_verify	parked		2026-11-10 13:42	failed-DRC-testpattern-generator
+1790219914907_y9xit	lizwen	hfeg0pkn003	128	physical_verify	parked		2026-11-10 13:42	failed-DRC-testpattern-env-broken
+1793869595986_r342a	kenwang	hfeg0plg16	98	physical_verify	parked		2026-11-10 13:42	skill-driven-DRC-ruledev-complex-155msgs
