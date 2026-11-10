@@ -1145,6 +1145,50 @@
       "case_count": "A.jsonl 200 unchanged (0 case delivered, DEBT 0)",
       "paper": "PAPER_SKIP(no latexmk verified this round); Ntasks unchanged (case count 200 unchanged)",
       "next_plan": "r320: continue search in mc 100-250 digital pool with cross-shard dedup; OR pivot to lower mc (5-15) threshold evaluation per 11/09 top-priority; coordinate shard D overlap. Clean A-faithful produce remains scarce (13th confirm)."
+    },
+    "r320": {
+      "ts": "2026-11-10T18:30:00+08:00",
+      "date": "2026-11-10",
+      "round_type": "management + 14th clean-produce-scarcity confirmation + duplicate-prevention (0 case, A.jsonl 200 unchanged, DEBT 0)",
+      "scan_dir": "ssh_eda_search_20261109_224902",
+      "scan_confirmed": "no new scan since r292 full rescan (mc30=2247, dedup=5999, users=401, hosts=696 unchanged); daily log 20261110 healthy 2981 lines",
+      "eda_flow_status": "OK (run_commands exit 0; .75-local NFS session reads OK; backend recovered since r304)",
+      "no_new_scan": true,
+      "consecutive_no_new_scan": "r293-r320 (28th consecutive no-new-scan since r292 full rescan; only 11/09+11/05+10/28 scan dirs exist)",
+      "mc30": 2247,
+      "dedup_sessions": 5999,
+      "users_mc30": 401,
+      "hosts": 696,
+      "daily_log_20261110_lines": 2981,
+      "daily_log_healthy": true,
+      "candidate_pool_reassessment": {
+        "method": "python filter on .75 summary.tsv: mc>=15 + digital-dominant (digital kw count > analog kw count, dig>=50), dedup by session (col4), parse $6 keywords. Total 401 digital-dominant sessions.",
+        "exclude_set": "970 unique session IDs (855 used_sessions_allshards.txt cross-shard + 198 ledger-A, deduped). NOTE: prior r320 fresh-check initially used buggy grep -qx (exact-line) instead of substring; corrected to substring grep -q. xt9ag (VmodConnCheck-001), 1f7f1, q5ogm, evxj6, 8ylkn, 1hei0, 2xkge, pfubi, t8yss, j9oap, 7j1bw, c084j, nr884, mmmtz, hojhc, jzlbn, lond8, im5c1, stbzx, bw2u5, htbqn, a7ied, 7huyr, 9qa9d, ckulq, lku2o, 4q4w1, 1qlnn, o0c8y, 2pdn0, ayya3 ALL already used.",
+        "truly_fresh_peeked": ["vnze7 (trivial file-split)", "usjrp (analysis ODT-err)", "ajr06 (analysis continuation PDE)", "1yqtd (analysis test-scenarios)", "07zbx (what-can-you-do)", "sbaad (CLEAN PRODUCE but near-dup SignalXrefBuilder)", "lu4zi (diagnosis but 30 writes fix-session)", "6e2db (capability Q&A)", "6gjer (analysis module-summary)"]
+      },
+      "scarcity_confirm_14th": {
+        "peeked_fresh": 9,
+        "clean_a_faithful_produce": 0,
+        "viable_diagnosis_pivot": 0,
+        "near_duplicate": "sbaad (zmzhang mc122) = 3-level signal xref (cmname->patterns/cmds_testmode->Regressions .inc->record mapping) = SAME task structure as SignalXrefBuilder-001 (u54d9 eason1z). Different user/project but same skill tested -> skip per r313 duplicate discipline.",
+        "fix_session_not_pivot": "lu4zi (daiweilu mc120) = UNDIDN+CUVUNF diagnosis but agent did 30 editor writes (active fix-session, NOT 0-write analysis-only). diagnosis-generator PIVOT requires 0-writes (acaey/zxb65 pattern). Not viable.",
+        "prior_confirmations": "r295/r296/r299/r300/r309/r311/r312/r313/r314/r316/r317/r318/r319"
+      },
+      "parks_this_round": [
+        "lu4zi (daiweilu mc120 verification) -> parked: 30 writes fix-session, not pure diagnosis",
+        "sbaad (zmzhang mc122 digital) -> parked: near-duplicate of SignalXrefBuilder-001",
+        "1yqtd (lein mc188 verification) -> parked: analysis-only test-scenario comprehension"
+      ],
+      "duplicate_prevented": "xt9ag (e0045144 mc301) caught pre-build by ledger (already case VmodConnCheck-001 2026-11-06). Attempted claim refused. Lesson re-confirmed: check ledger + used_sessions_allshards BEFORE deepread/build.",
+      "case_delivered": "none (management round, 14th scarcity confirmation)",
+      "shard_A_new_this_round": 0,
+      "shard_A_jsonl": 200,
+      "ledger_entries": 343,
+      "ledger_case": 199,
+      "ledger_parked": 144,
+      "paper": "PAPER_SKIP(no latexmk); Ntasks unchanged (case count 200 unchanged)",
+      "finding": "r320 = 14th consecutive clean-A-faithful-produce scarcity confirmation. Pool NOT exhausted (401 digital-dominant mc>=15, ~many fresh after proper 970-session exclusion) BUT clean produce is rare: top fresh candidates are analysis-only (test-scenario/module-function comprehension), fix-sessions (lu4zi 30 writes), near-duplicates (sbaad=SignalXrefBuilder), trivial (vnze7 file-split), or capability Q&A. The strong-digital marker (verilog/rtl) is noisy: 'verilog' keyword count often = READ activity (read_files) not PRODUCE. diagnosis-generator PIVOT (r312/r315/r317 pattern) remains the viable path but requires 0-write analysis-only traces, which are also scarce among high-mc digital candidates. 11/09 top-priority (full rescan + mc threshold table) was completed in r292 (threshold_table_shardA + feasibility_peek + recommendation all in summary_stats.json.scansync.r292); mc>=15 confirmed as minimum viable threshold. Next: target lower-mc (5-50) digital pool OR continue diagnosis-generator PIVOT on 0-write analysis traces OR await new scan to capture fresh digital produce-sessions.",
+      "updated_at": "2026-11-10T18:30:00+08:00"
     }
   },
   "sessions": 38082,
@@ -1156,7 +1200,7 @@
   },
   "source": "/home/t0002965/log/ssh_eda_search_20261105_192825/summary.tsv (11/05 scan)",
   "target_mc": 30,
-  "updated_at": "2026-11-10T18:00:00+08:00",
+  "updated_at": "2026-11-10T18:30:00+08:00",
   "users_mc100": 182,
   "users_mc30": 401,
   "users_mc300": 60,
