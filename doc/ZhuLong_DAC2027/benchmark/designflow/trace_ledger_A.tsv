@@ -330,3 +330,10 @@
 1792902413837_3p5vl	alanji	hfeg0plg99	275	digital	parked		2026-11-10 14:38	r316 analysis-only how-to: 'package变量如何在DUT和TB之间传递值' = how-to question, not produce/diagnosis
 1792033394584_xd7ut	tongfanl	hfhds201	277	digital	parked		2026-11-10 14:38	r316 analysis-only: '帮我分析下这个环境并回答WTM模式write是否发到array' = analysis question, not produce/diagnosis
 1793972832447_zxb65	thomas1w	hfeg0pjn100	133	verification	case	EDA-Eval-DesignFlow-MbistRepairReArmDiag-001	2026-11-10 15:39	
+1793237499232_nph58	jkxu	hfeg0pkn002	297	verification	parked		2026-11-10 15:59	multi-topic-consultation-starts-perf-diag-then-pivots-to-partition-config-coverage-MSIE-build-U0-diagnosis-has-no-clean-resolution
+1791446512697_3s3zx	xuebaok	hfeg0pkn002	347	digital	parked		2026-11-10 15:59	how-to-change-tran-10ps-to-500ps-in-matrixrun-script
+1792378797897_0gv3z	thomas1w	hfeg0pkn002	291	verification	parked		2026-11-10 15:59	vague-analysis-look-at-netlist-structure-and-content
+1792137927597_f4kc0	jackliu	hfeg0pkn003	279	verification	parked		2026-11-10 15:59	capability-question-can-you-read-waveform-trn-file
+1788871441686_fieju	harrys	hfeg0pkn002	495	digital	parked		2026-11-10 16:00	clean-A-faithful-produce-3MCU-plus-compile-sim-L3-too-complex-for-checkable-case-defer-future
+1793779533537_k7668	e0039602	hfeg0pkn002	307	verification	parked		2026-11-10 16:00	context-coupled-verilog-lib-trans-tb-family-compare-modify
+1793953438523_pzo6g	e0039602	hfeg0pkn002	269	verification	parked		2026-11-10 16:00	context-coupled-verilog-lib-trans-skill-packaging
