@@ -13,83 +13,34 @@ Iterated after VQA review:
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
-from matplotlib.patches import FancyBboxPatch, FancyArrowPatch, Patch
+from matplotlib.patches import Patch
 import numpy as np
 
 OUT = "figures"
 
 # ----------------------------------------------------------------------------
-# 1. Evaluation pipeline flowchart
+# 1. Evaluation pipeline flowchart  (hand-authored SVG -> PDF via cairosvg)
+#    matplotlib-drawn boxes look toy-like; a hand-laid SVG gives clean
+#    alignment, crisp text, and proper arrowheads. The SVG source lives in
+#    figures/pipeline.svg; this step only re-renders it to PDF.
 # ----------------------------------------------------------------------------
-def draw_box(ax, x, y, w, h, text, fc, ec, fontsize=8.5, fontweight="normal"):
-    box = FancyBboxPatch((x, y), w, h,
-                         boxstyle="round,pad=0.02,rounding_size=0.08",
-                         facecolor=fc, edgecolor=ec, linewidth=1.4, zorder=2)
-    ax.add_patch(box)
-    ax.text(x + w / 2, y + h / 2, text, ha="center", va="center",
-            fontsize=fontsize, fontweight=fontweight, zorder=3, color="#1a1a1a")
-
-def draw_subgraph(ax, x, y, w, h, title, color):
-    ax.add_patch(FancyBboxPatch((x, y), w, h,
-                 boxstyle="round,pad=0.02,rounding_size=0.05",
-                 facecolor="none", edgecolor=color, linewidth=1.2,
-                 linestyle="--", zorder=1))
-    # title ABOVE the border (y + h + small gap), fully visible
-    ax.text(x + 0.15, y + h + 0.12, title, fontsize=7.8,
-            color=color, fontstyle="italic", zorder=5,
-            bbox=dict(boxstyle="round,pad=0.15", facecolor="white",
-                      edgecolor="none", alpha=0.9))
-
-def arrow(ax, p1, p2, color="#555", style="-|>", lw=1.3, ls="-", conn=None):
-    a = FancyArrowPatch(p1, p2, arrowstyle=style, mutation_scale=12,
-                        color=color, lw=lw, linestyle=ls,
-                        connectionstyle=conn or "arc3,rad=0", zorder=4)
-    ax.add_patch(a)
-
-# wider/taller canvas to give subgraph titles room above borders
-fig, ax = plt.subplots(figsize=(8.6, 5.6), dpi=150)
-ax.set_xlim(0, 10); ax.set_ylim(0, 6.6); ax.axis("off")
-
-C_BOX  = "#e8f0fe"; E_BOX  = "#2c7be5"
-C_AGT  = "#fef3e8"; E_AGT  = "#e88a1a"
-C_EDA  = "#e8f5ee"; E_EDA  = "#2ca57a"
-C_JDG  = "#f3e8fe"; E_JDG  = "#7a3ec9"
-C_OUT  = "#e8eef5"; E_OUT  = "#555555"
-
-# subgraphs (shifted down a bit to leave room for titles at top)
-draw_subgraph(ax, 0.3, 3.4, 4.0, 2.5, "Isolated agent workdir", "#e88a1a")
-draw_subgraph(ax, 5.2, 3.4, 4.5, 2.5, "Remote EDA server", "#2ca57a")
-draw_subgraph(ax, 0.3, 0.5, 4.0, 1.9, "Separate judge dir", "#7a3ec9")
-
-# boxes
-draw_box(ax, 0.6, 5.55, 3.4, 0.7, "Task assets\n(prompt.txt, input files)", C_BOX, E_BOX)
-draw_box(ax, 0.6, 4.75, 3.4, 0.6, "PreToolUse hook\n(anti-leakage)", C_BOX, E_BOX, fontsize=7.8)
-draw_box(ax, 0.7, 4.50, 2.0, 0.55, "Cline agent", C_AGT, E_AGT, fontweight="bold")
-draw_box(ax, 2.85, 4.50, 1.3, 0.55, "MCP bridge", C_AGT, E_AGT, fontsize=7.8)
-draw_box(ax, 5.5, 4.50, 4.0, 0.85, "EDA tools\n(run_code / run_commands)", C_EDA, E_EDA)
-draw_box(ax, 0.6, 3.55, 3.6, 0.7, "outputs/submit.zip\n(deliverable package)", C_OUT, E_OUT)
-draw_box(ax, 0.7, 1.65, 3.4, 0.6, "check.py\n(>= 8 assertions)", C_JDG, E_JDG)
-draw_box(ax, 0.7, 0.65, 3.4, 0.6, "PASS / FAIL", C_OUT, E_OUT)
-
-# arrows
-arrow(ax, (2.3, 5.55), (2.3, 5.05))                     # assets -> hook (down)
-arrow(ax, (2.3, 4.75), (2.3, 5.05) if False else (1.7, 4.50))  # hook -> agent area
-arrow(ax, (4.15, 4.77), (2.0, 4.50), color="#888", ls=":")  # hook blocks agent
-arrow(ax, (2.7, 4.77), (2.85, 4.77))                     # agent -> MCP
-arrow(ax, (4.15, 4.77), (5.5, 4.92))                     # MCP -> EDA
-arrow(ax, (5.5, 4.50), (4.15, 4.60), color="#2ca57a")    # EDA -> MCP (results)
-arrow(ax, (2.3, 4.50), (2.3, 4.25))                      # agent -> outputs
-arrow(ax, (2.3, 3.55), (2.3, 2.25), color="#7a3ec9")     # outputs -> judge
-arrow(ax, (2.3, 1.65), (2.3, 1.25), color="#555")        # judge -> verdict
-ax.text(2.55, 2.85, "agent exits", fontsize=7, color="#7a3ec9", fontstyle="italic")
-ax.text(4.55, 5.05, "tool call", fontsize=6.8, color="#888")
-ax.text(4.55, 4.25, "results", fontsize=6.8, color="#2ca57a")
-ax.text(1.05, 4.62, "blocks", fontsize=6.5, color="#888", fontstyle="italic")
-
-fig.tight_layout()
-fig.savefig(f"{OUT}/pipeline.pdf", bbox_inches="tight")
-print("wrote figures/pipeline.pdf")
-plt.close(fig)
+import os, subprocess
+svg_path = f"{OUT}/pipeline.svg"
+pdf_path = f"{OUT}/pipeline.pdf"
+try:
+    import cairosvg
+    cairosvg.svg2pdf(url=svg_path, write_to=pdf_path)
+    print("wrote figures/pipeline.pdf (from SVG via cairosvg)")
+except Exception as e:
+    print(f"cairosvg failed ({e}); trying rsvg-convert / inkscape")
+    for tool, cmd in [("rsvg-convert", f"rsvg-convert -f pdf -o {pdf_path} {svg_path}"),
+                      ("inkscape",   f"inkscape {svg_path} --export-filename={pdf_path}")]:
+        try:
+            subprocess.run(cmd, shell=True, check=True)
+            print(f"wrote figures/pipeline.pdf (via {tool})")
+            break
+        except Exception:
+            continue
 
 # ----------------------------------------------------------------------------
 # 2. Domain distribution donut chart
