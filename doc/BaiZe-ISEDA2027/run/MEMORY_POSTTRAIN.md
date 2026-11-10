@@ -14,7 +14,7 @@ WAITING: 1
 - 阻塞: 🔴远程沙盒10.129.32.75 TCP全CLOSED→阻塞Phase1 eval(不可本地绕过:pyAether不可pip装+MCP server转发到远程);GPU5/6/7被serve占位(17:10令)→SFT重启待GPU释放;P3等pretrain ckpt
 - 本轮新增产出: serve健康复检(4端点✅)+沙盒/隧道复检(仍CLOSED)+MCP server架构确认(本地SSE✅但转发远程沙盒)+pyAether本地不可安装确认(3环境全无)→全外部阻塞确认
 - 未完成指令: 🔴用户令17:10(serve占位)✅持续维护中;🔴用户令13:40(三阶段替身计划)Phase1待沙盒/Phase2待GPU释放/Phase3待SFT ckpt ⇒ 全外部阻塞,所有可做prep已穷尽
-- git: wake197 push成功(ae4eba50d in sync);wake198待提交(memory更新)
+- git: wake198 commit 3f83239e7已本地提交(ahead 1),push 2次超时(网络recurring wake195+);⏰下次唤醒第一件事=补推
 
 ## GPU 端口映射表（2026-11-10 wake195 实测）
 
