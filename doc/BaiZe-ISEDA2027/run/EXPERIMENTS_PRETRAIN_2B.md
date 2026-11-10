@@ -650,3 +650,26 @@ torchrun --nnodes=1 --nproc_per_node=8 --master_addr=127.0.0.1 --master_port=296
 - **注意**：c34b04e12 提交的 PDF (248801B) 系 §4.7 撤回前的旧编译产物（stale），本轮重新编译修正为 228400B
 - main.log: 0 `!` lines, 0 `Undefined` lines
 
+---
+
+### 论文 §4.6 刷新（2026-11-10 22:4x · iter 154,660 → 155,780）
+
+**取数**：
+- 训练日志：`ssh 10.239.2.29 'cat /proc/4179185/fd/1 | tail -5'`
+- 最新行：`[2026-11-10 22:43:49] iteration 155780/700000 | elapsed time per iteration (ms): 7275.9 | lm loss: 2.033605E+00 | number of nan iterations: 0 | number of skipped iterations: 0`
+- 吞吐计算：500 iter / 3550 s = 7.1 s/iter → 4,194,304 / 7.1 ≈ 590K tok/s
+- GPU：`nvidia-smi` → 8 卡 95-100% util, ~75GB mem（全满载）
+
+**改动**（仅 `0_abstract.tex` + `4_llm_pretrain.tex` + `main.pdf`）：
+- §4.6 进度句（4_llm_pretrain.tex line 109）：`154,660` → `155,780`；`595K` → `590K`；`2.03` → `2.02`
+- 摘要（0_abstract.tex line 14）：同上同步
+- `tab:prod-budget`（line 122）：Status `155k done` → `156k done`；wall-clock `≈57 d` → `≈58 d`
+- `tab:prod-budget` Total（line 126）：`≈60.6 d` → `≈61.5 d`
+- wall-clock 重算：700k × 4,194,304 / 590K ≈ 57.6 d → ≈58 d；Total = 58 + 1.2 + 2.3 ≈ 61.5 d
+
+**验证**：
+- grep benchmark 数字（ARC/HellaSwag/PIQA/BoolQ/OpenBookQA/SciQ/Winogrande/zero-shot/ckpt-scaling）：0 命中 ✅
+- `latexmk -pdf -interaction=nonstopmode main.tex` → 0 errors, 0 undefined references
+- main.pdf: 5 pages, 228,230 bytes
+- main.log: 0 `!` lines, 0 errors
+
