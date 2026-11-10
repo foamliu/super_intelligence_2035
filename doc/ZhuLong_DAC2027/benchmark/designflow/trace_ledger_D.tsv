@@ -1435,4 +1435,4 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1794035176106_1hei0.messages.json	kannik	hfeg0plg89	301	waveform	case	EDA-Eval-DesignFlow-SvwfHierExpand-001	2026-11-11 04:01	
 1791782242441_8rxb1	steveny	hfeg0pnd001	47	schematic_netlist	case	EDA-Eval-DesignFlow-NetPrefixHighlight-001	2026-11-11 04:30	
 1793762204059_2v098.messages.json	daiweilu	hfeg0pjn100	110	schematic_netlist	case	EDA-Eval-DesignFlow-DriverTrace-001	2026-11-11 05:42	
-1793091372339_bjl02	harrywu	hfeg0plg99	90	analog_context	claimed		2026-11-11 05:46	
+1793091372339_bjl02	harrywu	hfeg0plg99	90	analog_context	case	EDA-Eval-DesignFlow-ParallelMeasFanout-001	2026-11-11 06:12	
