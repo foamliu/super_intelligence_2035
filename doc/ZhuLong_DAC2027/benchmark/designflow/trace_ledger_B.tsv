@@ -857,4 +857,4 @@ kakcd	kenwang	hfeg017216808192	5	non_spice	parked		2026-11-10 09:06	DRC rule dev
 1794299323217_5oub3	clarawu	hfeg0plg106	30	spice_sim	parked		2026-11-10 19:24	fresh-window 1730 peek reject (consultation/wrong-shard/trivial)
 1794220525700_nj8q4	tongni	hfeg0pkn004	150	spice_sim	case	EDA-Eval-DesignFlow-NetlistStaticCheck-001	2026-11-10 20:44	
 1793082564833_dhqmb	reedchen	hfeg0plg93	102	characterization	case	EDA-Eval-DesignFlow-McPvtVmEval-001	2026-11-10 21:07	
-1793608841437_53e2m	victorq	hfeg0plg96	315	spice_sim	claimed		2026-11-10 21:30	
+1793608841437_53e2m	victorq	hfeg0plg96	315	spice_sim	case	EDA-Eval-DesignFlow-SpRcAlterGen-001	2026-11-10 21:51	
