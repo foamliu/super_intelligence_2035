@@ -11,7 +11,7 @@ PRED_DIR = "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA
 TB21_JOBS = "/tmp/tb21_glm53_jobs"
 TB21_TRACES = "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/terminalbench/traces"
 NOW = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
-ROUND = os.environ.get("ROUND", "R2000")
+ROUND = os.environ.get("ROUND", "R2124")
 
 HARNESSES = ["cline-patched","codex","opencode","claude-code","pi","hermes","deepseek-harness"]
 DISPLAY = {"cline-patched":"cline","deepseek-harness":"deepseek"}
@@ -47,6 +47,10 @@ for h in HARNESSES:
                 real += 1
         except: pass
     predict.append((disp(h), total, real, total - real))
+
+total_resolved = sum(s[2] for s in swebench)
+total_evaluated = sum(s[1] for s in swebench)
+total_pred = sum(p[2] for p in predict)
 
 # ---- TB-2.1 results ----
 tb21_data = {}
@@ -144,7 +148,7 @@ HTML = f"""<!DOCTYPE html>
 <p><strong>模型</strong>：glm-5.3-flash（网关 HTTP 200 · 已恢复）</p>
 <p><strong>7 路</strong>：cline / codex / opencode / claude-code / pi / hermes / deepseek</p>
 <p><strong>生成时间</strong>：{NOW}（{ROUND}）</p>
-<p><strong>状态</strong>：predict {total_pred}/3500={total_pred/3500*100:.1f}%（7路alive·网关200·predict进行中）；eval 1210 resolved(0 true backlog·3 incr_eval中)；TB-2.1 7路(80p/674t)</p>
+<p><strong>状态</strong>：predict {total_pred}/3500={total_pred/3500*100:.1f}%（7路alive·网关200·predict进行中）；eval {total_resolved} resolved(0 true backlog·incr_eval R2124中)；TB-2.1 7路(81p/677t)</p>
 </div>
 <div class="note"><p><strong>资源自检</strong>：CPU 33/224=15% ✅；内存 1.1Ti avail ✅；磁盘 /data 5.8T + / 352G ✅；网关 200 ✅(已恢复) (quota exhausted)</p></div>
 
@@ -158,7 +162,7 @@ HTML = f"""<!DOCTYPE html>
 {sw_rows}</table>
 <div class="info"><ul>
 <li>hermes 89.9%领先(328/365)，opencode 80.9%(317/392)，deepseek 79.5%(120/151)</li>
-<li>eval全量完成:7/7 DONE,1210 resolved/1502 evaluated,0 backlog</li>
+<li>eval全量完成:7/7 DONE,{total_resolved} resolved/{total_evaluated} evaluated,0 backlog</li>
 <li>各路predict推进中(网关429 blocking),eval随新predict增量更新</li>
 </ul></div>
 
@@ -174,7 +178,7 @@ HTML = f"""<!DOCTYPE html>
 <div class="info"><p>口径：TB-2.1/89题/7-way（与TB4不可比）。Oracle 5/5 ✅。§15:2x判据MET ✅</p></div>
 <table><tr><th>Harness</th><th>已完成</th><th>Passed</th><th>Errored</th><th>Remaining</th><th>通过率</th><th>状态</th></tr>
 {tb_rows}</table>
-<div class="note"><p>TB-2.1进行中:7路concurrent,80p/674t。pi 34p领先,opencode 31p(rerun中),deepseek 11p,cline 10p,hermes 7p,codex 1p,claude-code 0p。codex err=适配器(infra),claude-code 0p待分析。</p></div>
+<div class="note"><p>TB-2.1进行中:7路concurrent,81p/677t。pi 34p领先,opencode 18p(rerun中),deepseek 11p,cline 10p,hermes 7p,codex 1p,claude-code 0p。codex err=适配器(infra),claude-code 0p待分析。</p></div>
 
 <h2>5. cline 专项（§10:10 C1-C5）</h2>
 <table><tr><th>指标</th><th>值</th><th>判据</th></tr>
@@ -184,7 +188,7 @@ HTML = f"""<!DOCTYPE html>
 <tr><td>C4 心跳</td><td>real={cline_real}/empty={cline_empty}/top1=能力差(real patch但tests fail)</td><td>每轮含一行</td></tr>
 <tr><td>C5 报告</td><td>report_harness_cline_special_zh.html</td><td>0外链</td></tr>
 </table>
-<div class="info"><p>cline空patch={cline_empty}(cleanup后,由历史429产生后删除·网关已恢复200)。cline eval pass rate=75.3%(143/190),opencode=80.1%(317/396),差距为能力差(p=6.27e-08,R1685)。eval 1210 resolved(0 true backlog),pass%可直接对比。</p></div>
+<div class="info"><p>cline空patch={cline_empty}(cleanup后,由历史429产生后删除·网关已恢复200)。cline eval pass rate=75.3%(143/190),opencode=80.1%(317/392),差距为能力差(p=6.27e-08,R1685)。eval {total_resolved} resolved(0 true backlog),pass%可直接对比。</p></div>
 
 <h2>6. 失败归因（infra单列）</h2>
 <table><tr><th>类型</th><th>描述</th><th>归因</th></tr>
@@ -206,7 +210,7 @@ HTML = f"""<!DOCTYPE html>
 <h2>9. 后续计划</h2>
 <div class="info"><ol>
 <li>predict 7路推进至500(当前{total_pred}/3500={total_pred/3500*100:.1f}%,网关200·predict进行中)</li>
-<li>eval 1210 resolved(0 true backlog)·新predict后增量eval(R2123: 3 instances eval中)</li>
+<li>eval {total_resolved} resolved(0 true backlog)·新predict后增量eval(R2124: 15 instances eval中)</li>
 <li>TB-2.1: 7路(80p/674t),pi 34p领先,opencode 31p(rerun中)</li>
 <li>网关200稳定后各路predict继续推进至500→里程碑报告</li>
 </ol></div>

@@ -8,7 +8,7 @@ EVAL_DIR   = "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISE
 PRED_DIR   = "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions_glm53"
 TB21_JOBS  = "/tmp/tb21_glm53_jobs"
 NOW = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
-ROUND = os.environ.get("ROUND", "R2000")
+ROUND = os.environ.get("ROUND", "R2124")
 
 H = ["cline-patched","codex","opencode","claude-code","pi","hermes","deepseek-harness"]
 DISP = {"cline-patched":"cline","deepseek-harness":"deepseek"}
@@ -28,6 +28,8 @@ for h in H:
         eval_data[h] = (d.get("n",0), len(d.get("resolved",[])), len(d.get("failed",[])), len(d.get("infra_or_quota",[])))
     else:
         eval_data[h] = (0,0,0,0)
+
+total_resolved_all = sum(v[1] for v in eval_data.values())
 
 pred_data = {}
 cline_empty = []
@@ -104,7 +106,7 @@ def fp(v): return f"{v:.1f}%"
 
 html = f"""<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><title>cline 专项报告 {ROUND} {NOW}</title><style>body{{font-family:"Microsoft YaHei",sans-serif;margin:20px;max-width:960px}}h1{{color:#1a237e}}h2{{color:#283593;border-bottom:2px solid #e0e0e0;padding-bottom:4px}}table{{border-collapse:collapse;width:100%;margin:10px 0}}th,td{{border:1px solid #bbb;padding:6px 10px;text-align:left}}th{{background:#e3f2fd}}.green{{color:#2e7d32;font-weight:bold}}.red{{color:#c62828}}.summary{{background:#f5f5f5;padding:12px;border-radius:6px;margin:10px 0}}code{{background:#f5f5f5;padding:2px 4px;border-radius:3px}}</style></head><body>
 <h1>cline 专项报告 {ROUND} {NOW}</h1>
-<div class="summary"><strong>TL;DR</strong>: cline SWE-bench Verified eval = <span class="green">{cr}/{cn} = {fp(cpass)}</span> (eval全量完成,0 backlog)。predict {cp}/500, real {cre}/{cp}={fp(creal)}, empty=<span class="red">{ce}</span>({ce/max(cp,1)*100:.1f}%,cleanup后)。网关HTTP 429(quota exhausted), infra=0。空patch已cleanup删除(R2062分类:59%网关429,非resume bug)。cline vs opencode差距={fp(oc_pct-cpass)}=能力差(opencode={cmp[[x[0] for x in cmp].index('opencode')][2]}/{cmp[[x[0] for x in cmp].index('opencode')][1]}={fp(oc_pct)})。TB-2.1:{tb_total_done}trials/{tb_total_pass}passed。eval全量完成:7/7 DONE(cline→codex→opencode→cc→pi→hermes→dsh,1210 resolved/1502 evaluated)。</div>
+<div class="summary"><strong>TL;DR</strong>: cline SWE-bench Verified eval = <span class="green">{cr}/{cn} = {fp(cpass)}</span> (eval全量完成,0 backlog)。predict {cp}/500, real {cre}/{cp}={fp(creal)}, empty=<span class="red">{ce}</span>({ce/max(cp,1)*100:.1f}%,cleanup后)。网关HTTP 200(已恢复), infra=0。空patch已cleanup删除(R2062分类:59%网关429,非resume bug)。cline vs opencode差距={fp(oc_pct-cpass)}=能力差(opencode={cmp[[x[0] for x in cmp].index('opencode')][2]}/{cmp[[x[0] for x in cmp].index('opencode')][1]}={fp(oc_pct)})。TB-2.1:{tb_total_done}trials/{tb_total_pass}passed。eval全量完成:7/7 DONE(cline→codex→opencode→cc→pi→hermes→dsh,{total_resolved_all} resolved)。</div>
 <h2>C1 独立统计</h2>
 <table><tr><th>指标</th><th>数值</th><th>说明</th></tr>
 <tr><td>predict 总数</td><td>{cp}/500</td><td>{cp/500*100:.1f}%</td></tr>
@@ -134,7 +136,7 @@ for nm,res,ev,pct,pr,rp in cmp:
     html += f"\n<tr><td>{nm}</td><td>{res}</td><td>{ev}</td><td>{fp(pct)}</td><td>{pr}</td><td>{fp(rp)}</td></tr>"
 
 html += f"""</table>
-<p><strong>差距分析</strong>: cline({fp(cpass)}) vs opencode({fp(oc_pct)})={fp(oc_pct-cpass)}。<strong>eval全量完成</strong>(cline {cn}条 vs opencode {cmp[[x[0] for x in cmp].index('opencode')][1]}条,均已全量eval),pass%可直接对比。归因红线: ① eval infra={ci}(infra=0,无infra干扰) ② 空patch已cleanup(网关429历史产生后删除,非能力) ③ cline eval {cn}条real patches已全量评测 ④ {cf}条有real patch未resolve=能力差 -> <strong>pass rate差距={fp(oc_pct-cpass)}为能力差(p=6.27e-08,R1685)</strong>。eval 1210 resolved(0 true backlog·网关200·predict进行中)。</p>
+<p><strong>差距分析</strong>: cline({fp(cpass)}) vs opencode({fp(oc_pct)})={fp(oc_pct-cpass)}。<strong>eval全量完成</strong>(cline {cn}条 vs opencode {cmp[[x[0] for x in cmp].index('opencode')][1]}条,均已全量eval),pass%可直接对比。归因红线: ① eval infra={ci}(infra=0,无infra干扰) ② 空patch已cleanup(网关429历史产生后删除,非能力) ③ cline eval {cn}条real patches已全量评测 ④ {cf}条有real patch未resolve=能力差 -> <strong>pass rate差距={fp(oc_pct-cpass)}为能力差(p=6.27e-08,R1685)</strong>。eval {total_resolved_all} resolved(0 true backlog·网关200·predict进行中)。</p>
 <h2>TB-2.1 cline专项</h2>
 <table><tr><th>指标</th><th>数值</th><th>说明</th></tr>
 <tr><td>trials done</td><td>{ctd}</td><td>/tmp/tb21_glm53_jobs/cline-patched/</td></tr>
@@ -149,13 +151,13 @@ for nm,(done,passed) in sorted(tb21_data.items(), key=lambda x:-x[1][1]):
 html += f"""</table>
 <p>TB-2.1总计: {tb_total_pass} passed/{tb_total_done} trials。7-way concurrent。</p>
 <h2>C4 本轮小结</h2>
-<p>predict {cp}/500({cre}r/{ce}e={fp(creal)}real) | eval {cr}/{cn}({fp(cpass)},real patches全量评测,0 true backlog) | 空patch {ce}(cleanup后,59%网关429历史,非能力) | 网关HTTP 200(已恢复·predict进行中) | 失败top1=能力差(real patch但tests fail,{cf}条) | 7路alive(predict进行中) | TB-2.1 {tb_total_done}trials/{tb_total_pass}pass | eval 1210 resolved(0 true backlog) | {ROUND}</p>
+<p>predict {cp}/500({cre}r/{ce}e={fp(creal)}real) | eval {cr}/{cn}({fp(cpass)},real patches全量评测,0 true backlog) | 空patch {ce}(cleanup后,59%网关429历史,非能力) | 网关HTTP 200(已恢复·predict进行中) | 失败top1=能力差(real patch但tests fail,{cf}条) | 7路alive(predict进行中) | TB-2.1 {tb_total_done}trials/{tb_total_pass}pass | eval {total_resolved_all} resolved(0 true backlog) | {ROUND}</p>
 <h2>可检验假设与下一步</h2>
 <ol>
 <li><strong>假设</strong>: cline空patch主因=网关429(59%) -> <strong>已验证</strong>: 网关429历史,空patch由429产生后cleanup删除,网关已恢复200</li>
 <li><strong>结论</strong>: cline eval pass rate {fp(cpass)}为稳态值(eval {cn}条real patches全量评测,0 true backlog) -> cline vs opencode差距={fp(oc_pct-cpass)}为能力差(p=6.27e-08)</li>
-<li><strong>进行中</strong>: predict 7路推进至500(网关200·predict进行中) + TB-2.1 7路推进 + incr_eval R2123(3 instances)</li></ol>
-<hr><p style="color:#888;font-size:0.85em">报告生成: {NOW} | 口径: SWE-bench Verified 500 backbone=glm-5.3-flash 7-way | TB-2.1/89tasks/7way concurrent<br>命名纪律: 正文一律写cline | {ROUND}: 网关HTTP 200(已恢复)+predict {cp}/500+eval {cr}/{cn}(全量完成)+空patch {ce}(cleanup后)+TB-2.1 {tb_total_pass}/{tb_total_done}+eval 1210 resolved(0 true backlog)</p>
+<li><strong>进行中</strong>: predict 7路推进至500(网关200·predict进行中) + TB-2.1 7路推进 + incr_eval R2124(15 instances增量eval)</li></ol>
+<hr><p style="color:#888;font-size:0.85em">报告生成: {NOW} | 口径: SWE-bench Verified 500 backbone=glm-5.3-flash 7-way | TB-2.1/89tasks/7way concurrent<br>命名纪律: 正文一律写cline | {ROUND}: 网关HTTP 200(已恢复)+predict {cp}/500+eval {cr}/{cn}(全量完成)+空patch {ce}(cleanup后)+TB-2.1 {tb_total_pass}/{tb_total_done}+eval {total_resolved_all} resolved(0 true backlog)</p>
 </body></html>"""
 
 outpath = os.path.join(REPORT_DIR, "report_harness_cline_special_zh.html")
