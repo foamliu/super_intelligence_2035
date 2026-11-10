@@ -3,18 +3,18 @@
 > ⭐ 本文件每次唤醒被全文读进 cline 上下文 ⇒ ≤32KB；超限滚动到 `daily-memories-posttrain/`。
 > `WAITING:` 只在顶部出现一次；正文/流水/快照里不得再出现以 `WAITING:` 开头的行。
 
-WAITING: 0
+WAITING: 1
 
 ## 进度快照
 
-- PHASE: posttrain-wake193（2026-11-10 Phase 1 基线评测 + 里程碑报告）
-- 已完成: P3预备✅；P0✅；P1✅；P2✅；R1-R145✅；wake191✅ R144(production hooks)；wake192✅ R145(SFT-RL transfer+hooks集成)；wake193✅ Phase1基线评测(DeepSeek 67.97%±1.65%代码生成基线提取+三模型端点验证+baseline_eval.sh+里程碑HTML报告)
-- 当前动作: wake193 Phase 1: ①DeepSeek代码生成基线:EDA-Eval-Framework 6轮数据,排除1轮outlier(39.87%)→5轮clean mean=67.97%±1.65% ②分场景:Schematic60%/Layout62.8%/DesignMgmt80.8%/Others85.2% ③错误分解:AssertionError55.7%/timeout10.7%/ValueError9.5%/TypeError7.5% ④三模型端点:MiniCPM5-2B:8098✅(GPU4 vLLM)/Qwen3.8-27B:8099✅(GPU0-3 SGLang root)/GLM-5.2:cloud✅ ⑤cline auth两本地模型✅ ⑥baize_posttrain_baseline_eval.sh(bash -n✅/dry-run✅/--check-env✅) ⑦里程碑报告report_posttrain_baseline_3model_zh.html(13KB/12节/0script/自包含) ⑧EXPERIMENTS §Baseline-3model
-- 下一步: ①沙盒恢复→--check-env全绿→5-run×3-model评测 ②MiniCPM5-2B 5-run复测36%+采集失败轨迹(D1-D6实测校正) ③Phase2 GPU6-7 SFT可与GPU4评测并行 ④正式训练待pretrain ckpt(ETA≈2026-12-25)
-- 阻塞: 🔴远程沙盒10.129.32.75全端口CLOSED(8664-8669),ping可达0.5ms但TCP连接超时,沙盒服务停机非网络问题→阻塞全harness评测;P3等pretrain ckpt(ETA≈2026-12-25)
-- 本轮新增产出: Phase1基线评测里程碑报告(13KB HTML)+baseline_eval.sh(110行)+EXPERIMENTS §Baseline-3model(DeepSeek 5轮67.97%±1.65%+分场景+错误分解+三模型端点状态+沙盒阻塞文档+58pp差距分解+5-run计划)
-- 未完成指令: 🔴用户令2026-11-07(GPU未到位,需持续产出调研)+Phase1基线评测待沙盒恢复 ⇒ WAITING=0
-- git: synced with origin/main（wake192 commit b9f95b35d, 08:31）
+- PHASE: posttrain-wake194（2026-11-10 Phase 2 替身 SFT 端到端验证）
+- 已完成: P3预备✅；P0✅；P1✅；P2✅；R1-R145✅；wake191✅ R144(production hooks)；wake192✅ R145(SFT-RL transfer+hooks集成)；wake193✅ Phase1基线评测(DeepSeek 67.97%±1.65%代码生成基线+三模型端点+baseline_eval.sh+里程碑HTML报告)；wake194✅ Phase2 SFT脚本+smoke test+全量训练启动
+- 当前动作: wake194 Phase2 SFT: ①环境修复(torchao卸载→Trainer可导入+TRL/PEFT不可用→直接transformers Trainer) ②baize_posttrain_sft_surrogate.py(自定义SFTDataset,ChatML格式,loss masking on completion,gradient checkpointing) ③baize_posttrain_sft_surrogate.sh(wrapper,dry-run/smoke/train) ④smoke test PASS:20样本/1epoch/40.8s/loss1.75→0.10/37GB VRAM ⑤全量训练已启动:GPU6-7 DDP 2×A40,12434样本(high+medium),3 epochs,max_len=1024,grad_accum=16,~8s/step,ETA~2.5h,29.5GB/卡 ⑥数据替代:UltraData不可达(.17无/nas_train)→PyAether SFT corpus v2(domain-specific)
+- 下一步: ①SFT训练完成(~2.5h)→检查final loss+ckpt质量 ②沙盒恢复→pre-SFT/post-SFT EDA-Eval 5-run对比 ③Phase3 RL/GRPO(SFT ckpt→verl) ④正式训练待pretrain ckpt(ETA≈2026-12-25)
+- 阻塞: 🔴远程沙盒10.129.32.75全端口CLOSED→阻塞SFT前后评测;P3等pretrain ckpt(ETA≈2026-12-25)
+- 本轮新增产出: baize_posttrain_sft_surrogate.py+sh(SFT训练脚本)+smoke test PASS+全量训练运行中+EXPERIMENTS §Phase2-SFT-Surrogate
+- 未完成指令: 🔴用户令2026-11-10(三阶段替身计划:Phase1基线待沙盒+Phase2 SFT训练中+Phase3待SFT ckpt) ⇒ WAITING=1(训练中,~2.5h后唤醒检查)
+- git: pending commit (wake194)
 
 ## 关键事实（常驻）
 
@@ -87,3 +87,5 @@ WAITING: 0
 [wake192] R145 SFT-to-RL Transfer Dynamics + verl hooks 集成: 体积自检(TASK≈26KB/MEMORY≈18KB合规)→GPU:0/8free(8×A40全被SGLang Qwen3.8-27B占用44-45GB 0%util,11/9已过仍未释放)→git synced→R145: ①baize_posttrain_r145_sft_rl_transfer.py(405行,py_compile✅+run✅) ②Q1:SFT pass@1阈值=10%(G=8,GRPO信号质量分析) ③Q2:传递曲线14点(R2领先R1 2-5pp在30-50%区间,≥50%时domain ceiling主导各arm趋同) ④Q3:过拟合影响(healthy gap<0.3无惩罚/severe gap>1.0削减50%RL ceiling) ⑤Q4:指标敏感性排序(domain_coverage#1 23.6%>pass_at_1 15%>policy_entropy 14.1%>tool_compliance 9.1%) ⑥Q5:RL优化停止准则(健康区间内RL-opt=max-pass@1,gap=0%) ⑦成功阶梯映射:M1需SFT≥34%/M2≥43%/M3≥78%/M4(85%)不可达(domain ceiling~79%) ⑧verl_cu124_venv import测试:torch2.6.0+cu124 CUDA=True+verl OK+sglang OK ⑨baize_posttrain_verl_wrapper.py hooks集成:--hooks-config参数+class-level monkey-patch RayPPOTrainer.fit ⑩baize_posttrain_rl_grpo.sh hooks集成:--hooks/--no-hooks/--hooks-config+bash -n✅+dry-run显示hooks ENABLED. EXPERIMENTS §R145. r145_sft_rl_transfer_report.json(26.4KB). 📦 体积：TASK≈26KB / MEMORY≈18KB。本轮新增调研产出：§R145 SFT-to-RL Transfer(405行+5分析+传递曲线+过拟合影响+指标敏感性domain_coverage#1+成功阶梯M4不可达+verl hooks集成wrapper+RL GRPO脚本+import测试+EXPERIMENTS §R145）。未完成指令：🔴用户令2026-11-07(GPU未到位,需持续产出调研) ⇒ WAITING=0。
 
 [wake193] Phase 1 基线评测 + 里程碑报告: 体积自检(TASK≈26KB/MEMORY≈20KB合规)→GPU:4/8free(GPU4 vLLM MiniCPM5-2B✅/GPU0-3 SGLang Qwen3.8-27B root✅/GPU5-7空闲)→git synced→Phase1基线评测: ①DeepSeek代码生成基线:EDA-Eval-Framework 6轮zhulong_deepseek_v32,1轮outlier(39.87%<50%排除),5轮clean mean=67.97%±1.65% ②分场景:Schematic47/60.0%+Layout64/62.8%+DesignMgmt24/80.8%+Others23/85.2% ③错误分解(253错):AssertionError141/55.7%+timeout27/10.7%+ValueError24/9.5%+TypeError19/7.5%+GenFail16/6.3%+AttrErr13/5.1% ④三模型端点:MiniCPM5-2B localhost:8098 GPU4 vLLM✅/Qwen3.8-27B localhost:8099 GPU0-3 SGLang root✅/GLM-5.2 cloud✅ ⑤cline auth两本地模型✅(minicpm5-2b+qwen3.8-27b) ⑥baize_posttrain_baseline_eval.sh(110行,bash -n✅/dry-run✅/--check-env✅/--model/--all/--runs) ⑦里程碑HTML report_posttrain_baseline_3model_zh.html(13KB/12节/12表/0script/自包含/DOCTYPE✅) ⑧EXPERIMENTS §Baseline-3model ⑨🔴硬阻塞:远程沙盒10.129.32.75全端口CLOSED(8664-8669),ping 0.5ms可达但TCP连接超时→沙盒服务停机,阻塞全harness评测 ⑩58pp差距分解:工具协议20-30pp+API知识10-15pp+语义推理10-15pp+容量差10-15pp. 📦 体积：TASK≈26KB / MEMORY≈22KB。本轮新增产出：Phase1基线评测里程碑HTML报告(13KB)+baseline_eval.sh(110行)+EXPERIMENTS §Baseline-3model。未完成指令：🔴用户令2026-11-07+Phase1基线评测待沙盒恢复 ⇒ WAITING=0。
+
+[wake194] Phase 2 替身 SFT 端到端验证: 体积自检(TASK≈26KB/MEMORY≈22KB合规)→GPU:3/8free(GPU4 vLLM MiniCPM5-2B✅/GPU0-3 SGLang root✅/GPU5空闲/GPU6-7训练中)→Phase2 SFT: ①环境修复:torchao 0.18.0与torch 2.6.0冲突(ScalingType import fail)→pip uninstall torchao→Trainer可导入;TRL未装+PEFT broken→直接用transformers Trainer ②baize_posttrain_sft_surrogate.py(自定义SFTDataset,ChatML格式,loss masking on completion,gradient checkpointing,cosine LR) ③baize_posttrain_sft_surrogate.sh(wrapper,dry-run/smoke/train,GPU busy check) ④smoke test PASS:20样本/1epoch/40.8s/loss1.75→0.10(avg0.4033)/37GB VRAM/GPU6 ⑤数据替代:UltraData-SFT-2605不可达(.17无/nas_train)→PyAether SFT corpus v2(19524对,high11733+medium701=12434对,domain-specific更针对API知识缺口) ⑥全量训练启动:GPU6-7 DDP 2×A40,12434样本,3 epochs,max_len=1024,grad_accum=16,effective_batch=32,1164 steps,~8s/step,ETA~2.5h,29.5GB/卡(61%) ⑦踩坑:accelerate.launch模块路径(accelerate.commands.launch)+GPU6僵尸进程OOM+单GPU max_len=2048太慢(38.7s/step)→2GPU max_len=1024(8s/step) ⑧输出:/nas_data/app.e0031982/models/MiniCPM5-2B-SFT-surrogate ⑨EXPERIMENTS §Phase2-SFT-Surrogate ⑩🔴阻塞:沙盒仍CLOSED→SFT前后评测待恢复. 📦 体积：TASK≈26KB / MEMORY≈23KB。本轮新增产出：SFT训练脚本(py+sh)+smoke test PASS+全量训练运行中+EXPERIMENTS §Phase2-SFT-Surrogate。未完成指令：🔴用户令2026-11-10(三阶段替身计划) ⇒ WAITING=1(训练中,~2.5h后唤醒检查)。

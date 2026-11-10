@@ -15299,3 +15299,82 @@ bash run/baize_posttrain_baseline_eval.sh --all --runs 5  # 三模型各 5 轮
 ```
 
 预估：每模型 5 轮 ≈ 3-4h（158 任务 × 5 / 8 并行）；三模型 ≈ 10-12h。
+
+## §Phase2-SFT-Surrogate Phase 2 替身 SFT 端到端验证（2026-11-10 wake194）
+
+> **状态**：SFT 脚本就绪 + smoke test PASS + 全量训练已启动（GPU 6-7）。
+> **⚠️ 替身预演**：MiniCPM5-2B（2B, Llama 架构）作 BaiZe 替身，收益不可迁移到 BaiZe。
+> **阻塞**：SFT 前后评测需沙盒（10.129.32.75 仍全端口 CLOSED）。
+
+### 环境修复
+
+- **torchao 冲突**：verl_cu124_venv 中 torchao 0.18.0 与 torch 2.6.0 不兼容（`cannot import name 'ScalingType' from 'torch.nn.functional'`），导致 transformers Trainer 无法导入。**修复**：`pip uninstall torchao -y`（torchao 不是 SFT 必需依赖；verl 仍正常导入）。
+- **TRL 不可用**：verl_cu124_venv 未安装 TRL，PEFT 因 torchao 间接依赖也无法导入。**方案**：直接使用 transformers Trainer + 自定义 SFTDataset（loss masking on completion only），不依赖 TRL。
+- **可用包**：torch 2.6.0+cu124 ✅ / transformers 4.51.1 ✅ / accelerate 1.15.0 ✅ / datasets 5.0.1 ✅ / verl ✅（torchao 移除后）
+
+### SFT 训练脚本
+
+| 文件 | 说明 |
+|:--|:--|
+| `baize_posttrain_sft_surrogate.py` | 主训练脚本（transformers Trainer，ChatML 格式，gradient checkpointing） |
+| `baize_posttrain_sft_surrogate.sh` | shell wrapper（accelerate launch 2 GPU，dry-run/smoke/train 模式） |
+
+**训练配方**：
+- 模型：MiniCPM5-2B（2.52B params, LlamaForCausalLM, 42 层, 2048 hidden, vocab 130560）
+- 数据：PyAether SFT corpus v2（19524 对，high 11733 + medium 701 = 12434 对；prompt/completion JSONL）
+  - ⚠️ 任务指定 UltraData-SFT-2605，但 .17 无 /nas_train 挂载，UltraData 分词镜像不可达。使用本地 PyAether SFT 语料替代（domain-specific，更直接针对 EDA-Eval 的 API 知识缺口）。
+- 格式：ChatML（`<|im_start|>system/user/assistant<|im_end|>`），loss 仅在 assistant 回复部分
+- 训练：full FT, bf16, gradient checkpointing, cosine LR, 3 epochs
+- 硬件：2× A40 48GB（GPU 6-7），DP=2, per_device_batch=1, grad_accum=16, effective_batch=32
+- max_len: 2048（prompt ~1132 chars / ~300 tok + completion ~310 chars / ~80 tok，2048 充裕）
+
+### Smoke Test 结果（2026-11-10 16:38-16:39, GPU 6）
+
+```
+模型加载: 2.52B params, bf16
+数据: 20 samples (high+medium), max_len=1024
+训练: 20 steps, 1 epoch, 40.8s, ~1.5 it/s
+GPU 内存: 37GB / 48GB (76%, gradient checkpointing)
+```
+
+**Loss 轨迹**（20 步）：
+| 步 | Loss | Grad Norm | LR |
+|--:|-----:|----------:|---:|
+| 1 | 1.44 | 71.0 | 0.0 |
+| 2 | 1.75 | 68.0 | 2e-5 |
+| 5 | 0.12 | 10.7 | 1.88e-5 |
+| 10 | 0.51 | 20.8 | 1.25e-5 |
+| 15 | 0.84 | 27.4 | 4.5e-6 |
+| 20 | 0.10 | 9.9 | 1.4e-7 |
+
+**平均 train_loss = 0.4033**。Loss 从 1.75 快速下降至 0.1-0.3 区间，模型有效学习 PyAether API → 代码映射。
+
+### 全量训练（2026-11-10 16:58 启动, GPU 6-7, 2× A40 DDP）
+
+```bash
+# 输出: /nas_data/app.e0031982/models/MiniCPM5-2B-SFT-surrogate
+# 12434 samples × 3 epochs / 32 effective batch ≈ 1164 steps
+# 实测: ~8s/step, ETA ~2.5h（2× A40 DDP, max_len=1024, gradient checkpointing）
+# VRAM: 29.5GB / 48GB per GPU (61%)
+```
+
+**踩坑记录**：
+1. 首次用 `python -m accelerate.launch` → `No module named accelerate.launch`。修复：用 `accelerate launch` CLI 或 `python -m accelerate.commands.launch`。
+2. 首次 2-GPU max_len=2048 → OOM（GPU6 有僵尸进程残留 37GB）。清理僵尸后降 max_len=1024 重试成功。
+3. 单 GPU max_len=2048 → 38.7s/step, ETA 12.5h（太慢）。改 2 GPU max_len=1024 → 8s/step, ETA 2.5h。
+
+日志：`/tmp/sft_2gpu_train.log`
+
+### 评测计划（沙盒恢复后）
+
+1. **Pre-SFT 基线**：MiniCPM5-2B 原始模型 → EDA-Eval 5-run（Phase 1 基线的子集）
+2. **Post-SFT 评测**：MiniCPM5-2B-SFT-surrogate → EDA-Eval 5-run
+3. **对比**：配对检验（McNemar），报 mean±std + 分场景 + 错误类型变化
+4. **cheat rate**：anti-cheat 全程开
+
+### 关键决策记录
+
+1. **数据替代**：UltraData-SFT-2605 → PyAether SFT corpus v2。理由：.17 无 /nas_train，UltraData 分词镜像不可达；PyAether corpus 是 domain-specific，更直接针对 EDA-Eval API 知识缺口（58pp 差距中 10-15pp 归因于 API 知识）。
+2. **Full FT vs LoRA**：选择 Full FT。理由：PEFT/torchao 不可用；2B full FT 在 2× A40 48GB 可行（37GB used）；Full FT 是论文 §5.2 主实验条件。
+3. **attn_implementation=eager**：MiniCPM5-2B 可能不原生支持 flash attention，使用 eager 保证兼容。
+4. **max_len=2048**：prompt+completion 约 380 tokens，2048 充裕；不浪费显存。
