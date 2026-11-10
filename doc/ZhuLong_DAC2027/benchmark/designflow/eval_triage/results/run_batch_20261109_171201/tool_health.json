@@ -1,0 +1,1087 @@
+{
+  "tool": {
+    "name": "07_tool_health.py",
+    "version": "1.0.0"
+  },
+  "meta": {
+    "generated_at": "2026-11-10T22:48:36+08:00",
+    "triage_path": "/nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/benchmark/designflow/eval_triage/results/run_batch_20261109_171201/triage_summary.json",
+    "batch_dir": "/nasdata/app.e0031982/.cache/triage_batch_20261109_171201",
+    "total_runs": 696,
+    "runs_with_session": 630,
+    "runs_no_session": 66,
+    "runs_no_tool_calls": 0,
+    "tool_count": 25
+  },
+  "overall": {
+    "triage_overall": {
+      "total": 696,
+      "counts": {
+        "PASS": 62,
+        "FAIL": 558,
+        "ERROR": 70,
+        "ABSENT": 6
+      },
+      "pass_rate": {
+        "pass_over_pass_fail": 10.0,
+        "pass_over_pass_fail_num": 62,
+        "pass_over_pass_fail_den": 620,
+        "pass_over_non_absent": 8.99,
+        "pass_over_total": 8.91
+      },
+      "unknown_ratio": {
+        "unknown_count": 119,
+        "denominator_fail_error": 628,
+        "unknown_over_fail_error": 18.95,
+        "unknown_over_total": 17.1
+      },
+      "unknown_kinds": {},
+      "wall_max_sec": null
+    },
+    "domains": {
+      "analog_context": {
+        "status": {
+          "PASS": 4,
+          "FAIL": 39,
+          "ERROR": 12,
+          "ABSENT": 0
+        },
+        "class": {
+          "PASS": 0,
+          "ERROR_TIMEOUT": 0,
+          "ERROR_INFRA": 0,
+          "NO_SUBMIT": 3,
+          "FORMAT_CONTRACT": 1,
+          "ASSERT_RUNTIME": 9,
+          "ASSERT_SEMANTIC": 20,
+          "ASSERT_ANTIHARDCODE": 0,
+          "UNKNOWN": 18
+        },
+        "total": 55
+      },
+      "characterization": {
+        "status": {
+          "PASS": 5,
+          "FAIL": 21,
+          "ERROR": 2,
+          "ABSENT": 0
+        },
+        "class": {
+          "PASS": 0,
+          "ERROR_TIMEOUT": 0,
+          "ERROR_INFRA": 0,
+          "NO_SUBMIT": 5,
+          "FORMAT_CONTRACT": 0,
+          "ASSERT_RUNTIME": 7,
+          "ASSERT_SEMANTIC": 8,
+          "ASSERT_ANTIHARDCODE": 0,
+          "UNKNOWN": 3
+        },
+        "total": 28
+      },
+      "digital": {
+        "status": {
+          "PASS": 5,
+          "FAIL": 40,
+          "ERROR": 6,
+          "ABSENT": 0
+        },
+        "class": {
+          "PASS": 0,
+          "ERROR_TIMEOUT": 0,
+          "ERROR_INFRA": 0,
+          "NO_SUBMIT": 3,
+          "FORMAT_CONTRACT": 0,
+          "ASSERT_RUNTIME": 7,
+          "ASSERT_SEMANTIC": 28,
+          "ASSERT_ANTIHARDCODE": 0,
+          "UNKNOWN": 8
+        },
+        "total": 51
+      },
+      "eda_other": {
+        "status": {
+          "PASS": 6,
+          "FAIL": 27,
+          "ERROR": 4,
+          "ABSENT": 1
+        },
+        "class": {
+          "PASS": 0,
+          "ERROR_TIMEOUT": 0,
+          "ERROR_INFRA": 0,
+          "NO_SUBMIT": 5,
+          "FORMAT_CONTRACT": 0,
+          "ASSERT_RUNTIME": 3,
+          "ASSERT_SEMANTIC": 16,
+          "ASSERT_ANTIHARDCODE": 0,
+          "UNKNOWN": 7
+        },
+        "total": 38
+      },
+      "layout_aether": {
+        "status": {
+          "PASS": 1,
+          "FAIL": 33,
+          "ERROR": 4,
+          "ABSENT": 0
+        },
+        "class": {
+          "PASS": 0,
+          "ERROR_TIMEOUT": 0,
+          "ERROR_INFRA": 0,
+          "NO_SUBMIT": 4,
+          "FORMAT_CONTRACT": 0,
+          "ASSERT_RUNTIME": 4,
+          "ASSERT_SEMANTIC": 25,
+          "ASSERT_ANTIHARDCODE": 0,
+          "UNKNOWN": 4
+        },
+        "total": 38
+      },
+      "layout_virtuoso": {
+        "status": {
+          "PASS": 4,
+          "FAIL": 35,
+          "ERROR": 0,
+          "ABSENT": 1
+        },
+        "class": {
+          "PASS": 0,
+          "ERROR_TIMEOUT": 0,
+          "ERROR_INFRA": 0,
+          "NO_SUBMIT": 4,
+          "FORMAT_CONTRACT": 1,
+          "ASSERT_RUNTIME": 7,
+          "ASSERT_SEMANTIC": 20,
+          "ASSERT_ANTIHARDCODE": 0,
+          "UNKNOWN": 3
+        },
+        "total": 40
+      },
+      "pg_layout": {
+        "status": {
+          "PASS": 4,
+          "FAIL": 24,
+          "ERROR": 0,
+          "ABSENT": 0
+        },
+        "class": {
+          "PASS": 0,
+          "ERROR_TIMEOUT": 0,
+          "ERROR_INFRA": 0,
+          "NO_SUBMIT": 3,
+          "FORMAT_CONTRACT": 0,
+          "ASSERT_RUNTIME": 7,
+          "ASSERT_SEMANTIC": 11,
+          "ASSERT_ANTIHARDCODE": 0,
+          "UNKNOWN": 3
+        },
+        "total": 28
+      },
+      "physical_verify": {
+        "status": {
+          "PASS": 2,
+          "FAIL": 66,
+          "ERROR": 4,
+          "ABSENT": 1
+        },
+        "class": {
+          "PASS": 0,
+          "ERROR_TIMEOUT": 0,
+          "ERROR_INFRA": 0,
+          "NO_SUBMIT": 8,
+          "FORMAT_CONTRACT": 0,
+          "ASSERT_RUNTIME": 18,
+          "ASSERT_SEMANTIC": 37,
+          "ASSERT_ANTIHARDCODE": 0,
+          "UNKNOWN": 7
+        },
+        "total": 73
+      },
+      "pnr_signoff": {
+        "status": {
+          "PASS": 5,
+          "FAIL": 19,
+          "ERROR": 0,
+          "ABSENT": 1
+        },
+        "class": {
+          "PASS": 0,
+          "ERROR_TIMEOUT": 0,
+          "ERROR_INFRA": 0,
+          "NO_SUBMIT": 2,
+          "FORMAT_CONTRACT": 0,
+          "ASSERT_RUNTIME": 1,
+          "ASSERT_SEMANTIC": 16,
+          "ASSERT_ANTIHARDCODE": 0,
+          "UNKNOWN": 0
+        },
+        "total": 25
+      },
+      "schematic_netlist": {
+        "status": {
+          "PASS": 13,
+          "FAIL": 100,
+          "ERROR": 18,
+          "ABSENT": 0
+        },
+        "class": {
+          "PASS": 0,
+          "ERROR_TIMEOUT": 0,
+          "ERROR_INFRA": 0,
+          "NO_SUBMIT": 5,
+          "FORMAT_CONTRACT": 0,
+          "ASSERT_RUNTIME": 26,
+          "ASSERT_SEMANTIC": 54,
+          "ASSERT_ANTIHARDCODE": 0,
+          "UNKNOWN": 33
+        },
+        "total": 131
+      },
+      "spice_sim": {
+        "status": {
+          "PASS": 8,
+          "FAIL": 87,
+          "ERROR": 7,
+          "ABSENT": 2
+        },
+        "class": {
+          "PASS": 0,
+          "ERROR_TIMEOUT": 0,
+          "ERROR_INFRA": 0,
+          "NO_SUBMIT": 8,
+          "FORMAT_CONTRACT": 0,
+          "ASSERT_RUNTIME": 26,
+          "ASSERT_SEMANTIC": 48,
+          "ASSERT_ANTIHARDCODE": 0,
+          "UNKNOWN": 12
+        },
+        "total": 104
+      },
+      "verification": {
+        "status": {
+          "PASS": 3,
+          "FAIL": 30,
+          "ERROR": 5,
+          "ABSENT": 0
+        },
+        "class": {
+          "PASS": 0,
+          "ERROR_TIMEOUT": 0,
+          "ERROR_INFRA": 0,
+          "NO_SUBMIT": 5,
+          "FORMAT_CONTRACT": 0,
+          "ASSERT_RUNTIME": 11,
+          "ASSERT_SEMANTIC": 11,
+          "ASSERT_ANTIHARDCODE": 0,
+          "UNKNOWN": 8
+        },
+        "total": 38
+      },
+      "waveform": {
+        "status": {
+          "PASS": 2,
+          "FAIL": 37,
+          "ERROR": 8,
+          "ABSENT": 0
+        },
+        "class": {
+          "PASS": 0,
+          "ERROR_TIMEOUT": 0,
+          "ERROR_INFRA": 0,
+          "NO_SUBMIT": 15,
+          "FORMAT_CONTRACT": 0,
+          "ASSERT_RUNTIME": 6,
+          "ASSERT_SEMANTIC": 11,
+          "ASSERT_ANTIHARDCODE": 0,
+          "UNKNOWN": 13
+        },
+        "total": 47
+      }
+    }
+  },
+  "tools": [
+    {
+      "tool": "finesim",
+      "true_calls": 43,
+      "raw_mentions": 138,
+      "invoke": 26,
+      "probe": 17,
+      "mention_only": 95,
+      "ok": 40,
+      "error": 2,
+      "no_output": 1,
+      "runs_invoked": 19,
+      "runs_never_invoked": 611,
+      "all_calls_failed": false,
+      "examples_ok": [
+        {
+          "task_id": "EDA-Eval-DesignFlow-FinesimAutoRun-001",
+          "cmd": "which finesim 2>&1; finesim -help 2>&1 | head -60; echo '=== version ==='; finesim -version 2>&1 | head -10",
+          "exit_code": 0
+        },
+        {
+          "task_id": "EDA-Eval-DesignFlow-FinesimAutoRun-001",
+          "cmd": "finesim -h 2>&1 | head -120",
+          "exit_code": 0
+        }
+      ],
+      "examples_error": [
+        {
+          "task_id": "EDA-Eval-DesignFlow-SweepParallel-001",
+          "cmd": "cd /proj/train/AI/workdir/e0031982/eda_sandbox_flow/sessions/default_20261109-213625_EDA-Eval-DesignFlow-SweepParallel-001_0; module load prime/2023.12-SP4 2>/…",
+          "exit_code": 0,
+          "stderr": "awk: cmd. line:1: NR==6{print \".option alter_select=\" \\\"list 1\\\"} {print}"
+        },
+        {
+          "task_id": "EDA-Eval-DesignFlow-FineSimTbAuditFix-001",
+          "cmd": "cd /proj/train/AI/workdir/e0031982/eda_sandbox_flow/sessions/default_20261110-run01_FineSimTbAuditFix-001_0/tb && finesim -spice sim_TT_a.sp > orig_run.log 2>&…",
+          "exit_code": 0,
+          "stderr": "EXIT=5 === LOG === FineSim (R) Version V-2023.12-1 for linux64 - Jan 04, 2024 Copyright (c) 2003 - 2024 Synopsys, Inc. This software and the associated documen…"
+        }
+      ]
+    },
+    {
+      "tool": "hspice",
+      "true_calls": 123,
+      "raw_mentions": 314,
+      "invoke": 83,
+      "probe": 40,
+      "mention_only": 191,
+      "ok": 116,
+      "error": 5,
+      "no_output": 2,
+      "runs_invoked": 39,
+      "runs_never_invoked": 591,
+      "all_calls_failed": false,
+      "examples_ok": [
+        {
+          "task_id": "EDA-Eval-DesignFlow-CtleTranGen-001",
+          "cmd": "which hspice spectre xa xs 2>/dev/null; echo '---'; ls /usr/bin | grep -iE 'hspice|spectre|ngspice' 2>/dev/null; echo '--- model check ---'; ls -la",
+          "exit_code": 0
+        },
+        {
+          "task_id": "EDA-Eval-DesignFlow-IOBufTune-001",
+          "cmd": "which hspice hspice64 2>/dev/null; echo '---'; hspice -v 2>&1 | head -5; echo '---'; ls -la",
+          "exit_code": 0
+        }
+      ],
+      "examples_error": [
+        {
+          "task_id": "EDA-Eval-DesignFlow-Tr0JitterRemeas-001",
+          "cmd": "hspice -i dead.sp -o dead.lis -mt 4 >/dev/null 2>&1; echo \"exit=$?\"; ls -la dead.tr0 dead.lis 2>&1; python3 tr0_jitter_remeas.py dead.tr0 dead.lis dead_cfg.jso…",
+          "exit_code": 2,
+          "stderr": "exit=0 -rw-rw-r-- 1 e0031982 guest 379540 Nov 9 2026 dead.lis -rw-rw-r-- 1 e0031982 guest 181004 Nov 9 2026 dead.tr0 usage: tr0_jitter_remeas.py <netlist.sp> <…"
+        },
+        {
+          "task_id": "EDA-Eval-DesignFlow-LdoVerifyReport-001",
+          "cmd": "which python3; python3 --version; echo '---tools---'; ls /usr/bin | grep -iE 'finesim|hspice|spice' 2>/dev/null; echo '---finesim bin---'; find / -maxdepth 6 -…",
+          "exit_code": -1,
+          "stderr": "command timed out (120s)"
+        }
+      ]
+    },
+    {
+      "tool": "spectre",
+      "true_calls": 7,
+      "raw_mentions": 7,
+      "invoke": 1,
+      "probe": 6,
+      "mention_only": 0,
+      "ok": 7,
+      "error": 0,
+      "no_output": 0,
+      "runs_invoked": 7,
+      "runs_never_invoked": 623,
+      "all_calls_failed": false,
+      "examples_ok": [
+        {
+          "task_id": "EDA-Eval-DesignFlow-CtleTranGen-001",
+          "cmd": "which hspice spectre xa xs 2>/dev/null; echo '---'; ls /usr/bin | grep -iE 'hspice|spectre|ngspice' 2>/dev/null; echo '--- model check ---'; ls -la",
+          "exit_code": 0
+        },
+        {
+          "task_id": "EDA-Eval-DesignFlow-PorCapSweepGen-001",
+          "cmd": "which ngspice hspice xa spectre 2>/dev/null; echo '---tools checked---'",
+          "exit_code": 0
+        }
+      ],
+      "examples_error": []
+    },
+    {
+      "tool": "eldo",
+      "true_calls": 1,
+      "raw_mentions": 1,
+      "invoke": 1,
+      "probe": 0,
+      "mention_only": 0,
+      "ok": 1,
+      "error": 0,
+      "no_output": 0,
+      "runs_invoked": 1,
+      "runs_never_invoked": 629,
+      "all_calls_failed": false,
+      "examples_ok": [
+        {
+          "task_id": "EDA-Eval-DesignFlow-Tcs0PatAnalyze-001",
+          "cmd": "which hspice aether aserver 2>/dev/null; echo '---'; ls /usr/local/bin 2>/dev/null | grep -iE 'hspice|aether|eldo|spectre|ngspice' ; echo '---tools---'; ls /op…",
+          "exit_code": 0
+        }
+      ],
+      "examples_error": []
+    },
+    {
+      "tool": "smartspice",
+      "true_calls": 0,
+      "raw_mentions": 0,
+      "invoke": 0,
+      "probe": 0,
+      "mention_only": 0,
+      "ok": 0,
+      "error": 0,
+      "no_output": 0,
+      "runs_invoked": 0,
+      "runs_never_invoked": 630,
+      "all_calls_failed": false,
+      "examples_ok": [],
+      "examples_error": []
+    },
+    {
+      "tool": "asc",
+      "true_calls": 0,
+      "raw_mentions": 0,
+      "invoke": 0,
+      "probe": 0,
+      "mention_only": 0,
+      "ok": 0,
+      "error": 0,
+      "no_output": 0,
+      "runs_invoked": 0,
+      "runs_never_invoked": 630,
+      "all_calls_failed": false,
+      "examples_ok": [],
+      "examples_error": []
+    },
+    {
+      "tool": "aether",
+      "true_calls": 6,
+      "raw_mentions": 53,
+      "invoke": 1,
+      "probe": 5,
+      "mention_only": 47,
+      "ok": 6,
+      "error": 0,
+      "no_output": 0,
+      "runs_invoked": 6,
+      "runs_never_invoked": 624,
+      "all_calls_failed": false,
+      "examples_ok": [
+        {
+          "task_id": "EDA-Eval-DesignFlow-Tcs0PatAnalyze-001",
+          "cmd": "which hspice aether aserver 2>/dev/null; echo '---'; ls /usr/local/bin 2>/dev/null | grep -iE 'hspice|aether|eldo|spectre|ngspice' ; echo '---tools---'; ls /op…",
+          "exit_code": 0
+        },
+        {
+          "task_id": "EDA-Eval-DesignFlow-GgFlowReport-001",
+          "cmd": "which aether gg group_generate 2>/dev/null; echo '---PATH bins---'; ls /usr/local/bin 2>/dev/null | head -40",
+          "exit_code": 0
+        }
+      ],
+      "examples_error": []
+    },
+    {
+      "tool": "schematic",
+      "true_calls": 0,
+      "raw_mentions": 60,
+      "invoke": 0,
+      "probe": 0,
+      "mention_only": 60,
+      "ok": 0,
+      "error": 0,
+      "no_output": 0,
+      "runs_invoked": 0,
+      "runs_never_invoked": 630,
+      "all_calls_failed": false,
+      "examples_ok": [],
+      "examples_error": []
+    },
+    {
+      "tool": "calibre",
+      "true_calls": 2,
+      "raw_mentions": 119,
+      "invoke": 1,
+      "probe": 1,
+      "mention_only": 117,
+      "ok": 2,
+      "error": 0,
+      "no_output": 0,
+      "runs_invoked": 2,
+      "runs_never_invoked": 628,
+      "all_calls_failed": false,
+      "examples_ok": [
+        {
+          "task_id": "EDA-Eval-DesignFlow-PGSplitNTN-001",
+          "cmd": "python3 -c 'import gdstk; print(\"gdstk\", gdstk.__version__)' 2>&1; python3 -c 'import gdspy; print(\"gdspy\", gdspy.__version__)' 2>&1; python3 -c 'import gdspy'…",
+          "exit_code": 0
+        },
+        {
+          "task_id": "EDA-Eval-DesignFlow-ViaFillSvrfGen-001",
+          "cmd": "ls /proj/train/AI/workdir/e0031982/eda_sandbox_flow/sessions/ 2>&1 | grep -iE 'viafill|svrf|fill|drc|calibre|dfm' ; echo '=== total sessions ==='; ls /proj/tra…",
+          "exit_code": 0
+        }
+      ],
+      "examples_error": []
+    },
+    {
+      "tool": "pvx",
+      "true_calls": 0,
+      "raw_mentions": 0,
+      "invoke": 0,
+      "probe": 0,
+      "mention_only": 0,
+      "ok": 0,
+      "error": 0,
+      "no_output": 0,
+      "runs_invoked": 0,
+      "runs_never_invoked": 630,
+      "all_calls_failed": false,
+      "examples_ok": [],
+      "examples_error": []
+    },
+    {
+      "tool": "innovus",
+      "true_calls": 0,
+      "raw_mentions": 13,
+      "invoke": 0,
+      "probe": 0,
+      "mention_only": 13,
+      "ok": 0,
+      "error": 0,
+      "no_output": 0,
+      "runs_invoked": 0,
+      "runs_never_invoked": 630,
+      "all_calls_failed": false,
+      "examples_ok": [],
+      "examples_error": []
+    },
+    {
+      "tool": "icc2",
+      "true_calls": 0,
+      "raw_mentions": 0,
+      "invoke": 0,
+      "probe": 0,
+      "mention_only": 0,
+      "ok": 0,
+      "error": 0,
+      "no_output": 0,
+      "runs_invoked": 0,
+      "runs_never_invoked": 630,
+      "all_calls_failed": false,
+      "examples_ok": [],
+      "examples_error": []
+    },
+    {
+      "tool": "pt_shell",
+      "true_calls": 3,
+      "raw_mentions": 17,
+      "invoke": 0,
+      "probe": 3,
+      "mention_only": 14,
+      "ok": 2,
+      "error": 1,
+      "no_output": 0,
+      "runs_invoked": 3,
+      "runs_never_invoked": 627,
+      "all_calls_failed": false,
+      "examples_ok": [
+        {
+          "task_id": "EDA-Eval-DesignFlow-PTStaFlowBuild-001",
+          "cmd": "echo '=== test module load ==='; module purge 2>/dev/null; module load ds/pt/2022.12-SP5 2>&1 | head; which pt_shell 2>&1; pt_shell -version 2>&1 | head -10",
+          "exit_code": 0
+        },
+        {
+          "task_id": "EDA-Eval-DesignFlow-TimingECO-001",
+          "cmd": "which pt_shell; ls -l /apps/synopsys/SRB/pts/U-2022.12-SP5/bin/pt_shell 2>&1 | head; ls /apps/synopsys/SRB/pts/ 2>&1 | head",
+          "exit_code": 0
+        }
+      ],
+      "examples_error": [
+        {
+          "task_id": "EDA-Eval-DesignFlow-StaFlowScaffold-001",
+          "cmd": "which tclsh tclsh8.6 pt_shell 2>&1; echo '---'; W=/proj/train/AI/workdir/e0031982/eda_sandbox_flow/sessions/default_20261109-212345_StaFlowScaffold-001_0/sta_f…",
+          "exit_code": 0,
+          "stderr": "couldn't open \"run/sta.tcl\": no such file or directory"
+        }
+      ]
+    },
+    {
+      "tool": "primetime",
+      "true_calls": 1,
+      "raw_mentions": 26,
+      "invoke": 1,
+      "probe": 0,
+      "mention_only": 25,
+      "ok": 1,
+      "error": 0,
+      "no_output": 0,
+      "runs_invoked": 1,
+      "runs_never_invoked": 629,
+      "all_calls_failed": false,
+      "examples_ok": [
+        {
+          "task_id": "EDA-Eval-DesignFlow-PTStaFlowBuild-001",
+          "cmd": "echo '=== module avail pt ==='; module avail 2>&1 | grep -iE 'pt|primetime|star' | head -40",
+          "exit_code": 0
+        }
+      ],
+      "examples_error": []
+    },
+    {
+      "tool": "dc_shell",
+      "true_calls": 8,
+      "raw_mentions": 29,
+      "invoke": 1,
+      "probe": 7,
+      "mention_only": 21,
+      "ok": 8,
+      "error": 0,
+      "no_output": 0,
+      "runs_invoked": 7,
+      "runs_never_invoked": 623,
+      "all_calls_failed": false,
+      "examples_ok": [
+        {
+          "task_id": "EDA-Eval-DesignFlow-CombSynthClean-001",
+          "cmd": "which tclsh tclsh8.6 python3 dc_shell 2>&1; echo '---'; tclsh <<'EOF' puts [info patchlevel] EOF",
+          "exit_code": 0
+        },
+        {
+          "task_id": "EDA-Eval-DesignFlow-DCCombHier-001",
+          "cmd": "which dc_shell dc_shell-xg-t 2>/dev/null; ls /home/johnl/spiceTdc/primelib_char_T_IsmTop/dc_addr_to_region 2>/dev/null; ls /home/johnl/spiceTdc/primelib_char_T…",
+          "exit_code": 0
+        }
+      ],
+      "examples_error": []
+    },
+    {
+      "tool": "design_compiler",
+      "true_calls": 0,
+      "raw_mentions": 0,
+      "invoke": 0,
+      "probe": 0,
+      "mention_only": 0,
+      "ok": 0,
+      "error": 0,
+      "no_output": 0,
+      "runs_invoked": 0,
+      "runs_never_invoked": 630,
+      "all_calls_failed": false,
+      "examples_ok": [],
+      "examples_error": []
+    },
+    {
+      "tool": "verdi",
+      "true_calls": 1,
+      "raw_mentions": 6,
+      "invoke": 1,
+      "probe": 0,
+      "mention_only": 5,
+      "ok": 1,
+      "error": 0,
+      "no_output": 0,
+      "runs_invoked": 1,
+      "runs_never_invoked": 629,
+      "all_calls_failed": false,
+      "examples_ok": [
+        {
+          "task_id": "EDA-Eval-DesignFlow-RtlHierarchyVerdiGuide-001",
+          "cmd": "ls -la /proj/train/AI/workdir/e0031982/eda_sandbox_flow/sessions/ | grep -i -E 'e902|rtl|verdi|guide' 2>&1 | head",
+          "exit_code": 0
+        }
+      ],
+      "examples_error": []
+    },
+    {
+      "tool": "vcs",
+      "true_calls": 38,
+      "raw_mentions": 51,
+      "invoke": 26,
+      "probe": 12,
+      "mention_only": 13,
+      "ok": 36,
+      "error": 1,
+      "no_output": 1,
+      "runs_invoked": 13,
+      "runs_never_invoked": 617,
+      "all_calls_failed": false,
+      "examples_ok": [
+        {
+          "task_id": "EDA-Eval-DesignFlow-AhbMasterVerilog-001",
+          "cmd": "cd /proj/train/AI/workdir/e0031982/eda_sandbox_flow/sessions/default_20261109-run01_AhbMasterVerilog-001_0 && vcs -full64 -sverilog -q ahb_master.v tb.v -o sim…",
+          "exit_code": 0
+        },
+        {
+          "task_id": "EDA-Eval-DesignFlow-AhbMasterVerilog-001",
+          "cmd": "cd /proj/train/AI/workdir/e0031982/eda_sandbox_flow/sessions/default_20261109-run01_AhbMasterVerilog-001_0 && vcs -full64 -sverilog -timescale=1ns/1ps -q ahb_m…",
+          "exit_code": 0
+        }
+      ],
+      "examples_error": [
+        {
+          "task_id": "EDA-Eval-DesignFlow-ToggleCounterBindGen-001",
+          "cmd": "cd /proj/train/AI/workdir/e0031982/eda_sandbox_flow/sessions/default_20261110-100541_ToggleCounterBindGen-001_0 && vcs -sverilog -full64 +v2k -nc -o simv2 togg…",
+          "exit_code": 1,
+          "stderr": "$unit Can only bind to modules or module instances. bind invx1 toggle_counter #(.NUM_SIGNALS(2)) u_toggle_invx1( .sig ({A, Y})); 3 errors"
+        }
+      ]
+    },
+    {
+      "tool": "xrun",
+      "true_calls": 4,
+      "raw_mentions": 5,
+      "invoke": 0,
+      "probe": 4,
+      "mention_only": 1,
+      "ok": 4,
+      "error": 0,
+      "no_output": 0,
+      "runs_invoked": 4,
+      "runs_never_invoked": 626,
+      "all_calls_failed": false,
+      "examples_ok": [
+        {
+          "task_id": "EDA-Eval-DesignFlow-DrvqaGateNetlist-001",
+          "cmd": "which iverilog vcs ncverilog xrun 2>/dev/null; ls /usr/bin | grep -iE 'iverilog|vcs' 2>/dev/null; echo '--- done ---'",
+          "exit_code": 0
+        },
+        {
+          "task_id": "EDA-Eval-DesignFlow-NetCellMap-001",
+          "cmd": "which iverilog xrun vcs ncverilog irun xrun xsrun 2>/dev/null; echo '---'; which python3; echo '---'; ls /usr/bin | grep -iE 'iverilog|vcs|ncverilog|xrun|xmvlo…",
+          "exit_code": 0
+        }
+      ],
+      "examples_error": []
+    },
+    {
+      "tool": "spyglass",
+      "true_calls": 0,
+      "raw_mentions": 1,
+      "invoke": 0,
+      "probe": 0,
+      "mention_only": 1,
+      "ok": 0,
+      "error": 0,
+      "no_output": 0,
+      "runs_invoked": 0,
+      "runs_never_invoked": 630,
+      "all_calls_failed": false,
+      "examples_ok": [],
+      "examples_error": []
+    },
+    {
+      "tool": "star-rc",
+      "true_calls": 0,
+      "raw_mentions": 0,
+      "invoke": 0,
+      "probe": 0,
+      "mention_only": 0,
+      "ok": 0,
+      "error": 0,
+      "no_output": 0,
+      "runs_invoked": 0,
+      "runs_never_invoked": 630,
+      "all_calls_failed": false,
+      "examples_ok": [],
+      "examples_error": []
+    },
+    {
+      "tool": "redhawk",
+      "true_calls": 0,
+      "raw_mentions": 0,
+      "invoke": 0,
+      "probe": 0,
+      "mention_only": 0,
+      "ok": 0,
+      "error": 0,
+      "no_output": 0,
+      "runs_invoked": 0,
+      "runs_never_invoked": 630,
+      "all_calls_failed": false,
+      "examples_ok": [],
+      "examples_error": []
+    },
+    {
+      "tool": "totem",
+      "true_calls": 0,
+      "raw_mentions": 0,
+      "invoke": 0,
+      "probe": 0,
+      "mention_only": 0,
+      "ok": 0,
+      "error": 0,
+      "no_output": 0,
+      "runs_invoked": 0,
+      "runs_never_invoked": 630,
+      "all_calls_failed": false,
+      "examples_ok": [],
+      "examples_error": []
+    },
+    {
+      "tool": "siliconsmart",
+      "true_calls": 0,
+      "raw_mentions": 26,
+      "invoke": 0,
+      "probe": 0,
+      "mention_only": 26,
+      "ok": 0,
+      "error": 0,
+      "no_output": 0,
+      "runs_invoked": 0,
+      "runs_never_invoked": 630,
+      "all_calls_failed": false,
+      "examples_ok": [],
+      "examples_error": []
+    },
+    {
+      "tool": "pyaether",
+      "true_calls": 0,
+      "raw_mentions": 97,
+      "invoke": 0,
+      "probe": 0,
+      "mention_only": 97,
+      "ok": 0,
+      "error": 0,
+      "no_output": 0,
+      "runs_invoked": 0,
+      "runs_never_invoked": 630,
+      "all_calls_failed": false,
+      "examples_ok": [],
+      "examples_error": []
+    }
+  ],
+  "signatures": [
+    {
+      "signature": "non-zero exit (no stderr)",
+      "count": 3,
+      "runs": 3,
+      "example_task_ids": [
+        "EDA-Eval-DesignFlow-Tr0JitterRemeas-001",
+        "EDA-Eval-DesignFlow-ToggleCounterBindGen-001",
+        "EDA-Eval-DesignFlow-VcoKvcoChar-001"
+      ],
+      "evidence": "exit=0 -rw-rw-r-- 1 e0031982 guest 379540 Nov 9 2026 dead.lis -rw-rw-r-- 1 e0031982 guest 181004 Nov 9 2026 dead.tr0 usage: tr0_jitter_remeas.py <netlist.sp> <cfg.json> <out_dir>"
+    },
+    {
+      "signature": "command not found / No such file",
+      "count": 2,
+      "runs": 2,
+      "example_task_ids": [
+        "EDA-Eval-DesignFlow-PulseStimTbGen-001",
+        "EDA-Eval-DesignFlow-VcoKvcoChar-001"
+      ],
+      "evidence": "ls: cannot access *.mt0: No such file or directory"
+    },
+    {
+      "signature": "licence / license error",
+      "count": 1,
+      "runs": 1,
+      "example_task_ids": [
+        "EDA-Eval-DesignFlow-FineSimTbAuditFix-001"
+      ],
+      "evidence": "EXIT=5 === LOG === FineSim (R) Version V-2023.12-1 for linux64 - Jan 04, 2024 Copyright (c) 2003 - 2024 Synopsys, Inc. This software and the associated documentation are proprietary to Synopsys, Inc.…"
+    },
+    {
+      "signature": "timeout",
+      "count": 1,
+      "runs": 1,
+      "example_task_ids": [
+        "EDA-Eval-DesignFlow-LdoVerifyReport-001"
+      ],
+      "evidence": "command timed out (120s)"
+    },
+    {
+      "signature": "other",
+      "count": 1,
+      "runs": 1,
+      "example_task_ids": [
+        "EDA-Eval-DesignFlow-SweepParallel-001"
+      ],
+      "evidence": "awk: cmd. line:1: NR==6{print \".option alter_select=\" \\\"list 1\\\"} {print}"
+    }
+  ],
+  "cross": {
+    "signature_x_domain": {
+      "command not found / No such file": {
+        "spice_sim": 2
+      },
+      "licence / license error": {
+        "spice_sim": 1
+      },
+      "timeout": {
+        "eda_other": 1
+      },
+      "non-zero exit (no stderr)": {
+        "characterization": 1,
+        "schematic_netlist": 1,
+        "spice_sim": 1
+      },
+      "other": {
+        "digital": 1
+      }
+    },
+    "signature_x_class": {
+      "command not found / No such file": {
+        "ASSERT_RUNTIME": 1,
+        "ASSERT_SEMANTIC": 1
+      },
+      "licence / license error": {
+        "ASSERT_SEMANTIC": 1
+      },
+      "timeout": {
+        "ASSERT_RUNTIME": 1
+      },
+      "non-zero exit (no stderr)": {
+        "NO_SUBMIT": 1,
+        "ASSERT_SEMANTIC": 2
+      },
+      "other": {
+        "ASSERT_SEMANTIC": 1
+      }
+    },
+    "domain_list": [
+      "analog_context",
+      "characterization",
+      "digital",
+      "eda_other",
+      "layout_aether",
+      "layout_virtuoso",
+      "pg_layout",
+      "physical_verify",
+      "pnr_signoff",
+      "schematic_netlist",
+      "spice_sim",
+      "verification",
+      "waveform"
+    ],
+    "class_list": [
+      "NO_SUBMIT",
+      "ASSERT_RUNTIME",
+      "ASSERT_SEMANTIC",
+      "UNKNOWN",
+      "FORMAT_CONTRACT",
+      "PASS",
+      "NONE"
+    ]
+  },
+  "asc_special": {
+    "verdict": "在本数据集里 'asc' 不是 EDA 工具：0 次作为命令被执行。出现 65 处/21 case，全部为 (1) .asc 文件扩展名（calibre/SVRF ASCII rule 文件，如 xor.rule.asc）、(2) ASC 排序关键字（SQL/Python sorted 的 ascending）、(3) 'ascending' 片段。",
+    "cases_with_asc_word": 16,
+    "total_asc_occurrences": 56,
+    "tool_invocation_count": 0,
+    "kind_counter": {
+      ".asc 文件扩展名 (calibre/SVRF rule ASCII)": 31,
+      "其它 (含 'ascending' 缩写/片段)": 31,
+      "ASC 排序关键字 (SQL/Python sorted)": 8
+    },
+    "sample_contexts": [
+      {
+        "task_id": "EDA-Eval-DesignFlow-AnalogGroupCfgMergeDummy-001",
+        "snippet": "asc"
+      },
+      {
+        "task_id": "EDA-Eval-DesignFlow-DlySigmaSweep-001",
+        "snippet": "sigma ASC"
+      },
+      {
+        "task_id": "EDA-Eval-DesignFlow-DlySigmaSweep-001",
+        "snippet": "sigma ASC"
+      },
+      {
+        "task_id": "EDA-Eval-DesignFlow-DlySigmaSweep-001",
+        "snippet": "sigma ASC"
+      },
+      {
+        "task_id": "EDA-Eval-DesignFlow-OpCornerSummary-001",
+        "snippet": "asc)."
+      },
+      {
+        "task_id": "EDA-Eval-DesignFlow-Tcs0PatAnalyze-001",
+        "snippet": "(asc"
+      },
+      {
+        "task_id": "EDA-Eval-DesignFlow-ButterflyCurve-001",
+        "snippet": "[asc"
+      },
+      {
+        "task_id": "EDA-Eval-DesignFlow-AgentCodeStructAnalyze-001",
+        "snippet": "(asc"
+      },
+      {
+        "task_id": "EDA-Eval-DesignFlow-AgentCodeStructAnalyze-001",
+        "snippet": "(asc"
+      },
+      {
+        "task_id": "EDA-Eval-DesignFlow-AgentCodeStructAnalyze-001",
+        "snippet": "(asc"
+      },
+      {
+        "task_id": "EDA-Eval-DesignFlow-PdkDirSizeScan-001",
+        "snippet": "asc"
+      },
+      {
+        "task_id": "EDA-Eval-DesignFlow-DRCDeckSyncPlan-001",
+        "snippet": "asc,"
+      },
+      {
+        "task_id": "EDA-Eval-DesignFlow-DRCDeckSyncPlan-001",
+        "snippet": "asc)."
+      },
+      {
+        "task_id": "EDA-Eval-DesignFlow-DRCDeckSyncPlan-001",
+        "snippet": "pological sort, tie-break by (risk asc, min feature id asc).\\n heap ="
+      },
+      {
+        "task_id": "EDA-Eval-DesignFlow-DRCTimeStats-001",
+        "snippet": "name asc"
+      },
+      {
+        "task_id": "EDA-Eval-DesignFlow-DrcLegacyFallback-001",
+        "snippet": "pological sort, tie-break by (risk asc, min feature id asc).\\\\n heap ="
+      },
+      {
+        "task_id": "EDA-Eval-DesignFlow-DrcLegacyFallback-001",
+        "snippet": "break by (risk asc, min feature id asc).\\\\n heap = []\\\\n for idx in"
+      },
+      {
+        "task_id": "EDA-Eval-DesignFlow-DrcPyEnvDiag-001",
+        "snippet": "(asc"
+      },
+      {
+        "task_id": "EDA-Eval-DesignFlow-DrcPyEnvDiag-001",
+        "snippet": "\"asc"
+      },
+      {
+        "task_id": "EDA-Eval-DesignFlow-GDSBump2-001",
+        "snippet": "need ASC"
+      }
+    ]
+  },
+  "exclusions": {
+    "no_session_file": 66,
+    "no_tool_calls_parsed": 0,
+    "note": "no_session_file = 60 个 case 的 cline_stderr.log 软链断裂（多为 ABSENT/ERROR，cline 未产出 session）；no_tool_calls_parsed = session 存在但未解析到 run_commands 调用。两者均不计入工具健康矩阵的分母。从未调用 = runs_with_session - runs_invoked，不算失败。"
+  },
+  "methodology": {
+    "four_states": [
+      "有正常输出(ok)",
+      "报错退出(error)",
+      "调了但无产物(no_output)",
+      "从未调用(never)"
+    ],
+    "call_definition": "true_call = invoke(段首执行) + probe(which/type 探测); raw_mention = 词边界命中(含 printf/echo 字符串提及, 旁注)",
+    "never_invoked_is_not_failure": true,
+    "signature_scope": "失败签名只对【真正执行/探测 EDA 工具的命令】聚合（invoke/probe），剔除 grep/ls/test 等普通命令的 non-zero exit 噪声。",
+    "signature_norm": "stderr 首行去路径/时间/行号/十六进制后聚类; 无 stderr 用 stdout 头 400 字符; 仅在有失败信号(非零退出/stderr 非空/内层 exit=N>=1)时扫描 stdout。"
+  }
+}
