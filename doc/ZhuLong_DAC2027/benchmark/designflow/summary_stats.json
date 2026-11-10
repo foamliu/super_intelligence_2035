@@ -19,7 +19,7 @@
   "mc30": 2247,
   "mc300": 317,
   "mc500": 281,
-  "note": "11/10 r317: case MbistRepairReArmDiag-001 delivered (diagnosis-generator PIVOT, zxb65/thomas1w@hfeg0pjn100 mc133 verification, A.jsonl 199->200, k=16, test_sha8=6284d9b5). 3rd diagnosis-generator reframe after SvHierRefDiag-001/RhrQueueBoundsDiag-001. Root cause: errforcebit set to -1 after 1st mbist at mbistmppr.v:482, never re-armed before 2nd iteration under DOUBLE_REPAIR. Latest scan 11/09 r292 (no new), daily log 11/10 healthy 2981 lines.",
+  "note": "11/10 r321: management + bugfix (keyword $6 parsing + exclusion-set .messages.json suffix) + NFS-automount access BLOCKER (0 case, A.jsonl 200 unchanged). 186 truly-fresh digital-dominant candidates found but INACCESSIBLE (NFS automount: ls shows files but cat fails 'No such file'). 29 consecutive no-new-scan (r293-r321). Latest scan 11/09 r292, daily log 11/10 healthy 2981 lines.",
   "prev_scan_path": "/home/t0002965/log/ssh_eda_search_20261105_192825/summary.tsv",
   "prev_sessions": 5822,
   "scan_path": "/home/t0002965/log/ssh_eda_search_20261109_224902/summary.tsv",
@@ -270,7 +270,7 @@
       "hosts": 696,
       "shard_A_jsonl": 190
     },
-    "updated_at": "2026-11-10T12:45:00+08:00",
+    "updated_at": "2026-11-10T18:45:00+08:00",
     "r292": {
       "ts": "2026-11-09T23:33:30+08:00",
       "date": "2026-11-09",
@@ -1164,7 +1164,17 @@
       "candidate_pool_reassessment": {
         "method": "python filter on .75 summary.tsv: mc>=15 + digital-dominant (digital kw count > analog kw count, dig>=50), dedup by session (col4), parse $6 keywords. Total 401 digital-dominant sessions.",
         "exclude_set": "970 unique session IDs (855 used_sessions_allshards.txt cross-shard + 198 ledger-A, deduped). NOTE: prior r320 fresh-check initially used buggy grep -qx (exact-line) instead of substring; corrected to substring grep -q. xt9ag (VmodConnCheck-001), 1f7f1, q5ogm, evxj6, 8ylkn, 1hei0, 2xkge, pfubi, t8yss, j9oap, 7j1bw, c084j, nr884, mmmtz, hojhc, jzlbn, lond8, im5c1, stbzx, bw2u5, htbqn, a7ied, 7huyr, 9qa9d, ckulq, lku2o, 4q4w1, 1qlnn, o0c8y, 2pdn0, ayya3 ALL already used.",
-        "truly_fresh_peeked": ["vnze7 (trivial file-split)", "usjrp (analysis ODT-err)", "ajr06 (analysis continuation PDE)", "1yqtd (analysis test-scenarios)", "07zbx (what-can-you-do)", "sbaad (CLEAN PRODUCE but near-dup SignalXrefBuilder)", "lu4zi (diagnosis but 30 writes fix-session)", "6e2db (capability Q&A)", "6gjer (analysis module-summary)"]
+        "truly_fresh_peeked": [
+          "vnze7 (trivial file-split)",
+          "usjrp (analysis ODT-err)",
+          "ajr06 (analysis continuation PDE)",
+          "1yqtd (analysis test-scenarios)",
+          "07zbx (what-can-you-do)",
+          "sbaad (CLEAN PRODUCE but near-dup SignalXrefBuilder)",
+          "lu4zi (diagnosis but 30 writes fix-session)",
+          "6e2db (capability Q&A)",
+          "6gjer (analysis module-summary)"
+        ]
       },
       "scarcity_confirm_14th": {
         "peeked_fresh": 9,
@@ -1189,6 +1199,21 @@
       "paper": "PAPER_SKIP(no latexmk); Ntasks unchanged (case count 200 unchanged)",
       "finding": "r320 = 14th consecutive clean-A-faithful-produce scarcity confirmation. Pool NOT exhausted (401 digital-dominant mc>=15, ~many fresh after proper 970-session exclusion) BUT clean produce is rare: top fresh candidates are analysis-only (test-scenario/module-function comprehension), fix-sessions (lu4zi 30 writes), near-duplicates (sbaad=SignalXrefBuilder), trivial (vnze7 file-split), or capability Q&A. The strong-digital marker (verilog/rtl) is noisy: 'verilog' keyword count often = READ activity (read_files) not PRODUCE. diagnosis-generator PIVOT (r312/r315/r317 pattern) remains the viable path but requires 0-write analysis-only traces, which are also scarce among high-mc digital candidates. 11/09 top-priority (full rescan + mc threshold table) was completed in r292 (threshold_table_shardA + feasibility_peek + recommendation all in summary_stats.json.scansync.r292); mc>=15 confirmed as minimum viable threshold. Next: target lower-mc (5-50) digital pool OR continue diagnosis-generator PIVOT on 0-write analysis traces OR await new scan to capture fresh digital produce-sessions.",
       "updated_at": "2026-11-10T18:30:00+08:00"
+    },
+    "r321": {
+      "ts": "2026-11-10T18:45:00+08:00",
+      "date": "2026-11-10",
+      "round_type": "management + keyword/exclusion bug-fix + NFS-automount access BLOCKER (0 case, A.jsonl 200 unchanged, DEBT 0)",
+      "scan_dir": "ssh_eda_search_20261109_224902",
+      "scan_confirmed": "no new scan since r292 full rescan (29 consecutive no-new-scan r293-r321); scan rows 38082, mc30=2247 unchanged; daily log 20261110 healthy 2981 lines 2977 sessions",
+      "eda_flow_status": "run_commands OK (exit 0); file read via eda_flow read_file OK; BUT ssh-to-remote-host cat /home/<user>/.cline/data/sessions/ BROKEN (NFS automount flakiness)",
+      "nfs_automount_blocker": "e0031982 (groups: guest, eda_agent) cannot reliably read /home/<user>/.cline/data/sessions/ on remote hosts. ls <glob> shows filenames (cached dir listing) but cat/stat/cd-then-cat fails with 'No such file or directory' (automount expires between commands). Tested 4 hosts (10.129.2.10/11/40.149/8.240) x 5 sessions (i9chj/zs1pj/q3lrp/0ekf9-prior-case/i73zm). Even known prior-case 0ekf9 (delivered r293) is now unreadable. r301-class external blocker. Prior rounds r317-r320 could peek USER#0 (access was working ~hours ago); now broken.",
+      "bugfix_keyword_parsing": "dig/ana digital-dominant filter was parsing $6(keywords) as space-separated 'word count' pairs, but $6 format is 'word:count;word:count;' (semicolon-colon). FIXED: split on ';' then ':' → 392 digital-dominant candidates (mc>=15, dig>ana, dig>=20) vs 0 with broken parser.",
+      "bugfix_exclusion_set": "ledger A col1 has '.messages.json' suffix; awk split('_') extracted '0ekf9.messages.json' not '0ekf9'. FIXED: sub(/\\.messages\\.json$/,) before split → 335 ledger SIDs (was 343 with 8 false-excluded). Combined exclusion (2218 cross-shard + 335 ledger = 2533) → 186 truly-fresh digital-dominant (was 223 before fix, 37 were false-fresh = ledger entries with suffix).",
+      "pool_assessment": "186 truly-fresh digital-dominant candidates (mc>=15, dig>ana, dig>=20) — pool NOT exhausted but INACCESSIBLE for deepreading due to NFS automount blocker. Top candidates by verilog-dominance: q3lrp(graywang mc210 verilog:3443/pex:654), zs1pj(e0030085 mc125 verilog:1315/ana:190), i73zm(eric1ch mc71 verilog:818/ana:4), ddprg(daiweilu mc53 verilog:1194/ana:12), i9chj(alan3zh mc121 innovus:1136/floorplan:88 — PNR signoff, already a case in ledger), 3j03k(tongfanl mc51 882/9). Many top-fresh are wrong-shard (synopsys=Custom Compiler analog: cwq7f/1wvdl/f6x1i e02141; skipper/.gds layout: toezr xxchen; waveview: qv6pl adaml).",
+      "clean_produce_scarcity": "CANNOT confirm/deny this round — NFS automount blocked all USER#0 peeks. 14 prior confirmations (r295/r296/r299/r300/r309/r311-r320) stand. Pool has 186 fresh digital-dominant but quality unknown (unable to peek).",
+      "next_round": "r322: retry NFS access (automount may be transient like r301-r303); if recovered, peek top verilog-dominant fresh candidates (zs1pj/i73zm/ddprg/q3lrp) for clean A-faithful produce; if still blocked, continue management + report blocker.",
+      "paper": "case count unchanged (A.jsonl 200), \\Ntasks维持990; latexmk check pending"
     }
   },
   "sessions": 38082,
