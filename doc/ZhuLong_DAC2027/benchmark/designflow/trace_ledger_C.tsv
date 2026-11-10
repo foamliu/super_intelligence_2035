@@ -632,3 +632,5 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked		2026-11-09 20:39	RAG-looku
 1793189369078_y8881					parked		2026-11-10 18:07	non-seed: only user msg '沙箱是否打开' env-recon how-to, no produce-task (xiwang@hfeg0pkn002 mc=192)
 1794010547317_7ansu					parked		2026-11-10 18:07	non-seed: PDK_QA issue-handler status check + DrcPatternCheck fix, user gives fixes (U#3/U#8/U#10), context-heavy refactoring not standalone (xinqiaoz mc=431)
 1791523535284_pibrs					parked		2026-11-10 18:07	non-seed: run_pyaether policy validation recon/how-to, no produce-task (t0002962@hfeg0plg90 mc=154)
+1793949837980_hs4sv	adaml	hfeg0pkn002	756	layout_virtuoso	parked		2026-11-10 18:31	non-seed: ai-skill-optimizer reviewing virtuoso-sch-editor SKILL.md doc; keywords from SKILL content not real EDA tool execution; not design_flow produce-task
+1793165088136_0suhi	e0046686	hfeg0pkn001	1412	physical_verify	parked		2026-11-10 18:31	wrong-shard D: AUTOSIM netlist/vector generation tool (netlist_generator.py, GUI bsub cluster); 1266 netlist vs 101 calibre incidental; shard D schematic_netlist
