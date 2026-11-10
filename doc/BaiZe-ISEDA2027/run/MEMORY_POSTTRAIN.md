@@ -14,7 +14,7 @@ WAITING: 0
 - 阻塞: GPU 0/8free(SGLang Qwen3.8-27B占全8卡44-45GB 0%util,11/9已过仍未释放);P3等pretrain ckpt(ETA≈2026-12-25)
 - 本轮新增调研产出: R145 SFT-to-RL Transfer Dynamics(baize_posttrain_r145_sft_rl_transfer.py 405行+5分析+成功阶梯映射+domain_coverage#1指标+M4不可达发现+verl hooks集成wrapper+RL GRPO脚本+import测试+EXPERIMENTS §R145+r145_sft_rl_transfer_report.json 26.4KB）
 - 未完成指令: 🔴用户令2026-11-07(GPU未到位,需持续产出调研) ⇒ WAITING=0
-- git: commit f9b51d537 ✅（08:31），push ⚠️ 超时（NFS/网络慢，ahead 1）→ 下轮第一件事补推
+- git: synced with origin/main（commit b9f95b35d, 08:31, 无ahead/behind）
 
 ## 关键事实（常驻）
 
