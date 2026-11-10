@@ -51,4 +51,6 @@
 - 真实 .spf 在 /rundata（仿真临时区，可能已 GC）→ 按 trace 文档化格式合成资产
 
 ## 状态
-- 已 claim（台账 claimed=1），**DEBT: 1 — 本轮预算耗尽未合成，下轮第一件事交付**
+- 已 claim + **mark case**（台账 covered 228→229, characterization 35→36, claimed 1→0）
+- **DEBT:1 已清偿** — 11-10 10:2x 合成交付 EDA-Eval-DesignFlow-DspfCapExtractValidate-001
+- jsonl B 227→228；reference/ + assets/hidden/ 已落盘；check.py 14 断言 ref PASS + 6neg FAIL + §4.9 三假 FAIL

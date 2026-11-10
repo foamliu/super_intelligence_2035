@@ -785,7 +785,7 @@ widtp	jingjiew	hfeg0pkn012	0	non_spice	parked		2026-11-10 09:06	translation cons
 u65cq	e0047472	hfeg0plg3569	257	non_spice	parked		2026-11-10 09:06	physical/PnR consultation, wrong shard A/C
 0k1mk	chapinc	hfeg0plg8124	34	non_spice	parked		2026-11-10 09:06	structural search, wrong shard A
 kakcd	kenwang	hfeg017216808192	5	non_spice	parked		2026-11-10 09:06	DRC rule dev, wrong shard C
-1794272818268_ckhfh	haoliu	hfeg0pkn004	0	characterization	claimed		2026-11-10 09:43	
+1794272818268_ckhfh	haoliu	hfeg0pkn004	0	characterization	case	EDA-Eval-DesignFlow-DspfCapExtractValidate-001	2026-11-10 10:11	
 1794207224914_u5zf8	zhengc	hfeg0plg66	0	off_domain	parked		2026-11-10 09:44	fresh-window 1110 peek reject (digital/verif/ops/consult/wrong-shard)
 1794274134828_p55ig	e13zhang	hfeg0pkn002	0	off_domain	parked		2026-11-10 09:44	fresh-window 1110 peek reject (digital/verif/ops/consult/wrong-shard)
 1794274307583_a7mjg	kepeim	hfeg0pkn002	0	off_domain	parked		2026-11-10 09:44	fresh-window 1110 peek reject (digital/verif/ops/consult/wrong-shard)
