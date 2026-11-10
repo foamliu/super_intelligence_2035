@@ -138,6 +138,20 @@ for h in HARNESSES:
 total_pred = sum(t for _,t,_,_ in predict)
 total_real = sum(r for _,_,r,_ in predict)
 
+# ---- TB-2.1 aggregates + ranking (dynamic) ----
+tb_total_pass = sum(tb21_data[h]["passed"] for h in HARNESSES)
+tb_total_trials = sum(tb21_data[h]["completed"] + tb21_data[h]["errored"] for h in HARNESSES)
+tb_rank = sorted(((disp(h), tb21_data[h]["passed"], tb21_data[h]["status"]) for h in HARNESSES), key=lambda x: -x[1])
+tb_rank_str = "，".join(f"{n} {p}p({'rerun中' if st=='running' else 'done'})" for n,p,st in tb_rank if p > 0) or "全部0p"
+# ---- SWE-bench leading routes (dynamic, by pass rate) ----
+sw_rank = sorted([s for s in swebench if s[1]], key=lambda x: -x[2]/x[1])
+sw_lead_str = "，".join(f"{n} {r}/{nn}({r/nn*100:.1f}%)" for n,nn,r,_,_,_ in sw_rank[:3])
+sw_by_name = {s[0]: (s[1], s[2]) for s in swebench}
+_cl_n, _cl_r = sw_by_name.get("cline", (0,0))
+_oc_n, _oc_r = sw_by_name.get("opencode", (0,0))
+_cl_rate = f"{_cl_r/_cl_n*100:.1f}%" if _cl_n else "—"
+_oc_rate = f"{_oc_r/_oc_n*100:.1f}%" if _oc_n else "—"
+
 HTML = f"""<!DOCTYPE html>
 <html lang="zh-CN"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
@@ -148,7 +162,7 @@ HTML = f"""<!DOCTYPE html>
 <p><strong>模型</strong>：glm-5.3-flash（网关 HTTP 200 · 已恢复）</p>
 <p><strong>7 路</strong>：cline / codex / opencode / claude-code / pi / hermes / deepseek</p>
 <p><strong>生成时间</strong>：{NOW}（{ROUND}）</p>
-<p><strong>状态</strong>：predict {total_pred}/3500={total_pred/3500*100:.1f}%（7路alive·网关200·predict进行中）；eval {total_resolved} resolved(0 true backlog·incr_eval R2124中)；TB-2.1 7路(81p/677t)</p>
+<p><strong>状态</strong>：predict {total_pred}/3500={total_pred/3500*100:.1f}%（7路alive·网关200·predict进行中）；eval {total_resolved} resolved(0 true backlog·incr_eval {ROUND}已完成)；TB-2.1 7路({tb_total_pass}p/{tb_total_trials}t)</p>
 </div>
 <div class="note"><p><strong>资源自检</strong>：CPU 33/224=15% ✅；内存 1.1Ti avail ✅；磁盘 /data 5.8T + / 352G ✅；网关 200 ✅(已恢复) (quota exhausted)</p></div>
 
@@ -161,7 +175,7 @@ HTML = f"""<!DOCTYPE html>
 <table><tr><th>#</th><th>Harness</th><th>Eval N</th><th>Resolved</th><th>Unresolved</th><th>Errored</th><th>Rate</th><th>状态</th></tr>
 {sw_rows}</table>
 <div class="info"><ul>
-<li>hermes 89.9%领先(328/365)，opencode 80.9%(317/392)，deepseek 79.5%(120/151)</li>
+<li>领先: {sw_lead_str}</li>
 <li>eval全量完成:7/7 DONE,{total_resolved} resolved/{total_evaluated} evaluated,0 backlog</li>
 <li>各路predict推进中(网关429 blocking),eval随新predict增量更新</li>
 </ul></div>
@@ -178,7 +192,7 @@ HTML = f"""<!DOCTYPE html>
 <div class="info"><p>口径：TB-2.1/89题/7-way（与TB4不可比）。Oracle 5/5 ✅。§15:2x判据MET ✅</p></div>
 <table><tr><th>Harness</th><th>已完成</th><th>Passed</th><th>Errored</th><th>Remaining</th><th>通过率</th><th>状态</th></tr>
 {tb_rows}</table>
-<div class="note"><p>TB-2.1进行中:7路concurrent,81p/677t。pi 34p领先,opencode 18p(rerun中),deepseek 11p,cline 10p,hermes 7p,codex 1p,claude-code 0p。codex err=适配器(infra),claude-code 0p待分析。</p></div>
+<div class="note"><p>TB-2.1进行中:7路concurrent,{tb_total_pass}p/{tb_total_trials}t。领先: {tb_rank_str}。codex err=适配器(infra),claude-code 0p待分析。</p></div>
 
 <h2>5. cline 专项（§10:10 C1-C5）</h2>
 <table><tr><th>指标</th><th>值</th><th>判据</th></tr>
@@ -188,7 +202,7 @@ HTML = f"""<!DOCTYPE html>
 <tr><td>C4 心跳</td><td>real={cline_real}/empty={cline_empty}/top1=能力差(real patch但tests fail)</td><td>每轮含一行</td></tr>
 <tr><td>C5 报告</td><td>report_harness_cline_special_zh.html</td><td>0外链</td></tr>
 </table>
-<div class="info"><p>cline空patch={cline_empty}(cleanup后,由历史429产生后删除·网关已恢复200)。cline eval pass rate=75.3%(143/190),opencode=80.1%(317/392),差距为能力差(p=6.27e-08,R1685)。eval {total_resolved} resolved(0 true backlog),pass%可直接对比。</p></div>
+<div class="info"><p>cline空patch={cline_empty}(cleanup后,由历史429产生后删除·网关已恢复200)。cline eval pass rate={_cl_rate}({_cl_r}/{_cl_n}),opencode={_oc_rate}({_oc_r}/{_oc_n}),差距为能力差(p=6.27e-08,R1685)。eval {total_resolved} resolved(0 true backlog),pass%可直接对比。</p></div>
 
 <h2>6. 失败归因（infra单列）</h2>
 <table><tr><th>类型</th><th>描述</th><th>归因</th></tr>
@@ -210,8 +224,8 @@ HTML = f"""<!DOCTYPE html>
 <h2>9. 后续计划</h2>
 <div class="info"><ol>
 <li>predict 7路推进至500(当前{total_pred}/3500={total_pred/3500*100:.1f}%,网关200·predict进行中)</li>
-<li>eval {total_resolved} resolved(0 true backlog)·新predict后增量eval(R2124: 15 instances eval中)</li>
-<li>TB-2.1: 7路(80p/674t),pi 34p领先,opencode 31p(rerun中)</li>
+<li>eval {total_resolved} resolved(0 true backlog)·新predict后增量eval({ROUND}: incr_eval已完成·待新predict累积)</li>
+<li>TB-2.1: 7路({tb_total_pass}p/{tb_total_trials}t),领先: {tb_rank_str}</li>
 <li>网关200稳定后各路predict继续推进至500→里程碑报告</li>
 </ol></div>
 
