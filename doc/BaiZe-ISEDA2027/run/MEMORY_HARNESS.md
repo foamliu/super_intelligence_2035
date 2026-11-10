@@ -4,20 +4,22 @@ WAITING: 0
 
 ## 📊 进度快照
 
-PHASE:        R2064 监控轮·gateway HTTP200·glm53 predict 1969/3500(56.3%·1302r/667e=66%real)·TRUE eval=252/505(49.9%·hermes 153/186=82.3%↑)·incr_eval R2026 RUNNING(on hermes)·CPU PASS·MEM PASS·不产出HTML(11-09纪律)
-已完成:       H-B✅·Gate7/7·TB报告✅·cline专项C1-C5+报告R1785-R2004·TB4 0passed(能力)·TB-2.1 oracle5/5✅·§15:2x判据MET✅·R1789 eval 7/7DONE✅·R1804双报告交付✅·R1969-R2063 incr_eval+监控·R2033 old-run 3 routes 500/500 milestone·R2048 TB-2.1全7路DONE(517t/46p)·R2061 claude-code配置BUG修复+计数纠正·R2062 cline C2空patch分类完成·R2063 TRUE eval 240/493(48.7%)·R2064 TRUE eval 252/505(49.9%)
-当前动作:     R2064:①CPU PASS(load 43/224=19%) ②MEM PASS(1061GB avail) ③gateway HTTP200 ④glm53 predict=1969/3500(1302r/667e=66%real):cline242/500(153r/89e)+codex263/500(69r/194e)+opencode401/500(340r/61e)+cc280/500(147r/133e)+pi183/500(123r/60e)+hermes424/500(339r/85e)+dsh176/500(131r/45e) ⑤incr_eval R2026 RUNNING(PID 1009098·6.7h·on hermes·cline+codex+opencode DONE) ⑥**TRUE eval(reparse)=252/505(49.9%)**↑from 240/493:cline8/45(17.8%)+codex11/36(30.6%)+opencode30/96(31.2%)+cc15/48(31.2%)+pi24/56(42.9%)+**hermes153/186(82.3%)**↑from 141/174+dsh11/38(28.9%)·hermes eval+12 ⑦7路全活predicting ⑧不产出HTML(11-09纪律) ⑨research日报11-10已阅 ⑩未完成指令:有(§10:10+§22:4x)⇒W:0
-下一步:       ①7路predict续跑→各路500/500(当前最高hermes424/500·最低dsh176/500) ②incr_eval R2026续跑(hermes→cc→pi→dsh) ③7路满500+eval全DONE→里程碑报告(允许HTML) ④持续监控CPU/MEM ⑤C3:cline empty 89(非归零·R2062 C2已证71%=quota429非resume bug)
-阻塞:         无(gateway healthy·7路全活·incr_eval running)
+PHASE:        R2065 监控轮·gateway HTTP200·glm53 predict 1973/3500(56.4%)·TRUE eval=256/509(50.3%·hermes 157/190=82.6%↑)·incr_eval R2028 LAUNCHED(cline 127 backlog evaluating)·CPU PASS·MEM PASS·不产出HTML(11-09纪律)
+已完成:       H-B✅·Gate7/7·TB报告✅·cline专项C1-C5+报告R1785-R2004·TB4 0passed(能力)·TB-2.1 oracle5/5✅·§15:2x判据MET✅·R1789 eval 7/7DONE✅·R1804双报告交付✅·R1969-R2064 incr_eval+监控·R2033 old-run 3 routes 500/500 milestone·R2048 TB-2.1全7路DONE(517t/46p)·R2061 claude-code配置BUG修复+计数纠正·R2062 cline C2空patch分类完成·R2064 TRUE eval 252/505(49.9%)·R2065 TRUE eval 256/509(50.3%)+incr_eval R2026 DONE+R2028 launched
+当前动作:     R2065:①CPU PASS(load 48/224=21.7%) ②MEM PASS(1039GB avail) ③gateway /models 200 ④glm53 predict=1973/3500:cline242/500+codex263/500+opencode402/500+cc280/500+pi185/500+hermes425/500+dsh176/500 ⑤incr_eval R2026 DONE(PID 1009098 gone·hermes 152/152 completed)·**incr_eval R2028 LAUNCHED**(PID 4130298·cline-patched 127 backlog evaluating) ⑥**TRUE eval(reparse)=256/509(50.3%)**↑from 252/505:cline8/45(17.8%)+codex11/36(30.6%)+opencode30/96(31.2%)+cc15/48(31.2%)+pi24/56(42.9%)+**hermes157/190(82.6%)**↑from 153/186+dsh11/38(28.9%)·hermes+4 ⑦7路全活predicting ⑧TB-2.1 7way running(pi on protein-assembly) ⑨不产出HTML(11-09纪律) ⑩未完成指令:有(§10:10+§22:4x)⇒W:0
+下一步:       ①7路predict续跑→各路500/500(当前最高hermes425/500·最低dsh176/500) ②incr_eval R2028续跑(cline→codex→opencode→cc→pi→hermes→dsh) ③7路满500+eval全DONE→里程碑报告(允许HTML) ④持续监控CPU/MEM ⑤C3:cline empty 70(非归零·R2062 C2已证71%=quota429非resume bug)
+阻塞:         无(gateway healthy·7路全活·incr_eval R2028 running)
 ERROR_COUNT:  0
-  📦 体积：TASK=31.0KB / MEMORY=25.3KB（均在32KB限内·无归档）
-  🔍 cline专项小结: predict_glm53=242/500(153real/89empty=63%real)·TRUE eval=8/45(17.8%)·C1:242/500(153r/89e)·C2:68empty分类DONE(R2062)=48quota-429(71%)+12timeout+4ranoedit+2silent+1 5xx+1auth·C3:empty 89(非归零·71%=网关额度429非resume bug)·失败top1=网关额度429
+  📦 体积：TASK=31.0KB / MEMORY=25.5KB（均在32KB限内·无归档）
+  🔍 cline专项小结: predict_glm53=242/500(172real/70empty=71%real)·TRUE eval=8/45(17.8%)·C1:242/500(172r/70e)·C2:68empty分类DONE(R2062)=48quota-429(71%)+12timeout+4ranoedit+2silent+1 5xx+1auth·C3:empty 70(非归零·71%=网关额度429非resume bug)·失败top1=网关额度429
 
 > 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
 
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 ### 本唤醒流水
-[08:41] R2064 监控轮:①CPU PASS(load 43/224=19%) ②MEM PASS(1061GB avail) ③gateway HTTP200 ④glm53 predict=1969/3500(1302r/667e=66%real):cline242(153r/89e)+codex263(69r/194e)+opencode401(340r/61e)+cc280(147r/133e)+pi183(123r/60e)+hermes424(339r/85e)+dsh176(131r/45e)·cc+1(empty) ⑤incr_eval R2026 RUNNING(PID 1009098·6.7h·on hermes·cline+codex+opencode DONE) ⑥**TRUE eval(reparse)=252/505(49.9%)**↑from 240/493:cline8/45(17.8%)+codex11/36(30.6%)+opencode30/96(31.2%)+cc15/48(31.2%)+pi24/56(42.9%)+**hermes153/186(82.3%)**↑from 141/174(+12r)+dsh11/38(28.9%) ⑦7路全活predicting ⑧不产出HTML(11-09纪律) ⑨research日报11-10已阅(无新actionable·确认429quota issue+guardrail已impl via reparse) ⑩C3:cline empty 89(非归零·71%=quota429) ⑪未完成指令:有(§10:10+§22:4x)⇒W:0
+[08:55] R2065 监控轮:①CPU PASS(load 48/224=21.7%) ②MEM PASS(1039GB avail) ③gateway /models 200 ④glm53 predict=1973/3500:cline242+codex263+opencode402+cc280+pi185+hermes425+dsh176 ⑤incr_eval R2026 DONE(PID 1009098 gone·hermes 152/152 completed)·**incr_eval R2028 LAUNCHED**(PID 4130298·cline-patched 127 backlog evaluating) ⑥**TRUE eval(reparse)=256/509(50.3%)**↑from 252/505:cline8/45(17.8%)+codex11/36(30.6%)+opencode30/96(31.2%)+cc15/48(31.2%)+pi24/56(42.9%)+**hermes157/190(82.6%)**↑from 153/186(+4r)+dsh11/38(28.9%) ⑦7路全活predicting ⑧TB-2.1 7way running(pi on protein-assembly) ⑨不产出HTML(11-09纪律) ⑩C3:cline empty 70(非归零·71%=quota429) ⑪未完成指令:有(§10:10+§22:4x)⇒W:0
+
+> 📦 [08:41] R2064 流水已归档 → daily-memories-harness/2026-11-10.md。结论：监控轮·predict 1969/3500·TRUE eval 252/505(49.9%)·hermes 153/186(82.3%)·incr_eval R2026 on hermes·CPU/MEM PASS。需要时再读。
 
 > 📦 [08:35] R2063 流水已归档 → daily-memories-harness/2026-11-10.md。结论：监控轮·predict 1968/3500·TRUE eval 240/493(48.7%)·hermes 141/174(81%)·incr_eval R2026 on opencode·CPU/MEM PASS。需要时再读。
 
