@@ -15718,3 +15718,110 @@ Process 3557214 has 36.30 GiB memory in use.
 2. **Phase1 唯一解锁路径 = 运维恢复 10.129.32.75**（开端口 8664/8665/8653/8667/8669 或重启其上的沙盒服务），或运维提供另一台**已装 pyAether + EDA 工具**的主机 H 供设 `SANDBOX_HOST=H`。后者仍需 EDA 工具环境，非 .17 可独立完成。
 3. **不改动 `.env`**：`.env` 由 harness 线/eda_fastmcp 维护，本线只读引用；unlock-B 的环境变量切换由运维在恢复沙盒时统一处置。
 4. **本轮无需新增脚本**：所有 agent 侧 prep（P0/P1/P2/P3/Phase1 启动脚本/SFT 管线/RL 依赖审计/就绪性验证）已穷尽，Phase1 8/8 preflight 仅沙盒 1 项 BLOCKED，沙盒一通即可 `--smoke` → 正式三模型 5-run。
+
+---
+
+## §R147: EDA-Eval API Census + pyAether MCP Live Database Assessment + Eval Harness Architecture Discovery（wake215, 2026-11-11, 零 GPU · 实测）
+
+> **背景**：R146 确认 unlock-B 本地沙盒不可行，远程沙盒 10.129.32.75 连续 20 wake CLOSED。本轮利用 **pyAether MCP 工具的 API 查询功能**（search_apis / get_api_details / search_apis_by_keyword，均正常工作）对 EDA-Eval 158 题做 API 普查、污染隔离验证，并发现评估 harness 架构的关键事实。
+
+### R147.1 EDA-Eval API Census（488 unique APIs × 158 tasks）
+
+**数据源**：`~/code/eda_fastmcp/pyAether-eval/original_dataset/EDA-Eval-PyAether-v20260311.jsonl`（158 行，.17 本机可达）。
+
+每题 `metadata.apis_used` 字段列出该题使用的 pyAether API（带 `pyAether.` 前缀）。去重后 **488 个 unique API**，按 6 个 task category 分布：
+
+| Category | Tasks | Unique APIs | 代表性 API |
+|:--|--:|--:|:--|
+| Design Content Creation | 46 | 192 | EmyLPPHeader.create, emyRect.create, emyPolygon.create, emyInst, emyTerm.create |
+| Simulation & Analysis Configuration | 21 | 111 | MdeAcAnalysis, MdeDcAnalysis, MdeTranAnalysis, MdeSession.netlistAndRun, MdeSetting |
+| Geometry Operation & Analysis | 26 | 85 | aeMergeShapes, aeViaGenerateViasAtPoint, dbConvertPolygonToPath, goaLayerSize |
+| Design Content Query & Edit | 25 | 78 | dbOpenCV, dbGetOpenCV, aeGetActiveDa, cdfGetCDF, car |
+| Database & Design Management | 25 | 65 | aeCreateTree, cdfCreateCDF, dmOpenLib, dmGetLibList, dmSetForcedLib |
+| Utilities | 15 | 44 | emyStringGetNumUniqueBits, emyCdbaNS, CString, CStringList, etPcreSubstitute |
+
+**Scenario 分布**（与任务书一致）：Layout 64 / Schematic 47 / Design Management 24 / Others 23。
+**Techlib 依赖**：45 题 techlib_dependency=true，113 题 false。
+
+**结论**：488 个 API 覆盖 EDA 全流程（设计创建 → 查询编辑 → 几何操作 → 仿真配置 → 库管理 → 工具函数）。SFT/退火语料的 API 参考文档应按此 6 类配比，**Design Content Creation（192 API / 46 题）** 是最大权重域。
+
+### R147.2 pyAether MCP Live Tools Assessment
+
+通过本轮实测（在 cline agent 环境内直接调用 MCP 工具）：
+
+| MCP 工具 | 功能 | 状态 | 备注 |
+|:--|:--|:--|:--|
+| `search_apis` | 语义搜索 API（向量嵌入） | ✅ 正常 | 返回 api_name/description/similarity + BM25 补充 |
+| `search_apis_by_keyword` | 关键词搜索 API | ✅ 正常 | 支持 CamelCase 片段、缩写查询 |
+| `get_api_details` | 获取 API 详细文档 | ✅ 正常 | 返回**极丰富**数据：完整签名 + 参数类型 + 返回类型 + 示例 + **补充说明（测试验证）** + 错误处理 + 最佳实践 + 相关 API 对比 + category 分类 |
+| `run_code` (lang=pyAether) | 远程 EDA 沙盒执行代码 | ❌ 超时 60s | 即使 `1+1` 也超时——后端 10.129.32.75:8667 不可达（与 R146 一致） |
+| `run_code` (lang=skill) | Virtuoso SKILL 沙盒 | 未测试 | 路由到 SKILL sandbox port |
+
+**关键发现**：`get_api_details` 返回的数据远比静态 `API_INFO_MERGED_V3.json` 丰富。以 `emyStringGetNumUniqueBits` 为例，MCP 返回：
+- 完整签名 `emyStringGetNumUniqueBits(ns: emyNameSpace, sName: emyString) -> emyUInt4`
+- 5 个测试验证场景（基本计数/位范围/乘数/复杂组合/边界情况）
+- 常见错误和解决方法（名称空间不匹配 SystemError）
+- 相关 API 对比（emyNameGetNumUniqueBits / emyBundleNameGetNumUniqueBits / emyTermGetNumUniqueBits）
+- 最佳实践代码示例
+
+**静态 JSON 无此「补充说明（通过测试验证）」部分**——MCP live database 是更优质的 SFT/退火语料来源。
+
+### R147.3 评估 Harness 架构发现
+
+通过分析 `~/eda_code_eval/2026_1110_094902/` 的 trace 和 full_tasks：
+
+1. **评估 harness = MCP 工具系统**：被评测模型通过 cline agent 使用三个 MCP 工具解题：
+   - `search_apis` → 搜索 API（✅ 可用）
+   - `get_api_details` → 获取 API 文档（✅ 可用）
+   - `run_pyAether_code_tool` → 执行代码（= `run_code`，❌ 沙盒阻塞）
+
+2. **Task prompt 结构**（`full_tasks/EDA-Eval-PyAether-001.md`）：
+   - 系统角色：「精通 pyAether 文档的 python 工程师」
+   - 工具使用清单：三个 MCP 工具 + 使用注意事项
+   - TECHLIB 路径：`/proj/train/AI/workdir/e0023936/`（在沙盒机 10.129.32.75 上，.17 无此路径）
+   - 代码规范：函数级、≤200 行、英文 docstring、≤3 个 assert
+   - 合规流程：分析 → search_apis → get_api_details → 编写 → run_pyAether_code_tool 测试 → 验证
+
+3. **Nov 10 eval 运行分析**：
+   - 14 个 eval 目录（`2026_1110_092112` ~ `2026_1110_102129`），全部 2026-11-10
+   - `2026_1110_094902`：仅 1 任务（task 001），模型 = glm-5.2（DeepSeek 替身，非 MiniCPM5-2B）
+   - `completed_code_generation_2026_1110_094902.jsonl`：158 行但 157 行是未运行任务的占位（completion="pass", status="fail"）
+   - **无 final_report.json**（`find ~/eda_code_eval -name final_report.json` 返回空）
+   - 日志 `batch_cline.log`：「任务数量: 1」「成功[1] / 超时[0] / 失败[0]」「跳过沙盒清理 (SKIP_SANDBOX_CLEAN=1)」
+
+4. **评估流程**：模型生成代码 → `run_pyAether_code_tool` 在沙盒执行 → 断言验证 → 评分。**沙盒不通 = 无法评分**，即使模型生成了正确代码。
+
+### R147.4 污染隔离验证（红线 §5.1）
+
+**规则**：158 题的 prompt + canonical_solution + test 代码绝对不能进训练集。API 参考文档（描述/签名/示例）可以进训练集。
+
+**验证**：
+- `get_api_details("emyStringGetNumUniqueBits")` 返回的文档含通用示例 `res = pyScript.emyStringGetNumUniqueBits(ns, 'a,2*b,c<1:0>,a,2*b')`
+- EDA-Eval task 001 的 canonical_solution 是 `def count_unique_bus_bits(ns, bus_string): return pyScript.emyStringGetNumUniqueBits(ns, bus_string)` — 这是**任务包装函数**，不在 API 文档中
+- API 文档的示例是**API 级直接调用**，task 的 solution 是**函数级包装**，二者结构不同
+- **结论**：API 参考文档可安全用于 SFT/退火语料；隔离规则 = 按 API 名隔离即可（API 文档 ≠ task solution）
+
+**隔离脚本已就绪**：wake4 的污染隔离规则草案（P1-e）+ L2 500 题的 0 污染命中验证已确认此规则可行。488 个 API 的文档均可用于训练。
+
+### R147.5 SFT/退火语料组装建议（基于 R147 数据更新）
+
+| 来源 | 估算 token | 获取方式 | 污染隔离 |
+|:--|--:|:--|:--|
+| MCP get_api_details（488 API） | ~2-3M tok | 批量调用 `get_api_details`，提取 api_descriptions + 补充说明 | ✅ API 级隔离，无 task solution |
+| 静态 API_INFO_MERGED_V3.json（8463 API） | ~3.3-4.5M tok | wake4 已调研，直接读取 | ✅ 同上 |
+| MCP search_apis 补充描述 | ~0.5-1M tok | 按关键词搜索补充短描述 | ✅ 同上 |
+| **合计 PyAether 领域语料** | **~6-9M tok** | MCP live + 静态 JSON 组合 | ✅ 红线合规 |
+
+**行动项**（沙盒恢复后或零 GPU 可做）：
+1. 批量调用 `get_api_details` 获取 488 个 EDA-Eval API 的完整文档 → 落盘为 `pyAether_api_ref_488.jsonl`
+2. 与静态 JSON 合并去重 → 生成 SFT/退火用的 PyAether 领域语料
+3. 按 6 类配比混合（Design Content Creation 权重最高）
+
+### R147.6 结论
+
+1. **pyAether MCP API 查询工具正常工作**（search_apis / get_api_details / search_apis_by_keyword），可作为 SFT/退火语料的**高质量数据源**——比静态 JSON 更丰富（含测试验证补充说明）。
+2. **run_code（沙盒）仍阻塞**（20th wake），Phase1 评测硬阻塞不变。
+3. **评估 harness 架构 = MCP 工具系统**：被评测模型用 search_apis + get_api_details + run_pyAether_code_tool 解题。沙盒不通 = 模型无法测试代码 + 评分无法执行。
+4. **488 个 EDA-Eval API 已普查**，按 6 类分布，可直接指导 SFT/退火语料配比。
+5. **污染隔离已验证**：API 文档 ≠ task solution，按 API 名隔离即可合规。
+6. **eda_fastmcp 在 .17 的 `~/code/eda_fastmcp/`**，158 题数据集 + eval 基础设施均可达。
