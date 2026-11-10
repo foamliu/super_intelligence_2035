@@ -1413,3 +1413,4 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1792561000352_mdxo8	kaixuanx	hfeg0pkn002	149	waveform	case	EDA-Eval-DesignFlow-FsdbPowerWindowAnalysis-001	2026-11-10 11:10	
 1793964715214_ddg83	zhililu	hfhds219	46	schematic_netlist	case	EDA-Eval-DesignFlow-NetlistMasterDiag-001	2026-11-10 11:45	round476 schematic_netlist B L2 k=12
 1794143890547_lnkot	jackjia	hfeg0pkn002	535	waveform	case	EDA-Eval-DesignFlow-FsdbSpfbaPowerfillCatalog-001	2026-11-10 12:13	
+1793785648416_8go01	e0039602	hfeg0plg103	248	schematic_netlist	case	EDA-Eval-DesignFlow-PassModuleSplice-001	2026-11-10 12:53	schematic_netlist B-grade synthesized L2 k=12, e0039602@hfeg0plg103 mc=248, splice PASS gate-level ff modules from allpass into oneshot; 8go01 turn[43]
