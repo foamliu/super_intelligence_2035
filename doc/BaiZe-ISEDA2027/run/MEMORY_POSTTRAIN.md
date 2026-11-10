@@ -14,7 +14,7 @@ WAITING: 0
 - 阻塞: 🔴远程沙盒10.129.32.75主机级防火墙(ping OK但TCP22/8664-8669全CLOSED,连续10 wake)→Phase1 eval阻塞;GPU5/6/7被serve占位(17:10令)→SFT待GPU释放;P3等pretrain ckpt
 - 本轮新增产出: SFT脚本修复落地(fix1 --clean-gpu+fix2 NCCL_P2P_DISABLE+fix4 GPU wait→baize_posttrain_sft_surrogate.sh 85→140行,全验证✅)+EXPERIMENTS §SFT-failure-analysis追加修复记录
 - 未完成指令: 🔴用户令17:10(serve占位)✅持续维护中;🔴用户令13:40(三阶段替身计划)Phase1待沙盒/Phase2待GPU释放/Phase3待SFT ckpt ⇒ 全外部阻塞
-- git: wake205 commit待push
+- git: wake205 commit a6e70e0c6✅ pushed✅(rebase on 6c6d50a4e, synced, 无ahead/behind)
 
 ## GPU 端口映射表（2026-11-10 wake195 实测）
 
