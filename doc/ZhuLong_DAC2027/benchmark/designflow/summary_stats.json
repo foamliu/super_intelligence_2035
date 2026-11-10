@@ -1041,6 +1041,73 @@
     "parks_this_session": 7,
     "note": "95kx2 deepread was spice_sim (shard B domain) - NOT shard A candidate; abandoned"
    }
+  },
+  "r318": {
+   "ts": "2026-11-10T16:40:00+08:00",
+   "date": "2026-11-10",
+   "round_type": "management + candidate-pool reassessment + r2yjr claim/deepread-init (DEBT:1 -> r319 build)",
+   "scan_dir": "ssh_eda_search_20261109_224902",
+   "scan_path": "/home/t0002965/log/ssh_eda_search_20261109_224902/summary.tsv",
+   "scan_rows": 38082,
+   "daily_log_20261110_lines": 2981,
+   "daily_log_healthy": true,
+   "no_new_scan": true,
+   "no_new_scan_since": "r292 (11/09 full rescan; r293-r318 = 26 consecutive mgmt rounds no newer scan dir; only 11/09+11/05+10/28 exist)",
+   "candidate_pool_reassessment": {
+    "method": "python filter on .75 summary.tsv: mc>=15 + digital-dominant (digital kw count > analog kw count), dedup by session, exclude 339 shard-A ledger",
+    "digital_dominant_total": 380,
+    "fresh_unledgered": 214
+   },
+   "fresh_top_by_mc": [
+    {
+     "sid": "1790849679042_bjkmi",
+     "mc": 417,
+     "user": "tongfanl",
+     "kw": "analog:1509;verilog:964;systemverilog:674",
+     "note": "tongfanl overrepresented, borderline analog"
+    },
+    {
+     "sid": "1793177004095_tsn3o",
+     "mc": 327,
+     "user": "fernandoy",
+     "kw": "synopsys:2260;rtl:1593",
+     "note": "fernandoy genus/synthesis, parked-too-big r295 sibling"
+    },
+    {
+     "sid": "1792980364535_fyknj",
+     "mc": 296,
+     "user": "e0039602",
+     "kw": "verilog:938;netlist:570;lvs:102"
+    },
+    {
+     "sid": "1794201552569_r2yjr",
+     "mc": 287,
+     "user": "e0039602",
+     "kw": "verilog:1058;lvs:227;netlist:156;rtl:48",
+     "note": "CLAIMED r318 - clean A-faithful produce (tb_family xrun check)"
+    },
+    {
+     "sid": "1789976011359_06htj",
+     "mc": 275,
+     "user": "mike",
+     "kw": "synopsys:1314;verilog:312;rtl:56"
+    },
+    {
+     "sid": "1793931639221_rv1g2",
+     "mc": 249,
+     "user": "e0039602",
+     "kw": "verilog:1252;netlist:379;drc:65",
+     "note": "r317-plan deepread candidate, e0039602 diversity concern, deferred"
+    }
+   ],
+   "finding": "r292 full rescan (696 hosts) opened pool: 380 digital-dominant (mc>=15), 214 fresh un-ledgered. Pool NOT exhausted (prior r268-r291 exhaustion was 42-host coverage artifact, fixed r292). clean A-faithful produce still scarce but r2yjr viable (tb_family xrun check, L2). tongfanl/fernandoy/e0039602 overrepresented; digital-dominant-ratio filter successfully excludes wrong-shard analog that dominated unfiltered top.",
+   "claim": "1794201552569_r2yjr (e0039602/hfeg0pkn002 mc287 digital) - clean A-faithful produce: U#0 verbatim asks check verilog_lib_trans result_map (883 cells) vs tb_family (Xcelium xrun functional compare), write PASS to merged sv, return FAIL with reasons. Deepread: 194msgs/1MB, agent wrote _analyze/_run_all/_summary checker -> _results.json (verdict/fam/miss/reason per cell) + tb_family_check_report + final_merged_netlist_stdcells_ac_converted.sv (691 PASS / 192 FAIL=51 MISMATCH+141 NO_CONVERT). U#101 继续=fix-loop L3-too-complex excluded.",
+   "reframe_plan": "spec-driven generator gen_tb_family_check.py + spec_a.json -> emit tb_family_check.py (family derivation + verdict ground-truth lookup + merged sv + report). check.py static-verifies emitted output vs spec_b ground-truth (no xrun in grading env, matches r297 CkmuxXlsxExport / r310 SignalXrefBuilder pattern). ~16 conds a-p.",
+   "case_delivered": "none (DEBT:1 deepread-init, build -> r319)",
+   "shard_A_new_this_round": 0,
+   "shard_A_new_cumulative": 0,
+   "DEBT": 1,
+   "DEBT_note": "r2yjr deepread complete (trace_deepreads/r2yjr_verilog_lib_tb_family_check.md), case build deferred to r319"
   }
  },
  "sessions": 38082,
@@ -1052,7 +1119,7 @@
  },
  "source": "/home/t0002965/log/ssh_eda_search_20261105_192825/summary.tsv (11/05 scan)",
  "target_mc": 30,
- "updated_at": "2026-11-10T15:40:00+08:00",
+ "updated_at": "2026-11-10T16:40:00+08:00",
  "users_mc100": 182,
  "users_mc30": 401,
  "users_mc300": 60,
