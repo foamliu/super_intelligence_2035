@@ -14,7 +14,7 @@ WAITING: 0
 - 阻塞: 🔴远程沙盒10.129.32.75主机级防火墙(ping OK但TCP22/8664-8669全CLOSED,连续7 wake)→Phase1 eval阻塞;GPU5/6/7被serve占位(17:10令)→SFT待GPU释放;P3等pretrain ckpt
 - 本轮新增产出: serve健康复检(5端点✅,日志全200 OK)+沙盒复检(仍CLOSED,7th wake)+体积归档(wake189-192→daily,MEMORY 32.6KB→26.7KB)+P3脚本复检(4脚本bash -n OK)
 - 未完成指令: 🔴用户令17:10(serve占位)✅持续维护中;🔴用户令13:40(三阶段替身计划)Phase1待沙盒(主机级防火墙需运维)/Phase2待GPU释放/Phase3待SFT ckpt ⇒ 全外部阻塞
-- git: wake202 synced(无ahead/behind)
+- git: wake202 commit f822c965e✅(本地),push失败(github.com:443 timeout,连续wake网络recurring)→ahead 1,loop/下次唤醒补推
 
 ## GPU 端口映射表（2026-11-10 wake195 实测）
 
