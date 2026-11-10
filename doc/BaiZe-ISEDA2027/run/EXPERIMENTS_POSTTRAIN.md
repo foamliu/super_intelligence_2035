@@ -7560,3 +7560,88 @@ bash baize_posttrain_contamination_gate.sh --rl-synth rl_pyaether_synth_v2.parqu
 
 **数据溯源**：本节所有数字来自 `baize_posttrain_r169_sandbox_acl_escalation.py` 实测输出（ping / tcp_probe / ip route / arp / ss）。JSON 已落盘。无伪造。
 
+---
+
+## §R170 — Phase 2 Surrogate SFT Training Launch + tools_key=null Bug Fix（wake239, 2026-11-11, GPU 6/7）
+
+> **替身预演，收益不可迁移到 BaiZe**（MiniCPM5-2B Llama-arch != BaiZe Mamba2）
+
+### 1. 背景
+
+R169 关键洞察：Phase 2 SFT 训练本身**不需沙盒**（沙盒仅 post-SFT eval 需要）。
+因此即使沙盒仍 CLOSED（44th wake），SFT 训练可立即启动。
+GPU 6/7 原被 17:10 令的 vLLM serve 占位 → teardown 转为训练用途（更高效的 GPU 占用）。
+
+### 2. tools_key=null Bug Fix
+
+**问题**：`baize_posttrain_sft_surrogate.sh` 使用 verl FSDP2 multiturn SFT（`data.multiturn.enable=true`），
+verl 默认 `data.multiturn.tools_key=tools`。但 SFT parquet（`sft_pyaether_corpus_unified_v5v6v7.parquet`）
+只有 `conversation` 和 `metadata` 两列，无 `tools` 列 → `KeyError: 'tools'` crash。
+
+**修复**：`baize_posttrain_sft_surrogate.sh` L211 新增 `data.multiturn.tools_key=null`。
+verl `multiturn_sft_dataset.py` L43 `self.tools_key = multiturn_config.get("tools_key", None)` →
+当 `tools_key=None` 时走 else 分支 `self.tools = None`，不访问 parquet 的 `tools` 列。
+
+**验证**：smoke test 5 步全 PASS，loss 正常下降，checkpoint 保存成功。
+
+### 3. Smoke Test 结果（2026-11-11 07:34, GPU 6/7）
+
+| 步骤 | loss | lr(1e-3) | 秒/步 |
+|---:|---:|---:|---:|
+| 1 | 2.332 | 0.005 | 20.1 |
+| 2 | 2.184 | 0.010 | 19.1 |
+| 3 | 1.746 | 0.010 | 18.7 |
+| 4 | 1.448 | 0.010 | 18.5 |
+| 5 | 1.183 | 0.010 | 18.5 |
+
+- Checkpoint: `sft_surrogate_runs/minicpm5_pyaether_v1_smoke/global_step_5` ✅ 保存到 NFS
+- GPU 6/7: 100% utilization, ~29GB/卡
+- 结论：SFT recipe 有效，loss 健康收敛，checkpoint 机制正常
+
+### 4. Full Run 配置（2026-11-11 07:37 启动, GPU 6/7）
+
+| 参数 | 值 |
+|:--|:--|
+| 模型 | MiniCPM5-2B (2B, LlamaForCausalLM) |
+| 框架 | verl 0.4.0 FSDP2 SFT (fsdp_sft_trainer.py) |
+| GPU | 6,7 (2×A40, FSDP2, bf16, FlashAttn2, NCCL 2.21.5+cuda12.4) |
+| 数据 | sft_surrogate_train.parquet (1553 pairs) / sft_surrogate_val.parquet (172 pairs) |
+| 源 | sft_pyaether_corpus_unified_v5v6v7.parquet (R152, 1725 pairs, contam gate PASS) |
+| max_length | 2048 |
+| batch | global=64, micro/GPU=4 |
+| epochs | 3 |
+| total_steps | 72 (24 steps/epoch) |
+| lr | 1e-5 (cosine, warmup_ratio=0.1) |
+| ft_mode | full (LoRA rank=0) |
+| grad_checkpoint | True |
+| save_freq | 20 steps |
+| output_dir | `sft_surrogate_runs/minicpm5_pyaether_v1` (NFS 路径, 防重启丢失) |
+| log | `/tmp/baize_posttrain_sft_surrogate.log` |
+
+### 5. GPU 状态变更
+
+| GPU | 变更前（wake238） | 变更后（wake239） |
+|:--:|:--|:--|
+| 5 | vLLM serve 37.8GB (8097) | vLLM serve 37.8GB (8097) — 占位保持 |
+| 6 | vLLM serve 37.8GB (8096) | SFT 训练 ~29GB — serve teardown |
+| 7 | vLLM serve 37.8GB (8095) | SFT 训练 ~29GB — serve teardown |
+
+### 6. 交付物
+
+| Item | Path |
+|:--|:--|
+| SFT 脚本（含 tools_key fix） | `run/baize_posttrain_sft_surrogate.sh` (L211 新增) |
+| SFT 训练输出 | `run/sft_surrogate_runs/minicpm5_pyaether_v1/` |
+| SFT 训练日志 | `/tmp/baize_posttrain_sft_surrogate.log` |
+| Smoke test ckpt | `run/sft_surrogate_runs/minicpm5_pyaether_v1_smoke/global_step_5` |
+| 本节 | `EXPERIMENTS_POSTTRAIN.md` §R170 |
+
+### 7. 边界与纪律
+
+- 仅写本线文件（run/ SFT 脚本 fix + EXPERIMENTS §R170 + MEMORY 心跳 + daily）。
+- 红线：不碰 GPU 0-3；不碰 158 任务数据；不 `git add -A`。
+- SFT 训练数据已过污染闸门（R150/R151 0 命中）。
+- 报告标注「替身预演，收益不可迁移到 BaiZe」。
+
+**数据溯源**：本节所有数字来自 `baize_posttrain_sft_surrogate.sh --smoke` 实测日志 + `nvidia-smi` 实测。无伪造。
+

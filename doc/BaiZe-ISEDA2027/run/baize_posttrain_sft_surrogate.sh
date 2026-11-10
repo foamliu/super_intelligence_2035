@@ -208,6 +208,7 @@ echo "===== Surrogate SFT START @ $(date '+%F %T') =====" | tee "$LOG_FILE"
   data.truncation=right \
   data.multiturn.enable=true \
   data.multiturn.messages_key=conversation \
+  data.multiturn.tools_key=null \
   model.partial_pretrain="$MODEL_PATH" \
   model.trust_remote_code=true \
   $GC_CFG \
