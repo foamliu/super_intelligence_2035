@@ -1,49 +1,51 @@
 # BAIZE_DESIGNFLOW_BENCH_TASK.md — 设计流 Benchmark 任务书（2026-10-30 重构版）
 
-> 🚨 **本轮这一条 case 不是造题，是 eval triage（2026-11-10 用户直令 · 仅 shard A）**
+> 🚨 **本轮这一条 case 不是造题，是「工具健康深挖」（2026-11-10 22:2x 用户令 · 仅 shard A）**
 >
-> 循环任务卡每轮会说「本轮只做 1 条 case：trace_ledger next → 深读 → 合成 → 追加 jsonl」。
-> **本轮请把「这 1 条 case」直接替换成本任务**，`trace_ledger next / claim` 本轮**跳过**，
-> 不要动 `EDA-Eval-DesignFlow_A.jsonl`（保持 203 不变）。
-> （背景：r324 那轮已证明「任务书顶部写了令、但按卡片惯性仍然造题」——本轮以本段为准。）
+> 循环任务卡会说「本轮只做 1 条 case：trace_ledger next → 深读 → 合成 → 追加 jsonl」。
+> **本轮把这 1 条 case 直接替换成本任务**：`trace_ledger next / claim` 跳过，
+> `EDA-Eval-DesignFlow_A.jsonl` 保持 203 不变。
+> （沿用上一轮成功的经验：把令写成卡片语言，比在顶部挂"最高优先"更有效。）
 >
-> **一、跑归因（约 2~10 分钟，唯一必做）**
-> ```bash
-> cd /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/benchmark/designflow/eval_triage
-> # ① 只读探结构（不写文件）
-> python3 05_batch_triage.py \
->   --batch /nasdata/app.e0031982/code/EDA-Flow-Bench/eval/run_batch_20261109_171201 \
->   --cases /nasdata/app.e0031982/code/EDA-Flow-Bench/benchmarks/EDA-Eval-DesignFlow/EDA-Eval-DesignFlow.jsonl \
->   --out results --dry-run
-> # ② 正式跑
-> python3 05_batch_triage.py --batch <同上> --cases <同上> --out results --emit-tex
-> ```
-> - **闸门**：`results/triage_summary.json` 总数必须 **696 = 62 + 558 + 70 + 6**；
->   不符 → 停手，MEMORY 记 `BLOCKED: triage count=<X>`，不要回填论文。
-> - 若 ① 报「0 命中判分证据」→ `find <RUN_DIR> -maxdepth 2 | head -50` 看布局，
->   按 `eval_triage/TRACE_TRIAGE_RUNBOOK.md` 调 `--layout/--case-glob`；
->   **UNKNOWN 必须如实报**，不许并进其它类。
+> **问题（用户原话）**：「再深入看看 trace，有没有异常。比如 finesim、asc 这些 EDA 工具是否正常执行？
+> 有哪些重复出现的失败模式？**写个中文 HTML 报告**。」
 >
-> **二、回填论文（只动这两处，改完即本轮交付）**
-> 1. `EDA-LiveFlow-Bench_ICML2027/sections/5_analysis.tex` §5.1 的 `\textbf{Taxonomy protocol.}`
->    段末：把"we make no quantitative claim about the split"换成实测占比
->    （(i)/(ii)/(iii) 各 x% + UNKNOWN y% + 所用判据），英文正文与中文注释两行都改；
->    **保留** run 级锚点句与 triage 工具句。
-> 2. `EDA-LiveFlow-Bench_ICML2027/appendix/B_additional_results.tex` §B.3：
->    把"deferred to the camera-ready version"那句换成 `results/tables/failure_by_domain.tex`
->    的表格内容（**内联** tabular，booktabs 风格与现有列宽一致）。
-> 3. 编译：`cd .../EDA-LiveFlow-Bench_ICML2027 && latexmk -pdf -interaction=nonstopmode main.tex`
->    → 必须 0 error；**无 latexmk 就跳过**，MEMORY 记 `PAPER_SKIP(no latexmk)`，只交 .tex
->    （PDF 由本地侧补编译，**不要提交旧 PDF**）。
-> 4. 🚫 不要动 `\Ntasks`/`\Neval` 宏以外任何数字口径；不要动 §4 表 2、摘要、引言、结论。
+> **一、数据在手，别重新跑评测**
+> `designflow/eval_triage/results/run_batch_20261109_171201/triage_summary.json` 里每个 case 都带
+> status/class/evidence 路径；据此定位每条的 agent session 与 judge log。
+> 690/696 有判分证据，6 个 ABSENT。
 >
-> **三、收尾**
-> - `MEMORY_DESIGNFLOW_A.md` 一行：`eval triage: 696 confirmed, (i)/(ii)/(iii)=x/y/z, UNKNOWN=w%, §5.1+B.3 filled`
-> - commit 只含 `designflow/eval_triage/results/**` + 上述 2 个 .tex + MEMORY + daily；推。
-> - **本轮不造 case**；完成后 `WAITING: 0`，下一轮恢复造题。
+> **二、写 `07_tool_health.py`（stdlib only，放进 `eval_triage/`）**
+> 逐 run 抽取并聚合：
+> 1. **执行过的命令**：从 session 的 tool 调用里取 `run_commands` / `eda_flow__run_commands` 的输入；
+> 2. **工具识别**：正则命中清单（大小写不敏感、按"词边界+可执行名"匹配）：
+>    `finesim` `hspice` `spectre` `eldo` `smartspice` `asc` `aether` `schematic` `calibre` `pvx`
+>    `innovus` `icc2` `pt_shell` `primetime` `dc_shell` `design_compiler` `verdi` `vcs` `xrun`
+>    `spyglass` `star-rc` `redhawk` `totem` `siliconsmart` `pyAether`
+>    —— 每个工具报：**调用次数 / 有正常输出 / 报错退出 / 调了但无产物 / 从未调用**（四态分开，
+>    **"从未调用"绝不算工具失败**）；
+> 3. **失败签名归一化**：从工具输出/退出码里抽 stderr 首行，去掉路径/时间/编号后聚类
+>    （例：`command not found`、`licence`/`license`、`No such file`、`Permission denied`、
+>    `MCP ... refused`、`timeout`、`syntax error`、`undefined net`、`SPICE convergence`）。
+>    每类报：出现 run 数 / 出现次数 / **3 个 example task_id** / **1 行原文证据（≤200 字符）**；
+> 4. **交叉分析**：签名 × domain、签名 × 失败类别（NO_SUBMIT/RT/SEM/UNKNOWN）、finesim/asc 专项小节。
 >
-> **护栏**：只读批次目录与 jsonl；不 commit 原始 trace；不碰 B/C/D 的 MEMORY/ledger/jsonl；
-> 报告：需要给人看时再出 HTML，落 `doc/ZhuLong_DAC2027/reports/`（文件名带日期或里程碑）；日常轮只写 MEMORY + daily，不复制新报告。
+> **三、产出（本轮交付物）**
+> 1. `eval_triage/results/run_batch_20261109_171201/tool_health.json`（机器可读，带 evidence 路径）；
+> 2. **中文 HTML 报告**：`doc/ZhuLong_DAC2027/reports/report_designflow_tool_health_20261110_zh.html`
+>    —— 自包含（内联 CSS + 内联 SVG 条形图，**不引 CDN、不依赖 JS**），结构：
+>    ① 一句话结论 ② 工具健康矩阵表 ③ **finesim / asc 专项**（是否正常执行、典型失败）
+>    ④ Top-15 重复失败模式（含 example + 原文）⑤ 按 domain / 失败类别的交叉表 ⑥ 方法与被排除项
+>    （例如"从未调用"、"无判分证据"的计数）+ 复现命令。
+> 3. MEMORY 一行：`tool-health: <工具数> tools seen, finesim=ok/fail/not-invoked, top pattern=<签名> <n>runs, html=<path>`；
+> 4. commit 脚本 + json + html + MEMORY + daily；**原始 session/trace 不入库**。
+>
+> **四、判据**
+> - 工具四态必须能自证（贴 2 个 case 的解析前后对照到 MEMORY）；
+> - "asc" 若在本数据里其实是别的含义（如 Aether 的 asc 子命令或某个 shell 别名），
+>   **在报告里如实写清你核到的含义**，不要硬凑成工具；
+> - 若某工具的全部调用都失败，单独点名（这正是用户要的"异常"）。
+> - 数字不许估：取不到写 `n/a` 并说明原因。
 
 > 🎯 **本轮最高优先（2026-11-09 用户令 · 优先于常规选料）**：**全量 trace 重扫 + mc 阈值下调评估**
 > 1) **全量重扫**：停止依赖 11/05 的 stale `summary.tsv`，也不要只做 fresh-window。对目标机群执行一次**全量 `ssh_eda_search`**（或等价全盘 `find`），重新生成 `summary.tsv`。记录：扫描主机数、成功/失败、耗时、去重后 session 数、按 mc 的分布。
