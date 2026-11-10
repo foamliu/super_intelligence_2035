@@ -69,19 +69,31 @@ llm_probe() {
 #   未设时行为不变（默认仍写共享目录，harness 线即如此）。
 llm_apply_base() {
     local D="${LLM_DATA_DIR:-$HOME/.cline/data}"
-    local G="$D/globalState.json" cur
+    local G="$D/globalState.json" P="$D/settings/providers.json" cur curp
     [ -f "$G" ] || return 0
     cur="$(sed -n 's/.*"openAiBaseUrl"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$G" 2>/dev/null | head -1)"
-    [ "$cur" = "$1" ] && return 0
+    # 🔑 2026-11-10 运维：cline 3.x 的 openai-compatible provider 从 providers.json 的
+    #   settings.baseUrl 读端点，不再从 globalState.json 的 openAiBaseUrl 读。
+    #   若 providers.json 缺 baseUrl 或指向错误地址 → cline 连默认 api.openai.com → 超时。
+    curp="$(sed -n 's/.*"baseUrl"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$P" 2>/dev/null | head -1)"
+    [ "$cur" = "$1" ] && [ "$curp" = "$1" ] && return 0
     [ -f "$G.llmrot.bak" ] || cp -a "$G" "$G.llmrot.bak" 2>/dev/null
-    "$PYBIN" - "$G" "$1" <<'PY' 2>/dev/null
-import json, sys
-p, base = sys.argv[1], sys.argv[2]
-d = json.load(open(p, encoding='utf-8'))
+    [ -f "$P" ] && { [ -f "$P.llmrot.bak" ] || cp -a "$P" "$P.llmrot.bak" 2>/dev/null; }
+    "$PYBIN" - "$G" "$P" "$1" <<'PY' 2>/dev/null
+import json, sys, os
+gpath, ppath, base = sys.argv[1], sys.argv[2], sys.argv[3]
+d = json.load(open(gpath, encoding='utf-8'))
 d['openAiBaseUrl'] = base
-json.dump(d, open(p, 'w', encoding='utf-8'), ensure_ascii=False, indent=2)
+json.dump(d, open(gpath, 'w', encoding='utf-8'), ensure_ascii=False, indent=2)
+if os.path.isfile(ppath):
+    p = json.load(open(ppath, encoding='utf-8'))
+    provs = p.get('providers', {})
+    for k, v in provs.items():
+        if k == 'openai-compatible' or v.get('settings', {}).get('provider') == 'openai-compatible':
+            v.setdefault('settings', {})['baseUrl'] = base
+    json.dump(p, open(ppath, 'w', encoding='utf-8'), ensure_ascii=False, indent=2)
 PY
-    echo "[llmrot] $(date '+%F %T') openAiBaseUrl: ${cur:-<none>} -> $1"
+    echo "[llmrot] $(date '+%F %T') base: globalState ${cur:-<none>}→$1 | providers ${curp:-<none>}→$1"
 }
 
 # 从上次成功的下标开始**环状**探测，第一个 200 即选中；成功则写出 LLM_MODEL/LLM_KEY/LLM_BASE
