@@ -1,0 +1,3 @@
+[R2124-eval 23:00:33] cline: 190 already evaluated
+[R2124-eval 23:00:33] cline: 191 total real, 1 new to eval
+[R2124-eval 23:00:33] cline: launching eval on 1 NEW instances (workers=1, timeout=1800)...
