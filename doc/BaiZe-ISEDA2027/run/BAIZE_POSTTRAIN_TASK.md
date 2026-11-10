@@ -29,7 +29,76 @@
 > 本区为运维下发指令；agent 只读、不写（除「归档搬迁」这一唯一例外，见下方体积规程）。
 > 新指令置顶；已闭合块按体积规程原文搬入 `run/ARCHIVE_OPERATOR_POSTTRAIN.md`、留 1 行指针。
 
-### 🔴 用户令 · 2026-11-07 10:10（**GPU 11/9 到位是既定安排，不要再问；等待期继续深入调研**）· 用户直令 · 最高优先 · 未完成
+### 🔴 用户令 · 2026-11-10 13:40（**GPU 4-7 已到位，三阶段替身计划启动**）· 用户直令 · 最高优先 · 未完成
+
+> **用户原话**：「后四卡已腾出。GPU4 serve MiniCPM5-2B，GPU5 serve Qwen3.5-2B，GPU6-7训练。Qwen3.5-2B先不铺了，剩下的卡用于训练。」
+
+#### 0. 当前 GPU 状态（2026-11-10 实测）
+
+| GPU | 用途 | 状态 |
+|:--:|:--|:--|
+| 0-3 | root SGLang Qwen3.8-27B（:8099） | 占用中，不可动 |
+| **4** | **vLLM serve MiniCPM5-2B（:8098）** | ✅ 已启动，正常响应 |
+| 5 | 空闲（原定 Qwen3.5-2B，vLLM 0.7.3 不支持该架构，暂停） | 空闲→留给训练 |
+| **6-7** | **空闲，留给训练** | 空闲 |
+
+- vLLM venv：`/tmp/vllm_venv/bin/python`（vLLM 0.7.3 + torch 2.5.1 + CUDA 12.4）
+- 环境变量：`HF_HOME=/tmp/hf_home HF_MODULES_CACHE=/tmp/hf_home/modules`
+- 驱动限制：NVIDIA 550.54.14 → CUDA 12.4 max（不能用 cu128/cu130）
+- 模型路径：`/nas_data/app.e0031982/models/{MiniCPM5-2B,Qwen3.5-2B,gemma-4-E2B-it,Llama-3.2-3B-Instruct}`
+
+#### 1. Phase 1：基线评测（立即开始，仅用 GPU4 评测 + GPU0-3 的 Qwen3.8-27B）
+
+**目标**：用 EDA-Eval 158 任务，同口径横评三个模型，5-run mean±std。
+
+| 模型 | 端点 | 评测方式 |
+|:--|:--|:--|
+| MiniCPM5-2B | `http://localhost:8098` (vLLM, GPU4) | cline auth → EDA-Eval harness |
+| Qwen3.8-27B | `http://localhost:8099` (root SGLang, GPU0-3) | cline auth → EDA-Eval harness |
+| DeepSeek（云端） | `http://agi-gateway.cxmt.com/cloud/v1` (glm-5.2 替身) | 已有 P0 诊断数据 |
+
+- 每模型 5-run，报 mean±std + 配对检验
+- 采集真实失败轨迹，**用实测替换 P0 D1-D6 的假设值**
+- anti-cheat 全程开，报 cheat rate
+- 158 任务污染隔离闸门必须 PASS
+- 评测协议冻结，不改
+
+**交付物**：`reports/report_posttrain_baseline_3model_zh.html`（里程碑报告，非 rXXXX）
+
+#### 2. Phase 2：替身 SFT 端到端验证（Phase 1 完成后立即开始，GPU6-7 训练 + GPU4 评测）
+
+- 模型：MiniCPM5-2B（2B, Llama 架构, Apache 2.0）作 BaiZe 替身
+- 数据：UltraData-SFT-2605 子集（已在 `.29`/`.12` NFS 分词镜像）
+- 脚本：`baize_posttrain_anneal.sh` → `baize_posttrain_sft.sh`
+- A40 显存约束：48GB/卡，2B SFT 用 2 卡 TP=2 或 DP=2，batch/seq 按 R92 校准配方
+- SFT 前后跑 EDA-Eval 评测，验证 SFT recipe 是否提分
+- 报告显著标注「替身预演，收益不可迁移到 BaiZe」
+
+**交付物**：`reports/report_posttrain_sft_surrogate_zh.html`
+
+#### 3. Phase 3：替身 RL/GRPO 端到端验证（Phase 2 SFT ckpt 完成后开始，GPU4-7 全部投入）
+
+- 取 Phase 2 SFT ckpt → `baize_posttrain_rl_grpo.sh`
+- 激活 R130-R143 设计的 6 个 hook
+- 吞吐预估 666 R/hr → ~3000 步约 2-3 天
+- 验证：GRPO 是否在 EDA-Eval 上产生正向增益、hook 系统是否稳定
+- 报告显著标注「替身预演，收益不可迁移到 BaiZe」
+
+**交付物**：`reports/report_posttrain_rl_surrogate_zh.html`
+
+#### 4. 执行纪律
+
+- GPU4 的 vLLM serve 是**常驻服务**，不要 kill
+- Phase 1 和 Phase 2 可以**并行**：GPU4 评测的同时 GPU6-7 跑 SFT
+- 训练脚本用 `--dry-run` 先验证再正式跑
+- CUDA 限制：只能用 cu124，不能装 cu128/cu130 的包
+- vLLM venv 在 `/tmp`（本地磁盘），重启机器后会丢——需要时重建
+- 🚫 不碰 GPU 0-3（root 的 SGLang）
+- commit 前缀：`posttrain eval:` / `posttrain sft:` / `posttrain rl:`
+
+---
+
+### 📦 §用户令·2026-11-07 10:10（GPU 11/9 到位是既定安排，不要再问；等待期继续深入调研）· ✅ 已闭合 → 原文见 `ARCHIVE_OPERATOR_POSTTRAIN.md`；**结论**：R1-R143 调研全完成（EDA交互RL方案/造题/奖励设计/失败模式/GRPO超参/rollout调度/verl hooks），GPU 11/9 已到位并启动 Phase 1。
 
 > **用户原话**：「posttrain：不是说了11/9吗，还问啥。继续调研啊。」
 
