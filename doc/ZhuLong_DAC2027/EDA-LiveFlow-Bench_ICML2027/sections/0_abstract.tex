@@ -1,8 +1,12 @@
 \begin{abstract}
 Existing LLM benchmarks for EDA target single-function code generation (RTLLM, VerilogEval) or open-source flow repair (FlowFixer-EDA), but none evaluate the end-to-end \emph{orchestration} of multi-step design flows with live commercial EDA tools.
+% 现有的面向 EDA 的 LLM 基准测试只关注单函数代码生成（RTLLM、VerilogEval）或开源流程修复（FlowFixer-EDA），尚无一个基准真正评估在真实商业 EDA 工具上对多步设计流进行端到端"编排"的能力。
 We present \bench, a benchmark of \textbf{\Ntasks{} tasks} across \textbf{13 EDA domains}---from schematic/netlist to SPICE simulation, physical verification, and digital synthesis---each derived from \textbf{real Cline coding-agent traces} of 268 engineers in a production IC design environment.
+% 我们提出 \bench，包含 \textbf{\Ntasks{} 个任务}，覆盖 \textbf{13 个 EDA 领域}——从原理图/网表到 SPICE 仿真、物理验证和数字综合——每一个任务都来源于真实生产环境中 268 位工程师使用 Cline 编程智能体的交互轨迹。
 Each task requires the agent to produce a deliverable package (\texttt{submit.zip}) by orchestrating remote EDA tools through an MCP bridge, scored against $\geq 8$ executable assertions with a \texttt{PreToolUse} hook that prevents answer leakage.
+% 每个任务要求智能体通过 MCP 网桥调用远程 EDA 工具，最终产出一个交付件包（\texttt{submit.zip}）；判分基于不少于 8 条可执行断言，并通过 \texttt{PreToolUse} 钩子防止答案泄露。
 Under a controlled harness, the best frontier model achieves only \textbf{28\% Pass@1}---versus 76\% on single-script EDA benchmarks---showing that multi-step flow orchestration is qualitatively harder than isolated code generation.
+% 在受控评测框架下，最优前沿模型仅取得 \textbf{28\% Pass@1}——而在单脚本 EDA 基准上可达 76\%——表明多步流程编排比孤立的代码生成在本质上更为困难。
 Failure analysis reveals the gap is driven by \emph{tool-chain grounding depth} rather than model size: verification tasks pass at 80\% while digital synthesis passes at 0\%.
+% 失败分析表明，这一差距由"工具链接地深度"而非模型规模驱动：验证类任务通过率为 80\%，而数字综合类任务为 0\%。
 \end{abstract}
-% 摘要 (5 句, ~155 词): gap -> contribution -> method -> result -> analysis

@@ -3,23 +3,32 @@
 
 % 第 1 段：问题动机 — 设计流编排是工程师最耗时的工作
 Circuit design is less about writing individual components and more about \emph{orchestrating design flows}: a chip tape-out requires traversing schematic capture, SPICE simulation, layout generation, DRC/LVS physical verification, parasitic extraction, timing signoff, and dozens of tool-to-tool handoffs. Each EDA tool is a closed system; where tools refuse to interoperate, the only recourse is hand-written glue---a Tcl driver, a SKILL wrapper, a Python script parsing a simulation log---precisely the intent-to-code synthesis at which LLMs excel. This reframes EDA workflow automation as \emph{agentic flow orchestration}: a coding agent that can call live EDA tools, inspect their outputs, and iteratively refine a deliverable across multiple steps.
+% 电路设计的核心不在于编写单个组件，而在于"编排设计流"：一次芯片 tape-out 需要穿越原理图录入、SPICE 仿真、版图生成、DRC/LVS 物理验证、寄生参数提取、时序签核，以及数十次工具间衔接。每件 EDA 工具都是封闭系统；当工具之间无法互操作时，唯一的办法就是手写粘合代码——一段 Tcl 驱动、一个 SKILL 包装、一个解析仿真日志的 Python 脚本——而这正是 LLM 所擅长的"意图到代码"综合。这把 EDA 工作流自动化重新定义为"智能体式流程编排"：一个能够调用真实 EDA 工具、检视其输出、并跨多步迭代改进交付件的编程智能体。
 
 % 第 2 段：现有 benchmark 的缺口
 Existing LLM benchmarks for EDA fall into two categories, neither of which captures this orchestration challenge. \emph{Code-generation benchmarks} (RTLLM~\cite{lu2024rtllm}, VerilogEval~\cite{liu2023verilogeval}) evaluate single-function RTL generation from natural language---one module, one testbench, no tool interaction. \emph{Flow-repair benchmarks} (FlowFixer-EDA~\cite{dong2026flowfixer}, EDA-FlowBench) evaluate diagnosing and patching failures in open-source RTL-to-GDS runs---but only on open-source tools (Yosys, OpenROAD), not the commercial EDA ecosystem where most engineers work. Neither evaluates the \emph{end-to-end agentic loop}: read a task description, call live EDA tools through an MCP bridge, inspect execution results, and produce a complete deliverable package. Software engineering benchmarks like SWE-bench~\cite{jimenez2024swebench} test this loop for GitHub issues, but no equivalent exists for EDA design flows.
+% 现有的面向 EDA 的 LLM 基准可分为两类，但都未捕捉到这一编排挑战。"代码生成类基准"（RTLLM、VerilogEval）评估从自然语言到单函数 RTL 的生成——一个模块、一个测试台、无工具交互。"流程修复类基准"（FlowFixer-EDA、EDA-FlowBench）评估在开源 RTL-to-GDS 流程中诊断并修复失败——但仅限于开源工具（Yosys、OpenROAD），而非大多数工程师实际使用的商业 EDA 生态。两者都没有评估"端到端智能体回路"：读取任务描述、通过 MCP 网桥调用真实 EDA 工具、检视执行结果、并产出完整的交付件包。软件工程类基准如 SWE-bench 针对 GitHub issue 测试了这一回路，但在 EDA 设计流领域尚无对应物。
 
 % 第 3 段：我们的方法 — 从真实用户轨迹构建 benchmark
 We present \bench, built from an unprecedented data source: \textbf{real user interaction traces} of 268 engineers using the Cline~\cite{cline2026} coding agent across 42 workstations in a production IC design environment. Each task in \bench{} is derived from an actual multi-turn session where an engineer used an LLM agent to solve a real design-flow problem---ranging from generating a SPICE deck for a sense amplifier, to writing a DRC rule-check script for a DRAM layout, to automating netlist connectivity tracing for a mixed-signal block. We systematically mined 698 hosts, identified 1{,}511 candidate sessions (match-count $\geq 30$ EDA-keyword hits), and curated \Ntasks{} tasks across 13 EDA domains, each with $\geq 8$ executable assertions and a reference deliverable.
+% 我们提出 \bench，其数据来源前所未有：来自生产 IC 设计环境中 42 台工作站上 268 位工程师使用 Cline 编程智能体的真实交互轨迹。\bench{} 中的每个任务都源自一段真实的多轮会话——工程师曾用 LLM 智能体解决一个真实的设计流问题，从为灵敏放大器生成 SPICE 仿真卡，到为 DRAM 版图编写 DRC 规则检查脚本，再到为混合信号模块自动化网表连通性追踪。我们系统性地扫描了 698 台主机，筛出 1,511 个候选会话（EDA 关键词命中数 $\geq 30$），并在 13 个 EDA 领域中精心整理了 \Ntasks{} 个任务，每个任务配有不少于 8 条可执行断言和一份参考交付件。
 
 % 第 4 段：评测协议 + 防泄题
 Each task follows a unified \mode{} contract: the agent receives a task brief and input assets, must orchestrate remote EDA tools (on a dedicated EDA server) through an MCP~\cite{lee2025autoeda} bridge, and produce a deliverable package (\texttt{submit.zip}). Scoring is execution-based---a judge unpacks the deliverable and runs reference assertions against it---with a \texttt{PreToolUse} hook that blocks the agent from accessing the answer key (check.py, reference/), ensuring the pass rate reflects genuine agentic capability rather than answer leakage.
+% 每个任务遵循统一的 \mode{} 契约：智能体接收任务简述与输入附件，必须通过 MCP 网桥调用远程 EDA 工具（位于专用 EDA 服务器），并产出交付件包（\texttt{submit.zip}）。判分基于执行——判分器解包交付件并运行参考断言——同时配合 \texttt{PreToolUse} 钩子，阻止智能体访问答案（check.py、reference/），确保通过率反映真实的智能体能力而非答案泄露。
 
 % 第 5 段：核心发现
 We evaluate multiple frontier LLMs under a controlled cline harness and find a striking result: the best system achieves only \textbf{28\% Pass@1}, far below the 76\% reported on single-script EDA benchmarks~\cite{zhu2026edascript}. The gap is domain-dependent: verification tasks (testbench/makefile writing) achieve 80\%, while digital synthesis tasks (DC/Genus tcl flow generation) achieve 0\%. We show this gap is driven by \emph{tool-chain grounding depth}---the number of live EDA tool interactions needed to produce a correct deliverable---not by model size alone, as scaling the backbone from 53\% to 76\% on simpler tasks does not close the orchestration gap.
+% 我们在受控的 cline 评测框架下评估多个前沿 LLM，得到一个引人注目的结果：最优系统仅取得 \textbf{28\% Pass@1}，远低于单脚本 EDA 基准上报告的 76\%。该差距随领域而变：验证类任务（测试台/Makefile 编写）达 80\%，而数字综合类任务（DC/Genus tcl 流程生成）为 0\%。我们证明这一差距由"工具链接地深度"——产出正确交付件所需的真实 EDA 工具交互次数——而非单纯的模型规模驱动，因为在更简单任务上将骨干模型从 53\% 扩展到 76\% 并未弥合编排差距。
 
 % 第 6 段：贡献
 \noindent\textbf{Contributions.}
+% \noindent\textbf{贡献。}
 \begin{itemize}
     \item \textbf{Benchmark.} \bench: \Ntasks{} tasks from real user traces, 13 EDA domains, execution-based scoring with anti-leakage protocol (Section~\ref{sec:benchmark}).
+    % \textbf{基准。} \bench：来自真实用户轨迹的 \Ntasks{} 个任务，覆盖 13 个 EDA 领域，执行式判分加防泄题协议（第~\ref{sec:benchmark}~节）。
     \item \textbf{Evaluation.} First systematic evaluation of LLM agents on multi-step EDA design-flow orchestration with live commercial tools, revealing a 28\% ceiling and a 80pp domain gap (Section~\ref{sec:experiments}).
+    % \textbf{评测。} 首次系统性地评估 LLM 智能体在真实商业工具上的多步 EDA 设计流编排能力，揭示 28\% 的天花板和 80 个百分点的领域差距（第~\ref{sec:experiments}~节）。
     \item \textbf{Analysis.} Failure taxonomy showing that flow orchestration failures are qualitatively different from code-generation failures, driven by grounding depth rather than model capability (Section~\ref{sec:analysis}).
+    % \textbf{分析。} 失败分类法表明，流程编排失败在本质上不同于代码生成失败，其驱动因素是接地深度而非模型能力（第~\ref{sec:analysis}~节）。
 \end{itemize}

@@ -3,26 +3,36 @@
 
 \subsection{Experimental Setup}
 \label{sec:exp-setup}
+% \subsection{实验设置}
 
 \textbf{Research questions.}
+% \textbf{研究问题。}
 \begin{itemize}
     \item \textbf{RQ1 (orchestration ceiling).} How well do frontier LLM agents perform on multi-step EDA design-flow orchestration, and how does this compare to single-script EDA benchmarks?
+    % \textbf{RQ1（编排天花板）}：前沿 LLM 智能体在多步 EDA 设计流编排上表现如何？与单脚本 EDA 基准相比如何？
     \item \textbf{RQ2 (domain gap).} Which EDA domains are hardest for agents, and what drives the gap?
+    % \textbf{RQ2（领域差距）}：哪些 EDA 领域对智能体最难？差距由什么驱动？
     \item \textbf{RQ3 (model scaling).} Does scaling the backbone close the orchestration gap, or is it bounded by tool-chain grounding?
+    % \textbf{RQ3（模型扩展）}：扩大骨干模型能否弥合编排差距？还是受工具链接地能力约束？
 \end{itemize}
 
 \textbf{Benchmark.} \bench{} with \Ntasks{} tasks across 13 domains (Section~\ref{sec:benchmark}). We report Pass@1 (one trace per task, 2400s timeout, \texttt{thinking=low}).
+% \textbf{基准。} \bench{}，含 \Ntasks{} 个任务、覆盖 13 个领域（第~\ref{sec:benchmark}~节）。我们报告 Pass@1（每任务一次轨迹，超时 2400 秒，\texttt{thinking=low}）。
 
 \textbf{Models.} DeepSeek-V4-Pro (primary), GLM-5.2, Kimi-K2.6, DeepSeek-V4-Flash, Doubao-Seed-2.0-Pro. All accessed via agi-gateway (OpenAI-compatible API).
+% \textbf{模型。} DeepSeek-V4-Pro（主）、GLM-5.2、Kimi-K2.6、DeepSeek-V4-Flash、Doubao-Seed-2.0-Pro。均通过 agi-gateway（OpenAI 兼容 API）访问。
 
 \textbf{Harness.} Cline v3.0.51 with \texttt{PreToolUse} anti-leakage hook (Section~\ref{sec:anti-leakage}). Each task runs in a fresh workdir with EDA tools accessible via MCP bridge.
+% \textbf{框架。} Cline v3.0.51，配 \texttt{PreToolUse} 防泄题钩子（第~\ref{sec:anti-leakage}~节）。每个任务在全新工作目录中运行，通过 MCP 网桥访问 EDA 工具。
 
 \subsection{Main Results}
 \label{sec:main-results}
+% \subsection{主要结果}
 
 \begin{table}[ht]
 \centering
 \caption{Main results on \bench: Pass@1 (\%) by domain.}
+% \caption{\bench{} 主要结果：各领域 Pass@1 (\%)。}
 \label{tab:main-results}
 \small
 \begin{tabular}{@{}lcc@{}}
@@ -39,26 +49,34 @@ digital & 7 & 0.0 \\
 \end{tabular}
 \end{table}
 % NOTE: current eval sample = 48 cases (4 domains); final version will expand to all \Ntasks{} cases + 13 domains.
+% 注：当前评测样本为 48 例（4 个领域）；最终版将扩展到全部 \Ntasks{} 例 + 13 个领域。
 % 数字基于 11/06 快照，thinking=medium。最终版用 thinking=low 重跑。
 
 Table~\ref{tab:main-results} shows Pass@1 by domain on the current evaluation sample (48 tasks across 4 domains). The overall Pass@1 of \textbf{28.1\%} is dramatically lower than the 76.5\% reported on EDA-Scripting-Bench~\cite{zhu2026edascript} for single-script tasks, confirming that \emph{multi-step flow orchestration is qualitatively harder} than isolated code generation (RQ1).
+% 表~\ref{tab:main-results} 展示了当前评测样本（4 个领域 48 个任务）的各领域 Pass@1。总体 Pass@1 为 \textbf{28.1\%}，远低于 EDA-Scripting-Bench 上单脚本任务报告的 76.5\%，印证了"多步流程编排比孤立的代码生成在本质上更难"(RQ1)。
 
 \subsection{Domain Gap (RQ2)}
 \label{sec:domain-gap}
+% \subsection{领域差距 (RQ2)}
 
 The domain gap is striking: \textbf{verification} tasks (writing testbenches, makefiles, coverage scripts) achieve 80\%, while \textbf{digital synthesis} tasks (generating DC tcl flows, synthesis scripts) achieve 0\%. This 80pp gap is not explained by task difficulty alone---both domains require EDA domain knowledge. The difference lies in \emph{tool-chain grounding depth}:
+% 领域差距令人震惊：\textbf{验证}类任务（编写测试台、Makefile、覆盖率脚本）达 80\%，而 \textbf{数字综合}类任务（生成 DC tcl 流程、综合脚本）为 0\%。这 80 个百分点的差距无法仅用任务难度解释——两个领域都需要 EDA 领域知识。差异在于"工具链接地深度"：
 
 \begin{itemize}
     \item Verification tasks are largely \emph{text-in, text-out}: the agent reads a spec, writes a SystemVerilog testbench, and the deliverable is a single file. Minimal live-tool interaction is needed.
+    % 验证任务大体是"文本进、文本出"：智能体读取规格、编写 SystemVerilog 测试台，交付件是单个文件。几乎不需要实时工具交互。
     \item Digital synthesis tasks require \emph{deep tool grounding}: the agent must call \texttt{dc\_shell}, inspect synthesis logs, iterate on constraints, and produce a multi-file tcl flow. Each step requires interpreting domain-specific tool outputs that the LLM cannot produce from prior knowledge alone.
+    % 数字综合任务需要"深度工具接地"：智能体必须调用 \texttt{dc\_shell}、检视综合日志、迭代约束、并产出多文件 tcl 流程。每一步都需要解读领域专属的工具输出，而这是 LLM 无法仅凭先验知识生成的。
 \end{itemize}
 
 \subsection{Model Scaling (RQ3)}
 \label{sec:model-scaling}
+% \subsection{模型扩展 (RQ3)}
 
 \begin{table}[ht]
 \centering
 \caption{Impact of LLM backbone (full harness).}
+% \caption{LLM 骨干模型的影响（完整框架）。}
 \label{tab:llm-comparison}
 \small
 \begin{tabular}{@{}lc@{}}
@@ -74,5 +92,8 @@ DeepSeek-V4-Flash & --- \\
 \end{table}
 % 注：多模型对比数据待补。从 EDA-Scripting-Bench 的经验看，backbone 跨度 23.3pp，
 % 但 orchestration gap (56.8pp) 远大于 backbone gap，说明 grounding depth 是 binding 约束。
+% 注：多模型对比数据待补。从 EDA-Scripting-Bench 的经验看，骨干模型跨度为 23.3 个百分点，
+% 但编排差距（56.8 个百分点）远大于骨干差距，说明接地深度才是约束瓶颈。
 
 On EDA-Scripting-Bench~\cite{zhu2026edascript}, scaling the backbone from weakest to strongest yields a 23.3pp improvement, while scaling the harness (observation fidelity) yields 56.8pp---the grounding axis is binding. We expect a similar pattern on \bench: the orchestration gap (28\% vs.\ 76\%) is too large to be closed by model scaling alone, confirming that \emph{tool-chain grounding depth, not model size, is the binding constraint} for multi-step flow orchestration (RQ3).
+% 在 EDA-Scripting-Bench 上，将骨干模型从最弱扩展到最强带来 23.3 个百分点的提升，而扩展框架（观测保真度）带来 56.8 个百分点——接地维度才是约束所在。我们预期 \bench{} 上有类似规律：编排差距（28\% vs.\ 76\%）过大，无法仅靠模型扩展弥合，这印证了"对于多步流程编排，工具链接地深度而非模型规模才是约束瓶颈"(RQ3)。

@@ -2,17 +2,26 @@
 \label{sec:conclusion}
 
 % 注：原 §7 仅 Conclusion，现合并 Discussion 内容（SWE-bench 惯例：Discussion 单独成节或与 Conclusion 合并）。
+% 注：原第 7 节仅含结论，现合并讨论内容（SWE-bench 惯例：讨论可单独成节或与结论合并）。
 
 We presented \bench, the first benchmark for LLM agents on multi-step circuit design flow orchestration, built from \Ntasks{} real user interaction traces across 13 EDA domains. Our evaluation reveals a striking finding: while LLM agents achieve 76\% on single-script EDA tasks, they achieve only 28\% on multi-step flow orchestration---a gap driven by tool-chain grounding depth, not model size. The domain gap (80\% for verification vs.\ 0\% for digital synthesis) shows that current agents excel at text-in/text-out tasks but fail when deep tool interaction is required.
+% 我们提出了 \bench，这是首个面向 LLM 智能体多步电路设计流编排的基准，构建于 13 个 EDA 领域中 \Ntasks{} 条真实用户交互轨迹之上。我们的评测揭示了一个引人注目的发现：LLM 智能体在单脚本 EDA 任务上可达 76\%，而在多步流程编排上仅为 28\%——这一差距由工具链接地深度而非模型规模驱动。领域差距（验证 80\% vs.\ 数字综合 0\%）表明，当前智能体擅长"文本进、文本出"类任务，但在需要深度工具交互时失败。
 
 \textbf{Implications.} The grounding-depth bottleneck suggests two research directions: (i) \emph{retrieval-augmented tool use}, where the agent retrieves tool documentation and prior execution traces to ground its tool calls, and (ii) \emph{execution-feedback loops}, where intermediate tool outputs are explicitly fed back as context. Neither is fully solved by scaling the backbone alone. Our benchmark provides a testbed for evaluating such interventions.
+% \textbf{启示。} 接地深度瓶颈提示了两个研究方向：(i)"检索增强的工具使用"——智能体检索工具文档和历史执行轨迹来为自己的工具调用接地；(ii)"执行反馈回路"——把中间工具输出显式回填为上下文。两者都无法仅靠扩大骨干模型来解决。我们的基准为评估此类干预手段提供了测试床。
 
 \textbf{Future work.}
+% \textbf{未来工作。}
 \begin{itemize}
     \item \textbf{Expand domain coverage}: supplement digital synthesis and verification tasks to balance the distribution.
+    % \textbf{扩展领域覆盖}：补充数字综合与验证任务以均衡分布。
     \item \textbf{Multi-agent evaluation}: evaluate agent frameworks beyond Cline (SWE-agent, OpenHands).
+    % \textbf{多智能体评测}：评估 Cline 之外的智能体框架（SWE-agent、OpenHands）。
     \item \textbf{Open-source EDA}: extend the benchmark to open-source tool chains (Yosys, OpenROAD, Magic) for reproducibility.
+    % \textbf{开源 EDA}：将基准扩展到开源工具链（Yosys、OpenROAD、Magic）以提升可复现性。
     \item \textbf{Grounding interventions}: develop and evaluate techniques to improve tool-chain grounding (retrieval-augmented tool use, execution-feedback loops, tool-documentation pretraining).
+    % \textbf{接地干预}：开发并评估改善工具链接地的技术（检索增强工具使用、执行反馈回路、工具文档预训练）。
 \end{itemize}
 
 \bench{} is released with full task specifications, reference assertions, and evaluation harness, enabling reproducible evaluation of future EDA agents.
+% \bench{} 随完整的任务规格、参考断言和评测框架一同发布，使未来 EDA 智能体的可复现评测成为可能。

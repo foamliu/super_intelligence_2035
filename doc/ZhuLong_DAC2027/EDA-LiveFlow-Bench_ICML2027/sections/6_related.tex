@@ -2,17 +2,25 @@
 \label{sec:related}
 
 \subsection{LLM Benchmarks for EDA and Hardware Design}
+% \subsection{面向 EDA 与硬件设计的 LLM 基准}
 
 \textbf{RTL code generation.} RTLLM~\cite{lu2024rtllm} introduced 30 (later 50) digital designs with natural-language specifications, testbenches, and reference RTL, evaluating syntax correctness, functional accuracy, and PPA quality. VerilogEval~\cite{liu2023verilogeval} extended this to 100+ Verilog tasks from diverse sources. Both evaluate \emph{single-module} generation---one function, one testbench---without tool interaction or multi-step orchestration. \bench{} differs fundamentally: each task requires the agent to call live EDA tools, inspect outputs, and produce a multi-file deliverable across multiple steps.
+% \textbf{RTL 代码生成。} RTLLM 引入了 30 个（后扩至 50 个）数字设计，附带自然语言规格、测试台和参考 RTL，评估语法正确性、功能准确性和 PPA 质量。VerilogEval 将此扩展到来自多种来源的 100 多个 Verilog 任务。两者都评估"单模块"生成——一个函数、一个测试台——无工具交互、无多步编排。\bench{} 有根本不同：每个任务要求智能体调用真实 EDA 工具、检视输出、并跨多步产出多文件交付件。
 
 \textbf{Flow repair.} FlowFixer-EDA~\cite{dong2026flowfixer} and EDA-FlowBench evaluate diagnosing and repairing failures in open-source RTL-to-GDS flows (Yosys, OpenROAD), with 200 tasks covering multiple error categories. While closer to real workflows, these benchmarks operate on \emph{open-source tools only} and evaluate \emph{repair} (fixing a broken run) rather than \emph{orchestration} (building a deliverable from scratch). \bench{} uses commercial EDA tools (Empyrean Aether, Cadence Virtuoso, Synopsys tools) and evaluates end-to-end deliverable production.
+% \textbf{流程修复。} FlowFixer-EDA 和 EDA-FlowBench 评估在开源 RTL-to-GDS 流程（Yosys、OpenROAD）中诊断并修复失败，含 200 个任务覆盖多种错误类别。虽然更接近真实工作流，但这些基准仅操作"开源工具"，且评估的是"修复"（修复一次失败运行）而非"编排"（从零构建交付件）。\bench{} 使用商业 EDA 工具（华大九天 Aether、Cadence Virtuoso、Synopsys 工具），评估端到端的交付件生产。
 
 \textbf{EDA scripting.} EDA-Scripting-Bench~\cite{zhu2026edascript} evaluates LLM agents on PyAether, SKILL, and Tcl scripting across 449 tasks with execution-based scoring. While sharing the execution-grounded philosophy, it evaluates \emph{single-script} generation (one function per task), not multi-step flow orchestration with deliverable packaging. \bench{} extends this to the \mode{} paradigm where the agent must produce a complete deliverable package.
+% \textbf{EDA 脚本。} EDA-Scripting-Bench 在 pyAether、SKILL 和 Tcl 脚本上评估 LLM 智能体，含 449 个任务，采用执行式判分。虽然同样秉持"执行接地"的理念，但它评估的是"单脚本"生成（每任务一个函数），而非带交付件打包的多步流程编排。\bench{} 将此扩展到 \mode{} 范式，智能体须产出完整的交付件包。
 
 \subsection{Agent Benchmarks in Software Engineering}
+% \subsection{软件工程中的智能体基准}
 
 SWE-bench~\cite{jimenez2024swebench} and its variants (SWE-bench Verified, SWE-bench Pro) evaluate whether AI agents can resolve real GitHub issues by editing codebases. The key insight---execution-based evaluation against a project's own test suite---inspires our design. However, SWE-bench operates on Python repositories with Docker-based evaluation, while \bench{} operates on EDA design flows with live commercial tool execution on a remote EDA server. The EDA setting introduces unique challenges: closed tools, non-redistributable data, and tool-chain grounding requirements that have no software-engineering analog.
+% SWE-bench 及其变体（SWE-bench Verified、SWE-bench Pro）评估 AI 智能体能否通过编辑代码库来解决真实 GitHub issue。其核心洞见——基于项目自身测试套件进行执行式评估——启发了我们的设计。然而，SWE-bench 操作的是 Python 仓库并用 Docker 评估，而 \bench{} 操作的是 EDA 设计流，在远程 EDA 服务器上执行真实商业工具。EDA 场景引入了独特挑战：封闭工具、不可再分发数据，以及软件工程中不存在的工具链接地要求。
 
 \subsection{Tool-Use and Execution-Grounded Agents}
+% \subsection{工具使用与执行接地的智能体}
 
 The MCP (Model Context Protocol)~\cite{lee2025autoeda} standardizes tool exposure to LLMs. Execution-grounded agents~\cite{zhu2026edascript, schick2024toolformer} close a generate--execute--refine loop by observing tool outputs. \bench{} evaluates agents in this paradigm: the agent must call EDA tools through an MCP bridge, read execution results (simulation logs, DRC reports, netlist extracts), and iteratively refine its deliverable. This is qualitatively harder than single-shot generation because the agent must maintain state across tool calls, interpret domain-specific outputs, and decide when the deliverable is complete.
+% MCP（模型上下文协议）标准化了 LLM 的工具暴露方式。执行接地型智能体通过观测工具输出闭合"生成—执行—精炼"回路。\bench{} 在此范式下评估智能体：智能体必须通过 MCP 网桥调用 EDA 工具，读取执行结果（仿真日志、DRC 报告、网表抽取），并迭代精炼其交付件。这在本质上难于单次生成，因为智能体必须在多次工具调用间维护状态、解读领域专属输出，并判断交付件何时完成。

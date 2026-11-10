@@ -3,30 +3,42 @@
 
 \subsection{Data Source: Real User Interaction Traces}
 \label{sec:data-source}
+% \subsection{数据来源：真实用户交互轨迹}
 
 Unlike synthetic benchmarks constructed by task authors, \bench{} is built from \emph{real user interaction traces}---actual multi-turn sessions where IC design engineers used the Cline~\cite{cline2026} coding agent to solve design-flow problems in a production environment. We systematically scanned 698 engineering workstations, identified sessions containing EDA-related tool interactions, and curated tasks from the most representative ones.
+% 与由任务作者构造的合成基准不同，\bench{} 构建于"真实用户交互轨迹"之上——即 IC 设计工程师在生产环境中使用 Cline 编程智能体解决设计流问题的真实多轮会话。我们系统性地扫描了 698 台工程工作站，识别出包含 EDA 相关工具交互的会话，并从中挑选最具代表性的部分整理为任务。
 
 \textbf{Scan pipeline.} We grep session files for EDA-keyword matches (hspice, spectre, calibre, virtuoso, aether, innovus, pt\_shell, dc\_shell, netlist, schematic, etc.) and rank sessions by \emph{match-count} (mc)---the number of lines hitting any EDA keyword. Sessions with mc $\geq 30$ yield 1{,}511 candidates from 224 unique users. A two-stage prefilter (rule-based + 0.8B LLM classifier) filters non-design-flow sessions (Q\&A, permission-denied, tool-not-found), with 0\% rejection rate---confirming that mc $\geq 30$ sessions are almost universally genuine EDA work.
+% \textbf{扫描流程。} 我们对会话文件进行 EDA 关键词匹配（hspice、spectre、calibre、virtuoso、aether、innovus、pt\_shell、dc\_shell、netlist、schematic 等），并按"匹配计数"(mc)——命中任意 EDA 关键词的行数——对会话排序。mc $\geq 30$ 的会话从 224 位去重用户中产出 1,511 个候选。一个两级预筛器（基于规则 + 0.8B LLM 分类器）过滤掉非设计流会话（问答、权限被拒、工具未找到），拒绝率为 0\%——印证了 mc $\geq 30$ 的会话几乎全都是真实的 EDA 工作。
 
 \textbf{Trace attribution.} Each task records \texttt{trace\_source} (host, user, session\_file, session\_msgs, real\_task\_summary), enabling trace-back to the original engineer's workflow. User identifiers are preserved (not hashed) for reproducibility, with only API keys/tokens masked.
+% \textbf{轨迹溯源。} 每个任务记录 \texttt{trace\_source}（主机、用户、会话文件、会话消息数、真实任务摘要），可回溯至原始工程师的工作流。用户标识保留（不做哈希）以保证可复现性，仅对 API 密钥/令牌进行脱敏。
 
 \subsection{Task Schema: The \mode{} Contract}
 \label{sec:task-schema}
+% \subsection{任务模式：\mode{} 契约}
 
 All \Ntasks{} tasks follow a unified \mode{} contract (Table~\ref{tab:task-schema}):
+% 所有 \Ntasks{} 个任务遵循统一的 \mode{} 契约（表~\ref{tab:task-schema}）：
 
 \begin{itemize}
     \item \textbf{Prompt}: A natural-language task description derived from the real user's intent, reformulated to be self-contained (no assumed context from the original session).
+    % \textbf{提示词}：源自真实用户意图的自然语言任务描述，改写为自包含形式（不依赖原始会话的上下文）。
     \item \textbf{Assets}: Input files (RTL fragments, simulation logs, technology files, spec documents) that the agent reads locally.
+    % \textbf{附件}：智能体在本地读取的输入文件（RTL 片段、仿真日志、工艺文件、规格文档）。
     \item \textbf{Entry point}: \texttt{outputs/submit.zip}---the agent must write deliverable files under \texttt{outputs/} and the harness packages them into \texttt{submit.zip}.
+    % \textbf{入口点}：\texttt{outputs/submit.zip}——智能体须将交付件写入 \texttt{outputs/}，由评测框架打包为 \texttt{submit.zip}。
     \item \textbf{Test}: A two-parameter check function \texttt{check(deliverable, workdir)} that unpacks the deliverable and runs $\geq 8$ assertions.
+    % \textbf{测试}：一个双参判分函数 \texttt{check(deliverable, workdir)}，解包交付件并运行不少于 8 条断言。
     \item \textbf{No lang/host}: Unlike single-script benchmarks, the task does not specify a language or runtime---the agent must infer the appropriate tool chain from the task description.
+    % \textbf{不指定语言/主机}：与单脚本基准不同，任务不指定编程语言或运行时——智能体须从任务描述自行推断合适的工具链。
 \end{itemize}
 
 \begin{table}[ht]
 \centering
 \small
 \caption{Task schema comparison: single-script vs.\ design\_flow.}
+% \caption{任务模式对比：单脚本 vs.\ design\_flow。}
 \label{tab:task-schema}
 \begin{tabular}{@{}lll@{}}
 \toprule
@@ -44,20 +56,27 @@ Steps & 1--3 tool calls & 5--20+ tool calls \\
 
 \subsection{Domain Coverage}
 \label{sec:domain-coverage}
+% \subsection{领域覆盖}
 
 \bench{} spans 13 EDA design domains (Table~\ref{tab:domain-distribution}), organized into 4 shards by area:
+% \bench{} 覆盖 13 个 EDA 设计领域（表~\ref{tab:domain-distribution}），按方向组织为 4 个分片：
 
 \begin{itemize}
     \item \textbf{Shard A (Digital front)}: digital (24), verification (14), pnr\_signoff (23), eda\_other (17)
+    % \textbf{分片 A（数字前端）}：digital (24)、verification (14)、pnr\_signoff (23)、eda\_other (17)
     \item \textbf{Shard B (SPICE/characterization)}: spice\_sim (49), characterization (23)
+    % \textbf{分片 B（SPICE/表征）}：spice\_sim (49)、characterization (23)
     \item \textbf{Shard C (Physical/layout)}: physical\_verify (52), layout\_aether (27), layout\_virtuoso (24), pg\_layout (17)
+    % \textbf{分片 C（物理/版图）}：physical\_verify (52)、layout\_aether (27)、layout\_virtuoso (24)、pg\_layout (17)
     \item \textbf{Shard D (Schematic/netlist/analog)}: schematic\_netlist (59), waveform (23), analog\_context (23)
+    % \textbf{分片 D（原理图/网表/模拟）}：schematic\_netlist (59)、waveform (23)、analog\_context (23)
 \end{itemize}
 
 \begin{table}[ht]
 \centering
 \small
 \caption{Domain distribution in \bench.}
+% \caption{\bench{} 中的领域分布。}
 \label{tab:domain-distribution}
 \begin{tabular}{@{}lrl@{}}
 \toprule
@@ -82,12 +101,17 @@ verification & 14 & A \\
 \end{tabular}
 \end{table}
 % NOTE: table numbers are the 2026-11-06 snapshot (462 cases); the current release (2026-11-09) has \Ntasks{} cases.
+% 注：表内数字为 2026-11-06 快照（462 例）；当前版本（2026-11-09）已有 \Ntasks{} 例。
 
 \subsection{Evaluation Metric and Protocol}
 \label{sec:eval-protocol}
+% \subsection{评测指标与协议}
 
 \textbf{Pass@1.} One trace per task: the agent may iterate within the trace (multiple tool calls) but is never restarted. A 2400-second timeout per task. A task passes iff \emph{all} $k \geq 8$ assertions in the reference \texttt{check.py} hold.
+% \textbf{Pass@1。} 每个任务一次轨迹：智能体可在该轨迹内迭代（多次工具调用），但不会被重启。每个任务超时 2400 秒。当且仅当参考 \texttt{check.py} 中所有 $k \geq 8$ 条断言全部成立时，该任务判为通过。
 
 \textbf{Execution-based scoring.} The reference judge unpacks \texttt{submit.zip} into a fresh workdir and runs assertions against the deliverable, using only Python standard library (no EDA license required for judging). Each assertion is documented in the \texttt{test\_rationale} field as ``k assertions: (1), (2), ...'' for interpretability.
+% \textbf{执行式判分。} 参考判分器将 \texttt{submit.zip} 解包到一个全新的工作目录，并针对交付件运行断言，仅使用 Python 标准库（判分无需 EDA 许可证）。每条断言以"k 条断言：(1)、(2)、……"的形式记录在 \texttt{test\_rationale} 字段中，便于可解释性。
 
 The full evaluation harness---including the agent system, MCP bridge, anti-leakage hook, and judge implementation---is described in Section~\ref{sec:harness} (main text) and Appendix~\ref{sec:experimental-details} (implementation details).
+% 完整的评测框架——包括智能体系统、MCP 网桥、防泄题钩子和判分器实现——在正文第~\ref{sec:harness}~节和附录~\ref{sec:experimental-details}~节（实现细节）中描述。

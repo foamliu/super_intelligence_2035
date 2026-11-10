@@ -2,13 +2,19 @@
 \label{sec:ethics}
 
 % ICML 强制要求。讨论数据来源伦理、潜在双重用途、隐私保护。
+% ICML 强制要求。讨论数据来源伦理、潜在双重用途、隐私保护。
 
 \textbf{Data provenance and consent.} \bench{} is derived from real user interaction traces of IC design engineers using the Cline coding agent on their workstations. The trace collection was conducted as part of routine infrastructure monitoring of an internal engineering environment, with the knowledge and consent of the engineering organization. No personally identifying information (PII) beyond usernames is retained; usernames are preserved for reproducibility and trace-back but are internal corporate identifiers, not public identities. All API keys, tokens, and passwords found in session logs are masked before task curation.
+% \textbf{数据来源与同意。} \bench{} 源自 IC 设计工程师在其工作站上使用 Cline 编程智能体的真实交互轨迹。轨迹收集作为内部工程环境常规基础设施监控的一部分进行，事先已告知工程组织并获其同意。除用户名外不保留任何个人身份信息（PII）；用户名出于可复现和可回溯目的予以保留，但属内部企业标识而非公开身份。会话日志中发现的所有 API 密钥、令牌和密码在任务整理前均作脱敏处理。
 
 \textbf{Proprietary data and tools.} All tasks use commercial EDA tools (Empyrean Aether, Cadence Virtuoso, Synopsys) accessed through a licensed EDA server. The benchmark release includes task specifications, prompts, and reference assertions, but \emph{not} the proprietary tool licenses, PDK files, or design data. External users must provide their own EDA licenses to reproduce results. This limits reproducibility in open settings; we discuss this trade-off in Appendix~\ref{sec:repro-details} and propose an open-source-EDA extension as future work.
+% \textbf{专有数据与工具。} 所有任务使用商业 EDA 工具（华大九天 Aether、Cadence Virtuoso、Synopsys），通过许可的 EDA 服务器访问。基准发布包含任务规格、提示词和参考断言，但\emph{不包含}专有工具许可证、PDK 文件或设计数据。外部用户须自备 EDA 许可证才能复现结果。这限制了开放环境下的可复现性；我们在附录~\ref{sec:repro-details}~中讨论此权衡，并提出开源 EDA 扩展作为未来工作。
 
 \textbf{Dual-use considerations.} The benchmark measures agent capability on EDA design flows. Improvements on \bench{} could accelerate chip design automation, with broad societal benefit (faster semiconductors, lower design cost). We do not foresee direct dual-use risks: the benchmark does not expose classified designs, does not target security-critical circuits, and the evaluated capability (writing EDA glue scripts) is a general engineering skill, not a weaponizable capability.
+% \textbf{双重用途考量。} 该基准衡量智能体在 EDA 设计流上的能力。\bench{} 上的进步可加速芯片设计自动化，具有广泛的社会效益（更快半导体、更低设计成本）。我们预见不到直接的双重用途风险：该基准不暴露机密设计、不针对安全关键电路，所评估的能力（编写 EDA 粘合脚本）是一项通用工程技能，并非可武器化的能力。
 
 \textbf{Labor impact.} Benchmarks that measure automation of engineering tasks may be used to justify workforce reductions. We emphasize that \bench{} measures \emph{agent capability on flow orchestration}, which at 28\% Pass@1 is far below the threshold for autonomous replacement of engineers. The benchmark is intended to \emph{guide capability development}, not to evaluate individual engineers. We discourage using \bench{} results for personnel evaluation.
+% \textbf{劳动力影响。} 衡量工程任务自动化的基准可能被用于裁员的理由。我们强调，\bench{} 衡量的是"智能体在流程编排上的能力"，其 28\% Pass@1 远低于自主替代工程师的门槛。该基准旨在"引导能力发展"，而非评估个人工程师。我们反对将 \bench{} 结果用于人事评估。
 
 \textbf{Bias and representation.} The domain distribution reflects the usage patterns of one engineering organization, which may not represent the global EDA community. Analog/mixed-signal and physical-verification tasks are over-represented; digital-synthesis tasks are under-represented. Consumers of the benchmark should weight domain-specific results rather than aggregate scores alone.
+% \textbf{偏差与代表性。} 领域分布反映了一个工程组织的使用模式，可能不代表全球 EDA 社区。模拟/混合信号与物理验证任务被过度代表，数字综合任务被代表不足。基准使用者应重视领域专属结果，而非仅看聚合分数。

@@ -3,27 +3,39 @@
 
 % 注：原 "Analysis and Discussion" 拆分——本节聚焦实证分析（failure taxonomy / grounding depth / distribution），
 % "Discussion" 内容移到 §\ref{sec:conclusion} 的 Conclusion 部分。
+% 注：原"分析与讨论"已拆分——本节聚焦实证分析（失败分类法 / 接地深度 / 分布），
+% "讨论"内容移到第~\ref{sec:conclusion}~节的结论部分。
 
 \subsection{Failure Taxonomy}
 \label{sec:failure-taxonomy}
+% \subsection{失败分类法}
 
 We classify failures into three categories:
+% 我们将失败分为三类：
 
 \textbf{(1) No-output failures (60\%).} The agent produces no deliverable (\texttt{submit.zip} absent). These are predominantly \emph{grounding failures}: the agent cannot figure out which EDA tools to call, or calls them incorrectly, and gives up without producing any files. In the digital-synthesis domain, 100\% of failures are no-output---the agent never successfully invokes \texttt{dc\_shell} or produces a synthesis tcl flow.
+% \textbf{(1) 无输出失败（60\%）}：智能体未产出任何交付件（\texttt{submit.zip} 缺失）。这些主要是"接地失败"：智能体弄不清该调用哪些 EDA 工具，或调用方式错误，最终放弃且未产出任何文件。在数字综合领域，100\% 的失败为无输出——智能体从未成功调用 \texttt{dc\_shell} 或产出综合 tcl 流程。
 
 \textbf{(2) Partial-output failures (25\%).} The agent produces a deliverable but it fails $\geq 1$ assertion. These are \emph{semantic failures}: the deliverable is syntactically plausible but semantically incorrect---e.g., a SPICE deck that runs but produces wrong measurements, or a DRC script that checks the wrong rules.
+% \textbf{(2) 部分输出失败（25\%）}：智能体产出了交付件，但至少 1 条断言未通过。这些是"语义失败"：交付件在语法上看似合理，但在语义上不正确——例如，SPICE 仿真卡能运行但测量值错误，或 DRC 脚本检查了错误的规则。
 
 \textbf{(3) Format failures (15\%).} The deliverable is correct in content but fails format assertions (wrong file structure, missing files, wrong naming). These are \emph{contract failures}: the agent misunderstood the deliverable specification.
+% \textbf{(3) 格式失败（15\%）}：交付件内容正确，但未通过格式断言（文件结构错、缺文件、命名错）。这些是"契约失败"：智能体误解了交付件规范。
 
 \subsection{Tool-Chain Grounding Depth}
 \label{sec:grounding-depth}
+% \subsection{工具链接地深度}
 
 We define \emph{grounding depth} as the minimum number of live EDA tool calls needed to produce a correct deliverable. Figure~\ref{fig:grounding-depth} shows the correlation between grounding depth and Pass@1:
+% 我们将"接地深度"定义为产出正确交付件所需的最少真实 EDA 工具调用次数。图~\ref{fig:grounding-depth} 展示了接地深度与 Pass@1 的相关性：
 
 \begin{itemize}
     \item \textbf{Depth 1--2} (verification, simple scripting): 80\% pass. The agent can produce the deliverable from prior knowledge with minimal tool interaction.
+    % \textbf{深度 1--2}（验证、简单脚本）：通过率 80\%。智能体可凭先验知识产出交付件，几乎无需工具交互。
     \item \textbf{Depth 3--5} (pnr\_signoff, eda\_other): 19--29\% pass. The agent must call tools and inspect outputs, but the tool chain is relatively standardized.
+    % \textbf{深度 3--5}（pnr\_signoff、eda\_other）：通过率 19--29\%。智能体必须调用工具并检视输出，但工具链相对标准化。
     \item \textbf{Depth 6+} (digital synthesis, complex layout): 0\% pass. The agent must maintain state across many tool calls, interpret domain-specific outputs, and iterate---a capability that current LLMs lack.
+    % \textbf{深度 6+}（数字综合、复杂版图）：通过率 0\%。智能体必须在多次工具调用间维护状态、解读领域专属输出并迭代——这是当前 LLM 所欠缺的能力。
 \end{itemize}
 
 \begin{figure}[ht]
@@ -31,21 +43,29 @@ We define \emph{grounding depth} as the minimum number of live EDA tool calls ne
 % \includegraphics[width=\linewidth]{grounding_depth.pdf}
 \fbox{\parbox{0.9\linewidth}{\centering [Figure: Pass@1 vs.\ grounding depth --- monotone decreasing, 80\% at depth 1--2, 0\% at depth 6+]}}
 \caption{Pass@1 decreases monotonically with tool-chain grounding depth. The gap is not closed by model scaling, indicating a grounding bottleneck.}
+% \caption{Pass@1 随工具链接地深度单调下降。该差距无法由模型扩展弥合，表明存在接地瓶颈。}
 \label{fig:grounding-depth}
 \end{figure}
 
 \subsection{Distribution Analysis}
 \label{sec:distribution}
+% \subsection{分布分析}
 
 \bench's domain distribution reflects real engineering practice: schematic/netlist and SPICE simulation dominate (analog/mixed-signal design), while digital synthesis and verification are underrepresented---not because they are less important, but because digital engineers use cline less frequently (they work in IDEs and command-line flows). This is a \emph{feature} of trace-based benchmark construction: the distribution reflects actual agent usage patterns, not synthetic task design. We discuss implications for benchmark balance in Section~\ref{sec:threats}.
+% \bench{} 的领域分布反映了真实工程实践：原理图/网表与 SPICE 仿真占主导（模拟/混合信号设计），而数字综合与验证偏少——并非因为它们不重要，而是因为数字工程师较少使用 cline（他们多在 IDE 和命令行流程中工作）。这是基于轨迹构建基准的一个"特性"：分布反映真实的智能体使用模式，而非合成的任务设计。我们在第~\ref{sec:threats}~节讨论其对基准均衡性的影响。
 
 \subsection{Threats to Validity}
 \label{sec:threats}
+% \subsection{有效性威胁}
 
 \textbf{Domain imbalance.} The benchmark over-represents analog/layout domains (top 3 domains = 43\%) and under-represents digital/verification (10\%). This reflects real usage but may bias aggregate metrics toward analog-friendly capabilities.
+% \textbf{领域失衡。} 该基准过度代表模拟/版图领域（前 3 个领域占 43\%），而数字/验证偏少（10\%）。这反映了真实使用情况，但可能使聚合指标偏向对模拟友好的能力。
 
 \textbf{Single tool ecosystem.} All tasks use commercial EDA tools (Empyrean Aether, Cadence, Synopsys) accessible via a single EDA server. Generalization to open-source EDA (Yosys, OpenROAD, Magic) is not evaluated.
+% \textbf{单一工具生态。} 所有任务使用商业 EDA 工具（华大九天 Aether、Cadence、Synopsys），通过单一 EDA 服务器访问。对开源 EDA（Yosys、OpenROAD、Magic）的泛化能力未作评估。
 
 \textbf{Single agent harness.} We evaluate only Cline; other agent frameworks (SWE-agent, OpenHands, AutoGPT) may perform differently. However, the anti-leakage protocol and MCP bridge are agent-agnostic.
+% \textbf{单一智能体框架。} 我们只评测了 Cline；其他智能体框架（SWE-agent、OpenHands、AutoGPT）可能表现不同。但防泄题协议与 MCP 网桥是与具体智能体无关的。
 
 \textbf{Trace provenance.} Tasks are derived from real user sessions, which may contain company-specific conventions, PDK-specific constraints, or tool-version-specific behaviors that limit generalizability.
+% \textbf{轨迹来源。} 任务源于真实用户会话，可能包含公司专属约定、PDK 专属约束或工具版本专属行为，从而限制泛化性。

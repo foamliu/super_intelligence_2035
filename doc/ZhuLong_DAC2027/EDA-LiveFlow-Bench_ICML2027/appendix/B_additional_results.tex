@@ -2,16 +2,20 @@
 \label{sec:additional-results}
 
 % 附录 B：扩展实验结果（参考 SWE-bench Appendix C "Additional Results"）
+% 附录 B：扩展实验结果（参考 SWE-bench Appendix C "Additional Results"）
 
 \subsection{Full Per-Domain Results}
 \label{sec:full-per-domain}
+% \subsection{完整的各领域结果}
 
 [TODO: full Pass@1 table for all \Ntasks{} cases across 13 domains. Current evaluation: 48 cases / 4 domains; the final version will cover the full set.]
+% [待办：所有 \Ntasks{} 案例在 13 个领域上的完整 Pass@1 表。当前评测：48 例 / 4 领域；最终版将覆盖全集。]
 
 \begin{table}[ht]
 \centering
 \small
 \caption{Full Pass@1 (\%) by domain (target: all 13 domains, \Ntasks{} tasks).}
+% \caption{各领域完整 Pass@1 (\%)（目标：全部 13 个领域、\Ntasks{} 个任务）。}
 \label{tab:full-domain-results}
 \begin{tabular}{@{}lcc@{}}
 \toprule
@@ -38,13 +42,16 @@ verification & 14 & 80.0 \\
 
 \subsection{Per-Model Results}
 \label{sec:per-model}
+% \subsection{各模型结果}
 
 [TODO: multi-model comparison. Currently only DeepSeek-V4-Pro has data; GLM-5.2 / Kimi-K2.6 / DeepSeek-V4-Flash are pending.]
+% [待办：多模型对比。目前仅 DeepSeek-V4-Pro 有数据；GLM-5.2 / Kimi-K2.6 / DeepSeek-V4-Flash 待补。]
 
 \begin{table}[ht]
 \centering
 \small
 \caption{Pass@1 (\%) by model backbone.}
+% \caption{各骨干模型的 Pass@1 (\%)。}
 \label{tab:per-model}
 \begin{tabular}{@{}lc@{}}
 \toprule
@@ -61,10 +68,14 @@ Doubao-Seed-2.0-Pro & --- \\
 
 \subsection{Failure Taxonomy by Domain}
 \label{sec:failure-by-domain}
+% \subsection{各领域失败分类法}
 
 [TODO: failure-category breakdown by domain (no-output / partial-output / format), stacked bar chart + table. Current data: overall 60/25/15; digital 100/0/0.]
+% [待办：各领域失败类别分解（无输出 / 部分输出 / 格式），堆叠柱状图 + 表。当前数据：总体 60/25/15；digital 100/0/0。]
 
 \subsection{Token Usage and Cost Analysis}
 \label{sec:token-cost}
+% \subsection{Token 用量与成本分析}
 
 [TODO: per-task average input/output tokens, average number of tool calls, and average wall-clock time, computed from status.jsonl.]
+% [待办：每任务平均输入/输出 token 数、平均工具调用次数、平均墙钟时间，从 status.jsonl 计算。]

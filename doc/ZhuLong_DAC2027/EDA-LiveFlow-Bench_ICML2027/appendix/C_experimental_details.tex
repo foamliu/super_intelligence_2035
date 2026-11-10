@@ -2,22 +2,30 @@
 \label{sec:experimental-details}
 
 % 附录 C：实验细节（参考 SWE-bench Appendix D "Additional Experimental Details"）
+% 附录 C：实验细节（参考 SWE-bench Appendix D "Additional Experimental Details"）
 
 \subsection{Cline Agent Configuration}
 \label{sec:cline-config}
+% \subsection{Cline 智能体配置}
 
 \textbf{Version.} Cline v3.0.51~\cite{cline2026}, open-source.
+% \textbf{版本。} Cline v3.0.51，开源。
 
 \textbf{Thinking budget.} \texttt{thinking=low} (default). We chose low over medium/high to control token cost across \Ntasks{} tasks; the trade-off is reduced reasoning depth. A thinking-budget ablation is planned for the camera-ready version.
+% \textbf{思考预算。} \texttt{thinking=low}（默认）。我们选 low 而非 medium/high，以在 \Ntasks{} 个任务上控制 token 成本；代价是推理深度降低。camera-ready 版本计划做思考预算消融。
 
 \textbf{Auto-approve.} All tool calls auto-approved (no human-in-the-loop). The agent may iterate freely within the 2400s timeout.
+% \textbf{自动批准。} 所有工具调用自动批准（无人工介入）。智能体可在 2400 秒超时内自由迭代。
 
 \textbf{MCP bridge.} The \texttt{eda\_flow} MCP server (port 18891) exposes 8 tools: \texttt{open\_session}, \texttt{close\_session}, \texttt{declare\_done}, \texttt{run\_commands}, \texttt{run\_code}, \texttt{read\_file}, \texttt{write\_file}, \texttt{list\_files}. The agent must call \texttt{open\_session} first to obtain a workdir, then pass it to all subsequent calls.
+% \textbf{MCP 网桥。} \texttt{eda\_flow} MCP 服务器（端口 18891）暴露 8 个工具：\texttt{open\_session}、\texttt{close\_session}、\texttt{declare\_done}、\texttt{run\_commands}、\texttt{run\_code}、\texttt{read\_file}、\texttt{write\_file}、\texttt{list\_files}。智能体须先调用 \texttt{open\_session} 取得工作目录，再将其传入所有后续调用。
 
 \subsection{API Gateway Configuration}
 \label{sec:api-config}
+% \subsection{API 网关配置}
 
 All models accessed via an OpenAI-compatible API gateway (\texttt{agi-gateway}). The \texttt{providers.json} configuration (with API keys masked):
+% 所有模型通过 OpenAI 兼容 API 网关（\texttt{agi-gateway}）访问。\texttt{providers.json} 配置（API 密钥脱敏）：
 \begin{verbatim}
 {
   "baseURL": "http://agi-gateway.cxmt.com/cloud/v1",
@@ -26,39 +34,61 @@ All models accessed via an OpenAI-compatible API gateway (\texttt{agi-gateway}).
 }
 \end{verbatim}
 We verify API reachability with a \texttt{/chat/completions} health check before each batch run; a 403 response indicates key expiry.
+% 每批运行前，我们用 \texttt{/chat/completions} 健康检查验证 API 可达性；403 响应表示密钥失效。
 
 \subsection{Anti-Leakage Hook Implementation}
 \label{sec:hook-impl}
+% \subsection{防泄题钩子实现}
 
 The \texttt{PreToolUse} hook is a shell script invoked before every tool call. It enforces:
+% \texttt{PreToolUse} 钩子是一个 shell 脚本，在每次工具调用前触发。它强制执行：
 \begin{itemize}
     \item \textbf{Path whitelist}: only paths under the evaluation workdir root are accessible.
+    % \textbf{路径白名单}：仅评测工作目录根之下的路径可访问。
     \item \textbf{Answer-key blocklist}: any path matching \texttt{check.py}, \texttt{\_check.py}, \texttt{reference/}, \texttt{hidden/}, \texttt{\_reference\_check.py} is blocked.
+    % \textbf{答案黑名单}：任何匹配 \texttt{check.py}、\texttt{\_check.py}、\texttt{reference/}、\texttt{hidden/}、\texttt{\_reference\_check.py} 的路径被阻止。
     \item \textbf{Tool whitelist}: only \texttt{read\_file}, \texttt{write\_to\_file}, \texttt{eda\_flow/*} MCP tools, and basic shell commands are allowed. Code-search tools (\texttt{grep}, \texttt{find} outside the workdir) are blocked.
+    % \textbf{工具白名单}：仅允许 \texttt{read\_file}、\texttt{write\_to\_file}、\texttt{eda\_flow/*} MCP 工具及基本 shell 命令。代码搜索工具（工作目录之外的 \texttt{grep}、\texttt{find}）被阻止。
     \item \textbf{Blocked-call response}: the hook returns the string ``ACCESS RESTRICTED'' to the agent, which is logged but does not terminate the session.
+    % \textbf{被拦截调用的响应}：钩子向智能体返回字符串"ACCESS RESTRICTED"，该事件被记录但不终止会话。
 \end{itemize}
 We count blocked calls per session (\texttt{hook\_blocks} field in \texttt{status.jsonl}) to verify the hook is firing.
+% 我们统计每会话被拦截次数（\texttt{status.jsonl} 的 \texttt{hook\_blocks} 字段），以验证钩子是否触发。
 
 \subsection{Judge Implementation}
 \label{sec:judge-impl}
+% \subsection{判分器实现}
 
 The judge runs \emph{after} the agent exits, in a separate directory:
+% 判分器在智能体退出\emph{之后}运行，位于独立目录：
 \begin{enumerate}
     \item Unpack \texttt{submit.zip} into a fresh workdir.
+    % 将 \texttt{submit.zip} 解包到全新工作目录。
     \item Invoke \texttt{check.py} with \texttt{(deliverable\_path, workdir)} arguments.
+    % 以 \texttt{(deliverable\_path, workdir)} 参数调用 \texttt{check.py}。
     \item \texttt{check.py} uses only Python standard library (no EDA license required).
+    % \texttt{check.py} 仅使用 Python 标准库（判分无需 EDA 许可证）。
     \item A task passes iff all $k \geq 8$ assertions hold.
+    % 当且仅当所有 $k \geq 8$ 条断言成立时，任务判为通过。
 \end{enumerate}
 The \texttt{test\_rationale} field documents each assertion in human-readable form (``k assertions: (1), (2), ...'') for interpretability and audit.
+% \texttt{test\_rationale} 字段以可读形式（"k 条断言：(1)、(2)、……"）记录每条断言，便于可解释性与审计。
 
 \subsection{Open-Source EDA Extension Roadmap}
 \label{sec:repro-details}
+% \subsection{开源 EDA 扩展路线图}
 
 To address the reproducibility limitation of commercial EDA tools, we plan an open-source-EDA extension mapping each domain to an open-source equivalent:
+% 为应对商业 EDA 工具的可复现性限制，我们计划一个开源 EDA 扩展，将每个领域映射到对应的开源方案：
 \begin{itemize}
     \item \textbf{Digital synthesis}: Synopsys DC $\to$ Yosys + OpenROAD.
+    % \textbf{数字综合}：Synopsys DC $\to$ Yosys + OpenROAD。
     \item \textbf{SPICE simulation}: HSPICE/Spectre $\to$ ngspice/Xyce.
+    % \textbf{SPICE 仿真}：HSPICE/Spectre $\to$ ngspice/Xyce。
     \item \textbf{Physical verification}: Calibre $\to$ KLayout + Magic.
+    % \textbf{物理验证}：Calibre $\to$ KLayout + Magic。
     \item \textbf{Layout}: Virtuoso/Aether $\to$ KLayout + OpenROAD.
+    % \textbf{版图}：Virtuoso/Aether $\to$ KLayout + OpenROAD。
 \end{itemize}
 The open-source extension will share the task schema, harness, and anti-leakage protocol of the commercial benchmark, enabling cross-ecosystem comparison.
+% 开源扩展将与商业基准共享任务模式、框架和防泄题协议，从而支持跨生态对比。
