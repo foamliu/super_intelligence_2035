@@ -1168,4 +1168,38 @@ nvidia-smi --query-gpu=utilization.gpu,memory.used --format=csv,noheader
 - §4.7 sec:ckpt-scaling: 不存在 ✅
 - 📦 TASK≈22.5KB ✅ / MEMORY≈29KB ✅
 
+---
+
+### 论文 §4.6 刷新 #1946（2026-11-11 07:30）
+
+**取数命令**（.29）:
+```bash
+ssh 10.239.2.29 'cat /proc/146283/fd/1' | tail -50
+ssh 10.239.2.29 'nvidia-smi --query-gpu=utilization.gpu,memory.used,memory.total --format=csv,noheader'
+```
+
+**实测值**:
+- iteration: 160,210/700,000 (取整 160,200 入文)
+- 末 10 步 elapsed: 6940.0–7257.5ms (均 7062.5ms, 均 <7.4s ✅)
+- tok/s: 4,194,304 / 7.0625 = 593,884 ≈ 594K
+- loss: 2.014–2.042 (均 ≈2.03)
+- NaN: 0, skipped: 0
+- GPU: 8 卡 82–100% util, 74–75 GB / 81.5 GB
+
+**论文改动**:
+- §4.6 (4_llm_pretrain.tex line 109–110): iter 160,070→160,200, tok/s 595K→594K, loss≈2.03 不变
+- abstract (0_abstract.tex line 14–15): 同上
+- tab:prod-budget (line 122): "160k done" 不变 (160,200 rounds to 160k)
+- wall-clock: ≈57d 不变 (700k × 4,194,304 / 594K = 57.2d)
+- total (line 126): ≈60.5d 不变
+
+**编译结果**:
+- `latexmk -pdf -interaction=nonstopmode main.tex` → 0 errors
+- main.pdf: 5 pages, 228,400 bytes
+
+**护栏检查**:
+- grep benchmark 数字 in ISEDA2027/ + main.tex: 0 命中 ✅
+- §4.7 sec:ckpt-scaling: 不存在 ✅
+- 📦 TASK≈22.5KB ✅ / MEMORY≈32.9KB ⚠️ (略超32KB,下轮归档)
+
 
