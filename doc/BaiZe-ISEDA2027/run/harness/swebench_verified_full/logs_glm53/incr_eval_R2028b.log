@@ -24,3 +24,11 @@
   claude-code: 106 new instances to eval (total real preds: 154, already evaluated: 48)
   [12:59:02] claude-code: merged 154 -> predictions_glm53/predictions_claude-code_glm53.json
   [12:59:02] claude-code: launching eval (workers=1, timeout=1800, 106 instances)...
+  [14:25:15] claude-code: eval done rc=0 (log: logs/eval_incr_verified_full_glm53_claude-code_R2028.log)
+  [14:25:15] claude-code: eval summary updated: 120/154 resolved (77.9%)
+
+============================================================
+=== pi: incr_eval R2028 ===
+  pi: 85 new instances to eval (total real preds: 141, already evaluated: 56)
+  [14:25:15] pi: merged 141 -> predictions_glm53/predictions_pi_glm53.json
+  [14:25:15] pi: launching eval (workers=1, timeout=1800, 85 instances)...
