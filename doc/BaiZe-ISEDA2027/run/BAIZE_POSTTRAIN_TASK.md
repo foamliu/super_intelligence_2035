@@ -29,6 +29,28 @@
 > 本区为运维下发指令；agent 只读、不写（除「归档搬迁」这一唯一例外，见下方体积规程）。
 > 新指令置顶；已闭合块按体积规程原文搬入 `run/ARCHIVE_OPERATOR_POSTTRAIN.md`、留 1 行指针。
 
+### 🔴 用户令 · 2026-11-10 17:10（**sandbox 未通前用 serve 占住 GPU5-7，防止被挪用**）· 用户直令 · 最高优先 · 未完成
+
+> **用户原话**：「既然阻塞（隧道未通），让post-train先随便起一些长任务把后三卡占用起来（比如也serve MiniCPM5，否则被挪用）。」
+
+**立即执行**：
+1. 在 GPU 5/6/7 上各启动一个 vLLM serve MiniCPM5-2B（复用已有 venv 和配置），端口分别 8097/8096/8095。
+2. 命令模板（直接跑）：
+```bash
+CUDA_VISIBLE_DEVICES=<N> HF_HOME=/tmp/hf_home TRANSFORMERS_CACHE=/tmp/hf_home HF_MODULES_CACHE=/tmp/hf_home/modules \
+  nohup /tmp/vllm_venv/bin/python -m vllm.entrypoints.openai.api_server \
+  --model /nas_data/app.e0031982/models/MiniCPM5-2B \
+  --served-model-name minicpm5-2b-gpu<N> --host 0.0.0.0 --port <PORT> \
+  --trust-remote-code --gpu-memory-utilization 0.85 --max-model-len 32768 \
+  > /tmp/vllm_gpu<N>.log 2>&1 &
+```
+3. 启动后验证：`curl -s http://localhost:<PORT>/v1/models` 有响应 + `nvidia-smi -i <N>` 显存占用 ~37GB。
+4. **注意**：transformers 必须是 4.49（不是 5.x），否则 tokenizer 报错。如果 `import transformers; print(transformers.__version__)` 不是 4.49，先 `uv pip install --python /tmp/vllm_venv/bin/python "transformers>=4.45,<4.50"` 降级再启动。
+5. **注意**：启动前先 `nvidia-smi --query-compute-apps=pid,used_memory --format=csv -i <N>` 确认 GPU 无残留进程，有则 `kill -9` 清理。
+6. 占住后在 MEMORY_POSTTRAIN.md 记录端口映射表，并保持 WAITING=0 继续做其它可做的事（归档 EXPERIMENTS、准备 SFT 脚本等）。
+
+---
+
 ### 🔴 用户令 · 2026-11-10 13:40（**GPU 4-7 已到位，三阶段替身计划启动**）· 用户直令 · 最高优先 · 未完成
 
 > **用户原话**：「后四卡已腾出。GPU4 serve MiniCPM5-2B，GPU5 serve Qwen3.5-2B，GPU6-7训练。Qwen3.5-2B先不铺了，剩下的卡用于训练。」
@@ -39,13 +61,14 @@
 |:--:|:--|:--|
 | 0-3 | root SGLang Qwen3.8-27B（:8099） | 占用中，不可动 |
 | **4** | **vLLM serve MiniCPM5-2B（:8098）** | ✅ 已启动，正常响应 |
-| 5 | 空闲（原定 Qwen3.5-2B，vLLM 0.7.3 不支持该架构，暂停） | 空闲→留给训练 |
-| **6-7** | **空闲，留给训练** | 空闲 |
+| 5 | 空闲→**按 17:10 令占住** | 待 serve |
+| **6-7** | 空闲→**按 17:10 令占住** | 待 serve |
 
 - vLLM venv：`/tmp/vllm_venv/bin/python`（vLLM 0.7.3 + torch 2.5.1 + CUDA 12.4）
 - 环境变量：`HF_HOME=/tmp/hf_home HF_MODULES_CACHE=/tmp/hf_home/modules`
 - 驱动限制：NVIDIA 550.54.14 → CUDA 12.4 max（不能用 cu128/cu130）
 - 模型路径：`/nas_data/app.e0031982/models/{MiniCPM5-2B,Qwen3.5-2B,gemma-4-E2B-it,Llama-3.2-3B-Instruct}`
+- ⚠️ **transformers 版本**：必须 4.49.x；agent 若之前升到 5.x 需降回来（`uv pip install --python /tmp/vllm_venv/bin/python "transformers>=4.45,<4.50"`）
 
 #### 1. Phase 1：基线评测（立即开始，仅用 GPU4 评测 + GPU0-3 的 Qwen3.8-27B）
 
