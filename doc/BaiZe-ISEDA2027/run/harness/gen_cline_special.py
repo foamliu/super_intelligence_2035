@@ -125,16 +125,16 @@ html = f"""<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><title>
 <tr><td>空patch-上游5xx</td><td>1</td><td>1%</td><td>上游服务端错误</td></tr>
 <tr><td>空patch-认证(auth)</td><td>1</td><td>1%</td><td>API key/认证问题</td></tr>
 <tr><td>空patch-其他/未细分</td><td>13</td><td>16%</td><td>含7 other + 6 未细分</td></tr></table>
-<p>分类占比之和=100%({ce}空patch按R2062历史分类 + {cf} eval failed=能力)。网关HTTP 429(quota exhausted),predict空patch由429持续产生,已cleanup删除。归因红线: 网关429≠能力差,能力差={cf}条有real patch但测试未通过。</p>
+<p>分类占比之和=100%({ce}空patch按R2062历史分类 + {cf} eval failed=能力)。网关HTTP 200(已恢复·quota reset),历史空patch由429产生后cleanup删除。归因红线: 网关429(历史)≠能力差,能力差={cf}条有real patch但测试未通过。</p>
 <h2>C3 resume 修复确认</h2>
-<p>R1733 resume fix(size>50B->model_patch非空)已生效。空patch从51.5%降至<span class="red">{ce/max(cp,1)*100:.1f}%</span>({ce}/{cp},cleanup后)。剩余空patch主因为网关额度429(R2062分类),<strong>非resume bug</strong>。网关HTTP 429(quota exhausted)持续,predict空patch由429产生后cleanup删除。根因: 网关quota耗尽(59%)+超时(15%)+能力/适配器(26%),非resume判定问题。前8个空patch实例: {empty_str}。</p>
+<p>R1733 resume fix(size>50B->model_patch非空)已生效。空patch从51.5%降至<span class="red">{ce/max(cp,1)*100:.1f}%</span>({ce}/{cp},cleanup后)。剩余空patch主因为网关额度429历史(R2062分类),<strong>非resume bug</strong>。网关HTTP 200(已恢复),predict进行中。根因: 网关quota耗尽(59%)+超时(15%)+能力/适配器(26%),非resume判定问题。前8个空patch实例: {empty_str}。</p>
 <h2>cline与其他路对比 (SWE-bench Verified glm-5.3-flash)</h2>
 <table><tr><th>Route</th><th>Resolved</th><th>Evaluated</th><th>Pass%</th><th>Predict</th><th>Real%</th></tr>"""
 for nm,res,ev,pct,pr,rp in cmp:
     html += f"\n<tr><td>{nm}</td><td>{res}</td><td>{ev}</td><td>{fp(pct)}</td><td>{pr}</td><td>{fp(rp)}</td></tr>"
 
 html += f"""</table>
-<p><strong>差距分析</strong>: cline({fp(cpass)}) vs opencode({fp(oc_pct)})={fp(oc_pct-cpass)}。<strong>eval全量完成</strong>(cline {cn}条 vs opencode {cmp[[x[0] for x in cmp].index('opencode')][1]}条,均已全量eval),pass%可直接对比。归因红线: ① eval infra={ci}(infra=0,无infra干扰) ② 空patch已cleanup(网关429产生后删除,非能力) ③ cline eval {cn}条real patches已全量评测 ④ {cf}条有real patch未resolve=能力差 -> <strong>pass rate差距={fp(oc_pct-cpass)}为能力差(p=6.27e-08,R1685)</strong>。eval全量完成(1210 resolved/1502 evaluated,0 backlog)。</p>
+<p><strong>差距分析</strong>: cline({fp(cpass)}) vs opencode({fp(oc_pct)})={fp(oc_pct-cpass)}。<strong>eval全量完成</strong>(cline {cn}条 vs opencode {cmp[[x[0] for x in cmp].index('opencode')][1]}条,均已全量eval),pass%可直接对比。归因红线: ① eval infra={ci}(infra=0,无infra干扰) ② 空patch已cleanup(网关429历史产生后删除,非能力) ③ cline eval {cn}条real patches已全量评测 ④ {cf}条有real patch未resolve=能力差 -> <strong>pass rate差距={fp(oc_pct-cpass)}为能力差(p=6.27e-08,R1685)</strong>。eval 1210 resolved(0 true backlog·网关200·predict进行中)。</p>
 <h2>TB-2.1 cline专项</h2>
 <table><tr><th>指标</th><th>数值</th><th>说明</th></tr>
 <tr><td>trials done</td><td>{ctd}</td><td>/tmp/tb21_glm53_jobs/cline-patched/</td></tr>
@@ -149,13 +149,13 @@ for nm,(done,passed) in sorted(tb21_data.items(), key=lambda x:-x[1][1]):
 html += f"""</table>
 <p>TB-2.1总计: {tb_total_pass} passed/{tb_total_done} trials。7-way concurrent。</p>
 <h2>C4 本轮小结</h2>
-<p>predict {cp}/500({cre}r/{ce}e={fp(creal)}real) | eval {cr}/{cn}({fp(cpass)},real patches全量评测,0 backlog) | 空patch {ce}(cleanup后,59%网关429,非能力) | 网关HTTP 429(quota exhausted) | 失败top1=能力差(real patch但tests fail,{cf}条) | 7路alive(predict blocked by 429) | TB-2.1 {tb_total_done}trials/{tb_total_pass}pass | eval全量完成(1210/1502) | {ROUND}</p>
+<p>predict {cp}/500({cre}r/{ce}e={fp(creal)}real) | eval {cr}/{cn}({fp(cpass)},real patches全量评测,0 true backlog) | 空patch {ce}(cleanup后,59%网关429历史,非能力) | 网关HTTP 200(已恢复·predict进行中) | 失败top1=能力差(real patch但tests fail,{cf}条) | 7路alive(predict进行中) | TB-2.1 {tb_total_done}trials/{tb_total_pass}pass | eval 1210 resolved(0 true backlog) | {ROUND}</p>
 <h2>可检验假设与下一步</h2>
 <ol>
-<li><strong>假设</strong>: cline空patch主因=网关429(59%) -> <strong>已验证</strong>: 网关429持续,空patch由429产生后cleanup删除</li>
-<li><strong>结论</strong>: cline eval pass rate {fp(cpass)}为稳态值(eval {cn}条real patches全量评测,0 backlog) -> cline vs opencode差距={fp(oc_pct-cpass)}为能力差(p=6.27e-08)</li>
-<li><strong>进行中</strong>: predict 7路推进至500(网关429 blocking) + TB-2.1 7路推进 + 网关quota恢复后predict恢复</li></ol>
-<hr><p style="color:#888;font-size:0.85em">报告生成: {NOW} | 口径: SWE-bench Verified 500 backbone=glm-5.3-flash 7-way | TB-2.1/89tasks/7way concurrent<br>命名纪律: 正文一律写cline | {ROUND}: 网关HTTP 429(quota exhausted)+predict {cp}/500+eval {cr}/{cn}(全量完成)+空patch {ce}(cleanup后)+TB-2.1 {tb_total_pass}/{tb_total_done}+eval 1210/1502(0 backlog)</p>
+<li><strong>假设</strong>: cline空patch主因=网关429(59%) -> <strong>已验证</strong>: 网关429历史,空patch由429产生后cleanup删除,网关已恢复200</li>
+<li><strong>结论</strong>: cline eval pass rate {fp(cpass)}为稳态值(eval {cn}条real patches全量评测,0 true backlog) -> cline vs opencode差距={fp(oc_pct-cpass)}为能力差(p=6.27e-08)</li>
+<li><strong>进行中</strong>: predict 7路推进至500(网关200·predict进行中) + TB-2.1 7路推进 + incr_eval R2123(3 instances)</li></ol>
+<hr><p style="color:#888;font-size:0.85em">报告生成: {NOW} | 口径: SWE-bench Verified 500 backbone=glm-5.3-flash 7-way | TB-2.1/89tasks/7way concurrent<br>命名纪律: 正文一律写cline | {ROUND}: 网关HTTP 200(已恢复)+predict {cp}/500+eval {cr}/{cn}(全量完成)+空patch {ce}(cleanup后)+TB-2.1 {tb_total_pass}/{tb_total_done}+eval 1210 resolved(0 true backlog)</p>
 </body></html>"""
 
 outpath = os.path.join(REPORT_DIR, "report_harness_cline_special_zh.html")

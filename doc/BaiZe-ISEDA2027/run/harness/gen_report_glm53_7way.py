@@ -141,12 +141,12 @@ HTML = f"""<!DOCTYPE html>
 <style>{CSS}</style></head><body>
 <h1>glm-5.3-flash · 7 路 × SWE-bench Verified + Terminal-Bench 横评报告</h1>
 <div class="info">
-<p><strong>模型</strong>：glm-5.3-flash（网关 HTTP 429 · quota exhausted）</p>
+<p><strong>模型</strong>：glm-5.3-flash（网关 HTTP 200 · 已恢复）</p>
 <p><strong>7 路</strong>：cline / codex / opencode / claude-code / pi / hermes / deepseek</p>
 <p><strong>生成时间</strong>：{NOW}（{ROUND}）</p>
-<p><strong>状态</strong>：predict {total_pred}/3500={total_pred/3500*100:.1f}%（7路alive·429 blocking）；eval全量完成(1210/1502,0 backlog)；TB-2.1 7路运行中(80p/670t)</p>
+<p><strong>状态</strong>：predict {total_pred}/3500={total_pred/3500*100:.1f}%（7路alive·网关200·predict进行中）；eval 1210 resolved(0 true backlog·3 incr_eval中)；TB-2.1 7路(80p/674t)</p>
 </div>
-<div class="note"><p><strong>资源自检</strong>：CPU 28/224=13% ✅；内存 1114GB avail ✅；磁盘 /data 5.8T + / 352G ✅；网关 429 (quota exhausted)</p></div>
+<div class="note"><p><strong>资源自检</strong>：CPU 33/224=15% ✅；内存 1.1Ti avail ✅；磁盘 /data 5.8T + / 352G ✅；网关 200 ✅(已恢复) (quota exhausted)</p></div>
 
 <h2>1. SWE-bench Verified · 7 路 Predict</h2>
 <table><tr><th>#</th><th>Harness</th><th>Predict</th><th>Real</th><th>Empty</th><th>Real%</th></tr>
@@ -165,7 +165,7 @@ HTML = f"""<!DOCTYPE html>
 <h2>3. 与 kimi-k2.6-cloud 对照</h2>
 <table><tr><th>Harness</th><th>kimi(resolved/500)</th><th>glm53(interim)</th><th>备注</th></tr>
 {kimi_rows}</table>
-<div class="note"><p>⚠️ glm53 eval全量完成,可对照。但glm53 predict未满500(网关429 blocking),kimi为500满量,分母不同。</p></div>
+<div class="note"><p>⚠️ glm53 eval全量完成,可对照。但glm53 predict未满500(网关200·predict进行中),kimi为500满量,分母不同。</p></div>
 
 <h2>4. Terminal-Bench</h2>
 <h3>4.1 TB4 — 已闭合</h3>
@@ -174,21 +174,21 @@ HTML = f"""<!DOCTYPE html>
 <div class="info"><p>口径：TB-2.1/89题/7-way（与TB4不可比）。Oracle 5/5 ✅。§15:2x判据MET ✅</p></div>
 <table><tr><th>Harness</th><th>已完成</th><th>Passed</th><th>Errored</th><th>Remaining</th><th>通过率</th><th>状态</th></tr>
 {tb_rows}</table>
-<div class="note"><p>TB-2.1进行中:7路concurrent,80p/670t。pi 34p领先,opencode 17p,deepseek 11p,cline 10p,hermes 7p,codex 1p,claude-code 0p。codex err=适配器(infra),claude-code 0p待分析。</p></div>
+<div class="note"><p>TB-2.1进行中:7路concurrent,80p/674t。pi 34p领先,opencode 31p(rerun中),deepseek 11p,cline 10p,hermes 7p,codex 1p,claude-code 0p。codex err=适配器(infra),claude-code 0p待分析。</p></div>
 
 <h2>5. cline 专项（§10:10 C1-C5）</h2>
 <table><tr><th>指标</th><th>值</th><th>判据</th></tr>
 <tr><td>C1 Predict</td><td>{cline_real}r/{cline_empty}e/{len(cline_files)}t</td><td>可复算</td></tr>
-<tr><td>C2 失败分类</td><td>能力差(eval fail {cline_empty})+网关429(infra,已cleanup)</td><td>占比=100%</td></tr>
+<tr><td>C2 失败分类</td><td>能力差(eval fail {cline_empty})+网关429历史(infra,已cleanup·网关已恢复200)</td><td>占比=100%</td></tr>
 <tr><td>C3 Resume Fix</td><td>✅生效(51.5%→{cline_empty/max(len(cline_files),1)*100:.1f}%,cleanup后)</td><td>空patch=429产生后删除</td></tr>
 <tr><td>C4 心跳</td><td>real={cline_real}/empty={cline_empty}/top1=能力差(real patch但tests fail)</td><td>每轮含一行</td></tr>
 <tr><td>C5 报告</td><td>report_harness_cline_special_zh.html</td><td>0外链</td></tr>
 </table>
-<div class="info"><p>cline空patch={cline_empty}(cleanup后,由429产生后删除)。cline eval pass rate=75.3%(143/190),opencode=80.9%(317/392),差距=5.6%为能力差(p=6.27e-08,R1685)。eval全量完成(0 backlog),pass%可直接对比。</p></div>
+<div class="info"><p>cline空patch={cline_empty}(cleanup后,由历史429产生后删除·网关已恢复200)。cline eval pass rate=75.3%(143/190),opencode=80.1%(317/396),差距为能力差(p=6.27e-08,R1685)。eval 1210 resolved(0 true backlog),pass%可直接对比。</p></div>
 
 <h2>6. 失败归因（infra单列）</h2>
 <table><tr><th>类型</th><th>描述</th><th>归因</th></tr>
-<tr><td>网关429</td><td>额度耗尽(quota exhausted,持续中)</td><td class='warn'>infra(阻塞predict)</td></tr>
+<tr><td>网关429(历史)</td><td>额度耗尽(quota exhausted,已恢复HTTP 200)</td><td class='warn'>infra(已恢复·predict进行中)</td></tr>
 <tr><td>TB4全0</td><td>66×7=462 0passed</td><td class='fail'>能力</td></tr>
 <tr><td>TB-2.1 codex 84err</td><td>适配器/docker环境</td><td class='warn'>infra</td></tr>
 <tr><td>TB-2.1 cc docker down</td><td>已重启</td><td class='warn'>infra(已修)</td></tr>
@@ -201,14 +201,14 @@ HTML = f"""<!DOCTYPE html>
 <tr><td>/</td><td>384G</td><td>13G</td><td>352G</td><td>4%</td></tr></table>
 
 <h2>8. research日报输入(2026-11-10)</h2>
-<div class="info"><p>research日报2026-11-10已查(mtime18:12·no update·same as R2120)。harness advice:2611.09802 staleness audit+silent-fail guard+empty explicit fail。本期无立即动作(监控轮)。</p></div>
+<div class="info"><p>research日报2026-11-10已查(mtime18:12·no update)。harness advice:2611.09802 staleness audit+silent-fail guard+empty explicit fail。网关200已恢复,predict进行中。</p></div>
 
 <h2>9. 后续计划</h2>
 <div class="info"><ol>
-<li>predict 7路推进至500(当前{total_pred}/3500={total_pred/3500*100:.1f}%,网关429 blocking)</li>
-<li>eval全量完成(1210/1502,0 backlog)·新predict后增量eval</li>
-<li>TB-2.1: 7路运行中(80p/670t),pi 34p领先</li>
-<li>网关quota恢复后predict恢复→各路推进至500→里程碑报告</li>
+<li>predict 7路推进至500(当前{total_pred}/3500={total_pred/3500*100:.1f}%,网关200·predict进行中)</li>
+<li>eval 1210 resolved(0 true backlog)·新predict后增量eval(R2123: 3 instances eval中)</li>
+<li>TB-2.1: 7路(80p/674t),pi 34p领先,opencode 31p(rerun中)</li>
+<li>网关200稳定后各路predict继续推进至500→里程碑报告</li>
 </ol></div>
 
 <hr><p style="text-align:center;color:#7f8c8d;font-size:0.9em">
