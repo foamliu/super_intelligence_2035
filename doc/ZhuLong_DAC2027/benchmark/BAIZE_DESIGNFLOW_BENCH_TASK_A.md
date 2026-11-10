@@ -1,56 +1,49 @@
 # BAIZE_DESIGNFLOW_BENCH_TASK.md — 设计流 Benchmark 任务书（2026-10-30 重构版）
 
-> 🚨 **本轮最高优先（2026-11-10 用户直令 · 仅 shard A · 优先于一切造题/选料/重扫）**：
-> **对 696-run 全量评测做逐 run 失败归因，并据此回填论文 §5.1 与附录 B.3。**
+> 🚨 **本轮这一条 case 不是造题，是 eval triage（2026-11-10 用户直令 · 仅 shard A）**
 >
-> **背景**：`run_batch_20261109_171201` 全量跑完（696 例 / 8 workers / 24h10m；
-> `PASS 62 / FAIL 558 / ERROR 70 / ABSENT 6`；`62/626=9.9%`）。论文 §5.1 目前只有
-> "分类协议 + run 级锚点"，**三类失败的实测占比是空的**（上一版写的 ~45/40/15 无数据支撑，
-> 已按审计意见删除）。你的任务就是把这块**用实测数据补上**。论文其余部分（口径脚注、
-> ERROR/ABSENT 列、`\Neval{696}` 宏、§5.3 trace anatomy）**已改好，不要重写**。
+> 循环任务卡每轮会说「本轮只做 1 条 case：trace_ledger next → 深读 → 合成 → 追加 jsonl」。
+> **本轮请把「这 1 条 case」直接替换成本任务**，`trace_ledger next / claim` 本轮**跳过**，
+> 不要动 `EDA-Eval-DesignFlow_A.jsonl`（保持 203 不变）。
+> （背景：r324 那轮已证明「任务书顶部写了令、但按卡片惯性仍然造题」——本轮以本段为准。）
 >
-> **一、跑归因（唯一必做，约 2~10 分钟）**
+> **一、跑归因（约 2~10 分钟，唯一必做）**
 > ```bash
 > cd /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/benchmark/designflow/eval_triage
-> # ① 先探结构（只读，不写文件）——看清 batch 目录里判分证据长什么样
+> # ① 只读探结构（不写文件）
 > python3 05_batch_triage.py \
 >   --batch /nasdata/app.e0031982/code/EDA-Flow-Bench/eval/run_batch_20261109_171201 \
 >   --cases /nasdata/app.e0031982/code/EDA-Flow-Bench/benchmarks/EDA-Eval-DesignFlow/EDA-Eval-DesignFlow.jsonl \
 >   --out results --dry-run
-> # ② 正式跑（写 results/triage_summary.json + results/tables/*.tex + results/report.md）
+> # ② 正式跑
 > python3 05_batch_triage.py --batch <同上> --cases <同上> --out results --emit-tex
 > ```
-> - **自检闸门（必须过）**：`triage_summary.json` 的总数必须是 **696 = 62 + 558 + 70 + 6**。
->   若不是，**停手**，把 `results/report.md` + 你的判断写进 MEMORY，标 `BLOCKED: count mismatch`。
-> - 若 ① 显示"0 命中判分证据"：先 `find <RUN_DIR> -maxdepth 2 | head -50` 看清布局，
->   按 `eval_triage/TRACE_TRIAGE_RUNBOOK.md` 的排查表调 `--layout` / `--case-glob`；
->   **不要把 UNKNOWN 塞进别的类**——UNKNOWN 比例本身就是要报的数字。
-> - `results/` 只提交聚合产物（json/tex/report），**不要把原始 trace 或 session 文件入库**。
+> - **闸门**：`results/triage_summary.json` 总数必须 **696 = 62 + 558 + 70 + 6**；
+>   不符 → 停手，MEMORY 记 `BLOCKED: triage count=<X>`，不要回填论文。
+> - 若 ① 报「0 命中判分证据」→ `find <RUN_DIR> -maxdepth 2 | head -50` 看布局，
+>   按 `eval_triage/TRACE_TRIAGE_RUNBOOK.md` 调 `--layout/--case-glob`；
+>   **UNKNOWN 必须如实报**，不许并进其它类。
 >
-> **二、回填论文（必须做，但只动这两处）**
-> 1. `EDA-LiveFlow-Bench_ICML2027/sections/5_analysis.tex` §5.1 的
->    `\textbf{Taxonomy protocol.}` 段末：把"we make no quantitative claim about the split"
->    换成实测占比（(i)/(ii)/(iii) 各 x%，并给出 UNKNOWN y% 与所用判据），
->    英文正文 + 中文注释两行都要改；**保留** run 级锚点句与 triage 工具句。
+> **二、回填论文（只动这两处，改完即本轮交付）**
+> 1. `EDA-LiveFlow-Bench_ICML2027/sections/5_analysis.tex` §5.1 的 `\textbf{Taxonomy protocol.}`
+>    段末：把"we make no quantitative claim about the split"换成实测占比
+>    （(i)/(ii)/(iii) 各 x% + UNKNOWN y% + 所用判据），英文正文与中文注释两行都改；
+>    **保留** run 级锚点句与 triage 工具句。
 > 2. `EDA-LiveFlow-Bench_ICML2027/appendix/B_additional_results.tex` §B.3：
->    把"deferred to the camera-ready version"那句替换为逐域类别表
->    （直接 `\input{../benchmark/designflow/eval_triage/results/tables/...}` 不可行——
->    请把 `results/tables/failure_by_domain.tex` 的 tabular 内容**内联**进 B.3，
->    保持 booktabs 风格与现有列宽习惯）。
+>    把"deferred to the camera-ready version"那句换成 `results/tables/failure_by_domain.tex`
+>    的表格内容（**内联** tabular，booktabs 风格与现有列宽一致）。
 > 3. 编译：`cd .../EDA-LiveFlow-Bench_ICML2027 && latexmk -pdf -interaction=nonstopmode main.tex`
->    → 必须 0 error；**本机无 latexmk 则跳过编译**，在 MEMORY 记 `PAPER_SKIP(no latexmk)`，
->    只提交 .tex（PDF 由本地侧补编译，不要提交旧 PDF）。
-> 4. 🚫 **不要**改 `\Ntasks`/`\Neval` 宏以外的任何数字口径，不要动 §4 表 2、不要改摘要/引言/结论。
+>    → 必须 0 error；**无 latexmk 就跳过**，MEMORY 记 `PAPER_SKIP(no latexmk)`，只交 .tex
+>    （PDF 由本地侧补编译，**不要提交旧 PDF**）。
+> 4. 🚫 不要动 `\Ntasks`/`\Neval` 宏以外任何数字口径；不要动 §4 表 2、摘要、引言、结论。
 >
 > **三、收尾**
-> - `MEMORY_DESIGNFLOW_A.md` 写一行心跳：`eval triage: 696 confirmed, (i)/(ii)/(iii)=x/y/z, UNKNOWN=w%, paper §5.1+B.3 filled`。
-> - `daily_A_<日期>.md` 记一条。
-> - commit 只含 `designflow/eval_triage/results/**` + 上述 2 个 .tex + MEMORY + daily；
->   push（本 shard 的 push 逻辑已处理 rebase）。
-> - 完成后本轮**不造新 case**，`WAITING: 0`（等下一轮恢复造题）。
+> - `MEMORY_DESIGNFLOW_A.md` 一行：`eval triage: 696 confirmed, (i)/(ii)/(iii)=x/y/z, UNKNOWN=w%, §5.1+B.3 filled`
+> - commit 只含 `designflow/eval_triage/results/**` + 上述 2 个 .tex + MEMORY + daily；推。
+> - **本轮不造 case**；完成后 `WAITING: 0`，下一轮恢复造题。
 >
-> **护栏**：只读 `/nasdata` 上的批次目录与 jsonl；不 commit 原始 trace；不碰 B/C/D 的
-> MEMORY/ledger/jsonl；不新建 HTML 报告（报告纪律）。
+> **护栏**：只读批次目录与 jsonl；不 commit 原始 trace；不碰 B/C/D 的 MEMORY/ledger/jsonl；
+> 不新建 HTML 报告（报告纪律）。
 
 > 🎯 **本轮最高优先（2026-11-09 用户令 · 优先于常规选料）**：**全量 trace 重扫 + mc 阈值下调评估**
 > 1) **全量重扫**：停止依赖 11/05 的 stale `summary.tsv`，也不要只做 fresh-window。对目标机群执行一次**全量 `ssh_eda_search`**（或等价全盘 `find`），重新生成 `summary.tsv`。记录：扫描主机数、成功/失败、耗时、去重后 session 数、按 mc 的分布。
