@@ -1,5 +1,13 @@
 # EXPERIMENTS — Design-Flow Benchmark
 
+## EXP-DG1 analysis-only trace → diagnosis-generator reframe（2026-11-10 r312，acaey PIVOT）
+
+**背景**：r295/r296/r299/r300/r309/r311 连续 6 次确认 shard A fresh digital 池里 clean A-faithful **produce-task** 稀缺（verilog keyword 计数 = READ 活动，非 produce）。acaey (stevenh, verification, mc110) = 典型 analysis-only trace：USER#0 让分析 xmelab `*E,CUVUNF` elaboration 错误，agent 48msgs 全 read_files/search_codebase(0 writes)，产出 prose 根因报告，fix 由 USER 提出。按常规 produce-task 判定 = analysis-only，r311 parked。
+
+**PIVOT**：把 analysis-only trace 经 **spec-driven diagnosis-generator** reframe 成 viable case（匹配 r310 SignalXrefBuilder 模式）。deliverable = `gen_hier_diag.py`（生成器）→ emit `diag_hier_ref.py`（读 spec.json + 结构化 codebase: modules/include_chain/blocks/call_chain，**静态推导**根因：找出错块→推导作用域→判断 hier_name 是否 module→推导 include 位置→扫 bind 块按 references 前缀匹配(排除 distractor)→分类根因→找修复目标）→ 输出 `root_cause.json`(19 派生字段) + `diag_report.md`。check.py 15 conds a-o（独立 recompute 比对），gold PASS 15/15 + 8 negatives 全 FAIL。
+
+**结论**：analysis-only trace 不再是 dead-end——diagnosis-generator reframe 把"agent 无代码产出"的 trace 也纳入造题，是 analysis-dominated fresh 池的破局模板。clean produce scarcity 第 7 次确认，但 scarcity 不再阻塞 case 交付。后续同类 analysis-only verification trace（如 4q4w1 how-to、i555n FM log 诊断）均可照此 reframe。
+
 ## EXP-FR1 全量 trace 重扫 + mc 阈值下调评估（2026-11-09 r292，用户直令）
 
 **背景**：r268-r291 连续 17 轮管理轮判定 shard A digital produce-task 候选池 EXHAUSTED，全部依赖 11/05 的 `ssh_eda_search_20261105_192825/summary.tsv`（42 hosts / 3896 sessions / mc30=1511）。用户直令：对目标机群执行全量重扫，评估 mc 阈值下调可行性。
