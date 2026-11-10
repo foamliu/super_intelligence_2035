@@ -676,21 +676,46 @@ torchrun --nnodes=1 --nproc_per_node=8 --master_addr=127.0.0.1 --master_port=296
 ### 论文 §4.6 刷新（2026-11-10 23:5x · iter 155,780 → 156,320）
 
 **取数**：
-- 训练日志：`ssh -o StrictHostKeyChecking=no 10.239.2.29 'tail -10 /proc/146283/fd/1'`
-- 最新行：`[2026-11-10 23:47:52] iteration 156320/700000 | elapsed time per iteration (ms): 7102.6 | lm loss: 2.016253E+00 | number of nan iterations: 0 | number of skipped iterations: 0`
-- 吞吐计算：290 iter / 2067 s = 7.13 s/iter → 4,194,304 / 7.13 ≈ 588K tok/s ≈ 590K
-- wall-clock：700,000 × 4,194,304 / 588,461 / 86,400 = 57.7 d ≈ 58 d
+- 训练日志：`ssh 10.239.2.29 'tail -30 /proc/4179185/fd/1'`
+- 最新行：`[2026-11-11 00:12:56] iteration 156530/700000 | elapsed time per iteration (ms): 6971.3 | lm loss: 2.027347E+00 | number of nan iterations: 0 | number of skipped iterations: 0`
+- 吞吐计算：末26步均7,173 ms → 4,194,304 / 7.173 = 584,853 ≈ 585K tok/s
+- wall-clock：700,000 × 4,194,304 / 584,853 / 86,400 = 58.1 d ≈ 58 d
 - GPU：`nvidia-smi` → 8 卡 95-100% util, ~75GB mem（全满载）
 
 **改动**（仅 `0_abstract.tex` + `4_llm_pretrain.tex` + `main.pdf`）：
-- §4.6 进度句（4_llm_pretrain.tex line 109）：`155,780` → `156,320`（tok/s 590K 不变，loss ≈2.02 不变）
+- §4.6 进度句（4_llm_pretrain.tex line 109）：`156,320` → `156,530`，`590K` → `585K`，日期 `2026-11-10` → `2026-11-11`
 - 摘要（0_abstract.tex line 14）：同上同步
-- `tab:prod-budget`（line 122）：`156k done` 不变（156,320 rounds to 156k）；wall-clock `≈58 d` 不变
+- `tab:prod-budget`（line 122）：`156k done` → `157k done`；wall-clock `≈58 d` 不变
 - 中文注释行同步更新（line 110 + line 15）
 
 **验证**：
 - grep benchmark 数字（ARC/HellaSwag/PIQA/BoolQ/OpenBookQA/SciQ/Winogrande/ckpt-scaling/Checkpoint Scaling）：0 命中 ✅
 - `latexmk -pdf -interaction=nonstopmode main.tex` → 0 errors, 0 undefined references
-- main.pdf: 5 pages, 228,646 bytes
+- main.pdf: 5 pages, 228,472 bytes
+- main.log: 0 `!` lines, 0 errors
+
+---
+
+### 论文 §4.6 刷新 — 2026-11-11 00:15（#1927）
+
+**背景**：用户最高优先令「刷新 ISEDA2027 论文预训练章节」+ 21:2x 更正「评测结果不写进论文」。
+
+**取数**：
+- 训练日志：`ssh 10.239.2.29 'tail -30 /proc/4179185/fd/1'`
+- 最新行：`[2026-11-11 00:12:56] iteration 156530/700000 | elapsed time per iteration (ms): 6971.3 | lm loss: 2.027347E+00 | number of nan iterations: 0 | number of skipped iterations: 0`
+- 吞吐计算：末26步均7,173 ms → 4,194,304 / 7.173 = 584,853 ≈ 585K tok/s
+- wall-clock：700,000 × 4,194,304 / 584,853 / 86,400 = 58.1 d ≈ 58 d
+- GPU：`nvidia-smi` → 8 卡 95-100% util, ~75GB mem（全满载）
+
+**改动**（仅 `0_abstract.tex` + `4_llm_pretrain.tex` + `main.pdf`）：
+- §4.6 进度句（4_llm_pretrain.tex line 109）：`156,320` → `156,530`，`590K` → `585K`，日期 `2026-11-10` → `2026-11-11`
+- 摘要（0_abstract.tex line 14）：同上同步
+- `tab:prod-budget`（line 122）：`156k done` → `157k done`；wall-clock `≈58 d` 不变
+- 中文注释行同步更新（line 110 + line 15）
+
+**验证**：
+- grep benchmark 数字（ARC/HellaSwag/PIQA/BoolQ/OpenBookQA/SciQ/Winogrande/ckpt-scaling/Checkpoint Scaling）：0 命中 ✅
+- `latexmk -pdf -interaction=nonstopmode main.tex` → 0 errors, 0 undefined references
+- main.pdf: 5 pages, 228,472 bytes
 - main.log: 0 `!` lines, 0 errors
 
