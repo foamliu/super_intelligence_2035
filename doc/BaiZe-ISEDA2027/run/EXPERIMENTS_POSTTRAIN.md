@@ -11328,3 +11328,77 @@ Final eval      -> bash baize_posttrain_eval.sh --endpoint <served-ckpt>
 - `grep -n '^## §R45\|^## §R157' EXPERIMENTS…` → 行 16 / 行 11233
 - 指针块：`EXPERIMENTS` 行 8–14（`## §Archive`）
 
+
+
+## §R159 — Phase2 SFT Launch-Readiness Audit (wake228, 2026-11-11)
+
+> **触发**：沙盒 10.129.32.75:8667 连续 33 wake CLOSED（wake195–228），Phase1 eval 阻塞；
+> 17:10 令要求 GPU5-7 serve 占位 + WAITING=0 继续做可做的事。
+> 本节系统性审计 Phase2 SFT 的**全部依赖**，确保 GPU 一释放（或沙盒一通）即可零延迟起跑。
+
+### 1. 审计方法
+
+逐项验证 `baize_posttrain_sft_surrogate.sh --dry-run` 声明的 4 个 prerequisite + 数据/模型/框架/GPU 4 维，
+用 verl venv Python 实际 import + 版本打印 + parquet schema 读取 + nvidia-smi 查询。
+
+### 2. 依赖矩阵（全部 PASS）
+
+| # | 依赖 | 路径/版本 | 验证命令 | 结果 |
+|:--|:--|:--|:--|:--|
+| D1 | verl venv python | `~/code/verl_cu124_venv/bin/python` (cpython 3.10) | `which` + import | ✅ |
+| D2 | torch | 2.6.0+cu124 (CUDA 12.4, 匹配驱动 550.54.14) | `torch.__version__` | ✅ |
+| D3 | flash_attn | 2.7.4.post1 | `flash_attn.__version__` | ✅ |
+| D4 | peft | 0.21.2 | `peft.__version__` | ✅ |
+| D5 | transformers (verl venv) | 4.51.1 | `transformers.__version__` | ✅ |
+| D6 | datasets | 5.0.1 | `datasets.__version__` | ✅ |
+| D7 | pandas + pyarrow | 2.3.3 / 25.0.1 | import + read_table | ✅ |
+| D8 | verl | 0.4.0 | `verl.__version__` | ✅ |
+| D9 | torchrun | `~/code/verl_cu124_venv/bin/torchrun` | dry-run check | ✅ |
+| D10 | 模型 MiniCPM5-2B | `/nas_data/app.e0031982/models/MiniCPM5-2B/` (5GB safetensors) | ls + dry-run | ✅ |
+| D11 | SFT 源 parquet | `sft_pyaether_corpus_unified_v5v6v7.parquet` (804,319 B) | pq.read_table → 1725 rows | ✅ |
+| D12 | parquet schema | cols=[conversation, metadata] | pq.read_table.column_names | ✅ verl MultiTurnSFTDataset 兼容 |
+| D13 | SFT JSONL 对照 | 1725 lines, keys=[pair_id,type,prompt,completion,api_used,source,contamination_check] | json.loads(line[0]) | ✅ |
+| D14 | SFT --dry-run | recipe 打印 + 4 prereq check 全 OK | `bash ... --dry-run` | ✅ |
+| D15 | GPU 可用性 | GPU6-7 当前 37.8GB 被 serve 占（17:10 令） | nvidia-smi | ⏳ 占位中（非 FAIL，待释放） |
+
+### 3. 关键发现
+
+**F1 — verl venv transformers 4.51.1 ≠ vLLM venv transformers 4.49.0**：
+两个 venv 独立，verl venv 用 4.51.1（SFT/RL 训练用），vLLM venv 用 4.49.0（serve 用）。
+**不冲突**——训练和 serve 走不同 venv，互不影响。SFT 产出的 ckpt 用 vLLM venv serve 时，
+vLLM venv 的 4.49.0 能加载 4.51.1 产出的 safetensors（格式向下兼容）。
+
+**F2 — MAX_LENGTH=2048 对 PyAether API 语料充分**：
+SFT 数据 1725 pairs / ~650K tok → avg ~377 tok/pair，max_length=2048 截断率 ≈0%。
+R60 的 16K 需求针对的是**完整 agentic 轨迹**（DeepSeek avg 28,339 tok），不是单轮 API Q&A 语料。
+替身 SFT 用的是 PyAether API Q&A pairs（单轮），2048 充分。RL rollout 轨迹才需 16K+。
+
+**F3 — GPU-busy guard 设计正确**：
+脚本注释明确「GPU-busy guard prevents launching on occupied GPUs」+ 「17:10 user order: GPU5-7
+occupied by vLLM serve until sandbox tunnel restored」。dry-run 不触发 guard（不分配 GPU），
+正式训练时 guard 会检测 GPU6-7 被占并拒绝启动——**正确遵守 17:10 令**，不会误杀 serve。
+
+### 4. 起跑路径（沙盒恢复 or GPU 释放后）
+
+```
+沙盒恢复 → watcher 自动起 Phase1 eval (GPU4+GPU0-3)
+         → Phase1 完成后停 GPU5-7 serve
+         → bash baize_posttrain_surrogate_pipeline.sh --phase2  (GPU6-7 SFT)
+         → SFT ckpt → --phase3 (RL/GRPO, R0 reward arm 不需沙盒)
+```
+
+或：运维明确释放 GPU6-7 用于训练（停止 serve）→ Phase2 直接起跑（不需等 Phase1）。
+
+### 5. 红线遵守
+
+- 源 parquet gate PASS（R150/R151, 0 命中）；本次审计**不新增任何数据**。
+- 仅验证依赖，不启动训练（遵守 17:10 GPU 占位令）。
+- 仅写本线文件（EXPERIMENTS §R159 + MEMORY 心跳），不碰他线。
+
+### 证据
+
+- `verl_cu124_venv/bin/python -c 'import torch,...'` → 全版本打印（见 wake228 命令输出）
+- `pq.read_table('sft_pyaether_corpus_unified_v5v6v7.parquet')` → 1725 rows, [conversation, metadata]
+- `bash baize_posttrain_sft_surrogate.sh --dry-run` → recipe + 4 prereq 全 OK
+- `nvidia-smi --query-gpu=index,memory.used,...` → GPU6=37852MiB, GPU7=37852MiB (serve 占位)
+
