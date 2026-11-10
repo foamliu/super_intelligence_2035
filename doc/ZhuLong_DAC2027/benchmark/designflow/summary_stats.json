@@ -1377,7 +1377,28 @@
       "ts": "2026-11-11T02:30:00+08:00",
       "users_mc30": 401
     },
-    "updated_at": "2026-11-11T02:15:00+08:00"
+    "updated_at": "2026-11-11T02:45:00+08:00",
+    "r337": {
+      "daily_log_20261110_lines": 2981,
+      "daily_log_20261111_lines": 2545,
+      "daily_log_healthy": true,
+      "date": "2026-11-11",
+      "dedup_sessions": 5999,
+      "finding": "r337 = 11th consecutive tool-health holding round (r327-r337) since r325 DONE (r334 asc_special fix). scansync r337 via eda_flow open_session(task_id=shardA-r337 eval_id=20261111-r337, exit 0, close_session cleaned). LATEST_SCAN still ssh_eda_search_20261109_224902 (44th consecutive no-new-scan r293-r337), summary.tsv 38082 rows unchanged. Numbers unchanged from r336: dedup_sessions=5999, mc30=2247, users_mc30=401, hosts=696, shard_A_pool_mc15=2381, B=591, C=1981, D=1775. new_sessions=0. Daily log 20261111 healthy 2545 lines. r325 deliverables reconfirmed in place at HEAD. tool-health conclusion unchanged: 25 tools (12 invoked), finesim=ok(43calls 40ok/2err), top pattern=command not found 2runs.",
+      "hosts": 696,
+      "mc30": 2247,
+      "new_sessions": 0,
+      "paper": "pdflatex+bibtex+pdflatex x2: exit 0, 14 pages, 0 undefined, main.pdf 272044B unchanged; \\Ntasks{1032}=A203+B242+C289+D298 (A unchanged 203, no edit; B/D drift belongs other shards, shard A does not overreach)",
+      "round_type": "tool-health holding",
+      "scan_confirmed": "no new scan since r292 full rescan (43rd consecutive no-new-scan r293-r336)",
+      "scan_dir": "ssh_eda_search_20261109_224902",
+      "shard_A_jsonl": 203,
+      "shard_A_new_this_round": 0,
+      "shard_A_pool_mc15": 2381,
+      "tool_health_holding": "top user-令 (2026-11-10 22:2x tool-health deep-dig) still in TASK_A.md un-archived by 运维 -> A.jsonl frozen at 203, no new case. r325 deliverables verified committed at HEAD=origin/main (07_tool_health.py 49043B; tool_health.json 32014B 630/696 runs 25 tools 12 invoked; report_designflow_tool_health_20261110_zh.html 22788B 6 sections inline CSS+SVG no CDN/JS). r334 fixed asc_special. asc=not-a-tool; finesim=ok (43 calls 40 ok/2 err/1 no_output 93%); top fail sig=command-not-found 2 runs; NO tool with all-failed calls.",
+      "ts": "2026-11-11T02:30:00+08:00",
+      "users_mc30": 401
+    }
   },
   "sessions": 38082,
   "shard_mc": {
@@ -1388,7 +1409,7 @@
   },
   "source": "/home/t0002965/log/ssh_eda_search_20261109_224902/summary.tsv (11/09 full rescan r292)",
   "target_mc": 30,
-  "updated_at": "2026-11-11T02:30:00+08:00",
+  "updated_at": "2026-11-11T02:45:00+08:00",
   "users_mc100": 182,
   "users_mc30": 401,
   "users_mc300": 60,
