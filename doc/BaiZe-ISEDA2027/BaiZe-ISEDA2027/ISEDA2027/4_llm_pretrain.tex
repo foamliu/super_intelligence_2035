@@ -106,8 +106,8 @@ The search selects WSD at LR $1\times10^{-3}$ with $86{:}10{:}4$ annealing, reac
 
 The recipe is scaled to $2.94$T tokens at $\texttt{DP}{=}16$ over two $8{\times}$H100 nodes, $\texttt{GBS}{=}256$ at sequence $16{,}384$ ($4{,}194{,}304$ tokens/step), FP8 tensorwise, AdamW.
 % 中文：该配方被放大到 $2.94$T token：跨两个 $8{\times}$H100 节点，$\texttt{DP}{=}16$，$\texttt{GBS}{=}256$、序列 $16{,}384$（每步 $4{,}194{,}304$ token），FP8 tensorwise，AdamW。
-At the time of writing (2026-11-11), the run has passed iteration $157{,}440$ of $700{,}000$ at $\mathbf{\approx}590$K tok/s, training loss $\approx2.02$, with zero NaN or skipped iterations (Table~\ref{tab:prod-budget}). The $613{,}992$ tok/s peak is FP8 at $16{,}384$; shorter sequences use BF16.
-% 中文：截至撰文时（2026-11-11），运行已到 $700{,}000$ 步中的第 $157{,}440$ 步，约 $\mathbf{590}$K tok/s，训练损失约 $2.02$，无 NaN 或跳过迭代（表 \ref{tab:prod-budget}）。$613{,}992$ tok/s 峰值为 $16{,}384$ 时的 FP8 测量值；更短序列用 BF16。
+At the time of writing (2026-11-11), the run has passed iteration $157{,}620$ of $700{,}000$ at $\mathbf{\approx}575$K tok/s, training loss $\approx2.02$, with zero NaN or skipped iterations (Table~\ref{tab:prod-budget}). The $613{,}992$ tok/s peak is FP8 at $16{,}384$; shorter sequences use BF16.
+% 中文：截至撰文时（2026-11-11），运行已到 $700{,}000$ 步中的第 $157{,}620$ 步，约 $\mathbf{575}$K tok/s，训练损失约 $2.02$，无 NaN 或跳过迭代（表 \ref{tab:prod-budget}）。$613{,}992$ tok/s 峰值为 $16{,}384$ 时的 FP8 测量值；更短序列用 BF16。
 
 \begin{table}[t]
 \centering
@@ -119,11 +119,11 @@ At the time of writing (2026-11-11), the run has passed iteration $157{,}440$ of
 \toprule
 \textbf{Phase} & \textbf{Tokens} & \textbf{Steps} & \textbf{Wall-clock} & \textbf{Status} \\
 \midrule
-Warmup + stable & 2.94T & 700k & ${\approx}58$ d & 157k done \\
+Warmup + stable & 2.94T & 700k & ${\approx}59$ d & 158k done \\
 Decay A (16K, $60$--$70\%$) & 58.7B & 14k & ${\approx}1.2$ d & queued \\
 Decay B (LC, $30$--$40\%$) & 25.2B & 6k & ${\approx}2.3$ d & gated \\
 \midrule
-\textbf{Total} & \textbf{3.02T} & \textbf{720k} & ${\approx}61.5$ d & --- \\
+\textbf{Total} & \textbf{3.02T} & \textbf{720k} & ${\approx}62.5$ d & --- \\
 \bottomrule
 \end{tabular}
 \end{table}
