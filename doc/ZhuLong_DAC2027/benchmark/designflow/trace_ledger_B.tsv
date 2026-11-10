@@ -881,7 +881,7 @@ peek:					parked		2026-11-10 23:22	peek: consultation verdi-fsdb-warning-paste
 1793189553608_5uqoi	dsgao	hfeg0pkn001	12	spice_sim	parked		2026-11-10 23:23	consultation verdi-fsdb-warning-paste
 1793882229682_mk098	yazhuok	hfeg0pahpc501	21	spice_sim	case	EDA-Eval-DesignFlow-SimCapLisParse-001	2026-11-10 23:51	
 1792131744105_g48nq	adaml	hfeg0pkn002	192	spice_sim	parked		2026-11-11 00:22	skill-creator meta-task not produce-task
-1793151811279_nrep6	thqu	hfeahpc503	215	characterization	parked		2026-11-11 00:31	meta-skill DOE reject (prior round peek)
+1793151811279_nrep6	thqu	hfeahpc503	215	characterization	case	EDA-Eval-DesignFlow-DOERankBuild-001	2026-11-11 00:43	DOERankBuild-001: tapered-buffer DOE rank CSV builder (NAND+3inv chain, .measure f1-f3/fL, dly/area/dA, rank by PDP). synthesized deterministic logical-effort model. thqu@hfeahpc503 mc=215. check.py 16-assert a-p sha1 d5cb80a06b. ref 16/16 + 3neg + 3fake FAIL. committed EDA-Flow-Bench 3b6af7ba. prior parked-note 'meta-skill DOE reject' overridden: gold=DOE rank CSV builder extractable, not the meta-skill itself.
 1794314373226_6eas3	e0030760	hfeg0pkn004	204	spice_sim	parked		2026-11-11 00:31	devops desktop-cleanup
 1794308888937_ddye0	haoliu	hfeg0pkn004	189	spice_sim	parked		2026-11-11 00:31	devops netlist-cleanup
 1794292541692_gu0ry	t0001988	hfeg0pkn002	46	spice_sim	parked		2026-11-11 00:31	trivial hello+paste
