@@ -15555,3 +15555,51 @@ assemble_for_execution.py  →  run_on_sandbox.py  →  calculate_results.py
 - **pyAether 确认本地不可装**：pyaether_venv 不存在 + .venv ModuleNotFoundError + find 无 .so → SWIG 编译 EDA 工具，不可 pip
 - **SSH 确认不通**：`ssh app.e0031982@10.129.32.75` → connection timed out（port 22 也 CLOSED）
 - **eval 管线双依赖沙盒**：代码生成阶段(cline 用 MCP run_code 测试代码) + 评分阶段(run_eval.py POST 到 sandbox) 均需沙盒 → Phase 1 完全阻塞于沙盒
+
+## §SFT-failure-analysis（2026-11-10 wake204 · SFT 2-GPU DDP 失败根因分析）
+
+> **背景**：wake194 启动了 Phase 2 替身 SFT，smoke test PASS（20 步/40.8s/loss 1.75→0.096），但全量 2-GPU DDP 训练三次失败。本节分析根因并给出修复方案。
+
+### 1. 三次失败时间线
+
+| 时间 | 模式 | GPU | max_len | 结果 | 根因 |
+|:--|:--|:--:|:--:|:--|:--|
+| 16:37 | smoke (1 GPU) | 6 | 1024 | ✅ PASS (20步/40.8s) | — |
+| 16:50 | full (2 GPU DDP) | 6,7 | 2048 | ❌ OOM exit=1 | GPU6 有残留进程占 36.3GB |
+| 16:52 | single (1 GPU) | 7 | 2048 | ❌ Terminated@step6 | 38.7s/step 太慢 + 被 kill |
+| 17:11 | full (2 GPU DDP) | 6,7 | 1024 | ❌ SIGKILL exit=-9 | vLLM serve 占位(17:10令)抢显存 |
+
+### 2. 2-GPU DDP OOM 根因（第一次失败）
+
+```
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 4.69 GiB.
+GPU 0 has a total capacity of 44.55 GiB of which 3.03 GiB is free.
+Process 3557214 has 36.30 GiB memory in use.
+```
+
+- `CUDA_VISIBLE_DEVICES=6,7` → 进程内 GPU 0 = 物理 GPU 6
+- 物理 GPU 6 上有残留进程 PID 3557214 占用 36.3GB → 仅剩 3.03GB
+- DDP Reducer 初始化需 4.69GB → OOM
+- **根因**：smoke test (16:37) 完成后进程未完全释放显存（checkpoint 保存 14.7GB 到 /tmp 持续到 16:39），full training (16:50) 启动时 GPU busy check 通过（<1GB?）但 DDP init 时残留显存仍在
+
+### 3. 修复方案
+
+1. **启动前强制清理 GPU**：在 SFT 脚本中添加 `nvidia-smi --query-compute-apps` 检查 + `kill -9` 残留进程
+2. **添加 NCCL 环境变量**：`NCCL_P2P_DISABLE=1`（A40 无 NVLink，P2P 可能导致 DDP 初始化挂起）
+3. **降低 max_len**：2-GPU 模式用 max_len=1024（smoke 验证可行），单 GPU 用 2048
+4. **添加 GPU 空闲等待**：循环检查 `nvidia-smi --query-gpu=memory.used` 直到 <1GB 再启动
+5. **保存策略**：save_steps=200（wake194 crash@step95 lost all w/ save_steps=500 → 已在脚本中修复为 200）
+
+### 4. SFT 数据已就绪
+
+- 文件：`run/sft_pyaether_corpus_v2.jsonl`（19,524 行 / 21.8MB / ✅ 已 git tracked）
+- 筛选：quality_tier ∈ {high, medium} → 12,434 对
+- 类型：S1_doc_to_code / S2_api_to_code / S3_error_fix / S4_multi_api / S5_trajectory
+- 格式：prompt/completion JSONL → ChatML（system+user+assistant），loss masking on completion only
+- 替代理由：UltraData-SFT-2605 在 .17 不可达（无 /nas_train 挂载），PyAether SFT corpus 更针对 API 知识缺口（D4 执行报错占 74%）
+
+### 5. 当前阻塞
+
+- GPU 5/6/7 被 vLLM serve 占位（17:10 令，防止被挪用）→ SFT 无法启动
+- 沙盒 10.129.32.75 仍 CLOSED（9th wake）→ SFT 前后评测无法进行
+- **解锁条件**：沙盒恢复 → 释放 GPU 6-7 serve → 启动 SFT → 评测
