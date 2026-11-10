@@ -634,3 +634,22 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked		2026-11-09 20:39	RAG-looku
 1791523535284_pibrs					parked		2026-11-10 18:07	non-seed: run_pyaether policy validation recon/how-to, no produce-task (t0002962@hfeg0plg90 mc=154)
 1793949837980_hs4sv	adaml	hfeg0pkn002	756	layout_virtuoso	parked		2026-11-10 18:31	non-seed: ai-skill-optimizer reviewing virtuoso-sch-editor SKILL.md doc; keywords from SKILL content not real EDA tool execution; not design_flow produce-task
 1793165088136_0suhi	e0046686	hfeg0pkn001	1412	physical_verify	parked		2026-11-10 18:31	wrong-shard D: AUTOSIM netlist/vector generation tool (netlist_generator.py, GUI bsub cluster); 1266 netlist vs 101 calibre incidental; shard D schematic_netlist
+1790168650173_mdx5g					parked		2026-11-10 18:48	r334: failed+non-seed skill-add (add skill from /data folder; keywords from SKILL.md doc not real EDA exec)
+1789973143978_7glsf					parked		2026-11-10 18:48	r334: failed+recon (find open aether?) no accepted gold
+1793586676522_9kzwd					parked		2026-11-10 18:48	r334: failed+wrong-shard D (coverage bin analysis verilog.ddr5.drcpa.aicov)
+1794201867852_u5ihf					parked		2026-11-10 18:48	r334: failed+wrong-shard D (BURST_ORD verilog tb stimulus analysis)
+1789463421521_esq76					parked		2026-11-10 18:48	r334: failed+recon (read 0915_drc_pattern_check_handover.md background) no gold
+1789535720497_l98b2					parked		2026-11-10 18:48	r334: failed+recon (read multi_value_variable_naming_standard.md proposal) no gold
+1789611616123_di7rc					parked		2026-11-10 18:48	r334: failed+issue-handler-workflow (pdkQaSystem issue process doc) no gold
+1789643977401_bousd					parked		2026-11-10 18:48	r334: failed+recon (read drc_pattern_check_handover.md) no gold
+1789973243825_ws91y					parked		2026-11-10 18:48	r334: failed+recon (read sync_to_stable/README.md background) no gold
+1791967778332_6uwxi					parked		2026-11-10 18:48	r334: failed+doc-audit (doc vs code consistency audit, only-report) no gold
+1792021302895_idx43					parked		2026-11-10 18:48	r334: failed+doc-audit (same doc consistency audit) no gold
+1794200810852_wmv7m					parked		2026-11-10 18:48	r334: idle+handoff-resume (HANDOFF_20261109_114500.md) no gold
+1794202378967_ihvqf					parked		2026-11-10 18:48	r334: idle+handoff-resume (HANDOFF_20261109_150000.md) no gold
+1794213041594_yhfm0					parked		2026-11-10 18:48	r334: idle+handoff-resume (HANDOFF_20261109_171000.md) no gold
+1791795024899_lp74k					parked		2026-11-10 18:48	r334: cancelled+non-seed skill-launch (启动aether的skill) no gold
+1791512939497_0aw4j					parked		2026-11-10 18:48	r334: wrong-shard D/verif (DDR/LPDDR run-regression coverage workflow)
+1793264175600_ocmhu					parked		2026-11-10 18:48	r334: wrong-shard D/verif (verilog toggle coverage read cong_cov)
+1793251326263_gesut					parked		2026-11-10 18:48	r334: non-seed Q&A/how-to (hefei SOP/PDF/LMB/.dr explanations, prose only)
+1793016668331_gm17v					parked		2026-11-10 18:48	r334: non-seed env-setup (aether-launcher setup.bash+start_aether.sh config)
