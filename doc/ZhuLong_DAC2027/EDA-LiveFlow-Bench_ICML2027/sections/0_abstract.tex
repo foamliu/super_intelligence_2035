@@ -5,8 +5,8 @@ We present \bench, a benchmark of \textbf{\Ntasks{} tasks} across \textbf{13 EDA
 % 我们提出 \bench，包含 \textbf{\Ntasks{} 个任务}，覆盖 \textbf{13 个 EDA 领域}——从原理图/网表到 SPICE 仿真、物理验证和数字综合——每一个任务都来源于真实生产环境中 268 位工程师使用 Cline 编程智能体的交互轨迹。
 Each task requires the agent to produce a deliverable package (\texttt{submit.zip}) by orchestrating remote EDA tools through an MCP bridge, scored against $\geq 8$ executable assertions with a \texttt{PreToolUse} hook that prevents answer leakage.
 % 每个任务要求智能体通过 MCP 网桥调用远程 EDA 工具，最终产出一个交付件包（\texttt{submit.zip}）；判分基于不少于 8 条可执行断言，并通过 \texttt{PreToolUse} 钩子防止答案泄露。
-Under a controlled harness, the best frontier model achieves only \textbf{28\% Pass@1}---versus 76\% on single-script EDA benchmarks---showing that multi-step flow orchestration is qualitatively harder than isolated code generation.
-% 在受控评测框架下，最优前沿模型仅取得 \textbf{28\% Pass@1}——而在单脚本 EDA 基准上可达 76\%——表明多步流程编排比孤立的代码生成在本质上更为困难。
-Failure analysis reveals the gap is driven by \emph{tool-chain grounding depth} rather than model size: verification tasks pass at 80\% while digital synthesis passes at 0\%.
-% 失败分析表明，这一差距由"工具链接地深度"而非模型规模驱动：验证类任务通过率为 80\%，而数字综合类任务为 0\%。
+Under a controlled harness, the best frontier model achieves only \textbf{10.0\% Pass@1} on the full 696-task evaluation---versus 76\% on single-script EDA benchmarks---showing that multi-step flow orchestration is qualitatively harder than isolated code generation.
+% 在受控评测框架下，最优前沿模型在 696 个任务的完整评测上仅取得 \textbf{10.0\% Pass@1}——而在单脚本 EDA 基准上可达 76\%——表明多步流程编排比孤立的代码生成在本质上更为困难。
+Failure analysis reveals the gap is driven by \emph{tool-chain grounding depth} rather than model size: the highest-passing domain (pnr\_signoff, 20.8\%) still exceeds the lowest (physical\_verify and layout\_aether, both 2.9\%) by a factor of $\sim$7$\times$, with the lowest-passing domains being precisely those that demand the deepest live-tool interaction (DRC/LVS runs, GUI-driven layout editing).
+% 失败分析表明，这一差距由"工具链接地深度"而非模型规模驱动：通过率最高的领域（pnr\_signoff，20.8\%）与最低的领域（physical\_verify 与 layout\_aether，均为 2.9\%）之间仍有约 7 倍差距，而通过率最低的领域恰好是那些需要最深实时工具交互（DRC/LVS 运行、GUI 驱动的版图编辑）的领域。
 \end{abstract}

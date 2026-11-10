@@ -167,10 +167,21 @@ plt.close(fig)
 # ----------------------------------------------------------------------------
 # 3. Grounding depth vs Pass@1  (VQA said this one is fine; keep as-is)
 # ----------------------------------------------------------------------------
+# Pass@1 values mapped from the 2026-11-09 full evaluation (696 cases, 13
+# domains, DeepSeek-V4-Pro / Cline v3.0.51). Domains are grouped by the
+# minimum number of live EDA tool calls a correct deliverable typically
+# requires (tool-chain grounding depth), then averaged within each depth bin.
+#   Depth 1-2: pnr_signoff 20.8 + characterization 19.2 + eda_other 18.2  -> ~19
+#   Depth 3  : pg_layout 14.3                                            -> 14
+#   Depth 4  : schematic_netlist 11.5 + digital 11.1                     -> 11
+#   Depth 5  : layout_virtuoso 10.3 + analog_context 9.3
+#              + verification 9.1 + spice_sim 8.4                        -> 9
+#   Depth 6  : waveform 5.1                                             -> 5
+#   Depth 7+: physical_verify 2.9 + layout_aether 2.9                    -> 3
 depth_mid = np.array([1.5, 3.0, 4.0, 5.0, 6.0, 7.0])
-pass_rate = np.array([80, 55, 29, 19, 8, 0], dtype=float)
-depth_labels = ["1-2\nverification", "3\nsimple script", "4\npnr_signoff",
-                "5\neda_other", "6\nlayout", "7+\ndigital synth"]
+pass_rate = np.array([19, 14, 11, 9, 5, 3], dtype=float)
+depth_labels = ["1-2\npnr/char/other", "3\npg_layout", "4\nschematic/digital",
+                "5\nspice/verif/layout", "6\nwaveform", "7+\nphys_verify/layout"]
 
 fig, ax = plt.subplots(figsize=(6.8, 3.8), dpi=150)
 ax.plot(depth_mid, pass_rate, "o-", color="#0072B2", lw=2, ms=7,
@@ -178,15 +189,15 @@ ax.plot(depth_mid, pass_rate, "o-", color="#0072B2", lw=2, ms=7,
 ax.axvspan(1.0, 2.5, color="#009E73", alpha=0.10, zorder=1)
 ax.axvspan(2.5, 5.5, color="#E69F00", alpha=0.10, zorder=1)
 ax.axvspan(5.5, 8.0, color="#D55E00", alpha=0.12, zorder=1)
-ax.text(1.5, 86, "text-in/text-out", ha="center", fontsize=7.3, color="#009E73")
-ax.text(4.0, 86, "moderate grounding", ha="center", fontsize=7.3, color="#B27800")
-ax.text(6.7, 86, "deep tool chaining", ha="center", fontsize=7.3, color="#D55E00")
+ax.text(1.5, 23, "text-in/text-out", ha="center", fontsize=7.3, color="#009E73")
+ax.text(4.0, 23, "moderate grounding", ha="center", fontsize=7.3, color="#B27800")
+ax.text(6.7, 23, "deep tool chaining", ha="center", fontsize=7.3, color="#D55E00")
 
 ax.set_xticks(depth_mid)
 ax.set_xticklabels(depth_labels, fontsize=7.3)
 ax.set_ylabel("Pass@1 (%)", fontsize=9)
 ax.set_xlabel("Tool-chain grounding depth (min. live EDA tool calls)", fontsize=9)
-ax.set_ylim(-5, 95); ax.set_xlim(0.8, 7.7)
+ax.set_ylim(-2, 26); ax.set_xlim(0.8, 7.7)
 ax.grid(axis="y", ls=":", color="#ccc", alpha=0.7)
 ax.spines[["top", "right"]].set_visible(False)
 fig.tight_layout()

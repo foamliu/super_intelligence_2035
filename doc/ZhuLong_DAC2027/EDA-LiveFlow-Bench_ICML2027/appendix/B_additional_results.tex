@@ -8,34 +8,35 @@
 \label{sec:full-per-domain}
 % \subsection{完整的各领域结果}
 
-[TODO: full Pass@1 table for all \Ntasks{} cases across 13 domains. Current evaluation: 48 cases / 4 domains; the final version will cover the full set.]
-% [待办：所有 \Ntasks{} 案例在 13 个领域上的完整 Pass@1 表。当前评测：48 例 / 4 领域；最终版将覆盖全集。]
+Table~\ref{tab:full-domain-results} reports the full per-domain breakdown from the 2026-11-09 full evaluation (696 cases across all 13 domains, DeepSeek-V4-Pro, Cline v3.0.51, \texttt{thinking=low}). The overall Pass@1 is 10.0\% (62 PASS / 620 decided cases); 70 ERROR and 6 ABSENT runs are excluded from the denominator.
+% 表~\ref{tab:full-domain-results} 报告了 2026-11-09 完整评测（696 例，覆盖全部 13 个领域，DeepSeek-V4-Pro、Cline v3.0.51、\texttt{thinking=low}）的完整各领域分解。总体 Pass@1 为 10.0\%（62 PASS / 620 已判定案例）；70 个 ERROR 与 6 个 ABSENT 不计入分母。
 
 \begin{table}[ht]
 \centering
 \small
-\caption{Full Pass@1 (\%) by domain (target: all 13 domains, \Ntasks{} tasks).}
-% \caption{各领域完整 Pass@1 (\%)（目标：全部 13 个领域、\Ntasks{} 个任务）。}
+\caption{Full Pass@1 (\%) by domain on the 2026-11-09 full evaluation (696 cases, DeepSeek-V4-Pro, Cline v3.0.51, \texttt{thinking=low}, 8 workers, 2400s timeout). Pass\% = PASS/(PASS+FAIL); ERROR and ABSENT are excluded from the denominator.}
+% \caption{2026-11-09 完整评测（696 例，DeepSeek-V4-Pro、Cline v3.0.51、\texttt{thinking=low}、8 workers、超时 2400s）各领域 Pass@1 (\%)。Pass\% = PASS/(PASS+FAIL)；ERROR 与 ABSENT 不计入分母。}
 \label{tab:full-domain-results}
-\begin{tabular}{@{}lcc@{}}
+\scriptsize
+\begin{tabular}{@{}lcccccc@{}}
 \toprule
-\textbf{Domain} & \textbf{Tasks} & \textbf{Pass@1 (\%)} \\
+\textbf{Domain} & \textbf{PASS} & \textbf{FAIL} & \textbf{ERROR} & \textbf{ABSENT} & \textbf{Total} & \textbf{Pass\%} \\
 \midrule
-schematic\_netlist & 72 & --- \\
-spice\_sim & 72 & --- \\
-physical\_verify & 61 & --- \\
-layout\_aether & 35 & --- \\
-layout\_virtuoso & 33 & --- \\
-waveform & 33 & --- \\
-analog\_context & 30 & --- \\
-characterization & 25 & --- \\
-digital & 24 & 0.0 \\
-pg\_layout & 23 & --- \\
-pnr\_signoff & 23 & 18.8 \\
-eda\_other & 17 & 28.6 \\
-verification & 14 & 80.0 \\
+schematic\_netlist & 13 & 100 & 18 & 0 & 131 & 11.5 \\
+spice\_sim         & 8  & 87  & 7  & 2 & 104 & 8.4  \\
+physical\_verify   & 2  & 66  & 4  & 1 & 73  & 2.9  \\
+digital            & 5  & 40  & 6  & 0 & 51  & 11.1 \\
+analog\_context    & 4  & 39  & 12 & 0 & 55  & 9.3  \\
+waveform           & 2  & 37  & 8  & 0 & 47  & 5.1  \\
+layout\_virtuoso   & 4  & 35  & 0  & 1 & 40  & 10.3 \\
+layout\_aether     & 1  & 33  & 4  & 0 & 38  & 2.9  \\
+verification       & 3  & 30  & 5  & 0 & 38  & 9.1  \\
+eda\_other         & 6  & 27  & 4  & 1 & 38  & 18.2 \\
+pg\_layout         & 4  & 24  & 0  & 0 & 28  & 14.3 \\
+characterization   & 5  & 21  & 2  & 0 & 28  & 19.2 \\
+pnr\_signoff       & 5  & 19  & 0  & 1 & 25  & 20.8 \\
 \midrule
-\textbf{Total} & \textbf{462+} & \textbf{28.1 (partial)} \\
+\textbf{Total}     & \textbf{62} & \textbf{558} & \textbf{70} & \textbf{6} & \textbf{696} & \textbf{10.0} \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -57,7 +58,7 @@ verification & 14 & 80.0 \\
 \toprule
 \textbf{Backbone} & \textbf{Pass@1 (\%)} \\
 \midrule
-DeepSeek-V4-Pro & 28.1 \\
+DeepSeek-V4-Pro & 10.0 \\
 GLM-5.2 & --- \\
 Kimi-K2.6 & --- \\
 DeepSeek-V4-Flash & --- \\
@@ -70,8 +71,8 @@ Doubao-Seed-2.0-Pro & --- \\
 \label{sec:failure-by-domain}
 % \subsection{各领域失败分类法}
 
-[TODO: failure-category breakdown by domain (no-output / partial-output / format), stacked bar chart + table. Current data: overall 60/25/15; digital 100/0/0.]
-% [待办：各领域失败类别分解（无输出 / 部分输出 / 格式），堆叠柱状图 + 表。当前数据：总体 60/25/15；digital 100/0/0。]
+[TODO: failure-category breakdown by domain (no-output / partial-output / format), stacked bar chart + table. Preliminary overall estimate from the 696-task run: $\sim$45/40/15, with no-output failures concentrated in physical\_verify and layout\_aether. A fully systematic per-trace labeling is left to future work.]
+% [待办：各领域失败类别分解（无输出 / 部分输出 / 格式），堆叠柱状图 + 表。来自 696 任务运行的初步总体估计：约 45/40/15，无输出失败集中在 physical\_verify 与 layout\_aether。完全系统性的逐轨迹标注留待未来工作。]
 
 \subsection{Token Usage and Cost Analysis}
 \label{sec:token-cost}

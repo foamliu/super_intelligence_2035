@@ -10,32 +10,32 @@
 \label{sec:failure-taxonomy}
 % \subsection{失败分类法}
 
-We classify failures into three categories:
-% 我们将失败分为三类：
+We classify failures into three categories. The proportions below are preliminary estimates derived from inspecting a sample of failed traces and the ERROR/ABSENT counts from the full 696-task run (70 ERROR, 6 ABSENT, 558 FAIL); a fully systematic per-trace labeling is left to future work.
+% 我们将失败分为三类。以下比例为基于失败轨迹抽样和完整 696 任务运行中 ERROR/ABSENT 计数（70 ERROR、6 ABSENT、558 FAIL）得出的初步估计；完全系统性的逐轨迹标注留待未来工作。
 
-\textbf{(1) No-output failures (60\%).} The agent produces no deliverable (\texttt{submit.zip} absent). These are predominantly \emph{grounding failures}: the agent cannot figure out which EDA tools to call, or calls them incorrectly, and gives up without producing any files. In the digital-synthesis domain, 100\% of failures are no-output---the agent never successfully invokes \texttt{dc\_shell} or produces a synthesis tcl flow.
-% \textbf{(1) 无输出失败（60\%）}：智能体未产出任何交付件（\texttt{submit.zip} 缺失）。这些主要是"接地失败"：智能体弄不清该调用哪些 EDA 工具，或调用方式错误，最终放弃且未产出任何文件。在数字综合领域，100\% 的失败为无输出——智能体从未成功调用 \texttt{dc\_shell} 或产出综合 tcl 流程。
+\textbf{(1) No-output failures ($\sim$45\%).} The agent produces no deliverable (\texttt{submit.zip} absent) or the run terminates in ERROR before judging. These are predominantly \emph{grounding failures}: the agent cannot figure out which EDA tools to call, or calls them incorrectly, and gives up without producing any files. They are concentrated in the deepest-grounding domains---physical\_verify and layout\_aether, where driving Calibre/PVS or Aether SKILL to a clean run is the binding obstacle.
+% \textbf{(1) 无输出失败（约 45\%）}：智能体未产出任何交付件（\texttt{submit.zip} 缺失）或运行在判分前以 ERROR 终止。这些主要是"接地失败"：智能体弄不清该调用哪些 EDA 工具，或调用方式错误，最终放弃且未产出任何文件。它们集中在接地最深的领域——physical\_verify 与 layout\_aether，在这些领域中驱动 Calibre/PVS 或 Aether SKILL 跑到干净才是约束瓶颈。
 
-\textbf{(2) Partial-output failures (25\%).} The agent produces a deliverable but it fails $\geq 1$ assertion. These are \emph{semantic failures}: the deliverable is syntactically plausible but semantically incorrect---e.g., a SPICE deck that runs but produces wrong measurements, or a DRC script that checks the wrong rules.
-% \textbf{(2) 部分输出失败（25\%）}：智能体产出了交付件，但至少 1 条断言未通过。这些是"语义失败"：交付件在语法上看似合理，但在语义上不正确——例如，SPICE 仿真卡能运行但测量值错误，或 DRC 脚本检查了错误的规则。
+\textbf{(2) Partial-output failures ($\sim$40\%).} The agent produces a deliverable but it fails $\geq 1$ assertion. These are \emph{semantic failures}: the deliverable is syntactically plausible but semantically incorrect---e.g., a SPICE deck that runs but produces wrong measurements, or a DRC script that checks the wrong rules. These dominate the medium-grounding domains (spice\_sim, verification, schematic\_netlist).
+% \textbf{(2) 部分输出失败（约 40\%）}：智能体产出了交付件，但至少 1 条断言未通过。这些是"语义失败"：交付件在语法上看似合理，但在语义上不正确——例如，SPICE 仿真卡能运行但测量值错误，或 DRC 脚本检查了错误的规则。它们在中度接地领域（spice\_sim、verification、schematic\_netlist）占主导。
 
-\textbf{(3) Format failures (15\%).} The deliverable is correct in content but fails format assertions (wrong file structure, missing files, wrong naming). These are \emph{contract failures}: the agent misunderstood the deliverable specification.
-% \textbf{(3) 格式失败（15\%）}：交付件内容正确，但未通过格式断言（文件结构错、缺文件、命名错）。这些是"契约失败"：智能体误解了交付件规范。
+\textbf{(3) Format failures ($\sim$15\%).} The deliverable is correct in content but fails format assertions (wrong file structure, missing files, wrong naming). These are \emph{contract failures}: the agent misunderstood the deliverable specification.
+% \textbf{(3) 格式失败（约 15\%）}：交付件内容正确，但未通过格式断言（文件结构错、缺文件、命名错）。这些是"契约失败"：智能体误解了交付件规范。
 
 \subsection{Tool-Chain Grounding Depth}
 \label{sec:grounding-depth}
 % \subsection{工具链接地深度}
 
-We define \emph{grounding depth} as the minimum number of live EDA tool calls needed to produce a correct deliverable. Figure~\ref{fig:grounding-depth} shows the correlation between grounding depth and Pass@1:
-% 我们将"接地深度"定义为产出正确交付件所需的最少真实 EDA 工具调用次数。图~\ref{fig:grounding-depth} 展示了接地深度与 Pass@1 的相关性：
+We define \emph{grounding depth} as the minimum number of live EDA tool calls needed to produce a correct deliverable. Figure~\ref{fig:grounding-depth} shows the correlation between grounding depth and Pass@1, with domains binned by their typical tool-call depth and Pass@1 taken from the full 696-task evaluation:
+% 我们将"接地深度"定义为产出正确交付件所需的最少真实 EDA 工具调用次数。图~\ref{fig:grounding-depth} 展示了接地深度与 Pass@1 的相关性，其中领域按典型工具调用深度分箱，Pass@1 取自 696 个任务的完整评测：
 
 \begin{itemize}
-    \item \textbf{Depth 1--2} (verification, simple scripting): 80\% pass. The agent can produce the deliverable from prior knowledge with minimal tool interaction.
-    % \textbf{深度 1--2}（验证、简单脚本）：通过率 80\%。智能体可凭先验知识产出交付件，几乎无需工具交互。
-    \item \textbf{Depth 3--5} (pnr\_signoff, eda\_other): 19--29\% pass. The agent must call tools and inspect outputs, but the tool chain is relatively standardized.
-    % \textbf{深度 3--5}（pnr\_signoff、eda\_other）：通过率 19--29\%。智能体必须调用工具并检视输出，但工具链相对标准化。
-    \item \textbf{Depth 6+} (digital synthesis, complex layout): 0\% pass. The agent must maintain state across many tool calls, interpret domain-specific outputs, and iterate---a capability that current LLMs lack.
-    % \textbf{深度 6+}（数字综合、复杂版图）：通过率 0\%。智能体必须在多次工具调用间维护状态、解读领域专属输出并迭代——这是当前 LLM 所欠缺的能力。
+    \item \textbf{Depth 1--2} (pnr\_signoff, characterization, eda\_other): 14--21\% pass. The deliverable is largely a script or tcl template the agent can produce from prior knowledge with only light tool interaction.
+    % \textbf{深度 1--2}（pnr\_signoff、characterization、eda\_other）：通过率 14--21\%。交付件主要是脚本或 tcl 模板，智能体可凭先验知识产出，仅需少量工具交互。
+    \item \textbf{Depth 3--5} (pg\_layout, schematic\_netlist, digital, layout\_virtuoso, analog\_context, verification, spice\_sim): 8--14\% pass. The agent must call tools and inspect outputs, but the tool chain is relatively standardized; failures are mostly semantic (wrong measurements, wrong rules).
+    % \textbf{深度 3--5}（pg\_layout、schematic\_netlist、digital、layout\_virtuoso、analog\_context、verification、spice\_sim）：通过率 8--14\%。智能体必须调用工具并检视输出，但工具链相对标准化；失败多为语义失败（测量值错、规则错）。
+    \item \textbf{Depth 6+} (waveform, physical\_verify, layout\_aether): 3--5\% pass. The agent must drive Calibre/PVS or Aether SKILL, maintain state across many tool calls, interpret domain-specific outputs, and iterate---a capability that current LLMs lack.
+    % \textbf{深度 6+}（waveform、physical\_verify、layout\_aether）：通过率 3--5\%。智能体必须驱动 Calibre/PVS 或 Aether SKILL、在多次工具调用间维护状态、解读领域专属输出并迭代——这是当前 LLM 所欠缺的能力。
 \end{itemize}
 
 \begin{figure}[ht]
@@ -57,8 +57,8 @@ We define \emph{grounding depth} as the minimum number of live EDA tool calls ne
 \label{sec:threats}
 % \subsection{有效性威胁}
 
-\textbf{Domain imbalance.} The benchmark over-represents analog/layout domains (top 3 domains = 43\%) and under-represents digital/verification (10\%). This reflects real usage but may bias aggregate metrics toward analog-friendly capabilities.
-% \textbf{领域失衡。} 该基准过度代表模拟/版图领域（前 3 个领域占 43\%），而数字/验证偏少（10\%）。这反映了真实使用情况，但可能使聚合指标偏向对模拟友好的能力。
+\textbf{Domain imbalance.} The benchmark over-represents analog/layout domains (top 3 domains = 44\%) and under-represents digital/verification (13\%). This reflects real usage but may bias aggregate metrics toward analog-friendly capabilities.
+% \textbf{领域失衡。} 该基准过度代表模拟/版图领域（前 3 个领域占 44\%），而数字/验证偏少（13\%）。这反映了真实使用情况，但可能使聚合指标偏向对模拟友好的能力。
 
 \textbf{Single tool ecosystem.} All tasks use commercial EDA tools (Empyrean Aether, Cadence, Synopsys) accessible via a single EDA server. Generalization to open-source EDA (Yosys, OpenROAD, Magic) is not evaluated.
 % \textbf{单一工具生态。} 所有任务使用商业 EDA 工具（华大九天 Aether、Cadence、Synopsys），通过单一 EDA 服务器访问。对开源 EDA（Yosys、OpenROAD、Magic）的泛化能力未作评估。
