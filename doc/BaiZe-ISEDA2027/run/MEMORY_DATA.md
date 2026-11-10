@@ -20,11 +20,11 @@ WAITING: 1
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        ✅stack-v3-train 2TB下载全DONE→进入过滤+分词阶段(待运维指令) → ✅论文数据节更新(11-10令) → ✅路径staleness审计(0 stale) → ✅TASK.md标记更新(10:10+08:5x改✅已交付) → WAITING=1
-已完成:       ✅85M;✅10-31报告;✅09:4x报告;✅09:2x长上下文10/10(249.48GiB);✅13:2x#2 RL报告;✅13:2x#1 B类12/12(78.73GiB);✅11-07 ROI 8源DONE(25.14GB/135文件/0inc);✅stack-v3-train调研DONE(8192shard/EDA语言27.1%);✅batch1-7全DONE(累计1,987,930,402,327B/4600parquet/0inc);✅batch7 QC(6885files/vendor1.0%/EDA12.3%);✅2TB ROI复盘(token~2,025B/重叠2.4%/97.6%独特/ROI判定✅有价值);✅论文pretrain数据节更新(淡化数据源名+Stable/Decay双饼图+中文图注,ERR=0,5pages);✅路径staleness审计(INDEX.tsv 12条全OK/symlink全resolve/stack-v3路径OK,0 stale);✅TASK.md 10:10令+08:5x令标记更新为✅已交付
-当前动作:     唤醒1446(2026-11-11 06:00):例行巡检→①git pull --rebase(Already up to date,TASK.md无新data令);②research日报11-10(18:12)仍为最新(无11-11 06:00报),data AM/PM建议已在wake1445处理(路径staleness已done,缺失型指标+曝光分桶纳注L4/L5);③stack-v3-train:du -sb=1,987,932,712,240B/4600parquet/0inc/13816files→完整稳定;④pgrep无下载进程(仅loop+cline自身);⑤df:/nas_inference 19T已用/27T可用(42%)≥5T红线OK;/nas_train 180T/28T可用(87%);/nas_env 8.3T/1.7T可用(84%);⑥体积MEMORY 31.9KB/TASK 29.8KB均≤40KB;⑦全部运维令已✅已交付→commit→WAITING=1
-下一步:       等运维指令→若批准stack-v3 L4/L5 parquet级过滤+分词→用tokenizer_eod分词→落baize-data/tokenized/→更新INDEX.tsv+DATA_MAPPING.md(过滤阶段纳入research日报PM建议:缺失型指标独立成行+曝光分桶统计);若无新指令→WAITING=1例行巡检
-阻塞:         无(2TB下载已完成,论文数据节已更新,路径审计0 stale,TASK.md标记已更新,/nas_inference 27T可用≥5T红线)
+PHASE:        ✅stack-v3-train 2TB下载全DONE→进入过滤+分词阶段(待运维指令) → WAITING=1
+已完成:       ✅85M;✅10-31报告;✅09:4x报告;✅09:2x长上下文10/10(249.48GiB);✅13:2x#2 RL报告;✅13:2x#1 B类12/12(78.73GiB);✅11-07 ROI 8源DONE(25.14GB/135文件/0inc);✅stack-v3-train调研DONE(8192shard/EDA语言27.1%);✅batch1-7全DONE(累计1,987,930,402,327B/4600parquet/0inc);✅batch7 QC(6885files/vendor1.0%/EDA12.3%);✅2TB ROI复盘(token~2,025B/重叠2.4%/97.6%独特/ROI判定✅有价值);✅论文pretrain数据节更新;✅路径staleness审计(0stale);✅TASK.md标记更新
+当前动作:     唤醒1447(2026-11-11 06:57):例行巡检→①git pull --rebase(Already up to date,TASK.md无新data令);②research日报11-11(06:06)已阅[data建议=本期无新增可用建议(不凑数),备查2611.12884子群体数据分配但标注"不是建议/现在不适用"];③stack-v3-train:du -sb=1,987,932,712,240B/4600parquet/0inc→完整稳定;④pgrep无下载进程(仅loop+cline自身);⑤df:/nas_inference 19T已用/27T可用(42%)≥5T红线OK;/nas_train 180T/28T可用(87%);/nas_env 8.3T/1.7T可用(84%);⑥体积MEMORY 31.0KB/TASK 29.1KB均≤40KB;⑦全部运维令已✅已交付→commit→WAITING=1
+下一步:       等运维指令→若批准stack-v3 L4/L5 parquet级过滤+分词→用tokenizer_eod分词→落baize-data/tokenized/→更新INDEX.tsv+DATA_MAPPING.md;若无新指令→WAITING=1例行巡检
+阻塞:         无(2TB下载已完成,/nas_inference 27T可用≥5T红线)
 ERROR_COUNT:  11
 未完成指令:   无(全部运维令均已✅已交付)→WAITING=1
 ```
