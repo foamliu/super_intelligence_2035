@@ -1,5 +1,5 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
-WAITING: 1
+WAITING: 1（🔴 **2026-11-10 21:2x 用户更正（最高优先）：评测结果不写进论文**——8 集 zero-shot 数只作训练监控（留在 EXPERIMENTS/MEMORY/reports），训练仍在早期（154k/700k≈22%）。主 agent 已撤回 §4.7+tab:ckpt-scaling，并把摘要里过期的 30,660/2.151 同步为 154,660/≈2.03；论文只保留 §4.6 训练状态句。**以后不要再把评测表加回 tex**，见 BAIZE_PRETRAIN_2B_TASK.md 顶部「⛔️ 用户更正」块）
 
 
 > 2026-11-10 21:16 #1920: **论文刷新独立验证轮·6行表值逐点核对results.json全匹配✅·PDF编译clean✅·训练健康iter155040/700k step6954-7178ms<7.4s✅·无160k(~9.7h后)**·**动作**：①git fetch+status(## main...origin/main同步✅) ②独立验证§4.7表值：ssh .29 对6个results.json逐个解析harness avg(acc_norm for ARC/HellaSwag,acc otherwise)=10k 50.75%/30k 51.00%/50k 52.88%/80k 55.50%/110k 57.12%/150k 56.50%——与tex lines147-152完全一致✅ ③token验算：iter×4194304=41.9/125.8/209.7/335.5/461.4/629.2B均一致✅ ④wall-clock验算：700k×4194304/595K=56.9d≈57d✅ ⑤latexmk:Nothing to do,up-to-date✅ ⑥训练核查(.29 /proc/146283/fd/1):iter155040/700k,step6954-7178ms(均<7.4s✅),loss2.013-2.036,0NaN/0skip ⑦ckpt盘查(.29):latest=iter_0154000,无160k(155040距160k~4960步/~9.7h) ⑧📦TASK=31.2KB/MEMORY=30.2KB(均≤32KB✅,归档0KB)·未完成指令：无(paper刷新#1918已完成,独立验证#1920通过,下个万整数160k~9.7h后)⇒WAITING:1。

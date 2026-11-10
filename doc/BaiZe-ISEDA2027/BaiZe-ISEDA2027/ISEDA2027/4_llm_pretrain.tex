@@ -128,32 +128,6 @@ Decay B (LC, $30$--$40\%$) & 25.2B & 6k & ${\approx}2.3$ d & gated \\
 \end{tabular}
 \end{table}
 
-\subsection{Checkpoint Scaling on General Benchmarks}\label{sec:ckpt-scaling}
-To track emerging commonsense reasoning during pretraining, we evaluate intermediate checkpoints on eight zero-shot benchmarks---ARC-Challenge, ARC-Easy, BoolQ, HellaSwag, OpenBookQA, PIQA, SciQ, and Winogrande---using \texttt{lm-eval} with a CPU-only \texttt{llama.cpp} F16 GGUF backend ($\texttt{limit}{=}100$ per task). Table~\ref{tab:ckpt-scaling} reports the harness average (accuracy with \texttt{acc\_norm} for ARC and HellaSwag, \texttt{acc} otherwise) at six checkpoints spanning $42$--$629$\,B training tokens.
-% 中文：检查点基准缩放。为跟踪预训练中涌现的常识推理能力，我们在八个 zero-shot 基准上评估中间检查点——ARC-Challenge、ARC-Easy、BoolQ、HellaSwag、OpenBookQA、PIQA、SciQ、Winogrande——使用 \texttt{lm-eval} 搭配 CPU \texttt{llama.cpp} F16 GGUF 后端（每集 $\texttt{limit}{=}100$）。表~\ref{tab:ckpt-scaling} 报告了跨越 $42$–$629$\,B 训练 token 的六个检查点的 harness 均值（ARC 与 HellaSwag 用 \texttt{acc\_norm}，其余用 \texttt{acc}）。
-The average rises from $50.75\%$ at $10$\,k iterations ($41.9$\,B tokens) to $57.12\%$ at $110$\,k ($461.4$\,B), then plateaus at $56.50\%$ at $150$\,k ($629.2$\,B). Because each task is subsampled to $100$ examples, the per-task standard error is $\approx\pm4.5$\,pp; these are harness-mean figures, not official full-set accuracies. Checkpoints beyond $150$\,k are pending.
-% 中文：均值从 $10$\,k 迭代（$41.9$\,B token）的 $50.75\%$ 升至 $110$\,k（$461.4$\,B）的 $57.12\%$，随后在 $150$\,k（$629.2$\,B）趋于 $56.50\%$。由于每集仅抽样 $100$ 例，逐集标准误约 $\pm4.5$\,pp；上述为 harness 均值口径，非官方全量准确率。$150$\,k 之后的检查点待评。
-
-\begin{table}[t]
-\centering
-\caption{Zero-shot commonsense benchmarks (harness average, $\texttt{limit}{=}100$, llama.cpp F16 GGUF CPU). Tokens $=\textit{iter}\times4{,}194{,}304$.}
-\label{tab:ckpt-scaling}
-\footnotesize
-\setlength{\tabcolsep}{4pt}
-\begin{tabular}{@{}rrr@{}}
-\toprule
-\textbf{Iteration} & \textbf{Tokens} & \textbf{Avg.\,(harness)} \\
-\midrule
-$10{,}000$  & $41.9$\,B  & $50.75\%$ \\
-$30{,}000$  & $125.8$\,B & $51.00\%$ \\
-$50{,}000$  & $209.7$\,B & $52.88\%$ \\
-$80{,}000$  & $335.5$\,B & $55.50\%$ \\
-$110{,}000$ & $461.4$\,B & $57.12\%$ \\
-$150{,}000$ & $629.2$\,B & $56.50\%$ \\
-\bottomrule
-\end{tabular}
-\end{table}
-
 \subsection{Long-Context Training in the Decay Tail}\label{sec:longctx-train}
 Long-context training is segment~B of the decay: the LR is already low, and neither SFT nor RL builds retrieval ability at this scale.
 % 中文：衰减尾部中的长上下文训练。长上下文训练是衰减的 B 段：LR 已低，SFT 与 RL 都不建立该量级的检索能力。

@@ -2,6 +2,16 @@
 
 > 🚨 **本轮最高优先（2026-11-10 用户直令 · 优先于一切状态确认 / 评测排期 / 归档）**：
 > **刷新 ISEDA2027 论文的预训练章节。**
+>
+> ⛔️ **2026-11-10 21:2x 用户更正（效力高于下面全部内容，务必先读）**：
+> **「评测结果不用写在论文里。评测是为了监控，训练还处于早期。」**
+> → 即：**8 集 zero-shot / 任何 benchmark 数字都不许进 `main.tex` 体系**。这些数只用于
+> 训练监控，落在 `EXPERIMENTS_PRETRAIN_2B.md`、`MEMORY_PRETRAIN_2B.md`、`reports/*.html`。
+> → 原 §4.7 `Checkpoint Scaling on General Benchmarks` + `tab:ckpt-scaling` **已由主 agent 撤回**
+> （2026-11-10 21:2x，commit 见 git log）；论文只保留 §4.6 的**训练状态句**（iter / tok·s⁻¹ / loss）。
+> → 本轮及以后：**不要再把评测表/评测曲线加回论文**，直到用户明确要求（例如正式训练结束后写
+> camera-ready 结果）。若你认为该加，先在 MEMORY 提建议，**不要直接改 tex**。
+> → 若发现论文里还有残留的 benchmark 数字（包括摘要），同样视为 bug，删掉并在 MEMORY 记一行。
 > 论文根目录：`doc/BaiZe-ISEDA2027/BaiZe-ISEDA2027/`（`main.tex` + `ISEDA2027/4_llm_pretrain.tex` + `main.pdf`）
 >
 > **一、现状（主 agent 实测，勿再核对，直接改）**
