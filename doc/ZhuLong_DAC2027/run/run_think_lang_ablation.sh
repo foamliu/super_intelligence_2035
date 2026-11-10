@@ -101,7 +101,7 @@ open('$RESULTS_JSON','w').write(json.dumps(d,ensure_ascii=False,indent=2))
 
 # ---------- 等待一轮结束 ----------
 wait_round_done() {
-  local cap=28800  # 8h 硬上限
+  local cap=43200  # 12h 硬上限 (2026-11-10 wake#806 提: 8h 曾杀掉 B_zh_r2 mid-grading→pass=null; B_en_r3 7h39m 亦贴边)
   local t=0
   while pgrep -f '^bash scripts/run_cline_script' >/dev/null 2>&1; do
     sleep 60; t=$((t+60))
@@ -159,13 +159,13 @@ run_round() {
   local round_log="/tmp/ABL_${TAG}.log"
   : > "$round_log"
 
-  # 启动并前台等待 (orchestrator 自身已 setsid 长驻, 前台阻塞安全; timeout 8h 硬上限)
+  # 启动并前台等待 (orchestrator 自身已 setsid 长驻, 前台阻塞安全; timeout 12h 硬上限)
   cd "$BASE_DIR"
-  log "  launching run_cline_script.sh (foreground, 8h cap) -> $round_log"
-  timeout --signal=TERM --kill-after=120 28800 bash scripts/run_cline_script.sh -p 8 -n >> "$round_log" 2>&1
+  log "  launching run_cline_script.sh (foreground, 12h cap) -> $round_log"
+  timeout --signal=TERM --kill-after=120 43200 bash scripts/run_cline_script.sh -p 8 -n >> "$round_log" 2>&1
   local ec=$?
   if [[ $ec -eq 124 ]]; then
-    log "  ⚠️ $TAG round 命中 8h 超时上限 (timeout=124)"
+    log "  ⚠️ $TAG round 命中 12h 超时上限 (timeout=124)"
   fi
   # 兜底清理可能残留的 worker
   pkill -f '^bash scripts/run_cline_script' 2>/dev/null || true
