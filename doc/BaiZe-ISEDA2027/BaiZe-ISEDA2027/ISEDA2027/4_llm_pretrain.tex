@@ -60,8 +60,11 @@ Contamination is controlled by a $193{,}295$-entry 13-gram blacklist from $536$ 
 \node at (108:0.55) {\textbf{60\%}};
 \node at (238:0.60) {\textbf{12\%}};
 \node at (299:0.62) {\textbf{22\%}};
-\node at (346:0.55) {\textbf{4\%}};
-\node at (357:0.65) {\textbf{2\%}};
+% small wedges: leader lines + external labels (avoid cramped overlap)
+\draw (345.6:0.70) -- (345.6:1.38);
+\node[anchor=south east] at (345.6:1.42) {\textbf{4\%}};
+\draw (356.4:0.70) -- (356.4:1.38);
+\node[anchor=north east] at (356.4:1.42) {\textbf{2\%}};
 \end{tikzpicture}\\[2pt]
 \begin{tabular}{@{}ll@{}}
 \textcolor{orange!70}{$\bullet$} instr-SFT & \textcolor{purple!60}{$\bullet$} agentic \\
