@@ -1430,3 +1430,4 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1793843059790_kjb39.messages.json	cong3li	hfeg0pkn004	205	schematic_netlist	case	EDA-Eval-DesignFlow-SenseAmpBuild-001	2026-11-11 00:43	
 1793770593617_a583c	xrxiong	hfeg0plg74	129	schematic_netlist	case	EDA-Eval-DesignFlow-NetlistPortClean-001	2026-11-11 01:38	round495 delivered: 5-step Verilog netlist power/gnd/bias/INH port cleaner, k=14, L2, schematic_netlist
 1793931639221_rv1g2.messages.json	e0039602	hfeg0plg103	249	schematic_netlist	case	EDA-Eval-DesignFlow-VerdictJoinPassLib-001	2026-11-11 01:57	round496 delivered: verdict-JSON JOIN (result_map blocks + external results.json PASS/RerunPASS verdicts, drop TIMEOUT/NO_TBRef/FAIL) -> PASS-only SV library matching ref_fmt banner+timescale, k=12, L2, schematic_netlist
+1794041346947_38tea	xiwang	hfeg0pkn002	67	schematic_netlist	case	EDA-Eval-DesignFlow-FindCir4CrossProbe-001	2026-11-11 02:40	
