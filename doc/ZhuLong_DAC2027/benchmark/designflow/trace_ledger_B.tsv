@@ -213,7 +213,7 @@ vbxlf.messages.json	jason17w	hfeg0pnd002	262	spice_sim	parked		2026-11-05 12:30	
 1793669867866_iby9j.messages.json	lvyy	hfeg0pkn004	576	spice_sim	parked		2026-11-06 13:31	dup_of_3123n_diag
 1793353212592_38quf.messages.json	gurmanli	hfeg0pkn005	597	spice_sim	parked		2026-11-06 13:31	aether_load_howto
 1793524556149_f86ll.messages.json	sinanz	hfeg0pkn005	655	spice_sim	parked		2026-11-06 13:31	analyze_circuit_func
-1793001881089_dek1i.messages.json	easont	hfeg0pkn004	592	spice_sim	parked		2026-11-06 13:31	read_fsdb
+1793001881089_dek1i.messages.json	easont	hfeg0pkn004	592	spice_sim	case	EDA-Eval-DesignFlow-NetlistCmp-001	2026-11-11 03:47	read_fsdb
 1793585625884_wohc2.messages.json	dsgao	hfeg0pkn001	104	spice_sim	parked		2026-11-06 13:31	verdi_diag
 1791447139857_poxvz.messages.json	johnl	hfeg0pkn001	87	spice_sim	parked		2026-11-06 13:31	run_dc_fail_diag
 1793856196029_7at4j.messages.json	lvyy	hfeg0pkn004	69	spice_sim	parked		2026-11-06 13:31	why_no_folder_diag
