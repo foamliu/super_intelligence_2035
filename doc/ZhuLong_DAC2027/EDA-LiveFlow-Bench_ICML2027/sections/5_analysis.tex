@@ -10,15 +10,20 @@
 \label{sec:failure-taxonomy}
 % \subsection{失败分类法}
 
-\textbf{Taxonomy protocol.} We define three mutually exclusive failure modes over the \Neval{} runs: (i) \emph{no-output / aborted}, where the run ends in ERROR (70 runs) or yields no \texttt{submit.zip} (among them the 6 ABSENT runs whose assets were unavailable); (ii) \emph{semantic / partial failure}, where a deliverable exists but at least one reference assertion fails (a subset of the 558 FAIL runs); and (iii) \emph{contract / format failure}, where the content is plausible but file-layout or naming assertions fail. The batch records only the terminal status per run, not which assertion failed first, so the quantities we can state with certainty are the run-level outcome counts (PASS 62 / FAIL 558 / ERROR 70 / ABSENT 6 of \Neval{}). We therefore make no quantitative claim about the split among (i)--(iii) here; a systematic per-run labelling pass is implemented (\texttt{eval\_triage/05\_batch\_triage.py}, which derives each class from machine-checkable evidence and reports an explicit UNKNOWN share) and will be reported in the camera-ready version.
+\textbf{Taxonomy protocol.} We define three mutually exclusive failure modes over the \Neval{} runs: (i) \emph{no-output / aborted}, where the run ends in ERROR (70 runs) or yields no \texttt{submit.zip} (among them the 6 ABSENT runs whose assets were unavailable); (ii) \emph{semantic / partial failure}, where a deliverable exists but at least one reference assertion fails (a subset of the 558 FAIL runs); and (iii) \emph{contract / format failure}, where the content is plausible but file-layout or naming assertions fail. The batch records only the terminal status per run, not which assertion failed first, so the run-level outcome counts we can state with certainty are PASS 62 / FAIL 558 / ERROR 70 / ABSENT 6 of \Neval{}. A systematic per-run labelling pass (\texttt{eval\_triage/05\_batch\_triage.py}, which derives each class from machine-checkable evidence and reports an explicit UNKNOWN share, never folding unclassified runs into another bucket) applied to the per-run judge logs of this batch yields the following measured split over the \Neval{} runs: (i) no-output / aborted = 146/696 = 21.0\% (the 70 ERROR runs plus the 6 ABSENT runs by terminal status, plus 70 FAIL runs that produced no \texttt{submit.zip}); (ii) semantic / partial failure = 437/696 = 62.8\% (132 \emph{ASSERT\_RUNTIME} runs where the candidate script crashed or exited non-zero, and 305 \emph{ASSERT\_SEMANTIC} runs where a reference assertion failed); (iii) contract / format failure = 2/696 = 0.3\%. The residual UNKNOWN is 49/696 = 7.0\%---FAIL runs that did produce a deliverable but whose released judge log exposes no machine-checkable failed-condition label (15 held-out-input setup gaps on the judge side, 12 check return-contract gaps, and 22 structured multi-condition results whose failing branch is not labelled in the truncated 300-char log). The tool's class-level UNKNOWN share is 119/696 = 17.1\%, which additionally includes the 70 ERROR-status runs (already counted in (i) by terminal status) whose abort reason---predominantly a missing per-case asset directory (59/70)---carries no timeout/infrastructure signature. The per-domain category matrix is reported in Appendix~\ref{sec:failure-by-domain}.
 % \textbf{分类协议。} 我们在 \Neval{} 个 run 上定义三类互斥的失败模式：(i) 无输出/中止——
 % run 以 ERROR 终止（70 个），或未产出 submit.zip（其中含 6 个资产缺失的 ABSENT）；
 % (ii) 语义/部分失败——有交付件但至少一条参考断言不通过（558 个 FAIL 的子集）；
-% (iii) 契约/格式失败——内容合理但文件结构或命名断言不通过。当前批次只记录每个 run 的终态，
-% 不记录哪条断言先失败，因此能确证给出的只有 run 级结果计数（PASS 62 / FAIL 558 / ERROR 70 /
-% ABSENT 6，共 \Neval{}）。故我们在此刻意不对 (i)-(iii) 的占比作任何定量断言；系统性的逐 run
-% 标注流程已实现（eval_triage/05_batch_triage.py，每类均由机器可核验证据推导并显式报告
-% UNKNOWN 比例），结果将在 camera-ready 版本给出。
+% (iii) 契约/格式失败——内容合理但文件结构或命名断言不通过。批次只记录每个 run 的终态，
+% 故能确证的 run 级计数为 PASS 62 / FAIL 558 / ERROR 70 / ABSENT 6（共 \Neval{}）。用逐 run
+% 归因工具（eval_triage/05_batch_triage.py，每类均由机器可核验证据推导并显式报告 UNKNOWN，
+% 不把未分类 run 并入别桶）对本批逐 run 判分日志归因，得到实测占比：(i)=146/696=21.0%（70 ERROR
+% +6 ABSENT 按终态 +70 个未产出 submit.zip 的 FAIL）；(ii)=437/696=62.8%（132 ASSERT_RUNTIME
+% 候选脚本崩溃/非零退出 +305 ASSERT_SEMANTIC 参考断言失败）；(iii)=2/696=0.3%。残余 UNKNOWN=
+% 49/696=7.0%——产出交付件但判分日志无可核验失败条件标签的 FAIL（15 个判分侧 hidden-B 输入缺失
+% +12 个 check 返回契约缺口 +22 个多条件结构化结果其失败分支未在 300 字符截断日志中标注）。
+% 工具类级 UNKNOWN=119/696=17.1%，另含 70 个 ERROR 终态 run（已按终态计入 (i)），其中止原因
+% 多为单 case 资产目录缺失（59/70），无 timeout/infra 签名。逐域类别矩阵见附录~\ref{sec:failure-by-domain}。
 
 \textbf{(1) No-output / aborted failures.} The agent produces no deliverable (\texttt{submit.zip} absent) or the run terminates in ERROR before judging. These are predominantly \emph{grounding failures}: the agent cannot determine which EDA tools to call, or calls them incorrectly, and gives up without producing any files. Among the failed traces we inspected, aborted and errored runs were concentrated in the deepest-grounding domains---physical\_verify and layout\_aether, where driving Calibre/PVS or Aether SKILL to a clean run is the binding obstacle.
 % \textbf{(1) 无输出/中止失败}：智能体未产出交付件（submit.zip 缺失）或运行在判分前以 ERROR 终止。

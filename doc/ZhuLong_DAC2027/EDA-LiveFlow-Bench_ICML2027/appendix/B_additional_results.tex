@@ -73,15 +73,58 @@ report (i) the run-level outcome anchors per domain (Table~\ref{tab:full-domain-
 and (ii) a triage tool that recovers the categories from each run's judge log and
 agent session, which accompanies this benchmark
 (\texttt{eval\_triage/05\_batch\_triage.py}, with an explicit UNKNOWN share so that
-unclassified runs are never silently folded into another bucket). Filling the
-per-domain category matrix, plus a stacked-bar view, is deferred to the
-camera-ready version together with an agreement statistic (Cohen's $\kappa$)
-between the tool and a human labeler on a 100-run sample.
+unclassified runs are never silently folded into another bucket). Applying it to
+the \Neval{}-run batch yields the per-domain category matrix in
+Table~\ref{tab:failure-by-domain} (PASS runs are out of scope here; rows sum to
+the FAIL+ERROR count per domain). Class abbreviations: TO=ERROR\_TIMEOUT,
+INFRA=ERROR\_INFRA, NOSUB=NO\_SUBMIT, FMT=FORMAT\_CONTRACT, RT=ASSERT\_RUNTIME,
+SEM=ASSERT\_SEMANTIC, ANTI=ASSERT\_ANTIHARDCODE, UNK=UNKNOWN; F+E=FAIL+ERROR.
+The UNKNOWN column is dominated by the ERROR-status runs (aborted pre-judging,
+counted in mode (i) of \S\ref{sec:failure-taxonomy} by terminal status) whose
+abort reason carries no timeout/infrastructure signature; the remaining
+FAIL-with-submit UNKNOWN (49 runs, 7.0\% of the batch) is detailed in
+\S\ref{sec:failure-taxonomy}. A stacked-bar view and a Cohen's $\kappa$ agreement
+statistic between the tool and a human labeler on a 100-run sample are deferred
+to the camera-ready version.
 % 批次 runner 每个 run 只记录一个终态，因此仅凭已发布的日志无法推导各领域的失败\emph{类别}。
 % 故我们给出：(i) 各领域 run 级结果锚点（表~\ref{tab:full-domain-results}）；
 % (ii) 一个逐 run 归因工具，它从每个 run 的判分日志与智能体会话中恢复类别
 % （eval_triage/05_batch_triage.py，并显式报告 UNKNOWN 比例，避免未分类 run 被悄悄并入别的桶）。
-% 逐域类别矩阵与堆叠柱状图推迟到 camera-ready，同时给出工具与人工标注者在 100-run 样本上的一致性（Cohen's kappa）。
+% 将其应用于 \Neval{}-run 批次得到表~\ref{tab:failure-by-domain} 的逐域类别矩阵（PASS run 不在此表
+% 范围；各行加和为该域 FAIL+ERROR 数）。列缩写：TO=ERROR_TIMEOUT, INFRA=ERROR_INFRA,
+% NOSUB=NO_SUBMIT, FMT=FORMAT_CONTRACT, RT=ASSERT_RUNTIME, SEM=ASSERT_SEMANTIC,
+% ANTI=ASSERT_ANTIHARDCODE, UNK=UNKNOWN; F+E=FAIL+ERROR。UNKNOWN 列以 ERROR 终态 run（判分前中止，
+% 按 \S\ref{sec:failure-taxonomy} 模式 (i) 的终态计入）为主，其中止原因无 timeout/infra 签名；
+% 其余 FAIL-with-submit UNKNOWN（49 run，占批次 7.0\%）见 \S\ref{sec:failure-taxonomy}。
+% 堆叠柱状图与工具对人工标注者在 100-run 样本上的 Cohen's kappa 一致性推迟到 camera-ready。
+
+\begin{table}[ht]
+\centering
+\caption{Per-domain failure-category matrix for the \Neval{}-run batch, recovered by \texttt{eval\_triage/05\_batch\_triage.py} from per-run judge logs. PASS runs are excluded; each row sums to that domain's FAIL+ERROR count. UNKNOWN is reported as its own column, not folded into another class. Pass\% is PASS/(PASS+FAIL) per domain (62/620 = 10.0\% overall).}
+\label{tab:failure-by-domain}
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{lrrrrrrrrr}
+\toprule
+Domain & TO & INFRA & NOSUB & FMT & RT & SEM & ANTI & UNK & F+E \\
+\midrule
+analog\_context & 0 & 0 & 3 & 1 & 9 & 20 & 0 & 18 & 51 \\
+characterization & 0 & 0 & 5 & 0 & 7 & 8 & 0 & 3 & 23 \\
+digital & 0 & 0 & 3 & 0 & 7 & 28 & 0 & 8 & 46 \\
+eda\_other & 0 & 0 & 5 & 0 & 3 & 16 & 0 & 7 & 31 \\
+layout\_aether & 0 & 0 & 4 & 0 & 4 & 25 & 0 & 4 & 37 \\
+layout\_virtuoso & 0 & 0 & 4 & 1 & 7 & 20 & 0 & 3 & 35 \\
+pg\_layout & 0 & 0 & 3 & 0 & 7 & 11 & 0 & 3 & 24 \\
+physical\_verify & 0 & 0 & 8 & 0 & 18 & 37 & 0 & 7 & 70 \\
+pnr\_signoff & 0 & 0 & 2 & 0 & 1 & 16 & 0 & 0 & 19 \\
+schematic\_netlist & 0 & 0 & 5 & 0 & 26 & 54 & 0 & 33 & 118 \\
+spice\_sim & 0 & 0 & 8 & 0 & 26 & 48 & 0 & 12 & 94 \\
+verification & 0 & 0 & 5 & 0 & 11 & 11 & 0 & 8 & 35 \\
+waveform & 0 & 0 & 15 & 0 & 6 & 11 & 0 & 13 & 45 \\
+\midrule
+\textbf{Total} & \textbf{0} & \textbf{0} & \textbf{70} & \textbf{2} & \textbf{132} & \textbf{305} & \textbf{0} & \textbf{119} & \textbf{628} \\
+\bottomrule
+\end{tabular}}
+\end{table}
 
 \subsection{Token Usage and Cost Analysis}
 \label{sec:token-cost}
