@@ -822,3 +822,4 @@ kakcd	kenwang	hfeg017216808192	5	non_spice	parked		2026-11-10 09:06	DRC rule dev
 1794290579357_trnx0	t0002614	hfeg0plg105	35	spice_sim	case	EDA-Eval-DesignFlow-SaDcSweepTbGen-001	2026-11-10 15:47	
 1794292585610_1ojna	curryxu	hfeg0plg07	148	spice_sim	case	EDA-Eval-DesignFlow-PvtInvChainDelayMeas-001	2026-11-10 17:06	
 1794277350221_vawjj	leliow	hfeg0plg52	340	spice_sim	case	EDA-Eval-DesignFlow-McVthSpVariantGen-001	2026-11-10 17:50	
+1794297017130_0uuj2	e0030760	hfeg0pkn001	Solido HSV MC SRAM SNM butterfly custom output	spice_sim	claimed		2026-11-10 18:38	
