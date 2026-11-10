@@ -14,7 +14,7 @@ WAITING: 0
 - 阻塞: 🔴远程沙盒10.129.32.75主机级防火墙(ping OK但TCP22/8664-8669全CLOSED,连续9 wake)→Phase1 eval阻塞;GPU5/6/7被serve占位(17:10令)→SFT待GPU释放;P3等pretrain ckpt
 - 本轮新增产出: SFT 2-GPU DDP失败根因分析(CUDA OOM根因+3次失败时间线+5项修复方案)+serve chat completions实测GPU5/6/7全✅+EXPERIMENTS §SFT-failure-analysis
 - 未完成指令: 🔴用户令17:10(serve占位)✅持续维护中;🔴用户令13:40(三阶段替身计划)Phase1待沙盒/Phase2待GPU释放/Phase3待SFT ckpt ⇒ 全外部阻塞
-- git: wake204 commit待提交;wake203 push已成功(HEAD=e581e945e synced)
+- git: wake204 commit b277aaced✅ pushed✅(rebase on 06379571c, synced, 无ahead/behind)
 
 ## GPU 端口映射表（2026-11-10 wake195 实测）
 
