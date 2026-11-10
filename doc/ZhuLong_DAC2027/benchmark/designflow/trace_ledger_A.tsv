@@ -319,3 +319,4 @@
 1794024347310_fkhb8.messages.json	graywang	hfeg0plg108	59	digital_front	case	EDA-Eval-DesignFlow-RunTaskMapExtractor-001	2026-11-10 09:12	
 1792053812772_9qa9d	aocao	hfhds227	129	verification	parked		2026-11-10 09:31	r308: unreachable - ssh publickey denied on hfhds227/226 (10.129.32.111/110); key auth unavailable this round; deepread done prev session but messages.json purged from workdir; cannot verify verbatim USER#0 — parked to preserve faithfulness gate
 1793949945535_873cy.messages.json					parked		2026-11-10 09:59	r308 peek: analysis-only (U#2 detect-errors) + user-named-fix (U#14 align monitor interface -> excluded A-faithful); not clean produce; .75-local
+1794021023245_u54d9.messages.json	eason1z	hfeg0plg100	108	digital	claimed		2026-11-10 10:23	

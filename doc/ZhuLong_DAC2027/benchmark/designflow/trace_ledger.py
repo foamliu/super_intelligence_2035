@@ -21,9 +21,12 @@ import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 STATS = os.path.join(HERE, "summary_stats.json")
 
-# ---- shard 支持：按 domain 分片，每个 shard 独立 ledger + tools 过滤候选 ----
+# ---- shard 支持：按 domain 分片，每个 shard 独立 ledger + keywords 过滤候选 ----
 # summary.tsv 列: ip host user session_file match_count keywords tools
-# tools 列（$7）做 domain 代理过滤（不完美，agent 可 peek-and-skip）
+# keywords 列（$6，格式 "tool:count;tool:count"）做 domain 代理过滤。
+# 注意：$7(tools) 对部分 session 为空（如 verilog:4237 但 tools=""），r309 修前
+# 过滤 $7 会漏掉 ~346 个 mc>=15 的 verilog/rtl/sdc session（dedup 294→2381，8x）。
+# 故 r309 起过滤改用 $6（authoritative），$7 仅作冗余参考。
 SHARD_DOMAINS = {
     # shard A 11/06 放宽: 加 synthesis/synopsys/tcl/verilog/systemverilog/rtl/synthesis/sdc
     # (数字前端工程师少用 cline, 旧过滤词只命中 53 session, 放宽后 11/05 新扫描命中 187)
@@ -241,12 +244,13 @@ def cmd_next(args):
     tool_filter = ""
     if _shard and _shard in SHARD_DOMAINS:
         tools_re = SHARD_DOMAINS[_shard][1]
-        tool_filter = " && $7 ~ /%s/" % tools_re
-    print("# 1) 在 .75 上跑（经 eda_flow run_commands）取候选，已排除台账里的 session%s：" % ("，按 shard %s tools 过滤" % _shard if _shard else ""))
+        tool_filter = " && $6 ~ /%s/" % tools_re
+    print("# 1) 在 .75 上跑（经 eda_flow run_commands）取候选，已排除台账里的 session%s：" % ("，按 shard %s keywords($6) 过滤" % _shard if _shard else ""))
     print("# (sub(/\\.messages\\.json$/,\"\",$4) 规范化后做 anchor 匹配)")
     print("# 候选池 mc>=%d%s (11/06: shard A 放宽过滤词+降到 mc>=15; 其他 shard 保持 mc>=30)" % (mc, " [shard %s 专属阈值]" % _shard if _shard and _shard in SHARD_MC and mc != 30 else ""))
     print("# 扫描源: %s" % scan_tsv)
-    print("awk -F'\\t' 'NR>1 && $5+0>=%d {sub(/\\.messages\\.json$/,\"\",$4); $4 !~ /^(%s)$/%s {print $5\"\\t\"$4\"\\t\"$3\"\\t\"$2\"\\t\"$7}' "
+    print("# r309: 过滤改用 $6(keywords) 而非 $7(tools)；$7 对 ~346 verilog session 为空，旧 $7 过滤漏候选 8x (dedup 294->2381)")
+    print("awk -F'\\t' 'NR>1 && $5+0>=%d {sub(/\\.messages\\.json$/,\"\",$4); $4 !~ /^(%s)$/%s {print $5\"\\t\"$4\"\\t\"$3\"\\t\"$2\"\\t\"$6}' "
           "%s | sort -rn | head -%d"
           % (mc, pat, tool_filter, scan_tsv, args.n))
     # 预筛提示
@@ -464,7 +468,7 @@ def cmd_scansync(args):
     for sid in sorted(SHARD_DOMAINS):
         tools_re = SHARD_DOMAINS[sid][1]
         mc = SHARD_MC.get(sid, 30)
-        print("echo \"shard_%s_pool_mc%d: $(tail -n +2 $SUMMARY | awk -F'\\t' '$5+0>=%d && $7 ~ /%s/ {print $4}' | sort -u | wc -l)\""
+        print("echo \"shard_%s_pool_mc%d: $(tail -n +2 $SUMMARY | awk -F'\\t' '$5+0>=%d && $6 ~ /%s/ {print $4}' | sort -u | wc -l)\""
               % (sid, mc, mc, tools_re))
     print("# 4) 新增 session (旧扫描没有的):")
     print("echo \"new_sessions: $(comm -13 <(tail -n +2 %s | awk -F'\\t' '$5+0>=30{print $4}' | sort -u) <(tail -n +2 $SUMMARY | awk -F'\\t' '$5+0>=30{print $4}' | sort -u) | wc -l)\""
@@ -473,7 +477,7 @@ def cmd_scansync(args):
     for sid in sorted(SHARD_DOMAINS):
         tools_re = SHARD_DOMAINS[sid][1]
         mc = SHARD_MC.get(sid, 30)
-        print("echo \"shard_%s_new: $(comm -13 <(tail -n +2 %s | awk -F'\\t' '$5+0>=%d && $7 ~ /%s/{print $4}' | sort -u) <(tail -n +2 $SUMMARY | awk -F'\\t' '$5+0>=%d && $7 ~ /%s/{print $4}' | sort -u) | wc -l)\""
+        print("echo \"shard_%s_new: $(comm -13 <(tail -n +2 %s | awk -F'\\t' '$5+0>=%d && $6 ~ /%s/{print $4}' | sort -u) <(tail -n +2 $SUMMARY | awk -F'\\t' '$5+0>=%d && $6 ~ /%s/{print $4}' | sort -u) | wc -l)\""
               % (sid, old_scan, mc, tools_re, mc, tools_re))
     print("# 6) 更新 summary_stats.json (把上面的数字填进去):")
     print("#    python3 designflow/trace_ledger.py refresh --json '{\"scan_path\":\"$SCAN_DIR/summary.tsv\",\"mc30\":NNN,...}'")
