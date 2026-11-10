@@ -1,94 +1,95 @@
-\section{Experimental Details}
+﻿\section{Experimental Details}
 \label{sec:experimental-details}
 
-% 附录 C：实验细节（参考 SWE-bench Appendix D "Additional Experimental Details"）
-% 附录 C：实验细节（参考 SWE-bench Appendix D "Additional Experimental Details"）
+% 闄勫綍 C锛氬疄楠岀粏鑺傦紙鍙傝€?SWE-bench Appendix D "Additional Experimental Details"锛?
+% 闄勫綍 C锛氬疄楠岀粏鑺傦紙鍙傝€?SWE-bench Appendix D "Additional Experimental Details"锛?
 
 \subsection{Cline Agent Configuration}
 \label{sec:cline-config}
-% \subsection{Cline 智能体配置}
+% \subsection{Cline 鏅鸿兘浣撻厤缃畗
 
 \textbf{Version.} Cline v3.0.51~\cite{cline2026}, open-source.
-% \textbf{版本。} Cline v3.0.51，开源。
+% \textbf{鐗堟湰銆倉 Cline v3.0.51锛屽紑婧愩€?
 
 \textbf{Thinking budget.} \texttt{thinking=low} (default). We chose low over medium/high to control token cost across \Ntasks{} tasks; the trade-off is reduced reasoning depth. A thinking-budget ablation is planned for the camera-ready version.
-% \textbf{思考预算。} \texttt{thinking=low}（默认）。我们选 low 而非 medium/high，以在 \Ntasks{} 个任务上控制 token 成本；代价是推理深度降低。camera-ready 版本计划做思考预算消融。
+% \textbf{鎬濊€冮绠椼€倉 \texttt{thinking=low}锛堥粯璁わ級銆傛垜浠€?low 鑰岄潪 medium/high锛屼互鍦?\Ntasks{} 涓换鍔′笂鎺у埗 token 鎴愭湰锛涗唬浠锋槸鎺ㄧ悊娣卞害闄嶄綆銆俢amera-ready 鐗堟湰璁″垝鍋氭€濊€冮绠楁秷铻嶃€?
 
 \textbf{Auto-approve.} All tool calls auto-approved (no human-in-the-loop). The agent may iterate freely within the 2400s timeout.
-% \textbf{自动批准。} 所有工具调用自动批准（无人工介入）。智能体可在 2400 秒超时内自由迭代。
+% \textbf{鑷姩鎵瑰噯銆倉 鎵€鏈夊伐鍏疯皟鐢ㄨ嚜鍔ㄦ壒鍑嗭紙鏃犱汉宸ヤ粙鍏ワ級銆傛櫤鑳戒綋鍙湪 2400 绉掕秴鏃跺唴鑷敱杩唬銆?
 
 \textbf{MCP bridge.} The \texttt{eda\_flow} MCP server (port 18891) exposes 8 tools: \texttt{open\_session}, \texttt{close\_session}, \texttt{declare\_done}, \texttt{run\_commands}, \texttt{run\_code}, \texttt{read\_file}, \texttt{write\_file}, \texttt{list\_files}. The agent must call \texttt{open\_session} first to obtain a workdir, then pass it to all subsequent calls.
-% \textbf{MCP 网桥。} \texttt{eda\_flow} MCP 服务器（端口 18891）暴露 8 个工具：\texttt{open\_session}、\texttt{close\_session}、\texttt{declare\_done}、\texttt{run\_commands}、\texttt{run\_code}、\texttt{read\_file}、\texttt{write\_file}、\texttt{list\_files}。智能体须先调用 \texttt{open\_session} 取得工作目录，再将其传入所有后续调用。
+% \textbf{MCP 缃戞ˉ銆倉 \texttt{eda\_flow} MCP 鏈嶅姟鍣紙绔彛 18891锛夋毚闇?8 涓伐鍏凤細\texttt{open\_session}銆乗texttt{close\_session}銆乗texttt{declare\_done}銆乗texttt{run\_commands}銆乗texttt{run\_code}銆乗texttt{read\_file}銆乗texttt{write\_file}銆乗texttt{list\_files}銆傛櫤鑳戒綋椤诲厛璋冪敤 \texttt{open\_session} 鍙栧緱宸ヤ綔鐩綍锛屽啀灏嗗叾浼犲叆鎵€鏈夊悗缁皟鐢ㄣ€?
 
 \subsection{API Gateway Configuration}
 \label{sec:api-config}
-% \subsection{API 网关配置}
+% \subsection{API 缃戝叧閰嶇疆}
 
 All models accessed via an OpenAI-compatible API gateway (\texttt{agi-gateway}). The \texttt{providers.json} configuration (with API keys masked):
-% 所有模型通过 OpenAI 兼容 API 网关（\texttt{agi-gateway}）访问。\texttt{providers.json} 配置（API 密钥脱敏）：
-{\small\begin{verbatim}
+% 鎵€鏈夋ā鍨嬮€氳繃 OpenAI 鍏煎 API 缃戝叧锛圽texttt{agi-gateway}锛夎闂€俓texttt{providers.json} 閰嶇疆锛圓PI 瀵嗛挜鑴辨晱锛夛細
+{\scriptsize\begin{verbatim}
 {
-  "baseURL": "http://agi-gateway.cxmt.com/cloud/v1",
+  "baseURL": "http://agi-gateway.internal/cloud/v1",
   "apiKey": "<MASKED>",
   "model": "deepseek-v4-pro-cloud"
 }
 \end{verbatim}}
+% 娉細涓绘満鍚嶅凡鍖垮悕鍖栦负 agi-gateway.internal锛堝弻鐩叉姇绋匡紝鍘熸枃鍚叕鍙稿唴閮ㄥ煙鍚嶏級銆?
 We verify API reachability with a \texttt{/chat/completions} health check before each batch run; a 403 response indicates key expiry.
-% 每批运行前，我们用 \texttt{/chat/completions} 健康检查验证 API 可达性；403 响应表示密钥失效。
+% 姣忔壒杩愯鍓嶏紝鎴戜滑鐢?\texttt{/chat/completions} 鍋ュ悍妫€鏌ラ獙璇?API 鍙揪鎬э紱403 鍝嶅簲琛ㄧず瀵嗛挜澶辨晥銆?
 
 \subsection{Anti-Leakage Hook Implementation}
 \label{sec:hook-impl}
-% \subsection{防泄题钩子实现}
+% \subsection{闃叉硠棰橀挬瀛愬疄鐜皚
 
 The \texttt{PreToolUse} hook is a shell script invoked before every tool call. It enforces:
-% \texttt{PreToolUse} 钩子是一个 shell 脚本，在每次工具调用前触发。它强制执行：
+% \texttt{PreToolUse} 閽╁瓙鏄竴涓?shell 鑴氭湰锛屽湪姣忔宸ュ叿璋冪敤鍓嶈Е鍙戙€傚畠寮哄埗鎵ц锛?
 \begin{itemize}
     \item \textbf{Path whitelist}: only paths under the evaluation workdir root are accessible.
-    % \textbf{路径白名单}：仅评测工作目录根之下的路径可访问。
+    % \textbf{璺緞鐧藉悕鍗晑锛氫粎璇勬祴宸ヤ綔鐩綍鏍逛箣涓嬬殑璺緞鍙闂€?
     \item \textbf{Answer-key blocklist}: any path matching \texttt{check.py}, \texttt{\_check.py}, \texttt{reference/}, \texttt{hidden/}, or \texttt{\_reference\_check.py} is blocked.
-    % \textbf{答案黑名单}：任何匹配 \texttt{check.py}、\texttt{\_check.py}、\texttt{reference/}、\texttt{hidden/}、\texttt{\_reference\_check.py} 的路径被阻止。
+    % \textbf{绛旀榛戝悕鍗晑锛氫换浣曞尮閰?\texttt{check.py}銆乗texttt{\_check.py}銆乗texttt{reference/}銆乗texttt{hidden/}銆乗texttt{\_reference\_check.py} 鐨勮矾寰勮闃绘銆?
     \item \textbf{Tool whitelist}: only \texttt{read\_file}, \texttt{write\_to\_file}, \texttt{eda\_flow/*} MCP tools, and basic shell commands are allowed; code-search tools (\texttt{grep}, \texttt{find} outside the workdir) are blocked.
-    % \textbf{工具白名单}：仅允许 \texttt{read\_file}、\texttt{write\_to\_file}、\texttt{eda\_flow/*} MCP 工具及基本 shell 命令；工作目录之外的 \texttt{grep}、\texttt{find} 被阻止。
+    % \textbf{宸ュ叿鐧藉悕鍗晑锛氫粎鍏佽 \texttt{read\_file}銆乗texttt{write\_to\_file}銆乗texttt{eda\_flow/*} MCP 宸ュ叿鍙婂熀鏈?shell 鍛戒护锛涘伐浣滅洰褰曚箣澶栫殑 \texttt{grep}銆乗texttt{find} 琚樆姝€?
     \item \textbf{Blocked-call response}: the hook returns the string ``ACCESS RESTRICTED'' to the agent, which is logged but does not terminate the session.
-    % \textbf{被拦截调用的响应}：钩子向智能体返回字符串"ACCESS RESTRICTED"，该事件被记录但不终止会话。
+    % \textbf{琚嫤鎴皟鐢ㄧ殑鍝嶅簲}锛氶挬瀛愬悜鏅鸿兘浣撹繑鍥炲瓧绗︿覆"ACCESS RESTRICTED"锛岃浜嬩欢琚褰曚絾涓嶇粓姝細璇濄€?
 \end{itemize}
 We count blocked calls per session (\texttt{hook\_blocks} field in \texttt{status.jsonl}) to verify the hook is firing.
-% 我们统计每会话被拦截次数（\texttt{status.jsonl} 的 \texttt{hook\_blocks} 字段），以验证钩子是否触发。
+% 鎴戜滑缁熻姣忎細璇濊鎷︽埅娆℃暟锛圽texttt{status.jsonl} 鐨?\texttt{hook\_blocks} 瀛楁锛夛紝浠ラ獙璇侀挬瀛愭槸鍚﹁Е鍙戙€?
 
 \subsection{Judge Implementation}
 \label{sec:judge-impl}
-% \subsection{判分器实现}
+% \subsection{鍒ゅ垎鍣ㄥ疄鐜皚
 
 The judge runs \emph{after} the agent exits, in a separate directory:
-% 判分器在智能体退出\emph{之后}运行，位于独立目录：
+% 鍒ゅ垎鍣ㄥ湪鏅鸿兘浣撻€€鍑篭emph{涔嬪悗}杩愯锛屼綅浜庣嫭绔嬬洰褰曪細
 \begin{enumerate}
     \item Unpack \texttt{submit.zip} into a fresh workdir.
-    % 将 \texttt{submit.zip} 解包到全新工作目录。
+    % 灏?\texttt{submit.zip} 瑙ｅ寘鍒板叏鏂板伐浣滅洰褰曘€?
     \item Invoke \texttt{check.py} with \texttt{(deliverable\_path, workdir)} arguments.
-    % 以 \texttt{(deliverable\_path, workdir)} 参数调用 \texttt{check.py}。
+    % 浠?\texttt{(deliverable\_path, workdir)} 鍙傛暟璋冪敤 \texttt{check.py}銆?
     \item \texttt{check.py} uses only Python standard library (no EDA license required).
-    % \texttt{check.py} 仅使用 Python 标准库（判分无需 EDA 许可证）。
+    % \texttt{check.py} 浠呬娇鐢?Python 鏍囧噯搴擄紙鍒ゅ垎鏃犻渶 EDA 璁稿彲璇侊級銆?
     \item A task passes iff all $k \geq 8$ assertions hold.
-    % 当且仅当所有 $k \geq 8$ 条断言成立时，任务判为通过。
+    % 褰撲笖浠呭綋鎵€鏈?$k \geq 8$ 鏉℃柇瑷€鎴愮珛鏃讹紝浠诲姟鍒や负閫氳繃銆?
 \end{enumerate}
 The \texttt{test\_rationale} field documents each assertion in human-readable form (``k assertions: (1), (2), ...'') for interpretability and audit.
-% \texttt{test\_rationale} 字段以可读形式（"k 条断言：(1)、(2)、……"）记录每条断言，便于可解释性与审计。
+% \texttt{test\_rationale} 瀛楁浠ュ彲璇诲舰寮忥紙"k 鏉℃柇瑷€锛?1)銆?2)銆佲€︹€?锛夎褰曟瘡鏉℃柇瑷€锛屼究浜庡彲瑙ｉ噴鎬т笌瀹¤銆?
 
 \subsection{Open-Source EDA Extension Roadmap}
 \label{sec:repro-details}
-% \subsection{开源 EDA 扩展路线图}
+% \subsection{寮€婧?EDA 鎵╁睍璺嚎鍥緘
 
 To address the reproducibility limitation of commercial EDA tools, we plan an open-source-EDA extension mapping each domain to an open-source equivalent:
-% 为应对商业 EDA 工具的可复现性限制，我们计划一个开源 EDA 扩展，将每个领域映射到对应的开源方案：
+% 涓哄簲瀵瑰晢涓?EDA 宸ュ叿鐨勫彲澶嶇幇鎬ч檺鍒讹紝鎴戜滑璁″垝涓€涓紑婧?EDA 鎵╁睍锛屽皢姣忎釜棰嗗煙鏄犲皠鍒板搴旂殑寮€婧愭柟妗堬細
 \begin{itemize}
     \item \textbf{Digital synthesis}: Synopsys DC $\to$ Yosys + OpenROAD.
-    % \textbf{数字综合}：Synopsys DC $\to$ Yosys + OpenROAD。
+    % \textbf{鏁板瓧缁煎悎}锛歋ynopsys DC $\to$ Yosys + OpenROAD銆?
     \item \textbf{SPICE simulation}: HSPICE/Spectre $\to$ ngspice/Xyce.
-    % \textbf{SPICE 仿真}：HSPICE/Spectre $\to$ ngspice/Xyce。
+    % \textbf{SPICE 浠跨湡}锛欻SPICE/Spectre $\to$ ngspice/Xyce銆?
     \item \textbf{Physical verification}: Calibre $\to$ KLayout + Magic.
-    % \textbf{物理验证}：Calibre $\to$ KLayout + Magic。
+    % \textbf{鐗╃悊楠岃瘉}锛欳alibre $\to$ KLayout + Magic銆?
     \item \textbf{Layout}: Virtuoso/Aether $\to$ KLayout + OpenROAD.
-    % \textbf{版图}：Virtuoso/Aether $\to$ KLayout + OpenROAD。
+    % \textbf{鐗堝浘}锛歏irtuoso/Aether $\to$ KLayout + OpenROAD銆?
 \end{itemize}
 The open-source extension will share the task schema, harness, and anti-leakage protocol of the commercial benchmark, enabling cross-ecosystem comparison.
-% 开源扩展将与商业基准共享任务模式、框架和防泄题协议，从而支持跨生态对比。
+% 寮€婧愭墿灞曞皢涓庡晢涓氬熀鍑嗗叡浜换鍔℃ā寮忋€佹鏋跺拰闃叉硠棰樺崗璁紝浠庤€屾敮鎸佽法鐢熸€佸姣斻€?

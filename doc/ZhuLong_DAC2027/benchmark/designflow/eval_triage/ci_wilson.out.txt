@@ -1,0 +1,83 @@
+==============================================================================
+SECTION A  Grand totals from run_batch_20261109_171201
+==============================================================================
+PASS=62  FAIL=558  ERROR=70  ABSENT=6  ->  sum=696   (expected 696)
+
+estimator                k/n     note                               p_hat %  Wilson 95% CI  width pp
+-----------------------  ------  ---------------------------------  -------  -------------  --------
+PASS/(PASS+FAIL)         62/620  paper's current denominator (620)  10.00    [7.88, 12.61]  4.73    
+PASS/(PASS+FAIL+ABSENT)  62/626  ABSENT treated as failure (626)    9.90     [7.80, 12.49]  4.69    
+PASS/all 696 cases       62/696  ERROR counted as non-pass (696)    8.91     [7.01, 11.26]  4.24    
+
+delta between the 620 and 626 point estimates: 10.00% - 9.90% = 0.096 pp
+620-CI and 626-CI overlap -> the '9.9' vs '10.0' decimal is noise, NOT a finding.
+
+==============================================================================
+SECTION B  Per-domain p_hat and Wilson 95% CI  (n = PASS+FAIL)
+==============================================================================
+domain             PASS/decided  p_hat %  Wilson 95% CI  width pp  flag                         
+-----------------  ------------  -------  -------------  --------  -----------------------------
+pnr_signoff        5/24          20.83    [9.24, 40.47]  31.2      SMALL n<30 -> CI uncomparable
+characterization   5/26          19.23    [8.51, 37.88]  29.4      SMALL n<30 -> CI uncomparable
+eda_other          6/33          18.18    [8.61, 34.39]  25.8                                   
+pg_layout          4/28          14.29    [5.70, 31.49]  25.8      SMALL n<30 -> CI uncomparable
+schematic_netlist  13/113        11.50    [6.85, 18.69]  11.8                                   
+digital            5/45          11.11    [4.84, 23.50]  18.7                                   
+layout_virtuoso    4/39          10.26    [4.06, 23.58]  19.5                                   
+analog_context     4/43          9.30     [3.68, 21.60]  17.9                                   
+verification       3/33          9.09     [3.14, 23.57]  20.4                                   
+spice_sim          8/95          8.42     [4.33, 15.75]  11.4                                   
+waveform           2/39          5.13     [1.42, 16.89]  15.5                                   
+physical_verify    2/68          2.94     [0.81, 10.10]  9.3                                    
+layout_aether      1/34          2.94     [0.52, 14.92]  14.4                                   
+
+column sums: PASS=62  FAIL=558  ERROR=70  ABSENT=6  case-total=696
+decided=620   p_hat=10.0000%  -> rounds to 10.0%
+
+Weighting sensitivity (case-pooled vs mean-of-domain-rates):
+  case-pooled (62/620)          = 10.00%
+  unweighted mean of 13 domains = 11.02%
+
+==============================================================================
+SECTION C  Domain-gap claims (abstract / intro / concl. / Sec.4)
+==============================================================================
+best  (pnr_signoff)     = 20.83%  CI [9.2, 40.5]  (n=24)
+worst (physical_verify) = 2.94%  CI [0.8, 10.1]  (n=68)
+tie   (layout_aether)   = 2.94%  CI [0.5, 14.9]  (n=34)
+ratio best/worst        = 7.08x (paper says ~7x)
+CAVEAT: best-domain lower bound 9.24% vs worst-domain upper bound 10.10% -> intervals OVERLAP.
+        With overlapping Wilson CIs (n=24 vs n=68), the ~7x ranking is a point-
+        estimate, not a significant one: +-1 PASS in pnr_signoff moves it to 24.0% / 17.4%.
+        two-proportion z = 2.84  (two-sided p = 0.0045); CIs overlap is the conservative view ->
+        report the intervals, and phrase the gap as descriptive, not significant.
+
+==============================================================================
+SECTION D  Sec.5 grounding-depth bins vs table values
+==============================================================================
+Depth 1--2  paper says 14--21% | actual min=18.18% max=20.83% | unweighted mean=19.42% | case-pooled=19.28% (16/83)
+Depth 3--5  paper says 8--14 % | actual min=8.42% max=14.29% | unweighted mean=10.57% | case-pooled=10.35% (41/396)
+Depth 6+    paper says 3--5  % | actual min=2.94% max=5.13% | unweighted mean=3.67% | case-pooled=3.55% (5/141)
+
+==============================================================================
+SECTION E  Sec.5 threats-to-validity percentages (which denominator?)
+==============================================================================
+corpus counts in Sec.2 / make_figs.py sum to 964 (\Ntasks is 1007)
+  top-3 by corpus size = 46.6% of 964, or 44.6% of 1007
+  paper says 'top 3 domains = 44%' -> matches the evaluated 696 run: 44.3% (308/696)
+  'digital+verification = 13%' -> evaluated 12.8% (89/696); corpus 11.8% of 964
+
+==============================================================================
+SECTION F  Footnote-ready intervals
+==============================================================================
+62/620 = 10.00%   Wilson 95% CI [7.9, 12.6]
+62/626 = 9.90%   Wilson 95% CI [7.8, 12.5]
+62/696 = 8.91%   Wilson 95% CI [7.0, 11.3]
+
+==============================================================================
+SECTION G  Outcome mix over all 696 runs (for the 'error rate' footnote)
+==============================================================================
+  PASS     62    8.91% of 696    10.00% of 620
+  FAIL    558   80.17% of 696    90.00% of 620
+  ERROR    70   10.06% of 696    11.29% of 620
+  ABSENT    6    0.86% of 696     0.97% of 620
+  decided fraction = 89.08% of 696

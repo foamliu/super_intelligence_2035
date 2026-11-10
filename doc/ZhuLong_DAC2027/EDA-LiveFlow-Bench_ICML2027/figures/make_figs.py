@@ -24,41 +24,63 @@ OUT = "figures"
 #    alignment, crisp text, and proper arrowheads. The SVG source lives in
 #    figures/pipeline.svg; this step only re-renders it to PDF.
 # ----------------------------------------------------------------------------
-import os, subprocess
+import os, subprocess, shutil
 svg_path = f"{OUT}/pipeline.svg"
 pdf_path = f"{OUT}/pipeline.pdf"
+_converters = [
+    ("cairosvg", None),
+    ("rsvg-convert", f"rsvg-convert -f pdf -o {pdf_path} {svg_path}"),
+    ("inkscape", f"inkscape {svg_path} --export-filename={pdf_path}"),
+]
+_rendered = False
 try:
     import cairosvg
     cairosvg.svg2pdf(url=svg_path, write_to=pdf_path)
     print("wrote figures/pipeline.pdf (from SVG via cairosvg)")
+    _rendered = True
 except Exception as e:
-    print(f"cairosvg failed ({e}); trying rsvg-convert / inkscape")
-    for tool, cmd in [("rsvg-convert", f"rsvg-convert -f pdf -o {pdf_path} {svg_path}"),
-                      ("inkscape",   f"inkscape {svg_path} --export-filename={pdf_path}")]:
-        try:
-            subprocess.run(cmd, shell=True, check=True)
-            print(f"wrote figures/pipeline.pdf (via {tool})")
-            break
-        except Exception:
-            continue
+    print(f"cairosvg unavailable ({e}); trying rsvg-convert / inkscape")
+for tool, cmd in _converters[1:]:
+    if _rendered:
+        break
+    if shutil.which(tool.split()[0]) is None:
+        print(f"  {tool}: not installed, skipping")
+        continue
+    try:
+        subprocess.run(cmd, shell=True, check=True)
+        print(f"wrote figures/pipeline.pdf (via {tool})")
+        _rendered = True
+    except Exception as e:
+        print(f"  {tool} failed: {e}")
+if not _rendered:
+    # Keeping the committed pipeline.pdf is correct: it is generated from the
+    # same pipeline.svg, and silently shipping a stale figure is worse than
+    # printing why we skipped.
+    print("SKIPPED figures/pipeline.pdf (no SVG converter on this machine; "
+          "existing file left untouched)")
 
 # ----------------------------------------------------------------------------
 # 2. Domain distribution donut chart
+#    2026-11-10: switched to the FROZEN evaluation snapshot used in §4/§5 --
+#    696 runs (PASS+FAIL+ERROR+ABSENT) whose per-domain counts are exactly the
+#    "Total" column of tab:main-results / tab:full-domain-results.
+#    Previous numbers (sum 564) came from an older build and disagreed with both
+#    \Ntasks and the evaluated set; keeping one source of truth avoids that.
 # ----------------------------------------------------------------------------
 domains = [
-    ("spice_sim",        177, "SPICE / char"),
-    ("schematic_netlist",166, "Schematic / analog"),
-    ("physical_verify",  106, "Physical / layout"),
-    ("layout_aether",     66, "Physical / layout"),
-    ("analog_context",    63, "Schematic / analog"),
-    ("digital",           59, "Digital front"),
-    ("layout_virtuoso",   57, "Physical / layout"),
-    ("verification",      55, "Digital front"),
-    ("waveform",          54, "Schematic / analog"),
-    ("eda_other",         53, "Digital front"),
-    ("characterization",  43, "SPICE / char"),
-    ("pg_layout",         38, "Physical / layout"),
-    ("pnr_signoff",       27, "Digital front"),
+    ("spice_sim",        104, "SPICE / char"),
+    ("schematic_netlist",131, "Schematic / analog"),
+    ("physical_verify",   73, "Physical / layout"),
+    ("layout_aether",     38, "Physical / layout"),
+    ("analog_context",    55, "Schematic / analog"),
+    ("digital",           51, "Digital front"),
+    ("layout_virtuoso",   40, "Physical / layout"),
+    ("verification",      38, "Digital front"),
+    ("waveform",          47, "Schematic / analog"),
+    ("eda_other",         38, "Digital front"),
+    ("characterization",  28, "SPICE / char"),
+    ("pg_layout",         28, "Physical / layout"),
+    ("pnr_signoff",       25, "Digital front"),
 ]
 labels = [d[0] for d in domains]  # plain underscore, no LaTeX escaping (mpl renders text mode)
 sizes  = [d[1] for d in domains]
@@ -158,7 +180,7 @@ for d in labels_xy:
 # No legend: each slice already has its own color + label with count, so a
 # separate 4-entry area-group legend is redundant and collides with the
 # bottom slice labels.
-ax.set_title(f"Domain distribution (N={total} tasks, 13 domains)", fontsize=10, pad=18)
+ax.set_title(f"Domain distribution of the 696-run evaluation snapshot", fontsize=10, pad=18)
 fig.tight_layout()
 fig.savefig(f"{OUT}/domain_pie.pdf", bbox_inches="tight")
 print("wrote figures/domain_pie.pdf")
@@ -167,21 +189,25 @@ plt.close(fig)
 # ----------------------------------------------------------------------------
 # 3. Grounding depth vs Pass@1  (VQA said this one is fine; keep as-is)
 # ----------------------------------------------------------------------------
-# Pass@1 values mapped from the 2026-11-09 full evaluation (696 cases, 13
-# domains, DeepSeek-V4-Pro / Cline v3.0.51). Domains are grouped by the
-# minimum number of live EDA tool calls a correct deliverable typically
-# requires (tool-chain grounding depth), then averaged within each depth bin.
-#   Depth 1-2: pnr_signoff 20.8 + characterization 19.2 + eda_other 18.2  -> ~19
-#   Depth 3  : pg_layout 14.3                                            -> 14
-#   Depth 4  : schematic_netlist 11.5 + digital 11.1                     -> 11
+# Pass@1 values mapped from the 2026-11-09 frozen evaluation (696 runs, 13
+# domains, DeepSeek-V4-Pro / Cline v3.0.51), read off tab:main-results. Domains
+# are grouped by the minimum number of live EDA tool calls a correct deliverable
+# typically requires (tool-chain grounding depth); each plotted value is the
+# MEAN Pass@1 of the domains in that bin, so the figure and the table can never
+# drift apart:
+#   Depth 1-2: pnr_signoff 20.8 + characterization 19.2 + eda_other 18.2 -> 19.4
+#   Depth 3  : pg_layout 14.3                                            -> 14.3
+#   Depth 4  : schematic_netlist 11.5 + digital 11.1                     -> 11.3
 #   Depth 5  : layout_virtuoso 10.3 + analog_context 9.3
-#              + verification 9.1 + spice_sim 8.4                        -> 9
-#   Depth 6  : waveform 5.1                                             -> 5
-#   Depth 7+: physical_verify 2.9 + layout_aether 2.9                    -> 3
+#              + verification 9.1 + spice_sim 8.4                        -> 9.3
+#   Depth 6  : waveform 5.1                                              -> 5.1
+#   Depth 7+ : physical_verify 2.9 + layout_aether 2.9                   -> 2.9
+# Depth is an ANNOTATION (design choice), not a measured quantity -- the
+# caption says so, and no causal claim is drawn from the monotone ordering.
 depth_mid = np.array([1.5, 3.0, 4.0, 5.0, 6.0, 7.0])
-pass_rate = np.array([19, 14, 11, 9, 5, 3], dtype=float)
-depth_labels = ["1-2\npnr/char/other", "3\npg_layout", "4\nschematic/digital",
-                "5\nspice/verif/layout", "6\nwaveform", "7+\nphys_verify/layout"]
+pass_rate = np.array([19.4, 14.3, 11.3, 9.3, 5.1, 2.9], dtype=float)
+depth_labels = ["1-2\npnr/char/other", "3\npg_layout", "4\nschem/\ndigital",
+                "5\nspice/verif\n/layout", "6\nwaveform", "7+\nphys_verify\n/layout"]
 
 fig, ax = plt.subplots(figsize=(6.8, 3.8), dpi=150)
 ax.plot(depth_mid, pass_rate, "o-", color="#0072B2", lw=2, ms=7,

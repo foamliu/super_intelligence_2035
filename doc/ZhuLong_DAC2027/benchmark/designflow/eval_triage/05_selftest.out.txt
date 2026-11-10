@@ -1,0 +1,96 @@
+---- 1. status 计数 ----
+PASS: case 总数 = 12  [got=12 want=12]
+PASS: status 矩阵 = 2 PASS / 7 FAIL / 2 ERROR / 1 ABSENT  [got={'PASS': 2, 'FAIL': 7, 'ERROR': 2, 'ABSENT': 1} want={'PASS': 2, 'FAIL': 7, 'ERROR': 2, 'ABSENT': 1}]
+PASS: Pass%(PASS+FAIL) 分母 = 9  [got=9 want=9]
+PASS: Pass%(PASS+FAIL) = 22.2  [got=22.2 want=22.2]
+---- 2. 逐 case 判定与类别 ----
+PASS: C01 → PASS/-  [got=('PASS', None) want=('PASS', None)]
+PASS: C02 → FAIL/ASSERT_SEMANTIC  [got=('FAIL', 'ASSERT_SEMANTIC') want=('FAIL', 'ASSERT_SEMANTIC')]
+PASS: C03 → FAIL/ASSERT_ANTIHARDCODE  [got=('FAIL', 'ASSERT_ANTIHARDCODE') want=('FAIL', 'ASSERT_ANTIHARDCODE')]
+PASS: C04 → ERROR/ERROR_TIMEOUT  [got=('ERROR', 'ERROR_TIMEOUT') want=('ERROR', 'ERROR_TIMEOUT')]
+PASS: C05 → ERROR/ERROR_INFRA  [got=('ERROR', 'ERROR_INFRA') want=('ERROR', 'ERROR_INFRA')]
+PASS: C06 → FAIL/NO_SUBMIT  [got=('FAIL', 'NO_SUBMIT') want=('FAIL', 'NO_SUBMIT')]
+PASS: C07 → FAIL/FORMAT_CONTRACT  [got=('FAIL', 'FORMAT_CONTRACT') want=('FAIL', 'FORMAT_CONTRACT')]
+PASS: C08 → FAIL/ASSERT_RUNTIME  [got=('FAIL', 'ASSERT_RUNTIME') want=('FAIL', 'ASSERT_RUNTIME')]
+PASS: C09 → ABSENT/-  [got=('ABSENT', None) want=('ABSENT', None)]
+PASS: C10 → PASS/-  [got=('PASS', None) want=('PASS', None)]
+PASS: C11 → FAIL/UNKNOWN  [got=('FAIL', 'UNKNOWN') want=('FAIL', 'UNKNOWN')]
+PASS: C12 → FAIL/UNKNOWN  [got=('FAIL', 'UNKNOWN') want=('FAIL', 'UNKNOWN')]
+---- 3. 失败类别分布 ----
+PASS: class 分布精确匹配  [got={'PASS': 2, 'ERROR_TIMEOUT': 1, 'ERROR_INFRA': 1, 'NO_SUBMIT': 1, 'FORMAT_CONTRACT': 1, 'ASSERT_RUNTIME': 1, 'ASSERT_SEMANTIC': 1, 'ASSERT_ANTIHARDCODE': 1, 'UNKNOWN': 2} want={'PASS': 2, 'ERROR_TIMEOUT': 1, 'ERROR_INFRA': 1, 'NO_SUBMIT': 1, 'FORMAT_CONTRACT': 1, 'ASSERT_RUNTIME': 1, 'ASSERT_SEMANTIC': 1, 'ASSERT_ANTIHARDCODE': 1, 'UNKNOWN': 2}]
+PASS: FAIL+ERROR 合计 = 9  [got=9 want=9]
+---- 4. UNKNOWN 比例与 coverage ----
+PASS: UNKNOWN 计数 = 2  [got=2 want=2]
+PASS: UNKNOWN/FAIL+ERROR = 22.2%  [got=22.2 want=22.2]
+PASS: 找到判分证据的 case = 9  [got=9 want=9]
+PASS: coverage = 75.0%  [got=75.0 want=75.0]
+PASS: coverage_warning 2 条  [got=2 want=2]
+PASS: C11 unknown_kind = NO_VERDICT_BUT_SUBMIT  [got='NO_VERDICT_BUT_SUBMIT' want='NO_VERDICT_BUT_SUBMIT']
+PASS: C12 unknown_kind = NO_EVIDENCE_AT_ALL  [got='NO_EVIDENCE_AT_ALL' want='NO_EVIDENCE_AT_ALL']
+PASS: C09 ABSENT 无 case_dir  [got=True want=True]
+---- 5. 证据路径可复核 ----
+PASS: C01 证据含 judge_result.json
+PASS: C02 证据含 check.log
+PASS: C02 失败条件编号 = ['3']  [got=['3'] want=['3']]
+PASS: C04 无 submit 仍判 ERROR  [got='ERROR' want='ERROR']
+PASS: C04 wall = 2512.3s  [2512.3]
+PASS: C07 submit.zip 机器检查为打不开  [got=False want=False]
+PASS: C07 坏 zip → FORMAT_CONTRACT  [got='FORMAT_CONTRACT' want='FORMAT_CONTRACT']
+PASS: C08 有 runtime 签名证据  [got=True want=True]
+---- 6. 逐域矩阵 ----
+PASS: digital = 1P/2F  [got={'PASS': 1, 'FAIL': 2, 'ERROR': 0, 'ABSENT': 0} want={'PASS': 1, 'FAIL': 2, 'ERROR': 0, 'ABSENT': 0}]
+PASS: analog = 1F/2E  [got={'PASS': 0, 'FAIL': 1, 'ERROR': 2, 'ABSENT': 0} want={'PASS': 0, 'FAIL': 1, 'ERROR': 2, 'ABSENT': 0}]
+PASS: layout_virtuoso = 2F/1A  [got={'PASS': 0, 'FAIL': 2, 'ERROR': 0, 'ABSENT': 1} want={'PASS': 0, 'FAIL': 2, 'ERROR': 0, 'ABSENT': 1}]
+PASS: verification = 1P/2F  [got={'PASS': 1, 'FAIL': 2, 'ERROR': 0, 'ABSENT': 0} want={'PASS': 1, 'FAIL': 2, 'ERROR': 0, 'ABSENT': 0}]
+---- 7. 输出文件与 tex 内容 ----
+PASS: 生成 <tmp>\out\triage_summary.json
+PASS: 生成 <tmp>\out\tables\status_by_domain.tex
+PASS: 生成 <tmp>\out\tables\failure_by_domain.tex
+PASS: 生成 <tmp>\out\report.md
+PASS: summary.json 含 12 个 case  [got=12 want=12]
+PASS: summary.json PASS = 2  [got=2 want=2]
+PASS: summary.json coverage = 9  [got=9 want=9]
+PASS: 所有 FAIL/ERROR case 都有 class  [got=[] want=[]]
+PASS: status tex 含行[digital & 1 & 2 & 0 & 0 & 3 & 33.3 \\]
+PASS: status tex 含行[analog & 0 & 1 & 2 & 0 & 3 & 0.0 \\]
+PASS: status tex 含行[layout\_virtuoso & 0 & 2 & 0 & 1 & 3 & 0]
+PASS: status tex 含行[verification & 1 & 2 & 0 & 0 & 3 & 33.3 ]
+PASS: status tex 含行[\textbf{Total} & \textbf{2} & \textbf{7}]
+PASS: status tex 注释含 62/626 = 9.9% 口径
+PASS: status tex 是 booktabs 风格
+PASS: failure tex 含行[digital & 0 & 0 & 0 & 0 & 0 & 1 & 1 & 0 ]
+PASS: failure tex 含行[analog & 1 & 1 & 1 & 0 & 0 & 0 & 0 & 0 &]
+PASS: failure tex 含行[layout\_virtuoso & 0 & 0 & 0 & 1 & 1 & 0]
+PASS: failure tex 含行[verification & 0 & 0 & 0 & 0 & 0 & 0 & 0]
+PASS: failure tex 含行[\textbf{Total} & \textbf{1} & \textbf{1}]
+PASS: report.md 有 UNKNOWN 披露段
+PASS: report.md 有 62/626 口径对照
+PASS: report.md 抽样 10 例  [got=10 want=10]
+PASS: report.md 标注 seed 可复现
+---- 8. 确定性与 dry-run 不落盘 ----
+PASS: 二次运行计数一致（确定性）  [got={'PASS': 2, 'FAIL': 7, 'ERROR': 2, 'ABSENT': 1} want={'PASS': 2, 'FAIL': 7, 'ERROR': 2, 'ABSENT': 1}]
+PASS: 二次运行 class 分布一致  [got={'PASS': 2, 'ERROR_TIMEOUT': 1, 'ERROR_INFRA': 1, 'NO_SUBMIT': 1, 'FORMAT_CONTRACT': 1, 'ASSERT_RUNTIME': 1, 'ASSERT_SEMANTIC': 1, 'ASSERT_ANTIHARDCODE': 1, 'UNKNOWN': 2} want={'PASS': 2, 'ERROR_TIMEOUT': 1, 'ERROR_INFRA': 1, 'NO_SUBMIT': 1, 'FORMAT_CONTRACT': 1, 'ASSERT_RUNTIME': 1, 'ASSERT_SEMANTIC': 1, 'ASSERT_ANTIHARDCODE': 1, 'UNKNOWN': 2}]
+PASS: --dry-run 打印汇总
+PASS: --dry-run 打印每个 case 的证据路径
+PASS: --dry-run 未创建输出目录
+---- 9. json-only / emit-tex 组合 ----
+PASS: --json-only 写 summary.json
+PASS: --json-only 不写 report.md
+PASS: --json-only 不写 tex
+PASS: --json-only --emit-tex 仍写 tex
+---- 10. 键名探测 / 错误友好性 ----
+PASS: 自动探测 id/category 键  [got=('id', 'category') want=('id', 'category')]
+PASS: 别名 cases 解析正确  [got=['A-1', 'A-2'] want=['A-1', 'A-2']]
+PASS: 缺 id 键退出码 = 2  [got=2 want=2]
+PASS: 缺 id 键的报错说清了试过的键名与可用键
+PASS: 不存在的 batch 目录退出码 = 2  [got=2 want=2]
+PASS: 不存在的 batch 目录报错带探针命令
+---- 11. 强/弱标记与 prompt 噪声抑制 ----
+PASS: prompt/任务描述不计 PASS/FAIL 标记（不污染判分）  [got=(0, 0) want=(0, 0)]
+PASS: 散文里的 'fails' 不算强 FAIL 标记
+PASS: 'FAIL: ...' 算强 FAIL 标记
+PASS: 'PASS: ...' 算强 PASS 标记
+
+---- selftest 统计 ----
+检查项: 81, 失败: 0
+ALL SELFTEST PASSED

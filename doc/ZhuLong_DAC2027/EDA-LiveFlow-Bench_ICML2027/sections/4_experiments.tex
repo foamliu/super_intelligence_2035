@@ -16,11 +16,11 @@
     % \textbf{RQ3（模型扩展）}：扩大骨干模型能否弥合编排差距？还是受工具链接地能力约束？
 \end{itemize}
 
-\textbf{Benchmark.} \bench{} with \Ntasks{} tasks across 13 domains (Section~\ref{sec:benchmark}). We report Pass@1 (one trace per task, 2400s timeout, \texttt{thinking=low}).
-% \textbf{基准。} \bench{}，含 \Ntasks{} 个任务、覆盖 13 个领域（第~\ref{sec:benchmark}~节）。我们报告 Pass@1（每任务一次轨迹，超时 2400 秒，\texttt{thinking=low}）。
+\textbf{Benchmark.} \bench{} with \Ntasks{} curated cases across 13 domains (Section~\ref{sec:benchmark}); the results below use the frozen \Neval{}-run evaluation snapshot. We report Pass@1 (one trace per run, 2400s timeout, \texttt{thinking=low}).
+% \textbf{基准。} \bench{}，含 \Ntasks{} 个已整理案例、覆盖 13 个领域（第~\ref{sec:benchmark}~节）；下方结果使用冻结的 \Neval{}-run 评测快照。我们报告 Pass@1（每 run 一次轨迹，超时 2400 秒，\texttt{thinking=low}）。
 
-\textbf{Models.} DeepSeek-V4-Pro (primary), GLM-5.2, Kimi-K2.6, DeepSeek-V4-Flash, Doubao-Seed-2.0-Pro. All accessed via agi-gateway (OpenAI-compatible API).
-% \textbf{模型。} DeepSeek-V4-Pro（主）、GLM-5.2、Kimi-K2.6、DeepSeek-V4-Flash、Doubao-Seed-2.0-Pro。均通过 agi-gateway（OpenAI 兼容 API）访问。
+\textbf{Model.} A single frontier backbone, DeepSeek-V4-Pro, accessed via an OpenAI-compatible agi-gateway. A multi-backbone sweep (GLM-5.2, Kimi-K2.6, DeepSeek-V4-Flash, Doubao-Seed-2.0-Pro) is configured but not yet run to completion, so this paper reports a \emph{single-backbone} evaluation; RQ3 is therefore discussed as an open question in Section~\ref{sec:model-scaling}.
+% \textbf{模型。} 单一前沿骨干模型 DeepSeek-V4-Pro，经 OpenAI 兼容的 agi-gateway 访问。多骨干扫描（GLM-5.2、Kimi-K2.6、DeepSeek-V4-Flash、Doubao-Seed-2.0-Pro）已配置但尚未跑完，故本文给出的是\emph{单骨干}评测；因此 RQ3 在第~\ref{sec:model-scaling}~节作为开放问题讨论。
 
 \textbf{Harness.} Cline v3.0.51 with \texttt{PreToolUse} anti-leakage hook (Section~\ref{sec:anti-leakage}). Each task runs in a fresh workdir with EDA tools accessible via MCP bridge.
 % \textbf{框架。} Cline v3.0.51，配 \texttt{PreToolUse} 防泄题钩子（第~\ref{sec:anti-leakage}~节）。每个任务在全新工作目录中运行，通过 MCP 网桥访问 EDA 工具。
@@ -31,48 +31,51 @@
 
 \begin{table}[ht]
 \centering
-\caption{Main results on \bench: Pass@1 (\%) by domain, full 696-task evaluation. Pass\% = PASS/(PASS+FAIL).}
-% \caption{\bench{} 主要结果：各领域 Pass@1 (\%)，696 个任务的完整评测。Pass\% = PASS/(PASS+FAIL)。}
+\caption{Main results on \bench: Pass@1 (\%) by domain, frozen 696-run evaluation (2026-11-09). Pass\% = PASS/(PASS+FAIL); ERROR (harness/tool infrastructure) and ABSENT (task assets unavailable) are reported but excluded from the denominator.}
+% \caption{\bench{} 主要结果：各领域 Pass@1 (\%)，冻结的 696-run 评测（2026-11-09）。Pass\% = PASS/(PASS+FAIL)；ERROR（框架/工具基础设施）与 ABSENT（任务资产缺失）如实列出但不计入分母。}
 % 注：完整配置 DeepSeek-V4-Pro / Cline v3.0.51 / thinking=low / 8 workers / 超时 2400s。
 \label{tab:main-results}
 \scriptsize
-\setlength{\tabcolsep}{4pt}
-\begin{tabular}{@{}lcccc@{}}
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}lcccccc@{}}
 \toprule
-\textbf{Domain} & \textbf{PASS} & \textbf{FAIL} & \textbf{Total} & \textbf{Pass\%} \\
+\textbf{Domain} & \textbf{PASS} & \textbf{FAIL} & \textbf{ERROR} & \textbf{ABSENT} & \textbf{Total} & \textbf{Pass\%} \\
 \midrule
-pnr\_signoff       & 5 & 19 & 25 & 20.8 \\
-characterization   & 5 & 21 & 28 & 19.2 \\
-eda\_other         & 6 & 27 & 38 & 18.2 \\
-pg\_layout         & 4 & 24 & 28 & 14.3 \\
-schematic\_netlist & 13 & 100 & 131 & 11.5 \\
-digital            & 5 & 40 & 51 & 11.1 \\
-layout\_virtuoso   & 4 & 35 & 40 & 10.3 \\
-analog\_context    & 4 & 39 & 55 & 9.3 \\
-verification       & 3 & 30 & 38 & 9.1 \\
-spice\_sim         & 8 & 87 & 104 & 8.4 \\
-waveform           & 2 & 37 & 47 & 5.1 \\
-physical\_verify   & 2 & 66 & 73 & 2.9 \\
-layout\_aether     & 1 & 33 & 38 & 2.9 \\
+pnr\_signoff       & 5 & 19 & 0 & 1 & 25 & 20.8 \\
+characterization   & 5 & 21 & 2 & 0 & 28 & 19.2 \\
+eda\_other         & 6 & 27 & 4 & 1 & 38 & 18.2 \\
+pg\_layout         & 4 & 24 & 0 & 0 & 28 & 14.3 \\
+schematic\_netlist & 13 & 100 & 18 & 0 & 131 & 11.5 \\
+digital            & 5 & 40 & 6 & 0 & 51 & 11.1 \\
+layout\_virtuoso   & 4 & 35 & 0 & 1 & 40 & 10.3 \\
+analog\_context    & 4 & 39 & 12 & 0 & 55 & 9.3 \\
+verification       & 3 & 30 & 5 & 0 & 38 & 9.1 \\
+spice\_sim         & 8 & 87 & 7 & 2 & 104 & 8.4 \\
+waveform           & 2 & 37 & 8 & 0 & 47 & 5.1 \\
+physical\_verify   & 2 & 66 & 4 & 1 & 73 & 2.9 \\
+layout\_aether     & 1 & 33 & 4 & 0 & 38 & 2.9 \\
 \midrule
-\textbf{Overall}   & \textbf{62} & \textbf{558} & \textbf{620} & \textbf{10.0} \\
+\textbf{Overall}   & \textbf{62} & \textbf{558} & \textbf{70} & \textbf{6} & \textbf{696} & \textbf{10.0} \\
 \bottomrule
 \end{tabular}
 \end{table}
-% Full evaluation: 696 cases total (62 PASS + 558 FAIL + 70 ERROR + 6 ABSENT).
-% Pass rate computed on decided cases: 62/620 = 10.0%.
-% 注：完整评测共 696 例（62 PASS + 558 FAIL + 70 ERROR + 6 ABSENT）。
-% 通过率按已判定案例计算：62/620 = 10.0%。
+% 逐行核验（PASS+FAIL+ERROR+ABSENT == Total，列合计 62/558/70/6/696，Pass% = 100*PASS/(PASS+FAIL) 四舍五入到 0.1）：
+% 已用 scripts/audit 表校验脚本在本地跑过，13 行全对；校验脚本见
+% doc/ZhuLong_DAC2027/benchmark/designflow/eval_triage/table_check.py
 
-Table~\ref{tab:main-results} shows Pass@1 by domain on the full evaluation of 696 tasks across all 13 EDA domains (DeepSeek-V4-Pro, Cline v3.0.51, \texttt{thinking=low}). The overall Pass@1 of \textbf{10.0\%} (62/620 decided cases; 70 ERROR and 6 ABSENT excluded from the denominator) is dramatically lower than the 76.5\% reported on EDA-Scripting-Bench~\cite{zhu2026edascript} for single-script tasks, confirming that \emph{multi-step flow orchestration is qualitatively harder} than isolated code generation (RQ1).
-% 表~\ref{tab:main-results} 展示了覆盖全部 13 个 EDA 领域、共 696 个任务的完整评测的各领域 Pass@1（DeepSeek-V4-Pro、Cline v3.0.51、\texttt{thinking=low}）。总体 Pass@1 为 \textbf{10.0\%}（62/620 已判定案例；70 个 ERROR 与 6 个 ABSENT 不计入分母），远低于 EDA-Scripting-Bench 上单脚本任务报告的 76.5\%，印证了"多步流程编排比孤立的代码生成在本质上更难"(RQ1)。
+Table~\ref{tab:main-results} shows Pass@1 by domain on the frozen evaluation of \Neval{} runs across all 13 EDA domains (DeepSeek-V4-Pro, Cline v3.0.51, \texttt{thinking=low}). The overall Pass@1 of \textbf{10.0\%} (62/620 decided runs)\footnote{All pass rates use the \emph{decided} denominator (PASS$+$FAIL $=620$). The full batch comprises \Neval{} runs: 62 PASS, 558 FAIL, 70 ERROR (harness/tool infrastructure, undecided) and 6 ABSENT (task assets unavailable). Counting ABSENT as failure gives $62/626=9.9\%$ (95\% Wilson CI $[7.8,12.5]$); counting ERROR as failure gives $62/696=8.9\%$ ($[7.0,11.3]$). Our headline figure is $62/620=10.0\%$ (95\% Wilson CI $[7.9,12.6]$); the three estimators lie within $1.1$\,pp of each other and their confidence intervals overlap, so no conclusion below depends on the choice of denominator.} is dramatically lower than the 76.5\% reported on EDA-Scripting-Bench~\cite{zhu2026edascript} for single-script tasks, confirming that \emph{multi-step flow orchestration is qualitatively harder} than isolated code generation (RQ1).
+% 表~\ref{tab:main-results} 展示了覆盖全部 13 个 EDA 领域、共 \Neval{} 个 run 的冻结评测的各领域 Pass@1（DeepSeek-V4-Pro、Cline v3.0.51、\texttt{thinking=low}）。总体 Pass@1 为 \textbf{10.0\%}（62/620 已判定 run），远低于 EDA-Scripting-Bench 上单脚本任务报告的 76.5\%，印证了"多步流程编排比孤立的代码生成在本质上更难"(RQ1)。
+% 脚注口径：所有通过率使用"已判定分母"(PASS+FAIL=620)：62/620 = 10.0%（Wilson 95% CI [7.9, 12.6]）。
+% 全批次 696 = 62 PASS + 558 FAIL + 70 ERROR（框架/工具基础设施故障，未判定）+ 6 ABSENT（任务资产缺失）。
+% 若把 6 个 ABSENT 计为失败：62/626 = 9.9%（CI [7.8, 12.5]）；若把 70 个 ERROR 计为失败：62/696 = 8.9%（CI [7.0, 11.3]）。
+% 三个估计量相差 ≤1.1pp 且置信区间重叠，故本文任何结论都不依赖分母选择。CI 由 eval_triage/ci_wilson.py 计算。
 
 \subsection{Domain Gap (RQ2)}
 \label{sec:domain-gap}
 % \subsection{领域差距 (RQ2)}
 
-The domain gap is large and consistent with the grounding-depth hypothesis: standardized-flow domains whose deliverable is largely a script or tcl template---\textbf{pnr\_signoff} (20.8\%), \textbf{characterization} (19.2\%), \textbf{eda\_other} (18.2\%)---pass at roughly twice the overall rate, while domains that require deep live-tool interaction---\textbf{physical\_verify} (2.9\%, DRC/LVS rule decks + run inspection) and \textbf{layout\_aether} (2.9\%, SKILL/GUI-driven layout editing)---sit at the bottom. This $\sim$7$\times$ gap is not explained by task difficulty alone---all domains require EDA domain knowledge. The difference lies in \emph{tool-chain grounding depth}:
-% 领域差距较大，且与接地深度假设一致：交付件主要为脚本或 tcl 模板的标准化流程领域——\textbf{pnr\_signoff}（20.8\%）、\textbf{characterization}（19.2\%）、\textbf{eda\_other}（18.2\%）——通过率约为整体的两倍，而需要深度实时工具交互的领域——\textbf{physical\_verify}（2.9\%，DRC/LVS 规则卡 + 运行检视）与 \textbf{layout\_aether}（2.9\%，SKILL/GUI 驱动的版图编辑）——垫底。这约 7 倍的差距无法仅用任务难度解释——所有领域都需要 EDA 领域知识。差异在于"工具链接地深度"：
+The domain gap is large and consistent with the grounding-depth hypothesis: standardized-flow domains whose deliverable is largely a script or tcl template---\textbf{pnr\_signoff} (20.8\%), \textbf{characterization} (19.2\%), \textbf{eda\_other} (18.2\%)---pass at roughly twice the overall rate, while domains that require deep live-tool interaction---\textbf{physical\_verify} (2.9\%, DRC/LVS rule decks + run inspection) and \textbf{layout\_aether} (2.9\%, SKILL/GUI-driven layout editing)---sit at the bottom. The $7.1\times$ point-estimate ratio between the best and worst domain should be read as descriptive rather than established: with 24 decided runs in pnr\_signoff (Wilson 95\% CI $[9.2,40.5]$) and 68 in physical\_verify ($[0.8,10.1]$), the intervals overlap, and a single flipped run moves pnr\_signoff from 20.8\% to 24.0\%. What is robust is the \emph{ordering}: every standardized-flow domain sits above the overall rate and both deep-grounding domains sit at the bottom. The difference is not explained by task difficulty alone---all domains require EDA domain knowledge. The difference lies in \emph{tool-chain grounding depth}:
+% 领域差距较大，且与接地深度假设一致：交付件主要为脚本或 tcl 模板的标准化流程领域——\textbf{pnr\_signoff}（20.8\%）、\textbf{characterization}（19.2\%）、\textbf{eda\_other}（18.2\%）——通过率约为整体的两倍，而需要深度实时工具交互的领域——\textbf{physical\_verify}（2.9\%，DRC/LVS 规则卡 + 运行检视）与 \textbf{layout\_aether}（2.9\%，SKILL/GUI 驱动的版图编辑）——垫底。最好/最差领域的 7.1 倍点估计应按描述性读，而非"已确立"：pnr\_signoff 仅 24 个已判定 run（Wilson 95\% CI [9.2,40.5]），physical\_verify 68 个（CI [0.8,10.1]），区间重叠；单个 PASS 翻转就能把 pnr\_signoff 从 20.8\% 推到 24.0\%。稳健的是\emph{排序}：所有标准化流程领域都高于总体，两个深度接地领域都在底部。该差距无法仅用任务难度解释——所有领域都需要 EDA 领域知识。差异在于"工具链接地深度"：
 
 \begin{itemize}
     \item Standardized-flow tasks (pnr\_signoff, characterization, eda\_other) are largely \emph{text-in, script-out}: the agent reads a spec, writes a PrimeTime/Innovus tcl flow or a characterization script, and the deliverable follows a relatively fixed template. The agent can produce much of it from prior knowledge with only light tool interaction.
@@ -85,27 +88,20 @@ The domain gap is large and consistent with the grounding-depth hypothesis: stan
 \label{sec:model-scaling}
 % \subsection{模型扩展 (RQ3)}
 
-\begin{table}[ht]
-\centering
-\caption{Impact of LLM backbone (full harness, 696-task evaluation).}
-% \caption{LLM 骨干模型的影响（完整框架，696 个任务评测）。}
-\label{tab:llm-comparison}
-\small
-\begin{tabular}{@{}lc@{}}
-\toprule
-\textbf{Backbone} & \textbf{Pass@1 (\%)} \\
-\midrule
-DeepSeek-V4-Pro & 10.0 \\
-GLM-5.2 & --- \\
-Kimi-K2.6 & --- \\
-DeepSeek-V4-Flash & --- \\
-\bottomrule
-\end{tabular}
-\end{table}
-% 注：多模型对比数据待补。从 EDA-Scripting-Bench 的经验看，backbone 跨度 23.3pp，
-% 但 orchestration gap (66.5pp) 远大于 backbone gap，说明 grounding depth 是 binding 约束。
-% 注：多模型对比数据待补。从 EDA-Scripting-Bench 的经验看，骨干模型跨度为 23.3 个百分点，
-% 但编排差距（66.5 个百分点）远大于骨干差距，说明接地深度才是约束瓶颈。
-
-On EDA-Scripting-Bench~\cite{zhu2026edascript}, scaling the backbone from weakest to strongest yields a 23.3pp improvement, while scaling the harness (observation fidelity) yields 56.8pp---the grounding axis is binding. We expect a similar pattern on \bench: the orchestration gap (10.0\% vs.\ 76\%) is too large to be closed by model scaling alone, confirming that \emph{tool-chain grounding depth, not model size, is the binding constraint} for multi-step flow orchestration (RQ3).
-% 在 EDA-Scripting-Bench 上，将骨干模型从最弱扩展到最强带来 23.3 个百分点的提升，而扩展框架（观测保真度）带来 56.8 个百分点——接地维度才是约束所在。我们预期 \bench{} 上有类似规律：编排差距（10.0\% vs.\ 76\%）过大，无法仅靠模型扩展弥合，这印证了"对于多步流程编排，工具链接地深度而非模型规模才是约束瓶颈"(RQ3)。
+We report a single-backbone evaluation, so we cannot answer RQ3 empirically and
+deliberately do not claim to. The relevant external evidence is that on
+EDA-Scripting-Bench~\cite{zhu2026edascript} moving from the weakest to the
+strongest backbone yields 23.3\,pp, while increasing observation fidelity of the
+harness yields 56.8\,pp---i.e.\ on \emph{single-script} tasks the grounding axis
+dominates the backbone axis. Whether the same holds when the task itself is a
+multi-step flow is an open question: the 10.0\% vs.\ 76.5\% gap is a
+\emph{cross-benchmark} comparison, confounded by task type, and therefore cannot
+by itself show that model scaling is insufficient. We state this as a hypothesis
+to be tested by the multi-backbone sweep (Section~\ref{sec:per-model}) rather than
+as a finding, and we flag it again among the threats to validity
+(Section~\ref{sec:threats}).
+% 本文只做了单骨干评测，因此无法实证回答 RQ3，也刻意不作此断言。相关外部证据是：在
+% EDA-Scripting-Bench 上，骨干从最弱换到最强带来 23.3pp，而提高框架的观测保真度带来 56.8pp
+% ——即在"单脚本"任务上接地轴压过骨干轴。这一规律在多步流程任务上是否成立是开放问题：
+% 10.0% vs 76.5% 是"跨基准"比较，被任务类型混淆，本身不能证明模型扩展不够。我们把它作为
+% 待多骨干扫描检验的假设，而不是发现；并在有效性威胁一节再次标注。

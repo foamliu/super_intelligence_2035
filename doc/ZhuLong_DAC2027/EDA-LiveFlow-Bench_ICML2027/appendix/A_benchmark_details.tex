@@ -34,7 +34,7 @@ Table~\ref{tab:keywords} lists the EDA keywords used for session scanning and ar
 \caption{EDA keyword filters by area group.}
 % \caption{各领域组的 EDA 关键词过滤器。}
 \label{tab:keywords}
-\begin{tabular}{@{}llp{0.52\linewidth}@{}}
+\begin{tabular}{@{}llp{0.38\linewidth}@{}}
 \toprule
 \textbf{Area group} & \textbf{mc threshold} & \textbf{Keywords} \\
 \midrule
@@ -50,8 +50,19 @@ Schematic / analog & $\geq 30$ & waveview, cosmos, skill, netlist, spiros, spect
 \label{sec:full-distribution}
 % \subsection{完整领域分布}
 
-[TODO: full domain-distribution table for all \Ntasks{} cases plus user/host distribution. Current counts (2026-11-10): A:201 B:241 C:289 D:297 = \Ntasks{} cases, 268 users, 13 domains.]
-% [待办：所有 \Ntasks{} 案例的完整领域分布表，外加用户/主机分布。当前计数（2026-11-10）：A:201 B:241 C:289 D:297 = \Ntasks{} 例，268 用户，13 领域。]
+The benchmark is built in four construction shards. As of 2026-11-10 the living
+build holds \Ntasks{} cases (A: 201, B: 241, C: 289, D: 297) drawn from the
+trace pool described in Section~\ref{sec:scan-pipeline}; the evaluation in
+Section~\ref{sec:experiments} uses the frozen \Neval{}-run snapshot of
+2026-11-09 (Table~\ref{tab:full-domain-results}). Per-shard counts are maintained
+in the benchmark repository; a full user/host distribution table is deferred to
+the camera-ready version because the host inventory is company-internal.
+% 基准由四个构建分片组成。截至 2026-11-10，活集含 \Ntasks{} 例（A: 201、B: 241、C: 289、
+% D: 297），全部取自第~\ref{sec:scan-pipeline}~节描述的轨迹池；第~\ref{sec:experiments}~节的
+% 评测使用 2026-11-09 冻结的 \Neval{}-run 快照（表~\ref{tab:full-domain-results}）。
+% 各分片计数在基准仓库中维护；完整的用户/主机分布表推迟到 camera-ready，因为主机清单属公司内部信息。
+% TODO(T12)：摘要/引言写 268 位工程师、42 台工作站，§2 写 698 台主机扫描、224 位去重用户（mc>=30）。
+% 三处口径需数据侧确认后统一（或在正文分别加定语说明），本版未擅自改动数字。
 
 \subsection{Task Schema Specification}
 \label{sec:task-schema-spec}

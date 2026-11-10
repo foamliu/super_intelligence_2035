@@ -8,8 +8,11 @@
 \label{sec:full-per-domain}
 % \subsection{完整的各领域结果}
 
-Table~\ref{tab:full-domain-results} reports the full per-domain breakdown from the 2026-11-09 full evaluation (696 cases across all 13 domains, DeepSeek-V4-Pro, Cline v3.0.51, \texttt{thinking=low}). The overall Pass@1 is 10.0\% (62 PASS / 620 decided cases); 70 ERROR and 6 ABSENT runs are excluded from the denominator.
-% 表~\ref{tab:full-domain-results} 报告了 2026-11-09 完整评测（696 例，覆盖全部 13 个领域，DeepSeek-V4-Pro、Cline v3.0.51、\texttt{thinking=low}）的完整各领域分解。总体 Pass@1 为 10.0\%（62 PASS / 620 已判定案例）；70 个 ERROR 与 6 个 ABSENT 不计入分母。
+Table~\ref{tab:full-domain-results} reports the full per-domain breakdown from the 2026-11-09 frozen evaluation (\Neval{} runs across all 13 domains, DeepSeek-V4-Pro, Cline v3.0.51, \texttt{thinking=low}, 8 workers). The overall Pass@1 is 10.0\% (62 PASS / 620 decided runs); 70 ERROR and 6 ABSENT runs are excluded from the denominator but reported per domain. Column sums are 62/558/70/6/696, and for every row PASS$+$FAIL$+$ERROR$+$ABSENT$=$Total.
+% 表~\ref{tab:full-domain-results} 报告 2026-11-09 冻结评测（\Neval{} 个 run，覆盖全部 13 个领域，
+% DeepSeek-V4-Pro、Cline v3.0.51、\texttt{thinking=low}、8 workers）的完整各领域分解。
+% 总体 Pass@1 为 10.0\%（62 PASS / 620 已判定 run）；70 个 ERROR 与 6 个 ABSENT 不计入分母但逐域列出。
+% 列合计 62/558/70/6/696，且每行 PASS+FAIL+ERROR+ABSENT=Total。
 
 \begin{table}[ht]
 \centering
@@ -45,38 +48,59 @@ pnr\_signoff       & 5  & 19  & 0  & 1 & 25  & 20.8 \\
 \label{sec:per-model}
 % \subsection{各模型结果}
 
-[TODO: multi-model comparison. Currently only DeepSeek-V4-Pro has data; GLM-5.2 / Kimi-K2.6 / DeepSeek-V4-Flash are pending.]
-% [待办：多模型对比。目前仅 DeepSeek-V4-Pro 有数据；GLM-5.2 / Kimi-K2.6 / DeepSeek-V4-Flash 待补。]
-
-\begin{table}[ht]
-\centering
-\small
-\caption{Pass@1 (\%) by model backbone.}
-% \caption{各骨干模型的 Pass@1 (\%)。}
-\label{tab:per-model}
-\begin{tabular}{@{}lc@{}}
-\toprule
-\textbf{Backbone} & \textbf{Pass@1 (\%)} \\
-\midrule
-DeepSeek-V4-Pro & 10.0 \\
-GLM-5.2 & --- \\
-Kimi-K2.6 & --- \\
-DeepSeek-V4-Flash & --- \\
-Doubao-Seed-2.0-Pro & --- \\
-\bottomrule
-\end{tabular}
-\end{table}
+This submission reports a \emph{single-backbone} evaluation: only DeepSeek-V4-Pro
+has been run to completion over the full \Neval{}-run snapshot (10.0\% Pass@1,
+62/620 decided). GLM-5.2, Kimi-K2.6, DeepSeek-V4-Flash and Doubao-Seed-2.0-Pro
+are configured in the same harness but their sweeps are still running, so we
+report no numbers for them rather than a table of dashes. At the observed batch
+cost (696 runs in $\approx$24\,h at 8 workers), the remaining four backbones
+amount to roughly five machine-days; we will report the sweep in the
+camera-ready version and repeat it as the multi-backbone test of RQ3
+(Section~\ref{sec:model-scaling}).
+% 本投稿给出的是\emph{单骨干}评测：只有 DeepSeek-V4-Pro 在完整的 \Neval{}-run 快照上跑到完成
+% （10.0\% Pass@1，62/620 已判定）。GLM-5.2、Kimi-K2.6、DeepSeek-V4-Flash、Doubao-Seed-2.0-Pro
+% 已接入同一框架但扫描仍在跑，因此这里不报数字，也不放一张全是 "---" 的表。
+% 按本批实测成本（696 run / 8 workers ≈ 24 小时），余下四个骨干约需五个机器日；camera-ready
+% 版本将给出该扫描，并用它作为 RQ3 的多骨干检验。
 
 \subsection{Failure Taxonomy by Domain}
 \label{sec:failure-by-domain}
 % \subsection{各领域失败分类法}
 
-[TODO: failure-category breakdown by domain (no-output / partial-output / format), stacked bar chart + table. Preliminary overall estimate from the 696-task run: $\sim$45/40/15, with no-output failures concentrated in physical\_verify and layout\_aether. A fully systematic per-trace labeling is left to future work.]
-% [待办：各领域失败类别分解（无输出 / 部分输出 / 格式），堆叠柱状图 + 表。来自 696 任务运行的初步总体估计：约 45/40/15，无输出失败集中在 physical\_verify 与 layout\_aether。完全系统性的逐轨迹标注留待未来工作。]
+The batch runner records one terminal status per run, so the per-domain failure
+\emph{categories} cannot be derived from the released logs alone. We therefore
+report (i) the run-level outcome anchors per domain (Table~\ref{tab:full-domain-results})
+and (ii) a triage tool that recovers the categories from each run's judge log and
+agent session, which accompanies this benchmark
+(\texttt{eval\_triage/05\_batch\_triage.py}, with an explicit UNKNOWN share so that
+unclassified runs are never silently folded into another bucket). Filling the
+per-domain category matrix, plus a stacked-bar view, is deferred to the
+camera-ready version together with an agreement statistic (Cohen's $\kappa$)
+between the tool and a human labeler on a 100-run sample.
+% 批次 runner 每个 run 只记录一个终态，因此仅凭已发布的日志无法推导各领域的失败\emph{类别}。
+% 故我们给出：(i) 各领域 run 级结果锚点（表~\ref{tab:full-domain-results}）；
+% (ii) 一个逐 run 归因工具，它从每个 run 的判分日志与智能体会话中恢复类别
+% （eval_triage/05_batch_triage.py，并显式报告 UNKNOWN 比例，避免未分类 run 被悄悄并入别的桶）。
+% 逐域类别矩阵与堆叠柱状图推迟到 camera-ready，同时给出工具与人工标注者在 100-run 样本上的一致性（Cohen's kappa）。
 
 \subsection{Token Usage and Cost Analysis}
 \label{sec:token-cost}
 % \subsection{Token 用量与成本分析}
 
-[TODO: per-task average input/output tokens, average number of tool calls, and average wall-clock time, computed from status.jsonl.]
-% [待办：每任务平均输入/输出 token 数、平均工具调用次数、平均墙钟时间，从 status.jsonl 计算。]
+We can report \emph{behavioural} cost from the archived pilot sessions. For the 30
+runs that carry an authoritative \texttt{run\_result.aggregateUsage} record, the
+median run consumes 0.71M input and 55.6k output tokens (mean 0.86M/52.5k; totals
+25.7M/1.58M), on top of a median of 26.5 tool calls (IQR 13.8--38.0) over 20.5
+iterations and 1{,}047\,s of wall-clock time (IQR 552--1{,}495). The input:output
+ratio of ${\sim}13{:}1$ is the signature of a long-horizon agent loop that re-sends
+its context each iteration, and it is the main cost driver of flow orchestration.
+A per-task token/cost table for the full \Neval{}-run batch is pending because the
+batch summary records only terminal status and wall time; the per-run session logs
+are retained and will be aggregated with the same parser
+(\texttt{eval\_triage/trace\_anatomy.py}) in the camera-ready version.
+% 我们能报告的是\emph{行为学}成本。对 30 份带有权威 run_result.aggregateUsage 记录的 run：
+% 中位每 run 消耗 0.71M input / 55.6k output token（均值 0.86M / 52.5k；合计 25.7M / 1.58M），
+% 同时中位发出 26.5 次工具调用（IQR 13.8--38.0）、跨 20.5 轮迭代、耗 1,047 秒墙钟（IQR 552--1,495）。
+% 约 13:1 的 input:output 比是长时程智能体回路的特征——每轮迭代都要重发上下文，这也是流程编排的主要成本来源。
+% 全量 \Neval{}-run 批次的逐任务 token/成本表待补：批次摘要只记录终态与墙钟，逐 run 会话日志已留存，
+% 将在 camera-ready 用同一解析器（eval_triage/trace_anatomy.py）聚合给出。
