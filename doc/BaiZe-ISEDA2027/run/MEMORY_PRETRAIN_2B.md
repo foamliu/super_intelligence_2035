@@ -1,5 +1,7 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
-WAITING: 1
+WAITING: 0
+
+> 2026-11-10 11:59 #1888: **运维令11-09执行轮·150k eval已启动运行中·训练健康iter150350/700k step6933-7182ms(<7.4s✅)·eval不影响训练**·**动作**：①git fetch+status(## main...origin/main同步✅,他线untracked未碰) ②训练核查(.29 /proc/146283/fd/1):iter150350/700k,step6933-7182ms✅(<7.4s铁律),loss2.020-2.034,0NaN/0skip ③发现150k ckpt已落盘(checkpoints/iter_0150000✅)+HF已导出(hf_iter_150000✅)+GGUF已转换(bz2b-150000-f16.gguf 4.4GB✅) ④启动150k eval pipeline(/tmp/baize_eval_150k_pipeline.sh PID1051898):llama-server PID1052008(-t4,nice19,port8190,health=ok✅)+lm_eval client PID1064563(8集limit=100,parallel2,batch32) ⑤训练step未受影响(6933-7182ms<7.4s✅) ⑥📦TASK=27.9KB/MEMORY=22.4KB(均≤32KB✅,归档0KB)·未完成指令：有(150k eval运行中,ETA~60-80min)⇒WAITING:0。
 
 > 2026-11-10 10:54 #1887: **运维令11-09执行轮·状态确认轮·无新ckpt可评·训练健康iter149800/700k step7086ms(<7.4s✅)·14/14eval全完成·等150k~23min后**·**动作**：①git fetch+status(## main...origin/main同步✅,他线untracked未碰) ②训练核查(.29 /proc/146283/fd/1):iter149800/700k,step7086ms✅(<7.4s铁律,末5步7102/6964/7143/6990/7086ms),loss2.031-2.035,0NaN/0skip,GPU满载 ③eval核查:pgrep llama-server/lm_eval=0(无残留),14/14 results.json确认(gguf_iter_{10000..140000}_fixed_8set),报告report_pretrain_llamacpp_scaling_60k_100k_zh.html=23.6KB@Nov9 17:48含10k-140k✅ ④无150k ckpt(latest=iter_0148000,iter149800→150000~200步×~7.0s≈23min后~11:17) ⑤research日报11-10 06:11早报已读(同#1886,无新更新,下期18:00) ⑥📦TASK=27.9KB/MEMORY=20.8KB→归档#1802-#1851四十九条📦指针为汇总(全文已存daily-memories/2026-11-09.md,归档~10KB)·未完成指令：无(11w-14w全完成,下个万整数150k~23min后)⇒WAITING:1。
 
