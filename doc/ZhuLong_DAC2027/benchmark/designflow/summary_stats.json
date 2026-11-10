@@ -914,6 +914,17 @@
       "daily_log_healthy": true,
       "new_sessions": 0,
       "updated_at": "2026-11-10T12:45:00+08:00"
+    },
+    "r314": {
+      "ts": "2026-11-10T13:30:00+08:00",
+      "date": "2026-11-10",
+      "round_type": "management + all-shard-dedup-fix + 7huyr claim/deepread (0 case, A.jsonl 198 unchanged; DEBT:1 build->r315)",
+      "scan_dir": "ssh_eda_search_20261109_224902",
+      "scan_confirmed": "no new scan since r292 full rescan (mc30=2247, dedup=5999, users=512, hosts=696 unchanged); daily log 20261110 healthy 2981 lines",
+      "produce_scarcity": "9th confirmation (r295/r296/r299/r300/r309/r311/r312/r313/r314): top-80 A-dominant fresh candidates mostly analysis-only or cross-shard dup; clean A-faithful produce scarce in fresh digital pool",
+      "dedup_fix": "filter2.py used shard-A-only exclude(319); top produce candidate us0hd was shard-D RegrCaseFilter-001 (same e0039102/session), wuuc7 same task dup; parked 7adgf(dup of 7huyr)+wuuc7; NEXT ROUND filter2 must use all-4-shard ledger(2220) exclude",
+      "claimed": "1792053769843_7huyr (aocao/hfhds227 mc129 verification) for diagnosis-generator PIVOT (acaey/SvHierRefDiag model)",
+      "deepread": "trace_deepreads/7huyr_rhr_queue_bounds.md (root cause: addr_q queue 65760 entries vs addr_phys up to 114719 -> RTSVQI; fix: pre-init 131072 + keep ACI 65760 direct-index)"
     }
   },
   "sessions": 38082,
@@ -925,7 +936,7 @@
   },
   "source": "/home/t0002965/log/ssh_eda_search_20261105_192825/summary.tsv (11/05 scan)",
   "target_mc": 30,
-  "updated_at": "2026-11-10T12:45:00+08:00",
+  "updated_at": "2026-11-10T13:30:00+08:00",
   "users_mc100": 182,
   "users_mc30": 401,
   "users_mc300": 60,
