@@ -26,19 +26,24 @@ usage() { echo "用法: $0 [--model <name>|--all] [--runs N|--run N] [-p N] [--d
 get_field() { local var="MODEL_$1"; echo "${!var}" | cut -d'|' -f"$2"; }
 check_env() {
     print_info "=== 环境检查 ==="
-    command -v cline &>/dev/null && print_success "cline OK" || { print_error "cline 不在 PATH"; return 1; }
-    [[ -f "$EVAL_SCRIPT" ]] && print_success "eval driver OK" || { print_error "eval driver 缺失"; return 1; }
-    curl -s --max-time 5 http://127.0.0.1:18888/sse 2>/dev/null | head -1 | grep -q endpoint && print_success "MCP OK" || { print_error "MCP 不可达"; return 1; }
+    local errs=0
+    command -v cline &>/dev/null && print_success "cline OK" || { print_error "cline 不在 PATH"; errs=$((errs+1)); }
+    [[ -f "$EVAL_SCRIPT" ]] && print_success "eval driver OK" || { print_error "eval driver 缺失"; errs=$((errs+1)); }
+    # MCP SSE: head -1 on SSE stream is unreliable (stream may not flush a line
+    # before pipe closes); grab first 500 bytes which include "event: endpoint".
+    local mcp_resp; mcp_resp=$(curl -s --max-time 5 http://127.0.0.1:18888/sse 2>/dev/null | head -c 500)
+    echo "$mcp_resp" | grep -q "endpoint" && print_success "MCP OK" || { print_error "MCP 不可达"; errs=$((errs+1)); }
     local sb_ok=false
     for port in 8664 8665 8653 8669 8667; do
         timeout 5 bash -c "echo > /dev/tcp/10.129.32.75/$port" 2>/dev/null && { print_success "sandbox :$port OK"; sb_ok=true; break; }
     done
-    [[ "$sb_ok" == false ]] && { print_error "sandbox 不可达 (所有端口 CLOSED)"; return 1; }
+    [[ "$sb_ok" == false ]] && { print_error "sandbox 不可达 (所有端口 CLOSED)"; errs=$((errs+1)); }
     for m in $ALL_MODELS; do
         local u; u=$(get_field "$m" 1)
         curl -s --max-time 10 "${u}/models" 2>/dev/null | grep -q model && print_success "$m OK" || print_warn "$m 不可达"
     done
-    return 0
+    [[ "$errs" -eq 0 ]] && print_success "环境检查通过 (0 errors)" || print_error "环境检查失败 ($errs errors)"
+    return $errs
 }
 configure_auth() {
     local m="$1" ep mid key
