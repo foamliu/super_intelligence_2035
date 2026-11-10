@@ -19,7 +19,7 @@
   "mc30": 2247,
   "mc300": 317,
   "mc500": 281,
-  "note": "11/10 r309: FIXED trace_ledger.py $6/$7 column-mapping bug (filter was on $7 tools, EMPTY for ~346 verilog rows; switched to $6 keywords). shard A mc>=15 dedup candidates 294->2381 (8.1x), digital-dominant=581. The r268-r308 'pool exhausted' era (40 rounds) was a FILTER BUG artifact, not real scarcity. u54d9(eason1z, A-faithful signal-xref produce) claimed+deepread, DEBT:1 build->r310. r292 FULL RESCAN: 696/698 hosts, dedup=5999, mc30=2247, users=401.",
+  "note": "11/10 r310: delivered SignalXrefBuilder-001 (u54d9, 3-level signal xref, k=14, A.jsonl 197). r309 fixed trace_ledger.py $6/$7 column-mapping bug (filter was on $7 tools, EMPTY for ~346 verilog rows; switched to $6 keywords). shard A mc>=15 dedup candidates 294->2381 (8.1x), digital-dominant=581. The r268-r308 'pool exhausted' era (40 rounds) was a FILTER BUG artifact, not real scarcity. r292 FULL RESCAN: 696/698 hosts, dedup=5999, mc30=2247, users=401.",
   "prev_scan_path": "/home/t0002965/log/ssh_eda_search_20261105_192825/summary.tsv",
   "prev_sessions": 5822,
   "scan_path": "/home/t0002965/log/ssh_eda_search_20261109_224902/summary.tsv",
@@ -774,11 +774,20 @@
       "eda_flow_status": "OK (run_commands exit 0; .75-local session read OK; remote ssh to q3lrp/4vmtg hosts not attempted within budget)",
       "column_mapping_finding": "summary.tsv columns are $1 ip $2 host $3 user $4 session_file $5 match_count $6 keywords(colon;semicolon e.g. verilog:4237) $7 tools(space-count e.g. 1128 netlist). trace_ledger.py next-awk filters on $7 ~ /verilog|vcs|.../ but keywords live in $6; verilog-heavy sessions with EMPTY $7 tools (e.g. fkhb8) are MISSED by official next-awk. This explains why agent has bypassed official next with manual relaxed $6 queries since r299. RECOMMEND fix: filter on $6 (keywords) not $7 (tools), or both.",
       "candidate_selection": "corrected filter on $6 keywords: 977 deduped verilog/systemverilog sessions (mc>=15). Excluded 2194 all-shard ledger entries. Top fresh (not r307-8 set, not ledgered): q3lrp(graywang v3443 mc210, SAME user as fkhb8, remote hfeg0pjn140), 4vmtg(bin1y v3744 mc199, remote hfeg0pkn002), 873cy(e0014036 v2093+drc1736, .75-local), s4my6/wuuc7(e0039102 v2081/v2005, remote hfeg0plg74).",
-      "peeked": ["873cy (.75-local, 143 msgs/73 user turns): U#0 find xrun.log (locate), U#2 detect-errors (analysis-only), U#14 'fix align monitor interface' (user-NAMED root cause -> EXCLUDED from A-faithful per 11/02 rule). No clean A-faithful produce turn; fix turn = B-track/L2-heavy (needs proj_special.sv + xrun re-run)."],
-      "classification": {"clean_a_faithful_produce": 0, "analysis_only": 1, "user_named_fix": 1, "remote_unpeekable_within_budget": 4},
+      "peeked": [
+        "873cy (.75-local, 143 msgs/73 user turns): U#0 find xrun.log (locate), U#2 detect-errors (analysis-only), U#14 'fix align monitor interface' (user-NAMED root cause -> EXCLUDED from A-faithful per 11/02 rule). No clean A-faithful produce turn; fix turn = B-track/L2-heavy (needs proj_special.sv + xrun re-run)."
+      ],
+      "classification": {
+        "clean_a_faithful_produce": 0,
+        "analysis_only": 1,
+        "user_named_fix": 1,
+        "remote_unpeekable_within_budget": 4
+      },
       "next_round_priority": "ssh-peek q3lrp (graywang, same user as fkhb8 case, v3443 fresh) + 4vmtg (bin1y v3744); if clean produce -> claim+deepread+build. Else trigger fresh full rescan (r292 scan now 16 rounds stale, daily log stable but no new scan dir since 11/09 22:49).",
       "shard_A_new_this_round": 0,
-      "parked_this_round": ["873cy (analysis + user-named-fix, not A-faithful produce) -> parked"]
+      "parked_this_round": [
+        "873cy (analysis + user-named-fix, not A-faithful produce) -> parked"
+      ]
     },
     "r309": {
       "date": "2026-11-10",
@@ -787,7 +796,13 @@
       "scan_dir": "ssh_eda_search_20261109_224902",
       "no_new_scan": true,
       "no_new_scan_streak": 17,
-      "scan_stats": { "mc30": 2247, "dedup_sessions": 5999, "users_mc30": 401, "hosts": 696, "rows": 38082 },
+      "scan_stats": {
+        "mc30": 2247,
+        "dedup_sessions": 5999,
+        "users_mc30": 401,
+        "hosts": 696,
+        "rows": 38082
+      },
       "daily_log_20261110_lines": 2981,
       "daily_log_healthy": true,
       "eda_flow_status": "OK (run_commands exit 0; remote ssh peek via scp+ssh worked; NFS-shared homes readable from any host)",
@@ -809,6 +824,34 @@
       "debt": 1,
       "debt_note": "u54d9 build deferred to r310 (deepread complete; r310 first task = build, no further exploration). Justified: r309 budget consumed by high-value $6/$7 bug fix ending 40-round scarcity misdiagnosis. NOT a §3 consecutive-deepread violation: r308 was mgmt (peek+park), r309 is infra-fix+claim+deepread; bug fix is a real deliverable.",
       "next_round_priority": "BUILD u54d9 case (spec-driven-generator gen_signal_xref.py + spec_a, hidden B synthetic file tree, check.py 14 conds, negatives, self-verify) -> append A.jsonl 196->197 -> mark case. Then continue case production from the now-ample 581-digital-dominant pool (u54d9 was first of ~5 fresh clean candidates)."
+    },
+    "r310": {
+      "ts": "2026-11-10T10:55:00+08:00",
+      "date": "2026-11-10",
+      "round_type": "case (cleared r309 DEBT:1 build — SignalXrefBuilder-001)",
+      "scan_dir": "ssh_eda_search_20261109_224902",
+      "scan_path": "/home/t0002965/log/ssh_eda_search_20261109_224902/summary.tsv",
+      "scan_confirmed": "no new scan since r292 full rescan (mc30=2247, dedup=5999, users=401, hosts=696 unchanged)",
+      "daily_log_20261110_lines": 2981,
+      "daily_log_healthy": true,
+      "no_new_scan": true,
+      "consecutive_no_new_scan": "r293-r310 (18th consecutive no-new-scan since r292 full rescan)",
+      "mc30": 2247,
+      "dedup_sessions": 5999,
+      "users_mc30": 401,
+      "hosts": 696,
+      "new_sessions": 0,
+      "case_delivered": "EDA-Eval-DesignFlow-SignalXrefBuilder-001 (digital, A-faithful produce-task, L1-static, k=14)",
+      "trace": "1794021023245_u54d9 (eason1z@hfeg0plg100, mc108, verilog:5163) -> case",
+      "case_k": 14,
+      "case_domain": "digital",
+      "case_track": "faithful",
+      "case_level": "L1-static",
+      "shard_A_new_this_round": 1,
+      "shard_A_jsonl": 197,
+      "finding": "r310 cleared r309 DEBT:1 (u54d9 deepread complete, build deferred to r310 per §3 no-consecutive-deepread). u54d9 found via r309 trace_ledger.py $6/$7 column-mapping bug fix (was hidden by old $7 filter; verilog:5163 in $6 keywords, $7 tools empty). USER#0 = clean A-faithful 3-level signal cross-reference produce-task (pattern match -> .inc reference via basename -> reg direct grep). Case = spec-driven-generator + static-verification (matches RunTaskMapExtractor-001/SpfCouplingParser-001 pattern + 3-level signal->pattern->.inc dimension). 14 conds a-n, gold PASS 14/14 + 8 negatives (3 §4.9 + 5 naive) all FAIL NEG_RC=0. Assertion gate k_rationale=k_check=14>=8 PASS. test_sha8=d8b879e3. A.jsonl 196->197. ledger u54d9 mark->case. scansync r310: no new scan (still r292, 18th consecutive no-new-scan), daily log 20261110 healthy 2981 lines. Paper: pdflatex 0 error 0 undefined 10p, Ntasks 972->990 (A197 B228 C280 D285, App A breakdown synced to real shard counts).",
+      "paper": "pdflatex compile OK (0 error, 0 undefined, 10 pages); \\Ntasks 972->990; App A breakdown A:194->197 B:224->228 C:275->280 D:279->285",
+      "updated_at": "2026-11-10T10:55:00+08:00"
     }
   },
   "sessions": 38082,
@@ -820,7 +863,7 @@
   },
   "source": "/home/t0002965/log/ssh_eda_search_20261105_192825/summary.tsv (11/05 scan)",
   "target_mc": 30,
-  "updated_at": "2026-11-10T09:15:00+08:00",
+  "updated_at": "2026-11-10T10:55:00+08:00",
   "users_mc100": 182,
   "users_mc30": 401,
   "users_mc300": 60,
