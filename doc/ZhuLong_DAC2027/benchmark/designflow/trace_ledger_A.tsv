@@ -323,6 +323,6 @@
 1793863355565_acaey	stevenh	hfeg0pgn145	110	verification	case	EDA-Eval-DesignFlow-SvHierRefDiag-001	2026-11-10 12:00	r311 peek: A-faithful USER#0=diagnose xmelab CUUVUNF elaboration error (proj_special.sv:6127 TOP hierarchical ref at $unit scope). 48msgs ALL read_files/search_codebase, 0 writes. Agent output=root-cause analysis report (IDX43); fix proposed by USER(44) not agent. analysis-only NOT produce-task. park.
 1793706026720_4q4w1	weihanwu	hfeg0pfn104	134	verification	parked		2026-11-10 11:33	r311 peek: USER#0=how-to (怎么在tb上把mr值送到dq_exp). 106msgs, 39 read_files+16 search_codebase+0 writes. Agent final(105)=explanation of existing MRR data-flow path, no code produced. analysis/explanation-only NOT produce-task. park.
 1793170209567_2mfi6.messages.json	jascperc	hfeg0pkn001	64	digital	parked		2026-11-10 12:41	duplicate of 0kv56/PatStatSpeed-001 (A:97); r313 build aborted, NOT appended
-1792053769843_7huyr	aocao	hfhds227	129	verification	claimed		2026-11-10 13:16	
+1792053769843_7huyr	aocao	hfhds227	129	verification	case	EDA-Eval-DesignFlow-RhrQueueBoundsDiag-001	2026-11-10 13:53	
 1792054934836_7adgf	aocao	hfhds227	128	verification	parked		2026-11-10 13:17	duplicate of 7huyr (same aocao user, identical first user msg, RHR queue-bounds diagnosis); 7huyr claimed for r314 deepread
 1792055475403_wuuc7	e0039102	hfeg0plg74	97	verification	parked		2026-11-10 13:17	duplicate task of shard-D RegrCaseFilter-001 (same e0039102 user, identical regression-case-filtering prompt, jason17w lpddr5 ddgoa.0812 dir); NOT a shard-A case

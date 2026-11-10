@@ -258,3 +258,9 @@
 - **唯一可行路径**：要找特定子技能的 real trace，只能 ssh peek 逐条 messages.json 读 user 首轮原话（成本高，无法批量预筛）。
 - **对 scouting 策略影响**：summary.tsv 只能按「spice 工具命中」(hspice/finesim/spectre) + mc 阈值过滤，不能按子技能过滤；shard B 跨全 mc 段(≥30/30-260/15-29/10-14) 4 轮 spice-keyword scouting 已穷尽，干净 distinct spice_char real trace 池 = 枯竭。后续若要补 noise/THD/FFT/eye/PZ 等真子技能缺口 case，需运维放行「无 real trace 的合成 L2」(红线 #1 例外) 或接受 L1 补牙 park-reframe（本 SimStatusMonitor-001 路径）。
 - **本轮交付**：EDA-Eval-DesignFlow-SimStatusMonitor-001（mf0l3 park→case，L1 补牙，k=15，ref 15/15 PASS，5 neg distinct FAIL）。ledger case 77→78.
+
+### EXP-DG1.b 第 2 次 application：RhrQueueBoundsDiag-001（2026-11-10 r315，7huyr）
+
+**trace**：7huyr(aocao@hfeg0plg227, verification, mc129) = analysis-only 诊断（USER#1「检查代码逻辑，波形暂没问题」→ addr_q 队列越界 RTSVQI，agent 0 writes 纯审查报告）。
+**reframe**：复用 EXP-DG1 的 diagnosis-generator 模板，换诊断对象 = SystemVerilog queue index out-of-bounds（ncsim `*W,RTSVQI`）。deliverable=gen_rhr_diag.py → diag_rhr_bounds.py 推导：queue 声明(by name) / address_space_max(2^bits-1) / max_index_value(max index_var_max) / is_out_of_bounds + OOB 点过滤(过滤 in-bounds distractor) / 根因分类(queue_index_out_of_bounds_undersized_push_back_init) / fix(separate_preinit_full_address_space_plus_keep_aci_loop_direct_index + target + why_simple_extend_rejected from constraint) / user_constraints_recognized。check.py 15 conds a-o，gold PASS 15/15 + 8 negatives 全 FAIL + §4.9。
+**结论**：diagnosis-generator reframe 模板可复用至非 elaboration 类诊断（queue-bounds vs hier-ref scope），验证了模板的 domain-portability。analysis-only verification trace 池（7huyr/acaey/及未来 i555n 类）经此 reframe 持续可造题。A.jsonl 198→199，verification 45→46。10th produce-scarcity 上下文，但 scarcity 不再阻塞交付。
