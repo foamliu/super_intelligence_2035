@@ -15687,3 +15687,34 @@ Process 3557214 has 36.30 GiB memory in use.
 2. **transformers 4.51.1 兼容 MiniCPM5-2B**——因 MiniCPM5-2B 是 LlamaForCausalLM 架构（非 MiniCPM 专用类），4.49 限制仅适用于 vLLM serve 的 tokenizer，训练用 HF transformers 无此问题。
 3. **SFT corpus 有效训练样本 12,434**（high+medium），以 max_len=1024 计 ≈12.4K 样本 × 3 epochs = 37.3K steps / 16 grad_accum ≈ 2,333 optimizer steps，A40 2 卡预估 2-4h。
 4. **S3_multi_api_chain 仅 89 条**——多 API 链式任务最少，RL 阶段需补充此类难样本。
+
+---
+
+## §R146: Phase1 unlock-B 可行性审计 — 本地 pyAether 沙盒是否可在 .17 起来（wake214, 2026-11-10, 零 GPU · 实测）
+
+> **背景**：远程沙盒 `10.129.32.75:8667`（pyAether 代码执行）连续 19 wake（wake195-213）TCP 全 CLOSED（ping OK 0.3ms，端口 22/8664/8665/8653/8667/8668/8669 全 CLOSED），Phase1 基线评测因此硬阻塞。`baize_posttrain_phase1_baseline.sh` 注释中给出 **unlock-B** 回退：「any host H with pyAether installed + set .env SANDBOX_HOST=H」。本轮审计 unlock-B 在 .17 本地是否可行。
+
+### R146.1 沙盒架构发现（client/server 分离）
+
+- `eda_fastmcp` 仓库内 `server/sandbox_server/exec_code.py` 是**纯 HTTP 客户端**：
+  - `run_code_http()` 用 `requests.post(url, json=payload, timeout=TIMEOUT)` 调用 `http://{SANDBOX_HOST}:{SANDBOX_PORT_HTTP}/{SANDBOX_URL_PATH}`（默认 `http://10.129.32.75:8667/v1/run_code`）。
+  - 多端口池 `SANDBOX_ENDPOINTS=8664:/proj/.../t0002596_bak_1,8665:...,8653:...,8669:...` 全部指向 **同一远程主机** `10.129.32.75` 上的 workdir。
+  - `SandboxEndpointPool` 只是端口并发池，**不含任何本地执行能力**。
+- **沙盒后端**（真正执行 pyAether SWIG 代码 + EDA 工具链的服务）**不在本仓库**，是 10.129.32.75 上的独立服务。仓库内无 listener/server 组件（无 `http.server`/FastAPI/flask/uvicorn 起沙盒后端的代码）。
+
+### R146.2 .17 本地环境实测（证据）
+
+| 检查项 | 命令 | 结果 |
+|:--|:--|:--|
+| pyAether 可导入 | `~/code/eda_fastmcp/.venv/bin/python -c 'import pyAether'` | ❌ `ModuleNotFoundError: No module named 'pyAether'` |
+| 沙盒 workdir 存在 | `ls -ld /proj/train/AI/workdir` | ❌ `No such file or directory`（`/proj` 在 .17 不存在） |
+| EDA 工具环境 | `ls /proj` / `env \| grep -iE 'EDA\|TECH\|CDB\|lib.defs'` | ❌ `/proj` 不存在；无 TECHLIB/lib.defs 环境变量 |
+| run_code 实测转发 | `run_code_http({'code':'print(1+1)'})` | ❌ 空（连接 10.129.32.75:8667 超时/拒绝，与端口 CLOSED 一致） |
+| MCP server 运行 | `curl localhost:18888/` / `ps` | ✅ PID 3217747 `~/code/eda_fastmcp/.venv/bin/python main.py`（etimes 51510s ≈14h），但 run_code 转发仍失败 |
+
+### R146.3 结论
+
+1. **unlock-B 在 .17 不可行**：本地无 pyAether SWIG 环境、无 EDA 工具链（TECHLIB/lib.defs）、无 `/proj` workdir，且仓库内只有客户端、无沙盒后端可起。pyAether 是 EDA 工具的 SWIG 绑定（C++ 编译产物，非 pip 包），需在装好 EDA 工具的机器上本地编译，无法在 GPU 训练盒 .17 上快速搭建。
+2. **Phase1 唯一解锁路径 = 运维恢复 10.129.32.75**（开端口 8664/8665/8653/8667/8669 或重启其上的沙盒服务），或运维提供另一台**已装 pyAether + EDA 工具**的主机 H 供设 `SANDBOX_HOST=H`。后者仍需 EDA 工具环境，非 .17 可独立完成。
+3. **不改动 `.env`**：`.env` 由 harness 线/eda_fastmcp 维护，本线只读引用；unlock-B 的环境变量切换由运维在恢复沙盒时统一处置。
+4. **本轮无需新增脚本**：所有 agent 侧 prep（P0/P1/P2/P3/Phase1 启动脚本/SFT 管线/RL 依赖审计/就绪性验证）已穷尽，Phase1 8/8 preflight 仅沙盒 1 项 BLOCKED，沙盒一通即可 `--smoke` → 正式三模型 5-run。
