@@ -19,12 +19,58 @@ The recipe was selected via a staged single-variable protocol at $5000$ steps: S
 % 中文：搜索协议。配方以分阶段单变量协议在 $5000$ 步上选出：S1 基线；S2 学习率扫描（$2\times10^{-4}$–$1\times10^{-3}$，七点）；S3 调度轴（WSD 与 cosine、衰减比例、预热、$min\_lr$）；S4 退火配比；S5 长跑加三种子。总预算约 $82$ GPU·h（八张 H100）；损失为排序用代理测量。
 
 \subsection{Data}\label{sec:llm-data}
-The stable phase uses a seven-source mixture yielding a $74{:}19{:}7$ web/code/math split ($0.74$ \texttt{Ultra-FineWeb}, $0.19$ \texttt{UltraData-Code}, $0.07$ \texttt{UltraData-Math}); a $400$-trial Bayesian search confirmed this region optimal within $0.6$\,pp.
-% 中文：数据。稳定阶段使用七源混合，产出 $74{:}19{:}7$ 的网页/代码/数学分布（$0.74$ \texttt{Ultra-FineWeb}、$0.19$ \texttt{UltraData-Code}、$0.07$ \texttt{UltraData-Math}）；$400$ 次贝叶斯搜索在 $0.6$ pp 内确认该区域最优。
+The stable phase uses a seven-source mixture yielding a $74{:}19{:}7$ web/code/math split; a $400$-trial Bayesian search confirmed this region optimal within $0.6$\,pp.
+% 中文：数据。稳定阶段使用七源混合，产出 $74{:}19{:}7$ 的网页/代码/数学分布；$400$ 次贝叶斯搜索在 $0.6$ pp 内确认该区域最优。
+Figure~\ref{fig:data-mix} shows the stable and decay (annealing) mixtures side by side; the decay segment drops most general web/code/math in favor of instruction-style and agentic data.
+% 中文：图 \ref{fig:data-mix} 并排展示了稳定段与衰减（退火）段的配比；衰减段大幅压低通用网页/代码/数学，转向指令式与智能体数据。
 Sources are pre-blended into large shards ($\mathcal{O}(10)$ vs.\ $\mathcal{O}(600)$ index files per rank), bounding the data-loader footprint.
 % 中文：各源预混合为大 shard（每 rank $\mathcal{O}(10)$ 个索引文件而非 $\mathcal{O}(600)$），限制数据加载内存占用。
 Contamination is controlled by a $193{,}295$-entry 13-gram blacklist from $536$ benchmarks; shards are scanned for ${\geq}0.80$ n-gram overlap.
 % 中文：污染控制由 $193{,}295$ 条 13-gram 黑名单实现（覆盖 $536$ 个基准）；shard 发布前扫描 ${\geq}0.80$ 的 n-gram 重叠。
+
+\begin{figure}[t]
+\centering
+\footnotesize
+\begin{minipage}[t]{0.47\linewidth}
+\centering
+\textbf{Stable (WSD $\theta{=}10^{6}$)}\\[-2pt]
+\begin{tikzpicture}[scale=0.9]
+% pie: web 74% (0--266.4), code 19% (266.4--334.8), math 7% (334.8--360)
+\fill[blue!60]   (0,0) -- (0:1)     arc (0:266.4:1)     -- cycle;
+\fill[red!60]    (0,0) -- (266.4:1) arc (266.4:334.8:1) -- cycle;
+\fill[green!55]  (0,0) -- (334.8:1) arc (334.8:360:1)   -- cycle;
+\node at (110:0.62)  {\textbf{74\%}};
+\node at (300:0.55)  {\textbf{19\%}};
+\node at (348:0.62)  {\textbf{7\%}};
+\end{tikzpicture}\\[2pt]
+\begin{tabular}{@{}ll@{}}
+\textcolor{blue!60}{$\bullet$} web & \textcolor{red!60}{$\bullet$} code\ \,\ \textcolor{green!55}{$\bullet$} math \\
+\end{tabular}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.47\linewidth}
+\centering
+\textbf{Decay (annealing)}\\[-2pt]
+\begin{tikzpicture}[scale=0.9]
+% pie: instr-SFT 60% (0--216), agentic-SFT 12% (216--259.2), web 22% (259.2--338.4), math 4% (338.4--352.8), code 2% (352.8--360)
+\fill[orange!70]  (0,0) -- (0:1)     arc (0:216:1)       -- cycle;
+\fill[purple!60]  (0,0) -- (216:1)   arc (216:259.2:1)   -- cycle;
+\fill[blue!60]    (0,0) -- (259.2:1) arc (259.2:338.4:1) -- cycle;
+\fill[green!55]   (0,0) -- (338.4:1) arc (338.4:352.8:1) -- cycle;
+\fill[red!60]     (0,0) -- (352.8:1) arc (352.8:360:1)   -- cycle;
+\node at (108:0.55) {\textbf{60\%}};
+\node at (238:0.60) {\textbf{12\%}};
+\node at (299:0.62) {\textbf{22\%}};
+\node at (346:0.55) {\textbf{4\%}};
+\node at (357:0.65) {\textbf{2\%}};
+\end{tikzpicture}\\[2pt]
+\begin{tabular}{@{}ll@{}}
+\textcolor{orange!70}{$\bullet$} instr-SFT & \textcolor{purple!60}{$\bullet$} agentic \\
+\textcolor{blue!60}{$\bullet$} web & \textcolor{green!55}{$\bullet$} math\ \,\ \textcolor{red!60}{$\bullet$} code \\
+\end{tabular}
+\end{minipage}
+\caption{Data mixture of the stable (WSD $\theta{=}10^{6}$) and decay (annealing) phases. The decay segment replaces the bulk of general web/code/math with instruction-style (60\%) and agentic (12\%) data; its SFT sources are a planned ratio pending tokenization.}
+\label{fig:data-mix}
+\end{figure}
 
 \subsection{Long-Context Data Gate}\label{sec:longctx-data}
 Only $\mathbf{2.52\%}$ of tokens sit in documents ${\geq}32$K and $0.03\%$ at ${\geq}128$K (mean $889$ tokens; Table~\ref{tab:longctx-data}), so we measured the distribution before budgeting segment~B.
