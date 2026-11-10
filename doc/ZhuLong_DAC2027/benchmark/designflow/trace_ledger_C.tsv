@@ -608,4 +608,4 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked		2026-11-09 20:39	RAG-looku
 1792671070682_6widi	sherlock	hfeg0pfn011	73	physical_verify	case	EDA-Eval-DesignFlow-DrcExactWaiver-001	2026-11-10 07:45	
 1794225997663_uxowi	e0023936	hfhds201	27	physical_verify	case	EDA-Eval-DesignFlow-DrcBad2gridLshape-001	2026-11-10 08:37	
 1792026663236_uo1hv	xxchen	hfeg0pkn001	106	physical_verify	parked		2026-11-10 09:09	r323: requirements-doc task, weak check, deferred
-1793669946013_xnk5l	kenwang	hfeg0plg49	212	physical_verify	case		2026-11-10 09:24	r323 DrcDeckCmpGen-001 kenwang physical_verify L1 faithful k=12 a-l
+1793669946013_xnk5l	kenwang	hfeg0plg16	212	physical_verify	case	EDA-Eval-DesignFlow-DrcDeckCmpGen-001	2026-11-10 09:40	r323 DrcDeckCmpGen-001 kenwang physical_verify L1 faithful k=12 a-l; host corrected hfeg0plg49->hfeg0plg16 (172.16.8.192 per summary.tsv)
