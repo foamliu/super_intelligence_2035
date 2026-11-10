@@ -15377,4 +15377,62 @@ GPU 内存: 37GB / 48GB (76%, gradient checkpointing)
 1. **数据替代**：UltraData-SFT-2605 → PyAether SFT corpus v2。理由：.17 无 /nas_train，UltraData 分词镜像不可达；PyAether corpus 是 domain-specific，更直接针对 EDA-Eval API 知识缺口（58pp 差距中 10-15pp 归因于 API 知识）。
 2. **Full FT vs LoRA**：选择 Full FT。理由：PEFT/torchao 不可用；2B full FT 在 2× A40 48GB 可行（37GB used）；Full FT 是论文 §5.2 主实验条件。
 3. **attn_implementation=eager**：MiniCPM5-2B 可能不原生支持 flash attention，使用 eager 保证兼容。
+
+---
+
+## §Phase1-readiness-sandbox-block（wake199, 2026-11-10 19:27）— 三模型端点就绪确认 + 沙盒阻塞根因深挖 + 灵活解锁路径
+
+> 检索词: `phase1-readiness`, `sandbox-block-rootcause`, `SANDBOX_HOST-env`, `unblock-path-ops`
+
+### 1. Phase1 三模型端点就绪确认（全部可达）
+
+| 模型 | 端点 | 协议 | /v1/models | inference | 用途 |
+|:--|:--|:--|:--:|:--:|:--|
+| MiniCPM5-2B | http://localhost:8098 | vLLM (GPU4) | OK | OK (37.8GB) | Phase1 基线（替身） |
+| Qwen3.8-27B | http://localhost:8099 | SGLang (GPU0-3, root) | OK (id=qwen3.8-27b, max_model_len=262144) | — | Phase1 基线（对照） |
+| DeepSeek 云端 | http://agi-gateway.cxmt.com/cloud/v1 | cloud | OK (owned_by=cloud) | — | Phase1 基线（P0 数据已有） |
+
+- GPU5/6/7 占位 serve（17:10 令）：端口 8097/8096/8095，served-model-name minicpm5-2b-gpu5/6/7，全部 /v1/models OK + GPU5 inference 实测 OK（chat completion 正常生成）。
+- **结论**：三个评测 backbone 的推理端点 100% 就绪。Phase1 唯一未就绪项 = 沙盒（代码执行）。
+
+### 2. 沙盒阻塞根因深挖（比 wake195-198 更深一层）
+
+| 检查项 | 结果 | 含义 |
+|:--|:--|:--|
+| 10.129.32.75 ICMP ping | OK (0.3ms, 0% loss) | 主机在线 |
+| 10.129.32.75:8664-8669 (sandbox HTTP/TCP) | 全 CLOSED | 沙盒服务端口不可达 |
+| 10.129.32.75:22 (SSH) | **CLOSED** | **主机级防火墙/策略阻断，非单纯服务崩溃** |
+| localhost:8664-8669 | 全 refused | .17 本机无沙盒服务运行 |
+| pyAether @ eda_fastmcp/.venv (py3.13) | ModuleNotFoundError | SWIG EDA 工具不可本地安装 |
+| pyAether @ system py3.8 / pyaether_venv3.13 | ModuleNotFoundError | 同上，3 环境全无 |
+
+**根因判定**：10.129.32.75 处于**主机级网络隔离**（SSH:22 也 CLOSED），不仅是沙盒服务 down。从 .17 无法 SSH 进入重启沙盒服务。pyAether（SWIG 封装 EDA 工具）**仅在 10.129.32.75 上安装**，.17 不可 pip 安装、Docker 需 root（无权限）→ **无本地绕过路径**。
+
+**架构确认**（读源码 `server/sandbox_server/exec_code.py` + `scripts/run_eval.py:286` + `.env`）：
+- `exec_code.py` 是**转发客户端**（非执行器）：把代码 POST 到 `SANDBOX_HOST:SANDBOX_PORT_HTTP/v1/run_code`。
+- 沙盒服务（实际执行 pyAether/SKILL 代码）运行**在 10.129.32.75 上**。
+- `.env`: `SANDBOX_HOST=10.129.32.75` `SANDBOX_PORT_HTTP=8667` `SANDBOX_PORT_TCP=8668`。
+
+### 3. 灵活解锁路径（给运维的可执行方案）⭐
+
+**关键发现**：`SANDBOX_HOST` 是**环境变量**（`exec_code.py` / `run_eval.py` / `clean_sandbox.sh` 全部 `os.getenv("SANDBOX_HOST", "10.129.32.75")`）→ **不需要修代码**，只需改环境变量即可指向任意沙盒主机。
+
+**解锁方案 A（优先，恢复原沙盒）**：在 10.129.32.75 上重启沙盒服务 + 开放 8664-8669 端口（需有该机访问权限的运维操作）。恢复后 .17 无需改任何配置。
+
+**解锁方案 B（备选，任意主机）**：在任一已装 pyAether 的可达主机 H 上启动沙盒服务（`server/sandbox_server/` 下的 HTTP server，监听 8664-8669），然后在 .17 的 `~/code/eda_fastmcp/.env` 改 `SANDBOX_HOST=H` 并重启 MCP server（`baize_posttrain_mcp_server.sh`）。eval 脚本通过 `SANDBOX_HOST` 环境变量传递，无需改脚本。
+
+**解锁后立即执行（Phase1 launch）**：
+1. 沙盒可达后先跑 `clean_sandbox.sh` 清理残留 workdir。
+2. 污染隔离闸门已 PASS（wake197，19524 docs 0 命中）→ 无需重跑。
+3. 三模型各 5-run：`baize_posttrain_baseline_eval.sh --model <endpoint> --runs 5`（脚本就绪，wake197 dry-run OK）。
+4. 评分 `run_eval.py --latest 1`，报 mean±std + McNemar 配对检验 + cheat rate。
+5. 交付物 `reports/report_posttrain_baseline_3model_zh.html`（里程碑报告）。
+
+### 4. 本轮结论
+
+- serve占位（17:10 令）✅ 持续维护中（GPU4-7 全 37.8GB，4 端点全 OK，inference 实测正常）。
+- Phase1 评测**除沙盒外 100% 就绪**（三端点 + 脚本 + 闸门 + dry-run）。
+- 沙盒阻塞 = **外部基础设施问题**（10.129.32.75 主机级网络隔离），需运维介入，agent 无法从 .17 自行解决。
+- 解锁路径已明确（方案 A/B），解锁后可立即起跑（步骤 1-5 已写死）。
+
 4. **max_len=2048**：prompt+completion 约 380 tokens，2048 充裕；不浪费显存。
