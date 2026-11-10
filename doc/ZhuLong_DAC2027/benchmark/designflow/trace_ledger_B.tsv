@@ -495,7 +495,7 @@ qnm9e					parked		2026-11-08 01:58	Finesim DC convergence Q&A prose dup of uky6c
 1792493511731_624js	johnl	hfeg0pkn001	113	spice_sim	parked		2026-11-08 21:5x	continuation 会话总结(resume 75msgs), U#0=Context summary not clean task; REJECT
 1793858875143_wzws0	adaml	hfeg0pkn002	89	spice_sim	parked		2026-11-08 21:5x	empty trace (8KB NMSG0), adaml skill-creator user; REJECT
 1792560658830_jvnvb	jinsongl	hfeg0pkn005	68	spice_sim	parked		2026-11-08 21:5x	netlist compare debug (head/wc/mkdir), not clean task-statement; REJECT
-1793771550244_nlf6u	e0044979	hfeg0pkn001	66	spice_sim	parked		2026-11-08 21:5x	FineSim detect_prep log debug, U#=cat log + testbench-needs-.include root-cause; 暂缓 archive 待查
+1793771550244_nlf6u	e0044979	hfeg0pkn001	66	spice_sim	case	EDA-Eval-DesignFlow-SramTailorPlanClassify-001	2026-11-11 02:43	re-peel 11-08 parked (archive 待查) -> deep peek 1.9MB session -> U#2 CLEAN analyze produce-task + U#6 gives fix direction -> B-synthesized L1 cell-action classifier (pin_mismatch:S/B acceptable)
 1793192893935_poa8g	yixiaow	hfeg0pkn005	56	spice_sim	parked		2026-11-08 21:5x	simulation-output-not-found debug, grep/find first turns; REJECT
 1789984306992_4vmtg	bin1y	hfeg0pkn002	50	spice_sim	parked		2026-11-08 21:5x	grep netlist vblhh debug, not clean task; REJECT
 1792398316632_497nv	thomasz	hfeg0pkn002	49	spice_sim	parked		2026-11-08 21:5x	SKILL Switch.*View/schSave, wrong-shard (schematic skill); REJECT
