@@ -63,11 +63,12 @@ def _now():
     return datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
 
 
-def load():
+def _load_file(path):
+    """从单个台账文件读行（不设全局 LEDGER）。"""
     rows = []
-    if not os.path.exists(LEDGER):
+    if not os.path.exists(path):
         return rows
-    with open(LEDGER, encoding="utf-8") as f:
+    with open(path, encoding="utf-8") as f:
         for line in f:
             if not line.strip():
                 continue
@@ -77,6 +78,19 @@ def load():
                 continue
             rows.append(dict(zip(COLS, parts[:len(COLS)])))
     return rows
+
+
+def load():
+    # 无 --shard 时：聚合 4 个 per-shard 台账（真实数据源），而非过时的合并台账
+    if _shard is None:
+        shard_files = [os.path.join(HERE, "trace_ledger_%s.tsv" % s)
+                       for s in ("A", "B", "C", "D")]
+        if any(os.path.exists(p) for p in shard_files):
+            rows = []
+            for p in shard_files:
+                rows.extend(_load_file(p))
+            return rows
+    return _load_file(LEDGER)
 
 
 def save(rows):
@@ -221,7 +235,7 @@ def cmd_next(args):
     # 扫描路径: 优先 summary_stats.json.scan_path, 否则用 .75 上最新扫描目录
     scan_tsv = st.get("scan_path", "")
     if not scan_tsv:
-        scan_tsv = "/home/t0002965/log/ssh_eda_search_20261105_192825/summary.tsv"
+        scan_tsv = "/home/t0002965/log/ssh_eda_search_20261109_224902/summary.tsv"
     pat = "|".join(used) if used else "__none__"
     # shard tools 过滤（$7 = tools 列）
     tool_filter = ""
@@ -431,7 +445,7 @@ def cmd_scansync(args):
     """管理任务: 在 .75 上找最新扫描目录, 统计各口径, 输出 ready-to-run 命令块.
     shard A 用这个做每日巡检: 更新 summary_stats.json + 报告各 shard 候选池规模 + 新增 trace."""
     st = load_stats()
-    old_scan = st.get("scan_path", "/home/t0002965/log/ssh_eda_search_20261028_174426/summary.tsv")
+    old_scan = st.get("scan_path", "/home/t0002965/log/ssh_eda_search_20261109_224902/summary.tsv")
     print("# === scansync: 在 .75 上跑 (经 eda_flow run_commands) ===")
     print("# 1) 找最新扫描目录 (按时间排序)")
     print("ls -dt /home/t0002965/log/ssh_eda_search_*/ 2>/dev/null | head -1")
