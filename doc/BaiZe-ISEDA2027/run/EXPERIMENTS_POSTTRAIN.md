@@ -15590,6 +15590,14 @@ Process 3557214 has 36.30 GiB memory in use.
 4. **添加 GPU 空闲等待**：循环检查 `nvidia-smi --query-gpu=memory.used` 直到 <1GB 再启动
 5. **保存策略**：save_steps=200（wake194 crash@step95 lost all w/ save_steps=500 → 已在脚本中修复为 200）
 
+> **✅ 修复落地（wake205 2026-11-10 22:15）**：fix 1/2/4 已全部应用到 `baize_posttrain_sft_surrogate.sh`（85→140行）：
+> - fix1 `--clean-gpu`：扫描目标 GPU 的 compute-apps，`kill -9` 残留进程
+> - fix2 `NCCL_P2P_DISABLE=1` + `NCCL_IB_DISABLE=1` + `NCCL_DEBUG=WARN`（A40 无 NVLink）
+> - fix4 GPU 空闲等待循环：`--gpu-wait-timeout S`（默认 120s），循环检查 VRAM<1GB 再启动
+> - fix3 max_len=1024 / fix5 save_steps=200 已在 wake204 就位
+> - 验证：`bash -n`✅ / `--help`✅ / `--dry-run`✅ / GPU-wait+abort 实测✅（GPU6,7 occupied→wait→abort exit=1）
+> - 使用方式（GPU 释放后）：`bash baize_posttrain_sft_surrogate.sh --clean-gpu --gpu 6,7 --max-len 1024`
+
 ### 4. SFT 数据已就绪
 
 - 文件：`run/sft_pyaether_corpus_v2.jsonl`（19,524 行 / 21.8MB / ✅ 已 git tracked）
