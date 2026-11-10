@@ -628,3 +628,7 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked		2026-11-09 20:39	RAG-looku
 1792497033564_goryy.messages.json	ellawu	hfeg0plg76	136	pg_layout	case	TvfSetlayerExpl-001	2026-11-10 15:52	
 1790564208899_h5wfp	weizhao	hfeg0pkn004	42	physical_verify	case	EDA-Eval-DesignFlow-DrcCloseOpenSwap-001	2026-11-10 16:39	r331: physical_verify DRC close/open layer swap script, k=10, A-faithful
 1792223414540_erhym	fhwang	hfeg0plg108	353	physical_verify	case	EDA-Eval-DesignFlow-LvsReportAnalyze-001	2026-11-10 17:48	
+1789622352136_kkl2q					parked		2026-11-10 18:07	non-seed: PDK_QA DrcPatternCheck refactoring, user gives root cause+fix (U#2/U#4), violates A-rule2; context-heavy not standalone produce-task
+1793189369078_y8881					parked		2026-11-10 18:07	non-seed: only user msg '沙箱是否打开' env-recon how-to, no produce-task (xiwang@hfeg0pkn002 mc=192)
+1794010547317_7ansu					parked		2026-11-10 18:07	non-seed: PDK_QA issue-handler status check + DrcPatternCheck fix, user gives fixes (U#3/U#8/U#10), context-heavy refactoring not standalone (xinqiaoz mc=431)
+1791523535284_pibrs					parked		2026-11-10 18:07	non-seed: run_pyaether policy validation recon/how-to, no produce-task (t0002962@hfeg0plg90 mc=154)
