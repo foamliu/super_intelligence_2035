@@ -16302,3 +16302,87 @@ CUDA_VISIBLE_DEVICES=6 /tmp/vllm_venv/bin/python -m vllm.entrypoints.openai.api_
 
 ---
 
+## §R155 替身 RL/GRPO 启动脚本（Phase 3 预备 · verl 0.4.0 GRPO · 零 GPU · 2026-11-11 wake224）
+
+> **任务**：为 13:40 用户令 Phase 3（替身 RL/GRPO 端到端验证）准备可执行启动脚本骨架，
+> 使 SFT ckpt + 沙盒一到位即可起跑。承 R154（替身 SFT 脚本）之后的自然下一步。
+> **脚本**：`baize_posttrain_rl_grpo_surrogate.sh`（14614B，可执行）。
+
+### 1. 设计要点
+
+| 维度 | 取值 | 来源 |
+|:--|:--|:--|
+| 框架 | verl 0.4.0 GRPO（`verl.trainer.main_ppo`）via `baize_posttrain_verl_wrapper.py` | R21 in-process parser；R47 v2 config |
+| 起始 ckpt | Phase 2 SFT surrogate ckpt（自动检测 `sft_surrogate_runs/*/global_step_*`），回退 base MiniCPM5-2B | 13:40 令 Phase 3 |
+| RL 数据 | `rl_pyaether_synth_v2.parquet`（3347 合成 API 派生任务，**非** 158 评测题） | R2 造题；§5.1 隔离 |
+| 奖励臂 | R0(骨架,无沙盒)/R1(二值)/R2(执行+断言率)/R3(R2+工具惩罚)/R4(R3+API合法性) | 论文 §5.3 Table reward |
+| 6 hooks | resilience/curriculum/rollout_scheduler/kl_scheduler/anti_cheat/early_stop | R143 设计 + R144 实现 + R145 config |
+| group_size G | 8 | R140 |
+| KL coef | 0.02（low_var_kl） | R132 |
+| clip_ratio | 0.2 | R47 config |
+| lr | 3.0e-6 | R47 config（R109 建议 1e-6 稳定时可切） |
+| total_steps | 3000（~2-3 天 @ 666 R/hr） | 13:40 令 |
+| GPU | 4×A40（4,5,6,7）FSDP | 13:40 令"GPU4-7 全部投入" |
+| 沙盒 | 10.129.32.75:8667；R1-R4 需沙盒，R0 不需要 | §5.1/§5.2 |
+
+### 2. 安全护栏（红线）
+
+- **§5.1 污染隔离**：启动前 `run_contam_gate` 调 `baize_posttrain_contamination_gate.sh` 扫描；命中即 ABORT。
+- **§5.2 反作弊**：6 hooks 含 anti_cheat；训练后 `save_cheat_rate_report` 落 `cheat_rate.json`；每个准确率数字须配 cheat rate。
+- **GPU-busy guard**：检测 GPU 显存 >1GB 即退出（**不 kill** 任何 serve 进程，遵守 17:10 令）。
+- **沙盒前置**：reward arm ≠ R0 时强制 `check_sandbox`；沙盒不通则 ABORT（R22 auto_fallback 仅在 config 层）。
+- **替身标注**：recipe + 训练后提示均标注"替身预演，收益不可迁移到 BaiZe"。
+
+### 3. 验证结果（零 GPU，2026-11-11 03:31 实测）
+
+| 检查 | 命令 | 结果 |
+|:--|:--|:--|
+| 语法 | `bash -n` | ✅ PASS |
+| sandbox-check | `--sandbox-check` | ✅ 正确报告沙盒不通（29th wake），R1-R4 BLOCKED，仅 R0 允许 |
+| contam-check | `--contam-check` | ✅ 闸门 PASS（0 命中），RL 数据与 158 评测隔离 |
+| dry-run | `--dry-run` | ✅ recipe 打印 + deps OK(verl main_ppo + RL data 3347 rows) + sandbox FAIL + contam PASS + SFT ckpt 警告(无 ckpt→用 base) + "verified, no training launched" |
+
+dry-run 关键输出摘录：
+```
+[deps] verl main_ppo OK
+[deps] RL data 3347 rows OK
+[sandbox] FAIL TCP 8667 unreachable (exit=124) — R1-R4 BLOCKED, only R0 allowed
+[contam] PASS contamination gate — RL data isolated from 158 eval
+[dry-run] WARN No SFT ckpt under sft_surrogate_runs — will use base model. Run Phase 2 SFT first.
+[dry-run] Recipe + deps + sandbox + contam verified. No training launched.
+```
+
+### 4. 依赖资产（全部已就位，实测确认）
+
+| 资产 | 路径 | 状态 |
+|:--|:--|:--|
+| verl venv | `~/code/verl_cu124_venv/` | ✅ verl 0.4.0, torch 2.6.0+cu124, main_ppo 可 import |
+| R47 v2 config | `baize_posttrain_rl_verl_config_v2.yaml` (5300B) | ✅ 5 critical bugs 已修 |
+| 奖励函数 | `baize_posttrain_reward_functions.py` (35101B) | ✅ compute_score + R0-R4 五臂 + anti-cheat |
+| hooks | `baize_posttrain_hooks.py` (42596B) + `hooks_config.yaml` (473B) | ✅ R144 实现 + R145 config |
+| verl wrapper | `baize_posttrain_verl_wrapper.py` (4742B) | ✅ R21 in-process MiniCPM5 parser |
+| RL 训练数据 | `rl_pyaether_synth_v2.parquet` (953467B, 3347 rows) | ✅ schema: prompt/reward_model/agent_name |
+| 沙盒客户端 | `baize_posttrain_eda_sandbox_client.py` (12407B) | ✅ check_tier1/2/3 + full_connectivity_report |
+| 污染闸门 | `baize_posttrain_contamination_gate.sh` (8228B) | ✅ 536 任务黑名单(含 158) |
+
+### 5. 模式与用法
+
+```
+bash baize_posttrain_rl_grpo_surrogate.sh --dry-run           # 打印配方 + 依赖/沙盒/闸门全检
+bash baize_posttrain_rl_grpo_surrogate.sh --sandbox-check     # 仅测沙盒连通性
+bash baize_posttrain_rl_grpo_surrogate.sh --contam-check      # 仅跑污染隔离闸门
+bash baize_posttrain_rl_grpo_surrogate.sh --smoke             # 10 步 G=4 烟测
+bash baize_posttrain_rl_grpo_surrogate.sh --reward-arm R2     # 正式 RL（需沙盒+GPU+SFT ckpt）
+SFT_CKPT=/path/step_X bash baize_posttrain_rl_grpo_surrogate.sh --reward-arm R4
+GPUS="4,5,6,7" bash baize_posttrain_rl_grpo_surrogate.sh --reward-arm R2
+```
+
+### 6. 边界与下一步
+
+- **本节交付**：替身 RL/GRPO 启动脚本（verl 0.4.0 GRPO + R0-R4 奖励臂 + 6 hooks + 反作弊 + 污染闸门 + 沙盒前置 + GPU guard + crash recovery），全验证 PASS。
+- **仍阻塞**：① 沙盒 10.129.32.75:8667 不通（29th wake）→ R1-R4 奖励无法计算 → 正式 RL 无法起 ② GPU4-7 被 serve 占位（17:10 令）→ 无空闲 GPU ③ 无 SFT ckpt（Phase 2 SFT 未跑，待 GPU 释放）。
+- **解锁路径**：沙盒恢复 → 停 GPU5-7 serve → 跑 Phase 2 SFT（`baize_posttrain_sft_surrogate.sh`）→ 取 SFT ckpt → `bash baize_posttrain_rl_grpo_surrogate.sh --reward-arm R2` 起正式 RL。
+- **下一步**：① 沙盒恢复（外部）② 提 data 线分词需求（退火源语料）③ 正式训练待 pretrain ckpt（ETA≈2026-12-25）。
+
+---
+

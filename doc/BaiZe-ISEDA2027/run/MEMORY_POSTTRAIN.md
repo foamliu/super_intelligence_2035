@@ -7,14 +7,14 @@ WAITING: 0
 
 ## 进度快照
 
-- PHASE: posttrain-wake223（2026-11-11 R154 替身SFT启动脚本verl FSDP+train/val split 0泄漏/serve健康5端点/沙盒28th wake仍阻塞/git synced）
-- 已完成: P3预备✅；P0✅；P1✅；P2✅；R1-R154✅；wake193-223✅；wake223 R154(替身SFT启动脚本baize_posttrain_sft_surrogate.sh verl FSDP2 MiniCPM5-2B+数据prep+train1553/val172 0泄漏+依赖验证全✅)+serve健康(5端点全✅)+沙盒28th wake CLOSED+MEMORY归档wake213-219+git synced
-- 当前动作: wake223 ①git fetch✅pull --rebase✅fast-forward到01dabc03d(他线pretrain commit) ②R154替身SFT启动脚本:缺口识别(sft.sh=Mamba2骨架≠替身Llama-arch verl parquet)+verl依赖验证(verl0.4/torch2.6+cu124/flash_attn2.7.4/peft0.21.2/torchrun全✅)+prep.py(py_compile✅ 90/10 split train1553/val172 overlap0)+sft_surrogate.sh(bash -n✅ --dry-run✅ --prep-only✅ GPU-busy guard verl hydra multiturn) ③serve健康5端点全✅ ④沙盒28th wake仍CLOSED
-- 下一步: ①沙盒恢复→停GPU5-7 serve→替身SFT smoke→full SFT ②SFT ckpt→EDA-Eval前后对比 ③提data线分词需求(退火源语料) ④正式训练待pretrain ckpt(ETA≈2026-12-25)
-- 阻塞: 🔴远程沙盒10.129.32.75主机级防火墙(ping OK但TCP8667 timeout,连续28 wake)→Phase1 eval阻塞;GPU5/6/7被serve占位(17:10令)→替身SFT待GPU释放;退火源语料待data线分词;P3等pretrain ckpt
-- 本轮新增产出: R154✅(替身SFT启动脚本verl FSDP+数据prep+train/val split 0泄漏+依赖全验证+--dry-run/--prep-only/bash -n全PASS)+serve健康5端点全✅+EXPERIMENTS §R154+MEMORY归档wake213-219
-- 未完成指令: 🔴用户令17:10(serve占位)✅持续维护中;🔴用户令13:40(三阶段替身计划)Phase1待沙盒/Phase2待GPU释放/Phase3待SFT ckpt ⇒ 全外部阻塞
-- git: wake223 fetch✅pull --rebase✅(HEAD=01dabc03d,up-to-date,fast-forward他线pretrain commit)
+- PHASE: posttrain-wake224（2026-11-11 R155 替身RL/GRPO启动脚本verl0.4.0 GRPO+R0-R4奖励臂+6hooks+反作弊+沙盒前置+全验证PASS/serve健康5端点/沙盒29th wake仍阻塞/git synced）
+- 已完成: P3预备✅；P0✅；P1✅；P2✅；R1-R155✅；wake193-224✅；wake224 R155(替身RL/GRPO启动脚本baize_posttrain_rl_grpo_surrogate.sh verl0.4.0 GRPO+R0-R4奖励臂+6hooks(R143/R144/R145)+污染闸门+沙盒前置+GPU guard+crash recovery+bash -n/--dry-run/--sandbox-check/--contam-check全PASS)+serve健康(5端点全✅)+沙盒29th wake CLOSED+git synced
+- 当前动作: wake224 ①git fetch✅(up-to-date,无新posttrain指令) ②R155替身RL/GRPO启动脚本:缺口识别(rl_grpo.sh=BaiZe骨架,需surrogate-specific)+verl GRPO依赖验证(main_ppo可import✅/RL数据3347rows✅)+脚本编写(14614B,4模式dry-run/sandbox-check/contam-check/smoke,reward臂R0-R4,G=8/KL0.02/clip0.2/lr3e-6/3000步,6hooks,沙盒前置R1-R4,污染闸门,GPU-busy guard不kill serve,crash recovery,cheat rate报告) ③验证:bash -n✅/--sandbox-check✅(沙盒不通R1-R4 BLOCKED)/--contam-check✅(0命中PASS)/--dry-run✅(recipe+deps+sandbox+contam全verified) ④serve健康5端点全✅ ⑤沙盒29th wake仍CLOSED
+- 下一步: ①沙盒恢复→停GPU5-7 serve→替身SFT smoke→full SFT ②SFT ckpt→bash baize_posttrain_rl_grpo_surrogate.sh --reward-arm R2起正式RL ③提data线分词需求(退火源语料) ④正式训练待pretrain ckpt(ETA≈2026-12-25)
+- 阻塞: 🔴远程沙盒10.129.32.75主机级防火墙(ping OK但TCP8667 timeout,连续29 wake)→Phase1 eval+Phase3 RL(R1-R4)阻塞;GPU5/6/7被serve占位(17:10令)→替身SFT/RL待GPU释放;退火源语料待data线分词;P3等pretrain ckpt
+- 本轮新增产出: R155✅(替身RL/GRPO启动脚本verl0.4.0 GRPO+R0-R4奖励臂+6hooks+污染闸门+沙盒前置+GPU guard+crash recovery+bash -n/--dry-run/--sandbox-check/--contam-check全PASS)+serve健康5端点全✅+EXPERIMENTS §R155
+- 未完成指令: 🔴用户令17:10(serve占位)✅持续维护中;🔴用户令13:40(三阶段替身计划)Phase1待沙盒/Phase2待GPU释放/Phase3待SFT ckpt+沙盒 ⇒ 全外部阻塞
+- git: wake224 fetch✅(up-to-date,HEAD=92d13b2de,无新posttrain指令)
 
 ## GPU 端口映射表（2026-11-10 wake195 实测）
 
