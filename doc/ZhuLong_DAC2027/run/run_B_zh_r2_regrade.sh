@@ -24,6 +24,19 @@
 # any run_cline_script / run_eval is active.
 set -uo pipefail
 
+# ---- arg parsing: -p N controls eval sandbox parallelism (EVAL_SANDBOX_WORKERS) ----
+# Default 2 (low footprint for gap-grabber; the generation-phase -p 8 is irrelevant
+# here since this is eval-only). n_shards = min(N, len(SANDBOX_ENDPOINTS), n_scripts),
+# so N=2 uses only the first 2 endpoints (8664,8665) of the 4 configured below.
+REGRADE_PARALLEL=2
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    -p) REGRADE_PARALLEL="${2:-2}"; shift 2 ;;
+    *)  shift ;;
+  esac
+done
+export EVAL_SANDBOX_WORKERS="$REGRADE_PARALLEL"
+
 EVAL_FW_DIR=/nasdata/app.e0031982/code/EDA-Eval-Framework
 EVAL_ROOT_DIR=/nasdata/app.e0031982/code/eda_code_eval   # run_eval.py reads this (NOT EVAL_ROOT_DIR_OVERRIDE)
 # 8664 group — MUST match the workdirs the generation used (same as .env).
@@ -42,7 +55,7 @@ RUN_EVAL="/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_eval.py"
 
 echo "=== B_ZH_R2 RE-GRADE START $(date '+%Y-%m-%d %H:%M:%S') ==="
 echo "GEN_FILE=$GEN_FILE  BENCHMARK=$BENCHMARK  SANDBOX_HOST=$SANDBOX_HOST"
-echo "EVAL_ROOT_DIR=$EVAL_ROOT_DIR  EVAL_FW_DIR=$EVAL_FW_DIR"
+echo "EVAL_ROOT_DIR=$EVAL_ROOT_DIR  EVAL_FW_DIR=$EVAL_FW_DIR  EVAL_SANDBOX_WORKERS=$REGRADE_PARALLEL"
 
 cd "$EVAL_FW_DIR"
 "$PYTHON" "$RUN_EVAL" \
