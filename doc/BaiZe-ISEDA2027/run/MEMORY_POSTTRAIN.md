@@ -14,7 +14,7 @@ WAITING: 1
 - 阻塞: 🔴远程沙盒10.129.32.75主机级网络隔离(SSH:22+8664-8669全CLOSED)→阻塞Phase1 eval(不可本地绕过:pyAether不可pip装+exec_code.py转发远程+Docker需root);GPU5/6/7被serve占位(17:10令)→SFT重启待GPU释放;P3等pretrain ckpt
 - 本轮新增产出: Phase1三端点就绪确认(三backbone全可达)+沙盒根因深挖(SSH:22也CLOSED=主机级隔离,非服务崩溃)+SANDBOX_HOST env发现(解锁路径灵活:改env指向任意沙盒主机)+EXPERIMENTS §Phase1-readiness-sandbox-block
 - 未完成指令: 🔴用户令17:10(serve占位)✅持续维护中;🔴用户令13:40(三阶段替身计划)Phase1待沙盒(主机级隔离需运维)/Phase2待GPU释放/Phase3待SFT ckpt ⇒ 全外部阻塞,所有可做prep已穷尽
-- git: wake199 HEAD==origin/main==c2a4fa37c(synced,clean). wake198 pending push已由loop补推成功,无需补推
+- git: wake199 commit fe65aaff9已本地提交(ahead 1),push 3次全超时(EXIT=124,网络recurring wake195+);⏰下次唤醒第一件事=补推;loop也会重试
 
 ## GPU 端口映射表（2026-11-10 wake195 实测）
 
