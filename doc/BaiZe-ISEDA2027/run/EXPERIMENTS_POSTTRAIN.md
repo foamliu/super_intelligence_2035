@@ -7484,3 +7484,79 @@ bash baize_posttrain_contamination_gate.sh --rl-synth rl_pyaether_synth_v2.parqu
 - 红线：不碰 GPU 0-3；不碰 158 任务数据；不启动训练；不 `git add -A`。
 - 修复属本线脚本健壮性，未跨线改动（R161 已修的 `check_contamination.py` 本轮未动）。
 
+---
+
+## §R169 — Sandbox ACL Escalation Runbook + Automated Network Diagnostic（wake238, 2026-11-11, 零 GPU）
+
+> **动机**：R164（wake233）已做手动网络诊断确认跨子网 blanket TCP 过滤，但诊断是一次性手动命令、无可复用工具、无同子网 control test、无结构化升级文档。沙盒已连续 43 wake（wake195–238）CLOSED，需要一个**自动化、可复现、可直接转发给网络团队**的升级 runbook。本轮将 R164 的发现升级为正式工具 + 可执行升级文档。
+
+### 1. 新增脚本：`baize_posttrain_r169_sandbox_acl_escalation.py`（265 行）
+
+**与 R164 的差异（为什么不是重复）**：
+
+| 维度 | R164（wake233） | R169（wake238） |
+|:--|:--|:--|
+| 形式 | 手动一次性命令 | **自动化脚本**（py_compile ✅，可重复运行） |
+| 同子网 control | ❌ 无 | ✅ 10.252.32.15:9001 (ZhuLong) TCP OPEN 0.2ms → 排除 .17 本地防火墙 |
+| 端口覆盖 | 5 个（22/80/443/8080/8667） | **7 个**（22/8664/8665/8667/8668/8669/8653，含全部多端口沙盒端点） |
+| 升级文档 | 散文建议 | **结构化 runbook**（title/priority/source/dest/ACL rules/justification/alternatives） |
+| 输出 | 无落盘 | **JSON** `r169_sandbox_acl_escalation.json` + stdout runbook |
+| 关键洞察 | Phase2 SFT 阻塞于 GPU | **Phase2 SFT 不需要沙盒**——只需 GPU 释放即可起跑，可与 ACL 解决并行 |
+
+### 2. 实测诊断结果（2026-11-11 07:17）
+
+| 探测项 | 结果 |
+|:--|:--|
+| ICMP → 10.129.32.75 | ✅ REACHABLE, avg 0.54ms, 0% loss |
+| TCP 22 (SSH) | ❌ CLOSED/filtered |
+| TCP 8664 (endpoint 1) | ❌ CLOSED/filtered |
+| TCP 8665 (endpoint 2) | ❌ CLOSED/filtered |
+| TCP 8667 (HTTP API /v1/run_code) | ❌ CLOSED/filtered |
+| TCP 8668 (TCP socket) | ❌ CLOSED/filtered |
+| TCP 8669 (endpoint 4) | ❌ CLOSED/filtered |
+| TCP 8653 (endpoint 3, SKILL) | ❌ CLOSED/filtered |
+| **Control: TCP 10.252.32.15:9001** | ✅ **OPEN (0.2ms)** — 同子网 TCP 正常 |
+| Gateway 10.252.32.1 ICMP | ✅ REACHABLE, 0.76ms |
+| Route | `10.129.32.75 via 10.252.32.1 dev bond0 src 10.252.32.17` |
+
+**诊断**：`BLANKET_CROSS_SUBNET_TCP_FILTER` — ICMP L3 可达但全部 TCP 端口被过滤；同子网 TCP 正常（control 证明非 .17 本地问题）；路由经网关解析正常。**防火墙/ACL 策略在 10.252.32.0/22 ↔ 10.129.32.0/24 之间，放行 ICMP 但阻断 TCP。**
+
+### 3. 升级 Runbook（可直接转发网络团队）
+
+- **Source**: 10.252.32.17 (10.252.32.0/22, bond0, gateway 10.252.32.1)
+- **Dest**: 10.129.32.75 (PyAether EDA code execution sandbox)
+- **Required ACL**: Allow TCP from 10.252.32.0/22 → 10.129.32.75 ports **8664, 8665, 8667, 8668, 8669, 8653**（+ optionally 22 for SSH admin）
+- **Priority**: HIGH — blocks ISEDA 2027 paper deadline (2027-02-01)
+- **Verify**: `timeout 5 bash -c 'echo > /dev/tcp/10.129.32.75/8667' && echo OPEN || echo CLOSED`
+- **Alternatives if denied**: (1) local PyAether on .17 (needs license) (2) SSH tunnel via intermediate host (3) eval from 10.129.32.0/24 host (4) **start Phase2 SFT now** (no sandbox needed for training)
+
+### 4. 关键发现：本地 MCP server 状态
+
+| 服务 | 端口 | 状态 |
+|:--|:--|:--|
+| eda_fastmcp MCP server | 18888 | ✅ **运行中**（pid=3217747, python, 0.0.0.0:18888） |
+| RAG recall service | 9002 | ⚠️ 端口被 Nvidia GPU Exporter 占用，RAG 未启动 — **但 eval 不依赖它**（search_apis.py 用本地向量，run_cline_script.sh 不引用 RAG_RECALL） |
+| 沙盒 sandbox_server | — | 客户端代码（`server/sandbox_server/exec_code.py`），连接远端 10.129.32.75 → 无法本地替代（需 Aether 商业 EDA 软件） |
+
+**结论**：MCP server 已就绪，eval 驱动不依赖 RAG。沙盒恢复后 eval 可零额外配置启动。
+
+### 5. 架构确认：为什么沙盒不可本地替代
+
+`eda_fastmcp/server/sandbox_server/exec_code.py` 是**客户端**——它把生成的 EDA 代码通过 HTTP POST 到 `http://10.129.32.75:8667/v1/run_code`，在远端执行 Empyrean Aether/PyAether（商业 EDA 软件），返回执行结果。.17 上**无 Aether 许可证/安装**，无法本地执行 EDA 代码。沙盒是 Phase1 eval + Phase3 RL R1-R4 的**硬依赖**，无法绕过。
+
+### 6. 交付物
+
+| Item | Path |
+|:--|:--|
+| 诊断+升级脚本 | `run/baize_posttrain_r169_sandbox_acl_escalation.py`（265 行, py_compile ✅） |
+| 诊断结果 JSON | `run/r169_sandbox_acl_escalation.json` |
+| 本节 | `EXPERIMENTS_POSTTRAIN.md` §R169 |
+
+### 7. 边界与纪律
+
+- 仅写本线文件（run/ 新增脚本 + JSON + EXPERIMENTS §R169 + MEMORY 心跳 + daily）。
+- 红线：不碰 GPU 0-3；不碰 158 任务数据；不启动训练；不 `git add -A`。
+- 网络探测为只读 TCP connect（无数据发送），不影响沙盒或网络设备。
+
+**数据溯源**：本节所有数字来自 `baize_posttrain_r169_sandbox_acl_escalation.py` 实测输出（ping / tcp_probe / ip route / arp / ss）。JSON 已落盘。无伪造。
+
