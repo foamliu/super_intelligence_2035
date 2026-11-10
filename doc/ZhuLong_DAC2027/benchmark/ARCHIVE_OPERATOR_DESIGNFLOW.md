@@ -2973,3 +2973,17 @@ WAITING: 0（📦 **2026-11-11 r355 工具健康令 holding 复核轮（0 case, 
 → r335 verbose 已归档 ARCHIVE_OPERATOR_DESIGNFLOW.md（归档批次 r337）；摘要：tool-health holding 复核轮（0 case, A.jsonl 203 不变）；r325 交付物复核在位已 push；scansync r335 无新扫描(第 42 连续)；paper 14p 0 undefined
 → r336 verbose 已归档 ARCHIVE_OPERATOR_DESIGNFLOW.md（归档批次 r339）；摘要：tool-health holding 复核轮（0 case, A.jsonl 203 不变）；r325 交付物复核在位已 push；scansync r336 无新扫描(第 43 连续 r293-r336)；paper 14p 0 undefined
 → r337 verbose 已归档 ARCHIVE_OPERATOR_DESIGNFLOW.md（归档批次 r339）；摘要：tool-health holding 复核轮（0 case, A.jsonl 203 不变）；r325 交付物复核在位已 push；scansync r337 无新扫描(第 44 连续 r293-r337)；paper 14p 0 undefined
+
+
+## 归档批次 r358a（2026-11-11，体积维护：r357 snapshot + r269/r270/r271 指针 -> 归档）
+
+### r357 完整快照（superseded by r358 holding 复核）
+
+原文（归档时搬入）：
+WAITING: 0（📦 **2026-11-11 r357 工具健康令 holding 复核轮（0 case, A.jsonl 203 不变, DEBT 0）** = 顶部用户令（2026-11-10 22:2x「工具健康深挖」）块仍在 TASK_A.md 未被运维归档 → 硬约束 "trace_ledger next/claim 跳过 + A.jsonl 保持 203 不变" 生效，不造新 case（第 31 连续 holding r327-r357）。**本轮 fresh-agent 独立复核（非橡皮图章）**：① 三件在位已 push——07_tool_health.py(49043B)/tool_health.json(32014B,generated_at=2026-11-11T05:16:39)/HTML(22788B)；② JSON↔HTML 一致（独立 python 重解析核对）——696 runs/630 with-session/25 tools(12 invoked)/finesim 43(40ok/2err/1noout)/hspice 123(117ok/4err/2noout)/vcs 38(36ok)/asc 0calls/asc_special.verdict=非工具(52处/16case)/top-sig="command not found / No such file" 2runs；③ HTML 自包含——0 外部 script src/link href/img src、0 真 script 块、1 内联 SVG+1 内联 style、lang=zh-CN；④ 四态自证判据在位（daily_A_2026-11-10.md §判据自证）；⑤ 无工具 all_calls_failed=True(全 false)，数字无估算(66 no_session 不入分母)。结论沿用：工具执行层稀疏健康，多数失败属语义层。scansync r357（eda_flow open_session task_id=shardA-r357 eval_id=20261111-r357, 5 cmds exit 0, declare_done+close_session cleaned）：LATEST_SCAN 仍 ssh_eda_search_20261109_224902（**第 64 连续无新扫描 r293-r357**），summary.tsv 38082 行不变；daily log 20261111 健康 2545 行/2541 sessions；mc30=2247/dedup_sessions=5999/dedup_users=512/dedup_hosts=696/users_mc30=401/shard_A_pool_mc15=2381 沿用 r292 全量重扫数；new_sessions=0。summary_stats.json.scansync 写 r357 条目(round=r357, consecutive=r293-r357 (64th), updated 06:20)。论文回归：本机无 latexmk → pdflatex+bibtex+pdflatex x2 exit 0/14p/0 undefined citation/0 error，main.pdf 272044B；\Ntasks{1032}(A203+B242+C289+D298) A 未变不改动（main.pdf 由 shard C/D 维护，shard A 不提交）。**tool-health: 25 tools (12 invoked), finesim=ok(43calls 40ok/2err), asc=not_invoked, top pattern=command not found 2runs, html=reports/report_designflow_tool_health_20261110_zh.html**。· 📊 trace 覆盖率: 不变（0 case）· 🎯 通过率: 不变（无 cline 实跑）· 🧾 断言: 0 new case, 既有达标不变, rewrite_queue 0, DEBT 0 · 📦 体积：MEMORY_A≈31.7KB（≤32KB ✓）· WAITING:0）
+
+### 移出的旧指针（r269/r270/r271，已在批次 r295/r288 归档过 verbose，此处仅从 MEMORY 移除以控体积）
+
+WAITING: 0（shard A 轮 r271：→ 已归档 ARCHIVE_OPERATOR_DESIGNFLOW.md；摘要：管理任务=scansync r271 到期执行(.75 run: LATEST_SCAN 仍 11/05 ssh_eda_search_20261105_192…）
+WAITING: 0（shard A 轮 r270：→ 已归档 ARCHIVE_OPERATOR_DESIGNFLOW.md；摘要：管理任务=scansync r270 到期执行(.75 run: LATEST_SCAN 仍 11/05 ssh_eda_search_20261105_192…）
+WAITING: 0（shard A 轮 r269：→ 已归档 ARCHIVE_OPERATOR_DESIGNFLOW.md；摘要：管理任务=scansync 复核(.75: LATEST_SCAN 仍 11/05 ssh_eda_search_20261105_192825, 无新扫描; …）
