@@ -785,3 +785,24 @@ widtp	jingjiew	hfeg0pkn012	0	non_spice	parked		2026-11-10 09:06	translation cons
 u65cq	e0047472	hfeg0plg3569	257	non_spice	parked		2026-11-10 09:06	physical/PnR consultation, wrong shard A/C
 0k1mk	chapinc	hfeg0plg8124	34	non_spice	parked		2026-11-10 09:06	structural search, wrong shard A
 kakcd	kenwang	hfeg017216808192	5	non_spice	parked		2026-11-10 09:06	DRC rule dev, wrong shard C
+1794272818268_ckhfh	haoliu	hfeg0pkn004	0	characterization	claimed		2026-11-10 09:43	
+1794207224914_u5zf8	zhengc	hfeg0plg66	0	off_domain	parked		2026-11-10 09:44	fresh-window 1110 peek reject (digital/verif/ops/consult/wrong-shard)
+1794274134828_p55ig	e13zhang	hfeg0pkn002	0	off_domain	parked		2026-11-10 09:44	fresh-window 1110 peek reject (digital/verif/ops/consult/wrong-shard)
+1794274307583_a7mjg	kepeim	hfeg0pkn002	0	off_domain	parked		2026-11-10 09:44	fresh-window 1110 peek reject (digital/verif/ops/consult/wrong-shard)
+1794212280717_vu923	sczhang	hfeahpc504	0	off_domain	parked		2026-11-10 09:44	fresh-window 1110 peek reject (digital/verif/ops/consult/wrong-shard)
+1793875108019_mef6s	hairuizh	hfeg0pkn001	0	off_domain	parked		2026-11-10 09:44	fresh-window 1110 peek reject (digital/verif/ops/consult/wrong-shard)
+1794274142982_bcmyg	tongni	hfeg0pkn001	0	off_domain	parked		2026-11-10 09:44	fresh-window 1110 peek reject (digital/verif/ops/consult/wrong-shard)
+1794273616948_6scni	t0002802	hfeg0pkn001	0	off_domain	parked		2026-11-10 09:44	fresh-window 1110 peek reject (digital/verif/ops/consult/wrong-shard)
+1794273999255_wx467	t0002802	hfeg0pkn001	0	off_domain	parked		2026-11-10 09:44	fresh-window 1110 peek reject (digital/verif/ops/consult/wrong-shard)
+1793070622287_pnxqe	daiweilu	hfeg0pgn145	0	off_domain	parked		2026-11-10 09:44	fresh-window 1110 peek reject (digital/verif/ops/consult/wrong-shard)
+1794273313287_xkrmr	xinqiaoz	hfeg0pkn002	0	off_domain	parked		2026-11-10 09:44	fresh-window 1110 peek reject (digital/verif/ops/consult/wrong-shard)
+1794272657712_k7u30	chapinc	hfeg0pkn004	0	off_domain	parked		2026-11-10 09:44	fresh-window 1110 peek reject (digital/verif/ops/consult/wrong-shard)
+1794272724091_dosot	haoliu	hfeg0pkn004	0	off_domain	parked		2026-11-10 09:44	fresh-window 1110 peek reject (digital/verif/ops/consult/wrong-shard)
+1793857146558_8anr6	haoliu	hfeg0pkn004	0	off_domain	parked		2026-11-10 09:44	fresh-window 1110 peek reject (digital/verif/ops/consult/wrong-shard)
+1793843537860_m8ma9	e0045128	hfeg0pkn005	0	off_domain	parked		2026-11-10 09:44	fresh-window 1110 peek reject (digital/verif/ops/consult/wrong-shard)
+1794223958453_enroe	mwxi	hfhds228	0	off_domain	parked		2026-11-10 09:44	fresh-window 1110 peek reject (digital/verif/ops/consult/wrong-shard)
+1793865788118_b7otd	xy1zhang	hfeg0pkn004	0	off_domain	parked		2026-11-10 09:44	fresh-window 1110 peek reject (digital/verif/ops/consult/wrong-shard)
+1794188385974_1c67w	e0014036	hfeg0pkn005	0	off_domain	parked		2026-11-10 09:44	fresh-window 1110 peek reject (digital/verif/ops/consult/wrong-shard)
+1793843123624_u65cq	e0047472	hfeg0plg53	0	off_domain	parked		2026-11-10 09:44	fresh-window 1110 peek reject (digital/verif/ops/consult/wrong-shard)
+1794223025353_0k1mk	chapinc	hfeg0pkn004	0	off_domain	parked		2026-11-10 09:44	fresh-window 1110 peek reject (digital/verif/ops/consult/wrong-shard)
+1794225905156_kakcd	kenwang	hfeg0plg16	0	off_domain	parked		2026-11-10 09:44	fresh-window 1110 peek reject (digital/verif/ops/consult/wrong-shard)
