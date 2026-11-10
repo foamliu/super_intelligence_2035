@@ -7261,3 +7261,79 @@ dry-run 后 4 端点(8095-8098) 全仍存活 ✅
 
 **数据溯源**：本节所有 PID/VRAM/端口来自 `baize_posttrain_serve_teardown.sh --status` / `--dry-run` 实测输出与 `ps -eo pid,args` / `nvidia-smi` 交叉核对。无伪造。
 
+## §R166 (2026-11-11 wake235) P3 Real-SFT Data-Reachability Audit — UltraData tokenized corpora NOT mounted on .17 (零 GPU · CPU)
+
+> **触发**：wake235 例行唤醒（沙盒 40th wake CLOSED、serve 5 端点全✅、无新指令）；
+> 反空转条款要求本轮产出实质内容。本轮选「P3 正式 SFT 数据可达性」——此前 §R159 只审计了
+> **替身** SFT 脚本（`baize_posttrain_sft_surrogate.sh`，仅用本地 PyAether parquet），
+> **未**审计 P3 正式 SFT 骨架（`baize_posttrain_sft.sh`，混用 UltraData 通用+agentic 语料）的数据落盘。
+> 本节补这个缺口。
+
+### 1. 审计问题
+
+P3 正式 BaiZe SFT（pretrain ckpt 就绪后，ETA≈2026-12-25）按 `baize_posttrain_sft.sh` 配方
+需 3 路语料混料（`DATA_MIX=agent50:general30:pyaether20`）：
+- `agent` = UltraData-SFT-Agent-2609（54.22G 下载 / 23.89GB 分词 / 5.97B tok）
+- `general` = UltraData-SFT-2605（319G 下载 / 75.87GB 分词 / 18.89B tok）
+- `pyaether` = 本地合成（PyAether API Q&A pairs）
+
+前两路来自 data 线分词镜像（`DATA_MAPPING.md` A 节 L11/L12，单一事实源）。
+问题：`.17` 能否读到这两路分词产物？
+
+### 2. 实测（2026-11-11 wake235，全在 .17 本机执行）
+
+| # | 探测 | 命令 | 结果 |
+|:--|:--|:--|:--|
+| P1 | .17 NFS 挂载 | `mount \| grep nas_` | 仅 `10.251.28.110:/train on /nas_data`；`/nas_train`/`/nas_inference`/`/nas_env` 均**未挂载**（与 2026-11-06 硬盘体检一致） |
+| P2 | `/nas_data/app.e0031982/` 子目录 | `ls` | 仅 `.cache code miniforge3 models venvs Miniforge3-*.sh`——**无 `datasets/`** |
+| P3 | 分词镜像根 | `test -d /nas_data/app.e0031982/datasets/baize-data/tokenized` | **absent** |
+| P4 | SFT-2605 .bin | `ls …/tokenized/UltraData-SFT-2605/UltraData-SFT-2605/*.bin` | **0**（路径不存在） |
+| P5 | SFT-Agent-2609 | `ls -d …/UltraData-SFT-Agent-2609/` | **absent** |
+| P6 | 骨架脚本 DATA 解析 | `source baize_posttrain_paths.sh; echo $BASE/data` | `BASE=/nas_data/app.e0031982/code/BaiZe-ISEDA2027` → `DATA=/nas_data/app.e0031982/code/BaiZe-ISEDA2027/data` |
+| P7 | 骨架脚本期望语料 | `ls $DATA/sft_{agent_ultradata_2609,ultradata_2605,pyaether_synth}.bin` | **全 MISSING**；且 `$BASE` 下只有 `nemo_experiments/`，**无 `data/`** |
+| P8 | tokenizer | `ls $DATA/tokenizer_eod` | **MISSING** |
+
+### 3. 结论（两层 gap）
+
+**Gap-A（骨架脚本路径是占位符，与 data 线真实命名不符）**：
+`baize_posttrain_sft.sh` L43-45 写的是 `sft_agent_ultradata_2609` / `sft_ultradata_2605` /
+`sft_pyaether_synth`，但 data 线分词镜像的真实目录名是 `UltraData-SFT-Agent-2609` /
+`UltraData-SFT-2605`（见 `DATA_MAPPING.md` A 节）。骨架脚本 L22 也自标「entrypoint sft_launcher.py 为占位」。
+→ 这是 P3 预备骨架的**已知占位**，非 bug；P3 正式起跑前需把路径对齐到 data 线单一事实源。
+
+**Gap-B（UltraData 分词镜像在 .17 不可达——真阻塞）**：
+`.17` 只挂了 `10.251.28.110:/train → /nas_data`，该 export 的 `app.e0031982/` 子树**只有 `code/`**，
+**没有 `datasets/`**。data 线分词镜像（17.66TB，`/nas_train/app.e0031982/datasets/baize-data/tokenized/`）
+在 `.29/.12` 的 `/nas_train` 上，而 `.17` 的 `/nas_train` 是**空本地目录**（非 NFS）。
+⇒ 即使修好 Gap-A 的路径，UltraData 通用+agentic 两路（占混料 80%）在 .17 上**读不到**。
+源 parquet 也在 `/nas_inference`（.17 未挂载），故**无法在 .17 重新分词**兜底。
+
+**与 §R159 的关系**：§R159 审计的 **替身** SFT（`baize_posttrain_sft_surrogate.sh`）只用本地
+`sft_pyaether_corpus_unified_v5v6v7.parquet`（804KB / 1725 行 / ~650K tok，单轮 API Q&A），
+**不依赖 UltraData**，依赖全 PASS。故 **Gap-A/B 不影响 Phase2 替身 SFT**，
+只影响 **P3 正式 BaiZe SFT**（依赖 pretrain ckpt，ETA≈2026-12-25，本就阻塞）。
+
+### 4. 缓解选项（P3 起跑前需运维裁定，非本轮决策）
+
+1. **挂载**：在 .17 把 data 线的 NFS export（承载 `datasets/baize-data/tokenized/`）挂到
+   `/nas_data` 或新建挂载点——需运维/网络确认 export 路径与 .17 可达性。
+2. **子集传输**：仅把 SFT 所需子集（SFT-2605 全量 75.87GB + Agent-2609 全量 23.89GB ≈99.76GB）
+   拷到 .17 可达存储（`/nas_data/app.e0031982/` 余量充足，2026-11-06 体检 `/nas_data` 20T 可用 85%）。
+3. **跨机训练**：P3 正式 SFT 放到 `.29/.12`（数据本地）跑，但 GPU 分配需重谈（.17 的 4×A40 是 post-train 专属）。
+4. **降配**：P3 正式 SFT 先只用 PyAether 合成语料（本地可达）跑小规模验证，UltraData 两路等挂载到位再补——
+   但这与论文 §5.2「通用+agentic+领域」三路混料设计偏离，仅作兜底。
+
+### 5. 本轮处置
+
+- **不修骨架脚本逻辑**（Gap-A 是已知占位，P3 起跑前对齐即可；本轮仅在 `baize_posttrain_sft.sh`
+  L43-46 附近加一行指针注释，指向 data 线单一事实源 + .17 挂载警示，不改运行行为）。
+- **不启动任何训练**（遵守 17:10 GPU 占位令 + P3 阻塞于 pretrain ckpt）。
+- 本节为**前瞻性 P3 就绪缺口登记**，非紧急（P3 ETA≈2026-12-25）；登记避免 pretrain ckpt 到位时才发现数据不可达。
+
+### 6. 边界与纪律
+
+- 仅写本线文件（EXPERIMENTS §R166 + `baize_posttrain_sft.sh` 1 行注释 + MEMORY 心跳），不碰他线、不碰 data 线分词产物。
+- 红线：未合成/未触碰任何训练数据；158 任务污染隔离不变。
+- 数据溯源：本节所有路径/挂载/字节数来自 .17 本机 `mount`/`ls`/`test -d` 实测 + `DATA_MAPPING.md`（data 线单一事实源）引用。无伪造。
+
+

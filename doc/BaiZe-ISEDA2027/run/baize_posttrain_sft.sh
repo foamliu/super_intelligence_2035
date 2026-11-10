@@ -40,6 +40,13 @@ LR=2e-5; MIN_LR=1e-6; SAVE_INTERVAL=300
 NP=8; TP=1; PORT=29821; NAME="posttrain_sft"
 LORA_R=64; LORA_ALPHA=128
 
+# ⚠️ R166: 以下 3 路语料路径为 P3 正式 SFT 骨架【占位符】，与 data 线分词镜像真实命名不符。
+#   data 线单一事实源 = run/data/DATA_MAPPING.md A 节；真实分词目录 = …/baize-data/tokenized/
+#   UltraData-SFT-Agent-2609 / UltraData-SFT-2605（在 .29/.12 的 /nas_train 上）。
+#   ⚠️ .17 只挂了 /nas_data(10.251.28.110:/train)，其 app.e0031982/ 下【无 datasets/】→
+#   UltraData 分词镜像在 .17 当前【不可达】（详见 EXPERIMENTS §R166）。P3 正式起跑前须：
+#   ① 运维把 data 线 NFS 挂到 .17 或传输子集；② 把下方路径对齐到 data 线真实命名。
+#   替身 SFT(baize_posttrain_sft_surrogate.sh)只用本地 PyAether parquet，不受此 gap 影响(§R159 PASS)。
 SFT_AGENT_DATA="${DATA}/sft_agent_ultradata_2609"
 SFT_GENERAL_DATA="${DATA}/sft_ultradata_2605"
 SFT_PYAETHER_DATA="${DATA}/sft_pyaether_synth"
