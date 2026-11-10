@@ -56,19 +56,30 @@ DRY_RUN=0; BUILD_ONLY=0
 declare -a IN_PATHS=() IN_LABELS=()
 declare -a EVAL_JSONLS=()
 add_input() { IN_PATHS+=("$2"); IN_LABELS+=("$1"); }
+# R168 FIX (2026-11-11): flags consuming $2 must guard against missing arg.
+# Under `set -u` a bare `--rl-synth` (no path) crashed with cryptic
+# "$2: unbound variable" instead of a clear fail-safe (exit 3).  Now any
+# value-taking flag without a following token exits 3 with a helpful msg,
+# keeping the §5.1 red-line control robust for operators/harness invocation.
+require_next_arg() {  # $1 = flag name, $2 = remaining script argc (incl. flag)
+  if [ "${2:-0}" -lt 2 ]; then
+    echo "[gate][FAIL-SAFE] 错误：$1 需要一个参数（用法见脚本顶部注释 / --dry-run）" >&2
+    exit 3
+  fi
+}
 while [ $# -gt 0 ]; do
   case "$1" in
     --dry-run) DRY_RUN=1 ;;
     --build-blacklist) BUILD_ONLY=1 ;;
-    --sft-synth)      add_input "sft-synth"      "$2"; shift ;;
-    --rl-synth)       add_input "rl-synth"       "$2"; shift ;;
-    --anneal-corpus)  add_input "anneal-corpus"  "$2"; shift ;;
-    --input)          add_input "input"          "$2"; shift ;;
-    --blacklist-dir)  BLACKLIST_DIR="$2"; shift ;;
-    --ngram)          NGRAM="$2"; shift ;;
-    --threshold)      THRESHOLD="$2"; shift ;;
-    --out)            OUT="$2"; shift ;;
-    --eval-jsonl)     EVAL_JSONLS+=("$2"); shift ;;
+    --sft-synth)      require_next_arg "$1" "$#"; add_input "sft-synth"      "$2"; shift ;;
+    --rl-synth)       require_next_arg "$1" "$#"; add_input "rl-synth"       "$2"; shift ;;
+    --anneal-corpus)  require_next_arg "$1" "$#"; add_input "anneal-corpus"  "$2"; shift ;;
+    --input)          require_next_arg "$1" "$#"; add_input "input"          "$2"; shift ;;
+    --blacklist-dir)  require_next_arg "$1" "$#"; BLACKLIST_DIR="$2"; shift ;;
+    --ngram)          require_next_arg "$1" "$#"; NGRAM="$2"; shift ;;
+    --threshold)      require_next_arg "$1" "$#"; THRESHOLD="$2"; shift ;;
+    --out)            require_next_arg "$1" "$#"; OUT="$2"; shift ;;
+    --eval-jsonl)     require_next_arg "$1" "$#"; EVAL_JSONLS+=("$2"); shift ;;
     *) echo "未知参数: $1" ;;
   esac
   shift

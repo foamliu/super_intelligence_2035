@@ -7406,3 +7406,81 @@ nohup bash baize_posttrain_serve_sentinel.sh --watch --auto-restart \
 - 17:10 令要求持续占位 → 本脚本提供**无人值守自动重启**能力，直接服务该令。
 
 
+## §R168 — Surrogate Pipeline 端到端 Launch-Readiness Audit + 污染闸门 missing-arg fail-safe 修复（wake237, 2026-11-11）
+
+> 检索词：`R168`, `launch-readiness`, `contamination gate missing-arg`, `surrogate pipeline go/no-go`
+> 背景：沙盒 ACL 跨子网 TCP 过滤连续 42nd wake（wake195-237）阻塞 Phase1 eval + Phase3 RL R1-R4；GPU5/6/7 被 vLLM serve 占位（17:10 令）。本轮做**全管线投料前就绪审计**——把"沙盒一通就能无人值守起跑"验证到落盘证据，并修一个闸门健壮性缺陷。
+
+### 1. Surrogate Pipeline dry-run 三阶段实测（`baize_posttrain_surrogate_pipeline.sh --dry-run` / `--status`）
+
+| 阶段 | 检查项 | 结果 | 证据 |
+|:--|:--|:--|:--|
+| Phase1 baseline eval | dataset/driver/scorer/venv/cline/MCP/2 backbone | **全 OK**（仅 sandbox BLOCKED） | preflight 打印 `OK dataset .../EDA-Eval-PyAether-v20260311.jsonl`、`OK driver run_cline_script.sh`、`OK scorer run_eval.py`、`OK venv .venv/bin/python`、`OK cline`、`OK backbone MiniCPM5-2B :8098`、`OK backbone Qwen3.8-27B :8099`、`BLOCKED sandbox 10.129.32.75:8667 unreachable` |
+| Phase1 报告产物 | `reports/report_posttrain_baseline_3model_zh.html` | 已存在（R156 骨架，待沙盒通后填实测） | `--status` 打印 `PASS report exists` |
+| Phase2 SFT | src parquet / train+val split / GPU 6,7 free | src+split OK；GPU 6,7 occupied（37.8GB，17:10 占位，by design） | recipe: `data.src sft_pyaether_corpus_unified_v5v6v7.parquet (1725 pairs, gate PASS)`、`[prep] train/val parquet already exist`、`ERROR: GPU 6(37852MiB) 7(37852MiB) occupied`（脚本正确检测，提示先 teardown） |
+| Phase3 RL | verl / RL data / sandbox / contam / SFT ckpt | verl OK、RL data 3347 OK、R0 arm 无需 sandbox、contam PASS；缺 SFT ckpt（需先跑 Phase2） | `[deps] verl main_ppo OK`、`[deps] RL data 3347 rows OK`、`[sandbox] R0 (skeleton) selected — sandbox not required`、`Phase 3 FAIL: no SFT ckpt (run --phase2 first)` |
+| Gates | sandbox TCP | **CLOSED**（外部阻塞） | `--status`: `FAIL sandbox 10.129.32.75:8667 TCP CLOSED` |
+| Endpoints | :8098 / :8099 | 双 reachable HTTP 200 | `PASS endpoint MiniCPM5-2B`、`PASS endpoint Qwen3.8-27B` |
+
+> 路径口径澄清：脚本内评测资产用**本机** `/home/app.e0031982/code/eda_fastmcp/...`（preflight 全 OK）；任务书常驻区写的 `/nasdata/...` 挂载点在 `.17` **不存在**（`ls /nasdata/... → No such file`），属总纲跨机通用写法，本机脚本已用本地 home 路径正确解析，非缺陷。
+
+### 2. §5.1 红线：污染闸门对**真实投料数据**全 PASS（首次三路齐验）
+
+`bash baize_posttrain_contamination_gate.sh --<tag> <path> --out /tmp/r168_contam_*.md`：
+
+| 输入 | 标签 | 扫描文档数 | 命中(污染) | 状态 | exit |
+|:--|:--|--:|--:|:--|:--:|
+| `rl_pyaether_synth_v2.parquet` | rl-synth | 3347 | 0 | ✅ PASS | 0 |
+| `sft_pyaether_corpus_unified_v5v6v7.parquet` | sft-synth | 1725 | 0 | ✅ PASS | 0 |
+| `pyAether_api_anneal_corpus.jsonl` | anneal-corpus | 400 | 0 | ✅ PASS | 0 |
+| **合计** | — | **5472** | **0** | ✅ | — |
+
+黑名单：`data_pipeline/blacklist/`（6 评测快照并集 536 任务，含 v20260311 的 158；13-gram FNV-1a + 短 8-gram 兜底 + entry_point sha256 + MinHash k=128）。
+checker python：`$HOME/code/verl_cu124_venv/bin/python`（pyarrow 25.0.1 + pandas 2.3.3，R161 修复）。
+**结论**：三路合成/退火数据与 158 评测任务不同源，红线 §5.1 在真实投料数据上成立，可投料。
+
+### 3. 数据/配置/资产盘点（落盘证据）
+
+| 资产 | 路径 | 实测 |
+|:--|:--|--:|
+| SFT src parquet | `sft_pyaether_corpus_unified_v5v6v7.parquet` | 1725 pairs |
+| SFT train split | `sft_surrogate_train.parquet` | **1553 rows** |
+| SFT val split | `sft_surrogate_val.parquet` | **172 rows**（1553+172=1725✅） |
+| RL synth parquet | `rl_pyaether_synth_v2.parquet` | 3347 rows |
+| 退火语料 | `pyAether_api_anneal_corpus.jsonl` | 400 行 / 3.6MB |
+| RL verl config | `baize_posttrain_rl_verl_config_v2.yaml` | 5.3KB（R47 v2） |
+| hooks config | `baize_posttrain_hooks_config.yaml` | 6 hooks enabled（R143-145） |
+| verl wrapper | `baize_posttrain_verl_wrapper.py` | 4.7KB（R21 in-process parser） |
+| MiniCPM5-2B | `/nas_data/app.e0031982/models/MiniCPM5-2B/config.json` | present |
+| cline | `~/.bun/bin/cline` | present |
+| eda_fastmcp 本机 | `/home/app.e0031982/code/eda_fastmcp` | driver+scorer+venv 全 present |
+
+### 4. 🔧 R168 FIX：污染闸门 missing-arg fail-safe
+
+**缺陷**：`baize_posttrain_contamination_gate.sh` 在 `set -uo pipefail` 下，值类 flag（`--rl-synth`/`--sft-synth`/`--anneal-corpus`/`--input`/`--blacklist-dir`/`--ngram`/`--threshold`/`--out`/`--eval-jsonl`）**缺参数**时崩 `$2: unbound variable`（exit 1），而非红线控制应有的 fail-safe（exit 3）+ 清晰提示。运维/编排误调时难诊断。
+
+**修复**：新增 `require_next_arg()` 守卫（接收 flag 名 + 剩余 argc，`<2` 则 stderr 提示 + exit 3），每个值类 flag 调用前置守卫。
+
+**验证**：
+```
+bash baize_posttrain_contamination_gate.sh --rl-synth       → [gate][FAIL-SAFE] 错误：--rl-synth 需要一个参数   exit=3 ✅
+bash baize_posttrain_contamination_gate.sh --dry-run --out  → 错误：--out 需要一个参数                          exit=3 ✅
+bash baize_posttrain_contamination_gate.sh --sft-synth      → 错误：--sft-synth 需要一个参数                     exit=3 ✅
+bash baize_posttrain_contamination_gate.sh --rl-synth rl_pyaether_synth_v2.parquet --out /tmp/x.md → 闸门 PASS exit=0 ✅
+```
+`bash -n` ✅。修复**只动错误路径**，正常投料闸门行为不变（三路仍 PASS exit 0）。
+
+### 5. Go/No-Go 结论
+
+- **GO（内部全就绪）**：Phase1 preflight 全 OK、Phase2 数据+split 就绪、Phase3 verl+RL data+hooks 就绪、§5.1 三路闸门真实 PASS、所有 config/wrapper/model/cline/eda_fastmcp 落盘、endpoints 双 reachable、serve_sentinel(R167) 维持占位、serve_teardown(R165) 待命拆除。
+- **No-Go（2 个外部阻塞，非本线可解）**：
+  1. 沙盒 `10.129.32.75:8667` 跨子网 TCP ACL 过滤（ICMP 0% loss 0.5ms，TCP 全端口 timeout，连续 42nd wake）→ 阻塞 Phase1 eval + Phase3 RL R1-R4。**解锁**：网络团队开 `10.252.32.0/22 → 10.129.32.75` 的 TCP ACL。
+  2. GPU 5/6/7 被 vLLM serve 占位（17:10 令 by design）→ 阻塞 Phase2 SFT + Phase3 GPU4-7。**解锁**：沙盒恢复后 watcher 自动起 Phase1 → `bash baize_posttrain_serve_teardown.sh`（拆 GPU5/6/7）→ pipeline --phase2 SFT → teardown --gpu4 → --phase3 RL。
+- **R0 arm 例外**：Phase3 RL arm R0（skeleton，无需沙盒）理论上 GPU 空闲即可跑，但 GPU4-7 全被 serve 占用 → 仍阻塞，与 17:10 令一致。
+
+### 6. 边界与纪律
+
+- 仅写本线文件：`baize_posttrain_contamination_gate.sh`（R168 fix）+ EXPERIMENTS §R168 + MEMORY 心跳 + daily。
+- 红线：不碰 GPU 0-3；不碰 158 任务数据；不启动训练；不 `git add -A`。
+- 修复属本线脚本健壮性，未跨线改动（R161 已修的 `check_contamination.py` 本轮未动）。
+
