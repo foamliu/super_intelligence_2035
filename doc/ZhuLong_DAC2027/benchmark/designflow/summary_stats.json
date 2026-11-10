@@ -1243,6 +1243,34 @@
       "paper": "pdflatex compile OK (0 error, 11 pages); \\Ntasks 1007->1028 (A:201 B:241 C:289 D:297); App A breakdown synced",
       "finding": "r322 bypassed r321 NFS blocker via .75-local sessions. Batch-peek of 30 .75-local sessions found jkxu/5s7n6 (clean A-faithful produce: monitor error scan report script). Case MonErrScanReport-001 built (spec-driven-generator + static-verification, 15 conds, gold PASS 15/15, 5 negs FAIL). A.jsonl 200->201. .75-local bypass is the new deepread path when remote NFS is blocked.",
       "updated_at": "2026-11-10T19:40:00+08:00"
+    },
+    "r324": {
+      "ts": "2026-11-10T20:55:00+08:00",
+      "date": "2026-11-10",
+      "round_type": "case (remote NFS recovered; strict core-verilog filter + batch-peek of 5 fresh candidates)",
+      "scan_dir": "ssh_eda_search_20261109_224902",
+      "scan_confirmed": "no new scan since r292 full rescan (32nd consecutive no-new-scan r293-r324)",
+      "mc30": 2246,
+      "dedup_sessions": 5999,
+      "users_mc15": 433,
+      "hosts": 696,
+      "daily_log_20261110_lines": 2981,
+      "daily_log_healthy": true,
+      "nfs_blocker_status": "REMOTE NFS RECOVERED (was broken r321-r323). ssh-peek to remote hosts works again. ow6zk deepread via scp to eda_flow workdir succeeded.",
+      "case_delivered": "EDA-Eval-DesignFlow-FuseUncalledAudit-001 (digital, A-faithful produce-task, L1-static, k=16)",
+      "trace": "1793589539062_ow6zk (wenzhuod@hfeg0pkn003, mc40) -> case",
+      "case_k": 16,
+      "test_sha8": "edd8d006",
+      "shard_A_new_this_round": 1,
+      "shard_A_jsonl": 203,
+      "candidate_pool": {
+        "method": "mc>=15 + dig>ana + verilog/sv/rtl core>=80 -> 298 digital-dominant candidates; exclude 975 (855 cross-shard used_sessions_allshards + 336 ledger-A minus overlaps); batch-peek 5 fresh",
+        "note": "ow6zk best of 5 peeked: clean A-faithful produce, focused, checkable. Key difficulty: bash single-quote blocks silently disable -sr commands."
+      },
+      "paper": "pdflatex compile OK (0 error, 13 pages); \\Ntasks 1028->1032 (A:203 B:242 C:289 D:298); App A breakdown synced",
+      "finding": "r324 is 16th clean-produce-scarcity context. Remote NFS recovered this round (broken r321-r323). ow6zk found via strict core-verilog filter (298 cands, mc>=15) + cross-shard exclusion (975) + batch-peek of 5 fresh. ow6zk=clean A-faithful produce 'find uncalled fuse regressions and patterns in run_fuse.sh'. Reframe: spec-driven-generator + static-verification (16 conds a-p). Key subtlety: bash single-quote blocks (lines 3-46, 58-89) silently disable -sr commands — only 1 of 26 commands is ACTIVE.",
+      "negative_selftest": "6 negatives ALL FAIL (NEG_RC=0): fake_empty->c, fake_print_a->c, fake_core_deleted->g, naive_all_pull->e, naive_ignore_quotes->e, hardcode_a->g",
+      "section_4_9_coverage": "§4.9 (a) fake_empty FAIL, (b) fake_print_a FAIL, (c) fake_core_deleted FAIL — all covered"
     }
   },
   "sessions": 38082,
