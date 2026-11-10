@@ -16,3 +16,11 @@
   opencode: 262 new instances to eval (total real preds: 358, already evaluated: 96)
   [10:59:02] opencode: merged 358 -> predictions_glm53/predictions_opencode_glm53.json
   [10:59:02] opencode: launching eval (workers=1, timeout=1800, 262 instances)...
+  [12:59:02] opencode: eval TIMEOUT (7200s)
+  [12:59:02] opencode: eval summary updated: 215/281 resolved (76.5%)
+
+============================================================
+=== claude-code: incr_eval R2028 ===
+  claude-code: 106 new instances to eval (total real preds: 154, already evaluated: 48)
+  [12:59:02] claude-code: merged 154 -> predictions_glm53/predictions_claude-code_glm53.json
+  [12:59:02] claude-code: launching eval (workers=1, timeout=1800, 106 instances)...
