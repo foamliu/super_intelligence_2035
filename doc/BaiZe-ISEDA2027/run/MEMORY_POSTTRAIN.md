@@ -14,7 +14,7 @@ WAITING: 1
 - 阻塞: 🔴远程沙盒10.129.32.75全端口CLOSED→阻塞全部harness评测(不可本地绕过:pyAether未装+Docker需root);GPU5/6/7被serve占位(17:10令)→SFT重启待GPU释放;P3等pretrain ckpt
 - 本轮新增产出: SFT脚本crash-resilient修复(3项:save_steps/MAX_LEN/output路径)+serve inference验证(2端点chat completion✅)+沙盒本地化不可行结论(pyAether未装+Docker需root)
 - 未完成指令: 🔴用户令17:10(serve占位)✅完成;🔴用户令13:40(三阶段替身计划)Phase1待沙盒/Phase2 SFT脚本已修待GPU释放/Phase3待SFT ckpt ⇒ 全外部阻塞(沙盒隧道CLOSED+GPU被serve占位),本轮可做的事已做完
-- git: synced with origin/main（wake195 commit 87c19ba95, 17:18；wake196 待提交）
+- git: commit a940b0a03 done locally, push FAILED (network timeout x2, same as git fetch) → 下次唤醒第一件事补推
 
 ## GPU 端口映射表（2026-11-10 wake195 实测）
 
