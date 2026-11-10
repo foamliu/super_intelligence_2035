@@ -606,4 +606,4 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked		2026-11-09 20:39	RAG-looku
 1793791417073_tro04	jiaqis	hfeg0plg09	125	physical_verify	case	EDA-Eval-DesignFlow-DrcVsDrmRuleAudit-001	2026-11-10 06:36	
 1792636294858_tzf35	e0035227	hfeg0plg55	86	layout_virtuoso	case	EDA-Eval-DesignFlow-LibPinManifest-001	2026-11-10 07:20	
 1792671070682_6widi	sherlock	hfeg0pfn011	73	physical_verify	case	EDA-Eval-DesignFlow-DrcExactWaiver-001	2026-11-10 07:45	
-1794225997663_uxowi	e0023936	hfhds201	27	physical_verify	claimed		2026-11-10 08:29	
+1794225997663_uxowi	e0023936	hfhds201	27	physical_verify	case	EDA-Eval-DesignFlow-DrcBad2gridLshape-001	2026-11-10 08:37	
