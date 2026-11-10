@@ -45,7 +45,9 @@ EVAL_PATTERN='run_eval\.py'
 MAX_CHANCES=3
 
 ts() { date '+%Y-%m-%d %H:%M:%S'; }
-log() { echo "[$(ts)] $*" | tee -a "$GAP_LOG"; }
+# log() just echoes; the launcher redirects stdout to $GAP_LOG (so we write once,
+# not twice). `tail -f $GAP_LOG` gives a live view.
+log() { echo "[$(ts)] $*"; }
 
 # Real-process detectors. Patterns are anchored / specific so they do NOT match this gap
 # script nor the opencode agent (whose cmdline embeds the task book mentioning these strings).
