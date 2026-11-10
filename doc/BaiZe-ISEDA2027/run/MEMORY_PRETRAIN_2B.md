@@ -1,6 +1,8 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
-WAITING: 1（🔴 **下一轮最高优先（2026-11-10 用户直令）：刷新 ISEDA2027 论文预训练章节 —— §4.6 进度句改实测值 + 新增 §4.7 基准缩放表 + 编译提交 main.pdf；命令与护栏见 BAIZE_PRETRAIN_2B_TASK.md 顶部「本轮最高优先」块；该轮不做其它运维令**）
+WAITING: 1
 
+
+> 2026-11-10 20:37 #1918: **ISEDA2027论文刷新轮·§4.6进度句改实测iter154660/700k+§4.7新增6行基准表+PDF编译0err✅**·paper: ISEDA2027 §4.6 refreshed (iter=154660) + §4.7 scaling table (6 rows) added, pdf=229159p, ERR=0·**动作**：①git pull --rebase(同步✅) ②取训练实测(.29 /proc/146283/fd/1):iter154660/700k,step~7050ms→~595K tok/s,loss≈2.03,0NaN/0skip ③取eval数据(.29 results.json):6点 harness avg(acc_norm for ARC/HellaSwag)=10k 50.75%/30k 51.00%/50k 52.88%/80k 55.50%/110k 57.12%/150k 56.50% ④改4_llm_pretrain.tex:§4.6进度句30,660→154,660/loss2.151→≈2.03/598K→595K,tab:prod-budget Status 30.7k→155k done/wall-clock 56d→57d/total 59.5d→60.6d ⑤新增§4.7 Checkpoint Scaling on General Benchmarks+tab:ckpt-scaling(6行booktabs) ⑥latexmk -pdf编译:0 err,5页,229159B ⑦📦TASK=31.2KB/MEMORY=28.7KB(均≤32KB✅,归档0KB)·未完成指令：无(paper刷新完成,下个万整数160k~10.4h后)⇒WAITING:1。
 
 > 2026-11-10 20:12 #1917: **状态确认轮·无新ckpt·训练健康iter154480/700k step6954-7106ms(均<7.4s✅)·15/15eval全完成(10k-150k)·无llama-server残留·报告✅**·**动作**：①git fetch+status(## main...origin/main同步✅,他线untracked未碰) ②训练核查(.29 /proc/146283/fd/1):iter154480/700k,末5步6954.4/7043.2/7106.2/7015.5/7035.1ms(均<7.4s✅),loss2.009-2.029,0NaN/0skip,grad_norm0.089-0.119,GPU8/8 93-100%/75GB ③ckpt盘查:latest=iter_0154000,无160k(iter154480距160k~5520步/~10.7h) ④eval核查:15/15 gguf_iter_*_fixed_8set全在(10k-150k,路径code/BaiZe-ISEDA2027/nemo_experiments/baize2b/lm_eval_results/),report_pretrain_llamacpp_scaling_zh.html=23903B✅,llama-server=0✅ ⑤research日报11-10晚报(18:12)已读(同#1916,pretrain建议=量化+状态复用降eval墙钟,nice-to-have不紧急) ⑥📦TASK=27.3KB/MEMORY=27.5KB(均≤32KB✅,归档0KB)·未完成指令：无(10k-150k全完成,下个万整数160k~10.7h后)⇒WAITING:1。
 

@@ -608,3 +608,44 @@ torchrun --nnodes=1 --nproc_per_node=8 --master_addr=127.0.0.1 --master_port=296
 - Expected total: ~56 min
 - Results: /tmp/baize_probe_results.json
 
+---
+
+## ISEDA2027 论文预训练章节刷新（2026-11-10 #1918 · 用户直令）
+
+**任务**：刷新 `ISEDA2027/4_llm_pretrain.tex` 的 §4.6 进度句 + 新增 §4.7 基准缩放表 + 编译 main.pdf。
+
+### 训练实测取数（.29 /proc/146283/fd/1）
+- iter: 154660/700000
+- step time: ~7050ms → tok/s = 4194304/7.05 ≈ 595K
+- loss: ≈2.03（末10步 2.017–2.051）
+- 0 NaN, 0 skipped iterations
+- GPU: 8/8, 87–100% util, ~75GB/GPU
+- 取数命令：`ssh 10.239.2.29 'cat /proc/146283/fd/1 | tail -30'`
+
+### 基准评测数据（.29 results.json · acc_norm for ARC/HellaSwag, acc for rest）
+| iter    | tokens  | Avg(harness) |
+|---------|---------|-------------|
+| 10,000  | 41.9B   | 50.75%      |
+| 30,000  | 125.8B  | 51.00%      |
+| 50,000  | 209.7B  | 52.88%      |
+| 80,000  | 335.5B  | 55.50%      |
+| 110,000 | 461.4B  | 57.12%      |
+| 150,000 | 629.2B  | 56.50%      |
+
+取数命令：`ssh 10.239.2.29 'python3 << PYEOF ...'`（读 `gguf_iter_{t}_fixed_8set/results.json`）
+
+### §4.6 修改
+- 进度句：`iteration 30,660` → `154,660`；`598K tok/s` → `595K`；`loss 2.151` → `≈2.03`；`no NaN` → `zero NaN or skipped iterations`；加 `as of (2026-11-10)`
+- `tab:prod-budget`：Status `30.7k done` → `155k done`；wall-clock `≈56 d` → `≈57 d`；Total `≈59.5 d` → `≈60.6 d`
+
+### §4.7 新增
+- `\subsection{Checkpoint Scaling on General Benchmarks}\label{sec:ckpt-scaling}`
+- 位置：§4.6（Results and Production Run）之后、原 Long-Context Training 之前
+- 含 booktabs 表 `tab:ckpt-scaling`（6 行）+ 正文 2 句（趋势 + limit=100 抽样波动 ±4.5pp + pending 声明）
+- 中文翻译行同步
+
+### 编译结果
+- `latexmk -pdf -interaction=nonstopmode main.tex` → 0 errors
+- main.pdf: 5 pages, 229159 bytes
+- main.log: 0 `!` lines, no undefined references
+
