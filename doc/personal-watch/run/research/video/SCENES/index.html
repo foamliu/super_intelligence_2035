@@ -41,6 +41,14 @@
 <table>
   <tr><th>日期</th><th>当日 TOP-1 论文</th><th>看点</th><th>分镜脚本</th></tr>
   <tr>
+    <td>2026-11-10</td>
+    <td><i>How Well Does AI Peer Review Work? A Benchmark Built from 100 Planted Errors</i><br><code>arXiv:2611.12820</code>（Paul Litvak，1 位 · Robyn Dawes Institute；<code>cs.CL</code> · 5 页）</td>
+    <td><b>一百个被埋进论文的错误，AI 审稿人能找出几个</b>：把 <b>100 个</b>已知错误埋进 <b>10 篇</b>开放获取心理学论文（62 类错误清单，既有「改句」也有「<b>删掉关键信息</b>」），最佳单系统只找到 <b>71/100</b>、最差 <b>30/100</b>，把全部系统并起来 <b>93/100</b>；剩下 <b>7 个谁都没抓到，全是「省略型」</b>；同一模型重跑 3 次几乎不增命中，但不同系统重合度低 ⇒ 提召回要靠<b>异构并集</b>。⚠️ 只做心理学、只测召回不测误报、作者自报未复现。</td>
+    <td><a href="11_10.html">11_10.html</a></td>
+  </tr>
+
+
+  <tr>
     <td>2026-11-08</td>
     <td><i>How Finite Brains Generalize Without Bound: Spatial Memory as a Universal Computer</i><br><code>arXiv:2611.07920</code>（Yuhang He · Si Wu，2 位 · 北京大学；<code>cs.AI</code> · 57 页）</td>
     <td><b>为什么孩子学加法能举一反三，大模型却不行</b>：只学过小数的孩子会加任意位数；而在 <b>≤40 符号</b>短串上训练的 LSTM / Transformer，到 <b>41–500</b> 长度就崩。作者把差别追到「决策时读什么」：位置 / 计数 / 时间是「<b>坐标</b>」，随输入变长不断取新值，必遇训练没覆盖的取值；「<b>两样是否相同</b>」是「<b>巧合</b>」，每个长度答案都一样，所以有限经验就能固定任意长度的规则——而且<b>不损失算力</b>（它能算的正是图灵机随输入步进算的那些）。推论：记忆须携带长度而规则保持有限 ⇒ 记忆从每个位置看必须一样 ⇒ 只能是「<b>环</b>」＝大鼠大脑里的<b>网格细胞</b>，检测回到原位的是位置细胞，记录是海马。实验：15 个基准中 <b>9 个</b>在长度 41–500 上 <b>≥99%</b>，其中 <b>5 个任务</b> LSTM/Transformer 全解不出；训练后给新环可<b>零错反转 15,015 个符号</b>，更长的失败点落在理论曲线上。边界：全为离散符号任务的小规模训练（12,000 步 / 批量 32 / 长度 1–40）；45 次运行 <b>23 首成功 / 7 重试 / 15 全败</b>；与网格细胞/位置细胞/海马的对应是<b>作者的解释性映射</b>（<b>作者自报 · 本线未复现</b>）</td>
@@ -216,7 +224,7 @@
 </table>
 
 <footer>
-  research 线 · <code>research/video/SCENES/index.html</code> ｜ 最近更新：2026-11-06 18:1x CST（新增 <code>11_06.html</code> · TOP-1 = ManimCode / <code>arXiv:2611.08294</code> · 5 镜 / 120s / 口播 420 汉字（210–220 字/分 ≈ 114–120s）；上一版 <code>11_05.html</code> · <code>arXiv:2611.06840</code>）<br>
+  research 线 · <code>research/video/SCENES/index.html</code> ｜ 最近更新：2026-11-10 18:1x CST（新增 <code>11_10.html</code> · TOP-1 = AI Peer Review / <code>arXiv:2611.12820</code> · 5 镜 / 120s / 口播 <b>385</b> 汉字（≈193 字/分）；上一版 <code>11_08.html</code> · <code>arXiv:2611.07920</code> · 口播 411 汉字）<br>
 </footer>
 </div>
 </body>

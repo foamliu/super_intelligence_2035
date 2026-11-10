@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>《论文两分钟》分镜脚本 · 2026-11-10 · 一百个被埋进论文的错误，AI 审稿人能找出几个</title>
+<style>
+  :root { --primary:#123a63; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700; --kp:#0d9488;
+          --bg:#f6f7fb; --card:#fff; --border:#d8dee9; --text:#1f2328; --muted:#556070; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+         color:var(--text); background:var(--bg); line-height:1.7; font-size:15px; }
+  .wrap { max-width:1100px; margin:0 auto; padding:32px 20px 80px; }
+  header.hero { background:linear-gradient(135deg,#0f2027 0%,#134e4a 55%,#0d9488 100%); color:#fff; border-radius:14px;
+                padding:30px 32px; margin-bottom:22px; box-shadow:0 8px 24px rgba(15,32,39,.26); }
+  header.hero h1 { margin:0 0 6px; font-size:23px; letter-spacing:.3px; }
+  header.hero .sub { font-size:15px; opacity:.96; }
+  header.hero .meta { margin-top:14px; font-size:13px; opacity:.94; display:flex; flex-wrap:wrap; gap:8px 18px; }
+  header.hero .meta span { background:rgba(255,255,255,.18); border-radius:999px; padding:2px 12px; }
+  .disc { margin-top:14px; font-size:12.5px; background:rgba(0,0,0,.22); border-radius:8px; padding:8px 12px; opacity:.96; }
+  h2.sec { font-size:19px; margin:34px 0 12px; padding-bottom:8px; border-bottom:2px solid var(--border); }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:18px 22px; margin:16px 0;
+          box-shadow:0 1px 3px rgba(27,31,36,.06); }
+  .row { display:flex; gap:10px; margin:7px 0; font-size:14px; }
+  .row .k { flex:0 0 116px; color:var(--muted); font-weight:600; }
+  .row .v { flex:1; }
+  .orig { font-style:italic; color:#0f4c47; }
+  code { background:#eef0f7; border:1px solid #dfe3ee; border-radius:5px; padding:1px 6px;
+         font-family:Consolas,Menlo,monospace; font-size:12.5px; color:#0f4c47; }
+  table { border-collapse:collapse; width:100%; margin:12px 0; font-size:13px; background:var(--card); }
+  th,td { border:1px solid var(--border); padding:8px 10px; text-align:left; vertical-align:top; }
+  th { background:#e6f7f4; color:#0f4c47; font-weight:600; }
+  tr:nth-child(even) td { background:#f8fcfb; }
+  .shot-no { display:inline-flex; align-items:center; justify-content:center; width:24px; height:24px;
+             border-radius:50%; background:#0d9488; color:#fff; font-size:13px; font-weight:700; }
+  .vo { color:#0b3b38; }
+  .note { background:#fff8ef; border:1px solid #f0d9b5; border-left:4px solid var(--warn); border-radius:8px;
+          padding:10px 16px; font-size:13px; color:#6a4a00; }
+  .ok-box { background:#f0fff4; border:1px solid #b7f0c5; border-left:4px solid var(--ok); border-radius:8px;
+            padding:10px 16px; font-size:13px; }
+  ul,ol { margin:6px 0; padding-left:20px; } li { margin:3px 0; }
+  a { color:var(--accent); word-break:break-all; }
+  footer { margin-top:44px; padding-top:16px; border-top:1px solid var(--border); color:var(--muted); font-size:12.5px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+  <h1>《论文两分钟》分镜脚本 · 2026-11-10</h1>
+  <div class="sub">今日 TOP-1：<b>一百个被埋进论文的错误，AI 审稿人能找出几个</b> · 论文解读（非官方 · 非结论）· 总时长 <b>120s</b> · 口播字数见「口播与节奏」节</div>
+  <div class="meta">
+    <span>📅 日期：2026-11-10（CST）</span>
+    <span>🎬 期号：SCENES/11_10</span>
+    <span>📄 来源：arXiv <code>2611.12820</code></span>
+    <span>🏷 口径：科普（大众看得懂 + 有传播力）</span>
+  </div>
+  <div class="disc">
+    ⚠️ 本页是<b>分镜脚本</b>（纸面阶段），不是成片；<b>V3（真正生成视频）未启动</b>（工具链待确认）。<br>
+    所有数字均出自论文摘要 / 正文，<b>作者自报、本线未复现</b>；原题照抄不改写；画面全部自绘 / 自生成，<b>不使用论文原图</b>。
+  </div>
+</header>
+
+<h2 class="sec">🎯 选题说明：为什么从今天 5 篇里挑它</h2>
+<div class="card">
+  <div class="row"><div class="k">论文原题</div><div class="v"><span class="orig">How Well Does AI Peer Review Work? A Benchmark Built from 100 Planted Errors</span></div></div>
+  <div class="row"><div class="k">作者 / 机构</div><div class="v">Paul Litvak（<b>1 位</b>；据 PDF 首页：<b>Robyn Dawes Institute</b>；作者自述本工作与 Claude 协作完成，论文 / 埋入错误 / 模型输出 / 完整实验日志均已公开）</div></div>
+  <div class="row"><div class="k">arXiv</div><div class="v"><a href="https://arxiv.org/abs/2611.12820">https://arxiv.org/abs/2611.12820</a>（<code>cs.CL</code>；首次提交 <b>2026-11-09</b>；PDF <b>5 页</b> / 648,327 B，本线已落地并校验）</div></div>
+  <div class="row"><div class="k">一句话</div><div class="v">把 <b>100 个已知错误</b>偷偷埋进 <b>10 篇</b>心理学论文，再让 AI 去审：<b>最强的单系统只找到 71 个，最差的只找到 30 个；把大家的话合起来能到 93 个</b>——而剩下 <b>7 个谁都没找到</b>，因为它们是「<b>被删掉的东西</b>」。</div></div>
+  <div class="row"><div class="k">为什么选它</div><div class="v">
+    <ol>
+      <li><b>大众能懂</b>：规则一句话就讲完——「把错误埋进论文，看 AI 能不能挖出来」。这正是每个人都好奇的问题：AI 到底能不能替人审稿。</li>
+
+<h2 class="sec">🎬 分镜表（5 镜 / 120s）</h2>
+<table>
+  <tr><th style="width:44px;">镜</th><th style="width:72px;">时间轴</th><th style="width:76px;">段落</th><th>口播文案</th><th>画面（自绘 / 自生成）</th><th style="width:150px;">屏幕文字 / 字幕</th><th style="width:160px;">音效 / BGM</th></tr>
+  <tr>
+    <td><span class="shot-no">1</span></td>
+    <td>0–10s</td>
+    <td>钩子</td>
+    <td class="vo">十篇心理学论文里，有人偷偷埋了一百个错误。最强的 AI 审稿人，只找出七十一个。还有七个，全世界没有系统能发现。为什么？</td>
+    <td>①一张论文页面特写，几行字被「替换 / 删除」的动画效果点亮（自绘矢量，不用论文原图）；②右侧计数牌从 100 快速往下掉到 71，再掉到「7」处停住并变红；③画面中央浮出大问号。</td>
+    <td>100 个错误<br>最强 AI 找到 <b>71</b><br>没人找到 <b>7</b><br><b>为什么？</b></td>
+    <td>打字机「嗒嗒」；计数牌「咔咔」下落；停在 7 时「咚」一声；BGM 极低起</td>
+  </tr>
+  <tr>
+    <td><span class="shot-no">2</span></td>
+    <td>10–30s</td>
+    <td>问题</td>
+    <td class="vo">因为审稿不是考试。错误不只有「多写了一句错话」，更常见的是「少了一段该有的说明」。所有 AI 都在找可疑的句子，很少有人主动问：这篇论文，缺了什么。</td>
+    <td>①左右分屏：左边「多写了一句」= 一句话被红色高亮、画个叉；②右边「少了一段」= 页面中间留出一块空白，用虚线框标出「这里本该有」；③一堆放大镜在左屏上扫来扫去，右屏的空白始终没人看（自绘）。</td>
+    <td>多写一句 → 容易被抓<br>少了一段 → <b>没人问</b><br>「这里缺了什么？」</td>
+    <td>放大镜「沙沙」声；空白处低频「嗡」；BGM 停半拍留白</td>
+  </tr>
+  <tr>
+    <td><span class="shot-no">3</span></td>
+    <td>30–80s</td>
+    <td>方法</td>
+    <td class="vo">作者的做法很朴素：先把实验心理学的错误分成六十二类，再从十篇开放论文里，每篇埋十个，一共一百个。有的改掉关键句，有的干脆删掉关键信息。然后让当时最强的模型，还有两个付费审稿工具去读。再由一个 AI 裁判逐条核对：你指出的问题，对应的是不是我们埋下的那一个。</td>
+    <td>①一张「62 类错误」的网格清单快速滚动（自绘，只显示类目名，不抄原文）；②10 篇论文的卡片排成一行，每张被「盖章」10 次，累计计数到 100；③两类埋法并排演示：改句（句子被划线替换）/ 删句（整段变成灰块消失）；④一排系统图标用通用几何图形代替（不画真实品牌），依次「读完」论文；⑤最后出现「AI 裁判」逐条打勾：命中 / 未命中。</td>
+    <td>62 类错误<br>10 篇 × 10 个 = <b>100</b><br>改句 / <b>删句</b><br>多系统审 → <b>逐条核对</b></td>
+    <td>盖章「咚」×10；灰块消失「嘶」；裁判打勾「叮」/未命中「噗」；BGM 中段渐入</td>
+  </tr>
+  <tr>
+    <td><span class="shot-no">4</span></td>
+    <td>80–105s</td>
+    <td>结果</td>
+    <td class="vo">结果是：最好的单个系统找到七十一个，最差的只找到三十个。把十几个系统的话合起来，能到九十三个。更关键的是，同一个模型重跑三次，几乎不会多找到东西；可不同系统之间，找到的错误重叠得很少。所以想提高命中率，靠的不是多跑几次，而是让不同的系统一起看。</td>
+    <td>①一张排行榜柱状图从高到低排开（71 → 30），柱子顶端标数字（自绘，不写厂商名，用「系统 A…K」）；②右上角出现两根柱子对比：单系统 71 / 并集 93；③画面切「同模型跑 3 次」= 三条几乎重合的进度条停在同一个位置；④再切「不同系统」= 三个圆环交集很小，拼起来覆盖大半区域。</td>
+    <td>单系统 <b>30–71</b><br>并集 <b>93</b><br>同模型重跑 3 次 → <b>≈不增</b><br>异构并集 → <b>覆盖率↑</b></td>
+    <td>柱子升起「咚、咚」；并集出现时「叮」；三条进度条同步「嗒」；圆环拼接「咔」；BGM 抬 2 dB</td>
+  </tr>
+  <tr>
+    <td><span class="shot-no">5</span></td>
+    <td>105–120s</td>
+    <td>意义 / 展望</td>
+    <td class="vo">当然，这篇论文只做了心理学，也没测误报。但它留下一条很实用的经验：AI 审稿真正的短板，往往不是看不懂，而是没意识到，这里少了一句话。</td>
+    <td>①画面回到开头的论文页面，那块「空白」被虚线框再次标出；②下方浮现一行小字「只做心理学 · 未测误报 · 作者自报」；③结尾定格在论文标题与 arXiv 号（自绘版式，不用论文原图）。</td>
+    <td>短板不是「看不懂」<br>而是「没发现少了什么」<br><i>How Well Does AI Peer Review Work?</i><br>arXiv:2611.12820</td>
+    <td>BGM 收到只剩一个持续音；结尾「叮」一次；静音 0.5s 后结束</td>
+  </tr>
+</table>
+
+<h2 class="sec">📏 口播与节奏（脚本实测）</h2>
+<div class="card">
+  <table>
+    <tr><th>镜</th><th>时间轴</th><th>段落</th><th>纯汉字数</th><th>语速（字/分）</th><th>备注</th></tr>
+    <tr><td>1</td><td>0–10s</td><td>钩子</td><td>49</td><td>294</td><td>偏快；「七十一个」「七个」之间留 0.4s</td></tr>
+    <tr><td>2</td><td>10–30s</td><td>问题</td><td>59</td><td>177</td><td>「缺了什么」放慢</td></tr>
+    <tr><td>3</td><td>30–80s</td><td>方法</td><td>112</td><td>134</td><td>最重的一段，画面分 5 小节跟住</td></tr>
+    <tr><td>4</td><td>80–105s</td><td>结果</td><td>109</td><td>262</td><td>数字密集，可延到 108s</td></tr>
+    <tr><td>5</td><td>105–120s</td><td>意义 / 展望</td><td>56</td><td>224</td><td>收尾可再慢 1–2 字/秒</td></tr>
+    <tr><td colspan="3"><b>合计</b></td><td><b>385</b></td><td><b>≈193（总 120s）</b></td><td>在 350–450 字区间内；节奏偏紧，成片可按 124s 放宽</td></tr>
+  </table>
+  <div class="note" style="margin-top:10px;">实测方式：脚本内 <code>&lt;td class="vo"&gt;</code> 文本按 Unicode 汉字区间 <code>[\u4e00-\u9fff]</code> 计数（不含标点、数字、英文），可用同法复核。</div>
+</div>
+
+<h2 class="sec">🧭 制作与合规说明</h2>
+<div class="card">
+  <div class="row"><div class="k">画面来源</div><div class="v">全部<b>自绘 / 自生成</b>（论文页面示意、计数牌、网格清单、柱状图、圆环交集均为矢量示意）。<b>不使用论文原图</b>；排行榜中的系统用「系统 A…K」匿名化，不画真实厂商 logo，避免商标与背书暗示。</div></div>
+  <div class="row"><div class="k">数字出处</div><div class="v">均来自论文摘要与 Table 1 / §3：<b>10 篇论文 × 每篇 10 个 = 100 个错误</b>、<b>62 类错误清单</b>、<b>最佳单系统 71/100</b>（GPT-5.5 high reasoning，512 条意见，$0.30/篇、$0.042/错误）、<b>最差 30/100</b>（Reviewer3）、<b>基础模型并集 91/100、全部系统并集 93/100</b>、<b>7 个错误无任何系统检出（全为省略型）</b>、<b>同模型重跑 3 次几乎不增命中</b>、<b>Refine.ink 约 $50/篇 ≈ $8.77/错误</b>。本线已落地 PDF（5 页 / 15,420 字符）并逐条回查。</div></div>
+  <div class="row"><div class="k">不夸大（红线）</div><div class="v">口播里<b>不出现</b>「SOTA / 颠覆 / 突破 / AI 已能替代审稿人」；结论严格限定在「<b>10 篇实验心理学论文、100 个埋入错误</b>」范围内，并在镜 5 明说「只做了心理学、也没测误报」。</div></div>
+  <div class="row"><div class="k">标注</div><div class="v">成片与简介须写明「<b>论文解读 · 非官方 · 非结论</b>」，并在简介给出原题（英文照抄）+ 作者 / 机构 + <a href="https://arxiv.org/abs/2611.12820">arXiv abs 链接</a>。</div></div>
+  <div class="row"><div class="k">平台 / 栏目</div><div class="v">栏目名由本线自起（避免与已有「两分钟论文」频道混淆）；发布由用户本人执行（B站 / 抖音账号与实名在用户侧）。</div></div>
+</div>
+
+<h2 class="sec">⚠️ 边界与后续</h2>
+<div class="card" style="font-size:13.5px;">
+  <ul>
+    <li><b>领域边界</b>：只做<b>实验心理学</b> 10 篇论文、100 个错误，<b>不能</b>说成「AI 审稿整体水平」；作者自己也提醒，各系统版本是 2026-03 / 06 的快照，<b>名次别当真</b>。</li>
+    <li><b>方法边界</b>：只测<b>召回</b>（找到几个埋入错误），<b>没测误报</b>；埋入错误的分布与真实论文错误分布是否一致，作者明确说未知。</li>
+    <li><b>核验边界</b>：错误判定靠 LLM-as-judge + 抽查，<b>不是</b> 100 条逐条人工复核（作者自陈这是最大短板）。</li>
+    <li><b>V3 未启动</b>：本页仅到分镜脚本（V1/V2 阶段）；真正生成视频（TTS / 文生图 / 剪辑）需先确认工具链，<b>未获确认不擅自生成或发布成片</b>。</li>
+    <li><b>来源声明</b>：一切数字<b>作者自报、本线未复现</b>；如需引用请以 <a href="https://arxiv.org/abs/2611.12820">arXiv:2611.12820</a> 原文为准。</li>
+  </ul>
+</div>
+
+<footer>
+  research 线 · 《论文两分钟》分镜脚本 <code>research/video/SCENES/11_10.html</code> · 2026-11-10（CST）· 当日 TOP-1 = <code>2611.12820</code>（本日科普 TOP-1）·
+  口播实测 <b>385</b> 汉字 ≈ 120s · 自包含单文件（内联 CSS · 零 <code>&lt;script&gt;</code> · 离线可开）· 索引 <code>SCENES/index.html</code>
+</footer>
+</div>
+</body>
+</html>
+
+      <li><b>有传播力</b>：「<b>最强模型也漏掉近三成</b>」「<b>7 个错误全世界没人能发现</b>」都是天然的反差结论；「<b>4 美分 vs 8.77 美元/错误</b>」是可截图的成本对比。</li>
+      <li><b>可讲清</b>：全篇只需「埋错误 → 让 AI 审 → 数命中」三步，不必搬 62 类错误清单的细节（只在画面上闪过）。</li>
+      <li><b>有真实来源</b>：arXiv ID + 官方 abs 链接 + 5 页 PDF（已校验字节 / 页数 / 可解析），每个数字都能回查原文 Table 1。</li>
+    </ol>
+    <b>同日其它 4 篇为何不做</b>：早报 3 篇（<code>2611.09412</code> 极点几何 / <code>2611.09729</code> Monte Carlo 评测 / <code>2611.09802</code> 过期指令文件）都是方法论，几乎没有可视化画面；晚报另一篇 <code>2611.12832</code>（FP4 与罕见事实）反直觉性同样强，但核心是「曝光次数 — 召回曲线 — 梯度噪声」的机制，两分钟内很难让普通观众「看见」，留作后续期号备选。
+  </div></div>
+</div>

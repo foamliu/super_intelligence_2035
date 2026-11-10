@@ -5651,3 +5651,5 @@
 | 2026-11-10 | 2611.09412 | MIRA: Mitigating Pole Geometry Bias in Recurrent Language Models | cs.AI | 收录 |
 | 2026-11-10 | 2611.09729 | One Run Is Not Enough: A Monte Carlo Protocol for Evaluating LLM Reliability on Data Science Tasks | cs.LG | 收录 |
 | 2026-11-10 | 2611.09802 | When Instruction Files Go Stale: Documentation Debt and Hidden Cost in Coding Agents | cs.SE | 收录 |
+| 2026-11-10 | 2611.12820 | How Well Does AI Peer Review Work? A Benchmark Built from 100 Planted Errors | cs.CL | 收录 |
+| 2026-11-10 | 2611.12832 | What the Loss Curve Misses: FP4 Pretraining Slows the Acquisition of Rare Facts | cs.LG | 收录 |

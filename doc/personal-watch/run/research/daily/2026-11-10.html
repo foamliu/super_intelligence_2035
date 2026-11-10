@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>论文观察日报 · 2026-11-10（早报 · 3/5）· research 线</title>
+<title>论文观察日报 · 2026-11-10（晚报 · 5/5）· research 线</title>
 <style>
   :root { --primary:#0b3d6e; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700; --bad:#cf222e;
           --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
@@ -54,19 +54,21 @@
 <body>
 <div class="wrap">
 <header class="hero">
-  <h1>论文观察日报 · 2026-11-10 <span class="badge b-am">早报 · 3/5</span></h1>
-  <div class="sub">每日 5 篇推荐论文（早 3 / 晚 2）· <b>今日进度 3 / 5</b>（早报 3 篇「借鉴」；晚报 2 篇「科普」待 18:00）· 含 <b>「对各线的可执行建议」</b>（pretrain / vision / harness / data / zhulong / designflow 六线）</div>
+  <h1>论文观察日报 · 2026-11-10 <span class="badge b-pm">晚报 · 5/5</span></h1>
+  <div class="sub">每日 5 篇推荐论文（早 3 / 晚 2）· <b>今日进度 5 / 5</b>（早报 3 篇「借鉴」+ 晚报 2 篇「科普」）· 含 <b>「对各线的可执行建议」</b>（pretrain / vision / harness / data / zhulong / designflow 六线）</div>
   <div class="meta">
     <span>📅 2026-11-10（周二）</span>
-    <span>🕕 生成 06:0x CST（早报）</span>
+    <span>🕕 早报 06:0x → 晚报 18:0x CST</span>
     <span>📚 数据源 arXiv（export.arxiv.org）· 官方 API</span>
-    <span>🏷 本页口径：<b>借鉴</b>（3 篇）</span>
+    <span>🏷 本页口径：<b>借鉴</b>（3 篇）+ <b>科普</b>（2 篇）</span>
   </div>
   <div class="disc">⚠️ 免责：本页为 <b>论文解读 / 待读线索</b>，<b>非结论、非官方</b>；所有数字均为<b>作者自报</b>，本线<b>未复现</b>；原题照抄不改写。「对各线的可执行建议」为<b>基于论文的推断，供各线自行评估</b>，非指令；与各线任务书冲突时以任务书为准。</div>
 </header>
 
 <div class="note">
   <b>批次状态（先看这条）</b>：本轮 4 条独立探针 <b>4/4</b> <code>status=200</code> + <code>application/atom+xml; charset=utf-8</code>、全部 <code>attempts=1</code> —— ① <code>cat:cs.CL</code> <code>totalResults=</code><b>124,868</b>、最新 <code>published</code> 已推进到 <code>2026-11-06T18:48:04Z</code>（<code>2611.09868v1</code> CodeQuant2）；② <code>cat:cs.CL AND submittedDate:[202611090000 TO 202611132359]</code> → <b>total=0</b>；③ 全库同区间 → <b>total=0</b>（11-09 提交尚未入库）；④ 广度 5 分类 → <b>644,448</b>。与 r141（11-09 早报，批次仍 <code>2026-11-05</code>、总量 124,790、广度 643,965）相比 <b>批次已刷新</b> ⇒ 本轮取<b>最近公告批次 <code>2026-11-06</code></b>，三篇距本轮唤醒 <b>76.1–81.3h</b>（<b>超出 72h 常规窗口 ⇒ 走 §0.1 公告批次例外</b>，逐卡标注实际时长，<b>不写成「无新增」</b>）。
+  <hr style="border:0;border-top:1px dashed #d0d7de;margin:10px 0;">
+  <b>🌙 晚报批次复核（18:0x · 已刷新）</b>：4 条独立探针 <b>4/4</b> <code>status=200</code> + <code>application/atom+xml; charset=utf-8</code>、全部 <code>attempts=1</code> —— ① <code>cat:cs.CL</code> <code>totalResults=</code><b>125,075</b>、最新 <code>published</code> 推进到 <code>2026-11-09T18:57:00Z</code>（<code>2611.12872v1</code> HiVe-Mem）；② <code>cat:cs.CL AND submittedDate:[202611100000 TO 202611142359]</code> → <b>total=0</b>；③ 全库同区间 → <b>total=0</b>（11-10 提交尚未入库，合日历）；④ 广度 5 分类 → <b>645,596</b>（AM 644,448）。与早报（124,868 / <code>2026-11-06</code>）相比<b>批次推进一个公告批次</b> ⇒ 晚报窗口 = <code>published ≥ 2026-11-09</code>，两篇距本轮唤醒 <b>≈15.5–15.6h</b>（<b>在 72h 常规窗口内，无需例外</b>）。早报的批次数字仍保留在附录 A（<b>06:00 时点快照</b>，不追改）。
 </div>
 
 <h2 class="sec">☀️ 早报 · 3 篇「借鉴」<span class="badge b-jz">借鉴</span></h2>
@@ -130,9 +132,54 @@
 </div>
 
 
+<h2 class="sec">🌙 晚报 · 2 篇「科普」<span class="badge b-kp">科普</span></h2>
+<p style="font-size:13.5px;color:#59636e;margin:0 0 8px;">晚报按「<b>大众看得懂 + 有传播力</b>」口径选（与早报的「借鉴」口径分开，不混用）。两篇都满足「反直觉 + 可截图」：<b>① 100 个错误埋进论文，最好的 AI 审稿人只找到 71 个，7 个谁都找不到</b>（且全是「删掉的东西」）；<b>② loss 曲线几乎一样，4-bit 预训练却要多看 1.3–1.5 倍的样本才记得住罕见事实</b>。两篇同时对各线有直接可用之处（见下方「晚报补充建议」）。</p>
+
+<div class="card">
+  <h3><span class="no">4</span>How Well Does AI Peer Review Work? A Benchmark Built from 100 Planted Errors</h3>
+  <div class="row"><div class="k">中文一句话</div><div class="v">作者把 <b>100 个已知错误</b>埋进 <b>10 篇</b>开放获取的心理学论文（先按 INSPECT-SR 等清单整理出 <b>62 类</b>错误，每篇 10 个；埋法既包括改写关键句，也包括<b>直接删掉关键信息</b>），再让当时的 Claude / GPT / Gemini 各版本与两个付费 AI 审稿工具去读：<b>最好的单系统抓到 71/100，最差的只有 30/100；把全部系统并起来能到 93/100</b>。而<b>7 个谁都没抓到的错误，全是「省略型」</b>——论文少了本该有的一段说明，而不是多写了一句错话。</div></div>
+  <div class="row"><div class="k">原题</div><div class="v"><span class="orig">How Well Does AI Peer Review Work? A Benchmark Built from 100 Planted Errors</span></div></div>
+  <div class="row"><div class="k">作者 / 机构</div><div class="v">Paul Litvak（<b>1 位</b>；据 PDF 首页：<b>Robyn Dawes Institute</b>；作者自述本工作与 Claude 协作完成，评审工具与全部输出已公开）</div></div>
+  <div class="row"><div class="k">日期</div><div class="v">首次提交 <b>2026-11-09</b>（<code>published=2026-11-09T18:22:19Z</code>；<code>updated</code> 同日，无 v2）· 距本轮唤醒（11-10 18:00 CST = 11-10 10:00Z）<b>≈15.6h</b>（<b>在 72h 常规窗口内</b>）· PDF 实测 <b>5 页</b> / <b>648,327 B</b></div></div>
+  <div class="row"><div class="k">分类 / 标签</div><div class="v"><code>cs.CL</code> · <span class="badge b-kp">科普</span> · 关键词：AI 审稿 / 埋错误基准 / 漏检 / 省略型错误 / 系统集成 / 误报未测</div></div>
+  <div class="row"><div class="k">链接</div><div class="v"><a href="https://arxiv.org/abs/2611.12820">https://arxiv.org/abs/2611.12820</a>（PDF 已落地：<code>research/pdf/2026-11-10/2611.12820.pdf</code>，校验见附录 F）</div></div>
+  <div class="reason"><b>推荐理由（科普 · 大众看点 + 对 harness / zhulong / designflow / data 的「判分器校准」直接可用）</b>
+    <ol>
+      <li><b>大众看得懂的画面</b>：把错误「埋」进论文，看 AI 能不能挖出来 —— 这是所有人都能秒懂的游戏规则；而且结论反直觉：<b>最强模型也漏掉近三成</b>，最差的付费工具只找到三成。</li>
+      <li><b>可截图的大数字</b>：<b>71 / 100</b>（GPT-5.5 high reasoning）· <b>30 / 100</b>（Reviewer3）· 并集 <b>93 / 100</b> · <b>7 个谁都没抓到</b>。成本对比也好讲：基础模型<b>约 4 美分/错误</b>，付费工具 <b>≈8.77 美元/错误</b>（贵约 200 倍）。</li>
+      <li><b>对 harness 最有用的一点</b>：<b>同一个模型重跑 3 次几乎不增加命中</b>，但<b>不同系统之间重合很少</b> —— 所以提召回要靠<b>异构多样性</b>（不同模型 / 不同 harness），不是靠同一路多跑几次。这条正好对上本线「7 路 predict」的现状。</li>
+      <li><b>对 designflow 最有用的一点</b>：全部漏检都集中在「<b>删掉了什么</b>」这类错误上。而当前 <code>check.py</code> 的 <code>k_check</code> 断言多为「交付件里有没有 / 对不对」，<b>天然缺「少了什么」这一类</b>。另外作者明确<b>没测误报</b>（precision 未知）—— 这也是我们判分器该补的一维。</li>
+      <li><b>边界（必须写清）</b>：① 只做<b>实验心理学</b> 10 篇论文、100 个错误，<b>不能直接外推到 EDA / 代码评审</b>；② 只测<b>召回</b>，不测误报；埋入错误的分布与真实论文错误分布是否一致<b>未知</b>；③ 错误判定靠 LLM-as-judge + 抽查，不是 100 条逐条人工复核；④ 系统版本是 2026-03 / 06 的快照，作者自己也说「名次别当真」；⑤ 作者自报、本线未复现。</li>
+    </ol>
+    <b>建议动作</b>：<b>读原文</b>（Table 1 排行榜 + §3 并集/重跑结论 + §4 Caveats）+ <b>试跑</b>：见下方「harness」「zhulong」「designflow」「data」晚报补充建议。
+  </div>
+</div>
+
+<div class="card">
+  <h3><span class="no">5</span>What the Loss Curve Misses: FP4 Pretraining Slows the Acquisition of Rare Facts</h3>
+  <div class="row"><div class="k">中文一句话</div><div class="v">问一个被 loss 曲线盖住的问题：<b>低精度训练在 loss 打平时，学「罕见事实」是不是一样快？</b> 作者用模拟 4-bit 矩阵乘从零训练小 transformer，在「人物出现 1–256 次」可控的合成传记上测：<b>NVFP4 要达到 BF16 相同的召回，token 对齐下需要 1.32×（合成）/ 1.52×（自然文本）的曝光次数，而验证 loss 只差 0.5% / 2%</b>；越罕见越吃亏（见 64 次的 0.97× → 只见到 2 次的 <b>1.30×</b>）。机制上，<b>噪声进 Adam 二阶矩 ≈ 降学习率（代价会消退），噪声进更新会压低信噪比（约 2/3 代价持续到训练结束）</b>，把学习率调大补不回来。</div></div>
+  <div class="row"><div class="k">原题</div><div class="v"><span class="orig">What the Loss Curve Misses: FP4 Pretraining Slows the Acquisition of Rare Facts</span></div></div>
+  <div class="row"><div class="k">作者 / 机构</div><div class="v">Chang Lu · Mengjiao Zhang（<b>2 位</b>；据 PDF 首页：<b>Independent Researcher</b>，通讯 <code>luchang.cs@gmail.com</code>）</div></div>
+  <div class="row"><div class="k">日期</div><div class="v">首次提交 <b>2026-11-09</b>（<code>published=2026-11-09T18:30:41Z</code>；<code>updated</code> 同日，无 v2）· 距本轮唤醒 <b>≈15.5h</b>（<b>72h 内</b>）· PDF 实测 <b>22 页</b> / <b>619,592 B</b></div></div>
+  <div class="row"><div class="k">分类 / 标签</div><div class="v"><code>cs.LG</code> · <span class="badge b-kp">科普</span> · 关键词：低精度预训练 / NVFP4 / 罕见事实 / 曝光次数 / 梯度噪声 / Adam 二阶矩 / loss 指标盲区</div></div>
+  <div class="row"><div class="k">链接</div><div class="v"><a href="https://arxiv.org/abs/2611.12832">https://arxiv.org/abs/2611.12832</a>（PDF 已落地：<code>research/pdf/2026-11-10/2611.12832.pdf</code>，校验见附录 F）</div></div>
+  <div class="reason"><b>推荐理由（科普 · 反直觉结论 + 对 pretrain 的低精度路线 / 评测设计、data 的配比与去重直接可用）</b>
+    <ol>
+      <li><b>大众能懂的反差</b>：「loss 一模一样，模型记住的东西却不一样」—— 用一句话就能讲清，且与每个人用 AI 的体感一致（冷门知识老是记错）。</li>
+      <li><b>有传播力的数字</b>：loss 只差 <b>0.5%</b>，罕见事实却要 <b>1.32×</b> 曝光；自然文本上 loss 差 <b>2%</b>、曝光差 <b>1.52×</b>；只出现 2 次的事实要 <b>1.30×</b>。</li>
+      <li><b>对 pretrain 的评测设计直接可用</b>：作者只需要「<b>一段插桩的语料切片</b>」就能量出曝光代价 —— 即按曝光次数分桶（1–2 / 4–8 / 16–64）的<b>罕见事实召回探针</b>。这比再加一个「8 集常识平均分」更能分辨低精度/量化的真实损失。</li>
+      <li><b>给了一个不靠调参的判据</b>：用 <b>BF16 checkpoint 的梯度统计</b> 就能给各低精度格式 / 部分量化 / 噪声控制排序（Spearman <b>0.96</b>，95% CI [0.84, 0.99]；17 个配置里 15 个落在观测 95% 区间内），<b>不用真的把每种格式都训一遍</b>。</li>
+      <li><b>边界（必须写清）</b>：① 模型仅 <b>10.6M / 25.7M / 92.0M</b> 非嵌入参数（主实验 40M），<b>远小于 2B</b>；② 单张 <b>RTX 4090</b>，量化是<b>模拟</b>（操作数量化 + FP32 乘），<b>不验证与 Blackwell 内核逐位一致，也不测原生 FP4 吞吐</b>；③ 只测「事实召回」一类知识，未覆盖推理/代码；④ 作者自报、本线未复现。</li>
+    </ol>
+    <b>建议动作</b>：<b>读原文</b>（Fig.1 两条召回曲线、§4 机制拆分、§5 梯度统计判据、§6 补救实验与 Table 1）+ <b>试跑</b>：见下方「pretrain」「data」晚报补充建议。
+  </div>
+</div>
+
+
+
 <h2 class="sec">🎯 对各线的可执行建议（pretrain / vision / harness / data / zhulong / designflow）</h2>
 <div class="note">
-  <b>说明</b>：依据均取自本页今日 <b>3 篇</b>（arXiv ID + 摘要/正文关键数字，作者自报、本线未复现）；「建议动作」为<b>基于论文的推断</b>，供各线自行评估，<b>不构成新指令</b>；与各线任务书冲突时以任务书为准。某线本期确无对口论文时，如实写「本线本期无新增可用建议」。各线当轮状态取自其 <code>MEMORY_*</code> 顶部快照 + 任务书运维指令区（<b>2026-11-10 06:0x 实读</b>）。<b>本期 6 线均有落点</b>（无「无建议」行）。
+  <b>说明</b>：本节依据取自<b>早报 3 篇</b>（arXiv ID + 摘要/正文关键数字，作者自报、本线未复现）；「建议动作」为<b>基于论文的推断</b>，供各线自行评估，<b>不构成新指令</b>；与各线任务书冲突时以任务书为准。各线当轮状态取自其 <code>MEMORY_*</code> 顶部快照 + 任务书运维指令区（<b>2026-11-10 06:0x 实读</b>）。<b>早报 6 线均有落点</b>（无「无建议」行）；<b>晚报增量另见下一节</b>「🌙 晚报补充 · 对各线的可执行建议（PM）」，两节合起来构成本期完整 6 线建议。
 </div>
 <table>
   <tr><th>线</th><th>建议动作</th><th>依据（arXiv ID + 关键数字）</th><th>预期收益</th><th>成本</th><th>优先级</th></tr>
@@ -186,7 +233,65 @@
   </tr>
 </table>
 
-<h2 class="sec">附录 A · 本轮检索式与命中数（可核验）</h2>
+<h2 class="sec">🌙 晚报补充 · 对各线的可执行建议（PM · 仍覆盖 6 线）</h2>
+<div class="note">
+  <b>说明</b>：本节依据 = 晚报 2 篇（<code>2611.12820</code> / <code>2611.12832</code>），是<b>增量</b>，不替代上一节。<b>6 线全部列出</b>：本期无新增可用建议的线<b>显式写「无」</b>并给理由，<b>不凑数</b>。各线状态取自 <code>MEMORY_*</code> / 任务书运维区（<b>2026-11-10 17:2x–17:5x 实读</b>）。
+</div>
+<table>
+  <tr><th>线</th><th>建议动作</th><th>依据（arXiv ID + 关键数字）</th><th>预期收益</th><th>成本</th><th>优先级</th></tr>
+  <tr>
+    <td><b>pretrain</b><br><span style="font-size:12px;color:#59636e;">iter≈153.3k/700k、step 6.99–7.25s（全 &lt;7.4s）、15/15 eval（10k–150k）全完成、150k Avg=57.12%、无 llama-server 残留；架构 = Mamba2-hybrid 2B</span></td>
+    <td>① <b>加一个「罕见事实曝光探针」</b>（与 8 集常识评测并列、不改口径）：挑 200–400 个长尾实体事实，按训练语料里的<b>曝光次数分桶</b>（1–2 / 4–8 / 16–64），比较各 ckpt 的召回；bucket 间曲线比总分更能看出「长尾是否被欠训练」。② 若评估低精度（FP8/FP4）路线：<b>先用 BF16 ckpt 的梯度统计做格式排序</b>（Spearman 0.96），再决定要不要真训；验收时必须<b>同时</b>报 loss 与「匹配召回所需曝光倍数」，只报 loss 会高估。</td>
+    <td><code>2611.12832</code>（loss 只差 <b>0.5%/2%</b> 时，NVFP4 需 <b>1.32×/1.52×</b> 曝光；64 次 <b>0.97×</b> → 2 次 <b>1.30×</b>；BF16 梯度统计可排序，Spearman <b>0.96</b> [0.84,0.99]）</td>
+    <td>长尾能力从「总分里看不见」变成可量化；低精度决策不再靠试。</td>
+    <td>① 造探针 + 分桶 0.5–1 天（CPU 即可；跑分只在每万 ckpt 时顺带做）② 梯度统计脚本 0.5 天（只读权重）</td>
+    <td>中（不阻塞训练；建议与 160k ckpt 评测合并做）</td>
+  </tr>
+  <tr>
+    <td><b>vision</b><br><span style="font-size:12px;color:#59636e;">阶段 2 已交付 v5（A16%→B37%→C53%、McNemar p=0.0009、cheat_rate=0）；全 CPU；v6 待令</span></td>
+    <td><b>本线本期无新增可用建议</b>。理由：晚报两篇分别是「AI 审稿漏检」与「低精度预训练的长尾代价」，<b>与波形 RL 的奖励设计 / LoRA / 小样本显著性无直接对应</b>；硬塞会变成泛泛而谈。早报已给的「稳定性前提（重复 3 次 + 样本翻转率）」仍有效，照旧推进即可。</td>
+    <td>—（无对口论文，不凑数）</td>
+    <td>—</td>
+    <td>—</td>
+    <td>—</td>
+  </tr>
+  <tr>
+    <td><b>harness</b><br><span style="font-size:12px;color:#59636e;">R2100：gateway UP（0.14s，STABLE）、predict 7 路 ALL ALIVE（2217/1455 real/762 empty）、incr_eval R2028b 6/7 saved + deepseek running、TB-2.1 续跑；不产 HTML（监控轮）</span></td>
+    <td>① <b>用「注入已知缺陷」校准判分/验证器</b>：取 10–20 个已完成任务，人为注入 N 类缺陷（改参数、删关键步骤、删交付件），看现有 verifier / judge 能抓到几成；这是把「pass 率高」变成「召回可测」的最短路径。② <b>提召回靠异构并集，不靠重试</b>：统计 7 路「各自报出的问题集合」的<b>并集覆盖率</b>（并报出每条问题由哪几路发现），取代「单路多跑几次」；文中同模型重跑 3 次几乎不增命中。③ 报告把 <b>empty 数</b> 与 <b>real 数</b>分开列为两行（当前 762 empty 必须可见，不得被 total 吞掉）。</td>
+    <td><code>2611.12820</code>（单系统 <b>30–71/100</b>，并集 <b>93/100</b>；同模型 3 次重跑<b>不增</b>命中；<b>7/7</b> 漏检全是「删除型」）+ <code>2611.12832</code>（loss 不是充分统计量 ⇒ <b>pass rate 也不是</b>）</td>
+    <td>「7 路」的价值第一次被量化（并集增益）；empty 不再被总分掩盖。</td>
+    <td>① 20 个任务 × 3 类注入 ≈ 1 天（可离线，不占 gateway 额度）② 并集统计脚本 2h（只读 jobs-dir）③ 报告加一行 0.5h</td>
+    <td>高（②③ 先做，成本最低）</td>
+  </tr>
+  <tr>
+    <td><b>data</b><br><span style="font-size:12px;color:#59636e;">stack-v3-train 2TB 全 DONE（4600 parquet / 1.85TiB / 0 inc）；ROI 复盘已出（97.6% 独特）；路径台账 staleness 0；等令进 L4/L5 过滤+分词</span></td>
+    <td>① 把「<b>缺失型指标</b>」提为一等公民：QC / 台账里对「缺 license、缺语言标注、缺 shard、缺 checksum」<b>独立成行计数</b>，与「多出异常（重复/损坏/超大文件）」并列（当前漏斗主要统计后者）。② 罕见事实探针落地时，<b>曝光分桶的统计脚本放 data 侧</b>（去重与配比会直接改变长尾曝光次数）：输出每桶 token 数与实体数，供 pretrain 直接消费。</td>
+    <td><code>2611.12820</code>（<b>7/7</b> 无人检出全是「删掉的信息」——缺失最难被发现）+ <code>2611.12832</code>（曝光 64 次 → 2 次，代价从 <b>0.97×</b> 升到 <b>1.30×</b>）</td>
+    <td>数据问题从「事后发现」变「按缺失清单核对」；长尾配比可量化。</td>
+    <td>① QC 报表加 4 列 ≈ 2h（只扫 manifest，不读大文件）② 曝光分桶 ≈ 4h（抽样语料 + 计数）</td>
+    <td>中</td>
+  </tr>
+  <tr>
+    <td><b>zhulong</b><br><span style="font-size:12px;color:#59636e;">两轴消融 20/30 跑中（B_zh_r3 12h cap）；轴 A 定论倒 U（none 79.5±2.6 / medium 85.4±0.7 峰值 / xhigh 82.3±1.1）；B_en 80.0±4.5；B_zh r1 84.2%；r2 pass=null 待 regrade；报告须含分数 + 成本</span></td>
+    <td>① 报告里把 <b>「同变体 3 轮」的定位写清</b>：它买的是<b>稳定性</b>（均值±sd、CI），<b>不买覆盖面</b>——文中同模型重跑 3 次几乎不增加命中，增加命中要靠<b>异构</b>（换基座 / 换 harness）。② 因此不建议「把 30 轮翻倍成 60 轮」；若确需提高「发现问题」的召回，<b>抽 1–2 个关键 cell 加一个异构第二判官</b>（如 GLM + 另一个 harness）做并集，成本口径拆成「<b>重复成本</b> vs <b>多样性成本</b>」两行。③ <b>不要</b>把「通过率」当成唯一质量证据：低精度/低 loss 相关结论在本文里被证明会漏掉长尾（对应到本线 = 158 题里少数难题的表现被均值掩盖），建议报告保留<b>逐题通过矩阵</b>。</td>
+    <td><code>2611.12820</code>（并集 93 vs 单系统 30–71；同模型重跑不增命中）+ <code>2611.12832</code>（loss 差 0.5% 掩盖 <b>1.32×</b> 曝光差 ⇒ 均值掩盖长尾）</td>
+    <td>避免用「多跑几轮」买不到的东西；成本/收益口径更清楚。</td>
+    <td>① 报告改口径 ≈ 1h（只改文字与表头）② 异构判官只在 1–2 cell 试点（按现有预算，不动在跑的 30 轮）</td>
+    <td>中（① 可立即做；② 等 30 轮收口后）</td>
+  </tr>
+  <tr>
+    <td><b>designflow</b><br><span style="font-size:12px;color:#59636e;">shard A 193 case、shard C 饱和（ledger 605：case 275 / parked 330）、shard B/D 被 <code>.75</code> 后端阻塞（exit −1 / 超时）；<code>rewrite_queue.tsv</code> 按「断言闸门 k≥8」逐条重建</span></td>
+    <td>① <b>给 case 加「删除型负例」</b>：对已有 case 各造 2–3 个「删掉应有交付件/关键字段/关键步骤」的变体，验证 <code>check.py</code> 会 <b>FAIL</b>；当前断言多为「有没有 / 对不对」，<b>「少了什么」这一类天然缺</b>（文中 7/7 漏检全在此）。② 把 <b>误报率（precision）</b>纳入 case 质量指标：喂一个「合格但风格不同」的提交，记录 check.py 误报条数（作者明确说这一维在 AI 审稿里仍是空白，我们自己在造题时同样缺）。③ 在 <code>rewrite_queue.tsv</code> 增加 <code>omission_tested</code> 列（是/否）。</td>
+    <td><code>2611.12820</code>（<b>7/7</b> 无系统可检出的错误 = 全部「省略型」；且<b>误报未测</b>是作者自陈的最大缺口）+ <code>2611.09802</code>（早报：过期检查「静默通过」同属缺失类）</td>
+    <td>判分器从「能拦住错答」升级为「也能发现漏答」；case 质量有可比较的第二维。</td>
+    <td>每条 case 2–3 个负例 ≈ 20–30 min；20 条 case 约 1 天（可与 rewrite_queue 修复并行）</td>
+    <td>高（先挑 3 条 case 试点）</td>
+  </tr>
+</table>
+<p style="font-size:13px;color:#59636e;"><b>PM 自检</b>：6 线齐全；<b>vision 本期无新增可用建议（显式写「无」+ 理由）</b>；可执行建议条数 = <b>5 线 × 1–3 条</b>（跨线累计 ≥2 条，满足 2026-11-07 用户令）。</p>
+
+
+<h2 class="sec">附录 A · 早报检索式与命中数（06:00 时点 · 可核验）</h2>
 <table>
   <tr><th>#</th><th>检索式</th><th>totalResults</th><th>返回 / 最新 published</th><th>判定</th></tr>
   <tr><td>①</td><td><code>cat:cs.CL</code> · <code>sortBy=lastUpdatedDate</code></td><td><b>124,868</b></td><td>5 条；最新 <code>2026-11-06T18:48:04Z</code>（<code>2611.09868v1</code> CodeQuant2）</td><td><b>已刷新</b>（r141 为 124,790 / 11-05）</td></tr>
@@ -196,7 +301,7 @@
 </table>
 <p style="font-size:13px;color:#59636e;">候选池（`raw/candidates_r142.py`，单分类各取最新 100 条、合并去重、只留 <code>published ≥ 2026-11-06</code>）：<code>cs.CL</code> 124,868 / <code>cs.CV</code> 212,596 / <code>cs.LG</code> 297,942 / <code>cs.AI</code> 211,682 / <code>cs.SE</code> 30,885（均 <code>200</code> + <code>atom+xml</code>、<code>n=100</code>）⇒ <b>merged 298 / seen 0 / fresh 298</b>（本批新入库，故零重复）。<code>id_list</code> 复核 <b>5/5</b>（<code>raw/2026-11-10-am-idlist-r142a.xml</code>：200 / <code>application/atom+xml</code> / 12,791 B / 1.29s）。</p>
 
-<h2 class="sec">附录 B · 取数、去重与选文（3 篇）</h2>
+<h2 class="sec">附录 B · 早报取数、去重与选文（3 篇）</h2>
 <table>
   <tr><th>#</th><th>arXiv ID · 简称</th><th>分类</th><th>published</th><th>距唤醒</th><th>落点线</th></tr>
   <tr><td>1</td><td><code>2611.09412</code> MIRA</td><td>cs.AI</td><td>2026-11-06T12:44:53Z</td><td>≈81.3h（例外）</td><td>pretrain（主）· vision（侧）</td></tr>
@@ -205,7 +310,7 @@
 </table>
 <p style="font-size:13px;color:#59636e;"><b>未选但强对口的候选（留作后续，不凑数）</b>：<code>2611.08946</code> Flex-RSI（harness 自改进基准：固定预算下 executor 改方案、improver 改 harness 本身；<b>改 harness 本身贡献增益</b>，对 harness 线极对口，但今日额度 3 篇已满）；<code>2611.09807</code> 压缩式对话记忆 vs RAG（已于同轮补进 <code>daily/2026-11-09.html</code> 晚报）；<code>2611.09204</code> 表征漂移（同上补进 11-09 晚报）；<code>2611.09825</code> BitDecoding-FP4（原生 FP4 KV cache 解码，对 pretrain 推理吞吐侧向）；<code>2611.09722</code> FOSCAR（2/4-bit KV cache decode attention 仿射折叠）；<code>2611.09457</code> Definitions, Label Names, or Demonstrations?（LLM 标注到底听谁的：定义 vs 标签名 vs 示例，对 data 的标注质量与 designflow 的判分有效性侧向）。</p>
 
-<h2 class="sec">附录 C · PDF 落地校验（3/3）</h2>
+<h2 class="sec">附录 C · 早报 PDF 落地校验（3/3）</h2>
 <table>
   <tr><th>arXiv ID</th><th>字节数</th><th>页数</th><th>字符数（去空白）</th><th>sha256（前 16）</th><th>结构校验</th></tr>
   <tr><td><code>2611.09412</code></td><td>3,766,708</td><td>63</td><td>117,158</td><td><code>55d33803a96b874d</code></td><td><code>%PDF-</code> 头 + <code>%%EOF</code> + 字节 == <code>Content-Range</code> total + <code>pdftotext</code> 可解析 ✅</td></tr>
@@ -217,19 +322,55 @@
 <h2 class="sec">附录 D · 台账与当日进度</h2>
 <table>
   <tr><th>项</th><th>本轮前</th><th>本轮后</th><th>说明</th></tr>
-  <tr><td><code>SEEN.md</code></td><td>5,648 行（收录 324 / 候选 4,558 / 候选(RSS) 507）</td><td><b>5,653 行（收录 329）</b></td><td>+5（11-09 晚报补 2 + 11-10 早报 3）；幂等断言：每 ID 恰好 1 行</td></tr>
-  <tr><td><code>papers.jsonl</code></td><td>324</td><td><b>329</b></td><td><code>raw/update_r142.py</code> 断言：仅追加、无重复、<code>published</code> 前缀 <code>2026-11-06</code></td></tr>
-  <tr><td><code>daily/2026-11-10.html</code></td><td>—</td><td><b>本期（3/5）</b></td><td>3 卡 + 六线建议 + 附录 A/B/C/D；0 <code>&lt;script&gt;</code>、外链仅 3 条 arXiv abs</td></tr>
-  <tr><td><code>daily/index.html</code></td><td>最新 = 11-09 早报 3/5</td><td><b>11-09 改 5/5 + 新增 11-10 行（3/5）</b></td><td>按日倒序；footer 最近更新同步</td></tr>
+  <tr><td><code>SEEN.md</code></td><td>5,648 行（收录 324 / 候选 4,558 / 候选(RSS) 507）</td><td><b>5,655 行（收录 331）</b></td><td>今日 +7（11-09 晚报补 2 + 11-10 早报 3 + 晚报 2）；幂等断言：每 ID 恰好 1 行</td></tr>
+  <tr><td><code>papers.jsonl</code></td><td>324</td><td><b>331</b></td><td><code>raw/update_r142.py</code> + <code>raw/update_r143.py</code> 断言：仅追加、无重复、<code>published</code> 前缀分别为 <code>2026-11-06</code> / <code>2026-11-09</code></td></tr>
+  <tr><td><code>daily/2026-11-10.html</code></td><td>—</td><td><b>本期（5/5 · 晚报收官）</b></td><td>5 卡（3 借鉴 + 2 科普）+ 早/晚两节六线建议 + 附录 A–G；0 <code>&lt;script&gt;</code>、外链仅 5 条 arXiv abs</td></tr>
+  <tr><td><code>daily/index.html</code></td><td>最新 = 11-09 早报 3/5</td><td><b>11-09 改 5/5 + 新增 11-10 行（5/5）</b></td><td>按日倒序；footer 最近更新同步</td></tr>
   <tr><td>出口</td><td>—</td><td><b>HTML（无邮件）</b></td><td>🚫 未发任何日报邮件（2026-11-07 10:50 用户令：唯一出口 = <code>daily/&lt;date&gt;.html</code> + <code>daily/index.html</code>）</td></tr>
 </table>
+<h2 class="sec">附录 E · 晚报批次复核、取数与选文（2 篇）</h2>
+<table>
+  <tr><th>#</th><th>检索式（晚报 18:0x 实测）</th><th>totalResults</th><th>返回 / 最新 published</th><th>判定</th></tr>
+  <tr><td>①</td><td><code>cat:cs.CL</code> · <code>sortBy=lastUpdatedDate</code></td><td><b>125,075</b></td><td>5 条；最新 <code>2026-11-09T18:57:00Z</code>（<code>2611.12872v1</code> HiVe-Mem）</td><td><b>批次已推进</b>（AM 为 124,868 / 11-06）</td></tr>
+  <tr><td>②</td><td><code>cat:cs.CL AND submittedDate:[202611100000 TO 202611142359]</code></td><td><b>0</b></td><td>0 条</td><td>11-10 提交尚未入库，合日历</td></tr>
+  <tr><td>③</td><td><code>submittedDate:[202611100000 TO 202611142359]</code>（全库）</td><td><b>0</b></td><td>0 条</td><td>同上</td></tr>
+  <tr><td>④</td><td><code>cat:cs.CL OR cs.CV OR cs.SE OR cs.AI OR cs.LG</code>（广度）</td><td><b>645,596</b></td><td>3 条；最新 <code>2026-11-09T18:59:54Z</code>（<code>2611.12886v1</code> Reframe）</td><td>较 AM 的 644,448 增加 1,148</td></tr>
+</table>
+<p style="font-size:13px;color:#59636e;">证据：<code>raw/2026-11-10-pm-verify-r143.txt</code>（4/4 <code>200</code> + <code>application/atom+xml; charset=utf-8</code>，全部 <code>attempts=1</code>）。候选池（<code>raw/candidates_r143.py 2026-11-09</code>，单分类各取最新 100 条、合并去重、只留 <code>published ≥ 2026-11-09</code>）：<code>cs.CL</code> 125,075 / <code>cs.CV</code> 212,913 / <code>cs.LG</code> 298,450 / <code>cs.AI</code> 212,161 / <code>cs.SE</code> 30,951（均 <code>200</code> + <code>atom+xml</code>、<code>n=100</code>）⇒ <b>merged 310 / seen 0 / fresh 310</b>（<code>raw/2026-11-10-pm-candidates-r143.json</code>）。</p>
+<table>
+  <tr><th>#</th><th>arXiv ID · 简称</th><th>分类</th><th>published</th><th>距唤醒</th><th>落点线</th></tr>
+  <tr><td>4</td><td><code>2611.12820</code> AI Peer Review / 100 Planted Errors</td><td>cs.CL</td><td>2026-11-09T18:22:19Z</td><td>≈15.6h</td><td>harness（主）· zhulong · designflow · data</td></tr>
+  <tr><td>5</td><td><code>2611.12832</code> What the Loss Curve Misses</td><td>cs.LG</td><td>2026-11-09T18:30:41Z</td><td>≈15.5h</td><td>pretrain（主）· data</td></tr>
+</table>
+<p style="font-size:13px;color:#59636e;"><b>未选但留作后续（不凑数）</b>：<code>2611.12676</code> VLA + 真人机械臂下棋（模拟数据预训练在真实数据稀缺时收益明显、LR cool-down 一项 +31 分、验证 loss/动作误差不能用于选 ckpt —— 对 vision 的「小样本 + 选点」很对口，但今日额度已满）；<code>2611.12879</code> 从网络视频预测 3D 手-物交互（可视化潜力强）；<code>2611.12834</code> AI 预测机器人是怎么被人类造出来的（访谈研究，过程失败模式）；<code>2611.12814</code> 41 个模型给临床/照护者/患者三种身份的心理健康建议审计（35,055 条回答）。</p>
+
+<h2 class="sec">附录 F · 晚报 PDF 落地校验（2/2）</h2>
+<table>
+  <tr><th>arXiv ID</th><th>字节数</th><th>页数</th><th>字符数（去空白）</th><th>sha256（前 16）</th><th>结构校验</th></tr>
+  <tr><td><code>2611.12820</code></td><td>648,327</td><td>5</td><td>15,420</td><td><code>ca17cfbbcda4db33</code></td><td><code>%PDF-</code> 头 + <code>%%EOF</code> + 字节 == <code>Content-Range</code> total + <code>pdftotext</code> 可解析 ✅</td></tr>
+  <tr><td><code>2611.12832</code></td><td>619,592</td><td>22</td><td>88,894</td><td><code>908f56036d957361</code></td><td>同上 ✅</td></tr>
+</table>
+<p style="font-size:13px;color:#59636e;">晚报合计 <b>1,267,919 B ≈ 1.21 MiB</b>（<code>research/pdf/</code> 按体积红线<b>不入 git</b>）；下载器 <code>raw/pdf_range_resume_r142.py</code>（8 段 Range + 断点续传，边缘 IP <code>151.101.67.42</code>），<b>2/2 首轮全 OK、零续传</b>。当日 5 篇 PDF 合计 <b>6,844,924 B ≈ 6.53 MiB</b>。<b>不声称哈希与 ETag 一致</b>（口径不可比），只称结构校验 + 字节数 + 页数 + 可解析。</p>
+
+<h2 class="sec">附录 G · 晚报变更说明（AM → PM）</h2>
+<table>
+  <tr><th>#</th><th>改了什么</th><th>为什么</th></tr>
+  <tr><td>1</td><td>页头/title：<b>早报 · 3/5 → 晚报 · 5/5</b>；口径标签改为「借鉴 3 篇 + 科普 2 篇」；生成时间改为「早报 06:0x → 晚报 18:0x」</td><td>当日收口，进度必须与事实一致（3 + 2 = 5/5）</td></tr>
+  <tr><td>2</td><td>批次状态块<b>新增一段晚报复核</b>（cs.CL 125,075 / 最新 11-09 / 广度 645,596），并注明早报数字保留为 06:00 时点快照、不追改</td><td>批次在 09:00 后推进了一个公告批次；旧数字若直接改写会丢掉「当时看到什么」的证据</td></tr>
+  <tr><td>3</td><td><b>新增 2 张卡（4、5）</b> + 新章节「🌙 晚报增补 · 对各线的可执行建议（PM · 6 线）」</td><td>兑现「早 3 晚 2」与「每期 6 线齐全」；PM 建议是<b>增量</b>，不覆盖早报建议</td></tr>
+  <tr><td>4</td><td>六线建议节说明改为「本节 = 早报 3 篇」，并指到 PM 节</td><td>避免读者把「3 篇」当成全天依据；两节合起来才是本期完整 6 线建议</td></tr>
+  <tr><td>5</td><td>新增附录 E（PM 批次/取数/选文 + 未选候选）、附录 F（PM PDF 校验）、附录 G（本表）；附录 A–D <b>保留为 AM 快照</b>（仅 D 的台账数字更新为收官值）</td><td>可核验优先：AM 的探针结果是当时的真实输出，不能用 PM 结果覆盖</td></tr>
+  <tr><td>6</td><td>footer：下一轮改为「<b>2026-11-11 06:00 CST（早报）</b>」；补「今日已收口 5/5」</td><td>避免读者以为还要等一轮</td></tr>
+</table>
+
+
 <div class="ok-box" style="margin-top:14px;">
-  <b>本期口径自检</b>：① 当天合计 <b>3 / 5</b>（早 3「借鉴」；晚报 2 篇待 18:00）—— 未凑数、未放宽入账判据；② 3 篇均实测 <code>HTTP 200</code> + <code>application/atom+xml</code> + 真实 <code>published</code>（<b>200 ≠ 有料</b> 已校验）；③ 与 <code>SEEN.md</code> / <code>papers.jsonl</code> / <code>TOP_K.jsonl</code> / 近 7 天 <code>daily/</code> <b>无重复</b>；④ 3 篇均<b>超出 72h 常规窗口</b>（76.1–81.3h），按 §0.1 公告批次例外登记并逐卡标注（<b>不写成「无新增」</b>）；⑤ 建议节 <b>6 线齐全</b>（pretrain / vision / harness / data / zhulong / designflow），每条含「动作 + 依据 + 收益 + 成本 + 优先级」。同轮另补跑 <code>daily/2026-11-09.html</code> 晚报至 5/5。
+  <b>本期口径自检（晚报收官）</b>：① 当天合计 <b>5 / 5</b>（早 3「借鉴」+ 晚 2「科普」）—— 未凑数、未放宽入账判据；② 5 篇均实测 <code>HTTP 200</code> + <code>application/atom+xml</code> + 真实 <code>published</code>（<b>200 ≠ 有料</b> 已校验）；③ 与 <code>SEEN.md</code> / <code>papers.jsonl</code> / <code>TOP_K.jsonl</code> / 近 7 天 <code>daily/</code> <b>无重复</b>（晚报候选池 310 条 <code>seen=0</code>）；④ 早报 3 篇<b>超出 72h 常规窗口</b>（76.1–81.3h）按 §0.1 公告批次例外登记并逐卡标注（<b>不写成「无新增」</b>）；晚报 2 篇在 72h 内（≈15.5–15.6h）；⑤ 建议节<b>两节合计 6 线齐全</b>（早报 6/6、晚报 5/6 + vision 显式写「无」并给理由），每条含「动作 + 依据 + 收益 + 成本 + 优先级」；⑥ <b>出口只有 HTML</b>：未发任何日报邮件。同轮另补跑 <code>daily/2026-11-09.html</code> 晚报至 5/5。
 </div>
 
 <footer>
-  research 线 · 论文观察日报 <b>2026-11-10（早报 · 3/5）</b> ｜ 生成：2026-11-10 06:0x CST ｜ 数据源：arXiv 官方 API（<code>export.arxiv.org</code>）｜ 入口索引：<code>research/daily/index.html</code><br>
-  下一轮：<b>2026-11-10 18:00 CST（晚报）</b>——补 2 篇「科普」→ 当日 5/5 收口 + <code>晚报变更说明（AM → PM）</code>；同轮已补跑 11-09 晚报（见 <code>daily/2026-11-09.html</code>）。<br>
+  research 线 · 论文观察日报 <b>2026-11-10（晚报 · 5/5 收官）</b> ｜ 生成：2026-11-10 06:0x / 18:0x CST ｜ 数据源：arXiv 官方 API（<code>export.arxiv.org</code>）｜ 入口索引：<code>research/daily/index.html</code><br>
+  下一轮：<b>2026-11-11 06:00 CST（早报）</b>——当日 3 篇「借鉴」→ 3/5；分镜脚本见 <code>research/video/SCENES/11_10.html</code>（今日科普 TOP-1 = <code>2611.12820</code>）。<br>
   ⚠️ 本页为论文解读 / 待读线索，<b>非结论、非官方</b>；数字均为作者自报、本线未复现；「对各线的可执行建议」为基于论文的推断，<b>非指令</b>。
 </footer>
 </div>

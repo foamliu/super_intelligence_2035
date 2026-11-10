@@ -1,0 +1,24 @@
+    attempts=1
+--- ① lastUpdatedDate cs.CL
+    url=https://export.arxiv.org/api/query?search_query=cat%3Acs.CL&start=0&max_results=5&sortBy=lastUpdatedDate&sortOrder=descending
+    status=200 ct=application/atom+xml; charset=utf-8 total=125075 n_entries=5 4.69s
+    2611.12872v1 2026-11-09T18:57:00Z 2026-11-09T18:57:00Z cs.CL HiVe-Mem: Interleaving Horizontal Memory Expansion and Vertical Eviden
+    2611.12864v1 2026-11-09T18:51:03Z 2026-11-09T18:51:03Z cs.CL Is Persona Generalization Predictable?
+    2611.12856v1 2026-11-09T18:45:28Z 2026-11-09T18:45:28Z cs.CL WorkflowArena: Benchmarking Executable Workflow Orchestration in LLM-B
+    2611.12820v1 2026-11-09T18:22:19Z 2026-11-09T18:22:19Z cs.CL How Well Does AI Peer Review Work? A Benchmark Built from 100 Planted 
+    2606.25632v2 2026-06-24T09:37:49Z 2026-11-09T18:20:33Z cs.CL Staying In Character: Role-Playing Agents with Perspective-Bounded Mem
+    attempts=1
+--- ② submittedDate 20261109-20261113 (cs.CL)
+    url=https://export.arxiv.org/api/query?search_query=cat%3Acs.CL+AND+submittedDate%3A%5B202611100000+TO+202611142359%5D&start=0&max_results=8&sortBy=submittedDate&sortOrder=descending
+    status=200 ct=application/atom+xml; charset=utf-8 total=0 n_entries=0 2.01s
+    attempts=1
+--- ③ submittedDate 20261109-20261113 (全库，不加分类)
+    url=https://export.arxiv.org/api/query?search_query=submittedDate%3A%5B202611100000+TO+202611142359%5D&start=0&max_results=8&sortBy=submittedDate&sortOrder=descending
+    status=200 ct=application/atom+xml; charset=utf-8 total=0 n_entries=0 1.01s
+    attempts=1
+--- ④ 广度 sweep 5 分类
+    url=https://export.arxiv.org/api/query?search_query=cat%3Acs.CL+OR+cat%3Acs.CV+OR+cat%3Acs.SE+OR+cat%3Acs.AI+OR+cat%3Acs.LG&start=0&max_results=3&sortBy=submittedDate&sortOrder=descending
+    status=200 ct=application/atom+xml; charset=utf-8 total=645596 n_entries=3 0.74s
+    2611.12886v1 2026-11-09T18:59:54Z 2026-11-09T18:59:54Z cs.CV Reframe: Observation-Aligned Multi-Teacher On-Policy Distillation for 
+    2611.12885v1 2026-11-09T18:59:45Z 2026-11-09T18:59:45Z cs.CV World In-Context Learning for Agentic Robot Manipulation
+    2611.12884v1 2026-11-09T18:59:40Z 2026-11-09T18:59:40Z cs.LG Guiding Data Allocation for Robust Subpopulation Generalization
