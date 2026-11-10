@@ -34,32 +34,27 @@
   - assistant 的修复方案（连续方波激励 + `.meas tran` 4 边沿 + 平均 + PVT corner sweep）作为金标准结构
 - 真实 `delay_test.sp` 在 `/proj/m2701/...`（curryxu 所有，e0031982 无权限读，已验证 NOACCESS）→ 合成代表性 base netlist（25 级 invFx1_sub_Fifo，单脉冲 VClk，.param pvcc/tCK/tr/tf）
 
-## case 设计
+## case 设计（实际交付，与 on-disk check.py/ref 一致）
 
-**EDA-Eval-DesignFlow-PvtInvDelayMeas-001**（spice_sim / synthesized / L1，k=14）
+**EDA-Eval-DesignFlow-PvtInvChainDelayMeas-001**（spice_sim / synthesized / L1，k=12）
 
-- **deliverable**: `pvt_inv_delay_meas_gen.py`，CLI `python3 pvt_inv_delay_meas_gen.py <base_netlist.sp> <spec.json> <out_deck.sp> <out_report.json>`
-- 读 base_netlist.sp（反相器链 subckt + XI_ 实例 + .param pvcc/tCK/tr/tf + 单脉冲 VClk）→ 解析 n_stages（XI_ 计数）/ in_node / out_node / params
-- 读 spec.json（corners[] {name,temp,vdd,process} / stimulus{tCK,tr,tf,n_edges} / measure{rise,fall,n_samples} / model_lib / in_node / out_node）
-- 生成 out_deck.sp：
-  - `.lib "<model_lib>" <base process>`
-  - `.param pvcc=<base vdd> tCK=... tr=... tf=...`
-  - 连续方波激励 `VClk IN 0 pulse(0 pvcc 0 tr tf 'tCK-tr' '2*tCK')`（**反单脉冲**）
-  - 反相器链 subckt + XI_ 实例（从 base 提取，verbatim）
-  - `.tran <tstep> <n_edges*tCK>`（tstep=tr/10）
-  - `.meas tran td_rise_k`（k=1..n_samples）：trig v(IN) val=pvcc/2 rise=k targ v(OUT) val=pvcc/2 rise=k + `.meas td_rise_avg param=avg`
-  - 若 measure.fall：`.meas tran td_fall_k` fall=k + `.meas td_fall_avg`
-  - 每 corner（除 base）一个 `.alter` 块：`.temp <temp>` + `.param pvcc=<vdd>` + `.lib "<model_lib>" <process>`
-  - `.end`
-- 生成 out_report.json：case_id / spec 镜像 / extracted{n_stages, in_node, out_node, original_stimulus_type} / deck_lines / has_tran / has_alter / n_alter_blocks / n_corners / n_measure_stmts / measure_names[] / has_rise_meas / has_fall_meas / square_wave_stimulus / n_edges / tran_tstop
+- **deliverable**: `pvt_delay_meas_gen.py`，CLI `python3 pvt_delay_meas_gen.py <testbench.sp> <meas_config.json> <measure_output.mt0> <out_deck.sp> <out_report.json>`
+- 读 testbench.sp：提取 PVT corner 链（base .lib + 各 .alter）与各 corner pvcc；定位 `VClk IN 0 pulse(...)` 单脉冲激励行；定位空 .measure 段
+- 读 meas_config.json：in_node/out_node/vdd_param/vth_fraction/n_edges/inverting/corner_meta{temp,vcc}
+- 生成 out_deck.sp：单脉冲→连续方波 `pulse(0 pvcc <tRst_delay> tr tf 'tCK-tr' '2*tCK')`（**保留符号 2*tCK 周期，不数值代入**）；.measure 段插 2*n_edges 条 `.measure tran td_rise_<i>`/`td_fall_<i>`（inverting=true：trig v(IN) rise=<i> → targ v(OUT) fall=<i>；trig v(IN) fall=<i> → targ v(OUT) rise=<i>，阈值 pvcc*vth_fraction）；保留 .alter 链 + .end
+- 解析 measure_output.mt0（CSV: measname,corner,value）：按 corner 聚合 → td_rise_avg/td_fall_avg
+- 写 out_report.json：{corners:[{name,temp,vcc,td_rise_avg,td_fall_avg,edges:[...]}], summary:{min_rise,max_rise,spread_rise,min_fall,max_fall,spread_fall}, n_edges}
 
-## 资产
+## 资产（实际）
 
-- A: base_netlist.sp（25 级，单脉冲）+ spec.json（3 corners TT25/1.0·FF-40/1.1·SS125/0.9，n_edges=8，n_samples=4，rise+fall）
-- 隐藏 B1: hidden_b1_netlist.sp（15 级）+ hidden_b1_spec.json（4 corners，n_edges=10，n_samples=6，rise+fall）
-- 隐藏 B2（反硬编码）: hidden_b2_netlist.sp（31 级）+ hidden_b2_spec.json（2 corners，n_edges=6，n_samples=3，rise only / fall=false）
-- check 只跑 B1+B2，subprocess 真跑候选，断言 deck 结构 + report JSON 字段
+- A: delay_test.sp（25 级，单脉冲，5 corner TT/FF/SS×-40/25/125℃）+ netlist.sp（invFx1_sub_Fifo subckt + 25 XI_ 实例）+ meas_config.json（n_edges=4/inverting=true/5 corner_meta）+ measure_output.mt0（measform=3 CSV）+ output_format_spec.txt + task_brief.md
+- 隐藏 B1: testbench.sp + meas_config.json(3 corner/3 edges) + measure_output.mt0 + netlist.sp
+- 隐藏 B2（反硬编码）: 4 corner(tt_85_pre/ff_m40_pre/ss_85_pre/fs_125_pre)/5 edges，值≠B1
+- check 只跑 B1+B2，subprocess 真跑候选，check 内 _expected_report() 独立重算期望（1% tol）
 
-## 14 断言 (a-n)
+## 12 断言 (a-l)
 
-a zip 含 pvt_inv_delay_meas_gen.py ｜ b py_compile ｜ c B1 exit0 出 out_deck.sp+out_report.json ｜ d B1 deck 含连续方波激励（pulse ... 'tCK-tr' '2*tCK'，反单脉冲 tRst_delay）｜ e B1 deck 含 ≥2 条 .meas tran ｜ f B1 deck 含上升沿 delay 量测（trig v(IN) rise + targ v(OUT) rise）｜ g B1 deck .alter 块数 == n_corners-1 ｜ h B1 deck 含所有 corner 的 .temp（base+各 alter）｜ i B1 deck 含 VDD 变化（pvcc 多个不同值）｜ j B1 deck .tran tstop ≥ n_edges*tCK ｜ k B1 report 合法且 n_stages==XI_计数 / n_corners==spec / has_rise_meas==spec.rise / has_fall_meas==spec.fall / square_wave_stimulus==true ｜ l 反硬编码 B2 deck != B1 且 report.n_stages==B2 XI_计数 / n_corners==B2 spec / .alter 数==B2 corners-1 ｜ m 确定性 B1 连跑 2 次字节一致 ｜ n B1 deck 含下降沿 delay 量测（spec.fall=true ⇒ trig v(IN) fall + targ v(OUT) fall）
+a zip 含 pvt_delay_meas_gen.py ｜ b py_compile ｜ c B1 exit0 出 out_deck.sp+out_report.json ｜ d deck .measure trig v(IN)/targ v(OUT) ｜ e deck 同时含 rise=/fall= ｜ f B1 连续方波(2*tCK 周期)+td_* 量测数≥2*n_edges ｜ g B1 deck 覆盖 3 corner(tt_25/ff_85/ss_m40)+.alter≥2 ｜ h B1 report 每 corner td_rise_avg+td_fall_avg ｜ i B1 report 延迟值与 mt0 真值 1% 一致 ｜ j B1 report summary 含 min/max/spread(rise+fall) ｜ k 反硬编码 B2 4 corner+10 measures+值≠B1 ｜ l B2 report 延迟值与 B2 mt0 真值一致(交叉输入)
+
+## 自验
+ref PASS 12/12 + 6neg(naive_empty/only_print/empty_shell/no_measure/hardcoded_b1/ref_core_deleted)全 FAIL + §4.9 三假(empty_shell→c/only_print→c/ref_core_deleted→d)全 FAIL + 确定性 B1 连跑 3 次 k=12 一致 + byte-sync sha256=d7346cfd(14137B) + jsonl B 237→238, ledger covered 238→239(spice_sim 191→192)
