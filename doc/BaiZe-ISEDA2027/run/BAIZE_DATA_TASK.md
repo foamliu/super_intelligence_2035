@@ -1,5 +1,25 @@
 # BAIZE_DATA_TASK.md
 
+### 🔴 运维令 · 2026-11-10 08:1x（**更新论文 pretrain 数据部分：淡化数据源名 + 补 Stable/Decay 双饼图**）· 用户直令 · 最高优先
+
+> **用户原话**：「安排 data 更新 BaiZe-LLM 论文中 pretrain 的数据部分：① 淡化 MiniCPM5 的数据名称，只说 web、code、math 等；② 补一张图，左右两边分别是 WSD Stable 和 Decay 阶段的数据配比饼图。」
+
+**① 现状（运维已核，配比以 `code/baize-llm/configs/blend_{s1,decay}.tsv` 为准）**：
+- 论文数据节在 `doc/BaiZe-ISEDA2027/BaiZe-ISEDA2027/ISEDA2027/4_llm_pretrain.tex` 的 `\subsection{Data}`。
+- **Stable 7 源** 归类：web = 0.65(en_v1_4)+0.05(l1_en_hq)+0.04(zh) = **0.74**；code = 0.15(l2)+0.04(l3) = **0.19**；math = 0.05(l1)+0.02(l3) = **0.07** ⇒ 74:19:7。
+- **Decay 6 源** 归类：sft = 0.60(sft_2605)+0.12(sft_agent_2609) = **0.72**；web = 0.18(l3_qa)+0.04(zh) = **0.22**；math = 0.04(l3)；code = 0.02(l3) ⇒ 72:22:4:2（注：Decay 的 sft_2605/sft_agent_2609 此前「未分词」，若仍未就绪须在正文/图注注明该配比为计划配比）。
+
+**② 本轮要改的两点**：
+1. **淡化数据源名**：把 Data 节里 `\texttt{Ultra-FineWeb}` / `\texttt{UltraData-Code}` / `\texttt{UltraData-Math}` / `\texttt{UltraData-SFT-2605}` / `\texttt{UltraData-SFT-Agent-2609}` 等专有数据源名，改为通用类别（web / code / math / instruction-SFT / agentic-SFT）。🚫 正文不再出现具体数据集品牌名；如需溯源可放脚注/补充材料，正文只讲类别配比。
+2. **补一张图**：`\begin{figure}` 含左右两个饼图（内联 SVG 或 TikZ）——
+   - 左：**Stable** 配比（web 74% / code 19% / math 7%）；
+   - 右：**Decay** 配比（instruction-SFT 72%，其中 sft 60% + agentic-SFT 12%，web 22% / math 4% / code 2%）。
+   - 图注用中文（中英对照模板里中文注释保留），标注「Decay 的 SFT 源若未分词则标注计划配比」。
+
+**③ 交付**：① 改 `4_llm_pretrain.tex` 的 Data 节（文本 + 图）② `pdflatex main.tex` 编译 PASS（0 error）③ 图自包含（无外部资源引用）。commit `data paper:`。
+
+**④ 纪律**：只改论文数据节 + 本线文件；🚫 不碰其他章节正文与它线文件；下载任务（stack-v3 2TB 等）继续按既有令推进，本令不阻断。心跳写 `未完成指令：有` ⇒ `WAITING: 0` 直到交付。
+
 ### 📌 常驻 · 论文观察日报（research 线产出 · 2026-11-07 用户令）
 
 > 索引：`doc/personal-watch/run/research/daily/index.html`｜最新一期：`doc/personal-watch/run/research/daily/<日期>.html`
