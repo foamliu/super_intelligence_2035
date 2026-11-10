@@ -7134,3 +7134,45 @@ baize_posttrain_sandbox_watcher.sh (--watch --auto-eval, PID 4109314, ppid=1, et
 **同步**：MEMORY_POSTTRAIN.md 滚 wake223–226（R154/R155/R156/R157）→ daily-memories-posttrain/2026-11-11.md（日报已存，去重后仅删 MEMORY 不重复追加）；MEMORY 30KB → 22.2KB。
 
 **数据溯源**：`wc -l`/`wc -c`/`grep -nE '^## §R'` 实测。无伪造。归档文件原文不改。
+## §R164 — Sandbox 深度网络诊断：ICMP 通 / 全 TCP 端口被阻断（escalation-grade evidence · wake233 · 2026-11-11 · 零 GPU）
+
+> **动机**：沙盒 `10.129.32.75:8667` 已连续 38 wake（wake195–233）CLOSED，此前 38 条心跳仅记「TCP8667 timeout, ping OK」，**诊断粒度不足以驱动运维升级**。本轮做**端口扫描级**网络诊断，把阻塞性质钉死，供运维向网络团队提交 ACL 开放工单。
+
+### 方法（本机 `10.252.32.17` → `10.129.32.75`，零 GPU · 纯网络探测）
+
+| # | 探测 | 命令 | 结果 |
+|:--|:--|:--|:--|
+| 1 | ICMP ping ×3 | `ping -c 3 -W 2 10.129.32.75` | ✅ 3/3 收，rtt 0.169–0.413ms（avg 0.253ms），**0% 丢包** |
+| 2 | TCP 8667（沙盒） | `timeout 3 bash -c 'cat </dev/tcp/10.129.32.75/8667'` | ❌ exit=124（timeout） |
+| 3 | TCP 22（SSH） | `timeout 2 bash -c 'cat </dev/tcp/10.129.32.75/22'` | ❌ exit=124 |
+| 3 | TCP 80（HTTP） | 同上 | ❌ exit=124 |
+| 3 | TCP 443（HTTPS） | 同上 | ❌ exit=124 |
+| 3 | TCP 8080 | 同上 | ❌ exit=124 |
+| 4 | traceroute | `traceroute -n -m 8 ...` | ⚠️ 命令未安装（`command not found`） |
+| 5 | 路由 | `ip route get 10.129.32.75` | `via 10.252.32.1 dev bond0 src 10.252.32.17`（跨子网路由，网关=10.252.32.1） |
+| 6 | ARP | `ip neigh | grep 10.129.32.75` | 无条目 → **非 L2 邻接**（不同子网：本机 10.252.32.0/22，目标 10.129.32.0/24） |
+| 7 | nc -zv 8667 | `timeout 3 nc -zv 10.129.32.75 8667` | ❌ exit=124 |
+| 8 | 本机地址 | `ip -4 addr show` | `10.252.32.17/22 dev bond0`（+docker bridge 172.x） |
+
+### 结论（escalation-grade）
+
+1. **ICMP 通、全部 TCP 不通** → 阻塞**不是**「沙盒服务挂了」也**不是**「8667 单端口防火墙」，而是 **`10.252.32.0/22` ↔ `10.129.32.75` 之间的 blanket TCP 过滤**（网络侧 ACL，或目标主机 `iptables INPUT` 仅放 ICMP、DROP 全部 TCP）。
+2. ping ttl=57（64−57≈7 跳）、rtt 0.18ms → 两机**同数据中心**，物理可达；问题在**策略层**不在链路层。
+3. **此前 38 wake 的「主机级防火墙」措辞不准确**（无法区分网络 ACL vs 主机 iptables）；本轮证据指向**更可能是网络 ACL**（因为 SSH 22 也被挡，沙盒主机若自己 iptables 通常不会连 SSH 一起挡死）。⚠️ 但两者无法仅从本机侧完全区分，需运维在 `10.129.32.75` 上 `iptables -L INPUT -n` 或 `ss -tlnp | grep 8667` 复核。
+
+### 给运维的升级建议（写入 MEMORY「阻塞」行）
+
+- **不要再尝试重启沙盒服务**（服务可能本来就是好的，是网络把 SYN 挡在外面）。
+- **请网络团队核查 `10.252.32.0/22` → `10.129.32.0/24` 的 ACL**，开放 TCP（至少 8667，建议同时开 22 便于排障）。
+- 复核项（若能登录 .75）：`ss -tlnp | grep 8667`（服务是否在听）+ `iptables -L INPUT -n -v | head`（是否有 DROP 规则）。
+- **若 ACL 开放后沙盒仍不通**，再回到沙盒服务侧排查。
+
+### 影响
+
+- Phase 1 评测（3 模型 × 5-run baseline）仍阻塞（沙盒是 cline 执行代码的必需组件）。
+- Phase 2 SFT（替身）阻塞于 GPU 释放（GPU 5/6/7 被 serve 占位，按 17:10 令保持）。
+- Phase 3 RL 阻塞于 SFT ckpt + 沙盒。
+- **本诊断不改变任何阻塞结论，但把「主机级防火墙」升级为「跨子网 blanket TCP 过滤，建议网络团队开 ACL」**，为运维提供可执行的升级路径。
+
+**数据溯源**：本节所有数字来自上表命令的实测输出（`ping`/`/dev/tcp`/`ip route get`/`ip neigh`/`ip addr`/`nc`）。无伪造。traceroute 未安装已如实标注。
+
