@@ -7645,3 +7645,95 @@ verl `multiturn_sft_dataset.py` L43 `self.tools_key = multiturn_config.get("tool
 
 **数据溯源**：本节所有数字来自 `baize_posttrain_sft_surrogate.sh --smoke` 实测日志 + `nvidia-smi` 实测。无伪造。
 
+---
+
+## §R171 (2026-11-11 wake240) Post-SFT Serve Bridge Script + SFT Training Progress (Epoch 3/3)
+
+**背景**：Phase 2 surrogate SFT 训练在 wake239 启动后持续运行（PID 88979, GPU6/7 verl FSDP2）。本轮唤醒时训练仍在进行中（step 48/72, Epoch 3/3 刚开始）。本轮产出 = SFT ckpt → EDA-Eval 的**桥接 serve 脚本**（此前缺失）+ 训练 loss 曲线记录 + eval dry-run 验证。
+
+### 1. 交付物：baize_posttrain_sft_surrogate_serve.sh
+
+SFT 训练脚本 (`baize_posttrain_sft_surrogate.sh`) 的 ckpt 输出为 HF safetensors 格式（directly vLLM-serveable），但此前**没有脚本将 SFT ckpt serve 为 OpenAI-compatible endpoint**——这是训练与评测之间的关键缺口。本轮补齐。
+
+| 属性 | 值 |
+|:--|:--|
+| 脚本路径 | `run/baize_posttrain_sft_surrogate_serve.sh` |
+| 功能 | serve SFT ckpt → vLLM OpenAI endpoint → 供 `baize_posttrain_eval.sh` 评测 |
+| 默认 GPU | 6（SFT 训练释放后） |
+| 默认端口 | 8096 |
+| served-model-name | minicpm5-sft |
+| vLLM venv | `/tmp/vllm_venv/bin/python`（transformers 4.49.0 ✅） |
+| 自动 ckpt 检测 | `ls -d global_step_* | sort -t_ -k3 -n | tail -1`（取最高步数） |
+| 模式 | `--dry-run`（打印配方）/ `--status`（健康检查）/ `--stop`（停止 serve）/ 默认（启动+等待健康） |
+| 守卫 | GPU 占用检测（训练未完成则 abort）/ 端口占用检测 / transformers 版本检测 / ckpt 完整性检测 |
+| 健康等待 | 最多 180s 轮询 `/v1/models`，进程死亡则提前报错 |
+
+**验证**：
+- `bash -n` 语法检查 ✅ (exit 0)
+- `--dry-run` ✅：正确检测到 `global_step_40` (4.7G)，transformers 4.49.0，GPU6 占用警告（SFT 训练中）
+- `--status` ✅：正确报告 :8096 无 serve，GPU6 VRAM 28789 MiB
+- eval dry-run ✅：`baize_posttrain_eval.sh --dry-run --backbone minicpm5-sft --endpoint http://localhost:8096/v1 --model minicpm5-sft` 正确打印冻结评测协议配方
+
+### 2. SFT 训练 Loss 曲线（step 1–48, 实测）
+
+> 数据源：`/tmp/baize_posttrain_sft_surrogate.log`（`grep -oP 'step:\d+ - train/loss:[\d.]+'`）
+
+| 步 | Loss | 步 | Loss | 步 | Loss |
+|---:|-----:|---:|-----:|---:|-----:|
+| 1 | 2.332 | 17 | 0.970 | 33 | 0.556 |
+| 2 | 2.184 | 18 | 0.713 | 34 | 0.827 |
+| 3 | 1.983 | 19 | 0.871 | 35 | 0.801 |
+| 4 | 2.306 | 20 | 0.703 | 36 | 0.515 |
+| 5 | 1.902 | 21 | 0.914 | 37 | 0.646 |
+| 6 | 1.822 | 22 | 0.739 | 38 | 0.502 |
+| 7 | 1.718 | 23 | 0.647 | 39 | 0.561 |
+| 8 | 1.226 | 24 | 0.770 | 40 | 0.678 |
+| 9 | 1.235 | 25 | 0.712 | 41 | 0.671 |
+| 10 | 1.148 | 26 | 0.629 | 42 | 0.659 |
+| 11 | 0.987 | 27 | 0.645 | 43 | 0.575 |
+| 12 | 1.034 | 28 | 0.628 | 44 | 0.484 |
+| 13 | 0.916 | 29 | 0.656 | 45 | 0.594 |
+| 14 | 0.864 | 30 | 0.553 | 46 | 0.677 |
+| 15 | 0.760 | 31 | 0.484 | 47 | 0.452 |
+| 16 | 0.808 | 32 | 0.619 | 48 | 0.590 |
+
+**趋势**：
+- Epoch 1 (step 1–24): loss 2.332 → 0.770，快速下降（warmup + cosine lr）
+- Epoch 2 (step 25–48): loss 0.712 → 0.590，持续下降但波动增大（过拟合迹象待 Epoch 3 观察）
+- Epoch 3 (step 49–72): 进行中
+- 已保存 ckpt：`global_step_20` (step 20), `global_step_40` (step 40)，各 4.7GB safetensors
+- 下次保存：`global_step_60` (step 60), 最终 `global_step_72` (step 72)
+
+### 3. 训练配置（实测确认）
+
+| 参数 | 值 |
+|:--|:--|
+| 框架 | verl 0.4.0 FSDP2 SFT trainer |
+| GPU | 2×A40 (index 6,7), FSDP2 across 2 GPUs |
+| 模型 | MiniCPM5-2B (full-param, lora_rank=0) |
+| 数据 | sft_surrogate_train.parquet (1553 pairs) / val (172 pairs) |
+| max_length | 2048 |
+| train_batch_size | 64 (effective), micro_batch=4/gpu |
+| lr | 1e-5, cosine, warmup 10% |
+| epochs | 3 (24 steps/epoch, 72 total) |
+| save_freq | 20 |
+| dtype | bf16, gradient_checkpointing=True |
+| ~18.3s/step | NCCL 2.21.5+cuda12.4 |
+
+### 4. 阻塞与下一步
+
+| 项 | 状态 |
+|:--|:--|
+| SFT 训练 | 🔄 进行中 (step 48/72, ETA ~08:00) |
+| SFT ckpt serve | ⬜ 待训练完成（脚本已就绪 ✅） |
+| post-SFT eval | 🔴 阻塞于沙盒 (10.129.32.75:8667 TCP ACL, 44th+ wake CLOSED) |
+| Phase 1 baseline eval | 🔴 同上，阻塞于沙盒 |
+| Phase 3 RL | ⬜ 待 SFT ckpt + 沙盒 |
+
+**训练完成后的操作流程**（已就绪）：
+1. `bash baize_posttrain_sft_surrogate_serve.sh`（自动找 global_step_72, serve on GPU6:8096）
+2. 等待 serve 健康（脚本内置 180s 等待）
+3. `bash baize_posttrain_eval.sh --backbone minicpm5-sft --endpoint http://localhost:8096/v1 --model minicpm5-sft`（需沙盒恢复）
+
+**数据溯源**：loss 曲线来自 `/tmp/baize_posttrain_sft_surrogate.log` grep 实测；训练配置来自 `ps -eo args=` 实测进程命令行；eval dry-run 实测输出。无伪造。
+
