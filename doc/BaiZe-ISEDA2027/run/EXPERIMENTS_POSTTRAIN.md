@@ -15891,3 +15891,62 @@ Process 3557214 has 36.30 GiB memory in use.
 - MCP enrichment 可扩展到全部 8463 API（当前仅做了 488 中的 123 not-found）
 
 ---
+
+## §R149 — Method-Level Authoritative-Example Extraction: v6 SFT Corpus（wake217, 2026-11-11, 零 GPU）
+
+> **目标**：R148 的 API ref corpus（400 entries）内嵌权威 `>>> import pyAether` 示例代码。
+> v5 corpus 虽覆盖全部 488 eval API，但 completion 是浅层 LLM 生成桩（如 `def call_x(): return pyScript.X()`）。
+> R149 从 R148 corpus 解析**逐方法**文档块，提取文档中的**权威示例代码**作为 completion，产出高质量 doc-to-code 训练对。
+
+### 1. 方法
+
+- **输入**：`pyAether_api_ref_488.jsonl`（365 entries, 3.5MB）+ `pyAether_api_ref_mcp_enriched.jsonl`（35 entries, 26.9KB）
+- **解析**：按方法头正则 `^(?:\*static\*\s+)?`methodName`(` 拆分 class 文档为逐方法块
+- **提取**：每方法块的 `Examples` 节中 `>>>` doctest 行 → 清洗为 Python 代码（去 `>>>` prompt、保 `import` 行）
+- **配对**：prompt = 方法文档（签名+参数+返回，剥离 Examples 节）+ "write code that calls this API"；completion = 提取的权威示例代码
+- **去重**：`(api_name, method_name, md5(code))` 三元组去重
+
+### 2. 产物
+
+| 指标 | 值 |
+|:--|--:|
+| 训练对数 | **352** |
+| 文件大小 | 459 KB |
+| ~tokens | ~100K（366K chars / ~3.7 char/tok） |
+| 覆盖 eval API | **186 / 488**（38.1%） |
+| 静态 JSON 源 | 335 pairs |
+| MCP enriched 源 | 17 pairs |
+| 产物文件 | `run/sft_pyaether_corpus_v6_method_examples.jsonl` |
+| 合成脚本 | `run/baize_posttrain_synth_v6_method_examples.py`（py_compile ✅） |
+
+### 3. 质量对比（v5 vs v6）
+
+| 维度 | v5（shallow stub） | v6（authoritative example） |
+|:--|:--|:--|
+| completion 来源 | LLM 生成（`def call_x(): return X()`） | API 文档原始 `>>>` 示例 |
+| 示例：EmyLPPHeader.__eq__ | `def call_emylppheader(): obj=pyScript.EmyLPPHeader(); return obj` | `lpp_header1 = pyAether.EmyLPPHeader.create(tech,2001,12); lpp_header2=...; res=lpp_header1.__eq__(lpp_header2)` |
+| 示例：SleQueryData.setObject | 浅桩 | `queryData=pyScript.SleQueryData(queryData1); box=...; rect=...; queryData.setObject(rect)`（多步链式） |
+| 参数保真 | ❌ 不体现真实参数 | ✅ 文档签名参数类型 |
+| 多步链式 | ❌ | ✅ 部分示例含创建→操作链 |
+
+### 4. 污染隔离闸门（红线 §5.1）
+
+- 闸门脚本：`baize_posttrain_contamination_gate.sh`
+- 黑名单：6 评测快照并集 536 任务（含 v20260311 的 158）
+- 判定：13-gram 重合率 ≥ 0.8 或短 8-gram 兜底重合 ≥ 1
+- **结果**：扫描 352 文档 / **命中 0** → ✅ **PASS**（可投料）
+- 隔离原理：corpus 内容 = API 文档（签名+参数+示例）；eval task = prompt+test_code+canonical_solution；API 文档 ≠ task solution
+
+### 5. 覆盖缺口分析
+
+- 488 eval API 中 186 有 `>>>` 示例（38.1%）；302 无示例
+- 无示例的 API = 纯签名方法（无 Examples 节）+ enum 常量（R148 的 33 failed）+ 部分无文档条目的 standalone 函数
+- **补救路径**：① 用 GPU4 的 MiniCPM5-2B serve 端点（:8098）对无示例 API 做生成式补全（需污染隔离二次闸门）② MCP `get_api_details` 对全部 8463 API 做 enrichment（当前仅 123 done）③ 规则模板生成（对纯签名方法用参数类型构造调用）
+
+### 6. 结论与下一步
+
+- v6 corpus 是**首个以权威文档示例为 completion 的 PyAether SFT 语料**，质量显著优于 v5 的 LLM 桩
+- 352 pairs / ~100K tok 可直接混入 SFT 数据的 `pyaether20` 配比（与 v5 1193 pairs 合并 → 1545 pairs）
+- 下一步：① 扩展覆盖（生成式补全 302 缺口 API）② 合并 v5+v6 → 统一 SFT pyaether 语料 ③ 退火语料用 R148 corpus 原文（~626K tok）做 domain blend
+
+---
