@@ -16070,21 +16070,51 @@ Process 3557214 has 36.30 GiB memory in use.
 - **隔离原理**：模型输入 = API 文档（签名+参数+描述）；158 eval 任务的 prompt/entry_point/test/assert **从未发送给模型**；
   生成产物按 13-gram/8-gram 与 536 任务黑名单比对，0 命中
 
-### 5. 修复后 Re-run（进行中）
+### 5. 修复后 Re-run（wake220 完成 ✅）
 
 - 用修复后的 `has_real_api_call` + `extract_code` 重新运行 207 API
-- 进程：setsid 派生（PID 3991230），GPU4 :8098，temperature=0.2
-- 状态：wake219 提交时仍在运行（GPU4 util 94%）；下次唤醒将收集最终结果 + 二次闸门 + 合并到统一语料
+- **wake219 首次 re-run**（PID 3991230, delay=0.2s）：172 pairs / 35 failed → 被 git pull 覆盖丢失，wake220 重新生成
+- **wake220 最终 re-run**（PID 4015407, delay=0.5s, temp=0.2, GPU4 :8098）：
 
-### 6. 结论与下一步
+| 指标 | 初始运行(旧检查) | wake220 re-run(修复后) | 回收 |
+|:--|--:|--:|--:|
+| 生成对数 | 83 | **180** | +97 (↑117%) |
+| 失败数 | 124 | 27 | -97 |
+| ~tokens | ~83K | ~265K (980KB/3.7) | +182K |
+| unique api_used | 83 | 180 | +97 |
+| v6+v7 覆盖 | 269/488(55.1%) | **366/488(75.0%)** | +97 API |
+| 文件 | 442 KB | 980 KB | — |
 
-- v7 生成式补全**可行**：83/207 API 生成高质量真实代码示例，contam gate PASS
-- has_real_api_call 缺陷已修复，re-run 预计回收部分假阴性
-- **覆盖扩展**：v6(186) + v7(83+待定) → 预计覆盖 270+/488 eval API（>55%）
+- 失败分解（27）：`no_code_extracted` 8（emyArc/emyDesign.open/emyInstHeader/emyLib/emyObject/emyPin/emyScalarName/emyTech — 抽象类型/构造器，模型无法生成可执行代码）+ `no_real_api_call` 19（属性 getter + 容器类型：MdeSweepRange.span/stop, MdeSweepType.mode/logMode, vector1D_double, emyBitArray 等）
+- **修复有效性确认**：has_real_api_call 从 83→180 pairs，回收率 117%（97 个假阴性被修正）
+
+### 6. 统一语料合并 v5+v6+v7（wake220 ✅）
+
+- 脚本：`baize_posttrain_merge_v5v6.py`（扩展支持 `--v7` 可选第三输入，auto-detect，py_compile✅）
+- 合并结果：
+
+| 输入 | pairs | 说明 |
+|:--|--:|:--|
+| v5 (sft_pyaether_corpus_v5_deep_enriched.jsonl) | 1193 | 全 488 API 覆盖，浅桩 |
+| v6 (sft_pyaether_corpus_v6_method_examples.jsonl) | 352 | 权威 >>> doctest，186 API |
+| v7 (sft_pyaether_corpus_v7_generative.jsonl) | 180 | 生成式补全，180 API |
+| **合并去重后** | **1725** | 0 重复（md5 prompt+completion） |
+
+- 类型分布：S1_doc_to_code 364 / S2_api_lookup 364 / S3_multi_api_chain 261 / R149_method_example 352 / R150_generative_example 180 / S5_source_* 128 / S0_api_existence 34 / S6_* 42
+- unique api_used: 550
+- est. tokens: ~649.5K (2,403,209 chars / 3.7)
+- 文件：`sft_pyaether_corpus_unified_v5v6v7.jsonl`（3119 KB）
+- **污染隔离闸门（二次，统一语料）**：baize_posttrain_contamination_gate.sh 实扫 1725 文档 / **命中 0** / 536 任务黑名单 → ✅ **PASS**（可投料）
+
+### 7. 结论与下一步
+
+- v7 生成式补全**可行且有效**：180/207 API 生成高质量真实代码示例，has_real_api_call 修复回收 97 个假阴性
+- v6+v7 覆盖率达 **75.0%**（366/488 eval API），剩余 122 API 多为属性 getter / 抽象类型 / 容器类型（无文档或不可执行）
+- 统一 SFT 语料已就绪：**1725 pairs / ~649.5K tok / 550 unique API / 0 污染** → 可投料
 - **下一步**：
-  1. re-run 完成后收集结果 → 二次 contam gate → 合并到 `sft_pyaether_corpus_unified_v5v6.jsonl`（v5+v6+v7）
-  2. verl parquet 转换（verl venv `~/code/verl_cu124_venv/`）
-  3. 退火语料用 R148 corpus 原文（~626K tok）做 domain blend
-  4. GPU 释放后用统一语料跑 SFT surrogate
+  1. verl parquet 转换（verl venv `~/code/verl_cu124_venv/`，系统 python 无 pandas）
+  2. 退火语料用 R148 corpus 原文（~626K tok）做 domain blend
+  3. GPU 释放后用统一语料跑 SFT surrogate（Phase 2）
+  4. 训练配比建议：649.5K tok vs UltraData-SFT 18.89B tok ≈ 0.0034% → 需上采样（×5-10）平衡 pyaether20 配比
 
 ---

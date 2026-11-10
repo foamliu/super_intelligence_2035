@@ -31,6 +31,7 @@ import sys
 RUN_DIR = os.path.dirname(os.path.abspath(__file__))
 DEFAULT_V5 = os.path.join(RUN_DIR, "sft_pyaether_corpus_v5_deep_enriched.jsonl")
 DEFAULT_V6 = os.path.join(RUN_DIR, "sft_pyaether_corpus_v6_method_examples.jsonl")
+DEFAULT_V7 = os.path.join(RUN_DIR, "sft_pyaether_corpus_v7_generative.jsonl")
 DEFAULT_OUT = os.path.join(RUN_DIR, "sft_pyaether_corpus_unified_v5v6.jsonl")
 
 
@@ -72,12 +73,13 @@ def content_hash(d):
     return h.hexdigest()
 
 
-def merge(v5_pairs, v6_pairs):
-    """Merge v5 then v6; deduplicate by content hash (keep first occurrence)."""
+def merge(v5_pairs, v6_pairs, v7_pairs=None):
+    """Merge v5 then v6 then v7; deduplicate by content hash (keep first occurrence)."""
     seen = set()
     merged = []
     dup_v5 = 0
     dup_v6 = 0
+    dup_v7 = 0
     for d in v5_pairs:
         ch = content_hash(d)
         if ch in seen:
@@ -93,7 +95,16 @@ def merge(v5_pairs, v6_pairs):
         seen.add(ch)
         d["contamination_check"] = "passed_R149"
         merged.append(d)
-    return merged, dup_v5, dup_v6
+    if v7_pairs:
+        for d in v7_pairs:
+            ch = content_hash(d)
+            if ch in seen:
+                dup_v7 += 1
+                continue
+            seen.add(ch)
+            d["contamination_check"] = "pending_v7"
+            merged.append(d)
+    return merged, dup_v5, dup_v6, dup_v7
 
 
 def estimate_tokens(text):
@@ -128,10 +139,11 @@ def to_verl_conversation(d):
 
 
 def main():
-    ap = argparse.ArgumentParser(description="Merge v5+v6 PyAether SFT corpora (R150)")
+    ap = argparse.ArgumentParser(description="Merge v5+v6(+v7) PyAether SFT corpora (R150/R151)")
     ap.add_argument("--v5", default=DEFAULT_V5, help="v5 JSONL path")
     ap.add_argument("--v6", default=DEFAULT_V6, help="v6 JSONL path")
-    ap.add_argument("-o", "--out", default=DEFAULT_OUT, help="output unified JSONL")
+    ap.add_argument("--v7", default="", help="v7 JSONL path (optional; default = auto-detect)")
+    ap.add_argument("-o", "--out", default="", help="output unified JSONL (auto if empty)")
     ap.add_argument("--dry-run", action="store_true", help="stats only, no output file")
     ap.add_argument("--parquet", action="store_true",
                     help="also emit verl SFT parquet (requires pandas/pyarrow)")
@@ -142,9 +154,22 @@ def main():
             print("ERROR: input not found: {0}".format(p), file=sys.stderr)
             return 1
 
+    v7_path = args.v7
+    if not v7_path:
+        v7_path = DEFAULT_V7 if os.path.isfile(DEFAULT_V7) else ""
+    use_v7 = bool(v7_path and os.path.isfile(v7_path))
+    if args.v7 and not use_v7:
+        print("ERROR: --v7 not found: {0}".format(args.v7), file=sys.stderr)
+        return 1
+
+    out_path = args.out
+    if not out_path:
+        out_path = os.path.join(RUN_DIR, "sft_pyaether_corpus_unified_v5v6v7.jsonl") if use_v7 else DEFAULT_OUT
+
     v5 = load_jsonl(args.v5)
     v6 = load_jsonl(args.v6)
-    merged, dup_v5, dup_v6 = merge(v5, v6)
+    v7 = load_jsonl(v7_path) if use_v7 else []
+    merged, dup_v5, dup_v6, dup_v7 = merge(v5, v6, v7 if use_v7 else None)
 
     type_dist = collections.Counter(d["type"] for d in merged)
     all_apis = set()
@@ -154,11 +179,13 @@ def main():
     total_tokens = estimate_tokens(" " * total_chars)
 
     print("=" * 60)
-    print("R150 v5+v6 Unified SFT Corpus Merge")
+    print("R150/R151 v5+v6(+v7) Unified SFT Corpus Merge")
     print("=" * 60)
     print("v5 input : {0} ({1} pairs)".format(args.v5, len(v5)))
     print("v6 input : {0} ({1} pairs)".format(args.v6, len(v6)))
-    print("dedup    : v5 removed {0}, v6 removed {1}".format(dup_v5, dup_v6))
+    if use_v7:
+        print("v7 input : {0} ({1} pairs)".format(v7_path, len(v7)))
+    print("dedup    : v5 removed {0}, v6 removed {1}, v7 removed {2}".format(dup_v5, dup_v6, dup_v7))
     print("merged   : {0} pairs".format(len(merged)))
     print("-" * 60)
     print("type distribution:")
@@ -168,17 +195,17 @@ def main():
     print("unique api_used: {0}".format(len(all_apis)))
     print("total chars    : {0}".format(total_chars))
     print("est. tokens    : ~{0} ({1:.1f}K)".format(total_tokens, total_tokens / 1000.0))
-    print("output         : {0}".format("(dry-run, no file)" if args.dry_run else args.out))
+    print("output         : {0}".format("(dry-run, no file)" if args.dry_run else out_path))
     print("=" * 60)
 
     if args.dry_run:
         return 0
 
-    with open(args.out, "w", encoding="utf-8") as fh:
+    with open(out_path, "w", encoding="utf-8") as fh:
         for d in merged:
             fh.write(json.dumps(d, ensure_ascii=False) + "\n")
-    out_size = os.path.getsize(args.out)
-    print("wrote {0} ({1:.1f} KB)".format(args.out, out_size / 1024.0))
+    out_size = os.path.getsize(out_path)
+    print("wrote {0} ({1:.1f} KB)".format(out_path, out_size / 1024.0))
 
     if args.parquet:
         try:
@@ -188,7 +215,7 @@ def main():
             return 0
         rows = [to_verl_conversation(d) for d in merged]
         df = pd.DataFrame(rows)
-        pq_path = args.out.replace(".jsonl", ".parquet")
+        pq_path = out_path.replace(".jsonl", ".parquet")
         df.to_parquet(pq_path, index=False)
         print("wrote {0} ({1:.1f} KB, {2} rows)".format(
             pq_path, os.path.getsize(pq_path) / 1024.0, len(df)))
