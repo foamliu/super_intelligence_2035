@@ -653,3 +653,5 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked		2026-11-09 20:39	RAG-looku
 1793264175600_ocmhu					parked		2026-11-10 18:48	r334: wrong-shard D/verif (verilog toggle coverage read cong_cov)
 1793251326263_gesut					parked		2026-11-10 18:48	r334: non-seed Q&A/how-to (hefei SOP/PDF/LMB/.dr explanations, prose only)
 1793016668331_gm17v					parked		2026-11-10 18:48	r334: non-seed env-setup (aether-launcher setup.bash+start_aether.sh config)
+1792979233831_cs27h	xinqiaoz	hfeg0pkn005	44	physical_verify	case	EDA-Eval-DesignFlow-AntMetalThkPathFix-001	2026-11-10 19:21	
+1791507538479_0w5tl					parked		2026-11-10 19:21	r335 peek: completed fork from a1jb6, title Pattern QA Den rule, U#2=construct base/ dir assembly (config.ini+deck+gds symlinks to env-specific /home/pdk paths). produce-task but gold=env-specific symlinks+inherited fork state (前提缺失), low generalizability for hidden B, physical_verify saturated(109). B-档 last-resort REJECT.
