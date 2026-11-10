@@ -19,7 +19,7 @@
   "mc30": 2247,
   "mc300": 317,
   "mc500": 281,
-  "note": "11/10 r315: case delivered RhrQueueBoundsDiag-001 (7huyr/aocao, verification, A-faithful diagnosis-generator, k=15, A.jsonl 198->199). PIVOT: 7huyr r314-claimed analysis-only trace (USER#1 'check code logic, wave looks ok' -> addr_q queue 65760 vs addr_phys 114719 RTSVQI out-of-bounds) reframed to spec-driven diagnosis-generator (gen_rhr_diag.py -> diag_rhr_bounds.py derives queue-bounds root cause: decl/max-index/OOB-filter/classification/fix+constraint). 10th produce-scarcity context; analysis-only traces viable via diagnosis-generator reframe (2nd after SvHierRefDiag-001). Latest scan 11/09 r292 (no new), daily log 11/10 healthy 2981 lines.",
+  "note": "11/10 r316: management + 10th produce-scarcity confirmation (0 case, A.jsonl 199 unchanged). Peeked 6 top fresh digital-dominant candidates: brnqb(e02141)=wrong-shard Sentaurus TCAD parked, 3p5vl(alanji)=analysis how-to parked, xd7ut(tongfanl)=analysis-q parked, tsn3o(fernandoy)=big UVM continuation, 95kx2(tongfanl)=diagnosis but 4th same-project case. 1159 digital-dominant fresh in pool but clean produce scarce. Latest scan 11/09 r292 (no new), daily log 11/10 healthy 2977 lines.",
   "prev_scan_path": "/home/t0002965/log/ssh_eda_search_20261105_192825/summary.tsv",
   "prev_sessions": 5822,
   "scan_path": "/home/t0002965/log/ssh_eda_search_20261109_224902/summary.tsv",
@@ -944,6 +944,51 @@
       "mc30": 2247,
       "hosts": 696,
       "updated_at": "2026-11-10T13:55:00+08:00"
+    },
+    "r316": {
+      "date": "2026-11-10",
+      "scan_dir": "ssh_eda_search_20261109_224902",
+      "no_new_scan": true,
+      "consecutive_no_new_scan": "r292-r316 (r292 did full rescan; no newer scan dir since)",
+      "daily_log_20261110_lines": 2977,
+      "daily_log_healthy": true,
+      "mc30": 2247,
+      "dedup_sessions": 5999,
+      "users_mc30": 401,
+      "hosts": 696,
+      "shard_A_pool_mc15_raw": 14100,
+      "shard_A_pool_digital_dominant_fresh": 1159,
+      "round_type": "management + 10th produce-scarcity confirmation",
+      "case_count": 0,
+      "ledger_entries": 331,
+      "ledger_case": 198,
+      "ledger_parked": 133,
+      "parks_this_round": [
+        {
+          "sess": "1793268918911_brnqb",
+          "user": "e02141",
+          "reason": "wrong-shard Sentaurus TCAD (synopsys=sentaurus device sim), not digital"
+        },
+        {
+          "sess": "1792902413837_3p5vl",
+          "user": "alanji",
+          "reason": "analysis-only how-to (package var DUT/TB passing)"
+        },
+        {
+          "sess": "1792033394584_xd7ut",
+          "user": "tongfanl",
+          "reason": "analysis-only (WTM write-to-array behavior question)"
+        }
+      ],
+      "peek_results": {
+        "brnqb_e02141": "wrong-shard Sentaurus TCAD study (synopsys=sentaurus, cmos/.gds/bandgap/mosfet). e02141 cluster 9 sessions same TCAD pattern",
+        "tsn3o_fernandoy": "big UVM-sim continuation session (20401 lines, pu_uvm_v3.0), first user_input is follow-up complaint, not clean produce",
+        "3p5vl_alanji": "analysis how-to: package var DUT/TB passing via vsim8",
+        "xd7ut_tongfanl": "analysis question: WTM mode write to array behavior",
+        "95kx2_tongfanl": "A-faithful diagnosis (OP2 bit set but missing in WTM002 extracted stimulus, asks why) - viable diagnosis-generator candidate BUT 4th tongfanl/dscqa-DDR6-vecgen case (diversity concern, already 3: bg39v/tjzn5/5fpod), deferred to r317 if diversity allows"
+      },
+      "finding": "10th clean A-faithful produce-scarcity confirmation (r295/r296/r299/r300/r309/r311/r312/r313/r314/r316). Pool NOT exhausted (1159 digital-dominant fresh) but clean produce rare: top candidates are analysis-only (how-to/behavior-q) or wrong-shard (TCAD) or same-user-overrepresented (tongfanl 4th) or too-big (20K-line UVM). Diagnosis-generator PIVOT remains viable path (r310/r312/r315 precedent). 3 wrong-shard/analysis sessions parked. r317 plan: evaluate 95kx2 diagnosis-generator despite diversity, OR find a non-tongfanl diagnosis trace among 1159 fresh.",
+      "updated_at": "2026-11-10T14:35:00+08:00"
     }
   },
   "sessions": 38082,
@@ -955,7 +1000,7 @@
   },
   "source": "/home/t0002965/log/ssh_eda_search_20261105_192825/summary.tsv (11/05 scan)",
   "target_mc": 30,
-  "updated_at": "2026-11-10T13:55:00+08:00",
+  "updated_at": "2026-11-10T14:35:00+08:00",
   "users_mc100": 182,
   "users_mc30": 401,
   "users_mc300": 60,

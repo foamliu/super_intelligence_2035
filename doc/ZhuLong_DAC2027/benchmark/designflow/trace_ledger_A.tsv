@@ -326,3 +326,6 @@
 1792053769843_7huyr	aocao	hfhds227	129	verification	case	EDA-Eval-DesignFlow-RhrQueueBoundsDiag-001	2026-11-10 13:53	
 1792054934836_7adgf	aocao	hfhds227	128	verification	parked		2026-11-10 13:17	duplicate of 7huyr (same aocao user, identical first user msg, RHR queue-bounds diagnosis); 7huyr claimed for r314 deepread
 1792055475403_wuuc7	e0039102	hfeg0plg74	97	verification	parked		2026-11-10 13:17	duplicate task of shard-D RegrCaseFilter-001 (same e0039102 user, identical regression-case-filtering prompt, jason17w lpddr5 ddgoa.0812 dir); NOT a shard-A case
+1793268918911_brnqb	e02141	hfeg0plg56	717	digital	parked		2026-11-10 14:38	r316 wrong-shard: Sentaurus TCAD (synopsys=sentaurus device sim, kw cmos/.gds/bandgap/mosfet), not digital front-end. e02141 cluster (cwq7f/1wvdl/f6x1i/hgqho/l1u7n/yiohr/ckiw9/o0dm6) same TCAD pattern
+1792902413837_3p5vl	alanji	hfeg0plg99	275	digital	parked		2026-11-10 14:38	r316 analysis-only how-to: 'package变量如何在DUT和TB之间传递值' = how-to question, not produce/diagnosis
+1792033394584_xd7ut	tongfanl	hfhds201	277	digital	parked		2026-11-10 14:38	r316 analysis-only: '帮我分析下这个环境并回答WTM模式write是否发到array' = analysis question, not produce/diagnosis
