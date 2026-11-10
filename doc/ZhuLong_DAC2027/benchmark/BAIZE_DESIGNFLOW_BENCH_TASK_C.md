@@ -1,5 +1,10 @@
 # BAIZE_DESIGNFLOW_BENCH_TASK.md — 设计流 Benchmark 任务书（2026-10-30 重构版）
 
+> 🚫 **2026-11-10 用户令：696-run 评测归因（`eval_triage/`）由 shard A 独占执行。**
+> B/C/D **不要**跑 `designflow/eval_triage/05_batch_triage.py`、**不要**改论文
+> `sections/5_analysis.tex` 或 `appendix/B_additional_results.tex`（4 个 agent 抢同一批文件会互相覆盖）。
+> 继续按本任务书正常造题；若 shard A 在 MEMORY 里报了归因结果，直接采信、不重复跑。
+
 ### 📌 常驻 · 论文观察日报（research 线产出 · 2026-11-07 用户令）
 
 > 索引：`doc/personal-watch/run/research/daily/index.html`｜最新一期：`doc/personal-watch/run/research/daily/<日期>.html`
