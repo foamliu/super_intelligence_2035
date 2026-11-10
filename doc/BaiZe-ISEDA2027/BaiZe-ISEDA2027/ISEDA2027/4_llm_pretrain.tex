@@ -106,8 +106,8 @@ The search selects WSD at LR $1\times10^{-3}$ with $86{:}10{:}4$ annealing, reac
 
 The recipe is scaled to $2.94$T tokens at $\texttt{DP}{=}16$ over two $8{\times}$H100 nodes, $\texttt{GBS}{=}256$ at sequence $16{,}384$ ($4{,}194{,}304$ tokens/step), FP8 tensorwise, AdamW.
 % 中文：该配方被放大到 $2.94$T token：跨两个 $8{\times}$H100 节点，$\texttt{DP}{=}16$，$\texttt{GBS}{=}256$、序列 $16{,}384$（每步 $4{,}194{,}304$ token），FP8 tensorwise，AdamW。
-At the time of writing (2026-11-11), the run has passed iteration $158{,}570$ of $700{,}000$ at $\mathbf{\approx}584$K tok/s, training loss $\approx2.01$, with zero NaN or skipped iterations (Table~\ref{tab:prod-budget}). The $613{,}992$ tok/s peak is FP8 at $16{,}384$; shorter sequences use BF16.
-% 中文：截至撰文时（2026-11-11），运行已到 $700{,}000$ 步中的第 $158{,}570$ 步，约 $\mathbf{584}$K tok/s，训练损失约 $2.01$，无 NaN 或跳过迭代（表 \ref{tab:prod-budget}）。$613{,}992$ tok/s 峰值为 $16{,}384$ 时的 FP8 测量值；更短序列用 BF16。
+At the time of writing (2026-11-11), the run has passed iteration $158{,}780$ of $700{,}000$ at $\mathbf{\approx}585$K tok/s, training loss $\approx2.02$, with zero NaN or skipped iterations (Table~\ref{tab:prod-budget}). The $613{,}992$ tok/s peak is FP8 at $16{,}384$; shorter sequences use BF16.
+% 中文：截至撰文时（2026-11-11），运行已到 $700{,}000$ 步中的第 $158{,}780$ 步，约 $\mathbf{585}$K tok/s，训练损失约 $2.02$，无 NaN 或跳过迭代（表 \ref{tab:prod-budget}）。$613{,}992$ tok/s 峰值为 $16{,}384$ 时的 FP8 测量值；更短序列用 BF16。
 
 \begin{table}[t]
 \centering
