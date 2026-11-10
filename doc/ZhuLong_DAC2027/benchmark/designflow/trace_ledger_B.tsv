@@ -819,3 +819,4 @@ kakcd	kenwang	hfeg017216808192	5	non_spice	parked		2026-11-10 09:06	DRC rule dev
 1793879549590_l64el	kailiu	hfeg0plg100	182	spice_sim	parked		2026-11-10 13:10	peek consultation SPF extraction example reject
 1793682926396_lt3nh	t0003117	hfeg0pkn005	159	spice_sim	parked		2026-11-10 13:10	peek GUI open virtuoso run SKILL reject
 1794290403498_45msy	e0023936	hfeg0pkn004	42	spice_sim	case	EDA-Eval-DesignFlow-SimConfigEditReport-001	2026-11-10 14:58	config.yaml sim-param edit+change report; B-synthesized L1
+1794290579357_trnx0	t0002614	hfeg0plg105	35	spice_sim	case	EDA-Eval-DesignFlow-SaDcSweepTbGen-001	2026-11-10 15:47	
