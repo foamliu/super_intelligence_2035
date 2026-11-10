@@ -2,3 +2,7 @@
 [verified-full 02:03:11] [1/500] astropy__astropy-12907 SKIP (predicted, patch=1507B)
 [verified-full 02:03:11] [2/500] astropy__astropy-13033 SKIP (predicted, patch=3729B)
 [verified-full 02:03:11] [3/500] PREDICT pi on astropy__astropy-13236
+[verified-full 02:33:12]   -> patch-produced (patch=203B wall=1800.9s)
+[verified-full 02:33:12] [4/500] astropy__astropy-13398 SKIP (predicted, patch=0B)
+[verified-full 02:33:12] [5/500] astropy__astropy-13453 SKIP (predicted, patch=1061B)
+[verified-full 02:33:12] [6/500] PREDICT pi on astropy__astropy-13579
