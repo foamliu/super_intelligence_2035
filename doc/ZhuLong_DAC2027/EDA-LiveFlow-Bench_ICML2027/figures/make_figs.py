@@ -113,13 +113,30 @@ labels = [d[0] for d in domains]  # plain underscore, no LaTeX escaping (mpl ren
 sizes  = [d[1] for d in domains]
 groups = [d[2] for d in domains]
 
-group_colors = {
-    "Digital front":          "#0072B2",
-    "SPICE / char":           "#D55E00",
-    "Physical / layout":      "#009E73",
-    "Schematic / analog":     "#CC79A7",
+# 13 distinct colors, organized as 4 hue families (one per area group) with
+# lightness variants within each family. Each domain gets a unique color so
+# adjacent slices are distinguishable, while the hue family still signals
+# the area-group grouping visually.
+domain_colors = {
+    # Digital front (blue family: dark -> light)
+    "digital":           "#08519c",
+    "verification":      "#3182bd",
+    "pnr_signoff":       "#6baed6",
+    "eda_other":         "#9ecae1",
+    # SPICE / char (orange/red family)
+    "spice_sim":         "#b30000",
+    "characterization":  "#ef6548",
+    # Physical / layout (green family: dark -> light)
+    "physical_verify":   "#006d2c",
+    "layout_aether":     "#2ca25c",
+    "layout_virtuoso":   "#66c2a4",
+    "pg_layout":         "#a8ddb5",
+    # Schematic / analog (purple/pink family)
+    "schematic_netlist": "#7b3294",
+    "analog_context":    "#c2a5cf",
+    "waveform":          "#e7d4e8",
 }
-colors = [group_colors[g] for g in groups]
+colors = [domain_colors[d[0]] for d in domains]
 
 fig, ax = plt.subplots(figsize=(7.8, 5.8), dpi=150)
 total = sum(sizes)
@@ -132,6 +149,17 @@ wedges, _, autotexts = ax.pie(
     wedgeprops=dict(width=0.42, edgecolor="white", linewidth=1.2),
     textprops=dict(fontsize=8, color="white", fontweight="bold"),
 )
+
+# Auto-contrast: flip percentage text to dark on light-colored slices.
+def _luminance(hex_color):
+    h = hex_color.lstrip("#")
+    r, g, b = (int(h[i:i+2], 16) / 255 for i in (0, 2, 4))
+    # relative luminance (ITU-R BT.709)
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b
+
+for autotext, color in zip(autotexts, colors):
+    if _luminance(color) > 0.6:
+        autotext.set_color("#1a1a1a")
 
 # Smart label placement: pillar/collision algorithm to prevent vertical overlap.
 # Compute each label's natural (x,y) at radius r_out; sort by y; enforce a
