@@ -1096,4 +1096,32 @@ nvidia-smi --query-gpu=utilization.gpu,memory.used --format=csv,noheader
 - §4.7 sec:ckpt-scaling: 不存在 ✅
 - 📦 TASK≈22.5KB ✅ / MEMORY≈27KB ✅
 
+---
+
+### 2026-11-11 06:50 — 论文 §4.6 刷新 (#1944)
+
+**取数**:
+- 命令: `ssh 10.239.2.29 'tail -50 /proc/146283/fd/1'`
+- 最新 iter: 159,860/700,000 (2026-11-11 06:46:56)
+- 末 10 步 (159,770–159,860): elapsed 6946–7240ms (avg 7099ms, 均 <7.4s ✅)
+- loss: 2.017–2.043 (avg ≈2.03)
+- 0 NaN, 0 skipped iterations ✅
+- GPU: 8 卡 100% util / ~75GB each
+- tok/s: 4,194,304 / 7.099 = 590,811 ≈ 591K
+
+**刷新内容**:
+- §4.6 (4_llm_pretrain.tex line 109): iter 159,690 → 159,860, tok/s 592K → 591K, loss ≈2.03 不变
+- abstract (0_abstract.tex line 14): 同步
+- tab:prod-budget (line 122): "160k done" 不变 (159,860 rounds to 160k); wall-clock ≈57d → ≈58d (700k × 4,194,304 / 591K = 57.5d)
+- tab:prod-budget (line 126): total ≈60.5d → ≈61.5d
+
+**编译结果**:
+- `latexmk -pdf -interaction=nonstopmode main.tex` → 0 errors, 0 warnings, 0 undefined
+- main.pdf: 5 pages, 228,670 bytes
+
+**护栏检查**:
+- grep benchmark 数字 (ARC/HellaSwag/PIQA/BoolQ/OpenBookQA/SciQ/Winogrande/ckpt-scaling/zero-shot) in ISEDA2027/ + main.tex: 0 命中 ✅
+- §4.7 sec:ckpt-scaling: 不存在 ✅
+- 📦 TASK≈22.5KB ✅ / MEMORY≈28KB ✅
+
 
