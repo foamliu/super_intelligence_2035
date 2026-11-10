@@ -1,0 +1,12 @@
+[R2136-eval 02:35:47] cline: 204 already evaluated, 204 total real, 0 new to eval
+[R2136-eval 02:35:47] codex: 95 already evaluated, 95 total real, 0 new to eval
+[R2136-eval 02:35:47] opencode: 422 already evaluated, 422 total real, 0 new to eval
+[R2136-eval 02:35:47] claude-code: 191 already evaluated, 191 total real, 0 new to eval
+[R2136-eval 02:35:47] pi: 170 already evaluated, 171 total real, 1 new to eval
+[R2136-eval 02:35:47] pi: launching eval on 1 NEW instances (workers=1, timeout=1800)...
+[R2136-eval 02:35:47]   cmd: python3 -m swebench.harness.run_evaluation --predictions_path /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions_glm53/predictions_...
+[R2136-eval 02:37:36]   eval finished rc=0
+[R2136-eval 02:37:36]   pi: +0 resolved +1 failed +0 infra => total resolved=132
+[R2136-eval 02:37:36] hermes: 366 already evaluated, 366 total real, 0 new to eval
+[R2136-eval 02:37:36] deepseek: 163 already evaluated, 163 total real, 0 new to eval
+[R2136-eval 02:37:36] DONE R2136: total new resolved this round = 0
