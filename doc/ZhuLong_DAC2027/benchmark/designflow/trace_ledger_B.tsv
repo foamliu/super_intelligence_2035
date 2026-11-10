@@ -966,3 +966,32 @@ peek:					parked		2026-11-10 23:22	peek: consultation verdi-fsdb-warning-paste
 1793795315027_yhh19	ziyuny	hfeg0plg52	0	spice_sim	parked		2026-11-11 04:50	2d/3d lvs runtime script wrong-shard C
 1794188409880_zs1pj	e0030085	hfeg0plg76	0	spice_sim	parked		2026-11-11 04:50	verilog netlist debug wrong-shard A
 1794192540450_k91cd	harrywu	hfeg0plg99	0	spice_sim	parked		2026-11-11 04:50	continue-work continuation
+1793947529316_ie8du	declanzh	hfeg0plg97	0	spice_sim	case	EDA-Eval-DesignFlow-Mt0AggMinMax-001	2026-11-11 06:37	
+1794290784003_33ahv	unknown	unknown	0	spice_sim	parked		2026-11-11 06:38	HBM Q&A consultation
+1792053321007_ux82s	unknown	unknown	0	spice_sim	parked		2026-11-11 06:38	ddgoa verilog pattern analysis wrong-shard A
+1794310529086_5n8of	unknown	unknown	0	spice_sim	parked		2026-11-11 06:38	verilog regression ecc search wrong-shard A
+1794144165637_dm3nn	unknown	unknown	0	spice_sim	parked		2026-11-11 06:38	aether bridge meta trivial
+1794295800537_cap3d	unknown	unknown	0	spice_sim	parked		2026-11-11 06:38	TCAD deck setup skill-loading
+1794225695396_j0imx	unknown	unknown	0	spice_sim	parked		2026-11-11 06:38	ncsim trn parse verilog wrong-shard A
+1794316241145_xo2fw	unknown	unknown	0	spice_sim	parked		2026-11-11 06:38	nginx reverse proxy non-EDA
+1794316266157_2a9xz	unknown	unknown	0	spice_sim	parked		2026-11-11 06:38	PDK_QA DRC handoff wrong-shard
+1794310416716_ymubf	unknown	unknown	0	spice_sim	parked		2026-11-11 06:38	DYT3 what-is consultation
+1794276162054_68j6e	unknown	unknown	0	spice_sim	parked		2026-11-11 06:38	life advice buy car/house non-EDA
+1794297136542_f9zd7	unknown	unknown	0	spice_sim	parked		2026-11-11 06:38	HBM3 datapath diagram wrong-shard digital
+1794320105194_wmls6	unknown	unknown	0	spice_sim	parked		2026-11-11 06:38	PDK_QA genReleaseNote handoff wrong-shard
+1794290639649_19nh3	unknown	unknown	0	spice_sim	parked		2026-11-11 06:38	Windows logon PS script non-EDA
+1794294180798_y70ch	unknown	unknown	0	spice_sim	parked		2026-11-11 06:38	flask ops platform non-EDA
+1794280083783_13vlc	unknown	unknown	0	spice_sim	parked		2026-11-11 06:38	hello/speak-chinese trivial
+1794274042713_jr2g5	unknown	unknown	0	spice_sim	parked		2026-11-11 06:38	DDR6 OSC verilog sv code wrong-shard A
+1794314918312_qln7t	unknown	unknown	0	spice_sim	parked		2026-11-11 06:38	hspice waveform hierarchy debug
+1794224252917_ls7n4	unknown	unknown	0	spice_sim	parked		2026-11-11 06:38	finesim matrix sleep+exec scheduling thin
+1794290015438_49vj4	unknown	unknown	0	spice_sim	parked		2026-11-11 06:38	SIPI file read permission consultation
+1793236214810_7o1am	unknown	unknown	0	spice_sim	parked		2026-11-11 06:38	sos directory lookup consultation
+1793927167185_ayinb	unknown	unknown	0	spice_sim	parked		2026-11-11 06:38	waveview fsdb open wrong-shard D
+1794298302090_ony07	unknown	unknown	0	spice_sim	parked		2026-11-11 06:38	HBM/DDR5 Q&A consultation
+1794295488517_n4336	unknown	unknown	0	spice_sim	parked		2026-11-11 06:38	feishu doc fetch consultation
+1794277014106_0helb	unknown	unknown	0	spice_sim	parked		2026-11-11 06:38	context-engineering skill-loading
+1793150137494_widtp	unknown	unknown	0	spice_sim	parked		2026-11-11 06:38	DDR6 spec translation
+1793788828764_coodr	unknown	unknown	0	spice_sim	parked		2026-11-11 06:38	DRC/LVS conn_layer wrong-shard C
+1794317548962_pksze	unknown	unknown	0	spice_sim	parked		2026-11-11 06:38	PDK_QA DRC handoff wrong-shard
+1793006622937_6kot7	unknown	unknown	0	spice_sim	parked		2026-11-11 06:38	calibre doc study note consultation
