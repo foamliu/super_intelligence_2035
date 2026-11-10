@@ -14,7 +14,7 @@ WAITING: 1
 - 阻塞: 🔴远程沙盒10.129.32.75全端口CLOSED→阻塞SFT前后评测;P3等pretrain ckpt(ETA≈2026-12-25)
 - 本轮新增产出: baize_posttrain_sft_surrogate.py+sh(SFT训练脚本)+smoke test PASS+全量训练运行中+EXPERIMENTS §Phase2-SFT-Surrogate
 - 未完成指令: 🔴用户令2026-11-10(三阶段替身计划:Phase1基线待沙盒+Phase2 SFT训练中+Phase3待SFT ckpt) ⇒ WAITING=1(训练中,~2.5h后唤醒检查)
-- git: pending commit (wake194)
+- git: synced with origin/main（wake194 commit 994c20ec8, 17:08）
 
 ## 关键事实（常驻）
 
