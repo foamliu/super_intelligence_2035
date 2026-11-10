@@ -109,7 +109,7 @@ domains = [
     ("pg_layout",         38, "Physical / layout"),
     ("pnr_signoff",       27, "Digital front"),
 ]
-labels = [d[0].replace("_", r"\_") for d in domains]
+labels = [d[0] for d in domains]  # plain underscore, no LaTeX escaping (mpl renders text mode)
 sizes  = [d[1] for d in domains]
 groups = [d[2] for d in domains]
 
@@ -176,10 +176,9 @@ for d in labels_xy:
                         connectionstyle=f"angle,angleA=0,angleB={d['ang']}"),
     )
 
-legend_handles = [Patch(facecolor=c, edgecolor="white", label=g)
-                  for g, c in group_colors.items()]
-ax.legend(handles=legend_handles, loc="center", bbox_to_anchor=(0.5, -0.06),
-          ncol=2, fontsize=8, frameon=False, title="Area group", title_fontsize=8.5)
+# No legend: each slice already has its own color + label with count, so a
+# separate 4-entry area-group legend is redundant and collides with the
+# bottom slice labels.
 ax.set_title(f"Domain distribution (N={total} tasks, 13 domains)", fontsize=10, pad=18)
 fig.tight_layout()
 fig.savefig(f"{OUT}/domain_pie.pdf", bbox_inches="tight")
