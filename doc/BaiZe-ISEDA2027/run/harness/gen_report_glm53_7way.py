@@ -57,7 +57,26 @@ tb21_data = {}
 for h in HARNESSES:
     hd = os.path.join(TB21_JOBS, h)
     passed = 0; completed = 0; errored = 0; total = 89; status = "unknown"
+    # --- Primary: count task-level result.json (has 'task_name' + verifier_result) ---
     if os.path.isdir(hd):
+        for root, dirs, fnames in os.walk(hd):
+            for fn in fnames:
+                if fn == "result.json":
+                    try:
+                        d = json.load(open(os.path.join(root, fn)))
+                        if "task_name" not in d:
+                            continue
+                        completed += 1
+                        vr = d.get("verifier_result", {})
+                        if isinstance(vr, dict):
+                            rw = vr.get("rewards", {})
+                            if isinstance(rw, dict): rew = rw.get("reward", 0)
+                            elif isinstance(rw, (int, float)): rew = rw
+                            else: rew = 0
+                            if rew and rew > 0: passed += 1
+                    except: pass
+    # --- Fallback 1: run-dir level stats (if no task-level results found) ---
+    if passed == 0 and completed == 0 and os.path.isdir(hd):
         for run_dir in sorted(os.listdir(hd)):
             rj = os.path.join(hd, run_dir, "result.json")
             if os.path.isfile(rj):
@@ -79,6 +98,7 @@ for h in HARNESSES:
                     elif np > 0: status = "partial"
                     else: status = "done"
                 except: pass
+    # --- Fallback 2: parse log files ---
     if passed == 0 and completed == 0:
         for logname in [f"tb21_{h}_restart_run.log", f"tb21_{h}_run2.log"]:
             lf = os.path.join(TB21_TRACES, logname)
@@ -92,6 +112,7 @@ for h in HARNESSES:
     if status in ("unknown",):
         r = subprocess.run(["ps", "-eo", "args="], capture_output=True, text=True)
         if f"/tmp/tb21_glm53_jobs/{h}" in r.stdout: status = "running"
+        else: status = "done" if completed >= total else "partial"
     remaining = max(0, total - completed - errored)
     tb21_data[h] = {"passed": passed, "completed": completed, "errored": errored, "remaining": remaining, "total": total, "status": status}
 
