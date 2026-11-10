@@ -815,6 +815,6 @@ kakcd	kenwang	hfeg017216808192	5	non_spice	parked		2026-11-10 09:06	DRC rule dev
 1792544257107_ui4d7.messages.json	curryxu	hfeg0plg99	83	spice_sim	parked		2026-11-10 12:47	peek全diagnostic/consultation(netlist为何保持高电平),非produce-task,reject
 1793847690294_guobm	leo7c	hfeg0plg95	159	spice_sim	case	EDA-Eval-DesignFlow-SarAdc8bNetlistGen-001	2026-11-10 13:21	
 1793350203105_0l5zn	chentong	hfeg0plg76	37	spice_sim	parked		2026-11-10 13:10	peek U#2 explain scripts=consultation reject
-1793341757885_9e4kf	bolint	hfeg0plg100	42	spice_sim	parked		2026-11-10 13:10	held留池 CLEAN produce-task run finesim duty PUP/PDN next round
+1793341757885_9e4kf	bolint	hfeg0plg100	42	spice_sim	case	EDA-Eval-DesignFlow-DutyMeasMt0Report-001	2026-11-10 13:51	held留池 CLEAN produce-task run finesim duty PUP/PDN next round
 1793879549590_l64el	kailiu	hfeg0plg100	182	spice_sim	parked		2026-11-10 13:10	peek consultation SPF extraction example reject
 1793682926396_lt3nh	t0003117	hfeg0pkn005	159	spice_sim	parked		2026-11-10 13:10	peek GUI open virtuoso run SKILL reject
