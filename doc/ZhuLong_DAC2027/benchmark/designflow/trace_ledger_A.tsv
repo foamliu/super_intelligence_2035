@@ -342,3 +342,4 @@
 1792399916731_sbaad	zmzhang	hfeg0pjn140	122	digital	parked		2026-11-10 18:07	r320: near-duplicate of SignalXrefBuilder-001 (u54d9) — same 3-level signal xref task (cmname->patterns/cmds_testmode->Regressions .inc->record mapping), different user/project; skip per r313 duplicate discipline
 1794189717347_1yqtd	lein	hfeg0pkn001	188	verification	parked		2026-11-10 18:07	r320: analysis-only (analyze lpddr6 refresh test scenarios), code-comprehension not produce/diagnosis, hard to make checkable case
 1793358097996_5s7n6	jkxu	hfeg0pkn002	257	verification	case	EDA-Eval-DesignFlow-MonErrScanReport-001	2026-11-10 19:35	
+1794131904136_0rtkh	jkxu	hfeg0pkn002	479	verification	case	EDA-Eval-DesignFlow-RegrunMakefileGen-001	2026-11-10 20:05	
