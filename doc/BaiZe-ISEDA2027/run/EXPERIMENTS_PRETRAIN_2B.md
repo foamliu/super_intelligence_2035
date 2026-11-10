@@ -638,14 +638,15 @@ torchrun --nnodes=1 --nproc_per_node=8 --master_addr=127.0.0.1 --master_port=296
 - 进度句：`iteration 30,660` → `154,660`；`598K tok/s` → `595K`；`loss 2.151` → `≈2.03`；`no NaN` → `zero NaN or skipped iterations`；加 `as of (2026-11-10)`
 - `tab:prod-budget`：Status `30.7k done` → `155k done`；wall-clock `≈56 d` → `≈57 d`；Total `≈59.5 d` → `≈60.6 d`
 
-### §4.7 新增
-- `\subsection{Checkpoint Scaling on General Benchmarks}\label{sec:ckpt-scaling}`
-- 位置：§4.6（Results and Production Run）之后、原 Long-Context Training 之前
-- 含 booktabs 表 `tab:ckpt-scaling`（6 行）+ 正文 2 句（趋势 + limit=100 抽样波动 ±4.5pp + pending 声明）
-- 中文翻译行同步
+### §4.7 新增→撤回
+- #1918 (20:37): 新增 `\subsection{Checkpoint Scaling on General Benchmarks}\label{sec:ckpt-scaling}`（6 行 booktabs 表 + 正文 2 句）
+- **c34b04e12 (21:23): 撤回 §4.7 + tab:ckpt-scaling**（用户更正 21:2x：「评测结果不用写在论文里。评测是为了监控，训练还处于早期。」）
+- 撤回后 tex 无残留：grep `ckpt-scaling|Checkpoint Scaling|General Benchmarks` = 0 命中
+- 摘要同步更新：30,660/2.151 → 154,660/≈2.03
 
-### 编译结果
-- `latexmk -pdf -interaction=nonstopmode main.tex` → 0 errors
-- main.pdf: 5 pages, 229159 bytes
-- main.log: 0 `!` lines, no undefined references
+### 编译结果（c34b04e12 后重新验证）
+- `latexmk -pdf -interaction=nonstopmode main.tex` → 0 errors, 0 undefined references
+- main.pdf: 5 pages, 228400 bytes（§4.7 撤回后比含表版 229159→228400，更小）
+- **注意**：c34b04e12 提交的 PDF (248801B) 系 §4.7 撤回前的旧编译产物（stale），本轮重新编译修正为 228400B
+- main.log: 0 `!` lines, 0 `Undefined` lines
 
