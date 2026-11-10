@@ -1,6 +1,8 @@
 WAITING: 1
 
-> 🆕 **【wake #986 · 2026-11-10 11:52】例行巡检·全交付态·零异常·research日报2026-11-10早报vision建议与wake#976~#985一致(来源2611.09729·无新增·文件时间戳06:11未变·晚报待18:00)。** git pull(Already up to date·gc.log警告非关键)。**research日报2026-11-10早报(06:11)vision栏建议1条**(来源2611.09729 One Run Is Not Enough·稳定性前提)·**与wake#976~#985已查一致·无新增**·非指令(仅输入参考)·纳入备查待令。体积自检TASK=31477B(31KB)✓/MEMORY=19331B(19KB)✓。**本轮动作**：①确认两条用户令均✅已交付·交付物在位✓。②进程巡检：vision loop PID669545(ppid=1·etimes=1046574s~12.1天)·ops_relay_v2 PID1032513(ppid=1·etimes=1441096s~16.7天)·GPU-wait chain PID1365749(ppid=1·etimes=329062s~3.8天·run_grpo_wave.sh 8)均健康·未碰pretrain✓。③主机=10.239.2.12✓。④ops inbox RUN_ID276=.29 eval进度查询·非vision指令✓。⑤无收敛旧loop空转✓。⑥git log最新=designflow非本线✓。**未完成指令:无**。📦体积:TASK=31KB✓/MEMORY=19KB✓。
+> 🆕 **【wake #987 · 2026-11-10 12:26】例行巡检·全交付态·零异常·research日报2026-11-10早报vision建议与wake#976~#986一致(来源2611.09729·无新增·文件时间戳06:11未变·晚报待18:00)。** git pull(Already up to date·gc.log警告非关键)。**research日报2026-11-10早报(06:11)vision栏建议1条**(来源2611.09729 One Run Is Not Enough·稳定性前提)·**与wake#976~#986已查一致·无新增**·非指令(仅输入参考)·纳入备查待令。体积自检TASK=31477B(31KB)✓/MEMORY=19130B(19KB)✓。**本轮动作**：①确认两条用户令均✅已交付·交付物在位✓。②进程巡检：vision loop PID669545(ppid=1·etimes=1048598s~12.1天)·ops_relay_v2 PID1032513(ppid=1·etimes=1443120s~16.7天)·GPU-wait chain PID1365749(ppid=1·etimes=331086s~3.8天·run_grpo_wave.sh 8)均健康·未碰pretrain✓。③主机=10.239.2.12✓。④ops inbox RUN_ID276=.29 eval进度查询·非vision指令✓。⑤无收敛旧loop空转✓。⑥git log最新=harness非本线✓。**未完成指令:无**。📦体积:TASK=31KB✓/MEMORY=19KB✓。本轮归档wake#943~#966(24条→1条bulk)→daily-memories-vision。
+
+> 📦 wake #986（例行巡检·全交付态·零异常·research日报11-10早报vision建议与wake#976~#985一致·2026-11-10 11:52）已归档 → daily-memories-vision/2026-11-10.md；**结论**：全交付态·11-10早报(06:11)vision栏建议1条(来源2611.09729·稳定性前提)·与wake#976~#985一致·无新增·非指令·纳入备查·loop/ops_relay/GPU-wait chain健康。需要时再读。
 
 > 📦 wake #985（例行巡检·全交付态·零异常·research日报11-10早报vision建议与wake#976~#984一致·2026-11-10 11:18）已归档 → daily-memories-vision/2026-11-10.md；**结论**：全交付态·11-10早报(06:11)vision栏建议1条(来源2611.09729·稳定性前提)·与wake#976~#984一致·无新增·非指令·纳入备查·loop/ops_relay/GPU-wait chain健康。需要时再读。
 
@@ -36,52 +38,7 @@ WAITING: 1
 
 > 📦 wake #969（例行巡检·全交付态·零异常·无新增·2026-11-10 00:34）已归档 → daily-memories-vision/2026-11-10.md；**结论**：全交付态·research日报2026-11-09早报vision建议3条与wake#943~#968已查一致·无新增·非指令·loop/ops_relay健康。需要时再读。
 
-> 📦 wake #966（例行巡检·全交付态·零异常·无新增·2026-11-09 22:16）已归档 → daily-memories-vision/2026-11-09.md；**结论**：全交付态·research日报2026-11-09早报vision建议3条与wake#943~#965已查一致·无新增·非指令·loop/ops_relay健康。需要时再读。
-
-> 📦 wake #965（例行巡检·全交付态·零异常·无新增·2026-11-09 21:43）已归档 → daily-memories-vision/2026-11-09.md；**结论**：全交付态·research日报2026-11-09早报vision建议3条与wake#943~#964已查一致·无新增·非指令·loop/ops_relay健康。需要时再读。
-
-> 📦 wake #964（例行巡检·全交付态·零异常·无新增·2026-11-09 21:09）已归档 → daily-memories-vision/2026-11-09.md；**结论**：全交付态·research日报2026-11-09早报vision建议3条与wake#943~#963已查一致·无新增·非指令·loop/ops_relay健康。需要时再读。
-
-> 📦 wake #963（例行巡检·全交付态·零异常·无新增·2026-11-09 20:31）已归档 → daily-memories-vision/2026-11-09.md；**结论**：全交付态·research日报2026-11-09早报vision建议3条与wake#943~#962已查一致·无新增·非指令·loop/ops_relay/GPU-wait chain健康。需要时再读。
-
-> 📦 wake #961（例行巡检·全交付态·零异常·无新增·2026-11-09 19:19）已归档 → daily-memories-vision/2026-11-09.md；**结论**：全交付态·research日报2026-11-09早报vision建议3条与wake#943~#960已查一致·无新增·非指令·loop/ops_relay/GPU-wait chain健康。需要时再读。
-
-> 📦 wake #960（例行巡检·全交付态·零异常·无新增·2026-11-09 18:45）已归档 → daily-memories-vision/2026-11-09.md；**结论**：全交付态·research日报2026-11-09早报vision建议3条与wake#943~#959已查一致·无新增·非指令·loop/ops_relay/GPU-wait chain健康。需要时再读。
-
-> 📦 wake #959（例行巡检·全交付态·零异常·无新增·2026-11-09 18:12）已归档 → daily-memories-vision/2026-11-09.md；**结论**：全交付态·research日报2026-11-09早报vision建议3条与wake#943~#958已查一致·无新增·非指令·loop/ops_relay/GPU-wait chain健康。需要时再读。
-
-> 📦 wake #958（例行巡检·全交付态·零异常·无新增·2026-11-09 17:37）已归档 → daily-memories-vision/2026-11-09.md；**结论**：全交付态·research日报2026-11-09早报vision建议3条与wake#943~#957已查一致·无新增·非指令·loop/ops_relay/GPU-wait chain健康。需要时再读。
-
-> 📦 wake #957（例行巡检·全交付态·零异常·无新增·2026-11-09 17:03）已归档 → daily-memories-vision/2026-11-09.md；**结论**：全交付态·research日报2026-11-09早报vision建议3条与wake#943~#956已查一致·无新增·非指令·loop/ops_relay/GPU-wait chain健康。需要时再读。
-
-> 📦 wake #956（例行巡检·全交付态·零异常·无新增·2026-11-09 16:28）已归档 → daily-memories-vision/2026-11-09.md；**结论**：全交付态·research日报2026-11-09早报vision建议3条与wake#943~#955一致·无新增·非指令·loop/ops_relay/GPU-wait chain健康。需要时再读。
-
-> 📦 wake #955（例行巡检·全交付态·零异常·无新增·2026-11-09 15:55）已归档 → daily-memories-vision/2026-11-09.md；**结论**：全交付态·research日报2026-11-09早报vision建议3条与wake#943~#954一致·无新增·非指令·loop/ops_relay/GPU-wait chain健康。需要时再读。
-
-> 📦 wake #954（例行巡检·全交付态·零异常·无新增·2026-11-09 15:19）已归档 → daily-memories-vision/2026-11-09.md；**结论**：全交付态·research日报2026-11-09早报vision建议3条与wake#943~#953一致·无新增·非指令·loop/ops_relay/GPU-wait chain健康。需要时再读。
-
-> 📦 wake #953（例行巡检·全交付态·零异常·无新增·2026-11-09 14:44）已归档 → daily-memories-vision/2026-11-09.md；**结论**：全交付态·research日报2026-11-09早报vision建议3条与wake#943~#952一致·无新增·非指令·loop/ops_relay/GPU-wait chain健康。需要时再读。
-
-
-> 📦 wake #952（例行巡检·全交付态·零异常·无新增·2026-11-09 13:38）已归档 → daily-memories-vision/2026-11-09.md；**结论**：全交付态·research日报2026-11-09早报vision建议3条与wake#943~#951一致·无新增·非指令·loop/ops_relay/GPU-wait chain健康。需要时再读。
-
-> 📦 wake #951（例行巡检·全交付态·零异常·无新增·2026-11-09 13:05）已归档 → daily-memories-vision/2026-11-09.md；**结论**：全交付态·research日报2026-11-09早报vision建议3条与wake#943~#950一致·无新增·非指令·loop/ops_relay/GPU-wait chain健康。需要时再读。
-
-> 📦 wake #950（例行巡检·全交付态·零异常·无新增·2026-11-09 10:54）已归档 → daily-memories-vision/2026-11-09.md；**结论**：全交付态·research日报2026-11-09早报vision建议3条与wake#943~#949一致·无新增·非指令·loop/ops_relay/GPU-wait chain健康。需要时再读。
-
-> 📦 wake #949（例行巡检·全交付态·零异常·无新增·2026-11-09 10:20）已归档 → daily-memories-vision/2026-11-09.md；**结论**：全交付态·research日报2026-11-09早报vision建议3条与wake#943~#948一致·无新增·非指令·loop/ops_relay/GPU-wait chain健康。需要时再读。
-
-> 📦 wake #948（例行巡检·全交付态·零异常·无新增·2026-11-09 09:44）已归档 → daily-memories-vision/2026-11-09.md；**结论**：全交付态·research日报2026-11-09早报vision建议3条与wake#943~#947一致·无新增·非指令·loop/ops_relay/GPU-wait chain健康。需要时再读。
-
-> 📦 wake #947（例行巡检·全交付态·零异常·无新增·2026-11-09 09:11）已归档 → daily-memories-vision/2026-11-09.md；**结论**：全交付态·research日报2026-11-09早报vision建议3条与wake#943~#946一致·无新增·非指令·loop/ops_relay/GPU-wait chain健康。需要时再读。
-
-> 📦 wake #946（例行巡检·全交付态·零异常·无新增·2026-11-09 08:38）已归档 → daily-memories-vision/2026-11-09.md；**结论**：全交付态·research日报2026-11-09早报vision建议3条与wake#944/#945一致·无新增·非指令·loop/ops_relay/GPU-wait chain健康。需要时再读。
-
-> 📦 wake #945（例行巡检·全交付态·零异常·无新增·2026-11-09 08:05）已归档 → daily-memories-vision/2026-11-09.md；**结论**：全交付态·research日报2026-11-09早报vision建议3条与wake#944一致·无新增·非指令·loop/ops_relay/GPU-wait chain健康。需要时再读。
-
-> 📦 wake #944（例行巡检·全交付态·零异常·无新增·2026-11-09 07:28）已归档 → daily-memories-vision/2026-11-09.md；**结论**：全交付态·research日报2026-11-09早报vision建议3条与wake#943一致·无新增·非指令·loop/ops_relay/GPU-wait chain健康。需要时再读。
-
-> 📦 wake #943（例行巡检·全交付态·research日报11-09早报vision建议3条·2026-11-09 06:23）已归档 → daily-memories-vision/2026-11-09.md；**结论**：全交付态·research日报vision栏新建议3条(v6奖励拆两项α=0.25/β=0.35+合成数据两道闸+SFT→GRPO对照臂·非指令·备查)·loop/ops_relay/GPU-wait chain健康。需要时再读。
+> 📦 wake#943~#966（例行巡检·全交付态·零异常·2026-11-09 06:23~22:16，24轮）已归档 → daily-memories-vision/2026-11-09.md；**结论**：全交付态·loop/ops_relay/GPU-wait chain健康·零异常·research日报2026-11-09早报vision建议3条(v6奖励拆两项α=0.25/β=0.35+合成数据两道闸+SFT→GRPO对照臂·非指令·备查)无新增。需要时再读。
 
 > 📦 wake#917~#942（例行巡检·全交付态·零异常·2026-11-08 14:08 ~ 11-09 05:48，26轮）已归档 → daily-memories-vision/2026-11-08.md / 2026-11-09.md；**结论**：全交付态·loop/ops_relay/GPU-wait chain健康·零异常·research日报vision建议无新增。需要时再读。
 
