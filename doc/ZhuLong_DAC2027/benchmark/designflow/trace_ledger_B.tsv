@@ -820,7 +820,7 @@ kakcd	kenwang	hfeg017216808192	5	non_spice	parked		2026-11-10 09:06	DRC rule dev
 1793682926396_lt3nh	t0003117	hfeg0pkn005	159	spice_sim	parked		2026-11-10 13:10	peek GUI open virtuoso run SKILL reject
 1794290403498_45msy	e0023936	hfeg0pkn004	42	spice_sim	case	EDA-Eval-DesignFlow-SimConfigEditReport-001	2026-11-10 14:58	config.yaml sim-param edit+change report; B-synthesized L1
 1794290579357_trnx0	t0002614	hfeg0plg105	35	spice_sim	case	EDA-Eval-DesignFlow-SaDcSweepTbGen-001	2026-11-10 15:47	
-1794292585610_1ojna	curryxu	hfeg0plg07	148	spice_sim	parked	EDA-Eval-DesignFlow-PvtInvChainDelayMeas-001	2026-11-11 04:50	delay_test.sp PVT analysis diagnostic no-produce
+1794292585610_1ojna	curryxu	hfeg0plg07	148	spice_sim	case	EDA-Eval-DesignFlow-PvtInvChainDelayMeas-001	2026-11-11 05:08	spice_sim/L1 k=12 PVT inv-chain delay meas; delivered 11-10 17:06; re-verified 11-11 05:0x (ref 12/12 PASS + 6neg FAIL + 3fake FAIL + byte-sync); fixed 04:50 mis-park regression
 1794277350221_vawjj	leliow	hfeg0plg52	340	spice_sim	case	EDA-Eval-DesignFlow-McVthSpVariantGen-001	2026-11-10 17:50	
 1794297017130_0uuj2	e0030760	hfeg0pkn001	Solido HSV MC SRAM SNM butterfly custom output	spice_sim	case	EDA-Eval-DesignFlow-SnmButterflyCalc-001	2026-11-10 18:55	
 1794299323217_5oub3.messages.json	clarawu	hfeg0plg106	30	spice_sim	case	EDA-Eval-DesignFlow-CioLeakageExtract-001	2026-11-10 19:24	
