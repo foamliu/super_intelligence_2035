@@ -1242,3 +1242,42 @@ ssh 10.239.2.29 'nvidia-smi --query-gpu=utilization.gpu,memory.used,memory.total
 - 📦 TASK≈22.5KB ✅ / MEMORY≈10.4KB ✅ (归档 #1940–#1924 → daily-memories/2026-11-11.md, 省~17KB)
 
 **160k eval 状态**: HF 导出✅ · GGUF 转换❌ (time_step_limit tuple/list 错误重现, 同 #1945/#1946, 待下轮修复)
+
+### 论文 §4.6 刷新 #1948（2026-11-11 08:00）
+
+**取数命令**（.29 实测）:
+```
+ssh -o StrictHostKeyChecking=no 10.239.2.29 'tail -30 /proc/146283/fd/1'
+ssh -o StrictHostKeyChecking=no 10.239.2.29 'nvidia-smi --query-gpu=index,utilization.gpu,memory.used --format=csv,noheader'
+```
+
+**训练指标**（末 10 步 160340–160430）:
+- iteration: 160,430 / 700,000
+- elapsed time per iteration (ms): 6957.2, 6975.1, 6981.4, 7119.9, 7007.3, 6971.4, 7178.3, 6973.6, 7097.0, 6948.1
+- 平均 step time: 7020.83 ms = 7.021 s
+- tok/s = 4,194,304 / 7.021 = 597,410 ≈ 597K
+- lm loss range: 2.012–2.033, 平均 ≈2.03
+- skipped iterations: 0, nan iterations: 0
+- GPU: 8 卡 100% util, ~75 GB/卡
+
+**wall-clock 估算**:
+- stable: 700,000 × 4,194,304 / 597K = 57.0d → ≈57d (不变)
+- total = 57 + 1.2 + 2.3 = 60.5d (不变)
+
+**论文改动**:
+- §4.6 (4_llm_pretrain.tex line 109–110): iter 160,290→160,430, tok/s 591K→597K, loss≈2.03 不变
+- abstract (0_abstract.tex line 14–15): 同上
+- tab:prod-budget (line 122): "160k done" 不变 (160,430 rounds to 160k)
+- wall-clock: ≈57d 不变
+- total (line 126): ≈60.5d 不变
+
+**编译结果**:
+- `latexmk -pdf -interaction=nonstopmode main.tex` → 0 errors
+- main.pdf: 5 pages, 228,640 bytes
+
+**护栏检查**:
+- grep ARC-Challenge|HellaSwag|BoolQ|OpenBookQA|PIQA|SciQ|Winogrande|ckpt-scaling in ISEDA2027/*.tex main.tex: 0 命中 ✅
+- §4.7 sec:ckpt-scaling: 不存在 ✅
+- 📦 TASK≈22.5KB ✅ / MEMORY≈10.5KB ✅
+
+**160k eval 状态**: HF 导出✅ · GGUF 转换✅ (07:43, bz2b-160000-f16.gguf 4.2G) · llama-server 起服 (PID1726277, port8190, -t4, nice19) · lm_eval client 运行中 (PID1736839, 8集 limit=100, --parallel 2 --batch-size 32) · results.json 尚未落盘 · 报告刷新 pending
