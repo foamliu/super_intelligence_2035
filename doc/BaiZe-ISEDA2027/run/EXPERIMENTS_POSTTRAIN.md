@@ -3,7 +3,7 @@
 > 记录 post-train 所有实验/诊断/评测的原始数据与结论。
 > agent 可写；正文不改结论。
 
----
+
 
 ## §D 诊断清单 D1–D6（§7.0 · 零 GPU · 从 36% 运行的 final_report.json 提取）
 
@@ -15825,3 +15825,69 @@ Process 3557214 has 36.30 GiB memory in use.
 4. **488 个 EDA-Eval API 已普查**，按 6 类分布，可直接指导 SFT/退火语料配比。
 5. **污染隔离已验证**：API 文档 ≠ task solution，按 API 名隔离即可合规。
 6. **eda_fastmcp 在 .17 的 `~/code/eda_fastmcp/`**，158 题数据集 + eval 基础设施均可达。
+
+---
+
+## §R148 — PyAether API Reference Corpus 构建（wake216, 2026-11-11）
+
+> **目标**：将 R147 普查的 488 个 EDA-Eval API 转为可用的 SFT/退火领域语料（API 参考文档 JSONL）。
+> **方法**：双源构建——静态 JSON + MCP SSE enrichment。
+
+### 1. API 名称提取
+
+- 来源：`~/code/eda_fastmcp/pyAether-eval/original_dataset/EDA-Eval-PyAether-v20260311.jsonl`（158 task，689KB）
+- 字段：`metadata.apis_used`（list[str]）
+- 结果：488 unique API（均带 `pyAether.` 前缀）
+- 产物：`run/pyAether_eval_488_apis.txt`
+
+### 2. 去重为 lookup targets
+
+- 分类：`pyAether.Class.method` → Class（57 unique classes）；`pyAether.func` → func（312 standalone）
+- 合计：369 lookup targets（class 查询一次即获全部方法文档）
+- 产物：`run/pyAether_eval_api_targets.txt`
+
+### 3. 静态 JSON 匹配（源 1）
+
+- 源文件：`~/code/eda_fastmcp/docs/API_INFO_MERGED_V3.json`（18MB，8463 API，dict key=API 名不带前缀）
+- 每条 entry：`api_name` / `api_type`（class|function）/ `api_descriptions`（Markdown: 签名+参数+返回+示例）/ `category`
+- 匹配逻辑：先查完整名（如 `EmyLPPHeader.create`），再查 class 名（如 `EmyLPPHeader`），`seen_keys` 去重
+- 结果：**365 entries**，3.54MB，~621K tokens
+- 产物：`run/pyAether_api_ref_488.jsonl`
+
+### 4. MCP SSE enrichment（源 2）
+
+- MCP server：`~/code/eda_fastmcp/.venv/bin/python main.py`（SSE transport on `:18888`）
+- 工具：`get_api_details`（返回比静态 JSON 更丰富：测试验证补充+错误处理+最佳实践+示例代码）
+- 编写 SSE client：`run/baize_posttrain_mcp_api_corpus.py`
+  - MCP 协议：initialize handshake（protocolVersion 2024-11-05）→ notifications/initialized → tools/call
+  - 特性：batch 调用、自动 reconnect、failed 列表输出
+  - 验证：`py_compile` ✅，5-API test ✅（2/5 found），123-API full run ✅
+- 结果：**35 entries**，26.9KB，~4.8K tokens
+- 产物：`run/pyAether_api_ref_mcp_enriched.jsonl`
+
+### 5. 合并统计
+
+| 指标 | 静态 JSON | MCP enrichment | 合并去重 |
+|:--|--:|--:|--:|
+| entries | 365 | 35 | **400** |
+| 文件大小 | 3.5MB | 26.9KB | ~3.5MB |
+| ~tokens | 621K | 4.8K | **~626K** |
+| 覆盖率 | 74.8% | 7.2% | **82.0%** |
+
+- 33 failed = enum 常量（`MDE_SWEEP_RANGE_CENTER_SPAN` 等）+ SWIG 属性（`tm_mday` 等）——非 API 函数/类，无文档条目
+- 这些 enum 常量的父类（如 `MdeSweepRange`/`MdeSweepType`）已在 corpus 中
+
+### 6. 污染隔离验证
+
+- corpus 内容 = `api_descriptions`（API 签名 + 参数说明 + 返回值 + 用法示例）
+- EDA-Eval task = `prompt`（自然语言任务描述）+ `test_code`（断言代码）+ `canonical_solution`
+- **API 文档 ≠ task solution**：corpus 只含 API 用法文档，不含任何 task 的 prompt 或断言
+- 按 API 名隔离：corpus 中的 API 文档可自由用于训练，158 task 的 prompt/assert 绝对不进训练集 ✅
+
+### 7. 下一步
+
+- corpus → SFT/退火语料组装：将 API ref 文档转为 doc-to-code 训练对（"给定 API 文档，写调用代码"）
+- 需配合已有 `sft_pyaether_corpus_v2.jsonl`（19524 对）扩展
+- MCP enrichment 可扩展到全部 8463 API（当前仅做了 488 中的 123 not-found）
+
+---
