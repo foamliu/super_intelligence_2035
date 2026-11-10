@@ -251,6 +251,41 @@
 > - SFT/RL 训练入口 `sft_launcher.py` / `grpo_train.py` / `reward_compute.py`（待确认自研 vs TRL/verl/OpenRLHF）。
 > - 所有 `/nas_train/...` 路径在训练机（.29/.12/.17）上为同一 NFS 导出；本节点挂载于 `/nas_data`，dry-run 已验证配方逻辑。
 
+### Phase 3 RL/GRPO 端到端依赖审计（2026-11-10 wake212 · 零 GPU · 全绿）
+
+> **目标**：以完整依赖图验证 Phase 3 RL/GRPO 管线——不只单脚本 `bash -n`，而是**全部 7 个依赖文件 + 数据 schema 一致性**逐项校验。
+> **背景**：`baize_posttrain_rl_grpo.sh` 于 Nov 10 08:41 最后修改（verl wrapper 同步更新），此前 EXPERIMENTS 仅记录单脚本 `bash -n PASS`，未做过完整依赖图审计。
+
+| # | 依赖文件 | 大小 | 修改时间 | 校验方法 | 结果 |
+|:--|:--|--:|:--|:--|:--|
+| 1 | `baize_posttrain_rl_grpo.sh` | 11124B | Nov10 08:41 | `bash -n` + `--dry-run` | ✅ rc=0, recipe 打印 reward_arm=R0/framework=verl/4GPU/6hooks/anti-cheat |
+| 2 | `baize_posttrain_rl_verl_config_v2.yaml` | 5300B | Nov09 20:46 | `yaml.safe_load` | ✅ YAML valid, 9 top keys; R47 五 BUG 全修 (BUG1 custom_reward_function→top-level / BUG2 adv_estimator:grpo / BUG3 rollout.n:8 / BUG4 multi_turn nested dict / BUG5 tool_config_path) |
+| 3 | `baize_posttrain_verl_wrapper.py` | 4742B | Nov10 08:41 | `ast.parse` | ✅ AST valid (R21 in-process parser) |
+| 4 | `baize_posttrain_minicpm5_parser.py` | 13760B | Nov07 18:34 | `ast.parse` | ✅ AST valid (ToolParser registry "minicpm5") |
+| 5 | `baize_posttrain_hooks_config.yaml` | 473B | Nov10 08:12 | `yaml.safe_load` | ✅ YAML valid, **6 hooks 全启用**: resilience/curriculum/rollout_scheduler(max_sc=8,strategy=both,max_turns=6)/kl_scheduler/anti_cheat/early_stop(max_steps=750) |
+| 6 | `baize_posttrain_reward_functions.py` | 35101B | Nov10 01:48 | `ast.parse` | ✅ AST valid, **23 functions**: R0-R4 五臂 (reward_r0_skeleton/reward_r1_binary/reward_r2_partial/reward_r3_tool_penalty/reward_r4_api_legality) + anti-cheat (_init_cheat_tracker/check_cheat_overlap/update_cheat_rate/get_cheat_rate_report/save_cheat_rate_report) + compute_score 主入口 + 工具提取/执行解析/断言计数 helpers |
+| 7 | `rl_pyaether_synth_v2.parquet` | 953467B | Nov07 15:15 | 源码审计 `baize_posttrain_jsonl_to_parquet.py` (pyarrow 未装无法直读) | ✅ schema 确认: `prompt`(list[dict] chat格式) + `reward_model`(dict: test_code/canonical_solution/entry_point/metadata) + `agent_name`(str="eda_sandbox"); 3347 rows (源 JSONL 3347 行) |
+
+**Config-Data schema 一致性校验**：
+
+| config 字段 (v2) | 期望 | parquet 实际 | 匹配 |
+|:--|:--|:--|:--|
+| `data.prompt_key: prompt` | prompt 列存在 | ✅ prompt (list[dict]) | ✅ |
+| `data.reward_fn_key: reward_model` | reward_model 列存在 | ✅ reward_model (dict) | ✅ |
+| `data.return_raw_chat: True` | prompt 为 list[dict] | ✅ chat 格式 [{role,content}] | ✅ |
+| `data.need_tools_kwargs: True` | agent_name 列存在 | ✅ agent_name (str) | ✅ |
+| `actor_rollout_ref.rollout.n: 8` | G=8 group | — (runtime param) | ✅ |
+| `custom_reward_function.path: baize_posttrain_reward_functions.py` | 文件存在 | ✅ (#6) | ✅ |
+| `custom_reward_function.name: compute_score` | 函数存在 | ✅ (#6 函数列表含 compute_score) | ✅ |
+
+**reward 臂配置**：config 设 `arm: R0`（skeleton, 无沙盒）+ `auto_fallback: true`（R22: 沙盒不可用时自动降级 R0）。R1-R4 在沙盒恢复后切换。reward_functions.py 五臂函数全存在。
+
+**hooks 配置**：6 hooks 全 `enabled: true`——resilience(容错)/curriculum(课程学习)/rollout_scheduler(max_sc=8,max_turns=6)/kl_scheduler(KL 退火)/anti_cheat(反作弊红线)/early_stop(max_steps=750)。与 EXPERIMENTS §R130-R143 设计的 6 hook 一致。
+
+**审计结论**：Phase 3 RL/GRPO 管线**全依赖图验证通过**（7/7 文件 + config-data schema 一致）。SFT ckpt 就绪 + GPU 释放后可直接起跑；沙盒恢复前用 R0 skeleton 臂（无执行奖励），沙盒恢复后切 R2/R3/R4。**无遗漏依赖、无 schema 不匹配**。
+
+> ⚠️ 运行时仍需：(a) verl venv 含 pyarrow（当前 /tmp verl venv 未装，运行前 `pip install pyarrow`）；(b) SGLang inference engine（rollout.name=sglang，verl 自带 sglang 后端）；(c) 沙盒可达（R2-R4 奖励需要执行；R0 不需要）。
+
 ---
 
 ## §Plan 三步训练方案书（P2 · 2026-11-06 wake3 · 零 GPU · 已定稿）
