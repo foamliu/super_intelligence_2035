@@ -33,29 +33,49 @@ if [[ "$models_rc" != "200" ]]; then
 fi
 
 # Step 2: /chat/completions (the REAL quota check — this is what R1736 missed)
-resp=$(curl -s -m 15 "$GW/chat/completions" \
+# R2072 fix: capture HTTP status code separately — bare grep '429' on the body
+# false-matches JSON response IDs that happen to contain "429" as a substring
+# (e.g. "b75b614022284291a9cdcc3296307115").  Now we check the *HTTP status*
+# for 429, and only grep the body for explicit error strings.
+resp_with_rc=$(curl -s -m 15 -w '\n%{http_code}' "$GW/chat/completions" \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer $KEY" \
   -d '{"model":"glm-5.3-flash","messages":[{"role":"user","content":"ping"}],"max_tokens":5}' \
-  2>/dev/null || echo "CURL_FAILED")
+  2>/dev/null || echo -e "CURL_FAILED\n000")
+
+# Split body and HTTP status code (last line)
+chat_rc=$(echo "$resp_with_rc" | tail -1)
+resp=$(echo "$resp_with_rc" | sed '$d')
 
 if [[ "$VERBOSE" == "1" ]]; then
-  echo "[probe] /v1/chat/completions → $(echo "$resp" | head -c 200)"
+  echo "[probe] /v1/chat/completions → HTTP $chat_rc, body: $(echo "$resp" | head -c 200)"
 fi
 
-# Check for quota exhaustion (Chinese error string or 429 in response)
-if echo "$resp" | grep -qE '额度已用完|429|rate.limit|Rate.Limit|Too Many|CURL_FAILED'; then
-  # Extract wait time if present
-  wait_time=$(echo "$resp" | grep -oP '等待\K[0-9]+分钟[0-9]+秒' || echo "unknown")
-  echo "GATEWAY_QUOTA_EXHAUSTED: chat completions blocked. Wait: ${wait_time}"
+# Check for CURL failure
+if [[ "$resp" == "CURL_FAILED" || "$chat_rc" == "000" ]]; then
+  echo "GATEWAY_DOWN: chat completions curl failed (rc=$chat_rc)"
   exit 1
 fi
 
-# Check for valid JSON response with choices
-if echo "$resp" | grep -q '"choices"'; then
-  echo "GATEWAY_OK: chat completions working"
+# Check for quota exhaustion: HTTP 429 status OR explicit error strings in body
+if [[ "$chat_rc" == "429" ]] || echo "$resp" | grep -qE '额度已用完|rate.limit|Rate.Limit|Too Many|quota'; then
+  # Extract wait time if present
+  wait_time=$(echo "$resp" | grep -oP '等待\K[0-9]+分钟[0-9]+秒' || echo "unknown")
+  echo "GATEWAY_QUOTA_EXHAUSTED: chat completions blocked (HTTP $chat_rc). Wait: ${wait_time}"
+  exit 1
+fi
+
+# Check for auth failure
+if [[ "$chat_rc" == "401" || "$chat_rc" == "403" ]]; then
+  echo "GATEWAY_AUTH_FAIL: chat completions returned HTTP $chat_rc"
+  exit 1
+fi
+
+# Check for valid JSON response with choices (HTTP 200)
+if [[ "$chat_rc" == "200" ]] && echo "$resp" | grep -q '"choices"'; then
+  echo "GATEWAY_OK: chat completions working (HTTP 200)"
   exit 0
 fi
 
-echo "GATEWAY_UNKNOWN: unexpected response: $(echo "$resp" | head -c 200)"
+echo "GATEWAY_UNKNOWN: unexpected response (HTTP $chat_rc): $(echo "$resp" | head -c 200)"
 exit 1
