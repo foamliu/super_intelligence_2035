@@ -15950,3 +15950,54 @@ Process 3557214 has 36.30 GiB memory in use.
 - 下一步：① 扩展覆盖（生成式补全 302 缺口 API）② 合并 v5+v6 → 统一 SFT pyaether 语料 ③ 退火语料用 R148 corpus 原文（~626K tok）做 domain blend
 
 ---
+
+## §R150 — Unified v5+v6 SFT Corpus Merge + Contamination Gate PASS（wake218, 2026-11-11, 零 GPU）
+
+> **目标**：执行 R149 §6 的下一步②——将 v5（1193 pairs，广覆盖浅桩）与 v6（352 pairs，权威示例）
+> 合并为统一 PyAether SFT 语料，过污染隔离闸门，产出可直接投料的训练集。
+
+### 1. 方法
+
+- **输入**：
+  - v5 = `sft_pyaether_corpus_v5_deep_enriched.jsonl`（1193 pairs / 1708 KB / 覆盖全 488 eval API / 浅层 LLM 桩）
+  - v6 = `sft_pyaether_corpus_v6_method_examples.jsonl`（352 pairs / 459 KB / 186 eval API / 权威 >>> doctest 示例）
+- **合并**：v5 先入（保广覆盖 + 多类型 S0–S6），v6 后入（补充高质量 R149_method_example）；md5(prompt+completion) 去重
+- **字段归一化**：api_used（v5=list / v6=str）统一为 list；v6 标注 `contamination_check=passed_R149`
+- **产物**：`run/sft_pyaether_corpus_unified_v5v6.jsonl`（1545 pairs / 2160 KB）
+- **合成脚本**：`run/baize_posttrain_merge_v5v6.py`（py_compile ✅ / --dry-run ✅ / --parquet 可选）
+
+### 2. 产物统计
+
+| 指标 | 值 |
+|:--|--:|
+| 合并后总对数 | **1545**（1193 v5 + 352 v6，0 重复） |
+| 文件大小 | 2160 KB（2.16 MB） |
+| ~tokens | ~453K（1,675,901 chars / 3.7） |
+| unique api_used | 550 |
+| 类型分布 | S1_doc_to_code 364 / S2_api_lookup 364 / S3_multi_api_chain 261 / R149_method_example 352 / S5_* 128 / S0 34 / S6_* 42 |
+
+### 3. 污染隔离闸门（红线 §5.1）
+
+- 闸门脚本：`baize_posttrain_contamination_gate.sh`（非 dry-run 实扫）
+- 黑名单：6 评测快照并集 536 任务（含 v20260311 的 158）
+- 判定：13-gram 重合率 ≥ 0.8 或短 8-gram 兜底重合 ≥ 1
+- **结果**：扫描 1545 文档 / **命中 0** → ✅ **PASS**（可投料）
+- 报告：`/tmp/r150_contam_report.md`
+
+### 4. verl SFT Parquet
+
+- 合并脚本内置 `--parquet` 选项（`to_verl_conversation` 转 conversation+metadata 格式）
+- 当前系统 python 无 pandas → parquet 待用 verl venv（`~/code/verl_cu124_venv/`）生成；JSONL 已就绪，parquet 为训练时按需转换
+
+### 5. 训练配比建议
+
+- 统一语料 1545 pairs / ~453K tok 可直接作为 SFT 数据的 `pyaether20` 配比成分
+- 与 UltraData-SFT-2605（18.89B tok）混合时，pyaether 语料占比 ≈ 453K / 18.89B ≈ 0.0024%（需上调至目标配比 20% → 取子集或上采样）
+- v6 的 352 权威示例对质量贡献最大（参数保真 + 多步链式），建议在配比中**上采样 v6**（如 ×5 → 1760 pairs）以平衡其少量
+
+### 6. 结论与下一步
+
+- R150 完成 R149 §6 下一步②：统一 PyAether SFT 语料已就绪（1545 pairs / 453K tok / 0 污染）
+- 下一步：① v6 覆盖扩展（生成式补全 302 缺口 API，需 GPU4 :8098 + 二次闸门）② verl parquet 转换（verl venv）③ 退火语料用 R148 corpus 原文（~626K tok）做 domain blend ④ GPU 释放后用统一语料跑 SFT surrogate
+
+---
