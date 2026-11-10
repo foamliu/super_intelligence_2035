@@ -1,0 +1,101 @@
+[R2136-eval 02:15:45] cline: 204 already evaluated, 204 total real, 0 new to eval
+[R2136-eval 02:15:45] codex: 95 already evaluated, 95 total real, 0 new to eval
+[R2136-eval 02:15:45] opencode: 421 already evaluated, 421 total real, 0 new to eval
+[R2136-eval 02:15:45] claude-code: 189 already evaluated, 191 total real, 2 new to eval
+[R2136-eval 02:15:45] claude-code: launching eval on 2 NEW instances (workers=1, timeout=1800)...
+[R2136-eval 02:15:45]   cmd: python3 -m swebench.harness.run_evaluation --predictions_path /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions_glm53/predictions_...
+[R2136-eval 02:16:02]   eval finished rc=0
+[R2136-eval 02:16:02]   claude-code: +1 resolved +0 failed +1 infra => total resolved=150
+[R2136-eval 02:16:02] pi: 170 already evaluated, 170 total real, 0 new to eval
+[R2136-eval 02:16:02] hermes: 365 already evaluated, 366 total real, 1 new to eval
+[R2136-eval 02:16:02] hermes: launching eval on 1 NEW instances (workers=1, timeout=1800)...
+[R2136-eval 02:16:02]   cmd: python3 -m swebench.harness.run_evaluatio[R2136-eval 02:16:40]   eval finished rc=0
+[R2136-eval 02:16:40]   claude-code: +2 resolved +0 failed +0 infra => total resolved=150
+[R2136-eval 02:16:40] pi: 170 already evaluated, 170 total real, 0 new to eval
+[R2136-eval 02:16:40] hermes: 366 already evaluated, 366 total real, 0 new to eval
+[R2136-eval 02:16:40] deepseek: 162 already evaluated, 163 total real, 1 new to eval
+[R2136-eval 02:16:40] deepseek: launching eval on 1 NEW instances (workers=1, timeout=1800)...
+[R2136-eval 02:16:40]   cmd: python3 -m swebench.harness.run_evaluation --predictions_path /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions_glm53/predictions_[R21[R2136-eval 02:17:19]   eval finished rc=0
+[R2136-eval 02:17:19]   deepseek: +1 resolved +0 failed +0 infra => total resolved=128
+[R2136-eval 02:17:19] DONE R2136: total new resolved this round = 5
+�█████| 1/1 [00:25<00:00, 25.36s/it]
+1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:25<00:00, 25.36s/it]
+1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:25<00:00, 25.36s/it]
+
+
+=== claude-code R2136 ===
+Running 2 instances...
+All instances run.
+Total instances: 2
+Instances submitted: 2
+Instances completed: 2
+Instances incomplete: 0
+Instances resolved: 2
+Instances unresolved: 0
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 0
+Unremoved images: 2
+Report written to claude-code-glm-5.3-flash.verified_full_glm53_claude-code_incr_R2136.json
+
+[stderr]
+
+  0%|          | 0/2 [00:00<?, ?it/s]
+ 50%|█████     | 1/2 [00:33<00:33, 33.50s/it]
+1 ran successfully, 0 failed:  50%|█████     | 1/2 [00:33<00:33, 33.50s/it]
+1 ran successfully, 0 failed: 100%|██████████| 2/2 [01:12<00:00, 36.49s/it]
+2 ran successfully, 0 failed: 100%|██████████| 2/2 [01:12<00:00, 36.49s/it]
+2 ran successfully, 0 failed: 100%|██████████| 2/2 [01:12<00:00, 36.50s/it]
+
+
+=== deepseek-harness R2136 ===
+Running 1 instances...
+All instances run.
+Total instances: 1
+Instances submitted: 1
+Instances completed: 0
+Instances incomplete: 0
+Instances resolved: 0
+Instances unresolved: 0
+Instances with likely infrastructure failures: 1
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 1
+Unstopped containers: 1
+Unremoved images: 1
+Report written to deepseek-harness-glm-5.3-flash.verified_full_glm53_deepseek-harness_incr_R2136.json
+
+[stderr]
+
+  0%|          | 0/1 [00:00<?, ?it/s]
+100%|██████████| 1/1 [00:09<00:00,  9.55s/it]
+1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:09<00:00,  9.55s/it]
+1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:09<00:00,  9.55s/it]
+
+
+=== deepseek-harness R2136 ===
+Running 1 instances...
+All instances run.
+Total instances: 1
+Instances submitted: 1
+Instances completed: 1
+Instances incomplete: 0
+Instances resolved: 1
+Instances unresolved: 0
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 0
+Unremoved images: 1
+Report written to deepseek-harness-glm-5.3-flash.verified_full_glm53_deepseek-harness_incr_R2136.json
+
+[stderr]
+
+  0%|          | 0/1 [00:00<?, ?it/s]
+100%|██████████| 1/1 [00:34<00:00, 34.90s/it]
+1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:34<00:00, 34.90s/it]
+1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:34<00:00, 34.90s/it]
+
