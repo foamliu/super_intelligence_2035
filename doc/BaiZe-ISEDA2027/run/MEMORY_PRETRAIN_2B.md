@@ -1,6 +1,8 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
 WAITING: 1
 
+> 2026-11-10 09:11 #1882: **运维令11-09执行轮·状态确认轮·无新ckpt可评·训练健康iter148950/700k step6934-7257ms<7.4s✅·14/14eval全完成·报告60k_100k版含10k-140k✅·等150k~2h后**·**动作**：①git fetch+status→push(ahead1=harness commit,push后## main...origin/main同步✅,他线untracked未碰) ②训练核查(.29 /proc/146283/fd/1):iter148950/700k,step6934-7257ms✅(<7.4s铁律),loss2.023-2.051,0NaN/0skip,GPU96-100%满载 ③eval核查:pgrep llama-server/lm_eval=0(无残留),14/14 results.json确认(gguf_iter_{10000..140000}_fixed_8set),报告report_pretrain_llamacpp_scaling_60k_100k_zh.html=23.6KB@Nov9 17:48含10k-140k✅ ④无150k ckpt(latest=iter_0148000,iter148950→150000~1050步×~7.0s≈2h后~11:15) ⑤research日报11-10 06:11已读(同#1881,无新更新,下期18:00) ⑥📦TASK=27.9KB/MEMORY=26.6KB(均≤32KB✅,归档0KB)·未完成指令：无(11w-14w全完成,下个万整数150k~2h后)⇒WAITING:1。
+
 > 2026-11-10 08:46 #1881: **运维令11-09执行轮·状态确认轮·无新ckpt可评·训练健康iter148740/700k step6937-7068ms<7.4s✅·14/14eval全完成·等150k~2.5h后**·**动作**：①git fetch+status(同步✅,## main...origin/main,他线untracked文件未碰) ②训练核查(.29 /proc/146283/fd/1):iter148740/700k,step6937-7068ms✅(<7.4s铁律),loss2.029-2.049,0NaN/0skip,GPU满载 ③eval核查:pgrep llama-server/lm_eval=0(无残留),14/14 results.json确认(gguf_iter_{10000..140000}_fixed_8set),无150k eval ④无150k ckpt(latest=iter_0148000,iter148740→150000~1260步×~7.0s≈2.5h后~11:15) ⑤research日报11-10 06:11早报已读(同#1880,无新更新,下期18:00) ⑥📦TASK=27.9KB/MEMORY=25.1KB→归档#1864-#1870七条状态确认流水为指针(全文已存daily-memories/2026-11-10.md,归档~6KB)·未完成指令：无(11w-14w全完成,下个万整数150k~2.5h后)⇒WAITING:1。
 
 
