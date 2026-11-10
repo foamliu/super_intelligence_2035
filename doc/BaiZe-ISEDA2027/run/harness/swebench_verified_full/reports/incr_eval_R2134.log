@@ -1,0 +1,171 @@
+[R2134-eval 01:44:42] cline: 204 already evaluated, 204 total real, 0 new to eval
+[R2134-eval 01:44:42] codex: 94 already evaluated, 95 total real, 1 new to eval
+[R2134-eval 01:44:42] codex: launching eval on 1 NEW instances (workers=1, timeout=1800)...
+[R2134-eval 01:44:42]   cmd: python3 -m swebench.harness.run_evaluation --predictions_path /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions_glm53/predictions_...
+[R2134-eval 01:46:03] cline: 204 already evaluated, 204 total real, 0 new to eval
+[R2134-eval 01:46:03] codex: 94 already evaluated, 95 total real, 1 new to eval
+[R2134-eval 01:46:03] codex: launching eval on 1 NEW instances (workers=1, timeout=1800)...
+[R2134-eval 01:46:03]   cmd: python3 -m swebench.harness.run_evaluation --predictions_path /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions_glm53/predictions_...
+
+=== codex R2134 ===
+1 instances already run, skipping...
+No instances to run.
+Total instances: 1
+Instances submitted: 1
+Instances completed: 1
+Instances incomplete: 0
+Instances resolved: 0
+Instances unresolved: 1
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 1
+Unremoved images: 1
+Report written to codex-glm-5.3-flash.verified_full_glm53_codex_incr_R2134.json
+
+[stderr]
+
+[R2134-eval 01:46:08]   eval finished rc=0
+[R2134-eval 01:46:08]   codex: +0 resolved +1 failed +0 infra => total resolved=64
+[R2134-eval 01:46:08] opencode: 419 already evaluated, 419 total real, 0 new to eval
+[R2134-eval 01:46:08] claude-code: 188 already evaluated, 189 total real, 1 new to eval
+[R2134-eval 01:46:08] claude-code: launching eval on 1 NEW instances (workers=1, timeout=1800)...
+[R2134-eval 01:46:08]   cmd: python3 -m swebench.harness.run_evaluation --predictions_path /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions_glm53/predictions_...
+[R2134-eval 01:46:51] cline: 204 already evaluated, 204 total real, 0 new to eval
+[R2134-eval 01:46:51] codex: 95 already evaluated, 95 total real, 0 new to eval
+[R2134-eval 01:46:51] opencode: 419 already evaluated, 419 total real, 0 new to eval
+[R2134-eval 01:46:51] claude-code: 188 already evaluated, 189 total real, 1 new to eval
+[R2134-eval 01:46:51] claude-code: launching eval on 1 NEW instances (workers=1, timeout=1800)...
+[R2134-eval 01:46:51]   cmd: python3 -m swebench.harness.run_evaluation --predictions_path /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions_glm53/predictions_...
+
+=== claude-code R2134 ===
+Running 1 instances...
+All instances run.
+Total instances: 1
+Instances submitted: 1
+Instances completed: 0
+Instances incomplete: 0
+Instances resolved: 0
+Instances unresolved: 0
+Instances with likely infrastructure failures: 1
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 1
+Unstopped containers: 1
+Unremoved images: 1
+Report written to claude-code-glm-5.3-flash.verified_full_glm53_claude-code_incr_R2134.json
+
+[stderr]
+
+  0%|          | 0/1 [00:00<?, ?it/s]
+100%|██████████| 1/1 [00:44<00:00, 44.69s/it]
+1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:44<00:00, 44.69s/it]
+1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:44<00:00, 44.69s/it]
+
+[R2134-eval 01:47:08]   eval finished rc=0
+[R2134-eval 01:47:08]   claude-code: +0 resolved +0 failed +1 infra => total resolved=149
+[R2134-eval 01:47:09] pi: 170 already evaluated, 170 total real, 0 new to eval
+[R2134-eval 01:47:09] hermes: 365 already evaluated, 365 total real, 0 new to eval
+[R2134-eval 01:47:09] deepseek: 160 already evaluated, 162 total real, 2 new to eval
+[R2134-eval 01:47:09] deepseek: launching eval on 2 NEW instances (workers=1, timeout=1800)...
+[R2134-eval 01:47:09]   cmd: python3 -m swebench.harness.run_evaluation --predictions_path /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions_glm53/predictions_...
+[R2134-eval 01:47:42] cline: 204 already evaluated, 204 total real, 0 new to eval
+[R2134-eval 01:47:42] codex: 95 already evaluated, 95 total real, 0 new to eval
+[R2134-eval 01:47:42] opencode: 419 already evaluated, 419 total real, 0 new to eval
+[R2134-eval 01:47:42] claude-code: 189 already evaluated, 189 total real, 0 new to eval
+[R2134-eval 01:47:42] pi: 170 already evaluated, 170 total real, 0 new to eval
+[R2134-eval 01:47:42] hermes: 365 already evaluated, 365 total real, 0 new to eval
+[R2134-eval 01:47:42] deepseek: 160 already evaluated, 162 total real, 2 new to eval
+[R2134-eval 01:47:42] deepseek: launching eval on 2 NEW instances (workers=1, timeout=1800)...
+[R2134-eval 01:47:42]   cmd: python3 -m swebench.harness.run_evaluation --predictions_path /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions_glm53/predictions_...
+
+=== deepseek-harness R2134 ===
+Running 2 instances...
+All instances run.
+Total instances: 2
+Instances submitted: 2
+Instances completed: 1
+Instances incomplete: 0
+Instances resolved: 1
+Instances unresolved: 0
+Instances with likely infrastructure failures: 1
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 1
+Unstopped containers: 1
+Unremoved images: 2
+Report written to deepseek-harness-glm-5.3-flash.verified_full_glm53_deepseek-harness_incr_R2134.json
+
+[stderr]
+
+  0%|          | 0/2 [00:00<?, ?it/s]
+ 50%|█████     | 1/2 [00:28<00:28, 28.92s/it]
+1 ran successfully, 0 failed:  50%|█████     | 1/2 [00:28<00:28, 28.92s/it]
+1 ran successfully, 0 failed: 100%|██████████| 2/2 [00:34<00:00, 17.38s/it]
+2 ran successfully, 0 failed: 100%|██████████| 2/2 [00:34<00:00, 17.38s/it]
+2 ran successfully, 0 failed: 100%|██████████| 2/2 [00:34<00:00, 17.38s/it]
+
+[R2134-eval 01:47:51]   eval finished rc=0
+[R2134-eval 01:47:51]   deepseek: +1 resolved +0 failed +1 infra => total resolved=128
+[R2134-eval 01:47:51] DONE R2134: total new resolved this round = 1
+
+=== deepseek-harness R2134 ===
+1 instances already run, skipping...
+Running 1 instances...
+All instances run.
+Total instances: 2
+Instances submitted: 2
+Instances completed: 2
+Instances incomplete: 0
+Instances resolved: 2
+Instances unresolved: 0
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 0
+Unremoved images: 2
+Report written to deepseek-harness-glm-5.3-flash.verified_full_glm53_deepseek-harness_incr_R2134.json
+
+[stderr]
+
+  0%|          | 0/1 [00:00<?, ?it/s]
+100%|██████████| 1/1 [00:29<00:00, 29.04s/it]
+1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:29<00:00, 29.04s/it]
+1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:29<00:00, 29.04s/it]
+
+[R2134-eval 01:48:15]   eval finished rc=0
+[R2134-eval 01:48:15]   deepseek: +2 resolved +0 failed +0 infra => total resolved=128
+[R2134-eval 01:48:15] DONE R2134: total new resolved this round = 2
+
+=== claude-code R2134 ===
+Running 1 instances...
+All instances run.
+Total instances: 1
+Instances submitted: 1
+Instances completed: 1
+Instances incomplete: 0
+Instances resolved: 1
+Instances unresolved: 0
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 0
+Unremoved images: 1
+Report written to claude-code-glm-5.3-flash.verified_full_glm53_claude-code_incr_R2134.json
+
+[stderr]
+
+  0%|          | 0/1 [00:00<?, ?it/s]
+100%|██████████| 1/1 [02:49<00:00, 169.83s/it]
+1 ran successfully, 0 failed: 100%|██████████| 1/1 [02:49<00:00, 169.83s/it]
+1 ran successfully, 0 failed: 100%|██████████| 1/1 [02:49<00:00, 169.83s/it]
+
+[R2134-eval 01:49:45]   eval finished rc=0
+[R2134-eval 01:49:45]   claude-code: +1 resolved +0 failed +0 infra => total resolved=149
+[R2134-eval 01:49:46] pi: 170 already evaluated, 170 total real, 0 new to eval
+[R2134-eval 01:49:46] hermes: 365 already evaluated, 365 total real, 0 new to eval
+[R2134-eval 01:49:46] deepseek: 162 already evaluated, 162 total real, 0 new to eval
+[R2134-eval 01:49:46] DONE R2134: total new resolved this round = 1
