@@ -719,3 +719,26 @@ torchrun --nnodes=1 --nproc_per_node=8 --master_addr=127.0.0.1 --master_port=296
 - main.pdf: 5 pages, 228,472 bytes
 - main.log: 0 `!` lines, 0 errors
 
+---
+
+### 论文 §4.6 刷新 · 2026-11-11 00:37 (#1928)
+
+**取数**：
+- 训练日志：`ssh 10.239.2.29 'tail -10 /proc/146283/fd/1'`
+- 最新行：`[2026-11-11 00:35:19] iteration 156720/700000 | elapsed time per iteration (ms): 6997.2 | lm loss: 2.027124E+00 | number of nan iterations: 0 | number of skipped iterations: 0`
+- 吞吐计算：末10步均 7,069 ms → 4,194,304 / 7.069 = 593,436 ≈ 590K tok/s
+- wall-clock：700,000 × 4,194,304 / 590,000 / 86,400 = 57.6 d ≈ 58 d（不变）
+- GPU：`nvidia-smi` → 8 卡 94-100% util, ~75GB mem（全满载）
+
+**改动**（仅 `0_abstract.tex` + `4_llm_pretrain.tex` + `main.pdf`）：
+- §4.6 进度句（4_llm_pretrain.tex line 109）：`156,530` → `156,720`，`585K` → `590K`，`2.02` → `2.03`
+- 摘要（0_abstract.tex line 14）：同上同步
+- `tab:prod-budget`（line 122）：`157k done` 不变；wall-clock `≈58 d` 不变
+- 中文注释行同步更新（line 110 + line 15）
+
+**验证**：
+- grep benchmark 数字：0 命中 ✅
+- `latexmk -pdf -interaction=nonstopmode main.tex` → 0 errors, 0 undefined references, 0 warnings
+- main.pdf: 5 pages, 228,405 bytes
+- main.log: 0 `!` lines, 0 errors
+
