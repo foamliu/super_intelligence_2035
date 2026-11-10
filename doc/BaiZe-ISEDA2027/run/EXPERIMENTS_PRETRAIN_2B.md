@@ -1203,3 +1203,42 @@ ssh 10.239.2.29 'nvidia-smi --query-gpu=utilization.gpu,memory.used,memory.total
 - 📦 TASK≈22.5KB ✅ / MEMORY≈32.9KB ⚠️ (略超32KB,下轮归档)
 
 
+---
+
+### 论文 §4.6 刷新 #1947（2026-11-11 07:40）
+
+**取数命令**:
+- `ssh 10.239.2.29 'ps aux | grep -E "torchrun|xmodel25|pretrain_launcher" | grep -v grep | head -5'`
+  → PID=146283, pretrain_launcher.py, Nov02 start, 8.6% CPU, 40.6GB RSS
+- `ssh 10.239.2.29 'tail -15 /proc/146283/fd/1 2>/dev/null'`
+  → fd=1 → /tmp/baize_s1_baize2b_worker.log (deleted)
+  → latest: iteration 160,290/700,000 at 07:37:36
+  → last 10 steps (160200–160290): 7025–7258 ms, avg 7,095 ms (<7.4s ✅)
+  → loss: 2.010–2.042, avg ≈2.03
+  → 0 NaN, 0 skipped iterations
+  → grad norm: 0.089–0.110, lr: 1.000E-03
+- `ssh 10.239.2.29 'nvidia-smi --query-gpu=utilization.gpu,memory.used,memory.total --format=csv,noheader'`
+  → 8 卡: 79–100% util, 74.8–75.2 GB / 81.5 GB
+
+**计算**:
+- tok/s = 4,194,304 / 7.095s = 591,060 ≈ 591K (前轮 594K → -3K)
+- wall-clock = 700,000 × 4,194,304 / 591K = 57.5d → ≈57d (不变)
+- total = 57 + 1.2 + 2.3 = 60.5d (不变)
+
+**论文改动**:
+- §4.6 (4_llm_pretrain.tex line 109–110): iter 160,200→160,290, tok/s 594K→591K, loss≈2.03 不变
+- abstract (0_abstract.tex line 14–15): 同上
+- tab:prod-budget (line 122): "160k done" 不变 (160,290 rounds to 160k)
+- wall-clock: ≈57d 不变
+- total (line 126): ≈60.5d 不变
+
+**编译结果**:
+- `latexmk -pdf -interaction=nonstopmode main.tex` → 0 errors
+- main.pdf: 5 pages, 228,618 bytes
+
+**护栏检查**:
+- grep ARC-Challenge|HellaSwag|BoolQ|OpenBookQA|PIQA|SciQ|Winogrande|ckpt-scaling in ISEDA2027/*.tex main.tex: 0 命中 ✅
+- §4.7 sec:ckpt-scaling: 不存在 ✅
+- 📦 TASK≈22.5KB ✅ / MEMORY≈10.4KB ✅ (归档 #1940–#1924 → daily-memories/2026-11-11.md, 省~17KB)
+
+**160k eval 状态**: HF 导出✅ · GGUF 转换❌ (time_step_limit tuple/list 错误重现, 同 #1945/#1946, 待下轮修复)
