@@ -742,3 +742,18 @@ torchrun --nnodes=1 --nproc_per_node=8 --master_addr=127.0.0.1 --master_port=296
 - main.pdf: 5 pages, 228,405 bytes
 - main.log: 0 `!` lines, 0 errors
 
+### 论文 §4.6 刷新 — 2026-11-11 01:21 (#1930)
+
+- **取数命令**：`ssh 10.239.2.29 'tail -30 /proc/146283/fd/1'`
+- **训练日志**：iteration 157,080 / 700,000 | elapsed 7034.5 ms/step | lm loss 2.0326 | 0 NaN / 0 skipped
+- **末 26 步**：6957–7176 ms (均 7065 ms, 均 < 7.4s ✅) | loss 2.010–2.041 | grad norm 0.087–0.132
+- **tok/s 计算**：4,194,304 / 7.065 s = 593,653 ≈ 590K
+- **GPU**：8 卡 93–96% util / 74–75 GB
+- **§4.6 刷新** (4_llm_pretrain.tex line 109): 156,920 → 157,080 (loss ≈2.02 不变, tok/s ≈590K 不变)
+- **摘要刷新** (0_abstract.tex line 14): 同上
+- **tab:prod-budget** (line 122): "157k done" 不变 (157,080 rounds to 157k); wall-clock ≈58d 不变
+- grep benchmark 数字：0 命中 ✅；§4.7 不存在 ✅
+- `latexmk -pdf -interaction=nonstopmode main.tex` → 0 errors, 0 undefined references, 0 warnings
+- main.pdf: 5 pages, 228,225 bytes
+- main.log: 0 `!` lines, 0 errors
+
