@@ -820,7 +820,7 @@ kakcd	kenwang	hfeg017216808192	5	non_spice	parked		2026-11-10 09:06	DRC rule dev
 1793682926396_lt3nh	t0003117	hfeg0pkn005	159	spice_sim	parked		2026-11-10 13:10	peek GUI open virtuoso run SKILL reject
 1794290403498_45msy	e0023936	hfeg0pkn004	42	spice_sim	case	EDA-Eval-DesignFlow-SimConfigEditReport-001	2026-11-10 14:58	config.yaml sim-param edit+change report; B-synthesized L1
 1794290579357_trnx0	t0002614	hfeg0plg105	35	spice_sim	case	EDA-Eval-DesignFlow-SaDcSweepTbGen-001	2026-11-10 15:47	
-1794292585610_1ojna	curryxu	hfeg0plg07	148	spice_sim	case	EDA-Eval-DesignFlow-PvtInvChainDelayMeas-001	2026-11-10 17:06	
+1794292585610_1ojna	curryxu	hfeg0plg07	148	spice_sim	parked	EDA-Eval-DesignFlow-PvtInvChainDelayMeas-001	2026-11-11 04:50	delay_test.sp PVT analysis diagnostic no-produce
 1794277350221_vawjj	leliow	hfeg0plg52	340	spice_sim	case	EDA-Eval-DesignFlow-McVthSpVariantGen-001	2026-11-10 17:50	
 1794297017130_0uuj2	e0030760	hfeg0pkn001	Solido HSV MC SRAM SNM butterfly custom output	spice_sim	case	EDA-Eval-DesignFlow-SnmButterflyCalc-001	2026-11-10 18:55	
 1794299323217_5oub3.messages.json	clarawu	hfeg0plg106	30	spice_sim	case	EDA-Eval-DesignFlow-CioLeakageExtract-001	2026-11-10 19:24	
@@ -896,7 +896,7 @@ peek:					parked		2026-11-10 23:22	peek: consultation verdi-fsdb-warning-paste
 1794278751082_g8en5	jinsongl	hfeg0pkn005	7	spice_sim	parked		2026-11-11 00:56	11-11 fresh spice>=5: raw SKILL cckExplore log, not cline session
 1794280189538_742yv	rhyanw	hfeg0pkn001	8	spice_sim	parked		2026-11-11 00:56	11-11 fresh spice>=5: trivial 1msg
 1794291924966_ws1x6	mwxi	hfhds228	9	spice_sim	parked		2026-11-11 00:56	11-11 fresh spice>=5: consultation 'finesim.*总' + ObsidianVault ls
-1794293298759_nk0hg	e0042624	hfeg0pkn001	5	spice_sim	parked		2026-11-11 00:56	11-11 fresh spice>=5: trivial 1msg
+1794293298759_nk0hg	e0042624	hfeg0pkn001	5	spice_sim	parked		2026-11-11 04:50	project how-to consultation
 1794296961043_fessi	t0002113	hfeg0pkn001	5	spice_sim	parked		2026-11-11 00:56	11-11 fresh spice>=5: tool discovery 'which finesim finesime hspice'
 1794299623303_khbvq	yuchens	hfeg0pkn004	5	spice_sim	parked		2026-11-11 00:56	11-11 fresh spice>=5: trivial 1msg
 1794302513665_soa79	chuanqiz	hfeg0pkn001	10	spice_sim	parked		2026-11-11 00:56	11-11 fresh spice>=5: trivial 1msg, cellview:385 layout-domain
@@ -929,3 +929,40 @@ peek:					parked		2026-11-10 23:22	peek: consultation verdi-fsdb-warning-paste
 1793002657891_l36g5	wei9liu	hfeg0plg75	168	spice_sim	parked		2026-11-11 04:07	AMS sim diagnostic: U#1 run AMS sim in Maestro/ADE; assistant couldn't run (policy read-only /proj + 2min timeout), diagnosed config_V1 viewlist missing functional view; real config files gone; L1 diagnostic no concrete self-contained deliverable; §5 L2/L3 req unmet
 1793021121702_24h7g	hemiao1w	hfeg0plg75	227	characterization	parked		2026-11-11 04:07	schematic annotation: U#1 read path, U#2 insert hierarchical text labels into schematic via addHierText_labels.il; schematic/cellview dominant (sch:878 cv:622 dbOpenCellViewByType:480); not spice_char sim/characterization
 1793964715214_ddg83	zhililu	hfeg0pkn002	46	spice_sim	parked		2026-11-11 04:07	netlist-creation error debug: U#1 paste ADE netlister error (failed at creating netlist T_sensor_0p5_TOP_SIM); virtuoso:737 netlist:599 dominant; error-paste debug not produce-task
+1794293848674_wy85y	xinqiaoz	hfeg0plg58	0	spice_sim	parked		2026-11-11 04:50	handoff skill continuation
+1793857124040_5i5bo	zqzhan	hfeg0plg52	0	spice_sim	parked		2026-11-11 04:50	feishu doc fetch consultation
+1794291677559_d6tzr	zhenglu	hfeg0plg52	0	spice_sim	parked		2026-11-11 04:50	PDK model info summarize consultation
+1794279080046_z999w	aocao	hfeg0plg52	0	spice_sim	parked		2026-11-11 04:50	hammer_count.rpt collect verilog regr wrong-shard A
+1794288882731_kjeit	e0039602	hfeg0plg07	0	spice_sim	parked		2026-11-11 04:50	verilog_lib diff consultation
+1794291739758_mh8rj	yuqingc	hfeg0plg05	0	spice_sim	parked		2026-11-11 04:50	verilog controller path find wrong-shard A
+1794292759049_xqgpn	e0041392	hfeg0plg52	0	spice_sim	parked		2026-11-11 04:50	workspace upload ops
+1793268918911_brnqb	e02141	hfeg0plg58	0	spice_sim	parked		2026-11-11 04:50	sentaurus deck study consultation
+1794276648034_pigzp	e0041126	hfeg0plg76	0	spice_sim	parked		2026-11-11 04:50	verilog regression run wrong-shard A
+1794291558968_pxf8v	e0039102	hfeg0plg52	0	spice_sim	parked		2026-11-11 04:50	run_regr compare verilog wrong-shard A
+1793104413373_56ohw	jackliu	hfeg0pkn005	0	spice_sim	parked		2026-11-11 04:50	verilog x-state analysis wrong-shard A
+1793351374740_3xkcq	yanxvwei	hfeg0plg52	0	spice_sim	parked		2026-11-11 04:50	dump_pwl.pl explanation consultation
+1793760693424_2kkcq	jinsongl	hfeg0plg52	0	spice_sim	parked		2026-11-11 04:50	ERC marker code edit continuation wrong-shard C
+1790600533401_vnze7	clwang	hfeg0pkn005	0	spice_sim	parked		2026-11-11 04:50	file split generic linux
+1792721663678_dfw5h	jinsongl	hfeg0plg52	0	spice_sim	parked		2026-11-11 04:50	cckSearchInst TCL net trace wrong-shard D schematic
+1794296631536_zyqoe	gabrielh	hfeg0plg52	0	spice_sim	parked		2026-11-11 04:50	PDK QA GUI analysis consultation
+1794280416949_n1tmq	gracew	hfeg0plg102	0	spice_sim	parked		2026-11-11 04:50	TM_CmMaxcnt verilog verification wrong-shard A
+1794292352673_gjzyg	thqu	hfeg0plg99	0	spice_sim	parked		2026-11-11 04:50	aether cross-probe how-to consultation
+1794275548538_ga7xw	e0024852	hfeg0plg58	0	spice_sim	parked		2026-11-11 04:50	gxrc error-paste debug
+1794213257272_e0taz	e0039122	hfeg0plg52	0	spice_sim	parked		2026-11-11 04:50	aether how-to consultation
+1794280570314_gnw66	willl	hfeg0plg99	0	spice_sim	parked		2026-11-11 04:50	finesim script analysis diagnostic
+1794311735311_4msuj	xinqiaoz	hfeg0plg58	0	spice_sim	parked		2026-11-11 04:50	PDK QA issue-handler wrong-domain
+1794278956495_qw3n6	xinqiaoz	hfeg0plg58	0	spice_sim	parked		2026-11-11 04:50	context-summary continuation PDK QA
+1794296966966_l4tfv	shushengz	hfeg0pkn005	0	spice_sim	parked		2026-11-11 04:50	find LP6 waveform file-search consultation
+1794221506176_tdt0k	boyangma	hfeg0plg58	0	spice_sim	parked		2026-11-11 04:50	电源 explanation consultation
+1794298878710_riotl	lein	hfeg0pkn005	0	spice_sim	parked		2026-11-11 04:50	lpddr6 netlist path analysis wrong-shard A
+1793869480489_7kote	e0027609	hfeg0pkn005	0	spice_sim	parked		2026-11-11 04:50	查看电路图结构 explanation
+1794224138220_25gxe	ziyuny	hfeg0plg52	0	spice_sim	parked		2026-11-11 04:50	session history meta
+1793344162057_ki1dq	leliow	hfeg0plg52	0	spice_sim	parked		2026-11-11 04:50	dup of McVthSpVariantGen-001 (leliow, identical to ja7xp)
+1794295290930_r2uwu	lorikx	hfeg0plg52	0	spice_sim	parked		2026-11-11 04:50	frontend dir diff generic wrong-domain
+1794277229509_ja7xp	leliow	hfeg0plg52	0	spice_sim	parked		2026-11-11 04:50	dup of McVthSpVariantGen-001 (leliow .sp gen from vth.mt0)
+1793361216165_nqgxe	hbpeng	hfeg0pkn005	0	spice_sim	parked		2026-11-11 04:50	calibre runset version finder wrong-shard C
+1793683605769_xt9ag	e0045144	hfeg0plg74	0	spice_sim	parked		2026-11-11 04:50	verilog module connection check wrong-shard A
+1792986549258_5vo44	rongtaoy	hfeg0pkn005	0	spice_sim	parked		2026-11-11 04:50	context-summary continuation sense_margin_generator
+1793795315027_yhh19	ziyuny	hfeg0plg52	0	spice_sim	parked		2026-11-11 04:50	2d/3d lvs runtime script wrong-shard C
+1794188409880_zs1pj	e0030085	hfeg0plg76	0	spice_sim	parked		2026-11-11 04:50	verilog netlist debug wrong-shard A
+1794192540450_k91cd	harrywu	hfeg0plg99	0	spice_sim	parked		2026-11-11 04:50	continue-work continuation
