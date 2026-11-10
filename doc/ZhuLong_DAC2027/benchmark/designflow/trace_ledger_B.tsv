@@ -646,7 +646,7 @@ qnm9e					parked		2026-11-08 01:58	Finesim DC convergence Q&A prose dup of uky6c
 1794210761770_t9j7w	owench	hfeg0pkn002	24	spice_sim	parked		2026-11-09 16:07	kw=24 reject: jigeshixing PDK model analysis(分析这个model/都有哪些管子), vague consulting+multi-turn-dep(这部分 refs prior ctx), L1 parse no spice-run, gold=prose inventory ambiguous
 1794209737398_a5mxr	ruminji	hfeg0pkn002	6	spice_sim	parked		2026-11-09 16:07	kw=6 reject: 仿真ac怎么语句=Q&A consulting(RAG api search x40), no produce-task
 1794197643242_8b0og	xinqiaoz	hfeg0pkn002	0	spice_sim	parked		2026-11-09 16:07	kw=0 non-spice, fresh 15:30
-1794209742408_8aer9	xinqiaoz	hfeg0pkn002	0	spice_sim	parked		2026-11-09 16:07	kw=0 non-spice(85KB trivial), fresh 15:30
+1794209742408_8aer9	xinqiaoz	hfeg0pkn002	0	spice_sim	parked		2026-11-10 08:26	fresh-window 11-10 0 spice_kw non-spice (xinqiaoz)
 1794210829621_i1no4	cong3li	hfeg0pkn004	0	spice_sim	parked		2026-11-09 16:07	kw=0 non-spice(12KB trivial), fresh 15:30
 1794205533893_16yrv	e0023936	hfeg0pkn004	0	spice_sim	parked		2026-11-09 16:07	kw=0 non-spice, fresh 15:30
 1792634547955_wzkye	gracew	hfeg0pkn004	0	spice_sim	parked		2026-11-09 16:07	kw=0 non-spice, fresh 15:30
@@ -770,8 +770,10 @@ qnm9e					parked		2026-11-08 01:58	Finesim DC convergence Q&A prose dup of uky6c
 1793264248842_ezukw.messages.json	e0024852	hfeg0pkn002	325	spice_sim	parked		2026-11-10 07:13	no-gold: 174msgs FineSim XA SRAM debug; U#15(msg157) timing-extraction produce-request but session interrupted at assistant clarifying ask_question (msg172) with code_sidecar_sigterm (msg173); no user-accepted product; relaxed cron10 spice=325 ratio=0.276
 1793178284228_y3h0j	yanxvwei	hfeg0pkn002	236	spice_sim	parked		2026-11-10 07:28	off-domain: WaveformCompare tooling (compare_wave_ddr5.pl vs compare_wave_new.pl segmentation logic + pincheck script path replacement), not spice_sim/characterization; 236msgs; gold U#10=_swap_seg_pincheck.py sed path swap (85/85)
 1791600745476_4v4nf	wenwenl	hfeg0plg74	122	spice_sim	case	EDA-Eval-DesignFlow-FsdbWrDqMeas-001	2026-11-10 08:07	
-1792744686252_m8y0q	jiashengz	hfeg0plg92	22	spice_sim	parked		2026-11-10 08:09	consultation anasimpro GUI
-1788845510771_5xxsm	sophiaw	hfeg0plg09	15	non_spice	parked		2026-11-10 08:09	off-domain agent_policy/zhuulong config
-1793264956869_hxfhy	jasminej	hfeg0plg52	14	spice_sim	parked		2026-11-10 08:09	consultation redefine vth in .sp
-1793350875865_f1u4t	chentong	hfeg0plg76	13	spice_sim	parked		2026-11-10 08:09	consultation explain DFF scripts
-1794200811873_k36er	e0041392	hfeg0plg75	12	spice_sim	parked		2026-11-10 08:09	diagnostic check workspace project
+1792744686252_m8y0q	jiashengz	hfeg0plg92	22	spice_sim	parked		2026-11-10 08:21	consultation/diagnostic non-produce-task (rescan_1110_0735 peek)
+1788845510771_5xxsm	sophiaw	hfeg0plg09	15	non_spice	parked		2026-11-10 08:21	consultation/diagnostic non-produce-task (rescan_1110_0735 peek)
+1793264956869_hxfhy	jasminej	hfeg0plg52	14	spice_sim	parked		2026-11-10 08:21	consultation/diagnostic non-produce-task (rescan_1110_0735 peek)
+1793350875865_f1u4t	chentong	hfeg0plg76	13	spice_sim	parked		2026-11-10 08:21	consultation/diagnostic non-produce-task (rescan_1110_0735 peek)
+1794200811873_k36er	e0041392	hfeg0plg75	12	spice_sim	parked		2026-11-10 08:21	consultation/diagnostic non-produce-task (rescan_1110_0735 peek)
+1794221449278_bqqtk	e0046686	hfhds201	530	characterization	case	EDA-Eval-DesignFlow-Coord3DProj-001	2026-11-10 08:45	
+1794202571966_v87lq	e0030760	hfhds201	941	characterization	parked		2026-11-10 08:26	fresh-window 11-10 consultation-dominant (HSV/aether 怎么/解释/操作步骤), U#5 doc-only
