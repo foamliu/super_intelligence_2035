@@ -1,0 +1,88 @@
+=== incr_eval R2141 (7 new ids) START Wed Nov 11 03:56:08 AM CST 2026 === (py=/nas_train/app.e0031982/miniforge3/envs/py310/bin/python3)
+[Wed Nov 11 03:56:08 AM CST 2026] === merge opencode predictions ===
+opencode: 428 real patches merged
+[Wed Nov 11 03:56:09 AM CST 2026] === opencode eval START 3 NEW instances ===
+Running 3 instances...
+  0%|          | 0/3 [00:00<?, ?it/s] 33%|███▎      | 1/3 [00:28<00:56, 28.43s/it]1 ran successfully, 0 failed:  33%|███▎      | 1/3 [00:28<00:56, 28.43s/it]1 ran successfully, 0 failed:  67%|██████▋   | 2/3 [00:29<00:14, 14.77s/it]2 ran successfully, 0 failed:  67%|██████▋   | 2/3 [00:29<00:14, 14.77s/it]2 ran successfully, 0 failed: 100%|██████████| 3/3 [00:30<00:00, 10.03s/it]3 ran successfully, 0 failed: 100%|██████████| 3/3 [00:30<00:00, 10.03s/it]3 ran successfully, 0 failed: 100%|██████████| 3/3 [00:30<00:00, 10.03s/it]
+All instances run.
+Total instances: 3
+Instances submitted: 3
+Instances completed: 3
+Instances incomplete: 0
+Instances resolved: 3
+Instances unresolved: 0
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 0
+Unremoved images: 3
+Report written to opencode-glm-5.3-flash.verified_full_glm53_opencode_incr_R2141.json
+[Wed Nov 11 03:56:43 AM CST 2026] === opencode eval DONE ===
+[Wed Nov 11 03:56:43 AM CST 2026] === merge claude-code predictions ===
+claude-code: 193 real patches merged
+[Wed Nov 11 03:56:44 AM CST 2026] === claude-code eval START 2 NEW instances ===
+Running 2 instances...
+  0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [00:42<00:42, 42.57s/it]1 ran successfully, 0 failed:  50%|█████     | 1/2 [00:42<00:42, 42.57s/it]1 ran successfully, 0 failed: 100%|██████████| 2/2 [13:21<00:00, 400.94s/it]2 ran successfully, 0 failed: 100%|██████████| 2/2 [13:21<00:00, 400.94s/it]2 ran successfully, 0 failed: 100%|██████████| 2/2 [13:21<00:00, 400.94s/it]
+All instances run.
+Total instances: 2
+Instances submitted: 2
+Instances completed: 2
+Instances incomplete: 0
+Instances resolved: 0
+Instances unresolved: 2
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 0
+Unremoved images: 2
+Report written to claude-code-glm-5.3-flash.verified_full_glm53_claude-code_incr_R2141.json
+[Wed Nov 11 04:10:09 AM CST 2026] === claude-code eval DONE ===
+[Wed Nov 11 04:10:09 AM CST 2026] === merge pi predictions ===
+pi: 183 real patches merged
+[Wed Nov 11 04:10:10 AM CST 2026] === pi eval START 1 NEW instances ===
+Running 1 instances...
+  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [05:23<00:00, 323.22s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [05:23<00:00, 323.22s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [05:23<00:00, 323.22s/it]
+All instances run.
+Total instances: 1
+Instances submitted: 1
+Instances completed: 1
+Instances incomplete: 0
+Instances resolved: 0
+Instances unresolved: 1
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 0
+Unremoved images: 1
+Report written to pi-glm-5.3-flash.verified_full_glm53_pi_incr_R2141.json
+[Wed Nov 11 04:15:38 AM CST 2026] === pi eval DONE ===
+[Wed Nov 11 04:15:38 AM CST 2026] === merge hermes predictions ===
+hermes: 369 real patches merged
+[Wed Nov 11 04:15:39 AM CST 2026] === hermes eval START 1 NEW instances ===
+Running 1 instances...
+  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [00:25<00:00, 25.83s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:25<00:00, 25.83s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:25<00:00, 25.83s/it]
+All instances run.
+Total instances: 1
+Instances submitted: 1
+Instances completed: 1
+Instances incomplete: 0
+Instances resolved: 1
+Instances unresolved: 0
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 0
+Unremoved images: 1
+Report written to hermes-glm-5.3-flash.verified_full_glm53_hermes_incr_R2141.json
+[Wed Nov 11 04:16:10 AM CST 2026] === hermes eval DONE ===
+[Wed Nov 11 04:16:10 AM CST 2026] === merge R2141 results into eval_glm53_ ===
+[merge-R2141 04:16:10]   opencode: +3 resolved +0 failed +0 infra => total resolved=348
+[merge-R2141 04:16:10]   claude-code: +0 resolved +2 failed +0 infra => total resolved=150
+[merge-R2141 04:16:10]   pi: +0 resolved +1 failed +0 infra => total resolved=133
+[merge-R2141 04:16:10]   hermes: +1 resolved +0 failed +0 infra => total resolved=331
+[merge-R2141 04:16:10] DONE R2141 merge: total new resolved = 4
+=== incr_eval R2141 DONE Wed Nov 11 04:16:10 AM CST 2026 ===
