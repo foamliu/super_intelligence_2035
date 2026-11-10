@@ -880,3 +880,15 @@ peek:					parked		2026-11-10 23:22	peek: consultation verdi-fsdb-warning-paste
 1792936692635_f1pj5	jingc	hfeg0pkn001	16	spice_sim	parked		2026-11-10 23:23	consultation what-is-DSA
 1793189553608_5uqoi	dsgao	hfeg0pkn001	12	spice_sim	parked		2026-11-10 23:23	consultation verdi-fsdb-warning-paste
 1793882229682_mk098	yazhuok	hfeg0pahpc501	21	spice_sim	case	EDA-Eval-DesignFlow-SimCapLisParse-001	2026-11-10 23:51	
+1792131744105_g48nq	adaml	hfeg0pkn002	192	spice_sim	parked		2026-11-11 00:22	skill-creator meta-task not produce-task
+1793151811279_nrep6	thqu	hfeahpc503	215	characterization	parked		2026-11-11 00:31	meta-skill DOE reject (prior round peek)
+1794314373226_6eas3	e0030760	hfeg0pkn004	204	spice_sim	parked		2026-11-11 00:31	devops desktop-cleanup
+1794308888937_ddye0	haoliu	hfeg0pkn004	189	spice_sim	parked		2026-11-11 00:31	devops netlist-cleanup
+1794292541692_gu0ry	t0001988	hfeg0pkn002	46	spice_sim	parked		2026-11-11 00:31	trivial hello+paste
+1794195576366_jp8n9	xiwang	hfeg0pkn002	34	spice_sim	parked		2026-11-11 00:31	consultation floating-tool
+1794295775296_m64s7	zqzhan	hfeg0pkn002	19	spice_sim	parked		2026-11-11 00:31	archive-JSONL low-hspice
+1794280510073_twt2n	yuyingc	hfeg0pkn001	15	spice_sim	parked		2026-11-11 00:31	consultation explain-script
+1794301691470_zg7xg	jinsongl	hfeg0pkn005	14	spice_sim	parked		2026-11-11 00:31	wrong-shard ERC
+1794279029544_1vjqj	zhililu	hfeg0pkn002	71	spice_sim	parked		2026-11-11 00:31	debug finesim SFE-1802
+1793783334586_h14an	zanezang	hfeg0plg57	8	spice_sim	parked		2026-11-11 00:31	unreachable+low-mc
+1785392109301_zh03r	e0025730	hfeg0plg49	1	spice_sim	parked		2026-11-11 00:31	unreachable+mc=1
