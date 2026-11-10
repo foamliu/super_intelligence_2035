@@ -25,7 +25,7 @@
   "prev_sessions": 38082,
   "scan_path": "/home/t0002965/log/ssh_eda_search_20261109_224902/summary.tsv",
   "scansync": {
-    "round": "r363",
+    "round": "r364",
     "scan_dir": "/home/t0002965/log/ssh_eda_search_20261109_224902",
     "summary_tsv_rows": 38082,
     "dedup_sessions": 5999,
@@ -38,11 +38,11 @@
     "shard_C_pool_mc30": 1981,
     "shard_D_pool_mc30": 1775,
     "new_sessions": 0,
-    "consecutive_no_new_scan": "r293-r363 (70th)",
+    "consecutive_no_new_scan": "r293-r364 (71st)",
     "daily_log_20261111_lines": 2545,
     "daily_log_20261111_sessions": 2541,
-    "note": "70th consecutive no new scan; metrics unchanged from r291 full rescan",
-    "updated_at": "2026-11-11T07:35:00+08:00"
+    "note": "71st consecutive no new scan; metrics unchanged from r291 full rescan; tool-health holding review r364 (deliverables in place, JSON/HTML consistent)",
+    "updated_at": "2026-11-11T07:34:00+08:00"
   },
   "sessions": 38082,
   "shard_mc": {
@@ -53,7 +53,7 @@
   },
   "source": "/home/t0002965/log/ssh_eda_search_20261109_224902/summary.tsv (11/09 full rescan r292)",
   "target_mc": 30,
-  "updated_at": "2026-11-11T07:35:00+08:00",
+  "updated_at": "2026-11-11T07:34:00+08:00",
   "users_mc100": 182,
   "users_mc30": 401,
   "users_mc300": 60,
