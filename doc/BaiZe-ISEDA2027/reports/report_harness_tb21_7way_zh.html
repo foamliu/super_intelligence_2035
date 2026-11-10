@@ -1,18 +1,20 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><title>TB-2.1 7way R1982</title><style>body{font-family:"Noto Sans CJK SC","Microsoft YaHei",sans-serif;max-width:1000px;margin:0 auto;padding:20px;background:#f8f9fa;color:#333}h1{color:#1a5276;border-bottom:3px solid #2980b9;padding-bottom:10px}h2{color:#1a5276;margin-top:25px;border-left:5px solid #2980b9;padding-left:10px}table{border-collapse:collapse;width:100%;margin:12px 0}th,td{border:1px solid #ddd;padding:6px 10px;text-align:left}th{background:#2980b9;color:#fff}tr:nth-child(even){background:#ecf0f1}.pass{color:#27ae60;font-weight:bold}.fail{color:#e74c3c}.info{background:#ebf5fb;border-left:4px solid #3498db;padding:10px 15px;margin:12px 0}</style></head><body>
-<h1>Terminal-Bench 2.1 · 7路横评 - R1982</h1>
-<p><strong>模型</strong>: glm-5.3-flash | <strong>时间</strong>: 2026-11-09 16:04 | <strong>网关</strong>: ALL 200<br><strong>口径声明</strong>: TB-2.1 / 89题 / 7-way concurrent (<strong>不可与TB4比较</strong>) | oracle 5/5 ✅</p>
-<h2>TB-2.1 7路矩阵</h2>
-<table><tr><th>Harness</th><th>Passed</th><th>Done(trials)</th><th>Pass%</th><th>Errors</th></tr>
-<tr><td><strong>pi</strong></td><td>42</td><td>152</td><td class="pass">27.6%</td><td>12</td></tr>
-<tr><td><strong>opencode</strong></td><td>40</td><td>93</td><td class="pass">43.0%</td><td>15</td></tr>
-<tr><td><strong>deepseek</strong></td><td>21</td><td>108</td><td class="pass">19.4%</td><td>0</td></tr>
-<tr><td><strong>claude-code</strong></td><td>25</td><td>165</td><td class="pass">15.2%</td><td>51</td></tr>
-<tr><td><strong>cline</strong></td><td>19</td><td>260</td><td class="pass">7.3%</td><td>12</td></tr>
-<tr><td><strong>codex</strong></td><td>8</td><td>186</td><td class="pass">4.3%</td><td>3</td></tr>
-<tr><td><strong>hermes</strong></td><td>6</td><td>233</td><td class="pass">2.6%</td><td>2</td></tr>
+<!DOCTYPE html><html lang='zh-CN'><head><meta charset='UTF-8'>
+<title>TB-2.1 7way 2026-11-11 03:16</title><style>body{font-family:'Noto Sans CJK SC','Microsoft YaHei',sans-serif;max-width:1000px;margin:0 auto;padding:20px;background:#f8f9fa;color:#333}h1{color:#1a5276;border-bottom:3px solid #2980b9;padding-bottom:10px}h2{color:#1a5276;margin-top:25px;border-left:5px solid #2980b9;padding-left:10px}table{border-collapse:collapse;width:100%;margin:12px 0}th,td{border:1px solid #ddd;padding:6px 10px;text-align:left}th{background:#2980b9;color:#fff}tr:nth-child(even){background:#ecf0f1}.pass{color:#27ae60;font-weight:bold}.fail{color:#e74c3c}.warn{color:#e67e22;font-weight:bold}.info{background:#ebf5fb;border-left:4px solid #3498db;padding:10px 15px;margin:12px 0}.caveat{background:#fef9e7;border-left:4px solid #f39c12;padding:10px 15px;margin:12px 0}</style></head><body>
+<h1>Terminal-Bench 2.1 · 7路横评 — 2026-11-11 03:16</h1>
+<p><strong>模型</strong>: glm-5.3-flash | <strong>网关</strong>: gw_proxy 9092 + gw_proxy_dsh 9093 (HTTP 200)<br><strong>口径声明</strong>: TB-2.1 / 89 题 / 7-way concurrent (<strong>不可与 TB4 比较</strong>) | oracle 5/5 ✅</p>
+<h2>TB-2.1 7路矩阵 (unique tasks passed)</h2>
+<table><tr><th>#</th><th>Harness</th><th>Passed</th><th>Evaluated</th><th>题集总数</th><th>Pass% (passed/eval)</th><th>Trials</th><th>Errors</th></tr>
+<tr><td>1</td><td><strong>opencode</strong></td><td class='pass'>33</td><td class='warn'>58</td><td>89</td><td><strong>56.9%</strong></td><td>58</td><td class='fail'>12</td></tr>
+<tr><td>2</td><td><strong>pi</strong></td><td class='pass'>27</td><td class='warn'>86</td><td>89</td><td><strong>31.4%</strong></td><td>144</td><td class='fail'>46</td></tr>
+<tr><td>3</td><td><strong>deepseek</strong></td><td class='pass'>11</td><td class='warn'>27</td><td>89</td><td><strong>40.7%</strong></td><td>27</td><td class='fail'>12</td></tr>
+<tr><td>4</td><td><strong>cline</strong></td><td class='pass'>10</td><td class='warn'>88</td><td>89</td><td><strong>11.4%</strong></td><td>88</td><td class='fail'>8</td></tr>
+<tr><td>5</td><td><strong>hermes</strong></td><td class='pass'>7</td><td class='warn'>53</td><td>89</td><td><strong>13.2%</strong></td><td>53</td><td class='fail'>5</td></tr>
+<tr><td>6</td><td><strong>codex</strong></td><td class='pass'>1</td><td class='warn'>6</td><td>89</td><td><strong>16.7%</strong></td><td>6</td><td class='fail'>3</td></tr>
+<tr><td>7</td><td><strong>claude-code</strong></td><td class='pass'>0</td><td class='warn'>0</td><td>89</td><td><strong>—</strong></td><td>0</td><td class='fail'>0</td></tr>
 </table>
-<p><strong>总计</strong>: 161 passed / 1197 trials (7-way concurrent, 仍在运行中)</p>
-<div class="info"><p><strong>不可比性说明</strong>: TB-2.1与TB4题集不同(89题 vs 66题), 不可跨基准比较. TB4全0=能力(verifier已运行). TB-2.1 oracle 5/5证明verifier正常.</p>
-<p><strong>注</strong>: trials含重试/多轮; 各路进度不同(done数差异大). errors=适配器/超时/环境错误(非能力). 网关ALL 200, 非429.</p></div>
-<hr><p style="text-align:center;color:#7f8c8d;font-size:0.9em">BaiZe Harness TB-2.1 7way R1982 2026-11-09 16:04 | glm-5.3-flash | 正文写cline | 数据源: _count_tb21_glm53_R1978.py</p>
+<p><strong>合计</strong>: 89 unique tasks passed / 318 evaluated / 376 trials (7-way concurrent, 仍在运行中)</p>
+<div class='caveat'><p><strong>⚠️ 临时快照说明 (interim)</strong>:</p><ul><li>本报告读取 <code>/tmp/tb21_glm53_jobs/</code> 当前快照. /tmp 为易失存储, 历史结果可能被清理; opencode / pi 的 rerun 仍在运行中.</li><li><strong>Evaluated 列</strong> = 该路在 /tmp 中有 verifier 结果的去重题数. 若 Evaluated &lt; 89, 表示该路尚未跑满 (或 /tmp 被清理后 rerun 未重建完), <strong>非能力结论</strong>.</li><li>Pass% = Passed / Evaluated (仅对已评测题, 非 Passed / 89). rerun 完成后 Evaluated → 89, 届时为最终报告.</li><li>历史峰值快照 (R1982, 2026-11-09): 161 passed-trials / 1197 trials (trial 级, 含重试). /tmp 被部分清理后当前 trial 数低于历史, 属存储现象而非回退.</li></ul></div>
+<div class='info'><p><strong>Oracle 5/5 证据</strong>: launch_tb21_glm53_7way.sh 内置 oracle check (5 pilot tasks: break-filter-js-from-html / bn-fit-modify / log-summary-date-ranges / cancel-async-tasks / fix-git), R1789 记录 oracle 5/5 PASS, verifier 正常.</p><p>oracle 5/5 通过 ⇒ verifier 正常 ⇒ 非 0 分均为能力/适配器/超时, 非 verifier infra 故障.</p></div>
+<div class='info'><p><strong>不可比性说明</strong>: TB-2.1 与 TB4 题集不同 (89 题 vs TB4 66 题), 不可跨基准比较. TB4 全 0 passed = 能力 (verifier 已运行, R1743). TB-2.1 oracle 5/5 证明 verifier 正常.</p><p><strong>空 patch 归因</strong>: errors 列 = 适配器/超时/环境错误 (exception_info 非空, 非能力). 网关 ALL 200, 非 429. reward=0 且无 exception = 能力差 (真实做错).</p><p><strong>7 路纪律</strong>: 7 路不得替换/合并 (§15:2x 铁律).</p></div>
+<hr><p style='text-align:center;color:#7f8c8d;font-size:0.9em'>BaiZe Harness TB-2.1 7way 2026-11-11 03:16 | glm-5.3-flash | 正文写 cline | 数据源: /tmp/tb21_glm53_jobs (gen_report_tb21_7way.py)</p>
 </body></html>
