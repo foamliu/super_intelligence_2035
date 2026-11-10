@@ -1,5 +1,55 @@
 # ZHULONG_TASK.md — ZhuLong（DAC2027）EDA 消融评测 · 合并任务书
 
+> 🚨 **本轮最高优先（2026-11-10 用户直令）：趁 `B_zh_r3` 还在跑，**立刻把 `B_zh_r2` 补 regrade**。**
+> 不要再等"30 轮后"——r2 的生成产物是完整的（158 题），只是当年被 8h cap 掐在 **grading 中途**，
+> 所以 `pass=null`。这是当前唯一能"顺手补回一格"的机会。
+>
+> **一、事实（已核实，别重新推导）**
+> - r2 的生成文件：`completed_code_generation_2026_1110_073833.jsonl`（444KB，存活）；trace 522M 已存档。
+> - 现成模板：`run/run_A_none_r2_regrade.sh`（**11-07 用它成功补过 A_none_r2 一次**）——照抄改 3 个变量即可。
+> - 已知坑（模板注释里写着，别踩第二遍）：
+>   a) benchmark 文件名是**小写 p**：`benchmarks/EDA-Eval-pyAether/EDA-Eval-pyAether-158.jsonl`
+>      （大写 P 的路径不存在 → 0 题 → NA）；
+>   b) `run_eval.py` 读的是 `EVAL_ROOT_DIR`（**不是** `EVAL_ROOT_DIR_OVERRIDE`）；
+>   c) 必须 `unset http_proxy/https_proxy` 并设 `NO_PROXY=agi-gateway.cxmt.com,10.129.32.75,localhost,127.0.0.1`。
+>
+> **二、并发安全闸门（先做这一步，做错会毁掉正在跑的 r3）**
+> 1. `pgrep -af 'run_cline_script|run_eval'` + `tail -5 /tmp/ABL_B_zh_r3.log` 判断 r3 现在处于
+>    **code-gen** 还是 **grading** 阶段；
+> 2. `ss -ltnp | grep -E '8664|8665|8653|8669'` + `fuser` 看 4 组沙箱端口占用；
+> 3. 分支：
+>    - **r3 在 grading** 或 4 组端口有 2 组以上空闲 → 直接跑 regrade（`-p 2`，别用 `-p 8` 抢带宽）；
+>    - **r3 在 code-gen 且端口基本占满** → **不要抢**：把 regrade 写成
+>      `run/run_B_zh_r2_regrade.sh` + 一条"r3 收口后执行"的等待脚本
+>      （`while pgrep -f '^bash scripts/run_cline_script' >/dev/null; do sleep 120; done` 后再跑），
+>      在 MEMORY 记 `QUEUED: B_zh_r2 regrade after r3`。**两种都算完成本轮**。
+> 4. 🚫 **绝对禁止**：`pkill` r3 相关任何进程；改 r3 的 workdir / gen batch / log；重启编排器。
+>
+> **三、执行（复用模板）**
+> ```bash
+> cd /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run
+> cp run_A_none_r2_regrade.sh run_B_zh_r2_regrade.sh
+> # 只改 3 处：GEN_FILE=completed_code_generation_2026_1110_073833.jsonl
+> #            （打印 tag / 日志名改成 B_zh_r2）
+> bash run_B_zh_r2_regrade.sh 2>&1 | tee /tmp/regrade_B_zh_r2.log
+> ```
+> **闸门**：跑完 `n_tasks` 必须 == **158**；若 <158 或 NA → 说明 gen 文件不完整/benchmark 选错，
+> **停手**，MEMORY 记 `BLOCKED: regrade n_tasks=<X>`，不要拿这个数去填结果。
+>
+> **四、回填与收尾**
+> 1. `python3 extract_cost.py --batch <regrade 产出的 batch 目录> --log /tmp/regrade_B_zh_r2.log --out cost_B_zh_r2.json`
+> 2. `ablation_think_lang_results.json`（**gitignore，不入库**）：把 `tag=B_zh_r2` 的 null 条目
+>    **原位替换**成真实值（字段与其它轮完全一致：`summary.tag / pass_rate_pct / n_tasks / ...`），
+>    **不要追加重复 tag**；替换后 `python3 -c "import json;d=json.load(...);print(len(d['rounds']))"` 应仍是 20。
+> 3. MEMORY 进度行：`20/30（r2=null 待 regrade）` → **`21/30（r2 ✅ regrade pass=X%）`**，
+>    并记：命令、耗时、n_tasks、与 r1(84.2%)/r3 的量级对比。
+> 4. 合理性检查：r2 应与 r1 ≈84% 同量级；若差 >15pp，先查是不是 benchmark 用错（见上文坑 a），
+>    **不要**直接写进结论。
+> 5. commit 只含 `doc/ZhuLong_DAC2027/run`（MEMORY / daily / run_B_zh_r2_regrade.sh），
+>    results json 被 gitignore 不提交；`WAITING` 保持 `1`（r3 仍在跑）。
+>
+> **五、范围**：本轮**只做这一件**（r2 regrade 或其挂起方案），不要顺手起 es/fr/ru，不要动报告生成器。
+
 ### 📌 常驻 · 论文观察日报（research 线产出 · 2026-11-07 用户令）
 
 > 索引：`doc/personal-watch/run/research/daily/index.html`｜最新一期：`doc/personal-watch/run/research/daily/<日期>.html`
