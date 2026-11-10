@@ -722,3 +722,6 @@ cron log 未变；hfhds201 fresh since 01:50→0；SSH 3 台→全 0；11-05 sum
 [归档] 11-09 00:2x 流水（LatchSubcktLocate-001 交付 spice_sim A-faithful L1 k=15, zxtu w3eav@hfeg0pkn001；11-05 重扫令 11-09 cron log 全扫 132 strict/16 unprospect/peek 8 → w3eav CLEAN）原文见 ARCHIVE_OPERATOR_DESIGNFLOW_B.md 归档批次 144
 [归档] 11-08 23:0x 流水（0-case 证据链轮 · 11-05 重扫令 11-08 cron log 全扫 698 hosts/2889 sessions → spice-dom unprospect=0 + spice-adjacent 15 unprospect 全 peek 全 reject → WAITING:1）原文见 ARCHIVE_OPERATOR_DESIGNFLOW_B.md 归档批次 142
 [归档] 11-08 21:1x 流水（Sram6tTbBuild-001 交付 characterization A-faithful L1 k=15, e0030760 f0vya@hfeg0pkn001；金标准=access 晶体管 HSPICE pin-order bug）原文见 ARCHIVE_OPERATOR_DESIGNFLOW_B.md 归档批次 139
+
+## 归档批次 192（2026-11-10 23:4x，为压 MEMORY_B 至 ≤32KB 滚入）
+- 2026-11-10 14:3x SimConfigEditReport-001 交付轮原文（spice_sim B-synthesized L1 k=15, e0023936 45msy config.yaml sim-param 编辑+审计报告；自验 ref PASS 15/15 + 6neg + §4.9；byte-sync sha e69bb09c938b76f1, 13034B；jsonl B 235→236）。完整原文见 git history commit 此前 HEAD:doc/ZhuLong_DAC2027/benchmark/MEMORY_DESIGNFLOW_B.md line "- 2026-11-10 14:3x"。详见 trace_deepreads/45msy_sim_config_edit_report.md。
