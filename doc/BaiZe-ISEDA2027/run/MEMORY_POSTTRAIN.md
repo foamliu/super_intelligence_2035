@@ -14,7 +14,7 @@ WAITING: 0
 - 阻塞: 🔴远程沙盒10.129.32.75主机级防火墙(ping OK但TCP22/8664-8669全CLOSED+SSH timed out,连续8 wake)→Phase1 eval阻塞;GPU5/6/7被serve占位(17:10令)→SFT待GPU释放;P3等pretrain ckpt
 - 本轮新增产出: Phase1启动脚本(baize_posttrain_phase1_baseline.sh,229行,bash -n✅,dry-run✅)+eval管线接口实测纠正(run_cline_script.sh/run_eval.py正确参数)+MCP server运行确认+cline auth实测✅+chat completions实测✅+EXPERIMENTS §Phase1-launch-script
 - 未完成指令: 🔴用户令17:10(serve占位)✅持续维护中;🔴用户令13:40(三阶段替身计划)Phase1待沙盒(主机级防火墙需运维)/Phase2待GPU释放/Phase3待SFT ckpt ⇒ 全外部阻塞
-- git: wake203 待提交(commit posttrain #203)
+- git: wake203 commit 7cff51f5c✅(本地),push超时(github.com:443 timeout,6th连续wake网络recurring)→ahead 1,loop/下次唤醒补推
 
 ## GPU 端口映射表（2026-11-10 wake195 实测）
 
