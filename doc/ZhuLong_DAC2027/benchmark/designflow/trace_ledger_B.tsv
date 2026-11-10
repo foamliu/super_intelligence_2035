@@ -996,3 +996,31 @@ peek:					parked		2026-11-10 23:22	peek: consultation verdi-fsdb-warning-paste
 1794317548962_pksze	unknown	unknown	0	spice_sim	parked		2026-11-11 06:38	PDK_QA DRC handoff wrong-shard
 1793006622937_6kot7	unknown	unknown	0	spice_sim	parked		2026-11-11 06:38	calibre doc study note consultation
 1794294098670_kpqjv	mhyu	hfeg0plg49	0	characterization	case	EDA-Eval-DesignFlow-BlSpfCapClassify-001	2026-11-11 07:29	
+1793176301340_bme92	my7li	hfeg0pkn004	0	spice_sim	parked		2026-11-11 07:53	skill-loading: dqtool skill_tracer.py dev
+1793688752516_jd1wq	e0045488	hfeg0pkn004	0	spice_sim	parked		2026-11-11 07:53	wrong-shard C: Virtuoso highlight gen_hilight.py
+1794214637465_iqj11	shaoyou	hfeg0plg105	0	spice_sim	parked		2026-11-11 07:53	wrong-shard D: waveform display
+1794274681885_3zsou	t0002802	hfeg0plg58	0	spice_sim	parked		2026-11-11 07:53	consultation: ask what's in .v file
+1794274820746_pcyg5	t0002802	hfeg0plg58	0	spice_sim	parked		2026-11-11 07:53	consultation: ask what's in .v file
+1794275370079_g5y76	t0002802	hfeg0plg58	0	spice_sim	parked		2026-11-11 07:53	wrong-shard A: verilog task content
+1794275440571_ekiap	e0046913	hfeg0pkn003	0	spice_sim	parked		2026-11-11 07:53	wrong-shard A: formal verification FM scripts
+1794276528076_41dk3	e0048255	hfeg0pkn004	0	spice_sim	parked		2026-11-11 07:53	non-EDA: gvim encoding/libreoffice
+1794277686083_6st9l	aocao	hfeg0pkn004	0	spice_sim	parked		2026-11-11 07:53	wrong-shard A: verilog regression hammer_count.rpt
+1794279044223_131gn	lorikx	hfeg0plg15	0	spice_sim	parked		2026-11-11 07:53	wrong-shard A: digital RTL FS-to-DBC replacement
+1794280771220_03pya	tongfanl	hfeg0plg105	0	spice_sim	parked		2026-11-11 07:53	consultation: how to modify cfg for stimulus gen
+1794288111148_w3pk1	zlhou	hfeg0plg105	0	spice_sim	parked		2026-11-11 07:53	consultation: file listing PEX dir
+1794288409346_0yfjk	zlhou	hfeg0plg105	0	spice_sim	parked		2026-11-11 07:53	consultation: PEX SPF how-to
+1794289004910_gc01n	e0044131	hfeg0pkn004	0	spice_sim	parked		2026-11-11 07:53	wrong-shard D/C: SRAM structure design
+1794292763992_amcrw	wenhanz	hfeg0plg105	0	spice_sim	parked		2026-11-11 07:53	consultation: via types difference
+1794293033340_lawzt	zlhou	hfeg0plg105	0	spice_sim	parked		2026-11-11 07:53	consultation: PEX multi-corner how-to
+1794293390849_mhgi7	wenhanz	hfeg0plg105	0	spice_sim	parked		2026-11-11 07:53	wrong-shard C: Aether metal wire editing
+1794295550536_9m9m6	wenhanz	hfeg0plg105	0	spice_sim	parked		2026-11-11 07:53	wrong-shard C: layout SDL pin gen
+1794295897562_texkl	jmgu	hfeg0plg05	0	spice_sim	parked		2026-11-11 07:53	consultation: knowledge base upload
+1794296252513_bnwz4	steveny	hfeg0plg105	0	spice_sim	parked		2026-11-11 07:53	skill-loading: virtuoso hello world
+1794296993221_v7we7	rongjiez	hfeg0plg54	0	spice_sim	parked		2026-11-11 07:53	consultation: FineSim simulation how-to
+1794298738679_qakfn	wenhanz	hfeg0plg105	0	spice_sim	parked		2026-11-11 07:53	consultation: stdcell drawing steps
+1794302284516_pylvf	maggiew	hfeg0pkn004	0	spice_sim	parked		2026-11-11 07:53	trivial: hello
+1794310457458_ultx4	raylei	hfeg0plg15	0	spice_sim	parked		2026-11-11 07:53	consultation: spice model explanation
+1794310642206_v5jv2	steveny	hfeg0plg105	0	spice_sim	parked		2026-11-11 07:53	skill-loading: aether hello world
+1794316107717_vyx10	guomings	hfeg0plg54	0	spice_sim	parked		2026-11-11 07:53	wrong-shard A: RTL code editing
+1794317657516_33zed	e0044587	hfeg0pkn004	0	spice_sim	parked		2026-11-11 07:53	trivial: hello
+1794318133593_cqvj3	guomings	hfeg0plg54	0	spice_sim	parked		2026-11-11 07:53	wrong-shard A: RTL code editing
