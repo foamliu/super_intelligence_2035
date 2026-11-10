@@ -1042,4 +1042,32 @@ nvidia-smi --query-gpu=utilization.gpu,memory.used --format=csv,noheader
 - §4.7 sec:ckpt-scaling: 不存在 ✅
 - 📦 TASK≈22.5KB ✅ / MEMORY≈25KB ✅
 
+---
+
+### 论文 §4.6 刷新 — 2026-11-11 06:07 (#1942)
+
+**取数命令**: `ssh 10.239.2.29 'tail -40 /proc/146283/fd/1'`
+
+**训练状态** (iter 159,500/700,000 @ 06:04:24):
+- 末 10 步 (159410–159500) step time: 7125.0, 7106.9, 6996.1, 7106.0, 7018.3, 7113.4, 7096.5, 7069.4, 7046.2, 7156.2 ms → avg 7083.4 ms (all < 7.4s ✅)
+- tok/s = 4,194,304 / 7.0834 = 592,073 ≈ 592K
+- loss: 2.021–2.037, avg ≈ 2.03
+- 0 NaN, 0 skipped
+- GPU: 8 卡 87–100% util, ~75 GB/卡
+
+**论文改动**:
+- §4.6 (4_llm_pretrain.tex line 109): iter 159,320 → 159,500, tok/s 595K → 592K, loss ≈2.03 不变
+- abstract (0_abstract.tex line 14): 同步 159,320 → 159,500, 595K → 592K
+- tab:prod-budget (line 122): "159k done" → "160k done" (159,500 rounds to 160k); wall-clock ≈57d 不变 (700k × 4,194,304 / 592K = 57.4d)
+- tab:prod-budget (line 126): total ≈60.5d 不变
+
+**编译结果**:
+- `latexmk -pdf -interaction=nonstopmode main.tex` → 0 errors, 0 undefined
+- main.pdf: 5 pages, 228,235 bytes
+
+**护栏检查**:
+- grep benchmark 数字 (ARC/HellaSwag/PIQA/BoolQ/OpenBookQA/SciQ/Winogrande/ckpt-scaling/zero-shot) in ISEDA2027/ + main.tex: 0 命中 ✅
+- §4.7 sec:ckpt-scaling: 不存在 ✅
+- 📦 TASK≈22.5KB ✅ / MEMORY≈26KB ✅
+
 
