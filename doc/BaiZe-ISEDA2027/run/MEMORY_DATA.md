@@ -20,18 +20,19 @@ WAITING: 1
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        ✅stack-v3-train 2TB下载全DONE→进入过滤+分词阶段(待运维指令) → WAITING=1
-已完成:       ✅85M;✅10-31报告;✅09:4x报告;✅09:2x长上下文10/10(249.48GiB);✅13:2x#2 RL报告;✅13:2x#1 B类12/12(78.73GiB);✅11-07 ROI 8源DONE(25.14GB/135文件/0inc);✅stack-v3-train调研DONE(8192shard/EDA语言27.1%);✅batch1-7全DONE(累计1,987,930,402,327B/4600parquet/0inc);✅batch7 QC(6885files/vendor1.0%/EDA12.3%);✅2TB ROI复盘(token~2,025B/重叠2.4%/97.6%独特/ROI判定✅有价值)
-当前动作:     唤醒1428(2026-11-10 09:29):例行巡检+staleness复审→①git pull --rebase --autostash(Already up to date,TASK.md diff origin/main=空→无新data令);②research日报11-10(06:11)data建议=「路径台账staleness审计」已在唤醒1425执行完毕,本轮复审确认0 stale(12 tokenized_dir+11 symlink download_dir全stat OK);③stack-v3下载复核:4600parquet/1,987,932,716,336B(1.85TiB)/0inc→确认完整;④pgrep无下载进程运行;⑤df:/nas_inference 19T已用/27T可用(42%)≥5T红线OK;/nas_train 180T/87%;/nas_env 8.3T/84%;⑥体积MEMORY 31,505B/TASK 37,391B均≤40KB无需归档→更新心跳→commit→WAITING=1
-下一步:       等运维指令→若批准stack-v3 L4/L5 parquet级过滤(保留EDA/目标语言+质量过滤+丢弃漏斗分级报告来自research日报2026-11-09)+分词→用tokenizer_eod分词→落baize-data/tokenized/→更新INDEX.tsv+DATA_MAPPING.md;若无新指令→WAITING=1例行巡检
-阻塞:         无(2TB下载已完成,/nas_inference 27T可用≥5T红线)
+PHASE:        ✅stack-v3-train 2TB下载全DONE→进入过滤+分词阶段(待运维指令) → ✅论文数据节更新(11-10令) → WAITING=1
+已完成:       ✅85M;✅10-31报告;✅09:4x报告;✅09:2x长上下文10/10(249.48GiB);✅13:2x#2 RL报告;✅13:2x#1 B类12/12(78.73GiB);✅11-07 ROI 8源DONE(25.14GB/135文件/0inc);✅stack-v3-train调研DONE(8192shard/EDA语言27.1%);✅batch1-7全DONE(累计1,987,930,402,327B/4600parquet/0inc);✅batch7 QC(6885files/vendor1.0%/EDA12.3%);✅2TB ROI复盘(token~2,025B/重叠2.4%/97.6%独特/ROI判定✅有价值);✅论文pretrain数据节更新(淡化数据源名+Stable/Decay双饼图+中文图注,ERR=0,5pages)
+当前动作:     唤醒1429(2026-11-10 10:3x):执行运维令08:1x(更新论文pretrain数据部分)→①pretrain线已先在commit b56ce5f79做了核心改动(移除Ultra-FineWeb/UltraData品牌名+补TikZ双饼图+main.tex加tikz包);②data线复核+补齐:正文line24"instruction-style"→"instruction-SFT and agentic-SFT"(对齐令§②.1类别名);caption移除过时"pending tokenization"(SFT-2605/Agent-2609已分词,见DATA_MAPPING.md行26-27镜像完整)+加中文图注注释(令§②.2"图注用中文");③pdflatex×3+bibtex:ERR=0/UNDEF=0/5pages/211KB;④Data节无品牌名(仅Architecture节保留MiniCPM5-2B引用,非数据源);⑤更新心跳+日报→commit data paper:
+下一步:       等运维指令→若批准stack-v3 L4/L5 parquet级过滤+分词→用tokenizer_eod分词→落baize-data/tokenized/→更新INDEX.tsv+DATA_MAPPING.md;若无新指令→WAITING=1例行巡检
+阻塞:         无(2TB下载已完成,论文数据节已更新,/nas_inference 27T可用≥5T红线)
 ERROR_COUNT:  11
-未完成指令:   无(10:10令2TB下载+ROI复盘✅已交付;08:5x令ROI排序+下载✅已交付)→WAITING=1
+未完成指令:   无(11-10 08:1x论文数据节更新✅已交付;10:10令2TB下载+ROI复盘✅已交付;08:5x令ROI排序+下载✅已交付)→WAITING=1
 ```
 
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。
 
 ## 📋 本唤醒流水
+> [11-10 10:3x] 唤醒1429：执行运维令08:1x(更新论文pretrain数据部分)→①git pull发现pretrain线已先commit b56ce5f79做了核心改动(4_llm_pretrain.tex Data节移除Ultra-FineWeb/UltraData-Code/UltraData-Math品牌名→只说web/code/math;补fig:data-mix TikZ双饼图:Stable web74%/code19%/math7% + Decay instr-SFT60%/agentic12%/web22%/math4%/code2%;main.tex加\usepackage{tikz});②data线复核+补齐2处:line24正文"instruction-style and agentic"→"instruction-SFT and agentic-SFT"(对齐令§②.1五类别名);caption移除过时"pending tokenization"(SFT-2605 94shard/Agent-2609 13shard均已分词,DATA_MAPPING.md行26-27=镜像完整)+加%中文图注注释(令§②.2"图注用中文");③编译验证:pdflatex×3+bibtex→ERR=0/UNDEF=0/5pages/211058B;④grep确认Data节(lines21-73)无任何Ultra-/MiniCPM品牌名(仅Architecture节line7-8保留MiniCPM5-2B架构对比引用,非数据源,不在本令范围);⑤体积MEMORY32KB/TASK35KB均≤40KB无需归档→commit data paper:→WAITING=1
 > [11-10 09:29] 唤醒1428：例行巡检+staleness复审→①git pull --rebase --autostash(Already up to date,TASK.md diff origin/main=空→无新data令);②research日报11-10(06:11)data建议=「路径台账staleness审计」已在唤醒1425执行完毕,本轮复审:INDEX.tsv 12条tokenized_dir全stat→12/12 OK+11条symlink download_dir全stat→11/11 OK→确认0 stale entries,0需更正;③stack-v3下载复核:/nas_inference/app.e0031982/datasets/HuggingFaceCode/stack-v3-train/=find 4600parquet/du -sb=1,987,932,716,336B(1.85TiB)/0 inc→确认完整;④pgrep无下载进程运行(2TB已停止);⑤df:/nas_inference 19T已用/27T可用(42%)≥5T红线OK;/nas_train 180T/28T可用(87%);/nas_env 8.3T/1.7T可用(84%);⑥DATA_MAPPING.md(615行/60827B)含stack-v3 §H全量+ROI复盘完整;⑦体积MEMORY 31,505B/TASK 37,391B均≤40KB无需归档→更新心跳→commit→WAITING=1
 > [11-10 08:31] 唤醒1427：例行巡检→①git pull --rebase(Already up to date,TASK.md diff origin/main=空→无新data令);②research日报11-10(06:11)data建议=「路径台账staleness审计」已在唤醒1425执行完毕(0 stale entries),本轮无需重复;③stack-v3下载复核:find=4600parquet/du -sb=1,987,930,402,327B(1.85TiB)/0inc→确认完整;④pgrep无下载进程运行;⑤df:/nas_inference 19T已用/27T可用(42%)≥5T红线OK;/nas_train 180T/28T可用(87%);/nas_env 8.3T/1.7T可用(84%);⑥体积MEMORY 30,859B/TASK 34,967B均≤40KB无需归档→更新心跳→commit→WAITING=1
 > [11-10 07:37] 唤醒1426：例行巡检→①git pull --rebase(c0970b5d8..d60e5d21a成功,TASK.md diff origin/main=空→无新data令);②research日报11-10(06:11)data建议=「路径台账staleness审计」已在唤醒1425执行完毕(0 stale entries),本轮无需重复执行;③stack-v3下载复核:find=4600parquet/du -sb=1,987,932,712,240B(1.85TiB)/0inc→确认完整;④pgrep无下载进程运行;⑤df:/nas_inference 19T已用/27T可用(42%)≥5T红线OK;/nas_train 180T/28T可用(87%);/nas_env 8.3T/1.7T可用(84%);⑥体积MEMORY 30,310B/TASK 34,967B均≤40KB无需归档→更新心跳→commit→WAITING=1

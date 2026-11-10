@@ -21,8 +21,8 @@ The recipe was selected via a staged single-variable protocol at $5000$ steps: S
 \subsection{Data}\label{sec:llm-data}
 The stable phase uses a seven-source mixture yielding a $74{:}19{:}7$ web/code/math split; a $400$-trial Bayesian search confirmed this region optimal within $0.6$\,pp.
 % 中文：数据。稳定阶段使用七源混合，产出 $74{:}19{:}7$ 的网页/代码/数学分布；$400$ 次贝叶斯搜索在 $0.6$ pp 内确认该区域最优。
-Figure~\ref{fig:data-mix} shows the stable and decay (annealing) mixtures side by side; the decay segment drops most general web/code/math in favor of instruction-style and agentic data.
-% 中文：图 \ref{fig:data-mix} 并排展示了稳定段与衰减（退火）段的配比；衰减段大幅压低通用网页/代码/数学，转向指令式与智能体数据。
+Figure~\ref{fig:data-mix} shows the stable and decay (annealing) mixtures side by side; the decay segment drops most general web/code/math in favor of instruction-SFT and agentic-SFT data.
+% 中文：图 \ref{fig:data-mix} 并排展示了稳定段与衰减（退火）段的配比；衰减段大幅压低通用网页/代码/数学，转向指令式 SFT 与智能体 SFT 数据。
 Sources are pre-blended into large shards ($\mathcal{O}(10)$ vs.\ $\mathcal{O}(600)$ index files per rank), bounding the data-loader footprint.
 % 中文：各源预混合为大 shard（每 rank $\mathcal{O}(10)$ 个索引文件而非 $\mathcal{O}(600)$），限制数据加载内存占用。
 Contamination is controlled by a $193{,}295$-entry 13-gram blacklist from $536$ benchmarks; shards are scanned for ${\geq}0.80$ n-gram overlap.
@@ -68,7 +68,8 @@ Contamination is controlled by a $193{,}295$-entry 13-gram blacklist from $536$ 
 \textcolor{blue!60}{$\bullet$} web & \textcolor{green!55}{$\bullet$} math\ \,\ \textcolor{red!60}{$\bullet$} code \\
 \end{tabular}
 \end{minipage}
-\caption{Data mixture of the stable (WSD $\theta{=}10^{6}$) and decay (annealing) phases. The decay segment replaces the bulk of general web/code/math with instruction-style (60\%) and agentic (12\%) data; its SFT sources are a planned ratio pending tokenization.}
+\caption{Data mixture of the stable (WSD $\theta{=}10^{6}$) and decay (annealing) phases. The decay segment replaces the bulk of general web/code/math with instruction-SFT (60\%) and agentic-SFT (12\%) data.}
+% 中文：图 \ref{fig:data-mix} 稳定段（WSD $\theta{=}10^{6}$）与衰减（退火）段的数据配比。衰减段以指令式 SFT（60\%）与智能体 SFT（12\%）取代大部分通用网页/代码/数学。
 \label{fig:data-mix}
 \end{figure}
 
