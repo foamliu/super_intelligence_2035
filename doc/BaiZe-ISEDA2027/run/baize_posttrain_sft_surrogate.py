@@ -74,7 +74,7 @@ def main():
     parser.add_argument("--lr", type=float, default=2e-5)
     parser.add_argument("--warmup_steps", type=int, default=50)
     parser.add_argument("--num_epochs", type=float, default=3.0)
-    parser.add_argument("--save_steps", type=int, default=500)
+    parser.add_argument("--save_steps", type=int, default=200)
     parser.add_argument("--logging_steps", type=int, default=10)
     parser.add_argument("--quality_filter", type=str, default="high,medium")
     parser.add_argument("--max_samples", type=int, default=None)
@@ -119,7 +119,7 @@ def main():
         gradient_accumulation_steps=args.grad_accum,
         learning_rate=args.lr, warmup_steps=args.warmup_steps,
         lr_scheduler_type="cosine", logging_steps=args.logging_steps,
-        save_steps=args.save_steps, save_total_limit=3, bf16=True,
+        save_steps=args.save_steps, save_strategy="steps", save_total_limit=3, bf16=True,
         gradient_checkpointing=True,
         gradient_checkpointing_kwargs={"use_reentrant": False},
         report_to="none", seed=args.seed, dataloader_num_workers=2,

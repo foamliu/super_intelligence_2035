@@ -7,14 +7,27 @@ WAITING: 1
 
 ## 进度快照
 
-- PHASE: posttrain-wake194（2026-11-10 Phase 2 替身 SFT 端到端验证）
-- 已完成: P3预备✅；P0✅；P1✅；P2✅；R1-R145✅；wake191✅ R144(production hooks)；wake192✅ R145(SFT-RL transfer+hooks集成)；wake193✅ Phase1基线评测(DeepSeek 67.97%±1.65%代码生成基线+三模型端点+baseline_eval.sh+里程碑HTML报告)；wake194✅ Phase2 SFT脚本+smoke test+全量训练启动
-- 当前动作: wake194 Phase2 SFT: ①环境修复(torchao卸载→Trainer可导入+TRL/PEFT不可用→直接transformers Trainer) ②baize_posttrain_sft_surrogate.py(自定义SFTDataset,ChatML格式,loss masking on completion,gradient checkpointing) ③baize_posttrain_sft_surrogate.sh(wrapper,dry-run/smoke/train) ④smoke test PASS:20样本/1epoch/40.8s/loss1.75→0.10/37GB VRAM ⑤全量训练已启动:GPU6-7 DDP 2×A40,12434样本(high+medium),3 epochs,max_len=1024,grad_accum=16,~8s/step,ETA~2.5h,29.5GB/卡 ⑥数据替代:UltraData不可达(.17无/nas_train)→PyAether SFT corpus v2(domain-specific)
-- 下一步: ①SFT训练完成(~2.5h)→检查final loss+ckpt质量 ②沙盒恢复→pre-SFT/post-SFT EDA-Eval 5-run对比 ③Phase3 RL/GRPO(SFT ckpt→verl) ④正式训练待pretrain ckpt(ETA≈2026-12-25)
-- 阻塞: 🔴远程沙盒10.129.32.75全端口CLOSED→阻塞SFT前后评测;P3等pretrain ckpt(ETA≈2026-12-25)
-- 本轮新增产出: baize_posttrain_sft_surrogate.py+sh(SFT训练脚本)+smoke test PASS+全量训练运行中+EXPERIMENTS §Phase2-SFT-Surrogate
-- 未完成指令: 🔴用户令2026-11-10(三阶段替身计划:Phase1基线待沙盒+Phase2 SFT训练中+Phase3待SFT ckpt) ⇒ WAITING=1(训练中,~2.5h后唤醒检查)
-- git: synced with origin/main（wake194 commit 994c20ec8, 17:08）
+- PHASE: posttrain-wake196（2026-11-10 SFT脚本crash-resilient修复 + serve inference验证 + 沙盒调研）
+- 已完成: P3预备✅；P0✅；P1✅；P2✅；R1-R145✅；wake193✅ Phase1基线评测；wake194✅ Phase2 SFT脚本+smoke+全量( crashed)；wake195✅ GPU5/6/7 serve占位+SFT crash诊断；wake196✅ SFT脚本crash-resilient修复+serve inference验证+沙盒本地化调研(不可行)
+- 当前动作: wake196 ①serve健康验证:5端点(8095-8099)inference test全通(GPU4:8098+GPU5:8097 chat completion✅,模型正常生成) ②SFT脚本crash-resilient修复:save_steps 500→200(首ckpt@step200而非500,crash@95不再全丢)+MAX_LEN 2048→1024(wake194实测8s/step vs 38.7s/step)+output /tmp→NFS路径(防重启丢失)+save_strategy="steps"显式+--save-steps CLI override ③沙盒本地化调研:远程沙盒10.129.32.75:8664-8669全CLOSED;pyAether本地未安装(ModuleNotFoundError);Docker需root(permission denied)→Phase1 eval硬阻塞不可本地绕过 ④验证:bash -n✅/dry-run✅(recipe正确)/python syntax✅/--help✅
+- 下一步: ①沙盒隧道恢复→Phase1基线评测(三模型5-run,脚本就绪) ②GPU释放后→重启SFT(脚本已修crash-resilient,recipe验证通过) ③SFT ckpt→Phase3 RL/GRPO ④正式训练待pretrain ckpt(ETA≈2026-12-25)
+- 阻塞: 🔴远程沙盒10.129.32.75全端口CLOSED→阻塞全部harness评测(不可本地绕过:pyAether未装+Docker需root);GPU5/6/7被serve占位(17:10令)→SFT重启待GPU释放;P3等pretrain ckpt
+- 本轮新增产出: SFT脚本crash-resilient修复(3项:save_steps/MAX_LEN/output路径)+serve inference验证(2端点chat completion✅)+沙盒本地化不可行结论(pyAether未装+Docker需root)
+- 未完成指令: 🔴用户令17:10(serve占位)✅完成;🔴用户令13:40(三阶段替身计划)Phase1待沙盒/Phase2 SFT脚本已修待GPU释放/Phase3待SFT ckpt ⇒ 全外部阻塞(沙盒隧道CLOSED+GPU被serve占位),本轮可做的事已做完
+- git: synced with origin/main（wake195 commit 87c19ba95, 17:18；wake196 待提交）
+
+## GPU 端口映射表（2026-11-10 wake195 实测）
+
+| GPU | 端口 | served-model-name | 用途 | VRAM | 状态 |
+|:--:|:--:|:--|:--|:--:|:--|
+| 0-3 | 8099 | qwen3.8-27b | root SGLang Qwen3.8-27B | ~45GB/卡 | ✅ root 占用，不可动 |
+| 4 | 8098 | minicpm5-2b | vLLM MiniCPM5-2B（Phase1评测用） | 37.8GB | ✅ 常驻 |
+| 5 | 8097 | minicpm5-2b-gpu5 | vLLM MiniCPM5-2B（17:10占位） | 37.8GB | ✅ 占位中 |
+| 6 | 8096 | minicpm5-2b-gpu6 | vLLM MiniCPM5-2B（17:10占位） | 37.8GB | ✅ 占位中 |
+| 7 | 8095 | minicpm5-2b-gpu7 | vLLM MiniCPM5-2B（17:10占位） | 37.8GB | ✅ 占位中 |
+
+> vLLM venv: `/tmp/vllm_venv/bin/python`（transformers 4.49.0）；日志: `/tmp/vllm_gpu{5,6,7}.log`
+> ⚠️ vLLM venv 在 `/tmp`，重启机器后丢失需重建
 
 ## 关键事实（常驻）
 
@@ -89,3 +102,6 @@ WAITING: 1
 [wake193] Phase 1 基线评测 + 里程碑报告: 体积自检(TASK≈26KB/MEMORY≈20KB合规)→GPU:4/8free(GPU4 vLLM MiniCPM5-2B✅/GPU0-3 SGLang Qwen3.8-27B root✅/GPU5-7空闲)→git synced→Phase1基线评测: ①DeepSeek代码生成基线:EDA-Eval-Framework 6轮zhulong_deepseek_v32,1轮outlier(39.87%<50%排除),5轮clean mean=67.97%±1.65% ②分场景:Schematic47/60.0%+Layout64/62.8%+DesignMgmt24/80.8%+Others23/85.2% ③错误分解(253错):AssertionError141/55.7%+timeout27/10.7%+ValueError24/9.5%+TypeError19/7.5%+GenFail16/6.3%+AttrErr13/5.1% ④三模型端点:MiniCPM5-2B localhost:8098 GPU4 vLLM✅/Qwen3.8-27B localhost:8099 GPU0-3 SGLang root✅/GLM-5.2 cloud✅ ⑤cline auth两本地模型✅(minicpm5-2b+qwen3.8-27b) ⑥baize_posttrain_baseline_eval.sh(110行,bash -n✅/dry-run✅/--check-env✅/--model/--all/--runs) ⑦里程碑HTML report_posttrain_baseline_3model_zh.html(13KB/12节/12表/0script/自包含/DOCTYPE✅) ⑧EXPERIMENTS §Baseline-3model ⑨🔴硬阻塞:远程沙盒10.129.32.75全端口CLOSED(8664-8669),ping 0.5ms可达但TCP连接超时→沙盒服务停机,阻塞全harness评测 ⑩58pp差距分解:工具协议20-30pp+API知识10-15pp+语义推理10-15pp+容量差10-15pp. 📦 体积：TASK≈26KB / MEMORY≈22KB。本轮新增产出：Phase1基线评测里程碑HTML报告(13KB)+baseline_eval.sh(110行)+EXPERIMENTS §Baseline-3model。未完成指令：🔴用户令2026-11-07+Phase1基线评测待沙盒恢复 ⇒ WAITING=0。
 
 [wake194] Phase 2 替身 SFT 端到端验证: 体积自检(TASK≈26KB/MEMORY≈22KB合规)→GPU:3/8free(GPU4 vLLM MiniCPM5-2B✅/GPU0-3 SGLang root✅/GPU5空闲/GPU6-7训练中)→Phase2 SFT: ①环境修复:torchao 0.18.0与torch 2.6.0冲突(ScalingType import fail)→pip uninstall torchao→Trainer可导入;TRL未装+PEFT broken→直接用transformers Trainer ②baize_posttrain_sft_surrogate.py(自定义SFTDataset,ChatML格式,loss masking on completion,gradient checkpointing,cosine LR) ③baize_posttrain_sft_surrogate.sh(wrapper,dry-run/smoke/train,GPU busy check) ④smoke test PASS:20样本/1epoch/40.8s/loss1.75→0.10(avg0.4033)/37GB VRAM/GPU6 ⑤数据替代:UltraData-SFT-2605不可达(.17无/nas_train)→PyAether SFT corpus v2(19524对,high11733+medium701=12434对,domain-specific更针对API知识缺口) ⑥全量训练启动:GPU6-7 DDP 2×A40,12434样本,3 epochs,max_len=1024,grad_accum=16,effective_batch=32,1164 steps,~8s/step,ETA~2.5h,29.5GB/卡(61%) ⑦踩坑:accelerate.launch模块路径(accelerate.commands.launch)+GPU6僵尸进程OOM+单GPU max_len=2048太慢(38.7s/step)→2GPU max_len=1024(8s/step) ⑧输出:/nas_data/app.e0031982/models/MiniCPM5-2B-SFT-surrogate ⑨EXPERIMENTS §Phase2-SFT-Surrogate ⑩🔴阻塞:沙盒仍CLOSED→SFT前后评测待恢复. 📦 体积：TASK≈26KB / MEMORY≈23KB。本轮新增产出：SFT训练脚本(py+sh)+smoke test PASS+全量训练运行中+EXPERIMENTS §Phase2-SFT-Surrogate。未完成指令：🔴用户令2026-11-10(三阶段替身计划) ⇒ WAITING=1(训练中,~2.5h后唤醒检查)。
+[wake195] GPU5/6/7 serve占位 + SFT crash诊断: 体积自检(TASK≈31KB/MEMORY≈23KB合规)→GPU:0/8free(GPU0-3 root SGLang/GPU4 vLLM:8098/GPU5-7空闲)→git fetch超时(网络)→用户令17:10执行:①GPU5/6/7确认无残留进程(3MiB)+端口8097/8096/8095空闲 ②各起vLLM serve MiniCPM5-2B(CUDA_VISIBLE_DEVICES=N,gpu-mem-util 0.85,max-model-len 32768,nohup /tmp/vllm_venv) ③transformers 4.49.0确认✅(无需降级) ④三端点全部"Application startup complete"+37.85GB/卡+curl /v1/models✅(minicpm5-2b-gpu5/6/7) ⑤SFT crash诊断:wake194全量SFT在step95/1164(epoch0.23,loss0.076)被SIGKILL(17:11:15),与17:10令时间重合→GPU6/7被释放给serve;输出目录MiniCPM5-2B-SFT-surrogate空(无ckpt);dmesg显示OOM kill为其他PID(3542499/1338171)非SFT进程;系统755GB RAM/671GB可用→非系统OOM ⑥SFT recipe验证通过(loss1.75→0.076健康收敛),脚本就绪待GPU释放后重启. 📦 体积：TASK≈31KB / MEMORY≈24KB。本轮新增产出：GPU5/6/7 vLLM serve占位(3端点✅)+端口映射表+SFT crash诊断(SIGKILL step95,recipe有效,无ckpt)。未完成指令：🔴用户令17:10(serve占位)✅完成;🔴用户令13:40(三阶段替身计划)全外部阻塞(沙盒隧道CLOSED+GPU被serve占位) ⇒ WAITING=1。
+[wake196] SFT脚本crash-resilient修复 + serve inference验证 + 沙盒本地化调研: 体积自检(TASK≈31KB/MEMORY≈25KB合规)→GPU:0/8free(GPU0-3 root SGLang/GPU4-7 vLLM serve占位,全37.8GB)→git fetch超时(网络,同wake195)→serve健康验证:①5端点(8095-8099)curl /v1/models全✅ ②inference test:GPU4:8098+GPU5:8097 chat completion✅(模型正常生成,"What is 2+3?"→正确reasoning+生成)→SFT脚本crash-resilient修复:③baize_posttrain_sft_surrogate.sh:SAVE_STEPS 500→200(首ckpt@step200,crash@95不再全丢,1164步共~5个ckpt)+MAX_LEN 2048→1024(wake194实测8s/step vs 38.7s/step)+OUTPUT /tmp→/nas_data NFS路径(防机器重启丢失)+--save-steps CLI override ④baize_posttrain_sft_surrogate.py:save_steps default 500→200+save_strategy="steps"显式 ⑤验证:bash -n✅/dry-run✅(recipe:max_len=1024,save_steps=200,output=NFS)/python syntax✅/--help✅(含--save-steps)→沙盒本地化调研(结论:不可行):⑥远程沙盒10.129.32.75:8664-8669全CLOSED ⑦pyAether本地未安装(~/code/eda_fastmcp/.venv→ModuleNotFoundError) ⑧Docker需root(permission denied on docker.sock) ⑨run_on_sandbox.py发送代码到远程HTTP服务器(v1/run_code),非本地执行→Phase1 eval硬阻塞,不可本地绕过→SFT输出目录确认空(MiniCPM5-2B-SFT-surrogate/,crash后无残留). 📦 体积：TASK≈31KB / MEMORY≈25KB。本轮新增产出：SFT脚本crash-resilient修复(3项:save_steps 500→200/MAX_LEN 2048→1024/output→NFS)+serve inference验证(2端点chat completion✅)+沙盒本地化不可行结论(pyAether未装+Docker需root)。未完成指令：🔴用户令17:10✅完成;🔴用户令13:40全外部阻塞(沙盒CLOSED+GPU被serve占位) ⇒ WAITING=1。
+

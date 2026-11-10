@@ -11,15 +11,15 @@ SCRIPT_DIR="$(cd "$(dirname "$(realpath "${BASH_SOURCE[0]}")")" && pwd)"
 PY="$HOME/code/verl_cu124_venv/bin/python"
 MODEL="/nas_data/app.e0031982/models/MiniCPM5-2B"
 DATA="$SCRIPT_DIR/sft_pyaether_corpus_v2.jsonl"
-OUTPUT="/tmp/sft_surrogate_out"
+OUTPUT="/nas_data/app.e0031982/models/MiniCPM5-2B-SFT-surrogate"
 GPU_IDS="6,7"
-MAX_LEN=2048
+MAX_LEN=1024
 BATCH=1
 GRAD_ACCUM=16
 LR=2e-5
 EPOCHS=3.0
 WARMUP=50
-SAVE_STEPS=500
+SAVE_STEPS=200
 DRY_RUN=0
 SMOKE=0
 while [ $# -gt 0 ]; do
@@ -31,8 +31,9 @@ while [ $# -gt 0 ]; do
     --epochs) EPOCHS="$2"; shift ;;
     --lr) LR="$2"; shift ;;
     --max-len) MAX_LEN="$2"; shift ;;
+    --save-steps) SAVE_STEPS="$2"; shift ;;
     -h|--help)
-      echo "Usage: $0 [--dry-run] [--smoke] [--gpu 6,7] [--output DIR] [--epochs N] [--lr F] [--max-len N]"
+      echo "Usage: $0 [--dry-run] [--smoke] [--gpu 6,7] [--output DIR] [--epochs N] [--lr F] [--max-len N] [--save-steps N]"
       exit 0 ;;
     *) echo "Unknown: $1" ;;
   esac
@@ -46,6 +47,7 @@ echo "  GPUs       : $GPU_IDS"
 echo "  max_len    : $MAX_LEN"
 echo "  batch      : ${BATCH} x grad_accum ${GRAD_ACCUM}"
 echo "  lr         : $LR (cosine, warmup ${WARMUP})"
+echo "  save_steps : $SAVE_STEPS (crash-resilient: wake194 crash@step95 lost all w/ save_steps=500)"
 echo "  epochs     : $EPOCHS"
 echo "  mode       : $([ $DRY_RUN = 1 ] && echo DRY-RUN || ([ $SMOKE = 1 ] && echo SMOKE || echo TRAIN))"
 echo "  ⚠️ SURROGATE: gains NOT transferable to BaiZe"
