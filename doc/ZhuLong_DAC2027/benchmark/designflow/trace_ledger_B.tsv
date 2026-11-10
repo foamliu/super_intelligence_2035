@@ -859,3 +859,23 @@ kakcd	kenwang	hfeg017216808192	5	non_spice	parked		2026-11-10 09:06	DRC rule dev
 1793082564833_dhqmb	reedchen	hfeg0plg93	102	characterization	case	EDA-Eval-DesignFlow-McPvtVmEval-001	2026-11-10 21:07	
 1793608841437_53e2m	victorq	hfeg0plg96	315	spice_sim	case	EDA-Eval-DesignFlow-SpRcAlterGen-001	2026-11-10 21:51	
 1788513689914_ayl62	sophiaw	hfeg0plg09	46	spice_sim	case	EDA-Eval-DesignFlow-PvtCornerSubsetGen-001	2026-11-10 22:34	10corner subset deck gen produce-task
+1793771879264_qtchi	qijingx	hfeg0pjn200	70	spice_sim	parked		2026-11-10 23:23	consultation netlist-compare no produce-task
+1793931348269_d06uu	curryxu	hfeg0plg99	51	spice_sim	parked		2026-11-10 23:23	consultation circuit-opt-suggestion
+peek:					parked		2026-11-10 23:22	peek: consultation verdi-fsdb-warning-paste
+1794208159902_v593e	t0002614	hfeg0pkn004	52	spice_sim	parked		2026-11-10 23:23	consultation netlist-extract-how-to
+1792567034258_hasla	zqzhan	hfeg0plg58	41	spice_sim	parked		2026-11-10 23:23	consultation finesim-deck script-snippet
+1793870551130_jr0o3	ronghu	hfeg0pkn005	44	spice_sim	parked		2026-11-10 23:23	debug power-meas-inst fix-iteration
+1791787377751_frxg5	hswang	hfeg0plg64	54	spice_sim	parked		2026-11-10 23:23	consultation analyze-aging-script
+1791513972290_bih9j	thomasz	hfeg0pfn060	99	spice_sim	parked		2026-11-10 23:23	debug IR-result-missing-vcc-vblh
+1793875415367_oue4a	eva1wu	hfeg0plg52	49	spice_sim	parked		2026-11-10 23:23	consultation what-is-cm generic
+1794212917714_ibwba	zhililu	hfeg0pkn002	154	spice_sim	parked		2026-11-10 23:23	consultation virtuoso-netlist-sim debug-sfe
+1793879303886_7l4sx	e0017906	hfeg0pkn002	122	spice_sim	parked		2026-11-10 23:23	consultation circuit-hierarchy exploration
+1792045004436_fdrqq	zxtu	hfeg0pkn001	70	spice_sim	parked		2026-11-10 23:23	consultation perl-python pipe finesim-automation
+1792572197494_0rj7b	e0022089	hfeg0pkn002	24	spice_sim	parked		2026-11-10 23:23	consultation explain-model-purpose
+1792572922387_8pl7h	e0022089	hfeg0pkn002	24	spice_sim	parked		2026-11-10 23:23	consultation explain-model-purpose dup
+1792722310323_1e0xa	sagequan	hfeg0pbn04	11	spice_sim	parked		2026-11-10 23:23	skill-loading cimi-kb-search
+1793857356226_kubzy	zhililu	hfeg0pkn002	169	spice_sim	parked		2026-11-10 23:23	consultation resistor-TRIM-netlist-explain
+1792398188240_i0cnz	mwxi	hfeg0plg52	84	spice_sim	parked		2026-11-10 23:23	wrong-shard ops-crontab-sync
+1792550155026_cn4bl	steveny	hfeg0pnd001	20	spice_sim	parked		2026-11-10 23:23	consultation navigate-to-host
+1792936692635_f1pj5	jingc	hfeg0pkn001	16	spice_sim	parked		2026-11-10 23:23	consultation what-is-DSA
+1793189553608_5uqoi	dsgao	hfeg0pkn001	12	spice_sim	parked		2026-11-10 23:23	consultation verdi-fsdb-warning-paste
