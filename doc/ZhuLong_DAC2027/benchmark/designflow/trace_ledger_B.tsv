@@ -777,3 +777,11 @@ qnm9e					parked		2026-11-08 01:58	Finesim DC convergence Q&A prose dup of uky6c
 1794200811873_k36er	e0041392	hfeg0plg75	12	spice_sim	parked		2026-11-10 08:21	consultation/diagnostic non-produce-task (rescan_1110_0735 peek)
 1794221449278_bqqtk	e0046686	hfhds201	530	characterization	case	EDA-Eval-DesignFlow-Coord3DProj-001	2026-11-10 08:45	
 1794202571966_v87lq	e0030760	hfhds201	941	characterization	parked		2026-11-10 08:26	fresh-window 11-10 consultation-dominant (HSV/aether 怎么/解释/操作步骤), U#5 doc-only
+m8ma9	e0045128	hfeg0plg49	604	non_spice	parked		2026-11-10 09:06	consultation-dominant, wrong domain
+enroe	mwxi	hfeg0plg49	1678	non_spice	parked		2026-11-10 09:06	ops/diagnostic, wrong domain
+b7otd	xy1zhang	hfeg0plg49	4048	non_spice	parked		2026-11-10 09:06	digital verification, wrong shard A
+widtp	jingjiew	hfeg0pkn012	0	non_spice	parked		2026-11-10 09:06	translation consultation, not produce-task
+1c67w	e0014036	hfeg0pkn014	0	non_spice	parked		2026-11-10 09:06	digital verification diagnostic, wrong shard A
+u65cq	e0047472	hfeg0plg3569	257	non_spice	parked		2026-11-10 09:06	physical/PnR consultation, wrong shard A/C
+0k1mk	chapinc	hfeg0plg8124	34	non_spice	parked		2026-11-10 09:06	structural search, wrong shard A
+kakcd	kenwang	hfeg017216808192	5	non_spice	parked		2026-11-10 09:06	DRC rule dev, wrong shard C
