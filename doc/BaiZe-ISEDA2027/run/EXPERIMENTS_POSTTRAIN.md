@@ -16451,3 +16451,53 @@ Final eval      -> bash baize_posttrain_eval.sh --endpoint <served-ckpt>
 
 ---
 
+## §R157 — Sandbox Recovery Watcher + Auto Phase1 Trigger（wake226, 2026-11-11, 零 GPU）
+
+### 缺口
+远程 EDA 沙盒 `10.129.32.75:8667` 因主机级防火墙连续 31 wake CLOSED（ping OK 0% loss，但 TCP 8667 timeout exit=124）。
+这阻塞了 Phase1 baseline eval 与 Phase3 RL（R1-R4，需 code-execution rewards）。
+此前每 wake 仅被动记录"CLOSED"，沙盒何时恢复不可控，恢复后也需等下一次 agent wake 才能起 Phase1 eval。
+
+### 交付物
+`run/baize_posttrain_sandbox_watcher.sh`（186 行 / 8.0 KB / `bash -n` ✅）
+- 5 模式：`--check-once`（单探针，exit 0=OPEN / 1=CLOSED）/ `--status`（sentinel+log+pipeline 状态）/ `--dry-run`（打印配置+探针，不 launch）/ `--watch`（INTERVAL 轮询）/ `--watch --auto-eval`（恢复即 `setsid nohup` 起 `baize_posttrain_surrogate_pipeline.sh --phase1`）
+- 探针口径与 pipeline 一致：`timeout $PROBE_TIMEOUT bash -c "exec 3<>/dev/tcp/$SANDBOX_HOST/$SANDBOX_PORT"`
+- 恢复动作：`stamp_recovery`（写 sentinel `/tmp/posttrain_sandbox_recovered.flag` + log）→ `launch_phase1`（`setsid bash $PIPELINE_PHASE1 --phase1` nohup bg，detach 存活）
+- 纪律：不 kill 任何 vLLM serve（遵守 17:10 令）；pipeline 自身闸门（sandbox/contam §5.1/endpoints）二次防护，spurious 恢复不会 unsafe launch
+- 环境变量可覆盖：`SANDBOX_HOST SANDBOX_PORT INTERVAL MAX_POLLS SENTINEL LOG PIPELINE_PHASE1 AUTO_EVAL_OUT PROBE_TIMEOUT`
+
+### 验证（全 PASS）
+| 模式 | 结果 |
+|:--|:--|
+| `bash -n` | SYNTAX_OK |
+| `--help` | 10 行 usage 输出 ✅ |
+| `--check-once` | `[NO] sandbox 10.129.32.75:8667 CLOSED (timeout 6s)`，exit=1 ✅（与独立探针 exit=124 一致） |
+| `--status` | config/sentinel(none)/log(none)/pipeline(present)/auto-eval OFF/probe CLOSED，exit=0 ✅ |
+| `--dry-run` | pipeline present / probe CLOSED (would keep polling)，exit=0 ✅ |
+| `--watch MAX_POLLS=1 INTERVAL=1` | poll#1 CLOSED → MAX_POLLS reached → exit=1 ✅ |
+| `--watch --auto-eval MAX_POLLS=1` | auto_eval=1 / CLOSED / 无 launch / 无 sentinel / exit=1 ✅ |
+
+### 修复记录
+两段 `editor` insert 致 `probe_sandbox` 被 split（head 留 line 91-93，tail `return 0/else/return 1/fi/}` + `log_line` 被 push 到 line 181-187 成为 orphan）。
+在 `set -euo pipefail` 下，顶层 orphan `return 0` 使脚本静默 exit=0 并吞没所有函数输出，且 `--check-once` 误报 exit=0（OPEN）。
+两处 editor 修复：① probe 尾部回归 line 94 + `log_line` 归位；② 删 `esac` 后 orphan 尾。重验全 PASS，`log_line` 仅 1 处定义。
+
+### 部署（运行中）
+`setsid env INTERVAL=120 MAX_POLLS=5040 bash baize_posttrain_sandbox_watcher.sh --watch --auto-eval > /tmp/posttrain_sandbox_watcher.nohup 2>&1 < /dev/null &`
+- PID **4109314**，ppid=1（setsid 完全 detach），etimes 持续增长
+- nohup 日志 91B：`WATCH start interval=120s max_polls=5040 auto_eval=1` + `poll #1: CLOSED — sleeping 120s`
+- watcher.log 有 `WATCH start interval=120s` 条目
+- 仅 1 个 watcher 进程（pgrep 确认，无重复 launch 风险）
+- 5 端点 serve 全✅（watcher 未 kill 任何进程）；sentinel 不存在（未误触发）
+- MAX_POLLS=5040 @120s ≈ 7 天；到期或机器重启（/tmp venv 丢）需重部署
+
+### 价值
+把 31 wake 的"沙盒 CLOSED 被动等待"转为"沙盒 OPEN 即自动起 Phase1 baseline eval"，符合 11-07 令"到位当天自动起跑"与 17:10 令"占住资源防挪用"的精神。Phase1 eval 仅需沙盒 + GPU4 serve(8098) + root GPU0-3(8099)，三者已就绪，恢复即跑，不与任何 serve 争用。
+
+### 证据
+- 脚本：`run/baize_posttrain_sandbox_watcher.sh`（186 行）
+- nohup 日志：`/tmp/posttrain_sandbox_watcher.nohup`
+- watcher 日志：`/tmp/posttrain_sandbox_watcher.log`
+- 进程：`ps -o pid=,ppid=,etimes= -p 4109314` → `4109314  1  <etimes>`
+- 独立探针对照：`timeout 6 bash -c 'cat </dev/null >/dev/tcp/10.129.32.75/8667'` → exit=124（CLOSED）
+
