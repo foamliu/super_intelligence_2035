@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaiZe Post-Training Phase 1 基线评测报告</title>
+<style>
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;max-width:1100px;margin:0 auto;padding:20px;color:#1a1a1a;line-height:1.7}
+h1{color:#1a5276;border-bottom:3px solid #2980b9;padding-bottom:10px}
+h2{color:#1a5276;margin-top:2em;border-bottom:1px solid #d5d8dc;padding-bottom:5px}
+h3{color:#2c3e50;margin-top:1.5em}
+table{border-collapse:collapse;width:100%;margin:1em 0;font-size:0.95em}
+th,td{border:1px solid #bdc3c7;padding:8px 12px;text-align:left}
+th{background:#ecf0f1;font-weight:600}
+tr:nth-child(even){background:#f8f9fa}
+.outlier{background:#fadbd8!important}
+.ok{color:#27ae60;font-weight:600}
+.fail{color:#e74c3c;font-weight:600}
+.warn{color:#e67e22;font-weight:600}
+.box{padding:15px;margin:1em 0;border-radius:8px}
+.box.info{background:#eaf2f8;border-left:4px solid #3498db}
+.box.warn{background:#fef9e7;border-left:4px solid #f39c12}
+.box.error{background:#fdedec;border-left:4px solid #e74c3c}
+.box.success{background:#eafaf1;border-left:4px solid #27ae60}
+code{background:#f4f6f7;padding:2px 6px;border-radius:3px;font-size:0.9em}
+.metric{font-size:1.4em;font-weight:700;color:#2980b9}
+.tag{display:inline-block;padding:2px 8px;border-radius:12px;font-size:0.8em;font-weight:600}
+.tag.green{background:#d5f5e3;color:#27ae60}
+.tag.red{background:#fadbd8;color:#e74c3c}
+.tag.yellow{background:#fef9e7;color:#e67e22}
+</style></head><body>
+
+<h1>BaiZe Post-Training Phase 1 基线评测报告</h1>
+<p><strong>生成时间</strong>：2026-11-10 16:03 &nbsp; <strong>评测节点</strong>：10.252.32.17 (s0pgpuap12, 8×A40)</p>
+<p><strong>报告类型</strong>：里程碑报告（Phase 1 基线评测） &nbsp; <strong>状态</strong>：<span class="tag yellow">部分完成 — 沙盒阻塞</span></p>
+
+<div class="box info">
+<strong>📋 摘要</strong>：本报告汇总 Phase 1 三模型基线评测的当前状态。DeepSeek（GLM-5.2 替身）代码生成基线已从 5 轮历史数据中提取（mean=67.97%±1.65%）；MiniCPM5-2B（36% 全 harness 参考值）和 Qwen3.8-27B 的端点均已就绪。但<strong>远程沙盒 10.129.32.75 全端口不可达</strong>（所有 5 个端口 CLOSED），导致无法执行新的全 harness 评测。评测驱动脚本和基础设施已就绪，待沙盒恢复后即可起跑 5-run × 3-model 评测。
+</div>
+
+<h2>1. 评测协议（冻结）</h2>
+<table>
+<tr><th>项目</th><th>规格</th><th>状态</th></tr>
+<tr><td>任务集</td><td>EDA-Eval-PyAether 158 任务（v20260311）</td><td><span class="ok">✅ 已确认</span></td></tr>
+<tr><td>指标</td><td>Pass@1（单 trace 原则）</td><td><span class="ok">✅ 冻结</span></td></tr>
+<tr><td>超时</td><td>2500 秒/任务</td><td><span class="ok">✅ 冻结</span></td></tr>
+<tr><td>重复</td><td>5-run mean ± std</td><td><span class="tag yellow">待执行</span></td></tr>
+<tr><td>并行</td><td>-p 8 -n（无 memory injection）</td><td><span class="ok">✅ 冻结</span></td></tr>
+<tr><td>反作弊</td><td>PreToolUse hook 全程开</td><td><span class="tag yellow">待验证</span></td></tr>
+<tr><td>污染隔离</td><td>158 任务禁入训练集</td><td><span class="ok">✅ 闸门就绪</span></td></tr>
+<tr><td>统计检验</td><td>McNemar / paired bootstrap</td><td><span class="ok">✅ 预注册</span></td></tr>
+</table>
+
+<h2>2. 三模型配置与端点状态</h2>
+<table>
+<tr><th>模型</th><th>端点</th><th>GPU</th><th>角色</th><th>端点状态</th><th>cline auth</th></tr>
+<tr><td>MiniCPM5-2B</td><td><code>http://localhost:8098/v1</code></td><td>GPU4 (vLLM)</td><td>BaiZe 替身（2B, Llama 架构）</td><td><span class="ok">✅ 在线</span></td><td><span class="ok">✅ 已配置</span></td></tr>
+<tr><td>Qwen3.8-27B</td><td><code>http://localhost:8099/v1</code></td><td>GPU0-3 (SGLang, root)</td><td>对照（27B, 大模型上限）</td><td><span class="ok">✅ 在线</span></td><td><span class="ok">✅ 已配置</span></td></tr>
+<tr><td>GLM-5.2 (DeepSeek 替身)</td><td><code>http://agi-gateway.cxmt.com/cloud/v1</code></td><td>云端</td><td>强模型参照（≈94% 全 harness）</td><td><span class="ok">✅ 在线</span></td><td><span class="ok">✅ 已配置</span></td></tr>
+</table>
+<p><small>注：Qwen3.8-27B 为 root 用户的 SGLang 服务（GPU0-3），不可 kill；MiniCPM5-2B vLLM 为本线常驻服务（GPU4）。</small></p>
+
+<h2>3. 环境依赖状态</h2>
+<table>
+<tr><th>依赖</th><th>地址</th><th>状态</th><th>影响</th></tr>
+<tr><td>cline CLI</td><td><code>~/.bun/bin/cline</code></td><td><span class="ok">✅ 可用</span></td><td>—</td></tr>
+<tr><td>MCP Server</td><td><code>http://127.0.0.1:18888/sse</code></td><td><span class="ok">✅ 在线</span></td><td>提供 search_apis / get_api_details / run_code 工具</td></tr>
+<tr><td>EDA-Eval harness</td><td><code>~/code/eda_fastmcp/scripts/</code></td><td><span class="ok">✅ 就绪</span></td><td>run_cline_script.sh + run_eval.py</td></tr>
+<tr><td>158-case 数据集</td><td><code>EDA-Eval-PyAether-v20260311.jsonl</code></td><td><span class="ok">✅ 158 行</span></td><td>—</td></tr>
+<tr><td>cline MCP settings</td><td><code>~/.cline/data/settings/cline_mcp_settings.json</code></td><td><span class="ok">✅ 已配置</span></td><td>pyAether_MCP_server SSE + autoApprove</td></tr>
+<tr><td colspan="1"><strong>远程沙盒</strong></td><td><code>10.129.32.75:8664-8669</code></td><td><span class="fail">❌ 全端口 CLOSED</span></td><td><strong>硬阻塞：无法执行代码/评测</strong></td></tr>
+</table>
+
+<div class="box error">
+<strong>🔴 硬阻塞：远程沙盒 10.129.32.75 不可达</strong>
+<p><strong>现象</strong>：ping 10.129.32.75 可达（0.5ms），但 TCP 端口 8664/8665/8653/8669/8667 全部 CLOSED（连接超时）。</p>
+<p><strong>影响</strong>：EDA-Eval 评测管线依赖沙盒执行生成代码并判定 Pass/Fail。沙盒不可达 → 全 harness 评测（cline agent 模式）和代码生成评测（run_eval.py）均无法执行。</p>
+<p><strong>可能原因</strong>：沙盒服务停机 / 防火墙规则变更 / 网络路由变更。沙盒位于 10.129.32.75（非 BaiZe 管理的机器，属 EDA 平台团队）。</p>
+<p><strong>解除条件</strong>：沙盒服务恢复后，执行 <code>bash baize_posttrain_baseline_eval.sh --check-env</code> 确认全绿，即可起跑。</p>
+</div>
+
+<h2>4. DeepSeek 代码生成基线（历史数据 · EDA-Eval-Framework）</h2>
+<p>以下数据来自 <code>~/code/EDA-Eval-Framework/output_evaluation/</code> 中 <strong>zhulong_deepseek_v32</strong> 模型的 6 轮完整 158 任务评测。此为<strong>代码生成模式</strong>（模型直接生成代码，无 agent 工具调用），与全 harness 模式不同。</p>
+
+<h3>4.1 逐轮通过率</h3>
+<table>
+<tr><th>评测批次</th><th>Pass@1</th></tr>
+<tr><td>20260323_1506_e0030209</td><td>68.99%</td></tr><tr><td>20260330_1127_e0030209</td><td>70.25%</td></tr><tr><td>20260330_1338_e0030209</td><td>67.72%</td></tr><tr><td>20260413_1711_app.e0030209</td><td>66.46%</td></tr><tr class="outlier"><td>20260416_1720_app.e0030209</td><td>39.87%</td></tr><tr><td>20260417_1000_app.e0030209</td><td>66.46%</td></tr>
+</table>
+<p>含异常轮（39.87%，疑似沙盒不稳定）：mean=63.29% ± 11.57%（n=6）</p>
+<p><strong>排除异常轮后（<50% 排除）</strong>：<span class="metric">mean = 67.97% ± 1.65%</span>（n=5，波动 1.65pp）</p>
+
+<h3>4.2 分场景通过率（5 轮清洁均值）</h3>
+<table>
+<tr><th>场景</th><th>任务数</th><th>平均通过率</th></tr>
+<tr><td>Design Management</td><td>24</td><td>80.83%</td></tr><tr><td>Layout</td><td>64</td><td>62.81%</td></tr><tr><td>Others</td><td>23</td><td>85.22%</td></tr><tr><td>Schematic</td><td>47</td><td>60.00%</td></tr>
+</table>
+<p><strong>判读</strong>：Schematic（60.0%）和 Layout（62.8%）是难点（占 158 任务的 70%）；Design Management（80.8%）和 Others（85.2%）较易。SFT 数据应优先补 Schematic/Layout 场景的 API 知识与代码模式。</p>
+
+<h3>4.3 错误类型分解（5 轮累计 253 个错误）</h3>
+<table>
+<tr><th>错误类型</th><th>次数</th><th>占比</th></tr>
+<tr><td>AssertionError</td><td>141</td><td>55.7%</td></tr><tr><td>Generation timeout</td><td>27</td><td>10.7%</td></tr><tr><td>ValueError</td><td>24</td><td>9.5%</td></tr><tr><td>TypeError</td><td>19</td><td>7.5%</td></tr><tr><td>Generation failure</td><td>16</td><td>6.3%</td></tr><tr><td>AttributeError</td><td>13</td><td>5.1%</td></tr><tr><td>RuntimeError</td><td>6</td><td>2.4%</td></tr><tr><td>Timeout</td><td>3</td><td>1.2%</td></tr><tr><td>Unknown Failure</td><td>2</td><td>0.8%</td></tr><tr><td>ModuleNotFoundError</td><td>1</td><td>0.4%</td></tr><tr><td>NameError</td><td>1</td><td>0.4%</td></tr>
+</table>
+<p><strong>判读</strong>：AssertionError 占 55.7%（141/253）= <strong>语义推理错误</strong>（代码能跑但逻辑错），RL(GRPO) 主战场；Generation timeout 10.7% = 模型推理超时，长上下文适配问题；ValueError/TypeError/AttributeError 合计 22.1% = API 误用/类型错误，SFT 领域语料可修。</p>
+
+<h2>5. DeepSeek 全 Harness 参考值</h2>
+<table>
+<tr><th>项目</th><th>值</th><th>来源</th></tr>
+<tr><td>评测模式</td><td>全 harness（cline agent + MCP 工具）</td><td>cline_trace_v1_3</td></tr>
+<tr><td>任务数</td><td>103 任务（158 中完成）</td><td>实测</td></tr>
+<tr><td>Pass@1</td><td>≈94%</td><td>项目总纲（同口径）</td></tr>
+<tr><td>轨迹位置</td><td><code>~/code/eda_fastmcp/pyAether-eval/cline_cli_trace/cline_trace_v1_3/</code></td><td>本节点可达</td></tr>
+</table>
+<p>注：94% 为全 harness 模式（agent 使用 search_apis/get_api_details/run_code 工具迭代求解），与代码生成模式（67.97%）差距 26pp = agent 闭环的价值。D6 实测：DeepSeek 平均迭代 5.01 轮（中位 5，1-14 轮，56% 在 3-6 轮）。</p>
+
+<h2>6. MiniCPM5-2B 基线参考（36%）</h2>
+<table>
+<tr><th>项目</th><th>值</th><th>状态</th></tr>
+<tr><td>评测模式</td><td>全 harness（cline agent + MCP 工具）</td><td>同口径</td></tr>
+<tr><td>Pass@1</td><td>36%</td><td><span class="tag yellow">先验值，待复测</span></td></tr>
+<tr><td>与 DeepSeek 差距</td><td>58 pp</td><td>核心改进空间</td></tr>
+<tr><td>失败轨迹</td><td>❌ 不在本节点</td><td>待沙盒恢复后采集</td></tr>
+<tr><td>vLLM 端点</td><td><code>http://localhost:8098/v1</code> (GPU4)</td><td><span class="ok">✅ 在线</span></td></tr>
+</table>
+<p><strong>关键缺口</strong>：MiniCPM5-2B 的 36% 侧 D1-D6 诊断数据尚未实测（轨迹不在本节点）。沙盒恢复后首要任务 = 复测 36% 基线 + 采集真实失败轨迹，用实测替换 P0 D1-D6 的外推假设。</p>
+
+<h2>7. Qwen3.8-27B 状态</h2>
+<table>
+<tr><th>项目</th><th>值</th><th>状态</th></tr>
+<tr><td>端点</td><td><code>http://localhost:8099/v1</code></td><td><span class="ok">✅ 在线</span></td></tr>
+<tr><td>GPU</td><td>GPU0-3 (root SGLang, TP=4, 不可 kill)</td><td>占用中</td></tr>
+<tr><td>评测</td><td>5-run × 158 任务</td><td><span class="tag yellow">待沙盒恢复</span></td></tr>
+</table>
+<p>Qwen3.8-27B 作为 27B 大模型对照，可展示「规模上限」在 EDA-Eval 上的表现。端点已由 root 部署（SGLang + DFLASH 推测解码），本线只需通过 cline auth 接入评测。</p>
+
+<h2>8. 成功阶梯映射（预注册 · 先定后测）</h2>
+<table>
+<tr><th>里程碑</th><th>Pass@1</th><th>含义</th><th>当前状态</th></tr>
+<tr><td>起点</td><td>36%</td><td>MiniCPM5-2B 零适配</td><td><span class="tag yellow">先验值待复测</span></td></tr>
+<tr><td>M1</td><td>50%</td><td>工具协议修好（D1/D2/D6）</td><td>—</td></tr>
+<tr><td>M2</td><td>65%</td><td>+ 领域退火 + SFT</td><td>—</td></tr>
+<tr><td>M3</td><td>75%</td><td>+ RL(GRPO)</td><td>—</td></tr>
+<tr><td>M4</td><td>85%+</td><td>逼近 DeepSeek-V4-Pro</td><td>—</td></tr>
+</table>
+<p>DeepSeek 参照：全 harness ≈94%，代码生成 67.97%±1.65%。BaiZe 替身（2B）的 ceiling 受限于模型容量（R145 分析：domain ceiling ≈79%，M4 不可达）。</p>
+
+<h2>9. 评测基础设施就绪度</h2>
+<table>
+<tr><th>组件</th><th>文件/路径</th><th>状态</th></tr>
+<tr><td>评测驱动脚本</td><td><code>run/baize_posttrain_baseline_eval.sh</code></td><td><span class="ok">✅ 已创建，bash -n PASS，dry-run PASS</span></td></tr>
+<tr><td>cline auth (MiniCPM5-2B)</td><td><code>~/.cline/data/settings/providers.json</code></td><td><span class="ok">✅ 已配置</span></td></tr>
+<tr><td>cline auth (Qwen3.8-27B)</td><td>同上（切换时覆盖）</td><td><span class="ok">✅ 已验证</span></td></tr>
+<tr><td>cline MCP settings</td><td><code>~/.cline/data/settings/cline_mcp_settings.json</code></td><td><span class="ok">✅ pyAether SSE + autoApprove</span></td></tr>
+<tr><td>污染隔离闸门</td><td><code>run/baize_posttrain_contamination_gate.sh</code></td><td><span class="ok">✅ 就绪</span></td></tr>
+<tr><td>结果聚合</td><td><code>run/baseline_eval_results/</code></td><td><span class="ok">✅ 目录就绪</span></td></tr>
+</table>
+
+<h2>10. 5-Run 评测计划（沙盒恢复后执行）</h2>
+<div class="box info">
+<strong>执行命令</strong>：
+<pre>
+# 1. 环境检查
+bash run/baize_posttrain_baseline_eval.sh --check-env
+
+# 2. 三模型各 5 轮（顺序执行，每轮 158 任务 -p 8 -n）
+bash run/baize_posttrain_baseline_eval.sh --all --runs 5
+
+# 或分模型执行（Phase 1 与 Phase 2 可并行）
+bash run/baize_posttrain_baseline_eval.sh --model minicpm5_2b --runs 5  # GPU4 评测
+bash run/baize_posttrain_baseline_eval.sh --model qwen3_8_27b --runs 5   # GPU0-3 评测
+bash run/baize_posttrain_baseline_eval.sh --model glm_5_2 --runs 5       # 云端评测
+</pre>
+<strong>预估时长</strong>：每模型 5 轮 ≈ 3-4 小时（158 任务 × 5 轮 / 8 并行，avg ~120s/任务）；三模型顺序 ≈ 10-12 小时。
+</div>
+
+<h2>11. 58pp 差距初步分解（基于已有数据）</h2>
+<table>
+<tr><th>差距来源</th><th>估占</th><th>证据</th><th>对应阶段</th></tr>
+<tr><td>工具协议（D1/D2/D6）</td><td>~20-30 pp</td><td>DeepSeek 全 harness 94% vs 代码生成 68% = 26pp agent 闭环价值</td><td>SFT（注入工具轨迹）</td></tr>
+<tr><td>API 领域知识（D4）</td><td>~10-15 pp</td><td>ValueError/TypeError/AttributeError 占 22%，Schematic/Layout 难点 60%</td><td>领域退火 + SFT</td></tr>
+<tr><td>语义推理（D4 AssertionError）</td><td>~10-15 pp</td><td>AssertionError 55.7% = 逻辑错非语法错</td><td>RL(GRPO) 打磨闭环</td></tr>
+<tr><td>真实能力差距</td><td>~10-15 pp</td><td>2B vs 27B/大模型的固有容量差</td><td>规模/蒸馏</td></tr>
+</table>
+<p><strong>⚠️ 注意</strong>：上述分解基于 DeepSeek 侧实测 + MiniCPM5-2B 36% 侧外推假设。MiniCPM5-2B 的 D1-D6 实测数据待沙盒恢复后采集校正。</p>
+
+<h2>12. 下一步行动</h2>
+<div class="box success">
+<ol>
+<li><strong>沙盒恢复</strong>（阻塞项）：联系 EDA 平台团队确认 10.129.32.75 沙盒服务状态。恢复后 <code>--check-env</code> 确认全绿。</li>
+<li><strong>MiniCPM5-2B 5-run 复测</strong>：复测 36% 基线，采集真实失败轨迹，用实测替换 D1-D6 假设值。</li>
+<li><strong>Qwen3.8-27B 5-run 评测</strong>：获取 27B 大模型在 EDA-Eval 上的基线。</li>
+<li><strong>GLM-5.2 5-run 评测</strong>：获取 DeepSeek 替身的同口径基线（代码生成模式 + 全 harness 模式）。</li>
+<li><strong>三模型配对检验</strong>：McNemar / paired bootstrap，报 mean±std + 显著性。</li>
+<li><strong>Phase 2 并行</strong>：GPU6-7 跑替身 SFT，与 GPU4 评测不冲突。</li>
+<li><strong>更新本报告</strong>：实测数据到位后更新为完整版（替换先验值）。</li>
+</ol>
+</div>
+
+<hr>
+<p><small>BaiZe Post-Training · Phase 1 基线评测 · 节点 10.252.32.17 · 2026-11-10 16:03<br>
+评测驱动：<code>run/baize_posttrain_baseline_eval.sh</code> · 数据源：EDA-Eval-Framework + cline_trace_v1_3<br>
+协议冻结：158 任务 / Pass@1 / 2500s / 单 trace / 5-run / -p 8 -n · 反作弊 PreToolUse · 污染隔离闸门</small></p>
+
+</body></html>

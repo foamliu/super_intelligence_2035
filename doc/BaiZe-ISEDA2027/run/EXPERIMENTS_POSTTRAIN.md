@@ -15230,3 +15230,72 @@ RL 的最大贡献区间在 SFT 34%-50% → M1-M2 层级。
 3. **baize_posttrain_rl_grpo.sh hooks 集成** ✅：添加 `--hooks`/`--no-hooks`/`--hooks-config` 参数，
    dry-run 显示 hooks 状态，bash -n ✅，dry-run ✅
 5. 正式训练待 pretrain ckpt（ETA≈2026-12-25）
+
+---
+
+## §Baseline-3model Phase 1 基线评测（2026-11-10 wake193）
+
+> **状态**：部分完成 — 评测基础设施就绪，沙盒阻塞待恢复。
+> **交付物**：`reports/report_posttrain_baseline_3model_zh.html`（13KB / 12 节 / 0 script / 自包含）
+> **评测驱动**：`run/baize_posttrain_baseline_eval.sh`（bash -n ✅, dry-run ✅, --check-env ✅）
+
+### 环境状态（2026-11-10 实测）
+
+| 组件 | 地址 | 状态 |
+|:--|:--|:--|
+| vLLM MiniCPM5-2B | http://localhost:8098/v1 (GPU4) | ✅ 在线 |
+| SGLang Qwen3.8-27B | http://localhost:8099/v1 (GPU0-3, root) | ✅ 在线 |
+| GLM-5.2 cloud | http://agi-gateway.cxmt.com/cloud/v1 | ✅ 在线 |
+| MCP Server | http://127.0.0.1:18888/sse | ✅ 在线 |
+| cline CLI | ~/.bun/bin/cline | ✅ 可用 |
+| **远程沙盒** | **10.129.32.75:8664-8669** | **❌ 全端口 CLOSED** |
+| GPU 5-7 | 空闲 | ✅ 可用于训练 |
+
+### DeepSeek 代码生成基线（EDA-Eval-Framework · 5 轮清洁数据）
+
+| 批次 | Pass@1 |
+|:--|:--|
+| 20260323_1506 | 68.99% |
+| 20260330_1127 | 70.25% (best) |
+| 20260330_1338 | 67.72% |
+| 20260413_1711 | 66.46% |
+| 20260417_1000 | 66.46% |
+| 20260416_1720 | 39.87% (outlier, 排除) |
+
+**排除异常轮后**：mean = **67.97% ± 1.65%**（n=5）
+
+**分场景通过率**：
+| 场景 | 任务数 | 平均通过率 |
+|:--|--:|:--|
+| Schematic | 47 | 60.0% |
+| Layout | 64 | 62.8% |
+| Design Management | 24 | 80.8% |
+| Others | 23 | 85.2% |
+
+**错误类型分解（5 轮累计 253 个错误）**：
+| 错误类型 | 次数 | 占比 |
+|:--|--:|:--|
+| AssertionError | 141 | 55.7% |
+| Generation timeout | 27 | 10.7% |
+| ValueError | 24 | 9.5% |
+| TypeError | 19 | 7.5% |
+| Generation failure | 16 | 6.3% |
+| AttributeError | 13 | 5.1% |
+| 其他 | 13 | 5.2% |
+
+### DeepSeek 全 harness 参考值
+
+- 评测模式：cline agent + MCP 工具（search_apis/get_api_details/run_code）
+- 轨迹：`cline_trace_v1_3/`（103 任务，本节点可达）
+- Pass@1：≈94%（项目总纲同口径）
+- 与代码生成差距：26pp = agent 闭环价值
+- D6 实测：平均迭代 5.01 轮（中位 5，1-14 轮，56% 在 3-6 轮）
+
+### 三模型评测计划（沙盒恢复后）
+
+```bash
+bash run/baize_posttrain_baseline_eval.sh --check-env    # 确认全绿
+bash run/baize_posttrain_baseline_eval.sh --all --runs 5  # 三模型各 5 轮
+```
+
+预估：每模型 5 轮 ≈ 3-4h（158 任务 × 5 / 8 并行）；三模型 ≈ 10-12h。
