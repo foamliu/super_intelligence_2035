@@ -892,3 +892,12 @@ peek:					parked		2026-11-10 23:22	peek: consultation verdi-fsdb-warning-paste
 1794279029544_1vjqj	zhililu	hfeg0pkn002	71	spice_sim	parked		2026-11-11 00:31	debug finesim SFE-1802
 1793783334586_h14an	zanezang	hfeg0plg57	8	spice_sim	parked		2026-11-11 00:31	unreachable+low-mc
 1785392109301_zh03r	e0025730	hfeg0plg49	1	spice_sim	parked		2026-11-11 00:31	unreachable+mc=1
+1794276772104_yicdk	hengbow	hfeg0pkn001	9	spice_sim	parked		2026-11-11 00:56	11-11 fresh spice>=5: trivial 1msg
+1794278751082_g8en5	jinsongl	hfeg0pkn005	7	spice_sim	parked		2026-11-11 00:56	11-11 fresh spice>=5: raw SKILL cckExplore log, not cline session
+1794280189538_742yv	rhyanw	hfeg0pkn001	8	spice_sim	parked		2026-11-11 00:56	11-11 fresh spice>=5: trivial 1msg
+1794291924966_ws1x6	mwxi	hfhds228	9	spice_sim	parked		2026-11-11 00:56	11-11 fresh spice>=5: consultation 'finesim.*总' + ObsidianVault ls
+1794293298759_nk0hg	e0042624	hfeg0pkn001	5	spice_sim	parked		2026-11-11 00:56	11-11 fresh spice>=5: trivial 1msg
+1794296961043_fessi	t0002113	hfeg0pkn001	5	spice_sim	parked		2026-11-11 00:56	11-11 fresh spice>=5: tool discovery 'which finesim finesime hspice'
+1794299623303_khbvq	yuchens	hfeg0pkn004	5	spice_sim	parked		2026-11-11 00:56	11-11 fresh spice>=5: trivial 1msg
+1794302513665_soa79	chuanqiz	hfeg0pkn001	10	spice_sim	parked		2026-11-11 00:56	11-11 fresh spice>=5: trivial 1msg, cellview:385 layout-domain
+1794309772651_z3xy1	mwxi	hfhds228	5	spice_sim	parked		2026-11-11 00:56	11-11 fresh spice>=5: consultation/diagnostic desktop scripts
