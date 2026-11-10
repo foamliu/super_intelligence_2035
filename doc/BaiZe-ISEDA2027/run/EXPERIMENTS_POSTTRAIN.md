@@ -16386,3 +16386,68 @@ GPUS="4,5,6,7" bash baize_posttrain_rl_grpo_surrogate.sh --reward-arm R2
 
 ---
 
+## §R156 — End-to-End Surrogate Campaign Orchestrator（Phase 1→2→3 集成 · 零 GPU · 2026-11-11 wake225）
+
+> **任务**：构建单一入口编排器，串联 BaiZe Stage(ii) 替身预演三阶段（Phase 1 基线评测 → Phase 2 SFT → Phase 3 RL/GRPO），统一验证 + 闸门强制 + ckpt 交接，作为 R154/R155 之后的集成封顶件。
+> **产物**：`run/baize_posttrain_surrogate_pipeline.sh`（285 行 / 14.1KB / bash -n ✅ / 可执行）。
+> **设计原则**：不重复子脚本逻辑，只做验证、排序、闸门强制；每阶段委托各自启动脚本。
+
+### 1. 模式
+
+| 模式 | 作用 |
+|:--|:--|
+| `--dry-run`（默认） | 验证全链：5 子脚本存在+语法、各自 --dry-run、contam gate、serve 端点、沙盒、GPU、数据资产、venv、ckpt 交接计划、交付物清单 |
+| `--status` | 每阶段就绪态：报告/ckpt/cheat_rate 是否存在、阻塞项、端点/沙盒 |
+| `--phase1` | 仅跑基线评测（委托 `baize_posttrain_phase1_baseline.sh`，需沙盒） |
+| `--phase2` | 仅跑 SFT（委托 `baize_posttrain_sft_surrogate.sh`，GPU6-7，含 contam 闸门+GPU 闸门） |
+| `--phase3` | 仅跑 RL（委托 `baize_posttrain_rl_grpo_surrogate.sh`，需 SFT ckpt，GPU4-7，含 cheat_rate 检查） |
+| `--all` | 1→2→3 顺序执行，阶段间闸门失败即 HALT |
+| `--smoke` | 透传给子脚本（tiny run） |
+| `--reward-arm R2` | 透传给 Phase 3（R0-R4 奖励臂切换） |
+
+### 2. 闸门强制（红线 §5）
+
+- **污染闸门**（§5.1）：`gate_contam()` 调 `baize_posttrain_contamination_gate.sh --dry-run`，FAIL 即中止。
+- **反作弊**（§5.2）：Phase 3 完成后检查 `cheat_rate.json` 存在，缺失即 WARN（必须报告 cheat rate）。
+- **沙盒闸门**：Phase 1 评测 + Phase 3 RL R1-R4 硬依赖沙盒；`check_sandbox()` TCP 探测 10.129.32.75:8667。
+- **GPU 闸门**：Phase 2 需 GPU6-7 空闲；Phase 3 需 GPU4-7 空闲；`check_gpu_free()` 查 nvidia-smi used<1GB（不 kill serve，遵守 17:10 令）。
+- **ckpt 交接**：`find_latest_ckpt()` 自动探测 SFT `global_step_*` → 传给 Phase 3 `--sft-ckpt`。
+
+### 3. 验证结果（2026-11-11 03:47-03:50 实测）
+
+| 检查项 | 结果 |
+|:--|:--|
+| bash -n 语法 | ✅ PASS |
+| --status | ✅ 正确报告：Phase1 报告已存在 / Phase2 无 SFT ckpt / Phase3 BLOCKED 无 SFT ckpt / 沙盒 CLOSED / 端点 8098+8099 ✅ |
+| --dry-run [A] 子脚本存在+语法 | ✅ 5/5 PASS（phase1_baseline / sft_surrogate / rl_grpo_surrogate / contam_gate / eval） |
+| --dry-run [B] Phase 1 子dry-run | ✅ 资产全 OK（dataset/driver/scorer/venv/cline/MCP/3 backbones），沙盒正确 BLOCKED |
+| --dry-run [B] Phase 2 子dry-run | ✅ torchrun/model/verl+flash_attn+peft/src parquet 全 OK |
+| --dry-run [B] Phase 3 子dry-run | ✅ exit=0：verl main_ppo OK / RL data 3347 rows OK / 沙盒 FAIL(R1-R4 BLOCKED,R0 only) / contam PASS(0 hits) / SFT ckpt WARN |
+| 全链 --dry-run 耗时 | ~41s（Phase1 3s + Phase2 3s + Phase3 ~30s + contam 5s），超 30s 工具墙但脚本本身正常完成 |
+
+### 4. ckpt 交接路径（已写入 --dry-run [I]）
+
+```
+Phase 2 SFT out -> sft_surrogate_runs/minicpm5_pyaether_v1/global_step_*
+Phase 3 RL  in  -> auto-detect latest SFT ckpt (detect_sft_ckpt())
+Phase 3 RL  out -> rl_surrogate_runs/minicpm5_grpo_v1/global_step_* + cheat_rate.json
+Final eval      -> bash baize_posttrain_eval.sh --endpoint <served-ckpt>
+```
+
+### 5. 交付物清单（--dry-run [J]）
+
+| 报告 | 阶段 | 现状 |
+|:--|:--|:--|
+| report_posttrain_baseline_3model_zh.html | Phase 1 | ✅ 已存在 |
+| report_posttrain_sft_surrogate_zh.html | Phase 2 | ⏳ pending（待 SFT 跑完） |
+| report_posttrain_rl_surrogate_zh.html | Phase 3 | ⏳ pending（待 RL 跑完） |
+
+### 6. 边界与下一步
+
+- **本节交付**：替身预演三阶段集成编排器（统一入口 + 闸门强制 + ckpt 交接 + 全链验证），bash -n / --status / --dry-run 全 PASS。
+- **仍阻塞**（全外部）：① 沙盒 10.129.32.75:8667 不通（30th wake）→ Phase 1 评测 + Phase 3 RL R1-R4 阻塞 ② GPU5-7 被 serve 占位（17:10 令）→ Phase 2 SFT 无 GPU ③ 无 SFT ckpt → Phase 3 无 init。
+- **解锁路径**：沙盒恢复 → 停 GPU5-7 serve → `bash baize_posttrain_surrogate_pipeline.sh --phase2` 跑 SFT → `--phase3` 跑 RL → `--all` 一键全链。
+- **下一步**：① 沙盒恢复（外部）② 提 data 线分词需求（退火源语料）③ 正式训练待 pretrain ckpt（ETA≈2026-12-25）。
+
+---
+
