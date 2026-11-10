@@ -398,11 +398,18 @@ def analyze(triage_path: str, batch_dir: str) -> dict:
                 stdout_head = stdout[:400] if stdout else ""
                 # 失败信号：非零退出 / 有 stderr / stdout 里显式 "exit=N"(N>=1，agent 捕获内层工具退出码)
                 inner_exit_fail = bool(re.search(r"exit\s*=\s*[1-9]\d*", stdout_head, re.IGNORECASE))
+                inner_exit_ok = bool(re.search(r"exit\s*=\s*0\b", stdout_head, re.IGNORECASE))
                 has_fail_signal = (exit_code not in (None, 0)) or bool(stderr_first) or inner_exit_fail
                 # 结果状态（保守：无失败信号一律不算 error，避免把 stdout banner 里的
                 # "license"/"convergence" 等关键词误判）
+                # 链式命令修正：若 stdout 有内层 "exit=0"（agent 在工具后紧跟 echo exit=$?）
+                # 且无 "exit=N>=1" 且无 stderr，说明工具本身成功，外层非零退出源于后续
+                # 无关子命令（如 python3/grep），应判 ok，不归给工具。
                 if not stdout and not stderr and exit_code in (None, 0):
                     kind = "no_output"
+                    sig = ""
+                elif inner_exit_ok and not inner_exit_fail and not stderr_first:
+                    kind = "ok"
                     sig = ""
                 elif not has_fail_signal:
                     kind = "ok"
@@ -561,6 +568,7 @@ def analyze(triage_path: str, batch_dir: str) -> dict:
             "call_definition": "true_call = invoke(段首执行) + probe(which/type 探测); raw_mention = 词边界命中(含 printf/echo 字符串提及, 旁注)",
             "never_invoked_is_not_failure": True,
             "signature_scope": "失败签名只对【真正执行/探测 EDA 工具的命令】聚合（invoke/probe），剔除 grep/ls/test 等普通命令的 non-zero exit 噪声。",
+            "chained_cmd_correction": "若 stdout 含内层 'exit=0'（agent 在工具后紧跟 echo exit=$? 捕获的工具退出码）且无 'exit=N>=1' 且无 stderr，判 ok——外层非零退出源于后续无关子命令（python3/grep），不归给工具。",
             "signature_norm": "stderr 首行去路径/时间/行号/十六进制后聚类; 无 stderr 用 stdout 头 400 字符; 仅在有失败信号(非零退出/stderr 非空/内层 exit=N>=1)时扫描 stdout。",
         },
     }

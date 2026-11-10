@@ -4,7 +4,7 @@
     "version": "1.0.0"
   },
   "meta": {
-    "generated_at": "2026-11-10T22:48:36+08:00",
+    "generated_at": "2026-11-10T22:55:08+08:00",
     "triage_path": "/nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/benchmark/designflow/eval_triage/results/run_batch_20261109_171201/triage_summary.json",
     "batch_dir": "/nasdata/app.e0031982/.cache/triage_batch_20261109_171201",
     "total_runs": 696,
@@ -349,8 +349,8 @@
       "invoke": 83,
       "probe": 40,
       "mention_only": 191,
-      "ok": 116,
-      "error": 5,
+      "ok": 117,
+      "error": 4,
       "no_output": 2,
       "runs_invoked": 39,
       "runs_never_invoked": 591,
@@ -369,16 +369,16 @@
       ],
       "examples_error": [
         {
-          "task_id": "EDA-Eval-DesignFlow-Tr0JitterRemeas-001",
-          "cmd": "hspice -i dead.sp -o dead.lis -mt 4 >/dev/null 2>&1; echo \"exit=$?\"; ls -la dead.tr0 dead.lis 2>&1; python3 tr0_jitter_remeas.py dead.tr0 dead.lis dead_cfg.jso…",
-          "exit_code": 2,
-          "stderr": "exit=0 -rw-rw-r-- 1 e0031982 guest 379540 Nov 9 2026 dead.lis -rw-rw-r-- 1 e0031982 guest 181004 Nov 9 2026 dead.tr0 usage: tr0_jitter_remeas.py <netlist.sp> <…"
-        },
-        {
           "task_id": "EDA-Eval-DesignFlow-LdoVerifyReport-001",
           "cmd": "which python3; python3 --version; echo '---tools---'; ls /usr/bin | grep -iE 'finesim|hspice|spice' 2>/dev/null; echo '---finesim bin---'; find / -maxdepth 6 -…",
           "exit_code": -1,
           "stderr": "command timed out (120s)"
+        },
+        {
+          "task_id": "EDA-Eval-DesignFlow-PulseStimTbGen-001",
+          "cmd": "ls -la t_* 2>/dev/null; echo '=== try manual ==='; hspice -i t_1n.sp -o t_1n.lis 2>&1 | tail -15; echo '=== mt0 files ==='; ls *.mt0",
+          "exit_code": 2,
+          "stderr": "ls: cannot access *.mt0: No such file or directory"
         }
       ]
     },
@@ -862,17 +862,6 @@
   ],
   "signatures": [
     {
-      "signature": "non-zero exit (no stderr)",
-      "count": 3,
-      "runs": 3,
-      "example_task_ids": [
-        "EDA-Eval-DesignFlow-Tr0JitterRemeas-001",
-        "EDA-Eval-DesignFlow-ToggleCounterBindGen-001",
-        "EDA-Eval-DesignFlow-VcoKvcoChar-001"
-      ],
-      "evidence": "exit=0 -rw-rw-r-- 1 e0031982 guest 379540 Nov 9 2026 dead.lis -rw-rw-r-- 1 e0031982 guest 181004 Nov 9 2026 dead.tr0 usage: tr0_jitter_remeas.py <netlist.sp> <cfg.json> <out_dir>"
-    },
-    {
       "signature": "command not found / No such file",
       "count": 2,
       "runs": 2,
@@ -881,6 +870,16 @@
         "EDA-Eval-DesignFlow-VcoKvcoChar-001"
       ],
       "evidence": "ls: cannot access *.mt0: No such file or directory"
+    },
+    {
+      "signature": "non-zero exit (no stderr)",
+      "count": 2,
+      "runs": 2,
+      "example_task_ids": [
+        "EDA-Eval-DesignFlow-ToggleCounterBindGen-001",
+        "EDA-Eval-DesignFlow-VcoKvcoChar-001"
+      ],
+      "evidence": "$unit Can only bind to modules or module instances. bind invx1 toggle_counter #(.NUM_SIGNALS(2)) u_toggle_invx1( .sig ({A, Y})); 3 errors"
     },
     {
       "signature": "licence / license error",
@@ -922,7 +921,6 @@
         "eda_other": 1
       },
       "non-zero exit (no stderr)": {
-        "characterization": 1,
         "schematic_netlist": 1,
         "spice_sim": 1
       },
@@ -942,7 +940,6 @@
         "ASSERT_RUNTIME": 1
       },
       "non-zero exit (no stderr)": {
-        "NO_SUBMIT": 1,
         "ASSERT_SEMANTIC": 2
       },
       "other": {
@@ -1082,6 +1079,7 @@
     "call_definition": "true_call = invoke(段首执行) + probe(which/type 探测); raw_mention = 词边界命中(含 printf/echo 字符串提及, 旁注)",
     "never_invoked_is_not_failure": true,
     "signature_scope": "失败签名只对【真正执行/探测 EDA 工具的命令】聚合（invoke/probe），剔除 grep/ls/test 等普通命令的 non-zero exit 噪声。",
+    "chained_cmd_correction": "若 stdout 含内层 'exit=0'（agent 在工具后紧跟 echo exit=$? 捕获的工具退出码）且无 'exit=N>=1' 且无 stderr，判 ok——外层非零退出源于后续无关子命令（python3/grep），不归给工具。",
     "signature_norm": "stderr 首行去路径/时间/行号/十六进制后聚类; 无 stderr 用 stdout 头 400 字符; 仅在有失败信号(非零退出/stderr 非空/内层 exit=N>=1)时扫描 stdout。"
   }
 }
