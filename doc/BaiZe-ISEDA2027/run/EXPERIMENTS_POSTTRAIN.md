@@ -15499,3 +15499,59 @@ assemble_for_execution.py  →  run_on_sandbox.py  →  calculate_results.py
 | agent 能自行解锁吗？ | ❌ 不能（无 10.129.32.75 访问权限，无 pyAether 二进制，无替代沙盒） |
 
 **Phase1 评测阻塞 = 纯外部基础设施问题，agent 侧已穷尽所有可行路径。**
+
+---
+
+## §Phase1-launch-script（2026-11-10 wake203 · 零 GPU · Phase 1 基线评测启动脚本）
+
+> **背景**：13:40 用户令 Phase 1 要求用 EDA-Eval 158 任务横评三模型（MiniCPM5-2B / Qwen3.8-27B / DeepSeek-cloud），5-run mean±std。沙盒阻塞（8th wake），但所有其它前置条件已就绪 → 写完整的 ready-to-run 启动脚本，沙盒一通即可起跑。
+
+### 1. 评测管线实测接口（纠正旧 eval 脚本的错误参数）
+
+| 组件 | 实测接口 | 旧 baize_posttrain_eval.sh 的错误 |
+|:--|:--|:--|
+| `run_cline_script.sh` | `-t ID1,ID2` (task filter) / `-p N` (parallel) / `-n` (no-memory-inject) / `-e` (evolve) | 旧脚本用 `--dataset`/`--out`/`--timeout`/`--reshuffle-seed`（均不存在） |
+| `run_eval.py` | `--generations <file>` / `--latest N` / `--skip-assemble` / `--retry` / `--lang pyAether\|skill` | 旧脚本用 `-g`/`--out`（接口不匹配） |
+| 输出路径 | `~/eda_code_eval/<TIMESTAMP2>/` (code/ logs/ trace/) + `completed_code_generation_*.jsonl` | 旧脚本假设 `--out` 直接指定输出文件 |
+| cline auth | `cline auth -p openai -k <key> -b <base_url> -m <model_id>` → 写入 `~/.cline/data/settings/providers.json` | 正确 |
+| MCP server | localhost:18888/sse (PID 3217747, `.venv/bin/python main.py`) → search_apis/get_api_details✅ + run_code→sandbox❌ | N/A |
+
+### 2. Phase 1 三模型配置
+
+| backbone | endpoint | model_id | key | GPU |
+|:--|:--|:--|:--|:--|
+| MiniCPM5-2B | http://localhost:8098/v1 | minicpm5-2b | sk-placeholder | GPU4 (vLLM 37.8GB) |
+| Qwen3.8-27B | http://localhost:8099/v1 | qwen3.8-27b | sk-placeholder | GPU0-3 (root SGLang, 不可动) |
+| DeepSeek-cloud | http://agi-gateway.cxmt.com/cloud/v1 | glm-5.2 | .env GLM_API_KEY | 云端 |
+
+### 3. 启动脚本：`baize_posttrain_phase1_baseline.sh`
+
+- **路径**：`run/baize_posttrain_phase1_baseline.sh`
+- **功能**：三模型 × 5-run × 158-task 横评，自动 cline auth + 代码生成 + 评分 + 聚合 mean±std
+- **前置检查**（preflight）：dataset/driver/scorer/venv/cline/MCP server/sandbox/backbone endpoints 全检
+- **模式**：`--dry-run`（打印配方+前置检查）/ `--smoke`（1模型×1run×3任务）/ `--backbone <name>`（单模型）/ 默认（三模型全量）
+- **冻结协议**：158 tasks / Pass@1 / 2500s/task / single-trace / 5-run / -p 8 -n
+- **bash -n**：✅ 通过
+- **dry-run 实测**（2026-11-10 21:42）：
+  - dataset ✅ / driver ✅ / scorer ✅ / venv ✅ / cline ✅ / MCP server ✅
+  - MiniCPM5-2B endpoint ✅ / Qwen3.8-27B endpoint ✅ / DeepSeek-cloud endpoint ✅
+  - sandbox 🔴 BLOCKED (10.129.32.75:8667 unreachable) → Phase 1 scoring impossible
+  - 输出 unlock-A/B 指引
+
+### 4. 沙盒恢复后的启动步骤
+
+1. 确认沙盒可达：`timeout 3 bash -c 'echo > /dev/tcp/10.129.32.75/8667' && echo OK`
+2. 确认 MCP server 运行：`curl -s http://127.0.0.1:18888/sse | head -1`
+3. Dry-run 复检：`bash baize_posttrain_phase1_baseline.sh --dry-run`（全 OK）
+4. Smoke 测试：`bash baize_posttrain_phase1_baseline.sh --smoke`（3 任务快速验证管线）
+5. 正式跑：`bash baize_posttrain_phase1_baseline.sh`（三模型 × 5-run 全量）
+6. 生成里程碑报告：`reports/report_posttrain_baseline_3model_zh.html`
+
+### 5. 关键发现（wake203 新增）
+
+- **MCP server 确认运行**：PID 3217747 `~/code/eda_fastmcp/.venv/bin/python main.py` → API 知识库本地可达（search_apis/get_api_details），run_code 转发到沙盒（DOWN）
+- **cline auth 确认可用**：`cline auth -p openai -k sk-placeholder -b http://localhost:8098/v1 -m minicpm5-2b --data-dir /tmp/cline_test_auth` → "Provider configured: openai-compatible (minicpm5-2b)" ✅
+- **chat completions 确认可用**：GPU5(8097)+GPU4(8098) curl POST /v1/chat/completions 均返回正常生成 ✅
+- **pyAether 确认本地不可装**：pyaether_venv 不存在 + .venv ModuleNotFoundError + find 无 .so → SWIG 编译 EDA 工具，不可 pip
+- **SSH 确认不通**：`ssh app.e0031982@10.129.32.75` → connection timed out（port 22 也 CLOSED）
+- **eval 管线双依赖沙盒**：代码生成阶段(cline 用 MCP run_code 测试代码) + 评分阶段(run_eval.py POST 到 sandbox) 均需沙盒 → Phase 1 完全阻塞于沙盒
