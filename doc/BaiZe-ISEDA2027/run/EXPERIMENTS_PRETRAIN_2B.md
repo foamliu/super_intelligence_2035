@@ -810,3 +810,33 @@ torchrun --nnodes=1 --nproc_per_node=8 --master_addr=127.0.0.1 --master_port=296
 - §4.7 sec:ckpt-scaling: 不存在 ✅
 - 📦 TASK=22.5KB ✅ / MEMORY≈15.5KB ✅
 
+---
+
+### 论文 §4.6 刷新 — 2026-11-11 02:47 (#1934)
+
+**取数命令**: `tail -40 /proc/146283/fd/1` (PID 146283 = pretrain_launcher.py on .29)
+
+**训练状态** (.29 /proc/146283/fd/1):
+- iteration: 157,810 / 700,000
+- elapsed time per iteration (ms): 末9步 6948-7234ms (均 7061ms, 均 <7.4s ✅)
+- lm loss: 2.009-2.023 (≈2.02)
+- 0 NaN, 0 skipped iterations
+- GPU: 8/8 卡 95-100% util, ~75GB/卡
+- tok/s: 4,194,304 / 7.061s = 593,453 ≈ 590K (较前轮 575K 回升, step time 回落 ~240ms)
+
+**论文修改** (只改 `ISEDA2027/4_llm_pretrain.tex` + `ISEDA2027/0_abstract.tex` + `main.pdf`):
+- §4.6 进度句 (line 109): iteration 157,620 → 157,810, tok/s 575K → 590K (loss ≈2.02 不变, date 2026-11-11 不变)
+- 摘要 (0_abstract.tex line 14): 157,620 → 157,810, 575K → 590K, "one-fifth" → "one-quarter" (22.5% 更接近 1/4)
+- tab:prod-budget (line 122): "158k done" 不变 (157,810 rounds to 158k); wall-clock ≈59d → ≈58d
+  - wall-clock 重算: 700,000 × 4,194,304 / 590,000 = 4,976,293s = 57.6d → ≈58d
+- tab:prod-budget total (line 126): ≈62.5d → ≈61.5d (58 + 1.2 + 2.3)
+
+**编译结果**:
+- `latexmk -pdf -interaction=nonstopmode main.tex` → 0 errors, 0 undefined, 0 warnings
+- main.pdf: 5 pages, 228,206 bytes
+
+**护栏检查**:
+- grep benchmark 数字 (ARC/HellaSwag/PIQA/BoolQ/OpenBookQA/SciQ/Winogrande/ckpt-scaling/zero-shot) in ISEDA2027/ + main.tex: 0 命中 ✅
+- §4.7 sec:ckpt-scaling: 不存在 ✅
+- 📦 TASK=22.5KB ✅ / MEMORY≈16.8KB ✅
+
