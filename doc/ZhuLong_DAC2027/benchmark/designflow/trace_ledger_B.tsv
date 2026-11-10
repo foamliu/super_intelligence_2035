@@ -806,3 +806,4 @@ kakcd	kenwang	hfeg017216808192	5	non_spice	parked		2026-11-10 09:06	DRC rule dev
 1793843123624_u65cq	e0047472	hfeg0plg53	0	off_domain	parked		2026-11-10 09:44	fresh-window 1110 peek reject (digital/verif/ops/consult/wrong-shard)
 1794223025353_0k1mk	chapinc	hfeg0pkn004	0	off_domain	parked		2026-11-10 09:44	fresh-window 1110 peek reject (digital/verif/ops/consult/wrong-shard)
 1794225905156_kakcd	kenwang	hfeg0plg16	0	off_domain	parked		2026-11-10 09:44	fresh-window 1110 peek reject (digital/verif/ops/consult/wrong-shard)
+1793240429367_jrjm6	ghyang	hfeg0plg93	62	spice_sim	case	EDA-Eval-DesignFlow-SpTempParamAlter-001	2026-11-10 10:53	
