@@ -1,37 +1,34 @@
 \section*{Reproducibility Statement}
 \label{sec:reproducibility}
 
-% ICML 期望。说明代码/数据/模型/harness 的可复现性。
+% ICML 期望。说明代码/数据/模型/框架的可复现性。
 % ICML 期望。说明代码/数据/模型/框架的可复现性。
 
-We are committed to reproducible research. The following artifacts will be released:
-% 我们致力于可复现研究。以下产物将予以发布：
+\textbf{Confidentiality constraint.} The core asset of \bench---the real user interaction traces from which all \Ntasks{} tasks are derived---constitutes proprietary intellectual property of the IC design organization. These traces contain company-specific design data, PDK references, and engineer workflows that cannot be redistributed under the organization's data governance policy. We therefore adopt a \emph{tiered release strategy} that separates methodological reproducibility (which we fully support) from exact-data reproducibility (which is constrained), following the approach used by other industrial benchmarks built on confidential data~\cite{rao2026sap, sulthanpete2026nyris}.
+% \textbf{保密约束。} \bench{} 的核心资产——所有 \Ntasks{} 个任务所源自的真实用户交互轨迹——构成 IC 设计组织的专有知识产权。这些轨迹包含公司专属设计数据、PDK 引用和工程师工作流，根据组织的数据治理政策不可再分发。因此我们采用\emph{分层发布策略}，将方法可复现性（我们完全支持）与精确数据可复现性（受约束）分离，这一做法与其他基于保密数据的工业基准一致。
 
-\textbf{Benchmark tasks.} All \Ntasks{} task specifications (prompts, input assets, reference assertions, \texttt{check.py} judges, \texttt{test\_rationale} fields) will be released in JSONL format with per-task unique identifiers. The release includes the full domain distribution, area-group assignment, and \texttt{trace\_source} attribution (host, user, session file, message count, real task summary).
-% \textbf{基准任务。} 全部 \Ntasks{} 个任务规格（提示词、输入附件、参考断言、\texttt{check.py} 判分器、\texttt{test\_rationale} 字段）将以 JSONL 格式发布，每个任务附唯一标识。发布内容包括完整的领域分布、领域组分配和 \texttt{trace\_source} 溯源（主机、用户、会话文件、消息数、真实任务摘要）。
+\textbf{What we release.}
+% \textbf{我们发布什么。}
+\begin{itemize}
+    \item \textbf{Evaluation harness (open-source).} The full \texttt{run\_one.sh} / \texttt{run\_batch.sh} harnesses, the \texttt{PreToolUse} anti-leakage hook, and the MCP bridge configuration are released as open-source scripts. The harness is agent-agnostic: any coding agent supporting MCP and shell hooks can be evaluated.
+    % \textbf{评测框架（开源）。} 完整的 \texttt{run\_one.sh} / \texttt{run\_batch.sh} 框架、\texttt{PreToolUse} 防泄题钩子和 MCP 网桥配置作为开源脚本发布。框架与具体智能体无关：任何支持 MCP 和 shell 钩子的编程智能体均可被评测。
+    \item \textbf{Sanitized task subset.} For tasks whose underlying designs have been approved for external release, we release the full task specification: prompt, input assets, reference assertions, \texttt{check.py} judge, and \texttt{test\_rationale}. This subset is sufficient to reproduce the evaluation protocol and compare new agents on a representative slice of \bench.
+    % \textbf{脱敏任务子集。} 对于底座设计已获对外发布批准的任务，我们发布完整任务规格：提示词、输入附件、参考断言、\texttt{check.py} 判分器和 \texttt{test\_rationale}。该子集足以复现评测协议并在 \bench{} 的代表性切片上比较新智能体。
+    \item \textbf{Task schema and construction protocol.} The JSONL schema, domain keyword filters, scan pipeline, and two-stage prefilter are fully documented (Appendix~\ref{sec:benchmark-details}), enabling other organizations with their own Cline traces to construct comparable benchmarks.
+    % \textbf{任务模式与构建协议。} JSONL 模式、领域关键词过滤器、扫描流程和两级预筛器完整记录于附录~\ref{sec:benchmark-details}，使拥有自有 Cline 轨迹的其他组织能够构建可比基准。
+    \item \textbf{Model configurations.} All evaluated models are accessed via an OpenAI-compatible API gateway. We release the exact \texttt{providers.json} configuration (with API keys masked), the thinking-budget setting (\texttt{thinking=low}), the per-task timeout (2400s), and the auto-approve policy.
+    % \textbf{模型配置。} 所有受评模型通过 OpenAI 兼容 API 网关访问。我们发布精确的 \texttt{providers.json} 配置（API 密钥脱敏）、思考预算设置（\texttt{thinking=low}）、单任务超时（2400 秒）和自动批准策略。
+    \item \textbf{Experimental logs.} Full \texttt{status.jsonl} records (verdict, duration, hook blocks, token usage per task) are released for all reported runs, enabling replication of every reported number on the released task subset.
+    % \textbf{实验日志。} 所有报告运行的完整 \texttt{status.jsonl} 记录（每任务的判定、耗时、钩子拦截次数、token 用量）予发布，使发布任务子集上的每个报告数字可复现。
+    \item \textbf{Mock-EDA mode.} A mock MCP bridge that returns canned tool outputs, enabling harness and hook testing without commercial EDA tool licenses.
+    % \textbf{mock-EDA 模式。} 一个返回预设工具输出的 mock MCP 网桥，无需商业 EDA 工具许可证即可测试框架和钩子。
+\end{itemize}
 
-\textbf{Evaluation harness.} The \texttt{run\_one.sh} / \texttt{run\_batch.sh} harnesses, the \texttt{PreToolUse} anti-leakage hook, and the MCP bridge configuration will be released as open-source scripts. The harness is agent-agnostic: any coding agent that supports MCP and shell hooks can be evaluated.
-% \textbf{评测框架。} \texttt{run\_one.sh} / \texttt{run\_batch.sh} 框架、\texttt{PreToolUse} 防泄题钩子和 MCP 网桥配置将作为开源脚本发布。该框架与具体智能体无关：任何支持 MCP 和 shell 钩子的编程智能体均可被评测。
+\textbf{What we cannot release.} The original user interaction traces, the unreleased task assets (RTL fragments, simulation logs, technology files, PDK data), and access to the specific commercial EDA tools (Empyrean Aether, Cadence Virtuoso, Synopsys) remain behind the organization's confidentiality boundary. Full reproduction of all \Ntasks{} tasks in their original form requires these assets and licenses, which we cannot provide to external parties.
+% \textbf{我们不能发布什么。} 原始用户交互轨迹、未发布的任务附件（RTL 片段、仿真日志、工艺文件、PDK 数据）以及对特定商业 EDA 工具（华大九天 Aether、Cadence Virtuoso、Synopsys）的访问，仍留在组织的保密边界之内。以原始形式完整复现所有 \Ntasks{} 个任务需要这些资产和许可证，而我们无法向外部方提供。
 
-\textbf{Model configurations.} All evaluated models (DeepSeek-V4-Pro, GLM-5.2, Kimi-K2.6) are accessed via an OpenAI-compatible API gateway. We release the exact \texttt{providers.json} configuration (with API keys masked), the thinking-budget setting (\texttt{thinking=low}), the per-task timeout (2400s), and the auto-approve policy.
-% \textbf{模型配置。} 所有受评模型（DeepSeek-V4-Pro、GLM-5.2、Kimi-K2.6）均通过 OpenAI 兼容 API 网关访问。我们发布精确的 \texttt{providers.json} 配置（API 密钥脱敏）、思考预算设置（\texttt{thinking=low}）、单任务超时（2400 秒）和自动批准策略。
-
-\textbf{Experimental logs.} Full \texttt{status.jsonl} records (verdict, duration, hook blocks, token usage per task) will be released for all reported runs, enabling replication of every reported number.
-% \textbf{实验日志。} 所有报告运行的完整 \texttt{status.jsonl} 记录（每任务的判定、耗时、钩子拦截次数、token 用量）将予发布，使每个报告数字均可复现。
+\textbf{Mitigations and roadmap.} To address the reproducibility gap, we provide: (i) a \emph{judge-only mode} that runs \texttt{check.py} against any pre-packaged \texttt{submit.zip}, enabling verification of agent deliverables without live EDA tools; (ii) a roadmap for an open-source-EDA extension (Yosys, OpenROAD, Magic, ngspice) that maps each domain to an open-source equivalent (Appendix~\ref{sec:repro-details}); and (iii) a commitment to expand the sanitized task subset as more designs receive release approval.
+% \textbf{缓解措施与路线图。} 为弥合可复现性差距，我们提供：(i) 一套"仅判分模式"，对任意预打包 \texttt{submit.zip} 运行 \texttt{check.py}，无需真实 EDA 工具即可验证智能体交付件；(ii) 一份开源 EDA 扩展路线图（Yosys、OpenROAD、Magic、ngspice），将每个领域映射到对应开源方案（附录~\ref{sec:repro-details}）；以及 (iii) 随更多设计获得发布批准而持续扩展脱敏任务子集的承诺。
 
 \textbf{Statistical methodology.} We report Pass@1 (single trace per task). For aggregate scores, we report both raw counts and percentages. Confidence intervals are computed via Wilson score intervals at 95\% confidence.
 % \textbf{统计方法。} 我们报告 Pass@1（每任务单次轨迹）。对于聚合分数，我们同时报告原始计数与百分比。置信区间采用 95\% 置信水平下的 Wilson 区间。
-
-\textbf{Limitations on reproducibility.} Full reproduction requires commercial EDA tool licenses (Empyrean Aether, Cadence Virtuoso, Synopsys) and access to the specific PDKs used in the original traces. We provide:
-% \textbf{可复现性限制。} 完整复现需要商业 EDA 工具许可证（华大九天 Aether、Cadence Virtuoso、Synopsys），以及原始轨迹所用特定 PDK 的访问权限。我们提供：
-\begin{itemize}
-    \item A \emph{judge-only mode} that runs \texttt{check.py} against a pre-packaged \texttt{submit.zip}, enabling verification of any agent's deliverables without live EDA tools.
-    % 一种"仅判分模式"：对预打包的 \texttt{submit.zip} 运行 \texttt{check.py}，无需真实 EDA 工具即可验证任意智能体的交付件。
-    \item A \emph{mock-EDA mode} where the MCP bridge returns canned tool outputs, enabling harness testing without licenses.
-    % 一种"mock-EDA 模式"：MCP 网桥返回预设的工具输出，无需许可证即可测试框架。
-    \item A roadmap for an open-source-EDA extension (Yosys, OpenROAD, Magic) as future work (Appendix~\ref{sec:repro-details}).
-    % 一份开源 EDA 扩展路线图（Yosys、OpenROAD、Magic）作为未来工作（附录~\ref{sec:repro-details}）。
-\end{itemize}
-
-All artifacts, code, and logs will be available at the anonymous repository linked in the camera-ready version.
-% 所有产物、代码和日志将在 camera-ready 版本中链接的匿名仓库中提供。
