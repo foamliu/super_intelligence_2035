@@ -19,7 +19,7 @@
   "mc30": 2247,
   "mc300": 317,
   "mc500": 281,
-  "note": "11/10 r310: delivered SignalXrefBuilder-001 (u54d9, 3-level signal xref, k=14, A.jsonl 197). r309 fixed trace_ledger.py $6/$7 column-mapping bug (filter was on $7 tools, EMPTY for ~346 verilog rows; switched to $6 keywords). shard A mc>=15 dedup candidates 294->2381 (8.1x), digital-dominant=581. The r268-r308 'pool exhausted' era (40 rounds) was a FILTER BUG artifact, not real scarcity. r292 FULL RESCAN: 696/698 hosts, dedup=5999, mc30=2247, users=401.",
+  "note": "11/10 r311: mgmt+peek round (0 case, A.jsonl 197 unchanged). Peeked 2 fresh digital-dominant candidates post r309 $6-filter fix (pool 294->2381): acaey(stevenh mc110, verification, diagnose xmelab CUUVUNF) + 4q4w1(weihanwu mc134, verification, how-to MRR dataflow). BOTH analysis-only NOT produce-task (verilog keyword=READ activity 39x read_files, not produce); both parked. Confirms clean A-faithful produce scarcity persists after 8.1x pool expansion. r310 delivered SignalXrefBuilder-001 (u54d9). r309 fixed trace_ledger.py $6/$7 bug. Latest scan 11/09 (no new since r292 rescan), daily log 11/10 healthy 2981 lines.",
   "prev_scan_path": "/home/t0002965/log/ssh_eda_search_20261105_192825/summary.tsv",
   "prev_sessions": 5822,
   "scan_path": "/home/t0002965/log/ssh_eda_search_20261109_224902/summary.tsv",
@@ -852,6 +852,18 @@
       "finding": "r310 cleared r309 DEBT:1 (u54d9 deepread complete, build deferred to r310 per §3 no-consecutive-deepread). u54d9 found via r309 trace_ledger.py $6/$7 column-mapping bug fix (was hidden by old $7 filter; verilog:5163 in $6 keywords, $7 tools empty). USER#0 = clean A-faithful 3-level signal cross-reference produce-task (pattern match -> .inc reference via basename -> reg direct grep). Case = spec-driven-generator + static-verification (matches RunTaskMapExtractor-001/SpfCouplingParser-001 pattern + 3-level signal->pattern->.inc dimension). 14 conds a-n, gold PASS 14/14 + 8 negatives (3 §4.9 + 5 naive) all FAIL NEG_RC=0. Assertion gate k_rationale=k_check=14>=8 PASS. test_sha8=d8b879e3. A.jsonl 196->197. ledger u54d9 mark->case. scansync r310: no new scan (still r292, 18th consecutive no-new-scan), daily log 20261110 healthy 2981 lines. Paper: pdflatex 0 error 0 undefined 10p, Ntasks 972->990 (A197 B228 C280 D285, App A breakdown synced to real shard counts).",
       "paper": "pdflatex compile OK (0 error, 0 undefined, 10 pages); \\Ntasks 972->990; App A breakdown A:194->197 B:224->228 C:275->280 D:279->285",
       "updated_at": "2026-11-10T10:55:00+08:00"
+    },
+    "r311": {
+      "date": "2026-11-10",
+      "scan_dir": "ssh_eda_search_20261109_224902",
+      "no_new_scan": true,
+      "consecutive_no_new_scan": "r292-r311 (since r292 full rescan; 11/05 dir was prev)",
+      "daily_log_20261110_lines": 2981,
+      "daily_log_healthy": true,
+      "summary_tsv_rows": 38083,
+      "shard_A_pool_digital_dominant_dedup": 2381,
+      "finding": "r311 mgmt+peek round (0 case). Latest scan still 11/09 ssh_eda_search_20261109_224902 (no new scan since r292 full rescan). Daily log 20261110 healthy 2981 lines (unchanged). Peeked 2 fresh un-ledgered digital-dominant candidates (post r309 $6-filter fix, pool=2381): acaey(stevenh mc110 v1455+sv195, verification) + 4q4w1(weihanwu mc134 v1412+sv17, verification). BOTH analysis-only NOT produce-task: acaey=diagnose xmelab CUUVUNF (48msgs all read_files, agent output=root-cause report, fix proposed by USER not agent); 4q4w1=how-to explain MRR data-flow (106msgs, 39 read_files+16 search+0 writes, agent final=explanation no code). Both parked. CONFIRMS r309/r310 finding: fresh high-mc digital candidates are predominantly analysis/Q&A (verilog keyword count = READ activity 39x read_files, NOT produce); clean A-faithful produce-task remains scarce even after 8.1x pool expansion. shard A ledger now 324 (322+2 parked). Next: target lower-mc digital or pivot to B-档 synthesized produce reframe of acaey (spec-driven diagnosis-generator) if clean produce stays scarce.",
+      "updated_at": "2026-11-10T11:35:00+08:00"
     }
   },
   "sessions": 38082,
@@ -863,7 +875,7 @@
   },
   "source": "/home/t0002965/log/ssh_eda_search_20261105_192825/summary.tsv (11/05 scan)",
   "target_mc": 30,
-  "updated_at": "2026-11-10T10:55:00+08:00",
+  "updated_at": "2026-11-10T11:35:00+08:00",
   "users_mc100": 182,
   "users_mc30": 401,
   "users_mc300": 60,
