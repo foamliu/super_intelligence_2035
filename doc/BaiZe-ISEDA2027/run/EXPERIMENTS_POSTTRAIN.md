@@ -11558,3 +11558,100 @@ Phase 3 = 从 Phase 2 SFT ckpt 起，用 verl 0.4.0 GRPO + 4 奖励臂（R0–R4
 - 无伪造。所有数值来自实跑命令输出。dry-run 超时（F3）如实标注。
 
 ---
+
+## §R162 — Phase 1 Eval Launch-Readiness Audit（wake231, 2026-11-11, 零 GPU · CPU）
+
+> **目标**：对 Phase 1 三模型基线评测（`baize_posttrain_phase1_baseline.sh`）做与 R159（SFT）/R161（RL）同口径的**发射前就绪审计**。Phase 1 是沙盒恢复后 watcher 自动起跑的**第一个阶段**（`watcher → pipeline --phase1 → phase1_baseline.sh`），此前未做过同口径逐项审计。
+>
+> **触发**：R159 审计了 Phase 2 SFT，R161 审计了 Phase 3 RL，但 Phase 1 eval 的就绪审计缺失——补齐三阶段审计闭环。
+
+### 1. 依赖矩阵（11 项逐项验证）
+
+| # | 依赖项 | 验证方法 | 结果 | 证据 |
+|:--|:--|:--|:--|:--|
+| 1 | 158-case 数据集 | `wc -l` + `ls -la` | ✅ 158 行 | `EDA-Eval-PyAether-v20260311.jsonl` 689,461B, 158 lines |
+| 2 | 评测 driver | `ls -la` | ✅ 存在 | `run_cline_script.sh` 29,415B |
+| 3 | 评分脚本 | `ls -la` | ✅ 可执行 | `run_eval.py` 39,781B, `-rwxr-x---` |
+| 4 | venv python | `--version` | ✅ 3.13.14 | `eda_fastmcp/.venv/bin/python` → cpython-3.13 |
+| 5 | cline 二进制 | `command -v` | ✅ 在 PATH | `/home/app.e0031982/.bun/bin/cline` |
+| 6 | MCP server (SSE) | `curl /sse` | ✅ 在线 | `event: endpoint` 响应正常 |
+| 7 | 沙盒 10.129.32.75:8667 | TCP 探测 | ❌ **BLOCKED** | `exit=124`（36th 连续 wake，主机级防火墙） |
+| 8 | MiniCPM5-2B endpoint :8098 | `curl /v1/models` | ✅ 在线 | `minicpm5-2b` GPU4 vLLM |
+| 9 | Qwen3.8-27B endpoint :8099 | `curl /v1/models` | ✅ 在线 | `qwen3.8-27b` GPU0-3 root SGLang |
+| 10 | DeepSeek cloud endpoint | `curl /chat/completions` | ✅ 可用 | glm-5.2 返回有效 chat completion（见 F1） |
+| 11 | eval root `~/eda_code_eval` | `ls -ld` | ✅ 存在 | 16 子目录（Nov 10 历史） |
+
+**汇总**：11 项中 10 项 PASS，1 项 BLOCKED（沙盒，外部不可修）。
+
+### 2. 发现（3 项）
+
+#### 🟡 F1（info · 非阻塞）：cloud /models 返回 id=null
+
+- **现象**：`GET http://agi-gateway.cxmt.com/cloud/v1/models` → `{"data":[{"id":null,...}]}`（model id 为 null）。
+- **影响**：若有组件依赖 /models 自动发现 model id 会失败。但 `baize_posttrain_phase1_baseline.sh` 硬编码 `BB_MODEL[deepseek_cloud]="glm-5.2"`，`cline auth -m glm-5.2` 显式指定，不依赖 /models 发现。
+- **验证**：`POST /chat/completions` with `model: "glm-5.2"` → 正常返回（`finish_reason: "length"`, `reasoning_content` 有内容, `usage` 合理）。
+- **结论**：**非阻塞**，cosmetic 问题。若未来 cline auth 改为从 /models 读 id 则需处理。
+
+#### 🟡 F2（info · 已知）：baseline report 已存在但为「部分完成」
+
+- **现象**：`reports/report_posttrain_baseline_3model_zh.html`（16,389B, Nov 10 16:18）已存在，pipeline `--status` 报 `PASS report exists`。
+- **实情**：报告状态标注「部分完成 — 沙盒阻塞」。内容：
+  - DeepSeek/GLM-5.2：**有实测数据** mean=67.97%±1.65%（5 轮代码生成历史，非 full harness）
+  - MiniCPM5-2B：**36% 参考值**（未复测）
+  - Qwen3.8-27B：**无数据**（endpoint 就绪但未评测）
+- **影响**：pipeline `--status` 的 `PASS report exists` 有误导性——文件存在 ≠ 评测完成。沙盒恢复后 Phase1 重跑会覆盖此报告为完整版。
+- **结论**：**非阻塞**，Phase1 正式起跑后会原地覆盖。不需现在改 status 逻辑。
+
+#### 🟢 F3（info · 非阻塞）：两个 eval 脚本端口检查不一致
+
+- **现象**：`baize_posttrain_baseline_eval.sh`（早期独立版）`check_env` 探测 5 个端口 `8664 8665 8653 8669 8667`；`baize_posttrain_phase1_baseline.sh`（pipeline 集成版）只探测 `8667`。
+- **影响**：pipeline watcher 起的是 `phase1_baseline.sh`（只查 8667），与 `baseline_eval.sh`（查 5 端口）口径不同。但 8667 是 pyAether run_code 的标准端口，两者实际都依赖它。
+- **结论**：**非阻塞**，无功能差异。`phase1_baseline.sh` 是正式版，`baseline_eval.sh` 是早期原型，保留备查。
+
+### 3. watcher → pipeline → phase1 链路验证
+
+```
+baize_posttrain_sandbox_watcher.sh (--watch --auto-eval, PID 4109314, ppid=1, etimes=4157s)
+  └─ launch_phase1(): setsid bash baize_posttrain_surrogate_pipeline.sh --phase1
+       └─ run_phase1(): check_sandbox || ABORT; check_endpoint(8098,8099) || skip
+            └─ bash baize_posttrain_phase1_baseline.sh (3-model × 5-run)
+```
+
+- watcher 120s 轮询沙盒 TCP 8667；恢复即 `setsid ... --phase1`（detach nohup bg，存活于 watcher 退出后）。
+- pipeline `run_phase1` 先 `check_sandbox`（失败则 ABORT），再 `check_endpoint`（8098 必过，8099 可跳）。
+- **链路完整**，沙盒恢复即零延迟起跑。
+
+### 4. Phase 1 起跑路径（零延迟就绪）
+
+沙盒恢复（watcher PID 4109314 自动检测，120s 轮询） → `pipeline --phase1` → 3 模型 × 5-run × 158 任务（MiniCPM5-2B @ :8098 + Qwen3.8-27B @ :8099 + GLM-5.2 @ cloud）→ `run_eval.py --latest 1` 评分 → `final_report.json` per run → aggregate mean±std → 覆盖 `reports/report_posttrain_baseline_3model_zh.html`（完整版）。
+
+- 冻结协议：158 / Pass@1 / 2500s / single-trace / 5-run / `-p 8 -n`（总纲 §2）。
+- 预注册阶梯：M1=50% M2=65% M3=75% M4=85%+（先定后测）。
+- 预计耗时：3 模型 × 5 run × 158 任务 / 8 并发 × 2500s ≈ **~20h**（沙盒执行 bound）。
+
+### 5. 红线遵守
+
+- **§5.3 口径一致**：Phase1 脚本冻结协议与总纲 §2 完全一致（158/Pass@1/2500s/single-trace/5-run/`-p 8 -n`）。
+- **§5.2 反作弊**：Phase1 eval 是基线测量（非训练），anti-cheat 在 driver 层（`run_cline_script.sh` 内置 PreToolUse），不在此审计范围。
+- **§5.1 污染隔离**：Phase1 是**评测**（读 158 任务），不产生训练数据，不涉及污染。RL/SFT parquet 闸门已在 R161 修复并 PASS。
+- **预注册**：成功阶梯 M1-M4 在脚本 `print_recipe()` 中硬编码输出，先定后测。
+
+### 6. 三阶段审计闭环汇总
+
+| 阶段 | 审计轮次 | 就绪项 | 阻塞项 | 起跑条件 |
+|:--|:--|:--|:--|:--|
+| Phase 1 (eval) | **R162（本轮）** | 10/11 PASS | 沙盒 CLOSED（外部） | 沙盒恢复 → watcher 自动起 |
+| Phase 2 (SFT) | R159 (wake228) | 15/15 PASS | GPU 6-7 被 serve 占位 | 停 serve / 运维释放 GPU |
+| Phase 3 (RL) | R161 (wake230) | 17/17 PASS | SFT ckpt + 沙盒 + GPU 4-7 | Phase 2 完成 + 沙盒恢复 |
+
+**三阶段审计闭环完成**。所有非外部阻塞项均已 PASS。起跑路径零延迟就绪。
+
+### 7. 交付物
+
+- `EXPERIMENTS_POSTTRAIN.md` §R162（本节）
+- 验证证据：dry-run preflight 输出 + cloud chat completion 测试 + watcher 链路 grep + report 状态检查
+- 无新增/修改脚本（审计性质，零 GPU，纯验证）
+
+- 无伪造。所有数值来自实跑命令输出。沙盒 BLOCKED 如实标注。
+
+---
