@@ -901,3 +901,28 @@ peek:					parked		2026-11-10 23:22	peek: consultation verdi-fsdb-warning-paste
 1794299623303_khbvq	yuchens	hfeg0pkn004	5	spice_sim	parked		2026-11-11 00:56	11-11 fresh spice>=5: trivial 1msg
 1794302513665_soa79	chuanqiz	hfeg0pkn001	10	spice_sim	parked		2026-11-11 00:56	11-11 fresh spice>=5: trivial 1msg, cellview:385 layout-domain
 1794309772651_z3xy1	mwxi	hfhds228	5	spice_sim	parked		2026-11-11 00:56	11-11 fresh spice>=5: consultation/diagnostic desktop scripts
+1794298060155_ma0ui	fresh1111	fresh-scan	0	spice_sim	parked		2026-11-11 03:19	no-gold: R_RHDlutFull_PRAC IDD analysis, pyAether sandbox unresponsive, session interrupted at ask_question (code_sidecar_sigterm), no user-accepted product
+1794308420196_3hfbw	fresh1111	fresh-scan	0	spice_sim	parked		2026-11-11 03:19	consultation 'aether自动绕线', not produce-task
+1792977240005_1mvxt	fresh1111	fresh-scan	0	spice_sim	parked		2026-11-11 03:19	CDL/Aether code-fixing continuation (context summary start), not clean spice_char produce-task
+1794123767956_afyoq	fresh1111	fresh-scan	0	spice_sim	parked		2026-11-11 03:19	Aether IP packaging tool dev_CXMT_Aether_ip_package.py, devops not spice_char
+1792560382811_jjrak	fresh1111	fresh-scan	0	spice_sim	parked		2026-11-11 03:19	consultation LPDDR5X WCK2CK circuit explanation, not produce-task
+1794295553780_49up8	fresh1111	fresh-scan	0	spice_sim	parked		2026-11-11 03:19	verilog xrun.log warning analysis, digital verification not spice_char
+1792291111625_6m150	fresh1111	fresh-scan	0	spice_sim	parked		2026-11-11 03:19	consultation LPDDR5X ESD/VREF circuit explanation, not produce-task
+1794300687998_e5k8p	fresh1111	fresh-scan	0	spice_sim	parked		2026-11-11 03:19	skill management + presim-automation skill content, not spice_char
+1794132462913_9fsio	fresh1111	fresh-scan	0	spice_sim	parked		2026-11-11 03:19	workspace-operations skill test, devops not spice_char
+1794300008457_0t7fe	fresh1111	fresh-scan	0	spice_sim	parked		2026-11-11 03:19	skill management '如何添加skill', not spice_char
+1794280981307_0xger	fresh1111	fresh-scan	0	spice_sim	parked		2026-11-11 03:19	hier_pin_gui.py Python GUI fixing, code-editing not spice_char
+1794297992607_e4kv0	fresh1111	fresh-scan	0	spice_sim	parked		2026-11-11 03:19	open ddgoa circuit exploration, not produce-task
+1794208380987_0j2me	fresh1111	fresh-scan	0	spice_sim	parked		2026-11-11 03:19	workspace upload/nginx/SSL devops, wrong domain
+1794295501512_8i9qk	fresh1111	fresh-scan	0	spice_sim	parked		2026-11-11 03:19	circuit introduction '介绍drjpa D_ExtWrCmdShift', consultation not produce-task
+1792394341749_wapy4	fresh1111	fresh-scan	0	spice_sim	parked		2026-11-11 03:19	session NOT FOUND on hfeg0pkn001
+1793254895387_3m5t4	fresh1111	fresh-scan	0	spice_sim	parked		2026-11-11 03:19	agent_policy.py config editing, devops not spice_char
+1792204264887_zdzqa	fresh1111	fresh-scan	0	spice_sim	parked		2026-11-11 03:19	consultation DDR5 VRCG/Vref circuit explanation, not produce-task
+1790682440421_6zz20	fresh1111	fresh-scan	0	spice_sim	parked		2026-11-11 03:19	ops/infra(Portal/nginx/SSH), wrong domain
+1794278391708_xedbf	fresh1111	fresh-scan	0	spice_sim	parked		2026-11-11 03:19	PrimeSim version output paste, debug/error paste not produce-task
+1794280331741_c2mvp	fresh1111	fresh-scan	0	spice_sim	parked		2026-11-11 03:19	GDS-out error debugging, physical_verify/layout not spice_char
+1794276534959_30cgz	fresh1111	fresh-scan	0	spice_sim	parked		2026-11-11 03:19	linux how-to (chmod/mkdir), trivial not spice_char
+1792398629941_aohd9	fresh1111	fresh-scan	0	spice_sim	parked		2026-11-11 03:19	ops/infra NIS group permissions, wrong domain
+1794301029899_8qve2	fresh1111	fresh-scan	0	spice_sim	parked		2026-11-11 03:19	skill copying '去adaml目录复制skills', not spice_char
+1794294853309_rytsm	fresh1111	fresh-scan	0	spice_sim	parked		2026-11-11 03:19	single user turn 'run LVS没通过该怎么知道error', LVS debug not spice_char
+1791425782404_rn6pm	fresh1111	fresh-scan	0	spice_sim	parked		2026-11-11 03:19	Virtuoso/Aether SKILL code-comprehension (IL files), not spice_char
