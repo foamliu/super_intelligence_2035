@@ -16118,3 +16118,60 @@ Process 3557214 has 36.30 GiB memory in use.
   4. 训练配比建议：649.5K tok vs UltraData-SFT 18.89B tok ≈ 0.0034% → 需上采样（×5-10）平衡 pyaether20 配比
 
 ---
+
+## §R152 — verl SFT Parquet 转换 + Schema 校验（wake221, 2026-11-11, 零 GPU · CPU）
+
+> **目的**：把 R150/R151 统一 v5+v6+v7 PyAether SFT 语料（1725 pairs / ~649.5K tok）转成 verl SFT 训练可直接读取的 parquet 格式（`conversation` + `metadata` schema），为 Phase 2 替身 SFT 投料做最后一步数据准备。系统 python 无 pandas/pyarrow，必须用 verl venv（`~/code/verl_cu124_venv/`，pandas 2.3.3 / pyarrow 25.0.1）。
+
+### 1. 执行
+
+- 脚本：`baize_posttrain_merge_v5v6.py --parquet`（R150 写入的 `--parquet` 分支，`to_verl_conversation()` 转换器）
+- 命令：`~/code/verl_cu124_venv/bin/python baize_posttrain_merge_v5v6.py --parquet`
+- 输入：v5(1193) + v6(352) + v7(180)，三源 auto-detect
+- 输出：
+  - `sft_pyaether_corpus_unified_v5v6v7.jsonl`（3119.0 KB，确定性重生成，与 wake220 一致）
+  - `sft_pyaether_corpus_unified_v5v6v7.parquet`（**785.5 KB, 1725 rows**）✅ 新增
+
+### 2. 合并统计（与 wake220 一致，确定性）
+
+| 项 | 值 |
+|:--|:--|
+| merged pairs | 1725（v5 1193 + v6 352 + v7 180，0 dedup）|
+| unique api_used | 550 |
+| total chars | 2,403,209 |
+| est. tokens | ~649.5K |
+
+类型分布：S1_doc_to_code 364 / S2_api_lookup 364 / S3_multi_api_chain 261 / R149_method_example 352 / R150_generative_example 180 / S5_source_* 128 / S0_api_existence 34 / S6_* 42
+
+### 3. Parquet Schema 校验（verl venv read_parquet）
+
+| 校验项 | 结果 |
+|:--|:--|
+| rows | 1725 ✅ |
+| columns | `['conversation', 'metadata']` ✅（verl SFT 标准 schema）|
+| dtypes | conversation=object, metadata=object ✅ |
+| conversation[0].role / [1].role | `['user', 'assistant']` ✅ |
+| metadata keys | `['pair_id', 'type', 'api_used', 'source']` ✅ |
+| sample user content len / asst content len | 1493 / 107 ✅ |
+
+- `to_verl_conversation()` 对 completion 做了 markdown fence 剥离（去首行 ``` 和尾 ```），保证 assistant content 是纯代码/纯文本，不带围栏标记
+- pollution 隔离：parquet 由已通过 contam gate（wake220，1725 docs / 0 命中 / 536 任务黑名单 → PASS）的 JSONL 派生，**同源数据，零新增风险** → ✅ 可投料
+
+### 4. 产物清单（R152 新增）
+
+| 文件 | 大小 | 说明 |
+|:--|--:|:--|
+| `sft_pyaether_corpus_unified_v5v6v7.parquet` | 785.5 KB | verl SFT parquet，1725 rows，conversation+metadata |
+| `sft_pyaether_corpus_unified_v5v6v7.jsonl` | 3119.0 KB | 统一 JSONL（确定性重生成，与 wake220 byte-identical）|
+
+### 5. 结论与下一步
+
+- verl SFT parquet 已就绪：**1725 rows / conversation+metadata schema / verl venv 可读** → Phase 2 替身 SFT 投料的最后数据准备完成
+- 训练配比仍需上采样：649.5K tok vs UltraData-SFT 18.89B tok ≈ 0.0034% → pyaether20 配比需 ×5-10 上采样（在 SFT 数据 blend 阶段处理，不在 parquet 层）
+- **下一步**：
+  1. 退火语料用 R148 corpus 原文（~626K tok）做 domain blend（P3 预备，零 GPU）
+  2. GPU 释放（停 GPU5-7 serve）→ SFT surrogate 训练（Phase 2）
+  3. 沙盒恢复 → Phase 1 三模型 5-run 基线评测
+  4. 正式训练待 pretrain ckpt（ETA≈2026-12-25）
+
+---
