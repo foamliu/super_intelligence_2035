@@ -37,12 +37,12 @@ All \Ntasks{} tasks follow a unified \mode{} contract (Table~\ref{tab:task-schem
 \begin{table}[ht]
 \centering
 \small
-\caption{Task schema comparison: single-script vs.\ design\_flow.}
-% \caption{任务模式对比：单脚本 vs.\ design\_flow。}
+\caption{Task schema comparison: single-script (EDA-Scripting-Bench) vs.\ \mode{} (\bench).}
+% \caption{任务模式对比：单脚本（EDA-Scripting-Bench）vs.\ \mode{}（\bench）。}
 \label{tab:task-schema}
-\begin{tabular}{@{}lll@{}}
+\begin{tabularx}{\linewidth}{@{}lXX@{}}
 \toprule
- & \textbf{Single-script} (EDA-Scripting-Bench) & \textbf{Design-flow} (\bench) \\
+ & \textbf{Single-script} & \textbf{Design-flow (\bench)} \\
 \midrule
 Entry point & function return value & \texttt{outputs/submit.zip} \\
 Tool interaction & single \texttt{run\_code} & multi-step MCP orchestration \\
@@ -51,57 +51,37 @@ Assertions & function-level & deliverable-level ($\geq 8$) \\
 Lang/host specified & yes (pyAether/SKILL/Tcl) & no (agent infers) \\
 Steps & 1--3 tool calls & 5--20+ tool calls \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \end{table}
 
 \subsection{Domain Coverage}
 \label{sec:domain-coverage}
 % \subsection{领域覆盖}
 
-\bench{} spans 13 EDA design domains (Table~\ref{tab:domain-distribution}), organized into 4 shards by area:
-% \bench{} 覆盖 13 个 EDA 设计领域（表~\ref{tab:domain-distribution}），按方向组织为 4 个分片：
+\bench{} spans 13 EDA design domains (Figure~\ref{fig:domain-distribution}), organized into four area groups:
+% \bench{} 覆盖 13 个 EDA 设计领域（图~\ref{fig:domain-distribution}），按方向组织为四个领域组：
 
 \begin{itemize}
-    \item \textbf{Shard A (Digital front)}: digital (24), verification (14), pnr\_signoff (23), eda\_other (17)
-    % \textbf{分片 A（数字前端）}：digital (24)、verification (14)、pnr\_signoff (23)、eda\_other (17)
-    \item \textbf{Shard B (SPICE/characterization)}: spice\_sim (49), characterization (23)
-    % \textbf{分片 B（SPICE/表征）}：spice\_sim (49)、characterization (23)
-    \item \textbf{Shard C (Physical/layout)}: physical\_verify (52), layout\_aether (27), layout\_virtuoso (24), pg\_layout (17)
-    % \textbf{分片 C（物理/版图）}：physical\_verify (52)、layout\_aether (27)、layout\_virtuoso (24)、pg\_layout (17)
-    \item \textbf{Shard D (Schematic/netlist/analog)}: schematic\_netlist (59), waveform (23), analog\_context (23)
-    % \textbf{分片 D（原理图/网表/模拟）}：schematic\_netlist (59)、waveform (23)、analog\_context (23)
+    \item \textbf{Digital front} (194 tasks): digital (59), verification (55), pnr\_signoff (27), eda\_other (53)
+    % \textbf{数字前端}（194 个任务）：digital (59)、verification (55)、pnr\_signoff (27)、eda\_other (53)
+    \item \textbf{SPICE / characterization} (220 tasks): spice\_sim (177), characterization (43)
+    % \textbf{SPICE / 表征}（220 个任务）：spice\_sim (177)、characterization (43)
+    \item \textbf{Physical / layout} (267 tasks): physical\_verify (106), layout\_aether (66), layout\_virtuoso (57), pg\_layout (38)
+    % \textbf{物理 / 版图}（267 个任务）：physical\_verify (106)、layout\_aether (66)、layout\_virtuoso (57)、pg\_layout (38)
+    \item \textbf{Schematic / netlist / analog} (283 tasks): schematic\_netlist (166), waveform (54), analog\_context (63)
+    % \textbf{原理图 / 网表 / 模拟}（283 个任务）：schematic\_netlist (166)、waveform (54)、analog\_context (63)
 \end{itemize}
 
-\begin{table}[ht]
+The distribution reflects real engineering practice: schematic/netlist and SPICE simulation dominate (analog/mixed-signal design accounts for the largest share), while digital synthesis and PNR signoff are comparatively underrepresented---not because they are less important, but because digital engineers use coding agents less frequently (they work in IDEs and command-line flows). We revisit the implications of this imbalance in Section~\ref{sec:threats}.
+% 该分布反映了真实工程实践：原理图/网表与 SPICE 仿真占主导（模拟/混合信号设计占比最大），而数字综合与 PNR 签核相对偏少——并非因为它们不重要，而是因为数字工程师较少使用编程智能体（他们多在 IDE 和命令行流程中工作）。我们在第~\ref{sec:threats}~节重新讨论这种失衡的影响。
+
+\begin{figure}[ht]
 \centering
-\small
-\caption{Domain distribution in \bench.}
-% \caption{\bench{} 中的领域分布。}
-\label{tab:domain-distribution}
-\begin{tabular}{@{}lrl@{}}
-\toprule
-\textbf{Domain} & \textbf{Tasks} & \textbf{Shard} \\
-\midrule
-schematic\_netlist & 72 & D \\
-spice\_sim & 72 & B \\
-physical\_verify & 61 & C \\
-layout\_aether & 35 & C \\
-layout\_virtuoso & 33 & C \\
-waveform & 33 & D \\
-analog\_context & 30 & D \\
-characterization & 25 & B \\
-digital & 24 & A \\
-pg\_layout & 23 & C \\
-pnr\_signoff & 23 & A \\
-eda\_other & 17 & A \\
-verification & 14 & A \\
-\midrule
-\textbf{Total} & \textbf{462} & \\
-\bottomrule
-\end{tabular}
-\end{table}
-% NOTE: table numbers are the 2026-11-06 snapshot (462 cases); the current release (2026-11-09) has \Ntasks{} cases.
-% 注：表内数字为 2026-11-06 快照（462 例）；当前版本（2026-11-09）已有 \Ntasks{} 例。
+\includegraphics[width=\linewidth]{figures/domain_pie.pdf}
+\caption{Domain distribution across \Ntasks{} tasks and 13 EDA domains, colored by area group. The donut layout keeps small slices legible; percentages are shown for slices $\geq 4\%$.}
+% \caption{\Ntasks{} 个任务在 13 个 EDA 领域上的分布，按领域组着色。环形布局使小切片也可读；占比 $\geq 4\%$ 的切片显示百分比。}
+\label{fig:domain-distribution}
+\end{figure}
 
 \subsection{Evaluation Metric and Protocol}
 \label{sec:eval-protocol}

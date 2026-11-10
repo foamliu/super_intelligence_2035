@@ -40,8 +40,7 @@ We define \emph{grounding depth} as the minimum number of live EDA tool calls ne
 
 \begin{figure}[ht]
 \centering
-% \includegraphics[width=\linewidth]{grounding_depth.pdf}
-\fbox{\parbox{0.9\linewidth}{\centering [Figure: Pass@1 vs.\ grounding depth --- monotone decreasing, 80\% at depth 1--2, 0\% at depth 6+]}}
+\includegraphics[width=\linewidth]{figures/grounding_depth.pdf}
 \caption{Pass@1 decreases monotonically with tool-chain grounding depth. The gap is not closed by model scaling, indicating a grounding bottleneck.}
 % \caption{Pass@1 随工具链接地深度单调下降。该差距无法由模型扩展弥合，表明存在接地瓶颈。}
 \label{fig:grounding-depth}
@@ -51,8 +50,8 @@ We define \emph{grounding depth} as the minimum number of live EDA tool calls ne
 \label{sec:distribution}
 % \subsection{分布分析}
 
-\bench's domain distribution reflects real engineering practice: schematic/netlist and SPICE simulation dominate (analog/mixed-signal design), while digital synthesis and verification are underrepresented---not because they are less important, but because digital engineers use cline less frequently (they work in IDEs and command-line flows). This is a \emph{feature} of trace-based benchmark construction: the distribution reflects actual agent usage patterns, not synthetic task design. We discuss implications for benchmark balance in Section~\ref{sec:threats}.
-% \bench{} 的领域分布反映了真实工程实践：原理图/网表与 SPICE 仿真占主导（模拟/混合信号设计），而数字综合与验证偏少——并非因为它们不重要，而是因为数字工程师较少使用 cline（他们多在 IDE 和命令行流程中工作）。这是基于轨迹构建基准的一个"特性"：分布反映真实的智能体使用模式，而非合成的任务设计。我们在第~\ref{sec:threats}~节讨论其对基准均衡性的影响。
+\bench's domain distribution (Figure~\ref{fig:domain-distribution}) reflects real engineering practice, as discussed in Section~\ref{sec:domain-coverage}. This is a \emph{feature} of trace-based benchmark construction: the distribution reflects actual agent usage patterns, not synthetic task design.
+% \bench{} 的领域分布（图~\ref{fig:domain-distribution}）反映了真实工程实践，如第~\ref{sec:domain-coverage}~节所述。这是基于轨迹构建基准的一个"特性"：分布反映真实的智能体使用模式，而非合成的任务设计。
 
 \subsection{Threats to Validity}
 \label{sec:threats}

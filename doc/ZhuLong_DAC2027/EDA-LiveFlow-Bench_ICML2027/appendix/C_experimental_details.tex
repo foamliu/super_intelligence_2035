@@ -26,13 +26,13 @@
 
 All models accessed via an OpenAI-compatible API gateway (\texttt{agi-gateway}). The \texttt{providers.json} configuration (with API keys masked):
 % 所有模型通过 OpenAI 兼容 API 网关（\texttt{agi-gateway}）访问。\texttt{providers.json} 配置（API 密钥脱敏）：
-\begin{verbatim}
+{\small\begin{verbatim}
 {
   "baseURL": "http://agi-gateway.cxmt.com/cloud/v1",
   "apiKey": "<MASKED>",
   "model": "deepseek-v4-pro-cloud"
 }
-\end{verbatim}
+\end{verbatim}}
 We verify API reachability with a \texttt{/chat/completions} health check before each batch run; a 403 response indicates key expiry.
 % 每批运行前，我们用 \texttt{/chat/completions} 健康检查验证 API 可达性；403 响应表示密钥失效。
 
@@ -45,10 +45,10 @@ The \texttt{PreToolUse} hook is a shell script invoked before every tool call. I
 \begin{itemize}
     \item \textbf{Path whitelist}: only paths under the evaluation workdir root are accessible.
     % \textbf{路径白名单}：仅评测工作目录根之下的路径可访问。
-    \item \textbf{Answer-key blocklist}: any path matching \texttt{check.py}, \texttt{\_check.py}, \texttt{reference/}, \texttt{hidden/}, \texttt{\_reference\_check.py} is blocked.
+    \item \textbf{Answer-key blocklist}: any path matching \texttt{check.py}, \texttt{\_check.py}, \texttt{reference/}, \texttt{hidden/}, or \texttt{\_reference\_check.py} is blocked.
     % \textbf{答案黑名单}：任何匹配 \texttt{check.py}、\texttt{\_check.py}、\texttt{reference/}、\texttt{hidden/}、\texttt{\_reference\_check.py} 的路径被阻止。
-    \item \textbf{Tool whitelist}: only \texttt{read\_file}, \texttt{write\_to\_file}, \texttt{eda\_flow/*} MCP tools, and basic shell commands are allowed. Code-search tools (\texttt{grep}, \texttt{find} outside the workdir) are blocked.
-    % \textbf{工具白名单}：仅允许 \texttt{read\_file}、\texttt{write\_to\_file}、\texttt{eda\_flow/*} MCP 工具及基本 shell 命令。代码搜索工具（工作目录之外的 \texttt{grep}、\texttt{find}）被阻止。
+    \item \textbf{Tool whitelist}: only \texttt{read\_file}, \texttt{write\_to\_file}, \texttt{eda\_flow/*} MCP tools, and basic shell commands are allowed; code-search tools (\texttt{grep}, \texttt{find} outside the workdir) are blocked.
+    % \textbf{工具白名单}：仅允许 \texttt{read\_file}、\texttt{write\_to\_file}、\texttt{eda\_flow/*} MCP 工具及基本 shell 命令；工作目录之外的 \texttt{grep}、\texttt{find} 被阻止。
     \item \textbf{Blocked-call response}: the hook returns the string ``ACCESS RESTRICTED'' to the agent, which is logged but does not terminate the session.
     % \textbf{被拦截调用的响应}：钩子向智能体返回字符串"ACCESS RESTRICTED"，该事件被记录但不终止会话。
 \end{itemize}

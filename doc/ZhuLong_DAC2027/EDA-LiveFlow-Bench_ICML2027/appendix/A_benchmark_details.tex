@@ -25,23 +25,23 @@ We surveyed 698 engineering workstations (2{,}850 users, 52{,}698 session files;
 \label{sec:keyword-filters}
 % \subsection{领域关键词过滤器}
 
-Table~\ref{tab:keywords} lists the EDA keywords used for session scanning and shard assignment. Shard A uses an expanded keyword set (synthesis, synopsys, tcl, verilog, systemverilog, rtl, sdc, vivado, yosys, openroad) and a relaxed mc threshold ($\geq 15$) to capture digital-front tasks that use cline less intensively.
-% 表~\ref{tab:keywords} 列出用于会话扫描和分片分配的 EDA 关键词。分片 A 使用扩展关键词集（synthesis、synopsys、tcl、verilog、systemverilog、rtl、sdc、vivado、yosys、openroad）并放宽 mc 阈值（$\geq 15$），以捕获使用 cline 不那么密集的数字前端任务。
+Table~\ref{tab:keywords} lists the EDA keywords used for session scanning and area-group assignment. The digital-front group uses an expanded keyword set (synthesis, synopsys, tcl, verilog, systemverilog, rtl, sdc, vivado, yosys, openroad) and a relaxed mc threshold ($\geq 15$) to capture digital-front tasks that use cline less intensively.
+% 表~\ref{tab:keywords} 列出用于会话扫描和领域组分配的 EDA 关键词。数字前端组使用扩展关键词集（synthesis、synopsys、tcl、verilog、systemverilog、rtl、sdc、vivado、yosys、openroad）并放宽 mc 阈值（$\geq 15$），以捕获使用 cline 不那么密集的数字前端任务。
 
 \begin{table}[ht]
 \centering
 \small
-\caption{EDA keyword filters by shard.}
-% \caption{各分片的 EDA 关键词过滤器。}
+\caption{EDA keyword filters by area group.}
+% \caption{各领域组的 EDA 关键词过滤器。}
 \label{tab:keywords}
-\begin{tabular}{@{}lll@{}}
+\begin{tabular}{@{}llp{0.52\linewidth}@{}}
 \toprule
-\textbf{Shard} & \textbf{mc threshold} & \textbf{Keywords} \\
+\textbf{Area group} & \textbf{mc threshold} & \textbf{Keywords} \\
 \midrule
-A & $\geq 15$ & verdi, vcs, dc\_shell, innovus, primetime, synthesis, tcl, verilog, rtl \\
-B & $\geq 30$ & hspice, finesim, siliconsmart, spectre, ngspice, simulator, spice \\
-C & $\geq 30$ & calibre, virtuoso, aether, ipcustom, layout, lvs, drc \\
-D & $\geq 30$ & waveview, cosmos, skill, netlist, spiros, spectrum, analog, schematic \\
+Digital front & $\geq 15$ & verdi, vcs, dc\_shell, innovus, primetime, synthesis, tcl, verilog, rtl \\
+SPICE / char.\ & $\geq 30$ & hspice, finesim, siliconsmart, spectre, ngspice, simulator, spice \\
+Physical / layout & $\geq 30$ & calibre, virtuoso, aether, ipcustom, layout, lvs, drc \\
+Schematic / analog & $\geq 30$ & waveview, cosmos, skill, netlist, spiros, spectrum, analog, schematic \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -60,8 +60,8 @@ D & $\geq 30$ & waveview, cosmos, skill, netlist, spiros, spectrum, analog, sche
 Each task is a JSONL record with the following fields:
 % 每个任务是一条 JSONL 记录，包含以下字段：
 \begin{itemize}
-    \item \texttt{id}: unique task identifier (shard-prefixed, e.g., \texttt{A-001}).
-    % \texttt{id}：唯一任务标识（分片前缀，如 \texttt{A-001}）。
+    \item \texttt{id}: unique task identifier (area-group-prefixed, e.g., \texttt{A-001}).
+    % \texttt{id}：唯一任务标识（领域组前缀，如 \texttt{A-001}）。
     \item \texttt{mode}: always \texttt{design\_flow}.
     % \texttt{mode}：恒为 \texttt{design\_flow}。
     \item \texttt{prompt}: natural-language task description.

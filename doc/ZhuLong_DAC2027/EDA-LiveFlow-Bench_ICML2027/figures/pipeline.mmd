@@ -1,0 +1,36 @@
+flowchart TB
+    classDef box fill:#e8f0fe,stroke:#2c7be5,stroke-width:1.5px,color:#1a1a1a
+    classDef agent fill:#fef3e8,stroke:#e88a1a,stroke-width:1.5px,color:#1a1a1a
+    classDef eda fill:#e8f5ee,stroke:#2ca57a,stroke-width:1.5px,color:#1a1a1a
+    classDef judge fill:#f3e8fe,stroke:#7a3ec9,stroke-width:1.5px,color:#1a1a1a
+    classDef out fill:#e8eef5,stroke:#555,stroke-width:1px,color:#1a1a1a
+
+    A["Task assets<br/>(prompt.txt, input files)"]:::box
+    H["PreToolUse hook<br/>(anti-leakage)"]:::box
+
+    subgraph S1 ["Isolated Agent Workdir"]
+        B["Cline agent<br/>(LLM + thinking)"]:::agent
+        M["MCP bridge"]:::agent
+    end
+
+    subgraph S2 ["Remote EDA Server"]
+        C["EDA tools<br/>(run_code / run_commands)"]:::eda
+    end
+
+    D["outputs/submit.zip<br/>(deliverable package)"]:::out
+
+    subgraph S3 ["Separate Judge Dir"]
+        E["check.py<br/>(>=8 assertions)"]:::judge
+    end
+
+    F["PASS / FAIL"]:::out
+
+    A --> B
+    H -.->|blocks answer-key access| B
+    B -->|tool call| M
+    M -->|open_session / run_code| C
+    C -->|logs / reports / extracts| M
+    M -->|results| B
+    B -->|writes files| D
+    D -->|agent exits| E
+    E -->|all assertions hold?| F

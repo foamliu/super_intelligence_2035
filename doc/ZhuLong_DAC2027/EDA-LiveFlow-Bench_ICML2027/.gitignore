@@ -1,11 +1,21 @@
-# LaTeX build artifacts (keep main.pdf)
-main.aux
-main.log
-main.out
-main.blg
-main.fls
-main.fdb_latexmk
-main.bbl
-main.synctex.gz
-build.log
-missfont.log
+# LaTeX build artifacts
+*.aux
+*.bbl
+*.blg
+*.log
+*.out
+*.toc
+*.lof
+*.lot
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.nav
+*.snm
+*.vrb
+
+# matplotlib / mermaid venv (图源脚本在 figures/, PDF 入库)
+figures/.venv/
+
+# mermaid npm cache
+figures/node_modules/

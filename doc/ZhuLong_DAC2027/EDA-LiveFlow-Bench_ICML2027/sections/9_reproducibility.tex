@@ -7,8 +7,8 @@
 We are committed to reproducible research. The following artifacts will be released:
 % 我们致力于可复现研究。以下产物将予以发布：
 
-\textbf{Benchmark tasks.} All \Ntasks{} task specifications (prompts, input assets, reference assertions, \texttt{check.py} judges, \texttt{test\_rationale} fields) will be released in JSONL format with per-task unique identifiers. The release includes the full domain distribution, shard assignment, and \texttt{trace\_source} attribution (host, user, session file, message count, real task summary).
-% \textbf{基准任务。} 全部 \Ntasks{} 个任务规格（提示词、输入附件、参考断言、\texttt{check.py} 判分器、\texttt{test\_rationale} 字段）将以 JSONL 格式发布，每个任务附唯一标识。发布内容包括完整的领域分布、分片分配和 \texttt{trace\_source} 溯源（主机、用户、会话文件、消息数、真实任务摘要）。
+\textbf{Benchmark tasks.} All \Ntasks{} task specifications (prompts, input assets, reference assertions, \texttt{check.py} judges, \texttt{test\_rationale} fields) will be released in JSONL format with per-task unique identifiers. The release includes the full domain distribution, area-group assignment, and \texttt{trace\_source} attribution (host, user, session file, message count, real task summary).
+% \textbf{基准任务。} 全部 \Ntasks{} 个任务规格（提示词、输入附件、参考断言、\texttt{check.py} 判分器、\texttt{test\_rationale} 字段）将以 JSONL 格式发布，每个任务附唯一标识。发布内容包括完整的领域分布、领域组分配和 \texttt{trace\_source} 溯源（主机、用户、会话文件、消息数、真实任务摘要）。
 
 \textbf{Evaluation harness.} The \texttt{run\_one.sh} / \texttt{run\_batch.sh} harnesses, the \texttt{PreToolUse} anti-leakage hook, and the MCP bridge configuration will be released as open-source scripts. The harness is agent-agnostic: any coding agent that supports MCP and shell hooks can be evaluated.
 % \textbf{评测框架。} \texttt{run\_one.sh} / \texttt{run\_batch.sh} 框架、\texttt{PreToolUse} 防泄题钩子和 MCP 网桥配置将作为开源脚本发布。该框架与具体智能体无关：任何支持 MCP 和 shell 钩子的编程智能体均可被评测。
