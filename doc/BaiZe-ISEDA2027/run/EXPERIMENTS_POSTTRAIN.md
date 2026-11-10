@@ -16001,3 +16001,90 @@ Process 3557214 has 36.30 GiB memory in use.
 - 下一步：① v6 覆盖扩展（生成式补全 302 缺口 API，需 GPU4 :8098 + 二次闸门）② verl parquet 转换（verl venv）③ 退火语料用 R148 corpus 原文（~626K tok）做 domain blend ④ GPU 释放后用统一语料跑 SFT surrogate
 
 ---
+
+## §R151 — Generative Code-Example Completion for Missing Eval APIs（wake219, 2026-11-11, GPU4 vLLM serve）
+
+> **目标**：执行 R150 §6 下一步①——v6 corpus 仅覆盖 186/488 eval API（通过权威 >>> doctest 提取），
+> 剩余 302 API 无 doctest 示例。其中 207 个有 R148 API-ref 文档（签名/参数/返回描述）。
+> 本节用 GPU4 上已常驻的 MiniCPM5-2B vLLM serve（:8098）**生成式补全**这 207 个 API 的 Python 代码示例。
+
+### 1. 方法
+
+- **脚本**：`run/baize_posttrain_synth_v7_generative.py`
+- **输入**：
+  - eval API 列表：`pyAether_eval_488_apis.txt`（488 API）
+  - v6 已覆盖 API：`sft_pyaether_corpus_v6_method_examples.jsonl`（186 API）
+  - R148 API-ref 文档：`pyAether_api_ref_488.jsonl`（365 static）+ `pyAether_api_ref_mcp_enriched.jsonl`（35 MCP）= 400 entries
+- **流程**：
+  1. `missing = eval_apis - v6_apis` → 302 API
+  2. `has_doc = missing ∩ ref_corpus` → 207 API（有文档可做生成式补全）
+  3. `no_doc = missing - ref_corpus` → 95 API（无文档，跳过）
+  4. 对每个 has_doc API：构建 prompt（API 文档 + "写 Python 代码调用此 API" 指令）→ 查询 vLLM → 提取代码块 → `wrap_as_function` → `has_real_api_call` 质量检查 → (api_name, method, md5(code)) 去重
+- **模型端点**：`http://localhost:8098/v1/chat/completions`（MiniCPM5-2B, GPU4, vLLM 0.7.3）
+- **生成参数**：max_tokens=400, temperature=0.2, delay=0.2s
+
+### 2. has_real_api_call 缺陷与修复（关键发现）
+
+- **原始检查**（wake218 首次运行使用）：要求 `code_lines > 0 AND reasoning_lines == 0`
+  - `reasoning_kws` 含 "we need"/"the user"/"the code"/"we must" 等 25 个关键词
+  - **问题**：MiniCPM5-2B（2B 小模型）常在代码块前后输出推理散文（如 "We need to output a single line of Python code that calls pyAether.dbFind…"）
+  - 当 `extract_code` 的 fallback 路径（无 fenced block 时）保留了提及 "pyAether" 的散文行，
+    `has_real_api_call` 因 `reasoning_lines > 0` 而**拒绝整个块** → 大量假阴性
+- **实测确认**：直接查询 `print(pyAether.dbFind())` → 模型输出推理散文 + 代码块混合
+- **修复（R151）**：
+  - `has_real_api_call`：不再要求 `reasoning_lines == 0`；改为逐行扫描，跳过 prose/comment/def/import 行，
+    只要找到**至少一行**含 `pyAether.X(` 或 `pyAether.X` + `=`/`(`（code structure）即返回 True
+  - `extract_code` fallback：仅保留 import 行 + 含 pyAether 且有 `(`/`=` 的行（不保留纯散文）
+  - 正则从 `(?:pyAether|pyScript|pa|ae)` 收紧为 `(?:pyAether|pyScript|pa|ae)\s*\.\s*[A-Za-z_][A-Za-z0-9_]*`（要求完整标识符）
+
+### 3. 产物统计
+
+#### 初始运行（旧检查，wake218）
+
+| 指标 | 值 |
+|:--|--:|
+| 生成对数 | **83** |
+| 失败数 | 124（全部 `no_real_api_call`） |
+| ~tokens | ~83K（307,093 chars / 3.7） |
+| unique api_used | 83 |
+| 文件 | `run/sft_pyaether_corpus_v7_generative.jsonl`（442 KB） |
+
+#### 样本质量（初始运行 83 对）
+
+- `pyAether.CString`：`import pyAether; s = pyAether.CString("hello"); print(s.value)` ✅ 真实 API 调用
+- `pyAether.EmyTechGetPurposeNum`：`import pyAether as pa; pa.emyInitAether("-adv"); pa.aeOpenDesign(...); pa.aeGetTech()` ✅ 多步链式调用
+- `pyAether.GuCartPolyLine.getPointArray`：`import pyAether as pyScript; pyScript.emyPointArrayF(); pyScript.GuCartPolyLine(point_array)` ✅ 对象创建+方法调用
+
+#### 失败分析（124 个 no_real_api_call）
+
+- 多为**属性 getter**（`emyBox.top/bottom/right`、`MdeSweepRange.center/mode/start/stop`）和**容器类型**（`vector1D_double`、`emyBitArray`）
+- 模型对这些 API 生成的代码多为纯散文（无 fenced code block）或仅引用 API 名而未实际调用
+- 部分为**假阴性**（模型生成了真实代码，但散文关键词导致 `reasoning_lines > 0` 被拒）→ 修复后 re-run 可回收
+
+### 4. 污染隔离闸门（红线 §5.1）
+
+- 闸门脚本：`baize_posttrain_contamination_gate.sh`（非 dry-run 实扫）
+- 黑名单：6 评测快照并集 536 任务（含 v20260311 的 158）
+- **结果**：扫描 83 文档 / **命中 0** → ✅ **PASS**（可投料）
+- 报告：`/tmp/r151_v7_contam_report.md`
+- **隔离原理**：模型输入 = API 文档（签名+参数+描述）；158 eval 任务的 prompt/entry_point/test/assert **从未发送给模型**；
+  生成产物按 13-gram/8-gram 与 536 任务黑名单比对，0 命中
+
+### 5. 修复后 Re-run（进行中）
+
+- 用修复后的 `has_real_api_call` + `extract_code` 重新运行 207 API
+- 进程：setsid 派生（PID 3991230），GPU4 :8098，temperature=0.2
+- 状态：wake219 提交时仍在运行（GPU4 util 94%）；下次唤醒将收集最终结果 + 二次闸门 + 合并到统一语料
+
+### 6. 结论与下一步
+
+- v7 生成式补全**可行**：83/207 API 生成高质量真实代码示例，contam gate PASS
+- has_real_api_call 缺陷已修复，re-run 预计回收部分假阴性
+- **覆盖扩展**：v6(186) + v7(83+待定) → 预计覆盖 270+/488 eval API（>55%）
+- **下一步**：
+  1. re-run 完成后收集结果 → 二次 contam gate → 合并到 `sft_pyaether_corpus_unified_v5v6.jsonl`（v5+v6+v7）
+  2. verl parquet 转换（verl venv `~/code/verl_cu124_venv/`）
+  3. 退火语料用 R148 corpus 原文（~626K tok）做 domain blend
+  4. GPU 释放后用统一语料跑 SFT surrogate
+
+---
