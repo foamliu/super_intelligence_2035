@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>论文观察日报 · 2026-11-11（早报 · 3/5）· research 线</title>
+<style>
+  :root { --primary:#0b3d6e; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700; --bad:#cf222e;
+          --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+         color:var(--text); background:var(--bg); line-height:1.7; font-size:15px; }
+  .wrap { max-width:1040px; margin:0 auto; padding:32px 20px 80px; }
+  header.hero { background:linear-gradient(135deg,#0b3d6e 0%,#1f6feb 100%); color:#fff; border-radius:14px;
+                padding:30px 32px; margin-bottom:22px; box-shadow:0 8px 24px rgba(11,61,110,.18); }
+  header.hero h1 { margin:0 0 6px; font-size:24px; letter-spacing:.3px; }
+  header.hero .sub { font-size:15px; opacity:.95; }
+  header.hero .meta { margin-top:14px; font-size:13px; opacity:.9; display:flex; flex-wrap:wrap; gap:8px 18px; }
+  header.hero .meta span { background:rgba(255,255,255,.14); border-radius:999px; padding:2px 12px; }
+  .disc { margin-top:14px; font-size:12.5px; background:rgba(0,0,0,.18); border-radius:8px; padding:8px 12px; opacity:.95; }
+  .badge { display:inline-block; padding:1px 10px; border-radius:999px; font-size:12.5px; font-weight:700; vertical-align:middle; }
+  .b-am { background:#e6f4ea; color:#0b6b2f; }
+  .b-pm { background:#ddf4ff; color:#0b3d6e; }
+  .b-jz { background:#dafbe1; color:var(--ok); } .b-kp { background:#ffeef8; color:#a3238e; }
+  .progress { margin-top:8px; font-size:13.5px; }
+  h2.sec { font-size:19px; margin:34px 0 12px; padding-bottom:8px; border-bottom:2px solid var(--border); }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:18px 22px; margin:16px 0;
+          box-shadow:0 1px 3px rgba(27,31,36,.06); }
+  .card h3 { margin:0 0 4px; font-size:17px; line-height:1.45; }
+  .card .no { display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px; margin-right:8px;
+              border-radius:50%; background:var(--accent); color:#fff; font-size:14px; font-weight:700; vertical-align:middle; }
+  .row { display:flex; gap:10px; margin:7px 0; font-size:14px; }
+  .row .k { flex:0 0 108px; color:var(--muted); font-weight:600; }
+  .row .v { flex:1; }
+  .orig { font-style:italic; color:#0b3d6e; }
+  code { background:#eef1f4; border:1px solid #e1e4e8; border-radius:5px; padding:1px 6px;
+         font-family:Consolas,Menlo,monospace; font-size:12.5px; color:#0b3d6e; }
+  a { color:var(--accent); word-break:break-all; }
+  .reason { background:#f0f6ff; border:1px solid #cfe0f5; border-left:4px solid var(--accent); border-radius:8px;
+            padding:10px 14px; margin-top:10px; font-size:13.5px; }
+  table { border-collapse:collapse; width:100%; margin:12px 0; font-size:13px; background:var(--card); }
+  th,td { border:1px solid var(--border); padding:7px 10px; text-align:left; vertical-align:top; }
+  th { background:#eef3f8; color:var(--primary); font-weight:600; }
+  tr:nth-child(even) td { background:#fafbfc; }
+  .note { background:#fff8ef; border:1px solid #f0d9b5; border-left:4px solid var(--warn); border-radius:8px;
+          padding:10px 16px; font-size:13px; color:#6a4a00; }
+  .ok-box { background:#f0fff4; border:1px solid #b7f0c5; border-left:4px solid var(--ok); border-radius:8px;
+            padding:10px 16px; font-size:13px; }
+  footer { margin-top:44px; padding-top:16px; border-top:1px solid var(--border);
+           color:var(--muted); font-size:12.5px; }
+  ul,ol { margin:6px 0; padding-left:20px; } li { margin:3px 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+  <h1>论文观察日报 · 2026-11-11 <span class="badge b-am">早报 · 3/5</span></h1>
+  <div class="sub">每日 5 篇推荐论文（早 3 / 晚 2）· <b>今日进度 3 / 5</b>（早报 3 篇「借鉴」；晚报 18:00 补 2 篇）· 含 <b>「对各线的可执行建议」</b>（pretrain / vision / harness / data / zhulong / designflow 六线）</div>
+  <div class="meta">
+    <span>📅 2026-11-11（周三）</span>
+    <span>🕕 早报 06:0x CST</span>
+    <span>📚 数据源 arXiv（export.arxiv.org）· 官方 API</span>
+    <span>🏷 本页口径：<b>借鉴</b>（3 篇）</span>
+  </div>
+  <div class="disc">⚠️ 免责：本页为 <b>论文解读 / 待读线索</b>，<b>非结论、非官方</b>；所有数字均为<b>作者自报</b>，本线<b>未复现</b>；原题照抄不改写。「对各线的可执行建议」为<b>基于论文的推断，供各线自行评估</b>，非指令；与各线任务书冲突时以任务书为准。</div>
+</header>
+
+<div class="note">
+  <b>批次状态（先看这条）</b>：本轮 4 条独立探针 <b>4/4</b> <code>status=200</code> + <code>application/atom+xml; charset=utf-8</code>、全部 <code>attempts=1</code> —— ① <code>cat:cs.CL</code> <code>totalResults=</code><b>125,075</b>、最新 <code>published</code> 仍为 <code>2026-11-09T18:57:00Z</code>（<code>2611.12872v1</code> HiVe-Mem）；② <code>cat:cs.CL AND submittedDate:[202611110000 TO 202611152359]</code> → <b>total=0</b>；③ 全库同区间 → <b>total=0</b>（11-10 提交尚未入库，合公告日历）；④ 广度 5 分类 → <b>645,595</b>（PM 轮 645,596，<b>−1</b>，如实记：arXiv 总量会因撤稿/重分类回退，不能当单调计数器）。<br>
+  ⇒ 与 2026-11-10 晚报相比<b>批次未推进</b>（同一 <code>2026-11-09</code> 公告批次）⇒ 本轮窗口 = <code>published ≥ 2026-11-09</code>；三篇距本轮唤醒 <b>27.2–29.0h</b>，<b>在 72h 常规窗口内，无需例外</b>。
+  <hr style="border:0;border-top:1px dashed #d0d7de;margin:10px 0;">
+  <b>取数</b>（<code>raw/candidates_r144.py 2026-11-09</code>，与 r143 同口径：单分类各取最新 100 条、合并去重、只留 <code>published ≥ 2026-11-09</code>）：<code>cs.CL</code> 125,075 / <code>cs.CV</code> 212,913 / <code>cs.LG</code> 298,450 / <code>cs.AI</code> 212,161 / <code>cs.SE</code> 30,950（均 <code>200</code> + <code>atom+xml</code>、<code>n=100</code>）⇒ <b>merged 310 / seen 2 / fresh 308</b>（seen 2 = 11-10 晚报已收的 <code>2611.12820</code> / <code>2611.12832</code>）。
+</div>
+
+<h2 class="sec">☀️ 早报 · 3 篇「借鉴」<span class="badge b-jz">借鉴</span></h2>
+<p style="font-size:13.5px;color:#59636e;margin:0 0 8px;">本轮按「<b>各线当轮真正卡住的地方</b>」选文：<b>vision</b> 的 v6 卡在<b>奖励信号</b>（历史诊断：离散分档导致 78.7% 的组 advantage 标准差为 0）；<b>harness</b> 的 7 路评测只报 resolved / pass，<b>部分完成与组织成本被压成一个数</b>；<b>designflow / zhulong</b> 的判分仍是<b>二值 pass/fail</b>。对应三篇：<code>2611.12728</code>（dense process credit 取代 outcome-only）→ vision 主 · zhulong 侧；<code>2611.12856</code>（resolved + continuous 双指标 + 委派遥测）→ harness 主；<code>2611.12712</code>（assertion snapshot：把「功能是否被破坏」变成可计分断言集）→ designflow 主 · zhulong 侧。三篇均属 <code>2026-11-09</code> 公告批次。</p>
+
+<div class="card">
+  <h3><span class="no">1</span>Safe Reinforcement Learning for Multi-Turn Clinical Agents: When Dense Rewards Beat Outcome Rewards</h3>
+  <div class="row"><div class="k">中文一句话</div><div class="v">在多轮临床 agent（该问什么、何时停止收集证据、采取哪个动作）上做受控实验：<b>只用最终结果奖励</b>的 GRPO 常把<b>平均分</b>刷上去，却同时制造<b>过早承诺、只问一个问题就收手、在罕见高危病例上崩掉</b>；给「<b>能降低不确定性的提问</b>」加<b>稠密过程奖励</b>（λ=0.2）后，在 3 个训练种子上<b>留出集价值 +0.285→+0.313、高危价值 +0.098→+0.157、高危支持率 0.33→0.50、中等病例支持率 0.38→0.67</b>，且不再出现 outcome-only 的高危种子崩坏；但过程奖励的<b>强度是任务相关的</b>（滴定任务里 λ=0.1 才把提问数从 1.24 拉回 2.67，λ=0.2 则过度提问、价值掉到 −0.091），且 RL <b>修不好</b>有偏 SFT 留下的稀有行为缺口。</div></div>
+  <div class="row"><div class="k">原题</div><div class="v"><span class="orig">Safe Reinforcement Learning for Multi-Turn Clinical Agents: When Dense Rewards Beat Outcome Rewards</span></div></div>
+  <div class="row"><div class="k">作者 / 机构</div><div class="v">Brendan P. Murphy · Agustina Saenz（<b>2 位</b>；据 PDF 首页：<code>asaenz@stanford.edu</code> ⇒ <b>Stanford</b>；代码 <code>github.com/csbrendan/Safe-Reinforcement-Learning-for-Multi-Turn-Clinical-Agents</code>）</div></div>
+  <div class="row"><div class="k">日期</div><div class="v">首次提交 <b>2026-11-09</b>（<code>published=2026-11-09T17:14:40Z</code>；<code>updated</code> 同日，无 v2）· 距本轮唤醒 <b>≈28.8h</b>（<b>在 72h 内</b>）· PDF 实测 <b>31 页</b> / <b>95,431</b> 字符（去空白）</div></div>
+  <div class="row"><div class="k">分类 / 标签</div><div class="v"><code>cs.LG</code> · <span class="badge b-jz">借鉴</span> · 关键词：GRPO / 过程奖励 / 稠密信用分配 / 多轮 agent / 高危子群 / 奖励几何</div></div>
+  <div class="row"><div class="k">链接</div><div class="v"><a href="https://arxiv.org/abs/2611.12728">https://arxiv.org/abs/2611.12728</a>（PDF 已落地：<code>research/pdf/2026-11-11/2611.12728.pdf</code>，1,817,756 B，校验见附录 C）</div></div>
+  <div class="reason"><b>推荐理由（借鉴 · 与 vision 的 v6 奖励重设直接对口 / 与 zhulong 的「分数 + 成本」口径侧向相关）</b>
+    <ol>
+      <li><b>vision 的根因就是「奖励离散、组内全同」</b>：v5 诊断显示 <b>78.7% 的组 advantage 标准差为 0</b>、全 0 组 0%、全同档组无信号。本文的对照组正是<b>outcome-only GRPO</b>，并把它拆成三类失败模式（过早承诺 / 只问一次 / 高危崩坏），与「离散档位把过程压扁」是同一类病。它给的解法不是调温度，而是<b>把过程信号显式写进奖励</b>，且用 <code>λ</code> 做强度旋钮 —— 这正好对应 v6 要做的「奖励连续化」。</li>
+      <li><b>有可用的量化对照与安全护栏</b>：3 个种子、留出集、support@k（不是只看均值）——高危支持率 <b>0.33±0.29 → 0.50±0.00</b>，中等 <b>0.38±0.18 → 0.67±0.10</b>，同时提问数只从 1.82 增到 2.08。说明「加过程奖励」不是无代价地鼓励多动作，而是把「有效动作」与「凑动作」区分开。v6 若只看总分，会把「多测几次波形」误判为变好。</li>
+      <li><b>负结果同样值钱</b>：分离探索/利用能把高危支持推到 1.00，但提问数升到 4.4、良性支持从 0.48 掉到 0.04，且末次 ckpt 回落到 0.50 —— <b>「选点乐观」会把一次性收益当成稳定收益</b>。这对 vision「CPU 小样本、几次就下结论」是直接警告。</li>
+      <li><b>边界</b>：① 临床多轮决策，<b>不是波形</b>，数值不可移植，只有奖励结构/报告口径可移植；② 高危子群只有 <b>2 个病例</b>（support 只能取 0/0.5/1），统计力极弱；③ 主实验 3 seeds，滴定/解耦实验是单种子；④ 作者自报、本线未复现。</li>
+    </ol>
+    <b>建议动作</b>：<b>读原文</b>（§3 三个环境与 oracle、§5.2 dense credit、§5.3 解耦的代价、Table 3）+ <b>试跑</b>：见「vision」建议（v6 奖励加过程项，λ 三点扫）。
+  </div>
+</div>
+
+
+
+<div class="card">
+  <h3><span class="no">2</span>WorkflowArena: Benchmarking Executable Workflow Orchestration in LLM-Based Multi-Agent Systems</h3>
+  <div class="row"><div class="k">中文一句话</div><div class="v">把「<b>多 agent 怎么组织</b>」当成一项可测能力：造 <b>145 个长程任务 / 8 个专业域 / 17 种任务形态</b>，每个任务给初始工作区 + 一个由<b>隐藏 verifier</b> 判分的整合交付物；agent 自己决定要不要委派、怎么委派，所有委派必须走统一的 <code>Workflow</code> 工具（最多 16 个并发 worker、原生 sub-agent 被禁用），<b>委派次数、worker 规模、主/子 agent 的 token 与成本全部记账</b>，且共享同一时间预算。25 个「模型 × effort」配置里<b>没有任何一个通吃所有域</b>：最强 Opus max 平均解出 <b>36.95%</b>，MATH 最高 <b>95.83%</b>、SWE 最高 <b>29.41%</b>、LAW 从未超过 <b>9.09%</b>、FIN 从未超过 <b>18.75%</b>；<b>连续得分与 resolved 率的 Spearman 只有 0.90，但域内差得离谱</b>（SWE 平均差 <b>66.16</b> 分：Opus high 的 SWE 得分 <b>96.98</b> 却只 resolved <b>17.65%</b>）。组织策略也分家：Claude Code 系<b>少委派、大编组</b>（Opus 0.86 次/任务、5.55 worker/次），Codex 系<b>多委派、小编组</b>（Astra 2.09 次、1.72 worker）；把执行模型固定后，<b>Opus 写的 workflow 能提升所有弱执行者</b>（Kimi 35.75→46.61、DeepSeek 18.37→25.24）。</div></div>
+  <div class="row"><div class="k">原题</div><div class="v"><span class="orig">WorkflowArena: Benchmarking Executable Workflow Orchestration in LLM-Based Multi-Agent Systems</span></div></div>
+  <div class="row"><div class="k">作者 / 机构</div><div class="v">Zheng Jiang · Fang Niu · Bo Peng · et al（<b>13 位</b>；据 PDF 首页：<b>Navers Lab · Einsia.AI · Tsinghua University</b>；项目页 <code>lab.einsia.ai/workflowarena</code>）</div></div>
+  <div class="row"><div class="k">日期</div><div class="v">首次提交 <b>2026-11-09</b>（<code>published=2026-11-09T18:45:28Z</code>；<code>updated</code> 同日，无 v2）· 距本轮唤醒 <b>≈27.2h</b>（<b>在 72h 内</b>）· PDF 实测 <b>22 页</b> / <b>70,935</b> 字符（去空白）</div></div>
+  <div class="row"><div class="k">分类 / 标签</div><div class="v"><code>cs.CL</code> · <span class="badge b-jz">借鉴</span> · 关键词：agent harness / 多 agent 编排 / 委派遥测 / 隐藏 verifier / resolved vs continuous / 成本前沿</div></div>
+  <div class="row"><div class="k">链接</div><div class="v"><a href="https://arxiv.org/abs/2611.12856">https://arxiv.org/abs/2611.12856</a>（PDF 已落地：<code>research/pdf/2026-11-11/2611.12856.pdf</code>，14,382,044 B ≈ 13.7 MiB <b>（单文件 &gt;5MB，按体积红线绝不入 git）</b>，校验见附录 C）</div></div>
+  <div class="reason"><b>推荐理由（借鉴 · 与 harness 的 7 路评测/报告口径直接对口 / 对 designflow 的「部分完成」判分侧向相关）</b>
+    <ol>
+      <li><b>harness 现在只有「pass / resolved」一个面</b>：cline 223 files / 206 real / 153 resolved / 53 fail / 17 empty，报告里看不出「改对了一半」与「完全没做」的差别。本文给出可直接抄的<b>双指标</b>：resolved（全部验收项通过）+ continuous score（部分进度），并证明两者会<b>改变系统排名</b>（Sonnet max 按总分排第 15、按 resolved 排第 4）。</li>
+      <li><b>「组织成本」是可测的，不必等新基准</b>：WorkflowArena 把每次委派记成事件，给出 <code>Workflow calls/task</code>、<code>worker invocations/Workflow</code>、主/子 token、推理成本四列。harness 的 7 路 trace 里本来就有 tool call 与 token，<b>只差把这四列落到报告</b>；有了它们才能回答「加子 agent 到底赚不赚」（本文：Sonnet max 用 3.2× token 换 +7.95 分，Sol xhigh 用 1.9× 只换 +1.91 分）。</li>
+      <li><b>成本前沿直接给 harness 的 429/quota 决策提供对照</b>：Opus high 34.11% @ <b>$6.66/任务</b>、Sol low 27.59% @ <b>$3.61</b>、Astra xhigh 30.80% @ <b>$29.26</b>（比 Opus high 低 3.31 分却贵 4.4×）。这说明「堆 effort/堆并发」不是单调收益，可为 7 路配额分配提供量化依据。</li>
+      <li><b>边界</b>：① 8 个域里没有 EDA/芯片设计，<b>任务形态不可直接搬</b>；② 判分用隐藏 verifier + 程序化验收，harness 的 SWE-bench/TB4 已有自己的 verifier，不能替换；③ 只测 9 个闭源/API 模型，未测本地微调模型；④ 作者自报、本线未复现。</li>
+    </ol>
+    <b>建议动作</b>：<b>读原文</b>（§3.3 协议与预算、§4.2–4.3 resolved/token、§4.4 成本、§4.5 委派分布、Table 1/2）+ <b>试跑</b>：见「harness」建议（报告加 6 列，先用现有 trace 回填）。
+  </div>
+</div>
+
+
+
+<div class="card">
+  <h3><span class="no">3</span>Will AI mess my RTL? A snapshot-based approach to verifying AI-written RTL</h3>
+  <div class="row"><div class="k">中文一句话</div><div class="v">提出 <b>SVApshot</b>：让 LLM 为一个已有 RTL 模块<b>自动生成 SystemVerilog 断言（SVA）</b>，再用形式验证工具反复给出反例（CEX）→ LLM 修断言，直到得到一组<b>「对参考 RTL 证明通过」的断言快照</b>；快照就是该模块功能的<b>回归测试集</b>，之后无论人还是 AI 改代码，只要跑这组断言就能发现「功能被改坏」。在 <b>16 个 RTL 模块（24–419 行，含带子模块的层次化设计）</b>上测 3 个模型：<b>覆盖率不再是 0/1</b>（如 <code>branch_unit</code> 14.4%→42.0%、<code>score_board_scalar</code> 55.7%→86.0%、<code>ptw</code> 47.9%→52.8%、<code>tlb</code> 23.7%→39.3%；<code>alu</code> 初始即 100%）；人工在 scoreboard 里埋一个「64 位乘法写错 <code>inst_d[2]</code> 而非 <code>inst_d[1]</code>」的真 bug，<b>生成的断言成功检出</b>。成本约 <b>0.5 €/模块快照</b>，但时间主要花在「修断言」（55 分钟，占 77.4%；FPV 工具占 69.4%），作者建议调小修复次数上限。</div></div>
+  <div class="row"><div class="k">原题</div><div class="v"><span class="orig">Will AI mess my RTL? A snapshot-based approach to verifying AI-written RTL</span></div></div>
+  <div class="row"><div class="k">作者 / 机构</div><div class="v">Bernat Homs · Oscar Palomar · Miquel Moreto · Marcelo Orenes-Vera（<b>4 位</b>；据 PDF 首页：<b>UPC · Barcelona Supercomputing Center · NVIDIA</b>；DAC 2026 Work-in-Progress Poster）</div></div>
+  <div class="row"><div class="k">日期</div><div class="v">首次提交 <b>2026-11-09</b>（<code>published=2026-11-09T17:03:14Z</code>；<code>updated</code> 同日，无 v2）· 距本轮唤醒 <b>≈29.0h</b>（<b>在 72h 内</b>）· PDF 实测 <b>7 页</b> / <b>37,044</b> 字符（去空白）</div></div>
+  <div class="row"><div class="k">分类 / 标签</div><div class="v"><code>cs.SE</code> · <span class="badge b-jz">借鉴</span> · 关键词：RTL 验证 / 形式断言 / 快照回归 / 埋 bug 检出 / 覆盖率计分 / 非二值判分</div></div>
+  <div class="row"><div class="k">链接</div><div class="v"><a href="https://arxiv.org/abs/2611.12712">https://arxiv.org/abs/2611.12712</a>（PDF 已落地：<code>research/pdf/2026-11-11/2611.12712.pdf</code>，586,437 B，校验见附录 C）</div></div>
+  <div class="reason"><b>推荐理由（借鉴 · 与 designflow 的「判分可验证性 + L1–L5 保真度」直接对口 / 与 zhulong 的 EDA 代码评测侧向相关）</b>
+    <ol>
+      <li><b>designflow 正在把「检查」做成 k_check≥16 的断言闸门</b>，但仍以「全过 = PASS」为主。SVApshot 的做法补上了<b>三件缺的东西</b>：① <b>快照</b>（对参考实现证明通过的性质集，作为未来改动的回归基线）；② <b>覆盖率/通过断言数</b>作为<b>分级分数</b>（不是二值）；③ <b>埋 bug 哨兵</b>（参考实现里故意埋一个错，检查器必须报错）——这正好对应 designflow 已有的 <code>bad_p7 切边 rect</code> 哨兵思路，可把「哨兵必须失败」写成通用验收项。</li>
+      <li><b>它把「部分完成」变成可解释的数字</b>：同一模块不同模型/不同初始断言集，最终覆盖率 1.76%–100% 连续分布（<code>mul_unit</code>：GPT 92.6→98.9，Llama 3.3 70b 仅 0.7→1.76）。这比只看 pass/fail 更能区分「勉强过」与「真的覆盖了边界」。</li>
+      <li><b>成本口径可直接进设计</b>：0.5 €/快照，77.4% 时间在修断言，FPV 占 69.4% —— 说明<b>判分器本身的时间/成本要单列</b>；designflow 若加形式/断言类检查，应按「每 case 分钟数 + 工具费」入账，而不是只算造题成本。</li>
+      <li><b>边界</b>：① 全程依赖 <b>SystemVerilog + JasperGold</b>，designflow 的 Python/GDS/DRC/SPICE 任务<b>不能直接跑</b>，只能移植协议；② 只测 16 个 24–419 行的小模块，未测 SoC 级；③ 断言快照假设「参考 RTL 是对的」，参考错则快照错；④ 作者自报、本线未复现。</li>
+    </ol>
+    <b>建议动作</b>：<b>读原文</b>（§2 工具流与 Algorithm 1、§4.1 Table 3、§4.3 时间/成本、§4.4 埋 bug 与 AI 重写验证）+ <b>试跑</b>：见「designflow」建议（先在一个 RTL/GDS 小 case 上加「快照 + 哨兵 + 覆盖率」三件套）。
+  </div>
+</div>
+
+
+
+<h2 class="sec">🎯 对各线的可执行建议（pretrain / vision / harness / data / zhulong / designflow）</h2>
+<div class="note">
+  <b>说明</b>：依据 = 本轮 3 篇（arXiv ID + 摘要/正文关键数字；作者自报、本线未复现）；「建议动作」为<b>基于论文的推断</b>，供各线自行评估，<b>不构成新指令</b>；与各线任务书冲突时以任务书为准。各线当轮状态取自其 <code>MEMORY_*</code> 顶部快照 + 任务书运维指令区（<b>2026-11-11 06:0x 实读</b>）。<b>6 线全部列出</b>；本期确无可用论文的线<b>显式写「无新增可用建议」并给理由</b>，<b>不凑数</b>。
+</div>
+<table>
+  <tr><th>线</th><th>建议动作</th><th>依据（arXiv ID + 关键数字）</th><th>预期收益</th><th>成本</th><th>优先级</th></tr>
+  <tr>
+    <td><b>pretrain</b><br><span style="font-size:12px;color:#59636e;">iter <b>159,320 / 700k</b>（≈22.8%）、<b>595K tok/s</b>、loss≈2.03、step 7.05s（&lt;7.4s）、0 NaN；用户更正：<b>评测数不写进论文</b>，只作训练监控；下个 160k ckpt ≈1.3h 后</span></td>
+    <td><b>本期无新增可用建议</b>（不凑数）。理由：训练已锁定在 159k/700k，<b>架构与配方都不可动</b>；本轮 3 篇分别讲<b>多轮奖励</b>、<b>多 agent 编排评测</b>、<b>RTL 形式验证</b>，均不涉及预训练吞吐 / 长上下文 / 数据配方；把它们的结论硬套到 2B 预训练只会增加噪声。<br><span style="font-size:12px;color:#59636e;">备查（<b>不是建议</b>，零成本）：<code>2611.12729</code> <b>KiteNorm</b>（NeurIPS 2026，≤1.3B decoder-only，Post-LN 方差正则 + 残差缩放，深度/宽度/批量/预算的 scaling law 均偏好它）—— 当前是 Mamba2-hybrid、不是 Post-LN 的稳定性问题，<b>仅当架构搜索重开再读</b>。</span></td>
+    <td>—（3 篇均无对口；<code>2611.12729</code> 仅备查）</td>
+    <td>—</td><td>0（仅备查）</td><td>—</td>
+  </tr>
+  <tr>
+    <td><b>vision</b><br><span style="font-size:12px;color:#59636e;">v5 已交付（A 16%→B 37%→C 53%，McNemar <b>p=0.0009</b>，cheat_rate=0）；v6 GRPO 脚本在位待令；全 CPU（.12/.29）；历史诊断：<b>78.7% 的组 advantage 标准差 = 0</b>（离散分档导致无信号）</span></td>
+    <td>① <b>v6 奖励拆成两项</b>：<code>R = R_outcome + λ · R_process</code>。outcome 用<b>连续误差</b>（不是 4 档离散）；process 用<b>每步交互的信息增益</b>（候选：执行 zoom / measure / cursor 动作后，模型对最终答案分布的<b>熵下降</b>；或该动作新覆盖的波形区段比例）。<br>② <b>λ 三点扫 {0.03, 0.1, 0.2} × 3 seeds = 9 组</b>，每组 50 步（≈2 min/步），<b>预注册判据</b>：以 outcome-only 为基线，报 <b>mean±sd + support@k</b>（同一样本重复 3 次），只有「均值提升 &gt; 1 sd 且 3 seeds 同向」才判通过；否则记负结果。<br>③ <b>同时记录每样本交互步数</b>，防止把「多测几次」当成能力提升；<b>最优 ckpt 与最后 ckpt 双报</b>。</td>
+    <td><code>2611.12728</code>：3 seeds、留出集；outcome-only → dense（λ=0.2）价值 <b>+0.285±0.027 → +0.313±0.024</b>、高危价值 <b>+0.098→+0.157</b>、高危支持 <b>0.33→0.50</b>、中等支持 <b>0.38→0.67</b>；λ 强任务相关（滴定 λ=0.1 提问 1.24→2.67，λ=0.2 过度提问、价值 −0.091）；解耦最优高危支持 1.00 但末次 ckpt 回落 0.50、提问 4.4</td>
+    <td>① 打破「组内全同 → advantage=0」的无信号区，让 78.7% 的零方差组重新有梯度；② 用 support@k + 双 ckpt 防「选出乐观点」；③ 负结果也能写进 v6 报告，不再只有「无提升」。</td>
+    <td>脚本改造 ≈0.5 天；9 组 × 50 步 × 2 min ≈ <b>15h CPU</b>（.12/.29 夜间跑，不占 GPU）</td>
+    <td><b>高</b></td>
+  </tr>
+  <tr>
+    <td><b>harness</b><br><span style="font-size:12px;color:#59636e;">R2147 incr_eval：hermes 343/381、opencode 365/446、eval 总 <b>1340 resolved</b>；predict 7 路 alive <b>1830 files</b>；cline <b>223 files / 206 real / 153 resolved / 53 fail / 17 empty</b>；gateway <b>429 QUOTA</b>（predict stalled）；TB-2.1 opencode rerun 105 done / 35 pass</span></td>
+    <td>① 在 <code>gen_report</code>（<code>glm53_7way</code> + <code>cline_special</code>）<b>加 6 列</b>：<code>resolved_rate</code> / <code>continuous_score</code>（按测试通过比例或 rubric 部分分）/ <code>workflow_calls_per_task</code>（子 agent 启动次数）/ <code>worker_invocations_per_workflow</code> / <code>tokens_main</code>+<code>tokens_worker</code> / <code>usd_per_task</code>。<br>② <b>先用现有 1340 resolved + 1830 files 回填，不重跑</b>；算一次「旧 pass vs 新 continuous」的 Spearman，&lt;0.9 就<b>两种排名并列</b>。<br>③ <code>empty</code> 一律标 <code>EMPTY/QUOTA</code> 并单列「因 quota 损失的任务数」，<b>不算失败</b>（沿用上轮静默失败守卫）。</td>
+    <td><code>2611.12856</code>：resolved 与 continuous 的 <b>Spearman 0.90</b>，但 SWE 平均差 <b>66.16 分</b>（Opus high SWE 得分 <b>96.98</b> vs resolved <b>17.65%</b>；LAW 70.7 vs <b>2.9%</b>）；Sonnet max 用 <b>3.2× token 换 +7.95 分</b>、Sol xhigh <b>1.9× 只换 +1.91</b>；成本 Opus high 34.11% <b>@$6.66</b>、Sol low 27.59% <b>@$3.61</b>、Astra xhigh 30.80% <b>@$29.26</b>（低 3.31 分、贵 4.4×）；委派 Opus <b>0.86 次/任务、5.55 worker</b> vs Astra <b>2.09 次、1.72 worker</b></td>
+    <td>① 把「能力不足」与「交付不完整」分开（现在 53 fail 里两者混在一起）；② 给 429 配额在 7 路之间怎么分提供量化依据（避免把预算堆到边际收益最低的一路）；③ 空输出不再污染 pass 率。</td>
+    <td>报告脚本 2–4h + 现有 trace 回填 1h；<b>零 GPU、零重跑</b></td>
+    <td><b>中高</b></td>
+  </tr>
+  <tr>
+    <td><b>data</b><br><span style="font-size:12px;color:#59636e;"><code>stack-v3-train</code> 2TB 下载 <b>全 DONE</b>（4,600 parquet / 1,987,930,402,327 B ≈ 1.85 TiB / 0 inc）；QC 已出（vendor 1.0%、&gt;1MB 0、empty 0；EDA 12.3%、Target 58.1%）；与 UDC L2 重叠 <b>2.4%</b>；<b>当前进入过滤 + 分词阶段、待运维指令</b></span></td>
+    <td><b>本期无新增可用建议</b>（不凑数）。理由：本轮 3 篇分别是<b>多轮奖励设计</b>、<b>多 agent 编排评测</b>、<b>RTL 形式验证</b>，与「语料过滤 / 去重 / 分词 / 配比」不同口径；data 线当前处在<b>已定方案的执行阶段</b>（等令跑过滤+分词），此时塞入不相干的论文建议只会干扰执行。<br><span style="font-size:12px;color:#59636e;">备查（<b>不是建议</b>）：<code>2611.12884</code> <b>Guiding Data Allocation for Robust Subpopulation Generalization</b>（NeurIPS 2026；理论 + 梯度引导的子群体比例调整，代码 <code>github.com/zhaoyingpan/subpop-data-allocation</code>）—— 面向<b>子群体偏移</b>，需要子群体标签；<b>等进入配比/退火阶段再评估</b>，现在不适用。</span></td>
+    <td>—（3 篇均不涉及语料工程；<code>2611.12884</code> 仅备查）</td>
+    <td>—</td><td>0（仅备查）</td><td>—</td>
+  </tr>
+  <tr>
+    <td><b>zhulong</b><br><span style="font-size:12px;color:#59636e;">两轴消融进度 <b>22/30</b>：B_es_r1 81.0% / r2 80.4%、B_zh_r3 78.5%、B_es_r3 跑中（round 23，12h cap ≈15:29 结束）；B_zh_r2 <b>pass=null 待 regrade</b>（gap-grabber 自主等空档，chances 0/3）；<code>/home</code> 3.2G/100% 紧但非阻塞</span></td>
+    <td>① <b>报告加「部分分」列</b>：现在 158 题的判分是 pass/fail，建议对每条子检查给 <code>partial = passed_checks / total_checks</code>，pass 仍保留；<b>若 trace 里有逐测结果就回填，不重跑</b>。<br>② <b>加三列过程指标</b>：<code>tool_calls</code> / <code>steps_to_submit</code> / <code>early_commit</code>（未读关键文件就提交）；再加一个 <code>shortcut_flag</code>（diff 里出现写死的期望常量 / 只写输出文件）。<br>③ 沿用 11-10 建议：<b>「均值差 &lt; 组内 sd」的 cell 标 <code>pending</code></b>，不给排序结论；<b>最优 ckpt 与末次 ckpt 双报</b>。</td>
+    <td><code>2611.12728</code>：outcome-only 会「均值升、罕见高危崩」（高危支持 0.50→0.33±0.29），且最优 ckpt 的收益会回落（解耦 1.00 → 末次 0.50）；<code>2611.12856</code>：resolved 与 continuous 域内差可达 <b>66.16 分</b>、排名会翻转（Sonnet 总分第 15 / resolved 第 4）</td>
+    <td>① 避免「pass 数一样但过程退化（少读文件、写死答案）」被漏掉；② 给 xhigh 回落一个可解释的过程指标，而不是只报均值；③ 复核 r2 时不必再猜「为什么同分」。</td>
+    <td>日志解析 ≈0.5 天（不占沙盒、不打断 B_es_r3）；若 trace 缺逐测结果，对 2 个 cell 各补 3 轮 ≈ 数小时 API</td>
+    <td><b>中</b></td>
+  </tr>
+  <tr>
+    <td><b>designflow</b><br><span style="font-size:12px;color:#59636e;">shard C r217 已交付（<code>DrcExtendRuleValidator-001</code>：<b>k_check=16 (a)–(p)</b>、golden PASS 16/16 + 3 个 fake FAIL + 3 negative FAIL + 3-seed md5 稳定 + E2E 校验）；ledger 46xqi 已标 <code>physical_verify</code>；本 case DEBT=0；<b>MEMORY ≈97KB 超 32KB 红线（待归档）</b></span></td>
+    <td>① <b>把 k_check 变成「快照 + 分级分」</b>：每个 case 存 <code>checks.json</code>（name / 输入 / 期望），先对 <b>reference 全跑通过</b>形成快照；判分输出 <code>pass/16</code> 作为部分分，写进 case 元数据。<br>② <b>加通用哨兵验收项</b>：reference 注入 1 个已知 bug（沿用 <code>bad_p7 切边 rect</code> 模式），检查器<b>必须 FAIL</b>，否则该 case 不算交付；<br>③ <b>单列「判分器成本」</b>（运行分钟 / 工具调用数），与造题成本分开记账。</td>
+    <td><code>2611.12712</code>：16 个 RTL 模块、覆盖率 <b>14.4%→42.0%</b>（branch_unit）、<b>55.7%→86.0%</b>（score_board_scalar）、<b>47.9%→52.8%</b>（ptw）、<b>23.7%→39.3%</b>（tlb）；埋 bug（<code>inst_d[2]</code> 写成 <code>inst_d[1]</code>）被断言检出；<b>0.5 €/快照</b>，Stage5 修断言 <b>55 min / 77.4%</b>，FPV 占 <b>69.4%</b></td>
+    <td>① 判分从二值变成可解释分数，能区分「勉强过」与「覆盖边界」；② 哨兵把「检查没跑/检查写松」挡在交付前；③ 成本可核验，避免判分器本身变成隐性开销。</td>
+    <td>先做 <b>1 个 case 试点</b> ≈0.5–1 天（不阻塞造题）；全量按 shard 逐步推进；仅协议移植，<b>不引入 JasperGold</b></td>
+    <td><b>高</b></td>
+  </tr>
+
+</table>
+
+<h2 class="sec">附录 A · 检索式与命中数（06:00 时点 · 可核验）</h2>
+<table>
+  <tr><th>#</th><th>检索式</th><th>totalResults</th><th>返回 / 最新 published</th><th>判定</th></tr>
+  <tr><td>①</td><td><code>cat:cs.CL</code> · <code>sortBy=lastUpdatedDate</code></td><td><b>125,075</b></td><td>5 条；最新 <code>2026-11-09T18:57:00Z</code>（<code>2611.12872v1</code> HiVe-Mem）</td><td><b>未刷新</b>（与 11-10 晚报同一公告批次）</td></tr>
+  <tr><td>②</td><td><code>cat:cs.CL AND submittedDate:[202611110000 TO 202611152359]</code></td><td><b>0</b></td><td>0 条</td><td>11-10 提交尚未入库，合公告日历</td></tr>
+  <tr><td>③</td><td><code>submittedDate:[202611110000 TO 202611152359]</code>（全库）</td><td><b>0</b></td><td>0 条</td><td>同上</td></tr>
+  <tr><td>④</td><td><code>cat:cs.CL OR cs.CV OR cs.SE OR cs.AI OR cs.LG</code>（广度）</td><td><b>645,595</b></td><td>3 条；最新 <code>2026-11-09T18:59:54Z</code>（<code>2611.12886v1</code> Reframe）</td><td>较 PM 的 645,596 <b>−1</b>（撤稿/重分类可回退，如实记）</td></tr>
+</table>
+<p style="font-size:13px;color:#59636e;">证据文件：<code>raw/verify_r144.py</code> → <code>raw/2026-11-11-am-verify-r144.txt</code>（4/4 <code>status=200</code> + <code>application/atom+xml; charset=utf-8</code>、全部 <code>attempts=1</code>，耗时 0.65–0.85s）。</p>
+
+<h2 class="sec">附录 B · 取数、去重与选文（3 篇）</h2>
+<table>
+  <tr><th>#</th><th>arXiv ID · 简称</th><th>分类</th><th>published</th><th>距唤醒</th><th>落点线</th></tr>
+  <tr><td>1</td><td><code>2611.12728</code> Safe RL / Dense Rewards</td><td>cs.LG</td><td>2026-11-09T17:14:40Z</td><td>≈28.8h</td><td>vision（主）· zhulong（侧）</td></tr>
+  <tr><td>2</td><td><code>2611.12856</code> WorkflowArena</td><td>cs.CL</td><td>2026-11-09T18:45:28Z</td><td>≈27.2h</td><td>harness（主）· designflow（侧）</td></tr>
+  <tr><td>3</td><td><code>2611.12712</code> SVApshot / Will AI mess my RTL</td><td>cs.SE</td><td>2026-11-09T17:03:14Z</td><td>≈29.0h</td><td>designflow（主）· zhulong（侧）</td></tr>
+</table>
+<p style="font-size:13px;color:#59636e;"><b>取数</b>：<code>raw/candidates_r144.py 2026-11-09</code>（单分类各取最新 100 条、合并去重、只留 <code>published ≥ 2026-11-09</code>）⇒ <b>merged 310 / seen 2 / fresh 308</b>（<code>raw/2026-11-11-am-candidates-r144.json</code>）。<code>id_list</code> 复核 <b>3/3</b>（<code>raw/2026-11-11-am-idlist-r144.xml</code>：<code>status=200</code> / <code>application/atom+xml</code> / <b>9,224 B / 1.07s</b>；三条 <code>published</code> 均为 <code>2026-11-09</code>）。</p>
+<p style="font-size:13px;color:#59636e;"><b>未选但强对口的候选（留作后续，不凑数）</b>：<code>2611.12825</code> <b>MaxIM</b>（有界记忆的增量摘要 + 稠密互信息奖励 + 严格 token 预算 —— 对 harness 的<b>上下文压缩</b>极对口，但今日 3 篇额度已满）；<code>2611.12823</code> Coding Agents in KVM（KVM 隔离 + 用户控制，适合 harness 的沙盒隔离）；<code>2611.12886</code> Reframe（多教师 on-policy 蒸馏做 agentic 视觉推理，vision 侧向）；<code>2611.12729</code> KiteNorm（Post-LN 方差正则，pretrain 备查）；<code>2611.12884</code> 子群体数据分配（data 备查）；<code>2611.12879</code> 3D 手-物预测（科普可视化潜力强，留晚报/后续）。</p>
+
+<h2 class="sec">附录 C · PDF 落地校验（3/3）</h2>
+<table>
+  <tr><th>arXiv ID</th><th>字节数</th><th>页数</th><th>字符数（去空白）</th><th>sha256（前 16）</th><th>结构校验</th></tr>
+  <tr><td><code>2611.12728</code></td><td>1,817,756</td><td>31</td><td>95,431</td><td><code>7d7af44c6b2c584b</code></td><td><code>%PDF-</code> 头 + <code>pdftotext</code> 可解析 ✅</td></tr>
+  <tr><td><code>2611.12856</code></td><td>14,382,044</td><td>22</td><td>70,935</td><td><code>f06be4821c9bb50e</code></td><td><code>%PDF-</code> 头 + <code>pdftotext</code> 可解析 ✅（<b>&gt;5MB，按体积红线不入 git</b>）</td></tr>
+  <tr><td><code>2611.12712</code></td><td>586,437</td><td>7</td><td>37,044</td><td><code>fd8d47313f54e133</code></td><td><code>%PDF-</code> 头 + <code>pdftotext</code> 可解析 ✅</td></tr>
+</table>
+<p style="font-size:13px;color:#59636e;">合计 <b>16,786,237 B ≈ 16.0 MiB</b>；<code>research/pdf/</code> 已在 <code>.gitignore</code>（<code>git check-ignore -v</code> 命中），<b>数据本体不入 git</b>，仅本表入账。<b>不声称哈希与 CDN ETag 一致</b>（口径不可比），只称结构校验 + 字节数 + 页数 + 可解析。</p>
+
+<h2 class="sec">附录 D · 台账、进度与口径自检</h2>
+<table>
+  <tr><th>项</th><th>本轮值</th><th>说明</th></tr>
+  <tr><td>当日进度</td><td><b>3 / 5</b></td><td>早报 3 篇「借鉴」；18:00 晚报补 2 篇（科普）→ 5/5</td></tr>
+  <tr><td>台账</td><td>收录 <b>331 → 334</b>；<code>SEEN.md</code> 5,655 → <b>5,658 行</b></td><td><code>papers.jsonl</code> 同步 +3（每 ID 恰好 1 行）</td></tr>
+  <tr><td>候选累计</td><td><b>4,558</b> + 候选(RSS) <b>507</b></td><td>本轮候选池 310（fresh 308）</td></tr>
+  <tr><td>出口</td><td><b>仅 HTML</b></td><td>🚫 未发任何日报邮件（2026-11-07 10:50 用户令）</td></tr>
+</table>
+
+<div class="ok-box" style="margin-top:14px;">
+  <b>本期口径自检</b>：① 当日 <b>3/5</b>（早 3「借鉴」，未凑数、未放宽入账判据）；② 3 篇均实测 <code>HTTP 200</code> + <code>application/atom+xml</code> + 真实 <code>published</code>（<b>200 ≠ 有料</b> 已校验，<code>id_list</code> 3/3）；③ 与 <code>SEEN.md</code> / <code>papers.jsonl</code> / <code>TOP_K.jsonl</code> / 近 7 天 <code>daily/</code> <b>无重复</b>（候选池 <code>seen=2</code>，均为昨日已收）；④ 3 篇距唤醒 27.2–29.0h，<b>在 72h 常规窗口内</b>；⑤ 建议节 <b>6 线齐全</b>（4 线给可执行动作 + 2 线显式「无新增可用建议」并给理由），每条含「动作 / 依据 / 收益 / 成本 / 优先级」；⑥ <b>0 <code>&lt;script&gt;</code></b>、外链仅 3 条 arXiv abs；⑦ 未改动他线任何文件。
+</div>
+
+<footer>
+  research 线 · 论文观察日报 <b>2026-11-11（早报 · 3/5）</b> ｜ 生成：2026-11-11 06:0x CST ｜ 数据源：arXiv 官方 API（<code>export.arxiv.org</code>）｜ 入口索引：<code>research/daily/index.html</code><br>
+  下一轮：<b>2026-11-11 18:00 CST（晚报）</b>——补 2 篇「科普」→ 5/5，并追加「🌙 晚报变更说明（AM → PM）」；分镜脚本取当日科普 TOP-1 → <code>research/video/SCENES/11_11.html</code>。<br>
+  ⚠️ 本页为论文解读 / 待读线索，<b>非结论、非官方</b>；数字均为作者自报、本线未复现；「对各线的可执行建议」为基于论文的推断，<b>非指令</b>。
+</footer>
+</div>
+</body>
+</html>
+

@@ -5653,3 +5653,6 @@
 | 2026-11-10 | 2611.09802 | When Instruction Files Go Stale: Documentation Debt and Hidden Cost in Coding Agents | cs.SE | 收录 |
 | 2026-11-10 | 2611.12820 | How Well Does AI Peer Review Work? A Benchmark Built from 100 Planted Errors | cs.CL | 收录 |
 | 2026-11-10 | 2611.12832 | What the Loss Curve Misses: FP4 Pretraining Slows the Acquisition of Rare Facts | cs.LG | 收录 |
+| 2026-11-11 | 2611.12728 | Safe Reinforcement Learning for Multi-Turn Clinical Agents: When Dense Rewards Beat Outcome Rewards | cs.LG | 收录 |
+| 2026-11-11 | 2611.12856 | WorkflowArena: Benchmarking Executable Workflow Orchestration in LLM-Based Multi-Agent Systems | cs.CL | 收录 |
+| 2026-11-11 | 2611.12712 | Will AI mess my RTL? A snapshot-based approach to verifying AI-written RTL | cs.SE | 收录 |

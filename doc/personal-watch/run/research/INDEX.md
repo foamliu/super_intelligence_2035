@@ -518,3 +518,27 @@
 
 > **下一轮（2026-11-11 06:00 周三 AM）**：① 复验批次（若推进到 `2026-11-10` 则重跑 5 分类取数；判刷新看「最新 `published` 前移 + ① 总量」）；② 早 3「借鉴」按六线当轮阻塞选（优先看各线 MEMORY 顶部阻塞）；③ 维持「两节合计 6 线齐全 + 无建议显式写无」口径；④ 🚫 不发日报邮件。
 
+
+---
+
+> **【AM 早报 · 第一百四十四轮 · 借鉴 3 篇 + 六线建议】**（2026-11-11 06:0x CST，周三）
+
+> **批次复核**（`raw/verify_r144.py` → `raw/2026-11-11-am-verify-r144.txt`，4/4 `200` + `application/atom+xml; charset=utf-8`、全 `attempts=1`；区间 `202611110000 TO 202611152359`）：① `cat:cs.CL` `totalResults=` **125,075**、最新 `2026-11-09T18:57:00Z`（`2611.12872v1` HiVe-Mem）⇒ **未刷新**（与 11-10 晚报同一公告批次）；② `cat:cs.CL AND submittedDate:[…]` → **0**；③ 全库同区间 → **0**；④ 广度 5 分类 → **645,595**（PM 645,596，**−1**，如实记：总量可因撤稿/重分类回退）。
+
+> **取数**（`raw/candidates_r144.py 2026-11-09`）：`cs.CL` 125,075 / `cs.CV` 212,913 / `cs.LG` 298,450 / `cs.AI` 212,161 / `cs.SE` 30,950（均 200 + `atom+xml`、`n=100`）⇒ **merged 310 / seen 2 / fresh 308**（`raw/2026-11-11-am-candidates-r144.json`）。`id_list` **3/3**（`raw/2026-11-11-am-idlist-r144.xml`：200 / `application/atom+xml` / 9,224 B / 1.07s）。
+
+> **早 3 篇「借鉴」**（按「各线当轮真正卡住的地方」）：
+> ① `2611.12728` **Safe Reinforcement Learning for Multi-Turn Clinical Agents: When Dense Rewards Beat Outcome Rewards**（cs.LG，Stanford，2 位；`published=2026-11-09T17:14:40Z`；≈28.8h；31 页 / 95,431 字符）。outcome-only GRPO 均值升但高危崩（高危支持 0.50→0.33±0.29、提前承诺/只问一次）；dense process credit（λ=0.2、3 seeds）价值 +0.285±0.027→+0.313±0.024、高危价值 +0.098→+0.157、高危支持 0.33→0.50、中等支持 0.38→0.67、提问 1.82→2.08；λ 强任务相关（滴定 λ=0.1 最校准 2.67 问；λ=0.2 过问且价值 −0.091）；解耦最优高危 1.00 但末次回落 0.50、提问 4.4。⚠️ 临床域、高危仅 2 例、主实验 3 seeds、作者自报未复现。
+> ② `2611.12856` **WorkflowArena: Benchmarking Executable Workflow Orchestration in LLM-Based Multi-Agent Systems**（cs.CL，Navers Lab / Einsia.AI / 清华，13 位；`published=2026-11-09T18:45:28Z`；≈27.2h；22 页 / 70,935 字符）。145 任务 / 8 域 / 17 形态、隐藏 verifier、共享时间预算、Workflow 工具最多 16 并发、原生 sub-agent 禁用、委派全记账；25 配置无一通吃：Opus max 36.95%，MATH 95.83%、SWE 29.41%、LAW ≤9.09%、FIN ≤18.75%；resolved vs continuous Spearman 0.90 但 SWE 差 66.16 分（Opus high SWE 96.98 vs resolved 17.65%）；成本 $3.61–$29.26/任务（Opus high 34.11% @$6.66；Astra xhigh 30.80% @$29.26）；委派 Opus 0.86 次/5.55 worker vs Astra 2.09/1.72；Opus workflow 转移提升弱执行者（Kimi 35.75→46.61）。⚠️ 无 EDA 域、只测 9 个 API 模型。
+> ③ `2611.12712` **Will AI mess my RTL? A snapshot-based approach to verifying AI-written RTL**（cs.SE，UPC/BSC/NVIDIA，4 位；`published=2026-11-09T17:03:14Z`；≈29.0h；7 页 / 37,044 字符）。SVApshot：LLM 生成 SVA + 形式反例迭代修复 → 断言快照当回归集；16 模块 24–419 行；覆盖率 branch_unit 14.4%→42.0%、score_board 55.7%→86.0%、ptw 47.9→52.8、tlb 23.7→39.3、alu 100%；埋 bug（`inst_d[2]` 误写）被检出；0.5 €/快照、Stage5 修断言 55 min（77.4%）、FPV 69.4%。⚠️ 依赖 JasperGold、小模块、假设参考正确。
+
+> **交付**：`daily/2026-11-11.html` **3/5**（3 卡 + 六线建议表 + 附录 A–D；div 67/67、table 5/5、tr 25/25、**0 `<script>`**、外链仅 3 条 arXiv abs）+ `daily/index.html`（新增 11-11 行 + footer）+ `raw/verify_r144.py` / `raw/candidates_r144.py` / `raw/update_r144.py` + `raw/2026-11-11-am-idlist-r144.xml`。
+
+> **PDF 3/3**：`2611.12728` 1,817,756 B / 31 页 / sha `7d7af44c6b2c584b`、`2611.12856` **14,382,044 B** / 22 页 / sha `f06be4821c9bb50e`（>5MB，**不入 git**）、`2611.12712` 586,437 B / 7 页 / sha `fd8d47313f54e133`；合计 16,786,237 B ≈ 16.0 MiB；均 `%PDF-` + `pdftotext` 可解析。
+
+> **台账**：`SEEN.md` 5,655 → **5,658 行** ⇒ 收录 **334** / 候选 4,558 / 候选(RSS) 507；`papers.jsonl` 331 → **334**（`raw/update_r144.py`，幂等断言：每 ID 1 行、`published` 前缀 `2026-11-09`）。
+
+> **累计（截至 2026-11-11 第一百四十四轮 · AM）**：收录 **334 篇** / 候选 **4,558** + 候选(RSS) **507** / `SEEN.md` **5,658 行** / 当日日报 11-11 **3/5**。
+
+> **下一轮（2026-11-11 18:00 周三 PM）**：① 复验批次（若推进到 `2026-11-10` 则重跑 5 分类取数）；② 晚 2「科普」（备选 `2611.12825` MaxIM / `2611.12823` KVM-Agent / `2611.12886` Reframe / `2611.12879` 3D 手-物）；③ 11-11 日报 3/5 → 5/5 + `晚报变更说明（AM → PM）`；④ 分镜 `video/SCENES/11_11.html`（当日科普 TOP-1）；🚫 不发日报邮件。
+
