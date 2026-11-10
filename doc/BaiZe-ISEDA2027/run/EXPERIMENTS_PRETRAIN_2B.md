@@ -1125,3 +1125,47 @@ nvidia-smi --query-gpu=utilization.gpu,memory.used --format=csv,noheader
 - 📦 TASK≈22.5KB ✅ / MEMORY≈28KB ✅
 
 
+### 2026-11-11 07:14 — 论文 §4.6 刷新 + 160k eval 启动 (#1945)
+
+**取数**:
+- 命令: `ssh 10.239.2.29 'tail -15 /proc/146283/fd/1 | grep iteration'`
+- 最新 iter: 160,070/700,000 (2026-11-11 07:11:44)
+- 末 10 步 (159,980–160,070): elapsed 6931–7156ms (avg 7043ms, 均 <7.4s ✅)
+- loss: 2.017–2.048 (avg ≈2.03)
+- 0 NaN, 0 skipped iterations ✅
+- GPU: 8 卡 96-100% util / ~75GB each
+- tok/s: 4,194,304 / 7.043 = 595,497 ≈ 595K
+
+**刷新内容**:
+- §4.6 (4_llm_pretrain.tex line 109): iter 159,860 → 160,070, tok/s 591K → 595K, loss ≈2.03 不变
+- abstract (0_abstract.tex line 14): 同步
+- tab:prod-budget (line 122): "160k done" 不变 (160,070 rounds to 160k); wall-clock ≈58d → ≈57d (700k × 4,194,304 / 595K = 57.1d)
+- tab:prod-budget (line 126): total ≈61.5d → ≈60.5d
+
+**编译结果**:
+- `latexmk -pdf -interaction=nonstopmode main.tex` → 0 errors
+- main.pdf: 5 pages, 228,237 bytes
+
+**160k eval pipeline**:
+- 脚本: `/tmp/baize_eval_160k_pipeline.sh` (基于 140k export + 150k eval 模板)
+- Phase 1 (HF 导出): ✅ convert_mcore_to_hf.py, 323 tensors, 2.22B params, model.safetensors 4.44GB
+- Phase 2 (config patch): ✅ max_position_embeddings=1048576, rope_theta=1000000, rope_scaling=None
+- Phase 3 (check_rope): ⚠️ 参数格式不匹配 (--config vs positional), 非阻塞
+- Phase 4 (GGUF 转换): 首次失败 → 修复 → 重试中
+  - 失败根因: `mamba_dt_limit: [0.0, "inf"]` 字段 (convert_mcore_to_hf.py 新增, 150k config 无此字段)
+  - 导致: `huggingface_hub.StrictDataclassFieldValidationError: time_step_limit expected tuple, got list`
+  - 修复: 从 hf_iter_160000/config.json 删除 mamba_dt_limit 字段, 与 150k config 对齐
+  - 重试: 转换进程 alive (PID 32217), 已进入 Writing 阶段 (4.44GB)
+- Phase 5 (eval): pending (GGUF 写入完成后自动启动)
+- Phase 6 (report): pending (eval 完成后自动刷新 gen_llamacpp_scaling_report.py)
+
+**训练影响检查**:
+- eval 全程: CUDA_VISIBLE_DEVICES="" / nice 19 / -t 4 / CPU-only / 串行单 ckpt
+- 训练 step time: 6980-7103ms (<7.4s ✅), 未受影响
+
+**护栏检查**:
+- grep benchmark 数字 in ISEDA2027/ + main.tex: 0 命中 ✅
+- §4.7 sec:ckpt-scaling: 不存在 ✅
+- 📦 TASK≈22.5KB ✅ / MEMORY≈29KB ✅
+
+
