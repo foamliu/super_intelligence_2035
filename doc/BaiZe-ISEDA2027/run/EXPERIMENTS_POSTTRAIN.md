@@ -15611,3 +15611,44 @@ Process 3557214 has 36.30 GiB memory in use.
 - GPU 5/6/7 被 vLLM serve 占位（17:10 令，防止被挪用）→ SFT 无法启动
 - 沙盒 10.129.32.75 仍 CLOSED（9th wake）→ SFT 前后评测无法进行
 - **解锁条件**：沙盒恢复 → 释放 GPU 6-7 serve → 启动 SFT → 评测
+
+---
+
+## §Phase2-SFT-Validation CPU数据管线全验证（2026-11-10 wake211 · 零 GPU · 实测）
+
+> **目的**：在 GPU 释放前，用 CPU 验证 Phase 2 SFT 数据管线端到端无缺陷，确保 GPU 一到位即可起跑。
+> **方法**：SFT surrogate dry-run + verl venv 依赖检查 + MiniCPM5-2B 架构/兼容性检查 + tokenizer 加载 + CPU SFTDataset 加载/tokenize
+
+### 验证结果
+
+| 检查项 | 结果 | 证据 |
+|:--|:--|:--|
+| SFT surrogate dry-run | ✅ PASS | `bash baize_posttrain_sft_surrogate.sh --dry-run` → recipe 全路径正确（model/data/output/GPU/超参） |
+| verl_cu124_venv 依赖 | ✅ PASS | torch 2.6.0+cu124 (cuda available), accelerate 1.15.0, transformers 4.51.1 |
+| MiniCPM5-2B 架构 | ✅ PASS | config.json: model_type=llama, architectures=[LlamaForCausalLM] → transformers 4.51.1 兼容（4.49 仅 vLLM serve tokenizer 需要） |
+| Tokenizer 加载 | ✅ PASS | AutoTokenizer.from_pretrained → vocab_size=130072, chat_template exists, pad_token=eos_token |
+| CPU SFTDataset 加载 | ✅ PASS | CUDA_VISIBLE_DEVICES='' → SFTDataset(v2.jsonl, tok, max_len=1024, quality_filter={high,medium}) → Loaded 12434 examples |
+| 样本 shape 验证 | ✅ PASS | 3 样本 [0, 6217, 12433] → 全 shape=[1024], valid_len=416/172/311, label_tokens=87/70/92, dtype=int64, 无 NaN 无空样本 |
+
+### SFT Corpus 质量分布（sft_pyaether_corpus_v2.jsonl · 19,524 行 · 21.8MB）
+
+| quality_tier | 数量 | 占比 |
+|:--|--:|--:|
+| high | 11,733 | 60.1% |
+| medium | 701 | 3.6% |
+| low | 7,090 | 36.3% |
+| **high+medium（训练用）** | **12,434** | **63.7%** |
+
+| type | 数量 | 说明 |
+|:--|--:|:--|
+| S1_doc_to_code | 8,012 | API 文档 → 代码生成 |
+| S2_api_lookup | 8,012 | API 查询任务 |
+| S3_multi_api_chain | 89 | 多 API 链式调用 |
+| S4_error_recovery | 3,411 | 错误恢复轨迹 |
+
+### 关键结论
+
+1. **Phase 2 SFT 数据管线已完全验证**——GPU 释放后可直接 `bash baize_posttrain_sft_surrogate.sh --clean-gpu --gpu 6,7 --max-len 1024` 起跑，无需额外数据准备。
+2. **transformers 4.51.1 兼容 MiniCPM5-2B**——因 MiniCPM5-2B 是 LlamaForCausalLM 架构（非 MiniCPM 专用类），4.49 限制仅适用于 vLLM serve 的 tokenizer，训练用 HF transformers 无此问题。
+3. **SFT corpus 有效训练样本 12,434**（high+medium），以 max_len=1024 计 ≈12.4K 样本 × 3 epochs = 37.3K steps / 16 grad_accum ≈ 2,333 optimizer steps，A40 2 卡预估 2-4h。
+4. **S3_multi_api_chain 仅 89 条**——多 API 链式任务最少，RL 阶段需补充此类难样本。
