@@ -1,0 +1,104 @@
+=== incr_eval R2140 START Wed Nov 11 03:29:43 AM CST 2026 === (py=/nas_train/app.e0031982/miniforge3/envs/py310/bin/python3)
+[Wed Nov 11 03:29:43 AM CST 2026] === merge opencode predictions ===
+opencode: 423 real patches merged
+opencode: 423 eval IDs (swebench skips cached)
+[Wed Nov 11 03:29:44 AM CST 2026] === opencode eval START 423 instances ===
+Running 423 instances...
+  0%|          | 0/423 [00:00<?, ?it/s]  0%|          | 1/423 [01:37<11:23:55, 97.24s/it]1 ran successfully, 0 failed:   0%|          | 1/423 [01:37<11:23:55, 97.24s/it]1 ran successfully, 0 failed:   0%|          | 2/423 [01:41<5:56:07, 50.75s/it] 2 ran successfully, 0 failed:   0%|          | 2/423 [01:41<5:56:07, 50.75s/it]2 ran successfully, 0 failed:   1%|          | 3/423 [01:43<4:02:00, 34.57s/it]3 ran successfully, 0 failed:   1%|          | 3/423 [01:43<4:02:00, 34.57s/it]3 ran successfully, 0 failed:   1%|          | 4/423 [01:44<3:02:38, 26.15s/it]4 ran successfully, 0 failed:   1%|          | 4/423 [01:44<3:02:38, 26.15s/it]4 ran successfully, 0 failed:   1%|          | 5/423 [03:15<4:32:32, 39.12s/it]5 ran successfully, 0 failed:   1%|          | 5/423 [03:15<4:32:32, 39.12s/it]5 ran successfully, 0 failed:   1%|▏         | 6/423 [03:24<3:57:08, 34.12s/it]6 ran successfully, 0 failed:   1%|▏         | 6/423 [03:24<3:57:08, 34.12s/it]6 ran successfully, 0 failed:   2%|▏         | 7/423 [03:28<3:26:16, 29.75s/it]7 ran successfully, 0 failed:   2%|▏         | 7/423 [03:28<3:26:16, 29.75s/it]7 ran successfully, 0 failed:   2%|▏         | 8/423 [03:30<3:01:49, 26.29s/it]8 ran successfully, 0 failed:   2%|▏         | 8/423 [03:30<3:01:49, 26.29s/it]=== incr_eval R2140 (fixed: 10 new ids) START Wed Nov 11 03:34:46 AM CST 2026 === (py=/nas_train/app.e0031982/miniforge3/envs/py310/bin/python3)
+[Wed Nov 11 03:34:46 AM CST 2026] === merge opencode predictions ===
+opencode: 425 real patches merged
+[Wed Nov 11 03:34:47 AM CST 2026] === opencode eval START 3 NEW instances ===
+Running 3 instances...
+  0%|          | 0/3 [00:00<?, ?it/s] 33%|███▎      | 1/3 [00:26<00:52, 26.36s/it]1 ran successfully, 0 failed:  33%|███▎      | 1/3 [00:26<00:52, 26.36s/it]1 ran successfully, 0 failed:  67%|██████▋   | 2/3 [00:26<00:13, 13.38s/it]2 ran successfully, 0 failed:  67%|██████▋   | 2/3 [00:26<00:13, 13.38s/it]2 ran successfully, 0 failed: 100%|██████████| 3/3 [00:28<00:00,  9.53s/it]3 ran successfully, 0 failed: 100%|██████████| 3/3 [00:28<00:00,  9.53s/it]3 ran successfully, 0 failed: 100%|██████████| 3/3 [00:28<00:00,  9.53s/it]
+All instances run.
+Total instances: 3
+Instances submitted: 3
+Instances completed: 3
+Instances incomplete: 0
+Instances resolved: 3
+Instances unresolved: 0
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 4
+Unremoved images: 3
+Report written to opencode-glm-5.3-flash.verified_full_glm53_opencode_incr_R2140.json
+[Wed Nov 11 03:35:19 AM CST 2026] === opencode eval DONE ===
+[Wed Nov 11 03:35:19 AM CST 2026] === merge pi predictions ===
+pi: 178 real patches merged
+[Wed Nov 11 03:35:20 AM CST 2026] === pi eval START 5 NEW instances ===
+Running 5 instances...
+  0%|          | 0/5 [00:00<?, ?it/s] 20%|██        | 1/5 [00:24<01:39, 24.93s/it]1 ran successfully, 0 failed:  20%|██        | 1/5 [00:24<01:39, 24.93s/it]1 ran successfully, 0 failed:  40%|████      | 2/5 [00:53<01:20, 26.81s/it]2 ran successfully, 0 failed:  40%|████      | 2/5 [00:53<01:20, 26.81s/it]2 ran successfully, 0 failed:  60%|██████    | 3/5 [01:16<00:51, 25.55s/it]3 ran successfully, 0 failed:  60%|██████    | 3/5 [01:16<00:51, 25.55s/it]3 ran successfully, 0 failed:  80%|████████  | 4/5 [01:16<00:19, 19.20s/it]4 ran successfully, 0 failed:  80%|████████  | 4/5 [01:16<00:19, 19.20s/it]4 ran successfully, 0 failed: 100%|██████████| 5/5 [01:46<00:00, 21.22s/it]5 ran successfully, 0 failed: 100%|██████████| 5/5 [01:46<00:00, 21.22s/it]5 ran successfully, 0 failed: 100%|██████████| 5/5 [01:46<00:00, 21.22s/it]
+All instances run.
+Total instances: 5
+Instances submitted: 5
+Instances completed: 5
+Instances incomplete: 0
+Instances resolved: 1
+Instances unresolved: 4
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 0
+Unremoved images: 5
+Report written to pi-glm-5.3-flash.verified_full_glm53_pi_incr_R2140.json
+[Wed Nov 11 03:37:10 AM CST 2026] === pi eval DONE ===
+[Wed Nov 11 03:37:10 AM CST 2026] === merge hermes predictions ===
+hermes: 367 real patches merged
+[Wed Nov 11 03:37:11 AM CST 2026] === hermes eval START 1 NEW instances ===
+Running 1 instances...
+  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [00:54<00:00, 54.15s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:54<00:00, 54.15s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:54<00:00, 54.15s/it]
+All instances run.
+Total instances: 1
+Instances submitted: 1
+Instances completed: 1
+Instances incomplete: 0
+Instances resolved: 1
+Instances unresolved: 0
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 0
+Unremoved images: 1
+Report written to hermes-glm-5.3-flash.verified_full_glm53_hermes_incr_R2140.json
+[Wed Nov 11 03:38:09 AM CST 2026] === hermes eval DONE ===
+[Wed Nov 11 03:38:09 AM CST 2026] === merge deepseek-harness predictions ===
+deepseek-harness: 164 real patches merged
+[Wed Nov 11 03:38:10 AM CST 2026] === deepseek-harness eval START 1 NEW instances ===
+Running 1 instances...
+  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [00:21<00:00, 21.91s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:21<00:00, 21.91s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:21<00:00, 21.91s/it]
+All instances run.
+Total instances: 1
+Instances submitted: 1
+Instances completed: 1
+Instances incomplete: 0
+Instances resolved: 1
+Instances unresolved: 0
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 0
+Unremoved images: 1
+Report written to deepseek-harness-glm-5.3-flash.verified_full_glm53_deepseek-harness_incr_R2140.json
+[Wed Nov 11 03:38:35 AM CST 2026] === deepseek-harness eval DONE ===
+[Wed Nov 11 03:38:35 AM CST 2026] === regen eval summaries ===
+regen_eval_summaries: cline-patched, opencode, pi, claude-code, codex, hermes, deepseek-harness
+  cline-patched: scanned 12 run dir(s), 487 instances with report.json
+  cline-patched: unchanged (n=500 resolved=356 failed=131 infra=0 no_patch=13)
+  opencode: scanned 1 run dir(s), 497 instances with report.json
+  opencode: unchanged (n=500 resolved=401 failed=96 infra=0 no_patch=3)
+  pi: scanned 1 run dir(s), 463 instances with report.json
+  pi: unchanged (n=475 resolved=333 failed=130 infra=0 no_patch=12)
+  claude-code: scanned 1 run dir(s), 358 instances with report.json
+  claude-code: unchanged (n=500 resolved=273 failed=85 infra=10 no_patch=132)
+  codex: scanned 2 run dir(s), 369 instances with report.json
+  codex: unchanged (n=500 resolved=291 failed=78 infra=0 no_patch=131)
+  hermes: scanned 1 run dir(s), 230 instances with report.json
+  hermes: unchanged (n=314 resolved=184 failed=46 infra=0 no_patch=84)
+  deepseek-harness: scanned 16 run dir(s), 260 instances with report.json
+  deepseek-harness: unchanged (n=276 resolved=205 failed=55 infra=10 no_patch=6)
+=== incr_eval R2140 (fixed) DONE Wed Nov 11 03:38:38 AM CST 2026 ===
