@@ -15,13 +15,13 @@ Privacy compounds the cost argument: netlists, GDSII layouts, and design rules a
 Building such a model \emph{from scratch} as a production subagent, however, remains an under-documented engineering problem.
 
 \paragraph{Contributions.}
-We present BaiZe, a $\approx$2.2B-parameter hybrid (state-space + attention) agentic model built from scratch to serve as a cost-efficient EDA subagent beneath a deployed orchestrator.
-% 中文：我们提出 BaiZe——一个约 22 亿参数的混合（状态空间+注意力）智能体模型，从零构建，作为已部署 orchestrator 之下的高性价比 EDA 子智能体。
+We present YuYan (\yy, ``taming the flame"), a $\approx$2.2B-parameter hybrid (state-space + attention) agentic model built from scratch to serve as a cost-efficient EDA subagent beneath a deployed orchestrator.
+% 中文：我们提出 YuYan（驭焰，意为「驾驭火焰」）——一个约 22 亿参数的混合（状态空间+注意力）智能体模型，从零构建，作为已部署 orchestrator 之下的高性价比 EDA 子智能体。
 
 \begin{itemize}
 \item \textbf{A cost-efficient EDA subagent.}
-BaiZe receives EDA subtasks in natural language from the orchestrator and drives EDA tools in their native scripting languages (PyAether, SKILL, Tcl).
-% 中文：高性价比的 EDA 子智能体。BaiZe 以自然语言从 编排者 接收 EDA 子任务，并以 EDA 工具的原生脚本语言（PyAether、SKILL、Tcl）驱动这些工具。
+YuYan receives EDA subtasks in natural language from the orchestrator and drives EDA tools in their native scripting languages (PyAether, SKILL, Tcl).
+% 中文：高性价比的 EDA 子智能体。YuYan 以自然语言从 编排者 接收 EDA 子任务，并以 EDA 工具的原生脚本语言（PyAether、SKILL、Tcl）驱动这些工具。
 Its 56 layers interleave Mamba-2 state-space and MLP layers with four grouped-query-attention layers, so only the latter carry a session-growing state---which is what makes per-subtask cost reduction structural rather than a matter of quantization alone.
 % 中文：其 56 层将 Mamba-2 状态空间层与 MLP 层同 4 个分组查询注意力层交错排列，因此只有后者携带随会话增长的状态——这使每子任务成本下降具有结构性，而非仅靠量化。
 A staged budget-constrained search (S1--S5) with a reduced-horizon proxy protocol fixes the pre-training recipe.

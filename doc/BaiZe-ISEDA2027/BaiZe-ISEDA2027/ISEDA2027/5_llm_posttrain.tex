@@ -1,6 +1,6 @@
 ﻿\section{LLM Post-Training}\label{sec:llm-posttrain}
 
-Stage~(ii) adapts the pre-trained backbone to EDA scripting, and it is the stage that carries BaiZe's domain claim: the pre-training corpus of Section~\ref{sec:llm-data} is general web, code, and mathematics text and contains no EDA artifacts, so the domain prior must be introduced here.
+Stage~(ii) adapts the pre-trained backbone to EDA scripting, and it is the stage that carries YuYan's domain claim: the pre-training corpus of Section~\ref{sec:llm-data} is general web, code, and mathematics text and contains no EDA artifacts, so the domain prior must be introduced here.
 % 中文：第 (ii) 阶段把预训练骨干适配到 EDA 脚本编写，而承载本文领域主张的正是这一阶段：第 \ref{sec:llm-data} 节的预训练语料是通用网页、代码与数学文本，不含任何 EDA 产物，因此领域先验必须在此引入。
 We organise the stage as three steps---\emph{domain annealing}, \emph{supervised fine-tuning}, and \emph{reinforcement learning}---all evaluated under a single frozen protocol (Section~\ref{sec:posttrain-eval}).
 % 中文：我们按三个步骤组织该阶段——\emph{领域退火}、\emph{监督微调} 与 \emph{强化学习}——三者在同一套冻结协议下评测（第 \ref{sec:posttrain-eval} 节）。
@@ -49,8 +49,8 @@ R4 & R3 $+$ API-legality term \\
 
 \subsection{Deployment: The Anima Protocol and Local Self-Correction}\label{sec:anima}
 
-Deployed as a subagent, BaiZe is driven not by free-form prose but by a semi-structured \emph{anima} directive that carries an action, a target object, and a constraint---e.g.\ \texttt{\{action:\ route, target:\ net\_clk, constraint:\ minimize\_crosstalk\}}.
-% 中文：作为子智能体部署时，BaiZe 并非由自由文本驱动，而是由一条半结构化的 \emph{anima} 指令驱动——该指令携带动作、目标对象与约束，例如 \texttt{\{action: route, target: net\_clk, constraint: minimize\_crosstalk\}}。
+Deployed as a subagent, YuYan is driven not by free-form prose but by a semi-structured \emph{anima} directive that carries an action, a target object, and a constraint---e.g.\ \texttt{\{action:\ route, target:\ net\_clk, constraint:\ minimize\_crosstalk\}}.
+% 中文：作为子智能体部署时，YuYan 并非由自由文本驱动，而是由一条半结构化的 \emph{anima} 指令驱动——该指令携带动作、目标对象与约束，例如 \texttt{\{action: route, target: net\_clk, constraint: minimize\_crosstalk\}}。
 A deterministic directive removes the ambiguity of free-form commands, so script generation is conditioned on a narrow, tool-specific intent rather than on the whole session---this is what keeps the subagent small and its per-subtask cost low.
 % 中文：确定性指令消除了自由文本命令的歧义，使脚本生成只依赖狭窄的、工具专属的意图，而非整个会话——这正是子智能体能保持小巧、且每子任务成本低廉的原因。
 

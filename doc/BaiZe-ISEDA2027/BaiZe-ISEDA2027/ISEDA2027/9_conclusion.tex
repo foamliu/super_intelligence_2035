@@ -1,7 +1,7 @@
 ﻿\section{Conclusion}
 
-We presented BaiZe, a $\approx$2.2B-parameter hybrid (state-space + attention) language model built from scratch and post-trained for agentic capability.
-% 中文：我们提出了 BaiZe——一个约 22 亿参数的混合（状态空间+注意力）语言模型，从零构建，并为智能体能力做后训练。
+We presented YuYan, a $\approx$2.2B-parameter hybrid (state-space + attention) language model built from scratch and post-trained for agentic capability.
+% 中文：我们提出了 YuYan——一个约 22 亿参数的混合（状态空间+注意力）语言模型，从零构建，并为智能体能力做后训练。
 Through a controlled from-scratch comparison, we selected a sequential Mamba2-hybrid backbone over a dense transformer for its lower loss-per-parameter and substantially faster inference, then applied a staged, budget-constrained hyper-parameter search (S1--S5) on the final backbone.
 % 中文：通过受控的从零对比，我们因顺序式 Mamba2 混合骨干具有更低的「每参数损失」与显著更快的推理而选择它、而非稠密 Transformer，随后在最终骨干上执行分阶段的、受预算约束的超参搜索（S1--S5）。
 Stage~(ii) is specified here as a protocol and evaluated on a common execution-based benchmark~\cite{liu2026zhulong}; its measurements are reported as \textbf{[TBD]}.
