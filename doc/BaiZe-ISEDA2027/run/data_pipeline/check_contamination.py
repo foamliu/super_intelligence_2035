@@ -89,11 +89,17 @@ def _extract_jsonl_text(obj, jsonl_field: str):
 
 
 def _iter_parquet(path: Path):
-    """流式产出单个 parquet 文件的文本（自动探测 content / texts / text 列）。"""
+    """流式产出单个 parquet 文件的文本（自动探测 content / texts / text / prompt / messages 列）。
+
+    R161 FIX (2026-11-11): 增加 prompt / messages 列探测，支持 verl RL parquet
+    (prompt=list<struct<role,content>>) 和 SFT parquet (messages 格式)。
+    旧版只找 content/texts/text → RL parquet (prompt 列) 静默扫 0 文档 → 污染闸门漏检。
+    _flatten 已正确处理 list<struct<role,content>> 格式（逐项提取 content 字段）。
+    """
     import pyarrow.parquet as pq
     parrot = pq.ParquetFile(str(path))
     for batch in parrot.iter_batches(batch_size=1024):
-        col = next((c for c in ("content", "texts", "text") if c in batch.schema.names), None)
+        col = next((c for c in ("content", "texts", "text", "prompt", "messages", "conversation") if c in batch.schema.names), None)
         if col is None:
             break
         for v in batch.column(col).to_pylist():

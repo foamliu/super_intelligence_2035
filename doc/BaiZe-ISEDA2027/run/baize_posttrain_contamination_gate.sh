@@ -37,6 +37,18 @@ BLACKLIST_DIR="${BLACKLIST_DIR:-$RUN_DIR/data_pipeline/blacklist}"
 CHECK_PY="$RUN_DIR/data_pipeline/check_contamination.py"
 BUILD_PY="$RUN_DIR/data_pipeline/build_blacklist.py"
 
+# R161 FIX (2026-11-11): system python3 (/usr/bin/python3) lacks pyarrow →
+# check_contamination.py crashes with ImportError on parquet inputs → gate
+# reports FAIL-SAFE (exit 3) even though 0 contamination.  Use verl venv
+# python (has pyarrow 25.0.1 + pandas) when available; fall back to python3.
+if [ -x "$HOME/code/verl_cu124_venv/bin/python" ]; then
+    GATE_PY="$HOME/code/verl_cu124_venv/bin/python"
+elif command -v python3 >/dev/null 2>&1; then
+    GATE_PY="python3"
+else
+    GATE_PY="python"
+fi
+
 NGRAM=13; SHORT_NGRAM=8; THRESHOLD=0.8; MINHASH_K=128
 OUT="${OUT:-/tmp/baize_posttrain_contam_gate_$(date +%s).md}"
 DRY_RUN=0; BUILD_ONLY=0
@@ -70,7 +82,7 @@ if [ "$BUILD_ONLY" -eq 1 ]; then
   fi
   if [ ! -f "$BUILD_PY" ]; then echo "[gate] 缺 build_blacklist.py: $BUILD_PY" >&2; exit 3; fi
   echo "[gate] 重建黑名单 → $BLACKLIST_DIR"
-  python3 "$BUILD_PY" --eval-jsonl "${EVAL_JSONLS[@]}" --out-dir "$BLACKLIST_DIR" \
+  "$GATE_PY" "$BUILD_PY" --eval-jsonl "${EVAL_JSONLS[@]}" --out-dir "$BLACKLIST_DIR" \
     --ngram "$NGRAM" --short-ngram "$SHORT_NGRAM" --minhash-k "$MINHASH_K" || exit 3
   echo "[gate] 黑名单已重建：$BLACKLIST_DIR"; exit 0
 fi
@@ -108,7 +120,7 @@ TOTAL_FLAGGED=0; TOTAL_SCANNED=0; FAIL=0
 for i in "${!IN_PATHS[@]}"; do
   label="${IN_LABELS[$i]}"; inp="${IN_PATHS[$i]}"; rep="/tmp/pt_contam_${label}_$$.md"
   echo "[gate] 扫描 [${label}] ${inp} ..."
-  if ! python3 "$CHECK_PY" --blacklist-dir "$BLACKLIST_DIR" --input "$inp" \
+  if ! "$GATE_PY" "$CHECK_PY" --blacklist-dir "$BLACKLIST_DIR" --input "$inp" \
         --ngram "$NGRAM" --threshold "$THRESHOLD" --out "$rep" >/tmp/pt_contam_stdout_$$.log 2>&1; then
     echo "[gate][FAIL-SAFE] check_contamination.py 执行失败（见 /tmp/pt_contam_stdout_$$.log）" >&2
     { echo "| ${label} | ${inp} | ERR | ERR | ❌ checker 失败(阻断) |"; } >> "$OUT"; FAIL=1; continue

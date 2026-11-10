@@ -11474,3 +11474,87 @@ occupied by vLLM serve until sandbox tunnel restored」。dry-run 不触发 guar
 ---
 
 
+## §R161 — Phase 3 RL/GRPO Launch-Readiness Audit + Contamination Gate Fix（wake230, 2026-11-11, 零 GPU · CPU）
+
+> **目标**：对 Phase 3 替身 RL/GRPO（`baize_posttrain_rl_grpo_surrogate.sh`）做与 R159（SFT）同口径的**发射前就绪审计**——逐项验证 verl GRPO 依赖矩阵，并在审计中发现并修复污染闸门对 RL/SFT parquet 的**静默漏扫**（红线 §5.1）。
+
+### 1. 审计范围
+
+Phase 3 = 从 Phase 2 SFT ckpt 起，用 verl 0.4.0 GRPO + 4 奖励臂（R0–R4）+ 6 生命周期 hook + anti-cheat，在 GPU 4-7 上跑 ~3000 步。依赖链：SFT ckpt → rl_grpo_surrogate.sh → [verl venv / config v2 / wrapper / reward funcs / hooks / RL parquet / contam gate / sandbox / GPU 4-7]。
+
+### 2. 依赖矩阵（17 项）
+
+| # | 依赖项 | 验证命令 | 结果 |
+|:--|:--|:--|:--|
+| 1 | verl 0.4.0 | `import verl; verl.__version__` | ✅ 0.4.0 |
+| 2 | torch 2.6.0+cu124 | `torch.__version__, torch.version.cuda, torch.cuda.is_available()` | ✅ 2.6.0+cu124 / 12.4 / True |
+| 3 | flash_attn 2.7.4.post1 | `flash_attn.__version__` | ✅ 2.7.4.post1 |
+| 4 | ray 2.60.0 | `ray.__version__` | ✅ 2.60.0 |
+| 5 | transformers 4.51.1 | `transformers.__version__` | ✅ 4.51.1（≠vLLM venv 4.49.0，独立 venv 不冲突，见 R159 F1） |
+| 6 | datasets/pandas/pyarrow | 版本打印 | ✅ 5.0.1 / 2.3.3 / 25.0.1 |
+| 7 | RayPPOTrainer import | `from verl.trainer.ppo.ray_trainer import RayPPOTrainer` | ✅ import OK |
+| 8 | verl main_ppo entry | wrapper 引用 `from verl.trainer.main_ppo import main` | ✅ import 路径已验证 |
+| 9 | RL 数据 parquet | `pq.read_table('rl_pyaether_synth_v2.parquet')` | ✅ 3347 rows, cols=[prompt, reward_model, agent_name], prompt=list<struct<role,content>> |
+| 10 | reward functions 自测 | `python baize_posttrain_reward_functions.py --arm R0` | ✅ Self-test PASSED（R0-R4 全臂 + cheat rate tracker） |
+| 11 | reward compute_score 签名 | `inspect.signature(compute_score)` | ✅ `(data_source, solution_str, ground_truth, extra_info=None, **kwargs)` |
+| 12 | hooks smoke test | `python baize_posttrain_hooks.py --smoke-test --smoke-steps 5` | ✅ ALL PASS（6 hooks registered + fired + verification 7/7） |
+| 13 | hooks config | `cat baize_posttrain_hooks_config.yaml` | ✅ 6 hooks enabled（resilience/curriculum/rollout_scheduler/kl_scheduler/anti_cheat/early_stop） |
+| 14 | surrogate RL 脚本语法 | `bash -n baize_posttrain_rl_grpo_surrogate.sh` | ✅（dry-run 因 NFS 冷启动 torch import >30s 超时，见 F3） |
+| 15 | sandbox-check | `bash baize_posttrain_rl_grpo_surrogate.sh --sandbox-check` | ✅ 正确报告 CLOSED（exit=124, R1-R4 blocked, R0 only） |
+| 16 | contamination gate（修复后） | `bash baize_posttrain_contamination_gate.sh --rl-synth rl_pyaether_synth_v2.parquet` | ✅ 扫描 3347 / 命中 0 → PASS（**修复前扫 0 docs + FAIL-SAFE**，见 F1/F2） |
+| 17 | orchestrator 集成 | `baize_posttrain_surrogate_pipeline.sh --phase3` | ✅ phase3 委托 rl_grpo_surrogate.sh + gate_contam + check_sandbox + check_gpu_free |
+
+### 3. 发现（F1–F3）
+
+#### 🔴 F1（CRITICAL · 已修复）：污染闸门对 RL/SFT parquet 静默漏扫
+
+- **现象**：gate 报「扫描 0 / 命中 0 → PASS」，但 RL parquet 有 3347 行——**实际扫了 0 行，闸门形同虚设**。
+- **根因**：`check_contamination.py` 的 `_iter_parquet()` 只探测 `content/texts/text` 列。RL parquet 列名为 `prompt`（`list<struct<role,content>>`），SFT parquet 列名为 `conversation`（同结构）——均不在探测列表 → `col=None → break` → 产出 0 文档。
+- **影响**：红线 §5.1 的**训练侧扫描对 parquet 格式 RL/SFT 数据完全失效**。若合成数据含 eval task 原文，闸门不会拦截 → 直接违反红线。
+- **修复**：`_iter_parquet()` 列探测列表增加 `prompt/messages/conversation`（向后兼容，`_flatten()` 已正确处理 `list<struct<role,content>>`）。
+- **验证**：RL 修复前 0 docs → 修复后 **3347/0 PASS** ✅；SFT 修复前 0 docs → 修复后 **1725/0 PASS** ✅；anneal JSONL 400/0 PASS（回归无影响）✅。
+
+#### 🔴 F2（CRITICAL · 已修复）：闸门 wrapper 用 system python3（无 pyarrow）→ FAIL-SAFE
+
+- **现象**：gate wrapper 报 `[gate][FAIL-SAFE] check_contamination.py 执行失败`（exit 2，阻断训练）。
+- **根因**：`baize_posttrain_contamination_gate.sh` 用 `python3`（= `/usr/bin/python3`，system python）调 checker。system python **无 pyarrow** → `import pyarrow.parquet` ImportError → checker 非 0 退出 → FAIL-SAFE。
+- **影响**：**所有 parquet 输入**都触发 FAIL-SAFE → 闸门永远 exit 2 → 训练永远被阻断。
+- **修复**：gate wrapper 增加 `GATE_PY` 探测——优先 `~/code/verl_cu124_venv/bin/python`（有 pyarrow 25.0.1），回退 `python3`。两处调用改为 `"$GATE_PY"`。
+- **验证**：修复后正确执行 checker + 正确解析报告（grep 模式 `扫描文档数：` / `命中（污染）文档数：` 与 checker 输出格式匹配）。
+
+#### 🟠 F3（info · 已知）：surrogate RL dry-run 超时
+
+- **现象**：`bash baize_posttrain_rl_grpo_surrogate.sh --dry-run` 30s 超时。
+- **根因**：verl wrapper import torch（NFS 冷启动 >30s，R45 实测）。
+- **处置**：记录，起跑前先 `python -c 'import torch'` warm-up。
+
+### 4. 阻塞项（外部，非本线可解）
+
+| 阻塞 | 状态 | 解除条件 |
+|:--|:--|:--|
+| 沙盒 10.129.32.75:8667 | 🔴 CLOSED（35th 连续 wake，主机级防火墙） | 防火墙开通 / watcher 自动检测恢复 → 自动起 Phase 1 |
+| GPU 4-7 | 🔴 serve 占位（17:10 令） | 沙盒恢复 → 停 GPU 5-7 serve → GPU 6-7 跑 SFT → SFT ckpt → GPU 4-7 跑 RL |
+| SFT ckpt | ⬜ 未产出 | Phase 2 SFT 完成（依赖 GPU 释放） |
+| pretrain ckpt | ⬜ 未收敛 | ETA≈2026-12-25（正式 BaiZe RL，非替身） |
+
+### 5. 起跑路径（零延迟就绪）
+
+沙盒恢复(watcher PID4109314 自动检测) → pipeline --phase1(GPU4 评测) → 停 GPU5-7 serve → pipeline --phase2(SFT GPU6-7) → SFT ckpt → pipeline --phase3(RL/GRPO GPU4-7, R0→R2→R4) → gate_contam PASS(R161 修复后对 parquet 有效) + check_sandbox + check_gpu_free + 6 hooks auto-install + cheat_rate.json 报告。
+
+### 6. 红线遵守
+
+- **§5.1 污染隔离**：R161 **修复了闸门对 parquet 的漏扫**——修复后 RL(3347)/SFT(1725)/anneal(400) 三路均实测 PASS（0 命中）。修复前 RL/SFT parquet 扫 0 docs = 闸门失效 = 红线裸露。此修复使红线在 RL/SFT parquet 路径上**首次真正生效**。
+- **§5.2 反作弊**：reward functions 自测含 cheat rate tracker（high_overlap=0.907→is_cheat=True ✅）；hooks 含 AntiCheatMonitorHook（rolling mean>5%→rollback）；RL 脚本 post-training 生成 cheat_rate.json。
+- **§5.3 口径一致**：RL 数据 3347 合成任务（非 158 eval 原题），闸门 0 命中证实不同源。
+- **修改的文件**：`data_pipeline/check_contamination.py`（shared with data 线，向后兼容：仅增加列名探测，不影响既有 content/texts/text 路径）+ `baize_posttrain_contamination_gate.sh`（posttrain 本线）。跨线修改已在 MEMORY 记一行。
+
+### 7. 交付物清单
+
+- `data_pipeline/check_contamination.py` — `_iter_parquet()` 增加 prompt/messages/conversation 列探测（F1 修复）
+- `baize_posttrain_contamination_gate.sh` — `GATE_PY` 探测 verl venv python（F2 修复）
+- `EXPERIMENTS_POSTTRAIN.md` §R161（本节）
+- 验证证据：RL 3347/0 PASS + SFT 1725/0 PASS + anneal 400/0 PASS + hooks smoke ALL PASS + reward self-test PASSED
+
+- 无伪造。所有数值来自实跑命令输出。dry-run 超时（F3）如实标注。
+
+---
