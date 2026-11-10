@@ -1,0 +1,18 @@
+
+============================================================
+=== cline-patched: incr_eval R2028 ===
+  cline-patched: 3 new instances to eval (total real preds: 174, already evaluated: 171)
+  [10:58:31] cline-patched: merged 174 -> predictions_glm53/predictions_cline-patched_glm53.json
+  [10:58:31] cline-patched: launching eval (workers=1, timeout=1800, 3 instances)...
+  [10:59:02] cline-patched: eval done rc=0 (log: logs/eval_incr_verified_full_glm53_cline-patched_R2028.log)
+  [10:59:02] cline-patched: eval summary updated: 130/174 resolved (74.7%)
+
+============================================================
+=== codex: incr_eval R2028 ===
+  codex: no backlog, skipping
+
+============================================================
+=== opencode: incr_eval R2028 ===
+  opencode: 262 new instances to eval (total real preds: 358, already evaluated: 96)
+  [10:59:02] opencode: merged 358 -> predictions_glm53/predictions_opencode_glm53.json
+  [10:59:02] opencode: launching eval (workers=1, timeout=1800, 262 instances)...
