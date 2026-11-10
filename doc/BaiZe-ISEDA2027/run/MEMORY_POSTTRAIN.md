@@ -7,14 +7,14 @@ WAITING: 0
 
 ## 进度快照
 
-- PHASE: posttrain-wake206（2026-11-10 serve占位持续维护+沙盒11th wake仍阻塞+体积归档wake193-202）
-- 已完成: P3预备✅；P0✅；P1✅；P2✅；R1-R145✅；wake193-205✅；wake206✅ serve健康复检(5端点chat completions✅)+沙盒11th wake复检+体积归档(wake193-202→daily)
-- 当前动作: wake206 ①serve健康:5端点(8095-8099)/v1/models全✅+chat completions实测GPU4(8098)+GPU7(8095)✅正常生成,PID3408952(GPU4,~8.5h)+3595802-04(GPU5-7,~5.0h,ppid=1),全37.8GB 0%util,transformers4.49.0 ②沙盒11th wake仍CLOSED:10.129.32.75 ping OK(0.6ms)但TCP22/8664-8669全CLOSED→主机级防火墙持续(11th连续wake,wake195-206) ③体积归档:MEMORY 32492B→17.3KB(wake193-202原文搬入daily-memories-posttrain/2026-11-10.md,留1行指针) ④git synced(HEAD=047cf9add,无ahead/behind)
+- PHASE: posttrain-wake207（2026-11-10 serve占位持续维护+沙盒12th wake仍阻塞）
+- 已完成: P3预备✅；P0✅；P1✅；P2✅；R1-R145✅；wake193-206✅；wake207✅ serve全端点chat completions实测+沙盒12th wake复检
+- 当前动作: wake207 ①serve健康:4端点MiniCPM5(GPU4-7,8095-8098)chat completions全✅正常生成(temperature=0,实测有输出),PID3408952(GPU4,~8.7h etimes=31460s)+3595802-04(GPU5-7,~5.2h etimes=18723s,ppid=1),全37.8GB 0%util,transformers4.49.0;Qwen3.8-27B(8099)/v1/models✅(root线不碰) ②沙盒12th wake仍CLOSED:10.129.32.75 ping OK(0.4ms 0%loss)但TCP22+8664全CLOSED→主机级防火墙持续(12th连续wake,wake195-207) ③git synced(HEAD=14b2e616a,fetch✅无ahead/behind,无新运维指令) ④体积合规:MEMORY=18.6KB/TASK=24.5KB
 - 下一步: ①沙盒恢复→bash baize_posttrain_phase1_baseline.sh --smoke→正式三模型5-run ②GPU释放(停GPU6-7 serve)→bash baize_posttrain_sft_surrogate.sh --clean-gpu --gpu 6,7 --max-len 1024→SFT ckpt ③SFT ckpt→Phase3 RL/GRPO ④正式训练待pretrain ckpt(ETA≈2026-12-25)
-- 阻塞: 🔴远程沙盒10.129.32.75主机级防火墙(ping OK但TCP22/8664-8669全CLOSED,连续11 wake)→Phase1 eval阻塞;GPU5/6/7被serve占位(17:10令)→SFT待GPU释放;P3等pretrain ckpt
-- 本轮新增产出: serve健康复检(5端点chat completions GPU4+GPU7实测✅)+沙盒11th wake复检(仍CLOSED)+体积归档(wake193-202→daily-memories-posttrain/2026-11-10.md,MEMORY 32KB→17KB)
+- 阻塞: 🔴远程沙盒10.129.32.75主机级防火墙(ping OK但TCP22/8664全CLOSED,连续12 wake)→Phase1 eval阻塞;GPU5/6/7被serve占位(17:10令)→SFT待GPU释放;P3等pretrain ckpt
+- 本轮新增产出: serve 4端点MiniCPM5 chat completions全实测✅(GPU4-7均有生成输出)+沙盒12th wake复检(仍CLOSED)+git fetch确认无新运维指令
 - 未完成指令: 🔴用户令17:10(serve占位)✅持续维护中;🔴用户令13:40(三阶段替身计划)Phase1待沙盒/Phase2待GPU释放/Phase3待SFT ckpt ⇒ 全外部阻塞
-- git: wake206 commit 64bcc28ec+71243a1a6✅ pushed✅(网络retry后成功)
+- git: wake207 待提交(serve健康复检+沙盒12th wake)
 
 ## GPU 端口映射表（2026-11-10 wake195 实测）
 
@@ -96,4 +96,6 @@ WAITING: 0
 [wake205 22:15] SFT脚本修复落地(fix1/2/4)+serve健康+沙盒10th wake仍CLOSED: 体积自检(TASK=31437B30.7KB/MEMORY=31399B30.7KB合规)→GPU:0/8free(GPU0-3 root SGLang 45GB/GPU4-7 vLLM serve 37.8GB,全0%util)→git:synced(HEAD=e581e945e,无ahead/behind)→①serve健康:5端点(8095-8099)/v1/models全✅,PID3408952(GPU4,~8.3h)+3595802-04(GPU5-7,~4.7h,ppid=1),全37.8GB 0%util,transformers4.49.0 ②沙盒10th wake仍CLOSED:10.129.32.75 ping OK(0.42ms)但TCP22/8664-8669全CLOSED→主机级防火墙持续(10th连续wake) ③SFT脚本修复落地NEW:baize_posttrain_sft_surrogate.sh 85→140行,fix1 --clean-gpu(kill残留)+fix2 NCCL_P2P_DISABLE=1+IB_DISABLE=1+DEBUG=WARN(A40无NVLink)+fix4 GPU空闲等待循环--gpu-wait-timeout(默认120s);fix3(max_len=1024)/fix5(save_steps=200)已在wake204就位;验证全✅:bash -n/--help/--dry-run/GPU-wait+abort实测(GPU6,7 occupied→wait6s→abort exit=1). 📦 体积：TASK=31KB / MEMORY=31KB。本轮新增产出：SFT脚本修复落地(fix1/2/4→baize_posttrain_sft_surrogate.sh 140行,全验证✅)+EXPERIMENTS §SFT-failure-analysis追加。未完成指令：🔴17:10✅持续维护;🔴13:40全外部阻塞(沙盒10th wake仍CLOSED,GPU被serve占位) ⇒ WAITING=0(17:10令要求)。
 
 [wake206 22:40] serve健康复检(chat completions✅)+沙盒11th wake仍CLOSED+体积归档wake193-202: 体积自检(TASK=25137B24.5KB/MEMORY=32492B31.7KB→归档wake193-202后17.3KB合规)→GPU:0/8free(GPU0-3 root SGLang 45GB/GPU4-7 vLLM serve 37.8GB,全0%util)→git:synced(HEAD=047cf9add,无ahead/behind)→①serve健康:5端点(8095-8099)/v1/models全✅+chat completions实测GPU4(8098)+GPU7(8095)✅正常生成,PID3408952(GPU4,~8.5h)+3595802-04(GPU5-7,~5.0h,ppid=1),全37.8GB 0%util,transformers4.49.0 ②沙盒11th wake仍CLOSED:10.129.32.75 ping OK(0.6ms)但TCP22/8664-8669全CLOSED→主机级防火墙持续(11th连续wake,wake195-206) ③体积归档:MEMORY 32492B→17.3KB(wake193-202原文搬入daily-memories-posttrain/2026-11-10.md,留1行指针) ④全外部阻塞确认:沙盒主机级防火墙(Phase1 eval)+GPU5/6/7 serve占位(Phase2 SFT)+P3等pretrain ckpt→所有agent侧prep已穷尽(wake193-205) 📦 体积：TASK=24.5KB / MEMORY=17.3KB（归档14KB→daily-memories）。本轮新增产出：serve chat completions实测GPU4+GPU7✅+沙盒11th wake复检+体积归档(wake193-202→daily)。未完成指令：🔴17:10✅持续维护;🔴13:40全外部阻塞(沙盒11th wake仍CLOSED,GPU被serve占位) ⇒ WAITING=0(17:10令要求)。
+
+[wake207 22:45] serve 4端点chat completions全实测✅+沙盒12th wake仍CLOSED+git无新指令: 体积自检(TASK=25137B24.5KB/MEMORY=18604B18.2KB合规)→GPU:0/8free(GPU0-3 root SGLang 45GB/GPU4-7 vLLM serve 37.8GB,全0%util)→git:fetch✅synced(HEAD=14b2e616a,无ahead/behind,无新运维指令)→①serve健康NEW:4端点MiniCPM5(GPU4:8098/GPU5:8097/GPU6:8096/GPU7:8095)chat completions全✅正常生成(temperature=0 max_tokens=10,4端点均有文本输出),PID3408952(GPU4,~8.7h etimes=31460s)+3595802-04(GPU5-7,~5.2h etimes=18723s,ppid=1),全37.8GB 0%util,transformers4.49.0;Qwen3.8-27B(8099)/v1/models✅model_id=qwen3.8-27b(root线不碰) ②沙盒12th wake仍CLOSED:10.129.32.75 ping OK(0.4ms 0%loss)但TCP22+8664全CLOSED→主机级防火墙持续(12th连续wake,wake195-207) ③全外部阻塞再确认:沙盒主机级防火墙(Phase1 eval,需运维开端口)+GPU5/6/7 serve占位(17:10令,Phase2 SFT待释放)+P3等pretrain ckpt(ETA≈2026-12-25)→所有agent侧prep已穷尽(wake193-206),本轮仅serve维护+沙盒复检 📦 体积：TASK=24.5KB / MEMORY=18.6KB。本轮新增产出：serve 4端点MiniCPM5 chat completions全实测✅(GPU4-7均有生成)+沙盒12th wake复检(仍CLOSED)+git fetch确认无新运维指令。未完成指令：🔴17:10✅持续维护;🔴13:40全外部阻塞(沙盒12th wake仍CLOSED,GPU被serve占位) ⇒ WAITING=0(17:10令要求)。
 
