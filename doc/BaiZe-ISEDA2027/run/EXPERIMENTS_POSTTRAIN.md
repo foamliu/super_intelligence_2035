@@ -15436,3 +15436,66 @@ GPU 内存: 37GB / 48GB (76%, gradient checkpointing)
 - 解锁路径已明确（方案 A/B），解锁后可立即起跑（步骤 1-5 已写死）。
 
 4. **max_len=2048**：prompt+completion 约 380 tokens，2048 充裕；不浪费显存。
+---
+
+## §Phase1-unblock-deep-dive（wake201 · 2026-11-10 · no-sandbox 模式分析 + 本地沙盒不可能性确认）
+
+> 检索词: `no-sandbox-eval-mode`, `pyAether-local-install-impossible`, `SANDBOX_HOST-config-point`, `eval-pipeline-hard-dependency`
+
+### 1. no-sandbox 评测模式分析
+
+**发现**：`eda_fastmcp/prompts/eval_sys_prompt_template_no_sandbox.md` 存在，但仅影响**生成阶段**，不影响**评分阶段**。
+
+- **生成阶段**（no-sandbox prompt）：模型生成代码时无沙盒可执行 → 必须「内部推演」（在脑中逐行模拟执行轨迹、断言效果）。prompt 原文：「本场景无沙箱可实际执行，内部推演是唯一的逻辑校验手段。」
+- **评分阶段**（`run_on_sandbox.py` → `calculate_results.py`）：仍然必须把生成的代码发送到远程沙盒执行，检查断言是否通过 → **Pass@1 依赖沙盒执行**。
+- **结论**：no-sandbox 模式**不能解锁 Phase1 评测**。它只是让模型在生成时更依赖内部推理，但最终判分仍需沙盒。
+- **历史对照**：`eval_result/code_generation_without_sandbox-deepseek-v32-20260130.jsonl` 存在 → DeepSeek 曾跑过 no-sandbox 生成，但其评分仍需沙盒执行（同年跑的 with_sandbox 版本 v1-v5 证明评分链路依赖沙盒）。
+
+### 2. pyAether 本地安装不可能性确认（.17）
+
+**检查项**：
+| 检查 | 结果 |
+|:--|:--|
+| `/home/app.e0031982/code/pyaether_venv/` (Python 3.13) | 标准包（sqlalchemy/grpc/pydantic 等），**无 pyAether 模块** |
+| `import pyAether` in pyaether_venv | `ModuleNotFoundError: No module named 'pyAether'` |
+| `import _pyAether` in pyaether_venv | `ModuleNotFoundError: No module named '_pyAether'` |
+| 系统级搜索 `pyAether*.so` / `_pyAether*.so` / `libpyAether*` | **0 命中**（/home/app.e0031982 + /nas_data/app.e0031982, maxdepth 5） |
+| pyaether_venv 中的 .so 文件 | 全是标准库编译扩展（zstandard/yaml/sqlalchemy/grpc/pydantic 等），无 pyAether |
+
+**结论**：pyAether 是 SWIG 编译的 EDA 工具，需要编译好的 `.so` + 原生 EDA 库 → **不可 pip 安装**。`.17` 上无任何 pyAether 二进制 → **本地沙盒不可能**。pyAether 仅安装在 `10.129.32.75`。
+
+### 3. eval 管线确认（hard dependency on sandbox）
+
+```
+assemble_for_execution.py  →  run_on_sandbox.py  →  calculate_results.py
+(拼装 candidate+test)      (HTTP POST → SANDBOX_HOST:8667/v1/run_code)  (Pass@1 from 执行结果)
+```
+
+- `run_on_sandbox.py` 发送生成的代码到 `SANDBOX_HOST:SANDBOX_PORT_HTTP`（默认 10.129.32.75:8667）执行
+- `calculate_results.py` 从执行结果计算 Pass@1
+- **沙盒是 Pass@1 评分的硬依赖**，无沙盒 = 无法评分
+
+### 4. SANDBOX_HOST 配置点确认
+
+- `exec_code.py:25`: `HOST = os.getenv("SANDBOX_HOST", "10.129.32.75")`
+- `.env`: `SANDBOX_HOST=10.129.32.75`, `SANDBOX_PORT_HTTP=8667`, `SANDBOX_ENDPOINTS=8664:...,8665:...,8653:...,8669:...`
+- **唯一配置点** = 改 `.env` 的 `SANDBOX_HOST` + 重启 MCP server → 无需改代码（方案 B 已在 §Phase1-readiness-sandbox-block 记录）
+
+### 5. 网络路由确认
+
+- `ip route get 10.129.32.75` → `via 10.252.32.1 dev bond0 src 10.252.32.17`（路由正常）
+- ping OK（0.5ms, 0% loss）→ 主机在线
+- 但 TCP 22/8664-8669 全 CLOSED → **10.129.32.75 主机级防火墙/网络策略**阻断入站连接
+- **不是路由问题，是目标主机防火墙问题** → 需运维在 10.129.32.75 上开放端口或重启沙盒服务
+
+### 6. 本轮总结
+
+| 问题 | 结论 |
+|:--|:--|
+| no-sandbox 模式能解锁 Phase1 吗？ | ❌ 不能（仅影响生成阶段，评分仍需沙盒） |
+| 能在 .17 本地跑沙盒吗？ | ❌ 不能（pyAether 未安装，无 .so，不可 pip 装） |
+| 沙盒阻塞的根因？ | 10.129.32.75 主机级防火墙（ping OK 但 TCP 全 CLOSED） |
+| 解锁路径？ | 方案 A: 运维在 10.129.32.75 开放端口/重启服务；方案 B: 任一已装 pyAether 的可达主机 H 启服务 + 改 .env SANDBOX_HOST=H |
+| agent 能自行解锁吗？ | ❌ 不能（无 10.129.32.75 访问权限，无 pyAether 二进制，无替代沙盒） |
+
+**Phase1 评测阻塞 = 纯外部基础设施问题，agent 侧已穷尽所有可行路径。**

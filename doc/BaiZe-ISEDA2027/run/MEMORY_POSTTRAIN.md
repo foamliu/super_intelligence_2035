@@ -7,14 +7,14 @@ WAITING: 1
 
 ## 进度快照
 
-- PHASE: posttrain-wake200（2026-11-10 serve占位维护+pyAether MCP双后端发现:API KB✅/sandbox❌+push 4连超时→全外部阻塞持续,解锁需运维）
-- 已完成: P3预备✅；P0✅；P1✅；P2✅；R1-R145✅；wake193-199✅（详见流水）；wake200✅ serve健康复检(5端点)+pyAether MCP search_apis✅/run_code❌双后端确认+push 4连超时记录
-- 当前动作: wake200 ①serve健康:GPU4-7全37.8GB,5端点(8095-8099)/v1/models全OK,pid3408953(GPU4,6.1h)+3595802-04(GPU5-7,2.6h,ppid=1真守护),transformers4.49.0 ②pyAether MCP双后端NEW:search_apis✅(query"create a layout cell"→leGuiMakeCell/aeMakeCell/aeNewCell+BM25补充,API知识库本地可达)+get_api_details✅,但run_code❌(probe超时60s=转发10.129.32.75:8667沙盒DOWN)→MCP server API查询可用,代码执行不可用 ③沙盒复检:10.129.32.75:8664-8669+SSH:22全CLOSED(连续5 wake无变化,主机级隔离持续) ④git push:EXIT=124(4连超时wake195/198/199/200,网络recurring);HEAD=6a3ed381d本地提交,loop会补推
-- 下一步: ①沙盒恢复(方案A:10.129.32.75重启沙盒服务/方案B:任一已装pyAether主机H启服务+.17改.env SANDBOX_HOST=H)→立即Phase1基线评测(脚本+闸门+dry-run全就绪) ②GPU释放后→重启SFT(crash-resilient脚本就绪) ③SFT ckpt→Phase3 RL/GRPO ④正式训练待pretrain ckpt(ETA≈2026-12-25)
-- 阻塞: 🔴远程沙盒10.129.32.75主机级网络隔离(SSH:22+8664-8669全CLOSED,连续5 wake无变化)→Phase1 eval阻塞(pyAether不可pip装+run_code转发远程+Docker需root);GPU5/6/7被serve占位(17:10令)→SFT重启待GPU释放;P3等pretrain ckpt
-- 本轮新增产出: pyAether MCP双后端确认(API KB=search_apis/get_api_details✅本地可达 vs sandbox=run_code❌远程DOWN)→Phase1 eval阻塞精确到"仅代码执行不可用,API查询可用";serve健康复检(5端点✅);push 4连超时记录
-- 未完成指令: 🔴用户令17:10(serve占位)✅持续维护中;🔴用户令13:40(三阶段替身计划)Phase1待沙盒(主机级隔离需运维)/Phase2待GPU释放/Phase3待SFT ckpt ⇒ 全外部阻塞,所有可做prep已穷尽
-- git: wake200 commit本地提交,push EXIT=124(4连超时,网络recurring wake195/198/199/200);⏰下次唤醒第一件事=补推;loop也会重试
+- PHASE: posttrain-wake201（2026-11-10 no-sandbox eval模式分析+pyAether本地不可能性确认+eval管线hard-dep确认→Phase1解锁路径穷尽,纯外部阻塞）
+- 已完成: P3预备✅；P0✅；P1✅；P2✅；R1-R145✅；wake193-200✅（详见流水）；wake201✅ no-sandbox模式分析(仅生成阶段,评分仍需沙盒)+pyAether本地安装不可能(0 .so文件)+eval管线hard-dep确认+SANDBOX_HOST唯一配置点确认
+- 当前动作: wake201 ①serve健康:5端点(8095-8099)/v1/models全✅,pid3408953(GPU4,6.7h)+3595802-04(GPU5-7,3.2h,ppid=1),GPU4-7全37.8GB 0%util ②no-sandbox模式NEW:eval_sys_prompt_template_no_sandbox.md仅影响生成阶段(模型内部推演),评分阶段run_on_sandbox.py仍需远程沙盒→不能解锁Phase1 ③pyAether本地不可能确认:pyaether_venv(Python3.13)无pyAether模块,系统级搜索0个.so/SWIG文件→pyAether是SWIG编译EDA工具不可pip装 ④eval管线:assemble→run_on_sandbox(POST SANDBOX_HOST:8667)→calculate(Pass@1)→沙盒是硬依赖 ⑤SANDBOX_HOST=os.getenv唯一配置点(exec_code.py:25) ⑥网络:ip route get→via 10.252.32.1正常,ping 0.5ms OK但TCP全CLOSED→10.129.32.75主机级防火墙 ⑦git:synced(HEAD=ac92cae37),push timeout(网络flaky但repo同步)
+- 下一步: ①沙盒恢复(方案A:运维在10.129.32.75开放端口/重启服务/方案B:任一已装pyAether可达主机H启服务+改.env SANDBOX_HOST=H)→立即Phase1基线评测 ②GPU释放后→重启SFT ③SFT ckpt→Phase3 RL/GRPO ④正式训练待pretrain ckpt(ETA≈2026-12-25)
+- 阻塞: 🔴远程沙盒10.129.32.75主机级防火墙(ping OK但TCP22/8664-8669全CLOSED,连续6 wake)→Phase1 eval阻塞(no-sandbox模式不能解锁+pyAether本地不可装+无10.129.32.75访问权);GPU5/6/7被serve占位(17:10令)→SFT待GPU释放;P3等pretrain ckpt
+- 本轮新增产出: §Phase1-unblock-deep-dive→no-sandbox模式分析(仅生成阶段)+pyAether本地安装不可能(0 .so确认)+eval管线hard-dep(沙盒是Pass@1硬依赖)+SANDBOX_HOST唯一配置点+网络路由确认(非路由问题=目标主机防火墙)→Phase1解锁路径agent侧穷尽
+- 未完成指令: 🔴用户令17:10(serve占位)✅持续维护中;🔴用户令13:40(三阶段替身计划)Phase1待沙盒(主机级防火墙需运维)/Phase2待GPU释放/Phase3待SFT ckpt ⇒ 全外部阻塞,agent侧所有可行路径已穷尽
+- git: wake201 synced(HEAD=ac92cae37=wake200,无ahead/behind);push timeout(网络flaky)但repo已同步
 
 ## GPU 端口映射表（2026-11-10 wake195 实测）
 
@@ -108,3 +108,4 @@ WAITING: 1
 
 [wake200] serve占位维护+pyAether MCP双后端发现+push 4连超时: 体积自检(TASK=31437B30.7KB/MEMORY=30259B29.0KB合规)→GPU:0/8free(GPU0-3 root SGLang 45GB/GPU4-7 vLLM serve 37.8GB,全0%util)→git push EXIT=124(4连超时wake195/198/199/200,网络recurring)→①serve健康:5端点(8095-8099)/v1/models全✅,pid3408953(GPU4,6.1h)+3595802-04(GPU5-7,2.6h,ppid=1),transformers4.49.0 ②pyAether MCP双后端NEW:search_apis✅(query"create a layout cell"→leGuiMakeCell/aeMakeCell/aeNewCell+BM25补充,API知识库本地可达)+get_api_details✅,但run_code❌(probe超时60s=转发10.129.32.75:8667沙盒DOWN)→MCP server API查询可用,代码执行不可用 ③沙盒复检:10.129.32.75:8664-8669+SSH:22全CLOSED(连续5 wake无变化,主机级隔离持续) ④EXPERIMENTS=809KB(大但非32KB限制对象,不读入prompt). 📦 体积：TASK=31KB / MEMORY=30KB。本轮新增产出：pyAether MCP双后端确认(API KB✅ vs sandbox❌)+serve健康复检(5端点✅)+push 4连超时记录。未完成指令：🔴17:10✅持续维护;🔴13:40全外部阻塞(沙盒DOWN+GPU被serve占位) ⇒ WAITING=1。
 
+[wake201] Phase1解锁路径穷尽:no-sandbox模式分析+pyAether本地不可能+eval管线hard-dep: 体积自检(TASK=31437B30.7KB/MEMORY=31044B30.3KB合规)→GPU:0/8free(GPU0-3 root SGLang 45GB/GPU4-7 vLLM serve 37.8GB,全0%util)→git:synced(HEAD=ac92cae37=wake200,无ahead/behind),push timeout(网络flaky)→①serve健康:5端点(8095-8099)/v1/models全✅,pid3408953(GPU4,6.7h)+3595802-04(GPU5-7,3.2h,ppid=1) ②no-sandbox模式NEW:eval_sys_prompt_template_no_sandbox.md仅影响生成阶段(模型内部推演,无沙盒执行),评分阶段run_on_sandbox.py仍POST到SANDBOX_HOST:8667→不能解锁Phase1 ③pyAether本地不可能:pyaether_venv(Python3.13)import pyAether→ModuleNotFoundError,系统级搜索pyAether*.so/_pyAether*.so/libpyAether*=0命中→SWIG编译EDA工具不可pip装 ④eval管线:assemble→run_on_sandbox(POST 8667/v1/run_code)→calculate(Pass@1)→沙盒是硬依赖 ⑤SANDBOX_HOST=os.getenv唯一配置点(exec_code.py:25,.env) ⑥网络:ip route get 10.129.32.75→via 10.252.32.1正常,ping 0.5ms OK但TCP22/8664-8669全CLOSED→目标主机防火墙 ⑦EXPERIMENTS §Phase1-unblock-deep-dive写入. 📦 体积：TASK=31KB / MEMORY=31KB。本轮新增产出：no-sandbox模式分析(仅生成阶段,评分仍需沙盒)+pyAether本地安装不可能(0 .so确认)+eval管线hard-dep+SANDBOX_HOST唯一配置点+网络路由确认(非路由=目标主机防火墙)→Phase1解锁路径agent侧穷尽。未完成指令：🔴17:10✅持续维护;🔴13:40全外部阻塞(沙盒主机级防火墙需运维,GPU被serve占位) ⇒ WAITING=1。
