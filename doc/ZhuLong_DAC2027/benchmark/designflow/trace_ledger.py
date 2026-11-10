@@ -40,9 +40,15 @@ SHARD_DOMAINS = {
     "D": ("schematic_netlist|waveform|analog_context",
           "waveview|cosmos|skill|netlist|spiros|spectrum|analog|schematic"),
 }
-# per-shard mc 阈值 (shard A 候选稀缺, 降到 15; 其他保持 30)
-# 可被 summary_stats.json 的 shard_mc 字段覆盖
-SHARD_MC = {"A": 15, "B": 30, "C": 30, "D": 30}
+# per-shard mc 阈值
+# 2026-11-11 用户令：全面下调到 mc>=10（原 A=15 / B,C,D=30）。
+# 依据：2026-11-05 全量扫描 summary_1105.tsv 实测（5822 数据行 -> 2560 去重 session）：
+#   未动过(可做)  mc>=30 → mc>=10：119 → 381（+262，3.2x）；分 shard A 109→318, B 5→39,
+#   C 102→332, D 70→252。复算：trace_ledger.py mc-matrix --src designflow/summary_1105.tsv
+# 可被 summary_stats.json 的 shard_mc 字段覆盖。
+SHARD_MC = {"A": 10, "B": 10, "C": 10, "D": 10}
+# 全局默认阈值（无 --shard 时用；也是 refresh 时写 mc<N> 的键）
+DEFAULT_MC = 10
 
 # 运行时由 --shard 设定
 _shard = None
@@ -112,12 +118,27 @@ def load_stats():
 
 
 def target_of(stats):
-    """分母 = 候选池规模（默认 match_count>=30，可用 stats.target_mc 覆盖）"""
-    mc = int(stats.get("target_mc", 30))
-    for k in ("mc%d" % mc, "mc30", "mc100", "mc300", "sessions"):
+    """分母 = 候选池规模。严格按 target_mc 取对应 key。
+
+    2026-11-11 修复：旧实现把候选 key 列表写死成 ("mc30","mc100",...)，导致
+    target_mc 形同虚设 —— 设 target_mc=10 时仍会 fallback 到 mc30，分母永远是
+    mc>=30 的口径（这正是日报 34.4% 与"池枯竭"互相打架的根因）。
+    现在：显式接受 mc<N> / mcN / mc100 / mc300 / sessions 按顺序精确回退，
+    但会打印实际命中的 key，绝不静默换成别档口径。
+    返回 (target, mc, key_hit)。
+    """
+    mc = int(stats.get("target_mc", DEFAULT_MC))
+    # 只接受与 target_mc 同档或更宽松的显式快照 key，按"同档优先"顺序
+    cand_keys = ["mc%d" % mc, "mc_%d" % mc, "mc%03d" % mc,
+                 "mc100", "mc300", "sessions"]
+    seen = set()
+    for k in cand_keys:
+        if k in seen:
+            continue
+        seen.add(k)
         if stats.get(k):
-            return int(stats[k]), mc
-    return int(stats.get("sessions", 0) or 0), mc
+            return int(stats[k]), mc, k
+    return int(stats.get("sessions", 0) or 0), mc, "sessions"
 
 
 def bar(pct, width=28):
@@ -147,27 +168,55 @@ def _upsert(session, **kw):
     save(rows)
     return r
 
+def _pool_members(st):
+    """返回池内 session slug 集合（来自 mc_matrix.src / scan_snapshot），用于把
+    覆盖率分子限制在同一底池内 —— 否则会把快照之外的旧 session 算进分子，
+    导致"池 1929 - 已动过 2347"这类自相矛盾的数字。"""
+    src = st.get("mc_matrix", {}).get("src") if isinstance(st.get("mc_matrix"), dict) else None
+    src = src or st.get("scan_snapshot")
+    if not src:
+        return None
+    p = src if os.path.isabs(src) else os.path.join(HERE, src)
+    if not os.path.exists(p):
+        p = os.path.join(os.path.dirname(HERE), src) if not os.path.isabs(src) else p
+    if not os.path.exists(p):
+        return None
+    best, _, _ = _dedup_scan(p)
+    return set(best)
+
+
 def cmd_stats(args):
     rows = load()
     st = load_stats()
-    target, mc = target_of(st)
-    covered = [r for r in rows if r["status"] in COVERED]
-    touched = [r for r in rows if r["status"] in TOUCHED]
+    target, mc, key_hit = target_of(st)
+    pool = _pool_members(st)
+
+    def _in_pool(r):
+        return pool is None or _norm_sid(r["session_file"]) in pool
+
+    covered = [r for r in rows if r["status"] in COVERED and _in_pool(r)]
+    touched = [r for r in rows if r["status"] in TOUCHED and _in_pool(r)]
     by = {}
     for r in rows:
         by[r["status"]] = by.get(r["status"], 0) + 1
     pct = (100.0 * len(covered) / target) if target else 0.0
     if target:
-        print("trace 覆盖率 %s %5.1f%%   covered=%d / target=%d (mc>=%d)"
-              % (bar(pct), pct, len(covered), target, mc))
+        print("trace 覆盖率 %s %5.1f%%   covered=%d / target=%d (mc>=%d, key=%s%s)"
+              % (bar(pct), pct, len(covered), target, mc, key_hit,
+                 "，已限定池内" if pool else ""))
     else:
-        print("trace 覆盖率：候选池未知（先 refresh：sessions/mc300/mc500/mc1000）；covered=%d"
+        print("trace 覆盖率：候选池未知（先 refresh：sessions/mc10/mc30/mc100）；covered=%d"
               % len(covered))
-    print("  已动过 %d：case %d · deepread %d · parked %d · claimed %d"
+    print("  已动过 %d：case %d · deepread %d · parked %d · claimed %d（全台账）"
           % (len(touched), by.get("case", 0), by.get("deepread", 0),
              by.get("parked", 0), by.get("claimed", 0)))
     if target:
-        print("  剩余可做 ≈ %d（已动过的不再计入）" % max(0, target - len(touched)))
+        # 2026-11-11：旧实现用 len(touched) 直接减，但 4 个 shard ledger 有重复行
+        # （同一 session 被多个 shard park 过），会把"剩余可做"算成 0，误导成"池已枯竭"。
+        # 现在按去重后的 session slug 计数。
+        touched_sids = {_norm_sid(r["session_file"]) for r in touched if r["session_file"]}
+        print("  剩余可做 ≈ %d（池 %d - 池内去重已动过 %d）"
+              % (max(0, target - len(touched_sids)), target, len(touched_sids)))
     if st.get("updated_at"):
         print("  快照 %s：sessions=%s mc300=%s mc500=%s mc1000=%s"
               % (st.get("updated_at"), st.get("sessions"), st.get("mc300"),
@@ -189,9 +238,14 @@ def html_block(rows=None, st=None):
     """日报用的 HTML 片段（内联样式，无外链）"""
     rows = load() if rows is None else rows
     st = load_stats() if st is None else st
-    target, mc = target_of(st)
-    covered = [r for r in rows if r["status"] in COVERED]
-    touched = [r for r in rows if r["status"] in TOUCHED]
+    target, mc, key_hit = target_of(st)
+    pool = _pool_members(st)
+
+    def _in_pool(r):
+        return pool is None or _norm_sid(r["session_file"]) in pool
+
+    covered = [r for r in rows if r["status"] in COVERED and _in_pool(r)]
+    touched = [r for r in rows if r["status"] in TOUCHED and _in_pool(r)]
     pct = (100.0 * len(covered) / target) if target else 0.0
     by = {}
     for r in rows:
@@ -208,8 +262,12 @@ def html_block(rows=None, st=None):
     pct_txt = ("%.1f%%" % pct) if target else "—"
     width = pct if target else 0.0
     pool_txt = str(target) if target else "未知（待 refresh）"
+    # 2026-11-11：把分母实际命中的快照 key 显式写进页面，杜绝"分母悄悄换档"。
+    src_txt = ("分母口径 = <code>summary_stats.json:%s</code>（target_mc=%d）" % (key_hit, mc)
+               if target else "分母口径 = 未知")
     return (
         '<h3>trace 覆盖率进度条（候选池 mc&ge;%d，合并 4 shard ledger）</h3>\n'
+        '<p style="color:#666;font-size:.78rem">%s</p>\n'
         '<div class="kpis">\n'
         '<div class="kpi"><div class="n">%s</div><div class="l">已用 / 候选池（mc&ge;%d）</div></div>\n'
         '<div class="kpi"><div class="n">%d</div><div class="l">已用去重 session</div></div>\n'
@@ -220,7 +278,7 @@ def html_block(rows=None, st=None):
         '<div style="width:%.1f%%;height:18px;background:#2c7be5"></div></div>\n'
         '<p style="color:#666;font-size:.8rem">%s · 台账 case %d / seeded %d / deepread %d / parked %d / claimed %d</p>\n'
         '<ul>%s</ul>\n'
-        % (mc, pct_txt, mc, len(covered), pool_txt, len(touched), width, delta,
+        % (mc, src_txt, pct_txt, mc, len(covered), pool_txt, len(touched), width, delta,
            by.get("case", 0), by.get("seeded", 0), by.get("deepread", 0),
            by.get("parked", 0), by.get("claimed", 0), dom_html or "<li>—</li>"))
 def cmd_next(args):
@@ -229,12 +287,12 @@ def cmd_next(args):
     used = [r["session_file"].replace(".messages.json", "")
             for r in load() if r["session_file"]]
     st = load_stats()
-    # per-shard mc 阈值: SHARD_MC → summary_stats.json.shard_mc → target_mc → 30
+    # per-shard mc 阈值: summary_stats.json.shard_mc → SHARD_MC → target_mc → DEFAULT_MC
     shard_mc_cfg = st.get("shard_mc", {}) if isinstance(st.get("shard_mc"), dict) else {}
     if _shard and _shard in SHARD_MC:
         mc = int(shard_mc_cfg.get(_shard, SHARD_MC[_shard]))
     else:
-        mc = int(st.get("target_mc", 30))
+        mc = int(st.get("target_mc", DEFAULT_MC))
     # 扫描路径: 优先 summary_stats.json.scan_path, 否则用 .75 上最新扫描目录
     scan_tsv = st.get("scan_path", "")
     if not scan_tsv:
@@ -247,7 +305,7 @@ def cmd_next(args):
         tool_filter = " && $6 ~ /%s/" % tools_re
     print("# 1) 在 .75 上跑（经 eda_flow run_commands）取候选，已排除台账里的 session%s：" % ("，按 shard %s keywords($6) 过滤" % _shard if _shard else ""))
     print("# (sub(/\\.messages\\.json$/,\"\",$4) 规范化后做 anchor 匹配)")
-    print("# 候选池 mc>=%d%s (11/06: shard A 放宽过滤词+降到 mc>=15; 其他 shard 保持 mc>=30)" % (mc, " [shard %s 专属阈值]" % _shard if _shard and _shard in SHARD_MC and mc != 30 else ""))
+    print("# 候选池 mc>=%d%s (11/06: shard A 放宽过滤词+降阈值; **2026-11-11 用户令: 全线降到 mc>=10**)" % (mc, " [shard %s 专属阈值]" % _shard if _shard and _shard in SHARD_MC and mc != DEFAULT_MC else ""))
     print("# 扫描源: %s" % scan_tsv)
     print("# r309: 过滤改用 $6(keywords) 而非 $7(tools)；$7 对 ~346 verilog session 为空，旧 $7 过滤漏候选 8x (dedup 294->2381)")
     print("awk -F'\\t' 'NR>1 && $5+0>=%d {sub(/\\.messages\\.json$/,\"\",$4); $4 !~ /^(%s)$/%s {print $5\"\\t\"$4\"\\t\"$3\"\\t\"$2\"\\t\"$6}' "
@@ -463,6 +521,14 @@ def cmd_scansync(args):
     print("echo \"dedup_hosts: $(tail -n +2 $SUMMARY | awk -F'\\t' '{print $2}' | sort -u | wc -l)\"")
     print("echo \"mc30: $(tail -n +2 $SUMMARY | awk -F'\\t' '$5+0>=30 {print $4}' | sort -u | wc -l)\"")
     print("echo \"mc100: $(tail -n +2 $SUMMARY | awk -F'\\t' '$5+0>=100 {print $4}' | sort -u | wc -l)\"")
+    # 2026-11-11 用户令：全线下调到 mc>=10，故各档都要统计，供 refresh 写 mc10/mc15/mc20/mc30
+    for m in (10, 15, 20, 30):
+        if m == 30:
+            continue
+        print("echo \"mc%d: $(tail -n +2 $SUMMARY | awk -F'\\t' '$5+0>=%d {print $4}' | sort -u | wc -l)\""
+              % (m, m))
+        print("echo \"users_mc%d: $(tail -n +2 $SUMMARY | awk -F'\\t' '$5+0>=%d {print $3}' | sort -u | wc -l)\""
+              % (m, m))
     print("echo \"users_mc30: $(tail -n +2 $SUMMARY | awk -F'\\t' '$5+0>=30 {print $3}' | sort -u | wc -l)\"")
     print("# 3) 各 shard 候选池规模 (用当前过滤词 + mc 阈值):")
     for sid in sorted(SHARD_DOMAINS):
@@ -470,9 +536,9 @@ def cmd_scansync(args):
         mc = SHARD_MC.get(sid, 30)
         print("echo \"shard_%s_pool_mc%d: $(tail -n +2 $SUMMARY | awk -F'\\t' '$5+0>=%d && $6 ~ /%s/ {print $4}' | sort -u | wc -l)\""
               % (sid, mc, mc, tools_re))
-    print("# 4) 新增 session (旧扫描没有的):")
-    print("echo \"new_sessions: $(comm -13 <(tail -n +2 %s | awk -F'\\t' '$5+0>=30{print $4}' | sort -u) <(tail -n +2 $SUMMARY | awk -F'\\t' '$5+0>=30{print $4}' | sort -u) | wc -l)\""
-          % old_scan)
+    print("# 4) 新增 session (旧扫描没有的, 按 target_mc=%d 口径):" % DEFAULT_MC)
+    print("echo \"new_sessions: $(comm -13 <(tail -n +2 %s | awk -F'\\t' '$5+0>=%d{print $4}' | sort -u) <(tail -n +2 $SUMMARY | awk -F'\\t' '$5+0>=%d{print $4}' | sort -u) | wc -l)\""
+          % (old_scan, DEFAULT_MC, DEFAULT_MC))
     print("# 5) 各 shard 的新增候选 (旧扫描没有的):")
     for sid in sorted(SHARD_DOMAINS):
         tools_re = SHARD_DOMAINS[sid][1]
@@ -487,6 +553,250 @@ def cmd_scansync(args):
     print("echo \"today_sessions: $(grep -c '^10\\.' /home/t0002965/log/eda_trace_$TODAY.log 2>/dev/null)\"")
     print("# 旧扫描: %s" % old_scan)
     return 0
+
+
+def _norm_sid(s):
+    """规范化 session 标识 → **纯 slug**（如 1792044811256_a7ied）。
+
+    同一 slug 会在多个 user 目录 / 多台机器上重复出现（实测 2700 个 slug 里有 2 个
+    被两个不同 user 使用），所以必须用 slug 而不是 user+slug 做去重键，否则会多算。
+    """
+    base = s.replace("\\", "/").rstrip("/").split("/")[-1]
+    for suf in (".messages.archive.json", ".messages.archive",
+                ".messages.json", ".archive.json", ".json"):
+        if base.endswith(suf):
+            return base[: -len(suf)]
+    return base
+
+
+def _is_header(p):
+    """判断 summary.tsv 的一行是否为表头（列名，而非数据）。"""
+    return bool(p) and p[0] in ("ip", "session_file", "match_count", "#")
+
+
+def _dedup_scan(src):
+    """读 summary.tsv → {sid: {mc, user, host, kw, ip}}，同 session 取最大 mc。
+
+    注意：summary.tsv 里同一 session 会在**很多台机器**上各出现一行（同一个 cline
+    session 目录被多 host 挂载/同步），所以必须先按 session 去重再统计，否则数字会
+    虚高（实测 5822 数据行 → 2701 个去重 session）。表头行必须跳过，否则
+    "session_file" 会被当成一个 session 混进统计。
+    """
+    best = {}
+    n_rows = 0
+    n_hdr = 0
+    with open(src, encoding="utf-8") as f:
+        for line in f:
+            if not line.strip():
+                continue
+            p = line.rstrip("\n").split("\t")
+            if _is_header(p):
+                n_hdr += 1
+                continue
+            if len(p) < 6:
+                continue
+            n_rows += 1
+            host, user, sf, mcs, kws = p[1], p[2], p[3], p[4], p[5]
+            sid = _norm_sid(sf)
+            try:
+                mc = int(float(mcs))
+            except (TypeError, ValueError):
+                continue
+            if sid not in best or mc > best[sid]["mc"]:
+                best[sid] = {"mc": mc, "user": user, "host": host,
+                             "kw": kws, "ip": p[0]}
+    return best, n_rows, n_hdr
+
+
+def cmd_mcmartix(args):
+    """2026-11-11 用户令：mc 阈值全线下调到 mc>=10 的评估工具（纯本机，可复算）。
+
+    读一份 summary.tsv（列: ip host user session_file match_count keywords tools），
+    按 session 去重（同一 session 可能在多台机重复出现，取最大 match_count），
+    然后对每个阈值 m 统计：池总量 / 已动过(4 shard ledger) / 未动过(=真正可做)。
+    可选 --shard X 再按该 shard 的 keywords 过滤词切分。
+
+    用途：
+      1) 复核"降到 mc>=10 到底能多出多少可做候选"；
+      2) 生成可直接喂给 `trace_ledger.py refresh --json` 的 mc10/mc15/mc20/mc30 数字；
+      3) 生成 candidates_mc<N>.tsv 候选清单（--emit-candidates）。
+    """
+    import re
+    src = args.src
+    if not os.path.exists(src):
+        print("ERROR: 扫描快照不存在: %s" % src)
+        return 2
+
+    # 台账：把已动过的 session 全部收进来（4 shard + 老合并台账）
+    touched = {}
+    for s in ("A", "B", "C", "D"):
+        p = os.path.join(HERE, "trace_ledger_%s.tsv" % s)
+        for r in _load_file(p):
+            if r["session_file"]:
+                touched[_norm_sid(r["session_file"])] = r["status"]
+    for r in _load_file(os.path.join(HERE, "trace_ledger.tsv")):
+        if r["session_file"]:
+            touched.setdefault(_norm_sid(r["session_file"]), r["status"])
+
+    # 扫描快照：session 去重，取最大 mc（和 keywords 一起保留）
+    best, n_rows, n_hdr = _dedup_scan(src)
+
+    # 可选：按 shard 的 keywords 过滤词切分
+    kw_pat = None
+    if args.shard:
+        if args.shard not in SHARD_DOMAINS:
+            print("ERROR: 未知 shard %s" % args.shard)
+            return 2
+        kw_pat = re.compile(SHARD_DOMAINS[args.shard][1])
+
+    rows = [dict(sid=k, **v) for k, v in best.items()
+            if (kw_pat is None or kw_pat.search(v["kw"] or ""))]
+
+    thresholds = [int(x) for x in args.thresholds.split(",") if x.strip()]
+    print("# 扫描快照: %s" % src)
+    print("# 数据行 = %d（跳过表头 %d 行）→ 去重 session = %d%s"
+          % (n_rows, n_hdr, len(rows),
+             ("（shard %s keywords 过滤后）" % args.shard) if args.shard else ""))
+    print("# 台账已动过 session = %d（case/seeded=%d, parked=%d）"
+          % (len(touched),
+             sum(1 for v in touched.values() if v in COVERED),
+             sum(1 for v in touched.values() if v == "parked")))
+    print("")
+    print("%-10s %10s %10s %10s" % ("阈值", "池总量", "已动过", "未动过(可做)"))
+    print("-" * 44)
+    table = {}
+    for m in thresholds:
+        sel = [r for r in rows if r["mc"] >= m]
+        t = sum(1 for r in sel if r["sid"] in touched)
+        table[m] = {"pool": len(sel), "touched": t, "fresh": len(sel) - t}
+        print("mc>=%-6d %10d %10d %10d" % (m, len(sel), t, len(sel) - t))
+
+    if args.json:
+        print("")
+        print("# 可直接喂 refresh 的 JSON 片段：")
+        obj = {"target_mc": args.target_mc,
+               "shard_mc": {s: args.target_mc for s in sorted(SHARD_DOMAINS)},
+               "mc_matrix": {("mc%d" % m): table[m] for m in thresholds}}
+        for m in thresholds:
+            obj["mc%d" % m] = table[m]["pool"]
+        print(json.dumps(obj, ensure_ascii=False))
+
+    if args.emit_candidates:
+        m = args.emit_candidates_mc
+        sel = sorted([r for r in rows if r["mc"] >= m],
+                     key=lambda r: -r["mc"])
+        out = os.path.join(HERE, "candidates_mc%d.tsv" % m)
+        with open(out, "w", encoding="utf-8") as f:
+            f.write("ip\tuser\tsession_file\tmatch_count\tkeywords\n")
+            for r in sel:
+                f.write("%s\t%s\t%s\t%d\t%s\n"
+                        % (r["ip"], r["user"], r["sid"], r["mc"], r["kw"]))
+        unledgered = sum(1 for r in sel if r["sid"] not in touched)
+        print("")
+        print("已写出候选清单: %s（%d 行，其中未动过 %d）" % (out, len(sel), unledgered))
+    return 0
+
+
+def cmd_mcguard(args):
+    """2026-11-11 用户令守门员：检查 mc>=10 规则是否被破坏（可进 pre-commit / 每轮自检）。
+
+    检查项：
+      G1 summary_stats.json: target_mc == 10
+      G2 summary_stats.json: shard_mc 全 == 10（A/B/C/D）
+      G3 trace_ledger.py: SHARD_MC 全 == 10、DEFAULT_MC == 10
+      G4 候选清单 candidates_mc10.tsv 存在，且 min(match_count) >= 10
+      G5 任务书 *_TASK*.md 的「选料阈值」不得残留 target_mc=30 / shard_mc 15/30 模板
+      G6 覆盖率分母 key 必须是 mc10
+    退出码：0 全过；1 有 FAIL。
+    """
+    import re
+    fails = []
+    warns = []
+
+    # ---- G1/G2 ----
+    st = load_stats()
+    if int(st.get("target_mc", -1)) != 10:
+        fails.append("G1 summary_stats.target_mc = %r（必须 10）" % st.get("target_mc"))
+    shard_mc = st.get("shard_mc", {})
+    for s in ("A", "B", "C", "D"):
+        v = shard_mc.get(s)
+        if v != 10:
+            fails.append("G2 summary_stats.shard_mc[%s] = %r（必须 10）" % (s, v))
+
+    # ---- G3 ----
+    src = os.path.join(HERE, "trace_ledger.py")
+    with open(src, encoding="utf-8") as f:
+        txt = f.read()
+    m = re.search(r"^SHARD_MC\s*=\s*(\{[^}]*\})", txt, re.M)
+    if not m:
+        fails.append("G3 找不到 SHARD_MC 定义")
+    else:
+        try:
+            cfg = json.loads(m.group(1).replace("'", '"'))
+        except Exception:
+            cfg = {}
+        for s in ("A", "B", "C", "D"):
+            if cfg.get(s) != 10:
+                fails.append("G3 trace_ledger.SHARD_MC[%s] = %r（必须 10）" % (s, cfg.get(s)))
+    if not re.search(r"^DEFAULT_MC\s*=\s*10\b", txt, re.M):
+        fails.append("G3 trace_ledger.DEFAULT_MC 不是 10")
+
+    # ---- G4 ----
+    cand = os.path.join(HERE, "candidates_mc10.tsv")
+    if not os.path.exists(cand):
+        fails.append("G4 缺 candidates_mc10.tsv")
+    else:
+        mn = None
+        with open(cand, encoding="utf-8") as f:
+            f.readline()
+            for line in f:
+                p = line.rstrip("\n").split("\t")
+                if len(p) < 4:
+                    continue
+                try:
+                    v = int(float(p[3]))
+                except ValueError:
+                    continue
+                mn = v if mn is None else min(mn, v)
+        if mn is None:
+            fails.append("G4 candidates_mc10.tsv 无数据行")
+        elif mn < 10:
+            fails.append("G4 candidates_mc10.tsv 最小 mc = %d（<10，混入低档候选）" % mn)
+
+    # ---- G5 ----
+    bench = os.path.dirname(HERE)
+    import glob
+    tasks = sorted(glob.glob(os.path.join(bench, "BAIZE_DESIGNFLOW_BENCH_TASK*.md")))
+    for t in tasks:
+        with open(t, encoding="utf-8") as f:
+            for i, line in enumerate(f, 1):
+                # 只抓"可复制执行"的模板行，放过已标注作废/禁止的行
+                if '"target_mc":30' in line.replace(" ", "") and "禁止" not in line \
+                        and "作废" not in line and "已作废" not in line:
+                    fails.append("G5 %s:L%d 残留可执行的 target_mc=30 模板"
+                                 % (os.path.basename(t), i))
+                if re.search(r'"shard_mc"\s*:\s*\{\s*"A"\s*:\s*15', line) and "作废" not in line:
+                    fails.append("G5 %s:L%d 残留 shard_mc A:15 模板"
+                                 % (os.path.basename(t), i))
+
+    # ---- G6 ----
+    target, mc, key = target_of(st)
+    if key != "mc10":
+        warns.append("G6 覆盖率分母 key = %s（期望 mc10；可能是 11/09 换池未完成或 key 缺失）" % key)
+
+    print("=== mc>=10 守门员 ===")
+    print("target_mc=%s shard_mc=%s 分母key=%s 分母=%s"
+          % (st.get("target_mc"), json.dumps(shard_mc, ensure_ascii=False), key, target))
+    if fails:
+        print("\nFAIL (%d):" % len(fails))
+        for x in fails:
+            print("  ✗ " + x)
+    else:
+        print("  ✓ G1-G5 全过")
+    for w in warns:
+        print("  ! " + w)
+    print("\n结果：%s" % ("FAIL" if fails else "PASS"))
+    return 1 if fails else 0
 
 
 def main():
@@ -521,15 +831,30 @@ def main():
                        help="管理任务: 输出 .75 上最新扫描的统计命令块 (shard A 每日巡检用)")
     p = sub.add_parser("prefilter")
     p.add_argument("--candidates", help="candidates TSV (跑 trace_prefilter.py)")
-    p.add_argument("--min-mc", type=int, default=30)
+    p.add_argument("--min-mc", type=int, default=DEFAULT_MC)
     p.add_argument("--limit", type=int, default=0)
     p.add_argument("--apply", action="store_true", help="写回台账 (默认 dry-run)")
+    p = sub.add_parser("mc-matrix",
+                       help="2026-11-11 用户令: 按 mc 阈值矩阵统计 池/已动过/未动过 "
+                            "(纯本机可复算), 并生成 candidates_mc<N>.tsv")
+    p.add_argument("--src", required=True, help="扫描快照 summary.tsv 路径")
+    p.add_argument("--thresholds", default="5,10,15,20,30")
+    p.add_argument("--target-mc", dest="target_mc", type=int, default=DEFAULT_MC,
+                   help="建议 adopt 的阈值 (写进 refresh JSON 的 target_mc/shard_mc)")
+    p.add_argument("--json", action="store_true", help="输出可喂 refresh --json 的片段")
+    p.add_argument("--emit-candidates", dest="emit_candidates", action="store_true",
+                   help="写出 candidates_mc<N>.tsv")
+    p.add_argument("--emit-candidates-mc", dest="emit_candidates_mc", type=int,
+                   default=DEFAULT_MC)
+    p = sub.add_parser("mcguard",
+                       help="2026-11-11 守门员: 校验 mc>=10 规则未被破坏 (退出码 0=PASS/1=FAIL)")
     a = ap.parse_args()
     if a.shard:
         _set_shard(a.shard)
     return {"stats": cmd_stats, "next": cmd_next, "claim": cmd_claim,
             "mark": cmd_mark, "refresh": cmd_refresh, "seed": cmd_seed,
-            "scansync": cmd_scansync, "prefilter": cmd_prefilter}[a.cmd](a) or 0
+            "scansync": cmd_scansync, "prefilter": cmd_prefilter,
+            "mc-matrix": cmd_mcmartix, "mcguard": cmd_mcguard}[a.cmd](a) or 0
 
 
 if __name__ == "__main__":

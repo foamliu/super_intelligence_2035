@@ -73,16 +73,19 @@ def load_cases():
 def load_pi_status():
     last = {}
     if os.path.exists(PI_STATUS):
-        for line in open(PI_STATUS):
-            line = line.strip()
-            if line:
-                try:
-                    r = json.loads(line)
-                    tid = r.get("task_id", "")
-                    if tid:
-                        last[tid] = r
-                except Exception:
-                    pass
+        # 2026-11-11: 显式 utf-8 + errors=replace。旧实现 open(PI_STATUS) 走平台默认编码，
+        # 在 Windows(GBK) 下直接 UnicodeDecodeError 让整份日报生成失败。
+        with open(PI_STATUS, encoding="utf-8", errors="replace") as f:
+            for line in f:
+                line = line.strip()
+                if line:
+                    try:
+                        r = json.loads(line)
+                        tid = r.get("task_id", "")
+                        if tid:
+                            last[tid] = r
+                    except Exception:
+                        pass
     return last
 
 
@@ -298,8 +301,42 @@ def main():
                     seen.add(sf)
                     merged.append(dict(zip(trace_ledger.COLS, parts[:len(trace_ledger.COLS)])))
         cov_html = trace_ledger.html_block(merged)
+        # 2026-11-11：把分母口径抽出来，供上面的"候选池与覆盖率"整节复用，
+        # 避免出现"第三节说 mc>=100=696、进度条说 mc>=10=1929"两个分母打架。
+        _st = trace_ledger.load_stats()
+        _target, _mc, _key = trace_ledger.target_of(_st)
+        _mtx = _st.get("mc_matrix", {}) if isinstance(_st.get("mc_matrix"), dict) else {}
+        _row = _mtx.get("mc%d" % _mc, {}) or {}
+        POOL = {
+            "mc": _mc,
+            "key": _key,
+            "pool": _target,
+            "touched": _row.get("touched", 0),
+            "fresh": _row.get("fresh", 0),
+        }
     except Exception as e:
         cov_html = "<p style='color:#999'>trace 台账未就绪（%s）</p>" % esc(e)
+        POOL = {"mc": 0, "key": "-", "pool": 0, "touched": 0, "fresh": 0}
+
+    # mc 阈值矩阵表行（2026-11-11：mc 全线降到 10 的依据表）
+    _mtx_all = {}
+    try:
+        _mtx_all = trace_ledger.load_stats().get("mc_matrix", {}) or {}
+    except Exception:
+        _mtx_all = {}
+    _notes = {10: "← 2026-11-11 用户令采用", 15: "原 shard A 阈值",
+              30: "原 B/C/D 阈值（已弃）", 20: "参考档", 5: "参考档（噪声偏大）"}
+    _rows = []
+    for _m in (5, 10, 15, 20, 30):
+        _r = _mtx_all.get("mc%d" % _m) or {}
+        if not _r:
+            continue
+        _hl = ' style="background:#e8f2ff;font-weight:700"' if _m == POOL.get("mc") else ""
+        _rows.append(
+            "<tr%s><td>mc≥%d</td><td>%d</td><td>%d</td><td>%d</td><td>%s</td></tr>"
+            % (_hl, _m, _r.get("pool", 0), _r.get("touched", 0),
+               _r.get("fresh", 0), _notes.get(_m, "")))
+    MC_MATRIX_ROWS = "\n".join(_rows) or '<tr><td colspan="5">(mc_matrix 未生成，先跑 trace_ledger.py mc-matrix)</td></tr>'
 
     doc = f"""<!DOCTYPE html>
 <html lang="zh-CN"><head><meta charset="utf-8">
@@ -348,18 +385,24 @@ footer{{margin-top:30px;color:#999;font-size:.75rem;text-align:center}}
 </table>
 <b>每日趋势</b>（qualifying sessions，去重命中 session 数）：10/29=14370 · 10/30=2641（异常低，疑似扫描中断）· 10/31=13994 · 11/01=14047 · 11/02=13890 · <b>11/03=14448</b>。会话数在增长（6 天 +78）。
 </div>
-<h3>候选池与覆盖率（候选池 = match_count≥100 的去重 session，11/03 调整）</h3>
+<h3>候选池与覆盖率（候选池 = match_count≥{POOL['mc']} 的去重 session，2026-11-11 全线下调）</h3>
 <div class="kpis">
-<div class="kpi"><div class="n">{THREE_MOUTH.get('pool_mc100',696)}</div><div class="l">候选池（mc≥100 去重 session）</div></div>
-<div class="kpi"><div class="n">172</div><div class="l">旧候选池（mc≥300, 已弃）</div></div>
-<div class="kpi"><div class="n">{THREE_MOUTH.get('pool_users_mc100',182)}</div><div class="l">候选池去重用户</div></div>
-<div class="kpi"><div class="n">80/365</div><div class="l">已覆盖用户（21.9%）</div></div>
+<div class="kpi"><div class="n">{POOL['pool']}</div><div class="l">候选池（mc≥{POOL['mc']} 去重 session）</div></div>
+<div class="kpi"><div class="n">{POOL['touched']}</div><div class="l">已动过（含暂缓）</div></div>
+<div class="kpi"><div class="n">{POOL['fresh']}</div><div class="l">未动过（真正可做）</div></div>
+<div class="kpi"><div class="n">{POOL['key']}</div><div class="l">分母快照口径</div></div>
 </div>
 <div class="note">
 <b>mc = match_count</b> = session 文件里命中 EDA 关键词的<b>行数</b>（grep -icE RE1，一行命中任一关键词计 1）。RE1 含 60+ EDA 关键词：virtuoso/innovus/calibre/spectre/hspice/aether/skipper/waveview/pyAether/dbGet/dbCreate*/schematic/netlist/synthesis/PDK/analog/cmos/... 11/03 已加 <code>rtl</code>。<br>
-<b>候选池阈值 mc≥300 → mc≥100</b>（11/03 用户直令）：旧阈值 300 太严（只筛出 172 个"重度 EDA 会话"），把 mc 100-299 的 524 个中等丰富 session 排除了。新阈值 mc≥100 候选池 = <b>696</b> 个去重 session / 182 个去重用户。<b>trace 覆盖率 156/696 = 22.4%</b>（严格口径：已出 case 的去重 session；另有 114 个 parked 暂缓 + 2 个 claimed/deepread 在途，宽松口径 272/696=39.1%；旧口径 88.4% 是因候选池 mc≥300=172 太小虚高，已弃）。<br>
-<b>mc 分布</b>（去重 session）：1-9: 1912(49%) · 10-49: 883 · 50-99: 408 · <b>100-299: 524(新纳入)</b> · 300-499: 123 · 500-999: 47 · 1000+: 2
+<b>2026-11-11 用户令：mc 阈值全线 30 → 10</b>（原 A=15 / B,C,D=30）。实测（11/05 全量扫描 5822 数据行 → 2560 去重 session）：可做候选 <b>mc≥30 仅 119 → mc≥10 达 381</b>（+262），池总量 1511 → 1929。各档明细见下表与 <code>summary_stats.json.mc_matrix</code>，复算命令 <code>python3 designflow/trace_ledger.py mc-matrix --src designflow/summary_1105.tsv --json</code>。<br>
+<b>口径纪律（本次修）</b>：分母只认 <code>summary_stats.json.target_mc</code> 对应的 <code>mc&lt;N&gt;</code> 键，且<b>分子也限定在同一快照池内</b>——旧实现在 target_mc 改变时仍会悄悄 fallback 到 <code>mc30</code>，并用全台账分母算分子，这正是此前"覆盖率 34.4%"与"池已枯竭"互相矛盾的根因。<br>
+<b>mc 分布</b>（去重 session）：1-9: 1912(49%) · 10-49: 883 · 50-99: 408 · 100-299: 524 · 300-499: 123 · 500-999: 47 · 1000+: 2
 </div>
+
+<table style="margin-top:6px;font-size:.78rem">
+<tr><th>mc 阈值</th><th>池总量</th><th>已动过</th><th>未动过（可做）</th><th>说明</th></tr>
+{MC_MATRIX_ROWS}
+</table>
 
 {cov_html}
 
@@ -400,7 +443,9 @@ footer{{margin-top:30px;color:#999;font-size:.75rem;text-align:center}}
 
     os.makedirs(REPORT_DIR, exist_ok=True)
     out = os.path.join(REPORT_DIR, f"report_benchmark_{mmdd}.html")
-    with open(out, "w") as f:
+    # 2026-11-11: 显式 utf-8。旧实现 open(out,"w") 走平台默认编码，
+    # 在 Windows(GBK) 下写 ✅ 等字符直接 UnicodeEncodeError（Linux 上只是静默乱码风险）。
+    with open(out, "w", encoding="utf-8") as f:
         f.write(doc)
     print("wrote", out, f"({len(cases)} cases, {proper_n} proper, {legacy_n} legacy)")
 

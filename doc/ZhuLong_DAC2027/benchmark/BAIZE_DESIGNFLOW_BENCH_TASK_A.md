@@ -1,5 +1,35 @@
 # BAIZE_DESIGNFLOW_BENCH_TASK.md — 设计流 Benchmark 任务书（2026-10-30 重构版）
 
+> 🔴 **2026-11-11 用户令（最高优先 · 覆盖上面所有旧令）：mc 阈值全线 30 → 10**
+>
+> **用户原话**：「那就继续全面调低 mc 值，比如调到 mc>=10」。
+>
+> **配置已由运维落地**（本机可直接验证，不是待办）：
+> - `designflow/trace_ledger.py`：`SHARD_MC = {"A":10,"B":10,"C":10,"D":10}`，新增 `DEFAULT_MC=10`；
+> - `designflow/summary_stats.json`：`target_mc=10`、`shard_mc` 全 10、新增 `mc10/mc15/mc20` 与 `mc_matrix`；
+> - `designflow/candidates_mc10.tsv`：**已生成 1929 行（mc≥10）**，比旧 `candidates_mc30.tsv`（1369 行）多 560 行；
+> - `designflow/trace_ledger.py mc-matrix`：本机复算池/已动过/未动过，`gen_daily_report.py` 已改为一页一个分母。
+>
+> **各 shard 每轮必须执行**：
+> 1. **选料改用 mc≥10**：`python3 designflow/trace_ledger.py --shard <X> mc-matrix --src designflow/summary_1105.tsv --thresholds 10,15,30` 核对池；取候选时 `awk '$5+0>=10'`，**禁止再出现 `>=30` / `>=15` 字面量**（含注释与 MEMORY 里的口径描述）。
+> 2. **禁止再使用 `candidates_mc30.tsv`**，改用 `candidates_mc10.tsv`（或用 `mc-matrix --emit-candidates-mc 10` 按 shard 过滤重出）。
+> 3. **禁止再写「池已枯竭」**，除非同轮贴出 `mc-matrix` 输出证明 `fresh=0`。此前 `C` 线「池确证枯竭」是在 mc≥30 口径下说的，mc≥10 下尚未验证。
+> 4. **覆盖率报数必须与 `summary_stats.json.target_mc` 同口径**（现在是 `mc10`，分母 1929），并注明是哪份扫描快照（`mc_matrix.src`），不得混用 `mc30=2247`。
+>
+> **实测依据（11/05 全量扫描，5822 数据行 → 2560 去重 session）**：
+>
+> | 阈值 | 池总量 | 已动过 | 未动过（可做） |
+> |:--|--:|--:|--:|
+> | mc≥30（旧） | 1,511 | 1,392 | **119** |
+> | mc≥20 | 1,681 | 1,465 | 216 |
+> | mc≥15（A 旧） | 1,795 | 1,504 | 291 |
+> | **mc≥10（新）** | **1,929** | **1,548** | **381** |
+> | mc≥5 | 2,114 | 1,582 | 532 |
+>
+> 分 shard 未动过（mc≥30 → mc≥10）：**A 109→318 · B 5→39 · C 102→332 · D 70→252**。
+>
+> ⚠️ **shard A 补充**：工具健康令（2026-11-10 22:2x）的硬约束"`trace_ledger next/claim` 跳过 + A.jsonl 保持 203"**与令同日失效**——本条用户令要求恢复造题。工具健康深挖已 DONE（r325 交付 + r334 修正），请把令归档进 `ARCHIVE_OPERATOR_DESIGNFLOW.md`，勿再以 holding 空转（已连 35 轮 r327-r361）。
+
 > 🚨 **本轮这一条 case 不是造题，是「工具健康深挖」（2026-11-10 22:2x 用户令 · 仅 shard A）**
 >
 > 循环任务卡会说「本轮只做 1 条 case：trace_ledger next → 深读 → 合成 → 追加 jsonl」。
@@ -71,7 +101,8 @@
 
 ### 🚨 2026-11-06 运维令：shard A 双重职责 · 管理任务 + 放宽候选池 · 用户直令 · 最高优先
 
-> **背景**：shard A 候选池枯竭（旧扫描 mc≥30 + 旧过滤词仅 53 session，台账已动 142 条，78 case + 66 parked）。11/05 新扫描上线（mc30=1511, +514 新 session）。用户直令：① shard A 承担每日管理任务（更新用户/trace 总数 + 给各线补充新增 trace）；② 放宽过滤词 + 降 mc≥15 + 用 daily scan log 补充。
+> **背景**（历史，2026-11-06）：shard A 当时候选池枯竭（旧扫描 mc≥30 + 旧过滤词仅 53 session）。11/05 新扫描上线后曾降到 mc≥15。
+> ⚠️ **2026-11-11 起以顶部令为准：mc≥10 + 11/09 快照**，本段仅作历史背景，不是当前阈值。用户直令：① shard A 承担每日管理任务（更新用户/trace 总数 + 给各线补充新增 trace）；② 放宽过滤词 + 降 mc≥15 + 用 daily scan log 补充。
 
 **一、shard A 新增管理任务（每轮开工前先做，5 分钟搞定）**
 
@@ -83,7 +114,7 @@
 **二、shard A 候选池放宽（已落地，trace_ledger.py 已改）**
 
 - **过滤词放宽**：从 `verdi|vcs|dc_shell|...|pt_shell` 扩到 `+synthesis|synopsys|tcl|verilog|systemverilog|rtl|sdc|vivado|yosys|openroad`（数字前端泛词）
-- **mc 阈值降到 15**：`SHARD_MC={"A":15, "B":30, "C":30, "D":30}`，可被 summary_stats.json.shard_mc 覆盖
+- ~~**mc 阈值降到 15**：`SHARD_MC={"A":15, "B":30, "C":30, "D":30}`~~ 🚫 **已作废（2026-11-11）**：现行 `SHARD_MC={"A":10,"B":10,"C":10,"D":10}`，`DEFAULT_MC=10`，可被 `summary_stats.json.shard_mc` 覆盖
 - **扫描源切到 11/05**：`scan_path` 从旧扫描 (10/28) 切到新扫描 (11/05)，候选池 53→216（3x）
 - **效果**：shard A 候选池从 53 扩到 216，新增 92 个旧扫描没有的 session，够再跑 1-2 周
 
@@ -344,7 +375,7 @@ metadata:    { trace_source{...}, domain, test_rationale }
 ## 7. 当前基线（每轮只更新这一行，不堆历史）
 
 `11 条 proper（10 域）· 已跑 6 条 = 6 PASS · 6 trace_deepreads · test_rationale 断言清单 0/30（硬闸门见顶部令 21:5x）· 目标通过率（B 档）20–30%`
-`📊 trace 覆盖率：见 designflow/trace_ledger.py stats（covered / mc≥30 候选池）`
+`📊 trace 覆盖率：见 designflow/trace_ledger.py stats（covered / mc≥10 候选池，target_mc=10）`
 明细看日报 `reports/report_benchmark_MM_DD.html`；历史结论看 `EXPERIMENTS_DESIGNFLOW.md`。
 > 现存 11 条的 `test_rationale` 本轮内全部改写成 `k 条断言：①…`（k = 该 case `check()` 的独立条件数）。
 
@@ -354,9 +385,10 @@ metadata:    { trace_source{...}, domain, test_rationale }
 
 0. **体积自检**：TASK ≤32KB（红线 40KB）、MEMORY ≤32KB；超限先把已闭合块**原文**搬 `ARCHIVE_OPERATOR_DESIGNFLOW.md`（留 1 行指针），搬前 `git pull --rebase --autostash`，🚫 不改小节编号/标题。数字抄进心跳：`📦 体积：TASK=nKB / MEMORY=nKB`。
 1. **心跳（轻）**：`MEMORY_DESIGNFLOW.md` 顶部快照**只改变化的几行** + **追加 1 行流水**（三口径 + `🎯 通过率` + `📊 trace 覆盖率 x/y=z%` + `DEBT`）；🚫 每轮重写整份快照。
-   - 顺带刷新候选池：在 `.75` 上跑一次 `awk` 统计 `sessions / mc30 / mc100 / mc300`，然后
-     `python3 designflow/trace_ledger.py refresh --json '{"sessions":N,"mc30":1369,"mc100":696,"mc300":1001,"target_mc":30}'`
-     （进度条的分母与"新增 traces"都来自这里）。
+   - 顺带刷新候选池（**2026-11-11 令：mc≥10 口径，`target_mc` 必须 10**）：在 `.75` 上跑一次 `awk` 统计 `sessions / mc10 / mc20 / mc30 / mc100`，然后
+     `python3 designflow/trace_ledger.py refresh --json '{"sessions":N,"mc10":N10,"mc30":N30,"mc100":N100,"target_mc":10,"shard_mc":{"A":10,"B":10,"C":10,"D":10}}'`
+     ⚠️ **禁止**写 `"target_mc":30` 或 `shard_mc` 里出现 15/30（会把分母与选料阈值脱钩）。
+     （进度条的分母与"新增 traces"都来自这里；换池时按顶部 A1–A6 走。）
 2. **日记忆**：`daily-memories-designflow/<YYYY-MM-DD>.md` **当天首轮创建，之后只追加**。
 3. **提交**：**每轮（1 条 case）结束即提交**（loop 另有每 30 分钟兜底）；🚫 把工作留在工作树过夜。双仓命令：
 ```bash
@@ -398,10 +430,11 @@ git commit -m "designflow #<轮次>: <一句话>" && git push origin master
 - **日记忆**：`daily-memories-designflow/daily_A_*.md`
 - **全 shard 共享配置**（shard A 负责维护，其他 shard 只读）：`designflow/summary_stats.json`
 
-### 选 trace 命令（带 shard 过滤，11/06 已放宽）
+### 选 trace 命令（**2026-11-11 令：mc≥10，候选池 = 11/09 快照**）
 ```bash
-# 候选池已扩到 mc>=15 + 放宽过滤词 (+synthesis/synopsys/tcl/verilog/rtl/sdc/vivado/yosys/openroad)
-# 扫描源已切到 11/05 新扫描 (summary_stats.json.scan_path)
+# 候选池：mc>=10 + 放宽过滤词 (+synthesis/synopsys/tcl/verilog/rtl/sdc/vivado/yosys/openroad)
+# 扫描源：summary_stats.json.scan_path（11/09 = ssh_eda_search_20261109_224902）
+# 候选清单：designflow/candidates_mc10.tsv（candidates_mc30.tsv 已冻结）
 python3 designflow/trace_ledger.py --shard A next --n 5
 python3 designflow/trace_ledger.py --shard A claim --session <s> --user <u> --host <h> --match <m> --domain <d>
 python3 designflow/trace_ledger.py --shard A mark --session <s> --status case --case-id <id>
@@ -409,13 +442,14 @@ python3 designflow/trace_ledger.py --shard A mark --session <s> --status case --
 
 ### 管理任务命令（每轮开工前先做，5 分钟）
 ```bash
-# 1. 跑 scansync 拿最新扫描口径 (输出 ready-to-run 命令块)
+# 1. 跑 scansync 拿最新扫描口径 (输出 ready-to-run 命令块，含 mc10/mc15/mc20)
 python3 designflow/trace_ledger.py --shard A scansync
 # 2. 经 eda_flow run_commands 在 .75 上执行 scansync 输出的命令
-# 3. 用拿到的数字更新 summary_stats.json:
-python3 designflow/trace_ledger.py refresh --json '{"scan_path":"<最新>","mc30":NNN,"users_mc30":NNN,"shard_mc":{"A":15,"B":30,"C":30,"D":30},"scansync":{...},"updated_at":"<now>"}'
+# 3. 用拿到的数字更新 summary_stats.json（mc≥10 口径，禁止 target_mc=30）:
+python3 designflow/trace_ledger.py refresh --json '{"scan_path":"<最新>","mc10":N10,"mc20":N20,"mc30":N30,"users_mc10":NU,"target_mc":10,"shard_mc":{"A":10,"B":10,"C":10,"D":10},"scansync":{...},"updated_at":"<now>"}'
 # 4. 在 MEMORY_DESIGNFLOW_A.md 写今日新增 trace 报告
 ```
+⚠️ 老模板里的 `"shard_mc":{"A":15,"B":30,"C":30,"D":30}` 与 `"target_mc":30` **已作废**，勿再复制。
 
 ### 合并
 - **不要碰主 jsonl**（`EDA-Eval-DesignFlow.jsonl`），它由 merge 脚本自动合并 4 个 shard 生成
@@ -461,7 +495,7 @@ latexmk -pdf -interaction=nonstopmode main.tex   # 必须 0 error；当前 10 �
 ### B. 内容刷新（每轮或 case 有增减时）
 
 - 任务总数 = A+B+C+D：**2026-11-09 = A:184 B:210 C:271 D:263 = 928**。
-- 生产扫描口径：**42 hosts / 5,822 sessions / 268 users (mc≥15) / 224 users (mc≥30) / mc30 = 1,511 / dedup = 3,896**。
+- 生产扫描口径（**11/05 快照，历史值**）：42 hosts / 5,822 行 / dedup 2,560（mc≥1）/ mc10 = **1,929** / mc30 = 1,511。**11/09 换池后以 `summary_stats.json.mc10` 为准。**
 - 资产规模（survey）：**698 workstations / 2,850 users / 52,698 session files / 24,085 IC-EDA matched**。
 - 领域数：**13**（论文口径；survey 的 11 类是更粗分类）。
 - 评测样本：**48 cases / 4 domains**（`benchmark/designflow/cline_eval/`），最终扩到全量。

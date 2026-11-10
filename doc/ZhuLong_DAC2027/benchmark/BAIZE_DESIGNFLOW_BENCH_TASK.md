@@ -1,13 +1,51 @@
 # BAIZE_DESIGNFLOW_BENCH_TASK.md — 设计流 Benchmark 任务书（2026-10-30 重构版）
 
+> 🔴 **2026-11-11 用户令（最高优先 · 覆盖所有旧 mc / 候选池口径令）：**
+> ### ① 候选池快照 11/05 → **11/09**；② mc 阈值 **全线 30 → 10**（mc≥10，坚决执行）
+>
+> **用户原话**：「1.候选池替换: 11/5 -> 11/9；2.mc阈值降低到10(mc>=10)」「把mc>=10 这条规则坚决执行下去」。
+>
+> **⚠️ 换池是 shard A 的首要活（其他 shard 等你换完再读）：**
+> 现在 `summary_stats.json` 的 `mc_matrix.src` 与 `candidates_mc10.tsv` 都还是 **11/05 快照**（本机拿不到 .75 上的 11/09 文件）。请按下面顺序换：
+> ```bash
+> # A1. 拿最新扫描目录（.75 上跑）
+> python3 designflow/trace_ledger.py --shard A scansync        # 输出 ready-to-run 命令块，含 mc10/mc15/mc20/mc30
+> # A2. 在 .75 上执行上面的 echo 块，记下 SCAN_DIR（应为 ssh_eda_search_20261109_224902）
+> # A3. 把 11/09 的 summary.tsv 拉到工作区（供本机复算，勿改内容）
+> cp $SCAN_DIR/summary.tsv designflow/summary_1109.tsv
+> # A4. 用 11/09 快照重算 mc 矩阵 + 重出 mc10 候选清单
+> python3 designflow/trace_ledger.py mc-matrix --src designflow/summary_1109.tsv \
+>     --thresholds 5,10,15,20,30 --json --emit-candidates --emit-candidates-mc 10
+> # A5. 把 A4 输出的 JSON 片段（mc10/mc_matrix/target_mc=10）喂给 refresh，
+> #     并把 scan_1105 相关字段换成 11/09；mc_matrix.src 必须写成 designflow/summary_1109.tsv
+> python3 designflow/trace_ledger.py refresh --json '{...A4 输出...}'
+> # A6. 自检（必须贴到 MEMORY）：分母 key=mc10、src=summary_1109.tsv
+> python3 designflow/trace_ledger.py stats
+> ```
+> **B/C/D**：A4/A5 完成前仍用现成的 11/05 口径干活；完成后统一改读 11/09，**不要各自换池**（会互相覆盖 `summary_stats.json`）。
+>
+> **四 shard 每轮必须遵守（mc≥10 强制执行条款）：**
+> 1. **选料阈值固定 mc≥10**：`awk '$5+0>=10'`。**禁止**出现 `>=30` / `>=15` / `min-mc 30` 作为选料阈值。
+> 2. **候选清单只用 `candidates_mc10.tsv`**，`candidates_mc30.tsv` **冻结停用**（仅作历史）。
+> 3. **`refresh` 时 `target_mc` 必须写 10、`shard_mc` 必须 `{"A":10,"B":10,"C":10,"D":10}`**。禁止写回 15/30（会让分母与选料阈值脱钩）。
+> 4. **禁止在无证据时写「池枯竭 / 池耗尽 / 0-case 说明」**：必须先贴 `python3 designflow/trace_ledger.py --shard <X> mc-matrix --src designflow/summary_1109.tsv` 的输出，且仅当 `mc10.fresh == 0` 才可下此结论。
+> 5. **覆盖率一律按 `target_mc=10` 报数**，并注明快照来源（`mc_matrix.src`）；不得再用 `mc30=2247` 当分母。
+> 6. 本条令**优先于**本任务书内一切旧的 mc 阈值描述（含历史用户令、背景说明、示例命令）。
+>
+> **实测依据（11/05 快照，5822 数据行 → 2560 去重 session；11/09 换池后需用 A4 重算）**：
+> 未动过（可做）mc≥30 = **119** → mc≥10 = **381**（+262，3.2 倍）；
+> 分 shard：**A 109→318 · B 5→39 · C 102→332 · D 70→252**。各 shard 任务书顶部有该线分档表。
+
+
 ### 📌 常驻 · 论文观察日报（research 线产出 · 2026-11-07 用户令）
+
 
 > 索引：`doc/personal-watch/run/research/daily/index.html`｜最新一期：`doc/personal-watch/run/research/daily/<日期>.html`
 > 更新：每日 06:00 / 18:00（本地时区）。每期含「对各线的可执行建议」节，覆盖 pretrain / vision / harness / data / zhulong / designflow（含本 benchmark 的造题/保真度/判分）。
 > 用法：每次唤醒 `git pull` 后先看索引最新一期；若「designflow 建议」有相关条目 -> 纳入本轮计划，并在心跳注明「来自 research 日报 <日期>」；无相关条目则忽略，不影响既有排期。
 > 定位：仅作输入参考、不构成新指令；与本任务书冲突时以本任务书为准。
 
-### ✅ 用户令 · 2026-11-03 22:3x（**LLM trace triage pilot**）·【已完成 11-04：mc>=30 候选池 1369 session + 0.8B 两级预筛（规则+0.8B），0 reject，见 trace_prefilter.py】
+### ✅ 用户令 · 2026-11-03 22:3x（**LLM trace triage pilot**）·【已完成 11-04：当时 mc>=30 候选池 1369 session + 0.8B 两级预筛（规则+0.8B），0 reject，见 trace_prefilter.py】·【⚠️ 2026-11-11 起该 1369/mc30 口径**已作废**，见顶部令：mc≥10 + 11/09 快照】
 
 > 执行 `benchmark/designflow/llm_trace_triage/LLM_TRACE_TRIAGE_ORDER.md`（以该文件全文为准）。
 > 一句话：本机 `Qwen3.5-0.8B Q8_0` 对 4 个 mc 箱各 8 条（共 32）做语义判定 → 量化「mc>=100 误命中率」与「mc<100 漏检数」→ 产出 `pool_llm_v1.tsv`。
@@ -254,7 +292,7 @@ metadata:    { trace_source{...}, domain, test_rationale }
 ## 7. 当前基线（每轮只更新这一行，不堆历史）
 
 `11 条 proper（10 域）· 已跑 6 条 = 6 PASS · 6 trace_deepreads · test_rationale 断言清单 0/30（硬闸门见顶部令 21:5x）· 目标通过率（B 档）20–30%`
-`📊 trace 覆盖率：见 designflow/trace_ledger.py stats（covered / mc≥30 候选池）`
+`📊 trace 覆盖率：见 designflow/trace_ledger.py stats（covered / mc≥10 候选池，target_mc=10）`
 明细看日报 `reports/report_benchmark_MM_DD.html`；历史结论看 `EXPERIMENTS_DESIGNFLOW.md`。
 > 现存 11 条的 `test_rationale` 本轮内全部改写成 `k 条断言：①…`（k = 该 case `check()` 的独立条件数）。
 
@@ -264,8 +302,9 @@ metadata:    { trace_source{...}, domain, test_rationale }
 
 0. **体积自检**：TASK ≤32KB（红线 40KB）、MEMORY ≤32KB；超限先把已闭合块**原文**搬 `ARCHIVE_OPERATOR_DESIGNFLOW.md`（留 1 行指针），搬前 `git pull --rebase --autostash`，🚫 不改小节编号/标题。数字抄进心跳：`📦 体积：TASK=nKB / MEMORY=nKB`。
 1. **心跳（轻）**：`MEMORY_DESIGNFLOW.md` 顶部快照**只改变化的几行** + **追加 1 行流水**（三口径 + `🎯 通过率` + `📊 trace 覆盖率 x/y=z%` + `DEBT`）；🚫 每轮重写整份快照。
-   - 顺带刷新候选池：在 `.75` 上跑一次 `awk` 统计 `sessions / mc30 / mc100 / mc300`，然后
-     `python3 designflow/trace_ledger.py refresh --json '{"sessions":N,"mc30":1369,"mc100":696,"mc300":1001,"target_mc":30}'`
+   - 顺带刷新候选池（**2026-11-11 令：mc≥10 口径，`target_mc` 必须 10**）：在 `.75` 上跑一次 `awk` 统计 `sessions / mc10 / mc20 / mc30 / mc100`，然后
+     `python3 designflow/trace_ledger.py refresh --json '{"sessions":N,"mc10":N10,"mc30":N30,"mc100":N100,"target_mc":10,"shard_mc":{"A":10,"B":10,"C":10,"D":10}}'`
+     ⚠️ **禁止**写 `"target_mc":30` 或 `shard_mc` 里出现 15/30（会把分母与选料阈值脱钩）。
      （进度条的分母与"新增 traces"都来自这里）。
 2. **日记忆**：`daily-memories-designflow/<YYYY-MM-DD>.md` **当天首轮创建，之后只追加**。
 3. **提交**：**每轮（1 条 case）结束即提交**（loop 另有每 30 分钟兜底）；🚫 把工作留在工作树过夜。双仓命令：
