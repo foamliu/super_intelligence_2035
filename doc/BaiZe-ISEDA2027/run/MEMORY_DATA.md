@@ -22,7 +22,7 @@ WAITING: 1
 ```
 PHASE:        ✅stack-v3-train 2TB下载全DONE→进入过滤+分词阶段(待运维指令) → ✅论文数据节更新(11-10令) → ✅路径staleness审计(0 stale) → ✅TASK.md标记更新(10:10+08:5x改✅已交付) → WAITING=1
 已完成:       ✅85M;✅10-31报告;✅09:4x报告;✅09:2x长上下文10/10(249.48GiB);✅13:2x#2 RL报告;✅13:2x#1 B类12/12(78.73GiB);✅11-07 ROI 8源DONE(25.14GB/135文件/0inc);✅stack-v3-train调研DONE(8192shard/EDA语言27.1%);✅batch1-7全DONE(累计1,987,930,402,327B/4600parquet/0inc);✅batch7 QC(6885files/vendor1.0%/EDA12.3%);✅2TB ROI复盘(token~2,025B/重叠2.4%/97.6%独特/ROI判定✅有价值);✅论文pretrain数据节更新(淡化数据源名+Stable/Decay双饼图+中文图注,ERR=0,5pages);✅路径staleness审计(INDEX.tsv 12条全OK/symlink全resolve/stack-v3路径OK,0 stale);✅TASK.md 10:10令+08:5x令标记更新为✅已交付
-当前动作:     唤醒1434(2026-11-10 16:08):例行巡检→①git fetch(代理)+push(harness commit已推)→0ahead/0behind;②TASK.md diff origin/main=空→无新data令;③research日报11-10(06:11)已阅,18:00未到,无新建议;④stack-v3-train:du -sb=1,987,932,712,240B/4600parquet/0inc→完整;⑤pgrep无下载进程;⑥df:/nas_inference 19T已用/27T可用(42%)≥5T红线OK;⑦体积MEMORY 36KB/TASK 35KB均≤40KB无需归档;⑧全部运维令已✅已交付→commit→WAITING=1
+当前动作:     唤醒1435(2026-11-10 18:50):例行巡检→①git fetch(代理)→0ahead/0behind;②TASK.md diff origin/main=空→无新data令;③research日报11-10晚报(18:00)已阅:data建议=「缺失型指标独立成行+曝光分桶统计脚本」,纳注:用于后续stack-v3过滤QC(来自research日报2026-11-10),本轮不执行(无运维令授权);④stack-v3-train:du -sb=1,987,932,712,240B/4600parquet/0inc→完整;⑤pgrep无下载进程;⑥df:/nas_inference 19T已用/27T可用(42%)≥5T红线OK;/nas_train 180T/28T可用(87%);⑦体积MEMORY 37KB/TASK 35KB均≤40KB无需归档;⑧全部运维令已✅已交付→commit→WAITING=1
 下一步:       等运维指令→若批准stack-v3 L4/L5 parquet级过滤+分词→用tokenizer_eod分词→落baize-data/tokenized/→更新INDEX.tsv+DATA_MAPPING.md;若无新指令→WAITING=1例行巡检
 阻塞:         无(2TB下载已完成,论文数据节已更新,路径审计0 stale,TASK.md标记已更新,/nas_inference 27T可用≥5T红线)
 ERROR_COUNT:  11
@@ -32,6 +32,7 @@ ERROR_COUNT:  11
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。
 
 ## 📋 本唤醒流水
+> [11-10 18:50] 唤醒1435：例行巡检→①git fetch(代理)→0ahead/0behind;②TASK.md diff origin/main=空→无新data令;③research日报11-10晚报(18:00)已阅:data建议=「缺失型指标独立成行+曝光分桶统计脚本」,纳注:用于后续stack-v3过滤QC(来自research日报2026-11-10),本轮不执行(无运维令授权);④stack-v3-train:du -sb=1,987,932,712,240B/4600parquet/0inc→完整;⑤pgrep无下载进程;⑥df:/nas_inference 19T已用/27T可用(42%)≥5T红线OK;/nas_train 180T/28T可用(87%);⑦体积MEMORY 37KB/TASK 35KB均≤40KB无需归档;⑧全部运维令已✅已交付→commit→WAITING=1
 > [11-10 16:08] 唤醒1434：例行巡检→①git fetch(代理)+push(harness commit已推)→0ahead/0behind;②TASK.md diff origin/main=空→无新data令;③research日报11-10(06:11)已阅,18:00未到,无新建议;④stack-v3-train:du -sb=1,987,932,712,240B/4600parquet/0inc→完整;⑤pgrep无下载进程;⑥df:/nas_inference 27T可用(42%)≥5T红线OK;⑦体积MEMORY 36KB/TASK 35KB均≤40KB无需归档;⑧全部运维令已✅已交付→commit→WAITING=1
 > [11-10 15:09] 唤醒1433：例行巡检→①git pull --rebase(Already up to date,无新data令);②research日报11-10(06:11)已阅,18:00未到,无新建议;③stack-v3-train:du -sb=1,987,932,712,240B/4600parquet/0inc→完整;④pgrep无下载进程;⑤df:/nas_inference 27T可用(42%)≥5T红线OK;⑥体积MEMORY 35KB/TASK 35KB均≤40KB无需归档;⑦全部运维令已✅已交付→commit→WAITING=1
 > [11-10 14:12] 唤醒1432：例行巡检→①git pull --rebase(Already up to date,无新data令);②research日报11-10(06:11)已阅,18:00未到,无新建议;③stack-v3-train:du -sb=1,987,932,712,240B/4600parquet/0inc→完整;④pgrep无下载进程;⑤df:/nas_inference 27T可用(42%)≥5T红线OK;⑥体积MEMORY 35KB/TASK 35KB均≤40KB无需归档;⑦全部运维令已✅已交付→commit→WAITING=1
