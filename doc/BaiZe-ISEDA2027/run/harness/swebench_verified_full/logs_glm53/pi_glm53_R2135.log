@@ -1,0 +1,4 @@
+[verified-full 02:03:11] resume: loaded 500 existing results
+[verified-full 02:03:11] [1/500] astropy__astropy-12907 SKIP (predicted, patch=1507B)
+[verified-full 02:03:11] [2/500] astropy__astropy-13033 SKIP (predicted, patch=3729B)
+[verified-full 02:03:11] [3/500] PREDICT pi on astropy__astropy-13236
