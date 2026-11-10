@@ -7176,3 +7176,88 @@ baize_posttrain_sandbox_watcher.sh (--watch --auto-eval, PID 4109314, ppid=1, et
 
 **数据溯源**：本节所有数字来自上表命令的实测输出（`ping`/`/dev/tcp`/`ip route get`/`ip neigh`/`ip addr`/`nc`）。无伪造。traceroute 未安装已如实标注。
 
+## §R165 (2026-11-11 wake234) Surrogate-Pipeline Orchestration Audit + serve-teardown gap fix (零 GPU)
+
+**背景**：R162/R159/R161 已分别完成 Phase1/Phase2/Phase3 单相就绪审计，但从未审计**端到端 orchestrator** `baize_posttrain_surrogate_pipeline.sh` 的**相间过渡**逻辑——尤其是「沙盒恢复 → Phase1 自动起 → Phase2 需 GPU6-7」这条链上，GPU5/6/7 的占位 serve 谁来拆。本轮审计发现并修复了这个 gap。
+
+### 1. 审计方法
+
+- 通读 `baize_posttrain_surrogate_pipeline.sh`（285 行）全部 helper（check_endpoint / check_sandbox / check_gpu_free / find_latest_ckpt / do_status / do_dry_run / gate_contam / run_phase1..3 / run_all）。
+- grep `baize_posttrain_sft_surrogate.sh` 与 `baize_posttrain_rl_grpo_surrogate.sh` 中的 serve-stop / kill / GPU 逻辑。
+- 实跑 `pipeline --status` / `--dry-run` / `sandbox_watcher --status`。
+
+### 2. 关键发现：serve-teardown 协调 gap
+
+| 项 | 现状 | 问题 |
+|:--|:--|:--|
+| Phase1→Phase2 过渡 | `run_phase2` 调 `check_gpu_free "6,7"`，GPU 被占则 **ABORT** | ✅ 安全（不会在占位 serve 上硬跑 SFT） |
+| SFT 子脚本 | GPU-busy guard 打印「do NOT kill serve, wait + stop serve + re-run」 | ✅ 纪律正确（不杀 serve） |
+| **谁来 stop serve** | **无任何脚本** | 🔴 **gap**：沙盒恢复后 watcher 自动起 Phase1（用 GPU4+GPU0-3，不碰 5-7）；Phase1 完成后要跑 Phase2，但 GPU6-7 还被占位 serve 占着，**没有脚本负责拆**，需操作员手工 `kill` 并承担误杀风险 |
+
+**风险量化**：占位 serve 共 4 个进程（gpu5:3595802 / gpu6:3595803 / gpu7:3595804 / gpu4:3408952+3408953），与 root SGLang（GPU0-3, :8099）同机。手工 `kill` 若误杀 root SGLang 或误杀非本线进程，后果严重。
+
+### 3. 修复：新建 `baize_posttrain_serve_teardown.sh`（170 行）
+
+| 设计点 | 实现 |
+|:--|:--|
+| 硬护栏 | ROOT port 8099 / GPU0-3 **永不在目标列表**；运行前 `grep -qw` 二次校验 |
+| 默认范围 | 仅 GPU5/6/7 占位 serve（ports 8097/8096/8095） |
+| `--gpu4` | 额外拆 GPU4 的 Phase1 eval serve（:8098），仅在 Phase1 完成后用 |
+| `--all` | GPU5/6/7 + GPU4（4 个 posttrain serve 全拆，仍不碰 0-3） |
+| `--status` | 打印占用全景表（GPU/PORT/served-model/VRAM/PID），ROOT 标 `[GUARD]` |
+| 进程定位 | 按 **PORT** 用 `pgrep -f "vllm.entrypoints.openai.api_server.*--port <PORT>"`（不靠 PID/model-name，抗 PID 回绕） |
+| **自匹配防护** | pgrep -f 会匹配 pgrep 自己的命令行（pattern 字符串出现在 pgrep 调用里）→ 用 `ps -o args=` 过滤掉 cmdline 含 `pgrep`/`grep`/脚本名的 PID |
+| 拆除方式 | SIGTERM → 等 GRACE=15s → SIGKILL 残留 → 校验 VRAM<1024MiB |
+| 校验 | 拆后 `find_pids_by_port` 为空 **且** `nvidia-smi memory.used<1024` 才算 PASS |
+
+### 4. 验证（dry-run，不杀任何进程）
+
+```
+--status:
+  GPU 0-3  8099  qwen3.8-27b (ROOT)   45558  — [GUARD]   ← root 未匹配 vllm pattern，正确
+  GPU 4    8098  minicpm5-2b          38092  3408952 3408953
+  GPU 5    8097  minicpm5-2b-gpu5     37854  3595802
+  GPU 6    8096  minicpm5-2b-gpu6     37852  3595803
+  GPU 7    8095  minicpm5-2b-gpu7     37852  3595804
+
+--dry-run (默认): found {3595802}/{3595803}/{3595804}, "would SIGTERM+SIGKILL" — 未杀
+--dry-run --all:  上述 + GPU4 {3408952 3408953}
+dry-run 后 4 端点(8095-8098) 全仍存活 ✅
+```
+
+- **自匹配修复前后对比**：修复前 dry-run 误报 `{8028 3595802}`（8028 是 pgrep 自身子 shell）；修复后仅 `{3595802}`（真实 vllm PID），与 `ps` 交叉核对一致。
+- `bash -n` PASS；`--status`/`--dry-run`/`--dry-run --all` 三模式均符合预期。
+
+### 5. 沙盒恢复后的完整 runbook（更新）
+
+1. watcher（PID 4109314, `--watch --auto-eval`）探测到 10.129.32.75:8667 TCP OPEN → 自动 `setsid pipeline --phase1`（用 GPU4 serve + GPU0-3 root，不碰 5-7）。
+2. Phase1 完成 → `reports/report_posttrain_baseline_3model_zh.html`（覆盖现有 partial 报告）。
+3. **手动**：`bash baize_posttrain_serve_teardown.sh`（拆 GPU5/6/7 占位 serve）→ 校验 VRAM 释放。
+4. `bash baize_posttrain_surrogate_pipeline.sh --phase2`（GPU6-7 SFT）→ SFT ckpt + post-SFT eval。
+5. **手动**：`bash baize_posttrain_serve_teardown.sh --gpu4`（拆 GPU4 serve，给 Phase3 让 GPU4）。
+6. `bash baize_posttrain_surrogate_pipeline.sh --phase3`（GPU4-7 RL/GRPO）→ RL ckpt + cheat_rate.json。
+
+> 步骤 3/5 即本轮填补的 gap——此前无脚本、需手工 kill 且有误杀风险。
+
+### 6. 其他审计结论
+
+- `pipeline --status` 对 Phase1 报告「report exists: PASS」**不检查完整性**（R162 F2 已知：现有报告 partial，DeepSeek 67.97% 有实测 / MiniCPM5 36% 参考 / Qwen38 空）。非新发现，沿用 F2。
+- watcher 运行进程 `--auto-eval` 已开（沙盒恢复会自动起 Phase1）；`--status` 显示 `auto-eval: OFF` 仅反映本次 status 调用的解析结果，非运行中 watcher 的标志——非 bug。
+- 5 个核心脚本 `bash -n` 全 PASS（pipeline/sft/rl_grpo/eval/sandbox_watcher）。
+- GPU 端口映射表（MEMORY）与实测一致：GPU0-3 root SGLang / GPU4 vLLM :8098 / GPU5-7 vLLM :8097/8096/8095。
+
+### 7. 交付物
+
+| Item | Path | 行数 |
+|:--|:--|--:|
+| serve-teardown 脚本 | `run/baize_posttrain_serve_teardown.sh` | 170 |
+| 本节 | `EXPERIMENTS_POSTTRAIN.md` §R165 | — |
+
+### 8. 边界与纪律
+
+- 跨线：无（仅本线 run/ 新增脚本 + 本线台账）。
+- 红线：teardown 脚本**永不**碰 GPU0-3 / root SGLang（双重护栏：目标列表排除 + 运行前 grep 校验）。
+- 未改任何既有脚本（pipeline/sft/rl/eval/watcher 原样），仅新增 teardown helper。
+
+**数据溯源**：本节所有 PID/VRAM/端口来自 `baize_posttrain_serve_teardown.sh --status` / `--dry-run` 实测输出与 `ps -eo pid,args` / `nvidia-smi` 交叉核对。无伪造。
+
