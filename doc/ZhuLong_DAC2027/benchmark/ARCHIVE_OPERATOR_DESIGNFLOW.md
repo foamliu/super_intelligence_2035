@@ -2803,3 +2803,15 @@ WAITING: 0（shard A 轮 r299：🔑 **management + candidate-pool assessment（
 WAITING: 0（shard A 轮 r300：✅ **交付 case EDA-Eval-DesignFlow-VcsIpdSverilogFix-001 — r299 DEBT:1 CLEARED（1 case delivered, A.jsonl 191→192）** = abtf1 full deepread (136msgs/1.6MB, USER#1 逐字「sim下的仿真 最新一次有10个error，请检查并修改代码」= A-faithful produce-task ✓) + case build. 根因: VCS 默认 V2001 parser 对 sp_sram.v 10 个 `output realtime dbg_*` ANSI 端口报 `Error-[IPD] Identifier previously declared` (经 /tmp/vcs_ipd_test 最小复现确认 output realtime/real 触发, integer/reg 不触发); fix = ① sim/Makefile+inst_sim/Makefile VCS_FLAGS+CR_ABSORB_VCS_FLAGS 加 `-sverilog` 切 SV parser 清 10 IPD 错误 ② FAULT_ARGS `+defect_bit`→`+defect_bit_left` (默认+6 fi/cm1 target) 与 RTL defect_bit_left 对齐 ③ sp_sram.v 行1019-1025 加注释; cm1_all 全回归 PASS. case = spec-driven generator gen_vcs_ipd_fix.py (产 fixed Makefile + ipd_fix_notes.md), 14 conds a-n; 自验 gold PASS 14/14 + 4 negs (noop/hardcode_a/stub/keep_bug) 全 FAIL + §4.9 (空壳/print/core-deleted) 全 FAIL; 断言闸门 k_rationale=k_check=14≥8 ✓; test_sha8=bcfba184 test==disk ✓. A=spec_a faithful (lorikx/CXMT_SPSRAM_1028_v21/-sverilog/10 IPD/dbg_/30 ports/+defect_bit→+defect_bit_left); hidden B=spec_b isomorphic (w0047129/CXMT_SPSRAM_2048_v33/14 IPD/tdbg_/42 ports/+defect_bit→+defect_bit_right/cm1_all_64x16). ledger mark abtf1→case; summary_stats.json.scansync 写 r300 条目. scansync r300: 无新扫描 (仍 r292 ssh_eda_search_20261109_224902, mc30=2247/dedup=5999/users=401/hosts=696 不变), daily log 20261110 健康 2981 行. shard A clean digital A-faithful produce 稀缺 第4次确认 (r295/r296/r299/r300). · 📊 trace 覆盖率: covered=190/2247=8.5%（+1 abtf1 verification, ledger case marks）· 🎯 通过率: 最近20条 5/20=25.0%（不变, 无 cline 实跑）· 🦾 断言: 14条 a-n k_rationale=k_check=14 ✓（今日 1 新 case 达标, 既有 31 条不变, rewrite_queue 0, DEBT 0）· 📦 体积：MEMORY_A≈30KB · WAITING:0）
 ```
 
+
+---
+
+## 归档批次 r319（2026-11-10）
+
+以下 MEMORY_DESIGNFLOW_A.md 全文条目因体积控制（MEMORY_A 超 32KB）归档至此，原文摘要保留：
+
+- **r317**（concurrent mgmt session）：parallel session delivered MbistRepairReArmDiag-001（A.jsonl 199→200, DEBT 0）；本 session = scansync + candidate-pool reassessment + 7 parks（0 case, A.jsonl 200 不变）；11th scarcity confirm。详情见 summary_stats.json.scansync.r317。
+- **r316**（management + 10th scarcity confirm）：0 case, A.jsonl 199 不变, DEBT 0；1159 digital-dominant fresh 全 wrong-shard/analysis-only/overrep；3 park。详情见 summary_stats.json.scansync.r316。
+- **r315**（交付 case EDA-Eval-DesignFlow-RhrQueueBoundsDiag-001）：verification, 7huyr, diagnosis-generator PIVOT, A.jsonl 198→199, 15 conds a-o, r314 DEBT CLEARED。详情见 summary_stats.json.scansync.r315。
+
+> 注：r317/r316/r315 的完整原文在归档时已被截短为 1 行指针；详细数据（candidate pool / park / conds / trace）保存在 summary_stats.json.scansync 对应 round 条目中，可按 round key 查阅。
