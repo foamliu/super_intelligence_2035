@@ -1,19 +1,16 @@
 # BAIZE_HARNESS_TASK.md
 
-> 🚨 **报告生成纪律（2026-11-09 用户令 · 最高优先 · 覆盖 C5 的旧实现）**
-> **背景**：`reports/` 已堆积 **37 个 `report_harness_cline_special_r*.html`** + **185 个 `gen_*r*.py`** 复制脚本（每轮 ~7KB / ~10KB）。用户明确：**不要生成垃圾报告**。旧 C5 写的是"已有则增量更新"，**不是**每轮新建文件。
-> 1) **常规监控轮禁止**新建 `report_harness_*_rXXXX.html`，也禁止复制新的 `gen_*_rXXXX.py`。
-> 2) 只维护 **两个固定文件**（原地覆盖，不带 r 后缀）：
->    - `reports/report_harness_glm53_7way_swebench_tb_zh.html`
->    - `reports/report_harness_cline_special_zh.html`
-> 3) 只维护 **两个固定生成器**（`ROUND=R20xx python3 ...` 把轮次写进正文，不要复制脚本）：
->    - `run/harness/gen_report_glm53_7way.py`
->    - `run/harness/gen_cline_special.py`
-> 4) 允许新增一次性报告的**唯一**条件：用户明确要求，或里程碑（eval 全 DONE / predict 每路满 500 / TB-2.1 全 89）。此时文件名写里程碑，不写 rXXXX。
-> 5) 日常轮只写 `MEMORY_HARNESS.md` 心跳 + `daily-memories-harness/` 一行（C4 的 cline 小结），**不产出 HTML**。
-> 6) 历史文件已归档到 `reports/archive/harness_cline_special/` 与 `run/harness/archive/`；🚫 不要再往主目录新增。
-> 违反本条 = 未执行本令。
+### 🧭 工作约定（常驻 · 中性表述，替代旧「收尾铁律／体积规程／归档纪律／报告纪律」四段）
 
+1. **每轮收尾**：体积自检 → `MEMORY` 写一行心跳 → 当日日报一行 →
+   `git add <本线文件>`（**不用 `-A`**，共享副本上别把别线在途改动卷进提交）→ `commit + push` →
+   `git status -sb` 应干净、`git log -1` 时间戳 = 本轮。
+2. **体积**：本任务书与 `MEMORY` 各自 **≤32KB**（40KB 为硬上限）；超了就把**已闭合**的段落原文搬进本线
+   `ARCHIVE_*.md`、留 1 行指针。**尚未交付的运维令留在正文**，搬完当轮继续把它做完。
+3. **报告**：默认不新开文件——维护本线既定的固定报告（原地覆盖）（本线现有：`reports/report_harness_glm53_7way_swebench_tb_zh.html`、`reports/report_harness_cline_special_zh.html`、`run/harness/gen_report_glm53_7way.py`、`run/harness/gen_cline_special.py`）；
+   只有**用户点名**或**里程碑**才新增，文件名写里程碑；产物一律落 `reports/`。
+4. **边界**：只写本线文件与目录；跨线需要改动时先在自己的 MEMORY 里记一行，再交给对应线。
+5. **数字与证据**：结论要能追到落盘文件（路径/行号/命令输出）；取不到就标 `TODO/BLOCKED`，不要估。
 
 ### 📌 常驻 · 论文观察日报（research 线产出 · 2026-11-07 用户令）
 
@@ -56,21 +53,6 @@
 > 📦 §运维令·2026-10-30 22:2x（把恒为 0 分的 harness 调试跑通）**✅ R988** → `run/ARCHIVE_OPERATOR_HARNESS.md`；hermes 根因=PYTHONPATH 中毒、deepseek 根因=网关 SSE 非标字段+超时 patch 丢弃，均已修复（verify5b 4/5、3/5）。
 
 ### 🧷 📛 命名与归档纪律（常驻）
-> 🧷 **归档与执行纪律（2026-10-25 用户令 · 最高优先 · 覆盖任何其它归档/收尾条文）**
-> 用户原话：「agent 看到任务书 >32k 后要滚动归档，但是它们**在滚动归档时不要碰没有完成的运维指令**，而且在**归档后立即执行运维指令**，而不是立刻睡去等下次唤醒。」
-> 1. **未完成的运维指令一律不许归档**：判断标准 = 该块里的任务是否**已产出交付物并 commit**、或运维已标注「已闭合」。**没有 `✅ 已完成/已交付` 标记的一律视为未完成**，不许搬进 ARCHIVE。
-> 2. **归档完必须原地继续执行**：归档只是「清理」，**不是本轮交付物**。归档结束后立即回到运维指令区，从最上面那条**未完成**的指令开始做，做完再收尾。
-> 3. **禁止**「只做归档 + 写心跳 + 提交 → 置 `WAITING: 1` 睡 30 分钟」。**只要有未完成指令，`WAITING` 必须置 0**（loop 会 60 秒后立即再唤醒），直到该指令交付。
-> 4. 判据自检（写进心跳）：`本轮是否还有未完成的运维指令？` 若「是」→ `WAITING: 0` 并在本轮内完成它。
-
-> 📛 **命名常驻规程（2026-10-25 用户令 · 所有线通用的报告纪律）**：**报告里一律写 `cline`，🚫 不许写 `cline-patched`**。
-> - 同理：`ClinePatched` / `cline_patched` / `Cline-patched` 等任何变体**均禁止出现在报告正文、表格、图例、TL;DR、结论**里。
-> - 理由（用户原话）：「以后在报告里不要写 cline-patched，就写 cline，否则容易造成误解。」——读者会误以为"只跑了被改造过的 Cline"，而实际差异只在接入层（装 CLI / 写 baseUrl / 参数大小写），原生工具循环未改。
-> - **代码/脚本/配置里的标识符不改**（`cline_patched.py`、`terminalbench.agents.cline_patched:ClinePatched`、`jobs_cline-patched/` 是真实路径，改了会跑不起来）；**但报告里凡引用必须转写成 `cline`**。
-> - 如需交代接入层适配，放在**附录或脚注**写一次即可，正文一律 `cline`。
-
-> 📁 **报告目录纪律（2026-10-28 用户直令 · 全局常驻 · 覆盖一切旧报告路径）**：所有 HTML/中文报告**一律产出在 `doc/BaiZe-ISEDA2027/reports/`**。🚫 **禁止产出到 `run/reports/` 或项目根 `reports/`**（生成器输出路径必须指向项目级 reports；run/reports 历史文件不得再新增）。
-
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区，自上而下找第一条「未完成」的指令执行
 
 ### 🔴 用户令 · 2026-11-07 10:10（**按早晨令继续评测；cline 专项加盯**）· 用户直令 · 最高优先 · 未完成
@@ -189,40 +171,6 @@
 > 护栏：搬前 `git pull --rebase --autostash`；只搬「最新活跃块之下」的已闭合块（保留最上面 1–2 个未完成块）；冲突保留双方；提交用 `harness 归档: …` 前缀。
 > 本轮动作：本任务书现 ≈32KB（已贴上限）⇒ 下次唤醒先归档到 ≤32KB，并把 `📦 体积：TASK=nKB / MEMORY=nKB（归档 nKB）` 抄进心跳。
 
-### 🧭 收尾铁律 · 2026-10-06（用户指令 · 每轮唤醒必须执行，不许省）
-
-> 为什么新增（真实事故）：2026-10-06 06:55 → 08:30，data 线心跳文件 `MEMORY_DATA.md` 近 2 小时未更新（其间 agent 在改别的文件、push 得出去），外部运维只能靠 git 判断死活 ⇒ 被误判成静默卡死并上机排查。
-> 根因：「更新记忆 + push」以前只是建议、没有硬约束；loop 的兜底 push 间隔是 5h（本日已缩短），且只覆盖固定白名单 —— 不许依赖兜底。
-> 🚫 旧口径（已废）：「每 5 小时由 loop 兜底同步一次」不再作为交付保障 —— 兜底只是保险丝，不是你的提交手段。
-
-每轮唤醒（一次 cline 会话）结束前，按顺序做完这 5 件事，再置 `WAITING` / 去睡：
-
-0. 体积自检（先跑，数字要抄进下一步的心跳）：
-   ```bash
-   cd /nas_train/app.e0031982/code/super_intelligence_2035
-   for f in doc/BaiZe-ISEDA2027/run/BAIZE_HARNESS_TASK.md doc/BaiZe-ISEDA2027/run/MEMORY_HARNESS.md; do
-     printf '%-46s %7s B\n' "$f" "$(wc -c < "$f")"; done
-   ```
-   判据：两者都应 ≤ 32KB；任一 > 32KB ⇒ 本轮收尾前【你自己】滚动归档（见本文件「📉 体积维护规程」：只把已闭合内容原文移入 `run/ARCHIVE_OPERATOR_HARNESS.md`、留 1 行指针），直到两者都 ≤ 32KB；> 40KB（红线）⇒ 必须先归档再提交（不许只上报等运维）。
-   收尾把两文件体积 + 本轮归档量抄进心跳：`📦 体积：TASK=nKB / MEMORY=nKB（归档 nKB → ARCHIVE_OPERATOR_HARNESS.md）`。去向/指针格式见本文件「📉 体积维护规程」。
-
-1. 写心跳：更新 `run/MEMORY_HARNESS.md` 顶部进度快照（`PHASE` / `WAITING` / `已完成` / `当前动作` / `下一步` / `阻塞`），并追加 1 行「本唤醒流水」：`[HH:MM] 干了什么 + 关键原始输出 1–2 行`。
-2. 写日报：`run/daily-memories-harness/<YYYY-MM-DD>.md` 追加本轮记录（当天文件必须建）。
-3. 自己提交 + 推送（不许等 loop 兜底）：
-   ```bash
-   cd /nas_train/app.e0031982/code/super_intelligence_2035
-   git add -- doc/BaiZe-ISEDA2027/run/MEMORY_HARNESS.md doc/BaiZe-ISEDA2027/run/BAIZE_HARNESS_TASK.md \
-              doc/BaiZe-ISEDA2027/run/harness doc/BaiZe-ISEDA2027/run/daily-memories-harness
-   git commit -m "harness R<N>: <一句话>"      # 🚫 提交信息必须带线名前缀，否则运维无法溯源
-   git push origin main
-   ```
-   🚫 绝不用 `git add -A` —— 这是共享工作副本，`-A` 会把别线尚未完成的在途文件一并卷进你的提交（10-05 已出事故：`restore other agents files from dropped auto-commit`），后果是提交归属不可溯（运维查不出谁在干活）。
-4. 闭环自检：`git status -sb` ⇒ 无 ahead / 无 behind；`git log -1 --format='%h %ad %s' --date=format:'%H:%M'` 的时间戳 = 本轮。
-   push 失败（`error: Forbidden` / 网络）：重试 1 次；仍失败 ⇒ 把报错原文写进心跳，下一轮唤醒第一件事就是补推。
-
-> ⏱️ 运维判死判据（硬）：心跳文件 >60 min 无新提交 ⇒ 按卡死处理，不再等你。你干得再多，心跳不动 = 仍会被判死。
-> 📦 历史已闭合指针 · 2026-10-05~07（原文见 ARCHIVE）：Claude Code 合规口径（遥测已关）· deepseek-harness 工具链自装 · 10-07 汇报 HTML 已交付 · 10-07⑥ **7-way 全完成**（cline 60.0 / Pi 60.0 / Hermes 53.3 / opencode 50.0 / codex 46.7 / claude-code 43.3 / deepseek 40.0%）。
-
 ### 🆕 运维口径 · 2026-10-05（你的 shell 被剥了代理 ⇒ 一切「外网不可达」先按本口径显式带 proxy 复测）
 
 > 定位（2026-10-05，跨线）：三条 loop 启动 cline 时都执行 `env -u http_proxy -u https_proxy -u … cline …`（目的是给内网网关鉴权：不剥 → 网关 `error: Forbidden`，且 cline 仍 exit 0 → 静默空转）。⇒ 你（agent）会话里每条命令都继承了「无代理」env。
@@ -238,34 +186,6 @@
 > 🚫 装包别动共享 py310 env（P-9.8 arm B 崩溃即「共享 env 被污染」所致；P-9.9 现在还在跑）→ 用 `--target` 或独立 venv，起服时补 `PYTHONPATH`。
 
 > 📦 10-05「换冷门模型+严格串行」已归档 → 被 10-07 7-way 取代。
-
-### 📉 体积维护规程（2026-10-03 立 → 2026-10-06 升级为「记忆 + 任务书」双约束，硬性）
-
-> 理由：`MEMORY_*.md` 与 `BAIZE_<线>_TASK.md` 都每次唤醒被全文读进 prompt⇒ 越大越烧 token。
-> 📊 2026-10-06 实测：本线任务书 `BAIZE_HARNESS_TASK.md` ≈ 30KB、`MEMORY_HARNESS.md` ≈ 30KB（两者都已贴上限）。
-- 上限（两者相同）：≤ 32KB；红线 40KB ⇒ 超红线当轮必须先归档才能收尾。
-- 自检：见「收尾铁律」第 0 条（`wc -c` 两文件，数字抄进心跳）。
-- 归档去向（只归档「历史」，🚫 不许归档「活口径」）：
-  ① 已执行完/已作废的运维指令块 → `run/ARCHIVE_OPERATOR_HARNESS.md`（留下 1 行指针）；
-  ② 被取代的候选表/推导过程（保留现行档 + 实测结果） → `run/ARCHIVE_HARNESS_SPEC_HISTORY.md`（无则新建）；
-  ③ 较早的巡检条目（保留最近 ~20 条） → `daily-memories-harness/<条目日期>.md`（原文不改）。
-- 🚫 不许归档：硬规则 / 验收标准 / 现行口径 / `WAITING:` 状态头 / 「运维问答」区。
-- 指针（必须留、只 1 行）：`> 📦 §<标题>（<日期>）已归档 → run/ARCHIVE_….md；**结论**：<一句话>。需要时再读。`
-  🚫 不许改小节编号/标题（别处有交叉引用）。
-- 谁做（2026-10-06 改 · 与 MEMORY 自滚同机制 = agent 自己做）：本线 agent 自己把「已闭合」内容原文移入对应归档文件、留 1 行指针。⚠️ 本文件「agent 只读」的唯一例外 = 仅此「搬迁」：原文一字不改、不动小节编号/标题、不新增/不改写任何运维指令（本区作者仍是运维）。并发安全：归档前先 `git pull --rebase --autostash`；只搬「最新活跃块之下」的已闭合块（保留最上面 1–2 个未完成块）；冲突保留双方；提交用 `<线> 归档: …` 前缀。
-- 顶部必须保留：① `WAITING:` 行（仍只出现一次）② 状态头 ③ 「运维问答」④ 最近 ~20 条。
-- 纪律：归档不改变任何结论；`WAITING:` 纪律不变。
-
----
-
-| 项 | 当前值 |
-|:---|:---|
-| 当前指令 | 🎯 （2026-10-02 首启）两条线，按序做：<br>① H-B 源码分析（先开始） —— 分析 `/nas_train/app.e0031982/harness` 下各 harness 的源码，从 cline 开始，产出自包含 HTML 报告。分析主线见 §2。<br>② H-A SWE-bench 横评 —— 用 SWE-bench 评测几个 agent harness（cline / opencode / deepseek harness 等）并对比。⚠️ 先做可行性核查（§1.1），再定规模，不要一上来跑全量。<br>🚫 两条铁律：<b>不许猜</b>（源码结论必须贴文件+行号原文）；<b>每个结论必须可复现</b>（命令+输出）。 |
-| 优先级覆盖 | H-B（源码分析）> H-A（SWE-bench）；<br>H-A 只在环境与数据集核查通过后才进入实跑。 |
-| 状态索取 | `<无>`（若运维写入具体问题，本轮先答该问题再干活，答案写进 `MEMORY_HARNESS.md` 顶部「运维问答」区） |
-| 暂停标志 | `<无>`（若写入 `STOP`，本轮只更新记忆、不做任何动作，然后退出） |
-
----
 
 ## 📊 进度快照（每次唤醒必须更新，供远程巡检）
 

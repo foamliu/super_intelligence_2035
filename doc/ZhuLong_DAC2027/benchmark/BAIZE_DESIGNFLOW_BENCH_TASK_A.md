@@ -43,7 +43,7 @@
 > - **本轮不造 case**；完成后 `WAITING: 0`，下一轮恢复造题。
 >
 > **护栏**：只读批次目录与 jsonl；不 commit 原始 trace；不碰 B/C/D 的 MEMORY/ledger/jsonl；
-> 不新建 HTML 报告（报告纪律）。
+> 报告：需要给人看时再出 HTML，落 `doc/ZhuLong_DAC2027/reports/`（文件名带日期或里程碑）；日常轮只写 MEMORY + daily，不复制新报告。
 
 > 🎯 **本轮最高优先（2026-11-09 用户令 · 优先于常规选料）**：**全量 trace 重扫 + mc 阈值下调评估**
 > 1) **全量重扫**：停止依赖 11/05 的 stale `summary.tsv`，也不要只做 fresh-window。对目标机群执行一次**全量 `ssh_eda_search`**（或等价全盘 `find`），重新生成 `summary.tsv`。记录：扫描主机数、成功/失败、耗时、去重后 session 数、按 mc 的分布。

@@ -1,28 +1,16 @@
 # BAIZE_POSTTRAIN_TASK.md
 
-> 🚨 **报告生成纪律（2026-11-09 用户令 · 最高优先 · 覆盖“每轮产出 HTML”）**
-> **背景**：`reports/` 已堆积 **105 个 `report_posttrain_r*.html`**（1.16MB），其中 r104 一轮就有 2 份；用户明确不要垃圾报告。
-> 1) **常规研究轮禁止**新建 `report_posttrain_rXXXX_*.html`；日常产出写 `EXPERIMENTS_POSTTRAIN.md` 新节 + `MEMORY_POSTTRAIN.md` 心跳 + `daily-memories-posttrain/` 一行即可（“实质内容”不等于“一份 HTML”）。
-> 2) 只维护 **一个滚动报告**（原地覆盖）：`reports/report_posttrain_research_zh.html`（汇总当前研究状态/结论）。
-> 3) 仅以下里程碑允许一次性报告：GPU 到位 / launch 成功 / smoke 结果 / 主 RL 开始或结束 / 评测结果 / 用户明确要求；文件名写里程碑，不写 rXXXX。
-> 4) 🚫 不得把 HTML 放进 `run/`（现有 `run/baize_posttrain_r*_report.html` 已归档到 `run/archive/posttrain/`）。
-> 5) 历史 105 份已归档到 `reports/archive/posttrain/`；不要再往主目录新增。
-> 违反本条 = 未执行本令。
+### 🧭 工作约定（常驻 · 中性表述，替代旧「收尾铁律／体积规程／归档纪律／报告纪律」四段）
 
-
-> BaiZe Stage(ii) LLM Post-Training 任务书 —— 领域退火 / SFT / RLVR-GRPO 三步走 + EDA-Eval-PyAether 评测。
-> 论文章节：`BaiZe-ISEDA2027/ISEDA2027/5_llm_posttrain.tex`。
-> 本文件为**只读指令文件**，agent 禁止修改本文件。所有运行时状态写入 `MEMORY_POSTTRAIN.md`、`EXPERIMENTS_POSTTRAIN.md` 和 `daily-memories-posttrain/`。
-
-> 📁 **报告目录纪律（全局常驻）**：所有 HTML/中文报告**一律产出在 `doc/BaiZe-ISEDA2027/reports/`**。🚫 禁止产出到 `run/reports/` 或项目根 `reports/`。
-
-> 🧷 **归档与执行纪律（2026-10-25 用户令 · 最高优先 · 覆盖任何其它归档/收尾条文）**
-> 1. **未完成的运维指令一律不许归档**：判断标准 = 该块任务是否已产出交付物并 commit 或运维已标「已闭合」。没有 `✅ 已完成/已交付` 标记的一律视为未完成，不许搬进 ARCHIVE。
-> 2. **归档完必须原地继续执行**：归档只是「清理」，不是本轮交付物。归档完立即回到运维指令区，从最上面那条未完成指令开始做。
-> 3. **禁止**「只归档 + 写心跳 + 提交 → 置 `WAITING: 1` 睡去等下次唤醒」。只要有未完成指令，`WAITING` 必须置 0（loop 60 秒后再唤醒），直到交付。
-> 4. 心跳里必须写这一句：`未完成指令：<有/无>`；有 ⇒ `WAITING: 0` 且本轮内完成。
-
----
+1. **每轮收尾**：体积自检 → `MEMORY` 写一行心跳 → 当日日报一行 →
+   `git add <本线文件>`（**不用 `-A`**，共享副本上别把别线在途改动卷进提交）→ `commit + push` →
+   `git status -sb` 应干净、`git log -1` 时间戳 = 本轮。
+2. **体积**：本任务书与 `MEMORY` 各自 **≤32KB**（40KB 为硬上限）；超了就把**已闭合**的段落原文搬进本线
+   `ARCHIVE_*.md`、留 1 行指针。**尚未交付的运维令留在正文**，搬完当轮继续把它做完。
+3. **报告**：默认不新开文件——维护本线既定的固定报告（原地覆盖）（本线现有：`reports/report_posttrain_research_zh.html`）；
+   只有**用户点名**或**里程碑**才新增，文件名写里程碑；产物一律落 `reports/`。
+4. **边界**：只写本线文件与目录；跨线需要改动时先在自己的 MEMORY 里记一行，再交给对应线。
+5. **数字与证据**：结论要能追到落盘文件（路径/行号/命令输出）；取不到就标 `TODO/BLOCKED`，不要估。
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
@@ -286,76 +274,7 @@ commit 前缀 `posttrain plan:`。
 > 做法 = 只「搬迁」、不改内容：① 已闭合运维块原文搬入 `run/ARCHIVE_OPERATOR_POSTTRAIN.md`（无则新建）；② 留 1 行指针；🚫 不改小节编号/标题；🚫 不新增/不改写任何指令（本区作者仍是运维）。
 > 护栏：搬前 `git pull --rebase --autostash`；只搬「最新活跃块之下」的已闭合块；冲突保留双方；提交用 `posttrain 归档:` 前缀。
 
-### 📉 体积维护规程（2026-10-03 立 → 2026-10-06 升级，硬性）
-
-> `MEMORY_POSTTRAIN.md` 与 `BAIZE_POSTTRAIN_TASK.md` 都每次唤醒被全文读进 prompt ⇒ 越大越烧 token。
-> - 上限：≤ 32KB；红线 40KB ⇒ 超红线当轮必须先归档才能收尾。
-> - 自检：见「收尾铁律」第 0 条（`wc -c` 两文件，数字抄进心跳）。
-> - 归档去向：① 已执行完/作废的运维块 → `run/ARCHIVE_OPERATOR_POSTTRAIN.md`（留 1 行指针）；② 较早流水（保留最近 ~20 条）→ `daily-memories-posttrain/<日期>.md`（原文不改）。
-> - 🚫 不许归档：硬规则 / 验收标准 / 现行口径 / `WAITING:` 状态头。
-> - 指针：`> 📦 §<标题>（<日期>）已归档 → run/ARCHIVE_OPERATOR_POSTTRAIN.md；**结论**：<一句话>。需要时再读。`
-> - 顶部必须保留：① `WAITING:` 行（仍只出现一次）② 状态头 ③ 最近 ~20 条流水。
-> - 纪律：归档不改变任何结论；`WAITING:` 纪律不变（正文/流水/快照里不得再出现以 `WAITING:` 开头的行）。
-
-### 🧭 收尾铁律（每轮唤醒结束前必须执行，不许省）
-
-每轮唤醒（一次 cline 会话）结束前，按顺序做完这 5 件事，再置 `WAITING` / 去睡：
-
-0. **体积自检**（先跑，数字抄进心跳）：
-   ```bash
-   cd /nas_train/app.e0031982/code/super_intelligence_2035
-   for f in doc/BaiZe-ISEDA2027/run/BAIZE_POSTTRAIN_TASK.md doc/BaiZe-ISEDA2027/run/MEMORY_POSTTRAIN.md; do
-     printf '%-46s %7s B\n' "$f" "$(wc -c < "$f")"; done
-   ```
-   判据：两者都应 ≤ 32KB；任一 > 32KB ⇒ 本轮收尾前你自己滚动归档，直到两者都 ≤ 32KB；> 40KB ⇒ 必须先归档再提交。
-   收尾把两文件体积抄进心跳：`📦 体积：TASK=nKB / MEMORY=nKB（归档 nKB → ARCHIVE_OPERATOR_POSTTRAIN.md）`。
-
-1. **写心跳**：更新 `run/MEMORY_POSTTRAIN.md` 顶部进度快照（`PHASE` / `WAITING` / `已完成` / `当前动作` / `下一步` / `阻塞`），并追加 1 行「本唤醒流水」：`[HH:MM] 干了什么 + 关键原始输出 1–2 行`。
-2. **写日报**：`run/daily-memories-posttrain/<YYYY-MM-DD>.md` 追加本轮记录（当天文件必须建）。
-3. **自己提交 + 推送**（不许等 loop 兜底）：
-   ```bash
-   cd /nas_train/app.e0031982/code/super_intelligence_2035
-   git add -- doc/BaiZe-ISEDA2027/run/MEMORY_POSTTRAIN.md \
-              doc/BaiZe-ISEDA2027/run/EXPERIMENTS_POSTTRAIN.md \
-              doc/BaiZe-ISEDA2027/run/BAIZE_POSTTRAIN_TASK.md \
-              doc/BaiZe-ISEDA2027/run/daily-memories-posttrain
-   git commit -m "posttrain #<轮次>: <一句话>"   # 🚫 提交信息必须带线名前缀
-   git push origin main
-   ```
-   🚫 绝不用 `git add -A` —— 这是共享工作副本，`-A` 会把别线尚未完成的在途文件一并卷进你的提交。
-4. **闭环自检**：`git status -sb` ⇒ 无 ahead / 无 behind；`git log -1 --format='%h %ad %s' --date=format:'%H:%M'` 的时间戳 = 本轮。
-   push 失败（`error: Forbidden` / 网络）：重试 1 次；仍失败 ⇒ 把报错原文写进心跳，下一轮唤醒第一件事就是补推。
-
-> ⏱️ 运维判死判据（硬）：心跳文件 >60 min 无新提交 ⇒ 按卡死处理，不再等你。
-
----
-
 ## ⚠️ git 同步规则（必读，每次唤醒都要走）
-
-### 前提：这是一个共享工作副本
-
-vision / pretrain / data / harness 任务的 agent 与本任务共用同一份工作副本——同一个 NFS 路径
-`/nas_train/app.e0031982/code/super_intelligence_2035`（多节点共享同一块盘）。
-
-因此：
-- 只需一个 agent pull，其余立刻看到。不要重复 pull，也不要因为「工作区里出现了别的任务的改动」而困惑。
-- 工作区里陌生的未提交改动很可能是别线任务的在途文件。🚫 绝不为此执行
-  `git checkout -- <file>` / `git clean` / `git stash` / `git reset --hard`——那会毁掉另一个任务的成果。
-- 各 loop 会互相把对方在途文件一起提交，这是既有设计的已知副作用，不要试图「修正」它。
-
-### 但 loop 本身只 push 不 pull（pull 必须由 agent 做）
-
-每次唤醒按顺序执行：
-1. `git fetch origin` + `git status -sb`，看 ahead/behind。
-2. 提交时显式指定你自己的文件（见上方收尾铁律第 3 条）。🚫 不要用 `git add -A`。
-3. 若显示 behind / diverged：`git pull --rebase --autostash origin main`。
-   - 报 `cannot rebase: You have unstaged changes` → 是双方的在途改动：先把自己要提交的文件 commit 掉再 rebase；🚫 不要 stash / 丢弃别人的改动。
-   - 报 `Unable to create '.git/index.lock'` → 另一个 agent 正在做 git 操作：等 30–60 秒重试（最多 3 次）；仍失败就记一行流水并跳过本次 git 操作，下次唤醒再试。
-   - 🚫 绝不 `git push --force`；🚫 绝不 `git reset --hard`。
-4. `git push origin main`；确认 `git status -sb` 无 ahead/behind 才算闭环。
-5. 流水记一行 git 结果。
-
----
 
 ## ══════════════ Stage (ii) 任务定义 ══════════════
 
