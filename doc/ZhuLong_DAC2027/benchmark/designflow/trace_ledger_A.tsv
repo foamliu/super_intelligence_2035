@@ -316,3 +316,4 @@
 1794190176104_bhcla.messages.json	ray1lei	hfeg0pkn004	0	eda_other	case	EDA-Eval-DesignFlow-SpfCouplingParser-001	2026-11-10 06:34	
 1792047975640_tdmdj.messages.json	qi3wang	hfhds209	105	digital	parked		2026-11-10 07:57	inaccessible: .messages.json not at /home/qi3wang/.cline on hfhds209/hfeg0pjn178 (cleaned or non-standard path); fresh digital candidate (verilog:333 rtl:106) but unreadable
 1792631504800_0cv47.messages.json	t0002470	hfeg0plg76	95	verification	case	EDA-Eval-DesignFlow-IrunIllegalLogParser-001	2026-11-10 07:59	
+1794024347310_fkhb8.messages.json	graywang	hfeg0plg108	59	digital_front	claimed		2026-11-10 08:21	
