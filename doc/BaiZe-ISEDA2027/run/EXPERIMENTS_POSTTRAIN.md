@@ -11401,4 +11401,76 @@ occupied by vLLM serve until sandbox tunnel restored」。dry-run 不触发 guar
 - `pq.read_table('sft_pyaether_corpus_unified_v5v6v7.parquet')` → 1725 rows, [conversation, metadata]
 - `bash baize_posttrain_sft_surrogate.sh --dry-run` → recipe + 4 prereq 全 OK
 - `nvidia-smi --query-gpu=index,memory.used,...` → GPU6=37852MiB, GPU7=37852MiB (serve 占位)
+## §R160 — Annealing Domain Corpus Tokenization Request + Script for Data Line（wake229, 2026-11-11, 零 GPU · CPU）
+
+> **目标**：将 R153 构建的 PyAether 领域退火源语料（`pyAether_api_anneal_corpus.jsonl`，400 docs / ~696K tok / 污染闸门 PASS）的分词需求落实为**可执行脚本 + 精确规格**，供 data 线在 .29/.12 上直接运行。完成 MEMORY「下一步②」。
+
+### 1. 背景
+
+`baize_posttrain_anneal.sh`（R12 骨架）的 `DOMAIN_DATA="${DATA}/pyAether_api_anneal"` 指向 data 线分词产物（mcore `.bin/.idx`）。R153 构建了源语料 JSONL 并通过污染闸门（400 扫描 / 0 命中 / PASS），但**源 JSONL → mcore 分词**是 data 线待办（tokenizer `tokenizer_eod` + `preprocess_data.py` 仅在 .29/.12 的 `/nas_train` 上，.17 不可达）。
+
+### 2. 交付物
+
+| 产物 | 路径 | 说明 |
+|:--|:--|:--|
+| JSONL→parquet 转换脚本 | `run/baize_posttrain_anneal_to_parquet.py` | 读 JSONL `text` 字段 → parquet `content` 列（pa.string），供 `preprocess_data.py --mode content` 消费 |
+| 分词编排脚本 | `run/baize_posttrain_tokenize_anneal_corpus.sh` | 3 步：JSONL→parquet→`.bin/.idx`→验证；`--dry-run`/`--help` 模式；设计在 .29/.12 上运行 |
+
+### 3. 数据线分词规格（R160 请求）
+
+| 项 | 值 |
+|:--|:--|
+| **输入** | `pyAether_api_anneal_corpus.jsonl`（共享 git 仓库内，400 docs，3.48 MB） |
+| **Step 1** | JSONL → parquet（`baize_posttrain_anneal_to_parquet.py`，`content` 列） |
+| **Step 2** | parquet → mcore `.bin/.idx`（`preprocess_data.py --mode content --dtype int32`） |
+| **Tokenizer** | `/nas_train/app.e0031982/models/DeepSeek-V4.1-Flash`（vocab 129281，与 pretrain 同源） |
+| **输出路径** | `/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/pyAether_api_anneal/` |
+| **输出文件** | `pyAether_api_anneal_train_s0.{bin,idx,json}` |
+| **预估 token** | ~696K（小规模高质量领域语料，domain30 blend 上采样 ~3600x，WSD 标准做法） |
+| **污染闸门** | ✅ R153 已 PASS（400 docs / 0 命中 / 158-task 黑名单）；corpus = API 参考文档 = 任务来源材料，非 task prompt/assert/solution |
+| **优先级** | P3 依赖（正式退火需 pretrain ckpt ETA≈2026-12-25，不紧急但应提前排队） |
+| **运行命令** | `bash baize_posttrain_tokenize_anneal_corpus.sh`（在 .29 或 .12 上） |
+
+### 4. 验证结果（2026-11-11 .17 实测）
+
+| 验证项 | 结果 |
+|:--|:--|
+| `bash -n baize_posttrain_tokenize_anneal_corpus.sh` | ✅ syntax OK |
+| `py_compile baize_posttrain_anneal_to_parquet.py` | ✅ compile OK |
+| `--help` | ✅ 正确显示 usage + output path |
+| `--dry-run` | ✅ 正确显示 recipe + exit 0（不执行） |
+| JSONL→parquet 转换（.17 verl venv pyarrow 25.0.1） | ✅ 400 docs / 2,573,892 chars / ~695,646 tok / 1.4 MB parquet |
+| parquet schema 验证 | ✅ rows=400, cols=['content'], 类型 pa.string |
+| parquet 内容抽样 | ✅ 首条 = `# PyAether API Reference: pyAether.EmyLPPHeader...`（API 参考文档，非 eval task） |
+
+### 5. .17 局限性
+
+- `tokenizer_eod`（`/nas_train/.../data/tokenizer_eod`）在 .17 不存在（`/nas_train` 未挂载）
+- `preprocess_data.py`（`/nas_train/.../mamba2_hybrid_2b/preprocess_data.py`）在 .17 不存在
+- → **Step 2（parquet→.bin/.idx）必须在 .29/.12 上执行**；Step 1（JSONL→parquet）在 .17 可做（verl venv pyarrow 25.0.1 已验证）
+- 脚本设计为在 .29/.12 上一键运行（前置检查会拒绝在 .17 上正式执行）
+
+### 6. 与既有调研的关系
+
+- **R153**：构建源语料 JSONL + 污染闸门 PASS（本轮的前置）
+- **R64**：退火配比敏感性（domain30 = 696K tok 上采样至 ~2.52B tok，倍率 ~3600x）
+- **R77**：分词器 EDA 领域词汇覆盖分析（API 名称碎片化 5.20x → 退火语料量 ×3.0，步数 5000→15000）
+- **DATA_LEDGER** §101-105：分词脚本 `preprocess_data.py` + tokenizer + 既有 `.bin/.idx` 产物路径
+
+### 7. 红线遵守
+
+- 源语料 R153 污染闸门已 PASS（400/0）；本轮**不新增任何数据**，仅写分词脚本。
+- 仅写本线文件（2 脚本 + EXPERIMENTS §R160 + MEMORY 心跳），不碰他线。
+- 脚本注释明确标注红线（§5.1 corpus = API 参考文档 ONLY）。
+
+### 8. 交付物清单
+
+- `run/baize_posttrain_anneal_to_parquet.py`（~85 行，py_compile ✅）
+- `run/baize_posttrain_tokenize_anneal_corpus.sh`（~119 行，bash -n ✅，--help ✅，--dry-run ✅）
+- `EXPERIMENTS_POSTTRAIN.md` §R160（本节）
+
+- 无伪造。脚本在 .17 上仅验证了 Step 1（JSONL→parquet）；Step 2 需 data 线在 .29/.12 上执行。
+
+---
+
 
