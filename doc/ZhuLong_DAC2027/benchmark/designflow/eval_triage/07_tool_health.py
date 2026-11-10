@@ -576,10 +576,24 @@ def analyze(triage_path: str, batch_dir: str) -> dict:
 
 
 def _collect_asc_contexts(batch_dir: str, run_records: List[dict]) -> dict:
-    """专门收集 "asc" 的所有出现上下文，判断其真实含义。"""
+    """专门收集 "asc" 的所有出现上下文，判断其真实含义。
+
+    正则与工具健康矩阵一致 ``(?<![A-Za-z0-9_])asc(?![A-Za-z0-9_])``（大小写不敏感），
+    因此 ``.asc`` 文件扩展名也会被命中（``.`` 不在 ``[A-Za-z0-9_]`` 内）。每个命中
+    记录其紧邻前字符 ``pre_char``，据此把上下文归入**互斥**的三类之一：
+      1. ``.asc 文件扩展名``：pre_char == '.'（如 xor.rule.asc）
+      2. ``ASC 排序关键字``：上下文含 sort/order/by/risk/sigma/name/ascending 等排序语义
+      3. ``其它``：剩余（含 'ascending' 缩写/片段、裸 asc 等）
+    互斥归类避免重复计数（修掉旧版 ``if "rule.asc" or ".asc" in s`` 的运算符优先级 bug
+    与三 if 叠加导致 sum > 样本数的问题）。
+    """
     contexts = []
     cases_with = 0
     total = 0
+    # 排序关键字上下文特征（小写匹配）
+    sort_ctx_re = re.compile(
+        r"(sort|order|by\b|risk asc|sigma asc|name asc|ascending|sort.*asc|asc.*sort)",
+        re.IGNORECASE)
     for rec in run_records:
         sj = rec.get("session_path")
         if not sj:
@@ -603,33 +617,42 @@ def _collect_asc_contexts(batch_dir: str, run_records: List[dict]) -> dict:
                             blob += " " + json.dumps(inp, ensure_ascii=False)
                     elif ev.get("type") == "content_end":
                         blob = json.dumps(ev.get("output") or "", ensure_ascii=False)
-                    for m in re.finditer(r"(?<![A-Za-z0-9_.])asc(?![A-Za-z0-9_])", blob, re.IGNORECASE):
+                    for m in re.finditer(r"(?<![A-Za-z0-9_])asc(?![A-Za-z0-9_])", blob, re.IGNORECASE):
                         s = max(0, m.start() - 35); e = min(len(blob), m.end() + 35)
                         snip = re.sub(r"\s+", " ", blob[s:e]).strip()
-                        per_case.append(snip[:140])
+                        pre_char = blob[m.start() - 1] if m.start() > 0 else ""
+                        per_case.append({"snippet": snip[:140], "pre_char": pre_char})
         except Exception:
             pass
         if per_case:
             cases_with += 1
             total += len(per_case)
-            for snip in per_case[:3]:
-                contexts.append({"task_id": rec["task_id"], "snippet": snip})
+            for item in per_case[:3]:
+                contexts.append({"task_id": rec["task_id"],
+                                 "snippet": item["snippet"],
+                                 "pre_char": item["pre_char"]})
             if len(contexts) >= 30:
                 break
-    # 归类含义
+    # 互斥归类（每个 context 恰归一类）
     kind_counter = collections.Counter()
     for c in contexts:
         s = c["snippet"].lower()
-        if "rule.asc" or ".asc" in s or "xor.rule" in s:
+        if c.get("pre_char") == ".":
             kind_counter[".asc 文件扩展名 (calibre/SVRF rule ASCII)"] += 1
-        if " asc" in s and ("sort" in s or "order" in s or "sigma asc" in s or "name asc" in s or "risk asc" in s):
+        elif sort_ctx_re.search(s):
             kind_counter["ASC 排序关键字 (SQL/Python sorted)"] += 1
-        if "asc" in s:
-            kind_counter["其它 (含 'ascending' 缩写/片段)"] += 1
+        else:
+            kind_counter["其它 (含 'ascending' 缩写/片段/裸 asc)"] += 1
+    verdict = (
+        f"在本数据集里 'asc' 不是 EDA 工具：0 次作为命令被执行。"
+        f"出现 {total} 处/{cases_with} case（基于全 session agent_event blob 抽样，"
+        f"非命令层口径），全部为 (1) .asc 文件扩展名（calibre/SVRF ASCII rule 文件，"
+        f"如 xor.rule.asc）、(2) ASC 排序关键字（SQL/Python sorted 的 ascending）、"
+        f"(3) 其它 'ascending' 片段/裸 asc。注：工具健康矩阵的 raw_mentions=0 是"
+        f"对【run_commands 命令字符串】口径，与本节【全 session blob】口径不同，"
+        f"二者不矛盾。")
     return {
-        "verdict": "在本数据集里 'asc' 不是 EDA 工具：0 次作为命令被执行。出现 65 处/21 case，"
-                   "全部为 (1) .asc 文件扩展名（calibre/SVRF ASCII rule 文件，如 xor.rule.asc）、"
-                   "(2) ASC 排序关键字（SQL/Python sorted 的 ascending）、(3) 'ascending' 片段。",
+        "verdict": verdict,
         "cases_with_asc_word": cases_with,
         "total_asc_occurrences": total,
         "tool_invocation_count": 0,

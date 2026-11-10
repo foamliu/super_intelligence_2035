@@ -4,7 +4,7 @@
     "version": "1.0.0"
   },
   "meta": {
-    "generated_at": "2026-11-10T22:55:08+08:00",
+    "generated_at": "2026-11-11T01:49:38+08:00",
     "triage_path": "/nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/benchmark/designflow/eval_triage/results/run_batch_20261109_171201/triage_summary.json",
     "batch_dir": "/nasdata/app.e0031982/.cache/triage_batch_20261109_171201",
     "total_runs": 696,
@@ -972,95 +972,115 @@
     ]
   },
   "asc_special": {
-    "verdict": "在本数据集里 'asc' 不是 EDA 工具：0 次作为命令被执行。出现 65 处/21 case，全部为 (1) .asc 文件扩展名（calibre/SVRF ASCII rule 文件，如 xor.rule.asc）、(2) ASC 排序关键字（SQL/Python sorted 的 ascending）、(3) 'ascending' 片段。",
+    "verdict": "在本数据集里 'asc' 不是 EDA 工具：0 次作为命令被执行。出现 52 处/16 case（基于全 session agent_event blob 抽样，非命令层口径），全部为 (1) .asc 文件扩展名（calibre/SVRF ASCII rule 文件，如 xor.rule.asc）、(2) ASC 排序关键字（SQL/Python sorted 的 ascending）、(3) 其它 'ascending' 片段/裸 asc。注：工具健康矩阵的 raw_mentions=0 是对【run_commands 命令字符串】口径，与本节【全 session blob】口径不同，二者不矛盾。",
     "cases_with_asc_word": 16,
-    "total_asc_occurrences": 56,
+    "total_asc_occurrences": 52,
     "tool_invocation_count": 0,
     "kind_counter": {
-      ".asc 文件扩展名 (calibre/SVRF rule ASCII)": 31,
-      "其它 (含 'ascending' 缩写/片段)": 31,
-      "ASC 排序关键字 (SQL/Python sorted)": 8
+      "其它 (含 'ascending' 缩写/片段/裸 asc)": 21,
+      "ASC 排序关键字 (SQL/Python sorted)": 7,
+      ".asc 文件扩展名 (calibre/SVRF rule ASCII)": 3
     },
     "sample_contexts": [
       {
         "task_id": "EDA-Eval-DesignFlow-AnalogGroupCfgMergeDummy-001",
-        "snippet": "asc"
+        "snippet": "asc",
+        "pre_char": ""
       },
       {
         "task_id": "EDA-Eval-DesignFlow-DlySigmaSweep-001",
-        "snippet": "sigma ASC"
+        "snippet": "sigma ASC",
+        "pre_char": " "
       },
       {
         "task_id": "EDA-Eval-DesignFlow-DlySigmaSweep-001",
-        "snippet": "sigma ASC"
+        "snippet": "sigma ASC",
+        "pre_char": " "
       },
       {
         "task_id": "EDA-Eval-DesignFlow-DlySigmaSweep-001",
-        "snippet": "sigma ASC"
+        "snippet": "sigma ASC",
+        "pre_char": " "
       },
       {
         "task_id": "EDA-Eval-DesignFlow-OpCornerSummary-001",
-        "snippet": "asc)."
+        "snippet": "asc).",
+        "pre_char": " "
       },
       {
         "task_id": "EDA-Eval-DesignFlow-Tcs0PatAnalyze-001",
-        "snippet": "(asc"
+        "snippet": "(asc",
+        "pre_char": "("
       },
       {
         "task_id": "EDA-Eval-DesignFlow-ButterflyCurve-001",
-        "snippet": "[asc"
+        "snippet": "[asc",
+        "pre_char": "["
       },
       {
         "task_id": "EDA-Eval-DesignFlow-AgentCodeStructAnalyze-001",
-        "snippet": "(asc"
+        "snippet": "(asc",
+        "pre_char": "("
       },
       {
         "task_id": "EDA-Eval-DesignFlow-AgentCodeStructAnalyze-001",
-        "snippet": "(asc"
+        "snippet": "(asc",
+        "pre_char": "("
       },
       {
         "task_id": "EDA-Eval-DesignFlow-AgentCodeStructAnalyze-001",
-        "snippet": "(asc"
+        "snippet": "(asc",
+        "pre_char": "("
       },
       {
         "task_id": "EDA-Eval-DesignFlow-PdkDirSizeScan-001",
-        "snippet": "asc"
+        "snippet": "asc",
+        "pre_char": ""
+      },
+      {
+        "task_id": "EDA-Eval-DesignFlow-AutoViaNameGen-001",
+        "snippet": "guest 1427 Jul 6 13:55 xor.rule.asc\\\\n-rw-rw-r-- 1 e0014566 guest 33",
+        "pre_char": "."
+      },
+      {
+        "task_id": "EDA-Eval-DesignFlow-AutoViaNameGen-001",
+        "snippet": "ayout_austin2/vss/fastxor/xor.rule.asc\\\\n/proj/train/AI_Virtuoso/ver/auto",
+        "pre_char": "."
+      },
+      {
+        "task_id": "EDA-Eval-DesignFlow-AutoViaNameGen-001",
+        "snippet": "stin/new_xxxx/vss/fastxor/xor.rule.asc\\\\n/proj/train/AI_Virtuoso/ver/auto",
+        "pre_char": "."
       },
       {
         "task_id": "EDA-Eval-DesignFlow-DRCDeckSyncPlan-001",
-        "snippet": "asc,"
+        "snippet": "asc,",
+        "pre_char": " "
       },
       {
         "task_id": "EDA-Eval-DesignFlow-DRCDeckSyncPlan-001",
-        "snippet": "asc)."
+        "snippet": "asc).",
+        "pre_char": " "
       },
       {
         "task_id": "EDA-Eval-DesignFlow-DRCDeckSyncPlan-001",
-        "snippet": "pological sort, tie-break by (risk asc, min feature id asc).\\n heap ="
+        "snippet": "pological sort, tie-break by (risk asc, min feature id asc).\\n heap =",
+        "pre_char": " "
       },
       {
         "task_id": "EDA-Eval-DesignFlow-DRCTimeStats-001",
-        "snippet": "name asc"
+        "snippet": "name asc",
+        "pre_char": " "
       },
       {
         "task_id": "EDA-Eval-DesignFlow-DrcLegacyFallback-001",
-        "snippet": "pological sort, tie-break by (risk asc, min feature id asc).\\\\n heap ="
+        "snippet": "pological sort, tie-break by (risk asc, min feature id asc).\\\\n heap =",
+        "pre_char": " "
       },
       {
         "task_id": "EDA-Eval-DesignFlow-DrcLegacyFallback-001",
-        "snippet": "break by (risk asc, min feature id asc).\\\\n heap = []\\\\n for idx in"
-      },
-      {
-        "task_id": "EDA-Eval-DesignFlow-DrcPyEnvDiag-001",
-        "snippet": "(asc"
-      },
-      {
-        "task_id": "EDA-Eval-DesignFlow-DrcPyEnvDiag-001",
-        "snippet": "\"asc"
-      },
-      {
-        "task_id": "EDA-Eval-DesignFlow-GDSBump2-001",
-        "snippet": "need ASC"
+        "snippet": "break by (risk asc, min feature id asc).\\\\n heap = []\\\\n for idx in",
+        "pre_char": " "
       }
     ]
   },
