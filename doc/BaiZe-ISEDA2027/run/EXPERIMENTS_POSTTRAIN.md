@@ -8276,3 +8276,47 @@ API 文档来源：pyAether MCP `get_api_details` 返回的**官方 API 文档**
 | v8 语料 | `run/sft_pyaether_corpus_v8_schematic_apis.jsonl` | 18.4KB / 25 对 |
 | 修正评测结果 | `run/r177_corrected_qual_eval_results.json` | 9.1KB |
 
+## §R178 (2026-11-11 wake247) Validated pyAether Schematic & Layout API Inventory (MCP-sourced, eval-cross-checked)
+
+### 1. 动机
+R177 发现 SFT 对真实 API `dbCrtSchWire` 幻觉出 `lib.openSchematic` ⇒ v8 语料（25 对/11 API）太薄，不足以教会正确调用模式。本节用**本地 pyAether MCP**（`search_apis`/`search_apis_by_keyword`/`get_api_details`，MEMORY line48 确认本地可用）系统枚举真实 schematic/layout API，记录**精确签名**，并与 158 题评测集逐 API 交叉核验，分类污染风险，为 v9 语料扩展闭环覆盖缺口且不违反污染红线。
+
+### 2. 方法
+- **API 发现**：`search_apis`（语义，query="schematic wire pin net creation drawing" + "layout create rectangle polygon path instance"）+ `search_apis_by_keyword`（"sch"）。
+- **签名捕获**：`get_api_details`（返回官方 API reference 的完整签名 + example）。
+- **评测交叉核验**：`grep -c <api> EDA-Eval-PyAether-v20260311.jsonl`（158 题，本地路径 `/home/app.e0031982/code/eda_fastmcp/pyAether-eval/original_dataset/`，文件存在 689461B/158 行 ✅）。
+- **v8 覆盖**：比对 `sft_pyaether_corpus_v8_schematic_apis.jsonl` 的 `api_used` 字段（11 API）。
+
+### 3. 结果（22 API 全量交叉核验）
+
+| 安全类 | 数量 | API（eval_count） |
+|:--|--:|:--|
+| **SAFE**（eval=0，可自由扩展） | 13 | dbCrtWire(0)·dbCrtSchWireName(0)·emyFigGetPinName(0)·dbGetPinFigName(0)·dbSchIsWire(0)·emyPinGetNames(0)·aeLeCreatePin(0)·dbFindInst(0)·**dbSchGetPinOrder(0,新)**·**aeSchStretch(0,新)**·**aeCrtWireLabelsAndPins(0,新)**·**emyDesignIsSchematic(0,新)**·leGuiCrtWire(0,新·低价值GUI排除) |
+| **ISOLATE**（eval>0，仅官方doc教学+entry_point扫描） | 9 | dbCrtSchWire(2)·dbCrtSchPin(3)·dbCrtNet(5)·**dbCrtPinByNet(1,新)**·**dbSchDrawSymbolPin(1,新)**·**dbCrtRect(18,新)**·**dbCrtPolygon(3,新)**·**dbCrtInst(24,新)**·**dbCrtPath(3,新)** |
+
+精确签名（MCP get_api_details 实测，节选核心）：
+- `dbCrtSchWire(cv, point, wireMode='Narrow', width=0.0625, lockAngle='AnyAngle', flyLine=False, wireSnapping=True, color='cadetBlue', lineStyle='solid') -> Tuple[emyFig]`
+- `dbCrtSchPin(cv, name, point, direction='input', overbar=False, orient='R0') -> emyPin`
+- `dbCrtRect(cv, bbox: emyBoxF, layer, purpose='drawing') -> emyShape`
+- `dbCrtInst(cv, point, master=None, lib='', cell='', view='layout', inst='', orient='R0', justify='origin', rowPitch=0.0, colPitch=0.0, rows=1, cols=1, mag=1, angle=0, params=None) -> emyInst`
+- `dbCrtPolygon(cv, points, layer, purpose='drawing') -> emyShape`
+- `dbSchGetPinOrder(pDesign) -> emyStringArray`；`aeCrtWireLabelsAndPins(design=None,inst=None,instTerm=None,isCrtLabels=True,isCrtPins=True) -> bool`；`emyDesignIsSchematic(design) -> emyBoolean`
+- v8 已有 6 API（dbCrtNet/emyFigGetPinName/dbGetPinFigName/emyPinGetNames/aeLeCreatePin/dbFindInst）签名标注 pending，下一轮语料构建时补抓。
+
+### 4. 关键发现
+1. **v8 覆盖盲区确认**：v8（11 API/25 对）只覆盖 schematic-create API，对 4 个核心 layout-create API（dbCrtRect/dbCrtPolygon/dbCrtInst/dbCrtPath）**零覆盖**——而这 4 个 API 在评测集中被引用 48 次（18+3+24+3）。**Layout 场景（64 题）是最大覆盖缺口**。
+2. **SAFE 扩展集**：7 个新 SAFE API（eval=0）可零污染风险直接进 v9：dbSchGetPinOrder/aeSchStretch/aeCrtWireLabelsAndPins/emyDesignIsSchematic（+ leGuiCrtWire 低价值排除）。叠加 v8 已有 6 SAFE，schematic 域 SAFE 池 ~13 API。
+3. **ISOLATE 处理**：9 个 ISOLATE API（eval>0）可从官方 doc 教学，但每个合成对必须对评测 entry_points 扫描（R177 方法：155 entry_points 扫描）。dbCrtInst/dbCrtRect/dbCrtNet 是最高价值 ISOLATE 目标（Layout 场景）。
+4. **R177 幻觉根因**：SFT 幻觉 `lib.openSchematic` 因 v8 对仅在 doc 里展示 API 名，未在多变上下文中重复强化精确调用模式 `pyScript.dbCrtSchWire(cv=..., point=...)`。v9 修正：每 API 更多对 + 多步轨迹（openCV→create→save），而非 doc→单次调用。
+
+### 5. 红线合规
+污染隔离（总纲 §5.1）：158 题的 prompt+签名+断言不得进训练。本盘点对每个出现在评测集的 API 打 ISOLATE 标。SAFE API 按定义无污染（eval_count==0）。ISOLATE API 仅从官方 API reference（MCP get_api_details 输出）教学，绝不复制评测题文本。
+
+### 6. 下一步
+构建 v9 语料：① 每 SAFE API 3-5 对用精确 MCP 签名（~13 API ⇒ ~50 对）；② ISOLATE API 从官方 doc + entry_point 扫描（瞄准 4 个 layout-create API 补 Layout 场景覆盖）；③ 多步轨迹。重训需 GPU6-7（当前按 17:10 令 serve 占位）或待沙盒 ACL 开放后用 eval 验证。
+
+### 7. 交付物
+| Item | Path | Size |
+|:--|:--|--:|
+| 验证 API 盘点 | `run/r178_pyaether_schematic_layout_api_inventory.json` | 10.2KB / 22 API |
+
