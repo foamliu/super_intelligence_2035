@@ -10,11 +10,11 @@ WAITING: 0
 - PHASE: posttrain-wake298（2026-11-12 SFT数据重平衡补救[db*生命周期API v37生成]+serve 5端点UP+sandbox 103rd CLOSED+GPU全占位+git synced）
 - 已完成: P3预备✅；P0✅；P1✅；P2✅；R1-R210✅；R280(EXPERIMENTS归档)；wake281-297✅；wake298 SFT数据重平衡补救(§R298)
 - 当前动作: wake298 ①体积自检MEMORY合规(归档wake293/294→daily) ②git synced(main=origin) ③GPU:0-3 root SGLang~45GB/4-7 vLLM各~38GB全idle serve ④serve健康5端点全UP(8095-8099) ⑤sandbox 103rd wake ICMP 0.46ms OK但TCP 8664/22全FILTERED(仍阻塞) ⑥SFT数据重平衡补救:量化v11-v36 API家族失衡(emy*394/db*243=1.6:1)→识别10个被遗忘db*生命周期API(dbCloseLib=0完全缺失)→从API_INFO_MERGED_V3.json提取文档→生成v37_db_lifecycle_remedial(57pairs:50 S1单API+7 S2工作流链)→contamination gate PASS(346 eval sigs,0违规)→db*家族243→335(+38%) ⑦EXPERIMENTS §R298新增(6节:失衡量化/覆盖缺口/v37生成/重平衡投影/BaiZe启示/局限)
-- 下一步: ①待沙盒ACL恢复→用v11-v36+v37重跑SFT验证遗忘消除 ②Phase3 RL待沙盒+GPU(SFT ckpt已就绪,RL核心目标=db*系列API+correct rate提升) ③Phase1基线评测待沙盒(3模型端点已就绪) ④P3正式训练待pretrain ckpt(ETA≈2026-12-25) ⑤正式SFT数据需按场景均衡补充Layout/DesignMgmt(v37已为替身验证准备)
+- 下一步: ①合并v11-v36+v37为单训练文件+更新SFT脚本+--dry-run验证(CPU可做,不待沙盒) ②待沙盒ACL恢复→用合并数据重跑SFT验证遗忘消除 ③Phase3 RL待沙盒+GPU(SFT ckpt已就绪,RL核心目标=db*系列API+correct rate提升) ④Phase1基线评测待沙盒(3模型端点已就绪) ⑤P3正式训练待pretrain ckpt(ETA≈2026-12-25) ⑥正式SFT数据需按场景均衡补充Layout/DesignMgmt(v37已为替身验证准备)
 - 阻塞: 🔴远程沙盒10.129.32.75跨子网TCP全端口过滤(103rd wake,8664/22全FILTERED,ICMP OK,需网络团队开ACL)→Phase1 eval+Phase3 RL+post-SFT eval阻塞;P3等pretrain ckpt
 - 本轮新增产出: R298✅(SFT数据重平衡补救[v11-v36失衡量化emy*394/db*243/10个被遗忘db*API/dbCloseLib=0/v37生成57pairs/contamination PASS/db*+38%]+EXPERIMENTS §R298+sft_pyaether_corpus_v37_db_lifecycle_remedial.jsonl+rebalance_analysis_r298.json+baize_posttrain_sft_rebalance_r298.py)
 - 未完成指令: 🔴用户令17:10(serve占位)GPU5/6/7全✅;🔴用户令13:40(三阶段替身计划)Phase2 SFT COMPLETE✅+全量113task静态分析✅+Live烟测✅+训练动力学✅+报告校正✅+扩展15task对比✅+3-model对比✅+API级Gap分析✅+SFT数据重平衡补救✅/Phase1待沙盒ACL/Phase3 RL脚本就绪✅待沙盒+GPU
-- git: wake298 本轮提交R298(SFT数据重平衡补救v37+EXPERIMENTS §R298+MEMORY归档+heartbeat)
+- git: wake298 R298已提交并pushed(68439e652,rebase onto fceca35b7,main=origin同步✅)
 
 
 
