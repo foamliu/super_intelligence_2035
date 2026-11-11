@@ -8186,3 +8186,93 @@ semantic_error 类失败（L1 缺 .area / S2 缺 len）会被当作完全失败�
 - 评测脚本 `run/baize_posttrain_r176_expanded_qual_eval.py`（319 行, py_compile✅）
 - GPU `nvidia-smi`；serve `curl /v1/models`（5 端点全 UP）；沙盒 TCP exit=124（50th wake CLOSED）
 - 无伪造：所有数据为真实 vLLM API 调用输出，自动分类由脚本完成，人工校正已标注。
+
+---
+
+## §R177 (2026-11-11 wake246) R176 方法论修正 + 真实 Schematic API 语料 v8 + 修正定性评测
+
+> **任务**：执行 MEMORY「下一步 ④ SFT 语料 v6: 补充 schCreateWire/leGetPin 覆盖」。在执行前先核验这两个 API 是否真实存在于 PyAether API 数据库——发现**二者均不存在**，是 R176 自定义评测 prompt 中的**虚构 API 名**。本轮完成方法论修正 + 为真实 schematic API 合成语料 v8 + 修正定性评测验证。
+
+### 1. 关键发现：R176 S3/S4 引用了不存在的 API
+
+通过 pyAether MCP API 搜索（`search_apis` + `search_apis_by_keyword`）核验：
+
+| R176 prompt 用的 API | 是否存在 | 真实对应 API | 相似度 |
+|:--|:--:|:--|:--:|
+| `schCreateWire` | ❌ **不存在** | `dbCrtSchWire`（create wire in schematic view） | 0.96 |
+| `leGetPin` | ❌ **不存在** | `emyFigGetPinName` / `dbGetPinFigName`（get pin name） | 0.77-0.81 |
+
+进一步验证：
+- `grep -c 'schCreateWire' EDA-Eval-PyAether-v20260311.jsonl` = **0**
+- `grep -c 'leGetPin' EDA-Eval-PyAether-v20260311.jsonl` = **0**
+- 158 任务评测集**从不**测试这两个虚构名。
+
+**结论**：R176 的「S3 退化循环（import pyvisa×24）」和「S4 跨域幻觉（adafruit_mcp1202）」根因是 **prompt 引用了不存在的 API**，而非 SFT 语料覆盖不足。R176「下一步 ④ 补充 schCreateWire/leGetPin 覆盖」基于错误前提。
+
+### 2. 语料覆盖核验（v5/v6/v7 全版本）
+
+| 语料版本 | 行数 | schCreateWire | leGetPin | dbCrtSchWire | emyFigGetPinName |
+|:--|--:|:--:|:--:|:--:|:--:|
+| v5_deep_enriched | 1193 | 0 | 0 | 0 | 0 |
+| v6_method_examples | 352 | 0 | 0 | 0 | 0 |
+| v7_generative | 180 | 0 | 0 | 0 | 0 |
+
+→ 所有现有语料对真实 schematic 创建/查询 API **零覆盖**。这才是真正的语料缺口（在正确的 API 名下）。
+
+### 3. SFT 语料 v8：真实 Schematic API 训练对合成
+
+**脚本**：`baize_posttrain_r177_schematic_api_corpus.py`（py_compile✅）
+**产出**：`sft_pyaether_corpus_v8_schematic_apis.jsonl`（25 对 / 18.4KB）
+
+API 文档来源：pyAether MCP `get_api_details` 返回的**官方 API 文档**（签名 + 参数 + 文档化 `>>>` doctest 示例），非评测任务。
+
+| 对类型 | 数量 | 说明 |
+|:--|--:|:--|
+| S1_doc_to_code | 10 | API 文档 → 正确用法代码（target = doctest） |
+| S2_api_lookup | 10 | 「哪个 API 做 X」→ API 名 + 最小用法 |
+| S3_multi_api_chain | 3 | 多步链（open CV → create → verify） |
+| S7_corrected_prompt | 2 | R176 S3/S4 意图改用真实 API 名 |
+
+**覆盖的 11 个真实 API**：dbCrtSchWire, dbCrtWire, dbCrtSchPin, dbCrtSchWireName, dbCrtNet, emyFigGetPinName, dbGetPinFigName, dbSchIsWire, emyPinGetNames, aeLeCreatePin, dbFindInst
+
+### 4. 污染隔离（红线 5.1）
+
+- 加载 158 任务 `entry_point` 字符串共 **155 个**（3 个任务无 entry_point）
+- 指纹扫描：每个生成的 completion 与全部 155 个 entry_point 比对
+- **0 rejected**（rejected_contam=0）→ **PASS**
+- 来源仅为 API 文档，不读取评测 prompt/canonical_solution/test
+
+### 5. 修正定性评测（真实 vs 虚构 API 对照）
+
+**方法**：4 个 prompt × 2 端点（base:8098 / sft:8096），temp=0.0, max_tokens=400, urllib。
+**产出**：`r177_corrected_qual_eval_results.json`（9.1KB）
+
+| Prompt | API 真假 | base(8098) finish | sft(8096) finish | sft 行为 |
+|:--|:--:|:--|:--|:--|
+| S3_corrected | ✅ dbCrtSchWire | length(400tok,思考散文) | **stop(75tok)** | 产出代码但幻觉通用接口 `lib.openSchematic`/`sc.createWire()`，**未用 dbCrtSchWire** |
+| S4_corrected | ✅ emyFigGetPinName | length(400tok,思考散文) | **stop(32tok)** | 引用 `emyFigGetPinName` 但 import 错误（`import emyFig` 而非 `import pyAether`） |
+| S3_original | ❌ schCreateWire | length(400tok) | **length(400tok)** | **退化循环复现**：`import pyvisa` ×20+（与 R176 一致） |
+| S4_original | ❌ leGetPin | length(400tok) | **stop(64tok)** | **跨域幻觉复现**：`adafruit_mcp1202` + `py.LE.GetPin`（与 R176 一致） |
+
+### 6. 关键结论
+
+1. **R176 S3/S4 失败根因更正**：虚构 API 名 → 模型无法使用不存在的 API → 退化循环/跨域幻觉。**非语料覆盖问题**。
+2. **真实 API 暴露真正的语料缺口**：SFT 模型遇到 `dbCrtSchWire`（真实但语料未覆盖）时，幻觉出通用 OOP 接口而非使用该 API → 证实 schematic 创建/查询 API 确实是语料盲区（v5/v6/v7 零覆盖）。
+3. **v8 语料是正确修复**：25 对覆盖 11 个真实 schematic API，污染隔离 PASS。需合入下一轮 SFT 训练才能验证修复效果（当前 SFT serve 训练于 v5，未含 v8）。
+4. **方法论教训**：自定义定性评测 prompt 必须先经 API 数据库核验，避免引用虚构 API 导致误诊。
+
+### 7. 局限
+
+- ⚠️ v8 语料尚未训练（需 GPU + SFT 重训），当前评测仅证明语料缺口存在，未证明 v8 修复有效。
+- ⚠️ 定性评测（4 prompt × 1 run），非量化 Pass@1。
+- ⚠️ 沙盒仍 CLOSED（51st wake）→ 无法跑 158 任务正式评测。
+- **替身预演**：MiniCPM5-2B 替身，收益不可迁移到 BaiZe。
+
+### 8. 交付物
+
+| Item | Path | Size |
+|:--|:--|--:|
+| 合成脚本 | `run/baize_posttrain_r177_schematic_api_corpus.py` | ~380 行 |
+| v8 语料 | `run/sft_pyaether_corpus_v8_schematic_apis.jsonl` | 18.4KB / 25 对 |
+| 修正评测结果 | `run/r177_corrected_qual_eval_results.json` | 9.1KB |
+
