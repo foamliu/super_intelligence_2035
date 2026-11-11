@@ -42,8 +42,8 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
   <div class="meta">
     <span>📅 2026-11-12</span>
     <span>🏗 Mamba2-hybrid 2.22B</span>
-    <span>🔥 训练 iter≈169.7k / 700k · step~7.0s<7.4s✅ · ckpt 168k · lr-decay-iters=0(stable段,decay未配置) · GPU 8×100%/75GB · 170k ETA~35min · 🔄 L1 autoqueue已启动(PID36398·轮询iter_0170000)</span>
-    <span>📊 L1: 16 ckpt ✅(160k=58.13%新高) · 170k autoqueue轮询中 | L2: 6/6完成 ✅ GSM8K=0%🔴 MMLU=23.16%(≈随机) BBH=0%🔴 MATH=0%🔴 HumanEval=0%🔴 MBPP=0%🔴 · 🟢<b>HF transformers生成正常</b>→llama.cpp SSM bug是0%主因(非模型完全无能) · GSM8K HF重评运行中 | L3: 🔴TB 0/2(待HF重测) | L4: 🔴/nasdata/未挂载.29+SSH .15/.17均不通</span>
+    <span>🔥 训练 iter≈170.2k / 700k · step~7.1s<7.4s✅ · ckpt 170k已落盘 · lr-decay-iters=0(stable段,decay未配置) · GPU 8×100%/75GB · 🔄 170k L1 eval pipeline运行中(GGUF转换中→eval→report)</span>
+    <span>📊 L1: 16 ckpt ✅(160k=58.13%新高) · 170k GGUF转换中(fixed mamba_dt_limit bug) | L2: 6/6完成 ✅ GSM8K=0%🔴 MMLU=23.16%(≈随机) BBH=0%🔴 MATH=0%🔴 HumanEval=0%🔴 MBPP=0%🔴 · 🟢<b>HF transformers生成正常</b>→llama.cpp SSM bug是0%主因(非模型完全无能) · GSM8K HF=0/10(数学确实弱,生成连贯) | L3: 🔴TB 0/2(待HF重测) | L4: 🔴/nasdata/空+SSH .15/.17均不通</span>
   </div>
   <div style="margin-top:12px;font-size:12.5px;background:rgba(0,0,0,.18);border-radius:8px;padding:8px 12px;opacity:.95">
     ⚠️ 本报告是<b>训练监控与决策依据</b>，<b>不进论文正文</b>（2026-11-10 用户令）。用户关注点（2026-11-11）：<b>如何拿到更好的结果</b>。
