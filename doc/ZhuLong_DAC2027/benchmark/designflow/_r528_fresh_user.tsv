@@ -1,0 +1,11 @@
+# mc	sid	user	host	keywords	d_dominant
+79	1789717846934_5laiw	yongk1li	hfeg0plg99	drc:94;netlist:25;lvs:16;.gds:9;gdsii:7;virtuoso:2;hspice:2;.cdl:1;	1
+77	1789710184698_xbtsx	yongk1li	hfeg0plg99	drc:92;netlist:25;lvs:16;.gds:9;gdsii:7;virtuoso:2;hspice:2;.cdl:1;	1
+75	1794211804231_rx7i7	zhi3wang	hfeg0plg86	aether:722;schematic:120;virtuoso:49;netlist:29;floorplan:17;cellview:14;drc:10;pyaether:9;	1
+72	1793241481863_0xwjx	haiquanp	hfeg0plg66	aether:199;pyaether:177;waveview:19;dbget:15;mixed-signal:13;floorplan:11;calibre:9;virtuoso:8;	1
+66	1789090361589_54h58	e0044455	hfeg0plg76	schematic:294;cellview:161;drc:101;netlist:76;lvs:70;pyaether:48;verilog:39;virtuoso:21;	1
+60	1794223587428_daqqm	zhukais	hfeg0plg54	aether:1018;schematic:140;virtuoso:129;verilog:49;netlist:40;drc:19;cellview:18;transistor:17;	1
+52	1794203033198_asrox	eva1li	hfeg0plg10	verilog:146;netlist:62;analog:35;cadence:14;systemverilog:6;pyaether:1;	1
+49	1792724611414_ohuot	e0026027	hfeg0plg104	analog:2757;aether:51;cmos:30;drc:26;bandgap:24;lvs:19;floorplan:15;schematic:14;	1
+48	1794206548447_artkz	yihuig	hfeg0plg98	aether:128;virtuoso:87;drc:55;lvs:51;cadence:17;schematic:16;floorplan:16;voltus:14;	1
+46	1793081523131_s3cj6	ashwang	hfeg0plg83	drc:562;lvs:116;aether:12;calibre:9;pdk:4;schematic:2;pyaether:2;techfile:1;	1
