@@ -350,3 +350,4 @@
 1794202811512_vo5f5	haoyut	hfeg0pkn003	249	pnr_signoff	case	EDA-Eval-DesignFlow-SpefLogAnalyze-001	2026-11-11 11:07	
 1793756662778_nfb5r	xmxu	hfeg0plg93	73	digital	parked		2026-11-11 11:46	analysis-only: agent searched TYPE_BANK_INFO 35msgs no deliverable; U#0 gives compile errs=root cause not A-faithful
 1792376650304_nf195	e0045144	hfeg0pkn002	61	digital	case	EDA-Eval-DesignFlow-ConCsvSliceOrderGen-001	2026-11-11 11:56	
+1792052209542_r6bcb.messages.json	tongfanl	hfeg0plg72	60	digital	case	EDA-Eval-DesignFlow-SimIncludeMissDiag-001	2026-11-11 12:44	
