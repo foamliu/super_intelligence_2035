@@ -42,8 +42,8 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
   <div class="meta">
     <span>📅 2026-11-11</span>
     <span>🏗 Mamba2-hybrid 2.22B</span>
-    <span>🔥 训练 iter≈164k / 700k</span>
-    <span>📊 L1: 16 ckpt ✅ | L2: v3 GSM8K 61/100 🟡 | L3: 空白 | L4: 61任务未接</span>
+    <span>🔥 训练 iter≈163.6k / 700k</span>
+    <span>📊 L1: 16 ckpt ✅ | L2: v3 GSM8K 86/100 🟡 | L3: 空白 | L4: 61任务未接</span>
   </div>
   <div style="margin-top:12px;font-size:12.5px;background:rgba(0,0,0,.18);border-radius:8px;padding:8px 12px;opacity:.95">
     ⚠️ 本报告是<b>训练监控与决策依据</b>，<b>不进论文正文</b>（2026-11-10 用户令）。用户关注点（2026-11-11）：<b>如何拿到更好的结果</b>。
@@ -122,7 +122,7 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
   </div>
 </div>
 <div class="card">
-  <h3>160k 重评（v3 · 进行中 · 2026-11-11 13:35 起 · GSM8K 61/100）</h3>
+  <h3>160k 重评（v3 · 进行中 · 2026-11-11 13:35 起 · GSM8K 86/100 → MMLU 排队）</h3>
   <div class="alert"><b>v2 失败根因</b>：MMLU 是 <code>loglikelihood</code> 任务，标准 <code>local-completions</code> 后端要求 response 含 <code>token_logprobs</code>，但 llama-server <code>/v1/completions</code> 不返回该字段 → <code>KeyError: 'token_logprobs'</code>。</div>
   <table>
     <tr><th>任务</th><th>口径</th><th>shot</th><th>后端</th><th>状态</th><th>结果</th></tr>
@@ -194,7 +194,7 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
   <table>
     <tr><th>层</th><th>评测</th><th>状态</th><th>关键数</th><th>下一步</th></tr>
     <tr><td><b>L1</b></td><td class="l">常识 8 集 (0-shot)</td><td><span class="badge b-ok">✅ 16ckpt</span></td><td>58.13%@160k</td><td class="l">继续每万 ckpt</td></tr>
-    <tr><td><b>L2</b></td><td class="l">复杂推理 6 集</td><td><span class="badge b-warn">⚠️ v3 GSM8K 61/100</span></td><td>P-8:6.66% / 160k:?</td><td class="l">v3运行中→v4已备(4集)</td></tr>
+    <tr><td><b>L2</b></td><td class="l">复杂推理 6 集</td><td><span class="badge b-warn">⚠️ v3 GSM8K 86/100</span></td><td>P-8:6.66% / 160k:?</td><td class="l">v3运行中→v4已备(4集)</td></tr>
     <tr><td><b>L3</b></td><td class="l">Agentic</td><td><span class="badge b-bad">❌ 空白</span></td><td>—</td><td class="l">需GPU窗口</td></tr>
     <tr><td><b>L4</b></td><td class="l">领域</td><td><span class="badge b-bad">❌ 未接</span></td><td>—</td><td class="l">同L3</td></tr>
   </table>
@@ -204,7 +204,7 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
   <ol>
     <li><b>训练健康确认</b>：iter 163,560 · step 7260-7280ms (<7.4s✅) · loss ~2.05 · 0 NaN/skip · GPU 8×100%</li>
     <li><b>L1 状态确认</b>：16/16 ckpt(10k–160k) 全部完成 · 160k=58.13% 新高 ✅ · 下一个 170k ETA ~12h</li>
-    <li><b>L2 v3 进度监控</b>：GSM8K 61/100 运行中(~27s/it, ETA~17min) → MMLU 排队(~53min) → 总 ETA ~15:10</li>
+    <li><b>L2 v3 进度监控</b>：GSM8K 86/100 运行中(~25s/it, ETA~6min) → MMLU 排队(~53min) → 总 ETA ~15:25</li>
     <li><b>L3/L4 对接可行性调研</b>：
       <ul>
         <li><b>L4 designflow</b>：<code>run_one.sh</code> 用 cline harness，model 参数可配（默认 deepseek-v4-pro-cloud）· 61 任务目录各有 <code>cline_session.jsonl</code> · 接 BaiZe 2B 需将其以 OpenAI-compatible API 服务化（llama-server/vllm/sglang），再配 <code>--model baize-2b-local</code></li>
@@ -221,7 +221,7 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
 </div>
 
 <footer>
-  BaiZe pretrain 线 · 四层能力评测报告 · 2026-11-11 · 评测数字仅用于训练监控，不进论文正文
+  BaiZe pretrain 线 · 四层能力评测报告 · 2026-11-11 14:15 更新(#1963) · 评测数字仅用于训练监控，不进论文正文
 </footer>
 </div>
 </body>
