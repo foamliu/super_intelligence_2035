@@ -1438,3 +1438,4 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1793091372339_bjl02	harrywu	hfeg0plg99	90	analog_context	case	EDA-Eval-DesignFlow-ParallelMeasFanout-001	2026-11-11 06:12	
 1793755053336_lc2c6	qunzhu	hfeg0plg101	29	schematic_netlist	case	EDA-Eval-DesignFlow-SchemExplodeLabel-001	2026-11-11 06:51	MOS打散+net打标;.sch合成;k=13;schematic_netlist;B-grade
 1789547704200_6e61y	rongtaoy	hfeg0plg99	101	schematic_netlist	case	EDA-Eval-DesignFlow-CouplingPivotStats-001	2026-11-11 07:27	
+1789983654695_c4i7o	e0031668	hfeg0pkn003	24	analog_context	case	EDA-Eval-DesignFlow-ErcSetupFromVolt-001	2026-11-11 08:23	
