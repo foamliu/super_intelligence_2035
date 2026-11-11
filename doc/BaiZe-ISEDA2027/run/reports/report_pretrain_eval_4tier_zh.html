@@ -38,11 +38,11 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
 <div class="wrap">
 <header class="hero">
   <h1>BaiZe 2B 预训练 · 四层能力评测报告</h1>
-  <div class="sub">Mamba2-hybrid 2.22B · S1 生产 run（iter 171.4k/700k, ~719B tokens）</div>
+  <div class="sub">Mamba2-hybrid 2.22B · S1 生产 run（iter 170k+/700k, ~715B tokens）</div>
   <div class="meta">
     <span>📅 2026-11-12</span>
     <span>🏗 Mamba2-hybrid 2.22B</span>
-    <span>🔥 训练 iter≈171.4k / 700k(24.5%) · step~7.1s<7.4s✅ · loss~2.04 · 0NaN/0skip · ckpt 170k已落盘 · lr-decay-iters=0(stable段) · GPU 8×100%/75GB · 🔄 170k L1 eval 运行中(llama-server -t 4 nice 19·gguf_lmeval_run.py·task~36120·~67min·ETA~10-20min→results.json→report刷新)</span>
+    <span>🔥 训练 iter≈171.5k / 700k(24.5%) · step~7.1s<7.4s✅ · loss~2.04 · 0NaN/0skip · ckpt 170k已落盘 · lr-decay-iters=0(stable段) · GPU 8×95-100%/75GB · 🔄 170k L1 eval 运行中(llama-server -t 4 nice 19·gguf_lmeval_run.py·~76min·both alive·等results.json)</span>
     <span>📊 L1: 16 ckpt ✅(160k=58.13%新高) · 170k L1 eval 运行中(GGUF已转换✅,eval进行中) | L2: 6/6完成 ✅ GSM8K=0%🔴 MMLU=23.16%(≈随机) BBH=0%🔴 MATH=0%🔴 HumanEval=0%🔴 MBPP=0%🔴 · 🟢<b>HF transformers生成正常</b>→llama.cpp SSM bug是0%主因(非模型完全无能) · GSM8K HF=0/10(数学确实弱,生成连贯) | L3: 🔴TB 0/2(待HF重测) | L4: 🔴/nasdata/未挂载+SSH .15/.17均超时</span>
   </div>
   <div style="margin-top:12px;font-size:12.5px;background:rgba(0,0,0,.18);border-radius:8px;padding:8px 12px;opacity:.95">
@@ -58,7 +58,7 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
     <tr><td class="l">任务集</td><td class="l">ARC-Challenge / ARC-Easy / BoolQ / HellaSwag / OpenBookQA / PIQA / SciQ / Winogrande</td></tr>
     <tr><td class="l">口径</td><td class="l">zero-shot · <code>limit=100</code> · GGUF F16 · llama-server CPU（<code>-t 4</code> · <code>nice 19</code> · 串行单 ckpt）</td></tr>
     <tr><td class="l">已评</td><td class="l">10k–160k（<b>16 个</b>万整数 ckpt）</td></tr>
-    <tr><td class="l">下一个</td><td class="l">180k（训练 iter 171.4k，ETA ≈18h 后落盘）</td></tr>
+    <tr><td class="l">下一个</td><td class="l">170k（ETA ≈12h 后）</td></tr>
   </table>
 </div>
 <div class="card">
@@ -545,7 +545,7 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
 </div>
 
 <footer>
-  BaiZe pretrain 线 · 四层能力评测报告 · 2026-11-12 05:39 更新(#2032 · 170k L1 eval运行中(task~36120,~67min,ETA~10-20min) · 训练健康iter171.4k/700k(24.5%) step~7.1s<7.4s✅ loss~2.04 · L1 16/16(160k=58.13%,170k eval进行中) · L2 6/6完成(GSM8K=0%HF确认,MMLU=23.16%) · L3 TB 0/2(待HF重测) · L4 BLOCKED(/nasdata/未挂载+SSH超时)) · 评测数字仅用于训练监控，不进论文正文
+  BaiZe pretrain 线 · 四层能力评测报告 · 2026-11-12 05:45 更新(#2033 · 170k L1 eval运行中(~76min·both alive·等results.json) · 训练健康iter171.5k/700k(24.5%) step~7.1s<7.4s✅ loss~2.04 · L1 16/16(160k=58.13%,170k eval进行中) · L2 6/6完成(GSM8K=0%HF确认,MMLU=23.16%) · L3 TB 0/2(待HF重测) · L4 BLOCKED(/nasdata/未挂载+SSH超时)) · 评测数字仅用于训练监控，不进论文正文
 </footer>
 </div>
 </body>
