@@ -74,6 +74,11 @@ c = json.load(open(sys.argv[1]))
 c["max_position_embeddings"] = 1048576
 c["rope_theta"] = 1000000
 c["rope_scaling"] = None
+# Remove mamba_dt_limit to avoid huggingface_hub strict dataclass validation error
+# (p6_tf5 huggingface_hub rejects [0.0, "inf"] as list[float])
+if "mamba_dt_limit" in c:
+    del c["mamba_dt_limit"]
+    print("  patched: removed mamba_dt_limit (huggingface_hub compat fix)")
 json.dump(c, open(sys.argv[1], "w"), indent=2, ensure_ascii=False)
 print(f"  patched: max_pos={c['max_position_embeddings']}, rope_theta={c['rope_theta']}")
 PYEOF
