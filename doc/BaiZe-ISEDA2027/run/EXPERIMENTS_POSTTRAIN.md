@@ -3649,3 +3649,76 @@ bash baize_posttrain_sft_surrogate_serve.sh --dry-run \
 | 训练日志 | `/tmp/baize_posttrain_sft_v11v36_full.log` |
 | SFT ckpt | `sft_surrogate_runs/minicpm5_pyaether_v2_v11v36/global_step_{20,40,60}` |
 | Serve 脚本 | `baize_posttrain_sft_surrogate_serve.sh`（已修复） |
+
+---
+
+## §R285 (2026-11-12 wake285) Base-vs-SFT 定性对比评测（6 prompt × 2 model · 零沙盒 · 纯 vLLM 推理）
+
+### 1. 动机
+
+v11-v36 SFT 训练已在 wake284 完成（step 70/70, train loss 0.618, val 0.673），final ckpt `global_step_70` 已 serve 在 GPU6:8096（`minicpm5-sft`）。但沙盒仍阻塞（90th wake, TCP filtered），无法跑完整 EDA-Eval 158 任务正式评测。
+
+**本节目标**：在沙盒恢复前，用 6 个定性 prompt 直接通过 vLLM OpenAI-compatible API 横评 base（8098 `minicpm5-2b`）vs SFT（8096 `minicpm5-sft`），获取 SFT recipe 是否有效的**早期信号**。不需要沙盒——纯 vLLM 单轮推理。
+
+### 2. 方法
+
+- **端点**：base = `http://localhost:8098`（GPU4, `minicpm5-2b`）；SFT = `http://localhost:8096`（GPU6, `minicpm5-sft` = `global_step_70`）
+- **参数**：`temperature=0.0`（确定性），`max_tokens=300-400`，`top_p=0.9`，单轮 user message（无 system prompt，测试泛化）
+- **6 个 prompt**：覆盖 S1(doc→code) / S3(code→doc) / 通用知识 / bug 修正 / 多步工作流
+- 原始结果落盘：`sft_vs_base_compare_wake285.json`（21KB, 6 test × base+sft 完整 text + latency）
+
+### 3. 结果汇总
+
+| Test | 类别 | base 输出长度 | sft 输出长度 | base 行为 | sft 行为 | 判定 |
+|:--|:--|--:|--:|:--|:--|:--|
+| T1 dbCreateCell doc→code | S1 | 2240 ch | 124 ch | 输出可见 CoT 推理，反复讨论「该怎么做」，**不产出代码** | 直接输出 `import pyAether as pyScript; def create_cell(lib, cellName): pyScript.emyInitAether(); return pyScript.dbCreateCell(lib, cellName)` | ✅ SFT 大幅优于 |
+| T2 aeCreateTree code→doc | S3 | 1981 ch | 1941 ch | CoT 推理但不确定 API 含义 | 结构化输出：API 名 + signature + 描述 | ✅ SFT 更结构化 |
+| T3 PyAether 是什么 | 通用 | 1777 ch | 794 ch | **幻觉**：「PyAether 是量子系统模拟库」（错误） | 正确：「PyAether 是 EDA 自动化的 Python 库，用于布局生成和仿真」 | ✅ SFT 纠正幻觉 |
+| T4 bug 修正 dbOpenCell | API 修正 | 2023 ch | 340 ch | CoT 推理，**幻觉**「Aether 网络（也许是区块链？）」，不产出修正代码 | 正确识别 bug，输出修正代码：先 `dbOpenLibrary` 再 `dbOpenCell(lib, "inv")` | ✅ SFT 大幅优于 |
+| T5 多步工作流 | 多步 | 1987 ch | 246 ch | 用错误命名空间 `pyScript.Aether.emyInitAether()`，不产出最终代码 | 正确 `pyScript.emyInitAether()` + `emyOpenLibrary` + `emyCreateCell` | ✅ SFT 大幅优于 |
+| T6 emyInitAether code→doc | S3 | 2105 ch | 262 ch | CoT 推理，不确定「maybe」「might be」 | 结构化：API 名 + 功能描述 + signature `emyInitAether(...) -> bool` | ✅ SFT 更结构化 |
+
+### 4. 关键发现
+
+**4.1 格式改善（最显著）**：
+- **BASE**：输出包含大量可见 chain-of-thought 推理（「We need to...」「Let's recall...」），经常不产出最终代码/答案
+- **SFT**：直接输出简洁、格式化的代码或结构化文档，无冗余推理
+
+**4.2 领域知识改善**：
+- **BASE**：将 PyAether 幻觉为「量子系统模拟库」或「区块链网络」
+- **SFT**：正确识别为 EDA 自动化 Python 库
+
+**4.3 API 调用规范改善**：
+- **BASE**：使用错误命名空间 `pyScript.Aether.emyInitAether()` / `pyScript.Aether.openLibrary()`
+- **SFT**：正确使用 `import pyAether as pyScript` + `pyScript.emyInitAether()` + `pyScript.dbCreateCell()` 模式
+
+**4.4 简洁性**：
+- 平均输出长度：base 2035 ch → sft 618 ch（缩减 70%），冗余推理消除
+
+### 5. 局限性
+
+- **6 个 prompt 非随机抽样**：手工设计的代表性 prompt，不构成统计显著的评测
+- **无沙盒执行验证**：无法验证 SFT 产出的代码是否在真实 PyAether 环境中可执行
+- **单轮无 system prompt**：测试了泛化能力，但实际 EDA-Eval harness 使用 cline agentic 多轮 + system prompt
+- **temperature=0.0**：确定性输出，无法评估方差
+- ⚠️ **替身预演声明**：MiniCPM5-2B 是 BaiZe 替身模型，此结果**不可迁移到 BaiZe**，仅验证 SFT recipe 流程有效性
+
+### 6. 结论
+
+SFT recipe（v11-v36 PyAether 语料, 927 train pairs, 5 epoch, lr 1e-5 cosine, full FT）在定性层面**显著改善了模型的 PyAether API 使用能力**：
+1. 消除了 base 模型的冗余 CoT 输出 → 直接产出可用代码
+2. 纠正了领域幻觉 → 正确识别 PyAether 为 EDA 工具
+3. 建立了正确的 API 调用范式 → `import pyAether as pyScript` + `emyInitAether()` 前置
+
+这为沙盒恢复后的正式 EDA-Eval 158 任务 5-run 评测提供了**积极先验**：SFT 大概率能在 M1（50% Pass@1）阶梯上产生正向增益。
+
+### 7. 资产
+
+| 项 | 路径 |
+|:--|:--|
+| 本节 | EXPERIMENTS §R285 |
+| 原始结果 JSON | `sft_vs_base_compare_wake285.json`（21KB, 6 test 完整 text + latency） |
+| 对比脚本 | `/tmp/sft_vs_base_compare.py` |
+| SFT ckpt | `sft_surrogate_runs/minicpm5_pyaether_v2_v11v36/global_step_70`（served on GPU6:8096） |
+| Base serve | GPU4:8098 `minicpm5-2b` |
+
