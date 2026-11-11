@@ -362,4 +362,4 @@
 1793084065593_fg1kv	ghyang	10.129.2.12	33	eda_other	parked		2026-11-11 13:48	SPICE analysis Q&A, weak
 1793069063742_76i4q	wnyu	10.129.2.13	18	eda_other	parked		2026-11-11 13:48	doc-search Q&A, weak
 1793603696817_p16i1	shanliny	10.129.2.10	20	digital	parked		2026-11-11 13:48	Python script debug Q&A, weak
-1790038213566_y4c5b	rongjiez	10.129.2.14	19	eda_other	parked		2026-11-11 13:48	REFRAME-PREPARED for r377: B档 offline-patch L1 (Qt Jobmonitor feature). base=jobmonitor.cpp446L/h51L/ui231L(728L total, small). A-faithful(U0需求未给实现). check=patch-apply+structural-grep≥8cond, 3fake-submit FAIL. Build next round.
+1790038213566_y4c5b	rongjiez	10.129.2.14	19	eda_other	case	EDA-Eval-DesignFlow-JobmonitorFeatPatch-001	2026-11-11 14:21	REFRAME-PREPARED for r377: B档 offline-patch L1 (Qt Jobmonitor feature). base=jobmonitor.cpp446L/h51L/ui231L(728L total, small). A-faithful(U0需求未给实现). check=patch-apply+structural-grep≥8cond, 3fake-submit FAIL. Build next round.
