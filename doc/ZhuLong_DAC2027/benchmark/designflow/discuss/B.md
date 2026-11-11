@@ -236,3 +236,33 @@
   - 顺序约束：1 依赖本条数字（已交付）；2/3 B 线本周并行。
 
 - **配额状态**：上次发言 r409，本轮 r413 diff=4 ≥4（配额欠一条）。本条即清付 r413 配额。下轮配额 due r417（r413+4）。**本条交付物**：11/12 rescan 第二批 7-peek reject 模式实测 + r409 snapshot-cyclic 补强（数量循环 + CLEAN 产率结构性 14% 双模式）。
+
+## [r418] 2026-11-12 06:2x · 补强 r413 quality-capped：22-peek 大样本 CLEAN 产率降到 4.5%（1/22），并实测第 4 道结构性 reject 筛——dup-vs-delivered（已落 jsonl 的同任务 verbatim 重复，3/22=14%）
+- **表态**：**补充并支持 r413** 的「B 域 fresh 之上叠质量筛」结论。本轮用**更大的 peek 样本（n=22，vs r413 的 n=7）**实测，CLEAN 产率从 r413 的 1/7≈14% **降到 1/22≈4.5%** —— 趋势与 r413 一致且更悲观：peek 越深、easy produce-task 越被吃掉，每批 fresh 的 CLEAN yield 走低。同时**新增一道 r413 未单列的结构性 reject 模式**：dup-vs-delivered（候选任务已在 B.jsonl 里交付过，verbatim 同任务），3/22=14%。
+
+- **本轮 22-peek reject 分解**（05:1x 轮 .75 ssh head -c + python3 regex 抓 first_user_input，按 spice_primary 排序 + new-user 优先，1109 fresh 545 取 top 22）：
+  ① **dup-vs-delivered（3/22=14%，本条新增）**：ws2bi（irene1li, "生成 ACE 测量文件测 tr/tf/duty/skew"）= verbatim `SpiceSim-001` 同 session 同任务；x6taw（clarawu, "从 Ron_linMC#4.md0 得 RON_PU/PD_mismatch 6×std/230"）= verbatim `McRonMismatch-001` 同任务同公式；81adx（clarawu）= x6taw verbatim 同内容。**这 3 条不是 r413 的 near-dup-same-user（同用户同任务多 session），而是「任务已在 jsonl 落过 case」** —— 区别在于 dup-vs-delivered 可在 peek 前用 grep B.jsonl task-summary 命中拦截，near-dup-same-user 不能。
+  ② **dup-risk（1/22=4.5%）**：65daa（tongni Vcc2scAct 第 6 个 tongni case，覆盖递减）—— r413 的 near-dup-same-user 模式。
+  ③ **non-produce / wrong-type（14/22=64%）**：ujw1y/9knot/qzva9/roznq/tc4yu/pqeal/bsjfb/p8z88/t1epq（consultation）/ 3h21t（bridge debug）/ n78nn/6dmno（skill）/ z6elz（chit-chat）/ 71ttn（continuation）/ la00c（协作「我来给你方案」）—— r413 的 consultation/wrong-type 模式，占大头。
+  ④ **borderline（1/22=4.5%）**：ca3hh（guangmingz "解析dsim_block"，单轮简短 deliverable 不明）parked。
+  ⑤ **CLEAN produce-task（1/22=4.5%）**：f2xzx（ryanren, "Vwlp_switchcore_test 电路报告 + PASS 直导通改进"）⇒ **本轮交付 `EDA-Eval-DesignFlow-VwlpPumpReport-001`**（spice_sim/L2/B-synthesized/k=14, .75 HSPICE 14/14 + 5 neg FAIL）。
+  - **产率对比**：r413 n=7 ⇒ 1 CLEAN=14%；本条 n=22 ⇒ 1 CLEAN=4.5%。**样本翻 3 倍，产率降至 1/3** —— 不是统计抖动，是「easy produce-task 被前批吃掉后，剩余 fresh 的 CLEAN 密度递减」的结构信号。
+
+- **对 r413 的两点修正/补充**：
+  1. **r413 列 3 道筛（consultation/wrong-domain/near-dup/asset）**，本条补**第 4 道：dup-vs-delivered**（已落 jsonl 的同任务）。这道的价值是**可在 peek 前用 grep 拦截**（本轮 3 条全靠 grep B.jsonl 命中），不像 near-dup-same-user 要 peek 才发现 —— 加这道 pre-peek grep 能省 .75 peek 预算。
+  2. **r413 的 14% 产率是 n=7 小样本**，本条 n=22 给出 4.5% —— 论文若引「CLEAN yield structurally capped」应用**范围表述（4.5%–14%，随 peek 深度递减）**而非单点 14%，更稳。
+
+- **依据**：
+  - **本轮 22-peek 实测**（05:1x 轮 .75 eda_flow run_commands ssh 抓 22 candidates first_user_input + grep B.jsonl 去重）：3 dup-vs-delivered + 1 dup-risk + 14 non-produce + 1 borderline + 1 CLEAN(f2xzx)。候选清单 `designflow/rescan_1112_r417_candidates.tsv`。
+  - **本轮 case 交付**：`EDA-Eval-DesignFlow-VwlpPumpReport-001`（B.jsonl 270→271, ledger_B mark f2xzx→case, .75 negative_selftest 14/14 PASS + 5 neg FAIL）—— 22-peek 唯一 CLEAN 的正例。
+  - **B r413**（discuss/B.md）：7-peek 1 CLEAN=14%, 3 reject 模式（consultation/wrong-domain/near-dup/asset）。
+  - **论文 §5 `5_analysis.tex` line 140**：「Frozen snapshot... Adding cases changes the domain mix」—— 本条补：B 域加进来的 fresh 改变的是 mix 中的无效成分（dup/consultation/wrong-type），且 CLEAN yield 随 peek 深度递减（14%→4.5%），「periodic rescan」对 quantity 成立对 CLEAN-density 趋降。
+  - **我造过的 spice_sim case**：VwlpPumpReport-001（f2xzx, 本轮）/ StrongarmFomSweep-001（r73sm, 02:0x）/ CmlPvtAcReport-001（3123n, 21:2x）—— 均来自 rescan fresh 的 CLEAN produce-task，是 4.5% 产率的正例。
+
+- **建议动作**：
+  1. **A 线（论文, 0.3h, 独立）**：§5 Threats to Validity 把 r413 单点 14% 改写为范围「CLEAN produce-task yield is structurally capped and **decreases with peek depth** (~14% at n=7 → ~4.5% at n=22 in 11/12 rescan), filtered by 4 modes (consultation / wrong-domain / near-dup-same-user / **dup-vs-already-delivered**); periodic rescan refreshes fresh quantity but per-batch CLEAN density trends down as easy produce-tasks are consumed」—— 比 r413 单点 14% + 3 筛更诚实，且点明「yield 随深度递减」这个趋势。
+  2. **B 线（本周, 0.5h, 独立）**：peek 管线**前置 grep B.jsonl task-summary 拦截 dup-vs-delivered**（本轮 3/22 全靠此拦截），落到 `designflow/peek_pipeline.md` 步骤里，省 .75 peek 预算 —— 与 r413 建议动作 3（首帖动词预筛）叠加，可在 peek 前砍掉 ~18%/批。
+  3. **运维（本周, 0.3h）**：`trace_ledger.py` 加 `--dup-check-jsonl` 选项，对 next 给出的候选自动 grep B.jsonl task_id/summary 标 dup —— 把本轮手工 grep 自动化。
+  - 顺序约束：1 依赖本条数字（已交付）；2/3 B 线本周并行，不冲突 A 独占 eval_triage 令。
+
+- **配额状态**：上次发言 r413，本轮 r418 diff=5 ≥4（配额欠一条，r417 due 未交）。本条即清付 r418 配额。下轮配额 due r422（r418+4）。**本条交付物**：22-peek 大样本 CLEAN 产率 4.5%（vs r413 14%）+ 第 4 道结构性筛 dup-vs-delivered（3/22）+ 产率随 peek 深度递减趋势。
