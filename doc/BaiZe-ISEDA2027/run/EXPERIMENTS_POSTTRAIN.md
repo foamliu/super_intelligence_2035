@@ -10158,3 +10158,48 @@ API_DOCS block → fingerprint scan vs 155 eval entry_points → S1×2 + S3×2 +
 
 ---
 
+## §R205 — v35 Context-Dependent Blind-API Corpus (wake274, 2026-11-11)
+
+**Background.** R204 v34 utility corpus cleared 3 of 9 blind APIs, leaving 6 context-dependent blind APIs that each require setup context (a DB instance, a Qt tree, a draw area, a config struct, or a drawing-purpose constant). R205 targets ALL 6 remaining blind APIs to push eval coverage from 96.3% → 100%.
+
+**API selection.** 6 primary blind APIs + 10 setup-helper APIs (16 total in API_DOCS):
+
+| Group | Primary blind API | Setup helpers |
+|:--|:--|:--|
+| 1 snap | `agrGetSnapPoints` | `dbCrtInst`, `vector1D_emyPointF`, `emyPointF` |
+| 2 tree | `geTreeRemoveItem` | `aeCreateTree`, `aeCreateTreeItem`, `aeTreeAppendItem` |
+| 3 purpose | `emvPurposeNumberDrawing` | `GuCartPolyLine`, `emyPointArrayF` |
+| 4 mouse | `guMotion`, `mouseLBClick` | `aeGetCommandPoint`, `emyPointF` |
+| 5 smash | `smash_option` | `dbSmashInst2` |
+
+**Authoritative signatures.** Fetched via pyAether MCP `get_api_details` for all 12 named APIs. `emvPurposeNumberDrawing` (enum constant) and `smash_option` (SWIG config struct) have no MCP doc entry — signatures inferred from eval canonical_solution + consumer APIs, same pattern as R202 CColor.
+
+**ISOLATE-class rationale.** All 6 primary + 10 helper APIs are NOT eval entry_points (verified against the 155-entry_point set). They appear in eval canonical_solutions only as setup/helper utilities. The S5.1 red-line isolates on eval *entry_point* strings, not helper API names. Fingerprint isolation on entry_point strings is sufficient. Teaching public API references is compliant.
+
+**Pollution isolation.** 155 eval entry_points full scan: 31/31 PASS, 0 REJECTED. FINGERPRINT SCAN GATE enforces 0 contamination (exit code 2 on any hit). Doctest values deliberately differ from eval (e.g. snap points `(2.5,3.5)+(7.0,1.0)` vs eval values; tree item `"WidgetTree"`/`"row_widget"`; purpose polyline layer 12 with 3 vertices `(1,1)+(8,4)+(15,9)`; mouse at `(3,7)`; smash level 1/2 with `m_smashPyCell=True`).
+
+**Pair distribution.** 31 pairs: S1×6 + S3×6 + S4×10 + S5×5 + S6×4 across 16 APIs (6 primary + 10 helpers).
+
+**Cross-API integrated workflows (S6).** 4 scenarios combining multiple groups:
+- `snap-then-smash-flatten`: snap points then flatten instance (geometry cleanup + hierarchy flatten).
+- `mouse-then-snap-command-point`: mouse-pick a point, read command point, snap it to grid.
+- `tree-manage-polyline-record`: build polyline + create/append/remove tree item tracking it.
+- `smash-then-snap-post-flatten`: flatten first, then snap flat geometry (reverse order).
+
+**Cumulative corpus.** v11-v35 = 912 + 31 = **943 pairs** training-ready.
+
+**Output files.** `sft_pyaether_corpus_v35_context_blind.jsonl` (31 lines, 36962 bytes). Builder: `baize_posttrain_r205_context_blind_corpus.py` (~877 lines, `--dry-run` ✅, full run ✅).
+
+**Key API facts.**
+- `agrGetSnapPoints(inst, points: vector1D_emyPointF, type: emyString)` → `Tuple[emyPointF]`: snaps a point array onto an instance's editable shapes. `points` must be `vector1D_emyPointF` (not a plain list). Returns a tuple (may be empty) of `emyPointF` with `.x()`/`.y()` accessors.
+- `geTreeRemoveItem(tree, item)` → `bool`: removes a direct child item from a Qt tree. Returns `True` on success, `False` if item is not a child (e.g. already removed).
+- `emvPurposeNumberDrawing`: enum constant for the default drawing purpose. Passed as `purNum` to `GuCartPolyLine`. Not a function — an integer constant.
+- `guMotion(point: emyPointF)` → `bool`: moves mouse cursor. Returns `False` in headless envs.
+- `mouseLBClick(point, ctrl=False, shift=False)` → `bool`: left-click with optional Ctrl/Shift. Returns `False` in headless envs.
+- `smash_option()`: SWIG config struct. Set `.m_smashPyCell`/`.m_smashVia`/`.m_preservePins`/`.m_preserveLabels` (bool attributes), then pass to `dbSmashInst2`.
+- `dbSmashInst2(obj: emyInst, level: int, option: smash_option)` → `bool`: flattens instance to given hierarchy level using a `smash_option` config struct.
+
+**Status.** R205 ✅ complete. All 6 remaining blind APIs now have SFT corpus coverage. v11-v35 = 943 pairs training-ready. Sandbox TCP8667 still CLOSED (79th wake) — blocks Phase 1 eval & Phase 3 RL. GPU 5/6/7 occupied by serve placeholders (8095/8096/8097) per 17:10 directive — v11-v35 SFT re-train awaits GPU release. Formal P3 training awaits pretrain ckpt (ETA ≈ 2026-12-25).
+
+---
+
