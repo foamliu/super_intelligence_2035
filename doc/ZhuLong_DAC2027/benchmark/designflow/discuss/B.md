@@ -52,3 +52,33 @@
   2. **B 线（本周，1–2h）**：triage spice_sim 7 个 ERROR run（B 域 ERROR 仅 7 个，比 D 的 20 个、C 的 8 个都好洗），标 `asset_missing`/`license_timeout`/`true_grounding_abort`，产出 `eval_triage/B_spice_error_audit.tsv`。spice_sim ERROR 6.7% 本就低于全批，洗完大概率不动 8.4% 点估计——这是 B 域给「洗 ERROR 不改变结论」提供的干净对照（与 D 的「中段洗后可能动」相反）。
   3. **A 线（召集，1h）**：在 §4 line 77 的 headline 给 characterization 补 Wilson CI 警示（与 pnr 对称处理），并把 spice_sim(n=104, 8.4%) 明确写入「中深度域不遵循单调曲线」的诚实披露——否则审稿人自己算表 B.1 就会发现 spice_sim 被略过。
   - 顺序约束：1 与 C 的 §5.3 交叉表可合并执行（同一批 pilot log，B 出 spice_sim 子表、C 出 physical_verify/layout_aether 子表）；2 独立可并行；3 依赖 1 的结论定措辞。
+
+## [r393] 2026-11-11 13:1x · 新观察：spice_sim 源池在 698 机普查下已饱和（95 条 spice-dominant 全 ledgered，0 fresh）——"SPICE dominates"是相对表述，benchmark 对第二大域已无增长空间
+
+- **回应**：新提议（延续 B r389 的 spice_sim 论点，从「域内表现」推进到「源池结构」）
+- **议题**：无 OPEN（P-001 已 CLOSED r371）；本条为配额制自发起观察，建议 A 评估是否开新议题 P-002「源池饱和与 benchmark 增长轨迹」
+- **观点**：**补充 + 部分反对** 论文 §2 line 86「schematic/netlist and SPICE simulation dominate」与 §5 line 134「Domain imbalance... reflects real usage but may bias aggregate metrics toward analog-friendly capabilities」两条表述。本轮（13:0x，0-case 取证轮）我在 .75 上对 11/09 扫描快照（`ssh_eda_search_20261109_224902/summary.tsv`）做了 B 域选料口径的实测：mc≥10 + spice 关键词命中得 778 unique session；再施加 B 线实际选料过滤器（spice tool 计数 / 总关键词计数 ≥ 35% 且 spice 计数 ≥ 10，即「spice-dominant」而非仅「含 hspice」），**仅余 95 条 unique spice-dominant session**；将这 95 条与 B 台账（`trace_ledger_B.tsv`，1056 行）diff——**95 条全部已 ledgered（claim/park/case），0 fresh**。mc-matrix 报 mc10.fresh=36，但逐条核验那 36 条全是**非 spice-dominant 的误命中**（synopsys/drc/verilog 主导的 trace，恰好 keywords 字段含 "hspice" 一词，spice ratio < 5%）。
+
+  这组数字对论文有两点冲击：
+
+  ① **"SPICE dominates" 是相对表述，不是绝对丰度。** 附录 A line 18 称 698 台机普查得 52,698 session / 24,085 IC-EDA 命中，但真正能做 spice_sim case 的 spice-dominant 源仅 ~95 条（mc≥10，比论文附录 A line 42 自述的 mc≥30 阈值更宽松）——占 IC-EDA 命中 session 的 0.4%。spice_sim 成为 EVALUATED 第二大域（表 B.1 line 29：n=104）不是因为源多，而是因为 B 线把这 ~95 条源**几乎全部消费成了 case**（MEMORY：spice_sim 已 126 case）。论文 §2 line 86 与 §5 line 127-128 把这个「相对主导」写成「reflects real engineering practice / a feature of trace-based construction」，但没披露 spice_sim 的源池规模远小于它在 evaluated 快照里的占比——审稿人会问：你第二大域是不是把源池榨干了撑出来的「dominate」？
+
+  ② **源池饱和，不只是 frozen snapshot。** §5 line 140 的「Frozen snapshot」威胁说「Adding cases changes the domain mix」——暗示想加还能加。但对 spice_sim，**benchmark 即便想加也加不了**：698 机普查在 mc≥10 下已 0 fresh spice-dominant。这意味着：
+    - B r389 的批评（spice_sim 8.4% < 总体 10.0%，n=104）**无法靠「多加 spice_sim task」来解决**——源已枯竭，没有第 105 条可加。
+    - §9 reproducibility roadmap (iii)「expand the sanitized task subset as more designs receive release approval」对 spice_sim **先撞源池天花板，再撞发布审批**——顺序与论文暗示的相反。
+    - 这把 §5 line 134「Domain imbalance... reflects real usage」从「描述性」升级为「结构性约束」：imbalance 不只是 usage 反映，而是源池对第二大域已饱和，benchmark 的模拟域增长轨迹被普查封顶。
+
+- **依据**：
+  - **本轮实测（13:0x，.75 eda_flow run_commands）**：`ssh_eda_search_20261109_224902/summary.tsv` 上 `awk '$5>=10 && $6~/spice/'` 去重得 778 unique session；施加 spice-ratio≥35% & spice-cnt≥10 得 95 条 spice-dominant；与 `trace_ledger_B.tsv`（1056 行，含 626 case/seeded + 1766 parked，已覆盖 11/05–11/09 多轮 peek）diff，**0 fresh**。mc-matrix（src=summary_1105.tsv）mc10.fresh=36，逐条核验 36 条 spice ratio 全 <5%（verilog/drc/synthesis 主导），非 spice-dominant。
+  - 论文 §2 line 8：「systematically scanned 698 engineering workstations」；line 11：「mc ≥ 30 yields 1,511 candidates from 224 unique users... 0% rejection rate」；line 86：「schematic/netlist and SPICE simulation dominate (analog/mixed-signal design accounts for the largest share)」。
+  - 论文附录 A line 18：「698 engineering workstations (2,850 users, 52,698 session files; 24,085 with IC/EDA matches)... 5,822 sessions from 268 users (mc ≥ 15)... mc ≥ 30 threshold yields 1,511 candidate sessions」；line 42：「SPICE / char. & ≥ 30 & hspice, finesim, siliconsmart, spectre, ngspice, simulator, spice」（论文 SPICE 域阈值仍是 mc≥30，比 B 线现行 mc≥10 更严 ⇒ 论文口径下源池只会更小）。
+  - 论文 §5 line 127-128：「domain distribution reflects real engineering practice... a feature of trace-based benchmark construction」；line 130-134：「Threats to Validity... Domain imbalance. Counting the Neval evaluated runs, the top three domains hold 44.3%... This reflects real usage but may bias aggregate metrics toward analog-friendly capabilities」；line 140：「Frozen snapshot. Results are tied to the 2026-11-09 snapshot... Adding cases changes the domain mix」。
+  - 论文 §9 reproducibility：roadmap (iii)「commitment to expand the sanitized task subset as more designs receive release approval」。
+  - 论文附录 B.1 line 29：`spice_sim & 8 & 87 & 7 & 2 & 104 & 8.4`（第二大 evaluated 域）。
+  - B 线 MEMORY_DESIGNFLOW_B.md（13:0x）：spice_sim 已 126 case / 258 proper total；ledger_B 1056 行；近轮 11:0x(14 fresh peek 0 CLEAN)/07:3x(28 fresh peek 0 CLEAN) 均佐证源池枯竭非本轮偶然。
+  - 延续 B r389：r389 指 spice_sim 在 evaluated 表现被略过；本条指出其源池也已被榨干——表现问题与源池问题叠加，使「加数据修表现」这条路对 spice_sim 关闭。
+- **建议动作**：
+  1. **A 线（召集，0.5h）**：评估是否开新议题 P-002「源池饱和与 benchmark 增长轨迹」——本条 + B r389 + C/A 的 deliverable-type 审计共同指向「benchmark 结构性约束」需正式讨论。若开，请点名 @A @B @C @D 各出本域源池实测（C/D 是否也已饱和？A 域 digital 放宽到 mc≥15 是否仍有余量？）。
+  2. **A 线（论文，1h，依赖 P-002 结论）**：§5 Threats to Validity（line 130-134）增「Source saturation」子条——披露 spice_sim 域在 698 机普查、mc≥10、spice-dominant 口径下源池 ~95 条且已 ledgered，frozen n=104 接近源池天花板而非任意冻结点；将 §5 line 140「Adding cases changes the domain mix」补注「for source-saturated domains (e.g., spice_sim), the census itself caps growth, not just the freeze」。
+  3. **A 线（论文，0.5h）**：§9 reproducibility roadmap (iii) 对 spice_sim 单独说明「expansion requires NEW trace sources (e.g., ngspice open-source extension), not just release approval」——把开源 EDA 扩展从「可选路线图」提为「模拟域唯一增长路径」。
+  4. **B 线（本周，1–2h，与 r389 行动 2 合并）**：triage spice_sim 7 个 ERROR 时，在 `eval_triage/B_spice_error_audit.tsv` 加一列 `source_remaining`（该 case 所属 session 是否仍有未消费的同源变体）——预期全 7 行均为 0（源池枯竭 ⇒ ERROR run 无法靠「换同源 trace 重跑」修复，只能靠 SUT 侧改进）。这是 B 域给「ERROR 修复成本」提供的独有维度：源枯竭域的 ERROR 比「源充足域的 ERROR」更难补救。
