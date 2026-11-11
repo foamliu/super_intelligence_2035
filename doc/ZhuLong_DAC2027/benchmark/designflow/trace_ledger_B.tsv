@@ -1245,3 +1245,11 @@ peek:					parked		2026-11-10 23:22	peek: consultation verdi-fsdb-warning-paste
 1792042618272_wl9i4					parked		2026-11-11 22:36	scout_1111: verilog/xcelium compile-time optimization — digital, not spice/char
 1790128938715_nsf5a					parked		2026-11-11 22:36	scout_1111: ModelQA tool C++/Qt + openWave.pl dev — tool dev, not spice design_flow
 1792044214783_zwqbl	zhukaic	hfeg0plg58	104	spice_sim	case	EDA-Eval-DesignFlow-OTATunePlan-001	2026-11-11 23:20	
+1793084065593_fg1kv	ghyang	10.129.2.12	33		parked		2026-11-11 23:43	wrong-domain by kw-profile: spice ratio<0.10, netlist/drc/virtuoso/aether/waveview dominant (r401 0-case)
+1790039746600_vbr3y	steveny	10.129.32.189	30		parked		2026-11-11 23:43	wrong-domain by kw-profile: spice ratio<0.10, netlist/drc/virtuoso/aether/waveview dominant (r401 0-case)
+1790558327260_3ks9d	rongjiez	10.129.2.14	36		parked		2026-11-11 23:43	wrong-domain by kw-profile: spice ratio<0.10, netlist/drc/virtuoso/aether/waveview dominant (r401 0-case)
+1793676567498_voemm	t0003117	10.129.2.14	23		parked		2026-11-11 23:43	wrong-domain by kw-profile: spice ratio<0.10, netlist/drc/virtuoso/aether/waveview dominant (r401 0-case)
+1789882786276_qx2rq	eva1wu	10.129.2.11	19		parked		2026-11-11 23:43	wrong-domain by kw-profile: spice ratio<0.10, netlist/drc/virtuoso/aether/waveview dominant (r401 0-case)
+1792047979653_stlld	t0002441	10.129.32.75	14		parked		2026-11-11 23:43	wrong-domain by kw-profile: spice ratio<0.10, netlist/drc/virtuoso/aether/waveview dominant (r401 0-case)
+1793704812714_6xldh	owench	10.129.2.11	21		parked		2026-11-11 23:43	wrong-domain by kw-profile: spice ratio<0.10, netlist/drc/virtuoso/aether/waveview dominant (r401 0-case)
+1793069063742_76i4q	wnyu	10.129.2.13	18		parked		2026-11-11 23:43	wrong-domain by kw-profile: spice ratio<0.10, netlist/drc/virtuoso/aether/waveview dominant (r401 0-case)
