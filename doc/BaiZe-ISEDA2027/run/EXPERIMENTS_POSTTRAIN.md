@@ -4423,3 +4423,57 @@ SFT 模型更倾向使用 pyAether 域 API、输出更简洁、格式更规范�
 - max_tokens=768 对 SFT 部分 task 偏短（Schematic 场景 API 多，代码长），可能导致 2/15 SFT 语法不合法（截断）。
 
 > 替身预演声明：以上数字仅证明 SFT recipe 在代码生成质量上的改善，**不预测 BaiZe 在 EDA-Eval 上的 Pass@1**。收益不可迁移到 BaiZe。
+
+
+## §R296 — 3-Model 对比：MiniCPM5-2B BASE vs SFT vs Qwen3.8-27B（wake296, 2026-11-12 04:10）
+
+### 实验设计
+
+在 wake295 的 2-model（BASE vs SFT）对比基础上，**新增 Qwen3.8-27B**（27B, root SGLang :8099, GPU0-3）作为第三个参照模型，回答"2B SFT 与 13.5× 大模型在 EDA 代码生成上的差距"。
+
+- 3 个模型：MiniCPM5-2B BASE（:8098）、MiniCPM5-2B SFT（:8096）、Qwen3.8-27B（:8099）
+- 15 task × 4 scenario（同 wake295 任务集），raw OpenAI chat completions
+- temp=0, max_tokens=768
+- **Qwen3.8-27B 关键修正**：默认 thinking 模式下 `content` 字段为空（全部输出在 `reasoning_content`），需加 `chat_template_kwargs: {"enable_thinking": false}` 才能直接输出代码（wake296 首次发现并修复）
+- 产物：`smoke_test_results/three_model_15task_comparison.json`（45KB）
+- 脚本：`baize_posttrain_3model_comparison.py`
+
+### 3-Model 汇总（15 tasks）
+
+| 指标 | BASE (2B) | SFT (2B) | Qwen3.8-27B |
+|:--|--:|--:|--:|
+| 语法合法 | 1/15 (7%) | 13/15 (87%) | **14/15 (93%)** |
+| 函数完整 | 10/15 (67%) | 15/15 (100%) | 15/15 (100%) |
+| pyAether API 总数 | 14 | **33** | 19 |
+| 平均 thinking ratio | 0.393 | 0.018 | 0.010 |
+| 代码总长度 | 28,746 | 19,353 | 24,042 |
+| finish=stop（无截断） | 1/15 (7%) | **12/15 (80%)** | 11/15 (73%) |
+| 平均延迟 (s) | 8.3 | 4.0 | **2.6** |
+
+### Per-Scenario 分解
+
+| 场景 | n | BASE syn | SFT syn | QWEN syn | BASE func | SFT func | QWEN func | BASE api | SFT api | QWEN api |
+|:--|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|
+| Schematic | 5 | 0 | 3 | **4** | 4 | 5 | 5 | 2 | **13** | 3 |
+| Layout | 4 | 0 | 4 | 4 | 2 | 4 | 4 | 8 | 7 | 8 |
+| Design Mgmt | 3 | 0 | 3 | 3 | 2 | 3 | 3 | 2 | **11** | 6 |
+| Others | 3 | 1 | 3 | 3 | 2 | 3 | 3 | 2 | 2 | 2 |
+
+### 关键发现
+
+1. **SFT (2B) 在语法合法率上逼近 Qwen3.8-27B (27B)**：87% vs 93%，差距仅 6pp。考虑到 Qwen 是 13.5× 参数量的大模型，SFT 在 2B 规模上已基本追平大模型的代码格式能力。
+2. **SFT 使用的 pyAether 领域 API 远超 Qwen3.8-27B**：33 vs 19（+74%）。SFT 学到的领域知识使它在 Schematic（13 vs 3, +333%）和 Design Management（11 vs 6, +83%）场景中显著更善于调用 pyAether 专用 API。**这说明 SFT 成功注入了通用大模型不具备的领域 API 知识**。
+3. **Qwen3.8-27B 在 Schematic 语法上最优**：4/5 vs SFT 3/5，差距 1 task（task-105 create_buffer_schematic，SFT 在 max_tokens=768 限制下截断导致语法不合法，Qwen 也截断但恰好截在合法位置）。
+4. **三模型在 Others 场景无差异**：API 使用均为 2（这些任务不涉及 pyAether，如 get_date_from_timestamp），说明领域优势仅在 EDA 专用场景体现。
+5. **Qwen3.8-27B 延迟最低（2.6s）**：尽管 27B 参数，4-GPU SGLang 推理比单 GPU vLLM 的 2B 模型更快（BASE 8.3s, SFT 4.0s）——BASE 慢是因为总耗尽 max_tokens=768。
+6. **BASE (2B) raw chat 模式极度退化**：仅 7% 语法合法、7% 无截断、39% 输出是思考文本——无工具调用框架时，未经 SFT 的 2B 模型几乎无法产出可用 EDA 代码。
+7. **SFT 的截断率（20%）与 Qwen（27%）接近**：说明 SFT 学会了在 token 预算内完成输出，与 BASE 的 93% 截断形成鲜明对比。
+
+### BaiZe 启示
+
+- 2B SFT 可在代码格式/语法层面追平 27B 通用大模型（87% vs 93%），但在**领域 API 知识**上超越（33 vs 19）——支持论文"规模非瓶颈、领域适配是关键"的论点。
+- 正式 EDA-Eval 评测需沙盒恢复后用 cline + MCP 模式运行，此 raw chat 结果仅证明代码生成质量改善趋势。
+- Qwen3.8-27B 作为 Phase 1 基线评测的第三模型，其 thinking 模式适配（`enable_thinking: false`）已解决，可接入正式评测。
+
+> 替身预演声明：以上数字仅证明 SFT recipe 在代码生成质量上的改善，**不预测 BaiZe 在 EDA-Eval 上的 Pass@1**。Qwen3.8-27B 为参照模型（非本项目训练）。收益不可迁移到 BaiZe。
+
