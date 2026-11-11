@@ -1,0 +1,30 @@
+
+============================================================
+=== cline-patched: incr_eval R2164 (2 instances) ===
+  [09:30:56] cline-patched: merged 211 real preds -> predictions_glm53/predictions_cline-patched_glm53.json
+  [09:30:56] cline-patched: launching eval (workers=1, timeout=1800, 2 instances)...
+  [09:31:01] cline-patched: eval done rc=0 (log: logs/eval_incr_verified_full_glm53_cline-patched_R2164.log)
+  matplotlib__matplotlib-22865: failed (capability)
+  matplotlib__matplotlib-22871: failed (capability)
+  [09:31:01] cline-patched: eval report updated (n=211, resolved=155, failed=56, infra=0)
+
+============================================================
+=== opencode: incr_eval R2164 (2 instances) ===
+  [09:31:01] opencode: merged 453 real preds -> predictions_glm53/predictions_opencode_glm53.json
+  [09:31:01] opencode: launching eval (workers=1, timeout=1800, 2 instances)...
+  [09:31:10] opencode: eval done rc=0 (log: logs/eval_incr_verified_full_glm53_opencode_R2164.log)
+  sphinx-doc__sphinx-8265: failed (capability)
+  sphinx-doc__sphinx-8269: failed (capability)
+  [09:31:10] opencode: eval report updated (n=453, resolved=370, failed=81, infra=2)
+
+============================================================
+=== pi: incr_eval R2164 (1 instances) ===
+  [09:31:10] pi: merged 186 real preds -> predictions_glm53/predictions_pi_glm53.json
+  [09:31:10] pi: launching eval (workers=1, timeout=1800, 1 instances)...
+  [09:31:43] pi: eval done rc=0 (log: logs/eval_incr_verified_full_glm53_pi_R2164.log)
+  django__django-11999: failed (capability)
+  [09:31:43] pi: eval report updated (n=187, resolved=137, failed=48, infra=2)
+
+============================================================
+R2164 incr_eval complete in 83.9s
+in 19.9s
