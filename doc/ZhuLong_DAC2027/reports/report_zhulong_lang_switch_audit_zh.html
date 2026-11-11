@@ -18,6 +18,7 @@ pre{padding:8px 10px;overflow-x:auto;border:1px solid #e1e4e8;white-space:pre-wr
 .verdict-真切换{color:#1a7f37;font-weight:700}
 .verdict-部分生效{color:#bf8700;font-weight:700}
 .verdict-未生效{color:#cf222e;font-weight:700}
+verdict-未跑{color:#6e7781;font-weight:700}
 .note{background:#fff8c5;border-left:4px solid #d4a72c;padding:8px 12px;margin:10px 0;font-size:0.92em}
 .warn{background:#ffebe9;border-left:4px solid #cf222e;padding:8px 12px;margin:10px 0}
 .ok{background:#dafbe1;border-left:4px solid #1a7f37;padding:8px 12px;margin:10px 0}
@@ -44,12 +45,14 @@ li{margin:2px 0}
 <div class="card"><h4>中 （zh）</h4><div class="v verdict-真切换">真切换</div><div class="muted">19/21 条 TARGET/MIXED（90%）</div></div>
 <div class="card"><h4>西 （es）</h4><div class="v verdict-未生效">未生效</div><div class="muted">仅 4/21 条 TARGET/MIXED（19%）；17 条未切换</div></div>
 <div class="card"><h4>法 （fr）</h4><div class="v verdict-部分生效">部分生效</div><div class="muted">3/7 条 TARGET/MIXED（43%）；4 条未切换</div></div>
+<div class="card"><h4>俄 （ru）</h4><div class="v verdict-未跑">未跑</div><div class="muted">BLOCKED(not_run)：截至 2026-11-11 17:35 无 B_ru_* trace，编排器仍在 B_fr 阶段</div></div>
 </div>
 <ul>
 <li><strong>英（en）</strong>：注入「Think in English.」<span class="verdict-真切换">真切换</span>——16/19 有效样本思维链主体为英语，成功压制了基础 prompt 的中文要求；3 条后期漂回中文（基础 prompt 泄漏），2 条 gen-fail 无响应。</li>
 <li><strong>中（zh）</strong>：注入「请使用中文思考。」<span class="verdict-真切换">真切换（但confounded）</span>——19/21 思维链为中文。<strong>但基础 prompt 本就强制中文</strong>，故此结果<strong>无法归因于注入</strong>，仅说明模型遵循了基础 prompt；2 条（task 120）模型连基础 prompt 带注入一起无视、改用英语思考。</li>
 <li><strong>西（es）</strong>：注入「Piensa en español.」<span class="verdict-未生效">未生效</span>——21 条抽查里仅 3 条思维链为西班牙语（r1-030 / r2-090 / r3-001），15 条仍是英语（模型默认思考语言），2 条漂成中文（基础 prompt 胜出），1 条西→中混合。注入既未压过模型默认的英语，也未压过基础 prompt 的中文。</li>
 <li><strong>法（fr）</strong>：注入「Réfléchis en français.」<span class="verdict-部分生效">部分生效</span>——7 条抽查里 3 条法语（030/060/090，且法语特征极强：accent 338~561、fr_kw 466~967），3 条英语，1 条中文。<strong>法语是四个语言里注入信号最强的</strong>，但仍有 4/7 未切换。</li>
+<li><strong>俄（ru）</strong>：<span class="verdict-未跑">未跑</span>——截至抽查时（2026-11-11 17:35）<code>B_ru_*</code> 尚未起跑（编排器仍在 B_fr 阶段，B_fr_r2 跑中），无 trace 可查，记 <code>BLOCKED(not_run)</code>；不许凭 MEMORY 旧描述当作已验证。编排器进入 B_ru 阶段后需先抽 3~5 条 trace 核对西里尔字符思维链再定性。</li>
 </ul>
 <h2>2. 抽查表（按语言汇总）</h2>
 <p class="muted">每语言抽查 7 个题号 × 各轮（en/zh/es 各 3 轮 = 21 条，fr 1 轮 = 7 条，共 70 条）。判定四类 + 两个补充类：<code>TARGET</code>=主体目标语；<code>ENGLISH</code>=主体英语（未遵循）；<code>MIXED</code>=两种实质混用；<code>COPIED_PROMPT</code>=仅复述注入短语；<code>WRONG_LANG(zh)</code>=漂成基础 prompt 的中文（未遵循）；<code>EMPTY</code>=gen-fail 无响应。</p>
@@ -205,6 +208,7 @@ li{margin:2px 0}
 <tr><td>zh</td><td class="verdict-真切换">真切换（19/21，但confounded）</td><td>B_zh_r1/r2/r3 分数 <strong>不能解读为「中文思维链的效应」</strong>——基础 prompt 已强制中文，注入只是重复</td><td><strong>降级</strong>：B_zh 实质 ≈ 基线（基础 prompt 中文），其分数应作为「中文基线锚点」而非「中文注入变体」</td></tr>
 <tr><td>es</td><td class="verdict-未生效">未生效（3/21）</td><td>B_es_r1/r2/r3 的分数 <strong>绝大多数题实际是英语思维链</strong>，与 B_en 同语族，不应作为「西班牙语思维链」数据点</td><td><strong>作废「西班牙语」标签</strong>：B_es 三轮实质 = 「模型默认英语思维链 + 末尾一句无效西语提示」，分数应并入「注入未生效」组或单独标注</td></tr>
 <tr><td>fr</td><td class="verdict-部分生效">部分生效（3/7）</td><td>B_fr_r1 仅 1 轮且 3/7 真切换——分数是「法语思维链」与「英语思维链」的<strong>混合</strong>，样本量不足以分离</td><td><strong>降级 + 标注</strong>：B_fr_r1 分数需标注「约 43% 题真用法语思考」；如要采信需补 r2/r3 且按题级（非轮级）分离法语子集与英语子集</td></tr>
+<tr><td>ru</td><td class="verdict-未跑">未跑（无 trace）</td><td>B_ru_* 尚未起跑（编排器仍在 B_fr 阶段），无分数、无结论</td><td><strong>BLOCKED(not_run)</strong>：编排器进入 B_ru 阶段后需先抽 3~5 条 trace 核对西里尔字符思维链，再决定是否采信；本抽查未覆盖 ru</td></tr>
 </tbody></table>
 <h3>5.2 方法学问题（独立于语言切换，本身即需修）</h3>
 <ul><li><strong>基座不恒定</strong>：B_en_r1=glm-5.2，其余=deepseek-v4-pro-cloud。B 轴内任何「语言间 Δpp」对比都被基座差异污染，<strong>不能直接横比</strong>。需在同基座下重跑，或在报告里只做「同基座内 language vs baseline」的单点对比。</li><li><strong>使用了被禁基座</strong>：任务书明确 🚫 不用 deepseek-v4-pro-* 系列（额度耗尽/被排除），但 B 轴 8/9 个 batch 实际都跑在 deepseek-v4-pro-cloud 上。这违反用户令的口径约束。</li><li><strong>基础 prompt 中文指令未控制</strong>：基础 prompt 的「思考用中文」与 B 轴注入冲突。正确的消融应<strong>先去掉基础 prompt 的语言指令</strong>（或设为中性「请用指定语言思考」），再注入 B 轴语言，否则 zh 永远confounded、en/es/fr 都在和基础 prompt 对着干。</li><li><strong>B_fr 只有 1 轮</strong>：n=1 无法给 mean±std，B_fr 的任何「分数」都是单点，不能与 3 轮的 en/zh/es 横比。</li><li><strong>B_zh_r2 状态存疑</strong>：任务书说 B_zh_r2「待 regrade」，但 trace 目录已存在（batch 2026_1110_073833，158 题）。本次抽查用了该 trace，其思维链 7 条里 6 条中文 TARGET、1 条英语——与 r1/r3 一致；如该轮分数被作废重跑，本抽查的语言判定仍成立（语言切换与分数无关）。</li></ul>
