@@ -1,0 +1,15 @@
+
+=== Step 1: wait for cline-patched container sweb.eval.matplotlib__matplotlib-24177.verified_full_glm53_cline-patched_incr_R2167 ===
+  [11:13:28] container still Up: Up 3 minutes
+  [11:40:32] container finished/not-found: '' (waited 1620s)
+  matplotlib__matplotlib-24177: failed (capability)
+  [11:40:37] cline-patched: eval report updated (n=216, resolved=158, failed=57, infra=1)
+
+=== Step 2: opencode sympy__sympy-13757 eval ===
+  [11:40:37] opencode: merged 467 real preds -> predictions_glm53/predictions_opencode_glm53.json
+  [11:40:37] opencode: launching eval ...
+  [11:41:10] opencode: eval done rc=0 (log: logs/eval_incr_verified_full_glm53_opencode_R2167.log)
+  sympy__sympy-13757: failed (capability)
+  [11:41:15] opencode: eval report updated (n=462, resolved=376, failed=84, infra=2)
+
+=== finish_incr_eval_R2167 complete in 1667.7s ===

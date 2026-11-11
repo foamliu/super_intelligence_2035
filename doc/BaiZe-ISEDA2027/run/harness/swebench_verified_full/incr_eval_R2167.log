@@ -1,0 +1,5 @@
+
+============================================================
+=== cline-patched: incr_eval R2167 (1 instances) ===
+  [11:09:31] cline-patched: merged 216 real preds -> predictions_glm53/predictions_cline-patched_glm53.json
+  [11:09:31] cline-patched: launching eval (workers=1, timeout=1800, 1 instances)...

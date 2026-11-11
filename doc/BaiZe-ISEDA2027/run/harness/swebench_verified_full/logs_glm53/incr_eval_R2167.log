@@ -1,0 +1,89 @@
+=== incr_eval R2167 (9 new ids) START Wed Nov 11 11:36:37 AM CST 2026 === (py=/nas_train/app.e0031982/miniforge3/envs/py310/bin/python3)
+[Wed Nov 11 11:36:37 AM CST 2026] === merge cline-patched predictions ===
+cline-patched: 218 real patches merged
+[Wed Nov 11 11:36:37 AM CST 2026] === cline-patched eval START 2 NEW instances ===
+Running 2 instances...
+  0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [01:32<01:32, 92.37s/it]1 ran successfully, 0 failed:  50%|█████     | 1/2 [01:32<01:32, 92.37s/it]1 ran successfully, 0 failed: 100%|██████████| 2/2 [03:43<00:00, 111.73s/it]2 ran successfully, 0 failed: 100%|██████████| 2/2 [03:43<00:00, 111.73s/it]2 ran successfully, 0 failed: 100%|██████████| 2/2 [03:43<00:00, 111.73s/it]
+All instances run.
+Total instances: 2
+Instances submitted: 2
+Instances completed: 2
+Instances incomplete: 0
+Instances resolved: 1
+Instances unresolved: 1
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 0
+Unremoved images: 2
+Report written to cline-glm-5.3-flash.verified_full_glm53_cline-patched_incr_R2167.json
+[Wed Nov 11 11:40:25 AM CST 2026] === cline-patched eval DONE ===
+[Wed Nov 11 11:40:25 AM CST 2026] === merge opencode predictions ===
+opencode: 467 real patches merged
+[Wed Nov 11 11:40:26 AM CST 2026] === opencode eval START 5 NEW instances ===
+Running 5 instances...
+  0%|          | 0/5 [00:00<?, ?it/s] 20%|██        | 1/5 [00:12<00:48, 12.13s/it]1 ran successfully, 0 failed:  20%|██        | 1/5 [00:12<00:48, 12.13s/it]1 ran successfully, 0 failed:  40%|████      | 2/5 [00:24<00:36, 12.32s/it]2 ran successfully, 0 failed:  40%|████      | 2/5 [00:24<00:36, 12.32s/it]2 ran successfully, 0 failed:  60%|██████    | 3/5 [00:24<00:16,  8.31s/it]3 ran successfully, 0 failed:  60%|██████    | 3/5 [00:24<00:16,  8.31s/it]3 ran successfully, 0 failed:  80%|████████  | 4/5 [00:36<00:09,  9.20s/it]4 ran successfully, 0 failed:  80%|████████  | 4/5 [00:36<00:09,  9.20s/it]4 ran successfully, 0 failed: 100%|██████████| 5/5 [00:38<00:00,  7.73s/it]5 ran successfully, 0 failed: 100%|██████████| 5/5 [00:38<00:00,  7.73s/it]5 ran successfully, 0 failed: 100%|██████████| 5/5 [00:38<00:00,  7.74s/it]
+All instances run.
+Total instances: 5
+Instances submitted: 5
+Instances completed: 5
+Instances incomplete: 0
+Instances resolved: 4
+Instances unresolved: 1
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 0
+Unremoved images: 5
+Report written to opencode-glm-5.3-flash.verified_full_glm53_opencode_incr_R2167.json
+[Wed Nov 11 11:41:09 AM CST 2026] === opencode eval DONE ===
+[Wed Nov 11 11:41:09 AM CST 2026] === merge claude-code predictions ===
+claude-code: 200 real patches merged
+[Wed Nov 11 11:41:10 AM CST 2026] === claude-code eval START 1 NEW instances ===
+Running 1 instances...
+  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [00:22<00:00, 22.31s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:22<00:00, 22.31s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:22<00:00, 22.31s/it]
+All instances run.
+Total instances: 1
+Instances submitted: 1
+Instances completed: 1
+Instances incomplete: 0
+Instances resolved: 1
+Instances unresolved: 0
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 0
+Unremoved images: 1
+Report written to claude-code-glm-5.3-flash.verified_full_glm53_claude-code_incr_R2167.json
+[Wed Nov 11 11:41:36 AM CST 2026] === claude-code eval DONE ===
+[Wed Nov 11 11:41:36 AM CST 2026] === merge hermes predictions ===
+hermes: 387 real patches merged
+[Wed Nov 11 11:41:37 AM CST 2026] === hermes eval START 1 NEW instances ===
+Running 1 instances...
+  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [00:44<00:00, 44.55s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:44<00:00, 44.55s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:44<00:00, 44.55s/it]
+All instances run.
+Total instances: 1
+Instances submitted: 1
+Instances completed: 1
+Instances incomplete: 0
+Instances resolved: 0
+Instances unresolved: 1
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 0
+Unremoved images: 1
+Report written to hermes-glm-5.3-flash.verified_full_glm53_hermes_incr_R2167.json
+[Wed Nov 11 11:42:26 AM CST 2026] === hermes eval DONE ===
+[Wed Nov 11 11:42:26 AM CST 2026] === merge R2167 results into eval_glm53_ ===
+[merge-R2167 11:42:26] === merge R2167 START ===
+[merge-R2167 11:42:26]   cline: +1 resolved +1 failed +0 infra => total resolved=159
+[merge-R2167 11:42:26]   opencode: +4 resolved +1 failed +0 infra => total resolved=379
+[merge-R2167 11:42:26]   claude-code: +1 resolved +0 failed +0 infra => total resolved=156
+[merge-R2167 11:42:26]   hermes: +0 resolved +1 failed +0 infra => total resolved=345
+[merge-R2167 11:42:26] === merge R2167 DONE: +6 resolved +3 failed +0 infra ===
+=== incr_eval R2167 DONE Wed Nov 11 11:42:26 AM CST 2026 ===
