@@ -1294,7 +1294,7 @@ peek:					parked		2026-11-10 23:22	peek: consultation verdi-fsdb-warning-paste
 1794369069999_jlgfx	yohannw	10.129.2.11	195	spice_sim	parked		2026-11-12 03:58	r414 rescan reject: jlgfx not-viable B-domain L2/L3
 1794395852366_tef8l	yinyus	10.129.2.10	283	spice_sim	parked		2026-11-12 03:58	r414 rescan: unlocatable on recorded host (file absent /home/*/.cline on 10.129.2.10)
 1793942940446_q3y71.messages.json	declanzh	hfeg0pkn005	96	spice_sim	parked		2026-11-12 04:52	dup ie8du (declanzh core1103 .mt0 aggregation) already covered by Mt0FolderAggStat-001(k=17)+Mt0AggMinMax-001; sibling row 1793942940446_q3y71 parked 11-10 same note; DEBT cleared - synthesis not viable (redundant 3rd case)
-1793586031652_f2xzx.messages.json	ryanren	hfeg0pfn120	156	spice_sim	claimed		2026-11-12 05:14	
+1793586031652_f2xzx.messages.json	ryanren	hfeg0pfn120	156	spice_sim	case	EDA-Eval-DesignFlow-VwlpPumpReport-001	2026-11-12 06:08	
 1791424827517_ca3hh.messages.json					parked		2026-11-12 05:14	ambiguous (guangmingz '解析dsim_block' - parse DSIM block, single brief turn, unclear deliverable; parked borderline)
 1791523486486_ws2bi.messages.json					parked		2026-11-12 05:14	DUP SpiceSim-001 (irene1li, same ws2bi session, tr/tf/duty/skew measurement task)
 1793668301608_71ttn.messages.json					parked		2026-11-12 05:14	continuation (tongni '继续/继续中断的工作' - resume, not first-turn produce)
