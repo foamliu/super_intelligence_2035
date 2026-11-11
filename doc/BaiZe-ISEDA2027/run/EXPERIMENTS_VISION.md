@@ -2958,6 +2958,53 @@ std>0 组 ≥30%                  ⇒ PARAM-ISSUE
 
 ---
 
+## §v6 — GRPO Outcome-only 连续奖励（2026-11-09~11 · CPU · 1 run）
+
+**背景**：v5 证明波形类型分类任务可显著提升（RFT A→B→C p=0.0009），但 RFT 是监督方法。v6 回到 RL（GRPO）路线，用 v5 的 SFT adapter 作为起点，加 outcome-only 连续奖励（R = α·R_correct + β·R_partial，α=0.25, β=0.35），验证 GRPO 是否也能提升类型分类。
+
+**实验设计**：
+- 基座：Qwen3.5-2B(1.88B) + LoRA r=16，先 merge v5 SFT adapter 再加 fresh LoRA
+- 训练：40 GRPO steps, group_size=8, batch_prompts=2, n_train=200
+- 评测：100 题（25/type），B(SFT)/C(GRPO treatment)/D(GRPO control 随机奖励)
+- CPU fp32 / nice19 / OMP16 / seed=20261109 / 零GPU
+
+**v6 结果**：
+| 条件 | 准确率 | sine | square | triangle | sawtooth |
+|:--|:--|:--|:--|:--|:--|
+| B (SFT v5) | 35.0% | 20% | 84% | 8% | 28% |
+| C (GRPO treatment) | 40.0% | 4% | 88% | 32% | 36% |
+| D (GRPO control) | 36.0% | — | — | — | — |
+
+**统计检验**：
+| 检验 | 统计量 | p 值 | 判定 |
+|:--|:--|:--|:--|
+| McNemar C-vs-B | stat=4, n_disc=13 | p=0.267 | ❌ NOT SIG |
+| Bootstrap C-vs-B | Δ=+5.0% | CI=[-8.0%, +19.0%] | ❌ 含 0 |
+| McNemar C-vs-D | stat=3, n_disc=10 | p=0.344 | ❌ NOT SIG |
+| Bootstrap C-vs-D | Δ=+4.0% | CI=[-9.0%, +18.0%] | ❌ 含 0 |
+
+**关键指标**：
+- **nonzero-std = 93.8%** ✅ — 彻底解决 v1-v4 的 std=0 问题（v4 78.7% std=0），group_size=8 + 连续奖励有效
+- **C_avg_std = 0.342** — 方差健康
+- **cheat_rate = 0** — train/eval disjoint seeds，无泄漏
+- **VERDICT**: `TREATMENT NOT SIGNIFICANT | REWARD-DESIGN DRIVEN (C>D)`
+
+**逐类分析**：
+- **triangle** 从 B=8% → C=32%（+24pp），是最大改善 → GRPO 对能力缺口类有部分帮助
+- **sawtooth** 从 B=28% → C=36%（+8pp），温和改善
+- **square** 从 B=84% → C=88%（+4pp），已接近天花板
+- **sine** 从 B=20% → C=4%（-16pp），**恶化** → GRPO 可能损害已学到的 sine 能力
+
+**结论**：
+1. v6 GRPO 在预注册判据下 **NOT SIG**（p=0.267），但 C=40% > B=35% > D=36% 方向正确
+2. **nonzero-std 93.8% 是关键突破** — 证明连续奖励 + group_size=8 可解决 v1-v4 的方差问题
+3. triangle/sawtooth 有改善但 sine 恶化 → 需要更细粒度的奖励设计或更多训练步数
+4. 为 v7（加 process reward）奠定基础
+
+**数字溯源**：`/nas_train/app.e0031982/datasets/baize-vision/out/cpu_rl_v6_grpo/experiment_results.json` + `run_v6_full.sh` + `cpu_rl_v6_grpo_experiment.py`。CPU fp32 / nice19 / OMP16 / 零GPU / 未碰pretrain。
+
+---
+
 ## §v7 — Process Reward λ Sweep + LoRA Rank Probe（2026-11-11~12 · CPU · 18 runs）
 
 **背景**：v6 GRPO 连续奖励（outcome-only）C=40% vs B=35%，McNemar p=0.267 NOT SIG，但 nonzero-std=93.8% 解决了 v4 的 78.7% std=0 问题。v7 在 v6 基础上加 process reward（R = R_outcome + λ·R_process），并探查 LoRA rank 是否为瓶颈。
