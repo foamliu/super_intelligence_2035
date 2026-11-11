@@ -42,8 +42,8 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
   <div class="meta">
     <span>📅 2026-11-11</span>
     <span>🏗 Mamba2-hybrid 2.22B</span>
-    <span>🔥 训练 iter≈166.56k / 700k · step~7.04s<7.4s✅</span>
-    <span>📊 L1: 16 ckpt ✅ | L2: GSM8K=0%@160k🔴(诊断完成:生成退化) MMLU=23.16%@160k(≈随机) BBH=0%@160k🔴 · v5 重启运行中(HumanEval/MBPP lm_eval配置失败·MATH运行中) · 🔬vLLM方案已备(待GPU窗口·.29/.12全占·.17不可达) | L3: 🔧 pipeline脚本已建·模型生成退化 | L4: 数据在.15不可达+定性测试=退化输出</span>
+    <span>🔥 训练 iter≈166.63k / 700k · step~7.0s<7.4s✅</span>
+    <span>📊 L1: 16 ckpt ✅ | L2: GSM8K=0%@160k🔴(诊断完成:生成退化) MMLU=23.16%@160k(≈随机) BBH=0%@160k🔴 · v5 MATH运行中(16/100,~42s/it) · v6已启动(修复confirm_run_unsafe_code+repeat_penalty=1.3测试) · 🔬vLLM方案已备(待GPU窗口) | L3: 🔧 pipeline脚本已建·模型生成退化 | L4: 数据在.15不可达+定性测试=退化输出</span>
   </div>
   <div style="margin-top:12px;font-size:12.5px;background:rgba(0,0,0,.18);border-radius:8px;padding:8px 12px;opacity:.95">
     ⚠️ 本报告是<b>训练监控与决策依据</b>，<b>不进论文正文</b>（2026-11-10 用户令）。用户关注点（2026-11-11）：<b>如何拿到更好的结果</b>。
@@ -215,7 +215,8 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
     <b>MMLU=23.16% 是唯一非零的 L2 分数</b>，因为它是 MCQ 任务（loglikelihood prefill），不需要生成。
   </div>
   <div class="note">
-    <b>v5 重启（#1990 · 19:58）</b>：llama-server 正常启动(port 8083, PID=1648187, t=4, nice=19)，训练 step 7043ms<7.4s✅ 未受影响。HumanEval 失败（lm_eval code_eval metric traceback）· MBPP 失败（需 <code>confirm_run_unsafe_code=True</code>，非仅 <code>HF_ALLOW_CODE_EVAL=1</code>）· MATH 运行中。即使 MATH 完成，预期 0%（生成退化同 GSM8K/BBH）。<br>
+    <b>v5 重启（#1990 · 19:58）</b>：llama-server 正常启动(port 8083, PID=1594930, t=4, nice=19)，训练 step 7043ms<7.4s✅ 未受影响。HumanEval 失败（lm_eval code_eval metric traceback）· MBPP 失败（需 <code>confirm_run_unsafe_code=True</code>，非仅 <code>HF_ALLOW_CODE_EVAL=1</code>）· MATH 运行中(0-shot, limit=100, 16/100, ~42s/it, ETA~1h)。即使 MATH 完成，预期 0%（生成退化同 GSM8K/BBH）。<br>
+    <b>v6 已启动（#1991 · 20:11）</b>：<code>baize_l2_eval_160k_v6.sh</code> 在 .29 后台等待 v5 MATH 完成后自动运行。修复：① HumanEval/MBPP 加 <code>--confirm_run_unsafe_code</code> CLI flag；② llama-server 加 <code>--repeat-penalty 1.3</code>（#1984 诊断发现 RP 可部分打破 SSM 退化循环）；③ MATH 用 RP=1.3 重跑对比 v5 baseline；④ 生成探针验证 RP 效果。<br>
     <b>GSM8K 诊断完成（19:32）</b>：5-shot=0%, 0-shot=0%, 实际输出为退化的重复文本（"The eggs are the same thing that day, the same thing..."）和 token 崩溃（"$111111..."）。<br>
     <b>repeat_penalty=1.3 测试完成（19:39）</b>：0% exact_match，但退化模式改变——从纯重复变为半连贯但无意义的英文（"The birds are not yet known what happens to their food..."），确认双重根因：① llama.cpp SSM 生成 bug（RP 部分缓解）② 模型@23% 训练确实缺乏数学推理能力。
   </div>
@@ -362,7 +363,7 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
   <table>
     <tr><th>层</th><th>评测</th><th>状态</th><th>关键数</th><th>下一步</th></tr>
     <tr><td><b>L1</b></td><td class="l">常识 8 集 (0-shot)</td><td><span class="badge b-ok">✅ 16ckpt</span></td><td>58.13%@160k</td><td class="l">继续每万 ckpt</td></tr>
-    <tr><td><b>L2</b></td><td class="l">复杂推理 6 集</td><td><span class="badge b-bad">🔴 GSM8K=0%@160k</span></td><td>GSM8K=0% · MMLU=23.16%(≈随机) · BBH=0% · v5 重启中(HumanEval/MBPP配置失败·MATH运行中) · 🔬生成退化=llama.cpp SSM bug(待vLLM验证)</td><td class="l">等v5 MATH结果+GPU窗口vLLM验证</td></tr>
+    <tr><td><b>L2</b></td><td class="l">复杂推理 6 集</td><td><span class="badge b-bad">🔴 GSM8K=0%@160k</span></td><td>GSM8K=0% · MMLU=23.16%(≈随机) · BBH=0% · v5 MATH运行中(16/100) · v6已启动(修复confirm_run_unsafe_code+RP=1.3) · 🔬生成退化=llama.cpp SSM bug(待vLLM验证)</td><td class="l">等v5 MATH+v6 RP结果+GPU窗口vLLM验证</td></tr>
     <tr><td><b>L3</b></td><td class="l">Agentic</td><td><span class="badge b-warn">🔧 脚本已建·待运行</span></td><td>— · 模型生成能力不足(pipeline已建)</td><td class="l">MMLU完后运行smoke</td></tr>
     <tr><td><b>L4</b></td><td class="l">领域</td><td><span class="badge b-bad">❌ 未接·调研完</span></td><td>— · 数据在.15不可达</td><td class="l">延后至.15可达+SFT后</td></tr>
   </table>
@@ -442,7 +443,7 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
 </div>
 
 <footer>
-  BaiZe pretrain 线 · 四层能力评测报告 · 2026-11-11 20:05 更新(#1990) · 评测数字仅用于训练监控，不进论文正文
+  BaiZe pretrain 线 · 四层能力评测报告 · 2026-11-11 20:12 更新(#1991) · 评测数字仅用于训练监控，不进论文正文
 </footer>
 </div>
 </body>

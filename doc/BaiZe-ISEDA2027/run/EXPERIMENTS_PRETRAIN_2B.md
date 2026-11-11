@@ -1748,3 +1748,27 @@ L2/L3/L4 低分/空白同一根因 = 训练数据(P-5b/P-8 Ultra-FineWeb-L3)缺�
 - footer #1988
 - 报告: `run/reports/report_pretrain_eval_4tier_zh.html` + 同步至 `doc/reports/`
 
+
+## #1991 · 2026-11-11 20:12 · 四层评测轮 · v6脚本创建+启动
+
+### v5 MATH 进度
+- hendrycks_math_algebra 0-shot limit=100
+- 16/100, ~42s/it, ETA~1h
+- 预期 0%（生成退化同 GSM8K/BBH）
+- llama-server PID=1594930 port 8083 t=4 nice=19
+
+### HumanEval/MBPP 失败根因确认
+- lm_eval 0.4.x 需要 `--confirm_run_unsafe_code` CLI flag (store_true)
+- v5 脚本仅设 `HF_ALLOW_CODE_EVAL=1` env var → 不足
+- 错误: `ValueError: Attempted to run task: humaneval which is marked as unsafe. Set confirm_run_unsafe_code=True to run this task.`
+- 源码: `/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/lm_eval/_cli/run.py:330`
+
+### v6 脚本创建
+- 文件: `baize_l2_eval_160k_v6.sh`
+- 修复: ① HumanEval/MBPP 加 `--confirm_run_unsafe_code` ② llama-server 加 `--repeat-penalty 1.3` ③ MATH 用 RP=1.3 重跑 ④ 生成探针
+- 在 .29 后台 nohup 运行, 等待 port 8083 空闲 (v5 MATH 完成后自动启动)
+- 落盘目录: `gguf_iter_160000_l2_v6/`
+
+### 训练健康
+- iter 166630/700k, step 6943-7205ms (<7.4s✅), loss 2.022-2.044, 0 NaN/skip
+- GPU 8卡 95-100%/75GB
