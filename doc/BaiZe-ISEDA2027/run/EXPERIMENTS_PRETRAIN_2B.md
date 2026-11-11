@@ -1498,3 +1498,33 @@ ssh 10.239.2.29 'tail -5 /proc/146283/fd/1'
 ### 四层报告
 
 - 新建：`reports/report_pretrain_eval_4tier_zh.html`（中文 · 单文件自包含 · 14.5KB）
+
+### L2 v2 崩溃修复 + v3 重评启动（#1960 · 2026-11-11 13:3x）
+
+**v2 崩溃根因**：MMLU 是 `loglikelihood` 任务，标准 `local-completions` 后端（lm_eval `openai_completions.py:115`）要求 response 含 `choice["logprobs"]["token_logprobs"]`，但 llama-server `/v1/completions` 不返回该字段 → `KeyError: 'token_logprobs'`（0/22800 请求即崩）。
+
+**v3 修复方案**：
+- GSM8K（generate_until）→ 继续用 `local-completions`（generation 路径不需要 logprobs）
+- MMLU（loglikelihood）→ 改用 `gguf_lmeval_run.py`（自定义 `GGUFServerLM` 类，logit_bias teacher forcing 方式计算 loglikelihood）
+- 脚本：`run/baize_l2_eval_160k_v3.sh`（NFS 共享路径，避免 /tmp heredoc 引号问题）
+- 服务：llama-server port=8082, -t 4, --parallel 2, nice 19, ctx=4096
+- 输出：`gguf_iter_160000_l2_v3/{gsm8k,mmlu}/results.json`
+
+**执行命令**：
+```bash
+# .29 上
+ssh 10.239.2.29 'tail -5 /proc/146400/fd/1'  # 训练 iter 163,310 step 7172ms loss 2.04
+ssh 10.239.2.29 'setsid bash .../baize_l2_eval_160k_v3.sh > /tmp/baize_l2_eval_160k_v3.log 2>&1 &'
+```
+
+**进度**：GSM8K 7/100 (~30s/it) → ETA ~45min → MMLU 排队 (~53min) → 总 ETA ~14:25+53min ≈ 15:18
+
+### 论文 §4.6 刷新（#1960）
+
+- iter 161,350 → 163,310, tok/s 592K → 590K, loss 2.02 → 2.04
+- `tab:prod-budget`: 161k → 163k done, wall-clock 57d → 58d, total 60.5d → 61.5d
+- 摘要同步刷新
+- benchmark grep = 0 命中 ✅, §4.7 不存在 ✅
+- latexmk: 5 pages / 215825B / 0 err ✅
+- 取数命令：`ssh 10.239.2.29 'tail -5 /proc/146400/fd/1'`（PID 146400 = pretrain_launcher）
+
