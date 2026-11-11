@@ -43,7 +43,7 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
     <span>📅 2026-11-11</span>
     <span>🏗 Mamba2-hybrid 2.22B</span>
     <span>🔥 训练 iter≈168k / 700k · step~7.1s<7.4s✅ · ckpt 168k(刚存) · lr-decay-iters=0(stable段,decay未配置)</span>
-    <span>📊 L1: 16 ckpt ✅(160k=58.13%新高) | L2: GSM8K=0%@160k🔴 MMLU=23.16%(≈随机) BBH=0%🔴 MATH=0%🔴(v5确认,生成退化) · v6运行中(Phase1 HumanEval 72/100~82s/it,--repeat-penalty 1.3,ETA~39min→MBPP→MATH→探针) · 🔬vLLM方案已备(.17 SSH不通,待GPU窗口) | L3: ✅前置全通过(Docker27.5+Harbor0.24+TB tasks+harness)·待v6释放端口8083 | L4: 🔴/nasdata/未挂载.29+.15 SSH不通+生成退化</span>
+    <span>📊 L1: 16 ckpt ✅(160k=58.13%新高) | L2: GSM8K=0%@160k🔴 MMLU=23.16%(≈随机) BBH=0%🔴 MATH=0%🔴(v5确认,生成退化) · v6运行中(Phase1 HumanEval 82/100~80s/it,--repeat-penalty 1.3,ETA~25min→MBPP→MATH→探针) · 🔬vLLM方案已备(.17 SSH不通,待GPU窗口) | L3: ✅前置全通过(Docker27.5+Harbor0.24+TB tasks+harness)·待v6释放端口8083 | L4: 🔴/nasdata/未挂载.29+.15 SSH不通+生成退化</span>
   </div>
   <div style="margin-top:12px;font-size:12.5px;background:rgba(0,0,0,.18);border-radius:8px;padding:8px 12px;opacity:.95">
     ⚠️ 本报告是<b>训练监控与决策依据</b>，<b>不进论文正文</b>（2026-11-10 用户令）。用户关注点（2026-11-11）：<b>如何拿到更好的结果</b>。
@@ -377,15 +377,14 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
   </table>
 </div>
 <div class="card">
-  <h3>本轮(#2007)动作</h3>
+  <h3>本轮(#2008)动作</h3>
   <ol>
-    <li><b>训练健康确认</b>：iter 168,000/700,000（24.0%）· step ~7100ms(7032-7325ms)<7.4s✅ · loss 2.03-2.05 · GPU 8×100%/75GB · lr=1e-3(stable段,decay未开始) · 0 NaN/skip · PID 146283(etimes~788ks≈9.1天) · 168k ckpt 刚保存</li>
-    <li><b>v6 HumanEval 进度</b>：Phase 1 HumanEval 72/100 · ~82s/it · llama-server PID 2671359(port 8083, t=4, nice=19, --repeat-penalty 1.3) · 训练 step 未受影响(7100ms<7.4s✅) · ETA HumanEval~39min(28项×82s) → Phase 2 MBPP(~1.5h) → Phase 3 MATH(RP=1.3,~1h) → Phase 4 探针</li>
-    <li><b>L2 确认结果汇总</b>：GSM8K=0.0%(v3,strict+flexible) · MMLU=23.16%(v3,5700样本,≈随机25%) · BBH=0.0%(v4,boolean_expressions,3-shot CoT) · MATH=0.0%(v5,algebra,0-shot) · 所有生成任务=0%(SSM state崩溃→重复输出) · MCQ正常(MMLU via loglikelihood prefill)</li>
-    <li><b>L1 160k 逐集确认</b>：arc_c=34% · arc_e=62% · boolq=67% · hella=53% · obqa=34% · piqa=75% · sciq=82% · wino=58% · Avg=58.13%(acc_norm口径) · 700k拟合≈62.8%(R²=0.860)</li>
-    <li><b>研究日报 2026-11-11</b>：无 pretrain 新增可用建议（确认,不凑数）</li>
-    <li><b>.17/.15 SSH</b>：.17(10.252.32.17) connection timed out → vLLM 验证仍阻塞 · .15(10.251.36.15) connection timed out → L4 designflow 仍不可达</li>
-    <li><b>下一个万整数 ckpt</b>：170k ETA~3.5h(2000步×7.1s) · v6 eval 应在 170k 前完成(~3h) → 释放 port 8083 → 可运行 L3 smoke + 170k L1 eval</li>
+    <li><b>训练健康确认</b>：iter 168,070/700,000（24.0%）· step ~7100ms(7000-7325ms)<7.4s✅ · loss 2.03-2.05 · GPU 8×93-100%/75GB · lr=1e-3(stable段,decay未开始) · 0 NaN/skip · PID 146283 · 168k ckpt 已保存(22:49) · 命令行确认 --lr-decay-iters 0（decay未配置）</li>
+    <li><b>v6 HumanEval 进度</b>：Phase 1 HumanEval 82/100 · ~80s/it · llama-server(port 8083, t=4, nice=19, --repeat-penalty 1.3) · 训练 step 未受影响(7100ms<7.4s✅) · ETA HumanEval~25min(18项×80s) → Phase 2 MBPP(~1.5h) → Phase 3 MATH(RP=1.3,~1h) → Phase 4 探针 → 释放 port 8083</li>
+    <li><b>GSM8K 结果确认（从 results.json 提取）</b>：exact_match(strict-match)=0.0% · exact_match(flexible-extract)=0.0% · v3 评测(100样本,5-shot,gguf_lmeval_run.py) · 与 MEMORY 记录一致</li>
+    <li><b>L3 前置再确认</b>：Docker=OK · Harbor=OK(~/.local/bin/harbor) · TB tasks=OK(fix-git + break-filter-js-from-html) · 脚本 baize_l3_tb_smoke.sh 就绪 · 仅待 v6 释放 port 8083</li>
+    <li><b>.17/.15 SSH</b>：.17(10.252.32.17) timeout → vLLM 验证阻塞 · .15(10.251.36.15) timeout → L4 designflow 不可达</li>
+    <li><b>下一个万整数 ckpt</b>：170k ETA~3.9h(2000步×7.1s,约 02:40 Nov 12) · v6 eval 应在 170k 前完成(~3h) → 释放 port 8083 → 可运行 L3 smoke + 170k L1 eval</li>
     <li><b>核心发现（不变·待用户拍板）</b>：L2/L3/L4 的低分/空白同一根因——code+math 数据占比 26%(vs DeepSeek 最优 60%) + stable 阶段未 decay + llama.cpp SSM 生成 bug · 建议方案 A(decay 4:2:4)/B(SFT)/C(A+B)</li>
   </ol>
   <div class="alert">
@@ -453,7 +452,7 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
 </div>
 
 <footer>
-  BaiZe pretrain 线 · 四层能力评测报告 · 2026-11-11 23:00 更新(#2007) · 评测数字仅用于训练监控，不进论文正文
+  BaiZe pretrain 线 · 四层能力评测报告 · 2026-11-11 23:10 更新(#2008) · 评测数字仅用于训练监控，不进论文正文
 </footer>
 </div>
 </body>
