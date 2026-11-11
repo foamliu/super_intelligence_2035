@@ -1467,3 +1467,4 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1793621647806_3u5t4	chengk	hfeg0plg96	70	schematic_netlist	case	EDA-Eval-DesignFlow-RailMapMissingAudit-001	2026-11-12 01:34	
 1789610397098_48m5j	ericw	hfhds206	28	analog_context	case	EDA-Eval-DesignFlow-Ddr5ClDelayPivot-001	2026-11-12 02:18	shard D #530 analog_context L2
 1791946116873_bs9rk	e0039503	hfeg0pgn145	34	schematic_netlist	case	EDA-Eval-DesignFlow-CdsLibNetlistInventory-001	2026-11-12 02:44	
+1793583887609_nwlan	reedchen	hfeg0pkn001	44	waveform	case	EDA-Eval-DesignFlow-SetupHoldPostShFold-001	2026-11-12 03:13	
