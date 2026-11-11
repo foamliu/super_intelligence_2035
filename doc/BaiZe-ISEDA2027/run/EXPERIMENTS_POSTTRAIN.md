@@ -5048,3 +5048,81 @@ R176 的 16-prompt 定性评测发现：
 
 ---
 
+## §R304 — Phase1 生成 100% 失败根因分析：工具名不匹配 + 沙盒不可达 → 退化循环 → max-output-token（wake304, 2026-11-12）
+
+> **一句话**：Phase1 生成（`baize_posttrain_phase1_launch.sh --generate --model minicpm5-2b`，run `2026_1112_062640`）8/8 已完成任务 100% 失败（exit 1），0 .py 产出；根因是**工具名不匹配**（任务 prompt 引用 `run_pyAether_code_tool`，但 MCP 注册名是 `pyAether_MCP_server__run_code`）叠加**沙盒不可达**（10.129.32.75 全端口 FILTERED）→ 模型无法验证代码 → 退化循环 → 触发 cline "Model reached the maximum output token limit" → exit 1。**纠正 wake301 结论**：生成也依赖沙盒，.17 上生成+评分双阻塞。已停止浪费运行（GPU4 100%util×34h 预估→0 输出），GPU4 serve 保留。
+
+### 1. 现象
+
+- 运行：`~/eda_code_eval/2026_1112_062640/`，8 workers，158 tasks，5 runs，2500s timeout/task
+- `logs/batch_cline.log`：8 任务完成，**全部失败 (Exit Code: 1)**，无超时（timeout_task.log 空）
+- 每任务耗时 1439–1697s（~24–28 min），iteration 25–79
+- `code/EDA-Eval-PyAether-001~014/` 全空 → `find code/ -name '*.py' | wc -l` = **0**
+- **历史对照**：`~/eda_code_eval/` 下 15+ 个 run（2026_1110_09xxxx ~ 2026_1112_06xxxx）**全部 0 .py**，无一例外
+
+### 2. 根因（三层）
+
+**层 1 — cline 退出错误**（`cli_data/worker_3/data/logs/cline.log` L24371-24372）：
+```
+"errorMessage":"Model reached the maximum output token limit before completing the turn"
+"iteration":79
+"stack":"Error: ... at execute (agent-runtime.ts:732:16)"
+```
+vLLM serve `--max-model-len 32768`，每请求 `max_tokens=26009`。模型在单次响应内重复生成（退化循环）直到撞 26009 token 上限 → cline 抛错 → exit 1。
+
+**层 2 — 退化循环的直接原因：工具名不匹配**（`sessions/.../messages.json` 原文）：
+```
+"The tool `run_pyAether_code_tool` doesn't exist in my available tools.
+ Let me check - I see `pyAether_MCP_server__run_code` instead."
+```
+- EDA-Eval 任务 prompt（158 题固定集，冻结不可改）指令模型用 `run_pyAether_code_tool` 验证代码
+- 但 cline MCP 注册的工具名是 `pyAether_MCP_server__run_code`（带 server 前缀）
+- base 模型无法调和：先尝试 `run_pyAether_code_tool`（未注册→cline 无法执行）→ 回退 `pyAether_MCP_server__run_code` → 再困惑 → 反复 → 退化循环
+- MCP 配置：`cli_data/worker_3/data/settings/cline_mcp_settings.json` → `pyAether_MCP_server.url=http://127.0.0.1:18888/sse`，autoApprove=[search_apis, get_api_details, search_apis_by_keyword, run_code]（**不含 run_pyAether_code_tool**）
+
+**层 3 — 即使工具名对也跑不了：沙盒不可达**
+- `pyAether_MCP_server__run_code` 代理代码执行到远程沙盒 `10.129.32.75:8664`
+- 实测 5 端口（8664/22/8665/8653/8669）**全 FILTERED**（wake304 实测，与 wake301-303 一致）
+- `.17` 本机 pyAether 未安装（system py3.8.10 ModuleNotFoundError）→ 无法本地执行
+- ⇒ 即使模型正确调用 run_code，工具也会 timeout/error → 模型仍无法验证 → 仍退化循环
+- **这纠正了 wake301 的结论**「代码生成可在 .17 本地跑（无需沙盒）」—— **生成同样依赖沙盒**，因为模型工作流的核心环节（run_pyAether_code_tool 验证）必须连沙盒
+
+### 3. D1/D2/D6 诊断意义
+
+| 诊断项 | 本发现证据 |
+|:--|:--|
+| D1 工具调用合法率 | **~0%**：模型引用的工具名（`run_pyAether_code_tool`）与注册名（`pyAether_MCP_server__run_code`）不匹配 → 工具调用无法被执行 → 格式合法但语义非法 |
+| D2 工具调用频次 | task 001 中 `run_pyAether_code_tool` 出现 17 次（messages.json），全部无效 → 高频次但零有效验证 |
+| D6 迭代轮数 Φ | 25–79 iteration 仍未完成 → 模型不会从执行反馈中学习/终止 → 退化循环 |
+| **新发现** | base 模型不仅「做不对」，而是**根本无法产出**（0 .py）—— 比断言失败更底层，是协议级崩溃 |
+
+> 36% 基线必是在**沙盒可达 + 工具名正确**的环境下测得（非 .17 本机）。.17 上从未复现 36%。
+
+### 4. 处置
+
+- **已停止**生成运行 `2026_1112_062640`（`pkill -9 -f 'eda_code_eval/2026_1112_062640'`）：8 workers 全杀，GPU4 util 100%→0%
+- **保留** GPU4 vLLM serve（:8098，PID 425730，41.3GB，Phase1 评测端点）—— serve 是常驻服务，不杀
+- **保留** GPU5/6/7 占位 serve（17:10 令持续占位）
+- 全 8 GPU 仍占位中
+
+### 5. 解锁条件（Phase1 生成要跑通需要同时满足）
+
+1. **沙盒可达**：10.129.32.75 TCP 8664+ 通（外部 ACL，需运维/网络组解除）
+2. **工具名对齐**：MCP 侧注册 `run_pyAether_code_tool` 别名（指向同一 run_code 实现），或在 cline 侧做 tool-name 映射 —— **不改为任务 prompt**（冻结协议）
+3. **模型能验证+提交**：以上两条满足后，模型才能 run_code 成功 → 验证 → submit_and_exit → 产出 .py
+4. 三条全满足前，Phase1 5-run mean±std **无法在 .17 测得**
+
+### 6. 溯源
+
+- batch log：`~/eda_code_eval/2026_1112_062640/logs/batch_cline.log`（8 失败记录）
+- failed：`~/eda_code_eval/2026_1112_062640/logs/failed_task.log`（001-008）
+- cline error：`~/eda_code_eval/2026_1112_062640/cli_data/worker_3/data/logs/cline.log` L24371-24372
+- 工具名困惑：`~/eda_code_eval/2026_1112_062640/cli_data/worker_3/data/sessions/1794436008604_mc78q/1794436008604_mc78q.messages.json`（grep `run_pyAether_code_tool` 17 次 + "doesn't exist" 原文）
+- MCP 配置：`~/eda_code_eval/2026_1112_062640/cli_data/worker_3/data/settings/cline_mcp_settings.json`
+- vLLM 配置：`/tmp/vllm_gpu4_toolcall.log`（`--max-model-len 32768 --enable-auto-tool-choice --tool-call-parser hermes`，max_tokens=26009）
+- 沙盒实测：`for p in 8664 22 8665 8653 8669; do timeout 3 bash -c "echo>/dev/tcp/10.129.32.75/$p"; done` → 全 FILTERED
+- 历史 0-py 证据：`for d in ~/eda_code_eval/2026_111*; do find $d/code -name '*.py'|wc -l; done` → 全 0
+- 无伪造：所有数据为真实进程日志 / cline session 文件 / nvidia-smi 输出。
+
+---
+
