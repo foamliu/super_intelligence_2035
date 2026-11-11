@@ -67,7 +67,7 @@
 1789091963593_k3g96	lorikx	hfeg0pjn200	9	verification	case	EDA-Eval-DesignFlow-QualibTimingFix-001	2026-11-03 23:44	synthesized: SRAM Qualib Verilog<->TMLib timing-constraint fixer; 12 conds (a-l); hidden B=TSMC R2R028SGA Verilog-Only removal arcs cross-input guard; 5 negatives all FAIL; ref PASS all 12; appended to A.jsonl line 47
 1788853067089_zggtc	lorikx	hfeg0pjn200	16	verification	parked		2026-11-03 22:41	templated '启动业务场景: 时序分析'; assistant only explored sos2 flow dir, no deliverable, no gold; thin 25 msgs
 1789038497364_qvkte	e0039503	hfeg0plg49	22	digital	parked		2026-11-03 22:41	templated '启动业务场景: 数字 RTL 设计'; assistant only explored /proj/ddjoc/V0, no deliverable, no gold; thin 26 msgs
-1788775118036_48swh	lorikx	hfeg0pjn200	10	eda_other	parked		2026-11-03 22:41	non-EDA: Chinese input method Q&A; skip
+1788775118036_48swh	lorikx	hfeg0pjn200	10	eda_other	parked		2026-11-11 13:24	r375 peek: U#0 "如何在系统上输入中文" = system input-method config Q&A. U#2 "你不能帮我直接尝试操作吗". Wrong-domain (Linux IM config), not EDA produce-task. rtl:204/verilog:68 from agent env-probing not RTL work.
 1783323056207_rc0jh	e0014566	hfeg0plg49	71	pnr_signoff	parked		2026-11-03 22:41	'请尝试连接virtuoso' analog connect request; not digital/pnr task
 1793584942223_nrkph	alan3zh	hfeg0pkn003	1367	pnr_signoff	case	EDA-Eval-DesignFlow-RedhawkGenInputs-001	2026-11-04 00:17	
 1792552971568_dnkz8	johnl	hfeg0plg99	99	pnr_signoff	case	EDA-Eval-DesignFlow-CdlVbnBulkRemap-001	2026-11-04 00:45	
@@ -102,7 +102,7 @@
 1793674800055_2xkge	e0046913	hfeg0pkn003	89	digital	case	EDA-Eval-DesignFlow-CombSdcGen-001	2026-11-04 10:05	
 1789895218929_1xhgy	miccao	hfeg0plg37	370	eda_other	case	EDA-Eval-DesignFlow-AutoCellTclFlow-001	2026-11-04 10:09	
 1793324309763_tzth7	e0045144	hfeg0pkn004	23	digital	case	EDA-Eval-DesignFlow-DcDontuseGen-001	2026-11-04 11:09	DC dont_use 脚本生成 A档 faithful→B档 synthesized (real lib permission-denied); deepread note trace_deepreads/tzth7_dc_dontuse_script.md; next round synthesize DcDontuseGen-001
-1793620820813_7qn0b	e0045128	hfeg0pkn005	84	verification	parked		2026-11-04 10:48	DFT env 梳理 task; real /rundata files permission-denied (not e0045128 identity); read_files tool_results empty in trace; L1-ish static parse; B档 only w/ synthesized bundle — defer
+1793620820813_7qn0b	e0045128	hfeg0pkn005	84	verification	parked		2026-11-11 13:24	r375 peek: U#0 "帮我梳理一下 DFT 的env" at /rundata/.../DFT. Env-structure catalog task. Sandbox already has analyze_dc_log.py/grep_mblib.py etc. analysis-only env-walk, not produce-task. pt_shell:154 from DFT flow scripts not STA gen.
 1793587958955_0yyhj	e0046913	hfeg0pkn003	89	digital	parked		2026-11-04 10:48	USER#1='解读README/.md/LICENSE并说明.md格式'=doc-explanation Q&A, not design_flow; e0046913已有2xkge/q11i6两case
 1792118902296_4efo6	e0039102	hfeg0pkn002	567	digital	parked		2026-11-04 10:48	USER#1='帮我看下run_vsim_uvs_vps.pl文件框架'=perl-script code-comprehension Q&A, not design_flow
 1791870002859_kvv66	e0045128	hfeg0plg78	22	digital	parked		2026-11-04 10:48	pure concept Q&A (recovery-time/wireload-model/WLM原理), no artifact, not design_flow
@@ -185,11 +185,11 @@
 1792461218411_hojhc	aocao	hfhds224	258	verification	case	EDA-Eval-DesignFlow-SimSpeedupMonitor-001	2026-11-07 06:25	
 1791879279182_rfcu4.messages.json	shanliny	hfeg0pkn001	72	verification	case	EDA-Eval-DesignFlow-CrStateDesyncFix-001	2026-11-07 07:39	
 1791774991665_uks7k	lorikx	hfeg0pkn004	44	digital	case	EDA-Eval-DesignFlow-RtlBistInventory-001	2026-11-07 08:12	
-1793786351814_mmmtz	e0046913	hfeg0pkn003	169	digital	case	EDA-Eval-DesignFlow-DcSynthAnalyze-001	2026-11-07 08:55	
+1793786351814_mmmtz	e0046913	hfeg0pkn003	169	digital	parked	EDA-Eval-DesignFlow-DcSynthAnalyze-001	2026-11-11 13:24	r375 peek: 213msgs/20 user-turns = DC synthesis -> formality -> STA multi-turn flow analysis (U#0 analyze syn, U#5 user-given VT-ratio fix, U#10 env-structure, U#13/U#15 ask FM/STA run cmds, U#16 pt_shell error paste). env-dependent full-flow driving + U#5 user-gives-fix (A-faithful 不合格). Not single deliverable. icc2:345/rtl:276 from flow dir.
 1793261933061_z7stj	ypzheng	hfeg0pkn003	273	digital	case	EDA-Eval-DesignFlow-SimRunDepExtract-001	2026-11-07 09:36	
 1793091608908_lzt3e	dummy	dummy	0		parked		2026-11-07 09:52	accidental dummy claim r193, not a real candidate (out-of-shard waveview)
 1789367633495_9uwcw	lorikx	hfeg0pkn001	250	digital	case	EDA-Eval-DesignFlow-SpecNotifClassify-001	2026-11-07 10:06	
-1793603150610_nr884	thomas1w	hfeg0pkn005	159	digital	case	EDA-Eval-DesignFlow-RedBistFlowRecon-001	2026-11-07 10:33	
+1793603150610_nr884	thomas1w	hfeg0pkn005	159	digital	parked	EDA-Eval-DesignFlow-RedBistFlowRecon-001	2026-11-11 13:24	r375 peek: U#0 "看下redbist的测试流程和数据流 怎么产生测试期望值 记忆错误的地址" = redbist netlist analysis request. Deliverable=prose analysis of complex memory-BIST logic, env-dependent (netlist at /rundata). B档 reframe would need faithful redbist netlist fragment (hard). verilog:936/netlist:292.
 1793772666905_bgkn6	lorikx	hfeg0pkn001	54	digital	case	EDA-Eval-DesignFlow-SramGrpStructAnalyze-001	2026-11-07 11:18	
 1792843726821_uiqz1.messages.json	e0043890	hfeg0pnd002	212	digital	case	EDA-Eval-DesignFlow-DesignListGen-001	2026-11-07 12:50	
 1793849459663_qo3pd.messages.json	e0046913	hfeg0pkn003	39	digital	case	EDA-Eval-DesignFlow-Upf579Patch-001	2026-11-07 14:35	
@@ -354,3 +354,7 @@
 1792389512614_7z9re	williang	10.129.2.12	74	pnr_signoff	parked		2026-11-11 13:02	r374 survey: 241msgs/40 user-turns heterogeneous pasted snippets (.lib cell / SBTest tcl / Perl netlist gen / SKILL CDL / silismart Q&A) = analysis chat grab-bag not clean produce-task. primetime:45/netlist:986 from pasted content not coherent pnr flow.
 1793165432787_o5o6p	e0046913	10.129.2.12	186	digital	parked		2026-11-11 13:02	r374 survey: 131msgs/6 user-turns = UPF low-power VCLP flow setup + demo run (U#4 build LP flow, U#5 switch VCLP path). env-dependent (synopsys VCLP install/license), not offline-verifiable produce-task. synopsys:2213 from install-dir analysis not synthesis gen.
 1789898322144_yhqp5	mike	10.129.2.12	119	digital	parked		2026-11-11 13:02	r374 survey: 382msgs/6 user-turns = install riscv-isa-sim-1.1.0.tar.gz + run README steps + cosim (U#1 install, U#2/U#3 run steps). env-dependent build/run task (gcc/vcs/cosim), not offline-verifiable produce-task. synopsys:650 from vcs module-load not synthesis gen.
+1790652004587_8zuqr	mike	10.129.2.12	201	digital	parked		2026-11-11 13:24	r375 peek: U#0 "home目录下有个skill你找一下" = vague env-exploration of /home/mike. No produce-task, agent does list_allowed_files wandering. synopsys:288/verilog:270 from home-dir tool listing not synthesis.
+1792135280846_sr426	jackliu	10.129.2.12	166	digital	parked		2026-11-11 13:24	r375 peek: U#0 "你可以读取verilog波形文件吗 比如 ncsim.trn" = waveform read request on binary Cadence .trn. Needs simvision/verdi (env-dependent binary tool). analysis-only, no offline-verifiable deliverable. verilog:764/synopsys:359 from simdir path tokens.
+1793189553608_5uqoi	dsgao	10.129.32.75	126	eda_other	parked		2026-11-11 13:24	r375 peek: U#0 = paste of Verdi FSDB dumper loading error (libsscore_vcs202312.so Cannot load). Verdi/VCS env-config debug Q&A. Not produce-task. synopsys:949/drc:88/pex:86 from tool-install paths in error msg not from DRC/PEX run.
+1792992278510_lku2o	e0045144	10.129.2.11	129	digital	parked		2026-11-11 13:24	r375 peek: U#0 "你会做什么" + U#2 "你会根据spec写完整的RTL code吗" = capability-exploration meta Q&A. No actual task/attachment. synopsys:368/rtl:283/verilog:153 from agent self-intro examples not real work.
