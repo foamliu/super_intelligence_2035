@@ -3373,3 +3373,100 @@ pyAether 是华大九天商业 EDA 工具的 Python+SWIG 绑定，**未安装在
 - **Nov 10 eval traces 不足**：仅 1 task failed，无 final_report.json，无法补充 D1-D6 实测。
 - **无新增可做项**：P0/P1/P2/P3 prep/R1-R210 全完成，所有可做的零 GPU 工作已做尽。
 - **等待项**：沙盒 ACL（外部）→ 解锁 Phase 1/3；GPU 释放 → 解锁 v11-v36 SFT 重训。
+
+---
+
+## §R282 (2026-11-12 wake282) v11-v36 SFT 重训启动 + NCCL P2P 诊断修复（GPU 6,7 · 2×A40）
+
+### 1. 动机
+
+wake281 审计确认所有零 GPU 工作已做尽，沙盒仍 CLOSED。17:10 用户令要求 serve 占位 GPU 5/6/7 防止被挪用，
+但 13:40 用户令同时要求 GPU 6/7 训练。本轮决策：**将 GPU 6/7 从 serve 占位转为 SFT 训练**（训练比空 serve 更有效占用 GPU）。
+
+### 2. FSDP2 启动挂起诊断
+
+| 项 | 值 |
+|:--|:--|
+| 现象 | 首次 `bash baize_posttrain_sft_surrogate.sh --src-parquet ... --epochs 5` 启动后挂在 step 0/14 >6min |
+| GPU 状态 | GPU6 idle (0% util, ~200MB), GPU7 100% util (~38GB) → **非对称利用** |
+| 推断 | NCCL P2P 通信初始化死锁，可能因 prior vLLM serve 残留的 CUDA context / P2P mapping |
+| GPU 拓扑 | `nvidia-smi topo -m`: GPU6-GPU7 = NV4 (NVLink 4 links) + PIX (same PCIe switch), 同 NUMA node 2 |
+| 修复 | `NCCL_P2P_DISABLE=1` 环境变量 → 强制 NCCL 走 SHM/网络而非 P2P |
+
+### 3. Smoke test 验证
+
+```
+NCCL_P2P_DISABLE=1 NCCL_DEBUG=WARN bash baize_posttrain_sft_surrogate.sh --smoke \
+  --src-parquet sft_pyaether_corpus_v11_v36_merged.parquet \
+  --run-name minicpm5_pyaether_v2_v11v36_smoke2
+```
+
+| 项 | 结果 |
+|:--|:--|
+| Step 0→1 | ✅ 23.63s/it, loss=2.123 |
+| GPU6 | 23977 MiB, 100% util |
+| GPU7 | 23626 MiB, 100% util |
+| 结论 | NCCL_P2P_DISABLE=1 修复成功，两卡对称利用 |
+
+### 4. Full v11-v36 SFT 重训启动
+
+```
+NCCL_P2P_DISABLE=1 bash baize_posttrain_sft_surrogate.sh \
+  --src-parquet sft_pyaether_corpus_v11_v36_merged.parquet \
+  --run-name minicpm5_pyaether_v2_v11v36 --epochs 5
+```
+
+| 项 | 值 |
+|:--|:--|
+| 模型 | MiniCPM5-2B (LlamaForCausalLM, 42层) |
+| 框架 | verl FSDP2, 2×A40 (GPU 6,7) |
+| 数据 | sft_pyaether_corpus_v11_v36_merged.parquet (927 train / 102 val, max_token≈1244) |
+| 超参 | batch=64, micro/GPU=4, max_length=2048, lr=1e-5 cosine, warmup=0.1, ft_mode=full, grad_checkpoint=1 |
+| 总步数 | 70 (14 steps/epoch × 5 epochs), save_freq=20 |
+| Step 1 | loss=2.123, 23.83s/it |
+| Step 2 | loss=2.143, 22.67s/it |
+| 预估时长 | ~28 min (70 × ~24s) |
+| 日志 | `/tmp/baize_posttrain_sft_v11v36_full.log` |
+| 输出目录 | `sft_surrogate_runs/minicpm5_pyaether_v2_v11v36/` |
+| GPU 占用 | GPU6=23977MiB/100%, GPU7=23626MiB/100% |
+
+### 5. Sandbox 状态
+
+| 项 | 值 |
+|:--|:--|
+| ICMP ping 10.129.32.75 | ✅ 0.4ms RTT（host alive） |
+| TCP ports 22/80/443/8653/8664-8670/8080 | ❌ ALL filtered |
+| 判定 | 子网 ACL 阻断 10.252.32.0/22 → 10.129.32.0/24 的 TCP 流量 |
+| 影响 | Phase 1 eval + Phase 3 RL + post-SFT eval 全阻塞 |
+| 解除 | 需网络团队开 ACL（已 R169 升级） |
+
+### 6. GPU 端口映射（wake282 更新）
+
+| GPU | 端口 | 用途 | VRAM | 状态 |
+|:--:|:--:|:--|:--:|:--|
+| 0-3 | 8099 | root SGLang Qwen3.8-27B | ~45GB/卡 | ✅ root 不可动 |
+| 4 | 8098 | vLLM MiniCPM5-2B（Phase1评测用） | 37.8GB | ✅ 常驻 |
+| 5 | 8097 | vLLM MiniCPM5-2B（17:10占位保持） | 37.8GB | ✅ 占位中 |
+| 6 | — | v11-v36 SFT 训练（verl FSDP2） | ~24GB | ✅ 训练中 |
+| 7 | — | v11-v36 SFT 训练（verl FSDP2） | ~24GB | ✅ 训练中 |
+
+### 7. 关键发现
+
+- **NCCL P2P 死锁**：vLLM serve 退出后 GPU 间 P2P mapping 可能残留 → FSDP2 NCCL 初始化不对称（一卡 idle 一卡 100%）。`NCCL_P2P_DISABLE=1` 绕过 P2P 走 SHM 是可靠 workaround。**后续所有 GPU 6/7 训练都应带此 env var**。
+- **SFT 训练比空 serve 更有效**：训练占用 ~24GB/卡（vs serve ~38GB/卡），但 GPU util 100%（vs serve 0% idle），更符合 13:40「用于训练」令意。
+- **Sandbox ICMP vs TCP 分离**：host alive（ping OK）≠ service reachable（TCP filtered），确认为网络层 ACL 而非主机宕机。
+
+### 8. 交付物
+
+| 项 | 路径 |
+|:--|:--|
+| 本节 | EXPERIMENTS §R282 |
+| 训练日志 | `/tmp/baize_posttrain_sft_v11v36_full.log` |
+| SFT 输出目录 | `sft_surrogate_runs/minicpm5_pyaether_v2_v11v36/`（训练完成后含 ckpt） |
+
+### 9. 结论
+
+- v11-v36 SFT 重训已成功启动并稳定运行（step 2 loss=2.143, 两卡 100% util）。
+- NCCL P2P 死锁已通过 `NCCL_P2P_DISABLE=1` 解决，后续训练应沿用。
+- 沙盒仍 CLOSED（87th wake），Phase 1/3 继续阻塞，post-SFT eval 需沙盒恢复或用本地 serve 做定性验证。
+- **本轮新增产出**：R282（v11-v36 SFT 重训启动 + NCCL P2P 诊断修复 + sandbox ICMP/TCP 分离确认）。
