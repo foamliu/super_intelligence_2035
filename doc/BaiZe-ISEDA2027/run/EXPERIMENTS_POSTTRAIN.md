@@ -9987,9 +9987,50 @@ and #2 (sle) blind families in one round, pushing coverage 89.6% → 92.1%.
 > Cumulative PyAether SFT corpus: v11 (93) + v12 (25) + v13 (45) + v14 (45)
 > + v15 (45) + v16 (45) + v17 (45) + v18 (25) + v19 (30) + v20 (35)
 > + v21 (50) + v22 (65) + v23 (65) + v24 (25) + v25 (30) + v26 (40)
-> + v27 (25) + v28 (50) + v29 (25) + v30 (27) = **835 pairs**.
-> All 835 pairs PASS the 155-entry_point pollution scan. v11-v30 are gated
-> for training.
+> + v27 (25) + v28 (50) + v29 (25) + v30 (27) + v31 (23) = **858 pairs**.
+> All 858 pairs PASS the 155-entry_point pollution scan (v31 independently
+> re-verified: 0 entry_point hits). v11-v31 are gated for training.
+
+---
+
+## R201 — v31 CString + CStringList string-container corpus (wake270, 2026-11-11)
+
+**Goal.** Clear the #1 blind family from the R191 blind scan after v30:
+`CString` (2 eval usages, 1 API) coupled with `CStringList` (1 usage, 1 API)
+— both appear together in eval task 074 (`create_wrapped_cstring_list`).
+
+**API extraction (pyAether MCP `get_api_details`).**
+
+| Class | ctor / key facts |
+|:--|:--|
+| `CString` | `CString(s: char)` or `CString()`; `.value` is full read/write property; empty `CString().value == ''` (NOT `None`). |
+| `CStringList` (runtime name `CString_List` = `QList<CString>`) | **Only the empty ctor `CStringList()` is usable.** The documented `CStringList(i: CString)` ctor raises `TypeError` at runtime → robust pattern is empty ctor + `append()`. 16 QList methods: `at / size / isEmpty / append / prepend / insert / replace / removeAll / removeAt / removeFirst / removeLast / removeOne / takeAt / takeFirst / takeLast / clear`. **Elements must be `CString` objects** (raw Python `str` → `TypeError`). |
+
+**Key runtime caveats captured in corpus.**
+- `CStringList(some_CString)` → `TypeError`; must `lst = CStringList(); lst.append(CString("x"))`.
+- `append("raw")` → `TypeError`; must wrap: `append(CString("raw"))`.
+- `removeFirst` / `removeLast` return `None`; `takeFirst` / `takeLast` return the removed `CString`.
+- `removeAll` returns `int` (count); `removeOne` returns `bool`.
+- `at(i)` returns a *live* `CString` — mutating `.value` is visible through the list.
+- Index out of range raises an exception (not silent).
+
+**Corpus build.** `baize_posttrain_r201_cstring_corpus.py` (520 lines, `py_compile` PASS):
+API_DOCS block → fingerprint scan vs 155 eval entry_points → S1×2 + S3×2 + S4×6 + S5×6 + S6×7 = **23 pairs** → `sft_pyaether_corpus_v31_cstring.jsonl` (25208 B / 23 records, all valid JSON, `contamination_check=PASS`).
+
+**Pollution isolation.**
+- Internal scan: 23/23 PASS, 0 REJECTED vs 155 eval entry_points.
+- Independent re-verification (this wake): 23/23 PASS, 0 entry_point hits; `contamination_check` field all `PASS`.
+- `CString` / `CStringList` are **NOT** eval entry_points (only the consumer `create_wrapped_cstring_list` is an entry_point) → ISOLATE-class helper APIs. S5.1 red line isolates entry_points, not helper API names → teaching public helper API references is compliant.
+- Doctest values (`netA` / `PIN_B7` / `ROUTE_5X`) deliberately differ from the eval's `"HelloEDA"`.
+
+**Blind scan re-run (v31 added to `CORPUS_FILES`).**
+- covered 151 → **153 / 164** (+2); blind 13 → **11**; coverage_ratio 92.1% → **93.3%**.
+- `CString` + `CStringList` blind families **cleared**.
+- New #1 blind = `CColor` (1 usage, 1 API).
+
+**Cumulative corpus.** v11-v31 = 858 pairs (835 + 23), all pollution-gated, training-ready.
+
+**Status.** R201 ✅ complete. Sandbox TCP8667 still CLOSED (75th wake) — blocks Phase 1 eval & Phase 3 RL. GPU occupied by serve placeholders (8095-8099) — v11-v31 SFT re-train awaits GPU release. Formal P3 training awaits pretrain ckpt (ETA ≈ 2026-12-25).
 
 ---
 

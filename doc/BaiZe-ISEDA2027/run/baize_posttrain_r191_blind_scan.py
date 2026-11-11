@@ -38,6 +38,7 @@ CORPUS_FILES = [
     'sft_pyaether_corpus_v28_mde_goa.jsonl',
     'sft_pyaether_corpus_v29_gu_cart.jsonl',
     'sft_pyaether_corpus_v30_sle_enum.jsonl',
+    'sft_pyaether_corpus_v31_cstring.jsonl',
 ]
 
 PAT = re.compile(r'pyScript\.([A-Za-z_][A-Za-z0-9_]*)')
