@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BaiZe 2B 预训练 · 四层能力评测报告</title>
+<style>
+:root{--pri:#0b3d6e;--acc:#1f6feb;--ok:#1a7f37;--warn:#9a6700;--bad:#cf222e;--bg:#f6f8fa;--card:#fff;--bd:#d0d7de;--tx:#1f2328;--mut:#59636e}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;color:var(--tx);background:var(--bg);line-height:1.7;font-size:15px}
+.wrap{max-width:1100px;margin:0 auto;padding:28px 20px 80px}
+header.hero{background:linear-gradient(135deg,#0b3d6e 0%,#1f6feb 100%);color:#fff;border-radius:14px;padding:28px 30px;margin-bottom:22px;box-shadow:0 8px 24px rgba(11,61,110,.18)}
+header.hero h1{margin:0 0 6px;font-size:24px}
+header.hero .sub{font-size:15px;opacity:.95}
+header.hero .meta{margin-top:14px;font-size:13px;opacity:.9;display:flex;flex-wrap:wrap;gap:8px 18px}
+header.hero .meta span{background:rgba(255,255,255,.14);border-radius:999px;padding:2px 12px}
+h2.sec{font-size:20px;margin:34px 0 12px;padding-bottom:8px;border-bottom:2px solid var(--bd)}
+h3.sub{font-size:17px;margin:22px 0 8px;color:var(--pri)}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:18px 22px;margin:16px 0;box-shadow:0 1px 3px rgba(27,31,36,.06)}
+.card h3{margin:0 0 6px;font-size:17px}
+table{border-collapse:collapse;width:100%;margin:12px 0;font-size:13px;background:var(--card)}
+th,td{border:1px solid var(--bd);padding:7px 10px;text-align:center;vertical-align:top}
+th{background:#eef3f8;color:var(--pri);font-weight:600}
+tr:nth-child(even) td{background:#fafbfc}
+td.l{text-align:left}
+.ok{color:var(--ok);font-weight:700}.bad{color:var(--bad);font-weight:700}.warn{color:var(--warn);font-weight:700}
+.badge{display:inline-block;padding:2px 10px;border-radius:999px;font-size:12px;font-weight:700}
+.b-ok{background:#e6f4ea;color:#0b6b2f}.b-warn{background:#fff8ef;color:#9a6700}.b-bad{background:#ffeef0;color:#cf222e}.b-info{background:#ddf4ff;color:#0b3d6e}
+.note{background:#fff8ef;border:1px solid #f0d9b5;border-left:4px solid var(--warn);border-radius:8px;padding:10px 16px;font-size:13px;color:#6a4a00;margin:12px 0}
+.alert{background:#ffeef0;border:1px solid #ffcccc;border-left:4px solid var(--bad);border-radius:8px;padding:10px 16px;font-size:13px;color:#82071a;margin:12px 0}
+.ok-box{background:#f0fff4;border:1px solid #b7f0c5;border-left:4px solid var(--ok);border-radius:8px;padding:10px 16px;font-size:13px;margin:12px 0}
+code{background:#eef1f4;border:1px solid #e1e4e8;border-radius:5px;padding:1px 6px;font-family:Consolas,Menlo,monospace;font-size:12px;color:#0b3d6e}
+.trend{font-size:13px;color:var(--mut)}
+footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var(--mut);font-size:12.5px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+  <h1>BaiZe 2B 预训练 · 四层能力评测报告</h1>
+  <div class="sub">Mamba2-hybrid 2.22B · S1 生产 run（iter 160k+/700k, ~675B tokens）</div>
+  <div class="meta">
+    <span>📅 2026-11-11</span>
+    <span>🏗 Mamba2-hybrid 2.22B</span>
+    <span>🔥 训练 iter≈161k / 700k</span>
+    <span>📊 L1: 16 ckpt ✅ | L2: 重评中 | L3: 空白 | L4: 未接</span>
+  </div>
+  <div style="margin-top:12px;font-size:12.5px;background:rgba(0,0,0,.18);border-radius:8px;padding:8px 12px;opacity:.95">
+    ⚠️ 本报告是<b>训练监控与决策依据</b>，<b>不进论文正文</b>（2026-11-10 用户令）。用户关注点（2026-11-11）：<b>如何拿到更好的结果</b>。
+  </div>
+</header>
+
+<!-- L1 -->
+<h2 class="sec">L1 · 常识推理（8 集）<span class="badge b-ok">✅ 16/20 ckpt</span></h2>
+<div class="card">
+  <h3>评测口径</h3>
+  <table>
+    <tr><td class="l">任务集</td><td class="l">ARC-Challenge / ARC-Easy / BoolQ / HellaSwag / OpenBookQA / PIQA / SciQ / Winogrande</td></tr>
+    <tr><td class="l">口径</td><td class="l">zero-shot · <code>limit=100</code> · GGUF F16 · llama-server CPU（<code>-t 4</code> · <code>nice 19</code> · 串行单 ckpt）</td></tr>
+    <tr><td class="l">已评</td><td class="l">10k–160k（<b>16 个</b>万整数 ckpt）</td></tr>
+    <tr><td class="l">下一个</td><td class="l">170k（ETA ≈12h 后）</td></tr>
+  </table>
+</div>
+<div class="card">
+  <h3>L1 能力趋势（harness Avg %）</h3>
+  <table>
+    <tr><th>iter</th><th>已训 token</th><th>Avg(harness)</th><th>Δ</th></tr>
+    <tr><td>10k</td><td>42B</td><td>51.50%</td><td>—</td></tr>
+    <tr><td>20k</td><td>84B</td><td>52.00%</td><td class="ok">+0.50</td></tr>
+    <tr><td>30k</td><td>126B</td><td>53.00%</td><td class="ok">+1.00</td></tr>
+    <tr><td>40k</td><td>168B</td><td>55.12%</td><td class="ok">+2.12</td></tr>
+    <tr><td>50k</td><td>210B</td><td>54.25%</td><td class="bad">-0.87</td></tr>
+    <tr><td>60k</td><td>252B</td><td>54.25%</td><td>±0.00</td></tr>
+    <tr><td>70k</td><td>294B</td><td>56.00%</td><td class="ok">+1.75</td></tr>
+    <tr><td>80k</td><td>336B</td><td>57.00%</td><td class="ok">+1.00</td></tr>
+    <tr><td>90k</td><td>378B</td><td>57.88%</td><td class="ok">+0.88</td></tr>
+    <tr><td>100k</td><td>419B</td><td>57.75%</td><td class="bad">-0.13</td></tr>
+    <tr><td>110k</td><td>461B</td><td>58.00%</td><td class="ok">+0.25</td></tr>
+    <tr><td>120k</td><td>503B</td><td>56.75%</td><td class="bad">-1.25</td></tr>
+    <tr><td>130k</td><td>545B</td><td>58.00%</td><td class="ok">+1.25</td></tr>
+    <tr><td>140k</td><td>587B</td><td>55.25%</td><td class="bad">-2.75</td></tr>
+    <tr><td>150k</td><td>629B</td><td>57.12%</td><td class="ok">+1.87</td></tr>
+    <tr><td><b>160k</b></td><td><b>671B</b></td><td><b>58.13%</b></td><td class="ok">+1.01 新高</td></tr>
+  </table>
+  <p class="trend">📊 51.50%(10k)→58.13%(160k)，<b>+6.63pp</b>。700k 对数拟合≈62.8%(R²=0.860)。波动±2.75pp 在 <code>limit=100</code> 抽样误差内（stderr≈±4.5%）。</p>
+</div>
+<div class="ok-box">
+  <b>L1 结论</b>：常识推理持续上升，160k 新高 58.13%。与 Xmodel-2(1.2B,1.5T,61.79%) 差距~3.7pp。<b>下一步</b>：继续每万整数 ckpt 评测。
+</div>
+
+<!-- L2 -->
+<h2 class="sec">L2 · 复杂推理（6 集）<span class="badge b-warn">⚠️ 异常调查中</span></h2>
+<div class="card">
+  <h3>P-8 历史结果（44.4B tokens · 2026-10-15）</h3>
+  <table>
+    <tr><th>任务</th><th>口径</th><th>BaiZe P-8</th><th>Xmodel-2</th><th>诊断</th></tr>
+    <tr><td>GSM8K</td><td>5-shot flex-extract</td><td class="bad">1.52%</td><td>55.88%</td><td class="bad">🔴 异常低</td></tr>
+    <tr><td>GSM8K strict</td><td>5-shot strict-match</td><td class="bad">0.00%</td><td>—</td><td class="bad">🔴 从未匹配</td></tr>
+    <tr><td>MATH-500</td><td>exact_match</td><td class="bad">0.00%</td><td>25.50%</td><td class="bad">🔴</td></tr>
+    <tr><td>MMLU</td><td>0-shot acc</td><td class="warn">23.79%</td><td>48.87%</td><td class="warn">🟡 偏低</td></tr>
+    <tr><td>BBH</td><td>0-shot flex-extract</td><td class="warn">14.04%</td><td>48.40%</td><td class="warn">🟡</td></tr>
+    <tr><td>HumanEval</td><td>pass@1</td><td class="bad">0.61%</td><td>29.88%</td><td class="bad">🔴</td></tr>
+    <tr><td>MBPP</td><td>pass@1</td><td class="bad">0.00%</td><td>29.20%</td><td class="bad">🔴</td></tr>
+    <tr><td><b>CX6 Avg</b></td><td></td><td class="bad"><b>6.66%</b></td><td><b>39.62%</b></td><td class="bad">差33pp</td></tr>
+  </table>
+</div>
+<div class="card">
+  <h3>🔴 L2 异常诊断（P0 · 用户令 2026-11-11）</h3>
+  <div class="alert"><b>核心问题</b>：GSM8K=1.52%(flex)/0.00%(strict)，对 2B 模型异常低（正常应>5%）。</div>
+  <table>
+    <tr><th>维度</th><th>证据</th><th>指向</th></tr>
+    <tr><td class="l">strict-match=0%</td><td class="l">模型从未产生 "The answer is X" 格式 → 格式生成能力缺失</td><td><span class="badge b-bad">能力</span></td></tr>
+    <tr><td class="l">训练量极低</td><td class="l">P-8 仅 44.4B tok（当前 160k=671B，<b>15×</b>）→ 早期 ckpt 生成能力必然弱</td><td><span class="badge b-bad">能力(早期)</span></td></tr>
+    <tr><td class="l">L1 正常</td><td class="l">同期 L1=48.01%(loglikelihood 正常) → 模型加载/权重/分词无误</td><td><span class="badge b-ok">排除配置</span></td></tr>
+    <tr><td class="l">LL vs generation</td><td class="l">L1=loglikelihood，L2 GSM8K=generation → 生成路径可能有差异</td><td><span class="badge b-warn">部分配置</span></td></tr>
+    <tr><td class="l">stop tokens</td><td class="l">eval log: <code>until:['Question:','&lt;/s&gt;','&lt;|im_end|&gt;']</code> → 标准，无误</td><td><span class="badge b-ok">排除配置</span></td></tr>
+  </table>
+  <div class="note">
+    <b>初步结论</b>：<b>主要是 44.4B tokens 早期训练的能力问题</b>，非评测配置错误。<br>
+    ① strict-match=0% → 模型尚未学会生成答案格式（训练量不足）；② L1 正常 → 模型加载/权重/分词无误；③ stop tokens/few-shot 配置均标准。<br>
+    <b>当前 160k(671B tok, 15× P-8) 生成能力可能已显著改善 → 正在重评确认。</b>
+  </div>
+</div>
+<div class="card">
+  <h3>当前重评（160k · 进行中）</h3>
+  <table>
+    <tr><th>任务</th><th>口径</th><th>状态</th><th>结果</th></tr>
+    <tr><td>MMLU</td><td>0-shot, limit=100, CPU</td><td class="warn">⏳ 进行中</td><td>—</td></tr>
+    <tr><td>GSM8K</td><td>5-shot, limit=100, CPU</td><td class="warn">⏳ 进行中</td><td>—</td></tr>
+    <tr><td>BBH/MATH/HumanEval/MBPP</td><td>—</td><td>📋 待追加</td><td>—</td></tr>
+  </table>
+  <p class="trend">📝 脚本：<code>/tmp/baize_l2_eval_160k.sh</code>（.29）· 输出：<code>gguf_iter_160000_l2_test/</code></p>
+</div>
+
+<!-- L3 -->
+<h2 class="sec">L3 · Agentic 能力 <span class="badge b-bad">❌ 完全空白</span></h2>
+<div class="card">
+  <h3>评测目标与现状</h3>
+  <table>
+    <tr><th>评测</th><th>描述</th><th>现状</th><th>优先级</th></tr>
+    <tr><td>Terminal-Bench 2.0</td><td class="l">89 题 Docker 沙盒终端任务</td><td class="bad">❌ 空白</td><td>P0（较轻）</td></tr>
+    <tr><td>SWE-bench Verified</td><td class="l">500 题 GitHub issue 修复</td><td class="bad">❌ 空白</td><td>P1（较重）</td></tr>
+    <tr><td>τ-bench / WebArena / GAIA</td><td class="l">其他 agentic 评测</td><td class="bad">❌ 空白</td><td>P2</td></tr>
+  </table>
+</div>
+<div class="card">
+  <h3>已有资源（harness 线产出 · 用 kimi-k2.6 作骨干）</h3>
+  <table>
+    <tr><th>资源</th><th>路径</th><th>说明</th></tr>
+    <tr><td class="l">TB 7 路横评报告</td><td class="l"><code>report_harness_terminalbench_7way_final_zh.html</code></td><td class="l">cline 48.3% 最优</td></tr>
+    <tr><td class="l">SWE-bench pilot20</td><td class="l"><code>report_harness_swebench_verified_pilot20_zh.html</code></td><td class="l">20 题 pilot</td></tr>
+    <tr><td class="l">SWE-bench full500</td><td class="l"><code>report_harness_swebench_verified_full500_zh.html</code></td><td class="l">500 题</td></tr>
+    <tr><td class="l">TB 题集</td><td class="l"><code>~/terminal-bench/</code></td><td class="l">89 目录 · Docker 镜像</td></tr>
+  </table>
+  <div class="alert"><b>关键差异</b>：harness 线用 kimi-k2.6(API)，BaiZe 2B 需<b>本地 GPU 服务</b>(vllm/sglang)。当前训练占满 .29 GPU。</div>
+</div>
+<div class="card">
+  <h3>L3 建设计划</h3>
+  <table>
+    <tr><th>步骤</th><th>内容</th><th>依赖</th><th>状态</th></tr>
+    <tr><td>1</td><td class="l">vllm/sglang 服务化 BaiZe 2B(160k)</td><td class="l">GPU 窗口</td><td class="warn">📋 待资源</td></tr>
+    <tr><td>2</td><td class="l">cline harness → 本地 endpoint</td><td class="l">步骤1</td><td>📋</td></tr>
+    <tr><td>3</td><td class="l">TB 10 题 smoke → 全 89 题</td><td class="l">步骤1+2</td><td>📋</td></tr>
+  </table>
+</div>
+
+<!-- L4 -->
+<h2 class="sec">L4 · 领域能力 <span class="badge b-bad">❌ 未接</span></h2>
+<div class="card">
+  <h3>已有资源</h3>
+  <table>
+    <tr><th>资源</th><th>路径</th><th>说明</th></tr>
+    <tr><td class="l">designflow 评测脚本</td><td class="l"><code>doc/ZhuLong_DAC2027/benchmark/designflow/cline_eval/</code></td><td class="l">20+ 任务 · <code>run_one.sh</code></td></tr>
+    <tr><td class="l">zhulong 消融评测</td><td class="l"><code>doc/ZhuLong_DAC2027/run/eval/</code></td><td class="l">框架已有</td></tr>
+  </table>
+  <div class="note"><b>同 L3 约束</b>：需 GPU 服务化模型。designflow 用 cline harness，配 baseUrl 即可对接。</div>
+</div>
+
+<!-- Summary -->
+<h2 class="sec">总览与下一步</h2>
+<div class="card">
+  <h3>四层能力总表</h3>
+  <table>
+    <tr><th>层</th><th>评测</th><th>状态</th><th>关键数</th><th>下一步</th></tr>
+    <tr><td><b>L1</b></td><td class="l">常识 8 集</td><td><span class="badge b-ok">✅ 16ckpt</span></td><td>58.13%@160k</td><td class="l">继续每万 ckpt</td></tr>
+    <tr><td><b>L2</b></td><td class="l">复杂推理 6 集</td><td><span class="badge b-warn">⚠️ 重评中</span></td><td>P-8:6.66% / 160k:?</td><td class="l">等MMLU+GSM8K</td></tr>
+    <tr><td><b>L3</b></td><td class="l">Agentic</td><td><span class="badge b-bad">❌ 空白</span></td><td>—</td><td class="l">需GPU窗口</td></tr>
+    <tr><td><b>L4</b></td><td class="l">领域</td><td><span class="badge b-bad">❌ 未接</span></td><td>—</td><td class="l">同L3</td></tr>
+  </table>
+</div>
+<div class="card">
+  <h3>本轮(#1959)动作</h3>
+  <ol>
+    <li><b>L2 异常诊断</b>：P-8 eval log 分析 → <b>主要 44.4B tok 早期能力问题</b>（strict-match=0% + L1正常排除配置）</li>
+    <li><b>L2 重评启动</b>：160k GSM8K(5shot)+MMLU(0shot) · limit=100 · CPU · <b>进行中</b></li>
+    <li><b>四层报告</b>：本文件（用户令 §5 交付物）</li>
+    <li><b>L3/L4 盘点</b>：harness 线有 TB+SWE 题集；designflow 有 20+ 任务；<b>都需 GPU 服务化</b></li>
+  </ol>
+  <div class="note">
+    <b>待决策</b>：① L3/L4 需 GPU 服务化模型——训练 decay 阶段安排还是等 pretrain 完成？② L2 若 160k 仍异常(GSM8K&lt;5%)——需排查 llama.cpp Mamba2 generation？
+  </div>
+</div>
+
+<footer>
+  BaiZe pretrain 线 · 四层能力评测报告 · 2026-11-11 · 评测数字仅用于训练监控，不进论文正文
+</footer>
+</div>
+</body>
+</html>

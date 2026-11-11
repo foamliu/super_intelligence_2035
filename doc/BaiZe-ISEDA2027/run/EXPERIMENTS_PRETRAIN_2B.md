@@ -1451,3 +1451,50 @@ ssh 10.239.2.29 'tail -5 /proc/146283/fd/1'
 - 报告刷新: `reports/report_pretrain_llamacpp_scaling_zh.html`（24,331 B, 16/20 ckpt, 10k–160k 全覆盖）
 - 生成器: `gen_llamacpp_scaling_report.py`（TARGET_ITERS 含 10k–200k，幂等）
 - 全 16 点 harness Avg 曲线: 51.50→52.00→53.00→55.12→54.25→54.25→56.00→57.00→57.88→57.75→58.00→56.75→58.00→55.25→57.12→**58.13**
+
+## 2026-11-11 — L2 异常诊断 + 四层评测启动（用户令 2026-11-11）
+
+> 用户令：「如何拿到更好的结果」· 四层评测目标：L1 常识 / L2 复杂推理 / L3 Agentic / L4 领域
+
+### L2 异常诊断（P0 · GSM8K 1.52% 调查）
+
+**历史评测**：P-8 `hf_iter_1149`（44.4B tok, 2026-10-15）· lm-eval 0.4.13 · GPU HF bf16
+
+| 任务 | BaiZe P-8 (44.4B) | 口径 | 诊断 |
+|:--|--:|:--|:--|
+| GSM8K flex-extract | 1.52% | 5-shot, full 1319 | 🔴 异常低 |
+| GSM8K strict-match | 0.00% | 5-shot | 🔴 从未匹配格式 |
+| MATH-500 | 0.00% | exact_match | 🔴 |
+| MMLU | 23.79% | 0-shot acc | 🟡 偏低但非零 |
+| BBH | 14.04% | 0-shot flex-extract | 🟡 |
+| HumanEval | 0.61% | pass@1 | 🔴 |
+| MBPP | 0.00% | pass@1 | 🔴 |
+| **CX6 Avg** | **6.66%** | | 🔴 vs Xmodel-2 39.62% |
+
+**诊断证据**（eval log: `nemo_experiments/p8_adamw_decay/lm_eval_14/cx_gsm8k.log`）：
+1. `strict-match=0.00%` → 模型从未产生 "The answer is X" 格式 → **格式生成能力缺失**
+2. P-8 仅 44.4B tokens（当前 160k=671B，**15×**）→ 早期 ckpt 生成能力必然弱
+3. 同期 L1=48.01%（loglikelihood 正常）→ 模型加载/权重/分词无误
+4. `until: ['Question:', '</s>', '<|im_end|>']` → stop tokens 标准，无误
+5. `trust_remote_code: False` → 但 L1 正常，排除加载问题
+
+**初步结论**：**主要是 44.4B tokens 早期训练的能力问题**，非评测配置错误。
+- L1(loglikelihood)正常 vs L2(generation)异常 → 早期 ckpt 能做"选最优"但不能"生成答案"
+- 当前 160k(671B tok) 生成能力可能已改善 → 正在重评
+
+### L2 重评（160k · 进行中）
+
+- 脚本：`/tmp/baize_l2_eval_160k_v2.sh`（.29）
+- 口径：llama-server CPU · `ctx=4096` · `-t 4` · `nice 19` · `limit=100`
+- MMLU(0-shot) + GSM8K(5-shot) · lm_eval `local-completions` · `model=hf_iter_160000`(本地 tokenizer)
+- 输出：`nemo_experiments/baize2b/lm_eval_results/gguf_iter_160000_l2_test/`
+- 状态：🟡 进行中
+
+### L3/L4 资源盘点
+
+- L3 (Agentic)：harness 线已有 TB 89 题 + SWE-bench 500 题（用 kimi-k2.6 API）；BaiZe 2B 需 GPU 服务化 → 待资源窗口
+- L4 (领域)：designflow 评测脚本在 `doc/ZhuLong_DAC2027/benchmark/designflow/cline_eval/`（20+ 任务，`run_one.sh`）；同 L3 需 GPU
+
+### 四层报告
+
+- 新建：`reports/report_pretrain_eval_4tier_zh.html`（中文 · 单文件自包含 · 14.5KB）
