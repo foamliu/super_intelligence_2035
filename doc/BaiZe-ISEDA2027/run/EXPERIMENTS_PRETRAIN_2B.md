@@ -1603,3 +1603,11 @@ L2/L3/L4 低分/空白同一根因 = 训练数据(P-5b/P-8 Ultra-FineWeb-L3)缺�
 - llama-server PID 2369157 port 8083 · HumanEval(0-shot,gen,pass@1,limit=100) 运行中
 - 落盘目录：`gguf_iter_160000_l2_v4/`
 - 脚本：`baize_l2_eval_160k_v4.sh`
+
+### v4 部分失败 + v5 修复（2026-11-11 #1980）
+- **HumanEval/MBPP 失败**：lm_eval `code_eval` 指标未缓存（离线模式无法下载）→ ValueError
+  - 修复：通过 proxy (http://172.19.92.25:13128) 下载 `code_eval` 到 `/nas_train/app.e0031982/.cache/modules/evaluate_modules/metrics/evaluate-metric--code_eval/`
+- **MATH 失败**：`hendrycks_math_algebra` 4-shot 触发 `build_qa_turn` 断言 `Answer is not a string! : [-9, 9]`
+  - 修复：v5 改用 0-shot 绕过 few-shot context 构建
+- **BBH 运行中**：`bbh_cot_fewshot_boolean_expressions` 3-shot, limit=100, ~69s/it, 6/100, ETA~1.5h
+- **v5 已启动**：`baize_l2_eval_160k_v5.sh` 在 .29 后台 (PID 3102868) 等待 BBH 完成后重跑 HumanEval+MBPP+MATH(0-shot)

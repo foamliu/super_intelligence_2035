@@ -97,12 +97,18 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
     <tr><td>GSM8K strict</td><td>0-shot, logprob</td><td class="bad">0.00%</td><td class="bad">0.00%</td><td>—</td><td class="bad">🔴 无改善</td></tr>
     <tr><td>GSM8K flex</td><td>0-shot, logprob</td><td class="bad">0.00%</td><td class="bad">1.52%</td><td>55.88%</td><td class="bad">🔴 退化</td></tr>
     <tr><td>MMLU</td><td>0-shot, logprob, 5700 sample</td><td class="warn">23.16%</td><td class="warn">23.79%</td><td>48.87%</td><td class="warn">🟡 ≈随机(25%)</td></tr>
-    <tr><td>HumanEval</td><td>0-shot, gen, pass@1</td><td class="badge b-info">🟡 v4 运行中</td><td class="bad">0.61%</td><td>29.88%</td><td>—</td></tr>
-    <tr><td>MBPP</td><td>0-shot, gen, pass@1</td><td class="badge b-info">🟡 v4 排队</td><td class="bad">0.00%</td><td>29.20%</td><td>—</td></tr>
-    <tr><td>MATH</td><td>4-shot, gen</td><td class="badge b-info">🟡 v4 排队</td><td class="bad">0.00%</td><td>25.50%</td><td>—</td></tr>
-    <tr><td>BBH</td><td>3-shot, gen</td><td class="badge b-info">🟡 v4 排队</td><td class="warn">14.04%</td><td>48.40%</td><td>—</td></tr>
+    <tr><td>HumanEval</td><td>0-shot, gen, pass@1</td><td class="badge b-bad">❌ v4 失败(缺code_eval)</td><td class="bad">0.61%</td><td>29.88%</td><td>🔧 v5 修复</td></tr>
+    <tr><td>MBPP</td><td>0-shot, gen, pass@1</td><td class="badge b-bad">❌ v4 失败(缺code_eval)</td><td class="bad">0.00%</td><td>29.20%</td><td>🔧 v5 修复</td></tr>
+    <tr><td>MATH</td><td>0-shot, gen</td><td class="badge b-bad">❌ v4 失败(数据格式)</td><td class="bad">0.00%</td><td>25.50%</td><td>🔧 v5 0-shot修复</td></tr>
+    <tr><td>BBH</td><td>3-shot, gen</td><td class="badge b-info">🟡 v4 运行中(6/100)</td><td class="warn">14.04%</td><td>48.40%</td><td>ETA~1.5h</td></tr>
   </table>
-  <p class="trend">📍 v3 落盘：<code>gguf_iter_160000_l2_v3/{gsm8k,mmlu}/results.json</code> · v4 落盘：<code>gguf_iter_160000_l2_v4/</code></p>
+  <p class="trend">📍 v3 落盘：<code>gguf_iter_160000_l2_v3/{gsm8k,mmlu}/results.json</code> · v4 落盘：<code>gguf_iter_160000_l2_v4/</code> · v5 落盘：<code>gguf_iter_160000_l2_v5/</code></p>
+  <div class="note">
+    <b>v4 失败原因 + v5 修复</b>（2026-11-11 #1980）：<br>
+    ① <b>HumanEval/MBPP</b>：lm_eval 的 <code>code_eval</code> 指标未缓存（离线模式无法下载）→ 已通过 proxy 下载 <code>code_eval</code> 到 HF cache → v5 将重跑<br>
+    ② <b>MATH</b>：<code>hendrycks_math_algebra</code> 4-shot 触发 <code>build_qa_turn</code> 断言失败（answer 是 list 不是 string）→ v5 改用 0-shot 绕过<br>
+    ③ <b>BBH</b>：唯一正常运行的任务，~69s/it，ETA~1.5h
+  </div>
 </div>
 <div class="card">
   <h3>P-8 历史结果（44.4B tokens · 2026-10-15）</h3>
@@ -280,7 +286,8 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
   <ol>
     <li><b>训练健康确认</b>：iter 165,220 · step 7150ms (<7.4s✅) · loss ~2.03 · 0 NaN/skip · GPU 8×95-100%/75GB · ~588K tok/s</li>
     <li><b>L2 v3 ✅ 完成</b>：GSM8K = 0.0%(strict+flex) · MMLU = 23.16%(5700 sample, 0-shot, logprob) · 结果落盘 <code>gguf_iter_160000_l2_v3/</code></li>
-    <li><b>L2 v4 🟡 运行中</b>：<code>baize_l2_eval_160k_v4.sh</code> 在 .29 后台 · llama-server PID 2369157 port 8083 · HumanEval(0-shot,gen) 运行中 → MBPP → MATH → BBH 依次排队</li>
+    <li><b>L2 v4 部分失败</b>：HumanEval/MBPP 失败(缺 code_eval 指标·已通过 proxy 下载修复) · MATH 失败(数据格式 assert·v5 改 0-shot) · BBH 🟡 运行中(6/100,~69s/it,ETA~1.5h)</li>
+    <li><b>L2 v5 已启动</b>：<code>baize_l2_eval_160k_v5.sh</code> 在 .29 后台等待 BBH 完成后自动重跑 HumanEval+MBPP+MATH(0-shot) · code_eval 已缓存✅</li>
     <li><b>🔧 L3 Pipeline</b>：脚本 <code>baize_l3_tb_smoke.sh</code> 已建 · 待 v4 完成后(port 8083 空闲)运行 smoke</li>
     <li><b>无新万整数 ckpt</b>：最新 ckpt iter_160000(已评) · 下一个 170k ETA~10h</li>
   </ol>
