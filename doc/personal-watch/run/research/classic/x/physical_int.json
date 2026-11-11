@@ -1,0 +1,65 @@
+{
+ "handle": "physical_int",
+ "name": "Physical Intelligence (@physical_int) / X",
+ "bio": "Physical Intelligence (Pi), bringing AI into the physical world.",
+ "tweets": [
+  {
+   "id": "2110115571681690051",
+   "created_at": "2026-10-13 21:08 UTC",
+   "created_at_ms": 1791925730000,
+   "text": "Announcing the beta release of the Pi API. We’ve partnered with companies across diverse industries to adapt our models to their robots and applications, from harvesting strawberries to assembling servers. Now we’re opening access to more teams. https://t.co/0T9tTFjVqM",
+   "url": "https://x.com/physical_int/status/2110115571681690051",
+   "handle_guess": "physical_int"
+  },
+  {
+   "id": "2108675639859724458",
+   "created_at": "2026-10-09 21:47 UTC",
+   "created_at_ms": 1791582424000,
+   "text": "Excited to see our partners at @Ultraroboticsco announce their $50M Series A! Ultra is a great example of what's becoming possible when general-purpose robot foundation models meet real-world deployments!",
+   "url": "https://x.com/physical_int/status/2108675639859724458",
+   "handle_guess": "physical_int"
+  },
+  {
+   "id": "2108565469682688330",
+   "created_at": "2026-10-09 14:29 UTC",
+   "created_at_ms": 1791556157000,
+   "text": "Robotics has a distribution problem. Today, Ultra is announcing $62M in funding to solve it, including a $50M Series A led by @hiFramework.\\\n\\\nWe believe that deployment is the bottleneck in robotics.\\\n\\\nIt’s relatively easy to make a robot look impressive in a controlled https://t.co/ZLStllFcI8",
+   "url": "https://x.com/physical_int/status/2108565469682688330",
+   "handle_guess": "Ultraroboticsco"
+  },
+  {
+   "id": "2067678249904493008",
+   "created_at": "2026-06-18 18:38 UTC",
+   "created_at_ms": 1781807885000,
+   "text": "New work with @nvidia: evaluating robot policies entirely inside a world model. The policy acts, the model imagines the consequences, and the imagined evals predict real-world results. 🧵\\\n\\\nreal vs world-model rollout side by side📷 https://t.co/yR9JmyAE4G",
+   "url": "https://x.com/physical_int/status/2067678249904493008",
+   "handle_guess": "physical_int"
+  },
+  {
+   "id": "2062216498215870656",
+   "created_at": "2026-06-03 16:55 UTC",
+   "created_at_ms": 1780505701000,
+   "text": "π0.5 driving autonomous anastomosis!",
+   "url": "https://x.com/physical_int/status/2062216498215870656",
+   "handle_guess": "physical_int"
+  },
+  {
+   "id": "2047461280278012012",
+   "created_at": "2026-04-23 23:43 UTC",
+   "created_at_ms": 1776987783000,
+   "text": "https://t.co/fMuxiHumwA",
+   "url": "https://x.com/physical_int/status/2047461280278012012",
+   "handle_guess": "r_mcguire"
+  },
+  {
+   "id": "2044841263254638862",
+   "created_at": "2026-04-16 18:12 UTC",
+   "created_at_ms": 1776363123000,
+   "text": "Our newest model, π0.7, has some interesting emergent capabilities: it can control a new robot to fold shirts for which we had no shirt folding data, figure out how to use an appliance with language-based coaching, and perform a wide range of dexterous tasks all in one model! https://t.co/s9NxKfb7pe",
+   "url": "https://x.com/physical_int/status/2044841263254638862",
+   "handle_guess": "physical_int"
+  }
+ ],
+ "http_status": 200,
+ "fetched_at": "2026-11-12 00:07:32"
+}

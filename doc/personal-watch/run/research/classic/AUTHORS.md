@@ -6,7 +6,7 @@
 > 🔴 **找 X 的铁律（不猜）**：只登记**能从可访问页面读到**的 handle（作者本人主页 `href`，并用 X 页 `og:description` 二次核对身份）；**读不到 = 写「未找到 X」**。
 > 🚫 不许猜 handle（猜错会 follow 到无关账号，比不 follow 更糟）。X.com 自 **2026-11-11 12:4x** 起经本机 Mihomo 代理**只读可达**；**follow 仍需登录态 ⇒ 未自动执行**（0 follow，未假装）。
 
-**本轮快照**：累计 **39** 人（第七轮 +5：David Silver / Oriol Vinyals / Sergey Levine / Chelsea Finn / Moo Jin Kim）｜已发信 **9**（Tri Dao · Shunyu Yao · Haoxing Ren · Jason Wei · Noah Shinn · Kaiming He · Haotian Liu · Karthik Narasimhan · **Moo Jin Kim**）｜X 已核验 **17**（`@tri_dao` / `@_albertgu` / `@ShunyuYao12` / `@edwardjhu` / `@jyangballin` / `@_jasonwei` / `@ilyasut` / `@RichardSSutton` / `@imhaotian` / `@ChunyuanLi` / `@karthik_r_n` / `@demishassabis` / `@koraykv` / **`@OriolVinyalsML` / `@svlevine` / `@chelseabfinn` / `@moo_jin_kim`**）｜X 未找到 **22**｜**X 可达（本机 Mihomo 7897，本轮 21:0x 复测 `x.com` `200` / 0.52s / 出口 `178.249.213.185`）**｜已 follow **0**（follow 需登录态 ⇒ 仍靠用户手动，见第二节）｜言论台账 **8 条**（V1–V8；完整可引用 **5** 条 = V1/V2/V4/V6/V8，V3/V5/V7 正文不完整**未采用**，V8 >30 天降级）
+**本轮快照**：累计 **43** 人（第八轮 +4：John Jumper / Igor Babuschkin / Danny Driess / Kimi Team）｜已发信 **10**（Tri Dao · Shunyu Yao · Haoxing Ren · Jason Wei · Noah Shinn · Kaiming He · Haotian Liu · Karthik Narasimhan · Moo Jin Kim · **Danny Driess**）｜X 已核验 **20**（`@tri_dao` / `@_albertgu` / `@ShunyuYao12` / `@edwardjhu` / `@jyangballin` / `@_jasonwei` / `@ilyasut` / `@RichardSSutton` / `@imhaotian` / `@ChunyuanLi` / `@karthik_r_n` / `@demishassabis` / `@koraykv` / `@OriolVinyalsML` / `@svlevine` / `@chelseabfinn` / `@moo_jin_kim` / **`@ibab` / `@DannyDriess` / `@Kimi_Moonshot`**）｜X 未找到 **23**｜**X 可达（本机 Mihomo 7897，2026-11-12 00:0x 实测 `x.com` `200` / 0.49s、8 个 profile 均 `200`）**｜已 follow **0**（follow 需登录态 ⇒ 仍靠用户手动，见第二节）｜言论台账 **8 条**（V1–V8；完整可引用 **5** 条 = V1/V2/V4/V6/V8，V3/V5/V7 正文不完整**未采用**，V8 >30 天降级；本期 `voice_ready` 用 V4 + V6）
 
 
 ---
@@ -526,6 +526,60 @@
 
 ---
 
+### 40. John Jumper
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | John Jumper（美国人 ⇒ 信按英文写） |
+| 机构 | **Google DeepMind**（AlphaFold 一作 / 通讯；2024 诺贝尔化学奖共同得主） |
+| 代表论文 | AlphaFold（Nature 2021，DOI `10.1038/s41586-021-03819-2`，一作） |
+| 邮箱 | **未找到**（DeepMind 不公开个人邮箱；无本人主页可核） |
+| 主页 | **未找到本人页**（机构页 <https://deepmind.google/technologies/alphafold/> 为项目页） |
+| X 账号 | **未找到 X**（`x.com/JohnJumper` 实测 `200` 但 `og:description` = `19 followers · 7 following. Joined Dec 2008`、无 bio ⇒ **身份不可证，拒绝登记**，🚫 不猜） |
+| 状态 | 待跟踪（无邮箱、无可证 X ⇒ 本轮不发信、不 follow） |
+| 备注 | AlphaFold 的「把领域先验编码进结构」是 vision 线几何通道的参照；但**公开联系通道缺失** ⇒ 只作经典条目作者，不作本线沟通对象。 |
+
+### 41. Igor Babuschkin
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Igor Babuschkin（德国出生 ⇒ 信按英文写） |
+| 机构 | **River AI（CEO & 联合创始人）**· 曾任 xAI（Research & Engineering）· AlphaStar 发表时在 DeepMind |
+| 代表论文 | AlphaStar（Nature 2019，DOI `10.1038/s41586-019-1724-z`，二作） |
+| 邮箱 | **未找到**（无公开个人页/邮箱） |
+| 主页 | **未找到** |
+| X 账号 | **@ibab**（`x.com/ibab` `200`；bio = `CEO & Co-Founder @river_ai_inc. Previously @xAI, Research & Engineering`，与 AlphaStar 二作身份一致） |
+| 状态 | 待跟踪 · X 待 follow（无邮箱 ⇒ 不发信） |
+| 备注 | AlphaStar 联盟式 RL 的工程负责人之一；其言论对「多智能体训练/大规模 RL 工程」有参考价值，但**当前创业方向与本线偏离** ⇒ 只跟踪、不发信。 |
+
+### 42. Danny Driess
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Danny Driess（德国人 ⇒ 信按英文写） |
+| 机构 | **Physical Intelligence**（Research Scientist）· 曾任 Google DeepMind（Gemini × robotics） |
+| 代表论文 | π0（arXiv `2410.24164`，第三作）· PaLM-E（ICML 2023，一作） |
+| 邮箱 | **danny.driess@gmail.com**（来源：本人主页 `https://dannydriess.github.io/` 页内防爬写法 `danny dot driess at gmail dot com`，`HTTP 200` / 29,043 B 实测，按原样还原） |
+| 主页 | <https://dannydriess.github.io/>（实测 `200`） |
+| X 账号 | **@DannyDriess**（来源：本人主页 `href="https://twitter.com/DannyDriess"`；`x.com/DannyDriess` `200`，`<title>Danny Driess (@DannyDriess) / X</title>`） |
+| 状态 | **已发信**（2026-11-12 00:07 CST，B 轨第八轮；英文 191 词）· X 待 follow |
+| 备注 | 信问两个取舍：① 低数据域内（数万张图）flow matching 动作头 vs 离散 token 化，哪个更稳；② 动作块（action chunk）长度与异构动作空间（不同 arity 的 tool call）如何兼容。答复直接回填 zhulong 的动作接口消融。 |
+
+### 43. Kimi Team（Moonshot AI）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | **Kimi Team / Moonshot AI（团队署名，无单一作者）**；作者列表中含 **Jianlin Su**（见主表 #20） |
+| 机构 | Moonshot AI（月之暗面，北京） |
+| 代表论文 | Kimi k1.5（arXiv `2501.12599`，团队署名） |
+| 邮箱 | **未找到**（官方站未给研究联系邮箱；🚫 不用客服/商务邮箱冒充作者） |
+| 主页 | <https://www.kimi.com>（产品站；<https://www.moonshot.cn> 机构站） |
+| X 账号 | **@Kimi_Moonshot**（`200`；`<title>Kimi.ai (@Kimi_Moonshot) / X</title>`，官方账号，非个人） |
+| 状态 | 待跟踪 · X 待 follow（团队账号只作发布源，不发信） |
+| 备注 | long2short 与「RL 作为新 scaling 轴」是 zhulong 的直接参照；**团队账号的言论只作公司口径**，引用须标「Moonshot 官方账号」。 |
+
+---
+
 ## 二、🟢 X 能力探测（只读 · 2026-11-11 **第四轮 12:4x 起已恢复可达**）
 
 
@@ -552,9 +606,9 @@
 
 **落地**：脚本 `research/classic/x_fetch.py`，原始结果落 `research/classic/x/<handle>.json`（6 个文件，共 15.3 KB，可入 git）。
 
-### 待 follow 清单（请用户手动执行 · 17 个 handle 已在 X 侧二次核验）
+### 待 follow 清单（请用户手动执行 · 21 个 handle 已在 X 侧二次核验）
 
-| # | 人物 | handle | 主页链接 | X 侧核验（第四轮实测） | 为什么值得跟 |
+| # | 人物 | handle | 主页链接 | X 侧核验（2026-11-12 实测） | 为什么值得跟 |
 |:--|:--|:--|:--|:--|:--|
 | 1 | Tri Dao | `@tri_dao` | <https://x.com/tri_dao> | `200`，bio = `Asst. Prof @PrincetonCS, Chief Scientist @togethercompute…` | FlashAttention / Mamba 作者，kernel 与长上下文进展的第一手来源 |
 | 2 | Albert Gu | `@_albertgu` | <https://x.com/_albertgu> | `200`，bio = `assistant prof @mldcmu. chief scientist @cartesia…` | SSM / Mamba 路线主推者，架构选择的判断值得跟踪 |
@@ -573,9 +627,13 @@
 | 15（**第七轮新增**） | Sergey Levine | `@svlevine` | <https://x.com/svlevine> | `200`，bio = `Associate Professor at UC Berkeley / Co-founder, Physical Intelligence` | OpenVLA 资深作者 ⇒ VLA / 动作接口的一手来源 |
 | 16（**第七轮新增**） | Chelsea Finn | `@chelseabfinn` | <https://x.com/chelseabfinn> | `200`，bio = `Asst Prof of CS & EE @Stanford / Co-founder of Physical Intelligence…` | OpenVLA 末位 + 元学习 ⇒ VLA 与 long-context agent 方法言论 |
 | 17（**第七轮新增**） | Moo Jin Kim | `@moo_jin_kim` | <https://x.com/moo_jin_kim> | `200`，bio = `Research @OpenAI | CS PhD @StanfordAILab` | OpenVLA 一作 ⇒ 该配方细节的最直接作者（今日已发信） |
+| 18（**第八轮新增**） | Igor Babuschkin | `@ibab` | <https://x.com/ibab> | `200`，bio = `CEO & Co-Founder @river_ai_inc. Previously @xAI, Research & Engineering` | AlphaStar 二作 ⇒ 大规模多智能体 RL 的工程一手经验 |
+| 19（**第八轮新增**） | Danny Driess | `@DannyDriess` | <https://x.com/DannyDriess> | `200`，`<title>Danny Driess (@DannyDriess) / X</title>`；handle 源自主页 `href` | π0 三作 / PaLM-E 一作 ⇒ VLA 与 flow matching 动作接口一手信息 |
+| 20（**第八轮新增**） | Kimi Team（Moonshot AI） | `@Kimi_Moonshot` | <https://x.com/Kimi_Moonshot> | `200`，`<title>Kimi.ai (@Kimi_Moonshot) / X</title>`（官方账号） | Kimi k1.5 团队 ⇒ long2short / RL scaling 的官方发布源 |
+| 21（**第八轮新增**） | Physical Intelligence | `@physical_int` | <https://x.com/physical_int> | `200`，bio = `Physical Intelligence (Pi), bringing AI into the physical world.` | π0 / OpenVLA 系团队账号 ⇒ VLA 模型与数据发布的一手源 |
 
 
-> 17 个 handle 均来自其**本人主页的 `href`** 或**论文作者身份可核对**的路径（前 6 个第四轮、7–10 第五轮、11–13 第六轮、14–17 第七轮），并用 X 主页 `og:description` **二次核对 bio 与身份一致**；`x.com/AlecRadford` 虽 `200` 但 bio 无身份信息 ⇒ **拒绝登记**（见主表 #33）。用户 follow 后请把状态改为 `已follow` 并写日期。
+> 21 个 handle 均来自其**本人主页的 `href`** 或**论文作者身份可核对**的路径（前 6 个第四轮、7–10 第五轮、11–13 第六轮、14–17 第七轮、18–21 第八轮），并用 X 主页 `og:description` / `<title>` **二次核对身份一致**；`x.com/AlecRadford` 虽 `200` 但 bio 无身份信息、`x.com/JohnJumper` 虽 `200` 但仅 19 followers 且无 bio ⇒ **均拒绝登记**（见主表 #33 / #40）。用户 follow 后请把状态改为 `已follow` 并写日期。
 
 ### 已核验言论台账（第四轮首获 · 原文 + 时间 + 链接）
 
@@ -584,15 +642,15 @@
 | V1 | Albert Gu `@_albertgu` | 2026-11-07 | "it's hilarious how many have taken the bitter lesson to mean just scaling up transformers. it's about scaling, but innovations in algorithmic primitives can lead to much more efficient scaling" | <https://x.com/_albertgu/status/2119206160410800219> | ✅ 已进日报 `voice_ready`（架构消融口径） |
 | V2 | Tri Dao `@tri_dao` | 2026-10-28 | "Super interesting result: H-Net learns to dynamically tokenize variable names in coding data as separate tokens, and it scales much better on code compared to BPE" | <https://x.com/tri_dao/status/2115531348161028374> | ✅ 已进日报 `voice_ready`（代码语料 tokenizer） |
 | V3 | Jason Wei `@_jasonwei` | 2026-11-10 22:31 | 起句 "Created a \"benchmark benchmark\": a frequency distribution of which benchmarks were reported by the frontier labs in 2026…"（**正文含转义引号，HTML 内嵌串被截断；推文页正文未渲染**） | <https://x.com/_jasonwei/status/2120283338640621826> | ❌ **未采用**：不满足「原文完整 + 可核验」，不冒充完整原文；仅在此登记，待下轮用其它入口取全文后再评估 |
-| V4 | Richard S. Sutton `@RichardSSutton` | 2026-11-07 18:57 | "Brute force computation is not enough for intelligence. Clever new methods are needed. The science of AI is far from finished. IMHO" | <https://x.com/RichardSSutton/status/2119142310894334262> | 🕓 **本期未用（受「每期 ≤2 条」上限）**，原文已核验 ⇒ **下期 `voice_ready` 首选候选**；话题点 = 「暴力算力 vs 更聪明的方法」；风险 = 是**观点**且带 `IMHO`，🚫 不得写成结论 |
+| V4 | Richard S. Sutton `@RichardSSutton` | 2026-11-07 18:57 | "Brute force computation is not enough for intelligence. Clever new methods are needed. The science of AI is far from finished. IMHO" | <https://x.com/RichardSSutton/status/2119142310894334262> | ✅ **已进日报 `voice_ready`（2026-11-12 期）**；话题点 = 「暴力算力 vs 更聪明的方法」；风险 = 是**观点**且带 `IMHO`，🚫 不得写成结论 |
 | V5 | Karthik Narasimhan `@karthik_r_n` | 2026-11-05 21:38 | 起句 `Just like everything else in the global economy, the future will have lots of AI agents for specialized tasks,  essentially creating multi-developer agentic systems that can benefit greatly from working together. @awhanjie 's latest paper`（**抓到的 `full_text` 在此处截断**；推文页正文未渲染） | <https://x.com/karthik_r_n/status/2118457961727275111> | ❌ **未采用（正文不完整）**：推文页 `200`、`og:title` = `Karthik Narasimhan (@karthik_r_n) on X` 作者可核，但正文不完整 ⇒ 按令**不冒充完整原文**；下轮换入口（thread 首条 / 转载全文）再评估 |
-| V6（**第七轮新增**） | Chelsea Finn `@chelseabfinn` | 2026-10-24 22:09 UTC | "Generative value classifiers are a new parametrization of Q-functions that don't require action conditioning. We think these may combine gracefully with large, pre-trained policies and learn/generalize better from a richer output signal. Paper: https://t.co/pNphW8m0uf"（原文两处换行，此处以空格连接；**起止完整**） | <https://x.com/chelseabfinn/status/2114117117813706782> | 🕓 **本期未用（受「每期 ≤2 条」上限）**，推文页 `200` + `og:title` = `Chelsea Finn (@chelseabfinn) on X` 双核验 ⇒ **下期 `voice_ready` 候选**；话题点 = 「不依赖动作条件的价值函数」；风险 = 是**作者观点 + 自家论文**，须标「作者自述」 |
+| V6（**第七轮新增**） | Chelsea Finn `@chelseabfinn` | 2026-10-24 22:09 UTC | "Generative value classifiers are a new parametrization of Q-functions that don't require action conditioning. We think these may combine gracefully with large, pre-trained policies and learn/generalize better from a richer output signal. Paper: https://t.co/pNphW8m0uf"（原文两处换行，此处以空格连接；**起止完整**） | <https://x.com/chelseabfinn/status/2114117117813706782> | ✅ **已进日报 `voice_ready`（2026-11-12 期）**，推文页 `200` + `og:title` 双核验；话题点 = 「不依赖动作条件的价值函数」；风险 = 是**作者观点 + 自家论文**，须标「作者自述」 |
 | V7（**第七轮新增**） | Sergey Levine `@svlevine` | 2026-11-09 06:02 UTC | 起句 `A VLM can figure out semantics: which object to grasp, where to put it. But how do we turn this knowledge into fluent and dexterous actions? At CoRL on Tuesday, Andy and Will will talk about Flow Reversal Steering: a method for passing VLM …"（**抓到的 `full_text` 在引号处截断**） | <https://x.com/svlevine/status/2119672075589726281> | ❌ **未采用（正文不完整）**：推文页 `200` + `og:title` = `Sergey Levine (@svlevine) on X` 作者可核，但正文不完整 ⇒ 按令**不冒充完整原文** |
 | V8（**第七轮新增**） | Oriol Vinyals `@OriolVinyalsML` | 2026-08-05 16:05 UTC | "Thirteen years ago, a quick email exchange with @JeffDean brought me to @Google. After an unforgettable journey from Brain, to DeepMind, and to @GoogleDeepMind, working on seq2seq or distillation, and co-leading huge projects such as AlphaStar, and Gemini, I'm saying goodbye to https://t.co/v2zK39buQ1"（起止完整） | <https://x.com/OriolVinyalsML/status/2085034508777304440> | 🕓 **>30 天 ⇒ 降级**（2026-08-05，98 天），**不进 `voice_ready`**；只作作者动向记录（已离开 Google，创办 Discovery Loop） |
 
 
 
-> ⚠️ 引用纪律：只有 **V1 / V2** 两条的原文在「profile 页内嵌 JSON」与「单条推文页 `og:title` 作者核对」两处一致，才进日报 `voice_ready`；**每条都附原链接与时间**，中文仅作翻译、不作转述。
+> ⚠️ 引用纪律：`voice_ready` 只采用**原文完整 + 作者可核**的条目（V1 / V2 / V4 / V6 / V8；V3 / V5 / V7 正文截断不采用），**每条附原链接与时间**，中文仅作翻译、不作转述；V8 >30 天已降级。
 
 **每个 handle 的原始快照**：`research/classic/x/<handle>.json`（字段 `bio` / `name` / `tweets[]`（`id` / `created_at` / `text` / `url`）/ `fetched_at`）。
 
@@ -613,6 +671,7 @@
 | 2026-11-11 15:05（**第五轮**） | Haotian Liu | `2304.08485` LLaVA | 本人当前主页 `mailto:`（`haotian-liu.github.io`，`200`） | `SENT OK`（`liuhaotian.cn@gmail.com`，**中文 215 字**） |
 | 2026-11-11 18:06（**第六轮**） | Karthik Narasimhan | GPT-1（无 arXiv） | 本人主页 `karthiknarasimhan.com` 的 `mailto:`（percent-encoded，`200` / 14,706 B 实测） | `SENT OK`（`karthikn@princeton.edu`，**英文 164 词**） |
 | 2026-11-11 21:04（**第七轮**） | Moo Jin Kim | `2406.09246` OpenVLA | 本人主页 `moojink.github.io` 防爬写法 `moojink at cs dot stanford dot edu`（`200` / 33,139 B 实测） | `SENT OK`（`moojink@cs.stanford.edu`，**英文 195 词**；⚠️ 已入职 OpenAI，若退信记「通道失效」） |
+| 2026-11-12 00:1x（**第八轮**） | Danny Driess | `2410.24164` π0 | 本人主页 `dannydriess.github.io` 防爬写法 `danny dot driess at gmail dot com`（`200` / 29,043 B 实测） | `SENT OK`（`danny.driess@gmail.com`，**英文 178 词**） |
 
 | 2026-11-11 12:4x–13:0x（**第四轮**） | （本轮 **0 封**） | 新增经典 `2005.14165` / `2203.02155` / `2302.13971` | 逐个实测：`hugotouvron.github.io` `404` · `longouyang.github.io` `404` · `ashishvaswani.com` `000` · 未命中任何 `mailto:` | **不发信**（按令不猜邮箱）。该轮结束时累计 **5 封**（分属三轮，每轮 ≤3）；第四轮把额度留给「有可核验邮箱」的候选 —— 本轮没有合格的 ⇒ **宁缺勿凑**（当日最终累计 = **9 封**，见上方各行） |
 

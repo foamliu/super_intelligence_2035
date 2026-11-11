@@ -5658,3 +5658,6 @@
 | 2026-11-11 | 2611.12712 | Will AI mess my RTL? A snapshot-based approach to verifying AI-written RTL | cs.SE | 收录 |
 | 2026-11-11 | 2611.14009 | Coding Agent Memory Post-Training II: Unlocking the Memory Potential of Pre-trained File Operations for Long-Horizon Tasks via On-Policy Distillation | cs.LG | 收录 |
 | 2026-11-11 | 2611.13541 | Agent Benchmarks Stop Ranking Before They Run Out of Tasks | cs.AI | 收录 |
+| 2026-11-12 | 2611.13452 | SLIC: Reinforcement Fine-Tuning Small LMs for Multi-Turn Analog Circuit Optimization | cs.LG | 收录 |
+| 2026-11-12 | 2611.13393 | Plumbline: When the Loss Lies, Validating LLM Training Correctly | cs.DC | 收录 |
+| 2026-11-12 | 2611.13709 | Do They Do as They Are Told? Investigating Coding Agents' Adherence to Explicit Instructions in Context Files | cs.SE | 收录 |

@@ -10,7 +10,7 @@
 >
 > **元数据核验**：标题 / 首次提交日 均取自 arXiv 官方 API（`export.arxiv.org/api/query?id_list=...`，2026-11-11 两轮实测 `HTTP 200` + `application/atom+xml; charset=utf-8`，首轮 4/4、第二轮 4/4 = 累计 8/8）。
 
-**本轮快照**：累计 **27** 条（首轮 11:5x 收 4 条；第二轮 11:4x 补 4 条 EDA / agent / PEFT；第三轮 12:1x 补 4 条 RoPE / SWE-bench / Reflexion / CoT；第四轮 12:4x 补 3 条 GPT-3 / InstructGPT / LLaMA；第五轮 15:0x 补 4 条 ResNet / seq2seq / Dyna / LLaVA；第六轮 18:0x 补 4 条 GPT-1 / GPT-2 / Kaplan scaling laws / DQN；**第七轮 21:0x 补 4 条** AlphaGo / AlphaGo Zero / Gemini / OpenVLA）｜ 覆盖（一篇可服务多线，按文内「与我们工作的关系」逐条计数）：pretrain **18** · vision **6** · harness **13** · data **13** · zhulong **18** · designflow **8**
+**本轮快照**：累计 **31** 条（首轮 11:5x 收 4 条；第二轮 11:4x 补 4 条 EDA / agent / PEFT；第三轮 12:1x 补 4 条 RoPE / SWE-bench / Reflexion / CoT；第四轮 12:4x 补 3 条 GPT-3 / InstructGPT / LLaMA；第五轮 15:0x 补 4 条 ResNet / seq2seq / Dyna / LLaVA；第六轮 18:0x 补 4 条 GPT-1 / GPT-2 / Kaplan scaling laws / DQN；第七轮 21:0x 补 4 条 AlphaGo / AlphaGo Zero / Gemini / OpenVLA；**第八轮 2026-11-12 00:0x 补 4 条** AlphaFold / AlphaStar / Kimi k1.5 / π0）｜ 覆盖（一篇可服务多线，按文内「与我们工作的关系」逐条计数）：pretrain **20** · vision **9** · harness **17** · data **16** · zhulong **21** · designflow **10**
 
 > 🆕 **第四轮（2026-11-11 12:4x）新增 3 条 = 「规模 → 指令 → 开放权重」三段主线**：GPT-3（few-shot 能力从哪来）→ InstructGPT（对齐/指令跟随的范式起点）→ LLaMA（用「多 token」把开放权重做到可用）。三篇合起来回答 data 线当前最实际的问题：**token 预算、指令数据、公开配比**。
 >
@@ -22,6 +22,10 @@
 > 🆕 **第七轮（2026-11-11 21:0x）新增 4 条 = 「搜索 / 自我对弈 / 多模态家族 / 视觉-语言-动作」**：AlphaGo（策略/价值网络 + MCTS，首次击败人类职业棋手）→ AlphaGo Zero（去掉人类数据，纯自我对弈）→ Gemini（Ultra/Pro/Nano 多模态家族，报告口径）→ OpenVLA（7B 开源 VLA，DINOv2+SigLIP 融合 + 离散动作）。**必读清单覆盖：本轮后 10/10 组均至少一条落点**（第 3 组 AlphaGo、第 8 组 DeepMind 家族、第 10 组 VLA 均补齐）。⚠️ 组内仍有未收子项，见文末候选池（AlphaFold / AlphaStar / Kimi / GLM-4 / MiniMax-01 / RT-1·RT-2·π0·Octo / SORA）。
 
 > **第七轮核验证据（可复核）**：arXiv API `id_list=2312.11805` 与 `2406.09246` **2/2** `HTTP 200` + `application/atom+xml`（83,259 B / 4,376 B；首条 2023-12-19、第二条 2024-06-13，均取 **v5 / v3** 最新版本标题）；Nature 两条经 **Crossref 2/2 `200`**（`nature16961` → 529(7587):484–489, 2016-01-27；`nature24270` → 550(7676):354–359, 2017-10）；被引数为 **OpenAlex 4/4 `200`**、查询日 **2026-11-11**。Nature 摘要文本取自 `nature.com/articles/<id>` 页面 `dc.description`（2/2 `200`），**只引摘要内出现的数字**。
+
+> 🆕 **第八轮（2026-11-12 00:0x）新增 4 条 = 「领域先验 / 自我对弈 / RL scaling / VLA 主干复用」**：AlphaFold（把领域约束编码进网络 + CASP 盲测）→ AlphaStar（联盟式多智能体 RL）→ Kimi k1.5（RL 作为新 scaling 轴 + long2short）→ π0（VLM 主干 + flow matching 动作专家）。**必读清单组内剩余**：GLM-4 / MiniMax-01、VLA 其余（RT-1 / RT-2 / Octo）、SORA、Llama 2/3、LLaVA-1.5、Tree of Thoughts / SWE-agent、TD-Gammon、Christiano 2017 / Stiennon 2020。
+
+> **第八轮核验证据（可复核）**：`nature.com/articles/s41586-021-03819-2` 与 `s41586-019-1724-z` 均 `HTTP 200`，摘要取自 `dc.description`（只引摘要内数字）；arXiv API `id_list=2501.12599,2410.24164` `HTTP 200` + `application/atom+xml`（11,826 B，首次提交 2025-01-22 / 2024-10-31）；OpenAlex `4/4 200`（45,663 / 3,799 / 1,436 / 3,214，查询日 2026-11-12）。
 
 ---
 
@@ -484,10 +488,78 @@
 
 ---
 
+## 28. Highly accurate protein structure prediction with AlphaFold
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Highly accurate protein structure prediction with AlphaFold |
+| 作者（前 3） | John Jumper · Richard Evans · Alexander Pritzel（et al.；DeepMind；通讯含 Demis Hassabis / John Jumper） |
+| 年份 | 2021 |
+| 会议 / 期刊 | **Nature 596(7873): 583–589**（DOI `10.1038/s41586-021-03819-2`，OpenAlex 卷期页码已核） |
+| 被引数 | **45,663**（OpenAlex，查询日 2026-11-12；S2 未查，🚫 不跨源比较） |
+| arXiv / DOI | **无 arXiv** ｜ DOI <https://doi.org/10.1038/s41586-021-03819-2> ｜ 官方介绍 <https://deepmind.google/technologies/alphafold/> |
+| 一句话贡献 | 用「多序列比对（MSA）+ 深度学习」把蛋白质三维结构预测做到**原子级精度**：据摘要，在 **CASP14** 上「多数目标达到与实验结构可竞争」的精度并大幅超过其他方法，且**在没有同源结构时**仍可用。 |
+| 与我们工作的关系 | **vision（几何先验，间接）**：AlphaFold 的核心不是「更大的 ViT」，而是**把领域约束（物理/生物先验、MSA 进化信息）编码进网络结构**；对应我们工业图像（版图 / SEM / 波形）里「已知几何/工艺约束该以什么形式进模型」。<b>动作</b>：视觉线在下一版视觉塔预注册里加一组「显式几何通道 vs 纯像素」对照（同数据、同预算），<b>判据</b>：显式几何臂在 held-out 新节点/新图层上 > 纯像素 +2 个绝对点才保留。<br>**data（先验数据 vs 原始数据）**：MSA 相当于「同族历史样本」而非更多标注；对应 data 线「同族仓库/同族版图」的检索增强。<b>动作</b>：data 线为每条样本记 `family_id`，做「是否检索同族上下文」A/B。<br>**harness（盲测协议）**：CASP = 题目冻结 + 统一提交 + 统一判分，是防泄漏典范；<b>动作</b>：harness 设计 EDA 评测时固定「冻结题目 → 提交 → 统一判分」，报告写清冻结日期。<br>**风险**：① 生物「进化同源」在版图/波形无严格对应物，🚫 不可把 MSA 类比当可直接落地的模块；② 45,663 被引主要来自生命科学，不代表与我们的相关度；③ 「原子级」是 CASP14（2020）口径。 |
+
+首次收录: 2026-11-12（第八轮）｜ 状态: 元数据已核验（Nature 页面 `dc.description` `200`；OpenAlex `200`）
+
+---
+
+## 29. Grandmaster level in StarCraft II using multi-agent reinforcement learning
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Grandmaster level in StarCraft II using multi-agent reinforcement learning |
+| 作者（前 3） | Oriol Vinyals · Igor Babuschkin · Wojciech M. Czarnecki（et al.；DeepMind；含 David Silver） |
+| 年份 | 2019 |
+| 会议 / 期刊 | **Nature 575(7782): 350–354**（DOI `10.1038/s41586-019-1724-z`） |
+| 被引数 | **3,799**（OpenAlex，查询日 2026-11-12；S2 未查） |
+| arXiv / DOI | **无 arXiv** ｜ DOI <https://doi.org/10.1038/s41586-019-1724-z> |
+| 一句话贡献 | 用**多智能体 RL + 持续进化的「联盟（league）」**（人类对局与智能体对局混用、主策略与克制策略共存）在完整《星际争霸 II》达到**宗师**水平：据摘要，三个种族均达宗师、**高于 99.8% 的官方排名玩家**（前 0.2%）。 |
+| 与我们工作的关系 | **zhulong（自对弈与陪练课程，直接）**：联盟 = 一组**互相克制、持续更新**的对手，而非单一固定 baseline；对应我们「陪练模型生成难例」的课程设计。<b>动作</b>：zhulong 线把「单基线 RL」改为「3–5 个历史快照 + 1 个主策略」小联盟，主策略只与联盟对打，<b>判据</b>：固定评测集胜率提升且对最强历史快照不退步（防只赢当前陪练）。<br>**harness（防过拟合评测）**：联盟天然构造「训练时未见但同分布」的对手；<b>动作</b>：harness 的 agent 评测引入动态题库/对手池，每轮用不同快照，报告「对池均值 + 最差对手」两列。<br>**designflow（多轮任务）**：SC2 是长时程、部分可观测、动作空间巨大的决策问题，与 EDA 多步工具调用同构；<b>动作</b>：designflow 造题显式标注「部分可观测」与「环境会变化」两类，作为 L4/L5 保真度新维度。<br>**风险**：① SC2 动作空间与奖励由游戏给定，EDA 的「胜负」需自定义且多指标，🚫 不可照搬算法；② 宗师/99.8% 是 2019 天梯口径；③ 联盟训练成本极高，只能借思路不能借规模。 |
+
+首次收录: 2026-11-12（第八轮）｜ 状态: 元数据已核验（Nature 页面 `dc.description` `200`；OpenAlex `200`）
+
+---
+
+## 30. Kimi k1.5: Scaling Reinforcement Learning with LLMs
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Kimi k1.5: Scaling Reinforcement Learning with LLMs |
+| 作者（前 3） | Kimi Team（Moonshot AI；署名列表含 Angang Du · Bofei Gao · Bowei Xing …，作者列表中另见 Jianlin Su） |
+| 年份 | 2025（arXiv 首次提交 **2025-01-22**，本线实测；最新 **v4** 2025-06-03） |
+| 会议 / 期刊 | 预印本技术报告（OpenAlex `type=preprint`；**未查**正式会议收录） |
+| 被引数 | **1,436**（OpenAlex，DOI `10.48550/arxiv.2501.12599`，查询日 2026-11-12；S2 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2501.12599> ｜ DOI `10.48550/arxiv.2501.12599` |
+| 一句话贡献 | 用**长上下文 RL 扩展 + 改进的策略优化**训练多模态 LLM，**不依赖 MCTS / 价值函数 / 过程奖励模型**：据摘要，AIME **77.5**、MATH-500 **96.2**、Codeforces **94 百分位**、MathVista **74.9**，与 OpenAI o1 相当；并给出 **long2short**（用长 CoT 提升短 CoT），短 CoT 侧 AIME **60.8**、MATH-500 **94.6**、LiveCodeBench **47.3**。 |
+| 与我们工作的关系 | **zhulong（thinking 预算 / long2short，直接）**：长 CoT 训练出的能力可**蒸馏进短 CoT**，对应我们「训练时想得长、部署时想得短」的成本结构。<b>动作</b>：zhulong 线加 `long2short` 消融（同一 base：长 CoT RL → 短 CoT 蒸馏 vs 直接短 CoT RL），<b>判据</b>：固定 token 预算下，蒸馏臂准确率不低于直接臂且平均生成长度 ≤ 其 60%。<br>**posttrain / pretrain（RL 数据墙）**：核心论点是「RL 提供新的 scaling 轴（用奖励换数据）」；<b>动作</b>：pretrain 线在算力分配表里把「RL token 预算」单列，不混算；对外统一用「总生成 token + GPU 小时」双口径。<br>**harness（自报口径）**：77.5 / 96.2 / 94 百分位均为**作者自报**、基准版本敏感；<b>动作</b>：引用时标「Moonshot 自报，2025-01」并同时记录我们自己的复测值，禁止把自报值写进对外结论。<br>**data（多模态 RL 数据）**：报告提到配方但未给完整配比；<b>动作</b>：data 线只当「多模态 RL 数据可 scale」的 existence proof，不据此推我们的配比。<br>**风险**：① 技术报告不公开训练细节（数据量、奖励设计）；② 基准分数随时间过期；③ 「不依赖 MCTS/PRM」是作者口径，复现需自行验证。 |
+
+首次收录: 2026-11-12（第八轮）｜ 状态: 元数据已核验（arXiv API `200` + `application/atom+xml`；OpenAlex `200`）
+
+---
+
+## 31. π0: A Vision-Language-Action Flow Model for General Robot Control
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | π₀: A Vision-Language-Action Flow Model for General Robot Control（arXiv 标题写作 `$π_0$`） |
+| 作者（前 3） | Kevin Black · Noah Brown · Danny Driess（et al.；Physical Intelligence；含 Chelsea Finn / Sergey Levine / Karl Pertsch） |
+| 年份 | 2024（arXiv 首次提交 **2024-10-31**，本线实测；最新 **v4** 2026-01-08） |
+| 会议 / 期刊 | **Robotics: Science and Systems (RSS) 2025**（OpenAlex `type=conference-paper`，DOI `10.15607/rss.2025.xxi.010`） |
+| 被引数 | **3,214**（OpenAlex，RSS DOI，查询日 2026-11-12；S2 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2410.24164> ｜ DOI `10.15607/rss.2025.xxi.010` ｜ 项目页 <https://physicalintelligence.company/blog/pi0> |
+| 一句话贡献 | 在**预训练 VLM** 之上加一个 **flow matching** 动作专家，用**多机器人平台的大规模多样数据**训练通用策略：据摘要，支持**零样本**执行、跟随人类语言指令与高层 VLM 策略、并可通过微调获得新技能（叠衣、清桌、装箱等）。 |
+| 与我们工作的关系 | **vision（VLM 主干复用，直接）**：π0 不重训视觉塔，而**继承 Internet 规模语义知识**再加动作头；对应 BaiZe 视觉塔「先接通用 VLM，再小成本适配域内」。<b>动作</b>：vision 线预注册「冻结 VLM 主干 + 只训适配层」与「全参微调」两臂，<b>判据</b>：冻结臂在域内任务上达到全参臂 −3 个绝对点以内即采用（省下的算力转投数据）。<br>**zhulong（动作生成方式）**：flow matching 生成连续动作块（action chunk），与「逐 token 自回归出 tool call」是两种接口；<b>动作</b>：zhulong 线对比「动作块（一次出多步）」与「逐步出」在长流程 EDA 任务上的成功率与调用成本，<b>判据</b>：动作块臂成功率不降且工具调用轮数下降 ≥20% 才保留。<br>**data（跨平台多样性）**：多机器人平台数据混合是泛化关键；<b>动作</b>：data 线为 EDA 语料建「工具/器件/工艺节点」三维多样性标签，做固定 token 预算下的多样性消融。<br>**harness（任务族评测）**：叠衣/清桌/装箱是可复现任务族而非单题；<b>动作</b>：harness 按任务族组织 EDA 用例，报告「族内平均 + 族间最差」。<br>**风险**：① 机器人高频连续控制与 EDA 离散、分钟级工具调用**时间尺度差几个数量级**，🚫 不可直接搬 flow matching 到 tool call；② 零样本/新技能均为作者自报自选任务；③ 训练数据不可得。 |
+
+首次收录: 2026-11-12（第八轮）｜ 状态: 元数据已核验（arXiv API `200` + `application/atom+xml`；OpenAlex RSS DOI `200`）
+
+---
+
 ## 候选池（下轮起逐轮补，**被引数本轮未查**，勿引用）
 
 > 只登记「已实测 arXiv 元数据」的条目；被引数待下轮 OpenAlex 批量核过再写，**本表数字一律留空 = 未查**。
-> ⚠️ 第七轮**未新增候选**（4 条直接转正为 #24–#27，元数据均当场实测）；**必读清单 10/10 组已有落点**，但组内仍有未收子项，下轮优先：**AlphaFold（Nature 2021，DOI 待核）/ AlphaStar（Nature 2019，DOI 待核）**、**Kimi（`2401.14185` Moonshot 或 Kimi k1.5 `2501.12599`）· GLM-4 `2406.12793` · MiniMax-01 `2501.08313`**、**VLA 其余（RT-1 `2212.06817` / RT-2 `2307.15818` / π0 `2410.24164` / Octo `2405.12213`）· SORA（OpenAI 技术报告，无 arXiv）**。**元数据未实测前不进本表，也不凭印象写 DOI / 被引**。
+> ⚠️ 第八轮**未新增候选**（4 条直接转正为 #28–#31，元数据均当场实测）；**必读清单 10/10 组已有落点**，组内剩余子项，下轮优先：**GLM-4 `2406.12793` · MiniMax-01 `2501.08313`**、**VLA 其余（RT-1 `2212.06817` / RT-2 `2307.15818` / Octo `2405.12213`）· SORA（OpenAI 技术报告，无 arXiv，作者 Bill Peebles `@billpeeb` 已核验）**、**Llama 2 `2307.09288` / Llama 3 `2407.21783` · LLaVA-1.5 `2310.03744`**、**Tree of Thoughts `2305.10601` / SWE-agent `2405.15793` · TD-Gammon（Tesauro 1995）· Christiano 2017 `1706.03741` / Stiennon 2020**。**元数据未实测前不进本表，也不凭印象写 DOI / 被引**。
 
 
 | arXiv ID | 标题（arXiv 实测） | 首次提交 | 拟服务线 | 为什么算经典（待核被引） |

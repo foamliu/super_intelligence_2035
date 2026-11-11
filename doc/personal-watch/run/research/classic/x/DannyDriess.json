@@ -1,0 +1,73 @@
+{
+ "handle": "DannyDriess",
+ "name": "Danny Driess (@DannyDriess) / X",
+ "bio": "Research Scientist @physical_int. \nFormerly Google DeepMind",
+ "tweets": [
+  {
+   "id": "2110120051554820310",
+   "created_at": "2026-10-13 21:26 UTC",
+   "created_at_ms": 1791926799000,
+   "text": "One of the most exciting moments is when you see our models being used by others. With our API release we are going to accelerate that",
+   "url": "https://x.com/DannyDriess/status/2110120051554820310",
+   "handle_guess": "DannyDriess"
+  },
+  {
+   "id": "2110115571681690051",
+   "created_at": "2026-10-13 21:08 UTC",
+   "created_at_ms": 1791925730000,
+   "text": "Announcing the beta release of the Pi API. We’ve partnered with companies across diverse industries to adapt our models to their robots and applications, from harvesting strawberries to assembling servers. Now we’re opening access to more teams. https://t.co/0T9tTFjVqM",
+   "url": "https://x.com/DannyDriess/status/2110115571681690051",
+   "handle_guess": "physical_int"
+  },
+  {
+   "id": "2079598449549508821",
+   "created_at": "2026-07-21 16:04 UTC",
+   "created_at_ms": 1784649882000,
+   "text": "Anyone up for doing a CoRL emergency review? DM me",
+   "url": "https://x.com/DannyDriess/status/2079598449549508821",
+   "handle_guess": "DannyDriess"
+  },
+  {
+   "id": "2044852341715910723",
+   "created_at": "2026-04-16 18:56 UTC",
+   "created_at_ms": 1776365764000,
+   "text": "The most exciting aspect of modern machine learning, in my opinion, is that one can train models that just work for many tasks, without finetuning.\\\n\\\nπ0.7 is a major step in that direction for robots",
+   "url": "https://x.com/DannyDriess/status/2044852341715910723",
+   "handle_guess": "DannyDriess"
+  },
+  {
+   "id": "2044841263254638862",
+   "created_at": "2026-04-16 18:12 UTC",
+   "created_at_ms": 1776363123000,
+   "text": "Our newest model, π0.7, has some interesting emergent capabilities: it can control a new robot to fold shirts for which we had no shirt folding data, figure out how to use an appliance with language-based coaching, and perform a wide range of dexterous tasks all in one model! https://t.co/s9NxKfb7pe",
+   "url": "https://x.com/DannyDriess/status/2044841263254638862",
+   "handle_guess": "physical_int"
+  },
+  {
+   "id": "2028997084352004550",
+   "created_at": "2026-03-04 00:52 UTC",
+   "created_at_ms": 1772585576000,
+   "text": "If you look at this plot here, you can see that both short- and long-term memory were important to make long-horizon tasks work well https://t.co/SAdErXLdGI",
+   "url": "https://x.com/DannyDriess/status/2028997084352004550",
+   "handle_guess": "DannyDriess"
+  },
+  {
+   "id": "2028954630458401040",
+   "created_at": "2026-03-03 22:04 UTC",
+   "created_at_ms": 1772575454000,
+   "text": "We’ve developed a memory system for our models that provides both short-term visual memory and long-term semantic memory.\\\n\\\nOur approach allows us to train robots to perform long and complex tasks, like cleaning up a kitchen or preparing a grilled cheese sandwich from scratch 👇 https://t.co/RlcqmZEP6M",
+   "url": "https://x.com/DannyDriess/status/2028954630458401040",
+   "handle_guess": "physical_int"
+  },
+  {
+   "id": "1927786620834504994",
+   "created_at": "2025-05-28 17:58 UTC",
+   "created_at_ms": 1748455121000,
+   "text": "How to build vision-language-action models that train fast, run fast &amp; generalize? In our new paper, we formalize &amp; analyze the approach of our π-0.5  model &amp; further improve it with a single stage recipe.\\\nBlog: https://t.co/IihKEmmxSB\\\nPaper: https://t.co/JfEU7pcoZk https://t.co/deANlnouRh",
+   "url": "https://x.com/DannyDriess/status/1927786620834504994",
+   "handle_guess": "DannyDriess"
+  }
+ ],
+ "http_status": 200,
+ "fetched_at": "2026-11-12 00:07:25"
+}
