@@ -1056,3 +1056,5 @@ peek:					parked		2026-11-10 23:22	peek: consultation verdi-fsdb-warning-paste
 1793328354943_p7jfx	tongni	hfeg0plg63	481	spice_sim	case	EDA-Eval-DesignFlow-SpSpecCovAudit-001	2026-11-11 12:59	
 1792399702966_lcbck	e0029495	10.129.2.11	10	spice_sim	case	EDA-Eval-DesignFlow-Mt0MetastabAudit-001	2026-11-11 13:59	
 1793704886522_kdb8z	owench	pkn002	12	spice_sim	case	EDA-Eval-DesignFlow-MosToxeClassify-001	2026-11-11 14:37	
+1788249638562_0si6a	sophiaw	hfeg0plg09	160	characterization	parked		2026-11-11 15:05	meta-exploration session (agent self-introspection), no real design task; hspice kw from API docs not sim
+1793928131571_20ss9	junweix	hfeg0pjn185	71	spice_sim	parked		2026-11-11 15:08	real spice deck analysis task but L1 offline (agent read+explained 5_pnoise.sp, no sim run); not suitable as new L2/L3 case per S5
