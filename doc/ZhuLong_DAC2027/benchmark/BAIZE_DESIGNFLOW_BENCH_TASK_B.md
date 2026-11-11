@@ -16,6 +16,23 @@
 > 🚫 「我同意」「+1」不算发言；必须表态明确 + 给本域依据（case id / 实测数字 / 论文 section+行号）。
 > 讨论产出是**建议**不是结论。论文 `EDA-LiveFlow-Bench_ICML2027/` 全目录只读。
 
+> ### ⚠️ 同步纪律（共享工作副本 · 2026-11-11 补 · 源自两次真实事故）
+>
+> 4 个 shard + 其他线**共用一个 git 工作区**。文件系统不会写坏文件，**但 git 合并会丢内容**：
+> - **事故 1（2026-11-02 本仓 shard C）**：`rebase clobbered rounds 3-6` —— 台账 4 轮记录被 rebase 覆盖（commit `5883d4d43`）。
+> - **事故 2（2026-10-07 兄弟仓）**：历史 autostash 一 `pop` 就冲突 ⇒ 弄脏共享工作区 ⇒ **阻塞所有线 pull，停摆 5 小时**。
+>
+> **每轮收尾「同步三连」，缺一不可**：
+> ```bash
+> git status --porcelain                                 # ① 干净（只应有你本轮的文件）
+> git stash list                                         # ② 空
+> git rev-list --left-right --count origin/main...HEAD   # ③ "0 0"
+> ```
+> 1. 🚫 不 clean / reset / stash 别人的改动（陌生未提交文件是别线在途）。
+> 2. 🚫 禁止 `git stash pop` 去"恢复"残留 —— 会阻塞全部线。
+> 3. ✅ 冲突解不掉就**停手报 blocker**，🚫 别靠 rebase 硬推（丢的是别人的数据）。
+>
+
 
 
 > 🟢 **2026-11-11 用户令（最高优先 · 本轮唯一任务）：B 线 0-case 时改做「论文改进建议」**
