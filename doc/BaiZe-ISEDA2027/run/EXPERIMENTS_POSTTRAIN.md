@@ -8320,3 +8320,53 @@ R177 发现 SFT 对真实 API `dbCrtSchWire` 幻觉出 `lib.openSchematic` ⇒ v
 |:--|:--|--:|
 | 验证 API 盘点 | `run/r178_pyaether_schematic_layout_api_inventory.json` | 10.2KB / 22 API |
 
+
+## §R179 (2026-11-11 wake248) v9 SFT Corpus: Layout-Create API Coverage + Multi-Step Traces (closes v8 blind spot)
+
+**背景**：R178 盘点确认 v8（25 对/11 API）对 4 个核心 layout-create API（dbCrtRect/dbCrtPolygon/dbCrtInst/dbCrtPath，评测引用 121 次：dbCrtInst 58+dbCrtRect 47+dbCrtPath 10+dbCrtPolygon 6）**零覆盖**，且 R177 幻觉根因是 v8 仅在 doc 形式展示 API 名、未在多变上下文重复强化精确调用模式。本轮构建 v9 语料直接补这一缺口。
+
+### 1. v9 语料设计
+- **API 覆盖**：12 个 API = 4 layout-create ISOLATE（dbCrtRect/dbCrtPolygon/dbCrtInst/dbCrtPath）+ 4 新 SAFE 扩展（dbSchGetPinOrder/aeSchStretch/aeCrtWireLabelsAndPins/emyDesignIsSchematic）+ 4 carry-over（dbCrtSchWire/dbCrtWire/dbCrtNet/dbCrtSchPin）。
+- **签名来源**：全部经 pyAether MCP `get_api_details` 抓取**权威签名 + 官方 doctest**（非评测题文本）。
+- **对类型**：
+  - **S1 doc→code**（12 对）：每 API 一对，从官方 doc 生成单 API 调用函数。
+  - **S4 多步轨迹**（12 对）：每 API 一对，openCV→create→save 多步流——**R178 反幻觉修正**，在真实多步上下文强化 `pyScript.<api>(cv=..., ...)` 精确调用模式。
+  - **S5 参数变化**（12 对）：每 API 一对，同 API 不同 orient/layer/points/args，增加上下文多样性。
+  - **S3 多 API 链**（5 对）：layout 场景导向（rect+inst / path+net / polygon+wire / pinorder+guard / schwire+labels）。
+  - **S6 API 查找**（8 对）：intent→API→minimal usage。
+- **总计 49 对**。
+
+### 2. 污染隔离（红线 §5.1 合规）
+- 加载评测集 155 个 `entry_point`，对**每个** completion 做子串指纹扫描。
+- **结果：49/49 PASS，0 rejected**。所有 ISOLATE API（dbCrtRect/dbCrtPolygon/dbCrtInst/dbCrtPath/dbCrtNet/dbCrtSchWire/dbCrtSchPin）的教学对均未命中任何评测 entry_point。
+- 来源 = 官方 API reference（MCP get_api_details），非评测题。
+
+### 3. 验证
+- `py_compile` ✅
+- dry-run ✅：49 对 / 12 API / 0 rejected
+- 落盘 ✅：`sft_pyaether_corpus_v9_layout_create.jsonl` 35846 bytes / 49 行
+- JSON parse ✅：所有 49 行可解析，`contamination_check` 全 PASS
+- 4 layout-create API 全覆盖 ✅
+- 4 新 SAFE API 全覆盖 ✅
+
+### 4. 与 v8 对比
+| 维度 | v8 (R177) | v9 (R179) |
+|:--|:--|:--|
+| API 数 | 11 | 12 |
+| 对数 | 25 | 49 |
+| layout-create 覆盖 | 0/4 | 4/4 ✅ |
+| 多步轨迹 | 0 | 12 (S4) |
+| 参数变化 | 0 | 12 (S5) |
+| 多 API 链 | 3 | 5 |
+| 评测引用覆盖 | schematic-only | +layout 121 refs |
+
+### 5. 下一步
+- v9 语料合入 SFT 重训（需 GPU6-7，当前按 17:10 令 serve 占位；待沙盒 ACL 开放或 GPU 释放后执行）。
+- 重训后 post-SFT eval（bash baize_posttrain_eval.sh --backbone minicpm5-sft-v9 --endpoint :8096），验证 layout/schematic API 修复效果。
+- 沙盒恢复→watcher --auto-eval 自动触发 Phase1 baseline eval。
+
+### 6. 交付物
+| Item | Path | Size |
+|:--|:--|--:|
+| v9 语料生成脚本 | `run/baize_posttrain_r179_v9_corpus.py` | 623 行 / py_compile✅ |
+| v9 语料 JSONL | `run/sft_pyaether_corpus_v9_layout_create.jsonl` | 35846 bytes / 49 对 |

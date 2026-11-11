@@ -7,14 +7,14 @@ WAITING: 0
 
 ## 进度快照
 
-- PHASE: posttrain-wake247（2026-11-11 11:30-R178验证pyAether schematic/layout API盘点[MCP源22API/13SAFE/9ISOLATE/评测交叉核验/v8盲区确认4核心layout-create API零覆盖]+serve健康5端点✅+沙盒52nd wake CLOSED+git synced）
-- 已完成: P3预备✅；P0✅；P1✅；P2✅；R1-R178✅；wake193-247✅；wake246 R177(R176修正+真实schematic API语料v8+修正评测);wake247 R178(验证schematic/layout API盘点MCP源+评测交叉核验)
-- 当前动作: wake247 ①R178验证API盘点✅:本地pyAether MCP search_apis/search_apis_by_keyword/get_api_details枚举22真实schematic+layout API→捕获精确签名(dbCrtSchWire/dbCrtSchPin/dbCrtRect/dbCrtInst/dbCrtPolygon/dbSchGetPinOrder/aeCrtWireLabelsAndPins/emyDesignIsSchematic等)→与158题评测集逐API grep -c交叉核验→13 SAFE(eval=0可自由扩展)/9 ISOLATE(eval>0仅官方doc教学+entry_point扫描) ②v8盲区确认✅:v8(11API/25对)对4核心layout-create API(dbCrtRect18/dbCrtPolygon3/dbCrtInst24/dbCrtPath3)零覆盖而评测引用48次→Layout场景(64题)最大覆盖缺口 ③SAFE扩展集✅:7新SAFE API(dbSchGetPinOrder/aeSchStretch/aeCrtWireLabelsAndPins/emyDesignIsSchematic+leGuiCrtWire低价值排除)可零污染进v9 ④R177幻觉根因✅:对未在多变上下文重复强化精确调用模式pyScript.dbCrtSchWire(cv=...,point=...)→v9修正:每API更多对+多步轨迹(openCV→create→save) ⑤serve健康5端点✅(8095-8099/v1/models全UP) ⑥沙盒52nd wake仍CLOSED(TCP8667 timeout,ICMP0%loss) ⑦watcher PID4109314运行中(~5.75h) ⑧git synced
-- 下一步: ①v9语料构建(可CPU做):每SAFE API 3-5对用精确MCP签名(~13API⇒~50对)+ISOLATE API官方doc+entry_point扫描(瞄准4 layout-create API补Layout场景)+多步轨迹 ②沙盒恢复→watcher --auto-eval自动触发Phase1 eval ③v9语料合入SFT重训(需GPU6-7,验证layout/schematic API修复效果) ④post-SFT eval:bash baize_posttrain_eval.sh --backbone minicpm5-sft --endpoint:8096 ⑤Phase3 RL:bash baize_posttrain_rl_grpo_surrogate.sh --reward-arm R2(待沙盒+GPU释放) ⑥P3正式训练待pretrain ckpt(ETA≈2026-12-25)
-- 阻塞: 🔴远程沙盒10.129.32.75跨子网TCP过滤(52nd wake,需网络团队开ACL[R169 runbook已就绪])→Phase1 eval+Phase3 RL+post-SFT eval阻塞;🔴P3正式SFT数据(UltraData)在.17不可达(NFS未挂,R166);P3等pretrain ckpt
-- 本轮新增产出: R178✅(验证pyAether schematic/layout API盘点[本地MCP源22API/13SAFE/9ISOLATE/评测交叉核验/v8盲区确认4核心layout-create API零覆盖/R177幻觉根因=对未重复强化精确调用模式])+serve健康5端点✅+EXPERIMENTS §R178+r178_pyaether_schematic_layout_api_inventory.json(10.2KB/22API,JSON parse✅)
+- PHASE: posttrain-wake248（2026-11-11 12:20-R179 v9 SFT语料构建[12API/49对/4 layout-create盲区补齐+4新SAFE+多步轨迹+参数变化+155 entry_point污染扫描全PASS]+serve健康5端点✅+沙盒53rd wake CLOSED+git synced）
+- 已完成: P3预备✅；P0✅；P1✅；P2✅；R1-R179✅；wake247 R178(API盘点);wake248 R179(v9语料构建补layout-create盲区)
+- 当前动作: wake248 ①R179 v9语料构建✅:pyAether MCP get_api_details抓取4 layout-create API(dbCrtRect/dbCrtPolygon/dbCrtInst/dbCrtPath)+4新SAFE(dbSchGetPinOrder/aeSchStretch/aeCrtWireLabelsAndPins/emyDesignIsSchematic)+4 carry-over(dbCrtSchWire/dbCrtWire/dbCrtNet/dbCrtSchPin)=12 API权威签名→baize_posttrain_r179_v9_corpus.py(623行py_compile✅)→49对(S1 doc→code×12+S4多步轨迹×12[S4=openCV→create→save反幻觉修正]+S5参数变化×12+S3多API链×5+S6 API查找×8)→sft_pyaether_corpus_v9_layout_create.jsonl(35846B/49对) ②污染隔离✅:155 eval entry_points全量扫描49/49 PASS 0 rejected ③v8对比:v9 API 11→12/对 25→49/layout-create覆盖 0/4→4/4/多步轨迹 0→12 ④serve健康5端点✅(8095-8099) ⑤沙盒53rd wake仍CLOSED(TCP8667 timeout,ICMP0%loss) ⑥watcher PID4109314运行中(~6h) ⑦git synced
+- 下一步: ①v9语料合入SFT重训(需GPU6-7,当前serve占位;待GPU释放执行) ②post-SFT eval验证layout/schematic API修复效果 ③沙盒恢复→watcher --auto-eval自动触发Phase1 baseline eval ④Phase3 RL:bash baize_posttrain_rl_grpo_surrogate.sh --reward-arm R2(待沙盒+GPU释放) ⑤v8 6 API pending签名补抓(emyFigGetPinName/dbGetPinFigName/emyPinGetNames/aeLeCreatePin/dbFindInst/dbCrtNet) ⑥P3正式训练待pretrain ckpt(ETA≈2026-12-25)
+- 阻塞: 🔴远程沙盒10.129.32.75跨子网TCP过滤(53rd wake,需网络团队开ACL[R169 runbook已就绪])→Phase1 eval+Phase3 RL+post-SFT eval阻塞;🔴P3正式SFT数据(UltraData)在.17不可达(NFS未挂,R166);P3等pretrain ckpt
+- 本轮新增产出: R179✅(v9 SFT语料[12API/49对/4 layout-create盲区补齐/4新SAFE/多步轨迹反幻觉/155 entry_point污染扫描全PASS])+serve健康5端点✅+EXPERIMENTS §R179+baize_posttrain_r179_v9_corpus.py(623行py_compile✅)+sft_pyaether_corpus_v9_layout_create.jsonl(35846B/49对)
 - 未完成指令: 🔴用户令17:10(serve占位)GPU5/6/7全✅;🔴用户令13:40(三阶段替身计划)Phase2 SFT完成✅/Phase1待沙盒ACL/Phase3 RL脚本就绪✅待沙盒+GPU
-- git: wake247 本轮提交R178(验证schematic/layout API盘点MCP源+评测交叉核验+EXPERIMENTS+MEMORY+daily)
+- git: wake248 本轮提交R179(v9 SFT语料构建补layout-create盲区+EXPERIMENTS+MEMORY+daily)
 
 ## GPU 端口映射表（2026-11-10 wake195 实测）
 
@@ -113,3 +113,4 @@ WAITING: 0
 
 
 
+[wake248 12:20] R179 v9 SFT语料构建(补layout-create盲区+多步轨迹)+serve健康5端点+沙盒53rd wake CLOSED+git synced: 体积自检(MEMORY≈27.3KB合规)→GPU:0/8free(GPU0-3 root SGLang 45GB/GPU4-7 vLLM 37.8GB各占位)→git:pull --rebase✅→①NEW R179 v9语料构建:pyAether MCP get_api_details抓取4 layout-create API(dbCrtRect/dbCrtPolygon/dbCrtInst/dbCrtPath)+4新SAFE(dbSchGetPinOrder/aeSchStretch/aeCrtWireLabelsAndPins/emyDesignIsSchematic)+4 carry-over(dbCrtSchWire/dbCrtWire/dbCrtNet/dbCrtSchPin)=12 API权威签名→baize_posttrain_r179_v9_corpus.py(623行py_compile✅)→49对(S1×12+S4多步轨迹×12+S5参数变化×12+S3×5+S6×8)→sft_pyaether_corpus_v9_layout_create.jsonl(35846B) ②污染隔离✅:155 eval entry_points全量扫描49/49 PASS 0 rejected ③v8对比:v9 API 11→12/对 25→49/layout-create覆盖 0/4→4/4/多步轨迹 0→12 ④serve健康5端点✅(8095-8099) ⑤沙盒53rd wake仍CLOSED:TCP8667 timeout,ICMP0%loss ⑥watcher PID4109314运行中(~6h) 📦 MEMORY≈28.8KB。本轮新增产出：R179✅(v9 SFT语料[12API/49对/4 layout-create盲区补齐/4新SAFE/多步轨迹反幻觉/155 entry_point污染扫描全PASS])+serve健康5端点✅+EXPERIMENTS §R179+baize_posttrain_r179_v9_corpus.py(623行)+sft_pyaether_corpus_v9_layout_create.jsonl(35846B/49对)。未完成指令：🔴17:10 GPU5/6/7全✅;🔴13:40 Phase2 SFT完成✅/Phase1待沙盒ACL/Phase3 RL脚本就绪✅待沙盒+GPU ⇒ WAITING=0。
