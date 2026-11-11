@@ -26,3 +26,14 @@ new instances: 3 ['scikit-learn__scikit-learn-25931', 'scikit-learn__scikit-lear
 new instances: 4 ['django__django-15503', 'django__django-15561', 'django__django-15569', 'django__django-15572']
 [incr-eval 06:29:54] pi: merged 4 new patches -> predictions_pi_new_R2235.json
 [incr-eval 06:29:54] pi: EVAL 4 instances -> run_id=verified_full_glm53_pi_incr_R2235
+[incr-eval 06:31:46] pi: eval rc=0
+[incr-eval 06:31:46]   django__django-15503: FAILED
+[incr-eval 06:31:46]   django__django-15561: RESOLVED
+[incr-eval 06:31:46]   django__django-15569: RESOLVED
+[incr-eval 06:31:46]   django__django-15572: RESOLVED
+[incr-eval 06:31:46] pi: cumulative n=232 resolved=171 failed=61 infra=0 -> eval_glm53_pi.json
+
+=== hermes R2235 ===
+new instances: 5 ['pytest-dev__pytest-5787', 'pytest-dev__pytest-5809', 'pytest-dev__pytest-6197', 'pytest-dev__pytest-6202', 'pytest-dev__pytest-7205']
+[incr-eval 06:31:46] hermes: merged 5 new patches -> predictions_hermes_new_R2235.json
+[incr-eval 06:31:46] hermes: EVAL 5 instances -> run_id=verified_full_glm53_hermes_incr_R2235
