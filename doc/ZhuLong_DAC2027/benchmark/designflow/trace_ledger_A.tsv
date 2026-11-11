@@ -271,7 +271,6 @@
 1788347732612_bhs4z	e0025768	hfeg0pkn001	38	eda_other	case	EDA-Eval-DesignFlow-RtlDesignScenarioBoot-001	2026-11-09 09:00	
 1789904654090_nzxx2.messages.json	ziyuny	hfeg0pnd002	44	eda_other	case	EDA-Eval-DesignFlow-GgFlowReport-001	2026-11-09 09:43	
 1793240332278_86t8o.messages.json	rose3wang	hfeg0pkn003	278	digital	case	EDA-Eval-DesignFlow-TclAreaUpdate-001	2026-11-09 13:43	
-1793929852342_5jgp2.messages.json	lorikx	hfeg0pkn004	8	digital	case	EDA-Eval-DesignFlow-FiMergeVcs-001	2026-11-09 11:32	
 1793932600947_c5gwq	johnl	hfeg0pkn001	306	digital	parked		2026-11-09 12:30	A-faithful infeasible: golden=hand-migrated DC scripts (run_dc.sh bsub fqueue3_analog + run_dc_local.sh module-load + synth.tcl */* cell-policy/gtech-exclude + SPPR-removed timing_constraints.tcl + setup.sh) with A-specific hardcoded values; cannot satisfy §4.1/§4.2 hidden-B cross-input (golden not parameterized, would fail B-run). Needs B-档 reformulation as migration-program deliverable (see trace_deepreads/c5gwq_johnl_dc_migrate.md). daily-log find (mc306, 174msgs, 685KB, digital/synthesis dominant).
 1792409159286_g7hcn	shanliny	hfeg0pkn001	15	verification	parked		2026-11-09 14:57	analysis-only trace, 0 write/edit, no executable golden; A-faithful #0=analysis task, #18/19=give fix=hint; not design_flow viable
 1793098169771_pvx74	lorikx	hfeg0pkn001	29	digital	case	EDA-Eval-DesignFlow-RwConflictBackstop-001	2026-11-09 15:33	B-档 digital code-fix (sp_2pram.v rw_conflict backstop insert line2573); golden=on-disk post-fix; deepread done, case-build queued r276
@@ -408,4 +407,4 @@
 1793177058917_hzyu6	fernandoy	hfeg0plg76	326	digital	parked		2026-11-12 02:26	dup-of-ii9ew(r401 VerdiCfgVipGen-001): same fernandoy PIM2 UVM, same produce-task gen_verdi_cfg.py(filelist flatten+VIP bank2pu_if/dbg_if+module load ver). hzyu6=earlier 799msg/3MB, ii9ew=later 104msg+821archive. dup.
 1793619124342_usjrp					case	EDA-Eval-DesignFlow-OdtErrStatScan-001	2026-11-12 02:40	
 1793091129423_vxorx	e0046913	hfeg0pkn003	159	verification	case	EDA-Eval-DesignFlow-FmR2rFlowGen-001	2026-11-12 03:11	
-1793929852342_5jgp2	lorikx	hfeg0pkn004	8	digital	case	EDA-Eval-DesignFlow-FiMergeGen-001	2026-11-12 03:33	
+1793929852342_5jgp2	lorikx	hfeg0pkn004	8	digital	case	EDA-Eval-DesignFlow-FiMergeVcs-001	2026-11-12 03:41	
