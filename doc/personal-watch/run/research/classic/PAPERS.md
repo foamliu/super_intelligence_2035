@@ -10,7 +10,7 @@
 >
 > **元数据核验**：标题 / 首次提交日 均取自 arXiv 官方 API（`export.arxiv.org/api/query?id_list=...`，2026-11-11 两轮实测 `HTTP 200` + `application/atom+xml; charset=utf-8`，首轮 4/4、第二轮 4/4 = 累计 8/8）。
 
-**本轮快照**：累计 **8** 条（首轮 2026-11-11 11:5x CST 收 4 条；第二轮 11:4x 补 4 条 EDA / agent / PEFT）｜ 覆盖（一篇可服务多线，故合计数 > 8）：pretrain 5 · vision 1 · harness 2 · data 1 · zhulong 4 · designflow 2
+**本轮快照**：累计 **12** 条（首轮 11:5x 收 4 条；第二轮 11:4x 补 4 条 EDA / agent / PEFT；**第三轮 12:1x 补 4 条** RoPE / SWE-bench / Reflexion / CoT）｜ 覆盖（一篇可服务多线，故合计数 > 12）：pretrain **7** · vision 1 · harness **4** · data 1 · zhulong **8** · designflow **3**
 
 ---
 
@@ -150,17 +150,83 @@
 
 ---
 
+## 9. RoFormer: Enhanced Transformer with Rotary Position Embedding
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | RoFormer: Enhanced Transformer with Rotary Position Embedding |
+| 作者（前 3） | Jianlin Su · Yu Lu · Shengfeng Pan（et al.，共 6 位；Zhuiyi Technology, Shenzhen） |
+| 年份 | 2021（arXiv 首次提交 **2021-04-20**；v5 = 2023-11-08） |
+| 会议 / 期刊 | **Neurocomputing**（OpenAlex `primary_location.source` 实测：vol. 568, 127063；arXiv 元数据无 `journal_ref` / `comment` 会议信息） |
+| 被引数 | **3,867**（OpenAlex，查询日 2026-11-11；S2 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2104.09864> ｜ DOI `10.48550/arxiv.2104.09864` |
+| 一句话贡献 | 把位置信息写成「按绝对位置旋转 query/key 向量」的乘法形式，使注意力分数只依赖相对位移，且不增加参数；外推与长文性能优于绝对位置编码与当时的口径。 |
+| 与我们工作的关系 | **pretrain（直接）**：RoPE 是 BaiZe 位置编码的默认选择，本文是 θ 基频 / 外推（NTK、YaRN 等后续工作）的源头 ⇒ 长上下文实验排障时必须能回到「旋转角随位置线性增长」这一条。<br>**zhulong（消融口径）**：任何位置编码消融（绝对 / 相对 / RoPE / NoPE）都以此为等参数对照。<br>**风险**：论文自报的长文外推收益依赖具体实现，训练长度外的退化曲线要用我们自己的长度扫描验，不能直接引用结论。 |
+
+首次收录: 2026-11-11（第三轮）｜ 状态: 已核验元数据（机构 = OpenAlex `raw_affiliation_strings` 实测）
+
+---
+
+## 10. SWE-bench: Can Language Models Resolve Real-World GitHub Issues?
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | SWE-bench: Can Language Models Resolve Real-World GitHub Issues? |
+| 作者（前 3） | Carlos E. Jimenez · John Yang · Alexander Wettig（et al.，共 7 位；Princeton · UChicago） |
+| 年份 | 2023（arXiv 首次提交 **2023-10-10**；v3 = 2024-11-11） |
+| 会议 / 期刊 | **ICLR 2024**（arXiv `comment` 实测含「ICLR 2024」；OpenAlex 只记 arXiv 版） |
+| 被引数 | **2,078**（OpenAlex，查询日 2026-11-11；S2 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2310.06770> ｜ DOI `10.48550/arxiv.2310.06770` |
+| 一句话贡献 | 从 12 个真实 Python 仓库的 issue + 合并 PR 里抽出 2,294 个任务，用「仓库自带测试是否从 fail 变 pass」自动判分，把「修真实 bug」变成可规模化评测的基准。 |
+| 与我们工作的关系 | **harness（协议来源）**：我们 7 路评测的「resolved / pass@k / 重试」口径都源自这里；本文的价值在**判分协议**（FAIL_TO_PASS + PASS_TO_PASS）而不是分数本身。<br>**designflow（判分可验证性）**：这正是「判据 = 可执行测试」的范本 —— 我们的 RTL/波形题若要做自动判分，应照此把「必须由错变对」与「必须保持正确」两类断言分开写。<br>**风险**：仓库测试覆盖不足 ⇒ 过测试 ≠ bug 真被修对（后续 SWE-bench+ / SWE-ABS 一类工作正是补这个洞）。 |
+
+首次收录: 2026-11-11（第三轮）｜ 状态: 已核验元数据
+
+---
+
+## 11. Reflexion: Language Agents with Verbal Reinforcement Learning
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Reflexion: Language Agents with Verbal Reinforcement Learning |
+| 作者（前 3） | Noah Shinn · Federico Cassano · Edward Berman（et al.，共 6 位；发表时 Northeastern University · Princeton） |
+| 年份 | 2023（arXiv 首次提交 **2023-03-20**；v4 = 2023-10-10） |
+| 会议 / 期刊 | **NeurIPS 2023**（OpenAlex `primary_location.source` = neural information processing systems，pp. 8634–8652；arXiv 无 `journal_ref`） |
+| 被引数 | **3,297**（OpenAlex，查询日 2026-11-11；S2 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2303.11366> ｜ DOI `10.48550/arxiv.2303.11366` |
+| 一句话贡献 | 不更新权重，把「失败原因」写成自然语言反思存进情节记忆，下一轮把它放进上下文再试，从而用「语言梯度」替代策略梯度来改进 agent 的重复尝试。 |
+| 与我们工作的关系 | **harness（重试策略）**：我们现在的重试只是「再来一次」，本文给出另一种做法：把失败信号蒸馏成可复用的教训。关键待验问题是「反思 vs 直接带测试反馈重试」谁更划算。<br>**zhulong（agent 侧消融）**：可作为「记忆 / 反思」这一轴的基线条件（无记忆 → 原始轨迹 → 蒸馏反思）。<br>**风险**：反思会累积成上下文膨胀；对「测试即真值」的任务，反思可能只是变相增加尝试次数（本轮已就此给作者发信）。 |
+
+首次收录: 2026-11-11（第三轮）｜ 状态: 已核验元数据 + 已发信（`noahrshinn@gmail.com`）
+
+---
+
+## 12. Chain-of-Thought Prompting Elicits Reasoning in Large Language Models
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Chain-of-Thought Prompting Elicits Reasoning in Large Language Models |
+| 作者（前 3） | Jason Wei · Xuezhi Wang · Dale Schuurmans（et al.，共 9 位） |
+| 年份 | 2022（arXiv 首次提交 **2022-01-28**；v6 = 2023-01-10） |
+| 会议 / 期刊 | **NeurIPS 2022**（OpenAlex `primary_location.source` = neural information processing systems，pp. 24824–24837；arXiv 无 `journal_ref`） |
+| 被引数 | **13,949**（OpenAlex，查询日 2026-11-11；S2 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2201.11903> ｜ DOI `10.48550/arxiv.2201.11903` |
+| 一句话贡献 | 在 few-shot 提示里给出「中间推理步骤」的示例，让足够大的模型在数学/常识/符号推理上显著提升；并指出这是**随规模涌现**的能力，小模型写出流畅但不合逻辑的链反而更差。 |
+| 与我们工作的关系 | **zhulong（thinking 轴的理论依据）**：「显式推理 token 是否值得」这件事的成本账要从这里起算 —— 收益随规模涌现，2B 级未必成立，必须自己做规模扫描。<br>**pretrain（数据侧）**：若 SFT 数据里混入推理链，要区分「示范格式」与「真实可验证推理」，否则学到的只是句式。<br>**风险**：CoT 的「可解释」是形式上的，不等于忠实反映模型内部计算（2026 年已有专门工作反驳）。 |
+
+首次收录: 2026-11-11（第三轮）｜ 状态: 已核验元数据 + 已发信（`jason.weng.wei@gmail.com`）
+
+---
+
 ## 候选池（下轮起逐轮补，**被引数本轮未查**，勿引用）
 
 > 只登记「已实测 arXiv 元数据」的条目；被引数待下轮 OpenAlex 批量核过再写，**本表数字一律留空 = 未查**。
+> ⚠️ 本轮候选池已清空（4 条全部转正为 #9–#12）；下轮候选将优先补 pretrain / data 侧奠基工作（GPT-3、InstructGPT、LLaMA 系列），**元数据未实测前不进本表**。
 
 | arXiv ID | 标题（arXiv 实测） | 首次提交 | 拟服务线 | 为什么算经典（待核被引） |
 |:--|:--|:--|:--|:--|
-| `2104.09864` | RoFormer: Enhanced Transformer with Rotary Position Embedding | 2021-04-20 | pretrain | RoPE 原始论文，BaiZe 位置编码的直接来源（被引未查） |
-| `2310.06770` | SWE-bench: Can Language Models Resolve Real-World GitHub Issues? | 2023-10-10 | harness | 代码 agent 评测的事实标准（被引未查） |
-| `2303.11366` | Reflexion: Language Agents with Verbal Reinforcement Learning | 2023-03-20 | harness | 「失败后自反思再重试」的常青范式，与 harness 重试策略直接相关（被引未查） |
-| `2201.11903` | Chain-of-Thought Prompting Elicits Reasoning in Large Language Models | 2022-01-28 | pretrain · harness | CoT 范式起点；解释「显式推理 token 值不值」的成本账（被引未查） |
+| — | （本轮无新增候选，待下轮实测后填） | — | — | — |
 
-> ✅ 已晋级（第二轮转正，勿再留在候选池）：`2311.00176` ChipNeMo（#5）· `2210.03629` ReAct（#6）· `2309.07544` VerilogEval（#7）· `2106.09685` LoRA（#8）。
+> ✅ 已晋级（第三轮转正，勿再留在候选池）：`2104.09864` RoFormer（#9）· `2310.06770` SWE-bench（#10）· `2303.11366` Reflexion（#11）· `2201.11903` CoT（#12）。
 
 <!-- 维护纪律：新条目按「首次收录日」追加到末尾（不插入到旧条目之间、不改历史数字）；被引数变动只在新条目里写，旧条目保留原查询日。 -->

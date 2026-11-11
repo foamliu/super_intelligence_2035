@@ -1,0 +1,14 @@
+    attempts=1
+--- ① cs.CL 最新提交（submittedDate desc）
+    url=https://export.arxiv.org/api/query?search_query=cat%3Acs.CL&start=0&max_results=5&sortBy=submittedDate&sortOrder=descending
+    status=200 ct=application/atom+xml; charset=utf-8 total=125161 n_entries=5 1.06s
+    2611.14059v1 2026-11-10T13:25:28Z 2026-11-10T13:25:28Z cs.CL HandsOnAid: Building and Evaluating an Offline First-Aid Assistant for
+    2611.14039v1 2026-11-10T13:09:11Z 2026-11-10T13:09:11Z cond-mat.stat-mech Thermodynamics of words
+    2611.14036v1 2026-11-10T13:03:50Z 2026-11-10T13:03:50Z cs.CL MISO-BR: An Open Corpus for Misogyny Detection in Brazilian Portuguese
+    2611.14019v1 2026-11-10T12:53:12Z 2026-11-10T12:53:12Z cs.CL Program-Aided Patchable Skill Evolution
+    2611.14010v1 2026-11-10T12:50:33Z 2026-11-10T12:50:33Z cs.CL One Sequence Is Enough: Fingerprinting Language Models from Fixed-Leng
+    attempt 1 failed: <HTTPError 429: 'Unknown Error'>
+    attempt 2 failed: <HTTPError 429: 'Unknown Error'>
+    attempt 3 failed: <HTTPError 429: 'Unknown Error'>
+--- ② submittedDate 20261110-20261114（cs.CL）
+    FAILED: <HTTPError 429: 'Unknown Error'>

@@ -1,0 +1,16 @@
+Dear Dr. Wei,
+
+I am Yang Liu (Foam), author of Superintelligence 2035 and lead of the BaiZe-ISEDA2027 / ZhuLong-DAC2027 projects at CXMT AI Research. We train ~2B models for EDA tasks and run ablations on when explicit reasoning tokens pay for themselves.
+
+Your chain-of-thought paper is the reference point for that ablation. Two questions:
+
+1) Your experiments used very large models with 8-shot exemplars. In your ablations, at what model scale did CoT stop helping, and did you see the failure mode where small models produce fluent but illogical chains that hurt accuracy?
+
+2) At a fixed inference budget, is there a decision rule you would trust for spending tokens on a longer chain versus spending them on a larger model or on more samples? We report cost per solved task, so the accounting matters.
+
+Any pointer to an ablation table or a rule of thumb would directly shape our next round of experiments.
+
+Thank you for your time.
+
+Yang Liu (Foam)
+CXMT AI Research

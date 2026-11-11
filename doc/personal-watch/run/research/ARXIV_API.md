@@ -2222,3 +2222,14 @@ python3 research/arxiv_fetch.py --query 'cat:cs.CL AND abs:"agent"' --max-result
 - **台账**：`SEEN.md` 5,655 → **5,658 行**（+3「收录」）⇒ 收录 **334** / 候选 4,558 / 候选(RSS) 507；`papers.jsonl` 331 → **334**（`raw/update_r144.py`；幂等断言：每 ID 1 行、`published` 前缀 `2026-11-09`）。
 - **下一轮（2026-11-11 18:00 周三 PM）**：① 复验批次（若推进到 `2026-11-10` 则重跑 5 分类取数）；② 晚 2「科普」（备选 `2611.12825` MaxIM / `2611.12823` KVM-Agent / `2611.12886` Reframe / `2611.12879` 3D 手-物）；③ 日报 3/5 → 5/5 + `晚报变更说明（AM → PM）`；④ 分镜 `video/SCENES/11_11.html`。
 
+
+## §9.147 · 2026-11-11 12:00 CST（午间轮 · 批次刷新 + B 轨第三轮）
+
+- **批次已刷新** `2026-11-09` → **`2026-11-10`**：`raw/candidates_r147.py 2026-11-10` 5 单分类 **5/5** `200` + `application/atom+xml; charset=utf-8`；`cs.CL` **125,161**（AM 125,075，**+86**）/ `cs.CV` 213,025 / `cs.LG` 298,625 / `cs.AI` 212,361 / `cs.SE` 30,979；最新 `published` **`2026-11-10T13:25:28Z`**（`2611.14059v1`）。
+- **限速实测（重要）**：并发跑「取数 + 4 条探针」⇒ `HTTP 429`（`urllib`：`Too Many Requests`；`curl`：`Rate exceeded.`）。**之后即便串行 `id_list` 仍 429 约 10 分钟** ⇒ 结论：arXiv API 的限速窗口比任务书的「≥3s」更严，**同一 IP 单轮应 ≤6 次查询并串行**；429 期间改用 `https://arxiv.org/abs/<ID>`（`200`，4/4）取元数据。
+- **取数**：`merged 234 / seen 0 / fresh 234`（`raw/2026-11-11-midday-candidates-r147.json`）。
+- **午间 2 篇**：`2611.14009` **CAMP-II**（cs.LG；PKU/JD/川大/北理工/人大/港科大，12 位；CAMG-II 5 环境；文件接口 NLL 0.19/0.42 vs 工具 0.70/0.91、压缩 0.98/1.40；记忆动作占比 21.6% vs 7.8%；CAMP-II-4B 64.6 / 9B 66.5；TB2.1 & SWE-Bench Pro V2：4B 23.1/11.2→30.0/18.1、9B 38.0/30.1 > 35B-A3B 33.8/27.4；2.97× OPD 增益；40 页）+ `2611.13541` **Agent Benchmarks Stop Ranking**（cs.AI；Lenovo/Marquette/Cornell，3 位；SWE-bench Verified 前十 3.6 分一档、TB2.0 8.5 分一档、OSWorld 12.0 分两档；ALE-Bench 3 档 S=0.07 → 二值 1 档 S=1.00 → 分级 3 档 S=0.03，47.8% 超参考；TB 复跑同分差 10×；57 份模型卡仅 1/3 可比；13 页）。
+- **PDF 2/2**：`2611.14009` 1,955,406 B / 40 页 / sha256 `4b7d5dda7a3b0ad5…`（**首轮被工具超时截断，`curl -C -` 续传到 Content-Length 后才解析**）；`2611.13541` 513,443 B / 13 页 / `17aa9a6bb06d6265…`。
+- **B 轨第三轮**（元数据因 API 429 改取 `arxiv.org/abs` 4/4 `200`；被引 OpenAlex 4/4 `200`，查询日 2026-11-11）：RoFormer `2104.09864` **3,867** · SWE-bench `2310.06770` **2,078** · Reflexion `2303.11366` **3,297** · CoT `2201.11903` **13,949**。
+- **交付**：`daily/2026-11-11.html` **5/5 = 87,802 B**（div 112/112、table 10/10、tr 82/82、td 400/400、0 `<script>`）+ `daily/index.html`（11-11 行改「早报 3 + 午间 2 · 5/5」+ footer 最近更新）。
+- **台账**：`SEEN.md` 5,658 → **5,660 行**（收录 **336**）/ `papers.jsonl` 334 → **336**（`raw/update_r147.py`，幂等断言过）。

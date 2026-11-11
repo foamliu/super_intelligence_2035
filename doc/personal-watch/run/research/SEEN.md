@@ -5656,3 +5656,5 @@
 | 2026-11-11 | 2611.12728 | Safe Reinforcement Learning for Multi-Turn Clinical Agents: When Dense Rewards Beat Outcome Rewards | cs.LG | 收录 |
 | 2026-11-11 | 2611.12856 | WorkflowArena: Benchmarking Executable Workflow Orchestration in LLM-Based Multi-Agent Systems | cs.CL | 收录 |
 | 2026-11-11 | 2611.12712 | Will AI mess my RTL? A snapshot-based approach to verifying AI-written RTL | cs.SE | 收录 |
+| 2026-11-11 | 2611.14009 | Coding Agent Memory Post-Training II: Unlocking the Memory Potential of Pre-trained File Operations for Long-Horizon Tasks via On-Policy Distillation | cs.LG | 收录 |
+| 2026-11-11 | 2611.13541 | Agent Benchmarks Stop Ranking Before They Run Out of Tasks | cs.AI | 收录 |

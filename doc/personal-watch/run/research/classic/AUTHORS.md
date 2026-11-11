@@ -6,7 +6,7 @@
 > 🔴 **找 X 的铁律（不猜）**：只登记**能从可访问页面读到**的 handle（本轮唯一可用手段 = 作者本人主页 `href` 实测）；**读不到 = 写「未找到 X」**。
 > 🚫 不许猜 handle（猜错会 follow 到无关账号，比不 follow 更糟）。X.com 本身本轮不可达（见文末探测证据），因此**无法在本轮做任何 follow 动作**。
 
-**本轮快照**：累计 **13** 人｜已发信 **3**（Tri Dao · Shunyu Yao · Haoxing Ren）｜X 已核验 **4**（`@tri_dao` / `@_albertgu` / `@ShunyuYao12` / `@edwardjhu`）｜X 未找到 **9**｜已 follow **0（BLOCKED，见第二节）**
+**本轮快照**：累计 **20** 人｜已发信 **5**（Tri Dao · Shunyu Yao · Haoxing Ren · **Jason Wei** · **Noah Shinn**）｜X 已核验 **6**（`@tri_dao` / `@_albertgu` / `@ShunyuYao12` / `@edwardjhu` / **`@jyangballin`** / **`@_jasonwei`**）｜X 未找到 **14**｜已 follow **0（BLOCKED，见第二节）**
 
 ---
 
@@ -181,9 +181,100 @@
 | 状态 | 待跟踪 |
 | 备注 | — |
 
+### 14. Jason Wei
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Jason Wei（美籍 ⇒ 信按英文写） |
+| 机构 | **Meta Superintelligence Labs**（本人主页实测「I currently work at Meta Superintelligence Labs. From 2023 to 2025, I was at OpenAI…」；CoT 发表时为 Google Brain） |
+| 代表论文 | Chain-of-Thought（`2201.11903`，一作）· 指令微调 / 涌现能力系列 |
+| 邮箱 | **jason.weng.wei@gmail.com**（来源：`https://jasonwei.net/` 页内 `mailto:` 实测；**非 2022 年论文 PDF 旧地址**） |
+| 主页 | <https://jasonwei.net>（实测 `HTTP 200` / 116,550 B） |
+| X 账号 | **@_jasonwei**（核验方式：主页 `href="https://twitter.com/_jasonwei"`） |
+| 状态 | **已发信**（2026-11-11 12:10 CST，经典论文请教信第 4 封）· X 待 follow（BLOCKED） |
+| 备注 | 其主页自述「My work helped popularize chain-of-thought, instruction tuning, and emergence」⇒ **一篇经典覆盖 zhulong 的 thinking 轴与 pretrain 的 SFT 数据口径**。⚠️ 邮箱是 gmail 个人信箱（本人主页公开挂出），非机构信箱。 |
+
+### 15. Noah Shinn
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Noah Shinn |
+| 机构 | 独立研究者 · **前 Sierra**（本人主页实测「Previously, I was a researcher at Sierra, where I joined as one of the first employees.」；Reflexion 发表时为 Northeastern University 编程语言组） |
+| 代表论文 | Reflexion（`2303.11366`，一作）· τ-bench（与 Shunyu Yao 合作） |
+| 邮箱 | **noahrshinn@gmail.com**（来源：`https://noahshinn.com/` 页内明写 `Email: noahrshinn[at]gmail[dot]com`，去混淆后使用） |
+| 主页 | <https://noahshinn.com>（实测 `HTTP 200` / 4,689 B） |
+| X 账号 | **未找到 X**（该主页只列 Github / Google Scholar，无 twitter / x.com 链接 ⇒ 按令不猜） |
+| 状态 | **已发信**（2026-11-11 12:11 CST，经典论文请教信第 5 封） |
+| 备注 | τ-bench 与 Shunyu Yao 合作 ⇒ 与已发信的 Shunyu Yao 属同一合作圈；本轮只写给 Noah（未重复打扰 Shunyu）。 |
+
+### 16. Xuezhi Wang
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Xuezhi Wang |
+| 机构 | **未核实**（CoT 发表时在 Google；本轮无可访问的本人主页） |
+| 代表论文 | Chain-of-Thought（`2201.11903`，二作） |
+| 邮箱 | **未找到** |
+| 主页 | **未找到**（`xuezhiwang.com` 实测 `HTTP 200` 但页面标题为「w66.com 中国区」赌博站 ⇒ **非本人站点**，不予采用） |
+| X 账号 | **未找到 X** |
+| 状态 | 待跟踪 |
+| 备注 | 同论文已发给一作 Jason Wei ⇒ 按「同一合作圈不重复打扰」本轮不发。 |
+
+### 17. Denny Zhou
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Denny Zhou |
+| 机构 | **未核实**（CoT 发表时在 Google；本轮未核到机构字段） |
+| 代表论文 | Chain-of-Thought（`2201.11903`，末位作者）· 推理 / 思维链系列 |
+| 邮箱 | **未找到**（`dennyzhou.github.io` 实测 `HTTP 200` / 50,918 B，但页面为多年前的论文列表，**无 `mailto:` / 社交链接**） |
+| 主页 | <https://dennyzhou.github.io>（无联系方式） |
+| X 账号 | **未找到 X** |
+| 状态 | 待跟踪 |
+| 备注 | 末位作者、CoT 方向长期主导者；拿到可访问的新主页后再补。 |
+
+### 18. Carlos E. Jimenez
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Carlos E. Jimenez |
+| 机构 | Princeton University（Princeton Language and Intelligence；OpenAlex `institutions` 实测） |
+| 代表论文 | SWE-bench（`2310.06770`，一作） |
+| 邮箱 | **未找到** |
+| 主页 | **未找到**（`carlosej.github.io` DNS 不解析；`www.cs.princeton.edu/~carlosej/` 返回「This person has moved」占位页） |
+| X 账号 | **未找到 X** |
+| 状态 | 待跟踪 |
+| 备注 | SWE-bench 一作；论文已由二作 John Yang 的 handle 覆盖（X 侧）。 |
+
+### 19. John Yang
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | John Yang（主页自称「John Y」） |
+| 机构 | Stanford University（CS PhD；本人主页实测「2nd year Computer Science PhD student @ Stanford University」） |
+| 代表论文 | SWE-bench（`2310.06770`，二作）· SWE-agent 系列 |
+| 邮箱 | **未找到**（主页无 `mailto:`） |
+| 主页 | <https://john-b-yang.github.io>（实测 `HTTP 200` / 6,840 B） |
+| X 账号 | **@jyangballin**（核验方式：主页 `href="https://x.com/jyangballin"`，同页多条推文链接指向同一 handle） |
+| 状态 | 待跟踪 · X 待 follow（BLOCKED） |
+| 备注 | SWE-agent / SWE-bench 的主要工程实现者，harness 侧言论密度高；**关注度优先级高**。 |
+
+### 20. Jianlin Su（苏剑林）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Jianlin Su（苏剑林；中文作者 ⇒ 若发信按中文） |
+| 机构 | **Zhuiyi Technology（追一科技，深圳）**（OpenAlex `raw_affiliation_strings` 实测：`Zhuiyi Technology Co., Ltd. Shenzhen, China`） |
+| 代表论文 | RoFormer / RoPE（`2104.09864`，一作） |
+| 邮箱 | **未找到**（`kexue.fm` 站点本轮实测 `HTTP 403`（站点自身拦截），无法读取联系方式） |
+| 主页 | <https://kexue.fm>（403，不可读） |
+| X 账号 | **未找到 X** |
+| 状态 | 待跟踪 |
+| 备注 | RoPE 是 BaiZe 位置编码的直接来源，**如果只能补一个人的联系方式，优先补他**；但机构邮箱不公开、博客反爬 ⇒ 本轮不发信（不猜邮箱）。 |
+
 ---
 
-## 二、🔴 X 能力探测（只读 · 2026-11-11 11:3x–11:4x CST 两轮）
+## 二、🔴 X 能力探测（只读 · 2026-11-11 **三轮**：11:3x / 11:4x / 12:0x CST）
 
 > 令要求「先验证能力再动手」。**结论：BLOCKED(x_access)** —— 本机对 X 的出网被阻断，且无浏览器 / MCP 通道、无授权凭据。
 
@@ -198,10 +289,12 @@
 | 7（第二轮复测） | `curl -o /dev/null -m 10 https://x.com/` | **`000` / 10.002s** |
 | 8（第二轮复测） | `curl -o /dev/null -m 10 https://x.com/ShunyuYao12` | **`000` / 10.003s** |
 | 9（同轮对照） | `curl -o /dev/null -m 10 https://export.arxiv.org/` | **`200` / 1.16s** |
+| 10（**第三轮复测**） | `curl -o /dev/null -m 10 https://x.com/` | **`000` / 10.002s** |
+| 11（**第三轮对照**） | `curl -o /dev/null -m 15 https://export.arxiv.org/api/query?...` ｜ `https://api.openalex.org/...` | **`200` / 0.74s** ｜ **`200` / 0.75s** |
 
-**判读**：③④⑦⑧ 同时 `000`，而 ⑨ 与 `github.io` / `tridao.me` / `api.openalex.org` 可通 ⇒ **不是 x.com 单点故障，而是本机出网白名单**。因此：
+**判读**：③④⑦⑧⑩ 同时 `000`，而 ⑨⑪ 与 `github.io` / `tridao.me` / `api.openalex.org` 可通 ⇒ **不是 x.com 单点故障，而是本机出网白名单**。因此：
 - ❌ **不能自动 follow**；🚫 不许注册新账号、不许用未授权凭据登录；
-- ✅ 可做的替代：**从作者本人主页核验 handle**（两轮累计已核验 4 个），并把清单交给用户手动 follow。
+- ✅ 可做的替代：**从作者本人主页核验 handle**（三轮累计已核验 **6** 个），并把清单交给用户手动 follow。
 
 ### 待 follow 清单（请用户手动执行 · 均已从作者本人主页核验）
 
@@ -211,8 +304,10 @@
 | 2 | Albert Gu | `@_albertgu` | <https://x.com/_albertgu> | SSM / Mamba 路线主推者，架构选择的判断值得跟踪 |
 | 3 | Shunyu Yao | `@ShunyuYao12` | <https://x.com/ShunyuYao12> | ReAct / ToT 一作，现于 OpenAI 做 agent 产品（CUA / Deep Research），agent 方向言论密度高 |
 | 4 | Edward J. Hu | `@edwardjhu` | <https://x.com/edwardjhu> | LoRA 一作，PEFT 与训练实践的第一手来源 |
+| 5（**第三轮新增**） | John Yang | `@jyangballin` | <https://x.com/jyangballin> | SWE-bench 二作 / SWE-agent 工程主力，harness 与 SWE 评测的一手信息 |
+| 6（**第三轮新增**） | Jason Wei | `@_jasonwei` | <https://x.com/_jasonwei> | CoT / 指令微调 / 涌现能力的关键作者，reasoning 与训练配方判断密度高 |
 
-> 四个 handle 均来自其**本人主页**的 `href`（`twitter.com/tri_dao` / `x.com/_albertgu` / `www.twitter.com/ShunyuYao12` / `twitter.com/edwardjhu`），非搜索猜测。用户 follow 后请在本表把状态改为 `已follow` 并写日期，后续 `voice_ready` 才能标「已核验账号」。
+> 六个 handle 均来自其**本人主页**的 `href`（`twitter.com/tri_dao` / `x.com/_albertgu` / `www.twitter.com/ShunyuYao12` / `twitter.com/edwardjhu` / `x.com/jyangballin` / `twitter.com/_jasonwei`），非搜索猜测。用户 follow 后请在本表把状态改为 `已follow` 并写日期，后续 `voice_ready` 才能标「已核验账号」。
 
 ---
 
@@ -223,6 +318,8 @@
 | 2026-11-11 11:36 | Tri Dao | `2205.14135` FlashAttention | 个人 CV PDF（2026 版） | `SENT OK`（见 `research/mail/发送记录.md`） |
 | 2026-11-11 11:43 | Shunyu Yao | `2210.03629` ReAct | 本人主页 `mailto:` | `SENT OK`（`shunyuy@princeton.edu`） |
 | 2026-11-11 11:43 | Haoxing Ren | `2311.00176` ChipNeMo · `2309.07544` VerilogEval | 公司站 `mailto:`（`info@agentrys.ai`，请转交） | `SENT OK`（公司公开信箱） |
+| 2026-11-11 12:10 | Jason Wei | `2201.11903` Chain-of-Thought | 本人主页 `mailto:`（`jasonwei.net`） | `SENT OK`（`jason.weng.wei@gmail.com`，英文 165 词） |
+| 2026-11-11 12:11 | Noah Shinn | `2303.11366` Reflexion | 本人主页明写邮箱（`noahshinn.com`） | `SENT OK`（`noahrshinn@gmail.com`，英文 153 词） |
 
 ---
 
