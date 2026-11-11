@@ -1,4 +1,73 @@
-# BAIZE_DATA_TASK.md
+﻿# BAIZE_DATA_TASK.md
+
+### 🔴 用户令 · 2026-11-11（**为 vision encoder 找图文对：去 hf.co 等平台搜，出中文 HTML 报告**）· 用户直令 · 最高优先
+
+> **用户原话**：「用于训练 vision encoder 的图文对不够，请 data 去 hf.co 等地方找找。写个中文 HTML 报告。」
+
+#### 0. 为什么缺（先读，决定你要找什么样的数据）
+
+vision 线当前基线用 **CC12M + Amshaker ≈ 18.5M** 对；GPIC 已全量下完（train 8000/8000）。
+
+| 事实 | 出处 |
+|:--|:--|
+| GPIC `short` 为 45% 占比，要 **≥18.5M** 才能做有效数据轴对比 | `ARCHIVE_OPERATOR_VISION.md` §R11-E |
+| R11-E（数据源对比）因可比区间窄被 ⏸，等数据到位 | 同上 L350 |
+| 现有 base 全是**英文 caption + 通用网络图** | CC12M / Amshaker / GPIC |
+
+⇒ 缺口是三样：① 规模 ② **中文/多语言 caption（现几乎为 0，边际收益最大）** ③ **领域多样性（技术图/图表/文档/EDA 类）**
+
+#### 0.5 ⚠️ 本令与 2026-10-13 旧令的区别（**先读，别重复劳动**）
+
+- **2026-10-13 已做过一次**同类任务 → 交付 `reports/report_data_hf_imagetext_datasets_zh.html`（TOP-5：WebMix-38M / wit_base / GPIC已用 / the_cauldron / InternVL-SA1B，其中 4 路已下完）。
+- **本次不是重复**：上次只要「image 带 bytes 的通用英文图文对」，**未覆盖中文 caption、未覆盖领域图**，也**未回答「为什么下了却没进训练」**。
+- **✅ 白名单解除（本令即授权）**：`ARCHIVE_OPERATOR_DATA.md` 里那条「🚫 白名单外一律不下载、不调研、不推荐（含任何 HF 图文对…）——除运维点名」**本条即运维点名**，本任务范围内的图文对**调研与推荐已获授权**。
+  - 但**下载仍需另批**：本轮只盘点+推荐，**不启动大下载**（见 §3「本轮不做」）。
+
+#### 1. 任务 A：**先做归因**（半小时内，优先于找新数据）
+
+在找新数据之前，先回答一个更关键的问题：**上次 TOP-5 里已经下完的那批，为什么没让 18.5M 缺口补上？**
+
+逐项核实并写进报告（找不到就写「未查到」）：
+1. 已下的是哪几个、各多少对、落在哪个路径（`/nas_inference` / `/nas_user` / `/nas_env`）；
+2. 是否真的进入了 vision 训练（看 `ARCHIVE_OPERATOR_VISION.md` 里 R11 各臂的数据配置）；
+3. 若"下了但没用"，原因是什么（格式不兼容 / bytes vs url / 许可问题 / 质量问题 / 只是没人接）。
+
+> 💡 这一节的结论可能直接说明「不必再找新数据，把已有的接上就行」——那也是有价值的结论。
+
+#### 2. 任务 B：平台盘点（找**中文 + 领域**方向，与上次互补）
+
+上次已覆盖通用英文集，**本轮重点检索这两类**：
+
+| 方向 | 重点平台与关键词 |
+|:--|:--|
+| **中文图文对** | **ModelScope（魔搭）** 中文多模态集 · OpenDataLab · **Wukong（华为，1亿中文图文）** · TaiSu · Zero · LAION-Chinese 系 · `Chinese-LLaVA` 数据 · `COCO-CN` · `Flickr30k-CN` |
+| **多语言 caption** | `LAION-Multi` · `DataComp-Multilingual` · `CC3M/12M` 的多语翻译版 |
+| **领域图（技术/文档/图表）** | 文档理解类（`DocVQA` / `ChartQA` / `PlotQA` / `Rico`）· 学术图表（`SciCap` / `Paper2Fig`）· **EDA/版图类（若有）** · 截图/UI（`WebUI` / `Rico`） |
+| 补充通用 | HF `datasets-server` 检索 `image-text-to-text`、按 `num_rows` 排序 |
+
+**每个候选项记录 8 字段**（缺一标 `n/a`，🚫 不许估）：`数据集名 · 平台 · 链接 · 对数 · 大小 · 语言 · 许可证 · 可商用/需申请`
+
+**硬性要求**：
+- 数量用 HF `datasets-server /info` 的 `num_rows`，或官方标注；拿不到写「官方未标」。
+- **许可证必查**；无许可证 / NC（非商用）**单独标红**——研究可用，不得混进商用路径。
+- **不下载本体**；允许拉 `README` / `dataset_infos.json`。
+
+#### 3. 任务 C：报告（用户点名要求）
+
+**产出**：`reports/report_vision_textpair_sourcing_zh.html`（中文 · 单文件自包含 · 内联 CSS · 零外链 · 离线可开）
+
+**必含 6 节**：
+① **归因**（上次 TOP-5 为何没补上缺口——本报告最重要的一节）
+② 缺口分析（三缺口：规模 / 中文 / 领域）
+③ 平台盘点全表（8 字段 + 与上次报告的去重对照）
+④ 推荐 Top-5（含打分：规模 / 中文 / 领域 / 许可 / 获取成本）
+⑤ 许可合规（能商用 / 只能研究 / 禁用）
+⑥ 下一步建议（先接哪个已有数据 / 再下哪个新的 / 下多少 / 怎么验）
+
+**纪律**：每个数字注明来源；查不到写「未查到」；不确定写「待核实」；🚫 不许把猜测写成事实。报告底部写生成时间 + 平台清单 + 检索关键词。
+
+**本轮不做**：🚫 不下载数据集本体（>1GB 下轮另批）；🚫 不改 vision 线文件；🚫 不动现有 CC12M/GPIC；🚫 不重复上次报告的通用英文集结论（引用即可）。
+
 
 ### 🧭 工作约定（常驻 · 中性表述，替代旧「收尾铁律／体积规程／归档纪律／报告纪律」四段）
 
@@ -62,56 +131,7 @@
 ---
 
 
-### ✅ 运维令 · 2026-11-07 08:5x（**代码语料放行：`stack-v3-train` 可考虑，`the-stack-v2` 禁下，其余单集 <1TB 放行 —— 你自己按 ROI 从高到低排优先级下载**）· 用户直令 · 最高优先 · ✅ 已交付（ROI表+8源25.14GB下载+stack-v3调研+2TB全下+ROI复盘）
-
-> **用户原话**：「report_data_lc_agentic_survey_zh.html 这个报告我看了。bigcode/the-stack-v2 占用空间太大，不能下载。HuggingFaceCode/stack-v3-train 可以考虑，其它单集 <1TB 的也可以放行。让它自己排个优先级，从 ROI 从高到低开始下载吧。」
-
-> **补充语境（用户 2026-11-07 追加）**：「pretrain 还缺 code 数据，现在 code 占比才 19%，低于我在 Xmodel 训练时使用的量（25%）。……增加 code 配比这件事**不急**，所以可以按 data 的喜好**慢慢来**。**有也行，无也行。快也行，慢也行。**……UltraData-Code L2/L3 pretrain 已经在训练了，**后续考虑 stack-v3-train**。」
->
-> ⇒ **本令的优先级定位**：code 数据补料 = **低压力背景任务**，🚫 不要挤占 S1 训练带宽、🚫 不要为了赶进度牺牲质量。可以慢慢下、分批下、挑着下。
-
-**① 三条硬口径（不可改）**
-
-| 数据集 | 结论 | 依据 |
-|:--|:--|:--|
-| `bigcode/the-stack-v2` | 🚫 **禁止下载** | 67.5TB full / **32.1TB dedup**，且需与 SoftwareHeritage/INRIA 签协议 + gated |
-| `HuggingFaceCode/stack-v3-train` | ⚠️ **可以考虑**（非无条件放行） | **train 15.9TB**（full 113.7TB，🚫 不许下 full）；ODC-By、非 gated、**文件内容内联**（比 v2 的 SWHID 引用形态更实用） |
-| 其它**单集 < 1TB** | ✅ **放行**（你自行判断 ROI） | 见下方 §② 候选池 |
-
-> 🚫 **单集 ≥1TB 一律不下载**，包括 `stack-v3-train` 的 full 版（113.7TB）与 `AlienKevin/SWE-ZERO-12M-trajectories`(111G 可下，但要注意它不是 <1TB 的问题而是性价比)。若你认为某 ≥1TB 集必须下，**先报运维批准**，🚫 不许自行开工。
-
-**② 允许放行的候选池（从 `report_data_lc_agentic_survey_zh.html` 提取，单集均 <1TB）**
-
-- **长上下文 E 类**（部分已下载，见 `DATA_MAPPING.md` §E，🚫 不重复下）：`ysngkil/whole-books` 25.3G · `princeton-nlp/prolong-data-512K` 114G（**代码仓库级，ROI 高**）· `openbmb/InfLLM-V2-data-5B` 15G · `self-long/RULER-llama3-1M` 5.1G · `caskcsg/NExtLong-128K-dataset` 20.5G · `THUDM/LongAlign-10k` 0.6G · `ghostcc3/mix-context-post-training-128k` 32.5G · `yuyijiong/LongData-Corpus` 36.1G(gated) · `birgermoell/oellm-longctx-tokenized-...-pilot-v1` · `deepmind/pg19`(仅脚本)
-- **新增候选**（报告中出现、尚未下载）：`caskcsg/NExtLong-Instruct-dataset-Magpie-Llama-3` · `THUDM/LongWriter-6k` · `utter-project/LongBlocks` · `zai-org/LongBench-v2` · `alea-institute/kl3m-data` · `common-pile/arxiv_papers_filtered` · `common-pile/project_gutenberg_filtered` · `NovaSky-AI/SkyRL-v0-293-data` · `Nethraaaaa81/swev-trm-trajectories-25models` · `harborframework/terminal-bench-2`（⚠️ 评测集，仅去污染）
-- **B 类 agentic 补漏**：`nvidia/Nemotron-RL-Agentic-SWE-Pivot-v1`（报告中出现，未在 F 节）
-
-**③ 你要自己做的事：排 ROI 优先级 → 从高到低下载**
-
-**③-0 · Code 补料专项（用户 11-07 重点，但明确「不急、有也行无也行」）**
-
-- 盘上 code 源仅 `UltraData-Code-L2`(421.45B tok)+`L3`(128.62B tok)=**550.1B tok**，占全量 **12.23%**（总 4,498.6B）。
-- ⚠️ 用户称 **S1 实际配比 19%**，与上不符 ⇒ **查清口径**：`EXPERIMENTS_PRETRAIN_2B.md:15` 记的是 `L3(86)+code(10)+math(4)`。查 S1 配比配置/启动脚本，明确「19%」分母（shard 采样权重？文件大小？token？），**结论写进 `DATA_MAPPING.md` 一节**。
-- 缺口（仅量级参考，非 KPI）：25% 目标需 1,125B tok，缺 ≈575B tok ≈ 2–2.5TB 原始数据。
-
-**要做的**：①查 `stack-v3-train` 子集/分片结构，给出只下代码相关的 `--include` 方案（15.9TB train，评估按语言筛能否压到 2TB 内）②把它放进 ROI 排序做主力候选 ③节奏自定（可分批/夜间/`nice -n 19` + `--max-workers 2`），🚫 不与 S1 抢带宽 ④**不把 25% 当 KPI**，做多少算多少，但每次下载须记清 token 增量。
-
----
-
-1. **ROI 评估表**（写进 `DATA_MAPPING.md` 新节）：每候选评 5 维 —— ①相关性（PyAether/EDA 代码/agentic）②单位成本收益（GB vs token vs 独特性）③可用性（gated/协议/格式）④质量风险（license/污染/清洗）⑤落地成本（下载时长 + 转换）
-2. **排序 + 按序下载**（≥1TB 的须先报批）；**总量 ≤1.5TB**（/nas_inference 29T 可用，留余量给分词产物），超限先报。
-
-**④ 落盘与纪律（沿用 11-04 令）**
-
-- 落盘 `/nas_inference/app.e0031982/datasets/<repo原名>/`；gated 源用已配 token（`.29` `~/.cache/huggingface/token`）；走代理 `HTTPS_PROXY=http://172.19.92.25:13128`
-- `setsid` 后台 + `/tmp/data_download_*.log`；🚫 不挤 S1（`nice`、`--max-workers 4`、留带宽）；断点续传
-- 🚫 `ia03/terminal-bench` / `harborframework/terminal-bench-2` 等**评测集只进去污染黑名单，禁入训练**
-- 下载完写 `DATA_MAPPING.md` 新节（`du -sb` + `find | wc -l` + `incomplete` 三项核对）；commit `data 下载:`
-- 🚫 token 不得写入表/日报/commit
-
-> **完成标记**：ROI 评估表 + 下载（含本轮已完成部分）落盘核对齐全 ⇒ 本行改 `✅ 已交付`；未完成 ⇒ `WAITING: 0`（60s 后继续）。
-
----
+### 📦 归档指针 · 2026-11-07 08:5x「代码语料放行 stack-v3-train」· ✅ 已交付（ROI表+8源25.14GB+stack-v3调研+2TB全下+ROI复盘）。现行要点：`the-stack-v2` 🚫禁下；`stack-v3-train` 仅 train 15.9TB（🚫 full 113.7TB）；其它单集 <1TB 按 ROI 自排；code 补料属**低压力背景任务**（用户：有也行无也行、不急、不挤 S1 带宽）。原文见 ARCHIVE「归档块 · 2026-11-11」
 
 ### 🚀 运维令 · 2026-11-04 13:2x（**放行 B 类 agentic 数据下载 · 落盘 /nas_inference**）· 用户直令 · 最高优先 · ✅ 已交付（12/12 落地 78.73 GiB）
 

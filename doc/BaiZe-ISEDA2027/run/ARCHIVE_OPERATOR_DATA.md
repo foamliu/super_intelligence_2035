@@ -2275,3 +2275,60 @@ export HF_PROXY=http://172.19.92.23:13128; export HF_ENDPOINT=https://hf-mirror.
 
 > **执行结论（唤醒672, 2026-10-26 16:3x）**：已交付 DONE。①核查分词状态=两份均无 .bin/.idx/.json（仅 jsonl）→判定「未分词」（不伪造镜像完整）。②实测：SFT-2605=1504 jsonl/318,990,486,183 B（297 GB，no_think 855:Chinese-general50/Code300/IF20/Knowledge80/Math300/Multi-lang-Knowledge50/Multi-lang-Math55 + think 649:Chinese-general50/Code279/IF20/Knowledge50/Math250）；Agent-2609=50 jsonl/54,220,373,384 B（50 GB，Code_Agent7/General_Agent32/Search_Agent2/Tool_Use9）。③新建 `untokenized_sft_sources.tsv` + 改 `gen_data_mapping_md.py`（load_untokenized + --untokenized-tsv，A 节追加 2 行未分词，分词目录=—，下载字节计入合计）→ DATA_MAPPING.md 重生成 103 行/11,001 B（字节数变化 10,093→11,001 B，+908 B；合计 815 shards/4474.83 B/17.26 TB 分词产物/下载 13,021,192,793,759 B=12127 GB；未分词小计 2 源 1554 jsonl/373,210,859,567 B=347.6 GB；幂等 run1==run2=True）。④报告 report_data_mapping_zh.html 更新（字节数变化 25,112→20,434 B，−4,678 B；总览数据源 10→12 + 下载 12647.98→13021.19 GB；逐源列表加行 11(SFT-2605 未分词)+12(Agent-2609 未分词)+合计；删第 4 节「其余状态源」（32 已删除表+状态汇总），5→4 结论节号顺延，加 SFT 未分词说明；footer 更新）。⑤HTML 校验 tag 平衡。commit 86431cfb4 `data report:`。后续 1cfb5e7dd（坏 shard 修复）再次全量刷新报告，当前报告 20,882 B / 4 节。
 
+
+---
+
+## 📦 归档块 · 2026-11-11（2026-11-07 08:5x「代码语料放行 stack-v3-train」原文 · 已交付，压 32KB 软限搬出）
+
+> 状态：✅ 已交付（ROI表 + 8源25.14GB + stack-v3调研 + 2TB全下 + ROI复盘）。原文一字未改。
+
+### ✅ 运维令 · 2026-11-07 08:5x（**代码语料放行：`stack-v3-train` 可考虑，`the-stack-v2` 禁下，其余单集 <1TB 放行 —— 你自己按 ROI 从高到低排优先级下载**）· 用户直令 · 最高优先 · ✅ 已交付（ROI表+8源25.14GB下载+stack-v3调研+2TB全下+ROI复盘）
+
+> **用户原话**：「report_data_lc_agentic_survey_zh.html 这个报告我看了。bigcode/the-stack-v2 占用空间太大，不能下载。HuggingFaceCode/stack-v3-train 可以考虑，其它单集 <1TB 的也可以放行。让它自己排个优先级，从 ROI 从高到低开始下载吧。」
+
+> **补充语境（用户 2026-11-07 追加）**：「pretrain 还缺 code 数据，现在 code 占比才 19%，低于我在 Xmodel 训练时使用的量（25%）。……增加 code 配比这件事**不急**，所以可以按 data 的喜好**慢慢来**。**有也行，无也行。快也行，慢也行。**……UltraData-Code L2/L3 pretrain 已经在训练了，**后续考虑 stack-v3-train**。」
+>
+> ⇒ **本令的优先级定位**：code 数据补料 = **低压力背景任务**，🚫 不要挤占 S1 训练带宽、🚫 不要为了赶进度牺牲质量。可以慢慢下、分批下、挑着下。
+
+**① 三条硬口径（不可改）**
+
+| 数据集 | 结论 | 依据 |
+|:--|:--|:--|
+| `bigcode/the-stack-v2` | 🚫 **禁止下载** | 67.5TB full / **32.1TB dedup**，且需与 SoftwareHeritage/INRIA 签协议 + gated |
+| `HuggingFaceCode/stack-v3-train` | ⚠️ **可以考虑**（非无条件放行） | **train 15.9TB**（full 113.7TB，🚫 不许下 full）；ODC-By、非 gated、**文件内容内联**（比 v2 的 SWHID 引用形态更实用） |
+| 其它**单集 < 1TB** | ✅ **放行**（你自行判断 ROI） | 见下方 §② 候选池 |
+
+> 🚫 **单集 ≥1TB 一律不下载**，包括 `stack-v3-train` 的 full 版（113.7TB）与 `AlienKevin/SWE-ZERO-12M-trajectories`(111G 可下，但要注意它不是 <1TB 的问题而是性价比)。若你认为某 ≥1TB 集必须下，**先报运维批准**，🚫 不许自行开工。
+
+**② 允许放行的候选池（从 `report_data_lc_agentic_survey_zh.html` 提取，单集均 <1TB）**
+
+- **长上下文 E 类**（部分已下载，见 `DATA_MAPPING.md` §E，🚫 不重复下）：`ysngkil/whole-books` 25.3G · `princeton-nlp/prolong-data-512K` 114G（**代码仓库级，ROI 高**）· `openbmb/InfLLM-V2-data-5B` 15G · `self-long/RULER-llama3-1M` 5.1G · `caskcsg/NExtLong-128K-dataset` 20.5G · `THUDM/LongAlign-10k` 0.6G · `ghostcc3/mix-context-post-training-128k` 32.5G · `yuyijiong/LongData-Corpus` 36.1G(gated) · `birgermoell/oellm-longctx-tokenized-...-pilot-v1` · `deepmind/pg19`(仅脚本)
+- **新增候选**（报告中出现、尚未下载）：`caskcsg/NExtLong-Instruct-dataset-Magpie-Llama-3` · `THUDM/LongWriter-6k` · `utter-project/LongBlocks` · `zai-org/LongBench-v2` · `alea-institute/kl3m-data` · `common-pile/arxiv_papers_filtered` · `common-pile/project_gutenberg_filtered` · `NovaSky-AI/SkyRL-v0-293-data` · `Nethraaaaa81/swev-trm-trajectories-25models` · `harborframework/terminal-bench-2`（⚠️ 评测集，仅去污染）
+- **B 类 agentic 补漏**：`nvidia/Nemotron-RL-Agentic-SWE-Pivot-v1`（报告中出现，未在 F 节）
+
+**③ 你要自己做的事：排 ROI 优先级 → 从高到低下载**
+
+**③-0 · Code 补料专项（用户 11-07 重点，但明确「不急、有也行无也行」）**
+
+- 盘上 code 源仅 `UltraData-Code-L2`(421.45B tok)+`L3`(128.62B tok)=**550.1B tok**，占全量 **12.23%**（总 4,498.6B）。
+- ⚠️ 用户称 **S1 实际配比 19%**，与上不符 ⇒ **查清口径**：`EXPERIMENTS_PRETRAIN_2B.md:15` 记的是 `L3(86)+code(10)+math(4)`。查 S1 配比配置/启动脚本，明确「19%」分母（shard 采样权重？文件大小？token？），**结论写进 `DATA_MAPPING.md` 一节**。
+- 缺口（仅量级参考，非 KPI）：25% 目标需 1,125B tok，缺 ≈575B tok ≈ 2–2.5TB 原始数据。
+
+**要做的**：①查 `stack-v3-train` 子集/分片结构，给出只下代码相关的 `--include` 方案（15.9TB train，评估按语言筛能否压到 2TB 内）②把它放进 ROI 排序做主力候选 ③节奏自定（可分批/夜间/`nice -n 19` + `--max-workers 2`），🚫 不与 S1 抢带宽 ④**不把 25% 当 KPI**，做多少算多少，但每次下载须记清 token 增量。
+
+---
+
+1. **ROI 评估表**（写进 `DATA_MAPPING.md` 新节）：每候选评 5 维 —— ①相关性（PyAether/EDA 代码/agentic）②单位成本收益（GB vs token vs 独特性）③可用性（gated/协议/格式）④质量风险（license/污染/清洗）⑤落地成本（下载时长 + 转换）
+2. **排序 + 按序下载**（≥1TB 的须先报批）；**总量 ≤1.5TB**（/nas_inference 29T 可用，留余量给分词产物），超限先报。
+
+**④ 落盘与纪律（沿用 11-04 令）**
+
+- 落盘 `/nas_inference/app.e0031982/datasets/<repo原名>/`；gated 源用已配 token（`.29` `~/.cache/huggingface/token`）；走代理 `HTTPS_PROXY=http://172.19.92.25:13128`
+- `setsid` 后台 + `/tmp/data_download_*.log`；🚫 不挤 S1（`nice`、`--max-workers 4`、留带宽）；断点续传
+- 🚫 `ia03/terminal-bench` / `harborframework/terminal-bench-2` 等**评测集只进去污染黑名单，禁入训练**
+- 下载完写 `DATA_MAPPING.md` 新节（`du -sb` + `find | wc -l` + `incomplete` 三项核对）；commit `data 下载:`
+- 🚫 token 不得写入表/日报/commit
+
+> **完成标记**：ROI 评估表 + 下载（含本轮已完成部分）落盘核对齐全 ⇒ 本行改 `✅ 已交付`；未完成 ⇒ `WAITING: 0`（60s 后继续）。
+
+---
