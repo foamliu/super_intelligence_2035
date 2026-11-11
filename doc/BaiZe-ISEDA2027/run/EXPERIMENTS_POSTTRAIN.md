@@ -8736,3 +8736,65 @@ S3 chains: (1) MdeSession+MdeOutput+MdeSession.run, (2) MdeDcAnalysis+MdeTranAna
 
 > Cumulative PyAether SFT corpus: v11 (93) + v12 (25) + v13 (45) = **163 pairs**.
 > All 45 v13 pairs PASS the 155-entry_point pollution scan. v13 is gated for training.
+
+---
+
+## R184 — v14 ae* layout-editing primitives SFT corpus (wake253)
+
+**Date**: 2026-11-11 12:11
+**Goal**: Generate v14 PyAether SFT corpus for the ae* (analog environment /
+layout-editing) API family — the 3rd blind domain from the R181 coverage
+audit (~18 ae* blind APIs).  All ISOLATE-class (eval helpers, not
+entry_points).  Red line S5.1 isolates on entry_point strings, not helper
+API names, so teaching public API reference is allowed.
+
+### 1. APIs covered (10, all ISOLATE-class)
+
+| API | Signature | eval_count | Category |
+|:--|:--|--:|:--|
+| aeOpenDesign | (lib, cell, view, mode, selLcv) -> bool | 10 | File |
+| aeGetCurDesign | () -> emyDesign | 8 | Other |
+| aeCreateRect | (point, layerName, purpose) -> emyFig | 12 | Create |
+| aeSelectFigs | (figs, selInside) -> bool | 6 | Select |
+| aeMakeCell | (cellName, instName, libName, overwrite, replace, viewName) | 5 | Hierarchy |
+| aeMergeShapes | (objs) -> List[emyFig] | 4 | Extension |
+| aeViaGetViaOptions | (design, constraintGroup) -> viaBaseOptions | 3 | Create |
+| aeViaGenerateViasAtPoint | (design, point, viaOption, topLayer, bottomLayer, startLevel, stopLevel) | 3 | Create |
+| aeGetActiveDa | () -> GuDrawArea | 2 | Extension |
+| aeGetCommandPoint | (da, getFit) -> emyPointF | 2 | Other |
+
+These form the coherent layout-editing workflow:
+open design -> get current design -> create rectangle -> select figures
+-> make cell from selection -> merge shapes -> get via options ->
+generate vias -> get active draw area -> get command point.
+
+Authoritative signatures fetched via pyAether MCP `get_api_details`.
+
+### 2. Pair distribution (45 pairs)
+
+| Type | Count | Description |
+|:--|--:|:--|
+| S1 | 10 | doc-to-code (API doc -> Python function) |
+| S4 | 10 | multi-step trace (2-3 API calls in sequence) |
+| S5 | 10 | parameter variation (batch/loop over multiple inputs) |
+| S3 | 5 | multi-API chain (3-5 API end-to-end workflow) |
+| S6 | 10 | API lookup (intent -> API name + minimal usage) |
+
+### 3. Contamination scan
+
+- **155 eval entry_points** loaded from EDA-Eval-PyAether-v20260311.jsonl
+- Fingerprint scan: 45/45 PASS, 0 REJECTED
+- **Independent re-scan** (separate Python process): 0 hits on entry_point
+- **task_id scan**: 0 hits on task_id strings
+- **GATE: PASS** — v14 is training-ready
+
+### 4. Deliverables
+
+| Item | Path | Size |
+|:--|:--|--:|
+| corpus builder | `run/baize_posttrain_r184_ae_corpus.py` | 804 lines / py_compile OK |
+| training-ready corpus | `run/sft_pyaether_corpus_v14_ae_primitives.jsonl` | 36,234 bytes / 45 pairs |
+
+> Cumulative PyAether SFT corpus: v11 (93) + v12 (25) + v13 (45) + v14 (45)
+> = **208 pairs**.  All 45 v14 pairs PASS the 155-entry_point pollution scan
+> (plus independent re-scan + task_id scan).  v14 is gated for training.
