@@ -1462,3 +1462,4 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1793167500635_mn59z	e03179	hfeg0pkn002	29	analog_context	parked		2026-11-11 22:38	DUP: mn59z already produced ProfCellReco-001 (D.jsonl line 84, 2026-11-04). Re-claim 2026-11-11 was same session file — unclaiming.
 1793070622287_pnxqe	daiweilu	hfhds209	29	waveform	case	EDA-Eval-DesignFlow-FuseAddrCompare-001	2026-11-11 23:09	
 1793692590888_zudnw	yuhzhu	hfeg0plg91	53	analog_context	case	CdlPlacePlanGen-001	2026-11-11 23:28	
+1791511259262_4qz5x	simplec	hfeg0plg56	26	schematic_netlist	case	EDA-Eval-DesignFlow-RcCellCapReport-001	2026-11-12 00:09	
