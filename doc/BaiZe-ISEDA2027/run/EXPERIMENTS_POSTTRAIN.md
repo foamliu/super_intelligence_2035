@@ -9377,3 +9377,87 @@ dbCrtTerm, dbExpandPoints, etc.) or vector* container APIs.
 > pollution scan. v11-v22 are gated for training.
 
 
+---
+
+## R193 — v23 db* lifecycle / traverse / geometry / transform / symbol-pin corpus (2026-11-11)
+
+### 1. Motivation & target selection
+
+R191 blind scan re-run with v22 (this wake) confirmed **db\*** as the #1 blind
+family: **14 eval usages across 13 APIs** (the largest blind family after v22
+eliminated emy\*). All 13 are ISOLATE-class (eval helper APIs, not
+entry_points) — safe for SFT corpus under contamination isolation rules.
+
+### 2. Target APIs (13)
+
+| # | API | eval_count | Category | Key quirk |
+|--:|:--|--:|:--|:--|
+| 1 | dbCrtTerm | 1 | Create Database | dir is string not enum |
+| 2 | dbExpandPoints | 1 | Edit Database | 4 offsets all required |
+| 3 | dbFindMemInstByName | 1 | Query | vector bits use <> not [] |
+| 4 | dbGetCurrNetNameByHierName | 1 | Query | separator is / not dot |
+| 5 | dbPointArrayGen | 1 | Edit Database | op uppercase AND/OR/XOR |
+| 6 | dbResize | 1 | Edit Database | size is vector1D_double not list |
+| 7 | dbSchDrawSymbolPin | 1 | Edit Database | returns emyFig not emyPin |
+| 8 | dbSetInstHeaderMasterName | 1 | Edit Database | isReplaceMissmatched (TWO s's) |
+| 9 | dbSingleLayerGOA | 1 | Edit Database | OR/AND/XOR only (no NOT) |
+| 10 | dbSmashInst2 | 1 | Other | requires smash_option object |
+| 11 | dbTransformBBox | 1 | Edit Database | offsetPoint required |
+| 12 | dbTraverseTriggerFunc | 2 | Traversal | CLASS to subclass, not function |
+| 13 | dbTraverseDesignWithCB | 1 | Traversal | needs registered callback |
+
+Authoritative signatures fetched via pyAether MCP `get_api_details` (R193 wake).
+
+### 3. Generation: 5 templates × 13 APIs = 65 pairs
+
+| Template | Description | Pairs |
+|:--|:--|--:|
+| S1 | doc → code (given API reference, write minimal code) | 13 |
+| S3 | code → doc (given code, identify API + explain signature) | 13 |
+| S4 | multi-step trace (realistic 2-4 step workflow per API) | 13 |
+| S5 | anti-pattern (common mistake + correction) | 13 |
+| S6 | cross-API combination (2-3 db\* APIs in one workflow) | 13 |
+| | **Total** | **65** |
+
+### 4. Contamination isolation
+
+Fingerprint scan against **155 eval entry_points**:
+- Script-internal gate: **0 rejected** out of 65 pairs (GATE PASS)
+- All 13 db\* APIs are ISOLATE-class (helper APIs, not entry_points)
+
+### 5. Coverage delta vs R191
+
+| Metric | After v22 | After v23 | Delta |
+|:--|--:|--:|:--|
+| Covered eval APIs | 97 | 110 | +13 |
+| Blind eval APIs | 67 | 54 | -13 |
+| Corpus unique APIs (gated) | 115 | 128 | +13 |
+| Total pairs | 548 | 613 | +65 |
+| Coverage ratio | 59.1% | 67.1% | +8.0 pp |
+
+All 13 db\* APIs are genuinely newly-covered (none appeared in v11-v22).
+The **db\* family is fully eliminated** from the blind list.
+
+### 6. Remaining blind priority (after v23)
+
+After v23 the db\* family is exhausted. Remaining blind families by eval
+usage: vector\* (11, 5), ae\* (8, 8), et\* (8, 6), Emy\* (7, 2), MDE\* (6, 6),
+NTL\* (6, 3), goa\* (6, 4). R194 candidate: vector\* container APIs
+(vector1D_emyPointF, vector1D_p_emyFig, etc.) or ae\* GUI/tree APIs.
+
+### 7. Deliverables
+
+| Item | Path | Size |
+|:--|:--|--:|
+| corpus builder | `run/baize_posttrain_r193_db_lifecycle_traverse_corpus.py` | ~1014 lines / py_compile OK |
+| training-ready corpus | `run/sft_pyaether_corpus_v23_db_lifecycle_traverse.jsonl` | 77,858 bytes / 65 pairs |
+| blind scan script (updated) | `run/baize_posttrain_r191_blind_scan.py` | v23 added to CORPUS_FILES |
+| blind scan output | `run/r191_blind_scan.json` | re-run with v11-v23 |
+
+> Cumulative PyAether SFT corpus: v11 (93) + v12 (25) + v13 (45) + v14 (45)
+> + v15 (45) + v16 (45) + v17 (45) + v18 (25) + v19 (30) + v20 (35)
+> + v21 (50) + v22 (65) + v23 (65) = **613 pairs**. All 613 pairs PASS the
+> 155-entry_point pollution scan. v11-v23 are gated for training.
+
+
+

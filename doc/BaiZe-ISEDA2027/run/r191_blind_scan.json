@@ -1,9 +1,9 @@
 {
   "round": "R191-scan",
   "eval_raw_apis": 164,
-  "covered_eval_apis": 97,
-  "blind_eval_apis": 67,
-  "coverage_ratio": 0.5915,
+  "covered_eval_apis": 110,
+  "blind_eval_apis": 54,
+  "coverage_ratio": 0.6707,
   "blind_list": [
     "CColor",
     "CString",
@@ -36,19 +36,6 @@
     "aeTreeAppendItem",
     "aelEngineerNotation",
     "agrGetSnapPoints",
-    "dbCrtTerm",
-    "dbExpandPoints",
-    "dbFindMemInstByName",
-    "dbGetCurrNetNameByHierName",
-    "dbPointArrayGen",
-    "dbResize",
-    "dbSchDrawSymbolPin",
-    "dbSetInstHeaderMasterName",
-    "dbSingleLayerGOA",
-    "dbSmashInst2",
-    "dbTransformBBox",
-    "dbTraverseDesignWithCB",
-    "dbTraverseTriggerFunc",
     "emvPurposeNumberDrawing",
     "etPcreCompile",
     "etPcreExecute",
@@ -74,7 +61,6 @@
     "vector2D_emyPointF"
   ],
   "family_usage": {
-    "db": 14,
     "vector": 11,
     "ae": 8,
     "et": 8,
@@ -100,60 +86,6 @@
     "time": 1
   },
   "family_apis": {
-    "db": [
-      {
-        "api": "dbTraverseTriggerFunc",
-        "eval_usage": 2
-      },
-      {
-        "api": "dbCrtTerm",
-        "eval_usage": 1
-      },
-      {
-        "api": "dbExpandPoints",
-        "eval_usage": 1
-      },
-      {
-        "api": "dbFindMemInstByName",
-        "eval_usage": 1
-      },
-      {
-        "api": "dbGetCurrNetNameByHierName",
-        "eval_usage": 1
-      },
-      {
-        "api": "dbPointArrayGen",
-        "eval_usage": 1
-      },
-      {
-        "api": "dbResize",
-        "eval_usage": 1
-      },
-      {
-        "api": "dbSchDrawSymbolPin",
-        "eval_usage": 1
-      },
-      {
-        "api": "dbSetInstHeaderMasterName",
-        "eval_usage": 1
-      },
-      {
-        "api": "dbSingleLayerGOA",
-        "eval_usage": 1
-      },
-      {
-        "api": "dbSmashInst2",
-        "eval_usage": 1
-      },
-      {
-        "api": "dbTransformBBox",
-        "eval_usage": 1
-      },
-      {
-        "api": "dbTraverseDesignWithCB",
-        "eval_usage": 1
-      }
-    ],
     "vector": [
       {
         "api": "vector1D_emyPointF",
