@@ -42,8 +42,8 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
   <div class="meta">
     <span>📅 2026-11-11</span>
     <span>🏗 Mamba2-hybrid 2.22B</span>
-    <span>🔥 训练 iter≈167.8k / 700k · step~7.1s<7.4s✅ · ckpt 166k · 下一个168k~10min后 · lr-decay-iters=0(stable段,decay未配置)</span>
-    <span>📊 L1: 16 ckpt ✅(160k=58.13%新高) | L2: GSM8K=0%@160k🔴 MMLU=23.16%(≈随机) BBH=0%🔴 MATH=0%🔴(v5确认,生成退化) · v6运行中(Phase1 HumanEval 54/100~82s/it,--repeat-penalty 1.3,ETA HumanEval~63min→MBPP→MATH→探针) · 🔬vLLM方案已备(.17 SSH不通,待GPU窗口) | L3: 🔧 pipeline脚本已建·模型生成退化 | L4: 数据在.15不可达+定性测试=退化输出</span>
+    <span>🔥 训练 iter≈168k / 700k · step~7.1s<7.4s✅ · ckpt 166k(168k待存) · lr-decay-iters=0(stable段,decay未配置)</span>
+    <span>📊 L1: 16 ckpt ✅(160k=58.13%新高) | L2: GSM8K=0%@160k🔴 MMLU=23.16%(≈随机) BBH=0%🔴 MATH=0%🔴(v5确认,生成退化) · v6运行中(Phase1 HumanEval 64/100~82s/it,--repeat-penalty 1.3,ETA~49min→MBPP→MATH→探针) · 🔬vLLM方案已备(.17 SSH不通,待GPU窗口) | L3: ✅前置全通过(Docker27.5+Harbor0.24+TB tasks+harness)·待v6释放端口8083 | L4: 🔴/nasdata/未挂载.29+.15 SSH不通+生成退化</span>
   </div>
   <div style="margin-top:12px;font-size:12.5px;background:rgba(0,0,0,.18);border-radius:8px;padding:8px 12px;opacity:.95">
     ⚠️ 本报告是<b>训练监控与决策依据</b>，<b>不进论文正文</b>（2026-11-10 用户令）。用户关注点（2026-11-11）：<b>如何拿到更好的结果</b>。
@@ -255,7 +255,7 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
 </div>
 
 <!-- L3 -->
-<h2 class="sec">L3 · Agentic 能力 <span class="badge b-warn">🔧 pipeline 脚本已建 · 待运行</span></h2>
+<h2 class="sec">L3 · Agentic 能力 <span class="badge b-ok">✅ 前置全通过 · 待端口释放</span></h2>
 <div class="card">
   <h3>评测目标与现状</h3>
   <table>
@@ -278,6 +278,11 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
   <div class="alert"><b>关键差异</b>：harness 线用 cloud API (glm-5.3-flash)，BaiZe 2B 需<b>本地服务</b>(vllm/sglang on GPU, 或 llama-server on CPU)。当前训练占满 .29 GPU。</div>
 </div>
 <div class="card">
+  <h3>✅ L3 前置验证全通过（2026-11-11 #2006）</h3>
+  <div class="ok-box">
+    <b>实测验证（ssh .29）</b>：① Docker 27.5.1 daemon 运行中✅ ② Harbor v0.24.0 at <code>~/.local/bin/harbor</code>✅ ③ TB pilot tasks <code>fix-git</code> + <code>break-filter-js-from-html</code> 各含 environment/instruction.md/solution/task.toml/tests✅ ④ harness/terminalbench overlay + agents✅ ⑤ L3 smoke script <code>baize_l3_tb_smoke.sh</code> 完整自包含✅<br>
+    <b>阻塞</b>：v6 HumanEval 占用 port 8083（铁律：单 server 串行）→ v6 完成后即可运行 L3 smoke（预期 0% 但建立 pipeline 有价值）
+  </div>
   <h3>🔧 L3 Pipeline 已建（2026-11-11 #1979）</h3>
   <div class="ok-box">
     <b>脚本</b>: <code>run/baize_l3_tb_smoke.sh</code> — 自包含 L3 Terminal-Bench smoke test<br>
@@ -321,7 +326,7 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
 </div>
 
 <!-- L4 -->
-<h2 class="sec">L4 · 领域能力 <span class="badge b-bad">❌ 未接 · 调研完成</span></h2>
+<h2 class="sec">L4 · 领域能力 <span class="badge b-bad">❌ 未接 · 数据不可达</span></h2>
 <div class="card">
   <h3>已有资源</h3>
   <table>
@@ -336,7 +341,7 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
   <h3>🔴 L4 可行性分析（2026-11-11 · P0 调研结论）</h3>
   <table>
     <tr><th>维度</th><th>发现</th><th>影响</th></tr>
-    <tr><td class="l">数据位置</td><td class="l"><code>run_one.sh</code> 引用 <code>/nasdata/app.e0031982/code/EDA-Flow-Bench</code>(JSONL + assets + reference/check.py + hooks)。该路径<b>仅存在于 .15 (10.251.36.15)</b>。SSH .15 = <b>Connection timed out</b>。</td><td class="bad">🔴 无法运行完整 pipeline</td></tr>
+    <tr><td class="l">数据位置</td><td class="l"><code>run_one.sh</code> 引用 <code>/nasdata/app.e0031982/code/EDA-Flow-Bench</code>(JSONL + assets + reference/check.py + hooks)。<b>#2006 实测：.29 上 <code>/nasdata</code> 不存在（ls exit=2, mount 无条目）</b>。SSH .15 = <b>Connection timed out</b>。</td><td class="bad">🔴 无法运行完整 pipeline</td></tr>
     <tr><td class="l">NFS 上可用</td><td class="l">任务 workdir(prompt.txt + assets/ + cline_session.jsonl) <b>在共享 NFS 上</b> → 可读取任务定义和素材</td><td class="ok">部分可用</td></tr>
     <tr><td class="l">判分器</td><td class="l"><code>reference/$TASK_ID/check.py</code> 在 .15 上，NFS 上<b>没有</b> → 无法自动判分</td><td class="warn">需 .15 或手动判分</td></tr>
     <tr><td class="l">任务复杂度</td><td class="l">抽检 EDA-Eval-DesignFlow-Verification-001 prompt：要求<b>4 步多任务</b>(修复 Python 过滤逻辑 + 改写 SKILL 脚本为 aether flow + 运行 pipeline + 更新 lib.defs) → 远超 2B base model 能力</td><td class="bad">🔴 任务极难</td></tr>
@@ -446,7 +451,7 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
 </div>
 
 <footer>
-  BaiZe pretrain 线 · 四层能力评测报告 · 2026-11-11 22:30 更新(#2005) · 评测数字仅用于训练监控，不进论文正文
+  BaiZe pretrain 线 · 四层能力评测报告 · 2026-11-11 22:50 更新(#2006) · 评测数字仅用于训练监控，不进论文正文
 </footer>
 </div>
 </body>
