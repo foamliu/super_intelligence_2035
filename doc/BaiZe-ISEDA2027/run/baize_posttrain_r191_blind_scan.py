@@ -28,6 +28,8 @@ CORPUS_FILES = [
     'sft_pyaether_corpus_v18_dm_datamgmt.jsonl',
     'sft_pyaether_corpus_v19_emy_dbstructure.jsonl',
     'sft_pyaether_corpus_v20_mde_sweep_platform.jsonl',
+    'sft_pyaether_corpus_v21_mdeplat_sweep_jobsession.jsonl',
+    'sft_pyaether_corpus_v22_emy_geometry_lib_tech.jsonl',
 ]
 
 PAT = re.compile(r'pyScript\.([A-Za-z_][A-Za-z0-9_]*)')

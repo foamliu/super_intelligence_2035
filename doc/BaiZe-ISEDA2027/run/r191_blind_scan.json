@@ -1,9 +1,9 @@
 {
   "round": "R191-scan",
   "eval_raw_apis": 164,
-  "covered_eval_apis": 74,
-  "blind_eval_apis": 90,
-  "coverage_ratio": 0.4512,
+  "covered_eval_apis": 97,
+  "blind_eval_apis": 67,
+  "coverage_ratio": 0.5915,
   "blind_list": [
     "CColor",
     "CString",
@@ -19,16 +19,6 @@
     "MDE_SWEEP_VARIABLE_MODEL_PARAMETER",
     "MDE_TRAN_ACC_LEVEL_CONSERVATIVE",
     "MDE_TRAN_ACC_LEVEL_LIBERAL",
-    "MdePlatDonauJobPolicy",
-    "MdePlatLSFJobPolicy",
-    "MdePlatOGEJobPolicy",
-    "MdePlatParamSweepAddSpecificPoints",
-    "MdePlatParamSweepCenterSpan",
-    "MdePlatParamSweepCenterSpanPercentage",
-    "MdePlatParamSweepStartStop",
-    "MdePlatSession",
-    "MdePlatSweepStepModeAuto",
-    "MdePlatSweepStepModeTimes",
     "NTL_INDEX_FORMAT_ORIGIN",
     "NTL_INDEX_FORMAT_USE_BRACKET",
     "NTL_INDEX_FORMAT_USE_UNDERLINE",
@@ -60,19 +50,6 @@
     "dbTraverseDesignWithCB",
     "dbTraverseTriggerFunc",
     "emvPurposeNumberDrawing",
-    "emyArray_emyScalarName",
-    "emyArray_emySegment",
-    "emyArray_emyUInt4",
-    "emyArray_p_emyPointArray",
-    "emyLibAccess",
-    "emyLibAccessExt",
-    "emyPointArrayGOA",
-    "emyPointArrayIsClockwise",
-    "emyPointArrayIsConvex",
-    "emyPointArrayScaleSegments",
-    "emyPolygonChopByPolygon",
-    "emySegStyle",
-    "emyTech",
     "etPcreCompile",
     "etPcreExecute",
     "etPcreGenExecOptBits",
@@ -97,8 +74,6 @@
     "vector2D_emyPointF"
   ],
   "family_usage": {
-    "Mde": 20,
-    "emy": 16,
     "db": 14,
     "vector": 11,
     "ae": 8,
@@ -125,102 +100,6 @@
     "time": 1
   },
   "family_apis": {
-    "Mde": [
-      {
-        "api": "MdePlatLSFJobPolicy",
-        "eval_usage": 4
-      },
-      {
-        "api": "MdePlatParamSweepCenterSpan",
-        "eval_usage": 3
-      },
-      {
-        "api": "MdePlatSweepStepModeAuto",
-        "eval_usage": 3
-      },
-      {
-        "api": "MdePlatDonauJobPolicy",
-        "eval_usage": 2
-      },
-      {
-        "api": "MdePlatOGEJobPolicy",
-        "eval_usage": 2
-      },
-      {
-        "api": "MdePlatSweepStepModeTimes",
-        "eval_usage": 2
-      },
-      {
-        "api": "MdePlatParamSweepAddSpecificPoints",
-        "eval_usage": 1
-      },
-      {
-        "api": "MdePlatParamSweepCenterSpanPercentage",
-        "eval_usage": 1
-      },
-      {
-        "api": "MdePlatParamSweepStartStop",
-        "eval_usage": 1
-      },
-      {
-        "api": "MdePlatSession",
-        "eval_usage": 1
-      }
-    ],
-    "emy": [
-      {
-        "api": "emyArray_p_emyPointArray",
-        "eval_usage": 3
-      },
-      {
-        "api": "emyArray_emyUInt4",
-        "eval_usage": 2
-      },
-      {
-        "api": "emyArray_emyScalarName",
-        "eval_usage": 1
-      },
-      {
-        "api": "emyArray_emySegment",
-        "eval_usage": 1
-      },
-      {
-        "api": "emyLibAccess",
-        "eval_usage": 1
-      },
-      {
-        "api": "emyLibAccessExt",
-        "eval_usage": 1
-      },
-      {
-        "api": "emyPointArrayGOA",
-        "eval_usage": 1
-      },
-      {
-        "api": "emyPointArrayIsClockwise",
-        "eval_usage": 1
-      },
-      {
-        "api": "emyPointArrayIsConvex",
-        "eval_usage": 1
-      },
-      {
-        "api": "emyPointArrayScaleSegments",
-        "eval_usage": 1
-      },
-      {
-        "api": "emyPolygonChopByPolygon",
-        "eval_usage": 1
-      },
-      {
-        "api": "emySegStyle",
-        "eval_usage": 1
-      },
-      {
-        "api": "emyTech",
-        "eval_usage": 1
-      }
-    ],
     "db": [
       {
         "api": "dbTraverseTriggerFunc",

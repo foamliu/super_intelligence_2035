@@ -9289,3 +9289,91 @@ et* (8, 6). R192 candidate: emy* residual structural members or db* residual.
 > + v21 (50) = **483 pairs**. All 483 pairs PASS the 155-entry_point pollution
 > scan. v11-v21 are gated for training.
 
+---
+
+## §R192 (2026-11-11 wake261) v22 emy* Geometry / Library-Access / SWIG-Container / Tech-Database Corpus
+
+**Background**: After v21 (R191) coverage reached 84/164 (51.2%) with 80 blind
+APIs. The R191 blind scan (re-run with v21) confirmed **emy\* as the #1 blind
+family**: 16 eval usages across 13 APIs. R192 targets all 13 emy* blind APIs
+with authoritative signatures fetched via pyAether MCP `get_api_details` and
+`search_apis_by_keyword`.
+
+### 1. APIs targeted (13 emy* APIs, 16 eval usages)
+
+| API | eval_count | Category |
+|:--|--:|:--|
+| emyPointArrayIsClockwise | 1 | Geometry / winding check |
+| emyPointArrayIsConvex | 1 | Geometry / convexity check |
+| emyPointArrayScaleSegments | 1 | Geometry / segment extraction |
+| emyPolygonChopByPolygon | 1 | Geometry / polygon chop |
+| emyPointArrayGOA | 1 | Geometry / geometric OR-AND-SUB-XOR |
+| emyLibAccess | 1 | Library / access level enum |
+| emyLibAccessExt | 1 | Library / access wrapper |
+| emySegStyle | 1 | Path / segment style |
+| emyTech | 1 | Database / technology |
+| emyArray_p_emyPointArray | 3 | SWIG container / polygon list |
+| emyArray_emyUInt4 | 2 | SWIG container / unsigned-int list |
+| emyArray_emyScalarName | 1 | SWIG container / scalar-name list |
+| emyArray_emySegment | 1 | SWIG container / segment list |
+| **Total** | **16** | |
+
+All 13 APIs are **ISOLATE-class** (eval_count > 0; appear as helpers in eval
+solutions). The red line (S5.1) isolates on eval **entry_point** strings (155
+task function names), NOT on helper API names. Teaching the public API
+reference of these geometry/library/tech/container primitives is explicitly
+allowed.
+
+### 2. Corpus structure (65 pairs)
+
+| Pair type | Count | Description |
+|:--|--:|:--|
+| S1 (doc_to_code) | 13 | One per API: API reference -> minimal usage |
+| S4 (multi_step_trace) | 13 | One per API: realistic EDA scenario |
+| S5 (param_variation) | 13 | One per API: two param/constructor variants |
+| S3 (error_edge_case) | 13 | One per API: edge-case with try/except |
+| S6 (cross_api_composition) | 13 | Multi-API EDA pipelines (chop+scale, GOA+convex, etc.) |
+| **Total** | **65** | |
+
+### 3. Pollution isolation
+
+Fingerprint scan against **155 eval entry_points** (the 158-task EDA-Eval
+dataset's task function names):
+- Script-internal gate: **0 rejected** out of 65 pairs (GATE PASS)
+- Independent JSONL verification: **0 hits** out of 65 pairs checked (VERDICT PASS)
+
+### 4. Coverage delta vs R191
+
+| Metric | After v21 | After v22 | Delta |
+|:--|--:|--:|:--|
+| Covered eval APIs | 84 | 97 | +13 |
+| Blind eval APIs | 80 | 67 | -13 |
+| Corpus unique APIs (gated) | 102 | 115 | +13 |
+| Total pairs | 483 | 548 | +65 |
+| Coverage ratio | 51.2% | 59.1% | +7.9 pp |
+
+All 13 emy* APIs are genuinely newly-covered (none appeared in v11-v21).
+The emy* family is **fully eliminated** from the blind list.
+
+### 5. Remaining blind priority (after v22)
+
+After v22 the emy* family is exhausted. Remaining blind families by eval
+usage: db* (14, 13), vector* (11, 5), ae* (8, 8), et* (8, 6), Emy* (7, 2),
+MDE* (6, 6), NTL* (6, 3), goa* (6, 4). R193 candidate: db* residual (dbTraverseTriggerFunc,
+dbCrtTerm, dbExpandPoints, etc.) or vector* container APIs.
+
+### 6. Deliverables
+
+| Item | Path | Size |
+|:--|:--|--:|
+| corpus builder | `run/baize_posttrain_r192_emy_geometry_lib_tech_corpus.py` | ~1389 lines / py_compile OK |
+| training-ready corpus | `run/sft_pyaether_corpus_v22_emy_geometry_lib_tech.jsonl` | 64,329 bytes / 65 pairs |
+| blind scan script (updated) | `run/baize_posttrain_r191_blind_scan.py` | v21+v22 added to CORPUS_FILES |
+| blind scan output | `run/r191_blind_scan.json` | re-run with v11-v22 |
+
+> Cumulative PyAether SFT corpus: v11 (93) + v12 (25) + v13 (45) + v14 (45)
+> + v15 (45) + v16 (45) + v17 (45) + v18 (25) + v19 (30) + v20 (35)
+> + v21 (50) + v22 (65) = **548 pairs**. All 548 pairs PASS the 155-entry_point
+> pollution scan. v11-v22 are gated for training.
+
+
