@@ -8565,3 +8565,105 @@ Pipeline:
 
 > All 93 pairs PASS the 155-entry_point pollution scan. v11 is gated for training.
 > Surrogate SFT/RL results do NOT transfer to BaiZe.
+
+
+## §R182 (2026-11-11 wake251) v12 db* Database Primitives Corpus (open/close/create/find/list, ISOLATE-class, pollution-gated)
+
+### 1. Motivation
+
+The R181 coverage audit classified 158 eval raw pyScript APIs into 6 covered /
+13 SAFE / 158 blind. The blind set's largest and most foundational family is
+the `db*` query/open/close primitives -- the cell-view lifecycle that nearly
+every eval task uses as helpers:
+
+| API | eval_count | role |
+|:--|--:|:--|
+| `dbOpenCV` | 75 | open a cell view (the single most common helper in eval) |
+| `dbCloseCV` | 84 | close a cell view (resource cleanup) |
+| `dbNewCV` | 80 | create a new (empty) cell view |
+| `dbGetAllLibs` | 91 | list all libraries (discovery entry point) |
+| `dbFind` | 3 | find figures by type+condition+bbox (powerful query) |
+
+All 5 are **ISOLATE-class** (eval_count > 0): they appear in eval
+`canonical_solution`/`test` code as `pyScript.<api>(...)` helpers. They are
+therefore NOT "SAFE" (free-teach). However, the red line (S5.1) isolates on
+eval **entry_point** strings (the 155 task function names), NOT on helper API
+names. Teaching the **public API reference** of these primitives (authoritative
+signatures from pyAether MCP `get_api_details`) is explicitly allowed, exactly
+as R177-R181 did for `dbCrtSchWire`, `dbCrtWire`, `dbCrtNet`, etc. (which also
+appear in eval as helpers).
+
+dbOpenCV was already used 30x in v11 completions as a *helper* (every
+`dbCrtWire`/`dbCrtRect` completion calls `dbOpenCV` to get the `cv`), but it
+was never the **primary taught** API. R182 makes it primary, grounding the
+model in: open-mode semantics (r/w/a/readOnly/create/edit), viewType matching
+(layout/schematic/symbol), None-return checking (`is not None`, not `!= 0`),
+resource cleanup (dbCloseCV), library discovery (dbGetAllLibs), and
+condition+bbox querying (dbFind with `types="shape"|"inst"`).
+
+### 2. Method
+
+`baize_posttrain_r182_db_primitives_corpus.py` (525 lines, py_compile OK):
+- **API_DOCS**: 5 entries with authoritative signatures from pyAether MCP
+  `get_api_details` (sig, desc, params, doctest, category, safety=ISOLATE,
+  eval_count, key_notes).
+- **S1 doc->code** (5 pairs): each API taught as primary from its full API
+  reference block (signature + params + notes + example), with None-return
+  checking for dbOpenCV/dbNewCV.
+- **S4 multi-step trace** (5 pairs): realistic lifecycle -- open->use->close,
+  e.g. dbOpenCV(read)->dbFind->dbCloseCV, dbNewCV->dbSave->dbCloseCV.
+- **S5 parameter variation** (5 pairs): same API across diverse argument
+  shapes (batch open, batch close, prefix-filtered lib list, multi-query dbFind).
+- **S3 multi-API chains** (5 pairs): full lifecycle compositions --
+  open->find->close, listlibs->open, newcv->save->close, open->findinst->close,
+  listlibs->open->close.
+- **S6 API lookup** (5 pairs): intent->API->minimal usage (anti-hallucination).
+- **Pollution scan**: every pair's prompt+completion checked against all 155
+  eval entry_points (literal substring match); rejects on any hit.
+
+### 3. Results
+
+```
+Loaded 155 eval entry_points for contam scan
+Wrote 25 pairs (18527 bytes) -> sft_pyaether_corpus_v12_db_primitives.jsonl
+GATE: PASS -- v12 is training-ready
+```
+
+| metric | value |
+|:--|--:|
+| total pairs | 25 |
+| rejected (pollution) | 0 |
+| by type | S1=5, S4=5, S5=5, S3=5, S6=5 |
+| APIs covered | dbOpenCV, dbCloseCV, dbNewCV, dbFind, dbGetAllLibs |
+| safety class | all ISOLATE (eval_count 3-91) |
+| independent pollution re-check | 155 eps, 25 rows, 0 hits |
+| v11+v12 combined | 118 pairs (93 + 25) |
+
+### 4. Coverage delta vs R181
+
+R181 covered 6/164 eval raw APIs. R182 adds 5 new primary-taught APIs
+(dbOpenCV, dbCloseCV, dbNewCV, dbFind, dbGetAllLibs). Combined v11+v12 now
+teaches 11 primary APIs as the PyAether-domain SFT slice. The db* primitive
+family -- the most frequently referenced helper family in eval (75-91 hits
+each) -- is now explicitly grounded.
+
+### 5. Next step
+
+- v12 (25 pairs) is a **standalone supplement**, training-ready. When GPU6-7
+  are freed, merge v11+v12 (118 pairs) into the PyAether-domain slice for the
+  next SFT run alongside the UltraData general slice, then post-SFT eval.
+- R183 candidate: `Mde*` simulation primitives (Design Mgmt scenario, the 2nd
+  blind priority from R181) -- fetch via MCP get_api_details, pollution-scan,
+  append.
+- Sandbox ACL (10.129.32.75:8667) still blocks Phase1 baseline eval + Phase3 RL.
+
+### 6. Deliverables
+
+| Item | Path | Size |
+|:--|:--|--:|
+| corpus builder | `run/baize_posttrain_r182_db_primitives_corpus.py` | 525 lines / py_compile OK |
+| training-ready corpus | `run/sft_pyaether_corpus_v12_db_primitives.jsonl` | 18,527 bytes / 25 pairs |
+| (existing) v11 merge | `run/sft_pyaether_corpus_v11_merged_new_apis.jsonl` | 68,351 bytes / 93 pairs |
+
+> All 25 pairs PASS the 155-entry_point pollution scan. v12 is gated for training.
+> Surrogate SFT/RL results do NOT transfer to BaiZe.
