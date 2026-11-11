@@ -10480,3 +10480,105 @@ python3 baize_posttrain_r208_corpus_coverage_audit.py --json r208_coverage_audit
 | 审计脚本 | `run/baize_posttrain_r208_corpus_coverage_audit.py`（10.6KB，py_compile✅，dry-run✅）|
 | JSON 摘要 | `run/r208_coverage_audit.json`（6.7KB）|
 | EXPERIMENTS | 本节 §R208 |
+
+---
+
+## §R210 (2026-11-11 wake279) v11-v36 Merged Corpus JSONL→Parquet Conversion + Contamination Gate + SFT Dry-Run Readiness
+
+> **任务**：v11-v36 合并语料（1029 对，Tier-2 覆盖 75.0% GOAL MET）此前仅以 JSONL 存在，而 SFT surrogate 脚本需要 `--src-parquet`（verl parquet 格式，`conversation` 列）。本节完成 JSONL→parquet 转换 + 权威污染闸门 + SFT dry-run 验证，使 v11-v36 SFT 重训真正「一条命令可起」。
+> **脚本**：`run/baize_posttrain_r210_v11v36_parquet.py`（155 行，Python3，pyarrow 依赖 verl venv）
+
+### 1. JSONL → Parquet 转换
+
+| 维度 | 值 |
+|:--|:--|
+| 输入 | `sft_pyaether_corpus_v11_v36_merged.jsonl`（1029 对，1.2MB） |
+| 输出 | `sft_pyaether_corpus_v11_v36_merged.parquet`（270727 bytes = 0.26MB，snappy 压缩） |
+| 行数 | 1029（0 parse errors，0 empty prompt，0 empty completion） |
+| Schema | conversation（list&lt;struct&lt;role,content&gt;&gt;）、pair_id、type、api_used、contamination_check |
+| Schema 匹配 v5 | ✅ **True**（与 R102 v5 parquet 完全一致） |
+| 首行 conversation | [system(134), user(867), assistant(236)] |
+
+**conversation 构造**（与 R102 v5 一致）：
+```
+system  → "You are an EDA automation assistant specialized in PyAether API usage..."
+user    → d["prompt"]
+assistant → d["completion"]
+```
+
+### 2. 类型分布
+
+| 类型 | 数量 |
+|:--|--:|
+| S4 (scenario) | 217 |
+| S5 (variant) | 212 |
+| S1 (doc→code) | 208 |
+| S6 (augmented) | 188 |
+| S3 (multi-API) | 179 |
+| S1_doc_to_code | 10 |
+| S2_api_lookup | 10 |
+| S3_multi_api_chain | 3 |
+| S7_corrected_prompt | 2 |
+| **合计** | **1029** |
+
+### 3. 污染隔离闸门（权威 · 红线 P1-e）
+
+**命令**：`bash baize_posttrain_contamination_gate.sh --sft-synth sft_pyaether_corpus_v11_v36_merged.jsonl`
+
+| 维度 | 值 |
+|:--|:--|
+| 黑名单来源 | 6 个评测快照并集 536 任务（含 v20260311 的 158） |
+| 命中判定 | 13-gram 重合率 ≥ 0.8 或短 8-gram 兜底重合 ≥ 1 |
+| 扫描文档数 | 1029 |
+| **命中（污染）数** | **0** |
+| **闸门状态** | ✅ **PASS**（exit 0，可投料） |
+
+### 4. SFT Surrogate Dry-Run 验证
+
+**命令**：`bash baize_posttrain_sft_surrogate.sh --dry-run --src-parquet sft_pyaether_corpus_v11_v36_merged.parquet --run-name minicpm5_pyaether_v2_v11v36 --epochs 5`
+
+| 检查项 | 状态 |
+|:--|:--|
+| torchrun | ✅ OK |
+| model (MiniCPM5-2B) | ✅ OK |
+| verl+flash_attn+peft | ✅ OK |
+| src parquet (270727 bytes) | ✅ OK |
+| GPU 配置 | 6,7 (2×A40，FSDP2) |
+| max_length | 2048 |
+| batch (global/micro) | 64/4 |
+| epochs | 5 |
+| lr | 1e-5 (cosine, warmup 0.1) |
+| ft_mode | full |
+
+### 5. GPU 释放后一条命令起跑
+
+```bash
+# Step 1: prep-only (创建 train/val split, 零 GPU)
+bash baize_posttrain_sft_surrogate.sh --prep-only \
+  --src-parquet sft_pyaether_corpus_v11_v36_merged.parquet \
+  --run-name minicpm5_pyaether_v2_v11v36 --epochs 5
+
+# Step 2: full SFT (需 GPU 6,7 释放后)
+bash baize_posttrain_sft_surrogate.sh \
+  --src-parquet sft_pyaether_corpus_v11_v36_merged.parquet \
+  --run-name minicpm5_pyaether_v2_v11v36 --epochs 5
+```
+
+> ⚠️ GPU 6,7 当前被 vLLM serve 占位（17:10 令），需先 `bash baize_posttrain_serve_teardown.sh`（默认拆 GPU5/6/7）释放后再跑 SFT。
+
+### 6. 交付物
+
+| 项 | 路径 | 大小 |
+|:--|:--|--:|
+| 转换脚本 | `run/baize_posttrain_r210_v11v36_parquet.py`（155 行，py_compile✅） | 6.5KB |
+| Parquet | `run/sft_pyaether_corpus_v11_v36_merged.parquet` | 0.26MB |
+| Summary JSON | `run/r210_v11v36_parquet_summary.json` | 2.5KB |
+| 污染闸门报告 | `/tmp/r210_contam_gate.md` | — |
+| EXPERIMENTS | 本节 §R210 | — |
+
+### 7. 结论
+
+- v11-v36 合并语料（1029 对，Tier-2 75.0%）已从 JSONL 转为 verl parquet，schema 与 v5 完全匹配。
+- 权威污染闸门 PASS（0/1029 命中），可安全投料。
+- SFT surrogate dry-run 全部 prerequisite OK，GPU 释放后一条命令可起 v11-v36 SFT 重训。
+- **本轮新增产出**：R210（parquet 转换 + 污染闸门 + SFT dry-run readiness）。
