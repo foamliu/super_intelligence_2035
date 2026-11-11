@@ -1,0 +1,24 @@
+[incr-eval 16:52:24] === incr_eval R2181 start ===
+[incr-eval 16:52:24] cline: 0 new instances, skip
+[incr-eval 16:52:24] codex: 0 new instances, skip
+[incr-eval 16:52:24] opencode: 0 new instances, skip
+
+=== claude-code R2181 ===
+new instances: 2 ['django__django-11299', 'django__django-11333']
+[incr-eval 16:52:24] claude-code: merged 2 new patches -> predictions_claude-code_new_R2181.json
+[incr-eval 16:52:24] claude-code: EVAL 2 instances -> run_id=verified_full_glm53_claude-code_incr_R2181
+[incr-eval 16:53:23] claude-code: eval rc=0
+[incr-eval 16:53:23]   django__django-11299: RESOLVED
+[incr-eval 16:53:23]   django__django-11333: RESOLVED
+[incr-eval 16:53:23] claude-code: cumulative n=209 resolved=164 failed=43 infra=2 -> eval_glm53_claude-code.json
+[incr-eval 16:53:23] pi: 0 new instances, skip
+
+=== hermes R2181 ===
+new instances: 1 ['sphinx-doc__sphinx-7462']
+[incr-eval 16:53:23] hermes: merged 1 new patches -> predictions_hermes_new_R2181.json
+[incr-eval 16:53:23] hermes: EVAL 1 instances -> run_id=verified_full_glm53_hermes_incr_R2181
+[incr-eval 16:53:51] hermes: eval rc=0
+[incr-eval 16:53:51]   sphinx-doc__sphinx-7462: FAILED
+[incr-eval 16:53:51] hermes: cumulative n=401 resolved=357 failed=43 infra=1 -> eval_glm53_hermes.json
+[incr-eval 16:53:51] deepseek: 0 new instances, skip
+[incr-eval 16:53:51] === incr_eval R2181 done: 3 instances, +2resolved +1failed +0infra ===
