@@ -57,11 +57,9 @@
 > - ⚠️ **年代久的论文邮箱可能失效**：先查其**当前机构主页**上的最新邮箱，别用 PDF 上的旧邮箱
 >
 > **X follow**：
-> - ⚠️ **先验证能力再动手**：本线目前**没有确认可用的 X 自动化能力**。本轮先做**只读探测**：
->   `curl -sI https://x.com/<handle>` 是否可达、是否需登录、有无可用 MCP/浏览器通道。
-> - 结果如实写进 MEMORY：
->   - **可自动 follow** ⇒ 按 `AUTHORS.md` 逐个 follow，记时间与结果；
->   - **不可达/需登录/无凭据** ⇒ 记 `BLOCKED(x_access)`，输出「待 follow 清单」（handle + 主页链接）供用户手动执行，🚫 不许假装已 follow。
+> - ✅ **2026-11-11 起 X 已可达**（运维已在本机部署 Mihomo，`HTTP(S)_PROXY=http://127.0.0.1:7897`，已注入 loop 脚本与 `~/.profile`；实测 `x.com`=200、`x.com/<handle>`=200、出口 IP `178.249.213.185`）。
+>   - **先自检**：`curl -s -o /dev/null -w '%{http_code}' --max-time 20 https://x.com` 应返回 `200`；返回 `000` ⇒ 代理挂了，记 `BLOCKED(proxy_down)` 并报运维（`systemctl status mihomo`）。
+>   - 可达后用只读 GET 抓取作者主页 / 推文页面；**follow 动作若需登录态则仍不可自动执行** ⇒ 此时输出「待 follow 清单」，🚫 不许假装已 follow。
 > - 🚫 **不许注册新账号、不许用未授权凭据登录**。
 >
 > ### 5. 产出 4：给 news 投料（第三类素材 `voice_ready`）

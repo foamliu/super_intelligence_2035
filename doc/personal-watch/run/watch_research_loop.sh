@@ -1,4 +1,11 @@
 #!/bin/bash
+# ── PROXY (2026-11-11 运维): x.com 需经本机 Mihomo 7897 ──
+export HTTP_PROXY=http://127.0.0.1:7897
+export HTTPS_PROXY=http://127.0.0.1:7897
+export http_proxy=http://127.0.0.1:7897
+export https_proxy=http://127.0.0.1:7897
+export NO_PROXY=localhost,127.0.0.1,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16
+export no_proxy=$NO_PROXY
 # personal-watch（观察哨）· **research agent** 自动推进循环（arXiv 论文采集/整理）
 # 让 cline 读任务书（WATCH_RESEARCH_TASK.md）连续推进，并每约 PUSH_INTERVAL 秒兜底做一次 git 同步 + commit + push。
 # ⏰ 唤醒节律（**2026-10-07 用户令：由「每 30 分钟」改为「每天 8 次 —— 每 3 小时：00/03/06/09/12/15/18/21」**）：
