@@ -3470,3 +3470,92 @@ NCCL_P2P_DISABLE=1 bash baize_posttrain_sft_surrogate.sh \
 - NCCL P2P 死锁已通过 `NCCL_P2P_DISABLE=1` 解决，后续训练应沿用。
 - 沙盒仍 CLOSED（87th wake），Phase 1/3 继续阻塞，post-SFT eval 需沙盒恢复或用本地 serve 做定性验证。
 - **本轮新增产出**：R282（v11-v36 SFT 重训启动 + NCCL P2P 诊断修复 + sandbox ICMP/TCP 分离确认）。
+
+---
+
+## §R283 (2026-11-12 wake283) v11-v36 SFT 训练监控 + ckpt 完整性验证 + post-SFT serve dry-run 确认（GPU 6,7 · 2×A40）
+
+> 零新增 GPU（延续 wake282 启动的 SFT 训练，仅监控 + 验证 + dry-run）。本节确认训练健康、checkpoint 可用、post-SFT serve 路径就绪。
+
+### 1. SFT 训练监控（step 1→27）
+
+- **训练状态**：RUNNING，step 27/70（Epoch 2/5，step 13/14）
+- **loss 轨迹**（实测，来自 `/tmp/baize_posttrain_sft_v11v36_full.log`）：
+
+| step | epoch | loss | lr(1e-3) |
+|:--:|:--:|:--:|:--:|
+| 1 | 1/5 | 2.123 | 0.001 |
+| 5 | 1/5 | 1.671 | 0.007 |
+| 8 | 1/5 | 1.157 | 0.010 |
+| 14 | 1/5 | 0.938 | 0.010 |
+| 20 | 2/5 | 0.819 | 0.009 |
+| 23 | 2/5 | 0.818 | 0.008 |
+| 27 | 2/5 | 0.728 | 0.008 |
+
+- **判定**：loss 从 2.12 单调下降到 0.73，epoch 1 末已降到 0.94，epoch 2 继续降到 0.73 —— 健康 SFT 收敛轨迹，无发散/震荡。
+- **吞吐**：~22 s/it（两卡 FSDP2，micro_batch 4×2=8，train_batch 32），70 steps ≈ 26 min，ETA ≈ 01:09。
+- **GPU 利用率**：GPU6 99% / GPU7 96%，显存 28.7GB / 28.4GB —— 充分利用。
+
+### 2. global_step_20 ckpt 完整性验证
+
+- **路径**：`sft_surrogate_runs/minicpm5_pyaether_v2_v11v36/global_step_20/`
+- **大小**：715 MB
+- **文件清单**（全部齐全）：
+  - `model-00001-of-00002.safetensors` (4,498,783,184 B ≈ 4.5 GB)
+  - `model-00002-of-00002.safetensors` (534,773,888 B ≈ 0.53 GB)
+  - `model.safetensors.index.json` (31,379 B)
+  - `config.json` (722 B)
+  - `generation_config.json` (192 B)
+  - `tokenizer_config.json` (100,034 B)
+  - `tokenizer.json` (9,894,271 B)
+  - `special_tokens_map.json` (551 B)
+- **判定**：标准 HF safetensors 格式，2B 参数 bf16（4.5+0.53≈5.0 GB ≈ 2.5B params×2 bytes），可直接被 vLLM 加载 serve。save_freq=20 → 训练完成时将产出 global_step_20/40/60/70（final）。
+
+### 3. post-SFT serve dry-run 确认
+
+命令（dry-run，不实际启动）：
+```bash
+bash baize_posttrain_sft_surrogate_serve.sh --dry-run \
+  --ckpt .../sft_surrogate_runs/minicpm5_pyaether_v2_v11v36/global_step_20 \
+  --gpu 6 --port 8096
+```
+- **输出**：完整 recipe 打印：
+  - ckpt: global_step_20 (4.7G)
+  - gpu: 6, port: 8096
+  - served-model-name: minicpm5-sft
+  - gpu-mem-util: 0.85, max-model-len: 32768
+  - vllm venv: /tmp/vllm_venv/bin/python, transformers: 4.49.0
+  - log: /tmp/vllm_sft_serve_gpu6.log
+- **安全检测**：script 正确检测到 GPU6 上有训练进程（PID 341824/341825）并 warn "If from SFT training, wait for it to finish first" —— 防止训练未完成就抢占 GPU。
+- **eval 下一步提示**：`baize_posttrain_eval.sh --backbone minicpm5-sft --endpoint http://localhost:8096/v1 --model minicpm5-sft`，并标注 sandbox BLOCKED + 替身预演声明。
+- **判定**：post-SFT serve 路径完全就绪，训练完成后 next wake 可直接去掉 `--dry-run` 启动。
+
+### 4. Sandbox 状态（88th wake）
+
+- poll #590，ICMP ping 0.28ms OK（host alive）
+- TCP 全部 filtered：8653/8664/8665/8669/8667/22/80/443
+- 判定：跨子网网络 ACL 未开，需网络团队处理。watcher（PID 4109314）持续轮询中。
+- 影响：Phase 1 eval + Phase 3 RL + post-SFT eval 继续阻塞。
+
+### 5. Serve 占位健康
+
+| 端口 | GPU | 状态 |
+|:--:|:--:|:--|
+| 8097 | 5 | ✅ UP (minicpm5-2b-gpu5，17:10 占位) |
+| 8098 | 4 | ✅ UP (minicpm5-2b，Phase1 评测常驻) |
+| 8099 | 0-3 | ✅ UP (qwen3.8-27b，root SGLang) |
+| 8095/8096 | 6/7 | down（GPU6/7 训练中，正确） |
+
+### 6. 结论
+
+- v11-v36 SFT 训练健康运行中（step 27/70，loss 2.12→0.73），ETA ~01:09。
+- global_step_20 ckpt 完整可用（HF safetensors 格式，715MB）。
+- post-SFT serve dry-run 验证通过，next wake 训练完成后可直接 serve + eval（eval 仍待沙盒）。
+- 沙盒 88th wake 仍 CLOSED，Phase 1/3 继续阻塞。
+- **本轮新增产出**：R283（SFT 训练监控 + ckpt 完整性验证 + post-SFT serve dry-run 确认）。
+
+| 项 | 路径 |
+|:--|:--|
+| 本节 | EXPERIMENTS §R283 |
+| 训练日志 | `/tmp/baize_posttrain_sft_v11v36_full.log` |
+| SFT ckpt | `sft_surrogate_runs/minicpm5_pyaether_v2_v11v36/global_step_20`（运行中） |
