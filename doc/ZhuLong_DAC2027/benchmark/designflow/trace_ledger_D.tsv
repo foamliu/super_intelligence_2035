@@ -1471,3 +1471,4 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1793081469014_i1s8t	chengk	hfeg0plg74		analog_context	case	EDA-Eval-DesignFlow-IddLeakRank-001	2026-11-12 04:06	analog_context iddtree leakage rank/filter/outlier pipeline; 14 conds; ref 14/14 PASS, 4 neg FAIL, det ok
 1793609997920_hsw4o	xxchen	hfeg0pbn011	43	schematic_netlist	case	EDA-Eval-DesignFlow-SpfTrueShortScan-001	2026-11-12 04:39	
 1794204364689_0o6q1	e0023936	hfhds201	60	waveform	case	EDA-Eval-DesignFlow-WvEyeSelect-001	2026-11-12 05:28	
+1793762292369_ue8qf	xxchen	10.129.2.11	12	analog_context	case	EDA-Eval-DesignFlow-SpfLayerAnnotate-001	2026-11-12 06:01	
