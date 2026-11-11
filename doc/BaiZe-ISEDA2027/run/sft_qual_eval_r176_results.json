@@ -1,0 +1,1035 @@
+{
+  "timestamp": "2026-11-11 09:16:20",
+  "protocol": {
+    "temperature": 0.0,
+    "max_tokens": 400,
+    "base_endpoint": "http://localhost:8098",
+    "sft_endpoint": "http://localhost:8096"
+  },
+  "summary": {
+    "total_prompts": 16,
+    "replication_prompts": 8,
+    "new_prompts": 8,
+    "base": {
+      "finish_length": "16/16",
+      "function_def": "9/16",
+      "pure_prose": "6/16",
+      "avg_len_chars": 1688.5,
+      "avg_completion_tokens": 400.0,
+      "hallucination": "3/16"
+    },
+    "sft": {
+      "finish_stop": "15/16",
+      "function_def": "15/16",
+      "pure_prose": "1/16",
+      "avg_len_chars": 205.8,
+      "avg_completion_tokens": 64.0,
+      "hallucination": "0/16",
+      "correct": "11/16",
+      "semantic_error": "2/16",
+      "api_misuse": "1/16",
+      "protocol_failure": "1/16",
+      "incomplete": "1/16",
+      "correctness_rate": 68.8,
+      "replication_correct": "5/8",
+      "new_correct": "6/8"
+    },
+    "compression_ratio": 8.2,
+    "token_efficiency": 6.2,
+    "reward_arm_projection": {
+      "R1_binary_mean": 0.688,
+      "R2_partial_mean": 0.781,
+      "R4_api_legality_mean": 0.762,
+      "R2_vs_R1_gradient": 0.094,
+      "note": "R2 captures gradient R1 misses; R4 catches API misuse"
+    }
+  },
+  "results": [
+    {
+      "id": "L1",
+      "category": "Layout",
+      "replication": true,
+      "prompt": "Write a Python function get_cell_area(name) that uses dbfunc.dbGetCell to get a cell by name and returns its area as a float.",
+      "expected_api": "dbGetCell",
+      "rubric": "def get_cell_area + dbGetCell + .area + float()",
+      "base": {
+        "content": "<think>\nWe need to write a Python function get_cell_area(name) that uses dbfunc.dbGetCell to get a cell by name and returns its area as a float.\n\nWe need to consider the context: dbfunc.dbGetCell is presumably a function from a library that accesses a database (maybe a spreadsheet or a database). The function should get a cell by name and return its area as a float. The question is ambiguous: what does \"area\" mean? Possibly the cell's area in terms of its dimensions? Or maybe the cell's value? Or maybe the cell's area in a spreadsheet? The function name \"get_cell_area\" suggests we want the area of a cell, perhaps the area of a rectangle defined by the cell's dimensions? Or maybe the cell's area in terms of the size of the cell in a spreadsheet? The question is not fully specified. However, we can assume that dbfunc.dbGetCell returns a cell object that has an attribute \"area\" or something. Or maybe we need to compute the area based on the cell's dimensions (width and height). The question is ambiguous. But we can assume that dbfunc.dbGetCell returns a cell object that has a method or attribute to get its area. Or maybe we need to compute the area based on the cell's value? That seems unlikely.\n\nWe need to write a function that uses dbfunc.dbGetCell to get a cell by name and returns its area as a float. So we need to import dbfunc, call dbfunc.dbGetCell(name) to get a cell object, then get its area. The function should return a float. If the cell doesn't exist, maybe raise an exception or return None? The question doesn't specify error handling. We can assume that the function will be used in a context where the cell exists.\n\nThus, we can write:\n\n```python\nimport dbf",
+        "finish": "length",
+        "completion_tokens": 400,
+        "elapsed": 4.47,
+        "analysis": {
+          "len_chars": 1693,
+          "has_function_def": false,
+          "has_code_block": true,
+          "has_return": true,
+          "is_pure_prose": false,
+          "has_expected_api": true,
+          "keys_found": [
+            "dbGetCell"
+          ],
+          "keys_missing": [
+            "def get_cell_area",
+            ".area"
+          ],
+          "hits_trap": false
+        },
+        "error_class": "protocol_failure",
+        "hallucination": [
+          "spreadsheet"
+        ]
+      },
+      "sft": {
+        "content": "<think>\n\n</think>\n\nimport dbfunc as dbfunc\n\ndef get_cell_area(name):\n    cell = dbfunc.dbGetCell(name)\n    return float(cell)\n```\n",
+        "finish": "stop",
+        "completion_tokens": 39,
+        "elapsed": 0.45,
+        "analysis": {
+          "len_chars": 130,
+          "has_function_def": true,
+          "has_code_block": true,
+          "has_return": true,
+          "is_pure_prose": false,
+          "has_expected_api": true,
+          "keys_found": [
+            "def get_cell_area",
+            "dbGetCell"
+          ],
+          "keys_missing": [
+            ".area"
+          ],
+          "hits_trap": false
+        },
+        "error_class": "semantic_error",
+        "hallucination": [],
+        "reward_arm_mapping": {
+          "arm": "R2 gradient",
+          "r1": 0,
+          "r2": 0.5,
+          "r3": 0.5,
+          "r4": 0.5,
+          "note": "Right API wrong logic -- R2 partial captures gradient; R1 binary misses"
+        }
+      }
+    },
+    {
+      "id": "L2",
+      "category": "Layout",
+      "replication": true,
+      "prompt": "Write a Python function list_all_cells() that uses dbfunc.dbGetCells to return a list of all cell names in the database.",
+      "expected_api": "dbGetCells",
+      "rubric": "def list_all_cells + dbGetCells + return",
+      "base": {
+        "content": "<think>\nWe need to write a Python function list_all_cells() that uses dbfunc.dbGetCells to return a list of all cell names in the database.\n\nWe need to consider that dbfunc is a library for accessing Microsoft Access databases. The function dbGetCells likely returns a list of cell names in a given database. The function signature might be something like dbGetCells(db_path) or dbGetCells(db). We need to check typical usage.\n\nWe need to write a function that uses dbfunc.dbGetCells to return a list of all cell names in the database. The function should probably accept a database path as argument, or maybe a connection object. The question is ambiguous: \"Write a Python function list_all_cells() that uses dbfunc.dbGetCells to return a list of all cell names in the database.\" It doesn't specify arguments. Possibly the function should accept a path to a database file, or a connection object. The typical usage: import dbfunc; dbfunc.dbGetCells('path/to/database.accdb') returns a list of cell names. Or dbfunc.dbGetCells(conn) where conn is a connection object. Let's check typical dbfunc documentation.\n\nI recall dbfunc is a Python library for accessing Microsoft Access databases. The function dbGetCells returns a list of cell names in a database. The signature is dbGetCells(db) where db can be a path string or a connection object. The function returns a list of cell names.\n\nThus, we can write:\n\ndef list_all_cells(db_path):\n    import dbfunc\n    return dbfunc.dbGetCells(db_path)\n\nBut we need to handle errors? The question is simple: just write a function that uses dbfunc.dbGetCells to return a list of all cell names in the database. So we can define",
+        "finish": "length",
+        "completion_tokens": 400,
+        "elapsed": 4.46,
+        "analysis": {
+          "len_chars": 1666,
+          "has_function_def": true,
+          "has_code_block": false,
+          "has_return": true,
+          "is_pure_prose": false,
+          "has_expected_api": true,
+          "keys_found": [
+            "def list_all_cells",
+            "dbGetCells",
+            "return"
+          ],
+          "keys_missing": [],
+          "hits_trap": false
+        },
+        "error_class": "protocol_failure",
+        "hallucination": [
+          "Microsoft Access"
+        ]
+      },
+      "sft": {
+        "content": "<think>\n\n</think>\n\nimport dbfunc as db\ndef list_all_cells():\n    return db.dbGetCells()\n```\n",
+        "finish": "stop",
+        "completion_tokens": 27,
+        "elapsed": 0.32,
+        "analysis": {
+          "len_chars": 92,
+          "has_function_def": true,
+          "has_code_block": true,
+          "has_return": true,
+          "is_pure_prose": false,
+          "has_expected_api": true,
+          "keys_found": [
+            "def list_all_cells",
+            "dbGetCells",
+            "return"
+          ],
+          "keys_missing": [],
+          "hits_trap": false
+        },
+        "error_class": "correct",
+        "hallucination": [],
+        "reward_arm_mapping": {
+          "arm": "all_pass",
+          "r1": 1,
+          "r2": 1.0,
+          "r3": 1.0,
+          "r4": 1.0,
+          "note": "Correct -- all arms give full reward"
+        }
+      }
+    },
+    {
+      "id": "L3",
+      "category": "Layout",
+      "replication": false,
+      "prompt": "Write a Python function create_cell(cell_name) that uses dbfunc.dbCreateCell to create a new cell and returns it.",
+      "expected_api": "dbCreateCell",
+      "rubric": "def create_cell + dbCreateCell + return",
+      "base": {
+        "content": "<think>\nWe need to write a Python function create_cell(cell_name) that uses dbfunc.dbCreateCell to create a new cell and returns it.\n\nWe need to consider the context: The user asks to \"Write a Python function create_cell(cell_name) that uses dbfunc.dbCreateCell to create a new cell and returns it.\"\n\nWe need to produce a code snippet that defines this function. The function should import dbfunc (presumably a module that provides dbCreateCell). The function should call dbfunc.dbCreateCell(cell_name) and return the result.\n\nWe need to consider that the user might be using a database library like dbfunc (maybe a custom module). The function should be straightforward.\n\nWe need to ensure that the function is defined with proper docstring, maybe type hints, and handle errors? The user didn't ask for error handling, but we can include a simple try/except to catch any errors and raise a custom exception or just let it propagate.\n\nWe need to produce a final answer that includes the code block with the function definition.\n\nWe need to ensure that the code is correct and follows best practices.\n\nWe need to consider that the user might be using a library that expects a certain signature. The function name is create_cell, and it takes a cell_name argument. It should call dbfunc.dbCreateCell(cell_name) and return the result.\n\nWe need to ensure that the code is in a code block with python.\n\nWe need to ensure that we don't include any extraneous text outside the code block, but we can include a brief explanation before the code block.\n\nWe need to ensure that the answer is concise and helpful.\n\nThus, the answer will be something like:\n\n```python\nimport dbfunc\n\ndef create_cell(cell_name):\n    \"\"\"\n    Create a new cell in the database using dbfunc.dbCreateCell.\n\n    Parameters:\n       ",
+        "finish": "length",
+        "completion_tokens": 400,
+        "elapsed": 4.45,
+        "analysis": {
+          "len_chars": 1796,
+          "has_function_def": true,
+          "has_code_block": true,
+          "has_return": true,
+          "is_pure_prose": false,
+          "has_expected_api": true,
+          "keys_found": [
+            "def create_cell",
+            "dbCreateCell",
+            "return"
+          ],
+          "keys_missing": [],
+          "hits_trap": false
+        },
+        "error_class": "protocol_failure",
+        "hallucination": []
+      },
+      "sft": {
+        "content": "<think>\n\n</think>\n\nimport dbfunc as db\ndef create_cell(cell_name):\n    cell = db.dbCreateCell(cell_name)\n    return cell\n```\n",
+        "finish": "stop",
+        "completion_tokens": 35,
+        "elapsed": 0.41,
+        "analysis": {
+          "len_chars": 125,
+          "has_function_def": true,
+          "has_code_block": true,
+          "has_return": true,
+          "is_pure_prose": false,
+          "has_expected_api": true,
+          "keys_found": [
+            "def create_cell",
+            "dbCreateCell",
+            "return"
+          ],
+          "keys_missing": [],
+          "hits_trap": false
+        },
+        "error_class": "correct",
+        "hallucination": [],
+        "reward_arm_mapping": {
+          "arm": "all_pass",
+          "r1": 1,
+          "r2": 1.0,
+          "r3": 1.0,
+          "r4": 1.0,
+          "note": "Correct -- all arms give full reward"
+        }
+      }
+    },
+    {
+      "id": "L4",
+      "category": "Layout",
+      "replication": false,
+      "prompt": "Write a Python function get_cell_bbox(name) that uses dbfunc.dbGetCell to get a cell and returns its bounding box as a tuple (x0, y0, x1, y1).",
+      "expected_api": "dbGetCell",
+      "rubric": "def get_cell_bbox + dbGetCell + bbox",
+      "base": {
+        "content": "<think>\nWe need to write a Python function get_cell_bbox(name) that uses dbfunc.dbGetCell to get a cell and returns its bounding box as a tuple (x0, y0, x1, y1). The user wants a function that uses dbfunc.dbGetCell to get a cell and returns its bounding box. We need to consider the context: dbfunc is likely a module from some library, maybe a database function for getting cell bounding boxes. The function name is get_cell_bbox(name). The function should call dbfunc.dbGetCell(name) to get a cell, then compute its bounding box. The bounding box is a tuple (x0, y0, x1, y1). We need to know what dbGetCell returns. Possibly it returns a tuple of coordinates or a dict. The user didn't provide details. We need to infer typical usage. The function should be robust: handle errors, maybe return None or raise exception. The user wants a function that uses dbfunc.dbGetCell to get a cell and returns its bounding box. We need to write code that imports dbfunc, calls dbGetCell, extracts bounding box. The bounding box might be something like (x0, y0, x1, y1) from the cell's geometry. Could be a tuple of four numbers. The function should return that tuple. If dbGetCell returns something else, we need to adapt. The user didn't specify the exact return format of dbGetCell. We need to assume that dbGetCell returns a tuple (x0, y0, x1, y1) or maybe a dict with 'x0', 'y0', 'x1', 'y1'. The function should be generic: call dbGetCell, then extract bounding box. We can write a function that tries to get the bounding box from the returned value. If",
+        "finish": "length",
+        "completion_tokens": 400,
+        "elapsed": 4.46,
+        "analysis": {
+          "len_chars": 1547,
+          "has_function_def": false,
+          "has_code_block": false,
+          "has_return": true,
+          "is_pure_prose": true,
+          "has_expected_api": true,
+          "keys_found": [
+            "dbGetCell"
+          ],
+          "keys_missing": [
+            "def get_cell_bbox"
+          ],
+          "hits_trap": false
+        },
+        "error_class": "protocol_failure",
+        "hallucination": []
+      },
+      "sft": {
+        "content": "<think>\n\n</think>\n\nimport dbfunc as dbfunc\n\ndef get_cell_bbox(name):\n    cell = dbfunc.dbGetCell(name)\n    bbox = cell.bbox\n    return (bbox.x0, bbox.y0, bbox.x1, bbox.y1)\n```\n",
+        "finish": "stop",
+        "completion_tokens": 59,
+        "elapsed": 0.68,
+        "analysis": {
+          "len_chars": 176,
+          "has_function_def": true,
+          "has_code_block": true,
+          "has_return": true,
+          "is_pure_prose": false,
+          "has_expected_api": true,
+          "keys_found": [
+            "def get_cell_bbox",
+            "dbGetCell"
+          ],
+          "keys_missing": [],
+          "hits_trap": false
+        },
+        "error_class": "correct",
+        "hallucination": [],
+        "reward_arm_mapping": {
+          "arm": "all_pass",
+          "r1": 1,
+          "r2": 1.0,
+          "r3": 1.0,
+          "r4": 1.0,
+          "note": "Correct -- all arms give full reward"
+        }
+      }
+    },
+    {
+      "id": "S1",
+      "category": "Schematic",
+      "replication": true,
+      "prompt": "Write a Python function get_inst_net(inst_name) that uses the PyAether schematic API to return the net name connected to an instance.",
+      "expected_api": null,
+      "rubric": "def get_inst_net + return net name",
+      "base": {
+        "content": "<think>\nWe need to write a Python function get_inst_net(inst_name) that uses the PyAether schematic API to return the net name connected to an instance.\n\nWe need to understand what PyAether is. It's a library for schematic design? Possibly a library for creating schematics? The user wants a function that uses the PyAether schematic API to return the net name connected to an instance.\n\nWe need to write a function that takes an instance name (inst_name) and returns the net name connected to that instance. The function should use the PyAether API.\n\nWe need to consider that the user might be using a library like \"pyaether\" which is a Python library for schematic design? I'm not sure. Let's search memory: PyAether is a library for schematic design? I recall \"pyaether\" is a Python library for schematic design? Actually, I'm not aware of a library called PyAether. There's \"pyaether\" maybe a library for schematic design? Let's think: There's \"schematics\" library for creating schematics? There's \"schematics\" library for creating schematics? There's \"schematics\" library for creating schematics? There's \"schematics\" library for creating schematics? There's \"schematics\" library for creating schematics? There's \"schematics\" library for creating schematics? There's \"schematics\" library for creating schematics? There's \"schematics\" library for creating schematics? There's \"schematics\" library for creating schematics? There's \"schematics\" library for creating schematics? There's \"schematics\" library for creating schematics? There's \"schematics\" library for creating schematics? There's \"schematics\" library for creating schematics? There's \"schematics\" library for creating schematics? There's \"schematics\" library for creating schematics? There's \"sc",
+        "finish": "length",
+        "completion_tokens": 400,
+        "elapsed": 4.46,
+        "analysis": {
+          "len_chars": 1761,
+          "has_function_def": false,
+          "has_code_block": false,
+          "has_return": true,
+          "is_pure_prose": true,
+          "has_expected_api": true,
+          "keys_found": [
+            "return"
+          ],
+          "keys_missing": [
+            "def get_inst_net"
+          ],
+          "hits_trap": false
+        },
+        "error_class": "protocol_failure",
+        "hallucination": []
+      },
+      "sft": {
+        "content": "<think>\n\n</think>\n\nimport pyAether as pyScript\ndef get_inst_net(inst_name):\n    net = pyScript.get_inst_net(inst_name)\n    return net\n```\n",
+        "finish": "stop",
+        "completion_tokens": 40,
+        "elapsed": 0.46,
+        "analysis": {
+          "len_chars": 138,
+          "has_function_def": true,
+          "has_code_block": true,
+          "has_return": true,
+          "is_pure_prose": false,
+          "has_expected_api": true,
+          "keys_found": [
+            "def get_inst_net",
+            "return"
+          ],
+          "keys_missing": [],
+          "hits_trap": false
+        },
+        "error_class": "correct",
+        "hallucination": [],
+        "reward_arm_mapping": {
+          "arm": "all_pass",
+          "r1": 1,
+          "r2": 1.0,
+          "r3": 1.0,
+          "r4": 1.0,
+          "note": "Correct -- all arms give full reward"
+        }
+      }
+    },
+    {
+      "id": "S2",
+      "category": "Schematic",
+      "replication": true,
+      "prompt": "Write a Python function count_instances(cell_name) that uses dbfunc.dbGetInsts to count the number of instances in a cell.",
+      "expected_api": "dbGetInsts",
+      "rubric": "def count_instances + dbGetInsts + len()",
+      "base": {
+        "content": "<think>\nWe need to write a Python function count_instances(cell_name) that uses dbfunc.dbGetInsts to count the number of instances in a cell.\n\nWe need to consider that dbfunc is a module that presumably provides a function dbGetInsts. The function likely takes a cell name and returns something like a list of instances or a count. The question: \"Write a Python function count_instances(cell_name) that uses dbfunc.dbGetInsts to count the number of instances in a cell.\" So we need to define a function that calls dbfunc.dbGetInsts(cell_name) and returns the count of instances. The function should probably handle errors, maybe return 0 if no instances. The question is ambiguous: what does dbGetInsts return? It might return a list of instances, or maybe a dictionary with counts. The function name count_instances suggests we need to count the number of instances. So we need to call dbGetInsts and then count the length of the returned list. Or maybe dbGetInsts returns a count directly. But the question says \"uses dbfunc.dbGetInsts to count the number of instances in a cell.\" So we need to use dbGetInsts to get the instances, then count them. So the function should call dbGetInsts(cell_name) and then return len(instances). If dbGetInsts returns something else, we need to adapt.\n\nWe need to write a function that uses dbfunc.dbGetInsts. The function signature: def count_instances(cell_name): ... It should import dbfunc. Then call dbfunc.dbGetInsts(cell_name). Then count the number of instances. Possibly the function returns the count. If dbGetInsts returns a list of instances, then len(list) is the count. If",
+        "finish": "length",
+        "completion_tokens": 400,
+        "elapsed": 4.46,
+        "analysis": {
+          "len_chars": 1623,
+          "has_function_def": true,
+          "has_code_block": false,
+          "has_return": true,
+          "is_pure_prose": false,
+          "has_expected_api": true,
+          "keys_found": [
+            "def count_instances",
+            "dbGetInsts",
+            "len("
+          ],
+          "keys_missing": [],
+          "hits_trap": false
+        },
+        "error_class": "protocol_failure",
+        "hallucination": []
+      },
+      "sft": {
+        "content": "<think>\n\n</think>\n\nimport dbfunc as dbfunc\n\ndef count_instances(cell_name):\n    return dbfunc.dbGetInsts(cell_name)\n```\n",
+        "finish": "stop",
+        "completion_tokens": 37,
+        "elapsed": 0.43,
+        "analysis": {
+          "len_chars": 120,
+          "has_function_def": true,
+          "has_code_block": true,
+          "has_return": true,
+          "is_pure_prose": false,
+          "has_expected_api": true,
+          "keys_found": [
+            "def count_instances",
+            "dbGetInsts"
+          ],
+          "keys_missing": [
+            "len("
+          ],
+          "hits_trap": false
+        },
+        "error_class": "semantic_error",
+        "hallucination": [],
+        "reward_arm_mapping": {
+          "arm": "R2 gradient",
+          "r1": 0,
+          "r2": 0.5,
+          "r3": 0.5,
+          "r4": 0.5,
+          "note": "Right API wrong logic -- R2 partial captures gradient; R1 binary misses"
+        }
+      }
+    },
+    {
+      "id": "S3",
+      "category": "Schematic",
+      "replication": false,
+      "prompt": "Write a Python function create_wire(net_name, points) that uses schCreateWire to create a schematic wire on the given net with the given points.",
+      "expected_api": "schCreateWire",
+      "rubric": "def create_wire + schCreateWire",
+      "base": {
+        "content": "<think>\nWe need to write a Python function create_wire(net_name, points) that uses schCreateWire to create a schematic wire on the given net with the given points.\n\nWe need to consider the context: This is likely a function for a schematic design tool, perhaps using a library like `sch` or `schCreateWire` from a specific library. The user asks to \"Write a Python function create_wire(net_name, points) that uses schCreateWire to create a schematic wire on the given net with the given points.\"\n\nWe need to produce a function that takes a net name and a list of points (presumably coordinates) and uses schCreateWire to create a wire. The function should probably return something (maybe the created wire object). The user didn't specify the exact library or environment, but we can assume a typical usage: `schCreateWire(net_name, points)` returns a wire object. The function should call that and perhaps handle errors.\n\nWe need to produce a code snippet that defines the function. The user might be expecting a simple function that calls schCreateWire and returns the result. Possibly also includes docstring and type hints.\n\nWe need to consider that the function might be part of a larger code base, but we can just provide a minimal implementation.\n\nWe need to ensure that the function signature matches: `def create_wire(net_name, points):`.\n\nWe need to ensure that the function uses `schCreateWire` correctly. The function should probably accept a net name (string) and a list of points (list of tuples or list of lists). The function should call `schCreateWire(net_name, points)` and return the result.\n\nWe need to consider that the function might need to handle errors, e.g., if points is empty or invalid. But the user didn't ask for error handling, just to use schCreateWire.\n\nThus, we can write:\n\n```python",
+        "finish": "length",
+        "completion_tokens": 400,
+        "elapsed": 4.46,
+        "analysis": {
+          "len_chars": 1818,
+          "has_function_def": true,
+          "has_code_block": true,
+          "has_return": true,
+          "is_pure_prose": false,
+          "has_expected_api": true,
+          "keys_found": [
+            "def create_wire",
+            "schCreateWire"
+          ],
+          "keys_missing": [],
+          "hits_trap": false
+        },
+        "error_class": "protocol_failure",
+        "hallucination": []
+      },
+      "sft": {
+        "content": "<think>\n\n</think>\n\nimport pyvisa\nimport pyvisa\nimport pyvisa\nimport pyvisa\nimport pyvisa\nimport pyvisa\nimport pyvisa\nimport pyvisa\nimport pyvisa\nimport pyvisa\nimport pyvisa\nimport pyvisa\nimport pyvisa\nimport pyvisa\nimport pyvisa\nimport pyvisa\nimport pyvisa\nimport pyvisa\nimport pyvisa\nimport pyvisa\nimport pyvisa\nimport pyvisa\nimport pyvisa\nimport pyvisa\nimport pyvisa\nimport pyvisa\nimport pyvisa\nimport pyvisa\nimport pyvisa\nimport pyvisa\nimport pyvisa\nimport pyvisa\nimport pyvisa\nimport pyvisa\nimport pyvisa\nimport pyvisa\nimport pyvisa\nimport pyvisa\nimport pyvisa\nimport pyvisa\nimport pyvisa\nimport pyvisa\nimport pyvisa\nimport pyvisa\nimport pyvisa\nimport pyvisa\nimport pyvisa\nimport pyvisa\nimport pyvisa\nimport pyvisa\nimport pyvisa\nimport pyvisa\nimport pyvisa\nimport pyvisa\nimport pyvisa\nimport pyvisa\nimport pyvisa\nimport pyvisa\nimport pyvisa\nimport pyvisa\nimport pyvisa\nimport pyvisa\nimport pyvisa\nimport pyvisa\nimport pyvisa\nimport pyvisa\nimport pyvisa\nimport pyvisa\nimport pyvisa\nimport pyvisa\nimport pyvisa\nimport pyvisa\nimport pyvisa\nimport pyvisa\nimport pyvisa\nimport pyvisa\nimport pyvisa\nimport pyvisa\nimport pyvisa\nimport",
+        "finish": "length",
+        "completion_tokens": 400,
+        "elapsed": 4.46,
+        "analysis": {
+          "len_chars": 1131,
+          "has_function_def": false,
+          "has_code_block": false,
+          "has_return": false,
+          "is_pure_prose": true,
+          "has_expected_api": false,
+          "keys_found": [],
+          "keys_missing": [
+            "def create_wire",
+            "schCreateWire"
+          ],
+          "hits_trap": false
+        },
+        "error_class": "protocol_failure",
+        "hallucination": [],
+        "reward_arm_mapping": {
+          "arm": "R1 catches",
+          "r1": 0,
+          "r2": 0.0,
+          "r3": 0.0,
+          "r4": 0.0,
+          "note": "No code produced -- R1 binary=0; R2 partial=0"
+        }
+      }
+    },
+    {
+      "id": "S4",
+      "category": "Schematic",
+      "replication": false,
+      "prompt": "Write a Python function get_pin_name(pin_id) that uses leGetPin to get a pin object and return its name.",
+      "expected_api": "leGetPin",
+      "rubric": "def get_pin_name + leGetPin + return",
+      "base": {
+        "content": "<think>\nWe need to write a Python function get_pin_name(pin_id) that uses leGetPin to get a pin object and return its name.\n\nWe need to consider the context: This is likely a function for Arduino or some microcontroller library? The function leGetPin is a function from the Arduino library? Actually, leGetPin is a function from the Arduino's \"Arduino.h\" library? Let's recall: In Arduino, there is a function `pinMode(pin, OUTPUT)`, `digitalWrite(pin, value)`, `analogWrite(pin, value)`, `digitalRead(pin)`. There's also `pinToDigitalPin`? Not sure. But `leGetPin` is a function from the Arduino's \"Arduino.h\"? Actually, I recall that in the Arduino library for the \"Arduino Uno\" or \"Arduino Core\" there is a function `leGetPin` used in the \"Arduino's library for the Arduino's \"Arduino's \"Arduino's \"Arduino's \"Arduino's \"Arduino's \"Arduino's \"Arduino's \"Arduino's \"Arduino's \"Arduino's \"Arduino's \"Arduino's \"Arduino's \"Arduino's \"Arduino's \"Arduino's \"Arduino's \"Arduino's \"Arduino's \"Arduino's \"Arduino's \"Arduino's \"Arduino's \"Arduino's \"Arduino's \"Arduino's \"Arduino's \"Arduino's \"Arduino's \"Arduino's \"Arduino's \"Arduino's \"Arduino's \"Arduino's \"Arduino's \"Arduino's \"Arduino's \"Arduino's \"Arduino's \"Arduino's \"Arduino's \"Arduino's \"Arduino's \"Arduino's \"Arduino's \"Arduino's \"Arduino's \"Arduino's \"Ar",
+        "finish": "length",
+        "completion_tokens": 400,
+        "elapsed": 4.46,
+        "analysis": {
+          "len_chars": 1310,
+          "has_function_def": false,
+          "has_code_block": false,
+          "has_return": true,
+          "is_pure_prose": true,
+          "has_expected_api": true,
+          "keys_found": [
+            "leGetPin",
+            "return"
+          ],
+          "keys_missing": [
+            "def get_pin_name"
+          ],
+          "hits_trap": false
+        },
+        "error_class": "protocol_failure",
+        "hallucination": []
+      },
+      "sft": {
+        "content": "<think>\n\n</think>\n\nimport pycom as py\nimport board as board\nimport busio as busio\nfrom adafruit_mcp1202 import MCP1202\n\ndef get_pin_name(pin_id):\n    pin = py.LE.GetPin(pin_id)\n    return pin.name\n```\n",
+        "finish": "stop",
+        "completion_tokens": 64,
+        "elapsed": 0.73,
+        "analysis": {
+          "len_chars": 201,
+          "has_function_def": true,
+          "has_code_block": true,
+          "has_return": true,
+          "is_pure_prose": false,
+          "has_expected_api": false,
+          "keys_found": [
+            "def get_pin_name",
+            "return"
+          ],
+          "keys_missing": [
+            "leGetPin"
+          ],
+          "hits_trap": false
+        },
+        "error_class": "api_misuse",
+        "hallucination": [],
+        "reward_arm_mapping": {
+          "arm": "R4 catches",
+          "r1": 0,
+          "r2": 0.3,
+          "r3": 0.3,
+          "r4": 0.0,
+          "note": "API misuse -- R4 API-legality=0; R2 partial for format"
+        }
+      }
+    },
+    {
+      "id": "D1",
+      "category": "DesignMgmt",
+      "replication": true,
+      "prompt": "Write a Python function save_design(path) that uses dbfunc.dbSaveDesign to save the current design to a file path.",
+      "expected_api": "dbSaveDesign",
+      "rubric": "def save_design + dbSaveDesign",
+      "base": {
+        "content": "<think>\nWe need to write a Python function save_design(path) that uses dbfunc.dbSaveDesign to save the current design to a file path.\n\nWe need to consider the context: dbfunc is a library for handling design data, perhaps from a CAD or similar. The function likely expects to import dbfunc and call dbfunc.dbSaveDesign. The function should accept a path argument and call dbfunc.dbSaveDesign with that path. Possibly also need to handle errors, but the prompt is simple: \"Write a Python function save_design(path) that uses dbfunc.dbSaveDesign to save the current design to a file path.\"\n\nThus we need to write a function that imports dbfunc and calls dbfunc.dbSaveDesign(path). Possibly also need to ensure that the function returns something (maybe None). The function should be defined in a module.\n\nWe need to produce code that is correct and robust. The user likely expects a simple function definition. However, we need to consider that dbfunc.dbSaveDesign may require additional arguments or context. Let's search memory: dbfunc is a library for handling design data in the context of a CAD system, perhaps from the \"dbfunc\" package used in the \"OpenSCAD\" or \"CadQuery\"? Actually, dbfunc is a library for handling design data in the context of the \"OpenSCAD\" or \"CadQuery\"? I'm not sure. Let's think: dbfunc is a library for handling design data in the context of the \"OpenSCAD\" or \"CadQuery\"? Actually, dbfunc is a library for handling design data in the context of the \"OpenSCAD\" or \"CadQuery\"? I'm not sure. Let's search memory: dbfunc is a library for handling design data in the context of the \"OpenSCAD\" or \"CadQuery\"? I'm not sure. Let's think:",
+        "finish": "length",
+        "completion_tokens": 400,
+        "elapsed": 4.45,
+        "analysis": {
+          "len_chars": 1658,
+          "has_function_def": false,
+          "has_code_block": false,
+          "has_return": false,
+          "is_pure_prose": true,
+          "has_expected_api": true,
+          "keys_found": [
+            "dbSaveDesign"
+          ],
+          "keys_missing": [
+            "def save_design"
+          ],
+          "hits_trap": false
+        },
+        "error_class": "protocol_failure",
+        "hallucination": []
+      },
+      "sft": {
+        "content": "<think>\n\n</think>\n\nimport dbfunc as db\ndef save_design(path):\n    db.dbSaveDesign(path)\n```\n",
+        "finish": "stop",
+        "completion_tokens": 26,
+        "elapsed": 0.31,
+        "analysis": {
+          "len_chars": 92,
+          "has_function_def": true,
+          "has_code_block": true,
+          "has_return": false,
+          "is_pure_prose": false,
+          "has_expected_api": true,
+          "keys_found": [
+            "def save_design",
+            "dbSaveDesign"
+          ],
+          "keys_missing": [],
+          "hits_trap": false
+        },
+        "error_class": "incomplete",
+        "hallucination": [],
+        "reward_arm_mapping": {
+          "arm": "R1 catches",
+          "r1": 0,
+          "r2": 0.2,
+          "r3": 0.2,
+          "r4": 0.2,
+          "note": "Incomplete -- R1=0; R2 small partial"
+        }
+      }
+    },
+    {
+      "id": "D2",
+      "category": "DesignMgmt",
+      "replication": true,
+      "prompt": "Write a Python function open_library(lib_path) that uses dbfunc.dbOpenLibrary to open a design library.",
+      "expected_api": "dbOpenLibrary",
+      "rubric": "def open_library + dbOpenLibrary",
+      "base": {
+        "content": "<think>\nWe need to write a Python function open_library(lib_path) that uses dbfunc.dbOpenLibrary to open a design library. The user wants a function that uses dbfunc.dbOpenLibrary to open a design library. We need to provide code. The function should probably accept a path to a design library (maybe a .dbf file) and open it using dbfunc.dbOpenLibrary. The function should return the handle or something. The user didn't specify any error handling, but we can include basic error handling. The function should be named open_library. The function should import dbfunc. The function should call dbfunc.dbOpenLibrary(lib_path). The function should return the handle. Possibly also close the library? The user didn't ask for closing, but we can provide a context manager or a function that returns the handle. The user might want to use it in a context manager. But the question is just to write a function that uses dbfunc.dbOpenLibrary to open a design library. So we can write a simple function:\n\ndef open_library(lib_path):\n    import dbfunc\n    handle = dbfunc.dbOpenLibrary(lib_path)\n    return handle\n\nBut we might also want to handle errors: if the library cannot be opened, raise an exception. The function could also accept a mode argument? The dbfunc.dbOpenLibrary signature: dbfunc.dbOpenLibrary(filename, flag=0, arg=0, mutex_flag=0). The default flag is 0 (read-only). The function might need to specify the flag for read/write. But the user didn't specify. So we can just call it with the path.\n\nWe can also provide a context manager version:\n\nclass Library:\n    def __init__(self, lib_path):\n        self.handle = dbfunc.dbOpenLibrary(lib_path)\n    def close(self):\n        dbfunc",
+        "finish": "length",
+        "completion_tokens": 400,
+        "elapsed": 4.46,
+        "analysis": {
+          "len_chars": 1693,
+          "has_function_def": true,
+          "has_code_block": false,
+          "has_return": true,
+          "is_pure_prose": false,
+          "has_expected_api": true,
+          "keys_found": [
+            "def open_library",
+            "dbOpenLibrary"
+          ],
+          "keys_missing": [],
+          "hits_trap": false
+        },
+        "error_class": "protocol_failure",
+        "hallucination": [
+          "DBF file"
+        ]
+      },
+      "sft": {
+        "content": "<think>\n\n</think>\n\nimport dbfunc as db\ndef open_library(lib_path):\n    lib = db.dbOpenLibrary(lib_path)\n    return lib\n```\n",
+        "finish": "stop",
+        "completion_tokens": 36,
+        "elapsed": 0.42,
+        "analysis": {
+          "len_chars": 123,
+          "has_function_def": true,
+          "has_code_block": true,
+          "has_return": true,
+          "is_pure_prose": false,
+          "has_expected_api": true,
+          "keys_found": [
+            "def open_library",
+            "dbOpenLibrary"
+          ],
+          "keys_missing": [],
+          "hits_trap": false
+        },
+        "error_class": "correct",
+        "hallucination": [],
+        "reward_arm_mapping": {
+          "arm": "all_pass",
+          "r1": 1,
+          "r2": 1.0,
+          "r3": 1.0,
+          "r4": 1.0,
+          "note": "Correct -- all arms give full reward"
+        }
+      }
+    },
+    {
+      "id": "D3",
+      "category": "DesignMgmt",
+      "replication": false,
+      "prompt": "Write a Python function open_cellview(lib, cell, view) that uses dmOpenCellView to open a cell view and return it.",
+      "expected_api": "dmOpenCellView",
+      "rubric": "def open_cellview + dmOpenCellView + return",
+      "base": {
+        "content": "<think>\nWe need to write a Python function open_cellview(lib, cell, view) that uses dmOpenCellView to open a cell view and return it.\n\nWe need to consider the context: This is likely a function for a library that deals with some kind of data model, maybe a \"dm\" library (maybe \"dm\" stands for \"Data Model\"?). The function open_cellview takes a library object (lib), a cell (cell), and a view (view). It uses dmOpenCellView to open a cell view and return it.\n\nWe need to write a function that presumably calls dmOpenCellView(lib, cell, view) and returns the result. The function signature is open_cellview(lib, cell, view). The function should call dmOpenCellView and return its result.\n\nWe need to consider that dmOpenCellView might be a function that returns a view object. The function should be straightforward: call dmOpenCellView(lib, cell, view) and return the result.\n\nBut we need to consider that the function might need to handle errors or something. However, the problem statement is simple: \"Write a Python function open_cellview(lib, cell, view) that uses dmOpenCellView to open a cell view and return it.\"\n\nThus, we need to write a function that calls dmOpenCellView and returns the result.\n\nWe need to ensure that the function is defined with the correct signature and docstring perhaps.\n\nWe need to consider that the function might be part of a larger codebase, but we only need to write the function.\n\nThus, the answer is a Python function definition:\n\n```python\ndef open_cellview(lib, cell, view):\n    \"\"\"\n    Open a cell view using dmOpenCellView and return the view.\n\n    Parameters:\n    lib: The library object.\n    cell: The cell to open.\n    view: The view to use",
+        "finish": "length",
+        "completion_tokens": 400,
+        "elapsed": 4.45,
+        "analysis": {
+          "len_chars": 1685,
+          "has_function_def": true,
+          "has_code_block": true,
+          "has_return": true,
+          "is_pure_prose": false,
+          "has_expected_api": true,
+          "keys_found": [
+            "def open_cellview",
+            "dmOpenCellView",
+            "return"
+          ],
+          "keys_missing": [],
+          "hits_trap": false
+        },
+        "error_class": "protocol_failure",
+        "hallucination": []
+      },
+      "sft": {
+        "content": "<think>\n\n</think>\n\nimport dm as dm\ndef open_cellview(lib, cell, view):\n    \"\"\"Open a cell view.\"\"\"\n    return dmOpenCellView(lib, cell, view)\n```\n",
+        "finish": "stop",
+        "completion_tokens": 42,
+        "elapsed": 0.49,
+        "analysis": {
+          "len_chars": 146,
+          "has_function_def": true,
+          "has_code_block": true,
+          "has_return": true,
+          "is_pure_prose": false,
+          "has_expected_api": true,
+          "keys_found": [
+            "def open_cellview",
+            "dmOpenCellView",
+            "return"
+          ],
+          "keys_missing": [],
+          "hits_trap": false
+        },
+        "error_class": "correct",
+        "hallucination": [],
+        "reward_arm_mapping": {
+          "arm": "all_pass",
+          "r1": 1,
+          "r2": 1.0,
+          "r3": 1.0,
+          "r4": 1.0,
+          "note": "Correct -- all arms give full reward"
+        }
+      }
+    },
+    {
+      "id": "D4",
+      "category": "DesignMgmt",
+      "replication": false,
+      "prompt": "Write a Python function list_libraries() that uses dmGetLibs to return a list of all library names.",
+      "expected_api": "dmGetLibs",
+      "rubric": "def list_libraries + dmGetLibs + return",
+      "base": {
+        "content": "<think>\nWe need to write a Python function list_libraries() that uses dmGetLibs to return a list of all library names.\n\nWe need to consider that dmGetLibs is presumably a function from the DLL (maybe from a library like \"dm\" or \"dll\"?). The user wants a Python function that uses dmGetLibs to return a list of all library names.\n\nWe need to think about the context: The user asks to \"Write a Python function list_libraries() that uses dmGetLibs to return a list of all library names.\" This is a fairly straightforward request: define a function that calls dmGetLibs and returns a list of library names.\n\nBut we need to consider that dmGetLibs might be a function from a library that is not part of Python's standard library. It might be a function from a DLL that is loaded via ctypes. The user might be expecting a function that uses ctypes to call dmGetLibs. Or perhaps dmGetLibs is a function from a library that is part of the Python environment (like a module). However, dmGetLibs is not a standard Python function. It might be a function from a library like \"dll\" or \"dm\" that is used in some context.\n\nWe need to consider that the user might be expecting a simple answer: define a function that calls dmGetLibs and returns the result. But we need to be careful: dmGetLibs might be a function that returns a list of library names. The function should be named list_libraries.\n\nWe need to consider that the user might be expecting a function that uses ctypes to call dmGetLibs. Or perhaps dmGetLibs is a function from a library that is loaded via ctypes. The user might be expecting a function that uses ctypes to call dmGetLibs and returns a list of library names.\n\nWe need to consider",
+        "finish": "length",
+        "completion_tokens": 400,
+        "elapsed": 4.46,
+        "analysis": {
+          "len_chars": 1691,
+          "has_function_def": false,
+          "has_code_block": false,
+          "has_return": true,
+          "is_pure_prose": true,
+          "has_expected_api": true,
+          "keys_found": [
+            "dmGetLibs",
+            "return"
+          ],
+          "keys_missing": [
+            "def list_libraries"
+          ],
+          "hits_trap": false
+        },
+        "error_class": "protocol_failure",
+        "hallucination": []
+      },
+      "sft": {
+        "content": "<think>\n\n</think>\n\nimport pybind11 as pybind11_lib\ndef list_libraries():\n    result = pybind11_lib.dmGetLibs()\n    return result\n```\n",
+        "finish": "stop",
+        "completion_tokens": 40,
+        "elapsed": 0.46,
+        "analysis": {
+          "len_chars": 133,
+          "has_function_def": true,
+          "has_code_block": true,
+          "has_return": true,
+          "is_pure_prose": false,
+          "has_expected_api": true,
+          "keys_found": [
+            "def list_libraries",
+            "dmGetLibs",
+            "return"
+          ],
+          "keys_missing": [],
+          "hits_trap": false
+        },
+        "error_class": "correct",
+        "hallucination": [],
+        "reward_arm_mapping": {
+          "arm": "all_pass",
+          "r1": 1,
+          "r2": 1.0,
+          "r3": 1.0,
+          "r4": 1.0,
+          "note": "Correct -- all arms give full reward"
+        }
+      }
+    },
+    {
+      "id": "O1",
+      "category": "Others",
+      "replication": true,
+      "prompt": "Write a Python function find_max(lst) that returns the maximum value in a list using functools.reduce.",
+      "expected_api": null,
+      "rubric": "def find_max + reduce + max (NOT operator.max)",
+      "base": {
+        "content": "<think>\nWe need to write a Python function find_max(lst) that returns the maximum value in a list using functools.reduce.\n\nWe need to produce a solution code block with the function.\n\nWe need to consider edge cases: empty list? Should we raise an error? The problem statement doesn't specify. Usually, we might raise a ValueError if the list is empty. Or we could return None. But typical reduce usage: reduce(lambda x, y: x if x > y else y, lst). But we need to import functools.\n\nWe need to write a function that uses functools.reduce.\n\nWe need to ensure that the function works for any iterable of comparable items.\n\nWe need to produce a final solution code block enclosed in triple backticks with python.\n\nWe need to include docstring perhaps.\n\nWe need to ensure that we import functools.\n\nWe need to ensure that we handle empty list gracefully.\n\nWe need to ensure that we handle non-numeric types? The function can be generic.\n\nWe need to ensure that we use reduce correctly.\n\nWe need to ensure that we return the maximum.\n\nWe need to ensure that we handle the case where the list is empty: maybe raise ValueError.\n\nWe need to ensure that we provide a simple example usage.\n\nWe need to ensure that we follow the instructions: \"Write a Python function find_max(lst) that returns the maximum value in a list using functools.reduce.\"\n\nThus we need to produce a function that uses reduce.\n\nWe need to produce a final answer with code block.\n\nWe need to ensure that we include import statements.\n\nWe need to ensure that we include a docstring.\n\nWe need to ensure that we include a test case perhaps.\n\nWe need to ensure that we follow the guidelines: no extra text outside the code block? The user asked to \"Write a Python function find_max(lst) that returns",
+        "finish": "length",
+        "completion_tokens": 400,
+        "elapsed": 4.46,
+        "analysis": {
+          "len_chars": 1757,
+          "has_function_def": false,
+          "has_code_block": false,
+          "has_return": true,
+          "is_pure_prose": true,
+          "has_expected_api": true,
+          "keys_found": [
+            "reduce"
+          ],
+          "keys_missing": [
+            "def find_max"
+          ],
+          "hits_trap": false
+        },
+        "error_class": "protocol_failure",
+        "hallucination": []
+      },
+      "sft": {
+        "content": "<think>\n\n</think>\n\nimport functools\n\ndef find_max(lst):\n    return functools.reduce(lambda x, y: x if x > y else y, lst)\n```\n",
+        "finish": "stop",
+        "completion_tokens": 38,
+        "elapsed": 0.44,
+        "analysis": {
+          "len_chars": 125,
+          "has_function_def": true,
+          "has_code_block": true,
+          "has_return": true,
+          "is_pure_prose": false,
+          "has_expected_api": true,
+          "keys_found": [
+            "def find_max",
+            "reduce"
+          ],
+          "keys_missing": [],
+          "hits_trap": false
+        },
+        "error_class": "correct",
+        "hallucination": [],
+        "reward_arm_mapping": {
+          "arm": "all_pass",
+          "r1": 1,
+          "r2": 1.0,
+          "r3": 1.0,
+          "r4": 1.0,
+          "note": "Correct -- all arms give full reward"
+        }
+      }
+    },
+    {
+      "id": "O2",
+      "category": "Others",
+      "replication": true,
+      "prompt": "Write a Python function reverse_string(s) that returns the reversed version of string s.",
+      "expected_api": null,
+      "rubric": "def reverse_string + s[::-1] or reversed()",
+      "base": {
+        "content": "<think>\nThe user asks: \"Write a Python function reverse_string(s) that returns the reversed version of string s.\"\n\nWe need to produce a solution: a Python function reverse_string(s) that returns the reversed version of string s.\n\nWe need to output code in a code block with python.\n\nWe need to ensure we follow the policy: no disallowed content. This is a simple programming request. We can provide a straightforward solution.\n\nWe need to consider that the user wants a function that returns reversed string. We can implement it using slicing: s[::-1] or using reversed and join.\n\nWe can also include a docstring and maybe some test cases.\n\nWe need to output only the final solution code block enclosed within triple backticks with python.\n\nWe need to ensure we follow the instruction: \"Put the final solution code block enclosed within ```python ... ```\". So we need to output a code block with python.\n\nWe can also include a brief explanation before the code block, but the instruction says \"Put the final solution code block enclosed within ```python\". It doesn't say we cannot have explanation outside the code block. But the user likely expects just the function. However, we can provide a short explanation and then the code block.\n\nBut the instruction from the developer says: \"Put the final solution code block enclosed within ```python\". So we need to ensure that the final solution code block is enclosed in triple backticks with python.\n\nWe can also include a short description before the code block, but the final solution code block must be enclosed.\n\nThus, we can respond with something like:\n\nHere is a simple implementation:\n\n```python\ndef reverse_string(s):\n    \"\"\"Return the reversed version of the input string s.\"\"\"\n    return s[::-1]\n```\n\nWe can also include a main guard for testing.\n\nBut the user only asked to write a function. So we can provide the function.\n\nWe",
+        "finish": "length",
+        "completion_tokens": 400,
+        "elapsed": 4.45,
+        "analysis": {
+          "len_chars": 1887,
+          "has_function_def": true,
+          "has_code_block": true,
+          "has_return": true,
+          "is_pure_prose": false,
+          "has_expected_api": true,
+          "keys_found": [
+            "def reverse_string"
+          ],
+          "keys_missing": [],
+          "hits_trap": false
+        },
+        "error_class": "protocol_failure",
+        "hallucination": []
+      },
+      "sft": {
+        "content": "<think>\n\n</think>\n\nimport string\n\ndef reverse_string(s):\n    return s[::-1]\n```\n",
+        "finish": "stop",
+        "completion_tokens": 22,
+        "elapsed": 0.27,
+        "analysis": {
+          "len_chars": 80,
+          "has_function_def": true,
+          "has_code_block": true,
+          "has_return": true,
+          "is_pure_prose": false,
+          "has_expected_api": true,
+          "keys_found": [
+            "def reverse_string"
+          ],
+          "keys_missing": [],
+          "hits_trap": false
+        },
+        "error_class": "correct",
+        "hallucination": [],
+        "reward_arm_mapping": {
+          "arm": "all_pass",
+          "r1": 1,
+          "r2": 1.0,
+          "r3": 1.0,
+          "r4": 1.0,
+          "note": "Correct -- all arms give full reward"
+        }
+      }
+    },
+    {
+      "id": "O3",
+      "category": "Others",
+      "replication": false,
+      "prompt": "Write a Python function flatten_list(nested) that flattens a nested list into a single list.",
+      "expected_api": null,
+      "rubric": "def flatten_list + iter/extend or comprehension",
+      "base": {
+        "content": "<think>\nWe are going to write a function that takes a nested list (which can have lists inside lists, etc.) and returns a flattened list.\n We can use recursion to handle nested lists.\n However, note that the input might not be a list at all, so we should handle that.\n Also, we should avoid modifying the original list.\n\n Steps:\n 1. Initialize an empty list to hold the flattened elements.\n 2. Iterate over each element in the input list.\n 3. If the element is a list, then recursively flatten it and extend the result.\n 4. If the element is not a list, then append it to the result.\n 5. Return the flattened list.\n\n However, note that the function should be able to handle any level of nesting.\n\n Let's write the function accordingly.\n</think>\n\nHere's a Python function that flattens a nested list into a single list using recursion:\n\n```python\ndef flatten_list(nested):\n    \"\"\"\n    Flattens a nested list into a single list.\n    \n    Args:\n        nested (list): A list that may contain other lists.\n    \n    Returns:\n        list: A flattened list containing all elements from the nested structure.\n    \"\"\"\n    result = []\n    \n    for item in nested:\n        if isinstance(item, list):\n            # Recursively flatten the nested list\n            result.extend(flatten_list(item))\n        else:\n            # Add non-list items directly to the result\n            result.append(item)\n    \n    return result\n```\n\n**Example usage:**\n\n```python\n# Test cases\nprint(flatten_list([1, [2, 3], [4, [5, 6]]]))  # Output: [1, 2, 3, 4, 5, 6]\nprint(flatten_list([1, 2, 3]))  # Output: [1, 2, 3]\nprint(flatten_list",
+        "finish": "length",
+        "completion_tokens": 400,
+        "elapsed": 4.45,
+        "analysis": {
+          "len_chars": 1605,
+          "has_function_def": true,
+          "has_code_block": true,
+          "has_return": true,
+          "is_pure_prose": false,
+          "has_expected_api": true,
+          "keys_found": [
+            "def flatten_list"
+          ],
+          "keys_missing": [],
+          "hits_trap": false
+        },
+        "error_class": "protocol_failure",
+        "hallucination": []
+      },
+      "sft": {
+        "content": "<think>\n\n</think>\n\nimport functools\n\ndef flatten_list(nested):\n    \"\"\"Flatten a nested list into a single list.\"\"\"\n    def flatten(x):\n        if isinstance(x, list):\n            return list(functools.chain.from_iterable(flatten(i) for i in x))\n        else:\n            return [x]\n    return flatten(nested)\n```\n",
+        "finish": "stop",
+        "completion_tokens": 75,
+        "elapsed": 0.86,
+        "analysis": {
+          "len_chars": 313,
+          "has_function_def": true,
+          "has_code_block": true,
+          "has_return": true,
+          "is_pure_prose": false,
+          "has_expected_api": true,
+          "keys_found": [
+            "def flatten_list"
+          ],
+          "keys_missing": [],
+          "hits_trap": false
+        },
+        "error_class": "correct",
+        "hallucination": [],
+        "reward_arm_mapping": {
+          "arm": "all_pass",
+          "r1": 1,
+          "r2": 1.0,
+          "r3": 1.0,
+          "r4": 1.0,
+          "note": "Correct -- all arms give full reward"
+        }
+      }
+    },
+    {
+      "id": "O4",
+      "category": "Others",
+      "replication": false,
+      "prompt": "Write a Python function count_words(text) that returns the number of words in a text string.",
+      "expected_api": null,
+      "rubric": "def count_words + split + len",
+      "base": {
+        "content": "<think>\nThe user asks: \"Write a Python function count_words(text) that returns the number of words in a text string.\"\n\nWe need to produce a solution: a Python function count_words(text) that returns the number of words in a text string.\n\nWe need to consider what constitutes a word. Typically, words are sequences of characters separated by whitespace. We can split on whitespace using str.split() which splits on any whitespace and discards empty strings. That's a simple approach.\n\nBut we might need to consider punctuation? The problem statement is simple: \"returns the number of words in a text string.\" Usually, we can just split on whitespace. But we could also consider using regex to split on non-word characters. However, the simplest solution is to use text.split().\n\nWe need to write a function count_words(text) that returns the number of words. We'll also include docstring and maybe some examples.\n\nWe need to output the final solution code block enclosed within triple backticks with python.\n\nWe need to ensure that the code is correct and robust.\n\nPotential edge cases: empty string returns 0. Strings with only whitespace returns 0. Strings with punctuation attached to words: e.g., \"Hello, world!\" would be split into [\"Hello,\", \"world!\"] which counts as 2 words. That's fine.\n\nIf we want to treat punctuation as separate words, we could use regex to split on non-alphanumeric characters. But the problem likely expects simple splitting.\n\nThus, we can implement:\n\ndef count_words(text):\n    \"\"\"Return the number of words in the given text.\n\n    Words are defined as sequences of characters separated by whitespace.\n    \"\"\"\n    # If text is None, treat as empty string.\n    if not text:\n        return 0\n    # Use split to separate on whitespace.\n    words = text.split()\n    return len(words)\n\nAlternatively,",
+        "finish": "length",
+        "completion_tokens": 400,
+        "elapsed": 4.46,
+        "analysis": {
+          "len_chars": 1826,
+          "has_function_def": true,
+          "has_code_block": false,
+          "has_return": true,
+          "is_pure_prose": false,
+          "has_expected_api": true,
+          "keys_found": [
+            "def count_words",
+            "len("
+          ],
+          "keys_missing": [],
+          "hits_trap": false
+        },
+        "error_class": "protocol_failure",
+        "hallucination": []
+      },
+      "sft": {
+        "content": "<think>\n\n</think>\n\nimport re\n\ndef count_words(text):\n    \"\"\"\n    Returns the number of words in a text string.\n    \"\"\"\n    return len(re.findall(r'\\b\\w+\\b', text))\n```\n",
+        "finish": "stop",
+        "completion_tokens": 44,
+        "elapsed": 0.51,
+        "analysis": {
+          "len_chars": 168,
+          "has_function_def": true,
+          "has_code_block": true,
+          "has_return": true,
+          "is_pure_prose": false,
+          "has_expected_api": true,
+          "keys_found": [
+            "def count_words",
+            "len("
+          ],
+          "keys_missing": [],
+          "hits_trap": false
+        },
+        "error_class": "correct",
+        "hallucination": [],
+        "reward_arm_mapping": {
+          "arm": "all_pass",
+          "r1": 1,
+          "r2": 1.0,
+          "r3": 1.0,
+          "r4": 1.0,
+          "note": "Correct -- all arms give full reward"
+        }
+      }
+    }
+  ]
+}
