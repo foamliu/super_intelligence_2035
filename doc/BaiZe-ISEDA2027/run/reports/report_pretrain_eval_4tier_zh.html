@@ -42,8 +42,8 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
   <div class="meta">
     <span>📅 2026-11-12</span>
     <span>🏗 Mamba2-hybrid 2.22B</span>
-    <span>🔥 训练 iter≈170.4k / 700k · step~7.1s<7.4s✅ · ckpt 170k已落盘 · lr-decay-iters=0(stable段,decay未配置) · GPU 8×~90%/75GB · 🔄 170k L1 eval pipeline运行中(GGUF转换17%·749MB/4.44G·~1.6MB/s·ETA~38min→eval→report)</span>
-    <span>📊 L1: 16 ckpt ✅(160k=58.13%新高) · 170k GGUF转换中(17%,eval v3等待转换完成) | L2: 6/6完成 ✅ GSM8K=0%🔴 MMLU=23.16%(≈随机) BBH=0%🔴 MATH=0%🔴 HumanEval=0%🔴 MBPP=0%🔴 · 🟢<b>HF transformers生成正常</b>→llama.cpp SSM bug是0%主因(非模型完全无能) · GSM8K HF=0/10(数学确实弱,生成连贯) | L3: 🔴TB 0/2(待HF重测) | L4: 🔴/nasdata/未挂载+SSH .15/.17均超时</span>
+    <span>🔥 训练 iter≈170k+ / 700k（24.3%） · step~7.1s<7.4s✅ · ckpt 170k已落盘 · lr-decay-iters=0(stable段,decay未配置) · GPU 8×94-100%/75GB · 🔄 170k L1 eval pipeline运行中(GGUF转换33%·1.46G/4.44G·ETA~45min→eval→report)</span>
+    <span>📊 L1: 16 ckpt ✅(160k=58.13%新高) · 170k GGUF转换33%进行中(eval v3等待转换完成) | L2: 6/6完成 ✅ GSM8K=0%🔴 MMLU=23.16%(≈随机) BBH=0%🔴 MATH=0%🔴 HumanEval=0%🔴 MBPP=0%🔴 · 🟢<b>HF transformers生成正常</b>→llama.cpp SSM bug是0%主因(非模型完全无能) · GSM8K HF=0/10(数学确实弱,生成连贯) | L3: 🔴TB 0/2(待GPU/HF重测) | L4: 🔴/nasdata/未挂载+SSH .15/.17均超时</span>
   </div>
   <div style="margin-top:12px;font-size:12.5px;background:rgba(0,0,0,.18);border-radius:8px;padding:8px 12px;opacity:.95">
     ⚠️ 本报告是<b>训练监控与决策依据</b>，<b>不进论文正文</b>（2026-11-10 用户令）。用户关注点（2026-11-11）：<b>如何拿到更好的结果</b>。
@@ -58,7 +58,7 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
     <tr><td class="l">任务集</td><td class="l">ARC-Challenge / ARC-Easy / BoolQ / HellaSwag / OpenBookQA / PIQA / SciQ / Winogrande</td></tr>
     <tr><td class="l">口径</td><td class="l">zero-shot · <code>limit=100</code> · GGUF F16 · llama-server CPU（<code>-t 4</code> · <code>nice 19</code> · 串行单 ckpt）</td></tr>
     <tr><td class="l">已评</td><td class="l">10k–160k（<b>16 个</b>万整数 ckpt）</td></tr>
-    <tr><td class="l">下一个</td><td class="l">170k（ETA ≈12h 后）</td></tr>
+    <tr><td class="l">进行中</td><td class="l">170k（GGUF转换33%·1.46G/4.44G·ETA~45min→eval v3自动eval+report）</td></tr>
   </table>
 </div>
 <div class="card">
@@ -472,12 +472,13 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
   </table>
 </div>
 <div class="card">
-  <h3>本轮(#2028)动作</h3>
+  <h3>本轮(#2029)动作</h3>
   <ol>
-    <li><b>训练健康确认</b>：iter 170,360/700,000（24.3%）· step ~7058-7448ms（多数<7.4s✅，1次7448ms微超） · loss 2.035 · GPU 8×~90%/75GB · lr=1e-3(stable段) · 0 NaN/skip · PID 146283 · 实测命令：<code>tail -5 /proc/146283/fd/1</code></li>
-    <li><b>170k GGUF转换监控</b>：转换进程PID 615648运行中·17%(749MB/4.44G)·~1.6MB/s·ETA~38min·此前stale find进程(PID 2329849,NFS扫描29min)已清理(可能是step 7514ms spike根因)</li>
-    <li><b>eval v3脚本启动</b>：旧eval脚本(15min timeout)因GGUF转换慢而超时→已创建v3脚本(等待转换进程退出→验证GGUF>3GB→eval→report)·PID 1388080后台运行中</li>
-    <li><b>L2/L3/L4 状态不变</b>：L2 6/6 完成(5/6=0%,MMLU=23.16%)·L3 TB smoke 0/2 reward(生成退化)·L4 BLOCKED(/nasdata/未挂载+SSH .15/.17超时)</li>
+    <li><b>训练健康确认</b>：iter 170k+/700k（24.3%）· GPU 8×94-100%/75GB · step<7.4s✅ · 最新ckpt=170k(save_interval=2000,下个172k) · 0 NaN/skip</li>
+    <li><b>170k GGUF转换监控</b>：转换进程PID 615648运行中·33%(1.46G/4.44G)·99.6%CPU·转换日志确认稳定写入(323 tensors)·ETA~45min·eval v3脚本(PID 1388080)等待转换完成后自动eval+report</li>
+    <li><b>L2 v6最终结果确认</b>：6/6全部完成·HumanEval=0%·MBPP=0%·MATH=0%·BBH=0%·GSM8K=0%·MMLU=23.16%(唯一非零,MCQ loglikelihood)·gen probe确认RP=1.3无效·双重根因:llama.cpp SSM bug+模型能力不足</li>
+    <li><b>L3 TB结果确认</b>：2 tasks(fix-git+break-filter-js-from-html)·reward=0.0/2·生成退化致agent无法编辑文件·延后至GPU/HF重测或decay/SFT后</li>
+    <li><b>L4 SSH再测</b>：.15(10.251.36.15)=Connection timed out·.17(10.252.32.17)=Connection timed out·/nasdata/在.29未挂载→L4维持BLOCKED</li>
     <li><b>核心发现（不变·待用户拍板）</b>：L2/L3/L4 低分/空白同一根因——code+math 数据占比 26%(vs DeepSeek 最优 60%) + stable 阶段未 decay + llama.cpp SSM 生成 bug · 建议方案 A(decay 4:2:4)/B(SFT)/C(A+B)</li>
   </ol>
   <div class="alert">
