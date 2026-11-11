@@ -367,3 +367,14 @@
 1792654922770_87wu6.messages.json	tongfanl	10.129.2.13	21	verification	parked		2026-11-11 15:03	r379 peek: U#0=check DDR6 DSCQA WTM 3 patterns is4phase misuse(检查型 analysis), no produce-task, weak
 1793003840562_382ay.messages.json	harrys	10.129.2.11	46	digital	parked		2026-11-11 15:03	r379 peek: U#0=workspace.cxmt.com link info-exploration Q&A(use skill), doc-search, no produce-task, weak
 1792041543395_mss1b.messages.json	e0039102	10.129.2.11	45	digital	parked		2026-11-11 15:03	r379 peek: U#0=逐行带我读 vcim/verilogrun 文件(walk-through explanation Q&A), verilog:2894 from pasted content, no produce-task, weak
+1793186643056_muf2k	thomas1w	10.129.40.109	87	verification	parked		2026-11-11 15:28	UVM hdl-path debug Q&A, env-dependent /rundata/ddgoa
+1790490968281_6vy3t	mike	10.129.32.80	58	verification	parked		2026-11-11 15:28	VCS SFCOR missing .svp, near-dup of SimIncludeMissDiag-001
+1792060840051_yrdts	shanliny	10.129.2.10	57	verification	parked		2026-11-11 15:28	SV UVM code-review Q&A (审查代码找bug)
+1791974855202_32935	shanliny	10.129.2.10	51	verification	parked		2026-11-11 15:28	SV UVM code-review Q&A, sibling of yrdts
+1791536684137_lpn8o	mike	10.129.32.80	39	eda_other	parked		2026-11-11 15:28	env-setup Q&A (重构环境 for new dir)
+1789375537537_uh4tz	lorikx	10.129.2.13	36	verification	parked		2026-11-11 15:28	sim-failure debug Q&A (WRITE FAIL/memoryIO mismatch)
+1791537885417_6h27d	mike	10.129.32.80	35	eda_other	parked		2026-11-11 15:28	env-setup Q&A, sibling of lpn8o
+1793179564697_11cny	clwang	10.129.2.14	29	digital	parked		2026-11-11 15:28	code-search Q&A (mr27在哪配置, grep specdef)
+1793244457637_k7z23	e0046913	10.129.2.12	18	eda_other	parked		2026-11-11 15:28	doc/criteria-writing Q&A (写出衡量标准, iterate text)
+1789893226302_sh8uf	shanliny	10.129.2.10	23	verification	parked		2026-11-11 15:28	sim x-propagation debug Q&A (VCD/log, testmode)
+1792133360129_whu5z	lorikx	10.129.2.13	22	verification	parked		2026-11-11 15:28	sim-failure debug Q&A (smoke.log FAIL)

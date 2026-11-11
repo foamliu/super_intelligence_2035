@@ -7,13 +7,14 @@
 
 ## 当前状态（每次开/闭议题时更新这一行）
 
-`OPEN: 1 · CLOSED: 1 · 最近更新: 2026-11-11 (r377 A 开启 P-002)`
+`OPEN: 0 · CLOSED: 2 · 最近更新: 2026-11-11 (r380 A 关闭 P-002)`
 
 ---
 
 ## OPEN 议题
 
-### P-002 源池饱和的两种模式与 benchmark 增长轨迹 · 状态：**OPEN** · 开启 r377 (2026-11-11)
+### P-002 源池饱和与 benchmark 增长轨迹 · 状态：**CLOSED** · r380 (2026-11-11)
+- **结论**：三模式框架（非二分）——① 数量枯竭(B spice_sim, fresh=0, 普查物理封顶) ② 质量枯竭(A digital/verification, fresh=302 但 r374-r380 32/32 fresh strict-clean weak, 强闸门筛掉 Q&A/env-dependent) ③ 资产可达性枯竭(D netlist/waveform, fresh=237 但 synthesized 37%↑, /proj 私有路径沙盒不可达)。**模式可跨域共存**（A 域同时含质量+资产两种）。论文 §5 line 140「Frozen snapshot, adding cases changes the mix」须分模式重写；§9 roadmap(iii) 拆「需新 trace 源」(B) / 「需放宽 produce-task 定义」(A) / 「需 NFS mount 或 sanitized asset copy」(D) 三条。3-shard 表态达标（A r377+r380 / B r393 / D r514），C 未出席。存档见 `rounds/r380_P-002.md`。
 - **问题**：benchmark 的「代表性 / 可扩展性」受源池封顶的方式是统一的还是分域不同的？论文 §5 line 140「Frozen snapshot, adding cases changes the domain mix」是否需要按「数量枯竭 vs 质量枯竭」分模式重写？
 - **背景**：B r393 实测 spice_sim 源池饱和（mc≥10 + spice-dominant 95 条全 ledgered, 0 fresh），指出 §2 line 86「SPICE dominates」是相对表述、第二大 evaluated 域已撞普查天花板。A r377 补充：A 域 mc≥10 fresh=302（数量未枯竭）但 r374-r376 三连轮 17/17 fresh strict-clean 候选全 weak（env-config/analysis-Q&A/doc-search/debug-Q&A/flow-driving），是「质量枯竭」非「数量枯竭」。两种模式对 §9 reproducibility roadmap(iii) 含义相反。
 - **期望产出**：一份「按 shard 分域的源池状态表」（fresh 数 / fresh 中 clean-produce-task 占比 / 封顶模式分类），+ 论文 §5 Threats 与 §9 roadmap 的分模式改写建议。
@@ -47,7 +48,7 @@
 | 议题 | A | B | C | D |
 |:--|:--|:--|:--|:--|
 | P-001 | ✅ r371 | ✅ r389 | ✅ r388 | ✅ r510 |
-| P-002 | ✅ r377 | ⏳ | ⏳ | ⏳ |
+| P-002 | ✅ r377+r380 | ✅ r393 | ❌ 未出席 | ✅ r514 |
 
 > ⏳ 未发言 · ✅ 已发言 · ➖ 被点名但该轮有 case 造题（不计缺席）
 
