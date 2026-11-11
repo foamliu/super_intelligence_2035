@@ -1,4 +1,42 @@
-# BAIZE_DESIGNFLOW_BENCH_TASK.md — 设计流 Benchmark 任务书（2026-10-30 重构版）
+﻿# BAIZE_DESIGNFLOW_BENCH_TASK.md — 设计流 Benchmark 任务书（2026-10-30 重构版）
+
+> 🟢 **2026-11-11 用户令（最高优先 · 本轮唯一任务）：B 线 0-case 时改做「论文改进建议」**
+>
+> **用户原话**：「既然 designflow-B 没有 case 了，那让它看下论文 EDA-LiveFlow-Bench_ICML2027，提出改进建议（中文HTML，设想自己是研究组的一员，思考下一步做什么，怎么做）。」
+>
+> ### 触发条件（满足即执行本条，替代当轮造题）
+> 当本轮**已经**做完 `mc-matrix` 取证且 `mc10.fresh == 0`（或 fresh 全部 peek 后无 CLEAN）⇒ **不要空转收尾，直接做本条**。
+> 若本轮仍有可用 case ⇒ 先造 case，本条留到 0-case 轮再做。
+>
+> ### 论文位置（只读，🚫 不许修改论文任何文件）
+> `doc/ZhuLong_DAC2027/EDA-LiveFlow-Bench_ICML2027/`
+> - 正文：`main.tex` + `sections/0_abstract.tex` … `sections/9_reproducibility.tex`（10 个 section 文件）
+> - 附录：`appendix/`
+> - 当前事实源：`\Ntasks` = **1032**（A203+B242+C289+D298）；冻结评测 **696 runs**（2026-11-09）；**Pass@1 = 10.0%（62/620 已判定，ERROR 70 不计分母）**
+>
+> ### 你的视角（关键 · 决定这份报告有没有价值）
+> **设想你是这个研究组的一员**，不是审稿人、不是打分员。要回答的是：
+> - **下一步做什么**（该补哪个实验、该改哪个口径、该扩哪个域）
+> - **怎么做**（具体到数据集/脚本/配置/预算，能直接派活）
+>
+> ### 必须回答的 6 个问题
+> 1. **我们最薄弱的论证环节是哪个？** 论文现在最容易被 ICML 审稿人打穿的地方（举出具体 section + 原句）。
+> 2. **10.0% 这个数字站得住吗？** 620 的分母、70 个 ERROR 的处置、单 backbone、单 thinking level —— 哪些需要补对照组？
+> 3. **B 线视角的独特输入**：你是 spice_sim / characterization 域，这两域在论文里的表现如何？域内案例质量、断言强度、判分口径有没有问题（结合你自己造的 case 经验）。
+> 4. **下一步该补什么实验**（按性价比排序，至少 3 条）：每条写清 *目的 / 方法 / 数据 / 预计工作量 / 预期能回答什么质疑*。
+> 5. **benchmark 本身该怎么演进**：1032 个 case 的分布是否合理？13 个域有没有偏科？要不要加新域（如 AI 辅助 layout、PDK QA）？
+> 6. **如果只有两周，你先做哪三件事？**（必须排序并说明为什么是这个顺序）
+>
+> ### 报告要求
+> **产出**：`reports/report_designflow_paper_next_steps_zh.html`
+> - **中文 · 单文件自包含**（内联 CSS · 零外链/CDN · 离线双击可开）
+> - 结构建议：① 一句话结论 ② 论文现状速览（关键数字表）③ 六个问题的回答 ④ **行动清单**（表格：优先级 / 事项 / 负责人角色 / 工时 / 依赖）⑤ 风险与反对意见（预判审稿人会怎么反驳，我们怎么答）
+> - **引用论文原句时必须给 section + 行号或原句**，不许转述成自己的话
+> - 🚫 **不许改论文**（`EDA-LiveFlow-Bench_ICML2027/` 下任何文件都只读）；🚫 不许提「已验证」的结论，未做的写「建议验证」
+>
+> ### 与既有令的关系
+> - 本条**不解除**顶部 mc≥10 令与「禁止无证据说池枯竭」令——做本条前仍须贴 `mc-matrix` 证据。
+> - 本条**不涉及** `eval_triage/`（那是 shard A 独占），若你要引用归因结果，直接读 A 已产出的即可，🚫 不要自己重跑。
 
 > 🔴 **2026-11-11 用户令（最高优先 · 覆盖所有旧 mc / 候选池口径令）：**
 > ### ① 候选池快照 11/05 → **11/09**；② mc 阈值 **全线 30 → 10**（mc≥10，坚决执行）
@@ -57,85 +95,7 @@
 
 **⑤ 体积（先做，别拖）**：`MEMORY_DESIGNFLOW_B.md` 现 **40,413B，已越 40KB 红线**（规则 §1.6：≤32KB / 红线 40KB）⇒ 本轮**先把已闭合流水原文滚进 `ARCHIVE_OPERATOR_DESIGNFLOW.md`**（保留状态头 + 最近 ≥20 条流水 + 1 行指针），压到 **≤32KB** 后再开工；TASK 28.6KB 尚在软限内。
 
-### 🚨 2026-11-02 运维令：被测换 cline + PreToolUse 防泄题 hook · 用户直令 · 最高优先
-
-> **背景**：pi 有 bash/read/write 工具，能任意读 cwd 里所有文件。benchmark agent 在 `.pi_debug/<case>/` 里放了 `_reference_check.py`（= check.py 判分器），pi 直接 `import _reference_check` 跑了它——**判分标准（答案）直接放在考生面前**。这是通过率偏高的主因，不是模型强。
->
-> **用户直令**：「把被测换成 cline，参考 zhulong 评测现有的防泄题 hook 机制（PreToolUse）。」
-
-**一、换被测：pi → cline**
-
-1. **被测 agent 改为 cline CLI**（已安装 `~/.local/bin/cline` v3.0.51）：
-   ```bash
-   cline -c <workdir> -m <model> -k <key> --auto-approve true --json --thinking medium "<prompt>"
-   ```
-   - `-c <workdir>`：独立 session workdir（**不放 check.py / reference / jsonl**）
-   - `-m <model>`：用 `deepseek-v4-pro-cloud`（与 pi 同模型，公平对比）
-   - `--auto-approve true`：自动批准工具调用（headless）
-   - `--json`：结构化输出
-   - key 从 `~/.cline/data/secrets.json` 或 `$OPENAI_API_KEY` 解析
-
-2. **cline 的 MCP 配置**：cline 也要能调 eda_flow MCP（和 pi 一样）。复用 `~/.cline/data/settings/cline_mcp_settings.json`（已配 eda_flow @ `http://127.0.0.1:18891/mcp`）。如果 cline 用独立 data-dir（如 `--data-dir ~/.cline_eval`），需把 MCP 配置复制过去。
-
-3. **不再用 `.pi_debug/`**：废弃所有 pi_debug 目录。新评测目录改用 `designflow/cline_eval/<case_id>/`。
-
-**二、PreToolUse 防泄题 hook（复用 EDA-Flow-Bench 现有机制）**
-
-1. **hook 脚本**：`EDA-Flow-Bench/scripts/cline_hooks/PreToolUse`（已存在，可直接用）。
-   - 作用：拦截 cline 的 `read_files`/`list_files`/`write`/`search_codebase`/`run_commands` 工具，只允许访问 workspace 内文件；MCP 工具（`mcp__eda_flow__*`）放行。
-   - `hook_scope.txt` 机制：同目录写 `hook_scope.txt`（本批次根路径），hook 只对 workspace 落在该路径内的会话启用限制，其余 cline 会话放行。
-
-2. **部署**：评测前把 hook 复制到 `~/.cline/hooks/PreToolUse`（cline 的全局 hook 搜索路径）：
-   ```bash
-   cp EDA-Flow-Bench/scripts/cline_hooks/PreToolUse ~/.cline/hooks/PreToolUse
-   chmod +x ~/.cline/hooks/PreToolUse
-   # 写 scope（本批次 workdir 根）
-   echo "<workdir_root>" > ~/.cline/hooks/hook_scope.txt
-   ```
-   评测结束后移除（或保留——scope 机制会让非评测会话放行）。
-
-3. **关键：workdir 里只放 prompt + assets（A 输入）+ task_brief**：
-   - ✅ 放：`prompt.txt`、`assets/`（case 的真实输入文件 A）、`task_brief.md`（≤3 行交付接口说明）
-   - 🚫 不放：`check.py`、`_reference_check.py`、`reference/`、`negative/`、`hidden/`、jsonl、test 字段
-   - cline 只产出 `outputs/submit.zip`，然后退出
-
-4. **判分在 cline 退出后独立跑**（不在 cline 的 cwd 里）：
-   ```bash
-   # cline 跑完，退出
-   # 独立进程判分：
-   cp <workdir>/outputs/submit.zip /tmp/judge_<case>/
-   cp reference/<case>/check.py /tmp/judge_<case>/
-   cd /tmp/judge_<case>/ && python3 -c "from check import check; print(check('submit.zip', '.'))"
-   ```
-   判分器（check.py）**绝不进 cline 的 workdir**。
-
-**三、pi_debug_status.jsonl → cline_eval_status.jsonl**
-
-1. 新建 `designflow/cline_eval_status.jsonl`（格式同 pi_debug_status.jsonl，追加 `harness:"cline"` 字段）
-2. pi_debug_status.jsonl 保留作历史（不删），但新评测只写 cline_eval_status.jsonl
-3. 日报 `gen_daily_report.py` 改为读 cline_eval_status.jsonl（pi 数据标"历史"）
-
-**四、执行**
-
-1. 先建一个 `designflow/cline_eval/run_one.sh` 脚本：部署 hook → 建 workdir（只放 prompt+assets+task_brief）→ 跑 cline → 独立判分 → 记 status
-2. 拿一条现有 PASS 的 case（如 Schematic-001）用 cline + hook 重跑，验证：
-   - hook 生效（cline 试图读 workdir 外文件被拦）
-   - cline 看不到 check.py
-   - 判分独立跑，结果真实
-3. 逐步把存量 case 用 cline 重跑一遍，得到真实通过率
-4. 收尾铁律提交
-
-**五、为什么换 cline**
-
-| 项 | pi | cline |
-|---|---|---|
-| shell 工具 | 有 bash/read/write/edit（任意访问） | 有 read/write/bash（但被 PreToolUse hook 拦截） |
-| 防泄题 hook | 无 | PreToolUse（EDA-Flow-Bench 现成） |
-| session 日志 | `~/.pi/agent/sessions/` | `~/.cline/data/sessions/`（结构化 JSONL） |
-| MCP 支持 | 有 eda_flow | 有 eda_flow（已配） |
-| headless | `--print --no-approve` | `--auto-approve true --json` |
-
-cline + PreToolUse hook = agent 只能看 workspace 内文件（prompt + assets），判分器在 workspace 外独立跑，**彻底消除泄题**。
+### 📦 归档指针 · 2026-11-02「被测换 cline + PreToolUse 防泄题 hook」· 现行口径：被测 = cline（`--auto-approve true --json`）；cline + PreToolUse hook ⇒ agent 只能看 workspace 内文件，判分器在 workspace 外独立跑，消除泄题。原文见 `ARCHIVE_OPERATOR_DESIGNFLOW_B.md`「归档块 · 2026-11-11」
 
 ### 🚨 2026-10-31 21:5x 运维令：`test 思路` 必须是「k 条断言」（**硬闸门 + 打回重写**）· 用户直令 · 最高优先
 

@@ -777,3 +777,89 @@ cron log 未变；hfhds201 fresh since 01:50→0；SSH 3 台→全 0；11-05 sum
 
 - 2026-11-11 02:1x **TspcTimingBisecTbGen-001 交付轮 · re-peel 8n60f skill-authoring parked → 深 peek archive 587msgs 推翻 park → TSPC native bisection testbench 生成器 → 1 case WAITING:0**：loop task card（01:46）派「1 case+WAITING:0」。承 01:3x 0-case 证据链轮。本轮走 re-peel parked 路径（MEMORY 上轮遗留 8n60f/0aw4j skill-authoring 候选）。经 eda_flow .75 open_session + run_commands ssh hfeg0pkn002 + peek.py/peek2-5.py（兼容 dict/list schema + editor old_text/new_text 字段 + 子目录 sessions/<sid>/ 格式）。**8n60f**（adaml@hfeg0pkn002, archive 2.2MB/587msgs, summary keywords hspice:1834/netlist:1397；同 g48nq user 但本 session 是实际 WORK）：.messages.json(40msgs)=续接 session SKILL.md 版本编辑 trivial；**archive(587msgs)** = 真实 TSPC 时序表征工作。U#1/U#10「生成 spice 仿真激励，hspice check setup/hold time + tCLK2Q，优化晶体管尺寸，面积不变」= CLEAN produce-task ✓；U#28「提取方法用 bisection 的仿真方法」补充方法；U#133「我强调一遍，hspice 自带 bisection 的仿真优化方案」给根因 → §A-② 排除 A 档 → B-synthesized；U#317 电压/温度约束 worst-case 优化（后续阶段）；U#481/U#541 ai-skill-optimizer 元技能（meta）。assistant 产 6 testbench(tb_func/tb_tclk2q/tb_setup_rise/fall/tb_hold_rise/fall)+measure_chk.sp+parse_mt0.py(MEASFORM=3 列式)+gen_netlist_opt.py(参数化网表 ΣW 面积约束)+bisect.sh(初外部 bash/LSF 循环)，落 /home/adaml/Projects/m2701/Presim/（现已被清理）。**关键转折**：初版外部 bash/LSF 逐点循环，U#133 纠正后查 hspice V-2023.12 手册 timing_analysis_using_bisection 章节改写为原生 bisection（tb_setup_rise.sp idx 152 final：.param tsu=Opt1(200p,0,400p)+t_meas='8.5*tck+tr/2'+.meas q_chk FIND v(Q) AT='t_chk' GOAL='pvcc/2'+.meas tq_del TRIG v(CK) RISE=9 TARG v(Q) RISE=1+.tran sweep optimize=Opt1 results=q_chk model=optmod+.MODEL optmod OPT METHOD=BISECTION Relin=0.005 Itropt=25）。**0aw4j**（jason17w@hfeg0pnd002, mc=297, drc:4686/verilog:1608 主导 hspice:120）DRC/verilog 主导 wrong-shard，11-07 park「root-cause+meta-skill」确认。**case EDA-Eval-DesignFlow-TspcTimingBisecTbGen-001**(spice_sim/synthesized/L1 k=16)：deliverable=tspc_timing_bisec_tb_gen.py（CLI <spec.json> <out_tb.sp> stdlib only，读 spec 渲染 13-section HSPICE testbench：1.option .inc/2..temp+.lib corner+pre_simu/3..param pvcc+pwr/4..param tck/tr/tf/cload_q+t_meas='(idx-0.5)*tck+tr/2'+t_chk+t_pre+bisec Opt1+t_tgt='t_meas<+/->name'+td_d/pw_d/per_d/t_rst/5..inc pwr/6..inc netlist/7.ic commented/8.VD+VCK+VRST+CLOAD 激励/9..tran sweep optimize=name results=q_chk model=optmod/10..probe/11..meas q_chk FIND v(Q) GOAL+tq_del RISE=idx+tq_pre/12..MODEL OPT METHOD=BISECTION Relin Itropt/13..end）；setup→t_tgt=t_meas-param，hold→t_tgt=t_meas+param；rise→VD pulse(0 pvcc)，fall→VD pulse(pvcc 0)。资产 A=spec_a.json(setup/rise,tt/25/1.087,tck=1n,idx=9,tsu 200p/0/400p,Relin=0.005/Itropt=25)+netlist_stub.sp(TSPC 端口 D/CK/RST/Q)+task_brief.md+output_format_spec.txt；隐藏 B1=spec_b1.json(setup/rise 泛化,ff/-40/1.2,tck=1.2n,idx=7,tsu 150p/-50p/350p,Relin=0.004/Itropt=30)+netlist_stub.sp；B2=spec_b2.json(hold/fall 反硬编码+measure-type 泛化,ss/85/0.95,tck=0.9n,idx=11,thd 100p/0/250p,Relin=0.006/Itropt=20)+netlist_stub.sp；reference=tspc_timing_bisec_tb_gen_ref.py(standalone)；check.py 16 断言(a-p:zip含 tspc_timing_bisec_tb_gen.py/py_compile/B1 exit0 出非空 out_tb.sp/B1 环境块 .temp+.lib corner+.param pvcc 三项/B1 VCK 时钟激励/B1 VD 数据激励/B1 VRST 复位激励/B1 bisec .param name=Opt1(init,lo,hi) name+三值匹配 spec/B1 t_meas 含 (idx-0.5)*tck 公式/B1 .meas q_chk FIND v(Q) AT='t_chk' GOAL='pvcc/2'/B1 .meas tq_del TRIG v(CK) RISE=idx TARG v(Q) RISE=1/B1 .tran sweep optimize=name results=q_chk model=optmod/B1 .MODEL optmod OPT METHOD=BISECTION Relin Itropt/B2 反硬码 .temp+.param pvcc+.lib corner 反映 B2 值≠A/B2 hold t_tgt=t_meas+name + VD fall pulse('pvcc' 0)/确定性 B1 两次字节一致)，subprocess 真跑 B1+B2+det。自验: ref PASS **16/16** + 6neg(naive_empty→c FAIL/hardcoded_a→d FAIL/only_print→c FAIL/no_stimulus→e FAIL/ref_core_deleted→l FAIL/wrong_sign→o FAIL)全 FAIL NEG_RC=0 + §4.9 三假(naive_empty/only_print/ref_core_deleted)全 FAIL + 断言门 k_rationale=k_check=16≥8 ✓ + test 字段与盘上 check.py 字节同步(sha1 e18c000b,9640B)。claim+mark 8n60f case(prior parked 11-07「skill-authoring-meta」→case)；jsonl B 248→249, ledger covered 249→250(spice_sim 200→201), parked 654→653, claimed 0 不变。与 SpBisecDeckGen-001(g48nq 同 user skill-CREATION session)区别：本 case 是 WORK session，deliverable 带 flip-flop 时序激励语义(clock/data/reset VCK/VD/VRST pulse + 捕获 .meas q_chk GOAL + 目标沿公式 t_meas=(idx-0.5)*tck+tr/2 + setup/hold 符号 t_tgt=t_meas∓param + tCLK2Q tq_del TRIG/TARG)，非通用 deck 生成（SpBisecDeckGen 无激励语义、无时序测量语义）。教训：**对 skill-author 用户（adaml）的高 mc session，archive 文件常含真实 WORK（非 skill 元任务），须深 peek archive 才能定论**；11-07 浅 peek 把 8n60f 当「skill-authoring-meta-SKILL.md」park 掉，本轮深 peek archive 推翻。详见 trace_deepreads/8n60f_tspc_timing_bisec_tb.md。·未完成指令：11-05 重扫令持续履行中（本轮走 re-peel parked 路径交付 1 case；0aw4j wrong-shard 确认；下轮待全量 summary 刷新或继续 re-peel 其他高 mc parked 候选）。
 
+
+---
+
+## 📦 归档块 · 2026-11-11（2026-11-02「被测换 cline + PreToolUse 防泄题 hook」令原文 · 压体积搬出）
+
+> 现行要点：被测 agent 已切 cline（--auto-approve true --json）；cline + PreToolUse hook 使 agent 只能看 workspace 内文件（prompt+assets），判分器在 workspace 外独立跑，彻底消除泄题。原文一字未改。
+
+### 🚨 2026-11-02 运维令：被测换 cline + PreToolUse 防泄题 hook · 用户直令 · 最高优先
+
+> **背景**：pi 有 bash/read/write 工具，能任意读 cwd 里所有文件。benchmark agent 在 `.pi_debug/<case>/` 里放了 `_reference_check.py`（= check.py 判分器），pi 直接 `import _reference_check` 跑了它——**判分标准（答案）直接放在考生面前**。这是通过率偏高的主因，不是模型强。
+>
+> **用户直令**：「把被测换成 cline，参考 zhulong 评测现有的防泄题 hook 机制（PreToolUse）。」
+
+**一、换被测：pi → cline**
+
+1. **被测 agent 改为 cline CLI**（已安装 `~/.local/bin/cline` v3.0.51）：
+   ```bash
+   cline -c <workdir> -m <model> -k <key> --auto-approve true --json --thinking medium "<prompt>"
+   ```
+   - `-c <workdir>`：独立 session workdir（**不放 check.py / reference / jsonl**）
+   - `-m <model>`：用 `deepseek-v4-pro-cloud`（与 pi 同模型，公平对比）
+   - `--auto-approve true`：自动批准工具调用（headless）
+   - `--json`：结构化输出
+   - key 从 `~/.cline/data/secrets.json` 或 `$OPENAI_API_KEY` 解析
+
+2. **cline 的 MCP 配置**：cline 也要能调 eda_flow MCP（和 pi 一样）。复用 `~/.cline/data/settings/cline_mcp_settings.json`（已配 eda_flow @ `http://127.0.0.1:18891/mcp`）。如果 cline 用独立 data-dir（如 `--data-dir ~/.cline_eval`），需把 MCP 配置复制过去。
+
+3. **不再用 `.pi_debug/`**：废弃所有 pi_debug 目录。新评测目录改用 `designflow/cline_eval/<case_id>/`。
+
+**二、PreToolUse 防泄题 hook（复用 EDA-Flow-Bench 现有机制）**
+
+1. **hook 脚本**：`EDA-Flow-Bench/scripts/cline_hooks/PreToolUse`（已存在，可直接用）。
+   - 作用：拦截 cline 的 `read_files`/`list_files`/`write`/`search_codebase`/`run_commands` 工具，只允许访问 workspace 内文件；MCP 工具（`mcp__eda_flow__*`）放行。
+   - `hook_scope.txt` 机制：同目录写 `hook_scope.txt`（本批次根路径），hook 只对 workspace 落在该路径内的会话启用限制，其余 cline 会话放行。
+
+2. **部署**：评测前把 hook 复制到 `~/.cline/hooks/PreToolUse`（cline 的全局 hook 搜索路径）：
+   ```bash
+   cp EDA-Flow-Bench/scripts/cline_hooks/PreToolUse ~/.cline/hooks/PreToolUse
+   chmod +x ~/.cline/hooks/PreToolUse
+   # 写 scope（本批次 workdir 根）
+   echo "<workdir_root>" > ~/.cline/hooks/hook_scope.txt
+   ```
+   评测结束后移除（或保留——scope 机制会让非评测会话放行）。
+
+3. **关键：workdir 里只放 prompt + assets（A 输入）+ task_brief**：
+   - ✅ 放：`prompt.txt`、`assets/`（case 的真实输入文件 A）、`task_brief.md`（≤3 行交付接口说明）
+   - 🚫 不放：`check.py`、`_reference_check.py`、`reference/`、`negative/`、`hidden/`、jsonl、test 字段
+   - cline 只产出 `outputs/submit.zip`，然后退出
+
+4. **判分在 cline 退出后独立跑**（不在 cline 的 cwd 里）：
+   ```bash
+   # cline 跑完，退出
+   # 独立进程判分：
+   cp <workdir>/outputs/submit.zip /tmp/judge_<case>/
+   cp reference/<case>/check.py /tmp/judge_<case>/
+   cd /tmp/judge_<case>/ && python3 -c "from check import check; print(check('submit.zip', '.'))"
+   ```
+   判分器（check.py）**绝不进 cline 的 workdir**。
+
+**三、pi_debug_status.jsonl → cline_eval_status.jsonl**
+
+1. 新建 `designflow/cline_eval_status.jsonl`（格式同 pi_debug_status.jsonl，追加 `harness:"cline"` 字段）
+2. pi_debug_status.jsonl 保留作历史（不删），但新评测只写 cline_eval_status.jsonl
+3. 日报 `gen_daily_report.py` 改为读 cline_eval_status.jsonl（pi 数据标"历史"）
+
+**四、执行**
+
+1. 先建一个 `designflow/cline_eval/run_one.sh` 脚本：部署 hook → 建 workdir（只放 prompt+assets+task_brief）→ 跑 cline → 独立判分 → 记 status
+2. 拿一条现有 PASS 的 case（如 Schematic-001）用 cline + hook 重跑，验证：
+   - hook 生效（cline 试图读 workdir 外文件被拦）
+   - cline 看不到 check.py
+   - 判分独立跑，结果真实
+3. 逐步把存量 case 用 cline 重跑一遍，得到真实通过率
+4. 收尾铁律提交
+
+**五、为什么换 cline**
+
+| 项 | pi | cline |
+|---|---|---|
+| shell 工具 | 有 bash/read/write/edit（任意访问） | 有 read/write/bash（但被 PreToolUse hook 拦截） |
+| 防泄题 hook | 无 | PreToolUse（EDA-Flow-Bench 现成） |
+| session 日志 | `~/.pi/agent/sessions/` | `~/.cline/data/sessions/`（结构化 JSONL） |
+| MCP 支持 | 有 eda_flow | 有 eda_flow（已配） |
+| headless | `--print --no-approve` | `--auto-approve true --json` |
+
+cline + PreToolUse hook = agent 只能看 workspace 内文件（prompt + assets），判分器在 workspace 外独立跑，**彻底消除泄题**。
