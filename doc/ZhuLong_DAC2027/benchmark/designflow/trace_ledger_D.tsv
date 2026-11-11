@@ -1450,3 +1450,6 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1793780117036_1jnsd	stephens	hfeg0pkn002	14	analog_context	case	EDA-Eval-DesignFlow-SpfMosCapRatio-001	2026-11-11 14:27	
 1793082010857_seety	joeyl	hfeg0plg74	12	waveform	case	EDA-Eval-DesignFlow-SimFailDiagnose-001	2026-11-11 15:05	
 1793702295738_4bsmv	owench	hfeg0plg57	14	analog_context	case	EDA-Eval-DesignFlow-CapPropsCalc-001	2026-11-11 15:33	
+1793602049673_w4596	hswang	hfeg0plg94	64	analog_context	parked		2026-11-11 16:03	misclaimed wrong session (w4596=gokuguo not hswang); re-claim skipped, will not use
+1791529572460_sao7s	yanxvwei	hfeg0plg99	72	waveform	parked		2026-11-11 16:03	task-family dup of ShiftIntervalReport-001 (same yanxvwei + same compare_wave_new.pl/find_best_shift); #515 peek-reject
+1793760248797_9sga3	hswang	hfeg0plg94	58	analog_context	claimed		2026-11-11 16:03	
