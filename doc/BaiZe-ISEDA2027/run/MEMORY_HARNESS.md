@@ -4,19 +4,21 @@ WAITING: 0
 
 ## 📊 进度快照
 
-PHASE:        R2165 监控轮+incr_eval·gateway direct-probe FAILS(403/000 direct-access artifact)但proxied predict仍产real patch(5/7new real)·incr_eval 5NEW(0resolved·1353不变)·cleanup 4empty(429infra)·predict 6/7 parents ALIVE(dsh DEAD)·CPU/MEM PASS·gw_proxy 9092/9093 UP·双报告REGENERATED(R2165·09:51)
-已完成:       H-B✅·Gate7/7·TB报告✅·cline专项C1-C5+报告R1785-R2165·TB4 0passed(能力)·TB-2.1 oracle5/5✅·§15:2x判据MET✅·R1789 eval 7/7DONE✅·R1804双报告交付✅·R1969-R2164 incr_eval+监控+报告+TB-2.1 opencode rerun COMPLETED(33pass)·R2165 监控+incr_eval 5NEW(0resolved)+cleanup 4empty(429infra)+双报告REGENERATED(R2165)
-当前动作:     R2165:①CPU PASS(load29.14/224·无harness>8000%·最高claude-code run_single 11.4%=0.11核·hermes kernel 10.6%·远低阈值) ②MEM PASS(763G/2Ti·1106G avail·/data 5.8T 18%) ③gateway direct-probe FAILS(gateway_probe.sh·/v1/models=200但/v1/chat/completions=000/403·direct-access artifact)·BUT proxied predict via gw_proxy 9092/9093仍产real patch(5/7new文件real·截至09:40 opencode sphinx-8475 REAL) ④gw_proxy 9092/9093 UP(PIDs 2058948/2058952·~105h) ⑤predict 6/7 parents ALIVE·real=1706files(cline211/codex96/opencode456/cc199/pi186/hermes384/dsh174·dsh parent DEAD=known gw_proxy_dsh:9093) ⑥incr_eval R2165 DONE(5NEW eval'd:hermes seaborn-3187/xarray-3305→failed(cap)·claude-code sympy-16886→failed(cap)·opencode sphinx-8459/8475→failed(cap)·total 1353resolved(不变)/1705evaluated·incr_eval_R2165.py·179.1s) ⑦cleanup 4empty(claude-code:1/codex:1/cline:1/pi:1=429infra·cleanup_empty_patches_r2165.py) ⑧双报告REGENERATED(R2165·10093B+7345B·mtime09:51)·未完成指令:有(§10:10+§22:4x)⇒W:0
-下一步:       ①gateway proxied path functional→predict继续产real patch向500推进(6路ALIVE·opencode已456接近500) ②dsh parent DEAD需重启(已知gw_proxy_dsh:9093 issue) ③TB-2.1已完成·无需再盯 ④持续监控CPU/MEM ⑤§22:4x两基准7路全交付(各路满500) ⑥(future)research建议加6列continuous_score等·待trace回填
-阻塞:         <各路尚未满500·§22:4x未全交付·dsh parent DEAD=已知proxy 9093问题·gateway direct-probe FAILS但proxied path仍工作>
+PHASE:        R2166 incr_eval RUNNING(cline 4NEW eval matplotlib workers=1 ~5min/inst)+cleanup 9empty·predict 6/7 ALIVE(dsh DEAD)·CPU/MEM PASS·gw_proxy 9092/9093 UP·kill orphan swebench proc+stale docker
+已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5 R1785-R2165·TB4 0passed(能力)·TB-2.1 oracle5/5·R1789 eval 7/7DONE·R1804双报告交付·R1969-R2165 incr_eval+监控+报告·R2166 incr_eval启动(12NEW backlog:cline4+opencode5+cc1+pi3)+cleanup 9empty(cc5/cline1/codex1/hermes2)
+当前动作:     R2166: CPU PASS(pytest matplotlib 114%=1.1核·远低8000%) MEM PASS(/data 5.8T 18%) incr_eval_glm53_R2166.py setsid PID1517512(cline 4NEW·1/4 report.json done=23412·matplotlib heavy) cleanup 9empty predict 6/7 ALIVE real=1715files(cline215/codex96/opencode460/cc200/pi189/hermes384/dsh174) kill orphan proc+stale docker23314 docker prune回收2.6GB·未完成指令:有 W:0
+下一步:       ①等incr_eval R2166完成(12NEW·~65min)regen双报告 ②predict继续向500推进 ③dsh parent DEAD需重启 ④§22:4x两基准7路全交付 ⑤持续监控CPU/MEM
+阻塞:         <各路尚未满500·§22:4x未全交付·dsh parent DEAD=已知proxy 9093·incr_eval R2166 in-progress>
 ERROR_COUNT:  0
-  📦 体积：TASK=22.5KB / MEMORY=16.5KB（均在32KB限内）
-  🔍 cline专项小结: predict_glm53=211files/211real/155resolved/56failed/0empty(100%real rate)·C1:211real/155resolved·C2:56failed=100%能力差(0infra·top3=astropy-13033/13236/13398)·C3:empty=0(本轮1empty=429infra已cleanup·非resume bug·resume fix R1733 confirmed·real rate 100%)·C5:报告R2165 REGEN(cline special·7345B·mtime09:51)·失败top1=能力差(real patch but tests fail)
+  体积: TASK=22.5KB / MEMORY=17.0KB(均<32KB)
+  cline专项小结: predict_glm53=215files/215real/155resolved/56failed/0empty(cleanup 1empty=429infra·100%real rate)·C1:215real/155resolved·C2:56failed=100%能力差·C3:empty归零(resume fix R1733)·C5:报告待R2166 eval完成后REGEN·失败top1=能力差
 
 > 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
 
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 ### 本唤醒流水
+> [10:30] R2166: incr_eval启动(12NEW backlog:cline4+opencode5+cc1+pi3·incr_eval_glm53_R2166.py·setsid PID1517512)+cleanup 9empty(cc5/cline1/codex1/hermes2·cleanup_empty_patches_r2166.py)·CPU PASS(pytest matplotlib 114%=1.1核)·MEM PASS(/data 5.8T 18%)·predict 6/7 ALIVE(dsh DEAD)·real=1715files(cline215/codex96/opencode460/cc200/pi189/hermes384/dsh174)·gw_proxy 9092/9093 UP·kill orphan swebench proc(第一次启动timeout遗留)+stale docker23314·docker prune回收2.6GB·C4:cline 215f/215r/155res/56fail/0empty·未完成指令:有(§10:10+§22:4x)·W:0
+
 > [09:51] R2165: 监控轮+incr_eval·gateway direct-probe FAILS(/v1/models=200但/v1/chat/completions=000/403=direct-access artifact)·BUT proxied predict via gw_proxy 9092/9093仍产real patch(5/7new文件real·截至09:40 opencode sphinx-8475 REAL)·predict 6/7 parents ALIVE(dsh DEAD=known gw_proxy_dsh:9093)·real=1706files(cline211/codex96/opencode456/cc199/pi186/hermes384/dsh174)·incr_eval R2165 DONE(5NEW:hermes seaborn-3187/xarray-3305→failed(cap)·claude-code sympy-16886→failed(cap)·opencode sphinx-8459/8475→failed(cap)·total 1353resolved(不变)/1705evaluated·incr_eval_R2165.py·179.1s)·cleanup 4empty(claude-code:1/codex:1/cline:1/pi:1=429infra·cleanup_empty_patches_r2165.py)·双报告REGENERATED(R2165·10093B+7345B·mtime09:51)·CPU PASS(load29.14/224·最高claude-code run_single 11.4%=0.11核)·MEM PASS(763G/2Ti·1106G avail·/data 5.8T 18%)·gw_proxy 9092/9093 UP·C4:cline 211f/211r/155res/56fail/0empty·未完成指令:有(§10:10+§22:4x)⇒W:0
 
 > 📦 [09:31] R2164 流水已归档 → daily-memories-harness/2026-11-11.md。结论：gateway 200 STABLE+incr_eval 5NEW(0resolved·1353不变)+0empty(无需cleanup)+双报告REGENERATED(R2164)。需要时再读。
