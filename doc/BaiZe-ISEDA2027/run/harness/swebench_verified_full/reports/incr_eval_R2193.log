@@ -1,0 +1,53 @@
+
+=== cline-patched: pytest-dev__pytest-10356 ===
+  merged 236 real preds -> predictions_glm53/predictions_cline-patched_glm53.json
+  [20:25:01] launching eval ...
+  Instances resolved: 0
+  Instances unresolved: 1
+  Instances with likely infrastructure failures: 0
+  eval done rc=0 (log: logs/eval_incr_verified_full_glm53_cline-patched_R2193.log)
+  pytest-dev__pytest-10356: failed (capability)
+  [20:25:38] cline-patched: eval updated (resolved=173, failed=65, infra=1)
+
+=== hermes: sympy__sympy-16597 ===
+  merged 404 real preds -> predictions_glm53/predictions_hermes_glm53.json
+  [20:25:38] launching eval ...
+  Instances resolved: 0
+  Instances unresolved: 1
+  Instances with likely infrastructure failures: 0
+  eval done rc=0 (log: logs/eval_incr_verified_full_glm53_hermes_R2193.log)
+  sympy__sympy-16597: failed (capability)
+  [20:26:21] hermes: eval updated (resolved=359, failed=45, infra=1)
+
+=== cline-patched: pytest-dev__pytest-10081 ===
+  merged 236 real preds -> predictions_glm53/predictions_cline-patched_glm53.json
+  [20:26:21] launching eval ...
+  Instances resolved: 1
+  Instances unresolved: 0
+  Instances with likely infrastructure failures: 0
+  eval done rc=0 (log: logs/eval_incr_verified_full_glm53_cline-patched_R2193.log)
+  pytest-dev__pytest-10081: failed (capability)
+  [20:26:58] cline-patched: eval updated (resolved=173, failed=66, infra=1)
+
+=== codex: django__django-12754 ===
+  merged 105 real preds -> predictions_glm53/predictions_codex_glm53.json
+  [20:26:59] launching eval ...
+  Instances resolved: 1
+  Instances unresolved: 0
+  Instances with likely infrastructure failures: 0
+  eval done rc=0 (log: logs/eval_incr_verified_full_glm53_codex_R2193.log)
+  django__django-12754: failed (capability)
+  [20:27:34] codex: eval updated (resolved=69, failed=36, infra=0)
+
+=== claude-code: django__django-12741 ===
+  merged 218 real preds -> predictions_glm53/predictions_claude-code_glm53.json
+  [20:27:34] launching eval ...
+  Instances resolved: 0
+  Instances unresolved: 1
+  Instances with likely infrastructure failures: 0
+  eval done rc=0 (log: logs/eval_incr_verified_full_glm53_claude-code_R2193.log)
+  django__django-12741: failed (capability)
+  [20:28:08] claude-code: eval updated (resolved=171, failed=45, infra=2)
+
+=== incr_eval R2193 complete in 187.4s ===
+EXIT_RC=0
