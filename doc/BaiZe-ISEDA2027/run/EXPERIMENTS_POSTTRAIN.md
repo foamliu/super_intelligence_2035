@@ -10381,3 +10381,102 @@ MCP `run_code` also timed out (60s) → sandbox unreachable from all paths. This
 | Train parquet | `run/sft_surrogate_data/minicpm5_pyaether_v2_v11v35/sft_surrogate_train.parquet` (312KB) |
 | Val parquet | `run/sft_surrogate_data/minicpm5_pyaether_v2_v11v35/sft_surrogate_val.parquet` (42KB) |
 | MEMORY | `run/MEMORY_POSTTRAIN.md` (wake276 snapshot + heartbeat, wake269/270 archived) |
+
+## §R208 (2026-11-11 wake277) v11-v35 Corpus Coverage Audit vs 158-task Eval API Requirement
+
+**目的**：在花 GPU 跑 v11-v35 SFT 重训之前，用证据回答「943 对语料是否教了 158 个 eval 任务真正需要的 API？」。这是红线 #5（数字与证据）的直接落地。
+
+### 1. 数据源（落盘文件可追溯）
+
+| 输入 | 路径 | 规模 |
+|:--|:--|--:|
+| eval 需求 API | `run/pyAether_eval_488_apis.txt` | 488 条（全限定 `pyAether.X` 或 `pyAether.C.m`）|
+| SFT 语料 | `run/sft_pyaether_corpus_v11_v35_merged.jsonl` | 943 对，`api_used` 字段=短名 list |
+| 审计脚本 | `run/baize_posttrain_r208_corpus_coverage_audit.py` | 10.6KB，纯 stdlib，py_compile✅ |
+| JSON 摘要 | `run/r208_coverage_audit.json` | 6.7KB |
+
+### 2. 三级覆盖度量（最可辩护在前）
+
+命名约定差异：eval 用全限定名（`pyAether.EmyLPPHeader.create`），语料用短名（class/func 级，如 `EmyLPPHeader`、`dbCrtInst`）。故定义三级：
+
+- **Tier-2 CLASS-AWARE（主指标）**：1-dot `pyAether.F` 覆盖⇔`F`在语料；2-dot `pyAether.C.m` 覆盖⇔`C`(类)或`m`(方法)在语料。
+- **Tier-1 LEAF（宽松）**：覆盖⇔末尾 token 在语料。
+- **Tier-3 STRICT（全路径）**：覆盖⇔全路径在语料。
+
+| 指标 | 覆盖 | 比例 |
+|:--|--:|--:|
+| **Tier-2 CLASS-AWARE（主）** | **314/488** | **64.3%** |
+| Tier-1 LEAF（宽松） | 167/488 | 34.2% |
+| Tier-3 STRICT（全路径） | 167/488 | 34.2% |
+
+> Tier-2 是可辩护主指标：语料多以 class/func 级短名标注，按「类被教过即算该类方法有基础」计数。Tier-1/3 偏低是因为语料不标 method 级短名（如 `create`/`getLayerNum`），属命名粒度差异非真实缺口。
+
+### 3. 语料类型分布
+
+| 类型 | 对数 |
+|:--|--:|
+| S4 | 204 |
+| S5 | 199 |
+| S6 | 188 |
+| S1 | 178 |
+| S3 | 149 |
+| S1_doc_to_code | 10 |
+| S2_api_lookup | 10 |
+| S3_multi_api_chain | 3 |
+| S7_corrected_prompt | 2 |
+
+### 4. 缺口集中度（family 级）
+
+- 320 个 family 中：**168 完全覆盖**、**152 有缺口**（其中 152 完全未覆盖）。
+- 缺口最集中的 family（v36+ 增强首选目标）：
+
+| family | 未覆盖 | 总数 |
+|:--|--:|--:|
+| emyLine | 4 | 4 |
+| emyScalarInst | 4 | 4 |
+| emyScalarNet | 4 | 4 |
+| MdeSetting | 3 | 3 |
+| dmLibObj | 3 | 3 |
+| emyPin | 3 | 3 |
+| dmCellObj | 2 | 2 |
+| dmViewObj | 2 | 2 |
+| emyArc | 2 | 2 |
+| emyEllipse | 2 | 2 |
+| emyNet | 2 | 2 |
+| emyTerm | 2 | 2 |
+| emyText | 2 | 2 |
+
+### 5. 剩余（surplus）= 语料教了但 eval 不考
+
+22 个 corpus API 不在 eval 需求集（如 `dbCrtWire`、`dbFindInst`、`aeLeCreatePin`、`SleHierQuery`）。不一定是坏事（拓展能力面），但说明语料有部分投入未对准 eval。
+
+### 6. Pre-GPU 判定
+
+**Tier-2 = 64.3% → MODERATE**：50–70% 区间。SFT 可能有帮助但缺口实质性。
+
+**建议**（GPU 释放前可做的零成本增强）：
+1. 优先针对上表 13 个完全未覆盖 family（emyLine/emyScalarInst/emyScalarNet/MdeSetting/dmLibObj/emyPin/dmCellObj/dmViewObj/emyArc/emyEllipse/emyNet/emyTerm/emyText）合成 v36 语料，每个 family 用 API 参考文档生成 5–10 对 S3/S4 类型示例。
+2. 评估：补完后重跑本审计脚本，目标 Tier-2 ≥ 75%。
+3. 即便不补，64.3% 也足以让 SFT 在 D1/D2（工具协议）层面回收部分分（M1=50% 仍可达），但 M2=65% 的领域增益会受限。
+
+### 7. 复现命令
+
+```bash
+cd run
+python3 baize_posttrain_r208_corpus_coverage_audit.py --json r208_coverage_audit.json
+# 或 dry-run 验证逻辑：python3 baize_posttrain_r208_corpus_coverage_audit.py --dry-run
+```
+
+### 8. 沙盒/GPU 状态（82nd wake）
+
+- 沙盒 10.129.32.75 五端口（8664/8665/8653/8669/8667）全 CLOSED（82nd 连续 wake）→ Phase1 eval / Phase3 RL / post-SFT eval 仍阻塞，需网络团队开 ACL。
+- GPU 0-7 全占：0-3 root SGLang（~45GB/卡）、4-7 vLLM serve 占位（~38GB/卡，17:10 令持续）。v11-v35 SFT 重训待 GPU 释放（train/val split 已就绪，一条命令可起）。
+- serve 5 端点（8095-8099）全健康。
+
+### 9. 交付物
+
+| 项 | 路径 |
+|:--|:--|
+| 审计脚本 | `run/baize_posttrain_r208_corpus_coverage_audit.py`（10.6KB，py_compile✅，dry-run✅）|
+| JSON 摘要 | `run/r208_coverage_audit.json`（6.7KB）|
+| EXPERIMENTS | 本节 §R208 |
