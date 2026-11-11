@@ -43,7 +43,7 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
     <span>📅 2026-11-11</span>
     <span>🏗 Mamba2-hybrid 2.22B</span>
     <span>🔥 训练 iter≈163k / 700k</span>
-    <span>📊 L1: 16 ckpt ✅ | L2: 重评中(v3) | L3: 空白 | L4: 未接</span>
+    <span>📊 L1: 16 ckpt ✅ | L2: v3 35/100 🟡 | L3: 空白 | L4: 61任务未接</span>
   </div>
   <div style="margin-top:12px;font-size:12.5px;background:rgba(0,0,0,.18);border-radius:8px;padding:8px 12px;opacity:.95">
     ⚠️ 本报告是<b>训练监控与决策依据</b>，<b>不进论文正文</b>（2026-11-10 用户令）。用户关注点（2026-11-11）：<b>如何拿到更好的结果</b>。
@@ -122,15 +122,25 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
   </div>
 </div>
 <div class="card">
-  <h3>160k 重评（v3 · 进行中 · 2026-11-11 13:35 起）</h3>
+  <h3>160k 重评（v3 · 进行中 · 2026-11-11 13:35 起 · GSM8K 35/100）</h3>
   <div class="alert"><b>v2 失败根因</b>：MMLU 是 <code>loglikelihood</code> 任务，标准 <code>local-completions</code> 后端要求 response 含 <code>token_logprobs</code>，但 llama-server <code>/v1/completions</code> 不返回该字段 → <code>KeyError: 'token_logprobs'</code>。</div>
   <table>
     <tr><th>任务</th><th>口径</th><th>shot</th><th>后端</th><th>状态</th><th>结果</th></tr>
-    <tr><td>GSM8K</td><td>limit=100, CPU, ctx=4096</td><td>5-shot</td><td class="l"><code>local-completions</code> (generation)</td><td class="warn">⏳ 进行中</td><td>—</td></tr>
-    <tr><td>MMLU</td><td>limit=100, CPU, ctx=4096</td><td>0-shot</td><td class="l"><code>gguf_lmeval_run.py</code> (logit_bias LL)</td><td class="warn">⏳ 排队</td><td>—</td></tr>
-    <tr><td>BBH/MATH/HumanEval/MBPP</td><td>—</td><td>—</td><td>—</td><td>📋 待追加</td><td>—</td></tr>
+    <tr><td>GSM8K</td><td>limit=100, CPU, ctx=4096</td><td>5-shot</td><td class="l"><code>local-completions</code></td><td class="warn">🟡 35/100 运行中</td><td>ETA~14:30</td></tr>
+    <tr><td>MMLU</td><td>limit=100, CPU, ctx=4096</td><td>0-shot</td><td class="l"><code>gguf_lmeval_run.py</code> (logit_bias)</td><td class="warn">📋 排队</td><td>ETA~15:00</td></tr>
   </table>
-  <p class="trend">📝 脚本：<code>baize_l2_eval_160k_v3.sh</code>（NFS 共享路径）· 输出：<code>gguf_iter_160000_l2_v3/</code> · 服务：<code>llama-server port=8082 -t 4 --parallel 2 nice 19</code></p>
+  <p class="trend">⏱ GSM8K ~27s/it · 总 v3 ETA ~15:00 · CPU llama-server port=8082 -t4 nice19 · 不占 GPU</p>
+</div>
+<div class="card">
+  <h3>L2 v4 计划（剩余 4 集 · 脚本已备 · 待 v3 完成后启动）</h3>
+  <table>
+    <tr><th>任务</th><th>口径</th><th>shot</th><th>后端</th><th>说明</th></tr>
+    <tr><td>HumanEval</td><td>limit=100, pass@1</td><td>0-shot</td><td class="l"><code>local-completions</code></td><td class="l">代码生成</td></tr>
+    <tr><td>MBPP</td><td>limit=100, pass@1</td><td>0-shot</td><td class="l"><code>local-completions</code></td><td class="l">代码生成</td></tr>
+    <tr><td>hendrycks_math_algebra</td><td>limit=100</td><td>4-shot</td><td class="l"><code>local-completions</code></td><td class="l">MATH 代数子集</td></tr>
+    <tr><td>bbh_cot_fewshot_boolean_expressions</td><td>limit=100</td><td>3-shot CoT</td><td class="l"><code>local-completions</code></td><td class="l">BBH 逻辑子集</td></tr>
+  </table>
+  <p class="trend">脚本：<code>baize_l2_eval_160k_v4.sh</code> · port=8083 · 等 v3 完成后自动启动 · 预计 ~3h</p>
 </div>
 
 <!-- L3 -->
@@ -171,7 +181,7 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
   <h3>已有资源</h3>
   <table>
     <tr><th>资源</th><th>路径</th><th>说明</th></tr>
-    <tr><td class="l">designflow 评测脚本</td><td class="l"><code>doc/ZhuLong_DAC2027/benchmark/designflow/cline_eval/</code></td><td class="l">20+ 任务 · <code>run_one.sh</code></td></tr>
+    <tr><td class="l">designflow 评测脚本</td><td class="l"><code>doc/ZhuLong_DAC2027/benchmark/designflow/cline_eval/</code></td><td class="l">61 任务 · <code>run_one.sh</code></td></tr>
     <tr><td class="l">zhulong 消融评测</td><td class="l"><code>doc/ZhuLong_DAC2027/run/eval/</code></td><td class="l">框架已有</td></tr>
   </table>
   <div class="note"><b>同 L3 约束</b>：需 GPU 服务化模型。designflow 用 cline harness，配 baseUrl 即可对接。</div>
@@ -184,21 +194,21 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
   <table>
     <tr><th>层</th><th>评测</th><th>状态</th><th>关键数</th><th>下一步</th></tr>
     <tr><td><b>L1</b></td><td class="l">常识 8 集 (0-shot)</td><td><span class="badge b-ok">✅ 16ckpt</span></td><td>58.13%@160k</td><td class="l">继续每万 ckpt</td></tr>
-    <tr><td><b>L2</b></td><td class="l">复杂推理 6 集</td><td><span class="badge b-warn">⚠️ 160k重评(v3)</span></td><td>P-8:6.66% / 160k:?</td><td class="l">GSM8K运行中→MMLU排队</td></tr>
+    <tr><td><b>L2</b></td><td class="l">复杂推理 6 集</td><td><span class="badge b-warn">⚠️ v3 GSM8K 35/100</span></td><td>P-8:6.66% / 160k:?</td><td class="l">v3运行中→v4已备(4集)</td></tr>
     <tr><td><b>L3</b></td><td class="l">Agentic</td><td><span class="badge b-bad">❌ 空白</span></td><td>—</td><td class="l">需GPU窗口</td></tr>
     <tr><td><b>L4</b></td><td class="l">领域</td><td><span class="badge b-bad">❌ 未接</span></td><td>—</td><td class="l">同L3</td></tr>
   </table>
 </div>
 <div class="card">
-  <h3>本轮(#1960)动作</h3>
+  <h3>本轮(#1961)动作</h3>
   <ol>
-    <li><b>L2 v2 崩溃修复</b>：MMLU loglikelihood 需 logit_bias 后端→改用 <code>gguf_lmeval_run.py</code>；GSM8K generation 仍用 <code>local-completions</code></li>
-    <li><b>L2 v3 启动</b>：160k GSM8K(5shot)+MMLU(0shot) · limit=100 · CPU llama-server(port=8082,-t4,parallel=2,nice19) · <b>进行中</b></li>
-    <li><b>论文 §4.6 刷新</b>：iter 163,310 · 590K tok/s · loss 2.04 · PDF 0err</li>
-    <li><b>shot 标注</b>：报告表格新增 shot 列（research 日报 2026-11-11 建议）</li>
+    <li><b>L2 v3 进度监控</b>：GSM8K 35/100 运行中(~27s/it) → MMLU 排队 → 总 ETA ~15:00</li>
+    <li><b>L2 v4 脚本准备</b>：<code>baize_l2_eval_160k_v4.sh</code> — HumanEval(0-shot)/MBPP(0-shot)/hendrycks_math_algebra(4-shot)/bbh_boolean_expressions(3-shot CoT) · limit=100 · 等 v3 完成后启动</li>
+    <li><b>L4 designflow 盘点</b>：cline_eval/ 共 61 个 EDA-Eval-DesignFlow 任务 · <code>run_one.sh</code> 用 cline harness · 当前配 deepseek-v4-pro-cloud · 接 BaiZe 2B 需本地 GPU 服务</li>
+    <li><b>训练健康确认</b>：iter 163,460 · step ~7s (<7.4s✅) · loss ~2.04 · 0 NaN/skip · GPU 94-100%</li>
   </ol>
   <div class="note">
-    <b>待决策</b>：① L3/L4 需 GPU 服务化模型——训练 decay 阶段安排还是等 pretrain 完成？② L2 若 160k 仍异常(GSM8K&lt;5%)——需排查 llama.cpp Mamba2 generation？
+    <b>待决策</b>：① L3/L4 需 GPU 服务化模型——训练 decay 阶段安排还是等 pretrain 完成？② L2 若 160k 仍异常(GSM8K&lt;5%)——需排查 llama.cpp Mamba2 generation？③ v4 4 集是否一次全跑(预计~3h)还是分批？
   </div>
 </div>
 

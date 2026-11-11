@@ -1528,3 +1528,30 @@ ssh 10.239.2.29 'setsid bash .../baize_l2_eval_160k_v3.sh > /tmp/baize_l2_eval_1
 - latexmk: 5 pages / 215825B / 0 err ✅
 - 取数命令：`ssh 10.239.2.29 'tail -5 /proc/146400/fd/1'`（PID 146400 = pretrain_launcher）
 
+### L2 v3 进度监控 + v4 脚本准备（#1961 · 2026-11-11 13:5x）
+
+**L2 v3 进度**（.29 上运行中）：
+- GSM8K: 41/100 (~27s/it, 5-shot, local-completions) → ETA ~27min
+- MMLU: 排队中 (0-shot, gguf_lmeval_run.py logit_bias) → ETA ~53min after GSM8K
+- 总 v3 ETA: ~15:00
+- 命令：`ssh 10.239.2.29 'tail -1 /tmp/baize_l2_eval_160k_v3.log | grep -oP "\d+/100" | tail -1'`
+
+**L2 v4 脚本**（已创建，待 v3 完成后启动）：
+- 文件：`baize_l2_eval_160k_v4.sh`
+- 4 集：HumanEval(0-shot) / MBPP(0-shot) / hendrycks_math_algebra(4-shot) / bbh_cot_fewshot_boolean_expressions(3-shot)
+- 各 limit=100, CPU llama-server port=8083, -t4, nice 19
+- 等 v3 (port 8082) 完成后自动启动
+- 预计耗时 ~3h
+
+**L4 designflow 盘点**：
+- `doc/ZhuLong_DAC2027/benchmark/designflow/cline_eval/` 共 61 个 EDA-Eval-DesignFlow 任务
+- `run_one.sh` 用 cline harness, 当前配 `deepseek-v4-pro-cloud`
+- 接 BaiZe 2B 需本地 GPU 服务 (vllm/sglang) → 待 GPU 窗口
+
+**训练健康**（.29）：
+- iter 163,480 / 700,000 (23.4%)
+- step 7189-7247ms (均 ~7.1s, <7.4s ✅)
+- loss 2.031-2.036, 0 NaN/0 skip
+- GPU 8 卡 94-100% / 74-75GB
+- 命令：`ssh 10.239.2.29 'cat /proc/146283/fd/1 | tail -3'`（PID 146283）
+
