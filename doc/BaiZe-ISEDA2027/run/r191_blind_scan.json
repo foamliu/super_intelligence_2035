@@ -1,13 +1,10 @@
 {
   "round": "R191-scan",
   "eval_raw_apis": 164,
-  "covered_eval_apis": 151,
-  "blind_eval_apis": 13,
-  "coverage_ratio": 0.9207,
+  "covered_eval_apis": 154,
+  "blind_eval_apis": 10,
+  "coverage_ratio": 0.939,
   "blind_list": [
-    "CColor",
-    "CString",
-    "CStringList",
     "SleQueryData",
     "aelEngineerNotation",
     "agrGetSnapPoints",
@@ -20,9 +17,6 @@
     "timeToTm"
   ],
   "family_usage": {
-    "CString": 2,
-    "CColor": 1,
-    "CStringList": 1,
     "Sle": 1,
     "ael": 1,
     "agr": 1,
@@ -35,24 +29,6 @@
     "time": 1
   },
   "family_apis": {
-    "CString": [
-      {
-        "api": "CString",
-        "eval_usage": 2
-      }
-    ],
-    "CColor": [
-      {
-        "api": "CColor",
-        "eval_usage": 1
-      }
-    ],
-    "CStringList": [
-      {
-        "api": "CStringList",
-        "eval_usage": 1
-      }
-    ],
     "Sle": [
       {
         "api": "SleQueryData",

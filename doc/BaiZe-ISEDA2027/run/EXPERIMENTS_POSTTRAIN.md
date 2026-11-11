@@ -10034,3 +10034,45 @@ API_DOCS block → fingerprint scan vs 155 eval entry_points → S1×2 + S3×2 +
 
 ---
 
+## R202 — v32 CColor color-wrapper corpus (wake271, 2026-11-11 20:53)
+
+**Goal.** Clear the CColor blind family (#1 blind after R201 v31: 1 eval usage, 1 API). CColor is a SWIG color-wrapper class absent from `API_INFO_MERGED_V3.json` but whitelisted as confirmed-executable in `validator_rules.json` `known_missing_from_db`.
+
+**Authoritative source gathering.**
+- `pyAether MCP get_api_details("CColor")` → empty (not in knowledge base; no formal doc entry).
+- Eval task 035 `canonical_solution`: `pyScript.CColor(color_name)` → `poly.setLineColor(ccolor)` — eval uses `CColor(name_str)` pattern.
+- Consumer API `GuCartoon.setLineColor(color: QColor)` official docs use `QColor("red")`, but eval uses `CColor(name)`. CColor is a QColor-compatible variant used by the eval harness.
+- `getLineColor()` returns `QColor` (not `CColor`) — type asymmetry explicitly taught.
+- `validator_rules.json` `known_missing_from_db` whitelist confirms CColor is executable via `hasattr` test.
+
+**Corpus design.** `baize_posttrain_r202_ccolor_corpus.py` (573 lines, `py_compile` ✅):
+- 17 pairs: S1×1 (construction), S3×1 (method call), S4×5 (parameter passing), S5×5 (set/read-back asymmetry), S6×5 (integration).
+- Doctest values deliberately different from eval: `red`/`green` (vs eval `blue`), `solid`/`dotted` (vs `dashed`), width 2/4 (vs 3), points different from eval's `[(0,0),(10,5),(20,0)]`.
+
+**Contamination isolation.**
+- 155 eval entry_points full scan: 17/17 PASS, 0 REJECTED.
+- Independent re-verify (separate Python script): 0 hits.
+- CColor is NOT an eval entry_point (`create_styled_polyline` IS the entry_point for task 035) → ISOLATE-class.
+- Initial run: 1 pair rejected (S5 pair mentioned literal eval entry_point name `create_styled_polyline` in prompt text) → fixed by rewording.
+
+**Blind scan re-run with v32** (v32 added to CORPUS_FILES in `baize_posttrain_r191_blind_scan.py`):
+- Covered: 153 → 154/164 (+1)
+- Blind: 11 → 10 (-1)
+- Coverage ratio: 93.3% → **93.9%**
+- CColor blind family **cleared**.
+- New #1 blind: Sle (`SleQueryData`, 1 usage, 1 API).
+
+**Cumulative corpus.** v11-v32 = 858 + 17 = **875 pairs** training-ready.
+
+**Key API facts.**
+- `CColor(name: str)` constructs from color-name string (not integer hex).
+- `setLineColor` accepts `CColor` (eval pattern) but `getLineColor` returns `QColor` (set/read-back type asymmetry).
+- CColor absent from `API_INFO_MERGED_V3.json`; official doc uses `QColor("red")` but eval uses `CColor(name)`.
+- CColor has no formal method doc (construct-only usage in eval).
+
+**Output files.** `sft_pyaether_corpus_v32_ccolor.jsonl` (17 lines, 23967 bytes).
+
+**Status.** R202 ✅ complete. Sandbox TCP8667 still CLOSED (76th wake) — blocks Phase 1 eval & Phase 3 RL. GPU occupied by serve placeholders (8095-8099) — v11-v32 SFT re-train awaits GPU release. Formal P3 training awaits pretrain ckpt (ETA ≈ 2026-12-25).
+
+---
+
