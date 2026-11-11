@@ -239,8 +239,8 @@ HTML = f"""<!DOCTYPE html>
 <tr><td>/data</td><td>7.0T</td><td>1.3T</td><td>5.8T</td><td>18%</td></tr>
 <tr><td>/</td><td>384G</td><td>13G</td><td>352G</td><td>4%</td></tr></table>
 
-<h2>8. research日报输入(2026-11-10)</h2>
-<div class="info"><p>research日报2026-11-10已查(mtime18:12·no update)。harness advice:2611.09802 staleness audit+silent-fail guard+empty explicit fail。网关200已恢复,predict进行中。</p></div>
+<h2>8. research日报输入(2026-11-11)</h2>
+<div class="info"><p>research日报2026-11-11已查(mtime15:08)。harness advice:报告加6列(resolved_rate/continuous_score/workflow_calls_per_task/worker_invocations_per_workflow/tokens_main+tokens_worker/usd_per_task)·用现有trace回填不重跑·empty标EMPTY/QUOTA单列不算失败·ETA 2-3天。纳入下轮(用现有{total_resolved} resolved+{total_pred} files回填)。网关200·predict进行中。</p></div>
 
 <h2>9. 后续计划</h2>
 <div class="info"><ol>
