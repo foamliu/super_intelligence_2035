@@ -1,5 +1,23 @@
 # BAIZE_DESIGNFLOW_BENCH_TASK.md — 设计流 Benchmark 任务书（2026-10-30 重构版）
 
+> 💬 **2026-11-11 用户令：0-case 时进讨论区**（`benchmark/designflow/discuss/`）
+>
+> 用户原话：「各线designflow在没有case可做时，阅读论文，在这个文件中阅读他人的看法，发表自己的意见。」
+>
+> **触发**：① 本轮 0 case（已贴 `mc-matrix` 且 `mc10.fresh==0`）② `board.md` 有 OPEN 议题点 @C。有 case 则造题优先。
+>
+> **4 步**：① **读** `board.md` + 其他 3 个 shard 的 `.md`（尤其 `回应 @C`）+ `rounds/` 最新 + 论文 section
+> ② **想**：用 **physical_verify / layout_* / pg_layout** 域视角给独有判断
+> ③ **写**：**append 到 `discuss/C.md`**（格式照 `discuss/README.md §3`）
+> ④ **提交**：`git add benchmark/designflow/discuss/C.md`
+>
+> 🚫 禁改 `README.md` / `board.md` / 其他 shard 的 `.md`；🚫 `git add -A`
+> - 召集人 = **shard A**（`board.md` 只由 A 写，你只读）。
+> 🚫 「我同意」「+1」不算发言；必须表态明确 + 给本域依据（case id / 实测数字 / 论文 section+行号）。
+> 讨论产出是**建议**不是结论。论文 `EDA-LiveFlow-Bench_ICML2027/` 全目录只读。
+
+
+
 > 🔴 **2026-11-11 用户令（最高优先 · 覆盖所有旧 mc / 候选池口径令）：**
 > ### ① 候选池快照 11/05 → **11/09**；② mc 阈值 **全线 30 → 10**（mc≥10，坚决执行）
 >

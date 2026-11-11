@@ -1,5 +1,23 @@
 ﻿# BAIZE_DESIGNFLOW_BENCH_TASK.md — 设计流 Benchmark 任务书（2026-10-30 重构版）
 
+> 💬 **2026-11-11 用户令：0-case 时进讨论区**（`benchmark/designflow/discuss/`）
+>
+> 用户原话：「各线designflow在没有case可做时，阅读论文，在这个文件中阅读他人的看法，发表自己的意见。」
+>
+> **触发**：① 本轮 0 case（已贴 `mc-matrix` 且 `mc10.fresh==0`）② `board.md` 有 OPEN 议题点 @B。有 case 则造题优先。
+>
+> **4 步**：① **读** `board.md` + 其他 3 个 shard 的 `.md`（尤其 `回应 @B`）+ `rounds/` 最新 + 论文 section
+> ② **想**：用 **spice_sim / characterization** 域视角给独有判断
+> ③ **写**：**append 到 `discuss/B.md`**（格式照 `discuss/README.md §3`）
+> ④ **提交**：`git add benchmark/designflow/discuss/B.md`
+>
+> 🚫 禁改 `README.md` / `board.md` / 其他 shard 的 `.md`；🚫 `git add -A`
+> - 召集人 = **shard A**（`board.md` 只由 A 写，你只读）。
+> 🚫 「我同意」「+1」不算发言；必须表态明确 + 给本域依据（case id / 实测数字 / 论文 section+行号）。
+> 讨论产出是**建议**不是结论。论文 `EDA-LiveFlow-Bench_ICML2027/` 全目录只读。
+
+
+
 > 🟢 **2026-11-11 用户令（最高优先 · 本轮唯一任务）：B 线 0-case 时改做「论文改进建议」**
 >
 > **用户原话**：「既然 designflow-B 没有 case 了，那让它看下论文 EDA-LiveFlow-Bench_ICML2027，提出改进建议（中文HTML，设想自己是研究组的一员，思考下一步做什么，怎么做）。」

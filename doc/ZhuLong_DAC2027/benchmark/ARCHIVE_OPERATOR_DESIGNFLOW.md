@@ -3015,3 +3015,131 @@ WAITING: 0（📦 **2026-11-11 r363 工具健康令 holding 复核轮（0 case, 
 ## 归档批次 r365a（2026-11-11，体积维护：r364 snapshot -> 归档，superseded by r365 holding 复核）
 
 WAITING: 0（📦 **2026-11-11 r364 工具健康令 holding 复核轮（0 case, A.jsonl 203 不变, DEBT 0）** = 顶部用户令（2026-11-10 22:2x「工具健康深挖」）块仍在 TASK_A.md 未被运维归档 → 硬约束 "trace_ledger next/claim 跳过 + A.jsonl 保持 203 不变" 生效，不造新 case（第 38 连续 holding r327-r364）。**fresh-agent 独立复核（非橡皮图章）**：① 三件在位已 push——07_tool_health.py(49043B)/tool_health.json(32014B,generated_at=2026-11-11T05:16:39)/HTML(22788B)；② JSON↔HTML 一致（独立 python 重解析 + HTML grep 核对）——696 runs/630 with-session/25 tools(12 invoked)/finesim 43(40ok/2err/1noout 93%)/hspice 123(117ok/4err/2noout)/vcs 38(36ok)/asc 0calls/asc_special.verdict=非工具(52处/16case, kind_counter 31=其它21+ASC排序7+.asc扩展3, 基于抽样上下文)/top-sig="command not found / No such file" 2runs；HTML 数字与 JSON 逐项一致；③ HTML 自包含——0 外部 src/href、0 script、1 内联 SVG+1 内联 style、lang=zh-CN，6 节齐全；④ 无工具 all_calls_failed=True(全 false, 无工具全失败异常)，never-invoked(13/25)不计失败；⑤ 数字无估算(66 no_session 不入分母)。结论沿用：工具执行层稀疏健康，多数失败属语义层。scansync r364（eda_flow 1 cmd exit 0, declare_done+close_session cleaned）：LATEST_SCAN 仍 ssh_eda_search_20261109_224902（**第 71 连续无新扫描 r293-r364**），summary.tsv 38082 行不变；daily log 20261111 健康 2545 行/2541 sessions；mc30=2247/dedup=5999/users_mc30=401/shard_A_pool_mc15=2381 沿用 r292；new_sessions=0。summary_stats.json.scansync 写 r364 条目(round=r364, consecutive=r293-r364 (71st), updated 07:34)。论文：无 latexmk→PAPER_SKIP(latexmk)；pdflatex 2-pass exit 0/14p/0 err/0 undefined, main.pdf 272044B；\Ntasks{1032}(A203+B242+C289+D298) A 未变不改动（main.pdf 由 shard C/D 维护，shard A 不提交）。**tool-health: 25 tools (12 invoked), finesim=ok(43calls 40ok/2err), asc=not_invoked, top pattern=command not found 2runs, html=reports/report_designflow_tool_health_20261110_zh.html**。· 📊 trace 覆盖率: 不变（0 case）· 🎯 通过率: 不变（无 cline 实跑）· 🧾 断言: 0 new case, 既有达标不变, rewrite_queue 0, DEBT 0 · 📦 体积：MEMORY_A≈31.6KB（≤32KB ✓）· WAITING:0）
+
+---
+
+## 📦 归档块 · 2026-11-11（shard A · 2026-11-02「被测换 cline + PreToolUse 防泄题 hook」令原文 · 压体积搬出）
+
+> 现行要点：被测 = cline（--auto-approve true --json）；cline + PreToolUse hook ⇒ agent 只能看 workspace 内（prompt+assets），判分器在 workspace 外独立跑，消除泄题。原文一字未改。
+
+### 🚨 2026-11-02 运维令：被测换 cline + PreToolUse 防泄题 hook · 用户直令 · 最高优先
+
+> **背景**：pi 有 bash/read/write 工具，能任意读 cwd 里所有文件。benchmark agent 在 `.pi_debug/<case>/` 里放了 `_reference_check.py`（= check.py 判分器），pi 直接 `import _reference_check` 跑了它——**判分标准（答案）直接放在考生面前**。这是通过率偏高的主因，不是模型强。
+>
+> **用户直令**：「把被测换成 cline，参考 zhulong 评测现有的防泄题 hook 机制（PreToolUse）。」
+
+**一、换被测：pi → cline**
+
+1. **被测 agent 改为 cline CLI**（已安装 `~/.local/bin/cline` v3.0.51）：
+   ```bash
+   cline -c <workdir> -m <model> -k <key> --auto-approve true --json --thinking medium "<prompt>"
+   ```
+   - `-c <workdir>`：独立 session workdir（**不放 check.py / reference / jsonl**）
+   - `-m <model>`：用 `deepseek-v4-pro-cloud`（与 pi 同模型，公平对比）
+   - `--auto-approve true`：自动批准工具调用（headless）
+   - `--json`：结构化输出
+   - key 从 `~/.cline/data/secrets.json` 或 `$OPENAI_API_KEY` 解析
+
+2. **cline 的 MCP 配置**：cline 也要能调 eda_flow MCP（和 pi 一样）。复用 `~/.cline/data/settings/cline_mcp_settings.json`（已配 eda_flow @ `http://127.0.0.1:18891/mcp`）。如果 cline 用独立 data-dir（如 `--data-dir ~/.cline_eval`），需把 MCP 配置复制过去。
+
+3. **不再用 `.pi_debug/`**：废弃所有 pi_debug 目录。新评测目录改用 `designflow/cline_eval/<case_id>/`。
+
+**二、PreToolUse 防泄题 hook（复用 EDA-Flow-Bench 现有机制）**
+
+1. **hook 脚本**：`EDA-Flow-Bench/scripts/cline_hooks/PreToolUse`（已存在，可直接用）。
+   - 作用：拦截 cline 的 `read_files`/`list_files`/`write`/`search_codebase`/`run_commands` 工具，只允许访问 workspace 内文件；MCP 工具（`mcp__eda_flow__*`）放行。
+   - `hook_scope.txt` 机制：同目录写 `hook_scope.txt`（本批次根路径），hook 只对 workspace 落在该路径内的会话启用限制，其余 cline 会话放行。
+
+2. **部署**：评测前把 hook 复制到 `~/.cline/hooks/PreToolUse`（cline 的全局 hook 搜索路径）：
+   ```bash
+   cp EDA-Flow-Bench/scripts/cline_hooks/PreToolUse ~/.cline/hooks/PreToolUse
+   chmod +x ~/.cline/hooks/PreToolUse
+   # 写 scope（本批次 workdir 根）
+   echo "<workdir_root>" > ~/.cline/hooks/hook_scope.txt
+   ```
+   评测结束后移除（或保留——scope 机制会让非评测会话放行）。
+
+3. **关键：workdir 里只放 prompt + assets（A 输入）+ task_brief**：
+   - ✅ 放：`prompt.txt`、`assets/`（case 的真实输入文件 A）、`task_brief.md`（≤3 行交付接口说明）
+   - 🚫 不放：`check.py`、`_reference_check.py`、`reference/`、`negative/`、`hidden/`、jsonl、test 字段
+   - cline 只产出 `outputs/submit.zip`，然后退出
+
+4. **判分在 cline 退出后独立跑**（不在 cline 的 cwd 里）：
+   ```bash
+   # cline 跑完，退出
+   # 独立进程判分：
+   cp <workdir>/outputs/submit.zip /tmp/judge_<case>/
+   cp reference/<case>/check.py /tmp/judge_<case>/
+   cd /tmp/judge_<case>/ && python3 -c "from check import check; print(check('submit.zip', '.'))"
+   ```
+   判分器（check.py）**绝不进 cline 的 workdir**。
+
+**三、pi_debug_status.jsonl → cline_eval_status.jsonl**
+
+1. 新建 `designflow/cline_eval_status.jsonl`（格式同 pi_debug_status.jsonl，追加 `harness:"cline"` 字段）
+2. pi_debug_status.jsonl 保留作历史（不删），但新评测只写 cline_eval_status.jsonl
+3. 日报 `gen_daily_report.py` 改为读 cline_eval_status.jsonl（pi 数据标"历史"）
+
+**四、执行**
+
+1. 先建一个 `designflow/cline_eval/run_one.sh` 脚本：部署 hook → 建 workdir（只放 prompt+assets+task_brief）→ 跑 cline → 独立判分 → 记 status
+2. 拿一条现有 PASS 的 case（如 Schematic-001）用 cline + hook 重跑，验证：
+   - hook 生效（cline 试图读 workdir 外文件被拦）
+   - cline 看不到 check.py
+   - 判分独立跑，结果真实
+3. 逐步把存量 case 用 cline 重跑一遍，得到真实通过率
+4. 收尾铁律提交
+
+**五、为什么换 cline**
+
+| 项 | pi | cline |
+|---|---|---|
+| shell 工具 | 有 bash/read/write/edit（任意访问） | 有 read/write/bash（但被 PreToolUse hook 拦截） |
+| 防泄题 hook | 无 | PreToolUse（EDA-Flow-Bench 现成） |
+| session 日志 | `~/.pi/agent/sessions/` | `~/.cline/data/sessions/`（结构化 JSONL） |
+| MCP 支持 | 有 eda_flow | 有 eda_flow（已配） |
+| headless | `--print --no-approve` | `--auto-approve true --json` |
+
+cline + PreToolUse hook = agent 只能看 workspace 内文件（prompt + assets），判分器在 workspace 外独立跑，**彻底消除泄题**。
+
+---
+
+## 📦 归档块 · 2026-11-11（shard A · 2026-11-06「双重职责 + 放宽候选池」令原文 · 已被 mc>=10 令覆盖）
+
+> 现行口径：A 仍承担每日管理任务（scansync / 刷新 summary_stats）；候选池阈值已由 2026-11-11 令改为 mc>=10（见任务书顶部）。原文一字未改。
+
+### 🚨 2026-11-06 运维令：shard A 双重职责 · 管理任务 + 放宽候选池 · 用户直令 · 最高优先
+
+> **背景**（历史，2026-11-06）：shard A 当时候选池枯竭（旧扫描 mc≥30 + 旧过滤词仅 53 session）。11/05 新扫描上线后曾降到 mc≥15。
+> ⚠️ **2026-11-11 起以顶部令为准：mc≥10 + 11/09 快照**，本段仅作历史背景，不是当前阈值。用户直令：① shard A 承担每日管理任务（更新用户/trace 总数 + 给各线补充新增 trace）；② 放宽过滤词 + 降 mc≥15 + 用 daily scan log 补充。
+
+**一、shard A 新增管理任务（每轮开工前先做，5 分钟搞定）**
+
+1. **跑 scansync**：`python3 designflow/trace_ledger.py --shard A scansync` 输出 ready-to-run 命令块，经 `eda_flow run_commands` 在 .75 上执行，拿到最新扫描的各口径数字（scan_dir / mc30 / users / 各 shard 候选池 / 新增 session 数）。
+2. **更新 summary_stats.json**：用 `trace_ledger.py refresh --json '{...}'` 把最新数字写回（scan_path / mc30 / users_mc30 / shard_mc / scansync 子对象）。**这是全 4 shard 共享的配置文件**，shard A 负责维护，其他 shard 读它。
+3. **报告各 shard 新增候选**：在 MEMORY_DESIGNFLOW_A.md 里写一段「今日新增 trace」：`shard_A_new=92 shard_B_new=200 shard_C_new=247 shard_D_new=383`（来自 scansync 输出），让其他 shard agent 看到自己的新增候选规模。
+4. **检查 daily scan log**：`ls -t /home/t0002965/log/eda_trace_*.log | head -1` 看今日扫描日志行数，记录到 MEMORY。如果今日日志显著缩水（<100 行），说明扫描脚本可能挂了，在 MEMORY 里标 ⚠️。
+
+**二、shard A 候选池放宽（已落地，trace_ledger.py 已改）**
+
+- **过滤词放宽**：从 `verdi|vcs|dc_shell|...|pt_shell` 扩到 `+synthesis|synopsys|tcl|verilog|systemverilog|rtl|sdc|vivado|yosys|openroad`（数字前端泛词）
+- ~~**mc 阈值降到 15**：`SHARD_MC={"A":15, "B":30, "C":30, "D":30}`~~ 🚫 **已作废（2026-11-11）**：现行 `SHARD_MC={"A":10,"B":10,"C":10,"D":10}`，`DEFAULT_MC=10`，可被 `summary_stats.json.shard_mc` 覆盖
+- **扫描源切到 11/05**：`scan_path` 从旧扫描 (10/28) 切到新扫描 (11/05)，候选池 53→216（3x）
+- **效果**：shard A 候选池从 53 扩到 216，新增 92 个旧扫描没有的 session，够再跑 1-2 周
+
+**三、管理任务优先级**
+
+- 候选池充足时（next 有 ≥5 个 fresh 候选）：优先出 case，管理任务每 5 轮做一次
+- 候选池快空时（next <3 个 fresh）：先跑 scansync + 更新 summary_stats.json，再继续出 case
+- 候选池空时：只做管理任务 + 从 daily scan log 手动捞候选（见下）
+
+**四、从 daily scan log 手动捞候选（候选池空时的兜底）**
+
+```bash
+# 在 .75 上跑（经 eda_flow run_commands），找今日扫描日志里命中 shard A 过滤词的 session
+TODAY=$(date +%Y%m%d)
+grep -E 'verdi|vcs|dc_shell|verilint|formality|innovus|primetime|design_compiler|rc|pt_shell|synthesis|synopsys|tcl|verilog|systemverilog|rtl|sdc|vivado|yosys|openroad' /home/t0002965/log/eda_trace_$TODAY.log | head -20
+# 每行格式: ip\thost:/full/session/path\truntime_or_tool_markers
+# 挑 mc 看起来高的 session，手动 claim + deepread
+```
+
