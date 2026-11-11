@@ -666,4 +666,4 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked		2026-11-09 20:39	RAG-looku
 1790749571151_n8yr8					case	EDA-Eval-DesignFlow-DRCLogTeardown-001	2026-11-11 08:13	
 1789717466435_hga1e	thomasz	hfeg0pfn060	243	pg_layout	case	EDA-Eval-DesignFlow-IRReportPdf-001	2026-11-11 09:07	
 1793843059790_kjb39	cong3li	hfeg0pkn004	205	layout_aether	case	EDA-Eval-DesignFlow-SASchematicAether-001	2026-11-11 10:12	
-1793095792921_pr0tt.messages.json	ziyuny	10.129.32.190	171	physical_verify	claimed		2026-11-11 10:06	
+1793095792921_pr0tt.messages.json	ziyuny	10.129.32.190	171	physical_verify	case	EDA-Eval-DesignFlow-LVSShortExtract-001	2026-11-11 10:21	
