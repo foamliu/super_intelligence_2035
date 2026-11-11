@@ -264,3 +264,38 @@
 **trace**：7huyr(aocao@hfeg0plg227, verification, mc129) = analysis-only 诊断（USER#1「检查代码逻辑，波形暂没问题」→ addr_q 队列越界 RTSVQI，agent 0 writes 纯审查报告）。
 **reframe**：复用 EXP-DG1 的 diagnosis-generator 模板，换诊断对象 = SystemVerilog queue index out-of-bounds（ncsim `*W,RTSVQI`）。deliverable=gen_rhr_diag.py → diag_rhr_bounds.py 推导：queue 声明(by name) / address_space_max(2^bits-1) / max_index_value(max index_var_max) / is_out_of_bounds + OOB 点过滤(过滤 in-bounds distractor) / 根因分类(queue_index_out_of_bounds_undersized_push_back_init) / fix(separate_preinit_full_address_space_plus_keep_aci_loop_direct_index + target + why_simple_extend_rejected from constraint) / user_constraints_recognized。check.py 15 conds a-o，gold PASS 15/15 + 8 negatives 全 FAIL + §4.9。
 **结论**：diagnosis-generator reframe 模板可复用至非 elaboration 类诊断（queue-bounds vs hier-ref scope），验证了模板的 domain-portability。analysis-only verification trace 池（7huyr/acaey/及未来 i555n 类）经此 reframe 持续可造题。A.jsonl 198→199，verification 45→46。10th produce-scarcity 上下文，但 scarcity 不再阻塞交付。
+
+## EXP-FR2 shard A mc≥10 质量枯竭正式阈值评估 + PIVOT（2026-11-11 r382，2026-11-09 用户令 deliverable 2/3/4 补交）
+
+**背景**：EXP-FR1（r292）做了全量重扫（11/09 scan，696 hosts / 38082 rows / 5999 dedup）+ 初版阈值表，并据此把 mc 阈值从 30 下调到 10（2026-11-11 用户令）。r367-r373 在 mc≥10 下连交 7 case（spec-driven-gen / log-parser 模式）后，r374-r381 **连续 8 轮 0-case**，逐轮 peek fresh strict-clean A-domain 候选累计 **32/32 全 weak**（env-config / analysis-Q&A / doc-search / debug-Q&A / flow-driving；唯一 produce-task y4c5b = Qt Jobmonitor 非 EDA GUI，r377 以 L1 offline-patch reframe 交付）。r381 提 PIVOT（4 选项）待用户裁决。本轮 r382 把 r374-r381 的 peek 数据正式落成阈值表 + 最低可用阈值建议（2026-11-09 令 deliverable 2/3/4，此前只做了 deliverable 1 全量重扫）。
+
+**方法**：
+- `trace_ledger.py --shard A mc-matrix --src summary_1105.tsv --thresholds 5,10,15,20,25,30` → pool/touched/fresh（ledger-aware）。
+- 本地 awk/python 读 summary_1105.tsv（shard A keyword filter, slug dedup）→ sessions/unique_users/digital_marker 命中数。
+- scansync 在 .75 上确认 11/09 scan 仍为最新（无 11/09 后新扫描），new_sessions=0。
+- 最低可用阈值建议 = 综合 r374-r380 的 32/32 strict-clean peek + r381 的 mc≥5 slice peek（12 sessions, 10/12 wrong-shard）。
+
+**结果 — shard A 阈值表**（src=summary_1105.tsv，shard A keyword filter，slug dedup；fresh = 4-shard ledger 排除后未动过）：
+
+| mc≥ | sessions | users | dig_marker | pool | touched | fresh |
+|----|----|----|----|----|----|----|
+| 5  | 1769 | 237 | 939 | 1765 | 1386 | 379 |
+| 10 | 1649 | 230 | 869 | 1648 | 1359 | 289 |
+| 15 | 1545 | 225 | 815 | 1545 | 1326 | 219 |
+| 20 | 1452 | 220 | 765 | 1452 | 1290 | 162 |
+| 25 | 1384 | 217 | 738 | 1384 | 1261 | 123 |
+| 30 | 1322 | 213 | 701 | 1322 | 1228 | 94 |
+
+**关键发现**：A 域的 binding constraint 是 **archetype + 强闸门**（k≥8 / 3 neg 必 FAIL / hidden B），**不是阈值**。
+1. fresh=289 @ mc≥10 ≠ 数量枯竭，但 strict-clean filter 下 32/32 全 weak = **质量枯竭**。
+2. 下调到 mc≥5 **不解决问题**：r381 peek 12 sessions，10/12 wrong-shard（drc/aether/schematic/hspice/waveview 主导），仅 2 A-domain-ish 但 mc<10 + 低多样性，且违反 2026-11-11 mc≥10 令。
+3. A archetype 饱和：~37/210 A case 是 diagnosis/generator/parser/audit/analyze/report；spec-driven-gen / log-parser / diagnosis-gen 三模式 r367-r373 已采空 fresh clean-produce 池。
+
+**最低可用阈值建议**：当前 mc≥10 已是最低可用阈值，但其下 clean-produce 池质量饱和。要继续造 A case 需 PIVOT（r381 提，待用户裁决）：
+- (a) 触发新全量重扫（11/09 scan 已 2 天 stale，11/11 daily log 2541 sessions 示新 material 积累）→ 量化新增；
+- (b) 授权 mc≥5 池 → ~0-2 clean A produce（low yield，不推荐，且违反 mc≥10 令）；
+- (c) 授权新 archetype（放宽 §5 L1 禁令 for A-static-analysis，把 audit/retrieval/explain 重分类为 L1 produce）→ 预计 ~10-20 case，需显式覆盖 §5；
+- (d) 接受 A 在 ~210 case 饱和，产能转 B/C/D → 0 新 A case。
+- **A 线建议**：先 (a) 量化新 material；若 yield 低，再 (c) 或 (d)。
+
+**交付**：`summary_stats.json` 新增 `threshold_table_shardA` + `threshold_eval_shardA` + scansync 刷新到 r382（11/09 scan 仍最新，new_sessions=0）。本轮 0 net-new-case（A.jsonl 210 不变），DEBT 0。PIVOT 待用户裁决，非 holding——本评估即 r374-r381 八连 0-case 的正式结案 + 数据依据。

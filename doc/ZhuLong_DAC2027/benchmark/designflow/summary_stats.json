@@ -15,12 +15,12 @@
   "generated": "2026-11-06T08:40:00+08:00",
   "hits_total": 38082,
   "hosts": 696,
-  "mc10": 486,
+  "mc10": 3024,
   "mc100": 0,
   "mc1000": 8,
-  "mc15": 1592,
-  "mc20": 420,
-  "mc30": 376,
+  "mc15": 2800,
+  "mc20": 2519,
+  "mc30": 2247,
   "mc300": 317,
   "mc500": 281,
   "mc_matrix": {
@@ -54,29 +54,29 @@
     "src": "designflow/summary_1105.tsv"
   },
   "note": "11/10 r321: management + bugfix (keyword $6 parsing + exclusion-set .messages.json suffix) + NFS-automount access BLOCKER (0 case, A.jsonl 200 unchanged). 186 truly-fresh digital-dominant candidates found but INACCESSIBLE (NFS automount: ls shows files but cat fails 'No such file'). 29 consecutive no-new-scan (r293-r321). Latest scan 11/09 r292, daily log 11/10 healthy 2981 lines.",
-  "note_mc30": "顶层 mc30=2247 来自 scansync(11/09 扫描, 38082 行 summary.tsv), 与 mc_matrix.mc30.pool=1511(11/05 扫描快照) 不同源, 勿混用; target_mc=10 时分母取 mc10=1929",
+  "note_mc30": "顶层 mcN 现统一取自 11/09 全量扫描 raw summary.tsv (38082 行 / 5999 dedup session by session_file). mc_matrix.* 仍基于 11/05 curated summary_1105.tsv (1928 shard-A-keyword dedup, slug 级取最大 mc) 用于 ledger fresh 复算; 两源口径不同, 勿混用. target_mc=10 时覆盖率分母取 mc_matrix.mc10.pool=1929 (与 ledger 同源).",
   "prev_scan_path": "/home/t0002965/log/ssh_eda_search_20261105_192825/summary.tsv",
   "prev_sessions": 486,
   "scan_path": "/home/t0002965/log/ssh_eda_search_20261109_224902/summary.tsv",
   "scansync": {
-    "consecutive_no_new_scan": "r293-r365 (72nd)",
-    "daily_log_20261111_lines": 2545,
-    "daily_log_20261111_sessions": 2541,
-    "dedup_hosts": 696,
+    "round": "r382",
+    "scan_dir": "/home/t0002965/log/ssh_eda_search_20261109_224902",
+    "summary_tsv_rows": 38082,
     "dedup_sessions": 5999,
     "dedup_users": 512,
-    "mc30": 2247,
+    "dedup_hosts": 696,
     "new_sessions": 0,
-    "note": "72nd consecutive no new scan; metrics unchanged from r291 full rescan; tool-health holding review r365 (deliverables in place, JSON/HTML consistent, fresh-agent independent re-verify)",
-    "round": "r365",
-    "scan_dir": "/home/t0002965/log/ssh_eda_search_20261109_224902",
-    "shard_A_pool_mc15": 2381,
-    "shard_B_pool_mc30": 591,
-    "shard_C_pool_mc30": 1981,
-    "shard_D_pool_mc30": 1775,
-    "summary_tsv_rows": 38082,
-    "updated_at": "2026-11-11T07:46:34+08:00",
-    "users_mc30": 401
+    "consecutive_no_new_scan": "r293-r382 (81st; 11/09 scan still latest, no newer scan on .75)",
+    "daily_log_20261111_sessions": 2541,
+    "mc5": 3368,
+    "mc10": 3024,
+    "mc15": 2800,
+    "mc20": 2519,
+    "mc25": 2376,
+    "mc30": 2247,
+    "users_mc10": 444,
+    "note": "r382 scansync: 11/09 full rescan still latest scan on .75 (no newer). 2026-11-09 令 deliverable(1) 全量重扫 = DONE(11/09). 本轮补 deliverable(2)(3)(4): threshold_table_shardA + 最低可用阈值建议, 见 threshold_eval_shardA. new_sessions=0 (无 11/09 之后的扫描). daily log 11/11 healthy 2541 sessions.",
+    "updated_at": "2026-11-11T16:11:48+08:00"
   },
   "sessions": 486,
   "shard_mc": {
@@ -88,9 +88,86 @@
   "source": "/home/t0002965/log/ssh_eda_search_20261109_224902/summary.tsv (11/09 full rescan r292)",
   "target_mc": 10,
   "target_mc_changed": "2026-11-11 用户令: 30 -> 10 (A 原 15); 候选池 11/05 -> 11/09 待 A 执行 A1-A6",
-  "updated_at": "2026-11-11 16:08",
+  "updated_at": "2026-11-11 16:11",
   "users_mc100": 182,
   "users_mc30": 401,
   "users_mc300": 60,
-  "users_total": 512
+  "users_total": 512,
+  "mc5": 3368,
+  "mc25": 2376,
+  "users_mc10": 444,
+  "threshold_table_shardA": {
+    "src": "designflow/summary_1105.tsv (11/05 curated, shard-A keyword filter, slug dedup)",
+    "kw_filter": "verdi|vcs|dc_shell|verilint|formality|innovus|primetime|design_compiler|rc|pt_shell|synthesis|synopsys|tcl|verilog|systemverilog|rtl|sdc|vivado|yosys|openroad",
+    "dig_marker": "verilog|systemverilog|rtl|sdc|vivado|yosys|openroad|synthesis|dc_shell|design_compiler",
+    "note": "sessions/users/dig_marker = A-keyword filtered dedup; fresh = un-ledgered (4-shard ledger 排除, from mc-matrix). pool=touched+fresh.",
+    "rows": {
+      "mc5": {
+        "sessions": 1769,
+        "users": 237,
+        "dig_marker": 939,
+        "pool": 1765,
+        "touched": 1386,
+        "fresh": 379
+      },
+      "mc10": {
+        "sessions": 1649,
+        "users": 230,
+        "dig_marker": 869,
+        "pool": 1648,
+        "touched": 1359,
+        "fresh": 289
+      },
+      "mc15": {
+        "sessions": 1545,
+        "users": 225,
+        "dig_marker": 815,
+        "pool": 1545,
+        "touched": 1326,
+        "fresh": 219
+      },
+      "mc20": {
+        "sessions": 1452,
+        "users": 220,
+        "dig_marker": 765,
+        "pool": 1452,
+        "touched": 1290,
+        "fresh": 162
+      },
+      "mc25": {
+        "sessions": 1384,
+        "users": 217,
+        "dig_marker": 738,
+        "pool": 1384,
+        "touched": 1261,
+        "fresh": 123
+      },
+      "mc30": {
+        "sessions": 1322,
+        "users": 213,
+        "dig_marker": 701,
+        "pool": 1322,
+        "touched": 1228,
+        "fresh": 94
+      }
+    }
+  },
+  "threshold_eval_shardA": {
+    "round": "r382",
+    "eval_basis": [
+      "r374-r380 peek 32/32 fresh strict-clean A-domain candidates (mc>=10, strict-clean filter adom>=50 & adom>1.2*ndom & mc>=15 & noise<0.3*adom) ALL weak: env-config / analysis-Q&A / doc-search / debug-Q&A / flow-driving; 1 produce-task = y4c5b Qt Jobmonitor (non-EDA GUI, delivered r377 as L1 offline-patch reframe)",
+      "r381 mc>=5 slice peek (new slice, never peeked): 12 unique sessions, ~10/12 wrong-shard C/D (drc/aether/schematic/hspice/waveview dominant), only 2 A-domain-ish (fwtt5 sv:14/netlist:12, nurc0 sv:598 low-diversity paste) but mc<10 unauthorized under 2026-11-11 mc>=10 令",
+      "A archetype saturation: ~37/210 A cases are diagnosis/generator/parser/audit/analyze/report; spec-driven-gen / log-parser / diagnosis-gen three modes (r367-r373) already exhausted fresh clean-produce pool"
+    ],
+    "finding": "Binding constraint is archetype + strong gate (k>=8, 3 neg FAIL, hidden B), NOT threshold. Lowering mc 10->5 does NOT help (wrong-shard dominated 10/12). fresh=289 at mc>=10 is quality-exhausted (32/32 strict-clean weak), not quantity-exhausted.",
+    "min_viable_threshold_recommendation": "NO threshold below mc>=10 unblocks A casemaking under current gate. mc>=5 yields wrong-shard/C-D material. The最低可用阈值 = mc>=10 (current), but it is quality-saturated.",
+    "predicted_new_cases_by_option": {
+      "a_full_rescan": "unknown until new scan runs; 11/09 scan 2 days stale, 11/11 daily log 2541 sessions suggests new material accumulating; recommend触发 new full rescan to quantify",
+      "b_lower_to_mc5": "~0-2 A clean-produce (10/12 wrong-shard, 2 low-diversity); NOT recommended, low yield + violates 2026-11-11 mc>=10 令",
+      "c_new_archetype": "~10-20 if §5 L1 ban relaxed for A-static-analysis (audit/retrieval/explain tasks reclassified as L1 produce); requires explicit user authorization to override §5",
+      "d_accept_saturation": "0 new A cases; redirect capacity to B/C/D; A holds at ~210"
+    },
+    "user_decision_needed": "PIVOT (r381) awaits user pick among (a/b/c/d). This eval provides the data basis. A-line recommendation: (a) full rescan first to quantify new material; if yield low, then (c) new archetype OR (d) accept saturation.",
+    "updated_at": "2026-11-11T16:11:48+08:00"
+  }
 }
