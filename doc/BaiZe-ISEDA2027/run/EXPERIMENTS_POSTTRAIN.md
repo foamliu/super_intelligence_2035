@@ -7832,3 +7832,61 @@ SFT 训练脚本 (`baize_posttrain_sft_surrogate.sh`) 的 ckpt 输出为 HF safe
 
 **数据溯源**：训练日志 `/tmp/baize_posttrain_sft_surrogate_full.log`；serve 日志 `/tmp/vllm_sft_serve_gpu6.log`；GPU 状态 `nvidia-smi` 实测；端点健康 `curl /v1/models` 实测。无伪造。
 
+## §R173 (2026-11-11 wake242) Phase 3 RL Surrogate Full Readiness Verification + detect_sft_ckpt Bug Fix
+
+**背景**：Phase 2 SFT 已完成（global_step_72），Phase 3 RL 替身预演是下一个里程碑。本轮对 `baize_posttrain_rl_grpo_surrogate.sh` 做完整 dry-run 验证，确保沙盒恢复后可立即起跑。
+
+### 1. Dry-Run 验证结果（`--dry-run` 全通过）
+
+| 检查项 | 结果 |
+|:--|:--|
+| bash -n 语法 | ✅ OK |
+| verl 0.4.0 main_ppo 导入 | ✅ `[deps] verl main_ppo OK` |
+| RL parquet 数据 | ✅ 3347 rows OK |
+| 依赖文件（10个：wrapper/reward/hooks/parser/config×2/parquet/torchrun） | ✅ 全部存在 |
+| sandbox-check | 🔴 DOWN（TCP 8667 timeout, 47th wake）→ 仅 R0 允许 |
+| contam-check | ✅ PASS（0 命中，RL 数据与 158 eval 隔离） |
+| SFT ckpt 检测 | ✅ global_step_72（修复后，见下） |
+| 6 hooks 配置 | ✅ ENABLED |
+| 配方打印 | ✅ 替身预演标注 + 红线标注（§5.1/§5.2） |
+
+**Dry-run 完整输出**：`/tmp/rl_dryrun_wake242_v2.log`
+
+**结论**：Phase 3 RL 替身脚本**完全就绪**，唯一阻塞为沙盒（R1-R4 需沙盒）+ GPU（全被 serve 占用，17:10 令）。两者在沙盒恢复时同时解除（sentinel watcher `--auto-eval` 自动触发 Phase1 eval → teardown serve 释放 GPU → Phase3 RL）。
+
+### 2. 🔴 关键 Bug 发现与修复：detect_sft_ckpt 排序错误
+
+**Bug**：`baize_posttrain_rl_grpo_surrogate.sh` 的 `detect_sft_ckpt()` 使用 `sort -t_ -k3 -n`。路径中含多个 `_` 分隔符（如 `minicpm5_pyaether_v1/global_step_72`），导致 `-k3` 取到的 field 是 `v1/global` 而非步号，`-n` 将其解析为 0，排序无效。结果**错误地选中 smoke 测试的 `global_step_5`**（来自 `minicpm5_pyaether_v1_smoke/`），而非正式训练的 `global_step_72`（来自 `minicpm5_pyaether_v1/`）。
+
+**Bug 复现**：
+```bash
+$ find sft_surrogate_runs -type d -name 'global_step_*' | sort -t_ -k3 -n | tail -1
+sft_surrogate_runs/minicpm5_pyaether_v1_smoke/global_step_5   # ← 错误！
+# 正确应为 sft_surrogate_runs/minicpm5_pyaether_v1/global_step_72
+```
+
+**影响**：若不修复，Phase 3 RL 将从 5 步 smoke ckpt 起跑（几乎等于 base model），而非 72 步 SFT ckpt，导致 RL 完全无效。这是一条**数据完整性红线**——RL 必须从 SFT 收敛 ckpt 起跑才有意义。
+
+**修复（2 个脚本）**：
+
+| 脚本 | 原代码 | 修复后 |
+|:--|:--|:--|
+| `baize_posttrain_rl_grpo_surrogate.sh` L58-66 | `find ... \| sort -t_ -k3 -n \| tail -1` | `find ... ! -path '*_smoke*'` 排除 smoke + `while read` 提取 basename 步号 + `sort -t$'\t' -k1,1n` 按步号数值排序 |
+| `baize_posttrain_sft_surrogate_serve.sh` L103-109 | `ls -d ... \| sort -t_ -k3 -n \| tail -1` | 同模式修复（原排序在步号 >99 时也会失效：`global_step_100` < `global_step_20` 字典序） |
+
+**验证**：修复后 dry-run 正确显示 `sft ckpt: .../minicpm5_pyaether_v1/global_step_72` ✅
+
+### 3. Phase 3 RL 起跑条件清单（沙盒恢复后）
+
+| 条件 | 状态 |
+|:--|:--|
+| SFT ckpt (global_step_72) | ✅ 就绪 |
+| verl 0.4.0 + torch 2.6.0+cu124 | ✅ `~/code/verl_cu124_venv/` |
+| RL 数据 (3347 tasks, 0 污染) | ✅ `rl_pyaether_synth_v2.parquet` |
+| 6 hooks (resilience/curriculum/rollout/kl/anti_cheat/early_stop) | ✅ 配置就绪 |
+| 奖励 4 臂 R1-R4 | ⏳ 需沙盒（R0 skeleton 已可用） |
+| GPU 4-7 | ⏳ 被 serve 占用（17:10 令），teardown 脚本就绪 |
+| 沙盒 (10.129.32.75:8667) | 🔴 DOWN（47th wake，R169 ACL runbook 待转发） |
+
+**数据溯源**：dry-run 日志 `/tmp/rl_dryrun_wake242_v2.log`；bug 复现命令输出实测；修复后 dry-run 输出实测；GPU/serve 状态 `nvidia-smi` + `curl /v1/models` 实测。无伪造。
+

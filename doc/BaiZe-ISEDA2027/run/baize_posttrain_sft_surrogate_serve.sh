@@ -100,7 +100,13 @@ if [ -z "$CKPT" ]; then
     echo "   Has the SFT training finished? Run baize_posttrain_sft_surrogate.sh first."
     exit 1
   fi
-  CKPT=$(ls -d "$SFT_RUNS_DIR"/global_step_* 2>/dev/null | sort -t_ -k3 -n | tail -1)
+  # FIX R173: sort by extracted step number (numeric), not fragile `sort -t_ -k3 -n`
+  # which breaks when step > 99 (e.g. global_step_100 < global_step_20 lexicographically).
+  CKPT=$(ls -d "$SFT_RUNS_DIR"/global_step_* 2>/dev/null | \
+    while IFS= read -r d; do
+      step=$(basename "$d" | sed 's/global_step_//')
+      printf '%s\t%s\n' "$step" "$d"
+    done | sort -t$'\t' -k1,1n | tail -1 | cut -f2)
   if [ -z "$CKPT" ]; then
     echo "❌ No global_step_* checkpoint found in $SFT_RUNS_DIR"
     echo "   SFT training may still be running or hasn't saved a checkpoint yet."

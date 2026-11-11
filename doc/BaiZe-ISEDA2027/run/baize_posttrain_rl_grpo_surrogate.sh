@@ -56,7 +56,14 @@ LOG_FILE="/tmp/baize_posttrain_rl_grpo_surrogate.log"
 # ============ SFT ckpt auto-detect (Phase 2 output) ============
 SFT_RUNS_DIR="$SCRIPT_DIR/sft_surrogate_runs"
 detect_sft_ckpt() {
-  find "$SFT_RUNS_DIR" -type d -name 'global_step_*' 2>/dev/null | sort -t_ -k3 -n | tail -1
+  # Sort by step number extracted from basename; exclude _smoke dirs (prefer full runs).
+  # FIX R173: old `sort -t_ -k3 -n` mis-parsed paths with multiple '_' delimiters,
+  # picking smoke global_step_5 over full-run global_step_72.
+  find "$SFT_RUNS_DIR" -type d -name 'global_step_*' ! -path '*_smoke*' 2>/dev/null | \
+    while IFS= read -r d; do
+      step=$(basename "$d" | sed 's/global_step_//')
+      printf '%s\t%s\n' "$step" "$d"
+    done | sort -t$'\t' -k1,1n | tail -1 | cut -f2
 }
 SFT_CKPT="${SFT_CKPT:-$(detect_sft_ckpt)}"
 
