@@ -42,8 +42,8 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
   <div class="meta">
     <span>📅 2026-11-12</span>
     <span>🏗 Mamba2-hybrid 2.22B</span>
-    <span>🔥 训练 iter≈171.5k / 700k(24.5%) · step~7.1s<7.4s✅ · loss~2.04 · 0NaN/0skip · ckpt 170k已落盘 · lr-decay-iters=0(stable段) · GPU 8×95-100%/75GB · 🔄 170k L1 eval 运行中(llama-server -t 4 nice 19·gguf_lmeval_run.py·~76min·both alive·等results.json)</span>
-    <span>📊 L1: 16 ckpt ✅(160k=58.13%新高) · 170k L1 eval 运行中(GGUF已转换✅,eval进行中) | L2: 6/6完成 ✅ GSM8K=0%🔴 MMLU=23.16%(≈随机) BBH=0%🔴 MATH=0%🔴 HumanEval=0%🔴 MBPP=0%🔴 · 🟢<b>HF transformers生成正常</b>→llama.cpp SSM bug是0%主因(非模型完全无能) · GSM8K HF=0/10(数学确实弱,生成连贯) | L3: 🔴TB 0/2(待HF重测) | L4: 🔴/nasdata/未挂载+SSH .15/.17均超时</span>
+    <span>🔥 训练 iter≈171.6k / 700k(24.5%) · step~7.0s<7.4s✅ · loss~2.04 · 0NaN/0skip · ckpt 170k已落盘 · lr-decay-iters=0(stable段) · GPU 8×95-100%/75GB · ✅ 170k L1 eval 完成(57.75%·4561s·llama-server -t 4 nice 19)</span>
+    <span>📊 L1: 17 ckpt ✅(160k=58.13%峰值,170k=57.75%) · 下一个180k(ETA≈12h) | L2: 6/6完成 ✅ GSM8K=0%🔴 MMLU=23.16%(≈随机) BBH=0%🔴 MATH=0%🔴 HumanEval=0%🔴 MBPP=0%🔴 · 🟢<b>HF transformers生成正常</b>→llama.cpp SSM bug是0%主因(非模型完全无能) · GSM8K HF=0/10(数学确实弱,生成连贯) | L3: 🔴TB 0/2(待HF重测) | L4: 🔴/nasdata/未挂载+SSH .15/.17均超时</span>
   </div>
   <div style="margin-top:12px;font-size:12.5px;background:rgba(0,0,0,.18);border-radius:8px;padding:8px 12px;opacity:.95">
     ⚠️ 本报告是<b>训练监控与决策依据</b>，<b>不进论文正文</b>（2026-11-10 用户令）。用户关注点（2026-11-11）：<b>如何拿到更好的结果</b>。
@@ -51,14 +51,14 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
 </header>
 
 <!-- L1 -->
-<h2 class="sec">L1 · 常识推理（8 集）<span class="badge b-ok">✅ 16/20 ckpt</span></h2>
+<h2 class="sec">L1 · 常识推理（8 集）<span class="badge b-ok">✅ 17/20 ckpt</span></h2>
 <div class="card">
   <h3>评测口径</h3>
   <table>
     <tr><td class="l">任务集</td><td class="l">ARC-Challenge / ARC-Easy / BoolQ / HellaSwag / OpenBookQA / PIQA / SciQ / Winogrande</td></tr>
     <tr><td class="l">口径</td><td class="l">zero-shot · <code>limit=100</code> · GGUF F16 · llama-server CPU（<code>-t 4</code> · <code>nice 19</code> · 串行单 ckpt）</td></tr>
-    <tr><td class="l">已评</td><td class="l">10k–160k（<b>16 个</b>万整数 ckpt）</td></tr>
-    <tr><td class="l">下一个</td><td class="l">170k（ETA ≈12h 后）</td></tr>
+    <tr><td class="l">已评</td><td class="l">10k–170k（<b>17 个</b>万整数 ckpt）</td></tr>
+    <tr><td class="l">下一个</td><td class="l">180k（ETA ≈12h 后）</td></tr>
   </table>
 </div>
 <div class="card">
@@ -81,11 +81,12 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
     <tr><td>140k</td><td>587B</td><td>55.25%</td><td class="bad">-2.75</td></tr>
     <tr><td>150k</td><td>629B</td><td>57.12%</td><td class="ok">+1.87</td></tr>
     <tr><td><b>160k</b></td><td><b>671B</b></td><td><b>58.13%</b></td><td class="ok">+1.01 新高</td></tr>
+    <tr><td>170k</td><td>713B</td><td>57.75%</td><td class="bad">-0.38</td></tr>
   </table>
-  <p class="trend">📊 51.50%(10k)→58.13%(160k)，<b>+6.63pp</b>。700k 对数拟合≈62.8%(R²=0.860)。波动±2.75pp 在 <code>limit=100</code> 抽样误差内（stderr≈±4.5%）。</p>
+  <p class="trend">📊 51.50%(10k)→58.13%(160k峰值)→57.75%(170k)，<b>+6.25pp</b>。700k 对数拟合≈62.8%(R²=0.860)。波动±2.75pp 在 <code>limit=100</code> 抽样误差内（stderr≈±4.5%）。</p>
 </div>
 <div class="ok-box">
-  <b>L1 结论</b>：常识推理持续上升，160k 新高 58.13%。与 Xmodel-2(1.2B,1.5T,61.79%) 差距~3.7pp。<b>下一步</b>：继续每万整数 ckpt 评测。
+  <b>L1 结论</b>：常识推理持续上升，160k 峰值 58.13%，170k=57.75%（-0.38pp，在 stderr±4.5% 内属正常波动）。与 Xmodel-2(1.2B,1.5T,61.79%) 差距~3.7pp。<b>下一步</b>：继续每万整数 ckpt 评测，下一个 180k。
 </div>
 
 <!-- L2 -->
@@ -465,7 +466,7 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
   <h3>四层能力总表</h3>
   <table>
     <tr><th>层</th><th>评测</th><th>状态</th><th>关键数</th><th>下一步</th></tr>
-    <tr><td><b>L1</b></td><td class="l">常识 8 集 (0-shot)</td><td><span class="badge b-ok">✅ 16ckpt</span></td><td>58.13%@160k</td><td class="l">继续每万 ckpt</td></tr>
+    <tr><td><b>L1</b></td><td class="l">常识 8 集 (0-shot)</td><td><span class="badge b-ok">✅ 17ckpt</span></td><td>58.13%@160k(峰值),57.75%@170k</td><td class="l">继续每万 ckpt(下一个180k)</td></tr>
     <tr><td><b>L2</b></td><td class="l">复杂推理 6 集</td><td><span class="badge b-bad">🔴 6/6完成 · 5/6=0% · MMLU=23%</span></td><td>GSM8K=0%(v3) · MMLU=23.16%(≈随机) · BBH=0%(v4) · MATH=0%(v5) · <b>HumanEval=0%(v6)</b> · <b>MBPP=0%(v6)</b> · 🔬生成退化=llama.cpp SSM bug+模型能力 · RP=1.3无效(gen probe确认)</td><td class="l">L2全部完成→等decay/SFT改善</td></tr>
     <tr><td><b>L3</b></td><td class="l">Agentic</td><td><span class="badge b-bad">🔴 TB smoke完成 0/2</span></td><td>2 tasks · reward=0.0 · fix-git pytest 2/2 failed · 生成退化致agent无法编辑文件</td><td class="l">延后至decay/SFT后</td></tr>
     <tr><td><b>L4</b></td><td class="l">领域</td><td><span class="badge b-bad">❌ 未接·调研完</span></td><td>— · 数据在.15不可达</td><td class="l">延后至.15可达+SFT后</td></tr>
@@ -545,7 +546,7 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
 </div>
 
 <footer>
-  BaiZe pretrain 线 · 四层能力评测报告 · 2026-11-12 05:45 更新(#2033 · 170k L1 eval运行中(~76min·both alive·等results.json) · 训练健康iter171.5k/700k(24.5%) step~7.1s<7.4s✅ loss~2.04 · L1 16/16(160k=58.13%,170k eval进行中) · L2 6/6完成(GSM8K=0%HF确认,MMLU=23.16%) · L3 TB 0/2(待HF重测) · L4 BLOCKED(/nasdata/未挂载+SSH超时)) · 评测数字仅用于训练监控，不进论文正文
+  BaiZe pretrain 线 · 四层能力评测报告 · 2026-11-12 05:55 更新(#2034 · 170k L1 eval✅完成=57.75%(4561s) · 训练健康iter171.6k/700k(24.5%) step~7.0s<7.4s✅ loss~2.04 · L1 17/17(10k-170k,160k峰值58.13%) · L2 6/6完成(GSM8K=0%HF确认,MMLU=23.16%) · L3 TB 0/2(待HF重测) · L4 BLOCKED(/nasdata/未挂载+SSH超时)) · 评测数字仅用于训练监控，不进论文正文
 </footer>
 </div>
 </body>

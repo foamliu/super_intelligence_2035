@@ -1804,3 +1804,15 @@ L2/L3/L4 低分/空白同一根因 = 训练数据(P-5b/P-8 Ultra-FineWeb-L3)缺�
 ### Training health
 - iter 168950/700k (24.1%), step 7008-7058ms (<7.4s OK), loss 2.05, lr=1e-3, 0 NaN/skip
 - PID 146283 on .29
+
+### 170k L1 eval (2026-11-12 05:47)
+- Checkpoint: iter_0170000 (hf_iter_170000, GGUF F16 at /nas_train/app.e0031982/models/baize2b_gguf/bz2b-170000-f16.gguf)
+- Eval: 8-set zero-shot, limit=100, llama-server CPU -t 4 nice 19, port 8190
+- Elapsed: 4560.94s (~76min)
+- Results: /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/lm_eval_results/gguf_iter_170000_fixed_8set/results.json
+- Per-task (harness acc_norm where available, acc otherwise):
+  arc_challenge=0.34  arc_easy=0.57  boolq=0.60  hellaswag=0.55
+  openbookqa=0.37    piqa=0.76     sciq=0.85   winogrande=0.58
+- **Avg(harness) = 57.75%** (vs 160k peak 58.13%, Δ=-0.38pp, within stderr±4.5%)
+- L1 scaling report refreshed: 17/20 ckpt (10k-170k)
+- Command: python3 gen_llamacpp_scaling_report.py (BAIZE_REPORT_PATH=...report_pretrain_llamacpp_scaling_zh.html)
