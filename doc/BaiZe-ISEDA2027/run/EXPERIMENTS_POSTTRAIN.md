@@ -10127,3 +10127,34 @@ API_DOCS block → fingerprint scan vs 155 eval entry_points → S1×2 + S3×2 +
 
 ---
 
+## §R204 — v34 Utility SFT Corpus (wake273, 2026-11-11)
+
+**Background.** R203 v33 SleQueryData completed with 9 remaining blind APIs, each with 1 usage and no clear family grouping. pyAether MCP `get_api_details` was queried for all 9 blind API signatures. The 3 most tractable pure-utility APIs were selected for R204: `aelEngineerNotation`, `timeToTm`, `setPyAePath`. The remaining 6 (DB/GUI/mouse: `agrGetSnapPoints`, `geTreeRemoveItem`, `emvPurposeNumberDrawing`, `guMotion`, `mouseLBClick`, `smash_option`) require setup context (e.g. `dbOpenCV`/`dbCrtInst`, `aeCreateTree`) and are deferred to R205.
+
+**API selection.** 3 primary utility APIs + 3 related `ael*` helper APIs + 1 `aelPopSignifDigs` (also used as helper):
+- `aelEngineerNotation(value, prefix, fixed_eng)` → `str`: Engineering notation conversion (e.g. `1.23e-4` → `"123f"`, f=femto).
+- `timeToTm(unix_epoch)` → `tm` dict: Unix epoch → `struct tm` fields (`tm_year`, `tm_mon`, `tm_mday`, `tm_hour`, `tm_min`, `tm_sec`, `tm_wday`, `tm_yday`, `tm_isdst`).
+- `setPyAePath(path)` → `None`: Set pyAether library search path.
+- Related: `aelPopSignifDigs(num, sig_digs)` → `str` (significant digits), `aelStrSplit(str, sep)` → `list`, `aelFormatNum(value, fmt)` → `str`.
+
+**ISOLATE-class rationale.** All 3 primary APIs are eval utility helpers, not eval entry_points. The S5.1 red-line isolates entry_point names, not helper API names. Teaching public API references is compliant.
+
+**Pollution isolation.** 155 eval entry_points full scan: 20/20 PASS, 0 REJECTED. Independent re-check: 0 hits. Doctest values deliberately differ from eval task values (e.g. `1.23e-4` → `"123f"`, epoch `1609459200` → `tm_year=2021`).
+
+**Pair distribution.** 20 pairs: S1×3 + S3×3 + S4×6 + S5×6 + S6×2 across 7 APIs (3 primary + 3 related + 1 `aelPopSignifDigs`).
+
+**Blind scan re-run with v34** (v34 added to CORPUS_FILES in `baize_posttrain_r191_blind_scan.py`):
+- Covered: 155 → 158/164 (+3)
+- Blind: 9 → 6
+- Coverage ratio: 94.5% → 96.3%
+- 3 utility APIs cleared: `aelEngineerNotation`, `timeToTm`, `setPyAePath`
+- Remaining 6 blind (medium-difficulty, deferred to R205): `agrGetSnapPoints` (DB, needs `dbOpenCV`+`dbCrtInst`), `geTreeRemoveItem` (Qt tree, needs `aeCreateTree`), `emvPurposeNumberDrawing`, `guMotion`, `mouseLBClick`, `smash_option`.
+
+**Cumulative corpus.** v11-v34 = 892 + 20 = **912 pairs** training-ready.
+
+**Output files.** `sft_pyaether_corpus_v34_utility.jsonl` (20 lines, 19530 bytes). Builder: `baize_posttrain_r204_utility_corpus.py` (~560 lines, py_compile ✅, `--dry-run` ✅).
+
+**Status.** R204 ✅ complete. Sandbox TCP8667 still CLOSED (78th wake) — blocks Phase 1 eval & Phase 3 RL. GPU occupied by serve placeholders (8095-8099) — v11-v34 SFT re-train awaits GPU release. Formal P3 training awaits pretrain ckpt (ETA ≈ 2026-12-25).
+
+---
+

@@ -1,46 +1,26 @@
 {
   "round": "R191-scan",
   "eval_raw_apis": 164,
-  "covered_eval_apis": 154,
-  "blind_eval_apis": 10,
-  "coverage_ratio": 0.939,
+  "covered_eval_apis": 158,
+  "blind_eval_apis": 6,
+  "coverage_ratio": 0.9634,
   "blind_list": [
-    "SleQueryData",
-    "aelEngineerNotation",
     "agrGetSnapPoints",
     "emvPurposeNumberDrawing",
     "geTreeRemoveItem",
     "guMotion",
     "mouseLBClick",
-    "setPyAePath",
-    "smash_option",
-    "timeToTm"
+    "smash_option"
   ],
   "family_usage": {
-    "Sle": 1,
-    "ael": 1,
     "agr": 1,
     "emv": 1,
     "ge": 1,
     "gu": 1,
     "mouse": 1,
-    "set": 1,
-    "smash": 1,
-    "time": 1
+    "smash": 1
   },
   "family_apis": {
-    "Sle": [
-      {
-        "api": "SleQueryData",
-        "eval_usage": 1
-      }
-    ],
-    "ael": [
-      {
-        "api": "aelEngineerNotation",
-        "eval_usage": 1
-      }
-    ],
     "agr": [
       {
         "api": "agrGetSnapPoints",
@@ -71,21 +51,9 @@
         "eval_usage": 1
       }
     ],
-    "set": [
-      {
-        "api": "setPyAePath",
-        "eval_usage": 1
-      }
-    ],
     "smash": [
       {
         "api": "smash_option",
-        "eval_usage": 1
-      }
-    ],
-    "time": [
-      {
-        "api": "timeToTm",
         "eval_usage": 1
       }
     ]
