@@ -239,9 +239,56 @@ R169 ACL 升级 runbook（<code>baize_posttrain_r169_sandbox_acl_escalation.py</
 <tr><td>沙盒 ACL runbook</td><td><code>run/baize_posttrain_r169_sandbox_acl_escalation.py</code></td></tr>
 <tr><td>实验台账</td><td><code>run/EXPERIMENTS_POSTTRAIN.md</code> §R172</td></tr>
 </table>
+<h2>13. EDA-Eval 静态分析全量结果（113 task · wake291）</h2>
+<div class="info">
+<strong>方法</strong>：对 EDA-Eval-PyAether 113 个 non-techlib 任务，用 vLLM 分别请求 Base (MiniCPM5-2B :8098) 和 SFT (global_step_70 :8096)，提取函数体做静态分析（语法检查 / 截断检测 / API 覆盖率 / 代码长度 / 推理时间）。<strong>不依赖沙盒</strong>，纯推理 + 静态分析。
+</div>
+<h3>13.1 总体对比（N=113）</h3>
+<table>
+<tr><th>指标</th><th>Base</th><th>SFT</th><th>差异</th></tr>
+<tr><td><strong>语法合法率</strong></td><td>62.8% (71/113)</td><td>95.6% (108/113)</td><td><strong>+32.7pp</strong></td></tr>
+<tr><td><strong>函数定义率</strong></td><td>69.0% (78/113)</td><td>100% (113/113)</td><td><strong>+31.0pp</strong></td></tr>
+<tr><td><strong>截断率</strong></td><td>38.1% (43/113)</td><td>4.4% (5/113)</td><td><strong>8.6x 降低</strong></td></tr>
+<tr><td>推理时间 (mean)</td><td>17.1 s/task</td><td>4.3 s/task</td><td><strong>4.0x 更快</strong></td></tr>
+<tr><td>API 覆盖率 (mean)</td><td>0.115</td><td>0.170</td><td>+0.055 (微增)</td></tr>
+</table>
+<div class="ok">
+<strong>核心结论</strong>：SFT 在<strong>协议层</strong>（语法/格式/截断）取得大幅改善（+32.7pp 语法、8.6x 截断降低、100% 函数定义），但在<strong>API 选择层</strong>仅微增（+0.055）——这恰好界定了 SFT 与 RL 的分工：SFT 修格式，RL 修 API 选择。
+</div>
+<h3>13.2 Per-Scenario 分层</h3>
+<table>
+<tr><th>场景</th><th>N</th><th>Base 语法</th><th>SFT 语法</th><th>Δ</th><th>Base 截断</th><th>SFT 截断</th></tr>
+<tr><td><strong>Schematic</strong></td><td>41</td><td>43.9%</td><td>92.7%</td><td><strong>+48.8pp</strong></td><td>56.1%</td><td>7.3%</td></tr>
+<tr><td>Layout</td><td>28</td><td>67.9%</td><td>96.4%</td><td>+28.6pp</td><td>35.7%</td><td>3.6%</td></tr>
+<tr><td>Others</td><td>23</td><td>78.3%</td><td>100%</td><td>+21.7pp</td><td>21.7%</td><td>0.0%</td></tr>
+<tr><td>Design Mgmt</td><td>21</td><td>76.2%</td><td>95.2%</td><td>+19.0pp</td><td>23.8%</td><td>4.8%</td></tr>
+</table>
+<p><strong>Schematic</strong>（原理图编辑）是 SFT 受益最大的场景（+48.8pp），也是 Base 截断率最高的场景（56.1%→7.3%）。SFT 的简洁输出风格直接解决了 Base 在高难度任务上的截断问题。</p>
+<h3>13.3 P0 诊断验证（D1-D6）</h3>
+<table>
+<tr><th>诊断项</th><th>Base</th><th>SFT</th><th>结论</th></tr>
+<tr><td>D1 工具调用合法率</td><td>69.0%</td><td>100%</td><td>✅ 协议问题完全可回收</td></tr>
+<tr><td>D2 API 覆盖率</td><td>0.115</td><td>0.170</td><td>⚠️ 仅微增 → RL 核心目标</td></tr>
+<tr><td>D3 截断率</td><td>38.1%</td><td>4.4%</td><td>✅ 8.6x 降低</td></tr>
+<tr><td>D4 语法错误数</td><td>42</td><td>5</td><td>✅ SFT 修复 88%</td></tr>
+<tr><td>D5 per-scenario</td><td colspan="2">Schematic +48.8pp</td><td>✅ 验证配比</td></tr>
+<tr><td>D6 迭代轮数</td><td colspan="2">N/A</td><td>需运行时 eval</td></tr>
+</table>
+<div class="warn">
+<strong>局限性</strong>：静态分析 ≠ 运行时 Pass@1。语法合法不等于功能正确。需沙盒恢复后跑 5-run EDA-Eval 评测获得真实 Pass@1。API 覆盖率是 proxy（代码中出现 API 名 ≠ 正确使用）。
+</div>
+<h3>13.4 趋势稳定性（10→30→60→80→113 task）</h3>
+<table>
+<tr><th>指标</th><th>10 task</th><th>30 task</th><th>60 task</th><th>80 task</th><th><strong>113 task</strong></th></tr>
+<tr><td>语法 Δ</td><td>+40pp</td><td>+26.7pp</td><td>+25pp</td><td>+21.3pp</td><td><strong>+32.7pp</strong></td></tr>
+<tr><td>截断 ratio</td><td>—</td><td>4.5x</td><td>—</td><td>6.3x</td><td><strong>8.6x</strong></td></tr>
+<tr><td>Schematic Δ</td><td>—</td><td>+50pp</td><td>+31.2pp</td><td>+27pp</td><td><strong>+48.8pp</strong></td></tr>
+</table>
+<p>从 10→113 task，核心结论<strong>稳健不变</strong>：SFT 大幅修复协议层（语法/截断），API 选择层改善有限（RL 价值区）。</p>
+<p><strong>数据文件</strong>：<code>run/eda_eval_static_full_wake287.json</code>（113 task 原始结果）| <code>run/eda_eval_static_final_summary.json</code>（结构化汇总）| <code>run/baize_posttrain_static_final_analysis.py</code>（分析脚本）| <code>run/EXPERIMENTS_POSTTRAIN.md §R291</code></p>
 <div class="footer">
 <p>BaiZe Stage(ii) Post-Training · Phase 2 Surrogate SFT · 替身预演，收益不可迁移到 BaiZe</p>
-<p>生成于 2026-11-11 08:10 CST · wake241 · R172 · 自包含 HTML（0 script, 0 外链）</p>
+<p>生成于 2026-11-12 03:05 CST · wake291 · R291 · 自包含 HTML（0 script, 0 外链）</p>
 </div>
 </div>
 </body>
