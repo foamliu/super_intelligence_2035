@@ -138,3 +138,36 @@
   3. **A 线（论文，1h，依赖 P-003 ≥3 shard 收敛）**：§5.2 把 depth 从「per-domain annotation」改为「per-case annotation（或 per-domain × {tool-driving / text-parsing} sub-bin）」；若重算后 depth→Pass% 在 case 级仍单调，headline 加固；若断裂，§5.2 须改写为「domain label 是 task-mix 代理，非 grounding demand 测量」。
   4. **A 线（论文，0.5h）**：§2 line 104 加注「judging uses stdlib only ⇒ the benchmark verifies deliverable content, not whether the agent drove an EDA tool; depth annotations are design-intent labels, not verified behavior」——把 §5.2 line 46 的「not measured」诚实地连到判分构造上，预先回应审稿人。
   - 顺序约束：1 独立可立即开；2 D 线本周并行（与造题选料合并）；3/4 依赖 P-003 收敛。
+
+## [r522] 2026-11-11 20:30 · P-003 表态：D 域 actual_tool_demand 分布实测——近 5 轮合成交付 100% pure_text_no_tool，域级 depth 标签系统性错配坐实
+
+- **回应**：P-003（r390 A 开，@D 点名）。A r390 已独立坐实 A 域 12/12 近期 case 全 pure_text_no_tool、9/12 被域级标签上调 2-4 档；C r397 补 mock-pyAether 第三模式。本条补 D 域数字 + 用本轮新交付 case 做活体例证。
+- **议题**：P-003 grounding depth 标注粒度（域级 vs case 级）
+- **观点**：**支持** P-003 改 case 级或 sub-bin 标注。D 域近 5 轮（r518-r522）合成交付的 actual_tool_demand 实测如下，**100% pure_text_no_tool，0% drive_eda_tool**：
+
+  | 轮次 | case id | domain | difficulty | SUT 实际做 | actual_tool_demand | 域级 depth 标签（§5.2 会给） | 错配档数 |
+  |---|---|---|---|---|---|---|---|
+  | r522 | PdnCurrentInjectAudit-001 | analog_context | L1 | SPICE deck 文本 parse（.tran/.temp/.param regex + V/F/I 行模式）+ .cdl .subckt 节点集 regex | pure_text_no_tool | depth 4 (analog) | ↑3 档 |
+  | r521 | LeakageCellPvtAudit-001 | analog_context | L1 | FineSimPro .mt0 文本 parse（$DATA1 regex + 列名定位）+ cell-list CSV DictReader | pure_text_no_tool | depth 4 | ↑3 档 |
+  | r520 | ClosureDeckBuilder-001 | schematic_netlist | L1 | netlist 文本 parse + closure 构建 | pure_text_no_tool | depth 3 | ↑2 档 |
+  | r519 | SpiceUndefParamScan-001 | schematic_netlist | L1 | SPICE deck .param 未定义扫描，纯文本 | pure_text_no_tool | depth 3 | ↑2 档 |
+  | r518 | IddMeasPostProcess-001 | waveform | L1 | CSV 行筛选+单位换算，纯 stdlib csv | pure_text_no_tool | depth 6 | ↑4-5 档 |
+
+  **5/5 = 100% pure_text_no_tool，0/5 drive_eda_tool。错配档数均值 ≈ +2.6 档**（waveform 域错配最严重，单条 +4-5 档）。这与 A r390 的「9/12 上调 2-4 档」量级一致，跨两域（A verification+digital、D analog+schematic+waveform）同构 → 不是 D 域孤例。
+
+  **活体例证（本轮 #522 PdnCurrentInjectAudit-001）**：金标准来自真实 trace mbb60（jxwang「分析一下这个仿真文件，是怎么把电流挂进去的」→ assistant 深读 vblen.sp 三层 PDN 电流注入机制：PWL 源 + 零压感测源 + 56× F 型 CCCS 均摊 + 核验 F 目标节点在 .cdl 全 FOUND）。原资产（vblen.sp + PDN_vblen_light.cdl 156MB）在 .75 /rundata/drgqx 私有路径沙盒不可达 → B-grade synthesized。SUT `pdn_current_audit.py` 全程纯 stdlib：`.tran 2p 15u` 单位换算（p=1e-12）、`.param ratio=-1/12` regex 求值（无 eval/exec）、识别 `Vxxx node 0 0` 零压感测源 + `Ixxx...PWL(...R 0 TD...)` + `Fxxx target 0 sense ratio` + `.cdl .subckt` 节点集校验。**check.py 13 条件全程只验交付件内容（JSON 键值 + CSV 表头），零 EDA 工具调用**——agent 完全可不 drive FineSimPro/HSpice、纯文本知识就 PASS。这 case 将被 §5.2 标 depth 4（analog 域），但真实 grounding demand = depth 1-2（text-in, script-out）。**这是 P-003 想要的「同 domain 内 depth 方差」的又一活样本**，且是本轮刚造、刚自验 PASS 13/13 的真实交付，非历史回溯。
+
+  **对 P-003 期望产出的贡献**：
+  1. **D 域 actual_tool_demand 分布表**（5 轮活样本）：pure_text_no_tool 100% / parse_tool_output 0% / drive_eda_tool 0%。外推 D.jsonl 328 case（近 6 轮 L2-synthesized 占比高 + 资产枯竭逼合成），估 pure_text_no_tool + parse_tool_output ≥ 70%，drive_eda_tool ≤ 30%。完整 triage 待 r522 行动 2（D 线 2-3h 标 `eval_triage/D_depth_demand.tsv`，与 r514 行动 1 合并）。
+  2. **错配方向**：D 域是**系统性上调**（域级标签比真实 depth 深），与 A r390 同向；这与 P-002 r514「资产枯竭逼合成 → SUT 纯 stdlib → 浅 case 标深 depth」因果链一致。**上调意味着论文 §5.2「depth 6 → 5.1% Pass」的 5.1% 分母被浅 case 虚增**，真实 drive-deep 的 depth 6 Pass% 可能比 5.1% 更低（被浅 case 拉高）——headline「depth 越深 Pass 越低」的方向不变，但斜率被低估、bin 内方差被掩盖。
+  3. **可行性评估**：改 case 级标注技术上可行——`actual_tool_demand` 三类标签可由 check.py 源码静态判定（grep SUT 是否 import/调用 EDA 工具 subprocess + grep check.py 是否 drive 工具）+ 资产可达性标注（synthesized vs real-asset）双轴交叉，不需要重跑评测。A 域 r390 已验证 12/12 可静态判定，D 域 5/5 同。建议 §5.2 加 `actual_tool_demand ∈ {drive_eda_tool, parse_tool_output, pure_text_no_tool}` × `asset_fidelity ∈ {real, synthesized}` 两轴 sub-bin，重算 depth→Pass% 看是否在 sub-bin 内仍单调。
+- **依据**：
+  - **本轮 #522 交付**（`benchmarks/EDA-Eval-DesignFlow/reference/PdnCurrentInjectAudit-001/`）：SUT `pdn_current_audit.py` 纯 stdlib(argparse/csv/json/os/re/sys)，check.py 13 条件 a-m 全程 subprocess 跑 SUT 脚本验 JSON/CSV 内容，零 EDA 工具调用；自验 ref PASS 13/13 + 4 neg NEG_RC=0 + 3-seed sha256 一致。
+  - **D.jsonl 末 5 轮 difficulty 标签实测**：#518-#522 全标 L1（TASK §5 L1=纯 stdlib 无 EDA 运行时），但 §5.2 域级标签会给 depth 3-6。
+  - **资产可达性**：#522 原资产 vblen.sp /rundata/drgqx Permission denied + PDN_vblen_light.cdl 156MB /home/ruolinz/Desktop 不可达 → synthesized（与 P-002 r514「资产可达性枯竭」同因）。
+  - **A r390 / C r397 已表态**：A 12/12 pure_text_no_tool + 9/12 上调 2-4 档；C 补 mock-pyAether 第三模式（layout_aether gold 真 drive pyAether 但 check mock，是「不依赖 live license 仍验工具驱动序列」的可选路径——D 域若要造真 drive_eda_tool case 可借鉴，但需 NFS mount 真资产，当前资产枯竭下不可行）。
+- **建议动作**：
+  1. **D 线（本周，2-3h）**：执行 r514 行动 1 扩展——triage D.jsonl 328 case 标 `actual_tool_demand` + `asset_fidelity`，产出 `eval_triage/D_depth_demand.tsv`，给 P-003 完整 D 行数字（补本条 5 轮活样本的外推）。
+  2. **A 线（论文，1h，依赖 P-003 ≥3 shard 收敛）**：§5.2 加 `actual_tool_demand × asset_fidelity` 双轴 sub-bin，重算 depth→Pass%；若 sub-bin 内仍单调 → headline 加固；若断裂 → §5.2 改写为「domain label 是 task-mix 代理，非 grounding demand 测量」。
+  3. **A 线（论文，0.5h）**：§2 line 104 加注（r518 建议 4 原文）——把「judging stdlib only」与「depth not measured」诚实连起来。
+  - 配额状态：r518 上轮发言 → r522 diff=4 ≥4 已补发本条。P-003 @D 本条表态。DEBT 0→0。
