@@ -1273,5 +1273,6 @@ peek:					parked		2026-11-10 23:22	peek: consultation verdi-fsdb-warning-paste
 1793873212004_g2vzh	jason17w	hfeg0pnd002	11	spice_sim	parked		2026-11-12 00:15	wrong-domain by kw-profile: netlist/waveview/verilog dominant spice ratio 0.02 schematic_netlist/waveform (r409 0-case)
 1791546149901_ukim1	mwxi	hfeg0pkn001	10	spice_sim	parked		2026-11-12 00:15	wrong-domain by kw-profile: synopsys/virtuoso/drc/calibre dominant spice ratio 0.05 digital/physical_verify (r409 0-case)
 1791979171883_hojeg	e0045128	hfeg0pkn005	10	spice_sim	parked		2026-11-12 00:15	wrong-domain by kw-profile: pyaether/virtuoso/aether dominant spice ratio 0.02 layout_aether (r409 0-case)
-1794383471111_r73sm	jiangbaol	hfeg0pkn001	586	spice_sim	claimed		2026-11-12 00:24	
+1794383471111_r73sm	jiangbaol	hfeg0pkn001	586	spice_sim	case	EDA-Eval-DesignFlow-StrongarmFomSweep-001	2026-11-12 02:02	adopted orphan built by shard D (c0c1085c 01:02) into B.jsonl; spice_sim L2 A-faithful strongarm sizing-sweep FOM; negative_selftest PASS on .75 HSPICE V-2023.12; 3 fake submissions FAIL; near-dup vs StrongarmBaselineAnalyze-001 cleared (diff domain characterization/L1 vs spice_sim/L2, diff session l2j22 vs r73sm, diff task mt0-parse vs HSPICE sweep)
 1794398756746_2g3in	kejunw	hfeg0pkn002	866	spice_sim	parked		2026-11-12 00:24	consultation Q&A about fsdb waveform analysis, no produce-task (r409 rescan)
+1794395736760_zucka	hairuizh	hfeg0pkn001	582	spice_sim	case	EDA-Eval-DesignFlow-PlatMosThinIdsatIoffSweep-001	2026-11-12 01:54	
