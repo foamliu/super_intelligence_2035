@@ -400,3 +400,4 @@
 1794215537758_5or9z.messages.json	e0046913	hfeg0pkn003	88	verification	parked		2026-11-11 21:50	r394 deepread (93msgs/42tool): Formality FM rtl2rtl flow diagnosis+consultation, NOT clean produce -- user asks '分析原因' x4 + conceptual Q&A (link lib/black box/set_case_analysis/dft mbist); 'add FM_CONSTRAINT_SCRIPT support' (msg63 q4) is advisory ('告诉我如何优化'), agent only wrote diag_*.py never edited Makefile/fm.tcl; overlaps FormalityLaunchDiag-001 archetype; assets in /proj/lacaa (sandbox-access risk per P-002)
 1789892513893_qopwl.messages.json	lorikx	hfeg0pkn001	30	digital	case	EDA-Eval-DesignFlow-FsdbDumpConvert-001	2026-11-11 23:01	
 1793350628620_wbhv1	lorikx	10.129.2.10	75	eda_other	case	EDA-Eval-DesignFlow-TqvVrefreshBuild-001	2026-11-11 23:41	
+1793957377461_s9bc9	e0039602	hfeg0pkn002	391	digital	case	EDA-Eval-DesignFlow-VlibDetConvert-001	2026-11-12 00:19	
