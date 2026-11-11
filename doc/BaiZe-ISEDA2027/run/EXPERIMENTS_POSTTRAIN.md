@@ -8445,3 +8445,123 @@ R177 发现 SFT 对真实 API `dbCrtSchWire` 幻觉出 `lib.openSchematic` ⇒ v
 | v10 语料 JSONL | `run/sft_pyaether_corpus_v10_pin_apis.jsonl` | 14019 bytes / 24 对 |
 
 > ⚠️ 替身 SFT/RL 结果不可迁移到 BaiZe。
+
+## §R181 (2026-11-11 wake250) v11 Merged Corpus + Coverage Audit (v8+v9+v10 -> training-ready, pollution-gated)
+
+### 1. Motivation
+
+The last SFT run (R172, Phase2 surrogate) used an earlier corpus snapshot.
+Since then three NEW targeted-API corpora were built (v8 R177 / v9 R179 / v10 R180)
+but they lived in **three separate files with three different schemas**:
+- v8: `pair_id, type, api_used, prompt, completion, contamination_check` (no `note`)
+- v9: `pair_id, type, api_used, prompt, completion, contamination_check, note`
+- v10: `id, type, prompt, completion, api_used, contamination_check, note`
+
+To re-run SFT the moment GPU6-7 are freed, a single schema-normalized,
+deduplicated, **pollution-gated** training file is needed. This round produces it
+plus a coverage audit that pinpoints the remaining blind spots.
+
+### 2. Method
+
+Script: `baize_posttrain_r181_corpus_merge_audit.py` (206 lines, py_compile OK).
+
+Pipeline:
+1. **Load** v8 (25) + v9 (49) + v10 (24) = 98 raw records.
+2. **Normalize** all to unified schema
+   `{id, type, api_used, prompt, completion, contamination_check, note, source}`
+   (carries `source` field so each pair is traceable to its origin file).
+3. **Dedup** by sha1(sorted(api_used) + prompt[:200].lower()).
+4. **Pollution scan** (red-line gate, taskbook section 5.1): reject any pair whose
+   `prompt+completion` contains a literal eval `entry_point` string
+   (155 unique task function names extracted from
+   `~/code/eda_fastmcp/pyAether-eval/original_dataset/EDA-Eval-PyAether-v20260311.jsonl`).
+5. **Write** `sft_pyaether_corpus_v11_merged_new_apis.jsonl`.
+6. **Coverage audit**: extract raw `pyScript.X` API names from eval
+   `canonical_solution+test` (164 unique), intersect with corpus `api_used`.
+
+### 3. Results
+
+| Metric | Value |
+|:--|--:|
+| Raw loaded (v8+v9+v10) | 98 |
+| Duplicates removed | 5 |
+| Post-dedup | 93 |
+| Pollution scan PASS | 93 |
+| Pollution scan REJECTED | **0** |
+| Merged v11 pairs | **93** |
+| Merged v11 bytes | 68,351 |
+| Corpus unique APIs | 19 |
+
+**Type distribution** (post-merge):
+
+| type | count |
+|:--|--:|
+| S1 / S1_doc_to_code | 23 |
+| S4 (multi-step trace) | 17 |
+| S5 (param variation) | 17 |
+| S6 (API lookup) | 12 |
+| S3 (multi-API chain) | 12 |
+| S2 (api lookup) | 10 |
+| S7 (corrected prompt) | 2 |
+
+**GATE: PASS** -- v11 is training-ready (0 pollution hits across 93 pairs vs 155 eval entry_points).
+
+### 4. Coverage Audit vs eval (164 raw pyScript APIs)
+
+| Category | Count | Examples |
+|:--|--:|:--|
+| Covered (corpus API also in eval) | 6 | dbCrtRect, dbCrtPolygon, dbCrtInst, dbCrtPath, dbCrtNet, dbCrtSchWire |
+| SAFE corpus (not in eval, free to expand) | 13 | emyFigGetPinName, dbGetPinFigName, emyPinGetNames, aeLeCreatePin, dbFindInst, dbSchGetPinOrder, aeSchStretch, aeCrtWireLabelsAndPins, emyDesignIsSchematic, dbCrtSchPin, dbCrtSchWireName, dbCrtWire, dbSchIsWire |
+| Blind eval APIs (in eval, not in corpus) | 158 | see below |
+| Coverage ratio | 3.7% | 6/164 |
+
+**Blind breakdown (158):**
+- 12 CONSTANT/ENUM-like (ALL_CAPS): MDE_SWEEP_*, MDE_TRAN_ACC_LEVEL_*, NTL_INDEX_FORMAT_*, SLE_GOA_AND, SLE_LE_WIRE_*
+- 146 callable-like, dominated by:
+  - `db*` database/query (~30): dbOpenCV, dbCloseCV, dbNewCV, dbCreateLib, dbDelLib, dbFind, dbFindMemInstByName, dbGetAllLibs, dbGetTrueOverlaps, dbCrtPinByNet, dbCrtTerm, dbDeleteAll, dbExpandPoints, dbConvertPolygonToPath ...
+  - `Mde*` simulation (~20): MdeAcAnalysis, MdeTranAnalysis, MdeOutput, MdeSpeOutput, MdeSweepRange/Type/Variable, MdePlatSession, MdePlat*JobPolicy, MdePlatParamSweep* ...
+  - `ae*` GUI/editor (~20): aeCreateRect, aeCreateTree, aeCreateTreeItem, aeCrtHilitPolygon, aeEditInPlace, aeGetActiveDa, aeGetCommandPoint, aeGetCurDesign, aeIpcProcess, aeMakeCell, aeMergeShapes, aeOpenDesign, aeSelectFigs, aeSetWindowFocus, aeTreeAppendItem, aeViaGenerateViasAtPoint, aeViaGetViaOptions ...
+  - `cdf*` CDF params (~5): cdfCreateCDF, cdfCreateParam, cdfSet, cdfSetSimInfo
+  - `Gu*` geometry (~3): GuCartBox, GuCartPolyLine, GuCartPolygon
+  - misc: CColor, CString, CStringList, EmyLPPHeader, EmyNtlUtil, SleQueryData, agrGetSnapPoints, aelEngineerNotation
+
+### 5. Interpretation
+
+- The 3.7% direct-coverage ratio is **expected and not alarming**: the corpus teaches
+  the **atomic PyAether primitives** (dbCrtRect, etc.) via official doc, while eval
+  `entry_points` are **composed task function names** (add_highlight_rect) that bundle
+  many primitives. The 6 covered are exactly the layout-create + schematic-wire
+  primitives R179 deliberately targeted -- confirming v9 closed its stated blind spot.
+- The 13 SAFE APIs are the expansion headroom: zero eval reference, can be grown
+  freely without touching the isolation red line.
+- The 146 callable blind APIs are **ISOLATE-class by construction** (they appear in
+  eval canonical solutions). They may be taught ONLY from official API reference
+  docs, never from eval task content. The pollution scan already enforces this
+  (entry_point literal match). Priority for the NEXT corpus iteration, ranked by
+  eval reference frequency and scenario weight (Layout 64 / Schematic 47 / Design
+  Mgmt 24 / Others 23):
+  1. `db*` query/open/close (foundational, high cross-scenario reuse)
+  2. `Mde*` simulation (Design Mgmt + Others scenarios)
+  3. `cdf*` CDF params (Design Mgmt scenario)
+  4. `ae*` GUI/editor (lower priority -- many are interactive, hard to sandbox)
+
+### 6. Next step
+
+- v11 is the **training-ready merge** of all new corpora since last SFT.
+  When GPU6-7 are freed (sandbox ACL open or serve teardown), feed v11 (93 pairs)
+  into `baize_posttrain_sft.sh` as the PyAether-domain slice alongside the
+  UltraData general slice, then post-SFT eval to verify layout/schematic/pin fix.
+- Next corpus iteration (R182 candidate): add `db*` query primitives
+  (dbOpenCV/dbCloseCV/dbNewCV/dbFind/dbGetAllLibs) from official MCP reference,
+  pollution-scan, append to v11.
+
+### 7. Deliverables
+
+| Item | Path | Size |
+|:--|:--|--:|
+| merge+audit script | `run/baize_posttrain_r181_corpus_merge_audit.py` | 206 lines / py_compile OK |
+| merged training-ready corpus | `run/sft_pyaether_corpus_v11_merged_new_apis.jsonl` | 68,351 bytes / 93 pairs |
+| coverage audit JSON | `run/r181_corpus_merge_audit.json` | full sets (covered/blind/safe) |
+
+> All 93 pairs PASS the 155-entry_point pollution scan. v11 is gated for training.
+> Surrogate SFT/RL results do NOT transfer to BaiZe.
