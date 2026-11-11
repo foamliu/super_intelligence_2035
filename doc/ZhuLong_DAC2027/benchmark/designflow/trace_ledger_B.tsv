@@ -1024,3 +1024,13 @@ peek:					parked		2026-11-10 23:22	peek: consultation verdi-fsdb-warning-paste
 1794316107717_vyx10	guomings	hfeg0plg54	0	spice_sim	parked		2026-11-11 07:53	wrong-shard A: RTL code editing
 1794317657516_33zed	e0044587	hfeg0pkn004	0	spice_sim	parked		2026-11-11 07:53	trivial: hello
 1794318133593_cqvj3	guomings	hfeg0plg54	0	spice_sim	parked		2026-11-11 07:53	wrong-shard A: RTL code editing
+1793341791924_0vtdn	weizhuo	hfeahpc503	15	spice_sim	parked		2026-11-11 08:17	consultation/teaching: HSPICE .measure/.probe Q&A, no produce-task deliverable
+1792743024140_uco1e	zhukaic	hfeg0plg58	14	spice_sim	parked		2026-11-11 08:17	write .measure rise/fall as TEXT in chat, no file deliverable, trivial L1 not viable
+1793752571635_39zg9	e0042624	hfeg0pjn200	0	spice_sim	parked		2026-11-11 08:18	agent-policy/shell_rm testing, wrong-shard non-EDA
+1794291480856_m1si1	e0042624	hfeg0pjn200	0	spice_sim	parked		2026-11-11 08:18	SA_Linux code analysis consultation, non-spice
+1794294505099_36ihy	e0042624	hfeg0pjn200	0	spice_sim	parked		2026-11-11 08:18	agent SDK debug/firefox launch, non-spice
+1792995911596_8h2g9	jiashengz	hfeg0plg92	0	spice_sim	parked		2026-11-11 08:18	Virtuoso SKILL .il load error debug, wrong-shard C layout
+1794187399277_1hbsm	thomasz	hfeg0plg92	0	spice_sim	parked		2026-11-11 08:18	Totem ESD sim-stuck diagnostic (check_sim_status.py), no produce-task deliverable
+1794274823283_jxhl2	thomasz	hfeg0plg92	0	spice_sim	parked		2026-11-11 08:18	LVS .nxf compare debug, wrong-shard C physical_verify
+1794299459246_lhbz9	thomasz	hfeg0plg92	0	spice_sim	parked		2026-11-11 08:18	pathfinder sim-stuck diagnostic, no produce-task
+1794296046202_t825w	sherlock	hfeg0plg104	0	spice_sim	parked		2026-11-11 08:18	DRC M1A_LS rule semantic explanation, wrong-shard C physical_verify
