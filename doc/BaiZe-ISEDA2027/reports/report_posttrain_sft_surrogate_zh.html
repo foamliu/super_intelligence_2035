@@ -46,16 +46,16 @@ BaiZe 本体使用 <strong>Mamba2</strong> 架构，两者架构不同。SFT rec
 </div>
 <h2>1. 摘要</h2>
 <p>Phase 2 替身 SFT 端到端验证<strong>已完成训练阶段</strong>。使用 verl 0.4.0 FSDP2 框架在 2×A40 GPU 上对 MiniCPM5-2B 进行了全参微调（full fine-tuning），
-训练数据为 R152 统一 PyAether SFT 语料（1725 对，污染隔离闸门 PASS）。72 步（3 epoch）训练在 24 分钟内完成，训练损失从 2.332 降至 0.545，
-验证损失 0.583。最终 checkpoint（global_step_72）已成功用 vLLM serve 加载并通过 smoke test，证明 SFT 产出的 checkpoint 格式正确、可服务。</p>
+训练数据为 R210 v11-v36 合并 PyAether SFT 语料（1029 对，污染隔离闸门 PASS）。70 步（5 epoch）训练在 27 分钟内完成，训练损失从 2.123 降至 0.618，
+验证损失 0.673。最终 checkpoint（global_step_70）已成功用 vLLM serve 加载（GPU6:8096, served-model-name=minicpm5-sft），并通过 113 任务静态分析 + Live 生成烟测验证，证明 SFT 产出的 checkpoint 格式正确、可服务且在 EDA 代码生成质量上有显著改善。</p>
 <div class="metrics-grid">
-<div class="metric-box"><div class="metric">2.332→0.545</div><div class="metric-label">训练损失 (step1→72)</div></div>
-<div class="metric-box"><div class="metric">0.583</div><div class="metric-label">验证损失 (val/loss)</div></div>
-<div class="metric-box"><div class="metric">72 / 3</div><div class="metric-label">总步数 / Epoch</div></div>
-<div class="metric-box"><div class="metric">24 min</div><div class="metric-label">训练耗时</div></div>
+<div class="metric-box"><div class="metric">2.123→0.618</div><div class="metric-label">训练损失 (step1→70)</div></div>
+<div class="metric-box"><div class="metric">0.673</div><div class="metric-label">验证损失 (val/loss)</div></div>
+<div class="metric-box"><div class="metric">70 / 5</div><div class="metric-label">总步数 / Epoch</div></div>
+<div class="metric-box"><div class="metric">27 min</div><div class="metric-label">训练耗时</div></div>
 </div>
 <div class="ok">
-<strong>✅ 训练状态</strong>：rc=0（成功退出）　|　4 个 checkpoint 已保存（step 20/40/60/72，各 4.7GB）　|　SFT ckpt vLLM serve 验证通过（GPU6:8096）　|　smoke test 生成连贯代码
+<strong>✅ 训练状态</strong>：rc=0（成功退出）　|　4 个 checkpoint 已保存（step 20/40/60/70，各 4.7GB）　|　SFT ckpt vLLM serve 验证通过（GPU6:8096, minicpm5-sft）　|　113 任务静态分析：语法率 +32.7pp（62.8%→95.6%）、截断率 8.6× 降低（38.1%→4.4%）、函数定义率 100%（vs 69.0%）　|　Live 烟测：SFT 3/3 task 尝试用 pyAether 域 API vs BASE 1/3
 </div>
 <h2>2. 训练配方（Training Recipe）</h2>
 <table>
@@ -67,20 +67,21 @@ BaiZe 本体使用 <strong>Mamba2</strong> 架构，两者架构不同。SFT rec
 <tr><td>微调模式</td><td>full（全参微调）</td><td>非 LoRA；lora_rank 配置项已设为 0</td></tr>
 <tr><td>最大序列长度</td><td>2048</td><td>右侧截断 (truncation=right)</td></tr>
 <tr><td>batch size</td><td>global=64, micro/GPU=4</td><td>梯度累积 = 64 / (4×2) = 8 步</td></tr>
-<tr><td>Epoch 数</td><td>3</td><td>每 epoch 24 步，总 72 步</td></tr>
+<tr><td>Epoch 数</td><td>5</td><td>每 epoch 14 步，总 70 步</td></tr>
 <tr><td>学习率</td><td>1e-5</td><td>cosine 调度，warmup_ratio=0.1（~7 步 warmup）</td></tr>
 <tr><td>优化器</td><td>AdamW</td><td>betas=[0.9, 0.95], weight_decay=0.01, clip_grad=1.0</td></tr>
-<tr><td>保存频率</td><td>每 20 步</td><td>save_freq=20 → ckpt at step 20, 40, 60, 72</td></tr>
+<tr><td>保存频率</td><td>每 20 步</td><td>save_freq=20 → ckpt at step 20, 40, 60, 70</td></tr>
 <tr><td>随机种子</td><td>42</td><td>可复现</td></tr>
-<tr><td>输出目录</td><td><code>sft_surrogate_runs/minicpm5_pyaether_v1/</code></td><td>HF safetensors 格式 checkpoint</td></tr>
+<tr><td>输出目录</td><td><code>sft_surrogate_runs/minicpm5_pyaether_v2_v11v36/</code></td><td>HF safetensors 格式 checkpoint</td></tr>
 </table>
 <h2>3. 训练数据</h2>
 <table>
 <tr><th>项目</th><th>值</th></tr>
-<tr><td>数据源</td><td><code>sft_pyaether_corpus_unified_v5v6v7.parquet</code>（R152 统一语料，804KB）</td></tr>
-<tr><td>总对数</td><td>1725 对（prompt + response）</td></tr>
-<tr><td>训练集</td><td><code>sft_surrogate_train.parquet</code>（960KB）</td></tr>
-<tr><td>验证集</td><td><code>sft_surrogate_val.parquet</code>（109KB）</td></tr>
+<tr><td>数据源</td><td><code>sft_pyaether_corpus_v11_v36_merged.parquet</code>（R210 合并语料，270KB）</td></tr>
+<tr><td>总对数</td><td>1029 对（prompt + response），覆盖 189 个 unique API</td></tr>
+<tr><td>类型分布</td><td>S4=217, S5=212, S1=208, S6=188, S3=179, S1_doc=10, S2=10, S3_chain=3, S7=2</td></tr>
+<tr><td>训练集</td><td><code>sft_surrogate_data/minicpm5_pyaether_v2_v11v36/sft_surrogate_train.parquet</code>（334KB）</td></tr>
+<tr><td>验证集</td><td><code>sft_surrogate_data/minicpm5_pyaether_v2_v11v36/sft_surrogate_val.parquet</code>（44KB）</td></tr>
 <tr><td>数据格式</td><td>multiturn conversation（messages_key=conversation, tools_key=null）</td></tr>
 <tr><td>上采样</td><td>x1（无上采样）</td></tr>
 </table>
@@ -90,7 +91,7 @@ EDA-Eval-PyAether 158 任务的 prompt + 函数签名 + 断言代码<strong>未�
 训练对仅来自 PyAether API 参考文档合成的指令-响应对，按 API 名/函数签名隔离。
 </div>
 <h2>4. 训练损失曲线</h2>
-<p>以下 SVG 图表展示 72 步训练损失（蓝线）及最终验证损失（红点）。垂直虚线标示 epoch 边界。</p>
+<p>以下 SVG 图表展示 70 步训练损失（蓝线）及最终验证损失（红点）。垂直虚线标示 epoch 边界（5 epoch，每 14 步）。</p>
 <svg class="svg-chart" viewBox="0 0 820 320" xmlns="http://www.w3.org/2000/svg">
 <rect x="55" y="20" width="745" height="255" fill="#fafafa" stroke="#ddd"/>
 <text x="48" y="24" text-anchor="end" font-size="10" fill="#666">2.5</text>
@@ -102,41 +103,51 @@ EDA-Eval-PyAether 158 任务的 prompt + 函数签名 + 断言代码<strong>未�
 <line x1="55" y1="20" x2="800" y2="20" stroke="#eee"/><line x1="55" y1="71" x2="800" y2="71" stroke="#eee"/>
 <line x1="55" y1="122" x2="800" y2="122" stroke="#eee"/><line x1="55" y1="173" x2="800" y2="173" stroke="#eee"/>
 <line x1="55" y1="224" x2="800" y2="224" stroke="#eee"/><line x1="55" y1="275" x2="800" y2="275" stroke="#eee"/>
-<line x1="296.3" y1="20" x2="296.3" y2="275" stroke="#aaa" stroke-dasharray="4,3"/>
-<line x1="548.2" y1="20" x2="548.2" y2="275" stroke="#aaa" stroke-dasharray="4,3"/>
-<text x="175" y="14" text-anchor="middle" font-size="10" fill="#888">Epoch 1</text>
-<text x="422" y="14" text-anchor="middle" font-size="10" fill="#888">Epoch 2</text>
-<text x="674" y="14" text-anchor="middle" font-size="10" fill="#888">Epoch 3</text>
-<text x="55" y="293" text-anchor="middle" font-size="10" fill="#666">step 1</text>
-<text x="296.3" y="293" text-anchor="middle" font-size="10" fill="#666">step 24</text>
-<text x="548.2" y="293" text-anchor="middle" font-size="10" fill="#666">step 48</text>
-<text x="800" y="293" text-anchor="middle" font-size="10" fill="#666">step 72</text>
+<line x1="206.2" y1="20" x2="206.2" y2="275" stroke="#aaa" stroke-dasharray="4,3"/>
+<line x1="357.3" y1="20" x2="357.3" y2="275" stroke="#aaa" stroke-dasharray="4,3"/>
+<line x1="508.5" y1="20" x2="508.5" y2="275" stroke="#aaa" stroke-dasharray="4,3"/>
+<line x1="659.6" y1="20" x2="659.6" y2="275" stroke="#aaa" stroke-dasharray="4,3"/>
+<text x="130.6" y="14" text-anchor="middle" font-size="9" fill="#888">Epoch 1</text>
+<text x="281.8" y="14" text-anchor="middle" font-size="9" fill="#888">Epoch 2</text>
+<text x="432.9" y="14" text-anchor="middle" font-size="9" fill="#888">Epoch 3</text>
+<text x="584.1" y="14" text-anchor="middle" font-size="9" fill="#888">Epoch 4</text>
+<text x="729.8" y="14" text-anchor="middle" font-size="9" fill="#888">Epoch 5</text>
+<text x="55" y="293" text-anchor="middle" font-size="9" fill="#666">step 1</text>
+<text x="206.2" y="293" text-anchor="middle" font-size="9" fill="#666">step 14</text>
+<text x="357.3" y="293" text-anchor="middle" font-size="9" fill="#666">step 28</text>
+<text x="508.5" y="293" text-anchor="middle" font-size="9" fill="#666">step 42</text>
+<text x="659.6" y="293" text-anchor="middle" font-size="9" fill="#666">step 56</text>
+<text x="800" y="293" text-anchor="middle" font-size="9" fill="#666">step 70</text>
 <text x="427" y="312" text-anchor="middle" font-size="11" fill="#333">训练步数 (Training Step)</text>
 <text x="15" y="150" text-anchor="middle" font-size="11" fill="#333" transform="rotate(-90 15 150)">Loss</text>
-<polyline points="55.0,37.1 65.5,52.2 76.0,72.7 86.5,39.8 97.0,81.0 107.5,89.2 118.0,99.8 128.5,149.9 138.9,149.0 149.4,157.9 159.9,174.3 170.4,169.5 180.9,181.6 191.4,186.9 201.9,197.5 212.4,192.6 222.9,176.1 233.4,202.3 243.9,186.2 254.4,203.3 264.9,181.8 275.4,199.6 285.8,209.0 296.3,196.5 306.8,202.4 317.3,210.8 327.8,209.2 338.3,210.9 348.8,208.1 359.3,218.6 369.8,225.6 380.3,211.9 390.8,218.3 401.3,190.6 411.8,193.3 422.3,222.5 432.7,209.1 443.2,223.8 453.7,217.8 464.2,205.8 474.7,206.6 485.2,207.8 495.7,216.3 506.2,225.6 516.7,214.4 527.2,205.9 537.7,228.9 548.2,214.8 558.7,211.0 569.2,224.4 579.6,220.2 590.1,207.1 600.6,222.0 611.1,218.9 621.6,205.7 632.1,206.2 642.6,225.0 653.1,223.9 663.6,208.5 674.1,218.5 684.6,208.4 695.1,214.7 705.6,220.4 716.1,230.5 726.5,228.6 737.0,223.9 747.5,221.4 758.0,222.9 768.5,229.3 779.0,208.1 789.5,231.0 800.0,219.4" fill="none" stroke="#2962ff" stroke-width="1.5"/>
-<circle cx="800.0" cy="215.5" r="5" fill="#e53935" stroke="#b71c1c" stroke-width="1.5"/>
-<text x="790" y="208" text-anchor="end" font-size="9" fill="#c62828">val=0.583</text>
-<text x="62" y="32" font-size="9" fill="#1565c0">2.332</text>
-<text x="795" y="235" text-anchor="end" font-size="9" fill="#1565c0">0.545</text>
+<polyline points="55.0,58.5 65.8,56.4 76.6,53.9 87.4,68.4 98.2,104.6 109.0,116.0 119.8,129.2 130.6,157.0 141.4,147.1 152.2,155.2 163.0,154.7 173.8,159.2 184.6,173.3 195.4,179.3 206.2,176.4 217.0,173.1 227.8,181.2 238.6,192.5 249.3,186.9 260.1,191.5 270.9,189.2 281.7,164.7 292.5,191.6 303.3,206.6 314.1,202.4 324.9,202.9 335.7,200.7 346.5,197.1 357.3,209.6 368.1,214.3 378.9,200.8 389.7,204.2 400.5,203.2 411.3,196.5 422.1,192.8 432.9,208.3 443.7,212.4 454.5,207.7 465.3,210.8 476.1,203.3 486.9,194.5 497.7,203.8 508.5,199.9 519.3,198.3 530.1,204.2 540.9,213.7 551.7,215.2 562.5,213.3 573.3,205.3 584.1,221.6 594.9,200.4 605.7,210.4 616.4,207.5 627.2,201.1 638.0,221.7 648.8,203.2 659.6,206.0 670.4,209.0 681.2,219.0 692.0,206.3 702.8,200.2 713.6,204.8 724.4,211.6 735.2,210.0 746.0,202.1 756.8,210.0 767.6,209.0 778.4,208.1 789.2,212.1 800.0,212.0" fill="none" stroke="#2962ff" stroke-width="1.5"/>
+<circle cx="800.0" cy="206.4" r="5" fill="#e53935" stroke="#b71c1c" stroke-width="1.5"/>
+<text x="790" y="199" text-anchor="end" font-size="9" fill="#c62828">val=0.673</text>
+<text x="62" y="52" font-size="9" fill="#1565c0">2.123</text>
+<text x="795" y="228" text-anchor="end" font-size="9" fill="#1565c0">0.618</text>
 </svg>
 <h3>各 Epoch 损失概要</h3>
 <table>
-<tr><th>Epoch</th><th>步数</th><th>起始 loss</th><th>结束 loss</th><th>趋势</th></tr>
-<tr><td>1</td><td>1–24</td><td>2.332</td><td>0.770</td><td>快速下降，warmup lr 0.001→0.010</td></tr>
-<tr><td>2</td><td>25–48</td><td>0.712</td><td>0.590</td><td>持续下降，波动增大，cosine lr 0.008→0.003</td></tr>
-<tr><td>3</td><td>49–72</td><td>0.627</td><td>0.545</td><td>趋于收敛，lr 0.003→0.000</td></tr>
+<tr><th>Epoch</th><th>步数</th><th>起始 loss</th><th>结束 loss</th><th>最低 loss</th><th>趋势</th></tr>
+<tr><td>1</td><td>1–14</td><td>2.123</td><td>0.938</td><td>0.938</td><td>快速下降（warmup lr 0.001→0.010），step 3-4 突破点</td></tr>
+<tr><td>2</td><td>15–28</td><td>0.967</td><td>0.764</td><td>0.671</td><td>持续下降，波动增大，cosine lr 0.010→0.008</td></tr>
+<tr><td>3</td><td>29–42</td><td>0.641</td><td>0.698</td><td>0.595</td><td>趋于平台，方差稳定，lr 0.007→0.004</td></tr>
+<tr><td>4</td><td>43–56</td><td>0.736</td><td>0.704</td><td>0.523</td><td>平台波动，最低 0.523（step 55），lr 0.004→0.001</td></tr>
+<tr><td>5</td><td>57–70</td><td>0.676</td><td>0.618</td><td>0.549</td><td>收敛，lr 0.001→0.000，最终 loss 0.618</td></tr>
 </table>
 <div class="info">
-<strong>损失曲线解读</strong>：Epoch 1 展现典型 SFT 快速收敛模式。Epoch 2–3 损失继续下降但方差增大，与 1725 对小数据集 + 全参微调的预期一致。
-最终 train loss 0.545 vs val loss 0.583，差距仅 0.038，<strong>未见明显过拟合</strong>。
+<strong>损失曲线解读</strong>：Epoch 1 展现典型 SFT 快速收敛模式（2.123→0.938，-56%）。Epoch 2 继续下降至 0.764。
+Epoch 3-5 进入平台期，train loss 在 0.6-0.7 区间波动，表明模型已基本拟合 1029 对小数据集。
+最终 train loss 0.618 vs val loss 0.673，差距 0.055，<strong>未见明显过拟合</strong>。
+Epoch 4 出现最低单步 loss 0.523（step 55），但 epoch 5 末段更稳定，说明 cosine 退火有助于收敛到更平滑的最优点。
 </div>
 <h2>5. Checkpoint 清单</h2>
 <table>
 <tr><th>Checkpoint</th><th>保存时间</th><th>大小</th><th>用途</th></tr>
-<tr><td>global_step_20</td><td>07:43</td><td>4.7GB</td><td>Epoch 1 中间快照</td></tr>
-<tr><td>global_step_40</td><td>07:50</td><td>4.7GB</td><td>Epoch 2 中间快照</td></tr>
-<tr><td>global_step_60</td><td>07:56</td><td>4.7GB</td><td>Epoch 3 中间快照</td></tr>
-<tr><td><strong>global_step_72</strong></td><td><strong>08:00</strong></td><td><strong>4.7GB</strong></td><td><strong>最终 checkpoint（SFT 产出）</strong></td></tr>
+<tr><td>global_step_20</td><td>00:50</td><td>4.7GB</td><td>Epoch 2 中间快照</td></tr>
+<tr><td>global_step_40</td><td>00:58</td><td>4.7GB</td><td>Epoch 3 中间快照</td></tr>
+<tr><td>global_step_60</td><td>01:06</td><td>4.7GB</td><td>Epoch 5 中间快照</td></tr>
+<tr><td><strong>global_step_70</strong></td><td><strong>01:11</strong></td><td><strong>4.7GB</strong></td><td><strong>最终 checkpoint（SFT 产出，已 serve on GPU6:8096）</strong></td></tr>
 </table>
 <p>所有 checkpoint 为标准 HuggingFace safetensors 格式（2 shards + tokenizer + config），可直接被 vLLM / Transformers 加载。总磁盘占用：4 × 4.7GB = <strong>18.8GB</strong>。</p>
 <h2>6. SFT Checkpoint Serve 验证</h2>
@@ -196,14 +207,14 @@ R169 ACL 升级 runbook（<code>baize_posttrain_r169_sandbox_acl_escalation.py</
 <ul>
 <li><strong>verl 0.4.0 FSDP2 SFT 在 A40 上稳定运行</strong>：2×A40 (46GB) 足以支撑 2B 模型全参微调（bf16 + gradient checkpointing），无 OOM。</li>
 <li><strong>multiturn SFT 的 tools_key=null 修复有效</strong>：R170 发现 verl 默认 tools_key=tools 与 parquet schema 不匹配，设为 null 后 smoke test 通过。此修复已写入训练脚本。</li>
-<li><strong>1725 对小数据集 + 3 epoch 配比合理</strong>：train/val loss 差距仅 0.038，未见过拟合。</li>
+<li><strong>1029 对小数据集 + 5 epoch 配比合理</strong>：train/val loss 差距仅 0.055，未见过拟合；Epoch 3 后进入平台期，cosine 退火有助于平滑收敛。</li>
 <li><strong>checkpoint → vLLM serve 链路无障碍</strong>：verl FSDP2 保存的 HF safetensors checkpoint 可直接被 vLLM 加载，无需格式转换。</li>
 </ul>
 <h3>10.2 对 BaiZe 正式训练的启示</h3>
 <ul>
 <li><strong>替身预演证明 SFT 管线端到端可行</strong>：数据准备 → 污染隔离 → verl SFT → checkpoint 保存 → vLLM serve → 推理验证，全链路打通。</li>
 <li><strong>BaiZe Mamba2 架构需额外验证</strong>：verl/vLLM 对 Mamba2 的支持需单独确认（替身用 LlamaForCausalLM）。</li>
-<li><strong>数据量需要扩展</strong>：1725 对仅为替身预演规模；正式 SFT 应混合 UltraData-SFT-2605（18.89B tok）+ agentic + PyAether API 语料。</li>
+<li><strong>数据量需要扩展</strong>：1029 对仅为替身预演规模；正式 SFT 应混合 UltraData-SFT-2605（18.89B tok）+ agentic + PyAether API 语料。</li>
 <li><strong>收益不可迁移声明</strong>：本报告的 loss 数字仅证明 recipe 可行性，<strong>不预测 BaiZe 在 EDA-Eval 上的 Pass@1</strong>。</li>
 </ul>
 <h3>10.3 成功阶梯对照</h3>
@@ -231,10 +242,12 @@ R169 ACL 升级 runbook（<code>baize_posttrain_r169_sandbox_acl_escalation.py</
 <tr><td>SFT 训练脚本</td><td><code>run/baize_posttrain_sft_surrogate.sh</code></td></tr>
 <tr><td>SFT serve 桥接脚本</td><td><code>run/baize_posttrain_sft_surrogate_serve.sh</code></td></tr>
 <tr><td>评测脚本</td><td><code>run/baize_posttrain_eval.sh</code></td></tr>
-<tr><td>训练数据（源）</td><td><code>run/sft_pyaether_corpus_unified_v5v6v7.parquet</code></td></tr>
-<tr><td>训练数据（train/val）</td><td><code>run/sft_surrogate_{train,val}.parquet</code></td></tr>
-<tr><td>Checkpoint 目录</td><td><code>run/sft_surrogate_runs/minicpm5_pyaether_v1/global_step_{20,40,60,72}</code></td></tr>
-<tr><td>训练日志</td><td><code>/tmp/baize_posttrain_sft_surrogate_full.log</code></td></tr>
+<tr><td>训练数据（源）</td><td><code>run/sft_pyaether_corpus_v11_v36_merged.parquet</code>（R210, 1029 对, 189 API）</td></tr>
+<tr><td>训练数据（train/val）</td><td><code>run/sft_surrogate_data/minicpm5_pyaether_v2_v11v36/sft_surrogate_{train,val}.parquet</code></td></tr>
+<tr><td>Checkpoint 目录</td><td><code>run/sft_surrogate_runs/minicpm5_pyaether_v2_v11v36/global_step_{20,40,60,70}</code></td></tr>
+<tr><td>训练日志</td><td><code>/tmp/baize_posttrain_sft_v11v36_full.log</code></td></tr>
+<tr><td>训练动力学 JSON</td><td><code>run/sft_v11v36_training_dynamics.json</code>（70 步 loss+lr 曲线）</td></tr>
+<tr><td>静态分析摘要</td><td><code>run/eda_eval_static_final_summary.json</code>（113 task, SFT vs BASE）</td></tr>
 <tr><td>SFT serve 日志</td><td><code>/tmp/vllm_sft_serve_gpu6.log</code></td></tr>
 <tr><td>沙盒 ACL runbook</td><td><code>run/baize_posttrain_r169_sandbox_acl_escalation.py</code></td></tr>
 <tr><td>实验台账</td><td><code>run/EXPERIMENTS_POSTTRAIN.md</code> §R172</td></tr>

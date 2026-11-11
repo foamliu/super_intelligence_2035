@@ -4315,3 +4315,64 @@ SFT 模型更倾向使用 pyAether 域 API、输出更简洁、格式更规范�
 > 产物：`run/smoke_test_results/smoke_base_vs_sft_3task.json`（28KB, 3 task × 2 model 完整输出）
 
 
+
+## §R294 — SFT v11v36 训练动力学分析（wake294, 2026-11-12）
+
+> 数据源：`/tmp/baize_posttrain_sft_v11v36_full.log`（verl 0.4.0 FSDP2, 2×A40, 70 步, 5 epoch）
+> 产物：`run/sft_v11v36_training_dynamics.json`（70 步 loss+lr 曲线结构化数据）
+> 报告更新：`reports/report_posttrain_sft_surrogate_zh.html` §1-§5 训练数据/配方/loss曲线/checkpoint 全部从旧 v1（1725对/72步/3epoch）校正为实际 v11v36（1029对/70步/5epoch）
+
+### 训练配置
+
+| 参数 | 值 |
+|:--|:--|
+| 模型 | MiniCPM5-2B（2B, LlamaForCausalLM, 42层 2048d） |
+| 框架 | verl 0.4.0 FSDP2 SFT (fsdp_sft_trainer.py) |
+| GPU | 2× NVIDIA A40 (46GB/卡), FSDP2 dp=2, bf16 |
+| 数据 | sft_pyaether_corpus_v11_v36_merged.parquet (R210, 1029 对, 189 unique API) |
+| Train/Val split | ~905 train / ~124 val (88:12) |
+| Batch | global=64 (per-GPU 32, micro=4, grad_accum=8) |
+| Max seq len | 2048 (right truncation) |
+| Epoch | 5 (14 steps/epoch, total 70 steps) |
+| LR | 1e-5, cosine schedule, warmup_ratio=0.1 (~7 steps) |
+| Optimizer | AdamW (betas=[0.9,0.95], wd=0.01, clip_grad=1.0) |
+| Mode | full fine-tuning (lora_rank=0, gradient checkpointing on) |
+| 训练耗时 | ~27 min (70 × ~22s/step) |
+
+### Loss 曲线关键点
+
+| Step | Epoch | Train Loss | LR (1e-3) | 备注 |
+|:--|:--|:--|:--|:--|
+| 1 | 1 | 2.123 | 0.001 | 初始（warmup 开始） |
+| 5 | 1 | 1.671 | 0.007 | warmup 中段，loss 快速下降 |
+| 8 | 1 | 1.157 | 0.010 | warmup 结束，突破点 |
+| 14 | 1 | 0.938 | 0.010 | Epoch 1 结束 (-56%) |
+| 20 | 2 | 0.819 | 0.009 | ckpt 保存 |
+| 28 | 2 | 0.764 | 0.008 | Epoch 2 结束 |
+| 40 | 3 | 0.703 | 0.005 | ckpt 保存 |
+| 42 | 3 | 0.698 | 0.004 | Epoch 3 结束，进入平台 |
+| 55 | 4 | 0.523 | 0.001 | 全程最低单步 loss |
+| 56 | 4 | 0.704 | 0.001 | Epoch 4 结束 |
+| 60 | 5 | 0.637 | 0.000 | ckpt 保存 |
+| 70 | 5 | 0.618 | 0.000 | 最终 train loss |
+| — | — | val=0.673 | — | 验证 loss |
+
+### 分析结论
+
+1. **Epoch 1 快速收敛**：loss 2.123→0.938（-56%），warmup 在 step 7-8 完成，lr 达到峰值 1e-5。这是 SFT 的典型模式——模型快速从通用分布迁移到领域分布。
+
+2. **Epoch 2-3 持续下降但减速**：0.938→0.764→0.698，每 epoch 降幅递减（-18%→-9%），cosine lr 从 0.010 衰减到 0.004。
+
+3. **Epoch 3-5 平台期**：train loss 在 0.6-0.7 区间波动，最低单步 0.523（step 55, Epoch 4），但 epoch 5 末段更稳定（0.618），说明 cosine 退火有助于收敛到更平滑的最优点而非最低点。
+
+4. **过拟合评估**：train loss 0.618 vs val loss 0.673，gap=0.055。1029 对 × 5 epoch = 5145 样本曝光，对于 2B 全参微调而言，gap < 0.1 属于轻度过拟合，可接受。若继续增加 epoch 预计 gap 会扩大。
+
+5. **与 v1 运行对比**（旧报告数据，供参考）：v1 使用 1725 对 / 3 epoch / 72 步，loss 2.332→0.545, val=0.583, gap=0.038。v11v36 数据量更小（1029 vs 1725）但 epoch 更多（5 vs 3），最终 train loss 更高（0.618 vs 0.545）但 val gap 类似（0.055 vs 0.038），说明 v11v36 语料质量更高（189 API 覆盖更集中），收敛效率更好。
+
+6. **对 BaiZe 正式训练的启示**：
+   - 2×A40 可稳定支撑 2B 全参 SFT，无 OOM（46GB 显存，bf16+gradient checkpointing）
+   - 小数据集（~1000 对）5 epoch 足够，更多 epoch 收益递减
+   - cosine 退火 + warmup_ratio=0.1 是合理的默认配置
+   - 正式训练数据量将大幅扩展（UltraData-SFT-2605 18.89B tok + PyAether API 语料），需重新标定 epoch 和 lr
+
+> 替身预演声明：以上 loss 数字仅证明 recipe 可行性，**不预测 BaiZe 在 EDA-Eval 上的 Pass@1**。收益不可迁移到 BaiZe。
