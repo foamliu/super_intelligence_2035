@@ -1,0 +1,18 @@
+{
+    "task": {
+        "path": "/tmp/tb_baize2b_pilot_PvrPzD/break-filter-js-from-html",
+        "source": "tb_baize2b_pilot_PvrPzD"
+    },
+    "trial_name": "break-filter-js-from-html__h4pE3EU",
+    "trials_dir": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_l3_tb_smoke_results/2026-11-12__00-41-06",
+    "agent": {
+        "name": "terminalbench.agents.cline_patched:ClinePatched"
+    },
+    "environment": {
+        "type": "docker",
+        "extra_docker_compose": [
+            "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/terminalbench/overlay-network-host.yml"
+        ]
+    },
+    "job_id": "68362aa7-47c0-4baf-94fe-fb2cff8e3e22"
+}

@@ -42,8 +42,8 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
   <div class="meta">
     <span>📅 2026-11-12</span>
     <span>🏗 Mamba2-hybrid 2.22B</span>
-    <span>🔥 训练 iter≈168.7k / 700k · step~7.0s<7.4s✅ · ckpt 168k · lr-decay-iters=0(stable段,decay未配置) · GPU 8×100%/75GB · 170k ETA~2.6h</span>
-    <span>📊 L1: 16 ckpt ✅(160k=58.13%新高) | L2: GSM8K=0%🔴 MMLU=23.16%(≈随机) BBH=0%🔴 MATH=0%(v5)·v6重评中(RP=1.3,41/100~41min) · HumanEval=0%(v6✅) · MBPP 59/100运行中(v6,~41s/it,ETA~28min) · ⚠️两个v6实例并发(PID 2571213+2632593)共享同一llama-server | L3: ✅前置全通过·🟢autoqueue等待中(PID1986722) | L4: 🔴/nasdata/未挂载.29+SSH .15/.17均不通</span>
+    <span>🔥 训练 iter≈169.1k / 700k · step~7.1s<7.4s✅ · ckpt 168k · lr-decay-iters=0(stable段,decay未配置) · GPU 8×100%/75GB · 170k ETA~1.8h</span>
+    <span>📊 L1: 16 ckpt ✅(160k=58.13%新高) | L2: 6/6完成 ✅ GSM8K=0%🔴 MMLU=23.16%(≈随机) BBH=0%🔴 MATH=0%🔴 HumanEval=0%🔴 MBPP=0%🔴 · 🔬生成退化=SSM state崩溃+模型@24%+code/math 26% | L3: 🔴TB smoke完成 0/2 reward(fix-git+break-filter都失败·生成退化致agent无法编辑文件) | L4: 🔴/nasdata/未挂载.29+SSH .15/.17均不通</span>
   </div>
   <div style="margin-top:12px;font-size:12.5px;background:rgba(0,0,0,.18);border-radius:8px;padding:8px 12px;opacity:.95">
     ⚠️ 本报告是<b>训练监控与决策依据</b>，<b>不进论文正文</b>（2026-11-10 用户令）。用户关注点（2026-11-11）：<b>如何拿到更好的结果</b>。
@@ -280,12 +280,12 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
 </div>
 
 <!-- L3 -->
-<h2 class="sec">L3 · Agentic 能力 <span class="badge b-ok">✅ 前置全通过 · 待端口释放</span></h2>
+<h2 class="sec">L3 · Agentic 能力 <span class="badge b-bad">🔴 TB smoke完成 · 0/2 reward</span></h2>
 <div class="card">
   <h3>评测目标与现状</h3>
   <table>
     <tr><th>评测</th><th>描述</th><th>现状</th><th>优先级</th></tr>
-    <tr><td>Terminal-Bench 2.0</td><td class="l">89 题 Docker 沙盒终端任务</td><td class="bad">❌ 空白</td><td>P0（较轻）</td></tr>
+    <tr><td>Terminal-Bench 2.0</td><td class="l">89 题 Docker 沙盒终端任务</td><td class="bad">🔴 0/2 smoke</td><td>P0（较轻）</td></tr>
     <tr><td>SWE-bench Verified</td><td class="l">500 题 GitHub issue 修复</td><td class="bad">❌ 空白</td><td>P1（较重）</td></tr>
     <tr><td>τ-bench / WebArena / GAIA</td><td class="l">其他 agentic 评测</td><td class="bad">❌ 空白</td><td>P2</td></tr>
   </table>
@@ -307,6 +307,16 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
   <div class="ok-box">
     <b>实测验证（ssh .29）</b>：① Docker 27.5.1 daemon 运行中✅ ② Harbor v0.24.0 at <code>~/.local/bin/harbor</code>✅ ③ TB pilot tasks <code>fix-git</code> + <code>break-filter-js-from-html</code> 各含 environment/instruction.md/solution/task.toml/tests✅ ④ harness/terminalbench overlay + agents✅ ⑤ L3 smoke script <code>baize_l3_tb_smoke.sh</code> 完整自包含✅<br>
     <b>阻塞</b>：v6 HumanEval 占用 port 8083（铁律：单 server 串行）→ v6 完成后即可运行 L3 smoke（预期 0% 但建立 pipeline 有价值）
+  </div>
+  <h3>🔴 L3 TB Smoke 结果（2026-11-12 #2018 · 完成）</h3>
+  <div class="alert">
+    <b>运行时间</b>: 2026-11-12 00:41:51 → 00:50:42 (8m51s)<br>
+    <b>配置</b>: 2 tasks (fix-git easy + break-filter-js-from-html medium) · cline-patched agent · baize-2b-local @ port 8083 (llama-server CPU -t 4)<br>
+    <b>结果</b>: 2/2 trials completed · 0 exceptions · <b>Mean reward = 0.0</b> (both tasks failed)<br>
+    <b>fix-git 失败原因</b>: pytest 2/2 failed — agent 无法正确编辑 about.md 和 default.html 文件（文件 hash 不匹配）→ 模型生成退化导致 cline agent 无法产生有效编辑命令<br>
+    <b>break-filter-js-from-html 失败原因</b>: 同上，agent 无法完成文件操作<br>
+    <b>结论</b>: L3 结果与 L2 一致——<b>模型生成能力根本不足</b>，在需要连贯多步代码/命令生成的 agentic 任务上完全失效。根因同 L2: ① code+math 数据 26% (vs DeepSeek 60%) ② stable 段无 decay ③ llama.cpp SSM 生成 bug<br>
+    <b>下一步</b>: 延后至 decay/SFT 后模型生成能力达标再跑完整 TB 89 题 · llama-server 已于本轮 kill（PID 1620294）释放 CPU
   </div>
   <h3>🔧 L3 Pipeline 已建（2026-11-11 #1979）</h3>
   <div class="ok-box">
@@ -421,7 +431,7 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
     <tr><th>层</th><th>评测</th><th>状态</th><th>关键数</th><th>下一步</th></tr>
     <tr><td><b>L1</b></td><td class="l">常识 8 集 (0-shot)</td><td><span class="badge b-ok">✅ 16ckpt</span></td><td>58.13%@160k</td><td class="l">继续每万 ckpt</td></tr>
     <tr><td><b>L2</b></td><td class="l">复杂推理 6 集</td><td><span class="badge b-bad">🔴 6/6完成 · 5/6=0% · MMLU=23%</span></td><td>GSM8K=0%(v3) · MMLU=23.16%(≈随机) · BBH=0%(v4) · MATH=0%(v5) · <b>HumanEval=0%(v6)</b> · <b>MBPP=0%(v6)</b> · 🔬生成退化=llama.cpp SSM bug+模型能力 · RP=1.3无效(gen probe确认)</td><td class="l">L2全部完成→等decay/SFT改善</td></tr>
-    <tr><td><b>L3</b></td><td class="l">Agentic</td><td><span class="badge b-ok">🟡 TB smoke运行中</span></td><td>2 tasks (fix-git + break-filter-js-from-html) · Harbor运行中 · llama-server port 8083</td><td class="l">等Harbor完成→记结果</td></tr>
+    <tr><td><b>L3</b></td><td class="l">Agentic</td><td><span class="badge b-bad">🔴 TB smoke完成 0/2</span></td><td>2 tasks · reward=0.0 · fix-git pytest 2/2 failed · 生成退化致agent无法编辑文件</td><td class="l">延后至decay/SFT后</td></tr>
     <tr><td><b>L4</b></td><td class="l">领域</td><td><span class="badge b-bad">❌ 未接·调研完</span></td><td>— · 数据在.15不可达</td><td class="l">延后至.15可达+SFT后</td></tr>
   </table>
 </div>
@@ -501,7 +511,7 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
 </div>
 
 <footer>
-  BaiZe pretrain 线 · 四层能力评测报告 · 2026-11-12 00:45 更新(#2017 · L2 6/6完成 · L3 TB smoke运行中) · 评测数字仅用于训练监控，不进论文正文
+  BaiZe pretrain 线 · 四层能力评测报告 · 2026-11-12 01:05 更新(#2018 · L2 6/6完成 · L3 TB smoke 0/2完成 · 论文§4.6刷新iter169k · llama-server已kill) · 评测数字仅用于训练监控，不进论文正文
 </footer>
 </div>
 </body>

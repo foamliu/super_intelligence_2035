@@ -1,0 +1,5 @@
+Running command: ln -sf /opt/node/bin/node /usr/local/bin/node && ln -sf /opt/node/bin/npm /usr/local/bin/npm && ln -sf /opt/node/bin/npx /usr/local/bin/npx && mkdir -p /usr/local/lib/node_modules && npm config set prefix /usr/local && node --version && npm --version
+Command outputs captured
+Running command: ln -sf /opt/cline-modules/@cline/cli-linux-x64/bin/cline /usr/local/bin/cline && cline --version
+Trial break-filter-js-from-html__h4pE3EU cancelled
+Collecting main service artifacts
