@@ -3,7 +3,38 @@ import os
 """Generate report_harness_glm53_7way_swebench_tb_zh.html — R1998 update.
 Self-contained Chinese HTML, 0 scripts, 0 external links.
 """
-import json, os, datetime, glob, re, subprocess
+import json, os, datetime, glob, re, subprocess, urllib.request
+
+# ---- Gateway probe (dynamic) ----
+GLM53_KEY = "02_088EE9051AAE4BF0ABFC7130331BF697_6903b05e-6f2d-4a69-93be-96e2b790053f"
+def probe_gateway():
+    try:
+        req = urllib.request.Request(
+            "http://agi-gateway.cxmt.com/v1/chat/completions",
+            data=json.dumps({"model":"glm-5.3-flash","messages":[{"role":"user","content":"hi"}],"max_tokens":5}).encode(),
+            headers={"Content-Type":"application/json","Authorization":f"Bearer {GLM53_KEY}"},
+        )
+        resp = urllib.request.urlopen(req, timeout=15)
+        return resp.status, ""
+    except urllib.error.HTTPError as e:
+        body = e.read().decode("utf-8","replace")[:200]
+        return e.code, body
+    except Exception as ex:
+        return 0, str(ex)[:200]
+
+_gw_code, _gw_body = probe_gateway()
+if _gw_code == 200:
+    GW_NOTE = "HTTP 200(正常·predict进行中)"
+    GW_NOTE_SHORT = "200(正常)"
+    GW_EMOJI = "✅"
+elif _gw_code == 429:
+    GW_NOTE = "HTTP 429(quota exhausted·predict stalled·~37min后reset)"
+    GW_NOTE_SHORT = "429(quota·stalled)"
+    GW_EMOJI = "⚠️"
+else:
+    GW_NOTE = f"HTTP {_gw_code}({_gw_body[:60]})"
+    GW_NOTE_SHORT = f"{_gw_code}"
+    GW_EMOJI = "⚠️"
 
 REPORT_DIR = "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/reports"
 EVAL_DIR = "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/reports"
@@ -253,6 +284,13 @@ HTML = f"""<!DOCTYPE html>
 <hr><p style="text-align:center;color:#7f8c8d;font-size:0.9em">
 BaiZe Harness · {ROUND} · {NOW}<br>glm-5.3-flash · SWE-bench Verified 500 + TB-2.1 89 · 7-way · 报告正文一律写 cline
 </p></body></html>"""
+
+# ---- Post-process: replace hardcoded gateway status with dynamic probe result ----
+HTML = HTML.replace("网关 HTTP 200 · 已恢复", f"网关 {GW_NOTE}")
+HTML = HTML.replace("网关200·predict进行中", f"网关{GW_NOTE_SHORT}·predict进行中" if _gw_code==200 else f"网关{GW_NOTE_SHORT}·predict stalled")
+HTML = HTML.replace("网关 200 ✅(已恢复) (quota exhausted)", f"网关 {GW_EMOJI} {GW_NOTE_SHORT}")
+HTML = HTML.replace("额度耗尽(quota exhausted,已恢复HTTP 200)", f"额度耗尽(quota exhausted,当前{GW_NOTE_SHORT})")
+HTML = HTML.replace("infra(已恢复·predict进行中)", f"infra(当前{GW_NOTE_SHORT})")
 
 os.makedirs(REPORT_DIR, exist_ok=True)
 out_path = os.path.join(REPORT_DIR, "report_harness_glm53_7way_swebench_tb_zh.html")

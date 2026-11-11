@@ -1,7 +1,35 @@
 import os
 #!/usr/bin/env python3
 """R1998 cline special report."""
-import json, os, datetime, glob
+import json, os, datetime, glob, urllib.request
+
+# ---- Gateway probe (dynamic) ----
+GLM53_KEY = "02_088EE9051AAE4BF0ABFC7130331BF697_6903b05e-6f2d-4a69-93be-96e2b790053f"
+def probe_gateway():
+    try:
+        req = urllib.request.Request(
+            "http://agi-gateway.cxmt.com/v1/chat/completions",
+            data=json.dumps({"model":"glm-5.3-flash","messages":[{"role":"user","content":"hi"}],"max_tokens":5}).encode(),
+            headers={"Content-Type":"application/json","Authorization":f"Bearer {GLM53_KEY}"},
+        )
+        resp = urllib.request.urlopen(req, timeout=15)
+        return resp.status, ""
+    except urllib.error.HTTPError as e:
+        body = e.read().decode("utf-8","replace")[:200]
+        return e.code, body
+    except Exception as ex:
+        return 0, str(ex)[:200]
+
+_gw_code, _gw_body = probe_gateway()
+if _gw_code == 200:
+    GW_NOTE = "HTTP 200(正常·predict进行中)"
+    GW_NOTE_SHORT = "200(正常)"
+elif _gw_code == 429:
+    GW_NOTE = "HTTP 429(quota exhausted·predict stalled·~37min后reset)"
+    GW_NOTE_SHORT = "429(quota·stalled)"
+else:
+    GW_NOTE = f"HTTP {_gw_code}({_gw_body[:60]})"
+    GW_NOTE_SHORT = f"{_gw_code}"
 
 REPORT_DIR = "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/reports"
 EVAL_DIR   = "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/reports"
@@ -159,6 +187,12 @@ html += f"""</table>
 <li><strong>进行中</strong>: predict 7路推进至500(网关200·predict进行中) + TB-2.1 7路推进 + incr_eval R2124(15 instances增量eval)</li></ol>
 <hr><p style="color:#888;font-size:0.85em">报告生成: {NOW} | 口径: SWE-bench Verified 500 backbone=glm-5.3-flash 7-way | TB-2.1/89tasks/7way concurrent<br>命名纪律: 正文一律写cline | {ROUND}: 网关HTTP 200(已恢复)+predict {cp}/500+eval {cr}/{cn}(全量完成)+空patch {ce}(cleanup后)+TB-2.1 {tb_total_pass}/{tb_total_done}+eval {total_resolved_all} resolved(0 true backlog)</p>
 </body></html>"""
+
+# ---- Post-process: replace hardcoded gateway status with dynamic probe result ----
+html = html.replace("网关HTTP 200(已恢复·predict进行中)", f"网关{GW_NOTE}")
+html = html.replace("网关HTTP 200(已恢复·quota reset)", f"网关{GW_NOTE}")
+html = html.replace("网关HTTP 200(已恢复)", f"网关{GW_NOTE_SHORT}")
+html = html.replace("网关200·predict进行中", f"网关{GW_NOTE_SHORT}·predict进行中" if _gw_code==200 else f"网关{GW_NOTE_SHORT}·predict stalled")
 
 outpath = os.path.join(REPORT_DIR, "report_harness_cline_special_zh.html")
 with open(outpath,"w") as f: f.write(html)
