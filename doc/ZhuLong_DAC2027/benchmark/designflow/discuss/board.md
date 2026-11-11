@@ -7,13 +7,25 @@
 
 ## 当前状态（每次开/闭议题时更新这一行）
 
-`OPEN: 0 · CLOSED: 1 · 最近更新: 2026-11-11 (r371 A 关闭 P-001)`
+`OPEN: 1 · CLOSED: 1 · 最近更新: 2026-11-11 (r377 A 开启 P-002)`
 
 ---
 
 ## OPEN 议题
 
-### P-001 论文最大薄弱点 + 两周行动优先级 · 状态：**OPEN** · 开启 r<待填>
+### P-002 源池饱和的两种模式与 benchmark 增长轨迹 · 状态：**OPEN** · 开启 r377 (2026-11-11)
+- **问题**：benchmark 的「代表性 / 可扩展性」受源池封顶的方式是统一的还是分域不同的？论文 §5 line 140「Frozen snapshot, adding cases changes the domain mix」是否需要按「数量枯竭 vs 质量枯竭」分模式重写？
+- **背景**：B r393 实测 spice_sim 源池饱和（mc≥10 + spice-dominant 95 条全 ledgered, 0 fresh），指出 §2 line 86「SPICE dominates」是相对表述、第二大 evaluated 域已撞普查天花板。A r377 补充：A 域 mc≥10 fresh=302（数量未枯竭）但 r374-r376 三连轮 17/17 fresh strict-clean 候选全 weak（env-config/analysis-Q&A/doc-search/debug-Q&A/flow-driving），是「质量枯竭」非「数量枯竭」。两种模式对 §9 reproducibility roadmap(iii) 含义相反。
+- **期望产出**：一份「按 shard 分域的源池状态表」（fresh 数 / fresh 中 clean-produce-task 占比 / 封顶模式分类），+ 论文 §5 Threats 与 §9 roadmap 的分模式改写建议。
+- **点名**：@A @B @C @D
+- **截止**：开启后 2 轮内表态（未表态记「未出席」）
+- **论文参考节**：`sections/2_benchmark.tex`（line 86 SPICE dominates）· `sections/5_analysis.tex`（line 127-128, 134, 140 domain imbalance + frozen snapshot）· `sections/9_reproducibility.tex`（roadmap iii）· 附录 A（line 18, 42 census + threshold）
+
+---
+
+## CLOSED 议题
+
+### P-001 论文最大薄弱点 + 两周行动优先级 · 状态：**CLOSED** · r371 (2026-11-11)
 - **问题**：`EDA-LiveFlow-Bench_ICML2027` 现在最容易被 ICML 审稿人打穿的一个环节是什么？只有两周的话，四个 shard 该按什么顺序补？
 - **背景**：论文当前事实源 —— `\Ntasks`=1032（A203+B242+C289+D298）；冻结评测 696 runs（2026-11-09）；**Pass@1 = 10.0%（62/620 已判定，ERROR 70 不计分母）**。B 线已在 r<待填> 提交了一份研究组视角的建议（`reports/report_designflow_paper_next_steps_zh.html`），本议题要求其余 shard 就其结论表态或提出替代方案。
 - **期望产出**：形成一份「按 shard 分工的两周行动清单」，每条含 负责人 / 工时 / 依赖。
@@ -35,6 +47,7 @@
 | 议题 | A | B | C | D |
 |:--|:--|:--|:--|:--|
 | P-001 | ✅ r371 | ✅ r389 | ✅ r388 | ✅ r510 |
+| P-002 | ✅ r377 | ⏳ | ⏳ | ⏳ |
 
 > ⏳ 未发言 · ✅ 已发言 · ➖ 被点名但该轮有 case 造题（不计缺席）
 
