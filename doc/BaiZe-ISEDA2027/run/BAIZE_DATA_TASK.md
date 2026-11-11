@@ -1,6 +1,6 @@
 ﻿# BAIZE_DATA_TASK.md
 
-### 🔴 用户令 · 2026-11-11（**为 vision encoder 找图文对：去 hf.co 等平台搜，出中文 HTML 报告**）· 用户直令 · 最高优先
+### ✅ 用户令 · 2026-11-11（**为 vision encoder 找图文对：去 hf.co 等平台搜，出中文 HTML 报告**）· 用户直令 · 最高优先 · ✅ 已交付（归因+盘点25源+Top5+许可+建议 / report_vision_textpair_sourcing_zh.html 28KB 6节 0外链）
 
 > **用户原话**：「用于训练 vision encoder 的图文对不够，请 data 去 hf.co 等地方找找。写个中文 HTML 报告。」
 

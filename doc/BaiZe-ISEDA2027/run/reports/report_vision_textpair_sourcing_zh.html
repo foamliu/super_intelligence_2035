@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>视觉编码器图文对数据调研报告 · 2026-11-11</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"PingFang SC","Microsoft YaHei",sans-serif;line-height:1.7;color:#1a1a2e;background:#f5f6fa;padding:20px;max-width:1200px;margin:0 auto}
+h1{font-size:1.8em;color:#16213e;margin:20px 0 10px;border-bottom:3px solid #0f3460;padding-bottom:8px}
+h2{font-size:1.4em;color:#0f3460;margin:25px 0 12px;border-left:5px solid #e94560;padding-left:12px}
+h3{font-size:1.15em;color:#16213e;margin:18px 0 8px}
+p{margin:8px 0}
+table{border-collapse:collapse;width:100%;margin:12px 0;font-size:0.82em}
+th{background:#0f3460;color:#fff;padding:8px 10px;text-align:left;font-weight:600;border:1px solid #1a1a3e}
+td{padding:6px 10px;border:1px solid #ddd;vertical-align:top}
+tr:nth-child(even){background:#f8f9fd}
+code{background:#e8eaf6;padding:2px 6px;border-radius:3px;font-family:"Consolas",monospace;font-size:0.9em;color:#c0392b}
+pre{background:#1a1a2e;color:#e0e0e0;padding:15px;border-radius:8px;overflow-x:auto;margin:10px 0;font-size:0.82em;line-height:1.5}
+.hero{background:linear-gradient(135deg,#0f3460,#16213e);color:#fff;padding:25px;border-radius:12px;margin:15px 0}
+.hero h1{color:#fff;border:none}
+.tldr{background:#fff3cd;border:2px solid #ffc107;border-radius:10px;padding:18px;margin:15px 0}
+.tldr h2{border:none;color:#856404;margin-top:0}
+.badge{display:inline-block;padding:2px 8px;border-radius:12px;font-size:0.75em;font-weight:600}
+.b-green{background:#d4edda;color:#155724}.b-yellow{background:#fff3cd;color:#856404}.b-gray{background:#e2e3e5;color:#383d41}.b-red{background:#fdecea;color:#721c24}
+.note{background:#e8f5e9;border-left:4px solid #4caf50;padding:12px 15px;margin:10px 0;border-radius:0 6px 6px 0}
+.warn{background:#fff3cd;border-left:4px solid #ffc107;padding:12px 15px;margin:10px 0;border-radius:0 6px 6px 0}
+.danger{background:#fdecea;border-left:4px solid #f5222d;padding:12px 15px;margin:10px 0;border-radius:0 6px 6px 0}
+.info{background:#e3f2fd;border-left:4px solid #2196f3;padding:12px 15px;margin:10px 0;border-radius:0 6px 6px 0}
+.footnote{color:#666;font-size:0.85em;margin-top:20px;border-top:1px solid #ddd;padding-top:10px}
+.score{font-weight:700;color:#0f3460}
+</style>
+</head>
+<body>
+<div class="hero">
+<h1>视觉编码器图文对数据调研报告</h1>
+<p>—— 归因 + 中文/领域方向盘点 ——</p>
+<p style="font-size:0.9em;opacity:0.8">BaiZe data 线 · 2026-11-11 · 用户令：为 vision encoder 找图文对</p>
+</div>
+
+<div class="tldr">
+<h2>TL;DR — 核心发现</h2>
+<ol>
+<li><strong>已下载数据未用 = 格式不兼容 + 无人接管线</strong>：2026-10-13 下载的 4 路图文对（WebMix-38M 38.8M 对、wit_base 6.48M 对、InternVL-SA1B 22.4M 对、the_cauldron 1.9M 对）全部在盘上且 0 incomplete，但 vision 训练管线 <code>data.py::build_mixed_loader</code> 只读 webdataset tar 格式。WebMix/wit_base 是 parquet（需转码或加 parquet reader），InternVL-SA1B 是 tar（可直接读但从未接入），the_cauldron 是 VQA 格式（非简单图文对）。</li>
+<li><strong>零成本即可扩 ~28M 对</strong>：InternVL-SA1B（22.4M 对，tar 格式，已在盘上）只需在训练脚本中加一行路径即可接入。若再加 parquet reader（约 20 行代码改动），WebMix-38M（38.8M）+ wit_base（6.48M）也可立即解锁。</li>
+<li><strong>中文图文对的最大两个源均非商用许可</strong>：Wukong（100M 对）和 TaiSu（166M 对）都是 CC-BY-NC-SA-4.0。商用可用（CC-BY-4.0）的 LAION-Chinese 仅 2.66M 对且为 URL 形式（需爬图）。</li>
+<li><strong>TaiSu 是最可落地的中文源</strong>：HF 上 Ajax102/Taisu 为 webdataset tar 格式、image bytes 内联、中文 caption、166M 对、~7.9TB。非商用许可，但研究用途可用，且格式与现有管线完全兼容（零转码）。</li>
+<li><strong>EDA/版图/电路类图文对在 HF/ModelScope 上未找到</strong>。领域多样性的最佳补充是 DocVQA/ChartQA/PlotQA（文档/图表/数据可视化），但有格式改造成本。</li>
+</ol>
+</div>
+
+<h2>① 归因：上次 TOP-5 为何没补上 18.5M 缺口</h2>
+<h3>1.1 上次（2026-10-13）推荐与下载了什么</h3>
+<p>2026-10-13 运维令让 data 调研 HF 图文对数据集，产出 <code>report_data_hf_imagetext_datasets_zh.html</code>。该报告推荐 TOP-5，其中 GPIC 已在盘上，其余 4 路获批下载，落盘 <code>/nas_user/app.e0031982/datasets/</code>：</p>
+<table>
+<tr><th>#</th><th>数据集</th><th>HF ID</th><th>对数</th><th>磁盘实测</th><th>文件数</th><th>.incomplete</th><th>格式</th><th>落地路径</th></tr>
+<tr><td>1</td><td>WebMix-38M</td><td>MVRL/WebMix-38M</td><td>~38.8M</td><td>1.9TB</td><td>3888 parquet</td><td>0</td><td><span class="badge b-red">parquet</span></td><td>/nas_user/.../MVRL/WebMix-38M/</td></tr>
+<tr><td>2</td><td>wit_base</td><td>VedaLabs/wit_base</td><td>~6.48M</td><td>287GB</td><td>330 parquet</td><td>0</td><td><span class="badge b-red">parquet</span></td><td>/nas_user/.../VedaLabs/wit_base/</td></tr>
+<tr><td>3</td><td>InternVL-SA1B</td><td>hanlincs/InternVL-SA1B-Caption-WebDataset</td><td>~22.4M</td><td>1.5TB</td><td>2000 tar</td><td>0</td><td><span class="badge b-green">webdataset tar</span></td><td>/nas_user/.../hanlincs/InternVL-SA1B-Caption-WebDataset/</td></tr>
+<tr><td>4</td><td>the_cauldron</td><td>HuggingFaceM4/the_cauldron</td><td>~1.9M</td><td>158GB</td><td>2821（50子集）</td><td>0</td><td><span class="badge b-yellow">VQA/SFT</span></td><td>/nas_user/.../HuggingFaceM4/the_cauldron/</td></tr>
+<tr><td>5</td><td>GPIC</td><td>stanford-vision-lab/gpic</td><td>~40.5M</td><td>12TB</td><td>8000 tar</td><td>0</td><td><span class="badge b-green">webdataset tar</span></td><td>/nas_inference/.../stanford-vision-lab/gpic/</td></tr>
+</table>
+<p><strong>证据命令</strong>：</p>
+<pre>du -sh /nas_user/app.e0031982/datasets/MVRL/WebMix-38M/          -> 1.9T
+du -sh /nas_user/app.e0031982/datasets/VedaLabs/wit_base/         -> 287G
+du -sh /nas_user/.../hanlincs/InternVL-SA1B-Caption-WebDataset/   -> 1.5T
+du -sh /nas_user/.../HuggingFaceM4/the_cauldron/                  -> 158G
+find .../MVRL/WebMix-38M/ -type f | wc -l                          -> 11671
+find .../MVRL/WebMix-38M/ -name '*.incomplete' | wc -l             -> 0
+find .../hanlincs/InternVL-SA1B-Caption-WebDataset/ -name '*.tar' | wc -l -> 2000</pre>
+
+<h3>1.2 下载了却没进训练——逐项归因</h3>
+<table>
+<tr><th>数据集</th><th>是否进了训练？</th><th>原因</th><th>证据出处</th></tr>
+<tr><td>WebMix-38M</td><td>未进</td><td><strong>格式不兼容</strong>：3886 个 parquet 文件，但 vision 训练管线 <code>data.py::build_mixed_loader</code> 只支持 webdataset tar（<code>--data-source wds</code>）。需加 parquet 直读分支（~20行代码）或转成 tar（需 >=2.3TB 余量）。</td><td>ARCHIVE_OPERATOR_VISION.md L2198: "parquet 需转换"; L2205-2206: 方案A加parquet reader / 方案B转tar</td></tr>
+<tr><td>wit_base</td><td>未进</td><td><strong>同上</strong>：330 个 parquet，同样格式不兼容。</td><td>同上 L2199</td></tr>
+<tr><td>InternVL-SA1B</td><td>未进</td><td><strong>格式兼容但从未接入</strong>：2000 个 webdataset tar，可直接读，但 R11 系列实验的基线臂只用 CC12M+Amshaker（约18.5M），没有把它加入 <code>--data-source</code> 路径列表。属于「能接但没人接」。</td><td>同上 L2200: "tar (wds) 直读"; R11-E/F/G实验配置(L367-368,L227)均只列CC12M+Amshaker</td></tr>
+<tr><td>the_cauldron</td><td>未进</td><td><strong>格式不匹配</strong>：50个子集(ai2d,aokvqa,chartqa,docvqa,clevr等)，是VQA/SFT格式(image+multi-turn QA)，不是简单(image,caption)对。需要提取/改造成(image,text)对才能用于对比预训练。</td><td>同上 L2200: "VQA/SFT格式"; 目录实测: ai2d/ aokvqa/ chart2text/ chartqa/ clevr/ ...</td></tr>
+<tr><td>GPIC</td><td>部分用了</td><td>R11-E臂B使用了GPIC <code>short</code>子集(约10.9M对,从1926 tar提取)，与CC12M+Amshaker基线做了同N对照。但全量8000 tar(约40.5M对)未全部用于训练——R11-E因「可比区间窄」被暂停(等>=18.5M唯一对再跑,截至归档时GPIC short约10.9M < 18.5M)。</td><td>同上 L350: "R11-E GPIC数据轴 暂停等条件"; L359-368: R11-E配置</td></tr>
+</table>
+<h3>1.3 结论</h3>
+<div class="danger">
+<p><strong>核心归因</strong>：缺口未补上 <strong>不是因为缺数据</strong>（4路约69.6M对已在盘上），而是因为：</p>
+<ol>
+<li><strong>格式壁垒</strong>：WebMix-38M(38.8M)和wit_base(6.48M)是parquet，训练代码不读parquet -> 需代码改动或数据转码，两者都没做。</li>
+<li><strong>接入遗漏</strong>：InternVL-SA1B(22.4M)是tar格式、可直接读，但从未被加入训练路径列表 -> 纯粹是「没人接」。</li>
+<li><strong>格式不匹配</strong>：the_cauldron是VQA格式，不是简单图文对 -> 需改造，未做。</li>
+<li><strong>实验设计限制</strong>：R11系列实验有意控变量(只变数据源/caption粒度)，基线臂固定用CC12M+Amshaker。即使数据在盘上，也没被纳入实验设计——因为实验目的是做controlled comparison，不是最大化数据量。</li>
+</ol>
+<p><strong>一句话</strong>：数据下了、格式不对/没人接/实验没设计进去。把InternVL-SA1B接上+给data.py加parquet reader，即可零成本从18.5M -> 约85.7M对。</p>
+</div>
+
+<h2>② 缺口分析</h2>
+<p>vision线当前基线用 <strong>CC12M + Amshaker 约18.5M对</strong>（英文caption + 通用网络图）。根据任务书和ARCHIVE_OPERATOR_VISION.md，缺口有三：</p>
+<table>
+<tr><th>缺口</th><th>现状</th><th>目标</th><th>差距</th><th>边际收益</th></tr>
+<tr><td><strong>规模</strong></td><td>18.5M对(CC12M+Amshaker)</td><td>>=18.5M唯一对做GPIC数据轴对比(R11-E要求)</td><td>GPIC short仅约10.9M < 18.5M；但盘上有约69.6M已下载未用</td><td>高：InternVL-SA1B(22.4M tar)零成本可接</td></tr>
+<tr><td><strong>中文/多语言caption</strong></td><td>几乎为0(CC12M/Amshaker/GPIC全是英文alt-text)</td><td>>=一定比例中文caption</td><td>现有数据0中文；最大中文源Wukong(100M)/TaiSu(166M)均非商用</td><td><strong>最大</strong>：中文caption对vision encoder在中文下游任务(OCR/文档理解/中文VQA)有直接增益</td></tr>
+<tr><td><strong>领域多样性</strong></td><td>通用网络图(alt-text噪声高)</td><td>技术图/图表/文档/EDA类</td><td>现有数据0领域图；HF上EDA/版图/电路类图文对未找到</td><td>中：对EDA-Eval等领域评测有潜在增益，但数据稀缺</td></tr>
+</table>
+<div class="warn">
+<p><strong>优先级判断</strong>：</p>
+<ol>
+<li><strong>先接已有数据(零成本)</strong>：InternVL-SA1B + WebMix-38M + wit_base -> 规模从18.5M -> 约85.7M，解决缺口1。</li>
+<li><strong>再补中文(最高边际收益)</strong>：TaiSu(166M中文，webdataset tar，非商用但研究可用) -> 解决缺口2。</li>
+<li><strong>领域图视情况</strong>：DocVQA/ChartQA/PlotQA可少量补充(约300K)，但格式需改造 -> 解决部分缺口3。</li>
+</ol>
+</div>
+
+<h2>③ 平台盘点全表</h2>
+<h3>3.1 中文图文对</h3>
+<table>
+<tr><th>数据集</th><th>平台</th><th>链接</th><th>对数</th><th>大小</th><th>语言</th><th>许可证</th><th>商用</th><th>Image bytes?</th><th>上次对照</th></tr>
+<tr><td>Noah-Wukong</td><td>HF</td><td>wanng/wukong100m</td><td>100M(HF上传15.2M)</td><td>约10TB+(全量)</td><td>中文</td><td><span class="badge b-red">CC-BY-NC-SA-4.0</span></td><td>仅研究</td><td>URL-based</td><td>上次未覆盖</td></tr>
+<tr><td>Noah-Wukong(镜像)</td><td>HF</td><td>Mxode/Noah-Wukong-100M</td><td>15.1M(HF viewer)</td><td>n/a</td><td>中文</td><td><span class="badge b-red">CC-BY-NC-SA-4.0</span></td><td>仅研究</td><td>URL-based</td><td>上次未覆盖</td></tr>
+<tr><td>TaiSu(太素)</td><td>HF</td><td>Ajax102/Taisu</td><td>166M(全量)</td><td>约7.9TB</td><td>中文</td><td><span class="badge b-red">CC-BY-NC-SA-4.0</span></td><td>仅研究</td><td><span class="badge b-green">webdataset tar</span></td><td>上次未覆盖</td></tr>
+<tr><td>LAION-Chinese</td><td>HF</td><td>wanng/laion-high-resolution-chinese</td><td>2.66M</td><td>约399MB(仅文本)</td><td>中文</td><td><span class="badge b-green">CC-BY-4.0</span></td><td>可商用</td><td>URL-based(需爬图)</td><td>上次未覆盖</td></tr>
+<tr><td>COCO-CN</td><td>HF</td><td>AIMClab-RUC/COCO-CN</td><td>20,342图/27,218caption</td><td>约小(基于COCO)</td><td>中文+英文</td><td><span class="badge b-green">MIT</span></td><td>可商用</td><td>是(COCO图片)</td><td>上次未覆盖</td></tr>
+<tr><td>Flickr30K-CN</td><td>HF</td><td>tomzhuo/Flickr30K-CN</td><td>约31K图</td><td>约39MB(viewer)</td><td>中文</td><td><span class="badge b-gray">未标注</span></td><td>待核实</td><td>是</td><td>上次未覆盖</td></tr>
+<tr><td>Chinese-LLaVA</td><td>HF</td><td>LinkSoul/Chinese-LLaVA-Vision-Instructions</td><td>1.82M</td><td>约1.3GB(仅文本)</td><td>中文</td><td><span class="badge b-green">Apache-2.0</span></td><td>可商用</td><td>否(图片从百度网盘)</td><td>上次未覆盖</td></tr>
+<tr><td>Chinese-Image-Text-Corpus</td><td>HF</td><td>REILX/Chinese-Image-Text-Corpus-dataset</td><td>待核实</td><td>n/a</td><td>中文</td><td><span class="badge b-green">Apache-2.0</span></td><td>可商用</td><td>待核实</td><td>上次未覆盖</td></tr>
+<tr><td>Chinese-Multimodal-Instruct</td><td>HF</td><td>Mxode/Chinese-Multimodal-Instruct</td><td>100(WIP,目标1-2M)</td><td>约5MB</td><td>中文</td><td><span class="badge b-green">CC-BY-SA-4.0</span></td><td>可商用</td><td>是</td><td>上次未覆盖</td></tr>
+</table>
+<p style="font-size:0.85em;color:#666">数据来源：HF API <code>api/datasets</code> + <code>datasets-server /info</code>，访问日期2026-11-11，经代理172.19.92.25:13128。</p>
+
+<h3>3.2 多语言caption</h3>
+<table>
+<tr><th>数据集</th><th>平台</th><th>链接</th><th>对数</th><th>大小</th><th>语言</th><th>许可证</th><th>商用</th><th>Image bytes?</th></tr>
+<tr><td>DataComp-1B</td><td>HF</td><td>mlfoundations/datacomp_1b</td><td>约1B</td><td>约数TB(parquet+npz)</td><td>英文为主</td><td><span class="badge b-green">CC-BY-4.0</span></td><td>可商用</td><td>URL-based(metadata only)</td></tr>
+<tr><td>DataComp pools</td><td>HF</td><td>mlfoundations/datacomp_pools</td><td>12.8M-12.8B(4档)</td><td>450GB-450TB</td><td>英文为主</td><td><span class="badge b-green">CC-BY-4.0</span></td><td>可商用</td><td>URL-based</td></tr>
+</table>
+<div class="warn"><p>注意：<strong>DataComp系列未找到专门的multilingual变体</strong>。DataComp原始数据来自CommonPool(基于DataComp竞赛)，以英文为主。多语言图文对的主要来源仍是LAION-5B(可按语言过滤出中文子集 -> wanng/laion-high-resolution-chinese即为其中文子集)。</p></div>
+<h3>3.3 领域图(技术/文档/图表/学术)</h3>
+<table>
+<tr><th>数据集</th><th>平台</th><th>链接</th><th>对数</th><th>大小</th><th>语言</th><th>许可证</th><th>商用</th><th>Image bytes?</th><th>领域</th></tr>
+<tr><td>DocVQA</td><td>HF</td><td>pixparse/docvqa-single-page-questions</td><td>50K(39K+5K+5K)</td><td>约12.4GB</td><td>英文</td><td><span class="badge b-green">MIT</span></td><td>可商用</td><td><span class="badge b-green">是</span></td><td>文档理解</td></tr>
+<tr><td>ChartQA</td><td>HF</td><td>ahmed-masry/ChartQA</td><td>约30K(QA对)</td><td>待核实(zip下载)</td><td>英文</td><td><span class="badge b-yellow">GPL-3.0</span></td><td>可商用(GPL)</td><td>是(zip内)</td><td>图表理解</td></tr>
+<tr><td>PlotQA</td><td>HF</td><td>achang/plot_qa</td><td>224K图/28.9M QA</td><td>约7GB</td><td>英文</td><td><span class="badge b-green">CC</span></td><td>可商用</td><td><span class="badge b-green">是</span></td><td>数据可视化/图表</td></tr>
+<tr><td>SciCap</td><td>HF</td><td>CrowdAILab/scicap</td><td>约400K+图</td><td>待核实</td><td>英文</td><td><span class="badge b-red">CC-BY-NC-SA-4.0</span></td><td>仅研究</td><td>待核实</td><td>学术论文图表</td></tr>
+<tr><td>ArXiv Figures</td><td>HF</td><td>ulab-ai/arxiv-figures</td><td>546K</td><td>约50MB(仅文本)</td><td>英文</td><td><span class="badge b-gray">未标注</span></td><td>待核实</td><td>否</td><td>学术论文图</td></tr>
+<tr><td>ArXiv AI Figures</td><td>HF</td><td>Leonardo6/ArXiv-AI-Figure-Caption</td><td>17K</td><td>约3MB(仅文本)</td><td>英文</td><td><span class="badge b-green">CC-BY-SA-4.0</span></td><td>可商用</td><td>否</td><td>AI论文图</td></tr>
+<tr><td>Rico Captions</td><td>HF</td><td>ncoop57/rico_captions</td><td>待核实</td><td>待核实</td><td>英文</td><td><span class="badge b-gray">未标注</span></td><td>待核实</td><td>待核实</td><td>UI截图</td></tr>
+</table>
+<div class="warn"><p>注意：<strong>EDA/版图/电路/原理图类图文对在HF上未找到</strong>。搜索关键词circuit/schematic/EDA layout均无相关结果。该领域数据可能需要从EDA工具文档/PDF自行提取，或从PyAether/SKILL API文档中的截图获取(但这些是评测集内容，不可入训练)。</p></div>
+
+<h3>3.4 已在盘上但未用的数据(补充盘点)</h3>
+<table>
+<tr><th>数据集</th><th>路径</th><th>对数</th><th>大小</th><th>格式</th><th>接入成本</th></tr>
+<tr><td>WebMix-38M</td><td>/nas_user/.../MVRL/WebMix-38M/</td><td>约38.8M</td><td>1.9TB</td><td>parquet</td><td>中(加parquet reader约20行 或 转tar需2.3TB)</td></tr>
+<tr><td>wit_base</td><td>/nas_user/.../VedaLabs/wit_base/</td><td>约6.48M</td><td>287GB</td><td>parquet</td><td>中(同上)</td></tr>
+<tr><td>InternVL-SA1B</td><td>/nas_user/.../hanlincs/InternVL-SA1B-Caption-WebDataset/</td><td>约22.4M</td><td>1.5TB</td><td>webdataset tar</td><td><span class="badge b-green">低(加路径即可)</span></td></tr>
+<tr><td>the_cauldron</td><td>/nas_user/.../HuggingFaceM4/the_cauldron/</td><td>约1.9M</td><td>158GB</td><td>VQA多子集</td><td>高(需提取image+caption改造)</td></tr>
+<tr><td>Amshaker</td><td>/nas_user/.../Amshaker/</td><td>约6M(已用)</td><td>3.7TB</td><td>已接入</td><td>-(已在基线中)</td></tr>
+<tr><td>CC12M</td><td>/nas_train/.../conceptual-captions-12m-webdataset/</td><td>约11M(已用)</td><td>1.2TB</td><td>已接入</td><td>-(已在基线中)</td></tr>
+<tr><td>GPIC</td><td>/nas_inference/.../stanford-vision-lab/gpic/</td><td>约40.5M(部分用)</td><td>12TB</td><td>webdataset tar</td><td>低(R11-E已部分用,可扩全量)</td></tr>
+</table>
+<h2>④ 推荐 Top-5(含打分)</h2>
+<p>打分维度(每项1-5分)：规模 / 中文支持 / 领域多样性 / 许可友好度 / 获取成本(越高越好=越容易获取)</p>
+<table>
+<tr><th>排名</th><th>数据集</th><th>规模</th><th>中文</th><th>领域</th><th>许可</th><th>获取成本</th><th>总分</th><th>推荐理由</th></tr>
+<tr><td><strong>1</strong></td><td><strong>InternVL-SA1B</strong>(已在盘上)</td><td class="score">5</td><td>1</td><td>2</td><td>4</td><td class="score">5</td><td class="score">17</td><td><strong>零成本即可接入</strong>：22.4M对，webdataset tar格式，已在/nas_user上(1.5TB/2000tar/0 incomplete)，只需在训练脚本加路径。英文caption但图片来源多样(SA1B)。</td></tr>
+<tr><td><strong>2</strong></td><td><strong>TaiSu(Ajax102/Taisu)</strong></td><td class="score">5</td><td class="score">5</td><td>3</td><td>2</td><td>3</td><td class="score">18</td><td><strong>最佳中文源</strong>：166M中文图文对，webdataset tar格式(image bytes内联)，与现有管线零转码兼容。约7.9TB。CC-BY-NC-SA-4.0(仅研究用，但BaiZe是学术项目)。</td></tr>
+<tr><td><strong>3</strong></td><td><strong>WebMix-38M</strong>(已在盘上)</td><td class="score">5</td><td>1</td><td>2</td><td>3</td><td>4</td><td class="score">15</td><td><strong>规模最大且已在盘上</strong>：38.8M对，1.9TB parquet。需给data.py加parquet reader(约20行代码)或转tar。英文caption，来源含CC12M等。</td></tr>
+<tr><td><strong>4</strong></td><td><strong>LAION-Chinese</strong></td><td>3</td><td class="score">5</td><td>2</td><td class="score">5</td><td>2</td><td>17</td><td><strong>最佳商用许可中文源</strong>：2.66M中文对，CC-BY-4.0可商用。但URL-based(需爬图)，且规模较小。适合需要商用许可时使用。</td></tr>
+<tr><td><strong>5</strong></td><td><strong>PlotQA</strong></td><td>3</td><td>1</td><td class="score">5</td><td>4</td><td>4</td><td>17</td><td><strong>最佳领域多样性补充</strong>：224K图表/数据可视化图，CC许可，image bytes内联(约7GB)。英文QA格式，需提取(image,caption)对。规模小但领域独特。</td></tr>
+</table>
+<div class="note"><p><strong>特别说明</strong>：InternVL-SA1B排名第1不是因为数据质量最高，而是因为<strong>获取成本为零</strong>(已在盘上、格式兼容、只需加一行路径)。如果纯看数据价值，TaiSu(166M中文)和WebMix-38M(38.8M规模)更高，但有下载成本/代码改造成本。</p></div>
+
+<h2>⑤ 许可合规</h2>
+<table>
+<tr><th>类别</th><th>数据集</th><th>许可证</th><th>可否用于BaiZe(学术研究)</th><th>可否商用</th><th>备注</th></tr>
+<tr><td rowspan="3"><strong>可商用</strong></td><td>LAION-Chinese</td><td>CC-BY-4.0</td><td>是</td><td>是</td><td>需署名</td></tr>
+<tr><td>COCO-CN</td><td>MIT</td><td>是</td><td>是</td><td>基于MS-COCO，COCO本身有额外条款</td></tr>
+<tr><td>DocVQA / PlotQA</td><td>MIT / CC</td><td>是</td><td>是</td><td>DocVQA基于DocVQA官方许可</td></tr>
+<tr><td><strong>可商用(copyleft)</strong></td><td>ChartQA</td><td>GPL-3.0</td><td>是</td><td>是(需开源衍生作品)</td><td>GPL传染性，模型权重分发需注意</td></tr>
+<tr><td rowspan="4"><strong>仅研究(非商用)</strong></td><td>Noah-Wukong</td><td>CC-BY-NC-SA-4.0</td><td>是(学术研究)</td><td><span class="badge b-red">否</span></td><td>华为诺亚方舟实验室，需署名-非商用-相同许可</td></tr>
+<tr><td>TaiSu</td><td>CC-BY-NC-SA-4.0</td><td>是(学术研究)</td><td><span class="badge b-red">否</span></td><td>NeurIPS 2022，原版需邮件申请；HF版可直接下</td></tr>
+<tr><td>SciCap</td><td>CC-BY-NC-SA-4.0</td><td>是(学术研究)</td><td><span class="badge b-red">否</span></td><td>学术论文图表</td></tr>
+<tr><td>Chinese-Multimodal-Instruct</td><td>CC-BY-SA-4.0</td><td>是</td><td>是(需相同许可)</td><td>WIP，目前仅100条</td></tr>
+<tr><td rowspan="3"><strong>待核实</strong></td><td>Flickr30K-CN</td><td>未标注</td><td>待核实</td><td>待核实</td><td>基于Flickr30K，原版许可需查</td></tr>
+<tr><td>ArXiv Figures</td><td>未标注</td><td>待核实</td><td>待核实</td><td>arXiv论文图，许可依赖原论文</td></tr>
+<tr><td>Rico Captions</td><td>未标注</td><td>待核实</td><td>待核实</td><td>基于Rico数据集</td></tr>
+</table>
+<div class="info"><p><strong>BaiZe定位</strong>：BaiZe是ISEDA 2027学术投稿项目，<strong>非商用用途</strong>。因此CC-BY-NC-SA-4.0的数据集(Wukong、TaiSu、SciCap)<strong>可用于BaiZe研究</strong>，只需在论文中正确署名并注明许可。但如果未来有商业化计划，需避免使用非商用许可数据。</p></div>
+
+<h2>⑥ 下一步建议</h2>
+<h3>6.1 即刻可做(零下载、零成本)</h3>
+<div class="note">
+<ol>
+<li><strong>接入InternVL-SA1B</strong>(22.4M对，webdataset tar，已在盘上)：<br>
+  在vision训练脚本的<code>--data-source</code>路径列表中加入<code>/nas_user/app.e0031982/datasets/hanlincs/InternVL-SA1B-Caption-WebDataset/webdataset/*.tar</code><br>
+  无需任何代码改动，webdataset tar格式与现有管线完全兼容<br>
+  效果：基线从18.5M -> 约40.9M对(+22.4M)</li>
+<li><strong>扩GPIC到全量</strong>(约40.5M对，webdataset tar，已在盘上8000 tar)：<br>
+  当前R11-E只用了short子集(约10.9M)，可扩到全量(short+medium+long+tag约40.5M)<br>
+  需在数据加载时去掉<code>caption_type=='short'</code>过滤<br>
+  效果：加上InternVL后总规模可达约81.4M对</li>
+</ol>
+</div>
+<h3>6.2 低成本可做(需少量代码改动，无新下载)</h3>
+<div class="warn">
+<ol>
+<li><strong>给data.py加parquet直读分支</strong>(解锁WebMix-38M + wit_base)：<br>
+  在<code>build_mixed_loader</code>里按文件扩展名分流：<code>.parquet</code> -> pyarrow逐row-group读<code>image.bytes</code>+<code>caption</code>；<code>.tar</code> -> 走现有wds路径<br>
+  代码量：约20-30行(ARCHIVE_OPERATOR_VISION.md L2205已有方案A设计)<br>
+  效果：解锁WebMix-38M(38.8M)+wit_base(6.48M)，总规模可达约126.6M对<br>
+  需先验证WebMix/wit_base的列名(image struct{bytes,path}+caption)，若不同需适配</li>
+</ol>
+</div>
+<h3>6.3 需下载(需运维批准)</h3>
+<table>
+<tr><th>优先级</th><th>数据集</th><th>大小</th><th>为什么下</th><th>许可</th><th>建议量</th></tr>
+<tr><td>P0</td><td>TaiSu(Ajax102/Taisu)</td><td>约7.9TB</td><td>166M中文图文对，webdataset tar格式，与管线零转码兼容。是<strong>唯一</strong>同时满足「大规模+中文+image bytes+格式兼容」的源。</td><td>CC-BY-NC-SA(研究OK)</td><td>全量或先下2TB子集</td></tr>
+<tr><td>P1</td><td>LAION-Chinese</td><td>约399MB(文本)+爬图</td><td>2.66M中文对，CC-BY-4.0可商用。URL-based需爬图，规模小但许可友好。</td><td>CC-BY-4.0</td><td>仅文本(若需图需爬取)</td></tr>
+<tr><td>P2</td><td>PlotQA</td><td>约7GB</td><td>224K图表/数据可视化图，领域多样性补充。CC许可，image bytes内联。</td><td>CC</td><td>全量</td></tr>
+<tr><td>P3</td><td>DocVQA</td><td>约12.4GB</td><td>50K文档图，MIT许可，领域补充(文档理解)。</td><td>MIT</td><td>全量</td></tr>
+</table>
+<h3>6.4 验证方法</h3>
+<ol>
+<li><strong>格式验证</strong>：对已在盘上的parquet文件，用<code>pyarrow.ParquetFile(fn).schema_arrow</code>打印前3个字段名，确认image列名和caption列名。</li>
+<li><strong>解码验证</strong>：对InternVL-SA1B tar，用<code>webdataset.Dataset</code>读1个tar，确认能正确解码image bytes。</li>
+<li><strong>规模验证</strong>：接入后跑100步smoke test，确认data loader吞吐正常(目标>=R11-G steady 2485 img/s)。</li>
+<li><strong>质量验证</strong>：对TaiSu，抽5个tar检查中文caption质量(是否为有效中文、是否与图像内容匹配)。</li>
+</ol>
+<div class="footnote">
+<p><strong>报告生成</strong>：BaiZe data线 · 2026-11-11 · commit前缀<code>data rpt:</code></p>
+<p><strong>数据来源</strong>：HuggingFace API(<code>api/datasets</code>+<code>datasets-server /info</code>) · 网络搜索(CIMI) · 磁盘实测(<code>du</code>/<code>find</code>/<code>ls</code>) · 仓库证据(<code>ARCHIVE_OPERATOR_VISION.md</code>)</p>
+<p><strong>检索关键词</strong>：wukong · coco-cn · flickr30k chinese · LAION chinese · taisu · chinese clip · datacomp multilingual · DocVQA · ChartQA · PlotQA · SciCap · rico · arxiv figure · circuit dataset · schematic dataset · EDA layout · chinese image caption · chinese multimodal · chinese visual · chinese ocr · multilingual image caption · chinese image pair · chinese image text · Noah-Wukong</p>
+<p><strong>访问日期</strong>：2026-11-11 · 代理172.19.92.25:13128</p>
+<p><strong>本报告未下载任何数据集本体</strong>，仅查询API元数据和README。实际下载需运维另批。</p>
+<p><strong>已知限制</strong>：① HF API <code>num_examples</code>对部分数据集反映的是HF上传量而非全量(如Wukong全量100M但HF仅15.2M)；② URL-based数据集未验证链接存活性；③ 领域图搜索可能遗漏非英文命名的数据集；④ ModelScope平台未深入搜索(需登录/SDK)，建议后续补充。</p>
+</div>
+</body>
+</html>

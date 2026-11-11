@@ -5,7 +5,9 @@ WAITING: 1
 > ⚠️ **`WAITING` 只认本文件顶部这一行**（`baize_data_loop.sh` 用 `^WAITING:[[:space:]]*1` 匹配）。
 > **不要在正文/流水里再写任何以 `WAITING:` 开头的行**——否则会误触发 30 分钟长睡。
 
-> 🟢 **✅ stack-v3-train 2TB下载全DONE（唤醒1422,03:56）**：batch7 FINISH@03:46:06→4600parquet/1,987,930,402,327B(1.85TiB)/0inc；batch7 QC(3shard×200repos):6885files/20.6MiB/vendor1.0%/>1MB0/empty0/PHP12.4%/Java10.4%/Python6.2%/EDA(14)12.3%/Target(32)58.1%；2TB ROI复盘:token~2,025B(全语种)/~1,019B per TB(压缩)；重叠度stack→UDC L2=2.4%(97.6%独特)；丢弃漏斗L0→L4保留~60%(目标语言)；ROI判定✅有价值→停止下载进入过滤+分词；DATA_MAPPING.md §H.11+§H.12已写；commit data stackv3: pushed。
+> 🟢 **✅ vision图文对调研报告DONE（唤醒1448,2026-11-11）**：用户令11-11→归因(10-13下载4路69.6M对未用=格式不兼容parquet/tar+无人接管线+实验设计限制)+平台盘点(中文9源/多语言2源/领域7源/已在盘7源)+推荐Top5(InternVL-SA1B零成本/TaiSu最佳中文/WebMix-38M规模/LAION-Chinese商用/PlotQA领域)+许可合规+下一步建议→report_vision_textpair_sourcing_zh.html(28321B/6节/0外链/HTML valid)落reports/→commit data rpt: pushed。
+
+> 🟢 **✅ stack-v3-train 2TB下载全DONE（唤醒1422,03:56）**：batch7 FINISH@03:46:06→4600parquet/1,987,930,402,327B(1.85TiB)/0inc；2TB ROI复盘:token~2,025B/重叠2.4%/97.6%独特/ROI判定✅有价值→停止下载进入过滤+分词。
 
 > 🟢 **✅ 运维令13:3x DONE（唤醒690,15:0x）**：分词 SFT-2605(94 shard/18.89B tok/75.87GB)+Agent-2609(13 shard/5.97B tok/23.89GB)→/nas_env(full_sft_2605/full_sft_agent_2609)；tokenized/ 镜像 per-file symlink→/nas_env；INDEX.tsv 922 shard triplet全OK inode_ok；DATA_MAPPING.md(10603B)行11-12=镜像完整；report_data_mapping_zh.html(20764B)12源全量更新；commit 44b512316 pushed。
 
@@ -20,11 +22,11 @@ WAITING: 1
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        ✅stack-v3-train 2TB下载全DONE→进入过滤+分词阶段(待运维指令) → WAITING=1
-已完成:       ✅85M;✅10-31报告;✅09:4x报告;✅09:2x长上下文10/10(249.48GiB);✅13:2x#2 RL报告;✅13:2x#1 B类12/12(78.73GiB);✅11-07 ROI 8源DONE(25.14GB/135文件/0inc);✅stack-v3-train调研DONE(8192shard/EDA语言27.1%);✅batch1-7全DONE(累计1,987,930,402,327B/4600parquet/0inc);✅batch7 QC(6885files/vendor1.0%/EDA12.3%);✅2TB ROI复盘(token~2,025B/重叠2.4%/97.6%独特/ROI判定✅有价值);✅论文pretrain数据节更新;✅路径staleness审计(0stale);✅TASK.md标记更新
-当前动作:     唤醒1447(2026-11-11 06:57):例行巡检→①git pull --rebase(Already up to date,TASK.md无新data令);②research日报11-11(06:06)已阅[data建议=本期无新增可用建议(不凑数),备查2611.12884子群体数据分配但标注"不是建议/现在不适用"];③stack-v3-train:du -sb=1,987,932,712,240B/4600parquet/0inc→完整稳定;④pgrep无下载进程(仅loop+cline自身);⑤df:/nas_inference 19T已用/27T可用(42%)≥5T红线OK;/nas_train 180T/28T可用(87%);/nas_env 8.3T/1.7T可用(84%);⑥体积MEMORY 31.0KB/TASK 29.1KB均≤40KB;⑦全部运维令已✅已交付→commit→WAITING=1
-下一步:       等运维指令→若批准stack-v3 L4/L5 parquet级过滤+分词→用tokenizer_eod分词→落baize-data/tokenized/→更新INDEX.tsv+DATA_MAPPING.md;若无新指令→WAITING=1例行巡检
-阻塞:         无(2TB下载已完成,/nas_inference 27T可用≥5T红线)
+PHASE:        ✅vision图文对调研报告DONE→✅stack-v3-train 2TB下载全DONE→进入过滤+分词阶段(待运维指令) → WAITING=1
+已完成:       ✅85M;✅10-31报告;✅09:4x报告;✅09:2x长上下文10/10(249.48GiB);✅13:2x#2 RL报告;✅13:2x#1 B类12/12(78.73GiB);✅11-07 ROI 8源DONE(25.14GB/135文件/0inc);✅stack-v3-train调研DONE(8192shard/EDA语言27.1%);✅batch1-7全DONE(累计1,987,930,402,327B/4600parquet/0inc);✅batch7 QC(6885files/vendor1.0%/EDA12.3%);✅2TB ROI复盘(token~2,025B/重叠2.4%/97.6%独特/ROI判定✅有价值);✅论文pretrain数据节更新;✅路径staleness审计(0stale);✅TASK.md标记更新;✅vision图文对调研报告(report_vision_textpair_sourcing_zh.html/28KB/6节/归因+盘点+Top5+许可+建议)
+当前动作:     唤醒1448(2026-11-11 08:4x):执行用户令11-11(vision图文对调研)→①git pull --rebase(Already up to date);②检测到TASK.md顶部新令(用户令11-11:为vision encoder找图文对,出中文HTML报告);③Task A归因:读ARCHIVE_OPERATOR_VISION.md→4路已下载(WebMix-38M 1.9TB parquet/wit_base 287GB parquet/InternVL-SA1B 1.5TB tar/the_cauldron 158GB VQA)全在/nas_user且0inc→未用原因=格式不兼容(parquet需转码)+接入遗漏(tar从未加路径)+格式不匹配(VQA非简单对)+实验设计限制(R11只控变量用CC12M+Amshaker);④Task B盘点:HF API搜25+关键词→中文9源(Wukong100M/TaiSu166M/LAION-Chinese2.66M/COCO-CN20K/Flickr30K-CN31K/Chinese-LLaVA1.82M等)+多语言2源(DataComp)+领域7源(DocVQA/ChartQA/PlotQA/SciCap/ArXiv/Rico);⑤关键发现:TaiSu(Ajax102/Taisu,166M中文,webdataset tar,CC-BY-NC-SA)是最佳可落地中文源;EDA/版图/电路类图文对HF上未找到;⑥Task C报告:report_vision_textpair_sourcing_zh.html(28321B/6节/0外链/HTML valid)落reports/;⑦体积MEMORY 31.6KB/TASK 29.6KB均≤40KB→commit data rpt:→WAITING=1
+下一步:       等运维指令→若批准TaiSu下载(7.9TB)或InternVL-SA1B接入vision训练→配合执行;若无新指令→WAITING=1例行巡检
+阻塞:         无(vision图文对调研报告已交付,/nas_inference 27T可用≥5T红线)
 ERROR_COUNT:  11
 未完成指令:   无(全部运维令均已✅已交付)→WAITING=1
 ```
@@ -32,6 +34,7 @@ ERROR_COUNT:  11
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。
 
 ## 📋 本唤醒流水
+> [11-11 08:4x] 唤醒1448：执行用户令11-11(vision图文对调研)→①git pull --rebase(Already up to date);②检测到TASK.md顶部新令(用户令11-11:为vision encoder找图文对,出中文HTML报告,含归因/盘点/Top5/许可/建议6节);③Task A归因:读ARCHIVE_OPERATOR_VISION.md(L2170-2210)→10-13下载4路(WebMix-38M 1.9TB/3888parquet,wit_base 287GB/330parquet,InternVL-SA1B 1.5TB/2000tar,the_cauldron 158GB/2821files)全在/nas_user且0incomplete→未用原因:WebMix/wit_base=parquet格式不兼容(data.py只读wds tar);InternVL-SA1B=tar可直读但从未加路径;the_cauldron=VQA格式非简单对;R11实验有意控变量只用CC12M+Amshaker;④Task B盘点:HF API搜25+关键词(wukong/coco-cn/flickr30k-chinese/LAION-chinese/taisu/chinese-clip/datacomp/DocVQA/ChartQA/PlotQA/SciCap/rico/arxiv-figure/circuit/schematic/EDA-layout等)→中文9源(Wukong100M CC-BY-NC-SA/TaiSu166M CC-BY-NC-SA webdataset/LAION-Chinese2.66M CC-BY-4.0 URL/COCO-CN20K MIT/Flickr30K-CN31K/Chinese-LLaVA1.82M Apache/Chinese-Image-Text-Corpus Apache/Chinese-Multimodal-Instruct100 WIP)+多语言2源(DataComp-1B CC-BY-4.0)+领域7源(DocVQA50K MIT/ChartQA30K GPL/PlotQA224K CC/SciCap400K CC-BY-NC-SA/ArXiv546K/Rico);⑤关键发现:TaiSu是唯一同时满足大规模+中文+image bytes+格式兼容的源(166M/7.9TB/webdataset tar/CC-BY-NC-SA研究可用);EDA/版图/电路类图文对HF上未找到;InternVL-SA1B(22.4M tar已在盘上)零成本可接入;⑥磁盘实测:du -sh确认4路数据完整(1.9T/287G/1.5T/158G/0inc);⑦Task C报告:Python脚本生成→report_vision_textpair_sourcing_zh.html(28321B/6节①归因②缺口分析③平台盘点④Top5⑤许可⑥建议/0外链/0 script/HTML valid)落reports/;⑧体积MEMORY~31.6KB/TASK~29.6KB均≤40KB→更新心跳+进度快照→commit data rpt:→WAITING=1
 > [11-11 05:1x] 唤醒1445：例行巡检→①git pull --rebase(解决ZhuLong MEMORY_ZHULONG.md UU冲突:取upstream wake#826较新版→git add→pull OK,now@177ab4d6a:2新提交=designflow r349+posttrain R160 anneal分词脚本;TASK.md diff origin/main=空→无新data令);②research日报11-10(18:12)仍为最新(无11-11 06:00报):AM建议=路径staleness审计(已done,0 stale),PM建议=缺失型指标独立成行+曝光分桶统计(纳注L4/L5过滤阶段,待运维批准后执行,来自research日报2026-11-10);③posttrain创建data线anneal分词脚本(baize_posttrain_anneal_to_parquet.py+baize_posttrain_tokenize_anneal_corpus.sh,commit f8fcde80f)→已注,非data运维指令,待posttrain正式请求时配合;④stack-v3-train:du -sb=1,987,932,712,240B/4600parquet/0inc→完整稳定(与wake1444一致);⑤pgrep无下载进程(仅loop PID1943222+cline PID3379899);⑥df:/nas_inference 19T已用/27T可用(42%)≥5T红线OK;/nas_train 180T/28T可用(87%);/nas_env 8.3T/1.7T可用(84%);⑦体积MEMORY 30.5KB/TASK 29.8KB均≤40KB无需归档;⑧全部运维令已✅已交付→commit data:→WAITING=1
 > [11-11 04:05] 唤醒1444：例行巡检→①git pull --rebase(bacea9606 designflow提交,TASK.md diff origin/main=空→无新data令);②research日报11-10(18:12)仍为最新(无11-11 06:00报),无新可执行data建议;③stack-v3-train:du -sb=1,987,932,712,240B/4600parquet/0inc→完整稳定;④pgrep无下载进程(仅loop+cline自身);⑤df:/nas_inference 19T已用/27T可用(42%)≥5T红线OK;/nas_train 180T/28T可用(87%);/nas_env 8.3T/1.7T可用(84%);⑥体积MEMORY 36.4KB/TASK 29.8KB均≤40KB;⑦全部运维令已✅已交付→commit→WAITING=1
 > 📦 唤醒1441-1443 原文已归档 → daily-memories-data/2026-11-11.md
