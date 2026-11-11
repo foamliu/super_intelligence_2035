@@ -10203,3 +10203,88 @@ API_DOCS block → fingerprint scan vs 155 eval entry_points → S1×2 + S3×2 +
 
 ---
 
+## §R206 (2026-11-11 wake275) v11-v35 Corpus Consolidation — 943 pairs merged, dual contamination gate PASS, parquet ready
+
+**背景**：v11-v35 的 25 个独立语料文件（943 对）散落在 25 个 JSONL 中，SFT 重训时需要手动拼接。
+本轮将它们合并为**单一训练就绪文件**，并跑双重污染隔离闸门（entry_point 指纹 + 13-gram 黑名单），
+使 GPU 释放后 SFT 重训「一条命令即可起」。
+
+**脚本**：`baize_posttrain_r206_consolidate_v11_v35.py`（~200 行，Python3 stdlib，py_compile✅）
+
+### 1. 合并流程
+
+| 步骤 | 内容 |
+|:--|:--|
+| 发现 | glob `sft_pyaether_corpus_v{11..35}_*.jsonl` → 25 文件（预期 25 ✅） |
+| 归一化 | `id`→`pair_id` 映射；确保 api_used 为 list；补 source 字段 |
+| 去重 | 按 `pair_id` 去重（first-wins） |
+| 指纹扫描 | 155 eval entry_points 逐条扫描 prompt+completion，命中即 REJECT |
+| 写入 | `sft_pyaether_corpus_v11_v35_merged.jsonl`（943 对 / 1030.0 KB） |
+
+### 2. 合并结果
+
+| 指标 | 值 |
+|:--|--:|
+| 输入文件 | 25 |
+| 读取对数 | 943 |
+| 去重移除 | 0 |
+| 指纹 REJECT | 0 |
+| Parse errors | 0 |
+| **最终对数** | **943** |
+| Unique APIs covered | 189 |
+| contamination_check=PASS | 943/943 (100%) |
+
+### 3. Per-type 分布
+
+| Type | Count |
+|:--|--:|
+| S1 (doc_to_code) | 178 |
+| S1_doc_to_code | 10 |
+| S2_api_lookup | 10 |
+| S3 (multi_api_chain) | 149 |
+| S3_multi_api_chain | 3 |
+| S4 | 204 |
+| S5 | 199 |
+| S6 | 188 |
+| S7_corrected_prompt | 2 |
+| **Total** | **943** |
+
+### 4. 双重污染隔离闸门
+
+| 闸门 | 机制 | 扫描数 | 命中 | 结果 |
+|:--|:--|--:|--:|:--|
+| Entry_point 指纹 | 155 eval entry_point 字符串逐条匹配 | 943 | 0 | ✅ PASS |
+| 13-gram 黑名单 | 6 快照并集 536 任务 / 13-gram FNV-1a / 重合率≥0.8 + 8-gram 兜底 | 943 | 0 | ✅ PASS |
+
+- 13-gram 闸门报告：`/tmp/r206_contam_gate.md`
+- 黑名单来源：v20260311(158) + EDA-Eval-148 + EDA-Eval-46 + Updated102 + TEST + cuhk_benchmark
+- **结论**：943 对与 158 评测任务不同源，可投料。
+
+### 5. Parquet 转换
+
+| 维度 | 值 |
+|:--|:--|
+| 输入 | `sft_pyaether_corpus_v11_v35_merged.jsonl`（943 对 / 1030.0 KB） |
+| 输出 | `sft_pyaether_corpus_v11_v35_merged.parquet`（247.7 KB，snappy） |
+| 行数 | 943（0 parse errors） |
+| Schema | conversation(list<struct<role,content>>), pair_id, type, api_used, contamination_check |
+| 回读验证 | 943 rows ✅ |
+| 工具 | verl venv python (`$HOME/code/verl_cu124_venv/bin/python` + pyarrow 25.0.1) |
+
+### 6. 交付物
+
+| Item | Path | Size |
+|:--|:--|--:|
+| 合并脚本 | `run/baize_posttrain_r206_consolidate_v11_v35.py` | ~200 行 |
+| Merged JSONL | `run/sft_pyaether_corpus_v11_v35_merged.jsonl` | 1054691 B (1030.0 KB) |
+| Merged Parquet | `run/sft_pyaether_corpus_v11_v35_merged.parquet` | 253672 B (247.7 KB) |
+| Summary JSON | `run/r206_consolidate_summary.json` | 10135 B |
+| 13-gram gate report | `/tmp/r206_contam_gate.md` | (临时) |
+
+### 7. 结论与下一步
+
+- **v11-v35 语料构建阶段正式收尾**：25 文件 → 1 merged JSONL + 1 parquet，双重闸门 PASS，GPU 释放后一条命令起 SFT 重训。
+- **SFT 重训启动条件**：①GPU 释放（拆除 serve 占位 or 新卡分配）②merged parquet 已就绪 ✅ ③SFT 脚本 `baize_posttrain_sft.sh` 已就绪 ✅
+- **阻塞不变**：沙盒 TCP8667 CLOSED → Phase1 eval / Phase3 RL / post-SFT eval 阻塞；GPU serve 占位 → SFT 重训阻塞；P3 等 pretrain ckpt。
+
+---
