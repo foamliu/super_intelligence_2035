@@ -8667,3 +8667,72 @@ each) -- is now explicitly grounded.
 
 > All 25 pairs PASS the 155-entry_point pollution scan. v12 is gated for training.
 > Surrogate SFT/RL results do NOT transfer to BaiZe.
+
+---
+
+## §R183 (2026-11-11 wake252) v13 Mde* + cdf* Simulation/CDF Primitives Corpus (ISOLATE-class, pollution-gated)
+
+### 1. Objective
+
+Cover 10 blind EDA APIs from the R181 coverage audit gap list — 5 Mde*
+simulation-engine primitives + 5 cdf* CDF parameter management APIs — into a
+new SFT corpus file `sft_pyaether_corpus_v13_mde_cdf.jsonl`. All 10 are
+ISOLATE-class (appear in eval solutions only as helper utilities, never as the
+graded entry_point), so teaching public API reference is allowed per §5.1, but
+fingerprint scanning against the 155 eval entry_point strings is mandatory.
+
+### 2. APIs covered
+
+| API | Class | Domain | Pairs (S1+S4+S5+S6) |
+|:--|:--|:--|--:|
+| `MdeSession` | ISOLATE | MDE session open/close | 4 |
+| `MdeSession.run` | ISOLATE | MDE simulation launch | 4 |
+| `MdeOutput` | ISOLATE | MDE output expression | 4 |
+| `MdeDcAnalysis` | ISOLATE | MDE DC analysis config | 4 |
+| `MdeTranAnalysis` | ISOLATE | MDE transient analysis config | 4 |
+| `cdfCreateCDF` | ISOLATE | CDF create | 4 |
+| `cdfGetCDF` | ISOLATE | CDF get | 4 |
+| `cdfCreateParam` | ISOLATE | CDF parameter create | 4 |
+| `cdfSet` | ISOLATE | CDF parameter attribute set | 4 |
+| `cdfSetSimInfo` | ISOLATE | CDF sim-info set | 4 |
+
+### 3. Pair structure (45 pairs)
+
+| Type | Count | Description |
+|:--|--:|:--|
+| S1 doc→code | 10 | One per API: prompt includes API_DOCS block, completion is correct usage |
+| S4 multi-step trace | 10 | One per API: 2-4 API method calls chained |
+| S5 parameter variation | 10 | One per API: batch/loop variation across parameters |
+| S3 multi-API chain | 5 | Cross-API chains combining 2-3 APIs |
+| S6 API lookup | 10 | Intent→API lookup with minimal example |
+| **Total** | **45** | |
+
+S3 chains: (1) MdeSession+MdeOutput+MdeSession.run, (2) MdeDcAnalysis+MdeTranAnalysis,
+(3) cdfGetCDF+cdfCreateParam, (4) cdfCreateCDF+cdfCreateParam+cdfSetSimInfo,
+(5) cdfGetCDF+cdfSet.
+
+### 4. Pollution scan results
+
+- Script internal scan: `rejected_contam = 0` (fingerprint_scan against 155 eval entry_points)
+- Independent verification (separate Python script): **0 hits** on both
+  entry_point strings AND task_id strings
+- **GATE: PASS** — v13 is training-ready
+
+### 5. Cross-checks
+
+- API signatures fetched via MCP `get_api_details` (authoritative)
+- Zero Mde* or cdf* APIs were present in existing v8-v12 corpus (confirmed
+  by extraction from 158-task eval dataset)
+- R182 structural pattern followed (S1/S4/S5 per API × N + S3 chains + S6 lookups)
+
+### 6. Deliverables
+
+| Item | Path | Size |
+|:--|:--|--:|
+| corpus builder | `run/baize_posttrain_r183_mde_cdf_corpus.py` | ~600 lines / py_compile OK |
+| training-ready corpus | `run/sft_pyaether_corpus_v13_mde_cdf.jsonl` | 42,538 bytes / 45 pairs |
+| (existing) v12 db* | `run/sft_pyaether_corpus_v12_db_primitives.jsonl` | 18,527 bytes / 25 pairs |
+| (existing) v11 merge | `run/sft_pyaether_corpus_v11_merged_new_apis.jsonl` | 68,351 bytes / 93 pairs |
+
+> Cumulative PyAether SFT corpus: v11 (93) + v12 (25) + v13 (45) = **163 pairs**.
+> All 45 v13 pairs PASS the 155-entry_point pollution scan. v13 is gated for training.
