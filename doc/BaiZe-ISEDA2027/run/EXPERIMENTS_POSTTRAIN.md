@@ -8370,3 +8370,78 @@ R177 发现 SFT 对真实 API `dbCrtSchWire` 幻觉出 `lib.openSchematic` ⇒ v
 |:--|:--|--:|
 | v9 语料生成脚本 | `run/baize_posttrain_r179_v9_corpus.py` | 623 行 / py_compile✅ |
 | v9 语料 JSONL | `run/sft_pyaether_corpus_v9_layout_create.jsonl` | 35846 bytes / 49 对 |
+
+## §R180 (2026-11-11 wake249) v10 SFT Corpus: Pin Query + Pin Create API Coverage (closes v8 6-API backlog)
+
+**背景**：R179 v9（49 对/12 API）补齐了 layout-create 盲区，但 R178 盘点中标记的「v8 6 API pending 签名补抓」backlog 只解决了 1 个（dbCrtNet 作为 v9 carry-over，ISOLATE eval_count=5）。剩余 5 个 pin 相关 API 仍无覆盖。本轮用 pyAether MCP `get_api_details` 抓取这 5 个 API 的权威签名，并 grep 158 题评测集确认 eval_count 全 0（SAFE），构建 v10 语料补齐「pin query / pin create / instance lookup」子域盲区。
+
+### 1. 污染隔离核验（grep 验证，先于语料构建）
+
+对 158 题评测集 `EDA-Eval-PyAether-v20260311.jsonl` 逐 API `grep -c`：
+
+| API | eval_count | safety | 处置 |
+|:--|--:|:--|:--|
+| emyFigGetPinName | 0 | SAFE | 可自由教学 |
+| dbGetPinFigName | 0 | SAFE | 可自由教学 |
+| emyPinGetNames | 0 | SAFE | 可自由教学 |
+| aeLeCreatePin | 0 | SAFE | 可自由教学 |
+| dbFindInst | 0 | SAFE | 可自由教学 |
+| dbCrtNet | 5 | ISOLATE | 已在 v9（carry-over），不重复 |
+
+→ 5 个全部 SAFE，零污染风险，仅做 entry_point 指纹扫描即可。
+
+### 2. v10 语料设计
+
+- **API 覆盖**：5 个 SAFE pin API（emyFigGetPinName / dbGetPinFigName / emyPinGetNames / aeLeCreatePin / dbFindInst）。
+- **签名来源**：全部经 pyAether MCP `get_api_details` 抓取**权威签名 + 官方 doctest**（非评测题文本）。
+- **对类型**：
+  - **S1 doc→code**（5 对）：每 API 一对，从官方 doc 生成单 API 调用函数。
+  - **S4 多步轨迹**（5 对）：每 API 一对，openCV→find/create→save 多步流——**R178 反幻觉修正**，在真实多步上下文强化 `pyScript.<api>(...)` 精确调用模式。
+  - **S5 参数变化**（5 对）：每 API 一对，同 API 不同 args（list 迭代 / 多 pin 类型 / vector 开关），增加上下文多样性。
+  - **S3 多 API 链**（4 对）：pin 场景导向（findInst→getPinFigName / createPin→getNames / findInst→figName→pinName / createPin 多类型循环）。
+  - **S6 API 查找**（5 对）：intent→API→minimal usage。
+- **总计 24 对**。
+
+### 3. 污染隔离（红线 §5.1 合规）
+
+- 加载评测集 155 个 `entry_point`，对**每个** completion 做子串指纹扫描。
+- **结果：24/24 PASS，0 rejected**。
+- 来源 = 官方 API reference（MCP get_api_details），非评测题。
+- grep 验证 corpus 内 `entry_point` 出现次数 = 0（无评测题内容泄漏）。
+
+### 4. 验证
+
+- `py_compile` ✅
+- dry-run ✅：24 对 / 5 API / 0 rejected
+- 落盘 ✅：`sft_pyaether_corpus_v10_pin_apis.jsonl` 14019 bytes / 24 行
+- JSON parse ✅：所有 24 行可解析，`contamination_check` 全 PASS
+- 5 pin API 全覆盖 ✅
+- v8 6 API pending backlog 清零 ✅（5 进 v10 + dbCrtNet 在 v9）
+
+### 5. 与 v9 累计对比
+
+| 维度 | v9 (R179) | v10 (R180) | v9+v10 累计 |
+|:--|:--|:--|:--|
+| API 数 | 12 | 5 | 17 |
+| 对数 | 49 | 24 | 73 |
+| layout-create 覆盖 | 4/4 ✅ | — | 4/4 |
+| schematic 覆盖 | 7 | — | 7 |
+| pin query/create 覆盖 | 0 | 5/5 ✅ | 5/5 |
+| 多步轨迹 | 12 | 5 | 17 |
+| 评测引用覆盖 | layout 121 refs | pin 子域(SAFE,0 refs) | +pin |
+
+### 6. 下一步
+
+- v9+v10 语料合入 SFT 重训（需 GPU6-7，当前按 17:10 令 serve 占位；待沙盒 ACL 开放或 GPU 释放后执行）。
+- 重训后 post-SFT eval（bash baize_posttrain_eval.sh --backbone minicpm5-sft-v10 --endpoint :8096），验证 layout/schematic/pin API 修复效果。
+- 沙盒恢复→watcher --auto-eval 自动触发 Phase1 baseline eval。
+- v8 6 API pending backlog 已清零，无 pending 签名补抓任务。
+
+### 7. 交付物
+
+| Item | Path | Size |
+|:--|:--|--:|
+| v10 语料生成脚本 | `run/baize_posttrain_r180_v10_corpus.py` | 481 行 / py_compile✅ |
+| v10 语料 JSONL | `run/sft_pyaether_corpus_v10_pin_apis.jsonl` | 14019 bytes / 24 对 |
+
+> ⚠️ 替身 SFT/RL 结果不可迁移到 BaiZe。
