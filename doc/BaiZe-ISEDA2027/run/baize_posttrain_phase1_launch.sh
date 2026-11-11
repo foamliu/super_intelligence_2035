@@ -218,7 +218,14 @@ run_one_model() {
 
     if [ "$act" = "generate" ] || [ "$act" = "full" ]; then
       echo "  [run $run/$N_RUNS] generate @ $(date '+%T')"
-      bash "$DRIVER" -p "$PARALLEL" -n --timeout "$TASK_TIMEOUT" \
+      # NOTE: --timeout is NOT a driver flag; timeout is hardcoded at 2500s in run_cli.sh.
+      # SKIP_SANDBOX_CLEAN=1 needed when sandbox is unreachable (prevents hang on cleanup).
+      # PYTHON=py310 + PYTHONPATH stubs: format_eval_task.py imports langchain_openai
+      # which is not installed on .17; stubs provide empty class (only used with --evolve).
+      SKIP_SANDBOX_CLEAN=1 \
+      PYTHON=/nas_data/app.e0031982/miniforge3/envs/py310/bin/python \
+      PYTHONPATH=/tmp/langchain_stubs \
+        bash "$DRIVER" -p "$PARALLEL" -n \
         > "$rd/driver.log" 2>&1 || { echo "  ❌ run $run 生成失败 (见 $rd/driver.log)"; continue; }
       local latest; latest=$(ls -dt "$EVAL_ROOT"/2026_* 2>/dev/null | head -1)
       [ -n "$latest" ] && cp "$EVAL_ROOT/completed_code_generation_$(basename "$latest").jsonl" "$gen" 2>/dev/null || true
