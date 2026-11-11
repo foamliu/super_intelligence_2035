@@ -42,8 +42,8 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
   <div class="meta">
     <span>📅 2026-11-11</span>
     <span>🏗 Mamba2-hybrid 2.22B</span>
-    <span>🔥 训练 iter≈167.1k / 700k · step~7.1s<7.4s✅ · lr-decay-iters=0(stable段,decay未配置)</span>
-    <span>📊 L1: 16 ckpt ✅(160k=58.13%新高) | L2: GSM8K=0%@160k🔴(v3确认:strict+flexible均=0.0) MMLU=23.16%@160k(≈随机) BBH=0%@160k🔴(v4 results.json确认) · v5 MATH运行中(88/100,~39s/it,ETA~8min) · v6排队(4阶段:HumanEval+MBPP+MATH-RP1.3+gen_probe,修复confirm_run_unsafe_code) · 🔬vLLM方案已备(待GPU窗口) | L3: 🔧 pipeline脚本已建·模型生成退化 | L4: 数据在.15不可达+定性测试=退化输出</span>
+    <span>🔥 训练 iter≈167k / 700k · step~7s<7.4s✅ · ckpt 166k(18:52) · lr-decay-iters=0(stable段,decay未配置)</span>
+    <span>📊 L1: 16 ckpt ✅(160k=58.13%新高) | L2: GSM8K=0%@160k🔴 MMLU=23.16%(≈随机) BBH=0%🔴 MATH=0%🔴(v5确认21:07,exact_match=0,生成退化) · v6运行中(Phase1 HumanEval 1/100~100s/it,--repeat-penalty 1.3) · 🔬vLLM方案已备(待GPU窗口) | L3: 🔧 pipeline脚本已建·模型生成退化 | L4: 数据在.15不可达+定性测试=退化输出</span>
   </div>
   <div style="margin-top:12px;font-size:12.5px;background:rgba(0,0,0,.18);border-radius:8px;padding:8px 12px;opacity:.95">
     ⚠️ 本报告是<b>训练监控与决策依据</b>，<b>不进论文正文</b>（2026-11-10 用户令）。用户关注点（2026-11-11）：<b>如何拿到更好的结果</b>。
@@ -205,7 +205,10 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
     <tr><td>HumanEval</td><td>v4</td><td>0-shot, limit=100, gen</td><td>—</td><td class="bad">❌ v4失败(缺HF_ALLOW_CODE_EVAL)</td></tr>
     <tr><td>MBPP</td><td>v4</td><td>0-shot, limit=100, gen</td><td>—</td><td class="bad">❌ v4失败(同上)</td></tr>
     <tr><td>MATH</td><td>v4</td><td>4-shot, limit=100, gen</td><td>—</td><td class="bad">❌ v4失败(assertion error)</td></tr>
-    <tr><td>HumanEval+MBPP+MATH</td><td>v5</td><td>0-shot, HF_ALLOW_CODE_EVAL=1</td><td>—</td><td class="warn">🔄 v5 重启(19:58): HumanEval/MBPP lm_eval配置失败(code_eval safety)·MATH运行中</td></tr>
+    <tr><td>MATH</td><td>v5</td><td>0-shot, limit=100, gen</td><td class="bad">0.0%</td><td>✅ 完成(21:07, exact_match=0, 生成退化同GSM8K/BBH)</td></tr>
+    <tr><td>HumanEval</td><td>v5</td><td>0-shot, limit=100, gen</td><td>—</td><td class="bad">❌ 失败(需--confirm_run_unsafe_code CLI flag)</td></tr>
+    <tr><td>MBPP</td><td>v5</td><td>0-shot, limit=100, gen</td><td>—</td><td class="bad">❌ 失败(同上)</td></tr>
+    <tr><td>HumanEval+MBPP+MATH-RP1.3</td><td>v6</td><td>--confirm_run_unsafe_code + --repeat-penalty 1.3</td><td>—</td><td class="warn">🔄 运行中(21:09起, Phase1 HumanEval 1/100~100s/it)</td></tr>
     <tr><td>GSM8K 诊断</td><td>diag</td><td>5-shot+0-shot, --log_samples, 10样本</td><td class="bad">0%(5shot) + 0%(0shot)</td><td class="bad">✅ 完成(19:32): 生成退化确认</td></tr>
     <tr><td>GSM8K RP=1.3 测试</td><td>rp</td><td>0-shot, repeat_penalty=1.3, 10样本</td><td class="bad">0%</td><td class="bad">✅ 完成(19:39): 半连贯但无数学能力</td></tr>
   </table>
@@ -363,20 +366,21 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
   <table>
     <tr><th>层</th><th>评测</th><th>状态</th><th>关键数</th><th>下一步</th></tr>
     <tr><td><b>L1</b></td><td class="l">常识 8 集 (0-shot)</td><td><span class="badge b-ok">✅ 16ckpt</span></td><td>58.13%@160k</td><td class="l">继续每万 ckpt</td></tr>
-    <tr><td><b>L2</b></td><td class="l">复杂推理 6 集</td><td><span class="badge b-bad">🔴 GSM8K=0%@160k</span></td><td>GSM8K=0%(v3确认:strict+flexible均=0.0) · MMLU=23.16%(≈随机) · BBH=0%(v4确认) · v5 MATH运行中(88/100,~8min) · v6排队(4阶段:HumanEval+MBPP+MATH-RP1.3+gen_probe) · 🔬生成退化=llama.cpp SSM bug(待vLLM验证)</td><td class="l">等v5 MATH完成+v6 RP=1.3结果+GPU窗口vLLM验证</td></tr>
+    <tr><td><b>L2</b></td><td class="l">复杂推理 6 集</td><td><span class="badge b-bad">🔴 4/6=0% · MMLU=23%</span></td><td>GSM8K=0%(v3) · MMLU=23.16%(≈随机) · BBH=0%(v4) · <b>MATH=0%(v5确认21:07)</b> · HumanEval/MBPP v6运行中(RP=1.3) · 🔬生成退化=llama.cpp SSM bug+模型能力(待vLLM验证)</td><td class="l">等v6 HumanEval/MBPP/MATH-RP结果+GPU窗口vLLM验证</td></tr>
     <tr><td><b>L3</b></td><td class="l">Agentic</td><td><span class="badge b-warn">🔧 脚本已建·待运行</span></td><td>— · 模型生成能力不足(pipeline已建)</td><td class="l">MMLU完后运行smoke</td></tr>
     <tr><td><b>L4</b></td><td class="l">领域</td><td><span class="badge b-bad">❌ 未接·调研完</span></td><td>— · 数据在.15不可达</td><td class="l">延后至.15可达+SFT后</td></tr>
   </table>
 </div>
 <div class="card">
-  <h3>本轮(#1996)动作</h3>
+  <h3>本轮(#1997)动作</h3>
   <ol>
-    <li><b>训练健康确认</b>：iter 167,050 · step 6947-7170ms (均~7116ms<7.4s✅) · loss 2.028-2.045 · 0 NaN/skip · GPU 8×93-100%/75GB · lr=1e-3(stable段,decay未开始)</li>
-    <li><b>v5 MATH 进度监控</b>：Phase 3 hendrycks_math_algebra 0-shot limit=100 · 88/100(~39s/it,ETA~8min) · Phase 1 HumanEval/Phase 2 MBPP 均失败(需 <code>--confirm_run_unsafe_code</code> CLI flag,非仅环境变量) · 预期 MATH≈0%(生成退化同 GSM8K/BBH)</li>
-    <li><b>v3 GSM8K results.json 确认</b>：从深层嵌套路径读取 → exact_match,strict-match=0.0 + exact_match,flexible-extract=0.0 · 确认 GSM8K=0%(双口径均=0)</li>
-    <li><b>v6 脚本完整验证</b>：4 阶段确认 → ① HumanEval(--confirm_run_unsafe_code) ② MBPP(--confirm_run_unsafe_code) ③ MATH 重跑(--repeat-penalty 1.3,对比 v5 baseline) ④ 生成探针(curl 验证 RP 效果) · 等 v5 完成后自动启动</li>
+    <li><b>训练健康确认</b>：iter ≈167k · ckpt 166k(18:52) · step ~7s<7.4s✅ · GPU 8×100%/75GB · lr=1e-3(stable段,decay未开始) · 0 NaN/skip</li>
+    <li><b>v5 MATH 完成</b>：hendrycks_math_algebra 0-shot limit=100 · <b>exact_match=0.0%</b>(21:07完成,~68min,100/100@~40s/it) · 确认所有 L2 生成任务均=0%(GSM8K+BBH+MATH) · HumanEval/MBPP 在 v5 中失败(需 <code>--confirm_run_unsafe_code</code> CLI flag)</li>
+    <li><b>v5 残留 llama-server 清理</b>：v5 脚本 kill PID 1594930 未生效,进程仍存活 → 手动 <code>kill 1594930</code> 清理</li>
+    <li><b>v6 启动确认</b>：<code>baize_l2_eval_160k_v6.sh</code> 21:08 自动检测到 port 8083 空闲后启动 · llama-server 带 <code>--repeat-penalty 1.3</code>(PID 2680200) · Phase 1 HumanEval 运行中(1/100,~100s/it,ETA~2.8h) · 后续 Phase 2 MBPP + Phase 3 MATH(RP=1.3 对比 v5 baseline) + Phase 4 生成探针</li>
+    <li><b>L2 全貌</b>：6 集中 4 集已确认=0%(GSM8K/MATH/BBH/预期HumanEval+MBPP) · MMLU=23.16%(MCQ,唯一非零) · 根因=生成退化(SSM state 崩溃→重复输出)+模型能力不足(26% code+math)</li>
     <li><b>GPU 资源</b>：<code>.29</code> 8×H100 满载(训练) / <code>.12</code> 8×H100 满载(vision R9) / <code>.17</code> A40 SSH 不通 → vLLM 验证仍阻塞</li>
-    <li><b>无新万整数 ckpt</b>：当前 iter 167050 · 下一个万整数 170k ETA~6.6h(2950步×7.1s)</li>
+    <li><b>无新万整数 ckpt</b>：当前 iter ~167k · ckpt 166k · 下一个万整数 170k ETA~5h(3300步×~7s)</li>
   </ol>
   <div class="alert">
     <b>🔴 核心发现（待用户拍板）</b>：L2/L3/L4 的低分/空白<b>同一根因</b>——训练数据中 code+math 比例不足（code 19% + math 7% = 26%，远低于 DeepSeek 最优 60%），且仍在 stable 阶段（decay 尚未开始），导致模型在<b>所有需要连贯生成的任务</b>上退化为重复输出。<br>
@@ -443,7 +447,7 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
 </div>
 
 <footer>
-  BaiZe pretrain 线 · 四层能力评测报告 · 2026-11-11 21:00 更新(#1996) · 评测数字仅用于训练监控，不进论文正文
+  BaiZe pretrain 线 · 四层能力评测报告 · 2026-11-11 21:15 更新(#1997) · 评测数字仅用于训练监控，不进论文正文
 </footer>
 </div>
 </body>
