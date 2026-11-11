@@ -42,8 +42,8 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
   <div class="meta">
     <span>📅 2026-11-11</span>
     <span>🏗 Mamba2-hybrid 2.22B</span>
-    <span>🔥 训练 iter≈164.2k / 700k</span>
-    <span>📊 L1: 16 ckpt ✅ | L2: GSM8K=0%@160k 🔴 MMLU~37%进行中 v4已启动 | L3: 调研完(基础设施复杂) | L4: 数据在.15不可达+定性测试=退化输出</span>
+    <span>🔥 训练 iter≈164.3k / 700k</span>
+    <span>📊 L1: 16 ckpt ✅ | L2: GSM8K=0%@160k 🔴 MMLU~43%进行中 v4已启动 | L3: 调研完(基础设施复杂) | L4: 数据在.15不可达+定性测试=退化输出</span>
   </div>
   <div style="margin-top:12px;font-size:12.5px;background:rgba(0,0,0,.18);border-radius:8px;padding:8px 12px;opacity:.95">
     ⚠️ 本报告是<b>训练监控与决策依据</b>，<b>不进论文正文</b>（2026-11-10 用户令）。用户关注点（2026-11-11）：<b>如何拿到更好的结果</b>。
@@ -244,13 +244,13 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
   </table>
 </div>
 <div class="card">
-  <h3>本轮(#1969)动作</h3>
+  <h3>本轮(#1970)动作</h3>
   <ol>
-    <li><b>训练健康确认</b>：iter 164,220 · step 6967-7103ms (<7.4s✅) · loss ~2.03 · 0 NaN/skip · GPU 8×100%/75GB</li>
-    <li><b>L2 v3 进度</b>：GSM8K ✅ 完成 = 0.0%(strict+flex) · MMLU 🟡 进行中 ~8528/22800(~37%) ETA~1h</li>
+    <li><b>训练健康确认</b>：iter 164,280 · step 7056-7276ms (<7.4s✅) · loss ~2.02 · 0 NaN/skip · GPU 8×100%/75GB</li>
+    <li><b>L2 v3 进度</b>：GSM8K ✅ 完成 = 0.0%(strict+flex) · MMLU 🟡 进行中 ~9699/22800(~43%) ETA~1h(~16:30)</li>
     <li><b>L2 v4 状态</b>：<code>baize_l2_eval_160k_v4.sh</code> 在 .29 后台(PID2515987) · 轮询 port 8082 · v3 完成后自动切换</li>
-    <li><b>无新万整数 ckpt</b>：最新 164k(已评) · 下一个 170k ETA~12h</li>
-    <li><b>四层报告刷新</b>：MMLU 进度 30%→37% · iter 164.0k→164.2k · footer #1968→#1969</li>
+    <li><b>无新万整数 ckpt</b>：最新 164k(已评) · 下一个 170k ETA~11h</li>
+    <li><b>四层报告刷新</b>：MMLU 进度 37%→43% · iter 164.2k→164.3k · footer #1969→#1970</li>
   </ol>
   <div class="alert">
     <b>🔴 核心发现（待用户拍板）</b>：L2/L3/L4 的低分/空白<b>同一根因</b>——训练数据(P-5b/P-8 Ultra-FineWeb-L3)缺乏 code+math 内容，导致模型在<b>所有需要连贯生成的任务</b>上退化为重复输出。<br>
@@ -259,7 +259,7 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
 </div>
 
 <footer>
-  BaiZe pretrain 线 · 四层能力评测报告 · 2026-11-11 15:22 更新(#1969) · 评测数字仅用于训练监控，不进论文正文
+  BaiZe pretrain 线 · 四层能力评测报告 · 2026-11-11 15:29 更新(#1970) · 评测数字仅用于训练监控，不进论文正文
 </footer>
 </div>
 </body>
