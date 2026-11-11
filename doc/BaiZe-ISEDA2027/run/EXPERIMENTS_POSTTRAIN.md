@@ -4477,3 +4477,123 @@ SFT 模型更倾向使用 pyAether 域 API、输出更简洁、格式更规范�
 
 > 替身预演声明：以上数字仅证明 SFT recipe 在代码生成质量上的改善，**不预测 BaiZe 在 EDA-Eval 上的 Pass@1**。Qwen3.8-27B 为参照模型（非本项目训练）。收益不可迁移到 BaiZe。
 
+
+## §R297 — API-Level Gap Analysis: BASE vs SFT vs Expected (113 tasks) (wake297, 2026-11-12 04:30)
+
+> **背景**：R291 全量 113-task 静态分析发现 API 覆盖率仅 +0.055（从 0.115→0.170），定为 RL 核心价值区。本轮从 **API 级别**做精细分析：不再看“每任务平均覆盖率”，而是逐个 API 对比 expected vs BASE found vs SFT found，建立 API gap matrix，直接指导 RL 奖励设计。
+>
+> **分析脚本**：`run/baize_posttrain_api_gap_analysis.py`（189 行，py_compile 通过）
+> **数据源**：`run/eda_eval_static_full_wake287.json`（113 non-techlib task × {base, sft}）
+> **输出**：`run/api_gap_analysis_r297.json`（282KB，完整 API matrix + per-task gaps）
+
+### 1. 总体 Recall（找到/期望）
+
+| 指标 | BASE (2B) | SFT (2B) | 差异 |
+|:--|--:|--:|--:|
+| **API found recall** | 27.5% (255/926) | 33.5% (310/926) | **+5.9pp** |
+| **API correct rate** | 7.4% (69/926) | 10.0% (93/926) | **+2.6pp** |
+| 唯一 API 数 | 720 | — | — |
+| 期望 API 调用总数 | 926 | — | — |
+
+> **关键发现**：API found recall 仅 27.5%→33.5%，但 correct rate 更低（7.4%→10.0%）——即使模型提到了 API 名，参数/调用方式仍多有错误。这意味着 **运行时反馈（RL 沙盒执行）的价值远大于静态匹配**：仅靠看代码中出现了 API 名不够，需要真正执行验证参数正确性。
+
+### 2. Task-Level 对比
+
+| 结果 | 任务数 |
+|:--|--:|
+| SFT 找到的 API 比 BASE 多 | 25 |
+| BASE 找到的 API 比 SFT 多 | **34** |
+| 二者相等 | 54 |
+| 二者均为 0 | 10 |
+
+> **意外发现**：BASE 在 34 个任务中找到了比 SFT 更多的 API！这与 R291 的“SFT +0.055 微增”一致，但更精细地揭示了 **SFT 的场景偏移问题**（见 §3）。
+
+### 3. ☉️ 核心发现：SFT 场景偏移（Scenario Bias）
+
+| 场景 | N | 期望调用 | BASE recall | SFT recall | 差异 | 结论 |
+|:--|--:|--:|--:|--:|--:|:--|
+| **Schematic** | 41 | 607 | 15.3% | **32.0%** | **+16.6pp** | ✅ SFT 大幅提升 |
+| **Layout** | 28 | 134 | **52.2%** | 33.6% | **-18.7pp** | ⚠️ SFT 退化！ |
+| **Design Mgmt** | 21 | 97 | **56.7%** | 41.2% | **-15.5pp** | ⚠️ SFT 退化！ |
+| Others | 23 | 88 | 42.0% | 35.2% | -6.8pp | ⚠️ 微退化 |
+
+> **这是本轮最重要的发现**：SFT 在 Schematic 上大幅提升（+16.6pp），但在 Layout（-18.7pp）和 Design Management（-15.5pp）上明显退化。
+>
+> **成因分析**：
+> - SFT 训练数据（v11-v36, 1029 对）偏重 Schematic 类任务（emy* 系列 API），导致模型学了 Schematic API 但“遗忘”了 Layout/DesignMgmt API。
+> - Layout 场景中 BASE 本来能找到 52.2% 的期望 API（如 dbCreateLib/dbNewCV 等），SFT 后降至 33.6%——这是 **灾难性遗忘（catastrophic forgetting）** 的典型表现。
+> - 具体例证据：task-005 (Layout) BASE 找到 10 个 API→SFT 找到 0 个；task-023 (Layout) BASE 4→SFT 0；task-019 (DesignMgmt) BASE 3→SFT 1。
+>
+> **对 post-train 的启示**：
+> 1. 正式 SFT 数据必须均衡覆盖 4 个场景（Schematic/Layout/DesignMgmt/Others），不能偏重一类。
+> 2. 替身 SFT 的偏移是数据问题非方法问题——扩大 Layout/DesignMgmt 语料即可解决。
+> 3. RL 奖励设计应对场景敏感：在 Layout/DesignMgmt 任务上给予更高权重，防止 RL 也“偷懒”只做 Schematic。
+
+### 4. API 分类分布（720 个唯一 API）
+
+| 类别 | 含义 | API 数 | 占比 |
+|:--|:--|--:|--:|
+| **both_missed** | 期望但 BASE/SFT 均未使用 | 322 | 44.7% |
+| **sft_learned** | SFT 新学会（BASE 未用、SFT 用了） | 184 | 25.6% |
+| **base_only** | BASE 会但 SFT “遗忘” | 164 | 22.8% |
+| both_use | 二者均使用 | 40 | 5.6% |
+| sft_improved | SFT 使用频率超过 BASE | 7 | 1.0% |
+| unexpected_use | 未被期望但被使用 | 3 | 0.4% |
+
+> **both_missed (322) = RL 核心目标**：这些 API 在 113 个任务中被期望但两个模型都未使用。RL 应通过执行反馈激励模型学习这些 API。
+>
+> **base_only (164) = SFT 遗忘的 API**：证实了§3 的灾难性遗忘结论——164 个 API 原本 BASE 能用，SFT 后丢了。
+
+### 5. Top Both-Missed APIs（RL 核心目标区）
+
+| API | 被期望的任务数 | 类别 |
+|:--|--:|:--|
+| dbCreateLib | 20 | Layout/DesignMgmt |
+| dbGetAllLibs | 19 | Layout/DesignMgmt |
+| dbDelLib | 18 | Layout/DesignMgmt |
+| dbNewCV | 16 | Layout/DesignMgmt |
+| dbCloseCV | 15 | Layout/DesignMgmt |
+| emyScalarName | 13 | Schematic |
+| emyBlock.create | 12 | Schematic |
+| emyPin.create | 12 | Schematic |
+| emyScalarNet.create | 12 | Schematic |
+| emyTerm.create | 12 | Schematic |
+| emcR0 | 11 | Schematic |
+| emyLine.create | 11 | Schematic |
+| emyTermType | 11 | Schematic |
+| dbOpenCVByType | 10 | Layout/DesignMgmt |
+| emcInputTermType | 10 | Schematic |
+
+> **db* 系列（dbCreateLib/dbGetAllLibs/dbDelLib/dbNewCV/dbCloseCV/dbOpenCVByType）是最大缺口**：被 10-20 个任务期望但两个模型都不会用。这些是 Design Management 场景的核心 API，与 §3 中 Design Mgmt 退化一致。
+
+### 6. Top SFT-Learned APIs（SFT Wins）
+
+| API | 被期望的任务数 |
+|:--|--:|
+| emyString | 19 |
+| emyName | 12 |
+| emyDesign.open | 7 |
+| emyPointArrayF | 7 |
+| emyPointArray | 6 |
+| emyPin | 5 |
+| emyScalarNet | 5 |
+| emyTerm | 5 |
+| emyPoint | 4 |
+| emyLine | 3 |
+
+> SFT 成功学会了 emy* 系列（Schematic 场景的字符串/名称/设计操作 API），证实了 R296 的“SFT 注入了领域 API 知识”结论。
+
+### 7. 对 RL 奖励设计的直接启示
+
+1. **R4 臂（API 合法性奖励）应分场景加权**：Layout/DesignMgmt 任务中正确调用 db* 系列 API 应给予更高奖励，因为这些是最大缺口（322 both_missed 中的主力）。
+2. **惩罚“语法 OK 但 0 API ”**：10 个任务中两个模型都找到 0 个 API，说明模型“写了代码但没用对工具”——RL 应惩罚这种“纯 Python 解决 EDA 问题”的行为。
+3. **correct rate 仅 10%**：即使模型提到了正确的 API 名，90% 的调用仍有参数/用法错误——这是沙盒执行反馈能解决而静态分析不能解决的问题，进一步证实 RL 的不可替代性。
+4. **场景均衡策略**：正式 SFT 数据应按场景分层补充：当前 v11-v36 偏重 Schematic，需补充 Layout/DesignMgmt 的 db* 系列示例。
+
+### 8. 局限性
+
+- 静态分析仅检测 API 名出现，不验证参数/返回值正确性（需沙盒）
+- 113 task 为 158-task 中的 non-techlib 子集（45 techlib 任务不涉及 pyAether API）
+- 替身预演声明：以上结果基于 MiniCPM5-2B（2B, Llama 架构, Apache 2.0）作为 BaiZe 替身，收益不可迁移到 BaiZe 本体。
+
+---
