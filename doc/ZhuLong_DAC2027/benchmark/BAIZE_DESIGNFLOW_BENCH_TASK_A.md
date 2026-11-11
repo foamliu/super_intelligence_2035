@@ -1,20 +1,34 @@
 ﻿# BAIZE_DESIGNFLOW_BENCH_TASK.md — 设计流 Benchmark 任务书（2026-10-30 重构版）
 
-> 💬 **2026-11-11 用户令：0-case 时进讨论区**（`benchmark/designflow/discuss/`）
+> 💬 **2026-11-11 用户令（第 2 版）：讨论区 `benchmark/designflow/discuss/`**
 >
 > 用户原话：「各线designflow在没有case可做时，阅读论文，在这个文件中阅读他人的看法，发表自己的意见。」
 >
-> **触发**：① 本轮 0 case（已贴 `mc-matrix` 且 `mc10.fresh==0`）② `board.md` 有 OPEN 议题点 @A。有 case 则造题优先。
+> #### 触发（配额制 · 取代第 1 版「0-case 才进」）
+> 第 1 版写「本轮 0 case 才进 + 有 case 则造题优先」⇒ **零发言**（0-case 是瞬时状态，且没配额跳过零成本）。
 >
-> **4 步**：① **读** `board.md` + 其他 3 个 shard 的 `.md`（尤其 `回应 @A`）+ `rounds/` 最新 + 论文 section
-> ② **想**：用 **digital / verification / pnr_signoff / eda_other** 域视角给独有判断
-> ③ **写**：**append 到 `discuss/A.md`**（格式照 `discuss/README.md §3`）
-> ④ **提交**：`git add benchmark/designflow/discuss/A.md`
+> | 何时必须发言 | 说明 |
+> |:--|:--|
+> | **每 4 个造题轮 ⇒ 1 次** | 看 `discuss/A.md` 最近发言轮次，与本轮相差 ≥4 即欠一条 |
+> | **`board.md` 有 OPEN 议题点 `@A`** | 当轮必须表态，不受配额限制 |
 >
+> 🚫 不许以「本轮有 case」跳过 —— 发言仅 15–20 分钟，不占造题时间。
+> **豁免**：BLOCKED/事故轮；或无 OPEN 议题且未欠配额。连续两轮欠配额须在 MEMORY 写原因。
+>
+> #### 4 步（15–20 min）
+> ① 读：`board.md` OPEN 议题 → 其他 3 shard 的 `.md`（尤其 `回应 @A`）→ `rounds/` → 论文 section
+> ② 想：用 **digital / verification / pnr_signoff / eda_other** 域视角；**引你造过的 case** 作依据最有价值
+> ③ 写：append 到 `discuss/A.md`（格式照 `discuss/README.md §3`）
+> ④ 提交：`git add benchmark/designflow/discuss/A.md`
+>
+> #### 最低有效标准（达不到 = 没发言，下轮重写）
+> 🚫「我同意」「+1」不算；✅ 必须表态明确（同意/反对/补充）+ 本域依据（case id / 实测数字 / `sections/X.tex`+行号）。
+>
+> #### 边界
 > 🚫 禁改 `README.md` / `board.md` / 其他 shard 的 `.md`；🚫 `git add -A`
-> - **你是召集人**：`board.md` 只由你写（开题 / 记出席 / 关闭议题），见主任务书「召集人」段。
-> 🚫 「我同意」「+1」不算发言；必须表态明确 + 给本域依据（case id / 实测数字 / 论文 section+行号）。
-> 讨论产出是**建议**不是结论。论文 `EDA-LiveFlow-Bench_ICML2027/` 全目录只读。
+> 召集人 = **shard A**（board 只由 A 写；A 也要发言）。讨论产出是**建议**不是结论。论文目录只读。
+
+
 
 > ### ⚠️ 同步纪律（共享工作副本 · 2026-11-11 补 · 源自两次真实事故）
 >
@@ -154,39 +168,7 @@
 > 📦 体积：本令约 1.5KB；TASK 现 17KB，远低于 40KB 红线。
 
 
-### 🚨 2026-10-31 21:3x 运维令：A/B 双档 casemaking（trace-faithful 试点 10 条）· 用户直令 · 最高优先
-
-> **用户原话**：「如果只把真实 trace 中用户的意图作为任务说明，不妄做修改，是否难度就可以提升、通过率下降？」→「好的试试看」
-> **判断（运维）**：当前通过率偏高，主因不是模型强，而是**合成的 `task_brief.md` 替模型把题读懂了**——交付形态、资产用途、验收点全写明，难度被稀释。本轮起引入 **A 档（trace-faithful）**。
-
-#### ① A 档（本轮试点 10 条，唯一硬交付）
-1. **任务说明 = 该轮用户原话逐字原文**：按红线 #2 **不脱敏、不改写、不补全**（仅 key/token/密码掩码）。🚫 不许把口语改写成规整需求。
-2. **选轮规则（关键）**：只取「**提出需求 / 表达目标**」的用户轮；🚫 **凡用户已指出根因或给出修复方案的轮，一律不得用作 A 档任务说明**（可另存为 hint，不进 prompt）。
-3. **接口固定 ≠ 改意图**：契约照旧 —— `mode:design_flow` + `entry_point=outputs/submit.zip` + `test=check(deliverable, workdir)` 双参；`task_brief.md` **只写「交付接口与文件位置」≤3 行，不写「要做什么」**。
-4. **金标准** = trace 末尾**用户实际接受的结果**（工具真实产物），人工复核一次；断言只对事实（数值容差 / 拓扑等价 / 产物确由工具生成），🚫 不对措辞、不许拿合成 brief 反推答案。
-5. **隐藏 B 照旧**（换输入 / 反转结构 / 多 seed），防硬编码与猜答案。
-6. **资产用该轮真实 attachments**（原文），不加说明性注解。
-
-#### ② B 档（synthesized）= 现有做法
-保留作 L1 补牙 / 教学 / 消融。**A、B 两档通过率分开报，🚫 混算**（这同时修掉「最近 20 条混算 L1+L2」的口径缺陷）。
-
-#### ③ 试点与判据
-- 先做 **10 条 A 档**，优先覆盖 **L2 真跑商业工具**的域（spice_sim / physical_verify / schematic_netlist / layout_*）。
-- 每条用同一口径跑 pi（`pi 1.4.0` / `deepseek-v4-pro-cloud` / `--thinking medium`），记录 pass/fail + **失败归因四类**：①交付形态/位置错 ②前提缺失（需澄清/需上一轮状态）③能力不足 ④判分歧义。
-- **判据**：A 档通过率 **≤10%**，且「①+④」类失败占比 **≤30%**（否则先修接口与判分，不许把格式失败当难度）。
-- 交付：10 条追加进同一 jsonl（加 `metadata.track: "faithful"`；🚫 不新建 jsonl）；日报加「A/B 分档通过率」两行；中文 HTML 报告落 `doc/ZhuLong_DAC2027/reports/`。
-
-#### ④ 口径调整（覆盖 §0 的单一目标）
-- B 档：通过率目标 **20–30% 不变**；
-- A 档：**本轮不设目标、只报数**，试点后用实测定档；
-- 任何对外数字必须标档位（A / B），🚫 用 B 档数字代表真实难度。
-
-> 📦 体积：本令约 1.7KB，TASK 已超 40KB 红线（agent 只读）；运维下轮归档已闭合块。
-
-
-
-> **本文件由运维维护（agent 只读）**。运行时状态写 `MEMORY_DESIGNFLOW.md`、`EXPERIMENTS_DESIGNFLOW.md`、`daily-memories-designflow/`。
-> 旧版全文（即时令 VII/VIII/IX/X/XI/XII、运维增补 I–IV、收尾铁律、体积规程）已**原文归档** → `ARCHIVE_OPERATOR_DESIGNFLOW.md`「归档批次 48」。本版把上述指令**按主题融合**，不再按时间堆叠。
+### 📦 归档指针 · 2026-10-31「A/B 双档 casemaking」· 现行要点：A 档 = trace-faithful（用真实 trace 用户原话作任务说明，不改写），B 档 = synthesized；A 档优先，B 档须说明 A 为何不可行。原文见 `ARCHIVE_OPERATOR_DESIGNFLOW.md`「归档块 · 2026-11-11」。
 
 ## 0. 目标（一句话）
 

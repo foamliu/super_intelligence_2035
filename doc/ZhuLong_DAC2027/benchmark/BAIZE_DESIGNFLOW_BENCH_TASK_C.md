@@ -1,20 +1,34 @@
 # BAIZE_DESIGNFLOW_BENCH_TASK.md — 设计流 Benchmark 任务书（2026-10-30 重构版）
 
-> 💬 **2026-11-11 用户令：0-case 时进讨论区**（`benchmark/designflow/discuss/`）
+> 💬 **2026-11-11 用户令（第 2 版）：讨论区 `benchmark/designflow/discuss/`**
 >
 > 用户原话：「各线designflow在没有case可做时，阅读论文，在这个文件中阅读他人的看法，发表自己的意见。」
 >
-> **触发**：① 本轮 0 case（已贴 `mc-matrix` 且 `mc10.fresh==0`）② `board.md` 有 OPEN 议题点 @C。有 case 则造题优先。
+> #### 触发（配额制 · 取代第 1 版「0-case 才进」）
+> 第 1 版写「本轮 0 case 才进 + 有 case 则造题优先」⇒ **零发言**（0-case 是瞬时状态，且没配额跳过零成本）。
 >
-> **4 步**：① **读** `board.md` + 其他 3 个 shard 的 `.md`（尤其 `回应 @C`）+ `rounds/` 最新 + 论文 section
-> ② **想**：用 **physical_verify / layout_* / pg_layout** 域视角给独有判断
-> ③ **写**：**append 到 `discuss/C.md`**（格式照 `discuss/README.md §3`）
-> ④ **提交**：`git add benchmark/designflow/discuss/C.md`
+> | 何时必须发言 | 说明 |
+> |:--|:--|
+> | **每 4 个造题轮 ⇒ 1 次** | 看 `discuss/C.md` 最近发言轮次，与本轮相差 ≥4 即欠一条 |
+> | **`board.md` 有 OPEN 议题点 `@C`** | 当轮必须表态，不受配额限制 |
 >
+> 🚫 不许以「本轮有 case」跳过 —— 发言仅 15–20 分钟，不占造题时间。
+> **豁免**：BLOCKED/事故轮；或无 OPEN 议题且未欠配额。连续两轮欠配额须在 MEMORY 写原因。
+>
+> #### 4 步（15–20 min）
+> ① 读：`board.md` OPEN 议题 → 其他 3 shard 的 `.md`（尤其 `回应 @C`）→ `rounds/` → 论文 section
+> ② 想：用 **physical_verify / layout_* / pg_layout** 域视角；**引你造过的 case** 作依据最有价值
+> ③ 写：append 到 `discuss/C.md`（格式照 `discuss/README.md §3`）
+> ④ 提交：`git add benchmark/designflow/discuss/C.md`
+>
+> #### 最低有效标准（达不到 = 没发言，下轮重写）
+> 🚫「我同意」「+1」不算；✅ 必须表态明确（同意/反对/补充）+ 本域依据（case id / 实测数字 / `sections/X.tex`+行号）。
+>
+> #### 边界
 > 🚫 禁改 `README.md` / `board.md` / 其他 shard 的 `.md`；🚫 `git add -A`
-> - 召集人 = **shard A**（`board.md` 只由 A 写，你只读）。
-> 🚫 「我同意」「+1」不算发言；必须表态明确 + 给本域依据（case id / 实测数字 / 论文 section+行号）。
-> 讨论产出是**建议**不是结论。论文 `EDA-LiveFlow-Bench_ICML2027/` 全目录只读。
+> 召集人 = **shard A**（board 只由 A 写；A 也要发言）。讨论产出是**建议**不是结论。论文目录只读。
+
+
 
 > ### ⚠️ 同步纪律（共享工作副本 · 2026-11-11 补 · 源自两次真实事故）
 >
