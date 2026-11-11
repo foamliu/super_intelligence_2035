@@ -1465,3 +1465,4 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1791511259262_4qz5x	simplec	hfeg0plg56	26	schematic_netlist	case	EDA-Eval-DesignFlow-RcCellCapReport-001	2026-11-12 00:09	
 1794203033198_asrox	eva1li	hfeg0plg10	52	waveform	case	EDA-Eval-DesignFlow-IrunWarnClassify-001	2026-11-12 01:13	r528 case: irun/ncsim *W warn code extract+count+phase classify+error/fatal+export; k=17; ref PASS + 5neg NEG_RC=0 + 3seed sha256 stable
 1793621647806_3u5t4	chengk	hfeg0plg96	70	schematic_netlist	case	EDA-Eval-DesignFlow-RailMapMissingAudit-001	2026-11-12 01:34	
+1789610397098_48m5j	ericw	hfhds206	28	analog_context	case	EDA-Eval-DesignFlow-Ddr5ClDelayPivot-001	2026-11-12 02:18	shard D #530 analog_context L2
