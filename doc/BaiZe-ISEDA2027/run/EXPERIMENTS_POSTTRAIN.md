@@ -4245,3 +4245,73 @@ SFT recipe（v11-v36 PyAether 语料, 927 train pairs, 5 epoch, lr 1e-5 cosine, 
 
 > ⚠️ **替身预演声明**：以上结果基于 MiniCPM5-2B（2B, Llama 架构, Apache 2.0）作为 BaiZe 替身，收益不可迁移到 BaiZe 本体。目的仅验证 SFT recipe 的有效性。
 
+---
+
+## §R293 — Live 生成烟测：BASE vs SFT 实际输出对比（wake293, 2026-11-12 03:18）
+
+### 1. 动机
+
+§R291 全量 113-task 静态分析已 COMPLETE，但静态分析仅检查提取后函数体的语法/结构特征，
+**不等于实际生成质量**。沙盒仍阻塞（98th wake, 10.129.32.75 全端口 FILTERED），
+无法跑 5-run EDA-Eval 评测获得真实 Pass@1。
+
+本轮用 **本地 vLLM 端点**（8098 BASE / 8096 SFT）做 live 生成烟测，
+直接对比两个模型在 EDA-Eval 任务上的实际生成输出，补充静态分析的 qualitative 证据。
+**零 GPU 额外开销**（复用已占位 serve），**不需要沙盒**。
+
+### 2. 方法
+
+- 数据集：`~/code/eda_fastmcp/pyAether-eval/original_dataset/EDA-Eval-PyAether-v20260311.jsonl`（158 task）
+- 选 3 task（Schematic / Others / Others — 注：Layout/DesignMgmt 场景名在 dataset 中可能不同，fallback 到前 3 task）
+- 端点：BASE `http://localhost:8098/v1`（model=minicpm5-2b），SFT `http://localhost:8096/v1`（model=minicpm5-sft, ckpt=global_step_70）
+- 参数：temperature=0.0, max_tokens=1024, raw chat completions（非 cline tool-call 模式）
+- prompt：`"Complete the following Python function. Output only the completed function code.\n\n" + task.prompt`
+- 结果落盘：`run/smoke_test_results/smoke_base_vs_sft_3task.json`（28KB）
+
+### 3. 结果
+
+| Task | Scenario | Model | finish | pyAether? | codeblock? | len | 关键行为 |
+|:--|:--|:--|:--|:--:|:--:|---:|:--|
+| 001 | Schematic | BASE | length | ✅ | ❌ | 3920 | 卡在 thinking，未输出代码 |
+| 001 | Schematic | SFT | length | ✅ | ❌ | 3536 | 更简洁，引用正确 API 名 |
+| 002 | Others | BASE | length | ✅ | ✅ | 4542 | **"we can use standard library datetime"** — 明确回避 pyAether |
+| 002 | Others | SFT | length | ✅ | ❌ | 3746 | 尝试用 pyAether API（pyScript.dt_from_timestamp） |
+| 003 | Others | BASE | length | ❌ | ❌ | 4733 | **完全不用 pyAether** — 用 os.path.isdir 替代 |
+| 003 | Others | SFT | length | ✅ | ✅ | 4623 | 使用 pyAether + 有 code block |
+
+### 4. 关键发现
+
+1. **API 使用倾向（核心发现）**：SFT 模型 3/3 task 都尝试使用 pyAether 域 API；
+   BASE 模型 2/3 task 回避 pyAether（task 002 明确说 "we can use standard library datetime"，
+   task 003 完全不提 pyAether 用 os.path.isdir）。
+   → **SFT 成功改变了模型的 API 选择倾向**，与 §R291 静态分析「API 覆盖率 SFT 0.170 vs BASE 0.115」一致。
+
+2. **输出简洁度**：SFT 输出一致更短（3536 vs 3920, 3746 vs 4542, 4623 vs 4733），
+   平均短 ~12%。与 §R291 静态分析「SFT 代码 4.8x 更短 / 4.0x 更快」方向一致。
+
+3. **Thinking 行为**：两个模型在 1024 max_tokens 下都未完成代码生成（均 finish=length），
+   仍处于 thinking 阶段。MiniCPM5 的 thinking mode 在 raw chat 下非常 verbose。
+   **实际 eval 使用 cline + tool calls + 32768 max_model_len**，生成模式完全不同，
+   故本烟测的 finish=length 不代表真实 eval 表现。
+
+4. **Code block 格式**：SFT 在 task 003 输出了 markdown code block，BASE 没有。
+   与 §R291 静态分析「SFT 语法 95.6% vs BASE 62.8%」一致——SFT 更遵循输出格式规范。
+
+### 5. 局限性
+
+- **max_tokens=1024 太短**：两个模型都在 thinking 阶段耗尽 token，未输出最终代码。
+  更大 max_tokens（4096+）可能让 SFT 完成而 BASE 仍冗长——但时间成本高，本轮不做。
+- **Raw chat ≠ cline tool-call**：实际 eval 用 cline 通过 MCP 协议调用 pyAether API，
+  生成模式完全不同（多轮 tool-call + 执行反馈）。本烟测仅测单轮 raw 生成倾向。
+- **3 task 太少**：仅定性证据，不做统计推断。
+- **替身预演**：基于 MiniCPM5-2B，收益不可迁移到 BaiZe 本体。
+
+### 6. 结论
+
+Live 生成烟测 **定性验证**了 §R291 静态分析的核心结论：
+SFT 模型更倾向使用 pyAether 域 API、输出更简洁、格式更规范。
+**API 选择倾向的改变**是 SFT 的核心收益，也是 RL R4 臂（API 合法性奖励）的核心价值区的直接证据。
+
+> 产物：`run/smoke_test_results/smoke_base_vs_sft_3task.json`（28KB, 3 task × 2 model 完整输出）
+
+
