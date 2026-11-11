@@ -668,3 +668,4 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked		2026-11-09 20:39	RAG-looku
 1793843059790_kjb39	cong3li	hfeg0pkn004	205	layout_aether	case	EDA-Eval-DesignFlow-SASchematicAether-001	2026-11-11 10:12	
 1793095792921_pr0tt.messages.json	ziyuny	10.129.32.190	171	physical_verify	case	EDA-Eval-DesignFlow-LVSShortExtract-001	2026-11-11 10:21	
 1793784554206_v23sb	xinqiaoz	hfeg0pkn004	366	physical_verify	case	EDA-Eval-DesignFlow-StarrcReleaseNoteGen-001	2026-11-11 10:57	
+1789954294975_4chsl.messages.json	xrxiong	hfeg0plg74	497	physical_verify	parked		2026-11-11 11:31	wrong-shard: seed task=分析row_ctrl模块功能 from 893KB netlist.sv (schematic_netlist/D-domain); summary lvs:1895 keyword is FALSE-POSITIVE (scanner counted netlist.sv file content, not conversation); trace grep: lvs=0 calibre=0 runlvs=0; 28 user turns, 4MB, status=failed
