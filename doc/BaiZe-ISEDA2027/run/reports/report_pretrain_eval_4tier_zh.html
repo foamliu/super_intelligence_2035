@@ -308,8 +308,9 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
     <b>诊断修正</b>：<br>
     ① <b>llama.cpp SSM 生成 bug（PR #31703）是 L2 生成任务 0% 的主因</b>——HF transformers 生成路径正常，说明模型权重/SSM 状态计算正确，问题在 llama.cpp 的 SSM 生成实现<br>
     ② <b>模型有基础代码生成能力</b>（Fibonacci 正确），但数学推理仍弱（GSM8K 答错）——code 19% 数据有效，math 7% 不足<br>
-    ③ <b>L2 应使用 HF transformers 重新评测</b>——当前正在运行 10-sample GSM8K HF 评测（PID 2074939, .29 CPU, nice 19, ~7min）<br>
+    ③ <b>L2 应使用 HF transformers 重新评测</b>——10-sample GSM8K HF 评测已完成：0/10=0%（数学能力确实弱，但生成连贯：如 "60+60+60=180" 而非 llama.cpp 的 "111..." → 证明是数学能力不足而非生成退化）<br>
     ④ <b>L3 TB 0/2 也应重测</b>——生成退化是 TB 失败的直接原因，HF 生成正常后 agentic 任务可能改善<br>
+    <b>下一步</b>：HumanEval/MBPP 用 HF transformers 重评（代码生成 Fibonacci 正确 → 预期 pass@1 > 0%）<br>
     <b>环境</b>：sglang env (transformers 5.18.0, 支持 nemotron_h), CPU bfloat16, 4.6 tok/s, 无 mamba_ssm/causal_conv1d 优化（reference PyTorch 实现）
   </div>
 </div>
@@ -546,7 +547,7 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
 </div>
 
 <footer>
-  BaiZe pretrain 线 · 四层能力评测报告 · 2026-11-12 02:40 更新(#2026 · 🟢HF transformers生成正常=llama.cpp SSM bug是L2=0%主因 · GSM8K HF 10-sample评测运行中(PID2074939) · 训练健康iter169.9k step~7.1s<7.4s✅ · 170k autoqueue轮询中(PID36398) · L1 16/16(160k=58.13%) · L2 6/6完成(待HF重评) · L3 TB 0/2(待HF重测) · L4 BLOCKED) · 评测数字仅用于训练监控，不进论文正文
+  BaiZe pretrain 线 · 四层能力评测报告 · 2026-11-12 02:52 更新(#2026 · 🟢HF transformers生成正常=llama.cpp SSM bug是L2=0%主因 · GSM8K HF 10-sample=0/10(数学确实弱但生成连贯) · 训练健康iter170k/700k(24.3%) step~7.1s<7.4s✅ · 170k ckpt已落盘(autoqueue GGUF转换失败:p6_tf5 huggingface_hub版本不兼容) · L1 16/16(160k=58.13%) · L2 6/6完成(待HF重评:GSM8K=0%HF确认,HumanEval/MBPP待测) · L3 TB 0/2(待HF重测) · L4 BLOCKED) · 评测数字仅用于训练监控，不进论文正文
 </footer>
 </div>
 </body>
