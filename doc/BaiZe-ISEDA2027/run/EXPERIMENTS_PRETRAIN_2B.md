@@ -1354,3 +1354,19 @@ ssh 10.239.2.29 'tail -5 /proc/146283/fd/1'
 - latexmk: 5 pages / 228,240 bytes / 0 errors / 0 undefined ✅
 - grep benchmark 全文 = 0 命中 ✅; §4.7 不存在 ✅
 - 160k eval: 仍运行中 (llama-server PID1726277 + lm_eval PID1736839), results.json pending
+
+### 论文 §4.6 刷新 #1952 (2026-11-11 08:24)
+
+- 取数命令: `ssh 10.239.2.29 'tail -20 /proc/146283/fd/1'`
+- 最新 iteration: 160,670 / 700,000 (08:22:15)
+- 末 10 步 (160,580–160,670) step time: 6972.9–7211.7ms (均 7054ms, 均 <7.4s ✅)
+- loss 范围: 2.014–2.032, 均值 ≈2.02
+- 0 NaN / 0 skipped iterations ✅
+- GPU: 8 卡 95–100% / ~75GB
+- tok/s = 4,194,304 / 7.054s = 594,616 ≈ 595K
+- wall-clock = 700k × 4,194,304 / 595K = 57.1d ≈ 57d (不变)
+- 刷新文件: 4_llm_pretrain.tex line109 (iter 160,610→160,670, tok/s 596K→595K), 0_abstract.tex line14 (同步)
+- tab:prod-budget (line 122): "160k done" 不变 (160,670 rounds to 160k); total ≈60.5d 不变
+- latexmk: 5 pages / 228,225 bytes / 0 errors ✅
+- grep benchmark 全文 = 0 命中 ✅; §4.7 不存在 ✅
+- 160k eval: 仍运行中 (llama-server PID1726277 + lm_eval PID1736839, etimes≈2393s≈40min), results.json pending
