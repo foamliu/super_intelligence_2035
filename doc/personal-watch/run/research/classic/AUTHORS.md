@@ -6,7 +6,8 @@
 > 🔴 **找 X 的铁律（不猜）**：只登记**能从可访问页面读到**的 handle（作者本人主页 `href`，并用 X 页 `og:description` 二次核对身份）；**读不到 = 写「未找到 X」**。
 > 🚫 不许猜 handle（猜错会 follow 到无关账号，比不 follow 更糟）。X.com 自 **2026-11-11 12:4x** 起经本机 Mihomo 代理**只读可达**；**follow 仍需登录态 ⇒ 未自动执行**（0 follow，未假装）。
 
-**本轮快照**：累计 **23** 人（第四轮 +3：Hugo Touvron / Long Ouyang / Tom B. Brown）｜已发信 **5**（Tri Dao · Shunyu Yao · Haoxing Ren · Jason Wei · Noah Shinn）｜X 已核验 **6**（`@tri_dao` / `@_albertgu` / `@ShunyuYao12` / `@edwardjhu` / `@jyangballin` / `@_jasonwei`）｜X 未找到 **17**｜**X 已恢复可达（2026-11-11 12:4x 起，经本机 Mihomo 7897，`x.com` `200` / 出口 `178.249.213.185`）**｜已 follow **0**（follow 需登录态 ⇒ 仍靠用户手动，见第二节）｜已核验言论 **3 条**（第四轮首获一手原文）
+**本轮快照**：累计 **28** 人（第五轮 +5：Kaiming He / Ilya Sutskever / Richard S. Sutton / Haotian Liu / Chunyuan Li）｜已发信 **7**（Tri Dao · Shunyu Yao · Haoxing Ren · Jason Wei · Noah Shinn · **Kaiming He · Haotian Liu**）｜X 已核验 **10**（`@tri_dao` / `@_albertgu` / `@ShunyuYao12` / `@edwardjhu` / `@jyangballin` / `@_jasonwei` / **`@ilyasut` / `@RichardSSutton` / `@imhaotian` / `@ChunyuanLi`**）｜X 未找到 **18**｜**X 已恢复可达（2026-11-11 12:4x 起，经本机 Mihomo 7897，`x.com` `200` / 出口 `178.249.213.185`）**｜已 follow **0**（follow 需登录态 ⇒ 仍靠用户手动，见第二节）｜已核验言论 **4 条**（V1–V4；本轮新增 V4 Sutton）
+
 
 ---
 
@@ -311,9 +312,75 @@
 | 状态 | 待跟踪 |
 | 备注 | ⚠️ 同名者极多（`Tom Brown` 在 X 上有多个高仿/同名账号）⇒ 本线**明确不登记任何 handle**，避免 follow 到无关账号。 |
 
+### 24. Kaiming He（何恺明）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Kaiming He（何恺明；中文作者 ⇒ 信按**中文**写） |
+| 机构 | **MIT**（EECS，Associate Professor；ResNet 发表时 Microsoft Research） |
+| 代表论文 | ResNet（arXiv `1512.03385`，一作）· Mask R-CNN / Focal Loss 等检测线 |
+| 邮箱 | **kaiming@mit.edu**（来源：`https://people.csail.mit.edu/kaiming/` 页内明文，2026-11-11 实测 `HTTP 200` / 55,458 B） |
+| 主页 | <https://people.csail.mit.edu/kaiming/>（实测 `200`） |
+| X 账号 | **未找到 X**（主页面无 twitter / x.com 链接 ⇒ 按令不猜） |
+| 状态 | **已发信**（2026-11-11 15:2x CST，B 轨第五轮；中文，≤300 字）· 无 X |
+| 备注 | 顶级作者 ⇒ 按令**优先覆盖**。信只问两点：小数据 + 冻结视觉塔下 depth vs width 的取舍、shortcut 恒等映射是否仍关键；以及接进 LN 预训练栈时 BN 该换 GN 还是保留并冻结。 |
+
+### 25. Ilya Sutskever
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Ilya Sutskever（按英文写） |
+| 机构 | **SSI**（Safe Superintelligence Inc.，联合创始人；seq2seq 发表时 Google） |
+| 代表论文 | seq2seq（arXiv `1409.3215`，一作）· AlexNet（2012，二作）· GPT 系列早期工作 |
+| 邮箱 | **未找到**（无公开个人主页 / 未见 `mailto:` ⇒ 按纪律不猜、不发信） |
+| 主页 | 未找到（无公开个人站；机构站无个人页） |
+| X 账号 | **@ilyasut**（核验：`x.com/ilyasut` 实测 `200`，`name` = `Ilya Sutskever (@ilyasut) / X`，`bio` = `SSI @SSI`） |
+| 状态 | 待跟踪（X 待 follow；无公开邮箱 ⇒ 不发信） |
+| 备注 | 其言论多为长周期观点（scaling / superintelligence），**低频但权重高**；引用需整段上下文，历史推文多超 30 天 ⇒ 按令降级处理。 |
+
+### 26. Richard S. Sutton
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Richard S. Sutton（按英文写） |
+| 机构 | University of Alberta（教授荣休）· **Keen Technologies**（联合创始人）· amii |
+| 代表论文 | Dyna（1991，单作者）· 《Reinforcement Learning: An Introduction》（教材）· TD 学习系列 |
+| 邮箱 | **未找到**（`http://incompleteideas.net/` 实测 `200`，页内仅有 amii 行政信箱 `lynda.vang@amii.ca`，**非本人** ⇒ 不写、不发） |
+| 主页 | <http://incompleteideas.net/>（实测 `200` / 16,719 B） |
+| X 账号 | **@RichardSSutton**（核验：`x.com/RichardSSutton` 实测 `200`，`bio` 含 `UAlberta, amii, The Royal Society, Turing Award`） |
+| 状态 | 待跟踪（X 待 follow；无本人公开邮箱 ⇒ 不发信） |
+| 备注 | Dyna 作者 ⇒ 「规划/想象」这条线的源头人物；2026-11 仍在高频发言（见言论台账 V4），是 `voice_ready` 的**高价值稳定源**。 |
+
+### 27. Haotian Liu
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Haotian Liu（中文作者 ⇒ 信按**中文**写） |
+| 机构 | **Meta Superintelligence Lab**（X bio 实测；LLaVA 发表时 UC San Diego） |
+| 代表论文 | LLaVA / Visual Instruction Tuning（arXiv `2304.08485`，一作）· LLaVA-1.5（`2310.03744`，一作） |
+| 邮箱 | **liuhaotian.cn@gmail.com**（来源：`https://haotian-liu.github.io/` 页内 `mailto:`（percent-encoded），2026-11-11 实测 `200` / 25,018 B） |
+| 主页 | <https://haotian-liu.github.io/>（实测 `200`） |
+| X 账号 | **@imhaotian**（核验：主页 `href="https://twitter.com/imhaotian"`；`x.com/imhaotian` 实测 `200`，`bio` = `@Meta Superintelligence Lab, prev. @xAI @grok imagine/omni/v`） |
+| 状态 | **已发信**（2026-11-11 15:2x CST，B 轨第五轮；中文，≤300 字）· X 待 follow |
+| 备注 | 信问两点：①「先冻结 LLM 只训 projection」的收益来源（防遗忘 vs 对齐输入分布），只能保一阶段时保哪个；② 595K 过滤 CC 对齐数据有多关键、专业领域真实图文对稀少时强模型合成描述能否替代。 |
+
+### 28. Chunyuan Li
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Chunyuan Li（李春元；中文作者） |
+| 机构 | **Google DeepMind**（X bio：`Agentic Vision @Google DeepMind`；此前 xAI / Microsoft Research；LLaVA 发表时 MSR） |
+| 代表论文 | LLaVA（arXiv `2304.08485`，二作 / 通讯级）· LLaVA-Med · 多模态指令数据系列 |
+| 邮箱 | **lichunyuan24@gmail.com**（来源：`https://chunyuanli.github.io/` 页内 `mailto:`（percent-encoded），实测 `200` / 24,034 B） |
+| 主页 | <https://chunyuanli.github.io/>（实测 `200`） |
+| X 账号 | **@ChunyuanLi**（核验：主页 `href="https://twitter.com/ChunyuanLi"`；`x.com/ChunyuanLi` 实测 `200`，`bio` = `Agentic Vision @Google DeepMind | Previous: @xAI, @MSFTResearch`） |
+| 状态 | 待跟踪（**本轮不与一作同轮发信**，避免同一合作圈两封信） |
+| 备注 | 其 bio 已转向「Agentic Vision」⇒ 后续 `voice_ready` 与 VLM-agent 选题的优先跟踪对象。 |
+
 ---
 
 ## 二、🟢 X 能力探测（只读 · 2026-11-11 **第四轮 12:4x 起已恢复可达**）
+
 
 > 令要求「先验证能力再动手」。**结论：`OPEN(x_readonly)`（第四轮 12:4x CST 实测）** —— 经运维部署的本机 Mihomo 代理（`http://127.0.0.1:7897`），`x.com` 已可达；**只读可做，写操作（follow/like/发帖）仍需登录态 ⇒ 不做**。
 
@@ -348,6 +415,11 @@
 | 4 | Edward J. Hu | `@edwardjhu` | <https://x.com/edwardjhu> | `200`，bio = `Head of AI Modeling @ Mercor / Ph.D. with Yoshua Bengio` | LoRA 一作，PEFT 与训练实践的第一手来源 |
 | 5 | John Yang | `@jyangballin` | <https://x.com/jyangballin> | `200`，bio = `CS PhD @Stanford. Creator of @SWEbench…` | SWE-bench 二作 / SWE-agent 工程主力，harness 与 SWE 评测一手信息 |
 | 6 | Jason Wei | `@_jasonwei` | <https://x.com/_jasonwei> | `200`，bio = `ai researcher @meta, past: openai, google` | CoT / 指令微调 / 涌现能力关键作者，reasoning 与训练配方判断密度高 |
+| 7（**第五轮新增**） | Ilya Sutskever | `@ilyasut` | <https://x.com/ilyasut> | `200`，`name` = `Ilya Sutskever (@ilyasut) / X`，bio = `SSI @SSI` | seq2seq 一作 / GPT 系早期核心，长周期判断（scaling、superintelligence）权重极高 |
+| 8（**第五轮新增**） | Richard S. Sutton | `@RichardSSutton` | <https://x.com/RichardSSutton> | `200`，bio 含 `UAlberta, amii, The Royal Society, Turing Award` | Dyna / TD 学习作者，「规划 vs 暴力算力」争论的源头人物，仍在高频发言 |
+| 9（**第五轮新增**） | Haotian Liu | `@imhaotian` | <https://x.com/imhaotian> | `200`，bio = `@Meta Superintelligence Lab, prev. @xAI @grok imagine/omni/v` | LLaVA 一作，多模态指令数据与 VLM 训练一手信息 |
+| 10（**第五轮新增**） | Chunyuan Li | `@ChunyuanLi` | <https://x.com/ChunyuanLi> | `200`，bio = `Agentic Vision @Google DeepMind | Previous: @xAI, @MSFTResearch` | LLaVA 二作，现做 agentic vision ⇒ VLM-agent 选题优先源 |
+
 
 > 六个 handle 均来自其**本人主页**的 `href`（非搜索猜测），并在第四轮用 X 主页 `og:description` **二次核对 bio 与身份一致**。用户 follow 后请把状态改为 `已follow` 并写日期。
 
@@ -358,6 +430,8 @@
 | V1 | Albert Gu `@_albertgu` | 2026-11-07 | "it's hilarious how many have taken the bitter lesson to mean just scaling up transformers. it's about scaling, but innovations in algorithmic primitives can lead to much more efficient scaling" | <https://x.com/_albertgu/status/2119206160410800219> | ✅ 已进日报 `voice_ready`（架构消融口径） |
 | V2 | Tri Dao `@tri_dao` | 2026-10-28 | "Super interesting result: H-Net learns to dynamically tokenize variable names in coding data as separate tokens, and it scales much better on code compared to BPE" | <https://x.com/tri_dao/status/2115531348161028374> | ✅ 已进日报 `voice_ready`（代码语料 tokenizer） |
 | V3 | Jason Wei `@_jasonwei` | 2026-11-10 22:31 | 起句 "Created a \"benchmark benchmark\": a frequency distribution of which benchmarks were reported by the frontier labs in 2026…"（**正文含转义引号，HTML 内嵌串被截断；推文页正文未渲染**） | <https://x.com/_jasonwei/status/2120283338640621826> | ❌ **未采用**：不满足「原文完整 + 可核验」，不冒充完整原文；仅在此登记，待下轮用其它入口取全文后再评估 |
+| V4 | Richard S. Sutton `@RichardSSutton` | 2026-11-07 18:57 | "Brute force computation is not enough for intelligence. Clever new methods are needed. The science of AI is far from finished. IMHO" | <https://x.com/RichardSSutton/status/2119142310894334262> | 🕓 **本期未用（受「每期 ≤2 条」上限）**，原文已核验 ⇒ **下期 `voice_ready` 首选候选**；话题点 = 「暴力算力 vs 更聪明的方法」；风险 = 是**观点**且带 `IMHO`，🚫 不得写成结论 |
+
 
 > ⚠️ 引用纪律：只有 **V1 / V2** 两条的原文在「profile 页内嵌 JSON」与「单条推文页 `og:title` 作者核对」两处一致，才进日报 `voice_ready`；**每条都附原链接与时间**，中文仅作翻译、不作转述。
 
@@ -376,6 +450,9 @@
 | 2026-11-11 11:43 | Haoxing Ren | `2311.00176` ChipNeMo · `2309.07544` VerilogEval | 公司站 `mailto:`（`info@agentrys.ai`，请转交） | `SENT OK`（公司公开信箱） |
 | 2026-11-11 12:10 | Jason Wei | `2201.11903` Chain-of-Thought | 本人主页 `mailto:`（`jasonwei.net`） | `SENT OK`（`jason.weng.wei@gmail.com`，英文 165 词） |
 | 2026-11-11 12:11 | Noah Shinn | `2303.11366` Reflexion | 本人主页明写邮箱（`noahshinn.com`） | `SENT OK`（`noahrshinn@gmail.com`，英文 153 词） |
+| 2026-11-11 15:05（**第五轮**） | Kaiming He（何恺明） | `1512.03385` ResNet | 本人当前机构主页明文（`people.csail.mit.edu/kaiming/`，`200`） | `SENT OK`（`kaiming@mit.edu`，**中文 196 字**） |
+| 2026-11-11 15:05（**第五轮**） | Haotian Liu | `2304.08485` LLaVA | 本人当前主页 `mailto:`（`haotian-liu.github.io`，`200`） | `SENT OK`（`liuhaotian.cn@gmail.com`，**中文 215 字**） |
+
 | 2026-11-11 12:4x–13:0x（**第四轮**） | （本轮 **0 封**） | 新增经典 `2005.14165` / `2203.02155` / `2302.13971` | 逐个实测：`hugotouvron.github.io` `404` · `longouyang.github.io` `404` · `ashishvaswani.com` `000` · 未命中任何 `mailto:` | **不发信**（按令不猜邮箱）。今日累计 **5 封**（分属三轮，每轮 ≤3）；第四轮把额度留给「有可核验邮箱」的候选 —— 本轮没有合格的 ⇒ **宁缺勿凑** |
 
 ---

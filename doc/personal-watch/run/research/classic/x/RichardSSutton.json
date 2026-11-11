@@ -1,0 +1,49 @@
+{
+ "handle": "RichardSSutton",
+ "name": "Richard Sutton (@RichardSSutton) / X",
+ "bio": "Student of mind and nature, libertarian, chess player, cancer survivor. @ https://t.co/pioQVVjSXz, UAlberta, amii, https://t.co/vPRUv44glx, The Royal Society, Turing Award",
+ "tweets": [
+  {
+   "id": "2119218417383383222",
+   "created_at": "2026-11-08 00:00 UTC",
+   "created_at_ms": 1794096018000,
+   "text": "This Thursday I will be giving the opening keynote at RISEx 2026 in Edmonton\\\n\\\nTitle: The Tashan/Openmind Robot Kindergarten\\\n\\\nAbstract: It has always been a dream in reinforcement learning to make robots that learn online by trial and error from their own experience. After all,",
+   "url": "https://x.com/RichardSSutton/status/2119218417383383222",
+   "handle_guess": "RichardSSutton"
+  },
+  {
+   "id": "2119142310894334262",
+   "created_at": "2026-11-07 18:57 UTC",
+   "created_at_ms": 1794077873000,
+   "text": "Brute force computation is not enough for intelligence. Clever new methods are needed. The science of AI is far from finished. IMHO",
+   "url": "https://x.com/RichardSSutton/status/2119142310894334262",
+   "handle_guess": "RichardSSutton"
+  },
+  {
+   "id": "2117700510581149851",
+   "created_at": "2026-11-03 19:28 UTC",
+   "created_at_ms": 1793734121000,
+   "text": "Abhishek Naik prepping RL for space https://t.co/AQ6wTqi6ck",
+   "url": "https://x.com/RichardSSutton/status/2117700510581149851",
+   "handle_guess": "RichardSSutton"
+  },
+  {
+   "id": "2116314708101988817",
+   "created_at": "2026-10-30 23:42 UTC",
+   "created_at_ms": 1793403720000,
+   "text": "One reason I am sanguine about the technological singularity is that I have seen it coming for over 50 years. In 1975, when I was 17, I wrote:\\\n\\\n\\\\",
+   "url": "https://x.com/RichardSSutton/status/2116314708101988817",
+   "handle_guess": "RichardSSutton"
+  },
+  {
+   "id": "1681822942546759681",
+   "created_at": "2023-07-20 00:26 UTC",
+   "created_at_ms": 1689812810000,
+   "text": "AI researchers seek to understand intelligence well enough to create beings of greater intelligence than current humans. \\\n\\\nReaching this profound intellectual milestone will enrich our economies and challenge our societal institutions. It will be unprecedented and",
+   "url": "https://x.com/RichardSSutton/status/1681822942546759681",
+   "handle_guess": "RichardSSutton"
+  }
+ ],
+ "http_status": 200,
+ "fetched_at": "2026-11-11 15:02:07"
+}

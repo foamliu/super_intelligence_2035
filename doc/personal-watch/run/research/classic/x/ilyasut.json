@@ -1,0 +1,65 @@
+{
+ "handle": "ilyasut",
+ "name": "Ilya Sutskever (@ilyasut) / X",
+ "bio": "SSI @SSI",
+ "tweets": [
+  {
+   "id": "2094881278621253755",
+   "created_at": "2026-09-01 20:13 UTC",
+   "created_at_ms": 1788293592000,
+   "text": "Neoclouds have limited cybersecurity.   Next time agents successfully go rouge, they'll try taking over a neocloud to run more copies.  This is bad.\\\n\\\nThus:  neoclouds should greatly strengthen their cybersecurity and every company with strong cyber models should help with that.",
+   "url": "https://x.com/ilyasut/status/2094881278621253755",
+   "handle_guess": "ilyasut"
+  },
+  {
+   "id": "2081732293161582930",
+   "created_at": "2026-07-27 13:23 UTC",
+   "created_at_ms": 1785158630000,
+   "text": "Time to scale that SSI:",
+   "url": "https://x.com/ilyasut/status/2081732293161582930",
+   "handle_guess": "ilyasut"
+  },
+  {
+   "id": "2081732119194394763",
+   "created_at": "2026-07-27 13:23 UTC",
+   "created_at_ms": 1785158588000,
+   "text": "We are announcing a long-term strategic partnership with NVIDIA. NVIDIA is making a substantial investment in SSI that will let us 10x our compute in the next 12 months. We reached the point where our research is worth scaling and with this partnership we will be able to. We are",
+   "url": "https://x.com/ilyasut/status/2081732119194394763",
+   "handle_guess": "ssi"
+  },
+  {
+   "id": "2073568142480314771",
+   "created_at": "2026-07-05 00:42 UTC",
+   "created_at_ms": 1783212144000,
+   "text": "🇺🇸🦅250!",
+   "url": "https://x.com/ilyasut/status/2073568142480314771",
+   "handle_guess": "ilyasut"
+  },
+  {
+   "id": "2027486969174102261",
+   "created_at": "2026-02-27 20:52 UTC",
+   "created_at_ms": 1772225536000,
+   "text": "It’s extremely good that Anthropic has not backed down, and it’s siginficant that OpenAI has taken a similar stance.\\\n\\\nIn the future, there will be much more challenging situations of this nature, and it will be critical for the relevant leaders to rise up to the occasion, for",
+   "url": "https://x.com/ilyasut/status/2027486969174102261",
+   "handle_guess": "ilyasut"
+  },
+  {
+   "id": "1994424504370581726",
+   "created_at": "2025-11-28 15:13 UTC",
+   "created_at_ms": 1764342831000,
+   "text": "One point I made that didn’t come across:\\\n- Scaling the current thing will keep leading to improvements.  In particular, it won’t stall.\\\n- But something important will continue to be missing.",
+   "url": "https://x.com/ilyasut/status/1994424504370581726",
+   "handle_guess": "ilyasut"
+  },
+  {
+   "id": "1993416904162328880",
+   "created_at": "2025-11-25 20:30 UTC",
+   "created_at_ms": 1764102600000,
+   "text": "here are the most important points from today's ilya sutskever podcast:\\\n\\\n- superintelligence in 5-20 years\\\n- current scaling will stall hard; we're back to real research\\\n- superintelligence = super-fast continual learner, not finished oracle\\\n- models generalize 100x worse than",
+   "url": "https://x.com/ilyasut/status/1993416904162328880",
+   "handle_guess": "haider1"
+  }
+ ],
+ "http_status": 200,
+ "fetched_at": "2026-11-11 15:02:03"
+}
