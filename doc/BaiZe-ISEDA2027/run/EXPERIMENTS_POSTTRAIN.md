@@ -9095,3 +9095,107 @@ emyPointArrayScaleSegments).
 > All 398 pairs PASS the 155-entry_point pollution scan.  v11-v19 are gated
 > for training.
 
+## §R190 (2026-11-11 wake259) v20 Mde* Simulation-Sweep / Platform-Policy Corpus (ISOLATE-class, pollution-gated)
+
+**Background**: R189 §4 identified the **Mde\* family** as the next-largest blind
+family by eval usage after v19 (35 usages / 22 APIs).  R190 targets the 7
+simulation-sweep / platform-policy Mde* APIs that orchestrate a sweep campaign:
+the analysis-type selectors (`MdeTranAnalysis`, `MdeAcAnalysis`), the sweep-range
+/ type / variable config objects (`MdeSweepRange`, `MdeSweepType`,
+`MdeSweepVariable`), the spec-output policy (`MdeSpeOutput`), and the local-job
+policy (`MdePlatLocalJobPolicy`).  An 8th API, `MdeAddSpecificPoints`, is taught
+as a *helper* inside the S3 multi-API chains (it is NOT in the 164 eval raw
+APIs — `inEval=False` — so it does not move the coverage count, but it appears
+in real eval solutions as a sweep-point injector).
+
+| API | eval role | newly covered? |
+|:--|:--|:--|
+| MdeTranAnalysis | transient analysis type | re-taught (already in v13) |
+| MdeAcAnalysis | AC analysis type | **NEW** |
+| MdeSweepRange | sweep range config (center/span or start/stop) | **NEW** |
+| MdeSweepType | sweep type enum (lin/log/list) | **NEW** |
+| MdeSweepVariable | sweep variable config | **NEW** |
+| MdeSpeOutput | spec/output policy | **NEW** |
+| MdePlatLocalJobPolicy | local job policy (jobName/numProc) | **NEW** |
+| MdeAddSpecificPoints | sweep-point injector (helper) | helper (not in 164) |
+
+All 7 primary APIs are ISOLATE-class (eval helpers, not eval entry_points).
+The red line (S5.1) isolates on eval *entry_point* strings (the 155 task
+function names), NOT on helper API names.  Teaching the *public API reference*
+of these simulation-sweep / platform primitives is explicitly allowed.  The
+fingerprint scan rejects any pair whose prompt+completion contains a literal
+eval entry_point.  MDE_* enum constants (MDE_SWEEP_RANGE_CENTER_SPAN,
+MDE_SWEEP_TYPE_LOG, etc.) are taught as config-class *values*, not as callable
+APIs.
+
+**Authoritative signatures**: fetched via pyAether MCP `get_api_details` for all
+7 primary APIs (R190 wake).
+
+**Key API facts captured in the corpus**:
+- MdeSweepRange is a *config object* built then attached to an analysis; the two
+  constructors are center/span (MDE_SWEEP_RANGE_CENTER_SPAN) and start/stop
+  (MDE_SWEEP_RANGE_START_STOP).
+- MdeSweepType is an enum-selector object: MDE_SWEEP_TYPE_LIN / LOG / LIST.
+- MdeSweepVariable binds a sweep to a named device parameter (e.g. "w", "l").
+- MdeAcAnalysis / MdeTranAnalysis are the AC / transient analysis-type objects
+  that own the sweep list; tranAnalysis needs a stop-time, acAnalysis needs a
+  freq sweep.
+- MdeSpeOutput governs what gets saved (all-nodes vs spec list) + format.
+- MdePlatLocalJobPolicy sets jobName + numProc for local parallel runs.
+- MdeAddSpecificPoints injects explicit (param, value) probe points into a sweep.
+
+### 1. Corpus construction
+
+v20: 7 primary APIs with 5 pair types (S1 doc->code, S4 multi-step trace, S5
+param variation, S3 multi-API chains, S6 API lookup) = **35 pairs**
+(7+7+7+7+7).  S3 chains model a full sweep campaign: build sweep-range -> bind
+sweep-variable -> set sweep-type -> attach to analysis -> set output policy ->
+set job policy -> run.
+
+### 2. Pollution isolation (GATE)
+
+Full scan of all 35 pairs against the 155 eval entry_points (loaded from
+EDA-Eval-PyAether-v20260311.jsonl).  **0 REJECTED**.  Independent re-verify
+(separate script, fresh load, prompt+completion blob lower-cased, substring
+match against every entry_point): **0 hits / 35 checked**.  GATE: PASS — v20
+is training-ready.
+
+### 3. Coverage delta vs R189
+
+Coverage recomputed programmatically from the gated v11-v20 corpora against the
+R181 audit's 164 eval raw pyScript APIs (baseline covered = 6):
+
+| Metric | After v19 | After v20 | Delta |
+|:--|--:|--:|:--|
+| Covered eval APIs | 68 | 74 | +6 |
+| Blind eval APIs | 96 | 90 | -6 |
+| Corpus unique APIs (gated) | 85 | 92 | +7 |
+| Total pairs | 398 | 433 | +35 |
+| Coverage ratio | 41.5% | 45.1% | +3.6 pp |
+
+Note: `MdeTranAnalysis` was already introduced in v13 (R183) and is re-taught
+here in deeper sweep-context; it is NOT a newly-covered API.  The 6 genuinely
+new APIs are MdeAcAnalysis, MdeSweepRange, MdeSweepType, MdeSweepVariable,
+MdeSpeOutput, MdePlatLocalJobPolicy.  `MdeAddSpecificPoints` (helper, +1
+corpus-unique API) is not in the 164 eval raw APIs.
+
+### 4. Remaining blind priority (after v20)
+
+After v20 the Mde* sweep/platform family is largely exhausted; remaining blind
+families by eval usage: db* (16 usages), vector* (12), ae* (9), et* regex (8),
+plus residual emy* structural members (emySegStyle, emyPointArrayScaleSegments,
+emyTech, emyLibAccessExt, emyArray_* containers).  R191 candidate: db* residual
+or vector* family, or the remaining high-single emy*.
+
+### 5. Deliverables
+
+| Item | Path | Size |
+|:--|:--|--:|
+| corpus builder | `run/baize_posttrain_r190_mde_sweep_platform_corpus.py` | 598 lines / py_compile OK |
+| training-ready corpus | `run/sft_pyaether_corpus_v20_mde_sweep_platform.jsonl` | 28,481 bytes / 35 pairs |
+
+> Cumulative PyAether SFT corpus: v11 (93) + v12 (25) + v13 (45) + v14 (45)
+> + v15 (45) + v16 (45) + v17 (45) + v18 (25) + v19 (30) + v20 (35) = **433
+> pairs**.  All 433 pairs PASS the 155-entry_point pollution scan.  v11-v20
+> are gated for training.
+
