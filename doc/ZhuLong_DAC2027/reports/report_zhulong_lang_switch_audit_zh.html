@@ -1,231 +1,217 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ZhuLong B 轴思维链语言切换抽查报告</title>
-<style>
-  body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;max-width:1100px;margin:24px auto;padding:0 20px;color:#222;line-height:1.65;background:#fafafa}
-  h1{font-size:1.5em;border-bottom:3px solid #c0392b;padding-bottom:8px;color:#c0392b}
-  h2{font-size:1.2em;margin-top:1.8em;border-left:5px solid #c0392b;padding-left:10px;background:#eee;padding:6px 10px}
-  h3{font-size:1.05em;margin-top:1.4em;color:#333}
-  table{border-collapse:collapse;width:100%;margin:12px 0;font-size:0.92em;background:#fff}
-  th,td{border:1px solid #bbb;padding:7px 9px;text-align:center;vertical-align:top}
-  th{background:#34495e;color:#fff;font-weight:600}
-  tr:nth-child(even){background:#f4f6f7}
-  .ok{color:#1e8; font-weight:700}
-  .warn{color:#e67e22;font-weight:700}
-  .bad{color:#c0392b;font-weight:700}
-  .tag{display:inline-block;padding:1px 7px;border-radius:3px;font-size:0.82em;color:#fff}
-  .t-TARGET{background:#27ae60}
-  .t-MIXED{background:#2980b9}
-  .t-ENGLISH{background:#7f8c8d}
-  .t-CHINESE{background:#8e44ad}
-  .t-CONFLICT{background:#c0392b}
-  .frag{background:#fff;border:1px solid #ddd;border-left:4px solid #3498db;padding:10px 14px;margin:10px 0;font-family:"SF Mono",Consolas,monospace;font-size:0.85em;white-space:pre-wrap;word-break:break-word;color:#333}
-  .frag.es{border-left-color:#e74c3c}
-  .frag.zh{border-left-color:#e67e22}
-  .frag.en{border-left-color:#27ae60}
-  .frag.fr{border-left-color:#9b59b6}
-  .src{font-size:0.78em;color:#666;margin-top:4px}
-  .note{background:#fff8e1;border:1px solid #f1c40f;padding:10px 14px;margin:12px 0;border-radius:4px}
-  .alert{background:#fdecea;border:1px solid #c0392b;padding:10px 14px;margin:12px 0;border-radius:4px}
-  .meta{color:#555;font-size:0.9em}
-  code{background:#eee;padding:1px 4px;border-radius:2px;font-size:0.88em}
-  .small{font-size:0.82em;color:#666}
-</style>
-</head>
-<body>
-
-<h1>ZhuLong B 轴（思维链语言消融）思维链语言切换抽查报告</h1>
-
-<div class="meta">
-<b>抽查日期</b>：2026-11-11&nbsp;&nbsp;|&nbsp;&nbsp;
-<b>对象</b>：EDA-Eval-PyAether 158 题集，cline × GLM 思维链语言消融 B 轴<br>
-<b>抽查范围</b>：es（3 轮）/ zh（3 轮）/ en（3 轮）/ fr（1 轮，B_fr_r1）<b>全量 trace</b>（非抽样）<br>
-<b>方法</b>：只读解析每个 trace 的 <code>thinking</code> 内容块，统计主导语言（英 / 中 / 目标语 / 混合），并人工核实片段<br>
-<b>trace 根目录</b>：<code>/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/&lt;TAG&gt;/&lt;batch&gt;/trace/&lt;task&gt;/</code>
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><title>ZhuLong 思维链语言消融（B 轴）trace 抽查报告</title><style>
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;max-width:1180px;margin:24px auto;padding:0 20px;color:#1f2328;line-height:1.6}
+h1{font-size:1.5em;border-bottom:2px solid #4a90d9;padding-bottom:8px}
+h2{font-size:1.2em;margin-top:2em;border-left:5px solid #4a90d9;padding-left:10px;background:#f0f6ff;padding:6px 10px}
+h3{font-size:1.05em;margin-top:1.5em;color:#274472}
+table{border-collapse:collapse;width:100%;margin:10px 0;font-size:0.9em}
+th,td{border:1px solid #d0d7de;padding:6px 8px;text-align:left;vertical-align:top}
+th{background:#f6f8fa;font-weight:600}
+tr:nth-child(even){background:#fbfcfd}
+code,pre{font-family:"SF Mono",Consolas,monospace;font-size:0.88em;background:#f6f8fa;padding:1px 4px;border-radius:3px}
+pre{padding:8px 10px;overflow-x:auto;border:1px solid #e1e4e8;white-space:pre-wrap;word-break:break-word}
+.verdict-TARGET{color:#1a7f37;font-weight:700}
+.verdict-ENGLISH{color:#cf222e;font-weight:700}
+.verdict-MIXED{color:#bf8700;font-weight:700}
+.verdict-COPIED{color:#cf222e;font-weight:700}
+.verdict-WRONG{color:#8250df;font-weight:700}
+.verdict-EMPTY{color:#6e7781}
+.verdict-真切换{color:#1a7f37;font-weight:700}
+.verdict-部分生效{color:#bf8700;font-weight:700}
+.verdict-未生效{color:#cf222e;font-weight:700}
+.note{background:#fff8c5;border-left:4px solid #d4a72c;padding:8px 12px;margin:10px 0;font-size:0.92em}
+.warn{background:#ffebe9;border-left:4px solid #cf222e;padding:8px 12px;margin:10px 0}
+.ok{background:#dafbe1;border-left:4px solid #1a7f37;padding:8px 12px;margin:10px 0}
+.snippet{background:#f6f8fa;border-left:3px solid #6e7781;padding:6px 10px;margin:4px 0;font-size:0.88em;color:#57606a}
+.path{font-size:0.78em;color:#6e7782;word-break:break-all}
+.summary-box{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0}
+.card{flex:1;min-width:230px;border:1px solid #d0d7de;border-radius:6px;padding:10px 12px;background:#fbfcfd}
+.card h4{margin:0 0 4px;font-size:0.95em}
+.card .v{font-size:1.1em;font-weight:700;margin:4px 0}
+ul{margin:6px 0 6px 18px}
+li{margin:2px 0}
+.muted{color:#6e7782;font-size:0.88em}
+</style></head><body>
+<h1>ZhuLong 思维链语言消融（B 轴）trace 抽查报告</h1>
+<p class="muted">生成时间：2026-11-11 · 只读抽查，未修改任何 trace · 抽查对象 = <code>/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/&lt;TAG&gt;/&lt;batch&gt;/trace/</code></p>
+<h2>0. 关键背景与抽查前提（必读）</h2>
+<div class="warn"><strong>发现 1（最关键 · 方法学confound）</strong>：基础 prompt（EDA-Eval-PyAether 任务模板）中<strong>已硬性要求</strong>「<code>所有的回复、总结、思考等过程均使用中文回答，使用中文分析</code>」。因此「思维链语言」同时受 <strong>基础 prompt 的中文指令</strong> 与 <strong>B 轴注入的语言指令</strong> 两股力量拉扯，且注入在 prompt 末尾、强度弱于基础 prompt 的整体约束。</div>
+<div class="warn"><strong>发现 2（基座不一致）</strong>：B 轴各轮的<strong>基座模型不恒定</strong>——<code>B_en_r1</code> 用 <code>glm-5.2</code>，而 <code>B_en_r2 / B_en_r3 / B_zh_* / B_es_* / B_fr_r1</code> 全部用 <code>deepseek-v4-pro-cloud</code>。这违反任务书「两轴实验内基座必须恒定」的要求，且 <code>deepseek-v4-pro-*</code> 系列恰是任务书明确 <strong>🚫 不应使用</strong> 的基座（额度耗尽/被排除）。B 轴结论的方法学有效性已受损。</div>
+<div class="warn"><strong>发现 3（注入位置已核验）</strong>：四个语言的注入短语均<strong>确实出现在 prompt 末尾</strong>（<code>&lt;user_input&gt;...Piensa en español.&lt;/user_input&gt;</code> 等），跨 9 个 batch × 2 个抽查题号全部命中。即「prompt 层注入」是生效的；问题出在<strong>模型是否遵循</strong>，不是「注入没进去」。</div>
+<div class="note"><strong>任务书 §2.3 的预期需修正</strong>：任务书预期「答案部分仍为英语」。但基础 prompt 已强制「回复用中文」，因此实测<strong>答案正文以中文为主</strong>（代码与注释仍为英文，符合基础 prompt「注释与 print 一律英文」）。故 §4 答案核查的标准应为「答案是否被注入污染成目标语言」，而非「是否为英语」。</div>
+<h2>1. 结论一句话</h2>
+<div class="summary-box">
+<div class="card"><h4>英 （en）</h4><div class="v verdict-真切换">真切换</div><div class="muted">16/19 条 TARGET/MIXED（84%）</div></div>
+<div class="card"><h4>中 （zh）</h4><div class="v verdict-真切换">真切换</div><div class="muted">19/21 条 TARGET/MIXED（90%）</div></div>
+<div class="card"><h4>西 （es）</h4><div class="v verdict-未生效">未生效</div><div class="muted">仅 4/21 条 TARGET/MIXED（19%）；17 条未切换</div></div>
+<div class="card"><h4>法 （fr）</h4><div class="v verdict-部分生效">部分生效</div><div class="muted">3/7 条 TARGET/MIXED（43%）；4 条未切换</div></div>
 </div>
-
-<div class="alert">
-<b>⚠️ 头条结论（方法论级混淆）</b>：本 harness 的任务 prompt 模板里<b>已经写着</b>
-<code>「所有的回复、总结、思考等过程均使用中文回答，使用中文分析」</code>（见 <code>user_input</code> 的「输出要求」节）。
-也就是说<b>基座 prompt 本身就命令模型「用中文思考」</b>。B 轴的语言 hint（如 <code>Piensa en español.</code>）只是追加在 prompt 最末，
-对 zh 是「与基座一致」、对 en 是「覆盖基座」、对 es/fr/ru 是「与基座直接冲突」。<b>这一混淆使 B 轴不是干净的「思维链语言」单轴消融</b>，
-是本次抽查发现的最重要问题，详见第 ⑤ 节。
-</div>
-
-<h2>① 每语言一句话结论</h2>
-<table>
-<tr><th>语言</th><th>hint</th><th>样本（全量）</th><th>真切换 / 目标语占比</th><th>判定</th></tr>
-<tr><td><b>es 西班牙语</b></td><td><code>Piensa en español.</code></td><td>473（3 轮）</td><td>20% 西语 / 67% 英语 / 12% 中文</td><td class="bad">未生效</td></tr>
-<tr><td><b>zh 中文</b></td><td><code>请使用中文思考。</code></td><td>474（3 轮）</td><td>88% 中文 / 10% 英语</td><td class="ok">真切换（但与基座默认重合，非干净消融）</td></tr>
-<tr><td><b>en 英语</b></td><td><code>Think in English.</code></td><td>471（3 轮）</td><td>97% 英语</td><td class="ok">真切换（干净覆盖基座）</td></tr>
-<tr><td><b>fr 法语</b></td><td><code>Réfléchis en français.</code></td><td>158（1 轮）</td><td>46% 法语 / 43% 英语 / 11% 中文</td><td class="warn">部分生效</td></tr>
-<tr><td><b>ru 俄语</b></td><td><code>Думай по-русски.</code></td><td>—</td><td>未跑（无 trace 目录）</td><td class="small">BLOCKED(未跑)</td></tr>
-</table>
-<p class="small">判定阈值（按任务书）：目标语+混用 ≥80% → 真切换；40–80% → 部分生效；&lt;40% → 未生效。en 的 3% EMPTY 为无 thinking 块的短/失败 trace，不影响结论。</p>
-
-<h2>② 抽查表（全量 trace，按轮）</h2>
-<p>分类口径：<span class="tag t-TARGET">TARGET</span>思维链主体为目标语；
-<span class="tag t-MIXED">MIXED</span>目标语与英/中实质混用且目标语不占少数；
-<span class="tag t-ENGLISH">ENGLISH</span>主体英语（未遵循）；
-<span class="tag t-CHINESE">CHINESE</span>主体中文（遵循了基座 prompt 的「思考用中文」而非 hint）；
-<span class="tag t-CONFLICT">CONFLICT</span>模型在思维链里显式纠结 hint 与基座要求冲突（COPIED_PROMPT 同源问题，点名见下）。</p>
-
-<h3>es（西班牙语）— 未生效</h3>
-<table>
-<tr><th>轮</th><th>batch</th><th>样本</th><th>TARGET</th><th>MIXED</th><th>ENGLISH</th><th>CHINESE</th><th>目标语占比</th><th>判定</th></tr>
-<tr><td>B_es_r1</td><td>2026_1110_203542</td><td>157</td><td>41</td><td>2</td><td>93</td><td>21</td><td>27%</td><td class="bad">未生效</td></tr>
-<tr><td>B_es_r2</td><td>2026_1111_002251</td><td>158</td><td>27</td><td>3</td><td>110</td><td>18</td><td>19%</td><td class="bad">未生效</td></tr>
-<tr><td>B_es_r3</td><td>2026_1111_032900</td><td>158</td><td>25</td><td>3</td><td>112</td><td>18</td><td>18%</td><td class="bad">未生效</td></tr>
-<tr><td colspan="2"><b>合计</b></td><td><b>473</b></td><td><b>93</b></td><td><b>8</b></td><td><b>315</b></td><td><b>57</b></td><td><b>21%</b></td><td class="bad"><b>未生效</b></td></tr>
-</table>
-<div class="small">trace 路径：<code>.../B_es_r1/2026_1110_203542/trace/EDA-Eval-PyAether-*/&lt;session&gt;.messages.json</code>（r2/r3 同构）</div>
-
-<h3>zh（中文）— 真切换（但与基座默认重合）</h3>
-<table>
-<tr><th>轮</th><th>batch</th><th>样本</th><th>TARGET</th><th>MIXED</th><th>ENGLISH</th><th>中文占比</th><th>判定</th></tr>
-<tr><td>B_zh_r1</td><td>2026_1110_005204</td><td>158</td><td>139</td><td>6</td><td>13</td><td>92%</td><td class="ok">真切换</td></tr>
-<tr><td>B_zh_r2</td><td>2026_1110_073833</td><td>158</td><td>137</td><td>1</td><td>20</td><td>87%</td><td class="ok">真切换</td></tr>
-<tr><td>B_zh_r3</td><td>2026_1110_161756</td><td>158</td><td>139</td><td>3</td><td>16</td><td>90%</td><td class="ok">真切换</td></tr>
-<tr><td colspan="2"><b>合计</b></td><td><b>474</b></td><td><b>415</b></td><td><b>10</b></td><td><b>49</b></td><td><b>90%</b></td><td class="ok"><b>真切换</b></td></tr>
-</table>
-<div class="alert"><b>但需注意</b>：基座 prompt 已写「思考使用中文」，所以 zh 臂 90% 的中文思考<b>主要是基座默认行为</b>，而非 hint「请使用中文思考」的独立效应。zh 臂实质 ≈ 无 hint 基线（B6），不能 claim「中文 hint 带来了某 Δ」。</div>
-
-<h3>en（英语）— 真切换（干净覆盖基座）</h3>
-<table>
-<tr><th>轮</th><th>batch</th><th>样本</th><th>TARGET(英)</th><th>EMPTY</th><th>英语占比</th><th>判定</th></tr>
-<tr><td>B_en_r1</td><td>2026_1109_084446</td><td>156</td><td>141</td><td>15</td><td>90%</td><td class="ok">真切换</td></tr>
-<tr><td>B_en_r2</td><td>2026_1109_104439</td><td>158</td><td>158</td><td>0</td><td>100%</td><td class="ok">真切换</td></tr>
-<tr><td>B_en_r3</td><td>2026_1109_171220</td><td>157</td><td>157</td><td>0</td><td>100%</td><td class="ok">真切换</td></tr>
-<tr><td colspan="2"><b>合计</b></td><td><b>471</b></td><td><b>456</b></td><td><b>15</b></td><td><b>97%</b></td><td class="ok"><b>真切换</b></td></tr>
-</table>
-<div class="note">en 是 B 轴里唯一一个 hint 与基座「思考用中文」<b>冲突且 hint 成功覆盖基座</b>的臂。97% 的英文思考证明 <code>Think in English.</code> 注入真实生效。EMPTY 15 条为无 thinking 块的失败/超短 trace，与语言无关。</div>
-
-<h3>fr（法语）— 部分生效（仅 1 轮）</h3>
-<table>
-<tr><th>轮</th><th>batch</th><th>样本</th><th>TARGET</th><th>MIXED</th><th>ENGLISH</th><th>CHINESE</th><th>目标语占比</th><th>判定</th></tr>
-<tr><td>B_fr_r1</td><td>2026_1111_071240</td><td>158</td><td>64</td><td>9</td><td>68</td><td>17</td><td>46%</td><td class="warn">部分生效</td></tr>
-</table>
-<div class="note">fr 仅有 1 轮 trace（r1）。46% 真用法语，43% 退回英语，11% 退回中文（基座默认）。属「约半数生效」的不稳定状态，不能代表「法语思维链」的纯净效应。</div>
-
-<h2>③ 原文片段（每语言 ≥2 段思维链原文，截 80–150 字）</h2>
-
-<h3>es — 遵循 hint（TARGET，西语思维链）</h3>
-<div class="frag es">El usuario me pide completar una tarea de generación de código en pyAether. Necesito: 1. Analizar la tarea: implementar `get_clipped_intersections` que filtra una lista de boxes candidatos y devuelve las áreas de intersección con el query box. 2. Buscar APIs de pyAether relacionadas con `emyBoxF` y operaciones de intersección/clipping.</div>
-<div class="src">来源：B_es_r1/2026_1110_203542/trace/EDA-Eval-PyAether-032/&lt;session&gt;.messages.json（thinking 块）</div>
-
-<h3>es — 未遵循 hint（ENGLISH，英语思维链，占 67%）</h3>
-<div class="frag es">Let me analyze this task. The user wants me to generate a Python function `count_unique_bus_bits` that uses pyAether API to count unique signal bits in an EDA bus definition string. The function signature: import pyAether as pyScript ... I need to: 1. Search for relevant pyAether APIs...</div>
-<div class="src">来源：B_es_r1/2026_1110_203542/trace/EDA-Eval-PyAether-001/&lt;session&gt;.messages.json</div>
-
-<h3>es — 显式冲突（CONFLICT / COPIED_PROMPT 同源问题，点名）</h3>
-<div class="frag es">...there's a conflict: the user's last instruction "Piensa en español" means "think in Spanish". But the core output requirement says use Chinese. I'll follow the Chinese requirement for responses since that's the explicit output requirement, but I could note. Actually let...</div>
-<div class="src">来源：B_es_r1/2026_1110_203542/trace/EDA-Eval-PyAether-005/&lt;session&gt;.messages.json</div>
-<div class="alert"><b>点名 COPIED_PROMPT/CONFLICT</b>：es 三轮分别有 <b>37/157、44/158、55/158</b> 条 trace 在思维链里<b>显式纠结</b> hint 与基座「思考用中文」的冲突，最终大多选择遵循基座（中文/英文思考），把 hint 当作可忽略的旁注。这正是任务书所说的「以为生效其实没生效」的典型。</div>
-
-<h3>zh — 遵循 hint（TARGET，中文思维链）</h3>
-<div class="frag zh">让我先理解任务。需要完成一个函数 `count_unique_bus_bits(ns, bus_string)`，计算 EDA 总线定义字符串中唯一位的数量。例如 'a,b<1:0>,a'，唯一的信号位是 'a', 'b<1>', 'b<0>'，共 3 个。需要使用 pyAether API 来实现。我需要先搜索相关的 API，比如解析总线字符串的 API。</div>
-<div class="src">来源：B_zh_r1/2026_1110_005204/trace/EDA-Eval-PyAether-001/&lt;session&gt;.messages.json</div>
-
-<div class="frag zh">让我分析这个任务。用户需要我完成一个 pyAether 代码生成任务，函数签名是：def get_first_instance_name(cv: 'pyScript.emyDesign') -> str: ... 我需要：1. 分析任务需求 2. 使用 search_apis 搜索与任务相关的 pyAether API 3. 使用 get_api_details 获取 API 详细文档并分析...</div>
-<div class="src">来源：B_zh_r1/2026_1110_005204/trace/EDA-Eval-PyAether-016/&lt;session&gt;.messages.json</div>
-
-<h3>en — 遵循 hint（TARGET，英语思维链，成功覆盖基座「思考用中文」）</h3>
-<div class="frag en">Let me analyze the task. I need to create a function that counts unique bus bits in an EDA bus definition string using pyAether API. For example, for the string 'a,b<1:0>,a', the unique signal bits are 'a', 'b<1>', 'b<0>'...</div>
-<div class="src">来源：B_en_r1/2026_1109_084446/trace/EDA-Eval-PyAether-001/&lt;session&gt;.messages.json</div>
-
-<div class="frag en">Let me analyze the task. I need to write a function that retrieves the name of the first instance in a given CellView (emyDesign object). Let me search for the relevant pyAether APIs related to instances...</div>
-<div class="src">来源：B_en_r1/2026_1109_084446/trace/EDA-Eval-PyAether-016/&lt;session&gt;.messages.json</div>
-
-<h3>fr — 遵循 hint（TARGET，法语思维链）</h3>
-<div class="frag fr">Je dois analyser ce problème. L'utilisateur veut que je génère du code Python utilisant pyAether pour une opération booléenne sur des polygones. Je dois chercher les APIs pyAether pertinentes pour l'opération boolean sur les polygones...</div>
-<div class="src">来源：B_fr_r1/2026_1111_071240/trace/EDA-Eval-PyAether-080/&lt;session&gt;.messages.json</div>
-
-<h3>fr — 显式冲突（CONFLICT，点名）</h3>
-<div class="frag fr">让我分析这个任务。用户要求我完成一个 pyAether 代码生成任务...最后一句 "Réfléchis en français" 让我用法语思考，但这与系统要求有些矛盾。系统要求用中文回答，但用户最后说用法语思考。我理解 "Réfléchis en français" 是让我用法语进行思考/分析，但输出要求说用中文。我会以中文为主进行输出，思考过程可以参考法语。实际上，我应该遵循明确的输出要求（中文回答），内部思考可以是法语。我会用中文输出。</div>
-<div class="src">来源：B_fr_r1/2026_1111_071240/trace/EDA-Eval-PyAether-048/&lt;session&gt;.messages.json</div>
-<div class="alert"><b>点名</b>：B_fr_r1 有 <b>29/158</b> 条 trace 出现这种显式冲突推理，模型看到 hint 却主动选择遵循基座的中文要求。这是「以为生效其实没生效」的典型，fr 必须在报告里点名。</div>
-
-<h2>④ 答案 / 代码部分语言核查</h2>
-
-<div class="note">
-<b>任务书预期</b>：「答案/代码部分是否仍是英语（预期：是，因为只要求思维链换语言；若答案也变成目标语言，说明注入影响了输出，需单独记）」。
-<b>实际核查结论</b>：任务书的「答案仍是英语」前提<b>不成立</b>——本 harness 的基座 prompt 已强制 <code>「所有的回复、总结、思考等过程均使用中文回答」</code>，所以<b>口头答案（assistant 的 text 块）默认就是中文，从来不是英语</b>。具体表现：
-</div>
-
-<table>
-<tr><th>臂</th><th>思维链语言</th><th>口头答案(text)语言</th><th>代码语言</th><th>是否符合「只换思维链不换输出」</th></tr>
-<tr><td>es（未生效）</td><td>67% 英 / 12% 中 / 20% 西</td><td>多数中文（基座默认）</td><td>英文(Python)</td><td>— 思维链本就没换成西语</td></tr>
-<tr><td>zh（真切换）</td><td>90% 中文</td><td>中文</td><td>英文(Python)</td><td>✓ 思维链与答案都中文（基座默认一致）</td></tr>
-<tr><td>en（真切换）</td><td>97% 英文</td><td><b>英文/中文各半</b></td><td>英文(Python)</td><td>✓ 思维链换英文；答案受基座「回复用中文」拉扯，英/中混</td></tr>
-<tr><td>fr（部分生效）</td><td>46% 法 / 43% 英 / 11% 中</td><td>遵循时法、未遵循时中</td><td>英文(Python)</td><td>部分；遵循 hint 时答案也变法语（自然溢出）</td></tr>
-</table>
-
-<h3>证据片段</h3>
-<p class="small">en 臂：思维链英文，但口头答案中文（基座「回复用中文」未被 hint 覆盖）：</p>
-<div class="frag en">让我分析一下这项任务。我需要编写一个函数，使用 pyAether API 来计算 EDA 总线定义字符串中唯一的信号位。让我先搜索一下相关的 API。让我获取最相关 API 的详细信息：`etExpandName`、`emyNameSpace` 和 `emyName.getBitName`。</div>
-<div class="src">来源：B_en_r1/2026_1109_084446/trace/EDA-Eval-PyAether-001（assistant text 块，对应同题 thinking 为英文）</div>
-
-<p class="small">代码始终英文（即使 zh 臂思维链中文，代码仍是英文 Python，符合 prompt「代码注释和 print 一律用英文」）：</p>
-<div class="frag zh">import pyAether as pyScript
-# Test etExpandName behavior on the example bus string
-test_str = "a,b<1:0>,a"
-print("compress=False net:", pyScript.etExpandName(test_str, False, "net"))
-print("compress=True net:", pyScript.etExpandName(test_str, True, "net"))</div>
-<div class="src">来源：B_zh_r1/2026_1110_005204/trace/EDA-Eval-PyAether-001（tool_use: run_code, code 字段）</div>
-
-<div class="note">
-<b>结论</b>：① <b>代码部分在所有臂中始终为英文</b>，未受 hint 影响（符合 prompt 的「代码用英文」硬约束）。② <b>口头答案默认中文</b>是基座 prompt 行为，非 hint 泄漏；当思维链真切换到目标语时，答案有时自然溢出为目标语（es→西、fr→法），这是「用 X 思考 → 顺带用 X 回答」的次级效应，<b>不是</b> hint 直接命令输出换语言。③ 任务书「答案应仍是英语」的预期与实际 harness 行为不符，应在主报告中修正这一前提。
-</div>
-
-<h2>⑤ 影响评估（B 轴对应轮次结论是否要作废）</h2>
-
-<div class="alert">
-<b>es（未生效）— B_es_r1/r2/r3 三轮结论<b>需作废或重跑</b>。</b>
-仅 21% 的 trace 真用西语思考，67% 退回英语、12% 退回中文。B_es 的 Pass@1 分数<b>实质反映的是「英文/中文思考 + 西语 hint 被忽略」的状态</b>，与 B_en 基线高度同质，<b>不能作为「西语思维链对分数影响」的有效数据点</b>。若论文要 claim 西语思维链效应，必须先修注入（让 hint 真生效，例如把基座 prompt 的「思考用中文」改为中性、或把 hint 提到 system 层并加强）后重跑。
-</div>
-
-<div class="alert">
-<b>fr（部分生效）— B_fr_r1（仅 1 轮）结论<b>需保留不确定性标注</b>，不能作为「法语思维链」的可靠数据点。</b>
-46% 真用法语、43% 英语、11% 中文，且 29/158 条显式纠结冲突。B_fr_r1 的分数只能解读为「约半数法语 + 半数英/中思考」的混合结果。<b>fr 的 r2/r3 在编排器排队中，开跑前必须先修注入</b>，否则 r2/r3 会重蹈 r1 覆辙。
-</div>
-
-<div class="note">
-<b>zh（真切换但混淆）— B_zh_r1/r2/r3 数据有效，但<b>消融意义存疑</b>。</b>
-90% 真用中文思考，但基座 prompt 本身就要求「思考用中文」，所以 zh 臂 ≈ 无 hint 基线（B6）。<b>不能 claim「中文 hint 带来了 Δpp」</b>——它和基线本质同质。论文应将 zh 与 B6（无 hint）对照，或直接把 zh 当作「基座默认思维链语言」的基线处理，而非独立的消融臂。
-</div>
-
-<div class="note">
-<b>en（真切换，干净）— B_en_r1/r2/r3 数据有效。</b>
-97% 真用英文思考，<code>Think in English.</code> 成功覆盖基座「思考用中文」。en 是 B 轴里唯一一个干净生效、且与基座形成真实对比的臂，其分数可作为「英文思维链 vs 基座中文思维链」的有效对照。注意：en 的口头答案英/中混（基座「回复用中文」未被 hint 覆盖），但这不影响 Pass@1（评分只看代码）。
-</div>
-
-<h3>对 B 轴整体的影响</h3>
-<div class="alert">
-<b>B 轴当前 5 语言里有 2 个（es/fr）未真切换，1 个（zh）与基座混淆，只有 1 个（en）干净生效，ru 尚未跑。</b>
-即 <b>B 轴已完成的 4 个语言里仅 en 可作为有效消融数据</b>。MEMORY 里一路写的「lang hint 生效 ✅」<b>证据不足，需更正</b>：仅对 en/zh 成立（zh 还是默认），对 es 不成立，对 fr 部分成立。<b>建议</b>：
-<ol>
-<li><b>立即修注入</b>：把语言指令从「prompt 末尾追加一句」改为<b>覆盖/删除基座 prompt 的「思考用中文」一句</b>，或把 hint 提升到 system_prompt 层，消除冲突。</li>
-<li>修注入后<b>重跑 es（3 轮）和 fr（3 轮）</b>；zh 可保留但需与 B6 基线对照后定性；en 保留。</li>
-<li>在主报告（<code>report_zhulong_ablation_thinking_language_zh.html</code>）的「口径校验节」<b>如实标注</b>：es/fr 当前轮次思维链未真切换，对应分数暂不能归因于目标语思维链。</li>
-<li>B 轴「成本-分数」结论中，es/fr 的 token/墙钟数据仍有效（反映实际跑的状态），但<b>不能与 en/zh 直接做「语言效应」横比</b>——因为 es/fr 实际思维链语言与标签不符。</li>
-</ol>
-</div>
-
-<h2>附：方法与局限</h2>
-<ul class="small">
-<li><b>分类方法</b>：对每个 trace 的全部 assistant <code>thinking</code> 内容块，统计英文功能词频、CJK 字符数、目标语标记（西/法功能词 + 重音字符），按主导语言分类；top-2 分数比 ≥0.6 记为 MIXED。人工抽检了每类片段以校准。</li>
-<li><b>样本</b>：全量 trace（非抽样）。es 473 / zh 474 / en 471 / fr 158。ru 无 trace 目录（BLOCKED 未跑）。</li>
-<li><b>局限</b>：① 思维链存在中途切语言（如英文开头 + 中文正文），主导语言分类对「英/中」边界的 MIXED 判定可能保守；但对「是否为目标语」的判定稳健（目标语标记足够特异）。② fr 仅 1 轮，样本量小。③ 未读取 cline session 的 token 计费字段，仅做语言判定，不重算成本。</li>
-<li><b>只读</b>：本次抽查全程只读 trace，未 kill 进程、未改编排器、未写 trace 目录。编排器 PID 3675162（<code>run_think_lang_ablation.sh</code>）在抽查期间持续运行未受影响。</li>
+<ul>
+<li><strong>英（en）</strong>：注入「Think in English.」<span class="verdict-真切换">真切换</span>——16/19 有效样本思维链主体为英语，成功压制了基础 prompt 的中文要求；3 条后期漂回中文（基础 prompt 泄漏），2 条 gen-fail 无响应。</li>
+<li><strong>中（zh）</strong>：注入「请使用中文思考。」<span class="verdict-真切换">真切换（但confounded）</span>——19/21 思维链为中文。<strong>但基础 prompt 本就强制中文</strong>，故此结果<strong>无法归因于注入</strong>，仅说明模型遵循了基础 prompt；2 条（task 120）模型连基础 prompt 带注入一起无视、改用英语思考。</li>
+<li><strong>西（es）</strong>：注入「Piensa en español.」<span class="verdict-未生效">未生效</span>——21 条抽查里仅 3 条思维链为西班牙语（r1-030 / r2-090 / r3-001），15 条仍是英语（模型默认思考语言），2 条漂成中文（基础 prompt 胜出），1 条西→中混合。注入既未压过模型默认的英语，也未压过基础 prompt 的中文。</li>
+<li><strong>法（fr）</strong>：注入「Réfléchis en français.」<span class="verdict-部分生效">部分生效</span>——7 条抽查里 3 条法语（030/060/090，且法语特征极强：accent 338~561、fr_kw 466~967），3 条英语，1 条中文。<strong>法语是四个语言里注入信号最强的</strong>，但仍有 4/7 未切换。</li>
 </ul>
-
-<div class="meta" style="margin-top:2em;border-top:1px solid #ccc;padding-top:8px">
-本报告由 ZhuLong agent 于 2026-11-11 按用户令（「抽查 B 轴思维链语言是否真切换」）生成，只读证据均来自落盘 trace。<br>
-原始分类数据：<code>run/_audit_population.json</code>（全量主导语言）、<code>run/_audit_final.json</code>（含片段头）。
-</div>
-
-</body>
-</html>
+<h2>2. 抽查表（按语言汇总）</h2>
+<p class="muted">每语言抽查 7 个题号 × 各轮（en/zh/es 各 3 轮 = 21 条，fr 1 轮 = 7 条，共 70 条）。判定四类 + 两个补充类：<code>TARGET</code>=主体目标语；<code>ENGLISH</code>=主体英语（未遵循）；<code>MIXED</code>=两种实质混用；<code>COPIED_PROMPT</code>=仅复述注入短语；<code>WRONG_LANG(zh)</code>=漂成基础 prompt 的中文（未遵循）；<code>EMPTY</code>=gen-fail 无响应。</p>
+<table><thead><tr><th>语言</th><th>TAG</th><th>样本数</th><th>TARGET</th><th>MIXED</th><th>ENGLISH</th><th>COPIED_PROMPT</th><th>WRONG_LANG(zh)</th><th>EMPTY</th><th>判定</th><th>明细</th></tr></thead><tbody>
+<tr><td><strong>英</strong></td><td>B_en_r1, B_en_r2, B_en_r3</td><td>21</td><td>16</td><td>0</td><td>0</td><td>0</td><td>3</td><td>2</td><td class="verdict-真切换">真切换</td><td class="muted">16/19 条 TARGET/MIXED（84%）</td></tr>
+<tr><td><strong>中</strong></td><td>B_zh_r1, B_zh_r2, B_zh_r3</td><td>21</td><td>19</td><td>0</td><td>2</td><td>0</td><td>0</td><td>0</td><td class="verdict-真切换">真切换</td><td class="muted">19/21 条 TARGET/MIXED（90%）</td></tr>
+<tr><td><strong>西</strong></td><td>B_es_r1, B_es_r2, B_es_r3</td><td>21</td><td>3</td><td>1</td><td>15</td><td>0</td><td>2</td><td>0</td><td class="verdict-未生效">未生效</td><td class="muted">仅 4/21 条 TARGET/MIXED（19%）；17 条未切换</td></tr>
+<tr><td><strong>法</strong></td><td>B_fr_r1</td><td>7</td><td>3</td><td>0</td><td>3</td><td>0</td><td>1</td><td>0</td><td class="verdict-部分生效">部分生效</td><td class="muted">3/7 条 TARGET/MIXED（43%）；4 条未切换</td></tr>
+</tbody></table>
+<div class="note"><strong>阈值核对（任务书 §3）</strong>：en ≥4/5 TARGET ⇒ 真切换 ✅；zh 同 ✅（但confounded）；es 仅 3/21 TARGET+1 MIXED ⇒ 未生效 ✅；fr 3/7 TARGET ⇒ 部分生效 ✅。<strong>未发现 <code>COPIED_PROMPT</code></strong>（无样本仅复述注入短语而无实质思考）——所有「未遵循」样本都是<strong>真实地用英语/中文思考</strong>，而非敷衍复述注入。</div>
+<h3>2.1 逐条抽查明细（70 条）</h3>
+<table><thead><tr><th>语言</th><th>TAG</th><th>题号</th><th>基座</th><th>判定</th><th>思维链字符数</th><th>思维链开头原文（≤140 字）</th><th>备注</th></tr></thead><tbody>
+<tr><td>英</td><td>B_en_r1</td><td>001</td><td><code>glm-5.2</code></td><td class="verdict-TARGET">TARGET</td><td>7988</td><td><div class="snippet">Let me analyze the task. I need to create a function that counts unique bus bits in an EDA bus definition string using pyAether API.  For ex…</div><div class="path">/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_en_r1/2026_1109_084446/trace/EDA-Eval-PyAether-001/api_conversation_history.json</div></td><td class="muted">clean English thinking; injection overrode base-prompt Chinese mandate</td></tr>
+<tr><td>英</td><td>B_en_r1</td><td>030</td><td><code>glm-5.2</code></td><td class="verdict-TARGET">TARGET</td><td>4884</td><td><div class="snippet">Let me analyze the task. I need to create a function that generates a list of points representing a rectangle expanded by a margin. The func…</div><div class="path">/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_en_r1/2026_1109_084446/trace/EDA-Eval-PyAether-030/api_conversation_history.json</div></td><td class="muted">English thinking (minor incidental CJK from quoting prompt terms)</td></tr>
+<tr><td>英</td><td>B_en_r1</td><td>060</td><td><code>glm-5.2</code></td><td class="verdict-TARGET">TARGET</td><td>1904</td><td><div class="snippet">Let me analyze the task. I need to create and configure an AC analysis object for a Model Parameter sweep using Center/Span mode and Logarit…</div><div class="path">/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_en_r1/2026_1109_084446/trace/EDA-Eval-PyAether-060/api_conversation_history.json</div></td><td class="muted">English thinking</td></tr>
+<tr><td>英</td><td>B_en_r1</td><td>090</td><td><code>glm-5.2</code></td><td class="verdict-TARGET">TARGET</td><td>63586</td><td><div class="snippet">Let me analyze the task. I need to create a function that: 1. Creates a polygon on a specified layer using provided coordinates 2. Immediate…</div><div class="path">/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_en_r1/2026_1109_084446/trace/EDA-Eval-PyAether-090/api_conversation_history.json</div></td><td class="muted">English thinking</td></tr>
+<tr><td>英</td><td>B_en_r1</td><td>120</td><td><code>glm-5.2</code></td><td class="verdict-TARGET">TARGET</td><td>102946</td><td><div class="snippet">Let me analyze the task. I need to create a Python function that populates an emyDesign object with graphics and connectivity for an Inverte…</div><div class="path">/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_en_r1/2026_1109_084446/trace/EDA-Eval-PyAether-120/api_conversation_history.json</div></td><td class="muted">English thinking</td></tr>
+<tr><td>英</td><td>B_en_r1</td><td>150</td><td><code>glm-5.2</code></td><td class="verdict-EMPTY">EMPTY(gen-fail)</td><td>0</td><td><div class="snippet"></div><div class="path">/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_en_r1/2026_1109_084446/trace/EDA-Eval-PyAether-150/api_conversation_history.json</div></td><td class="muted">gen-fail: trace has only the user prompt, no assistant response</td></tr>
+<tr><td>英</td><td>B_en_r1</td><td>158</td><td><code>glm-5.2</code></td><td class="verdict-EMPTY">EMPTY(gen-fail)</td><td>0</td><td><div class="snippet"></div><div class="path">/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_en_r1/2026_1109_084446/trace/EDA-Eval-PyAether-158/api_conversation_history.json</div></td><td class="muted">gen-fail: trace has only the user prompt, no assistant response</td></tr>
+<tr><td>英</td><td>B_en_r2</td><td>001</td><td><code>deepseek-v4-pro-cloud</code></td><td class="verdict-TARGET">TARGET</td><td>31025</td><td><div class="snippet">Let me analyze this task. I need to create a Python function `count_unique_bus_bits` that uses pyAether API to calculate the number of uniqu…</div><div class="path">/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_en_r2/2026_1109_104439/trace/EDA-Eval-PyAether-001/api_conversation_history.json</div></td><td class="muted">English thinking</td></tr>
+<tr><td>英</td><td>B_en_r2</td><td>030</td><td><code>deepseek-v4-pro-cloud</code></td><td class="verdict-TARGET">TARGET</td><td>16372</td><td><div class="snippet">Let me analyze this task. I need to generate Python code using pyAether that: 1. Accepts bbox tuple and margin 2. Calculates 4 corners CCW:…</div><div class="path">/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_en_r2/2026_1109_104439/trace/EDA-Eval-PyAether-030/api_conversation_history.json</div></td><td class="muted">English thinking</td></tr>
+<tr><td>英</td><td>B_en_r2</td><td>060</td><td><code>deepseek-v4-pro-cloud</code></td><td class="verdict-TARGET">TARGET</td><td>18137</td><td><div class="snippet">Let me start by understanding the task. I need to: 1. Analyze the task requirements and function definition 2. Search for relevant pyAether…</div><div class="path">/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_en_r2/2026_1109_104439/trace/EDA-Eval-PyAether-060/api_conversation_history.json</div></td><td class="muted">English thinking</td></tr>
+<tr><td>英</td><td>B_en_r2</td><td>090</td><td><code>deepseek-v4-pro-cloud</code></td><td class="verdict-TARGET">TARGET</td><td>52816</td><td><div class="snippet">I&#x27;ll analyze the task and use the tools to find the relevant pyAether APIs.</div><div class="path">/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_en_r2/2026_1109_104439/trace/EDA-Eval-PyAether-090/api_conversation_history.json</div></td><td class="muted">English thinking (CJK ~1% incidental)</td></tr>
+<tr><td>英</td><td>B_en_r2</td><td>120</td><td><code>deepseek-v4-pro-cloud</code></td><td class="verdict-TARGET">TARGET</td><td>155476</td><td><div class="snippet">Let me analyze this task. I need to create a Python function using pyAether APIs to populate a design with graphics and connectivity for an…</div><div class="path">/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_en_r2/2026_1109_104439/trace/EDA-Eval-PyAether-120/api_conversation_history.json</div></td><td class="muted">English thinking</td></tr>
+<tr><td>英</td><td>B_en_r2</td><td>150</td><td><code>deepseek-v4-pro-cloud</code></td><td class="verdict-WRONG">WRONG_LANG(zh)</td><td>90521</td><td><div class="snippet">Let me analyze this task. I need to generate Python code using pyAether APIs for an SDL (Schematic Driven Layout) automation flow. Let me fo…</div><div class="path">/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_en_r2/2026_1109_104439/trace/EDA-Eval-PyAether-150/api_conversation_history.json</div></td><td class="muted">opened English then drifted to Chinese (base-prompt leak)</td></tr>
+<tr><td>英</td><td>B_en_r2</td><td>158</td><td><code>deepseek-v4-pro-cloud</code></td><td class="verdict-WRONG">WRONG_LANG(zh)</td><td>35381</td><td><div class="snippet">I need to approach this task carefully. The user wants me to complete a Python code generation task based on a function signature and docstr…</div><div class="path">/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_en_r2/2026_1109_104439/trace/EDA-Eval-PyAether-158/api_conversation_history.json</div></td><td class="muted">opened English then drifted to Chinese (base-prompt leak)</td></tr>
+<tr><td>英</td><td>B_en_r3</td><td>001</td><td><code>deepseek-v4-pro-cloud</code></td><td class="verdict-TARGET">TARGET</td><td>29139</td><td><div class="snippet">Let me start by understanding the task. I need to write a Python function `count_unique_bus_bits(ns, bus_string)` that uses pyAether API to…</div><div class="path">/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_en_r3/2026_1109_171220/trace/EDA-Eval-PyAether-001/api_conversation_history.json</div></td><td class="muted">English thinking</td></tr>
+<tr><td>英</td><td>B_en_r3</td><td>030</td><td><code>deepseek-v4-pro-cloud</code></td><td class="verdict-WRONG">WRONG_LANG(zh)</td><td>27848</td><td><div class="snippet">Let me analyze the task. I need to: 1. Understand the task: generate a function that creates an expanded rectangle array using pyAether APIs…</div><div class="path">/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_en_r3/2026_1109_171220/trace/EDA-Eval-PyAether-030/api_conversation_history.json</div></td><td class="muted">opened English then drifted to Chinese (base-prompt leak)</td></tr>
+<tr><td>英</td><td>B_en_r3</td><td>060</td><td><code>deepseek-v4-pro-cloud</code></td><td class="verdict-TARGET">TARGET</td><td>23491</td><td><div class="snippet">Let me start by understanding the task. I need to generate a Python function using pyAether that configures an AC analysis object for a Mode…</div><div class="path">/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_en_r3/2026_1109_171220/trace/EDA-Eval-PyAether-060/api_conversation_history.json</div></td><td class="muted">English thinking</td></tr>
+<tr><td>英</td><td>B_en_r3</td><td>090</td><td><code>deepseek-v4-pro-cloud</code></td><td class="verdict-TARGET">TARGET</td><td>32786</td><td><div class="snippet">Let me analyze this task. I need to create a Python function that: 1. Creates a polygon on a specified layer using provided coordinates in a…</div><div class="path">/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_en_r3/2026_1109_171220/trace/EDA-Eval-PyAether-090/api_conversation_history.json</div></td><td class="muted">English thinking</td></tr>
+<tr><td>英</td><td>B_en_r3</td><td>120</td><td><code>deepseek-v4-pro-cloud</code></td><td class="verdict-TARGET">TARGET</td><td>405746</td><td><div class="snippet">Let me analyze this task. The user wants me to generate a Python function `create_inverter_symbol_on_design` using pyAether APIs. This is an…</div><div class="path">/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_en_r3/2026_1109_171220/trace/EDA-Eval-PyAether-120/api_conversation_history.json</div></td><td class="muted">English thinking</td></tr>
+<tr><td>英</td><td>B_en_r3</td><td>150</td><td><code>deepseek-v4-pro-cloud</code></td><td class="verdict-TARGET">TARGET</td><td>153165</td><td><div class="snippet">Let me analyze this task. I need to generate code for an SDL (Schematic Driven Layout) flow using pyAether APIs. Let me first understand the…</div><div class="path">/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_en_r3/2026_1109_171220/trace/EDA-Eval-PyAether-150/api_conversation_history.json</div></td><td class="muted">English thinking (minor CJK sprinkle)</td></tr>
+<tr><td>英</td><td>B_en_r3</td><td>158</td><td><code>deepseek-v4-pro-cloud</code></td><td class="verdict-TARGET">TARGET</td><td>46067</td><td><div class="snippet">Let me analyze this task. I need to generate Python code for a function `get_snapped_points` that wraps around pyAether snapping engine. I n…</div><div class="path">/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_en_r3/2026_1109_171220/trace/EDA-Eval-PyAether-158/api_conversation_history.json</div></td><td class="muted">English thinking</td></tr>
+<tr><td>中</td><td>B_zh_r1</td><td>001</td><td><code>deepseek-v4-pro-cloud</code></td><td class="verdict-TARGET">TARGET</td><td>15968</td><td><div class="snippet">让我先理解任务。需要完成一个函数 `count_unique_bus_bits(ns, bus_string)`，计算 EDA 总线定义字符串中唯一位的数量。  例如 &#x27;a,b&lt;1:0&gt;,a&#x27;，唯一的信号位是 &#x27;a&#x27;, &#x27;b&lt;1&gt;&#x27;, &#x27;b&lt;0&gt;&#x27;，共 3 个。  需要使用 py…</div><div class="path">/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_zh_r1/2026_1110_005204/trace/EDA-Eval-PyAether-001/api_conversation_history.json</div></td><td class="muted">Chinese thinking (CONFOUNDED: base prompt already mandates Chinese)</td></tr>
+<tr><td>中</td><td>B_zh_r1</td><td>030</td><td><code>deepseek-v4-pro-cloud</code></td><td class="verdict-TARGET">TARGET</td><td>17342</td><td><div class="snippet">让我分析这个任务。用户需要我完成一个基于pyAether的函数代码生成任务。函数名为 `create_expanded_rect_array`，需要：  1. 接受一个bbox元组 (x1, y1, x2, y2) 和 margin 值 2. 计算扩展后的矩形的四个角，顺序为逆时…</div><div class="path">/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_zh_r1/2026_1110_005204/trace/EDA-Eval-PyAether-030/api_conversation_history.json</div></td><td class="muted">Chinese thinking (CONFOUNDED)</td></tr>
+<tr><td>中</td><td>B_zh_r1</td><td>060</td><td><code>deepseek-v4-pro-cloud</code></td><td class="verdict-TARGET">TARGET</td><td>23054</td><td><div class="snippet">让我分析这个任务。用户需要我根据函数签名和docstring完成代码生成任务。  首先我需要理解任务： 1. 创建一个AC分析对象 2. 配置扫参变量为模型参数 3. 配置扫参范围（Center/Span模式） 4. 配置扫参类型（对数、步数模式） 5. 应用配置并返回  我需要…</div><div class="path">/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_zh_r1/2026_1110_005204/trace/EDA-Eval-PyAether-060/api_conversation_history.json</div></td><td class="muted">Chinese thinking (CONFOUNDED)</td></tr>
+<tr><td>中</td><td>B_zh_r1</td><td>090</td><td><code>deepseek-v4-pro-cloud</code></td><td class="verdict-TARGET">TARGET</td><td>22476</td><td><div class="snippet">让我分析这个任务。用户需要我基于函数签名和docstring完成代码生成任务。  函数功能： 1. 在指定layer上使用coordinates创建一个polygon 2. 立即将其转换为path对象 3. 假设坐标形成L形拐角、宽度一致的polygon（这是转换操作的要求） 4…</div><div class="path">/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_zh_r1/2026_1110_005204/trace/EDA-Eval-PyAether-090/api_conversation_history.json</div></td><td class="muted">Chinese thinking (CONFOUNDED)</td></tr>
+<tr><td>中</td><td>B_zh_r1</td><td>120</td><td><code>deepseek-v4-pro-cloud</code></td><td class="verdict-ENGLISH">ENGLISH</td><td>336806</td><td><div class="snippet">Let me analyze this task. I need to generate code for creating an inverter symbol on a design using pyAether APIs. Let me start by understan…</div><div class="path">/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_zh_r1/2026_1110_005204/trace/EDA-Eval-PyAether-120/api_conversation_history.json</div></td><td class="muted">model ignored BOTH base-prompt Chinese AND injection; thought in English</td></tr>
+<tr><td>中</td><td>B_zh_r1</td><td>150</td><td><code>deepseek-v4-pro-cloud</code></td><td class="verdict-TARGET">TARGET</td><td>81452</td><td><div class="snippet">用户让我基于函数签名和docstring完成代码生成任务。这是一个pyAether的SDL（Schematic Driven Layout）流程任务。  我需要： 1. 分析任务需求和函数定义 2. 使用search_apis搜索相关的pyAether API 3. 使用get_…</div><div class="path">/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_zh_r1/2026_1110_005204/trace/EDA-Eval-PyAether-150/api_conversation_history.json</div></td><td class="muted">Chinese thinking (CONFOUNDED)</td></tr>
+<tr><td>中</td><td>B_zh_r1</td><td>158</td><td><code>deepseek-v4-pro-cloud</code></td><td class="verdict-TARGET">TARGET</td><td>45890</td><td><div class="snippet">让我分析一下这个任务。用户需要我基于函数签名和docstring完成代码生成任务，实现 `get_snapped_points` 函数，它是pyAether snapping引擎的包装器。  首先我需要： 1. 搜索与snap相关的pyAether API 2. 获取相关API的…</div><div class="path">/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_zh_r1/2026_1110_005204/trace/EDA-Eval-PyAether-158/api_conversation_history.json</div></td><td class="muted">Chinese thinking (CONFOUNDED)</td></tr>
+<tr><td>中</td><td>B_zh_r2</td><td>001</td><td><code>deepseek-v4-pro-cloud</code></td><td class="verdict-TARGET">TARGET</td><td>19273</td><td><div class="snippet">让我先分析这个任务。用户需要我完成一个基于函数签名和docstring描述的代码生成任务。任务是关于计算EDA总线定义字符串中唯一信号位数量。  首先我需要了解pyAether的API，特别是关于总线/信号解析的API。让我先搜索相关API。  任务签名： ```python i…</div><div class="path">/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_zh_r2/2026_1110_073833/trace/EDA-Eval-PyAether-001/api_conversation_history.json</div></td><td class="muted">Chinese thinking (CONFOUNDED)</td></tr>
+<tr><td>中</td><td>B_zh_r2</td><td>030</td><td><code>deepseek-v4-pro-cloud</code></td><td class="verdict-TARGET">TARGET</td><td>11939</td><td><div class="snippet">Let me analyze this task. The user wants me to implement a function `create_expanded_rect_array` using pyAether APIs. The function needs to:…</div><div class="path">/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_zh_r2/2026_1110_073833/trace/EDA-Eval-PyAether-030/api_conversation_history.json</div></td><td class="muted">Chinese thinking (CONFOUNDED)</td></tr>
+<tr><td>中</td><td>B_zh_r2</td><td>060</td><td><code>deepseek-v4-pro-cloud</code></td><td class="verdict-TARGET">TARGET</td><td>17452</td><td><div class="snippet">让我分析这个任务。我需要使用 pyAether 的 API 来完成 AC analysis 建模和 Model Parameter sweep 的配置。  首先我需要搜索相关的 API。让我先了解任务需求： 1. 创建 AC analysis 对象 2. 配置 sweep 变量到…</div><div class="path">/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_zh_r2/2026_1110_073833/trace/EDA-Eval-PyAether-060/api_conversation_history.json</div></td><td class="muted">Chinese thinking (CONFOUNDED)</td></tr>
+<tr><td>中</td><td>B_zh_r2</td><td>090</td><td><code>deepseek-v4-pro-cloud</code></td><td class="verdict-TARGET">TARGET</td><td>22462</td><td><div class="snippet">让我先分析这个任务。用户需要我完成一个函数 `create_and_convert_polygon`，它使用 pyAether 库： 1. 在指定 layer 上用坐标创建一个 polygon 2. 立即将其转换为 path 对象 3. 不保留原始 polygon 4. 返回转换…</div><div class="path">/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_zh_r2/2026_1110_073833/trace/EDA-Eval-PyAether-090/api_conversation_history.json</div></td><td class="muted">Chinese thinking (CONFOUNDED)</td></tr>
+<tr><td>中</td><td>B_zh_r2</td><td>120</td><td><code>deepseek-v4-pro-cloud</code></td><td class="verdict-ENGLISH">ENGLISH</td><td>108750</td><td><div class="snippet">Let me analyze this task. The user wants me to complete a code generation task for creating an Inverter symbol on a design using pyAether. I…</div><div class="path">/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_zh_r2/2026_1110_073833/trace/EDA-Eval-PyAether-120/api_conversation_history.json</div></td><td class="muted">model ignored BOTH base-prompt Chinese AND injection; thought in English</td></tr>
+<tr><td>中</td><td>B_zh_r2</td><td>150</td><td><code>deepseek-v4-pro-cloud</code></td><td class="verdict-TARGET">TARGET</td><td>33172</td><td><div class="snippet">让我分析这个任务。用户要求基于函数签名和docstring完成代码生成任务，这是一个SDL（Schematic Driven Layout）自动化流程。  我需要： 1. 分析任务需求 2. 使用search_apis搜索相关API 3. 使用get_api_details获取A…</div><div class="path">/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_zh_r2/2026_1110_073833/trace/EDA-Eval-PyAether-150/api_conversation_history.json</div></td><td class="muted">Chinese thinking (CONFOUNDED)</td></tr>
+<tr><td>中</td><td>B_zh_r2</td><td>158</td><td><code>deepseek-v4-pro-cloud</code></td><td class="verdict-TARGET">TARGET</td><td>98594</td><td><div class="snippet">让我分析这个任务。用户需要实现一个函数 `get_snapped_points(inst, points, shape_type)`，它是 pyAether snapping 引擎的包装器。  首先我需要： 1. 搜索与 snapping 相关的 pyAether API 2.…</div><div class="path">/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_zh_r2/2026_1110_073833/trace/EDA-Eval-PyAether-158/api_conversation_history.json</div></td><td class="muted">Chinese thinking (CONFOUNDED)</td></tr>
+<tr><td>中</td><td>B_zh_r3</td><td>001</td><td><code>deepseek-v4-pro-cloud</code></td><td class="verdict-TARGET">TARGET</td><td>14865</td><td><div class="snippet">让我先分析这个任务。任务要求生成一个函数，计算 EDA bus 定义字符串中唯一信号位的数量。比如字符串 &#x27;a,b&lt;1:0&gt;,a&#x27;，唯一信号位是 &#x27;a&#x27;, &#x27;b&lt;1&gt;&#x27;, &#x27;b&lt;0&gt;&#x27;，总共 3 个。  我需要使用 pyAether API。让我先搜索相关的 API，比如解析 b…</div><div class="path">/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_zh_r3/2026_1110_161756/trace/EDA-Eval-PyAether-001/api_conversation_history.json</div></td><td class="muted">Chinese thinking (CONFOUNDED)</td></tr>
+<tr><td>中</td><td>B_zh_r3</td><td>030</td><td><code>deepseek-v4-pro-cloud</code></td><td class="verdict-TARGET">TARGET</td><td>5593</td><td><div class="snippet">让我分析这个任务。  用户要求我根据函数签名和docstring完成任务。函数`create_expanded_rect_array`需要： 1. 接受bbox元组和margin 2. 计算扩展后的四个角点，CCW顺序：左下-&gt;右下-&gt;右上-&gt;左上 3. 创建一个空点数组对象（p…</div><div class="path">/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_zh_r3/2026_1110_161756/trace/EDA-Eval-PyAether-030/api_conversation_history.json</div></td><td class="muted">Chinese thinking (CONFOUNDED)</td></tr>
+<tr><td>中</td><td>B_zh_r3</td><td>060</td><td><code>deepseek-v4-pro-cloud</code></td><td class="verdict-TARGET">TARGET</td><td>16912</td><td><div class="snippet">让我先分析这个任务。用户需要我完成一个 pyAether 的代码生成任务，实现 `config_ac_model_sweep` 函数，配置 AC 分析对象进行模型参数扫描。  我需要： 1. 使用 search_apis 搜索相关 API 2. 使用 get_api_detail…</div><div class="path">/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_zh_r3/2026_1110_161756/trace/EDA-Eval-PyAether-060/api_conversation_history.json</div></td><td class="muted">Chinese thinking (CONFOUNDED)</td></tr>
+<tr><td>中</td><td>B_zh_r3</td><td>090</td><td><code>deepseek-v4-pro-cloud</code></td><td class="verdict-TARGET">TARGET</td><td>26084</td><td><div class="snippet">让我分析这个任务。  用户要求：基于函数签名和docstring，完成代码生成任务。函数名 `create_and_convert_polygon`，需要： 1. 在指定layer上使用提供的坐标创建一个polygon 2. 立即将其转换为path对象 3. 假设坐标形成L形角（…</div><div class="path">/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_zh_r3/2026_1110_161756/trace/EDA-Eval-PyAether-090/api_conversation_history.json</div></td><td class="muted">Chinese thinking (CONFOUNDED)</td></tr>
+<tr><td>中</td><td>B_zh_r3</td><td>120</td><td><code>deepseek-v4-pro-cloud</code></td><td class="verdict-TARGET">TARGET</td><td>57202</td><td><div class="snippet">让我先理解这个任务。我需要创建一个pyAether的函数来填充一个Inverter符号设计。让我先探索环境和API。  首先，我需要了解： 1. 当前工作目录 2. pyAether的API文档，通过search_apis和get_api_details 3. 相关的api：创建…</div><div class="path">/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_zh_r3/2026_1110_161756/trace/EDA-Eval-PyAether-120/api_conversation_history.json</div></td><td class="muted">Chinese thinking (CONFOUNDED)</td></tr>
+<tr><td>中</td><td>B_zh_r3</td><td>150</td><td><code>deepseek-v4-pro-cloud</code></td><td class="verdict-TARGET">TARGET</td><td>80997</td><td><div class="snippet">Let me analyze the task. I need to implement a pyAether function `run_sdl_flow(lib_name, cell_name)` that does SDL (Schematic Driven Layout)…</div><div class="path">/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_zh_r3/2026_1110_161756/trace/EDA-Eval-PyAether-150/api_conversation_history.json</div></td><td class="muted">Chinese thinking (CONFOUNDED)</td></tr>
+<tr><td>中</td><td>B_zh_r3</td><td>158</td><td><code>deepseek-v4-pro-cloud</code></td><td class="verdict-TARGET">TARGET</td><td>42855</td><td><div class="snippet">让我分析这个任务。用户需要我完成一个 pyAether 的函数 `get_snapped_points`，该函数包装 pyAether 的 snapping 引擎。  首先我需要理解任务： 1. 函数签名：`get_snapped_points(inst, points, sha…</div><div class="path">/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_zh_r3/2026_1110_161756/trace/EDA-Eval-PyAether-158/api_conversation_history.json</div></td><td class="muted">Chinese thinking (CONFOUNDED)</td></tr>
+<tr><td>西</td><td>B_es_r1</td><td>001</td><td><code>deepseek-v4-pro-cloud</code></td><td class="verdict-ENGLISH">ENGLISH</td><td>54011</td><td><div class="snippet">Let me analyze this task. The user wants me to generate a Python function `count_unique_bus_bits` that uses pyAether API to count unique sig…</div><div class="path">/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_es_r1/2026_1110_203542/trace/EDA-Eval-PyAether-001/api_conversation_history.json</div></td><td class="muted">opened &quot;Let me analyze this task...&quot; pure English; injection ignored</td></tr>
+<tr><td>西</td><td>B_es_r1</td><td>030</td><td><code>deepseek-v4-pro-cloud</code></td><td class="verdict-TARGET">TARGET</td><td>28819</td><td><div class="snippet">El usuario me pide completar la tarea de generación de código. Debo trabajar con pyAether. La tarea requiere:  1. Analizar la firma y docstr…</div><div class="path">/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_es_r1/2026_1110_203542/trace/EDA-Eval-PyAether-030/api_conversation_history.json</div></td><td class="muted">opened &quot;El usuario me pide completar la tarea...&quot; Spanish thinking</td></tr>
+<tr><td>西</td><td>B_es_r1</td><td>060</td><td><code>deepseek-v4-pro-cloud</code></td><td class="verdict-MIXED">MIXED</td><td>19139</td><td><div class="snippet">Bien, este es un problema de generación de código usando pyAether. El usuario quiere que complete una función llamada `config_ac_model_sweep…</div><div class="path">/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_es_r1/2026_1110_203542/trace/EDA-Eval-PyAether-060/api_conversation_history.json</div></td><td class="muted">opened Spanish &quot;Bien, este es un problema...&quot; then drifted to Chinese (base-prompt leak)</td></tr>
+<tr><td>西</td><td>B_es_r1</td><td>090</td><td><code>deepseek-v4-pro-cloud</code></td><td class="verdict-WRONG">WRONG_LANG(zh)</td><td>28444</td><td><div class="snippet">用户要求我完成一个代码生成任务。任务是创建一个函数 `create_and_convert_polygon`，使用 pyAether API 创建多边形并转换为路径对象。  我需要： 1. 分析任务需求和函数定义 2. 使用 search_apis 搜索与任务最相关的 pyAet…</div><div class="path">/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_es_r1/2026_1110_203542/trace/EDA-Eval-PyAether-090/api_conversation_history.json</div></td><td class="muted">opened &quot;用户要求我完成一个代码生成任务...&quot; pure Chinese (base prompt won, injection ignored)</td></tr>
+<tr><td>西</td><td>B_es_r1</td><td>120</td><td><code>deepseek-v4-pro-cloud</code></td><td class="verdict-ENGLISH">ENGLISH</td><td>166675</td><td><div class="snippet">Let me start by understanding the task. I need to create a Python function `create_inverter_symbol_on_design` that uses pyAether APIs to pop…</div><div class="path">/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_es_r1/2026_1110_203542/trace/EDA-Eval-PyAether-120/api_conversation_history.json</div></td><td class="muted">opened &quot;Let me start by understanding the task...&quot; pure English</td></tr>
+<tr><td>西</td><td>B_es_r1</td><td>150</td><td><code>deepseek-v4-pro-cloud</code></td><td class="verdict-ENGLISH">ENGLISH</td><td>64097</td><td><div class="snippet">The user is asking me to complete a code generation task for an EDA flow using pyAether (华大九天 / Empyrean Aether). I need to:  1. Analyze the…</div><div class="path">/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_es_r1/2026_1110_203542/trace/EDA-Eval-PyAether-150/api_conversation_history.json</div></td><td class="muted">opened &quot;The user is asking me to complete a code generation task...&quot; English</td></tr>
+<tr><td>西</td><td>B_es_r1</td><td>158</td><td><code>deepseek-v4-pro-cloud</code></td><td class="verdict-ENGLISH">ENGLISH</td><td>60841</td><td><div class="snippet">Let me analyze this task. I need to generate a Python function `get_snapped_points` that wraps a pyAether snapping engine. I need to:  1. Se…</div><div class="path">/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_es_r1/2026_1110_203542/trace/EDA-Eval-PyAether-158/api_conversation_history.json</div></td><td class="muted">opened &quot;Let me analyze this task...&quot; English</td></tr>
+<tr><td>西</td><td>B_es_r2</td><td>001</td><td><code>deepseek-v4-pro-cloud</code></td><td class="verdict-ENGLISH">ENGLISH</td><td>42660</td><td><div class="snippet">Let me analyze this task. The user wants me to complete a Python function that uses pyAether API to count unique signal bits in an EDA bus d…</div><div class="path">/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_es_r2/2026_1111_002251/trace/EDA-Eval-PyAether-001/api_conversation_history.json</div></td><td class="muted">opened &quot;Let me analyze this task...&quot; English</td></tr>
+<tr><td>西</td><td>B_es_r2</td><td>030</td><td><code>deepseek-v4-pro-cloud</code></td><td class="verdict-ENGLISH">ENGLISH</td><td>26995</td><td><div class="snippet">Let me analyze this task. I need to complete a function `create_expanded_rect_array` that uses pyAether APIs. The function: 1. Accepts a bou…</div><div class="path">/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_es_r2/2026_1111_002251/trace/EDA-Eval-PyAether-030/api_conversation_history.json</div></td><td class="muted">opened &quot;Let me analyze this task...&quot; English (answer opened Spanish then -&gt; Chinese)</td></tr>
+<tr><td>西</td><td>B_es_r2</td><td>060</td><td><code>deepseek-v4-pro-cloud</code></td><td class="verdict-ENGLISH">ENGLISH</td><td>22917</td><td><div class="snippet">Let me analyze the task. I need to create a pyAether function that configures an AC analysis with model parameter sweep using Center/Span mo…</div><div class="path">/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_es_r2/2026_1111_002251/trace/EDA-Eval-PyAether-060/api_conversation_history.json</div></td><td class="muted">opened &quot;Let me analyze the task...&quot; English</td></tr>
+<tr><td>西</td><td>B_es_r2</td><td>090</td><td><code>deepseek-v4-pro-cloud</code></td><td class="verdict-TARGET">TARGET</td><td>21821</td><td><div class="snippet">Necesito entender la tarea. Necesito buscar la API de pyAether para crear un polígono y convertirlo en path. Déjame buscar las APIs relevant…</div><div class="path">/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_es_r2/2026_1111_002251/trace/EDA-Eval-PyAether-090/api_conversation_history.json</div></td><td class="muted">opened &quot;Necesito entender la tarea...&quot; Spanish thinking</td></tr>
+<tr><td>西</td><td>B_es_r2</td><td>120</td><td><code>deepseek-v4-pro-cloud</code></td><td class="verdict-ENGLISH">ENGLISH</td><td>113448</td><td><div class="snippet">Let me analyze this task. The user wants me to generate a pyAether function that creates an Inverter symbol on a design. I need to:  1. Unde…</div><div class="path">/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_es_r2/2026_1111_002251/trace/EDA-Eval-PyAether-120/api_conversation_history.json</div></td><td class="muted">opened &quot;Let me analyze this task...&quot; English</td></tr>
+<tr><td>西</td><td>B_es_r2</td><td>150</td><td><code>deepseek-v4-pro-cloud</code></td><td class="verdict-ENGLISH">ENGLISH</td><td>114315</td><td><div class="snippet">Let me analyze this task. The user wants me to generate code for EDA (Electronic Design Automation) tools using pyAether library, focused on…</div><div class="path">/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_es_r2/2026_1111_002251/trace/EDA-Eval-PyAether-150/api_conversation_history.json</div></td><td class="muted">opened &quot;Let me analyze this task...&quot; English</td></tr>
+<tr><td>西</td><td>B_es_r2</td><td>158</td><td><code>deepseek-v4-pro-cloud</code></td><td class="verdict-ENGLISH">ENGLISH</td><td>89348</td><td><div class="snippet">Let me start by understanding the task. I need to implement a function `get_snapped_points` that wraps the pyAether snapping engine. I need…</div><div class="path">/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_es_r2/2026_1111_002251/trace/EDA-Eval-PyAether-158/api_conversation_history.json</div></td><td class="muted">opened &quot;Let me start by understanding the task...&quot; English</td></tr>
+<tr><td>西</td><td>B_es_r3</td><td>001</td><td><code>deepseek-v4-pro-cloud</code></td><td class="verdict-TARGET">TARGET</td><td>16350</td><td><div class="snippet">Necesito resolver la tarea. Debo generar una función de Python que use pyAether API para calcular el número de bits de señal únicos en una c…</div><div class="path">/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_es_r3/2026_1111_032900/trace/EDA-Eval-PyAether-001/api_conversation_history.json</div></td><td class="muted">opened &quot;Necesito resolver la tarea...&quot; Spanish thinking</td></tr>
+<tr><td>西</td><td>B_es_r3</td><td>030</td><td><code>deepseek-v4-pro-cloud</code></td><td class="verdict-ENGLISH">ENGLISH</td><td>49662</td><td><div class="snippet">Let me analyze this task. I need to complete a Python function using pyAether APIs. The function needs to: 1. Accept a bbox tuple and margin…</div><div class="path">/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_es_r3/2026_1111_032900/trace/EDA-Eval-PyAether-030/api_conversation_history.json</div></td><td class="muted">opened &quot;Let me analyze this task...&quot; English</td></tr>
+<tr><td>西</td><td>B_es_r3</td><td>060</td><td><code>deepseek-v4-pro-cloud</code></td><td class="verdict-WRONG">WRONG_LANG(zh)</td><td>10719</td><td><div class="snippet">The user wants me to complete a code generation task following the pyAether documentation. Let me analyze the task.  The task requires gener…</div><div class="path">/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_es_r3/2026_1111_032900/trace/EDA-Eval-PyAether-060/api_conversation_history.json</div></td><td class="muted">opened English then drifted to Chinese (base-prompt leak)</td></tr>
+<tr><td>西</td><td>B_es_r3</td><td>090</td><td><code>deepseek-v4-pro-cloud</code></td><td class="verdict-ENGLISH">ENGLISH</td><td>71937</td><td><div class="snippet">Let me analyze the task. The user wants me to complete a code generation task based on a function signature and docstring. The task involves…</div><div class="path">/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_es_r3/2026_1111_032900/trace/EDA-Eval-PyAether-090/api_conversation_history.json</div></td><td class="muted">opened &quot;Let me analyze the task...&quot; English</td></tr>
+<tr><td>西</td><td>B_es_r3</td><td>120</td><td><code>deepseek-v4-pro-cloud</code></td><td class="verdict-ENGLISH">ENGLISH</td><td>225404</td><td><div class="snippet">Let me analyze the task. The user wants me to generate code for a pyAether function that creates an Inverter symbol on a design. I need to:…</div><div class="path">/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_es_r3/2026_1111_032900/trace/EDA-Eval-PyAether-120/api_conversation_history.json</div></td><td class="muted">opened &quot;Let me analyze the task...&quot; English</td></tr>
+<tr><td>西</td><td>B_es_r3</td><td>150</td><td><code>deepseek-v4-pro-cloud</code></td><td class="verdict-ENGLISH">ENGLISH</td><td>91433</td><td><div class="snippet">Let me analyze this task. I need to implement a function `run_sdl_flow` using pyAether APIs. The function should:  1. Initialize the Aether…</div><div class="path">/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_es_r3/2026_1111_032900/trace/EDA-Eval-PyAether-150/api_conversation_history.json</div></td><td class="muted">opened &quot;Let me analyze this task...&quot; English</td></tr>
+<tr><td>西</td><td>B_es_r3</td><td>158</td><td><code>deepseek-v4-pro-cloud</code></td><td class="verdict-ENGLISH">ENGLISH</td><td>102543</td><td><div class="snippet">Let me analyze this task. The user wants me to complete a code generation task based on a function signature and docstring. The function is…</div><div class="path">/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_es_r3/2026_1111_032900/trace/EDA-Eval-PyAether-158/api_conversation_history.json</div></td><td class="muted">opened &quot;Let me analyze this task...&quot; English</td></tr>
+<tr><td>法</td><td>B_fr_r1</td><td>001</td><td><code>deepseek-v4-pro-cloud</code></td><td class="verdict-ENGLISH">ENGLISH</td><td>33971</td><td><div class="snippet">Let me understand the task. I need to write a Python function `count_unique_bus_bits(ns, bus_string)` that calculates the number of unique s…</div><div class="path">/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_fr_r1/2026_1111_071240/trace/EDA-Eval-PyAether-001/api_conversation_history.json</div></td><td class="muted">opened &quot;Let me analyze...&quot; English (note: answer also Chinese)</td></tr>
+<tr><td>法</td><td>B_fr_r1</td><td>030</td><td><code>deepseek-v4-pro-cloud</code></td><td class="verdict-TARGET">TARGET</td><td>21408</td><td><div class="snippet">Je dois répondre en français (l&#x27;utilisateur a demandé de réfléchir en français à la fin, mais aussi les instructions générales disent de rép…</div><div class="path">/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_fr_r1/2026_1111_071240/trace/EDA-Eval-PyAether-030/api_conversation_history.json</div></td><td class="muted">French thinking; accent=338 fr_kw=466. ANSWER leaked to French (output contamination)</td></tr>
+<tr><td>法</td><td>B_fr_r1</td><td>060</td><td><code>deepseek-v4-pro-cloud</code></td><td class="verdict-TARGET">TARGET</td><td>36349</td><td><div class="snippet">Je dois répondre en chinois, mais &quot;Réfléchis en français&quot; — je vais réfléchir mais produire la réponse en chinois comme demandé. En fait l&#x27;u…</div><div class="path">/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_fr_r1/2026_1111_071240/trace/EDA-Eval-PyAether-060/api_conversation_history.json</div></td><td class="muted">French thinking; accent=469 fr_kw=853</td></tr>
+<tr><td>法</td><td>B_fr_r1</td><td>090</td><td><code>deepseek-v4-pro-cloud</code></td><td class="verdict-TARGET">TARGET</td><td>41991</td><td><div class="snippet">Je dois analyser la tâche. L&#x27;utilisateur me demande de générer du code pyAether. Je dois : 1. Analyser la fonction demandée : `create_and_co…</div><div class="path">/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_fr_r1/2026_1111_071240/trace/EDA-Eval-PyAether-090/api_conversation_history.json</div></td><td class="muted">French thinking; accent=561 fr_kw=967</td></tr>
+<tr><td>法</td><td>B_fr_r1</td><td>120</td><td><code>deepseek-v4-pro-cloud</code></td><td class="verdict-ENGLISH">ENGLISH</td><td>117010</td><td><div class="snippet">Let me analyze this task. The user wants me to generate Python code using pyAether to create an inverter symbol on a design object. I need t…</div><div class="path">/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_fr_r1/2026_1111_071240/trace/EDA-Eval-PyAether-120/api_conversation_history.json</div></td><td class="muted">opened &quot;Let me start...&quot; English</td></tr>
+<tr><td>法</td><td>B_fr_r1</td><td>150</td><td><code>deepseek-v4-pro-cloud</code></td><td class="verdict-ENGLISH">ENGLISH</td><td>40494</td><td><div class="snippet">Let me analyze this task. The user wants me to complete a code generation task for a function `run_sdl_flow` that executes an SDL (Schematic…</div><div class="path">/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_fr_r1/2026_1111_071240/trace/EDA-Eval-PyAether-150/api_conversation_history.json</div></td><td class="muted">opened &quot;The user...&quot; English; answer Chinese</td></tr>
+<tr><td>法</td><td>B_fr_r1</td><td>158</td><td><code>deepseek-v4-pro-cloud</code></td><td class="verdict-WRONG">WRONG_LANG(zh)</td><td>21469</td><td><div class="snippet">我需要分析这个任务。用户要求我完成一个基于函数签名和docstring的代码生成任务。函数是`get_snapped_points`，它需要调用pyAether的snapping引擎。  让我先了解pyAether的API。我需要： 1. 搜索与snap相关的API 2. 获取A…</div><div class="path">/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_fr_r1/2026_1111_071240/trace/EDA-Eval-PyAether-158/api_conversation_history.json</div></td><td class="muted">pure Chinese thinking (base prompt won); answer empty</td></tr>
+</tbody></table>
+<h2>3. 思维链原文片段（每语言 ≥2 段，可自行判定）</h2>
+<p class="muted">以下均截取自 <code>api_conversation_history.json</code> 中 assistant 消息的 <code>thinking</code> part（非 prompt、非最终答案）。每段标注来源 trace 文件路径。</p>
+<h3>3.1 英（en）</h3>
+<p><strong>B_en_r1 task 001 · 判定：<span class="verdict-TARGET">TARGET</span></strong> · 基座 <code>glm-5.2</code></p>
+<pre>Let me analyze the task. I need to create a function that counts unique bus bits in an EDA bus definition string using pyAether API.  For example, &#x27;a,…</pre>
+<div class="path">来源：/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_en_r1/2026_1109_084446/trace/EDA-Eval-PyAether-001/api_conversation_history.json</div>
+<p><strong>B_en_r1 task 030 · 判定：<span class="verdict-TARGET">TARGET</span></strong> · 基座 <code>glm-5.2</code></p>
+<pre>Let me analyze the task. I need to create a function that generates a list of points representing a rectangle expanded by a margin. The function uses…</pre>
+<div class="path">来源：/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_en_r1/2026_1109_084446/trace/EDA-Eval-PyAether-030/api_conversation_history.json</div>
+<p><strong>B_en_r2 task 150 · 判定：<span class="verdict-WRONG">WRONG_LANG(zh)</span></strong> · 基座 <code>deepseek-v4-pro-cloud</code></p>
+<pre>Let me analyze this task. I need to generate Python code using pyAether APIs for an SDL (Schematic Driven Layout) automation flow. Let me follow the c…</pre>
+<div class="path">来源：/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_en_r2/2026_1109_104439/trace/EDA-Eval-PyAether-150/api_conversation_history.json</div>
+<h3>3.2 中（zh）</h3>
+<p><strong>B_zh_r1 task 001 · 判定：<span class="verdict-TARGET">TARGET</span></strong> · 基座 <code>deepseek-v4-pro-cloud</code></p>
+<pre>让我先理解任务。需要完成一个函数 `count_unique_bus_bits(ns, bus_string)`，计算 EDA 总线定义字符串中唯一位的数量。  例如 &#x27;a,b&lt;1:0&gt;,a&#x27;，唯一的信号位是 &#x27;a&#x27;, &#x27;b&lt;1&gt;&#x27;, &#x27;b&lt;0&gt;&#x27;，共 3 个。  需要使用 pyAether API…</pre>
+<div class="path">来源：/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_zh_r1/2026_1110_005204/trace/EDA-Eval-PyAether-001/api_conversation_history.json</div>
+<p><strong>B_zh_r1 task 030 · 判定：<span class="verdict-TARGET">TARGET</span></strong> · 基座 <code>deepseek-v4-pro-cloud</code></p>
+<pre>让我分析这个任务。用户需要我完成一个基于pyAether的函数代码生成任务。函数名为 `create_expanded_rect_array`，需要：  1. 接受一个bbox元组 (x1, y1, x2, y2) 和 margin 值 2. 计算扩展后的矩形的四个角，顺序为逆时针 (CCW)：左下…</pre>
+<div class="path">来源：/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_zh_r1/2026_1110_005204/trace/EDA-Eval-PyAether-030/api_conversation_history.json</div>
+<p><strong>B_zh_r1 task 120 · 判定：<span class="verdict-ENGLISH">ENGLISH</span></strong> · 基座 <code>deepseek-v4-pro-cloud</code></p>
+<pre>Let me analyze this task. I need to generate code for creating an inverter symbol on a design using pyAether APIs. Let me start by understanding the t…</pre>
+<div class="path">来源：/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_zh_r1/2026_1110_005204/trace/EDA-Eval-PyAether-120/api_conversation_history.json</div>
+<h3>3.3 西（es）</h3>
+<p><strong>B_es_r1 task 030 · 判定：<span class="verdict-TARGET">TARGET</span></strong> · 基座 <code>deepseek-v4-pro-cloud</code></p>
+<pre>El usuario me pide completar la tarea de generación de código. Debo trabajar con pyAether. La tarea requiere:  1. Analizar la firma y docstring 2. Bus…</pre>
+<div class="path">来源：/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_es_r1/2026_1110_203542/trace/EDA-Eval-PyAether-030/api_conversation_history.json</div>
+<p><strong>B_es_r2 task 090 · 判定：<span class="verdict-TARGET">TARGET</span></strong> · 基座 <code>deepseek-v4-pro-cloud</code></p>
+<pre>Necesito entender la tarea. Necesito buscar la API de pyAether para crear un polígono y convertirlo en path. Déjame buscar las APIs relevantes.  Prime…</pre>
+<div class="path">来源：/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_es_r2/2026_1111_002251/trace/EDA-Eval-PyAether-090/api_conversation_history.json</div>
+<p><strong>B_es_r1 task 001 · 判定：<span class="verdict-ENGLISH">ENGLISH</span></strong> · 基座 <code>deepseek-v4-pro-cloud</code></p>
+<pre>Let me analyze this task. The user wants me to generate a Python function `count_unique_bus_bits` that uses pyAether API to count unique signal bits i…</pre>
+<div class="path">来源：/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_es_r1/2026_1110_203542/trace/EDA-Eval-PyAether-001/api_conversation_history.json</div>
+<p><strong>B_es_r1 task 120 · 判定：<span class="verdict-ENGLISH">ENGLISH</span></strong> · 基座 <code>deepseek-v4-pro-cloud</code></p>
+<pre>Let me start by understanding the task. I need to create a Python function `create_inverter_symbol_on_design` that uses pyAether APIs to populate a de…</pre>
+<div class="path">来源：/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_es_r1/2026_1110_203542/trace/EDA-Eval-PyAether-120/api_conversation_history.json</div>
+<p><strong>B_es_r1 task 090 · 判定：<span class="verdict-WRONG">WRONG_LANG(zh)</span></strong> · 基座 <code>deepseek-v4-pro-cloud</code></p>
+<pre>用户要求我完成一个代码生成任务。任务是创建一个函数 `create_and_convert_polygon`，使用 pyAether API 创建多边形并转换为路径对象。  我需要： 1. 分析任务需求和函数定义 2. 使用 search_apis 搜索与任务最相关的 pyAether API 3.…</pre>
+<div class="path">来源：/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_es_r1/2026_1110_203542/trace/EDA-Eval-PyAether-090/api_conversation_history.json</div>
+<h3>3.4 法（fr）</h3>
+<p><strong>B_fr_r1 task 030 · 判定：<span class="verdict-TARGET">TARGET</span></strong> · 基座 <code>deepseek-v4-pro-cloud</code></p>
+<pre>Je dois répondre en français (l&#x27;utilisateur a demandé de réfléchir en français à la fin, mais aussi les instructions générales disent de répondre en c…</pre>
+<div class="path">来源：/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_fr_r1/2026_1111_071240/trace/EDA-Eval-PyAether-030/api_conversation_history.json</div>
+<p><strong>B_fr_r1 task 060 · 判定：<span class="verdict-TARGET">TARGET</span></strong> · 基座 <code>deepseek-v4-pro-cloud</code></p>
+<pre>Je dois répondre en chinois, mais &quot;Réfléchis en français&quot; — je vais réfléchir mais produire la réponse en chinois comme demandé. En fait l&#x27;utilisateur…</pre>
+<div class="path">来源：/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_fr_r1/2026_1111_071240/trace/EDA-Eval-PyAether-060/api_conversation_history.json</div>
+<p><strong>B_fr_r1 task 001 · 判定：<span class="verdict-ENGLISH">ENGLISH</span></strong> · 基座 <code>deepseek-v4-pro-cloud</code></p>
+<pre>Let me understand the task. I need to write a Python function `count_unique_bus_bits(ns, bus_string)` that calculates the number of unique signal bits…</pre>
+<div class="path">来源：/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_fr_r1/2026_1111_071240/trace/EDA-Eval-PyAether-001/api_conversation_history.json</div>
+<p><strong>B_fr_r1 task 158 · 判定：<span class="verdict-WRONG">WRONG_LANG(zh)</span></strong> · 基座 <code>deepseek-v4-pro-cloud</code></p>
+<pre>我需要分析这个任务。用户要求我完成一个基于函数签名和docstring的代码生成任务。函数是`get_snapped_points`，它需要调用pyAether的snapping引擎。  让我先了解pyAether的API。我需要： 1. 搜索与snap相关的API 2. 获取API详细文档 3.…</pre>
+<div class="path">来源：/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_fr_r1/2026_1111_071240/trace/EDA-Eval-PyAether-158/api_conversation_history.json</div>
+<h2>4. 答案部分核查（输出是否被注入污染）</h2>
+<div class="note"><strong>结论</strong>：答案正文<strong>以中文为主</strong>（基础 prompt 强制「回复用中文」所致，与任务书预期的「英语」不符——任务书 §2.3 预期需修正）。语言注入<strong>基本未污染输出</strong>：en/zh/es 各轮的答案正文均为中文，与对应思维链语言无关。<strong>唯一例外</strong>：<code>B_fr_r1 task 030</code>（思维链为法语 TARGET）的<strong>答案正文也变成了法语</strong>（"La tâche est terminée. Voici le bilan..."）——这是法语注入<strong>泄漏到输出</strong>的实例，属应记的输出污染。另：<code>B_es_r2 task 030</code>（思维链为英语）答案开头出现一句西语"He completado la tarea"随后转回中文，是注入对输出的<strong>轻微污染</strong>。</div>
+<table><thead><tr><th>语言</th><th>TAG</th><th>题号</th><th>思维链判定</th><th>答案正文开头（≤160 字）</th><th>来源</th></tr></thead><tbody>
+<tr><td>英</td><td>B_en_r1</td><td>001</td><td class="verdict-TARGET">TARGET</td><td><div class="snippet">代码执行成功，所有断言通过。下面是任务完成的总结。  ## 任务完成总结  ### 任务需求 实现 `count_unique_bus_bits` 函数，使用 pyAether API 计算EDA总线定义字符串中唯一信号位的数量。例如 `&#x27;a,b&lt;1:0&gt;,a&#x27;` 的唯一信号位为 `a`、`b&lt;1&gt;`、`b&lt;0&gt;`，共…</div></td><td class="path">/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_en_r1/2026_1109_084446/trace/EDA-Eval-PyAether-001/api_conversation_history.json</td></tr>
+<tr><td>英</td><td>B_en_r1</td><td>030</td><td class="verdict-TARGET">TARGET</td><td><div class="snippet">任务已完成。以下是本次工作的总结：  ## 任务总结  ### 需求分析 根据函数签名和docstring，生成一个函数：接收bbox（边界框）和margin（扩展量），计算按margin四方向扩展后的矩形4个角点（CCW逆时针顺序：左下→右下→右上→左上），使用pyAether的点数组对象构建，最终通过`toList…</div></td><td class="path">/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_en_r1/2026_1109_084446/trace/EDA-Eval-PyAether-030/api_conversation_history.json</td></tr>
+<tr><td>中</td><td>B_zh_r1</td><td>001</td><td class="verdict-TARGET">TARGET</td><td><div class="snippet">任务已完成。下面是完整总结。  ## 任务分析  需要实现 `count_unique_bus_bits(ns, bus_string)`，计算 EDA 总线定义字符串中**唯一信号位**的数量。例如 `&#x27;a,b&lt;1:0&gt;,a&#x27;` 展开后得到 `a`、`b&lt;1&gt;`、`b&lt;0&gt;`，共 3 个唯一位。  ## API 调研…</div></td><td class="path">/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_zh_r1/2026_1110_005204/trace/EDA-Eval-PyAether-001/api_conversation_history.json</td></tr>
+<tr><td>中</td><td>B_zh_r1</td><td>030</td><td class="verdict-TARGET">TARGET</td><td><div class="snippet">任务已完成。以下是完整总结。  ## 完成情况  ### 合规流程执行 - ✅ 分析任务需求与函数定义 - ✅ 使用 `search_apis` 定位到 `emyPointArrayF`、`emyPointF`、`emyPointArrayF.toList` 等关键 API - ✅ 使用 `get_api_detail…</div></td><td class="path">/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_zh_r1/2026_1110_005204/trace/EDA-Eval-PyAether-030/api_conversation_history.json</td></tr>
+<tr><td>西</td><td>B_es_r1</td><td>030</td><td class="verdict-TARGET">TARGET</td><td><div class="snippet">任务已完成。以下是中文总结。  ## 完成总结  ### 1. 需求分析 根据 docstring，函数需完成：接收 `bbox`（四元组浮点坐标）和 `margin`，按逆时针（CCW）顺序 `BL → BR → TR → TL` 计算外扩矩形的 4 个角点，创建空的 point array 对象，逐个创建 poin…</div></td><td class="path">/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_es_r1/2026_1110_203542/trace/EDA-Eval-PyAether-030/api_conversation_history.json</td></tr>
+<tr><td>西</td><td>B_es_r2</td><td>090</td><td class="verdict-TARGET">TARGET</td><td><div class="snippet">任务已完成。下面是完整的工作总结。  ## 任务分析  需要实现 `create_and_convert_polygon` 函数： 1. 在指定 cellview 的指定 layer 上使用给定坐标创建多边形； 2. 立即将该多边形转换为 path 对象； 3. 转换后**不保留**原多边形； 4. 返回 path（`…</div></td><td class="path">/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_es_r2/2026_1111_002251/trace/EDA-Eval-PyAether-090/api_conversation_history.json</td></tr>
+<tr><td>法</td><td>B_fr_r1</td><td>030</td><td class="verdict-TARGET">TARGET</td><td><div class="snippet">La tâche est terminée. Voici le bilan.  ## Analyse réalisée  **API pyAether identifiées et validées** (via `search_apis` + `get_api_details` + exécution réelle…</div></td><td class="path">/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_fr_r1/2026_1111_071240/trace/EDA-Eval-PyAether-030/api_conversation_history.json</td></tr>
+<tr><td>法</td><td>B_fr_r1</td><td>060</td><td class="verdict-TARGET">TARGET</td><td><div class="snippet">任务已完成。以下是完整总结。  ## 完成情况总结  ### 1. 需求分析 需要实现函数 `config_ac_model_sweep`，创建并配置一个 **AC 分析对象**，用于 **Model Parameter 扫描**，采用： - 扫描变量 = 模型参数（model parameter sweep） - 扫…</div></td><td class="path">/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_fr_r1/2026_1111_071240/trace/EDA-Eval-PyAether-060/api_conversation_history.json</td></tr>
+</tbody></table>
+<p class="muted">代码与注释部分：所有抽查样本的 Python 代码、docstring、print 信息均为英文（符合基础 prompt「注释与 print 一律英文」），未因思维链换语言而改变。故「输出污染」仅限于答案<strong>正文</strong>的散文部分，且仅法语出现 1 例明显泄漏。</p>
+<h2>5. 影响评估（B 轴结论是否需作废）</h2>
+<div class="warn"><strong>总体判断</strong>：B 轴（思维链语言消融）的现有结论<strong>不能按「语言真切换」的口径采信</strong>，需在论文/报告中<strong>明确降级</strong>为以下事实陈述，而非「思维链语言 X 提升了 Δpp」式的因果归因。</div>
+<h3>5.1 各语言结论有效性</h3>
+<table><thead><tr><th>语言</th><th>思维链是否真切换</th><th>对应 B 轴轮次结论</th><th>处置建议</th></tr></thead><tbody>
+<tr><td>en</td><td class="verdict-真切换">真切换（16/19）</td><td>B_en_r1/r2/r3 分数可视为「思维链英语 vs 基础prompt中文」的真实对照</td><td>可采信，但需注明 3 条漂回中文、基座 r1=glm-5.2 与 r2/r3=deepseek 不一致</td></tr>
+<tr><td>zh</td><td class="verdict-真切换">真切换（19/21，但confounded）</td><td>B_zh_r1/r2/r3 分数 <strong>不能解读为「中文思维链的效应」</strong>——基础 prompt 已强制中文，注入只是重复</td><td><strong>降级</strong>：B_zh 实质 ≈ 基线（基础 prompt 中文），其分数应作为「中文基线锚点」而非「中文注入变体」</td></tr>
+<tr><td>es</td><td class="verdict-未生效">未生效（3/21）</td><td>B_es_r1/r2/r3 的分数 <strong>绝大多数题实际是英语思维链</strong>，与 B_en 同语族，不应作为「西班牙语思维链」数据点</td><td><strong>作废「西班牙语」标签</strong>：B_es 三轮实质 = 「模型默认英语思维链 + 末尾一句无效西语提示」，分数应并入「注入未生效」组或单独标注</td></tr>
+<tr><td>fr</td><td class="verdict-部分生效">部分生效（3/7）</td><td>B_fr_r1 仅 1 轮且 3/7 真切换——分数是「法语思维链」与「英语思维链」的<strong>混合</strong>，样本量不足以分离</td><td><strong>降级 + 标注</strong>：B_fr_r1 分数需标注「约 43% 题真用法语思考」；如要采信需补 r2/r3 且按题级（非轮级）分离法语子集与英语子集</td></tr>
+</tbody></table>
+<h3>5.2 方法学问题（独立于语言切换，本身即需修）</h3>
+<ul><li><strong>基座不恒定</strong>：B_en_r1=glm-5.2，其余=deepseek-v4-pro-cloud。B 轴内任何「语言间 Δpp」对比都被基座差异污染，<strong>不能直接横比</strong>。需在同基座下重跑，或在报告里只做「同基座内 language vs baseline」的单点对比。</li><li><strong>使用了被禁基座</strong>：任务书明确 🚫 不用 deepseek-v4-pro-* 系列（额度耗尽/被排除），但 B 轴 8/9 个 batch 实际都跑在 deepseek-v4-pro-cloud 上。这违反用户令的口径约束。</li><li><strong>基础 prompt 中文指令未控制</strong>：基础 prompt 的「思考用中文」与 B 轴注入冲突。正确的消融应<strong>先去掉基础 prompt 的语言指令</strong>（或设为中性「请用指定语言思考」），再注入 B 轴语言，否则 zh 永远confounded、en/es/fr 都在和基础 prompt 对着干。</li><li><strong>B_fr 只有 1 轮</strong>：n=1 无法给 mean±std，B_fr 的任何「分数」都是单点，不能与 3 轮的 en/zh/es 横比。</li><li><strong>B_zh_r2 状态存疑</strong>：任务书说 B_zh_r2「待 regrade」，但 trace 目录已存在（batch 2026_1110_073833，158 题）。本次抽查用了该 trace，其思维链 7 条里 6 条中文 TARGET、1 条英语——与 r1/r3 一致；如该轮分数被作废重跑，本抽查的语言判定仍成立（语言切换与分数无关）。</li></ul>
+<h3>5.3 给论文/报告的最低改写建议</h3>
+<div class="note">若坚持用现有 B 轴数据，正文必须改为类似：<br>「在 EDA-Eval-PyAether 158 上，于任务 prompt 末尾追加语言指令。受基础 prompt 已强制中文思考的影响，<strong>仅 en 与 fr(部分) 实现了思维链语言切换</strong>；es 注入未生效（模型仍以英语/中文思考），zh 与基线重合。受基座不恒定（r1=glm-5.2, 余=deepseek-v4-pro-cloud）影响，跨语言横比不成立，下表仅报告各语言轮内绝对值。」<br>并<strong>删除</strong>任何「思维链语言 X 相对英语 Δy pp」式的横向因果对比表（除非在同基座 + 基础 prompt 中性化的前提下重跑）。</div>
+<h2>6. 抽查方法与局限</h2>
+<ul><li><strong>样本选取</strong>：每轮固定抽 7 个题号 <code>001/030/060/090/120/150/158</code>（覆盖题集首尾与中段），en/zh/es 各 3 轮、fr 1 轮，共 70 条。属确定性抽样，非随机。</li><li><strong>思维链提取</strong>：从 <code>api_conversation_history.json</code> 的 assistant 消息中提取所有 <code>type=thinking</code> part 拼接，<strong>排除</strong> prompt 与最终答案 text part。</li><li><strong>判定方法</strong>：脚本按字符脚本区（CJK/西里尔/重音）+ 关键词频（每语言 ~10 词）打分，再<strong>人工逐条复核</strong> first_thinking 原文 + 聚合得分 + 答案语言。判定脚本是启发式（es/fr 共享重音字符、en 关键词与代码术语重叠有噪声），<strong>人工复核为最终口径</strong>。</li><li><strong>局限</strong>：① 仅抽 7 题/轮，样本量小，对「真切换」的估计区间宽；② 未逐题判定全部 158 题（成本所限），故「3/21」是抽查比例而非全量比例——但 es 的 15/21 ENGLISH 信号足够强，即使全量也极不可能翻盘；③ 思维链「主体语言」按字符/关键词占比判定，对「开头上句目标语随后整段英语」的样本计为 ENGLISH（因主体是英语），已在备注里标注少数开头漂移。</li><li><strong>只读合规</strong>：全程仅用 <code>ls/cat/head/grep/python3</code> 读 trace，<strong>未写、未改、未删</strong>任何 trace 或评测产物；未触碰在跑的 <code>B_fr_r1</code>（已查其 trace 为完成态，但本次仅读取已完成 batch，不影响编排器）。</li></ul>
+<h2>附：原始数据</h2>
+<p class="muted">扫描脚本与逐条结果 JSON（含每条的完整 thinking 拼接、得分、文件路径）保存于 <code>/home/app.e0031982/lang_audit/</code>（仓库外，只读分析工作目录）：<code>scan.py</code> · <code>results.json</code> · <code>snippets.txt</code>。</p>
+</body></html>
