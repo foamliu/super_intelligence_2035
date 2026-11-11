@@ -1402,3 +1402,19 @@ ssh 10.239.2.29 'tail -5 /proc/146283/fd/1'
 - latexmk -g: 5 pages / 228,225 bytes / 0 errors ✅
 - grep benchmark 全文 = 0 命中 ✅; §4.7 sec:ckpt-scaling 不存在 ✅
 - 160k eval: 仍运行中 (llama-server PID1726277 + lm_eval PID1736839, etimes≈3143s≈52min), results.json pending
+
+### 论文 §4.6 刷新 #1956 (2026-11-11 09:01)
+
+- 取数命令: `ssh -o StrictHostKeyChecking=no 10.239.2.29 'tail -30 /proc/146283/fd/1'`
+- 最新 iteration: 160,970 / 700,000 (08:57:45)
+- 末 10 步 (160,880–160,970) step time: 6966.8–7221.6ms (均 7085.2ms, 均 <7.4s ✅)
+- loss 范围: 2.008–2.026, 均值 ≈2.02
+- 0 NaN / 0 skipped iterations ✅
+- GPU: 8 卡 94–100% / ~75GB
+- tok/s = 4,194,304 / 7.0852s = 591,947 ≈ 592K (较前轮 591K +1K)
+- wall-clock = 700k × 4,194,304 / 592K = 4,959,481s = 57.4d ≈ 57d (前轮 58d→57d)
+- 刷新文件: 4_llm_pretrain.tex line109 (iter 160,770→160,970, tok/s 591K→592K), 0_abstract.tex line14 (同步)
+- tab:prod-budget (line 122): wall-clock ≈58d→≈57d; Status "160k done" 不变 (160,970 rounds to 160k); total (line 126) ≈61.5d→≈60.5d
+- latexmk: 5 pages / 228,442 bytes / 0 errors ✅
+- grep benchmark 全文 = 0 命中 ✅; §4.7 sec:ckpt-scaling 不存在 ✅
+- 160k eval: 仍运行中 (llama-server PID1726277 + lm_eval PID1736839, etimes≈4620s≈77min), results.json pending
