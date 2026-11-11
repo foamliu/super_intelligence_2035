@@ -402,3 +402,5 @@
 1793350628620_wbhv1	lorikx	10.129.2.10	75	eda_other	case	EDA-Eval-DesignFlow-TqvVrefreshBuild-001	2026-11-11 23:41	
 1793957377461_s9bc9	e0039602	hfeg0pkn002	391	digital	case	EDA-Eval-DesignFlow-VlibDetConvert-001	2026-11-12 00:19	
 1793177577202_ii9ew	fernandoy	hfeg0plg76	63	digital	case	EDA-Eval-DesignFlow-VerdiCfgVipGen-001	2026-11-12 01:05	
+1793330336899_zh3eq	lorikx	hfeg0pkn004	45	digital	parked		2026-11-12 01:45	dup of TqvVrefreshBuild-001 (r398 wbhv1): same lorikx TQV 4-script-combine task
+1793326182885_wyezr	stevenh	hfeg0pgn145	35	digital	parked		2026-11-12 01:46	analysis-Q&A weak: stevenh asks how-to-delay-compare-timing on compare_tasks.sv#543, agent explains data flow no produce-task
