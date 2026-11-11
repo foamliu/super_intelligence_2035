@@ -1,0 +1,89 @@
+=== incr_eval R2175 (5 new ids, 4 harnesses) START Wed Nov 11 02:30:51 PM CST 2026 === (py=/nas_train/app.e0031982/miniforge3/envs/py310/bin/python3)
+[Wed Nov 11 02:30:51 PM CST 2026] === merge cline-patched predictions ===
+cline-patched: 224 real patches merged
+[Wed Nov 11 02:30:51 PM CST 2026] === cline-patched eval START 1 NEW instances ===
+Running 1 instances...
+  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [00:26<00:00, 26.41s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:26<00:00, 26.42s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:26<00:00, 26.42s/it]
+All instances run.
+Total instances: 1
+Instances submitted: 1
+Instances completed: 1
+Instances incomplete: 0
+Instances resolved: 1
+Instances unresolved: 0
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 0
+Unremoved images: 1
+Report written to cline-glm-5.3-flash.verified_full_glm53_cline-patched_incr_R2175.json
+[Wed Nov 11 02:31:22 PM CST 2026] === cline-patched eval DONE ===
+[Wed Nov 11 02:31:22 PM CST 2026] === merge codex predictions ===
+codex: 100 real patches merged
+[Wed Nov 11 02:31:22 PM CST 2026] === codex eval START 2 NEW instances ===
+Running 2 instances...
+  0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [00:25<00:25, 25.89s/it]1 ran successfully, 0 failed:  50%|█████     | 1/2 [00:25<00:25, 25.89s/it]1 ran successfully, 0 failed: 100%|██████████| 2/2 [00:26<00:00, 13.04s/it]2 ran successfully, 0 failed: 100%|██████████| 2/2 [00:26<00:00, 13.04s/it]2 ran successfully, 0 failed: 100%|██████████| 2/2 [00:26<00:00, 13.04s/it]
+All instances run.
+Total instances: 2
+Instances submitted: 2
+Instances completed: 2
+Instances incomplete: 0
+Instances resolved: 1
+Instances unresolved: 1
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 0
+Unremoved images: 2
+Report written to codex-glm-5.3-flash.verified_full_glm53_codex_incr_R2175.json
+[Wed Nov 11 02:31:53 PM CST 2026] === codex eval DONE ===
+[Wed Nov 11 02:31:53 PM CST 2026] === merge pi predictions ===
+pi: 194 real patches merged
+[Wed Nov 11 02:31:54 PM CST 2026] === pi eval START 1 NEW instances ===
+Running 1 instances...
+  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [00:25<00:00, 25.99s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:25<00:00, 25.99s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:25<00:00, 25.99s/it]
+All instances run.
+Total instances: 1
+Instances submitted: 1
+Instances completed: 1
+Instances incomplete: 0
+Instances resolved: 0
+Instances unresolved: 1
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 0
+Unremoved images: 1
+Report written to pi-glm-5.3-flash.verified_full_glm53_pi_incr_R2175.json
+[Wed Nov 11 02:32:24 PM CST 2026] === pi eval DONE ===
+[Wed Nov 11 02:32:24 PM CST 2026] === merge hermes predictions ===
+hermes: 393 real patches merged
+[Wed Nov 11 02:32:24 PM CST 2026] === hermes eval START 1 NEW instances ===
+Running 1 instances...
+  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [00:28<00:00, 28.57s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:28<00:00, 28.57s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:28<00:00, 28.57s/it]
+All instances run.
+Total instances: 1
+Instances submitted: 1
+Instances completed: 1
+Instances incomplete: 0
+Instances resolved: 1
+Instances unresolved: 0
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 0
+Unremoved images: 1
+Report written to hermes-glm-5.3-flash.verified_full_glm53_hermes_incr_R2175.json
+[Wed Nov 11 02:32:58 PM CST 2026] === hermes eval DONE ===
+[Wed Nov 11 02:32:58 PM CST 2026] === merge R2175 results into eval_glm53_ ===
+[merge-R2175 14:32:58] === merge R2175 START ===
+[merge-R2175 14:32:58]   cline: +1 resolved +0 failed +0 infra => total resolved=166
+[merge-R2175 14:32:58]   codex: +1 resolved +1 failed +0 infra => total resolved=67
+[merge-R2175 14:32:58]   pi: +0 resolved +1 failed +0 infra => total resolved=142
+[merge-R2175 14:32:58]   hermes: +1 resolved +0 failed +0 infra => total resolved=351
+[merge-R2175 14:32:58] === merge R2175 DONE: +3 resolved +2 failed +0 infra ===
+=== incr_eval R2175 DONE Wed Nov 11 02:32:58 PM CST 2026 ===
