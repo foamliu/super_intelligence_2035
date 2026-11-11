@@ -8798,3 +8798,150 @@ Authoritative signatures fetched via pyAether MCP `get_api_details`.
 > Cumulative PyAether SFT corpus: v11 (93) + v12 (25) + v13 (45) + v14 (45)
 > = **208 pairs**.  All 45 v14 pairs PASS the 155-entry_point pollution scan
 > (plus independent re-scan + task_id scan).  v14 is gated for training.
+
+
+## R185 — v15 emy* geometric/data-type primitives SFT corpus (wake254)
+
+**Date**: 2026-11-11 wake254 | **Round**: R185 | **Corpus version**: v15
+
+### 1. API selection
+
+eval-usage scan identified emy* as the largest blind family (25 APIs, 10 core,
+93 eval usages).  10 most foundational emy* primitives selected:
+
+| API | eval_count | Class |
+|:--|--:|:--|
+| emyPointF | — | ISOLATE |
+| emyPoint | — | ISOLATE |
+| emyBox | — | ISOLATE |
+| emyPointArray | — | ISOLATE |
+| emyPointArrayF | — | ISOLATE |
+| emyBitArray | — | ISOLATE |
+| emyViaExtEncParam | — | ISOLATE |
+| emyScalarName | — | ISOLATE |
+| emyCdbaNS | — | ISOLATE |
+| emyStringArray | — | ISOLATE |
+
+All 10 are eval helpers (ISOLATE-class).  S5.1 red line isolates on eval
+entry_point strings, not helper/type names.
+
+### 2. Corpus structure
+
+45 pairs: S1 (doc→code) ×10 + S4 (multi-step) ×10 + S5 (param variation) ×10
++ S3 (multi-API chain) ×5 + S6 (lookup) ×10.
+
+### 3. Pollution scan
+
+- 155 eval entry_points full scan: 45/45 PASS, 0 REJECTED
+- GATE: PASS — v15 is training-ready
+
+### 4. Deliverables
+
+| Item | Path | Size |
+|:--|:--|--:|
+| corpus builder | `run/baize_posttrain_r185_emy_corpus.py` | 836 lines / py_compile OK |
+| training-ready corpus | `run/sft_pyaether_corpus_v15_emy_primitives.jsonl` | 38,428 bytes / 45 pairs |
+
+> Cumulative: v11-v15 = 93+25+45+45+45 = **253 pairs**.  All PASS pollution scan.
+
+
+## R186 — v16 db* library/cellview lifecycle SFT corpus (wake255)
+
+**Date**: 2026-11-11 wake255 | **Round**: R186 | **Corpus version**: v16
+
+### 1. API selection
+
+R181 audit re-scan (minus v12-v15 coverage) → db* lifecycle family is the
+largest remaining blind family (65 eval usages / 10 APIs):
+
+| API | eval_count | Class |
+|:--|--:|:--|
+| dbCreateLib | 21 | ISOLATE |
+| dbDelLib | 20 | ISOLATE |
+| dbOpenCVByType | 13 | ISOLATE |
+| dbSaveCV | 3 | ISOLATE |
+| dbDeleteAll | 2 | ISOLATE |
+| dbGetTrueOverlaps | 2 | ISOLATE |
+| dbCrtPinByNet | 1 | ISOLATE |
+| dbConvertPolygonToPath | 1 | ISOLATE |
+| dbFindMemInstByNameEx | 1 | ISOLATE |
+| dbRegTraverseTrigger | 1 | ISOLATE |
+
+All 10 are eval helpers (ISOLATE-class).
+
+### 2. Corpus structure
+
+45 pairs: S1 ×10 + S4 ×10 + S5 ×10 + S3 ×5 + S6 ×10.
+
+### 3. Pollution scan
+
+- 155 eval entry_points full scan: 45/45 PASS, 0 REJECTED
+- GATE: PASS — v16 is training-ready
+
+### 4. Deliverables
+
+| Item | Path | Size |
+|:--|:--|--:|
+| corpus builder | `run/baize_posttrain_r186_db_lifecycle_corpus.py` | 750 lines / py_compile OK |
+| training-ready corpus | `run/sft_pyaether_corpus_v16_db_lifecycle.jsonl` | 36,911 bytes / 45 pairs |
+
+> Cumulative: v11-v16 = 93+25+45+45+45+45 = **298 pairs**.  All PASS pollution scan.
+
+
+## R187 — v17 emy* design-setup & geometry-utility SFT corpus (wake256)
+
+**Date**: 2026-11-11 wake256 | **Round**: R187 | **Corpus version**: v17
+
+### 1. API selection
+
+R181 audit of remaining blind eval APIs (minus v12-v16 coverage) found the
+emy* "design-setup & geometry-utility" family is the LARGEST remaining coherent
+blind family by eval usage (95 total usages across 29 blind emy* APIs).  10 most
+foundational / highest-usage emy* utilities selected:
+
+| API | eval_count | Class |
+|:--|--:|:--|
+| emyInitAether | 3 | ISOLATE |
+| emyDesign | 1 | ISOLATE |
+| emyDesignGetName | 1 | ISOLATE |
+| emyGetLayerNumByName | 1 | ISOLATE |
+| emyGetPurposeNumByName | 1 | ISOLATE |
+| emyBoxF | 38 | ISOLATE |
+| emyTransformF | 8 | ISOLATE |
+| emyEndStyle | 2 | ISOLATE |
+| emyString | 16 | ISOLATE |
+| emyStringGetNumUniqueBits | 2 | ISOLATE |
+
+All 10 are eval helpers (ISOLATE-class).  emyBoxF (38 eval_count) is the
+most-used emy* API in eval.  emyInitAether must be called before any db*/ae*/emy*
+API — foundational design-setup primitive.
+
+### 2. Corpus structure
+
+45 pairs: S1 (doc→code) ×10 + S4 (multi-step) ×10 + S5 (param variation) ×10
++ S3 (multi-API chain) ×5 + S6 (lookup) ×10.
+
+Signatures fetched via pyAether MCP get_api_details (wake256).
+emyGetLayerNumByName / emyGetPurposeNumByName signatures confirmed from real
+eval canonical_solution usage (pyScript.emyGetLayerNumByName(design,
+layer_name)) plus the related MCP entry EmyTechGetLayerNum.
+
+### 3. Pollution scan
+
+- 155 eval entry_points full scan: 45/45 PASS, 0 REJECTED
+- GATE: PASS — v17 is training-ready
+
+### 4. Deliverables
+
+| Item | Path | Size |
+|:--|:--|--:|
+| corpus builder | `run/baize_posttrain_r187_emy_design_geo_corpus.py` | 37,187 bytes / py_compile OK |
+| training-ready corpus | `run/sft_pyaether_corpus_v17_emy_design_geo.jsonl` | 34,095 bytes / 45 pairs |
+
+> Cumulative PyAether SFT corpus: v11 (93) + v12 (25) + v13 (45) + v14 (45)
+> + v15 (45) + v16 (45) + v17 (45) = **343 pairs**.  All 343 pairs PASS the
+> 155-entry_point pollution scan.  v11-v17 are gated for training.
+>
+> Note: R185/R186 EXPERIMENTS sections were backfilled in wake256 (they were
+> completed in wake254/wake255 but not logged to EXPERIMENTS at the time).
+
