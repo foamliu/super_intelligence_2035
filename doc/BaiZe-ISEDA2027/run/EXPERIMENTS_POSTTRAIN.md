@@ -10288,3 +10288,96 @@ API_DOCS block → fingerprint scan vs 155 eval entry_points → S1×2 + S3×2 +
 - **阻塞不变**：沙盒 TCP8667 CLOSED → Phase1 eval / Phase3 RL / post-SFT eval 阻塞；GPU serve 占位 → SFT 重训阻塞；P3 等 pretrain ckpt。
 
 ---
+
+---
+
+## §R207 (2026-11-11 wake276) Surrogate SFT Script Parameterized for v11-v35 Merged Corpus + Train/Val Split Ready
+
+**Background**: R206 consolidated 25 corpus files (v11-v35) into a single merged parquet (943 pairs, 189 unique APIs, dual contamination gate PASS). The surrogate SFT script (`baize_posttrain_sft_surrogate.sh`) was hardcoded to use the older v5v6v7 corpus (1725 pairs, 804KB). This round wires the v11-v35 merged corpus into the script and creates the train/val split, achieving one-command launch readiness for when GPU is freed.
+
+### 1. Script Modification: `baize_posttrain_sft_surrogate.sh`
+
+Added two new CLI parameters:
+
+| Parameter | Purpose | Default |
+|:--|:--|:--|
+| `--src-parquet` | Override source parquet path | `sft_pyaether_corpus_unified_v5v6v7.parquet` (backward compatible) |
+| `--run-name` | Set run name → controls data subdir + output dir | `minicpm5_pyaether_v1` (backward compatible) |
+
+When `--run-name` is set:
+- `DATA_SUBDIR` = `sft_surrogate_data/<run-name>/`
+- `TRAIN_PARQUET` = `<DATA_SUBDIR>/sft_surrogate_train.parquet`
+- `VAL_PARQUET` = `<DATA_SUBDIR>/sft_surrogate_val.parquet`
+- `OUTPUT_DIR` = `sft_surrogate_runs/<run-name>/`
+- `prep_data()` passes `--out-dir $DATA_SUBDIR` to prep script (avoids collision with v1 train/val)
+
+**Backward compatibility**: Default invocation (no new params) is unchanged — v1 paths preserved.
+
+**Verification**:
+- `bash -n` syntax check: PASS
+- `--dry-run` with v11-v35 merged: PASS (src=253672 bytes, correct paths)
+- `--dry-run` default: PASS (src=804319 bytes, v1 paths unchanged)
+
+### 2. Train/Val Split: v11-v35 Merged Corpus
+
+**Command**: `bash baize_posttrain_sft_surrogate.sh --prep-only --src-parquet sft_pyaether_corpus_v11_v35_merged.parquet --run-name minicpm5_pyaether_v2_v11v35`
+
+| Dimension | Value |
+|:--|:--|
+| Source | `sft_pyaether_corpus_v11_v35_merged.parquet` (943 rows, 247.7KB) |
+| Schema | conversation, pair_id, type, api_used, contamination_check |
+| Split | 849 train / 94 val (90/10, seed=42) |
+| Train parquet | `sft_surrogate_data/minicpm5_pyaether_v2_v11v35/sft_surrogate_train.parquet` (312KB) |
+| Val parquet | `sft_surrogate_data/minicpm5_pyaether_v2_v11v35/sft_surrogate_val.parquet` (42KB) |
+| Round-trip verify | PASS (849 rows read back) |
+| Roles present | {user, assistant, system} |
+
+**Char/token stats** (train set):
+- median char_len: 776
+- p95 char_len: 406
+- max char_len: 3734 (est_tok max ~1244)
+- recommended `data.max_length`: 1280 (current 2048 is sufficient)
+
+### 3. v1 vs v2 Corpus Comparison
+
+| Metric | v1 (v5v6v7) | v2 (v11-v35 merged) |
+|:--|--:|--:|
+| Pairs | 1725 | 943 |
+| Parquet size | 804KB | 248KB |
+| Unique APIs | ~100 (est) | 189 |
+| Contamination gate | R150/R151 fingerprint | dual gate (fingerprint + 13-gram) |
+| Coverage | partial | 100% (all blind APIs cleared) |
+| Type distribution | mixed | S1=178, S1_doc_to_code=10, S2=10, S3=149, S3_multi=3, S4=204, S5=199, S6=188, S7=2 |
+
+**Note**: v2 has fewer pairs but higher quality — all 189 APIs are documented with authoritative signatures from pyAether MCP, dual contamination gate PASS, and 100% coverage of blind APIs. The smaller size means fewer steps per epoch (~13 steps/epoch at batch=64), so `--epochs 5` is recommended for v2 (vs default 3 for v1).
+
+### 4. One-Command Launch (when GPU freed)
+
+```bash
+bash baize_posttrain_sft_surrogate.sh \
+  --src-parquet sft_pyaether_corpus_v11_v35_merged.parquet \
+  --run-name minicpm5_pyaether_v2_v11v35 \
+  --epochs 5
+```
+
+Prerequisites: GPU 6,7 free (or override with `GPUS="<free>"`), sandbox restored for post-SFT eval.
+
+### 5. Sandbox Status (81st wake)
+
+All 5 sandbox ports confirmed CLOSED via direct TCP from .17:
+- 10.129.32.75:8664 → CLOSED
+- 10.129.32.75:8665 → CLOSED
+- 10.129.32.75:8653 → CLOSED
+- 10.129.32.75:8669 → CLOSED
+- 10.129.32.75:8667 → CLOSED
+
+MCP `run_code` also timed out (60s) → sandbox unreachable from all paths. This is a network/ACL issue requiring network team intervention.
+
+### 6. Deliverables
+
+| Item | Path |
+|:--|:--|
+| Modified script | `run/baize_posttrain_sft_surrogate.sh` (--src-parquet, --run-name added) |
+| Train parquet | `run/sft_surrogate_data/minicpm5_pyaether_v2_v11v35/sft_surrogate_train.parquet` (312KB) |
+| Val parquet | `run/sft_surrogate_data/minicpm5_pyaether_v2_v11v35/sft_surrogate_val.parquet` (42KB) |
+| MEMORY | `run/MEMORY_POSTTRAIN.md` (wake276 snapshot + heartbeat, wake269/270 archived) |

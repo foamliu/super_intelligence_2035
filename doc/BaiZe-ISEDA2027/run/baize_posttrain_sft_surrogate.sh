@@ -22,8 +22,19 @@
 #   bash baize_posttrain_sft_surrogate.sh --dry-run     # print recipe only
 #   bash baize_posttrain_sft_surrogate.sh --prep-only   # create train/val split
 #   bash baize_posttrain_sft_surrogate.sh --smoke       # tiny run (5 steps)
-#   bash baize_posttrain_sft_surrogate.sh               # full SFT
+#   bash baize_posttrain_sft_surrogate.sh               # full SFT (v5v6v7 corpus)
 #   GPUS="4,5" bash baize_posttrain_sft_surrogate.sh    # override GPU set
+#
+# R207: Retrain with v11-v35 merged corpus (943 pairs, 189 unique APIs, dual gate PASS):
+#   bash baize_posttrain_sft_surrogate.sh --dry-run \
+#     --src-parquet sft_pyaether_corpus_v11_v35_merged.parquet \
+#     --run-name minicpm5_pyaether_v2_v11v35
+#   bash baize_posttrain_sft_surrogate.sh --prep-only \
+#     --src-parquet sft_pyaether_corpus_v11_v35_merged.parquet \
+#     --run-name minicpm5_pyaether_v2_v11v35
+#   bash baize_posttrain_sft_surrogate.sh \
+#     --src-parquet sft_pyaether_corpus_v11_v35_merged.parquet \
+#     --run-name minicpm5_pyaether_v2_v11v35 --epochs 5
 set -uo pipefail
 
 SCRIPT_DIR="$(dirname "$(realpath "${BASH_SOURCE[0]}")")"
@@ -33,9 +44,11 @@ VERL_PY="$HOME/code/verl_cu124_venv/bin/python"
 VERL_TORCHRUN="$HOME/code/verl_cu124_venv/bin/torchrun"
 MODEL_PATH="/nas_data/app.e0031982/models/MiniCPM5-2B"
 SRC_PARQUET="$SCRIPT_DIR/sft_pyaether_corpus_unified_v5v6v7.parquet"
+RUN_NAME="minicpm5_pyaether_v1"
 TRAIN_PARQUET="$SCRIPT_DIR/sft_surrogate_train.parquet"
 VAL_PARQUET="$SCRIPT_DIR/sft_surrogate_val.parquet"
-OUTPUT_DIR="$SCRIPT_DIR/sft_surrogate_runs/minicpm5_pyaether_v1"
+OUTPUT_DIR="$SCRIPT_DIR/sft_surrogate_runs/${RUN_NAME}"
+DATA_SUBDIR="$SCRIPT_DIR"
 HYDRA_DIR="/tmp/baize_sft_surrogate_hydra"
 LOG_FILE="/tmp/baize_posttrain_sft_surrogate.log"
 
@@ -75,6 +88,14 @@ while [ $# -gt 0 ]; do
     --upsample) UPSAMPLE="$2"; shift ;;
     --ft-mode) FT_MODE="$2"; shift ;;
     --lora-rank) LORA_RANK="$2"; shift ;;
+    --src-parquet) SRC_PARQUET="$2"; shift ;;
+    --run-name)
+      RUN_NAME="$2"; shift
+      DATA_SUBDIR="$SCRIPT_DIR/sft_surrogate_data/${RUN_NAME}"
+      TRAIN_PARQUET="$DATA_SUBDIR/sft_surrogate_train.parquet"
+      VAL_PARQUET="$DATA_SUBDIR/sft_surrogate_val.parquet"
+      OUTPUT_DIR="$SCRIPT_DIR/sft_surrogate_runs/${RUN_NAME}"
+      ;;
     *) echo "unknown arg: $1" ;;
   esac
   shift
@@ -91,7 +112,7 @@ print_recipe() {
   GPUs            : $GPUS ($NGPU x A40)
   data.train      : $TRAIN_PARQUET
   data.val        : $VAL_PARQUET
-  data.src        : $SRC_PARQUET (R152, 1725 pairs, gate PASS)
+  data.src        : $SRC_PARQUET
   data.upsample   : x$UPSAMPLE
   max_length      : $MAX_LENGTH
   batch           : global=$TRAIN_BATCH  micro/GPU=$MICRO_BATCH
@@ -119,9 +140,10 @@ prep_data() {
     exit 1
   fi
   echo "[prep] splitting $SRC_PARQUET -> train/val (90/10, seed=$SEED, upsample=x$UPSAMPLE)"
+  mkdir -p "$DATA_SUBDIR"
   "$VERL_PY" "$SCRIPT_DIR/baize_posttrain_sft_surrogate_prep.py" \
     --src "$SRC_PARQUET" \
-    --out-dir "$SCRIPT_DIR" \
+    --out-dir "$DATA_SUBDIR" \
     --val-ratio 0.1 \
     --upsample "$UPSAMPLE" \
     --seed "$SEED" || { echo "ERROR: data prep failed"; exit 1; }
