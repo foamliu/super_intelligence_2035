@@ -405,3 +405,5 @@
 1793330336899_zh3eq	lorikx	hfeg0pkn004	45	digital	parked		2026-11-12 01:45	dup of TqvVrefreshBuild-001 (r398 wbhv1): same lorikx TQV 4-script-combine task
 1793326182885_wyezr	stevenh	hfeg0pgn145	35	digital	parked		2026-11-12 01:46	analysis-Q&A weak: stevenh asks how-to-delay-compare-timing on compare_tasks.sv#543, agent explains data flow no produce-task
 1792637822804_6xv88	e0045140	hfeg0pnd001	33	digital	case	EDA-Eval-DesignFlow-AhbSbCompareGen-001	2026-11-12 02:06	
+1793177058917_hzyu6	fernandoy	hfeg0plg76	326	digital	parked		2026-11-12 02:26	dup-of-ii9ew(r401 VerdiCfgVipGen-001): same fernandoy PIM2 UVM, same produce-task gen_verdi_cfg.py(filelist flatten+VIP bank2pu_if/dbg_if+module load ver). hzyu6=earlier 799msg/3MB, ii9ew=later 104msg+821archive. dup.
+1793619124342_usjrp					case	EDA-Eval-DesignFlow-OdtErrStatScan-001	2026-11-12 02:40	
