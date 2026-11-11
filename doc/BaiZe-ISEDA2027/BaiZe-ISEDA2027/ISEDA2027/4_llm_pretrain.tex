@@ -4,8 +4,8 @@ Stage~(i) pre-trains the hybrid backbone (Section~\ref{sec:arch}) from scratch u
 % 中文：第 (i) 阶段在固定预算下从零预训练混合骨干（第 \ref{sec:arch} 节）。
 
 \subsection{Architecture Selection}\label{sec:arch-rationale}
-We adopt the hybrid backbone because a matched from-scratch comparison at $\approx$2B scale favours it over a dense transformer (MiniCPM5-2B~\cite{openbmb2026minicpm5}): lower loss with $11.6\%$ fewer parameters ($\approx$2.22B vs.\ 2.51B) at $\sim$8\% throughput cost; the Megatron-Core provider (Section~\ref{sec:arch}) makes it executable without custom kernels.
-% 中文：架构选型。采用混合骨干是因为约 2B 规模从零对比中混合模型优于稠密 Transformer（MiniCPM5-2B~\cite{openbmb2026minicpm5}）：少 $11.6\%$ 参数（约 2.22B 对 2.51B）达更低损失，代价约 8\% 吞吐；Megatron-Core provider（第 \ref{sec:arch} 节）使其无需自定义核即可执行。
+We adopt the hybrid backbone because a matched from-scratch comparison at $\approx$2B scale favours it over a dense transformer (MiniCPM5-2B~\cite{openbmb2026minicpm5}): lower loss with $11.6\%$ fewer parameters at $\sim$8\% throughput cost; the Megatron-Core provider (Section~\ref{sec:arch}) makes it executable without custom kernels.
+% 中文：架构选型。采用混合骨干是因为约 2B 规模从零对比中混合模型优于稠密 Transformer（MiniCPM5-2B~\cite{openbmb2026minicpm5}）：少 $11.6\%$ 参数达更低损失，代价约 8\% 吞吐；Megatron-Core provider（第 \ref{sec:arch} 节）使其无需自定义核即可执行。
 
 \subsection{Training Framework and Learning-Rate Schedule}\label{sec:framework}
 We use NVIDIA NeMo~\cite{nvidia-nemo} with Megatron-Core's~\cite{nvidia-megatron} Mamba-hybrid provider (Section~\ref{sec:arch}).
