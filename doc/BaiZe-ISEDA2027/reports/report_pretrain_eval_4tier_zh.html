@@ -42,8 +42,8 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
   <div class="meta">
     <span>📅 2026-11-11</span>
     <span>🏗 Mamba2-hybrid 2.22B</span>
-    <span>🔥 训练 iter≈164.69k / 700k · step~7.09s<7.4s✅</span>
-    <span>📊 L1: 16 ckpt ✅ | L2: GSM8K=0%@160k 🔴 MMLU~74%进行中(16761/22800) v4已启动 | L3: 调研完(基础设施复杂) | L4: 数据在.15不可达+定性测试=退化输出</span>
+    <span>🔥 训练 iter≈164.81k / 700k · step~7.10s<7.4s✅</span>
+    <span>📊 L1: 16 ckpt ✅ | L2: GSM8K=0%@160k 🔴 MMLU~80%进行中(18190/22800) v4等待中 | L3: 调研完(基础设施复杂) | L4: 数据在.15不可达+定性测试=退化输出</span>
   </div>
   <div style="margin-top:12px;font-size:12.5px;background:rgba(0,0,0,.18);border-radius:8px;padding:8px 12px;opacity:.95">
     ⚠️ 本报告是<b>训练监控与决策依据</b>，<b>不进论文正文</b>（2026-11-10 用户令）。用户关注点（2026-11-11）：<b>如何拿到更好的结果</b>。
@@ -123,7 +123,7 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
   </div>
 </div>
 <div class="card">
-  <h3>160k 重评结果（v3 · 2026-11-11 · GSM8K ✅ 完成 · MMLU 🟡 进行中 ~49%）</h3>
+  <h3>160k 重评结果（v3 · 2026-11-11 · GSM8K ✅ 完成 = 0.0% · MMLU 🟡 进行中 ~80%(18190/22800) ETA~90min · v4 等待中）</h3>
   <div class="alert"><b>v2 失败根因</b>：MMLU 是 <code>loglikelihood</code> 任务，标准 <code>local-completions</code> 后端要求 response 含 <code>token_logprobs</code>，但 llama-server <code>/v1/completions</code> 不返回该字段 → <code>KeyError: 'token_logprobs'</code>。</div>
   <table>
     <tr><th>任务</th><th>口径</th><th>shot</th><th>后端</th><th>状态</th><th>结果</th></tr>
@@ -238,19 +238,18 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
   <table>
     <tr><th>层</th><th>评测</th><th>状态</th><th>关键数</th><th>下一步</th></tr>
     <tr><td><b>L1</b></td><td class="l">常识 8 集 (0-shot)</td><td><span class="badge b-ok">✅ 16ckpt</span></td><td>58.13%@160k</td><td class="l">继续每万 ckpt</td></tr>
-    <tr><td><b>L2</b></td><td class="l">复杂推理 6 集</td><td><span class="badge b-bad">🔴 GSM8K=0%@160k</span></td><td>GSM8K=0% · MMLU~74%进行中(16761/22800) · v4已启动</td><td class="l">等MMLU+v4结果</td></tr>
+    <tr><td><b>L2</b></td><td class="l">复杂推理 6 集</td><td><span class="badge b-bad">🔴 GSM8K=0%@160k</span></td><td>GSM8K=0% · MMLU~80%进行中(18190/22800) · v4等待中</td><td class="l">等MMLU+v4结果</td></tr>
     <tr><td><b>L3</b></td><td class="l">Agentic</td><td><span class="badge b-bad">❌ 空白·调研完</span></td><td>— · 模型生成能力不足</td><td class="l">延后至SFT/数据改进后</td></tr>
     <tr><td><b>L4</b></td><td class="l">领域</td><td><span class="badge b-bad">❌ 未接·调研完</span></td><td>— · 数据在.15不可达</td><td class="l">延后至.15可达+SFT后</td></tr>
   </table>
 </div>
 <div class="card">
-  <h3>本轮(#1976)动作</h3>
+  <h3>本轮(#1977)动作</h3>
   <ol>
-    <li><b>训练健康确认</b>：iter 164,690 · step 7088ms (<7.4s✅) · loss ~2.036 · 0 NaN/skip · GPU 8×97-100%/75GB · ~590K tok/s</li>
-    <li><b>L2 v3 进度</b>：GSM8K ✅ 完成 = 0.0%(strict+flex) · MMLU 🟡 进行中 ~16761/22800(~74%) ETA~30min · ~1-4 it/s</li>
+    <li><b>训练健康确认</b>：iter 164,810 · step 7100ms (<7.4s✅) · loss ~2.02 · 0 NaN/skip · GPU 8×95-100%/75GB · ~590K tok/s</li>
+    <li><b>L2 v3 进度</b>：GSM8K ✅ 完成 = 0.0%(strict+flex) · MMLU 🟡 进行中 ~18190/22800(~80%) ETA~90min · ~1-1.5 it/s</li>
     <li><b>L2 v4 状态</b>：<code>baize_l2_eval_160k_v4.sh</code> 在 .29 后台(PID2515987) · 轮询 port 8082 · v3 完成后自动切换(HumanEval/MBPP/MATH/BBH)</li>
-    <li><b>P2 数据配比调研</b>：DeepSeek LLM 消融实验 4:2:4(code:math:lang)最优 → 写进报告待决策区，建议在 decay 阶段混入 code+math 数据</li>
-    <li><b>无新万整数 ckpt</b>：最新 ckpt iter_0164000(已评) · 下一个 170k ETA~8h</li>
+    <li><b>无新万整数 ckpt</b>：最新 ckpt iter_0164000(已评) · 下一个 170k ETA~10h</li>
     <li><b>研究日报 2026-11-11</b>：pretrain 无新增可用建议（已确认，不凑数）</li>
   </ol>
   <div class="alert">
@@ -289,7 +288,7 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
 </div>
 
 <footer>
-  BaiZe pretrain 线 · 四层能力评测报告 · 2026-11-11 16:20 更新(#1976) · 评测数字仅用于训练监控，不进论文正文
+  BaiZe pretrain 线 · 四层能力评测报告 · 2026-11-11 16:32 更新(#1977) · 评测数字仅用于训练监控，不进论文正文
 </footer>
 </div>
 </body>
