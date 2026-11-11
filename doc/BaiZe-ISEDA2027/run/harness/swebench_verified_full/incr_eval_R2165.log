@@ -1,0 +1,29 @@
+
+============================================================
+=== hermes: incr_eval R2165 (2 instances) ===
+  [09:47:16] hermes: merged 384 real preds -> predictions_glm53/predictions_hermes_glm53.json
+  [09:47:16] hermes: launching eval (workers=1, timeout=1800, 2 instances)...
+  [09:48:55] hermes: eval done rc=0 (log: logs/eval_incr_verified_full_glm53_hermes_R2165.log)
+  mwaskom__seaborn-3187: failed (capability)
+  pydata__xarray-3305: failed (capability)
+  [09:48:55] hermes: eval report updated (n=384, resolved=344, failed=40, infra=0)
+
+============================================================
+=== claude-code: incr_eval R2165 (1 instances) ===
+  [09:48:55] claude-code: merged 198 real preds -> predictions_glm53/predictions_claude-code_glm53.json
+  [09:48:55] claude-code: launching eval (workers=1, timeout=1800, 1 instances)...
+  [09:49:22] claude-code: eval done rc=0 (log: logs/eval_incr_verified_full_glm53_claude-code_R2165.log)
+  sympy__sympy-16886: failed (capability)
+  [09:49:22] claude-code: eval report updated (n=198, resolved=154, failed=42, infra=2)
+
+============================================================
+=== opencode: incr_eval R2165 (2 instances) ===
+  [09:49:22] opencode: merged 455 real preds -> predictions_glm53/predictions_opencode_glm53.json
+  [09:49:22] opencode: launching eval (workers=1, timeout=1800, 2 instances)...
+  [09:50:15] opencode: eval done rc=0 (log: logs/eval_incr_verified_full_glm53_opencode_R2165.log)
+  sphinx-doc__sphinx-8459: failed (capability)
+  sphinx-doc__sphinx-8475: failed (capability)
+  [09:50:15] opencode: eval report updated (n=455, resolved=370, failed=83, infra=2)
+
+============================================================
+R2165 incr_eval complete in 179.1s
