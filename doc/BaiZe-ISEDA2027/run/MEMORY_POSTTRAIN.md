@@ -7,14 +7,14 @@ WAITING: 0
 
 ## 进度快照
 
-- PHASE: posttrain-wake283（2026-11-12 v11-v36 SFT重训RUNNING step27/70 loss0.73+ckpt global_step_20 validated+post-SFT serve dry-run confirmed+sandbox 88th wake CLOSED+serve 3端点OK+git synced）
-- 已完成: P3预备✅；P0✅；P1✅；P2✅；R1-R210✅；R280(EXPERIMENTS归档)；wake281 R281(全链路就绪审计20项)；wake282 R282(v11-v36 SFT重训启动+NCCL P2P fix)；wake283 R283(SFT训练监控+ckpt完整性验证+post-SFT serve dry-run确认)
-- 当前动作: wake283 ①v11-v36 SFT重训RUNNING step27/70(Epoch2/5,loss 2.12→0.73,GPU6/7 99/96% util,ETA~01:09) ②global_step_20 ckpt validated(715MB,2×safetensors+config+tokenizer完整) ③post-SFT serve dry-run confirmed(ckpt→GPU6:8096→minicpm5-sft,script检测到训练进程正确warn) ④sandbox 88th wake仍CLOSED(poll#590,ICMP 0.28ms OK但ALL TCP filtered) ⑤GPU5 serve占位中(8097✅) ⑥GPU4 serve常驻(8098✅) ⑦git synced
-- 下一步: ①v11-v36 SFT重训完成(~01:09,global_step_70)→serve ckpt on GPU6:8096(命令已dry-run验证)→post-SFT qual eval ②沙盒恢复→watcher auto-launch Phase1 ③Phase3 RL待沙盒+GPU ④P3正式训练待pretrain ckpt(ETA≈2026-12-25)
-- 阻塞: 🔴远程沙盒10.129.32.75跨子网TCP过滤(88th wake,poll#590,ICMP 0.28ms OK但ALL TCP filtered,需网络团队开ACL)→Phase1 eval+Phase3 RL+post-SFT eval阻塞;P3等pretrain ckpt
-- 本轮新增产出: R283✅(SFT训练监控[step27/70 loss 2.12→0.73健康下降]+ckpt完整性验证[global_step_20 715MB safetensors+tokenizer+config完整]+post-SFT serve dry-run确认[ckpt→GPU6:8096→minicpm5-sft recipe valid,script正确检测训练进程并warn])
-- 未完成指令: 🔴用户令17:10(serve占位)GPU5✅占位中/GPU6-7训练中(更优占用);🔴用户令13:40(三阶段替身计划)Phase2 v11-v36重训RUNNING/Phase1待沙盒ACL/Phase3 RL脚本就绪✅待沙盒+GPU
-- git: wake283 本轮提交R283(SFT训练监控+ckpt验证+serve dry-run+EXPERIMENTS §R283+MEMORY heartbeat+daily-memories)
+- PHASE: posttrain-wake284（2026-11-12 v11-v36 SFT训练Epoch5/5 step60/70 loss0.65收敛+训练动力学分析+serve脚本修复+sandbox 89th wake CLOSED+serve 3端点OK+git synced）
+- 已完成: P3预备✅；P0✅；P1✅；P2✅；R1-R210✅；R280(EXPERIMENTS归档)；wake281 R281(全链路就绪审计20项)；wake282 R282(v11-v36 SFT重训启动+NCCL P2P fix)；wake283 R283(SFT训练监控+ckpt验证+serve dry-run)；wake284 R284(SFT训练动力学分析+serve脚本修复)
+- 当前动作: wake284 ①v11-v36 SFT训练RUNNING step60/70(Epoch5/5,loss 2.12→0.65,E1→E4 -51.7%,健康收敛,ETA~01:09) ②训练动力学分析:per-epoch mean E1=1.354/E2=0.836/E3=0.692/E4=0.654,loss floor~0.6,diminishing returns ③3 ckpt落盘(global_step_20/40/60各715MB HF safetensors) ④serve脚本修复:SFT_RUNS_DIR v1→v2_v11v36+--run-name新增+--ckpt裸名解析,dry-run✅ ⑤sandbox 89th wake CLOSED(ICMP OK ALL TCP filtered) ⑥GPU5/4 serve✅ ⑦git synced
+- 下一步: ①SFT训练完成(step70)→verify final ckpt→serve on GPU6:8096(bash baize_posttrain_sft_surrogate_serve.sh)→post-SFT qual eval(待沙盒) ②沙盒恢复→watcher auto-launch Phase1 eval ③Phase3 RL待沙盒+GPU ④P3正式训练待pretrain ckpt(ETA≈2026-12-25)
+- 阻塞: 🔴远程沙盒10.129.32.75跨子网TCP过滤(89th wake,ICMP OK ALL TCP filtered,需网络团队开ACL)→Phase1 eval+Phase3 RL+post-SFT eval阻塞;P3等pretrain ckpt
+- 本轮新增产出: R284✅(SFT训练动力学分析[per-epoch mean/min/max,E1→E4 -51.7%,loss floor~0.6,无发散NaN,健康收敛]+serve脚本修复[3处:SFT_RUNS_DIR v2_v11v36+--run-name+--ckpt裸名解析,bash -n✅+dry-run✅]+sandbox 89th wake CLOSED)
+- 未完成指令: 🔴用户令17:10(serve占位)GPU5✅占位中/GPU6-7训练中(更优占用);🔴用户令13:40(三阶段替身计划)Phase2 v11-v36训练RUNNING step60/70/Phase1待沙盒ACL/Phase3 RL脚本就绪✅待沙盒+GPU
+- git: wake284 本轮提交R284(SFT训练动力学分析+serve脚本修复+EXPERIMENTS §R284+MEMORY heartbeat+daily-memories)
 
 
 

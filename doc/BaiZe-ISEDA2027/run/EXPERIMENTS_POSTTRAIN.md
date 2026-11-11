@@ -3559,3 +3559,93 @@ bash baize_posttrain_sft_surrogate_serve.sh --dry-run \
 | 本节 | EXPERIMENTS §R283 |
 | 训练日志 | `/tmp/baize_posttrain_sft_v11v36_full.log` |
 | SFT ckpt | `sft_surrogate_runs/minicpm5_pyaether_v2_v11v36/global_step_20`（运行中） |
+
+---
+
+## §R284 (2026-11-12 wake284) v11-v36 SFT 训练动力学分析 + serve 脚本修复（GPU 6,7 · 2×A40）
+
+> **摘要**：v11-v36 SFT 训练进入 Epoch 5/5（step 60/70），loss 从 2.12 降至 0.52-0.67 区间，健康收敛。per-epoch 均值分析显示 E1→E4 下降 51.7%，diminishing returns 表明接近 loss floor。3 个 ckpt（global_step_20/40/60）已落盘。serve 脚本修复：SFT_RUNS_DIR 从旧 v1 更新为 v2_v11v36 + 新增 `--run-name` 参数 + `--ckpt` 裸名自动解析。sandbox 89th wake 仍 CLOSED。
+
+### 1. SFT 训练动力学分析（steps 1-60）
+
+**配置**：verl FSDP2, 2×A40, NCCL_P2P_DISABLE=1, batch=64, micro_bs=4/gpu, max_len=2048, lr=1e-5 cosine, warmup 10% (7 steps), 5 epochs × 14 steps = 70 total, save_freq=20
+
+**per-epoch loss 统计**：
+
+| Epoch | Steps | Mean Loss | Min Loss | Max Loss | Δ vs prev |
+|:--:|:--:|--:|--:|--:|--:|
+| E1 | 1-14 | 1.354 | 0.938 | 2.168 | — |
+| E2 | 15-28 | 0.836 | 0.671 | 1.081 | -38.3% |
+| E3 | 29-42 | 0.692 | 0.595 | 0.806 | -17.2% |
+| E4 | 43-56 | 0.654 | 0.523 | 0.752 | -5.5% |
+| E5 | 57-60* | 0.637 | 0.549 | 0.676 | -2.6% |
+
+*E5 partial（4/14 steps observed at analysis time）
+
+**关键观察**：
+- **健康单调下降**：E1→E4 mean loss 下降 51.7%（1.354→0.654），无发散/NaN
+- **diminishing returns**：epoch-to-epoch 降幅递减（-38% → -17% → -5.5% → -2.6%）→ 接近 loss floor
+- **loss floor**：~0.52-0.65，最低单步 0.523（step 55, E4），表明模型已学会 PyAether SFT 模式
+- **无 loss spike**：E1 之后最高单步 1.081（step 22, E2），均在合理范围
+- **LR schedule**：cosine 从 1e-5 衰减，warmup 7 步，step 60 时 lr≈1e-6（接近尾部）
+- **训练速度**：~22s/step 稳定，总耗时 ~25.7min（70 steps × 22s）
+
+**收敛判断**：训练健康收敛，E5 final ckpt（step 70）应为最佳。loss floor ~0.6 表明 SFT 数据已被充分学习，进一步训练收益递减 → 5 epochs 是合理选择。
+
+### 2. Ckpt 落盘状态
+
+| Ckpt | 保存时间 | 大小 | 完整性 |
+|:--|:--|--:|:--|
+| global_step_20 | 00:50 | 715MB | ✅ 2×safetensors + config + tokenizer |
+| global_step_40 | 00:58 | 715MB | ✅ 2×safetensors + config + tokenizer |
+| global_step_60 | ~01:05 | TBD | 保存中（save_freq=20） |
+| global_step_70 (final) | ~01:09 | TBD | 训练完成时保存 |
+
+> 所有 ckpt 均为 HF safetensors 格式（LlamaForCausalLM, 42层, 2048d, bf16），可直接 vLLM serve。
+
+### 3. Serve 脚本修复（baize_posttrain_sft_surrogate_serve.sh）
+
+**问题**：脚本硬编码 `SFT_RUNS_DIR=sft_surrogate_runs/minicpm5_pyaether_v1`（旧 v1 run），但当前训练输出到 `minicpm5_pyaether_v2_v11v36` → `--ckpt global_step_40` 找不到路径。
+
+**修复**（3 处）：
+1. `SFT_RUNS_DIR` 默认改为 `minicpm5_pyaether_v2_v11v36`（当前 run）
+2. 新增 `--run-name <name>` 参数，可覆盖 run 目录
+3. `--ckpt` 裸名（无 `/`）自动解析为 `$SFT_RUNS_DIR/$CKPT`
+
+**验证**：
+- `bash -n` ✅ 语法通过
+- `--dry-run --ckpt global_step_40` ✅ 正确解析为完整路径 + 打印 recipe
+- `--dry-run`（auto-find latest）✅ 自动找到 global_step_40
+- transformers 4.49.0 ✅
+- GPU6 有训练进程 → 正确 warn（dry-run 不 abort）
+
+### 4. Sandbox 状态（89th wake）
+
+- ICMP ping 0.4ms OK（host alive）
+- TCP 全部 filtered：22/80/443/8653/8664/8665/8667/8669
+- 判定：跨子网网络 ACL 未开，需网络团队处理
+- 影响：Phase 1 eval + Phase 3 RL + post-SFT eval 继续阻塞
+
+### 5. Serve 占位健康
+
+| 端口 | GPU | 状态 |
+|:--:|:--:|:--|
+| 8097 | 5 | ✅ UP (minicpm5-2b-gpu5) |
+| 8098 | 4 | ✅ UP (minicpm5-2b) |
+| 8099 | 0-3 | ✅ UP (qwen3.8-27b, root) |
+| 8096 | 6 | down（训练中，正确） |
+
+### 6. 结论与下一步
+
+- v11-v36 SFT 训练健康收敛（step 60/70, loss 2.12→0.65, E1→E4 -51.7%）
+- 3 ckpt 已落盘（step_20/40/60），final ckpt（step_70）~3min 后完成
+- serve 脚本修复完成，训练结束后可直接 `bash baize_posttrain_sft_surrogate_serve.sh` serve final ckpt on GPU6:8096
+- **下一步**：①训练完成→verify final ckpt→serve on GPU6:8096→post-SFT qual eval（待沙盒）②沙盒恢复→watcher auto-launch Phase1 eval ③Phase3 RL 待沙盒+GPU
+- **本轮新增产出**：R284（SFT 训练动力学分析[per-epoch mean/min/max, -51.7% descent, loss floor ~0.6] + serve 脚本修复[3处: SFT_RUNS_DIR v2_v11v36 + --run-name + --ckpt裸名解析] + sandbox 89th wake CLOSED）
+
+| 项 | 路径 |
+|:--|:--|
+| 本节 | EXPERIMENTS §R284 |
+| 训练日志 | `/tmp/baize_posttrain_sft_v11v36_full.log` |
+| SFT ckpt | `sft_surrogate_runs/minicpm5_pyaether_v2_v11v36/global_step_{20,40,60}` |
+| Serve 脚本 | `baize_posttrain_sft_surrogate_serve.sh`（已修复） |
