@@ -692,3 +692,4 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked		2026-11-09 20:39	RAG-looku
 1789561002781_mqop7	ziyuny	hfeg0pnd002	579	physical_verify	parked		2026-11-11 18:15	dup of LVSLogFilter-001 (same trace ziyuny/mqop7, already built); re-claimed by mistake r397 due to ledger not having marked it as case
 1790217091100_uks8u	lizwen	hfeg0plg89	220	layout_aether	case	EDA-Eval-DesignFlow-DrcPatQueryEnrich-001	2026-11-11 19:05	
 1784166233879_nd1or	e0014566	hfeg0pkn005	67	pg_layout	case	EDA-Eval-DesignFlow-PwrViaAgentGen-001	2026-11-11 19:59	
+1790064242187_1dh6s	e0031668	hfeg0pkn003	626	physical_verify	case	EDA-Eval-DesignFlow-ErcSetupGen-001	2026-11-11 20:54	
