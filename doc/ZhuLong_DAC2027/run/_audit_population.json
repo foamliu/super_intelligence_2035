@@ -1,0 +1,93 @@
+{
+  "round": {
+    "B_es_r1": {
+      "lang": "es",
+      "n": 157,
+      "c": {
+        "ENGLISH": 93,
+        "TARGET": 41,
+        "CHINESE": 21,
+        "MIXED": 2
+      }
+    },
+    "B_es_r2": {
+      "lang": "es",
+      "n": 158,
+      "c": {
+        "ENGLISH": 110,
+        "TARGET": 27,
+        "CHINESE": 18,
+        "MIXED": 3
+      }
+    },
+    "B_es_r3": {
+      "lang": "es",
+      "n": 158,
+      "c": {
+        "TARGET": 25,
+        "ENGLISH": 112,
+        "CHINESE": 18,
+        "MIXED": 3
+      }
+    },
+    "B_zh_r1": {
+      "lang": "zh",
+      "n": 158,
+      "c": {
+        "TARGET": 139,
+        "ENGLISH": 13,
+        "MIXED": 6
+      }
+    },
+    "B_zh_r3": {
+      "lang": "zh",
+      "n": 158,
+      "c": {
+        "TARGET": 139,
+        "ENGLISH": 16,
+        "MIXED": 3
+      }
+    },
+    "B_zh_r2": {
+      "lang": "zh",
+      "n": 158,
+      "c": {
+        "TARGET": 137,
+        "ENGLISH": 20,
+        "MIXED": 1
+      }
+    },
+    "B_en_r1": {
+      "lang": "en",
+      "n": 156,
+      "c": {
+        "TARGET": 141,
+        "EMPTY": 15
+      }
+    },
+    "B_en_r2": {
+      "lang": "en",
+      "n": 158,
+      "c": {
+        "TARGET": 158
+      }
+    },
+    "B_en_r3": {
+      "lang": "en",
+      "n": 157,
+      "c": {
+        "TARGET": 157
+      }
+    },
+    "B_fr_r1": {
+      "lang": "fr",
+      "n": 158,
+      "c": {
+        "ENGLISH": 68,
+        "TARGET": 64,
+        "CHINESE": 17,
+        "MIXED": 9
+      }
+    }
+  }
+}
