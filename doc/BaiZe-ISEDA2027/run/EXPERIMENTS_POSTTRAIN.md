@@ -4769,3 +4769,103 @@ bash baize_posttrain_sft_surrogate.sh \
 4. **正式 SFT 配比**：BaiZe 正式 SFT 应按场景分层配比，确保每类 API pairs ≥ eval 期望任务数 × 0.7。
 
 ---
+
+## §R300 — Scene-Weighted Reward Design for RL R4 Arm (GRPO-Compatible, from R297 API Gap) (wake300, 2026-11-12)
+
+> **时间**：2026-11-12 wake300
+> **背景**：R297 API-Level Gap Analysis 发现 SFT v11-v36 导致 Layout(-18.7pp)/DesignMgmt(-15.5pp) 灾难性遗忘，而 Schematic(+16.6pp) 提升。R297 明确建议「RL 奖励设计应对场景敏感：在 Layout/DesignMgmt 任务上给予更高权重，防止 RL 也偷懒只做 Schematic」。本轮将此建议落实为 **GRPO 兼容的场景加权奖励增强**。
+> **脚本**：`run/baize_posttrain_r300_scene_weight_design.py`（配置生成器，py_compile 通过）
+> **产物**：`run/rl_scene_weight_config_r300.json`（4.1KB，被 reward 函数加载）+ `run/r300_scene_weight_summary.json`
+> **代码改动**：`run/baize_posttrain_reward_functions.py`（+3 函数：`_load_scene_weight_config`/`_infer_scenario`/`reward_r300_scene_weighted`，py_compile 通过）+ `run/baize_posttrain_rl_verl_config_v2.yaml`（+2 reward_kwargs，YAML parse 通过）
+> **替身声明**：MiniCPM5-2B（2B, Llama 架构, Apache 2.0）是 BaiZe 替身，收益不可迁移到 BaiZe 本体。
+
+### 1. 核心设计问题：GRPO 组内归一化使简单乘子失效
+
+GRPO 的优势计算为 `A_i = (r_i - r_bar) / sigma`，其中 `r_bar` 和 `sigma` 是同一 prompt 的 group 统计量。若对基础奖励施加场景乘子 `w`（即 `r'_i = w * r_i`），则：
+
+```
+A'_i = (w*r_i - w*r_bar) / (w*sigma) = (r_i - r_bar) / sigma = A_i
+```
+
+**乘子完全抵消**——场景权重对 GRPO 学习信号无影响。这是本设计的**关键约束**。
+
+### 2. GRPO 兼容方案：场景加权作用于加性 bonus/penalty 项
+
+正确做法：保持论文定义的 R1-R4 基础奖励**不变**，在 R4 之上叠加**场景加权的加性项**（both_missed API bonus + anti-forget penalty）。这些加性项在不同 rollout 间产生差异（不同 rollout 使用不同 API），从而在 GRPO 组内创造可被利用的方差。
+
+| 机制 | 含义 | 数据来源 |
+|:--|:--|:--|
+| **both_missed API bonus** | 模型正确使用 322 个「两模型都不会」的 API 时，给予课程奖励 | R297 `top_both_missed_apis`（30 个 top API） |
+| **anti-forget penalty** | 模型丢弃 164 个「BASE 会但 SFT 遗忘」的 API 时，给予惩罚 | R297 `api_matrix` category=base_only（50 个 top API） |
+| **scene weight** | 场景权重**缩放 bonus/penalty 的幅度**（非基础奖励） | R297 `scenario_summary`（数据驱动） |
+
+### 3. 场景权重计算（数据驱动）
+
+公式：`weight_raw = 1.0 + max(0, -delta) * 2.0 + (1 - sft_recall) * 0.5`
+
+- `forgetting_penalty = max(0, -delta) * 2.0`：SFT 退化越严重，权重越高
+- `gap_bonus = (1 - sft_recall) * 0.5`：当前 recall 越低（提升空间越大），权重越高
+
+归一化（最佳场景 = 1.0 基线）+ 上限 1.5（防止 GRPO 不稳定）：
+
+| 场景 | SFT recall | Delta | Raw weight | **归一化 weight** | 含义 |
+|:--|--:|--:|--:|--:|:--|
+| **layout** | 0.336 | -0.187 | 1.705 | **1.000** | 最高权重（遗忘最严重） |
+| **design_mgmt** | 0.412 | -0.155 | 1.603 | **0.940** | 高权重（严重遗忘） |
+| others | 0.352 | -0.068 | 1.460 | 0.856 | 中权重（轻微退化） |
+| schematic | 0.320 | +0.166 | 1.340 | 0.786 | 基线（已提升，低边际价值） |
+
+> Layout 的 both_missed API bonus = 0.03 × 1.0 = 0.03/API；Schematic = 0.03 × 0.786 = 0.024/API。模型在 Layout 任务上正确使用 dbCreateLib 获得的奖励比在 Schematic 任务上使用 emyScalarName 高 27%。
+
+### 4. both_missed API bonus set（30 个 RL 核心目标 API）
+
+Top 10：dbCreateLib(20 tasks), dbGetAllLibs(19), dbDelLib(18), dbNewCV(16), dbCloseCV(15), emyScalarName(13), emyBlock.create(12), emyPin.create(12), emyScalarNet.create(12), emyTerm.create(12)
+
+> db* 系列（前 5 个）全部属于 Layout/DesignMgmt 场景，正是 R297 发现的灾难性遗忘重灾区。
+
+### 5. anti-forget API set（50 个被遗忘 API）
+
+从 R297 `api_matrix` 中 category=base_only 的 API 提取 top 50（BASE 能用但 SFT 后遗忘的 API）。当任务期望某 API 但模型未调用时，施加 `0.02 × scene_weight` 的惩罚。
+
+### 6. 场景推断（`_infer_scenario`）
+
+优先级：
+1. 任务 metadata 中的 `scenario`/`category`/`task_category`/`scene` 字段（若有）
+2. 启发式：expected_apis 或 tool_calls 中含 db* → layout；含 emy* → schematic；两者都有 → layout（优先恢复）；否则 → others
+
+### 7. 自测验证
+
+| 测试 | tool_calls | scenario | R4 base | enhanced | bonus |
+|:--|:--|:--|--:|--:|--:|
+| Layout + dbCreateLib/dbNewCV | [dbCreateLib, dbNewCV] | layout | 0.500 | 0.560 | +0.060 |
+| Schematic + emyScalarName/emyBlock.create | [emyScalarName, emyBlock.create] | schematic | 0.500 | 0.547 | +0.047 |
+| 无 both_missed API | [someOtherAPI] | others | 0.500 | 0.500 | +0.000 |
+
+> Layout bonus (0.060) > Schematic bonus (0.047)，因为 layout weight (1.0) > schematic weight (0.786)。✅ 场景加权生效。
+
+### 8. 配置接入
+
+`baize_posttrain_rl_verl_config_v2.yaml` 新增 reward_kwargs：
+```yaml
+enable_scene_weighting: false   # set true when arm=R4 + sandbox ready
+scene_weight_config: rl_scene_weight_config_r300.json
+```
+
+当前 `enable_scene_weighting: false`（沙盒未通，arm=R0 骨架模式）。沙盒恢复后切换 arm=R4 + `enable_scene_weighting: true` 即可启用。
+
+### 9. 对 BaiZe 正式训练的启示
+
+1. **GRPO 兼容性是奖励设计的硬约束**：任何奖励 shaping 必须在组内产生方差才能影响 GRPO 学习信号。简单乘子无效；加性项有效。
+2. **场景加权 ≠ 场景采样**：本设计在奖励侧加权；另外可在数据侧做课程采样（多采 Layout/DesignMgmt 任务），两者互补。
+3. **论文消融设计**：R4（无场景加权）vs R4+R300（有场景加权）可作为消融实验臂，验证场景加权是否在 RL 阶段消除遗忘。
+4. **bonus 幅度保守**：0.03/API × 最多 30 API = 0.9 理论上限，但实际单任务通常 2-5 个 both_missed API → bonus 0.06-0.15，相对 R4 base [0, 1.1] 是合理 shaping（不主导奖励）。
+
+### 10. 局限性
+
+- both_missed set 仅含 top 30 API（R297 的 `top_both_missed_apis` 只有 30 个）；完整 322 个 both_missed API 的 per-API n_expected 数据需从 api_matrix 重新提取（当前 anti_forget set 已含 50 个 base_only）
+- 场景推断的启发式（db*→layout, emy*→schematic）是粗粒度近似；精确场景需从 EDA-Eval 数据集的 category 字段获取
+- 未沙盒验证（沙盒仍阻塞，105th wake TCP 8664 FILTERED）——bonus/penalty 的实际 RL 效果待 Phase 3 实测
+- 替身预演声明：以上设计基于 MiniCPM5-2B 替身的 R297 静态分析数据，收益不可迁移到 BaiZe 本体
+
+---
+
