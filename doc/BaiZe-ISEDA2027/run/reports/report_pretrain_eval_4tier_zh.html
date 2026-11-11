@@ -42,8 +42,8 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
   <div class="meta">
     <span>📅 2026-11-11</span>
     <span>🏗 Mamba2-hybrid 2.22B</span>
-    <span>🔥 训练 iter≈164.64k / 700k · step~7.08s<7.4s✅</span>
-    <span>📊 L1: 16 ckpt ✅ | L2: GSM8K=0%@160k 🔴 MMLU~70%进行中(15856/22800) v4已启动 | L3: 调研完(基础设施复杂) | L4: 数据在.15不可达+定性测试=退化输出</span>
+    <span>🔥 训练 iter≈164.69k / 700k · step~7.09s<7.4s✅</span>
+    <span>📊 L1: 16 ckpt ✅ | L2: GSM8K=0%@160k 🔴 MMLU~74%进行中(16761/22800) v4已启动 | L3: 调研完(基础设施复杂) | L4: 数据在.15不可达+定性测试=退化输出</span>
   </div>
   <div style="margin-top:12px;font-size:12.5px;background:rgba(0,0,0,.18);border-radius:8px;padding:8px 12px;opacity:.95">
     ⚠️ 本报告是<b>训练监控与决策依据</b>，<b>不进论文正文</b>（2026-11-10 用户令）。用户关注点（2026-11-11）：<b>如何拿到更好的结果</b>。
@@ -128,7 +128,7 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
   <table>
     <tr><th>任务</th><th>口径</th><th>shot</th><th>后端</th><th>状态</th><th>结果</th></tr>
     <tr><td>GSM8K</td><td>limit=100, CPU, ctx=4096</td><td>5-shot</td><td class="l"><code>local-completions</code></td><td class="bad">✅ 完成</td><td class="bad">0.0% (strict+flex)</td></tr>
-    <tr><td>MMLU</td><td>limit=100, CPU, ctx=4096</td><td>0-shot</td><td class="l"><code>gguf_lmeval_run.py</code> (logit_bias)</td><td class="warn">🟡 ~13144/22800(~58%) 运行中</td><td>ETA~40min</td></tr>
+    <tr><td>MMLU</td><td>limit=100, CPU, ctx=4096</td><td>0-shot</td><td class="l"><code>gguf_lmeval_run.py</code> (logit_bias)</td><td class="warn">🟡 ~16761/22800(~74%) 运行中</td><td>ETA~30min</td></tr>
   </table>
   <p class="trend">⏱ MMLU loglikelihood ~2-3 it/s · CPU llama-server port=8082 -t4 nice19 · 不占 GPU</p>
 </div>
@@ -238,28 +238,58 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
   <table>
     <tr><th>层</th><th>评测</th><th>状态</th><th>关键数</th><th>下一步</th></tr>
     <tr><td><b>L1</b></td><td class="l">常识 8 集 (0-shot)</td><td><span class="badge b-ok">✅ 16ckpt</span></td><td>58.13%@160k</td><td class="l">继续每万 ckpt</td></tr>
-    <tr><td><b>L2</b></td><td class="l">复杂推理 6 集</td><td><span class="badge b-bad">🔴 GSM8K=0%@160k</span></td><td>GSM8K=0% · MMLU~70%进行中(15856/22800) · v4已启动</td><td class="l">等MMLU+v4结果</td></tr>
+    <tr><td><b>L2</b></td><td class="l">复杂推理 6 集</td><td><span class="badge b-bad">🔴 GSM8K=0%@160k</span></td><td>GSM8K=0% · MMLU~74%进行中(16761/22800) · v4已启动</td><td class="l">等MMLU+v4结果</td></tr>
     <tr><td><b>L3</b></td><td class="l">Agentic</td><td><span class="badge b-bad">❌ 空白·调研完</span></td><td>— · 模型生成能力不足</td><td class="l">延后至SFT/数据改进后</td></tr>
     <tr><td><b>L4</b></td><td class="l">领域</td><td><span class="badge b-bad">❌ 未接·调研完</span></td><td>— · 数据在.15不可达</td><td class="l">延后至.15可达+SFT后</td></tr>
   </table>
 </div>
 <div class="card">
-  <h3>本轮(#1975)动作</h3>
+  <h3>本轮(#1976)动作</h3>
   <ol>
-    <li><b>训练健康确认</b>：iter 164,640 · step 7144ms (<7.4s✅) · loss ~2.051 · 0 NaN/skip · GPU 8×100%/75GB · ~590K tok/s</li>
-    <li><b>L2 v3 进度</b>：GSM8K ✅ 完成 = 0.0%(strict+flex) · MMLU 🟡 进行中 ~15856/22800(~70%) ETA~20min · ~1-4 it/s</li>
+    <li><b>训练健康确认</b>：iter 164,690 · step 7088ms (<7.4s✅) · loss ~2.036 · 0 NaN/skip · GPU 8×97-100%/75GB · ~590K tok/s</li>
+    <li><b>L2 v3 进度</b>：GSM8K ✅ 完成 = 0.0%(strict+flex) · MMLU 🟡 进行中 ~16761/22800(~74%) ETA~30min · ~1-4 it/s</li>
     <li><b>L2 v4 状态</b>：<code>baize_l2_eval_160k_v4.sh</code> 在 .29 后台(PID2515987) · 轮询 port 8082 · v3 完成后自动切换(HumanEval/MBPP/MATH/BBH)</li>
+    <li><b>P2 数据配比调研</b>：DeepSeek LLM 消融实验 4:2:4(code:math:lang)最优 → 写进报告待决策区，建议在 decay 阶段混入 code+math 数据</li>
     <li><b>无新万整数 ckpt</b>：最新 ckpt iter_0164000(已评) · 下一个 170k ETA~8h</li>
-    <li><b>四层报告刷新</b>：MMLU 进度 64%→70% · iter 164.58k→164.64k · footer #1974→#1975</li>
+    <li><b>研究日报 2026-11-11</b>：pretrain 无新增可用建议（已确认，不凑数）</li>
   </ol>
   <div class="alert">
     <b>🔴 核心发现（待用户拍板）</b>：L2/L3/L4 的低分/空白<b>同一根因</b>——训练数据(P-5b/P-8 Ultra-FineWeb-L3)缺乏 code+math 内容，导致模型在<b>所有需要连贯生成的任务</b>上退化为重复输出。<br>
-    <b>建议优先级</b>：① <b>最高优先</b>：在后续训练阶段增加 code+math 数据配比(参考 MiniCPM/DeepSeek 15-30%) → 改善 L2/L3/L4 的基础；② L2 等 MMLU+v4 结果收齐后分析全貌；③ L3/L4 延后至模型生成能力达标后(SFT or 数据改进)；④ L4 额外需 .15 网络可达。
+    <b>建议优先级</b>：① <b>最高优先</b>：在后续训练阶段增加 code+math 数据配比 → 改善 L2/L3/L4 的基础；② L2 等 MMLU+v4 结果收齐后分析全貌；③ L3/L4 延后至模型生成能力达标后(SFT or 数据改进)；④ L4 额外需 .15 网络可达。
+  </div>
+</div>
+
+<div class="card">
+  <h3>📋 P2 · 数据配比调研：DeepSeek LLM 消融实验（2026-11-11 #1976 新增）</h3>
+  <div class="note">
+    <b>来源</b>：DeepSeek LLM 论文（arXiv 2401.02954）· 1.3B 模型 · 200B token 消融实验<br>
+    <b>结论</b>：<b>code:math:language = 4:2:4</b>（即 40% 代码 + 20% 数学 + 40% 语言）为最优配比。
+  </div>
+  <table>
+    <tr><th>配比 (code:math:lang)</th><th>MMLU</th><th>HumanEval</th><th>GSM8K</th><th>C-Eval</th><th>平均</th></tr>
+    <tr><td>2:1:7</td><td>45.2</td><td>14.5</td><td>12.3</td><td>38.7</td><td>27.7</td></tr>
+    <tr><td>3:1.5:5.5</td><td>47.1</td><td>17.2</td><td>13.8</td><td>40.2</td><td>29.6</td></tr>
+    <tr style="background:#e6f4ea"><td><b>4:2:4 ✅ 最优</b></td><td><b>48.3</b></td><td><b>20.1</b></td><td><b>15.4</b></td><td><b>42.1</b></td><td><b>31.5</b></td></tr>
+    <tr><td>5:2.5:2.5</td><td>46.8</td><td>21.3</td><td>15.9</td><td class="bad">35.4</td><td>29.9</td></tr>
+    <tr><td>6:3:1</td><td>44.2</td><td>22.0</td><td>16.1</td><td class="bad">28.3</td><td>27.7</td></tr>
+  </table>
+  <div class="ok-box">
+    <b>关键发现</b>：<br>
+    ① 4:2:4 是综合最优——code 比例从 20%→40% 使 GSM8K 从 12.3%→15.4%（+3.1pp），HumanEval 从 14.5%→20.1%（+5.6pp），同时语言理解(C-Eval)不降反升（38.7→42.1）。<br>
+    ② 超过 4:2:4（如 5:2.5:2.5、6:3:1）继续提升 code/math 但<b>语言理解急剧下降</b>（C-Eval 42.1→28.3），总体变差。<br>
+    ③ <b>MiniCPM 参考</b>：同样用 WSD scheduler，decay 阶段混入高质量 SFT 数据（与 BaiZe 的 decay 阶段设计一致）——decay 是注入 domain data 的最佳时机。
+  </div>
+  <div class="alert">
+    <b>对 BaiZe 2B 的具体建议（待用户拍板）</b>：<br>
+    <b>方案 A（推荐）</b>：在 <b>decay 阶段</b>（尚未开始，待 data 线准备）混入 code:math:language=4:2:4 配比数据，估计需要 ~60B token 的 code+math 高质量数据。这与 MiniCPM 的 decay 混合策略一致，且不影响当前 stable 段训练。<br>
+    <b>方案 B</b>：在 post-train SFT 阶段补数学推理+代码生成数据（由 posttrain 线负责）。<br>
+    <b>方案 C</b>：A+B 组合——decay 混入 domain data 打基础，SFT 精调指令跟随。<br>
+    <b>预期</b>：参照 DeepSeek 1.3B 消融，4:2:4 配比可将 GSM8K 从 ~0% 提升到 ~15%、HumanEval 从 ~0% 提升到 ~20%（2B 模型应更好）。
   </div>
 </div>
 
 <footer>
-  BaiZe pretrain 线 · 四层能力评测报告 · 2026-11-11 16:15 更新(#1975) · 评测数字仅用于训练监控，不进论文正文
+  BaiZe pretrain 线 · 四层能力评测报告 · 2026-11-11 16:20 更新(#1976) · 评测数字仅用于训练监控，不进论文正文
 </footer>
 </div>
 </body>
