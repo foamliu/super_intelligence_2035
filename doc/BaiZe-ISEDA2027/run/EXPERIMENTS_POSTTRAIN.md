@@ -8945,3 +8945,60 @@ layer_name)) plus the related MCP entry EmyTechGetLayerNum.
 > Note: R185/R186 EXPERIMENTS sections were backfilled in wake256 (they were
 > completed in wake254/wake255 but not logged to EXPERIMENTS at the time).
 
+---
+
+## §R188 (2026-11-11 wake257) v18 dm* Data-Management Object Corpus (ISOLATE-class, pollution-gated)
+
+**Background**: R181 coverage audit (updated R188) found that after v11-v17
+(343 pairs covering 57/164 eval raw APIs), 107 APIs remained blind.  The
+dm* data-management family had the highest single-API blind: dmGetObj
+(eval_usage=8).  R188 targets 5 dm* APIs totaling 12 eval usages.
+
+### 1. Targeted APIs
+
+All 5 are ISOLATE-class (eval helpers, eval_count>0).  S5.1 red line isolates
+on eval *entry_point* strings, not helper API names — teaching the public API
+reference is compliant.
+
+| API | eval_count | Description |
+|:--|--:|:--|
+| dmGetObj | 8 | Overloaded: lib/cell/view objects (1/2/3 args) |
+| dmGetObjF | 1 | Overloaded: file objects (2/3/4 args), wildcard support |
+| dmGetObjType | 1 | Returns type string for any dm object (6 overloads) |
+| dmGetObjReadPath | 1 | Returns read path for any dm object (6 overloads) |
+| dmDeleteObj | 1 | Permanently delete a dm object (6 overloads) |
+
+Signatures fetched via pyAether MCP get_api_details (wake257).
+
+### 2. Corpus structure
+
+25 pairs: S1 (doc->code) x5 + S4 (multi-step trace) x5 + S5 (param variation) x5
++ S3 (multi-API chain) x5 + S6 (API lookup) x5.
+
+### 3. Pollution scan
+
+- 155 eval entry_points full scan: 25/25 PASS, 0 REJECTED
+- Independent re-scan: 25 pairs, 0 hits
+- GATE: PASS — v18 is training-ready
+
+### 4. Coverage update (v11-v18)
+
+| Metric | After v17 | After v18 | Delta |
+|:--|--:|--:|:--|
+| Covered eval APIs | 57 | 62 | +5 |
+| Blind eval APIs | 107 | 102 | -5 |
+| Corpus unique APIs | 74 | 79 | +5 |
+| Total pairs | 343 | 368 | +25 |
+| Coverage ratio | 34.8% | 37.8% | +3.0 pp |
+
+### 5. Deliverables
+
+| Item | Path | Size |
+|:--|:--|--:|
+| corpus builder | `run/baize_posttrain_r188_dm_datamgmt_corpus.py` | 27,224 bytes / 525 lines / py_compile OK |
+| training-ready corpus | `run/sft_pyaether_corpus_v18_dm_datamgmt.jsonl` | 21,216 bytes / 25 pairs |
+
+> Cumulative PyAether SFT corpus: v11 (93) + v12 (25) + v13 (45) + v14 (45)
+> + v15 (45) + v16 (45) + v17 (45) + v18 (25) = **368 pairs**.  All 368 pairs
+> PASS the 155-entry_point pollution scan.  v11-v18 are gated for training.
+
