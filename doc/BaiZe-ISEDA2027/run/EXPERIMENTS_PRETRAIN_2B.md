@@ -1322,3 +1322,19 @@ ssh 10.239.2.29 'tail -5 /proc/146283/fd/1'
 - 📦 TASK≈22.5KB ✅ / MEMORY≈11.9KB ✅
 
 **160k eval 状态**: llama-server (PID1726277) + lm_eval (PID1736839) 仍运行中 · results.json 尚未落盘 · 报告刷新 pending
+
+### 论文 §4.6 刷新 #1950 (2026-11-11 08:12)
+
+- 取数命令: `ssh 10.239.2.29 'tail -30 /proc/146283/fd/1'`
+- 最新 iteration: 160,560 / 700,000 (08:09:19)
+- 末 10 步 (160,470–160,560) step time: 6938.5–7140.7ms (均 7026ms, 均 <7.4s ✅)
+- loss 范围: 2.013–2.032, 均值 ≈2.02
+- 0 NaN / 0 skipped iterations ✅
+- GPU: 8 卡 100% / ~75GB
+- tok/s = 4,194,304 / 7.026s = 596,787 ≈ 597K
+- wall-clock = 700k × 4,194,304 / 597K = 56.9d ≈ 57d (不变)
+- 刷新文件: 4_llm_pretrain.tex line109 (iter 160,500→160,560, tok/s 598K→597K), 0_abstract.tex line14 (同步)
+- tab:prod-budget: "160k done" 不变 (160,560 rounds to 160k); total ≈60.5d 不变
+- latexmk: 5 pages / 228,237 bytes / 0 errors / 0 undefined ✅
+- grep benchmark 全文 = 0 命中 ✅; §4.7 不存在 ✅
+- commit: 9991d5b09, pushed to origin/main
