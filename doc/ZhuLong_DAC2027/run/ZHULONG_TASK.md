@@ -1,5 +1,20 @@
 ﻿# ZHULONG_TASK.md — ZhuLong（DAC2027）EDA 消融评测 · 合并任务书
 
+[用户令 · 2026-11-11 22:4x · 最高优先 · 覆盖任何"抽检后停机/作废"建议]
+用户原话："抽样的结果只做参考，跑完再说。不许因为抽检思维链漂回英文而停止评测。坚决把评测执行到底。RU之后，regrade zh r2.再之后重跑 zh r3"
+
+执行口径（严格按顺序，不许改序）：
+1) 评测不许停：B_ru_r1/r2/r3 必须全部跑完（30/30）。抽检报告只是参考；不得因 en/es/fr/ru 思维链漂回英文而 kill 编排器、暂停轮次、提前收口或改编排器；WAITING 不得因此置 1。
+2) 现有编排器 PID 3675162 继续跑；B_ru 三轮完成前不做任何会打断评测的动作（不抢沙盒、不改 trace、不重跑其他臂）。
+3) RU 三轮全部结束后，按此顺序执行：
+   - 先 regrade B_zh_r2：用已存 completed_code_generation_2026_1110_073833.jsonl 原地补分；补分后原位替换 run/ablation_think_lang_results.json 的 B_zh_r2（旧 pass=null）；原 batch/trace/日志保留不删。
+   - 再重跑 B_zh_r3：起新 batch；旧 r3（78.5%）标 SUPERSEDED 留档，不删；新 r3 完成后更新 results JSON 与 cost 字段。
+4) 重跑 r3 的配置：先按与 B_zh_r1/r3 相同的现有配置跑（不改 prompt、不改基座），保证可比；"基础 prompt 强制中文 / 基座不恒定"的修法另开令，不许在本次重跑里顺手改口径。
+5) 报告：30 轮 + regrade + 新 r3 全部落盘后，才按 report_zhulong_lang_switch_audit_zh.html §5.3 做降级改写；当前不动报告、不新增 divergent 产物。
+6) 每轮心跳必须写明：当前轮次/30、编排器 PID、B_ru 进度、B_zh_r2 regrade 状态、B_zh_r3 重跑状态；WAITING 不得因抽检结论置 1。
+7) 红线：不 kill 编排器/worker/gap-grabber（除明确的 regrade/重启流程）；不碰 trace 原文；不占沙盒；不改别线。
+
+
 > 🔍 **用户令 · 2026-11-11（最高优先 · 评测期间做）：抽查 B 轴 trace，验证思维链真的换了语言**
 >
 > **用户原话**：「让zhulong agent在评测过程中看看 思维链语言消融（B）的现有trace，抽查一下，看看思维链是否遵循prompt改成了指定语言。」
