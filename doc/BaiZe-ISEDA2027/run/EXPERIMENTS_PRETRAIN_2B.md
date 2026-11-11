@@ -1418,3 +1418,36 @@ ssh 10.239.2.29 'tail -5 /proc/146283/fd/1'
 - latexmk: 5 pages / 228,442 bytes / 0 errors ✅
 - grep benchmark 全文 = 0 命中 ✅; §4.7 sec:ckpt-scaling 不存在 ✅
 - 160k eval: 仍运行中 (llama-server PID1726277 + lm_eval PID1736839, etimes≈4620s≈77min), results.json pending
+
+### 160k eval 交付 + 论文 §4.6 刷新 #1957 (2026-11-11 09:14)
+
+- 取数命令: `ssh -o StrictHostKeyChecking=no 10.239.2.29 'tail -12 /proc/146283/fd/1'`
+- 最新 iteration: 161,110 / 700,000 (09:14:14)
+- 末 10 步 (161,020–161,110) step time: 6981.5–7179.9ms (均 7068.5ms, 均 <7.4s ✅)
+- loss 范围: 2.011–2.020, 均值 ≈2.02
+- 0 NaN / 0 skipped iterations ✅
+- GPU: 8 卡 96–100% / ~75GB
+- tok/s = 4,194,304 / 7.0685s = 593,273 ≈ 593K (较前轮 592K +1K)
+- wall-clock = 700k × 4,194,304 / 593K = 4,950,782s = 57.3d ≈ 57d (不变)
+- 刷新文件: 4_llm_pretrain.tex line109 (iter 160,970→161,110, tok/s 592K→593K), 0_abstract.tex line14 (同步), tab:prod-budget line122 (Status 160k→161k done)
+- latexmk: 5 pages / 228,247 bytes / 0 errors ✅
+- grep benchmark 全文 = 0 命中 ✅; §4.7 sec:ckpt-scaling 不存在 ✅
+
+#### 160k eval 结果（gguf_iter_160000_fixed_8set/results.json, 09:05 落盘）
+
+| 任务 | acc | acc_norm | harness 口径 |
+|:--|:--|:--|:--|
+| ARC-Challenge | 0.35 | 0.34 | 0.34 |
+| ARC-Easy | 0.61 | 0.62 | 0.62 |
+| BoolQ | 0.67 | N/A | 0.67 |
+| HellaSwag | 0.39 | 0.53 | 0.53 |
+| OpenBookQA | 0.24 | 0.34 | 0.34 |
+| PIQA | 0.75 | 0.75 | 0.75 |
+| SciQ | 0.89 | 0.82 | 0.82 |
+| Winogrande | 0.58 | N/A | 0.58 |
+| **Avg(harness)** | | | **58.13%** |
+
+- 160k harness Avg = 58.13%（新高峰，前峰值 58.00% @110k/130k，150k 为 57.12%）
+- 报告刷新: `reports/report_pretrain_llamacpp_scaling_zh.html`（24,331 B, 16/20 ckpt, 10k–160k 全覆盖）
+- 生成器: `gen_llamacpp_scaling_report.py`（TARGET_ITERS 含 10k–200k，幂等）
+- 全 16 点 harness Avg 曲线: 51.50→52.00→53.00→55.12→54.25→54.25→56.00→57.00→57.88→57.75→58.00→56.75→58.00→55.25→57.12→**58.13**
