@@ -1,0 +1,16 @@
+Dear Dr. Pertsch,
+
+I am Yang Liu, author of Superintelligence 2035 and lead of the BaiZe-ISEDA2027 project, a ~2B domain model for chip design. It drives synthesis and simulation tools through multi-turn calls, so every action we emit is a structured tool call whose arity and parameter types change from tool to tool.
+
+Octo is our closest precedent: one policy over 800k heterogeneous trajectories that adapts to a new action space in hours. Three things I could not settle from the paper:
+
+1) Action-space heterogeneity. Octo predicts fixed-dimension action chunks. When the space is not a consistent vector, did chunking hurt fine-grained correction, and looking back, would you still pick chunking over a per-command interface?
+
+2) Co-training value. At ~2B parameters with only tens of thousands of in-domain traces, does co-training with many other "embodiments" still pay off, or does negative transfer dominate? Any ratio you would protect?
+
+3) Evaluation power. Roughly how many trials per task are needed before a 1-2 point gap is real?
+
+These would shape our action-interface and data-mixing ablations. Thank you for the paper and for any pointer to the relevant ablations.
+
+Best regards,
+Yang Liu

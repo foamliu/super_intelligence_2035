@@ -10,7 +10,7 @@
 >
 > **元数据核验**：标题 / 首次提交日 均取自 arXiv 官方 API（`export.arxiv.org/api/query?id_list=...`，2026-11-11 两轮实测 `HTTP 200` + `application/atom+xml; charset=utf-8`，首轮 4/4、第二轮 4/4 = 累计 8/8）。
 
-**本轮快照**：累计 **35** 条（首轮 11:5x 收 4 条；第二轮 11:4x 补 4 条 EDA / agent / PEFT；第三轮 12:1x 补 4 条 RoPE / SWE-bench / Reflexion / CoT；第四轮 12:4x 补 3 条 GPT-3 / InstructGPT / LLaMA；第五轮 15:0x 补 4 条 ResNet / seq2seq / Dyna / LLaVA；第六轮 18:0x 补 4 条 GPT-1 / GPT-2 / Kaplan scaling laws / DQN；第七轮 21:0x 补 4 条 AlphaGo / AlphaGo Zero / Gemini / OpenVLA；第八轮 2026-11-12 00:0x 补 4 条 AlphaFold / AlphaStar / Kimi k1.5 / π0；**第九轮 2026-11-12 03:0x 补 4 条** GLM-4 / MiniMax-01 / RT-2 / Octo）｜ 覆盖（一篇可服务多线，按文内「与我们工作的关系」逐条计数）：pretrain **22** · vision **12** · harness **21** · data **19** · zhulong **25** · designflow **10**
+**本轮快照**：累计 **39** 条（首轮 11:5x 收 4 条；第二轮 11:4x 补 4 条 EDA / agent / PEFT；第三轮 12:1x 补 4 条 RoPE / SWE-bench / Reflexion / CoT；第四轮 12:4x 补 3 条 GPT-3 / InstructGPT / LLaMA；第五轮 15:0x 补 4 条 ResNet / seq2seq / Dyna / LLaVA；第六轮 18:0x 补 4 条 GPT-1 / GPT-2 / Kaplan scaling laws / DQN；第七轮 21:0x 补 4 条 AlphaGo / AlphaGo Zero / Gemini / OpenVLA；第八轮 2026-11-12 00:0x 补 4 条 AlphaFold / AlphaStar / Kimi k1.5 / π0；第九轮 2026-11-12 03:0x 补 4 条 GLM-4 / MiniMax-01 / RT-2 / Octo；**第十轮 2026-11-12 06:0x 补 4 条** SWE-agent / Tree of Thoughts / Llama 2 / LLaVA-1.5）｜ 覆盖（一篇可服务多线，按文内「与我们工作的关系」逐条计数）：pretrain **23** · vision **13** · harness **23** · data **21** · zhulong **27** · designflow **11**
 
 > 🆕 **第四轮（2026-11-11 12:4x）新增 3 条 = 「规模 → 指令 → 开放权重」三段主线**：GPT-3（few-shot 能力从哪来）→ InstructGPT（对齐/指令跟随的范式起点）→ LLaMA（用「多 token」把开放权重做到可用）。三篇合起来回答 data 线当前最实际的问题：**token 预算、指令数据、公开配比**。
 >
@@ -30,6 +30,10 @@
 > 🆕 **第九轮（2026-11-12 03:0x）新增 4 条 = 「中文系开源 + VLA 两条地基」**：GLM-4（中文为主 10T token + All Tools 工具选择）→ MiniMax-01（线性注意力 + MoE，百万级上下文）→ RT-2（动作＝文本 token、6k 次真机评测）→ Octo（80 万轨迹、9 平台、数小时适配新动作空间）。**必读清单：10/10 组均有落点，具体条目 26/37**；组内剩余：TD-Gammon、Christiano 2017 / Stiennon 2020、Llama 2 / 3、LLaVA-1.5、Tree of Thoughts / SWE-agent、RT-1、SORA。
 >
 > **第九轮核验证据（可复核）**：arXiv API `id_list=2611.14459,2611.14493,2611.13560,2406.12793,2501.08313,2307.15818,2405.12213,2307.09288,2310.03744` **`200` + `application/atom+xml; charset=utf-8`**（38,801 B，9 条 entry；首次提交 2026-11-10 ×3 / 2024-06-18 / 2025-01-14 / 2023-07-28 / 2024-05-20 / 2023-07-18 / 2023-10-05）；OpenAlex `6/6 200`（1,879 / 213 / 2,322 / 1,192 / 19,635 / 3,281，查询日 2026-11-12）；Crossref 精确标题 **Octo 命中**（`10.15607/rss.2024.xx.090`，2024-07-15），**RT-2 未命中 ⇒ 会议记「未核验」**。
+
+> 🆕 **第十轮（2026-11-12 06:0x）新增 4 条 = 「接口即方法 + 推理期算力 + 开源三档配方 + 视觉最小基线」**：SWE-agent（ACI 设计本身决定分数）→ Tree of Thoughts（搜索换成功率）→ Llama 2（SFT→拒绝采样→PPO 三段式，68 人报告）→ LLaVA-1.5（三处小改动 + 120 万公开数据 + 8×A100 一天）。**必读清单：10/10 组均有落点，具体条目 30/37**；组内剩余：TD-Gammon、Christiano 2017 / Stiennon 2020、Llama 3、RT-1、SORA。
+>
+> **第十轮核验证据（可复核）**：arXiv API `id_list=2307.09288,2310.03744,2405.15793,2305.10601` **`200` + `application/atom+xml; charset=utf-8`**（13,172 B，4 条 entry；首次提交 2023-07-18 / 2023-10-05 / 2024-05-06 / 2023-05-17，最新版本 v2 / v2 / v3 / v2）；会议取自 **arXiv `arxiv:comment` 原文**（ToT 明写 `NeurIPS 2023 camera ready`、LLaVA-1.5 明写 `Camera ready, CVPR 2024 (highlight)`；Llama 2 / SWE-agent 的 comment 未提会议 ⇒ 由 OpenAlex 定）；被引数 **OpenAlex 4/4 `200`**（19,635 / 3,281 / 1,502 / 3,112，查询日 2026-11-12）；会场 DOI 与页码来自 OpenAlex `primary_location`（LLaVA-1.5 `10.1109/cvpr52733.2024.02484` pp.26286–26296；SWE-agent `10.52202/079017-1601` pp.50528–50652；ToT `10.52202/075280-0517` pp.11809–11822；Llama 2 无会场记录）。
 
 ---
 
@@ -628,10 +632,78 @@
 
 ---
 
+## 36. SWE-agent: Agent-Computer Interfaces Enable Automated Software Engineering
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | SWE-agent: Agent-Computer Interfaces Enable Automated Software Engineering |
+| 作者（前 3） | John Yang · Carlos E. Jimenez · Alexander Wettig（et al.，共 **7** 位；含 Shunyu Yao / Karthik Narasimhan） |
+| 年份 | 2024（arXiv 首次提交 **2024-05-06**，最新 **v3** 2024-11-11，本线实测） |
+| 会议 / 期刊 | **NeurIPS 2024**（OpenAlex `primary_location.source` = `neural information processing systems`，DOI `10.52202/079017-1601`，pp. 50528–50652） |
+| 被引数 | **1,502**（OpenAlex，DOI `10.48550/arxiv.2405.15793`，查询日 2026-11-12；S2 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2405.15793> ｜ 会场 DOI `10.52202/079017-1601` ｜ 代码 <https://swe-agent.com> |
+| 一句话贡献 | 提出「**agent-计算机接口（ACI）必须为人之外的另一种用户单独设计**」：给 LM agent 定制打开文件/编辑/检索/执行测试的接口，抑制低层无效动作；据摘要，在 SWE-bench 上 pass@1 **12.5%**、HumanEvalFix **87.7%**，均称当时最好，并分析 ACI 设计如何改变 agent 行为。 |
+| 与我们工作的关系 | **harness（直接，接口即能力）**：本文的核心主张是「**接口设计本身就是方法**」——同一模型换 ACI，SWE-bench 分数差一大截。这正是我们 harness 线在做的事（工具封装、输出截断、报错回显格式）。<b>动作</b>：harness 线做「同一个 2B/7B 模型 × 两套工具封装（原样 vs ACI 式：统一 edit 命令 + 限长输出 + 明确错误摘要）」的配对实验，<b>判据</b>：ACI 臂在一族 EDA 任务上成功率高 ≥3 点且平均轮次不升；否则不引入。<br>**designflow（工具接口保真度）**：ACI 是对真实工具（git / 测试 / 编辑器）的**窄接口**，而不是自由 shell；<b>动作</b>：designflow 的 L1–L5 保真度里加一条「接口粒度」维度（自由 shell / 受限命令集），造题时两档都出。<br>**data（轨迹数据格式）**：agent 的每一步被记录成「命令 + 观察 + 结果」，可直接转成训练轨迹；<b>动作</b>：data 线统一 `<cmd, obs, reward>` schema，并保留失败轨迹（负样本占比单独统计）。<br>**风险**：① SWE 任务（仓库级代码修复）与 EDA 工具（分钟级综合/仿真）时间尺度与错误面不同；② 12.5% 是 2024 年的基线，🚫 不可当作现在的能力参照；③ 作者自报。 |
+
+首次收录: 2026-11-12（第十轮）｜ 状态: 元数据已核验（arXiv API `200` + `application/atom+xml`；OpenAlex `200`）
+
+---
+
+## 37. Tree of Thoughts: Deliberate Problem Solving with Large Language Models
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Tree of Thoughts: Deliberate Problem Solving with Large Language Models |
+| 作者（前 3） | Shunyu Yao · Dian Yu · Jeffrey Zhao（et al.，共 **7** 位；含 Izhak Shafran / Thomas L. Griffiths / Yuan Cao / Karthik Narasimhan） |
+| 年份 | 2023（arXiv 首次提交 **2023-05-17**，最新 **v2** 2023-12-03，本线实测） |
+| 会议 / 期刊 | **NeurIPS 2023**（arXiv `comments` 明写 camera-ready；OpenAlex DOI `10.52202/075280-0517`，pp. 11809–11822） |
+| 被引数 | **3,112**（OpenAlex，DOI `10.48550/arxiv.2305.10601`，查询日 2026-11-12；S2 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2305.10601> ｜ 会场 DOI `10.52202/075280-0517` ｜ 代码 <https://github.com/princeton-nlp/tree-of-thought-llm> |
+| 一句话贡献 | 把 CoT 从「一条链」推广成「**思维树**」：在「思维」这一语义单元上做多分支探索 + 自评 + 前瞻/回溯，使推理可搜索；据摘要，在 24 点游戏上 GPT-4 + CoT 只有 **4%** 成功率，ToT 达 **74%**（另两个任务为创意写作与迷你填字）。 |
+| 与我们工作的关系 | **zhulong（推理期算力分配，直接）**：ToT 证明「**多花推理算力换成功率**」是独立可调的一根轴，和我们「thinking / 语言轴」的消融是同一族问题。<b>动作</b>：zhulong 在固定总预算下比较三臂（单链 / 自洽投票 k 条 / ToT 式显式分支 + 剪枝），<b>判据</b>：ToT 臂只有在「每题工具调用次数不增 30%」时才算赢，否则记「贵而不值」。<br>**harness（评测口径）**：ToT 的收益高度依赖「有可自动判定的中间状态」（24 点游戏可验算）；<b>动作</b>：harness 给每类 EDA 任务标注「中间步骤可否自动验证」，只在该类上允许搜索式推理，避免把不可验证任务上的失败当作方法失败。<br>**pretrain（间接）**：说明「推理能力有一部分来自推理期搜索而非权重」，<b>动作</b>：pretrain 报 base 能力时固定「无搜索」解码，别把 ToT 收益混进 base。<br>**风险**：① 任务刻意选了可搜索、可判分的玩具题，外推到长链路 EDA 流程未验证；② 成本（token × 分支数）在摘要里未给；③ 作者自报。 |
+
+首次收录: 2026-11-12（第十轮）｜ 状态: 元数据已核验（arXiv API `200` + `application/atom+xml`；OpenAlex `200`）
+
+---
+
+## 38. Llama 2: Open Foundation and Fine-Tuned Chat Models
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Llama 2: Open Foundation and Fine-Tuned Chat Models |
+| 作者（前 3） | Hugo Touvron · Louis Martin · Kevin Stone（et al.，共 **68** 位，Meta AI） |
+| 年份 | 2023（arXiv 首次提交 **2023-07-18**，最新 **v2** 2023-07-19，本线实测） |
+| 会议 / 期刊 | **预印本技术报告**（arXiv only；OpenAlex `primary_location.source` = `arXiv (Cornell University)`，无会议 DOI ⇒ 🚫 不写「某会议」） |
+| 被引数 | **19,635**（OpenAlex，DOI `10.48550/arxiv.2307.09288`，查询日 2026-11-12；S2 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2307.09288> ｜ DOI `10.48550/arxiv.2307.09288` |
+| 一句话贡献 | 7B / 13B / 70B 三档**预训练 + 对话微调**模型全家桶（Llama 2-Chat），并首次把「**SFT → RLHF（拒绝采样 + PPO）→ 多轮安全迭代**」的完整配方与安全评估公开写清；据摘要，在多数测试基准上优于开源对话模型，人工评测的 helpfulness / safety 结果「可作为闭源模型的替代」。 |
+| 与我们工作的关系 | **pretrain（配方 + 规模档位，直接）**：3 档同族模型 = 天然的「规模-能力」对照表；<b>动作</b>：pretrain 线报结果时固定「同族至少两档规模」，别只报单点，便于与我们 2B 定位比较。<br>**zhulong（post-train 三段式）**：SFT → 拒绝采样 → PPO 的顺序与「安全数据反复回流」是工业界标准做法；<b>动作</b>：zhulong 的 post-train 消融按这三级拆开报（SFT-only / +拒绝采样 / +RL），每级都记数据量与算力，<b>判据</b>：后一级必须在留出集上带来 ≥2 点且不损前一级能力才保留。<br>**data（数据量与配比披露口径）**：报告给了 token 规模与微调数据量级但**未给完整配比**——这正是我们可追问的缺口；<b>动作</b>：data 线对外汇报时也采用「总量公开、配比分级」的口径，内部留完整配比表。<br>**风险**：① 68 位作者、报告式写作，很多关键数字在附录表里，🚫 不要引二手博客的转述数字；② 2023 年的安全/对齐结论已明显过时；③ 开源许可有商用限制条款（需另核）。 |
+
+首次收录: 2026-11-12（第十轮）｜ 状态: 元数据已核验（arXiv API `200` + `application/atom+xml`；OpenAlex `200`；会议=无）
+
+---
+
+## 39. Improved Baselines with Visual Instruction Tuning（LLaVA-1.5）
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Improved Baselines with Visual Instruction Tuning |
+| 作者（前 3） | Haotian Liu · Chunyuan Li · Yuheng Li（et al.，共 **4** 位；含 Yong Jae Lee） |
+| 年份 | 2023（arXiv 首次提交 **2023-10-05**，最新 **v2** 2024-05-15，本线实测） |
+| 会议 / 期刊 | **CVPR 2024（highlight）**（arXiv `comments` 明写 camera ready；OpenAlex DOI `10.1109/cvpr52733.2024.02484`，pp. 26286–26296） |
+| 被引数 | **3,281**（OpenAlex，DOI `10.48550/arxiv.2310.03744`，查询日 2026-11-12；S2 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2310.03744> ｜ 会场 DOI `10.1109/cvpr52733.2024.02484` ｜ 项目页 <https://llava-vl.github.io> |
+| 一句话贡献 | 一篇「**把基线做扎实**」的短文：只改三处——视觉塔换 **CLIP-ViT-L-336px**、投影从 Linear 换 **MLP**、加入**学术任务型 VQA 数据 + 简单回答格式提示**——就在 **11 个基准**上取得当时最好；据摘要，**13B 权重仅用 120 万公开数据**，单台 **8×A100 约 1 天**训完。 |
+| 与我们工作的关系 | **vision（最小可行配方，直接）**：这是「**小改动 + 公开数据 + 1 天 8 卡**」的性价比样本，正好对应我们 vision 线「有限算力下先把基线打牢」的处境。<b>动作</b>：vision 线把三处改动做成三个开关（视觉塔分辨率 / 投影层类型 / 是否混学术 VQA），做 2³ 全因子或至少三组单变量对照，<b>判据</b>：某开关若在我们域内（版图/波形）指标上 <1 点收益，则不引入，避免无谓复杂度。<br>**data（数据效率口径）**：120 万条公开数据 + 简单格式提示就能对齐，说明「**格式一致性**」比数据量更便宜有效；<b>动作</b>：data 线把「回答格式模板」当作独立变量做 A/B（同数据、不同模板）。<br>**pretrain（算力口径）**：8×A100 × 1 天是罕见的「可复现训练预算」披露；<b>动作</b>：pretrain/vision 报训练成本统一用「卡数 × 小时 × 卡型」，并注明是否含数据加载。<br>**风险**：① 只报「11 个基准最好」而未逐项列数，🚫 不要转述具体分数；② 视觉塔分辨率提升带来的收益与其算力开销不可分；③ 作者自报。 |
+
+首次收录: 2026-11-12（第十轮）｜ 状态: 元数据已核验（arXiv API `200` + `application/atom+xml`；OpenAlex `200`）
+
+---
+
 ## 候选池（下轮起逐轮补，**被引数本轮未查**，勿引用）
 
 > 只登记「已实测 arXiv 元数据」的条目；被引数待下轮 OpenAlex 批量核过再写，**本表数字一律留空 = 未查**。
-> ⚠️ 第九轮把 **GLM-4 `2406.12793` / MiniMax-01 `2501.08313` / RT-2 `2307.15818` / Octo `2405.12213`** 四条转正为 #32–#35（元数据 + 被引当场实测）。**下轮优先**：**Llama 2 `2307.09288`（19,635）/ Llama 3 `2407.21783` · LLaVA-1.5 `2310.03744`（3,281）**、**RT-1 `2212.06817`**、**SORA（OpenAI 技术报告，无 arXiv，作者 Bill Peebles `@billpeeb` 已核验；只能引官方技术报告，🚫 不造 arXiv 号）**、**Tree of Thoughts `2305.10601` / SWE-agent `2405.15793`**、**TD-Gammon（Tesauro 1995，NPL/ICML 口径待核）· Christiano 2017 `1706.03741` / Stiennon 2020（无 arXiv，需另找出处）**。**元数据未实测前不进本表，也不凭印象写 DOI / 被引**。
+> ⚠️ 第十轮把 **Llama 2 `2307.09288` / LLaVA-1.5 `2310.03744` / SWE-agent `2405.15793` / Tree of Thoughts `2305.10601`** 四条转正为 #36–#39（元数据 + 被引当场实测）。**下轮优先**：**Llama 3 Herd of Models `2407.21783`**、**RT-1 `2212.06817`**、**Christiano 2017 `1706.03741`（RLHF 前置）/ Stiennon 2020（无 arXiv，需另找出处）**、**TD-Gammon（Tesauro 1995，NPL/ICML 口径待核）**、**SORA（OpenAI 技术报告，无 arXiv，作者 Bill Peebles `@billpeeb` 已核验；只能引官方技术报告，🚫 不造 arXiv 号）**。**元数据未实测前不进本表，也不凭印象写 DOI / 被引**。
 
 
 | arXiv ID | 标题（arXiv 实测） | 首次提交 | 拟服务线 | 为什么算经典（待核被引） |

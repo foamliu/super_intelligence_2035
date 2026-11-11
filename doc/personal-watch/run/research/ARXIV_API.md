@@ -2241,3 +2241,14 @@ python3 research/arxiv_fetch.py --query 'cat:cs.CL AND abs:"agent"' --max-result
 - **OpenAlex 语法坑**：`filter=doi:10.48550/arxiv.X|doi:10.48550/arxiv.Y` 会被拒 **`400 Invalid query parameters`**（「OR between filters not supported」）⇒ **只能逐条串行**（`/works/https://doi.org/10.48550/arxiv.<ID>`），间隔 2s。本轮 3/3 `200`：33,665 / 8,059 / 23,690（查询日 2026-11-11）。
 - **OpenAlex 机构字段不可信（实例）**：GPT-3 `authorships` 31 位中有 30 位被记为 `Johns Hopkins University`（实为 OpenAI）⇒ **不采用**其机构映射，本线只记「发表时机构（未逐位核验）」或不填。
 - **X（只读）通道**：必须显式带代理 `-x http://127.0.0.1:7897`（本线 shell 不继承 `~/.profile`）；`x.com` **200 / 0.79s**、出口 IP `178.249.213.185`；`syndication.twitter.com/srv/timeline-profile/screen-name/<h>` → **`429`**（未绕过）。登录前 profile 页内嵌 timeline JSON 可解析 `full_text` / `created_at_ms`（约 8–9 条），但**正文含转义引号会被截断** ⇒ 引用前须用单条推文页 `og:title` 核作者，原文**两处一致**才可用。工具：`research/classic/x_fetch.py`。
+
+## §9.154 · 2026-11-12 06:00 CST（AM 轮 · A 轨扫描 + B 轨第十轮）
+
+- **批次未刷新**：仍 `2026-11-10`（最新 `published=2026-11-10T18:59:54Z`）；但 `totalResults` 较 03:0x 上升：`cs.CL` 125,161 → **125,187**（+26）/ `cs.CV` 213,025 → **213,062** / `cs.LG` 298,625 → **298,685** / `cs.AI` 212,361 → **212,409** / `cs.SE` 30,979 → **30,986**（索引继续回填，非新批）。
+- **取数**：单分类 5 查询 **5/5 `200` + `application/atom+xml; charset=utf-8`**（1.19–4.70s，间隔 ≥3.2s）；merged **303** / seen **4** / fresh **299**（`raw/2026-11-12-am-candidates-r154.json`；脚本 `raw/candidates_r154.py`）。
+- **A 轨额度**：当日已 5/5（00:0x + 03:0x 两轮用满）⇒ 本轮**不超额**；5 条强候补写入 `SEEN.md`（状态=候选）+ 日报附录：`2611.13713` RTL/synthesis agents · `2611.13931` TAPCO-G · `2611.13543` attention surgery sanity checks · `2611.13925` OpenRE-Bench · `2611.14285` LM-SimBench。
+- **B 轨元数据**：arXiv API `id_list=2307.09288,2310.03744,2405.15793,2305.10601` **`200` + `atom+xml`**（13,172 B）；会议取自 `arxiv:comment`（ToT = `NeurIPS 2023 camera ready`；LLaVA-1.5 = `Camera ready, CVPR 2024 (highlight)`），Llama 2 无 comment、SWE-agent comment 仅给项目地址 ⇒ 由 OpenAlex 定。
+- **OpenAlex 4/4 `200`**（串行 2s）：19,635（Llama 2，source=arXiv）/ 3,281（LLaVA-1.5，CVPR pp.26286–26296，DOI `10.1109/cvpr52733.2024.02484`）/ 1,502（SWE-agent，NeurIPS pp.50528–50652，DOI `10.52202/079017-1601`）/ 3,112（ToT，NeurIPS pp.11809–11822，DOI `10.52202/075280-0517`）。查询日 **2026-11-12**。
+- **X（只读）**：经 `-x http://127.0.0.1:7897` 实测 `x.com` **200 / 0.56s**、出口 `178.249.213.185`；7 个 profile 全 `200`（`jyangballin` / `KarlPertsch` / `imhaotian` / `ShunyuYao12` / `peteflorence` / `DannyDriess` / `tri_dao`）；`https://x.com/KLieret` **200**（`og:title` + `og:description` 自证身份）⇒ 新核验 1 个。
+- **⚠️ 新口径坑（重要）**：`x_fetch.py` 从 profile 内嵌 timeline 解析出的条目**会混入他人推文** —— 本轮两条拟引用经 `x.com/<handle>/status/<id>` 的 `og:title` 核对分别显示 `Mark Müller (@mnmueller)` 与 `Mercor (@mercor)`，**与预期作者不符 ⇒ 未采用**。今后每条引用必须做「推文页 `og:title` 作者 + `og:description` 正文」双核验，且正文要与 profile `full_text` 互校。
+- **单条推文页 curl 坑**：`https://x.com/<handle>/status/<id>` 直接 GET 返回 **307**（`B=0`）⇒ 必须 `curl -sL`；`og:description` 部分推文存在、部分缺失（缺则正文无法二次核验 ⇒ 不用）。
