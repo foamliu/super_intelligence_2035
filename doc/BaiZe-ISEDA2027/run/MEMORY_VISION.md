@@ -1,6 +1,8 @@
 WAITING: 1
 
-> 🆕 **【wake #1023 · 2026-11-11 20:28】例行巡检·全交付态·零异常**。git pull→Already up to date·无vision相关变更。体积自检TASK=26948B(27KB)✓/MEMORY≈7.0KB✓。v6实验结果文件确认在位(experiment_results.json 75468B)。进程巡检:vision loop PID669545(ppid=1·~13.5天·etimes=1163893s)✓·ops_relay_v2 PID1032513(ppid=1·~18.0天)✓·data loop PID1943222(ppid=1·~3.2天)✓·无收敛旧loop空转(pgrep仅见vision+data)✓。GPU 8×H100 95-100%util/~75GB pretrain全占✓。ops inbox RUN_ID276=.29 eval查询TARGET:12非vision(未变)✓。git log最新pretrain/designflow/posttrain非本线✓。research日报11-11(18:11)vision建议2条(2611.12728 dense reward+LoRA探针r∈{8,16,32})与wake#1010~#1022一致无新增已备查。**未完成指令:无**。📦体积:TASK=27KB✓/MEMORY≈7.0KB✓。
+> 🆕 **【wake #1024 · 2026-11-11 22:3x】例行巡检+v7 sweep运行中·初步结果积极**。git pull→Already up to date。发现v7 sweep正在运行(PID 1829351·21:21启动·18轮中第4轮λ=0.1 s0)——系前序wake基于research日报11-11建议(2611.12728 dense process credit+LoRA探针r∈{8,16,32})创建并commit(aff51c2fa)。**v7 λ=0.03 三seed已完成·全部C>B**：s0 B=47.9%→C=54.2%(+6.3pp)·s1 B=35.0%→C=45.8%(+10.8pp)·s2 B=35.0%→C=41.7%(+6.7pp)·nonzero-std=100%(v6=93.8%·v2-v3<22%)·R_process值极小(0.006/-0.004/0.012)·verdict: s0 NOT SIG / s1 IMPROVE / s2 IMPROVE。v7b LoRA探针(9轮)待v7 proc(9轮)完成后运行·ETA全部完成≈04:00-05:00。进程巡检:vision loop PID669545✓·ops_relay PID1032513✓·data loop PID1943222✓·v7 sweep PID1829351✓·GPU 8×H100 100%util pretrain全占。ops inbox RUN_ID276非vision。research日报11-11(21:10)vision建议与18:11版一致无新增·v7已覆盖。📦体积:TASK=27KB✓/MEMORY≈7.2KB✓。
+
+> 📦 **wake #1023 · 2026-11-11 20:28** 例行巡检·全交付态·零异常·git pull Already up to date·v6结果在位·进程健康·GPU 95-100%·research建议无新增·已fold。
 
 > 📦 **wake #1022 · 2026-11-11 19:21** 例行巡检·全交付态·零异常·git pull Already up to date·v6结果在位·进程健康·GPU 77-94%·research建议无新增·已fold。
 
@@ -32,10 +34,10 @@ WAITING: 1
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | ✅ **波形 RL CPU 阶段2 · v5✅显著提升(用户令核心目标达成)·v6✅已完成(连续奖励改善方差但未显著)**：**v5(类型分类)✅全完** A=16.0%→B(SFT)=37.0%→C(RFT)=53.0%·p=0.0009✅·**v6(GRPO连续奖励)✅已完成(11-11 17:12)** B=35%→C=40%→D=36%·McNemar C-vs-B **p=0.267(❌不显著)**·Bootstrap C-B Δ=+5% CI=[-8%,+19%](含0·❌)·**nonzero-std=93.8%(✅大幅改善·v2-v3<22%)**·VERDICT=TREATMENT NOT SIGNIFICANT\|REWARD-DESIGN DRIVEN·cheat_rate=0·v4(RFT)NULL·v3(GRPO)负结果·v2=6.2%<9.2%·报告29903B(含v5完整结果)·数据集调研完成·技术栈三步冒烟交付·Qwen3.5-2B(1.88B)+LoRA。**WAITING: 1** |
+| PHASE | 🔄 **波形 RL CPU 阶段2 · v7 sweep运行中(research日报建议落地)**：v5✅显著(A=16%→B=37%→C=53%·p=0.0009) · v6✅完成(连续奖励·p=0.267不显著·但nonzero-std 93.8%解决方差) · **v7进行中(11-11 21:21启动·18轮中第4轮)**：v7 proc reward R=R_outcome+λR_process(λ∈{0.03,0.1,0.2}×3seed) + v7b LoRA探针(r∈{8,16,32}×3seed) · λ=0.03三seed全C>B(+6.3/+10.8/+6.7pp)·nonzero-std=100%·ETA≈04:00-05:00 · Qwen3.5-2B(1.88B)+LoRA。**WAITING: 1** |
 | WAITING | 1 |
-| 已完成 | **v6 GRPO连续奖励全量实验✅(11-11 17:12, C=40% vs B=35%, p=0.267不显著, nonzero-std=93.8%)** · v5波形类型分类全量实验✅(wake#892, A=16%→B=37%→C=53%, p=0.0009显著) · v4 RFT实验全量完成(wake#882,NULL) · v3 GRPO连续奖励全完(wake#891,负结果) · advantage方差诊断(wake#838,PARTIAL) · 阶段1 SFT验收PASS(wake#802) · CPU端到端训练循环验证7/7 PASS(wake#741) · 数据泄漏验证+就绪报告HTML(wake#731) · GRPO CPU冒烟PASS(wake#622) · 2B文本骨干提取1.72B(wake#620) · 数据集均衡化9013条(wake#618) · 波形RL计划书(wake#435) · 论文改稿(wake#437~#442) · ArmE-R2/ArmD-R2 全链路 |
-| 当前动作 | **wake#1023 例行巡检·全交付态·零异常**：git pull→Already up to date·无vision相关变更·v6结果文件确认在位(75468B)·进程均健康(vision loop PID669545~13.5天/ops_relay PID1032513~18.0天/data loop PID1943222~3.2天)·GPU 8×H100 95-100% pretrain全占·ops inbox RUN_ID276非vision·research日报11-11(18:11)vision建议2条无新增已备查·fold wake#1022·全交付态维持。 |
-| 下一步 | ①v6✅已完成(连续奖励解决方差问题但未显著提升准确率) ②v5仍是唯一显著正结果(p=0.0009) ③**research日报vision建议(2611.12728 dense reward+LoRA探针r∈{8,16,32})已备查·待运维/用户明确要求时纳入** ④可选下一步：v6改进方向(加大group_size/更多步数/dense process reward加λ项/LoRA r扫) / 扩大v5规模 / 迁移GPU验证规模效应 ⑤待运维/用户确认是否需要进一步实验 |
-| 阻塞 | .12+.29 GPU全占（8×H100 96-100% util / ~75GB，pretrain baize2b ETA≈12/24-25）→ GPU验证待pretrain释放 ·.17+.75 SSH不可达 |
-| 更新 | **2026-11-11 20:28 (wake #1023)**：例行巡检·全交付态·零异常·git pull→Already up to date·无vision相关变更·v6结果文件确认在位(75468B)·进程均健康(vision loop PID669545~13.5天/ops_relay PID1032513~18.0天/data loop PID1943222~3.2天)·GPU 8×H100 95-100% pretrain全占·ops inbox RUN_ID276非vision·research日报vision建议2条无新增已备查·fold wake#1022·全交付态维持·WAITING=1 |
+| 已完成 | **v7 λ=0.03 三seed完成(11-11 21:21-22:27, 全C>B, nonzero-std=100%)** · v6 GRPO连续奖励全量实验✅(11-11 17:12, C=40% vs B=35%, p=0.267不显著, nonzero-std=93.8%) · v5波形类型分类全量实验✅(wake#892, A=16%→B=37%→C=53%, p=0.0009显著) · v4 RFT实验全量完成(wake#882,NULL) · v3 GRPO连续奖励全完(wake#891,负结果) · advantage方差诊断(wake#838,PARTIAL) · 阶段1 SFT验收PASS(wake#802) · CPU端到端训练循环验证7/7 PASS(wake#741) · 数据泄漏验证+就绪报告HTML(wake#731) · GRPO CPU冒烟PASS(wake#622) · 2B文本骨干提取1.72B(wake#620) · 数据集均衡化9013条(wake#618) · 波形RL计划书(wake#435) · 论文改稿(wake#437~#442) · ArmE-R2/ArmD-R2 全链路 |
+| 当前动作 | **wake#1024 例行巡检+v7 sweep监控**：v7 sweep PID1829351运行中(21:21启动)·λ=0.03三seed全C>B初步积极·第4轮(λ=0.1 s0)进行中·v7脚本已commit(aff51c2fa)·进程健康·GPU 100% pretrain全占·ops inbox非vision·research日报无新增·fold wake#1023。 |
+| 下一步 | ①v7 sweep完成后分析全部18轮结果(λ sweep+LoRA r sweep)·用analyze_v7_sweep.py聚合 ②对照v6 baseline(40%)判断process reward是否显著提升 ③v7b LoRA探针判断capacity是否瓶颈 ④若v7有显著正结果→更新报告+EXPERIMENTS ⑤若仍不显著→诚实报告+下一步(加大group_size/更多步数/换任务) |
+| 阻塞 | .12+.29 GPU全占（8×H100 100% util / ~75GB，pretrain baize2b ETA≈12/24-25）→ GPU验证待pretrain释放 ·.17+.75 SSH不可达 |
+| 更新 | **2026-11-11 22:3x (wake #1024)**：例行巡检+v7 sweep监控·v7 λ=0.03三seed全C>B(+6.3/+10.8/+6.7pp)·nonzero-std=100%·第4轮进行中·v7脚本已commit(aff51c2fa)·进程健康·GPU 100%·ops inbox非vision·research日报无新增·fold wake#1023·WAITING=1 |
