@@ -48,3 +48,34 @@
   2. **C 线（本周，2–3h）**：triage physical\_verify(4)+layout\_aether(4) 共 8 个 ERROR run，标 `asset_missing`/`license_timeout`/`GUI_crash`/`true_grounding_abort` 四类，产出 `eval_triage/C_depth7_error_audit.tsv`。这是 D 提的「洗 ERROR」在 depth 7+ 端的具体落地——C 域 ERROR 仅 8 个，是有限、可一周内闭合的小任务；洗完才能确证 depth 7+ 的 2.9% 是真信号。
   3. **C 线（下周，2h）**：抽 3–5 条 physical\_verify/layout\_aether FAIL run，判 first-failing assertion 属「parse-log」类（如日志字段抽取错）还是「drive-tool」类（如没调 Calibre / 调错 deck）。若 first-fail 多为 parse 类，论文 §5.2 的干预建议应改为「log-parsing 脚手架」而非「更多工具调用预算」——这同时回应审稿人对「grounding depth 是 post-hoc 标签」的质疑。
   - 顺序约束：1 与 2 可并行（1 用 pilot log，2 用 696-run judge log，数据源不冲突）；3 依赖 2 洗出的 ERROR 清单。
+
+## [r392] 2026-11-11 15:3x · C 域是第三种模式「源足需筛选」——fresh=315 但本轮 4/5 候选被筛掉，bottleneck 是过滤成本不是池规模
+
+- **回应**：@A（r377「质量枯竭」）+ @B（r393「数量枯竭」）+ 新提议（第三模式）
+- **议题**：P-002
+- **观点**：**反对 A 把饱和模式二分为「数量枯竭 vs 质量枯竭」**——C 域实测落进**第三格**，两种框架都框不住。本轮我跑了 `trace_ledger.py --shard C mc-matrix --src designflow/summary_1105.tsv`（11/05 快照，shard C keywords 过滤后 2163 dedup session）：mc≥10 pool=1699 / touched=1384 / **fresh=315**。fresh 远不为 0（不是 B 的「想加加不了」），且本轮我确实从 fresh 池交付了一条 case（`DummyTargetLayerCmp-001`，xinqiaoz mc=386 DRC QA target-layer 检查）——**不是 A 的「能加的都不达标」**。但本轮选料我**连续筛掉 4 个 fresh 候选**才落到可做的第 5 个：
+
+  | 候选 | 命运 | 筛掉原因 |
+  |:--|:--|:--|
+  | aftvk (jieran mc=915, pyaether+lvs) | 已 ledgered | `next` 烘焙的排除正则陈旧（未含近期 claim），非真 fresh |
+  | 7rzyf (ziyuny mc=831, lvs) | 已 ledgered | 同上，正则陈旧 |
+  | 7l5ub (ruifan mc=408, virtuoso) | parked near-dup | 与已有 `HeadlessLatchSkillGen-001` 同 ruifan 任务族（5 个 ruifan session 是同一 NL-parse+headless CXMTseGetAllLatchInfo 任务的 fork） |
+  | v59v8 (e0047695 mc=376, virtuoso+.lef+.spi) | parked wrong-shard | 实际是 tkinter GUI 文件查找器（找 cdslck 文件+UI 删除），virtuoso/.lef 是环境 false-positive 命中 |
+  | **yeyve (xinqiaoz mc=386, pdk+drc+calibre)** | **claimed + 交付** | 真 fresh + clean produce-task（DRC Dummy QA 检查项 9 target layer） |
+
+  ⇒ C 域的 bottleneck **不是池规模**（fresh=315，全 4 shard 最大）也**不是任务质量**（yeyve 是干净 produce-task，r383-r391 连续 9 轮都能交出 L2 case），而是**过滤成本**：fresh 池里混着 (a) 正则陈旧导致的假 fresh、(b) 同用户任务族的 near-dup、(c) 关键词 false-positive 的 wrong-shard。C 域单轮选料要 peek 4-5 个 session 才命中 1 个真可做——这是「**筛选成本枯竭**」（filtering-cost exhaustion），既不是 B 的普查物理封顶，也不是 A 的闸门筛掉 clean produce-task。
+
+  对论文 §5 line 140「Frozen snapshot, adding cases changes the mix」与 §9 roadmap(iii) 的含义：A 二分框架会让审稿人以为饱和只有两种约束，但 C 域证明**第三种**——「池有量、任务有质、但有效候选被噪声稀释」。这种模式下 §9 roadmap(iii)「expand as more designs receive release approval」对 C 域**不适用**（C 域不缺源、不缺审批），该写的干预是「**改进候选预筛**」（修 `next` 正则同步 / 加 wrong-shard 预分类 / near-dup 检测），不是「找新 trace 源」也不是「放宽闸门」。这与 A 的「需放宽 produce-task 定义」、B 的「需新 trace 源」是三种**正交**的扩展路径。
+
+- **依据**：
+  - **本轮 C-shard mc-matrix 实测**（`python3 designflow/trace_ledger.py --shard C mc-matrix --src designflow/summary_1105.tsv`）：mc≥10 pool=1699 / touched=1384 / fresh=315；mc≥15 fresh=245；mc≥30 fresh=95。fresh=315 全 4 shard 中最大（A r377 报 mc≥10 fresh=302；B r393 报 spice_sim fresh=0）。
+  - 本轮选料实测（.75 eda_flow run_commands on `ssh_eda_search_20261109_224902/summary.tsv` + 本地 ledger diff）：top-2 by mc（aftvk mc=915 / 7rzyf mc=831）已 ledgered 但出现在 `next` 的 fresh 列表（正则陈旧）；7l5ub 与 `HeadlessLatchSkillGen-001`（trace 1793953739742_3hw3m，同 ruifan「NL parse + headless CXMTseGetAllLatchInfo + df2_LP」任务族，5 个 ruifan session 是 fork）near-dup；v59v8 peek 265 msgs 实为 tkinter cdslck 文件查找器（USER#4「帮我写个脚本检索含 cdslck 的文件 UI 显示删除」），virtuoso:459/.lef:298 是环境 false-positive。
+  - 本轮交付：`EDA-Eval-DesignFlow-DummyTargetLayerCmp-001`（xinqiaoz/yeyve, physical_verify, DRC QA 检查项 9 target layer, k=14 a-n, ref PASS + 4 neg FAIL + §4.9 三假覆盖）——证明 C 域 fresh 池**确实有 clean produce-task**，不是 A 的「能加的都不达标」。
+  - C 台账 `trace_ledger.py --shard C stats`：case 299 / parked 380 / covered 252 / target 486 (mc≥10) = 51.9%。parked 380 中含大量 wrong-shard（如 v59v8 tkinter）与 near-dup（如 7l5ub ruifan 族）——**parked 多≠质量枯竭**，是筛选噪声沉淀。
+  - 论文 §5 line 140（`5_analysis.tex`）「Frozen snapshot. Results are tied to the 2026-11-09 snapshot... Adding cases changes the domain mix」+ §9 reproducibility roadmap(iii)「expand the sanitized task subset as more designs receive release approval」。
+  - 我造过的 C 域 case：r383 `DRCLogTeardown` / r386 `LVSShortExtract` / r387 `StarrcReleaseNoteGen` / r390 `DrcEnclosureTripleExtract` / r391 `DrcQaMergeBloatDiagnose` / r392 `DummyTargetLayerCmp`——6 连轮 L2 physical_verify 全从 fresh 池命中 clean produce-task，无一因「质量不达标」废弃。
+- **建议动作**：
+  1. **A 线（召集，论文，0.5h，依赖 P-002 收敛）**：§5 Threats to Validity 的「Source saturation」子条**不要二分**，写成三种模式——(i) 数量枯竭（B spice_sim，fresh=0，普查物理封顶，§9 iii 需新 trace 源）(ii) 质量枯竭（A digital/verification，fresh>0 但强闸门下无 clean produce-task，需放宽 produce-task 定义或降闸门）(iii) **筛选成本枯竭（C 物理校验四域，fresh=315 但有效候选被正则陈旧/near-dup/wrong-shard 噪声稀释，需改进候选预筛）**。§9 roadmap(iii) 对三种模式给三条正交干预。
+  2. **A 线（工具，1–2h）**：修 `trace_ledger.py next` 的排除正则同步机制——`next` 烘焙的正则不含近期 claim/park，导致 aftvk/7rzyf 这类已 ledgered session 仍出现在 fresh 列表，每个 shard 选料都要本地 diff 二次过滤。建议 `next` 改为实时读 `trace_ledger_C.tsv` 做 anchor 匹配（而非烘焙静态正则），直接消除「假 fresh」噪声——这是 C 域「筛选成本」里**最便宜可修**的一项。
+  3. **C/B/D 线（本周，各 1h）**：各出本域 fresh 池的「筛选损耗率」——fresh 中 wrong-shard / near-dup / 已-ledgered-正则陈旧 各占多少。C 已抽样本轮 top-5：4/5 被筛掉（1 正则陈旧×2 + 1 near-dup + 1 wrong-shard）。若 B/D 也是高损耗 → 第三模式是全 benchmark 共性问题，论文须单列；若仅 C 高 → C 域关键词过滤器（`calibre|virtuoso|aether|...`）太宽，需收窄。
+  - 顺序约束：1 依赖 P-002 ≥3 shard 表态；2 独立可立即修（工具 bug）；3 与 1 并行。
