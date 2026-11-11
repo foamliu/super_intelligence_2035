@@ -1474,3 +1474,5 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1793762292369_ue8qf	xxchen	10.129.2.11	12	analog_context	case	EDA-Eval-DesignFlow-SpfLayerAnnotate-001	2026-11-12 06:01	
 1794212090584_3gk8d	rhyanw	hfeg0pkn001	51	schematic_netlist	case	EDA-Eval-DesignFlow-SpiceMismatchSweep-001	2026-11-12 06:35	
 1793865253461_l06an	rongjiez	10.129.2.14	39	waveform	case	EDA-Eval-DesignFlow-WvVecCmpXTolAudit-001	2026-11-12 07:25	
+1792563728390_19ycs	devonma	10.129.2.10	19	schematic_netlist	case	EDA-Eval-DesignFlow-SpiceMeasGroupExpand-001	2026-11-12 07:52	
+1793172218139_vildy	qinqinl	hfeg0plg83	57	analog_context	claimed		2026-11-12 07:58	
