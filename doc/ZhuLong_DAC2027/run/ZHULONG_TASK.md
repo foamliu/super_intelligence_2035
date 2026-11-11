@@ -1,4 +1,78 @@
-# ZHULONG_TASK.md — ZhuLong（DAC2027）EDA 消融评测 · 合并任务书
+﻿# ZHULONG_TASK.md — ZhuLong（DAC2027）EDA 消融评测 · 合并任务书
+
+> 🔍 **用户令 · 2026-11-11（最高优先 · 评测期间做）：抽查 B 轴 trace，验证思维链真的换了语言**
+>
+> **用户原话**：「让zhulong agent在评测过程中看看 思维链语言消融（B）的现有trace，抽查一下，看看思维链是否遵循prompt改成了指定语言。」
+>
+> ### 0. 为什么现在必须做（现有证据链是弱的）
+>
+> 本任务书本来就写着两条要求，但**从未真正执行**：
+> - §轴 B L98：「**抽 3~5 条 trace 核对思维链真的换了语言**。未生效 ⇒ 停下修注入」
+> - §4 P3 L115：「**每语言先抽 3 条 trace 核对语言真切换**」
+>
+> 而 MEMORY 里一路写的「lang hint 生效 ✅」，证据只有：
+> - ❌ 「log 里看到一句 `Piensa en español`」——**这只能证明 prompt 注入了，不能证明思维链是法语**
+> - ❌ 「1791 行重音字符」——**数量不能证明是法语思考，可能是复述 prompt**
+>
+> ⇒ **B 轴（en/zh/es/fr/ru 五语言）的全部结论目前建立在这个弱证据上。若思维链其实没换语言，B 轴 15 轮的结论全部作废。**
+>
+> ### 1. 抽查对象：直接读已存档的 trace
+>
+> 路径（已由 §3 Trace 保留机制落盘）：
+> ```
+> /nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/<TAG>/<batch>/
+> ```
+> 已有 TAG（截至 11-11 10:35）：`B_es_r1` `B_es_r2` `B_es_r3` `B_fr_r1`（跑中）· `B_zh_r1` `B_zh_r3`（`B_zh_r2` 待 regrade）· `A_*` 系列
+> 每轮 trace 应 ≥158 个（与题一一对应）；cline session 在 `~/.cline/data/**`
+>
+> 读之前先在 .75 上 `ls -dt .../trace_ablation_think_lang/*/` 确认真实目录名与体量。
+>
+> ### 2. 抽查方法（**每语言至少 5 条**，不足则如实记）
+>
+> 对 **es / fr / zh / en** 四个已完成的语言（ru 若已跑也加上）：
+>
+> 1. **从 trace 里抽出模型的 reasoning / thinking 段**（不是 prompt、不是最终答案）。
+>    - 若 trace 是 JSON：找 `reasoning_content` / `thinking` / `thought` 字段
+>    - 若是纯文本：定位 thinking 块的起止标记
+> 2. **逐条判定「思维链主体语言」**，四分类（不许只写"是/否"）：
+>    - `TARGET`：**主体**是目标语言（如 es 轮的思维链主体为西班牙语）
+>    - `ENGLISH`：主体是英语（**未遵循**，即使个别词是目标语言）
+>    - `MIXED`：两种语言实质混用（记大致比例，如「70% es / 30% en」）
+>    - `COPIED_PROMPT`：只是在复述/翻译 prompt 那句语言指令，其余思维链仍是英语
+> 3. **同时核一件事**：答案/代码部分是否仍是英语（预期：**是**，因为只要求思维链换语言；若答案也变成目标语言，说明注入影响了输出，需单独记）。
+>
+> ### 3. 判定阈值（写进报告）
+>
+> - **语言真切换**：≥5 条里 **≥4 条**为 `TARGET` 或 `MIXED`（且 MIXED 必须目标语言占多数）
+> - **部分生效**：≥5 条里 2–3 条 `TARGET`/`MIXED`
+> - **未生效**：≥5 条里 ≥4 条为 `ENGLISH` 或 `COPIED_PROMPT`
+> - ≥5 条里出现 `COPIED_PROMPT` ⇒ **必须在报告里点名**（这正是"以为生效其实没生效"的典型）
+>
+> ### 4. 交付
+>
+> **产出**：`reports/report_zhulong_lang_switch_audit_zh.html`（中文 · 单文件自包含 · 内联 CSS · 零外链）
+>
+> 必含 5 节：
+> ① **结论一句话**（每个语言：真切换 / 部分生效 / 未生效）
+> ② **抽查表**：`语言 | TAG | 样本数 | TARGET | MIXED | ENGLISH | COPIED_PROMPT | 判定 | trace 文件路径`
+> ③ **原文片段**：每语言贴 **≥2 段思维链原文**（截 80–150 字，标注来自哪个 trace 文件），让人能自己判断
+> ④ **答案部分核查**：答案/代码是否仍英语（避免把"输出变外语"误当"思维链变外语"）
+> ⑤ **影响评估**：若某语言判为「未生效」或「部分生效」，**明确写出 B 轴对应轮次的结论是否要作废**
+>
+> ### 5. 边界
+>
+> - 🚫 **不打断在跑的评测**（`B_fr_r1` 跑中）：只读已存档 trace，**不许 kill / 不许改编排器 / 不许抢沙盒**
+> - 🚫 **不改 trace 原文**，只读
+> - 🚫 不改论文、不改其他线产物
+> - 抽查用只读命令（`ls` / `cat` / `head` / `grep` / `python3` 读文件），**不许写 /nasdata 下的 trace 目录**
+> - 若某语言 trace 已不存在（被清）⇒ 记 `BLOCKED(trace_missing)`，**不许凭 MEMORY 里的旧描述当作已验证**
+>
+> ### 6. 与现有最高优先令的关系
+>
+> 本条**不取代**「轮间空档补 `B_zh_r2` regrade」令；两者并行：
+> - **regrade 优先**（有空档就跑）
+> - **本文抽查**在等空档的间隙做（只读，不占沙盒，可与 eval 并发）
+
 ### 🧭 工作约定（常驻 · 中性表述，替代旧「收尾铁律／体积规程／归档纪律／报告纪律」四段）
 
 1. **每轮收尾**：体积自检 → `MEMORY` 写一行心跳 → 当日日报一行 →
@@ -151,35 +225,7 @@
 > 🚨 11-03 21:0x llama.cpp + Qwen3.5-0.8B 安装（smoke 双过）✅ · 11-02 21:3x Tab-3 美观改进（`Tab3_改进建议.html` 已入库，`6_exp.tex` 已落地）✅ · 10-30 22:2x zhulong-full×kimi-k2.6 5-run（**85.0±2.5%**，vs cline 86.8±1.6% Δ−1.8pp）✅ · 10-29 21:5x 论文审阅（92.8KB 报告，P0=1/P1=3/P2=11）✅ · 10-26 08:1x 作废 224219+重跑 glm53-full（已被 10-27 令覆盖）。详情见 archive §batch 15/16。
 
 
-### 📕 改稿任务令 · 2026-10-25 00:0x（**按外部评审意见改论文（含 57.4pp 归因硬伤）**）· 用户直令 · 与 5-run 并行 ·【保留·与 10-26 令并行】
-> **评审原文（必读，逐条对照）**：`doc/ZhuLong_DAC2027/reviews/REVIEW_DAC2027_external_2026-10-24.md`
-> 评审结论：**Borderline / major revision**。核心建议 = 「把论文做成**实证 EDA 自动化论文**，grounding-gap 只作**有边界的框架/假设**，不要当成已证明的定理」。
-
-**对：逐条核对（必须先做，别急着改）**
-1. 对每条意见给出判定：**成立 / 部分成立 / 不成立**，并**锚定证据**（论文节号/表号/页码，或 `zhulong_results.md` 的行）；
-2. **重点核对第 2 条（57.4pp）**：Table 3 里 `no read-back 62.2 → binary 65.5 → full 75.7`，**受控 read-back 轴只有 13.5pp**；57.4pp = 75.7−18.3（含检索+沙盒+自探索的系统级增益）。若核对成立 ⇒ **这是必须改的硬伤**（abstract / 贡献条 / §4.2 / §6.2.1 四处都要改）；
-3. 核对第 5 条（SKILL 60.3 vs w/o Self-Expl. 61.5；PyAether 去检索后 81.0 vs 77.3）是否与 `zhulong_results.md` 的 C1/S1 表一致。
-
-**改（P0，必须落地）**
-- **A. 57.4pp 归因**：按上面口径拆成三个数并分别表述（受控 read-back 13.5pp / binary 3.3pp / 系统级 57.4pp）；
-- **B. 理论降级或补证**：二选一 ——（i）给出显式假设下的 Proposition + 证明；或（ii）把 `D_grounding ≤ g(ε)` 明确写成 **hypothesis/framework**，并把 §4.2 的措辞改到与证据相称（评审给了可直接用的替代句式，见评审 §5）；
-- **C. benchmark 可复现性**：补一小节写明「可公开什么 / 受许可限制不能公开什么 / 独立研究者能复现到哪一步 / assertion 如何设计与防假阳性」；
-- **D. related work 加强**：对 ChatEDA / AutoEDA / MCP4EDA / LayoutCopilot / ChaTCL / RAG-EDA 逐条写**三句差异**（目标环境 / 统一接口 / 实证贡献），别再只说"我们不同"；
-- **E. 参考文献占位符**：修掉 `In Proceedings of . ACM` 这类空字段（ACM-Reference-Format + 缺字段导致）。
-
-**补（强烈建议，能做就做）**
-- **F. 成本/延迟/token**：⚠️ **用户提示：陈熙元的版本里已有 cost 数字，可在 git 历史里查到**。请先在 git 里检索（如 `git log --all -S 'cost' -- doc/ZhuLong_DAC2027`、`git log --all --author=Chen`、grep `cost|token|latency|耗时|成本` 于历史版本/`daily-memories`），**找到就直接复用并注明出处 commit**；确实找不到再从 eval log 统计（每任务 token / 墙钟 / tool calls / 约当成本）并标"需补测"。
-- **G. SKILL 回归**：回答"为什么离线自探索在 SKILL 上反而 −1.2pp"（给假设 + 可从日志验证的判据）；
-- **H. Tcl 拆开报**：WaveView(77) 与 Innovus(57) 分别给数，不要只给 pooled 87.2%；
-- **I. 统计**：给 5-run 的 **Wilson CI + 配对 McNemar**（数据已有，不用重跑）；
-- **J. 部署声明**：把"服务数百名工程师"改成可核验的表述，或标为"内部部署（细节受限）"。
-
-**交付**
-1. `reports/report_zhulong_review_response_zh.html`（中文 HTML，**response-letter 风格**：意见 → 判定 → 证据位置 → 具体改动（原文/新文对照）→ 若未改要写理由）；用 cimi search 时可引用外部资料（给出处）。
-2. 论文修订：改完必须 `pdflatex×1 + bibtex + pdflatex×2` 通过，且保持 **7 页（正文 6 + refs 1）**、`0 undefined`、无 Overfull/Underfull 告警（`main.log` 自查）。
-3. 更新 `zhulong_results.md` / `MEMORY_ZHULONG.md` 的对应行；commit 前缀 `zhulong paper-review:`。
-> 允许为验证关键点打断正在跑的 5-run（先落盘 + 记 MEMORY + 事后 regrade 补记）。**不得编造任何数字或文献**；凡"待补"必须写明怎么补。
-
+### 📦 归档指针 · 2026-10-25「按外部评审意见改论文（含 57.4pp 归因硬伤）」· 已执行完毕（10-26 令并行）。要点：改稿须如实标注「待补」及补法，不得编造数字/文献。原文见 `ZHULONG_TASK_ARCHIVE.md`「归档块 · 2026-11-11」。
 
 ### 📦 已归档 batch 13 · 2026-10-27（原文见 `ZHULONG_TASK_ARCHIVE.md` §归档 batch 13）
 
