@@ -3842,6 +3842,87 @@ SFT recipe（v11-v36 PyAether 语料, 927 train pairs, 5 epoch, lr 1e-5 cosine, 
 | 项 | 路径 |
 |:--|:--|
 | 本节 | EXPERIMENTS §R286 |
+
+## §R287 (2026-11-12 wake287) EDA-Eval 静态分析全量扩展（113 non-techlib task × 2 model · 零沙盒 · 后台运行中 + 10-task 初步结果 + 工具链修复）
+
+### 1. 背景与动机
+
+- wake286 做了 10-task mini-eval，统计力弱。本轮扩展到**全量 113 个 non-techlib 任务**（158 总 - 45 techlib）
+- 沙盒仍 BLOCKED（92nd wake, 10.129.32.75 全 TCP filtered: 8664/8665/8653/8669/22/80 全 FILTERED, ICMP 0.3ms OK）
+- 策略不变：生成代码 → 静态分析（语法/API 覆盖率/代码长度/finish_reason），不做执行验证
+
+### 2. 工具链修复（关键发现）
+
+- **wake286 的 strip_markdown 有 bug**：MiniCPM5-2B/SFT 输出以 `tilloink`...`/tilloink` 思考标签包裹（不是 markdown ```fences），旧 regex `r"```(?:python)?\s*\n?(.*?)```"` 无法处理 → 导致 wake286 的语法检查在 strip 后仍包含 think tags → 误判
+- **修复**：新 `strip_markdown` 先用 `re.sub(r"tilloink.*?/tilloink", "", t, flags=re.DOTALL)` 移除思考标签，再移除 markdown fence 行
+- **影响**：wake286 的 SFT 语法合法率 90% 可能偏低（部分被 think tag 残留误判为语法错）；修复后 10-task 初步结果 SFT 100%
+- **字节验证**：raw code 前 7 字节 = `0x3c 0x74 0x68 0x69 0x6e 0x6b 0x3e` = `tilloink`，确认是 think tag 而非 markdown fence
+
+### 3. 实验设计（与 wake286 一致，扩展到全量）
+
+- **任务集**：113 个 non-techlib 任务（Layout 64 + Schematic 47 + Design Mgmt 24 + Others 23 中的 non-techlib 子集）
+- **模型**：Base `minicpm5-2b`（GPU4:8098）vs SFT `minicpm5-sft` global_step_70（GPU6:8096）
+- **Prompt**：system="Python code generator for EDA, output ONLY raw code" + user=USER_PREFIX+task_prompt
+- **温度**：0.0（确定性） · **max_tokens**：2048
+- **指标**：API 覆盖率 / 语法合法性（strip think+markdown 后 compile()）/ 代码长度 / finish_reason / has_function
+- **脚本**：`baize_posttrain_static_eval_full.py`（新增，--resume 支持断点续跑，每 10 task checkpoint）
+
+### 4. 10-task 初步结果（checkpoint，think-tag 修复后）
+
+| 指标 | Base (minicpm5-2b) | SFT (minicpm5-sft) | 差异 |
+|:--|:--|:--|:--|
+| 语法合法（strip后） | 6/10 (60%) | **10/10 (100%)** | **SFT +40pp** |
+| API 覆盖率（mean） | 0.050 | 0.075 | SFT 略高 +0.025 |
+| 代码长度（mean ch） | 5763 | 1653 | SFT **3.5x 更短** |
+| finish=stop | 6/10 | 9/10 | SFT 更多完成 |
+| finish=length（截断） | 4/10 | 1/10 | Base 更多截断 |
+
+> ⚠️ 仅 10 task，统计力弱；全量 113 task 结果待后台进程完成后更新。
+
+### 5. API 覆盖率低的原因分析
+
+- Task 002：期望 `pyAether.timeToTm/tm_year/tm_mon/tm_mday`，SFT 用 Python `time` 内置模块替代 → 覆盖率 0.0
+- Task 003：期望 `pyAether.setPyAePath`，SFT 用 `os.path` 替代 → 覆盖率 0.0
+- Task 001：期望 4 个 API，SFT 仅在类型注解中使用 `emyNameSpace`（1/4=0.25）
+- **发现**：SFT 有时用 Python 内置函数替代 pyAether API → 这是 RL 阶段需要通过执行反馈修正的「API 选择」问题
+- wake286 的 API 覆盖率 0.412/0.366 是在**手工挑选的 10 个任务**上测的，全量前 10 task 覆盖率更低（0.05/0.075），说明任务难度分布不均
+
+### 6. 与 wake286 的对比
+
+| 维度 | wake286（10 task 手工挑选） | wake287（10 task 前 10 个 non-techlib） |
+|:--|:--|:--|
+| 语法合法 SFT | 90% | **100%**（think-tag 修复后） |
+| 语法合法 Base | 10% | **60%**（think-tag 修复后大幅改善） |
+| 代码长度比 | 3.4x | 3.5x |
+| API 覆盖率 Base | 0.412 | 0.050（不同任务集） |
+| API 覆盖率 SFT | 0.366 | 0.075（不同任务集） |
+
+> think-tag 修复后 Base 语法合法率从 10%→60%，说明 wake286 的 Base 10% 被低估了（think tag 残留导致误判）。但 SFT 仍显著优于 Base（100% vs 60%）。
+
+### 7. 后台进程状态
+
+- 进程：PID 371302（setsid 全分离），日志 `/tmp/static_eval_full.log`
+- 状态：resuming from 10 tasks, processing task 11+/113
+- 预估完成时间：~82 分钟（103 tasks × ~48s/task）
+- 输出：`eda_eval_static_full_wake287.json`（每 10 task checkpoint）
+- 下一唤醒可检查是否完成并分析全量结果
+
+### 8. 局限性
+
+- **无沙盒执行**：API 覆盖 ≠ Pass@1，语法 OK ≠ 运行时正确
+- **直连 API 非 cline agentic**：实际 EDA-Eval 使用 cline 多轮 agentic loop
+- **API 覆盖率受任务选择影响大**：前 10 task 覆盖率 0.05-0.075 vs wake286 手工挑选 0.4
+- **think-tag 修复可能影响 wake286 可比性**：wake286 的分析未 strip think tags
+- ⚠️ **替身预演声明**：MiniCPM5-2B 是 BaiZe 替身，此结果**不可迁移到 BaiZe**，仅验证 SFT recipe 流程
+
+### 9. 资产
+
+| 项 | 路径 |
+|:--|:--|
+| 本节 | EXPERIMENTS §R287 |
+| 脚本 | `baize_posttrain_static_eval_full.py` |
+| 结果（10-task checkpoint） | `eda_eval_static_full_wake287.json` |
+| 日志 | `/tmp/static_eval_full.log` |
 | v1 原始结果 | `eda_eval_static_wake286.json`（v1 prompt，10 task × 2 model） |
 | v2 原始结果 | `eda_eval_static_v2_wake286.json`（v2 prompt，10 task × 2 model） |
 | 生成脚本 v1 | `/tmp/eda_eval_static_wake286.py` |
