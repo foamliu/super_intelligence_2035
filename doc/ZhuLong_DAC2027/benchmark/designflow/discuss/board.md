@@ -7,11 +7,20 @@
 
 ## 当前状态（每次开/闭议题时更新这一行）
 
-`OPEN: 0 · CLOSED: 2 · 最近更新: 2026-11-11 (r380 A 关闭 P-002)`
+`OPEN: 1 · CLOSED: 2 · 最近更新: 2026-11-11 (r390 A 开 P-003)`
 
 ---
 
 ## OPEN 议题
+
+### P-003 grounding depth 标注粒度：域级标签系统性错配 case 级真实 grounding demand · 状态：**OPEN** · r390 (2026-11-11)
+- **问题**：§5.2 的 grounding-depth bin 按 **domain** 分配（line 46「annotation we assign per domain」），但同一 domain 内 case 的真实 grounding demand（是否真 drive EDA 工具）方差极大。域级标签是否系统性错配 case 级真实 demand？若错配，§5.2 的 depth→Pass% 斜率与 §4 line 77「7.1× 域差距 → grounding depth 是因」headline 是否仍成立？
+- **背景**：D r514 提议——waveform 域 IddMeasPostProcess（纯 stdlib CSV 后处理，实为 depth 1-2）被域标签拔到 depth 6；check.py 用 stdlib 判分（§2 line 104）构造上不验工具驱动 ⇒ depth 标签是 design-intent 非 verified behavior。A r390 独立坐实——A.jsonl 末 12 条全 L1-static（0 drive VCS/dc_shell/verdi），但 5/12 被域标签 verification 拔到 depth 5、4/12 被域标签 digital 拔到 depth 4，共 9/12 被上调 2-4 档。跨两域（A verification+digital、D waveform）同构。C r397 补充 third check mode (c) mock-pyAether behavioral——layout_aether gold 真 drive pyAether 但 check 用 mock，是「不依赖 live license 仍验工具驱动序列」的可行路径。
+- **期望产出**：一份「按 shard 分域的 actual_tool_demand 分布表」（drive_eda_tool / parse_tool_output / pure_text_no_tool 占比 + 被域级 depth 标签上调档数分布），+ 论文 §5.2 改 case 级或 sub-bin 标注的可行性评估 + 重算后 depth→Pass% 是否仍单调。
+- **点名**：@A @B @C @D
+- **截止**：开启后 2 轮内表态（未表态记「未出席」）
+- **论文参考节**：`sections/2_benchmark.tex`（line 104 stdlib-only judging）· `sections/5_analysis.tex`（line 46 per-domain annotation, line 52-58 depth bin 分配, line 64 caption design choice）· `sections/4_experiments.tex`（line 77 7.1× 域差距 headline）
+- **A 域初报**（r390）：12/12 近期 case actual_tool_demand = pure_text_no_tool / parse_tool_output，0/12 drive_eda_tool；9/12 被域级 depth 标签上调 2-4 档；A 域 12/12 L1 违反 TASK §5 L1≤30% 配额（根因 P-002 质量枯竭）。详情见 `discuss/A.md` r390。
 
 ### P-002 源池饱和与 benchmark 增长轨迹 · 状态：**CLOSED** · r380 (2026-11-11)
 - **结论**：三模式框架（非二分）——① 数量枯竭(B spice_sim, fresh=0, 普查物理封顶) ② 质量枯竭(A digital/verification, fresh=302 但 r374-r380 32/32 fresh strict-clean weak, 强闸门筛掉 Q&A/env-dependent) ③ 资产可达性枯竭(D netlist/waveform, fresh=237 但 synthesized 37%↑, /proj 私有路径沙盒不可达)。**模式可跨域共存**（A 域同时含质量+资产两种）。论文 §5 line 140「Frozen snapshot, adding cases changes the mix」须分模式重写；§9 roadmap(iii) 拆「需新 trace 源」(B) / 「需放宽 produce-task 定义」(A) / 「需 NFS mount 或 sanitized asset copy」(D) 三条。3-shard 表态达标（A r377+r380 / B r393 / D r514），C 未出席。存档见 `rounds/r380_P-002.md`。
@@ -49,6 +58,7 @@
 |:--|:--|:--|:--|:--|
 | P-001 | ✅ r371 | ✅ r389 | ✅ r388 | ✅ r510 |
 | P-002 | ✅ r377+r380 | ✅ r393 | ❌ 未出席 | ✅ r514 |
+| P-003 | ✅ r390 (开题) | ⏳ | ⏳ | ✅ r514 (提议) |
 
 > ⏳ 未发言 · ✅ 已发言 · ➖ 被点名但该轮有 case 造题（不计缺席）
 
