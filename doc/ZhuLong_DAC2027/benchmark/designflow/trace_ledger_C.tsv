@@ -699,3 +699,10 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked		2026-11-09 20:39	RAG-looku
 1789628875183_b48ma	rongtaoy	hfeg0plg99	237	physical_verify	case	EDA-Eval-DesignFlow-PexBlCouplingCompare-001	2026-11-12 04:06	
 1793166342310_f4b79	jianilu	hfeg0pkn004	104	physical_verify	case	EDA-Eval-DesignFlow-PexRccLayerMigrate-001	2026-11-12 04:26	
 1793341786030_qhvcj	kenwang	hfeg0plg49	241	physical_verify	case	EDA-Eval-DesignFlow-DrcRuleFromDesc-001	2026-11-12 05:12	
+1793879524880_3h21t.messages.json					parked		2026-11-12 05:38	r419 peek: e0047527 newbie env-setup Q&A (modulecmd/startup), not produce-task; aether/pyaether kw=path noise; same as parked dus4q
+1789636492253_sr1fw.messages.json					parked		2026-11-12 05:38	r419 peek: miccao, USER#1 = Calibre/Argus DRC Log 拆解报告 skill spec — NEAR-DUP of DrcLogTeardownReport-001(joelchen sk6cg)+DrcLogAnalyzer-001(4fhmt), same shared skill spec 4-module workflow
+1789699043373_y91i6.messages.json					parked		2026-11-12 05:38	r419 peek: ericw(NEW user), coverage-bin filtering (drcpa_sim cov_work table1.json cg_t meet_exactly bins, filter VrefCA/SRX/REF/SRE) — A-shard verification/coverage not physical_verify + asset /rundata/drcpa_sim unreachable
+1794010590146_aqtdv.messages.json					parked		2026-11-12 05:38	r419 peek: xinqiaoz PDK-QA genReleaseNote refactor (merge 3 scripts/emails/excel-sheets, 7-day window, HTML restructure) — handoff-resume continuation, task embedded in HANDOFF md, weak EDA affinity (report-pipeline refactor), iteration-driven USER#2-10
+1793000252239_9jz8x.messages.json					parked		2026-11-12 05:38	r419 profile-reject: xinqiaoz drc:2341;pdk:776 = PDK-QA DRC-deck profile, near-dup of PDKQA-001/DrcMetalOptGen/DrcDeckCmp/DrcRuleFromDesc (same user+profile), not peeked
+1789628116508_kxmzc.messages.json					parked		2026-11-12 05:38	r419: rongtaoy PEX (pex:195), near-dup b48ma PexBlCouplingCompare+vtz09 SacapSpfCouplingExtract same user; 3 consecutive PEX cases r416-418, 4th rongtaoy PEX over-saturated
+1789645785974_iuoie.messages.json					parked		2026-11-12 05:38	r419: rongtaoy PEX (pex:178), near-dup b48ma+vtz09 same user; see kxmzc
