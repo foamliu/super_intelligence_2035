@@ -1287,3 +1287,9 @@ peek:					parked		2026-11-10 23:22	peek: consultation verdi-fsdb-warning-paste
 1794401271107_fnxke					parked		2026-11-12 02:44	11-12 02:3x rescan peek reject: near-dup of op8wj (already parked r411) - same user tongni, same sim-sp-gen skill, same Vcc2sc_stdby .sp template with /proj PDK .inc paths not portable
 1794366982750_ngnm2					parked		2026-11-12 02:44	11-12 02:3x rescan peek reject: wrong-domain (waveform=D shard) + consultation - first user 'full_testbench_far.fsdb 抓取xi147.v ra210_far/ra543_far 上升到vwlp时对其他地址线coupling影响' = .fsdb waveform coupling analysis, not spice_sim produce-task; run_approved(25)/editor(24) on waveform
 1794394189493_0fuy7					parked		2026-11-12 02:44	11-12 02:3x rescan peek reject: near-dup of r73sm (already delivered StrongarmFomSweep-001) - same user jiangbaol, same first-user-msg '我现在需要优化strongarm电路应该从哪里开始', same strongarm optimization task; 0fuy7 has RAG_MCP_search_apis(10) heavy, SPICE_KW=5 low in prefix
+1794398684733_jjrpj	e0030760	10.129.2.10	509	spice_sim	parked		2026-11-12 03:58	r414 rescan reject: jjrpj not-viable B-domain L2/L3
+1794394259449_bwtk9	e0030760	10.129.2.10	509	spice_sim	parked		2026-11-12 03:58	r414 rescan reject: bwtk9 not-viable B-domain L2/L3
+1794382087740_nm5op	rongjiez	10.129.35.69	306	spice_sim	parked		2026-11-12 03:58	r414 rescan reject: nm5op not-viable B-domain L2/L3
+1794375717921_5p2v2	thomasz	10.129.35.69	122	spice_sim	parked		2026-11-12 03:58	r414 rescan reject: 5p2v2 not-viable B-domain L2/L3
+1794369069999_jlgfx	yohannw	10.129.2.11	195	spice_sim	parked		2026-11-12 03:58	r414 rescan reject: jlgfx not-viable B-domain L2/L3
+1794395852366_tef8l	yinyus	10.129.2.10	283	spice_sim	parked		2026-11-12 03:58	r414 rescan: unlocatable on recorded host (file absent /home/*/.cline on 10.129.2.10)
