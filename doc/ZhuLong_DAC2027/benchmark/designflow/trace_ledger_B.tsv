@@ -1314,3 +1314,15 @@ peek:					parked		2026-11-10 23:22	peek: consultation verdi-fsdb-warning-paste
 1792119938594_z6elv.messages.json					parked		2026-11-12 05:14	non-task (wnyu 'hi/在吗/为什么job跑得慢' - chit-chat + job-speed complaint)
 1793684384632_6dmno.messages.json					parked		2026-11-12 05:14	wrong-type (t0003117 '执行skills_v0.2/netlist_extract/SKILLS.md' - skill execution)
 1793544152898_p8z88.messages.json					parked		2026-11-12 05:14	documentation (yh1yang '整理代码形成维护文档和AI agent提示词文档' - doc generation, not spice)
+1792134251943_q9r9s.messages.json	lanxinz	hfeg0pkn001	100	spice_sim	parked		2026-11-12 06:35	dup: bare-sid 1792134251943_q9r9s already case FineSimTbAuditFix-001 (11-04); rescan suffix-mismatch dedup bug
+1794227337092_vuj95.messages.json					parked		2026-11-12 06:31	wrong-domain: find SA/SWD layout (C shard layout), not spice_sim
+1793243641918_xcuds.messages.json					parked		2026-11-12 06:31	meta/infra: skill-creator meta-skill writing, spice kw from skill content
+1792045605929_rp1xk.messages.json					parked		2026-11-12 06:31	consultation: ask what hspice sweep options to use (Q&A, no deliverable)
+1793757463114_zd8iu.messages.json					parked		2026-11-12 06:31	borderline-L1: bash bsub script num1/num2 calc fix, not spice sim proper; L1 capped
+1792837595656_ymjs5.messages.json					parked		2026-11-12 06:31	phantom: session file not found on any reachable host (harrywu)
+1793953494729_nmz6w.messages.json					parked		2026-11-12 06:31	phantom: session file not found on reachable hosts (hairuizh)
+1794210761770_t9j7w.messages.json					parked		2026-11-12 06:31	consultation: analyze hspice model_thick.sp (Q&A, no deliverable)
+1793865540752_5ue0u.messages.json					parked		2026-11-12 06:31	wrong-domain: web scan-service debug (粗扫细扫合并/部署包/页面), not spice
+1790159575229_gn11a.messages.json					parked		2026-11-12 06:31	continuation/consultation: first user='1' menu pick, yanxvwei consultation pattern
+1791954407908_szdav.messages.json					parked		2026-11-12 06:31	near-dup: jiangbaol strongarm slicer tuning, dup of delivered StrongarmFomSweep-001 (r73sm)
+1793176752981_ikfrw.messages.json	joeyl	hfeg0plg49	34	spice_sim	claimed		2026-11-12 06:32	
