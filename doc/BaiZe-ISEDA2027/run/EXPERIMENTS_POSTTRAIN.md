@@ -4376,3 +4376,50 @@ SFT 模型更倾向使用 pyAether 域 API、输出更简洁、格式更规范�
    - 正式训练数据量将大幅扩展（UltraData-SFT-2605 18.89B tok + PyAether API 语料），需重新标定 epoch 和 lr
 
 > 替身预演声明：以上 loss 数字仅证明 recipe 可行性，**不预测 BaiZe 在 EDA-Eval 上的 Pass@1**。收益不可迁移到 BaiZe。
+
+## §R295 — 扩展 BASE vs SFT 实时生成对比（15 task × 4 scenario）
+
+> **时间**：2026-11-12 wake295
+> **方法**：从 158 任务中选 15 个 nontechlib 任务（Schematic 5 / Layout 4 / Design Mgmt 3 / Others 3），分别用 BASE(minicpm5-2b :8098) 和 SFT(minicpm5-sft :8096) 生成代码，temp=0, max_tokens=768。纯静态分析（无沙盒执行）。
+> **脚本**：`run/baize_posttrain_expanded_comparison.py`；**产物**：`run/smoke_test_results/expanded_base_vs_sft_15task.json`
+> **替身声明**：MiniCPM5-2B 是 BaiZe 替身，收益不可迁移。
+
+### 汇总（15 task）
+
+| 指标 | BASE | SFT | Delta |
+|:--|--:|--:|:--|
+| 语法合法 (compile pass) | 1/15 (7%) | 13/15 (87%) | **+80pp** |
+| 函数定义完整 | 5/15 (33%) | 15/15 (100%) | **+67pp** |
+| pyAether API 总调用数 | 31 | 61 | **+97%** |
+| 平均 thinking ratio | 0.519 | 0.026 | **-95%** |
+| 代码块 fence 标记 | 1/15 | 0/15 | SFT 输出纯代码 |
+| 代码总长度 (chars) | 39504 | 18625 | SFT 更精简 -53% |
+| finish=stop (非截断) | 1/15 (7%) | 11/15 (73%) | **+66pp** |
+
+### Per-scenario 分解
+
+| Scenario | n | BASE syn | SFT syn | BASE func | SFT func | BASE api | SFT api | BASE think | SFT think |
+|:--|--:|--:|--:|--:|--:|--:|--:|--:|--:|
+| Schematic | 5 | 1 | 3 | 2 | 5 | 6 | 28 | 0.573 | 0.019 |
+| Layout | 4 | 0 | 4 | 1 | 4 | 12 | 15 | 0.315 | 0.027 |
+| Design Mgmt | 3 | 0 | 3 | 1 | 3 | 7 | 14 | 0.502 | 0.027 |
+| Others | 3 | 0 | 3 | 1 | 3 | 6 | 4 | 0.719 | 0.038 |
+
+### 关键发现
+
+1. **SFT 彻底改变了输出模式**：BASE 平均 52% 的输出是「思考/推理」文本（thinking ratio），4/15 任务 thinking_ratio=1.0（完全无代码输出）。SFT 平均仅 2.6%，几乎全部是代码。
+2. **语法合法性飞跃**：7%→87%（+80pp）。BASE 仅 1/15 生成可编译代码，SFT 13/15。
+3. **函数完整度从 33%→100%**：BASE 常只写片段或思考到 token 上限，SFT 全部定义了目标函数。
+4. **领域 API 使用翻倍**：31→61（+97%）。Schematic 场景最显著（6→28, +367%），SFT 学会了用 emy*/pyScript* API。
+5. **截断率大幅降低**：BASE 93% 被 max_tokens 截断（因思考消耗 token），SFT 仅 27% 截断。
+6. **Layout 场景改善最大**：BASE 0/4 语法合法→SFT 4/4；Schematic API 增幅最大（6→28）。
+7. **与 wake291 的 113-task 静态分析趋势一致**：wake291 报告 +32.7pp 语法改善，本实验 15-task 显示 +80pp（更极端，因为本实验用 raw chat 而非 cline tool-call 模式，BASE 无工具调用能力时退化更严重）。
+
+### 方法论说明
+
+- 本实验用 raw OpenAI chat completions（非 cline + MCP 工具调用），因此 BASE 表现比 full-harness 更差（无工具调用框架辅助）。
+- SFT 表现也非 full-harness Pass@1（无沙盒执行验证），仅证明代码生成质量改善。
+- 正式 EDA-Eval 评测需沙盒恢复后用 cline + MCP 模式运行（协议冻结：158 任务 / Pass@1 / 5-run / 2500s）。
+- max_tokens=768 对 SFT 部分 task 偏短（Schematic 场景 API 多，代码长），可能导致 2/15 SFT 语法不合法（截断）。
+
+> 替身预演声明：以上数字仅证明 SFT recipe 在代码生成质量上的改善，**不预测 BaiZe 在 EDA-Eval 上的 Pass@1**。收益不可迁移到 BaiZe。
