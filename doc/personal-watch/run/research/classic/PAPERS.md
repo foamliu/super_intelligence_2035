@@ -10,11 +10,14 @@
 >
 > **元数据核验**：标题 / 首次提交日 均取自 arXiv 官方 API（`export.arxiv.org/api/query?id_list=...`，2026-11-11 两轮实测 `HTTP 200` + `application/atom+xml; charset=utf-8`，首轮 4/4、第二轮 4/4 = 累计 8/8）。
 
-**本轮快照**：累计 **19** 条（首轮 11:5x 收 4 条；第二轮 11:4x 补 4 条 EDA / agent / PEFT；第三轮 12:1x 补 4 条 RoPE / SWE-bench / Reflexion / CoT；第四轮 12:4x 补 3 条 GPT-3 / InstructGPT / LLaMA；**第五轮 15:0x 补 4 条** ResNet / seq2seq / Dyna / LLaVA）｜ 覆盖（一篇可服务多线，故合计数 > 19）：pretrain **12** · vision **4** · harness **5** · data **5** · zhulong **10** · designflow **4**
+**本轮快照**：累计 **23** 条（首轮 11:5x 收 4 条；第二轮 11:4x 补 4 条 EDA / agent / PEFT；第三轮 12:1x 补 4 条 RoPE / SWE-bench / Reflexion / CoT；第四轮 12:4x 补 3 条 GPT-3 / InstructGPT / LLaMA；第五轮 15:0x 补 4 条 ResNet / seq2seq / Dyna / LLaVA；**第六轮 18:0x 补 4 条** GPT-1 / GPT-2 / Kaplan scaling laws / DQN）｜ 覆盖（一篇可服务多线，按文内「与我们工作的关系」逐条计数）：pretrain **17** · vision **4** · harness **9** · data **9** · zhulong **15** · designflow **7**
 
 > 🆕 **第四轮（2026-11-11 12:4x）新增 3 条 = 「规模 → 指令 → 开放权重」三段主线**：GPT-3（few-shot 能力从哪来）→ InstructGPT（对齐/指令跟随的范式起点）→ LLaMA（用「多 token」把开放权重做到可用）。三篇合起来回答 data 线当前最实际的问题：**token 预算、指令数据、公开配比**。
 >
 > 🆕 **第五轮（2026-11-11 15:0x）新增 4 条 = 「视觉塔 + 序列到序列 + 模型式规划」**：ResNet（视觉塔的对照基线）→ LLaVA（图文对齐的最小可行配方）补上第四轮显式留空的 **vision 空档**；seq2seq（定长瓶颈的历史证据）与 Dyna（model-based 规划的范式起点）分别给 pretrain 的长上下文 ROI 与 harness 的 plan/act 预算提供参照。**必读清单覆盖度：本轮后 7/10 组已有一条以上落点**（缺：AlphaGo 系 / DeepMind 家族其余 / Kimi·GLM·MiniMax / VLA·SORA / GPT-1·GPT-2）。
+
+> 🆕 **第六轮（2026-11-11 18:0x）新增 4 条 = 「预训练配方的起点 + 规模律 + 深度 RL 地基」**：GPT-1（两阶段配方 117M）→ GPT-2（1.5B 零样本 + WebText）→ Kaplan scaling laws（N/D/C 幂律，与 Chinchilla 对照）→ DQN（经验回放 + 目标网络）。**必读清单覆盖度：本轮后 8/10 组已有一条以上落点**（缺：AlphaGo 系 / AlphaGo Zero / AlphaFold / AlphaStar / Gemini / Kimi·GLM·MiniMax / VLA·SORA；其中 **DQN 已补上「DeepMind 家族」的入口**）。
+> ⚠️ 第六轮如实记：**GPT-1 / GPT-2 无 arXiv、无 DOI**，OpenAlex 精确标题检索 `count=0`、Crossref 无对应条目 ⇒ **被引数「未查」**，本表不写估算值（Google Scholar 本机不可达）。这两条的「经典」依据是**奠基性**，不是被引数。
 
 ---
 
@@ -341,10 +344,78 @@
 
 ---
 
+## 20. Improving Language Understanding by Generative Pre-Training（GPT-1）
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Improving Language Understanding by Generative Pre-Training |
+| 作者（前 3） | Alec Radford · Karthik Narasimhan · Tim Salimans（et al.，共 4 位；Ilya Sutskever 末位；OpenAI） |
+| 年份 | 2018（OpenAI 技术报告，**无 arXiv / 无 DOI**） |
+| 会议 / 期刊 | 未发表（技术报告）；官方 PDF 实测 `HTTP 200` / `application/pdf` / 541,036 B（2026-11-11） |
+| 被引数 | **未查**（OpenAlex 精确标题检索 `count=0`、Crossref `total-results` 无对应条目 ⇒ **无 DOI 可核**，按纪律不写估算值；Google Scholar 本机不可达） |
+| arXiv / DOI | 无 ｜ 官方 PDF <https://cdn.openai.com/research-covers/language-unsupervised/language_understanding_paper.pdf> |
+| 一句话贡献 | 把「**生成式预训练 + 判别式微调**」写成两阶段配方：先在 BooksCorpus（7,000 本书）上用 12 层 decoder-only Transformer（768 hidden / 12 heads / **117M** 参数）做语言模型预训练，再把下游任务改写成「带任务前缀的连续文本」微调 ⇒ 12 个任务里 **9 个**刷新当时的 SOTA（含常识推理、蕴含、分类、指代）。 |
+| 与我们工作的关系 | **pretrain（配方的历史起点）**：BaiZe 的「预训练 → SFT」两段式，方法学祖先就是这篇；它给出的关键判断「**无标注语料 >> 有标注任务量** 时预训练才划算」，正是我们 2B 规模要自己复核的前提。<br>**data（任务格式化）**：把分类 / 蕴含 / 相似度任务统一改写成文本序列的「task-aware input transformation」，可直接借到 EDA 任务（如「这段 RTL 是否有竞态？」）的 SFT 数据构造。<br>**harness（口径）**：9/12 任务 SOTA 是 **2018 年**的对照面，🚫 不可当今日基线。<br>**风险**：BooksCorpus 已不再公开分发，复现数据不可得；被引数未查 ⇒ 本表**不能**用它做「高引」论证。 |
+
+首次收录: 2026-11-11（第六轮）｜ 状态: 元数据已核验（PDF 200 实测；被引数**未查**，已如实标注）
+
+---
+
+## 21. Language Models are Unsupervised Multitask Learners（GPT-2）
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Language Models are Unsupervised Multitask Learners |
+| 作者（前 3） | Alec Radford · Jeffrey Wu · Rewon Child（et al.，共 6 位；Dario Amodei、Ilya Sutskever 在列；OpenAI） |
+| 年份 | 2019（OpenAI 技术报告，**无 arXiv / 无 DOI**） |
+| 会议 / 期刊 | 未发表（技术报告）；官方 PDF 实测 `HTTP 200` / `application/pdf` / 582,775 B（2026-11-11）；`openai.com/index/better-language-models/` 对本机返回 **403**（页面不可判定，故只挂 CDN PDF） |
+| 被引数 | **未查**（同 GPT-1：OpenAlex 精确标题 `count=0`、Crossref 无对应条目 ⇒ 无 DOI 可核） |
+| arXiv / DOI | 无 ｜ 官方 PDF <https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf> |
+| 一句话贡献 | 提出「**语言模型即无监督多任务学习器**」：在 WebText（**40GB / 800 万文档**，从 Reddit 外链抓取）上训练 **1.5B** 参数的 LM，**零样本**（zero-shot）即在 CoQA、LAMBADA、翻译、摘要等任务上达到「不需任务特定训练」的可用水平，并明确记录 `PPL` 与下游准确率的**对数线性**关系。 |
+| 与我们工作的关系 | **pretrain（数据来源假设）**：WebText 的「**由人筛过的外链**」= 质量过滤的原始形态，对应 data 线现在的去污染 / 质量筛流程；它的教训是「数据来源的**筛选规则**本身就是方法」，而不是附带步骤。<br>**pretrain（评测）**：zero-shot PPL → 下游任务的对数线性关系，是「小模型能不能靠 PPL 预测下游」这一假设的最早系统性陈述 ⇒ **2B 上必须重测**，不可外推。<br>**zhulong（消融口径）**：1.5B 与 117M（GPT-1）的对比是「纯规模放大 + 数据放大」的最小对照实验，可作为我们等 token / 等算力对照的历史模板。<br>**风险**：WebText 未公开，复现只能近似；报告里「零样本」与「少样本」口径常被二手解读混用，引用时须点明。 |
+
+首次收录: 2026-11-11（第六轮）｜ 状态: 元数据已核验（PDF 200 实测；被引数**未查**，已如实标注）
+
+---
+
+## 22. Scaling Laws for Neural Language Models（Kaplan et al.）
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Scaling Laws for Neural Language Models |
+| 作者（前 3） | Jared Kaplan · Sam McCandlish · Tom Henighan（et al.，共 7 位；Johns Hopkins + OpenAI） |
+| 年份 | 2020（arXiv 首次提交 **2020-01-23**，本线实测） |
+| 会议 / 期刊 | 预印本（**未被会议正式收录**；OpenAlex `type=preprint`） |
+| 被引数 | **9,945**（OpenAlex，DOI `10.48550/arxiv.2001.08361`，查询日 2026-11-11；S2 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2001.08361> ｜ DOI `10.48550/arxiv.2001.08361` |
+| 一句话贡献 | 用幂律同时拟合**参数量 N / 数据量 D / 训练算力 C**：`L(N,D)`、`L(C)` 在跨 7 个数量级内近似为直线（对数坐标），且**性能强烈依赖规模、极弱依赖网络形状（深宽比 / 头数）**；大模型样本效率更高 ⇒ 在固定算力下应「**大模型 + 适量数据**」（与后来 Chinchilla 的结论相反，两者口径不同，须分别引用）。 |
+| 与我们工作的关系 | **pretrain（选点方法论，直接）**：2B 的训练 token 预算要用**自己的**拟合曲线定，而不是引 Chinchilla 的 20 token/参数 —— 这两条经验线在尺度外推上会打架，本文的「形状不敏感」也提示我们**别把调深宽比当主攻方向**。<br>**zhulong（成本口径）**：`L(C)` 曲线给出「多花 10× 算力换多少 loss」的一阶估计 ⇒ 消融表里报收益时应换算成算力倍数，而不是只报绝对值。<br>**data（配比）**：文中「大模型样本效率更高」意味着**数据配比实验必须在小与中等尺度各做一遍**，否则外推会错。<br>**风险**：① 结论建立在 2019 年的 Transformer + WebText 口径上；② 与 Chinchilla 的差异源于**固定算力下怎么分配 N 与 D**，🚫 不得把两者当成互相否证；③ 被引数口径 = OpenAlex。 |
+
+首次收录: 2026-11-11（第六轮）｜ 状态: 已核验元数据（arXiv + OpenAlex + PDF 均实测）
+
+---
+
+## 23. Human-level control through deep reinforcement learning（DQN）
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Human-level control through deep reinforcement learning |
+| 作者（前 3） | Volodymyr Mnih · Koray Kavukcuoglu · David Silver（et al.，共 9 位；Demis Hassabis 末位；DeepMind） |
+| 年份 | 2015（Nature 2015-02-25，Crossref 实测） |
+| 会议 / 期刊 | **Nature** 518(7540): **529–533**（Crossref `page=529-533`，实测） |
+| 被引数 | **32,259**（OpenAlex，DOI `10.1038/nature14236`，查询日 2026-11-11；S2 未查） |
+| arXiv / DOI | 无 arXiv 正刊版（**前置**：Playing Atari with Deep RL，arXiv `1312.5602`，NIPS 2013 DRL Workshop）｜ DOI `10.1038/nature14236` |
+| 一句话贡献 | 用**同一个**卷积网络 + Q-learning，直接从 **210×160 像素 + 得分**学 49 个 Atari 游戏，靠两个工程手段稳住「深度网络 + RL」：**经验回放**（打散样本相关性）与**目标网络**（固定 bootstrap 目标）；29 个游戏达到人类水平以上。 |
+| 与我们工作的关系 | **harness（agent 训练/评测的地基）**：我们的 code agent 若做 RL 或 on-policy 蒸馏，**经验回放 + 目标网络**仍是「样本贵、奖励稀疏」场景下最省的第一选择；报告里必须写清 replay 容量与目标网络同步频率，否则不可比。<br>**vision（特征学习的早期证据）**：像素 → 卷积特征 → 控制，是「视觉塔端到端可训」的最早大规模证据；对应我们「冻结视觉塔 vs 端到端」的 2×2 预注册。<br>**zhulong（评测口径）**：「人类水平」= **单游戏人类测试员得分**，且用 30 次随机种子的均值 —— 这条「多 seed + 人类参照」的记账方式应直接沿用。<br>**designflow（造题）**：49 个游戏同一接口（同分辨率 / 同动作空间）是「同构题库」的早期范例，可借鉴其**统一输入输出契约**降低判分成本。<br>**风险**：① 32,259 是 OpenAlex 口径；② Atari 的奖励稠密、状态可完全观测，与我们 EDA 任务（奖励稀疏、部分可观测）差异极大，🚫 不可直接套超参。 |
+
+首次收录: 2026-11-11（第六轮）｜ 状态: 已核验元数据（OpenAlex + Crossref 双 200；页码 / 卷期实测）
+
+---
+
 ## 候选池（下轮起逐轮补，**被引数本轮未查**，勿引用）
 
 > 只登记「已实测 arXiv 元数据」的条目；被引数待下轮 OpenAlex 批量核过再写，**本表数字一律留空 = 未查**。
-> ⚠️ 第五轮**未新增候选**（4 条直接转正为 #16–#19，元数据均当场实测）；下轮优先补必读清单仍缺的组：**AlphaGo / AlphaGo Zero / DQN / AlphaFold / AlphaStar / Gemini**（DeepMind 家族）、**GPT-1 / GPT-2 + Kaplan scaling laws**、**Kimi / GLM / MiniMax**、**VLA（RT-2 / OpenVLA / π0）· SORA**。**元数据未实测前不进本表**。
+> ⚠️ 第六轮**未新增候选**（4 条直接转正为 #20–#23，元数据均当场实测）；下轮优先补必读清单仍缺的组：**AlphaGo（Nature 2016）/ AlphaGo Zero（Nature 2017）/ AlphaFold / AlphaStar / Gemini `2312.11805`**、**Kimi（`2401.14185` Moonshot / Kimi k1.5）· GLM-4 `2406.12793` · MiniMax-01 `2501.08313`**、**VLA（RT-1 `2212.06817` / RT-2 `2307.15818` / OpenVLA `2406.09246` / π0 `2410.24164` / Octo `2405.12213`）· SORA（OpenAI 技术报告，无 arXiv）**。**元数据未实测前不进本表**。
 
 
 | arXiv ID | 标题（arXiv 实测） | 首次提交 | 拟服务线 | 为什么算经典（待核被引） |

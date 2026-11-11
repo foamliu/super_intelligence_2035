@@ -1,0 +1,65 @@
+{
+ "handle": "koraykv",
+ "name": "koray kavukcuoglu (@koraykv) / X",
+ "bio": "SVP, Google DeepMind\nChief AI Architect, Google.",
+ "tweets": [
+  {
+   "id": "2120195516235673793",
+   "created_at": "2026-11-10 16:42 UTC",
+   "created_at_ms": 1794328977000,
+   "text": "Great work from @pushmeet  and team! Very exciting progress!",
+   "url": "https://x.com/koraykv/status/2120195516235673793",
+   "handle_guess": "koraykv"
+  },
+  {
+   "id": "2120186714358702187",
+   "created_at": "2026-11-10 16:07 UTC",
+   "created_at_ms": 1794326878000,
+   "text": "Gemini 4 Carbon is now available for users, developers and enterprises!\\\n\\\nWe are heavily using Carbon internally at Google for hardest long horizon tasks, our teams have used it to help mathematically prove the core cryptographic protocol of Signal — and it’s topping independent https://t.co/bvmnYBwNp7",
+   "url": "https://x.com/koraykv/status/2120186714358702187",
+   "handle_guess": "koraykv"
+  },
+  {
+   "id": "2120127611137634376",
+   "created_at": "2026-11-10 12:13 UTC",
+   "created_at_ms": 1794312787000,
+   "text": "Announcing a major milestone achieved by my team @GoogleDeepMind: we have proven key security properties of the machine code underlying the Signal messaging protocol. This is the first time the actual production code of a widely deployed protocol has been formally verified – by https://t.co/RiYEVZD5ok",
+   "url": "https://x.com/koraykv/status/2120127611137634376",
+   "handle_guess": "pushmeet"
+  },
+  {
+   "id": "2115489649649234259",
+   "created_at": "2026-10-28 17:03 UTC",
+   "created_at_ms": 1793207011000,
+   "text": "Just two weeks after rolling out Gemini 4 Argon, excited to share a preview of Gemini 4 Carbon - our next frontier model.  It has state-of-the-art long horizon coding capabilities driving SOTA performance across the cybersecurity defense lifecycle including detection, validation, https://t.co/acRuTEPmEw",
+   "url": "https://x.com/koraykv/status/2115489649649234259",
+   "handle_guess": "koraykv"
+  },
+  {
+   "id": "2112768144649650384",
+   "created_at": "2026-10-21 04:49 UTC",
+   "created_at_ms": 1792558153000,
+   "text": "We’ve seen an incredible response to Gemini 4 Argon from users, developers &amp; enterprises: nearly 25 trillion tokens processed in the first 72 hours after launch - 3x what Gemini 3 did.\\\n\\\nHear more about Argon and our commitment to the AI frontier from @sundarpichai ‘s conversation",
+   "url": "https://x.com/koraykv/status/2112768144649650384",
+   "handle_guess": "koraykv"
+  },
+  {
+   "id": "2112664584293167535",
+   "created_at": "2026-10-20 21:57 UTC",
+   "created_at_ms": 1792533462000,
+   "text": "New: I spoke with @sundarpichai about Google's commitment to the AI frontier, how close we are to RSI, balancing DeepMind's compute needs vs. Google Cloud profits, and much, much more. \\\n\\\nFull Big Technology Podcast episode here --&gt;\\\n\\\nChapters:\\\n\\\n0:00 Introduction \\\n1:14 Google’s https://t.co/RCyRfSVGyF",
+   "url": "https://x.com/koraykv/status/2112664584293167535",
+   "handle_guess": "Kantrowitz"
+  },
+  {
+   "id": "2110038795924168736",
+   "created_at": "2026-10-13 16:03 UTC",
+   "created_at_ms": 1791907426000,
+   "text": "Excited to launch Gemini 4 Argon, designed to help with hardest coding and knowledge work tasks with its frontier capabilities..\\\n\\\nFor developers and enterprises, it’s available in the paid tier of the Gemini API and the Gemini platform, for Ultra subscribers in Google",
+   "url": "https://x.com/koraykv/status/2110038795924168736",
+   "handle_guess": "koraykv"
+  }
+ ],
+ "http_status": 200,
+ "fetched_at": "2026-11-11 18:02:25"
+}

@@ -1,0 +1,81 @@
+{
+ "handle": "karthik_r_n",
+ "name": "Karthik Narasimhan (@karthik_r_n) / X",
+ "bio": "Professor@Princeton, ex @OpenAI, @SierraPlatform, @MIT_CSAIL, @iitmadras. \nGPT, ReAct, Tree-of-Thoughts, SWE-Bench/Agent, TAU-bench, GEO",
+ "tweets": [
+  {
+   "id": "2118457961727275111",
+   "created_at": "2026-11-05 21:38 UTC",
+   "created_at_ms": 1793914711000,
+   "text": "Just like everything else in the global economy, the future will have lots of AI agents for specialized tasks,  essentially creating multi-developer agentic systems that can benefit greatly from working together. @awhanjie 's latest paper demonstrates how this could work and",
+   "url": "https://x.com/karthik_r_n/status/2118457961727275111",
+   "handle_guess": "karthik_r_n"
+  },
+  {
+   "id": "2117784475358879999",
+   "created_at": "2026-11-04 01:02 UTC",
+   "created_at_ms": 1793754140000,
+   "text": "In AI we've scaled: 📈 parameters -&gt; 🧠 reasoning -&gt; 🐝 agent swarms. What's next?\\\n\\\nWe believe it's scaling across developers 🌍.\\\n\\\nIntroducing Multi-developer agentic systems (MDAs). Video summary below, more thoughts and paper link in the thread. https://t.co/OhJmmgNzb7",
+   "url": "https://x.com/karthik_r_n/status/2117784475358879999",
+   "handle_guess": "awhanjie"
+  },
+  {
+   "id": "2105040428437319725",
+   "created_at": "2026-09-29 21:02 UTC",
+   "created_at_ms": 1790715722000,
+   "text": "so are gpt-5.6-sol and 6-sol obsolete now?",
+   "url": "https://x.com/karthik_r_n/status/2105040428437319725",
+   "handle_guess": "karthik_r_n"
+  },
+  {
+   "id": "2104884278924345643",
+   "created_at": "2026-09-29 10:41 UTC",
+   "created_at_ms": 1790678493000,
+   "text": "This is both a sufficient and necessary answer. Great post! https://t.co/FaMFveD1AU",
+   "url": "https://x.com/karthik_r_n/status/2104884278924345643",
+   "handle_guess": "karthik_r_n"
+  },
+  {
+   "id": "2104626489421611394",
+   "created_at": "2026-09-28 17:37 UTC",
+   "created_at_ms": 1790617031000,
+   "text": "Students sometimes ask me if it still makes sense, in this accelerating age, to pursue a PhD in AI.\\\n\\\nPerhaps counterintuitively, I think it's a great time to do so.\\\n\\\nI wrote up some thoughts on this here: https://t.co/RRqGR0qi1R",
+   "url": "https://x.com/karthik_r_n/status/2104626489421611394",
+   "handle_guess": "phillip_isola"
+  },
+  {
+   "id": "2098000990037225618",
+   "created_at": "2026-09-10 10:49 UTC",
+   "created_at_ms": 1789037389000,
+   "text": "Human communication and coordination are where AI has not helped much, yet. This is the beginning!",
+   "url": "https://x.com/karthik_r_n/status/2098000990037225618",
+   "handle_guess": "karthik_r_n"
+  },
+  {
+   "id": "2097794967574028448",
+   "created_at": "2026-09-09 21:11 UTC",
+   "created_at_ms": 1788988270000,
+   "text": "Introducing our Trusted Person network powered by our new Instinct-to-Instinct communication protocol. Your Instinct can now talk to other Instincts to coordinate plans on your behalf.\\\n\\\nGetting people together often involves a lot of back-and-forth: finding a time, working out https://t.co/LXkDpXGmea",
+   "url": "https://x.com/karthik_r_n/status/2097794967574028448",
+   "handle_guess": "noahrshinn"
+  },
+  {
+   "id": "2072493944068337729",
+   "created_at": "2026-07-02 01:33 UTC",
+   "created_at_ms": 1782956035000,
+   "text": "When we first conceptualized SWE-bench in the summer of 2023, the driving question was \\",
+   "url": "https://x.com/karthik_r_n/status/2072493944068337729",
+   "handle_guess": "karthik_r_n"
+  },
+  {
+   "id": "2072394631996645724",
+   "created_at": "2026-07-01 18:59 UTC",
+   "created_at_ms": 1782932358000,
+   "text": "We expect agents to act like senior engineers, but most benchmarks still evaluate them like interns.\\\n\\\nExcited to introduce Senior SWE-Bench, an open-source and @harborframework-native benchmark that assesses agents as senior engineers on long-horizon tasks with realistically https://t.co/sTjr1ovPFc",
+   "url": "https://x.com/karthik_r_n/status/2072394631996645724",
+   "handle_guess": "henryehrenberg"
+  }
+ ],
+ "http_status": 200,
+ "fetched_at": "2026-11-11 18:02:17"
+}

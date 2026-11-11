@@ -59,7 +59,7 @@
 <div class="wrap">
 <header class="hero">
   <h1>论文观察日报 · 2026-11-11 <span class="badge b-am">早报 3</span><span class="badge b-pm">午间 2</span><span class="badge b-jz">5/5 收口</span><span class="badge b-pm">晚报</span><span class="badge b-pm">15:00 补充</span></h1>
-  <div class="sub">每日 5 篇推荐论文 · <b>今日进度 5 / 5</b>（早报 3 篇「借鉴」+ 午间 2 篇：1 篇「借鉴」+ 1 篇「科普」）· 含 <b>「对各线的可执行建议」</b>（pretrain / vision / harness / data / zhulong / designflow 六线）· <b>🅱 B 轨（经典论文）五轮累计 19 篇</b>（不占 5 篇额度）· <b>🗣 voice_ready 2 条</b>（X 已恢复可达，首获一手原文）· <b>✉ 作者信累计 7 封</b></div>
+  <div class="sub">每日 5 篇推荐论文 · <b>今日进度 5 / 5</b>（早报 3 篇「借鉴」+ 午间 2 篇：1 篇「借鉴」+ 1 篇「科普」）· 含 <b>「对各线的可执行建议」</b>（pretrain / vision / harness / data / zhulong / designflow 六线）· <b>🅱 B 轨（经典论文）六轮累计 23 篇</b>（不占 5 篇额度）· <b>🗣 voice_ready 2 条</b>（X 可达，一手原文）· <b>✉ 作者信累计 8 封</b>（含 18:06 第 8 封）· <b>👥 作者网 34 人 / 13 个 X handle 已核验</b></div>
   <div class="meta">
     <span>📅 2026-11-11（周三）</span>
     <span>🕕 早报 06:0x CST</span>
@@ -339,9 +339,9 @@
   </tr>
 </table>
 
-<h2 class="sec">🅱 B 轨 · 经典论文（五轮累计 19 篇 · <b>不占</b>每日 5 篇额度）</h2>
+<h2 class="sec">🅱 B 轨 · 经典论文（六轮累计 23 篇 · <b>不占</b>每日 5 篇额度）</h2>
 <div class="note">
-  <b>本轮口径变更</b>（用户令 2026-11-11）：research 从「只追新」改为「新 + 经典」双轨，<b>A 轨（最新论文）50%</b>、<b>B 轨（经典论文 + 作者关系网）50%</b>。本节为 B 轨产出（<b>第一轮 4 篇</b> LLM/架构基础 + <b>第二轮 4 篇</b> EDA / agent / PEFT + <b>第三轮 4 篇</b> 位置编码 / 评测基准 / 反思式 agent / 思维链 + <b>第四轮 3 篇</b> GPT-3 / InstructGPT / LLaMA + <b>第五轮 4 篇</b> ResNet / seq2seq / Dyna / LLaVA），<b>不占</b>当日 5 篇推荐额度、<b>不进</b> <code>SEEN.md</code> 去重台账（经典论文无 72h 时效要求）。<br>
+  <b>本轮口径变更</b>（用户令 2026-11-11）：research 从「只追新」改为「新 + 经典」双轨，<b>A 轨（最新论文）50%</b>、<b>B 轨（经典论文 + 作者关系网）50%</b>。本节为 B 轨产出（<b>第一轮 4 篇</b> LLM/架构基础 + <b>第二轮 4 篇</b> EDA / agent / PEFT + <b>第三轮 4 篇</b> 位置编码 / 评测基准 / 反思式 agent / 思维链 + <b>第四轮 3 篇</b> GPT-3 / InstructGPT / LLaMA + <b>第五轮 4 篇</b> ResNet / seq2seq / Dyna / LLaVA + <b>第六轮 4 篇</b> GPT-1 / GPT-2 / Kaplan scaling laws / DQN），<b>不占</b>当日 5 篇推荐额度、<b>不进</b> <code>SEEN.md</code> 去重台账（经典论文无 72h 时效要求）。<br>
   <b>「经典」判据</b>：被引 ≥500 ／ 开创范式 ／ 方法论常青 ／ 本领域（EDA·LLM-for-EDA·存储）标志性工作，且与本线在研方向相关。<b>清单滚动维护</b>（不删旧条目）：<code>research/classic/PAPERS.md</code>；<b>作者关系网</b>：<code>research/classic/AUTHORS.md</code>。<br>
   🆕 <b>第五轮要点</b>：补上第四轮显式留空的 <b>vision 空档</b>（ResNet 作视觉塔对照基线、LLaVA 作图文对齐最小配方），并补必读清单里此前缺失的 <b>seq2seq</b>（伊利亚）与 <b>Dyna</b>（萨顿）；会议 / 页码首次改用 <b>Crossref + NIPS 官方论文集索引</b> 核验（见附录 A-2 第 10 行）。
 </div>
@@ -499,13 +499,46 @@
     <td><b>3,189</b><br><span style="font-size:12px;color:#59636e;">NeurIPS 版 DOI；arXiv 版 2,820（分列）· 2026-11-11 查</span></td>
     <td>用<b>纯文本 GPT-4</b> 把图文对翻成多模态指令数据（158K 指令 + 595K 过滤 CC 对齐），接投影层进 LLM，<b>两阶段</b>（先只训 projection 再解冻）；ScienceQA 92.53%（+GPT-4 集成）。</td>
     <td><b>vision（最小可行配方，直接）</b>：只训 projection 就能接视觉 ⇒ 2B 主干第一阶段先复现这条最省的路。<b>data（造数据模板）</b>：强模型改写已有图文对，是 EDA 版图 / 波形图造多模态指令的可复用方法，<b>标注成本要进账</b>。<b>harness</b>：「相对 GPT-4 的 85.1%」是相对分，🚫 不能当绝对能力。<b>风险</b>：作者自报未复现；GPT-4 生成数据的许可 / 污染未量化。<b>本轮已发信</b>（中文）。</td>
+  <tr>
+    <td>20</td>
+    <td><b>Improving Language Understanding by Generative Pre-Training</b>（GPT-1）<br><a href="https://cdn.openai.com/research-covers/language-unsupervised/language_understanding_paper.pdf">官方 PDF（无 arXiv / 无 DOI）</a><br><span style="font-size:12px;color:#59636e;">A. Radford · K. Narasimhan · T. Salimans（4 位；OpenAI）</span></td>
+    <td>2018<br>技术报告（<b>无会议</b>；PDF 实测 541,036 B）</td>
+    <td><b>未查</b><br><span style="font-size:12px;color:#59636e;">OpenAlex 精确标题 <code>count=0</code> · Crossref 无条目 ⇒ 不写估算值</span></td>
+    <td>「<b>生成式预训练 + 判别式微调</b>」两阶段配方：BooksCorpus（7,000 本书）+ 12 层 decoder-only（<b>117M</b>），把下游任务改写成带前缀的连续文本再微调 ⇒ 12 个任务里 <b>9 个</b>刷新 2018 年 SOTA。</td>
+    <td><b>pretrain（配方起点，直接）</b>：BaiZe 的「预训练 → SFT」方法学祖先；它给的判据「<b>无标注语料 ≫ 有标注任务量</b> 时预训练才划算」须在 2B 上自己复核。<b>data</b>：task-aware input transformation 可直接搬到 EDA 任务（如「这段 RTL 有竞态吗」）的 SFT 数据构造。<b>风险</b>：BooksCorpus 已不再公开分发；<b>被引未查</b> ⇒ 🚫 不能拿它做「高引」论证。<b>本轮已发信</b>。</td>
+  </tr>
+  <tr>
+    <td>21</td>
+    <td><b>Language Models are Unsupervised Multitask Learners</b>（GPT-2）<br><a href="https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf">官方 PDF（无 arXiv / 无 DOI）</a><br><span style="font-size:12px;color:#59636e;">A. Radford · J. Wu · R. Child（6 位；OpenAI）</span></td>
+    <td>2019<br>技术报告（<b>无会议</b>；PDF 实测 582,775 B）</td>
+    <td><b>未查</b><br><span style="font-size:12px;color:#59636e;">同 GPT-1：OpenAlex <code>count=0</code> · 无 DOI</span></td>
+    <td>「<b>语言模型即无监督多任务学习器</b>」：WebText（<b>40GB / 800 万文档</b>）+ <b>1.5B</b> 参数，<b>零样本</b>即在 CoQA / LAMBADA / 翻译 / 摘要上可用，并记录 PPL 与下游准确率的<b>对数线性</b>关系。</td>
+    <td><b>pretrain（数据来源假设）</b>：WebText 的「人筛外链」= 质量过滤的原始形态 ⇒ 数据<b>筛选规则本身就是方法</b>。<b>pretrain（评测）</b>：PPL→下游的对数线性关系必须在 2B 上重测，🚫 不外推。<b>zhulong</b>：GPT-1（117M）→ GPT-2（1.5B）是「纯规模 + 数据放大」的最小对照模板。<b>风险</b>：WebText 未公开，复现只能近似；「零样本 / 少样本」口径常被二手解读混用。</td>
+  </tr>
+  <tr>
+    <td>22</td>
+    <td><b>Scaling Laws for Neural Language Models</b>（Kaplan et al.）<br><a href="https://arxiv.org/abs/2001.08361">arXiv:2001.08361</a><br><span style="font-size:12px;color:#59636e;">J. Kaplan · S. McCandlish · T. Henighan（7 位；JHU + OpenAI）</span></td>
+    <td>2020<br>预印本（<b>未被会议收录</b>；arXiv 首次提交 2020-01-23）</td>
+    <td><b>9,945</b><br><span style="font-size:12px;color:#59636e;">OpenAlex · 2026-11-11 查</span></td>
+    <td>用幂律同时拟合 <b>N / D / C</b>：loss 在跨 7 个数量级上近似直线，<b>强烈依赖规模、极弱依赖网络形状</b>；大模型样本效率更高 ⇒ 固定算力下应「大模型 + 适量数据」（与 Chinchilla 口径相反，须分别引用）。</td>
+    <td><b>pretrain（选点方法论，直接）</b>：2B 的 token 预算要用<b>自己的</b>拟合曲线定，🚫 不要照抄 Chinchilla 的 20 token/参数；「形状不敏感」提示别把调深宽比当主攻。<b>zhulong（成本口径）</b>：把 loss 收益换算成<b>算力倍数</b>再进消融表。<b>data</b>：样本效率随规模变 ⇒ 配比实验须在<b>小 + 中</b>两个尺度各做一遍。<b>风险</b>：2019 年的 Transformer 口径；与 Chinchilla 不是互相否证。</td>
+  </tr>
+  <tr>
+    <td>23</td>
+    <td><b>Human-level control through deep reinforcement learning</b>（DQN）<br><a href="https://www.nature.com/articles/nature14236">DOI:10.1038/nature14236</a><br><span style="font-size:12px;color:#59636e;">V. Mnih · K. Kavukcuoglu · D. Silver（9 位；DeepMind）</span></td>
+    <td>2015<br><b>Nature</b> 518(7540): 529–533（Crossref 实测）</td>
+    <td><b>32,259</b><br><span style="font-size:12px;color:#59636e;">OpenAlex · 2026-11-11 查</span></td>
+    <td>同一卷积网络 + Q-learning 直接从 <b>210×160 像素</b>学 <b>49 个 Atari 游戏</b>；靠<b>经验回放</b>（打散相关性）+ <b>目标网络</b>（固定 bootstrap 目标）稳住训练；<b>29 个</b>游戏达人类水平以上。</td>
+    <td><b>harness（训练/评测地基，直接）</b>：做 RL 或 on-policy 蒸馏时，replay 容量与目标网络同步频率<b>必须写进报告</b>，否则不可比。<b>vision</b>：像素→卷积特征→控制，是「视觉塔端到端可训」的最早大规模证据，对应我们「冻结 vs 端到端」2×2。<b>zhulong（评测口径）</b>：人类参照 + <b>30 seed</b> 均值应直接沿用。<b>designflow</b>：49 个游戏同一输入输出契约 = 「同构题库」早期范例。<b>风险</b>：Atari 奖励稠密、全观测，与 EDA（稀疏奖励、部分可观测）差异极大，🚫 不可套超参。</td>
+  </tr>
+
   </tr>
 </table>
 <div class="blk">
   <b>被引数口径（硬）</b>：全部取自 <code>OpenAlex API</code>（<code>api.openalex.org/works/https://doi.org/10.48550/arxiv.&lt;ID&gt;</code>），查询日 <b>2026-11-11</b>，逐条可复核。<br>
   ⚠️ <b>局限如实记</b>：① <code>api.semanticscholar.org</code> 首轮<b>两次均返回 <code>HTTP 429</code></b> ⇒ S2 未查（第二、三轮未再请求，仍记「未查」）；Google Scholar 本机不可达；② <b>不同来源被引数口径不同</b>（OpenAlex 含预印本引用）⇒ <b>禁止跨源比较</b>；③ 元数据（标题 / 首次提交日 / comment）前两轮取自 arXiv 官方 API（各 4/4 <code>200</code> + <code>atom+xml</code>），<b>第三轮因 API 限速 <code>429</code> 改用 <code>arxiv.org/abs/&lt;ID&gt;</code> 页面（4/4 <code>200</code>，逐条可复核）</b>；首轮日期 2017-06-12 / 2022-03-29 / 2022-05-27 / 2023-12-01，第二轮 2023-10-31 / 2022-10-06 / 2023-09-14 / 2021-06-17，第三轮 2021-04-20 / 2023-10-10 / 2023-03-20 / 2022-01-28；④ 第三轮被引 3,867 / 2,078 / 3,297 / 13,949，均为 <b>OpenAlex 单源、查询日 2026-11-11</b>；⑤ <b>第五轮</b>新增 <b>Crossref</b> 作为会议 / 卷期 / 页码的核验源（`api.crossref.org/works/<DOI>`，4/4 `200`），被引数仍为 OpenAlex 单源：<b>243,173</b>（ResNet/CVPR 版）· <b>18,379</b>（seq2seq）· <b>871</b>（Dyna 1991）与 <b>1,383</b>（Dyna 1990 前身）· <b>3,189</b>（LLaVA/NeurIPS 版）；⚠️ ResNet 与 LLaVA 的 <b>arXiv 记录</b>分别另有 12,953 / 2,820 —— <b>同一论文两条记录分列，不相加、不跨记录比较</b>。
 </div>
-<h2 class="sec">👥 作者关系网 · 五轮互动（28 人建档 / 7 封已发 / X 已恢复只读 / follow 待手动）</h2>
+<h2 class="sec">👥 作者关系网 · 六轮互动（34 人建档 / 8 封已发 / 13 个 X handle 已核验 / follow 待手动）</h2>
 <table>
   <tr><th>人物</th><th>机构</th><th>代表论文</th><th>邮箱（来源）</th><th>X</th><th>状态</th></tr>
   <tr><td><b>Tri Dao</b></td><td>Princeton（助理教授）· Together AI</td><td>FlashAttention（一作）· Mamba（二作）</td><td><b>tri@tridao.me</b>（本人 2026 版 CV，<code>pdftotext</code> 实测）</td><td><b>@tri_dao</b>（主页 href 核验）</td><td><b>已发信</b> 11-11 11:36 · X 待 follow</td></tr>
@@ -535,13 +568,20 @@
   <tr><td><b>Richard S. Sutton</b>（<b>第五轮新增</b>）</td><td>U Alberta（荣休）· Keen Technologies · amii</td><td>Dyna（单作者）· TD 学习 / RL 教材</td><td>未找到（主页仅有 amii 行政信箱，<b>非本人</b> ⇒ 不发信）</td><td><b>@RichardSSutton</b>（<code>200</code>，bio 含 <code>UAlberta, amii, The Royal Society, Turing Award</code>）</td><td>待跟踪 · X 待 follow（<b>高价值言论源</b>）</td></tr>
   <tr><td><b>Haotian Liu</b>（<b>第五轮新增</b>）</td><td><b>Meta Superintelligence Lab</b>（X bio；发表时 UCSD）</td><td>LLaVA（一作）· LLaVA-1.5</td><td><b>liuhaotian.cn@gmail.com</b>（本人主页 <code>mailto:</code> 实测）</td><td><b>@imhaotian</b>（主页 href 核验 + X bio 一致）</td><td><b>已发信</b> 11-11 15:05（中文 215 字）· X 待 follow</td></tr>
   <tr><td><b>Chunyuan Li</b>（李春元 · <b>第五轮新增</b>）</td><td><b>Google DeepMind</b>（Agentic Vision，X bio；此前 xAI / MSR）</td><td>LLaVA（二作）· LLaVA-Med</td><td><b>lichunyuan24@gmail.com</b>（本人主页 <code>mailto:</code> 实测）</td><td><b>@ChunyuanLi</b>（主页 href 核验 + X bio 一致）</td><td>待跟踪（<b>不与一作同轮发信</b>，避免同合作圈两封）· X 待 follow</td></tr>
+  <tr><td><b>Karthik Narasimhan</b>（<b>第六轮新增</b>）</td><td><b>Princeton University</b>（助理教授；此前 OpenAI · MIT CSAIL · Sierra）</td><td>GPT-1（二作）· ReAct（共同作者）</td><td><b>karthikn@princeton.edu</b>（本人主页 <code>mailto:</code>，percent-encoded，<code>200</code> 实测）</td><td><b>@karthik_r_n</b>（主页 href + X bio 双核验：<code>Professor@Princeton, ex @OpenAI…</code>）</td><td><b>已发信</b> 11-11 18:06（英文 164 词）· X 待 follow</td></tr>
+  <tr><td><b>Demis Hassabis</b>（<b>第六轮新增</b>）</td><td><b>Google DeepMind</b>（联合创始人 &amp; CEO；Alphabet 首席科学家）</td><td>DQN（末位）· AlphaGo / AlphaFold</td><td>未找到（仅公司级联系表单 ⇒ 不发信）</td><td><b>@demishassabis</b>（<code>200</code>，bio 含 <code>Nobel Laureate… @GoogleDeepMind</code>）</td><td>待跟踪 · X 待 follow</td></tr>
+  <tr><td><b>Koray Kavukcuoglu</b>（<b>第六轮新增</b>）</td><td><b>Google DeepMind</b>（SVP）· Google 首席 AI 架构师</td><td>DQN（二作）</td><td>未找到</td><td><b>@koraykv</b>（<code>200</code>，bio = <code>SVP, Google DeepMind / Chief AI Architect…</code>）</td><td>待跟踪 · X 待 follow</td></tr>
+  <tr><td>Volodymyr Mnih（<b>第六轮新增</b>）</td><td>Google DeepMind（DQN 一作）</td><td>DQN（一作）· A3C</td><td>未找到（无个人主页）</td><td>未找到 X（不猜）</td><td>待跟踪（渠道缺失 ⇒ 不发信）</td></tr>
+  <tr><td>Alec Radford（<b>第六轮新增</b>）</td><td>OpenAI（GPT-1 / GPT-2 / CLIP 一作）</td><td>GPT-1 · GPT-2（均无 arXiv）</td><td>未找到</td><td><b>未找到 X</b>（<code>x.com/AlecRadford</code> 虽 <code>200</code> 但 bio = <code>8 followers · 1 following</code>，<b>身份不可核 ⇒ 拒绝登记</b>）</td><td>待跟踪（<b>「不猜」样本</b>）</td></tr>
+  <tr><td>Jared Kaplan（<b>第六轮新增</b>）</td><td><b>Anthropic</b>（联合创始人 &amp; 首席科学官；发表时 JHU）</td><td>Scaling Laws（一作）</td><td>未找到（<code>jaredkaplan.net</code> 仅 114 B 占位页）</td><td>未找到 X（不猜）</td><td>待跟踪（渠道缺失 ⇒ 不发信）</td></tr>
+
 </table>
 <p style="font-size:13px;color:#59636e;">完整字段（主页 / 备注 / 探测原命令与输出）见 <code>research/classic/AUTHORS.md</code>；X handle <b>只登记能从作者本人主页 <code>href</code> 读到</b>的，并在本轮用 X 页 <code>og:description</code> <b>二次核对 bio 与身份一致</b>；读不到一律写「未找到 X」——<b>不猜</b>（猜错会 follow 到无关账号，比不 follow 更糟）。</p>
 
 <div class="note">
   <b>🟢 X 能力探测（只读 · 第四轮 12:4x）⇒ <code>OPEN(x_readonly)</code>（此前三轮为 <code>BLOCKED(x_access)</code>，历史保留）</b>：显式带本机代理 <code>curl -x http://127.0.0.1:7897 -w '%{http_code} %{time_total}' https://x.com</code> → <b><code>200</code> / 0.79s</b>；<code>x.com/karpathy</code> <b><code>200</code> / 0.77s</b>、<code>x.com/_jasonwei</code> <b><code>200</code> / 0.66s</b>；出口 IP <b><code>178.249.213.185</code></b>（与运维口径一致）。<b>不带代理仍 <code>000</code></b> ⇒ 本线 shell 未继承 <code>~/.profile</code>，脚本内已内置默认代理。<br>
-  <b>可做</b>：读主页 bio / 页内 timeline 的近 8–9 条推文原文（<code>full_text</code> + <code>created_at_ms</code>）；单条推文页可核验作者（<code>og:title</code>）。<b>不可做</b>：follow / like / 发帖（需登录态）⇒ <b>本轮 follow 数 = 0</b>（如实记，未假装已 follow）；🚫 未注册新账号、未使用任何凭据。抓取一律走 <code>research/classic/x_fetch.py</code>（只读、串行、相邻 ≥3s、单轮 ≤6 个 handle），原始快照落 <code>research/classic/x/*.json</code>（<b>10 个文件 / 28.0 KB</b>，第五轮 +4）。<br>
-  <b>待 follow 清单（请用户手动执行 · 10 个 handle 已在 X 侧二次核验 bio）</b>：① <a href="https://x.com/tri_dao">@tri_dao</a>（Tri Dao，FlashAttention / Mamba）；② <a href="https://x.com/_albertgu">@_albertgu</a>（Albert Gu，Mamba / SSM）；③ <a href="https://x.com/ShunyuYao12">@ShunyuYao12</a>（Shunyu Yao，ReAct / ToT）；④ <a href="https://x.com/edwardjhu">@edwardjhu</a>（Edward J. Hu，LoRA）；⑤ <a href="https://x.com/jyangballin">@jyangballin</a>（John Yang，SWE-bench / SWE-agent）；⑥ <a href="https://x.com/_jasonwei">@_jasonwei</a>（Jason Wei，CoT / 指令微调）；⑦ <a href="https://x.com/ilyasut">@ilyasut</a>（Ilya Sutskever，seq2seq）；⑧ <a href="https://x.com/RichardSSutton">@RichardSSutton</a>（Richard S. Sutton，Dyna / TD）；⑨ <a href="https://x.com/imhaotian">@imhaotian</a>（Haotian Liu，LLaVA）；⑩ <a href="https://x.com/ChunyuanLi">@ChunyuanLi</a>（Chunyuan Li，LLaVA / Agentic Vision）。
+  <b>可做</b>：读主页 bio / 页内 timeline 的近 8–9 条推文原文（<code>full_text</code> + <code>created_at_ms</code>）；单条推文页可核验作者（<code>og:title</code>）。<b>不可做</b>：follow / like / 发帖（需登录态）⇒ <b>本轮 follow 数 = 0</b>（如实记，未假装已 follow）；🚫 未注册新账号、未使用任何凭据。抓取一律走 <code>research/classic/x_fetch.py</code>（只读、串行、相邻 ≥3s、单轮 ≤6 个 handle），原始快照落 <code>research/classic/x/*.json</code>（<b>14 个文件 / 40,085 B</b>，第六轮 +4）。<br>
+  <b>待 follow 清单（请用户手动执行 · <b>13</b> 个 handle 已在 X 侧二次核验 bio）</b>：① <a href="https://x.com/tri_dao">@tri_dao</a>（Tri Dao，FlashAttention / Mamba）；② <a href="https://x.com/_albertgu">@_albertgu</a>（Albert Gu，Mamba / SSM）；③ <a href="https://x.com/ShunyuYao12">@ShunyuYao12</a>（Shunyu Yao，ReAct / ToT）；④ <a href="https://x.com/edwardjhu">@edwardjhu</a>（Edward J. Hu，LoRA）；⑤ <a href="https://x.com/jyangballin">@jyangballin</a>（John Yang，SWE-bench / SWE-agent）；⑥ <a href="https://x.com/_jasonwei">@_jasonwei</a>（Jason Wei，CoT / 指令微调）；⑦ <a href="https://x.com/ilyasut">@ilyasut</a>（Ilya Sutskever，seq2seq）；⑧ <a href="https://x.com/RichardSSutton">@RichardSSutton</a>（Richard S. Sutton，Dyna / TD）；⑨ <a href="https://x.com/imhaotian">@imhaotian</a>（Haotian Liu，LLaVA）；⑩ <a href="https://x.com/ChunyuanLi">@ChunyuanLi</a>（Chunyuan Li，LLaVA / Agentic Vision）；<b>⑪ <a href="https://x.com/karthik_r_n">@karthik_r_n</a>（Karthik Narasimhan，GPT-1 / ReAct / SWE-bench / τ-bench —— 今日已发信）</b>；<b>⑫ <a href="https://x.com/demishassabis">@demishassabis</a>（Demis Hassabis，DQN / AlphaGo / AlphaFold）</b>；<b>⑬ <a href="https://x.com/koraykv">@koraykv</a>（Koray Kavukcuoglu，DQN）</b>。⚠️ <code>x.com/AlecRadford</code> 虽 <code>200</code>，但 bio = <code>8 followers · 1 following</code>（无身份信息）⇒ <b>判为同名占位、不列入清单</b>。
 </div>
 <details class="voice-ready" open>
 <summary>🗣 voice_ready · 研究者言论（可发头条）—— 本期 2 条（X 首获一手原文）</summary>
@@ -700,6 +740,51 @@
   <tr><td>5</td><td><code>voice_ready</code> 仍 <b>2 条</b>（Sutton 原文登记为 V4，下期用）</td><td>遵守「每期 ≤2 条」上限，<b>不替换已核验条目、不硬塞</b></td></tr>
   <tr><td>6</td><td>会议/页码改用 <b>Crossref</b> 核验；被引数仍 OpenAlex 单源</td><td>前四轮会议信息多为「未核验」；本轮起用 DOI 元数据补上，并把 ResNet / LLaVA 的 arXiv 与会议两条记录<b>分列</b>，避免跨记录比较</td></tr>
 </table>
+<h2 class="sec">🕕 18:00 增量建议（B 轨第六轮 · GPT-1 / GPT-2 / Kaplan / DQN · 6 线齐全）</h2>
+<div class="note">
+  <b>依据</b>：本节 4 篇经典论文（<code>#20–#23</code>）的原文结论 + 各线 2026-11-11 18:0x 的 MEMORY 顶部状态（pretrain <code>#1983</code> 训练 iter165560/700k · vision <code>wake#1020</code> 全交付 · harness <code>R2184</code> · data <code>唤醒1448</code> · zhulong <code>wake#838</code> B_fr_r2 跑中 · designflow <code>第157轮</code>）。<b>建议 = 基于论文的推断，非指令</b>；与各线任务书冲突以任务书为准。<b>6 线全部列出</b>，无可用建议的线<b>显式写「无」并给理由</b>。
+</div>
+<table>
+  <tr><th style="width:96px;">线</th><th>可执行建议（含判据 / 命令 / 口径）</th></tr>
+  <tr>
+    <td><b>pretrain</b></td>
+    <td>① <b>用自己的曲线核对 Kaplan vs Chinchilla，而不是引任何一条</b>：训练日志已记 iter/loss（<code>#1983</code> 实测 loss 2.025–2.0x），把 (tokens_seen, loss) 从现有 log 抽成 CSV，在 <code>log-log</code> 上拟合 <code>L = a·C^-α + c</code>，<b>判据</b>：拟合残差 &lt; 0.01 nats 且 α 落在 0.05–0.10 才算「曲线可用」；否则只写「样本不足、不外推」。<b>成本</b>：纯 CPU 解析 log，≈10–20 min，<b>不影响在跑训练</b>。<br>② Kaplan 的「<b>形状不敏感</b>」⇒ <b>不要再开深宽比扫描</b>；把省下的卡时留给 token 预算（每 +10% token 的 loss 降幅要能算出来）。<br>③ 评测口径（参考 GPT-2）：<b>PPL 与下游准确率的关系必须与 shot 数一起报</b>，现有四层报告若只写 zero-shot，需标注。<b>不做</b>：不改训练超参、不重启训练。</td>
+  </tr>
+  <tr>
+    <td><b>vision</b></td>
+    <td>① <b>把「冻结视觉塔 vs 端到端」的 2×2 预注册补上（来自 DQN 的历史证据）</b>：DQN 证明「像素 → 卷积特征 → 控制」可端到端训，但那是 210×160 低分辨率 + 稠密奖励；<b>判据</b>：我们的工业图像若单卡 batch &lt; 32 或标注 &lt; 10k，默认走「冻结 + 只训 projection」（LLaVA 配方），端到端作为<b>对照臂</b>而非默认。<br>② <b>随机性记账</b>：DQN 报 30 seed 均值 + 人类参照 ⇒ 视觉评测表加 <code>n_seeds</code> 与 <code>human_ref</code> 两列（无人类参照就写「无」），避免单 seed 结论。<b>成本</b>：改表头 + 回填，≈30 min。<br>③ 若 vision 线后续做 RL 微调：先照 DQN 报 <code>replay_size</code> / <code>target_sync_steps</code>，否则与公开结果不可比。</td>
+  </tr>
+  <tr>
+    <td><b>harness</b></td>
+    <td>① <b>报告加 3 列成本口径（来自本轮给 Karthik 的请教问题，先自答，不等回信）</b>：<code>retries</code> / <code>simulated_turns</code> / <code>cost_per_resolved</code>；<b>判据</b>：任一路由补齐这 3 列后，<b>同分不同质</b>才算可比（R2184 现有 <code>1420 resolved</code> 可直接重算，无需重跑）。<br>② DQN 的「经验回放 + 目标网络」若要用在 on-policy 蒸馏：<b>先做小规模消融</b>（replay on/off × target sync {1k, 10k}），<b>判据</b>＝「resolved 提升 &gt; 2 个绝对点且方差下降」才保留；否则退回无 replay。<br>③ <b>不要</b>把「1799 real / 1927 total = 93.4%」当能力上界 —— 那是<b>采集完成度</b>，与解决率无关（口径纪律，源自 GPT-1 那代「任务数 ≠ 能力」的教训）。</td>
+  </tr>
+  <tr>
+    <td><b>data</b></td>
+    <td>① <b>过滤规则要版本化（来自 GPT-2 的 WebText 教训：筛选规则本身就是方法）</b>：在数据 manifest 增加 <code>filter_rule_ver</code> + <code>filter_yield</code>（保留率）两个字段；<b>判据</b>：同一源两份不同规则的子集必须能靠 manifest 区分，否则视为<b>不可复现</b>。<b>成本</b>：改 schema + 回填近 9 源，≈1–2 h CPU。<br>② Kaplan 的「大模型样本效率更高」⇒ <b>配比实验至少在小 + 中两个尺度各做一次</b>（现有 2B 单尺度结论不得外推到 7B+，也不得反向外推到 &lt;1B）。<br>③ <b>无新增清洗算法建议</b>：本轮 4 篇都不涉及去污染 / 分词细节，不硬凑。</td>
+  </tr>
+  <tr>
+    <td><b>zhulong</b></td>
+    <td>① <b>消融表把 loss 收益换算成「算力倍数」（Kaplan 的 L(C) 曲线）</b>：B 轴语言/thinking 对比现在报绝对值；加一列 <code>ΔC_equiv</code>（按本线自己的拟合斜率折算），<b>判据</b>：报「thinking 带来的收益 ≈ 多花 x× 算力」，x &lt; 1 才说明该机制真的划算。<br>② <b>B_fr_r2 跑完后的报告加 <code>n_seeds</code></b>（DQN 的 30 seed 纪律）⇒ 单次 run 差异不写进结论。<br>③ 风险提示：Kaplan 与 Chinchilla 的结论在「固定算力怎么分配 N:D」上相反，<b>zhulong 的等算力对照必须写明按哪条线设的预算</b>。</td>
+  </tr>
+  <tr>
+    <td><b>designflow</b></td>
+    <td>① <b>同域题目统一「输入 / 输出契约」（DQN 的 49 游戏同接口）</b>：<code>spice_sim</code> / <code>physical_verify</code> / <code>layout_aether</code> 各域内，case 的入口参数与产物格式<b>只允许一种</b>；<b>判据</b>：新 case 若偏离本域既有契约，必须显式写 <code>contract_exception: true</code> + 理由，否则不接收（第 157 轮 shard C 可直接按此复查）。<b>成本</b>：schema 加 1 字段 + 存量扫描，≈1 h。<br>② 判分成本：统一契约后，同一域可复用同一套 checker 外壳 ⇒ 目标把每 case 的判分脚本差异压到「仅断言段」。<br>③ <b>本轮无新造题方法论建议</b>：4 篇均非 EDA 造题工作，不硬凑。</td>
+  </tr>
+</table>
+
+<h2 class="sec">🌙 18:00 补充轮变更说明（15:0x → 18:0x）</h2>
+<table>
+  <tr><th style="width:150px;">项</th><th>改了什么</th><th>为什么</th></tr>
+  <tr><td>A 轨 5 篇</td><td><b>0 变更</b>（仍 5/5）</td><td>今日额度已满；用户令是「新 + 经典 各 50%」，B 轨补课不占 A 轨额度</td></tr>
+  <tr><td>B 轨经典清单</td><td><b>19 → 23</b>（+4：GPT-1 / GPT-2 / Kaplan scaling laws / DQN）</td><td>必读清单 §6.5 第 5 组（GPT 系列）与第 8 组（DeepMind 家族）此前缺失，本轮补齐入口</td></tr>
+  <tr><td>作者关系网</td><td><b>28 → 34 人</b>；X 核验 <b>10 → 13</b> handle；已发信 <b>7 → 8</b> 封</td><td>新增 6 位 GPT-1 / DQN / Kaplan 作者；对 Karthik Narasimhan（GPT-1 二作、ReAct 共同作者）发第 8 封（英文 164 词，<code>SENT OK 18:06:44</code>）</td></tr>
+  <tr><td>follow 状态</td><td><b>0 → 0</b>（未变）</td><td>follow 需登录态 ⇒ 仍靠用户手动；待 follow 清单 <b>10 → 13</b> 个 handle 已二次核验</td></tr>
+  <tr><td>被引数</td><td>Kaplan <b>9,945</b> / DQN <b>32,259</b>（OpenAlex 实测）；GPT-1 / GPT-2 <b>「未查」</b></td><td>GPT-1/2 无 arXiv、无 DOI，OpenAlex 精确标题 <code>count=0</code>、Crossref 无条目 ⇒ <b>按纪律不写估算值</b></td></tr>
+  <tr><td>研究者言论</td><td><b>voice_ready 仍 2 条</b>（未替换、未硬塞）</td><td>受「每期 ≤2 条」上限；新增 V5（Karthik 11-05）<b>正文不完整 ⇒ 未采用</b>；Sutton V4 仍为下期首选</td></tr>
+  <tr><td>分镜脚本</td><td>新增 <code>research/video/SCENES/11_11.html</code>（5 镜 / 120s，TOP-1 = <code>2611.13541</code>）</td><td>第 5 批 P0：18:00 时窗从当日科普 TOP-1 出分镜</td></tr>
+</table>
+
+
 
 <h2 class="sec">附录 A · 检索式与命中数（06:00 时点 · 可核验）</h2>
 <table>
@@ -726,6 +811,10 @@
   <tr><td>10（<b>第五轮 15:0x</b>）</td><td>经典论文元数据（ResNet / seq2seq / LLaVA / Dyna）：<code>arxiv.org/abs/&lt;ID&gt;</code> + <code>api.crossref.org/works/&lt;DOI&gt;</code> + NIPS 官方论文集索引</td><td>arXiv abs <b>3/3 <code>200</code></b>（42,963 / 43,176 / 42,352 B）；Crossref <b>4/4 <code>200</code></b>：CVPR 2016 pp. 770–778 · NeurIPS 36 pp. 34892–34916 · SIGART 2(4) 160–163 · ML Proc. 1990 pp. 216–224；<code>papers.nips.cc/paper_files/paper/2014</code> <b><code>200</code></b> 且标题命中；LLaVA <code>comments</code> = `NeurIPS 2023 Oral`</td><td>会议 / 页码首次可核验（seq2seq 页码仍留空）</td></tr>
   <tr><td>11（<b>第五轮 · 被引</b>）</td><td>OpenAlex（串行 2s）：4 篇 5 条记录</td><td><b>5/5 <code>200</code></b>：ResNet CVPR 版 <b>243,173</b> / arXiv 版 12,953；seq2seq <b>18,379</b>；LLaVA NeurIPS 版 <b>3,189</b> / arXiv 版 2,820；Dyna 1991 <b>871</b> / 1990 前身 <b>1,383</b></td><td>单源；同论文多记录<b>分列不相加</b></td></tr>
   <tr><td>12（<b>第五轮 · X 与主页</b>）</td><td>4 个新 handle（串行 ≥3s）+ 4 个作者主页</td><td><code>x.com</code> <b><code>200</code></b>（<code>-x http://127.0.0.1:7897</code>）；<code>ilyasut</code> / <code>RichardSSutton</code> / <code>imhaotian</code> / <code>ChunyuanLi</code> 均 <b><code>200</code></b> 且 bio 与身份一致；主页 <code>people.csail.mit.edu/kaiming/</code> <b>200</b>（<code>kaiming@mit.edu</code>）、<code>haotian-liu.github.io</code> <b>200</b>、<code>chunyuanli.github.io</code> <b>200</b>、<code>incompleteideas.net</code> <b>200</b>（仅有 amii 行政信箱，<b>非本人 ⇒ 不发信</b>）</td><td>handle 与邮箱均可复核；<b>0 follow</b>（需登录态）</td></tr>
+  <tr><td>13（<b>第六轮 18:0x · 元数据</b>）</td><td>arXiv <code>id_list=2001.08361</code>；OpenAlex <code>works/https://doi.org/10.48550/arxiv.2001.08361</code> 与 <code>10.1038/nature14236</code>；Crossref <code>10.1038/nature14236</code>；GPT-1 / GPT-2 官方 PDF</td><td>arXiv <b><code>200</code></b> + <code>application/atom+xml; charset=utf-8</code>（2,756 B；标题 <code>Scaling Laws for Neural Language Models</code> / <code>published=2020-01-23T03:59:20Z</code>）；OpenAlex <b><code>200</code></b>（9,945 / 32,259）；Crossref <b><code>200</code></b>（<code>Nature 518(7540) 529-533</code>）；两份官方 PDF <b><code>200</code> + <code>application/pdf</code></b>（541,036 B / 582,775 B）</td><td>4 篇元数据齐备；证据 <code>research/raw/2026-11-11-pm-meta-r150.json</code> + <code>research/raw/2026-11-11-pm-arxiv-r150.xml</code></td></tr>
+  <tr><td>14（<b>第六轮 · GPT-1/2 被引</b>）</td><td>OpenAlex <code>filter=title.search:&lt;精确标题&gt;</code>；Crossref <code>query.bibliographic=&lt;精确标题&gt;</code></td><td>OpenAlex <b><code>count=0</code></b>（两篇均 0）；Crossref <b>无对应条目</b>（返回的是同名词条）</td><td><b>如实写「未查」</b>，🚫 不写估算值（两篇无 arXiv / 无 DOI）</td></tr>
+  <tr><td>15（<b>第六轮 · X 与主页</b>）</td><td>4 个 handle（<code>AlecRadford</code> / <code>karthik_r_n</code> / <code>demishassabis</code> / <code>koraykv</code>，串行 ≥3s）+ 主页 <code>karthiknarasimhan.com</code> / <code>radford.ai</code> / <code>jaredkaplan.net</code>；推文页复核 1 条</td><td><code>x.com</code> <b><code>200</code></b>、出口 <b><code>178.249.213.185</code></b>；<code>karthik_r_n</code> / <code>demishassabis</code> / <code>koraykv</code> 均 <b>200 + bio 与身份一致</b>；<code>AlecRadford</code> 200 但 bio = <code>8 followers · 1 following</code> ⇒ <b>拒绝登记</b>；主页 <b>200</b>（14,706 B，含 <code>mailto:karthikn@princeton.edu</code>）、<code>radford.ai</code> / <code>jaredkaplan.net</code> 各 200 但仅 <b>114 B</b>（占位页 ⇒ 不采信）；推文页 <b>200</b>（<code>og:title</code> 回显本人）</td><td>3 个 handle 入清单；<b>0 follow</b>（需登录态）；<b>V5 因正文不完整未采用</b></td></tr>
+
 </table>
 
 <h2 class="sec">附录 B · 取数、去重与选文（5 篇：早 3 + 午间 2）</h2>
@@ -761,7 +850,7 @@
   <tr><td><code>news_ready</code></td><td><b>1 条</b></td><td><code>2611.13541</code>（科普）；含 5 个数字 + PDF 页码 + Fig. 2 配图</td></tr>
   <tr><td><code>voice_ready</code></td><td><b>2 条</b></td><td>Albert Gu 2026-11-07（架构原语 vs 规模化）· Tri Dao 2026-10-28（代码动态分词）；均「原文 + 链接 + 时间」双核验；另有 1 条（Jason Wei 11-10）因正文不可完整核验<b>未采用</b>并如实记</td></tr>
   <tr><td>出口</td><td><b>仅 HTML</b></td><td>🚫 未发任何日报邮件（2026-11-07 10:50 用户令）</td></tr>
-  <tr><td>B 轨（经典论文）</td><td><b>19 篇</b>（4+4+4+3+<b>4</b>） / <b>28 人</b>建档 / <b>7 封</b>已发 / <b>0 follow</b></td><td>不占当日 5 篇额度、不进 <code>SEEN.md</code>；<b>第五轮</b>被引 <b>243,173</b>（ResNet/CVPR 版）· <b>18,379</b>（seq2seq）· <b>871 / 1,383</b>（Dyna 两版）· <b>3,189</b>（LLaVA/NeurIPS 版），OpenAlex 单源、同论文多记录<b>分列</b>；<b>本轮信 2 封</b>（Kaiming He / Haotian Liu，均中文、均有当前主页邮箱）；X <b><code>OPEN(x_readonly)</code></b>（代理 200 / 出口 <code>178.249.213.185</code>，<b>10 handle</b> 二次核验 bio）⇒ follow 需登录态，<b>0 follow（未假装）</b>；<code>voice_ready</code> 仍 <b>2 条</b>（Sutton 原文登记 V4，下期用）</td></tr>
+  <tr><td>B 轨（经典论文）</td><td><b>23 篇</b>（4+4+4+3+4+<b>4</b>） / <b>34 人</b>建档 / <b>8 封</b>已发 / <b>0 follow</b></td><td>不占当日 5 篇额度、不进 <code>SEEN.md</code>；<b>第六轮</b>被引 Kaplan <b>9,945</b>（arXiv 版）· DQN <b>32,259</b>（Nature 版），GPT-1/GPT-2 <b>无 DOI ⇒ 未查</b>；本轮 +6 人 / +3 handle / +1 封信（<code>SENT OK 18:06:44</code>）</td></tr>
 </table>
 
 <div class="ok-box" style="margin-top:14px;">
@@ -769,8 +858,8 @@
 </div>
 
 <footer>
-  research 线 · 论文观察日报 <b>2026-11-11（早报 3 + 午间 2 · 5/5 ＋ 🅱 B 轨经典论文 19 篇 ＋ 🗣 voice_ready 2 条 ＋ ✉ 作者信 7 封）</b> ｜ 生成：2026-11-11 06:0x CST（A 轨早报）/ <b>11:3x、11:4x、12:1x CST（B 轨前三轮）</b> / <b>12:0x–12:2x CST（午间补报 + 批次复核）</b> / <b>12:4x–13:1x CST（B 轨第四轮 + X 只读解封 + 晚报）</b> / <b>15:0x CST（B 轨第五轮：ResNet / seq2seq / Dyna / LLaVA + 2 封信）</b> ｜ 数据源：arXiv 官方 API（<code>export.arxiv.org</code>；第三、四、五轮经典元数据因限速改取 <code>arxiv.org/abs</code>）· 会议/页码 Crossref · 被引数 OpenAlex · 言论 X（只读）｜ 入口索引：<code>research/daily/index.html</code> ｜ B 轨清单：<code>research/classic/PAPERS.md</code> · <code>research/classic/AUTHORS.md</code> · 抓取脚本 <code>research/classic/x_fetch.py</code> · 快照 <code>research/classic/x/</code><br>
-  下一轮：<b>2026-11-11 18:00 CST</b>——A 轨额度 5/5 已满（不加篇）；B 轨第六轮优先补必读清单剩余组（<b>GPT-1 / GPT-2 + Kaplan scaling laws</b> 或 <b>DQN / AlphaGo</b>，视邮箱可核验性定）；另取回 <b>Jason Wei 那条 benchmark 推文的完整正文</b>（换入口，仍以「原文 + 链接」为准）+ Sutton 言论进下期 <code>voice_ready</code>；分镜脚本取当日科普 TOP-1（<code>2611.13541</code>）→ <code>research/video/SCENES/11_11.html</code>。<br>
+  research 线 · 论文观察日报 <b>2026-11-11（早报 3 + 午间 2 · 5/5 ＋ 🅱 B 轨经典论文 <b>23</b> 篇 ＋ 👥 作者网 <b>34</b> 人 ＋ 🗣 voice_ready 2 条 ＋ ✉ 作者信 <b>8</b> 封）</b> ｜ 生成：2026-11-11 06:0x CST（A 轨早报）/ 11:3x–15:0x CST（B 轨第 1–5 轮）/ <b>18:0x CST（B 轨第六轮 + 18:00 增量建议 + 补充变更说明）</b> ｜ 自包含单文件（内联 CSS · 零 <code>&lt;script&gt;</code> · 离线可开）<br>
+  下一轮：<b>2026-11-12 06:00 CST</b>——A 轨新窗（目标 3 篇「借鉴」，需先复核公告批次是否刷新）；B 轨第七轮优先补 <b>AlphaGo（Nature 2016）/ AlphaGo Zero（Nature 2017）/ AlphaFold / AlphaStar / Gemini <code>2312.11805</code></b> 与 <b>Kimi / GLM-4 / MiniMax-01 / VLA（RT-2 / OpenVLA / π0）/ SORA</b>（元数据实测后才收录）；<b>voice_ready 换 Sutton V4</b>（原文已核验，今日受 ≤2 上限未用）；V5（Karthik 11-05）与 V3（Jason Wei）<b>待换入口取全文</b>；作者信下轮额度 ≤3 封，优先「有可核验邮箱」者。<br>
   ⚠️ 本页为论文解读 / 待读线索，<b>非结论、非官方</b>；数字均为作者自报、本线未复现；「对各线的可执行建议」为基于论文的推断，<b>非指令</b>。
 </footer>
 </div>

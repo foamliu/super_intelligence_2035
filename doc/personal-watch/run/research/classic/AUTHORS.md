@@ -6,7 +6,7 @@
 > 🔴 **找 X 的铁律（不猜）**：只登记**能从可访问页面读到**的 handle（作者本人主页 `href`，并用 X 页 `og:description` 二次核对身份）；**读不到 = 写「未找到 X」**。
 > 🚫 不许猜 handle（猜错会 follow 到无关账号，比不 follow 更糟）。X.com 自 **2026-11-11 12:4x** 起经本机 Mihomo 代理**只读可达**；**follow 仍需登录态 ⇒ 未自动执行**（0 follow，未假装）。
 
-**本轮快照**：累计 **28** 人（第五轮 +5：Kaiming He / Ilya Sutskever / Richard S. Sutton / Haotian Liu / Chunyuan Li）｜已发信 **7**（Tri Dao · Shunyu Yao · Haoxing Ren · Jason Wei · Noah Shinn · **Kaiming He · Haotian Liu**）｜X 已核验 **10**（`@tri_dao` / `@_albertgu` / `@ShunyuYao12` / `@edwardjhu` / `@jyangballin` / `@_jasonwei` / **`@ilyasut` / `@RichardSSutton` / `@imhaotian` / `@ChunyuanLi`**）｜X 未找到 **18**｜**X 已恢复可达（2026-11-11 12:4x 起，经本机 Mihomo 7897，`x.com` `200` / 出口 `178.249.213.185`）**｜已 follow **0**（follow 需登录态 ⇒ 仍靠用户手动，见第二节）｜已核验言论 **4 条**（V1–V4；本轮新增 V4 Sutton）
+**本轮快照**：累计 **34** 人（第六轮 +6：Karthik Narasimhan / Demis Hassabis / Koray Kavukcuoglu / Volodymyr Mnih / Alec Radford / Jared Kaplan）｜已发信 **8**（Tri Dao · Shunyu Yao · Haoxing Ren · Jason Wei · Noah Shinn · Kaiming He · Haotian Liu · **Karthik Narasimhan**）｜X 已核验 **13**（`@tri_dao` / `@_albertgu` / `@ShunyuYao12` / `@edwardjhu` / `@jyangballin` / `@_jasonwei` / `@ilyasut` / `@RichardSSutton` / `@imhaotian` / `@ChunyuanLi` / **`@karthik_r_n` / `@demishassabis` / `@koraykv`**）｜X 未找到 **21**｜**X 可达（本机 Mihomo 7897，本轮 18:0x 复测 `x.com` `200` / 出口 `178.249.213.185`）**｜已 follow **0**（follow 需登录态 ⇒ 仍靠用户手动，见第二节）｜已核验言论 **5 条**（V1–V5；本轮新增 V5，**正文不完整 ⇒ 未采用**）
 
 
 ---
@@ -379,6 +379,86 @@
 
 ---
 
+### 29. Karthik Narasimhan
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Karthik Narasimhan（印度裔 ⇒ 信按英文写） |
+| 机构 | Princeton University（Computer Science，助理教授）；此前 OpenAI · MIT CSAIL · Sierra |
+| 代表论文 | GPT-1（arXiv 无；官方 PDF `language_understanding_paper.pdf`，**二作**）· ReAct（arXiv `2210.03629`，共同作者） |
+| 邮箱 | **karthikn@princeton.edu**（来源：本人主页 `https://karthiknarasimhan.com/` 页内 `mailto:`，**percent-encoded**；`HTTP 200` / 14,706 B 实测 2026-11-11） |
+| 主页 | <https://karthiknarasimhan.com/>（`200`；`www.` 同源同内容） |
+| X 账号 | **@karthik_r_n**（核验：主页 `href="https://twitter.com/karthik_r_n"` + X 页 `og:description` = `Professor@Princeton, ex @OpenAI, @SierraPlatform, @MIT_CSAIL, @iitmadras.` **两处一致**；`HTTP 200`） |
+| 状态 | **已发信**（2026-11-11 18:1x CST，第六轮 · 英文）· X 待 follow |
+| 备注 | X bio 自列 `GPT, ReAct, Tree-of-Thoughts, SWE-Bench/Agent, TAU-bench, GEO` ⇒ **一个人横跨我们 harness 线的三条主线**（ReAct 式循环 / SWE 式判分 / τ-bench 式对话任务），是作者网里「覆盖面最宽」的节点；信里避开「复述摘要」，只问 harness 记账与失败模式。同合作圈注意：Shunyu Yao 今日 11:43 已发 1 封（同为 Princeton 圈）⇒ 按「同机构 ≤2 封/天」本日 Princeton 恰为 2 封，**不再追加**。 |
+
+### 30. Demis Hassabis
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Demis Hassabis |
+| 机构 | **Google DeepMind**（联合创始人 & CEO；Alphabet 首席科学家；2024 诺贝尔化学奖） |
+| 代表论文 | DQN（Nature 2015，**末位作者**）· AlphaGo（Nature 2016）/ AlphaFold（Nature 2021，通讯） |
+| 邮箱 | **未找到**（无公开个人邮箱；DeepMind 站点只有公司级联系表单 ⇒ 按纪律不发信） |
+| 主页 | 未找到（无个人主页） |
+| X 账号 | **@demishassabis**（核验：X 页 `og:description` = `Nobel Laureate. Co-Founder & Chair @GoogleDeepMind; Chief...`，与作者身份一致；`HTTP 200`） |
+| 状态 | 待跟踪 · X 待 follow |
+| 备注 | 言论密度极高（模型发布 / 世界模型 / 科学发现），是 `voice_ready` 的**高价值源**，但同时**商业宣传属性强** ⇒ 采用时必须区分「事实性发布」与「营销表述」，后者不标 `voice_ready`。 |
+
+### 31. Koray Kavukcuoglu
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Koray Kavukcuoglu |
+| 机构 | **Google DeepMind**（SVP）· Google 首席 AI 架构师 |
+| 代表论文 | DQN（Nature 2015，**二作**）· 早期 CNN 特征学习（NIPS 2013） |
+| 邮箱 | **未找到**（无公开个人邮箱） |
+| 主页 | 未找到 |
+| X 账号 | **@koraykv**（核验：X 页 `og:description` = `SVP, Google DeepMind / Chief AI Architect, Google.`；`HTTP 200`） |
+| 状态 | 待跟踪 · X 待 follow |
+| 备注 | DQN 的两个人（Hassabis / Kavukcuoglu）都在 X 上活跃，但**一作 Mnih 无公开账号/邮箱** ⇒ 深度 RL 这条线**无法从作者侧直接问到超参**，只能靠论文 + 社区复现。 |
+
+### 32. Volodymyr Mnih
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Volodymyr Mnih |
+| 机构 | Google DeepMind（DQN / A3C 一作） |
+| 代表论文 | DQN（Nature 2015，**一作**）· Asynchronous Methods for Deep RL（A3C，arXiv `1602.01783`） |
+| 邮箱 | **未找到**（无个人主页、无 `mailto:` 命中） |
+| 主页 | 未找到 |
+| X 账号 | **未找到 X**（未核验到本人账号 ⇒ 不登记） |
+| 状态 | 待跟踪（缺可联系方式 ⇒ 本轮不发信） |
+| 备注 | 这是「顶级作者但渠道缺失」的典型：🚫 不猜 `@volodymyrmnih` 之类 handle（X 上同名账号无法用 bio 核验身份）。 |
+
+### 33. Alec Radford
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Alec Radford |
+| 机构 | OpenAI（研究科学家；GPT-1 / GPT-2 / CLIP 一作） |
+| 代表论文 | GPT-1（一作，无 arXiv）· GPT-2（一作，无 arXiv）· CLIP（arXiv `2103.00020`） |
+| 邮箱 | **未找到**（无公开个人主页可核） |
+| 主页 | **未找到**（`https://radford.ai/` 实测 `HTTP 200` 但仅 **114 B** ⇒ 占位/跳转页，**不采信为个人主页**） |
+| X 账号 | **未找到 X**（`x.com/AlecRadford` 实测 `200`，但 `og:description` = `8 followers · 1 following. Joined Feb 2011.` —— **无任何身份信息、粉丝数异常** ⇒ 判定为同名占位 / 非本人，**不登记**） |
+| 状态 | 待跟踪（本轮**不发信**） |
+| 备注 | ⚠️ **本轮最好的「不猜」样本**：handle 拼写完全正确、页面也 `200`，但 bio 无法验证身份 ⇒ 按令**宁可不登记**（猜错 = follow 到无关账号，比不 follow 更糟）。原始快照 `research/classic/x/AlecRadford.json`。 |
+
+### 34. Jared Kaplan
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Jared Kaplan |
+| 机构 | **Anthropic**（联合创始人 & 首席科学官）；Scaling Laws 发表时 Johns Hopkins University 物理系 |
+| 代表论文 | Scaling Laws for Neural Language Models（arXiv `2001.08361`，**一作**）· 后续 Anthropic 系列（多为机构署名） |
+| 邮箱 | **未找到**（`https://jaredkaplan.net/` 实测 `200` 但仅 **114 B** ⇒ 占位页；Anthropic 无个人公开邮箱 ⇒ 不发信） |
+| 主页 | 未找到 |
+| X 账号 | **未找到 X**（本轮未核验到本人账号；🚫 不猜） |
+| 状态 | 待跟踪 |
+| 备注 | 他这条线的「可问价值」很高（2B 的 token 预算到底该按哪条幂律选点），但**渠道缺失** ⇒ 改为在日报里把「Kaplan vs Chinchilla 口径差异」写成给 pretrain 的可执行实验设计（见当日 18:00 增量建议）。 |
+
+---
+
 ## 二、🟢 X 能力探测（只读 · 2026-11-11 **第四轮 12:4x 起已恢复可达**）
 
 
@@ -405,7 +485,7 @@
 
 **落地**：脚本 `research/classic/x_fetch.py`，原始结果落 `research/classic/x/<handle>.json`（6 个文件，共 15.3 KB，可入 git）。
 
-### 待 follow 清单（请用户手动执行 · 6 个 handle 已在 X 侧二次核验）
+### 待 follow 清单（请用户手动执行 · 13 个 handle 已在 X 侧二次核验）
 
 | # | 人物 | handle | 主页链接 | X 侧核验（第四轮实测） | 为什么值得跟 |
 |:--|:--|:--|:--|:--|:--|
@@ -419,9 +499,12 @@
 | 8（**第五轮新增**） | Richard S. Sutton | `@RichardSSutton` | <https://x.com/RichardSSutton> | `200`，bio 含 `UAlberta, amii, The Royal Society, Turing Award` | Dyna / TD 学习作者，「规划 vs 暴力算力」争论的源头人物，仍在高频发言 |
 | 9（**第五轮新增**） | Haotian Liu | `@imhaotian` | <https://x.com/imhaotian> | `200`，bio = `@Meta Superintelligence Lab, prev. @xAI @grok imagine/omni/v` | LLaVA 一作，多模态指令数据与 VLM 训练一手信息 |
 | 10（**第五轮新增**） | Chunyuan Li | `@ChunyuanLi` | <https://x.com/ChunyuanLi> | `200`，bio = `Agentic Vision @Google DeepMind | Previous: @xAI, @MSFTResearch` | LLaVA 二作，现做 agentic vision ⇒ VLM-agent 选题优先源 |
+| 11（**第六轮新增**） | Karthik Narasimhan | `@karthik_r_n` | <https://x.com/karthik_r_n> | `200`，bio = `Professor@Princeton, ex @OpenAI, @SierraPlatform, @MIT_CSAIL, @iitmadras. GPT, ReAct, Tree-of-Thoughts, SWE-Bench/Agent, TAU-bench, GEO` | GPT-1 二作 / ReAct 共同作者 ⇒ **harness 三条主线（循环 / 判分 / 对话任务）汇于一人**，言论价值最高 |
+| 12（**第六轮新增**） | Demis Hassabis | `@demishassabis` | <https://x.com/demishassabis> | `200`，bio = `Nobel Laureate. Co-Founder & Chair @GoogleDeepMind; Chief Scientist of Alphabet. Founder & CEO @IsomorphicLabs` | DQN 末位 / AlphaGo / AlphaFold 通讯 ⇒ DeepMind 家族一手发布源（**须区分事实与营销**） |
+| 13（**第六轮新增**） | Koray Kavukcuoglu | `@koraykv` | <https://x.com/koraykv> | `200`，bio = `SVP, Google DeepMind / Chief AI Architect, Google.` | DQN 二作 ⇒ 深度 RL 与 Gemini 系架构的一手来源 |
 
 
-> 六个 handle 均来自其**本人主页**的 `href`（非搜索猜测），并在第四轮用 X 主页 `og:description` **二次核对 bio 与身份一致**。用户 follow 后请把状态改为 `已follow` 并写日期。
+> 13 个 handle 均来自其**本人主页的 `href`** 或**论文作者身份可核对**的路径（前 6 个第四轮、7–10 第五轮、11–13 第六轮），并用 X 主页 `og:description` **二次核对 bio 与身份一致**；`x.com/AlecRadford` 虽 `200` 但 bio 无身份信息 ⇒ **拒绝登记**（见主表 #33）。用户 follow 后请把状态改为 `已follow` 并写日期。
 
 ### 已核验言论台账（第四轮首获 · 原文 + 时间 + 链接）
 
@@ -431,6 +514,8 @@
 | V2 | Tri Dao `@tri_dao` | 2026-10-28 | "Super interesting result: H-Net learns to dynamically tokenize variable names in coding data as separate tokens, and it scales much better on code compared to BPE" | <https://x.com/tri_dao/status/2115531348161028374> | ✅ 已进日报 `voice_ready`（代码语料 tokenizer） |
 | V3 | Jason Wei `@_jasonwei` | 2026-11-10 22:31 | 起句 "Created a \"benchmark benchmark\": a frequency distribution of which benchmarks were reported by the frontier labs in 2026…"（**正文含转义引号，HTML 内嵌串被截断；推文页正文未渲染**） | <https://x.com/_jasonwei/status/2120283338640621826> | ❌ **未采用**：不满足「原文完整 + 可核验」，不冒充完整原文；仅在此登记，待下轮用其它入口取全文后再评估 |
 | V4 | Richard S. Sutton `@RichardSSutton` | 2026-11-07 18:57 | "Brute force computation is not enough for intelligence. Clever new methods are needed. The science of AI is far from finished. IMHO" | <https://x.com/RichardSSutton/status/2119142310894334262> | 🕓 **本期未用（受「每期 ≤2 条」上限）**，原文已核验 ⇒ **下期 `voice_ready` 首选候选**；话题点 = 「暴力算力 vs 更聪明的方法」；风险 = 是**观点**且带 `IMHO`，🚫 不得写成结论 |
+| V5 | Karthik Narasimhan `@karthik_r_n` | 2026-11-05 21:38 | 起句 `Just like everything else in the global economy, the future will have lots of AI agents for specialized tasks,  essentially creating multi-developer agentic systems that can benefit greatly from working together. @awhanjie 's latest paper`（**抓到的 `full_text` 在此处截断**；推文页正文未渲染） | <https://x.com/karthik_r_n/status/2118457961727275111> | ❌ **未采用（正文不完整）**：推文页 `200`、`og:title` = `Karthik Narasimhan (@karthik_r_n) on X` 作者可核，但正文不完整 ⇒ 按令**不冒充完整原文**；下轮换入口（thread 首条 / 转载全文）再评估 |
+
 
 
 > ⚠️ 引用纪律：只有 **V1 / V2** 两条的原文在「profile 页内嵌 JSON」与「单条推文页 `og:title` 作者核对」两处一致，才进日报 `voice_ready`；**每条都附原链接与时间**，中文仅作翻译、不作转述。
@@ -452,6 +537,7 @@
 | 2026-11-11 12:11 | Noah Shinn | `2303.11366` Reflexion | 本人主页明写邮箱（`noahshinn.com`） | `SENT OK`（`noahrshinn@gmail.com`，英文 153 词） |
 | 2026-11-11 15:05（**第五轮**） | Kaiming He（何恺明） | `1512.03385` ResNet | 本人当前机构主页明文（`people.csail.mit.edu/kaiming/`，`200`） | `SENT OK`（`kaiming@mit.edu`，**中文 196 字**） |
 | 2026-11-11 15:05（**第五轮**） | Haotian Liu | `2304.08485` LLaVA | 本人当前主页 `mailto:`（`haotian-liu.github.io`，`200`） | `SENT OK`（`liuhaotian.cn@gmail.com`，**中文 215 字**） |
+| 2026-11-11 18:06（**第六轮**） | Karthik Narasimhan | GPT-1（无 arXiv） | 本人主页 `karthiknarasimhan.com` 的 `mailto:`（percent-encoded，`200` / 14,706 B 实测） | `SENT OK`（`karthikn@princeton.edu`，**英文 164 词**） |
 
 | 2026-11-11 12:4x–13:0x（**第四轮**） | （本轮 **0 封**） | 新增经典 `2005.14165` / `2203.02155` / `2302.13971` | 逐个实测：`hugotouvron.github.io` `404` · `longouyang.github.io` `404` · `ashishvaswani.com` `000` · 未命中任何 `mailto:` | **不发信**（按令不猜邮箱）。今日累计 **5 封**（分属三轮，每轮 ≤3）；第四轮把额度留给「有可核验邮箱」的候选 —— 本轮没有合格的 ⇒ **宁缺勿凑** |
 
