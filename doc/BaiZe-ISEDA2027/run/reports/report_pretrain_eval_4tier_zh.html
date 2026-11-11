@@ -40,10 +40,10 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
   <h1>BaiZe 2B 预训练 · 四层能力评测报告</h1>
   <div class="sub">Mamba2-hybrid 2.22B · S1 生产 run（iter 160k+/700k, ~675B tokens）</div>
   <div class="meta">
-    <span>📅 2026-11-11</span>
+    <span>📅 2026-11-12</span>
     <span>🏗 Mamba2-hybrid 2.22B</span>
-    <span>🔥 训练 iter≈168.4k / 700k · step~7.0s<7.4s✅ · ckpt 168k(22:49存) · lr-decay-iters=0(stable段,decay未配置)</span>
-    <span>📊 L1: 16 ckpt ✅(160k=58.13%新高) | L2: GSM8K=0%@160k🔴 MMLU=23.16%(≈随机) BBH=0%🔴 MATH=0%🔴(v5确认) · HumanEval=0%(v6确认✅) · MBPP 20/100运行中(v6,~44s/it,ETA~58min) · 🔬生成退化=llama.cpp SSM bug+模型能力 · vLLM方案已备(.17 SSH不通) | L3: ✅前置全通过·待MBPP释放端口8083 | L4: 🔴/nasdata/未挂载.29+.15 SSH不通</span>
+    <span>🔥 训练 iter≈168.6k / 700k · step~7.1s<7.4s✅ · ckpt 168k · lr-decay-iters=0(stable段,decay未配置) · GPU 8×100%/75GB · 170k ETA~3h</span>
+    <span>📊 L1: 16 ckpt ✅(160k=58.13%新高) | L2: GSM8K=0%🔴 MMLU=23.16%(≈随机) BBH=0%🔴 MATH=0%(v5)·v6重评中(RP=1.3,31/100) · HumanEval=0%(v6✅) · MBPP 49/100运行中(v6,~43s/it,ETA~36min) · ⚠️两个v6实例并发(PID 2571213+2632593)共享同一llama-server | L3: ✅前置全通过·🟢autoqueue等待中(PID1986722) | L4: 🔴/nasdata/未挂载.29+SSH .15/.17均不通</span>
   </div>
   <div style="margin-top:12px;font-size:12.5px;background:rgba(0,0,0,.18);border-radius:8px;padding:8px 12px;opacity:.95">
     ⚠️ 本报告是<b>训练监控与决策依据</b>，<b>不进论文正文</b>（2026-11-10 用户令）。用户关注点（2026-11-11）：<b>如何拿到更好的结果</b>。
@@ -371,22 +371,21 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
   <table>
     <tr><th>层</th><th>评测</th><th>状态</th><th>关键数</th><th>下一步</th></tr>
     <tr><td><b>L1</b></td><td class="l">常识 8 集 (0-shot)</td><td><span class="badge b-ok">✅ 16ckpt</span></td><td>58.13%@160k</td><td class="l">继续每万 ckpt</td></tr>
-    <tr><td><b>L2</b></td><td class="l">复杂推理 6 集</td><td><span class="badge b-bad">🔴 5/6=0% · MMLU=23%</span></td><td>GSM8K=0%(v3) · MMLU=23.16%(≈随机) · BBH=0%(v4) · <b>MATH=0%(v5确认)</b> · <b>HumanEval=0%(v6确认)</b> · MBPP 20/100运行中(v6,~44s/it,ETA~58min) · 🔬生成退化=llama.cpp SSM bug+模型能力</td><td class="l">等MBPP完成→释放port 8083→L3 smoke</td></tr>
-    <tr><td><b>L3</b></td><td class="l">Agentic</td><td><span class="badge b-warn">🔧 脚本已建·待运行</span></td><td>— · 模型生成能力不足(pipeline已建)</td><td class="l">MMLU完后运行smoke</td></tr>
+    <tr><td><b>L2</b></td><td class="l">复杂推理 6 集</td><td><span class="badge b-bad">🔴 5/6=0% · MMLU=23%</span></td><td>GSM8K=0%(v3) · MMLU=23.16%(≈随机) · BBH=0%(v4) · <b>MATH=0%(v5确认)</b> · <b>HumanEval=0%(v6确认)</b> · MBPP 34/100运行中(v6,~44s/it,ETA~48min) · 🔬生成退化=llama.cpp SSM bug+模型能力</td><td class="l">等MBPP完成→autoqueue自动跑L3</td></tr>
+    <tr><td><b>L3</b></td><td class="l">Agentic</td><td><span class="badge b-ok">🟢 autoqueue运行中</span></td><td>— · MBPP完成后自动启动TB smoke</td><td class="l">等MBPP释放port→autoqueue自动跑</td></tr>
     <tr><td><b>L4</b></td><td class="l">领域</td><td><span class="badge b-bad">❌ 未接·调研完</span></td><td>— · 数据在.15不可达</td><td class="l">延后至.15可达+SFT后</td></tr>
   </table>
 </div>
 <div class="card">
-  <h3>本轮(#2012)动作</h3>
+  <h3>本轮(#2013)动作</h3>
   <ol>
-    <li><b>训练健康确认</b>：iter 168,430/700,000（24.1%）· step ~7033ms(6963-7244ms)<7.4s✅ · loss 2.05-2.08 · GPU 8×100%/75GB · lr=1e-3(stable段,decay未开始) · 0 NaN/skip · PID 146283 · 168k ckpt 已保存(22:49)</li>
-    <li><b>重复 MBPP 进程清理</b>：发现 2 个 lm_eval MBPP 进程同时运行(PID 19794+47854,同一 output_path+log)→ kill 47854/47855(保留先启动的 19794)·根因=上一轮 cline 会话退出时未清理子进程</li>
-    <li><b>v6 HumanEval ✅ 确认</b>：pass@1=0.0%(100/100 全失败,100%生成退化)·v6 用 --repeat-penalty 1.3 仍未改善·与 v5 HumanEval=0% 一致</li>
-    <li><b>v6 MBPP 进度</b>：20/100 · ~44s/it · ETA~58min · llama-server(port 8083, t=4, nice=19, --repeat-penalty 1.3) · 训练 step 未受影响(7033ms<7.4s✅)</li>
-    <li><b>L2 全貌(5/6 确认)</b>：GSM8K=0% · MMLU=23.16%(≈随机25%) · BBH=0% · MATH=0% · HumanEval=0% · MBPP=运行中(预期~0%)·所有生成任务=0%因 llama.cpp SSM state 崩溃+模型@24%训练+code/math 26%远低于60%</li>
-    <li><b>L3/L4 状态</b>：L3 脚本 baize_l3_tb_smoke.sh 就绪,待 MBPP 释放 port 8083(~1h) · L4 /nasdata/ 未挂载 .29 + .15 SSH 不通</li>
-    <li><b>下一个万整数 ckpt</b>：170k ETA~3.5h(2000步×7.0s,约 03:10 Nov 12) · MBPP 应在 170k 前完成(~1h) → 释放 port 8083 → 可运行 L3 smoke + 170k L1 eval</li>
-    <li><b>核心发现（不变·待用户拍板）</b>：L2/L3/L4 的低分/空白同一根因——code+math 数据占比 26%(vs DeepSeek 最优 60%) + stable 阶段未 decay + llama.cpp SSM 生成 bug · 建议方案 A(decay 4:2:4)/B(SFT)/C(A+B)</li>
+    <li><b>训练健康确认</b>：iter 168,480/700,000（24.1%）· step ~7110ms(7031-7247ms)<7.4s✅ · loss 2.05-2.07 · GPU 8×100%/75GB · lr=1e-3(stable段) · 0 NaN/skip · PID 146283</li>
+    <li><b>v6 MBPP 进度</b>：34/100 · ~44s/it · ETA~48min · llama-server(port 8083, t=4, nice=19) · 训练未受影响</li>
+    <li><b>L3 autoqueue 启动</b>：创建 baize_l3_autoqueue.sh 并在 .29 后台启动(PID 1986722)·轮询 port 8083·MBPP 完成后自动检查训练健康→启动 L3 TB smoke(fix-git + break-filter-js-from-html)·无需等 agent 唤醒</li>
+    <li><b>L3 smoke 脚本修复</b>：baize_l3_tb_smoke.sh 训练健康检查从 /tmp/log(已删除)改为 /proc/PID/fd/1(实际日志)·修复后 pre-flight 可正确读取 step time</li>
+    <li><b>L4 调研</b>：designflow cline_eval/ 61 任务在 NFS 可见,但 run_one.sh 依赖 /nasdata/(EDA-Flow-Bench+assets+reference+hooks)·/nasdata/ 未挂载 .29 → L4 仍 BLOCKED·.15 SSH 不通(超时)·.17 SSH 不通(vLLM 验证阻塞)</li>
+    <li><b>下一个万整数 ckpt</b>：170k ETA~3h(1520步×7.1s)·MBPP 应在 170k 前完成(~48min)→autoqueue 自动启动 L3 smoke→170k 出现后做 L1 eval</li>
+    <li><b>核心发现（不变·待用户拍板）</b>：L2/L3/L4 低分/空白同一根因——code+math 数据占比 26%(vs DeepSeek 最优 60%) + stable 阶段未 decay + llama.cpp SSM 生成 bug · 建议方案 A(decay 4:2:4)/B(SFT)/C(A+B)</li>
   </ol>
   <div class="alert">
     <b>🔴 核心发现（待用户拍板）</b>：L2/L3/L4 的低分/空白<b>同一根因</b>——训练数据中 code+math 比例不足（code 19% + math 7% = 26%，远低于 DeepSeek 最优 60%），且仍在 stable 阶段（decay 尚未开始），导致模型在<b>所有需要连贯生成的任务</b>上退化为重复输出。<br>
@@ -453,7 +452,7 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
 </div>
 
 <footer>
-  BaiZe pretrain 线 · 四层能力评测报告 · 2026-11-11 23:40 更新(#2012) · 评测数字仅用于训练监控，不进论文正文
+  BaiZe pretrain 线 · 四层能力评测报告 · 2026-11-12 00:02 更新(#2014) · 评测数字仅用于训练监控，不进论文正文
 </footer>
 </div>
 </body>
