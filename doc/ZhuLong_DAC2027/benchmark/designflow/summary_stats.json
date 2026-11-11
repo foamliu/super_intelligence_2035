@@ -56,7 +56,7 @@
   "note": "11/10 r321: management + bugfix (keyword $6 parsing + exclusion-set .messages.json suffix) + NFS-automount access BLOCKER (0 case, A.jsonl 200 unchanged). 186 truly-fresh digital-dominant candidates found but INACCESSIBLE (NFS automount: ls shows files but cat fails 'No such file'). 29 consecutive no-new-scan (r293-r321). Latest scan 11/09 r292, daily log 11/10 healthy 2981 lines.",
   "note_mc30": "顶层 mc30=2247 来自 scansync(11/09 扫描, 38082 行 summary.tsv), 与 mc_matrix.mc30.pool=1511(11/05 扫描快照) 不同源, 勿混用; target_mc=10 时分母取 mc10=1929",
   "prev_scan_path": "/home/t0002965/log/ssh_eda_search_20261105_192825/summary.tsv",
-  "prev_sessions": 38082,
+  "prev_sessions": 2163,
   "scan_path": "/home/t0002965/log/ssh_eda_search_20261109_224902/summary.tsv",
   "scansync": {
     "consecutive_no_new_scan": "r293-r365 (72nd)",
@@ -88,7 +88,7 @@
   "source": "/home/t0002965/log/ssh_eda_search_20261109_224902/summary.tsv (11/09 full rescan r292)",
   "target_mc": 10,
   "target_mc_changed": "2026-11-11 用户令: 30 -> 10 (A 原 15); 候选池 11/05 -> 11/09 待 A 执行 A1-A6",
-  "updated_at": "2026-11-11 07:47",
+  "updated_at": "2026-11-11 08:56",
   "users_mc100": 182,
   "users_mc30": 401,
   "users_mc300": 60,
