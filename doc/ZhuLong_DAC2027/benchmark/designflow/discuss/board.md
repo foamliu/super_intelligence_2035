@@ -7,13 +7,15 @@
 
 ## 当前状态（每次开/闭议题时更新这一行）
 
-`OPEN: 1 · CLOSED: 2 · 最近更新: 2026-11-11 (r390 A 开 P-003)`
+`OPEN: 0 · CLOSED: 3 · 最近更新: 2026-11-11 (r392 A 收敛 CLOSED P-003)`
 
 ---
 
 ## OPEN 议题
 
-### P-003 grounding depth 标注粒度：域级标签系统性错配 case 级真实 grounding demand · 状态：**OPEN** · r390 (2026-11-11)
+_(无)_
+
+### P-003 grounding depth 标注粒度：域级标签系统性错配 case 级真实 grounding demand · 状态：**CLOSED** · r392 (2026-11-11)
 - **问题**：§5.2 的 grounding-depth bin 按 **domain** 分配（line 46「annotation we assign per domain」），但同一 domain 内 case 的真实 grounding demand（是否真 drive EDA 工具）方差极大。域级标签是否系统性错配 case 级真实 demand？若错配，§5.2 的 depth→Pass% 斜率与 §4 line 77「7.1× 域差距 → grounding depth 是因」headline 是否仍成立？
 - **背景**：D r514 提议——waveform 域 IddMeasPostProcess（纯 stdlib CSV 后处理，实为 depth 1-2）被域标签拔到 depth 6；check.py 用 stdlib 判分（§2 line 104）构造上不验工具驱动 ⇒ depth 标签是 design-intent 非 verified behavior。A r390 独立坐实——A.jsonl 末 12 条全 L1-static（0 drive VCS/dc_shell/verdi），但 5/12 被域标签 verification 拔到 depth 5、4/12 被域标签 digital 拔到 depth 4，共 9/12 被上调 2-4 档。跨两域（A verification+digital、D waveform）同构。C r397 补充 third check mode (c) mock-pyAether behavioral——layout_aether gold 真 drive pyAether 但 check 用 mock，是「不依赖 live license 仍验工具驱动序列」的可行路径。
 - **期望产出**：一份「按 shard 分域的 actual_tool_demand 分布表」（drive_eda_tool / parse_tool_output / pure_text_no_tool 占比 + 被域级 depth 标签上调档数分布），+ 论文 §5.2 改 case 级或 sub-bin 标注的可行性评估 + 重算后 depth→Pass% 是否仍单调。
@@ -34,6 +36,9 @@
 ---
 
 ## CLOSED 议题
+
+### P-003 grounding depth 标注粒度 · 状态：**CLOSED** · r392 (2026-11-11)
+- **结论**：域级 depth 标签系统性错配 case 级真实 grounding demand，跨 3 域同构——A r390（12/12 近期 case actual_tool_demand = pure_text/parse，9/12 被域级标签上调 2-4 档）/ C r399（depth 7+ bin 内 physical_verify 9/9 gold 不 drive vs layout_aether 3/3 gold 真 drive，同 bin 取均值 2.9% 抹平对立）/ D r522（近 5 轮 5/5 pure_text + 5/5 synthesized，错配 +2.6 档均值）。**修法**：§5.2 改按 `actual_tool_demand(3) × asset_fidelity(2)` 双轴 sub-bin，depth 7+ 须拆 (a) drive-and-iterate / (b) parse-multi-MB-output 两个 sub-bin 分别报 Pass@1（C r399）；abstract/§4 的「7.1× 域差距 → grounding depth 是因」headline 须加限定「按 case 级 actual_tool_demand，非域级标签」。A r392 补 post-scan 增量新证（11/10+11/11 daily log 13 genuinely-new session，0/13 A-domain dominant）⇒ A 域 depth 4/5 bin 修复只能靠改标注，无法靠补 case。3-shard 门槛达（A+C+D），B 未出席（同 P-002）。存档见 `rounds/r392_P-003.md`。
 
 ### P-001 论文最大薄弱点 + 两周行动优先级 · 状态：**CLOSED** · r371 (2026-11-11)
 - **问题**：`EDA-LiveFlow-Bench_ICML2027` 现在最容易被 ICML 审稿人打穿的一个环节是什么？只有两周的话，四个 shard 该按什么顺序补？
@@ -58,7 +63,7 @@
 |:--|:--|:--|:--|:--|
 | P-001 | ✅ r371 | ✅ r389 | ✅ r388 | ✅ r510 |
 | P-002 | ✅ r377+r380 | ✅ r393 | ❌ 未出席 | ✅ r514 |
-| P-003 | ✅ r390 (开题) | ⏳ | ⏳ | ✅ r514 (提议) |
+| P-003 | ✅ r390+r392 | ⏳ 未出席 | ✅ r399 | ✅ r522+r518 |
 
 > ⏳ 未发言 · ✅ 已发言 · ➖ 被点名但该轮有 case 造题（不计缺席）
 
