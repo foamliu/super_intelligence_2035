@@ -42,8 +42,8 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
   <div class="meta">
     <span>📅 2026-11-11</span>
     <span>🏗 Mamba2-hybrid 2.22B</span>
-    <span>🔥 训练 iter≈166.05k / 700k · step~7.09s<7.4s✅</span>
-    <span>📊 L1: 16 ckpt ✅ | L2: GSM8K=0%@160k 🔴 MMLU=23.16%@160k(≈随机) · BBH 83/100运行中🟡 · v5等待中 · GSM8K诊断等待中 · 🔬vLLM方案已备(待GPU窗口) | L3: 🔧 pipeline脚本已建·模型生成退化 | L4: 数据在.15不可达+定性测试=退化输出</span>
+    <span>🔥 训练 iter≈166.15k / 700k · step~7.02s<7.4s✅</span>
+    <span>📊 L1: 16 ckpt ✅ | L2: GSM8K=0%@160k🔴 MMLU=23.16%@160k(≈随机) BBH=0%@160k🔴(v4完成) · v5 NFS崩溃待重启 · GSM8K诊断运行中🟡 · 🔬vLLM方案已备(待GPU窗口) | L3: 🔧 pipeline脚本已建·模型生成退化 | L4: 数据在.15不可达+定性测试=退化输出</span>
   </div>
   <div style="margin-top:12px;font-size:12.5px;background:rgba(0,0,0,.18);border-radius:8px;padding:8px 12px;opacity:.95">
     ⚠️ 本报告是<b>训练监控与决策依据</b>，<b>不进论文正文</b>（2026-11-10 用户令）。用户关注点（2026-11-11）：<b>如何拿到更好的结果</b>。
@@ -89,7 +89,7 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
 </div>
 
 <!-- L2 -->
-<h2 class="sec">L2 · 复杂推理（6 集）<span class="badge b-bad">🔴 GSM8K=0%@160k</span></h2>
+<h2 class="sec">L2 · 复杂推理（6 集）<span class="badge b-bad">🔴 GSM8K=0% · BBH=0% · MMLU=23%@160k</span></h2>
 <div class="card">
   <h3>P-8 历史结果（44.4B tokens · 2026-10-15）</h3>
   <table>
@@ -191,6 +191,31 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
     ③ <code>baize_l2_eval_160k_vllm.sh</code>：L2 全量 eval（GSM8K + BBH + HumanEval + MBPP + MATH）<br>
     <b>GPU 资源</b>：<code>.29</code> 8×H100 满载（训练）/ <code>.12</code> 8×H100 满载（vision R9）/ <code>.17</code> A40 SSH 不通 → <b>BLOCKED: 待 GPU 窗口</b><br>
     <b>建议</b>：① posttrain 线在 <code>.17</code> 获得 GPU 后可运行此验证；② 或训练 checkpoint 后短暂的 GPU 空闲；③ 若 vLLM 生成正常 → 所有 L2 生成评测切换到 vLLM
+  </div>
+</div>
+
+<!-- L2 v4 BBH result + v5 crash + GSM8K diag -->
+<div class="card">
+  <h3>🔴 L2 v4 BBH 结果 + v5 崩溃 + GSM8K 诊断（#1988 · 2026-11-11 19:17）</h3>
+  <table>
+    <tr><th>任务</th><th>版本</th><th>口径</th><th>结果</th><th>状态</th></tr>
+    <tr><td>GSM8K</td><td>v3</td><td>5-shot, limit=100, gen</td><td class="bad">0.0%</td><td>✅ 完成</td></tr>
+    <tr><td>MMLU</td><td>v3</td><td>0-shot, limit=100/subj, MCQ</td><td class="warn">23.16%</td><td>✅ 完成(≈随机25%)</td></tr>
+    <tr><td>BBH (bool_expr)</td><td>v4</td><td>3-shot CoT, limit=100, gen</td><td class="bad">0.0%</td><td>✅ 完成(19:17, ~1h55m)</td></tr>
+    <tr><td>HumanEval</td><td>v4</td><td>0-shot, limit=100, gen</td><td>—</td><td class="bad">❌ v4失败(缺HF_ALLOW_CODE_EVAL)</td></tr>
+    <tr><td>MBPP</td><td>v4</td><td>0-shot, limit=100, gen</td><td>—</td><td class="bad">❌ v4失败(同上)</td></tr>
+    <tr><td>MATH</td><td>v4</td><td>4-shot, limit=100, gen</td><td>—</td><td class="bad">❌ v4失败(assertion error)</td></tr>
+    <tr><td>HumanEval+MBPP+MATH</td><td>v5</td><td>0-shot, HF_ALLOW_CODE_EVAL=1</td><td>—</td><td class="bad">❌ v5 NFS崩溃(Stale file handle)</td></tr>
+    <tr><td>GSM8K 诊断</td><td>diag</td><td>5-shot+0-shot, --log_samples, 10样本</td><td>—</td><td class="warn">🟡 运行中(19:18起)</td></tr>
+  </table>
+  <div class="alert">
+    <b>BBH v4 = 0.0%</b>（exact_match, boolean_expressions, 3-shot CoT, 100 样本, 1h55m 完成）—— 确认<b>所有 L2 生成任务均=0%</b>。<br>
+    与 GSM8K=0% 同根因：模型 token-by-token 生成时 SSM 状态崩溃，退化为重复输出。BBH boolean_expressions 虽然是简单逻辑题（True/False），但需要 CoT 生成（多 token 推理），同样受生成退化影响。<br>
+    <b>MMLU=23.16% 是唯一非零的 L2 分数</b>，因为它是 MCQ 任务（loglikelihood prefill），不需要生成。
+  </div>
+  <div class="note">
+    <b>v5 崩溃</b>：NFS "Stale file handle" 错误（`baize_l2_eval_160k_v5.sh` 脚本文件读取失败）→ HumanEval/MBPP/MATH 仍未评测。待 GSM8K 诊断完成后重启 v5。<br>
+    <b>GSM8K 诊断</b>：已启动（PID 2851659, ctx=8192, port 8083），正在跑 10 样本 5-shot + 0-shot with --log_samples → 将捕获模型实际输出用于诊断。
   </div>
 </div>
 
@@ -314,14 +339,14 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
 <div class="card">
   <h3>本轮(#1987)动作</h3>
   <ol>
-    <li><b>训练健康确认</b>：iter 166,050 · step 7156ms (<7.4s✅) · loss 2.040 · 0 NaN/skip · GPU 8×100%/75GB · lr=1e-3(stable段,decay未开始)</li>
-    <li><b>BBH v4 进度</b>：83/100 运行中(~68s/it,ETA~20min) · HumanEval/MBPP/MATH 在v4中失败(v5已修复等待中)</li>
+    <li><b>训练健康确认</b>：iter 166,150 · step 7018ms (<7.4s✅) · loss 2.043 · 0 NaN/skip · GPU 8×100%/75GB · lr=1e-3(stable段,decay未开始)</li>
+    <li><b>BBH v4 完成</b>：<b>0.0% exact_match</b>(boolean_expressions, 3-shot CoT, 100样本, 1h55m) · 确认所有L2生成任务=0% · HumanEval/MBPP/MATH v4失败 → v5 NFS崩溃待重启</li>
     <li><b>🔴 关键发现：vLLM 有原生 NemotronH 支持</b>：vLLM 0.14.1（.29 vllm env）内置 <code>nemotron_h.py</code> 模型文件 + registry 注册 <code>NemotronHForCausalLM</code> → <b>可替代 llama.cpp 做生成评测</b>。模型架构确认：<code>hybrid_override_pattern=M-M-M--M-M*-M-M-M-M--M*-M-M-M-M-M*--M-M-M-M-M*-M--M-M-M-</code>（56层，~6个attention层+Mamba2层）</li>
     <li><b>生成退化根因假说</b>：llama.cpp SSM 生成路径 bug（非模型本身）→ 证据：① MCQ 任务(loglikelihood/prefill)正常(L1=58%,MMLU=23%)；② 生成任务(token-by-token)崩溃(repeat"1"×200+)；③ repeat_penalty=1.3 部分修复；④ Nemotron-H 已知有 SSM causality leak（audit paper arXiv:2608.22876）；⑤ llama.cpp b9265 修过 SSM-conv 大 prompt bug</li>
     <li><b>vLLM 验证方案（已备脚本，待 GPU 窗口）</b>：<code>baize_vllm_gpu_gen_test.py</code>（快速生成对比）+ <code>baize_vllm_server_160k.sh</code>（OpenAI兼容服务）+ <code>baize_l2_eval_160k_vllm.sh</code>（L2全量eval）→ 需 1 GPU（.17 A40 不可达 / .29 GPU 满载 / .12 GPU 满载）→ <b>阻塞：待 GPU 窗口</b></li>
     <li><b>HF CPU 生成测试失败</b>：transformers 4.57.1 有 <code>nemotron_h</code> 模型文件但缺 <code>initialization</code>/<code>integrations</code> 等模块（需 4.58+）→ 无网络无法 pip install → 跳过，等 vLLM GPU 验证</li>
-    <li><b>L2 v5/GSM8K 诊断</b>：仍在 .29 后台等待 port 8083（BBH 完成后自动启动）</li>
-    <li><b>无新万整数 ckpt</b>：当前 iter 166050 · save-interval=2000 · 下一个万整数 170k ETA~8h</li>
+    <li><b>L2 v5 崩溃 / GSM8K 诊断运行中</b>：v5 NFS "Stale file handle" 崩溃 → 待重启 · GSM8K 诊断已启动（PID 2851659, 10样本 --log_samples, 运行中）</li>
+    <li><b>无新万整数 ckpt</b>：当前 iter 166150 · save-interval=2000 · 下一个万整数 170k ETA~8h</li>
   </ol>
   <div class="alert">
     <b>🔴 核心发现（待用户拍板）</b>：L2/L3/L4 的低分/空白<b>同一根因</b>——训练数据中 code+math 比例不足（code 19% + math 7% = 26%，远低于 DeepSeek 最优 60%），且仍在 stable 阶段（decay 尚未开始），导致模型在<b>所有需要连贯生成的任务</b>上退化为重复输出。<br>
@@ -388,7 +413,7 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
 </div>
 
 <footer>
-  BaiZe pretrain 线 · 四层能力评测报告 · 2026-11-11 19:00 更新(#1987) · 评测数字仅用于训练监控，不进论文正文
+  BaiZe pretrain 线 · 四层能力评测报告 · 2026-11-11 19:20 更新(#1988) · 评测数字仅用于训练监控，不进论文正文
 </footer>
 </div>
 </body>

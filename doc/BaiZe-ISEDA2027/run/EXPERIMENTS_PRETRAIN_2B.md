@@ -1708,3 +1708,43 @@ L2/L3/L4 低分/空白同一根因 = 训练数据(P-5b/P-8 Ultra-FineWeb-L3)缺�
 - footer #1984
 - 报告: `run/reports/report_pretrain_eval_4tier_zh.html` (34.9KB) + 同步至 `doc/reports/`
 
+---
+
+## #1988 2026-11-11 19:20 — BBH v4 完成(0.0%) + v5 NFS 崩溃 + GSM8K 诊断启动
+
+### 训练健康
+- iter=166150/700k, step=7018ms (<7.4s ✅), loss=2.043, lr=1e-3 (stable 段), 0 NaN/0 skip
+- GPU: 8 卡 100% util, ~75GB VRAM
+- 命令：`ssh 10.239.2.29 'tail -3 /proc/146283/fd/1'`
+
+### BBH v4 结果（✅ 完成）
+- **exact_match = 0.0%** (boolean_expressions, 3-shot CoT, limit=100, 1h55m, 19:17 完成)
+- 结果文件：`gguf_iter_160000_l2_v4/bbh/__nas_train__..._hf_iter_160000/results_2026-11-11T19-17-24.938559.json`
+- 命令验证：`cat <path>/results_*.json | python3 -c "import json,sys; d=json.load(sys.stdin); print(d['results'])"`
+  → `{"bbh_cot_fewshot_boolean_expressions": {"exact_match,get-answer": 0.0, "exact_match_stderr,get-answer": 0.0}}`
+- **确认所有 L2 生成任务 = 0%**（GSM8K=0%, BBH=0%, HumanEval/MBPP/MATH 未能评测）
+- MMLU=23.16% 是唯一非零 L2 分数（MCQ loglikelihood，不需生成）
+
+### v5 NFS 崩溃
+- `baize_l2_eval_160k_v5.sh` 启动时遇到 `error reading input file: Stale file handle`（NFS 错误）
+- HumanEval/MBPP/MATH 仍未评测 → 待 GSM8K 诊断完成后重启 v5
+
+### GSM8K 诊断（🟡 运行中）
+- PID=2851659, port=8083, ctx=8192, -t 4, nice 19
+- 5-shot + 0-shot 各 10 样本 with --log_samples
+- 进度：4/10 @ 42s/it, ETA ~11min（两阶段合计）
+- 日志：`/tmp/baize_l2_gsm8k_diag.log`
+
+### L2 评测队列状态（port 8083 串行）
+1. ~~BBH v4~~ ✅ 完成 (0.0%)
+2. ~~v5: HumanEval + MBPP + MATH~~ ❌ NFS 崩溃 → 待重启
+3. GSM8K 诊断 🟡 运行中 (4/10)
+
+### 四层报告更新
+- header: iter 166150, BBH=0% 完成
+- L2 badge: GSM8K=0% · BBH=0% · MMLU=23%@160k
+- 新增 BBH v4 结果 card（8 行表 + v5 崩溃 + GSM8K 诊断状态）
+- 核心发现区更新（BBH 完成 0%，v5 崩溃，GSM8K 诊断运行中）
+- footer #1988
+- 报告: `run/reports/report_pretrain_eval_4tier_zh.html` + 同步至 `doc/reports/`
+
