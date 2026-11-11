@@ -664,3 +664,4 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked		2026-11-09 20:39	RAG-looku
 1791976043518_5w70e					parked		2026-11-10 20:07	r337 deepread: xinqiaoz pdkQaSystem DUMMY status recon Q&A (ls/find/read handoff docs, write .tmp reply md). pure status-recon Q&A, no produce deliverable, physical_verify saturated. REJECT.
 1789648311264_pev4p	xinqiaoz	10.129.2.11	323	physical_verify	parked		2026-11-11 07:57	NFS automount broken on 10.129.2.11 for /home/xinqiaoz (ls ok but cat fails, known坑)
 1790749571151_n8yr8					case	EDA-Eval-DesignFlow-DRCLogTeardown-001	2026-11-11 08:13	
+1789717466435_hga1e	thomasz	hfeg0pfn060	243	pg_layout	claimed		2026-11-11 08:45	
