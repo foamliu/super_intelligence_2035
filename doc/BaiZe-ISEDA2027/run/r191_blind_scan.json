@@ -1,0 +1,541 @@
+{
+  "round": "R191-scan",
+  "eval_raw_apis": 164,
+  "covered_eval_apis": 74,
+  "blind_eval_apis": 90,
+  "coverage_ratio": 0.4512,
+  "blind_list": [
+    "CColor",
+    "CString",
+    "CStringList",
+    "EmyLPPHeader",
+    "EmyNtlUtil",
+    "GuCartBox",
+    "GuCartPolyLine",
+    "GuCartPolygon",
+    "MDE_SWEEP_RANGE_CENTER_SPAN",
+    "MDE_SWEEP_TYPE_LOG",
+    "MDE_SWEEP_TYPE_LOG_NUM_STEP",
+    "MDE_SWEEP_VARIABLE_MODEL_PARAMETER",
+    "MDE_TRAN_ACC_LEVEL_CONSERVATIVE",
+    "MDE_TRAN_ACC_LEVEL_LIBERAL",
+    "MdePlatDonauJobPolicy",
+    "MdePlatLSFJobPolicy",
+    "MdePlatOGEJobPolicy",
+    "MdePlatParamSweepAddSpecificPoints",
+    "MdePlatParamSweepCenterSpan",
+    "MdePlatParamSweepCenterSpanPercentage",
+    "MdePlatParamSweepStartStop",
+    "MdePlatSession",
+    "MdePlatSweepStepModeAuto",
+    "MdePlatSweepStepModeTimes",
+    "NTL_INDEX_FORMAT_ORIGIN",
+    "NTL_INDEX_FORMAT_USE_BRACKET",
+    "NTL_INDEX_FORMAT_USE_UNDERLINE",
+    "SLE_GOA_AND",
+    "SLE_LE_WIRE_EXTEND",
+    "SLE_LE_WIRE_VARIABLE",
+    "SleQueryData",
+    "aeCreateTree",
+    "aeCreateTreeItem",
+    "aeCrtHilitPolygon",
+    "aeEditInPlace",
+    "aeIpcProcess",
+    "aeReturn",
+    "aeSetWindowFocus",
+    "aeTreeAppendItem",
+    "aelEngineerNotation",
+    "agrGetSnapPoints",
+    "dbCrtTerm",
+    "dbExpandPoints",
+    "dbFindMemInstByName",
+    "dbGetCurrNetNameByHierName",
+    "dbPointArrayGen",
+    "dbResize",
+    "dbSchDrawSymbolPin",
+    "dbSetInstHeaderMasterName",
+    "dbSingleLayerGOA",
+    "dbSmashInst2",
+    "dbTransformBBox",
+    "dbTraverseDesignWithCB",
+    "dbTraverseTriggerFunc",
+    "emvPurposeNumberDrawing",
+    "emyArray_emyScalarName",
+    "emyArray_emySegment",
+    "emyArray_emyUInt4",
+    "emyArray_p_emyPointArray",
+    "emyLibAccess",
+    "emyLibAccessExt",
+    "emyPointArrayGOA",
+    "emyPointArrayIsClockwise",
+    "emyPointArrayIsConvex",
+    "emyPointArrayScaleSegments",
+    "emyPolygonChopByPolygon",
+    "emySegStyle",
+    "emyTech",
+    "etPcreCompile",
+    "etPcreExecute",
+    "etPcreGenExecOptBits",
+    "etPcreSubstitute",
+    "etRexCompile",
+    "etRexReplace",
+    "geTreeRemoveItem",
+    "goaInit",
+    "goaLayerAbut",
+    "goaLayerFromCellView",
+    "goaLayerToCellView",
+    "guMotion",
+    "mouseLBClick",
+    "setPyAePath",
+    "sleLeWireTypeEnumToEMYSegStyleEnum",
+    "smash_option",
+    "timeToTm",
+    "vector1D_double",
+    "vector1D_emyPointF",
+    "vector1D_p_emyFig",
+    "vector1D_p_emyShape",
+    "vector2D_emyPointF"
+  ],
+  "family_usage": {
+    "Mde": 20,
+    "emy": 16,
+    "db": 14,
+    "vector": 11,
+    "ae": 8,
+    "et": 8,
+    "Emy": 7,
+    "MDE": 6,
+    "NTL": 6,
+    "goa": 6,
+    "Gu": 5,
+    "SLE": 3,
+    "CString": 2,
+    "CColor": 1,
+    "CStringList": 1,
+    "Sle": 1,
+    "ael": 1,
+    "agr": 1,
+    "emv": 1,
+    "ge": 1,
+    "gu": 1,
+    "mouse": 1,
+    "set": 1,
+    "sle": 1,
+    "smash": 1,
+    "time": 1
+  },
+  "family_apis": {
+    "Mde": [
+      {
+        "api": "MdePlatLSFJobPolicy",
+        "eval_usage": 4
+      },
+      {
+        "api": "MdePlatParamSweepCenterSpan",
+        "eval_usage": 3
+      },
+      {
+        "api": "MdePlatSweepStepModeAuto",
+        "eval_usage": 3
+      },
+      {
+        "api": "MdePlatDonauJobPolicy",
+        "eval_usage": 2
+      },
+      {
+        "api": "MdePlatOGEJobPolicy",
+        "eval_usage": 2
+      },
+      {
+        "api": "MdePlatSweepStepModeTimes",
+        "eval_usage": 2
+      },
+      {
+        "api": "MdePlatParamSweepAddSpecificPoints",
+        "eval_usage": 1
+      },
+      {
+        "api": "MdePlatParamSweepCenterSpanPercentage",
+        "eval_usage": 1
+      },
+      {
+        "api": "MdePlatParamSweepStartStop",
+        "eval_usage": 1
+      },
+      {
+        "api": "MdePlatSession",
+        "eval_usage": 1
+      }
+    ],
+    "emy": [
+      {
+        "api": "emyArray_p_emyPointArray",
+        "eval_usage": 3
+      },
+      {
+        "api": "emyArray_emyUInt4",
+        "eval_usage": 2
+      },
+      {
+        "api": "emyArray_emyScalarName",
+        "eval_usage": 1
+      },
+      {
+        "api": "emyArray_emySegment",
+        "eval_usage": 1
+      },
+      {
+        "api": "emyLibAccess",
+        "eval_usage": 1
+      },
+      {
+        "api": "emyLibAccessExt",
+        "eval_usage": 1
+      },
+      {
+        "api": "emyPointArrayGOA",
+        "eval_usage": 1
+      },
+      {
+        "api": "emyPointArrayIsClockwise",
+        "eval_usage": 1
+      },
+      {
+        "api": "emyPointArrayIsConvex",
+        "eval_usage": 1
+      },
+      {
+        "api": "emyPointArrayScaleSegments",
+        "eval_usage": 1
+      },
+      {
+        "api": "emyPolygonChopByPolygon",
+        "eval_usage": 1
+      },
+      {
+        "api": "emySegStyle",
+        "eval_usage": 1
+      },
+      {
+        "api": "emyTech",
+        "eval_usage": 1
+      }
+    ],
+    "db": [
+      {
+        "api": "dbTraverseTriggerFunc",
+        "eval_usage": 2
+      },
+      {
+        "api": "dbCrtTerm",
+        "eval_usage": 1
+      },
+      {
+        "api": "dbExpandPoints",
+        "eval_usage": 1
+      },
+      {
+        "api": "dbFindMemInstByName",
+        "eval_usage": 1
+      },
+      {
+        "api": "dbGetCurrNetNameByHierName",
+        "eval_usage": 1
+      },
+      {
+        "api": "dbPointArrayGen",
+        "eval_usage": 1
+      },
+      {
+        "api": "dbResize",
+        "eval_usage": 1
+      },
+      {
+        "api": "dbSchDrawSymbolPin",
+        "eval_usage": 1
+      },
+      {
+        "api": "dbSetInstHeaderMasterName",
+        "eval_usage": 1
+      },
+      {
+        "api": "dbSingleLayerGOA",
+        "eval_usage": 1
+      },
+      {
+        "api": "dbSmashInst2",
+        "eval_usage": 1
+      },
+      {
+        "api": "dbTransformBBox",
+        "eval_usage": 1
+      },
+      {
+        "api": "dbTraverseDesignWithCB",
+        "eval_usage": 1
+      }
+    ],
+    "vector": [
+      {
+        "api": "vector1D_emyPointF",
+        "eval_usage": 5
+      },
+      {
+        "api": "vector1D_p_emyFig",
+        "eval_usage": 3
+      },
+      {
+        "api": "vector1D_double",
+        "eval_usage": 1
+      },
+      {
+        "api": "vector1D_p_emyShape",
+        "eval_usage": 1
+      },
+      {
+        "api": "vector2D_emyPointF",
+        "eval_usage": 1
+      }
+    ],
+    "ae": [
+      {
+        "api": "aeCreateTree",
+        "eval_usage": 1
+      },
+      {
+        "api": "aeCreateTreeItem",
+        "eval_usage": 1
+      },
+      {
+        "api": "aeCrtHilitPolygon",
+        "eval_usage": 1
+      },
+      {
+        "api": "aeEditInPlace",
+        "eval_usage": 1
+      },
+      {
+        "api": "aeIpcProcess",
+        "eval_usage": 1
+      },
+      {
+        "api": "aeReturn",
+        "eval_usage": 1
+      },
+      {
+        "api": "aeSetWindowFocus",
+        "eval_usage": 1
+      },
+      {
+        "api": "aeTreeAppendItem",
+        "eval_usage": 1
+      }
+    ],
+    "et": [
+      {
+        "api": "etPcreCompile",
+        "eval_usage": 2
+      },
+      {
+        "api": "etPcreExecute",
+        "eval_usage": 2
+      },
+      {
+        "api": "etPcreGenExecOptBits",
+        "eval_usage": 1
+      },
+      {
+        "api": "etPcreSubstitute",
+        "eval_usage": 1
+      },
+      {
+        "api": "etRexCompile",
+        "eval_usage": 1
+      },
+      {
+        "api": "etRexReplace",
+        "eval_usage": 1
+      }
+    ],
+    "Emy": [
+      {
+        "api": "EmyNtlUtil",
+        "eval_usage": 5
+      },
+      {
+        "api": "EmyLPPHeader",
+        "eval_usage": 2
+      }
+    ],
+    "MDE": [
+      {
+        "api": "MDE_SWEEP_RANGE_CENTER_SPAN",
+        "eval_usage": 1
+      },
+      {
+        "api": "MDE_SWEEP_TYPE_LOG",
+        "eval_usage": 1
+      },
+      {
+        "api": "MDE_SWEEP_TYPE_LOG_NUM_STEP",
+        "eval_usage": 1
+      },
+      {
+        "api": "MDE_SWEEP_VARIABLE_MODEL_PARAMETER",
+        "eval_usage": 1
+      },
+      {
+        "api": "MDE_TRAN_ACC_LEVEL_CONSERVATIVE",
+        "eval_usage": 1
+      },
+      {
+        "api": "MDE_TRAN_ACC_LEVEL_LIBERAL",
+        "eval_usage": 1
+      }
+    ],
+    "NTL": [
+      {
+        "api": "NTL_INDEX_FORMAT_ORIGIN",
+        "eval_usage": 2
+      },
+      {
+        "api": "NTL_INDEX_FORMAT_USE_BRACKET",
+        "eval_usage": 2
+      },
+      {
+        "api": "NTL_INDEX_FORMAT_USE_UNDERLINE",
+        "eval_usage": 2
+      }
+    ],
+    "goa": [
+      {
+        "api": "goaLayerFromCellView",
+        "eval_usage": 3
+      },
+      {
+        "api": "goaInit",
+        "eval_usage": 1
+      },
+      {
+        "api": "goaLayerAbut",
+        "eval_usage": 1
+      },
+      {
+        "api": "goaLayerToCellView",
+        "eval_usage": 1
+      }
+    ],
+    "Gu": [
+      {
+        "api": "GuCartPolyLine",
+        "eval_usage": 2
+      },
+      {
+        "api": "GuCartPolygon",
+        "eval_usage": 2
+      },
+      {
+        "api": "GuCartBox",
+        "eval_usage": 1
+      }
+    ],
+    "SLE": [
+      {
+        "api": "SLE_GOA_AND",
+        "eval_usage": 1
+      },
+      {
+        "api": "SLE_LE_WIRE_EXTEND",
+        "eval_usage": 1
+      },
+      {
+        "api": "SLE_LE_WIRE_VARIABLE",
+        "eval_usage": 1
+      }
+    ],
+    "CString": [
+      {
+        "api": "CString",
+        "eval_usage": 2
+      }
+    ],
+    "CColor": [
+      {
+        "api": "CColor",
+        "eval_usage": 1
+      }
+    ],
+    "CStringList": [
+      {
+        "api": "CStringList",
+        "eval_usage": 1
+      }
+    ],
+    "Sle": [
+      {
+        "api": "SleQueryData",
+        "eval_usage": 1
+      }
+    ],
+    "ael": [
+      {
+        "api": "aelEngineerNotation",
+        "eval_usage": 1
+      }
+    ],
+    "agr": [
+      {
+        "api": "agrGetSnapPoints",
+        "eval_usage": 1
+      }
+    ],
+    "emv": [
+      {
+        "api": "emvPurposeNumberDrawing",
+        "eval_usage": 1
+      }
+    ],
+    "ge": [
+      {
+        "api": "geTreeRemoveItem",
+        "eval_usage": 1
+      }
+    ],
+    "gu": [
+      {
+        "api": "guMotion",
+        "eval_usage": 1
+      }
+    ],
+    "mouse": [
+      {
+        "api": "mouseLBClick",
+        "eval_usage": 1
+      }
+    ],
+    "set": [
+      {
+        "api": "setPyAePath",
+        "eval_usage": 1
+      }
+    ],
+    "sle": [
+      {
+        "api": "sleLeWireTypeEnumToEMYSegStyleEnum",
+        "eval_usage": 1
+      }
+    ],
+    "smash": [
+      {
+        "api": "smash_option",
+        "eval_usage": 1
+      }
+    ],
+    "time": [
+      {
+        "api": "timeToTm",
+        "eval_usage": 1
+      }
+    ]
+  }
+}

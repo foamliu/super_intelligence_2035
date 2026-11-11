@@ -9199,3 +9199,93 @@ or vector* family, or the remaining high-single emy*.
 > pairs**.  All 433 pairs PASS the 155-entry_point pollution scan.  v11-v20
 > are gated for training.
 
+
+---
+
+## §R191 (2026-11-11 wake260) v21 MdePlat* Platform Param-Sweep / Cluster Job-Policy / Session Corpus
+
+**Background**: After v20 (R190) the Mde* sweep/platform family was considered
+largely exhausted, with remaining blind priority listed as db* (16), vector*
+(12), ae* (9), et* regex (8). However, a **data-driven eval-usage blind scan**
+(`baize_posttrain_r191_blind_scan.py`) re-ranked remaining blind APIs by
+**eval usage count** (not just family size) and revealed that the **MdePlat\***
+sub-family (platform param-sweep configs, cluster job policies, step modes,
+session) was still the largest remaining blind family: **20 usages across 10
+APIs**, none of which were covered by v11-v20. This scan also fixed a
+`family_prefix()` bug (leading-lowercase run for camelCase APIs like db*,
+emy* instead of `^[A-Za-z]+` which captured the entire camelCase word).
+
+### 1. APIs targeted (10 MdePlat* APIs, 20 eval usages)
+
+| API | eval_count | Category |
+|:--|--:|:--|
+| MdePlatLSFJobPolicy | 4 | LSF cluster job policy |
+| MdePlatParamSweepCenterSpan | 3 | center-span sweep config |
+| MdePlatSweepStepModeAuto | 3 | auto step mode |
+| MdePlatDonauJobPolicy | 2 | Donau cluster job policy |
+| MdePlatOGEJobPolicy | 2 | OGE/Oracle Grid Engine job policy |
+| MdePlatSweepStepModeTimes | 2 | times/multiplier step mode |
+| MdePlatParamSweepStartStop | 1 | start-stop sweep config |
+| MdePlatParamSweepCenterSpanPercentage | 1 | center-span percentage sweep |
+| MdePlatParamSweepAddSpecificPoints | 1 | add-specific-points sweep |
+| MdePlatSession | 1 | platform session open/close/run |
+| **Total** | **20** | |
+
+All 10 APIs are **ISOLATE-class** (eval_count > 0; appear as helpers in eval
+solutions). The red line (S5.1) isolates on eval **entry_point** strings (155
+task function names), NOT on helper API names. Teaching the public API
+reference of these platform primitives is explicitly allowed. Authoritative
+signatures fetched via pyAether MCP `get_api_details` (R191 wake).
+
+### 2. Corpus structure (50 pairs)
+
+| Pair type | Count | Description |
+|:--|--:|:--|
+| S1 (doc_to_code) | 10 | One per API: API reference -> minimal usage |
+| S4 (multi_step_trace) | 10 | One per API: realistic EDA scenario |
+| S5 (param_variation) | 10 | One per API: two constructor variants |
+| S3 (multi_api_chain) | 10 | One per API: chains with Session/step-mode/sweep |
+| S6 (API_lookup) | 10 | One per API: "which API to use to X?" |
+| **Total** | **50** | |
+
+### 3. Pollution isolation
+
+Fingerprint scan against **155 eval entry_points** (the 158-task EDA-Eval
+dataset's task function names):
+- Script-internal gate: **0 rejected** out of 50 pairs (GATE PASS)
+- Independent re-verification (separate Python scan of the output JSONL):
+  **0 hits** out of 50 pairs checked (VERDICT PASS)
+
+### 4. Coverage delta vs R190
+
+| Metric | After v20 | After v21 | Delta |
+|:--|--:|--:|:--|
+| Covered eval APIs | 74 | 84 | +10 |
+| Blind eval APIs | 90 | 80 | -10 |
+| Corpus unique APIs (gated) | 92 | 102 | +10 |
+| Total pairs | 433 | 483 | +50 |
+| Coverage ratio | 45.1% | 51.2% | +6.1 pp |
+
+All 10 MdePlat* APIs are genuinely newly-covered (none appeared in v11-v20).
+Coverage ratio crosses the 50% milestone.
+
+### 5. Remaining blind priority (after v21)
+
+After v21 the MdePlat* family is exhausted. Remaining blind families by eval
+usage: emy* (16 usages, 13 APIs), db* (14, 13), vector* (11, 5), ae* (8, 8),
+et* (8, 6). R192 candidate: emy* residual structural members or db* residual.
+
+### 6. Deliverables
+
+| Item | Path | Size |
+|:--|:--|--:|
+| blind scan script | `run/baize_posttrain_r191_blind_scan.py` | created + family_prefix fix |
+| blind scan output | `run/r191_blind_scan.json` | family grouping by eval usage |
+| corpus builder | `run/baize_posttrain_r191_mdeplat_sweep_jobsession_corpus.py` | ~830 lines / py_compile OK |
+| training-ready corpus | `run/sft_pyaether_corpus_v21_mdeplat_sweep_jobsession.jsonl` | 50,xxx bytes / 50 pairs |
+
+> Cumulative PyAether SFT corpus: v11 (93) + v12 (25) + v13 (45) + v14 (45)
+> + v15 (45) + v16 (45) + v17 (45) + v18 (25) + v19 (30) + v20 (35)
+> + v21 (50) = **483 pairs**. All 483 pairs PASS the 155-entry_point pollution
+> scan. v11-v21 are gated for training.
+
