@@ -1455,3 +1455,4 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1793760248797_9sga3	hswang	hfeg0plg94	58	analog_context	case	EDA-Eval-DesignFlow-SpfRccShieldDiff-001	2026-11-11 16:34	
 1792579582434_9g6vn	mengfeiz	hfeg0plg74	10	waveform	case	EDA-Eval-DesignFlow-IddMeasPostProcess-001	2026-11-11 17:33	
 1794226612818_s08eb	rhyanw	hfeg0plg76	33	schematic_netlist	case	EDA-Eval-DesignFlow-SpiceUndefParamScan-001	2026-11-11 18:20	
+1793261282500_4fq1p	t0002224	hfeg0pkn004	347	schematic_netlist	case	EDA-Eval-DesignFlow-ClosureDeckBuilder-001	2026-11-11 18:52	
