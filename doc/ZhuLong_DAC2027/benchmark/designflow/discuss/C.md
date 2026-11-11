@@ -121,3 +121,34 @@
   2. **A 线（论文，1h，依赖 P-003 收敛）**：§5.2 line 58 把"must drive Calibre/PVS ... maintain state across many tool calls"改为分情况——(a) drive-and-iterate 类（layout_aether drive Aether SKILL、waveform drive WaveView）真需工具；(b) parse-EDA-output 类（physical_verify 多为 parse Calibre log/deck）实际 grounding demand 在 read/parse。两类分开报 Pass@1，不要混进同一 depth 7+ bin。同时 §5.2 line 65 caption 的"非因果"诚实声明要上提到正文 line 58，不能只在 caption 里。
   3. **C 线（本周，2–3h，本域可派活）**：把 C.jsonl 全部 physical_verify case 按"gold 是否调 EDA tool"二分（subprocess 跑候选 ≠ 跑 EDA；check.py 里 subprocess 跑 .py 也 ≠ 跑 EDA），产出 `eval_triage/C_depth_label_audit.tsv`（case_id / gold_calls_eda_tool: bool / §5.2-labeled-depth / functional-depth-estimate）。这是 D r518 建议 2「洗 depth label」在 C 域的落地，可直接喂 P-003。注：`eval_triage/` 696-run 归因由 A 独占（11-10 用户令），本表只针对 C.jsonl 已造 case 的 gold，不跑 696-run judge，不冲突。
   - 顺序约束：1 独立可立即开；2 依赖 P-003 ≥3 shard 表态；3 与 1 并行（C 域自有数据）。
+
+---
+
+### r397（本 session · SchematicPinAdd-001 交付 + mock-pyAether 第三种 check 模式）— 2026-11-11 18:19
+
+**交付**: EDA-Eval-DesignFlow-SchematicPinAdd-001（colinxu/hfeg0plg55 layout_aether, k=15 a-o, jsonl_C 301→302）。
+
+**对 P-002（r396 9/9 stdlib-parser）的数据点补充**：
+
+r396 P-002 实锤「C 域 physical_verify 9/9 gold 纯 stdlib-parser，域级 depth 标签把 depth 1-2 parser 标成 depth 7+」。本 session 交付的 SchematicPinAdd-001 是一个**反例/补丁**：它的 gold（add_schematic_pin.py）**真 import pyAether 并真调 Aether API**（dbOpenCVByType / dbFindTermByName / emyPointF / dbCreateSchPinEx / dbCheckAndSaveDesign / termCount），不是 stdlib-parser。但这不推翻 P-002——因为：
+
+1. **域不同**：SchematicPinAdd 是 layout_aether（drive Aether API），P-002 实锤的是 physical_verify（parse Calibre log/deck）。layout_aether 的 gold 确实更可能 drive 工具（cf r385 SA schematic build / r392 netlist export skill），physical_verify 的 gold 确实更可能 parse 工具产物。**P-002 的结论应限定到 physical_verify 子域**，不要外推到整个 depth 7+ bin。
+2. **check 仍不 drive 真工具**：SchematicPinAdd 的 check.py 用 **mock-pyAether**（PYTHONPATH shim 记录 API 调用链到 JSON log），subprocess 跑候选时候选 import 的是 mock 不是真 Aether。即 **gold 写的是真 drive 代码，但判分时跑的是 mock**——SUT 仍不需 live Aether license。这引出 **C 域第三种 check 模式**：
+
+   | 模式 | 代表 case | gold drive 真工具? | check drive 真工具? | grounding demand 落点 |
+   |---|---|---|---|---|
+   | (a) stdlib-parser | r383-r396 physical_verify 多数 | 否（parse 附件） | 否 | read/parse 多 MB log/deck |
+   | (b) AST-only-bridge-wrapper | r392 NetlistExtractSkill | 是（import pyAether） | 否（AST 静态） | 写对 bridge 调用结构 |
+   | (c) mock-pyAether behavioral | **本 case r397** | 是（import pyAether） | 否（mock 记录调用链） | 写对 bridge 调用**序列+参数** |
+
+   模式 (c) 比 (b) 强：不只查"调了哪些 API"（AST），还查"以什么**顺序+参数**调"（mock log 验证 dbOpenCVByType→dbFindTermByName 幂等→dbCreateSchPinEx(pin=B 的名, dir=output)→dbCheckAndSaveDesign 的完整序列 + 交叉校验 A/B pin 名不同防硬编码）。这是 layout_aether/layout_virtuoso 类"drive Aether/Virtuoso API"任务可**不依赖 live bridge 仍做行为级判分**的可行路径，建议 C 域后续 pyAether/SKILL 构建类 case 优先采用 (c) 而非 (b)。
+
+**对 P-002 建议动作 1（P-003 域级 gold-stdlib 占比）的 C 域初报**：
+- physical_verify：9/9 纯 stdlib-parser（r396 已实锤）
+- layout_aether：r385(SA schematic, gold 真 drive pyAether) / r392(netlist export, gold 真 drive bridge 但 check AST-only) / r397(本 case, gold 真 drive + check mock-behavioral) —— **layout_aether gold 3/3 真 drive pyAether，0/3 纯 stdlib-parser**
+- layout_virtuoso / pg_layout：待补
+- **C 域小结**：physical_verify gold 100% stdlib-parser，layout_aether gold 0% stdlib-parser（100% drive pyAether）。P-003 的"全域 gold stdlib-parser 占比"在 C 域内**强域分化**，不宜给单一个 C 域数字。
+
+**选料教训（process，非 case 内容）**：本轮选料时误判 colinxu 为 new user（实为 5th case，4 prior 全 layout_aether/virtuoso schematic-edit 族，含 AddCellPin-001 主题相邻）。claim 前必查 `grep <user> ledger_C.tsv | awk -F'\t' '$6=="case"' | wc -l`，不能凭 fresh-diff 印象判 new-user。C 域「筛选成本枯竭」模式（cf r393 discuss）再现：rows 121-400 fresh 池 97 候选，14 peek 仅 1 真 fresh clean produce-demand（6kbdj），其余 env-debug/capability-probe/bridge-wrapper-near-dup/wrong-shard。layout_aether fresh 候选 90%+ 是 bridge-连接调试/截图探测/Hello-验证（非 produce-task）。
+
+**讨论配额**：上次 r393，本轮 r397 diff=4，已发言。下轮 r401 due。
