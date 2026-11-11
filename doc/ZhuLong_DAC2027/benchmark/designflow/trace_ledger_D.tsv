@@ -1444,4 +1444,4 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1793256298450_v56s8	yh1yang	10.129.2.11	89	waveform	parked		2026-11-11 10:05	duplicate: yh1yang HCI stress = HciStressExtract-001(cdza6)/HciStressWindowExtract-001(e5k8y) same user+mechanism; v56s8 mc=89 is earlier session of same HCI stress task family
 1793757030814_j2uza	zongjiuh	10.129.32.100	20	analog_context	case	EDA-Eval-DesignFlow-SpfCapResAnomaly-001	2026-11-11 10:44	
 1793676567498_voemm	t0003117	10.129.2.14	23	waveform	parked		2026-11-11 11:09	Q&A+explain only (read SKILL.md -> summarize -> '直接执行它' -> assistant explains cannot run w/o Virtuoso CIW -> gives manual steps). No artifact produced. code-review/explain非产, same class as #508 reject 86g62
-1793841389903_yrvv2	e0023936	10.129.32.75	25	waveform	claimed		2026-11-11 11:09	
+1793841389903_yrvv2	e0023936	10.129.32.75	25	waveform	parked		2026-11-11 11:17	dup of SineZeroCrossFreqPeak-001(ox6r3 e0047722 same verbatim prompt '使用tcl代码画正弦波+过零点+频率+峰值')+CosWaveWdf-001(p5x6n e0023936 same user cosine variant); yrvv2=sine+cosine combined; r511 reject post-deepread dup-check §5
