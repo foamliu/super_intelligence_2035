@@ -1204,3 +1204,30 @@ peek:					parked		2026-11-10 23:22	peek: consultation verdi-fsdb-warning-paste
 1793704886522_kdb8z.messages.json	owench	hfeg0pkn002	12	spice_sim	case		2026-11-11 19:16	seeded
 1788427145336_tk1gr.messages.json	e0044979	hfeg0pkn001	175	characterization	case	EDA-Eval-DesignFlow-AnalogOptPipeline-001	2026-11-11 19:16	seeded
 1792390745145_31s8i.messages.json	reedchen	hfeg0pkn002	37	spice_sim	case	EDA-Eval-DesignFlow-PostSimDeckBatch-001	2026-11-11 19:16	seeded
+1793370534751_zju83	yh1yang	hfeg0pkn002	24	spice_sim	parked		2026-11-11 19:25	reject first_user=00 续指垃圾
+1793957358059_v5icx	yanxvwei	hfeg0pkn002	25	spice_sim	parked		2026-11-11 19:25	reject how-to Q&A ansim_pro Run
+1793257968522_mp3us	tongni	hfeg0plg49	164	spice_sim	parked		2026-11-11 19:25	reject skill-authoring sim-sp-gen
+1793856196029_7at4j	lvyy	hfeg0pkn002	69	spice_sim	parked		2026-11-11 19:25	reject diagnostic 仿真提交没生成文件夹
+1793263785862_3123n	lvyy	hfeg0pkn002	576	spice_sim	parked		2026-11-11 19:25	reject consultation 扫mp5尺寸电流差
+1785907092176_vdeyi	e0025768	hfeg0pkn001	65	spice_sim	parked		2026-11-11 19:25	reject debugging optimize报错
+1793602325758_lcg3v	ronghu	hfeg0pkn005	27	spice_sim	parked		2026-11-11 19:25	reject debugging SiliconSmart char hspice rc=1
+1793264248842_f1rqc	hbpeng	hfeg0pkn004	151	spice_sim	parked		2026-11-11 19:25	reject wrong-domain tcl->skill PDK QA + /apps/imctf perm
+1792547194816_gsmj2	adaml	hfeg0pkn002	58	spice_sim	parked		2026-11-11 19:25	reject analysis 网表功能分析报告
+1793274153419_2q4mg	rhyanw	hfeg0pkn002	79	spice_sim	parked		2026-11-11 19:25	reject how-to 仿真任务运行还是卡死
+1793266716067_ioa1s	tongni	hfeg0plg49	93	spice_sim	parked		2026-11-11 19:25	reject skill-authoring skill-creator meta
+1793069992209_qpgvn	junweix	hfeg0pkn002	53	spice_sim	parked		2026-11-11 19:25	reject consultation 解释sp文件
+1793791874358_a7erh	t0002062	hfeg0pkn002	52	spice_sim	parked		2026-11-11 19:25	reject how-to 怎么仿真电路+rscalc.log
+1792056845394_o8w1u	e0024852	hfeg0pkn002	18	spice_sim	parked		2026-11-11 19:25	reject consultation (schematic 看文件)
+1792207956030_8anm0	lanxinz	hfeg0pkn002	57	spice_sim	parked		2026-11-11 19:25	park 1109 fresh unassessed-low
+1792391609614_eznro	mwxi	hfeg0pkn002	43	spice_sim	parked		2026-11-11 19:25	park 1109 fresh unassessed-low
+1791773204994_wotp5	e0024597	hfeg0pkn004	136	spice_sim	parked		2026-11-11 19:25	reject wrong-domain ERC tcl + /home/e0031668 perm
+1793176175395_5i5wz	e03179	hfeg0pkn002	147	spice_sim	parked		2026-11-11 19:25	reject skill-use vam-agent
+1792220242064_duzjh	jinsongl	hfeg0pkn002	123	spice_sim	parked		2026-11-11 19:25	reject skill-authoring zigzag skill
+1793864695856_gxlr2	shunlinp	hfeg0pkn002	71	spice_sim	parked		2026-11-11 19:25	reject skill-install/demo Q&A
+1792462491236_ccaea	weidong	hfeg0pkn002	133	spice_sim	parked		2026-11-11 19:25	reject L1 filename->CSV too simple for new case
+1790658262664_zjzz8	e03179	hfeg0pkn002	168	spice_sim	parked		2026-11-11 19:25	reject skill-use vam-agent 建模
+1793755992968_1ip4z	reedchen	hfeg0pkn004	68	spice_sim	parked		2026-11-11 19:25	reject near-dup McPvtVmEval-001/PostSimDeckBatch-001
+1791437695704_3pn6a	thomasz	hfeg0pkn002	24	spice_sim	parked		2026-11-11 19:25	reject diagnostic 波形打不开
+1793104325523_ad0nq	jackjia	hfeg0pkn002	34	spice_sim	parked		2026-11-11 19:25	reject empty nmsg=0
+1794133519350_jesvi	joeyl	hfeg0plg53	49	spice_sim	parked		2026-11-11 19:25	near-dup DutySkewAvg-001 (7ycbz same .sp path)
+1793341820971_f5ser	wzj	hfeg0pkn002	96	characterization	case	EDA-Eval-DesignFlow-G5TbGen-001	2026-11-11 19:25	
