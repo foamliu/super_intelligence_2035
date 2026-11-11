@@ -372,7 +372,7 @@
 1792060840051_yrdts	shanliny	10.129.2.10	57	verification	parked		2026-11-11 15:28	SV UVM code-review Q&A (审查代码找bug)
 1791974855202_32935	shanliny	10.129.2.10	51	verification	parked		2026-11-11 15:28	SV UVM code-review Q&A, sibling of yrdts
 1791536684137_lpn8o	mike	10.129.32.80	39	eda_other	parked		2026-11-11 15:28	env-setup Q&A (重构环境 for new dir)
-1789375537537_uh4tz	lorikx	10.129.2.13	36	verification	parked		2026-11-11 15:28	sim-failure debug Q&A (WRITE FAIL/memoryIO mismatch)
+1789375537537_uh4tz	lorikx	10.129.2.13	36	verification	parked		2026-11-11 15:57	r381 re-eval: near-DUP of SramVcsLogDiagnose-001 (same user lorikx + sp_sram SRAM-sim-log diagnosis pattern); reframe->SimRepairLogDiag not viable
 1791537885417_6h27d	mike	10.129.32.80	35	eda_other	parked		2026-11-11 15:28	env-setup Q&A, sibling of lpn8o
 1793179564697_11cny	clwang	10.129.2.14	29	digital	parked		2026-11-11 15:28	code-search Q&A (mr27在哪配置, grep specdef)
 1793244457637_k7z23	e0046913	10.129.2.12	18	eda_other	parked		2026-11-11 15:28	doc/criteria-writing Q&A (写出衡量标准, iterate text)
