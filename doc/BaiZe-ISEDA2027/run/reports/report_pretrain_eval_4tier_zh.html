@@ -42,8 +42,8 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
   <div class="meta">
     <span>📅 2026-11-11</span>
     <span>🏗 Mamba2-hybrid 2.22B</span>
-    <span>🔥 训练 iter≈165.02k / 700k · step~7.02s<7.4s✅</span>
-    <span>📊 L1: 16 ckpt ✅ | L2: GSM8K=0%@160k 🔴 MMLU~88%进行中(19996/22800) v4等待中 | L3: 🔧 pipeline脚本已建(baize_l3_tb_smoke.sh)·待MMLU完后运行 | L4: 数据在.15不可达+定性测试=退化输出</span>
+    <span>🔥 训练 iter≈165.56k / 700k · step~7.04s<7.4s✅</span>
+    <span>📊 L1: 16 ckpt ✅ | L2: GSM8K=0%@160k 🔴 MMLU=23.16%@160k(≈随机) · BBH 32/100运行中🟡 · v5等待中 · GSM8K诊断等待中 | L3: 🔧 pipeline脚本已建·模型生成退化 | L4: 数据在.15不可达+定性测试=退化输出</span>
   </div>
   <div style="margin-top:12px;font-size:12.5px;background:rgba(0,0,0,.18);border-radius:8px;padding:8px 12px;opacity:.95">
     ⚠️ 本报告是<b>训练监控与决策依据</b>，<b>不进论文正文</b>（2026-11-10 用户令）。用户关注点（2026-11-11）：<b>如何拿到更好的结果</b>。
@@ -114,21 +114,21 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
     <tr><td class="l">L1 正常</td><td class="l">同期 L1=48.01%(loglikelihood 正常) → 模型加载/权重/分词无误</td><td><span class="badge b-ok">排除配置</span></td></tr>
     <tr><td class="l">stop tokens</td><td class="l">eval log: <code>until:['Question:','&lt;/s&gt;','&lt;|im_end|&gt;']</code> → 标准，无误</td><td><span class="badge b-ok">排除配置</span></td></tr>
     <tr><td class="l"><b>实际输出</b></td><td class="l"><b>curl 直查 160k llama-server</b>：模型输出 <code>"The answer is 5 years old3335431111..."</code> → 尝试答案格式但内容错误，随后退化为重复"1"×200+，finish_reason=length</td><td><span class="badge b-bad">能力(数学)</span></td></tr>
-    <tr><td class="l">数据配比</td><td class="l">P-5b/P-8 主体=Ultra-FineWeb-L3（网页文本），<b>无显式数学/代码数据</b> → 数学推理能力必然弱</td><td><span class="badge b-bad">数据配比</span></td></tr>
+    <tr><td class="l">数据配比</td><td class="l">S1 训练 blend 实际含 code 19% + math 7% + language 74%（<b>≠无 code/math</b>），但 code/math 比例远低于 DeepSeek 最优 4:2:4（40%+20%）→ 推理生成能力不足</td><td><span class="badge b-warn">配比不足</span></td></tr>
   </table>
   <div class="note">
-    <b>结论</b>：GSM8K=0% 是<b>真能力问题</b>，根因是训练数据缺乏数学/代码内容。<br>
-    ① 模型有基本生成能力（产生 "The answer is..."）但数学内容完全错误；② 退化为重复"1"是小型模型在未见过的推理模式上的典型行为；③ L1(loglikelihood)正常说明模型权重/加载无误；④ stop tokens/few-shot 配置均标准。<br>
-    <b>建议（写进 MEMORY 待用户拍板）</b>：① 后续训练阶段增加数学/代码数据配比（参考 MiniCPM/DeepSeek 的 code+math 占比 15-30%）；② 或在 post-train SFT 阶段补数学推理能力。
+    <b>结论</b>：GSM8K=0% 是<b>真能力问题</b>，根因是训练数据中 code/math 比例不足（19%+7%=26%，远低于 DeepSeek 最优 60%）且仍在 stable 阶段（decay 尚未开始）。<br>
+    ① 模型有基本生成能力（产生 "The answer is..."）但数学内容完全错误；② 退化为重复"1"是小型模型在推理模式训练不足时的典型行为；③ L1(loglikelihood)正常说明模型权重/加载无误；④ stop tokens/few-shot 配置均标准；⑤ <b>修正</b>：训练 blend 实际含 code_l2(15%)+code_l3(4%)+math_l1(5%)+math_l3(2%)=26%，并非"无 code/math"，但比例远低于最优。<br>
+    <b>建议（写进 MEMORY 待用户拍板）</b>：① <b>decay 阶段</b>混入更多 code+math 数据（提升至 4:2:4 配比）；② 或在 post-train SFT 阶段补数学推理能力；③ 当前 stable 段 code/math 比例已固定，等 decay 阶段是最佳调整时机。
   </div>
 </div>
 <div class="card">
-  <h3>160k 重评结果（v3 · 2026-11-11 · GSM8K ✅ 完成 = 0.0% · MMLU 🟡 进行中 ~82%(18604/22800) ETA~85min · v4 等待中）</h3>
+  <h3>160k 重评结果（v3 · 2026-11-11 · GSM8K ✅ 完成 = 0.0% · MMLU ✅ 完成 = 23.16% · v4 BBH 🟡 32/100 运行中）</h3>
   <div class="alert"><b>v2 失败根因</b>：MMLU 是 <code>loglikelihood</code> 任务，标准 <code>local-completions</code> 后端要求 response 含 <code>token_logprobs</code>，但 llama-server <code>/v1/completions</code> 不返回该字段 → <code>KeyError: 'token_logprobs'</code>。</div>
   <table>
     <tr><th>任务</th><th>口径</th><th>shot</th><th>后端</th><th>状态</th><th>结果</th></tr>
     <tr><td>GSM8K</td><td>limit=100, CPU, ctx=4096</td><td>5-shot</td><td class="l"><code>local-completions</code></td><td class="bad">✅ 完成</td><td class="bad">0.0% (strict+flex)</td></tr>
-    <tr><td>MMLU</td><td>limit=100, CPU, ctx=4096</td><td>0-shot</td><td class="l"><code>gguf_lmeval_run.py</code> (logit_bias)</td><td class="warn">🟡 ~16761/22800(~74%) 运行中</td><td>ETA~30min</td></tr>
+    <tr><td>MMLU</td><td>full(5700), CPU, ctx=4096</td><td>0-shot</td><td class="l"><code>gguf_lmeval_run.py</code> (logit_bias)</td><td class="warn">✅ 完成</td><td class="warn">23.16% (≈随机25%)</td></tr>
   </table>
   <p class="trend">⏱ MMLU loglikelihood ~2-3 it/s · CPU llama-server port=8082 -t4 nice19 · 不占 GPU</p>
 </div>
@@ -256,23 +256,54 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
   <table>
     <tr><th>层</th><th>评测</th><th>状态</th><th>关键数</th><th>下一步</th></tr>
     <tr><td><b>L1</b></td><td class="l">常识 8 集 (0-shot)</td><td><span class="badge b-ok">✅ 16ckpt</span></td><td>58.13%@160k</td><td class="l">继续每万 ckpt</td></tr>
-    <tr><td><b>L2</b></td><td class="l">复杂推理 6 集</td><td><span class="badge b-bad">🔴 GSM8K=0%@160k</span></td><td>GSM8K=0% · MMLU~82%进行中(18604/22800) · v4等待中</td><td class="l">等MMLU+v4结果</td></tr>
+    <tr><td><b>L2</b></td><td class="l">复杂推理 6 集</td><td><span class="badge b-bad">🔴 GSM8K=0%@160k</span></td><td>GSM8K=0% · MMLU=23.16%(≈随机) · BBH 32/100运行中 · v5等待中</td><td class="l">等BBH+v5结果</td></tr>
     <tr><td><b>L3</b></td><td class="l">Agentic</td><td><span class="badge b-warn">🔧 脚本已建·待运行</span></td><td>— · 模型生成能力不足(pipeline已建)</td><td class="l">MMLU完后运行smoke</td></tr>
     <tr><td><b>L4</b></td><td class="l">领域</td><td><span class="badge b-bad">❌ 未接·调研完</span></td><td>— · 数据在.15不可达</td><td class="l">延后至.15可达+SFT后</td></tr>
   </table>
 </div>
 <div class="card">
-  <h3>本轮(#1979)动作</h3>
+  <h3>本轮(#1983)动作</h3>
   <ol>
-    <li><b>训练健康确认</b>：iter 165,020 · step 7020ms (<7.4s✅) · loss ~2.03 · 0 NaN/skip · GPU 8×93-100%/75GB · ~590K tok/s</li>
-    <li><b>L2 v3 进度</b>：GSM8K ✅ 完成 = 0.0%(strict+flex) · MMLU 🟡 进行中 ~19996/22800(~88%) ETA~30min · ~1 it/s</li>
-    <li><b>L2 v4 状态</b>：<code>baize_l2_eval_160k_v4.sh</code> 在 .29 后台(PID2515987) · 轮询 port 8082 · v3 完成后自动切换</li>
-    <li><b>🔧 L3 Pipeline 创建</b>：脚本 <code>baize_l3_tb_smoke.sh</code> 已建 · 利用 Harbor+cline-patched(只读) · 2 任务(fix-git+break-filter-js-from-html) · 待 MMLU 完后运行</li>
-    <li><b>无新万整数 ckpt</b>：最新 ckpt iter_0164000(已评) · 下一个 170k ETA~10h</li>
+    <li><b>训练健康确认</b>：iter 165,560 · step 6959-7090ms (<7.4s✅) · loss 2.025-2.040 · 0 NaN/skip · GPU 8×96-100%/75GB · lr=1e-3(stable段,decay未开始)</li>
+    <li><b>L2 v3 结果</b>：GSM8K ✅ 完成 = 0.0%(strict+flex) · MMLU ✅ 完成 = 23.16%(≈随机25%,与P-8基线23.79%一致,15×训练量后无改善)</li>
+    <li><b>L2 v4 状态</b>：BBH 32/100 运行中(~69s/it,ETA~78min) · HumanEval/MBPP/MATH 失败(v5已修复等待中)</li>
+    <li><b>L2 v5 状态</b>：<code>baize_l2_eval_160k_v5.sh</code> PID 3102868 在 .29 后台 · 等 BBH(port 8083)完成后自动启动 · 含 HF_ALLOW_CODE_EVAL=1 + MATH 0-shot 修复</li>
+    <li><b>GSM8K 诊断</b>：<code>baize_l2_gsm8k_diag.sh</code> PID 354759 在 .29 后台 · 等 v5 完成后运行 · --log_samples 捕获实际输出 · 5-shot+0-shot 各 10 样本 · ctx=8192</li>
+    <li><b>⚠️ 数据配比修正</b>：从训练进程命令行参数确认 S1 blend 实际含 code 19% + math 7% + language 74%（此前报告错误称"无 code/math"）· 远低于 DeepSeek 4:2:4 最优配比</li>
+    <li><b>无新万整数 ckpt</b>：最新 ckpt iter_0164000(已评) · 下一个 170k ETA~12h</li>
   </ol>
   <div class="alert">
-    <b>🔴 核心发现（待用户拍板）</b>：L2/L3/L4 的低分/空白<b>同一根因</b>——训练数据(P-5b/P-8 Ultra-FineWeb-L3)缺乏 code+math 内容，导致模型在<b>所有需要连贯生成的任务</b>上退化为重复输出。<br>
-    <b>建议优先级</b>：① <b>最高优先</b>：在后续训练阶段增加 code+math 数据配比 → 改善 L2/L3/L4 的基础；② L2 等 MMLU+v4 结果收齐后分析全貌；③ L3/L4 延后至模型生成能力达标后(SFT or 数据改进)；④ L4 额外需 .15 网络可达。
+    <b>🔴 核心发现（待用户拍板）</b>：L2/L3/L4 的低分/空白<b>同一根因</b>——训练数据中 code+math 比例不足（code 19% + math 7% = 26%，远低于 DeepSeek 最优 60%），且仍在 stable 阶段（decay 尚未开始），导致模型在<b>所有需要连贯生成的任务</b>上退化为重复输出。<br>
+    <b>⚠️ 数据配比修正（#1983 · 2026-11-11 18:00）</b>：此前分析称"无显式 code/math 数据"是<b>错误</b>。从训练进程命令行参数确认，S1 blend 实际含 code_l2(15%)+code_l3(4%)+math_l1(5%)+math_l3(2%)=26%，但远低于 DeepSeek 4:2:4 最优配比（code 40%+math 20%=60%）。<br>
+    <b>建议优先级</b>：① <b>最高优先</b>：在 <b>decay 阶段</b>混入更多 code+math 数据（提升至 4:2:4 配比）→ 改善 L2/L3/L4 的基础；② L2 等 BBH+v5 结果收齐后分析全貌；③ L3/L4 延后至模型生成能力达标后（decay or SFT）；④ L4 额外需 .15 网络可达。
+  </div>
+</div>
+
+<div class="card">
+  <h3>🔬 S1 训练数据实际配比（#1983 新增 · 从训练进程命令行参数提取）</h3>
+  <div class="note"><b>数据来源</b>：<code>ssh 10.239.2.29 'ps -eo pid=,args= | grep pretrain_launcher | grep -v grep'</code> · PID 146283 · etimes~770789s(~8.9天)</div>
+  <table>
+    <tr><th>数据源</th><th>分片数</th><th>单片权重</th><th>总权重</th><th>占比</th><th>类别</th></tr>
+    <tr><td class="l">en_v1_4_pb_s000-s015</td><td>16</td><td>0.040625</td><td>0.6500</td><td><b>65.0%</b></td><td>语言(英文网页)</td></tr>
+    <tr><td class="l">ufw_l1_en_hq_pb_s000-s015</td><td>16</td><td>0.003125</td><td>0.0500</td><td>5.0%</td><td>语言(UFW L1 HQ)</td></tr>
+    <tr><td class="l">ufw_zh_train_s0-s3</td><td>4</td><td>0.010000</td><td>0.0400</td><td>4.0%</td><td>语言(中文)</td></tr>
+    <tr><td class="l">math_l1_pb_s000-s015</td><td>16</td><td>0.003125</td><td>0.0500</td><td>5.0%</td><td><b>数学(L1)</b></td></tr>
+    <tr><td class="l">math_l3_pb_s000-s015</td><td>16</td><td>0.001250</td><td>0.0200</td><td>2.0%</td><td><b>数学(L3)</b></td></tr>
+    <tr><td class="l">code_l2_pb_s000-s015</td><td>16</td><td>0.009375</td><td>0.1500</td><td>15.0%</td><td><b>代码(L2)</b></td></tr>
+    <tr><td class="l">code_l3_pb_s000-s015</td><td>16</td><td>0.002500</td><td>0.0400</td><td>4.0%</td><td><b>代码(L3)</b></td></tr>
+    <tr style="background:#eef3f8"><td class="l"><b>合计</b></td><td>—</td><td>—</td><td><b>1.0000</b></td><td><b>100%</b></td><td>—</td></tr>
+  </table>
+  <table>
+    <tr><th>类别</th><th>实际占比</th><th>DeepSeek 4:2:4 最优</th><th>差距</th></tr>
+    <tr><td class="l">Code (L2+L3)</td><td><b>19.0%</b></td><td>40.0%</td><td class="bad">-21.0pp</td></tr>
+    <tr><td class="l">Math (L1+L3)</td><td><b>7.0%</b></td><td>20.0%</td><td class="bad">-13.0pp</td></tr>
+    <tr><td class="l">Language (en+zh+ufw)</td><td><b>74.0%</b></td><td>40.0%</td><td class="warn">+34.0pp</td></tr>
+    <tr><td class="l">Code:Math:Lang</td><td><b>2.7:1:10.6</b></td><td><b>4:2:4</b></td><td class="bad">严重偏离</td></tr>
+  </table>
+  <div class="alert">
+    <b>关键修正</b>：此前报告(#1966/#1979)称"训练数据缺乏 code+math 内容"是<b>不准确的</b>。实际 blend 含 26% code+math，但比例远低于 DeepSeek 最优 60%。<br>
+    <b>671B tokens 时已训练量</b>：code ~127B tok · math ~47B tok · 127B code tokens 理论上应产生基础代码能力，GSM8K=0% + 代码生成退化说明：<br>
+    ① code/math 数据质量(L2/L3 级别)可能不足以教会模型生成；② stable 阶段 lr=1e-3 恒定，模型可能需要 decay 阶段(低 lr)来 consolidate 生成能力；③ Mamba2-hybrid 架构在自回归生成上可能有特殊行为。
   </div>
 </div>
 
@@ -306,7 +337,7 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
 </div>
 
 <footer>
-  BaiZe pretrain 线 · 四层能力评测报告 · 2026-11-11 16:56 更新(#1979) · 评测数字仅用于训练监控，不进论文正文
+  BaiZe pretrain 线 · 四层能力评测报告 · 2026-11-11 18:00 更新(#1983) · 评测数字仅用于训练监控，不进论文正文
 </footer>
 </div>
 </body>

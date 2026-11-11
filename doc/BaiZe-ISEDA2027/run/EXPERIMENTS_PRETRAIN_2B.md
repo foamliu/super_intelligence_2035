@@ -1611,3 +1611,55 @@ L2/L3/L4 低分/空白同一根因 = 训练数据(P-5b/P-8 Ultra-FineWeb-L3)缺�
   - 修复：v5 改用 0-shot 绕过 few-shot context 构建
 - **BBH 运行中**：`bbh_cot_fewshot_boolean_expressions` 3-shot, limit=100, ~69s/it, 6/100, ETA~1.5h
 - **v5 已启动**：`baize_l2_eval_160k_v5.sh` 在 .29 后台 (PID 3102868) 等待 BBH 完成后重跑 HumanEval+MBPP+MATH(0-shot)
+
+## #1983 · 2026-11-11 18:00 · 四层评测轮 · 数据配比修正 + BBH 监控
+
+### 训练状态
+- iter 165,560 / 700,000 (23.65%) · step 6959-7090ms (<7.4s✅) · loss 2.025-2.040 · 0 NaN/0 skip
+- lr = 1.000000E-03（stable 段，decay 尚未开始）
+- GPU 8×96-100% / 75GB · PID 146283 · etimes ~770789s (~8.9 天)
+- 命令：`ssh 10.239.2.29 'tail -3 /proc/146283/fd/1'`
+
+### 🔬 S1 训练数据实际配比（从训练进程命令行参数提取 · 重要修正）
+**此前报告(#1966/#1979)称"训练数据缺乏 code+math 内容"是错误的。**
+
+从 `ps -eo args= | grep pretrain_launcher` 提取的数据 blend 权重：
+
+| 数据源 | 分片数 | 单片权重 | 总权重 | 占比 | 类别 |
+|:--|--:|--:|--:|--:|:--|
+| en_v1_4_pb_s000-s015 | 16 | 0.040625 | 0.6500 | 65.0% | 语言(英文网页) |
+| ufw_l1_en_hq_pb_s000-s015 | 16 | 0.003125 | 0.0500 | 5.0% | 语言(UFW L1 HQ) |
+| ufw_zh_train_s0-s3 | 4 | 0.010000 | 0.0400 | 4.0% | 语言(中文) |
+| math_l1_pb_s000-s015 | 16 | 0.003125 | 0.0500 | 5.0% | 数学(L1) |
+| math_l3_pb_s000-s015 | 16 | 0.001250 | 0.0200 | 2.0% | 数学(L3) |
+| code_l2_pb_s000-s015 | 16 | 0.009375 | 0.1500 | 15.0% | 代码(L2) |
+| code_l3_pb_s000-s015 | 16 | 0.002500 | 0.0400 | 4.0% | 代码(L3) |
+| **合计** | — | — | **1.0000** | **100%** | — |
+
+**实际配比 vs DeepSeek 最优**：
+- Code: 19.0% (vs 40.0% → -21.0pp)
+- Math: 7.0% (vs 20.0% → -13.0pp)
+- Language: 74.0% (vs 40.0% → +34.0pp)
+- Code:Math:Lang = 2.7:1:10.6 (vs 4:2:4 → 严重偏离)
+
+**671B tokens 时已训练量**：code ~127B tok · math ~47B tok
+- 127B code tokens 理论上应产生基础代码能力
+- GSM8K=0% + 代码生成退化说明：① code/math 数据质量(L2/L3)可能不足以教会生成；② stable 阶段 lr=1e-3 恒定，可能需要 decay 阶段 consolidate；③ Mamba2-hybrid 架构在自回归生成上可能有特殊行为
+
+### L2 v4 BBH 进度
+- 32/100 (~69s/it, ETA ~78min) · `bbh_cot_fewshot_boolean_expressions` 3-shot, limit=100
+- 命令：`ssh 10.239.2.29 'tail -3 /tmp/baize_l2_eval_160k_v4.log | grep -oP "\d+/100" | tail -1'`
+
+### 评测队列（port 8083 串行）
+1. BBH v4 (运行中, 32/100, ETA ~78min)
+2. v5: HumanEval + MBPP + MATH 0-shot (等待 BBH 完成, ~3h)
+3. GSM8K 诊断: --log_samples, 5-shot + 0-shot 各 10 样本, ctx=8192 (等待 v5 完成, ~30min)
+- 总队列 ETA: ~4.5h
+
+### 四层报告更新
+- 修正数据配比分析（从"无 code/math"→"26% code+math，但远低于最优 60%"）
+- 更新 MMLU 状态为完成 (23.16%)
+- 更新 BBH 状态 (32/100 运行中)
+- 新增 S1 训练数据实际配比表
+- 更新 footer 至 #1983
+- 报告: `run/reports/report_pretrain_eval_4tier_zh.html` (31.9KB) + 同步至 `doc/reports/`
