@@ -1053,3 +1053,4 @@ peek:					parked		2026-11-10 23:22	peek: consultation verdi-fsdb-warning-paste
 1793173193409_mx7xh	junweix	hfeg0pkn002	77	spice_sim	parked		2026-11-11 11:52	remote pkn002 junweix file others-r=0, not readable by e0031982 sandbox identity
 1789630642152_8b8wk	ghyang	hfeg0pkn003	70	spice_sim	parked		2026-11-11 11:56	agent read_files all returned empty - analysis hallucinated from dir listing, trace not grounded; unusable for A-faithful case
 1791786108086_vumhg	e03179	hfeg0pkn002	274	characterization	case	EDA-Eval-DesignFlow-CabufPvtDatAudit-001	2026-11-11 12:20	
+1793328354943_p7jfx	tongni	hfeg0plg63	481	spice_sim	case	EDA-Eval-DesignFlow-SpSpecCovAudit-001	2026-11-11 12:59	
