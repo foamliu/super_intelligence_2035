@@ -1,9 +1,9 @@
 {
   "round": "R191-scan",
   "eval_raw_apis": 164,
-  "covered_eval_apis": 110,
-  "blind_eval_apis": 54,
-  "coverage_ratio": 0.6707,
+  "covered_eval_apis": 115,
+  "blind_eval_apis": 49,
+  "coverage_ratio": 0.7012,
   "blind_list": [
     "CColor",
     "CString",
@@ -53,15 +53,9 @@
     "setPyAePath",
     "sleLeWireTypeEnumToEMYSegStyleEnum",
     "smash_option",
-    "timeToTm",
-    "vector1D_double",
-    "vector1D_emyPointF",
-    "vector1D_p_emyFig",
-    "vector1D_p_emyShape",
-    "vector2D_emyPointF"
+    "timeToTm"
   ],
   "family_usage": {
-    "vector": 11,
     "ae": 8,
     "et": 8,
     "Emy": 7,
@@ -86,28 +80,6 @@
     "time": 1
   },
   "family_apis": {
-    "vector": [
-      {
-        "api": "vector1D_emyPointF",
-        "eval_usage": 5
-      },
-      {
-        "api": "vector1D_p_emyFig",
-        "eval_usage": 3
-      },
-      {
-        "api": "vector1D_double",
-        "eval_usage": 1
-      },
-      {
-        "api": "vector1D_p_emyShape",
-        "eval_usage": 1
-      },
-      {
-        "api": "vector2D_emyPointF",
-        "eval_usage": 1
-      }
-    ],
     "ae": [
       {
         "api": "aeCreateTree",
