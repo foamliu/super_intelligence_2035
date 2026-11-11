@@ -9456,8 +9456,103 @@ NTL\* (6, 3), goa\* (6, 4). R194 candidate: vector\* container APIs
 
 > Cumulative PyAether SFT corpus: v11 (93) + v12 (25) + v13 (45) + v14 (45)
 > + v15 (45) + v16 (45) + v17 (45) + v18 (25) + v19 (30) + v20 (35)
-> + v21 (50) + v22 (65) + v23 (65) = **613 pairs**. All 613 pairs PASS the
-> 155-entry_point pollution scan. v11-v23 are gated for training.
+> + v21 (50) + v22 (65) + v23 (65) + v24 (25) = **638 pairs**. All 638 pairs PASS the
+> 155-entry_point pollution scan. v11-v24 are gated for training.
 
 
+
+---
+
+## R195 — v25 et\* regex (PCRE + Rex) SFT corpus
+
+**Date**: 2026-11-11 (wake264)
+**Goal**: Build SFT corpus for the 6 blind-spot `et*` regex APIs identified by
+the R191 blind scan as #1 blind family (tied with `ae*` at 8 eval usages, but
+fewer APIs: 6 vs 8).
+
+### 1. Target APIs (6)
+
+| API | Family | Return type | Key characteristic |
+|:--|:--|:--|:--|
+| `etPcreCompile` | PCRE (object-based) | `_etReComPatObj` | Returns reusable compiled object |
+| `etPcreExecute` | PCRE | `bool` | Takes compiled object as first arg |
+| `etPcreGenExecOptBits` | PCRE | `int` | Generates execution-time option bits |
+| `etPcreSubstitute` | PCRE | `str` | Uses last etPcreExecute match; `\\0`-`\\9` backrefs |
+| `etRexCompile` | Rex (global-state) | `bool` | Returns True/False; stores pattern globally |
+| `etRexReplace` | Rex | `str` | Uses globally stored Rex pattern; index-based replace |
+
+**Key architectural difference** (emphasized in S5/S6 pairs):
+- `etPcre*` family is **object-based**: `etPcreCompile` returns a
+  `_etReComPatObj` that must be passed to `etPcreExecute`/`etPcreSubstitute`.
+- `etRex*` family is **global-state-based**: `etRexCompile` returns `bool`
+  (valid/invalid) and stores the pattern internally; `etRexReplace` uses the
+  last-compiled Rex pattern with no object argument.
+
+### 2. Pair categories (30 total)
+
+| Category | Pairs | Description |
+|:--|--:|:--|
+| S1 doc_to_code | 6 | One per API: given API reference doc, write minimal correct code |
+| S3 code_to_doc | 6 | One per API: given code, identify API and explain signature |
+| S4 multi_step_trace | 6 | One per API: multi-step realistic EDA workflow using the API |
+| S5 anti_pattern | 6 | One per API: common mistake + corrected code |
+| S6 cross_api_combo | 6 | Combinations of 2-3 APIs in a single workflow |
+
+### 3. S5 anti-pattern highlights
+
+The S5 pairs target the most common confusion points:
+- **etPcreCompile**: Passing a raw pattern string to `etPcreExecute` instead of
+  a compiled object.
+- **etPcreExecute**: Default case-sensitive matching failing on mixed-case
+  input (should use `caseLess` compile option).
+- **etPcreGenExecOptBits**: Confusing compile-time vs execution-time options
+  (`etPcreGenCompileOptBits` vs `etPcreGenExecOptBits`).
+- **etPcreSubstitute**: Calling `etPcreSubstitute` without a prior
+  `etPcreExecute` match (captured groups unavailable).
+- **etRexCompile**: Treating the `bool` return as a pattern object (Rex stores
+  pattern globally, not in an object).
+- **etRexReplace**: Pattern too restrictive (e.g. `[A-Z]+` only matching
+  uppercase, not full words).
+
+### 4. Contamination scan
+
+Fingerprint scan against **155 eval entry_points**:
+- Script-internal gate: **0 rejected** out of 30 pairs (GATE PASS)
+- All 6 `et*` APIs are ISOLATE-class (regex utility APIs, not eval entry_points)
+
+### 5. Coverage delta vs R194
+
+| Metric | After v24 | After v25 | Delta |
+|:--|--:|--:|:--|
+| Covered eval APIs | 115 | 121 | +6 |
+| Blind eval APIs | 49 | 43 | -6 |
+| Corpus unique APIs (gated) | 128 | 134 | +6 |
+| Total pairs | 638 | 668 | +30 |
+| Coverage ratio | 70.1% | 73.8% | +3.7 pp |
+
+All 6 `et*` APIs are genuinely newly-covered (none appeared in v11-v24).
+The **et\* family is fully eliminated** from the blind list.
+
+### 6. Remaining blind priority (after v25)
+
+After v25 the et\* family is exhausted. Remaining blind families by eval
+usage: ae\* (8, 8 APIs), Emy\* (7, 2 APIs), MDE\* (6, 6 APIs), NTL\* (6, 3 APIs),
+goa\* (6, 4 APIs), Gu\* (5, 3 APIs). R196 candidate: ae\* GUI/tree APIs
+(aeCreateTree, aeCreateTreeItem, aeCrtHilitPolygon, aeEditInPlace, etc.) or
+Emy\* utility APIs (EmyNtlUtil, EmyLPPHeader).
+
+### 7. Deliverables
+
+| Item | Path | Size |
+|:--|:--|--:|
+| corpus builder | `run/baize_posttrain_r195_et_pcre_rex_corpus.py` | ~565 lines / py_compile OK |
+| training-ready corpus | `run/sft_pyaether_corpus_v25_et_pcre_rex.jsonl` | 38,386 bytes / 30 pairs |
+| blind scan script (updated) | `run/baize_posttrain_r191_blind_scan.py` | v25 added to CORPUS_FILES |
+| blind scan output | `run/r191_blind_scan.json` | re-run with v11-v25 |
+
+> Cumulative PyAether SFT corpus: v11 (93) + v12 (25) + v13 (45) + v14 (45)
+> + v15 (45) + v16 (45) + v17 (45) + v18 (25) + v19 (30) + v20 (35)
+> + v21 (50) + v22 (65) + v23 (65) + v24 (25) + v25 (30) = **668 pairs**.
+> All 668 pairs PASS the 155-entry_point pollution scan. v11-v25 are gated
+> for training.
 

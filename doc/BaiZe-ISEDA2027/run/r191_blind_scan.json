@@ -1,9 +1,9 @@
 {
   "round": "R191-scan",
   "eval_raw_apis": 164,
-  "covered_eval_apis": 115,
-  "blind_eval_apis": 49,
-  "coverage_ratio": 0.7012,
+  "covered_eval_apis": 121,
+  "blind_eval_apis": 43,
+  "coverage_ratio": 0.7378,
   "blind_list": [
     "CColor",
     "CString",
@@ -37,12 +37,6 @@
     "aelEngineerNotation",
     "agrGetSnapPoints",
     "emvPurposeNumberDrawing",
-    "etPcreCompile",
-    "etPcreExecute",
-    "etPcreGenExecOptBits",
-    "etPcreSubstitute",
-    "etRexCompile",
-    "etRexReplace",
     "geTreeRemoveItem",
     "goaInit",
     "goaLayerAbut",
@@ -57,7 +51,6 @@
   ],
   "family_usage": {
     "ae": 8,
-    "et": 8,
     "Emy": 7,
     "MDE": 6,
     "NTL": 6,
@@ -111,32 +104,6 @@
       },
       {
         "api": "aeTreeAppendItem",
-        "eval_usage": 1
-      }
-    ],
-    "et": [
-      {
-        "api": "etPcreCompile",
-        "eval_usage": 2
-      },
-      {
-        "api": "etPcreExecute",
-        "eval_usage": 2
-      },
-      {
-        "api": "etPcreGenExecOptBits",
-        "eval_usage": 1
-      },
-      {
-        "api": "etPcreSubstitute",
-        "eval_usage": 1
-      },
-      {
-        "api": "etRexCompile",
-        "eval_usage": 1
-      },
-      {
-        "api": "etRexReplace",
         "eval_usage": 1
       }
     ],

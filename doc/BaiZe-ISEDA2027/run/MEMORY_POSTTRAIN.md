@@ -7,14 +7,14 @@ WAITING: 0
 
 ## 进度快照
 
-- PHASE: posttrain-wake263（2026-11-11 R194 v24 vector* SWIG container[5 API/25 pair/0 pollution/ISOLATE-class/coverage 70.1%]+serve 5 endpoints OK+sandbox 68th wake CLOSED+git synced）
-- 已完成: P3预备✅；P0✅；P1✅；P2✅；R1-R194✅；wake260 R191(v21 MdePlat*);wake261 R192(v22 emy* geo/lib/tech);wake262 R193(v23 db* lifecycle/traverse);wake263 R194(v24 vector* containers)
-- 当前动作: wake263 ①R194 v24 vector*✅:R191 blind scan定vector*为#1 blind family(11 usages/5 APIs)→pyAether MCP get_api_details抓取5 API(vector1D_emyPointF/vector1D_p_emyFig/vector1D_double/vector1D_p_emyShape/vector2D_emyPointF)权威签名→baize_posttrain_r194_vector_containers_corpus.py(~535行 py_compile✅)→25对(S1×5+S3×5+S4×5+S5×5+S6×5)→sft_pyaether_corpus_v24_vector_containers.jsonl(33270B/25对) ②污染隔离✅:155 eval entry_points全量扫榒5/25 PASS 0 REJECTED ③v11-v24合讠638对(93+25+45+45+45+45+45+25+30+35+50+65+65+25)训练就绪 ④blind scan re-run with v24:covered 110→115/164(+5),blind 54→49,coverage_ratio 67.1%→70.1%,vector*family全清;新#1 blind=ae*(8,8API) ⑤serve健康5端点✅(8095-8099) ⑥沙盒68th wake仍CLOSED(TCP8667 timeout) ⑦git synced
-- 下一步: ①v11-v24(638对)合入SFT重训(需GPU,当前serve占位) ②post-SFT eval验证 ③沙盒恢复→Phase1 baseline eval ④Phase3 RL待沙盒+GPU ⑤R195候选:剩佶49 blind,vector*/db*/emy*/Mde*已全清;下=ae*(8,8API)或et*(8,6API) ⑥P3正式训练待pretrain ckpt(ETA≈2026-12-25)
-- 阻塞: 🔴远程沙盒10.129.32.75跨子网TCP过滤(68th wake,需网络团队开ACL)→Phase1 eval+Phase3 RL+post-SFT eval阻塞;🔴GPU被serve占位→v11-v24 SFT重训待GPU释放;P3等pretrain ckpt
-- 本轮新增产出: R194✅(v24 vector* SWIG container[5 API/25对/ISOLATE-class/155 entry_point污染扫描全PASS/v11-v24合讠638对训练就绪/coverage 110→115/164 70.1%/vector*blind全清])+baize_posttrain_r194_vector_containers_corpus.py(~535行)+sft_pyaether_corpus_v24_vector_containers.jsonl(33270B/25对)+blind scan updated(v24)+归档wake256-259
+- PHASE: posttrain-wake264（2026-11-11 R195 v25 et* regex[6 API/30 pair/0 pollution/ISOLATE-class/coverage 73.8%]+serve 5 endpoints OK+sandbox 69th wake CLOSED+git synced）
+- 已完成: P3预备✅；P0✅；P1✅；P2✅；R1-R195✅；wake260 R191(v21 MdePlat*);wake261 R192(v22 emy* geo/lib/tech);wake262 R193(v23 db* lifecycle/traverse);wake263 R194(v24 vector* containers);wake264 R195(v25 et* pcre/rex)
+- 当前动作: wake264 ①R195 v25 et* regex✅:R191 blind scan定et*为#1 blind family(8 usages/6 APIs,tied ae*但API更少)→pyAether MCP get_api_details抓取6 API(etPcreCompile/etPcreExecute/etPcreGenExecOptBits/etPcreSubstitute/etRexCompile/etRexReplace)权威签名→baize_posttrain_r195_et_pcre_rex_corpus.py(565行 py_compile✅)→30对(S1×6+S3×6+S4×6+S5×6+S6×6)→sft_pyaether_corpus_v25_et_pcre_rex.jsonl(38386B/30对) ②污染隔离✅:155 eval entry_points全量扫描30/30 PASS 0 REJECTED ③v11-v25合计668对(93+25+45+45+45+45+45+25+30+35+50+65+65+25+30)训练就绪 ④blind scan re-run with v25:covered 115→121/164(+6),blind 49→43,coverage_ratio 70.1%→73.8%,et*family全清;新#1 blind=ae*(8,8API) ⑤serve健康5端点✅(8095-8099) ⑥沙盒69th wake仍CLOSED(TCP8667 timeout) ⑦git synced
+- 下一步: ①v11-v25(668对)合入SFT重训(需GPU,当前serve占位) ②post-SFT eval验证 ③沙盒恢复→Phase1 baseline eval ④Phase3 RL待沙盒+GPU ⑤R196候选:剩余43 blind,et*/vector*/db*/emy*/Mde*已全清;下=ae*(8,8API)或Emy*(7,2API) ⑥P3正式训练待pretrain ckpt(ETA≈2026-12-25)
+- 阻塞: 🔴远程沙盒10.129.32.75跨子网TCP过滤(69th wake,需网络团队开ACL)→Phase1 eval+Phase3 RL+post-SFT eval阻塞;🔴GPU被serve占位→v11-v25 SFT重训待GPU释放;P3等pretrain ckpt
+- 本轮新增产出: R195✅(v25 et* regex PCRE+Rex[6 API/30对/ISOLATE-class/155 entry_point污染扫描全PASS/v11-v25合计668对训练就绪/coverage 115→121/164 73.8%/et*blind全清])+baize_posttrain_r195_et_pcre_rex_corpus.py(565行)+sft_pyaether_corpus_v25_et_pcre_rex.jsonl(38386B/30对)+blind scan updated(v25)
 - 未完成指令: 🔴用户令17:10(serve占位)GPU5/6/7全✅;🔴用户令13:40(三阶段替身计划)Phase2 SFT完成✅/Phase1待沙盒ACL/Phase3 RL脚本就绪✅待沙盒+GPU
-- git: wake263 本轮提交R194(v24 vector* SWIG container+blind scan update+MEMORY+归档wake256-259)
+- git: wake264 本轮提交R195(v25 et* regex PCRE+Rex+blind scan update+MEMORY+EXPERIMENTS)
 
 
 ## GPU 端口映射表（2026-11-10 wake195 实测）
