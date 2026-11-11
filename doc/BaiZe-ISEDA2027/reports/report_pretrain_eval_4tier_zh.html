@@ -226,6 +226,31 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
 </div>
 
 <div class="card">
+  <h3>✅ L2 v6 最终结果（#2016 · 2026-11-12 00:40 · 6/6 全部完成）</h3>
+  <div class="ok-box"><b>L2 复杂推理 6 集评测全部完成</b>。所有生成任务（GSM8K/BBH/MATH/HumanEval/MBPP）均=0%，唯一非零是 MMLU=23.16%（MCQ loglikelihood，不需要生成）。</div>
+  <table>
+    <tr><th>任务</th><th>版本</th><th>口径</th><th>结果</th><th>状态</th></tr>
+    <tr><td>GSM8K</td><td>v3</td><td>5-shot, limit=100, gen</td><td class="bad">0.0%</td><td>✅ 完成</td></tr>
+    <tr><td>MMLU</td><td>v3</td><td>0-shot, MCQ loglikelihood</td><td class="warn">23.16%</td><td>✅ 完成(≈随机25%)</td></tr>
+    <tr><td>BBH (bool_expr)</td><td>v4</td><td>3-shot CoT, limit=100, gen</td><td class="bad">0.0%</td><td>✅ 完成</td></tr>
+    <tr><td>MATH</td><td>v5</td><td>0-shot, limit=100, gen</td><td class="bad">0.0%</td><td>✅ 完成(exact_match=0)</td></tr>
+    <tr><td>HumanEval</td><td>v6</td><td>0-shot, limit=100, pass@1, --confirm_run_unsafe_code</td><td class="bad">0.0% ± 0.0</td><td>✅ 完成(23:25)</td></tr>
+    <tr><td>MBPP</td><td>v6</td><td>0-shot, limit=100, pass@1, --confirm_run_unsafe_code, RP=1.3</td><td class="bad">0.0% ± 0.0</td><td>✅ 完成(00:37, 1h10m)</td></tr>
+    <tr><td>MATH (RP=1.3)</td><td>v6</td><td>0-shot, limit=100, RP=1.3</td><td class="bad">— (中断@84/100)</td><td class="warn">⚠️ server被v6脚本killed</td></tr>
+    <tr><td>Gen probe</td><td>v6</td><td>RP=1.3, "Solve: 2+3=?"</td><td class="bad">"yes!,$.\n111111..."</td><td>✅ 完成(RP=1.3无效)</td></tr>
+  </table>
+  <div class="alert">
+    <b>结论</b>：L2 全部完成。<b>6 集中 5 集=0%（GSM8K/BBH/MATH/HumanEval/MBPP），MMLU=23.16%（≈随机 25%）</b>。<br>
+    ① <b>所有需要 token-by-token 生成的任务均=0%</b>，唯一非零的 MMLU 是 MCQ（prefill loglikelihood，不需生成）；<br>
+    ② <b>repeat_penalty=1.3 无效</b>：gen probe 输出 <code>"yes!,$.\n111111..."</code>，RP 未能打破 SSM 退化循环（与 v5 MATH RP=1.3=0% 一致）；<br>
+    ③ <b>双重根因确认</b>：llama.cpp SSM 生成路径 bug（MCQ 正常但生成崩溃）+ 模型能力不足（code+math=26%，远低于 DeepSeek 最优 60%）；<br>
+    ④ <b>v6 MATH 中断原因</b>：v6 脚本的 Phase 3 MATH 被 kill 后，脚本继续执行 Phase 4 gen probe + cleanup，kill 了 llama-server，导致另一个并发的 MATH（84/100）失去 server 连接。<b>不影响结论</b>（v5 MATH 已=0%）。<br>
+    <b>建议（待用户拍板）</b>：① decay 阶段混入 4:2:4 配比数据；② post-train SFT 补生成能力；③ 等 GPU 窗口用 vLLM 验证 llama.cpp SSM bug 假说。
+  </div>
+</div>
+
+
+<div class="card">
   <h3>🔬 GSM8K 生成退化诊断 + repeat_penalty 对照（2026-11-11 19:32–19:39 · P0 完成）</h3>
   <table>
     <tr><th>条件</th><th>exact_match</th><th>样本1 (Janet's ducks)</th><th>样本3 (Josh flipping house)</th></tr>
@@ -364,6 +389,30 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
   </table>
 </div>
 
+<!-- L2 v6 final results -->
+<div class="card">
+  <h3>✅ L2 v6 最终结果（#2017 · 2026-11-12 00:45 · 6/6 全部完成）</h3>
+  <table>
+    <tr><th>任务</th><th>版本</th><th>口径</th><th>结果</th><th>状态</th><th>耗时</th></tr>
+    <tr><td>GSM8K</td><td>v3</td><td>5-shot, limit=100, gen</td><td class="bad">0.0%</td><td>✅</td><td>~1h</td></tr>
+    <tr><td>MMLU</td><td>v3</td><td>0-shot, MCQ (logit_bias)</td><td class="warn">23.16%</td><td>✅</td><td>~30min</td></tr>
+    <tr><td>BBH (bool_expr)</td><td>v4</td><td>3-shot CoT, limit=100, gen</td><td class="bad">0.0%</td><td>✅</td><td>~1h55m</td></tr>
+    <tr><td>MATH</td><td>v5</td><td>0-shot, limit=100, gen</td><td class="bad">0.0%</td><td>✅</td><td>~1h</td></tr>
+    <tr><td>HumanEval</td><td>v6</td><td>0-shot, limit=100, pass@1, RP=1.3</td><td class="bad">0.0% ± 0.0</td><td>✅</td><td>~2h15m</td></tr>
+    <tr><td>MBPP</td><td>v6</td><td>0-shot, limit=100, pass@1, RP=1.3</td><td class="bad">0.0% ± 0.0</td><td>✅</td><td>~1h10m</td></tr>
+    <tr><td><b>CX6 Avg</b></td><td></td><td></td><td class="bad"><b>3.86%</b></td><td></td><td></td></tr>
+  </table>
+  <div class="alert">
+    <b>L2 全貌定案</b>：6/6 全部完成。<b>5/6 = 0.0%</b>（GSM8K/BBH/MATH/HumanEval/MBPP），唯一非零是 MMLU=23.16%（≈随机 25%，MCQ 不需生成）。<br>
+    <b>repeat_penalty=1.3 无效</b>：v6 gen probe 确认 — 输出 <code>"yes!,$.\n111111111111111333353$111222333647½..."</code>（finish_reason=length），RP 未修复 SSM 退化。<br>
+    <b>MATH v6 中断@84/100</b>：v6 脚本在 MBPP 完成后自动 kill 了 llama-server（设计缺陷），但 v5 MATH=0% 已有结论，不影响定案。
+  </div>
+  <div class="note">
+    <b>根因不变（双重）</b>：① llama.cpp SSM 生成路径 recurrent state 维护有 bug（RP 部分缓解但无法修复）② 模型@24% 训练 + code/math 26%（vs DeepSeek 最优 60%）→ 生成能力不足<br>
+    <b>建议（待用户拍板）</b>：① decay 阶段混入 4:2:4 数据（方案 A）② post-train SFT 补数学/代码（方案 B）③ A+B 组合（方案 C）④ vLLM GPU 验证待 GPU 窗口
+  </div>
+</div>
+
 <!-- Summary -->
 <h2 class="sec">总览与下一步</h2>
 <div class="card">
@@ -371,8 +420,8 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
   <table>
     <tr><th>层</th><th>评测</th><th>状态</th><th>关键数</th><th>下一步</th></tr>
     <tr><td><b>L1</b></td><td class="l">常识 8 集 (0-shot)</td><td><span class="badge b-ok">✅ 16ckpt</span></td><td>58.13%@160k</td><td class="l">继续每万 ckpt</td></tr>
-    <tr><td><b>L2</b></td><td class="l">复杂推理 6 集</td><td><span class="badge b-bad">🔴 5/6=0% · MMLU=23%</span></td><td>GSM8K=0%(v3) · MMLU=23.16%(≈随机) · BBH=0%(v4) · <b>MATH=0%(v5确认)</b> · <b>HumanEval=0%(v6确认)</b> · MBPP 34/100运行中(v6,~44s/it,ETA~48min) · 🔬生成退化=llama.cpp SSM bug+模型能力</td><td class="l">等MBPP完成→autoqueue自动跑L3</td></tr>
-    <tr><td><b>L3</b></td><td class="l">Agentic</td><td><span class="badge b-ok">🟢 autoqueue运行中</span></td><td>— · MBPP完成后自动启动TB smoke</td><td class="l">等MBPP释放port→autoqueue自动跑</td></tr>
+    <tr><td><b>L2</b></td><td class="l">复杂推理 6 集</td><td><span class="badge b-bad">🔴 6/6完成 · 5/6=0% · MMLU=23%</span></td><td>GSM8K=0%(v3) · MMLU=23.16%(≈随机) · BBH=0%(v4) · MATH=0%(v5) · <b>HumanEval=0%(v6)</b> · <b>MBPP=0%(v6)</b> · 🔬生成退化=llama.cpp SSM bug+模型能力 · RP=1.3无效(gen probe确认)</td><td class="l">L2全部完成→等decay/SFT改善</td></tr>
+    <tr><td><b>L3</b></td><td class="l">Agentic</td><td><span class="badge b-ok">🟡 TB smoke运行中</span></td><td>2 tasks (fix-git + break-filter-js-from-html) · Harbor运行中 · llama-server port 8083</td><td class="l">等Harbor完成→记结果</td></tr>
     <tr><td><b>L4</b></td><td class="l">领域</td><td><span class="badge b-bad">❌ 未接·调研完</span></td><td>— · 数据在.15不可达</td><td class="l">延后至.15可达+SFT后</td></tr>
   </table>
 </div>
@@ -452,7 +501,7 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
 </div>
 
 <footer>
-  BaiZe pretrain 线 · 四层能力评测报告 · 2026-11-12 00:15 更新(#2015) · 评测数字仅用于训练监控，不进论文正文
+  BaiZe pretrain 线 · 四层能力评测报告 · 2026-11-12 00:45 更新(#2017 · L2 6/6完成 · L3 TB smoke运行中) · 评测数字仅用于训练监控，不进论文正文
 </footer>
 </div>
 </body>

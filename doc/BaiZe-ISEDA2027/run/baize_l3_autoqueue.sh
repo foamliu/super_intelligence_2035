@@ -36,13 +36,21 @@ while (( WAITED < MAX_WAIT )); do
     fi
     # Also check if the MBPP lm_eval process is still alive
     if ! pgrep -f "lm_eval.*mbpp" >/dev/null 2>&1; then
-        log "MBPP lm_eval process gone. Checking port..."
+        log "MBPP lm_eval process gone. Checking if MATH is still running..."
+        # CRITICAL: Also check if MATH lm_eval is still running before killing server
+        if pgrep -f "lm_eval.*math" >/dev/null 2>&1 || pgrep -f "lm_eval.*hendrycks" >/dev/null 2>&1; then
+            log "MATH lm_eval still running — NOT killing server. Continuing to wait..."
+            sleep "$POLL_INTERVAL"
+            WAITED=$((WAITED + POLL_INTERVAL))
+            continue
+        fi
+        log "Both MBPP and MATH gone. Checking port..."
         sleep 5
         if ! curl -s -o /dev/null "http://127.0.0.1:${PORT}/health" 2>/dev/null; then
-            log "Port ${PORT} confirmed free after MBPP exit."
+            log "Port ${PORT} confirmed free after all evals exit."
             break
         fi
-        log "Port still in use despite MBPP exit. Killing stale llama-server on ${PORT}..."
+        log "Port still in use despite all evals exited. Killing stale llama-server on ${PORT}..."
         local_server_pid=$(pgrep -f "llama-server.*--port ${PORT}" 2>/dev/null | head -1)
         if [[ -n "${local_server_pid:-}" ]]; then
             log "Killing stale llama-server PID ${local_server_pid}"
@@ -65,7 +73,7 @@ fi
 
 # --- Training health check ---
 log "Checking training health before starting L3..."
-TRAIN_PID=$(pgrep -f "baize_xmodel25_decay_v2" 2>/dev/null | head -1)
+TRAIN_PID=$(pgrep -f "pretrain_launcher.py" 2>/dev/null | head -1)
 if [[ -z "$TRAIN_PID" ]]; then
     log "WARNING: Training process not found. Proceeding with caution."
 else

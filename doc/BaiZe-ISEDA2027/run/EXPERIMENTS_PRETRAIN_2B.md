@@ -1772,3 +1772,35 @@ L2/L3/L4 低分/空白同一根因 = 训练数据(P-5b/P-8 Ultra-FineWeb-L3)缺�
 ### 训练健康
 - iter 166630/700k, step 6943-7205ms (<7.4s✅), loss 2.022-2.044, 0 NaN/skip
 - GPU 8卡 95-100%/75GB
+
+
+## #2017 2026-11-12 00:45 L2 v6 final + L3 TB smoke start
+
+### L2 v6 Final Results (160k ckpt, CPU llama-server, RP=1.3)
+- HumanEval: pass@1=0.0% +- 0.0 (100/100, 2h15m, results_2026-11-11T23-25-19.json)
+- MBPP: pass@1=0.0% +- 0.0 (100/100, 1h10m, results_2026-11-12T00-36-41.json)
+- MATH v6: interrupted @ 84/100 (v6 script killed server after MBPP done; v5 MATH=0% already confirmed)
+- Gen probe (RP=1.3): output="yes!,$.111111..." (finish_reason=length) -> RP=1.3 does NOT fix SSM degradation
+- L2 6/6 summary: GSM8K=0% + BBH=0% + MATH=0% + HumanEval=0% + MBPP=0% + MMLU=23.16% -> CX6 Avg=3.86%
+
+### Commands executed
+- ssh 10.239.2.29 'cat .../gguf_iter_160000_l2_v6/mbpp.log | tr "\r" "\n" | tail -5'
+  -> |mbpp |      1|none  |     0|pass_at_1|...|    0|±  |     0|
+- ssh 10.239.2.29 'cat /tmp/baize_l2_eval_160k_v6.log | tail -30'
+  -> Gen probe: {"choices":[{"text":"yes!,$.\n111111111111111333353$111222333647½..."}
+  -> [00:38:13] Killing llama-server PID=2671359...
+
+### Script fixes
+- baize_l3_autoqueue.sh: Added MATH-safety check (pgrep lm_eval.*math before killing server)
+- baize_l3_autoqueue.sh: pgrep pattern fixed (baize_xmodel25_decay_v2 -> pretrain_launcher.py)
+- baize_l3_tb_smoke.sh: pgrep pattern fixed + grep||true for step time parse
+- Old autoqueue PID1986722 killed, new PID1616750 started with fixed script
+
+### L3 TB smoke
+- Status: Harbor running 2 tasks (fix-git + break-filter-js-from-html) with cline_patched agent
+- llama-server port 8083, GGUF F16, -t 4, nice 19
+- Results pending in run/baize_l3_tb_smoke_results/
+
+### Training health
+- iter 168950/700k (24.1%), step 7008-7058ms (<7.4s OK), loss 2.05, lr=1e-3, 0 NaN/skip
+- PID 146283 on .29
