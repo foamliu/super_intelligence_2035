@@ -7,14 +7,14 @@ WAITING: 0
 
 ## 进度快照
 
-- PHASE: posttrain-wake284（2026-11-12 v11-v36 SFT训练Epoch5/5 step60/70 loss0.65收敛+训练动力学分析+serve脚本修复+sandbox 89th wake CLOSED+serve 3端点OK+git synced）
-- 已完成: P3预备✅；P0✅；P1✅；P2✅；R1-R210✅；R280(EXPERIMENTS归档)；wake281 R281(全链路就绪审计20项)；wake282 R282(v11-v36 SFT重训启动+NCCL P2P fix)；wake283 R283(SFT训练监控+ckpt验证+serve dry-run)；wake284 R284(SFT训练动力学分析+serve脚本修复)
-- 当前动作: wake284 ①v11-v36 SFT训练RUNNING step60/70(Epoch5/5,loss 2.12→0.65,E1→E4 -51.7%,健康收敛,ETA~01:09) ②训练动力学分析:per-epoch mean E1=1.354/E2=0.836/E3=0.692/E4=0.654,loss floor~0.6,diminishing returns ③3 ckpt落盘(global_step_20/40/60各715MB HF safetensors) ④serve脚本修复:SFT_RUNS_DIR v1→v2_v11v36+--run-name新增+--ckpt裸名解析,dry-run✅ ⑤sandbox 89th wake CLOSED(ICMP OK ALL TCP filtered) ⑥GPU5/4 serve✅ ⑦git synced
-- 下一步: ①SFT训练完成(step70)→verify final ckpt→serve on GPU6:8096(bash baize_posttrain_sft_surrogate_serve.sh)→post-SFT qual eval(待沙盒) ②沙盒恢复→watcher auto-launch Phase1 eval ③Phase3 RL待沙盒+GPU ④P3正式训练待pretrain ckpt(ETA≈2026-12-25)
+- PHASE: posttrain-wake284（2026-11-12 v11-v36 SFT训练COMPLETE step70/70 loss0.618 val0.673+SFT ckpt served GPU6:8096 minicpm5-sft smoke test PASS+GPU5/6/7全占位+serve脚本修复+sandbox 89th wake CLOSED+git synced）
+- 已完成: P3预备✅；P0✅；P1✅；P2✅；R1-R210✅；R280(EXPERIMENTS归档)；wake281 R281(全链路就绪审计20项)；wake282 R282(v11-v36 SFT重训启动+NCCL P2P fix)；wake283 R283(SFT训练监控+ckpt验证+serve dry-run)；wake284 R284(SFT训练COMPLETE+训练动力学分析+serve脚本修复+SFT ckpt served+smoke test PASS)
+- 当前动作: wake284 ①v11-v36 SFT训练COMPLETE 70/70(train loss 0.618/val loss 0.673/rc=0/01:11:28) ②global_step_70 ckpt 715MB HF safetensors完整 ③SFT ckpt SERVED on GPU6:8096(minicpm5-sft,vLLM 37.8GB,smoke test PASS:dbCreateCell回答正确) ④GPU7 serve base MiniCPM5-2B on 8095(37.8GB) ⑤GPU5/6/7全占位(17:10令满足) ⑥训练动力学分析:E1→E4 -51.7%,loss floor~0.6 ⑦serve脚本修复3处(SFT_RUNS_DIR v2_v11v36+--run-name+--ckpt裸名解析) ⑧sandbox 89th wake CLOSED ⑨git synced
+- 下一步: ①post-SFT EDA-Eval评测(待沙盒ACL恢复→watcher auto-launch) ②Phase3 RL待沙盒+GPU(SFT ckpt已就绪=minicpm5-sft:8096) ③Phase1基线评测待沙盒 ④P3正式训练待pretrain ckpt(ETA≈2026-12-25)
 - 阻塞: 🔴远程沙盒10.129.32.75跨子网TCP过滤(89th wake,ICMP OK ALL TCP filtered,需网络团队开ACL)→Phase1 eval+Phase3 RL+post-SFT eval阻塞;P3等pretrain ckpt
-- 本轮新增产出: R284✅(SFT训练动力学分析[per-epoch mean/min/max,E1→E4 -51.7%,loss floor~0.6,无发散NaN,健康收敛]+serve脚本修复[3处:SFT_RUNS_DIR v2_v11v36+--run-name+--ckpt裸名解析,bash -n✅+dry-run✅]+sandbox 89th wake CLOSED)
-- 未完成指令: 🔴用户令17:10(serve占位)GPU5✅占位中/GPU6-7训练中(更优占用);🔴用户令13:40(三阶段替身计划)Phase2 v11-v36训练RUNNING step60/70/Phase1待沙盒ACL/Phase3 RL脚本就绪✅待沙盒+GPU
-- git: wake284 本轮提交R284(SFT训练动力学分析+serve脚本修复+EXPERIMENTS §R284+MEMORY heartbeat+daily-memories)
+- 本轮新增产出: R284✅(SFT训练COMPLETE[70/70 loss 2.12→0.618 val 0.673 rc=0]+训练动力学分析[per-epoch mean E1=1.354/E2=0.836/E3=0.692/E4=0.654 -51.7% loss floor~0.6]+serve脚本修复[3处]+SFT ckpt served[GPU6:8096 minicpm5-sft smoke test PASS]+GPU5/6/7全占位+4 ckpt落盘[step20/40/60/70])
+- 未完成指令: 🔴用户令17:10(serve占位)GPU5✅/GPU6✅(SFT serve)/GPU7✅(base serve)全占位;🔴用户令13:40(三阶段替身计划)Phase2 SFT COMPLETE✅+ckpt served✅/Phase1待沙盒ACL/Phase3 RL脚本就绪✅待沙盒+GPU
+- git: wake284 本轮提交R284(SFT训练COMPLETE+训练动力学分析+serve脚本修复+SFT ckpt served+smoke test+EXPERIMENTS §R284+MEMORY heartbeat+daily-memories)
 
 
 
@@ -23,10 +23,10 @@ WAITING: 0
 | GPU | 端口 | served-model-name | 用途 | VRAM | 状态 |
 |:--:|:--:|:--|:--|:--:|:--|
 | 0-3 | 8099 | qwen3.8-27b | root SGLang Qwen3.8-27B | ~45GB/卡 | ✅ root 占用，不可动 |
-| 4 | 8098 | minicpm5-2b | vLLM MiniCPM5-2B（Phase1评测用） | 37.8GB | ✅ 常驻 |
+| 4 | 8098 | minicpm5-2b | vLLM MiniCPM5-2B（Phase1评测用） | 38.0GB | ✅ 常驻 |
 | 5 | 8097 | minicpm5-2b-gpu5 | vLLM MiniCPM5-2B（17:10占位保持） | 37.8GB | ✅ 占位中 |
-| 6 | — | — | **v11-v36 SFT 训练**（verl FSDP2, NCCL_P2P_DISABLE=1） | ~24GB | ✅ 训练中(wake282) |
-| 7 | — | — | **v11-v36 SFT 训练**（verl FSDP2, NCCL_P2P_DISABLE=1） | ~24GB | ✅ 训练中(wake282) |
+| 6 | 8096 | minicpm5-sft | **vLLM SFT ckpt global_step_70**（post-SFT评测用） | 37.8GB | ✅ SFT served(wake284) |
+| 7 | 8095 | minicpm5-2b-gpu7 | vLLM MiniCPM5-2B（17:10占位） | 37.8GB | ✅ 占位中(wake284) |
 
 > vLLM venv: `/tmp/vllm_venv/bin/python`（transformers 4.49.0）；日志: `/tmp/vllm_gpu{5,6,7}.log`
 > ⚠️ vLLM venv 在 `/tmp`，重启机器后丢失需重建
