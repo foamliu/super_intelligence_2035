@@ -42,8 +42,8 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
   <div class="meta">
     <span>📅 2026-11-11</span>
     <span>🏗 Mamba2-hybrid 2.22B</span>
-    <span>🔥 训练 iter≈165.22k / 700k · step~7.15s<7.4s✅</span>
-    <span>📊 L1: 16 ckpt ✅ | L2: GSM8K=0%✅ MMLU=23.16%✅ v4 HumanEval运行中 | L3: 🔧 pipeline脚本已建·待v4完后运行 | L4: 数据在.15不可达+定性测试=退化输出</span>
+    <span>🔥 训练 iter≈165.37k / 700k · step~7.10s<7.4s✅</span>
+    <span>📊 L1: 16 ckpt ✅ | L2: GSM8K=0%✅ MMLU=23.16%✅ v4 BBH运行中(14/100) · v5已修复HF_ALLOW_CODE_EVAL | L3: 🔧 pipeline脚本已建·待v4完后运行 | L4: 数据在.15不可达+定性测试=退化输出</span>
   </div>
   <div style="margin-top:12px;font-size:12.5px;background:rgba(0,0,0,.18);border-radius:8px;padding:8px 12px;opacity:.95">
     ⚠️ 本报告是<b>训练监控与决策依据</b>，<b>不进论文正文</b>（2026-11-10 用户令）。用户关注点（2026-11-11）：<b>如何拿到更好的结果</b>。
@@ -100,12 +100,12 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
     <tr><td>HumanEval</td><td>0-shot, gen, pass@1</td><td class="badge b-bad">❌ v4 失败(缺code_eval)</td><td class="bad">0.61%</td><td>29.88%</td><td>🔧 v5 修复</td></tr>
     <tr><td>MBPP</td><td>0-shot, gen, pass@1</td><td class="badge b-bad">❌ v4 失败(缺code_eval)</td><td class="bad">0.00%</td><td>29.20%</td><td>🔧 v5 修复</td></tr>
     <tr><td>MATH</td><td>0-shot, gen</td><td class="badge b-bad">❌ v4 失败(数据格式)</td><td class="bad">0.00%</td><td>25.50%</td><td>🔧 v5 0-shot修复</td></tr>
-    <tr><td>BBH</td><td>3-shot, gen</td><td class="badge b-info">🟡 v4 运行中(6/100)</td><td class="warn">14.04%</td><td>48.40%</td><td>ETA~1.5h</td></tr>
+    <tr><td>BBH</td><td>3-shot, gen</td><td class="badge b-info">🟡 v4 运行中(14/100,~69s/it)</td><td class="warn">14.04%</td><td>48.40%</td><td>ETA~1.2h</td></tr>
   </table>
   <p class="trend">📍 v3 落盘：<code>gguf_iter_160000_l2_v3/{gsm8k,mmlu}/results.json</code> · v4 落盘：<code>gguf_iter_160000_l2_v4/</code> · v5 落盘：<code>gguf_iter_160000_l2_v5/</code></p>
   <div class="note">
-    <b>v4 失败原因 + v5 修复</b>（2026-11-11 #1980）：<br>
-    ① <b>HumanEval/MBPP</b>：lm_eval 的 <code>code_eval</code> 指标未缓存（离线模式无法下载）→ 已通过 proxy 下载 <code>code_eval</code> 到 HF cache → v5 将重跑<br>
+    <b>v4 失败原因 + v5 修复</b>（2026-11-11 #1981 更新）：<br>
+    ① <b>HumanEval/MBPP</b>：lm_eval 的 <code>code_eval</code> 指标需要 <code>HF_ALLOW_CODE_EVAL=1</code> 环境变量 → v5 脚本已添加 <code>export HF_ALLOW_CODE_EVAL="1"</code> 修复<br>
     ② <b>MATH</b>：<code>hendrycks_math_algebra</code> 4-shot 触发 <code>build_qa_turn</code> 断言失败（answer 是 list 不是 string）→ v5 改用 0-shot 绕过<br>
     ③ <b>BBH</b>：唯一正常运行的任务，~69s/it，ETA~1.5h
   </div>
@@ -276,7 +276,7 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
   <table>
     <tr><th>层</th><th>评测</th><th>状态</th><th>关键数</th><th>下一步</th></tr>
     <tr><td><b>L1</b></td><td class="l">常识 8 集 (0-shot)</td><td><span class="badge b-ok">✅ 16ckpt</span></td><td>58.13%@160k</td><td class="l">继续每万 ckpt</td></tr>
-    <tr><td><b>L2</b></td><td class="l">复杂推理 6 集</td><td><span class="badge b-bad">🔴 GSM8K=0%@160k · MMLU=23.16%</span></td><td>GSM8K=0%✅ · MMLU=23.16%✅ · v4 HumanEval运行中</td><td class="l">等v4四集结果</td></tr>
+    <tr><td><b>L2</b></td><td class="l">复杂推理 6 集</td><td><span class="badge b-bad">🔴 GSM8K=0%@160k · MMLU=23.16%</span></td><td>GSM8K=0%✅ · MMLU=23.16%✅ · BBH运行中(14/100) · v5已修复</td><td class="l">等BBH+v5结果</td></tr>
     <tr><td><b>L3</b></td><td class="l">Agentic</td><td><span class="badge b-warn">🔧 脚本已建·待运行</span></td><td>— · 模型生成能力不足(pipeline已建)</td><td class="l">MMLU完后运行smoke</td></tr>
     <tr><td><b>L4</b></td><td class="l">领域</td><td><span class="badge b-bad">❌ 未接·调研完</span></td><td>— · 数据在.15不可达</td><td class="l">延后至.15可达+SFT后</td></tr>
   </table>
@@ -284,10 +284,10 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
 <div class="card">
   <h3>本轮(#1980)动作</h3>
   <ol>
-    <li><b>训练健康确认</b>：iter 165,220 · step 7150ms (<7.4s✅) · loss ~2.03 · 0 NaN/skip · GPU 8×95-100%/75GB · ~588K tok/s</li>
+    <li><b>训练健康确认</b>：iter 165,370 · step ~7100ms (<7.4s✅) · loss ~2.03 · 0 NaN/skip · GPU 8×95-100%/75GB · ~588K tok/s</li>
     <li><b>L2 v3 ✅ 完成</b>：GSM8K = 0.0%(strict+flex) · MMLU = 23.16%(5700 sample, 0-shot, logprob) · 结果落盘 <code>gguf_iter_160000_l2_v3/</code></li>
-    <li><b>L2 v4 部分失败</b>：HumanEval/MBPP 失败(缺 code_eval 指标·已通过 proxy 下载修复) · MATH 失败(数据格式 assert·v5 改 0-shot) · BBH 🟡 运行中(6/100,~69s/it,ETA~1.5h)</li>
-    <li><b>L2 v5 已启动</b>：<code>baize_l2_eval_160k_v5.sh</code> 在 .29 后台等待 BBH 完成后自动重跑 HumanEval+MBPP+MATH(0-shot) · code_eval 已缓存✅</li>
+    <li><b>L2 v4 部分失败</b>：HumanEval/MBPP 失败(缺 <code>HF_ALLOW_CODE_EVAL=1</code>·v5已修复) · MATH 失败(数据格式 assert·v5 改 0-shot) · BBH 🟡 运行中(14/100,~69s/it,ETA~1.2h)</li>
+    <li><b>L2 v5 已启动+修复</b>：<code>baize_l2_eval_160k_v5.sh</code> 在 .29 后台等待 BBH 完成后自动重跑 HumanEval+MBPP+MATH(0-shot) · <b>已修复 HF_ALLOW_CODE_EVAL="1"</b> ✅</li>
     <li><b>🔧 L3 Pipeline</b>：脚本 <code>baize_l3_tb_smoke.sh</code> 已建 · 待 v4 完成后(port 8083 空闲)运行 smoke</li>
     <li><b>无新万整数 ckpt</b>：最新 ckpt iter_160000(已评) · 下一个 170k ETA~10h</li>
   </ol>
@@ -327,7 +327,7 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
 </div>
 
 <footer>
-  BaiZe pretrain 线 · 四层能力评测报告 · 2026-11-11 17:25 更新(#1980) · 评测数字仅用于训练监控，不进论文正文
+  BaiZe pretrain 线 · 四层能力评测报告 · 2026-11-11 17:38 更新(#1981) · 评测数字仅用于训练监控，不进论文正文
 </footer>
 </div>
 </body>

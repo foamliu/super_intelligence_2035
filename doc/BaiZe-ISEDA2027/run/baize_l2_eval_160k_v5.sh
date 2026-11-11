@@ -10,6 +10,7 @@ export HF_HUB_OFFLINE=1
 export HF_DATASETS_CACHE="/nas_train/app.e0031982/hf_cache"
 export HF_HOME="/nas_train/app.e0031982/.cache"
 export PYTHONPATH="/nas_train/app.e0031982/code/BaiZe-ISEDA2027/p6_tf5:${PYTHONPATH:-}"
+export HF_ALLOW_CODE_EVAL="1"
 
 GGUF="/nas_train/app.e0031982/models/baize2b_gguf/bz2b-160000-f16.gguf"
 LLAMA_BIN="/nas_train/app.e0031982/tools/llama.cpp/build/bin/llama-server"
