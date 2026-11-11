@@ -131,6 +131,42 @@ cc_n,cc_r = eval_data["claude-code"][0], eval_data["claude-code"][1]
 empty_str = ", ".join(cline_empty[:8]) if cline_empty else "none"
 
 def fp(v): return f"{v:.1f}%"
+# ---- C2 deep classification (10:10) - load snapshot JSON ----
+_C2_JSON = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                        "swebench_verified_full", "cline_c2_classification_R2233.json")
+_c2 = json.load(open(_C2_JSON)) if os.path.isfile(_C2_JSON) else {}
+_c2_counts = _c2.get("category_counts", {})
+_c2_pct = _c2.get("category_pct", {})
+_c2_totals = _c2.get("totals", {})
+_c2_top3 = _c2.get("top3_samples", {})
+_C2_ALL = ["能力", "网关额度429", "上游5xx", "超时", "适配器", "格式不可解析", "环境依赖"]
+_C2_DESC = {
+    "能力": "real patch但eval测试未通过 / agent未生成有效patch(能力差距)",
+    "网关额度429": "网关quota耗尽(中文'本次Token额度已用完')·infra非能力",
+    "上游5xx": "上游服务端5xx错误·infra",
+    "超时": "agent超时(wall>=1800s或timeout flag)·infra",
+    "适配器": "适配器/鉴权403/401·infra",
+    "格式不可解析": "agent输出无法解析为diff",
+    "环境依赖": "缺依赖/环境错误",
+}
+_c2_tf = _c2_totals.get("total_failures", sum(_c2_counts.values()) or 1)
+def _esc(s): return str(s).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+c2_rows_html = ""
+for _c in _C2_ALL:
+    _n = _c2_counts.get(_c, 0)
+    _p = _c2_pct.get(_c, round(_n / _c2_tf * 100, 1) if _c2_tf else 0)
+    c2_rows_html += f"\n<tr><td>{_c}</td><td>{_n}</td><td>{_p:.1f}%</td><td>{_C2_DESC[_c]}</td></tr>"
+c2_top3_html = ""
+for _c in _C2_ALL:
+    _samps = _c2_top3.get(_c, [])
+    if not _samps:
+        continue
+    c2_top3_html += f"\n<h3>{_c} (top3 样本·trace证据)</h3><table><tr><th>instance_id</th><th>wall_s</th><th>stdout_tail(末300字符)</th></tr>"
+    for _s in _samps:
+        c2_top3_html += f"\n<tr><td>{_esc(_s.get('instance_id',''))}</td><td>{_s.get('wall_s','?')}</td><td><code>{_esc((_s.get('stdout_tail','') or '')[-300:])}</code></td></tr>"
+    c2_top3_html += "</table>"
+
+
 
 html = f"""<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><title>cline 专项报告 {ROUND} {NOW}</title><style>body{{font-family:"Microsoft YaHei",sans-serif;margin:20px;max-width:960px}}h1{{color:#1a237e}}h2{{color:#283593;border-bottom:2px solid #e0e0e0;padding-bottom:4px}}table{{border-collapse:collapse;width:100%;margin:10px 0}}th,td{{border:1px solid #bbb;padding:6px 10px;text-align:left}}th{{background:#e3f2fd}}.green{{color:#2e7d32;font-weight:bold}}.red{{color:#c62828}}.summary{{background:#f5f5f5;padding:12px;border-radius:6px;margin:10px 0}}code{{background:#f5f5f5;padding:2px 4px;border-radius:3px}}</style></head><body>
 <h1>cline 专项报告 {ROUND} {NOW}</h1>
@@ -145,17 +181,11 @@ html = f"""<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><title>
 <tr><td>eval pass rate</td><td>{fp(cpass)}</td><td>{cr}/{cn}</td></tr>
 <tr><td>TB-2.1 done</td><td>{ctd}</td><td>{ctp} passed={ctp/max(ctd,1)*100:.1f}%</td></tr></table>
 <p>复算命令: <code>ls predictions_glm53/cline-patched__*.json|wc -l</code> -> {cp}; <code>python3 -c "import json; d=json.load(open('reports/eval_glm53_cline-patched.json')); print(len(d['resolved']),'/',d['n'])"</code> -> {cr}/{cn}</p>
-<h2>C2 失败原因分类</h2>
-<table><tr><th>类别</th><th>数量</th><th>占比</th><th>说明</th></tr>
-<tr><td>能力失败(有real patch未resolve)</td><td>{cf}</td><td>{cf/max(cf+ce,1)*100:.0f}%</td><td>真实能力差距(eval errored={ci})</td></tr>
-<tr><td>空patch-网关额度429</td><td>48</td><td>59%</td><td>网关quota耗尽(R2062分类·非能力非resume bug)</td></tr>
-<tr><td>空patch-超时(timeout)</td><td>12</td><td>15%</td><td>agent超时未出patch</td></tr>
-<tr><td>空patch-无编辑(ranoedit)</td><td>4</td><td>5%</td><td>agent未做任何文件修改</td></tr>
-<tr><td>空patch-静默(silent)</td><td>2</td><td>2%</td><td>无输出/无错误</td></tr>
-<tr><td>空patch-上游5xx</td><td>1</td><td>1%</td><td>上游服务端错误</td></tr>
-<tr><td>空patch-认证(auth)</td><td>1</td><td>1%</td><td>API key/认证问题</td></tr>
-<tr><td>空patch-其他/未细分</td><td>13</td><td>16%</td><td>含7 other + 6 未细分</td></tr></table>
-<p>分类占比之和=100%({ce}空patch按R2062历史分类 + {cf} eval failed=能力)。网关HTTP 200(已恢复·quota reset),历史空patch由429产生后cleanup删除。归因红线: 网关429(历史)≠能力差,能力差={cf}条有real patch但测试未通过。</p>
+<h2>C2 失败原因分类 (§10:10 · 7类 · 占比和=100%)</h2>
+<table><tr><th>类别</th><th>数量</th><th>占比</th><th>说明</th></tr>{c2_rows_html}
+</table>
+<p>分类总数={_c2_tf} (failed_real_patch={_c2_totals.get('failed_real_patch','?')} + empty_patches={_c2_totals.get('empty_patches','?')})。snapshot=R2233-manual(eval/predict状态在live loop下实时变动,此处为快照比例)。复算: <code>cd swebench_verified_full && python3 c2_cline_R2233.py</code>。归因红线: 429/5xx/超时/适配器=infra(非能力); real patch未通过测试=能力。</p>
+{c2_top3_html}
 <h2>C3 resume 修复确认</h2>
 <p>R1733 resume fix(size>50B->model_patch非空)已生效。空patch从51.5%降至<span class="red">{ce/max(cp,1)*100:.1f}%</span>({ce}/{cp},cleanup后)。剩余空patch主因为网关额度429历史(R2062分类),<strong>非resume bug</strong>。网关HTTP 200(已恢复),predict进行中。根因: 网关quota耗尽(59%)+超时(15%)+能力/适配器(26%),非resume判定问题。前8个空patch实例: {empty_str}。</p>
 <h2>cline与其他路对比 (SWE-bench Verified glm-5.3-flash)</h2>
