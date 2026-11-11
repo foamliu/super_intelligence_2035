@@ -81,6 +81,45 @@
 > **规矩**：每期 ≤2 条，宁缺勿滥，没有写「本期无」；🚫 必须原文 + 链接，不许二手转述当原文；🚫 不许断章取义（有上下文必须一并给出）。
 > ⚠️ **X 不可达时**：可用公开二手报道，但须标「转引自 <媒体>，未见原推」，且**不能标 `voice_ready`**，只进「附录 · 相关报道」。
 >
+> ### 6.5 🎯 必读经典清单（2026-11-11 用户直令 · **优先于 §1 的抽象判据**）
+>
+> **用户原话**（列出 research 应关注哪些经典论文）：
+> 1. 理查德·萨顿的 **Dyna**
+> 2. 伊利亚的 **seq2seq**
+> 3. DeepMind 的 **AlphaGo**
+> 4. OpenAI 的 **RLHF / InstructGPT**
+> 5. OpenAI 的 **GPT-1 / GPT-2 / GPT-3**
+> 6. 何恺明的 **ResNet**
+> 7. 姚顺雨的 **ReAct / SWE-bench / τ-bench / Reflexion**
+> 8. DeepMind 的 **DQN / AlphaFold / AlphaGo Zero / AlphaStar / Gemini**
+> 9. Meta 的 **Llama**、月之暗面的 **Kimi**、智谱的 **GLM**、**MiniMax**、**LLaVA** 系列
+> 10. **VLA** 经典论文、OpenAI 的 **SORA**
+>
+> #### 这份清单是「必读基线」，不是「候选池」
+> - **逐条覆盖**：上表每一项都要在 `research/classic/PAPERS.md` 里有对应条目（同一工作多篇论文可拆多条）。
+> - **完成度自查**：每轮在 MEMORY 记 `必读清单覆盖 N/完整条目数`，未覆盖项列出缺哪些。
+> - **优先级**：**本条 > §1 的抽象判据（被引 ≥500 / 奠基 / 常青）**。判据用于清单外的补充，不用于筛掉清单内的。
+>
+> #### 展开成具体论文（目标清单，供核对；据此收录，勿漏）
+>
+> | # | 组 | 具体论文（名称 · 典型出处） |
+> |:--|:--|:--|
+> | 1 | 萨顿 · 时序差分/规划 | **Dyna**（Sutton 1990/1991, "Dyna, an integrated architecture for learning, planning, and reacting"）· 相关：TD-Gammon（Tesauro 1995） |
+> | 2 | 伊利亚 · 序列到序列 | **Sequence to Sequence Learning with Neural Networks**（Sutskever et al., NeurIPS 2014, arXiv 1409.3215） |
+> | 3 | AlphaGo | **Mastering the game of Go with deep neural networks and tree search**（Silver et al., Nature 2016） |
+> | 4 | RLHF / InstructGPT | **Training language models to follow instructions with human feedback**（Ouyang et al., arXiv 2203.02155）· 前置：Deep RL from Human Preferences（Christiano et al. 2017, arXiv 1706.03741）· 近端：Learning to summarize from human feedback（Stiennon et al. 2020） |
+> | 5 | GPT 系列 | **GPT-1** Improving Language Understanding by Generative Pre-Training（2018）· **GPT-2** Language Models are Unsupervised Multitask Learners（2019）· **GPT-3** Language Models are Few-Shot Learners（arXiv 2005.14165）· 配套：Scaling Laws for Neural LMs（Kaplan et al. 2020, arXiv 2001.08361） |
+> | 6 | ResNet | **Deep Residual Learning for Image Recognition**（He et al., CVPR 2016, arXiv 1512.03385） |
+> | 7 | 姚顺雨 | **ReAct**（arXiv 2210.03629）· **SWE-bench**（arXiv 2310.06770）· **τ-bench**（arXiv 2406.12045）· **Reflexion**（arXiv 2303.11366）· 相关：Tree of Thoughts（arXiv 2305.10601）· SWE-agent（arXiv 2405.15793） |
+> | 8 | DeepMind 家族 | **DQN** Human-level control through deep RL（Nature 2015）· **AlphaGo Zero** Mastering the game of Go without human knowledge（Nature 2017）· **AlphaFold** Highly accurate protein structure prediction（Nature 2021）· **AlphaStar** Grandmaster level in StarCraft II（Nature 2019）· **Gemini** A Family of Highly Capable Multimodal Models（arXiv 2312.11805） |
+> | 9 | 开源/中文系 | **Llama**（arXiv 2302.13971）· **Llama 2**（2307.09288）· **Llama 3** Herd of Models（2407.21783）· **Kimi**（月之暗面报告，如 Kimi k1.5 · 2401.14185 Moonshot）· **GLM**（ChatGLM · 2406.12793 GLM-4）· **MiniMax**（MiniMax-01, 2501.08313）· **LLaVA**（2304.08485）· LLaVA-1.5（2310.03744） |
+> | 10 | VLA / 视频生成 | **VLA 经典**：RT-1（2212.06817）· RT-2（2307.15818）· OpenVLA（2406.09246）· π0（2410.24164）· Octo（2405.12213）· **SORA** Video generation models as world simulators（OpenAI 2024 技术报告） |
+>
+> #### 收录时的额外要求（这份清单特有的价值）
+> - **记「在哪一层影响我们」**：每条在「与我们工作的关系」里点名归属于 **pretrain / posttrain / vision / harness / data / zhulong / designflow** 哪条线、影响哪一步。
+> - **抓作者账号优先序**：本清单里作者是**顶级研究者**，`AUTHORS.md` 要**优先**覆盖他们（Sutton、Sutskever、Silver、Ouyang、He Kaiming、Shunyu Yao、Hassabis、Karpathy 等），比清单外的作者优先级更高。
+> - 🚫 **不许因为「太老」而不收**：Dyna 1990、seq2seq 2014、AlphaGo 2016 都属于必读，不受 §0.1「arXiv 72h」时效限制（B 轨本就没有时效限制）。
+
 > ### 6. 边界（不变）
 >
 > 🚫 不改其他线产物；只写本线（`research/classic/` `research/mail/` `daily/`）· 🚫 不伪造账号/邮箱/被引数/言论
@@ -101,52 +140,26 @@
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
-### 🔴 用户令 · 2026-11-07 10:50（**出口变更：停发日报邮件 -> 改为「论文观察日报」HTML；并与其余 6 条线联动**）· 用户直令 · 最高优先 · 未完成
+### 🔴 用户令 · 2026-11-07 10:50（出口变更 + 6 线联动）· 用户直令 · 最高优先
 
-> **用户原话**：「把 research 的出口，从给 paul.liu@cxmt.com 发邮件，改成生成论文观察日报 HTML，在 pretrain/vision/harness/data/zhulong/designflow 的任务书中，常驻一个指向 research 日报的路径链接。同时 research 的调研，请也联系其他 agent 正在做的工作，争取对他们有帮助。」
+> 用户原话：「把 research 的出口，从给 paul.liu@cxmt.com 发邮件，改成生成论文观察日报 HTML；并在 pretrain/vision/harness/data/zhulong/designflow 的任务书中常驻一个指向 research 日报的路径链接。」
 
-#### 1. 出口变更（硬口径）
+**① 出口**：🚫 停止一切「每日论文日报」邮件（含分包）；✅ 唯一出口 = `research/daily/<YYYY-MM-DD>.html` + 每轮更新的 `daily/index.html`。**作者请教信不受影响**（走 `RESEARCH_MAIL_SPEC.md`）。
 
-1. **自本令起停止一切「每日论文日报」邮件发送**（含 `paul.liu@cxmt.com`，含分包）；10-12 块的「每日论文日报邮件」职能**作废**。
-2. **作者请教信职能不受影响**（仍按 `RESEARCH_MAIL_SPEC.md` 执行；该 spec 里的日报小节以本令为准）。
-3. **唯一出口 = 论文观察日报 HTML**：
-   - 每期：`doc/personal-watch/run/research/daily/<YYYY-MM-DD>.html`
-   - 索引：`doc/personal-watch/run/research/daily/index.html`（**每轮必须更新**：日期 + 篇数 + 一句话摘要 + 覆盖到哪些线）
-   - 规则：单文件自包含、中文、0 `<script>`、外链仅必要；沿用既有日报版式，可增量扩写。
-4. 邮件台账**不再新增**（历史记录保留、不得改写）；`PDF 下载 + 校验 + 归档` 继续做（供各线查阅），但**不再作为附件出口**。
-5. commit 前缀改为 `research daily:`（不再用 `research mail:`）。
+**② 6 线联动**：每期日报必含「对各线的可执行建议」节，覆盖 6 线（无建议的显式写「无」，🚫 不许凑数）：
 
-#### 2. 与其他 6 条线联动（本轮核心新增，必须做）
-
-每期日报**必须有一节「对各线的可执行建议」**，逐线给六列：`线名 / 建议动作 / 依据（arXiv ID + 关键数字）/ 预期收益 / 成本 / 优先级`。覆盖范围固定为 6 条：
-
-| 线 | 任务书（读它了解当前重点） | 该线关注点 |
+| 线 | 任务书 | 关注点 |
 |:--|:--|:--|
-| pretrain | `doc/BaiZe-ISEDA2027/run/BAIZE_PRETRAIN_2B_TASK.md` | 架构/长上下文/吞吐与评测方法、CPU 评测线程与 batch |
-| vision | `doc/BaiZe-ISEDA2027/run/BAIZE_VISION_TASK.md` | 波形 RL 奖励设计、LoRA、CPU 训练与小样本显著性 |
-| harness | `doc/BaiZe-ISEDA2027/run/BAIZE_HARNESS_TASK.md` | agent harness、工具调用、上下文压缩、SWE-bench/TB4 协议与成本 |
-| data | `doc/BaiZe-ISEDA2027/run/BAIZE_DATA_TASK.md` | 数据配比、去污染、代码语料质量筛 |
-| zhulong | `doc/ZhuLong_DAC2027/run/ZHULONG_TASK.md` | 消融实验设计、thinking/语言轴、成本口径 |
-| designflow | `doc/ZhuLong_DAC2027/benchmark/BAIZE_DESIGNFLOW_BENCH_TASK*.md` | 造题、L1-L5 保真度、判分可验证性 |
+| pretrain | `BaiZe-ISEDA2027/run/BAIZE_PRETRAIN_2B_TASK.md` | 训练稳定性、WSD、长上下文、评测口径 |
+| vision | `BaiZe-ISEDA2027/run/BAIZE_VISION_TASK.md` | 视觉编码器、图文对、RL |
+| harness | `BaiZe-ISEDA2027/run/BAIZE_HARNESS_TASK.md` | 评测框架、判分、agent 能力 |
+| data | `BaiZe-ISEDA2027/run/BAIZE_DATA_TASK.md` | 数据配比、去污染、代码语料质量筛 |
+| zhulong | `ZhuLong_DAC2027/run/ZHULONG_TASK.md` | 消融实验设计、thinking/语言轴、成本口径 |
+| designflow | `ZhuLong_DAC2027/benchmark/BAIZE_DESIGNFLOW_BENCH_TASK*.md` | 造题、L1-L5 保真度、判分可验证性 |
 
-#### 3. 每轮做法（固定流程）
+**③ 每轮做法**：`git pull` → 读 6 份任务书最新块 + 各线 MEMORY 顶部（各 30 行）→ 列出各线阻塞 → 检索/筛选时**按线建档**（一篇可服务多线，写清映射）→ 建议必须可落地（命令/实验设计/预注册判据；🚫 只写「值得关注」）→ 收尾（HTML + index + 心跳 + commit `research daily:`）。
 
-1. `git pull` 后先读上述 6 份任务书的「运维指令区」最新块 + 各线 `MEMORY_*` 顶部「进度快照/阻塞」（各取最新 30 行即可），列出**各线当前阻塞 + 正在做的 2-3 件事**；
-2. 检索/筛选论文时**按线建档**（一篇可同时服务多线，须写清映射关系）；
-3. 「可执行建议」必须可落地：给到命令 / 实验设计 / 预注册判据，🚫 禁止只写「值得关注」「可参考」；
-4. 某线本期确无可用论文 ⇒ 明确写「本线本期无新增可用建议」，🚫 不许凑数、不许把无关论文硬塞；
-5. 每期收尾：HTML + index.html + `MEMORY_RESEARCH.md` 心跳 + commit `research daily:`。
-
-#### 4. 验收判据
-
-- 每期 HTML 含「对各线的可执行建议」节，**6 线齐全**（无建议的显式写「无」）；
-- `daily/index.html` 当日行存在且摘要与实际篇数一致；
-- **无新增邮件发送日志**（台账最后一条应是 11-04/11-07 之前的旧记录）；
-- 每期至少给出 **2 条**可执行建议（跨线累计）。
-
-> 说明：6 条线任务书已由运维同步插入「常驻 · 论文观察日报」指针块（指向本线 `daily/index.html`），各线 agent 每轮会读；因此日报内容要按「被 agent 直接执行」的标准写。
-
----
+**④ 验收**：6 线齐全；`index.html` 当日行与实际篇数一致；无新增邮件日志；每期 ≥2 条可执行建议。
 
 
 ### 📋 禁令总表 · 2026-11-11（**唯一权威索引** · 冲突以本表为准）
@@ -226,56 +239,36 @@
 
 ### 📦 归档指针 · 2026-10-09「第 5 批：论文两分钟分镜脚本」· 现行：`research/video/SCENES/MM_DD.html` 仍按原规范（自包含/零外链/五段时间轴 钩子→问题→方法→结果→展望）；V3 生成视频仍冻结。原文见 `WATCH_RESEARCH_TASK_ARCHIVE.md`「归档块 · 2026-11-11」。
 
-### 🆕 运维指令 · 2026-11-11（**给 news 供料：日报新增 `news_ready` 标记**）· 用户令 · 最高优先
+### 🆕 运维指令 · 2026-11-11（给 news 供料：`news_ready` 标记）· 用户令 · 最高优先
 
-> 用户原话：「1.把news（论文 / preprint不能做新闻）的禁令清理掉，允许「引用 research 已核验条目」。news 的选题标准在research领域放宽。节律也不是问题，先跑跑看，都可以调整。」
-> 「2.论文中就有图，也有研究机构和个人联系方式，很有话题性，属于第一手新闻（直接接触信源不通过新闻社），很有价值」
-> 「3.当然你说的也对，不是所有论文都适合。需要经过筛选和处理。」
+**背景**：research 与 news 两条线此前平行，news 从未引用过 research 产出。现打通：**每期日报的「科普」类条目，就地产出一条 `news_ready` 块**，供 news 直接取用。（另一类供料 `voice_ready` 见文首 §5。）
 
-**背景**：research 与 news 两条线此前完全平行，news 从未引用过 research 产出。现打通：**research 每期日报的「科普」类条目，额外产出一条 `news_ready` 块，供 news 直接取用**。
-
-**① 产出要求（只针对「科普」类，借鉴类不产）**
-
-每期日报里，凡标 `科普` 的论文，就地追加一个**折叠块**（`<details>`，默认收起，不影响原 8 字段）：
+**① 产出（只针对「科普」类，借鉴类不产）** —— 在论文条目后加折叠块：
 
 ```html
 <details class="news-ready">
 <summary>📰 news_ready · 可发头条</summary>
 <ul>
-  <li><b>大众标题</b>：≤30 字，口语、有钩子、不夸大、不用「颠覆/炸裂」</li>
+  <li><b>大众标题</b>：≤30 字，口语、有钩子、不夸大，不用「颠覆/炸裂」</li>
   <li><b>一句话事实</b>：谁 + 做了什么 + 关键数字（≤60 字）</li>
-  <li><b>可用数字</b>：n 项，逐条列 <code>数字 → 原文出处（PDF 页码/表格）</code></li>
-  <li><b>配图</b>：论文内可用的图 1 张（Figure N + 说明 + 该图在原 PDF 第几页）</li>
+  <li><b>可用数字</b>：逐条列 `数字 → 原文出处（PDF 页码/表格）`</li>
+  <li><b>配图</b>：论文内可用图 1 张（Figure N + 说明 + 原 PDF 页码）</li>
   <li><b>一手信源</b>：机构 + 作者（前 3）+ arXiv abs 链接</li>
   <li><b>话题点</b>：为什么大众会关心（1 句）</li>
-  <li><b>不适合发的理由</b>（若有）：如过于垂直 / 易被误读 / 数字口径敏感</li>
+  <li><b>不适合发的理由</b>（若有）</li>
 </ul>
 </details>
 ```
 
-**② 筛选纪律（用户明确要求「不是所有论文都适合」）**
+**② 筛选四问**（任一不过就不标，并写明理由）：
+① 大众能懂吗（非本行读者能否一句话接住）② 有事件点吗（发布/突破/首次/开源，纯方法改进不算）③ 数字站得住吗（能否指到 PDF 具体位置）④ 配图可用吗（无图可标但注明）
 
-出 `news_ready` 前**必须过四问**，任一不过就**不标**，并在块内写「不适合」+ 理由：
+**③ 上限**：每期 ≤2 条；当天全不适合就写 0 条并说明原因，🚫 不许硬凑。
 
-| # | 四问 | 不过的处理 |
-|:--|:--|:--|
-| 1 | **大众能懂吗**？非本行读者能否一句话接住？ | 不标 |
-| 2 | **有事件点吗**？是「发布/突破/首次/开源」还是纯方法改进？ | 纯方法 → 不标 |
-| 3 | **数字站得住吗**？能否指到 PDF 具体位置？ | 指不到 → 不标 |
-| 4 | **配图可用吗**？论文里有能公开用的架构图/结果图？ | 无图 → 可标但注明「无配图」 |
+**④ 口径**：所有数字标「论文作者自报，未复现」；🚫 不改写原题（大众标题只是给 news 的建议）；🚫 不代替 news 做发布判断。
 
-**③ 数量上限**：每期 ≤2 条 `news_ready`（宁少勿多）。**当天 5 篇全不适合就写 0 条**并说明原因，🚫 不许硬凑。
+**⑤ 位置**：写在当日 `research/daily/<date>.html` 内；`daily/index.html` 当日行尾加 `📰 news_ready n 条`。
 
-**④ 免责与口径（与 news 对齐）**
-
-- 所有数字标注 **「论文作者自报，未复现」**（research 做的是 PDF 数字核对，不是实验复现）。
-- 🚫 不改写原题：`news_ready` 里的「大众标题」是**给 news 的改写建议**，原 8 字段的英文原题照抄规则不变。
-- 🚫 不直接联系作者：本条只产素材，**作者信是另一套已批准职能**，不得因本条而发信。
-- 🚫 不代替 news 做发布判断：news 可拒用，research 不追问。
-
-**⑤ 交付位置**：写在当日 `research/daily/<date>.html` 内（跟随该论文条目），并在 `research/daily/index.html` 当日行尾加一句 `📰 news_ready n 条`，便于 news 快速定位。
-
----
 
 ### 🎯 A 轨规范 · 每天 5 篇推荐论文（早 3 / 晚 2）→ 日报 HTML · 每轮先读
 
