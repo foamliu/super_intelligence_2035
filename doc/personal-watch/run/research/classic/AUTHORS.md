@@ -6,7 +6,7 @@
 > 🔴 **找 X 的铁律（不猜）**：只登记**能从可访问页面读到**的 handle（作者本人主页 `href`，并用 X 页 `og:description` 二次核对身份）；**读不到 = 写「未找到 X」**。
 > 🚫 不许猜 handle（猜错会 follow 到无关账号，比不 follow 更糟）。X.com 自 **2026-11-11 12:4x** 起经本机 Mihomo 代理**只读可达**；**follow 仍需登录态 ⇒ 未自动执行**（0 follow，未假装）。
 
-**本轮快照**：累计 **43** 人（第八轮 +4：John Jumper / Igor Babuschkin / Danny Driess / Kimi Team）｜已发信 **10**（Tri Dao · Shunyu Yao · Haoxing Ren · Jason Wei · Noah Shinn · Kaiming He · Haotian Liu · Karthik Narasimhan · Moo Jin Kim · **Danny Driess**）｜X 已核验 **20**（`@tri_dao` / `@_albertgu` / `@ShunyuYao12` / `@edwardjhu` / `@jyangballin` / `@_jasonwei` / `@ilyasut` / `@RichardSSutton` / `@imhaotian` / `@ChunyuanLi` / `@karthik_r_n` / `@demishassabis` / `@koraykv` / `@OriolVinyalsML` / `@svlevine` / `@chelseabfinn` / `@moo_jin_kim` / **`@ibab` / `@DannyDriess` / `@Kimi_Moonshot`**）｜X 未找到 **23**｜**X 可达（本机 Mihomo 7897，2026-11-12 00:0x 实测 `x.com` `200` / 0.49s、8 个 profile 均 `200`）**｜已 follow **0**（follow 需登录态 ⇒ 仍靠用户手动，见第二节）｜言论台账 **8 条**（V1–V8；完整可引用 **5** 条 = V1/V2/V4/V6/V8，V3/V5/V7 正文不完整**未采用**，V8 >30 天降级；本期 `voice_ready` 用 V4 + V6）
+**本轮快照**：累计 **47** 人（第八轮 +4：John Jumper / Igor Babuschkin / Danny Driess / Kimi Team；**第九轮 +4：Team GLM / MiniMax / Karl Pertsch / Pete Florence**）｜已发信 **11**（Tri Dao · Shunyu Yao · Haoxing Ren · Jason Wei · Noah Shinn · Kaiming He · Haotian Liu · Karthik Narasimhan · Moo Jin Kim · Danny Driess · **Pete Florence**）｜X 已核验 **24**（`@tri_dao` / `@_albertgu` / `@ShunyuYao12` / `@edwardjhu` / `@jyangballin` / `@_jasonwei` / `@ilyasut` / `@RichardSSutton` / `@imhaotian` / `@ChunyuanLi` / `@karthik_r_n` / `@demishassabis` / `@koraykv` / `@OriolVinyalsML` / `@svlevine` / `@chelseabfinn` / `@moo_jin_kim` / `@ibab` / `@DannyDriess` / `@Kimi_Moonshot` / **`@ZhipuAI` / `@MiniMax_AI` / `@KarlPertsch` / `@peteflorence`**）｜X 未找到 **23**｜**X 可达（本机 Mihomo 7897，2026-11-12 03:0x 实测 `x.com` `200` / 0.56s、出口 `178.249.213.185`）**｜已 follow **0**（follow 需登录态 ⇒ 仍靠用户手动，见第二节）｜言论台账 **8 条**（V1–V8；完整可引用 **5** 条 = V1/V2/V4/V6/V8，V3/V5/V7 正文不完整**未采用**，V8 >30 天降级；本期 `voice_ready` 用 V4 + V6）
 
 
 ---
@@ -578,6 +578,58 @@
 | 状态 | 待跟踪 · X 待 follow（团队账号只作发布源，不发信） |
 | 备注 | long2short 与「RL 作为新 scaling 轴」是 zhulong 的直接参照；**团队账号的言论只作公司口径**，引用须标「Moonshot 官方账号」。 |
 
+### 44. Team GLM（智谱 AI · 团队署名）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Team GLM（GLM-4 论文的团队署名，共 **59** 位；一作 Aohan Zeng，含 Jie Tang / Juanzi Li / Minlie Huang / Yuxiao Dong） |
+| 机构 | 智谱 AI（Zhipu AI / 北京）· 部分作者挂清华大学 |
+| 代表论文 | ChatGLM / GLM-4（arXiv `2406.12793`，团队署名）· GLM-130B |
+| 邮箱 | **未找到**（官网只有商务/客服入口；🚫 不用客服邮箱冒充研究作者） |
+| 主页 | <https://github.com/THUDM>（GLM 系列代码与模型卡；`200` 未逐页核验） |
+| X 账号 | **@ZhipuAI**（**官方机构账号**，非个人；核验：<https://x.com/ZhipuAI> `200`，`<title>` = `ZhipuAI by BigModel (@ZhipuAI) / X`，`og:description` = `全部自研GLM模型架构`） |
+| 状态 | 待跟踪 · X 待 follow（机构号） |
+| 备注 | 机构号主要发产品与发布信息，**言论价值低于个人号**；若要请教 GLM-4 的中文配比细节，需先找到一作 Aohan Zeng 的当前主页/邮箱（本轮未找到公开研究邮箱 ⇒ **不发信**）。 |
+
+### 45. MiniMax（团队署名）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | MiniMax（团队署名，**按字母序**：Aonian Li · Bangwei Gong · Bo Yang …，共 **90** 位） |
+| 机构 | MiniMax（上海） |
+| 代表论文 | MiniMax-01（arXiv `2501.08313`，团队署名）· MiniMax-VL-01（同报告） |
+| 邮箱 | **未找到**（🚫 不用客服/商务邮箱） |
+| 主页 | <https://github.com/MiniMax-AI>（代码与模型开源入口） |
+| X 账号 | **@MiniMax_AI**（**官方机构账号**；核验：<https://x.com/MiniMax_AI> `200`，`<title>` = `MiniMax (official) (@MiniMax_AI) / X`，bio 指向 `Code: @MiniMax_Code`） |
+| 状态 | 待跟踪 · X 待 follow（机构号） |
+| 备注 | 关注点：线性注意力 + MoE 的长上下文工程口径；个人作者未逐一建档（90 人字母序，无声明的通讯作者）。 |
+
+### 46. Karl Pertsch
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Karl Pertsch（德国人 ⇒ 信按英文写） |
+| 机构 | **Physical Intelligence**（member of technical staff，主页自述「training robot foundation models」）；前 UC Berkeley / Stanford 博后 |
+| 代表论文 | Octo（arXiv `2405.12213`，三作 / 共同负责人，RSS 2024）· RT-2（arXiv `2307.15818`，作者之一） |
+| 邮箱 | **karl.pertsch@gmail.com**（来源：本人主页 `<a href="mailto:karl.pertsch@gmail.com">`，`HTTP 200` / 64,903 B 实测） |
+| 主页 | <https://kpertsch.github.io>（`200` / 64,903 B） |
+| X 账号 | **@KarlPertsch**（核验：主页 `href="https://twitter.com/KarlPertsch"`；<https://x.com/karlpertsch> `200`，`<title>` = `Karl Pertsch (@KarlPertsch) / X`，bio = `Robot Foundation Models @physical_int`） |
+| 状态 | 待跟踪 · **待发信**（下轮优先） |
+| 备注 | **一份关系覆盖两条必读清单条目**（Octo + RT-2）；⚠️ 与 Danny Driess 同属 Physical Intelligence，**2026-11-12 当日该公司已有 1 封**（00:07）⇒ 为避免同机构同日两封的打扰感，本轮不发，留到 18:00 轮（届时若仍 ≤1 封/天则发）。 |
+
+### 47. Pete Florence
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Pete Florence（美国人 ⇒ 信按英文写） |
+| 机构 | **Generalist AI**（联合创始人 & CEO）；前 Google DeepMind（Senior Research Scientist）；MIT CS PhD（导师 Russ Tedrake） |
+| 代表论文 | RT-2（arXiv `2307.15818`，54 位作者中第 13 位，核心作者之一）· RT-1 系列 · kPAM |
+| 邮箱 | **pete.florence@gmail.com**（来源：本人主页 `Email: <code>pete dot florence at gmail dot com</code>` 的防爬写法还原；`HTTP 200` / 47,238 B 实测） |
+| 主页 | <https://www.peteflorence.com>（`200` / 47,238 B） |
+| X 账号 | **@peteflorence**（核验：主页 `href="https://x.com/peteflorence"`；<https://x.com/peteflorence> `200`，`<title>` = `Pete Florence (@peteflorence) / X`，bio = `Co-Founder &amp; CEO @GeneralistAI`） |
+| 状态 | **已发信**（2026-11-12 03:1x CST，英文，经典论文口径；见 `research/mail/发送记录.md`） |
+| 备注 | RT-2 的「**动作 = 文本 token**」正是我们「agent 用文本 tool call 调 EDA 工具」的机器人版先例 ⇒ 问题集中在「离散分桶的精度损失」与「网页数据 vs 域内轨迹的混比」。 |
+
 ---
 
 ## 二、🟢 X 能力探测（只读 · 2026-11-11 **第四轮 12:4x 起已恢复可达**）
@@ -606,7 +658,7 @@
 
 **落地**：脚本 `research/classic/x_fetch.py`，原始结果落 `research/classic/x/<handle>.json`（6 个文件，共 15.3 KB，可入 git）。
 
-### 待 follow 清单（请用户手动执行 · 21 个 handle 已在 X 侧二次核验）
+### 待 follow 清单（请用户手动执行 · 25 个 handle 已在 X 侧二次核验）
 
 | # | 人物 | handle | 主页链接 | X 侧核验（2026-11-12 实测） | 为什么值得跟 |
 |:--|:--|:--|:--|:--|:--|
@@ -631,9 +683,13 @@
 | 19（**第八轮新增**） | Danny Driess | `@DannyDriess` | <https://x.com/DannyDriess> | `200`，`<title>Danny Driess (@DannyDriess) / X</title>`；handle 源自主页 `href` | π0 三作 / PaLM-E 一作 ⇒ VLA 与 flow matching 动作接口一手信息 |
 | 20（**第八轮新增**） | Kimi Team（Moonshot AI） | `@Kimi_Moonshot` | <https://x.com/Kimi_Moonshot> | `200`，`<title>Kimi.ai (@Kimi_Moonshot) / X</title>`（官方账号） | Kimi k1.5 团队 ⇒ long2short / RL scaling 的官方发布源 |
 | 21（**第八轮新增**） | Physical Intelligence | `@physical_int` | <https://x.com/physical_int> | `200`，bio = `Physical Intelligence (Pi), bringing AI into the physical world.` | π0 / OpenVLA 系团队账号 ⇒ VLA 模型与数据发布的一手源 |
+| 22（**第九轮新增**） | Zhipu AI（智谱） | `@ZhipuAI` | <https://x.com/ZhipuAI> | `200`，`<title>ZhipuAI by BigModel (@ZhipuAI) / X</title>`，bio = `全部自研GLM模型架构`（**官方机构号**） | GLM-4 团队 ⇒ 中文系开源模型发布与配比口径的官方源（机构号，营销多，须筛） |
+| 23（**第九轮新增**） | MiniMax | `@MiniMax_AI` | <https://x.com/MiniMax_AI> | `200`，`<title>MiniMax (official) (@MiniMax_AI) / X</title>`，bio 含 `Code: @MiniMax_Code`（**官方机构号**） | MiniMax-01 团队 ⇒ 线性注意力 / 长上下文工程口径的官方源 |
+| 24（**第九轮新增**） | Karl Pertsch | `@KarlPertsch` | <https://x.com/KarlPertsch> | `200`，`<title>Karl Pertsch (@KarlPertsch) / X</title>`，bio = `Robot Foundation Models @physical_int`；handle 源自主页 `href` | Octo 三作 + RT-2 作者 ⇒ 通用机器人策略与「新动作空间低成本适配」一手信息 |
+| 25（**第九轮新增**） | Pete Florence | `@peteflorence` | <https://x.com/peteflorence> | `200`，`<title>Pete Florence (@peteflorence) / X</title>`，bio = `Co-Founder &amp; CEO @GeneralistAI`；handle 源自主页 `href` | RT-2 核心作者 ⇒ 「动作＝文本 token」与 VLA 泛化的第一手判断 |
 
 
-> 21 个 handle 均来自其**本人主页的 `href`** 或**论文作者身份可核对**的路径（前 6 个第四轮、7–10 第五轮、11–13 第六轮、14–17 第七轮、18–21 第八轮），并用 X 主页 `og:description` / `<title>` **二次核对身份一致**；`x.com/AlecRadford` 虽 `200` 但 bio 无身份信息、`x.com/JohnJumper` 虽 `200` 但仅 19 followers 且无 bio ⇒ **均拒绝登记**（见主表 #33 / #40）。用户 follow 后请把状态改为 `已follow` 并写日期。
+> 25 个 handle 均来自其**本人主页的 `href`** 或**论文作者身份可核对**的路径（前 6 个第四轮、7–10 第五轮、11–13 第六轮、14–17 第七轮、18–21 第八轮、**22–25 第九轮**），并用 X 主页 `og:description` / `<title>` **二次核对身份一致**；`x.com/AlecRadford` 虽 `200` 但 bio 无身份信息、`x.com/JohnJumper` 虽 `200` 但仅 19 followers 且无 bio ⇒ **均拒绝登记**（见主表 #33 / #40）。用户 follow 后请把状态改为 `已follow` 并写日期。
 
 ### 已核验言论台账（第四轮首获 · 原文 + 时间 + 链接）
 
@@ -672,6 +728,7 @@
 | 2026-11-11 18:06（**第六轮**） | Karthik Narasimhan | GPT-1（无 arXiv） | 本人主页 `karthiknarasimhan.com` 的 `mailto:`（percent-encoded，`200` / 14,706 B 实测） | `SENT OK`（`karthikn@princeton.edu`，**英文 164 词**） |
 | 2026-11-11 21:04（**第七轮**） | Moo Jin Kim | `2406.09246` OpenVLA | 本人主页 `moojink.github.io` 防爬写法 `moojink at cs dot stanford dot edu`（`200` / 33,139 B 实测） | `SENT OK`（`moojink@cs.stanford.edu`，**英文 195 词**；⚠️ 已入职 OpenAI，若退信记「通道失效」） |
 | 2026-11-12 00:1x（**第八轮**） | Danny Driess | `2410.24164` π0 | 本人主页 `dannydriess.github.io` 防爬写法 `danny dot driess at gmail dot com`（`200` / 29,043 B 实测） | `SENT OK`（`danny.driess@gmail.com`，**英文 178 词**） |
+| 2026-11-12 03:03（**第九轮**） | Pete Florence | `2307.15818` RT-2 | 本人主页 `www.peteflorence.com` 明写 `pete dot florence at gmail dot com`（`200` / 47,238 B 实测） | `SENT OK`（`pete.florence@gmail.com`，**英文 189 词**） |
 
 | 2026-11-11 12:4x–13:0x（**第四轮**） | （本轮 **0 封**） | 新增经典 `2005.14165` / `2203.02155` / `2302.13971` | 逐个实测：`hugotouvron.github.io` `404` · `longouyang.github.io` `404` · `ashishvaswani.com` `000` · 未命中任何 `mailto:` | **不发信**（按令不猜邮箱）。该轮结束时累计 **5 封**（分属三轮，每轮 ≤3）；第四轮把额度留给「有可核验邮箱」的候选 —— 本轮没有合格的 ⇒ **宁缺勿凑**（当日最终累计 = **9 封**，见上方各行） |
 

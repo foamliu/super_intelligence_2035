@@ -5661,3 +5661,5 @@
 | 2026-11-12 | 2611.13452 | SLIC: Reinforcement Fine-Tuning Small LMs for Multi-Turn Analog Circuit Optimization | cs.LG | 收录 |
 | 2026-11-12 | 2611.13393 | Plumbline: When the Loss Lies, Validating LLM Training Correctly | cs.DC | 收录 |
 | 2026-11-12 | 2611.13709 | Do They Do as They Are Told? Investigating Coding Agents' Adherence to Explicit Instructions in Context Files | cs.SE | 收录 |
+| 2026-11-12 | 2611.14459 | When does text encoding matter for language modeling? | cs.CL | 收录 |
+| 2026-11-12 | 2611.13560 | Are Dense Rewards Worth Their Tokens in GRPO? | cs.CL | 收录 |

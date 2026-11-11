@@ -10,7 +10,7 @@
 >
 > **元数据核验**：标题 / 首次提交日 均取自 arXiv 官方 API（`export.arxiv.org/api/query?id_list=...`，2026-11-11 两轮实测 `HTTP 200` + `application/atom+xml; charset=utf-8`，首轮 4/4、第二轮 4/4 = 累计 8/8）。
 
-**本轮快照**：累计 **31** 条（首轮 11:5x 收 4 条；第二轮 11:4x 补 4 条 EDA / agent / PEFT；第三轮 12:1x 补 4 条 RoPE / SWE-bench / Reflexion / CoT；第四轮 12:4x 补 3 条 GPT-3 / InstructGPT / LLaMA；第五轮 15:0x 补 4 条 ResNet / seq2seq / Dyna / LLaVA；第六轮 18:0x 补 4 条 GPT-1 / GPT-2 / Kaplan scaling laws / DQN；第七轮 21:0x 补 4 条 AlphaGo / AlphaGo Zero / Gemini / OpenVLA；**第八轮 2026-11-12 00:0x 补 4 条** AlphaFold / AlphaStar / Kimi k1.5 / π0）｜ 覆盖（一篇可服务多线，按文内「与我们工作的关系」逐条计数）：pretrain **20** · vision **9** · harness **17** · data **16** · zhulong **21** · designflow **10**
+**本轮快照**：累计 **35** 条（首轮 11:5x 收 4 条；第二轮 11:4x 补 4 条 EDA / agent / PEFT；第三轮 12:1x 补 4 条 RoPE / SWE-bench / Reflexion / CoT；第四轮 12:4x 补 3 条 GPT-3 / InstructGPT / LLaMA；第五轮 15:0x 补 4 条 ResNet / seq2seq / Dyna / LLaVA；第六轮 18:0x 补 4 条 GPT-1 / GPT-2 / Kaplan scaling laws / DQN；第七轮 21:0x 补 4 条 AlphaGo / AlphaGo Zero / Gemini / OpenVLA；第八轮 2026-11-12 00:0x 补 4 条 AlphaFold / AlphaStar / Kimi k1.5 / π0；**第九轮 2026-11-12 03:0x 补 4 条** GLM-4 / MiniMax-01 / RT-2 / Octo）｜ 覆盖（一篇可服务多线，按文内「与我们工作的关系」逐条计数）：pretrain **22** · vision **12** · harness **21** · data **19** · zhulong **25** · designflow **10**
 
 > 🆕 **第四轮（2026-11-11 12:4x）新增 3 条 = 「规模 → 指令 → 开放权重」三段主线**：GPT-3（few-shot 能力从哪来）→ InstructGPT（对齐/指令跟随的范式起点）→ LLaMA（用「多 token」把开放权重做到可用）。三篇合起来回答 data 线当前最实际的问题：**token 预算、指令数据、公开配比**。
 >
@@ -26,6 +26,10 @@
 > 🆕 **第八轮（2026-11-12 00:0x）新增 4 条 = 「领域先验 / 自我对弈 / RL scaling / VLA 主干复用」**：AlphaFold（把领域约束编码进网络 + CASP 盲测）→ AlphaStar（联盟式多智能体 RL）→ Kimi k1.5（RL 作为新 scaling 轴 + long2short）→ π0（VLM 主干 + flow matching 动作专家）。**必读清单组内剩余**：GLM-4 / MiniMax-01、VLA 其余（RT-1 / RT-2 / Octo）、SORA、Llama 2/3、LLaVA-1.5、Tree of Thoughts / SWE-agent、TD-Gammon、Christiano 2017 / Stiennon 2020。
 
 > **第八轮核验证据（可复核）**：`nature.com/articles/s41586-021-03819-2` 与 `s41586-019-1724-z` 均 `HTTP 200`，摘要取自 `dc.description`（只引摘要内数字）；arXiv API `id_list=2501.12599,2410.24164` `HTTP 200` + `application/atom+xml`（11,826 B，首次提交 2025-01-22 / 2024-10-31）；OpenAlex `4/4 200`（45,663 / 3,799 / 1,436 / 3,214，查询日 2026-11-12）。
+
+> 🆕 **第九轮（2026-11-12 03:0x）新增 4 条 = 「中文系开源 + VLA 两条地基」**：GLM-4（中文为主 10T token + All Tools 工具选择）→ MiniMax-01（线性注意力 + MoE，百万级上下文）→ RT-2（动作＝文本 token、6k 次真机评测）→ Octo（80 万轨迹、9 平台、数小时适配新动作空间）。**必读清单：10/10 组均有落点，具体条目 26/37**；组内剩余：TD-Gammon、Christiano 2017 / Stiennon 2020、Llama 2 / 3、LLaVA-1.5、Tree of Thoughts / SWE-agent、RT-1、SORA。
+>
+> **第九轮核验证据（可复核）**：arXiv API `id_list=2611.14459,2611.14493,2611.13560,2406.12793,2501.08313,2307.15818,2405.12213,2307.09288,2310.03744` **`200` + `application/atom+xml; charset=utf-8`**（38,801 B，9 条 entry；首次提交 2026-11-10 ×3 / 2024-06-18 / 2025-01-14 / 2023-07-28 / 2024-05-20 / 2023-07-18 / 2023-10-05）；OpenAlex `6/6 200`（1,879 / 213 / 2,322 / 1,192 / 19,635 / 3,281，查询日 2026-11-12）；Crossref 精确标题 **Octo 命中**（`10.15607/rss.2024.xx.090`，2024-07-15），**RT-2 未命中 ⇒ 会议记「未核验」**。
 
 ---
 
@@ -556,10 +560,78 @@
 
 ---
 
+## 32. ChatGLM: A Family of Large Language Models from GLM-130B to GLM-4 All Tools（GLM-4）
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | ChatGLM: A Family of Large Language Models from GLM-130B to GLM-4 All Tools |
+| 作者（前 3） | Team GLM（智谱 AI / Zhipu AI；Aohan Zeng · Bin Xu · Bowen Wang …，共 **59** 位，含 Jie Tang / Juanzi Li / Minlie Huang / Yuxiao Dong） |
+| 年份 | 2024（arXiv 首次提交 **2024-06-18**；最新 **v2** 2024-07-30，本线实测） |
+| 会议 / 期刊 | 预印本技术报告（arXiv only；OpenAlex `type=preprint`，**会议收录未查**，🚫 不写「NeurIPS/ACL」之类未经核实的出处） |
+| 被引数 | **1,879**（OpenAlex，DOI `10.48550/arxiv.2406.12793`，查询日 2026-11-12；S2 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2406.12793> ｜ DOI `10.48550/arxiv.2406.12793` |
+| 一句话贡献 | GLM-4 系列（GLM-4 / GLM-4-Air / GLM-4-9B）在 **约 10 万亿 token（以中英为主，另有 24 语种小比例语料）**上预训练，用**多阶段后训练（SFT + 人类反馈）**做中英对齐；据摘要，GLM-4 在 MMLU / GSM8K / MATH / BBH / GPQA / HumanEval 上「接近或超过 GPT-4」、IFEval 指令遵循「接近 GPT-4-Turbo」、长上下文与 GPT-4 Turbo（128K）/ Claude 3 相当、AlignBench 中文对齐「超过 GPT-4」；**GLM-4 All Tools** 学会判断「何时、调用哪个工具」（浏览器 / Python / 文生图 / 自定义函数）。 |
+| 与我们工作的关系 | **pretrain（中文语料配比，直接）**：这是公开报告里少见的「中文为主 + 10T token」完整配方叙述，可作为 BaiZe 中文 token 预算与中英配比的对照基线（作者自报，非复现）。<b>动作</b>：pretrain 线在配比实验里加一行「中文占比」维度，固定总 token 做 3 档（30% / 50% / 70% 中文）并在同一 held-out 中文评测上报告。<br>**data（多语种长尾）**：正文提到 24 语种的小比例语料；<b>动作</b>：data 线把「长尾语种/长尾工具文档」单列一类，标出其 token 占比，便于判断是否被中英淹没。<br>**zhulong（All Tools 的工具选择）**：与我们「model 决定调哪个 EDA 工具」同构；<b>动作</b>：zhulong 线在评测里把「选错工具」「参数错」「该调不调」分开计分，而不是只算最终成功率。<br>**harness（对齐口径）**：IFEval / AlignBench 是「指令遵循」的公开口径；<b>动作</b>：harness 引用前先确认版本与语言子集，禁止把中文 AlignBench 分数与英文 IFEval 混排。<br>**风险**：① 全部为厂商自报、基准自选；② 训练数据不可得、配比只给方向不给精确比例；③ 「超过 GPT-4」是 2024 年的对照，🚫 不得当作当前 SOTA。 |
+
+首次收录: 2026-11-12（第九轮）｜ 状态: 元数据已核验（arXiv API `200` + `application/atom+xml`；OpenAlex `200`）
+
+---
+
+## 33. MiniMax-01: Scaling Foundation Models with Lightning Attention
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | MiniMax-01: Scaling Foundation Models with Lightning Attention |
+| 作者（前 3） | MiniMax（团队署名，**按字母序**：Aonian Li · Bangwei Gong · Bo Yang …，共 **90** 位） |
+| 年份 | 2025（arXiv 首次提交 **2025-01-14**，本线实测；仅 v1） |
+| 会议 / 期刊 | 预印本技术报告（arXiv only；OpenAlex `type=preprint`） |
+| 被引数 | **213**（OpenAlex，DOI `10.48550/arxiv.2501.08313`，查询日 2026-11-12；S2 未查）。⚠️ **低于 §1 的「≥500」门槛**，按用户令「必读清单优先于抽象判据」收录，🚫 不据此说它「影响力不足」或「已是经典」 |
+| arXiv / DOI | <https://arxiv.org/abs/2501.08313> ｜ DOI `10.48550/arxiv.2501.08313` ｜ 代码 <https://github.com/MiniMax-AI> |
+| 一句话贡献 | 用 **lightning attention（线性注意力）+ MoE** 做超长上下文：**32 个专家、总参 4,560 亿、每 token 激活 459 亿**，配合并行策略与计算-通信重叠；据摘要，训练上下文可达 **100 万 token**、推理外推到 **400 万 token**，MiniMax-VL-01 以 **5,120 亿**视觉-语言 token 继续训练，标准与自建基准上「与 GPT-4o / Claude-3.5-Sonnet 相当」，上下文长 **20–32 倍**。 |
+| 与我们工作的关系 | **pretrain（线性注意力 / 混合架构，直接）**：这是「把 attention 换成线性注意力 + MoE」的完整工业级配方，与 Zhulong 的架构消融（线性注意力 / SSM / 循环深度）互为对照。<b>动作</b>：zhulong/pretrain 的架构消融表加一列「长上下文吞吐（tokens/s @ 256K）」，与「短上下文质量」并列，避免只报后者。<br>**zhulong（长上下文成本）**：100 万→400 万 token 的外推口径说明「训练长度」与「推理长度」要分开报；<b>动作</b>：成本表拆 `train_ctx` / `infer_ctx`，并注明是否含外推。<br>**vision（VL 继续训练）**：VL 版是「文本模型 + 512B VL token 继续训练」，不是从头多模态；<b>动作</b>：vision 线评估「继续训练」路线时，固定 VL token 预算，对比「继续训练 vs 从头对齐」两臂。<br>**harness（长上下文评测）**：摘要只给「与 GPT-4o 相当」的定性结论，未给逐项分数；<b>动作</b>：harness 引用时标「厂商自报、无逐项数字」，并自建 4 档长度（32K/128K/512K/1M）的 retrieval 测试。<br>**风险**：① 2025 年的对照结论已过期；② 线性注意力的质量-长度权衡在第三方复现中未必一致；③ 4,560 亿参数规模的并行细节不可复现到 2B 量级，只能借「方法选择」不能借「结论」。 |
+
+首次收录: 2026-11-12（第九轮）｜ 状态: 元数据已核验（arXiv API `200` + `application/atom+xml`；OpenAlex `200`）
+
+---
+
+## 34. RT-2: Vision-Language-Action Models Transfer Web Knowledge to Robotic Control
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | RT-2: Vision-Language-Action Models Transfer Web Knowledge to Robotic Control |
+| 作者（前 3） | Anthony Brohan · Noah Brown · Justice Carbajal（et al.，共 **54** 位；含 Pete Florence（第 13）、Chelsea Finn、Sergey Levine、Karl Pertsch、Danny Driess） |
+| 年份 | 2023（arXiv 首次提交 **2023-07-28**，本线实测；仅 v1） |
+| 会议 / 期刊 | **会议收录未核验**（Crossref 精确标题检索未命中；arXiv 为预印本 ⇒ 🚫 不写「CoRL 2023」等未证实出处） |
+| 被引数 | **2,322**（OpenAlex，DOI `10.48550/arxiv.2307.15818`，查询日 2026-11-12；S2 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2307.15818> ｜ DOI `10.48550/arxiv.2307.15818` ｜ 项目页 <https://robotics-transformer.github.io/> |
+| 一句话贡献 | 把**动作表示成文本 token**（与自然语言答案同一格式），在**机器人轨迹 + 互联网视觉-语言任务（如 VQA）上共同微调** VLM，得到端到端 VLA；据摘要，**6,000 次评测**显示其对未见物体的泛化显著提升，能执行机器人数据里没有的命令（如「放到数字 3 上」）、做基础推理（拿最小/最大/离某物最近的），并可用 **chain-of-thought** 完成多阶段语义推理（如「拿石头当锤子」）。 |
+| 与我们工作的关系 | **zhulong（动作接口 = 文本 token，直接）**：这正是我们「agent 用文本 tool call 调 EDA 工具」的机器人版先例——动作不另造头，直接复用词表；<b>动作</b>：zhulong 线做「动作＝自由文本 vs 动作＝受限语法/枚举」两臂，<b>判据</b>：受限臂在参数精确率（如 W/L、约束值）上更高且解析失败率 &lt;1% 才采用。<br>**vision（VLM 主干 + 共微调）**：网页 VQA 数据与域内轨迹**混训**，说明「语义能力来自预训练、控制能力来自域内数据」；<b>动作</b>：vision 线在建域内数据时保留 10–20% 通用 VQA 混比，做「混 vs 不混」A/B，<b>判据</b>：混比臂在留出语义任务上更好且域内指标不降才保留。<br>**data（配方可借用）**：动作被序列化进训练集，意味着**数据格式统一**比数据量更关键；<b>动作</b>：data 线定义统一的 `(obs, action_text, result)` 三元组 schema，先统一格式再谈配比。<br>**harness（评测规模）**：6,000 次真机试验是「小模型 + 大评测预算」的样本；<b>动作</b>：harness 在报 EDA 结果时同时给「试验次数 / 每次成本」，避免用 20 次试验下结论。<br>**风险**：① 真机高频控制与分钟级工具调用时间尺度差异极大；② 「涌现能力」为作者自报、任务自选；③ 动作离散分桶会损失精度（对连续参数尤其明显），🚫 不可直接照搬。 |
+
+首次收录: 2026-11-12（第九轮）｜ 状态: 元数据已核验（arXiv API `200` + `application/atom+xml`；OpenAlex `200`；会议未核验）
+
+---
+
+## 35. Octo: An Open-Source Generalist Robot Policy
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Octo: An Open-Source Generalist Robot Policy |
+| 作者（前 3） | Octo Model Team（Dibya Ghosh · Homer Walke · Karl Pertsch …，共 **19** 位；含 Sergey Levine / Chelsea Finn / Dorsa Sadigh） |
+| 年份 | 2024（arXiv 首次提交 **2024-05-20**，本线实测；最新 **v2** 2024-05-26） |
+| 会议 / 期刊 | **Robotics: Science and Systems (RSS) 2024**（Crossref 实测 DOI `10.15607/rss.2024.xx.090`，`issued 2024-07-15`） |
+| 被引数 | **1,192**（OpenAlex，DOI `10.48550/arxiv.2405.12213`，查询日 2026-11-12；S2 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2405.12213> ｜ DOI `10.15607/rss.2024.xx.090` ｜ 项目页 <https://octo-models.github.io> |
+| 一句话贡献 | 开源通用机器人策略：transformer 策略在 **Open X-Embodiment 的 80 万条轨迹**上训练，可用**语言指令或目标图像**指定任务，并能在**消费级 GPU 上数小时内**微调到**新的传感器与动作空间**；据摘要，在 **9 个机器人平台**上验证其可作为通用初始化，并系统消融了架构与训练数据的设计选择。 |
+| 与我们工作的关系 | **data（跨平台数据 + 微调成本，直接）**：80 万轨迹混合训练 + 「几小时即可适配新动作空间」是「数据规模换适配成本」的量化样本；<b>动作</b>：data 线统计我们的「新工具/新 PDK 接入成本（人天）」，设目标 ≤1 天，并把所需域内样本量记进接入清单。<br>**zhulong（新动作空间适配）**：换动作空间只需微调而非重训，对应我们「新增一个 EDA 工具/命令」的场景；<b>动作</b>：zhulong 做「新增工具只用 1k / 5k / 20k 条示例」三档，报告成功率随样本量的曲线，<b>判据</b>：5k 档达到 20k 档 −5 点以内即认为「低成本可接入」。<br>**vision（多模态条件）**：语言或目标图像两种任务指定方式并存；<b>动作</b>：vision 线在版图任务上对比「文本描述 vs 参考图」，<b>判据</b>：参考图臂在布局类任务上高 ≥3 点才引入图像条件。<br>**harness（9 平台矩阵）**：跨平台矩阵而非单平台单任务；<b>动作</b>：harness 的 EDA 评测按「工具 × PDK × 任务族」出矩阵，报告每格 n 与最差格。<br>**风险**：① 机器人动作空间是同构低维连续量，EDA 工具调用是异构离散结构，🚫 不能假设「几小时适配」可平移；② 消融结论绑定其数据规模；③ 作者自报。 |
+
+首次收录: 2026-11-12（第九轮）｜ 状态: 元数据已核验（arXiv API `200` + `application/atom+xml`；OpenAlex `200`；Crossref RSS DOI `200`）
+
+---
+
 ## 候选池（下轮起逐轮补，**被引数本轮未查**，勿引用）
 
 > 只登记「已实测 arXiv 元数据」的条目；被引数待下轮 OpenAlex 批量核过再写，**本表数字一律留空 = 未查**。
-> ⚠️ 第八轮**未新增候选**（4 条直接转正为 #28–#31，元数据均当场实测）；**必读清单 10/10 组已有落点**，组内剩余子项，下轮优先：**GLM-4 `2406.12793` · MiniMax-01 `2501.08313`**、**VLA 其余（RT-1 `2212.06817` / RT-2 `2307.15818` / Octo `2405.12213`）· SORA（OpenAI 技术报告，无 arXiv，作者 Bill Peebles `@billpeeb` 已核验）**、**Llama 2 `2307.09288` / Llama 3 `2407.21783` · LLaVA-1.5 `2310.03744`**、**Tree of Thoughts `2305.10601` / SWE-agent `2405.15793` · TD-Gammon（Tesauro 1995）· Christiano 2017 `1706.03741` / Stiennon 2020**。**元数据未实测前不进本表，也不凭印象写 DOI / 被引**。
+> ⚠️ 第九轮把 **GLM-4 `2406.12793` / MiniMax-01 `2501.08313` / RT-2 `2307.15818` / Octo `2405.12213`** 四条转正为 #32–#35（元数据 + 被引当场实测）。**下轮优先**：**Llama 2 `2307.09288`（19,635）/ Llama 3 `2407.21783` · LLaVA-1.5 `2310.03744`（3,281）**、**RT-1 `2212.06817`**、**SORA（OpenAI 技术报告，无 arXiv，作者 Bill Peebles `@billpeeb` 已核验；只能引官方技术报告，🚫 不造 arXiv 号）**、**Tree of Thoughts `2305.10601` / SWE-agent `2405.15793`**、**TD-Gammon（Tesauro 1995，NPL/ICML 口径待核）· Christiano 2017 `1706.03741` / Stiennon 2020（无 arXiv，需另找出处）**。**元数据未实测前不进本表，也不凭印象写 DOI / 被引**。
 
 
 | arXiv ID | 标题（arXiv 实测） | 首次提交 | 拟服务线 | 为什么算经典（待核被引） |
