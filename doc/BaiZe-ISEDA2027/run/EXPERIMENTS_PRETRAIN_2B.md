@@ -1579,3 +1579,27 @@ ssh 10.239.2.29 'setsid bash .../baize_l2_eval_160k_v3.sh > /tmp/baize_l2_eval_1
 
 ### 核心发现
 L2/L3/L4 低分/空白同一根因 = 训练数据(P-5b/P-8 Ultra-FineWeb-L3)缺乏 code+math 内容 → 所有需要连贯生成的任务都退化为重复输出
+
+---
+
+## L2 v3 最终结果 @ 160k（2026-11-11 #1980）
+
+### 训练状态
+- iter 165,220 / 700,000 · step ~7150ms (<7.4s✅) · loss ~2.03 · 0 NaN/0 skip · GPU 8×95-100%/75GB
+- 命令：`ssh 10.239.2.29 'tail -5 /tmp/baize_xmodel25_decay_v2_train.log'`
+
+### GSM8K 结果（v3 · 0-shot · logprob · limit=100）
+- exact_match,strict-match = 0.0% (stderr 0.0)
+- exact_match,flexible-extract = 0.0% (stderr 0.0)
+- 落盘：`gguf_iter_160000_l2_v3/gsm8k/__nas_train__.../results_2026-11-11T14-19-43.079813.json`
+
+### MMLU 结果（v3 · 0-shot · logprob · 5700 sample · full）
+- mmlu overall acc = 23.16% (stderr 0.0056)
+- mmlu_stem = 22.47% · mmlu_other = 23.08% · mmlu_social_sciences = 22.58% · mmlu_humanities = 24.77%
+- 落盘：`gguf_iter_160000_l2_v3/mmlu/results.json`
+- 诊断：≈随机水平（4-choice random=25%），与 P-8 基线 23.79% 基本一致 → 15× 训练量后 MMLU 无改善
+
+### v4 运行中（HumanEval/MBPP/MATH/BBH）
+- llama-server PID 2369157 port 8083 · HumanEval(0-shot,gen,pass@1,limit=100) 运行中
+- 落盘目录：`gguf_iter_160000_l2_v4/`
+- 脚本：`baize_l2_eval_160k_v4.sh`
