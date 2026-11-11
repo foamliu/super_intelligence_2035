@@ -1,8 +1,8 @@
 #!/bin/bash
 # personal-watch（观察哨）· **research agent** 自动推进循环（arXiv 论文采集/整理）
 # 让 cline 读任务书（WATCH_RESEARCH_TASK.md）连续推进，并每约 PUSH_INTERVAL 秒兜底做一次 git 同步 + commit + push。
-# ⏰ 唤醒节律（**2026-10-07 用户令：由「每 30 分钟」改为「每天 2 次 —— 06:00 / 18:00」**）：
-#   定时模式（**默认**，SCHEDULE_HOURS=6,18）：只在时窗边界调用 cline；其余时间**纯 bash 分段睡眠（零 token）**，
+# ⏰ 唤醒节律（**2026-10-07 用户令：由「每 30 分钟」改为「每天 4 次 —— 00:00 / 06:00 / 12:00 / 18:00」**）：
+#   定时模式（**默认**，SCHEDULE_HOURS=6,12,18,0）：只在时窗边界调用 cline；其余时间**纯 bash 分段睡眠（零 token）**，
 #     每 SLEEP_CHUNK 秒刷新存活标记 /tmp/watch_research_loop.hb（供外部判活）—— 目的就是「**别再烧用户自己的 token**」。
 #   旧模式（回退）：环境变量 `WATCH_SCHEDULE_HOURS=`（置空）⇒ 恢复 WAITING 自适应（0→60s 连续推进 / 1→1800s）。
 #   时窗内致命错：**最多重试 SCHEDULE_RETRY_MAX 次**，之后等下个时窗（🚫 不做 60s 死循环重试 —— 那会疯狂烧 token）。
@@ -39,8 +39,8 @@ CLINE_TIMEOUT=1500              # 单次 cline 最多 25 分钟（与 BaiZe 一�
 PUSH_INTERVAL=1800              # 每 30 分钟兜底同步一次（2026-10-06 由 18000/5h 缩短，与 BaiZe 一致；agent 每轮自己也会提交）
 SLEEP_SHORT=60                  # 【仅旧模式】WAITING=0 / 失败重试：短睡 1 分钟（= BaiZe SLEEP_BUSY）
 SLEEP_LONG=1800                 # 【仅旧模式】WAITING=1（无近期待办）→ 睡 30 分钟（= BaiZe SLEEP_WAIT）
-# ── ⏰ 定时唤醒时窗（2026-10-07 用户令：每天 2 次 · 06:00 / 18:00 · 本地时区）──────
-SCHEDULE_HOURS="${WATCH_SCHEDULE_HOURS-6,18}"   # 逗号分隔的小时；**置空 ⇒ 回退旧模式**
+# ── ⏰ 定时唤醒时窗（2026-10-07 用户令：每天 4 次 · 00:00 / 06:00 / 12:00 / 18:00 · 本地时区）──────
+SCHEDULE_HOURS="${WATCH_SCHEDULE_HOURS-6,12,18,0}"   # 逗号分隔的小时；**置空 ⇒ 回退旧模式**
 SLEEP_CHUNK=300                 # 时窗内分段睡：每 5 分钟刷新存活标记（零 token；可被 SIGTERM 立刻打断）
 SLEEP_RETRY=300                 # 时窗内 cline 失败后的重试等待
 SCHEDULE_RETRY_MAX=1            # 同一时窗内最多重试 1 次 ⇒ 之后等下个时窗（防 60s 死循环烧 token）
@@ -150,7 +150,7 @@ waiting_is_1() {
 # cline 级致命错误特征（**不要**用裸 `error:` —— agent 干活时会把 API 报错当证据贴出来，会误判）
 FATAL_RE='(supported API model names|额度已用完|hook dispatch failed|[Uu]nauthoriz|[Aa]uthentication (failed|error)|请等待[0-9]+分钟|cline: command not found|cline: not found)'
 
-# ── ⏰ 定时唤醒：下一个时窗的 epoch 秒（SCHEDULE_HOURS=6,18 ⇒ 06:00 / 18:00）──
+# ── ⏰ 定时唤醒：下一个时窗的 epoch 秒（SCHEDULE_HOURS=6,12,18,0 ⇒ 00/06/12/18）──
 next_slot_epoch() {
     local now h target best=""
     now=$(date +%s)
@@ -182,7 +182,7 @@ sleep_until_next_slot() {
     now=$(date +%s)
     remain=$((target - now))
     [ "$remain" -le 0 ] && remain=1
-    echo "[loop] $(date '+%F %T') ⏰ 定时模式：下次唤醒 = $(date -d "@$target" '+%F %T %Z')（$((remain / 60))min 后；每天 2 次 · 时窗 ${SCHEDULE_HOURS}）"
+    echo "[loop] $(date '+%F %T') ⏰ 定时模式：下次唤醒 = $(date -d "@$target" '+%F %T %Z')（$((remain / 60))min 后；每天 4 次 · 时窗 ${SCHEDULE_HOURS}）"
     while [ "$remain" -gt 0 ]; do
         chunk="$SLEEP_CHUNK"
         [ "$remain" -lt "$chunk" ] && chunk="$remain"
@@ -198,7 +198,7 @@ sleep_until_next_slot() {
 
 # ── 启动横幅：让外部一眼看出「跑的是哪种模式 / 时窗」（中继据此核验）──
 if [ -n "$SCHEDULE_HOURS" ]; then
-    echo "[loop] ⏰ 定时模式已启用：唤醒时窗 = ${SCHEDULE_HOURS}（每天 2 次）· 存活标记 = $LOOP_HB · 回退：WATCH_SCHEDULE_HOURS= 置空"
+    echo "[loop] ⏰ 定时模式已启用：唤醒时窗 = ${SCHEDULE_HOURS}（每天 4 次）· 存活标记 = $LOOP_HB · 回退：WATCH_SCHEDULE_HOURS= 置空"
     if _t=$(next_slot_epoch); then
         echo "[loop] ⏰ 时窗参考：此刻之后的下一个时窗 = $(date -d "@$_t" '+%F %T %Z')（首轮唤醒=立即执行；各轮跑完会实时重算）"
     fi
@@ -227,7 +227,7 @@ while true; do
     git_sync_and_push
     date +%s > "$LOOP_HB" 2>/dev/null || true       # 每轮唤醒回来都刷新存活标记
     if [ -n "$SCHEDULE_HOURS" ]; then
-        # ── ⏰ 定时模式：每天 2 次（06:00 / 18:00）──
+        # ── ⏰ 定时模式：每天 4 次（00/06/12/18）──
         if [ "$FORCE_SHORT" -eq 1 ]; then
             RETRY=$((RETRY + 1))
             if [ "$RETRY" -le "$SCHEDULE_RETRY_MAX" ]; then
