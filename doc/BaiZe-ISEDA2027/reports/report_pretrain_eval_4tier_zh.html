@@ -40,9 +40,9 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
   <h1>BaiZe 2B 预训练 · 四层能力评测报告</h1>
   <div class="sub">Mamba2-hybrid 2.22B · S1 生产 run（iter 160k+/700k, ~675B tokens）</div>
   <div class="meta">
-    <span>📅 2026-11-12 02:00</span>
+    <span>📅 2026-11-12 02:20</span>
     <span>🏗 Mamba2-hybrid 2.22B</span>
-    <span>🔥 训练 iter≈169.6k / 700k(24.2%) · step~7060ms<7.4s✅ · ckpt 168k · lr-decay-iters=0(stable段,decay未配置) · GPU 8×100%/75GB · loss~2.04 · 0NaN · 170k ETA~50min · L1 scaling report 已更新至 16/20(含160k=58.13%)</span>
+    <span>🔥 训练 iter≈169.8k / 700k(24.2%) · step~7100ms<7.4s✅ · ckpt 168k · lr-decay-iters=0(stable段,decay未配置) · GPU 8×100%/75GB · loss~2.05 · 0NaN · 170k ETA~25min(autoqueue PID36398轮询中) · L1 scaling report 已更新至 16/20(含160k=58.13%) · 论文§4.6已刷新iter169.8k+PDF 0err✅</span>
     <span>📊 L1: 16 ckpt ✅(160k=58.13%新高) | L2: 6/6完成 ✅ GSM8K=0%🔴 MMLU=23.16%(≈随机) BBH=0%🔴 MATH=0%🔴 HumanEval=0%🔴 MBPP=0%🔴 · 🔬生成退化=SSM state崩溃+模型@24%+code/math 26%·RP=1.3无效 | L3: 🔴TB smoke完成 0/2 reward(生成退化致agent无法编辑文件) | L4: 🔴/nasdata/未挂载.29/.12/本机+SSH .15/.17均不通</span>
   </div>
   <div style="margin-top:12px;font-size:12.5px;background:rgba(0,0,0,.18);border-radius:8px;padding:8px 12px;opacity:.95">
@@ -528,7 +528,7 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
 </div>
 
 <footer>
-  BaiZe pretrain 线 · 四层能力评测报告 · 2026-11-12 01:55 更新(#2023 · 监控巡检+L1 scaling report更新至16/20含160k·训练健康iter169.6k·L2 6/6完成·L3 TB smoke 0/2·L4 BLOCKED·170k ETA~50min) · 评测数字仅用于训练监控，不进论文正文
+  BaiZe pretrain 线 · 四层能力评测报告 · 2026-11-12 02:20 更新(#2025 · 监控巡检+论文§4.6刷新iter169.8k+PDF 0err✅·训练健康iter169.8k step~7.1s<7.4s✅·L1 16/20(170k autoqueue轮询中)·L2 6/6完成·L3 TB smoke 0/2·L4 BLOCKED(/nasdata/+SSH)·P2建议:decay 4:2:4+vLLM验证待GPU窗口) · 评测数字仅用于训练监控，不进论文正文
 </footer>
 </div>
 </body>
