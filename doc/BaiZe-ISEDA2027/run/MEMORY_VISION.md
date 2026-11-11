@@ -1,8 +1,10 @@
 WAITING: 1
 
-> 🆕 **【wake #1032 · 2026-11-12 03:30】报告+EXPERIMENTS更新完成**：v7 sweep ALL 18/18完成(6/6 ALL PASS)→更新HTML报告(`report_vision_cpu_rl_waveform_zh.html` v3→v7, 新增v6/v7两节+对比表+结论+下一步)+EXPERIMENTS_VISION.md新增§v6段。git pull Already up to date。体积:TASK=27KB✓/MEMORY≈9KB✓。research日报11-12 vision建议(VLM主干复用·非wave RL·参考不指令)无新增可用。进程:vision loop PID669545✓·ops_relay PID1032513✓·GPU 8×H100 93-100% pretrain全占。下一步：①决定v8方向(triangle/sawtooth全线0%→SFT补数据or改任务) ②若需GPU等pretrain释放(ETA≈12/24-25)。WAITING=1。
+> 🆕 **【wake #1033 · 2026-11-12 03:57】例行巡检·全交付态**：git pull Already up to date。v7 sweep ALL DONE确认(log: "v7 sweep ALL DONE at Thu Nov 12 02:40:21 AM CST 2026")·18/18轮·6/6 ALL PASS·结果在位(`/datasets/baize-vision/out/cpu_rl_v7_*`)·HTML报告39KB在位·EXPERIMENTS在位。ops inbox RUN_ID276(pretrain eval·非vision)。research日报11-12 vision建议(VLM主干复用·π0冻结VLM+适配层vs全参·非wave RL·参考不指令)无新增可用。进程:vision loop PID669545✓·ops_relay PID1032513✓·GPU 8×H100 100% pretrain全占。体积:TASK=27KB✓/MEMORY≈8KB✓。全交付态维持·无未完成指令·WAITING=1。
 
-> 📦 **wake #1031 · 2026-11-12 02:42** v7 sweep ALL 18/18完成·6/6 ALL PASS·聚合JSON已生成·已fold（报告+EXPERIMENTS更新见wake#1032）。
+> 📦 **wake #1032 · 2026-11-12 03:30** 报告+EXPERIMENTS更新完成(v3→v7,新增v6/v7两节)·已fold。
+
+> 📦 **wake #1031 · 2026-11-12 02:42** v7 sweep ALL 18/18完成·6/6 ALL PASS·聚合JSON已生成·已fold。
 
 > 📦 **wake #1030 · 2026-11-12 02:02** 例行巡检+v7 sweep监控·13/18轮完成·r32 s0运行中·已fold。
 
@@ -54,4 +56,4 @@ WAITING: 1
 | 当前动作 | **wake#1032 报告+EXPERIMENTS更新完成**：HTML报告(`report_vision_cpu_rl_waveform_zh.html`)更新至v3→v7(新增v6/v7两节+对比表7行+结论5段+诚实边界5条+下一步6条)·EXPERIMENTS_VISION.md新增§v6段(GRPO outcome-only 连续奖励)·v7 §v7段已在位·进程健康·GPU 93-100%·ops inbox非vision·research日报11-12 vision建议(VLM主干复用)·fold wake#1031。 |
 | 下一步 | ①决定v8方向：⚠️triangle/sawtooth全线0%→需SFT补数据或改任务定义(如二分类"有无三角波"或频率比较) ②McNemar(s0)NOT SIG→考虑增大eval set(48→96+)以提升paired test统计功效 ③support@2/@3=2.1%极低→模型对哪题答对高度随机→需分析per-question pattern ④process reward贡献微弱(R_process极小)→λ对结果影响不显著 ⑤若v8需要GPU→等pretrain释放(ETA≈12/24-25) ⑥research日报建议(VLM主干复用)非wave RL方向·参考不指令 |
 | 阻塞 | .12+.29 GPU全占（8×H100 93-100% util / ~75GB，pretrain baize2b ETA≈12/24-25）→ GPU验证待pretrain释放 ·.17+.75 SSH不可达 |
-| 更新 | **2026-11-12 03:30 (wake #1032)**：HTML报告+EXPERIMENTS更新完成(v3→v7, 新增v6/v7两节)·v7 sweep 6/6 ALL PASS·git pull Already up to date·进程健康·GPU 93-100%·ops inbox非vision·research日报11-12 vision建议(VLM主干复用)·fold wake#1031·WAITING=1 |
+| 更新 | **2026-11-12 03:57 (wake #1033)**：例行巡检·全交付态·v7 sweep ALL DONE确认(18/18·6/6 ALL PASS)·结果+报告+EXPERIMENTS在位·git pull Already up to date·进程健康(vision loop PID669545✓·ops_relay PID1032513✓)·GPU 8×H100 100% pretrain全占·ops inbox RUN_ID276非vision·research日报11-12 vision建议(VLM主干复用)无新增可用·fold wake#1032·WAITING=1 |
