@@ -662,3 +662,5 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked		2026-11-09 20:39	RAG-looku
 1792398649832_4tgr1					parked		2026-11-10 20:07	r337 deepread: mwxi create /scripts/sync_opc/syncopc.V0 + rsync commonIP SH->HF transfer logging. devops/scripting/infra. WRONG SHARD = eda_other/devops (A). AVOID user mwxi. REJECT.
 1792995418878_a5drw					parked		2026-11-10 20:07	r337 deepread: xinqiaoz init Dummy QA directory environment (mkdir/symlink scaffolding for G4B_LDDB_CWJBA). directory-setup non-logic, physical_verify saturated(109). REJECT.
 1791976043518_5w70e					parked		2026-11-10 20:07	r337 deepread: xinqiaoz pdkQaSystem DUMMY status recon Q&A (ls/find/read handoff docs, write .tmp reply md). pure status-recon Q&A, no produce deliverable, physical_verify saturated. REJECT.
+1789648311264_pev4p	xinqiaoz	10.129.2.11	323	physical_verify	parked		2026-11-11 07:57	NFS automount broken on 10.129.2.11 for /home/xinqiaoz (ls ok but cat fails, known坑)
+1790749571151_n8yr8					case	EDA-Eval-DesignFlow-DRCLogTeardown-001	2026-11-11 08:13	
