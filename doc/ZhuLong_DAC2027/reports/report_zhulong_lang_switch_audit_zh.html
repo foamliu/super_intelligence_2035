@@ -1,290 +1,161 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ZhuLong 思维链语言消融（B 轴）trace 抽查审计报告</title>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ZhuLong B 轴思维链语言切换抽查报告</title>
 <style>
-  :root{
-    --bg:#fafafa; --fg:#1f2328; --muted:#57606a; --border:#d0d7de;
-    --accent:#0969da; --ok:#1a7f37; --warn:#9a6700; --bad:#cf222e;
-    --target:#1a7f37; --english:#cf222e; --mixed:#9a6700; --copied:#8250df;
-  }
-  *{box-sizing:border-box;}
-  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
-       background:var(--bg); color:var(--fg); margin:0; padding:24px 16px 64px; line-height:1.65;}
-  .wrap{max-width:1080px; margin:0 auto;}
-  h1{font-size:1.55rem; margin:0 0 4px; letter-spacing:.5px;}
-  h2{font-size:1.2rem; margin:28px 0 12px; padding-bottom:6px; border-bottom:2px solid var(--border);}
-  h3{font-size:1.02rem; margin:18px 0 8px;}
-  .meta{color:var(--muted); font-size:.86rem; margin-bottom:18px;}
-  .meta code{background:#eaeef2; padding:1px 5px; border-radius:4px; font-size:.82rem;}
-  .verdict-bar{display:flex; gap:10px; flex-wrap:wrap; margin:14px 0 6px;}
-  .pill{padding:6px 12px; border-radius:999px; font-size:.85rem; font-weight:600; border:1px solid var(--border); background:#fff;}
-  .pill.ok{color:var(--ok); border-color:var(--ok);}
-  .pill.bad{color:var(--bad); border-color:var(--bad);}
-  .pill.warn{color:var(--warn); border-color:var(--warn);}
-  .pill.block{color:var(--muted); background:#f6f8fa;}
-  table{border-collapse:collapse; width:100%; margin:12px 0 6px; font-size:.86rem; background:#fff;}
-  th,td{border:1px solid var(--border); padding:6px 9px; text-align:left; vertical-align:top;}
-  th{background:#f6f8fa; font-weight:600; white-space:nowrap;}
-  td.num,th.num{text-align:right; font-variant-numeric:tabular-nums;}
-  tr:hover td{background:#fbfcfd;}
-  .verdict{font-weight:700;}
-  .v-ok{color:var(--ok);} .v-bad{color:var(--bad);} .v-warn{color:var(--warn);} .v-block{color:var(--muted);}
-  .tag{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; font-size:.8rem; background:#eaeef2; padding:1px 5px; border-radius:4px;}
-  .quote{background:#fff; border-left:4px solid var(--border); padding:10px 14px; margin:8px 0; font-size:.85rem;
-         border-radius:0 4px 4px 0; white-space:pre-wrap; word-break:break-word;}
-  .quote .src{display:block; color:var(--muted); font-size:.76rem; margin-top:6px; font-family:ui-monospace,monospace; word-break:break-all;}
-  .quote.target{border-left-color:var(--target);}
-  .quote.fail{border-left-color:var(--english);}
-  .quote.answer{border-left-color:var(--accent);}
-  .note{background:#fff8c5; border:1px solid #e7c000; color:#6b5d00; padding:10px 14px; border-radius:6px; margin:12px 0; font-size:.88rem;}
-  .note.bad{background:#ffe5e5; border-color:#f5c2c2; color:#7a1a1a;}
-  .note.ok{background:#e6f4ea; border-color:#9bcfa5; color:#0a5c1f;}
-  ul{margin:6px 0 6px 20px; padding:0;} li{margin:3px 0;}
-  .small{font-size:.8rem; color:var(--muted);}
-  code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; font-size:.82rem; background:#eaeef2; padding:1px 5px; border-radius:4px;}
-  .card{background:#fff; border:1px solid var(--border); border-radius:8px; padding:14px 16px; margin:12px 0;}
-  .legend span{display:inline-block; margin-right:14px; font-size:.8rem;}
-  .legend .sw{display:inline-block; width:10px; height:10px; border-radius:2px; margin-right:4px; vertical-align:middle;}
-  .foot{margin-top:36px; padding-top:14px; border-top:1px solid var(--border); color:var(--muted); font-size:.8rem;}
-</style>
-</head>
-<body>
-<div class="wrap">
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;line-height:1.65;color:#222;max-width:1100px;margin:0 auto;padding:24px;background:#fafafa}
+h1{font-size:1.5em;border-bottom:3px solid #c0392b;padding-bottom:8px}
+h2{font-size:1.25em;margin-top:32px;border-left:5px solid #2c3e50;padding-left:10px;background:#eef2f7;padding:6px 10px}
+h3{font-size:1.1em;margin-top:22px;color:#2c3e50}
+h4{font-size:1.02em;margin-top:16px;color:#34495e}
+table{border-collapse:collapse;width:100%;margin:12px 0;background:#fff;font-size:0.92em}
+th,td{border:1px solid #ccc;padding:6px 9px;text-align:center;vertical-align:top}
+th{background:#2c3e50;color:#fff;font-weight:600}
+tr:nth-child(even) td{background:#f6f8fa}
+td:nth-child(1),td:nth-child(2),td:nth-child(8){text-align:left}
+code{background:#eef;padding:1px 5px;border-radius:3px;font-size:0.88em}
+pre{background:#fff;border:1px solid #ddd;border-left:4px solid #999;padding:10px;overflow-x:auto;font-size:0.82em;line-height:1.5;white-space:pre-wrap;word-break:break-word}
+.card{background:#fff;border:1px solid #e0e0e0;border-radius:6px;padding:14px 18px;margin:14px 0}
+.card.warn{border-left:6px solid #e67e22;background:#fff8f0}
+.card.bad{border-left:6px solid #c0392b;background:#fdf2f1}
+.card.ok{border-left:6px solid #27ae60;background:#f0faf3}
+.snip{border:1px solid #ddd;border-radius:4px;padding:10px;margin:10px 0;background:#fff}
+.snip-meta{font-size:0.88em;color:#555;margin-bottom:4px}
+.snip-path{font-size:0.8em;color:#888;margin-bottom:4px}
+blockquote{border-left:4px solid #e67e22;background:#fff8f0;margin:8px 0;padding:8px 14px}
+.ans{margin:12px 0}
+.verdict-真切换{color:#27ae60;font-weight:bold}
+.verdict-部分生效{color:#e67e22;font-weight:bold}
+.verdict-未生效{color:#c0392b;font-weight:bold}
+.summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin:14px 0}
+.vcard{background:#fff;border:1px solid #e0e0e0;border-radius:6px;padding:10px 14px}
+.meta{color:#777;font-size:0.9em}
+</style></head><body>
+<h1>ZhuLong（DAC2027）B 轴 · 思维链语言切换抽查报告</h1>
+<p class="meta">基座 GLM-5.2 ｜ harness cline 3.0.51 ｜ 测试集 EDA-Eval-PyAether 158 ｜ thinking=medium ｜ 抽查日期 2026-11-11 ｜ 只读、与在跑评测并发（B_fr_r1 跑中未打断）</p>
 
-<h1>ZhuLong 思维链语言消融（B 轴）trace 抽查审计报告</h1>
-<div class="meta">
-  审计日期：2026-11-11 · 范围：B 轴（思维链语言）已存档 trace · 基座：GLM-5.3-Flash（与 B 轴实验一致）<br>
-  数据源：<code>/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/&lt;TAG&gt;/&lt;batch&gt;/trace/EDA-Eval-PyAether-*/api_conversation_history.json</code><br>
-  方法：只读 <code>ls/cat/python3</code>，未打断在跑评测（<code>B_fr_r1</code> 跑中），未改 trace 原文。
-</div>
-
-<!-- ① 结论一句话 -->
-<h2>① 结论一句话（按语言）</h2>
-<div class="verdict-bar">
-  <span class="pill ok">en · 真切换 ✅</span>
-  <span class="pill ok">zh · 真切换 ✅</span>
-  <span class="pill bad">es · 未生效 ❌（仅 ~21% 触发西班牙语思维链，~73% 仍为英语，且跨轮衰减）</span>
-  <span class="pill block">fr · BLOCKED(trace_missing) · B_fr_r1 仍在跑，无已存档 trace</span>
-  <span class="pill block">ru · BLOCKED(trace_missing) · 尚未运行</span>
-</div>
-<p>
-  <b>核心发现</b>：MEMORY 中「lang hint 生效 ✅」的证据（log 里看到一句 <code>Piensa en español</code> / 重音字符数）只能证明
-  <b>prompt 注入了</b>，<b>不能证明思维链换了语言</b>。本次对 1 417 条 trace 的全量扫描显示：
-  <b>en / zh 两个语言的思维链确实切换</b>（en≈99.6% 英语、zh≈79% 中文），<b>es 没有切换</b>（仅 21% 西班牙语，73% 英语，跨轮 27%→19%→16% 衰减）。
-  因此 <b>B 轴 es 的 3 轮结论不能作为「西班牙语思维链」数据使用</b>；fr/ru 尚无 trace，不得据 MEMORY 旧描述当作已验证。
-</p>
-
-<!-- ② 抽查表 -->
-<h2>② 抽查表（全量扫描，非抽样）</h2>
-<div class="legend small">
-  <span><span class="sw" style="background:var(--target)"></span>TARGET＝主体为目标语言</span>
-  <span><span class="sw" style="background:var(--english)"></span>ENGLISH＝主体仍为英语（未遵循）</span>
-  <span><span class="sw" style="background:var(--mixed)"></span>MIXED＝两种语言实质混用</span>
-  <span><span class="sw" style="background:var(--copied)"></span>COPIED_PROMPT＝仅复述 prompt 语言指令</span>
-</div>
-<p class="small">
-  判定基于每条 trace <b>首个 assistant thinking 段</b>前 1 500 字符的轻量语言分类（关键词重叠），并对每语言
-  <b>人工抽查 6 条</b>交叉核验（人工与全量结论一致）。分类口径保守：目标语言标记 ≥3 且领先英语 ≥1 才判 TARGET。
-  判定阈值：<b>真切换</b>≥4/5 为 TARGET/MIXED；<b>部分生效</b>2–3/5；<b>未生效</b>≥4/5 为 ENGLISH/COPIED_PROMPT。
-</p>
-<table>
-  <thead>
-  <tr>
-    <th>语言</th><th>TAG（轮次）</th><th class="num">样本数<br>(trace)</th>
-    <th class="num">TARGET</th><th class="num">MIXED</th><th class="num">ENGLISH</th><th class="num">COPIED<br>_PROMPT</th>
-    <th>判定</th><th>trace 路径（best batch）</th>
-  </tr>
-  </thead>
-  <tbody>
-  <tr>
-    <td><b>en</b><br><span class="small">hint: <code>Think in English.</code></span></td>
-    <td><span class="tag">B_en_r1/r2/r3</span></td>
-    <td class="num">471<br><span class="small">(含 15 无 thinking)</span></td>
-    <td class="num">454<br><span class="small">99.6%</span></td>
-    <td class="num">0</td>
-    <td class="num">2<sup>*</sup><br><span class="small">0.4%</span></td>
-    <td class="num">0</td>
-    <td class="verdict v-ok">真切换 ✅</td>
-    <td class="small">r1:<code>…/B_en_r1/2026_1109_084446/trace/</code><br>r2:<code>…/B_en_r2/2026_1109_104439/trace/</code><br>r3:<code>…/B_en_r3/2026_1109_171220/trace/</code></td>
-  </tr>
-  <tr>
-    <td><b>zh</b><br><span class="small">hint: <code>请使用中文思考。</code></span></td>
-    <td><span class="tag">B_zh_r1/r2/r3</span></td>
-    <td class="num">474</td>
-    <td class="num">376<br><span class="small">79.3%</span></td>
-    <td class="num">0</td>
-    <td class="num">98<br><span class="small">20.7%</span></td>
-    <td class="num">0</td>
-    <td class="verdict v-ok">真切换 ✅</td>
-    <td class="small">r1:<code>…/B_zh_r1/2026_1110_005204/trace/</code><br>r2:<code>…/B_zh_r2/2026_1110_073833/trace/</code><br>r3:<code>…/B_zh_r3/2026_1110_161756/trace/</code></td>
-  </tr>
-  <tr>
-    <td><b>es</b><br><span class="small">hint: <code>Piensa en español.</code></span></td>
-    <td><span class="tag">B_es_r1/r2/r3</span></td>
-    <td class="num">473</td>
-    <td class="num">99<br><span class="small">20.9%</span></td>
-    <td class="num">0</td>
-    <td class="num">346<sup>†</sup><br><span class="small">73.1%</span></td>
-    <td class="num">0</td>
-    <td class="verdict v-bad">未生效 ❌</td>
-    <td class="small">r1:<code>…/B_es_r1/2026_1110_203542/trace/</code><br>r2:<code>…/B_es_r2/2026_1111_002251/trace/</code><br>r3:<code>…/B_es_r3/2026_1111_032900/trace/</code></td>
-  </tr>
-  <tr>
-    <td><b>fr</b><br><span class="small">hint: <code>Réfléchis en français.</code></span></td>
-    <td><span class="tag">B_fr_r1</span></td>
-    <td class="num">0</td>
-    <td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">—</td>
-    <td class="verdict v-block">BLOCKED<br>(trace_missing)</td>
-    <td class="small">B_fr_r1 仍在跑，尚未存档；<code>…/trace_ablation_think_lang/B_fr*</code> 不存在。<br>🚫 不许凭 MEMORY 旧描述当作已验证。</td>
-  </tr>
-  <tr>
-    <td><b>ru</b><br><span class="small">hint: <code>Думай по-русски.</code></span></td>
-    <td><span class="tag">B_ru_*</span></td>
-    <td class="num">0</td>
-    <td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">—</td>
-    <td class="verdict v-block">BLOCKED<br>(trace_missing)</td>
-    <td class="small">尚未运行；<code>…/trace_ablation_think_lang/B_ru*</code> 不存在。</td>
-  </tr>
-  </tbody>
-</table>
-<p class="small">
-  <sup>*</sup> en 轮有 2 条 thinking 渗漏为中文（模型默认输出语），占比 0.4%，可忽略。<br>
-  <sup>†</sup> es 的「ENGLISH」列 346 条中，有 <b>28 条渗漏为中文</b>（zh，模型默认输出语，r1=12/r2=9/r3=7），
-  即「既非目标语言西班牙语、也非英语，而是模型默认的中文」——这是 es 注入失效的<b>额外</b>失败模式，已并入「未遵循」。
-</p>
-
-<div class="card">
-  <h3>es 跨轮衰减趋势（关键证据）</h3>
-  <table>
-  <tr><th>轮次</th><th class="num">n</th><th class="num">TARGET(西语)</th><th class="num">ENGLISH</th><th class="num">ZH 渗漏</th></tr>
-  <tr><td><span class="tag">B_es_r1</span></td><td class="num">157</td><td class="num">43 (27%)</td><td class="num">102 (65%)</td><td class="num">12 (8%)</td></tr>
-  <tr><td><span class="tag">B_es_r2</span></td><td class="num">158</td><td class="num">30 (19%)</td><td class="num">119 (75%)</td><td class="num">9 (6%)</td></tr>
-  <tr><td><span class="tag">B_es_r3</span></td><td class="num">158</td><td class="num">26 (16%)</td><td class="num">125 (79%)</td><td class="num">7 (4%)</td></tr>
-  </table>
-  <p class="small">西班牙语触发率 <b>27% → 19% → 16%</b>，逐轮下降；英语占比 65% → 79%，逐轮上升。提示注入对非母语/非默认语言的约束力随轮次弱化。</p>
-</div>
-
-<!-- ③ 原文片段 -->
-<h2>③ 思维链原文片段（每语言 ≥2 段，截 80–150 字）</h2>
-<p class="small">以下均取自 <code>api_conversation_history.json</code> 中首个 assistant 消息的 <code>thinking</code> part 原文，未做改写。</p>
-
-<h3>es — TARGET（思维链为西班牙语，少数情况）</h3>
-<div class="quote target">Necesito completar la tarea. Primero debo analizar los detalles de la API de pyAether para MdeTranAnalysis, especialmente las propiedades relacionadas con tran noise. Voy a buscar las APIs relevantes usando search_apis y luego get_api_details.
-<span class="src">来源：…/B_es_r1/2026_1110_203542/trace/EDA-Eval-PyAether-036/api_conversation_history.json（thinking part #1，截 140 字）</span></div>
-
-<h3>es — ENGLISH（思维链仍为英语，多数情况）</h3>
-<div class="quote fail">Let me understand the task. I need to write a Python function using pyAether APIs. The function: 1. Create a point array object from input raw_points (list of (x,y) tuples). Construct empty array first, then create point objects and append them. 2. Compress the array…
-<span class="src">来源：…/B_es_r1/2026_1110_203542/trace/EDA-Eval-PyAether-029/api_conversation_history.json（thinking part #1，截 140 字。注意：prompt 末尾确有 <code>Piensa en español.</code>，但思维链整段英语）</span></div>
-<div class="quote fail">Let me analyze the task. The user wants me to complete a function `count_signal_segments(length, active_indices)` that constructs a bit array, sets bits at given indices to 1, and counts contiguous 'ON' segments.
-<span class="src">来源：…/B_es_r3/2026_1111_032900/trace/EDA-Eval-PyAether-039/api_conversation_history.json（r3，衰减后典型）</span></div>
-
-<h3>zh — TARGET（思维链为中文）</h3>
-<div class="quote target">用户需要我完成一个代码生成任务：创建EDA library的函数。我需要先搜索pyAether相关的API，了解如何创建library。 让我先搜索相关的API。 最相关的API是 `dbCreateLib`。让我查询它的详细文档。
-<span class="src">来源：…/B_zh_r1/2026_1110_005204/trace/EDA-Eval-PyAether-007/api_conversation_history.json（thinking part #1，截 140 字）</span></div>
-
-<h3>zh — ENGLISH（少数未遵循，~21%）</h3>
-<div class="quote fail">Let me analyze this task. The user wants me to complete a code generation task for pyAether. I need to: 1. Analyze the task requirements and function definition 2. Use search_apis to find relevant pyAether APIs 3. Use get_api_details to get detailed API documentation…
-<span class="src">来源：…/B_zh_r1/2026_1110_005204/trace/EDA-Eval-PyAether-036/api_conversation_history.json（同一 prompt 末尾有 <code>请使用中文思考。</code>，但 thinking 仍英语）</span></div>
-
-<h3>en — TARGET（思维链为英语，~99.6%）</h3>
-<div class="quote target">Let me analyze the task: 1. I need to create a function `create_eda_library(library_name: str) -> bool` that creates a new EDA library in the Aether environment. 2. Returns True if successful, False if the library already exists or creation fails.
-<span class="src">来源：…/B_en_r1/2026_1109_084446/trace/EDA-Eval-PyAether-007/api_conversation_history.json（thinking part #1，截 140 字）</span></div>
-<div class="quote target">Let me analyze the task. I need to implement a function that: 1. Creates a pyAether float point array from raw_points 2. Compress the array to remove coincident and collinear points (isClosed=True) 3. Transform the array by scaling 2.0 with rotation angle 0.0…
-<span class="src">来源：…/B_en_r1/2026_1109_084446/trace/EDA-Eval-PyAether-029/api_conversation_history.json</span></div>
-
-<p class="small">
-  <b>COPIED_PROMPT 检查</b>：全量扫描 + 人工抽查均<b>未发现</b>任何 thinking 段以「复述 prompt 语言指令」开头然后转他语的情况（0 条）。
-  所有 thinking 段都直接进入任务分析，不存在「假装遵循」的典型假阳性。
-</p>
-
-<!-- ④ 答案部分核查 -->
-<h2>④ 答案/代码部分语言核查</h2>
-<div class="note">
-  <b>任务书预期</b>：只要求思维链换语言，<b>答案/代码应仍是英语</b>。<br>
-  <b>实测</b>：实际落盘的 <b>代码（write_file 的 content/code）在所有 trace 中均为英语</b>——Python 标识符、docstring、注释均为英文，
-  语言注入<b>未泄漏到代码输出</b>。这一点符合预期（注入只指向 thinking）。<br>
-  <b>但</b>：答案的<b>叙述部分</b>（assistant 的 <code>text</code> part，即代码前后的 markdown 解释）<b>在所有语言、所有轮次中均为中文</b>，
-  包括 B_en（hint=<code>Think in English.</code>）和 B_es（hint=西语）。这是 GLM 基座<b>默认输出中文叙述</b>的固行为，
-  <b>不是语言注入造成的</b>（注入只说「think in X」，没说「answer in X」）。
-</div>
-<table>
-  <tr><th>语言轮</th><th>代码(write_file)</th><th>答案叙述(text part)</th><th>是否符合「注入不污染输出」</th></tr>
-  <tr><td>en (B_en_r1 #007)</td><td>英语 ✅</td><td>中文（「我将分析任务需求并搜索相关的pyAether API…」）</td><td>✅ 代码未变外语</td></tr>
-  <tr><td>zh (B_zh_r1 #007)</td><td>英语 ✅</td><td>中文（「我先搜索 pyAether 中与创建库相关的 API…」）</td><td>✅</td></tr>
-  <tr><td>es TARGET (B_es_r1 #036)</td><td>英语 ✅</td><td>西语（「Voy a empezar analizando la tarea…」）<sup>‡</sup></td><td>⚠️ 此条叙述也变西语</td></tr>
-  <tr><td>es ENGLISH (B_es_r1 #029)</td><td>英语 ✅</td><td>中文（「任务已完成。以下是总结…」）</td><td>✅</td></tr>
-</table>
-<p class="small">
-  <sup>‡</sup> B_es_r1 #036 是少数思维链真切西班牙语的样本，其答案叙述<b>也跟着变成西班牙语</b>。这说明：当 es 注入「成功」时，
-  它并非只作用于 thinking，而是把<b>整条 assistant 输出</b>（thinking + text 叙述）都拉向西班牙语——只是代码本身因结构化仍为英文。
-  即 es 的注入是「<b>全输出语言漂移</b>」而非「仅思维链切换」，与 B 轴「只改思维链、不改答案」的设计意图<b>不一致</b>。
-  这进一步说明 es 那少数「触发」的样本也不能简单当作「纯思维链变西班牙语」数据。
-</p>
-<div class="quote answer">Voy a empezar analizando la tarea y buscando las APIs relevantes de pyAether para el análisis transitorio con ruido.
-<span class="src">来源：…/B_es_r1/2026_1110_203542/trace/EDA-Eval-PyAether-036/api_conversation_history.json（text part，答案叙述也变西语）</span></div>
-<div class="quote answer">我先搜索 pyAether 中与创建库（Library）相关的 API。 最相关的 API 是 `dbCreateLib`。我需要获取它的详细文档…
-<span class="src">来源：…/B_zh_r1/2026_1110_005204/trace/EDA-Eval-PyAether-007/api_conversation_history.json（text part，中文叙述——GLM 基座默认）</span></div>
-
-<!-- ⑤ 影响评估 -->
-<h2>⑤ 影响评估（B 轴结论是否要作废）</h2>
-<table>
-  <tr><th>语言</th><th>判定</th><th>B 轴该语言 3 轮结论是否有效</th><th>处置建议</th></tr>
-  <tr>
-    <td><b>en</b></td><td class="verdict v-ok">真切换</td>
-    <td>✅ <b>有效</b>。思维链 99.6% 为英语，3 轮分数可作为「英语思维链」数据点。</td>
-    <td>保留。与既有基线 <code>B.glm-5.3-flash=86.8±1.6%</code> 做 Δpp + McNemar 对照。</td>
-  </tr>
-  <tr>
-    <td><b>zh</b></td><td class="verdict v-ok">真切换</td>
-    <td>✅ <b>有效</b>。思维链 79% 为中文（21% 仍英语为噪声），3 轮分数可作为「中文思维链」数据点，但报告需注明 ~21% 噪声。</td>
-    <td>保留，注明噪声率。如要更干净可考虑加强 prompt 注入后重跑，但当前数据可用。</td>
-  </tr>
-  <tr>
-    <td><b>es</b></td><td class="verdict v-bad">未生效</td>
-    <td>❌ <b>作废（作为「西班牙语思维链」数据）</b>。3 轮中思维链仅 ~21% 为西班牙语、~73% 为英语，
-        实际测量的是「<b>mostly-英语思维链 + 偶发西语</b>」，≈ B_en 带噪声。<b>es 与 en 之间任何 Δ 不可归因于「思维链语言」</b>。</td>
-    <td>1) 在报告中把 B_es 三轮<b>降级标注</b>为「注入未生效，思维链主体仍为英语」，从语言轴对比表移除或单独列出；<br>
-        2) 不得用 B_es 的分数支撑「思维链语言对分数影响」的任何结论；<br>
-        3) 如需 es 数据点，须<b>先修注入</b>（见下），重跑并重做本审计。</td>
-  </tr>
-  <tr>
-    <td><b>fr</b></td><td class="verdict v-block">BLOCKED</td>
-    <td>⏸ <b>未验证</b>。B_fr_r1 仍在跑，无 trace。</td>
-    <td>B_fr_r1 落盘后<b>必须先跑本审计</b>再决定是否纳入。鉴于 es（非默认/非母语语言）已失效，<b>fr 大概率同样未生效</b>（法语亦非 GLM 默认语），高风险。</td>
-  </tr>
-  <tr>
-    <td><b>ru</b></td><td class="verdict v-block">BLOCKED</td>
-    <td>⏸ <b>未运行</b>。</td>
-    <td>开跑后同样必须先审计。高风险（同 fr/es 理由）。</td>
-  </tr>
-</table>
-
-<div class="note bad">
-  <b>对 B 轴整体结论的影响</b>：B 轴「思维链语言消融」原设计 5 语言，目前<b>仅 en / zh 两个数据点有效</b>，
-  且 en 是模型默认思维语言、zh 是模型默认输出语言——<b>两个「生效」的语言恰好都是模型的强项语言</b>。
-  es 失效 + fr/ru 高风险意味着：<b>「思维链语言对 EDA 代码生成分数的影响」这一命题，现有数据只能比较 en vs zh，无法支撑 5 语言横向结论</b>。
-  若论文/报告已写入 5 语言对比，须改为「en/zh 有效对比 + es/fr/ru 注入未生效或待验证」。
-</div>
-
-<h3>修复建议（若要救回 es/fr/ru）</h3>
+<h2>① 结论一句话</h2>
+<div class="summary">
+<div class='vcard'><div class='verdict-真切换'>英文：真切换</div><div class='meta'>n=5 ｜ TARGET 5 / MIXED 0 / ENGLISH 0 / COPIED 0</div></div><div class='vcard'><div class='verdict-真切换'>中文：真切换</div><div class='meta'>n=10 ｜ TARGET 0 / MIXED 10 / ENGLISH 0 / COPIED 0</div></div><div class='vcard'><div class='verdict-部分生效'>西班牙文：部分生效</div><div class='meta'>n=16 ｜ TARGET 0 / MIXED 5 / ENGLISH 11 / COPIED 0</div><div class='meta' style='color:#c0392b'>0 条纯 TARGET（无一样本思维链主体为目标语言）</div></div><div class='vcard'><div class='verdict-部分生效'>法文：部分生效</div><div class='meta'>n=8 ｜ TARGET 1 / MIXED 3 / ENGLISH 4 / COPIED 0</div></div></div><p><b>一句话</b>：英文、中文两臂思维链确实切换（en 真切换、zh 真切换且顺风）；<b>西班牙文臂未真正切换（0 条纯 TARGET，11/16 主体英文）</b>，作为「西语思维链」数据点<b>不成立</b>；法文臂部分切换（4/8 含法语），偏弱；俄文未跑。根因：158 个任务正文均含「所有的回复、总结、思考等过程均使用中文回答」，与 es/fr/en/ru 的注入直接冲突。</p>
+<div class="card warn">
+<h3>⚠️ 关键发现：注入指令与任务原文存在直接冲突（影响全部 5 个语言臂）</h3>
+<p>在 158 个 benchmark 任务（<code>EDA-Eval-PyAether-*.md</code>）的<strong>任务正文</strong>中，均包含如下「输出要求」：</p>
+<blockquote>## 输出要求<br>- <strong>所有的回复、总结、思考等过程均使用中文回答</strong>，使用中文分析</blockquote>
+<p>核验：对 9 个已存档批次（B_en_r1/r2/r3、B_zh_r1/r3、B_es_r1/r2/r3、B_fr_r1）逐批 <code>grep -rl '所有的回复、总结、思考等过程均使用中文回答' full_tasks/</code>，结果均为 <strong>158/158</strong> 命中。
+随后在 <code>*.messages.json</code> 的首条 user 消息中定位该串（位置约 1074）与注入后缀（位置约 2167，<code>&lt;/user_input&gt;</code> 前），确认两者并存于同一条用户消息。</p>
+<p>轴 B 的注入实现是在 prompt <strong>末尾追加</strong>一句「Think in English. / 请使用中文思考。 / Piensa en español. / Réfléchis en français. / Думай по-русски.」。于是：</p>
 <ul>
-  <li><b>加强注入</b>：单句后缀约束力不足（对非默认语言）。可改为在 system prompt + user prompt <b>双重注入</b>，
-      并加入「<b>用例约束</b>」（如「你的内部推理必须用西班牙语，不得用英语；可在开头先复述一次任务摘要以引导」）。
-      注意：复述引导有 COPIED_PROMPT 风险，需在审计里区分「真遵循」与「仅复述」。</li>
-  <li><b>验证闭环</b>：每语言第 1 轮跑完<b>立即抽 ≥5 条 trace 做本审计</b>，未达「真切换」则停下修注入，<b>不要跑满 3 轮再发现无效</b>（任务书 §轴 B L98 / §4 P3 L115 原要求，本次才首次执行）。</li>
-  <li><b>隔离 thinking 与 output</b>：当前 es 触发时连答案叙述也变西语（见 §④‡），说明注入是「全输出漂移」而非「仅思维链」。
-      若要严格只改思维链，需在 prompt 里同时显式约束「<b>最终答案与代码保持英文</b>」。</li>
+<li><strong>zh 臂</strong>：注入「请使用中文思考」<strong>与任务原文一致</strong> → 被强化，思维链普遍中文主体（顺水推舟）。</li>
+<li><strong>en / es / fr / ru 臂</strong>：注入「用 X 语言思考」<strong>与任务原文「用中文思考」直接矛盾</strong> → 模型须在两道指令间裁决，行为分裂（见下表）。</li>
 </ul>
-
-<div class="foot">
-  审计人：zhulong agent（OpenCode）· 审计命令：只读 <code>ls / cat / python3</code>（读 <code>api_conversation_history.json</code>）·
-  未触碰 trace 原文，未打断 <code>B_fr_r1</code> 评测，未改论文/其他线产物。<br>
-  本报告为 §5 边界内的只读审计产物；B 轴分数本身来自既有评测，本报告不重算分数，只判定「思维链语言是否真切换」。
+<p>这使 B 轴<strong>不是一次干净的「思维链语言」消融</strong>：zh 臂享有「顺风」（注入与任务一致），其余四臂面对「逆风」（注入与任务冲突）。下文的「影响评估」据此对各臂结论是否成立分别判定。</p>
+<p style="font-size:0.9em;color:#666">旁证：在 es/fr 多个 trace 中，模型在思维链里<strong>明确讨论了这一矛盾</strong>（例如 es 任务 127：「用户要求我用中文回答，但最后说"Piensa en español"…这有点矛盾」；fr 任务 060/139：「Je dois répondre en chinois, mais "Réfléchis en français" … Il y a une contradiction」）。模型有时选择遵循任务原文（中文输出 + 英文/中文思考），有时遵循注入（目标语言思考），有时退回默认（英文思考）。系统 prompt 本身<strong>不含</strong>任何中文指令（已读 <code>system_prompt</code> 全文 4331 字符确认）——模型所引的「中文要求」来自任务正文，非幻觉。</p>
 </div>
+<h2>② 抽查表</h2><table><thead><tr><th>语言</th><th>TAG（轮次）</th><th>样本数</th><th>TARGET</th><th>MIXED</th><th>ENGLISH</th><th>COPIED_PROMPT</th><th>判定</th><th>trace 路径</th></tr></thead><tbody><tr><td>英文 (en)</td><td>B_en_r1</td><td>5</td><td>5</td><td>0</td><td>0</td><td>0</td><td>真切换</td><td><code>.../B_en_r1/2026_1109_084446/trace/</code></td></tr><tr><td>英文 (en)</td><td>合计 (1 轮)</td><td>5</td><td>5</td><td>0</td><td>0</td><td>0</td><td>真切换</td><td><code>见上各行</code></td></tr><tr><td>中文 (zh)</td><td>B_zh_r1</td><td>5</td><td>0</td><td>5</td><td>0</td><td>0</td><td>真切换</td><td><code>.../B_zh_r1/2026_1110_005204/trace/</code></td></tr><tr><td>中文 (zh)</td><td>B_zh_r3</td><td>5</td><td>0</td><td>5</td><td>0</td><td>0</td><td>真切换</td><td><code>.../B_zh_r3/2026_1110_161756/trace/</code></td></tr><tr><td>中文 (zh)</td><td>合计 (2 轮)</td><td>10</td><td>0</td><td>10</td><td>0</td><td>0</td><td>真切换</td><td><code>见上各行</code></td></tr><tr><td>西班牙文 (es)</td><td>B_es_r1</td><td>8</td><td>0</td><td>3</td><td>5</td><td>0</td><td>部分生效</td><td><code>.../B_es_r1/2026_1110_203542/trace/</code></td></tr><tr><td>西班牙文 (es)</td><td>B_es_r2</td><td>4</td><td>0</td><td>0</td><td>4</td><td>0</td><td>部分生效</td><td><code>.../B_es_r2/2026_1111_002251/trace/</code></td></tr><tr><td>西班牙文 (es)</td><td>B_es_r3</td><td>4</td><td>0</td><td>2</td><td>2</td><td>0</td><td>部分生效</td><td><code>.../B_es_r3/2026_1111_032900/trace/</code></td></tr><tr><td>西班牙文 (es)</td><td>合计 (3 轮)</td><td>16</td><td>0</td><td>5</td><td>11</td><td>0</td><td>部分生效</td><td><code>见上各行</code></td></tr><tr><td>法文 (fr)</td><td>B_fr_r1</td><td>8</td><td>1</td><td>3</td><td>4</td><td>0</td><td>部分生效</td><td><code>.../B_fr_r1/2026_1111_071240/trace/</code></td></tr><tr><td>法文 (fr)</td><td>合计 (1 轮)</td><td>8</td><td>1</td><td>3</td><td>4</td><td>0</td><td>部分生效</td><td><code>见上各行</code></td></tr></tbody></table><p class='meta'>注：每语言「合计」行汇总该语言全部已存档轮次的样本。es 含 r1(8)+r2(4)+r3(4)=16；zh 含 r1(5)+r3(5)=10；en 含 r1(5)；fr 含 r1(8)。fr r1 为在跑轮，仅读其已完成 trace。</p><h2>③ 思维链原文片段（每语言 ≥2 段，截前 ~420 字）</h2><h4>英文（注入：Think in English.）— 判定：真切换</h4><div class='snip'><div class='snip-meta'>任务 EDA-Eval-PyAether-001 ｜ 分类 <b>TARGET</b> ｜ 主体 en ｜ 思维链 8002 字符</div><div class='snip-path'><code>trace_ablation_think_lang/B_en_r1/2026_1109_084446/trace/EDA-Eval-PyAether-001/1794185250013_qx3l1.messages.json</code></div><pre>Let me analyze the task. I need to create a function that counts unique bus bits in an EDA bus definition string using pyAether API.
 
-</div>
-</body>
-</html>
+For example, &#x27;a,b&lt;1:0&gt;,a&#x27; → unique bits are &#x27;a&#x27;, &#x27;b&lt;1&gt;&#x27;, &#x27;b&lt;0&gt;&#x27; → 3.
+
+I need to find the pyAether API that can parse/expand bus strings into individual bits. Let me search for relevant APIs. Let me get details on the most relevant APIs: `etExpandName`, `emyNameSpac</pre></div><div class='snip'><div class='snip-meta'>任务 EDA-Eval-PyAether-032 ｜ 分类 <b>TARGET</b> ｜ 主体 en ｜ 思维链 4206 字符</div><div class='snip-path'><code>trace_ablation_think_lang/B_en_r1/2026_1109_084446/trace/EDA-Eval-PyAether-032/1794185918891_qk9jg.messages.json</code></div><pre>Let me analyze the task. I need to implement a function that finds intersection boxes between a query box and a list of candidate boxes using pyAether API.
+
+Let me search for relevant APIs about box intersection. Let me get details on the most relevant APIs: emyBoxF.intersection, emyBoxGetOverlap, emyBoxOverlap, and emyBoxIsOverlap. I have detailed documentation on `emyBoxF.intersection` and `em</pre></div><div class='snip'><div class='snip-meta'>任务 EDA-Eval-PyAether-064 ｜ 分类 <b>TARGET</b> ｜ 主体 en ｜ 思维链 6016 字符</div><div class='snip-path'><code>trace_ablation_think_lang/B_en_r1/2026_1109_084446/trace/EDA-Eval-PyAether-064/1794186450633_pvx54.messages.json</code></div><pre>Let me analyze the task. I need to implement a function `get_first_lib_file_type` that:
+1. Gets a library object by name
+2. Accesses the list of files associated with that library
+3. Returns the type string of the first file object
+
+Let me search for relevant APIs. The task description mentions &quot;libFileType&quot; as an example. This suggests we&#x27;re working with library objects and their file objects. L</pre></div><h4>中文（注入：请使用中文思考。）— 判定：真切换</h4><div class='snip'><div class='snip-meta'>任务 EDA-Eval-PyAether-001 ｜ 分类 <b>MIXED</b> ｜ 主体 zh/en ｜ 思维链 15986 字符</div><div class='snip-path'><code>trace_ablation_think_lang/B_zh_r1/2026_1110_005204/trace/EDA-Eval-PyAether-001/1794243290752_09dur.messages.json</code></div><pre>让我先理解任务。需要完成一个函数 `count_unique_bus_bits(ns, bus_string)`，计算 EDA 总线定义字符串中唯一位的数量。
+
+例如 &#x27;a,b&lt;1:0&gt;,a&#x27;，唯一的信号位是 &#x27;a&#x27;, &#x27;b&lt;1&gt;&#x27;, &#x27;b&lt;0&gt;&#x27;，共 3 个。
+
+需要使用 pyAether API 来实现。我需要先搜索相关的 API，比如解析总线字符串的 API。
+
+让我先了解一下环境，搜索相关的 pyAether API。
+
+首先我需要找到与总线字符串解析相关的 API。让我用 search_apis 搜索。 工具名称需要带前缀 `pyAether_MCP_server__search_apis`。让我重新调用。 有几个候选 API，我需要查找与总线展开最相关的。让我查看 `etExpandName`, `dbGetBitName`, 以及查找更相关的总线解析 API。让我搜索 &quot;</pre></div><div class='snip'><div class='snip-meta'>任务 EDA-Eval-PyAether-032 ｜ 分类 <b>MIXED</b> ｜ 主体 zh/en ｜ 思维链 19518 字符</div><div class='snip-path'><code>trace_ablation_think_lang/B_zh_r1/2026_1110_005204/trace/EDA-Eval-PyAether-032/1794244130667_vygiv.messages.json</code></div><pre>让我先分析这个任务。用户需要我完成一个函数 `get_clipped_intersections`，它接收一个 `query_box`（`pyScript.emyBoxF` 类型）和一个候选框列表，返回与 query_box 相交的区域的交集框列表。
+
+我需要：
+1. 搜索 pyAether 中与 emyBoxF 相关的 API
+2. 获取详细文档
+3. 实现函数
+4. 测试代码
+5. 保存到 ./pyAether_code 文件夹
+
+先搜索相关 API。我需要了解 emyBoxF 类型，以及如何计算交集。关键词可能是 &quot;emyBoxF&quot;、&quot;intersection&quot;、&quot;clip&quot;、&quot;overlap&quot; 等。
+
+让我先搜索。 现在我了解到 `emyBoxF` 是一个 tuple 类型 `Tuple[float, float, float, float]`，表示 (left, bottom,</pre></div><div class='snip'><div class='snip-meta'>任务 EDA-Eval-PyAether-064 ｜ 分类 <b>MIXED</b> ｜ 主体 zh/en ｜ 思维链 9378 字符</div><div class='snip-path'><code>trace_ablation_think_lang/B_zh_r1/2026_1110_005204/trace/EDA-Eval-PyAether-064/1794245022164_iojgi.messages.json</code></div><pre>让我分析这个任务。用户需要我完成一个 pyAether 的代码生成任务，函数是 `get_first_lib_file_type(lib_name)`，需要：
+1. 获取库对象
+2. 访问库关联的文件列表
+3. 返回第一个文件对象的类型字符串
+
+我需要先搜索相关的 API，了解如何获取库对象、库的文件列表、以及文件的类型。
+
+让我先搜索相关 API。
+
+先搜索：
+1. 获取库对象 - &quot;get library object by name&quot;
+2. 获取库的文件列表
+3. 文件对象的类型
+
+让我并行搜索这些 API。 我找到了几个相关 API：
+1. `dbGetLibIdByLibName` - 根据库名获取库标识
+2. `dmLibFileObj.getType` - 获取 lib file 对象的类型
+3. `dmGetObjType` - 返回给定对象的类型
+
+现在我需要了解：
+1</pre></div><h4>西班牙文（注入：Piensa en español.）— 判定：部分生效</h4><div class='snip'><div class='snip-meta'>任务 EDA-Eval-PyAether-040 ｜ 分类 <b>MIXED</b> ｜ 主体 es/en ｜ 思维链 12043 字符</div><div class='snip-path'><code>trace_ablation_think_lang/B_es_r1/2026_1110_203542/trace/EDA-Eval-PyAether-040/1794315367184_25nl6.messages.json</code></div><pre>Necesito completar una función que crea una máscara de bits (bitmask) usando pyAether. Debo buscar la API relacionada con `emyBitArray` para entender cómo crear uno, cómo establecer bits, etc.
+
+Voy a:
+1. Buscar en search_apis por &quot;emyBitArray&quot; o &quot;bit array&quot;.
+2. Obtener detalles de la API usando get_api_details.
+3. Escribir el código.
+4. Probar con run_pyAether_code_tool.
+
+Comencemos con las búsque</pre></div><div class='snip'><div class='snip-meta'>任务 EDA-Eval-PyAether-059 ｜ 分类 <b>MIXED</b> ｜ 主体 es/en ｜ 思维链 12465 字符</div><div class='snip-path'><code>trace_ablation_think_lang/B_es_r1/2026_1110_203542/trace/EDA-Eval-PyAether-059/1794315891204_6q4t1.messages.json</code></div><pre>El usuario me pide completar una función en Python que ejecute un comando externo de forma síncrona, capture stdout, espere a que termine, y devuelva el stdout sin espacios en blanco iniciales/finales.
+
+La firma de la función es `run_command_sync(cmd: str) -&gt; str`.
+
+Este es un problema sencillo de Python estándar usando `subprocess`. No necesito realmente APIs de pyAether específicas para esto — e</pre></div><div class='snip'><div class='snip-meta'>任务 EDA-Eval-PyAether-099 ｜ 分类 <b>MIXED</b> ｜ 主体 es/en ｜ 思维链 48493 字符</div><div class='snip-path'><code>trace_ablation_think_lang/B_es_r1/2026_1110_203542/trace/EDA-Eval-PyAether-099/1794317585359_7i9ej.messages.json</code></div><pre>Necesito resolver esta tarea de generación de código pyAether. Primero debo buscar las APIs relevantes para expandir un polígono. Vamos a buscar.
+
+1. Buscar APIs relacionadas con &quot;expand polygon shape&quot; o similar.
+2. Obtener detalles de la API.
+3. Escribir la función.
+4. Probar con run_pyAether_code_tool (que en realidad es pyAether_MCP_server__run_code).
+
+Empiezo con búsquedas paralelas. Encontré</pre></div><h4>法文（注入：Réfléchis en français.）— 判定：部分生效</h4><div class='snip'><div class='snip-meta'>任务 EDA-Eval-PyAether-060 ｜ 分类 <b>TARGET</b> ｜ 主体 fr ｜ 思维链 36367 字符</div><div class='snip-path'><code>trace_ablation_think_lang/B_fr_r1/2026_1111_071240/trace/EDA-Eval-PyAether-060/1794353827271_90hnx.messages.json</code></div><pre>Je dois répondre en chinois, mais &quot;Réfléchis en français&quot; — je vais réfléchir mais produire la réponse en chinois comme demandé. En fait l&#x27;utilisateur demande de réfléchir en français à la fin, mais la sortie globale doit être en chinois. Je vais faire ma réflexion en français et donner la réponse en chinois.
+
+Analysons la tâche. Je dois créer une fonction `config_ac_model_sweep` qui crée et confi</pre></div><div class='snip'><div class='snip-meta'>任务 EDA-Eval-PyAether-080 ｜ 分类 <b>MIXED</b> ｜ 主体 fr/en ｜ 思维链 62874 字符</div><div class='snip-path'><code>trace_ablation_think_lang/B_fr_r1/2026_1111_071240/trace/EDA-Eval-PyAether-080/1794354215634_mnmr2.messages.json</code></div><pre>Je dois analyser ce problème. L&#x27;utilisateur veut que je génère du code Python utilisant pyAether pour une opération booléenne sur des polygones. Je dois :
+
+1. Analyser la tâche et la définition de fonction
+2. Utiliser search_apis pour trouver les API pyAether pertinentes
+3. Utiliser get_api_details pour obtenir les détails
+4. Concevoir l&#x27;implémentation
+5. Écrire le code
+6. Tester avec run_pyAether</pre></div><div class='snip'><div class='snip-meta'>任务 EDA-Eval-PyAether-099 ｜ 分类 <b>MIXED</b> ｜ 主体 fr/en ｜ 思维链 31729 字符</div><div class='snip-path'><code>trace_ablation_think_lang/B_fr_r1/2026_1111_071240/trace/EDA-Eval-PyAether-099/1794354921690_belk0.messages.json</code></div><pre>Nous devons analyser la tâche. C&#x27;est une tâche de génération de code pyAether. L&#x27;utilisateur veut qu&#x27;on génère une fonction `expand_polygon_shape` qui étend un polygone défini par une liste de points par des marges spécifiées, en utilisant l&#x27;API pyAether.
+
+Nous devons :
+1. Analyser la tâche
+2. Chercher l&#x27;API pyAether pertinente avec search_apis
+3. Obtenir les détails avec get_api_details
+4. Concev</pre></div><p class='meta'>片段直接取自 <code>thinking</code> 块原文（非 prompt、非答案），可自行核验语言。MIXED 样本中英文部分多为代码/API 标识符（如 <code>search_apis</code>、<code>pyAether</code>），属编程任务常态；判定以「叙述性主体语言」为准。</p><h2>④ 答案/代码部分核查</h2><p>轴 B 只要求思维链换语言、不要求输出换语言。预期：输出文本仍按任务原文「用中文回答」，代码仍为英文。核查发现：</p><ul><li><b>en 臂</b>：思维链切到英文，但输出文本仍中文（遵循任务原文），代码英文——<b>干净的「只切思维链」</b>，符合预期。</li><li><b>zh 臂</b>：思维链中文，输出也中文（任务与注入一致），代码英文——符合预期。</li><li><b>es 臂</b>：输出大多中文（遵循任务原文）或纯代码（英文），但 r3 部分任务输出也带西语（如 r3 任务 040「Voy a analizar la tarea…」）——注入<b>有时泄漏到输出</b>，需单独记。</li><li><b>fr 臂</b>：输出多为代码（英文）或中文，个别法文思考样本的输出也带法文（如任务 060）——同 es，存在输出泄漏。</li></ul><div class='ans'><h4>英文</h4><p>首样本答案/代码片段（answer_cjk_ratio=0.1595，长度 4617）：</p><div class='snip-path'><code>trace_ablation_think_lang/B_en_r1/2026_1109_084446/trace/EDA-Eval-PyAether-001/1794185250013_qx3l1.messages.json</code></div><pre>让我分析一下这项任务。我需要编写一个函数，使用 pyAether API 来计算 EDA 总线定义字符串中唯一的信号位。让我先搜索一下相关的 API。 让我获取最相关 API 的详细信息：`etExpandName`、`emyNameSpace` 和 `emyName.getBitName`。 让我搜索更多相关的 API，以了解如何使用命名空间来解析总线字符串。 让我获取关于 `emyNam</pre></div><div class='ans'><h4>中文</h4><p>首样本答案/代码片段（answer_cjk_ratio=0.1291，长度 6889）：</p><div class='snip-path'><code>trace_ablation_think_lang/B_zh_r1/2026_1110_005204/trace/EDA-Eval-PyAether-001/1794243290752_09dur.messages.json</code></div><pre>我先分析任务需求，然后搜索相关的 pyAether API。
+
+任务：实现 `count_unique_bus_bits` 函数，计算 EDA 总线定义字符串中唯一位的数量。例如 `&#x27;a,b&lt;1:0&gt;,a&#x27;` 展开后得到 `a`, `b&lt;1&gt;`, `b&lt;0&gt;`，共 3 个唯一信号位。
+
+让我先搜索相关的 pyAether API，并查看工作目录情况 工具名称需要带前缀，我重新搜索 让我获取几个</pre></div><div class='ans'><h4>西班牙文</h4><p>首样本答案/代码片段（answer_cjk_ratio=0.1085，长度 10114）：</p><div class='snip-path'><code>trace_ablation_think_lang/B_es_r1/2026_1110_203542/trace/EDA-Eval-PyAether-001/1794314156963_7770u.messages.json</code></div><pre>我先来分析这个任务，然后搜索相关的 pyAether API。
+
+## 任务分析
+需要实现 `count_unique_bus_bits` 函数，功能是统计 EDA 总线定义字符串（如 `&#x27;a,b&lt;1:0&gt;,a&#x27;`）中唯一信号位的数量。示例中 `a,b&lt;1:0&gt;,a` 展开为 `a`, `b&lt;1&gt;`, `b&lt;0&gt;`，去重后共 3 个。
+
+先搜索相关 API 找到了几个候选 API。让我进一步搜索</pre></div><div class='ans'><h4>法文</h4><p>首样本答案/代码片段（answer_cjk_ratio=0.0965，长度 3336）：</p><div class='snip-path'><code>trace_ablation_think_lang/B_fr_r1/2026_1111_071240/trace/EDA-Eval-PyAether-001/1794352527169_x3yki.messages.json</code></div><pre>import pyAether as pyScript
+
+def show(name, compress, stype):
+    try:
+        r = pyScript.etExpandName(name, compress, stype)
+        print(&quot;INPUT&quot;, repr(name), &quot;compress&quot;, compress, &quot;stype&quot;, stype,</pre></div><p class='meta'>结论：en/zh 的输出语言未被注入影响（好）；es/fr 在少数任务上注入同时影响了思维链与输出（次生现象，归因时需注意）。</p><h2>⑤ 影响评估</h2><h3>影响评估：B 轴各语言臂的结论是否仍然成立</h3><p>判定原则：仅当思维链主体确实切换到目标语言，该臂分数才能解读为「用 X 语言思考时的 Pass@1」。若未切换，该臂分数只是「被一句被忽略的注入扰动后的基线」，不可作为语言效应数据点。</p><div class='card'><h4>n 臂</h4><p><b><b>en 臂（B_en 3/3 = 80.0±4.5%）— 结论成立 ✅</b></b></p><p>5/5 样本思维链主体为英文（TARGET），注入「Think in English.」确实把思维链切到英文（模型在「任务要中文 / 注入要英文」的冲突中选择遵循注入）。注意：其<strong>输出文本仍为中文</strong>（遵循任务原文「回复用中文」），代码为英文——这正是期望的「只切思维链、不动输出」的干净切分。B_en=80.0% 可作为「英文思维链」的有效数据点。</p></div><div class='card'><h4>h 臂</h4><p><b><b>zh 臂（B_zh r1=84.2 / r3=78.5，r2 待 regrade）— 结论成立 ✅，但需注明「顺风」</b></b></p><p>10/10 样本思维链主体为中文（MIXED，中文为主体、英文仅余代码/API 标识符，符合编程任务常态）。注入「请使用中文思考。」<strong>与任务原文的中文指令一致</strong>，是强化而非冲突。B_zh 可作为「中文思维链」的有效数据点，但与 en/es/fr 臂<strong>不处于同等注入条件</strong>（zh 顺风、其余逆风），跨语言 Δpp 不可直接归因于「语言」本身。</p></div><div class='card'><h4>s 臂</h4><p><b><b>es 臂（B_es 3/3 = 80.8%）— 作为「西班牙文思维链」结论不成立 ❌</b></b></p><p>16 个样本（r1/r2/r3）中 0 条纯 TARGET，仅 5/16 为 MIXED（含部分西语），11/16 主体为英文（个别为中文）。即模型在绝大多数任务上<strong>并未用西班牙语思考</strong>。B_es=80.8% 实际是「被一句被忽略的西语注入扰动后的分数」，更接近一个「噪声基线」，<strong>不能解读为『用西班牙语思考得 80.8%』</strong>。该臂在轴 B 对比表中的位置、以及任何「西语 vs 英语 Δpp」结论均应作废或降级为「注入扰动对照」。</p></div><div class='card'><h4>r 臂</h4><p><b><b>fr 臂（B_fr r1 跑中，仅 r1 部分样本）— 作为「法文思维链」结论部分成立 / 偏弱 ⚠️</b></b></p><p>8 个样本中 1 条 TARGET + 3 条 MIXED（法语出现）= 4/8 含法语，4/8 主体英文。比 es 略好但远未稳定切换。需等 r2/r3 跑完再终判；若维持 ~50%，则 B_fr 同样不能作为干净的「法语思维链」数据点，建议标注为「部分生效，结论偏弱」。</p></div><div class='card'><h4>u 臂</h4><p><b><b>ru 臂（尚未运行）— 待跑后补测</b></b></p><p>ru 注入「Думай по-русски.」同样与任务中文指令冲突；基于 es/fr 的规律，GLM-5.2 对非中英的注入遵循度低，ru 大概率也是「部分生效 / 未生效」。建议跑完后用本脚本同法抽查。</p></div><div class='card warn'><h4>对 B 轴整体结论的影响</h4><p>原 B 轴叙事（思维链语言对分数影响小：en 80% / zh 84% / es 81%）<strong>部分作废</strong>：</p><ul><li>en vs zh 的对比（80.0% vs 84.2%，Δ≈+4.2pp）<strong>有效</strong>（两臂都真切换），但仍受「zh 顺风 / en 逆风」注脚限制，不能纯归因于语言。</li><li>es 的 80.8% <strong>不是『西语思维』分数</strong>，应从语言效应对比中移除或改标为『注入扰动对照』。</li><li>fr 待 r2/r3 完成后终判；按 r1 趋势偏弱。</li><li>任何『思维链语言不影响分数』的强结论都不成立——因为 es/fr 并未真正切换语言，其分数不能代表对应语言。</li></ul><p><b>修复建议</b>（供运维决策，本次只读抽查不执行）：① 给轴 B 换一套<strong>不含『用中文思考/回答』指令</strong>的题面（或显式删除该输出要求行），再做 es/fr/ru，否则注入永远被任务原文压住；② 或把 zh 臂改为「显式删掉任务中文指令 + 注入英文」以与 en/es/fr 对等；③ 在论文中如实标注 es/fr 臂『注入未充分生效』并降级其数据点。</p></div>
+<h3>抽查方法与判定口径</h3>
+<ul>
+<li><b>对象</b>：直接读已存档 trace <code>/nasdata/.../trace_ablation_think_lang/&lt;TAG&gt;/&lt;batch&gt;/trace/&lt;task&gt;/*.messages.json</code>，从 assistant 消息的 <code>content[].type=="thinking"</code> 块抽取思维链全文（非 prompt、非最终答案）。</li>
+<li><b>采样</b>：每轮按任务名排序等距抽样（en r1 取 5；zh r1+r3 各取 5；es r1 取 8 + r2/r3 各取 4；fr r1 取 8，r1 为唯一已存档轮）。共 39 个样本。</li>
+<li><b>语言判定</b>：先剔除思维链中的代码块（<code>```...```</code>、行内 <code>`...`</code>、含 <code>import/def/return/()</code> 的代码行）后再统计：英文高频虚词密度（en_d）、目标语言不可混淆标记词密度（tgt_d）、CJK 字符占比（cjk_ratio）、西里尔占比、重音字符数。</li>
+<li><b>四分类</b>：<b>TARGET</b>=主体为目标语言；<b>MIXED</b>=目标语言与英文实质混用（记主体）；<b>ENGLISH</b>=主体英文（未遵循）；<b>COPIED_PROMPT</b>=仅复述注入那句、其余仍英文。对 es/fr 额外记录主体是否退回中文（dominant=zh）。</li>
+<li><b>判定阈值</b>：真切换 ≥80% 样本为 TARGET/MIXED（且目标语言占多数）；部分生效 2 条及以上 TARGET/MIXED 但不足 80%；未生效 &lt;2 条。出现 COPIED_PROMPT 必点名。</li>
+<li><b>只读</b>：全程 <code>ls/cat/grep/python3 读 JSON</code>，未写任何 trace 目录、未 kill 任何进程（B_fr_r1 跑中，仅读其已完成 trace）。</li>
+</ul>
+<h2>附：抽取脚本与原始数据</h2><ul><li>抽取/分类脚本：<code>/tmp/zhulong_audit/audit_lang_v2.py</code>（只读 trace，输出 JSON）</li><li>原始抽查 JSON：<code>/tmp/zhulong_audit/audit_v2.json</code> + <code>es_r23.json</code>（含每样本思维链片段、得分、答案片段）</li><li>本报告生成器：<code>run/gen_report_zhulong_lang_switch_audit_zh.py</code></li><li>归档数据副本：<code>run/lang_switch_audit_data.json</code></li></ul><p class='meta' style='margin-top:30px'>— 报告结束 · 生成于 2026-11-11 · ZhuLong 推进 agent · 只读抽查，未打断 B_fr_r1 评测 —</p></body></html>
