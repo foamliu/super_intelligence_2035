@@ -1036,3 +1036,17 @@ peek:					parked		2026-11-10 23:22	peek: consultation verdi-fsdb-warning-paste
 1794296046202_t825w	sherlock	hfeg0plg104	0	spice_sim	parked		2026-11-11 08:18	DRC M1A_LS rule semantic explanation, wrong-shard C physical_verify
 1792041709940_x5fd4	t0002801	hfeg0plg49	119	characterization	case	EDA-Eval-DesignFlow-GmidLutRunSelect-001	2026-11-11 08:59	
 1794361090583_vi4ut	vincentz	hfeg0pkn004	206	spice_sim	parked		2026-11-11 10:30	input netlists /proj/drvqa/ permission-denied (vincentz-owned); trace has only diff-excerpt+grep, cannot reconstruct full 6672-line netlists; deep-read saved trace_deepreads/vi4ut_netlist_compare.md; revive if perms open
+1793843578065_vamug	rongtaoy	hfeg0pkn005	274	spice_sim	parked		2026-11-11 11:19	post-snap fresh: IO-extract Q&A turn1+script-modify goal; spice ratio 7%; /proj/ddgoa perm risk; borderline parked
+1794357676593_s5o5k	e0047527	hfeg0pkn005	153	eda_other	parked		2026-11-11 11:19	post-snap fresh: bridge-connection diagnostics not produce
+1794359298326_ho1cr	e0039602	hfeg0pkn005	57	eda_other	parked		2026-11-11 11:19	post-snap fresh: LLM-review-code refactor not EDA
+1794362790365_5kysh	e0039602	hfeg0pkn005	57	eda_other	parked		2026-11-11 11:19	post-snap fresh: similar-model-match Q&A not produce
+1794362305034_y7tif	lein	hfeg0pkn005	49	eda_other	parked		2026-11-11 11:19	post-snap fresh: regression-diff Q&A not produce
+1794363314971_wjyi5	junweix	hfeg0pkn005	8	spice_sim	parked		2026-11-11 11:19	post-snap fresh: tran.sp analyze Q&A 8 tool_use too short
+1794363743004_v11bs	my7li	hfeg0pkn005	41	eda_other	parked		2026-11-11 11:19	post-snap fresh: status-check not produce
+1794278219158_z95l6	e0041126	hfeg0plg100	36	eda_other	parked		2026-11-11 11:19	post-snap fresh: verilog regression wrong domain
+1794361820675_nqb2j	e0030760	hfeg0plg100	144	eda_other	parked		2026-11-11 11:19	post-snap fresh: desktop-file-move not EDA
+1794291355248_7bjc8	daiweilu	hfeg0plg101	36	eda_other	parked		2026-11-11 11:19	post-snap fresh: verilog .v explanation not spice
+1794357306964_9d0eh	e02141	hfeg0plg20	21	eda_other	parked		2026-11-11 11:19	post-snap fresh: Sentaurus TCAD deck search not spice/char
+1794361050224_6ipfr	phoebeli	hfeg0plg96	18	spice_sim	parked		2026-11-11 11:19	post-snap fresh: how-to-PWL-vsource Q&A not produce
+1794361655307_euuvj	xinqiaoz	hfeg0pkn002	67	eda_other	parked		2026-11-11 11:19	post-snap fresh: handoff-context-restore not produce
+1794362986412_knsmj	cadmin	hfeg0plg55	4	eda_other	parked		2026-11-11 11:19	post-snap fresh: strmIn-log warning-type layout not spice 4 tool_use short
