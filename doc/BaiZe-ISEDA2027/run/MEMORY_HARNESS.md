@@ -4,19 +4,21 @@ WAITING: 0
 
 ## 📊 进度快照
 
-PHASE:        R2167 incr_eval DONE(+5resolved 1369→1374)+cleanup 4empty+deepseek predict RESTARTED(7/7 ALIVE)+双报告REGENERATED(R2167)·CPU/MEM PASS·gw_proxy 9092/9093 UP
+PHASE:        R2168 incr_eval RUNNING(setsid detached·cline batch 5NEW eval in progress)+cleanup 0empty+双报告REGENERATED(R2168)+predict 7/7 ALIVE·CPU/MEM PASS·gw_proxy 9092/9093 UP
 已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5 R1785-R2167·TB4 0passed(能力)·TB-2.1 oracle5/5·R1789 eval 7/7DONE·R1804双报告交付·R1969-R2167 incr_eval+监控+报告·R2167 incr_eval(9NEW:cline2+opencode5+cc1+hermes1=+5resolved+3failed)+cleanup 4empty+deepseek predict RESTARTED+双报告REGEN(R2167)
-当前动作:     R2167: incr_eval DONE(11:36→11:42·6min·9NEW eval:cline2(1res+1fail)+opencode5(4res+1fail)+cc1(1res)+hermes1(0res+1fail)=+5resolved 1369→1374)+cleanup 4empty(cc2/pi2)+deepseek predict RESTARTED(PID2093585·gw_proxy_dsh 9093 UP HTTP200·dsh adapter silent-exit patch=0 known)+predict 7/7 ALIVE+CPU PASS(swebench 0.5核)+MEM PASS+双报告REGEN(R2167·7way=1374total/cline159/opencode379/hermes345)·W:0
+当前动作:     R2168: incr_eval RUNNING(setsid detached PID4095939·12:00:56 launch·cline 217evald/222real/5NEW eval in progress·matplotlib-24627 test suite 重·~9min/instance)+cleanup 0empty+双报告REGEN(R2168·7way=1374total(待incr_eval完成后更新)/cline159/opencode379/hermes345·cline special)+predict 7/7 ALIVE(cline219·codex97·opencode464·cc198·pi189·hermes386·dsh174)+CPU PASS(eval容器100%=1核·host load37/224)+MEM PASS+gw_proxy 9092/9093 UP·W:0
 下一步:       ①predict继续产real patch向500推进(7路ALIVE·opencode467最接近) ②dsh adapter silent-exit继续诊断(§10:10 item4) ③§22:4x两基准7路全交付(各路满500) ④持续监控CPU/MEM ⑤research日报2026-11-11建议:报告加6列(continuous_score/workflow_calls/tokens/usd)纳入下轮 ⑥下轮incr_eval待新real patch积累
 阻塞:         <各路尚未满500·§22:4x未全交付·dsh adapter silent-exit=已知hard fault>
 ERROR_COUNT:  0
-  体积: TASK=20.6KB / MEMORY=16.6KB(均<32KB)
-  cline专项小结: predict_glm53=219files/219real/159resolved/57failed/1infra/0empty(R2167 eval:1NEW resolved+1fail·100%real rate)·C1:219real/159resolved·C2:57failed=100%能力差·C3:empty归零(resume fix R1733)·C5:报告R2167 REGEN(cline special)·失败top1=能力差
+  体积: TASK=20.6KB / MEMORY=16.8KB(均<32KB)
+  cline专项小结: predict_glm53=222files/219real/159resolved/57failed/1infra/0empty(R2168 incr_eval running·3empty→real since R2167)·C1:219real/159resolved·C2:57failed=100%能力差·C3:empty归零(resume fix R1733)·C5:报告R2168 REGEN(cline special)·失败top1=能力差
 
 > 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
 
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 ### 本唤醒流水
+> [12:09] R2168 DONE: incr_eval LAUNCHED(setsid detached PID4095939·12:00:56·cline 217evald/222real/5NEW eval RUNNING·matplotlib-24627 test suite 重·~9min/instance·CPU PASS eval容器100%=1核·host load37/224)+cleanup 0empty+双报告REGEN(R2168·10090B+7342B·mtime12:09·7way=1374total/cline159/opencode379/hermes345·cline special)+predict 7/7 ALIVE(cline219·codex97·opencode464·cc198·pi189·hermes386·dsh174)+MEM PASS+gw_proxy 9092/9093 UP·C4:cline 222f/219r/159res/57fail/0empty·research日报2026-11-11建议(WorkflowArena:报告加6列continuous_score/workflow_calls/tokens/usd)已纳入下轮·未完成指令:有(§10:10+§22:4x)·W:0
+
 > [11:43] R2167 DONE: incr_eval完成(9NEW eval:cline2→1res+1fail·opencode5→4res+1fail·cc1→1res·hermes1→0res+1fail=+5resolved 1369→1374·11:36→11:42·6min)+cleanup 4empty(cc2/pi2)+deepseek predict RESTARTED(PID2093585·gw_proxy_dsh 9093 UP HTTP200·dsh adapter silent-exit patch=0 known hard fault)+predict 7/7 ALIVE(首次全活)+CPU PASS(swebench 0.5核)+MEM PASS(763G/2Ti·/data 5.8T 18%)+双报告REGEN(R2167·10092B+7344B·mtime11:43·7way=1374/cline159/opencode379/hermes345·cline special)·gw_proxy 9092/9093 UP·C4:cline 219f/219r/159res/57fail/0empty·research日报2026-11-11建议(报告加6列continuous_score/workflow_calls/tokens/usd)已纳入下轮·未完成指令:有(§10:10+§22:4x)·W:0
 
 > [10:52] R2166 DONE: incr_eval完成(12NEW eval:cline4→+3res+1infra·codex1→+1res·opencode6→+6res·cc1→+1res·pi4→+4res·hermes1→+1res=+16resolved 1353→1369·10:29→10:51·22min)+cleanup 9empty(cc5/cline1/codex1/hermes2)+双报告REGEN(R2166·7way=1369/cline158/opencode376/hermes345·cline special)·CPU PASS(pytest 1.1核)·MEM PASS·predict 6/7 ALIVE(dsh DEAD)·gw_proxy 9092/9093 UP·C4:cline 215f/215r/158res/56fail/1infra/0empty·未完成指令:有(§10:10+§22:4x)·W:0
