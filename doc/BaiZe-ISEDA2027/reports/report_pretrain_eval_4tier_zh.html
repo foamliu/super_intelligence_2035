@@ -38,12 +38,12 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
 <div class="wrap">
 <header class="hero">
   <h1>BaiZe 2B 预训练 · 四层能力评测报告</h1>
-  <div class="sub">Mamba2-hybrid 2.22B · S1 生产 run（iter 160k+/700k, ~675B tokens）</div>
+  <div class="sub">Mamba2-hybrid 2.22B · S1 生产 run（iter 170k+/700k, ~715B tokens）</div>
   <div class="meta">
     <span>📅 2026-11-12</span>
     <span>🏗 Mamba2-hybrid 2.22B</span>
-    <span>🔥 训练 iter≈169.7k / 700k · step~7.0s<7.4s✅ · ckpt 168k · lr-decay-iters=0(stable段,decay未配置) · GPU 8×100%/75GB · 170k ETA~35min · 🔄 L1 autoqueue已启动(PID36398·轮询iter_0170000)</span>
-    <span>📊 L1: 16 ckpt ✅(160k=58.13%新高) · 170k autoqueue轮询中 | L2: 6/6完成 ✅ GSM8K=0%🔴 MMLU=23.16%(≈随机) BBH=0%🔴 MATH=0%🔴 HumanEval=0%🔴 MBPP=0%🔴 · 🟢<b>HF transformers生成正常</b>→llama.cpp SSM bug是0%主因(非模型完全无能) · GSM8K HF重评运行中 | L3: 🔴TB 0/2(待HF重测) | L4: 🔴/nasdata/未挂载.29+SSH .15/.17均不通</span>
+    <span>🔥 训练 iter≈170.4k / 700k · step~7.1s<7.4s✅ · ckpt 170k已落盘 · lr-decay-iters=0(stable段,decay未配置) · GPU 8×~90%/75GB · 🔄 170k L1 eval pipeline运行中(GGUF转换17%·749MB/4.44G·~1.6MB/s·ETA~38min→eval→report)</span>
+    <span>📊 L1: 16 ckpt ✅(160k=58.13%新高) · 170k GGUF转换中(17%,eval v3等待转换完成) | L2: 6/6完成 ✅ GSM8K=0%🔴 MMLU=23.16%(≈随机) BBH=0%🔴 MATH=0%🔴 HumanEval=0%🔴 MBPP=0%🔴 · 🟢<b>HF transformers生成正常</b>→llama.cpp SSM bug是0%主因(非模型完全无能) · GSM8K HF=0/10(数学确实弱,生成连贯) | L3: 🔴TB 0/2(待HF重测) | L4: 🔴/nasdata/未挂载+SSH .15/.17均超时</span>
   </div>
   <div style="margin-top:12px;font-size:12.5px;background:rgba(0,0,0,.18);border-radius:8px;padding:8px 12px;opacity:.95">
     ⚠️ 本报告是<b>训练监控与决策依据</b>，<b>不进论文正文</b>（2026-11-10 用户令）。用户关注点（2026-11-11）：<b>如何拿到更好的结果</b>。
@@ -472,14 +472,12 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
   </table>
 </div>
 <div class="card">
-  <h3>本轮(#2024)动作</h3>
+  <h3>本轮(#2028)动作</h3>
   <ol>
-    <li><b>训练健康确认</b>：iter 169,670/700,000（24.2%）· step ~7028-7081ms<7.4s✅ · loss 2.04-2.06 · GPU 8×100%/75GB · lr=1e-3(stable段) · 0 NaN/skip · PID 146283 · 实测命令：<code>tail -5 /proc/146283/fd/1</code></li>
-    <li><b>L1 autoqueue 170k 已启动</b>：创建 <code>baize_l1_autoqueue_170k.sh</code> 并在 .29 后台启动(PID 36398)·每 5min 轮询 <code>iter_0170000</code> checkpoint·出现后自动验证训练健康(step<7.4s)→export HF→convert GGUF→llama-server(-t4,nice19)→lm_eval 8-set limit=100→刷新 scaling report·全程 CPU 不占 GPU·无需等 agent 唤醒</li>
-    <li><b>170k ckpt ETA</b>：最新 raw=iter_0168000(168k)·170k 需 ~330 步×7.0s ≈ 35min · autoqueue 自动捕获</li>
-    <li><b>L2/L3/L4 状态不变</b>：L2 6/6 完成(5/6=0%,MMLU=23.16%)·L3 TB smoke 0/2 reward(生成退化)·L4 BLOCKED(/nasdata/未挂载+SSH不通)</li>
-    <li><b>无 eval 进程</b>：.29 pgrep llama-server/lm_eval=0→CPU 全给训练✅</li>
-    <li><b>research 日报 2026-11-12</b>：pretrain 建议=Day-0 探针(单batch过拟合/标签打乱/梯度哈希)→适用于下次训练重启，本轮不actionable</li>
+    <li><b>训练健康确认</b>：iter 170,360/700,000（24.3%）· step ~7058-7448ms（多数<7.4s✅，1次7448ms微超） · loss 2.035 · GPU 8×~90%/75GB · lr=1e-3(stable段) · 0 NaN/skip · PID 146283 · 实测命令：<code>tail -5 /proc/146283/fd/1</code></li>
+    <li><b>170k GGUF转换监控</b>：转换进程PID 615648运行中·17%(749MB/4.44G)·~1.6MB/s·ETA~38min·此前stale find进程(PID 2329849,NFS扫描29min)已清理(可能是step 7514ms spike根因)</li>
+    <li><b>eval v3脚本启动</b>：旧eval脚本(15min timeout)因GGUF转换慢而超时→已创建v3脚本(等待转换进程退出→验证GGUF>3GB→eval→report)·PID 1388080后台运行中</li>
+    <li><b>L2/L3/L4 状态不变</b>：L2 6/6 完成(5/6=0%,MMLU=23.16%)·L3 TB smoke 0/2 reward(生成退化)·L4 BLOCKED(/nasdata/未挂载+SSH .15/.17超时)</li>
     <li><b>核心发现（不变·待用户拍板）</b>：L2/L3/L4 低分/空白同一根因——code+math 数据占比 26%(vs DeepSeek 最优 60%) + stable 阶段未 decay + llama.cpp SSM 生成 bug · 建议方案 A(decay 4:2:4)/B(SFT)/C(A+B)</li>
   </ol>
   <div class="alert">
@@ -547,7 +545,7 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
 </div>
 
 <footer>
-  BaiZe pretrain 线 · 四层能力评测报告 · 2026-11-12 02:52 更新(#2026 · 🟢HF transformers生成正常=llama.cpp SSM bug是L2=0%主因 · GSM8K HF 10-sample=0/10(数学确实弱但生成连贯) · 训练健康iter170k/700k(24.3%) step~7.1s<7.4s✅ · 170k ckpt已落盘(autoqueue GGUF转换失败:p6_tf5 huggingface_hub版本不兼容) · L1 16/16(160k=58.13%) · L2 6/6完成(待HF重评:GSM8K=0%HF确认,HumanEval/MBPP待测) · L3 TB 0/2(待HF重测) · L4 BLOCKED) · 评测数字仅用于训练监控，不进论文正文
+  BaiZe pretrain 线 · 四层能力评测报告 · 2026-11-12 03:30 更新(#2028 · 170k GGUF转换18%进行中(808MB/4.44G,~1.6MB/s)·eval v3脚本等待转换完成·stale find进程已清理 · 训练健康iter170.4k/700k(24.3%) step~7.1s<7.4s✅ · L1 16/16(160k=58.13%,170k进行中) · L2 6/6完成(GSM8K=0%HF确认,MMLU=23.16%) · L3 TB 0/2(待HF重测) · L4 BLOCKED(/nasdata/未挂载+SSH超时)) · 评测数字仅用于训练监控，不进论文正文
 </footer>
 </div>
 </body>
