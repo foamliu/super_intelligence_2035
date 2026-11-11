@@ -7737,3 +7737,98 @@ SFT 训练脚本 (`baize_posttrain_sft_surrogate.sh`) 的 ckpt 输出为 HF safe
 
 **数据溯源**：loss 曲线来自 `/tmp/baize_posttrain_sft_surrogate.log` grep 实测；训练配置来自 `ps -eo args=` 实测进程命令行；eval dry-run 实测输出。无伪造。
 
+---
+
+## §R172 (2026-11-11 wake241) Phase 2 SFT 训练完成 + SFT ckpt serve 验证 + Phase 2 里程碑报告
+
+**背景**：wake239 启动的 Phase 2 替身 SFT 训练（72 步 / 3 epoch）在 wake241 确认完成（rc=0）。本节记录训练完成状态、checkpoint serve 验证、以及 Phase 2 里程碑报告交付。
+
+### 1. SFT 训练完成确认
+
+| 项目 | 值 |
+|:--|:--|
+| 起止时间 | 07:37:01 → 08:01:00（24 min） |
+| 退出码 | rc=0（成功） |
+| 总步数 | 72（3 epoch × 24 步/epoch） |
+| 最终 train loss | 0.545（step 72） |
+| 最终 val loss | 0.583 |
+| train/val gap | 0.038（无过拟合） |
+| Epoch 1 loss 范围 | 2.332 → 0.770（快速下降） |
+| Epoch 2 loss 范围 | 0.712 → 0.590（持续下降，方差增大） |
+| Epoch 3 loss 范围 | 0.627 → 0.545（趋于收敛） |
+
+**数据溯源**：`/tmp/baize_posttrain_sft_surrogate_full.log` 逐行 grep 实测。
+
+### 2. Checkpoint 清单
+
+| Checkpoint | 保存时间 | 大小 | 文件 |
+|:--|:--|:--|:--|
+| global_step_20 | 07:43 | 4.7GB | model-00001-of-00002.safetensors (4.5GB) + model-00002 (0.5GB) + tokenizer + config |
+| global_step_40 | 07:50 | 4.7GB | 同上 |
+| global_step_60 | 07:56 | 4.7GB | 同上 |
+| global_step_72 | 08:00 | 4.7GB | 同上（最终 checkpoint） |
+
+路径：`sft_surrogate_runs/minicpm5_pyaether_v1/global_step_{20,40,60,72}/`
+总占用：18.8GB（NFS 工作副本）
+
+### 3. SFT ckpt serve 验证
+
+- 脚本：`baize_posttrain_sft_surrogate_serve.sh`（R171 桥接脚本，自动检测 global_step_72）
+- GPU：6（A40，SFT 训练后释放）
+- 端口：8096
+- served-model-name：`minicpm5-sft`
+- VRAM：37.8GB
+- vLLM 版本：0.7.3（transformers 4.49.0）
+- 加载方式：`setsid` 启动（避免 shell timeout 杀进程）
+- **Smoke test**：POST /v1/chat/completions → "def add(a, b): return a + b" ✅
+
+**结论**：verl FSDP2 保存的 HF safetensors checkpoint 可直接被 vLLM 加载服务，无需格式转换。SFT recipe 端到端可执行性（训练 → 保存 → serve → 推理）完全验证通过。
+
+### 4. Stale 进程清理
+
+- PID 3231640：sglang.launch_server on :30000（22h 旧进程，不占 GPU 但有 30+ inductor compile_worker zombie children）
+- 处置：`kill -TERM 3231640` → 验证 :30000 端口已释放
+- 影响：释放 ~30 个 zombie 进程占用的 RAM
+
+### 5. GPU 7 serve 占位（17:10 令）
+
+- GPU 7 上启动 vLLM serve MiniCPM5-2B
+- 端口：8095
+- served-model-name：`minicpm5-2b-gpu7`
+- VRAM：37.8GB
+- 目的：sandbox 未通期间持续占住 GPU 7，防止被挪用
+
+### 6. 全 GPU / 端点状态
+
+| GPU | 端口 | model | VRAM | 状态 |
+|:--:|:--:|:--|:--:|:--|
+| 0-3 | 8099 | qwen3.8-27b | ~45GB/卡 | ✅ root SGLang |
+| 4 | 8098 | minicpm5-2b | 38GB | ✅ Phase1 eval |
+| 5 | 8097 | minicpm5-2b-gpu5 | 37.8GB | ✅ 占位 |
+| 6 | 8096 | minicpm5-sft | 37.8GB | ✅ SFT ckpt serve |
+| 7 | 8095 | minicpm5-2b-gpu7 | 37.8GB | ✅ 占位 |
+
+5 端点全健康（curl /v1/models 全 ✅）。
+
+### 7. Phase 2 里程碑报告
+
+- 文件：`reports/report_posttrain_sft_surrogate_zh.html`
+- 大小：20.4KB
+- 节数：12（摘要/配方/数据/损失曲线SVG/ckpt清单/serve验证/GPU占用/评测状态/红线合规/关键发现/下一步/资产索引）
+- 约束：0 script, 0 外链, 自包含
+- 替身预演声明：显著标注「MiniCPM5-2B Llama 架构 ≠ BaiZe Mamba2 架构，收益不可迁移」
+
+### 8. 阻塞与下一步
+
+| 项 | 状态 |
+|:--|:--|
+| Phase 2 SFT 训练 | ✅ 完成（rc=0, 72 步） |
+| SFT ckpt serve | ✅ 验证通过（GPU6:8096） |
+| Phase 2 报告 | ✅ 交付（20.4KB） |
+| post-SFT eval | 🔴 阻塞于沙盒 ACL（46th wake CLOSED） |
+| Phase 1 baseline eval | 🔴 同上 |
+| Phase 3 RL | ⏳ SFT ckpt ✅，待沙盒 |
+| P3 正式训练 | ⬜ 等 pretrain ckpt (ETA≈2026-12-25) |
+
+**数据溯源**：训练日志 `/tmp/baize_posttrain_sft_surrogate_full.log`；serve 日志 `/tmp/vllm_sft_serve_gpu6.log`；GPU 状态 `nvidia-smi` 实测；端点健康 `curl /v1/models` 实测。无伪造。
+
