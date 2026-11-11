@@ -931,7 +931,7 @@ wl9i4					parked		2026-11-05 22:49	交互shell驱动+Q&A n752大
 1789710078047_rmlwl					parked		2026-11-06 04:12	trivial U#0(当前工作路径是什么)+doc-gen PDN
 1793017242561_zdwid					parked		2026-11-06 04:12	Q&A(svrf2pvrs工具能读吗)+root-cause debug DRC domain
 1791595952949_6c3cw					parked		2026-11-06 04:12	skill-loading netlist-timing-analyzer(U#0=skill_instructions)
-1792748499142_mbb60					parked		2026-11-06 04:12	skill-loading waveview-fsdb-readerV2-2(U#0=skill_instructions)+root-cause
+1792748499142_mbb60					case	PdnCurrentInjectAudit-001	2026-11-11 20:23	r522 re-eval: U#49 SPICE PDN current-injection analysis is clean goal-expression turn (parked was for U#0 skill-loading); jxwang fresh-USER
 1790647247167_hoq7e					parked		2026-11-06 04:12	root-cause debug(DC不收敛,用户给假设'会不会是选项')
 1790063606033_0erlw					parked		2026-11-06 04:12	skill-loading run-regression(U#0=skill_instructions)
 1792137927597_f4kc0					parked		2026-11-06 04:12	Q&A(你能读波形吗)+代码分析Q&A
