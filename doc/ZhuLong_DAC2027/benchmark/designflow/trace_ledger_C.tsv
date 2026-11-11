@@ -693,3 +693,4 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked		2026-11-09 20:39	RAG-looku
 1790217091100_uks8u	lizwen	hfeg0plg89	220	layout_aether	case	EDA-Eval-DesignFlow-DrcPatQueryEnrich-001	2026-11-11 19:05	
 1784166233879_nd1or	e0014566	hfeg0pkn005	67	pg_layout	case	EDA-Eval-DesignFlow-PwrViaAgentGen-001	2026-11-11 19:59	
 1790064242187_1dh6s	e0031668	hfeg0pkn003	626	physical_verify	case	EDA-Eval-DesignFlow-ErcSetupGen-001	2026-11-11 20:54	
+1793675505011_qxaiv	junwangt	hfeg0plg07	169	physical_verify	parked		2026-11-11 22:48	deepread done (321msgs/67-line orig->LDDB2.0_optimized 7-editor-patch); budget-limited park, synth deferred to future round (DrcSwitchSweepOpt-001); risk: Parallel::ForkManager module-availability in SUT sandbox; trace_deepreads/1793675505011_qxaiv_junwangt_drc_switch_sweep_opt.md
