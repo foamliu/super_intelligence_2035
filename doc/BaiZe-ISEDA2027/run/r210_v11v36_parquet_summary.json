@@ -1,0 +1,73 @@
+{
+  "round": "R210",
+  "wake": "wake279",
+  "date": "2026-11-11",
+  "conversion": {
+    "status": "PASS",
+    "input": "sft_pyaether_corpus_v11_v36_merged.jsonl",
+    "output": "sft_pyaether_corpus_v11_v36_merged.parquet",
+    "rows": 1029,
+    "parquet_rows": 1029,
+    "errors": 0,
+    "size_bytes": 270727,
+    "size_mb": 0.26,
+    "schema_cols": [
+      "conversation",
+      "pair_id",
+      "type",
+      "api_used",
+      "contamination_check"
+    ],
+    "types": [
+      "S1",
+      "S1_doc_to_code",
+      "S2_api_lookup",
+      "S3",
+      "S3_multi_api_chain",
+      "S4",
+      "S5",
+      "S6",
+      "S7_corrected_prompt"
+    ],
+    "type_distribution": {
+      "S4": 217,
+      "S5": 212,
+      "S1": 208,
+      "S6": 188,
+      "S3": 179,
+      "S1_doc_to_code": 10,
+      "S2_api_lookup": 10,
+      "S3_multi_api_chain": 3,
+      "S7_corrected_prompt": 2
+    },
+    "contamination_check_values": {
+      "PASS": 1029
+    },
+    "empty_prompt": 0,
+    "empty_completion": 0,
+    "first_row_conv_roles": [
+      "system",
+      "user",
+      "assistant"
+    ],
+    "first_row_conv_lengths": [
+      134,
+      867,
+      236
+    ],
+    "v5_schema_cols": [
+      "conversation",
+      "pair_id",
+      "type",
+      "api_used",
+      "contamination_check"
+    ],
+    "schema_match_v5": true
+  },
+  "contamination_fingerprint_scan": {
+    "status": "PASS",
+    "eval_entry_points": 488,
+    "corpus_pairs_mentioning_eval_api": 1022,
+    "note": "API names are ALLOWED in training corpus. Informational only."
+  }
+}
