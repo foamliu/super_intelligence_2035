@@ -1,5 +1,31 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
-WAITING: 0（🔴 2026-11-11 用户令「四层评测拿更好结果」执行中。**v5 MATH运行中(30/100~41s/it ETA~47min)**·**v6已启动:修复confirm_run_unsafe_code+repeat_penalty=1.3测试·等v5完后自动运行**·**L1 160k验证:58.13%新高✅**·**数据配比确认:code19%+math7%=26%·远低于DeepSeek 60%**·**🔬vLLM脚本已备·阻塞于GPU窗口**·**L3脚本已建·模型生成退化·L4数据在.15不可达**·**待决策:方案A(decay混入4:2:4)/B(SFT)/C(A+B)**·**论文§4.6已刷新iter166730+PDF编译0err✅**·训练健康iter166730 step~7.1s<7.4s✅）
+WAITING: 0（🔴 2026-11-11 用户令「四层评测拿更好结果」执行中。**v5 MATH运行中(46/100~42s/it ETA~37min)**·**v6已启动:修复confirm_run_unsafe_code+repeat_penalty=1.3测试·等v5完后自动运行**·**L1 160k验证:58.13%新高✅**·**数据配比确认:code19%+math7%=26%·远低于DeepSeek 60%**·**lr-decay-iters=0确认:decay阶段未配置·需data线准备4:2:4数据后启动decay**·**🔬vLLM脚本已备·.17 SSH不通·阻塞于GPU窗口**·**L3脚本已建·模型生成退化·L4数据在.15 SSH不通**·**🔴待决策(用户拍板):方案A(decay混入4:2:4数据)/B(SFT)/C(A+B)→详见下方待决策区**·**论文§4.6已刷新iter166730+PDF编译0err✅**·训练健康iter~167k step~7.1s<7.4s✅）
+> 2026-11-11 20:35 #1993: **四层报告刷新+重复v5清理+decay配置确认+待决策方案整理轮·训练健康 iter~167k/700k step~7.1s<7.4s✅·v5 MATH 46/100运行中🟡**·**动作**：①git pull --rebase(同步✅,3 files from designflow) ②训练健康(.29 ps+GPU):PID146283 etimes~780k(~9天),GPU 8卡100%/75GB,lr=1e-3,`--lr-decay-iters 0`确认=decay阶段未配置 ③**v5 MATH进度**:46/100,~42s/it,ETA~37min→预期0%(生成退化同GSM8K/BBH) ④**重复v5清理**:发现2个baize_l2_eval_160k_v5.sh实例(setsid PID1527845+nohup PID1578082)→kill 1578082/1578084→仅保留setsid实例 ⑤**.17 SSH不通**(A40 GPU for vLLM)·**.15 SSH不通**(L4 designflow数据)→vLLM+L4仍阻塞 ⑥四层报告更新:header iter~167k+v5 46/100+lr-decay-iters=0+footer#1993,同步doc/reports/ ⑦**🔴待决策方案整理**(详见下方待决策区):L2/L3/L4低分根因=code+math 26%远低于DeepSeek 60%+decay未配置+llama.cpp SSM生成bug→方案A(decay 4:2:4)/B(SFT)/C(A+B) ⑧📦TASK≈27KB✅/MEMORY≈24KB✅·四层评测 · L1=58.13%@160k L2=GSM8K=0%·MMLU=23.16%·BBH=0%·v5 MATH 46/100运行中 L3=脚本已建·生成退化 L4=未接(.15不通) · 本轮动作：报告刷新+重复v5清理+decay确认+待决策整理·未完成指令：有(v5 MATH运行中+v6排队+170k~8h后)⇒WAITING:0。
+
+## 🔴 待决策区（需用户拍板 · 2026-11-11 #1993 整理）
+
+**背景**：L2 GSM8K=0% / BBH=0% / MATH≈0% / MMLU=23.16%(≈随机25%)。L3/L4 因模型生成退化无法评测。三重根因：
+1. **数据配比不足**：code 19% + math 7% = 26%，远低于 DeepSeek 最优 4:2:4（code 40% + math 20% = 60%）。DeepSeek 1.3B 消融显示 4:2:4 可将 GSM8K 12.3%→15.4%、HumanEval 14.5%→20.1%。
+2. **Decay 阶段未配置**：训练命令 `--lr-decay-iters 0` = WSD scheduler 的 decay 段长度为 0，当前一直在 stable 段（lr=1e-3 恒定）。Decay 是模型 consolidate 生成能力 + 注入 domain data 的最佳时机（MiniCPM 同此策略）。
+3. **llama.cpp SSM 生成 bug**：Mamba2-hybrid 在 llama.cpp CPU 推理时 token-by-token 生成退化为重复输出（PR #31703 已提交）。MCQ（L1 58.13%）正常说明 prefill 路径无问题，仅 generation 路径有 bug。vLLM 有原生 NemotronH 支持可验证，但 .17 A40 SSH 不通。
+
+**方案 A（推荐）**：在 decay 阶段混入 code:math:language=4:2:4 配比数据
+- 需要 data 线准备 ~60B token 高质量 code+math 数据
+- 配置 `--lr-decay-iters` 为非零值（如 4771 步，约 20B token decay 段）
+- 不影响当前 stable 段训练，只在 decay 时切换数据
+- 预期：参照 DeepSeek 1.3B，GSM8K 0%→~15%、HumanEval 0%→~20%（2B 应更好）
+
+**方案 B**：在 post-train SFT 阶段补数学推理+代码生成数据
+- 由 posttrain 线负责（已在 .17 准备，当前零 GPU 预研）
+- 不影响 pretrain，但 L2 改善要等到 post-train 完成
+
+**方案 C（A+B 组合）**：decay 混入 domain data 打基础 + SFT 精调指令跟随
+- 最全面的方案，但需要 data 线 + posttrain 线协同
+
+**其他待解**：
+- .17 SSH 不通 → 无法用 A40 做 vLLM 验证（需运维检查 .17 网络）
+- .15 SSH 不通 → L4 designflow 数据不可达（需运维检查 .15 网络）
+
 > 2026-11-11 20:21 #1992: **论文§4.6刷新+四层报告更新轮·训练健康 iter166730/700k step~7.1s<7.4s✅·v5 MATH 30/100运行中🟡**·**动作**：①git pull --rebase(同步✅,Already up to date) ②训练健康(.29 /proc/146283/fd/1→tail log):iter166730/700k,step6943-7218ms(均7100ms<7.4s✅),loss2.034-2.044,lr=1e-3,0NaN/0skip,GPU 8卡95-100%/75GB ③**论文§4.6刷新**:`4_llm_pretrain.tex` iter163790→166790→166730(实测),loss2.05→2.04,`tab:prod-budget` 163k→167k done,wall-clock≈58d不变(591K tok/s) ④**PDF编译**:latexmk -pdf -interaction=nonstopmode main.tex→0 error,5 pages,216060 bytes,main.pdf时间戳20:21✅ ⑤**v5 MATH进度**:hendrycks_math_algebra 0-shot limit=100,30/100,~41s/it,ETA~47min→预期接近0%(生成退化同GSM8K/BBH) ⑥**v6状态**:仍waiting for port 8083(v5完成后自动启动) ⑦research日报2026-11-11:pretrain线「无新增可用建议」(确认,不凑数) ⑧四层报告更新:header iter166730+v5 30/100+footer#1992 ⑨📦TASK≈27KB✅/MEMORY≈22KB✅·四层评测 · L1=58.13%@160k L2=GSM8K=0%·MMLU=23.16%·BBH=0%·v5 MATH 30/100运行中 L3=脚本已建·生成退化 L4=未接 · 本轮动作：论文§4.6刷新+PDF编译+报告更新·未完成指令：有(v5 MATH运行中+v6排队+170k~8h后)⇒WAITING:0。
 
 > 2026-11-11 20:12 #1991: **v6脚本创建+启动+四层报告刷新轮·训练健康 iter166630/700k step~7.0s<7.4s✅·v5 MATH 16/100运行中🟡·v6已启动✅**·**动作**：①git pull --rebase(同步✅) ②训练健康(.29 /proc/146283/fd/1):iter166630/700k,step6943-7205ms(<7.4s✅),loss2.022-2.044,0NaN/0skip,GPU 8卡95-100%/75GB ③**v5 MATH进度**:hendrycks_math_algebra 0-shot limit=100,16/100,~42s/it,ETA~1h→预期0%(生成退化同GSM8K/BBH) ④**HumanEval/MBPP失败根因**:lm_eval需`--confirm_run_unsafe_code`CLI flag(store_true),非仅`HF_ALLOW_CODE_EVAL=1`env var→v5脚本缺此flag ⑤**v6脚本创建+启动**:`baize_l2_eval_160k_v6.sh`在.29后台(nohup,等port8083空闲)→修复:①HumanEval/MBPP加`--confirm_run_unsafe_code`②llama-server加`--repeat-penalty 1.3`(#1984诊断:RP打破SSM退化循环)③MATH用RP=1.3重跑对比v5 baseline ④生成探针验证RP效果 ⑥四层报告更新:header iter166630+v6状态+summary L2行+footer#1991,同步doc/reports/ ⑦📦TASK≈27KB✅/MEMORY≈21KB✅·四层评测 · L1=58.13%@160k L2=GSM8K=0%·MMLU=23.16%·BBH=0%·v5 MATH运行中·v6已启动(RP=1.3测试) L3=脚本已建·生成退化 L4=未接 · 本轮动作：v6脚本创建+启动+报告刷新·未完成指令：有(v5 MATH运行中+v6排队+170k~8h后)⇒WAITING:0。
