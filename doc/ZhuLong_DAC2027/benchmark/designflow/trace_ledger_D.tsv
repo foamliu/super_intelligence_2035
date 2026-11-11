@@ -1442,4 +1442,4 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1793435397635_ccy1n	xxchen	hfeg0plg53	40	analog_context	case	EDA-Eval-DesignFlow-SpfResPathTrace-001	2026-11-11 08:55	
 1792718147360_00l0o	jinsongl	hfeg0plg97	24	analog_context	case	EDA-Eval-DesignFlow-XDomainRepCompare-001	2026-11-11 09:49	
 1793256298450_v56s8	yh1yang	10.129.2.11	89	waveform	parked		2026-11-11 10:05	duplicate: yh1yang HCI stress = HciStressExtract-001(cdza6)/HciStressWindowExtract-001(e5k8y) same user+mechanism; v56s8 mc=89 is earlier session of same HCI stress task family
-1793757030814_j2uza	zongjiuh	10.129.32.100	20	analog_context	claimed		2026-11-11 10:12	
+1793757030814_j2uza	zongjiuh	10.129.32.100	20	analog_context	case	EDA-Eval-DesignFlow-SpfCapResAnomaly-001	2026-11-11 10:44	
