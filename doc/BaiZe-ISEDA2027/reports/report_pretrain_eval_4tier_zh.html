@@ -42,7 +42,7 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
   <div class="meta">
     <span>📅 2026-11-12 02:00</span>
     <span>🏗 Mamba2-hybrid 2.22B</span>
-    <span>🔥 训练 iter≈169.5k / 700k(24.2%) · step~7090ms<7.4s✅ · ckpt 168k · lr-decay-iters=0(stable段,decay未配置) · GPU 8×100%/75GB · loss~2.04 · 0NaN · 170k ETA~57min</span>
+    <span>🔥 训练 iter≈169.6k / 700k(24.2%) · step~7060ms<7.4s✅ · ckpt 168k · lr-decay-iters=0(stable段,decay未配置) · GPU 8×100%/75GB · loss~2.04 · 0NaN · 170k ETA~50min · L1 scaling report 已更新至 16/20(含160k=58.13%)</span>
     <span>📊 L1: 16 ckpt ✅(160k=58.13%新高) | L2: 6/6完成 ✅ GSM8K=0%🔴 MMLU=23.16%(≈随机) BBH=0%🔴 MATH=0%🔴 HumanEval=0%🔴 MBPP=0%🔴 · 🔬生成退化=SSM state崩溃+模型@24%+code/math 26%·RP=1.3无效 | L3: 🔴TB smoke完成 0/2 reward(生成退化致agent无法编辑文件) | L4: 🔴/nasdata/未挂载.29/.12/本机+SSH .15/.17均不通</span>
   </div>
   <div style="margin-top:12px;font-size:12.5px;background:rgba(0,0,0,.18);border-radius:8px;padding:8px 12px;opacity:.95">
@@ -436,6 +436,16 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
   </table>
 </div>
 <div class="card">
+  <h3>本轮(#2023)动作 · 2026-11-12 01:55 监控巡检 + L1 scaling report 更新</h3>
+  <ol>
+    <li><b>训练健康确认</b>：iter 169,570/700,000（24.2%）· step 7033-7176ms(均~7060ms)<7.4s✅ · loss 2.029-2.062 · GPU 8×100%/75GB · lr=1e-3(stable段) · 0 NaN/skip · PID 146283 · <code>ssh 10.239.2.29 'tail -10 /proc/146283/fd/1'</code></li>
+    <li><b>L1 scaling report 更新</b>：重跑 <code>gen_llamacpp_scaling_report.py</code> → 160k 数据填入（16/20 ckpt · 160k Avg=58.13%新高✅）· 170k-200k 仍为「评测中」· 报告 24,331B</li>
+    <li><b>170k ckpt 追踪</b>：最新 raw ckpt=iter_0168000(168k) · 170k 需 ~430iter×~7.1s≈50min · 到达后做 L1 8-set eval</li>
+    <li><b>四层状态不变</b>：L1=58.13%@160k(16ckpt✅) · L2=6/6完成 · L3=TB smoke 0/2 · L4=BLOCKED · 🔴待决策:方案A/B/C</li>
+  </ol>
+</div>
+
+<div class="card">
   <h3>本轮(#2022)动作 · 2026-11-12 01:50 监控巡检</h3>
   <ol>
     <li><b>训练健康确认</b>：iter 169,520/700,000（24.2%）· step 7021-7136ms(均~7090ms)<7.4s✅ · loss 2.034-2.050 · GPU 8×100%/75GB · lr=1e-3(stable段) · 0 NaN/skip · PID 146283 · /proc/146283/fd/1 实时日志确认（命令：<code>ssh 10.239.2.29 'tail -10 /proc/146283/fd/1'</code>）</li>
@@ -518,7 +528,7 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
 </div>
 
 <footer>
-  BaiZe pretrain 线 · 四层能力评测报告 · 2026-11-12 01:50 更新(#2022 · 监控巡检·训练健康iter169.5k·L2 6/6完成·L3 TB smoke 0/2·L4 BLOCKED·170k ETA~57min) · 评测数字仅用于训练监控，不进论文正文
+  BaiZe pretrain 线 · 四层能力评测报告 · 2026-11-12 01:55 更新(#2023 · 监控巡检+L1 scaling report更新至16/20含160k·训练健康iter169.6k·L2 6/6完成·L3 TB smoke 0/2·L4 BLOCKED·170k ETA~50min) · 评测数字仅用于训练监控，不进论文正文
 </footer>
 </div>
 </body>
