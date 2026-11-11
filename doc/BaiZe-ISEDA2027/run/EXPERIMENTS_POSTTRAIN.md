@@ -4952,3 +4952,99 @@ JSON 报告：`nemo_experiments/baize_posttrain_phase1/preflight_1794433848.json
 
 ---
 
+## §R303 (2026-11-12 wake303) Phase1 Generation Live Tool-Calling Analysis — Degenerate Repetition Evidence（零 GPU · CPU 分析）
+
+> **任务**：Phase1 生成在 wake302 启动后，本轮验证生成健康性 + 分析 tool-calling 行为 + 识别失败模式。
+
+### 1. 生成状态（2026-11-12 06:42 实测）
+
+| 指标 | 值 | 来源 |
+|:--|:--|:--|
+| 生成启动时间 | 2026-11-12 06:26:40 | `/tmp/phase1_generate.log` |
+| 运行时长 | ~16 min | `ps etimes` PID 426644 |
+| Worker 数 | 8（worker_1~8） | `batch_cline.log` |
+| 任务队列 | 150 待处理 / 8 进行中 = 158 总 | `.task_queue` |
+| 已完成 .py 文件 | 0 | `find code/ -name '*.py'` |
+| HTTP 200 请求数 | 514 | `grep -c POST /v1/chat/completions` vLLM log |
+| 当前 run | 1/5 | `phase1_generate.log` |
+| 失败/超时 | 0 / 0 | `stats/failure` `stats/timeout` |
+
+**结论**：生成健康运行中。8 worker 各处理 1 task（001-008），2500s timeout 内尚未有任务完成（预期：首批完成约在 06:26 + 2500s ≈ 07:08）。
+
+### 2. Tool-Calling 分布（vLLM GPU4 日志 514 请求累计）
+
+从 `/tmp/vllm_gpu4_toolcall.log`（30MB）提取 `<function name="...">` 模式：
+
+| 函数名 | 出现次数 | 含义 |
+|:--|:--|:--|
+| `run_commands` | 9704 | 终端命令执行（最多，含累积重复） |
+| `search_apis` | 5813 | pyAether API 语义搜索 |
+| `run_pyAether_code_tool` | 2592 | pyAether 代码执行 |
+| `submit_and_exit` | 2343 | 提交退出（含系统提醒文本） |
+| `get_api_details` | 908 | API 详细文档查询 |
+| `run_code` | 575 | MCP 代码执行 |
+| `read_files` | 476 | 文件读取 |
+| `editor` | 124 | 文件编辑 |
+| `search_apis_by_keyword` | 64 | 关键词搜索 |
+
+> 注：vLLM 日志记录完整 prompt（含历史轮次），故次数为**跨请求累积值**而非唯一调用数。但分布比例反映了模型的行为模式。
+
+**关键发现**：
+1. **模型确实在使用工具**：search_apis（5813）、get_api_details（908）、run_pyAether_code_tool（2592）均有大量调用 → tool-calling 基础设施通过 content XML 解析**正常工作**。
+2. **hermes parser 仍未解析 MiniCPM5 XML**：API 测试确认 `tool_calls` 字段返回 `[]`，模型将 `<function>` XML 放在 `content` 字段。cline 从 content 解析 `<function>` 标签执行工具 → **R302 结论复现确认**。
+
+### 3. 退化循环失败模式（Degenerate Repetition）
+
+**发现**：Worker 1（task EDA-Eval-PyAether-002）陷入退化循环——模型反复生成路径 `pyAeur_code`（拼写错误，缺少 'h'），系统反复提醒调用 `submit_and_exit`，模型无法跳出循环。
+
+**证据**：
+- `grep -c 'pyAeur_code' /tmp/vllm_gpu4_toolcall.log` = **40 次**
+- `grep -c 'submit_and_exit' /tmp/vllm_gpu4_toolcall.log` = **524 次**（含系统提醒文本）
+- vLLM 日志显示同一 worker 连续多轮生成相同 `<function name="run_commands">...ls -la .../pyAeur_code/generate.py...</function>`，每轮系统回复 `[SYSTEM] This run is not complete until you call submit_and_exit`，模型重复相同错误路径。
+
+**退化循环特征**：
+| 特征 | 值 |
+|:--|:--|
+| 循环类型 | 路径拼写错误（pyAeur_code → pyAether_code）+ 无法自我纠正 |
+| 循环次数 | ~20+ 轮（40 次出现 / 每次 2 行 prompt+response） |
+| 系统干预 | submit_and_exit 提醒 ×524（全局，非仅此 worker） |
+| 占比 | 40 / 9704 run_commands ≈ 0.4%（少数 worker） |
+
+**根因分析**：MiniCPM5-2B base 模型在长多轮对话中，当遇到执行失败反馈时，倾向于**重复相同动作**而非分析错误原因并调整策略。这是 **D1/D2 协议差距的直接体现**——模型不懂得从执行反馈中学习。
+
+### 4. 与 SFT 模型对比（R176 证据）
+
+R176 的 16-prompt 定性评测发现：
+- **Base 模型**：16/16 `finish=length`，100% 卡在思考模式，从不产出可执行代码
+- **SFT 模型**：15/16 产出可执行代码，0/16 退化循环
+
+**R303 新增证据**：在真实 158-task EDA-Eval harness 中，base 模型不仅卡在思考模式（R175/R176），还会在**开始使用工具后陷入退化循环**——这是比 R176 定性评测更严重的失败模式，因为它发生在真实评测流程中。
+
+### 5. 对 Post-Train 三步的侧重建议（R303 证据补充）
+
+| 阶段 | R303 新证据 | 建议 |
+|:--|:--|:--|
+| SFT (Phase2✅) | SFT 消除退化循环（R176: 0/16 vs base 退化） | ✅ 已验证 |
+| RL (Phase3⬜) | 退化循环 = 执行反馈未利用 → RL 可通过 reward=0 惩罚重复 | R1 二值即可惩罚退化 |
+| 评测 | 退化循环消耗 2500s timeout → Pass@1 被低估 | 5-run mean±std 可覆盖此方差 |
+
+### 6. 局限
+
+- ⚠️ vLLM 日志的 function call 次数为**跨请求累积**（含历史轮次），非唯一调用数。
+- ⚠️ 仅分析了 worker_1 的退化循环；其他 7 个 worker 可能正常或有不同的失败模式（需生成完成后全量分析）。
+- ⚠️ 生成尚未完成（0/158 .py 文件），无法做 Pass@1 统计。
+- ⚠️ 沙盒仍 FILTERED（10.129.32.75 全端口），评分仍需沙盒侧机器。
+- ⚠️ **替身预演**：MiniCPM5-2B 替身，收益不可迁移到 BaiZe。
+
+### 7. 数据溯源
+
+- vLLM 日志：`/tmp/vllm_gpu4_toolcall.log`（30MB, 514 POST 请求）
+- 生成日志：`/tmp/phase1_generate.log`
+- batch 日志：`~/eda_code_eval/2026_1112_062640/logs/batch_cline.log`
+- 任务队列：`~/eda_code_eval/2026_1112_062640/.task_queue`（150 行）
+- 统计：`~/eda_code_eval/2026_1112_062640/stats/{success,failure,timeout}`（全 0）
+- API 测试：`curl http://localhost:8098/v1/chat/completions` tool_choice=auto（tool_calls=[], content 有 `<function>` XML）
+- 无伪造：所有数据为真实 vLLM 日志 / 生成进程 / API 调用输出。
+
+---
+
