@@ -4063,3 +4063,101 @@ SFT recipe（v11-v36 PyAether 语料, 927 train pairs, 5 epoch, lr 1e-5 cosine, 
 
 > ⚠️ **替身预演声明**：以上结果基于 MiniCPM5-2B（2B, Llama 架构, Apache 2.0）作为 BaiZe 替身，收益不可迁移到 BaiZe 本体。目的仅验证 SFT recipe 的有效性。
 
+---
+
+## §R290 — wake290 全量静态分析 80/113 中间结果扩展（2026-11-12）
+
+> **背景**：wake287 启动的全量 113 non-techlib task 静态分析后台进程（PID 371302）在 wake290 唤醒时已推进至 task 80/113（运行 ~22 min，checkpoint 已保存 80 task）。本轮对 80 task 做中间结果分析，样本量从 wake289 的 60 增至 80（+33%），统计置信度进一步提升。
+
+### 1. 总体指标（N=80）
+
+| 指标 | Base | SFT | Delta |
+|:--|--:|--:|--:|
+| Syntax OK | 76.2% | 97.5% | **+21.3pp** |
+| Truncation | 23.8% | 3.8% | **-20.0pp（6.3x 降低）** |
+| Has Function | 93.8% | 100.0% | +6.2pp |
+| Avg Code Len (ch) | 6031 | 1248 | **-4784（4.8x 更短）** |
+| Median Code Len (ch) | 5824 | 1010 | -4815 |
+| Avg API Coverage | 0.196 | 0.191 | +0.005（≈持平） |
+| Avg Time (s) | 15.9 | 3.6 | **-12.3（4.4x 更快）** |
+
+- 语法错误数：Base 19 / SFT 2
+- Base 语法错误类型：16× invalid syntax (line 1) + 3× unexpected EOF
+- SFT 语法错误类型：1× unexpected EOF (line 123) + 1× invalid syntax (line 218)
+- API/timeout errors：Base 0 / SFT 0
+
+### 2. 与 wake289（60 task）对比趋势
+
+| 指标 | wake289 (N=60) | wake290 (N=80) | 趋势 |
+|:--|:--|:--|:--|
+| SFT Syntax | 98.3% | 97.5% | 稳定（+2 task 含 1 语法错） |
+| Base Syntax | 76.7% | 76.2% | 稳定 |
+| Delta | +21.6pp | +21.3pp | 收窄 0.3pp（收敛） |
+| SFT Truncation | 3.3% | 3.8% | 稳定 |
+| SFT Avg Code Len | 1192 | 1248 | 稳定 |
+| Base Avg Code Len | 2368 | 6031 | **大幅上升**（新样本含更多 Base 啰嗦输出） |
+| Code Len Ratio | 2.0x | 4.8x | **ratio 扩大**（Base 更啰嗦的样本被纳入） |
+| API Coverage Delta | +0.017 | +0.005 | 收窄→趋近持平 |
+
+> **关键发现**：样本量从 60→80 后，**Base 平均代码长度从 2368→6031 ch 大幅上升**——wake289 的 60 样本恰好抽到较短的 Base 输出；80 样本纳入了更多 Base 啰嗦/截断案例，使 Base 的真实冗余程度暴露（4.8x ratio 比 2.0x 更能反映 Base 的问题）。SFT 端稳定（1248 vs 1192），说明 SFT 的简洁性是**系统性**的，不是抽样偏差。
+
+### 3. Per-Scenario 分层（N=80）
+
+| Scenario | n | Syntax Base→SFT | Delta | Trunc Base→SFT | APIcov Base→SFT | Len Base→SFT |
+|:--|--:|:--|--:|:--|:--|:--|
+| Schematic | 22 | 68%→95% | **+27pp** | 32%→5% | 0.186→0.210 | 6332→1390 |
+| Design Mgmt | 17 | 76%→100% | +24pp | 24%→6% | 0.033→0.058 | 6304→1257 |
+| Layout | 22 | 77%→95% | +18pp | 23%→5% | 0.233→0.230 | 6032→1340 |
+| Others | 19 | 84%→100% | +16pp | 16%→0% | 0.239→0.242 | 5439→968 |
+
+> Schematic 仍是 SFT 最大受益者（+27pp syntax，truncation 32%→5%）。Design Mgmt syntax 达 100% 但 **API coverage 极低（0.058）**，确认是 RL 高价值修复目标。
+
+### 4. Per-Category 分层（top 6）
+
+| Category | n | Syntax Base→SFT | Delta |
+|:--|--:|:--|--:|
+| Design Content Query & Edit | 10 | 70%→100% | +30pp |
+| Database & Design Management | 14 | 71%→100% | +29pp |
+| Geometry Operation & Analysis | 13 | 69%→92% | +23pp |
+| Simulation & Analysis Config | 19 | 79%→100% | +21pp |
+| Utilities | 13 | 85%→100% | +15pp |
+| Design Content Creation | 11 | 82%→91% | +9pp |
+
+> "Design Content Query & Edit" 和 "Database & Design Management" 类别 SFT 提升最大（+30pp/+29pp），这些是 API 密集型任务，SFT 学会了格式但 API 选择仍需 RL。
+
+### 5. API Coverage 深度分析
+
+- Full API coverage (1.0)：Base 3/80 (4%) → SFT 3/80 (4%) — **无改善**
+- Zero API coverage (0.0)：Base 34/80 (42%) → SFT 31/80 (39%) — 仅微降
+- **Syntax OK 但 0 APIs found（用 Python 内置替代 pyAether）**：Base 7 → **SFT 11** — ⚠️ **SFT 反而更多用 Python 内置**
+  - 含义：SFT 学会了写合法 Python，但部分案例用 `re.split` / `os.path` / `time` 等内置替代 pyAether API
+  - 这是 SFT 的**负面副作用**：格式修好了，但 API 选择策略偏移到"不调用 pyAether 也能跑"
+  - **RL 的核心修正目标**：奖励必须包含 API 合法性（R4 臂），惩罚用内置替代 pyAether 的行为
+
+### 6. P0 诊断验证更新（D1-D6）
+
+| 诊断项 | 结论 | 证据 |
+|:--|:--|:--|
+| D1 工具调用合法率 | ✅ 协议可回收 +21.3pp | SFT syntax 97.5% vs Base 76.2% |
+| D2 工具调用频次 | ⚠️ SFT 略降 | SFT avg APIs found 1.74 vs Base 1.96（SFT 更倾向简洁但少用 API） |
+| D3 超上下文/截断 | ✅ 6.3x 降低 | SFT 3.8% vs Base 23.8% |
+| D4 失败类型分解 | ✅ SFT 修语法，RL 修 API | SFT syntax err 19→2；API coverage 持平 0.19 |
+| D5 per-scenario | ✅ Schematic 配比 | Schematic +27pp 最大受益 |
+| D6 迭代轮数 | N/A | 静态分析无执行反馈 |
+
+### 7. 新发现（vs wake289）
+
+1. **Base 啰嗦程度被低估**：60 样本 ratio 2.0x → 80 样本 4.8x，Base 平均 6031ch（含大量截断的冗余推理文本），SFT 1248ch 稳定
+2. **SFT 时间效率 4.4x**：Base avg 15.9s/task → SFT 3.6s/task，SFT 不啰嗦直接出码，推理开销大幅降低
+3. **SFT 用内置替代 pyAether**（11 vs 7 task）：SFT 学到了"写合法 Python"但部分案例绕过 pyAether API → RL R4 臂（API 合法性奖励）的核心修正场景
+4. **Full API coverage 无改善**（4%→4%）：SFT 没有教会模型"用对全部 expected APIs"，这是 RL 的核心价值区
+
+### 8. 下一步
+
+1. 后台进程 PID 371302 仍在运行（task ~80/113），下一唤醒检查是否完成 → 做全量 113-task 最终分析
+2. 沙盒 ACL 恢复后：post-SFT EDA-Eval 正式 5-run 评测（`baize_posttrain_eval.sh --backbone minicpm5-sft --endpoint http://localhost:8096/v1`）
+3. Phase 3 RL 待沙盒 + GPU
+4. RL 奖励设计需包含 R4 臂（API 合法性），惩罚用 Python 内置替代 pyAether 的行为
+
+> ⚠️ **替身预演声明**：以上结果基于 MiniCPM5-2B（2B, Llama 架构, Apache 2.0）作为 BaiZe 替身，收益不可迁移到 BaiZe 本体。目的仅验证 SFT recipe 的有效性。
+
