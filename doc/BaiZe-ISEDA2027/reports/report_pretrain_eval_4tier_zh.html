@@ -40,10 +40,10 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
   <h1>BaiZe 2B 预训练 · 四层能力评测报告</h1>
   <div class="sub">Mamba2-hybrid 2.22B · S1 生产 run（iter 160k+/700k, ~675B tokens）</div>
   <div class="meta">
-    <span>📅 2026-11-12</span>
+    <span>📅 2026-11-12 02:00</span>
     <span>🏗 Mamba2-hybrid 2.22B</span>
-    <span>🔥 训练 iter≈169.1k / 700k · step~7.1s<7.4s✅ · ckpt 168k · lr-decay-iters=0(stable段,decay未配置) · GPU 8×100%/75GB · 170k ETA~1.8h</span>
-    <span>📊 L1: 16 ckpt ✅(160k=58.13%新高) | L2: 6/6完成 ✅ GSM8K=0%🔴 MMLU=23.16%(≈随机) BBH=0%🔴 MATH=0%🔴 HumanEval=0%🔴 MBPP=0%🔴 · 🔬生成退化=SSM state崩溃+模型@24%+code/math 26% | L3: 🔴TB smoke完成 0/2 reward(fix-git+break-filter都失败·生成退化致agent无法编辑文件) | L4: 🔴/nasdata/未挂载.29+SSH .15/.17均不通</span>
+    <span>🔥 训练 iter≈169.4k / 700k(24.2%) · step~7.1s<7.4s✅ · ckpt 168k · lr-decay-iters=0(stable段,decay未配置) · GPU 8×100%/75GB · loss~2.05 · 0NaN · 170k ETA~1.5h</span>
+    <span>📊 L1: 16 ckpt ✅(160k=58.13%新高) | L2: 6/6完成 ✅ GSM8K=0%🔴 MMLU=23.16%(≈随机) BBH=0%🔴 MATH=0%🔴 HumanEval=0%🔴 MBPP=0%🔴 · 🔬生成退化=SSM state崩溃+模型@24%+code/math 26%·RP=1.3无效 | L3: 🔴TB smoke完成 0/2 reward(生成退化致agent无法编辑文件) | L4: 🔴/nasdata/未挂载.29/.12/本机+SSH .15/.17均不通</span>
   </div>
   <div style="margin-top:12px;font-size:12.5px;background:rgba(0,0,0,.18);border-radius:8px;padding:8px 12px;opacity:.95">
     ⚠️ 本报告是<b>训练监控与决策依据</b>，<b>不进论文正文</b>（2026-11-10 用户令）。用户关注点（2026-11-11）：<b>如何拿到更好的结果</b>。
@@ -58,7 +58,7 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
     <tr><td class="l">任务集</td><td class="l">ARC-Challenge / ARC-Easy / BoolQ / HellaSwag / OpenBookQA / PIQA / SciQ / Winogrande</td></tr>
     <tr><td class="l">口径</td><td class="l">zero-shot · <code>limit=100</code> · GGUF F16 · llama-server CPU（<code>-t 4</code> · <code>nice 19</code> · 串行单 ckpt）</td></tr>
     <tr><td class="l">已评</td><td class="l">10k–160k（<b>16 个</b>万整数 ckpt）</td></tr>
-    <tr><td class="l">下一个</td><td class="l">170k（ETA ≈12h 后）</td></tr>
+    <tr><td class="l">下一个</td><td class="l">170k（ETA ≈1.5h 后）</td></tr>
   </table>
 </div>
 <div class="card">
@@ -436,20 +436,27 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
   </table>
 </div>
 <div class="card">
-  <h3>本轮(#2013)动作</h3>
+  <h3>本轮(#2021)动作 · 2026-11-12 02:00 监控巡检</h3>
   <ol>
-    <li><b>训练健康确认</b>：iter 168,480/700,000（24.1%）· step ~7110ms(7031-7247ms)<7.4s✅ · loss 2.05-2.07 · GPU 8×100%/75GB · lr=1e-3(stable段) · 0 NaN/skip · PID 146283</li>
-    <li><b>v6 MBPP 进度</b>：34/100 · ~44s/it · ETA~48min · llama-server(port 8083, t=4, nice=19) · 训练未受影响</li>
-    <li><b>L3 autoqueue 启动</b>：创建 baize_l3_autoqueue.sh 并在 .29 后台启动(PID 1986722)·轮询 port 8083·MBPP 完成后自动检查训练健康→启动 L3 TB smoke(fix-git + break-filter-js-from-html)·无需等 agent 唤醒</li>
-    <li><b>L3 smoke 脚本修复</b>：baize_l3_tb_smoke.sh 训练健康检查从 /tmp/log(已删除)改为 /proc/PID/fd/1(实际日志)·修复后 pre-flight 可正确读取 step time</li>
-    <li><b>L4 调研</b>：designflow cline_eval/ 61 任务在 NFS 可见,但 run_one.sh 依赖 /nasdata/(EDA-Flow-Bench+assets+reference+hooks)·/nasdata/ 未挂载 .29 → L4 仍 BLOCKED·.15 SSH 不通(超时)·.17 SSH 不通(vLLM 验证阻塞)</li>
-    <li><b>下一个万整数 ckpt</b>：170k ETA~3h(1520步×7.1s)·MBPP 应在 170k 前完成(~48min)→autoqueue 自动启动 L3 smoke→170k 出现后做 L1 eval</li>
-    <li><b>核心发现（不变·待用户拍板）</b>：L2/L3/L4 低分/空白同一根因——code+math 数据占比 26%(vs DeepSeek 最优 60%) + stable 阶段未 decay + llama.cpp SSM 生成 bug · 建议方案 A(decay 4:2:4)/B(SFT)/C(A+B)</li>
+    <li><b>训练健康确认</b>：iter 169,370/700,000（24.2%）· step 6948-7219ms(均~7095ms)<7.4s✅ · loss 2.027-2.061 · GPU 8×100%/75GB · lr=1e-3(stable段) · 0 NaN/skip · PID 146283 · /proc/146283/fd/1 实时日志确认</li>
+    <li><b>无 eval 进程</b>：.29 pgrep lm_eval/llama-server=0 → CPU 全给训练✅（L2 v6 全部完成，llama-server 已清理）</li>
+    <li><b>170k ckpt 追踪</b>：最新 HF 导出=hf_iter_160000 · 训练 save-interval=2000 → 168k raw ckpt 已在盘 · 170k ETA≈630iter×7.1s≈75min · 到达后做 L1 8-set eval(limit=100)</li>
+    <li><b>L4 根因再确认</b>：/nasdata/ 在 .29/.12/本机均未挂载(ls exit=2) · SSH .15(10.251.36.15)=Connection timed out · SSH .17(10.252.32.17)=Connection timed out · EDA-Flow-Bench 数据仅存于 /nasdata → L4 维持 BLOCKED</li>
+    <li><b>research 日报 2026-11-12</b>：pretrain 建议为「Day-0 探针(单batch过拟合/标签打乱/梯度哈希)+RL token预算」→ 当前训练已运行 9 天，探针适用于下次重启前，本轮不适用</li>
+    <li><b>四层状态汇总</b>：L1=58.13%@160k(16ckpt✅) · L2=6/6完成(5/6=0%·MMLU=23.16%≈随机·生成退化双重根因确认) · L3=TB smoke 0/2(生成退化) · L4=BLOCKED(/nasdata+SSH) · 🔴待决策:方案A(decay 4:2:4)/B(SFT)/C(A+B)→详见下方</li>
+    <li><b>📦 TASK≈27KB✅ / MEMORY≈30KB✅</li>
   </ol>
+  <div class="note">
+    <b>四层状态</b>：L1=58.13%@160k | L2=6/6完成(5/6=0%·MMLU=23.16%·生成退化双重根因·RP=1.3无效) | L3=TB smoke 0/2(生成退化) | L4=BLOCKED(/nasdata未挂载+SSH .15/.17 timeout)
+  </div>
+</div>
+
+<div class="card">
+  <h3>🔴 核心发现与待决策项（2026-11-12 更新）</h3>
   <div class="alert">
-    <b>🔴 核心发现（待用户拍板）</b>：L2/L3/L4 的低分/空白<b>同一根因</b>——训练数据中 code+math 比例不足（code 19% + math 7% = 26%，远低于 DeepSeek 最优 60%），且仍在 stable 阶段（decay 尚未开始），导致模型在<b>所有需要连贯生成的任务</b>上退化为重复输出。<br>
-    <b>⚠️ 数据配比修正（#1983 · 2026-11-11 18:00）</b>：此前分析称"无显式 code/math 数据"是<b>错误</b>。从训练进程命令行参数确认，S1 blend 实际含 code_l2(15%)+code_l3(4%)+math_l1(5%)+math_l3(2%)=26%，但远低于 DeepSeek 4:2:4 最优配比（code 40%+math 20%=60%）。<br>
-    <b>建议优先级</b>：① <b>最高优先</b>：在 <b>decay 阶段</b>混入更多 code+math 数据（提升至 4:2:4 配比）→ 改善 L2/L3/L4 的基础；② L2 等 BBH+v5 结果收齐后分析全貌；③ L3/L4 延后至模型生成能力达标后（decay or SFT）；④ L4 额外需 .15 网络可达。
+    <b>🔴 核心发现（待用户拍板）</b>：L2/L3/L4 的低分/空白<b>同一根因</b>——训练数据中 code+math 比例不足（code 19% + math 7% = 26%，远低于 DeepSeek 最优 60%），且仍在 stable 阶段（decay 尚未开始），导致模型在<b>所有需要连贯生成的任务</b>上退化为重复输出。llama.cpp SSM 生成路径的 recurrent state bug 放大了这一退化（RP=1.3 仅部分缓解，L2 分数无改善）。<br>
+    <b>⚠️ 数据配比修正（#1983 · 2026-11-11 18:00）</b>：S1 blend 实际含 code_l2(15%)+code_l3(4%)+math_l1(5%)+math_l3(2%)=26%，远低于 DeepSeek 4:2:4 最优配比（code 40%+math 20%=60%）。<br>
+    <b>建议优先级</b>：① <b>最高优先</b>：在 <b>decay 阶段</b>混入更多 code+math 数据（提升至 4:2:4 配比）→ 改善 L2/L3/L4 的基础；② vLLM GPU 验证待 GPU 窗口（确认是否 llama.cpp SSM bug 可通过换推理后端修复）；③ L3/L4 延后至模型生成能力达标后（decay or SFT）；④ L4 额外需 .15/.17 网络可达。
   </div>
 </div>
 
@@ -511,7 +518,7 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
 </div>
 
 <footer>
-  BaiZe pretrain 线 · 四层能力评测报告 · 2026-11-12 01:05 更新(#2018 · L2 6/6完成 · L3 TB smoke 0/2完成 · 论文§4.6刷新iter169k · llama-server已kill) · 评测数字仅用于训练监控，不进论文正文
+  BaiZe pretrain 线 · 四层能力评测报告 · 2026-11-12 02:00 更新(#2021 · 监控巡检·训练健康iter169.4k·L2 6/6完成·L3 TB smoke 0/2·L4 BLOCKED·170k ETA~1.5h) · 评测数字仅用于训练监控，不进论文正文
 </footer>
 </div>
 </body>
