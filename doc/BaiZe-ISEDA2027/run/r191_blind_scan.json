@@ -1,9 +1,9 @@
 {
   "round": "R191-scan",
   "eval_raw_apis": 164,
-  "covered_eval_apis": 121,
-  "blind_eval_apis": 43,
-  "coverage_ratio": 0.7378,
+  "covered_eval_apis": 129,
+  "blind_eval_apis": 35,
+  "coverage_ratio": 0.7866,
   "blind_list": [
     "CColor",
     "CString",
@@ -26,14 +26,6 @@
     "SLE_LE_WIRE_EXTEND",
     "SLE_LE_WIRE_VARIABLE",
     "SleQueryData",
-    "aeCreateTree",
-    "aeCreateTreeItem",
-    "aeCrtHilitPolygon",
-    "aeEditInPlace",
-    "aeIpcProcess",
-    "aeReturn",
-    "aeSetWindowFocus",
-    "aeTreeAppendItem",
     "aelEngineerNotation",
     "agrGetSnapPoints",
     "emvPurposeNumberDrawing",
@@ -50,7 +42,6 @@
     "timeToTm"
   ],
   "family_usage": {
-    "ae": 8,
     "Emy": 7,
     "MDE": 6,
     "NTL": 6,
@@ -73,40 +64,6 @@
     "time": 1
   },
   "family_apis": {
-    "ae": [
-      {
-        "api": "aeCreateTree",
-        "eval_usage": 1
-      },
-      {
-        "api": "aeCreateTreeItem",
-        "eval_usage": 1
-      },
-      {
-        "api": "aeCrtHilitPolygon",
-        "eval_usage": 1
-      },
-      {
-        "api": "aeEditInPlace",
-        "eval_usage": 1
-      },
-      {
-        "api": "aeIpcProcess",
-        "eval_usage": 1
-      },
-      {
-        "api": "aeReturn",
-        "eval_usage": 1
-      },
-      {
-        "api": "aeSetWindowFocus",
-        "eval_usage": 1
-      },
-      {
-        "api": "aeTreeAppendItem",
-        "eval_usage": 1
-      }
-    ],
     "Emy": [
       {
         "api": "EmyNtlUtil",

@@ -9556,3 +9556,84 @@ Emy\* utility APIs (EmyNtlUtil, EmyLPPHeader).
 > All 668 pairs PASS the 155-entry_point pollution scan. v11-v25 are gated
 > for training.
 
+---
+
+## R196 — v26 ae\* tree/IPC/hilit corpus (2026-11-11 wake265)
+
+### 1. Objective
+
+Generate SFT training pairs for the `ae*` blind API family — the #1 blind family
+after v25 (8 eval usages, 8 APIs). All are ISOLATE-class GUI/tree/IPC helper APIs
+not present as eval entry_points.
+
+### 2. Target APIs (8)
+
+| # | API | Eval usage | Class |
+|--:|:--|--:|:--|
+| 1 | `aeCreateTree` | 1 | ISOLATE (tree widget) |
+| 2 | `aeCreateTreeItem` | 1 | ISOLATE (tree item) |
+| 3 | `aeTreeAppendItem` | 1 | ISOLATE (tree append) |
+| 4 | `aeCrtHilitPolygon` | 1 | ISOLATE (highlight) |
+| 5 | `aeEditInPlace` | 1 | ISOLATE (EIP descent) |
+| 6 | `aeIpcProcess` | 1 | ISOLATE (IPC) |
+| 7 | `aeReturn` | 1 | ISOLATE (EIP return) |
+| 8 | `aeSetWindowFocus` | 1 | ISOLATE (window focus) |
+
+### 3. Pair structure (5 section types × 8 APIs = 40 pairs)
+
+- **S1** (doc→code, 8): Given API reference, write correct usage
+- **S3** (code→doc, 8): Given code, describe API behavior
+- **S4** (multi-step trace, 8): Multi-step workflow with the API
+- **S5** (anti-pattern, 8): Show wrong usage and explain why it fails
+- **S6** (cross-API combo, 8): Combine 2-3 ae\* APIs in realistic EDA flows
+
+### 4. Contamination isolation
+
+- 155 eval entry_points loaded from EDA-Eval dataset
+- All 40 pairs scanned: each pair's `api_used` list checked against all 155
+  entry_points
+- **Result: 40/40 PASS, 0 REJECTED** — zero contamination
+
+### 5. Coverage impact
+
+| Metric | Before (v25) | After (v26) | Delta |
+|:--|--:|--:|:--|
+| Covered eval raw APIs | 121/164 | 129/164 | +8 |
+| Blind eval raw APIs | 43 | 35 | -8 |
+| Coverage ratio | 73.8% | 78.7% | +4.9pp |
+| ae\* family | 8 blind | 0 blind | cleared |
+
+New #1 blind family after v26: **Emy\*** (7 usages, 2 APIs: EmyNtlUtil, EmyLPPHeader).
+
+### 6. Key API facts
+
+- `aeCreateTree(name)` → returns `aeBaseTree` object (not a string/ID)
+- `aeCreateTreeItem(rowTitles, key, userData, icon)` — rowTitles is a list,
+  key/userData/icon can be None
+- `aeTreeAppendItem(tree, item)` → returns bool (success/fail)
+- `aeCrtHilitPolygon(design, points)` — requires `aeCrtHilitSet()` to create
+  the design handle first; points must be `vector1D_emyPointF`
+- `aeEditInPlace(point)` — accepts `emyPointF`, descends into child cell at
+  that location for editing
+- `aeReturn()` — no arguments, returns to parent/top cell after EIP
+- `aeIpcProcess` — pattern: `aeIpcBeginProcess(cmd)` → loop with
+  `aeIpcReadProcess(proc, timeout)` + `proc.isPending()` → read output
+- `aeSetWindowFocus(wnd)` — accepts window handle, returns bool
+
+### 7. Deliverables
+
+| Item | Path | Size |
+|:--|:--|--:|
+| corpus builder | `run/baize_posttrain_r196_ae_tree_ipc_hilit_corpus.py` | ~650 lines / py_compile OK |
+| training-ready corpus | `run/sft_pyaether_corpus_v26_ae_tree_ipc_hilit.jsonl` | 42,885 bytes / 40 pairs |
+| blind scan script (updated) | `run/baize_posttrain_r191_blind_scan.py` | v26 added to CORPUS_FILES |
+| blind scan output | `run/r191_blind_scan.json` | re-run with v11-v26 |
+
+> Cumulative PyAether SFT corpus: v11 (93) + v12 (25) + v13 (45) + v14 (45)
+> + v15 (45) + v16 (45) + v17 (45) + v18 (25) + v19 (30) + v20 (35)
+> + v21 (50) + v22 (65) + v23 (65) + v24 (25) + v25 (30) + v26 (40)
+> = **708 pairs**.
+> All 708 pairs PASS the 155-entry_point pollution scan. v11-v26 are gated
+> for training.
+
+
