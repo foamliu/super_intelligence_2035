@@ -9637,3 +9637,88 @@ New #1 blind family after v26: **Emy\*** (7 usages, 2 APIs: EmyNtlUtil, EmyLPPHe
 > for training.
 
 
+## R197 — v27 Emy\* NTL/LPP corpus (2026-11-11 wake266)
+
+### 1. Objective
+
+Generate SFT training pairs for the `Emy*` blind API family — the #1 blind family
+after v26 (7 eval usages, 2 APIs: EmyNtlUtil, EmyLPPHeader). Since EmyNtlUtil.
+getVerilogName naturally uses NTL_INDEX_FORMAT_* constants (NTL family, #3 blind,
+6 usages, 3 constant APIs), both families are covered in one corpus — clearing
+2 blind families. All are ISOLATE-class eval helper APIs, not eval entry_points.
+
+### 2. Target APIs (5)
+
+| # | API | Eval usage | Class |
+|--:|:--|--:|:--|
+| 1 | `EmyNtlUtil` | 5 | ISOLATE (static netlist utility class) |
+| 2 | `EmyLPPHeader` | 2 | ISOLATE (LPP header management class) |
+| 3 | `NTL_INDEX_FORMAT_ORIGIN` | 2 | ISOLATE (net-name fmt constant) |
+| 4 | `NTL_INDEX_FORMAT_USE_BRACKET` | 2 | ISOLATE (net-name fmt constant) |
+| 5 | `NTL_INDEX_FORMAT_USE_UNDERLINE` | 2 | ISOLATE (net-name fmt constant) |
+
+### 3. Pair structure (5 section types × 5 APIs = 25 pairs)
+
+- **S1** (doc→code, 5): Given API reference, write correct usage
+- **S3** (code→doc, 5): Given code, describe API behavior
+- **S4** (multi-step trace, 5): Multi-step workflow with the API
+- **S5** (realistic workflow, 5): Realistic EDA scenario solving
+- **S6** (cross-API combo, 5): Combine 2-5 APIs in realistic EDA flows
+
+### 4. Contamination isolation
+
+- 155 eval entry_points loaded from EDA-Eval dataset
+- All 25 pairs scanned: each pair's prompt+completion checked against all 155
+  entry_points via fingerprint substring match
+- **Result: 25/25 PASS, 0 REJECTED** — zero contamination
+
+### 5. Coverage impact
+
+| Metric | Before (v26) | After (v27) | Delta |
+|:--|--:|--:|:--|
+| Covered eval raw APIs | 129/164 | 134/164 | +5 |
+| Blind eval raw APIs | 35 | 30 | -5 |
+| Coverage ratio | 78.7% | 81.7% | +3.0pp |
+| Emy\* family | 7 blind (2 APIs) | 0 blind | cleared |
+| NTL family | 6 blind (3 APIs) | 0 blind | cleared |
+
+New #1 blind family after v27: **MDE** (6 usages, 6 constant APIs:
+MDE_SWEEP_RANGE_CENTER_SPAN, MDE_SWEEP_TYPE_LOG, MDE_SWEEP_TYPE_LOG_NUM_STEP,
+MDE_SWEEP_VARIABLE_MODEL_PARAMETER, MDE_TRAN_ACC_LEVEL_CONSERVATIVE,
+MDE_TRAN_ACC_LEVEL_LIBERAL).
+
+### 6. Key API facts
+
+- `EmyNtlUtil` — a static CLASS (call as `pyScript.EmyNtlUtil.method(...)`, NOT
+  `pyScript.EmyNtlUtil()`). Key method: `getVerilogName(baseName, index, fmt)` →
+  returns formatted verilog bus name string. Overloaded: also accepts
+  `(net, groupName, fmt)`, `(inst, fmt)`, `(indexName, fmt)`.
+- `EmyLPPHeader` — a CLASS for Layer-Purpose-Pair headers. Create with
+  `EmyLPPHeader.create(tech, layerNum, purposeNum, packetName, priority, flag)`.
+  For app-layer LPPs (layerNum ≥ 2000), tech can be None. `isAppLPP()` returns
+  True when layerNum ≥ 2000. `setAppLPPColorName(layerNum, purposeNum, color)`
+  and `setAppLPPLineWidth(layerNum, purposeNum, width)` configure display.
+- `NTL_INDEX_FORMAT_ORIGIN` — int constant, fmt=origin → "X0" (no separator)
+- `NTL_INDEX_FORMAT_USE_BRACKET` — int constant, fmt=bracket → "X[0]" (Verilog standard)
+- `NTL_INDEX_FORMAT_USE_UNDERLINE` — int constant, fmt=underline → "X_0" (flat netlist)
+- All three NTL_INDEX_FORMAT_* constants are used as the `fmt` argument to
+  `EmyNtlUtil.getVerilogName`. Must call `emyInitAether` before accessing them.
+
+### 7. Deliverables
+
+| Item | Path | Size |
+|:--|:--|--:|
+| corpus builder | `run/baize_posttrain_r197_emy_ntl_lpp_corpus.py` | ~580 lines / py_compile OK |
+| training-ready corpus | `run/sft_pyaether_corpus_v27_emy_ntl_lpp.jsonl` | 34,254 bytes / 25 pairs |
+| blind scan script (updated) | `run/baize_posttrain_r191_blind_scan.py` | v27 added to CORPUS_FILES |
+| blind scan output | `run/r191_blind_scan.json` | re-run with v11-v27 |
+
+> Cumulative PyAether SFT corpus: v11 (93) + v12 (25) + v13 (45) + v14 (45)
+> + v15 (45) + v16 (45) + v17 (45) + v18 (25) + v19 (30) + v20 (35)
+> + v21 (50) + v22 (65) + v23 (65) + v24 (25) + v25 (30) + v26 (40)
+> + v27 (25) = **733 pairs**.
+> All 733 pairs PASS the 155-entry_point pollution scan. v11-v27 are gated
+> for training.
+
+---
+

@@ -1,15 +1,13 @@
 {
   "round": "R191-scan",
   "eval_raw_apis": 164,
-  "covered_eval_apis": 129,
-  "blind_eval_apis": 35,
-  "coverage_ratio": 0.7866,
+  "covered_eval_apis": 134,
+  "blind_eval_apis": 30,
+  "coverage_ratio": 0.8171,
   "blind_list": [
     "CColor",
     "CString",
     "CStringList",
-    "EmyLPPHeader",
-    "EmyNtlUtil",
     "GuCartBox",
     "GuCartPolyLine",
     "GuCartPolygon",
@@ -19,9 +17,6 @@
     "MDE_SWEEP_VARIABLE_MODEL_PARAMETER",
     "MDE_TRAN_ACC_LEVEL_CONSERVATIVE",
     "MDE_TRAN_ACC_LEVEL_LIBERAL",
-    "NTL_INDEX_FORMAT_ORIGIN",
-    "NTL_INDEX_FORMAT_USE_BRACKET",
-    "NTL_INDEX_FORMAT_USE_UNDERLINE",
     "SLE_GOA_AND",
     "SLE_LE_WIRE_EXTEND",
     "SLE_LE_WIRE_VARIABLE",
@@ -42,9 +37,7 @@
     "timeToTm"
   ],
   "family_usage": {
-    "Emy": 7,
     "MDE": 6,
-    "NTL": 6,
     "goa": 6,
     "Gu": 5,
     "SLE": 3,
@@ -64,16 +57,6 @@
     "time": 1
   },
   "family_apis": {
-    "Emy": [
-      {
-        "api": "EmyNtlUtil",
-        "eval_usage": 5
-      },
-      {
-        "api": "EmyLPPHeader",
-        "eval_usage": 2
-      }
-    ],
     "MDE": [
       {
         "api": "MDE_SWEEP_RANGE_CENTER_SPAN",
@@ -98,20 +81,6 @@
       {
         "api": "MDE_TRAN_ACC_LEVEL_LIBERAL",
         "eval_usage": 1
-      }
-    ],
-    "NTL": [
-      {
-        "api": "NTL_INDEX_FORMAT_ORIGIN",
-        "eval_usage": 2
-      },
-      {
-        "api": "NTL_INDEX_FORMAT_USE_BRACKET",
-        "eval_usage": 2
-      },
-      {
-        "api": "NTL_INDEX_FORMAT_USE_UNDERLINE",
-        "eval_usage": 2
       }
     ],
     "goa": [

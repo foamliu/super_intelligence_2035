@@ -34,6 +34,7 @@ CORPUS_FILES = [
     'sft_pyaether_corpus_v24_vector_containers.jsonl',
     'sft_pyaether_corpus_v25_et_pcre_rex.jsonl',
     'sft_pyaether_corpus_v26_ae_tree_ipc_hilit.jsonl',
+    'sft_pyaether_corpus_v27_emy_ntl_lpp.jsonl',
 ]
 
 PAT = re.compile(r'pyScript\.([A-Za-z_][A-Za-z0-9_]*)')
