@@ -1,0 +1,65 @@
+{
+ "handle": "OriolVinyalsML",
+ "name": "Oriol Vinyals (@OriolVinyalsML) / X",
+ "bio": "Co-founder &amp; CTO of Discovery Loop; Partner, 224 Ventures\n\nPast: Google DeepMind VP, Gemini TL (1.0 to 4.0), Alpha{Fold,Star,Code}, seq2seq, distillation",
+ "tweets": [
+  {
+   "id": "2085446663116898518",
+   "created_at": "2026-08-06 19:23 UTC",
+   "created_at_ms": 1786044204000,
+   "text": "Founder Mode activated from my new office ♾ https://t.co/8zN9RDEgPF",
+   "url": "https://x.com/OriolVinyalsML/status/2085446663116898518",
+   "handle_guess": "OriolVinyalsML"
+  },
+  {
+   "id": "2085034508777304440",
+   "created_at": "2026-08-05 16:05 UTC",
+   "created_at_ms": 1785945939000,
+   "text": "Thirteen years ago, a quick email exchange with @JeffDean brought me to @Google. After an unforgettable journey from Brain, to DeepMind, and to @GoogleDeepMind, working on seq2seq or distillation, and co-leading huge projects such as AlphaStar, and Gemini, I'm saying goodbye to https://t.co/v2zK39buQ1",
+   "url": "https://x.com/OriolVinyalsML/status/2085034508777304440",
+   "handle_guess": "OriolVinyalsML"
+  },
+  {
+   "id": "2070576530195910865",
+   "created_at": "2026-06-26 18:34 UTC",
+   "created_at_ms": 1782498888000,
+   "text": "Fun fact: @woj_zaremba wanted to completely remove that paper from existence a year or so after. I forgot why though -- Woj?",
+   "url": "https://x.com/OriolVinyalsML/status/2070576530195910865",
+   "handle_guess": "OriolVinyalsML"
+  },
+  {
+   "id": "2070536336910540973",
+   "created_at": "2026-06-26 15:55 UTC",
+   "created_at_ms": 1782489306000,
+   "text": "I started doing language modeling research in Jan 2016, using the LSTM from the \\",
+   "url": "https://x.com/OriolVinyalsML/status/2070536336910540973",
+   "handle_guess": "OfirPress"
+  },
+  {
+   "id": "2070531751378620466",
+   "created_at": "2026-06-26 15:36 UTC",
+   "created_at_ms": 1782488212000,
+   "text": "It's been ten years since @OfirPress first wrote on how to get started in deep learning -- and most of what he wrote is still relevant today!\\\n\\\nCongratulations Ofir!👏👏👏 https://t.co/milhUsTdeZ",
+   "url": "https://x.com/OriolVinyalsML/status/2070531751378620466",
+   "handle_guess": "ori_press"
+  },
+  {
+   "id": "2056796792042447121",
+   "created_at": "2026-05-19 17:59 UTC",
+   "created_at_ms": 1779213543000,
+   "text": "This is my third Google I/O in a row. Some things have changed, some (like the amazing colleagues that were there since day 0) haven't. @JeffDean @borgeaud_s https://t.co/ASd6lFnMuf",
+   "url": "https://x.com/OriolVinyalsML/status/2056796792042447121",
+   "handle_guess": "OriolVinyalsML"
+  },
+  {
+   "id": "2056795397474168974",
+   "created_at": "2026-05-19 17:53 UTC",
+   "created_at_ms": 1779213210000,
+   "text": "1/ Today at Google I/O,  we’re launching Gemini 3.5 Flash ⚡️⚡️⚡️!\\\n\\\nOur mission was clear: bring frontier-level intelligence with unprecedented speed.\\\n\\\n3.5 Flash delivers drastic intelligence (beating 3.1 Pro on almost every benchmark), at Flash speeds. 🧵 https://t.co/oCtQ0zEhOK",
+   "url": "https://x.com/OriolVinyalsML/status/2056795397474168974",
+   "handle_guess": "OriolVinyalsML"
+  }
+ ],
+ "http_status": 200,
+ "fetched_at": "2026-11-11 21:03:26"
+}

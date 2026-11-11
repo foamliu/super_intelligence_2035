@@ -6,7 +6,7 @@
 > 🔴 **找 X 的铁律（不猜）**：只登记**能从可访问页面读到**的 handle（作者本人主页 `href`，并用 X 页 `og:description` 二次核对身份）；**读不到 = 写「未找到 X」**。
 > 🚫 不许猜 handle（猜错会 follow 到无关账号，比不 follow 更糟）。X.com 自 **2026-11-11 12:4x** 起经本机 Mihomo 代理**只读可达**；**follow 仍需登录态 ⇒ 未自动执行**（0 follow，未假装）。
 
-**本轮快照**：累计 **34** 人（第六轮 +6：Karthik Narasimhan / Demis Hassabis / Koray Kavukcuoglu / Volodymyr Mnih / Alec Radford / Jared Kaplan）｜已发信 **8**（Tri Dao · Shunyu Yao · Haoxing Ren · Jason Wei · Noah Shinn · Kaiming He · Haotian Liu · **Karthik Narasimhan**）｜X 已核验 **13**（`@tri_dao` / `@_albertgu` / `@ShunyuYao12` / `@edwardjhu` / `@jyangballin` / `@_jasonwei` / `@ilyasut` / `@RichardSSutton` / `@imhaotian` / `@ChunyuanLi` / **`@karthik_r_n` / `@demishassabis` / `@koraykv`**）｜X 未找到 **21**｜**X 可达（本机 Mihomo 7897，本轮 18:0x 复测 `x.com` `200` / 出口 `178.249.213.185`）**｜已 follow **0**（follow 需登录态 ⇒ 仍靠用户手动，见第二节）｜已核验言论 **5 条**（V1–V5；本轮新增 V5，**正文不完整 ⇒ 未采用**）
+**本轮快照**：累计 **39** 人（第七轮 +5：David Silver / Oriol Vinyals / Sergey Levine / Chelsea Finn / Moo Jin Kim）｜已发信 **9**（Tri Dao · Shunyu Yao · Haoxing Ren · Jason Wei · Noah Shinn · Kaiming He · Haotian Liu · Karthik Narasimhan · **Moo Jin Kim**）｜X 已核验 **17**（`@tri_dao` / `@_albertgu` / `@ShunyuYao12` / `@edwardjhu` / `@jyangballin` / `@_jasonwei` / `@ilyasut` / `@RichardSSutton` / `@imhaotian` / `@ChunyuanLi` / `@karthik_r_n` / `@demishassabis` / `@koraykv` / **`@OriolVinyalsML` / `@svlevine` / `@chelseabfinn` / `@moo_jin_kim`**）｜X 未找到 **22**｜**X 可达（本机 Mihomo 7897，本轮 21:0x 复测 `x.com` `200` / 0.52s / 出口 `178.249.213.185`）**｜已 follow **0**（follow 需登录态 ⇒ 仍靠用户手动，见第二节）｜言论台账 **8 条**（V1–V8；完整可引用 **5** 条 = V1/V2/V4/V6/V8，V3/V5/V7 正文不完整**未采用**，V8 >30 天降级）
 
 
 ---
@@ -459,6 +459,73 @@
 
 ---
 
+### 35. David Silver
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | David Silver |
+| 机构 | **Google DeepMind**（AlphaGo / AlphaGo Zero 一作；DQN 三作） |
+| 代表论文 | AlphaGo（Nature 2016）· AlphaGo Zero（Nature 2017） |
+| 邮箱 | **未找到**（个人站 `https://www.davidsilver.uk/` 实测 `HTTP 200` / 96,600 B，页内无 `mailto:`；无当前机构个人页可核） |
+| 主页 | <https://www.davidsilver.uk/>（实测 `200`；只有博客/文章，无联系方式区块） |
+| X 账号 | **未找到 X**（个人站无 x/twitter 链接；🚫 未猜 `@davidsilver` 之类常见 handle） |
+| 状态 | 待跟踪（渠道缺失 ⇒ 不发信） |
+| 备注 | AlphaGo 系两篇的**共同一作**，是「搜索预算 + 自我对弈」这条线最直接的作者；但其公开表达主要在论文与访谈，X 不可核 ⇒ 只作为**经典论文作者**建档，不作为言论源。 |
+
+### 36. Oriol Vinyals
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Oriol Vinyals |
+| 机构 | **Discovery Loop**（联合创始人 & CTO，X bio 自述）· **224 Ventures** 合伙人；发表时 Google DeepMind VP、Gemini TL（1.0–4.0） |
+| 代表论文 | Sequence to Sequence Learning（arXiv `1409.3215`，二作）· Gemini（arXiv `2312.11805`，Gemini TL）· AlphaStar（X bio 自述参与） |
+| 邮箱 | **未找到**（`research.google/people/oriolvinyals/` 实测 `404`；无个人主页可核 ⇒ 不发信） |
+| 主页 | 未找到（同上） |
+| X 账号 | **@OriolVinyalsML**（`200`；bio = `Co-founder & CTO of Discovery Loop; Partner, 224 Ventures / Past: Google DeepMind VP, Gemini TL (1.0 to 4.0), Alpha{Fold,Star,Code}, seq2seq, distillation` ⇒ 与 seq2seq / Gemini 作者身份一致） |
+| 状态 | 待跟踪 · X 待 follow |
+| 备注 | 一人同时覆盖必读清单第 2 组（seq2seq）与第 8 组（Gemini/AlphaStar）⇒ **优先级最高的言论源之一**；但已离开 Google，近期推文多为创业相关，引用时须区分「个人观点」与「Gemini 官方口径」。 |
+
+### 37. Sergey Levine
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Sergey Levine |
+| 机构 | **UC Berkeley**（EECS 副教授）· **Physical Intelligence** 联合创始人 |
+| 代表论文 | OpenVLA（arXiv `2406.09246`，作者列表第 16 位，arXiv API 18 人全量核对）· RT 系列 / 机器人学习 |
+| 邮箱 | **未找到**（个人页 `people.eecs.berkeley.edu/~svlevine/` 实测 `200` / 12,481 B，`Email:` 后是 `toggle_vis('email')` 的**招生说明**，无实际地址；页面不公开邮箱） |
+| 主页 | <https://people.eecs.berkeley.edu/~svlevine/>（实测 `200`） |
+| X 账号 | **@svlevine**（`200`；bio = `Associate Professor at UC Berkeley / Co-founder, Physical Intelligence`，与身份一致） |
+| 状态 | 待跟踪 · X 待 follow（无邮箱 ⇒ 不发信） |
+| 备注 | OpenVLA 的资深作者之一，言论集中在 VLA / 机器人策略；对我们「动作接口 + 评测协议」有参考价值，但**不套用机器人结论到 EDA**。 |
+
+### 38. Chelsea Finn
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Chelsea Finn |
+| 机构 | **Stanford University**（CS & EE 助理教授）· **Physical Intelligence** 联合创始人 |
+| 代表论文 | OpenVLA（arXiv `2406.09246`，作者列表第 18 位）· 元学习 / 机器人学习系列 |
+| 邮箱 | **未找到**（`https://cbfinn.github.io/` 实测 `200` / 31,521 B，仅有课程助教邮箱 `cs330-staff-aut2324@cs.stanford.edu`，**非本人**；`profiles.stanford.edu/chelsea-finn` 无公开邮箱 ⇒ 不猜） |
+| 主页 | <https://cbfinn.github.io/>（实测 `200`） |
+| X 账号 | **@chelseabfinn**（`200`；bio = `Asst Prof of CS & EE @Stanford / Co-founder of Physical Intelligence @physical_int / PhD from @Berkeley_EECS…`） |
+| 状态 | 待跟踪 · X 待 follow（无邮箱 ⇒ 不发信） |
+| 备注 | 言论密度高且偏方法论（VLA、long-context agent、value classifier）；已核验 V6（2026-10-24，generative value classifiers）⇒ **下期 `voice_ready` 候选**。 |
+
+### 39. Moo Jin Kim
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Moo Jin Kim（韩裔，英文名 ⇒ 信按英文写） |
+| 机构 | **OpenAI**（research scientist，主页自述）· Stanford CS PhD（导师 Chelsea Finn / Percy Liang） |
+| 代表论文 | OpenVLA（arXiv `2406.09246`，**一作**）· OpenVLA-OFT / Cosmos Policy（主页自述） |
+| 邮箱 | **moojink@cs.stanford.edu**（来源：本人主页 `https://moojink.github.io/` 页内防爬写法 `moojink at cs dot stanford dot edu`，`HTTP 200` / 33,139 B 实测，按原样还原） |
+| 主页 | <https://moojink.github.io/>（实测 `200`） |
+| X 账号 | **@moo_jin_kim**（`200`；bio = `Research @OpenAI | CS PhD @StanfordAILab`，与身份一致） |
+| 状态 | **已发信**（2026-11-11 21:04 CST，B 轨第七轮；英文 195 词）· X 待 follow |
+| 备注 | ⚠️ 主页自述已入职 OpenAI，Stanford 邮箱可能停用 ⇒ 若退信记「通道失效」，**不猜其他地址**。信的内容是「双塔融合 vs 数据多样性」「逐维分桶 vs 文本序列化」两个取舍，直接回填 vision / harness 的预注册。 |
+
+---
+
 ## 二、🟢 X 能力探测（只读 · 2026-11-11 **第四轮 12:4x 起已恢复可达**）
 
 
@@ -485,7 +552,7 @@
 
 **落地**：脚本 `research/classic/x_fetch.py`，原始结果落 `research/classic/x/<handle>.json`（6 个文件，共 15.3 KB，可入 git）。
 
-### 待 follow 清单（请用户手动执行 · 13 个 handle 已在 X 侧二次核验）
+### 待 follow 清单（请用户手动执行 · 17 个 handle 已在 X 侧二次核验）
 
 | # | 人物 | handle | 主页链接 | X 侧核验（第四轮实测） | 为什么值得跟 |
 |:--|:--|:--|:--|:--|:--|
@@ -502,9 +569,13 @@
 | 11（**第六轮新增**） | Karthik Narasimhan | `@karthik_r_n` | <https://x.com/karthik_r_n> | `200`，bio = `Professor@Princeton, ex @OpenAI, @SierraPlatform, @MIT_CSAIL, @iitmadras. GPT, ReAct, Tree-of-Thoughts, SWE-Bench/Agent, TAU-bench, GEO` | GPT-1 二作 / ReAct 共同作者 ⇒ **harness 三条主线（循环 / 判分 / 对话任务）汇于一人**，言论价值最高 |
 | 12（**第六轮新增**） | Demis Hassabis | `@demishassabis` | <https://x.com/demishassabis> | `200`，bio = `Nobel Laureate. Co-Founder & Chair @GoogleDeepMind; Chief Scientist of Alphabet. Founder & CEO @IsomorphicLabs` | DQN 末位 / AlphaGo / AlphaFold 通讯 ⇒ DeepMind 家族一手发布源（**须区分事实与营销**） |
 | 13（**第六轮新增**） | Koray Kavukcuoglu | `@koraykv` | <https://x.com/koraykv> | `200`，bio = `SVP, Google DeepMind / Chief AI Architect, Google.` | DQN 二作 ⇒ 深度 RL 与 Gemini 系架构的一手来源 |
+| 14（**第七轮新增**） | Oriol Vinyals | `@OriolVinyalsML` | <https://x.com/OriolVinyalsML> | `200`，bio = `Co-founder & CTO of Discovery Loop… Past: Google DeepMind VP, Gemini TL (1.0 to 4.0), Alpha{Fold,Star,Code}, seq2seq…` | seq2seq 二作 + Gemini TL ⇒ 必读清单第 2 / 8 组交叉点 |
+| 15（**第七轮新增**） | Sergey Levine | `@svlevine` | <https://x.com/svlevine> | `200`，bio = `Associate Professor at UC Berkeley / Co-founder, Physical Intelligence` | OpenVLA 资深作者 ⇒ VLA / 动作接口的一手来源 |
+| 16（**第七轮新增**） | Chelsea Finn | `@chelseabfinn` | <https://x.com/chelseabfinn> | `200`，bio = `Asst Prof of CS & EE @Stanford / Co-founder of Physical Intelligence…` | OpenVLA 末位 + 元学习 ⇒ VLA 与 long-context agent 方法言论 |
+| 17（**第七轮新增**） | Moo Jin Kim | `@moo_jin_kim` | <https://x.com/moo_jin_kim> | `200`，bio = `Research @OpenAI | CS PhD @StanfordAILab` | OpenVLA 一作 ⇒ 该配方细节的最直接作者（今日已发信） |
 
 
-> 13 个 handle 均来自其**本人主页的 `href`** 或**论文作者身份可核对**的路径（前 6 个第四轮、7–10 第五轮、11–13 第六轮），并用 X 主页 `og:description` **二次核对 bio 与身份一致**；`x.com/AlecRadford` 虽 `200` 但 bio 无身份信息 ⇒ **拒绝登记**（见主表 #33）。用户 follow 后请把状态改为 `已follow` 并写日期。
+> 17 个 handle 均来自其**本人主页的 `href`** 或**论文作者身份可核对**的路径（前 6 个第四轮、7–10 第五轮、11–13 第六轮、14–17 第七轮），并用 X 主页 `og:description` **二次核对 bio 与身份一致**；`x.com/AlecRadford` 虽 `200` 但 bio 无身份信息 ⇒ **拒绝登记**（见主表 #33）。用户 follow 后请把状态改为 `已follow` 并写日期。
 
 ### 已核验言论台账（第四轮首获 · 原文 + 时间 + 链接）
 
@@ -515,6 +586,9 @@
 | V3 | Jason Wei `@_jasonwei` | 2026-11-10 22:31 | 起句 "Created a \"benchmark benchmark\": a frequency distribution of which benchmarks were reported by the frontier labs in 2026…"（**正文含转义引号，HTML 内嵌串被截断；推文页正文未渲染**） | <https://x.com/_jasonwei/status/2120283338640621826> | ❌ **未采用**：不满足「原文完整 + 可核验」，不冒充完整原文；仅在此登记，待下轮用其它入口取全文后再评估 |
 | V4 | Richard S. Sutton `@RichardSSutton` | 2026-11-07 18:57 | "Brute force computation is not enough for intelligence. Clever new methods are needed. The science of AI is far from finished. IMHO" | <https://x.com/RichardSSutton/status/2119142310894334262> | 🕓 **本期未用（受「每期 ≤2 条」上限）**，原文已核验 ⇒ **下期 `voice_ready` 首选候选**；话题点 = 「暴力算力 vs 更聪明的方法」；风险 = 是**观点**且带 `IMHO`，🚫 不得写成结论 |
 | V5 | Karthik Narasimhan `@karthik_r_n` | 2026-11-05 21:38 | 起句 `Just like everything else in the global economy, the future will have lots of AI agents for specialized tasks,  essentially creating multi-developer agentic systems that can benefit greatly from working together. @awhanjie 's latest paper`（**抓到的 `full_text` 在此处截断**；推文页正文未渲染） | <https://x.com/karthik_r_n/status/2118457961727275111> | ❌ **未采用（正文不完整）**：推文页 `200`、`og:title` = `Karthik Narasimhan (@karthik_r_n) on X` 作者可核，但正文不完整 ⇒ 按令**不冒充完整原文**；下轮换入口（thread 首条 / 转载全文）再评估 |
+| V6（**第七轮新增**） | Chelsea Finn `@chelseabfinn` | 2026-10-24 22:09 UTC | "Generative value classifiers are a new parametrization of Q-functions that don't require action conditioning. We think these may combine gracefully with large, pre-trained policies and learn/generalize better from a richer output signal. Paper: https://t.co/pNphW8m0uf"（原文两处换行，此处以空格连接；**起止完整**） | <https://x.com/chelseabfinn/status/2114117117813706782> | 🕓 **本期未用（受「每期 ≤2 条」上限）**，推文页 `200` + `og:title` = `Chelsea Finn (@chelseabfinn) on X` 双核验 ⇒ **下期 `voice_ready` 候选**；话题点 = 「不依赖动作条件的价值函数」；风险 = 是**作者观点 + 自家论文**，须标「作者自述」 |
+| V7（**第七轮新增**） | Sergey Levine `@svlevine` | 2026-11-09 06:02 UTC | 起句 `A VLM can figure out semantics: which object to grasp, where to put it. But how do we turn this knowledge into fluent and dexterous actions? At CoRL on Tuesday, Andy and Will will talk about Flow Reversal Steering: a method for passing VLM …"（**抓到的 `full_text` 在引号处截断**） | <https://x.com/svlevine/status/2119672075589726281> | ❌ **未采用（正文不完整）**：推文页 `200` + `og:title` = `Sergey Levine (@svlevine) on X` 作者可核，但正文不完整 ⇒ 按令**不冒充完整原文** |
+| V8（**第七轮新增**） | Oriol Vinyals `@OriolVinyalsML` | 2026-08-05 16:05 UTC | "Thirteen years ago, a quick email exchange with @JeffDean brought me to @Google. After an unforgettable journey from Brain, to DeepMind, and to @GoogleDeepMind, working on seq2seq or distillation, and co-leading huge projects such as AlphaStar, and Gemini, I'm saying goodbye to https://t.co/v2zK39buQ1"（起止完整） | <https://x.com/OriolVinyalsML/status/2085034508777304440> | 🕓 **>30 天 ⇒ 降级**（2026-08-05，98 天），**不进 `voice_ready`**；只作作者动向记录（已离开 Google，创办 Discovery Loop） |
 
 
 
@@ -538,8 +612,9 @@
 | 2026-11-11 15:05（**第五轮**） | Kaiming He（何恺明） | `1512.03385` ResNet | 本人当前机构主页明文（`people.csail.mit.edu/kaiming/`，`200`） | `SENT OK`（`kaiming@mit.edu`，**中文 196 字**） |
 | 2026-11-11 15:05（**第五轮**） | Haotian Liu | `2304.08485` LLaVA | 本人当前主页 `mailto:`（`haotian-liu.github.io`，`200`） | `SENT OK`（`liuhaotian.cn@gmail.com`，**中文 215 字**） |
 | 2026-11-11 18:06（**第六轮**） | Karthik Narasimhan | GPT-1（无 arXiv） | 本人主页 `karthiknarasimhan.com` 的 `mailto:`（percent-encoded，`200` / 14,706 B 实测） | `SENT OK`（`karthikn@princeton.edu`，**英文 164 词**） |
+| 2026-11-11 21:04（**第七轮**） | Moo Jin Kim | `2406.09246` OpenVLA | 本人主页 `moojink.github.io` 防爬写法 `moojink at cs dot stanford dot edu`（`200` / 33,139 B 实测） | `SENT OK`（`moojink@cs.stanford.edu`，**英文 195 词**；⚠️ 已入职 OpenAI，若退信记「通道失效」） |
 
-| 2026-11-11 12:4x–13:0x（**第四轮**） | （本轮 **0 封**） | 新增经典 `2005.14165` / `2203.02155` / `2302.13971` | 逐个实测：`hugotouvron.github.io` `404` · `longouyang.github.io` `404` · `ashishvaswani.com` `000` · 未命中任何 `mailto:` | **不发信**（按令不猜邮箱）。今日累计 **5 封**（分属三轮，每轮 ≤3）；第四轮把额度留给「有可核验邮箱」的候选 —— 本轮没有合格的 ⇒ **宁缺勿凑** |
+| 2026-11-11 12:4x–13:0x（**第四轮**） | （本轮 **0 封**） | 新增经典 `2005.14165` / `2203.02155` / `2302.13971` | 逐个实测：`hugotouvron.github.io` `404` · `longouyang.github.io` `404` · `ashishvaswani.com` `000` · 未命中任何 `mailto:` | **不发信**（按令不猜邮箱）。该轮结束时累计 **5 封**（分属三轮，每轮 ≤3）；第四轮把额度留给「有可核验邮箱」的候选 —— 本轮没有合格的 ⇒ **宁缺勿凑**（当日最终累计 = **9 封**，见上方各行） |
 
 ---
 

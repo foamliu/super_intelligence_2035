@@ -1,0 +1,81 @@
+{
+ "handle": "chelseabfinn",
+ "name": "Chelsea Finn (@chelseabfinn) / X",
+ "bio": "Asst Prof of CS &amp; EE @Stanford\nCo-founder of Physical Intelligence @physical_int\nPhD from @Berkeley_EECS, EECS BS from @MIT",
+ "tweets": [
+  {
+   "id": "2114117117813706782",
+   "created_at": "2026-10-24 22:09 UTC",
+   "created_at_ms": 1792879773000,
+   "text": "Generative value classifiers are a new parametrization of Q-functions that don't require action conditioning.\\\n\\\nWe think these may combine gracefully with large, pre-trained policies and learn/generalize better from a richer output signal.\\\n\\\nPaper: https://t.co/pNphW8m0uf",
+   "url": "https://x.com/chelseabfinn/status/2114117117813706782",
+   "handle_guess": "chelseabfinn"
+  },
+  {
+   "id": "2113770131436585288",
+   "created_at": "2026-10-23 23:10 UTC",
+   "created_at_ms": 1792797045000,
+   "text": "In language models, turning a generative model into a critic is simple: pass in the output and prompt for a score. Robot policies can't do this - they output physical actions &amp; there's no built-in vocabulary to predict scores.\\\n\\\nSo when it comes to RL on robot policies, we https://t.co/D4ITmTRYAO",
+   "url": "https://x.com/chelseabfinn/status/2113770131436585288",
+   "handle_guess": "alexjswerdlow"
+  },
+  {
+   "id": "2113036636586131475",
+   "created_at": "2026-10-21 22:36 UTC",
+   "created_at_ms": 1792622167000,
+   "text": "How do we scale up the context of LLMs?\\\n\\\nAgentic search scales to arbitrarily large amounts of info, but can easily miss relevant info.\\\n\\\nIdea💡: Optimize organization of info for downstream utility. Leads to 30+% gains even on OOD domains\\\n\\\nPaper + code: https://t.co/Xk3XYn3QAc https://t.co/POgVhs7109",
+   "url": "https://x.com/chelseabfinn/status/2113036636586131475",
+   "handle_guess": "chelseabfinn"
+  },
+  {
+   "id": "2112196825314926891",
+   "created_at": "2026-10-19 14:59 UTC",
+   "created_at_ms": 1792421940000,
+   "text": "LLMs deployed in specialized domains, from enterprise codebases to law firms, dig through a mountain of unstructured context!\\\n\\\nOur new paper, Librarian Agents, asks: can an agent adapt by curating its own long-context workspace, anticipating queries before they arrive? 🧵⬇️ https://t.co/ayVmeIIpZJ",
+   "url": "https://x.com/chelseabfinn/status/2112196825314926891",
+   "handle_guess": "Anikait_Singh_"
+  },
+  {
+   "id": "2110125641819668636",
+   "created_at": "2026-10-13 21:48 UTC",
+   "created_at_ms": 1791928131000,
+   "text": "The Pi API is officially in beta! 🤖\\\n\\\nMany people have already been using it to fine-tune π models for their robots -- below are a few\\\n\\\nWe’re hoping to expand testing significantly. Let us know if you are interested!\\\n\\\nBlog: https://t.co/JBTahDOmg7\\\nSignup: https://t.co/pIVpvdGxCN https://t.co/5pmbAlASaq",
+   "url": "https://x.com/chelseabfinn/status/2110125641819668636",
+   "handle_guess": "chelseabfinn"
+  },
+  {
+   "id": "2108673441314566158",
+   "created_at": "2026-10-09 21:38 UTC",
+   "created_at_ms": 1791581900000,
+   "text": "As robots become more reliable, DAgger becomes far less efficient.\\\n\\\neg 90% success means the person spends &gt;90% of the time passively watching the robot\\\n\\\nKey idea: failures come from similar initial states &amp; we can focus learning on these states!\\\n\\\nPaper: https://t.co/kzsIufeRy1",
+   "url": "https://x.com/chelseabfinn/status/2108673441314566158",
+   "handle_guess": "chelseabfinn"
+  },
+  {
+   "id": "2108366595978617250",
+   "created_at": "2026-10-09 01:19 UTC",
+   "created_at_ms": 1791508742000,
+   "text": "I've been thinking a lot about making robot learning scalable. To me, that means learning on the job, and using the human help still needed efficiently.\\\n\\\nIn Mulligan ⛳️, we focus each data-collection round on the initial states where the robot fails. This happens in deployment, https://t.co/do9vwSPgxP",
+   "url": "https://x.com/chelseabfinn/status/2108366595978617250",
+   "handle_guess": "larsankile"
+  },
+  {
+   "id": "2106770820773433485",
+   "created_at": "2026-10-04 15:38 UTC",
+   "created_at_ms": 1791128280000,
+   "text": "Scientific discovery is one of the most exciting applications of LLMs, but we lack data &amp; evals on the scientific process.\\\n\\\nScholarCatalyst captures which prior papers can advance new research on a problem, rather than citations or topical relevance.\\\n\\\nStrikingly, even frontier",
+   "url": "https://x.com/chelseabfinn/status/2106770820773433485",
+   "handle_guess": "chelseabfinn"
+  },
+  {
+   "id": "2106034142400086512",
+   "created_at": "2026-10-02 14:50 UTC",
+   "created_at_ms": 1790952642000,
+   "text": "AI can increasingly make progress on open problems like Navier-Stokes. Yet defining a new problem still relies on human research taste.\\\n\\\nIntroducing ScholarCatalyst, a benchmark built from AI researchers’ firsthand accounts of what inspired their work. https://t.co/ew6BZDxUki",
+   "url": "https://x.com/chelseabfinn/status/2106034142400086512",
+   "handle_guess": "ohmyksh"
+  }
+ ],
+ "http_status": 200,
+ "fetched_at": "2026-11-11 21:03:30"
+}

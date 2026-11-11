@@ -10,7 +10,7 @@
 >
 > **元数据核验**：标题 / 首次提交日 均取自 arXiv 官方 API（`export.arxiv.org/api/query?id_list=...`，2026-11-11 两轮实测 `HTTP 200` + `application/atom+xml; charset=utf-8`，首轮 4/4、第二轮 4/4 = 累计 8/8）。
 
-**本轮快照**：累计 **23** 条（首轮 11:5x 收 4 条；第二轮 11:4x 补 4 条 EDA / agent / PEFT；第三轮 12:1x 补 4 条 RoPE / SWE-bench / Reflexion / CoT；第四轮 12:4x 补 3 条 GPT-3 / InstructGPT / LLaMA；第五轮 15:0x 补 4 条 ResNet / seq2seq / Dyna / LLaVA；**第六轮 18:0x 补 4 条** GPT-1 / GPT-2 / Kaplan scaling laws / DQN）｜ 覆盖（一篇可服务多线，按文内「与我们工作的关系」逐条计数）：pretrain **17** · vision **4** · harness **9** · data **9** · zhulong **15** · designflow **7**
+**本轮快照**：累计 **27** 条（首轮 11:5x 收 4 条；第二轮 11:4x 补 4 条 EDA / agent / PEFT；第三轮 12:1x 补 4 条 RoPE / SWE-bench / Reflexion / CoT；第四轮 12:4x 补 3 条 GPT-3 / InstructGPT / LLaMA；第五轮 15:0x 补 4 条 ResNet / seq2seq / Dyna / LLaVA；第六轮 18:0x 补 4 条 GPT-1 / GPT-2 / Kaplan scaling laws / DQN；**第七轮 21:0x 补 4 条** AlphaGo / AlphaGo Zero / Gemini / OpenVLA）｜ 覆盖（一篇可服务多线，按文内「与我们工作的关系」逐条计数）：pretrain **18** · vision **6** · harness **13** · data **13** · zhulong **18** · designflow **8**
 
 > 🆕 **第四轮（2026-11-11 12:4x）新增 3 条 = 「规模 → 指令 → 开放权重」三段主线**：GPT-3（few-shot 能力从哪来）→ InstructGPT（对齐/指令跟随的范式起点）→ LLaMA（用「多 token」把开放权重做到可用）。三篇合起来回答 data 线当前最实际的问题：**token 预算、指令数据、公开配比**。
 >
@@ -18,6 +18,10 @@
 
 > 🆕 **第六轮（2026-11-11 18:0x）新增 4 条 = 「预训练配方的起点 + 规模律 + 深度 RL 地基」**：GPT-1（两阶段配方 117M）→ GPT-2（1.5B 零样本 + WebText）→ Kaplan scaling laws（N/D/C 幂律，与 Chinchilla 对照）→ DQN（经验回放 + 目标网络）。**必读清单覆盖度：本轮后 8/10 组已有一条以上落点**（缺：AlphaGo 系 / AlphaGo Zero / AlphaFold / AlphaStar / Gemini / Kimi·GLM·MiniMax / VLA·SORA；其中 **DQN 已补上「DeepMind 家族」的入口**）。
 > ⚠️ 第六轮如实记：**GPT-1 / GPT-2 无 arXiv、无 DOI**，OpenAlex 精确标题检索 `count=0`、Crossref 无对应条目 ⇒ **被引数「未查」**，本表不写估算值（Google Scholar 本机不可达）。这两条的「经典」依据是**奠基性**，不是被引数。
+
+> 🆕 **第七轮（2026-11-11 21:0x）新增 4 条 = 「搜索 / 自我对弈 / 多模态家族 / 视觉-语言-动作」**：AlphaGo（策略/价值网络 + MCTS，首次击败人类职业棋手）→ AlphaGo Zero（去掉人类数据，纯自我对弈）→ Gemini（Ultra/Pro/Nano 多模态家族，报告口径）→ OpenVLA（7B 开源 VLA，DINOv2+SigLIP 融合 + 离散动作）。**必读清单覆盖：本轮后 10/10 组均至少一条落点**（第 3 组 AlphaGo、第 8 组 DeepMind 家族、第 10 组 VLA 均补齐）。⚠️ 组内仍有未收子项，见文末候选池（AlphaFold / AlphaStar / Kimi / GLM-4 / MiniMax-01 / RT-1·RT-2·π0·Octo / SORA）。
+
+> **第七轮核验证据（可复核）**：arXiv API `id_list=2312.11805` 与 `2406.09246` **2/2** `HTTP 200` + `application/atom+xml`（83,259 B / 4,376 B；首条 2023-12-19、第二条 2024-06-13，均取 **v5 / v3** 最新版本标题）；Nature 两条经 **Crossref 2/2 `200`**（`nature16961` → 529(7587):484–489, 2016-01-27；`nature24270` → 550(7676):354–359, 2017-10）；被引数为 **OpenAlex 4/4 `200`**、查询日 **2026-11-11**。Nature 摘要文本取自 `nature.com/articles/<id>` 页面 `dc.description`（2/2 `200`），**只引摘要内出现的数字**。
 
 ---
 
@@ -412,10 +416,78 @@
 
 ---
 
+## 24. Mastering the game of Go with deep neural networks and tree search（AlphaGo）
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Mastering the game of Go with deep neural networks and tree search |
+| 作者（前 3） | David Silver · Aja Huang · Chris J. Maddison（et al.，共 **20** 位；含 Ilya Sutskever / Koray Kavukcuoglu / Demis Hassabis；DeepMind） |
+| 年份 | 2016（Nature 出版 **2016-01-27**，Crossref 实测） |
+| 会议 / 期刊 | **Nature** 529(7587): **484–489**（Crossref `page=484-489`、OpenAlex biblio 一致） |
+| 被引数 | **16,697**（OpenAlex，DOI `10.1038/nature16961`，查询日 2026-11-11；S2 未查） |
+| arXiv / DOI | 无 arXiv 版 ｜ DOI `10.1038/nature16961` ｜ <https://www.nature.com/articles/nature16961> |
+| 一句话贡献 | 用「**策略网络**选点 + **价值网络**评估局面」两个深度网络（人类棋谱监督学习 + 自我对弈强化学习）配合 **MCTS** 搜索；据摘要，**无前瞻搜索**时网络已可达当时最强 MCTS 程序水平，完整系统对其他围棋程序胜率 **99.8%**，并以 **5–0** 击败欧洲围棋冠军 —— 首次在**全尺寸**围棋中战胜人类职业棋手。 |
+| 与我们工作的关系 | **zhulong（思考预算轴，直接）**：这篇把「**模型先验**（policy/value）」与「**搜索预算**（MCTS 模拟次数）」拆成两个可独立加大的旋钮。我们的 thinking 轴应照此把「模型能力」与「每问搜索/采样预算」分开记账；<b>动作</b>：B 轴对照表加一列 `search_budget`（同一模型跑 {1×, 4×, 16×} 预算），否则「thinking 更强」无法判断是模型还是预算。<br>**harness（评测协议）**：AlphaGo 的核心证据是**固定对手、固定局数**的胜率（99.8% / 5–0），而不是单局示例；<b>动作</b>：EDA 任务的 A/B 对比也须写清对手版本、局数/题数与胜负判据，单题 showcase 不进结论。<br>**data（监督信号的来源）**：人类棋谱只用于**冷启动**，之后靠自我对弈提升；对应我们 code / EDA 语料的「人类数据冷启动 + 自生成数据」两段式，<b>判据</b>：自生成数据占比提高后，若 held-out 真实任务不升，则只保留冷启动数据。<br>**风险**：① 围棋是**完全观测、规则固定、可无限自我对弈**的封闭域，EDA 任务部分可观测且验证代价高，🚫 不可把「自我对弈能超越人类」直接外推到 EDA；② 99.8% / 5–0 均为**作者自报**，本线未复现；③ 论文的工程细节（分布式、特征平面）在 Methods，引用数字前须回原文对应段落。 |
+
+首次收录: 2026-11-11（第七轮）｜ 状态: 元数据已核验（Crossref + OpenAlex 双 200；摘要文本取自 nature.com `dc.description`）
+
+---
+
+## 25. Mastering the game of Go without human knowledge（AlphaGo Zero）
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Mastering the game of Go without human knowledge |
+| 作者（前 3） | David Silver · Julian Schrittwieser · Karen Simonyan（et al.，共 **17** 位；含 Demis Hassabis；DeepMind） |
+| 年份 | 2017（Nature 出版 **2017-10**，Crossref 实测） |
+| 会议 / 期刊 | **Nature** 550(7676): **354–359**（Crossref `page=354-359`、OpenAlex biblio 一致） |
+| 被引数 | **9,661**（OpenAlex，DOI `10.1038/nature24270`，查询日 2026-11-11；S2 未查） |
+| arXiv / DOI | 无 arXiv 版 ｜ DOI `10.1038/nature24270` ｜ <https://www.nature.com/articles/nature24270> |
+| 一句话贡献 | **去掉人类棋谱、手工特征与领域知识**（除规则本身），只靠强化学习 + 自我对弈：网络同时预测自己的落子与胜负，搜索变强 → 自我对弈数据变好 → 网络再变强；据摘要，从 **tabula rasa** 起步最终以 **100–0** 战胜此前击败冠军的 AlphaGo，并自行发现新策略。 |
+| 与我们工作的关系 | **zhulong（自我提升闭环）**：这是「**不用人类示范，靠可验证结果自举**」的最清晰范式；对应我们 thinking / RL 轴的核心问题 —— 判分器是否可靠到能当「胜负」。<b>动作</b>：在 zhulong 预注册「自生成数据闭环」小实验（生成 → 用 checker 判 → 只保留可判分样本 → 再训），<b>判据</b>：held-out 真实题提升且 checker 误判率 < 5%，否则停。<br>**data（合成数据）**：自我对弈数据**无人工标注成本**，但依赖环境可无限重置；我们的 EDA 环境重置/验证成本高 ⇒ <b>动作</b>：先统计「一次自生成样本的端到端成本（生成 + 验证）」，成本高于人工样本时不做。<br>**harness（对手/基线选择）**：100–0 是对**上一代自己**的胜负，不是对人类；<b>动作</b>：内部迭代报告须同时给「对上一版」与「对固定外部基线」两组数，避免只报自比自。<br>**designflow（造题）**：自我对弈可视为「题目难度自适应」的极端形式（对手即难度）；<b>动作</b>：可试点「出题 agent vs 解题 agent」双角色，用解题方胜率调难度，先做 30–50 题小样，不直接替换现有题库。<br>**风险**：① 围棋胜负判据**零成本且绝对可靠**，EDA 的 checker 是近似判据 —— 这是两者最大的不可迁移点；② 100–0 为作者自报；③ 「无人类知识」仅指不输入棋谱/特征，规则仍由人给出，引用时 🚫 不可写成「完全无人类参与」。 |
+
+首次收录: 2026-11-11（第七轮）｜ 状态: 元数据已核验（Crossref + OpenAlex 双 200；摘要文本取自 nature.com `dc.description`）
+
+---
+
+## 26. Gemini: A Family of Highly Capable Multimodal Models
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Gemini: A Family of Highly Capable Multimodal Models |
+| 作者（前 3） | Gemini Team（集体署名）· Rohan Anil · Sebastian Borgeaud（et al.；Google / Google DeepMind） |
+| 年份 | 2023（arXiv 首次提交 **2023-12-19**，本线实测；所引为 **v5** 最新版本） |
+| 会议 / 期刊 | 预印本技术报告（OpenAlex `type=preprint`；**未查**正式会议收录） |
+| 被引数 | **10,518**（OpenAlex，DOI `10.48550/arxiv.2312.11805`，查询日 2026-11-11；S2 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2312.11805> ｜ DOI `10.48550/arxiv.2312.11805` |
+| 一句话贡献 | 一个覆盖 **图像 / 音频 / 视频 / 文本**理解的多模态模型家族（**Ultra / Pro / Nano** 三档，从复杂推理到端侧）；据摘要，最强 Ultra 在 **32 个基准中的 30 个**刷新 SOTA、**20 个多模态基准全部提升**，并称是**首个在 MMLU 达到人类专家水平**的模型。 |
+| 与我们工作的关系 | **vision（多模态家族形态）**：同一份报告里按「Ultra / Pro / Nano」分档 = 一套代码/数据配方服务多个算力档；对应 BaiZe 视觉塔的「同配方、不同规模」评估方式，<b>动作</b>：视觉线报告固定配方，至少报一个小档 + 一个大档，避免单档结论。<br>**pretrain（只作定位，不作配方依据）**：报告**未公开**数据配比、token 量与训练细节 ⇒ 🚫 不可据本文反推我们的 token 预算或配比；<b>动作</b>：pretrain 线引用时只写「多模态家族的产品化形态」，不引用任何训练配方。<br>**harness（评测口径）**：30/32、20/20 是**厂商自报**且基准集随时间过期（2023-12 口径）；<b>动作</b>：我们的评测表引用此类数字必须标「报告方自报 + 报告日期」，不得写成「当前 SOTA」。<br>**data（多模态混料）**：家族同时覆盖四种模态，说明混料必须覆盖下游要用的每一种模态；<b>动作</b>：data 线在 manifest 里为每个模态记 `share` 与 `eval_coverage`，缺模态覆盖的实验不进入对外结论。<br>**风险**：① 技术报告**信息不对称**（无配方、无数据细节），只能当「能力声明」不能当「方法论文」；② MMLU 人类专家水平的说法是 **2023 年**口径，今天已不构成 SOTA；③ 被引数含大量预印本引用，🚫 不与其他来源跨源比较。 |
+
+首次收录: 2026-11-11（第七轮）｜ 状态: 元数据已核验（arXiv API 200 + atom+xml；OpenAlex 200）
+
+---
+
+## 27. OpenVLA: An Open-Source Vision-Language-Action Model
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | OpenVLA: An Open-Source Vision-Language-Action Model |
+| 作者（前 3） | Moo Jin Kim · Karl Pertsch · Siddharth Karamcheti（et al.；Stanford / UC Berkeley / Google DeepMind 等；所引为 **v3**） |
+| 年份 | 2024（arXiv 首次提交 **2024-06-13**，本线实测） |
+| 会议 / 期刊 | 预印本（OpenAlex `type=preprint`；**未查**正式会议收录） |
+| 被引数 | **2,913**（OpenAlex，DOI `10.48550/arxiv.2406.09246`，查询日 2026-11-11；S2 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2406.09246> ｜ DOI `10.48550/arxiv.2406.09246` ｜ 代码 <https://github.com/openvla/openvla> |
+| 一句话贡献 | 开源 **7B** VLA：**Llama 2** 语言主干 + 融合 **DINOv2 与 SigLIP** 预训练特征的视觉编码器，在 **970k** 真实机器人示范上训练、动作**离散分桶**；据摘要，在 **29 个任务 / 多机器人本体**上比闭源 **RT-2-X（55B）** 绝对成功率**高 16.5%**，参数少 **7×**，并给出高效微调（LoRA）做法。 |
+| 与我们工作的关系 | **vision（双塔融合，直接）**：`DINOv2 + SigLIP` 融合是「语义 + 局部几何」两种预训练特征的组合；对应我们工业图像（版图 / 波形 / SEM）的视觉塔选型。<b>动作</b>：预注册 2×2 消融（单 SigLIP vs 双塔融合 × 冻结 vs 解冻），<b>判据</b>：融合臂在 held-out 域内任务上 > 单塔 +2 个绝对点才保留（否则省一半视觉算力）。<br>**data（多样性优先）**：970k 示范的价值在**任务/本体多样性**而非单任务量；<b>动作</b>：data 线做「固定 token 预算，仓库/文件数 × 每仓库重复次数」三臂实验，检验多样性是否同样压倒重复量（我们的语料侧对应命题）。<br>**harness（评测协议）**：29 任务 + 多本体 + 成功率 = 固定任务集、固定初始条件的对照；<b>动作</b>：EDA agent 评测表补 `fixed_initial_state`、`n_trials`、成功率置信区间三列，禁止用单次运行比较。<br>**zhulong（接口与微调成本）**：动作离散到 256 桶是「接口 token 化」的一种；对应我们 tool-call 动作空间的序列化方式。<b>动作</b>：对比「逐维分桶」与「动作文本序列化」两臂，同时记 LoRA vs 全参的训练成本。<br>**风险**：① 机器人动作空间连续、低维、固定本体，EDA 工具调用是**异构、变长、带类型**的，🚫 不可直接照搬分桶；② 16.5% / 7× 均为**作者自报**、任务集自选；③ 970k 示范不可得，复现只能换数据。 |
+
+首次收录: 2026-11-11（第七轮）｜ 状态: 元数据已核验（arXiv API 200 + atom+xml；OpenAlex 200）
+
+---
+
 ## 候选池（下轮起逐轮补，**被引数本轮未查**，勿引用）
 
 > 只登记「已实测 arXiv 元数据」的条目；被引数待下轮 OpenAlex 批量核过再写，**本表数字一律留空 = 未查**。
-> ⚠️ 第六轮**未新增候选**（4 条直接转正为 #20–#23，元数据均当场实测）；下轮优先补必读清单仍缺的组：**AlphaGo（Nature 2016）/ AlphaGo Zero（Nature 2017）/ AlphaFold / AlphaStar / Gemini `2312.11805`**、**Kimi（`2401.14185` Moonshot / Kimi k1.5）· GLM-4 `2406.12793` · MiniMax-01 `2501.08313`**、**VLA（RT-1 `2212.06817` / RT-2 `2307.15818` / OpenVLA `2406.09246` / π0 `2410.24164` / Octo `2405.12213`）· SORA（OpenAI 技术报告，无 arXiv）**。**元数据未实测前不进本表**。
+> ⚠️ 第七轮**未新增候选**（4 条直接转正为 #24–#27，元数据均当场实测）；**必读清单 10/10 组已有落点**，但组内仍有未收子项，下轮优先：**AlphaFold（Nature 2021，DOI 待核）/ AlphaStar（Nature 2019，DOI 待核）**、**Kimi（`2401.14185` Moonshot 或 Kimi k1.5 `2501.12599`）· GLM-4 `2406.12793` · MiniMax-01 `2501.08313`**、**VLA 其余（RT-1 `2212.06817` / RT-2 `2307.15818` / π0 `2410.24164` / Octo `2405.12213`）· SORA（OpenAI 技术报告，无 arXiv）**。**元数据未实测前不进本表，也不凭印象写 DOI / 被引**。
 
 
 | arXiv ID | 标题（arXiv 实测） | 首次提交 | 拟服务线 | 为什么算经典（待核被引） |

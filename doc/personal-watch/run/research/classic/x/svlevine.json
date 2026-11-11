@@ -1,0 +1,97 @@
+{
+ "handle": "svlevine",
+ "name": "Sergey Levine (@svlevine) / X",
+ "bio": "Associate Professor at UC Berkeley\nCo-founder, Physical Intelligence",
+ "tweets": [
+  {
+   "id": "2119672075589726281",
+   "created_at": "2026-11-09 06:02 UTC",
+   "created_at_ms": 1794204179000,
+   "text": "A VLM can figure out semantics: which object to grasp, where to put it. But how do we turn this knowledge into fluent and dexterous actions?\\\n\\\nAt CoRL on Tuesday, Andy and Will will talk about Flow Reversal Steering: a method for passing VLM \\\\",
+   "url": "https://x.com/svlevine/status/2119672075589726281",
+   "handle_guess": "svlevine"
+  },
+  {
+   "id": "2119671215086534907",
+   "created_at": "2026-11-09 05:59 UTC",
+   "created_at_ms": 1794203973000,
+   "text": "@tangerinecoder and I will be presenting Flow Reversal Steering at CoRL on Tue, 5–6:30p @ JW Marriott! We'll be at poster 39 at Lone Star (3rd floor). Come by if you're interested in chatting about robot reasoning and how it can guide efficient RL!\\\nhttps://t.co/42mHL60VDE",
+   "url": "https://x.com/svlevine/status/2119671215086534907",
+   "handle_guess": "verityw_"
+  },
+  {
+   "id": "2119660556563181720",
+   "created_at": "2026-11-09 05:17 UTC",
+   "created_at_ms": 1794201432000,
+   "text": "Come check out the RLT presentation on Tuesday at CoRL! Charles will talk about how we can adapt VLA models with sample-efficient real-world RL.",
+   "url": "https://x.com/svlevine/status/2119660556563181720",
+   "handle_guess": "svlevine"
+  },
+  {
+   "id": "2119657381340778539",
+   "created_at": "2026-11-09 05:04 UTC",
+   "created_at_ms": 1794200675000,
+   "text": "We've used the OmniVLA navigation model for multiple research projects at Berkeley. Earlier this year, Noriaki figured out how to make it run in real time with combined edge + remote inference!\\\nhttps://t.co/u7yxhsykOm\\\n\\\nCome check out Noriaki's presentation about it tomorrow!",
+   "url": "https://x.com/svlevine/status/2119657381340778539",
+   "handle_guess": "svlevine"
+  },
+  {
+   "id": "2119640223621751111",
+   "created_at": "2026-11-09 03:56 UTC",
+   "created_at_ms": 1794196584000,
+   "text": "Tomorrow, we present AsyncVLA, our work on fast onboard inference for reactive navigation, at the poster session (17:00–18:30)\\\nCome visit us at Booth 142. We’d love to chat and hear your thoughts. Hope to see you there!\\\nhttps://t.co/grcxzfCUB4\\\n\\\n@CatGlossop @shahdhruv_  @svlevine",
+   "url": "https://x.com/svlevine/status/2119640223621751111",
+   "handle_guess": "Noriaki_Hirose"
+  },
+  {
+   "id": "2119529031364456907",
+   "created_at": "2026-11-08 20:34 UTC",
+   "created_at_ms": 1794170074000,
+   "text": "RLT has been accepted for oral at #CoRL2026! \\\n\\\nI’ll be presenting on Tuesday at 9am and come find me by the poster at 5pm!\\\n\\\n🎙️Oral O4 (9am-9:30am)\\\n📎Poster #64 (5-6:30pm)",
+   "url": "https://x.com/svlevine/status/2119529031364456907",
+   "handle_guess": "CharlesXu0124"
+  },
+  {
+   "id": "2118749843019665665",
+   "created_at": "2026-11-06 16:58 UTC",
+   "created_at_ms": 1793984301000,
+   "text": "A really fun project led by @KaiTyrusNelson, @tobykreiman: use simulated experiments to create a prior with state information, then align it to real-world experiments (with partial observation). Oddly enough, the theoretical foundations have a lot in common with inverse RL!",
+   "url": "https://x.com/svlevine/status/2118749843019665665",
+   "handle_guess": "svlevine"
+  },
+  {
+   "id": "2118361926669607022",
+   "created_at": "2026-11-05 15:16 UTC",
+   "created_at_ms": 1793891815000,
+   "text": "1/ A grand challenge in science: the simulation-to-experiment gap\\\n\\\nSimulators model complex systems but introduce model errors; experiments give real-world data but are costly and noisy\\\n\\\nCan we leverage both? Yes! We introduce Adversarial Distribution Alignment (ADA), at https://t.co/bl7o04xc45",
+   "url": "https://x.com/svlevine/status/2118361926669607022",
+   "handle_guess": "ask1729"
+  },
+  {
+   "id": "2118192498652991753",
+   "created_at": "2026-11-05 04:03 UTC",
+   "created_at_ms": 1793851420000,
+   "text": "When running RL with prior data, a behavior constraint is important to trade off exploration vs staying close to known good parts of the data. But the choice of this constraint is delicate -- we don't want to just match all the prior data, but we don't want to wander too far. In",
+   "url": "https://x.com/svlevine/status/2118192498652991753",
+   "handle_guess": "svlevine"
+  },
+  {
+   "id": "2118105424172064811",
+   "created_at": "2026-11-04 22:17 UTC",
+   "created_at_ms": 1793830660000,
+   "text": "While working on RLT (https://t.co/O4HcT3xt9Q) @physical_int, it became clear to me that online RL needs the right constraints to guide exploration without hindering improvement.\\\n\\\nExcited to introduce 🌟GSBR🌟, a new behavior regularizer that allows RL actor to both (1) drop bad https://t.co/YewI1awwLY",
+   "url": "https://x.com/svlevine/status/2118105424172064811",
+   "handle_guess": "CharlesXu0124"
+  },
+  {
+   "id": "2034728220818641363",
+   "created_at": "2026-03-19 20:26 UTC",
+   "created_at_ms": 1773951985000,
+   "text": "We developed an RL method for fine-tuning our models for precise tasks in just a few hours or even minutes. Instead of training the whole model, we add an “RL token” output to π-0.6, our latest model, which is used by a tiny actor and critic to learn quickly with RL. https://t.co/KibBVrriEf",
+   "url": "https://x.com/svlevine/status/2034728220818641363",
+   "handle_guess": "physical_int"
+  }
+ ],
+ "http_status": 200,
+ "fetched_at": "2026-11-11 21:03:34"
+}

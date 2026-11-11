@@ -1,0 +1,73 @@
+{
+ "handle": "moo_jin_kim",
+ "name": "Moo Jin Kim (@moo_jin_kim) / X",
+ "bio": "Research @OpenAI | CS PhD @StanfordAILab",
+ "tweets": [
+  {
+   "id": "2108543004575223816",
+   "created_at": "2026-10-09 13:00 UTC",
+   "created_at_ms": 1791550801000,
+   "text": "Life update: I defended my PhD at @StanfordAILab and recently joined @OpenAI!\\\n\\\nExtremely thankful to my advisors (@chelseabfinn &amp; @percyliang), collaborators, friends, and everyone else who supported me along the way. ❤️\\\n\\\nVery excited for this next chapter! https://t.co/8MlIHrts3I",
+   "url": "https://x.com/moo_jin_kim/status/2108543004575223816",
+   "handle_guess": "moo_jin_kim"
+  },
+  {
+   "id": "2015113423831630241",
+   "created_at": "2026-01-24 17:24 UTC",
+   "created_at_ms": 1769275453000,
+   "text": "We release Cosmos Policy 💫: a state-of-the-art robot policy built on a video diffusion model backbone.\\\n\\\n- policy + world model + value function — in 1 model\\\n- no architectural changes to the base video model\\\n- SOTA in LIBERO (98.5%), RoboCasa (67.1%), &amp; ALOHA tasks (93.6%)\\\n\\\n🧵👇 https://t.co/cz9L3ziJ6x",
+   "url": "https://x.com/moo_jin_kim/status/2015113423831630241",
+   "handle_guess": "moo_jin_kim"
+  },
+  {
+   "id": "1991296725756309867",
+   "created_at": "2025-11-20 00:05 UTC",
+   "created_at_ms": 1763597110000,
+   "text": "What a stunning launch by @sundayrobotics. The results are super impressive: long-horizon &amp; whole-body control spanning multiple minutes, generalization to unseen environments, and impressive dexterity — all with ZERO robot data! 💯 So excited for this team's future.",
+   "url": "https://x.com/moo_jin_kim/status/1991296725756309867",
+   "handle_guess": "moo_jin_kim"
+  },
+  {
+   "id": "1991296582302724346",
+   "created_at": "2025-11-20 00:04 UTC",
+   "created_at_ms": 1763597076000,
+   "text": "Robots must be reliable and hold up for a long time in order to be useful in the real world. Congratulations to @physical_int on π*0.6, which achieves much faster and more reliable task execution—in hours-long autonomous deployments—via RL on past experiences! 🎉",
+   "url": "https://x.com/moo_jin_kim/status/1991296582302724346",
+   "handle_guess": "moo_jin_kim"
+  },
+  {
+   "id": "1991255295331561754",
+   "created_at": "2025-11-19 21:20 UTC",
+   "created_at_ms": 1763587232000,
+   "text": "Introducing ACT-1: The frontier robot AI behind Memo.\\\n\\\nACT-1 enables Memo to perform: 🎭\\\n⏰ Lengthy tasks like cleaning up after your dinner\\\n🦾 Dexterous tasks such as folding socks\\\n☕ Daily delights like making an espresso\\\n\\\nHow does it work? 🧵 https://t.co/dfa1KGQgJS",
+   "url": "https://x.com/moo_jin_kim/status/1991255295331561754",
+   "handle_guess": "sundayrobotics"
+  },
+  {
+   "id": "1990574901795979577",
+   "created_at": "2025-11-18 00:16 UTC",
+   "created_at_ms": 1763425014000,
+   "text": "Our model can now learn from its own experience with RL! Our new π*0.6 model can more than double throughput over a base model trained without RL, and can perform real-world tasks: making espresso drinks, folding diverse laundry, and assembling boxes.\\\n\\\nMore in the thread below. https://t.co/XN1VFYQey1",
+   "url": "https://x.com/moo_jin_kim/status/1990574901795979577",
+   "handle_guess": "physical_int"
+  },
+  {
+   "id": "1906812302730592472",
+   "created_at": "2025-03-31 20:54 UTC",
+   "created_at_ms": 1743454454000,
+   "text": "Can we train VLAs to think about what to do next—visually—before executing tasks? \\\n\\\nIn this work led by @qingqing_zhao_, we found that *visual* chain-of-thought reasoning enhances policy success rates + enables VLAs to leverage unlabeled video data during pretraining!\\\n\\\n#CVPR2025",
+   "url": "https://x.com/moo_jin_kim/status/1906812302730592472",
+   "handle_guess": "moo_jin_kim"
+  },
+  {
+   "id": "1906759214246355357",
+   "created_at": "2025-03-31 17:23 UTC",
+   "created_at_ms": 1743441797000,
+   "text": "Introduce CoT-VLA – Visual Chain-of-Thought reasoning for Robot Foundation Models! 🤖\\\n\\\nBy leveraging next-frame prediction as visual chain-of-thought reasoning, CoT-VLA uses future prediction to guide action generation and unlock large-scale video data for training. #CVPR2025 https://t.co/fwSrkKKlx7",
+   "url": "https://x.com/moo_jin_kim/status/1906759214246355357",
+   "handle_guess": "qingqing_zhao_"
+  }
+ ],
+ "http_status": 200,
+ "fetched_at": "2026-11-11 21:03:37"
+}
