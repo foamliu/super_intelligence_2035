@@ -1,6 +1,8 @@
 WAITING: 1
 
-> 🆕 **【wake #1033 · 2026-11-12 03:57】例行巡检·全交付态**：git pull Already up to date。v7 sweep ALL DONE确认(log: "v7 sweep ALL DONE at Thu Nov 12 02:40:21 AM CST 2026")·18/18轮·6/6 ALL PASS·结果在位(`/datasets/baize-vision/out/cpu_rl_v7_*`)·HTML报告39KB在位·EXPERIMENTS在位。ops inbox RUN_ID276(pretrain eval·非vision)。research日报11-12 vision建议(VLM主干复用·π0冻结VLM+适配层vs全参·非wave RL·参考不指令)无新增可用。进程:vision loop PID669545✓·ops_relay PID1032513✓·GPU 8×H100 100% pretrain全占。体积:TASK=27KB✓/MEMORY≈8KB✓。全交付态维持·无未完成指令·WAITING=1。
+> 🆕 **【wake #1034 · 2026-11-12 04:32】例行巡检·全交付态**：git pull Already up to date。v7结果18/18目录在位(`/nas_train/app.e0031982/datasets/baize-vision/out/cpu_rl_v7_*`)·sweep log确认ALL DONE(02:40:21)·HTML报告39KB在位·EXPERIMENTS §v7在位。ops inbox RUN_ID276(pretrain eval·非vision)。research日报11-12 vision建议(VLM主干复用·π0冻结VLM+适配层vs全参·非wave RL·参考不指令)无新增可用。进程:vision loop PID669545✓·ops_relay PID1032513✓·GPU 8×H100 95-100% pretrain全占。体积:TASK=27KB✓/MEMORY≈8KB✓。全交付态维持·无未完成指令·WAITING=1。
+
+> 📦 **wake #1033 · 2026-11-12 03:57** 例行巡检·全交付态·v7 sweep ALL DONE确认·已fold。
 
 > 📦 **wake #1032 · 2026-11-12 03:30** 报告+EXPERIMENTS更新完成(v3→v7,新增v6/v7两节)·已fold。
 
@@ -53,7 +55,7 @@ WAITING: 1
 | PHASE | 🔄 **波形 RL CPU 阶段2 · v7 sweep完成(6/6 ALL PASS)**：v5✅显著(A=16%→B=37%→C=53%·p=0.0009) · v6✅完成(连续奖励·p=0.267不显著·但nonzero-std 93.8%解决方差) · **v7✅ALL 18/18完成(11-11 21:21~02:40)**：v7 proc reward λ=0.03 C=47.2%±5.2%(Δ+7.2%)✅ · λ=0.1 C=49.3%±6.4%(Δ+9.3%)✅ · λ=0.2 C=47.9%±4.5%(Δ+7.9%)✅ · v7b LoRA r8 C=47.9%±2.9%✅ · r16 C=47.2%±2.6%✅ · r32 C=49.3%±4.3%✅ · **6/6 ALL PASS(预注册判据:meanΔ>1sd AND 3seed同方向>v6 40%)** · nonzero-std=100%(proc)/80-93%(LoRA) · r8≈r16≈r32→rank非瓶颈 · McNemar(s0)NOT SIG(B偏高) · support@2/@3=2.1%(高方差) · triangle/sawtooth全线0% · R_process极小 · Qwen3.5-2B(1.88B)+LoRA。**WAITING: 1** |
 | WAITING | 1 |
 | 已完成 | **v7 sweep ALL 18/18轮✅(11-11 21:21~02:40, 6/6 ALL PASS)** · v6 GRPO连续奖励全量实验✅(11-11, C=40% vs B=35%, p=0.267不显著, nonzero-std=93.8%) · v5波形类型分类全量实验✅(A=16%→B=37%→C=53%, p=0.0009显著) · v4 RFT实验全量完成(NULL) · v3 GRPO连续奖励全完(负结果) · advantage方差诊断(PARTIAL) · 阶段1 SFT验收PASS · CPU端到端训练循环验证7/7 PASS · 数据泄漏验证+就绪报告HTML · GRPO CPU冒烟PASS · 2B文本骨干提取1.72B · 数据集均衡化9013条 · 波形RL计划书 · 论文改稿 · ArmE-R2/ArmD-R2 全链路 |
-| 当前动作 | **wake#1032 报告+EXPERIMENTS更新完成**：HTML报告(`report_vision_cpu_rl_waveform_zh.html`)更新至v3→v7(新增v6/v7两节+对比表7行+结论5段+诚实边界5条+下一步6条)·EXPERIMENTS_VISION.md新增§v6段(GRPO outcome-only 连续奖励)·v7 §v7段已在位·进程健康·GPU 93-100%·ops inbox非vision·research日报11-12 vision建议(VLM主干复用)·fold wake#1031。 |
+| 当前动作 | **wake#1034 例行巡检**：全交付态·v7结果18/18目录确认在位·sweep log ALL DONE确认·HTML报告39KB·EXPERIMENTS §v7在位·进程健康(vision loop PID669545✓·ops_relay PID1032513✓)·GPU 95-100% pretrain全占·ops inbox非vision·research日报11-12 vision建议(VLM主干复用)无新增可用·fold wake#1033。 |
 | 下一步 | ①决定v8方向：⚠️triangle/sawtooth全线0%→需SFT补数据或改任务定义(如二分类"有无三角波"或频率比较) ②McNemar(s0)NOT SIG→考虑增大eval set(48→96+)以提升paired test统计功效 ③support@2/@3=2.1%极低→模型对哪题答对高度随机→需分析per-question pattern ④process reward贡献微弱(R_process极小)→λ对结果影响不显著 ⑤若v8需要GPU→等pretrain释放(ETA≈12/24-25) ⑥research日报建议(VLM主干复用)非wave RL方向·参考不指令 |
 | 阻塞 | .12+.29 GPU全占（8×H100 93-100% util / ~75GB，pretrain baize2b ETA≈12/24-25）→ GPU验证待pretrain释放 ·.17+.75 SSH不可达 |
-| 更新 | **2026-11-12 03:57 (wake #1033)**：例行巡检·全交付态·v7 sweep ALL DONE确认(18/18·6/6 ALL PASS)·结果+报告+EXPERIMENTS在位·git pull Already up to date·进程健康(vision loop PID669545✓·ops_relay PID1032513✓)·GPU 8×H100 100% pretrain全占·ops inbox RUN_ID276非vision·research日报11-12 vision建议(VLM主干复用)无新增可用·fold wake#1032·WAITING=1 |
+| 更新 | **2026-11-12 04:32 (wake #1034)**：例行巡检·全交付态·v7结果18/18目录确认在位·sweep log ALL DONE(02:40:21)·HTML报告39KB·EXPERIMENTS §v7在位·git pull Already up to date·进程健康(vision loop PID669545✓·ops_relay PID1032513✓)·GPU 8×H100 95-100% pretrain全占·ops inbox RUN_ID276非vision·research日报11-12 vision建议(VLM主干复用)无新增可用·fold wake#1033·WAITING=1 |
