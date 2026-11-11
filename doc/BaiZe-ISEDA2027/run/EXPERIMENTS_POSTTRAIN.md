@@ -10076,3 +10076,54 @@ API_DOCS block → fingerprint scan vs 155 eval entry_points → S1×2 + S3×2 +
 
 ---
 
+## §R203 — v33 SleQueryData SFT Corpus (wake272, 2026-11-11)
+
+**背景.** R202 v32 CColor 完成后，R191 blind scan 重新运行，确认 `SleQueryData` 为新 #1 blind API（1 usage, 1 API, family `Sle`）。本轮目标：为 `SleQueryData` 及其关联 API 构建隔离 SFT 语料 v33。
+
+**Target APIs (3).**
+- `SleQueryData` — query-data class for hierarchical spatial query (ISOLATE-class: eval entry_point `create_query_data` 是消费者函数，SleQueryData 是它内部用的 helper class)
+- `aeMakeSleQueryData` — factory function: `aeMakeSleQueryData(fig: emyObject) -> SleQueryData`
+- `SleHierQuery` — hierarchical query class: `naiveQuery()`, `sortObjectsByType()`, `free()` (cross-API integration)
+
+**API documentation source.** All 3 APIs fetched via pyAether MCP `get_api_details` — SleQueryData/aeMakeSleQueryData/SleHierQuery all present in `API_INFO_MERGED_V3.json` (unlike CColor/CString which were in `known_missing_from_db`).
+
+**Key API facts.**
+- `SleQueryData(obj, hierPath, dist=DBL_MAX)` — 3 constructor overloads: full, obj-only (dist=DBL_MAX), copy.
+- `__eq__(ref)` compares obj AND hierPath but **NOT** dist — key behavior exercised in S5 edge-case pairs.
+- `get(pt, ref, hierPath, row, col)` — two overloads (with/without pFigGroup).
+- `isEvaluedTextORUnderQuery(queryBox, showDefaultParameter)` — whether eval text overlaps query region.
+- `setObject(obj)` — sets the obj for this data.
+- Members: `m_object` (use `.down_cast()`), `m_hierPath` (use `.getDepth()`).
+- `SleHierQuery.naiveQuery(design, qbox, lpp_filter, obj_filter, startLevel, endLevel, startRow, endRow, maxCount, h_data)` populates `emyArray_p_SleQueryData`.
+- `SleHierQuery.free(h_data)` — cleanup.
+- `SleHierQuery.sortObjectsByType(h_data)` — reorder results by object type.
+
+**Corpus structure (17 pairs).**
+- S1×1: doc-to-code (SleQueryData construction with 3-arg overload).
+- S3×1: method-call (isEvaluedTextORUnderQuery).
+- S4×5: multi-step traces (eq-obj+hierPath, copy-constructor, aeMakeSleQueryData factory, isEvaluedTextORUnderQuery with eval text, construct-from-pin).
+- S5×5: error/edge-case (default dist DBL_MAX, eq different objects False, get() 5-arg, get() 6-arg with pFigGroup, eq same obj different after setObject).
+- S6×5: cross-API workflow (SleQueryData+SleHierQuery naiveQuery, aeMakeSleQueryData+SleHierQuery free, SleHierQuery sortObjectsByType, bulk construction in emyArray, construct-compare-copy pipeline).
+- Doctest values deliberately different from eval: lib=`demo_sle_lib` (vs eval `test_sle_lib`), distances 5.0/25.0/50.0 (vs eval 10.5), pin names Q7/D0/RST/EN/RDY/VCC/GND/X1/Y1 (different from eval), coordinates different from eval's.
+
+**Contamination isolation.**
+- 155 eval entry_points full scan: 17/17 PASS, 0 REJECTED.
+- Independent re-verify (separate Python script): 0 hits across 155 eval APIs.
+- SleQueryData is NOT an eval entry_point (`create_query_data` IS the entry_point for task 036) → ISOLATE-class.
+- Initial run: 2 pairs rejected (S1/S3 API_DOCS key_notes contained literal eval entry_point name `create_query_data`) → fixed by rewording to "a helper class used within an eval task".
+
+**Blind scan re-run with v33** (v33 added to CORPUS_FILES in `baize_posttrain_r191_blind_scan.py`):
+- Covered: 154 → 155/164 (+1)
+- Blind: 10 → 9 (-1)
+- Coverage ratio: 93.9% → **94.5%**
+- SleQueryData blind family **cleared**.
+- New blind list: `aelEngineerNotation`, `agrGetSnapPoints`, `emvPurposeNumberDrawing`, `geTreeRemoveItem`, `guMotion`, `mouseLBClick`, `setPyAePath`, `smash_option`, `timeToTm` (all 1 usage each, no clear family grouping).
+
+**Cumulative corpus.** v11-v33 = 875 + 17 = **892 pairs** training-ready.
+
+**Output files.** `sft_pyaether_corpus_v33_slequery.jsonl` (17 lines, 25934 bytes). Builder: `baize_posttrain_r203_slequery_corpus.py` (726 lines, py_compile ✅).
+
+**Status.** R203 ✅ complete. Sandbox TCP8667 still CLOSED (77th wake) — blocks Phase 1 eval & Phase 3 RL. GPU occupied by serve placeholders (8095-8099) — v11-v33 SFT re-train awaits GPU release. Formal P3 training awaits pretrain ckpt (ETA ≈ 2026-12-25).
+
+---
+
