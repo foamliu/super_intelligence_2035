@@ -37,9 +37,9 @@ PILOT_TASKS=("fix-git" "break-filter-js-from-html")
 
 # --- Pre-flight: training health ---
 echo "=== Pre-flight: training health check ==="
-TRAIN_PID=$(pgrep -f "baize_xmodel25_decay_v2" 2>/dev/null | head -1)
+TRAIN_PID=$(pgrep -f "pretrain_launcher.py" 2>/dev/null | head -1)
 if [[ -n "$TRAIN_PID" ]]; then
-    STEP_TIME=$(tail -5 /proc/${TRAIN_PID}/fd/1 2>/dev/null | grep -oP 'elapsed time per iteration \(ms\): \K\d+' | tail -1)
+    STEP_TIME=$(tail -5 /proc/${TRAIN_PID}/fd/1 2>/dev/null | grep -oP 'elapsed time per iteration \(ms\): \K\d+' | tail -1 || true)
     if [[ -n "$STEP_TIME" ]]; then
         echo "Training step time: ${STEP_TIME}ms (PID ${TRAIN_PID})"
         if (( STEP_TIME > 7400 )); then
@@ -50,7 +50,7 @@ if [[ -n "$TRAIN_PID" ]]; then
         echo "WARNING: Could not parse step time from /proc/${TRAIN_PID}/fd/1"
     fi
 else
-    echo "WARNING: Training process not found (pgrep baize_xmodel25_decay_v2)"
+    echo "WARNING: Training process not found (pgrep pretrain_launcher.py)"
 fi
 
 # --- Pre-flight: port + docker + harbor ---
