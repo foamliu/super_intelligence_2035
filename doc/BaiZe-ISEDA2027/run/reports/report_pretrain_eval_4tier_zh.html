@@ -42,8 +42,8 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
   <div class="meta">
     <span>📅 2026-11-11</span>
     <span>🏗 Mamba2-hybrid 2.22B</span>
-    <span>🔥 训练 iter≈167k / 700k · step~7s<7.4s✅ · ckpt 166k(18:52) · lr-decay-iters=0(stable段,decay未配置)</span>
-    <span>📊 L1: 16 ckpt ✅(160k=58.13%新高) | L2: GSM8K=0%@160k🔴 MMLU=23.16%(≈随机) BBH=0%🔴 MATH=0%🔴(v5确认21:07,exact_match=0,生成退化) · v6运行中(Phase1 HumanEval 1/100~100s/it,--repeat-penalty 1.3) · 🔬vLLM方案已备(待GPU窗口) | L3: 🔧 pipeline脚本已建·模型生成退化 | L4: 数据在.15不可达+定性测试=退化输出</span>
+    <span>🔥 训练 iter≈167.4k / 700k · step~7.1s<7.4s✅ · ckpt 166k · 下一个168k~77min后 · lr-decay-iters=0(stable段,decay未配置)</span>
+    <span>📊 L1: 16 ckpt ✅(160k=58.13%新高) | L2: GSM8K=0%@160k🔴 MMLU=23.16%(≈随机) BBH=0%🔴 MATH=0%🔴(v5确认,生成退化) · v6运行中(Phase1 HumanEval ~15/100~80s/it,--repeat-penalty 1.3,ETA~23:20→MBPP→MATH→探针) · 🔬vLLM方案已备(.17 SSH不通,待GPU窗口) | L3: 🔧 pipeline脚本已建·模型生成退化 | L4: 数据在.15不可达+定性测试=退化输出</span>
   </div>
   <div style="margin-top:12px;font-size:12.5px;background:rgba(0,0,0,.18);border-radius:8px;padding:8px 12px;opacity:.95">
     ⚠️ 本报告是<b>训练监控与决策依据</b>，<b>不进论文正文</b>（2026-11-10 用户令）。用户关注点（2026-11-11）：<b>如何拿到更好的结果</b>。
@@ -372,15 +372,14 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
   </table>
 </div>
 <div class="card">
-  <h3>本轮(#1997)动作</h3>
+  <h3>本轮(#1999)动作</h3>
   <ol>
-    <li><b>训练健康确认</b>：iter ≈167k · ckpt 166k(18:52) · step ~7s<7.4s✅ · GPU 8×100%/75GB · lr=1e-3(stable段,decay未开始) · 0 NaN/skip</li>
-    <li><b>v5 MATH 完成</b>：hendrycks_math_algebra 0-shot limit=100 · <b>exact_match=0.0%</b>(21:07完成,~68min,100/100@~40s/it) · 确认所有 L2 生成任务均=0%(GSM8K+BBH+MATH) · HumanEval/MBPP 在 v5 中失败(需 <code>--confirm_run_unsafe_code</code> CLI flag)</li>
-    <li><b>v5 残留 llama-server 清理</b>：v5 脚本 kill PID 1594930 未生效,进程仍存活 → 手动 <code>kill 1594930</code> 清理</li>
-    <li><b>v6 启动确认</b>：<code>baize_l2_eval_160k_v6.sh</code> 21:08 自动检测到 port 8083 空闲后启动 · llama-server 带 <code>--repeat-penalty 1.3</code>(PID 2680200) · Phase 1 HumanEval 运行中(1/100,~100s/it,ETA~2.8h) · 后续 Phase 2 MBPP + Phase 3 MATH(RP=1.3 对比 v5 baseline) + Phase 4 生成探针</li>
-    <li><b>L2 全貌</b>：6 集中 4 集已确认=0%(GSM8K/MATH/BBH/预期HumanEval+MBPP) · MMLU=23.16%(MCQ,唯一非零) · 根因=生成退化(SSM state 崩溃→重复输出)+模型能力不足(26% code+math)</li>
-    <li><b>GPU 资源</b>：<code>.29</code> 8×H100 满载(训练) / <code>.12</code> 8×H100 满载(vision R9) / <code>.17</code> A40 SSH 不通 → vLLM 验证仍阻塞</li>
-    <li><b>无新万整数 ckpt</b>：当前 iter ~167k · ckpt 166k · 下一个万整数 170k ETA~5h(3300步×~7s)</li>
+    <li><b>训练健康确认</b>：iter 167,350/700,000 · step ~7100ms(7048-7185ms)<7.4s✅ · loss 2.04-2.05 · GPU 8×100%/75GB · lr=1e-3(stable段,decay未开始) · 0 NaN/skip · PID 146283(etimes~783489s≈9.1天)</li>
+    <li><b>v6 HumanEval 进度</b>：Phase 1 HumanEval ~15/100 · ~80s/it · llama-server PID 2671359(port 8083, t=4, nice=19, --repeat-penalty 1.3) · 训练 step 未受影响(7100ms<7.4s✅) · ETA HumanEval~23:20 → Phase 2 MBPP → Phase 3 MATH(RP=1.3) → Phase 4 探针</li>
+    <li><b>研究日报 2026-11-11</b>：无 pretrain 新增可用建议（确认,不凑数）</li>
+    <li><b>.17/.15 SSH</b>：.17(10.252.32.17) connection timed out → vLLM 验证仍阻塞 · .15(10.251.36.15) connection timed out → L4 designflow 仍不可达</li>
+    <li><b>无新万整数 ckpt</b>：当前 iter 167,350 · ckpt 166k(checkpoints/latest_checkpointed_iteration.txt=166000) · 下一个 168k ETA~77min(650步×7.1s) · 下一个万整数 170k ETA~4.4h(2650步×7.1s)</li>
+    <li><b>L2 全貌（不变）</b>：GSM8K=0% · MMLU=23.16%(MCQ,唯一非零) · BBH=0% · MATH=0% · HumanEval/MBPP v6 运行中 · 根因=生成退化(SSM state 崩溃→重复输出)+模型能力不足(code19%+math7%=26% vs DeepSeek最优60%)</li>
   </ol>
   <div class="alert">
     <b>🔴 核心发现（待用户拍板）</b>：L2/L3/L4 的低分/空白<b>同一根因</b>——训练数据中 code+math 比例不足（code 19% + math 7% = 26%，远低于 DeepSeek 最优 60%），且仍在 stable 阶段（decay 尚未开始），导致模型在<b>所有需要连贯生成的任务</b>上退化为重复输出。<br>
@@ -447,7 +446,7 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
 </div>
 
 <footer>
-  BaiZe pretrain 线 · 四层能力评测报告 · 2026-11-11 21:15 更新(#1997) · 评测数字仅用于训练监控，不进论文正文
+  BaiZe pretrain 线 · 四层能力评测报告 · 2026-11-11 21:32 更新(#1999) · 评测数字仅用于训练监控，不进论文正文
 </footer>
 </div>
 </body>
