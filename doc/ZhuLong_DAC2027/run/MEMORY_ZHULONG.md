@@ -13,11 +13,7 @@ WAITING: 1（wake#850·2026-11-12 04:13·**B_ru_r2 🟠 评分中（round 29/30�
 - [2026-11-12 03:24 · wake#848·B_ru_r2 跑中监控 round 29/30 已滚出] 原文见 `daily-memories/2026-11-12.md` §[rolled-out 03:59 wake#849 归档]（状态同 wake#849 -35min·无实质变化·被 wake#849 取代）。
 
 - [2026-11-12 02:47 · wake#847·B_ru_r2 跑中监控 round 29/30 已滚出] 原文见 `daily-memories/2026-11-12.md` §[rolled-out 03:59 wake#849 归档]（状态同 wake#848 -37min·无实质变化·被 wake#848 取代）。
-- [2026-11-12 01:0x · wake#844·B_ru_r2 跑中监控 round 29/30 已滚出] 原文见 `daily-memories/2026-11-12.md` §[rolled-out 01:37 wake#845 归档]（状态同 wake#843 +37min elapsed·无实质变化·被 wake#845 取代）。
-
-- [2026-11-11 23:48 · wake#842·B_ru_r1 跑中监控 round 28/30 已滚出] 原文见 `daily-memories/2026-11-12.md` §[rolled-out 00:25 wake#843 归档]（22:4x 心跳轮次28/30·编排器 PID 3675162 活·B_ru_r1 round28 跑中·gap-grabber chances_used=0/3·被 wake#843 取代）。
-
-- [2026-11-11 23:1x · wake#841·22:4x 令接收+B_ru_r1 跑中监控 do-nothing 已滚出] 原文见 `daily-memories/2026-11-11.md` §[rolled-out 23:48 wake#842 归档]（22:4x 7 条口径纳入+B_ru_r1 round28 跑中+gap-grabber chances_used=0/3·已被 wake#842 取代）。
+- [wake#841/842/844 已滚出·2026-11-11 23:1x ~ 11-12 01:0x] 原文见 `daily-memories/2026-11-11.md` 与 `daily-memories/2026-11-12.md`（3 条 B_ru_r1/r2 跑中监控 do-nothing 心跳·均被 wake#843/845/849 取代·gap-grabber chances_used=0/3·无实质状态变化）。
 
 - [2026-11-11 22:3x · opencode 96-trace 再抽样 已滚出] 原文见 `daily-memories/2026-11-11.md` §[rolled-out 23:1x]（96-trace 再抽样·en真切换/zh真切换/es未生效/fr部分生效·与 72KB 报告同向·自回滚 divergent overwrite·do-nothing）。
 

@@ -1293,3 +1293,4 @@ peek:					parked		2026-11-10 23:22	peek: consultation verdi-fsdb-warning-paste
 1794375717921_5p2v2	thomasz	10.129.35.69	122	spice_sim	parked		2026-11-12 03:58	r414 rescan reject: 5p2v2 not-viable B-domain L2/L3
 1794369069999_jlgfx	yohannw	10.129.2.11	195	spice_sim	parked		2026-11-12 03:58	r414 rescan reject: jlgfx not-viable B-domain L2/L3
 1794395852366_tef8l	yinyus	10.129.2.10	283	spice_sim	parked		2026-11-12 03:58	r414 rescan: unlocatable on recorded host (file absent /home/*/.cline on 10.129.2.10)
+1793942940446_q3y71.messages.json	declanzh	hfeg0pkn005	96	spice_sim	claimed		2026-11-12 04:34	
