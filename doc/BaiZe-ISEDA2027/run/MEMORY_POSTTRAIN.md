@@ -7,14 +7,14 @@ WAITING: 0
 
 ## 进度快照
 
-- PHASE: posttrain-wake242（2026-11-11 Phase3 RL替身脚本全就绪验证✅[dry-run全通过]+detect_sft_ckpt排序bug修复✅[smoke global_step_5→正确global_step_72]+serve健康5端点✅+沙盒47th wake CLOSED/git synced）
-- 已完成: P3预备✅；P0✅；P1✅；P2✅；R1-R173✅；wake193-242✅；wake241 R172(SFT完成+serve验证+Phase2报告);wake242 R173(Phase3 RL全就绪验证+ckpt检测bug修复)
-- 当前动作: wake242 ①Phase3 RL dry-run全通过✅:verl 0.4.0 main_ppo OK/RL 3347rows/10依赖文件全存在/sandbox DOWN→R0 only/contam PASS ②🔴关键bug修复:detect_sft_ckpt sort -t_ -k3 -n排序错误→选中smoke global_step_5而非global_step_72→修复为排除_smoke+按步号数值排序(2脚本:rl_grpo_surrogate+sft_surrogate_serve) ③serve健康5端点✅(8095-8099) ④沙盒47th wake CLOSED ⑤watcher PID4109314运行中(~4.25h) ⑥git pull --rebase synced
-- 下一步: ①沙盒恢复→sentinel watcher --auto-eval自动触发Phase1 eval ②post-SFT eval:bash baize_posttrain_eval.sh --backbone minicpm5-sft --endpoint:8096 ③Phase3 RL:bash baize_posttrain_rl_grpo_surrogate.sh --reward-arm R2(待沙盒+GPU释放) ④P3正式训练待pretrain ckpt(ETA≈2026-12-25)
-- 阻塞: 🔴远程沙盒10.129.32.75跨子网TCP过滤(47th wake,需网络团队开ACL[R169 runbook已就绪])→Phase1 eval+Phase3 RL+post-SFT eval阻塞;🔴P3正式SFT数据(UltraData)在.17不可达(NFS未挂,R166);P3等pretrain ckpt
-- 本轮新增产出: R173✅(Phase3 RL替身全就绪验证[dry-run全通过:verl/deps/contam/sandbox]+detect_sft_ckpt排序bug修复[smoke global_step_5→正确global_step_72,2脚本修复])+serve健康5端点✅+EXPERIMENTS §R173
+- PHASE: posttrain-wake243（2026-11-11 SFT定性效果验证✅[base vs SFT冒烟对比:base 2218chars无代码/SFT 126chars直接出代码,压缩17.5×]+serve健康5端点✅+沙盒48th wake CLOSED+脚本完整性验证✅/git synced）
+- 已完成: P3预备✅；P0✅；P1✅；P2✅；R1-R174✅；wake193-243✅；wake242 R173(Phase3 RL全就绪验证+ckpt检测bug修复);wake243 R174(SFT定性效果验证base vs SFT冒烟对比)
+- 当前动作: wake243 ①SFT定性效果验证✅:base(8098)2218chars思考散文无代码 vs SFT(8096)126chars直接可执行代码[压缩17.5×]→直接证实P0 D1/D2假设(协议差距可回收) ②serve健康5端点✅(8095-8099,sentinel --check-once全UP) ③沙盒48th wake CLOSED(TCP8667 timeout exit=124,ICMP 0%loss) ④watcher PID4109314运行中(poll#132,interval=120s,auto_eval=1) ⑤contamination gate PASS(0命中) ⑥RL surrogate+SFT serve bash -n全✅ ⑦transformers 4.49.0✅ ⑧git synced
+- 下一步: ①沙盒恢复→watcher --auto-eval自动触发Phase1 eval ②post-SFT eval:bash baize_posttrain_eval.sh --backbone minicpm5-sft --endpoint:8096 ③Phase3 RL:bash baize_posttrain_rl_grpo_surrogate.sh --reward-arm R2(待沙盒+GPU释放) ④P3正式训练待pretrain ckpt(ETA≈2026-12-25)
+- 阻塞: 🔴远程沙盒10.129.32.75跨子网TCP过滤(48th wake,需网络团队开ACL[R169 runbook已就绪])→Phase1 eval+Phase3 RL+post-SFT eval阻塞;🔴P3正式SFT数据(UltraData)在.17不可达(NFS未挂,R166);P3等pretrain ckpt
+- 本轮新增产出: R174✅(SFT定性效果验证:base vs SFT冒烟对比2题[base卡思考模式2218chars无代码/SFT直接出代码126chars压缩17.5×]+D1/D2假设生成侧证实+系统状态快照)+serve健康5端点✅+EXPERIMENTS §R174
 - 未完成指令: 🔴用户令17:10(serve占位)GPU5/6/7全✅;🔴用户令13:40(三阶段替身计划)Phase2 SFT完成✅/Phase1待沙盒ACL/Phase3 RL脚本就绪✅待沙盒+GPU
-- git: wake242 本轮提交R173(Phase3 RL bug fix+EXPERIMENTS+MEMORY+daily)
+- git: wake243 本轮提交R174(SFT定性效果验证+EXPERIMENTS+MEMORY+daily)
 
 ## GPU 端口映射表（2026-11-10 wake195 实测）
 

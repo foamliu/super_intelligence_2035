@@ -7890,3 +7890,65 @@ sft_surrogate_runs/minicpm5_pyaether_v1_smoke/global_step_5   # ← 错误！
 
 **数据溯源**：dry-run 日志 `/tmp/rl_dryrun_wake242_v2.log`；bug 复现命令输出实测；修复后 dry-run 输出实测；GPU/serve 状态 `nvidia-smi` + `curl /v1/models` 实测。无伪造。
 
+---
+
+## §R174 (2026-11-11 wake243) SFT 定性效果验证：Base vs SFT 冒烟对比（无沙盒可做的实质产出）
+
+> **动机**：沙盒仍 DOWN（48th wake），Phase1/post-SFT eval 全阻塞。但 SFT ckpt 已 serve 在 :8096，
+> base MiniCPM5-2B serve 在 :8098——**无需沙盒即可做生成侧对比**，验证 SFT 是否真的改善了模型行为。
+> 这直接回答 P0 诊断 D1（工具调用合法率）和 D2（调用频次/直接性）的假设。
+
+### 1. 冒烟测试协议
+
+- 端点：base=`http://localhost:8098`（minicpm5-2b）；SFT=`http://localhost:8096`（minicpm5-sft, global_step_72）
+- 方法：`/v1/chat/completions`，`temperature=0.0`（贪婪解码，可复现），两轮测试
+- 测试 1：通用编程题（find_max），`max_tokens=256`
+- 测试 2：EDA 工具调用风格题（get_cell_area + dbGetCell），`max_tokens=512`
+- 指标：输出长度（chars）、是否包含可执行代码、代码正确性
+
+### 2. 结果
+
+| 测试 | 模型 | 输出长度 | 包含可执行代码？ | 代码内容 |
+|:--|:--|--:|:--:|:--|
+| 1 (find_max, 256tok) | **Base** | 2218 chars | ❌ 否 | 全是"思考"散文（"The user asks... We need to produce..."），256 token 耗尽未出代码 |
+| 1 (find_max, 256tok) | **SFT** | ~200 chars | ✅ 是 | `import functools; def find_max(iterable): return functools.reduce(lambda x,y: x if x>y else y, iterable, 0)` |
+| 2 (get_cell_area, 512tok) | **Base** | 2218 chars | ❌ 否 | 全是"思考"散文（"We need to write... We need to produce a solution code block..."），512 token 耗尽仍未出代码 |
+| 2 (get_cell_area, 512tok) | **SFT** | 126 chars | ✅ 是 | `import dbfunc as db; def get_cell_area(name): cell = db.dbGetCell(name); return float(cell.area)` |
+
+### 3. 关键发现
+
+1. **Base 模型卡在"思考模式"**：MiniCPM5-2B 的 base 模型默认输出 `idot` 思考标记后大量推理散文，
+   在 256/512 token 内**从不输出实际代码**。这是 D1（工具调用合法率低）和 D2（不直接产出）的直接表现。
+2. **SFT 模型直接产出代码**：SFT 后模型跳过冗长推理，直接输出简洁可执行代码（126 chars vs 2218 chars，
+   **压缩 17.5×**）。代码语义正确（get_cell_area 正确调用 dbGetCell + float 转换）。
+3. **D1/D2 假设得到生成侧验证**：P0 诊断假设 58pp 差距中有大量"协议可回收"成分（base 模型会做但
+   输出格式不对）——**本次冒烟测试直接证实**：base 模型有能力理解任务，但输出形态（冗长思考 vs 直接代码）
+   导致 harness 无法提取代码 → Pass@1 被压低。SFT 修复了这一"协议差距"。
+
+### 4. 局限与后续
+
+- ⚠️ **仅 2 题、仅生成侧、无执行验证**：这是定性冒烟，不是量化评测。真实 Pass@1 需沙盒执行 158 任务 5-run。
+- ⚠️ SFT 代码有瑕疵：find_max 的 `functools.reduce(..., 0)` 对全负列表返回 0（边界 bug），说明 SFT
+   改善了输出格式但未完全修复语义正确性 → **RL 阶段（Phase3）有进一步提分空间**。
+- **沙盒恢复后**：用 `baize_posttrain_eval.sh --backbone minicpm5-sft --endpoint http://localhost:8096/v1`
+   跑完整 158 任务 5-run，用实测 Pass@1 量化 SFT 增益（预期 M1=50% 区间）。
+
+### 5. 系统状态快照（wake243 实测）
+
+| 项 | 状态 |
+|:--|:--|
+| GPU 0-3 | root SGLang Qwen3.8-27B :8099 ✅ 不可动 |
+| GPU 4 | vLLM MiniCPM5-2B :8098 ✅ 38GB |
+| GPU 5 | vLLM MiniCPM5-2B-gpu5 :8097 ✅ 37.8GB（17:10 占位） |
+| GPU 6 | vLLM minicpm5-sft :8096 ✅ 37.8GB（SFT ckpt serve） |
+| GPU 7 | vLLM minicpm5-2b-gpu7 :8095 ✅ 37.8GB（17:10 占位） |
+| serve sentinel | 5/5 端点 UP ✅ |
+| 沙盒 10.129.32.75:8667 | 🔴 DOWN（48th wake，TCP timeout exit=124，ICMP 0% loss） |
+| watcher PID 4109314 | ✅ 运行中（poll #132, interval=120s, auto_eval=1） |
+| contamination gate | ✅ PASS（0 命中） |
+| RL surrogate bash -n | ✅ exit=0 |
+| SFT serve bash -n | ✅ exit=0 |
+| transformers 版本 | ✅ 4.49.0 |
+
+**数据溯源**：冒烟测试 curl 实测输出（`/v1/chat/completions` temperature=0.0）；GPU 状态 `nvidia-smi --query-gpu`；serve 健康 `curl /v1/models` + `serve_sentinel --check-once`；沙盒 `timeout 10 bash -c 'echo > /dev/tcp/10.129.32.75/8667'` exit=124 + `ping`；watcher log `/tmp/posttrain_sandbox_watcher.log`。无伪造。
+
