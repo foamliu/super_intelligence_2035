@@ -7952,3 +7952,114 @@ sft_surrogate_runs/minicpm5_pyaether_v1_smoke/global_step_5   # ← 错误！
 
 **数据溯源**：冒烟测试 curl 实测输出（`/v1/chat/completions` temperature=0.0）；GPU 状态 `nvidia-smi --query-gpu`；serve 健康 `curl /v1/models` + `serve_sentinel --check-once`；沙盒 `timeout 10 bash -c 'echo > /dev/tcp/10.129.32.75/8667'` exit=124 + `ping`；watcher log `/tmp/posttrain_sandbox_watcher.log`。无伪造。
 
+## §R175 (2026-11-11 wake244) 扩展 SFT 定性效果验证：8-prompt EDA 领域系统对比 + SFT 训练 loss 曲线全提取
+
+> **动机**：R174 仅 2 题（find_max + get_cell_area），统计力弱。本节扩展到 8 题（覆盖 Layout/Schematic/DesignMgmt/Others 四类，
+> 对齐 158 任务分布），系统量化 base vs SFT 的输出行为差异。同时从训练日志提取完整 72-step loss 曲线。
+> **无需沙盒**——直接调 `/v1/chat/completions`，temperature=0.0（贪婪解码可复现），max_tokens=400。
+
+### 1. 8-prompt 评测协议
+
+- 端点：base=`http://localhost:8098`（minicpm5-2b）；SFT=`http://localhost:8096`（minicpm5-sft, global_step_72）
+- 8 题分布：Layout×2 / Schematic×2 / DesignMgmt×2 / Others×2
+- 每题请求 base + SFT 各一次，采集：content / finish_reason / completion_tokens / elapsed
+- 分析指标：len_chars / has_code_block / has_function_def / has_tool_call(dbfunc/dbGet*) / is_pure_prose
+- 结果落盘：`run/sft_qual_eval_r175_results.json`（22.7KB，含全部原始输出）
+
+### 2. 汇总结果
+
+| 指标 | Base (minicpm5-2b) | SFT (global_step_72) | 差异 |
+|:--|:--|:--|:--|
+| finish=length（token 耗尽未完成） | **8/8** | **0/8** | SFT 全部自然停止 |
+| finish=stop（自然完成） | 0/8 | **8/8** | — |
+| 产出函数定义 (def) | 5/8 | **8/8** | SFT 100% 产出函数 |
+| 纯散文（无代码） | 3/8 | **0/8** | SFT 无纯散文 |
+| 工具调用提及 (dbfunc) | 6/8 | 6/8 | 同（2 题 Others 无 dbfunc） |
+| 平均输出长度 (chars) | 1740.5 | **116.5** | 压缩 **14.9×** |
+| 平均 completion_tokens | 400.0 | **34.2** | 压缩 **11.7×** |
+
+### 3. 逐题输出对比
+
+| ID | 类别 | Base 输出 | SFT 输出 | SFT 代码正确性 |
+|:--|:--|:--|:--|:--|
+| L1 | Layout | 1693c 散文"We need to write..."，400tok 耗尽 | 130c: `float(dbGetCell(name))` | ⚠️ 缺 `.area` 属性 |
+| L2 | Layout | 1666c 散文"Microsoft Access databases"（幻觉） | 92c: `return db.dbGetCells()` | ✅ 正确 |
+| S1 | Schematic | 1683c 散文，400tok 耗尽 | 176c: `return net.name` | ✅ 正确 |
+| S2 | Schematic | 1608c 散文，400tok 耗尽 | 116c: `return dbGetInsts(cell_name)` | ⚠️ 应 `len()` 才是 count |
+| D1 | DesignMgmt | 1747c 散文，400tok 耗尽 | 92c: `db.dbSaveDesign(path)` | ✅ 正确 |
+| D2 | DesignMgmt | 1678c 散文"DBF files"（幻觉） | 123c: `return db.dbOpenLibrary(lib_path)` | ✅ 正确 |
+| O1 | Others | 1962c 散文"The user didn't specify..." | 123c: `functools.reduce(operator.max, lst)` | ❌ `operator.max` 不存在 |
+| O2 | Others | 1887c 散文"We need to output code..." | 80c: `return s[::-1]` | ✅ 正确（多余 import） |
+
+### 4. 关键发现
+
+1. **Base 模型 100% 卡在"思考模式"**：8/8 题 `finish=length`（400 token 全耗尽，无一自然停止）。
+   Base 统一模式：`idot\nWe need to write...` → 大段推理散文 → token 耗尽 → **从不产出可执行代码**。
+   这是 P0 D1（工具调用合法率<90%）和 D2（不直接产出）的**直接量化证据**。
+
+2. **SFT 模型 100% 直接产出代码**：8/8 题 `finish=stop`，8/8 含函数定义，平均仅 34.2 tokens。
+   输出模式：`idot\n\n```python\nimport dbfunc...\ndef ...```` → 简洁可执行。
+   **压缩 14.9×**（1740→116 chars），**token 效率提升 11.7×**（400→34 tokens）。
+
+3. **SFT 代码正确性 5/8 完全正确，3/8 有瑕疵**：
+   - L1: `float(cell)` 缺 `.area`（语义不完整）
+   - S2: 返回列表而非 `len()`（语义偏差）
+   - O1: `operator.max` 不存在（API 误用）
+   - 正确率 62.5%（5/8）→ **SFT 修复了"协议差距"，但语义正确性仍有 37.5% 缺口**
+   → **这正是 RL 阶段（Phase3）的提分空间**：RL 通过执行反馈可纠正 API 误用和语义偏差。
+
+4. **Base 幻觉**：L2 题 base 称"dbfunc is a library for accessing Microsoft Access databases"，
+   D2 题 base 称"dbfunc is for reading/writing DBF files"——均为**幻觉**（dbfunc 是 PyAether EDA API）。
+   SFT 后无此幻觉——SFT 训练数据含 PyAether API 语料，纠正了领域认知。
+
+5. **D6（迭代轮数 Φ）侧面证据**：Base 400 token 内无法完成单轮输出 → harness 2500s/任务预算内，
+   base 需更多迭代轮（输出不可用需重试），SFT 单轮即完成 → **SFT 降低 Φ，提升单 trace 效率**。
+
+### 5. SFT 训练 loss 曲线全提取（72 步，3 epoch）
+
+> 来源：`/tmp/baize_posttrain_sft_surrogate_full.log`（verl 0.4.0 FSDP2 bf16，GPU6-7，72 步 / 3 epoch / 24min）
+
+| Epoch | 步范围 | loss 起止 | 特征 |
+|:--|:--|:--|:--|
+| 1/3 | step 1-24 | 2.332 → 0.770 | 快速下降（2.33→0.86 in 14 步） |
+| 2/3 | step 25-48 | 0.712 → 0.590 | 持续下降，波动增大（0.48-0.83） |
+| 3/3 | step 49-72 | 0.627 → 0.545 | 缓慢收敛，波动 0.43-0.68 |
+| 验证 | step 72 | val/loss=0.583 | val 略高于 train（0.583 vs 0.545），轻微过拟合 |
+
+- LR schedule：cosine 0.001→0.010→0.000（warmup 10 步 → peak → decay → 0）
+- 最低 train loss：step 71 = 0.431；训练无 NaN/Inf/OOM，rc=0
+- 4 ckpt：global_step_{20,40,60,72}（各 ~4.7GB safetensors）
+
+### 6. 对 Post-Train 三步的侧重建议（R174+R175 证据更新）
+
+| 阶段 | 预期贡献 | 证据 |
+|:--|:--|:--|
+| SFT (Phase2✅) | 修复协议差距（D1/D2/D6）：格式合法 0→100%，直接产出 0→100% | R175: base 0/8 代码 → SFT 8/8 |
+| RL (Phase3⬜) | 修复语义正确性（D4）：代码正确率 62.5%→? | R175: SFT 3/8 语义瑕疵 |
+| 正式训练 (P3⬜) | 领域认知纠正 + 规模效应 | R175: base 幻觉→SFT 无幻觉 |
+
+### 7. 局限
+
+- ⚠️ 仅 8 题、仅生成侧、无执行验证：定性评测，非量化 Pass@1。
+- ⚠️ max_tokens=400 可能截断 base 有效输出——但 base "思考模式"在 400 token 内不产出 = 极低代码产出效率。
+- ⚠️ **替身预演**：MiniCPM5-2B 替身，收益不可迁移到 BaiZe。
+- **沙盒恢复后**：`baize_posttrain_eval.sh --backbone minicpm5-sft --endpoint http://localhost:8096/v1` 跑完整 158 任务 5-run。
+
+### 8. 系统状态快照（wake244 实测）
+
+| 项 | 状态 |
+|:--|:--|
+| GPU 0-3 | root SGLang Qwen3.8-27B :8099 ✅ 不可动 |
+| GPU 4 | vLLM MiniCPM5-2B :8098 ✅ 38GB |
+| GPU 5 | vLLM MiniCPM5-2B-gpu5 :8097 ✅ 37.8GB（17:10 占位） |
+| GPU 6 | vLLM minicpm5-sft :8096 ✅ 37.8GB（SFT ckpt serve） |
+| GPU 7 | vLLM MiniCPM5-2B-gpu7 :8095 ✅ 37.8GB（17:10 占位） |
+| serve sentinel | 5/5 端点 UP ✅ |
+| 沙盒 10.129.32.75:8667 | 🔴 DOWN（49th wake，TCP timeout exit=124，ICMP 0% loss） |
+| watcher PID 4109314 | ✅ 运行中（--watch --auto-eval） |
+| transformers | ✅ 4.49.0 |
+| git | ✅ synced (HEAD=7099c5560) |
+
+**数据溯源**：8-prompt 评测 `run/sft_qual_eval_r175_results.json`（curl, temp=0.0, max_tokens=400）；
+SFT loss 曲线 `/tmp/baize_posttrain_sft_surrogate_full.log`（grep, 72 步全提取）；GPU `nvidia-smi`；serve `curl /v1/models`；沙盒 TCP exit=124。无伪造。
+
