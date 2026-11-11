@@ -14,7 +14,7 @@ WAITING: 0
 - 阻塞: 🔴远程沙盒10.129.32.75跨子网TCP全端口过滤(104th wake,8664 timeout,ICMP OK,需网络团队开ACL)→Phase1 eval+Phase3 RL+post-SFT eval阻塞;P3等pretrain ckpt
 - 本轮新增产出: R299✅(v11-v37统一语料合并[1086pairs/parquet 0.34MB/污染PASS/db*+37.9%/emy*:db*1.18]+SFT dry-run全OK+EXPERIMENTS §R299+sft_pyaether_corpus_v11_v37_merged.jsonl+parquet+r299_v11v37_merge_summary.json+baize_posttrain_r299_v11v37_merge.py)
 - 未完成指令: 🔴用户令17:10(serve占位)GPU5/6/7全✅;🔴用户令13:40(三阶段替身计划)Phase2 SFT COMPLETE✅+全量113task静态分析✅+Live烟测✅+训练动力学✅+报告校正✅+扩展15task对比✅+3-model对比✅+API级Gap分析✅+SFT数据重平衡补救✅+v11-v37合并+parquet+SFT dry-run✅/Phase1待沙盒ACL/Phase3 RL脚本就绪✅待沙盒+GPU
-- git: wake299 R299待提交(v11-v37合并+parquet+EXPERIMENTS §R299+MEMORY更新)
+- git: wake299 R299已提交并pushed(f3e7a41ca,rebase onto 308354dcd,main=origin同步✅)
 
 
 
