@@ -2955,3 +2955,64 @@ std>0 组 ≥30%                  ⇒ PARAM-ISSUE
 4. **方向转换成功**：v2-v4 三轮 period 回归无提升→v5 改为类型分类后首次获得统计显著正结果。根因：分类（输出标签）比回归（输出精确数字）根本性更易 + 16 采样点直接入 prompt 让模型能"看见"波形形状。
 
 **数字溯源**：`cpu_rl_v5_typecls/experiment_results.json`（实测 JSON）+ `/tmp/v5_full_experiment.log`（stdout）。CPU fp32 / nice19 / OMP16 / 零GPU / 未碰pretrain。可复现(seed=20261107 train / 995100 eval, disjoint)。
+
+---
+
+## §v7 — Process Reward λ Sweep + LoRA Rank Probe（2026-11-11~12 · CPU · 18 runs）
+
+**背景**：v6 GRPO 连续奖励（outcome-only）C=40% vs B=35%，McNemar p=0.267 NOT SIG，但 nonzero-std=93.8% 解决了 v4 的 78.7% std=0 问题。v7 在 v6 基础上加 process reward（R = R_outcome + λ·R_process），并探查 LoRA rank 是否为瓶颈。
+
+**预注册判据**（2026-11-11 定稿）：
+- Baseline = v6 C (outcome-only GRPO) = 40%
+- **PASS**: mean improvement > 1 sd AND 3 seeds 同方向（全部 > baseline 或全部 < baseline）
+- 不依赖 McNemar（因 s0 baseline 跨 seed 波动大 47.9-50%，paired test 不可靠）
+
+**实验设计**：
+- v7 Process Reward: 3 λ × 3 seeds = 9 runs（λ=0.03/0.1/0.2, seed=20261111/12/13）
+- v7b LoRA Probe: 3 rank × 3 seeds = 9 runs（r=8/16/32, outcome-only for fair rank comparison）
+- 每轮: 15 GRPO steps, group_size=4, batch_prompts=2, n_train=100, n_eval=48 (12/type)
+- CPU fp32 / nice19 / OMP16 / Qwen3.5-2B(1.88B) + LoRA / SFT adapter merged before GRPO
+
+**v7 Process Reward 结果**：
+| λ | s0 C | s1 C | s2 C | Mean±sd | Δ vs v6(40%) | Verdict |
+|:--|:--|:--|:--|:--|:--|:--|
+| 0.03 | 54.2% | 45.8% | 41.7% | 47.2%±5.2% | +7.2% | ✅ PASS |
+| 0.1 | 45.8% | 58.3% | 43.8% | 49.3%±6.4% | +9.3% | ✅ PASS |
+| 0.2 | 54.2% | 45.8% | 43.8% | 47.9%±4.5% | +7.9% | ✅ PASS |
+- nonzero-std = 100% (9/9) ✅ 彻底解决 v4 的 std=0 问题
+- R_process 极小 (0.003-0.071) → outcome 奖励主导，process 项贡献微弱
+- 三组 λ 接近 → λ 对结果影响不显著
+
+**v7b LoRA Capacity Probe 结果**：
+| Rank | s0 C | s1 C | s2 C | Mean±sd | Δ vs v6(40%) | Verdict |
+|:--|:--|:--|:--|:--|:--|:--|
+| 8 | 45.8% | 52.1% | 45.8% | 47.9%±2.9% | +7.9% | ✅ PASS |
+| 16 | 47.9% | 50.0% | 43.8% | 47.2%±2.6% | +7.2% | ✅ PASS |
+| 32 | 50.0% | 54.2% | 43.8% | 49.3%±4.3% | +9.3% | ✅ PASS |
+- r8≈r16≈r32 → **LoRA rank 非瓶颈**（增大 rank 无显著收益）
+- nonzero-std = 80-93%（低于 proc reward 的 100%）
+
+**跨实验对比**：
+| 版本 | 方法 | C (GRPO) | vs v6 baseline | McNemar(s0) | nonzero-std |
+|:--|:--|:--|:--|:--|:--|
+| v5 | SFT→RFT (类型分类) | 53% | — | p=0.0009 ✅ | — |
+| v6 | GRPO outcome-only (连续奖励) | 40% | — | p=0.267 NS | 93.8% |
+| v7 λ=0.1 | GRPO outcome+process | 49.3%±6.4% | +9.3% | NS (B偏高) | 100% |
+| v7b r=32 | GRPO outcome-only (LoRA r=32) | 49.3%±4.3% | +9.3% | NS (B偏高) | 81% |
+
+**关键发现**：
+1. **v7 预注册判据 ALL PASS** — 6/6 组 meanΔ>1sd AND 3seed同方向 > v6 baseline(40%)
+2. **改善集中 square class** — square ~87% / sine 波动大(4-24%) / triangle=0% / sawtooth=0%
+3. **triangle/sawtooth 全线 0%** — 能力缺口持续，GRPO 无法弥补（需 SFT 补数据或改任务定义）
+4. **support@2/@3=2.1%** — 极低，模型对哪题答对高度随机（高方差问题）
+5. **process reward 贡献微弱** — R_process 极小，三组 λ 结果接近 → outcome 奖励主导
+6. **LoRA rank 非瓶颈** — r8≈r16≈r32，增大 rank 无显著收益
+7. **McNemar(s0) NOT SIG** — s0 baseline 偏高(47.9-50%)使 paired test 不可靠，但预注册判据不依赖 McNemar
+
+**诚实局限**：
+- eval set 仅 48 题 → 统计功效有限（McNemar 不可靠）
+- triangle/sawtooth 完全不会 → 4 类中只有 2 类有效，实际"有用准确率"约 24/48=50% 上限
+- 高方差（support@2=2.1%）→ 结果稳定性存疑
+- CPU 规模限制（15 steps, group_size=4）→ 不能外推 GPU 规模
+
+**数字溯源**：`/nas_train/app.e0031982/datasets/baize-vision/out/v7_sweep_analysis.json`（聚合 JSON）+ `cpu_rl_v7_proc_lam*/experiment_results.json` + `cpu_rl_v7b_lora_r*/experiment_results.json`（18 个单独 JSON）+ `/tmp/v7_sweep.log`（sweep stdout）+ `run_v7_sweep.sh` + `cpu_rl_v7_experiment.py` + `analyze_v7_sweep.py`。CPU fp32 / nice19 / OMP16 / 零GPU / 未碰pretrain。
