@@ -4869,3 +4869,86 @@ scene_weight_config: rl_scene_weight_config_r300.json
 
 ---
 
+## §R301 — Phase 1 评测架构纵深调查 + 预检脚本（2026-11-12 wake301）
+
+> **触发**：Phase 1 基线评测（用户令 13:40）持续阻塞于"沙盒 ACL"，本节深入评测 harness 的完整依赖链，发现阻塞项不止 ACL 一条。
+> **检索词**：`R301 phase1 preflight`, `eval_framework absent`, `sandbox ACL`, `baize_posttrain_phase1_launch.sh`
+
+### R301.1 评测 harness 依赖链拆解
+
+EDA-Eval-PyAether 评测分两步：**代码生成** + **代码评分**。
+
+| 步骤 | 脚本 | 依赖 | .17 可跑? |
+|:--|:--|:--|:--|
+| 生成 | `run_cline_script.sh` + cline + 模型端点 | cline、模型 OpenAI-compatible 端点、MCP 检索(search_apis/get_api_details) | ✅ 是 |
+| 评分-拼装 | `assemble_for_execution.py` | EDA-Eval-Framework (EVAL_FW_DIR) | ❌ framework 不在 .17 |
+| 评分-执行 | `run_on_sandbox.py` → HTTP POST `http://10.129.32.75:8664/v1/run_code` | 沙盒网络可达 + pyAether SWIG 环境 | ❌ 沙盒 ACL 阻塞 + .17 无 pyAether |
+| 评分-计算 | `calculate_results.py` | EDA-Eval-Framework | ❌ framework 不在 .17 |
+
+**关键发现**：评分需要三件 .17 上都没有的东西：
+1. **远程沙盒网络可达** — `10.129.32.75` 的 4 个端口(8664/8665/8653/8669) 全部被跨子网 ACL 过滤（106th wake，ICMP 0.28ms OK 但 TCP 22+8664 全 timeout）。MCP `run_code` 也走同一沙盒 HTTP 端点，同样 -32001 超时。
+2. **EDA-Eval-Framework 在本机** — 默认 `EVAL_FW_DIR=~/20260806/EDA-Eval-Framework`，.17 上该目录不存在；NFS `/nas_data/app.e0031982/code/` 无；环境变量空。framework 含 `run_on_sandbox.py`/`assemble_for_execution.py`/`calculate_results.py`/`config.yaml`，是评分的核心。
+3. **pyAether 可 import** — .17 system python3 3.8.10，`import pyAether` → ModuleNotFoundError。沙盒执行 pyAether 代码需要 SWIG 绑定的 EDA 环境，仅在沙盒主机(10.129.32.75)上有。
+
+**结论**：从 .17 只能跑**代码生成**（`--generate`）；**评分**必须在沙盒同子网且已部署 EDA-Eval-Framework + pyAether 的机器上跑。此前 MEMORY 记"Phase1待沙盒ACL"**低估了阻塞**——即使 ACL 恢复，.17 仍无法评分（缺 framework + pyAether）。
+
+### R301.2 预检脚本 baize_posttrain_phase1_launch.sh
+
+新建 `run/baize_posttrain_phase1_launch.sh`（`bash -n` ✅，`--preflight` 实测 PASS=9 FAIL=6）。
+
+功能：
+- `--preflight`：10 项检查（dataset 158 行 / driver / scorer / cline / 3 模型端点 / 沙盒 4 端口 / ICMP / eval_framework / pyAether / 已有未评分生成集），输出 JSON + 人类可读汇总，明确告知本节点能跑哪步。
+- `--generate --model {minicpm5-2b|qwen3.8-27b|glm-5.2|all}`：仅代码生成（.17 可跑），5-run，reshuffle。
+- `--score` / `--full`：含评分（需沙盒+framework，缺则报错退出并指明原因）。
+- `--score-existing 11-10`：评分已存在的生成集（沙盒恢复后可立即用，无需重新生成）。
+
+3 模型端点注册表（单一事实源）：
+| 模型 | 端点 | 端口 | 预检状态 |
+|:--|:--|:--:|:--:|
+| MiniCPM5-2B | vLLM GPU4 | 8098 | ✅ UP |
+| Qwen3.8-27B | root SGLang GPU0-3 | 8099 | ✅ UP |
+| DeepSeek云端替身(glm-5.2) | agi-gateway | cloud/v1 | ✅ UP |
+
+### R301.3 已有未评分生成集（可直接评分的资产）
+
+`~/eda_code_eval/` 有 3 个 158-task 完整生成集（2026-11-10，沙盒断裂前生成）：
+- `completed_code_generation_2026_1110_094456.jsonl` — 158 tasks, 158 completion=pass, 0 status=pass（未评分）
+- `completed_code_generation_2026_1110_094902.jsonl` — 同上
+- `completed_code_generation_2026_1110_095714.jsonl` — 同上
+
+**价值**：沙盒 + framework 恢复后，`--score-existing 11-10` 可**立即评分**这批生成，无需重新跑 158-task 生成（省 ~数小时 GPU+API 调用）。但注意：这批是单 run，Phase 1 需 5-run mean±std，仍需补跑 4 轮生成。
+
+### R301.4 预检实测结果（2026-11-12 05:50）
+
+```
+PASS=9  FAIL=6  WARN=0
+  dataset(158)    : 158          ✅
+  driver          : OK            ✅
+  scorer          : OK            ✅
+  cline           : 3.0.53        ✅
+  endpoint minicpm5-2b : UP       ✅
+  endpoint qwen3.8-27b : UP       ✅
+  endpoint glm-5.2     : UP       ✅
+  sandbox(10.129.32.75) : FILTERED(ACL阻塞)  ❌ ×4端口
+  sandbox_icmp    : UP            ✅
+  eval_framework  : ABSENT(.17无)  ❌
+  pyAether        : NOT_INSTALLED  ❌
+🔴 沙盒不可达 → 从本节点只能 --generate；评分需沙盒 ACL 恢复 + framework
+```
+JSON 报告：`nemo_experiments/baize_posttrain_phase1/preflight_1794433848.json`
+
+### R301.5 对运维/用户的建议
+
+1. **Phase 1 评分需在沙盒主机(10.129.32.75)或其同子网机器上跑**，而非 .17。该机器需有 EDA-Eval-Framework + pyAether + 能访问 .17 的模型端点(8098/8099) + 云端(agi-gateway)。
+2. **沙盒 ACL 恢复是必要条件但非充分条件**——还需确认评分机器上 framework 在位。
+3. **沙盒恢复后第一动作**：`--score-existing 11-10` 先评分已有生成集做快速验证，再补跑 5-run。
+4. **从 .17 可立即做**：`--generate --model minicpm5-2b` 等，提前产出 5-run 生成集，沙盒恢复后直接评分（生成与评分解耦）。
+
+### R301.6 局限
+
+- 预检不验证 cline auth 是否真能驱动模型生成（需实际跑 1 task 烟测，但生成需 ~2500s/task × 158，非预检范畴）。
+- 未确认沙盒主机上 framework 的确切路径（无法 SSH 到 .75）。
+- `--generate` 模式未实测端到端（本轮只做预检 + 架构调查；实际生成留给沙盒恢复后或下一轮）。
+
+---
+
