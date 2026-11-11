@@ -1238,4 +1238,9 @@ peek:					parked		2026-11-10 23:22	peek: consultation verdi-fsdb-warning-paste
 1793669959152_3123n	lvyy	10.129.2.13	576	spice_sim	case	EDA-Eval-DesignFlow-CmlPvtAcReport-001	2026-11-11 21:38	
 1792732271802_olayh	junweix	hfeg0pkn002	21	spice_sim	parked		2026-11-11 21:28	consultation: read .sp path + explain MC netlist, 4 tool_calls all read_files, no produce-task (1111 21:2x peek)
 1792543801789_ftbpz	ruminji	hfeg0pkn004	14	spice_sim	parked		2026-11-11 21:28	consultation: 0 tool_calls, Q on LDE effect, asst tangents to DRAM half-density, no produce-task (1111 21:2x peek)
-1793759635878_p53dt	rongtaoy	hfeg0pnd002	419	spice_sim	claimed		2026-11-11 22:15	
+1793759635878_p53dt	rongtaoy	hfeg0pnd002	419	spice_sim	case	EDA-Eval-DesignFlow-NetlistWLReduce-001	2026-11-11 22:40	
+1792040981126_o5xjq					parked		2026-11-11 22:36	scout_1111: advisory 'which CAD tools for analog opt' — not design_flow
+1788764026073_8hdj3					parked		2026-11-11 22:36	scout_1111: aether/skills GUI connection session — not spice
+1792652163775_i6fn6					parked		2026-11-11 22:36	scout_1111: aether GUI process connection — not spice
+1792042618272_wl9i4					parked		2026-11-11 22:36	scout_1111: verilog/xcelium compile-time optimization — digital, not spice/char
+1790128938715_nsf5a					parked		2026-11-11 22:36	scout_1111: ModelQA tool C++/Qt + openWave.pl dev — tool dev, not spice design_flow
