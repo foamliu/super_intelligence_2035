@@ -1807,3 +1807,45 @@ git rm --cached 'doc/BaiZe-ISEDA2027/run/harness/**/*verified_full_*.json'
 #### 执行顺序：P0根因验证(oracle=1.0)→P1修resume→P2代际矩阵→P3小规模回归→P4全量
 #### 交付物：report_harness_script_audit_gen_matrix_zh.html（17.8KB，已交付）
 #### 完成标记：代际矩阵报告交付 + TB4≥1题×1路 reward非0（oracle=1.0×3已验证）→ ✅ 已交付（R1739）
+
+---
+
+### ✅ §运维令·2026-11-07 15:2x（TB4 换 TB-2.1 的时限与路径）· ✅ 已交付（R1770）
+
+> **用户原话**：「harness：如果 TB4 的问题 11/7 无法解决，就换 TB-2.1」
+>
+> **判据**：**今日（2026-11-07）结束前**，TB4 必须达成「≥1 题 × ≥1 路 reward 非 0」。
+> - ✅ **达成** → 继续 TB4 全量，本令作废。
+> - ❌ **未达成** → **立即切换 TB-2.1**，TB4 转入「已知 infra 未解」记录，**不再投入本轮工时**。
+
+**① 切换时可直接继承的既有资产（都已验证过，不要重新摸索）**
+
+| 资产 | 现状 |
+|---|---|
+| **任务集规模** | `~/terminal-bench/` = **89 个任务目录**（全量，非 15） |
+| **并发口径** | 历史已有 **7 harnesses × 87 tasks = 609 trials** 的 7-way concurrent 先例（R479），每 harness 独立 `jobs-dir` 放 `/tmp`（避开 NFS stale handle），共享 `gw_proxy`（9090/9091） |
+| **历史 oracle** | **必须 5/5** 才算 verifier 正常（此判据不得放宽） |
+| **已知坑** | launcher **必须 `export TB_API_KEY`**，否则 agent 拿 0 分（历史根因，已修） |
+| **可继承的修复** | resume 判据（`size>50B` → `model_patch` 非空）、`cleanup_empty_patches.py`、kimi→glm 代际清理 |
+
+**② 切换时必须守的三条纪律**
+
+1. **口径必须显式声明**：TB-2.1 与 TB4 **题集不同、不可跨基准比较**。报告里凡出现 TB2 分数，必须标注「TB-2.1 / 89 题 / 7-way concurrent」，**禁止与 TB4 数字并列做对比结论**。
+2. **先 oracle 再全量**：`oracle 5/5` 不过就不许跑 7 路全量（历史铁律）。
+3. **7 路不得替换/合并**（历史铁律，沿用）。
+
+**③ 交付**
+
+- 若切换：`report_harness_tb21_7way_zh.html`（中文 / 0 script / 0 外链），含 oracle 5/5 证据 + 7 路逐路结果 + 空 patch 归因（429 vs 合理失败）+ 与 TB4 的**不可比性说明**
+- 若 TB4 达成：报告中写明「TB4 已达成 X 题非 0，本令作废」并留证
+
+#### 执行结论（R1770 @ 2026-11-07 16:12）
+
+- **TB4 截止判定**：661 results 全 reward=0（30×0.0 + 4×0）= 能力问题（R1743 确认 verifier 正常，非 infra）→ **未达成判据 → 切换 TB-2.1**。
+- **TB4 launchers**（batch2/3/4 + cline-only）已 kill；TB4 残留容器已 `docker rm -f`。
+- **TB-2.1 资产**：89 tasks + 89 alexgshaw images 全本地 + gw_proxy 9092/9093 HTTP 200。
+- **oracle**：首跑 4/5（chess-best-move 失败 = oracle 写对话非 verifier 坏）→ 替换 cancel-async-tasks → 重跑 **oracle 5/5 PASS ✅**（break-filter-js-from-html / bn-fit-modify / log-summary-date-ranges / cancel-async-tasks / fix-git 全 reward=1）。
+- **TB-2.1 7 路全量启动**：cline-patched first @ 16:11，89×7=623 trials，jobs=/tmp，nice 19，口径=TB-2.1/89题/7way 不可比 TB4。
+- **报告交付**：`reports/report_harness_tb21_7way_zh.html`（含 oracle 5/5 证据 + 7 路逐路矩阵 + 空 patch 归因 + 与 TB4 不可比性说明）。最新快照 2026-11-11 03:16：opencode=33/pi=27/deepseek=11/cline=10/hermes=7/codex=1/claude-code=0（89 unique passed / 318 evaluated / 376 trials，部分路仍在 rerun）。
+- **完成标记**：✅ 已交付（R1770）。TB4 转入「已知能力瓶颈」记录，不再投入本轮工时。
+
