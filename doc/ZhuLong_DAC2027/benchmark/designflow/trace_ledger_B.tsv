@@ -1050,3 +1050,6 @@ peek:					parked		2026-11-10 23:22	peek: consultation verdi-fsdb-warning-paste
 1794361050224_6ipfr	phoebeli	hfeg0plg96	18	spice_sim	parked		2026-11-11 11:19	post-snap fresh: how-to-PWL-vsource Q&A not produce
 1794361655307_euuvj	xinqiaoz	hfeg0pkn002	67	eda_other	parked		2026-11-11 11:19	post-snap fresh: handoff-context-restore not produce
 1794362986412_knsmj	cadmin	hfeg0plg55	4	eda_other	parked		2026-11-11 11:19	post-snap fresh: strmIn-log warning-type layout not spice 4 tool_use short
+1793173193409_mx7xh	junweix	hfeg0pkn002	77	spice_sim	parked		2026-11-11 11:52	remote pkn002 junweix file others-r=0, not readable by e0031982 sandbox identity
+1789630642152_8b8wk	ghyang	hfeg0pkn003	70	spice_sim	parked		2026-11-11 11:56	agent read_files all returned empty - analysis hallucinated from dir listing, trace not grounded; unusable for A-faithful case
+1791786108086_vumhg	e03179	hfeg0pkn002	274	characterization	claimed		2026-11-11 11:56	

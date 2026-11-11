@@ -15,12 +15,12 @@
   "generated": "2026-11-06T08:40:00+08:00",
   "hits_total": 38082,
   "hosts": 696,
-  "mc10": 1699,
+  "mc10": 486,
   "mc100": 0,
   "mc1000": 8,
   "mc15": 1592,
-  "mc20": 1495,
-  "mc30": 1342,
+  "mc20": 420,
+  "mc30": 376,
   "mc300": 317,
   "mc500": 281,
   "mc_matrix": {
@@ -78,7 +78,7 @@
     "updated_at": "2026-11-11T07:46:34+08:00",
     "users_mc30": 401
   },
-  "sessions": 2163,
+  "sessions": 565,
   "shard_mc": {
     "A": 10,
     "B": 10,
@@ -88,7 +88,7 @@
   "source": "/home/t0002965/log/ssh_eda_search_20261109_224902/summary.tsv (11/09 full rescan r292)",
   "target_mc": 10,
   "target_mc_changed": "2026-11-11 用户令: 30 -> 10 (A 原 15); 候选池 11/05 -> 11/09 待 A 执行 A1-A6",
-  "updated_at": "2026-11-11 08:56",
+  "updated_at": "2026-11-11 11:58",
   "users_mc100": 182,
   "users_mc30": 401,
   "users_mc300": 60,
