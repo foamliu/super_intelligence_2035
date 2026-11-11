@@ -42,8 +42,8 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
   <div class="meta">
     <span>📅 2026-11-11</span>
     <span>🏗 Mamba2-hybrid 2.22B</span>
-    <span>🔥 训练 iter≈165.64k / 700k · step~7.09s<7.4s✅</span>
-    <span>📊 L1: 16 ckpt ✅ | L2: GSM8K=0%@160k 🔴 MMLU=23.16%@160k(≈随机) · BBH 42/100运行中🟡 · v5等待中 · GSM8K诊断等待中 | L3: 🔧 pipeline脚本已建·模型生成退化 | L4: 数据在.15不可达+定性测试=退化输出</span>
+    <span>🔥 训练 iter≈165.85k / 700k · step~7.16s<7.4s✅</span>
+    <span>📊 L1: 16 ckpt ✅ | L2: GSM8K=0%@160k 🔴 MMLU=23.16%@160k(≈随机) · BBH 64/100运行中🟡 · v5等待中 · GSM8K诊断等待中 | L3: 🔧 pipeline脚本已建·模型生成退化 | L4: 数据在.15不可达+定性测试=退化输出</span>
   </div>
   <div style="margin-top:12px;font-size:12.5px;background:rgba(0,0,0,.18);border-radius:8px;padding:8px 12px;opacity:.95">
     ⚠️ 本报告是<b>训练监控与决策依据</b>，<b>不进论文正文</b>（2026-11-10 用户令）。用户关注点（2026-11-11）：<b>如何拿到更好的结果</b>。
@@ -279,21 +279,21 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
   <table>
     <tr><th>层</th><th>评测</th><th>状态</th><th>关键数</th><th>下一步</th></tr>
     <tr><td><b>L1</b></td><td class="l">常识 8 集 (0-shot)</td><td><span class="badge b-ok">✅ 16ckpt</span></td><td>58.13%@160k</td><td class="l">继续每万 ckpt</td></tr>
-    <tr><td><b>L2</b></td><td class="l">复杂推理 6 集</td><td><span class="badge b-bad">🔴 GSM8K=0%@160k</span></td><td>GSM8K=0% · MMLU=23.16%(≈随机) · BBH 42/100运行中 · v5等待中 · 🔬生成退化诊断完成</td><td class="l">等BBH+v5结果</td></tr>
+    <tr><td><b>L2</b></td><td class="l">复杂推理 6 集</td><td><span class="badge b-bad">🔴 GSM8K=0%@160k</span></td><td>GSM8K=0% · MMLU=23.16%(≈随机) · BBH 64/100运行中(~68s/it,ETA~40min) · v5等待中 · 🔬生成退化诊断完成</td><td class="l">等BBH+v5结果</td></tr>
     <tr><td><b>L3</b></td><td class="l">Agentic</td><td><span class="badge b-warn">🔧 脚本已建·待运行</span></td><td>— · 模型生成能力不足(pipeline已建)</td><td class="l">MMLU完后运行smoke</td></tr>
     <tr><td><b>L4</b></td><td class="l">领域</td><td><span class="badge b-bad">❌ 未接·调研完</span></td><td>— · 数据在.15不可达</td><td class="l">延后至.15可达+SFT后</td></tr>
   </table>
 </div>
 <div class="card">
-  <h3>本轮(#1983)动作</h3>
+  <h3>本轮(#1986)动作</h3>
   <ol>
-    <li><b>训练健康确认</b>：iter 165,560 · step 6959-7090ms (<7.4s✅) · loss 2.025-2.040 · 0 NaN/skip · GPU 8×96-100%/75GB · lr=1e-3(stable段,decay未开始)</li>
-    <li><b>L2 v3 结果</b>：GSM8K ✅ 完成 = 0.0%(strict+flex) · MMLU ✅ 完成 = 23.16%(≈随机25%,与P-8基线23.79%一致,15×训练量后无改善)</li>
-    <li><b>L2 v4 状态</b>：BBH 32/100 运行中(~69s/it,ETA~78min) · HumanEval/MBPP/MATH 失败(v5已修复等待中)</li>
-    <li><b>L2 v5 状态</b>：<code>baize_l2_eval_160k_v5.sh</code> PID 3102868 在 .29 后台 · 等 BBH(port 8083)完成后自动启动 · 含 HF_ALLOW_CODE_EVAL=1 + MATH 0-shot 修复</li>
+    <li><b>训练健康确认</b>：iter 165,850 · step 7163ms (<7.4s✅) · loss 2.042 · 0 NaN/skip · GPU 8×96-100%/75GB · lr=1e-3(stable段,decay未开始)</li>
+    <li><b>L2 v3 结果确认</b>：GSM8K = 0.0%(strict+flexible) · MMLU = 23.16%(≈随机25%,与P-8基线23.79%一致,15×训练量后无改善)</li>
+    <li><b>L2 v4 状态</b>：BBH 64/100 运行中(~68s/it,ETA~40min) · HumanEval/MBPP/MATH 在v4中失败(v5已修复等待中)</li>
+    <li><b>L2 v5 状态</b>：<code>baize_l2_eval_160k_v5.sh</code> PID 3102868 在 .29 后台 · 等BBH(port 8083)完成后自动启动 · 含 HF_ALLOW_CODE_EVAL=1 + MATH 0-shot 修复</li>
     <li><b>GSM8K 诊断</b>：<code>baize_l2_gsm8k_diag.sh</code> PID 354759 在 .29 后台 · 等 v5 完成后运行 · --log_samples 捕获实际输出 · 5-shot+0-shot 各 10 样本 · ctx=8192</li>
-    <li><b>⚠️ 数据配比修正</b>：从训练进程命令行参数确认 S1 blend 实际含 code 19% + math 7% + language 74%（此前报告错误称"无 code/math"）· 远低于 DeepSeek 4:2:4 最优配比</li>
-    <li><b>无新万整数 ckpt</b>：最新 ckpt iter_0164000(已评) · 下一个 170k ETA~12h</li>
+    <li><b>评测队列(port 8083串行)</b>：BBH(~40min) → v5(HumanEval+MBPP+MATH 0-shot,~3h) → GSM8K诊断(~30min)</li>
+    <li><b>无新万整数 ckpt</b>：当前 iter 165850 · save-interval=2000 · 下一个万整数 170k ETA~8h</li>
   </ol>
   <div class="alert">
     <b>🔴 核心发现（待用户拍板）</b>：L2/L3/L4 的低分/空白<b>同一根因</b>——训练数据中 code+math 比例不足（code 19% + math 7% = 26%，远低于 DeepSeek 最优 60%），且仍在 stable 阶段（decay 尚未开始），导致模型在<b>所有需要连贯生成的任务</b>上退化为重复输出。<br>
@@ -360,7 +360,7 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
 </div>
 
 <footer>
-  BaiZe pretrain 线 · 四层能力评测报告 · 2026-11-11 18:10 更新(#1984) · 评测数字仅用于训练监控，不进论文正文
+  BaiZe pretrain 线 · 四层能力评测报告 · 2026-11-11 18:36 更新(#1986) · 评测数字仅用于训练监控，不进论文正文
 </footer>
 </div>
 </body>
