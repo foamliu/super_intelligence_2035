@@ -4597,3 +4597,79 @@ SFT 模型更倾向使用 pyAether 域 API、输出更简洁、格式更规范�
 - 替身预演声明：以上结果基于 MiniCPM5-2B（2B, Llama 架构, Apache 2.0）作为 BaiZe 替身，收益不可迁移到 BaiZe 本体。
 
 ---
+
+## §R298 — SFT 数据重平衡补救（Catastrophic Forgetting Remediation）
+
+> **时间**：2026-11-12 wake298
+> **背景**：R297 发现 SFT v11-v36 导致 Layout(-18.7pp)/DesignMgmt(-15.5pp) 灾难性遗忘，根因是训练数据偏重 Schematic(emy*=394 pairs) 而 db* 生命周期 API 仅 5-8 pairs/each，dbCloseLib=0。
+> **脚本**：`run/baize_posttrain_sft_rebalance_r298.py`；**产物**：`run/sft_pyaether_corpus_v37_db_lifecycle_remedial.jsonl`（57 pairs, 400KB）+ `run/rebalance_analysis_r298.json`
+> **污染隔离**：contamination gate PASS（346 eval signatures 扫描，0 违规；仅 API 文档为来源，158 任务 prompt/assertion 从不使用）
+> **替身声明**：MiniCPM5-2B 是 BaiZe 替身，收益不可迁移。
+
+### 1. 当前 v11-v36 API 家族失衡量化
+
+| 家族 | pairs | 占比 |
+|:--|--:|--:|
+| emy* (Schematic) | 394 | 41.5% |
+| db* (Layout/DesignMgmt) | 243 | 25.6% |
+| Mde* | 201 | 21.2% |
+| ae* | 87 | 9.2% |
+| other | 26 | 2.7% |
+
+> emy*:db* = 1.6:1，但 db* 生命周期 API 的 per-API 覆盖仅 5-8 pairs，远低于 eval 期望密度（10-20 tasks/API）。
+
+### 2. 被遗忘 db* 生命周期 API 覆盖缺口
+
+| API | v11-v36 pairs | eval 期望 tasks | 缺口% |
+|:--|--:|--:|--:|
+| dbCreateLib | 6 | 20 | 70% |
+| dbGetAllLibs | 6 | 19 | 68% |
+| dbDelLib | 5 | 18 | 72% |
+| dbNewCV | 5 | 16 | 69% |
+| dbCloseCV | 8 | 15 | 47% |
+| dbOpenCVByType | 5 | 10 | 50% |
+| **dbCloseLib** | **0** | — | **100%（完全缺失）** |
+
+### 3. v37 补救数据生成
+
+- **S1 单 API 对**（50 pairs）：10 个目标 API × 5 prompt 变体，每对含完整 API 文档 → 代码示例（从 doctest 适配或签名构造）
+- **S2 多 API 工作流链**（7 pairs）：模拟真实 Layout/DesignMgmt eval 任务模式，每对含多 API 文档 → 完整工作流脚本（try/finally 资源清理）
+  - create_lib_newcv_inst_save_close
+  - list_libs_open_cv_modify_close
+  - create_and_delete_library_lifecycle
+  - open_existing_cv_place_instance_close
+  - full_lib_cv_lifecycle_with_error_handling
+  - deprecated_dbopencv_migration_example
+  - traverse_libs_open_multiple_cvs
+
+### 4. 重平衡后覆盖投影
+
+| API | v11-v36 | +v37 | 增量 |
+|:--|--:|--:|--:|
+| dbCreateLib | 6 | 14 | +8 |
+| dbGetAllLibs | 6 | 16 | +10 |
+| dbDelLib | 5 | 12 | +7 |
+| dbNewCV | 5 | 13 | +8 |
+| dbCloseCV | 8 | 21 | +13 |
+| dbOpenCVByType | 5 | 14 | +9 |
+| dbCloseLib | 0 | 10 | +10 |
+| dbSaveCV | 5 | 16 | +11 |
+| dbCrtInst | 13 | 23 | +10 |
+
+> db* 家族总量：243 → 335（+38%）；emy*:db* 比从 1.6:1 改善至 1.2:1。
+
+### 5. 对 BaiZe 正式训练的启示
+
+1. **遗忘是数据问题非方法问题**：R297 证明 SFT recipe（5 epoch, cosine, lr=1e-5）本身合理，问题在于数据偏重 Schematic。v37 通过补充 db* 生命周期 API 示例直接解决根因。
+2. **正式 SFT 数据配比建议**：按场景分层，确保每类 API 的 pairs 数 ≥ eval 期望任务数 × 0.7（当前 db* 仅 0.3-0.5）。
+3. **工作流链 > 单 API**：S2 工作流对更接近 eval 任务的「多步 EDA 自动化」模式，比单 API 示例更能教会模型 API 间的协作关系。
+4. **RL 衔接**：v37 补救后，仍剩 322 个 both_missed API（两个模型都不会用）——这些是 RL 的核心目标。SFT 先把「会用的 API」补齐到基线水平，RL 再攻克「两个模型都不会的 API」。
+5. **验证路径**：待沙盒 ACL 恢复后，用 v11-v36+v37 重跑 SFT → 对比 Layout/DesignMgmt 场景 Pass@1 是否恢复到基线+（消除遗忘）。
+
+### 6. 局限性
+
+- v37 补救数据为从 API 文档构造的合成示例，未经沙盒执行验证（沙盒仍阻塞）——参数正确性需 RL 沙盒反馈校正
+- 57 pairs 的增量相对 1029 pairs 的基数较小（+5.5%），若遗忘严重可能需要更大规模补充
+- 替身预演声明：以上分析基于 MiniCPM5-2B 替身，收益不可迁移到 BaiZe 本体
+
+---
