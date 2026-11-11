@@ -1,0 +1,81 @@
+{
+ "handle": "tri_dao",
+ "name": "Tri Dao (@tri_dao) / X",
+ "bio": "Asst. Prof @PrincetonCS, Chief Scientist @togethercompute. Machine learning &amp; systems.",
+ "tweets": [
+  {
+   "id": "2118418321456660572",
+   "created_at": "2026-11-05 19:01 UTC",
+   "created_at_ms": 1793905260000,
+   "text": "Distilling most of our expertise in kernel and inference engine optimization into an agent loop that powers our production. A 2-year project that we're finally able to share",
+   "url": "https://x.com/tri_dao/status/2118418321456660572",
+   "handle_guess": "tri_dao"
+  },
+  {
+   "id": "2118032475498983540",
+   "created_at": "2026-11-04 17:27 UTC",
+   "created_at_ms": 1793813267000,
+   "text": "Introducing the Together Compiler: continual compilation for AI inference! I’m super proud to finally share this work from our research team! ✨\\\n\\\nToday’s inference is “Polymorphic” or shape-shifting, it doesn’t sit still. On OpenRouter, 80% of traffic goes to models released in https://t.co/wzLNbKy8y4",
+   "url": "https://x.com/tri_dao/status/2118032475498983540",
+   "handle_guess": "simran_s_arora"
+  },
+  {
+   "id": "2115531348161028374",
+   "created_at": "2026-10-28 19:49 UTC",
+   "created_at_ms": 1793216952000,
+   "text": "Super interesting result: H-Net learns to dynamically tokenize variable names in coding data as separate tokens, and it scales much better on code compared to BPE",
+   "url": "https://x.com/tri_dao/status/2115531348161028374",
+   "handle_guess": "tri_dao"
+  },
+  {
+   "id": "2115502110578290900",
+   "created_at": "2026-10-28 17:53 UTC",
+   "created_at_ms": 1793209981000,
+   "text": "I've always believed that intelligence should come from simple, general building blocks that learn their own abstractions directly from raw data; in other words, the bitter lesson. I think we're finally seeing a real step towards AI that can learn from all data.\\\n\\\nLanguage https://t.co/aEUoLCTPB3",
+   "url": "https://x.com/tri_dao/status/2115502110578290900",
+   "handle_guess": "_albertgu"
+  },
+  {
+   "id": "2112263652070043733",
+   "created_at": "2026-10-19 19:24 UTC",
+   "created_at_ms": 1792437873000,
+   "text": "We now have a platform for SFT &amp; RL. This is why open weight models are great",
+   "url": "https://x.com/tri_dao/status/2112263652070043733",
+   "handle_guess": "tri_dao"
+  },
+  {
+   "id": "2112263206085554392",
+   "created_at": "2026-10-19 19:22 UTC",
+   "created_at_ms": 1792437766000,
+   "text": "I’ve often wanted to pair a smart orchestrator / architect model with a super fast worker model. Diffusion LLM could fill the worker role",
+   "url": "https://x.com/tri_dao/status/2112263206085554392",
+   "handle_guess": "tri_dao"
+  },
+  {
+   "id": "2112241595273621857",
+   "created_at": "2026-10-19 17:56 UTC",
+   "created_at_ms": 1792432614000,
+   "text": "Together Post-Training is live\\\n\\\nTurn open models into custom models you own, with SFT or RL.\\\n\\\nYou define the data, rewards, environments and the training loop itself. We run the hard infrastructure underneath it, tuned for quality and speed. https://t.co/zB0RATnKne",
+   "url": "https://x.com/tri_dao/status/2112241595273621857",
+   "handle_guess": "togethercompute"
+  },
+  {
+   "id": "2112222911218291051",
+   "created_at": "2026-10-19 16:42 UTC",
+   "created_at_ms": 1792428159000,
+   "text": "1/4 Today, we’re releasing Mercury 3. Mercury 3 is by far our most powerful model and the most intelligent diffusion LLM ever released. It outperforms GPT-6 Luna and Haiku 5.5 on quality while running at 1000+ tok/sec. https://t.co/TYevDl43Lm",
+   "url": "https://x.com/tri_dao/status/2112222911218291051",
+   "handle_guess": "StefanoErmon"
+  },
+  {
+   "id": "1811453622070444071",
+   "created_at": "2024-07-11 17:32 UTC",
+   "created_at_ms": 1720719173000,
+   "text": "FlashAttention is widely used to accelerate Transformers, already making attention 4-8x faster, but has yet to take advantage of modern GPUs. We’re releasing FlashAttention-3: 1.5-2x faster on FP16, up to 740 TFLOPS on H100 (75% util), and FP8 gets close to 1.2 PFLOPS!\\\n1/ https://t.co/Kq931wG1uf",
+   "url": "https://x.com/tri_dao/status/1811453622070444071",
+   "handle_guess": "tri_dao"
+  }
+ ],
+ "http_status": 200,
+ "fetched_at": "2026-11-11 12:23:45"
+}

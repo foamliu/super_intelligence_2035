@@ -1,0 +1,81 @@
+{
+ "handle": "ShunyuYao12",
+ "name": "Shunyu Yao (@ShunyuYao12) / X",
+ "bio": "Language agents",
+ "tweets": [
+  {
+   "id": "2118633057167286295",
+   "created_at": "2026-11-06 09:14 UTC",
+   "created_at_ms": 1793956457000,
+   "text": "Looks good!",
+   "url": "https://x.com/ShunyuYao12/status/2118633057167286295",
+   "handle_guess": "ShunyuYao12"
+  },
+  {
+   "id": "2118632307859014021",
+   "created_at": "2026-11-06 09:11 UTC",
+   "created_at_ms": 1793956279000,
+   "text": "4 real productivity!",
+   "url": "https://x.com/ShunyuYao12/status/2118632307859014021",
+   "handle_guess": "ShunyuYao12"
+  },
+  {
+   "id": "2118559015722705161",
+   "created_at": "2026-11-06 04:20 UTC",
+   "created_at_ms": 1793938804000,
+   "text": "Try it out!",
+   "url": "https://x.com/ShunyuYao12/status/2118559015722705161",
+   "handle_guess": "ShunyuYao12"
+  },
+  {
+   "id": "2118420063242039721",
+   "created_at": "2026-11-05 19:07 UTC",
+   "created_at_ms": 1793905676000,
+   "text": "Hy4 from @TencentHunyuan is the new #1 open-weights model on APEX-Agents.\\\n\\\n77.6% Pass@1 (#3 of 69)\\\n85.1% mean score (#3 of 69)\\\n\\\nHere’s the updated APEX-Agents open-weights top 5 (Pass@1):\\\n\\\n1. Hy4: 77.6%\\\n2. DeepSeek-V4.1-Flash-1017: 69.8%\\\n3. Kimi K3.1 Pro: 65.5%\\\n4. Qwen3.8-Max: https://t.co/DTBRHlbRJb",
+   "url": "https://x.com/ShunyuYao12/status/2118420063242039721",
+   "handle_guess": "mercor"
+  },
+  {
+   "id": "2118416957502591114",
+   "created_at": "2026-11-05 18:55 UTC",
+   "created_at_ms": 1793904935000,
+   "text": "Hy4. Free. In WorkBuddy.\\\nLimited time, so like… don't sleep on it. https://t.co/3NkFsMNzWP",
+   "url": "https://x.com/ShunyuYao12/status/2118416957502591114",
+   "handle_guess": "WorkBuddy_AI"
+  },
+  {
+   "id": "2118166615795909048",
+   "created_at": "2026-11-05 02:20 UTC",
+   "created_at_ms": 1793845249000,
+   "text": "We built a Millennium Falcon with Tencent's Hy4 in 2h 16m, for $2.50 in total.  \\\n\\\nBig visual progress for the Hunyuan series! @TencentHunyuan https://t.co/AXndK8cO54",
+   "url": "https://x.com/ShunyuYao12/status/2118166615795909048",
+   "handle_guess": "gmi_cloud"
+  },
+  {
+   "id": "2117877129136542110",
+   "created_at": "2026-11-04 07:10 UTC",
+   "created_at_ms": 1793776230000,
+   "text": "Proud of what we’ve achieved under a year! \\\n\\\nPriortize security, usefulness, human evals, and generalization. \\\n\\\nFavorite part of mine is the bottom line of the plot 😂",
+   "url": "https://x.com/ShunyuYao12/status/2117877129136542110",
+   "handle_guess": "ShunyuYao12"
+  },
+  {
+   "id": "2117870250838630539",
+   "created_at": "2026-11-04 06:43 UTC",
+   "created_at_ms": 1793774590000,
+   "text": "👋Hy4 is here, new with vision.\\\nFirmly among the leading open models.\\\nMore productive everywhere: finance, frontend, game, officework, research…\\\nBuilt responsibly, with cyber/biosecurity in mind.\\\nTry it out and let us know!\\\n🔗：https://t.co/ZzL4DtgH3h https://t.co/xceRxN6ueT",
+   "url": "https://x.com/ShunyuYao12/status/2117870250838630539",
+   "handle_guess": "TencentHunyuan"
+  },
+  {
+   "id": "1911671943457345675",
+   "created_at": "2025-04-14 06:44 UTC",
+   "created_at_ms": 1744613083000,
+   "text": "I finally wrote another blogpost: https://t.co/WddJkbSfks\\\n\\\nAI just keeps getting better over time, but NOW is a special moment that i call “the halftime”. Before it, training &gt; eval. After it, eval &gt; training. The reason: RL finally works.\\\n\\\nLmk ur feedback so I’ll polish it.",
+   "url": "https://x.com/ShunyuYao12/status/1911671943457345675",
+   "handle_guess": "ShunyuYao12"
+  }
+ ],
+ "http_status": 200,
+ "fetched_at": "2026-11-11 12:23:52"
+}

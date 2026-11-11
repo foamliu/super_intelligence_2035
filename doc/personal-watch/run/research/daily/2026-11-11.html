@@ -58,13 +58,13 @@
 <body>
 <div class="wrap">
 <header class="hero">
-  <h1>论文观察日报 · 2026-11-11 <span class="badge b-am">早报 3</span><span class="badge b-pm">午间 2</span><span class="badge b-jz">5/5 收口</span></h1>
-  <div class="sub">每日 5 篇推荐论文 · <b>今日进度 5 / 5</b>（早报 3 篇「借鉴」+ 午间 2 篇：1 篇「借鉴」+ 1 篇「科普」）· 含 <b>「对各线的可执行建议」</b>（pretrain / vision / harness / data / zhulong / designflow 六线）· <b>🅱 B 轨（经典论文）三轮累计 12 篇</b>（不占 5 篇额度）</div>
+  <h1>论文观察日报 · 2026-11-11 <span class="badge b-am">早报 3</span><span class="badge b-pm">午间 2</span><span class="badge b-jz">5/5 收口</span><span class="badge b-pm">晚报</span></h1>
+  <div class="sub">每日 5 篇推荐论文 · <b>今日进度 5 / 5</b>（早报 3 篇「借鉴」+ 午间 2 篇：1 篇「借鉴」+ 1 篇「科普」）· 含 <b>「对各线的可执行建议」</b>（pretrain / vision / harness / data / zhulong / designflow 六线）· <b>🅱 B 轨（经典论文）四轮累计 15 篇</b>（不占 5 篇额度）· <b>🗣 voice_ready 2 条</b>（X 已恢复可达，首获一手原文）</div>
   <div class="meta">
     <span>📅 2026-11-11（周三）</span>
     <span>🕕 早报 06:0x CST</span>
-    <span>🕕 早报 06:0x CST</span><span>🕛 午间补报 12:0x–12:2x CST</span><span>🅱 经典轨 11:3x / 11:4x / 12:1x CST</span>
-    <span>📚 数据源 arXiv（export.arxiv.org）· 官方 API</span>
+    <span>🕛 午间补报 12:0x–12:2x CST</span><span>🌙 晚报 12:4x–13:1x CST（B 轨第四轮 + X 解封）</span>
+    <span>📚 数据源 arXiv（export.arxiv.org）· 官方 API · 被引 OpenAlex · 言论 X（只读）</span>
     <span>🏷 本页口径：<b>借鉴</b> 4 篇 · <b>科普</b> 1 篇</span>
   </div>
   <div class="disc">⚠️ 免责：本页为 <b>论文解读 / 待读线索</b>，<b>非结论、非官方</b>；所有数字均为<b>作者自报</b>，本线<b>未复现</b>；原题照抄不改写。「对各线的可执行建议」为<b>基于论文的推断，供各线自行评估</b>，非指令；与各线任务书冲突时以任务书为准。</div>
@@ -338,9 +338,9 @@
   </tr>
 </table>
 
-<h2 class="sec">🅱 B 轨 · 经典论文（三轮累计 12 篇 · <b>不占</b>每日 5 篇额度）</h2>
+<h2 class="sec">🅱 B 轨 · 经典论文（四轮累计 15 篇 · <b>不占</b>每日 5 篇额度）</h2>
 <div class="note">
-  <b>本轮口径变更</b>（用户令 2026-11-11）：research 从「只追新」改为「新 + 经典」双轨，<b>A 轨（最新论文）50%</b>、<b>B 轨（经典论文 + 作者关系网）50%</b>。本节为 B 轨产出（<b>第一轮 4 篇</b> LLM/架构基础 + <b>第二轮 4 篇</b> EDA / agent / PEFT + <b>第三轮 4 篇</b> 位置编码 / 评测基准 / 反思式 agent / 思维链），<b>不占</b>当日 5 篇推荐额度、<b>不进</b> <code>SEEN.md</code> 去重台账（经典论文无 72h 时效要求）。<br>
+  <b>本轮口径变更</b>（用户令 2026-11-11）：research 从「只追新」改为「新 + 经典」双轨，<b>A 轨（最新论文）50%</b>、<b>B 轨（经典论文 + 作者关系网）50%</b>。本节为 B 轨产出（<b>第一轮 4 篇</b> LLM/架构基础 + <b>第二轮 4 篇</b> EDA / agent / PEFT + <b>第三轮 4 篇</b> 位置编码 / 评测基准 / 反思式 agent / 思维链 + <b>第四轮 3 篇</b> GPT-3 / InstructGPT / LLaMA），<b>不占</b>当日 5 篇推荐额度、<b>不进</b> <code>SEEN.md</code> 去重台账（经典论文无 72h 时效要求）。<br>
   <b>「经典」判据</b>：被引 ≥500 ／ 开创范式 ／ 方法论常青 ／ 本领域（EDA·LLM-for-EDA·存储）标志性工作，且与本线在研方向相关。<b>清单滚动维护</b>（不删旧条目）：<code>research/classic/PAPERS.md</code>；<b>作者关系网</b>：<code>research/classic/AUTHORS.md</code>。
 </div>
 <table>
@@ -441,12 +441,36 @@
     <td>在 few-shot 提示里给「中间推理步骤」示例，让足够大的模型在数学/常识/符号推理上显著提升；并指出这是<b>随规模涌现</b>的能力，小模型的流畅链反而更差。</td>
     <td><b>zhulong（thinking 轴）</b>：「显式推理 token 值不值」的成本账从这里起算，2B 级必须自己做规模扫描。<b>pretrain（数据）</b>：SFT 里混推理链要区分「示范格式」与「可验证推理」。<b>风险</b>：CoT 的「可解释」是形式上的，不等于忠实反映内部计算。<b>本轮已发信</b>。</td>
   </tr>
+  <tr>
+    <td>13</td>
+    <td><b>Language Models are Few-Shot Learners</b>（GPT-3）<br><a href="https://arxiv.org/abs/2005.14165">arXiv:2005.14165</a><br><span style="font-size:12px;color:#59636e;">T. B. Brown · B. Mann · N. Ryder（31 位）</span></td>
+    <td>2020<br>NeurIPS 2020（卷 33 / pp. 1877–1901）</td>
+    <td><b>33,665</b><br><span style="font-size:12px;color:#59636e;">2026-11-11 查</span></td>
+    <td>175B + 零梯度更新，只靠上下文里几个示例（in-context learning）做新任务；系统记录了能力随规模上升与部分任务「涌现」。</td>
+    <td><b>pretrain（规模假设的原始表述）</b>：2B 不在其覆盖区间，结论<b>不能外推</b> —— 但定义了我们要自答的问题：2B 上 in-context 是否成立、示例收益在第几 shot 饱和。<b>data</b>：few/one/zero-shot 三口径的出处。<b>动作</b>：pretrain 的评测表必须标注 shot 数（现有多数只写 zero-shot）。</td>
+  </tr>
+  <tr>
+    <td>14</td>
+    <td><b>Training language models to follow instructions with human feedback</b>（InstructGPT）<br><a href="https://arxiv.org/abs/2203.02155">arXiv:2203.02155</a><br><span style="font-size:12px;color:#59636e;">L. Ouyang · J. Wu · X. Jiang（OpenAI）</span></td>
+    <td>2022<br>NeurIPS 2022（<b>页码未核验</b>）</td>
+    <td><b>8,059</b><br><span style="font-size:12px;color:#59636e;">2026-11-11 查</span></td>
+    <td>偏好标注 → 奖励模型 → PPO 三步（RLHF），让 1.3B 的 InstructGPT 在人类偏好上胜过 175B 的 GPT-3；同时如实记「对齐税」。</td>
+    <td><b>zhulong（对齐轴基线）</b>：1.3B &gt; 175B 是「小模型靠对齐翻盘」的最强历史证据 ⇒ 可作预注册判据的<b>参照</b>（非结论）。<b>data（成本）</b>：偏好标注成本要进「解出任务成本」的账。<b>风险</b>：只看人类偏好会形成奖励模型闭环（谄媚 / 长度偏置）。</td>
+  </tr>
+  <tr>
+    <td>15</td>
+    <td><b>LLaMA: Open and Efficient Foundation Language Models</b><br><a href="https://arxiv.org/abs/2302.13971">arXiv:2302.13971</a><br><span style="font-size:12px;color:#59636e;">H. Touvron · T. Lavril · G. Izacard（Meta AI）</span></td>
+    <td>2023<br>预印本（<b>会议未核验</b>）</td>
+    <td><b>23,690</b><br><span style="font-size:12px;color:#59636e;">2026-11-11 查</span></td>
+    <td>用远超 Chinchilla 最优的 token 数（7B–65B 训 1.0–1.4T token）证明：按<b>推理预算</b>而非训练预算算时，小模型多训更划算；并公开配方（公开数据）。</td>
+    <td><b>data（直接）</b>：与 Chinchilla 是两条相反经验线（≤20 vs ≫20 token/参数）⇒ <b>2B 必须自己扫</b>，不许引任一条当结论。<b>zhulong（成本口径）</b>：训练成本 vs 推理成本谁主导，会翻转「小模型多训」的结论。<b>风险</b>：大量二手解读混淆 LLaMA 1 / 2 的许可与数据口径。</td>
+  </tr>
 </table>
 <div class="blk">
   <b>被引数口径（硬）</b>：全部取自 <code>OpenAlex API</code>（<code>api.openalex.org/works/https://doi.org/10.48550/arxiv.&lt;ID&gt;</code>），查询日 <b>2026-11-11</b>，逐条可复核。<br>
   ⚠️ <b>局限如实记</b>：① <code>api.semanticscholar.org</code> 首轮<b>两次均返回 <code>HTTP 429</code></b> ⇒ S2 未查（第二、三轮未再请求，仍记「未查」）；Google Scholar 本机不可达；② <b>不同来源被引数口径不同</b>（OpenAlex 含预印本引用）⇒ <b>禁止跨源比较</b>；③ 元数据（标题 / 首次提交日 / comment）前两轮取自 arXiv 官方 API（各 4/4 <code>200</code> + <code>atom+xml</code>），<b>第三轮因 API 限速 <code>429</code> 改用 <code>arxiv.org/abs/&lt;ID&gt;</code> 页面（4/4 <code>200</code>，逐条可复核）</b>；首轮日期 2017-06-12 / 2022-03-29 / 2022-05-27 / 2023-12-01，第二轮 2023-10-31 / 2022-10-06 / 2023-09-14 / 2021-06-17，第三轮 2021-04-20 / 2023-10-10 / 2023-03-20 / 2022-01-28；④ 第三轮被引 3,867 / 2,078 / 3,297 / 13,949，均为 <b>OpenAlex 单源、查询日 2026-11-11</b>。
 </div>
-<h2 class="sec">👥 作者关系网 · 三轮互动（20 人建档 / 5 封已发 / X follow 阻塞）</h2>
+<h2 class="sec">👥 作者关系网 · 四轮互动（23 人建档 / 5 封已发 / X 已恢复只读 / follow 待手动）</h2>
 <table>
   <tr><th>人物</th><th>机构</th><th>代表论文</th><th>邮箱（来源）</th><th>X</th><th>状态</th></tr>
   <tr><td><b>Tri Dao</b></td><td>Princeton（助理教授）· Together AI</td><td>FlashAttention（一作）· Mamba（二作）</td><td><b>tri@tridao.me</b>（本人 2026 版 CV，<code>pdftotext</code> 实测）</td><td><b>@tri_dao</b>（主页 href 核验）</td><td><b>已发信</b> 11-11 11:36 · X 待 follow</td></tr>
@@ -468,20 +492,37 @@
   <tr><td>Carlos E. Jimenez</td><td>Princeton（PLI；OpenAlex <code>institutions</code>）</td><td>SWE-bench（一作）</td><td>未找到</td><td>未找到 X（<code>carlosej.github.io</code> 不解析；Princeton 个人页已迁走）</td><td>待跟踪</td></tr>
   <tr><td><b>John Yang</b></td><td>Stanford（CS PhD，主页自述）</td><td>SWE-bench（二作）· SWE-agent</td><td>未找到（主页无 <code>mailto:</code>）</td><td><b>@jyangballin</b>（主页 <code>href="https://x.com/jyangballin"</code>）</td><td>待跟踪 · X 待 follow（<b>优先</b>：harness 言论密度高）</td></tr>
   <tr><td>Jianlin Su（苏剑林）</td><td><b>Zhuiyi Technology（深圳）</b>（OpenAlex <code>raw_affiliation_strings</code> 实测）</td><td>RoFormer / RoPE（一作）</td><td>未找到（<code>kexue.fm</code> 实测 <code>403</code>，站点反爬）</td><td>未找到 X</td><td>待跟踪（RoPE 是 BaiZe 直接依据，<b>补联系方式优先级最高</b>）</td></tr>
+  <tr><td><b>Hugo Touvron</b>（<b>第四轮新增</b>）</td><td>Meta AI（FAIR）</td><td>LLaMA（一作）</td><td>未找到（<code>hugotouvron.github.io</code> <code>404</code>）</td><td>未找到 X（不猜）</td><td>待跟踪（data 线 token 预算一侧的直接依据）</td></tr>
+  <tr><td><b>Long Ouyang</b>（<b>第四轮新增</b>）</td><td>OpenAI（发表时；当前机构未核验）</td><td>InstructGPT（一作）</td><td>未找到（<code>longouyang.github.io</code> <code>404</code>）</td><td>未找到 X</td><td>待跟踪（zhulong 对齐轴基线）</td></tr>
+  <tr><td><b>Tom B. Brown</b>（<b>第四轮新增</b>）</td><td>未核实（发表时 OpenAI；OpenAlex 机构映射明显错误，<b>不采用</b>）</td><td>GPT-3（一作）</td><td>未找到</td><td>未找到 X（同名账号极多，<b>明确不登记</b>）</td><td>待跟踪</td></tr>
 </table>
-<p style="font-size:13px;color:#59636e;">完整字段（主页 / 备注 / 探测原命令与输出）见 <code>research/classic/AUTHORS.md</code>；X handle <b>只登记能从作者本人主页 <code>href</code> 读到</b>的，读不到一律写「未找到 X」——<b>不猜</b>（猜错会 follow 到无关账号，比不 follow 更糟）。</p>
+<p style="font-size:13px;color:#59636e;">完整字段（主页 / 备注 / 探测原命令与输出）见 <code>research/classic/AUTHORS.md</code>；X handle <b>只登记能从作者本人主页 <code>href</code> 读到</b>的，并在本轮用 X 页 <code>og:description</code> <b>二次核对 bio 与身份一致</b>；读不到一律写「未找到 X」——<b>不猜</b>（猜错会 follow 到无关账号，比不 follow 更糟）。</p>
 
 <div class="note">
-  <b>🔴 X 能力探测（只读 · <b>三轮</b>：11:3x / 11:4x / 12:0x）⇒ <code>BLOCKED(x_access)</code></b>：<code>curl -o /dev/null -m 8 https://x.com/</code> → <b><code>000</code> / 8.00s</b>；第二轮复测 <code>x.com/</code> 与 <code>x.com/ShunyuYao12</code> <b>均 <code>000</code> / 10.0s</b>；<b>第三轮复测 <code>x.com/</code> 仍 <code>000</code> / 10.0s</b>，同轮对照 <code>export.arxiv.org</code> <b><code>200</code> / 0.74s</b>、<code>api.openalex.org</code> <b><code>200</code> / 0.75s</b>；<code>google.com</code> / <code>huggingface.co</code> <b>同为 <code>000</code></b> ⇒ <b>本机出网白名单</b>，非 x.com 单点故障；无浏览器 / MCP 通道、无授权凭据 ⇒ <b>无法自动 follow</b>。🚫 未注册新账号、未使用任何凭据。<b>本轮 follow 数 = 0（如实记，未假装已 follow）</b>。<br>
-  <b>待 follow 清单（请用户手动执行 · handle 均已从本人主页核验 · 三轮累计 6 个）</b>：① <a href="https://x.com/tri_dao">@tri_dao</a>（Tri Dao，FlashAttention / Mamba）；② <a href="https://x.com/_albertgu">@_albertgu</a>（Albert Gu，Mamba / SSM）；③ <a href="https://x.com/ShunyuYao12">@ShunyuYao12</a>（Shunyu Yao，ReAct / ToT）；④ <a href="https://x.com/edwardjhu">@edwardjhu</a>（Edward J. Hu，LoRA）；⑤ <a href="https://x.com/jyangballin">@jyangballin</a>（John Yang，SWE-bench / SWE-agent）；⑥ <a href="https://x.com/_jasonwei">@_jasonwei</a>（Jason Wei，CoT / 指令微调）。
+  <b>🟢 X 能力探测（只读 · 第四轮 12:4x）⇒ <code>OPEN(x_readonly)</code>（此前三轮为 <code>BLOCKED(x_access)</code>，历史保留）</b>：显式带本机代理 <code>curl -x http://127.0.0.1:7897 -w '%{http_code} %{time_total}' https://x.com</code> → <b><code>200</code> / 0.79s</b>；<code>x.com/karpathy</code> <b><code>200</code> / 0.77s</b>、<code>x.com/_jasonwei</code> <b><code>200</code> / 0.66s</b>；出口 IP <b><code>178.249.213.185</code></b>（与运维口径一致）。<b>不带代理仍 <code>000</code></b> ⇒ 本线 shell 未继承 <code>~/.profile</code>，脚本内已内置默认代理。<br>
+  <b>可做</b>：读主页 bio / 页内 timeline 的近 8–9 条推文原文（<code>full_text</code> + <code>created_at_ms</code>）；单条推文页可核验作者（<code>og:title</code>）。<b>不可做</b>：follow / like / 发帖（需登录态）⇒ <b>本轮 follow 数 = 0</b>（如实记，未假装已 follow）；🚫 未注册新账号、未使用任何凭据。抓取一律走 <code>research/classic/x_fetch.py</code>（只读、串行、相邻 ≥3s、单轮 ≤6 个 handle），原始快照落 <code>research/classic/x/*.json</code>（6 个文件 / 15.3 KB）。<br>
+  <b>待 follow 清单（请用户手动执行 · 6 个 handle 已在 X 侧二次核验 bio）</b>：① <a href="https://x.com/tri_dao">@tri_dao</a>（Tri Dao，FlashAttention / Mamba）；② <a href="https://x.com/_albertgu">@_albertgu</a>（Albert Gu，Mamba / SSM）；③ <a href="https://x.com/ShunyuYao12">@ShunyuYao12</a>（Shunyu Yao，ReAct / ToT）；④ <a href="https://x.com/edwardjhu">@edwardjhu</a>（Edward J. Hu，LoRA）；⑤ <a href="https://x.com/jyangballin">@jyangballin</a>（John Yang，SWE-bench / SWE-agent）；⑥ <a href="https://x.com/_jasonwei">@_jasonwei</a>（Jason Wei，CoT / 指令微调）。
 </div>
-<details class="voice-ready">
-<summary>🗣 voice_ready · 研究者言论（可发头条）—— 本期：无</summary>
+<details class="voice-ready" open>
+<summary>🗣 voice_ready · 研究者言论（可发头条）—— 本期 2 条（X 首获一手原文）</summary>
 <ul>
-  <li><b>本期无</b>（0 条）。原因：<code>voice_ready</code> 硬要求「<b>原文摘录 + 原始链接</b>」，而<b>三轮</b>探测下 <b>X 均不可达</b>（<code>BLOCKED(x_access)</code>）、多数作者博客同样不可达 ⇒ 拿不到可核验的一手原文。</li>
-  <li>按令降级处理：<b>不用二手转述冒充原文</b>，也不把二手报道标成 <code>voice_ready</code>；本轮<b>附录也无相关报道</b>（未检索到可核验的一手言论）。</li>
-  <li>解封条件：用户手动 follow 上述 <b>6</b> 个账号后，或本机出网放行 <code>x.com</code> / 作者博客，下轮即可按「原文 + 链接 + 时间戳」出 1–2 条。</li>
+  <li><b>人物</b>：Albert Gu <code>@_albertgu</code>（CMU 助理教授 · Cartesia 首席科学家；Mamba / S4 一作）</li>
+  <li><b>言论</b>：原文 —— <span class="orig">"it's hilarious how many have taken the bitter lesson to mean just scaling up transformers. it's about scaling, but innovations in algorithmic primitives can lead to much more efficient scaling"</span><br>中文翻译（本线译，非转述）：很多人把「苦涩教训」理解成「只要把 Transformer 放大就行」。它讲的是规模化，但<b>算法原语上的创新</b>可以带来更高效的规模化。</li>
+  <li><b>时间</b>：<b>2026-11-07</b>（4 天前 · 未降级）</li>
+  <li><b>出处</b>：<a href="https://x.com/_albertgu/status/2119206160410800219">https://x.com/_albertgu/status/2119206160410800219</a>（本轮实测推文页 <code>200</code>，<code>og:title</code> = <code>Albert Gu (@_albertgu) on X</code>，与主页内嵌 JSON 原文<b>两处一致</b>）</li>
+  <li><b>话题点</b>：这是「堆算力 vs 改架构」之争在顶级研究者口中的<b>现场表述</b>，大众也能一句话接住：不是算力不重要，而是「怎么算」同样重要。</li>
+  <li><b>风险</b>：① 该推文是<b>回应他人评论</b>的上下文片段，单独引用易被读成「反规模化」⇒ 引用时须同时给「它讲的是规模化」这半句；② 属于<b>观点</b>而非实验结论，🚫 不得包装成「研究证明」。</li>
 </ul>
+<hr>
+<ul>
+  <li><b>人物</b>：Tri Dao <code>@tri_dao</code>（Princeton 助理教授 · Together AI 首席科学家；FlashAttention 一作）</li>
+  <li><b>言论</b>：原文 —— <span class="orig">"Super interesting result: H-Net learns to dynamically tokenize variable names in coding data as separate tokens, and it scales much better on code compared to BPE"</span><br>中文翻译（本线译）：很有意思的结果：H-Net 学会把代码里的变量名切成独立 token，在代码上比 BPE 的扩展性明显更好。</li>
+  <li><b>时间</b>：<b>2026-10-28</b>（14 天前 · 未降级）</li>
+  <li><b>出处</b>：<a href="https://x.com/tri_dao/status/2115531348161028374">https://x.com/tri_dao/status/2115531348161028374</a>（推文页 <code>200</code>，<code>og:title</code> = <code>Tri Dao (@tri_dao) on X</code>；原文与主页内嵌 JSON 一致）</li>
+  <li><b>话题点</b>：代码模型「看不懂变量名」的直觉，被换成<b>分词方式</b>这个可检验的解释 —— 对做代码语料的人是直接线索，对大众也易懂（切词方式会决定模型学得好不好）。</li>
+  <li><b>风险</b>：① 原推只给结论、未给数字，🚫 不得替它补指标；② H-Net 是他人工作，本推是<b>转述性评价</b> ⇒ 引用须写「Tri Dao 评价」而非「Tri Dao 发现」。</li>
+</ul>
+<p style="font-size:12.5px;color:#59636e;margin:8px 0 0;">⚠️ <b>未采用 1 条（如实记）</b>：Jason Wei <code>@_jasonwei</code> 2026-11-10 关于「benchmark benchmark（2026 各前沿实验室报告了哪些基准）」的推文，正文含转义引号，登录前页面内嵌串被截断、单条推文页正文未渲染 ⇒ <b>不满足「原文完整 + 可核验」</b>，本期<b>不标</b> <code>voice_ready</code>，仅登记在 <code>AUTHORS.md</code> 言论台账 V3，下轮再取全文评估。本期 <b>2 条 ≤ 上限 2 条</b>，宁缺勿滥。</p>
 </details>
 
 <details class="news-ready">
@@ -492,6 +533,67 @@
   <li>口径：所有数字标注「论文作者自报，未复现」；大众标题仅为给 news 的<b>改写建议</b>，原题照抄规则不变；不直接联系作者、不代替 news 做发布判断。</li>
 </ul>
 </details>
+
+<h2 class="sec">🌙 晚报变更说明（AM → PM）</h2>
+<table>
+  <tr><th>#</th><th>改了什么</th><th>为什么改</th></tr>
+  <tr><td>1</td><td>A 轨<b>不加篇</b>（仍 5/5），晚报只做 B 轨 + 言论投料</td><td>当日额度已满；用户令要求 A / B 各占 50%，B 轨前三轮偏「补清单」，第四轮转到<b>作者互动</b>这一真正的短板</td></tr>
+  <tr><td>2</td><td>B 轨 <b>12 → 15 篇</b>（新增 GPT-3 / InstructGPT / LLaMA）</td><td>上一轮「下一步」指定；三篇正好构成「规模 → 指令 → 开放权重」主线，直击 data 线的 token 预算与配方问题</td></tr>
+  <tr><td>3</td><td><code>voice_ready</code> 由「本期无」改为 <b>2 条</b></td><td><b>X 已恢复可达</b>（代理 200 / 出口 IP 已核）；首次拿到可核验的一手原文（Albert Gu / Tri Dao），满足「原文 + 链接 + 时间」</td></tr>
+  <tr><td>4</td><td>作者网 <b>20 → 23 人</b>；X 状态由 <code>BLOCKED</code> 改 <code>OPEN(x_readonly)</code></td><td>新增三篇经典的一作；follow 仍需登录态 ⇒ 仍为 <b>0 follow</b>，只把 6 个 handle 升级为「X 侧二次核验」</td></tr>
+  <tr><td>5</td><td>本轮 <b>0 封</b>作者信</td><td>三个新作者逐一实测主页（<code>404</code> / <code>000</code> / 无 <code>mailto:</code>），<b>无可核验邮箱 ⇒ 不猜、不发</b>；今日累计 5 封已覆盖三个轮次</td></tr>
+</table>
+
+<h3 style="margin-top:22px;">🌙 晚报增量建议（B 轨第四轮 + 研究者言论 · 6 线齐全）</h3>
+<table>
+  <tr><th>线</th><th>建议动作（可执行）</th><th>依据</th><th>预期收益</th><th>成本</th><th>优先级</th></tr>
+  <tr>
+    <td><b>pretrain</b></td>
+    <td>给 2B 的评测表<b>统一加 <code>shot</code> 列</b>，并把「in-context 是否成立」做成一次小扫描：固定 2B checkpoint，跑 <code>0 / 1 / 4 / 8-shot</code> 四点；<b>预注册判据</b>：若 8-shot 相对 4-shot 提升 &lt; 1 个点，则后续评测一律固定 4-shot 并停止加示例。</td>
+    <td>GPT-3 <code>2005.14165</code>（few/one/zero 三口径是原文定义）；CoT <code>2201.11903</code>（能力随规模涌现 ⇒ 2B 上不能外推）</td>
+    <td>消除「同模型不同 shot 数不可比」的隐性口径漂移；一次扫描 ≈ 4 组推理，成本极低</td>
+    <td>低（纯推理，无训练）</td>
+    <td><b>P1</b></td>
+  </tr>
+  <tr>
+    <td><b>data</b></td>
+    <td>做一次<b>「token/参数」对撞</b>：2B 固定，token 预算取 <code>20× / 40× / 80×</code> 参数（即 40B / 80B / 160B token），<b>训练 FLOPs 上限写死</b>（超出即截断步数），输出「验证 loss + 3 项下游」三点曲线；<b>预注册判据</b>：若 80× 相对 40× 的验证 loss 增益 &lt; 0.01，则 2B 的预算选点定在 40×（写进配方）。<br>副线（低成本）：抽 2B token 代码语料做 <b>BPE vs 变量名独立切分</b> 对照，判据 = 同 FLOPs 下 code 验证 loss。</td>
+    <td>LLaMA <code>2302.13971</code>（1.0–1.4T token，≫20×）vs Chinchilla <code>2203.15556</code>（≈20×）—— <b>两条相反经验线</b>，2B 必须自己扫；代码分词线索来自 Tri Dao 2026-10-28 言论（<code>voice_ready</code> 第 2 条，<b>观点非结论</b>）</td>
+    <td>把「预算选点」从拍脑袋变成一条可复算的曲线；直接决定后续所有消融的 token 口径</td>
+    <td>中高（3 个训练 run；可用小 proxy 模型先摸形状）</td>
+    <td><b>P0</b></td>
+  </tr>
+  <tr>
+    <td><b>harness</b></td>
+    <td>7 路评测报表<b>新增两列</b>：① <code>shot</code>（0/1/4/8，与 pretrain 同口径）② <code>单题 wall-clock + token 成本</code>；并在评测说明里<b>禁止跨 shot 数比较</b>。另：把「benchmark 采用频率」做成季度观察项（<b>我们的观察</b>：若某基准在头部实验室报告里普遍出现，它更可能长期有效）。</td>
+    <td>GPT-3 <code>2005.14165</code>（口径定义）；<code>2611.13541</code>（同分差 / 运行成本决定可比性，午间已给）</td>
+    <td>避免「换了 shot 数就涨点」的假提升；成本列让「解出任务成本」可核算</td>
+    <td>低（只改报表模板）</td>
+    <td><b>P1</b></td>
+  </tr>
+  <tr>
+    <td><b>zhulong</b></td>
+    <td>对齐轴补一条<b>低成本基线</b>：同数据下比 <code>2B-base + SFT</code> vs <code>1.3B + SFT + 偏好优化</code> 的人类/模型偏好胜率；<b>预注册判据</b>：若小模型在偏好胜率上不劣于大模型 ≥ 3 个点，则后续对齐实验默认从 1.3B 起做，把省下的算力给消融臂。<br>同时把<b>成本口径</b>写进表头：按「训练成本」还是「推理成本」记账，二者结论可能相反。</td>
+    <td>InstructGPT <code>2203.02155</code>（1.3B &gt; 175B，作者自报、未复现）；LLaMA <code>2302.13971</code>（推理预算主导时的取舍翻转）</td>
+    <td>用「小模型对齐」换更多消融臂；把成本口径争议提前消掉</td>
+    <td>中（一次 SFT + 偏好优化，可复用现有数据）</td>
+    <td><b>P1</b></td>
+  </tr>
+  <tr>
+    <td><b>vision</b></td>
+    <td><b>本线本期无新增可用建议</b>（B 轨第四轮 3 篇均为文本 LLM 主线，与波形 RL 奖励设计无直接可迁移结论 —— 不硬塞）。下一轮转向「视觉/多模态 × 奖励设计」的经典工作（如 CLIP / ViT 一类）后再给。</td>
+    <td>—</td><td>—</td><td>—</td><td>—</td>
+  </tr>
+  <tr>
+    <td><b>designflow</b></td>
+    <td>造题规范加一条<b>硬约束</b>：每题必须标注 <code>few-shot 示例数</code>（建议固定 <code>0</code>）与 <code>是否允许工具</code>，并随题落盘；判分脚本拒绝「示例数未标注」的题。</td>
+    <td>GPT-3 <code>2005.14165</code>（示例数直接改变任务难度）；<code>2611.12712</code>（断言快照式判分，早报已给）</td>
+    <td>消除「靠示例把题做简单」的隐性难度漂移，L1–L5 保真度才可比</td>
+    <td>低（改题面模板 + 校验脚本 1 处）</td>
+    <td><b>P2</b></td>
+  </tr>
+</table>
+<p style="font-size:13px;color:#59636e;">⚠️ 上述建议均为<b>基于论文/言论的推断</b>，非指令；与各线任务书冲突时以任务书为准。B 轨第四轮无可执行的 vision 建议 ⇒ <b>显式写「无新增」</b>，未凑数。</p>
 
 <h2 class="sec">附录 A · 检索式与命中数（06:00 时点 · 可核验）</h2>
 <table>
@@ -511,6 +613,10 @@
   <tr><td>3</td><td><code>raw/verify_r147.py</code> ②/③/④（<code>submittedDate</code> 区间 ×2 + 跨分类）</td><td><b><code>HTTP 429</code></b>（<code>Too Many Requests</code>；<code>curl</code> 单独复测同得 <code>Rate exceeded.</code>）</td><td><b>不作判据</b>（限速，非「无新增」）</td></tr>
   <tr><td>4</td><td>经典论文元数据（第三轮 4 篇）</td><td>arXiv API <code>id_list</code> 亦 <code>429</code> ⇒ 改取 <code>arxiv.org/abs/&lt;ID&gt;</code>：<b>4/4 <code>200</code></b>（43,899 / 43,765 / 43,184 / 42,603 B）</td><td>元数据可核验（来源变更已注明）</td></tr>
   <tr><td>5</td><td>被引数（OpenAlex，4 篇经典）</td><td><b>4/4 <code>200</code></b>：3,867 / 2,078 / 3,297 / 13,949（查询日 2026-11-11）</td><td>单源，不跨源比较</td></tr>
+  <tr><td>6（<b>第四轮 12:4x</b>）</td><td>经典论文元数据（GPT-3 / InstructGPT / LLaMA）</td><td>arXiv API <code>id_list</code> 仍 <code>429</code>（<code>text/html</code> / 14 B）⇒ 改取 <code>arxiv.org/abs/&lt;ID&gt;</code>：<b>3/3 <code>200</code></b>（48,472 / 45,449 / 41,002 B），首提交日 2020-05-28 / 2022-03-04 / 2023-02-27</td><td>元数据可核验（来源变更已注明）</td></tr>
+  <tr><td>7（<b>第四轮</b>）</td><td>被引数（OpenAlex，3 篇经典，<b>串行</b> 2s 间隔）</td><td><b>3/3 <code>200</code></b>：33,665 / 8,059 / 23,690（查询日 2026-11-11）；<code>GPT-3</code> 的 <code>authorships</code> = <b>31</b> 位；⚠️ OR 语法 <code>filter=doi:a|doi:b</code> 被 API 拒（<code>400 Invalid query parameters</code>）⇒ 改为逐条串行</td><td>单源，不跨源比较</td></tr>
+  <tr><td>8（<b>第四轮 · X</b>）</td><td>X 只读探测 + 作者主页（6 handle，串行 3s）</td><td><code>x.com</code> <b><code>200</code> / 0.79s</b>、<code>x.com/karpathy</code> <b>200 / 0.77s</b>、<code>x.com/_jasonwei</code> <b>200 / 0.66s</b>；出口 IP <code>178.249.213.185</code>；6/6 handle 均 <code>200</code> 且 bio 与身份一致；<code>syndication.twitter.com/timeline-profile</code> <b><code>429</code></b>（未用、不绕过）</td><td>只读可用 / follow 仍需登录</td></tr>
+  <tr><td>9（<b>第四轮 · 语音投料</b>）</td><td>单条推文页复核（4 条）</td><td>4/4 <code>200</code>（131–169 KB），<code>og:title</code> 均回显「姓名 (@handle) on X」⇒ 作者可核验；其中 Jason Wei 的 benchmark 条正文未渲染（JS）⇒ <b>不采用</b></td><td>原文 + 作者双核验</td></tr>
 </table>
 
 <h2 class="sec">附录 B · 取数、去重与选文（5 篇：早 3 + 午间 2）</h2>
@@ -544,17 +650,18 @@
   <tr><td>台账</td><td>收录 <b>331 → 336</b>；<code>SEEN.md</code> 5,655 → <b>5,660 行</b></td><td>早 +3（r144）、午 +2（r147）；<code>papers.jsonl</code> 同步（每 ID 恰好 1 行，幂等断言过）</td></tr>
   <tr><td>候选累计</td><td><b>4,558</b> + 候选(RSS) <b>507</b></td><td>午间候选池 234（fresh 234，早报批次 310/308 另计）</td></tr>
   <tr><td><code>news_ready</code></td><td><b>1 条</b></td><td><code>2611.13541</code>（科普）；含 5 个数字 + PDF 页码 + Fig. 2 配图</td></tr>
+  <tr><td><code>voice_ready</code></td><td><b>2 条</b></td><td>Albert Gu 2026-11-07（架构原语 vs 规模化）· Tri Dao 2026-10-28（代码动态分词）；均「原文 + 链接 + 时间」双核验；另有 1 条（Jason Wei 11-10）因正文不可完整核验<b>未采用</b>并如实记</td></tr>
   <tr><td>出口</td><td><b>仅 HTML</b></td><td>🚫 未发任何日报邮件（2026-11-07 10:50 用户令）</td></tr>
-  <tr><td>B 轨（经典论文）</td><td><b>12 篇</b>（三轮各 4） / <b>20 人</b>建档 / <b>5 封</b>已发</td><td>不占当日 5 篇额度、不进 <code>SEEN.md</code>；第三轮被引 3,867 / 2,078 / 3,297 / 13,949（OpenAlex）；本轮信 2 封（Jason Wei 12:10 · Noah Shinn 12:11，<code>SENT OK</code>，英文 165 / 153 词）；X 三轮 <code>BLOCKED(x_access)</code> ⇒ <b>0 follow</b>（未假装已 follow），待用户手动 follow <b>6</b> 个已核验 handle</td></tr>
+  <tr><td>B 轨（经典论文）</td><td><b>15 篇</b>（4+4+4+3） / <b>23 人</b>建档 / <b>5 封</b>已发 / <b>0 follow</b></td><td>不占当日 5 篇额度、不进 <code>SEEN.md</code>；第四轮被引 33,665 / 8,059 / 23,690（OpenAlex 串行实测）；本轮信 <b>0 封</b>（新作者主页 <code>404</code>/<code>000</code>，无邮箱 ⇒ 不猜不发）；X <b><code>OPEN(x_readonly)</code></b>（代理 200 / 出口 <code>178.249.213.185</code>，6 handle 二次核验）⇒ follow 需登录态，<b>0 follow（未假装）</b>；<code>voice_ready</code> 首获 <b>2 条</b></td></tr>
 </table>
 
 <div class="ok-box" style="margin-top:14px;">
-  <b>本期口径自检</b>：① 当日 <b>5/5</b>（早 3「借鉴」+ 午间 1「借鉴」+ 1「科普」，<b>未凑数、未放宽入账判据</b>）；② 5 篇均实测 <code>HTTP 200</code> + <code>application/atom+xml</code> + 真实 <code>published</code>（<b>200 ≠ 有料</b> 已校验；午间 2 篇另经 PDF 全文核对）；③ 与 <code>SEEN.md</code> / <code>papers.jsonl</code> / <code>TOP_K.jsonl</code> / 近 7 天 <code>daily/</code> <b>无重复</b>（午间候选 <code>seen=0</code>，早报 <code>seen=2</code> 均为昨日已收）；④ 5 篇距各自唤醒 22.6–29.0h，<b>均在 72h 常规窗口内</b>；⑤ 建议节 <b>6 线齐全</b>（早报表 + 午间增量表，每表 6 行；pretrain / data / vision 显式「无新增」并给理由），每条含「动作 / 依据 / 收益 / 成本 / 优先级」；⑥ <b>0 <code>&lt;script&gt;</code></b>；⑦ 未改动他线任何文件；⑧ <b>B 轨</b>：<b>12 篇</b>经典论文被引数<b>均为 OpenAlex 单源实测</b>（三轮：136,007 / 4,612 / 2,057 / 7,496；357 / 5,814 / 346 / 14,411；3,867 / 2,078 / 3,297 / 13,949；S2 首轮 429 ⇒ 注明「未查」，不估算、不跨源比较）；X handle 只登记<b>作者本人主页可核验</b>的 <b>6</b> 个，其余一律「未找到 X」；作者信本轮 <b>2 封</b>（Jason Wei / Noah Shinn）均<b>草稿先入仓</b>、台账已记（每轮 ≤3 封、同作者 ≤1、单收件人），<b>无群发 / 无承诺 / 无泄密</b>；<code>voice_ready</code> 因 X 不可达记 <b>0 条</b>并写明原因，<b>未用二手转述冒充原文</b>；⑨ <code>news_ready</code> <b>1 条</b>（≤2），四问逐条过，数字均指到 PDF 页码，配图给出处格式。
+  <b>本期口径自检</b>：① 当日 <b>5/5</b>（早 3「借鉴」+ 午间 1「借鉴」+ 1「科普」，<b>未凑数、未放宽入账判据</b>）；② 5 篇均实测 <code>HTTP 200</code> + <code>application/atom+xml</code> + 真实 <code>published</code>（<b>200 ≠ 有料</b> 已校验；午间 2 篇另经 PDF 全文核对）；③ 与 <code>SEEN.md</code> / <code>papers.jsonl</code> / <code>TOP_K.jsonl</code> / 近 7 天 <code>daily/</code> <b>无重复</b>（午间候选 <code>seen=0</code>，早报 <code>seen=2</code> 均为昨日已收）；④ 5 篇距各自唤醒 22.6–29.0h，<b>均在 72h 常规窗口内</b>；⑤ 建议节 <b>6 线齐全</b>（早报表 + 午间增量表 + <b>晚报增量表</b>，每表 6 行；无建议者显式写「无新增」并给理由），每条含「动作 / 依据 / 收益 / 成本 / 优先级」；⑥ <b>0 <code>&lt;script&gt;</code></b>；⑦ 未改动他线任何文件；⑧ <b>B 轨</b>：<b>15 篇</b>经典论文被引数<b>均为 OpenAlex 单源实测</b>（四轮：136,007 / 4,612 / 2,057 / 7,496；357 / 5,814 / 346 / 14,411；3,867 / 2,078 / 3,297 / 13,949；<b>33,665 / 8,059 / 23,690</b>；S2 首轮 429 ⇒ 注明「未查」，不估算、不跨源比较）；X handle 只登记<b>作者本人主页可核验</b>的 <b>6</b> 个并在 X 侧二次核对 bio，其余一律「未找到 X」（<b>不猜</b>）；作者信本轮 <b>0 封</b>（新作者无公开邮箱 ⇒ 不猜不发；今日累计 5 封分属三轮、均草稿先入仓、台账已记、每轮 ≤3 封、同作者 ≤1、单收件人、无群发/无承诺/无泄密）；<code>voice_ready</code> <b>2 条</b>（均原文 + 链接 + 时间双核验，≤2 上限，另 1 条不可核验者<b>明确未采用</b>）；⑨ <code>news_ready</code> <b>1 条</b>（≤2），四问逐条过，数字均指到 PDF 页码，配图给出处格式。
 </div>
 
 <footer>
-  research 线 · 论文观察日报 <b>2026-11-11（早报 3 + 午间 2 · 5/5 ＋ 🅱 B 轨经典论文 12 篇）</b> ｜ 生成：2026-11-11 06:0x CST（A 轨早报）/ <b>11:3x、11:4x、12:1x CST（B 轨三轮）</b> / <b>12:0x–12:2x CST（午间补报 + 批次复核）</b> ｜ 数据源：arXiv 官方 API（<code>export.arxiv.org</code>；第三轮经典元数据因限速改取 <code>arxiv.org/abs</code>）· 被引数 OpenAlex ｜ 入口索引：<code>research/daily/index.html</code> ｜ B 轨清单：<code>research/classic/PAPERS.md</code> · <code>research/classic/AUTHORS.md</code><br>
-  下一轮：<b>2026-11-11 15:00 / 18:00 CST</b>——A 轨当日额度已 5/5（不再加篇），改做「晚报变更说明（AM → PM）」+ B 轨第四轮（候选：GPT-3 / InstructGPT / LLaMA 系列，元数据实测后才入表）；分镜脚本取当日科普 TOP-1（<code>2611.13541</code>）→ <code>research/video/SCENES/11_11.html</code>。<br>
+  research 线 · 论文观察日报 <b>2026-11-11（早报 3 + 午间 2 · 5/5 ＋ 🅱 B 轨经典论文 15 篇 ＋ 🗣 voice_ready 2 条）</b> ｜ 生成：2026-11-11 06:0x CST（A 轨早报）/ <b>11:3x、11:4x、12:1x CST（B 轨前三轮）</b> / <b>12:0x–12:2x CST（午间补报 + 批次复核）</b> / <b>12:4x–13:1x CST（B 轨第四轮 + X 只读解封 + 晚报）</b> ｜ 数据源：arXiv 官方 API（<code>export.arxiv.org</code>；第三、四轮经典元数据因限速改取 <code>arxiv.org/abs</code>）· 被引数 OpenAlex · 言论 X（只读）｜ 入口索引：<code>research/daily/index.html</code> ｜ B 轨清单：<code>research/classic/PAPERS.md</code> · <code>research/classic/AUTHORS.md</code> · 抓取脚本 <code>research/classic/x_fetch.py</code> · 快照 <code>research/classic/x/</code><br>
+  下一轮：<b>2026-11-11 15:00 / 18:00 CST</b>——A 轨额度 5/5 已满（不加篇）；B 轨第五轮转向 <b>vision / 多模态 × 奖励设计</b>（补上本期空档）+ <b>取回 Jason Wei 那条 benchmark 推文的完整正文</b>（换入口，仍以「原文 + 链接」为准）；分镜脚本取当日科普 TOP-1（<code>2611.13541</code>）→ <code>research/video/SCENES/11_11.html</code>。<br>
   ⚠️ 本页为论文解读 / 待读线索，<b>非结论、非官方</b>；数字均为作者自报、本线未复现；「对各线的可执行建议」为基于论文的推断，<b>非指令</b>。
 </footer>
 </div>

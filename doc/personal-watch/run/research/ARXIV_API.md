@@ -2233,3 +2233,11 @@ python3 research/arxiv_fetch.py --query 'cat:cs.CL AND abs:"agent"' --max-result
 - **B 轨第三轮**（元数据因 API 429 改取 `arxiv.org/abs` 4/4 `200`；被引 OpenAlex 4/4 `200`，查询日 2026-11-11）：RoFormer `2104.09864` **3,867** · SWE-bench `2310.06770` **2,078** · Reflexion `2303.11366` **3,297** · CoT `2201.11903` **13,949**。
 - **交付**：`daily/2026-11-11.html` **5/5 = 87,802 B**（div 112/112、table 10/10、tr 82/82、td 400/400、0 `<script>`）+ `daily/index.html`（11-11 行改「早报 3 + 午间 2 · 5/5」+ footer 最近更新）。
 - **台账**：`SEEN.md` 5,658 → **5,660 行**（收录 **336**）/ `papers.jsonl` 334 → **336**（`raw/update_r147.py`，幂等断言过）。
+
+## §9.148 · 2026-11-11 12:4x CST（晚报轮 · B 轨第四轮：经典论文元数据取数 + X 只读通道）
+
+- **arXiv API `id_list` 仍 429**：`https://export.arxiv.org/api/query?id_list=2005.14165,2203.02155,2302.13971` → **`429` / `text/html` / 14 B**（上一轮 429 后约 40min 仍未恢复）。**兜底（已验证）**：改取 `https://arxiv.org/abs/<ID>` 页面，**3/3 `200`**（48,472 / 45,449 / 41,002 B），`<div class="dateline">` 给首提交日、`<td class="tablecell subjects">` 给分类、`citation_author` 给作者顺序 —— 与本线前两轮做法一致，**来源变更须在产物中注明**。
+- **建议**：经典论文（B 轨）元数据不必依赖 API —— 直接用 `arxiv.org/abs` 更稳（不受 `/api/query` 限速桶影响）；被引数走 OpenAlex。
+- **OpenAlex 语法坑**：`filter=doi:10.48550/arxiv.X|doi:10.48550/arxiv.Y` 会被拒 **`400 Invalid query parameters`**（「OR between filters not supported」）⇒ **只能逐条串行**（`/works/https://doi.org/10.48550/arxiv.<ID>`），间隔 2s。本轮 3/3 `200`：33,665 / 8,059 / 23,690（查询日 2026-11-11）。
+- **OpenAlex 机构字段不可信（实例）**：GPT-3 `authorships` 31 位中有 30 位被记为 `Johns Hopkins University`（实为 OpenAI）⇒ **不采用**其机构映射，本线只记「发表时机构（未逐位核验）」或不填。
+- **X（只读）通道**：必须显式带代理 `-x http://127.0.0.1:7897`（本线 shell 不继承 `~/.profile`）；`x.com` **200 / 0.79s**、出口 IP `178.249.213.185`；`syndication.twitter.com/srv/timeline-profile/screen-name/<h>` → **`429`**（未绕过）。登录前 profile 页内嵌 timeline JSON 可解析 `full_text` / `created_at_ms`（约 8–9 条），但**正文含转义引号会被截断** ⇒ 引用前须用单条推文页 `og:title` 核作者，原文**两处一致**才可用。工具：`research/classic/x_fetch.py`。

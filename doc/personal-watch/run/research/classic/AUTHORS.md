@@ -3,10 +3,10 @@
 > 依据：`WATCH_RESEARCH_TASK.md` 用户令 2026-11-11（「找到这些作者的 X 账号并 follow，把这些顶级研究者的最新言论也作为给 news 投料的一部分」）。
 > 字段：`姓名 · 机构 · 代表论文(1–2) · 邮箱(如公开) · 主页 · X 账号(@handle) · 状态(待跟踪/已follow/已发信/已回复) · 备注`
 >
-> 🔴 **找 X 的铁律（不猜）**：只登记**能从可访问页面读到**的 handle（本轮唯一可用手段 = 作者本人主页 `href` 实测）；**读不到 = 写「未找到 X」**。
-> 🚫 不许猜 handle（猜错会 follow 到无关账号，比不 follow 更糟）。X.com 本身本轮不可达（见文末探测证据），因此**无法在本轮做任何 follow 动作**。
+> 🔴 **找 X 的铁律（不猜）**：只登记**能从可访问页面读到**的 handle（作者本人主页 `href`，并用 X 页 `og:description` 二次核对身份）；**读不到 = 写「未找到 X」**。
+> 🚫 不许猜 handle（猜错会 follow 到无关账号，比不 follow 更糟）。X.com 自 **2026-11-11 12:4x** 起经本机 Mihomo 代理**只读可达**；**follow 仍需登录态 ⇒ 未自动执行**（0 follow，未假装）。
 
-**本轮快照**：累计 **20** 人｜已发信 **5**（Tri Dao · Shunyu Yao · Haoxing Ren · **Jason Wei** · **Noah Shinn**）｜X 已核验 **6**（`@tri_dao` / `@_albertgu` / `@ShunyuYao12` / `@edwardjhu` / **`@jyangballin`** / **`@_jasonwei`**）｜X 未找到 **14**｜已 follow **0（BLOCKED，见第二节）**
+**本轮快照**：累计 **23** 人（第四轮 +3：Hugo Touvron / Long Ouyang / Tom B. Brown）｜已发信 **5**（Tri Dao · Shunyu Yao · Haoxing Ren · Jason Wei · Noah Shinn）｜X 已核验 **6**（`@tri_dao` / `@_albertgu` / `@ShunyuYao12` / `@edwardjhu` / `@jyangballin` / `@_jasonwei`）｜X 未找到 **17**｜**X 已恢复可达（2026-11-11 12:4x 起，经本机 Mihomo 7897，`x.com` `200` / 出口 `178.249.213.185`）**｜已 follow **0**（follow 需登录态 ⇒ 仍靠用户手动，见第二节）｜已核验言论 **3 条**（第四轮首获一手原文）
 
 ---
 
@@ -272,42 +272,98 @@
 | 状态 | 待跟踪 |
 | 备注 | RoPE 是 BaiZe 位置编码的直接来源，**如果只能补一个人的联系方式，优先补他**；但机构邮箱不公开、博客反爬 ⇒ 本轮不发信（不猜邮箱）。 |
 
+### 21. Hugo Touvron
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Hugo Touvron（法国人 ⇒ 信按英文写） |
+| 机构 | Meta AI（FAIR；LLaMA 一作） |
+| 代表论文 | LLaMA（`2302.13971`，一作） |
+| 邮箱 | **未找到**（`hugotouvron.github.io` 实测 `HTTP 404`；未找到其它可访问个人页） |
+| 主页 | **未找到** |
+| X 账号 | **未找到 X**（无可核验来源 ⇒ 不猜） |
+| 状态 | 待跟踪 |
+| 备注 | LLaMA 的 token 预算口径（1.0–1.4T）是 data 线「小模型多训」一侧的直接依据；**但本文是否公开邮箱未核实 ⇒ 不发信**。⚠️ 今日 Meta 机构已发 1 封（Jason Wei），按「同机构 ≤2 封/天」仍有额度，缺的是**可核验邮箱**。 |
+
+### 22. Long Ouyang
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Long Ouyang（中文姓名 ⇒ 若发信按中文） |
+| 机构 | OpenAI（InstructGPT 一作；**当前机构未核验**） |
+| 代表论文 | InstructGPT（`2203.02155`，一作） |
+| 邮箱 | **未找到**（`longouyang.github.io` 实测 `HTTP 404`；无其它公开页） |
+| 主页 | **未找到** |
+| X 账号 | **未找到 X** |
+| 状态 | 待跟踪 |
+| 备注 | InstructGPT 的 RLHF 三步与「1.3B 胜过 175B」是 zhulong 对齐轴的基线；**作者已不在论文通讯地址可及的公开页** ⇒ 不发信。 |
+
+### 23. Tom B. Brown
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Tom B. Brown（GPT-3 一作；署名 `Tom B. Brown`，常被检索为 `Tom Brown`） |
+| 机构 | **未核实**（发表时 OpenAI；OpenAlex 的机构映射把 30/31 位作者记为 Johns Hopkins University —— **明显错误，不采用**） |
+| 代表论文 | GPT-3 / Language Models are Few-Shot Learners（`2005.14165`，一作） |
+| 邮箱 | **未找到** |
+| 主页 | **未找到**（未命中可访问个人页） |
+| X 账号 | **未找到 X** |
+| 状态 | 待跟踪 |
+| 备注 | ⚠️ 同名者极多（`Tom Brown` 在 X 上有多个高仿/同名账号）⇒ 本线**明确不登记任何 handle**，避免 follow 到无关账号。 |
+
 ---
 
-## 二、🔴 X 能力探测（只读 · 2026-11-11 **三轮**：11:3x / 11:4x / 12:0x CST）
+## 二、🟢 X 能力探测（只读 · 2026-11-11 **第四轮 12:4x 起已恢复可达**）
 
-> 令要求「先验证能力再动手」。**结论：BLOCKED(x_access)** —— 本机对 X 的出网被阻断，且无浏览器 / MCP 通道、无授权凭据。
+> 令要求「先验证能力再动手」。**结论：`OPEN(x_readonly)`（第四轮 12:4x CST 实测）** —— 经运维部署的本机 Mihomo 代理（`http://127.0.0.1:7897`），`x.com` 已可达；**只读可做，写操作（follow/like/发帖）仍需登录态 ⇒ 不做**。
 
-| 探针 | 命令（原样） | 结果 |
+| # | 探针（原样） | 结果 |
 |:--|:--|:--|
-| 1 | `curl -sI -m 20 https://x.com/karpathy` | **无任何响应头返回**（空输出，exit 0 = curl 走到超时分支） |
-| 2 | `curl -o /dev/null -m 8 -w '%{http_code} %{time_total}' https://x.com/` | **`000` / 8.00s**（连接阶段即失败） |
-| 3 | `curl -o /dev/null -m 8 https://google.com/` | **`000` / 8.00s** |
-| 4 | `curl -o /dev/null -m 8 https://huggingface.co/` | **`000` / 8.00s** |
-| 5 | `curl -o /dev/null -m 8 https://tridao.me/` | **`200` / 2.57s** |
-| 6 | `curl -o /dev/null -m 8 https://kexue.fm/` | `403` / 0.12s（站点自身拦截） |
-| 7（第二轮复测） | `curl -o /dev/null -m 10 https://x.com/` | **`000` / 10.002s** |
-| 8（第二轮复测） | `curl -o /dev/null -m 10 https://x.com/ShunyuYao12` | **`000` / 10.003s** |
-| 9（同轮对照） | `curl -o /dev/null -m 10 https://export.arxiv.org/` | **`200` / 1.16s** |
-| 10（**第三轮复测**） | `curl -o /dev/null -m 10 https://x.com/` | **`000` / 10.002s** |
-| 11（**第三轮对照**） | `curl -o /dev/null -m 15 https://export.arxiv.org/api/query?...` ｜ `https://api.openalex.org/...` | **`200` / 0.74s** ｜ **`200` / 0.75s** |
+| 1（前三轮 11:3x / 11:4x / 12:0x） | `curl -o /dev/null -m 8/10 https://x.com/` | **`000` / 8.0–10.0s ×3 次** ⇒ 历史结论 `BLOCKED(x_access)` |
+| 2（**第四轮**，显式带代理） | `curl -x http://127.0.0.1:7897 -w '%{http_code} %{time_total}' https://x.com` | **`200` / 0.79s** |
+| 3（**第四轮**） | 同上，`https://x.com/karpathy` | **`200` / 0.77s** |
+| 4（**第四轮**） | 同上，`https://x.com/_jasonwei` | **`200` / 0.66s**；页内 `<meta property="og:description">` = `ai researcher @meta, past: openai, google` |
+| 5（**第四轮**） | `curl -x http://127.0.0.1:7897 https://api.ipify.org` | **`178.249.213.185`**（与运维给的出口一致） |
+| 6（**第四轮**） | 未带代理的同一台机器 | **`000`** ⇒ 必须显式走代理；本线 shell 未继承 `~/.profile` 的变量（`env` 实测为空），脚本内已内置默认代理 |
 
-**判读**：③④⑦⑧⑩ 同时 `000`，而 ⑨⑪ 与 `github.io` / `tridao.me` / `api.openalex.org` 可通 ⇒ **不是 x.com 单点故障，而是本机出网白名单**。因此：
-- ❌ **不能自动 follow**；🚫 不许注册新账号、不许用未授权凭据登录；
-- ✅ 可做的替代：**从作者本人主页核验 handle**（三轮累计已核验 **6** 个），并把清单交给用户手动 follow。
+**能力矩阵（实测边界）**
 
-### 待 follow 清单（请用户手动执行 · 均已从作者本人主页核验）
+| 能力 | 是否可做 | 证据 |
+|:--|:--|:--|
+| 读作者主页（bio / 粉丝数 / 置顶） | ✅ | `x.com/<handle>` `200`，`og:description` 与页内 JSON 可读 |
+| 读近期推文原文（登录前 timeline） | ✅（有限） | profile 页内嵌 timeline JSON 含 `full_text` / `created_at_ms`；单页约 8–9 条**热门/近期**推文，**不是全量时间线** |
+| 单条推文页取全文 | ⚠️ 部分 | 推文页 `200` 且 `og:title` 可核验作者，但正文由 JS 渲染，**长推文正文可能不在 HTML**（Jason Wei 的 benchmark 那条即如此） |
+| follow / like / 发帖 | ❌ | 需登录态；🚫 令明确不许注册新账号、不许用未授权凭据 ⇒ **本轮 0 follow（未假装已 follow）** |
+| 抓取节奏 | ⏱ 受限 | 本轮 6 个 handle + 4 条推文页，串行、相邻请求 ≥3s；脚本 `research/classic/x_fetch.py`（只读，仅标准库） |
 
-| # | 人物 | handle | 主页链接 | 为什么值得跟 |
-|:--|:--|:--|:--|:--|
-| 1 | Tri Dao | `@tri_dao` | <https://x.com/tri_dao> | FlashAttention / Mamba 作者，kernel 与长上下文进展的第一手来源 |
-| 2 | Albert Gu | `@_albertgu` | <https://x.com/_albertgu> | SSM / Mamba 路线主推者，架构选择的判断值得跟踪 |
-| 3 | Shunyu Yao | `@ShunyuYao12` | <https://x.com/ShunyuYao12> | ReAct / ToT 一作，现于 OpenAI 做 agent 产品（CUA / Deep Research），agent 方向言论密度高 |
-| 4 | Edward J. Hu | `@edwardjhu` | <https://x.com/edwardjhu> | LoRA 一作，PEFT 与训练实践的第一手来源 |
-| 5（**第三轮新增**） | John Yang | `@jyangballin` | <https://x.com/jyangballin> | SWE-bench 二作 / SWE-agent 工程主力，harness 与 SWE 评测的一手信息 |
-| 6（**第三轮新增**） | Jason Wei | `@_jasonwei` | <https://x.com/_jasonwei> | CoT / 指令微调 / 涌现能力的关键作者，reasoning 与训练配方判断密度高 |
+**落地**：脚本 `research/classic/x_fetch.py`，原始结果落 `research/classic/x/<handle>.json`（6 个文件，共 15.3 KB，可入 git）。
 
-> 六个 handle 均来自其**本人主页**的 `href`（`twitter.com/tri_dao` / `x.com/_albertgu` / `www.twitter.com/ShunyuYao12` / `twitter.com/edwardjhu` / `x.com/jyangballin` / `twitter.com/_jasonwei`），非搜索猜测。用户 follow 后请在本表把状态改为 `已follow` 并写日期，后续 `voice_ready` 才能标「已核验账号」。
+### 待 follow 清单（请用户手动执行 · 6 个 handle 已在 X 侧二次核验）
+
+| # | 人物 | handle | 主页链接 | X 侧核验（第四轮实测） | 为什么值得跟 |
+|:--|:--|:--|:--|:--|:--|
+| 1 | Tri Dao | `@tri_dao` | <https://x.com/tri_dao> | `200`，bio = `Asst. Prof @PrincetonCS, Chief Scientist @togethercompute…` | FlashAttention / Mamba 作者，kernel 与长上下文进展的第一手来源 |
+| 2 | Albert Gu | `@_albertgu` | <https://x.com/_albertgu> | `200`，bio = `assistant prof @mldcmu. chief scientist @cartesia…` | SSM / Mamba 路线主推者，架构选择的判断值得跟踪 |
+| 3 | Shunyu Yao | `@ShunyuYao12` | <https://x.com/ShunyuYao12> | `200`，bio = `Language agents` | ReAct / ToT 一作，现于 OpenAI 做 agent 产品，agent 方向言论密度高 |
+| 4 | Edward J. Hu | `@edwardjhu` | <https://x.com/edwardjhu> | `200`，bio = `Head of AI Modeling @ Mercor / Ph.D. with Yoshua Bengio` | LoRA 一作，PEFT 与训练实践的第一手来源 |
+| 5 | John Yang | `@jyangballin` | <https://x.com/jyangballin> | `200`，bio = `CS PhD @Stanford. Creator of @SWEbench…` | SWE-bench 二作 / SWE-agent 工程主力，harness 与 SWE 评测一手信息 |
+| 6 | Jason Wei | `@_jasonwei` | <https://x.com/_jasonwei> | `200`，bio = `ai researcher @meta, past: openai, google` | CoT / 指令微调 / 涌现能力关键作者，reasoning 与训练配方判断密度高 |
+
+> 六个 handle 均来自其**本人主页**的 `href`（非搜索猜测），并在第四轮用 X 主页 `og:description` **二次核对 bio 与身份一致**。用户 follow 后请把状态改为 `已follow` 并写日期。
+
+### 已核验言论台账（第四轮首获 · 原文 + 时间 + 链接）
+
+| # | 人物 | 时间（UTC） | 原文（照抄） | 链接 | 用途 |
+|:--|:--|:--|:--|:--|:--|
+| V1 | Albert Gu `@_albertgu` | 2026-11-07 | "it's hilarious how many have taken the bitter lesson to mean just scaling up transformers. it's about scaling, but innovations in algorithmic primitives can lead to much more efficient scaling" | <https://x.com/_albertgu/status/2119206160410800219> | ✅ 已进日报 `voice_ready`（架构消融口径） |
+| V2 | Tri Dao `@tri_dao` | 2026-10-28 | "Super interesting result: H-Net learns to dynamically tokenize variable names in coding data as separate tokens, and it scales much better on code compared to BPE" | <https://x.com/tri_dao/status/2115531348161028374> | ✅ 已进日报 `voice_ready`（代码语料 tokenizer） |
+| V3 | Jason Wei `@_jasonwei` | 2026-11-10 22:31 | 起句 "Created a \"benchmark benchmark\": a frequency distribution of which benchmarks were reported by the frontier labs in 2026…"（**正文含转义引号，HTML 内嵌串被截断；推文页正文未渲染**） | <https://x.com/_jasonwei/status/2120283338640621826> | ❌ **未采用**：不满足「原文完整 + 可核验」，不冒充完整原文；仅在此登记，待下轮用其它入口取全文后再评估 |
+
+> ⚠️ 引用纪律：只有 **V1 / V2** 两条的原文在「profile 页内嵌 JSON」与「单条推文页 `og:title` 作者核对」两处一致，才进日报 `voice_ready`；**每条都附原链接与时间**，中文仅作翻译、不作转述。
+
+**每个 handle 的原始快照**：`research/classic/x/<handle>.json`（字段 `bio` / `name` / `tweets[]`（`id` / `created_at` / `text` / `url`）/ `fetched_at`）。
+
+**⚠️ 已知局限（如实记）**：① 登录前 profile 页只给 8–9 条热门/近期推文，**不能当完整时间线**用；② 正文含转义引号时可能被截断 ⇒ 只采用「两处一致」的条目；③ `syndication.twitter.com` 时间线接口本轮返回 **`429`**（未用，不绕过）；④ 不抓回复串（成本高、噪声大）。
 
 ---
 
@@ -320,6 +376,7 @@
 | 2026-11-11 11:43 | Haoxing Ren | `2311.00176` ChipNeMo · `2309.07544` VerilogEval | 公司站 `mailto:`（`info@agentrys.ai`，请转交） | `SENT OK`（公司公开信箱） |
 | 2026-11-11 12:10 | Jason Wei | `2201.11903` Chain-of-Thought | 本人主页 `mailto:`（`jasonwei.net`） | `SENT OK`（`jason.weng.wei@gmail.com`，英文 165 词） |
 | 2026-11-11 12:11 | Noah Shinn | `2303.11366` Reflexion | 本人主页明写邮箱（`noahshinn.com`） | `SENT OK`（`noahrshinn@gmail.com`，英文 153 词） |
+| 2026-11-11 12:4x–13:0x（**第四轮**） | （本轮 **0 封**） | 新增经典 `2005.14165` / `2203.02155` / `2302.13971` | 逐个实测：`hugotouvron.github.io` `404` · `longouyang.github.io` `404` · `ashishvaswani.com` `000` · 未命中任何 `mailto:` | **不发信**（按令不猜邮箱）。今日累计 **5 封**（分属三轮，每轮 ≤3）；第四轮把额度留给「有可核验邮箱」的候选 —— 本轮没有合格的 ⇒ **宁缺勿凑** |
 
 ---
 
@@ -327,5 +384,6 @@
 
 1. **一次一作者**：同一作者 / 同一论文 ≤1 封；同一机构 ≤2 封/天（`RESEARCH_MAIL_SPEC §3`）。
 2. **邮箱取当前机构主页 / 本人 CV 的最新地址**，🚫 不用 5 年前 PDF 首页的旧邮箱（可能已失效或转他人）。
-3. **X handle 只登记可访问页面读到的**；X 不可达期间，`voice_ready` 只能用「转引自 <媒体>，未见原推」，且**不得**标 `voice_ready`。
+3. **X handle 只登记可访问页面读到的**，并在 X 可达时用 `og:description` 二次核对身份；`voice_ready` **必须有原文 + 原链接 + 时间**，两处不一致或正文不完整的一律不采用（如 V3）。
 4. 状态四态：`待跟踪` → `已follow` → `已发信` → `已回复`；每次只前进，不跳级、不回退（回信内容另存 `research/mail/replies/`）。
+5. 抓 X 一律走 `research/classic/x_fetch.py`（只读、串行、≥3s、单轮 ≤6 个 handle），原始结果落 `research/classic/x/`，**不做任何写操作**。

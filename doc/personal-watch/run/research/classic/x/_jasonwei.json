@@ -1,0 +1,73 @@
+{
+ "handle": "_jasonwei",
+ "name": "Jason Wei (@_jasonwei) / X",
+ "bio": "ai researcher @meta, past: openai, google 🧠",
+ "tweets": [
+  {
+   "id": "2120283338640621826",
+   "created_at": "2026-11-10 22:31 UTC",
+   "created_at_ms": 1794349915000,
+   "text": "Created a \\",
+   "url": "https://x.com/_jasonwei/status/2120283338640621826",
+   "handle_guess": "_jasonwei"
+  },
+  {
+   "id": "2113313158769369124",
+   "created_at": "2026-10-22 16:54 UTC",
+   "created_at_ms": 1792688095000,
+   "text": "excited for you stephanie! really like the idea of betting on conviction in new technology before market fit. as ai improves faster than ever and has an increasingly outsized impact, the way we fund the ecosystem should evolve with it",
+   "url": "https://x.com/_jasonwei/status/2113313158769369124",
+   "handle_guess": "_jasonwei"
+  },
+  {
+   "id": "2113303172894867859",
+   "created_at": "2026-10-22 16:15 UTC",
+   "created_at_ms": 1792685714000,
+   "text": "I’m starting a new early-stage AI fund, doing what I love: partnering with founders from company formation on bold bets, long before consensus.\\\n\\\nThe fund’s LPs will include Sequoia, Jeff Dean, Sachin Katti, Philip Wong (my Stanford professor and Chief Scientist adviser to TSMC),",
+   "url": "https://x.com/_jasonwei/status/2113303172894867859",
+   "handle_guess": "stephzhan"
+  },
+  {
+   "id": "2112259970108686505",
+   "created_at": "2026-10-19 19:09 UTC",
+   "created_at_ms": 1792436995000,
+   "text": "AI will not automate radiologists like you think\\\n\\\nWe have been talking for years now about AI automating jobs. Radiology has been a prime target, with Geoff Hinton once claiming, “people should stop training radiologists now, it’s just completely obvious that within five years,",
+   "url": "https://x.com/_jasonwei/status/2112259970108686505",
+   "handle_guess": "_jasonwei"
+  },
+  {
+   "id": "2112037722982584604",
+   "created_at": "2026-10-19 04:26 UTC",
+   "created_at_ms": 1792384007000,
+   "text": "spotted: andrew and muse girl on first date https://t.co/tQBVEiKxyn",
+   "url": "https://x.com/_jasonwei/status/2112037722982584604",
+   "handle_guess": "_jasonwei"
+  },
+  {
+   "id": "2109866053803413786",
+   "created_at": "2026-10-13 04:37 UTC",
+   "created_at_ms": 1791866241000,
+   "text": "hiiii 👋🏻",
+   "url": "https://x.com/_jasonwei/status/2109866053803413786",
+   "handle_guess": "michelleekokoko"
+  },
+  {
+   "id": "2109754201509445939",
+   "created_at": "2026-10-12 21:12 UTC",
+   "created_at_ms": 1791839573000,
+   "text": "anyone know who the girl at 0:30 is???\\\n\\\nasking for a friend",
+   "url": "https://x.com/_jasonwei/status/2109754201509445939",
+   "handle_guess": "andrewztan"
+  },
+  {
+   "id": "1945294042138599722",
+   "created_at": "2025-07-16 01:26 UTC",
+   "created_at_ms": 1752629216000,
+   "text": "Becoming an RL diehard in the past year and thinking about RL for most of my waking hours inadvertently taught me an important lesson about how to live my own life.\\\n\\\nOne of the big concepts in RL is that you always want to be “on-policy”: instead of mimicking other people’s",
+   "url": "https://x.com/_jasonwei/status/1945294042138599722",
+   "handle_guess": "_jasonwei"
+  }
+ ],
+ "http_status": 200,
+ "fetched_at": "2026-11-11 12:23:41"
+}

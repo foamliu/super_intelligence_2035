@@ -1,0 +1,81 @@
+{
+ "handle": "_albertgu",
+ "name": "Albert Gu (@_albertgu) / X",
+ "bio": "assistant prof @mldcmu. chief scientist @cartesia. leading the ssm revolution.",
+ "tweets": [
+  {
+   "id": "2119497716766236917",
+   "created_at": "2026-11-08 18:30 UTC",
+   "created_at_ms": 1794162608000,
+   "text": "i mean i'll take it (but really our research team is incredible)",
+   "url": "https://x.com/_albertgu/status/2119497716766236917",
+   "handle_guess": "_albertgu"
+  },
+  {
+   "id": "2119206160410800219",
+   "created_at": "2026-11-07 23:11 UTC",
+   "created_at_ms": 1794093096000,
+   "text": "it's hilarious how many have taken the bitter lesson to mean just scaling up transformers. it's about scaling, but innovations in algorithmic primitives can lead to much more efficient scaling",
+   "url": "https://x.com/_albertgu/status/2119206160410800219",
+   "handle_guess": "_albertgu"
+  },
+  {
+   "id": "2119160922703122675",
+   "created_at": "2026-11-07 20:11 UTC",
+   "created_at_ms": 1794082310000,
+   "text": "A few Nvidia interns and I officially ranked tech companies in 2026... https://t.co/QJAa0Uzkny",
+   "url": "https://x.com/_albertgu/status/2119160922703122675",
+   "handle_guess": "babyshan445"
+  },
+  {
+   "id": "2119142310894334262",
+   "created_at": "2026-11-07 18:57 UTC",
+   "created_at_ms": 1794077873000,
+   "text": "Brute force computation is not enough for intelligence. Clever new methods are needed. The science of AI is far from finished. IMHO",
+   "url": "https://x.com/_albertgu/status/2119142310894334262",
+   "handle_guess": "RichardSSutton"
+  },
+  {
+   "id": "2118051656596422779",
+   "created_at": "2026-11-04 18:44 UTC",
+   "created_at_ms": 1793817841000,
+   "text": "new open weights model from a dark horse",
+   "url": "https://x.com/_albertgu/status/2118051656596422779",
+   "handle_guess": "_albertgu"
+  },
+  {
+   "id": "2118046765857546733",
+   "created_at": "2026-11-04 18:24 UTC",
+   "created_at_ms": 1793816675000,
+   "text": "Today we release Ripple-65B Preview, our 65B dense LLM we pretrained from scratch.\\\n\\\nRipple sets a new state-of-the-art for U.S. open-weight models in agentic coding tasks, surpassing significantly larger models including Muse Spark Open-816B, Beam-501B, Inkling-975B, and Nemotron https://t.co/0Dwh57Rr0J",
+   "url": "https://x.com/_albertgu/status/2118046765857546733",
+   "handle_guess": "RicursiveAI"
+  },
+  {
+   "id": "2118039679153102949",
+   "created_at": "2026-11-04 17:56 UTC",
+   "created_at_ms": 1793814985000,
+   "text": "in a constantly changing model landscape, faster adaptation is the biggest advantage",
+   "url": "https://x.com/_albertgu/status/2118039679153102949",
+   "handle_guess": "_albertgu"
+  },
+  {
+   "id": "2118032475498983540",
+   "created_at": "2026-11-04 17:27 UTC",
+   "created_at_ms": 1793813267000,
+   "text": "Introducing the Together Compiler: continual compilation for AI inference! I’m super proud to finally share this work from our research team! ✨\\\n\\\nToday’s inference is “Polymorphic” or shape-shifting, it doesn’t sit still. On OpenRouter, 80% of traffic goes to models released in https://t.co/wzLNbKy8y4",
+   "url": "https://x.com/_albertgu/status/2118032475498983540",
+   "handle_guess": "simran_s_arora"
+  },
+  {
+   "id": "2115502110578290900",
+   "created_at": "2026-10-28 17:53 UTC",
+   "created_at_ms": 1793209981000,
+   "text": "I've always believed that intelligence should come from simple, general building blocks that learn their own abstractions directly from raw data; in other words, the bitter lesson. I think we're finally seeing a real step towards AI that can learn from all data.\\\n\\\nLanguage https://t.co/aEUoLCTPB3",
+   "url": "https://x.com/_albertgu/status/2115502110578290900",
+   "handle_guess": "_albertgu"
+  }
+ ],
+ "http_status": 200,
+ "fetched_at": "2026-11-11 12:23:49"
+}
