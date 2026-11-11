@@ -4,23 +4,19 @@ Stage~(i) pre-trains the hybrid backbone (Section~\ref{sec:arch}) from scratch u
 % 中文：第 (i) 阶段在固定预算下从零预训练混合骨干（第 \ref{sec:arch} 节）。
 
 \subsection{Architecture Selection}\label{sec:arch-rationale}
-We adopt the hybrid backbone because a matched from-scratch comparison at $\approx$2B scale favours it over a dense transformer (MiniCPM5-2B~\cite{openbmb2026minicpm5}): lower loss with $11.6\%$ fewer parameters ($\approx$2.22B vs.\ 2.51B) at $\sim$8\% throughput cost (Table~\ref{tab:archcomp}); the Megatron-Core provider (Section~\ref{sec:arch}) makes it executable without custom kernels.
-% 中文：架构选型。采用混合骨干是因为约 2B 规模从零对比中混合模型优于稠密 Transformer（MiniCPM5-2B~\cite{openbmb2026minicpm5}）：少 $11.6\%$ 参数（约 2.22B 对 2.51B）达更低损失，代价约 8% 吞吐（表 \ref{tab:archcomp}）；Megatron-Core provider（第 \ref{sec:arch} 节）使其无需自定义核即可执行。
+We adopt the hybrid backbone because a matched from-scratch comparison at $\approx$2B scale favours it over a dense transformer (MiniCPM5-2B~\cite{openbmb2026minicpm5}): lower loss with $11.6\%$ fewer parameters ($\approx$2.22B vs.\ 2.51B) at $\sim$8\% throughput cost; the Megatron-Core provider (Section~\ref{sec:arch}) makes it executable without custom kernels.
+% 中文：架构选型。采用混合骨干是因为约 2B 规模从零对比中混合模型优于稠密 Transformer（MiniCPM5-2B~\cite{openbmb2026minicpm5}）：少 $11.6\%$ 参数（约 2.22B 对 2.51B）达更低损失，代价约 8\% 吞吐；Megatron-Core provider（第 \ref{sec:arch} 节）使其无需自定义核即可执行。
 
 \subsection{Training Framework and Learning-Rate Schedule}\label{sec:framework}
-We use NVIDIA NeMo~\cite{nvidia-nemo} with Megatron-Core's~\cite{nvidia-megatron} Mamba-hybrid provider (Section~\ref{sec:arch}); hyper-parameter searches run at a reduced iteration count with short-horizon ranking transferred to full scale.
-% 中文：训练框架与学习率调度。我们用 NVIDIA NeMo~\cite{nvidia-nemo} 驱动 Megatron-Core~\cite{nvidia-megatron} 的 Mamba 混合 provider（第 \ref{sec:arch} 节）；超参搜索以缩减迭代数运行，短程排序迁移到全规模。
+We use NVIDIA NeMo~\cite{nvidia-nemo} with Megatron-Core's~\cite{nvidia-megatron} Mamba-hybrid provider (Section~\ref{sec:arch}).
+% 中文：训练框架与学习率调度。我们用 NVIDIA NeMo~\cite{nvidia-nemo} 驱动 Megatron-Core~\cite{nvidia-megatron} 的 Mamba 混合 provider（第 \ref{sec:arch} 节）。
 
-YuYan trains under a WSD schedule (LR $1\times10^{-3}$, $2{,}000$ warmup $=0.29\%$ of $700$k; search found $250$ optimal at $5$k but the proportion narrows at full scale) at sequence $16{,}384$ ($613{,}992$ tok/s; $64\times$ extrapolation to $1$M). Decay has two segments: A anneals at 16K on instruction data ($60$--$70\%$), B extends on a \mbox{32K$\to$64K$\to$128K} ladder ($30$--$40\%$), with $lr_{\min}{=}1\times10^{-4}$.
-% 中文：YuYan 在 WSD 调度下训练（LR $1\times10^{-3}$，预热 $2{,}000$ 步 $=700$k 的 $0.29\%$；搜索在 $5$k 步上发现 $250$ 最优但全规模下比例收窄），序列 $16{,}384$（$613{,}992$ tok/s；到 $1$M 外推 $64\times$）。衰减分两段：A 段在 16K 上用指令数据退火（$60$–$70\%$），B 段沿 32K→64K→128K 阶梯扩展（$30$–$40\%$），$lr_{\min}{=}1\times10^{-4}$。
-
-\subsection{Search Protocol}\label{sec:search}
-The recipe was selected via a staged single-variable protocol at $5000$ steps: S1 baseline; S2 LR sweep ($2\times10^{-4}$--$1\times10^{-3}$, seven points); S3 schedule axes (WSD vs.\ cosine, decay ratio, warmup, $min\_lr$); S4 annealing mix; S5 long run + three seeds. Total budget $\approx$82 GPU-hours on eight H100s; losses are proxy measurements for ranking.
-% 中文：搜索协议。配方以分阶段单变量协议在 $5000$ 步上选出：S1 基线；S2 学习率扫描（$2\times10^{-4}$–$1\times10^{-3}$，七点）；S3 调度轴（WSD 与 cosine、衰减比例、预热、$min\_lr$）；S4 退火配比；S5 长跑加三种子。总预算约 $82$ GPU·h（八张 H100）；损失为排序用代理测量。
+YuYan trains under a WSD schedule (LR $1\times10^{-3}$, $2{,}000$ warmup $=0.29\%$ of $700$k) at sequence $16{,}384$ ($613{,}992$ tok/s; $64\times$ extrapolation to $1$M). Decay has two segments: A anneals at 16K on instruction data ($60$--$70\%$), B extends on a \mbox{32K$\to$64K$\to$128K} ladder ($30$--$40\%$), with $lr_{\min}{=}1\times10^{-4}$.
+% 中文：YuYan 在 WSD 调度下训练（LR $1\times10^{-3}$，预热 $2{,}000$ 步 $=700$k 的 $0.29\%$），序列 $16{,}384$（$613{,}992$ tok/s；到 $1$M 外推 $64\times$）。衰减分两段：A 段在 16K 上用指令数据退火（$60$–$70\%$），B 段沿 32K→64K→128K 阶梯扩展（$30$–$40\%$），$lr_{\min}{=}1\times10^{-4}$。
 
 \subsection{Data}\label{sec:llm-data}
-The stable phase uses a seven-source mixture yielding a $74{:}19{:}7$ web/code/math split; a $400$-trial Bayesian search confirmed this region optimal within $0.6$\,pp.
-% 中文：数据。稳定阶段使用七源混合，产出 $74{:}19{:}7$ 的网页/代码/数学分布；$400$ 次贝叶斯搜索在 $0.6$ pp 内确认该区域最优。
+The stable phase uses a seven-source mixture yielding a $74{:}19{:}7$ web/code/math split.
+% 中文：数据。稳定阶段使用七源混合，产出 $74{:}19{:}7$ 的网页/代码/数学分布。
 Figure~\ref{fig:data-mix} shows the stable and decay (annealing) mixtures side by side; the decay segment drops most general web/code/math in favor of instruction-SFT and agentic-SFT data.
 % 中文：图 \ref{fig:data-mix} 并排展示了稳定段与衰减（退火）段的配比；衰减段大幅压低通用网页/代码/数学，转向指令式 SFT 与智能体 SFT 数据。
 Sources are pre-blended into large shards ($\mathcal{O}(10)$ vs.\ $\mathcal{O}(600)$ index files per rank), bounding the data-loader footprint.
@@ -100,8 +96,8 @@ ${\geq}1$M & --- & n/a & n/a & 3 & 128K & 8/2 & ${\approx}90$K \\
 \end{table}
 
 \subsection{Results and Production Run}\label{sec:llm-results}
-The search selects WSD at LR $1\times10^{-3}$ with $86{:}10{:}4$ annealing, reaching validation loss $\mathbf{2.2054}$ at $20000$ steps ($2.6739\pm0.0469$ across three seeds at $5000$; Table~\ref{tab:configs}).
-% 中文：结果与生产训练。搜索选出 WSD 下 LR $1\times10^{-3}$、退火混合 $86{:}10{:}4$，20000 步验证损失 $\mathbf{2.2054}$（5000 步三种子 $2.6739\pm0.0469$；表 \ref{tab:configs}）。
+YuYan uses WSD at LR $1\times10^{-3}$ with an $86{:}10{:}4$ annealing mix.
+% 中文：结果与生产训练。YuYan 采用 WSD、LR $1\times10^{-3}$、退火混合 $86{:}10{:}4$。
 
 
 The recipe is scaled to $2.94$T tokens at $\texttt{DP}{=}16$ over two $8{\times}$H100 nodes, $\texttt{GBS}{=}256$ at sequence $16{,}384$ ($4{,}194{,}304$ tokens/step), FP8 tensorwise, AdamW.
@@ -140,38 +136,3 @@ At WSD end: one snapshot---needle retrieval (passkey + RULER, target ${\geq}95\%
 With $\theta{=}10^{6}$ on the four attention layers, perplexity evolves $83.2\to51.5\to53.3\to53.0\to55.8\to55.4$ from 4K to 1M, flat beyond 64K; only $4/56{=}7.1\%$ of layers carry RoPE. Under SGLang, the hybrid achieves $39{,}377$ tok/s prefill at $128$K and serves $1$M in $172$s at $34.7$\,GB; the dense transformer cannot serve beyond $512$K on a single $80$\,GB H100 (KV-pool cap ${\approx}455$K). The advantage is architectural: $O(1)$ per-layer state for $52$ of $56$ layers. While profiling the hybrid under a CPU-only \texttt{llama.cpp} backend, we isolated and fixed an upstream inference-correctness bug for \texttt{Nemotron-H} (missing RoPE on attention layers and a wrong FFN activation), contributed as a fix to llama.cpp\footnote{\url{https://github.com/ggml-org/llama.cpp/pull/31703}}; the fix restores 1-token logits to $\Delta_{\mathrm{max}}{=}0.006$ against the HF reference.
 % 中文：长上下文能力与推理成本。在 4 个注意力层上采用 $\theta{=}10^{6}$ 后，困惑度从 4K 到 1M 依次为 $83.2\to51.5\to53.3\to53.0\to55.8\to55.4$，64K 后基本持平；仅 $4/56{=}7.1\%$ 的层携带 RoPE。在 SGLang 下，混合模型 $128$K 时 prefill 达 $39{,}377$ tok/s，1M 时以 $172$ 秒、$34.7$ GB 完成；稠密 Transformer 在单张 80 GB H100 上无法服务超过 $512$K（KV 池上限约 $455$K）。优势是架构性的：56 层中 52 层的逐层状态以 $O(1)$ 增长。
 
-\begin{table}[htbp]
-\centering
-\caption{Architecture comparison (top; from scratch, matched data/seed/GPU) and search outcomes (bottom; $5000$-step horizon, S5: $20000$).}
-\label{tab:archcomp}
-\label{tab:configs}
-\footnotesize
-\setlength{\tabcolsep}{3pt}
-\begin{tabular}{lccc}
-\toprule
-\textbf{Metric} & \textbf{Dense} & \textbf{Hybrid} & \textbf{Edge} \\
-\midrule
-Parameters & 2.51B & \textbf{2.22B} & hybrid ($-11.6\%$) \\
-Final loss (1k) & 4.81 & \textbf{4.68} & hybrid ($-0.12$) \\
-Train loss (5k) & 3.36 & \textbf{3.06} & hybrid ($-0.30$) \\
-Training tok/s & \textbf{90K} & 83K & dense ($+8\%$) \\
-Prefill tok/s & 21.4K & \textbf{23.7K} & hybrid ($+10.5\%$) \\
-Decode tok/s & 2.2 & \textbf{22.8} & hybrid ($+10.3\times$) \\
-\bottomrule
-\end{tabular}
-
-\vspace{1pt}
-\begin{tabular}{llcc}
-\toprule
-\textbf{ID} & \textbf{Change vs.\ best} & \textbf{Val.\ loss} & \textbf{Outcome} \\
-\midrule
-S1-01 & baseline ($lr{=}3\times10^{-4}$, WSD) & 2.849 & baseline \\
-S2-07 & stable LR $=1\times10^{-3}$ & \textbf{2.7627} & best LR \\
-S3-02 & cosine & 2.8155 & WSD retains \\
-S3-03 & decay ratio $5\%$ & 2.7900 & $10\%$ retains \\
-S3-04 & warmup $2000$ & 2.7957 & $250$ retains \\
-S4-03 & anneal $86{:}10{:}4$ & \textbf{2.6298} & best mix \\
-S5-01 & winner, $20000$ steps & \textbf{2.2054} & \textbf{winner} \\
-\bottomrule
-\end{tabular}
-\end{table}
