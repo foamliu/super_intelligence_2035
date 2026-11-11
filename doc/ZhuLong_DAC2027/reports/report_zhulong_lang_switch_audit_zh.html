@@ -158,4 +158,35 @@ def show(name, compress, stype):
 <li><b>判定阈值</b>：真切换 ≥80% 样本为 TARGET/MIXED（且目标语言占多数）；部分生效 2 条及以上 TARGET/MIXED 但不足 80%；未生效 &lt;2 条。出现 COPIED_PROMPT 必点名。</li>
 <li><b>只读</b>：全程 <code>ls/cat/grep/python3 读 JSON</code>，未写任何 trace 目录、未 kill 任何进程（B_fr_r1 跑中，仅读其已完成 trace）。</li>
 </ul>
-<h2>附：抽取脚本与原始数据</h2><ul><li>抽取/分类脚本：<code>/tmp/zhulong_audit/audit_lang_v2.py</code>（只读 trace，输出 JSON）</li><li>原始抽查 JSON：<code>/tmp/zhulong_audit/audit_v2.json</code> + <code>es_r23.json</code>（含每样本思维链片段、得分、答案片段）</li><li>本报告生成器：<code>run/gen_report_zhulong_lang_switch_audit_zh.py</code></li><li>归档数据副本：<code>run/lang_switch_audit_data.json</code></li></ul><p class='meta' style='margin-top:30px'>— 报告结束 · 生成于 2026-11-11 · ZhuLong 推进 agent · 只读抽查，未打断 B_fr_r1 评测 —</p></body></html>
+<h2>附：抽取脚本与原始数据</h2><ul><li>抽取/分类脚本：<code>/tmp/zhulong_audit/audit_lang_v2.py</code>（只读 trace，输出 JSON）</li><li>原始抽查 JSON：<code>/tmp/zhulong_audit/audit_v2.json</code> + <code>es_r23.json</code>（含每样本思维链片段、得分、答案片段）</li><li>本报告生成器：<code>run/gen_report_zhulong_lang_switch_audit_zh.py</code></li><li>归档数据副本：<code>run/lang_switch_audit_data.json</code></li></ul><p class='meta' style='margin-top:30px'>— 报告主体结束 · 生成于 2026-11-11 · ZhuLong 推进 agent · 只读抽查，未打断 B_fr_r1 评测 —</p>
+
+<h2 style="border-left:5px solid #c0392b">附·二次独立抽查修订（2026-11-11 13:3x · 同一用户令的第二轮只读核查）</h2>
+<p class='meta'>本节为后续独立抽查的修订/补充，<strong>不改动上方主体结论</strong>，仅修正一处事实错误并补三处遗漏证据。修订依据：对全部 10 个 B tag 的<strong>每个 trace</strong> 读取 <code>model</code> 字段做全量统计（非首样本抽样），并对 es/r3 重抽 5 条做逐 thinking-block 复核。</p>
+
+<h3>修订 1（事实纠错）· 实际基座是 <code>deepseek-v4-pro-cloud</code>，<strong>不是</strong> GLM-5.2</h3>
+<p>上方报告头部写「基座 GLM-5.2」，与 trace 落盘的 <code>model</code> 字段<strong>不符</strong>。全量统计结果（每 tag 的全部 trace）：</p>
+<table>
+<tr><th>TAG</th><th>trace 数</th><th>实际 <code>model</code> 字段</th></tr>
+<tr><td>B_en_r1</td><td>156</td><td><code>glm-5.2</code>（唯一一个 GLM 臂）</td></tr>
+<tr><td>B_en_r2</td><td>158</td><td><code>deepseek-v4-pro-cloud</code></td></tr>
+<tr><td>B_en_r3</td><td>157</td><td><code>deepseek-v4-pro-cloud</code></td></tr>
+<tr><td>B_zh_r1 / r2 / r3</td><td>158 / 158 / 158</td><td><code>deepseek-v4-pro-cloud</code></td></tr>
+<tr><td>B_es_r1 / r2 / r3</td><td>157 / 158 / 158</td><td><code>deepseek-v4-pro-cloud</code></td></tr>
+<tr><td>B_fr_r1</td><td>158</td><td><code>deepseek-v4-pro-cloud</code></td></tr>
+</table>
+<p><strong>结论</strong>：B 轴实际基座是 <code>deepseek-v4-pro-cloud</code>（9/10 tag），<strong>仅 B_en_r1 误用了 glm-5.2</strong>。这同时违反任务书两条红线：①「两轴内基座必须恒定」；②「不用 deepseek-v4-pro」（额度耗尽令，虽然此处是 -cloud 变体）。上方报告 ⑤ 节里「<strong>B_en 3/3 = 80.0±4.5%</strong>」实际混入了两种模型（r1=glm-5.2，r2/r3=deepseek），其 mean±std <strong>不可信</strong>，en 臂须按模型拆开重报。上方 ⑤ 节中「GLM-5.2 对非中英注入遵循度低」的归因也因模型实为 deepseek 而<strong>归因对象错误</strong>，应改写为「deepseek-v4-pro-cloud 对非中英注入遵循度低」。</p>
+
+<h3>修订 2（新证据）· es 「知令不遵」原文——模型识别指令仍不遵循</h3>
+<p>上方报告判 es「部分成立/偏弱」；二次抽查在 <code>B_es_r3/.../EDA-Eval-PyAether-063</code> 的 thinking block 0 发现模型<strong>明确写出它知道指令却仍用英语思考</strong>：</p>
+<pre style="background:#f8f8f8;padding:10px;border-left:3px solid #c0392b;font-size:13px;white-space:pre-wrap">Let me analyze the task. I need to: 1. Understand the task… The user wants me to think in Spanish but respond in Chinese. Wait, "Piensa en español" means "Think in Spanish". Hmm, but the output require…</pre>
+<p class='meta'>来源：B_es_r3/2026_1111_032900/trace/EDA-Eval-PyAether-063/api_conversation_history.json · thinking block 0</p>
+<p>这是任务书 §3 点名要求抓的「<strong>COPIED_PROMPT 邻接型</strong>」典型——模型复述/识别了语言指令但思维链仍走英语。上方报告未引用此原文，此处补登。</p>
+
+<h3>修订 3（判定微调）· es 严格逐 block 复核后更接近「未生效」</h3>
+<p>上方报告对 es 用了较宽的 MIXED 判定（16 样本 0 TARGET / 5 MIXED / 11 ENGLISH → 部分生效弱）。二次抽查对 B_es_r3 重抽 5 条做<strong>逐 thinking-block</strong>（非仅首块）字符+功能词复核，得 <strong>1 TARGET / 0 MIXED / 4 ENGLISH</strong>——即把上方报告的 5 个 MIXED 中多数重判为 ENGLISH（因其主体仍英语，仅个别西语词命中，未达"实质混用"）。按任务书 §3 阈值（≥4/5 ENGLISH ⇒ 未生效），es 应进一步从「部分生效(弱)」<strong>上调为「未生效」</strong>。</p>
+<p>这一微调<strong>不改变上方报告的核心结论</strong>（es 作为「西语思维链」数据点不成立、应作废/降级），只是把判级从"偏弱"收紧为"未生效"，与上方影响评估一致。fr 仍维持「部分生效」（二次抽查 0 TARGET / 2 MIXED(法语为主) / 3 ENGLISH）。</p>
+
+<h3>修订 4（补遗）· 与既有 GLM 基线不可直接对照</h3>
+<p>任务书要求 B 轴与 <code>B.glm-5.3-flash=86.8±1.6%</code> 或 <code>B.glm-5.2=83.3±3.1%</code> 做 Δpp+McNemar。但实际基座是 deepseek-v4-pro-cloud，<strong>基座不同，Δpp 对照无意义</strong>。若要保留 B 轴数据，报告首行须明写「实际基座=deepseek-v4-pro-cloud（与任务书指定 GLM 不符）」，并放弃与 GLM 基线的直接 Δ 对照；或在 regrade 时统一改回 GLM-5.3-Flash 重跑。</p>
+
+<p class='meta' style='margin-top:20px'>— 二次抽查修订结束 · 2026-11-11 13:3x · 独立只读核查，未打断 B_fr_r1 · 原始复核样本存 <code>/tmp/lang_audit_e0031982/</code> —</p></body></html>
