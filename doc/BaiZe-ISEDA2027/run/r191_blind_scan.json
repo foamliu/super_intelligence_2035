@@ -1,9 +1,9 @@
 {
   "round": "R191-scan",
   "eval_raw_apis": 164,
-  "covered_eval_apis": 134,
-  "blind_eval_apis": 30,
-  "coverage_ratio": 0.8171,
+  "covered_eval_apis": 144,
+  "blind_eval_apis": 20,
+  "coverage_ratio": 0.878,
   "blind_list": [
     "CColor",
     "CString",
@@ -11,12 +11,6 @@
     "GuCartBox",
     "GuCartPolyLine",
     "GuCartPolygon",
-    "MDE_SWEEP_RANGE_CENTER_SPAN",
-    "MDE_SWEEP_TYPE_LOG",
-    "MDE_SWEEP_TYPE_LOG_NUM_STEP",
-    "MDE_SWEEP_VARIABLE_MODEL_PARAMETER",
-    "MDE_TRAN_ACC_LEVEL_CONSERVATIVE",
-    "MDE_TRAN_ACC_LEVEL_LIBERAL",
     "SLE_GOA_AND",
     "SLE_LE_WIRE_EXTEND",
     "SLE_LE_WIRE_VARIABLE",
@@ -25,10 +19,6 @@
     "agrGetSnapPoints",
     "emvPurposeNumberDrawing",
     "geTreeRemoveItem",
-    "goaInit",
-    "goaLayerAbut",
-    "goaLayerFromCellView",
-    "goaLayerToCellView",
     "guMotion",
     "mouseLBClick",
     "setPyAePath",
@@ -37,8 +27,6 @@
     "timeToTm"
   ],
   "family_usage": {
-    "MDE": 6,
-    "goa": 6,
     "Gu": 5,
     "SLE": 3,
     "CString": 2,
@@ -57,50 +45,6 @@
     "time": 1
   },
   "family_apis": {
-    "MDE": [
-      {
-        "api": "MDE_SWEEP_RANGE_CENTER_SPAN",
-        "eval_usage": 1
-      },
-      {
-        "api": "MDE_SWEEP_TYPE_LOG",
-        "eval_usage": 1
-      },
-      {
-        "api": "MDE_SWEEP_TYPE_LOG_NUM_STEP",
-        "eval_usage": 1
-      },
-      {
-        "api": "MDE_SWEEP_VARIABLE_MODEL_PARAMETER",
-        "eval_usage": 1
-      },
-      {
-        "api": "MDE_TRAN_ACC_LEVEL_CONSERVATIVE",
-        "eval_usage": 1
-      },
-      {
-        "api": "MDE_TRAN_ACC_LEVEL_LIBERAL",
-        "eval_usage": 1
-      }
-    ],
-    "goa": [
-      {
-        "api": "goaLayerFromCellView",
-        "eval_usage": 3
-      },
-      {
-        "api": "goaInit",
-        "eval_usage": 1
-      },
-      {
-        "api": "goaLayerAbut",
-        "eval_usage": 1
-      },
-      {
-        "api": "goaLayerToCellView",
-        "eval_usage": 1
-      }
-    ],
     "Gu": [
       {
         "api": "GuCartPolyLine",

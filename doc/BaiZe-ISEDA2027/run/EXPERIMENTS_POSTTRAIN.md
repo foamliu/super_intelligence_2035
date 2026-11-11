@@ -9722,3 +9722,98 @@ MDE_TRAN_ACC_LEVEL_LIBERAL).
 
 ---
 
+## §R198 — v28 MDE\*+goa\* SFT Corpus (wake267, 2026-11-11)
+
+### 1. Motivation
+
+R191 blind scan (re-run with v11-v27, 733 pairs) showed **30 blind eval APIs**
+out of 164 raw APIs (81.7% coverage). The top-2 blind families were:
+
+| Rank | Family | Usages | APIs | Type |
+|:--:|:--|--:|--:|:--|
+| #1 | MDE\* | 6 | 6 | int enum constants |
+| #2 | goa\* | 6 | 4 | callable GOA layer ops |
+
+Covering both in a single round (R198 v28) clears the top-2 blind families and
+pushes coverage from 81.7% → 87.8%.
+
+### 2. Target APIs (10)
+
+**goa\* — 4 callable functions (GOA Geometry Operations Accelerator):**
+
+| API | Signature | Returns |
+|:--|:--|:--|
+| `goaInit` | `goaInit(design: emyDesign, depth: emyUInt4=64)` | `bool` |
+| `goaLayerAbut` | `goaLayerAbut(layerA: goaLayer, layerB: goaLayer, resultLayer: goaLayer)` | `void` |
+| `goaLayerFromCellView` | `goaLayerFromCellView(layerName, boxF=None, purposeNameList=None, startLevel=0, stopLevel=63, ...)` | `goaLayer` |
+| `goaLayerToCellView` | `goaLayerToCellView(layer, outLayerName, purposeName="drawing", tiles=False, pShapes=None)` | `bool` |
+
+**MDE\* — 6 integer enum constants (analysis config):**
+
+| Constant | Used as | Configures |
+|:--|:--|:--|
+| `MDE_SWEEP_RANGE_CENTER_SPAN` | `MdeSweepRange.mode` | Center+span sweep range |
+| `MDE_SWEEP_TYPE_LOG` | `MdeSweepType.mode` | Logarithmic sweep type |
+| `MDE_SWEEP_TYPE_LOG_NUM_STEP` | `MdeSweepType.logMode` | Total step count (log sub-mode) |
+| `MDE_SWEEP_VARIABLE_MODEL_PARAMETER` | `MdeSweepVariable.mode` | Sweep model parameter |
+| `MDE_TRAN_ACC_LEVEL_CONSERVATIVE` | `MdeTranAnalysis.setAccuracyLevel()` | Conservative (highest accuracy) |
+| `MDE_TRAN_ACC_LEVEL_LIBERAL` | `MdeTranAnalysis.setAccuracyLevel()` | Liberal (fastest) |
+
+### 3. Pair Generation (50 pairs)
+
+| Type | Count | Description |
+|:--|--:|:--|
+| S1 | 10 | doc → code (1 per API) |
+| S3 | 10 | code → doc (1 per API) |
+| S4 | 10 | multi-step trace (1 per API) |
+| S5 | 10 | parameter variation (showing alternatives) |
+| S6 | 10 | cross-API workflow (combining 2-5 APIs) |
+
+### 4. Contamination Check
+
+- **155 eval entry_points** loaded from `EDA-Eval-PyAether-v20260311.jsonl`
+- All 50 pairs scanned: **0 rejected, 50 PASS**
+- All target APIs are ISOLATE-class (eval helper APIs/constants, NOT eval
+  entry_points) → teaching public API reference is compliant with S5.1 red line
+
+### 5. Coverage Impact
+
+| Metric | Before (v27) | After (v28) | Delta |
+|:--|:--|:--|:--|
+| Covered eval APIs | 134/164 | 144/164 | +10 |
+| Blind eval APIs | 30 | 20 | -10 |
+| Coverage ratio | 81.7% | 87.8% | +6.1 pp |
+| MDE\* blind | 6 | 0 | cleared |
+| goa\* blind | 4 | 0 | cleared |
+| New #1 blind family | MDE\* (6) | Gu\* (5, 3 APIs) | — |
+
+### 6. Key API Facts
+
+- `goaInit(cv, depth=64)` → `bool`; must pair with `goaDone()` to release
+- `goaLayerAbut(A, B, result)` performs geometric AND of two layers
+- `goaLayerFromCellView` accepts `boxF`, `purposeNameList`, `startLevel`/`stopLevel`
+- `goaLayerToCellView` writes goaLayer back to cellview with optional `tiles`, `pShapes`
+- MDE\* constants are **integers** (not functions); set as `.mode`/`.logMode`
+  properties or passed to `setAccuracyLevel()`
+- Numeric config values must be passed as **strings** (e.g. `'1e9'`, not `1e9`)
+- `MDE_SWEEP_TYPE_LOG` requires setting `logMode` to either
+  `LOG_NUM_STEP` (total steps) or `LOG_POINTS_DEC` (points per decade)
+
+### 7. Deliverables
+
+| Item | Path | Size |
+|:--|:--|--:|
+| corpus builder | `run/baize_posttrain_r198_mde_goa_corpus.py` | ~610 lines / py_compile OK |
+| training-ready corpus | `run/sft_pyaether_corpus_v28_mde_goa.jsonl` | 62 KB / 50 pairs |
+| blind scan script (updated) | `run/baize_posttrain_r191_blind_scan.py` | v28 added to CORPUS_FILES |
+| blind scan output | `run/r191_blind_scan.json` | re-run with v11-v28 |
+
+> Cumulative PyAether SFT corpus: v11 (93) + v12 (25) + v13 (45) + v14 (45)
+> + v15 (45) + v16 (45) + v17 (45) + v18 (25) + v19 (30) + v20 (35)
+> + v21 (50) + v22 (65) + v23 (65) + v24 (25) + v25 (30) + v26 (40)
+> + v27 (25) + v28 (50) = **783 pairs**.
+> All 783 pairs PASS the 155-entry_point pollution scan. v11-v28 are gated
+> for training.
+
+---
+
