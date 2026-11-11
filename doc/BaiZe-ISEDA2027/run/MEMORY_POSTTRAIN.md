@@ -7,14 +7,14 @@ WAITING: 0
 
 ## 进度快照
 
-- PHASE: posttrain-wake288（2026-11-12 全量静态分析30/113中间结果分析+per-scenario分层+SFT syntax 96.7%vsBase 70%+Schematic受益最大+sandbox 93st CLOSED+GPU全占位+git synced）
-- 已完成: P3预备✅；P0✅；P1✅；P2✅；R1-R210✅；R280(EXPERIMENTS归档)；wake281-287✅；wake288 R288(全量静态分析30/113中间结果+per-scenario分层)
-- 当前动作: wake288 ①全量113task静态分析后台进程仍在运行(PID371302,task32/113,ETA~50min) ②30-task中间结果分析:SFT语法96.7%vsBase70%(+26.7pp)/SFT截断6.7%vsBase30%/SFT代码4.5x更短(1383vs6216ch)/API覆盖率SFT0.118vsBase0.094(仍低→RL目标) ③per-scenario分层:Schematic受益最大(37.5→87.5% +50pp,API覆盖率最高0.195)/Layout(76.9→100%)/DesignMgmt(85.7→100%但API覆盖0.020) ④验证P0诊断D1(协议可回收)+D3(截断减少)+D4(语法vs语义)+D5(Schematic配比) ⑤sandbox 93st wake CLOSED(TCP filtered) ⑥GPU5/6/7全占位 ⑦5端点全UP(8095-8099)
-- 下一步: ①全量113task结果分析(后台进程完成后,下一唤醒检查PID371302) ②post-SFT EDA-Eval正式评测(待沙盒ACL恢复) ③Phase3 RL待沙盒+GPU(SFT ckpt已就绪=minicpm5-sft:8096) ④Phase1基线评测待沙盒 ⑤P3正式训练待pretrain ckpt(ETA≈2026-12-25)
-- 阻塞: 🔴远程沙盒10.129.32.75跨子网TCP过滤(93st wake,ICMP 0.42ms OK但8664 TCP filtered,需网络团队开ACL)→Phase1 eval+Phase3 RL+post-SFT eval阻塞;P3等pretrain ckpt
-- 本轮新增产出: R288✅(全量静态分析30/113中间结果分析[总体+SFT syntax 96.7%vsBase70%/截断6.7%vs30%/4.5x简洁/API覆盖低]+per-scenario分层[Schematic +50pp受益最大/DesignMgmt API覆盖0.020]+P0 D1/D3/D4/D5验证+EXPERIMENTS §R288)
-- 未完成指令: 🔴用户令17:10(serve占位)GPU5✅/GPU6✅(SFT serve)/GPU7✅(base serve)全占位;🔴用户令13:40(三阶段替身计划)Phase2 SFT COMPLETE✅+ckpt served✅+定性对比✅+静态分析30/113中间结果✅+全量运行中/Phase1待沙盒ACL/Phase3 RL脚本就绪✅待沙盒+GPU
-- git: wake288 本轮提交R288(30/113中间结果分析+per-scenario分层+EXPERIMENTS §R288+MEMORY heartbeat+daily-memories)
+- PHASE: posttrain-wake289（2026-11-12 全量静态分析60/113中间结果扩展+SFT syntax 98.3%vsBase 76.7%+Schematic受益最大+31.2pp+sandbox 94st CLOSED+GPU全占位+git synced）
+- 已完成: P3预备✅；P0✅；P1✅；P2✅；R1-R210✅；R280(EXPERIMENTS归档)；wake281-288✅；wake289 R289(全量静态分析60/113中间结果扩展+per-scenario分层)
+- 当前动作: wake289 ①全量113task静态分析后台进程仍在运行(PID371302,task62/113,ETA~12min) ②60-task中间结果扩展:SFT语法98.3%vsBase76.7%(+21.6pp,样本翻倍后delta收窄但仍压倒性)/SFT截断3.3%vsBase23.3%(7x降低)/SFT代码2x更短(1192vs2368ch)/API覆盖率SFT0.189vsBase0.172(仍低→RL核心目标) ③per-scenario分层:Schematic受益最大(62.5→93.8% +31.2pp,API覆盖+0.032最高)/Layout(76.5→100% +23.5pp)/DesignMgmt(84.6→100% +15.4pp但API覆盖0.051极低→RL高价值目标)/Others(85.7→100%) ④P0诊断验证更新:D1✅(+21.6pp协议可回收)/D3✅(23.3→3.3%)/D4✅(SFT修语法RL修API)/D5✅(Schematic配比) ⑤sandbox 94st wake CLOSED(TCP filtered) ⑥GPU5/6/7全占位 ⑦5端点全UP(8095-8099)
+- 下一步: ①全量113task最终分析(后台进程PID371302完成后,下一唤醒检查) ②post-SFT EDA-Eval正式评测(待沙盒ACL恢复) ③Phase3 RL待沙盒+GPU(SFT ckpt已就绪=minicpm5-sft:8096) ④Phase1基线评测待沙盒 ⑤P3正式训练待pretrain ckpt(ETA≈2026-12-25)
+- 阻塞: 🔴远程沙盒10.129.32.75跨子网TCP过滤(94st wake,ICMP 0.67ms OK但8664 TCP filtered,需网络团队开ACL)→Phase1 eval+Phase3 RL+post-SFT eval阻塞;P3等pretrain ckpt
+- 本轮新增产出: R289✅(全量静态分析60/113中间结果扩展[样本翻倍30→60+SFT syntax 98.3%vsBase76.7%/截断3.3%vs23.3%/API覆盖仍低0.189]+per-scenario分层[Schematic +31.2pp受益最大/DesignMgmt API覆盖极低0.051→RL高价值]+P0 D1/D3/D4/D5验证更新+EXPERIMENTS §R289)
+- 未完成指令: 🔴用户令17:10(serve占位)GPU5✅/GPU6✅(SFT serve)/GPU7✅(base serve)全占位;🔴用户令13:40(三阶段替身计划)Phase2 SFT COMPLETE✅+ckpt served✅+定性对比✅+静态分析60/113中间结果✅+全量运行中/Phase1待沙盒ACL/Phase3 RL脚本就绪✅待沙盒+GPU
+- git: wake289 本轮提交R289(60/113中间结果扩展+per-scenario分层+EXPERIMENTS §R289+MEMORY heartbeat+daily-memories)
 
 
 

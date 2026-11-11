@@ -3995,3 +3995,71 @@ SFT recipe（v11-v36 PyAether 语料, 927 train pairs, 5 epoch, lr 1e-5 cosine, 
 
 > ⚠️ **替身预演声明**：以上结果基于 MiniCPM5-2B（2B, Llama 架构, Apache 2.0）作为 BaiZe 替身，收益不可迁移到 BaiZe 本体。目的仅验证 SFT recipe 的有效性。
 
+---
+
+## §R289 — 全量静态分析 60/113 task 中间结果扩展分析（wake289, 2026-11-12 02:35）
+
+> **背景**：wake287 启动的全量 113 non-techlib task 静态分析后台进程（PID 371302）在 wake289 唤醒时已推进至 task 62/113（运行 ~16 min，~15s/task）。本轮对已完成的 60 task 做中间结果分析，样本量从 wake288 的 30 翻倍至 60，统计置信度显著提升。
+
+### 1. 60-task 总体结果（vs wake288 30-task 对照）
+
+| 指标 | Base (30-task) | SFT (30-task) | Base (60-task) | SFT (60-task) | 趋势 |
+|:--|:--:|:--:|:--:|:--:|:--|
+| 语法合法率 | 70.0% (21/30) | 96.7% (29/30) | **76.7%** (46/60) | **98.3%** (59/60) | SFT 优势持续扩大 |
+| 截断率（finish=length） | 30.0% (9/30) | 6.7% (2/30) | **23.3%** (14/60) | **3.3%** (2/60) | SFT 截断仍极低 |
+| has_function | 93.3% (28/30) | 100% (30/30) | **91.7%** (55/60) | **100%** (60/60) | SFT 始终 100% |
+| 平均代码长度 | 6216 ch | 1383 ch | **2368 ch** | **1192 ch** | SFT ~2x 更简洁 |
+| 平均 API 覆盖率 | 0.094 | 0.118 | **0.172** | **0.189** | 样本翻倍后覆盖率上修 |
+| 语法错误数 | 9 | 1 | **14** | **1** | SFT 仅 1 个 EOF 错误 |
+
+**关键发现**：
+1. **SFT 语法合法率 98.3%（+21.6pp vs Base 76.7%）**——样本翻倍后 SFT 优势从 +26.7pp 收窄至 +21.6pp，但**仍为压倒性差距**。Base 在 60 样本下语法率从 70% 升至 76.7%，说明 30 样本时 Base 被低估。
+2. **SFT 截断率 3.3%（vs Base 23.3%）**——7x 降低，与 wake288 的 4.5x 降低一致。SFT 的简洁输出风格（avg 1192 ch）使其几乎不触发 max_tokens 截断。
+3. **API 覆盖率仍低（SFT 0.189 vs Base 0.172）**——+0.017 的微弱提升**不具统计意义**。这**再次确认 API 选择/正确使用是 RL 的核心目标**，SFT 只修了语法格式和输出风格，未提升 API 调用质量。
+4. **SFT 仅 1 个语法错误（EOF）**——59/60 完全合法的 Python 代码，说明 SFT 学到了"输出干净代码"的协议。
+
+### 2. Per-scenario 分层（60 task）
+
+| Scenario | n | Base syntax | SFT syntax | delta | Base API cov | SFT API cov | API delta |
+|:--|--:|--:|--:|--:|--:|--:|--:|
+| Schematic | 16 | 62.5% | 93.8% | **+31.2pp** | 0.155 | 0.188 | +0.032 |
+| Layout | 17 | 76.5% | 100% | +23.5pp | 0.238 | 0.258 | +0.020 |
+| Design Management | 13 | 84.6% | 100% | +15.4pp | 0.044 | 0.051 | +0.007 |
+| Others | 14 | 85.7% | 100% | +14.3pp | 0.230 | 0.233 | +0.004 |
+
+**发现**：
+1. **Schematic 仍是 SFT 受益最大的场景（+31.2pp syntax）**——与 wake288 的 +50pp 一致方向（30-task 时 Schematic 仅 8 样本，60-task 扩至 16 样本后 delta 收窄但仍是最高）。
+2. **Schematic API 覆盖率提升最大（+0.032）**——Schematic 是 API 最密集的场景（expected APIs 多），SFT 在此场景的 API 调用质量改善最明显。
+3. **Design Management API 覆盖率极低（Base 0.044 / SFT 0.051）**——DM 任务多为配置/策略类（如 MdePlatDonauJobPolicy），API 调用方式复杂（setter/getter 链式调用），SFT 和 Base 都难以正确覆盖。这是 RL 的**高价值修复目标**。
+4. **Layout API 覆盖率最高（0.238/0.258）**——Layout 任务 API 使用模式较固定（dbOpenCell/dbCreateRect 等），SFT 有一定覆盖。
+
+### 3. P0 诊断验证更新（60-task 口径）
+
+| 诊断项 | wake288 (30-task) | wake289 (60-task) | 结论 |
+|:--|:--|:--|:--|
+| D1 协议可回收 | SFT +26.7pp syntax | SFT **+21.6pp** syntax | ✅ 确认：协议修复是 SFT 的主要贡献 |
+| D3 截断减少 | 30→6.7% | 23.3→**3.3%** | ✅ 确认：SFT 简洁输出大幅减少截断 |
+| D4 语法 vs 语义 | SFT 修语法/API 覆盖仍低 | 同 | ✅ 确认：SFT 修格式，RL 需修 API 选择 |
+| D5 Schematic 配比 | 受益最大 +50pp | 受益最大 **+31.2pp** | ✅ 确认：Schematic 是 SFT 语料配比的重点 |
+
+### 4. 与 wake288 的方法论改进
+
+- 样本从 30→60（53.1% 覆盖率），per-scenario 的 n 值翻倍，分层统计更可靠
+- Others 场景从 n=2→n=14，不再"太小无意义"
+- API 覆盖率基线上修（0.094→0.172），因为 30-task 样本偏向了低 API 密度任务
+
+### 5. 局限
+
+- **60/113 = 53.1%**，仍非全量。后台进程 PID 371302 预计 ~12 min 后完成全部 113 task。
+- **静态分析**：只评语法/结构/API 名匹配，不评执行正确性（需沙盒）
+- **替身预演**：MiniCPM5-2B SFT 结果不可迁移到 BaiZe
+- 沙盒 10.129.32.75 第 94 次唤醒仍 CLOSED（TCP filtered），执行正确性评测继续阻塞
+
+### 6. 下一步
+
+1. 后台进程完成后（下一唤醒检查 PID 371302），做全量 113-task 最终分析 + 更新报告
+2. 沙盒 ACL 恢复后：post-SFT EDA-Eval 正式 5-run 评测（`baize_posttrain_eval.sh --backbone minicpm5-sft --endpoint http://localhost:8096/v1`）
+3. Phase 3 RL 待沙盒 + GPU
+
+> ⚠️ **替身预演声明**：以上结果基于 MiniCPM5-2B（2B, Llama 架构, Apache 2.0）作为 BaiZe 替身，收益不可迁移到 BaiZe 本体。目的仅验证 SFT recipe 的有效性。
+
