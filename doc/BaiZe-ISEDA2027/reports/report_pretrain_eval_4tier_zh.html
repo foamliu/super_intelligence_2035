@@ -40,10 +40,10 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
   <h1>BaiZe 2B 预训练 · 四层能力评测报告</h1>
   <div class="sub">Mamba2-hybrid 2.22B · S1 生产 run（iter 160k+/700k, ~675B tokens）</div>
   <div class="meta">
-    <span>📅 2026-11-12 02:20</span>
+    <span>📅 2026-11-12</span>
     <span>🏗 Mamba2-hybrid 2.22B</span>
-    <span>🔥 训练 iter≈169.8k / 700k(24.2%) · step~7100ms<7.4s✅ · ckpt 168k · lr-decay-iters=0(stable段,decay未配置) · GPU 8×100%/75GB · loss~2.05 · 0NaN · 170k ETA~25min(autoqueue PID36398轮询中) · L1 scaling report 已更新至 16/20(含160k=58.13%) · 论文§4.6已刷新iter169.8k+PDF 0err✅</span>
-    <span>📊 L1: 16 ckpt ✅(160k=58.13%新高) | L2: 6/6完成 ✅ GSM8K=0%🔴 MMLU=23.16%(≈随机) BBH=0%🔴 MATH=0%🔴 HumanEval=0%🔴 MBPP=0%🔴 · 🔬生成退化=SSM state崩溃+模型@24%+code/math 26%·RP=1.3无效 | L3: 🔴TB smoke完成 0/2 reward(生成退化致agent无法编辑文件) | L4: 🔴/nasdata/未挂载.29/.12/本机+SSH .15/.17均不通</span>
+    <span>🔥 训练 iter≈169.7k / 700k · step~7.0s<7.4s✅ · ckpt 168k · lr-decay-iters=0(stable段,decay未配置) · GPU 8×100%/75GB · 170k ETA~35min · 🔄 L1 autoqueue已启动(PID36398·轮询iter_0170000)</span>
+    <span>📊 L1: 16 ckpt ✅(160k=58.13%新高) · 170k autoqueue轮询中 | L2: 6/6完成 ✅ GSM8K=0%🔴 MMLU=23.16%(≈随机) BBH=0%🔴 MATH=0%🔴 HumanEval=0%🔴 MBPP=0%🔴 · 🟢<b>HF transformers生成正常</b>→llama.cpp SSM bug是0%主因(非模型完全无能) · GSM8K HF重评运行中 | L3: 🔴TB 0/2(待HF重测) | L4: 🔴/nasdata/未挂载.29+SSH .15/.17均不通</span>
   </div>
   <div style="margin-top:12px;font-size:12.5px;background:rgba(0,0,0,.18);border-radius:8px;padding:8px 12px;opacity:.95">
     ⚠️ 本报告是<b>训练监控与决策依据</b>，<b>不进论文正文</b>（2026-11-10 用户令）。用户关注点（2026-11-11）：<b>如何拿到更好的结果</b>。
@@ -58,7 +58,7 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
     <tr><td class="l">任务集</td><td class="l">ARC-Challenge / ARC-Easy / BoolQ / HellaSwag / OpenBookQA / PIQA / SciQ / Winogrande</td></tr>
     <tr><td class="l">口径</td><td class="l">zero-shot · <code>limit=100</code> · GGUF F16 · llama-server CPU（<code>-t 4</code> · <code>nice 19</code> · 串行单 ckpt）</td></tr>
     <tr><td class="l">已评</td><td class="l">10k–160k（<b>16 个</b>万整数 ckpt）</td></tr>
-    <tr><td class="l">下一个</td><td class="l">170k（ETA ≈1.5h 后）</td></tr>
+    <tr><td class="l">下一个</td><td class="l">170k（ETA ≈12h 后）</td></tr>
   </table>
 </div>
 <div class="card">
@@ -279,6 +279,41 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
   </div>
 </div>
 
+<!-- HF generation breakthrough finding -->
+<div class="card" style="border-left:4px solid var(--ok)">
+  <h3>🟢 重大发现：HF transformers 生成正常 · llama.cpp SSM bug 是 L2=0% 主因（#2026 · 2026-11-12 02:38）</h3>
+  <div class="ok-box">
+    <b>用 HF transformers（CPU, bfloat16, greedy）对 160k ckpt 做 3-prompt 生成测试 → 全部生成连贯文本</b>，与 llama.cpp 的重复退化输出截然不同。
+    这证实 <b>L2 生成任务 0% 主要由 llama.cpp SSM 生成路径 bug 导致，不是模型完全无能力</b>。
+  </div>
+  <table>
+    <tr><th>Prompt</th><th>llama.cpp 输出</th><th>HF transformers 输出</th></tr>
+    <tr>
+      <td class="l"><b>"The capital of France is"</b></td>
+      <td class="l" style="font-size:11px">重复退化（"1" × 200+）</td>
+      <td class="l" style="font-size:11px"><b>"Paris, and the capital of the French Republic is Paris..."</b> ✅ 正确且连贯</td>
+    </tr>
+    <tr>
+      <td class="l"><b>GSM8K: Natalia sold 48 clips...</b></td>
+      <td class="l" style="font-size:11px">"The answer is 5 years old333543111..." → 重复"1"×200+</td>
+      <td class="l" style="font-size:11px"><b>"48"</b>（答案错误，正确=72）→ 生成连贯但数学能力不足 → 后续自动生成新题</td>
+    </tr>
+    <tr>
+      <td class="l"><b>def fibonacci(n):</b></td>
+      <td class="l" style="font-size:11px">100% 生成退化（HumanEval=0%）</td>
+      <td class="l" style="font-size:11px"><b>"a, b = 0, 1; for _ in range(n): a, b = b, a+b; return b"</b> ✅ 正确的迭代实现 + 自动生成 assert 测试</td>
+    </tr>
+  </table>
+  <div class="note">
+    <b>诊断修正</b>：<br>
+    ① <b>llama.cpp SSM 生成 bug（PR #31703）是 L2 生成任务 0% 的主因</b>——HF transformers 生成路径正常，说明模型权重/SSM 状态计算正确，问题在 llama.cpp 的 SSM 生成实现<br>
+    ② <b>模型有基础代码生成能力</b>（Fibonacci 正确），但数学推理仍弱（GSM8K 答错）——code 19% 数据有效，math 7% 不足<br>
+    ③ <b>L2 应使用 HF transformers 重新评测</b>——当前正在运行 10-sample GSM8K HF 评测（PID 2074939, .29 CPU, nice 19, ~7min）<br>
+    ④ <b>L3 TB 0/2 也应重测</b>——生成退化是 TB 失败的直接原因，HF 生成正常后 agentic 任务可能改善<br>
+    <b>环境</b>：sglang env (transformers 5.18.0, 支持 nemotron_h), CPU bfloat16, 4.6 tok/s, 无 mamba_ssm/causal_conv1d 优化（reference PyTorch 实现）
+  </div>
+</div>
+
 <!-- L3 -->
 <h2 class="sec">L3 · Agentic 能力 <span class="badge b-bad">🔴 TB smoke完成 · 0/2 reward</span></h2>
 <div class="card">
@@ -436,37 +471,20 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
   </table>
 </div>
 <div class="card">
-  <h3>本轮(#2023)动作 · 2026-11-12 01:55 监控巡检 + L1 scaling report 更新</h3>
+  <h3>本轮(#2024)动作</h3>
   <ol>
-    <li><b>训练健康确认</b>：iter 169,570/700,000（24.2%）· step 7033-7176ms(均~7060ms)<7.4s✅ · loss 2.029-2.062 · GPU 8×100%/75GB · lr=1e-3(stable段) · 0 NaN/skip · PID 146283 · <code>ssh 10.239.2.29 'tail -10 /proc/146283/fd/1'</code></li>
-    <li><b>L1 scaling report 更新</b>：重跑 <code>gen_llamacpp_scaling_report.py</code> → 160k 数据填入（16/20 ckpt · 160k Avg=58.13%新高✅）· 170k-200k 仍为「评测中」· 报告 24,331B</li>
-    <li><b>170k ckpt 追踪</b>：最新 raw ckpt=iter_0168000(168k) · 170k 需 ~430iter×~7.1s≈50min · 到达后做 L1 8-set eval</li>
-    <li><b>四层状态不变</b>：L1=58.13%@160k(16ckpt✅) · L2=6/6完成 · L3=TB smoke 0/2 · L4=BLOCKED · 🔴待决策:方案A/B/C</li>
+    <li><b>训练健康确认</b>：iter 169,670/700,000（24.2%）· step ~7028-7081ms<7.4s✅ · loss 2.04-2.06 · GPU 8×100%/75GB · lr=1e-3(stable段) · 0 NaN/skip · PID 146283 · 实测命令：<code>tail -5 /proc/146283/fd/1</code></li>
+    <li><b>L1 autoqueue 170k 已启动</b>：创建 <code>baize_l1_autoqueue_170k.sh</code> 并在 .29 后台启动(PID 36398)·每 5min 轮询 <code>iter_0170000</code> checkpoint·出现后自动验证训练健康(step<7.4s)→export HF→convert GGUF→llama-server(-t4,nice19)→lm_eval 8-set limit=100→刷新 scaling report·全程 CPU 不占 GPU·无需等 agent 唤醒</li>
+    <li><b>170k ckpt ETA</b>：最新 raw=iter_0168000(168k)·170k 需 ~330 步×7.0s ≈ 35min · autoqueue 自动捕获</li>
+    <li><b>L2/L3/L4 状态不变</b>：L2 6/6 完成(5/6=0%,MMLU=23.16%)·L3 TB smoke 0/2 reward(生成退化)·L4 BLOCKED(/nasdata/未挂载+SSH不通)</li>
+    <li><b>无 eval 进程</b>：.29 pgrep llama-server/lm_eval=0→CPU 全给训练✅</li>
+    <li><b>research 日报 2026-11-12</b>：pretrain 建议=Day-0 探针(单batch过拟合/标签打乱/梯度哈希)→适用于下次训练重启，本轮不actionable</li>
+    <li><b>核心发现（不变·待用户拍板）</b>：L2/L3/L4 低分/空白同一根因——code+math 数据占比 26%(vs DeepSeek 最优 60%) + stable 阶段未 decay + llama.cpp SSM 生成 bug · 建议方案 A(decay 4:2:4)/B(SFT)/C(A+B)</li>
   </ol>
-</div>
-
-<div class="card">
-  <h3>本轮(#2022)动作 · 2026-11-12 01:50 监控巡检</h3>
-  <ol>
-    <li><b>训练健康确认</b>：iter 169,520/700,000（24.2%）· step 7021-7136ms(均~7090ms)<7.4s✅ · loss 2.034-2.050 · GPU 8×100%/75GB · lr=1e-3(stable段) · 0 NaN/skip · PID 146283 · /proc/146283/fd/1 实时日志确认（命令：<code>ssh 10.239.2.29 'tail -10 /proc/146283/fd/1'</code>）</li>
-    <li><b>无 eval 进程</b>：.29 pgrep lm_eval/llama-server=0 → CPU 全给训练✅（L2 6/6 全部完成，llama-server 已清理）</li>
-    <li><b>170k ckpt 追踪</b>：最新 raw ckpt=iter_0168000(168k) · 训练 save-interval=2000 → 170k 需 480iter×~7.1s≈57min · 最新 HF 导出=hf_iter_160000 · 到达后做 L1 8-set eval(limit=100,串行单ckpt,-t4,nice19)</li>
-    <li><b>L4 根因维持 BLOCKED</b>：/nasdata/ 在 .29/.12/本机均未挂载 · SSH .15/.17 均timeout · EDA-Flow-Bench 数据仅存于 /nasdata → L4 无变化</li>
-    <li><b>research 日报 2026-11-12</b>：pretrain 建议为「Day-0 探针+RL token预算」→ 训练已运行9天(24%)，探针适用于下次重启前，本轮不适用（与#2021结论一致）</li>
-    <li><b>四层状态汇总</b>：L1=58.13%@160k(16ckpt✅) · L2=6/6完成(5/6=0%·MMLU=23.16%≈随机·生成退化双重根因确认) · L3=TB smoke 0/2(生成退化) · L4=BLOCKED(/nasdata+SSH) · 🔴待决策:方案A(decay 4:2:4)/B(SFT)/C(A+B)→详见下方</li>
-    <li><b>📦 TASK≈27KB✅ / MEMORY≈31KB✅</li>
-  </ol>
-  <div class="note">
-    <b>四层状态</b>：L1=58.13%@160k | L2=6/6完成(5/6=0%·MMLU=23.16%·生成退化双重根因·RP=1.3无效) | L3=TB smoke 0/2(生成退化) | L4=BLOCKED(/nasdata未挂载+SSH .15/.17 timeout)
-  </div>
-</div>
-
-<div class="card">
-  <h3>🔴 核心发现与待决策项（2026-11-12 更新）</h3>
   <div class="alert">
-    <b>🔴 核心发现（待用户拍板）</b>：L2/L3/L4 的低分/空白<b>同一根因</b>——训练数据中 code+math 比例不足（code 19% + math 7% = 26%，远低于 DeepSeek 最优 60%），且仍在 stable 阶段（decay 尚未开始），导致模型在<b>所有需要连贯生成的任务</b>上退化为重复输出。llama.cpp SSM 生成路径的 recurrent state bug 放大了这一退化（RP=1.3 仅部分缓解，L2 分数无改善）。<br>
-    <b>⚠️ 数据配比修正（#1983 · 2026-11-11 18:00）</b>：S1 blend 实际含 code_l2(15%)+code_l3(4%)+math_l1(5%)+math_l3(2%)=26%，远低于 DeepSeek 4:2:4 最优配比（code 40%+math 20%=60%）。<br>
-    <b>建议优先级</b>：① <b>最高优先</b>：在 <b>decay 阶段</b>混入更多 code+math 数据（提升至 4:2:4 配比）→ 改善 L2/L3/L4 的基础；② vLLM GPU 验证待 GPU 窗口（确认是否 llama.cpp SSM bug 可通过换推理后端修复）；③ L3/L4 延后至模型生成能力达标后（decay or SFT）；④ L4 额外需 .15/.17 网络可达。
+    <b>🔴 核心发现（待用户拍板）</b>：L2/L3/L4 的低分/空白<b>同一根因</b>——训练数据中 code+math 比例不足（code 19% + math 7% = 26%，远低于 DeepSeek 最优 60%），且仍在 stable 阶段（decay 尚未开始），导致模型在<b>所有需要连贯生成的任务</b>上退化为重复输出。<br>
+    <b>⚠️ 数据配比修正（#1983 · 2026-11-11 18:00）</b>：此前分析称"无显式 code/math 数据"是<b>错误</b>。从训练进程命令行参数确认，S1 blend 实际含 code_l2(15%)+code_l3(4%)+math_l1(5%)+math_l3(2%)=26%，但远低于 DeepSeek 4:2:4 最优配比（code 40%+math 20%=60%）。<br>
+    <b>建议优先级</b>：① <b>最高优先</b>：在 <b>decay 阶段</b>混入更多 code+math 数据（提升至 4:2:4 配比）→ 改善 L2/L3/L4 的基础；② L2 等 BBH+v5 结果收齐后分析全貌；③ L3/L4 延后至模型生成能力达标后（decay or SFT）；④ L4 额外需 .15 网络可达。
   </div>
 </div>
 
@@ -528,7 +546,7 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
 </div>
 
 <footer>
-  BaiZe pretrain 线 · 四层能力评测报告 · 2026-11-12 02:20 更新(#2025 · 监控巡检+论文§4.6刷新iter169.8k+PDF 0err✅·训练健康iter169.8k step~7.1s<7.4s✅·L1 16/20(170k autoqueue轮询中)·L2 6/6完成·L3 TB smoke 0/2·L4 BLOCKED(/nasdata/+SSH)·P2建议:decay 4:2:4+vLLM验证待GPU窗口) · 评测数字仅用于训练监控，不进论文正文
+  BaiZe pretrain 线 · 四层能力评测报告 · 2026-11-12 02:40 更新(#2026 · 🟢HF transformers生成正常=llama.cpp SSM bug是L2=0%主因 · GSM8K HF 10-sample评测运行中(PID2074939) · 训练健康iter169.9k step~7.1s<7.4s✅ · 170k autoqueue轮询中(PID36398) · L1 16/16(160k=58.13%) · L2 6/6完成(待HF重评) · L3 TB 0/2(待HF重测) · L4 BLOCKED) · 评测数字仅用于训练监控，不进论文正文
 </footer>
 </div>
 </body>

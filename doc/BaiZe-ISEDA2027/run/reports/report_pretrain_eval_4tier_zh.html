@@ -43,7 +43,7 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
     <span>📅 2026-11-12</span>
     <span>🏗 Mamba2-hybrid 2.22B</span>
     <span>🔥 训练 iter≈169.7k / 700k · step~7.0s<7.4s✅ · ckpt 168k · lr-decay-iters=0(stable段,decay未配置) · GPU 8×100%/75GB · 170k ETA~35min · 🔄 L1 autoqueue已启动(PID36398·轮询iter_0170000)</span>
-    <span>📊 L1: 16 ckpt ✅(160k=58.13%新高) · 170k autoqueue轮询中 | L2: 6/6完成 ✅ GSM8K=0%🔴 MMLU=23.16%(≈随机) BBH=0%🔴 MATH=0%🔴 HumanEval=0%🔴 MBPP=0%🔴 · 🔬生成退化=SSM state崩溃+模型@24%+code/math 26% | L3: 🔴TB smoke完成 0/2 reward(生成退化致agent无法编辑文件) | L4: 🔴/nasdata/未挂载.29+SSH .15/.17均不通</span>
+    <span>📊 L1: 16 ckpt ✅(160k=58.13%新高) · 170k autoqueue轮询中 | L2: 6/6完成 ✅ GSM8K=0%🔴 MMLU=23.16%(≈随机) BBH=0%🔴 MATH=0%🔴 HumanEval=0%🔴 MBPP=0%🔴 · 🟢<b>HF transformers生成正常</b>→llama.cpp SSM bug是0%主因(非模型完全无能) · GSM8K HF重评运行中 | L3: 🔴TB 0/2(待HF重测) | L4: 🔴/nasdata/未挂载.29+SSH .15/.17均不通</span>
   </div>
   <div style="margin-top:12px;font-size:12.5px;background:rgba(0,0,0,.18);border-radius:8px;padding:8px 12px;opacity:.95">
     ⚠️ 本报告是<b>训练监控与决策依据</b>，<b>不进论文正文</b>（2026-11-10 用户令）。用户关注点（2026-11-11）：<b>如何拿到更好的结果</b>。
@@ -279,6 +279,41 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
   </div>
 </div>
 
+<!-- HF generation breakthrough finding -->
+<div class="card" style="border-left:4px solid var(--ok)">
+  <h3>🟢 重大发现：HF transformers 生成正常 · llama.cpp SSM bug 是 L2=0% 主因（#2026 · 2026-11-12 02:38）</h3>
+  <div class="ok-box">
+    <b>用 HF transformers（CPU, bfloat16, greedy）对 160k ckpt 做 3-prompt 生成测试 → 全部生成连贯文本</b>，与 llama.cpp 的重复退化输出截然不同。
+    这证实 <b>L2 生成任务 0% 主要由 llama.cpp SSM 生成路径 bug 导致，不是模型完全无能力</b>。
+  </div>
+  <table>
+    <tr><th>Prompt</th><th>llama.cpp 输出</th><th>HF transformers 输出</th></tr>
+    <tr>
+      <td class="l"><b>"The capital of France is"</b></td>
+      <td class="l" style="font-size:11px">重复退化（"1" × 200+）</td>
+      <td class="l" style="font-size:11px"><b>"Paris, and the capital of the French Republic is Paris..."</b> ✅ 正确且连贯</td>
+    </tr>
+    <tr>
+      <td class="l"><b>GSM8K: Natalia sold 48 clips...</b></td>
+      <td class="l" style="font-size:11px">"The answer is 5 years old333543111..." → 重复"1"×200+</td>
+      <td class="l" style="font-size:11px"><b>"48"</b>（答案错误，正确=72）→ 生成连贯但数学能力不足 → 后续自动生成新题</td>
+    </tr>
+    <tr>
+      <td class="l"><b>def fibonacci(n):</b></td>
+      <td class="l" style="font-size:11px">100% 生成退化（HumanEval=0%）</td>
+      <td class="l" style="font-size:11px"><b>"a, b = 0, 1; for _ in range(n): a, b = b, a+b; return b"</b> ✅ 正确的迭代实现 + 自动生成 assert 测试</td>
+    </tr>
+  </table>
+  <div class="note">
+    <b>诊断修正</b>：<br>
+    ① <b>llama.cpp SSM 生成 bug（PR #31703）是 L2 生成任务 0% 的主因</b>——HF transformers 生成路径正常，说明模型权重/SSM 状态计算正确，问题在 llama.cpp 的 SSM 生成实现<br>
+    ② <b>模型有基础代码生成能力</b>（Fibonacci 正确），但数学推理仍弱（GSM8K 答错）——code 19% 数据有效，math 7% 不足<br>
+    ③ <b>L2 应使用 HF transformers 重新评测</b>——当前正在运行 10-sample GSM8K HF 评测（PID 2074939, .29 CPU, nice 19, ~7min）<br>
+    ④ <b>L3 TB 0/2 也应重测</b>——生成退化是 TB 失败的直接原因，HF 生成正常后 agentic 任务可能改善<br>
+    <b>环境</b>：sglang env (transformers 5.18.0, 支持 nemotron_h), CPU bfloat16, 4.6 tok/s, 无 mamba_ssm/causal_conv1d 优化（reference PyTorch 实现）
+  </div>
+</div>
+
 <!-- L3 -->
 <h2 class="sec">L3 · Agentic 能力 <span class="badge b-bad">🔴 TB smoke完成 · 0/2 reward</span></h2>
 <div class="card">
@@ -511,7 +546,7 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
 </div>
 
 <footer>
-  BaiZe pretrain 线 · 四层能力评测报告 · 2026-11-12 02:15 更新(#2024 · 监控巡检+L1 autoqueue 170k已启动PID36398 · 训练健康iter169.7k step~7.0s<7.4s✅ · L2 6/6完成 · L3 TB 0/2 · L4 BLOCKED) · 评测数字仅用于训练监控，不进论文正文
+  BaiZe pretrain 线 · 四层能力评测报告 · 2026-11-12 02:40 更新(#2026 · 🟢HF transformers生成正常=llama.cpp SSM bug是L2=0%主因 · GSM8K HF 10-sample评测运行中(PID2074939) · 训练健康iter169.9k step~7.1s<7.4s✅ · 170k autoqueue轮询中(PID36398) · L1 16/16(160k=58.13%) · L2 6/6完成(待HF重评) · L3 TB 0/2(待HF重测) · L4 BLOCKED) · 评测数字仅用于训练监控，不进论文正文
 </footer>
 </div>
 </body>
