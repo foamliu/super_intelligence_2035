@@ -381,3 +381,7 @@
 1790415942692_xbexl	jinhaoli	10.129.2.13	35	digital	parked		2026-11-11 16:34	r383 peek weak: 1790415942692_xbexl jinhaoli U#0=SV-syntax-check Q&A
 1788421090460_fzx8i	jason17w	10.129.32.190	145	digital	parked		2026-11-11 16:34	r383 peek weak: 1788421090460_fzx8i jason17w U#0=run-regression skill invoke flow-driving
 1792841088751_bg11w	congyi	10.129.32.75	77	eda_other	parked		2026-11-11 16:34	r383 peek weak: 1792841088751_bg11w congyi U#0=background-task query Q&A
+1789449816263_xinm9.messages.json	e0025522	hfeg0plg103	208	digital	parked		2026-11-11 17:10	U#0=启动业务场景:仿真与验证 generic flow-driving, 11/09scan direct peek r384
+1789868617686_y7550.messages.json	t0002470	hfeg0plg76	197	eda_other	parked		2026-11-11 17:10	U#0=filter JSON for non-REF/RFM/SRE/SRX, analysis-on-file hard to hidden-B, r384
+1792043028504_5szsv.messages.json	alanji	hfeg0pgn145	194	digital	parked		2026-11-11 17:10	U#0=analyze netlist diff between 2 paths, analysis Q&A weak, r384
+1792053321007_ux82s.messages.json	gracew	hfeg0pkn004	183	digital	parked		2026-11-11 17:10	U#2=write similar .v pattern (produce-intent) BUT 0 write tool_calls (agent never produced deliverable) + ref .v files permission-denied, NOT VIABLE, r384

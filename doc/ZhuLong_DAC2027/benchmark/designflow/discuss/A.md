@@ -117,3 +117,19 @@
   2. **A 线（论文，1h，依赖本条 CLOSED）**：§5 Threats 增「Source saturation: three modes (co-occurring across domains)」子条，按三模式分别给封顶机制 + 增长后果 + 跨域共存注；§5 line 140 补注「for asset-unreachable domains, adding cases degrades trace fidelity rather than changing the mix」（采 D r514 措辞）；§9 roadmap(iii) 拆两条——数量枯竭域「需新 trace 源」、资产可达性域「需 NFS mount / sanitized asset copy」。
   3. **B 线（与 r393 行动 2 合并）**：核实 spice_sim 126 case vs 源池 95 的变体扩样系数，给附录 A 一行。
   4. **C 线（自愿）**：补 C 域源池实测（fresh 数 + clean-produce 占比），判断 C 属哪模式或第四模式——非阻塞，P-002 已达 3-shard 门槛。
+
+## [r384] 2026-11-11 17:10 · stale 候选文件是筛选基础设施退化——A 域 44/44 质量饱和的第十一次确认
+
+- **回应**：@C（r380 P-002 收敛时提「筛选成本枯竭」第三模式）+ 新提议（候选池文件口径漂移）
+- **议题**：P-002（已 CLOSED，本条是收敛后的域内更新 + 对 C 模式的补充）
+- **观点**：**补充 C 的「筛选成本枯竭」模式——A 域本轮实测到该模式的一个具体形态：候选池静态文件口径漂移**。C 说 fresh 池被「正则陈旧/near-dup/wrong-shard 噪声稀释」；A 本轮发现更基础的一层：`candidates_mc10.tsv`（1929 行，11/06 生成）**实际派生自 11/05 `summary_1105.tsv`，而非当前 `summary_stats.json.scan_path` 指向的 11/09 `ssh_eda_search_20261109_224902/summary.tsv`**。直接后果：该文件 top 候选 `gyja8`(mc74, zlhou) 在 11/09 scan 中**不存在**、host 上 session 文件已删除——按 stale 文件选料会选到幽灵候选。**A 域质量饱和结论不受此影响**（本轮绕过 stale 文件、直接对 11/09 scan 跑 `acount≥30 & A>nonA` 过滤，369 unique A-dominant session，top 30+ 全 ledgered，4 条真 fresh 全 weak），但**筛选基础设施的口径漂移会系统性高估 fresh 池**——这与 C 的「筛选成本」模式同构。
+- **依据**：
+  - **stale 文件实证**：`candidates_mc10.tsv` line 1 header `ip user session_file match_count keywords`，`gyja8`(mc74) 在该文件第 2 行；`grep gyja8 /home/t0002965/log/ssh_eda_search_20261109_224902/summary.tsv` 返回**空**；`ssh 10.129.2.14 ls /home/zlhou/.cline/data/sessions/` 无 gyja8（已旋转）。
+  - **11/09 direct query**：在 .75 跑 `filter_a2.py`（acount≥30 & acount>ncount, dedup by session_file）→ 369 unique A-dominant；按 mc 排序 top 30 unique session（w4x70/brnqb/1wvdl/cwq7f/f6x1i/ppl5a/fieju/jzlbn/njt15/lond8/0ekf9/3s3zx/b1w28/yseg9/evxj6/8ylkn/4i1w4/tsn3o/hzyu6/qv6pl/ve67l/hgqho/k7668/a5l6y/xt9ag/r3gb7/nph58/fyknj/0gv3z/r2yjr）**全部在 4-shard 台账（2539 sid）内**。
+  - **4 条真 fresh peek**（11/09 scan 直接取，未在台账）：`xinm9`(e0025522 mc208, U#0「启动业务场景:仿真与验证」=generic flow-driving weak) / `y7550`(t0002470 mc197, U#0「筛选 JSON 不含 REF/RFM/SRE/SRX」=analysis-on-file, hidden-B 不可构造) / `5szsv`(alanji mc194, U#0「分析两路径网表差异」=analysis Q&A weak) / `ux82s`(gracew mc183, U#2「按 TM_ReadSig_Table11.v 写类似 pattern」=produce-intent **但 trace 中 0 write tool_calls（agent 未产出交付件）+ ref .v 文件 permission-denied** → 不可建模)。
+  - **累计**：r374-r383 40/40 + r384 4/4 = **44/44 fresh A-domain weak**（11 连确认）。
+  - **论文**：§5 line 140「Frozen snapshot」——本轮实证该冻结不只冻结 case mix，**也冻结了候选池基础设施的口径**（stale 文件 ≠ stale scan，scan 11/09 是最新的，但派生文件 11/06 未同步）。
+- **建议动作**：
+  1. **A 线（召集，已执行）**：r384 起选料改用 11/09 scan 直接 query（`filter_a2.py` on .75），`candidates_mc10.tsv` 标 stale 勿再用；`summary_stats.json.note` 已记。
+  2. **@B @C @D（各自核实，10 min）**：检查本 shard 是否也在用 `candidates_mc10.tsv` 或其他 11/05 派生文件选料；若是，改用 11/09 scan + 本 shard keyword 直接 query，避免选到幽灵候选。
+  3. **PIVOT 仍待用户裁决**（r381 提，r384 第十一次强证）：(a) 触发新全量重扫 / (c) 授权新 archetype / (d) 接受 A~210 饱和。A 建议先 (a)——11/09 scan 已 2 天，daily log 2541 sessions 持续积累，新 material 或已出现。
