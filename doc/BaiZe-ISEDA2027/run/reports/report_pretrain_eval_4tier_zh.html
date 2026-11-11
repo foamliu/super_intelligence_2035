@@ -42,8 +42,8 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
   <div class="meta">
     <span>📅 2026-11-11</span>
     <span>🏗 Mamba2-hybrid 2.22B</span>
-    <span>🔥 训练 iter≈164.88k / 700k · step~7.06s<7.4s✅</span>
-    <span>📊 L1: 16 ckpt ✅ | L2: GSM8K=0%@160k 🔴 MMLU~82%进行中(18604/22800) v4等待中 | L3: 调研完(基础设施复杂) | L4: 数据在.15不可达+定性测试=退化输出</span>
+    <span>🔥 训练 iter≈165.02k / 700k · step~7.02s<7.4s✅</span>
+    <span>📊 L1: 16 ckpt ✅ | L2: GSM8K=0%@160k 🔴 MMLU~88%进行中(19996/22800) v4等待中 | L3: 🔧 pipeline脚本已建(baize_l3_tb_smoke.sh)·待MMLU完后运行 | L4: 数据在.15不可达+定性测试=退化输出</span>
   </div>
   <div style="margin-top:12px;font-size:12.5px;background:rgba(0,0,0,.18);border-radius:8px;padding:8px 12px;opacity:.95">
     ⚠️ 本报告是<b>训练监控与决策依据</b>，<b>不进论文正文</b>（2026-11-10 用户令）。用户关注点（2026-11-11）：<b>如何拿到更好的结果</b>。
@@ -145,7 +145,7 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
 </div>
 
 <!-- L3 -->
-<h2 class="sec">L3 · Agentic 能力 <span class="badge b-bad">❌ 空白 · 调研完成</span></h2>
+<h2 class="sec">L3 · Agentic 能力 <span class="badge b-warn">🔧 pipeline 脚本已建 · 待运行</span></h2>
 <div class="card">
   <h3>评测目标与现状</h3>
   <table>
@@ -168,7 +168,25 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
   <div class="alert"><b>关键差异</b>：harness 线用 cloud API (glm-5.3-flash)，BaiZe 2B 需<b>本地服务</b>(vllm/sglang on GPU, 或 llama-server on CPU)。当前训练占满 .29 GPU。</div>
 </div>
 <div class="card">
-  <h3>🔴 L3 可行性分析（2026-11-11 · P0 调研结论）</h3>
+  <h3>🔧 L3 Pipeline 已建（2026-11-11 #1979）</h3>
+  <div class="ok-box">
+    <b>脚本</b>: <code>run/baize_l3_tb_smoke.sh</code> — 自包含 L3 Terminal-Bench smoke test<br>
+    <b>原理</b>: 利用 harness 线现有 Harbor + cline-patched 基础设施（只读引用，不修改 harness 文件）<br>
+    <b>配置</b>: TB_MODEL=baize-2b-local · TB_BASE_URL=http://127.0.0.1:8083/v1 · CPU llama-server -t 4 nice 19<br>
+    <b>任务</b>: fix-git(easy) + break-filter-js-from-html(medium) · 89 个 Docker 镜像均已在 .29 本地<br>
+    <b>护栏</b>: 训练 step>7.4s 自动中止 · 串行单任务 · TB_AGENT_TIMEOUT=600s · 运行后自动 kill llama-server<br>
+    <b>状态</b>: ✅ 脚本已创建 · ⏳ 待 MMLU v3/v4 完成后运行（当前 port 8082 被 MMLU eval 占用）
+  </div>
+  <table>
+    <tr><th>步骤</th><th>内容</th><th>状态</th></tr>
+    <tr><td>0</td><td class="l">脚本创建 + pre-flight 检查（训练健康/port/Docker/Harbor/TB tasks）</td><td><span class="badge b-ok">✅ 完成</span></td></tr>
+    <tr><td>1</td><td class="l">启动 llama-server (port 8083) + sanity check</td><td><span class="badge b-info">📋 待运行</span></td></tr>
+    <tr><td>2</td><td class="l">Harbor run cline-patched × 2 tasks (fix-git + break-filter-js-from-html)</td><td><span class="badge b-info">📋 待运行</span></td></tr>
+    <tr><td>3</td><td class="l">收集结果 + 清理 llama-server</td><td><span class="badge b-info">📋 待运行</span></td></tr>
+  </table>
+</div>
+<div class="card">
+  <h3>L3 可行性分析（2026-11-11 · P0 调研结论）</h3>
   <table>
     <tr><th>维度</th><th>发现</th><th>影响</th></tr>
     <tr><td class="l">基础设施</td><td class="l">TB 用 <b>Harbor Docker</b> 容器 + gw_proxy + 7 个 agent 适配器(cline/codex/hermes/...)。适配器硬编码 cloud API endpoint (<code>http://agi-gateway.cxmt.com/v1</code>) 和 model name (<code>glm-5.3-flash</code>)。改用本地模型需修改 <code>_base.py</code> 的 <code>TB_BASE_URL</code>/<code>TB_MODEL</code>/<code>TB_API_KEY</code> + 重建 Docker 镜像。</td><td class="warn">中等工作量</td></tr>
@@ -239,18 +257,18 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
     <tr><th>层</th><th>评测</th><th>状态</th><th>关键数</th><th>下一步</th></tr>
     <tr><td><b>L1</b></td><td class="l">常识 8 集 (0-shot)</td><td><span class="badge b-ok">✅ 16ckpt</span></td><td>58.13%@160k</td><td class="l">继续每万 ckpt</td></tr>
     <tr><td><b>L2</b></td><td class="l">复杂推理 6 集</td><td><span class="badge b-bad">🔴 GSM8K=0%@160k</span></td><td>GSM8K=0% · MMLU~82%进行中(18604/22800) · v4等待中</td><td class="l">等MMLU+v4结果</td></tr>
-    <tr><td><b>L3</b></td><td class="l">Agentic</td><td><span class="badge b-bad">❌ 空白·调研完</span></td><td>— · 模型生成能力不足</td><td class="l">延后至SFT/数据改进后</td></tr>
+    <tr><td><b>L3</b></td><td class="l">Agentic</td><td><span class="badge b-warn">🔧 脚本已建·待运行</span></td><td>— · 模型生成能力不足(pipeline已建)</td><td class="l">MMLU完后运行smoke</td></tr>
     <tr><td><b>L4</b></td><td class="l">领域</td><td><span class="badge b-bad">❌ 未接·调研完</span></td><td>— · 数据在.15不可达</td><td class="l">延后至.15可达+SFT后</td></tr>
   </table>
 </div>
 <div class="card">
-  <h3>本轮(#1978)动作</h3>
+  <h3>本轮(#1979)动作</h3>
   <ol>
-    <li><b>训练健康确认</b>：iter 164,880 · step 7059ms (<7.4s✅) · loss ~2.04 · 0 NaN/skip · GPU 8×95-100%/75GB · ~590K tok/s</li>
-    <li><b>L2 v3 进度</b>：GSM8K ✅ 完成 = 0.0%(strict+flex) · MMLU 🟡 进行中 ~18604/22800(~82%) ETA~85min · ~1-1.5 it/s</li>
-    <li><b>L2 v4 状态</b>：<code>baize_l2_eval_160k_v4.sh</code> 在 .29 后台(PID2515987) · 轮询 port 8082 · v3 完成后自动切换(HumanEval/MBPP/MATH/BBH)</li>
+    <li><b>训练健康确认</b>：iter 165,020 · step 7020ms (<7.4s✅) · loss ~2.03 · 0 NaN/skip · GPU 8×93-100%/75GB · ~590K tok/s</li>
+    <li><b>L2 v3 进度</b>：GSM8K ✅ 完成 = 0.0%(strict+flex) · MMLU 🟡 进行中 ~19996/22800(~88%) ETA~30min · ~1 it/s</li>
+    <li><b>L2 v4 状态</b>：<code>baize_l2_eval_160k_v4.sh</code> 在 .29 后台(PID2515987) · 轮询 port 8082 · v3 完成后自动切换</li>
+    <li><b>🔧 L3 Pipeline 创建</b>：脚本 <code>baize_l3_tb_smoke.sh</code> 已建 · 利用 Harbor+cline-patched(只读) · 2 任务(fix-git+break-filter-js-from-html) · 待 MMLU 完后运行</li>
     <li><b>无新万整数 ckpt</b>：最新 ckpt iter_0164000(已评) · 下一个 170k ETA~10h</li>
-    <li><b>研究日报 2026-11-11</b>：pretrain 无新增可用建议（已确认，不凑数）</li>
   </ol>
   <div class="alert">
     <b>🔴 核心发现（待用户拍板）</b>：L2/L3/L4 的低分/空白<b>同一根因</b>——训练数据(P-5b/P-8 Ultra-FineWeb-L3)缺乏 code+math 内容，导致模型在<b>所有需要连贯生成的任务</b>上退化为重复输出。<br>
@@ -288,7 +306,7 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
 </div>
 
 <footer>
-  BaiZe pretrain 线 · 四层能力评测报告 · 2026-11-11 16:39 更新(#1978) · 评测数字仅用于训练监控，不进论文正文
+  BaiZe pretrain 线 · 四层能力评测报告 · 2026-11-11 16:56 更新(#1979) · 评测数字仅用于训练监控，不进论文正文
 </footer>
 </div>
 </body>
