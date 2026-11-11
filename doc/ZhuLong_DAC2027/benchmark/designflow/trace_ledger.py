@@ -16,6 +16,7 @@ import argparse
 import datetime
 import json
 import os
+import re
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -282,9 +283,13 @@ def html_block(rows=None, st=None):
            by.get("case", 0), by.get("seeded", 0), by.get("deepread", 0),
            by.get("parked", 0), by.get("claimed", 0), dom_html or "<li>—</li>"))
 def cmd_next(args):
-    # 规范化：台账存 bare 形式或带 .messages.json 后缀混存，summary.tsv 统一带后缀。
+    # 规范化：台账存 bare 形式或带 .messages.json/.json 后缀混存，summary.tsv 统一带后缀。
     # strip 后缀再做 anchor 匹配，避免 $-anchor 漏放行已用 session。
-    used = [r["session_file"].replace(".messages.json", "")
+    # r394 修：summary.tsv 混存 .json 与 .messages.json，旧 sub 只剥 .messages.json，
+    #   导致 .json 后缀的已台账 session（如 fi203.json/31lou.json）漏过排除集 → 假 fresh。
+    #   现统一剥 \.(messages\.)?json$ 后缀。
+    _SF_SUFFIX = re.compile(r'\.(messages\.)?json$')
+    used = [_SF_SUFFIX.sub("", r["session_file"])
             for r in load() if r["session_file"]]
     st = load_stats()
     # per-shard mc 阈值: summary_stats.json.shard_mc → SHARD_MC → target_mc → DEFAULT_MC
@@ -304,11 +309,11 @@ def cmd_next(args):
         tools_re = SHARD_DOMAINS[_shard][1]
         tool_filter = " && $6 ~ /%s/" % tools_re
     print("# 1) 在 .75 上跑（经 eda_flow run_commands）取候选，已排除台账里的 session%s：" % ("，按 shard %s keywords($6) 过滤" % _shard if _shard else ""))
-    print("# (sub(/\\.messages\\.json$/,\"\",$4) 规范化后做 anchor 匹配)")
+    print("# (sub(/\\.messages\\.json$/,\"\",$4); sub(/\\.json$/,\"\",$4) 规范化后做 anchor 匹配; r394 修 .json 后缀漏排除)")
     print("# 候选池 mc>=%d%s (11/06: shard A 放宽过滤词+降阈值; **2026-11-11 用户令: 全线降到 mc>=10**)" % (mc, " [shard %s 专属阈值]" % _shard if _shard and _shard in SHARD_MC and mc != DEFAULT_MC else ""))
     print("# 扫描源: %s" % scan_tsv)
     print("# r309: 过滤改用 $6(keywords) 而非 $7(tools)；$7 对 ~346 verilog session 为空，旧 $7 过滤漏候选 8x (dedup 294->2381)")
-    print("awk -F'\\t' 'NR>1 && $5+0>=%d {sub(/\\.messages\\.json$/,\"\",$4); $4 !~ /^(%s)$/%s {print $5\"\\t\"$4\"\\t\"$3\"\\t\"$2\"\\t\"$6}' "
+    print("awk -F'\\t' 'NR>1 && $5+0>=%d {sub(/\\.messages\\.json$/,\"\",$4); sub(/\\.json$/,\"\",$4); $4 !~ /^(%s)$/%s {print $5\"\\t\"$4\"\\t\"$3\"\\t\"$2\"\\t\"$6}' "
           "%s | sort -rn | head -%d"
           % (mc, pat, tool_filter, scan_tsv, args.n))
     # 预筛提示

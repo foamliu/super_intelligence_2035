@@ -6586,3 +6586,11 @@ WAITING: 0（📦 **2026-11-11 r384 stale-候选文件发现+11/09-direct-peek-�
 → r389 造题轮(1 net-new-case, A.jsonl 210→211, DEBT 0, 清付 r388 DEBT 1)：合成 DiscardRefFix-001(verification L2, 1790128993113_iiqrs jinhaoli mc218, A-faithful)→B档修复生成器 gen_discard_fix.py(读 buggy dlut_func.sv→锚点改写共享句柄 push_back 为 per-iteration automatic new→写 fixed)→12 条件 a-l(含 Python 句柄语义模拟+B 保留性+反模式缺席+3-seed)→自验 gold PASS 12/12/5 neg FAIL/§4.9 (a)(b)(c) FAIL→A.jsonl 210→211→ledger mark case→归档 r387 verbose→ARCHIVE; pi 未跑(下轮补); 讨论欠配额下轮补; r388 shallow-peek 方法学发现沿用. A.jsonl 211, DEBT 0.
 
 → r388 deepread-造题恢复轮(0 net-new-case, DEBT 1)：选料改 Python(awk 正则超长截断/NFS 多主机去重/schema 适配); 深读 1790128993113_iiqrs(jinhaoli mc218 verification, DDR5 ref-model)→致命 SV 引用 bug(discard_sel push 同一 handle 6 次→队列前5条数据丢失, fix=循环内 automatic new); 关键发现: metadata title=trivial greeting 但后续是真实 verilog 工作→r374-r387 shallow peek 方法学有缺陷, saturation 结论需 deepread 复核; claim+深读笔记(含 buggy 代码+fix+9-断言 check plan+合成 plan); DEBT1 按硬闸门不入库, 下轮第一件事合成 DiscardRefFix-001; 讨论欠配额下轮补; PAPER_SKIP(time-budget, 下轮补). A.jsonl 210 不变, DEBT 1.
+
+## 归档批次 r394（MEMORY 体积维护 · 2026-11-11）
+
+### r385 verbose 原文
+→ r385 mc10-29-未探切片-peek+tool-health令归档轮(0 net-new-case)：探此前未peek的mc10-29 A-domain切片(79 unique/29 fresh)，peek 9/9 weak(l8989 analysis/vf2q3 check/k2x6m produce-intent BUT /proj/ddgoa不可达/bmqho compare/8bgtd code-search/187i0 code-search/2idq4 doc-gen fuzzy/dse5n consultation/df52y analysis /proj/dscqa不可达), 8 claim+park; mc10-29切片亦饱和→52/52 r374-r385 12连确认; 用户mc≥10指令已忠实执行; PIVOT待裁决(a重扫需授权/b mc≥5低yield/c新archetype/d饱和); tool-health令归档ARCHIVE; paper latexmk 0err 14p \Ntasks 1071. A.jsonl 210 不变, DEBT 0.
+
+### r384 verbose 原文
+→ r384 stale-候选文件发现+11/09-direct-peek-十连确认轮(0 net-new-case)：发现 candidates_mc10.tsv=11/05派生(STALE, gyja8 幽灵候选)；绕过改 11/09 scan 直接 query(filter_a2.py, 369 A-dominant, top30+ 全 ledgered)；4 真 fresh peek(xinm9/y7550/5szsv/ux82s) 全 weak/不可建模(ux82s produce-intent 但 0 write+permission-denied), 4 parked；44/44 饱和 11连确认；讨论配额已补发 r384(stale 文件口径漂移+PIVOT); PAPER_SKIP(no latexmk) \Ntasks 1071. A.jsonl 210 不变, DEBT 0.

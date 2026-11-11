@@ -61,7 +61,7 @@
   "prev_sessions": 1746,
   "scan_path": "/home/t0002965/log/ssh_eda_search_20261109_224902/summary.tsv",
   "scansync": {
-    "consecutive_no_new_scan": "r293-r384 (82nd; 11/09 scan still latest, no newer scan on .75)",
+    "consecutive_no_new_scan": "r293-r394 (11/09 scan still latest, no newer scan on .75)",
     "daily_log_20261111_sessions": 2541,
     "dedup_hosts": 696,
     "dedup_sessions": 5999,
@@ -71,11 +71,10 @@
     "mc20": 2519,
     "mc30": 2247,
     "new_sessions": 0,
-    "note": "r384 scansync: 11/09 full rescan still latest (no newer). NEW finding: candidates_mc10.tsv is STALE (derived from 11/05 summary_1105.tsv, not 11/09 scan). gyja8 (mc74, top of stale file) not in 11/09 summary + file gone from host. Proper method: query 11/09 summary.tsv directly on .75 (filter_a2.py this round, 369 unique A-dominant sessions). Top 30+ A-dominant all ledgered. 4 genuinely fresh peeked (xinm9/y7550/5szsv/ux82s) all weak/not-viable. daily log 11/11 = 2541 sessions (unchanged from r383).",
-    "round": "r384",
+    "note": "r394 scansync: 11/09 full rescan still latest (no newer; daily log 11/11 frozen 00:01, 2541 sessions unchanged). BUGFIX: trace_ledger.py cmd_next awk only stripped .messages.json not .json suffix -> .json-suffixed ledgered sessions (fi203/31lou/ch2cw/mt7ua) evaded exclusion as false-fresh; fixed to strip both (sub chain). Strict A-top-tool filter (fixed norm) -> 1 fresh vs A-ledger (aafag) deepread=trivial typo Q&A (innovus:401 kw from explanation text not tool use, D-parked boilerplate confirmed). High-signal A-tool>=50 -> 4 fresh vs A-ledger: aafag(trivial), u65cq(B+C-parked consultation), ayxhy(B-parked non-spice), 5or9z deepread=Formality FM rtl2rtl diagnosis+consultation (overlaps FormalityLaunchDiag-001, /proj asset risk). 2 parked A-ledger (aafag/5or9z). 17th exhaustion confirmation r374-r394.",
+    "round": "r394",
     "scan_dir": "/home/t0002965/log/ssh_eda_search_20261109_224902",
     "summary_tsv_rows": 38082,
-    "updated_at": "2026-11-11T17:05:00+08:00",
     "users_mc10": 444
   },
   "sessions": 1746,
@@ -162,7 +161,7 @@
     },
     "src": "designflow/summary_1105.tsv (11/05 curated, shard-A keyword filter, slug dedup)"
   },
-  "updated_at": "2026-11-11 20:54",
+  "updated_at": "2026-11-11 21:54",
   "users_mc10": 444,
   "users_mc100": 182,
   "users_mc30": 401,
