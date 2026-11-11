@@ -112,3 +112,5 @@
 [verified-full 00:00:56] [110/500] django__django-13346 SKIP (predicted, patch=0B)
 [verified-full 00:00:56] [111/500] django__django-13363 SKIP (predicted, patch=3018B)
 [verified-full 00:00:56] [112/500] PREDICT hermes on django__django-13401
+[verified-full 00:30:57]   -> patch-produced (patch=3734B wall=1801.2s)
+[verified-full 00:30:58] [113/500] PREDICT hermes on django__django-13406
