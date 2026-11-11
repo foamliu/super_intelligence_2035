@@ -1034,3 +1034,4 @@ peek:					parked		2026-11-10 23:22	peek: consultation verdi-fsdb-warning-paste
 1794274823283_jxhl2	thomasz	hfeg0plg92	0	spice_sim	parked		2026-11-11 08:18	LVS .nxf compare debug, wrong-shard C physical_verify
 1794299459246_lhbz9	thomasz	hfeg0plg92	0	spice_sim	parked		2026-11-11 08:18	pathfinder sim-stuck diagnostic, no produce-task
 1794296046202_t825w	sherlock	hfeg0plg104	0	spice_sim	parked		2026-11-11 08:18	DRC M1A_LS rule semantic explanation, wrong-shard C physical_verify
+1792041709940_x5fd4	t0002801	hfeg0plg49	119	characterization	case	EDA-Eval-DesignFlow-GmidLutRunSelect-001	2026-11-11 08:59	
