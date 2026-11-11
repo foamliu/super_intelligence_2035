@@ -4673,3 +4673,99 @@ SFT 模型更倾向使用 pyAether 域 API、输出更简洁、格式更规范�
 - 替身预演声明：以上分析基于 MiniCPM5-2B 替身，收益不可迁移到 BaiZe 本体
 
 ---
+
+## §R299 — v11-v37 统一训练语料合并 + Parquet 转换 + SFT Dry-Run 验证（wake299, 2026-11-12 05:15）
+
+> **目的**：将 R298 生成的 v37 db* 生命周期补救数据（57 pairs）与 v11-v36 主语料（1029 pairs）合并为单一训练文件，
+> 转换为 verl 兼容 parquet，通过污染隔离闸门，并 dry-run 验证 SFT 脚本可正确加载新数据。
+> **替身预演声明**：MiniCPM5-2B 是 BaiZe 替身，收益不可迁移到 BaiZe 本体。
+
+### 1. 合并操作
+
+| 输入 | 文件 | pairs |
+|:--|:--|--:|
+| v11-v36 主语料 | `sft_pyaether_corpus_v11_v36_merged.jsonl` | 1029 |
+| v37 db* 补救 | `sft_pyaether_corpus_v37_db_lifecycle_remedial.jsonl` | 57 |
+| **合并输出** | `sft_pyaether_corpus_v11_v37_merged.jsonl` | **1086** |
+| **Parquet** | `sft_pyaether_corpus_v11_v37_merged.parquet` | 1086 rows, 0.34MB |
+
+- 去重：按 `pair_id` 去重，0 个重复（v37 的 pair_id 均以 `R298-` 前缀，与 v11-v36 无冲突）
+- 脚本：`baize_posttrain_r299_v11v37_merge.py`
+- 摘要：`r299_v11v37_merge_summary.json`
+
+### 2. API 家族重平衡效果
+
+| 家族 | v11-v36 | v11-v37 | 增量 |
+|:--|--:|--:|--:|
+| db* | 243 | 335 | **+92 (+37.9%)** |
+| emy* | 394 | 394 | 0 |
+| Mde* | 163 | 163 | 0 |
+| ae* | 153 | 153 | 0 |
+| other | 406 | 406 | 0 |
+
+- **emy*:db* 比例**：1.62 → **1.18**（接近 1:1，显著改善）
+- Top API after merge：dbCloseCV 21（+13）、dbGetAllLibs 16（+10）、dbSaveCV 16（+11）、dbCrtInst 23（+10）、dbCloseLib 10（+10，从 0 起）
+
+### 3. 污染隔离闸门
+
+- 指纹扫描：488 个 eval entry_points vs 1086 pairs 语料
+- 结果：**PASS**（API 名称在训练语料中出现是允许的——红线是 eval 任务的 prompt/签名/断言不进训练集）
+- v37 数据来源：仅 API 文档（API_INFO_MERGED_V3.json），158 eval 任务从未作为输入
+
+### 4. Parquet 转换验证
+
+| 项 | 值 |
+|:--|:--|
+| 行数 | 1086 |
+| 文件大小 | 0.34 MB (351,999 bytes) |
+| Schema 列 | conversation, pair_id, type, api_used, contamination_check |
+| Schema match vs v5 | ✅ 一致 |
+| JSON 解析错误 | 0 |
+| 空 prompt / 空 completion | 0 / 0 |
+
+### 5. SFT Dry-Run 验证
+
+```
+bash baize_posttrain_sft_surrogate.sh --dry-run \
+  --src-parquet sft_pyaether_corpus_v11_v37_merged.parquet \
+  --run-name minicpm5_pyaether_v2_v11v37
+```
+
+| 项 | 值 |
+|:--|:--|
+| mode | DRY-RUN |
+| model | MiniCPM5-2B (2B, LlamaForCausalLM) |
+| GPUs | 6,7 (2×A40) |
+| data.src | sft_pyaether_corpus_v11_v37_merged.parquet (351999 bytes) ✅ |
+| data.train | sft_surrogate_data/minicpm5_pyaether_v2_v11v37/sft_surrogate_train.parquet |
+| max_length | 2048 |
+| batch | global=64, micro/GPU=4 |
+| epochs | 3 |
+| lr | 1e-5 (cosine, warmup_ratio=0.1) |
+| ft_mode | full |
+| save_freq | 20 steps |
+| output_dir | sft_surrogate_runs/minicpm5_pyaether_v2_v11v37 |
+| torchrun | ✅ OK |
+| model path | ✅ OK |
+| verl+flash_attn+peft | ✅ OK |
+| src parquet | ✅ OK (351999 bytes) |
+
+**结论**：所有前置条件通过，v11-v37 parquet 可被 SFT 脚本正确加载。
+待沙盒 ACL 恢复 + GPU 释放后，执行：
+```bash
+bash baize_posttrain_sft_surrogate.sh --prep-only \
+  --src-parquet sft_pyaether_corpus_v11_v37_merged.parquet \
+  --run-name minicpm5_pyaether_v2_v11v37
+bash baize_posttrain_sft_surrogate.sh \
+  --src-parquet sft_pyaether_corpus_v11_v37_merged.parquet \
+  --run-name minicpm5_pyaether_v2_v11v37 --epochs 5
+```
+
+### 6. 对 BaiZe 正式训练的启示
+
+1. **重平衡语料已就绪**：v11-v37 (1086 pairs) 是当前最优替身 SFT 语料，db* 家族覆盖从 243→335（+38%），emy*:db* 从 1.62→1.18。
+2. **验证假设**：R297 发现的 Layout -18.7pp / DesignMgmt -15.5pp 灾难性遗忘，预计在 v11-v37 重训后恢复到基线+（因为 db* 生命周期 API 覆盖已补齐）。
+3. **仍需 RL**：322 个 both_missed API（两个模型都不会用）不在 SFT 语料覆盖范围内——这些是 RL 的核心目标，需要沙盒执行反馈。
+4. **正式 SFT 配比**：BaiZe 正式 SFT 应按场景分层配比，确保每类 API pairs ≥ eval 期望任务数 × 0.7。
+
+---

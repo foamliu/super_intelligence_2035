@@ -1,0 +1,101 @@
+{
+  "meta": {
+    "round": "R299",
+    "date": "2026-11-12",
+    "purpose": "Merge v11-v36 + v37 remedial into unified SFT corpus",
+    "surrogate_disclaimer": "MiniCPM5-2B is BaiZe surrogate; gains not transferable to BaiZe"
+  },
+  "inputs": {
+    "v11_v36_pairs": 1029,
+    "v37_pairs": 57
+  },
+  "merge": {
+    "merged_pairs": 1086,
+    "duplicates_removed": 0,
+    "output_jsonl": "sft_pyaether_corpus_v11_v37_merged.jsonl",
+    "output_jsonl_kb": 1528.2
+  },
+  "family_distribution": {
+    "before_v11_v36": {
+      "other": 406,
+      "emy*": 394,
+      "db*": 243,
+      "Mde*": 163,
+      "ae*": 153,
+      "dm*": 78,
+      "et*": 42,
+      "sle*": 12,
+      "gu*": 6
+    },
+    "after_v11_v37": {
+      "other": 406,
+      "emy*": 394,
+      "db*": 335,
+      "Mde*": 163,
+      "ae*": 153,
+      "dm*": 78,
+      "et*": 42,
+      "sle*": 12,
+      "gu*": 6
+    },
+    "db_delta": 92,
+    "db_pct_improvement": 37.9,
+    "emy_db_ratio_before": 1.62,
+    "emy_db_ratio_after": 1.18
+  },
+  "top_apis_after": {
+    "GuCartPolyLine": 26,
+    "dbCrtInst": 23,
+    "dbCloseCV": 21,
+    "emyPointF": 17,
+    "emyArray_p_emyPointArray": 17,
+    "CStringList": 17,
+    "CColor": 17,
+    "SleQueryData": 17,
+    "dbGetAllLibs": 16,
+    "dbSaveCV": 16,
+    "emyPointArrayGOA": 16,
+    "EmyNtlUtil": 15,
+    "dbOpenCV": 14,
+    "emyPointArrayF": 14,
+    "dbCreateLib": 14,
+    "dbOpenCVByType": 14,
+    "MdePlatSession": 14,
+    "dbNewCV": 13,
+    "dmGetObj": 13,
+    "goaLayerFromCellView": 13,
+    "CString": 13,
+    "dbDelLib": 12,
+    "MdePlatSweepStepModeTimes": 12,
+    "vector1D_emyPointF": 12,
+    "GuCartBox": 12,
+    "dbSmashInst2": 11,
+    "GuCartPolygon": 11,
+    "MdeTranAnalysis": 10,
+    "MdePlatSweepStepModeAuto": 10,
+    "aeCreateTree": 10
+  },
+  "contamination_fingerprint_scan": {
+    "status": "PASS",
+    "eval_entry_points": 488,
+    "corpus_pairs_mentioning_eval_api": 1079,
+    "note": "API names are ALLOWED in training corpus. Informational only."
+  },
+  "parquet_conversion": {
+    "status": "PASS",
+    "output": "sft_pyaether_corpus_v11_v37_merged.parquet",
+    "rows": 1086,
+    "parquet_rows": 1086,
+    "errors": 0,
+    "size_bytes": 351999,
+    "size_mb": 0.34,
+    "schema_cols": [
+      "conversation",
+      "pair_id",
+      "type",
+      "api_used",
+      "contamination_check"
+    ],
+    "schema_match_v5": true
+  }
+}
