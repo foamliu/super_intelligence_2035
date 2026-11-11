@@ -42,7 +42,7 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
   <div class="meta">
     <span>📅 2026-11-12</span>
     <span>🏗 Mamba2-hybrid 2.22B</span>
-    <span>🔥 训练 iter≈171.6k / 700k(24.5%) · step~7.0s<7.4s✅ · loss~2.04 · 0NaN/0skip · ckpt 170k已落盘 · lr-decay-iters=0(stable段) · GPU 8×95-100%/75GB · ✅ 170k L1 eval 完成(57.75%·4561s·llama-server -t 4 nice 19)</span>
+    <span>🔥 训练 iter≈171.8k / 700k(24.5%) · step~7.0s<7.4s✅ · loss~2.03 · 0NaN/0skip · ckpt 170k已落盘(180k ETA~16h) · lr-decay-iters=0(stable段) · GPU 8×100%/75GB · ✅ 170k L1 eval 完成(57.75%·4561s·llama-server -t 4 nice 19) · ✅ 论文§4.6已刷新iter171.8k+PDF 0err</span>
     <span>📊 L1: 17 ckpt ✅(160k=58.13%峰值,170k=57.75%) · 下一个180k(ETA≈12h) | L2: 6/6完成 ✅ GSM8K=0%🔴 MMLU=23.16%(≈随机) BBH=0%🔴 MATH=0%🔴 HumanEval=0%🔴 MBPP=0%🔴 · 🟢<b>HF transformers生成正常</b>→llama.cpp SSM bug是0%主因(非模型完全无能) · GSM8K HF=0/10(数学确实弱,生成连贯) | L3: 🔴TB 0/2(待HF重测) | L4: 🔴/nasdata/未挂载+SSH .15/.17均超时</span>
   </div>
   <div style="margin-top:12px;font-size:12.5px;background:rgba(0,0,0,.18);border-radius:8px;padding:8px 12px;opacity:.95">
@@ -546,7 +546,7 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
 </div>
 
 <footer>
-  BaiZe pretrain 线 · 四层能力评测报告 · 2026-11-12 05:55 更新(#2034 · 170k L1 eval✅完成=57.75%(4561s) · 训练健康iter171.6k/700k(24.5%) step~7.0s<7.4s✅ loss~2.04 · L1 17/17(10k-170k,160k峰值58.13%) · L2 6/6完成(GSM8K=0%HF确认,MMLU=23.16%) · L3 TB 0/2(待HF重测) · L4 BLOCKED(/nasdata/未挂载+SSH超时)) · 评测数字仅用于训练监控，不进论文正文
+  BaiZe pretrain 线 · 四层能力评测报告 · 2026-11-12 06:25 更新(#2035 · 论文§4.6刷新iter171.8k+PDF 0err · L2分析确认GSM8K=0%(5-shot HF,非eval配置问题,模型24.5%训练进度+7%数学配比) · 训练健康iter171.8k/700k(24.5%) step~7.0s<7.4s✅ loss~2.03 · L1 17/17(10k-170k,160k峰值58.13%) · L2 6/6完成(GSM8K=0%,MMLU=23.16%≈随机,HumanEval=0%,MBPP=0%,BBH=0%,MATH=0%) · L3 TB 0/2(待HF重测) · L4 BLOCKED(/nasdata/未挂载+SSH超时)) · 评测数字仅用于训练监控，不进论文正文
 </footer>
 </div>
 </body>
