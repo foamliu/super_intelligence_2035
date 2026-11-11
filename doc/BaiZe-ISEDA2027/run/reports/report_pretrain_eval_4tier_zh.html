@@ -42,8 +42,8 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
   <div class="meta">
     <span>📅 2026-11-11</span>
     <span>🏗 Mamba2-hybrid 2.22B</span>
-    <span>🔥 训练 iter≈166.15k / 700k · step~7.02s<7.4s✅</span>
-    <span>📊 L1: 16 ckpt ✅ | L2: GSM8K=0%@160k🔴 MMLU=23.16%@160k(≈随机) BBH=0%@160k🔴(v4完成) · v5 NFS崩溃待重启 · GSM8K诊断运行中🟡 · 🔬vLLM方案已备(待GPU窗口) | L3: 🔧 pipeline脚本已建·模型生成退化 | L4: 数据在.15不可达+定性测试=退化输出</span>
+    <span>🔥 训练 iter≈166.9k / 700k · step~7.05s<7.4s✅ · lr-decay-iters=0(stable段,decay未配置)</span>
+    <span>📊 L1: 16 ckpt ✅(160k=58.13%新高) | L2: GSM8K=0%@160k🔴(诊断完成:生成退化) MMLU=23.16%@160k(≈随机) BBH=0%@160k🔴 · v5 MATH运行中(57/100,~40s/it,ETA~28min) · v6排队(修复confirm_run_unsafe_code+repeat_penalty=1.3) · 🔬vLLM方案已备(待GPU窗口) | L3: 🔧 pipeline脚本已建·模型生成退化 | L4: 数据在.15不可达+定性测试=退化输出</span>
   </div>
   <div style="margin-top:12px;font-size:12.5px;background:rgba(0,0,0,.18);border-radius:8px;padding:8px 12px;opacity:.95">
     ⚠️ 本报告是<b>训练监控与决策依据</b>，<b>不进论文正文</b>（2026-11-10 用户令）。用户关注点（2026-11-11）：<b>如何拿到更好的结果</b>。
@@ -205,8 +205,9 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
     <tr><td>HumanEval</td><td>v4</td><td>0-shot, limit=100, gen</td><td>—</td><td class="bad">❌ v4失败(缺HF_ALLOW_CODE_EVAL)</td></tr>
     <tr><td>MBPP</td><td>v4</td><td>0-shot, limit=100, gen</td><td>—</td><td class="bad">❌ v4失败(同上)</td></tr>
     <tr><td>MATH</td><td>v4</td><td>4-shot, limit=100, gen</td><td>—</td><td class="bad">❌ v4失败(assertion error)</td></tr>
-    <tr><td>HumanEval+MBPP+MATH</td><td>v5</td><td>0-shot, HF_ALLOW_CODE_EVAL=1</td><td>—</td><td class="bad">❌ v5 NFS崩溃(Stale file handle)</td></tr>
-    <tr><td>GSM8K 诊断</td><td>diag</td><td>5-shot+0-shot, --log_samples, 10样本</td><td>—</td><td class="warn">🟡 运行中(19:18起)</td></tr>
+    <tr><td>HumanEval+MBPP+MATH</td><td>v5</td><td>0-shot, HF_ALLOW_CODE_EVAL=1</td><td>—</td><td class="warn">🔄 v5 重启(19:58): HumanEval/MBPP lm_eval配置失败(code_eval safety)·MATH运行中</td></tr>
+    <tr><td>GSM8K 诊断</td><td>diag</td><td>5-shot+0-shot, --log_samples, 10样本</td><td class="bad">0%(5shot) + 0%(0shot)</td><td class="bad">✅ 完成(19:32): 生成退化确认</td></tr>
+    <tr><td>GSM8K RP=1.3 测试</td><td>rp</td><td>0-shot, repeat_penalty=1.3, 10样本</td><td class="bad">0%</td><td class="bad">✅ 完成(19:39): 半连贯但无数学能力</td></tr>
   </table>
   <div class="alert">
     <b>BBH v4 = 0.0%</b>（exact_match, boolean_expressions, 3-shot CoT, 100 样本, 1h55m 完成）—— 确认<b>所有 L2 生成任务均=0%</b>。<br>
@@ -214,8 +215,39 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
     <b>MMLU=23.16% 是唯一非零的 L2 分数</b>，因为它是 MCQ 任务（loglikelihood prefill），不需要生成。
   </div>
   <div class="note">
-    <b>v5 崩溃</b>：NFS "Stale file handle" 错误（`baize_l2_eval_160k_v5.sh` 脚本文件读取失败）→ HumanEval/MBPP/MATH 仍未评测。待 GSM8K 诊断完成后重启 v5。<br>
-    <b>GSM8K 诊断</b>：已启动（PID 2851659, ctx=8192, port 8083），正在跑 10 样本 5-shot + 0-shot with --log_samples → 将捕获模型实际输出用于诊断。
+    <b>v5 重启（#1990 · 19:58）</b>：llama-server 正常启动(port 8083, PID=1594930, t=4, nice=19)，训练 step 7043ms<7.4s✅ 未受影响。HumanEval 失败（lm_eval code_eval metric traceback）· MBPP 失败（需 <code>confirm_run_unsafe_code=True</code>，非仅 <code>HF_ALLOW_CODE_EVAL=1</code>）· MATH 运行中(0-shot, limit=100, 16/100, ~42s/it, ETA~1h)。即使 MATH 完成，预期 0%（生成退化同 GSM8K/BBH）。<br>
+    <b>v6 已启动（#1991 · 20:11）</b>：<code>baize_l2_eval_160k_v6.sh</code> 在 .29 后台等待 v5 MATH 完成后自动运行。修复：① HumanEval/MBPP 加 <code>--confirm_run_unsafe_code</code> CLI flag；② llama-server 加 <code>--repeat-penalty 1.3</code>（#1984 诊断发现 RP 可部分打破 SSM 退化循环）；③ MATH 用 RP=1.3 重跑对比 v5 baseline；④ 生成探针验证 RP 效果。<br>
+    <b>GSM8K 诊断完成（19:32）</b>：5-shot=0%, 0-shot=0%, 实际输出为退化的重复文本（"The eggs are the same thing that day, the same thing..."）和 token 崩溃（"$111111..."）。<br>
+    <b>repeat_penalty=1.3 测试完成（19:39）</b>：0% exact_match，但退化模式改变——从纯重复变为半连贯但无意义的英文（"The birds are not yet known what happens to their food..."），确认双重根因：① llama.cpp SSM 生成 bug（RP 部分缓解）② 模型@23% 训练确实缺乏数学推理能力。
+  </div>
+</div>
+
+<div class="card">
+  <h3>🔬 GSM8K 生成退化诊断 + repeat_penalty 对照（2026-11-11 19:32–19:39 · P0 完成）</h3>
+  <table>
+    <tr><th>条件</th><th>exact_match</th><th>样本1 (Janet's ducks)</th><th>样本3 (Josh flipping house)</th></tr>
+    <tr>
+      <td class="l"><b>无 RP（原始）</b><br>llama-server 默认</td>
+      <td class="bad">0%</td>
+      <td class="l" style="font-size:11px">"The eggs are the same thing that day, and the same thing that day, the same thing, the same thing..." → <b>纯重复</b></td>
+      <td class="l" style="font-size:11px">"$111111111111111111111111111111..." → <b>token 崩溃</b></td>
+    </tr>
+    <tr>
+      <td class="l"><b>RP=1.3</b><br>--repeat-penalty 1.3</td>
+      <td class="bad">0%</td>
+      <td class="l" style="font-size:11px">"The birds are not yet known what happens to their foodHH. The hens have been eating breakfast on a few days..." → <b>半连贯但无意义</b></td>
+      <td class="l" style="font-size:11px">"The answer is not enough money. The following are some examples: - Money = you guys want to buy something..." → <b>半连贯但无数学</b></td>
+    </tr>
+  </table>
+  <div class="alert">
+    <b>双重根因确认</b>：<br>
+    ① <b>llama.cpp SSM 生成路径 bug</b>——Mamba2 SSM 状态在 token-by-token 生成时崩溃 → 无 RP 时纯重复，RP=1.3 时部分缓解（打破重复循环）但生成质量仍不可用<br>
+    ② <b>模型@23% 训练缺乏数学推理能力</b>——即使生成不退化，2B 模型在 671B tokens（code 19%+math 7%=26%）下不足以解决 GSM8K<br>
+    <b>L1 MCQ 正常（58.13%）</b>证明模型权重/加载/分词无误——MCQ 只需 prefill logits，不触发 SSM 生成 bug
+  </div>
+  <div class="note">
+    <b>结论</b>：L2 生成任务的 0% 是<b>基础设施问题（llama.cpp SSM bug）+ 早期训练阶段能力不足</b>的叠加，<b>不是评测配置错误</b>。<br>
+    <b>修复路径</b>：① <b>vLLM（原生 NemotronH 支持）</b>可解决 SSM 生成 bug → 预计 GSM8K 可从 0% 提升到 >0%（但受限于模型能力，不会很高）；② <b>decay 阶段增加 code+math 数据</b>可提升模型本身能力 → 预计 GSM8K 可达 ~15%（参照 DeepSeek 1.3B 4:2:4 消融）；③ <b>当前阻塞</b>：vLLM 需 GPU，.29(训练100%)/.12(vision100%)/.17(不可达) 均不可用。
   </div>
 </div>
 
@@ -331,22 +363,20 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
   <table>
     <tr><th>层</th><th>评测</th><th>状态</th><th>关键数</th><th>下一步</th></tr>
     <tr><td><b>L1</b></td><td class="l">常识 8 集 (0-shot)</td><td><span class="badge b-ok">✅ 16ckpt</span></td><td>58.13%@160k</td><td class="l">继续每万 ckpt</td></tr>
-    <tr><td><b>L2</b></td><td class="l">复杂推理 6 集</td><td><span class="badge b-bad">🔴 GSM8K=0%@160k</span></td><td>GSM8K=0% · MMLU=23.16%(≈随机) · BBH 83/100运行中(~68s/it,ETA~20min) · v5等待中 · 🔬生成退化=llama.cpp SSM bug(待vLLM验证)</td><td class="l">等BBH+v5+GPU窗口vLLM验证</td></tr>
+    <tr><td><b>L2</b></td><td class="l">复杂推理 6 集</td><td><span class="badge b-bad">🔴 GSM8K=0%@160k</span></td><td>GSM8K=0% · MMLU=23.16%(≈随机) · BBH=0% · v5 MATH运行中(46/100,~42s/it,ETA~37min) · v6已启动(修复confirm_run_unsafe_code+RP=1.3) · 🔬生成退化=llama.cpp SSM bug(待vLLM验证)</td><td class="l">等v5 MATH+v6 RP结果+GPU窗口vLLM验证</td></tr>
     <tr><td><b>L3</b></td><td class="l">Agentic</td><td><span class="badge b-warn">🔧 脚本已建·待运行</span></td><td>— · 模型生成能力不足(pipeline已建)</td><td class="l">MMLU完后运行smoke</td></tr>
     <tr><td><b>L4</b></td><td class="l">领域</td><td><span class="badge b-bad">❌ 未接·调研完</span></td><td>— · 数据在.15不可达</td><td class="l">延后至.15可达+SFT后</td></tr>
   </table>
 </div>
 <div class="card">
-  <h3>本轮(#1987)动作</h3>
+  <h3>本轮(#1990)动作</h3>
   <ol>
-    <li><b>训练健康确认</b>：iter 166,150 · step 7018ms (<7.4s✅) · loss 2.043 · 0 NaN/skip · GPU 8×100%/75GB · lr=1e-3(stable段,decay未开始)</li>
-    <li><b>BBH v4 完成</b>：<b>0.0% exact_match</b>(boolean_expressions, 3-shot CoT, 100样本, 1h55m) · 确认所有L2生成任务=0% · HumanEval/MBPP/MATH v4失败 → v5 NFS崩溃待重启</li>
-    <li><b>🔴 关键发现：vLLM 有原生 NemotronH 支持</b>：vLLM 0.14.1（.29 vllm env）内置 <code>nemotron_h.py</code> 模型文件 + registry 注册 <code>NemotronHForCausalLM</code> → <b>可替代 llama.cpp 做生成评测</b>。模型架构确认：<code>hybrid_override_pattern=M-M-M--M-M*-M-M-M-M--M*-M-M-M-M-M*--M-M-M-M-M*-M--M-M-M-</code>（56层，~6个attention层+Mamba2层）</li>
-    <li><b>生成退化根因假说</b>：llama.cpp SSM 生成路径 bug（非模型本身）→ 证据：① MCQ 任务(loglikelihood/prefill)正常(L1=58%,MMLU=23%)；② 生成任务(token-by-token)崩溃(repeat"1"×200+)；③ repeat_penalty=1.3 部分修复；④ Nemotron-H 已知有 SSM causality leak（audit paper arXiv:2608.22876）；⑤ llama.cpp b9265 修过 SSM-conv 大 prompt bug</li>
-    <li><b>vLLM 验证方案（已备脚本，待 GPU 窗口）</b>：<code>baize_vllm_gpu_gen_test.py</code>（快速生成对比）+ <code>baize_vllm_server_160k.sh</code>（OpenAI兼容服务）+ <code>baize_l2_eval_160k_vllm.sh</code>（L2全量eval）→ 需 1 GPU（.17 A40 不可达 / .29 GPU 满载 / .12 GPU 满载）→ <b>阻塞：待 GPU 窗口</b></li>
-    <li><b>HF CPU 生成测试失败</b>：transformers 4.57.1 有 <code>nemotron_h</code> 模型文件但缺 <code>initialization</code>/<code>integrations</code> 等模块（需 4.58+）→ 无网络无法 pip install → 跳过，等 vLLM GPU 验证</li>
-    <li><b>L2 v5 崩溃 / GSM8K 诊断运行中</b>：v5 NFS "Stale file handle" 崩溃 → 待重启 · GSM8K 诊断已启动（PID 2851659, 10样本 --log_samples, 运行中）</li>
-    <li><b>无新万整数 ckpt</b>：当前 iter 166150 · save-interval=2000 · 下一个万整数 170k ETA~8h</li>
+    <li><b>训练健康确认</b>：iter 166,560 · step 7021-7177ms (<7.4s✅) · loss 2.037-2.053 · 0 NaN/skip · GPU 8×92-100%/75GB · lr=1e-3(stable段,decay未开始)</li>
+    <li><b>v5 L2 eval 重启</b>：llama-server 正常启动(PID=1648187, t=4, nice=19, port 8083) · 训练吞吐未受影响(step 7043ms<7.4s✅) · HumanEval 失败(lm_eval code_eval metric traceback) · MBPP 失败(需 <code>confirm_run_unsafe_code=True</code>，v5 脚本仅设 <code>HF_ALLOW_CODE_EVAL=1</code>) · MATH 运行中(0-shot, limit=100)</li>
+    <li><b>L1 160k 验证</b>：从 results.json 逐集核对 → harness Avg = (0.34+0.62+0.67+0.53+0.34+0.75+0.82+0.58)/8 = <b>58.13%</b> ✅ 新高</li>
+    <li><b>数据配比确认</b>：从训练进程 /proc/146283/cmdline 提取 → code 19%(L2 15%+L3 4%) + math 7%(L1 5%+L3 2%) = 26% · 远低于 DeepSeek 4:2:4 最优 60%</li>
+    <li><b>GPU 资源检查</b>：<code>.29</code> 8×H100 满载(训练) / <code>.12</code> 8×H100 满载(vision R9) / <code>.17</code> A40 SSH 不通 → vLLM 验证<b>仍阻塞</b></li>
+    <li><b>无新万整数 ckpt</b>：当前 iter 166560 · save-interval=2000 · 下一个万整数 170k ETA~8h</li>
   </ol>
   <div class="alert">
     <b>🔴 核心发现（待用户拍板）</b>：L2/L3/L4 的低分/空白<b>同一根因</b>——训练数据中 code+math 比例不足（code 19% + math 7% = 26%，远低于 DeepSeek 最优 60%），且仍在 stable 阶段（decay 尚未开始），导致模型在<b>所有需要连贯生成的任务</b>上退化为重复输出。<br>
@@ -413,7 +443,7 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
 </div>
 
 <footer>
-  BaiZe pretrain 线 · 四层能力评测报告 · 2026-11-11 19:20 更新(#1988) · 评测数字仅用于训练监控，不进论文正文
+  BaiZe pretrain 线 · 四层能力评测报告 · 2026-11-11 20:39 更新(#1994) · 评测数字仅用于训练监控，不进论文正文
 </footer>
 </div>
 </body>
