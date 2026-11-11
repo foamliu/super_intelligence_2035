@@ -59,7 +59,7 @@
 <div class="wrap">
 <header class="hero">
   <h1>论文观察日报 · 2026-11-11 <span class="badge b-am">早报 · 3/5</span></h1>
-  <div class="sub">每日 5 篇推荐论文（早 3 / 晚 2）· <b>今日进度 3 / 5</b>（早报 3 篇「借鉴」；晚报 18:00 补 2 篇）· 含 <b>「对各线的可执行建议」</b>（pretrain / vision / harness / data / zhulong / designflow 六线）· <b>🅱 B 轨（经典论文）本轮 4 篇</b>（不占 5 篇额度）</div>
+  <div class="sub">每日 5 篇推荐论文（早 3 / 晚 2）· <b>今日进度 3 / 5</b>（早报 3 篇「借鉴」；晚报 18:00 补 2 篇）· 含 <b>「对各线的可执行建议」</b>（pretrain / vision / harness / data / zhulong / designflow 六线）· <b>🅱 B 轨（经典论文）两轮累计 8 篇</b>（不占 5 篇额度）</div>
   <div class="meta">
     <span>📅 2026-11-11（周三）</span>
     <span>🕕 早报 06:0x CST</span>
@@ -196,9 +196,48 @@
 
 </table>
 
-<h2 class="sec">🅱 B 轨 · 经典论文（首轮 4 篇 · <b>不占</b>每日 5 篇额度）</h2>
+<h3 style="margin-top:18px;">🅱 B 轨补充建议（第二轮经典论文 · 仅 4 条，均可直接落地）</h3>
 <div class="note">
-  <b>本轮口径变更</b>（用户令 2026-11-11）：research 从「只追新」改为「新 + 经典」双轨，<b>A 轨（最新论文）50%</b>、<b>B 轨（经典论文 + 作者关系网）50%</b>。本节为 B 轨<b>首轮</b>产出，<b>不占</b>当日 5 篇推荐额度、<b>不进</b> <code>SEEN.md</code> 去重台账（经典论文无 72h 时效要求）。<br>
+  以下为<b>经典论文</b>（非 72h 新论文）推导出的补充动作，<b>不占</b> A 轨 5 篇额度；依据为论文原文陈述（作者自报，本线未复现），仍属<b>推断而非指令</b>。
+</div>
+<table>
+  <tr><th>线</th><th>建议动作</th><th>依据（arXiv ID + 关键数字）</th><th>预期收益</th><th>成本</th><th>优先级</th></tr>
+  <tr>
+    <td><b>harness</b></td>
+    <td>在现有 trace 上做一次 <b>token 归因 + 重复动作统计</b>（不重跑）：每题统计 <code>tokens_reasoning</code> / <code>tokens_tool_output</code> / <code>repeat_action_rate</code>（连续 ≥2 次同工具同参数）/ <code>steps_to_first_edit</code>；把四列加进 <code>gen_report</code> 的 7 路矩阵。</td>
+    <td><code>2210.03629</code>（ReAct）：推理与动作交错，<b>推理负责跟踪/修正计划、动作负责取新信息</b>；该文在 HotpotQA/Fever 上正是靠「动作取外部信息」压住 CoT 的幻觉与错误传播 ⇒ 说明「只留推理、砍掉观察」会破坏纠错回路。</td>
+    <td>给「上下文压缩压哪一类」提供本地数据依据（而不是照搬经验）；<code>repeat_action_rate</code> 可直接当卡死前兆指标。</td>
+    <td>日志解析 2–4h，<b>零 GPU、零重跑</b></td>
+    <td><b>中高</b></td>
+  </tr>
+  <tr>
+    <td><b>designflow</b></td>
+    <td>造题判分加<b>双门槛</b>：<code>pass = 仿真输出等价 AND 接口/时序断言全过</code>；并把「reference 注入已知 bug 必须 FAIL」写成通用哨兵项（沿用现有 <code>bad_p7</code> 模式）。</td>
+    <td><code>2309.07544</code>（VerilogEval，ICCAD 2023 Invited）：156 题、判据 = <b>生成设计 vs golden 的瞬态仿真输出比对</b>；只测仿真等价 ⇒ 无法覆盖「碰巧过激励」的设计意图错误。</td>
+    <td>把「碰巧过测试」挡在交付前；与现有 <code>k_check</code> 分级分天然兼容。</td>
+    <td>先在 1 个 case 试点 ≈0.5 天</td>
+    <td><b>高</b></td>
+  </tr>
+  <tr>
+    <td><b>vision</b></td>
+    <td>v6 前先做 <b>LoRA 容量探针</b>：<code>r ∈ {8,16,32}</code> × 固定 3 seeds × 同一子集，只报 <b>support@k 与均值±sd</b>；若 r=32 仍无区分度，再谈全参/换奖励，避免把「容量不足」误判成「奖励设计无效」。</td>
+    <td><code>2106.09685</code>（LoRA）：冻结原权重、只训低秩 <code>B·A</code>，可训练参数降几个数量级；推理需<b>合并权重</b>才无额外延迟。</td>
+    <td>把「模型容量」与「奖励信号」两个失败因分开；CPU 上也能跑。</td>
+    <td>3 档 × 3 seeds，按现有 50 步协议 ≈ 数小时 CPU</td>
+    <td><b>中</b></td>
+  </tr>
+  <tr>
+    <td><b>pretrain</b></td>
+    <td><b>不改训练</b>。仅在下一份「架构/适配」提案里预置两条对照口径：① 报「等<b>计算</b>预算」而非等步数；② 若做领域适配，<b>LoRA vs 全参继续预训练</b>必须同 token 预算对比。</td>
+    <td><code>2203.15556</code>（Chinchilla）：参数量与 token 数应同比放大（≈20 token/参数）；<code>2106.09685</code>（LoRA）：PEFT 只训低秩增量。</td>
+    <td>避免后续提案在口径上不可比（这是各线报告最常见的返工点）。</td>
+    <td>0（写作口径约束）</td>
+    <td><b>低</b>（当前训练锁定，不改动）</td>
+  </tr>
+</table>
+<h2 class="sec">🅱 B 轨 · 经典论文（两轮累计 8 篇 · <b>不占</b>每日 5 篇额度）</h2>
+<div class="note">
+  <b>本轮口径变更</b>（用户令 2026-11-11）：research 从「只追新」改为「新 + 经典」双轨，<b>A 轨（最新论文）50%</b>、<b>B 轨（经典论文 + 作者关系网）50%</b>。本节为 B 轨产出（<b>第一轮 4 篇</b> LLM/架构基础 + <b>第二轮 4 篇</b> EDA / agent / PEFT），<b>不占</b>当日 5 篇推荐额度、<b>不进</b> <code>SEEN.md</code> 去重台账（经典论文无 72h 时效要求）。<br>
   <b>「经典」判据</b>：被引 ≥500 ／ 开创范式 ／ 方法论常青 ／ 本领域（EDA·LLM-for-EDA·存储）标志性工作，且与本线在研方向相关。<b>清单滚动维护</b>（不删旧条目）：<code>research/classic/PAPERS.md</code>；<b>作者关系网</b>：<code>research/classic/AUTHORS.md</code>。
 </div>
 <table>
@@ -235,12 +274,44 @@
     <td>让 SSM 步长随输入变化（selective / S6）+ 硬件感知并行扫描，线性时间建模，语言建模首次与同规模 Transformer 可比。</td>
     <td><b>zhulong（架构消融）</b>：Transformer vs 线性注意力/SSM/混合比例是当前主流对照轴。<b>pretrain</b>：长上下文压缩的可对照方案。<b>注意</b>：线性时间 ≠ GPU 更快，吞吐仍看 kernel（同作者 FlashAttention 已说明）。</td>
   </tr>
+  <tr>
+    <td>5</td>
+    <td><b>ChipNeMo: Domain-Adapted LLMs for Chip Design</b><br><a href="https://arxiv.org/abs/2311.00176">arXiv:2311.00176</a><br><span style="font-size:12px;color:#59636e;">M. Liu · T.-D. Ene · R. Kirby（42 位，NVIDIA）</span></td>
+    <td>2023<br>arXiv 预印本（<b>会议未核验</b>）</td>
+    <td><b>357</b><br><span style="font-size:12px;color:#59636e;">2026-11-11 查</span></td>
+    <td>不直接部署通用模型，而走「领域 tokenizer + 领域继续预训练 + 领域指令对齐 + 领域检索」，在工程助手 / EDA 脚本生成 / bug 归纳三用例验证；作者自报 70B 在其中两例优于 GPT-4。</td>
+    <td><b>designflow（造题分类）</b>：按它的三类用例拆题，避免所有题退化成「写 Verilog」。<b>zhulong（消融轴）</b>：继续预训练 / 检索 / tokenizer 是可拆的三条轴。<b>pretrain（2B 现实）</b>：作者自报 70B 才在部分用例胜 GPT-4 ⇒ 2B 的领域适配收益必须实测。</td>
+  </tr>
+  <tr>
+    <td>6</td>
+    <td><b>ReAct: Synergizing Reasoning and Acting in Language Models</b><br><a href="https://arxiv.org/abs/2210.03629">arXiv:2210.03629</a><br><span style="font-size:12px;color:#59636e;">S. Yao · J. Zhao · D. Yu（7 位；Princeton · Google Research）</span></td>
+    <td>2022<br>ICLR 2023（arXiv comment 实测）</td>
+    <td><b>5,814</b><br><span style="font-size:12px;color:#59636e;">2026-11-11 查</span></td>
+    <td>把「推理轨迹」与「任务动作」交错生成：推理负责跟踪与修正计划、处理异常，动作负责从环境取新信息；在问答与交互决策任务上同时改善效果与可解释性。</td>
+    <td><b>harness（骨架）</b>：所有 code agent 的 think→tool→observation 循环都可追到它；我们的上下文压缩、重复 action 检测、失败归因都长在这个循环上。<b>harness（成本）</b>：reasoning 与 tool 输出谁更吃 token，直接决定压缩策略 —— <b>本轮已就此发信</b>。<b>data</b>：自造 agent 轨迹可用它的交错格式当最小模板。</td>
+  </tr>
+  <tr>
+    <td>7</td>
+    <td><b>VerilogEval: Evaluating Large Language Models for Verilog Code Generation</b><br><a href="https://arxiv.org/abs/2309.07544">arXiv:2309.07544</a><br><span style="font-size:12px;color:#59636e;">M. Liu · N. Pinckney · B. Khailany（4 位，NVIDIA）</span></td>
+    <td>2023<br>ICCAD 2023（Invited）</td>
+    <td><b>346</b><br><span style="font-size:12px;color:#59636e;">2026-11-11 查（源标题带 Invited Paper: 前缀）</span></td>
+    <td>从 HDLBits 取 156 题构成 Verilog 生成基准，用「生成设计 vs 标准答案的瞬态仿真输出比对」做自动功能正确性判分；并示范 LLM 合成题解对做 SFT 可提升生成能力。</td>
+    <td><b>designflow（判分）</b>：L1–L5 里「可自动判分」一档的现成参照 —— 判据是仿真等价，不是文本相似。<b>designflow（造题）</b>：156 题的难度梯度可当我们造题分布的下限基线。<b>风险</b>：仿真通过 ≠ 设计意图正确；只测仿真会把「碰巧过测试」判成对（<b>已写进给作者的信</b>）。</td>
+  </tr>
+  <tr>
+    <td>8</td>
+    <td><b>LoRA: Low-Rank Adaptation of Large Language Models</b><br><a href="https://arxiv.org/abs/2106.09685">arXiv:2106.09685</a><br><span style="font-size:12px;color:#59636e;">E. J. Hu · Y. Shen · P. Wallis（8 位，Microsoft）</span></td>
+    <td>2021<br>ICLR 2022（<b>本轮未核验</b>）</td>
+    <td><b>14,411</b><br><span style="font-size:12px;color:#59636e;">2026-11-11 查</span></td>
+    <td>冻结原权重，只训练注入到每层的低秩分解矩阵（B·A），可训练参数降几个数量级；推理时把 BA 合并回原权重 ⇒ 不增加延迟。</td>
+    <td><b>vision（小样本 / CPU）</b>：LoRA 是「小样本 + 低算力」微调的默认起点，波形任务要先确认 LoRA 容量够不够。<b>pretrain（PEFT 对照）</b>：领域适配的 LoRA vs 全参继续预训练是标准消融轴。<b>风险</b>：「推理无额外延迟」前提是合并权重，多适配器热切换时不成立。</td>
+  </tr>
 </table>
 <div class="blk">
   <b>被引数口径（硬）</b>：全部取自 <code>OpenAlex API</code>（<code>api.openalex.org/works/https://doi.org/10.48550/arxiv.&lt;ID&gt;</code>），查询日 <b>2026-11-11</b>，逐条可复核。<br>
-  ⚠️ <b>局限如实记</b>：① <code>api.semanticscholar.org</code> 本轮<b>两次均返回 <code>HTTP 429</code></b> ⇒ S2 未查；Google Scholar 本机不可达；② <b>不同来源被引数口径不同</b>（OpenAlex 含预印本引用）⇒ <b>禁止跨源比较</b>；③ 元数据（标题 / 首次提交日）均以 arXiv 官方 API 实测为准（本轮 <code>id_list</code> 4/4 <code>200</code> + <code>atom+xml</code>：2017-06-12 / 2022-03-29 / 2022-05-27 / 2023-12-01）。
+  ⚠️ <b>局限如实记</b>：① <code>api.semanticscholar.org</code> 首轮<b>两次均返回 <code>HTTP 429</code></b> ⇒ S2 未查（第二轮未再请求，仍记「未查」）；Google Scholar 本机不可达；② <b>不同来源被引数口径不同</b>（OpenAlex 含预印本引用）⇒ <b>禁止跨源比较</b>；③ 元数据（标题 / 首次提交日）均以 arXiv 官方 API 实测为准（两轮 <code>id_list</code> 各 4/4 <code>200</code> + <code>atom+xml</code>，累计 8/8；首轮日期 2017-06-12 / 2022-03-29 / 2022-05-27 / 2023-12-01，第二轮 2023-10-31 / 2022-10-06 / 2023-09-14 / 2021-06-17）。
 </div>
-<h2 class="sec">👥 作者关系网 · 本轮互动（8 人建档 / 1 封已发 / X follow 阻塞）</h2>
+<h2 class="sec">👥 作者关系网 · 两轮互动（13 人建档 / 3 封已发 / X follow 阻塞）</h2>
 <table>
   <tr><th>人物</th><th>机构</th><th>代表论文</th><th>邮箱（来源）</th><th>X</th><th>状态</th></tr>
   <tr><td><b>Tri Dao</b></td><td>Princeton（助理教授）· Together AI</td><td>FlashAttention（一作）· Mamba（二作）</td><td><b>tri@tridao.me</b>（本人 2026 版 CV，<code>pdftotext</code> 实测）</td><td><b>@tri_dao</b>（主页 href 核验）</td><td><b>已发信</b> 11-11 11:36 · X 待 follow</td></tr>
@@ -251,19 +322,24 @@
   <tr><td>Jordan Hoffmann</td><td>未核实（OpenAlex 空；发表时 DeepMind）</td><td>Chinchilla（一作）</td><td>未找到</td><td>未找到 X</td><td>待跟踪（优先补，data 线直接依据）</td></tr>
   <tr><td>Sebastian Borgeaud</td><td>未核实（发表时 DeepMind）</td><td>Chinchilla（二作）</td><td>未找到</td><td>未找到 X</td><td>待跟踪</td></tr>
   <tr><td>Arthur Mensch</td><td>Mistral AI（联合创始人 &amp; CEO，据公开报道）</td><td>Chinchilla（三作）</td><td>未找到</td><td>未找到 X</td><td>待跟踪（其公开言论是 <code>voice_ready</code> 候选，但需原文 + 链接）</td></tr>
+  <tr><td><b>Shunyu Yao</b></td><td>OpenAI（主页自述 researcher，study agents；ReAct 发表时 Princeton）</td><td>ReAct（一作）· Tree of Thoughts（一作）</td><td><b>shunyuy@princeton.edu</b>（本人主页 <code>mailto:</code> 实测）</td><td><b>@ShunyuYao12</b>（主页 header href）</td><td><b>已发信</b> 11-11 11:43（中文 230 字）· X 待 follow</td></tr>
+  <tr><td><b>Edward J. Hu</b></td><td>Mercor（主页自述 leading model training；LoRA 发表时 Microsoft）</td><td>LoRA（一作）</td><td>未找到（<code>edwardjhu.com</code> 与 <code>/about</code> 均无 <code>mailto:</code>）</td><td><b>@edwardjhu</b>（主页社交链接 href）</td><td>待跟踪（X 可跟；无邮箱 ⇒ 本轮不发信）</td></tr>
+  <tr><td><b>Haoxing Ren</b>（Mark Ren）</td><td>Agentrys（创始人）· 前 NVIDIA Research（主页自述 26 年 IBM + NVIDIA）</td><td>ChipNeMo（末位）· VerilogEval（末位）</td><td><b>info@agentrys.ai</b>（公司站 <code>mailto:</code>；<b>公共信箱，非个人</b>，信首已请转交）</td><td>未找到 X（主页只有 Scholar + LinkedIn）</td><td><b>已发信</b> 11-11 11:43（中文 246 字）</td></tr>
+  <tr><td>Mingjie Liu</td><td>NVIDIA（OpenAlex 作者记录 <code>A5100681148</code>）</td><td>ChipNeMo（一作）· VerilogEval（一作）</td><td>未找到（无可访问主页；企业邮箱不公开）</td><td>未找到 X</td><td>待跟踪（与 Haoxing 同合作圈，同轮不重复打扰）</td></tr>
+  <tr><td>Nathaniel Pinckney</td><td>NVIDIA（按论文署名）</td><td>VerilogEval（二作）· ChipNeMo（中间作者）</td><td>未找到</td><td>未找到 X</td><td>待跟踪</td></tr>
 </table>
 <p style="font-size:13px;color:#59636e;">完整字段（主页 / 备注 / 探测原命令与输出）见 <code>research/classic/AUTHORS.md</code>；X handle <b>只登记能从作者本人主页 <code>href</code> 读到</b>的，读不到一律写「未找到 X」——<b>不猜</b>（猜错会 follow 到无关账号，比不 follow 更糟）。</p>
 
 <div class="note">
-  <b>🔴 X 能力探测（只读）⇒ <code>BLOCKED(x_access)</code></b>：<code>curl -o /dev/null -m 8 https://x.com/</code> → <b><code>000</code> / 8.00s</b>；<code>https://x.com/karpathy</code> 20s 无响应头；<code>google.com</code> / <code>huggingface.co</code> <b>同为 <code>000</code></b> ⇒ <b>本机出网白名单</b>，非 x.com 单点故障；无浏览器 / MCP 通道、无授权凭据 ⇒ <b>本轮无法自动 follow</b>。🚫 未注册新账号、未使用任何凭据。<br>
-  <b>待 follow 清单（请用户手动执行 · handle 均已核验）</b>：① <a href="https://x.com/tri_dao">@tri_dao</a>（Tri Dao，FlashAttention / Mamba）；② <a href="https://x.com/_albertgu">@_albertgu</a>（Albert Gu，Mamba / SSM）。
+  <b>🔴 X 能力探测（只读 · 两轮）⇒ <code>BLOCKED(x_access)</code></b>：<code>curl -o /dev/null -m 8 https://x.com/</code> → <b><code>000</code> / 8.00s</b>；第二轮复测 <code>x.com/</code> 与 <code>x.com/ShunyuYao12</code> <b>均 <code>000</code> / 10.0s</b>，同轮对照 <code>export.arxiv.org</code> <b><code>200</code> / 1.16s</b>；<code>google.com</code> / <code>huggingface.co</code> <b>同为 <code>000</code></b> ⇒ <b>本机出网白名单</b>，非 x.com 单点故障；无浏览器 / MCP 通道、无授权凭据 ⇒ <b>无法自动 follow</b>。🚫 未注册新账号、未使用任何凭据。<br>
+  <b>待 follow 清单（请用户手动执行 · handle 均已从本人主页核验）</b>：① <a href="https://x.com/tri_dao">@tri_dao</a>（Tri Dao，FlashAttention / Mamba）；② <a href="https://x.com/_albertgu">@_albertgu</a>（Albert Gu，Mamba / SSM）；③ <a href="https://x.com/ShunyuYao12">@ShunyuYao12</a>（Shunyu Yao，ReAct / ToT，现 OpenAI agent 方向）；④ <a href="https://x.com/edwardjhu">@edwardjhu</a>（Edward J. Hu，LoRA）。
 </div>
 <details class="voice-ready">
 <summary>🗣 voice_ready · 研究者言论（可发头条）—— 本期：无</summary>
 <ul>
-  <li><b>本期无</b>（0 条）。原因：<code>voice_ready</code> 硬要求「<b>原文摘录 + 原始链接</b>」，而本轮 <b>X 不可达</b>（<code>BLOCKED(x_access)</code>）、多数作者博客同样不可达 ⇒ 拿不到可核验的一手原文。</li>
+  <li><b>本期无</b>（0 条）。原因：<code>voice_ready</code> 硬要求「<b>原文摘录 + 原始链接</b>」，而两轮探测下 <b>X 均不可达</b>（<code>BLOCKED(x_access)</code>）、多数作者博客同样不可达 ⇒ 拿不到可核验的一手原文。</li>
   <li>按令降级处理：<b>不用二手转述冒充原文</b>，也不把二手报道标成 <code>voice_ready</code>；本轮<b>附录也无相关报道</b>（未检索到可核验的一手言论）。</li>
-  <li>解封条件：用户手动 follow 上述 2 个账号后，或本机出网放行 <code>x.com</code> / 作者博客，下轮即可按「原文 + 链接 + 时间戳」出 1–2 条。</li>
+  <li>解封条件：用户手动 follow 上述 4 个账号后，或本机出网放行 <code>x.com</code> / 作者博客，下轮即可按「原文 + 链接 + 时间戳」出 1–2 条。</li>
 </ul>
 </details>
 
@@ -311,15 +387,15 @@
   <tr><td>台账</td><td>收录 <b>331 → 334</b>；<code>SEEN.md</code> 5,655 → <b>5,658 行</b></td><td><code>papers.jsonl</code> 同步 +3（每 ID 恰好 1 行）</td></tr>
   <tr><td>候选累计</td><td><b>4,558</b> + 候选(RSS) <b>507</b></td><td>本轮候选池 310（fresh 308）</td></tr>
   <tr><td>出口</td><td><b>仅 HTML</b></td><td>🚫 未发任何日报邮件（2026-11-07 10:50 用户令）</td></tr>
-  <tr><td>B 轨（经典论文）</td><td><b>+4 篇</b> / <b>8 人</b>建档</td><td>不占当日 5 篇额度、不进 <code>SEEN.md</code>；作者信 <b>1 封</b>（Tri Dao，11:36 <code>SENT OK</code>）；X <code>BLOCKED(x_access)</code> ⇒ <b>0 follow</b>（未假装已 follow）</td></tr>
+  <tr><td>B 轨（经典论文）</td><td><b>+8 篇</b>（两轮各 4） / <b>13 人</b>建档</td><td>不占当日 5 篇额度、不进 <code>SEEN.md</code>；作者信 <b>3 封</b>（Tri Dao 11:36 · Shunyu Yao 11:43 · Haoxing Ren 11:43，均 <code>SENT OK</code>）；X <code>BLOCKED(x_access)</code> ⇒ <b>0 follow</b>（未假装已 follow），待用户手动 follow 4 个已核验 handle</td></tr>
 </table>
 
 <div class="ok-box" style="margin-top:14px;">
-  <b>本期口径自检</b>：① 当日 <b>3/5</b>（早 3「借鉴」，未凑数、未放宽入账判据）；② 3 篇均实测 <code>HTTP 200</code> + <code>application/atom+xml</code> + 真实 <code>published</code>（<b>200 ≠ 有料</b> 已校验，<code>id_list</code> 3/3）；③ 与 <code>SEEN.md</code> / <code>papers.jsonl</code> / <code>TOP_K.jsonl</code> / 近 7 天 <code>daily/</code> <b>无重复</b>（候选池 <code>seen=2</code>，均为昨日已收）；④ 3 篇距唤醒 27.2–29.0h，<b>在 72h 常规窗口内</b>；⑤ 建议节 <b>6 线齐全</b>（4 线给可执行动作 + 2 线显式「无新增可用建议」并给理由），每条含「动作 / 依据 / 收益 / 成本 / 优先级」；⑥ <b>0 <code>&lt;script&gt;</code></b>、外链仅 3 条 arXiv abs；⑦ 未改动他线任何文件；⑧ <b>B 轨</b>：4 篇经典论文的被引数<b>均为 OpenAlex 单源实测</b>（S2 返回 429 ⇒ 已注明「未查」，不估算）；X handle 只登记<b>作者本人主页可核验</b>的 2 个，其余一律「未找到 X」；作者信<b>草稿先入仓</b>、台账已记，<b>无群发 / 无承诺 / 无泄密</b>。
+  <b>本期口径自检</b>：① 当日 <b>3/5</b>（早 3「借鉴」，未凑数、未放宽入账判据）；② 3 篇均实测 <code>HTTP 200</code> + <code>application/atom+xml</code> + 真实 <code>published</code>（<b>200 ≠ 有料</b> 已校验，<code>id_list</code> 3/3）；③ 与 <code>SEEN.md</code> / <code>papers.jsonl</code> / <code>TOP_K.jsonl</code> / 近 7 天 <code>daily/</code> <b>无重复</b>（候选池 <code>seen=2</code>，均为昨日已收）；④ 3 篇距唤醒 27.2–29.0h，<b>在 72h 常规窗口内</b>；⑤ 建议节 <b>6 线齐全</b>（4 线给可执行动作 + 2 线显式「无新增可用建议」并给理由），每条含「动作 / 依据 / 收益 / 成本 / 优先级」；⑥ <b>0 <code>&lt;script&gt;</code></b>、外链仅 3 条 arXiv abs；⑦ 未改动他线任何文件；⑧ <b>B 轨</b>：<b>8 篇</b>经典论文的被引数<b>均为 OpenAlex 单源实测</b>（首轮 136,007 / 4,612 / 2,057 / 7,496；第二轮 357 / 5,814 / 346 / 14,411；S2 首轮 429 ⇒ 已注明「未查」，不估算、不跨源比较）；X handle 只登记<b>作者本人主页可核验</b>的 4 个，其余一律「未找到 X」；作者信 <b>3 封</b>均<b>草稿先入仓</b>、台账已记（同轮 ≤3 封已达上限、同作者 ≤1、同机构 ≤2），<b>无群发 / 无承诺 / 无泄密</b>；`voice_ready` 因 X 不可达记 <b>0 条</b>并写明原因，<b>未用二手转述冒充原文</b>。
 </div>
 
 <footer>
-  research 线 · 论文观察日报 <b>2026-11-11（早报 · 3/5 ＋ 🅱 B 轨经典论文 4 篇）</b> ｜ 生成：2026-11-11 06:0x CST（A 轨）/ <b>11:3x–11:5x CST（B 轨增补）</b> ｜ 数据源：arXiv 官方 API（<code>export.arxiv.org</code>）· 被引数 OpenAlex ｜ 入口索引：<code>research/daily/index.html</code> ｜ B 轨清单：<code>research/classic/PAPERS.md</code> · <code>research/classic/AUTHORS.md</code><br>
+  research 线 · 论文观察日报 <b>2026-11-11（早报 · 3/5 ＋ 🅱 B 轨经典论文 8 篇）</b> ｜ 生成：2026-11-11 06:0x CST（A 轨）/ <b>11:3x–11:4x CST（B 轨首轮 + 第二轮）</b> ｜ 数据源：arXiv 官方 API（<code>export.arxiv.org</code>）· 被引数 OpenAlex ｜ 入口索引：<code>research/daily/index.html</code> ｜ B 轨清单：<code>research/classic/PAPERS.md</code> · <code>research/classic/AUTHORS.md</code><br>
   下一轮：<b>2026-11-11 18:00 CST（晚报）</b>——补 2 篇「科普」→ 5/5，并追加「🌙 晚报变更说明（AM → PM）」；分镜脚本取当日科普 TOP-1 → <code>research/video/SCENES/11_11.html</code>。<br>
   ⚠️ 本页为论文解读 / 待读线索，<b>非结论、非官方</b>；数字均为作者自报、本线未复现；「对各线的可执行建议」为基于论文的推断，<b>非指令</b>。
 </footer>
