@@ -378,3 +378,6 @@
 1793244457637_k7z23	e0046913	10.129.2.12	18	eda_other	parked		2026-11-11 15:28	doc/criteria-writing Q&A (写出衡量标准, iterate text)
 1789893226302_sh8uf	shanliny	10.129.2.10	23	verification	parked		2026-11-11 15:28	sim x-propagation debug Q&A (VCD/log, testmode)
 1792133360129_whu5z	lorikx	10.129.2.13	22	verification	parked		2026-11-11 15:28	sim-failure debug Q&A (smoke.log FAIL)
+1790415942692_xbexl	jinhaoli	10.129.2.13	35	digital	parked		2026-11-11 16:34	r383 peek weak: 1790415942692_xbexl jinhaoli U#0=SV-syntax-check Q&A
+1788421090460_fzx8i	jason17w	10.129.32.190	145	digital	parked		2026-11-11 16:34	r383 peek weak: 1788421090460_fzx8i jason17w U#0=run-regression skill invoke flow-driving
+1792841088751_bg11w	congyi	10.129.32.75	77	eda_other	parked		2026-11-11 16:34	r383 peek weak: 1792841088751_bg11w congyi U#0=background-task query Q&A
