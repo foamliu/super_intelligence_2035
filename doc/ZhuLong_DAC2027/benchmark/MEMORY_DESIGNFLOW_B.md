@@ -1,4 +1,4 @@
-WAITING: 0（11-11 22:0x **loop 1-case 轮 · 3123n CLEAN spice_sim(CML PMOS 差分对 PVT AC 报告) claim+合成 CmlPvtAcReport-001 交付(k=14 a..n/L2/faithful) · .75 HSPICE real-sim selftest 3/3 + §4.9 三假全 FAIL · WAITING:0**）：见下方「## 流水」本轮条目。更早轮次浓缩流水已移入 ARCHIVE_OPERATOR_DESIGNFLOW_B.md 归档批次 211；全文流水见下方「## 流水」及 ARCHIVE。
+WAITING: 0（11-11 22:1x **loop 1-case 轮 · 11-05 重扫令执行：扫 8 spice-keyword hosts 11/10+ 新 session → 208→102 genuinely fresh → peek top8(newest/host) → p53dt rongtaoy CLEAN spice_sim(DRAM netlist 1376→1184 WL 修改, 197 tool_use=91 run_approved_command+81 editor, L2) claim+deepread · trace 2.2MB/419msgs ⇒ §3 唯一例外深读-only · DEBT:1 合成下轮 · WAITING:0**）：见下方「## 流水」本轮条目。更早轮次浓缩流水已移入 ARCHIVE_OPERATOR_DESIGNFLOW_B.md 归档批次 211；全文流水见下方「## 流水」及 ARCHIVE。
 
 ## 当前基线（每轮只更新这一行，不堆历史）
 `265 条 proper（spice_sim:134 · characterization:26 · jsonl B 265 行 · ledger_B case 409）· cline_eval shard B 2/86 跋：1 PASS + 1 FAIL · test_rationale 断言清单 265/265 达标 · 目标通过率（B 档）20–30% · 本轮(22:0x)：3123n CML PMOS 差分对 PVT AC 报告 trace-faithful 合成 CmlPvtAcReport-001(k=14/L2) 交付 · DEBT 清零`
