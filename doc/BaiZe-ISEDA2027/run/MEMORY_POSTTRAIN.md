@@ -7,14 +7,14 @@ WAITING: 0
 
 ## 进度快照
 
-- PHASE: posttrain-wake285（2026-11-12 Base-vs-SFT定性对比6prompt✅SFT大幅优于+GPU5/6/7全占位+sandbox 90th wake CLOSED+git synced）
-- 已完成: P3预备✅；P0✅；P1✅；P2✅；R1-R210✅；R280(EXPERIMENTS归档)；wake281 R281(全链路就绪审计20项)；wake282 R282(v11-v36 SFT重训启动+NCCL P2P fix)；wake283 R283(SFT训练监控+ckpt验证+serve dry-run)；wake284 R284(SFT训练COMPLETE+训练动力学分析+serve脚本修复+SFT ckpt served+smoke test PASS)；wake285 R285(Base-vs-SFT定性对比6prompt)
-- 当前动作: wake285 ①Base-vs-SFT定性对比6prompt[8098 base vs 8096 SFT,temp=0]✅ ②SFT大幅优于:格式(消除冗余CoT→直接产码)+领域知识(纠正幻觉"量子库"→EDA工具)+API范式(import pyAether+emyInitAether前置)+简洁性(输出长度-70%) ③原始结果落盘sft_vs_base_compare_wake285.json(21KB) ④smoke2重复目录清理+gitignore更新 ⑤GPU5/6/7全占位(17:10令满足) ⑥sandbox 90th wake CLOSED ⑦git synced
-- 下一步: ①post-SFT EDA-Eval正式评测(待沙盒ACL恢复→watcher auto-launch) ②Phase3 RL待沙盒+GPU(SFT ckpt已就绪=minicpm5-sft:8096) ③Phase1基线评测待沙盒 ④P3正式训练待pretrain ckpt(ETA≈2026-12-25)
-- 阻塞: 🔴远程沙盒10.129.32.75跨子网TCP过滤(90th wake,ICMP OK ALL TCP filtered,需网络团队开ACL)→Phase1 eval+Phase3 RL+post-SFT eval阻塞;P3等pretrain ckpt
-- 本轮新增产出: R285✅(Base-vs-SFT定性对比6prompt[T1 doc→code base 2240ch rambling→sft 124ch clean code/T3 通用 base幻觉"量子库"→sft正确EDA工具/T4 bug修正 base幻觉"区块链"→sft正确dbOpenLibrary fix/T5 多步 base错误命名空间→sft正确emyInitAether+emyOpenLibrary+emyCreateCell/T6 code→doc base不确定→sft结构化API名+sig/平均输出长度-70%]+原始结果JSON 21KB+smoke2清理+gitignore)
-- 未完成指令: 🔴用户令17:10(serve占位)GPU5✅/GPU6✅(SFT serve)/GPU7✅(base serve)全占位;🔴用户令13:40(三阶段替身计划)Phase2 SFT COMPLETE✅+ckpt served✅+定性对比✅/Phase1待沙盒ACL/Phase3 RL脚本就绪✅待沙盒+GPU
-- git: wake285 本轮提交R285(Base-vs-SFT定性对比6prompt+EXPERIMENTS §R285+MEMORY heartbeat+daily-memories+sft_surrogate_data parquet+gitignore)
+- PHASE: posttrain-wake286（2026-11-12 EDA-Eval静态分析mini-eval 10task✅SFT语法90%vs Base10%+sandbox 91st wake CLOSED+GPU5/6/7全占位+git synced）
+- 已完成: P3预备✅；P0✅；P1✅；P2✅；R1-R210✅；R280(EXPERIMENTS归档)；wake281-285✅；wake286 R286(EDA-Eval静态分析mini-eval 10task)
+- 当前动作: wake286 ①EDA-Eval 158任务集分析(488 unique APIs/Layout64+Schematic47+DesignMgmt24+Others23/techlib45 vs non-techlib113)✅ ②静态分析mini-eval v1+v2:10 non-techlib task×2 model(8098 base vs 8096 SFT)✅ ③SFT语法合法9/10 vs Base1/10(strip markdown后) ④API覆盖率Base0.412 vs SFT0.366(可比) ⑤SFT代码3.4x更简洁(1747ch vs 5918ch) ⑥SFT全部finish=stop(10/10)vs Base4/10撞max_tokens ⑦SFT仍有API名幻觉(dbCV_place→应dbCrtInst)+参数传递差异(cfg vs *cfg) ⑧pyAether MCP search_apis可用但run_code超时(连同一沙盒) ⑨EXPERIMENTS §R286新增 ⑩sandbox 91st wake CLOSED ⑪GPU5/6/7全占位
+- 下一步: ①post-SFT EDA-Eval正式评测(待沙盒ACL恢复→watcher auto-launch) ②Phase3 RL待沙盒+GPU(SFT ckpt已就绪=minicpm5-sft:8096) ③Phase1基线评测待沙盒 ④P3正式训练待pretrain ckpt(ETA≈2026-12-25) ⑤可扩大静态分析至全量113 non-techlib任务(不需沙盒)
+- 阻塞: 🔴远程沙盒10.129.32.75跨子网TCP过滤(91st wake,ICMP OK ALL TCP filtered,需网络团队开ACL)→Phase1 eval+Phase3 RL+post-SFT eval阻塞;P3等pretrain ckpt
+- 本轮新增产出: R286✅(EDA-Eval静态分析mini-eval 10task[SFT语法90%vs Base10%/API覆盖率可比/SFT 3.4x简洁/SFT全部完成/Base 4/10截断/SFT API名幻觉dbCV_place/参数差异cfg vs *cfg]+pyAether MCP可用性发现[search_apis✅/run_code❌]+原始结果JSON v1+v2+EXPERIMENTS §R286)
+- 未完成指令: 🔴用户令17:10(serve占位)GPU5✅/GPU6✅(SFT serve)/GPU7✅(base serve)全占位;🔴用户令13:40(三阶段替身计划)Phase2 SFT COMPLETE✅+ckpt served✅+定性对比✅+静态分析✅/Phase1待沙盒ACL/Phase3 RL脚本就绪✅待沙盒+GPU
+- git: wake286 本轮提交R286(EDA-Eval静态分析mini-eval+EXPERIMENTS §R286+MEMORY heartbeat+daily-memories)
 
 
 

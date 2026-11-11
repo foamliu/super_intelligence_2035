@@ -3722,3 +3722,131 @@ SFT recipe（v11-v36 PyAether 语料, 927 train pairs, 5 epoch, lr 1e-5 cosine, 
 | SFT ckpt | `sft_surrogate_runs/minicpm5_pyaether_v2_v11v36/global_step_70`（served on GPU6:8096） |
 | Base serve | GPU4:8098 `minicpm5-2b` |
 
+## §R286 (2026-11-12 wake286) EDA-Eval 静态分析 mini-eval（10 task × 2 model · 零沙盒 · 纯 vLLM 推理 + pyAether MCP API 查验）
+
+### 1. 背景与动机
+
+- wake285 做了 6-prompt 定性对比（手工设计 prompt），结论是 SFT 在格式/领域知识/API 范式/简洁性 4 维全胜
+- 本轮推进：用 **EDA-Eval-PyAether 158 任务集中的 10 个真实任务**做定量静态分析
+- 沙盒仍 BLOCKED（91st wake, 10.129.32.75 全 TCP filtered），无法跑完整 Pass@1 评测
+- **关键发现**：pyAether MCP server 的 `search_apis` / `get_api_details` 可用（本地查询），但 `run_code` 超时（连同一沙盒）
+- 策略：生成代码 → 静态分析（语法/API 覆盖率/代码长度），不做执行验证
+
+### 2. 实验设计
+
+- **任务集**：从 158 任务中按 scenario 分层抽样 10 个 **非 techlib** 任务（Layout 5 + Schematic 3 + Design Mgmt 2）
+  - 非 techlib 原因：techlib 任务需技术库环境，沙盒不通时更无法验证
+- **模型**：Base `minicpm5-2b`（GPU4:8098）vs SFT `minicpm5-sft` global_step_70（GPU6:8096）
+- **Prompt 策略 v2**：system="Python code generator, output ONLY raw code" + user="Write the complete function, start with import"
+  - v1 失败原因：base 输出推理文本、SFT 仅输出 import 语句（47ch），prompt 不够明确
+  - v2 改进：明确要求"complete function (signature + body)"，移除 markdown stop sequence
+- **温度**：0.0（确定性）
+- **max_tokens**：2048
+- **指标**：
+  1. API 覆盖率 = 正确 API 数 / 期望 API 数（正则匹配 `pyScript.xxx` / `pyAether.xxx`）
+  2. 语法合法性 = `compile()` 通过（strip markdown ``` 后）
+  3. 代码长度（字符数）
+  4. finish_reason（stop vs length）
+
+### 3. 结果
+
+#### 3.1 汇总
+
+| 指标 | Base (minicpm5-2b) | SFT (minicpm5-sft) | 差异 |
+|:--|:--|:--|:--|
+| 语法合法（strip后） | **1/10** (10%) | **9/10** (90%) | **SFT +80pp** |
+| API 覆盖率（mean） | 0.412 | 0.366 | Base 略高 +0.046 |
+| 代码长度（mean ch） | 5918 | 1747 | SFT **3.4x 更短** |
+| finish=stop | 6/10 | **10/10** | SFT 全部完成 |
+| finish=length（截断） | 4/10 | 0/10 | Base 4次撞 max_tokens |
+| 定义了目标函数 | 10/10 | 10/10 | 持平 |
+
+#### 3.2 逐任务
+
+| Task | Scenario | APIs期望 | Base_cov | SFT_cov | Base_syn | SFT_syn | Base_len | SFT_len |
+|:--|:--|:--|:--|:--|:--|:--|:--|:--|
+| 069 | Layout/Creation | 4 | 0.25 | 0.25 | ERR | OK | 5454 | 1142 |
+| 062 | Layout/Query | 1 | **1.0** | **1.0** | ERR | OK | 5066 | 1691 |
+| 032 | Layout/Geometry | 6 | 0.167 | 0.167 | ERR | OK | 6915 | 1039 |
+| 080 | Layout/Geometry | 5 | 0.4 | 0.2 | ERR | ERR | 7965 | 1543 |
+| 149 | Layout/Query | 4 | 0.25 | 0.0 | ERR | OK | 8335 | 1151 |
+| 073 | Schematic/Sim | 3 | 0.333 | 0.333 | OK | OK | 2767 | 793 |
+| 021 | Schematic/Creation | 3 | 0.667 | 0.667 | ERR | OK | 3922 | 515 |
+| 067 | Schematic/Sim | 3 | 0.333 | 0.333 | ERR | OK | 4271 | 1039 |
+| 060 | Schematic/Sim | 21 | 0.048 | 0.048 | ERR | OK | 5890 | 2076 |
+| 013 | Schematic/Creation | 3 | 0.667 | 0.667 | ERR | OK | 8595 | 6481 |
+
+#### 3.3 代码质量实例
+
+**Task 062（SFT 100% API 覆盖，语法 OK）**：
+- SFT 正确使用 `pyScript.emyViaExtEncParam(cfg)` 创建对象，逻辑结构正确（set diff 找 added/removed）
+- vs Canonical：canonical 用 `*cfg` 解包传参，SFT 用 `cfg` 直接传 → **微妙 API 用法差异**（可能运行时失败）
+- SFT 用 `set()` 假设对象可哈希 → 风险点（canonical 用 list `in` 判断）
+
+**Task 021（SFT 66.7% API 覆盖，语法 OK，495ch 极简）**：
+- SFT 正确使用 `dbCV` 和 `dbInst` 类型注解
+- SFT **幻觉了** `pyScript.dbCV_place()` —— 正确 API 应为 `pyScript.dbCrtInst(cv=..., point=..., lib=..., cell=..., view=..., inst=...)`
+- 代码结构完全正确（遍历 → 提取 → 创建 → append → return），仅 API 名错误
+
+### 4. 关键发现
+
+1. **SFT 语法合法性碾压 Base（90% vs 10%）**：SFT 产出干净的 Python 代码（strip ``` 后），Base 输出推理文本与代码混杂，即使 strip 后仍多因残留文本导致语法错
+2. **SFT 3.4x 更简洁**：1747ch vs 5918ch，SFT 不输出冗余推理
+3. **SFT 全部完成（10/10 stop），Base 4/10 撞 max_tokens**：Base 的冗余推理消耗 token 预算
+4. **API 覆盖率可比**：Base 0.412 vs SFT 0.366 —— 但 Base 用 3.4x 文本仅多覆盖 4.6pp，效率远低于 SFT
+5. **SFT 的 API 知识仍有缺口**：
+   - 正确使用已知 API（emyViaExtEncParam, emyBoxF, dbCV, dbInst）
+   - **幻觉不存在的 API**（dbCV_place → 应为 dbCrtInst）
+   - **微妙的参数传递错误**（cfg vs *cfg）
+   - 这些缺口正是 RL 阶段需要通过执行反馈修正的
+
+### 5. 局限性
+
+- **10 task 非全量**：从 158 中抽 10 个非 techlib，统计力弱
+- **直连 API 非 cline agentic**：实际 EDA-Eval 使用 cline 多轮 agentic loop，单次 API 调用无法复现
+- **无沙盒执行**：无法验证功能正确性（API 覆盖 ≠ Pass@1）
+- **静态分析**：语法 OK + API 名正确 ≠ 运行时正确（参数传递/类型/异常处理未检查）
+- **v2 prompt 仍有问题**：两模型均回显函数签名/docstring，浪费 token；实际 cline 评测不回显
+- ⚠️ **替身预演声明**：MiniCPM5-2B 是 BaiZe 替身，此结果**不可迁移到 BaiZe**，仅验证 SFT recipe 流程
+
+### 6. 与 wake285 的一致性
+
+| 维度 | wake285（6 prompt 定性） | wake286（10 task 定量静态） |
+|:--|:--|:--|
+| 格式/语法 | SFT 消除冗余 CoT | SFT 语法合法 90% vs 10% |
+| 简洁性 | SFT 输出 -70% | SFT 输出 -70%（3.4x） |
+| API 范式 | SFT 正确 import + emyInitAether | SFT 正确 import + 函数结构 |
+| 领域知识 | SFT 纠正幻觉 | SFT 仍有 API 名幻觉（dbCV_place） |
+
+两轮结论一致：**SFT 显著改善代码格式和 API 调用范式，但 API 名称准确性和参数用法仍有缺口**。
+
+### 7. 对 post-train 三步的侧重建议（更新）
+
+- **SFT（已完成）**：✅ 成功建立代码输出格式和 API 调用范式
+- **RL（待沙盒）**：应重点修正 ① API 名幻觉 ② 参数传递方式 ③ 通过执行反馈关闭"语法 OK 但运行时 fail"的缺口
+- **评测（待沙盒）**：沙盒恢复后应优先跑 **techlib=False 的 113 任务子集**（非 techlib 更易通过，验证 SFT 增益），再扩到全量 158
+
+### 8. pyAether MCP server 可用性发现
+
+| 功能 | 状态 | 用途 |
+|:--|:--|:--|
+| `search_apis` | ✅ 可用（本地向量查询） | API 名称搜索/验证 |
+| `get_api_details` | ✅ 可用（本地数据库） | API 详情/参数/继承 |
+| `search_apis_by_keyword` | ✅ 可用 | 缩写/关键词查找 |
+| `run_code` | ❌ 超时（60s，连沙盒 10.129.32.75） | 代码执行——**与远程沙盒同一阻塞** |
+
+→ MCP server 的查询功能可用于 **API 名称验证**（辅助静态分析），但代码执行仍需沙盒恢复。
+
+### 9. 资产
+
+| 项 | 路径 |
+|:--|:--|
+| 本节 | EXPERIMENTS §R286 |
+| v1 原始结果 | `eda_eval_static_wake286.json`（v1 prompt，10 task × 2 model） |
+| v2 原始结果 | `eda_eval_static_v2_wake286.json`（v2 prompt，10 task × 2 model） |
+| 生成脚本 v1 | `/tmp/eda_eval_static_wake286.py` |
+| 生成脚本 v2 | `/tmp/eda_eval_static_v2.py` |
+| 158 任务集 | `/home/app.e0031982/code/eda_fastmcp/pyAether-eval/original_dataset/EDA-Eval-PyAether-v20260311.jsonl` |
+| SFT ckpt | `sft_surrogate_runs/minicpm5_pyaether_v2_v11v36/global_step_70`（served GPU6:8096） |
+| Base serve | GPU4:8098 `minicpm5-2b` |
+
