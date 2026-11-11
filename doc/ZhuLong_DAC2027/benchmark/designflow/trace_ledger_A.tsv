@@ -130,7 +130,7 @@
 1793081732674_ole38	e0030085	hfeg0pkn005	21	verification	case	EDA-Eval-DesignFlow-DFTTestmaxFlow-001	2026-11-04 23:17	
 1791962616204_7j1bw.messages.json	caozhang	hfhds209	111	digital	parked		2026-11-04 23:55	cross-shard collision: AsyncFifoSim-001 is shard D case (commit 3e9a310); shard A abandons; see trace_deepreads/7j1bw_async_fifo_sim.md for full-formula fix
 1792386615426_npf2k.messages.json					case	EDA-Eval-DesignFlow-StarRCDspfFlow-001	2026-11-05 00:08	r72 re-claim: B-synthesized StarRC DSPF flow + SPF resistor-layer parser; parked→active (asset /proj denied → B-synth like tzth7); .75 HAS real StarRC for self-verify
-1793004375421_dse5n.messages.json	e0046913	hfeg0pkn003	13	eda_other	parked		2026-11-05 01:10	CROSS-SHARD COLLISION (enbl7/8z5a8 pattern): shard B committed EDA-Eval-DesignFlow-FeintFlowAudit-001 assets+reference (incl check.py/negatives) at commit 6541c7f (2026-11-05 00:40) from the SAME dse5n trace. Shard A built a complete version in parallel (r74) but abandoned to avoid merged-jsonl duplicate. dse5n is owned by shard B; shard A does NOT re-pick. Lesson reinforced: BLOCKER② cross-shard dedup must check ALL shard jsonls + shared assets/ dir + main jsonl BEFORE building, not just A.jsonl + ledgerA.
+1793004375421_dse5n.messages.json	e0046913	hfeg0pkn003	13	eda_other	parked		2026-11-11 17:35	r385 mc10-29-slice peek: 
 1791967220671_pdxr9	alrenc	hfeg0pkn004	22	eda_other	case	EDA-Eval-DesignFlow-LsfPrimesimSubmit-001	2026-11-05 01:31	
 1792981676632_bxnc8	zhengc	hfeg0plg66	28	eda_other	parked		2026-11-05 01:31	pure capabilities Q&A (6 msgs, user 你能做什么), no real task/deliverable; mc28 from keyword noise in assistant capabilities listing
 1790126403703_fj73q	e02141	hfeg0pkn002	55	digital	parked		2026-11-05 16:46	TCAD/Sentaurus swb-python-api env config task; L1-only (eda_flow MCP has no Sentaurus backend, can't真跑); §5 new cases must be L2/L3; eda_other already 14 cases
@@ -385,3 +385,11 @@
 1789868617686_y7550.messages.json	t0002470	hfeg0plg76	197	eda_other	parked		2026-11-11 17:10	U#0=filter JSON for non-REF/RFM/SRE/SRX, analysis-on-file hard to hidden-B, r384
 1792043028504_5szsv.messages.json	alanji	hfeg0pgn145	194	digital	parked		2026-11-11 17:10	U#0=analyze netlist diff between 2 paths, analysis Q&A weak, r384
 1792053321007_ux82s.messages.json	gracew	hfeg0pkn004	183	digital	parked		2026-11-11 17:10	U#2=write similar .v pattern (produce-intent) BUT 0 write tool_calls (agent never produced deliverable) + ref .v files permission-denied, NOT VIABLE, r384
+1792548360759_l8989.messages.json	tongfanl	hfhds201	16	digital	parked		2026-11-11 17:35	r385 mc10-29-slice peek: 
+1793240477462_vf2q3.messages.json	ruisongs	10.129.33.216	25	digital	parked		2026-11-11 17:35	r385 mc10-29-slice peek: 
+1793704285912_k2x6m.messages.json	daiweilu	10.129.32.83	22	digital	parked		2026-11-11 17:35	r385 mc10-29-slice peek: 
+1794187704615_bmqho.messages.json	e0039602	10.129.2.11	23	digital	parked		2026-11-11 17:35	r385 mc10-29-slice peek: 
+1792804747547_8bgtd.messages.json	ruisongs	10.129.33.216	17	digital	parked		2026-11-11 17:35	r385 mc10-29-slice peek: 
+1793969287953_187i0.messages.json	johnl	10.129.33.246	12	digital	parked		2026-11-11 17:35	r385 mc10-29-slice peek: 
+1793154396942_2idq4.messages.json	mwhu	10.129.35.74	18	eda_other	parked		2026-11-11 17:35	r385 mc10-29-slice peek: 
+1793931604619_df52y.messages.json	chunfang	10.129.2.10	20	digital	parked		2026-11-11 17:35	r385 mc10-29-slice peek: 
