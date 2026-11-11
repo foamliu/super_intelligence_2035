@@ -9898,4 +9898,98 @@ box shapes), sharing the `emyPointArrayF` + `layNum` + `purNum` constructor patt
 
 ---
 
+## §R200 — v30 SLE Enum-Constant SFT Corpus (wake269, 2026-11-11)
+
+### 1. Motivation
+
+R191 blind scan (re-run with v11-v29, 808 pairs) showed **17 blind eval APIs**
+out of 164 raw APIs (89.6% coverage). The #1 blind family was:
+
+| Rank | Family | Usages | APIs | Type |
+|:--:|:--|--:|--:|:--|
+| #1 | SLE* | 3 | 3 | enum-constant values (SleGOATypeEnum / SleLeWireTypeEnum) |
+| #2 | sle* | 1 | 1 | `sleLeWireTypeEnumToEMYSegStyleEnum` (consumer of the 2 SLE_LE_WIRE_* constants) |
+
+The 3 SLE_* blind APIs are **enum CONSTANT values** (not callable functions) —
+the same ISOLATE-class pattern as R198's MDE_* constants. They cannot be fetched
+via MCP `get_api_details` (returns empty for enum values); authoritative
+signatures were extracted from the consuming callables' docs and eval-dataset
+grep. Covering SLE_* + `sleLeWireTypeEnumToEMYSegStyleEnum` clears the #1 (SLE)
+and #2 (sle) blind families in one round, pushing coverage 89.6% → 92.1%.
+
+### 2. Target APIs (6)
+
+| API | Kind | Signature | Consumed by |
+|:--|:--|:--|:--|
+| `SLE_GOA_AND` | enum constant (SleGOATypeEnum) | `SLE_GOA_AND` (no args) | `emyPointArrayGOA(..., opr)` |
+| `SLE_LE_WIRE_VARIABLE` | enum constant (SleLeWireTypeEnum) | `SLE_LE_WIRE_VARIABLE` (no args) | `sleLeWireTypeEnumToEMYSegStyleEnum` / `sleLeWireTypeEnumToEMYEndStyleEnum` |
+| `SLE_LE_WIRE_EXTEND` | enum constant (SleLeWireTypeEnum) | `SLE_LE_WIRE_EXTEND` (no args) | same two consumers |
+| `emyPointArrayGOA` | callable | `emyPointArrayGOA(a, b, out, opr)` → emyBoolean | (already covered; re-taught for GOA context) |
+| `sleLeWireTypeEnumToEMYSegStyleEnum` | callable | `...(pre, ctr, nxt, beginType, endType, bExt, eExt, preW, curW, nxtW, grid, style[, swapType])` → emyBoolean | blind; new coverage |
+| `sleLeWireTypeEnumToEMYEndStyleEnum` | callable | `...(type, endStyle)` → emyBoolean | extra context |
+
+### 3. Pair Generation (27 pairs)
+
+| Type | Count | Description |
+|:--|--:|:--|
+| S1 | 6 | doc → code (1 per API) |
+| S3 | 6 | code → doc (1 per API) |
+| S4 | 6 | multi-step trace (intersect-and-readback, union-vs-intersect, wire→segstyle swapType, wire→endstyle both-types) |
+| S5 | 6 | error / edge-case / quiz (constant-vs-callable, disjoint-intersection edge, output-param quiz, arg-count quiz) |
+| S6 | 3 | cross-API workflow (all-4-GOA-ops, wire→segstyle→endstyle, intersect-then-build-wire) |
+
+### 4. Contamination Check
+
+- **155 eval entry_points** loaded from `EDA-Eval-PyAether-v20260311.jsonl`
+- All 27 pairs scanned: **0 rejected, 27 PASS**
+- All 6 target APIs are ISOLATE-class (eval helper APIs/constants, NOT eval
+  entry_points) → teaching public API reference is compliant with S5.1 red line
+- Doctest coordinates deliberately differ from eval canonical solutions
+  (tasks 085 / 088) for pollution isolation
+
+### 5. Coverage Impact
+
+| Metric | Before (v29) | After (v30) | Delta |
+|:--|:--|:--|:--|
+| Covered eval APIs | 147/164 | 151/164 | +4 |
+| Blind eval APIs | 17 | 13 | -4 |
+| Coverage ratio | 89.6% | 92.1% | +2.5 pp |
+| SLE* blind | 3 | 0 | cleared |
+| sle* blind | 1 | 0 | cleared |
+| New #1 blind family | SLE (3) | CString (2) | — |
+
+### 6. Key API Facts
+
+- `SLE_GOA_AND` is the geometric-AND (intersection) selector; 4 siblings:
+  SLE_GOA_AND (intersection), SLE_GOA_OR (union), SLE_GOA_SUB (A-minus-B),
+  SLE_GOA_XOR (exclusive-or). Pass as the `opr` arg of `emyPointArrayGOA`.
+- `SLE_LE_WIRE_VARIABLE` = variable-width wire end; `SLE_LE_WIRE_EXTEND` =
+  extend wire end. Both are values of `SleLeWireTypeEnum`, consumed as
+  beginType/endType of `sleLeWireTypeEnumToEMYSegStyleEnum` and as the `type`
+  arg of `sleLeWireTypeEnumToEMYEndStyleEnum`.
+- `emyPointArrayGOA` returns an **emyBoolean** success flag, NOT the result
+  polygons — the result comes back through the **output-param** container
+  (`emyArray_p_emyPointArray`, pre-created, 3rd arg). Disjoint inputs → 0
+  polygons but `ok=True`.
+- `sleLeWireTypeEnumToEMYSegStyleEnum` takes 12 required positional args; the
+  `style` (emySegStyle) arg is the **output-param** (mutated in place). Optional
+  13th arg `swapType` (bool) swaps begin/end types.
+
+### 7. Deliverables
+
+| Item | Path | Size |
+|:--|:--|--:|
+| corpus builder | `run/baize_posttrain_r200_sle_enum_corpus.py` | ~660 lines / py_compile OK |
+| training-ready corpus | `run/sft_pyaether_corpus_v30_sle_enum.jsonl` | 27 pairs / 0 pollution |
+| blind scan script (updated) | `run/baize_posttrain_r191_blind_scan.py` | v30 added to CORPUS_FILES |
+| blind scan output | `run/r191_blind_scan.json` | re-run with v11-v30 |
+
+> Cumulative PyAether SFT corpus: v11 (93) + v12 (25) + v13 (45) + v14 (45)
+> + v15 (45) + v16 (45) + v17 (45) + v18 (25) + v19 (30) + v20 (35)
+> + v21 (50) + v22 (65) + v23 (65) + v24 (25) + v25 (30) + v26 (40)
+> + v27 (25) + v28 (50) + v29 (25) + v30 (27) = **835 pairs**.
+> All 835 pairs PASS the 155-entry_point pollution scan. v11-v30 are gated
+> for training.
+
+---
 

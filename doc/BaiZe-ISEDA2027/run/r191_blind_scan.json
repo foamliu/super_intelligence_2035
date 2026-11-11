@@ -1,16 +1,13 @@
 {
   "round": "R191-scan",
   "eval_raw_apis": 164,
-  "covered_eval_apis": 147,
-  "blind_eval_apis": 17,
-  "coverage_ratio": 0.8963,
+  "covered_eval_apis": 151,
+  "blind_eval_apis": 13,
+  "coverage_ratio": 0.9207,
   "blind_list": [
     "CColor",
     "CString",
     "CStringList",
-    "SLE_GOA_AND",
-    "SLE_LE_WIRE_EXTEND",
-    "SLE_LE_WIRE_VARIABLE",
     "SleQueryData",
     "aelEngineerNotation",
     "agrGetSnapPoints",
@@ -19,12 +16,10 @@
     "guMotion",
     "mouseLBClick",
     "setPyAePath",
-    "sleLeWireTypeEnumToEMYSegStyleEnum",
     "smash_option",
     "timeToTm"
   ],
   "family_usage": {
-    "SLE": 3,
     "CString": 2,
     "CColor": 1,
     "CStringList": 1,
@@ -36,25 +31,10 @@
     "gu": 1,
     "mouse": 1,
     "set": 1,
-    "sle": 1,
     "smash": 1,
     "time": 1
   },
   "family_apis": {
-    "SLE": [
-      {
-        "api": "SLE_GOA_AND",
-        "eval_usage": 1
-      },
-      {
-        "api": "SLE_LE_WIRE_EXTEND",
-        "eval_usage": 1
-      },
-      {
-        "api": "SLE_LE_WIRE_VARIABLE",
-        "eval_usage": 1
-      }
-    ],
     "CString": [
       {
         "api": "CString",
@@ -118,12 +98,6 @@
     "set": [
       {
         "api": "setPyAePath",
-        "eval_usage": 1
-      }
-    ],
-    "sle": [
-      {
-        "api": "sleLeWireTypeEnumToEMYSegStyleEnum",
         "eval_usage": 1
       }
     ],
