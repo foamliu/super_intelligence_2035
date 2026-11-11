@@ -1555,3 +1555,27 @@ ssh 10.239.2.29 'setsid bash .../baize_l2_eval_160k_v3.sh > /tmp/baize_l2_eval_1
 - GPU 8 卡 94-100% / 74-75GB
 - 命令：`ssh 10.239.2.29 'cat /proc/146283/fd/1 | tail -3'`（PID 146283）
 
+
+## #1966 · 2026-11-11 14:50 · L3/L4 可行性调研 + 定性测试
+
+### 定性测试：160k llama-server 代码生成
+- **方法**：curl http://127.0.0.1:8082/v1/completions 发送 "Write a Python function to check if a number is prime. Only output the code."
+- **模型输出**：` The following are the answers111111111111111111111...` (退化为重复字符)
+- **结论**：模型在 code/math 生成任务上全面退化，同 GSM8K=0% 根因
+
+### L3 Terminal-bench 可行性
+- 基础设施：Harbor Docker + gw_proxy + 7 agent 适配器，_base.py 硬编码 cloud API
+- 改本地模型：需修改 _base.py (TB_BASE_URL/TB_MODEL/TB_API_KEY) + 重建 Docker 镜像
+- CPU llama-server：多轮交互 ~30s/轮，极慢
+- **根本障碍**：模型生成能力不足，无法完成 agentic 多步任务
+
+### L4 designflow 可行性
+- run_one.sh 需 /nasdata/app.e0031982/code/EDA-Flow-Bench (仅 .15 有)
+- SSH 10.251.36.15 = Connection timed out
+- 任务 workdir (prompt.txt + assets/) 在 NFS 上可读
+- 判分器 check.py 在 .15，NFS 上没有
+- 任务极复杂（4 步多任务：修复 Python + 改写 SKILL + 运行 pipeline + 更新 lib.defs）
+- **根本障碍**：同 L3，模型生成能力不足
+
+### 核心发现
+L2/L3/L4 低分/空白同一根因 = 训练数据(P-5b/P-8 Ultra-FineWeb-L3)缺乏 code+math 内容 → 所有需要连贯生成的任务都退化为重复输出

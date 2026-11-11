@@ -43,7 +43,7 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
     <span>📅 2026-11-11</span>
     <span>🏗 Mamba2-hybrid 2.22B</span>
     <span>🔥 训练 iter≈163.8k / 700k</span>
-    <span>📊 L1: 16 ckpt ✅ | L2: GSM8K=0%@160k 🔴 MMLU~7%进行中 v4已启动 | L3: 空白 | L4: 61任务未接</span>
+    <span>📊 L1: 16 ckpt ✅ | L2: GSM8K=0%@160k 🔴 MMLU~17%进行中 v4已启动 | L3: 调研完(基础设施复杂) | L4: 数据在.15不可达+定性测试=退化输出</span>
   </div>
   <div style="margin-top:12px;font-size:12.5px;background:rgba(0,0,0,.18);border-radius:8px;padding:8px 12px;opacity:.95">
     ⚠️ 本报告是<b>训练监控与决策依据</b>，<b>不进论文正文</b>（2026-11-10 用户令）。用户关注点（2026-11-11）：<b>如何拿到更好的结果</b>。
@@ -128,7 +128,7 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
   <table>
     <tr><th>任务</th><th>口径</th><th>shot</th><th>后端</th><th>状态</th><th>结果</th></tr>
     <tr><td>GSM8K</td><td>limit=100, CPU, ctx=4096</td><td>5-shot</td><td class="l"><code>local-completions</code></td><td class="bad">✅ 完成</td><td class="bad">0.0% (strict+flex)</td></tr>
-    <tr><td>MMLU</td><td>limit=100, CPU, ctx=4096</td><td>0-shot</td><td class="l"><code>gguf_lmeval_run.py</code> (logit_bias)</td><td class="warn">🟡 ~1588/22800 运行中</td><td>ETA~2h</td></tr>
+    <tr><td>MMLU</td><td>limit=100, CPU, ctx=4096</td><td>0-shot</td><td class="l"><code>gguf_lmeval_run.py</code> (logit_bias)</td><td class="warn">🟡 ~3952/22800(~17%) 运行中</td><td>ETA~1.5h</td></tr>
   </table>
   <p class="trend">⏱ MMLU loglikelihood ~2-3 it/s · CPU llama-server port=8082 -t4 nice19 · 不占 GPU</p>
 </div>
@@ -145,7 +145,7 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
 </div>
 
 <!-- L3 -->
-<h2 class="sec">L3 · Agentic 能力 <span class="badge b-bad">❌ 完全空白</span></h2>
+<h2 class="sec">L3 · Agentic 能力 <span class="badge b-bad">❌ 空白 · 调研完成</span></h2>
 <div class="card">
   <h3>评测目标与现状</h3>
   <table>
@@ -156,36 +156,79 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
   </table>
 </div>
 <div class="card">
-  <h3>已有资源（harness 线产出 · 用 kimi-k2.6 作骨干）</h3>
+  <h3>已有资源（harness 线产出 · 用 kimi-k2.6 / glm-5.3-flash 作骨干）</h3>
   <table>
     <tr><th>资源</th><th>路径</th><th>说明</th></tr>
     <tr><td class="l">TB 7 路横评报告</td><td class="l"><code>report_harness_terminalbench_7way_final_zh.html</code></td><td class="l">cline 48.3% 最优</td></tr>
     <tr><td class="l">SWE-bench pilot20</td><td class="l"><code>report_harness_swebench_verified_pilot20_zh.html</code></td><td class="l">20 题 pilot</td></tr>
     <tr><td class="l">SWE-bench full500</td><td class="l"><code>report_harness_swebench_verified_full500_zh.html</code></td><td class="l">500 题</td></tr>
     <tr><td class="l">TB 题集</td><td class="l"><code>~/terminal-bench/</code></td><td class="l">89 目录 · Docker 镜像</td></tr>
+    <tr><td class="l">TB harness 代码</td><td class="l"><code>run/harness/terminalbench/</code></td><td class="l">Harbor Docker + 7 agent 适配器</td></tr>
   </table>
-  <div class="alert"><b>关键差异</b>：harness 线用 kimi-k2.6(API)，BaiZe 2B 需<b>本地 GPU 服务</b>(vllm/sglang)。当前训练占满 .29 GPU。</div>
+  <div class="alert"><b>关键差异</b>：harness 线用 cloud API (glm-5.3-flash)，BaiZe 2B 需<b>本地服务</b>(vllm/sglang on GPU, 或 llama-server on CPU)。当前训练占满 .29 GPU。</div>
 </div>
 <div class="card">
-  <h3>L3 建设计划</h3>
+  <h3>🔴 L3 可行性分析（2026-11-11 · P0 调研结论）</h3>
+  <table>
+    <tr><th>维度</th><th>发现</th><th>影响</th></tr>
+    <tr><td class="l">基础设施</td><td class="l">TB 用 <b>Harbor Docker</b> 容器 + gw_proxy + 7 个 agent 适配器(cline/codex/hermes/...)。适配器硬编码 cloud API endpoint (<code>http://agi-gateway.cxmt.com/v1</code>) 和 model name (<code>glm-5.3-flash</code>)。改用本地模型需修改 <code>_base.py</code> 的 <code>TB_BASE_URL</code>/<code>TB_MODEL</code>/<code>TB_API_KEY</code> + 重建 Docker 镜像。</td><td class="warn">中等工作量</td></tr>
+    <tr><td class="l">服务化</td><td class="l">CPU llama-server 可服务但 agentic 多轮交互极慢(~30s/轮)。GPU vllm/sglang 需要 GPU 窗口(训练占满)。</td><td class="warn">需 GPU 窗口</td></tr>
+    <tr><td class="l"><b>模型能力</b></td><td class="l"><b>定性测试(160k llama-server)</b>：发送 "Write a Python function to check if a number is prime" → 模型输出 <code>"The following are the answers111111111..."</code> → <b>退化为重复字符</b>，无法生成连贯代码</td><td class="bad">🔴 根本性障碍</td></tr>
+    <tr><td class="l">与 L2 一致性</td><td class="l">GSM8K=0%(数学退化重复) + 代码生成退化 → <b>同一根因：训练数据缺 code+math</b>。Agentic 任务需多轮工具调用+代码生成，2B base model 在当前训练阶段不可能完成。</td><td class="bad">🔴 同 L2 根因</td></tr>
+  </table>
+  <div class="alert">
+    <b>结论</b>：L3 评测在当前阶段(base 2B @ 160k)<b>不可行</b>——不是基础设施问题，而是<b>模型生成能力根本不足</b>。模型在任何需要连贯多步生成的任务上都退化为重复输出。<br>
+    <b>建议</b>：L3 延后至 ① post-train SFT 后(模型有基本指令跟随能力) 或 ② pretrain 增加 code+math 数据后。基础设施(GPU 服务化 + Docker 适配)可在模型能力达标后 1-2 天内完成。
+  </div>
+</div>
+<div class="card">
+  <h3>L3 建设计划（延后 · 待模型能力达标）</h3>
   <table>
     <tr><th>步骤</th><th>内容</th><th>依赖</th><th>状态</th></tr>
-    <tr><td>1</td><td class="l">vllm/sglang 服务化 BaiZe 2B(160k)</td><td class="l">GPU 窗口</td><td class="warn">📋 待资源</td></tr>
-    <tr><td>2</td><td class="l">cline harness → 本地 endpoint</td><td class="l">步骤1</td><td>📋</td></tr>
+    <tr><td>0</td><td class="l"><b>前置：模型生成能力达标</b>(SFT 后或数据配比改后)</td><td class="l">code+math 数据 / SFT</td><td class="bad">🔴 阻塞中</td></tr>
+    <tr><td>1</td><td class="l">vllm/sglang 服务化 BaiZe 2B</td><td class="l">GPU 窗口 + 步骤0</td><td class="warn">📋 待资源</td></tr>
+    <tr><td>2</td><td class="l">修改 TB 适配器 <code>_base.py</code> → 本地 endpoint</td><td class="l">步骤1</td><td>📋</td></tr>
     <tr><td>3</td><td class="l">TB 10 题 smoke → 全 89 题</td><td class="l">步骤1+2</td><td>📋</td></tr>
   </table>
 </div>
 
 <!-- L4 -->
-<h2 class="sec">L4 · 领域能力 <span class="badge b-bad">❌ 未接</span></h2>
+<h2 class="sec">L4 · 领域能力 <span class="badge b-bad">❌ 未接 · 调研完成</span></h2>
 <div class="card">
   <h3>已有资源</h3>
   <table>
     <tr><th>资源</th><th>路径</th><th>说明</th></tr>
     <tr><td class="l">designflow 评测脚本</td><td class="l"><code>doc/ZhuLong_DAC2027/benchmark/designflow/cline_eval/</code></td><td class="l">61 任务 · <code>run_one.sh</code></td></tr>
-    <tr><td class="l">zhulong 消融评测</td><td class="l"><code>doc/ZhuLong_DAC2027/run/eval/</code></td><td class="l">框架已有</td></tr>
+    <tr><td class="l">designflow 任务 workdir</td><td class="l"><code>cline_eval/EDA-Eval-DesignFlow-*/</code></td><td class="l">每任务含 prompt.txt + assets/ + cline_session.jsonl</td></tr>
+    <tr><td class="l">已有评测记录</td><td class="l"><code>cline_eval_status.jsonl</code> (94 条)</td><td class="l">全用 deepseek-v4-pro-cloud · 非 BaiZe</td></tr>
+    <tr><td class="l">EDA-Flow-Bench 原始数据</td><td class="l"><code>/nasdata/app.e0031982/code/EDA-Flow-Bench/</code></td><td class="l">在 .15 机器 · <b>.29/.12 不可达</b></td></tr>
   </table>
-  <div class="note"><b>同 L3 约束</b>：需 GPU 服务化模型。designflow 用 cline harness，配 baseUrl 即可对接。</div>
+</div>
+<div class="card">
+  <h3>🔴 L4 可行性分析（2026-11-11 · P0 调研结论）</h3>
+  <table>
+    <tr><th>维度</th><th>发现</th><th>影响</th></tr>
+    <tr><td class="l">数据位置</td><td class="l"><code>run_one.sh</code> 引用 <code>/nasdata/app.e0031982/code/EDA-Flow-Bench</code>(JSONL + assets + reference/check.py + hooks)。该路径<b>仅存在于 .15 (10.251.36.15)</b>。SSH .15 = <b>Connection timed out</b>。</td><td class="bad">🔴 无法运行完整 pipeline</td></tr>
+    <tr><td class="l">NFS 上可用</td><td class="l">任务 workdir(prompt.txt + assets/ + cline_session.jsonl) <b>在共享 NFS 上</b> → 可读取任务定义和素材</td><td class="ok">部分可用</td></tr>
+    <tr><td class="l">判分器</td><td class="l"><code>reference/$TASK_ID/check.py</code> 在 .15 上，NFS 上<b>没有</b> → 无法自动判分</td><td class="warn">需 .15 或手动判分</td></tr>
+    <tr><td class="l">任务复杂度</td><td class="l">抽检 EDA-Eval-DesignFlow-Verification-001 prompt：要求<b>4 步多任务</b>(修复 Python 过滤逻辑 + 改写 SKILL 脚本为 aether flow + 运行 pipeline + 更新 lib.defs) → 远超 2B base model 能力</td><td class="bad">🔴 任务极难</td></tr>
+    <tr><td class="l"><b>模型能力</b></td><td class="l"><b>定性测试(160k llama-server)</b>：发送代码生成 prompt → 退化为重复 <code>"111..."</code>。designflow 任务需要<b>多轮工具调用 + 代码生成 + 文件操作</b>，模型连单轮代码生成都做不到。</td><td class="bad">🔴 根本性障碍</td></tr>
+    <tr><td class="l">已有 deepseek 基线</td><td class="l">94 条 cline_eval_status.jsonl 中 deepseek-v4-pro-cloud 有 PASS/FAIL 记录 → 可作参照</td><td class="ok">参照基线</td></tr>
+  </table>
+  <div class="alert">
+    <b>结论</b>：L4 评测在当前阶段面临<b>双重障碍</b>：① 基础设施——benchmark 原始数据(含判分器)在 .15(不可达)；② 模型能力——2B base model @ 160k 无法生成连贯代码，designflow 任务远超其能力。<br>
+    <b>建议</b>：① <b>短期</b>：等 .15 可达后，用 <code>run_one.sh</code> + CPU llama-server smoke 1 个最简单 designflow 任务(即使预期 0% 也可建 pipeline)；② <b>中期</b>：post-train SFT 后模型有指令跟随能力时再评；③ <b>参照</b>：已有 deepseek-v4-pro-cloud 的 94 条评测记录可作 L4 能力天花板参照。
+  </div>
+</div>
+<div class="card">
+  <h3>L4 建设计划（延后 · 待资源+模型能力）</h3>
+  <table>
+    <tr><th>步骤</th><th>内容</th><th>依赖</th><th>状态</th></tr>
+    <tr><td>0</td><td class="l"><b>前置：.15 可达</b> + <b>模型生成能力达标</b></td><td class="l">网络 + SFT/数据</td><td class="bad">🔴 双重阻塞</td></tr>
+    <tr><td>1</td><td class="l">在 .15 上(or 拷数据到 .29) 配 cline + llama-server → smoke 1 任务</td><td class="l">步骤0</td><td class="warn">📋</td></tr>
+    <tr><td>2</td><td class="l">用 <code>run_one.sh</code> 跑 5 个最简单任务 → 基线数</td><td class="l">步骤1</td><td>📋</td></tr>
+    <tr><td>3</td><td class="l">全 61 任务评测</td><td class="l">步骤2 + GPU</td><td>📋</td></tr>
+  </table>
 </div>
 
 <!-- Summary -->
@@ -195,28 +238,30 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
   <table>
     <tr><th>层</th><th>评测</th><th>状态</th><th>关键数</th><th>下一步</th></tr>
     <tr><td><b>L1</b></td><td class="l">常识 8 集 (0-shot)</td><td><span class="badge b-ok">✅ 16ckpt</span></td><td>58.13%@160k</td><td class="l">继续每万 ckpt</td></tr>
-    <tr><td><b>L2</b></td><td class="l">复杂推理 6 集</td><td><span class="badge b-bad">🔴 GSM8K=0%@160k</span></td><td>P-8:6.66% / 160k:GSM8K=0%</td><td class="l">MMLU运行中→v4已备(4集)</td></tr>
-    <tr><td><b>L3</b></td><td class="l">Agentic</td><td><span class="badge b-bad">❌ 空白</span></td><td>—</td><td class="l">需GPU窗口</td></tr>
-    <tr><td><b>L4</b></td><td class="l">领域</td><td><span class="badge b-bad">❌ 未接</span></td><td>—</td><td class="l">同L3</td></tr>
+    <tr><td><b>L2</b></td><td class="l">复杂推理 6 集</td><td><span class="badge b-bad">🔴 GSM8K=0%@160k</span></td><td>GSM8K=0% · MMLU~17%进行中 · v4已启动</td><td class="l">等MMLU+v4结果</td></tr>
+    <tr><td><b>L3</b></td><td class="l">Agentic</td><td><span class="badge b-bad">❌ 空白·调研完</span></td><td>— · 模型生成能力不足</td><td class="l">延后至SFT/数据改进后</td></tr>
+    <tr><td><b>L4</b></td><td class="l">领域</td><td><span class="badge b-bad">❌ 未接·调研完</span></td><td>— · 数据在.15不可达</td><td class="l">延后至.15可达+SFT后</td></tr>
   </table>
 </div>
 <div class="card">
-  <h3>本轮(#1965)动作</h3>
+  <h3>本轮(#1966)动作</h3>
   <ol>
-    <li><b>训练健康确认</b>：iter 163,790 · step 7036-7237ms (均7098ms <7.4s✅) · loss ~2.05 · 0 NaN/skip · GPU 8×100%/75GB</li>
-    <li><b>L1 状态确认</b>：16/16 ckpt(10k–160k) 全部完成 · 160k=58.13% 新高 ✅ · 下一个 170k ETA ~13h</li>
-    <li><b>L2 v3 结果</b>：GSM8K ✅ 完成 = 0.0%(strict+flex) · MMLU 🟡 进行中 ~1588/22800(~7%) ETA~2h</li>
-    <li><b>L2 v4 启动</b>：<code>baize_l2_eval_160k_v4.sh</code> 已在 .29 后台启动(14:31) · 轮询 port 8082 · v3 完成后自动切换 HumanEval/MBPP/MATH/BBH</li>
-    <li><b>论文 §4.6 刷新</b>：iter 163,310→163,790 · tok/s 590K→591K · loss 2.04→2.05 · PDF 0err(216060B)</li>
-    <li><b>无 170k ckpt</b>：训练 ~163.8k，170k ETA ~13h · 无新万整数 ckpt 待评</li>
+    <li><b>训练健康确认</b>：iter 163,900 · step 6995-7167ms (<7.4s✅) · loss ~2.04 · 0 NaN/skip · GPU 8×100%/75GB</li>
+    <li><b>L2 v3 进度</b>：GSM8K ✅ 完成 = 0.0%(strict+flex) · MMLU 🟡 进行中 ~3952/22800(~17%) ETA~1.5h</li>
+    <li><b>L2 v4 状态</b>：<code>baize_l2_eval_160k_v4.sh</code> 已在 .29 后台(14:31) · 轮询 port 8082 · v3 完成后自动切换</li>
+    <li><b>L3 可行性调研完成</b>：TB 用 Harbor Docker + cloud API · 适配器硬编码 glm-5.3-flash · 改本地模型需修改 <code>_base.py</code> + 重建镜像 · <b>但模型生成能力不足是根本障碍</b></li>
+    <li><b>L4 可行性调研完成</b>：<code>run_one.sh</code> 需 <code>/nasdata/...</code> 在 .15(SSH timeout) · 任务 workdir 在 NFS 上(prompt+assets 可读) · 判分器 check.py 在 .15 · <b>模型生成能力不足是根本障碍</b></li>
+    <li><b>定性测试</b>：curl 160k llama-server 发送代码生成 prompt → 退化为重复 <code>"111..."</code> · 确认模型在 code/math 生成任务上全面退化(同 GSM8K 根因)</li>
+    <li><b>四层报告更新</b>：L3/L4 可行性分析 + 定性测试结果 + 更新 MMLU 进度</li>
   </ol>
-  <div class="note">
-    <b>待决策</b>：① <b>L2 GSM8K=0%@160k → 训练数据缺数学/代码 → 建议后续阶段增加 code+math 数据配比(15-30%)或在 post-train SFT 补数学推理</b>；② L3/L4 GPU 服务化——训练 decay 阶段安排还是等 pretrain 完成？③ L4 是否先用 CPU llama-server smoke 1 个 designflow 任务？④ v4 4 集是否一次全跑(预计~3h)还是分批？
+  <div class="alert">
+    <b>🔴 核心发现（待用户拍板）</b>：L2/L3/L4 的低分/空白<b>同一根因</b>——训练数据(P-5b/P-8 Ultra-FineWeb-L3)缺乏 code+math 内容，导致模型在<b>所有需要连贯生成的任务</b>上退化为重复输出。<br>
+    <b>建议优先级</b>：① <b>最高优先</b>：在后续训练阶段增加 code+math 数据配比(参考 MiniCPM/DeepSeek 15-30%) → 改善 L2/L3/L4 的基础；② L2 等 MMLU+v4 结果收齐后分析全貌；③ L3/L4 延后至模型生成能力达标后(SFT or 数据改进)；④ L4 额外需 .15 网络可达。
   </div>
 </div>
 
 <footer>
-  BaiZe pretrain 线 · 四层能力评测报告 · 2026-11-11 14:33 更新(#1965) · 评测数字仅用于训练监控，不进论文正文
+  BaiZe pretrain 线 · 四层能力评测报告 · 2026-11-11 14:50 更新(#1966) · 评测数字仅用于训练监控，不进论文正文
 </footer>
 </div>
 </body>
