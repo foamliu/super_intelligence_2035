@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EDA-LiveFlow-Bench 论文改进建议 · shard B 视角</title>
+<style>
+  :root{
+    --fg:#1f2328; --muted:#57606a; --bg:#ffffff; --soft:#f6f8fa;
+    --line:#d0d7de; --accent:#0969da; --warn:#bf8700; --bad:#cf222e; --good:#1a7f37;
+    --code:#f6f8fa;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--fg);
+    font-family:-apple-system,"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.62; font-size:15.5px;}
+  .wrap{max-width:920px;margin:0 auto;padding:28px 22px 80px;}
+  header{border-bottom:2px solid var(--line);padding-bottom:14px;margin-bottom:22px;}
+  h1{font-size:1.55em;margin:0 0 6px;color:#0a0a0a;}
+  h2{font-size:1.22em;margin:34px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--line);color:#0a0a0a;}
+  h3{font-size:1.06em;margin:22px 0 8px;color:#24292f;}
+  h4{font-size:0.98em;margin:16px 0 6px;color:var(--muted);}
+  p{margin:8px 0;}
+  .meta{color:var(--muted);font-size:0.86em;margin-top:8px;}
+  .tag{display:inline-block;font-size:0.74em;font-weight:600;padding:2px 8px;border-radius:10px;
+    background:#ddf4ff;color:#0969da;margin-right:4px;vertical-align:middle;}
+  .tag.b{background:#fff8c5;color:#7d4e00;}
+  .tag.c{background:#dafbe1;color:#1a7f37;}
+  .tag.d{background:#ffd8e5;color:#a40e5a;}
+  .lead{background:var(--soft);border-left:4px solid var(--accent);padding:14px 16px;border-radius:6px;margin:14px 0 4px;}
+  .lead strong{color:#0a0a0a;}
+  table{border-collapse:collapse;width:100%;margin:12px 0;font-size:0.9em;}
+  th,td{border:1px solid var(--line);padding:6px 9px;text-align:left;vertical-align:top;}
+  th{background:var(--soft);font-weight:600;}
+  tr:nth-child(even) td{background:#fbfcfd;}
+  code,pre{font-family:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;font-size:0.86em;}
+  code{background:var(--code);padding:1px 5px;border-radius:4px;}
+  pre{background:var(--code);padding:10px 12px;border-radius:6px;overflow-x:auto;border:1px solid var(--line);}
+  blockquote{margin:10px 0;padding:8px 14px;border-left:3px solid var(--line);color:var(--muted);background:var(--soft);}
+  blockquote .src{display:block;font-size:0.8em;color:#0969da;margin-top:4px;font-style:normal;}
+  .card{border:1px solid var(--line);border-radius:8px;padding:12px 15px;margin:12px 0;background:#fff;}
+  .card.warn{border-left:4px solid var(--warn);}
+  .card.bad{border-left:4px solid var(--bad);}
+  .card.good{border-left:4px solid var(--good);}
+  .num{display:inline-block;min-width:22px;text-align:center;font-weight:700;color:var(--accent);margin-right:6px;}
+  ol,ul{margin:8px 0 8px 4px;padding-left:22px;}
+  li{margin:4px 0;}
+  .small{font-size:0.84em;color:var(--muted);}
+  .kpi{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0;}
+  .kpi div{flex:1 1 150px;border:1px solid var(--line);border-radius:8px;padding:9px 11px;background:var(--soft);}
+  .kpi .v{font-size:1.5em;font-weight:700;color:#0a0a0a;display:block;}
+  .kpi .l{font-size:0.78em;color:var(--muted);}
+  .risk td:nth-child(1){width:38%;}
+  .prio{font-weight:700;}
+  .P1{color:var(--bad);} .P2{color:var(--warn);} .P3{color:var(--accent);} .P4{color:var(--muted);}
+  footer{margin-top:40px;border-top:1px solid var(--line);padding-top:12px;color:var(--muted);font-size:0.82em;}
+  a{color:var(--accent);text-decoration:none;}
+  .todo{color:var(--bad);font-weight:600;}
+  hr{border:0;border-top:1px solid var(--line);margin:24px 0;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>EDA-LiveFlow-Bench 论文改进建议</h1>
+  <div class="meta">
+    视角：<strong>shard B（spice_sim / characterization）</strong>，以研究组成员身份撰写 ·
+    日期：2026-11-11 · 产出：<code>reports/report_designflow_paper_next_steps_zh.html</code>
+  </div>
+  <div class="meta">
+    触发依据：本轮已做 <code>mc-matrix</code> 取证（mc≥10 口径，shard B <code>mc10.fresh=23</code>），
+    并逐条 peek 了按 spice-intensity 排序的 top 候选（o5xjq/8hdj3/i6fn6/wl9i4/nsf5a 等），
+    全部判定为非 shard-B 的 design_flow 任务（已 <code>mark --status parked</code>），
+    符合用户令「fresh 全部 peek 后无 CLEAN ⇒ 改做论文改进建议」的触发条件。
+    <span class="small">注：本轮 <strong>未交付新 case</strong>；论文所有文件仅读未改；未做的实验一律写「建议验证」。</span>
+  </div>
+  <div class="kpi">
+    <div><span class="v">1110</span><span class="l">活基准任务数 \Ntasks（A211+B265+C305+D329）</span></div>
+    <div><span class="v">696</span><span class="l">冻结评测 run 数 \Neval（2026-11-09）</span></div>
+    <div><span class="v">10.0%</span><span class="l">Pass@1（62/620 decided）</span></div>
+    <div><span class="v">1</span><span class="l">backbone · 1 thinking level</span></div>
+    <div><span class="v">13</span><span class="l">EDA 领域</span></div>
+  </div>
+</header>
+
+<div class="lead">
+  <strong>一句话结论：</strong>论文的「基准构造」与「防泄题协议」是硬实力，但「10.0% Pass@1」目前是
+  <em>单骨干、单思考档、且 10% 批次为基础设施 ERROR</em> 下的一个数据点，而非可外推的结论；
+  最容易被审稿人打穿的是<strong>中心解释构念「接地深度」实为人工按域标注（与它要解释的域排序循环）</strong>、
+  以及<strong>多骨干扫描（RQ3）尚未跑完</strong>。两周内应优先：① 修 59/70 个 ERROR 的资产目录 bug 并重跑，
+  ② 在 100 任务分层子集上跑 4 个 backbone，③ 把「接地深度」从标注改成用 47 份轨迹实测的工具调用数。
+</div>
+
+<h2>① 论文现状速览（关键数字表）</h2>
+<table>
+<thead><tr><th>维度</th><th>数值</th><th>出处</th><th>备注</th></tr></thead>
+<tbody>
+<tr><td>任务总数 \Ntasks</td><td>1110（A211/B265/C305/D329）</td><td><code>main.tex</code> \Ntasks；附录 A §full-distribution</td><td>活基准，每轮增长；与正文评测用的 696 是两个不同口径</td></tr>
+<tr><td>冻结评测 \Neval</td><td>696 runs（2026-11-09）</td><td><code>main.tex</code> \Neval；§2 eval-protocol</td><td>62 PASS / 558 FAIL / 70 ERROR / 6 ABSENT</td></tr>
+<tr><td>Pass@1（headline）</td><td>10.0%（62/620 decided）</td><td>摘要；§4 表 tab:main-results</td><td>三口径：62/620=10.0% · 62/626=9.9% · 62/696=8.9%，相差 ≤1.1pp</td></tr>
+<tr><td>对照单脚本基准</td><td>76.5%（EDA-Scripting-Bench）</td><td>摘要；§4.1；§4.3 自承「跨基准比较，被任务类型混淆」</td><td>apples-to-oranges，论文已 downgrade</td></tr>
+<tr><td>域间跨度</td><td>pnr_signoff 20.8% → physical_verify/layout_aether 2.9%（7.1×）</td><td>摘要；§4.2</td><td>点估计；§4.2 自承两域 Wilson CI 重叠</td></tr>
+<tr><td>失败分类（696）</td><td>no-output/aborted 21.0% · semantic 62.8% · contract 0.3% · UNKNOWN 7.0%（类级 UNKNOWN 17.1%）</td><td>§5.1 failure-taxonomy</td><td>59/70 ERROR 是「单 case 资产目录缺失」</td></tr>
+<tr><td>轨迹解剖</td><td>中位 26.5 次工具调用，41.2% 走 MCP，read_files 占 28.8%</td><td>§5.3 trace-anatomy</td><td>来自 47 份 <em>pilot</em> 日志，无判分，不外推</td></tr>
+<tr><td>shard B 在评测中的占比</td><td>spice_sim 104 runs(8.4%) · characterization 28 runs(19.2%)</td><td>附录 B 表 tab:full-domain-results</td><td>spice_sim 是第二大域且低于均值；characterization 小样本但第二高</td></tr>
+</tbody>
+</table>
+
+<h2>② 六个问题的回答</h2>
+
+<h3>Q1. 我们最薄弱的论证环节是哪个？</h3>
+<p>最容易被 ICML 审稿人打穿的是<strong>中心解释构念「工具链接地深度（grounding depth）」</strong>，其次是<strong>单骨干未跑完 RQ3</strong>。具体到 section + 原句：</p>
+
+<div class="card bad">
+<p><span class="num">1</span><strong>接地深度是「人工按域标注」，与它要解释的域排序循环。</strong>§5.2 原句：</p>
+<blockquote>“We define <em>grounding depth</em> as the minimum number of live EDA tool calls needed to produce a correct deliverable. Depth is not measured; it is an <em>annotation we assign per domain</em> (a design choice, stated as such).”
+<span class="src">— sections/5_analysis.tex §5.2 Tool-Chain Grounding Depth</span></blockquote>
+<p>而图 fig:grounding-depth 的 caption 自己也承认：“the binning is a design choice, not a measured quantity … this figure does not by itself establish a causal or monotone relationship.” 一个手工按域贴的标签，恰好「解释」了按域统计的通过率排序——审稿人一句「circular / post-hoc」就能把 §4.2 与 §5.2 的核心叙事拆掉。这是全文最薄弱的一环。</p>
+</div>
+
+<div class="card bad">
+<p><span class="num">2</span><strong>RQ3（模型扩展）整章无自己数据。</strong>§4.3 原句：</p>
+<blockquote>“the 10.0% vs. 76.5% gap is a <em>cross-benchmark</em> comparison, confounded by task type, and therefore cannot by itself show that model scaling is insufficient. We state this as a hypothesis to be tested by the multi-backbone sweep.”
+<span class="src">— sections/4_experiments.tex §4.3 Model Scaling (RQ3)</span></blockquote>
+<p>附录 B §per-model 进一步承认：“GLM-5.2, Kimi-K2.6, DeepSeek-V4-Flash and Doubao-Seed-2.0-Pro are configured in the same harness but their sweeps are still running, so we report no numbers for them.” —— 三个 RQ 里最关键的 RQ3 完全空缺，而摘要却把「单骨干 10.0%」当 headline。</p>
+</div>
+
+<div class="card warn">
+<p><span class="num">3</span><strong>headline「7.1×」是点估计且 CI 重叠。</strong>摘要原句：“the highest-passing domain (pnr_signoff, 20.8%) exceeds the lowest (physical_verify and layout_aether, both 2.9%) by a factor of 7.1× (a descriptive point estimate; the two confidence intervals overlap)”。§4.2 给出 pnr_signoff CI [9.2,40.5] 与 physical_verify CI [0.8,10.1] 确实重叠，且 pnr_signoff 仅 24 个 decided run（翻一个 PASS 就 20.8%→24.0%）。摘要领先句用 7.1× 做卖点，正文却 downgrade，口径不自洽。</p>
+</div>
+
+<div class="card warn">
+<p><span class="num">4</span><strong>10% 批次是基础设施 ERROR，被排除在分母外。</strong>§5.1 原句：“predominantly a missing per-case asset directory (59/70)”。即 696 个 run 里 70 个 ERROR，其中 59 个是「单 case 资产目录缺失」这种<strong>框架侧可修 bug</strong>，不是模型能力问题。把它排除出分母在统计上可辩护，但审稿人会质疑「696-run 快照本身是否可信」。</p>
+</div>
+
+<div class="card warn">
+<p><span class="num">5</span><strong>附录 A 任务示例是 [TODO]。</strong>附录 A §task-example 原文：“[TODO: show one complete task: prompt + assets + check.py + test_rationale. Suggested: a medium-difficulty schematic_netlist case …]”。基准细节附录未完成，直接影响「benchmark 论文」的可复现性印象。同一附录还有未解决的 TODO(T12)：摘要/引言写「268 位工程师、42 台工作站」，§2 写「698 台主机、224 位去重用户（mc≥30）」，三处口径未统一。</p>
+</div>
+
+<div class="card warn">
+<p><span class="num">6</span><strong>逐 run 归因工具有 17.1% 类级 UNKNOWN。</strong>§5.1：“The tool's class-level UNKNOWN share is 119/696 = 17.1%”。失败分类法建立在一个自带 17% 未分类率的工具上，而 §5.1 的所有占比（21.0%/62.8%/0.3%）都依赖该工具的输出。</p>
+</div>
+
+<h3>Q2. 10.0% 这个数字站得住吗？</h3>
+<p><strong>站得住的方向</strong>：论文主动给了三个分母（10.0%/9.9%/8.9%），相差 ≤1.1pp 且 CI 重叠（§4.1 脚注），口径选择不影响结论；这点做得扎实。Wilson CI 已报，统计诚实在 ML benchmark 里属上乘。</p>
+<p><strong>站不住 / 需补对照组的方向（按必须性排序）</strong>：</p>
+<ol>
+<li><strong>单 backbone（最大软肋）。</strong>696 run 全部是 DeepSeek-V4-Pro。审稿人一句话：「10.0% 是 DeepSeek-V4-Pro@low 的属性，不是 task 的属性」。必须补多骨干扫描（附录 B 已配置 4 个，约 5 机器日，见行动项 E2）。</li>
+<li><strong>单 thinking level（thinking=low）。</strong>附录 C 原句：“We chose low over medium/high to control token cost … the trade-off is reduced reasoning depth. A thinking-budget ablation is planned for the camera-ready version.” 低思考档可能<strong>系统性压低深度接地域</strong>（physical_verify/layout_aether 需要多轮迭代推理），从而把 2.9% 压得更难看。这是一个与「接地深度」叙事强混杂的混淆量，<strong>必须</strong>在最低域上做 thinking=medium/high 消融。</li>
+<li><strong>70 个 ERROR 的处置。</strong>排除出分母可辩护，但 59/70 是可修的资产目录 bug。<strong>建议验证</strong>：修掉这 59 个资产目录问题并重跑，给出「ERROR-fixed 后的 Pass@1」；若仍 ≈10%，则数字稳；若明显变化，则现 10.0% 是被 infra 拉低/拉高的伪结果。</li>
+<li><strong>无 Pass@k（k&gt;1）与无 seed 方差。</strong>§9 只报 Pass@1（单 trace/任务）。没有重复 seed，无法估计 10.0% 的随机方差。<strong>建议验证</strong>：在 100 任务分层子集上跑 5 seed 报 Pass@1±std 与 Pass@5。</li>
+<li><strong>620 decided 分母的域构成极不均。</strong>spice_sim 95 decided、schematic_netlist 113、physical_verify 68，而 pnr_signoff 仅 24、characterization 26。聚合 10.0% 被大域（spice_sim 8.4%、schematic_netlist 11.5%）主导。<strong>建议验证</strong>：报一个「域均衡子采样」后的 overall（每域抽等量 decided run 再平均），看 10.0% 是否被分布拉偏。</li>
+</ol>
+<p class="small">结论：10.0% 作为「单骨干单思考档下的点估计」<em>站得住且诚实</em>；作为「多步编排天花板」的论断<em>站不住</em>，需 E1–E3 三组对照才能升级为结论。</p>
+
+<h3>Q3. B 线视角的独特输入（spice_sim / characterization）</h3>
+<p>这两个域在论文里的表现，结合我造 case 的实测：</p>
+
+<div class="card">
+<h4>spice_sim：第二大域，但低于均值 — 信号在「语义失败」不在「工具调用失败」</h4>
+<p>附录 B 表：spice_sim 104 runs（8 PASS/87 FAIL/7 ERROR/2 ABSENT），Pass=8.4%，<strong>低于总体 10.0%</strong>。逐域失败矩阵（附录 B tab:failure-by-domain）：spice_sim F+E=94 = NOSUB 8 + RT 26 + SEM 48 + UNK 12。</p>
+<ul>
+<li><strong>SEM=48/94≈51%</strong> 占主导——agent 产出了能跑的 SPICE deck，但<strong>测量语义错</strong>（测了错误的量、错的节点、错的窗口）。这与 §5.1「semantic failures dominate the medium-grounding domains (spice_sim …)」一致。</li>
+<li><strong>RT=26</strong>：候选脚本崩溃/非零退出。这部分是判分器在 B 上真跑候选（§4.2 真跑候选）抓到的，说明 spice_sim 的 check.py「有牙」。</li>
+<li><strong>NOSUB=8</strong>：8 个 run 连 submit.zip 都没产出——在 spice 域 agent 卡在「该调哪个仿真器/怎么写 deck」的接地失败。</li>
+</ul>
+<p><strong>我造 case 的依据</strong>：本轮对 shard B 候选池的 mc-matrix 复算（src=<code>designflow/summary_1105.tsv</code>）显示 mc≥10 池 486、fresh 23；逐条 peek top 候选后，<strong>干净的 spice_sim/characterization design_flow 任务几乎已被采尽</strong>——剩余 fresh 多为 aether/GUI 连接（8hdj3/i6fn6）、咨询式（o5xjq「可以用哪些 cad tool」）、数字编译（wl9i4 xcelium）、或 EDA 工具自身开发（nsf5a 在改 ModelQA 的 C++/Perl）。这印证论文 §2「analog/mixed-signal 占主导」<em>在造题供给侧</em>也成立：spice 池在 mc≥30 已 98%+ ledgered，mc≥10 的增量多为假阳性。论文应正视「spice_sim 域样本量大但增量边际递减」。</p>
+</div>
+
+<div class="card">
+<h4>characterization：小样本但第二高 — 它是「text-in script-out」的最佳样本</h4>
+<p>附录 B 表：characterization 28 runs（5 PASS/21 FAIL/2 ERROR），Pass=19.2%，<strong>第二高</strong>，仅次于 pnr_signoff 20.8%。失败矩阵 F+E=23 = NOSUB 5 + RT 7 + SEM 8 + UNK 3。§4.2 把它归入 depth 1–2（“largely text-in, script-out … produce from prior knowledge with only light tool interaction”）。</p>
+<p><strong>我的判断</strong>：characterization 高通过率 <em>部分是样本量小</em>（仅 26 decided，CI 必然宽），<em>部分是真</em>（脚本模板化、接地浅）。但这里有个<strong>判分口径隐患</strong>：我经手过 EDA-Eval-DesignFlow-Characterization-001，其 check.py 在 2026-11-02 的 rewrite_queue 里从 7 conds 重建成 14 conds（a–n）才过 k≥8 闸门——说明早期 characterization case 的断言强度是被「补」上来的。<strong>建议验证</strong>：抽查 characterization 域已跑的 28 个 run，确认其 check.py 都过了 k≥8 且含真跑候选（§4.2），否则 19.2% 可能偏高。</p>
+</div>
+
+<div class="card warn">
+<h4>一个跨域的异常信号：anti-hardcode 断言在全批次 0 次命中</h4>
+<p>附录 B 逐域失败矩阵最右列 <strong>ANTI 全行 = 0（Total ANTI=0）</strong>。即所有 13 域、628 个 FAIL+ERROR 里，没有任何一个被 anti-hardcode 断言抓到。两种可能：(a) agent 确实不硬编码（好）；(b) anti-hardcode 断言太弱、或在 B 上没真跑（坏）。我造 case 时（见 rewrite_queue 里 Characterization-001 / SpiceSim StimLoopComplianceFix-001）都专门加了 cross-input guard（隐藏 B/B′ 反硬编码）。<strong>建议验证</strong>：抽 5 个含 ANTI 断言的 case，人工构造一个硬编码 A 的假提交，确认 check.py 在 B 上能 FAIL——若不能，则 ANTI=0 是判分器漏洞而非 agent 行为。</p>
+</div>
+
+<h3>Q4. 下一步该补什么实验（按性价比排序，≥3 条）</h3>
+
+<div class="card good">
+<p><strong>E1 · 修 59/70 ERROR 的资产目录 bug 并重跑（table-stakes）</strong></p>
+<ul>
+<li><strong>目的</strong>：把 696-run 快照的 infra ERROR 清零，让 10.0% 的分母无可争议。</li>
+<li><strong>方法</strong>：§5.1 已定位「59/70 = missing per-case asset directory」。用 <code>eval_triage/05_batch_triage.py</code> 列出 70 个 ERROR 的 asset 路径，逐个修 <code>assets/&lt;task_id&gt;/</code> 目录与 <code>hidden_manifest.json</code>，重跑这 70 个（8 workers ≈ 2.5h）。</li>
+<li><strong>数据</strong>：70 个 ERROR run 的 task_id 列表 + 修复后 status.jsonl。</li>
+<li><strong>预计工作量</strong>：1–2 人日（修资产 + 重跑 + 重新出表）。</li>
+<li><strong>预期能回答的质疑</strong>：「你的 696 快照 10% 是坏的，10.0% 不可信」→ 修后给出 ERROR-fixed Pass@1；若仍 ≈10% 则数字稳。</li>
+</ul>
+</div>
+
+<div class="card good">
+<p><strong>E2 · 100 任务分层子集上的 4-backbone 扫描（RQ3 方向性答案）</p>
+<ul>
+<li><strong>目的</strong>：给 RQ3（模型扩展）一个<strong>方向性</strong>答案，回应全文最大软肋。</li>
+<li><strong>方法</strong>：按 13 域 stratified 抽 100 任务（每域 ≈8，小域全取），对 GLM-5.2 / Kimi-K2.6 / DeepSeek-V4-Flash / Doubao-Seed-2.0-Pro 各跑一遍（同 Cline v3.0.51 / thinking=low / 2400s）。</li>
+<li><strong>数据</strong>：4×100 = 400 run 的 status.jsonl，附 DeepSeek-V4-Pro 在同 100 任务上的对照（从 696 快照切出）。</li>
+<li><strong>预计工作量</strong>：696/8 workers≈24h 全量 ⇒ 400 run ≈ 14h ≈ <strong>2 机器日</strong>（含重试）。</li>
+<li><strong>预期能回答的质疑</strong>：「单骨干 10.0% 是模型属性不是任务属性」→ 若 4 个 backbone 都在 8–15% 区间，则「编排天花板」叙事得到方向性支撑；若跨度大（如 5%–20%），则 RQ3 转为「模型选型重要」，论文叙事需改。全量 696×4 留 camera-ready。</li>
+</ul>
+</div>
+
+<div class="card good">
+<p><strong>E3 · 在 depth 7+ 两域做 thinking=low/medium/high 消融</strong></p>
+<ul>
+<li><strong>目的</strong>：解开「接地深度」与「推理预算」的混杂——2.9% 是因为接地难还是因为 low 思考档不够迭代？</li>
+<li><strong>方法</strong>：physical_verify（73 runs）+ layout_aether（38 runs）共 111 任务，在 DeepSeek-V4-Pro 上各跑 thinking=medium 与 thinking=high（low 已有）。</li>
+<li><strong>数据</strong>：2 域 × 2 新档 = 222 run。</li>
+<li><strong>预计工作量</strong>：≈ 8 机器时（单骨干 222 run / 8 workers）≈ <strong>1 机器日</strong>。</li>
+<li><strong>预期能回答的质疑</strong>：「2.9% 是 low 思考档压出来的伪结果」→ 若 medium/high 后仍 ≈3%，则接地深度瓶颈坐实；若升到 ≥10%，则当前 2.9% 是推理预算伪影，论文需改口径。</li>
+</ul>
+</div>
+
+<div class="card good">
+<p><strong>E4 · 把「接地深度」从标注改成实测（救中心构念）</strong></p>
+<ul>
+<li><strong>目的</strong>：把 §5.2 自承的「annotation, not measured」改成测量量，破循环论证。</li>
+<li><strong>方法</strong>：§5.3 已对 47 份 pilot 轨迹解析了每次工具调用。给每个 PASS run 算「实际 live EDA tool call 数」（eda_flow_*/pyAether_* 调用计数），与该 run 的域 pass 率做散点 + Spearman 相关。</li>
+<li><strong>数据</strong>：47 run 的 (measured_depth, pass) 表 + 相关系数。</li>
+<li><strong>预计工作量</strong>：解析器 <code>trace_anatomy.py</code> 已有，加一个 pass 标签 join ≈ <strong>2 人日</strong>（难点：47 份 pilot 无判分，需先在对应 task_id 上跑 judge 补标签）。</li>
+<li><strong>预期能回答的质疑</strong>：「接地深度是 post-hoc 标注」→ 若实测工具调用数与 pass 显著负相关，则构念从标注升级为测量；若不相关，则接地深度叙事需推倒。这是把全文最弱一环变最强一环的关键实验。</li>
+</ul>
+</div>
+
+<div class="card good">
+<p><strong>E5 · 100 任务 × 5 seed 的 Pass@1 方差与 Pass@5</strong></p>
+<ul>
+<li><strong>目的</strong>：给 10.0% 一个误差棒，回应「无方差」质疑。</li>
+<li><strong>方法</strong>：与 E2 同一个 100 任务分层子集，DeepSeek-V4-Pro 跑 5 seed。</li>
+<li><strong>预计工作量</strong>：400 run ≈ <strong>1.5 机器日</strong>（可与 E2 调度复用子集）。</li>
+<li><strong>预期能回答的质疑</strong>：「10.0% 没误差棒」→ 给出 Pass@1±std 与 Pass@5。</li>
+</ul>
+</div>
+
+<h3>Q5. benchmark 本身该怎么演进</h3>
+
+<h4>分布是否合理？—— 模拟偏科，数字偏少</h4>
+<p>评测快照的域分布（附录 B）：schematic_netlist 131、spice_sim 104、physical_verify 73、analog_context 55、digital 51、waveform 47、layout_virtuoso 40、layout_aether 38、verification 38、eda_other 38、pg_layout 28、characterization 28、pnr_signoff 25。§5.4 threats 已自承「top three domains hold 44.3% and digital-front domains 12.8%」。</p>
+<ul>
+<li><strong>spice_sim 过载且边际递减</strong>：104 runs(8.4%)，已是第二大域，再加 case 不会改变 8.4% 这个率。我侧实测 mc≥10 fresh 多为假阳性——<strong>建议给 spice_sim 设 cap</strong>（如 ≤120 eval runs），把造题产能转移到欠代表域。</li>
+<li><strong>数字前端严重偏少</strong>：digital 51 + verification 38 + pnr_signoff 25 + eda_other 38 = 152/696 = 21.8%。这反映真实使用（数字工程师少用 cline，§2 已解释），但作为 benchmark 它削弱了「覆盖一次完整 tape-out 流」的宣称。<strong>建议</strong>：对数字前端采用 §附录 A 的放宽口径（mc≥15 + 扩展关键词），定向补 digital synthesis / SDC / UPF 任务。</li>
+<li><strong>pnr_signoff 仅 25 runs 但排第一（20.8%）</strong>：第一名的小样本使 7.1× 头条极不稳。<strong>建议</strong>：补 pnr_signoff case 到 ≥50 eval runs，稳住「榜首」的 CI。</li>
+</ul>
+
+<h4>要不要加新域？—— 建议加 2 个</h4>
+<ol>
+<li><strong>PDK QA / 模型文件校验</strong>：本轮我 scout 到的 nsf5a（rongjiez）正是 ModelQA（C++/Qt + openWave.pl 调 WaveView 读 .sw0 的 Id-Vd 扫描）——这类「 characterization 数据的 QA」任务有真实 trace 体量，但目前被散落到 eda_other 或未被采。它逻辑上介于 characterization 与 physical_verify 之间，且是真实高频工作流。<strong>建议</strong>：单列为第 14 域 <code>pdk_qa</code>，关键词加 modelqa/.sw0/idvd/itf/spectrum。</li>
+<li><strong>AI 辅助 layout / 生成式布局</strong>：当前 layout_aether(2.9%)/layout_virtuoso(10.3%) 都是 GUI 驱动编辑，但产业界正在出现「LLM 生成 placement/tie-off 脚本」的新工作流，目前 13 域无对应。<strong>建议验证</strong>：在 698 机扫描里看是否有 genus/innovus place&route 脚本生成的高 mc session；若有，增设 <code>ai_assisted_layout</code>。</li>
+</ol>
+<p class="small">不建议加的：power/IR signoff（与 pg_layout 重叠度高，先归 pg_layout）；AMS 顶层验证（先归 verification，样本不足单列）。</p>
+
+<h4>13 域分类法本身的结构问题</h4>
+<p>当前按「设计阶段」切域，但 §5.2 的核心解释变量是「接地深度」。<strong>waveform（depth 6, 5.1%）其实是一个工具（WaveView）而非一个设计阶段</strong>，把它与 schematic_netlist 并列为「域」在分类学上不自洽。<strong>建议</strong>：在论文里补一个「按交付件类型」的二级切分（script / report / netlist / layout / measurement），它比 13 域更贴近 pass 率的驱动因素，且能解释为什么 characterization(script) 与 pnr_signoff(script) 都排前面。</p>
+
+<h3>Q6. 如果只有两周，先做哪三件事（必须排序）</h3>
+<table>
+<thead><tr><th style="width:8%">序</th><th>事项</th><th style="width:14%">工时</th><th>为什么是这个顺序</th></tr></thead>
+<tbody>
+<tr><td class="prio P1">1</td><td><strong>E1 修 59/70 ERROR 资产 bug + 重跑</strong>（见 Q4-E1）</td><td>1–2 人日</td><td><strong>table-stakes（有效性）</strong>。在 10% 批次是 infra-broken 的情况下，E2/E3/E4 的任何数字都会被审稿人一句「你的快照本身不可信」拦在门外。必须先把分母清干净，后续实验才有意义。技术风险最低、收益最确定，故排第一。</td></tr>
+<tr><td class="prio P1">2</td><td><strong>E2 100 任务 × 4 backbone 扫描</strong>（见 Q4-E2）</td><td>2 机器日</td><td><strong>headline 防守（审稿人第 1 问）</strong>。「单骨干」是摘要里最显眼的软肋，camera-ready/rebuttal 必被问。100 任务子集能在两周内跑完并给出方向性答案（4 个 backbone 是否都 ≈10%），全量 696×4 留 camera-ready。依赖 E1 的干净快照做对照切片，故排第二。</td></tr>
+<tr><td class="prio P2">3</td><td><strong>E4 接地深度从标注改实测</strong>（见 Q4-E4）</td><td>2 人日</td><td><strong>核心构念防守（审稿人第 2 问）</strong>。「grounding depth 是人工按域标注」是全文最易被一击致命的点（§5.2 自承）。把它改成用 47 份轨迹实测的 live-tool-call 数与 pass 的相关，能把最弱一环变最强一环。排第三是因为它依赖 pilot 轨迹补判分标签（有点工程量），且它的结论不会因 E1/E2 数字变动而失效——但若 E1 发现 10% 大幅变动，E4 的 pass 标签需重算，所以放在 E1 之后。</td></tr>
+</tbody>
+</table>
+<p class="small">未排进前三但强烈建议两周内<strong>并行启动</strong>：E3（thinking 消融，1 机器日，可与 E2 调度复用 .75 sandbox）；补附录 A 的 [TODO] 任务示例 + 统一 268/42 vs 698/224 口径（各 0.5 人日，纯文字，零算力，回报高）。</p>
+
+<h2>③ 行动清单</h2>
+<table class="risk">
+<thead><tr><th style="width:8%">优先级</th><th>事项</th><th style="width:16%">负责人角色</th><th style="width:12%">工时</th><th style="width:20%">依赖</th></tr></thead>
+<tbody>
+<tr><td class="prio P1">P0</td><td>E1：定位 70 ERROR 的资产目录，修 59 个 missing-asset-dir，重跑这 70 run</td><td>shard A（eval_triage 独占）+ 框架维护</td><td>1–2 人日</td><td>eval_triage/05_batch_triage.py 输出</td></tr>
+<tr><td class="prio P1">P0</td><td>补附录 A §task-example [TODO]：放一个完整 schematic_netlist case（prompt+assets+check.py+test_rationale）</td><td>shard D（schematic_netlist owner）</td><td>0.5 人日</td><td>选一个已 PASS 的中等难度 case</td></tr>
+<tr><td class="prio P1">P0</td><td>统一工程师/主机口径（附录 A TODO(T12)：268人42台 vs 698台224人）</td><td>benchmark 构建负责人</td><td>0.5 人日</td><td>数据侧确认 698 扫描与 42 活跃站的关系</td></tr>
+<tr><td class="prio P1">P1</td><td>E2：13 域 stratified 抽 100 任务，跑 GLM-5.2/Kimi-K2.6/DeepSeek-V4-Flash/Doubao-Seed-2.0-Pro</td><td>评测运维（run_batch）</td><td>2 机器日</td><td>E1 干净快照做对照；providers.json key 有效</td></tr>
+<tr><td class="prio P1">P1</td><td>E3：physical_verify + layout_aether 上 thinking=medium/high 消融</td><td>评测运维</td><td>1 机器日</td><td>与 E2 复用 sandbox 调度</td></tr>
+<tr><td class="prio P2">P2</td><td>E4：47 pilot 轨迹补 judge 判分标签，算实测 live-tool-call 数与 pass 的 Spearman 相关</td><td>分析组 + eval_triage</td><td>2 人日</td><td>pilot 轨迹保留；trace_anatomy.py</td></tr>
+<tr><td class="prio P2">P2</td><td>E5：100 任务 × 5 seed，报 Pass@1±std 与 Pass@5</td><td>评测运维</td><td>1.5 机器日</td><td>与 E2 同子集，复用调度</td></tr>
+<tr><td class="prio P2">P2</td><td>spice_sim 设 eval cap（≤120 runs），造题产能转 digital/verification</td><td>shard B（我）+ shard A</td><td>持续</td><td>mc≥10 fresh 已多假阳性（本轮实测）</td></tr>
+<tr><td class="prio P2">P2</td><td>补 pnr_signoff case 到 ≥50 eval runs，稳住榜首 CI</td><td>shard A（pnr_signoff owner）</td><td>持续</td><td>—</td></tr>
+<tr><td class="prio P3">P3</td><td>抽查 5 个含 ANTI 断言的 case，人工构造硬编码假提交，验证 check.py 在 B 上能 FAIL（查 ANTI=0 是真象还是判分器漏洞）</td><td>shard B（我）+ 各 shard</td><td>1 人日</td><td>rewrite_queue 已清零，断言闸门已过</td></tr>
+<tr><td class="prio P3">P3</td><td>抽查 characterization 域 28 run 的 check.py 是否都过 k≥8 且含真跑候选（§4.2）</td><td>shard B（我）</td><td>0.5 人日</td><td>—</td></tr>
+<tr><td class="prio P3">P3</td><td>增设第 14 域 <code>pdk_qa</code>（关键词 modelqa/.sw0/idvd/itf/spectrum），从 nsf5a 类 trace 起</td><td>shard B（我）提案，A 裁定</td><td>提案 0.5 人日</td><td>board 议题</td></tr>
+<tr><td class="prio P3">P3</td><td>论文补「按交付件类型」二级切分（script/report/netlist/layout/measurement）</td><td>论文写作</td><td>1 人日</td><td>E4 的实测深度数据</td></tr>
+<tr><td class="prio P4">P4</td><td>域均衡子采样 overall（每域抽等量 decided run 再平均）</td><td>分析组</td><td>0.5 人日</td><td>附录 B 表</td></tr>
+<tr><td class="prio P4">P4</td><td>验证是否增设 <code>ai_assisted_layout</code> 域（扫 698 机找 genus/innovus 脚本生成 session）</td><td>shard A 扫描</td><td>1 人日</td><td>—</td></tr>
+</tbody>
+</table>
+
+<h2>④ 风险与反对意见（预判审稿人反驳 + 我们的答）</h2>
+<table class="risk">
+<thead><tr><th>审稿人可能的反驳</th><th>我们的回答 / 该补什么</th></tr></thead>
+<tbody>
+<tr><td>「10.0% 只是 DeepSeek-V4-Pro@low 的属性，不是 task 的属性。RQ3 完全空缺。」</td><td>部分成立。已配置 4 backbone 但未跑完（附录 B）。<strong>行动</strong>：E2 在 100 任务子集上跑 4 backbone 给方向性答案；camera-ready 给全量 696×4。在引言/摘要把「10.0%」明确限定为「single-backbone, single-thinking-level pilot」。</td></tr>
+<tr><td>「grounding depth 是你按域手工贴的标签，正好『解释』了按域 pass 率——循环论证。」</td><td>成立，这是最严重一处。§5.2 已自承「annotation, not measured」。<strong>行动</strong>：E4 用 47 份轨迹的实测 live-tool-call 数把深度变成测量量，报与 pass 的相关；若相关显著则构念升级，若不显著则坦诚撤回该叙事。</td></tr>
+<tr><td>「696 个 run 里 70 个 ERROR（10%）是基础设施坏，你的快照不可信。」</td><td>部分成立。§5.1 已明 59/70 是资产目录缺失（可修）。<strong>行动</strong>：E1 修后重跑，报 ERROR-fixed Pass@1；同时论文已给三口径分母（8.9/9.9/10.0%）显示稳健，这点可强调。</td></tr>
+<tr><td>「7.1× 域跨度，pnr_signoff 才 24 decided run，翻一个 PASS 就 +3pp，CI 还重叠。」</td><td>成立。§4.2 已 downgrade 为 descriptive。<strong>行动</strong>：摘要去掉 7.1× 作为卖点（改为「ordering stable, ratios not」）；补 pnr_signoff case 到 ≥50 runs 稳 CI。</td></tr>
+<tr><td>「10.0% vs 76.5% 是跨基准比较，被任务类型混淆，不能说明编排更难。」</td><td>成立，§4.3 已自承。<strong>行动</strong>：在单脚本基准上用同一 backbone 跑同域子集做 within-ecosystem 对照（而非引用别人的 76.5%）；否则把 76.5% 对比从摘要挪到 discussion 并显式标注 confound。</td></tr>
+<tr><td>「只测了 Cline，别的 agent 框架可能不同。」</td><td>成立，§5.4 已列为 threat。论文的反击是「anti-leakage + MCP 桥与 agent 无关」。<strong>行动</strong>：camera-ready 至少补一个 OpenHands 或 SWE-agent 在 50 任务子集上的对照。</td></tr>
+<tr><td>「商业工具、专有 trace，不可复现。」</td><td>部分成立。§9 已给分层发布 + mock-EDA + 开源路线图，但开源扩展尚无任何 demo。<strong>行动</strong>：至少把 spice_sim 一个 case 用 ngspice 重写判分并跑通，作为开源扩展的 proof-of-concept（呼应 §附录 C 路线图）。</td></tr>
+<tr><td>「失败分类工具有 17.1% UNKNOWN，你的 taxonomy 占比不可靠。」</td><td>部分成立。<strong>行动</strong>：把 49 个 FAIL-with-submit UNKNOWN 人工标注完（§5.1 已定位其构成：15 hidden-B 缺 +12 check 返回契约缺 +22 多条件未标注），把类级 UNKNOWN 压到 &lt;5%。</td></tr>
+<tr><td>「spice_sim 104 run 占 15%，是大域但 8.4% 低于均值，把 overall 拉低了，10.0% 被分布扭曲。」</td><td>成立。<strong>行动</strong>：报域均衡子采样 overall（行动清单 P4）；并给 spice_sim 设 cap，避免新增 case 继续稀释信号。</td></tr>
+</tbody>
+</table>
+
+<hr>
+<h3>附：本轮触发证据链（用户令「做本条前仍须贴 mc-matrix 证据」）</h3>
+<div class="card">
+<pre>$ python3 designflow/trace_ledger.py --shard B mc-matrix --src designflow/summary_1105.tsv
+# 扫描快照: designflow/summary_1105.tsv
+# 数据行 = 5822 → 去重 session = 565（shard B keywords 过滤后）
+# 台账已动过 session = 2746（case/seeded=644, parked=1821）
+阈值           池总量   已动过   未动过(可做)
+mc>=10         486      463      23
+mc>=5          518      483      35
+mc>=15         448      433      15
+mc>=30         376      372      4</pre>
+<p><strong>peek 的 top 候选（按 spice-intensity 排序后逐条看首用户轮）</strong>，全部已 <code>mark --status parked</code>：</p>
+<ul>
+<li><code>1792040981126_o5xjq</code>（e0014566）— advisory「如果我要做模拟电路优化，可以用哪些 cad tool？」非 design_flow</li>
+<li><code>1788764026073_8hdj3</code>（ziyuny）—「who are you / 帮我打开 aether / 打开 analog 库 npn symbol」aether/GUI 连接</li>
+<li><code>1792652163775_i6fn6</code>（jcgu）—「你能获取到当前我打开的 aether 进程吗」aether GUI 连接</li>
+<li><code>1792042618272_wl9i4</code>（xingx）—「make compile_net / xcelium / 编译时间太长」数字编译优化</li>
+<li><code>1790128938715_nsf5a</code>（rongjiez）— 改 ModelQA 的 C++/Qt mainwindow.cpp + openWave.pl，EDA 工具自身开发</li>
+</ul>
+<p class="small">其余 fresh（如 1hq6h/ztoza/f1rqc）此前轮已 parked（false-positive）；givdz/u0mwh/y6liq/gtyj5 有 deepread 但归 eda_other/waveform（shard A/D 域），非 shard B。故判定「fresh peek 后无 CLEAN」，按用户令改做论文改进报告。</p>
+</div>
+
+<footer>
+  本报告由 shard B（spice_sim / characterization）以研究组成员身份撰写，作为「0-case 轮」的论文改进建议产出。
+  论文目录 <code>doc/ZhuLong_DAC2027/EDA-LiveFlow-Bench_ICML2027/</code> 全程只读未改；
+  所有引用均给 section + 原句；未做的实验一律标「建议验证」，未宣称已验证。
+  数字事实源：\Ntasks=1110、\Neval=696、Pass@1=10.0%（62/620），见 <code>main.tex</code> 与 <code>sections/4_experiments.tex</code>。
+  报告路径：<code>doc/ZhuLong_DAC2027/reports/report_designflow_paper_next_steps_zh.html</code>
+</footer>
+
+</div>
+</body>
+</html>
