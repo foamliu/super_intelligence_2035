@@ -43,7 +43,7 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
     <span>📅 2026-11-11</span>
     <span>🏗 Mamba2-hybrid 2.22B</span>
     <span>🔥 训练 iter≈163.6k / 700k</span>
-    <span>📊 L1: 16 ckpt ✅ | L2: v3 GSM8K 86/100 🟡 | L3: 空白 | L4: 61任务未接</span>
+    <span>📊 L1: 16 ckpt ✅ | L2: GSM8K=0%@160k 🔴 MMLU进行中 | L3: 空白 | L4: 61任务未接</span>
   </div>
   <div style="margin-top:12px;font-size:12.5px;background:rgba(0,0,0,.18);border-radius:8px;padding:8px 12px;opacity:.95">
     ⚠️ 本报告是<b>训练监控与决策依据</b>，<b>不进论文正文</b>（2026-11-10 用户令）。用户关注点（2026-11-11）：<b>如何拿到更好的结果</b>。
@@ -89,7 +89,7 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
 </div>
 
 <!-- L2 -->
-<h2 class="sec">L2 · 复杂推理（6 集）<span class="badge b-warn">⚠️ 160k 重评中(v3)</span></h2>
+<h2 class="sec">L2 · 复杂推理（6 集）<span class="badge b-bad">🔴 GSM8K=0%@160k</span></h2>
 <div class="card">
   <h3>P-8 历史结果（44.4B tokens · 2026-10-15）</h3>
   <table>
@@ -105,24 +105,25 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
   </table>
 </div>
 <div class="card">
-  <h3>🔴 L2 异常诊断（P0 · 用户令 2026-11-11）</h3>
-  <div class="alert"><b>核心问题</b>：GSM8K=1.52%(flex)/0.00%(strict)，对 2B 模型异常低（正常应>5%）。</div>
+  <h3>🔴 L2 诊断结论（P0 · 2026-11-11 · 160k v3 结果）</h3>
+  <div class="alert"><b>GSM8K = 0.0%（strict + flexible）@ 160k（671B tok，15× P-8）</b> — 判定：<b>真能力问题，非配置错误</b>。</div>
   <table>
     <tr><th>维度</th><th>证据</th><th>指向</th></tr>
-    <tr><td class="l">strict-match=0%</td><td class="l">模型从未产生 "The answer is X" 格式 → 格式生成能力缺失</td><td><span class="badge b-bad">能力</span></td></tr>
+    <tr><td class="l">strict-match=0%</td><td class="l">模型从未产生 "The answer is X" 正确格式 → 格式生成能力缺失</td><td><span class="badge b-bad">能力</span></td></tr>
     <tr><td class="l">训练量极低</td><td class="l">P-8 仅 44.4B tok（当前 160k=671B，<b>15×</b>）→ 早期 ckpt 生成能力必然弱</td><td><span class="badge b-bad">能力(早期)</span></td></tr>
     <tr><td class="l">L1 正常</td><td class="l">同期 L1=48.01%(loglikelihood 正常) → 模型加载/权重/分词无误</td><td><span class="badge b-ok">排除配置</span></td></tr>
-    <tr><td class="l">LL vs generation</td><td class="l">L1=loglikelihood，L2 GSM8K=generation → 生成路径可能有差异</td><td><span class="badge b-warn">部分配置</span></td></tr>
     <tr><td class="l">stop tokens</td><td class="l">eval log: <code>until:['Question:','&lt;/s&gt;','&lt;|im_end|&gt;']</code> → 标准，无误</td><td><span class="badge b-ok">排除配置</span></td></tr>
+    <tr><td class="l"><b>实际输出</b></td><td class="l"><b>curl 直查 160k llama-server</b>：模型输出 <code>"The answer is 5 years old3335431111..."</code> → 尝试答案格式但内容错误，随后退化为重复"1"×200+，finish_reason=length</td><td><span class="badge b-bad">能力(数学)</span></td></tr>
+    <tr><td class="l">数据配比</td><td class="l">P-5b/P-8 主体=Ultra-FineWeb-L3（网页文本），<b>无显式数学/代码数据</b> → 数学推理能力必然弱</td><td><span class="badge b-bad">数据配比</span></td></tr>
   </table>
   <div class="note">
-    <b>初步结论</b>：<b>主要是 44.4B tokens 早期训练的能力问题</b>，非评测配置错误。<br>
-    ① strict-match=0% → 模型尚未学会生成答案格式（训练量不足）；② L1 正常 → 模型加载/权重/分词无误；③ stop tokens/few-shot 配置均标准。<br>
-    <b>当前 160k(671B tok, 15× P-8) 生成能力可能已显著改善 → 正在重评确认。</b>
+    <b>结论</b>：GSM8K=0% 是<b>真能力问题</b>，根因是训练数据缺乏数学/代码内容。<br>
+    ① 模型有基本生成能力（产生 "The answer is..."）但数学内容完全错误；② 退化为重复"1"是小型模型在未见过的推理模式上的典型行为；③ L1(loglikelihood)正常说明模型权重/加载无误；④ stop tokens/few-shot 配置均标准。<br>
+    <b>建议（写进 MEMORY 待用户拍板）</b>：① 后续训练阶段增加数学/代码数据配比（参考 MiniCPM/DeepSeek 的 code+math 占比 15-30%）；② 或在 post-train SFT 阶段补数学推理能力。
   </div>
 </div>
 <div class="card">
-  <h3>160k 重评（v3 · 进行中 · 2026-11-11 13:35 起 · GSM8K 86/100 → MMLU 排队）</h3>
+  <h3>160k 重评结果（v3 · 2026-11-11 · GSM8K ✅ 完成 · MMLU 🟡 进行中）</h3>
   <div class="alert"><b>v2 失败根因</b>：MMLU 是 <code>loglikelihood</code> 任务，标准 <code>local-completions</code> 后端要求 response 含 <code>token_logprobs</code>，但 llama-server <code>/v1/completions</code> 不返回该字段 → <code>KeyError: 'token_logprobs'</code>。</div>
   <table>
     <tr><th>任务</th><th>口径</th><th>shot</th><th>后端</th><th>状态</th><th>结果</th></tr>
@@ -194,7 +195,7 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
   <table>
     <tr><th>层</th><th>评测</th><th>状态</th><th>关键数</th><th>下一步</th></tr>
     <tr><td><b>L1</b></td><td class="l">常识 8 集 (0-shot)</td><td><span class="badge b-ok">✅ 16ckpt</span></td><td>58.13%@160k</td><td class="l">继续每万 ckpt</td></tr>
-    <tr><td><b>L2</b></td><td class="l">复杂推理 6 集</td><td><span class="badge b-warn">⚠️ v3 GSM8K 86/100</span></td><td>P-8:6.66% / 160k:?</td><td class="l">v3运行中→v4已备(4集)</td></tr>
+    <tr><td><b>L2</b></td><td class="l">复杂推理 6 集</td><td><span class="badge b-bad">🔴 GSM8K=0%@160k</span></td><td>P-8:6.66% / 160k:GSM8K=0%</td><td class="l">MMLU运行中→v4已备(4集)</td></tr>
     <tr><td><b>L3</b></td><td class="l">Agentic</td><td><span class="badge b-bad">❌ 空白</span></td><td>—</td><td class="l">需GPU窗口</td></tr>
     <tr><td><b>L4</b></td><td class="l">领域</td><td><span class="badge b-bad">❌ 未接</span></td><td>—</td><td class="l">同L3</td></tr>
   </table>
@@ -216,7 +217,7 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
     <li><b>研究日报 2026-11-11</b>：pretrain 建议均为非指令（shot 标注已纳入四层报告），无新增可用建议</li>
   </ol>
   <div class="note">
-    <b>待决策</b>：① L3/L4 GPU 服务化——训练 decay 阶段安排还是等 pretrain 完成？② L4 是否先用 CPU llama-server smoke 1 个 designflow 任务？③ L2 若 160k 仍异常(GSM8K&lt;5%)——需排查 llama.cpp Mamba2 generation？④ v4 4 集是否一次全跑(预计~3h)还是分批？
+    <b>待决策</b>：① <b>L2 GSM8K=0%@160k → 训练数据缺数学/代码 → 建议后续阶段增加 code+math 数据配比(15-30%)或在 post-train SFT 补数学推理</b>；② L3/L4 GPU 服务化——训练 decay 阶段安排还是等 pretrain 完成？③ L4 是否先用 CPU llama-server smoke 1 个 designflow 任务？④ v4 4 集是否一次全跑(预计~3h)还是分批？
   </div>
 </div>
 
