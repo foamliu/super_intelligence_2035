@@ -1663,3 +1663,48 @@ L2/L3/L4 低分/空白同一根因 = 训练数据(P-5b/P-8 Ultra-FineWeb-L3)缺�
 - 新增 S1 训练数据实际配比表
 - 更新 footer 至 #1983
 - 报告: `run/reports/report_pretrain_eval_4tier_zh.html` (31.9KB) + 同步至 `doc/reports/`
+
+---
+
+## #1984 2026-11-11 18:10 — 生成退化诊断（7 个 curl 探针）+ BBH 监控
+
+### 训练健康
+- iter=165640/700k, step=7092ms (<7.4s ✅), loss=2.023, lr=1e-3 (stable 段), 0 NaN/0 skip
+- GPU: 8 卡 92-100% util, ~75GB VRAM
+
+### 生成退化诊断（核心发现）
+向运行中的 llama-server (port 8083, bz2b-160000-f16.gguf, iter 160k) 发送 7 个 curl 探针：
+
+| # | Prompt | Temp | 输出 | 诊断 |
+|---|--------|------|------|------|
+| 1 | GSM8K "Natalia sold clips..." | 0 greedy | "The video111111..." (重复1×200+) | 🔴 退化 |
+| 2 | "What is 2+3? Answer:" | 0 greedy | "the111 2nd333..." (首token="the"→退化) | 🔴 退化 |
+| 3 | "def fibonacci(n):..." | 0 greedy | "/examples111111..." (重复1×200+) | 🔴 退化 |
+| 4 | "True or False: 2+3=5. The answer is " | 0 greedy | "5" (✅正确!) → "th century" (退化) | 🟡 首token✅ |
+| 5 | "The capital of France is Paris. The capital of Japan is " | 0 greedy | "50xxxx111" (错误→退化) | 🔴 |
+| 6 | "What is 2+3? Answer:" | 0.7 | "Would it was easier..." → "111..." | 🔴 先连贯后退化 |
+| 7 | "What is 2+3? Answer:" | 0, rp=1.3 | "...The simplest possible way to solve this problem..." (✅连贯英文!) | 🟡 rp打破循环 |
+
+### 诊断结论
+1. **首 token logits 正确**：L1 MCQ 58.13%（正常），"2+3=5"→首token="5"✅ → 模型权重/加载/分词无误
+2. **SSM 状态在多 token 生成时崩溃**：2-5 token 后退化为重复"1" → Mamba2 recurrent state 未正确维护
+3. **repeat_penalty 可部分修复**：rp=1.3 打破"1"循环后模型能生成连贯英文 → SSM 状态并非完全损坏，而是陷入"1"吸引子
+4. **HF transformers 无法 CPU 验证**：`causal_conv1d_cuda` 仅支持 CUDA → 无法在 CPU 上对比 HF vs llama.cpp 生成质量
+5. **双重根因**：模型能力不足(26% code+math，远低于 60% 最优) + llama.cpp SSM 生成路径可能放大退化
+
+### 建议（待用户拍板）
+- ① 生成评测加 `repeat_penalty=1.1-1.3`（可能小幅改善 L2 分数）
+- ② 等 GPU 窗口用 vllm/sglang 对比 HF 生成质量
+- ③ decay 阶段混入 4:2:4 数据改善模型基础生成能力
+
+### BBH v4 进度
+- 42/100 (~68s/it, ETA ~66min)
+- HumanEval/MBPP 失败（缺 HF_ALLOW_CODE_EVAL，v5 已修复）
+- MATH 失败（4-shot assertion error，v5 改 0-shot）
+
+### 四层报告更新
+- 新增 "生成退化诊断" card（7 探针表 + 5 点结论 + 3 建议）
+- header iter/BBH 更新
+- footer #1984
+- 报告: `run/reports/report_pretrain_eval_4tier_zh.html` (34.9KB) + 同步至 `doc/reports/`
+
