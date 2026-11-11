@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaiZe-2B 预训练论文下一步建议（论文阅读轮 · 2026-11-11）</title>
+<style>
+:root{--blue:#1e40af;--blue-l:#3b82f6;--slate:#334155;--slate-l:#64748b;--green:#16a34a;--green-l:#dcfce7;--amber:#f59e0b;--amber-l:#fffbeb;--red:#dc2626;--red-l:#fef2f2;--border:#e2e8f0;--bg:#f8fafc}
+*{box-sizing:border-box}
+body{font-family:-apple-system,"Microsoft YaHei","Noto Sans SC",sans-serif;margin:0;padding:0;background:var(--bg);color:#1e293b;line-height:1.65}
+.container{max-width:1180px;margin:0 auto;padding:24px 20px 40px}
+h1{color:var(--blue);border-bottom:3px solid var(--blue-l);padding-bottom:12px;font-size:23px;margin-bottom:6px}
+.subtitle{color:var(--slate-l);font-size:13px;margin-bottom:24px}
+h2{color:var(--slate);font-size:19px;margin-top:32px;margin-bottom:10px;border-bottom:1px solid var(--border);padding-bottom:6px}
+h3{color:var(--slate);font-size:16px;margin-top:22px;margin-bottom:8px}
+h4{color:var(--blue);font-size:14.5px;margin-top:18px;margin-bottom:6px}
+table{border-collapse:collapse;width:100%;margin:14px 0;font-size:12.5px}
+th,td{border:1px solid var(--border);padding:6px 9px;text-align:left;vertical-align:top}
+th{background:#475569;color:#fff;font-weight:600}
+tr:nth-child(even){background:#f1f5f9}
+tr:hover{background:#e0e7ff}
+.code{background:#f1f5f9;padding:1px 5px;border-radius:3px;font-family:monospace;font-size:12px}
+.quote{background:#f8fafc;border-left:4px solid var(--blue-l);padding:10px 16px;margin:12px 0;font-size:13px;color:var(--slate);font-style:italic}
+.quote .src{display:block;margin-top:4px;font-style:normal;font-size:11px;color:var(--slate-l)}
+.card{background:#fff;border:1px solid var(--border);border-radius:8px;padding:16px 20px;margin:16px 0}
+.card-tl{border-top:3px solid var(--blue-l)}
+.note{background:var(--amber-l);border-left:4px solid var(--amber);padding:10px 16px;margin:14px 0;font-size:13px;border-radius:0 6px 6px 0}
+.success{background:var(--green-l);border-left:4px solid var(--green);padding:10px 16px;margin:14px 0;font-size:13px;border-radius:0 6px 6px 0}
+.warn{background:var(--red-l);border-left:4px solid var(--red);padding:10px 16px;margin:14px 0;font-size:13px;border-radius:0 6px 6px 0}
+.oneliner{background:linear-gradient(135deg,#1e40af,#3b82f6);color:#fff;padding:18px 24px;border-radius:10px;font-size:17px;font-weight:600;margin-bottom:24px}
+.tag{display:inline-block;padding:1px 8px;border-radius:10px;font-size:11px;font-weight:600;margin-right:4px}
+.tag-p0{background:#fecaca;color:#991b1b}
+.tag-p1{background:#fed7aa;color:#9a3412}
+.tag-p2{background:#dbeafe;color:#1e40af}
+.tag-p3{background:#d1fae5;color:#065f46}
+.tag-yes{background:#d1fae5;color:#065f46}
+.tag-no{background:#fee2e2;color:#991b1b}
+.tag-maybe{background:#fef3c7;color:#92400e}
+.small{font-size:11px;color:var(--slate-l)}
+.kpi-row{display:flex;gap:12px;flex-wrap:wrap;margin:14px 0}
+.kpi{flex:1;min-width:160px;background:#fff;border:1px solid var(--border);border-radius:8px;padding:12px 16px;text-align:center}
+.kpi .val{font-size:22px;font-weight:700;color:var(--blue)}
+.kpi .lbl{font-size:12px;color:var(--slate-l);margin-top:2px}
+ul.qa-list{list-style:none;padding:0;margin:0}
+ul.qa-list>li{margin-bottom:24px}
+.q-num{display:inline-block;background:var(--blue);color:#fff;width:28px;height:28px;border-radius:50%;text-align:center;line-height:28px;font-weight:700;margin-right:8px;font-size:14px}
+.foot{margin-top:36px;padding-top:14px;border-top:1px solid var(--border);font-size:11px;color:var(--slate-l);text-align:center}
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>BaiZe-2B 预训练论文下一步建议</h1>
+<div class="subtitle">
+论文阅读轮 · 2026-11-11 · pretrain 线执行者视角 ·
+训练健康（iter 160,770/700k, loss≈2.02, step&lt;7.4s, 0 NaN） ·
+报告生成于 2026-11-11
+</div>
+
+<!-- ① 一句话结论 -->
+<div class="oneliner">
+核心结论：超参搜索中 WSD vs cosine、decay 比例、warmup、min_lr 四项「胜出」结论的差距全部落在 3-seed 噪声带（σ=0.0469）内，审稿人一问即露；当前最该补的实验是 LR 边界探测（1e-3 是网格上限未被超越验证）与 S3 关键轴的多 seed 复现——二者合计 ≤30 GPU·h 即可把论文从「单点主张」提升到「统计可辩护」。
+</div>
+
+<!-- ② 论文现状速览 -->
+<h2>② 论文现状速览</h2>
+
+<div class="card card-tl">
+<h3>章节结构与关键数字</h3>
+<table>
+<tr><th>章节</th><th>文件</th><th>关键内容 / 数字</th><th>训练进度关联</th></tr>
+<tr><td>§4.1 架构选型</td><td><code>4_llm_pretrain.tex</code> L6–8</td><td>混合 vs 稠密：参数 2.22B vs 2.51B（−11.6%），1k 步 loss 4.68 vs 4.81，5k 步 loss 3.06 vs 3.36，吞吐 83K vs 90K</td><td>5k 步对比，远小于 700k 生产规模</td></tr>
+<tr><td>§4.2 框架与 LR 调度</td><td><code>4_llm_pretrain.tex</code> L10–15</td><td>WSD, LR=1e-3, warmup=2000, seq=16384, 613,992 tok/s</td><td>生产 run 使用此配置</td></tr>
+<tr><td>§4.3 搜索协议</td><td><code>4_llm_pretrain.tex</code> L17–19</td><td>S1–S5 分阶段单变量，5000 步地平线，总预算 ≈82 GPU·h</td><td>5000 步 → 700k 步的外推假设未验证</td></tr>
+<tr><td>§4.4 数据</td><td><code>4_llm_pretrain.tex</code> L21–29</td><td>七源混合 74:19:7，400 次贝叶斯搜索确认 ±0.6pp，193,295 条 13-gram 黑名单</td><td>生产 run 使用此配比</td></tr>
+<tr><td>§4.5 长上下文数据闸门</td><td><code>4_llm_pretrain.tex</code> L79–100</td><td>≥32K 占 2.52%，≥128K 占 0.03%，闸门未达标</td><td>衰减 B 段尚未开始</td></tr>
+<tr><td>§4.6 结果与生产训练</td><td><code>4_llm_pretrain.tex</code> L102–129</td><td>S5 winner loss 2.2054@20k；3-seed 2.6739±0.0469@5k；生产 iter 160,770/700k @591K tok/s, loss≈2.02, 0 NaN</td><td><strong>当前进度 23%</strong></td></tr>
+<tr><td>§4.7 长上下文训练</td><td><code>4_llm_pretrain.tex</code> L131–137</td><td>衰减 B 段 32K→64K→128K 阶梯，~880 GPU·h</td><td>尚未开始（queued/gated）</td></tr>
+<tr><td>§4.8 长上下文能力与推理成本</td><td><code>4_llm_pretrain.tex</code> L139–141</td><td>θ=1e6, PPL 4K→1M: 83.2→…→55.4, SGLang 128K prefill 39,377 tok/s, 1M 172s/34.7GB</td><td>已验证（来自 P-8 ckpt）</td></tr>
+<tr><td>摘要</td><td><code>0_abstract.tex</code> L1–20</td><td>「about one-quarter of the way (160,770/700k @591K tok/s, loss≈2.02)」</td><td><strong>诚实标注进度</strong></td></tr>
+<tr><td>结论</td><td><code>9_conclusion.tex</code> L1–15</td><td>Stage(ii) [TBD]；「post-trained for agentic capability」</td><td>Stage(ii) 尚未开始</td></tr>
+</table>
+</div>
+
+<div class="kpi-row">
+<div class="kpi"><div class="val">23%</div><div class="lbl">训练进度 (160,770 / 700,000 iter)</div></div>
+<div class="kpi"><div class="val">≈2.02</div><div class="lbl">训练 loss（stable 段，未进 decay）</div></div>
+<div class="kpi"><div class="val">591K</div><div class="lbl">tok/s（FP8 @16,384）</div></div>
+<div class="kpi"><div class="val">82</div><div class="lbl">超参搜索总 GPU·h（8×H100）</div></div>
+<div class="kpi"><div class="val">σ=0.047</div><div class="lbl">3-seed 复现标准差 @5000 步</div></div>
+</div>
+
+<div class="note">
+<strong>关键约束</strong>（2026-11-10 用户令）：评测结果（8 集 zero-shot benchmark）<strong>不写进论文</strong>，只用于训练监控。论文只保留 §4.6 的训练状态句（iter / tok/s / loss）。本报告遵守此约束，建议中不包含「加评测表到论文」的提议。
+</div>
+
+<!-- ③ 五问回答 -->
+<h2>③ 五问回答</h2>
+<ul class="qa-list">
+
+<!-- Q1 -->
+<li>
+<h3><span class="q-num">1</span>我们最薄弱的论证是哪个？</h3>
+
+<h4>最薄弱：§4.3 搜索协议的 5000 步地平线 → 700k 步外推假设</h4>
+
+<div class="quote">
+"The recipe was selected via a staged single-variable protocol at 5000 steps: S1 baseline; S2 LR sweep…"
+<span class="src">— <code>ISEDA2027/4_llm_pretrain.tex</code> L18</span>
+</div>
+
+<p>论文的全部超参结论（LR=1e-3、WSD 胜 cosine、decay 10%、warmup 250、min_lr 1e-5、退火 86:10:4）都来自 <strong>5000 步</strong>的短地平线实验，数据集仅 164.75M token（<code>EXPERIMENTS_PRETRAIN_2B.md</code> L5）。而生产训练是 700,000 步 / 2.94T token——<strong>搜索与生产之间差 140 倍步数、17,800 倍数据量</strong>。论文从未验证 5k 步的排名在 50k、100k 或更大步数上是否保持不变。</p>
+
+<div class="warn">
+<strong>审稿人反驳</strong>：「Your entire recipe is based on 5k-step proxy. How do you know the rankings don't flip at 100k? Literature shows LR-schedule preferences can change with horizon (e.g., WSD vs cosine crossover at different compute budgets).」这是一个 <strong>方法论级弱点</strong>，不是某个数字的问题——如果搜索方法论站不住，下游所有结论（架构选型、数据配比、调度选择）的可信度都被拉低。
+</div>
+
+<h4>第二薄弱：§4.6 搜索结果中多数「胜出」结论落在 seed 噪声带内</h4>
+
+<div class="quote">
+"reaching validation loss 2.2054 at 20000 steps (2.6739±0.0469 across three seeds at 5000; Table 2)"
+<span class="src">— <code>ISEDA2027/4_llm_pretrain.tex</code> L103</span>
+</div>
+
+<p>论文报告了 3-seed 标准差 σ=0.0469（<code>EXPERIMENTS_PRETRAIN_2B.md</code> L97），但 S3 各轴的「胜出」差距为：</p>
+<table>
+<tr><th>S3 轴</th><th>对比</th><th>Δ (loss)</th><th>vs σ=0.0469</th><th>结论是否稳健</th></tr>
+<tr><td>S3-02 调度族</td><td>WSD 2.7679 vs cosine 2.8155</td><td>0.048</td><td>≈ 1.02σ</td><td><span class="tag tag-no">不稳健</span></td></tr>
+<tr><td>S3-03 decay 比例</td><td>10% 2.7679 vs 5% 2.7900</td><td>0.022</td><td>≈ 0.47σ</td><td><span class="tag tag-no">不稳健</span></td></tr>
+<tr><td>S3-04 warmup</td><td>250 2.7679 vs 2000 2.7957</td><td>0.028</td><td>≈ 0.60σ</td><td><span class="tag tag-no">不稳健</span></td></tr>
+<tr><td>S3-05 min_lr</td><td>1e-5 2.7647 vs 3e-5 2.7679</td><td>0.003</td><td>≈ 0.06σ</td><td><span class="tag tag-no">不稳健</span></td></tr>
+<tr><td>S2 LR</td><td>1e-3 2.7627 vs 8e-4 2.7700</td><td>0.007</td><td>≈ 0.15σ</td><td><span class="tag tag-no">不稳健</span>（单 seed）</td></tr>
+<tr><td>S4 退火配比</td><td>86:10:4 2.6298 vs 纯L3 2.7621</td><td>0.132</td><td>≈ 2.81σ</td><td><span class="tag tag-maybe">较稳健</span>（单 seed）</td></tr>
+</table>
+<p class="small">数据源：<code>EXPERIMENTS_PRETRAIN_2B.md</code> L10, L12, L76–80, L85–87。σ 来自 L97（3-seed: 2.6402/2.6539/2.7275, σ≈0.0469）。</p>
+
+<div class="warn">
+<strong>审稿人反驳</strong>：「Table 2 reports σ=0.0469, yet your WSD-vs-cosine margin is 0.048 (1σ). Your decay-ratio margin is 0.022 (0.5σ). These are not statistically significant differences. You cannot claim "WSD retains" or "10% retains" with n=1 per arm and a known noise band that swamps the effect.」<br><br>
+论文 <code>4_llm_pretrain.tex</code> L170–172 的措辞（"WSD retains", "10% retains", "250 retains"）暗示了稳健的结论，但实际数据不支持这个强度。
+</div>
+</li>
+
+<!-- Q2 -->
+<li>
+<h3><span class="q-num">2</span>训练还在 23%，论文该怎么写才诚实？</h3>
+
+<p>当前 §4.6 的进度句（<code>4_llm_pretrain.tex</code> L109）：</p>
+<div class="quote">
+"At the time of writing (2026-11-11), the run has passed iteration 160,770 of 700,000 at ≈591K tok/s, training loss ≈2.02, with zero NaN or skipped iterations (Table 3)."
+<span class="src">— <code>ISEDA2027/4_llm_pretrain.tex</code> L109</span>
+</div>
+
+<p>摘要（<code>0_abstract.tex</code> L14）：</p>
+<div class="quote">
+"The backbone is currently about one-quarter of the way through this run (160,770 of 700,000 iterations at ≈591K tok/s, training loss ≈2.02)."
+<span class="src">— <code>ISEDA2027/0_abstract.tex</code> L14</span>
+</div>
+
+<h4>现有措辞的优点</h4>
+<ul>
+<li>明确标注了日期 "2026-11-11" 和 "at the time of writing"——好</li>
+<li>给出了 iter / total 比例（160,770 / 700,000），读者可自行计算进度——好</li>
+<li>"zero NaN or skipped iterations" 表明训练健康——好</li>
+<li>摘要用 "about one-quarter"——准确、不夸张</li>
+</ul>
+
+<h4>存在的风险与改写建议</h4>
+
+<div class="warn">
+<strong>风险 1：「training loss ≈2.02」可能被误读为「已收敛到 2.02」</strong><br>
+当前 loss 2.02 是 <strong>WSD stable 段</strong>的 loss（LR=1e-3 恒定，尚未进 decay）。stable 段 loss 仍在缓慢下降（<code>MEMORY_PRETRAIN_2B.md</code> #1954: 末 10 步 loss 2.013–2.024）。真正的大幅下降发生在 decay 段（S5-01: stable ~2.34 → decay 2.205，退火增益 ~0.14；<code>EXPERIMENTS_PRETRAIN_2B.md</code> L16）。读者如果看到 "loss ≈2.02" 可能以为这是最终 loss，但实际上 decay 后 loss 还会进一步下降。<br><br>
+<strong>建议</strong>：在 "training loss ≈2.02" 后加注 "(stable phase; decay annealing has not yet begun)"。
+</div>
+
+<div class="warn">
+<strong>风险 2：tab:prod-budget 的 "160k done" 可能被误读为「160k 步已完成 = 已收敛」</strong><br>
+<code>4_llm_pretrain.tex</code> L122: "Warmup + stable & 2.94T & 700k & ≈58d & 160k done"。这里 "160k done" 容易被误读为「已完成」而非「进行到 160k」。<br><br>
+<strong>建议</strong>：改为 "160k / 700k (in progress)" 或 "23% complete"。
+</div>
+
+<div class="note">
+<strong>不需要改的</strong>：摘要的 "about one-quarter" 是诚实的；§4.6 的 "at the time of writing" 是标准的会议论文做法（ISEDA/IEEE 允许 in-progress 报告）。论文整体定位为 "recipe + protocol paper" 而非 "final results paper"，这在 abstract L18 "Later stages are specified as protocols with pre-specified criteria; their measurements are in progress" 已有声明。
+</div>
+</li>
+
+<!-- Q3 -->
+<li>
+<h3><span class="q-num">3</span>哪些超参搜索结论经得起推敲？</h3>
+
+<table>
+<tr><th>结论</th><th>来源</th><th>Δ (loss)</th><th>n (seeds)</th><th>vs σ=0.0469</th><th>判定</th><th>审稿人一问会怎样</th></tr>
+<tr><td><strong>LR=1e-3 优于更低 LR</strong></td><td>S2, 7 点, <code>EXP</code> L10, L65–71</td><td>1e-3 vs 8e-4: 0.007（但 7 点单调递减趋势明显）</td><td>1</td><td>趋势 &gt; 单点 Δ</td><td><span class="tag tag-maybe">趋势可信</span></td><td>趋势可信但 <strong>1e-3 是网格上限，未测 1.2e-3/1.5e-3</strong>（<code>EXP</code> L11 自注）→ 审稿人会问「你怎么知道最优不在 1.5e-3?」</td></tr>
+<tr><td><strong>WSD 胜 cosine</strong></td><td>S3-01 vs S3-02, <code>EXP</code> L77</td><td>0.048</td><td>1</td><td>1.02σ</td><td><span class="tag tag-no">不稳健</span></td><td>「0.048 在你的 σ=0.047 噪声带内，n=1 per arm，p-value 不可算」→ <strong>直接露</strong></td></tr>
+<tr><td><strong>decay 10% 胜 5%</strong></td><td>S3-01 vs S3-03, <code>EXP</code> L78</td><td>0.022</td><td>1</td><td>0.47σ</td><td><span class="tag tag-no">不稳健</span></td><td>同上，差距更小，更容易被攻击</td></tr>
+<tr><td><strong>warmup 250 胜 2000</strong></td><td>S3-01 vs S3-04, <code>EXP</code> L79</td><td>0.028</td><td>1</td><td>0.60σ</td><td><span class="tag tag-no">不稳健</span></td><td>同上</td></tr>
+<tr><td><strong>min_lr 1e-5 胜 3e-5</strong></td><td>S3-01 vs S3-05, <code>EXP</code> L80</td><td>0.003</td><td>1</td><td>0.06σ</td><td><span class="tag tag-no">不稳健</span></td><td>论文自己已注「处 run-to-run 噪声 ~0.005 内」（<code>EXP</code> L80）→ 审稿人会指出这不是显著差异</td></tr>
+<tr><td><strong>退火加 code+math 有益</strong></td><td>S4-01→S4-03, <code>EXP</code> L85–87</td><td>0.132</td><td>1</td><td>2.81σ</td><td><span class="tag tag-maybe">较可信</span></td><td>Δ 大于噪声，但 n=1 → 审稿人会要求至少 2 seed 复现；另外 code/math 源本身熵更低（<code>EXP</code> L14 自注「loss 降幅含分布偏移成分」），审稿人会问「你确定是 code/math 帮了忙，还是只是换到了低熵数据？」</td></tr>
+<tr><td><strong>S5 winner loss 2.2054@20k</strong></td><td>S5-01, <code>EXP</code> L95</td><td>—</td><td>1</td><td>—</td><td><span class="tag tag-maybe">单点值</span></td><td>单 seed 长跑，作为收敛曲线展示没问题，但不应作为「可复现最终 loss」引用</td></tr>
+<tr><td><strong>3-seed 均值 2.6739±0.0469</strong></td><td>S5-02/03/04, <code>EXP</code> L92–94, L97</td><td>—</td><td>3</td><td>—</td><td><span class="tag tag-yes">诚实报告</span></td><td>这是论文<strong>最诚实</strong>的数字：如实报告了 σ 和离群 seed（seed2024 +0.087）。审稿人会认可这一点</td></tr>
+</table>
+
+<div class="warn">
+<strong>总结</strong>：7 个搜索结论中，<strong>只有 S4 退火配比（Δ=0.132, 2.8σ）</strong>在效应量上经得起推敲（但仍需多 seed 验证）。其余 5 个（LR 边界、WSD、decay、warmup、min_lr）的差距全部落在 1σ 以内。<strong>论文需要要么补多 seed 实验把这些结论的置信度提上来，要么在措辞上从「retains / optimal」降级为「preferred / selected within noise band」</strong>。
+</div>
+</li>
+
+<!-- Q4 -->
+<li>
+<h3><span class="q-num">4</span>下一步该补什么实验（≥3 条，按性价比排序）</h3>
+
+<table>
+<tr>
+<th>#</th><th>优先级</th><th>实验</th><th>目的</th><th>方法</th><th>数据 / 配置</th><th>工时</th><th>能回答的质疑</th><th>本轮可开跑</th>
+</tr>
+<tr>
+<td>E1</td>
+<td><span class="tag tag-p0">P0</span></td>
+<td><strong>LR 边界探测（1.2e-3, 1.5e-3）</strong></td>
+<td>确认 1e-3 是真最优还是网格上限截断</td>
+<td>在 S2 协议上追加 2 点（1.2e-3, 1.5e-3），其余配置同 S2-07（WSD, 5000 步, 8 卡）</td>
+<td>同 S2：<code>data/ultrafineweb_l3_qa</code>, seq=4094, GBS=8, bf16</td>
+<td>~7.2 GPU·h（2 点 × ~3.6h/点）</td>
+<td>「你确定最优 LR 不在 1.5e-3?」→ 如果 1.2e-3 或 1.5e-3 loss 更低，整个 recipe 的 LR 要改；如果 1e-3 仍最优，论文可补一句「boundary verified」</td>
+<td><span class="tag tag-no">否</span>（需 GPU，当前 pretrain 占满 16 卡）<br><span class="small">建议：在 decay 段结束后或用 .17 的 4 张 A40 跑</span></td>
+</tr>
+<tr>
+<td>E2</td>
+<td><span class="tag tag-p0">P0</span></td>
+<td><strong>S3 关键轴多 seed 复现（WSD vs cosine × 3 seed）</strong></td>
+<td>验证 WSD vs cosine 的 0.048 差距是否在多 seed 下保持</td>
+<td>S3-01 (WSD) 和 S3-02 (cosine) 各跑 3 seed（44, 777, 2024），共 6 run，5000 步</td>
+<td>同 S3：<code>data/ultrafineweb_l3_qa</code>, LR=1e-3, seq=4094, GBS=8</td>
+<td>~21.6 GPU·h（6 run × ~3.6h/run）</td>
+<td>「WSD vs cosine 的差距在你的噪声带内」→ 如果 3-seed 均值仍然 WSD &lt; cosine，p-value 可算；如果翻转，论文需改结论</td>
+<td><span class="tag tag-no">否</span>（需 GPU）<br><span class="small">建议：同 E1</span></td>
+</tr>
+<tr>
+<td>E3</td>
+<td><span class="tag tag-p1">P1</span></td>
+<td><strong>搜索→生产迁移验证（5k vs 50k 排名一致性）</strong></td>
+<td>验证 5k 步排名在 50k 步是否保持</td>
+<td>取 S3 winner (WSD, LR=1e-3) 和 S3-02 (cosine)，各跑到 50,000 步（10× 搜索地平线），比较 final loss 排名</td>
+<td>需 ≥700M token 数据（<code>ultrafineweb_l3_qa_700m</code> 已备, <code>EXP</code> L100–101）；8 卡</td>
+<td>~70 GPU·h（2 run × ~35h/run, 50k 步 @ ~3.6h/5k步）</td>
+<td>「5k 步排名怎么知道不翻转?」→ 如果 50k 步排名保持，论文可声明 "short-horizon rankings transfer to 10× horizon"；如果翻转，方法论需重新审视</td>
+<td><span class="tag tag-no">否</span>（需 GPU + 较长时间）<br><span class="small">建议：pretrain decay 段后用空闲 16 卡跑</span></td>
+</tr>
+<tr>
+<td>E4</td>
+<td><span class="tag tag-p1">P1</span></td>
+<td><strong>架构对比延长到 20k 步（dense vs hybrid）</strong></td>
+<td>验证 5k 步的架构优势在 20k 步是否保持</td>
+<td>重跑 dense (MiniCPM5-2B) 和 hybrid (YuYan 2.22B) 到 20,000 步，比较 final loss</td>
+<td>需 dense 模型 config + 相同数据/seed；8 卡</td>
+<td>~28 GPU·h（2 run × ~14h/run, 20k 步）</td>
+<td>「你的架构对比只有 5k 步，怎么知道优势不在 20k 步消失?」→ 如果 20k 步仍 hybrid &lt; dense，架构选型论证大幅加强</td>
+<td><span class="tag tag-no">否</span>（需 GPU + dense 模型配置）</td>
+</tr>
+<tr>
+<td>E5</td>
+<td><span class="tag tag-p2">P2</span></td>
+<td><strong>S4 退火配比多 seed 复现</strong></td>
+<td>验证 86:10:4 退火配比（Δ=0.132）在多 seed 下保持</td>
+<td>S4-01 (纯L3) 和 S4-03 (86:10:4) 各跑 2 个额外 seed（777, 2024），共 4 run</td>
+<td>同 S4：5000 步, 8 卡</td>
+<td>~14.4 GPU·h（4 run × ~3.6h/run）</td>
+<td>「S4 的 0.132 差距是不是 seed 运气?」→ 2.8σ 已经较大，多 seed 更稳</td>
+<td><span class="tag tag-no">否</span>（需 GPU）</td>
+</tr>
+<tr>
+<td>E6</td>
+<td><span class="tag tag-p2">P2</span></td>
+<td><strong>stable 段 loss 趋势定量分析</strong></td>
+<td>给论文提供 stable 段 loss 下降率的定量描述（而非仅一个 snapshot 值）</td>
+<td>从训练日志提取 loss vs iter 曲线（每 2000 步采样点），拟合 power-law / log 趋势，计算 loss 下降斜率</td>
+<td>纯数据分析，不需 GPU；数据源 = <code>.29</code> 训练日志 + 已有 ckpt loss 记录</td>
+<td>~2h（CPU, 数据分析）</td>
+<td>「loss 2.02 是收敛了还是在下降?」→ 斜率图可直观回答</td>
+<td><span class="tag tag-yes">是</span>（本轮可做，纯 CPU）</td>
+</tr>
+<tr>
+<td>E7</td>
+<td><span class="tag tag-p3">P3</span></td>
+<td><strong>tab:configs 措辞审查（不改数据，改 claim 强度）</strong></td>
+<td>把 Table 2 的 "retains" / "optimal" 措辞降到与统计证据匹配的强度</td>
+<td>审查 <code>4_llm_pretrain.tex</code> L168–174 的 7 行搜索结果表，在 "Outcome" 列加注 "(n=1, within noise band)" 或改为 "preferred (single-seed)"</td>
+<td>纯文本编辑，不需 GPU</td>
+<td>~1h</td>
+<td>审稿人对统计显著性的质疑→ 提前声明局限性比被指出后辩护更好</td>
+<td><span class="tag tag-yes">是</span>（本轮可做，但需用户许可改 tex——当前令禁止改 tex，建议先在 MEMORY 提建议）</td>
+</tr>
+</table>
+
+<div class="note">
+<strong>本轮可立即开跑的</strong>：E6（stable 段 loss 趋势分析，纯 CPU）和 E7（措辞审查建议，不改 tex 只在 MEMORY 记录建议）。其余 E1–E5 均需 GPU，当前 pretrain 占满 16 卡，需等 decay 段结束或用 .17 的 A40。
+</div>
+</li>
+
+<!-- Q5 -->
+<li>
+<h3><span class="q-num">5</span>摘要与结论是否超前于证据？</h3>
+
+<h4>摘要（<code>0_abstract.tex</code>）</h4>
+<table>
+<tr><th>行</th><th>原句</th><th>是否超前</th><th>分析</th></tr>
+<tr><td>L12</td><td>"a budget-constrained search fixes the pre-training recipe, now scaled to a 2.94T-token production run"</td><td><span class="tag tag-maybe">部分超前</span></td><td>"fixes" 暗示搜索已定论，但 LR 边界未测、多个结论在噪声带内。"scaled to" 暗示已完成，实际只到 23%。建议改为 "selects" 或 "determines"（而非 "fixes"），并标注 "in progress"。</td></tr>
+<tr><td>L14</td><td>"The backbone is currently about one-quarter of the way through this run (160,770 of 700,000…)"</td><td><span class="tag tag-yes">诚实</span></td><td>准确标注进度和日期，没有夸大。</td></tr>
+<tr><td>L16</td><td>"On a 449-task EDA-scripting benchmark… we test whether YuYan can offload subtasks from the deployed orchestrators at comparable task accuracy and materially lower serving cost."</td><td><span class="tag tag-maybe">措辞需注意</span></td><td>"we test whether" 是疑问句式，不是声称已实现——这是好的。但 "comparable task accuracy" 可能被解读为「已达到可比精度」。实际上 Stage(ii) 尚未开始，没有结果。建议保持 "we test whether" 的疑问句式，不要在后续修订中改成 "achieves"。</td></tr>
+<tr><td>L18</td><td>"Later stages are specified as protocols with pre-specified criteria; their measurements are in progress"</td><td><span class="tag tag-yes">诚实</span></td><td>明确声明后续阶段为协议、测量在进行中——这是正确的做法。</td></tr>
+</table>
+
+<h4>结论（<code>9_conclusion.tex</code>）</h4>
+<table>
+<tr><th>行</th><th>原句</th><th>是否超前</th><th>分析</th></tr>
+<tr><td>L3</td><td>"We presented YuYan, a ≈2.2B-parameter hybrid… language model built from scratch and post-trained for agentic capability."</td><td><span class="tag tag-no">超前</span></td><td>"post-trained for agentic capability" 声称已完成 post-training，但 Stage(ii) 状态为 "design"（<code>3_architecture.tex</code> L66: "Post-training (SFT, RLVR) & design"），尚未执行。建议改为 "designed for agentic capability" 或 "to be post-trained for agentic capability"。</td></tr>
+<tr><td>L5</td><td>"we selected a sequential Mamba2-hybrid backbone over a dense transformer for its lower loss-per-parameter and substantially faster inference"</td><td><span class="tag tag-maybe">部分超前</span></td><td>"lower loss-per-parameter" 基于 1k/5k 步对比（<code>4_llm_pretrain.tex</code> L7, tab:archcomp L155–156），未在 20k+ 步验证。"substantially faster inference" 有 SGLang 数据支撑（L140），这部分没问题。</td></tr>
+<tr><td>L7</td><td>"its measurements are reported as [TBD]"</td><td><span class="tag tag-yes">诚实</span></td><td>Stage(ii) 结果标注为 [TBD]——正确。</td></tr>
+<tr><td>L9</td><td>"The complete recipe and a single reproducible command encapsulate the entire construction under the NVIDIA NeMo recipe."</td><td><span class="tag tag-maybe">部分超前</span></td><td>"complete recipe" 暗示已完整，但 LR 边界未测、decay 段未跑。"entire construction" 暗示已构建完成，实际只到 pretrain 23%。建议改为 "the pre-training recipe and reproducible command"（限定到 pretrain）。</td></tr>
+<tr><td>L12</td><td>"The immediate next step is agentic fine-tuning with the UltraData-SFT-Agent corpus toward a deployable agent core"</td><td><span class="tag tag-yes">合理</span></td><td>这是 future work 的正确表述。</td></tr>
+</table>
+
+<div class="warn">
+<strong>需要修正的超前声明（按优先级）</strong>：
+<ol>
+<li><strong>结论 L3</strong>：「post-trained for agentic capability」→ 应改为「designed for agentic capability」或加 "(planned)"。这是最明显的超前：声称了尚未执行的工作。</li>
+<li><strong>摘要 L12</strong>：「fixes the pre-training recipe」→ 应改为「selects」或「determines」，因为搜索结论有统计局限性。</li>
+<li><strong>结论 L9</strong>：「complete recipe… entire construction」→ 应限定到 pretrain 阶段。</li>
+</ol>
+以上均为措辞修订，<strong>不改任何数据或结论</strong>，只让 claim 强度匹配证据强度。按当前用户令（不改 tex），建议先在 MEMORY 记录，待用户许可后再改。
+</div>
+</li>
+
+</ul>
+
+<!-- ④ 行动清单表 -->
+<h2>④ 行动清单表</h2>
+
+<table>
+<tr>
+<th>优先级</th><th>事项</th><th>工时</th><th>依赖</th><th>能否本轮开跑</th><th>状态</th>
+</tr>
+<tr><td><span class="tag tag-p0">P0</span></td><td>E1: LR 边界探测（1.2e-3, 1.5e-3 各 5000 步）</td><td>~7.2 GPU·h</td><td>需 8×H100 空闲（当前 pretrain 占满）</td><td><span class="tag tag-no">否</span></td><td>建议验证</td></tr>
+<tr><td><span class="tag tag-p0">P0</span></td><td>E2: S3 WSD vs cosine × 3 seed 复现</td><td>~21.6 GPU·h</td><td>需 8×H100 空闲</td><td><span class="tag tag-no">否</span></td><td>建议验证</td></tr>
+<tr><td><span class="tag tag-p1">P1</span></td><td>E3: 5k→50k 步排名迁移验证</td><td>~70 GPU·h</td><td>需 8×H100 + 700M token 数据（已备）</td><td><span class="tag tag-no">否</span></td><td>建议验证</td></tr>
+<tr><td><span class="tag tag-p1">P1</span></td><td>E4: 架构对比延长到 20k 步</td><td>~28 GPU·h</td><td>需 8×H100 + dense 模型 config</td><td><span class="tag tag-no">否</span></td><td>建议验证</td></tr>
+<tr><td><span class="tag tag-p2">P2</span></td><td>E5: S4 退火配比多 seed 复现</td><td>~14.4 GPU·h</td><td>需 8×H100 空闲</td><td><span class="tag tag-no">否</span></td><td>建议验证</td></tr>
+<tr><td><span class="tag tag-p2">P2</span></td><td>E6: stable 段 loss 趋势定量分析（斜率图）</td><td>~2h (CPU)</td><td>无（训练日志已可访问）</td><td><span class="tag tag-yes">是</span></td><td>本轮可做</td></tr>
+<tr><td><span class="tag tag-p3">P3</span></td><td>E7: tab:configs 措辞审查建议（在 MEMORY 记录，不改 tex）</td><td>~1h</td><td>无</td><td><span class="tag tag-yes">是</span></td><td>本轮可做</td></tr>
+<tr><td><span class="tag tag-p3">P3</span></td><td>结论 L3 "post-trained" → "designed" 修订建议（在 MEMORY 记录）</td><td>~0.5h</td><td>无</td><td><span class="tag tag-yes">是</span></td><td>本轮可做</td></tr>
+<tr><td><span class="tag tag-p3">P3</span></td><td>摘要 L12 "fixes" → "selects" 修订建议（在 MEMORY 记录）</td><td>~0.5h</td><td>无</td><td><span class="tag tag-yes">是</span></td><td>本轮可做</td></tr>
+</table>
+
+<div class="note">
+<strong>GPU 实验排期建议</strong>：E1+E2 合计 ~29 GPU·h，是最高性价比的一组（花不到 4 个 H100-天就能把论文两个最致命的弱点堵上）。建议在 pretrain decay 段结束后（ETA ~58 天后）用空闲的 16 卡跑，或在 .17 的 4×A40 上跑（A40 约为 H100 的 1/3 算力，5000 步约需 ~10h/run，E1+E2 约需 ~80 A40·h ≈ 20h on 4×A40）。
+</div>
+
+<!-- ⑤ 风险 -->
+<h2>⑤ 风险（预判审稿人反驳及回应）</h2>
+
+<table>
+<tr>
+<th>#</th><th>审稿人可能反驳</th><th>严重度</th><th>当前论文是否有回应</th><th>建议的回应 / 补充</th>
+</tr>
+<tr>
+<td>R1</td>
+<td>「5k 步搜索地平线太短，排名可能在 50k+ 翻转。你验证过迁移性吗？」</td>
+<td><span class="tag tag-p0">致命</span></td>
+<td>无。论文 L18 只说 "short-horizon ranking transferred to full scale"，但未提供任何迁移验证数据。</td>
+<td>补 E3（5k→50k 排名一致性）。如果暂时无法补，至少在论文中加一句 "The transfer of 5k-step rankings to full-scale training is an assumption that we do not independently verify in this work."</td>
+</tr>
+<tr>
+<td>R2</td>
+<td>「Table 2 的 σ=0.0469 大于你多数 S3 结论的 Δ。WSD vs cosine 的 0.048 差距在统计上不显著。你怎么 justify \"WSD retains\"?」</td>
+<td><span class="tag tag-p0">致命</span></td>
+<td>部分。L103 报告了 σ=0.0469，但 Table 2 的 "Outcome" 列仍用 "retains" 措辞。</td>
+<td>补 E2（WSD vs cosine × 3 seed）。或降级措辞为 "preferred (single-seed, within noise band)"。</td>
+</tr>
+<tr>
+<td>R3</td>
+<td>「LR=1e-3 是你网格的上限，你测过 1.2e-3/1.5e-3 吗？如果没有，你不能说 1e-3 是 \"optimal\"。」</td>
+<td><span class="tag tag-p1">严重</span></td>
+<td>论文未提边界问题。<code>EXPERIMENTS_PRETRAIN_2B.md</code> L11 自注了此问题但未进论文。</td>
+<td>补 E1（LR 边界探测）。或改措辞为 "best within the swept range [2e-4, 1e-3]"。</td>
+</tr>
+<tr>
+<td>R4</td>
+<td>「架构对比只有 1k/5k 步。你怎么知道 2.2B hybrid 在 100k 步后仍优于 dense？你的生产 run 用的就是这个架构，如果优势在 50k 步消失怎么办？」</td>
+<td><span class="tag tag-p1">严重</span></td>
+<td>无。L7 的架构对比只引用了 1k 和 5k 步 loss。</td>
+<td>补 E4（架构对比 20k 步）。或承认 "The architecture comparison is conducted at a short horizon; the advantage is expected to persist based on the hybrid's lower parameter count and O(1) inference cost, but we do not verify this at production scale."</td>
+</tr>
+<tr>
+<td>R5</td>
+<td>「结论说 \"post-trained for agentic capability\"，但 Stage(ii) 尚未执行。这是超前声明。」</td>
+<td><span class="tag tag-p1">严重</span></td>
+<td>结论 L7 标注了 [TBD]，但 L3 的 "post-trained" 声称已完成。</td>
+<td>改 L3 措辞为 "designed for agentic capability" 或 "to be post-trained"。</td>
+</tr>
+<tr>
+<td>R6</td>
+<td>「S4 退火配比的 0.132 loss 降幅可能来自 code/math 数据本身熵更低，不是退火质量提升。」</td>
+<td><span class="tag tag-p2">中等</span></td>
+<td>部分。<code>EXPERIMENTS_PRETRAIN_2B.md</code> L14 自注了此问题（「loss 降幅含分布偏移成分」），但论文 <code>4_llm_pretrain.tex</code> L103 未提及。</td>
+<td>在论文中加 caveat："The loss reduction from annealing mixtures partly reflects the lower entropy of code/math sources, not solely a quality gain."</td>
+</tr>
+<tr>
+<td>R7</td>
+<td>「训练只到 23%，你凭什么说 \"recipe fixes\" 了？如果后面 loss 爆了或 decay 段效果不好呢？」</td>
+<td><span class="tag tag-p2">中等</span></td>
+<td>部分。摘要 L18 说 "measurements are in progress"，但 L12 的 "fixes" 暗示已定论。</td>
+<td>把 "fixes" 改为 "selects"；保持 "in progress" 的诚实标注。</td>
+</tr>
+<tr>
+<td>R8</td>
+<td>「你们的 400-trial Bayesian search \"confirmed this region optimal within 0.6pp\"（L22）——400 次试验在哪里？数据呢？只看到一个 7 点 LR 扫描 + 5 点 S3 + 3 点 S4。」</td>
+<td><span class="tag tag-p2">中等</span></td>
+<td>无。论文 L22 声称 400-trial Bayesian search，但 §4.3 描述的实验只有 ~20 个配置。</td>
+<td>需要确认 400-trial Bayesian search 的数据是否落盘。如果存在，在附录或 supplementary 给出搜索轨迹；如果不存在或无法追溯，需降级措辞或删除此声称。<span class="small">（建议验证）</span></td>
+</tr>
+</table>
+
+<div class="card">
+<h3>风险等级总结</h3>
+<table>
+<tr><th>等级</th><th>数量</th><th>影响</th></tr>
+<tr><td><span class="tag tag-p0">致命 (P0)</span></td><td>2 (R1, R2)</td><td>如果审稿人提出且无法回应，可能直接被拒。R1 是方法论级弱点，R2 是统计级弱点。</td></tr>
+<tr><td><span class="tag tag-p1">严重 (P1)</span></td><td>3 (R3, R4, R5)</td><td>审稿人大概率会提出，需要实验或措辞修订来回应。</td></tr>
+<tr><td><span class="tag tag-p2">中等 (P2)</span></td><td>3 (R6, R7, R8)</td><td>审稿人可能提出，可通过 caveat 或措辞调整回应。</td></tr>
+</table>
+</div>
+
+<div class="foot">
+报告类型：论文阅读轮（用户令 2026-11-11「让 pretrain 在没事时也阅读它的论文，提出建议」）<br>
+数据来源：<code>EXPERIMENTS_PRETRAIN_2B.md</code>（超参搜索 + P-8 + eval 数据）、<code>MEMORY_PRETRAIN_2B.md</code> #1954（训练状态 2026-11-11 08:36）、<code>ISEDA2027/{0_abstract,1_intro,3_architecture,4_llm_pretrain,5_llm_posttrain,9_conclusion}.tex</code>（论文原文）<br>
+约束遵守：未修改任何 .tex 文件；未建议将 benchmark 数字写入论文；未验证的标注「建议验证」<br>
+生成时间：2026-11-11 · pretrain 线
+</div>
+
+</div>
+</body>
+</html>
