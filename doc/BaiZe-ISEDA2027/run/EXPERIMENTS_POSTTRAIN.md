@@ -3931,3 +3931,67 @@ SFT recipe（v11-v36 PyAether 语料, 927 train pairs, 5 epoch, lr 1e-5 cosine, 
 | SFT ckpt | `sft_surrogate_runs/minicpm5_pyaether_v2_v11v36/global_step_70`（served GPU6:8096） |
 | Base serve | GPU4:8098 `minicpm5-2b` |
 
+---
+
+## §R288 — 全量静态分析 30/113 task 中间结果 + per-scenario 分层（wake288, 2026-11-12 02:30）
+
+> **背景**：wake287 启动的全量 113 non-techlib task 静态分析（PID 371302, `baize_posttrain_static_eval_full.py --resume`）仍在后台运行，本唤醒检查时已完成 30/113（26.5%），ETA ~50min。以下为 **30 task 中间结果**（非最终），全量结果待下一唤醒检查。
+> **数据源**：`eda_eval_static_full_wake287.json`（429KB, 30 tasks, 后台进程每 10 task checkpoint）
+
+### 1. 总体对比（30 tasks）
+
+| 指标 | SFT (global_step_70) | Base (MiniCPM5-2B) | 差值 |
+|:--|:--:|:--:|:--:|
+| 语法合法率 (syntax_ok) | **29/30 = 96.7%** | 21/30 = 70.0% | **+26.7pp** |
+| 函数定义完整 (has_function) | **30/30 = 100%** | 28/30 = 93.3% | +6.7pp |
+| 平均代码长度 (chars) | **1383** | 6216 | **-77.8%（4.5× 更短）** |
+| 截断率 (finish=length) | **2/30 = 6.7%** | 9/30 = 30.0% | **-23.3pp** |
+| 正常停止 (finish=stop) | 28/30 = 93.3% | 21/30 = 70.0% | +23.3pp |
+| 语法错误数 | 1（EOF） | 9（8 invalid syntax + 1 EOF） | **-89%** |
+| 平均 API 覆盖率 | 0.118 | 0.094 | +0.024 |
+
+### 2. Per-scenario 分层（30 tasks）
+
+| Scenario | n | SFT_syn% | Base_syn% | Δsyn | SFT_cov | Base_cov | Δcov |
+|:--|--:|--:|--:|--:|--:|--:|--:|
+| Schematic | 8 | **87.5%** | 37.5% | **+50.0pp** | 0.195 | 0.146 | +0.049 |
+| Layout | 13 | **100.0%** | 76.9% | +23.1pp | 0.141 | 0.115 | +0.026 |
+| Design Management | 7 | **100.0%** | 85.7% | +14.3pp | 0.020 | 0.020 | 0.000 |
+| Others | 2 | 100.0% | 100.0% | 0.0pp | 0.000 | 0.000 | 0.000 |
+
+### 3. 关键发现
+
+1. **SFT 大幅回收协议问题（D1）**：语法合法率 70% → 96.7%（+26.7pp），证实 P0 诊断 D1「工具调用合法率 <90% → 协议问题，SFT 可大幅回收」的判断。
+2. **SFT 消除长输出截断（D3）**：Base 30% 截断 → SFT 6.7%，代码长度从 6216 → 1383 chars（-77.8%）。SFT 学会了简洁的 EDA 代码范式，而非冗长的散文式输出。
+3. **Schematic 场景受益最大**：+50pp 语法提升 + 最高 API 覆盖率（0.195），说明 SFT 对原理图类任务的 API 范式学习最有效。
+4. **API 覆盖率仍低（~10%）**：SFT 0.118 vs Base 0.094，虽有小幅提升但绝对值仍低。Design Management 场景 API 覆盖率 0.020 几乎为零。→ **这是 RL 的核心目标**：模型会写合法 Python，但选不对/用不全 pyAether API，需要 RL 的执行反馈来修正 API 选择。
+5. **Base 的典型错误**：8/30 为 "invalid syntax (line 1)" —— Base 输出以散文/think 标签开头而非代码，strip_markdown 修复后仍有残余。SFT 仅 1 个 EOF 错误。
+
+### 4. 与 P0 诊断 D1-D6 的对应
+
+| 诊断项 | 本结果验证 | 结论 |
+|:--|:--|:--|
+| D1 工具调用合法率 | SFT 96.7% vs Base 70% | ✅ 协议问题可大幅回收（+26.7pp） |
+| D3 超上下文/截断 | SFT 6.7% vs Base 30% | ✅ SFT 大幅减少截断 |
+| D4 失败类型 | Base 语法错 9/30 vs SFT 1/30 | ✅ SFT 修语法；API 选择错=语义推理→RL 价值 |
+| D5 per-scenario | Schematic 受益最大 | ✅ SFT 数据应增加 Schematic 类比例 |
+
+### 5. 局限性
+
+- **30/113 = 26.5%**，非全量结果，统计置信度有限（n 太小，尤其 Others n=2）
+- **静态分析**：只评语法/结构/API 名匹配，**不评执行正确性**（需沙盒）
+- **替身预演**：MiniCPM5-2B SFT 结果不可迁移到 BaiZe，仅验证 recipe 有效性
+- 沙盒 10.129.32.75 仍 CLOSED（第 93 次唤醒，TCP filtered），执行正确性评测继续阻塞
+
+### 6. 产物
+
+| 产物 | 路径 |
+|:--|:--|
+| 全量静态分析脚本 | `baize_posttrain_static_eval_full.py` |
+| 中间结果 JSON (30 task) | `eda_eval_static_full_wake287.json`（429KB，后台进程持续更新中） |
+| 后台进程 | PID 371302/371303（`--resume`，每 10 task checkpoint） |
+| SFT ckpt | `sft_surrogate_runs/minicpm5_pyaether_v2_v11v36/global_step_70`（served GPU6:8096） |
+| Base serve | GPU4:8098 `minicpm5-2b` |
+
+> ⚠️ **替身预演声明**：以上结果基于 MiniCPM5-2B（2B, Llama 架构, Apache 2.0）作为 BaiZe 替身，收益不可迁移到 BaiZe 本体。目的仅验证 SFT recipe 的有效性。
+
