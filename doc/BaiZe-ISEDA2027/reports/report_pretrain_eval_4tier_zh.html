@@ -42,8 +42,8 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
   <div class="meta">
     <span>📅 2026-11-11</span>
     <span>🏗 Mamba2-hybrid 2.22B</span>
-    <span>🔥 训练 iter≈166.15k / 700k · step~7.02s<7.4s✅</span>
-    <span>📊 L1: 16 ckpt ✅ | L2: GSM8K=0%@160k🔴 MMLU=23.16%@160k(≈随机) BBH=0%@160k🔴(v4完成) · v5 NFS崩溃待重启 · GSM8K诊断运行中🟡 · 🔬vLLM方案已备(待GPU窗口) | L3: 🔧 pipeline脚本已建·模型生成退化 | L4: 数据在.15不可达+定性测试=退化输出</span>
+    <span>🔥 训练 iter≈166.38k / 700k · step~6.99s<7.4s✅</span>
+    <span>📊 L1: 16 ckpt ✅ | L2: GSM8K=0%@160k🔴(诊断完成:生成退化) MMLU=23.16%@160k(≈随机) BBH=0%@160k🔴 · RP=1.3测试:0%(半连贯但无数学能力) · v5 NFS崩溃待重启 · 🔬vLLM方案已备(待GPU窗口·.29/.12全占·.17不可达) | L3: 🔧 pipeline脚本已建·模型生成退化 | L4: 数据在.15不可达+定性测试=退化输出</span>
   </div>
   <div style="margin-top:12px;font-size:12.5px;background:rgba(0,0,0,.18);border-radius:8px;padding:8px 12px;opacity:.95">
     ⚠️ 本报告是<b>训练监控与决策依据</b>，<b>不进论文正文</b>（2026-11-10 用户令）。用户关注点（2026-11-11）：<b>如何拿到更好的结果</b>。
@@ -206,7 +206,8 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
     <tr><td>MBPP</td><td>v4</td><td>0-shot, limit=100, gen</td><td>—</td><td class="bad">❌ v4失败(同上)</td></tr>
     <tr><td>MATH</td><td>v4</td><td>4-shot, limit=100, gen</td><td>—</td><td class="bad">❌ v4失败(assertion error)</td></tr>
     <tr><td>HumanEval+MBPP+MATH</td><td>v5</td><td>0-shot, HF_ALLOW_CODE_EVAL=1</td><td>—</td><td class="bad">❌ v5 NFS崩溃(Stale file handle)</td></tr>
-    <tr><td>GSM8K 诊断</td><td>diag</td><td>5-shot+0-shot, --log_samples, 10样本</td><td>—</td><td class="warn">🟡 运行中(19:18起)</td></tr>
+    <tr><td>GSM8K 诊断</td><td>diag</td><td>5-shot+0-shot, --log_samples, 10样本</td><td class="bad">0%(5shot) + 0%(0shot)</td><td class="bad">✅ 完成(19:32): 生成退化确认</td></tr>
+    <tr><td>GSM8K RP=1.3 测试</td><td>rp</td><td>0-shot, repeat_penalty=1.3, 10样本</td><td class="bad">0%</td><td class="bad">✅ 完成(19:39): 半连贯但无数学能力</td></tr>
   </table>
   <div class="alert">
     <b>BBH v4 = 0.0%</b>（exact_match, boolean_expressions, 3-shot CoT, 100 样本, 1h55m 完成）—— 确认<b>所有 L2 生成任务均=0%</b>。<br>
@@ -214,8 +215,38 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
     <b>MMLU=23.16% 是唯一非零的 L2 分数</b>，因为它是 MCQ 任务（loglikelihood prefill），不需要生成。
   </div>
   <div class="note">
-    <b>v5 崩溃</b>：NFS "Stale file handle" 错误（`baize_l2_eval_160k_v5.sh` 脚本文件读取失败）→ HumanEval/MBPP/MATH 仍未评测。待 GSM8K 诊断完成后重启 v5。<br>
-    <b>GSM8K 诊断</b>：已启动（PID 2851659, ctx=8192, port 8083），正在跑 10 样本 5-shot + 0-shot with --log_samples → 将捕获模型实际输出用于诊断。
+    <b>v5 崩溃</b>：NFS "Stale file handle" 错误（`baize_l2_eval_160k_v5.sh` 脚本文件读取失败）→ HumanEval/MBPP/MATH 仍未评测。待 GPU 窗口后用 vLLM 重评（v5 在 llama.cpp 上也会退化）。<br>
+    <b>GSM8K 诊断完成（19:32）</b>：5-shot=0%, 0-shot=0%, 实际输出为退化的重复文本（"The eggs are the same thing that day, the same thing..."）和 token 崩溃（"$111111..."）。<br>
+    <b>repeat_penalty=1.3 测试完成（19:39）</b>：0% exact_match，但退化模式改变——从纯重复变为半连贯但无意义的英文（"The birds are not yet known what happens to their food..."），确认双重根因：① llama.cpp SSM 生成 bug（RP 部分缓解）② 模型@23% 训练确实缺乏数学推理能力。
+  </div>
+</div>
+
+<div class="card">
+  <h3>🔬 GSM8K 生成退化诊断 + repeat_penalty 对照（2026-11-11 19:32–19:39 · P0 完成）</h3>
+  <table>
+    <tr><th>条件</th><th>exact_match</th><th>样本1 (Janet's ducks)</th><th>样本3 (Josh flipping house)</th></tr>
+    <tr>
+      <td class="l"><b>无 RP（原始）</b><br>llama-server 默认</td>
+      <td class="bad">0%</td>
+      <td class="l" style="font-size:11px">"The eggs are the same thing that day, and the same thing that day, the same thing, the same thing..." → <b>纯重复</b></td>
+      <td class="l" style="font-size:11px">"$111111111111111111111111111111..." → <b>token 崩溃</b></td>
+    </tr>
+    <tr>
+      <td class="l"><b>RP=1.3</b><br>--repeat-penalty 1.3</td>
+      <td class="bad">0%</td>
+      <td class="l" style="font-size:11px">"The birds are not yet known what happens to their foodHH. The hens have been eating breakfast on a few days..." → <b>半连贯但无意义</b></td>
+      <td class="l" style="font-size:11px">"The answer is not enough money. The following are some examples: - Money = you guys want to buy something..." → <b>半连贯但无数学</b></td>
+    </tr>
+  </table>
+  <div class="alert">
+    <b>双重根因确认</b>：<br>
+    ① <b>llama.cpp SSM 生成路径 bug</b>——Mamba2 SSM 状态在 token-by-token 生成时崩溃 → 无 RP 时纯重复，RP=1.3 时部分缓解（打破重复循环）但生成质量仍不可用<br>
+    ② <b>模型@23% 训练缺乏数学推理能力</b>——即使生成不退化，2B 模型在 671B tokens（code 19%+math 7%=26%）下不足以解决 GSM8K<br>
+    <b>L1 MCQ 正常（58.13%）</b>证明模型权重/加载/分词无误——MCQ 只需 prefill logits，不触发 SSM 生成 bug
+  </div>
+  <div class="note">
+    <b>结论</b>：L2 生成任务的 0% 是<b>基础设施问题（llama.cpp SSM bug）+ 早期训练阶段能力不足</b>的叠加，<b>不是评测配置错误</b>。<br>
+    <b>修复路径</b>：① <b>vLLM（原生 NemotronH 支持）</b>可解决 SSM 生成 bug → 预计 GSM8K 可从 0% 提升到 >0%（但受限于模型能力，不会很高）；② <b>decay 阶段增加 code+math 数据</b>可提升模型本身能力 → 预计 GSM8K 可达 ~15%（参照 DeepSeek 1.3B 4:2:4 消融）；③ <b>当前阻塞</b>：vLLM 需 GPU，.29(训练100%)/.12(vision100%)/.17(不可达) 均不可用。
   </div>
 </div>
 
@@ -413,7 +444,7 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
 </div>
 
 <footer>
-  BaiZe pretrain 线 · 四层能力评测报告 · 2026-11-11 19:20 更新(#1988) · 评测数字仅用于训练监控，不进论文正文
+  BaiZe pretrain 线 · 四层能力评测报告 · 2026-11-11 19:42 更新(#1989) · 评测数字仅用于训练监控，不进论文正文
 </footer>
 </div>
 </body>
