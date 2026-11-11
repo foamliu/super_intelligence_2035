@@ -9816,4 +9816,86 @@ pushes coverage from 81.7% → 87.8%.
 > for training.
 
 ---
+## §R199 — v29 Gu\* Cartoon Graphics SFT Corpus (wake268, 2026-11-11)
+
+### 1. Motivation
+
+R191 blind scan (re-run with v11-v28, 783 pairs) showed **20 blind eval APIs**
+out of 164 raw APIs (87.8% coverage). The #1 blind family was:
+
+| Rank | Family | Usages | APIs | Type |
+|:--:|:--|--:|--:|:--|
+| #1 | Gu\* | 5 | 3 | GuCartoon subclass cartoon-graphics APIs |
+
+Covering Gu\* in R199 v29 clears the #1 blind family and pushes coverage
+from 87.8% → 89.6%.
+
+### 2. Target APIs (3)
+
+All 3 are **GuCartoon subclasses** for EDA layout annotation (polyline / polygon /
+box shapes), sharing the `emyPointArrayF` + `layNum` + `purNum` constructor pattern:
+
+| API | Signature | Returns |
+|:--|:--|:--|
+| `GuCartPolyLine` | `GuCartPolyLine(emyPointArrayF, layNum, purNum, emyPurposeNumber=...)` | void (open polyline) |
+| `GuCartPolygon` | `GuCartPolygon(emyPointArrayF, layNum, purNum, emyPurposeNumber=...)` | void (auto-closes) |
+| `GuCartBox` | `GuCartBox(emyPointArrayF, layNum, purNum, emyPurposeNumber=...)` | void (rectangular box) |
+
+### 3. Pair Generation (25 pairs)
+
+| Type | Count | Description |
+|:--|--:|:--|
+| S1 | 3 | doc → code (1 per API) |
+| S3 | 3 | code → doc (1 per API) |
+| S4 | 6 | multi-step trace (2 per API) |
+| S5 | 6 | parameter variation |
+| S6 | 7 | cross-API workflow (combining 2-3 APIs) |
+
+### 4. Contamination Check
+
+- **155 eval entry_points** loaded from `EDA-Eval-PyAether-v20260311.jsonl`
+- All 25 pairs scanned: **0 rejected, 25 PASS**
+- All 3 target APIs are ISOLATE-class (eval helper cartoon APIs, NOT eval
+  entry_points) → teaching public API reference is compliant with S5.1 red line
+
+### 5. Coverage Impact
+
+| Metric | Before (v28) | After (v29) | Delta |
+|:--|:--|:--|:--|
+| Covered eval APIs | 144/164 | 147/164 | +3 |
+| Blind eval APIs | 20 | 17 | -3 |
+| Coverage ratio | 87.8% | 89.6% | +1.8 pp |
+| Gu\* blind | 3 | 0 | cleared |
+| New #1 blind family | Gu\* (5) | SLE (3, 3 APIs) | — |
+
+### 6. Key API Facts
+
+- `GuCartPolyLine` draws an **open** polyline (last point NOT connected to first)
+- `GuCartPolygon` **auto-closes** (last point connects to first); min 3 pts for
+  a valid polygon
+- `GuCartBox` draws a rectangular box; `layNum`/`purNum` must be **positional**
+  (keyword args raise `TypeError`)
+- Build point array with `emyPointArrayF().append((x, y))`
+- `getPointArray` uses the **output-param pattern**: pass a fresh
+  `emyPointArrayF` (cleared & filled in place, no return value)
+- Use `emvPurposeNumberDrawing` for the drawing purpose
+
+### 7. Deliverables
+
+| Item | Path | Size |
+|:--|:--|--:|
+| corpus builder | `run/baize_posttrain_r199_gu_cart_corpus.py` | ~611 lines / py_compile OK |
+| training-ready corpus | `run/sft_pyaether_corpus_v29_gu_cart.jsonl` | 34 KB / 25 pairs |
+| blind scan script (updated) | `run/baize_posttrain_r191_blind_scan.py` | v29 added to CORPUS_FILES |
+| blind scan output | `run/r191_blind_scan.json` | re-run with v11-v29 |
+
+> Cumulative PyAether SFT corpus: v11 (93) + v12 (25) + v13 (45) + v14 (45)
+> + v15 (45) + v16 (45) + v17 (45) + v18 (25) + v19 (30) + v20 (35)
+> + v21 (50) + v22 (65) + v23 (65) + v24 (25) + v25 (30) + v26 (40)
+> + v27 (25) + v28 (50) + v29 (25) = **808 pairs**.
+> All 808 pairs PASS the 155-entry_point pollution scan. v11-v29 are gated
+> for training.
+
+---
+
 

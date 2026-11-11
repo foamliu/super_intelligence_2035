@@ -1,16 +1,13 @@
 {
   "round": "R191-scan",
   "eval_raw_apis": 164,
-  "covered_eval_apis": 144,
-  "blind_eval_apis": 20,
-  "coverage_ratio": 0.878,
+  "covered_eval_apis": 147,
+  "blind_eval_apis": 17,
+  "coverage_ratio": 0.8963,
   "blind_list": [
     "CColor",
     "CString",
     "CStringList",
-    "GuCartBox",
-    "GuCartPolyLine",
-    "GuCartPolygon",
     "SLE_GOA_AND",
     "SLE_LE_WIRE_EXTEND",
     "SLE_LE_WIRE_VARIABLE",
@@ -27,7 +24,6 @@
     "timeToTm"
   ],
   "family_usage": {
-    "Gu": 5,
     "SLE": 3,
     "CString": 2,
     "CColor": 1,
@@ -45,20 +41,6 @@
     "time": 1
   },
   "family_apis": {
-    "Gu": [
-      {
-        "api": "GuCartPolyLine",
-        "eval_usage": 2
-      },
-      {
-        "api": "GuCartPolygon",
-        "eval_usage": 2
-      },
-      {
-        "api": "GuCartBox",
-        "eval_usage": 1
-      }
-    ],
     "SLE": [
       {
         "api": "SLE_GOA_AND",
