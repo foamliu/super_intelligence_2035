@@ -243,7 +243,7 @@ vbxlf.messages.json	jason17w	hfeg0pnd002	262	spice_sim	parked		2026-11-05 12:30	
 1793965015681_q3lrp					parked		2026-11-06 21:20	digital shardA: verilog signal search (graywang)
 1793966362470_otc01					parked		2026-11-06 21:20	consulting: device type exploration (xiwang)
 1793971631579_gvexo	kerwind	hfeg0pkn002	54	spice_sim	case	EDA-Eval-DesignFlow-TimingMeasGen-001	2026-11-06 22:30	
-1793600858808_la00c.messages.json	e0029308	hfeg0pkn001	339	spice_sim	case	EDA-Eval-DesignFlow-VSplit-001	2026-11-06 23:00	
+1793600858808_la00c.messages.json	e0029308	hfeg0pkn001	339	spice_sim	parked	EDA-Eval-DesignFlow-VSplit-001	2026-11-12 05:14	collaborative-continuation (e0029308 '修改DFF仿真结果判定 先从hold来 我来给你方案' - multi-turn collaborative, not clean produce)
 1793843849886_hsizo	ynbai	hfhds201	211	spice_sim	case	EDA-Eval-DesignFlow-FinesimIgnoreGen-001	2026-11-06 23:41	
 1791602435253_66tx9	ynbai	hfhds201	162	spice_sim	case	EDA-Eval-DesignFlow-LibCellListGen-001	2026-11-07 00:03	
 1793347412273_nq8l2	zjqiao	hfhds201	98	spice_sim	case	EDA-Eval-DesignFlow-HcellMissingFind-001	2026-11-07 00:33	
@@ -1293,4 +1293,24 @@ peek:					parked		2026-11-10 23:22	peek: consultation verdi-fsdb-warning-paste
 1794375717921_5p2v2	thomasz	10.129.35.69	122	spice_sim	parked		2026-11-12 03:58	r414 rescan reject: 5p2v2 not-viable B-domain L2/L3
 1794369069999_jlgfx	yohannw	10.129.2.11	195	spice_sim	parked		2026-11-12 03:58	r414 rescan reject: jlgfx not-viable B-domain L2/L3
 1794395852366_tef8l	yinyus	10.129.2.10	283	spice_sim	parked		2026-11-12 03:58	r414 rescan: unlocatable on recorded host (file absent /home/*/.cline on 10.129.2.10)
-1793942940446_q3y71.messages.json	declanzh	hfeg0pkn005	96	spice_sim	claimed		2026-11-12 04:34	
+1793942940446_q3y71.messages.json	declanzh	hfeg0pkn005	96	spice_sim	parked		2026-11-12 04:52	dup ie8du (declanzh core1103 .mt0 aggregation) already covered by Mt0FolderAggStat-001(k=17)+Mt0AggMinMax-001; sibling row 1793942940446_q3y71 parked 11-10 same note; DEBT cleared - synthesis not viable (redundant 3rd case)
+1793586031652_f2xzx.messages.json	ryanren	hfeg0pfn120	156	spice_sim	claimed		2026-11-12 05:14	
+1791424827517_ca3hh.messages.json					parked		2026-11-12 05:14	ambiguous (guangmingz '解析dsim_block' - parse DSIM block, single brief turn, unclear deliverable; parked borderline)
+1791523486486_ws2bi.messages.json					parked		2026-11-12 05:14	DUP SpiceSim-001 (irene1li, same ws2bi session, tr/tf/duty/skew measurement task)
+1793668301608_71ttn.messages.json					parked		2026-11-12 05:14	continuation (tongni '继续/继续中断的工作' - resume, not first-turn produce)
+1793184645122_t1epq.messages.json					parked		2026-11-12 05:14	consultation (e0030760 '先查看lacaa最小电路设计图' - exploration, not produce)
+1793327414642_81adx.messages.json					parked		2026-11-12 05:14	DUP x6taw (clarawu, verbatim same U1-U5 content as x6taw)
+1793260065712_n78nn.messages.json					parked		2026-11-12 05:14	wrong-type (t0003117 '调出抽网表的skill' - skill invocation, not spice produce)
+1793337530823_x6taw.messages.json					parked		2026-11-12 05:14	DUP McRonMismatch-001 (clarawu, same RON_PU/PD_mismatch 6*std/230 from Ron_linMC#4.md0 task)
+1793843116422_qzva9.messages.json					parked		2026-11-12 05:14	consultation (thqu 'ntn管子阈值电压怎么查看' - how-to-view, not produce)
+1791797079020_pqeal.messages.json					parked		2026-11-12 05:14	consultation (e0039122 '阅读工程给出代码架构' - code architecture doc, not spice produce)
+1793238266404_bsjfb.messages.json					parked		2026-11-12 05:14	consultation (t0002224 '看一下这个项目详细介绍' - project intro, not produce)
+1793931174603_tc4yu.messages.json					parked		2026-11-12 05:14	consultation (lvyy '为什么PM11截止 如何调整cascode' - circuit debug consultation)
+1792297573507_9knot.messages.json					parked		2026-11-12 05:14	continuation (vincelu '能避开这些错吗' - error-avoidance, not first-turn produce)
+1793879524880_3h21t.messages.json					parked		2026-11-12 05:14	wrong-type (e0047527 bridge/EDA-bridge connection debugging, not spice produce)
+1793589408208_roznq.messages.json					parked		2026-11-12 05:14	consultation (e0024852 'which one can be used for Analyze metrics Iread/Ilead/SNM' - bitcell metric consultation)
+1793345773037_65daa.messages.json					parked		2026-11-12 05:14	dup-risk (tongni Vcc2scAct '跑仿真放结果' - 6th tongni Vcc2sc case, coverage diminishing; Vcc2scActDeckGen-001/Vcc2scTranGen-001/Vcc2scPVTvar-001/SpGen-001/VwlpRefDeckSet-001 already cover)
+1793792759786_ujw1y.messages.json					parked		2026-11-12 05:14	consultation (qiang3xu 'PRBS_TM 总结一下这个电路' - summarize, not produce)
+1792119938594_z6elv.messages.json					parked		2026-11-12 05:14	non-task (wnyu 'hi/在吗/为什么job跑得慢' - chit-chat + job-speed complaint)
+1793684384632_6dmno.messages.json					parked		2026-11-12 05:14	wrong-type (t0003117 '执行skills_v0.2/netlist_extract/SKILLS.md' - skill execution)
+1793544152898_p8z88.messages.json					parked		2026-11-12 05:14	documentation (yh1yang '整理代码形成维护文档和AI agent提示词文档' - doc generation, not spice)
