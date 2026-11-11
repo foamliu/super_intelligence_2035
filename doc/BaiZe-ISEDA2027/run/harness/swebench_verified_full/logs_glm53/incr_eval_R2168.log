@@ -1,0 +1,24 @@
+[R2168-eval 12:00:56] cline: 217 evald, 222 real, 5 new
+[R2168-eval 12:00:56] cline: launching eval on 5 NEW instances (workers=1, timeout=1800)...
+[R2168-eval 12:20:55]   eval finished rc=0
+[R2168-eval 12:20:55]   cline: +5 resolved +0 failed +0 infra => total resolved=164
+[R2168-eval 12:20:55] codex: 97 evald, 97 real, 0 new
+[R2168-eval 12:20:55] opencode: EXCLUDING in-flight {'sympy__sympy-18199'}
+[R2168-eval 12:20:55] opencode: 466 evald, 471 real, 5 new
+[R2168-eval 12:20:55] opencode: launching eval on 5 NEW instances (workers=1, timeout=1800)...
+[R2168-eval 12:23:48]   eval finished rc=0
+[R2168-eval 12:23:48]   opencode: +4 resolved +1 failed +0 infra => total resolved=383
+[R2168-eval 12:23:49] claude-code: 200 evald, 205 real, 5 new
+[R2168-eval 12:23:49] claude-code: launching eval on 5 NEW instances (workers=1, timeout=1800)...
+[R2168-eval 12:25:53]   eval finished rc=0
+[R2168-eval 12:25:53]   claude-code: +5 resolved +0 failed +0 infra => total resolved=161
+[R2168-eval 12:25:53] pi: 190 evald, 192 real, 2 new
+[R2168-eval 12:25:53] pi: launching eval on 2 NEW instances (workers=1, timeout=1800)...
+[R2168-eval 12:26:51]   eval finished rc=0
+[R2168-eval 12:26:51]   pi: +0 resolved +2 failed +0 infra => total resolved=141
+[R2168-eval 12:26:51] hermes: 386 evald, 389 real, 3 new
+[R2168-eval 12:26:51] hermes: launching eval on 3 NEW instances (workers=1, timeout=1800)...
+[R2168-eval 12:28:22]   eval finished rc=0
+[R2168-eval 12:28:22]   hermes: +2 resolved +1 failed +0 infra => total resolved=347
+[R2168-eval 12:28:22] deepseek: 174 evald, 174 real, 0 new
+[R2168-eval 12:28:22] DONE R2168: 20 instances eval'd, total new resolved = 16

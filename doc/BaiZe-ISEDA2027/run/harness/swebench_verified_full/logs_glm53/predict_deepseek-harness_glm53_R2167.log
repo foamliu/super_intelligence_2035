@@ -9,3 +9,11 @@
 [verified-full 11:34:08] [8/500] astropy__astropy-14096 SKIP (predicted, patch=2561B)
 [verified-full 11:34:08] [9/500] PREDICT deepseek-harness on astropy__astropy-14182
 [verified-full 11:34:15]   -> silent exit (rc=0, patch=0, wall=6.6s), retrying once...
+[verified-full 12:06:15]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 12:06:15] [10/500] astropy__astropy-14309 SKIP (predicted, patch=4093B)
+[verified-full 12:06:15] [11/500] astropy__astropy-14365 SKIP (predicted, patch=3494B)
+[verified-full 12:06:15] [12/500] PREDICT deepseek-harness on astropy__astropy-14369
+[verified-full 12:08:02]   -> no-patch (patch=0B wall=107.3s)
+[verified-full 12:08:02] [13/500] astropy__astropy-14508 SKIP (predicted, patch=3256B)
+[verified-full 12:08:02] [14/500] astropy__astropy-14539 SKIP (predicted, patch=140B)
+[verified-full 12:08:02] [15/500] PREDICT deepseek-harness on astropy__astropy-14598
