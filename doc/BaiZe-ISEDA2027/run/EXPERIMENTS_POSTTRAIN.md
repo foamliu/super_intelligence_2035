@@ -3303,3 +3303,73 @@ bash baize_posttrain_sft_surrogate.sh \
 - EXPERIMENTS 台账从 585KB 缩减至 177KB（-70%），保留 §R167–§R210 当前活跃节。
 - §R91–§R166 原文完整保留在 ARCHIVE 文件中，可 `grep` 检索。
 - 归档遵循「原文搬迁、不改结论」纪律。
+
+---
+
+## §R281 (2026-11-12 wake281) Phase 1–3 全链路就绪审计 + 本地沙盒可行性排除（零 GPU · CPU）
+
+### 1. 动机
+
+沙盒 10.129.32.75 已连续 86 次唤醒 CLOSED（poll #570，2026-11-12 00:03），Phase 1 基线评测和 Phase 3 RL 均阻塞。
+本轮做一次**全链路就绪审计**，确认沙盒恢复后 auto-eval 能否一次跑通，并排除「本地起沙盒」的可能性。
+
+### 2. 审计项与结果
+
+| # | 审计项 | 命令/路径 | 结果 |
+|:--|:--|:--|:--|
+| A1 | Serve 5 端点健康 | `curl :{8095-8099}/v1/models` | ✅ 全 UP（minicpm5-2b-gpu7/8095, minicpm5-sft/8096, minicpm5-2b-gpu5/8097, minicpm5-2b/8098, qwen3.8-27b/8099） |
+| A2 | Serve sentinel check | `baize_posttrain_serve_sentinel.sh --check-once` | ✅ All 5 UP, action=none |
+| A3 | Sandbox TCP probe | `10.129.32.75:{8664,8665,8653,8669,8667}` | ❌ 全 CLOSED（86th wake, poll #570） |
+| A4 | Sandbox watcher 进程 | `ps` PID 4109314 | ✅ 运行中（etimes≈72240s≈20h, --watch --auto-eval）, 日志 `/tmp/posttrain_sandbox_watcher.log` poll #570 still CLOSED |
+| A5 | Sentinel flag | `/tmp/posttrain_sandbox_recovered.flag` | 不存在（沙盒未恢复）→ 正确 |
+| A6 | Eval 数据集 | `EDA-Eval-PyAether-v20260311.jsonl` | ✅ 689461 bytes (158 tasks) |
+| A7 | Eval driver | `run_cline_script.sh` | ✅ 29415 bytes |
+| A8 | Eval scorer | `run_eval.py` | ✅ 39781 bytes |
+| A9 | Eval dry-run | `baize_posttrain_eval.sh --dry-run` | ✅ exit 0, recipe 打印 OK |
+| A10 | Phase1 baseline dry-run | `baize_posttrain_phase1_baseline.sh --dry-run` | ✅ preflight 全 OK **除** sandbox BLOCKED |
+| A11 | SFT ckpt | `sft_surrogate_runs/minicpm5_pyaether_v1/global_step_72/` | ✅ 715MB, model-0000{1,2}-of-00002.safetensors (4.5GB+535MB), config.json, tokenizer.json |
+| A12 | SFT parquet v11-v36 | `sft_pyaether_corpus_v11_v36_merged.parquet` | ✅ 270727 bytes (1029 rows, 污染闸门 PASS) |
+| A13 | Pipeline status | `baize_posttrain_surrogate_pipeline.sh --status` | Phase1 report ✅ / Phase2 SFT ckpt ✅ report ✅ / Phase3 SFT ckpt ready, RL ckpt 待 / Gate: sandbox FAIL |
+| A14 | cline in PATH | `command -v cline` | ✅ `/home/app.e0031982/.bun/bin/cline` |
+| A15 | MCP server | `curl localhost:18888/sse` | ✅ SSE 响应（session_id 分配正常） |
+| A16 | pyAether 本地可用？ | `.venv/bin/python -c 'import pyAether'` | ❌ ModuleNotFoundError → **本地沙盒不可行** |
+| A17 | eda_fastmcp .env SANDBOX 配置 | `.env` | SANDBOX_HOST=10.129.32.75, SANDBOX_ENDPOINTS=8664/8665/8653/8669, SANDBOX_WORKDIR=/proj/train/AI/workdir/... |
+| A18 | vLLM venv + transformers | `/tmp/vllm_venv/bin/python` | ✅ transformers 4.49.0 |
+| A19 | GPU 占用 | `nvidia-smi` | GPU 0-3 root SGLang ~45GB, GPU 4-7 vLLM ~38GB 各, 全 0% util |
+| A20 | Nov 10 eval traces | `~/eda_code_eval/2026_1110_*/` | 12 dirs, 全部 1 task failed (sandbox down), 无 final_report.json, 不足 D1-D6 分析 |
+
+### 3. 关键发现：本地沙盒不可行
+
+Phase 1 dry-run 提示 `unlock-B: any host H with pyAether installed + set .env SANDBOX_HOST=H`。
+实测 `.venv/bin/python -c 'import pyAether'` → `ModuleNotFoundError: No module named 'pyAether'`。
+pyAether 是华大九天商业 EDA 工具的 Python+SWIG 绑定，**未安装在 .17**，仅在远程沙盒机 10.129.32.75 上有。
+→ **本地起沙盒路径排除**。唯一解锁方式 = 网络团队开放 10.129.32.75 的 TCP 端口 ACL。
+
+### 4. 沙盒恢复后的自动执行链
+
+1. `baize_posttrain_sandbox_watcher.sh`（PID 4109314, --watch --auto-eval）每 60s 探测 10.129.32.75:8667
+2. 探测 OPEN → 打 flag `/tmp/posttrain_sandbox_recovered.flag` + 日志 + nohup 启动 `baize_posttrain_surrogate_pipeline.sh --phase1`
+3. Phase 1 = 3-model × 5-run baseline eval → `reports/report_posttrain_baseline_3model_zh.html`（覆盖现有 partial 版）
+4. Phase 1 完成后可手动起 Phase 2 v11-v36 SFT 重训（需先 `baize_posttrain_serve_teardown.sh` 释放 GPU 5/6/7）
+
+### 5. 当前阻塞项（均为外部）
+
+| 阻塞 | 原因 | 影响 | 解除条件 |
+|:--|:--|:--|:--|
+| Sandbox 10.129.32.75 | 跨子网 TCP 过滤（86th wake） | Phase 1 eval + Phase 3 RL | 网络团队开 ACL |
+| GPU 4-7 | vLLM serve 占位（17:10 令） | v11-v36 SFT 重训 | 沙盒恢复 → serve teardown |
+
+### 6. 交付物
+
+| 项 | 路径 |
+|:--|:--|
+| 本节 | EXPERIMENTS §R281 |
+| 审计命令输出 | 本节表格（可复现） |
+
+### 7. 结论
+
+- **全链路就绪**：所有脚本/数据/ckpts/端点/MCP/cline 均已验证，沙盒恢复后 auto-eval 可一次跑通。
+- **本地沙盒排除**：pyAether 未装在 .17，无法本地起沙盒。
+- **Nov 10 eval traces 不足**：仅 1 task failed，无 final_report.json，无法补充 D1-D6 实测。
+- **无新增可做项**：P0/P1/P2/P3 prep/R1-R210 全完成，所有可做的零 GPU 工作已做尽。
+- **等待项**：沙盒 ACL（外部）→ 解锁 Phase 1/3；GPU 释放 → 解锁 v11-v36 SFT 重训。
