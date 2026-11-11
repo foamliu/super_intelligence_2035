@@ -4,19 +4,21 @@ WAITING: 0
 
 ## 📊 进度快照
 
-PHASE:        R2169 incr_eval R2168 RUNNING(claude-code 5NEW eval in progress·cline+5✅opencode+4✅done)+双报告REGEN(R2169)+predict 7/7 ALIVE·CPU/MEM PASS·gw_proxy 9092 UP/9093 LISTEN
-已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5 R1785-R2168·TB4 0passed(能力)·TB-2.1 oracle5/5·R1789 eval 7/7DONE·R1804双报告交付·R1969-R2168 incr_eval+监控+报告·R2168 incr_eval(cline+5res→164✅opencode+4res+1fail→383✅cc 5NEW eval running)+双报告REGEN(R2169)
-当前动作:     R2169: incr_eval R2168 RUNNING(PID4095939·12:00:56 launch·24min·cline+5res✅opencode+4res✅cc 5NEW eval in progress·pi/hermes/dsh pending)+双报告REGEN(R2169·7way=1383total/cline164/opencode383/hermes345·cline special)+predict 7/7 ALIVE(cline222·codex97·opencode467·cc200·pi190·hermes387·dsh174)+CPU PASS(load41/224)+MEM PASS(766G/2Ti·/data 5.8T 18%)+gw_proxy 9092 UP/9093 LISTEN·W:0
-下一步:       ①incr_eval R2168 finish(cc5NEW+pi+hermes+dsh pending)→collect→regen reports ②predict继续产real patch向500推进(7路ALIVE·opencode467最接近) ③dsh adapter silent-exit继续诊断(§10:10 item4) ④§22:4x两基准7路全交付(各路满500) ⑤research日报2026-11-11建议:报告加6列纳入下轮
-阻塞:         <各路尚未满500·§22:4x未全交付·dsh adapter silent-exit=已知hard fault>
+PHASE:        R2170 incr_eval R2168 DONE(5路evald·dsh/codex pending)+双报告REGEN(R2170)+predict 7/7 ALIVE但gateway 429 QUOTA_EXHAUSTED(infra·predict stalled·wait~57min)·CPU/MEM PASS·gw_proxy 9092 UP/9093 LISTEN
+已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5 R1785-R2170·TB4 0passed(能力)·TB-2.1 oracle5/5·R1789 eval 7/7DONE·R1804双报告交付·R1969-R2170 incr_eval+监控+报告·R2168 incr_eval DONE(cline164/opencode383/cc161/hermes347)+双报告REGEN(R2170)
+当前动作:     R2170: incr_eval R2168 DONE(PID4095939 exited·5路evald:cline221/164·codex97/65·opencode469/383·cc203/161·pi191/141·hermes389/347·dsh174/129·total=1390resolved)+双报告REGEN(R2170·7way=9025B·cline special=6311B)+cleanup 0removed(live 429 empties再現=infra artifact非resume bug)+predict 7/7 ALIVE但gateway 429 QUOTA_EXHAUSTED(wait~57min·predict stalled·infra非能力)+CPU PASS(load32.77/224)+MEM PASS(767G/2Ti·/data 5.8T 18%)+gw_proxy 9092 UP/9093 LISTEN·W:0
+下一步:       ①gateway quota reset(~57min)后predict恢复产real patch向500推进 ②dsh/codex incr_eval pending(待新predict累积) ③dsh adapter silent-exit继续诊断(§10:10 item4) ④§22:4x两基准7路全交付(各路满500) ⑤research日报2026-11-11建议:报告加6列(continuous_score/workflow_calls/tokens/usd)纳入下轮
+阻塞:         <gateway 429 QUOTA_EXHAUSTED(infra·predict stalled·~57min reset)·各路尚未满500·§22:4x未全交付·dsh adapter silent-exit=已知hard fault>
 ERROR_COUNT:  0
   体积: TASK=20.6KB / MEMORY=17.1KB(均<32KB)
-  cline专项小结: predict_glm53=222files/222real/164resolved/57failed/0infra/0empty(R2169·R2168 incr_eval cline+5res✅)·C1:222real/164resolved·C2:57failed=100%能力差·C3:empty归零(resume fix R1733)·C5:报告R2169 REGEN(cline special)·失败top1=能力差
+  cline专项小结: predict_glm53=224files/223real/164resolved/57failed/0infra/1empty(live 429 artifact·非resume bug·C3 resume fix仍有效)·C1:223real/164resolved·C2:57failed=100%能力差·C3:empty归零(resume fix R1733·新1empty=429 infra非能力)·C5:报告R2170 REGEN(cline special)·失败top1=能力差
 
 > 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
 
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 ### 本唤醒流水
+> [12:30] R2170 DONE: incr_eval R2168 DONE(PID4095939 exited·5路evald:cline221/164·codex97/65·opencode469/383·cc203/161·pi191/141·hermes389/347·dsh174/129·total=1390resolved↑7)+双报告REGEN(R2170·7way=9025B·cline special=6311B)+cleanup 0removed+predict 7/7 ALIVE(cline223·codex97·opencode472·cc205·pi192·hermes390·dsh175 real)但gateway 429 QUOTA_EXHAUSTED(wait~57min·predict stalled·infra非能力·归因红线)+CPU PASS(load32.77/224)+MEM PASS(767G/2Ti·/data 5.8T 18%)+gw_proxy 9092 UP/9093 LISTEN+C4:cline 224f/223r/164res/57fail/1empty(429 infra)·research日报2026-11-11建议(报告加6列continuous_score/workflow_calls/tokens/usd)已纳入下轮·未完成指令:有(§10:10+§22:4x)·W:0
+
 > [12:25] R2169 DONE: incr_eval R2168 RUNNING(PID4095939·24min·cline+5res→164✅opencode+4res+1fail→383✅cc 5NEW eval in progress·pi/hermes/dsh pending)+双报告REGEN(R2169·10090B+7342B·mtime12:24·7way=1383total/cline164/opencode383/hermes345/cc156/pi141/dsh129/codex65·cline special)+predict 7/7 ALIVE(cline222·codex97·opencode467·cc200·pi190·hermes387·dsh174)+CPU PASS(load41/224)+MEM PASS(766G/2Ti·/data 5.8T 18%)+gw_proxy 9092 UP/9093 LISTEN(dsh alive·silent-exit=known hard fault·1 timeout astropy14182 32min)+C4:cline 222f/222r/164res/57fail/0empty·research日报2026-11-11建议(WorkflowArena:报告加6列)已纳入下轮·未完成指令:有(§10:10+§22:4x)·W:0
 
 > [12:09] R2168 DONE: incr_eval LAUNCHED(setsid detached PID4095939·12:00:56·cline 217evald/222real/5NEW eval RUNNING·matplotlib-24627 test suite 重·~9min/instance·CPU PASS eval容器100%=1核·host load37/224)+cleanup 0empty+双报告REGEN(R2168·10090B+7342B·mtime12:09·7way=1374total/cline159/opencode379/hermes345·cline special)+predict 7/7 ALIVE(cline219·codex97·opencode464·cc198·pi189·hermes386·dsh174)+MEM PASS+gw_proxy 9092/9093 UP·C4:cline 222f/219r/159res/57fail/0empty·research日报2026-11-11建议(WorkflowArena:报告加6列continuous_score/workflow_calls/tokens/usd)已纳入下轮·未完成指令:有(§10:10+§22:4x)·W:0
