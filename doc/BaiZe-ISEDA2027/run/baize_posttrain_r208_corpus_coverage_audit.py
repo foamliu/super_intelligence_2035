@@ -145,6 +145,7 @@ def main():
     ap = argparse.ArgumentParser(description="R208 corpus coverage audit")
     ap.add_argument("--dry-run", action="store_true", help="use built-in sample")
     ap.add_argument("--json", metavar="PATH", help="write JSON summary to PATH")
+    ap.add_argument("--corpus", metavar="PATH", help="corpus JSONL file (default: v11-v35 merged)")
     args = ap.parse_args()
 
     if args.dry_run:
@@ -158,10 +159,11 @@ def main():
         src_corpus = "dry-run sample"
     else:
         eval_apis = load_eval_apis(EVAL_API_FILE)
-        records, corpus_apis, tcount = load_corpus(CORPUS_FILE)
+        corpus_path = args.corpus if args.corpus else CORPUS_FILE
+        records, corpus_apis, tcount = load_corpus(corpus_path)
         n_pairs = len(records)
         src_eval = EVAL_API_FILE
-        src_corpus = CORPUS_FILE
+        src_corpus = corpus_path
 
     n_eval = len(eval_apis)
     eval_leaf = set(leaf_of(e) for e in eval_apis)
