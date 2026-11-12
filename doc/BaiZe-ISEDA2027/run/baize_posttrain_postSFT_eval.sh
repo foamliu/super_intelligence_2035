@@ -77,6 +77,8 @@ cline auth -p openai-compatible -k "$API_KEY" -m "$MODEL_ID" -b "$MODEL_ENDPOINT
 export PYTHON="$VENV_PY"
 export PATH="$EDA_FASTMCP_DIR/.venv/bin:$HOME/.bun/bin:$PATH"
 export CLI_AGENT=cline
+# 关键：localhost 请求必须绕过 HTTP 代理，否则 squid 会拦截 vLLM API 调用
+export no_proxy=localhost,127.0.0.1 NO_PROXY=localhost,127.0.0.1
 
 TASK_FILTER=""
 [[ "$SMOKE" == true ]] && TASK_FILTER="-t 001,002"

@@ -7,12 +7,12 @@ WAITING: 0
 
 ## 进度快照
 
-- PHASE: posttrain-wake332（2026-11-12 R332 post-SFT eval LAUNCHED: 158-task full eval running in background via baize_posttrain_postSFT_eval.sh, cline→:8097 SFT model→MCP:18888→sandbox via tunnel）
-- 已完成: P3预备✅；P0✅；P1✅；P2✅；R1-R210✅；R280归档；wake281-331✅；R331✅(tunnel+SFT converged+serve)；R332✅(post-SFT eval launched+smoke verified pipeline e2e)
-- 当前动作: wake332 R332：①tunnel re-verified:`ssh -p 3333`→TUNNEL_OK(hfeg0tedaap02);sandbox localhost:8664/8667 OPEN via SSH -L(PID618469 alive ~2.4hr) ②SFT serve GPU5 :8097 UP(minicpm5-2b-sft,PID663980,38GB) ③base serve GPU4 :8098 UP(minicpm5-2b,PID553793) ④cline auth configured:minicpm5-2b-sft @ localhost:8097/v1(providers.json confirmed) ⑤2-task smoke test(001,002) verified pipeline e2e:run_cline_script.sh parsed 158 tasks→filtered 2→cline workers launched→MCP tools called[search_apis_by_keyword+run_code]→sandbox cleanup via tunnel OK→SFT model generating pyAether code ⑥full 158-task eval LAUNCHED in background(PID669910 setsid,run_cline_script.sh PID670127,-p 8 -n,1-run,log=/tmp/posttrain_postSFT_eval.log) ⑦wrapper script baize_posttrain_postSFT_eval.sh created(bash -n OK,dry-run OK,uses venv python 3.13.14 for run_eval.py) ⑧key fix:PYTHON env var set to eda_fastmcp .venv/bin/python(system python 3.8 too old for run_eval.py type hints)
-- 下一步: ①等post-SFT eval完成(~2-4hr)→收集final_report.json→compare vs baseline 36% Pass@1(target M1=50%) ②若1-run有改善→5-run mean±std+配对检验 ③baseline 3-model eval(Phase1:MiniCPM5-2B base+Qwen3.8-27B+GLM-5.2) ④RL prep(Phase3:GRPO 4-arm reward)
-- 阻塞: post-SFT eval RUNNING in background(ETA ~2-4hr);P3正式训练等pretrain ckpt
-- 本轮新增产出: R332✅(post-SFT eval LAUNCHED[158-task -p8 -n 1-run,PID669910,setsid background]+smoke test pipeline e2e verified[cline→SFT model→MCP run_code/search_apis→sandbox via tunnel]+wrapper script baize_posttrain_postSFT_eval.sh[bash -n OK+dry-run OK]+PYTHON env fix[venv 3.13.14 for run_eval.py])
+- PHASE: posttrain-wake333（2026-11-12 R333 post-SFT eval RUNNING: 158-task eval PID789217 dir=2026_1112_190335, 5/13 tasks succeeded, 0 failures, 200+ vLLM 200OK, GPU5 99%）
+- 已完成: P3预备✅；P0✅；P1✅；P2✅；R1-R210✅；R280归档；wake281-333✅；R331✅；R332✅(eval launched+smoke e2e)；R333✅(2 infra bugs fixed+eval re-launched+tasks succeeding)
+- 当前动作: wake333 R333 post-SFT eval 158-task RUNNING(PID789217,dir 2026_1112_190335):①**2 infra bugs fixed in sequence**:a)vLLM missing `--enable-auto-tool-choice`→400 on tool_choice="auto"→restarted vLLM PID754545 with flag b)http_proxy routing localhost:8097 through squid→"Access Denied"→fix:no_proxy=localhost,127.0.0.1(NO_PROXY too) ②eval re-launched with no_proxy env→0 proxy errors→vLLM receiving requests 200 OK ③progress@5:46:5 tasks succeeded(001,002,003,006,007),0 failures,200+ vLLM requests all 200OK,6 .py files generated,13 task dirs created,GPU5 99% util ④SFT model quality issue confirmed:model generates fake tool calls(echoing "MCP: [tool] calling:..." via run_commands instead of actual MCP tools)+repetition loops up to 50K tokens→some tasks timeout ⑤wrapper script updated:no_proxy export added to baize_posttrain_postSFT_eval.sh for future runs ⑥vLLM full args:`--gpu-memory-utilization 0.85 --max-model-len 65536 --enforce-eager --tool-call-parser minicpm5 --enable-auto-tool-choice --max-num-seqs 4`
+- 下一步: ①等eval完成(~2-4hr)→收集final_report.json→compare vs baseline 36% Pass@1(target M1=50%) ②若1-run有改善→5-run mean±std+配对检验 ③若未改善→调查tool-name mismatch+long-output garbage ④baseline 3-model eval(Phase1) ⑤RL prep(Phase3:GRPO)
+- 阻塞: post-SFT eval RUNNING(ETA ~2-4hr);P3正式训练等pretrain ckpt
+- 本轮新增产出: R333✅(2 infra bugs fixed[--enable-auto-tool-choice+no_proxy]+eval re-launched PID789217+5/13 tasks succeeding+wrapper script updated with no_proxy)
 - 未完成指令: 🔴11:2x✅隧道verified+主线post-SFT eval launched;🔴17:10✅拆除;🔴13:40 Phase2 SFT✅+post-SFT eval RUNNING/Phase1待eval完成/Phase3待post-SFT eval
 - git: super_intelligence_2035 ca621069(pulled);本轮 commit pending
 - 🔧 **SDPA patch**(wake328):verl fsdp_sft_trainer.py L199 `attn_implementation="flash_attention_2"`→`"sdpa"`;root cause:flash_attn crashes on CPU meta tensor during FSDP2 init→RANK0 segfault→RANK1 NCCL deadlock;backup `.bak.flash_attn`;venv重建后需重打此patch
@@ -25,7 +25,7 @@ WAITING: 0
 |:--:|:--:|:--|:--|:--:|:--|
 | 0-3 | 8099 | qwen3.8-27b | root SGLang Qwen3.8-27B | ~45GB/卡 | ✅ root 占用，不可动 |
 | 4 | 8098 | minicpm5-2b | vLLM MiniCPM5-2B（Phase1评测用,**--max-model-len 65536 --enforce-eager** --tool-call-parser minicpm5） | 37.9GB | ✅ wake311 restarted(serve was down,setsid PID 553793) |
-| 5 | 8097 | minicpm5-2b-sft | **vLLM SFT ckpt serve**(wake331,global_step_90,--max-model-len 65536 --enforce-eager --tool-call-parser minicpm5,PID663980) | 38.0GB | ✅ wake331 UP(post-SFT eval用) |
+| 5 | 8097 | minicpm5-2b-sft | **vLLM SFT ckpt serve**(wake333,global_step_90,--max-model-len 65536 --enforce-eager --tool-call-parser minicpm5 **--enable-auto-tool-choice** --max-num-seqs 4,PID754545) | 39.0GB | ✅ wake333 UP(post-SFT eval用,auto-tool-choice added) |
 | 6 | — | — | **空闲**(SFT v11v38 converged wake331,global_step_90 saved,GPU freed) | 3 MiB | ⬜ freed(wake331) |
 | 7 | — | — | **空闲**(同GPU6,SFT converged) | 3 MiB | ⬜ freed(wake331) |
 
