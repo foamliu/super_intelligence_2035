@@ -12,6 +12,7 @@ WAITING: 0
 > 🟢 **✅ EDA脚本价值分析DONE（唤醒1468,2026-11-12 23:5x）**：用户令11-12→Phase A全扫4600shard(97M repos/1.28B files/5.86TiB/vendor1.3%/4963s)+Phase B分层抽样3200文件(9类)→V1=18/V2=149/V3=3033→外推V1~828文件/~0.01B token→Tcl唯一显著EDA命中(39.2%)/SKILL未检出/PyAether 0命中→报告report_data_stackv3_eda_script_value_zh.html(43KB/8节+附录/0外链/0script)落reports/→DATA_MAPPING.md§H.13新增→commit data eda:。
 > 📝 **结论**：V1(直接可用)~828文件/~0.01B tok, V2(可挖掘)~6854文件/~0.04B tok, V3(低价值)~139518文件；报告路径reports/report_data_stackv3_eda_script_value_zh.html；建议：stack-v3对EDA脚本直接贡献有限，SKILL/PyAether需外部数据源。
 
+> [11-13 06:0x] 唤醒1472：分词巡检→①分词后台跑中(PID891129,16workers,nice19)→3148/4600shard(68.4%,ETA~4.1h,2944OK+204ERR);2985.json+3130.bin+635GB+171.33B tok;②EDA分析已确认commit a6370ce60(report+scan+summary+sample+gen_script+DATA_MAPPING§H.13全committed);③134 unique failed shards在/tmp/stackv3_failed_shard_ids.txt;④162 orphan .bin(rerun时脚本自动清理);⑤rerun脚本stackv3_rerun_failed.sh就绪(自动检测missing .json→用修复后脚本v4重跑);⑥df:/nas_train 181T/88%(27T余)OK;⑦体积MEMORY~36KB/TASK~39KB均≤40KB→更新进度快照→commit data stackv3:→WAITING=0继续巡检
 > [11-13 03:0x] 唤醒1471：分词巡检+脚本v3修复→①分词后台跑中(PID891129,旧版脚本)→2100/4600shard(45.7%,ETA~7.1h,134ERR~6.3%);2006.json+429GB输出;②134个failed shard IDs已提取→/tmp/stackv3_failed_shard_ids.txt;③验证shard#27:read_row_group()全部12个row group均OK(旧版combine_chunks导致ERR,新版row-group方式可修复);④脚本v3修复:新增Fallback2(pf.read() with dotted column paths,即EDA scan Phase A同方法)→stackv3_tokenize.py已更新;⑤df:/nas_train 181T/88%(27T余)/nas_inference 19T/42%(27T余);⑥体积MEMORY 34KB/TASK 39KB均≤40KB→commit data stackv3:→WAITING=0继续巡检
 
 > 🟢 **✅ 运维令13:3x DONE（唤醒690,15:0x）**：分词 SFT-2605(94 shard/18.89B tok/75.87GB)+Agent-2609(13 shard/5.97B tok/23.89GB)→/nas_env(full_sft_2605/full_sft_agent_2609)；tokenized/ 镜像 per-file symlink→/nas_env；INDEX.tsv 922 shard triplet全OK inode_ok；DATA_MAPPING.md(10603B)行11-12=镜像完整；report_data_mapping_zh.html(20764B)12源全量更新；commit 44b512316 pushed。
@@ -27,10 +28,10 @@ WAITING: 0
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        stack-v3-train 分词阶段（EDA分析DONE+分词16workers后台跑中~62%+脚本v4修复shard-list索引映射bug） → WAITING=0
-已完成:       ✅85M;✅10-31报告;✅09:4x报告;✅09:2x长上下文10/10(249.48GiB);✅13:2x#2 RL报告;✅13:2x#1 B类12/12(78.73GiB);✅11-07 ROI 8源DONE(25.14GB);✅stack-v3-train调研DONE;✅batch1-7全DONE(1,987,930,402,327B/4600parquet/0inc);✅2TB ROI复盘;✅vision图文对调研报告;✅EDA脚本价值分析(Phase A全扫+Phase B抽样+报告43KB/8节/0外链/DATA_MAPPING§H.13);✅orphan .bin清理(35个);✅tokenize脚本修复v3(新增Fallback2:dotted column paths full-read);✅tokenize脚本修复v4(修复--shard-list索引映射bug:旧代码给failed shard分配0,1,2...索引→会覆盖成功shard;新代码从full sorted list查找原始索引)
-当前动作:     分词后台运行中(PID891129 stackv3_tokenize.py --workers 16,nice19/ionice3,旧版脚本在内存)→2875/4600shard(62.5%,ETA~4.9h,2686OK+189ERR~6.6%);输出2726.json+2856.bin+582GB;189个failed shard(ArrowNotImplementedError nested columns);脚本v4已修复→rerun时用stackv3_rerun_failed.sh(已验证--shard-list参数+索引映射正确)
-下一步:       ①等分词主跑完成(~5h)→记录failed_shards.txt;②用stackv3_rerun_failed.sh重跑~189 failed shards(--workers 4,用修复后脚本v4+正确索引映射);③全部4600shard完成后→MANIFEST+INDEX.tsv+DATA_MAPPING.md+report_data_mapping_zh.html更新;④commit+push+WAITING=1;⑤EDA分析已交付,待用户验收
+PHASE:        stack-v3-train 分词阶段（EDA分析DONE+分词16workers后台跑中~68%+134failed shards待rerun） → WAITING=0
+已完成:       ✅85M;✅10-31报告;✅09:4x报告;✅09:2x长上下文10/10(249.48GiB);✅13:2x#2 RL报告;✅13:2x#1 B类12/12(78.73GiB);✅11-07 ROI 8源DONE(25.14GB);✅stack-v3-train调研DONE;✅batch1-7全DONE(1,987,930,402,327B/4600parquet/0inc);✅2TB ROI复盘;✅vision图文对调研报告;✅EDA脚本价值分析(Phase A全扫+Phase B抽样+报告43KB/8节/0外链/DATA_MAPPING§H.13,commit a6370ce60);✅orphan .bin清理(35个);✅tokenize脚本修复v3(新增Fallback2:dotted column paths full-read);✅tokenize脚本修复v4(修复--shard-list索引映射bug)
+当前动作:     分词后台运行中(PID891129 stackv3_tokenize.py --workers 16,nice19/ionice3,旧版脚本在内存)→3148/4600shard(68.4%,ETA~4.1h,2944OK+204ERR);输出2985.json+3130.bin+635GB+171.33B tok;134 unique failed shards(ArrowNotImplementedError nested columns)已提取→/tmp/stackv3_failed_shard_ids.txt;162 orphan .bin(rerun时自动清理);rerun脚本stackv3_rerun_failed.sh就绪
+下一步:       ①等分词主跑完成(~4h);②用stackv3_rerun_failed.sh重跑134 failed shards(--workers 4,用修复后脚本v4+Fallback2);③全部4600shard完成后→清理orphan .bin+MANIFEST+INDEX.tsv+DATA_MAPPING.md+report_data_mapping_zh.html更新;④commit+push;⑤EDA分析已交付,待用户验收
 阻塞:         无(分词后台跑中,WAITING=0短睡巡检)
 ERROR_COUNT:  12
 未完成指令:   有(stack-v3-train分词后台运行中)→WAITING=0
