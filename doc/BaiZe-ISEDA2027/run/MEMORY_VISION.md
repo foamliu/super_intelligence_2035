@@ -1,6 +1,6 @@
 WAITING: 1
 
-> 🆕 **【wake #1055 · 2026-11-12 22:0x】例行巡检·全交付态**：git pull→Already up to date。v7结果20目录在位·v7_sweep_analysis.json 6/6 ALL PASS·HTML报告39511B✓·EXPERIMENTS_VISION.md v7节11处引用✓。ops inbox RUN_ID276(pretrain eval chunk2/3·非vision)。research日报11-12 vision建议无新增可用。进程:vision loop PID669545✓(ppid=1·etimes~14.5天)·ops_relay_v2 PID1032513✓(ppid=1·etimes~19天)·GPU 8×H100 100% pretrain全占。体积:TASK=27.0KB✓/MEMORY≈11KB✓。全交付态维持·无未完成指令·WAITING=1。
+> 🆕 **【wake #1056 · 2026-11-12 23:3x】v8频率比较任务启动**：新任务维度——给定两个波形(各16采样点/固定1µs窗口)判断哪个频率更高(二分类A/B,50%baseline)。v5-v7全是4类类型分类,triangle/sawtooth全线0%→v8换维度。预注册判据:A~50%/B>60%/C>B/McNemar p<0.05/3seed同方向。smoke test已通过(全链路SFT→eval→GRPO→stats无报错)。run_v8_freqcmp.sh后台运行中(smoke→3 seeds→control, ETA~3.5h)。脚本:cpu_rl_v8_freqcmp_experiment.py(674行)·analyze_v8_freqcmp.py。SFT 200ex×3ep·GRPO 15step·gs=4·3seeds(20261112/13/14)·control random reward。
 
 > 📦 **wake #1054 · 2026-11-12 21:0x** 例行巡检·全交付态·git pull fast-forward(designflow文件)·v7结果20目录在位·v7_sweep_analysis.json 6/6 ALL PASS·已fold。
 
