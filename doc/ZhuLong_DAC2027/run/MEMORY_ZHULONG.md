@@ -1,12 +1,14 @@
 # MEMORY_ZHULONG.md — ZhuLong（DAC2027）EDA 消融评测 · 运行时状态
 
-WAITING: 1（wake#860·2026-11-12 10:32·**B_zh_r2 regrade ✅ DONE 81.6%·B_zh_r3 重跑🟠跑中 PID 4037472 ~1h41m/12h cap~14% log14MB**·30/30 全完 + regrade 完成 + r3 重跑跑中。✅ **30/30 落盘**：轴 A 15/15 ✅ + B_en 3/3 ✅ 80.0±4.5% + B_zh 3/3（r1 84.2%·**r2 ✅81.6%(129/158) regraded**·r3 78.5% SUPERSEDED→重跑中 PID 4037472）+ B_es 3/3 ✅ 80.8±0.3% + B_fr 3/3 ✅ 76.2±2.6% + B_ru 3/3 ✅ 79.3±2.5% [81.6,76.6,79.7]。**B_zh_r2 regrade 状态**：✅ DONE 81.6%(129/158)·regrade PID 3821059 08:03:31→08:44:56 rc=0·gap-grabber chance 1/3 成功·闸门 n_tasks==158 PASS·results JSON 原位回填 pass_rate_pct=81.6/passed=129/total=158。**B_zh_r3 重跑状态**：🟠 跑中 PID 4037472（08:51 启动·log /tmp/ABL_B_zh_r3_rerun.log·batch 2026_1112_085105·thinking=medium·LANG_HINT=请使用中文思考。·glm-5.2·-p 8 -n·12h cap·Step 2 格式化中）·旧 78.5% 已标 SUPERSEDED 留档不删·按 22:4x 令④与 r1/r3 同配置。🔴 22:4x 令③顺序：ru 3 轮✅→regrade zh r2✅→**重跑 zh r3 🟠跑中**→之后才改报告。infra：loop PID 813663 proxy✅·/home 12G/97%·P0=CLOSED 11-05。本轮=监控 r3 重跑。）
+WAITING: 1（wake#861·2026-11-12 11:08·**B_zh_r2 regrade ✅ DONE 81.6%·B_zh_r3 重跑🟠跑中 PID 4037472 ~2h17m/12h cap~19% log17.4MB**·30/30 全完 + regrade 完成 + r3 重跑跑中。✅ **30/30 落盘**：轴 A 15/15 ✅ + B_en 3/3 ✅ 80.0±4.5% + B_zh 3/3（r1 84.2%·**r2 ✅81.6%(129/158) regraded·results JSON 已核验 pass_rate_pct=81.6**·r3 78.5% SUPERSEDED→重跑中 PID 4037472）+ B_es 3/3 ✅ 80.8±0.3% + B_fr 3/3 ✅ 76.2±2.6% + B_ru 3/3 ✅ 79.3±2.5% [81.6,76.6,79.7]。**B_zh_r2 regrade 状态**：✅ DONE 81.6%(129/158)·regrade PID 3821059 08:03:31→08:44:56 rc=0·gap-grabber chance 1/3 成功·闸门 n_tasks==158 PASS·results JSON 原位回填已核验。**B_zh_r3 重跑状态**：🟠 跑中 PID 4037472（etime 02:16:39·08:51 启动·log /tmp/ABL_B_zh_r3_rerun.log 17.4MB 增长·batch 2026_1112_085105·thinking=medium·LANG_HINT=请使用中文思考。·glm-5.2·-p 8 -n·12h cap·未见 pass(/DONE=仍 Step3 cline batch 中段·log tail 含中文思考片段=lang hint ✅ 生效·trace 待轮末落盘）·旧 78.5% 已标 SUPERSEDED 留档不删·按 22:4x 令④与 r1/r3 同配置。🔴 22:4x 令③顺序：ru 3 轮✅→regrade zh r2✅→**重跑 zh r3 🟠跑中**→之后才改报告。infra：真 loop PID 813663 proxy✅(直核 environ)·/home 12G/97%·P0=CLOSED 11-05·gap-grabber 已退出(regrade done)·orchestrator(run_think_lang_ablation)已退出(30/30 done)。本轮=监控 r3 重跑 do-nothing。）
 
 - [2026-11-12 07:38 · wake#855·B_ru_r3 末轮跑中 round 30/30 已滚出] 原文见 `daily-memories/2026-11-12.md` §[rolled-out 08:15 wake#856 归档]（状态同 wake#854 +35min·无实质变化·被 wake#856 取代：30/30 完成 + regrade 启动）。
 
 - [2026-11-12 08:15 · wake#856·B_ru_r3 ✅ DONE 79.7%·30/30 全完·regrade 自动启动 已滚出] 原文见 `daily-memories/2026-11-12.md` §[rolled-out 08:46 wake#857 归档]（30/30 完成 + regrade 启动·被 wake#857 取代：regrade 完成 81.6% + r3 重跑启动）。
 
-- [2026-11-12 10:32 · wake#860·**B_zh_r3 重跑🟠监控 do-nothing**] 🔴 22:4x 令⑥心跳：**轮次 30/30 ✅全完**（r3 重跑是 post-30 单独重跑，非编排器轮）·**编排器** run_think_lang_ablation 已退出·**B_ru 进度** ✅ 3/3 = 79.3±2.5% [81.6,76.6,79.7]·**B_zh_r2 regrade 状态** ✅ DONE 81.6%(129/158)·**B_zh_r3 重跑状态** 🟠 跑中 PID 4037472（etime ~1h41m·~101min/12h cap≈14%·log /tmp/ABL_B_zh_r3_rerun.log 14MB 增长·batch 2026_1112_085105·thinking=medium·LANG_HINT=请使用中文思考。·glm-5.2·-p 8 -n·log tail 含中文思考片段「让我/我需要/看看」=lang hint ✅ 生效·未见 `pass (/DONE`=仍在 Step3 cline batch 中段·进程树 systemd→timeout 43200→bash→cline 与 loop 独立）·旧 78.5% 已标 SUPERSEDED 留档。**audit 报告** ✅ 已落盘 reports/report_zhulong_lang_switch_audit_zh.html 76KB 11-11 22:37（wake#836b/c/d 已闭合·本任务不再重做）。**本轮操作**：do-nothing 监控（pgrep 有输出→不动 eval·令⑦全守）·infra：**真 loop PID 813663** proxy ✅(https_proxy=172.19.92.23:13128·已跑16天)·⚠️`pgrep -f zhulong_loop.sh` 命中 opencode agent 自身(441882)假阳性·直核 813663 environ 才是真值·/home 12G/97% 紧非阻塞·P0=CLOSED 11-05。§7 PHASE=running·**WAITING=1**（r3 重跑跑中）。
+- [2026-11-12 11:08 · wake#861·**B_zh_r3 重跑🟠监控 do-nothing**] 🔴 22:4x 令⑥心跳：**轮次 30/30 ✅全完**（r3 重跑是 post-30 单独重跑，非编排器轮）·**编排器** run_think_lang_ablation 已退出（pgrep 仅命中 opencode agent 自身假阳性，已排除）·**B_ru 进度** ✅ 3/3 = 79.3±2.5% [81.6,76.6,79.7]·**B_zh_r2 regrade 状态** ✅ DONE 81.6%(129/158)·results JSON 已核验 B_zh_r2 pass_rate_pct=81.6/passed=129/total=158·**B_zh_r3 重跑状态** 🟠 跑中 PID 4037472（etime 02:16:39·~137min/12h cap≈19%·log /tmp/ABL_B_zh_r3_rerun.log 17.4MB 增长·batch 2026_1112_085105·thinking=medium·LANG_HINT=请使用中文思考。·glm-5.2·-p 8 -n·log tail 含中文思考片段「依赖跨 run_code 持久化…在一个 run_code 调用在 schematic 中 wire 宽度」=lang hint ✅ 生效·未见 `pass (/DONE`=仍 Step3 cline batch 中段·trace 待轮末落盘·进程树 systemd→timeout 43200→bash→cline 与 loop 独立）·旧 78.5% 已标 SUPERSEDED 留档（results JSON status=SUPERSEDED 已核验）。**本轮操作**：do-nothing 监控（pgrep 有输出→不动 eval·令⑦全守：不 kill/不碰 trace/不占沙盒/不改别线）·infra：**真 loop PID 813663** proxy ✅(https_proxy=172.19.92.23:13128·直核 /proc/813663/environ)·gap-grabber 已退出(regrade done)·/home 12G/97% 紧非阻塞·P0=CLOSED 11-05·results JSON B_zh 3 轮核验：r1=84.2/r2=81.6(129/158)/r3=78.5 SUPERSEDED。§7 PHASE=running·**WAITING=1**（r3 重跑跑中·令⑥WAITING 不因抽检置 1）。
+
+- [2026-11-12 10:32 · wake#860·**B_zh_r3 重跑🟠监控 do-nothing** 已滚出] 原文见 `daily-memories/2026-11-12.md` §[wake#860]（r3 etime ~1h41m log14MB·被 wake#861 取代：r3 etime 2h17m log17.4MB + results JSON 核验）。
 
 - [2026-11-12 09:58 · wake#859·**B_zh_r3 重跑🟠监控 do-nothing** 已滚出] 原文见 `daily-memories/2026-11-12.md` §[rolled-out 10:32 wake#860 归档]（状态同 wake#860 -34min·r3 log 10.2MB·被 wake#860 取代）。
 
@@ -55,25 +57,8 @@ WAITING: 1（wake#860·2026-11-12 10:32·**B_zh_r2 regrade ✅ DONE 81.6%·B_zh_
 - [wake#827 已滚出·2026-11-11 06:07] 原文见 `daily-memories/2026-11-11.md` §[rolled-out 06:07 wake#828 归档]（05:28 gap-grabber 健康巡检 do-nothing·等空档·B_es_r3 跑中·被 wake#828 取代·状态无变化）。
 - [wake#821~826 已滚出·2026-11-11 01:25–05:28] 原文见 `daily-memories/2026-11-11.md`（6 条 gap-grabber do-nothing 巡检·等空档·B_es_r2/r3 跑中·无新状态）。
 
-- [wake#813 已滚出·2026-11-10 21:01] 原文见 `daily-memories/2026-11-10.md` §[rolled-out 21:01 wake#814 归档]（20:20 B_zh_r3 do-nothing 监控·eval 跑中·编排器 PID 3675162 活 4h02m·log 24MB·中文思考 ✅ lang hint 生效·/home 4.8G/99% ⚠️紧·loop 代理复核 PASS）。
+- [wake#802~813 已滚出·2026-11-10 14:17–21:01] 原文见 `daily-memories/2026-11-10.md`（B_zh_r2/r3 do-nothing 监控系列 + wake#806 编排器 8h→12h cap 修复重启 PID 3675162 + B_zh_r3 12h cap 起跑·eval PID 529130/3675162 活·中文思考 ✅ lang hint 生效·/home 1.3–5.0G/99–100% 紧）。
 
-- [wake#811 已滚出·2026-11-10 19:46] 原文见 `daily-memories/2026-11-10.md` §[rolled-out 19:46 wake#812 归档]（19:13 B_zh_r3 do-nothing 监控·eval 跑中·编排器 PID 3675162 活 2h56m·log 18MB·中文思考 ✅ lang hint 生效·/home 4.8G/99% ⚠️紧）。
-
-- [wake#810 已滚出·2026-11-10 19:46] 原文见 `daily-memories/2026-11-10.md` §[rolled-out 19:46 wake#812 归档]（18:37 B_zh_r3 do-nothing 监控·eval 跑中·编排器 PID 3675162 活 2h19m·log 15MB·中文思考 ✅ lang hint 生效·/home 5.0G/99% ⚠️紧·research 日报 2026-11-10 无新可执行条目）。
-
-- [wake#809 已滚出·2026-11-10 18:37] 原文见 `daily-memories/2026-11-10.md` §[rolled-out 18:37 wake#810 归档]（18:03 B_zh_r3 do-nothing 监控·eval 跑中·编排器 PID 3675162 活 1h46m·log 10.7MB·中文思考 ✅ lang hint 生效·/home 5.0G/99% ⚠️紧）。
-
-- [wake#808 已滚出·2026-11-10 18:03] 原文见 `daily-memories/2026-11-10.md` §[rolled-out 18:03 wake#809 归档]（17:28 B_zh_r3 do-nothing 监控·eval 跑中·编排器 PID 3675162 活 1h10m·log 6.5MB·中文思考 ✅ lang hint 生效·/home 5.0G/99% ⚠️紧）。
-
-- [wake#807 已滚出·2026-11-10 17:28] 原文见 `daily-memories/2026-11-10.md` §[rolled-out 17:28 wake#808 归档]（16:46 B_zh_r3 do-nothing 监控·eval 跑中·编排器 PID 3675162 活 28min·log 2.68MB·中文思考 ✅ lang hint 生效·/home 1.3G/100% ⚠️降）。
-
-- [wake#806 已滚出·2026-11-10 16:46] 原文见 `daily-memories/2026-11-10.md` §[rolled-out 16:46 wake#807 归档]（16:19 🔧 编排器 8h→12h cap 修复+B_zh_r2 mid-grading 丢失处理+编排器重启 PID 3675162→START B_zh_r3 12h cap）。
-
-- [wake#805 已滚出·2026-11-10 16:19] 原文见 `daily-memories/2026-11-10.md` §[rolled-out 16:19 wake#806 归档]（15:26 B_zh_r2 跑中监控 do-nothing·wake#806 查编排器日志发现 r2 实际已被 8h cap 杀掉 mid-grading）。
-
-- [wake#803 已滚出·2026-11-10 14:50] 原文见 `daily-memories/2026-11-10.md` §[rolled-out 14:50]（14:17 B_zh_r2 跑中监控 do-nothing·被 wake#804 取代）。
-
-- [wake#802 已滚出·2026-11-10 14:17] 原文见 `daily-memories/2026-11-10.md` §[rolled-out 14:17]（13:43 B_zh_r2 跑中监控 do-nothing·被 wake#803 取代）。
 - [wake#790/#794/#795/#796 已滚出·2026-11-10 10:45 归档] 原文见 `daily-memories/2026-11-10.md` §[rolled-out 10:45 wake#797 归档]。范围：B_zh_r2 🟠 跑中监控 do-nothing 系列（06:51–10:12）·均 pgrep 有输出→不动 eval·eval PID 529130 持续活·log 12.7MB→23.6MB 增长·log tail 持续含中文思考片段=lang hint 注入仍生效 ✅。infra 全绿各轮复核（真 loop PID 813663 https_proxy ✅·端口全 404=open·/home 紧非阻塞·cline 3.0.51·P0 三证据成立）。
 
 - [wake#784–#789 已滚出·2026-11-10 06:51 归档] 原文见 `daily-memories/2026-11-10.md` §[rolled-out 06:51 wake#790 归档]。范围：B_zh_r1 🟠 跑中监控 do-nothing 系列（03:25–06:16）·均 pgrep 有输出→不动 eval·均被 wake#790 取代。关键里程碑：wake#787=research 日报 2026-11-09 聚合口径建议纳入 P4·wake#789=research 日报 2026-11-10 不稳定度建议纳入 P4·wake#786/784=log 含中文思考片段=lang hint 注入迹象（待 trace 出后正式核验）。
