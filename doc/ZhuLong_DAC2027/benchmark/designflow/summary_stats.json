@@ -15,49 +15,93 @@
   "generated": "2026-11-06T08:40:00+08:00",
   "hits_total": 38082,
   "hosts": 696,
-  "mc10": 1436,
-  "mc100": 618,
+  "mc10": 777,
+  "mc100": 0,
   "mc1000": 8,
   "mc15": 2684,
-  "mc20": 1478,
+  "mc20": 678,
   "mc25": 2376,
-  "mc30": 1126,
+  "mc30": 591,
   "mc300": 317,
   "mc5": 3368,
   "mc500": 281,
   "mc_matrix": {
     "computed_at": "2026-11-12",
     "dedup_sessions": 3964,
-    "mc5": {
-      "pool": 3210,
-      "touched": 2412,
-      "fresh": 798
-    },
     "mc10": {
+      "fresh": 518,
       "pool": 2882,
-      "touched": 2364,
-      "fresh": 518
+      "touched": 2364
     },
     "mc15": {
+      "fresh": 407,
       "pool": 2684,
-      "touched": 2277,
-      "fresh": 407
+      "touched": 2277
     },
     "mc20": {
+      "fresh": 320,
       "pool": 2519,
-      "touched": 2199,
-      "fresh": 320
+      "touched": 2199
     },
     "mc30": {
+      "fresh": 193,
       "pool": 2247,
-      "touched": 2054,
-      "fresh": 193
+      "touched": 2054
+    },
+    "mc5": {
+      "fresh": 798,
+      "pool": 3210,
+      "touched": 2412
     },
     "note": "2026-11-12 用户令(换池 1105->1109, shard B 执行): mc_matrix 切到 summary_1109.tsv。矩阵基于 11/09 全量扫描 summary_1109.tsv (38082 数据行 -> 3964 slug 去重 session, slug 级去重取最大 mc) 本地复算; 复算命令: python3 designflow/trace_ledger.py [--shard A|B|C|D] mc-matrix --src designflow/summary_1109.tsv --json (4 shard 输出 留 designflow/mc_matrix_1109_{A,B,C,D,ALL}.txt)。pool=池总量 touched=已动过(4 shard ledger, 2864 个 sid: case/seeded=693, parked=1913) fresh=未动过(真正可做)。口径: 本矩阵=slug 去重(3964 session); 顶层 mcN/dedup_sessions=5999 仍为 raw 1109 session_file 去重(两源口径不同, 勿混用)。1105 旧值见 mc_matrix_1105_hist。B 域 mc>=10 fresh: 1105(现台账)=0 -> 1109=22 (换池直接目标达成)",
     "src": "designflow/summary_1109.tsv"
   },
+  "mc_matrix_1105_hist": {
+    "computed_at": "2026-11-11",
+    "historical": "11/05 snapshot, pre-switch (kept for reference, do not use for fresh/pool)",
+    "mc10": {
+      "fresh": 381,
+      "pool": 1929,
+      "touched": 1548
+    },
+    "mc15": {
+      "fresh": 291,
+      "pool": 1795,
+      "touched": 1504
+    },
+    "mc20": {
+      "fresh": 216,
+      "pool": 1681,
+      "touched": 1465
+    },
+    "mc30": {
+      "fresh": 119,
+      "pool": 1511,
+      "touched": 1392
+    },
+    "mc5": {
+      "fresh": 532,
+      "pool": 2114,
+      "touched": 1582
+    },
+    "note": "2026-11-11 用户令: mc 全线降到 10(原 A=15 / B,C,D=30)。矩阵基于 11/05 全量扫描 summary_1105.tsv (5822 数据行 -> 2560 去重 session, slug 级去重取最大 mc) 本地复算; 复算命令: python3 designflow/trace_ledger.py [--shard X] mc-matrix --src designflow/summary_1105.tsv --json。pool=池总量 touched=已动过(4 shard ledger) fresh=未动过(真正可做)",
+    "src": "designflow/summary_1105.tsv"
+  },
   "note": "r384: scansync (11/09 still latest, no new scan) + stale-candidates-file finding (candidates_mc10.tsv=11/05, gyja8 gone) + 4 fresh A-dominant peeked from 11/09 direct (xinm9/y7550/5szsv/ux82s all weak/not-viable, 0 case). A.jsonl 210 unchanged. PIVOT (a/b/c/d) still awaits user decision.",
   "note_mc30": "顶层 mcN 现统一取自 11/09 全量扫描 raw summary.tsv (38082 行 / 5999 dedup session by session_file). mc_matrix.* 仍基于 11/05 curated summary_1105.tsv (1928 shard-A-keyword dedup, slug 级取最大 mc) 用于 ledger fresh 复算; 两源口径不同, 勿混用. target_mc=10 时覆盖率分母取 mc_matrix.mc10.pool=1929 (与 ledger 同源).",
+  "pool_switch": {
+    "by": "shard B",
+    "done_at": "2026-11-12T23:44+08:00",
+    "from": "designflow/summary_1105.tsv",
+    "mc10_fresh_B_new_1109": 22,
+    "mc10_fresh_B_old_1105": 0,
+    "note": "2026-11-12 用户直令: A 连续~2天未换池, 改由 B 接手执行(一次做完并落盘提交)",
+    "scan_path": "/home/t0002965/log/ssh_eda_search_20261109_224902/summary.tsv",
+    "scan_rows": 38082,
+    "scan_sha256": "a3a374ad5bcaa79f1b82ceeb3ab560e8a703450640b8ad4c11fc6fbb0bec3c07",
+    "summary_1109_dedup_sessions": 3964,
+    "to": "designflow/summary_1109.tsv"
+  },
   "prev_scan_path": "/home/t0002965/log/ssh_eda_search_20261105_192825/summary.tsv",
   "prev_sessions": 1746,
   "scan_path": "/home/t0002965/log/ssh_eda_search_20261109_224902/summary.tsv",
@@ -69,7 +113,7 @@
     "scan_dir": "ssh_eda_search_20261109_224902",
     "total_rows": 38082
   },
-  "sessions": 1746,
+  "sessions": 920,
   "shard_mc": {
     "A": 10,
     "B": 10,
@@ -153,54 +197,10 @@
     },
     "src": "designflow/summary_1105.tsv (11/05 curated, shard-A keyword filter, slug dedup)"
   },
-  "updated_at": "2026-11-12 23:44",
+  "updated_at": "2026-11-13 00:24",
   "users_mc10": 444,
   "users_mc100": 182,
   "users_mc30": 401,
   "users_mc300": 60,
-  "users_total": 512,
-  "mc_matrix_1105_hist": {
-    "computed_at": "2026-11-11",
-    "mc10": {
-      "fresh": 381,
-      "pool": 1929,
-      "touched": 1548
-    },
-    "mc15": {
-      "fresh": 291,
-      "pool": 1795,
-      "touched": 1504
-    },
-    "mc20": {
-      "fresh": 216,
-      "pool": 1681,
-      "touched": 1465
-    },
-    "mc30": {
-      "fresh": 119,
-      "pool": 1511,
-      "touched": 1392
-    },
-    "mc5": {
-      "fresh": 532,
-      "pool": 2114,
-      "touched": 1582
-    },
-    "note": "2026-11-11 用户令: mc 全线降到 10(原 A=15 / B,C,D=30)。矩阵基于 11/05 全量扫描 summary_1105.tsv (5822 数据行 -> 2560 去重 session, slug 级去重取最大 mc) 本地复算; 复算命令: python3 designflow/trace_ledger.py [--shard X] mc-matrix --src designflow/summary_1105.tsv --json。pool=池总量 touched=已动过(4 shard ledger) fresh=未动过(真正可做)",
-    "src": "designflow/summary_1105.tsv",
-    "historical": "11/05 snapshot, pre-switch (kept for reference, do not use for fresh/pool)"
-  },
-  "pool_switch": {
-    "done_at": "2026-11-12T23:44+08:00",
-    "by": "shard B",
-    "from": "designflow/summary_1105.tsv",
-    "to": "designflow/summary_1109.tsv",
-    "scan_path": "/home/t0002965/log/ssh_eda_search_20261109_224902/summary.tsv",
-    "scan_sha256": "a3a374ad5bcaa79f1b82ceeb3ab560e8a703450640b8ad4c11fc6fbb0bec3c07",
-    "scan_rows": 38082,
-    "summary_1109_dedup_sessions": 3964,
-    "mc10_fresh_B_old_1105": 0,
-    "mc10_fresh_B_new_1109": 22,
-    "note": "2026-11-12 用户直令: A 连续~2天未换池, 改由 B 接手执行(一次做完并落盘提交)"
-  }
+  "users_total": 512
 }
