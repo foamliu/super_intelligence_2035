@@ -7700,3 +7700,97 @@ def create_sch_wire():
 4. 用 final ckpt（step 105）重复 full eval
 5. 汇总写入 EXPERIMENTS + MEMORY → commit `posttrain eval:` prefix
 
+---
+
+## §L4-DesignFlow (2026-11-13 wake364) L4 Designflow Eval — SSH Reverse Tunnel Setup + 5-Task Baseline Launch
+
+> **任务来源**：用户令 2026-11-12「L4 领域评测改由 post-train 主责」+ 2026-11-12 11:2x「沙盒隧道已启动——只用它 SSH 到 36.15」。
+> **目标**：在 36.15（ZhuLong 机器，hfeg0tedaap02）上运行 EDA-Flow-Bench（designflow）评测，使用 MiniCPM5-2B SFT v39 final (step_105) 模型。
+
+### 1. 连通方案：SSH 反向隧道
+
+**问题**：36.15 无 GPU，无法本地 serve vLLM。.17 有 GPU 但与 36.15 不在同一网络（仅通过 SSH 隧道 `ssh -p 3333` 连通）。
+
+**方案**：SSH 反向端口转发 —— 从 .17 建立反向隧道，将 .17 的 vLLM 端口暴露到 36.15 的 localhost。
+
+```bash
+# 在 .17 上执行（通过现有 SSH 隧道到 36.15）
+ssh -p 3333 -fN -R 18096:localhost:8096 app.e0031982@localhost
+# 效果：36.15:18096 → .17:8096（GPU6 = SFT v39 final step_105）
+```
+
+**验证**：
+```bash
+# 在 36.15 上
+curl -s http://127.0.0.1:18096/v1/models
+# → {"object":"list","data":[{"id":"minicpm5-2b-sft-v39-final",...}]}
+```
+
+### 2. Cline 配置更新（36.15）
+
+**文件**：`~/.cline/data/settings/providers.json`（36.15 上）
+
+| 字段 | 旧值 | 新值 |
+|:--|:--|:--|
+| `baseUrl` | `http://127.0.0.1:8098/v1` | `http://127.0.0.1:18096/v1` |
+| `model` | `minicpm5-2b` | `minicpm5-2b-sft-v39-final` |
+| `apiKey` | `dummy-key` | `dummy-key`（不变） |
+| `provider` | `openai-compatible` | `openai-compatible`（不变） |
+
+### 3. Designflow Benchmark 概况
+
+| 属性 | 值 |
+|:--|:--|
+| 位置 | 36.15 `/nasdata/app.e0031982/code/EDA-Flow-Bench/` |
+| 评测脚本 | `eval/run_one.sh`（单任务）、`eval/run_batch.sh`（批量） |
+| 用例数 | 894 cases / 13 domains / 4 shards (A/B/C/D) |
+| 主 jsonl | `benchmarks/EDA-Eval-DesignFlow/EDA-Eval-DesignFlow.jsonl`（1163 行） |
+| 判分 | 每条用例 `reference/<task_id>/check.py`（≥8 断言，纯标准库） |
+| 防泄题 | PreToolUse hook 拦截 agent 对 check.py/reference 的访问 |
+| 交付件 | agent 产 `outputs/submit.zip`，harness 打包后独立判分 |
+
+**历史基线**（eval/status.jsonl，760 条）：
+- DeepSeek (deepseek-v4-pro-cloud)：近期 30-task batch → **0 PASS**（11 FAIL + 19 error/timeout）
+- MiniCPM5-2B base (2026-11-12)：5 tasks → **0 PASS**（全部 timeout，cline_exit=137）
+
+### 4. 5-Task Eval 启动
+
+**命令**：
+```bash
+# 在 36.15 上执行（通过 SSH 隧道）
+cd /nasdata/app.e0031982/code/EDA-Flow-Bench
+setsid bash -c "eval/run_batch.sh \
+  --workers 2 \
+  --sample 5 \
+  --model minicpm5-2b-sft-v39-final \
+  --timeout 2400 \
+  --status eval/status_sft_v39_final.jsonl \
+  > /tmp/designflow_sft_v39_run1.log 2>&1; echo DONE >> /tmp/designflow_sft_v39_run1.log" &
+```
+
+**5 个随机抽样的任务**：
+1. `EDA-Eval-DesignFlow-NetlistGate2Verilog-001` (shard D)
+2. `EDA-Eval-DesignFlow-CslWlGateMap-001` (shard A)
+3. `EDA-Eval-DesignFlow-LdoCircuitReport-001`
+4. `EDA-Eval-DesignFlow-DivSelDuty-001`
+5. `EDA-Eval-DesignFlow-PinFloatAether-001`
+
+**状态**（launch 时 03:17 CST）：
+- PID 1503774（run_batch.sh）
+- 2 workers 运行中，PreToolUse hook 已部署，workdir clean（anti-cheat ✅）
+- 日志：`/tmp/designflow_sft_v39_run1.log`（36.15）
+- 结果文件：`eval/status_sft_v39_final.jsonl`
+- batch dir：`eval/run_batch_20261113_031709`
+
+### 5. 磁盘清理
+
+36.15 `/nasdata` 100% 满（527G，仅 1.1G 可用）。清理了 `~/.cache/cline_eval/` 下 14G 旧评测缓存（20261110-20261112 的 workdir），释放后剩余 1.1G 足够 5 个任务的 workdir。
+
+### 6. 注意事项
+
+- **36.15 无 GPU**：所有模型推理通过 SSH 反向隧道到 .17 GPU6:8096（SFT v39 final）
+- **GPU6 共享**：GPU6 同时服务 zhulong step_105 eval（8 workers）和 designflow eval（2 workers），vLLM `--max-num-seqs 4` 会排队
+- **替身预演**：使用 MiniCPM5-2B SFT 替身，收益不可迁移到 BaiZe
+- **隧道依赖**：SSH 反向隧道进程在 .17 上（`ssh -p 3333 -fN -R 18096:localhost:8096`），若 .17 重启或进程退出需重建
+- **下一步**：等 5-task eval 完成 → 读 `status_sft_v39_final.jsonl` → 报告 Pass@1 baseline → 如有 PASS 则扩到全量
+
