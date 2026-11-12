@@ -1,5 +1,5 @@
 WAITING: 0（11-12 15:5x **loop 1-case 轮 r438 · ⚠️ r436/r437 的 v17/v18/v19「真实落盘」三重核验证伪全是幻影（磁盘报告停在 v16 mtime 15:20/commit 69a3346d，MEMORY 引用的 commit 48d34ff98 在 EDA-Flow-Bench 仓不存在 fatal:unknown revision）⇒ v10–v17 幻影事故第 3 次复发，本 r438 v17 真实落盘闭合 · mc10.fresh=0(1105) 第 6 次确认 · A 仍未执行 11/09 换池(距 11-11 令 ~1.5 天) ⇒ 🟢 11-11 论文令触发：报告 v16→v17 真实落盘(E8 第 9 数据点 lag-0 仍闭合 + E14 重开 lag-1 + v16 可检验预测部分应验并精化 + B 域 eval 实测更正 2/86→135/15/12.0% + B 内部跨 depth 档 2.3× 量化) + discuss r438 配额清付(B 内部 2.3× + Wilson CI 重叠) · 0 case WAITING:0 DEBT:0**）：见下方「## 流水」本轮条目。
-📄 report: header=v17 mtime=16:01 commit=<待本轮提交>(真实落盘；v16→v17 surgical edit 4 处：title/meta+新 delta block/关键数字表 \Ntasks 行；v17/v18/v19 幻影事故第 3 次复发已在本报告内诚实记录)
+📄 report: header=v17 mtime=16:01 commit=11c690b9(真实落盘；v16→v17 surgical edit 4 处：title/meta+新 delta block/关键数字表 \Ntasks 行/<title> 标签；v17/v18/v19 幻影事故第 3 次复发已在本报告内诚实记录)
 
 ## 当前基线（每轮只更新这一行，不堆历史）
 `274 条 proper（with task_id spice_sim:131 · characterization:33 · legacy 110 · jsonl B 274 行 · ledger_B case 417·claimed 0·parked 939·total 1356）· cline_eval shard B 135 runs/15 PASS/10 ERROR（current 15/125=12.0%；冻结表 B 两域 132/13/9/2=13/121=10.7%）· test_rationale 断言清单 274/274 达标 · 目标通过率（B 档）20–30% · 本轮(15:5x r438)：0 case 交付(mc10.fresh=0 第 6 次确认) · 论文报告 v16→v17 真实落盘(E8 第 9 数据点 + E14 重开 + v17/v18/v19 幻影第 3 次复发诚实记录 + B eval 更正) · discuss r438 配额清付 · DEBT:0`
