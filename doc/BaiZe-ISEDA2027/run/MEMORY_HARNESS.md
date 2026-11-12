@@ -4,20 +4,21 @@ WAITING: 0
 
 ## 📊 进度快照
 
-PHASE:        R2287 incr_eval轮(自检PASS·incr_eval 2inst/1resolved→总1670·eval backlog=0全清·predict 5/7 alive)·TB-2.1=已交付/SWE-bench Verified=~15天(瓶颈codex)
-已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5 R1785-R2287·TB4 0passed(能力)·TB-2.1 oracle5/5·R1789 eval 7/7DONE·R1804双报告交付·R1969-R2286 incr_eval+监控+报告+ETA·R2286 incr_eval(4inst/3resolved→总1669)·R2287 incr_eval(2inst/1resolved→总1670·双报告REGEN)·总resolved 1670
-当前动作:     R2287: 自检PASS(CPU load41/224≈18%·无harness进程>80核·MEM avail1077G)·gateway gw_proxy9092/9093=200(直连agi-gateway=403=key问题·predict走proxy正常)·_find_unevaluated发现hermes 1NEW(django-15695)·incr_eval自动发现pi 1NEW(matplotlib-23299)→incr_eval_glm53_R2287.py(setsid·PID351437·1min完成·2inst eval'd)·结果:pi matplotlib-23299 FAIL(+1fail→183不变)·hermes django-15695 RESOLVED(+1res→412)·总1669→1670(+1res+1fail)·eval backlog=0全清·predict 5/7 alive(cline296/codex130/cc288/pi255/hermes456·opencode500 DONE·dsh175 DONE)·磁盘OK(/data 5.8T 18%·/ 351G 4%)·双报告REGEN R2287(glm53_7way 12195B+cline_special 10276B)·research日报2026-11-12已阅(mtime18:10·无新更新·harness建议#3 ACF+#5等算力+#36 ACI配对+#41 n_eval=参考非新指令)·未完成指令:有(§10:10+§22:4x)·W:0
-下一步:       ①本轮commit MEMORY+双报告+push ②下轮incr_eval拾取新backlog(predict进行中产出) ③predict 5/7向500推进 ④各路满500后§22:4x两基准7路全交付 ⑤TB-2.1已交付
-阻塞:         <各路尚未满500:cline296/codex130/cc288/pi255/hermes456·§22:4x未全交付·opencode+dsh DONE>
+PHASE:        R2288 incr_eval轮(自检PASS·incr_eval 8inst/6resolved→总1676·eval backlog~50·predict 5/7 alive)·TB-2.1=已交付/SWE-bench Verified=~15天(瓶颈codex)
+已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5 R1785-R2288·TB4 0passed(能力)·TB-2.1 oracle5/5·R1789 eval 7/7DONE·R1804双报告交付·R1969-R2287 incr_eval+监控+报告+ETA·R2287 incr_eval(2inst/1resolved→总1670)·R2288 incr_eval(8inst/6resolved→总1676·双报告REGEN)·总resolved 1676
+当前动作:     R2288: 自检PASS(CPU load37/224≈17%·无harness进程>80核·MEM avail1078G)·gateway gw_proxy9092/9093=200(localhost直连)·incr_eval R2288(8inst eval'd:codex+0res+1fail·pi+2res+1fail·hermes+4res+0fail→总+6res)·总1670→1676·eval backlog~50(cc30/codex6/pi9/cline3/hermes2新预测待eval)·predict 5/7 alive(cline299/codex134/cc300/pi262/hermes462·opencode500 DONE·dsh175 DONE)·磁盘OK(/data 5.8T 18%·/ 352G 4%)·双报告REGEN R2288(glm53_7way 12199B+cline_special 10281B)·research日报2026-11-12已阅(mtime18:10·无新更新·harness建议#3 ACF+#5等算力=参考非新指令)·未完成指令:有(§10:10+§22:4x)·W:0
+下一步:       ①本轮commit MEMORY+双报告+push ②下轮incr_eval拾取~50新backlog(predict进行中产出) ③predict 5/7向500推进 ④各路满500后§22:4x两基准7路全交付 ⑤TB-2.1已交付
+阻塞:         <各路尚未满500:cline299/codex134/cc300/pi262/hermes462·§22:4x未全交付·opencode+dsh DONE>
 ERROR_COUNT:  0
- 体积: TASK=22KB / MEMORY=31KB
-  cline专项小结: predict_glm53=296files/287real/221resolved/9empty(gateway functional产real·C3 resume fix R1733仍有效·9empty全sympy=能力)·C1:287real/296total(可复算:ls predictions_glm53/cline-patched__*.json|wc -l→296)·C2:failed=能力66/49.6%·429 44/33.1%·超时15/11.3%·5xx 1/0.8%(R2233分类)·C3:empty=9(全sympy·能力差·靔resume bug·gateway functional)·C4:221res/287real=77.0%·C5:报告R2287(cline special·221/287real=77.0%·10276B)·失败top1=能力差(real patch但tests fail)·opencode414/498=83.1%·gap=能力差
+ 体积: TASK=22KB / MEMORY=26KB
+  cline专项小结: predict_glm53=299files/288real/221resolved/11empty(gateway functional产real·C3 resume fix R1733仍有效·11empty全astropy/sympy=能力)·C1:288real/299total(可复算:ls predictions_glm53/cline-patched__*.json|wc -l→299)·C2:failed=能力67(real patch但tests fail)+empty11(全astropy/sympy=能力)·C3:empty=11(全astropy/sympy·能力差·非性resume bug·gateway functional)·C4:221res/288real=76.7%·C5:报告R2288(cline special·221/288real=76.7%·10281B)·失败top1=能力差(real patch但tests fail)·opencode414/498=83.1%·gap=能力差
 
 > 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
 
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 ### 本唤醒流水
-> [19:1x] R2287: incr_eval轮·自检PASS(CPU load41/224≈18%·无harness>80核·MEM avail1077G)·gateway gw_proxy9092/9093=200(直连agi-gateway=403=key问题·predict走proxy正常产real)·_find_unevaluated发现hermes 1NEW(django-15695)·incr_eval自动发现pi 1NEW(matplotlib-23299)→incr_eval_glm53_R2287.py(setsid detached PID351437·1min完成·2inst eval'd)·结果:pi matplotlib-23299 FAIL(+1fail→183不变=能力)·hermes django-15695 RESOLVED(+1res→412)·总1669→1670(+1res+1fail)·eval backlog=0全清(_find_unevaluated复检全0)·predict 5/7 alive(cline296/codex130/cc288/pi255/hermes456·opencode500 DONE·dsh175 DONE)·磁盘OK(/data 5.8T 18%·/ 351G 4%)·双报告REGEN R2287(gen_report_glm53_7way 12195B+gen_cline_special 10276B)·research日报2026-11-12已阅(mtime18:10·无新更新·harness建议#3 ACF+#5等算力+#36 ACI配对+#41 n_eval=参考非新指令·纳入观察不改排期)·未完成指令:有(§10:10+§22:4x)·W:0
+> [20:1x] R2288: incr_eval轮·自检PASS(CPU load37/224≈17%·无harness>80核·MEM avail1078G)·gateway gw_proxy9092/9093=200(localhost)·incr_eval R2288自动发现codex1NEW+pi3NEW+hermes4NEW→8inst eval'd·结果:codex+0res+1fail·pi+2res+1fail·hermes+4res+0fail→总+6res·总1670→1676·eval backlog~50(cc30/codex6/pi9/cline3/hermes2新预测待eval)·predict 5/7 alive(cline299/codex134/cc300/pi262/hermes462·opencode500 DONE·dsh175 DONE)·磁盘OK(/data 5.8T 18%·/ 352G 4%)·双报告REGEN R2288(glm53_7way 12199B+cline_special 10281B)·research日报2026-11-12已阅(mtime18:10·无新更新·harness建议#3 ACF+#5等算力=参考非新指令·纳入观察不改排期)·未完成指令:有(§10:10+§22:4x)·W:0
+> 📦 R2287 流水已归档 → daily-memories-harness/2026-11-12.md。结论：incr_eval 2inst/1resolved→总1670。需要时再读。
 > 📦 R2286 流水已归档 → daily-memories-harness/2026-11-12.md。结论：incr_eval 4inst/3resolved(cline+1·codex+1·cc+1)→总1669。需要时再读。
 > 📦 R2285 流水已归档 → daily-memories-harness/2026-11-12.md。结论：incr_eval 3inst/1resolved(cline+1)→总1666。需要时再读。
 > 📦 R2284 流水已归档 → daily-memories-harness/2026-11-12.md。结论：incr_eval 8inst/6resolved(cline+1·cc+2·hermes+3)→总1665。需要时再读。
