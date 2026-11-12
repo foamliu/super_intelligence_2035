@@ -38,12 +38,12 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
 <div class="wrap">
 <header class="hero">
   <h1>BaiZe 2B 预训练 · 四层能力评测报告</h1>
-  <div class="sub">Mamba2-hybrid 2.22B · S1 生产 run（iter 179.8k+/700k, ~753B tokens）</div>
+  <div class="sub">Mamba2-hybrid 2.22B · S1 生产 run（iter 180.04k+/700k, ~756B tokens）</div>
   <div class="meta">
     <span>📅 2026-11-12</span>
     <span>🏗 Mamba2-hybrid 2.22B</span>
-    <span>🔥 训练 iter≈179.83k / 700k(25.7%) · step ~7167-7507ms(avg~7320ms<7.4s✅) · loss 2.031 · 0NaN/0skip · ckpt 178k已落盘(180k autoqueue PID2896237运行中,ETA~20min) · lr-decay-iters=0(stable段) · GPU 8×93-100%/75GB · ✅ 论文§4.6已刷新iter177k+PDF 0err</span>
-    <span>📊 L1: 17 ckpt ✅(160k=58.13%峰值,170k=57.75%) · 下一个180k(ETA~1.5h) | L2: 6/6完成 ✅ · 🟢<b>HF transformers五重验证全部完成</b>→llama.cpp SSM bug是0%主因 · <b>🟢HumanEval HF=3/20=15.0%✅</b> + <b>🟢GSM8K HF=1/10=10.0%✅</b> + <b>🟢MBPP HF=1/20=5.0%✅</b> + <b>🟡BBH HF=1/30=3.3%✅</b> + <b>🔴MATH HF=0/10=0.0%✅</b> vs llama.cpp全0% · MMLU=23.16%(≈随机) | L3: 🔴TB 0/2(无GPU做vLLM重试,.17 SSH不通) | L4: 🔄<b>HANDOFF→post-train</b>(2026-11-12用户令·只读引用post-train出数)</span>
+    <span>🔥 训练 iter≈180.04k / 700k(25.7%) · step ~7050ms(<7.4s✅) · loss 2.018 · 0NaN/0skip · ckpt 180k已落盘(180k eval pipeline运行中PID2567957:HF导出中) · lr-decay-iters=0(stable段) · GPU 8×100%/75GB · ✅ 论文§4.6已刷新iter177k+PDF 0err</span>
+    <span>📊 L1: 17 ckpt ✅(160k=58.13%峰值,170k=57.75%) · 180k评测运行中(HF→GGUF→eval) | L2: 6/6完成 ✅ · 🟢<b>HF transformers五重验证全部完成</b>→llama.cpp SSM bug是0%主因 · <b>🟢HumanEval HF=3/20=15.0%✅</b> + <b>🟢GSM8K HF=1/10=10.0%✅</b> + <b>🟢MBPP HF=1/20=5.0%✅</b> + <b>🟡BBH HF=1/30=3.3%✅</b> + <b>🔴MATH HF=0/10=0.0%✅</b> vs llama.cpp全0% · MMLU=23.16%(≈随机) | L3: 🔴TB 0/2(无GPU做vLLM重试,.17 SSH不通) | L4: 🔄<b>HANDOFF→post-train</b>(2026-11-12用户令·只读引用post-train出数)</span>
   </div>
   <div style="margin-top:12px;font-size:12.5px;background:rgba(0,0,0,.18);border-radius:8px;padding:8px 12px;opacity:.95">
     ⚠️ 本报告是<b>训练监控与决策依据</b>，<b>不进论文正文</b>（2026-11-10 用户令）。用户关注点（2026-11-11）：<b>如何拿到更好的结果</b>。
@@ -58,7 +58,7 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
     <tr><td class="l">任务集</td><td class="l">ARC-Challenge / ARC-Easy / BoolQ / HellaSwag / OpenBookQA / PIQA / SciQ / Winogrande</td></tr>
     <tr><td class="l">口径</td><td class="l">zero-shot · <code>limit=100</code> · GGUF F16 · llama-server CPU（<code>-t 4</code> · <code>nice 19</code> · 串行单 ckpt）</td></tr>
     <tr><td class="l">已评</td><td class="l">10k–170k（<b>17 个</b>万整数 ckpt）</td></tr>
-    <tr><td class="l">下一个</td><td class="l">180k（ETA ≈12h 后）</td></tr>
+    <tr><td class="l">正在评测</td><td class="l">180k（ckpt已落盘,HF导出运行中,PID2567957）</td></tr>
   </table>
 </div>
 <div class="card">
@@ -480,10 +480,10 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
 <div class="card">
   <h3>本轮(#2069)动作</h3>
   <ol>
-    <li><b>训练健康确认</b>：iter 179,140/700,000（25.6%）· step ~7000-7400ms（<7.4s✅） · loss 2.035 · GPU 8×66-100%/75GB · lr=1e-3(stable段) · 0 NaN/skip · PID 146283 · 实测命令：<code>tail -5 /proc/146283/fd/1</code></li>
+    <li><b>训练健康确认</b>：iter 180,040/700,000（25.7%）· step ~7050ms（<7.4s✅） · loss 2.018 · GPU 8×100%/75GB · lr=1e-3(stable段) · 0 NaN/skip · PID 146283 · 实测命令：<code>tail -5 /proc/146283/fd/1</code></li>
     <li><b>L1/L2 评测脚本入库确认</b>：code/baize-llm/scripts/eval/ 10文件全在 ✅ · README §4.6 已含口径/用法/依赖/已知坑 ✅ · commit ed6ea54e4 · 确认可用并接手维护（今后改动直接改 scripts/eval/）</li>
     <li><b>L4 移交 post-train（2026-11-12 用户令）</b>：L4 状态从 BLOCKED 改为 HANDOFF→post-train · 不再做 L4 资源调查/SSH .15/.17 直连 · 四层口径调整为 L1/L2/L3 由 pretrain 负责、L4 只读引用</li>
-    <li><b>180k autoqueue 运行中</b>：PID 2896237 · .29 · 训练 iter 179,140 → 180k ETA ~1.5h · 日志全 waiting · 超时限制 18h（已等 8.4h）</li>
+    <li><b>180k eval 运行中</b>：PID 2567957 · .29 · 180k ckpt已落盘,HF导出运行中(原autoqueue PID2896237因NFS stale file handle崩溃,已从/tmp重启) · 预计~30-60min完成(HF→GGUF→8集eval→报告)</li>
     <li><b>核心发现（不变·待用户拍板）</b>：L2/L3 低分根因——code+math 数据占比 26%(vs DeepSeek 最优 60%) + stable 阶段未 decay + llama.cpp SSM 生成 bug · 建议方案 A(decay 4:2:4)/B(SFT)/C(A+B) · L4 已移交 post-train</li>
   </ol>
   <div class="alert">
@@ -551,7 +551,7 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
 </div>
 
 <footer>
-  BaiZe pretrain 线 · 四层能力评测报告 · 2026-11-12 22:08 更新(#2074 · 监控巡检轮 · 训练健康iter179.83k/700k(25.7%) step~7167-7507ms(avg~7320ms)<7.4s✅ loss2.031 · 180k autoqueue运行中(ETA~20min) · L1 17/17(10k-170k,160k峰值58.13%) · L2 🟢HF五重验证全部完成(HumanEval=15.0%✅+GSM8K=10.0%✅+MBPP=5.0%✅+BBH=3.3%✅+MATH=0.0%✅ vs llama.cpp全0%,MMLU=23.16%)→llama.cpp SSM bug是L2生成0%主因 · L3 TB 0/2(无GPU做vLLM重试) · L4 🔄HANDOFF→post-train(2026-11-12用户令·只读引用post-train出数)) · 评测数字仅用于训练监控，不进论文正文
+  BaiZe pretrain 线 · 四层能力评测报告 · 2026-11-12 22:35 更新(#2075 · 监控巡检轮 · 训练健康iter180.04k/700k(25.7%) step~7050ms<7.4s✅ loss2.018 · 180k eval pipeline运行中(HF导出中,PID2567957) · L1 17/17(10k-170k,160k峰值58.13%) · L2 🟢HF五重验证全部完成(HumanEval=15.0%✅+GSM8K=10.0%✅+MBPP=5.0%✅+BBH=3.3%✅+MATH=0.0%✅ vs llama.cpp全0%,MMLU=23.16%)→llama.cpp SSM bug是L2生成0%主因 · L3 TB 0/2(无GPU做vLLM重试) · L4 🔄HANDOFF→post-train(2026-11-12用户令·只读引用post-train出数)) · 评测数字仅用于训练监控，不进论文正文
 </footer>
 </div>
 </body>
