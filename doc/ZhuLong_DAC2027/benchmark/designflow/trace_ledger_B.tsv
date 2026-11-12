@@ -1337,4 +1337,4 @@ peek:					parked		2026-11-10 23:22	peek: consultation verdi-fsdb-warning-paste
 1790578411744_brrc3.messages.json	e0039602	hfeg0pkn002	49	spice_sim	parked		2026-11-12 08:24	AutoDebug code-reading+comparison report (V3 vs 0916), no SPICE/waveform sim, L1 docs
 1789106338537_v9zug					parked		2026-11-12 09:14	kanban app session (.cline/apps/kanban/), not cline coding session, REJECT peek r421
 1791445250037_2gxuy					parked		2026-11-12 09:14	consultation: how-to open vscode, hspice:20 kw but 0 sim, REJECT peek r421
-1789371142448_mw3vr.messages.json	sophiaw	hfeg0plg09	28	spice_sim	claimed		2026-11-12 13:19	
+1789371142448_mw3vr.messages.json	sophiaw	hfeg0plg09	28	spice_sim	case	EDA-Eval-DesignFlow-SpiceFlowAuto-001	2026-11-12 13:43	
