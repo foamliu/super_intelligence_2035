@@ -6185,3 +6185,73 @@ wake311 启动的 full static eval（PID 554362）仍在后台运行。本轮唤
 - 三模型对比分析命令：inline `python3 << 'PYEOF'` (产出本节所有数字)
 - 沙盒状态：10.129.32.75:8664 BLOCKED（第 119 次确认）
 - 无伪造：所有数据为真实 vLLM/SGLang API 调用输出，分析由 Python json 完成。
+
+## §R318 (2026-11-12 wake318) Phase 3 RL Launch-Readiness Audit + GPU Occupation Maintenance (sandbox still DOWN)
+
+> 上下文：R316/R317 静态评测已完成（3 模型 113/113），核心发现 = **API 知识是通用瓶颈**
+> （三模型 all_apis_correct 均 2.7%，与规模无关）。本 wake 沙盒仍全端口 FILTERED，
+> 真实 Pass@1 评测与 Phase 3 RL 均阻塞。反空转条款下，本 wake 产出 = **Phase 3 启动就绪审计**
+> （用落盘证据确认「沙盒一通即可秒级起跑 RL」）+ 维持 17:10 GPU 占位令。
+
+### 1. GPU 占位维持（17:10 令 · 持续义务）
+
+`bash baize_posttrain_serve_sentinel.sh --check-once` 实测（2026-11-12 13:24）：
+
+| GPU | 端口 | served-model-name | HEALTH |
+|:--:|:--:|:--|:--:|
+| 5 | 8097 | minicpm5-2b-gpu5 | UP |
+| 6 | 8096 | minicpm5-2b-gpu6* | UP |
+| 7 | 8095 | minicpm5-2b-gpu7 | UP |
+| 4 | 8098 | minicpm5-2b | UP |
+| 0 | 8099 | qwen3.8-27b (root) | UP |
+
+> *GPU6 实际 serve 的是 SFT ckpt `minicpm5-sft`（Phase2 评测用），sentinel 报告名 minicpm5-2b-gpu6
+>   为配置别名；占位目的（防挪用）达成。VRAM：GPU4-7 各 ~38GB，GPU0-3 各 ~45GB（root SGLang）。
+>   全部 8 卡占用中，GPU0-3 不可动。
+
+### 2. 沙盒状态（硬阻塞 · 第 120 次探测）
+
+- `--sandbox-check`：`10.129.32.75:8667` TCP unreachable（exit=124，超时）。
+- 端口探测 22/8080/443/80 全 FILTERED；ping 通（0.188ms，主机在线 → 主机级防火墙拦截）。
+- 沙盒已连续 DOWN 29+ wakes。R1-R4 奖励臂 BLOCKED，仅 R0（skeleton，无沙盒）可用。
+- 性质：infra/防火墙问题，非 agent 可修；MEMORY 已记为已知阻塞，不升级为用户决策。
+
+### 3. 污染隔离闸门（§5.1 红线）— PASS
+
+`bash baize_posttrain_rl_grpo_surrogate.sh --contam-check` 实测：
+- 黑名单：6 快照并集 / 536 任务（含 v20260311 的 158）。
+- 命中判定：13-gram 重合率 ≥0.8 或 短 8-gram 兜底重合 ≥1。
+- 结果：**0 命中 → 闸门 PASS → RL 训练数据与 158 评测隔离** ✅。
+
+### 4. Phase 3 产物清单（全部就位）
+
+| 产物 | 路径 | 大小 | 更新 |
+|:--|:--|:--:|:--|
+| RL 启动脚本 | `baize_posttrain_rl_grpo_surrogate.sh` | — | mature (R21/R47/R144/R145) |
+| 奖励函数 R0-R4 | `baize_posttrain_reward_functions.py` | 42KB | 2026-11-12 05:37 |
+| 6 lifecycle hooks | `baize_posttrain_hooks.py` | 42KB | 2026-11-10 |
+| verl config v2 | `baize_posttrain_rl_verl_config_v2.yaml` | 5.7KB | 2026-11-12 |
+| hooks config | `baize_posttrain_hooks_config.yaml` | 473B | 2026-11-10 |
+| RL 训练数据 | `rl_pyaether_synth_v2.parquet` | 953KB | 3347 synthetic |
+| SFT ckpt（RL 起点） | `sft_surrogate_runs/minicpm5_pyaether_v2_v11v36/global_step_70` | — | Phase2 输出 |
+
+- 默认 REWARD_ARM=R0（skeleton，无沙盒可跑）；沙盒恢复后切 R1-R4。
+- GROUP_SIZE=8（R140），TOTAL_STEPS=3000，KL_COEF=0.02（R132），CLIP=0.2。
+- GPU 守卫：GPU-busy guard 阻止在占位卡上启动（不 kill 任何 serve）。
+
+### 5. 结论
+
+- **Phase 3 RL 已「秒级启动就绪」**：闸门 PASS、产物齐备、SFT ckpt 在位、配方冻结。
+  唯一阻塞 = 沙盒防火墙（infra）。沙盒一通 → 切 R1-R4 + 拆 GPU5/6/7 占位（`baize_posttrain_serve_teardown.sh`）
+  + `--smoke` 验证 → 正式起跑。
+- **静态评测战略结论已锁定**：58pp 差距归因 = API 知识 + agent 迭代闭环（非规模）。
+  RL 价值 = 通过执行反馈驱动 API 学习（R4 臂「R3+API 合法性」正中靶心）。
+- 替身预演，收益不可迁移到 BaiZe。
+
+### 6. 溯源
+
+- sentinel 输出：`bash baize_posttrain_serve_sentinel.sh --check-once`（本 wake 实测）
+- sandbox-check 输出：`bash baize_posttrain_rl_grpo_surrogate.sh --sandbox-check`（本 wake 实测）
+- contam-check 输出：`bash baize_posttrain_rl_grpo_surrogate.sh --contam-check`（本 wake 实测，报告 /tmp/baize_posttrain_contam_gate_*.md）
+- nvidia-smi：`--query-gpu` + `--query-compute-apps`（本 wake 实测，8 卡全占用）
+- 无伪造：所有数字为本 wake 真实命令输出。
