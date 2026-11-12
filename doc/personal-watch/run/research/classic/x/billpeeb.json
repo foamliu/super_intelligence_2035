@@ -1,0 +1,65 @@
+{
+ "handle": "billpeeb",
+ "name": "Bill Peebles (@billpeeb) / X",
+ "bio": "head of sora @openai 🇺🇸🇺🇸🇺🇸",
+ "tweets": [
+  {
+   "id": "2045225014807670949",
+   "created_at": "2026-04-17 19:36 UTC",
+   "created_at_ms": 1776454616000,
+   "text": "I’ve decided to leave OpenAI. Below is the note I shared with my team.\\\n\\\nBuilding Sora zero-to-one with you all has been the honor and adventure of a lifetime.\\\n\\\nAs this team knows well, one of the best parts of working on video is that you can see the scaling behavior with your https://t.co/mb4NggEAVN",
+   "url": "https://x.com/billpeeb/status/2045225014807670949",
+   "handle_guess": "billpeeb"
+  },
+  {
+   "id": "2000993520291823793",
+   "created_at": "2025-12-16 18:16 UTC",
+   "created_at_ms": 1765909006000,
+   "text": "amazing work by @gabeeegoooh and team!",
+   "url": "https://x.com/billpeeb/status/2000993520291823793",
+   "handle_guess": "billpeeb"
+  },
+  {
+   "id": "2000990989629161873",
+   "created_at": "2025-12-16 18:06 UTC",
+   "created_at_ms": 1765908403000,
+   "text": "Introducing ChatGPT Images, powered by our flagship new image generation model.\\\n\\\n- Stronger instruction following\\\n- Precise editing\\\n- Detail preservation\\\n- 4x faster than before\\\n\\\nRolling out today in ChatGPT for all users, and in the API as GPT Image 1.5. https://t.co/NLNIPEYJnr",
+   "url": "https://x.com/billpeeb/status/2000990989629161873",
+   "handle_guess": "OpenAI"
+  },
+  {
+   "id": "1999268898651431143",
+   "created_at": "2025-12-12 00:03 UTC",
+   "created_at_ms": 1765497824000,
+   "text": "sora x disney is going to be pure magic. dream come true to be working with them.",
+   "url": "https://x.com/billpeeb/status/1999268898651431143",
+   "handle_guess": "billpeeb"
+  },
+  {
+   "id": "1999230400313589874",
+   "created_at": "2025-12-11 21:30 UTC",
+   "created_at_ms": 1765488645000,
+   "text": "Really happy to be working with Disney to bring some magic to Sora and image gen!\\\n\\\nDisney is the best storytelling company in the world, and our users really, really want to generate content with their characters.",
+   "url": "https://x.com/billpeeb/status/1999230400313589874",
+   "handle_guess": "sama"
+  },
+  {
+   "id": "1994268973072834616",
+   "created_at": "2025-11-28 04:55 UTC",
+   "created_at_ms": 1764305749000,
+   "text": "we’re setting usage limits for free users to 6 gens/day. chatgpt plus and pro users have unchanged limits, and everybody can purchase additional gens as needed. our gpus are melting, and we want to let as many people access sora as possible!",
+   "url": "https://x.com/billpeeb/status/1994268973072834616",
+   "handle_guess": "billpeeb"
+  },
+  {
+   "id": "1993390600939618651",
+   "created_at": "2025-11-25 18:45 UTC",
+   "created_at_ms": 1764096329000,
+   "text": "we’ve made some improvements to sora 2. you should see much less “flickering” now, among other changes. rolling out now!",
+   "url": "https://x.com/billpeeb/status/1993390600939618651",
+   "handle_guess": "billpeeb"
+  }
+ ],
+ "http_status": 200,
+ "fetched_at": "2026-11-12 12:02:04"
+}

@@ -2262,3 +2262,17 @@ python3 research/arxiv_fetch.py --query 'cat:cs.CL AND abs:"agent"' --max-result
 - **X（只读）**：`https://x.com` **200 / 0.86s**、`https://x.com/ShunyuYao12` **200 / 0.76s**、出口 `178.249.213.185`；`RichardSSutton` / `_albertgu` / `_jasonwei` 三个 profile **200**；`x.com/janleike` **200**（`og:title` = `Jan Leike (@janleike) on X`，`og:description` 未渲染）、`x.com/paulfchristiano` **200**（bio 自证 ARC）、`x.com/nisanstiennon` **404**。
 - **再次确认 profile timeline 混入他人推文**：`_albertgu` 的解析结果里出现了 Sutton 的 `2119142310894334262`（同一 `full_text`）⇒ 引用前必须开单条推文页核 `og:title`（§9.154 的纪律继续有效）。
 - **推文正文截断实例**：`x.com/_jasonwei/status/2120630417158250953` 的 `og:description` 以 `…` 结尾（profile `full_text` 同样截断）⇒ 长贴类推文在登录前**拿不到全文**，只能放弃（V12 未采用）。
+
+## §9.156 · 2026-11-12 12:00 CST（加轮 · A 轨重扫（补测 cs.SE）+ B 轨第十二轮 + 第 5 封信）
+
+- **批次未刷新**：`cs.CL` **125,187** / `cs.CV` **213,062** / `cs.LG` **298,685** / `cs.AI` **212,409** —— 与 §9.154（06:00）/ §9.155（09:00）**逐字节同值** ⇒ 公告批仍 `2026-11-10`。
+- **`cs.SE` 429 已闭合**：本轮单分类 5 查询 **5/5 `200` + `application/atom+xml; charset=utf-8`**（3.08s / 2.20s / 4.58s / 2.97s / 1.98s，间隔 ≥3.2s），`cs.SE` **`200`**、`totalResults=30,986`（与 06:00 同值）⇒ 上次的 429 是**并发自伤**，串行后恢复（**不是**接口封禁）。
+- **A 轨结果**：merged **303** / seen **9** / fresh **294**；当日额度 5/5 已满 ⇒ **0 新收**；产物 `raw/2026-11-12-pm-candidates-r156.json`（脚本 `raw/candidates_r156.py`）。
+- **B 轨元数据**：`id_list=2406.12045,2401.14185` **`200` + atom**（5,114 B；τ-bench 2024-06-17 / TDFNet 2024-01-25）；`id_list=2507.20534` **`200` + atom**（14,399 B；v2，首发 2025-07-28、更新 2026-02-03）。
+- **⚠️ 任务书示例更正**：`2401.14185` 实测 = `TDFNet: An Efficient Audio-Visual Speech Separation Model with Top-down Fusion`（cs.SD，Samuel Pegg / Kai Li / Xiaolin Hu，OpenAlex 被引 **3**）⇒ **与 Kimi / Moonshot 无关**；改用 `2507.20534`（Kimi K2）。
+- **Crossref `10.1145/203330.203343` `200`**：TD-Gammon，CACM **38(3):58–68**，1995-03（作者 Gerald Tesauro，独著）。
+- **OpenAlex（串行 2s，查询日 2026-11-12）**：τ-bench `2406.12045` **1,198**（source=arXiv）/ Kimi K2 `2507.20534` **1,410**（source=arXiv）/ TD-Gammon CACM **1,680** / 1994 Neural Computation `10.1162/neco.1994.6.2.215` **823**（并取到**完整摘要**，本线只引摘要原文）。
+- **Sora 官方页不可达（如实记）**：`https://openai.com/index/video-generation-models-as-world-simulators/` 与 `https://openai.com/research/...` 直连 / 显式代理 / Safari UA 均 **`403`**；Wayback `403`（`Just a moment...`）；`r.jina.ai` **`401`**（匿名 IP 被拒）⇒ **正文未取到**，条目只写标题级信息，**不引任何数字**，被引记「未查（无 DOI）」。
+- **X（只读）**：⚠️ **本 shell 未继承 `HTTP(S)_PROXY`** ⇒ 直连 `x.com` **`000`**、显式 `--proxy http://127.0.0.1:7897` **`200`**（`mihomo.service` active 23h）⇒ **不是 proxy_down**；`x_fetch.py` 抓 `billpeeb` / `_tim_brooks` **2/2 `200`**（bio 分别 `head of sora @openai` / `superintelligence @ Meta`）。
+- **`research.ibm.com/people/t/tesauro/` → `308` → `https://research.ibm.com/people`**（124,911 B，通用页无 `mailto:`、无 X 链接）⇒ Tesauro 邮箱与 X 均记「未找到」。
+- **发信**：Nisan Stiennon `SENT OK 12:04:55`；正文 `wc -w` = **212 词**（规格 ≤200，**超 12 词**）⇒ 已如实记账；纪律新增「发送前先 `wc -w`」。

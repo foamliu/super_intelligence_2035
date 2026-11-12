@@ -6,7 +6,7 @@
 > 🔴 **找 X 的铁律（不猜）**：只登记**能从可访问页面读到**的 handle（作者本人主页 `href`，并用 X 页 `og:description` 二次核对身份）；**读不到 = 写「未找到 X」**。
 > 🚫 不许猜 handle（猜错会 follow 到无关账号，比不 follow 更糟）。X.com 自 **2026-11-11 12:4x** 起经本机 Mihomo 代理**只读可达**；**follow 仍需登录态 ⇒ 未自动执行**（0 follow，未假装）。
 
-**本轮快照**：累计 **51** 人（第八轮 +4：John Jumper / Igor Babuschkin / Danny Driess / Kimi Team；第九轮 +4：Team GLM / MiniMax / Karl Pertsch / Pete Florence；第十轮 +1：Kilian Lieret；**第十一轮 +3：Jan Leike / Paul Christiano / Nisan Stiennon**）｜已发信 **13**（Tri Dao · Shunyu Yao · Haoxing Ren · Jason Wei · Noah Shinn · Kaiming He · Haotian Liu · Karthik Narasimhan · Moo Jin Kim · Danny Driess · Pete Florence · Karl Pertsch · **Jan Leike**）｜X 已核验 **27**（`@tri_dao` / `@_albertgu` / `@ShunyuYao12` / `@edwardjhu` / `@jyangballin` / `@_jasonwei` / `@ilyasut` / `@RichardSSutton` / `@imhaotian` / `@ChunyuanLi` / `@karthik_r_n` / `@demishassabis` / `@koraykv` / `@OriolVinyalsML` / `@svlevine` / `@chelseabfinn` / `@moo_jin_kim` / `@ibab` / `@DannyDriess` / `@Kimi_Moonshot` / `@ZhipuAI` / `@MiniMax_AI` / `@KarlPertsch` / `@peteflorence` / `@KLieret` / **`@janleike`** / **`@paulfchristiano`**）｜X 未找到 **24**｜**X 可达（本机 Mihomo 7897，2026-11-12 09:0x 复测 `x.com` `200` / 0.86s、`x.com/ShunyuYao12` `200` / 0.76s、出口 `178.249.213.185`）**｜已 follow **0**（follow 需登录态 ⇒ 仍靠用户手动，见第二节）｜言论台账 **12 条**（V1–V12；第十一轮新增 V12 **正文截断 ⇒ 未采用**；本期 `voice_ready` 仍为 V2 / V4 两条）
+**本轮快照**：累计 **54** 人（第八轮 +4：John Jumper / Igor Babuschkin / Danny Driess / Kimi Team；第九轮 +4：Team GLM / MiniMax / Karl Pertsch / Pete Florence；第十轮 +1：Kilian Lieret；第十一轮 +3：Jan Leike / Paul Christiano / Nisan Stiennon；**第十二轮 +3：Bill Peebles `@billpeeb` / Tim Brooks `@_tim_brooks` / Gerald Tesauro（未找到 X）**）｜已发信 **14**（Tri Dao · Shunyu Yao · Haoxing Ren · Jason Wei · Noah Shinn · Kaiming He · Haotian Liu · Karthik Narasimhan · Moo Jin Kim · Danny Driess · Pete Florence · Karl Pertsch · Jan Leike · **Nisan Stiennon**）｜X 已核验 **29**（`@tri_dao` / `@_albertgu` / `@ShunyuYao12` / `@edwardjhu` / `@jyangballin` / `@_jasonwei` / `@ilyasut` / `@RichardSSutton` / `@imhaotian` / `@ChunyuanLi` / `@karthik_r_n` / `@demishassabis` / `@koraykv` / `@OriolVinyalsML` / `@svlevine` / `@chelseabfinn` / `@moo_jin_kim` / `@ibab` / `@DannyDriess` / `@Kimi_Moonshot` / `@ZhipuAI` / `@MiniMax_AI` / `@KarlPertsch` / `@peteflorence` / `@KLieret` / `@janleike` / `@paulfchristiano` / **`@billpeeb`** / **`@_tim_brooks`**）｜X 未找到 **25**｜**X 可达（本机 Mihomo 7897；2026-11-12 12:0x 实测：需显式 `--proxy http://127.0.0.1:7897` —— 本 shell 环境未继承 `HTTPS_PROXY`，直连 `x.com` 返回 `000`、带代理返回 `200`；`x_fetch.py` 内部已默认走代理，2/2 `200`）**｜已 follow **0**（follow 需登录态 ⇒ 仍靠用户手动，见第二节）｜言论台账 **12 条**（V1–V12；本期 `voice_ready` 仍为 V2 / V4 两条，未新增可采用的完整原文）
 
 
 ---
@@ -679,8 +679,49 @@
 | 邮箱 | **nisan+web@stiennon.com**（来源：本人站 <https://nisanstiennon.com/> 的 `<a href="mailto:nisan+web@stiennon.com">`，`HTTP 200` / 5,575 B 实测；**非 2020 年论文 PDF 旧地址**） |
 | 主页 | <https://nisanstiennon.com/>（`200` / 5,575 B；`www.` 同页同尺寸） |
 | X 账号 | **未找到 X**（`x.com/nisanstiennon` 实测 **`404`**，`og:title` = `User Profile Not Found - X｜404 Error` ⇒ 按令**不猜替代 handle、不登记**） |
-| 状态 | **待跟踪**（有可核验邮箱；本轮未发信 —— 今日已发 4 封且第 13 封给了同篇前史的 Leike，🚫 同方向不连发） |
+| 状态 | **已发信**（2026-11-12 12:04 CST，B 轨第十二轮；英文；⚠️ 实测 212 词，超 ≤200 规格 12 词，已如实记账） |
 | 备注 | 若 18:00 轮要发「偏好数据质量」方向的信，他是首选（RLHF 摘要范式的直接作者）；问题应聚焦**偏好数据集的构建与一致率**，而不是摘要任务本身。 |
+
+---
+
+### 52. Bill Peebles（William Peebles）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Bill Peebles（William Peebles） |
+| 机构 | OpenAI（X bio 自述 `head of sora @openai`） |
+| 代表论文 | Video generation models as world simulators（Sora 技术报告，2024，**无 arXiv**）· Scalable Diffusion Models with Transformers（DiT，2022） |
+| 邮箱 | **未找到**（本轮未核个人主页；🚫 不猜） |
+| 主页 | 未核验 |
+| X 账号 | **@billpeeb**（核验：`x_fetch.py` 实测 `200`，`<title>` = `Bill Peebles (@billpeeb) / X`，bio = `head of sora @openai 🇺🇸🇺🇸🇺🇸`） |
+| 状态 | **待跟踪**（X 待 follow；无公开邮箱 ⇒ 不发信） |
+| 备注 | Sora 负责人 ⇒ 视频生成 / 世界模型路线的**一手判断源**；⚠️ 官方页本机 403，其论文细节**只能等新发布或访谈**，🚫 不据传闻写。 |
+
+### 53. Tim Brooks
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Tim Brooks |
+| 机构 | Meta（X bio 自述 `superintelligence @ Meta`）· 前 OpenAI（Sora 共同负责人） |
+| 代表论文 | Video generation models as world simulators（Sora 技术报告，2024，**无 arXiv**）· InstructPix2Pix（2022） |
+| 邮箱 | **未找到**（本轮未核个人主页；🚫 不猜） |
+| 主页 | 未核验 |
+| X 账号 | **@_tim_brooks**（核验：`200`，`<title>` = `Tim Brooks (@_tim_brooks) / X`，bio = `superintelligence @ Meta`） |
+| 状态 | **待跟踪**（X 待 follow；无公开邮箱 ⇒ 不发信） |
+| 备注 | **已离开 OpenAI 转 Meta** ⇒ 任何涉 Sora 的发言均为「前负责人」视角，引用须标时间与身份变化，🚫 不可当成 OpenAI 现行口径。 |
+
+### 54. Gerald Tesauro
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Gerald Tesauro |
+| 机构 | IBM（论文发表时为 IBM Thomas J. Watson Research Center；**当前职位未核验**） |
+| 代表论文 | Temporal Difference Learning and TD-Gammon（CACM 1995，**独著**）· TD-Gammon, a Self-Teaching Backgammon Program（Neural Computation 1994） |
+| 邮箱 | **未找到**（旧主页 `research.ibm.com/people/t/tesauro/` 实测 **`308`** → 重定向到通用 `research.ibm.com/people`，页面无 `mailto:`） |
+| 主页 | 未核验（同上，已重定向到通用页） |
+| X 账号 | **未找到 X**（无可核个人页读到 handle ⇒ 按令不猜、不登记） |
+| 状态 | **待跟踪**（不发信） |
+| 备注 | 1995 年论文，PDF 上的邮箱已过 30 年 ⇒ 按令**必须**用当前机构主页邮箱，本轮拿不到 ⇒ 不发信；其方法论价值已通过 #45 条目落库。 |
 
 ---
 
@@ -711,7 +752,7 @@
 
 **落地**：脚本 `research/classic/x_fetch.py`，原始结果落 `research/classic/x/<handle>.json`（6 个文件，共 15.3 KB，可入 git）。
 
-### 待 follow 清单（请用户手动执行 · 28 个 handle 已在 X 侧二次核验）
+### 待 follow 清单（请用户手动执行 · 30 个 handle 已在 X 侧二次核验）
 
 | # | 人物 | handle | 主页链接 | X 侧核验（2026-11-12 实测） | 为什么值得跟 |
 |:--|:--|:--|:--|:--|:--|
@@ -743,9 +784,11 @@
 | 25（**第九轮新增**） | Pete Florence | `@peteflorence` | <https://x.com/peteflorence> | `200`，`<title>Pete Florence (@peteflorence) / X</title>`，bio = `Co-Founder &amp; CEO @GeneralistAI`；handle 源自主页 `href` | RT-2 核心作者 ⇒ 「动作＝文本 token」与 VLA 泛化的第一手判断 |
 | 27（**第十一轮新增**） | Jan Leike | `@janleike` | <https://x.com/janleike> | `200`，`og:title` = `Jan Leike (@janleike) on X`；handle 源自主页 `href="https://twitter.com/janleike"`（⚠️ `og:description` 本轮未渲染，bio 空缺如实记） | RLHF 前史（2017 偏好奖励 / 2020 摘要偏好）作者 ⇒ 「奖励从哪来 + 标注预算」的一手判断 |
 | 28（**第十一轮新增**） | Paul Christiano | `@paulfchristiano` | <https://x.com/paulfchristiano> | `200`，`og:title` = `Paul Christiano (@paulfchristiano) on X`，bio = `Founder &amp; Director of the Alignment Research Center. Former Head of Safety @ CAISI. Previously led alignment at OpenAI. Views my own.`（X 页自证；个人站未挂 X 链接） | 偏好奖励一作 ⇒ RLHF 思路源头，但发言偏 alignment 理论，**跟踪为主** |
+| 29（**第十二轮新增**） | Bill Peebles | `@billpeeb` | <https://x.com/billpeeb> | `200`，`<title>` = `Bill Peebles (@billpeeb) / X`，bio = `head of sora @openai 🇺🇸🇺🇸🇺🇸` | Sora 负责人 ⇒ 视频生成 / 世界模型路线的一手判断源（⚠️ 官方报告本机 403，细节勿据传闻写） |
+| 30（**第十二轮新增**） | Tim Brooks | `@_tim_brooks` | <https://x.com/_tim_brooks> | `200`，`<title>` = `Tim Brooks (@_tim_brooks) / X`，bio = `superintelligence @ Meta` | Sora 共同负责人（**已转 Meta**）⇒ 涉 Sora 发言均属「前负责人」视角，引用须标身份与时间 |
 
 
-> **28 个 handle** 均来自其**本人主页的 `href`** 或**论文作者身份可核对**的路径（前 6 个第四轮、7–10 第五轮、11–13 第六轮、14–17 第七轮、18–21 第八轮、22–25 第九轮、26 第十轮 `@KLieret`、**27–28 第十一轮 `@janleike` / `@paulfchristiano`**），并用 X 主页 `og:description` / `<title>` **二次核对身份一致**；`x.com/AlecRadford` 虽 `200` 但 bio 无身份信息、`x.com/JohnJumper` 虽 `200` 但仅 19 followers 且无 bio ⇒ **均拒绝登记**（见主表 #33 / #40）。⚠️ 序号在第十轮出现重复「25」（`@KLieret` 与 `@peteflorence` 同号）—— 属历史编号瑕疵，**handle 与核验证据不受影响**；本轮起按 27/28 续编，不再改动旧行（不删旧条目）。用户 follow 后请把状态改为 `已follow` 并写日期。
+> **30 个 handle** 均来自其**本人主页的 `href`**、**X 页 `<title>`/`og:title` 自证** 或**论文作者身份可核对**的路径（前 6 个第四轮、7–10 第五轮、11–13 第六轮、14–17 第七轮、18–21 第八轮、22–25 第九轮、26 第十轮 `@KLieret`、27–28 第十一轮 `@janleike` / `@paulfchristiano`、**29–30 第十二轮 `@billpeeb` / `@_tim_brooks`**），并用 X 主页 `og:description` / `<title>` **二次核对身份一致**；`x.com/AlecRadford` 虽 `200` 但 bio 无身份信息、`x.com/JohnJumper` 虽 `200` 但仅 19 followers 且无 bio ⇒ **均拒绝登记**（见主表 #33 / #40）。⚠️ 序号在第十轮出现重复「25」（`@KLieret` 与 `@peteflorence` 同号）—— 属历史编号瑕疵，**handle 与核验证据不受影响**；本轮起按 27/28 续编，不再改动旧行（不删旧条目）。用户 follow 后请把状态改为 `已follow` 并写日期。
 
 ### 已核验言论台账（第四轮首获 · 原文 + 时间 + 链接）
 
@@ -792,6 +835,7 @@
 | 2026-11-12 06:05（**第十轮**） | Karl Pertsch | `2405.12213` Octo | 本人主页 `kpertsch.github.io` 的 `mailto:karl.pertsch@gmail.com`（`200` / 64,903 B 复测，2026-11-12 06:0x） | `SENT OK`（`karl.pertsch@gmail.com`，**英文 191 词**；同机构 PI 当日第 2 封 = 达上限） |
 | 2026-11-12 09:04（**第十一轮**） | Jan Leike | `1706.03741` Deep RL from human preferences | 本人主页 `jan.leike.name` 的 `mailto:Jan Leike <jan@anthropic.com>`（`200` / 6,411 B，2026-11-12 09:0x） | `SENT OK`（`jan@anthropic.com`，**英文 199 词**；Anthropic 当日第 1 封） |
 
+| 2026-11-12 12:04（**第十二轮**） | Nisan Stiennon | `2009.01325` Learning to summarize from human feedback | 本人站 `nisanstiennon.com` 的 `mailto:nisan+web@stiennon.com`（`200` / 5,575 B，直连与代理 **md5 一致**） | `SENT OK`（`nisan+web@stiennon.com`，英文；⚠️ **`wc -w` 实测 212 词，超 ≤200 规格 12 词，已如实记入台账**） |
 | 2026-11-11 12:4x–13:0x（**第四轮**） | （本轮 **0 封**） | 新增经典 `2005.14165` / `2203.02155` / `2302.13971` | 逐个实测：`hugotouvron.github.io` `404` · `longouyang.github.io` `404` · `ashishvaswani.com` `000` · 未命中任何 `mailto:` | **不发信**（按令不猜邮箱）。该轮结束时累计 **5 封**（分属三轮，每轮 ≤3）；第四轮把额度留给「有可核验邮箱」的候选 —— 本轮没有合格的 ⇒ **宁缺勿凑**（当日最终累计 = **9 封**，见上方各行） |
 
 ---
@@ -803,3 +847,5 @@
 3. **X handle 只登记可访问页面读到的**，并在 X 可达时用 `og:description` 二次核对身份；`voice_ready` **必须有原文 + 原链接 + 时间**，两处不一致或正文不完整的一律不采用（如 V3）。<br>⚠️ **2026-11-12 第十轮新增教训**：`x_fetch.py` 从 profile 页内嵌 timeline JSON 解析出的条目**会混入他人推文**（本轮 V10/V11 两条经单条推文页 `og:title` 核对分别是 `@mnmueller` 与 `@mercor`）⇒ 今后**每条拟引用推文都必须先打开 `x.com/<handle>/status/<id>` 核 `og:title` 的作者名**，作者不符直接丢弃；**正文也要用 `og:description` 与 profile `full_text` 相互校验**，二者一致才算「双源一致」。
 4. 状态四态：`待跟踪` → `已follow` → `已发信` → `已回复`；每次只前进，不跳级、不回退（回信内容另存 `research/mail/replies/`）。
 5. 抓 X 一律走 `research/classic/x_fetch.py`（只读、串行、≥3s、单轮 ≤6 个 handle），原始结果落 `research/classic/x/`，**不做任何写操作**。
+6. **发送前必查词数（2026-11-12 新增，血的教训）**：英文信发送**之前**先 `wc -w <body.txt>` 确认 ≤200（中文 ≤300 字），**不达标先删改再发**。第十二轮因「先发后核」实测 **212 词**、超 12 词 ⇒ 已如实记入 `research/mail/发送记录.md`；此后本项为**发送前置检查**，不是事后记录。
+7. **X 抓取需显式代理**：本机 shell 默认**不继承** `HTTP(S)_PROXY`，直连 `x.com` 会返回 `000`；`x_fetch.py` 内部默认走 `http://127.0.0.1:7897`，手工 `curl` 时**必须加 `--proxy`**。`000` **不等于**代理挂了（本轮实测：直连 000 / 带代理 200）⇒ 先分清「无代理」与「代理挂」，再决定是否报运维。

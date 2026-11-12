@@ -10,7 +10,7 @@
 >
 > **元数据核验**：标题 / 首次提交日 均取自 arXiv 官方 API（`export.arxiv.org/api/query?id_list=...`，2026-11-11 两轮实测 `HTTP 200` + `application/atom+xml; charset=utf-8`，首轮 4/4、第二轮 4/4 = 累计 8/8）。
 
-**本轮快照**：累计 **43** 条（首轮 11:5x 收 4 条；第二轮 11:4x 补 4 条 EDA / agent / PEFT；第三轮 12:1x 补 4 条 RoPE / SWE-bench / Reflexion / CoT；第四轮 12:4x 补 3 条 GPT-3 / InstructGPT / LLaMA；第五轮 15:0x 补 4 条 ResNet / seq2seq / Dyna / LLaVA；第六轮 18:0x 补 4 条 GPT-1 / GPT-2 / Kaplan scaling laws / DQN；第七轮 21:0x 补 4 条 AlphaGo / AlphaGo Zero / Gemini / OpenVLA；第八轮 2026-11-12 00:0x 补 4 条 AlphaFold / AlphaStar / Kimi k1.5 / π0；第九轮 2026-11-12 03:0x 补 4 条 GLM-4 / MiniMax-01 / RT-2 / Octo；**第十轮 2026-11-12 06:0x 补 4 条** SWE-agent / Tree of Thoughts / Llama 2 / LLaVA-1.5；**第十一轮 2026-11-12 09:0x 补 4 条** Llama 3 / RT-1 / Christiano 2017 / Stiennon 2020）｜ 覆盖（一篇可服务多线，按文内「与我们工作的关系」逐条计数）：pretrain **24** · vision **15** · harness **26** · data **25** · zhulong **31** · designflow **12**
+**本轮快照**：累计 **47** 条（首轮 11:5x 收 4 条；第二轮 11:4x 补 4 条 EDA / agent / PEFT；第三轮 12:1x 补 4 条 RoPE / SWE-bench / Reflexion / CoT；第四轮 12:4x 补 3 条 GPT-3 / InstructGPT / LLaMA；第五轮 15:0x 补 4 条 ResNet / seq2seq / Dyna / LLaVA；第六轮 18:0x 补 4 条 GPT-1 / GPT-2 / Kaplan scaling laws / DQN；第七轮 21:0x 补 4 条 AlphaGo / AlphaGo Zero / Gemini / OpenVLA；第八轮 2026-11-12 00:0x 补 4 条 AlphaFold / AlphaStar / Kimi k1.5 / π0；第九轮 2026-11-12 03:0x 补 4 条 GLM-4 / MiniMax-01 / RT-2 / Octo；**第十轮 2026-11-12 06:0x 补 4 条** SWE-agent / Tree of Thoughts / Llama 2 / LLaVA-1.5；**第十一轮 2026-11-12 09:0x 补 4 条** Llama 3 / RT-1 / Christiano 2017 / Stiennon 2020；**第十二轮 2026-11-12 12:0x 补 4 条** τ-bench / TD-Gammon / Sora 技术报告 / Kimi K2）｜ 覆盖（一篇可服务多线，按文内「与我们工作的关系」逐条计数）：pretrain **26** · vision **17** · harness **29** · data **27** · zhulong **33** · designflow **15**
 
 > 🆕 **第四轮（2026-11-11 12:4x）新增 3 条 = 「规模 → 指令 → 开放权重」三段主线**：GPT-3（few-shot 能力从哪来）→ InstructGPT（对齐/指令跟随的范式起点）→ LLaMA（用「多 token」把开放权重做到可用）。三篇合起来回答 data 线当前最实际的问题：**token 预算、指令数据、公开配比**。
 >
@@ -39,6 +39,11 @@
 >
 > **第十一轮核验证据（可复核）**：arXiv API `id_list=2407.21783,2212.06817,1706.03741,2009.01325` **`200` + `application/atom+xml; charset=utf-8`**（73,338 B，4 条 entry；首次提交 2024-07-31 / 2022-12-13 / 2017-06-12 / 2020-09-02；最新版本 v3 / v2 / v4 / v3）；被引数 **OpenAlex 4/4 `200`**（23,796 / 2,747 / 1,643 / 945，查询日 2026-11-12）；会议证据：RT-1 = **RSS 2023**（OpenAlex 会场 DOI `10.15607/rss.2023.xix.025`）、Christiano = **NeurIPS 2017**（OpenAlex `locations` 含 `neural information processing systems` → `papers.nips.cc/paper/7017`）、Stiennon = **NeurIPS 2020**（arXiv `comments` 原文 `NeurIPS 2020`）、Llama 3 = **预印本技术报告**（OpenAlex `primary_location.source` = arXiv，无会场 DOI）。
 > ⚠️ 第十一轮如实记：本轮 A 轨扫描第 5 个查询（`cs.SE`）遇 **arXiv `429`**（本线并发请求所致，非「无新增」）⇒ 已在 `ARXIV_API.md §9.155` 记录并改为「4/5 查询成功 + 06:00 的 `cs.SE` 值可参照」；🚫 不把 429 写成「本领域无新增」。
+
+> 🆕 **第十二轮（2026-11-12 12:0x）新增 4 条 = 「补齐必读清单最后 3 项 + 中文系最新 agentic 报告」**：τ-bench（用 LM 模拟用户 + 域内 API + 政策约束，按**终态数据库**判分 + `pass^k` 测一致性）→ **第 7 组（姚顺雨）的最后一项**；TD-Gammon（1994/1995，TD(λ) + 自对弈，只靠胜负信号学到强中级水平）→ **第 1 组（萨顿）的「相关」项**；Sora 官方技术报告（「视频生成模型是世界模拟器」，无 arXiv/DOI）→ **第 10 组（SORA）的最后一项**；Kimi K2（32B 激活 MoE、MuonClip、15.5T token 零 loss spike、agentic 数据合成 + 联合 RL）→ 第 9 组（月之暗面）的**最新一条**。**必读清单：10/10 组、37/37 条目 —— 清单内条目本轮全部覆盖完毕**（此后转「补充 / 更正」为主）。
+>
+> **第十二轮核验证据（可复核）**：arXiv API `id_list=2406.12045,2401.14185` **`200` + `application/atom+xml; charset=utf-8`**（5,114 B）；`id_list=2507.20534` **`200` + atom**（14,399 B，v2，首发 2025-07-28 / 更新 2026-02-03）；OpenAlex `2406.12045` = **1,198**、`2507.20534` = **1,410**（查询日 2026-11-12）；TD-Gammon：Crossref `10.1145/203330.203343` **`200`**（CACM **38(3):58–68**，1995-03）、OpenAlex 同 DOI **1,680**，1994 姊妹篇 `10.1162/neco.1994.6.2.215` OpenAlex **823** 且取到**完整摘要**（本线只引摘要原文）；Sora：`openai.com/index/...` 与 `openai.com/research/...` 经代理与直连**均为 `403`**、Wayback `403`、`r.jina.ai` `401` ⇒ **正文未取到**，本条**不引任何数字**。
+> ⚠️ **第十二轮如实记（更正）**：任务书 §6.5 表格把「Kimi（月之暗面报告，如 … 2401.14185 Moonshot）」作为示例 —— 本线实测 **`2401.14185` = `TDFNet: An Efficient Audio-Visual Speech Separation Model with Top-down Fusion`（cs.SD，Samuel Pegg / Kai Li / Xiaolin Hu，2024-01-25，OpenAlex 被引 3）**，**与 Kimi / Moonshot 无关** ⇒ 🚫 不据此伪造条目，改用实测存在的 **Kimi K2 `2507.20534`**；建议 supervisor 更正任务书示例。
 
 ---
 
@@ -773,10 +778,82 @@
 
 ---
 
+## 44. τ-bench: A Benchmark for Tool-Agent-User Interaction in Real-World Domains
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | τ-bench: A Benchmark for Tool-Agent-User Interaction in Real-World Domains |
+| 作者（前 3） | Shunyu Yao · Noah Shinn · Pedram Razavi（et al.，共 **4** 位；含 Karthik Narasimhan） |
+| 年份 | 2024（arXiv 首次提交 **2024-06-17**，v1，本线实测） |
+| 会议 / 期刊 | **预印本**（arXiv only；arXiv `comment` 字段为空、OpenAlex `primary_location.source` = `arXiv (Cornell University)` ⇒ 🚫 不写「某会议」） |
+| 被引数 | **1,198**（OpenAlex，DOI `10.48550/arxiv.2406.12045`，查询日 2026-11-12；S2 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2406.12045> ｜ DOI `10.48550/arxiv.2406.12045` |
+| 一句话贡献 | 用**语言模型模拟用户** + 域内 API 工具 + 政策约束，构造动态多轮对话任务；判分不靠文本匹配，而是**比对对话结束时的数据库状态与标注目标状态**，并提出 `pass^k` 衡量同一任务多次试验的**一致性**；据摘要，gpt-4o 类 SOTA 函数调用 agent 成功率 **<50%**，retail 域 `pass^8` **<25%**。 |
+| 与我们工作的关系 | **harness（直接，最高优先）**：这是「**终态判分**」的范式样本 —— 我们的 EDA 任务同样有客观终态（工具跑通 / DRC 通过 / 网表一致），比「让裁判 LLM 打分」更可验证。<b>动作</b>：harness 把每条任务写成三元组 `(初始状态, 允许的 API 集, 目标终态谓词)`，判分只读终态；并新增 `pass^k`（同任务 k 次独立试验全过率）作为稳定性指标。<b>判据</b>：报告主表必须同时给「单次成功率」与 `pass^4`；两者差距 >20 点即判定该任务对随机性过敏，须先降方差再谈提升。<br>**zhulong（规则遵循）**：论文的核心失败模式是「不按域内政策办事」而非「不会调工具」——<b>动作</b>：zhulong 的 post-train 消融加入「政策违规率」这一独立指标（违规次数 / 总轮数），不要只看任务成功率。<br>**data（用户模拟器）**：用 LM 扮演用户 = 可无限扩样的交互数据源；<b>动作</b>：data 线先固定 2–3 个用户模拟 prompt 模板做 A/B，避免模拟器本身成为混淆变量。<br>**designflow（造题结构）**：`(状态, 工具, 目标谓词)` 正好可作为 designflow L1–L5 保真度的**判分骨架**。<br>**风险**：① 摘要只给 `gpt-4o` 与 retail 两个数字，🚫 不要外推成「所有 agent 都 <50%」；② 任务域是 retail / airline，与 EDA 差异大；③ 用户模拟器与真实用户分布不一致；④ 被引数高含「被当作 baseline 引用」的成分。 |
+
+首次收录: 2026-11-12（第十二轮）｜ 状态: 元数据已核验（arXiv API `200` + `application/atom+xml`；OpenAlex `200`；会议=无）
+
+---
+
+## 45. Temporal Difference Learning and TD-Gammon
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Temporal Difference Learning and TD-Gammon |
+| 作者（前 3） | Gerald Tesauro（**独著**；论文发表时为 IBM Thomas J. Watson Research Center） |
+| 年份 | 1995（CACM **38(3):58–68**，1995-03；前身：1994 Neural Computation **6(2):215–219**） |
+| 会议 / 期刊 | **Communications of the ACM 38(3), pp. 58–68**（Crossref `10.1145/203330.203343` 实测 `200`，卷 38 / 期 3 / 页 58–68）｜ 1994 姊妹篇 **Neural Computation 6(2):215–219**（DOI `10.1162/neco.1994.6.2.215`） |
+| 被引数 | **1,680**（1995 CACM 版，OpenAlex，查询日 2026-11-12）｜ **823**（1994 Neural Computation 版，同源同查；S2 未查） |
+| arXiv / DOI | 🚫 **无 arXiv**（1995 年 ACM 期刊）｜ CACM DOI <https://doi.org/10.1145/203330.203343> ｜ Neural Computation DOI <https://doi.org/10.1162/neco.1994.6.2.215> |
+| 一句话贡献 | **1994 摘要原文（OpenAlex 全文摘要，2026-11-12 取）**：TD-Gammon 是「一个神经网络，**只靠与自己下棋并从结果中学习**就能学会下西洋双陆棋，基于 TD(λ) 强化学习算法（Sutton 1988）」；「从随机初始权重起步（因而初始策略随机）仍达到**惊人的强**水平」；「只给棋盘状态的『原始』描述时学到**强中级水平**；加入一组手工特征后达到**真正惊人**的性能」。🚫 本线**未取到 1995 CACM 正文**（付费墙），**不引任何胜率/ELO 数字**。 |
+| 与我们工作的关系 | **zhulong（自对弈 RL 的最早成功案例，直接）**：证明「**只有最终胜负信号 + 自我对弈**」也能学出强策略 —— 与我们「用可验证结果（工具跑通 / DRC 通过）当奖励、用历史快照当陪练」的路线同构。<b>动作</b>：zhulong 的自对弈实验里把「**是否给手工特征/先验**」作为一个消融轴（原始输入 vs 加领域先验），<b>判据</b>：加先验臂要在固定预算下比原始输入臂高 ≥5 绝对点才值得维护特征管线。<br>**pretrain（数据效率的极端案例）**：零外部数据、纯自生成 —— 是「合成数据能否替代真人数据」这条讨论的历史锚点；<b>动作</b>：data/pretrain 报合成数据占比时，引用它作为「纯自生成可达强中级、但需先验才到顶级」的旁证（注明是棋盘游戏）。<br>**harness（评测设计）**：棋盘游戏「规则明确、结果客观」正是 `pass^k` 与终态判分的理想前提；<b>动作</b>：harness 对自对弈类实验固定「对手池 + 固定种子 + 局数」，禁止只报对单一对手的胜率。<br>**风险**：① **单一游戏 + 1990 年代算力**，外推到 LLM 工具调用无直接证据；② 1995 CACM 正文未读，**只用 1994 摘要内的表述**；③ 被引含大量「TD 教学引用」；④ 摘要里「惊人 / staggering」是作者修辞，🚫 不可当量化结论。 |
+
+首次收录: 2026-11-12（第十二轮）｜ 状态: 元数据已核验（Crossref `200` + OpenAlex `200`；1994 摘要取 OpenAlex 全文摘要；1995 正文未取）
+
+---
+
+## 46. Video generation models as world simulators（Sora 技术报告）
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Video generation models as world simulators |
+| 作者（前 3） | Bill Peebles · Tim Brooks · Connor Holmes（et al., OpenAI；⚠️ **作者顺序未能在官方页二次核对** —— 本机 403，见下） |
+| 年份 | 2024（OpenAI 官方技术报告，2024-02 发布） |
+| 会议 / 期刊 | **OpenAI 技术报告**（🚫 **无 arXiv、无 DOI**；本线**不造 arXiv 号 / DOI**） |
+| 被引数 | **未查**（无 DOI ⇒ OpenAlex 无精确匹配；Semantic Scholar 本轮未查。🚫 不写估算值） |
+| arXiv / DOI | 🚫 无 ｜ 官方页 <https://openai.com/index/video-generation-models-as-world-simulators/>（本机实测 **`403`**：直连、Mihomo 代理、Wayback、`r.jina.ai` 全部被拒 ⇒ **正文未取到**） |
+| 一句话贡献 | 官方报告的标题即其主张：把**视频生成模型当作「世界模拟器」**，即在大规模视频上训练的生成模型可作为通往通用物理世界模拟的一条路径。（⚠️ **本行只据官方标题与公开摘要表述**；正文 403 未取到，**不引任何数字、不转述实验细节**。） |
+| 与我们工作的关系 | **vision（方法路线参照）**：视频生成所需的「时空一致性」与我们版图/波形这类二维结构数据的建模有共通点（长程依赖 + 局部保真）；<b>动作</b>：vision 线若做生成式数据增广，预注册「局部保真度」与「长程一致性」两个指标分开报，🚫 不合并成一个总分。<br>**designflow（仿真的替代品？）**：若模型能稳定预测「动作后的画面」，理论上可做**廉价 rollout**（类似 Dyna 的 model-based 规划）；<b>动作</b>：designflow 先做一个**极小规模验证**：用生成模型预测工具调用后的中间产物，与真实工具输出比对，<b>判据</b>：结构一致率 <80% 就不投这条线。<br>**pretrain（数据形态）**：报告的存在本身说明「视频数据可作为预训练主模态」——对我们只是一条旁证；<b>动作</b>：无（我们无视频数据）。<br>**风险**：① **正文未取到（403）** ⇒ 本条**只有标题级信息**，任何细节（时长、分辨率、patch 方案、分数）本线**一律不写**；② 「世界模拟器」是作者主张，不是被独立验证的结论，🚫 不可写成「Sora 已实现世界模型」；③ 官方博客式报告无同行评议。 |
+
+首次收录: 2026-11-12（第十二轮）｜ 状态: ⚠️ **部分核验**（官方页标题可确认；正文 403 未取到；无 DOI ⇒ 被引未查）
+
+---
+
+## 47. Kimi K2: Open Agentic Intelligence
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Kimi K2: Open Agentic Intelligence |
+| 作者（前 3） | Kimi Team（团队署名）· Yifan Bai · Yiping Bao（et al.，作者列表数百人，本线只列前 3） |
+| 年份 | 2025（arXiv 首次提交 **2025-07-28**，最新 **v2** 2026-02-03，本线实测） |
+| 会议 / 期刊 | **预印本技术报告**（arXiv `comment` 原文 = `tech report of Kimi K2, with minor updates`；OpenAlex `primary_location.source` = arXiv ⇒ 🚫 不写会议） |
+| 被引数 | **1,410**（OpenAlex，DOI `10.48550/arxiv.2507.20534`，查询日 2026-11-12；S2 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2507.20534> ｜ DOI `10.48550/arxiv.2507.20534` |
+| 一句话贡献 | **32B 激活 / 1T 总参**的 MoE；提出 **MuonClip**（Muon + 新的 QK-clip）解决训练不稳定，**15.5T token 预训练零 loss spike**；后训练含**大规模 agentic 数据合成 + 联合 RL**；作者自报 Tau2-Bench **66.1** / ACEBench(En) **76.5** / SWE-Bench Verified **65.8** / SWE-Bench Multilingual **47.3**（称开源非思考模型 SOTA）。 |
+| 与我们工作的关系 | **pretrain（训练稳定性，直接可用）**：`MuonClip` 的「QK-clip 防 attention logit 爆炸」是**可直接抄的工程手段**，且给了「15.5T token 零 spike」这一强证据。<b>动作</b>：pretrain 线在 WSD 长跑前先做 **1B 级小规模对照**（Muon vs MuonClip vs AdamW），监控 `max attention logit` 与 loss spike 次数；<b>判据</b>：MuonClip 若在等 token 下把 spike 次数降到 0 且 loss 不低于 AdamW，就在 2B 主跑采用。<br>**data（agentic 数据合成）**：大规模合成 agentic 轨迹是能力来源之一；<b>动作</b>：data 线把「合成轨迹 / 真实轨迹」比例单列一栏，做 3 档消融。<br>**harness（评测口径）**：Tau2-Bench / SWE-Bench 是**自选基准**，<b>动作</b>：引用其分数时必须标「作者自报 + 日期 + 自选基准」，🚫 不写成「当前 SOTA」。<br>**zhulong（联合 RL）**：真实 + 合成环境联合 RL 与我们的「可验证奖励 + 自举环境」同构；<b>动作</b>：zhulong 记录「环境真实性占比」（真实工具 vs 模拟器）作为一列。<br>**风险**：① 1T 总参远超我们 2B 量级，**规模不可迁移**，只能抄方法与判据；② 全部分数为**作者自报、基准自选**；③ 「零 loss spike」是特定配置下的结果，不等于 MuonClip 普适；④ 数百人署名，无法逐条核对。 |
+
+首次收录: 2026-11-12（第十二轮）｜ 状态: 元数据已核验（arXiv API `200` + `application/atom+xml`；OpenAlex `200`；会议=无）
+
+---
+
 ## 候选池（下轮起逐轮补，**被引数本轮未查**，勿引用）
 
+
+
 > 只登记「已实测 arXiv 元数据」的条目；被引数待下轮 OpenAlex 批量核过再写，**本表数字一律留空 = 未查**。
-> ⚠️ 第十轮把 **Llama 2 `2307.09288` / LLaVA-1.5 `2310.03744` / SWE-agent `2405.15793` / Tree of Thoughts `2305.10601`** 四条转正为 #36–#39；**第十一轮把 Llama 3 `2407.21783` / RT-1 `2212.06817` / Christiano 2017 `1706.03741` / Stiennon 2020 `2009.01325`** 四条转正为 #40–#43（元数据 + 被引当场实测）。**下轮优先**：**τ-bench `2406.12045`**（必读清单第 7 组最后一项）· **TD-Gammon（Tesauro 1995，NPL/ICML 口径待核，无 arXiv）** · **SORA（OpenAI 技术报告，无 arXiv，作者 Bill Peebles `@billpeeb` 已核验；只能引官方技术报告，🚫 不造 arXiv 号）** · （可选）**Kimi 月之暗面早期报告 `2401.14185`**、**Stiennon 之后的 RLHF 规模化综述**。**元数据未实测前不进本表，也不凭印象写 DOI / 被引**。
+> ⚠️ 第十轮把 **Llama 2 `2307.09288` / LLaVA-1.5 `2310.03744` / SWE-agent `2405.15793` / Tree of Thoughts `2305.10601`** 四条转正为 #36–#39；**第十一轮把 Llama 3 `2407.21783` / RT-1 `2212.06817` / Christiano 2017 `1706.03741` / Stiennon 2020 `2009.01325`** 四条转正为 #40–#43；**第十二轮把 τ-bench `2406.12045` / TD-Gammon（CACM `10.1145/203330.203343`）/ Sora 技术报告 / Kimi K2 `2507.20534`** 四条转正为 #44–#47（元数据 + 被引当场实测）。✅ **必读清单 37/37 条目已全部覆盖**，此后以「补充 / 更正」为主。
+> ⚠️ **更正**：候选池此前记的「Kimi 月之暗面早期报告 `2401.14185`」**实测为 `TDFNet`（音视频语音分离，cs.SD），与 Kimi 无关** ⇒ 已删除该候选，改收 **Kimi K2 `2507.20534`**（已转正 #47）。
+> **下轮候选（🚫 未实测前不进本表、不写 DOI / 被引）**：① **DPO `2310.16944`**（「无需显式 RM 的偏好优化」，与 #42/#43 构成「RM vs 直接偏好优化」对照，服务 zhulong）；② **Mamba-2 / FlashAttention-2**（若在研方向仍以 attention 变体为对照，服务 pretrain 吞吐口径）；③ **存储 / EDA 方向再补 1 条**（如版图预训练 / CircuitNet 类，需先实测是否为 arXiv 一手）；④ Sutton《The Bitter Lesson》（**博客，无 arXiv / 无 DOI** ⇒ 只能引原文链接，单独标注）。
 
 
 | arXiv ID | 标题（arXiv 实测） | 首次提交 | 拟服务线 | 为什么算经典（待核被引） |
