@@ -7843,25 +7843,23 @@ setsid bash -c "eval/run_batch.sh \
 
 → DesignFlow benchmark 对所有测试模型均为 0% Pass@1，包括 DeepSeek——这表明该 benchmark 任务难度极高或评测协议需进一步调优
 
-### §L4-zhulong (2026-11-13 wake365→371) SFT v39 Post-SFT Eval — INTERMEDIATE PROGRESS (RUNNING)
+### §L4-zhulong (2026-11-13 wake365→372) SFT v39 Post-SFT Eval — INTERMEDIATE PROGRESS (RUNNING)
 
 > 替身预演声明：MiniCPM5-2B is BaiZe surrogate; gains/losses not transferable to BaiZe.
 
 - **两个并行 158-task eval 仍在运行**（无 final_report.json，code-gen 阶段未完成）
 - **eval 目录**：step_60=`~/eda_code_eval/2026_1113_021445`，step_105=`~/eda_code_eval/2026_1113_024153`
 
-#### 进度表（wake371 = 04:24）
+#### 进度表（wake372 = 04:35）
 
-| eval | GPU | model | code dirs | .py | syntax valid | syntax/158 | stats(succ+fail+timeout) | processed | rem | PID alive |
-|:--|:--:|:--|--:|--:|--:|--:|:--|--:|--:|:--|
-| step_60 | 5 (:8097) | minicpm5-2b-sft-v39 (global_step_60) | 137/158 (87%) | 64 | 38/64=59% | 24.1% | 119+8+2=129 | 82% | 29 | 953888 ✅ @8042s |
-| step_105 | 6 (:8096) | minicpm5-2b-sft-v39-final (global_step_105) | 128/158 (81%) | 93 | 69/93=73% | 43.7% | 109+7+2=118 | 75% | 40 | 972225 ✅ @6414s |
+| eval | GPU | model | task dirs | .py | syntax valid | syntax/158 | workers | runtime | PID alive |
+|:--|:--:|:--|--:|--:|--:|--:|--:|--:|:--|
+| step_60 | 5 (:8097) | minicpm5-2b-sft-v39 (global_step_60) | 43/158 (27%) | 67 | 39/67=58% | 24.7% | 8 (respawned) | ~147min | 953888 ✅ @8803s |
+| step_105 | 6 (:8096) | minicpm5-2b-sft-v39-final (global_step_105) | 53/158 (34%) | 98 | 72/98=73% | 45.6% | 8 | ~120min | 972225 ✅ @7175s |
 
-- **stats 文件**（`~/eda_code_eval/<run>/stats/`）：`success`=cline exit 0（非 eval pass），`failure`=cline exit≠0，`timeout`=2500s 超时；实际 Pass@1 须等 run_eval.py 评分
-- **16 cline workers**（8 per eval）；step_60 PID958613@7719s 仍 stuck（>2500s timeout 未杀掉 cline 子进程）；step_105 全部 8 workers 活跃
-- **GPU5=100%, GPU6=98% util**；3 serves healthy（8098+8097+8096 curl /v1/models OK）；tunnel UP（ssh -p3333→hfeg0tedaap02）
-- **trend since wake370**：step_60 .py 50→64(+14), syntax 32→38(+6)；step_105 .py 84→93(+9), syntax 65→69(+4)
-- **关键趋势**：step_105 syntax-valid/158=43.7% >> step_60 24.1% → final ckpt ~1.8× better → v39 format collapse significantly improved（vs v11v38 §L4.9 22.78%）
+- **wake372 关键动作**：kill -9 PID 958613+958614（step_60 worker_5 stuck @8470s，远超 2500s timeout；root cause: GNU `timeout` 发 SIGTERM 但 bun/node 忽略 → 进程永不被杀）→ 脚本自动 respawn 新 worker，step_60 恢复 8 workers
+- **trend since wake371**：step_60 .py 64→67(+3), syntax 38→39(+1)；step_105 .py 93→98(+5), syntax 69→72(+3)
+- **关键趋势**：step_105 syntax-valid/158=45.6% >> step_60 24.7% → final ckpt ~1.8× better → v39 format collapse significantly improved（vs v11v38 §L4.9 22.78%）
 - **代码质量抽查**（wake367，5 个样本，详见 daily-memories-posttrain/2026-11-13.md）：
   - step_60 `enforce_priority_limits.py`（056）：✅ 良好；step_60 `create_wrapped_cstring_list.py`（074）：❌ 差
   - step_105 `generate_balanced_policies.py`（058）：⚠️ 中等；step_105 `check_library_access.py`（042）：❌ 差；step_105 `create_wrapped_cstring_list.py`（074）：❌ 过度工程化
@@ -7869,6 +7867,7 @@ setsid bash -c "eval/run_batch.sh \
 - **结论**：v39 SFT 修复了格式崩溃（syntax-valid of total: 20%→44%, ~2× improvement），但**语义正确性仍不确定**——需 run_eval.py 判定实际 Pass@1
 - **对比 §L4.9**（v11v38 step_90, 0/158=0%, code-gen 仅 22.78%）：v39 format collapse FIXED，代码生成质量显著改善
 - **run_eval.py**：位于 `eda_fastmcp/scripts/run_eval.py`，用法 `python scripts/run_eval.py --latest N` 或 `--generations <jsonl>`，流程=assemble→sandbox→calculate Pass@1
-- **ETA**（wake371）：step_60 29rem @ ~5-8 workers, step_105 40rem @ 8 workers → ~20-30min → code-gen 完成 → run_eval.py → final_report.json
+- **GPU5=87%, GPU6=98% util**；3 serves healthy（8098+8097+8096 curl /v1/models OK）；tunnel UP（ssh -p3333→hfeg0tedaap02）
+- **ETA**（wake372）：step_60 ~115rem @ 8 workers, step_105 ~105rem @ 8 workers → ~30-45min → code-gen 完成 → run_eval.py → final_report.json
 - **下一步**：等 final_report.json → Pass@1 step_60 vs step_105 vs base 36% → 判定 SFT v39 配方是否有效 → 如 Pass@1>0% → 5-run eval
 
