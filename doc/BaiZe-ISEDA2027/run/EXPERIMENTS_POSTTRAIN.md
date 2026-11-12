@@ -7128,17 +7128,17 @@ SANDBOX_PORT="${SANDBOX_PORT_HTTP:-8664}"       # alive port (8667 dead)
   - worker_1.log 确认：PreToolUse hook 部署✅ → workdir 创建✅ → leak 自检通过✅ → cline 启动中（model=minicpm5-2b, timeout=2700s）
   - 5 tasks: ABMatchPlacementCheck-001, Analog-001, AnalogGroupCfgMergeDummy-001, AutoPR-001, BitcellMcSpGen-001
   - progress: done=0, pass=0, fail=0（仍在第一题）
+  - wake343 更新（21:21）：PID 3858541 alive on 36.15（etimes≈1156s≈19min），进程树已从 task1(ABMatchPlacementCheck-001) 推进到 task2(EDA-Eval-DesignFlow-Analog-001) → **有进展**；CWD=`/nasdata/app.e0031982/code/EDA-Flow-Bench`；`eval/status_rerun_2700s.jsonl` 仍空（status 记录步骤有已知 `ValueError: invalid literal for int() with base 10: '0\n0'` bug，见历史 worker_1.log，judge verdict 实落 worker log / `~/.cache/judge_*`）；仍 RUNNING
 - 预计耗时：worst case 5×2700s = 3.75hr，但多数任务应在 2700s 内完成
-- 结果：TBD（下轮 wake 检查）
+- 结果：TBD（下轮 wake 检查；Run2 完成后从 worker log/.cache 收集 per-task verdict）
 
-### L4.6c Post-SFT Eval Progress（wake342 监控）
-- PID 789217 alive on .17（etimes=7542s ≈ 2hr 5min）
+### L4.6c Post-SFT Eval Progress（wake342→wake343 监控）
+- PID 789217 alive on .17（wake343: etimes≈8125s ≈ 2hr 15min）
 - 输出目录：`~/eda_code_eval/2026_1112_190335/`
-- 进度：~94/158 code dirs created, 51 .py files generated, stats/failure=3
-- 当前活跃任务：EDA-Eval-PyAether-083（newest file 21:10:52, ~10s ago at check time）
+- 进度（wake343 21:21）：**83/158 已结算** = success=79 / failure=3 / timeout=1（wake342 时 ~51 .py / failure=3 → 已推进 ~32 任务）；8 workers (worker_1..8) 活跃；newest file 21:18:57（worker_7 cline.log/hooks.jsonl/messages.json，~3s ago at check）→ 仍活跃写
 - GPU5 :8097 (minicpm5-2b-sft) serving at 90% utilization — actively generating
-- 预计剩余：~1.5-2hr（~64 tasks remaining, 8 workers）
-- 结果：TBD（等 final_report.json）
+- 预计剩余：~1-1.5hr（~75 tasks remaining, 8 workers）
+- 结果：TBD（等 final_report.json；注意 stats/success=代码生成完成数，非 Pass@1，真正 pass 需 run_eval.py 评分）
 
 ### L4.7 BaiZe Ckpt 可达性（BLOCKED）
 - `/nas_train` 未挂载于 .17（`mount | grep nas_train` → 空）
