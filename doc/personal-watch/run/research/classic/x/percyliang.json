@@ -1,0 +1,73 @@
+{
+ "handle": "percyliang",
+ "name": "Percy Liang (@percyliang) / X",
+ "bio": "professor of computer science @Stanford @stanfordnlp, co-founder of @togethercompute, https://t.co/7R5THVnJ6u, @simile_ai, pianist",
+ "tweets": [
+  {
+   "id": "2120378748457607431",
+   "created_at": "2026-11-11 04:51 UTC",
+   "created_at_ms": 1794372663000,
+   "text": "You can simultaneously believe that AI is transformational and that there are bottlenecks.",
+   "url": "https://x.com/percyliang/status/2120378748457607431",
+   "handle_guess": "percyliang"
+  },
+  {
+   "id": "2120231348644483105",
+   "created_at": "2026-11-10 19:05 UTC",
+   "created_at_ms": 1794337520000,
+   "text": "I am excited to announce our new nonprofit STABL, co-founded with the wonderful @sayashk @random_walker!\\\n\\\nOur organization derives from four beliefs:\\\n\\\n1. Advanced AI will broadly transform society and, if managed well, this transformation will be broadly beneficial.\\\n\\\n2. The speed https://t.co/Ma1VBVAksZ",
+   "url": "https://x.com/percyliang/status/2120231348644483105",
+   "handle_guess": "RishiBommasani"
+  },
+  {
+   "id": "2120034819291898364",
+   "created_at": "2026-11-10 06:04 UTC",
+   "created_at_ms": 1794290663000,
+   "text": "Why was Marin 535B-A23B the size it was? Why 8 of 384 experts? Why GatedNorm, sconv, XSA? Why linear learning rate? All of these factors were driven by tradeoffs between timelines, compute efficiency, MoE router stability, etc.  Read about the rationale of each design decision:",
+   "url": "https://x.com/percyliang/status/2120034819291898364",
+   "handle_guess": "percyliang"
+  },
+  {
+   "id": "2119924094473023877",
+   "created_at": "2026-11-09 22:44 UTC",
+   "created_at_ms": 1794264265000,
+   "text": "Sharing the thought process behind the architecture for Marin 535B-A23B, which finished pretraining on 18T tokens last week: https://t.co/jFugRo5xhQ\\\n\\\nEarlier this year the Marin project had 6 full-time employees at Open Athena, a mix of AI veterans and people newer to the space, https://t.co/zGKcWo52bC",
+   "url": "https://x.com/percyliang/status/2119924094473023877",
+   "handle_guess": "classiclarryd"
+  },
+  {
+   "id": "2117859472496594965",
+   "created_at": "2026-11-04 06:00 UTC",
+   "created_at_ms": 1793772020000,
+   "text": "Scaling laws depend on a metric that improves gradually with scale in order to extrapolate to a large target scale.  We are interested in the accuracy metric, but you might get zero accuracy for small models. You can't extrapolate from a bunch of zeros.\\\n\\\nKey idea: introduce a",
+   "url": "https://x.com/percyliang/status/2117859472496594965",
+   "handle_guess": "percyliang"
+  },
+  {
+   "id": "2117855995494068430",
+   "created_at": "2026-11-04 05:46 UTC",
+   "created_at_ms": 1793771191000,
+   "text": "Marin 535B-A23B now on 65K contexts...  Counting down... https://t.co/2szsqMedB4",
+   "url": "https://x.com/percyliang/status/2117855995494068430",
+   "handle_guess": "percyliang"
+  },
+  {
+   "id": "2117702608936985058",
+   "created_at": "2026-11-03 19:37 UTC",
+   "created_at_ms": 1793734621000,
+   "text": "Can we forecast benchmark accuracy from models that score zero?\\\n\\\nWe (co-leads @LukeBailey181 @rckpudi) turn a benchmark into a series of easier hinted versions. Jointly modeling scale C and hint level H enables forecasting GSM8K acc (H=0) within 3 pts from 5600x less compute 🧵 https://t.co/fyLbvONHuL",
+   "url": "https://x.com/percyliang/status/2117702608936985058",
+   "handle_guess": "suze_va"
+  },
+  {
+   "id": "1924527490351169964",
+   "created_at": "2025-05-19 18:08 UTC",
+   "created_at_ms": 1747678084000,
+   "text": "What would truly open-source AI look like? Not just open weights, open code/data, but *open development*, where the entire research and development process is public *and* anyone can contribute. We built Marin, an open lab, to fulfill this vision: https://t.co/racsvmhyA3",
+   "url": "https://x.com/percyliang/status/1924527490351169964",
+   "handle_guess": "percyliang"
+  }
+ ],
+ "http_status": 200,
+ "fetched_at": "2026-11-12 21:05:24"
+}

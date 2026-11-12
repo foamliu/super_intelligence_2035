@@ -2297,3 +2297,12 @@ python3 research/arxiv_fetch.py --query 'cat:cs.CL AND abs:"agent"' --max-result
 - **《The Bitter Lesson》**：`http://www.incompleteideas.net/IncIdeas/BitterLesson.html` **`200` / 7,297 B**；页面日期 `March 13, 2019`；首句逐字核对通过 ⇒ **无被引口径，记「未查」**（博客条目，单列）。
 - **X（只读）**：直连 `x.com` **`000`** / 显式 `--proxy http://127.0.0.1:7897` **`200`**（代理在线）⇒ profile **3/3 `200`**（`danqi_chen` / `natolambert` / `_lewtun`）；单条推文页 **3/3 `200`**，其中 **2 条 `og:title` 为他人**（`@esonghori2` / `@deanwball`）⇒ 记 V15/V16 作废，**不采用**。
 - **发信 3 封（均 `SENT OK`）**：Danqi Chen `18:06:04`（`2405.14734`，中文 **296** 字）· Yibo Lin `18:06:07`（`2208.01040`，中文 **262** 字）· Nathan Lambert `18:06:13`（`2310.16944`，英文 **178** 词）；**发送前字数/词数均已核**。
+
+## §9.159 · 2026-11-12 21:00 CST（时窗轮 · A 轨重扫 + B 轨第十五轮 + 第 11/12 封信）
+
+- **批次仍未刷新**：`arxiv_fetch.py --fetch --json --seen research/SEEN.md` 跑 `queries.json` 全部 **15 条**查询，**15/15 `200` + `application/atom+xml; charset=utf-8`**；窗口内 **173** 条（`n_dropped=404`），最晚 `published = 2026-11-10T18:59:54Z` ⇒ 公告批仍为 `2026-11-10`（与 06/09/12/15/18 点一致）。
+- **A 轨结果**：当日额度 5/5 已满 ⇒ **0 新收**（未超额）；fetch 产物在 `/tmp/r159/fetch.json`（临时目录，不入 git）。
+- **B 轨元数据（arXiv `id_list`）**：`2403.07691,2310.12036,2307.03172,2309.06180` → **`200` + atom**（9,897 B / 4 条；ORPO v2 2024-03-14 · IPO v2 2023-11-22 · Lost in the Middle v3 2023-11-20 · vLLM v1 2023-09-12）。
+- **OpenAlex（查询日 2026-11-12，4/4 `200`）**：ORPO **586**（`type=conference-paper`，DOI `10.18653/v1/2024.emnlp-main.626`，EMNLP）· IPO **285**（`type=preprint`，arXiv DOI `10.48550/arxiv.2310.12036`）· Lost in the Middle **3,578**（DOI `10.1162/tacl_a_00638`，TACL）· vLLM **3,869**（DOI `10.1145/3600006.3613165`，SOSP 2023）。
+- **X（只读）**：直连 `x.com` **`000`**（本 shell 无 `HTTPS_PROXY`）/ 显式 `-x http://127.0.0.1:7897` **`200`**，出口 IP `178.249.213.185`；profile **4/4 `200`**（`percyliang` / `j6mes` / `nelsonfliu` / `woosuk_kwon`，另测 `istoica` 页面标题为 `Profile / X` ⇒ 该 handle 不存在）；推文页 **1/1 `200`**（`og:title` = `Percy Liang (@percyliang) on X`）。
+- **发信 2 封（均 `SENT OK`）**：James Thorne `21:07:24`（`2403.07691`，英文 **162** 词）· Nelson F. Liu `21:07:44`（`2307.03172`，英文 **159** 词）；**发送前词数均已核**；两封信的邮箱来源均**非当前主页**（`j6mes.com` `000`；`nelsonliu.me` 邮箱为图片），已在 `AUTHORS.md` 与台账标注「若退信记通道失效、不重发」。

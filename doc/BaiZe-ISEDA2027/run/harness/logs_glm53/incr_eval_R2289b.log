@@ -33,3 +33,11 @@ new instances: 4 ['django__django-11885', 'django__django-12304', 'django__djang
 new instances: 1 ['matplotlib__matplotlib-24177']
 [incr-eval 20:32:04] pi: merged 1 new patches -> predictions_pi_new_R2289b.json
 [incr-eval 20:32:04] pi: EVAL 1 instances -> run_id=verified_full_glm53_pi_incr_R2289b
+[incr-eval 20:54:21] pi: eval rc=0
+[incr-eval 20:54:21]   matplotlib__matplotlib-24177: RESOLVED
+[incr-eval 20:54:21] pi: cumulative n=254 resolved=186 failed=68 infra=0 -> eval_glm53_pi.json
+
+=== hermes R2289b ===
+new instances: 8 ['matplotlib__matplotlib-22719', 'matplotlib__matplotlib-22865', 'matplotlib__matplotlib-22871', 'matplotlib__matplotlib-23314', 'matplotlib__matplotlib-23412', 'matplotlib__matplotlib-23476', 'matplotlib__matplotlib-24026', 'matplotlib__matplotlib-24570']
+[incr-eval 20:54:21] hermes: merged 8 new patches -> predictions_hermes_new_R2289b.json
+[incr-eval 20:54:21] hermes: EVAL 8 instances -> run_id=verified_full_glm53_hermes_incr_R2289b

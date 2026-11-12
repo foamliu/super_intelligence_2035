@@ -1,6 +1,6 @@
 # MEMORY_DATA.md — BaiZe 正式训练数据准备 · 运行时状态
 
-WAITING: 1
+WAITING: 0
 
 > ⚠️ **`WAITING` 只认本文件顶部这一行**（`baize_data_loop.sh` 用 `^WAITING:[[:space:]]*1` 匹配）。
 > **不要在正文/流水里再写任何以 `WAITING:` 开头的行**——否则会误触发 30 分钟长睡。
@@ -22,19 +22,19 @@ WAITING: 1
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        ✅vision图文对调研报告DONE→✅stack-v3-train 2TB下载全DONE→进入过滤+分词阶段(待运维指令) → WAITING=1
+PHASE:        stack-v3-train 过滤+分词阶段（EDA扫描+分词并行后台跑中） → WAITING=0
 已完成:       ✅85M;✅10-31报告;✅09:4x报告;✅09:2x长上下文10/10(249.48GiB);✅13:2x#2 RL报告;✅13:2x#1 B类12/12(78.73GiB);✅11-07 ROI 8源DONE(25.14GB/135文件/0inc);✅stack-v3-train调研DONE(8192shard/EDA语言27.1%);✅batch1-7全DONE(累计1,987,930,402,327B/4600parquet/0inc);✅batch7 QC(6885files/vendor1.0%/EDA12.3%);✅2TB ROI复盘(token~2,025B/重叠2.4%/97.6%独特/ROI判定✅有价值);✅论文pretrain数据节更新;✅路径staleness审计(0stale);✅TASK.md标记更新;✅vision图文对调研报告(report_vision_textpair_sourcing_zh.html/28KB/6节/归因+盘点+Top5+许可+建议)
-当前动作:     唤醒1466(2026-11-12 20:0x):例行巡检→①git fetch(代理,0ahead/0behind,TASK.md diff origin/main=空→无新data令);②research日报11-12(120KB)已阅→data建议=family_id A/B+EDA三维多样性标签+chars_per_token+难度采样(与wake1465同版,无新增);③stack-v3-train:du -sh=1.9T/4600parquet/0inc→完整稳定;④df:/nas_inference 19T/27T(42%)≥5T OK;/nas_train 180T/28T(87%);/nas_env 8.3T/1.7T(84%);⑤体积MEMORY 31.8KB/TASK 29.1KB均≤40KB;⑥全部运维令已✅已交付→commit data:→WAITING=1
-下一步:       等运维指令→若批准TaiSu下载(7.9TB)或InternVL-SA1B接入vision训练→配合执行;若无新指令→WAITING=1例行巡检
-阻塞:         无(vision图文对调研报告已交付,/nas_inference 27T可用≥5T红线)
+当前动作:     唤醒1467(2026-11-12 21:0x):stack-v3-train分词+EDA扫描→①创建stackv3_tokenize.py(DeepSeek-V4.1-Flash+EOD+mcore .bin/.idx,语言优先Python/C/C++/Verilog/SV/Tcl/Shell/SKILL/Perl,质量过滤vendor/minified/generated/test/config/>1MB);②冒烟测试1shard=35,780docs/45.3Mtok/158s/0err→推算4600shard≈208B tok;③启动全量分词(16workers,nice19,后台PID running,/tmp/stackv3_tokenize_full.log);④创建stackv3_eda_scan.py(Phase A元数据全扫parquet列裁剪0.4s/shard+Phase B分层抽样EDA脚本检测);⑤Phase A全扫已启动后台(/tmp/stackv3_eda_phaseA.log,150/4600shards,~4s/shard,ETA~5h);⑥输出落/nas_train/.../tokenized/HuggingFaceCode/stack-v3-train/
+下一步:       ①等Phase A EDA扫描完成(~5h)→分析语言分布/vendor比例/EDA路径关键词命中;②等分词完成(~12h,16workers)→MANIFEST.json+更新INDEX.tsv+DATA_MAPPING.md;③Phase B抽样检测→EDA脚本价值评估;④全部完成后commit+WAITING=1
+阻塞:         无(后台跑中,WAITING=0短睡巡检)
 ERROR_COUNT:  11
-未完成指令:   无(全部运维令均已✅已交付)→WAITING=1
+未完成指令:   有(stack-v3-train分词+EDA扫描后台运行中)→WAITING=0
 ```
 
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。
 
 ## 📋 本唤醒流水
-> [11-12 20:0x] 唤醒1466：例行巡检→①git fetch origin(代理,0ahead/0behind,TASK.md diff origin/main=空→无新data令);②research日报11-12(120KB)已阅→data建议=family_id A/B+EDA三维多样性标签+chars_per_token+难度采样(与wake1465同版,无新增);③stack-v3-train:du -sh=1.9T/4600parquet/0inc→完整稳定;④df:/nas_inference 19T/27T(42%)≥5T OK;/nas_train 180T/28T(87%);/nas_env 8.3T/1.7T(84%);⑤体积MEMORY 31.8KB/TASK 29.1KB均≤40KB;⑥全部运维令已✅已交付→commit data:→WAITING=1
+> [11-12 21:0x] 唤醒1467：stack-v3-train分词+EDA扫描→①git fetch origin(代理,0ahead/0behind,TASK.md diff origin/main=空→无新data令);②创建stackv3_tokenize.py(读嵌套files列→语言优先Python/C/C++/Verilog/SV/Tcl/Shell/SKILL/Perl+质量过滤vendor/minified/generated/test/config/>1MB→DeepSeek-V4.1-Flash+EOD→mcore .bin/.idx);③冒烟测试1shard:35,780docs/45.3Mtok/158s/0err,语言分布Python18614/C++8744/C4054/Shell2000/Verilog67/SV60/Tcl8,skip=lang229178/vendor3601/test300;④启动全量分词16workers nice19后台(/tmp/stackv3_tokenize_full.log,ETA~12h,输出/nas_train/.../tokenized/HuggingFaceCode/stack-v3-train/);⑤创建stackv3_eda_scan.py(Phase A:parquet列裁跳content只读元数据0.4s/shard+Phase B:100shard分层抽样EDA脚本检测);⑥Phase A全扫后台启动(/tmp/stackv3_eda_phaseA.log,150/4600,~4s/shard,ETA~5h);⑦推算4600shard≈208B token(~13%文件通过过滤)→WAITING=0
 > [11-12 18:5x] 唤醒1465：例行巡检→①git fetch origin(代理,0ahead/0behind,TASK.md diff origin/main=空→无新data令);②research日报11-12(18:10,120KB)已阅→data建议=chars_per_token+难度采样+family_id A/B+EDA三维多样性标签+偏好数据建表+DPO三元组预注册+回答格式模板A/B(与wake1464同版,无新增);③stack-v3-train:du -sh=1.9T/4600parquet/0inc→完整稳定;④df:/nas_inference 19T/27T(42%)≥5T OK;/nas_train 180T/28T(87%);/nas_env 8.3T/1.7T(84%);⑤体积MEMORY 31.2KB/TASK 29.1KB均≤40KB;⑥全部运维令已✅已交付→commit data:→WAITING=1
 > [11-12 17:4x] 唤醒1464：例行巡检→①git fetch origin(代理,0ahead/0behind,TASK.md diff origin/main=空→无新data令);②research日报11-12(15:10,113KB)已阅→data建议=chars_per_token+难度采样+family_id A/B+EDA三维多样性标签(与wake1463同版,无新增);③stack-v3-train:du -sh=1.9T/4600parquet/0inc→完整稳定;④df:/nas_inference 19T/27T(42%)≥5T OK;/nas_train 180T/28T(87%);/nas_env 8.3T/1.7T(84%);⑤体积MEMORY 31.4KB/TASK 29.8KB均≤40KB;⑥全部运维令已✅已交付→commit data:→WAITING=1
 > [11-12 15:2x] 唤醒1463：例行巡检→①git fetch origin(代理,0ahead/0behind,TASK.md diff origin/main=空→无新data令);②research日报11-12(15:10,113KB)已阅→data建议=chars_per_token+难度采样+family_id A/B+EDA三维多样性标签(与wake1461/1462同版,无新增);③stack-v3-train:du -sh=1.9T/4600parquet/0inc→完整稳定;④df:/nas_inference 19T/27T(42%)≥5T OK;/nas_train 180T/28T(87%);/nas_env 8.3T/1.7T(84%);⑤体积MEMORY 30.8KB/TASK 29.8KB均≤40KB;⑥全部运维令已✅已交付→commit data:→WAITING=1

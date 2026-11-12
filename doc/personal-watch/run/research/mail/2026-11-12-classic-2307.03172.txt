@@ -1,0 +1,15 @@
+Dear Dr. Liu,
+
+I am Yang Liu, working on BaiZe-ISEDA2027 and ZhuLong-DAC2027: roughly 2B-parameter domain models for EDA and memory design flows, where the context is long tool logs and design reports.
+
+"Lost in the Middle" shaped how we think about context placement. Three questions:
+
+1. Our contexts are structured logs and error traces rather than natural-text passages. Do you expect the same U-shaped position sensitivity there, and was the effect in your experiments driven mainly by the training distribution rather than by architecture?
+
+2. When success means "the right tool was called" rather than "a gold span was retrieved", how would you adapt the evaluation protocol? Is a position sweep with a procedural checker still informative?
+
+3. Before investing in long-context training, is simple reordering (key evidence placed at the beginning or end) still the baseline you would insist on running first?
+
+Answers would guide our long-context data mix and harness scoring. Thanks for your time.
+
+Yang Liu
