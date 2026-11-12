@@ -437,3 +437,4 @@
 1793762539682_2izm6	e0039602	hfeg0plg103	234	digital	case	EDA-Eval-DesignFlow-StdcellMatch-001	2026-11-13 01:04	r441: A-faithful stdcell similar-cell matcher (token-Jaccard), L2, k=14, 5 negs+3 fakes all FAIL, ref SELFTEST PASS
 1792742776753_6yrpu	lorikx	hfeg0pkn004	152	digital	parked		2026-11-13 01:16	dup: already case SimMakefileVCS-001 (same session 1792742776753_6yrpu, A-internal, built 2026-11-04; slug-suffix normalization let it slip through hand filter r441)
 1794194078176_i73zm	eric1ch	hfeg0pkn002	71	digital	case	EDA-Eval-DesignFlow-RegrCaseLocate-001	2026-11-13 01:35	
+1792722189804_6e2db.messages.json	t0002470	10.129.8.233	96	digital	case	EDA-Eval-DesignFlow-EillenLogMerge-001	2026-11-13 01:57	
