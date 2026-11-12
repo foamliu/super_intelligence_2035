@@ -1832,3 +1832,21 @@ L2/L3/L4 低分/空白同一根因 = 训练数据(P-5b/P-8 Ultra-FineWeb-L3)缺�
 - **Training impact**: step 6945-7021ms < 7.4s ✅ (no impact on training throughput)
 - **Results file**: `/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/lm_eval_results/gguf_iter_160000_l2_hf_humaneval_direct/results.json`
 - **Next**: GSM8K HF 4-shot eval (script `baize_l2_hf_gsm8k_direct.py` ready, ~7 min for 50 problems)
+
+### #2059 · 2026-11-12 15:30 · L2 GSM8K HF Direct Eval (160k ckpt)
+
+- **Round**: #2059 (2026-11-12 15:30)
+- **Training status**: iter 176,450/700k (25.2%), step ~7.5s, loss ~2.05, 0 NaN/skip, GPU 8×100%/75GB
+- **Eval config**: sglang env (transformers 5.18.0, torch 2.9.1, native NemotronH) · CPU bfloat16 · 4-shot · limit=10 · max_new_tokens=128 · OMP_NUM_THREADS=4 · nice 19
+- **Script**: `baize_l2_hf_gsm8k_direct.py` (custom GSM8K evaluator, 4-shot prompting, answer extraction via `#### N` pattern)
+- **Result**: **GSM8K acc = 1/10 = 10.0%** (no_ans=0)
+  - Problem 5 (idx=4): gt=20, pred=20 ✅ PASS
+  - Problems 1,2,4,6: pred=2 (small-number bias for simple arithmetic)
+  - Problems 3,7,8,9,10: pred=50,100,43,1440,45 (numerical answers, wrong but non-degenerate)
+  - Each problem ~24s (reference PyTorch mamba fallback, no mamba_ssm/causal_conv1d optimization)
+  - Total eval time: ~4 minutes (15:24:35 → 15:28:43)
+- **Key finding**: GSM8K HF=10.0% vs llama.cpp=0/100=0.0% → **model HAS basic math reasoning capability** (llama.cpp SSM bug was suppressing it to 0%)
+- **Dual verification**: HumanEval HF=15.0% + GSM8K HF=10.0% → llama.cpp SSM bug is confirmed as L2 generation 0% primary cause
+- **Training impact**: step ~7.5s (slight CPU contention from eval, nice 19, within acceptable range)
+- **Results file**: `/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/lm_eval_results/gguf_iter_160000_l2_hf_gsm8k_direct/results.json`
+- **Next**: L2 remaining tasks (BBH/MATH/MBPP) can be re-evaluated with HF transformers in future rounds

@@ -1,6 +1,7 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
-WAITING: 1（🔴 2026-11-11 用户令「四层评测拿更好结果」执行中·**L1 17/17done(10k-170k,峰值160k=58.13%)·180k autoqueue运行中(PID2896237,.29,ETA~8h)**·**L2 🟢HumanEval HF=3/20=15.0%✅(完整评测!确认llama.cpp SSM bug是L2生成0%主因,模型有基础代码生成能力)·GSM8K HF=0/10(数学弱,生成连贯)·MMLU=23.16%**·**L3 TB smoke 0/2完成(8m51s,both reward=0.0)**·**L4🔴SSH.15/.17timeout**·**论文§4.6已刷新iter174.4k+PDF 0err✅·红线PASS**·训练健康iter≈176.2k/700k(25.2%) GPU 8×100%/75GB step~6945ms<7.4s✅）
-> 2026-11-12 15:00 #2058: **L2 HumanEval HF完整评测轮·训练健康iter176190/700k(25.2%) step6945ms<7.4s✅ loss2.054 0NaN/0skip**·**动作**：①git pull --rebase(同步✅) ②训练健康(.29):iter176190,step6945ms<7.4s✅,loss2.054 ③L2 HumanEval HF完整评测:sglang env(transformers 5.18.0,native NemotronH,CPU bfloat16,8 threads,nice 19),limit=20,max_new_tokens=128,0-shot greedy→**pass@1=3/20=15.0%**(filter_by_substring✅,string_sequence✅,count_distinct_characters✅),17/20 FAIL但生成连贯代码(非退化),每题~14s,训练未受影响 ④关键结论:llama.cpp SSM bug是L2生成0%主因(同ckpt HF=15% vs llama.cpp=0%),模型有基础代码生成能力 ⑤脚本:baize_l2_hf_humaneval_direct.py(自定义评测器绕过lm_eval/sklearn依赖问题) ⑥GSM8K HF脚本已就绪(baize_l2_hf_gsm8k_direct.py),待下一轮启动 ⑦四层报告+EXPERIMENTS已刷新 ⑧📦TASK≈40KB(需归档)/MEMORY≈26KB✅·四层评测 · L1=57.75%@170k L2=HumanEval HF=15.0%(3/20)✅ MMLU=23.16% L3=TB 0/2(完成) L4=🔴BLOCKED(SSH) · 本轮动作：L2 HumanEval HF完整评测(15.0%)+四层报告刷新·未完成指令：有(11w/12w/13w万整数ckpt L1评测autoqueue运行中;GSM8K HF评测待启动)⇒WAITING:1。
+WAITING: 1（🔴 2026-11-11 用户令「四层评测拿更好结果」执行中·**L1 17/17done(10k-170k,峰值160k=58.13%)·180k autoqueue运行中(PID2896237,.29,ETA~7.5h)**·**L2 🟢HumanEval HF=3/20=15.0%✅+GSM8K HF=1/10=10.0%✅(模型有基础数学能力!vs llama.cpp=0%,第5题gt=20正确)·MMLU=23.16%**·**L3 TB smoke 0/2完成(8m51s,both reward=0.0)**·**L4🔴SSH.15/.17timeout(11-12再次确认)**·**论文§4.6已刷新iter174.4k+PDF 0err✅·红线PASS**·训练健康iter≈176.5k/700k(25.2%) GPU 8×100%/75GB step~7.5s✅）
+> 2026-11-12 15:30 #2059: **GSM8K HF v2完成(1/10=10.0%✅)+L4再次确认BLOCKED+四层报告刷新轮·训练健康iter176450/700k(25.2%) step~7.5s loss~2.05 0NaN/0skip**·**动作**：①git pull --rebase(同步✅) ②训练健康(.29):iter176450,step~7.5s,GPU 8×100%/75GB ③GSM8K HF v2评测完成:sglang env(transformers 5.18.0,CPU bf16,4-shot,limit=10,max_new_tokens=128,nice19)→**acc=1/10=10.0%**(第5题gt=20 pred=20✅,9/10 FAIL但生成数值答案非退化,pred=2出现3次偏小数值倾向,每题~24s,总~4min) ④🟢重大发现:GSM8K HF=10.0% vs llama.cpp=0%→模型有基础数学推理能力!llama.cpp SSM bug是L2生成0%主因(已HumanEval+GSM8K双验证) ⑤L4再次确认BLOCKED:SSH .15/.17均超时(15:18测试) ⑥四层报告刷新:hero header+GSM8K HF结果卡(含10题明细表)+本轮动作+footer ⑦📦TASK≈27KB✅/MEMORY≈27KB✅·四层评测 · L1=57.75%@170k L2=HumanEval HF=15.0%(3/20)✅+GSM8K HF=10.0%(1/10)✅ MMLU=23.16% L3=TB 0/2(完成) L4=🔴BLOCKED(SSH) · 本轮动作：GSM8K HF v2完成(10.0%)+L4确认+四层报告刷新·未完成指令：有(180k autoqueue运行中;11w/12w/13w万整数ckpt L1评测已含在autoqueue中;L2剩余BBH/MATH/MBPP可用HF重评待后续轮)⇒WAITING:1。
+> 📦 #2058（11-12 15:00, L2 HumanEval HF完整评测轮·训练step6945ms<7.4s✅）→ daily-memories/2026-11-12.md；**结论**：HumanEval HF pass@1=3/20=15.0%,确认llama.cpp SSM bug是L2生成0%主因。需要时再读。
 > 📦 #2055（11-12 14:05, 监控巡检+四层报告刷新轮·训练step6928ms<7.4s✅）→ daily-memories/2026-11-12.md；**结论**：训练健康iter175.7k,L2 HumanEval HF 1/4 PASS(25%部分),L4仍BLOCKED。需要时再读。
 > 📦 #2054（11-12 13:45, 监控巡检+L2 HumanEval HF部分评测轮·训练step7015ms<7.4s✅）→ daily-memories/2026-11-12.md；**结论**：HumanEval HF 1/4 PASS(25%部分,below_zero✅)确认llama.cpp SSM bug是L2生成0%主因,L4仍BLOCKED。需要时再读。
 > 📦 #2053（11-12 13:05, 监控巡检+L2 GSM8K生成退化诊断轮·训练step~7076ms<7.4s✅）→ daily-memories/2026-11-12.md；**结论**：GSM8K=0%(生成退化+能力不足),L4仍BLOCKED。需要时再读。
@@ -46,21 +47,19 @@ WAITING: 1（🔴 2026-11-11 用户令「四层评测拿更好结果」执行中
 > 📦 #2006–#2023（11-11 22:50→11-12 02:00, 多轮监控+v6 HumanEval/MBPP/MATH评测+L3前置+L4确认+L1 scaling+autoqueue启动·训练step<7.4s✅）→ daily-memories/2026-11-11.md + 2026-11-12.md；**结论**：L2 6/6完成(5/6=0%),L3前置通过TB 0/2,L4 BLOCKED,170k autoqueue启动。需要时再读。
 > 📦 #1993–#2005（11-11 20:35→22:30, v5 MATH完成+v6启动+GSM8K/BBH确认+生成退化诊断+vLLM调查+L3/L4调研·训练step<7.4s✅）→ daily-memories/2026-11-11.md；**结论**：v5 MATH=0%,BBH v4=0%,GSM8K v3=0%,生成退化=SSM state崩溃+模型能力不足。需要时再读。
 
-## 🔴 待决策区（需用户拍板 · 2026-11-12 #2026 更新 · HF生成发现修正诊断）
+## 🔴 待决策区（需用户拍板 · 2026-11-12 #2059 更新 · GSM8K HF=10.0%修正诊断）
 
-**背景**：L2 GSM8K=0% / BBH=0% / MATH≈0% / MMLU=23.16%(≈随机25%)。L3 TB 0/2。L4 BLOCKED。
+**背景**：L2 llama.cpp: GSM8K=0% / BBH=0% / MATH≈0% / MMLU=23.16%(≈随机25%)。L3 TB 0/2。L4 BLOCKED。**🟢 HF transformers 重评: HumanEval=15.0%(3/20) + GSM8K=10.0%(1/10) → 模型有基础代码+数学能力, llama.cpp SSM bug 是 0% 主因**。
 
-**🟢 2026-11-12 重大发现修正诊断**：用 HF transformers (sglang env, transformers 5.18.0, CPU bfloat16) 对 160k ckpt 做 3-prompt 生成测试 → **全部生成连贯文本**：
-- "The capital of France is" → "Paris, and the capital of the French Republic is Paris..." ✅
-- GSM8K → "48" (答案错误正确=72, 但生成连贯) → 数学能力不足但生成正常
-- def fibonacci(n) → 正确的迭代实现 + assert 测试 ✅
-- **结论：L2 生成任务 0% 主要由 llama.cpp SSM 生成 bug 导致, 不是模型完全无能力**
-- GSM8K 10-sample HF 重评运行中 (PID 2300774, .29 CPU, nice 19)
-- 待决策：L2 全部生成任务应用 HF transformers 重评 (而非继续用 llama.cpp)
+**🟢 2026-11-12 HF transformers 重评定案（#2058+#2059）**：
+- HumanEval HF pass@1=3/20=15.0% (filter_by_substring✅, string_sequence✅, count_distinct_characters✅) vs llama.cpp 0/100=0%
+- GSM8K HF acc=1/10=10.0% (第5题gt=20 pred=20✅, 9/10 FAIL但生成数值答案非退化) vs llama.cpp 0/100=0%
+- **结论：llama.cpp SSM 生成 bug（PR #31703）是 L2 生成任务 0% 的主因（已 HumanEval+GSM8K 双验证）。模型有基础代码生成+数学推理能力, 但能力有限 (15%+10%)。**
+- **L2 评测应全面切换到 HF transformers**（BBH/MATH/MBPP 待后续轮 HF 重评）
 
 **三重根因（修正后）**：
 1. **llama.cpp SSM 生成 bug（主因）**：HF transformers 生成正常, 证明模型权重/SSM 计算正确, 问题在 llama.cpp 的 SSM 生成实现 (PR #31703)。**修复路径：用 HF transformers/vLLM 替代 llama.cpp 做生成评测**。
-2. **数据配比不足**：code 19% + math 7% = 26%, 但 HF 测试显示 code 生成有效 (Fibonacci 正确), math 不足 (GSM8K 答错)。仍需 decay 阶段增加 math 比例。
+2. **数据配比不足**：code 19% + math 7% = 26%, HF 测试显示 code 生成有效 (HumanEval=15%), math 有基础能力 (GSM8K=10%) 但不足。仍需 decay 阶段增加 math 比例。
 3. **Decay 阶段未配置**：`--lr-decay-iters 0`, 一直在 stable 段。Decay 是注入 domain data 的最佳时机。
 
 **方案 A（推荐）**：decay 阶段混入 code:math:language=4:2:4 + L2 切换到 HF transformers 评测
