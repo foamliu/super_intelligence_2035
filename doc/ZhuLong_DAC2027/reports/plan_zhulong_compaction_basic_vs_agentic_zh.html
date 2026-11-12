@@ -350,6 +350,38 @@ setsid bash -c 'timeout --signal=TERM --kill-after=120 43200 \
 <p class="small">用 cline 自带离线压缩工具（<code>compact-session</code>）对已有 session 分别跑 <code>--strategy basic</code> 与 <code>--strategy agentic</code>，比较<b>摘要 4 要素覆盖率/token 压缩比/关键事实保留</b>。若 agentic 摘要质量并不优于 basic，可直接判定「不值得跑昂贵评测」，先止损。注意：离线压缩只回答 H5（摘要质量），不能回答 Pass@1。</p>
 
 
+<h2>12. v3 补丁：P0d 实测推翻了「32K 强制压缩」的前提</h2>
+
+<div class="banner err">
+<b>P0d smoke 实测（2026-11-12 22:2x，cline 3.0.51，2 题）</b>：<code>models.json</code> 里 <code>contextWindow=32000</code> <b>被忽略</b>。<br>
+实测触发点：<b>basic ≈ 229.9k tokens</b>、<b>agentic ≈ 120.2k tokens</b> —— 阈值是<b>策略相关</b>的（agentic 会主动提前压缩），不是配置驱动。<br>
+⇒ <b>§11 的 tight-context regime 在 3.0.51 上不可实现</b>；若强行按原计划跑，两臂会变成「压缩过 vs 没压缩过」的对比（混杂触发时机）。
+</div>
+
+<h3>12.1 决策树（P0e → P1）</h3>
+<table>
+<thead><tr><th style="width:26%">检查</th><th style="width:16%">结果</th><th style="width:58%">动作</th></tr></thead>
+<tbody>
+<tr><td class="l">4.x 隔离安装 + 1 题 <code>maxInputTokens=32000</code></td><td class="l">触发点 ≈28.8k 且两臂一致</td><td class="l">走 <b>强制 regime</b>（两臂 4.x），按 §11 原计划（40 题 × 6 轮，~5.6h）；报告标注「4.x + tight-context」</td></tr>
+<tr><td class="l">同上</td><td class="l">仍忽略 / 仍策略相关</td><td class="l">不硬改源码；走 <b>Fallback（12.2）</b></td></tr>
+<tr><td class="l">4.x 与 3.0.51 行为差异过大</td><td class="l">无法对齐历史基线</td><td class="l">两臂同版本即可（内部比较有效），但报告必须写明版本断代，不与历史 158 基线横比</td></tr>
+</tbody></table>
+
+<h3>12.2 Fallback 设计（as-deployed，主结论=部署效果）</h3>
+<table>
+<thead><tr><th style="width:20%">项</th><th style="width:80%">取值</th></tr></thead>
+<tbody>
+<tr><td class="l">任务集</td><td class="l"><b>Top-15~20 超长任务</b>（按历史 trace 总 token 排序，确保 basic 也能过 230k）</td></tr>
+<tr><td class="l">臂/轮次</td><td class="l">basic vs agentic，各 3 轮 ABBA（约 2–3h）</td></tr>
+<tr><td class="l"><b>主终点</b></td><td class="l"><b>arm 级 ITT Pass@1</b> —— 回答「按默认策略部署，哪个更好」</td></tr>
+<tr><td class="l">机制终点</td><td class="l">① 两臂都触发压缩的子集（n 报出）；② 触发 token 中位数作为中介（agentic 120k vs basic 230k）；③ P0.5 离线摘要质量（唯一解耦时机差的证据）</td></tr>
+<tr><td class="l">必写免责</td><td class="l">两臂触发时机不同是策略自带属性 ⇒ 主结论是「部署效果」，<b>不是</b>「同一触发点下的摘要质量」；后者只由 P0.5 回答</td></tr>
+</tbody></table>
+
+<h3>12.3 P0.5 离线摘要质量（强烈建议，先于任何 P2）</h3>
+<p class="small">对同一批 session 前缀跑 <code>--strategy basic</code> / <code>agentic</code>，指标：4 要素覆盖率（Goal/State/Decisions/Next）、10 条关键事实保留率、token 压缩比、事实错误率。成本 ~1–2h、零评测轮；若 agentic 摘要并不优于 basic，可直接止损，不必跑昂贵 A/B。</p>
+
+
 <h2>附录 A · harness 透传补丁（3 行）</h2>
 <p class="small">先在 <code>EDA-Eval-Framework/scripts/run_cline_script.sh</code> 里定位 cline 调用行（含 <code>--thinking</code>），按以下模式加透传；无 flag 环境下必须保持原行为。</p>
 <pre># before
@@ -379,7 +411,7 @@ cline ... --thinking "$CLINE_THINKING" $COMPACT_FLAG ...</pre>
 <table>
 <thead><tr><th style="width:18%">日期</th><th style="width:16%">版本</th><th style="width:66%">变更</th></tr></thead>
 <tbody>
-<tr><td>2026-11-12</td><td>v1</td><td class="l">初版：基于 cline <code>--compaction</code> 语义、既有 6,162-session 压缩 trace 分析（12.1% 触发率、13.98% 压缩比、压缩会话 TIMEOUT 11.1% vs 0.04%）制定预注册方案</td></tr><tr><td>2026-11-12</td><td><b>v2</b></td><td class="l">用户质询触发效率修订：v1 自然 128K / 158 题 / 6 轮预期 ITT 效应仅 ≈+1.2pp（&lt;3pp 判据）→ 改为<b>强制压缩 regime</b>（<code>maxInputTokens</code> 32K，pilot 校准）+ <b>40 题长轨迹子集</b> + 2 臂 × 3 轮；成本 26h→8.7h，暴露对 57→84；新增 P0.5 离线摘要质量前置与可选自然 regime 验证臂；结论明确限定为 tight-context regime</td></tr>
+<tr><td>2026-11-12</td><td>v1</td><td class="l">初版：基于 cline <code>--compaction</code> 语义、既有 6,162-session 压缩 trace 分析（12.1% 触发率、13.98% 压缩比、压缩会话 TIMEOUT 11.1% vs 0.04%）制定预注册方案</td></tr><tr><td>2026-11-12</td><td><b>v2</b></td><td class="l">用户质询触发效率修订：v1 自然 128K / 158 题 / 6 轮预期 ITT 效应仅 ≈+1.2pp（&lt;3pp 判据）→ 改为<b>强制压缩 regime</b>（<code>maxInputTokens</code> 32K，pilot 校准）+ <b>40 题长轨迹子集</b> + 2 臂 × 3 轮；成本 26h→8.7h，暴露对 57→84；新增 P0.5 离线摘要质量前置与可选自然 regime 验证臂；结论明确限定为 tight-context regime</td></tr><tr><td>2026-11-12</td><td><b>v3</b></td><td class="l">P0d smoke 实测（cline 3.0.51）：<code>models.json</code> 的 32K 被忽略；basic 触发 ≈229.9k、agentic ≈120.2k（策略相关）。新增 §12：P0e（4.x 探测）→ 强制 regime 或 Fallback（Top-15~20 超长任务、主终点=arm ITT、机制靠双触发子集+触发 token 中介）；新增 P0.5 离线摘要质量实验解耦“时机”与“摘要质量”</td></tr>
 </tbody></table>
 
 <p class="small" style="margin-top:24px">生成：2026-11-12 · 单文件自包含（内联 CSS，零外链）· 结果区待 P3 填写。</p>

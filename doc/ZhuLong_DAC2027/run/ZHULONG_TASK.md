@@ -27,6 +27,19 @@
 
 ```bash
 # (1) 版本与 flag（无输出 ⇒ 升级 4.x，记录版本）
+14) **P0e（新增，P0d 发现后的必做门禁，~0.3h）**：P0d smoke 实测 cline **3.0.51 忽略 `models.json` 的 `contextWindow/maxInputTokens`**——basic 在 ~229.9k 触发、agentic 在 ~120.2k 触发（策略相关、非配置驱动）。因此：
+   a. 用**隔离安装**的 cline 4.x（不要覆盖 3.0.51）跑 1 题 `maxInputTokens=32000` smoke，看是否在 ≈28.8k 触发且两臂一致；
+   b. **若 4.x 生效** → P1/P2 切到 4.x 的强制 32K regime（两臂同版本），并在报告标注「4.x + tight-context」；
+   c. **若 4.x 同样忽略** → 放弃“强制 32K”，转 item 16 的 fallback 设计（不得硬改源码）。
+15) **P0.5（新增，~1–2h，强烈建议先做）**：用 cline 自带离线压缩工具对**同一批 session 前缀**分别跑 `--strategy basic` 与 `--strategy agentic`，比较：4 要素覆盖率（Goal/State/Decisions/Next）、关键事实保留（人工清单 10 条）、token 压缩比、事实错误率。**这是唯一能把“摘要质量”与“触发时机”解耦的低成本证据**；若 agentic 摘要并不更好，可据此提前止损。
+16) **Fallback 设计（若 32K 不可实现，替代 §11 的 regime）**：
+   - 任务集改为 **Top-15~20 超长任务**（按历史 trace 总 token 排序，保证 basic 也能过 230k）；
+   - 主终点 = **arm 级 ITT Pass@1**（即“按默认策略部署”的效果：agentic 更早压缩+语义摘要 vs basic 更晚压缩+逐字保留）；
+   - 次要 = **两臂都触发压缩**的子集（机制对照，报告 n）+ **触发 token 作为中介变量**（agentic 120k vs basic 230k 的时机差）；
+   - 报告必须写明：两臂的**触发时机不同**是策略自带属性（agentic 主动提前压缩），因此主结论是「部署效果」，不是「同一触发点下的摘要质量」；后者由 P0.5 离线实验回答。
+17) **报告口径补充（v3）**：必须记录 cline 版本（3.0.51 / 4.x）、每臂触发阈值实测、每臂触发率、触发 token 中位数；结论必须区分「部署效果（ITT）」与「机制（P0.5 + 双触发子集）」两句话，不得混写。
+
+
 cline --version | tee /tmp/COMP_p0_version.log
 cline --help | grep -n -- '--compaction' | tee -a /tmp/COMP_p0_version.log
 
