@@ -141,7 +141,7 @@
 1792829965577_rser7	jkxu		98	verification	parked		2026-11-06 09:11	surveyed r148: kw-mention only, analog/netlist session, unfit shard-A L2
 1792568990736_5c450	han1li		56	verification	parked		2026-11-06 09:11	surveyed r148: kw-mention only, analog/netlist session, unfit shard-A L2
 1791973347667_tx5s5	e04201		46	verification	parked		2026-11-06 09:11	surveyed r148: kw-mention only, analog/netlist session, unfit shard-A L2
-1788772817371_ppl5a	harrys		30	digital	parked		2026-11-06 09:11	surveyed r148: kw-mention only, analog/netlist session, unfit shard-A L2
+1788772817371_ppl5a	harrys		30	digital	case	EDA-Eval-DesignFlow-McuAsmGen-001	2026-11-12 10:18	r418 reopened from parked(r148 shallow misjudge): deep-read confirms clean digital/RTL asm_assembler.py produce-task; B档 McuAsmGen-001 k=15 self-verified
 1793794350956_fi203	chengleiy	hfeg0pkn005	274	pnr_signoff	case	EDA-Eval-DesignFlow-InnovusLogAudit-001	2026-11-06 11:12	
 1793760774987_u7mv3	alan3zh	hfeg0pkn001	324	digital	case	EDA-Eval-DesignFlow-DCDirSwitch-001	2026-11-06 11:49	
 1793191074113_6vcuk.messages.json	hbpeng	hfeg0pkn005	124	eda_other	case	EDA-Eval-DesignFlow-RunsetVerFind-001	2026-11-06 13:07	
