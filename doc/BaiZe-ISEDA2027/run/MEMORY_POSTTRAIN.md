@@ -7,14 +7,14 @@ WAITING: 0
 
 ## 进度快照
 
-- PHASE: posttrain-wake311（2026-11-12 R311 full static eval launched[113 non-techlib tasks,base vs SFT,no_sandbox]+GPU4 base serve restarted+preliminary 20-task results[SFT +20pp syntax,+20pp finish=stop,3.7x concise]）
-- 已完成: P3预备✅；P0✅；P1✅；P2✅；R1-R210✅；R280归档；wake281-310✅；R311✅（full static eval launched+GPU4 restart+20-task preliminary results）
-- 当前动作: wake311 ①GPU4 base serve(:8098)died→restarted with setsid[65536+enforce-eager+minicpm5 parser] ②launched baize_posttrain_static_eval_full.py[113 non-techlib tasks,base:8098 vs SFT:8096,temp=0.0,max_tokens=2048,PID 554362 setsid bg] ③preliminary 20-task results:SFT syntax 90%vs70%,finish=stop 85%vs65%,code 3.7x concise,has_function 100%vs90% ④EXPERIMENTS §R311 written
+- PHASE: posttrain-wake311（2026-11-12 R311 full static eval 50/113 done[base vs SFT,no_sandbox]+GPU4 base serve restarted+50-task intermediate results[SFT +26pp syntax,+28pp finish=stop,5x concise,4.3x faster]）
+- 已完成: P3预备✅；P0✅；P1✅；P2✅；R1-R210✅；R280归档；wake281-310✅；R311✅（full static eval running 50/113+GPU4 restart+50-task intermediate results+git committed 64ce4950c）
+- 当前动作: wake311 ①GPU4 base serve(:8098)died→restarted with setsid[65536+enforce-eager+minicpm5 parser] ②launched baize_posttrain_static_eval_full.py[113 non-techlib tasks,base:8098 vs SFT:8096,temp=0.0,max_tokens=2048,PID 554362 setsid bg] ③50/113 tasks done: SFT syntax 96%vs70%(+26pp),finish=stop 94%vs66%(+28pp),code 5x concise(1281vs6413),4.3x faster(5.5vs23.7s),has_function 100%vs92% ④EXPERIMENTS §R311 updated ⑤git committed+pushed 64ce4950c
 - 下一步: ①full 113-task eval完成后读取static_eval_r311_results.json全量分析 ②沙盒恢复后跑baize_posttrain_baseline_eval.sh获取真实Pass@1 5-run ③Phase1里程碑报告reports/report_posttrain_baseline_3model_zh.html ④Phase3 RL待沙盒+GPU ⑤P3正式训练待pretrain ckpt(ETA≈2026-12-25)
 - 阻塞: 🔴沙盒10.129.32.75全端口FILTERED(static eval不需沙盒→可跑生成;但Pass@1需沙盒);P3等pretrain ckpt
-- 本轮新增产出: R311✅(GPU4 base serve restart+full static eval launched[113 tasks,PID 554362 bg]+preliminary 20-task results[SFT +20pp syntax/+20pp finish=stop/3.7x concise/100% has_function]+EXPERIMENTS §R311)
-- 未完成指令: 🔴17:10 GPU5/6/7全✅+GPU4 restarted✅;🔴13:40 Phase2 SFT COMPLETE✅+R300-R311✅/Phase1 static eval running(20/113 done,full in bg)/Phase3 RL脚本+奖励就绪✅待沙盒+GPU
-- git: wake311 R311待提交
+- 本轮新增产出: R311✅(GPU4 base serve restart+full static eval running 50/113 done[PID 554362 bg]+50-task intermediate results[SFT +26pp syntax/+28pp finish=stop/5x concise/4.3x faster/100% has_function]+EXPERIMENTS §R311 updated+git commit 64ce4950c)
+- 未完成指令: 🔴17:10 GPU5/6/7全✅+GPU4 restarted✅;🔴13:40 Phase2 SFT COMPLETE✅+R300-R311✅/Phase1 static eval running(50/113 done,full in bg)/Phase3 RL脚本+奖励就绪✅待沙盒+GPU
+- git: wake311 R311 committed+pushed 64ce4950c
 
 
 

@@ -5625,9 +5625,11 @@ CUDA_VISIBLE_DEVICES=4 HF_HOME=/tmp/hf_home setsid /tmp/vllm_venv/bin/python -m 
 5. Code length = 字符数
 
 **执行**：11:24 启动（PID 554362，setsid 后台），每 10 任务 checkpoint。
-**状态**：截至本节写入，20/113 任务完成（checkpoint(20)），full eval 仍在运行。
+**状态**：截至本节更新，50/113 任务完成（checkpoint(50)），full eval 仍在运行。
 
-### 4. 初步结果（20 tasks，preliminary）
+### 4. 初步结果（20 tasks，preliminary → 50 tasks intermediate 更新）
+
+#### 4a. 20-task preliminary（写入时）
 
 | Metric | Base (minicpm5-2b) | SFT (global_step_70) | Delta |
 |:--|:--|:--|:--|
@@ -5638,6 +5640,20 @@ CUDA_VISIBLE_DEVICES=4 HF_HOME=/tmp/hf_home setsid /tmp/vllm_venv/bin/python -m 
 | API coverage (mean) | 0.088 | 0.101 | +0.013 |
 | Code length (mean chars) | 6264 | 1712 | **3.7x 更简洁** |
 | API errors | 0/20 | 0/20 | — |
+
+#### 4b. 50-task intermediate（wake311 同轮更新，eval 仍在跑）
+
+| Metric | Base (n=50) | SFT (n=50) | Delta |
+|:--|:--|:--|:--|
+| Syntax valid | 35/50 (70.0%) | 48/50 (96.0%) | **+26.0pp** ↑ |
+| finish=stop | 33/50 (66.0%) | 47/50 (94.0%) | **+28.0pp** ↑ |
+| has_function | 46/50 (92.0%) | 50/50 (100.0%) | **+8.0pp** |
+| API coverage (mean) | 0.134 | 0.151 | +0.017 |
+| Code length (mean chars) | 6413 | 1281 | **5.0x 更简洁** ↑ |
+| Time per task (mean sec) | 23.7 | 5.5 | **4.3x 更快** |
+
+> 50-task 数字与 20-task 高度一致且趋势更强：syntax gap 扩大到 +26pp，
+> code conciseness 从 3.7x 扩大到 5.0x，SFT 同时快 4.3x（23.7s→5.5s/task）。
 
 ### 5. 关键发现
 
