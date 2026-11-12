@@ -1448,3 +1448,12 @@
 - **教训 #127（工具/流程层 · 2026-11-12 R73 实证）**：新开 `chat/index?rNx=1` 后的**前 ~8s 可能读到 bfcache / 旧 DOM**（返回 `hasList:true / items:40 / bticket:false`），20s 后同一标签 URL 已变 `web/user/?ka=bticket` ⇒ **登录复验必须 ≥30s 二次读数**（URL 仍为 `chat/index` 且 `.geek-item-wrap` 真实存在），单次早读会误判「登录有效」。另：**复验只开 1 个新标签**、用完即 `prune`，多开 chat 标签可能加速票据失效。
 - **2026-11-12 R73 登录状态**：🔴 **失效**（三条判据全不过）⇒ 全线停手、STATE 升 RED、报 blocker；本窗 0 邮件（在手 PDF 未发 = 0，SMTP 亦无可发）；恢复需用户重登（VNC `127.0.0.1:5901` / `~/hr_login.sh`）。
 
+
+## §五十六 · 2026-11-12 18:00 实习窗口（第 74 轮）：🔴 **Boss 登录失效连续第 2 窗 ⇒ 本窗 0 封 · 当日 全职 0/2 · 实习 0/2（缺 2+2）** · 维持 RED 报 blocker
+
+- **登录复验（按 #127 等 ≥30s 二次读数）**：`chat/index?r74a=1` 与另开 `?r74b=1`（等 ≥45s）**均落 `web/user/?ka=bticket`**（标题「【BOSS直聘注册登录】」、`.geek-item-wrap`=0）；`https://www.zhipin.com/` **302 到 `/shanghai/?seoRefer=index`** 且正文含「登录/注册」⇒ 三条判据全不过。
+- **处置**：维持 RED、全线停手（🚫 未重登 / 未重启 Chrome / 未新建 context / 未清 cookie）；0 邮件 / 0 文本 / 0 授权卡；⛔ 0 约面 · 0 拒绝 · 无 `code=36`。
+- **SMTP 兜底复核对账（更严）**：`~/hr_resumes/2026-11-03~11-11` 共 **41 份 PDF** 逐份比对 `MAIL-R*` ⇒ **未发 = 0**；`2026-11-12/` 目录不存在 ⇒ 无可发。
+- **教训 #128（工具层 · 复验读数陷阱）**：当全部 zhipin 标签都已落 `bticket` 时，`node ~/hr_login_probe.js 'chat/index…'` 打印 **`no target`** —— 不是「登录有效」，而是**没有任何标签 URL 含 `chat/index`**（脚本按 URL 片段找目标）。⇒ 登录复验判据以 `python3 ~/hr_tabs.py list zhipin.com` 的**标题 + URL** 为准。
+- **离线产出**：`recruit/drafts/R56-登录恢复待发队列.md` 增 **§三 门槛版执行口径**（两条硬门槛 + 恢复窗三问模板 + 三态判定 + 队列 13 组逐人门槛状态），防止恢复窗用 2026-11-02 旧口径误发。
+- **恢复条件**：用户重登（VNC `127.0.0.1:5901` / `~/hr_login.sh`）⇒ 下一窗三点复验（≥30s 后仍 `chat/index`）⇒ 按 R56 §三 执行并补齐当日 全职 ≥2 + 实习 ≥2。
