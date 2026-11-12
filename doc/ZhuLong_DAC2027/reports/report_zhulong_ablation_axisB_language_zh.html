@@ -117,8 +117,8 @@ code{background:#eef2f7;padding:1px 5px;border-radius:3px;font-size:.85rem}
 <div style="margin-bottom:6px"><span class="legend-item"><span class="swatch" style="background:#2c7be5"></span>英语 en</span><span class="legend-item"><span class="swatch" style="background:#e83e8c"></span>中文 zh</span><span class="legend-item"><span class="swatch" style="background:#f0ad4e"></span>西班牙语 es</span><span class="legend-item"><span class="swatch" style="background:#e85a4f"></span>法语 fr</span><span class="legend-item"><span class="swatch" style="background:#27ab83"></span>俄语 ru</span></div>
 <div style="border-top:1px dashed #e3e8ef;padding-top:8px">
 <div class="bar-row b-zh"><div class="lbl">中文 zh</div><div class="bar"><div class="fill" style="width:97.5%">81.2%</div></div><div class="num">81.2 ± 3.2</div></div>
+<div class="bar-row b-en"><div class="lbl">英语 en</div><div class="bar"><div class="fill" style="width:97.4%">81.0%</div></div><div class="num">81.0 ± 2.9</div></div>
 <div class="bar-row b-es"><div class="lbl">西班牙 es</div><div class="bar"><div class="fill" style="width:97.0%">80.8%</div></div><div class="num">80.8 ± 0.3</div></div>
-<div class="bar-row b-en"><div class="lbl">英语 en</div><div class="bar"><div class="fill" style="width:96.2%">80.0%</div></div><div class="num">80.0 ± 4.5</div></div>
 <div class="bar-row b-ru"><div class="lbl">俄语 ru</div><div class="bar"><div class="fill" style="width:95.4%">79.3%</div></div><div class="num">79.3 ± 2.5</div></div>
 <div class="bar-row b-fr"><div class="lbl">法语 fr</div><div class="bar"><div class="fill" style="width:91.8%">76.2%</div></div><div class="num">76.2 ± 2.6</div></div>
 <div style="border-top:1px dashed #ccc;margin-top:8px;padding-top:6px;color:#999;font-size:.78rem">基线 B.glm-5.2 (cline 5-run, omitted-thinking) = 83.3 ± 3.1%（虚线右侧）</div>
@@ -205,7 +205,7 @@ code{background:#eef2f7;padding:1px 5px;border-radius:3px;font-size:.85rem}
 <table>
 <thead><tr><th>语言</th><th class="num">gen-fail/轮（均值）</th><th class="num">converged/轮（均值）</th><th>主要失败模式</th></tr></thead>
 <tbody>
-<tr><td>en</td><td class="num">7.7</td><td class="num">94.7%</td><td>r1 早停异常（23 fail + converged 85.4%）· r2/r3 健康（0 fail + converged 99.4%）</td></tr>
+<tr><td>en</td><td class="num">5.0</td><td class="num">95.8%</td><td>r1 重跑 15 fail（converged 88.6%，dsv4-pro 基座）· r2/r3 健康（0 fail + converged 99.4%）· 旧 r1 早停异常（23 fail + 85.4%）已标 SUPERSEDED</td></tr>
 <tr><td>zh</td><td class="num best">3.3</td><td class="num best">97.5%</td><td>r1/r2 全收敛（0 fail）· r3 重跑 10 fail（93.7% converged）</td></tr>
 <tr><td>es</td><td class="num">11.3</td><td class="num">92.6%</td><td>3 轮均 9-14 fail · 稳定的中等失败率 · 0 timeout</td></tr>
 <tr><td><b>fr</b></td><td class="num worst">21.3</td><td class="num worst">85.2%</td><td>r1 29 fail（converged 80.4%）· 部分切换混乱致模型「卡住」</td></tr>
@@ -228,7 +228,7 @@ code{background:#eef2f7;padding:1px 5px;border-radius:3px;font-size:.85rem}
 </tbody>
 </table>
 <div class="note">
-timeout 与 batch 墙钟强相关：en/zh 单题 689-708s（长 reasoning），es/ru 单题 498-520s（短 reasoning 或漂回英语后快速结束）。<b>en 的 timeout 高但 converged 也高</b>（99.4%）—— 是「思考太久」而非「生成失败」。
+timeout 与 batch 墙钟强相关：en/zh 单题 708-841s（长 reasoning），es/ru 单题 498-520s（短 reasoning 或漂回英语后快速结束）。<b>en 的 timeout 高（7.0/轮）但 converged 也高</b>（r2/r3 99.4%，r1 重跑 88.6% → 均值 95.8%）—— 是「思考太久」而非「生成失败」。
 </div>
 
 <h2>六、与基线对比</h2>
@@ -236,73 +236,74 @@ timeout 与 batch 墙钟强相关：en/zh 单题 689-708s（长 reasoning），e
 <thead><tr><th>配置</th><th class="num">N</th><th class="num">Pass@1</th><th class="num">Δpp vs 基线</th><th>基座</th><th>thinking</th><th>lang_hint</th></tr></thead>
 <tbody>
 <tr style="background:#f0f4f8;font-weight:600"><td>B.glm-5.2（基线）</td><td class="num">5</td><td class="num">83.3 ± 3.1</td><td class="num">—</td><td>glm-5.2</td><td>omitted</td><td>—</td></tr>
-<tr><td>B-en</td><td class="num">3</td><td class="num">80.0 ± 4.5</td><td class="num">−3.3</td><td>en_r1=glm-5.2 / r2,r3=dsv4-pro ⚠️</td><td>medium</td><td>en</td></tr>
-<tr><td>B-zh</td><td class="num">3</td><td class="num">81.2 ± 3.2</td><td class="num">−2.1</td><td>dsv4-pro ⚠️</td><td>medium</td><td>zh</td></tr>
-<tr><td>B-es</td><td class="num">3</td><td class="num">80.8 ± 0.3</td><td class="num">−2.5</td><td>dsv4-pro ⚠️</td><td>medium</td><td>es（未生效）</td></tr>
-<tr><td>B-fr</td><td class="num">3</td><td class="num">76.2 ± 2.6</td><td class="num">−7.1</td><td>dsv4-pro ⚠️</td><td>medium</td><td>fr（部分生效）</td></tr>
-<tr><td>B-ru</td><td class="num">3</td><td class="num">79.3 ± 2.5</td><td class="num">−4.0</td><td>dsv4-pro ⚠️</td><td>medium</td><td>ru（部分漂移）</td></tr>
+<tr><td>B-en</td><td class="num">3</td><td class="num">81.0 ± 2.9</td><td class="num">−2.3</td><td>dsv4-pro ✅（r1 已重跑对齐）</td><td>medium</td><td>en</td></tr>
+<tr><td>B-zh</td><td class="num">3</td><td class="num">81.2 ± 3.2</td><td class="num">−2.1</td><td>dsv4-pro ✅</td><td>medium</td><td>zh</td></tr>
+<tr><td>B-es</td><td class="num">3</td><td class="num">80.8 ± 0.3</td><td class="num">−2.5</td><td>dsv4-pro ✅</td><td>medium</td><td>es（未生效）</td></tr>
+<tr><td>B-fr</td><td class="num">3</td><td class="num">76.2 ± 2.6</td><td class="num">−7.1</td><td>dsv4-pro ✅</td><td>medium</td><td>fr（部分生效）</td></tr>
+<tr><td>B-ru</td><td class="num">3</td><td class="num">79.3 ± 2.5</td><td class="num">−4.0</td><td>dsv4-pro ✅</td><td>medium</td><td>ru（部分漂移）</td></tr>
 </tbody>
 </table>
 <div class="note">
-<b>5 语言全部低于基线 83.3%</b>（Δ −2.1 ~ −7.1pp）。<b>但 Δpp 不可归因为「语言效应」</b>：
+<b>5 语言全部低于基线 83.3%</b>（Δ −2.1 ~ −7.1pp）。<b>5 语言同基座（dsv4-pro）可横比</b>（B_en_r1 已于 11-12 重跑对齐）；但 <b>Δpp 不可单归因为「语言效应」</b>：
 <ol style="margin:6px 0 0 1.2em">
-<li><b>基座违规</b>：14/15 轮用 deepseek-v4-pro-cloud（非 glm-5.2），基座本身可能就有 Δpp 差异</li>
+<li><b>基座不同</b>：B 轴 15/15 轮 = deepseek-v4-pro-cloud，基线 = glm-5.2 —— 基座本身可能就有 Δpp 差异</li>
 <li><b>thinking=medium vs omitted</b>：基线是 omitted-thinking（无 reasoning），B 轴全部 medium（有 reasoning）—— 这是另一个混杂变量</li>
 <li><b>语言切换未全生效</b>：es 实质=英语思维链，zh 实质=基础 prompt 中文，fr 部分生效</li>
 </ol>
-故 Δpp 应理解为「dsv4-pro + medium + 语言注入（部分生效）vs glm-5.2 + omitted」的<b>多变量混合效应</b>，非单变量语言效应。
+故 Δpp 应理解为「dsv4-pro + medium + 语言注入（部分生效）vs glm-5.2 + omitted」的<b>多变量混合效应</b>，非单变量语言效应。<b>同基座条件已满足</b>，仅需基础 prompt 中性化 + 语言切换验证即可做语言间因果对比。
 </div>
 
 <h2>七、结论与建议</h2>
 
-<div class="banner danger">
-<b>⚠️ 降级结论</b>：轴 B 数据<b>仅能报告「在当前（违规）配置下各语言轮的绝对 Pass@1」</b>，<b>不能做语言间 Δpp 横比或因果归因</b>。
+<div class="banner good">
+<b>✅ 轴 B 基座已对齐（同基座横比成立）</b>：轴 B 15/15 轮 = deepseek-v4-pro-cloud ✅（B_en_r1 已于 11-12 重跑对齐，旧 75.3% glm-5.2 版标 SUPERSEDED 留档）。<b>5 语言间可同基座横比</b>；但与基线 B.glm-5.2（omitted-thinking）基座+thinking 模式均不同，<b>与基线的 Δpp 不可单归因为语言效应</b>。各语言注入实测生效程度不同（en 真切换 / zh confound / es 未生效 / fr 部分生效 / ru 部分漂移），基础 prompt 中性化 + 语言切换验证仍需做。
 </div>
 
 <h3>7.1 可陈述的事实</h3>
 <ul>
-<li>5 语言 Pass@1 落在 <b>76.2~81.2%</b> 区间（en 80.0 / zh 81.2 / es 80.8 / fr 76.2 / ru 79.3）</li>
-<li>5 语言均低于基线 83.3%（Δ −2.1 ~ −7.1pp），但受基座违规 + thinking 模式 + 语言切换未全生效三重污染</li>
-<li>es 最稳定（std=0.3%），en 最不稳定（std=4.5%，r1 早停异常）</li>
+<li>5 语言 Pass@1 落在 <b>76.2~81.2%</b> 区间（en 81.0 / zh 81.2 / es 80.8 / fr 76.2 / ru 79.3）</li>
+<li>5 语言均低于基线 83.3%（Δ −2.1 ~ −7.1pp），但与基线基座+thinking 模式均不同，Δpp 不可单归因为语言效应</li>
+<li><b>5 语言同基座（dsv4-pro）可横比</b>：zh 81.2 ≈ en 81.0 ≈ es 80.8 > ru 79.3 > fr 76.2</li>
+<li>es 最稳定（std=0.3%），en 重跑对齐后 std 由 4.5→2.9（r1 早停异常已消除）</li>
 <li>fr converged 最低（85.2%）、gen-fail 最高（21.3/轮），与「部分切换混乱」吻合</li>
 <li>zh token 消耗最高（131.8 万/题），fr 最低（96.9 万/题）</li>
 <li>语言切换 audit：en 17/17 真切换 · zh 14/18 真切换（confound）· es 3/21 未生效 · fr 6/18 部分生效</li>
 </ul>
 
-<h3>7.2 不可陈述的（已降级）</h3>
+<h3>7.2 不可陈述的（仍需降级）</h3>
 <ul>
-<li>❌ 「中文思维链比法语高 5pp」—— 基座不恒定，不可归因</li>
+<li>❌ 「中文思维链比法语高 5pp」—— 与基线基座+thinking 不同，5 语言间可横比但与基线 Δpp 不可单归因</li>
 <li>❌ 「西班牙语思维链 Pass@1 = 80.8%」—— es 未生效，实质=英语思维链 + 无效西语提示</li>
 <li>❌ 「法语思维链导致 gen-fail 升高」—— fr 部分生效，是「部分切换混乱」而非「法语本身」</li>
-<li>❌ 「思维链语言对 EDA 任务有显著影响」—— 当前数据不支持此结论</li>
+<li>❌ 「思维链语言对 EDA 任务有显著影响（vs 基线）」—— 与基线基座+thinking 双重不同，当前数据不支持此结论</li>
 </ul>
 
 <h3>7.3 修正建议（如需评估思维链语言真实效应）</h3>
 <ol>
-<li><b>同基座</b>：全部用 glm-5.2（或全部用 dsv4-pro），不可混用</li>
+<li><b>✅ 同基座条件已满足</b>：15/15 轮 = deepseek-v4-pro-cloud（B_en_r1 已于 11-12 重跑对齐）</li>
 <li><b>基础 prompt 中性化</b>：移除「思考用中文」等强制指令，让 LANG_HINT 成为唯一语言控制变量</li>
 <li><b>验证切换生效</b>：每轮跑完抽 5-10 题做 lang-switch audit，未生效的轮作废重跑</li>
 <li><b>同 thinking 档</b>：与基线对齐 thinking 模式（要么全 omitted，要么全 medium），不可混</li>
-<li><b>增加轮次</b>：N=3 std 偏大（en 4.5），N≥5 才能做 McNemar 配对检验</li>
+<li><b>增加轮次</b>：N=3 std 偏大（en 2.9），N≥5 才能做 McNemar 配对检验</li>
 </ol>
 
 <div class="banner good">
-<b>生产配置建议</b>：当前数据<b>不支持改生产语言配置</b>。如需评估思维链语言效应，须先在同基座（glm-5.2 恒定）+ 基础 prompt 中性化前提下重跑，audit 报告 §5.3 已给出最低改写建议。在修正前，<b>保持现有（基础 prompt 中文 + thinking=medium）配置</b>即可。
+<b>生产配置建议</b>：<b>5 语言同基座横比已成立</b>（11-12 重跑 B_en_r1 对齐后），但与基线 glm-5.2 的 Δpp 仍不可单归因为语言效应（基座+thinking 模式均不同）。如需评估思维链语言真实效应，须先在基础 prompt 中性化前提下重跑（同基座条件已满足），audit 报告 §5.3 已给出最低改写建议。在修正前，<b>保持现有（基础 prompt 中文 + thinking=medium）配置</b>即可。
 </div>
 
 <h2>附：生成信息</h2>
 <table style="font-size:.78rem">
-<tr><th>数据源</th><td><code>run/ablation_think_lang_results.json</code>（31 entries，B_zh_r3 含 SUPERSEDED 旧版 + 重跑新版）</td></tr>
-<tr><th>报告生成器</th><td><code>run/gen_report_zhulong_ablation_think_lang_zh.py</code></td></tr>
+<tr><th>数据源</th><td><code>run/ablation_think_lang_results.json</code>（32 entries，B_en_r1 含 SUPERSEDED 旧版 glm-5.2 + 重跑新版 dsv4-pro；B_zh_r3 含 SUPERSEDED 旧版 + 重跑新版）</td></tr>
+<tr><th>报告生成器</th><td><code>run/gen_report_zhulong_ablation_think_lang_zh.py</code>（主报告自动生成）· 本轴 B 报告手动维护</td></tr>
 <tr><th>audit 报告</th><td><code>reports/report_zhulong_lang_switch_audit_zh.html</code></td></tr>
 <tr><th>基线</th><td>B.glm-5.2 (cline CLI 5-run, omitted-thinking) = 83.3 ± 3.1% [84.2, 87.3, 84.2, 79.1, 81.6]</td></tr>
 <tr><th>评测框架</th><td>EDA-Eval-PyAether 158 题 · cline 3.0.51 · -p 8 -n · maxTokens=16384</td></tr>
-<tr><th>本线状态</th><td>done_all · WAITING=1 · 等下一条指令（wake#867, 2026-11-12 14:58）</td></tr>
+<tr><th>本线状态</th><td>B_en_r1 重跑落盘 + 报告刷新完成 · done_all · WAITING=1 · 等下一条指令（wake#876, 2026-11-12 21:0x）</td></tr>
 </table>
 
 <footer>
-<p>ZhuLong 轴 B · 思维链语言消融报告 · 2026-11-12 · 数据截至 wake#867 done_all</p>
-<p>⚠️ 本报告受基座违规 + 语言切换未全生效双重污染，已降级为描述性，不作因果归因</p>
+<p>ZhuLong 轴 B · 思维链语言消融报告 · 2026-11-12 · 数据截至 wake#876（B_en_r1 重跑对齐基座后刷新）</p>
+<p>✅ 轴 B 15/15 轮同基座（dsv4-pro）· 5 语言间可横比 · 与基线 glm-5.2 的 Δpp 不可单归因为语言效应（基座+thinking 模式均不同）· 基础 prompt 中性化 + 语言切换验证仍需做</p>
 </footer>
 
 </div></body></html>

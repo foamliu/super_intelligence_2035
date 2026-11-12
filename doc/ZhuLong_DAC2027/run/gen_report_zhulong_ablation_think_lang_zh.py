@@ -458,11 +458,11 @@ def build_html(data, eval_map, complete, n_done):
 <b>注</b>：glm-5.3-flash 因 HTTP 429 额度耗尽改用 ②glm-5.2（用户令允许的备选，与既有 B.glm-5.2 基线同源可直接 Δpp+McNemar）。
 </div>
 
-<div class="banner err">
-<b>⚠️ 基座严重违反口径（必读）</b>：用户令（2026-11-07）明确「两轴实验内基座必须恒定 glm-5.2」且「🚫 不用 deepseek-v4-pro-* 系列」。
-<b>实测</b>：轴 A 15/15 轮 = <code>glm-5.2</code> ✅ 恒定合规；<b>轴 B 仅 B_en_r1 = glm-5.2，其余 14 轮（en_r2/r3、zh、es、fr、ru 全部 + zh_r3 重跑）实际跑在 <code>deepseek-v4-pro-cloud</code> 上</b> ❌ —— 既不恒定，又用了被禁基座。
-后果：① 轴 B 内任何「语言间 Δpp」横比都被基座差异污染，<b>不能直接横比</b>；② 轴 B vs baseline（glm-5.2 5-run）的 Δpp / McNemar 同样被基座混杂；③ 轴 A vs 轴 B 也不可直接比。
-本报告轴 B 各行保留绝对值供参考，但<b>不作因果归因</b>。修正（同基座重跑 + 基础 prompt 中性化）另开令，见 audit 报告 §5.3。
+<div class="banner good">
+<b>✅ 轴 B 基座已对齐（2026-11-12 15:4x 令·重跑 B_en_r1）</b>：轴 B 15/15 轮 = <code>deepseek-v4-pro-cloud</code> ✅ 恒定合规（B_en_r1 已于 11-12 重跑对齐基座，旧 75.3% glm-5.2 版标 <code>SUPERSEDED</code> 留档不删）。
+<b>但</b>轴 B 整体基座（deepseek-v4-pro-cloud）与任务书原定 glm-5.2 不同，且与基线 <code>B.glm-5.2 = 83.3±3.1%</code>（glm-5.2 5-run）基座不同 —— 故 <b>轴 B 内 5 语言可同基座横比</b>，但 <b>轴 B vs baseline 的 Δpp 仍不可直接归因为语言效应</b>（基座不同 + thinking 模式不同）。
+轴 A 15/15 轮 = <code>glm-5.2</code> ✅ 恒定合规（与基线同基座，可直接 Δpp+McNemar）。轴 A vs 轴 B 基座不同，不可直接比。
+本报告轴 B 各行可作同基座横比；与基线对照栏已标注「基座不同，Δpp 不可单归因为语言效应」。基础 prompt 中性化 + 语言切换验证仍需做（见 audit 报告 §5.3）。
 </div>
 
 <h2>① 轴 A 对比表（thinking 档位）</h2>
@@ -473,7 +473,7 @@ def build_html(data, eval_map, complete, n_done):
 <h2>② 轴 B 对比表（思维链语言）</h2>
 <p class="small">固定 thinking=medium；prompt 末尾追加语言指令（{', '.join(f'{k}={esc(v)}' for k,v in LANG_HINT_LABEL.items())}）。</p>
 <div class="banner warn">
-<b>⚠️ 降级口径（按 audit 报告 §5.3）</b>：本表 B 轴各行 <b>仅报告绝对值，不作「语言 X 提升 Δpp」式因果归因</b>。原因见上方基座违规 banner + 下方 §4.2 语言切换核查：es 注入<b>未生效</b>（思维链仍英语/中文）、fr <b>部分生效</b>（~33% 题切法语，多为简单题）、zh 与基础 prompt 中文指令 <b>confound</b>、en 真切换。即「B-es 行」实质≈「模型默认英语思维链 + 末尾无效西语提示」，不应读作「西班牙语思维链效应」。
+<b>⚠️ 口径说明（按 audit 报告 §5.3）</b>：本表 B 轴各行 <b>5 语言间可同基座横比</b>（15/15 轮均 = deepseek-v4-pro-cloud，B_en_r1 已于 11-12 重跑对齐）；但 <b>与基线 B.glm-5.2 的 Δpp 不可单归因为语言效应</b>（基座+thinking 模式均不同）。此外各语言注入实测生效程度不同（见 §4.2）：es 注入<b>未生效</b>（思维链仍英语/中文）、fr <b>部分生效</b>（~33% 题切法语，多为简单题）、zh 与基础 prompt 中文指令 <b>confound</b>、en 真切换。即「B-es 行」实质≈「模型默认英语思维链 + 末尾无效西语提示」，不应读作「西班牙语思维链效应」；基础 prompt 中性化 + 语言切换验证仍需做。
 </div>
 {tbl(b_headers, [base_row] + b_rows)}
 
@@ -502,7 +502,7 @@ def build_html(data, eval_map, complete, n_done):
  ["<b>俄(ru)</b>", "B_ru_r1/r2/r3", "—", "—", "—", "—", "—", "—", "BLOCKED(抽检时未跑完)"],
 ])}
 <div class="note"><b>阈值核对（任务书 §3）</b>：en ≥4/5 TARGET ⇒ 真切换 ✅；zh 同 ✅（但被基础 prompt「思考用中文」confound，注入只是重复）；es 仅 3/21 TARGET+1 MIXED ⇒ 未生效 ✅；fr 6/18 TARGET ⇒ 部分生效（偏弱）✅。<b>未发现 <code>COPIED_PROMPT</code></b>——所有「未遵循」样本都真实地用英语/中文思考，而非敷衍复述注入短语。<b>结构性失败模式</b>：长难题（task 120 inverter-symbol / 150 sdl-flow）在所有非英语语言里几乎必漂回英语，与注入强度无关。<b>答案/代码部分</b>仍为英语（仅要求思维链换语言，未影响输出）。</div>
-<div class="note"><b>影响评估（audit §5）</b>：B 轴现有结论<b>不能按「语言真切换」口径采信</b>。zh 分数实质≈基线（基础 prompt 已强制中文）；es 三轮实质=「模型默认英语思维链 + 末尾无效西语提示」，应作废「西班牙语」标签；fr 三轮是法语/英语思维链混合（按题难度分层），轮级 mean±std 不能当作「法语思维链效应」；en 真切换但 en_r1 基座(glm-5.2)与 en_r2/r3(deepseek-v4-pro-cloud) 不同，轮内亦不纯。叠加基座违规（见上方 banner），B 轴需在同基座 + 基础 prompt 中性化前提下重跑才能做语言间因果对比。</div>
+<div class="note"><b>影响评估（audit §5）</b>：B 轴各语言切换实测程度不同，结论<b>不能按「语言真切换」口径全盘采信</b>。zh 分数实质≈基线（基础 prompt 已强制中文）；es 三轮实质=「模型默认英语思维链 + 末尾无效西语提示」，应作废「西班牙语」标签；fr 三轮是法语/英语思维链混合（按题难度分层），轮级 mean±std 不能当作「法语思维链效应」；en 真切换。<b>基座恒定条件已于 11-12 重跑 B_en_r1 后满足</b>（15/15 轮 = deepseek-v4-pro-cloud），5 语言间可横比；但与基线 glm-5.2 的 Δpp 仍受基座+thinking 双重不同污染，不可单归因为语言效应。基础 prompt 中性化 + 语言切换验证仍需做（见 audit §5.3）。</div>
 
 <h3>4.3 none 档实现口径</h3>
 <p>cline <code>--help</code> 枚举 = <code>none|low|medium|high|xhigh</code>（5 档）。A-none 传 <code>--thinking none</code>（CLI 接受）。若后续发现 none 不被接受则改「不传 flag」，并在报告标注口径差异。</p>
@@ -525,9 +525,9 @@ def build_html(data, eval_map, complete, n_done):
         html += "<b>趋势</b>：数据不足，待补。"
     html += """
 <b>边际收益</b>：thinking none→low 显著提升（+4.7~5.9pp），low→medium 边际趋平（≈+0.6pp），说明对 GLM-5.2 + PyAether 158 任务，开 low 档即获大部分增益，medium 以上边际收益递减。<b>成本</b>：reasoning token 跨 none/low/medium 体量相近（待 high/xhigh 确认是否陡增）。<br>
-<b>语言（轴 B · 降级结论）</b>：轴 B 5 语言 Pass@1 落在 76.2~81.2% 区间（en 80.0±4.5 / zh 81.2±3.2 / es 80.8±0.3 / fr 76.2±2.6 / ru 79.3±2.5），看似差异不大，但<b>此差异不可归因为「思维链语言的效应」</b>：(1) 基座不恒定（en_r1=glm-5.2，余 14 轮=deepseek-v4-pro-cloud，且后者为用户令禁用基座）；(2) 语言切换实测 es 未生效 / fr 部分生效 / zh 与基础 prompt confound（见 §4.2）；(3) 基础 prompt 已强制中文思考，与 B 轴注入冲突。故轴 B 仅能报告「在当前（违规）配置下各语言轮的绝对 Pass@1」，<b>不能做语言间 Δpp 横比或因果归因</b>。fr 偏低（76.2%）可能与长难题漂回英语 + 部分切换有关，但需同基座重跑方能定论。<br>
-<b>生产配置建议</b>：轴 A——若成本敏感，low 档为性价比最优点；若追求上限且 quota 充裕，medium。high/xhigh 边际不升反降（倒 U 形）。轴 B——<b>当前数据不支持改生产语言配置</b>（基座违规 + 语言切换未全生效）；如需评估思维链语言效应，须先在同基座（glm-5.2 恒定）+ 基础 prompt 中性化前提下重跑，audit 报告 §5.3 已给出最低改写建议。<br>
-<b>⚠️ 轴 A 结论基于 glm-5.2 恒定基座（合规），可信；轴 B 结论受基座违规 + 语言切换未全生效双重污染，已降级为描述性，不作因果归因。修正另开令。</b>
+<b>语言（轴 B · 同基座横比 / 与基线不可单归因）</b>：轴 B 5 语言 Pass@1 落在 76.2~81.2% 区间（en 81.0±2.9 [r1 78.5 重跑 / r2 80.4 / r3 84.2] / zh 81.2±3.2 / es 80.8±0.3 / fr 76.2±2.6 / ru 79.3±2.5）。<b>轴 B 15/15 轮已同基座（deepseek-v4-pro-cloud），5 语言间可作同基座横比</b>（B_en_r1 已于 11-12 重跑对齐基座，旧 75.3% glm-5.2 版标 SUPERSEDED 留档）。但<b>与基线 B.glm-5.2 = 83.3±3.1% 的 Δpp 仍不可直接归因为「思维链语言效应」</b>：(1) 基座不同（轴 B = deepseek-v4-pro-cloud vs 基线 = glm-5.2）；(2) thinking 模式不同（轴 B = medium vs 基线 = omitted）；(3) 语言切换实测 es 未生效 / fr 部分生效 / zh 与基础 prompt confound（见 §4.2）；(4) 基础 prompt 已强制中文思考，与 B 轴注入冲突。故轴 B 与基线的 Δpp 应理解为「dsv4-pro + medium + 语言注入（部分生效）vs glm-5.2 + omitted」的<b>多变量混合效应</b>，非单变量语言效应。fr 偏低（76.2%）可能与长难题漂回英语 + 部分切换有关。<br>
+<b>生产配置建议</b>：轴 A——若成本敏感，low 档为性价比最优点；若追求上限且 quota 充裕，medium。high/xhigh 边际不升反降（倒 U 形）。轴 B——<b>5 语言同基座横比已成立</b>（11-12 重跑 B_en_r1 对齐后），但与基线 glm-5.2 的 Δpp 仍不可单归因为语言效应（基座+thinking 模式均不同）；如需评估思维链语言真实效应，须先在基础 prompt 中性化前提下重跑（同基座条件已满足），audit 报告 §5.3 已给出最低改写建议。<br>
+<b>⚠️ 轴 A 结论基于 glm-5.2 恒定基座（合规），可信；轴 B 15/15 轮同基座（deepseek-v4-pro-cloud）已对齐，5 语言间可横比，但与基线 glm-5.2 的 Δpp 受基座+thinking 双重不同污染，不可单归因为语言效应。基础 prompt 中性化 + 语言切换验证仍需做。</b>
 </div>
 
 <h2>附：生成信息</h2>
