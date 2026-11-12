@@ -882,7 +882,7 @@
 | 2026-11-12 09:04（**第十一轮**） | Jan Leike | `1706.03741` Deep RL from human preferences | 本人主页 `jan.leike.name` 的 `mailto:Jan Leike <jan@anthropic.com>`（`200` / 6,411 B，2026-11-12 09:0x） | `SENT OK`（`jan@anthropic.com`，**英文 199 词**；Anthropic 当日第 1 封） |
 
 | 2026-11-12 12:04（**第十二轮**） | Nisan Stiennon | `2009.01325` Learning to summarize from human feedback | 本人站 `nisanstiennon.com` 的 `mailto:nisan+web@stiennon.com`（`200` / 5,575 B，直连与代理 **md5 一致**） | `SENT OK`（`nisan+web@stiennon.com`，英文；⚠️ **`wc -w` 实测 212 词，超 ≤200 规格 12 词，已如实记入台账**） |
-| 2026-11-12 15:03（**第十三轮**） | Archit Sharma | `2305.18290` DPO | 本人主页 `architsharma97.github.io` 的 `mailto:architsh@stanford.edu`（`200` / 3,936 B，代理实测） | `SENT OK`（`architsh@stanford.edu`，**英文 197 词**；🚦 **发送前 `wc -w` 已核**；⚠️ 其 X bio 已写 `prev: @Stanford` ⇒ 若退信记「通道失效」不重发；Stanford 当日第 2 封 = 达上限） |
+| 2026-11-12 15:03（**第十三轮**） | Archit Sharma | `2305.18290` DPO | 本人主页 `architsharma97.github.io` 的 `mailto:architsh@stanford.edu`（`200` / 3,936 B，代理实测） | `SENT OK`（`architsh@stanford.edu`，**英文 197 词**；🚦 **发送前 `wc -w` 已核**；⚠️ 其 X bio 已写 `prev: @Stanford` ⇒ 若退信记「通道失效」不重发；Stanford 当日第 1 封（Moo Jin Kim 那封属 **11-11** 21:04，按 11-12 00:00 起算不计入今日 ⇒ 1/2）） |
 | 2026-11-12 15:03（**第十三轮**） | Onur Mutlu | `2308.11030` Ramulator 2.0 | 本人 ETH 主页 `people.inf.ethz.ch/omutlu/` 的 `mailto:omutlu@gmail.com`（`200` / 19,850 B 实测） | `SENT OK`（`omutlu@gmail.com`，**英文 177 词**；🚦 发送前 `wc -w` 已核；ETH Zurich 当日第 1 封） |
 | 2026-11-11 12:4x–13:0x（**第四轮**） | （本轮 **0 封**） | 新增经典 `2005.14165` / `2203.02155` / `2302.13971` | 逐个实测：`hugotouvron.github.io` `404` · `longouyang.github.io` `404` · `ashishvaswani.com` `000` · 未命中任何 `mailto:` | **不发信**（按令不猜邮箱）。该轮结束时累计 **5 封**（分属三轮，每轮 ≤3）；第四轮把额度留给「有可核验邮箱」的候选 —— 本轮没有合格的 ⇒ **宁缺勿凑**（当日最终累计 = **9 封**，见上方各行） |
 
