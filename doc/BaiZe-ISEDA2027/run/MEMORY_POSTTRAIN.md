@@ -7,14 +7,14 @@ WAITING: 0
 
 ## 进度快照
 
-- PHASE: posttrain-wake324（2026-11-12 R324 SFT v38 Corpus Merge: v11-v37 1086 + R323 258 → 1344 pairs + contam gate PASS + train/val split ready）
-- 已完成: P3预备✅；P0✅；P1✅；P2✅；R1-R210✅；R280归档；wake281-323✅；R322✅(PoC 8→14)；R323✅(Full 166→258 pairs+100% coverage+contam PASS)；R324✅(v11-v38 merge 1344 pairs+parquet+train/val+contam gate PASS)
-- 当前动作: wake324 R324 SFT v38 Corpus Merge：①sentinel 5 serve全UP(17:10占位维持)②sandbox 126th FILTERED③merge v11-v37(1086)+R323(258)→v11-v38(1344,0 dedup)④schema转换(instruction/output→prompt/completion)⑤parquet 382.7KB 1344rows schema-match⑥train/val split train=1210/val=134→sft_surrogate_data/minicpm5_pyaether_v2_v11v38/⑦contam gate PASS(1344 scanned,0 hit)
-- 下一步: ①沙盒恢复→拆GPU5/6/7占位→用v11v38语料重训SFT→评测验证data gap coverage改善 ②沙盒恢复→baseline eval 5-run ③沙盒恢复→RL R1-R4正式起跑 ④P3待pretrain ckpt(ETA≈2026-12-25)
-- 阻塞: 🔴沙盒10.129.32.75全端口FILTERED(第126次)；P3等pretrain ckpt
-- 本轮新增产出: R324✅(SFT v38 corpus merge[1086+258→1344 pairs+parquet+train/val split+contam gate PASS 0 hit]+6产物+EXPERIMENTS §R324)
-- 未完成指令: 🔴17:10 GPU5/6/7全✅占位中(17:10令持续)；🔴13:40 Phase2 SFT✅+v38语料就绪待重训/Phase1 static eval COMPLETE(3-model 113/113)/Phase3 RL就绪✅(R4 validator可import)待沙盒+GPU
-- git: wake324 R324 pending commit
+- PHASE: posttrain-wake325（2026-11-12 R325 v38 Corpus Quality Analysis + SFT Retrain Dry-Run Readiness PASS）
+- 已完成: P3预备✅；P0✅；P1✅；P2✅；R1-R210✅；R280归档；wake281-324✅；R324✅(v11-v38 merge 1344 pairs)；R325✅(v38质量分析+v36→v38增量量化+SFT dry-run PASS)
+- 当前动作: wake325 R325 v38语料质量分析+SFT重训就绪验证：①sentinel 5 serve全UP(17:10占位维持)②sandbox 127th FILTERED③v38 parquet read-back:train=1210/val=134,548 APIs,12 types,全contam PASS④token长度:99.5%在2048内(仅6/1210超)⑤v36→v38增量:+283 rows(+30.5%),+165 APIs(+43.1%),+240 data-gap pairs,177 new APIs⑥SFT surrogate dry-run with v38 PASS(torchrun+model+verl+data paths全OK)⑦GPU guard确认会拦截(符合17:10令)
+- 下一步: ①沙盒恢复→拆GPU5/6/7占位→`bash baize_posttrain_sft_surrogate.sh --run-name minicpm5_pyaether_v2_v11v38 --epochs 5`重训SFT→评测验证data gap coverage改善 ②沙盒恢复→baseline eval 5-run ③沙盒恢复→RL R1-R4正式起跑 ④P3待pretrain ckpt(ETA≈2026-12-25)
+- 阻塞: 🔴沙盒10.129.32.75全端口FILTERED(第127次)；P3等pretrain ckpt
+- 本轮新增产出: R325✅(v38质量分析[1210 train/548 APIs/12 types/contam PASS]+v36→v38增量[+283 rows/+165 APIs/+240 data-gap pairs]+SFT dry-run PASS[全prereq OK]+一键启动序列+EXPERIMENTS §R325)
+- 未完成指令: 🔴17:10 GPU5/6/7全✅占位中(17:10令持续)；🔴13:40 Phase2 v38语料+dry-run就绪待沙盒恢复重训/Phase1 static eval COMPLETE(3-model 113/113)/Phase3 RL就绪✅(R4 validator可import)待沙盒+GPU
+- git: wake325 R325 pending commit
 
 
 
@@ -191,6 +191,8 @@ WAITING: 0
 [wake323 15:05] R323 Full Data Gap SFT Synthesis: 166 APIs→258 pairs+100% coverage+contam gate PASS+sandbox 125th FILTERED: sentinel全5 serve UP→Local KB提取104/158 from API_INFO_MERGED_V3.json(8463 entries,17.7MB)→MCP fetch 18/54 via get_api_details(9 batches×6)→36 stub docs(emc* enums+ae* callbacks)→merge 4源→166 unique(100% coverage)→synthesis: 166→258 pairs(doc=166+code=92,163.6KB)→contam gate PASS(258 scanned,0 hit)→vs R322 PoC: 18.4× pairs扩展。本轮新增产出：R323✅(Full 166→258 pairs+100% coverage+contam PASS+8产物+EXPERIMENTS §R323)。未完成指令：🔴17:10占位中;🔴13:40 Phase2 SFT✅/Phase1 static eval✅/Phase3 RL就绪待沙盒+GPU ⇒ WAITING=0。
 
 [wake324 15:30] R324 SFT v38 Corpus Merge: v11-v37(1086)+R323(258)→1344 pairs+contam gate PASS+sandbox 126th FILTERED: sentinel全5 serve UP→sandbox 126th still FILTERED→merge v11-v37 unified jsonl(1086 pairs prompt/completion schema)+R323 data-gap pairs(258 instruction/output schema)→schema转换+MD5内容去重(0 dup)→v11-v38 merged jsonl(1344 pairs,1743KB)→parquet(382.7KB,1344rows,schema-match v11-v37)→train/val split(train=1210/val=134→sft_surrogate_data/minicpm5_pyaether_v2_v11v38/)→contam gate PASS(1344 scanned,0 hit,exit 0)→family分布:emy*394→457,Mde*163→259,ae*153→176,emc*0→13(NEW)。本轮新增产出：R324✅(v11-v38 corpus 1344 pairs+parquet+train/val+contam PASS+6产物+EXPERIMENTS §R324)。v38语料训练就绪,沙盒恢复后拆GPU5/6/7即可重训。未完成指令：🔴17:10占位中;🔴13:40 Phase2 v38语料就绪待重训/Phase1 static eval✅/Phase3 RL就绪待沙盒+GPU ⇒ WAITING=0。
+
+[wake325 15:55] R325 v38 Corpus Quality Analysis+SFT Retrain Dry-Run Readiness+sandbox 127th FILTERED: sentinel全5 serve UP→sandbox 127th still FILTERED→v38 parquet read-back(train=1210 rows,548 unique APIs,12 types,全contam PASS;val=134 rows,114 APIs)→token长度分析(chars/4估算):med=189 mean=262 max=4510,>2048tok仅6/1210(0.5%)→MAX_LENGTH=2048截断率0.5%可接受→v36→v38增量:rows 927→1210(+283 +30.5%),APIs 383→548(+165 +43.1%),177 new APIs,+240 data-gap pairs(R323_datagap_doc=156+code=84)→SFT surrogate dry-run with v38 PASS(torchrun+model+verl+flash_attn+peft+data paths全OK,recipe:5 epochs full FT lr=1e-5 MAX_LENGTH=2048 GPU6,7)→GPU guard确认会拦截(GPU6=38GB GPU7=40.6GB>1GB threshold,符合17:10令占位期间不训练)→一键启动序列文档化。本轮新增产出：R325✅(v38质量分析+v36→v38增量量化+SFT dry-run PASS+一键启动序列+EXPERIMENTS §R325)。v38重训就绪,沙盒恢复后`bash baize_posttrain_serve_teardown.sh && bash baize_posttrain_sft_surrogate.sh --run-name minicpm5_pyaether_v2_v11v38 --epochs 5`即可起跑。未完成指令：🔴17:10占位中;🔴13:40 Phase2 v38+dry-run就绪待沙盒/Phase1 static eval✅/Phase3 RL就绪待沙盒+GPU ⇒ WAITING=0。
 
 
 

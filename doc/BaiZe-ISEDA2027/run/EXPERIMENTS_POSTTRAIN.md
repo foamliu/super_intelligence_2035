@@ -6869,3 +6869,84 @@ bash baize_posttrain_contamination_gate.sh --sft-synth sft_pyaether_corpus_v11_v
 ### 8. 无伪造声明
 
 所有数字为 merge 脚本实际计算 + parquet read-back 验证 + contamination gate 实跑结果。gate 报告路径：`/tmp/r324_contam_gate.md`。
+
+---
+
+## §R325 — v38 Corpus Quality Analysis + SFT Retrain Dry-Run Readiness (2026-11-12 wake325)
+
+> **背景**：R324 完成了 v11-v38 语料合并（1344 pairs），但尚未验证语料质量分布或确认 SFT 重训脚本能否直接用 v38 数据起跑。本轮做两件事：① v38 语料质量深度分析 ② v36→v38 增量量化 ③ SFT surrogate dry-run 验证 v38 就绪。
+> **沙盒状态**：第 127 次探测，10.129.32.75 全端口 FILTERED（超时）。GPU 5/6/7 占位 serve 全 UP（17:10 令持续）。
+
+### 1. v38 语料质量分析（parquet read-back）
+
+用 `/tmp/pt_parquet_venv/bin/python3` + pyarrow 读取 v38 train/val parquet，统计如下：
+
+**v38 TRAIN（1210 rows）**：
+- columns: `conversation` (list<struct<role,content>>), `pair_id`, `type`, `api_used`, `contamination_check`
+- msg/conv: min=3, med=3, mean=3.0, max=3（全部为 3-msg system/user/assistant 格式）
+- chars/conv: min=254, med=757, mean=1047, max=18038
+- Token 长度估算（chars/4）：min=64, med=189, mean=262, max=4510
+  - **>2048 tok: 6/1210 (0.5%)** → MAX_LENGTH=2048 截断率仅 0.5%，可接受
+  - >4096 tok: 4/1210 (0.3%)
+  - >8192 tok: 0/1210 (0.0%)
+- type 分布：S1(233), S5(193), S4(191), S6(166), S3(157), R323_datagap_doc(156), R323_datagap_code(84), S2_api_lookup(10), S1_doc_to_code(10), S2(6), S3_multi_api_chain(3), S7_corrected_prompt(1)
+- **unique APIs: 548**
+- contamination_check: PASS(922) + passed(288) = 1210 全部通过 ✅
+
+**v38 VAL（134 rows）**：
+- type 分布：S1(25), S4(26), S5(19), S6(22), S3(22), R323_datagap_doc(10), R323_datagap_code(8), S2(1), S7_corrected_prompt(1)
+- unique APIs: 114
+- contamination_check: PASS(107) + passed(27) = 134 全部通过 ✅
+
+### 2. v36 → v38 增量量化
+
+| 指标 | v36（上一轮 SFT 训练用） | v38（新，待重训） | 增量 |
+|:--|--:|--:|:--|
+| train rows | 927 | 1210 | **+283 (+30.5%)** |
+| unique APIs | 383 | 548 | **+165 (+43.1%)** |
+| data-gap pairs | 0 | 240 (doc 156 + code 84) | **+240 (NEW)** |
+| contam gate | PASS | PASS | ✅ |
+
+- **177 个新 API** 进入 v38（来自 R321 识别的 166 个 true data-gap APIs，经 R323 合成后覆盖到 177 个 unique api_used 值）
+- 新增 type 类别：R323_datagap_doc + R323_datagap_code，填补了 v36 中 0 覆盖的 data-gap API 空间
+- v36 的 SFT ckpt（global_step_70）当前 serve 在 GPU6:8096（minicpm5-sft），v38 重训后将替换
+
+### 3. SFT Surrogate Dry-Run with v38 — PASS ✅
+
+命令：`bash baize_posttrain_sft_surrogate.sh --dry-run --run-name minicpm5_pyaether_v2_v11v38 --epochs 5`
+
+结果：
+- data.train → `sft_surrogate_data/minicpm5_pyaether_v2_v11v38/sft_surrogate_train.parquet` ✅（正确找到 v38 train）
+- data.val → `sft_surrogate_data/minicpm5_pyaether_v2_v11v38/sft_surrogate_val.parquet` ✅
+- torchrun: OK ✅
+- model: `/nas_data/app.e0031982/models/MiniCPM5-2B` OK ✅
+- verl+flash_attn+peft: OK ✅
+- Recipe: 5 epochs, full FT, MAX_LENGTH=2048, global_batch=64, micro_batch=4/GPU, lr=1e-5, cosine, warmup_ratio=0.1, save_freq=20, GPU 6,7
+
+**GPU guard 行为确认**：脚本在非 dry-run 模式下检查 GPU 6,7 显存 >1GB 则拒绝启动（当前 GPU6=38GB, GPU7=40.6GB → 会被拦截），符合 17:10 令「占位期间不训练」的要求。
+
+### 4. 沙盒恢复后的一键启动序列
+
+```bash
+# 1. 拆除 GPU5/6/7 占位 serve（不碰 GPU0-3/4）
+bash baize_posttrain_serve_teardown.sh
+
+# 2. 用 v38 语料重训 SFT（5 epochs, full FT, GPU6-7）
+bash baize_posttrain_sft_surrogate.sh --run-name minicpm5_pyaether_v2_v11v38 --epochs 5
+
+# 3. serve 新 ckpt 评测
+# （新 ckpt 在 sft_surrogate_runs/minicpm5_pyaether_v2_v11v38/global_step_*/）
+
+# 4. EDA-Eval 评测（需沙盒）
+bash baize_posttrain_phase1_baseline.sh
+```
+
+### 5. 产物
+
+| 文件 | 说明 |
+|:--|:--|
+| 本节（EXPERIMENTS §R325） | v38 质量分析 + v36→v38 增量 + dry-run 验证 |
+
+### 6. 无伪造声明
+
+所有数字为 parquet read-back 实算 + dry-run 实跑结果。沙盒探测为 TCP timeout 实测。
