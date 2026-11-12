@@ -1,0 +1,841 @@
+{
+  "completed": 15,
+  "total": 15,
+  "results": [
+    {
+      "task_id": "EDA-Eval-PyAether-001",
+      "scenario": "Schematic",
+      "entry_point": "count_unique_bus_bits",
+      "base": {
+        "content_length": 2797,
+        "code_length": 2796,
+        "finish_reason": "length",
+        "syntax_valid": false,
+        "has_function": false,
+        "has_code_fence": false,
+        "pyaether_apis": [],
+        "api_count": 0,
+        "thinking_ratio": 0.0,
+        "code_preview": "<think>\nWe need to write a Python function that uses pyAether to count unique signal bits in a bus definition string.\n The function signature is given. We need to output only the Python code, starting with imports, then the function definition.\n\n We need to understand what the bus_string looks like. The example: 'a,b<1:0>,a' -> unique signal bits: 'a', 'b<1>', 'b<0>', total 3.\n\n We need to use pyAether API. The pyAether library is used for EDA tasks. We need to parse the bus string and count uni",
+        "latency_s": 8.6
+      },
+      "sft": {
+        "content_length": 1009,
+        "code_length": 989,
+        "finish_reason": "stop",
+        "syntax_valid": true,
+        "has_function": true,
+        "has_code_fence": false,
+        "pyaether_apis": [
+          "pyScript.emyNameSpace"
+        ],
+        "api_count": 1,
+        "thinking_ratio": 0.02,
+        "code_preview": "import pyAether as pyScript\nfrom typing import Optional\n\ndef count_unique_bus_bits(ns: 'pyScript.emyNameSpace', bus_string: str) -> int:\n    \"\"\"\n    Designs a function to calculate the number of unique signal bits in an EDA bus definition string.\n    For example, for the string 'a,b<1:0>,a', the unique signal bits are 'a', 'b<1>', 'b<0>', for a total of 3.\n    This function must use the pyAether API to accomplish this task.\n\n    Args:\n        ns (pyScript.emyNameSpace): The pyAether namespace ob",
+        "latency_s": 2.9
+      },
+      "qwen": {
+        "content_length": 3228,
+        "code_length": 3218,
+        "finish_reason": "length",
+        "syntax_valid": true,
+        "has_function": true,
+        "has_code_fence": true,
+        "pyaether_apis": [
+          "pyScript.emyNameSpace"
+        ],
+        "api_count": 1,
+        "thinking_ratio": 0.003,
+        "code_preview": "import pyAether as pyScript\nfrom typing import Optional\n\ndef count_unique_bus_bits(ns: 'pyScript.emyNameSpace', bus_string: str) -> int:\n    \"\"\"\n    Designs a function to calculate the number of unique signal bits in an EDA bus definition string.\n    For example, for the string 'a,b<1:0>,a', the unique signal bits are 'a', 'b<1>', 'b<0>', for a total of 3.\n    This function must use the pyAether API to accomplish this task.\n\n    Args:\n        ns (pyScript.emyNameSpace): The pyAether namespace ob",
+        "latency_s": 6.6
+      }
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-035",
+      "scenario": "Schematic",
+      "entry_point": "create_styled_polyline",
+      "base": {
+        "content_length": 3217,
+        "code_length": 1183,
+        "finish_reason": "length",
+        "syntax_valid": false,
+        "has_function": true,
+        "has_code_fence": false,
+        "pyaether_apis": [
+          "pyScript.GuCartPolyLine"
+        ],
+        "api_count": 1,
+        "thinking_ratio": 0.632,
+        "code_preview": "import pyAether as pyScript\nfrom typing import List, Tuple\n\ndef create_styled_polyline(points: List[Tuple[float, float]], width: int, color_name: str, pattern: str) -> 'pyScript.GuCartPolyLine':\n    # implementation\n\nWe need to create the polyline. Possibly pyScript.GuCartPolyLine(points) returns an object. Then set attributes. We'll do:\n\npolyline = pyScript.GuCartPolyLine(points)\npolyline.width = width\npolyline.color = color_name\npolyline.pattern = pattern\nreturn polyline\n\nBut we need to be car",
+        "latency_s": 8.6
+      },
+      "sft": {
+        "content_length": 1012,
+        "code_length": 992,
+        "finish_reason": "stop",
+        "syntax_valid": true,
+        "has_function": true,
+        "has_code_fence": false,
+        "pyaether_apis": [
+          "pyScript.GuCartPolyLine",
+          "pyScript.CColor"
+        ],
+        "api_count": 2,
+        "thinking_ratio": 0.02,
+        "code_preview": "import pyAether as pyScript\nfrom typing import List, Tuple\n\ndef create_styled_polyline(points: List[Tuple[float, float]], width: int, color_name: str, pattern: str) -> 'pyScript.GuCartPolyLine':\n    \"\"\"\n    Creates a GuCartPolyLine object from a list of 2D points and configures its visual style attributes\n    (width, color, and pattern).\n\n    Args:\n        points (List[Tuple[float, float]]): A list of (x, y) coordinates for the polyline vertices.\n        width (int): The line width to set (e.g.,",
+        "latency_s": 3.1
+      },
+      "qwen": {
+        "content_length": 1122,
+        "code_length": 1108,
+        "finish_reason": "stop",
+        "syntax_valid": true,
+        "has_function": true,
+        "has_code_fence": true,
+        "pyaether_apis": [
+          "pyScript.GuCartPolyLine"
+        ],
+        "api_count": 1,
+        "thinking_ratio": 0.012,
+        "code_preview": "import pyAether as pyScript\nfrom typing import List, Tuple\n\ndef create_styled_polyline(points: List[Tuple[float, float]], width: int, color_name: str, pattern: str) -> 'pyScript.GuCartPolyLine':\n    \"\"\"\n    Creates a GuCartPolyLine object from a list of 2D points and configures its visual style attributes\n    (width, color, and pattern).\n\n    Args:\n        points (List[Tuple[float, float]]): A list of (x, y) coordinates for the polyline vertices.\n        width (int): The line width to set (e.g.,",
+        "latency_s": 1.6
+      }
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-067",
+      "scenario": "Schematic",
+      "entry_point": "create_sweep_config",
+      "base": {
+        "content_length": 3419,
+        "code_length": 1900,
+        "finish_reason": "length",
+        "syntax_valid": false,
+        "has_function": true,
+        "has_code_fence": false,
+        "pyaether_apis": [
+          "pyScript.MdePlatParamSweepAddSpecificPoints"
+        ],
+        "api_count": 1,
+        "thinking_ratio": 0.444,
+        "code_preview": "import pyAether as pyScript\nfrom typing import List\n\ndef create_sweep_config(inclusion_points: List[str], exclusion_points: List[str]) -> 'pyScript.MdePlatParamSweepAddSpecificPoints':\n    \"\"\"\n    Creates a configuration object for adding specific points to a parameter sweep in the MDE platform.\n    This function initializes the configuration with a list of points to include and a list of points to exclude.\n\n    Args:\n        inclusion_points (List[str]): A list of string representations of valu",
+        "latency_s": 8.6
+      },
+      "sft": {
+        "content_length": 1039,
+        "code_length": 1019,
+        "finish_reason": "stop",
+        "syntax_valid": true,
+        "has_function": true,
+        "has_code_fence": false,
+        "pyaether_apis": [
+          "pyScript.MdePlatParamSweepAddSpecificPoints"
+        ],
+        "api_count": 1,
+        "thinking_ratio": 0.019,
+        "code_preview": "import pyAether as pyScript\nfrom typing import List\n\ndef create_sweep_config(inclusion_points: List[str], exclusion_points: List[str]) -> 'pyScript.MdePlatParamSweepAddSpecificPoints':\n    \"\"\"\n    Creates a configuration object for adding specific points to a parameter sweep in the MDE platform.\n    This function initializes the configuration with a list of points to include and a list of points to exclude.\n\n    Args:\n        inclusion_points (List[str]): A list of string representations of valu",
+        "latency_s": 2.7
+      },
+      "qwen": {
+        "content_length": 1013,
+        "code_length": 999,
+        "finish_reason": "stop",
+        "syntax_valid": true,
+        "has_function": true,
+        "has_code_fence": true,
+        "pyaether_apis": [
+          "pyScript.MdePlatParamSweepAddSpecificPoints"
+        ],
+        "api_count": 1,
+        "thinking_ratio": 0.014,
+        "code_preview": "import pyAether as pyScript\nfrom typing import List\n\ndef create_sweep_config(inclusion_points: List[str], exclusion_points: List[str]) -> 'pyScript.MdePlatParamSweepAddSpecificPoints':\n    \"\"\"\n    Creates a configuration object for adding specific points to a parameter sweep in the MDE platform.\n    This function initializes the configuration with a list of points to include and a list of points to exclude.\n\n    Args:\n        inclusion_points (List[str]): A list of string representations of valu",
+        "latency_s": 1.3
+      }
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-105",
+      "scenario": "Schematic",
+      "entry_point": "create_buffer_schematic",
+      "base": {
+        "content_length": 3019,
+        "code_length": 1082,
+        "finish_reason": "length",
+        "syntax_valid": false,
+        "has_function": true,
+        "has_code_fence": false,
+        "pyaether_apis": [],
+        "api_count": 0,
+        "thinking_ratio": 0.642,
+        "code_preview": "import pyAether\n\ndef create_buffer_schematic(design, pdk_lib_name=\"reference_pdk\"):\n    # code\n\nWe need to use pyAether.emyUnixNS() to get namespace. Then we need to create instances. The instances are for the master view \"symbol\". The specification says: \"Instances (Master View: \"symbol\")\". So we need to create instances with Lib, Cell, Name, Origin, Orient. The function should create two instances: one for NM0 and one for PM0.\n\nWe need to create wires. The wires are created with Layer and Purp",
+        "latency_s": 8.7
+      },
+      "sft": {
+        "content_length": 2334,
+        "code_length": 2315,
+        "finish_reason": "length",
+        "syntax_valid": false,
+        "has_function": true,
+        "has_code_fence": false,
+        "pyaether_apis": [
+          "pyScript.emyUnixNS",
+          "pyScript.emyPointOrientation",
+          "pyScript.emyInstance",
+          "pyScript.emyWire",
+          "pyScript.emyEllipse"
+        ],
+        "api_count": 5,
+        "thinking_ratio": 0.008,
+        "code_preview": "import pyAether as pyScript\n\ndef create_buffer_schematic(design, pdk_lib_name=\"reference_pdk\"):\n    ns = pyScript.emyUnixNS()\n    design.setNS(ns)\n    insts = []\n    for lib, cell, name, origin, orient in [\n        (pdk_lib_name, \"n18\", \"NM0\", (80, 180), pyScript.emyPointOrientation.R270),\n        (pdk_lib_name, \"p18\", \"PM0\", (80, -150), pyScript.emyPointOrientation.R90),\n    ]:\n        inst = pyScript.emyInstance()\n        inst.setLib(lib)\n        inst.setCell(cell)\n        inst.setName(name)\n ",
+        "latency_s": 8.6
+      },
+      "qwen": {
+        "content_length": 1826,
+        "code_length": 1816,
+        "finish_reason": "length",
+        "syntax_valid": false,
+        "has_function": true,
+        "has_code_fence": true,
+        "pyaether_apis": [],
+        "api_count": 0,
+        "thinking_ratio": 0.005,
+        "code_preview": "import pyAether as pyScript\n\ndef create_buffer_schematic(design, pdk_lib_name=\"reference_pdk\"):\n    \"\"\"\n    Populates the provided design object with a specific buffer schematic topology.\n    \n    This function initializes the top block of the design and creates instances, wires,\n    solder dots (ellipses), nets, pins, and text displays according to the specification below.\n    \n    Parameters:\n    ----------\n    design : pyAether.emyDesign\n        The open design object to be populated (e.g., a",
+        "latency_s": 3.9
+      }
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-123",
+      "scenario": "Schematic",
+      "entry_point": "create_lvsft_symbol",
+      "base": {
+        "content_length": 2841,
+        "code_length": 1626,
+        "finish_reason": "length",
+        "syntax_valid": false,
+        "has_function": true,
+        "has_code_fence": false,
+        "pyaether_apis": [],
+        "api_count": 0,
+        "thinking_ratio": 0.428,
+        "code_preview": "import pyAether as pyScript\n\ndef create_lvsft_symbol(design):\n    ...\n\nWe need to implement the steps. Let's break down:\n\n1. Creates a Unix namespace.\n   - Probably design.createUnixNamespace() or something. We need to check typical pyAether API. Since we don't have it, we need to guess. The user might have a specific library. But we can write code that uses common patterns. However, the instruction says \"Write the complete Python function implementation for the following function signature. The",
+        "latency_s": 8.6
+      },
+      "sft": {
+        "content_length": 2275,
+        "code_length": 2256,
+        "finish_reason": "length",
+        "syntax_valid": false,
+        "has_function": true,
+        "has_code_fence": false,
+        "pyaether_apis": [
+          "pyScript.emyUnixNamespace",
+          "pyScript.emyRectF",
+          "pyScript.emyPointF",
+          "pyScript.emyStringF"
+        ],
+        "api_count": 4,
+        "thinking_ratio": 0.008,
+        "code_preview": "import pyAether as pyScript\n\ndef create_lvsft_symbol(design):\n    ns = pyScript.emyUnixNamespace()\n    design.createNamespace(ns)\n    bg = pyScript.emyRectF()\n    bg.setX(0); bg.setY(0); bg.setWidth(200); bg.setHeight(100)\n    bg.setLayer(229); bg.setPurpose(237)\n    design.createBackground(bg)\n    sb = pyScript.emyRectF()\n    sb.setX(-40); sb.setY(0); sb.setWidth(240); sb.setHeight(100)\n    sb.setLayer(231); sb.setPurpose(237)\n    design.createBackground(sb)\n    pin_rects = {\n        'HVDD': py",
+        "latency_s": 8.6
+      },
+      "qwen": {
+        "content_length": 1998,
+        "code_length": 1988,
+        "finish_reason": "length",
+        "syntax_valid": true,
+        "has_function": true,
+        "has_code_fence": true,
+        "pyaether_apis": [],
+        "api_count": 0,
+        "thinking_ratio": 0.005,
+        "code_preview": "import pyAether as pyScript\n\ndef create_lvsft_symbol(design):\n    \"\"\"\n    Populates the given design (symbol view) with the graphics and connectivity for a Level Shifter.\n\n    The function performs the following steps on the top block of the provided design:\n    1. Creates a Unix namespace.\n    2. Creates background rectangles (Selection Box and Boundary):\n       - Boundary: (0, 0, 200, 100) on layer 229 (purpose 237).\n       - Selection Box: (-40, 0, 240, 100) on layer 231 (purpose 237).\n    3.",
+        "latency_s": 3.8
+      }
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-004",
+      "scenario": "Layout",
+      "entry_point": "apply_geometric_transform_to_box",
+      "base": {
+        "content_length": 3278,
+        "code_length": 834,
+        "finish_reason": "length",
+        "syntax_valid": false,
+        "has_function": true,
+        "has_code_fence": false,
+        "pyaether_apis": [
+          "pyScript.emyBoxF",
+          "pyScript.emyPointF"
+        ],
+        "api_count": 2,
+        "thinking_ratio": 0.746,
+        "code_preview": "import pyAether as pyScript\n\ndef apply_geometric_transform_to_box(...):\n    # implementation\n\nWe need to implement. Let's think about typical bounding box representation. emyBoxF might be a class with methods to get corners, set corners, etc. We need to apply transformation.\n\nWe can assume that there is a method to transform a box. But we don't know. We can try to use pyScript.emyBoxF methods. We can look at the signature: source_box: pyScript.emyBoxF. So we can call methods on it.\n\nWe need to h",
+        "latency_s": 8.6
+      },
+      "sft": {
+        "content_length": 1134,
+        "code_length": 1114,
+        "finish_reason": "stop",
+        "syntax_valid": true,
+        "has_function": true,
+        "has_code_fence": false,
+        "pyaether_apis": [
+          "pyScript.emyBoxF",
+          "pyScript.emyPointF",
+          "pyScript.emyBoxF_transform"
+        ],
+        "api_count": 3,
+        "thinking_ratio": 0.018,
+        "code_preview": "import pyAether as pyScript\n\ndef apply_geometric_transform_to_box(source_box: pyScript.emyBoxF, translation: pyScript.emyPointF, orientation: str, magnification: float) -> pyScript.emyBoxF:\n    \"\"\"\n    Applies a complete geometric transformation to a given bounding box, including translation, rotation, and scaling.\n    This function must be implemented using the pyAether API to ensure the correctness of the transformation.\n\n    Args:\n        source_box (pyScript.emyBoxF): The original bounding b",
+        "latency_s": 3.0
+      },
+      "qwen": {
+        "content_length": 2276,
+        "code_length": 2258,
+        "finish_reason": "length",
+        "syntax_valid": true,
+        "has_function": true,
+        "has_code_fence": true,
+        "pyaether_apis": [
+          "pyScript.emyBoxF",
+          "pyScript.emyPointF",
+          "pyScript.emyTransformF"
+        ],
+        "api_count": 3,
+        "thinking_ratio": 0.008,
+        "code_preview": "import pyAether as pyScript\n\ndef apply_geometric_transform_to_box(source_box: pyScript.emyBoxF, translation: pyScript.emyPointF, orientation: str, magnification: float) -> pyScript.emyBoxF:\n    \"\"\"\n    Applies a complete geometric transformation to a given bounding box, including translation, rotation, and scaling.\n    This function must be implemented using the pyAether API to ensure the correctness of the transformation.\n\n    Args:\n        source_box (pyScript.emyBoxF): The original bounding b",
+        "latency_s": 4.0
+      }
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-029",
+      "scenario": "Layout",
+      "entry_point": "process_and_scale_polygon",
+      "base": {
+        "content_length": 3427,
+        "code_length": 3427,
+        "finish_reason": "length",
+        "syntax_valid": false,
+        "has_function": false,
+        "has_code_fence": false,
+        "pyaether_apis": [
+          "pyScript.PointArray",
+          "pyScript.Point",
+          "pyScript.Polygon"
+        ],
+        "api_count": 3,
+        "thinking_ratio": 0.0,
+        "code_preview": "<think>\nWe need to output only Python code for the function. The user wants the complete function implementation. We need to follow the steps:\n\n1. Create an appropriate point array object from the input `raw_points`. (Note: Construct an empty array first, then create point objects and append them).\n2. Compress the array to remove coincident and collinear points. Assume the polygon is closed (isClosed=True).\n3. Transform the array by scaling it by a factor of 2.0 with a rotation angle of 0.0. (Us",
+        "latency_s": 8.6
+      },
+      "sft": {
+        "content_length": 1352,
+        "code_length": 1333,
+        "finish_reason": "stop",
+        "syntax_valid": true,
+        "has_function": true,
+        "has_code_fence": false,
+        "pyaether_apis": [
+          "pyScript.emyPointArrayF",
+          "pyScript.emyPointF"
+        ],
+        "api_count": 2,
+        "thinking_ratio": 0.014,
+        "code_preview": "import pyAether as pyScript\nfrom typing import List, Tuple\n\ndef process_and_scale_polygon(raw_points: List[Tuple[float, float]]) -> List[Tuple[float, float]]:\n    \"\"\"\n    Creates a pyAether float point array from a list of coordinates, cleans up redundant points,\n    scales the shape, and returns the result.\n\n    The function must perform the following steps in order:\n    1. Create an appropriate point array object from the input `raw_points`.\n       (Note: Construct an empty array first, then c",
+        "latency_s": 3.7
+      },
+      "qwen": {
+        "content_length": 1874,
+        "code_length": 1860,
+        "finish_reason": "stop",
+        "syntax_valid": true,
+        "has_function": true,
+        "has_code_fence": true,
+        "pyaether_apis": [
+          "pyScript.FloatPointArray",
+          "pyScript.FloatPoint"
+        ],
+        "api_count": 2,
+        "thinking_ratio": 0.007,
+        "code_preview": "import pyAether as pyScript\nfrom typing import List, Tuple\n\ndef process_and_scale_polygon(raw_points: List[Tuple[float, float]]) -> List[Tuple[float, float]]:\n    \"\"\"\n    Creates a pyAether float point array from a list of coordinates, cleans up redundant points,\n    scales the shape, and returns the result.\n\n    The function must perform the following steps in order:\n    1. Create an appropriate point array object from the input `raw_points`.\n       (Note: Construct an empty array first, then c",
+        "latency_s": 2.4
+      }
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-041",
+      "scenario": "Layout",
+      "entry_point": "find_contiguous_segments",
+      "base": {
+        "content_length": 3040,
+        "code_length": 1103,
+        "finish_reason": "length",
+        "syntax_valid": false,
+        "has_function": true,
+        "has_code_fence": false,
+        "pyaether_apis": [
+          "pyScript.emyBitArray"
+        ],
+        "api_count": 1,
+        "thinking_ratio": 0.637,
+        "code_preview": "import pyAether as pyScript\nfrom typing import List, Tuple\n\ndef find_contiguous_segments(scanline_mask: 'pyScript.emyBitArray') -> List[Tuple[int, int]]:\n    \"\"\"\n    Analyzes a bitmask representing a layout scanline to find all contiguous segments of 1s.\n\n    In physical layout analysis, it's common to process a design slice by slice (scanline). This function models such a process. It takes a bitmask where '1' represents the presence of metal and '0' represents empty space. The goal is to identi",
+        "latency_s": 8.6
+      },
+      "sft": {
+        "content_length": 532,
+        "code_length": 512,
+        "finish_reason": "stop",
+        "syntax_valid": true,
+        "has_function": true,
+        "has_code_fence": false,
+        "pyaether_apis": [
+          "pyScript.emyBitArray"
+        ],
+        "api_count": 1,
+        "thinking_ratio": 0.038,
+        "code_preview": "import pyAether as pyScript\nfrom typing import List, Tuple\n\ndef find_contiguous_segments(scanline_mask: 'pyScript.emyBitArray') -> List[Tuple[int, int]]:\n    segments: List[Tuple[int, int]] = []\n    n = scanline_mask.getLength()\n    i = 0\n    while i < n:\n        if scanline_mask.get(i):\n            start = i\n            while i < n and scanline_mask.get(i):\n                i += 1\n            length = i - start\n            segments.append((start, length))\n        else:\n            i += 1\n    ret",
+        "latency_s": 1.6
+      },
+      "qwen": {
+        "content_length": 1998,
+        "code_length": 1984,
+        "finish_reason": "stop",
+        "syntax_valid": true,
+        "has_function": true,
+        "has_code_fence": true,
+        "pyaether_apis": [
+          "pyScript.emyBitArray"
+        ],
+        "api_count": 1,
+        "thinking_ratio": 0.007,
+        "code_preview": "import pyAether as pyScript\nfrom typing import List, Tuple\n\ndef find_contiguous_segments(scanline_mask: 'pyScript.emyBitArray') -> List[Tuple[int, int]]:\n    \"\"\"\n    Analyzes a bitmask representing a layout scanline to find all contiguous segments of 1s.\n\n    In physical layout analysis, it's common to process a design slice by slice (scanline). This function models such a process. It takes a bitmask where '1' represents the presence of metal and '0' represents empty space. The goal is to identi",
+        "latency_s": 2.7
+      }
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-080",
+      "scenario": "Layout",
+      "entry_point": "compute_polygon_boolean_op",
+      "base": {
+        "content_length": 3230,
+        "code_length": 3230,
+        "finish_reason": "length",
+        "syntax_valid": false,
+        "has_function": false,
+        "has_code_fence": false,
+        "pyaether_apis": [
+          "pyScript.emyDesign",
+          "pyScript.emyPointF"
+        ],
+        "api_count": 2,
+        "thinking_ratio": 0.0,
+        "code_preview": "<think>\nWe need to write a complete Python function implementation for compute_polygon_boolean_op. The function uses pyAether EDA library imported as pyScript. We need to output only raw Python code, starting with imports, then function definition and body. No markdown, no explanations.\n\nWe need to understand the pyAether API. The function signature: compute_polygon_boolean_op(cv: 'pyScript.emyDesign', op: str, polys_a: List[List[Tuple[float, float]]], polys_b: List[List[Tuple[float, float]]]) -",
+        "latency_s": 8.6
+      },
+      "sft": {
+        "content_length": 2773,
+        "code_length": 2754,
+        "finish_reason": "length",
+        "syntax_valid": true,
+        "has_function": true,
+        "has_code_fence": false,
+        "pyaether_apis": [
+          "pyScript.emyDesign"
+        ],
+        "api_count": 1,
+        "thinking_ratio": 0.007,
+        "code_preview": "import pyAether as pyScript\nfrom typing import List, Tuple, Any\n\ndef compute_polygon_boolean_op(\n    cv: 'pyScript.emyDesign',\n    op: str,\n    polys_a: List[List[Tuple[float, float]]],\n    polys_b: List[List[Tuple[float, float]]]\n) -> Any:\n    \"\"\"\n    Performs a boolean operation on two sets of polygons using the pyAether engine.\n    \n    This function acts as a wrapper around the low-level polygon boolean API. It must handle\n    the conversion of standard Python coordinate lists into the speci",
+        "latency_s": 8.6
+      },
+      "qwen": {
+        "content_length": 1696,
+        "code_length": 1682,
+        "finish_reason": "stop",
+        "syntax_valid": true,
+        "has_function": true,
+        "has_code_fence": true,
+        "pyaether_apis": [
+          "pyScript.emyDesign",
+          "pyScript.emyPointF"
+        ],
+        "api_count": 2,
+        "thinking_ratio": 0.008,
+        "code_preview": "import pyAether as pyScript\nfrom typing import List, Tuple, Any\n\ndef compute_polygon_boolean_op(\n    cv: 'pyScript.emyDesign',\n    op: str,\n    polys_a: List[List[Tuple[float, float]]],\n    polys_b: List[List[Tuple[float, float]]]\n) -> Any:\n    \"\"\"\n    Performs a boolean operation on two sets of polygons using the pyAether engine.\n    \n    This function acts as a wrapper around the low-level polygon boolean API. It must handle\n    the conversion of standard Python coordinate lists into the speci",
+        "latency_s": 2.6
+      }
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-007",
+      "scenario": "Design Management",
+      "entry_point": "create_eda_library",
+      "base": {
+        "content_length": 3370,
+        "code_length": 1677,
+        "finish_reason": "length",
+        "syntax_valid": false,
+        "has_function": true,
+        "has_code_fence": false,
+        "pyaether_apis": [],
+        "api_count": 0,
+        "thinking_ratio": 0.502,
+        "code_preview": "import pyAether as ae\nfrom typing import List\n\ndef create_eda_library(library_name: str) -> bool:\n    ...\n\nWe need to fill the body. We'll use a try-except block. We'll call ae.create_library(library_name). If it returns True, return True. If it returns False or raises an exception, return False. We'll also need to handle the case where the library name is invalid? The docstring says the name should be a valid identifier. We can assume the library function will handle that. We'll just pass the n",
+        "latency_s": 8.6
+      },
+      "sft": {
+        "content_length": 1075,
+        "code_length": 1056,
+        "finish_reason": "stop",
+        "syntax_valid": true,
+        "has_function": true,
+        "has_code_fence": false,
+        "pyaether_apis": [
+          "pyScript.emyInitAether",
+          "pyScript.emyCreateLibrary"
+        ],
+        "api_count": 2,
+        "thinking_ratio": 0.018,
+        "code_preview": "import pyAether as pyScript\nfrom typing import List\n\ndef create_eda_library(library_name: str) -> bool:\n    \"\"\"\n    Creates a new, empty EDA library within the Aether environment.\n\n    This function attempts to create a library with the specified name. It provides feedback on whether the operation was successful.\n\n    Args:\n        library_name (str): The name for the new library. The name should be a valid identifier for the EDA system.\n\n    Returns:\n        bool: Returns `True` if the library ",
+        "latency_s": 2.9
+      },
+      "qwen": {
+        "content_length": 1064,
+        "code_length": 1050,
+        "finish_reason": "stop",
+        "syntax_valid": true,
+        "has_function": true,
+        "has_code_fence": true,
+        "pyaether_apis": [],
+        "api_count": 0,
+        "thinking_ratio": 0.013,
+        "code_preview": "import pyAether as ae\nfrom typing import List\n\ndef create_eda_library(library_name: str) -> bool:\n    \"\"\"\n    Creates a new, empty EDA library within the Aether environment.\n\n    This function attempts to create a library with the specified name. It provides feedback on whether the operation was successful.\n\n    Args:\n        library_name (str): The name for the new library. The name should be a valid identifier for the EDA system.\n\n    Returns:\n        bool: Returns `True` if the library was su",
+        "latency_s": 1.3
+      }
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-042",
+      "scenario": "Design Management",
+      "entry_point": "check_library_access",
+      "base": {
+        "content_length": 3488,
+        "code_length": 3488,
+        "finish_reason": "length",
+        "syntax_valid": false,
+        "has_function": false,
+        "has_code_fence": false,
+        "pyaether_apis": [
+          "pyScript.emyNameSpace"
+        ],
+        "api_count": 1,
+        "thinking_ratio": 0.0,
+        "code_preview": "<think>\nWe need to write a Python function that uses pyAether library. The function signature is given. We need to implement the body. The function should check if the specified access mode can be obtained for a given library name using the Extended Library Access interface. We need to use pyScript.emyNameSpace and pyScript's methods. The function returns a tuple of bool and str.\n\nWe need to output only the Python code, starting with imports, then the function definition. The imports are already",
+        "latency_s": 8.6
+      },
+      "sft": {
+        "content_length": 1078,
+        "code_length": 1058,
+        "finish_reason": "stop",
+        "syntax_valid": true,
+        "has_function": true,
+        "has_code_fence": false,
+        "pyaether_apis": [
+          "pyScript.emyNameSpace",
+          "pyScript.emyName",
+          "pyScript.emyAccess",
+          "pyScript.emyExtLibAccess",
+          "pyScript.emyString"
+        ],
+        "api_count": 5,
+        "thinking_ratio": 0.019,
+        "code_preview": "import pyAether as pyScript\nfrom typing import Tuple\n\ndef check_library_access(ns: 'pyScript.emyNameSpace', lib_name: str, access_mode: str) -> Tuple[bool, str]:\n    \"\"\"\n    Checks if the specified access mode can be obtained for a given library name using the Extended Library Access interface.\n\n    Args:\n        ns (pyScript.emyNameSpace): The pyAether namespace object used for name resolution.\n        lib_name (str): The name of the library to check (e.g., 'my_lib').\n        access_mode (str):",
+        "latency_s": 3.1
+      },
+      "qwen": {
+        "content_length": 1498,
+        "code_length": 1484,
+        "finish_reason": "stop",
+        "syntax_valid": true,
+        "has_function": true,
+        "has_code_fence": true,
+        "pyaether_apis": [
+          "pyScript.emyNameSpace"
+        ],
+        "api_count": 1,
+        "thinking_ratio": 0.009,
+        "code_preview": "import pyAether as pyScript\nfrom typing import Tuple\n\ndef check_library_access(ns: 'pyScript.emyNameSpace', lib_name: str, access_mode: str) -> Tuple[bool, str]:\n    \"\"\"\n    Checks if the specified access mode can be obtained for a given library name using the Extended Library Access interface.\n\n    Args:\n        ns (pyScript.emyNameSpace): The pyAether namespace object used for name resolution.\n        lib_name (str): The name of the library to check (e.g., 'my_lib').\n        access_mode (str):",
+        "latency_s": 2.1
+      }
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-078",
+      "scenario": "Design Management",
+      "entry_point": "get_dm_hierarchy_types",
+      "base": {
+        "content_length": 3290,
+        "code_length": 468,
+        "finish_reason": "length",
+        "syntax_valid": false,
+        "has_function": true,
+        "has_code_fence": false,
+        "pyaether_apis": [
+          "pyScript.DM"
+        ],
+        "api_count": 1,
+        "thinking_ratio": 0.858,
+        "code_preview": "import pyAether as pyScript\n\ndef get_dm_hierarchy_types(lib_name: str, cell_name: str, view_name: str) -> dict:\n    # implementation\n\nWe need to implement. Let's think: The function should retrieve DM objects. Perhaps we can use pyScript.DM.library(lib_name) to get a DM object for the library. Then get its type. Similarly for cell and view. But the cell and view are not necessarily DM objects? The description says \"Retrieve the DM objects for the library, the cell",
+        "latency_s": 8.6
+      },
+      "sft": {
+        "content_length": 1187,
+        "code_length": 1167,
+        "finish_reason": "stop",
+        "syntax_valid": true,
+        "has_function": true,
+        "has_code_fence": false,
+        "pyaether_apis": [
+          "pyScript.emyString",
+          "pyScript.emyDMGetLibDM",
+          "pyScript.emyDMGetCellDM",
+          "pyScript.emyDMGetViewDM"
+        ],
+        "api_count": 4,
+        "thinking_ratio": 0.017,
+        "code_preview": "import pyAether as pyScript\n\ndef get_dm_hierarchy_types(lib_name: str, cell_name: str, view_name: str) -> dict:\n    \"\"\"\n    Retrieves the Design Management (DM) object types for a specific library, cell, and view hierarchy.\n    \n    This function must:\n    1. Convert input strings to pyAether compatible strings if necessary.\n    2. Retrieve the DM objects for the library, the cell, and the view respectively.\n    3. Obtain the type string for each of these objects.\n    \n    Args:\n        lib_name",
+        "latency_s": 3.6
+      },
+      "qwen": {
+        "content_length": 1799,
+        "code_length": 1785,
+        "finish_reason": "stop",
+        "syntax_valid": true,
+        "has_function": true,
+        "has_code_fence": true,
+        "pyaether_apis": [
+          "pyScript.String",
+          "pyScript.dmGetLib",
+          "pyScript.dmGetCell",
+          "pyScript.dmGetView",
+          "pyScript.dmGetType"
+        ],
+        "api_count": 5,
+        "thinking_ratio": 0.008,
+        "code_preview": "import pyAether as pyScript\n\ndef get_dm_hierarchy_types(lib_name: str, cell_name: str, view_name: str) -> dict:\n    \"\"\"\n    Retrieves the Design Management (DM) object types for a specific library, cell, and view hierarchy.\n    \n    This function must:\n    1. Convert input strings to pyAether compatible strings if necessary.\n    2. Retrieve the DM objects for the library, the cell, and the view respectively.\n    3. Obtain the type string for each of these objects.\n    \n    Args:\n        lib_name",
+        "latency_s": 2.6
+      }
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-002",
+      "scenario": "Others",
+      "entry_point": "get_date_from_timestamp",
+      "base": {
+        "content_length": 1841,
+        "code_length": 917,
+        "finish_reason": "stop",
+        "syntax_valid": true,
+        "has_function": true,
+        "has_code_fence": false,
+        "pyaether_apis": [],
+        "api_count": 0,
+        "thinking_ratio": 0.502,
+        "code_preview": "import pyAether as pyScript\nimport time\nfrom datetime import datetime\n\ndef get_date_from_timestamp(timestamp: int) -> tuple[int, int, int]:\n    \"\"\"\n    Converts an integer Unix timestamp into a tuple containing the year, month, and day.\n\n    When processing simulation results or file timestamps, we often get an integer timestamp.\n    This function needs to parse this timestamp and extract the full year, month, and day.\n\n    Args:\n        timestamp (int): A Unix timestamp integer, for example, 16",
+        "latency_s": 4.6
+      },
+      "sft": {
+        "content_length": 935,
+        "code_length": 916,
+        "finish_reason": "stop",
+        "syntax_valid": true,
+        "has_function": true,
+        "has_code_fence": false,
+        "pyaether_apis": [],
+        "api_count": 0,
+        "thinking_ratio": 0.02,
+        "code_preview": "import pyAether as pyScript\nimport time\n\ndef get_date_from_timestamp(timestamp: int) -> tuple[int, int, int]:\n    \"\"\"\n    Converts an integer Unix timestamp into a tuple containing the year, month, and day.\n\n    When processing simulation results or file timestamps, we often get an integer timestamp.\n    This function needs to parse this timestamp and extract the full year, month, and day.\n\n    Args:\n        timestamp (int): A Unix timestamp integer, for example, 1682560771.\n\n    Returns:\n      ",
+        "latency_s": 2.4
+      },
+      "qwen": {
+        "content_length": 982,
+        "code_length": 968,
+        "finish_reason": "stop",
+        "syntax_valid": true,
+        "has_function": true,
+        "has_code_fence": true,
+        "pyaether_apis": [],
+        "api_count": 0,
+        "thinking_ratio": 0.014,
+        "code_preview": "import pyAether as pyScript\nimport time\n\ndef get_date_from_timestamp(timestamp: int) -> tuple[int, int, int]:\n    \"\"\"\n    Converts an integer Unix timestamp into a tuple containing the year, month, and day.\n\n    When processing simulation results or file timestamps, we often get an integer timestamp.\n    This function needs to parse this timestamp and extract the full year, month, and day.\n\n    Args:\n        timestamp (int): A Unix timestamp integer, for example, 1682560771.\n\n    Returns:\n      ",
+        "latency_s": 1.3
+      }
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-053",
+      "scenario": "Others",
+      "entry_point": "create_donau_policy",
+      "base": {
+        "content_length": 3438,
+        "code_length": 3438,
+        "finish_reason": "length",
+        "syntax_valid": false,
+        "has_function": false,
+        "has_code_fence": false,
+        "pyaether_apis": [
+          "pyScript.MdePlatDonauJobPolicy"
+        ],
+        "api_count": 1,
+        "thinking_ratio": 0.0,
+        "code_preview": "<think>\nWe need to output only Python code for the function. The function signature is given. We need to implement it using pyAether. The function should create a Donau job policy object. The docstring says: instantiate the policy with the provided job name and queue name. The 'misc' environment variable field should be left as an empty string. The maximum job number should be set to the provided integer value.\n\nWe need to know the pyAether API. The function returns pyScript.MdePlatDonauJobPolic",
+        "latency_s": 8.6
+      },
+      "sft": {
+        "content_length": 954,
+        "code_length": 934,
+        "finish_reason": "stop",
+        "syntax_valid": true,
+        "has_function": true,
+        "has_code_fence": false,
+        "pyaether_apis": [
+          "pyScript.MdePlatDonauJobPolicy"
+        ],
+        "api_count": 1,
+        "thinking_ratio": 0.021,
+        "code_preview": "import pyAether as pyScript\n\ndef create_donau_policy(job_name: str, queue_name: str, max_jobs: int) -> 'pyScript.MdePlatDonauJobPolicy':\n    \"\"\"\n    Creates and configures a Donau job policy object.\n    \n    The function should instantiate the policy with the provided job name and queue name.\n    The 'misc' environment variable field should be left as an empty string.\n    The maximum job number should be set to the provided integer value.\n\n    Args:\n        job_name (str): The name of the job.\n ",
+        "latency_s": 2.7
+      },
+      "qwen": {
+        "content_length": 892,
+        "code_length": 878,
+        "finish_reason": "stop",
+        "syntax_valid": true,
+        "has_function": true,
+        "has_code_fence": true,
+        "pyaether_apis": [
+          "pyScript.MdePlatDonauJobPolicy"
+        ],
+        "api_count": 1,
+        "thinking_ratio": 0.016,
+        "code_preview": "import pyAether as pyScript\n\ndef create_donau_policy(job_name: str, queue_name: str, max_jobs: int) -> 'pyScript.MdePlatDonauJobPolicy':\n    \"\"\"\n    Creates and configures a Donau job policy object.\n    \n    The function should instantiate the policy with the provided job name and queue name.\n    The 'misc' environment variable field should be left as an empty string.\n    The maximum job number should be set to the provided integer value.\n\n    Args:\n        job_name (str): The name of the job.\n ",
+        "latency_s": 1.3
+      }
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-065",
+      "scenario": "Others",
+      "entry_point": "configure_local_policy",
+      "base": {
+        "content_length": 3170,
+        "code_length": 1577,
+        "finish_reason": "length",
+        "syntax_valid": false,
+        "has_function": true,
+        "has_code_fence": false,
+        "pyaether_apis": [
+          "pyScript.MdePlatLocalJobPolicy"
+        ],
+        "api_count": 1,
+        "thinking_ratio": 0.503,
+        "code_preview": "import pyAether as pyScript\n\ndef configure_local_policy(max_jobs: int) -> 'pyScript.MdePlatLocalJobPolicy':\n    policy = pyScript.MdePlatLocalJobPolicy()\n    if 1 <= max_jobs <= 30000:\n        policy.max_jobs = max_jobs\n    else:\n        policy.max_jobs = 1\n    return policy\n\nBut we need to ensure the attribute name is correct. The docstring says \"set the maximum number of parallel jobs\". In pyAether, the attribute might be \"max_jobs\". We'll assume that. Also, the function might need to handle t",
+        "latency_s": 8.6
+      },
+      "sft": {
+        "content_length": 958,
+        "code_length": 938,
+        "finish_reason": "stop",
+        "syntax_valid": true,
+        "has_function": true,
+        "has_code_fence": false,
+        "pyaether_apis": [
+          "pyScript.MdePlatLocalJobPolicy"
+        ],
+        "api_count": 1,
+        "thinking_ratio": 0.021,
+        "code_preview": "import pyAether as pyScript\n\ndef configure_local_policy(max_jobs: int) -> 'pyScript.MdePlatLocalJobPolicy':\n    \"\"\"\n    Creates and configures a local job execution policy object.\n    \n    The function should set the maximum number of parallel jobs based on the input `max_jobs`.\n    According to the API constraints, the valid range for max job number is greater than 0 and less than 30001.\n    \n    Logic:\n    - If `max_jobs` is within the valid range (1 to 30000 inclusive), configure the policy w",
+        "latency_s": 2.7
+      },
+      "qwen": {
+        "content_length": 978,
+        "code_length": 964,
+        "finish_reason": "stop",
+        "syntax_valid": true,
+        "has_function": true,
+        "has_code_fence": true,
+        "pyaether_apis": [
+          "pyScript.MdePlatLocalJobPolicy"
+        ],
+        "api_count": 1,
+        "thinking_ratio": 0.014,
+        "code_preview": "import pyAether as pyScript\n\ndef configure_local_policy(max_jobs: int) -> 'pyScript.MdePlatLocalJobPolicy':\n    \"\"\"\n    Creates and configures a local job execution policy object.\n    \n    The function should set the maximum number of parallel jobs based on the input `max_jobs`.\n    According to the API constraints, the valid range for max job number is greater than 0 and less than 30001.\n    \n    Logic:\n    - If `max_jobs` is within the valid range (1 to 30000 inclusive), configure the policy w",
+        "latency_s": 1.4
+      }
+    }
+  ],
+  "summary": {
+    "total_tasks": 15,
+    "base_syntax_valid": 1,
+    "sft_syntax_valid": 13,
+    "qwen_syntax_valid": 14,
+    "base_has_function": 10,
+    "sft_has_function": 15,
+    "qwen_has_function": 15,
+    "base_total_apis": 14,
+    "sft_total_apis": 33,
+    "qwen_total_apis": 19,
+    "base_avg_thinking_ratio": 0.393,
+    "sft_avg_thinking_ratio": 0.018,
+    "qwen_avg_thinking_ratio": 0.01,
+    "base_total_code_len": 28746,
+    "sft_total_code_len": 19353,
+    "qwen_total_code_len": 24042,
+    "base_finish_stop": 1,
+    "sft_finish_stop": 12,
+    "qwen_finish_stop": 11,
+    "base_avg_latency": 8.3,
+    "sft_avg_latency": 4.0,
+    "qwen_avg_latency": 2.6,
+    "per_scenario": {
+      "Schematic": {
+        "n": 5,
+        "base_syn": 0,
+        "sft_syn": 3,
+        "qwen_syn": 4,
+        "base_func": 4,
+        "sft_func": 5,
+        "qwen_func": 5,
+        "base_api": 2,
+        "sft_api": 13,
+        "qwen_api": 3
+      },
+      "Layout": {
+        "n": 4,
+        "base_syn": 0,
+        "sft_syn": 4,
+        "qwen_syn": 4,
+        "base_func": 2,
+        "sft_func": 4,
+        "qwen_func": 4,
+        "base_api": 8,
+        "sft_api": 7,
+        "qwen_api": 8
+      },
+      "Design Management": {
+        "n": 3,
+        "base_syn": 0,
+        "sft_syn": 3,
+        "qwen_syn": 3,
+        "base_func": 2,
+        "sft_func": 3,
+        "qwen_func": 3,
+        "base_api": 2,
+        "sft_api": 11,
+        "qwen_api": 6
+      },
+      "Others": {
+        "n": 3,
+        "base_syn": 1,
+        "sft_syn": 3,
+        "qwen_syn": 3,
+        "base_func": 2,
+        "sft_func": 3,
+        "qwen_func": 3,
+        "base_api": 2,
+        "sft_api": 2,
+        "qwen_api": 2
+      }
+    }
+  }
+}

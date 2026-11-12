@@ -28,6 +28,14 @@
 ### 🧷 📛 命名与归档纪律（常驻）
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区，自上而下找第一条「未完成」的指令执行
 
+### ✅ §用户令 · 2026-11-12 16:3x（**给两个基准的 ETA**）· ✅ 已交付（R2279）
+
+> **ETA结论**：① **TB-2.1 = 已交付**（100p/750t, 7路≥89tasks, 全部done）；② **SWE-bench Verified = ~15天**（瓶颈=codex 374剩余@25/天, 预计 2026-11-27）。
+> **复算方法**：ETA=剩余题数÷3日平均速率(由 predictions_glm53/ 文件mtime统计)。各路拆分：cline 213剩余@49/天≈4天·codex 374剩余@25/天≈15天(瓶颈)·opencode 5剩余≈0天·cc 224剩余@49/天≈5天·pi 249剩余@51/天≈5天·hermes 51剩余@44/天≈1天·deepseek DONE(500attempted,325empty=能力,今日0产出)。eval已追上(incr_eval,0 true backlog)。网关200(curl实测)·429风险仍存(历史反复)。
+> **落盘**：MEMORY心跳第一行含两ETA数字 + 双报告新增§9 ETA节(`reports/report_harness_glm53_7way_swebench_tb_zh.html` + `reports/report_harness_cline_special_zh.html`) + 生成器脚本已更新(gen_report_glm53_7way.py + gen_cline_special.py)。
+
+---
+
 ### 🔴 用户令 · 2026-11-07 10:10（**按早晨令继续评测；cline 专项加盯**）· 用户直令 · 最高优先 · 未完成
 
 > **用户原话**：「harness：按早晨的用户令评测，同时多关注一点 cline。」

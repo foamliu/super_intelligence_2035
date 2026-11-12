@@ -1,0 +1,14 @@
+Dear Dr. Lambert,
+
+I am Yang Liu, working on BaiZe-ISEDA2027 and ZhuLong-DAC2027: small (~2B) domain models for EDA and memory workflows. Zephyr is the paper our team keeps returning to when we argue about how far distillation can carry a small model, and I would like to check three readings of it.
+
+1. With a ~2B student and only tens of thousands of in-domain preference pairs, does the dSFT-then-dDPO recipe still pay off over dSFT alone? Which part degrades first in your experience?
+
+2. Zephyr used AI feedback ranked by a teacher. For tool-call trajectories where success is checkable (a tool runs, DRC passes), would you still use AI feedback, or derive the preference pairs directly from the checker?
+
+3. You reported only a few hours of training with no extra sampling. How much of the gain would you attribute to the teacher's ranking quality rather than to the DPO step itself?
+
+Your answers would help us decide whether to keep a preference-learning stage at all. Thank you for the paper and your time.
+
+Best regards,
+Yang Liu

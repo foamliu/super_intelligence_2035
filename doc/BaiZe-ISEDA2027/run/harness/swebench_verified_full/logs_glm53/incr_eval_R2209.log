@@ -1,0 +1,60 @@
+
+=== cline-patched: scikit-learn__scikit-learn-13135 ===
+  merged 245 real preds -> predictions_glm53/predictions_cline-patched_glm53.json
+  [00:15:33] launching eval ...
+  Instances resolved: 1
+  Instances unresolved: 0
+  Instances with likely infrastructure failures: 0
+  eval done rc=0 (log: logs/eval_incr_verified_full_glm53_cline-patched_R2209.log)
+
+=== cline-patched: scikit-learn__scikit-learn-13135 ===
+  merged 245 real preds -> predictions_glm53/predictions_cline-patched_glm53.json
+  [00:16:33] launching eval ...
+  Instances resolved: 1
+  Instances unresolved: 0
+  Instances with likely infrastructure failures: 0
+  eval done rc=0 (log: logs/eval_incr_verified_full_glm53_cline-patched_R2209.log)
+  scikit-learn__scikit-learn-13135: RESOLVED
+  [00:16:43] cline-patched: eval updated (resolved=186, failed=62, infra=1)
+
+=== claude-code: django__django-14725 ===
+  merged 227 real preds -> predictions_glm53/predictions_claude-code_glm53.json
+  [00:16:43] launching eval ...
+  Instances resolved: 1
+  Instances unresolved: 0
+  Instances with likely infrastructure failures: 0
+  eval done rc=0 (log: logs/eval_incr_verified_full_glm53_claude-code_R2209.log)
+  django__django-14725: RESOLVED
+  [00:17:20] claude-code: eval updated (resolved=181, failed=45, infra=1)
+
+=== claude-code: django__django-14752 ===
+  merged 227 real preds -> predictions_glm53/predictions_claude-code_glm53.json
+  [00:17:20] launching eval ...
+  Instances resolved: 1
+  Instances unresolved: 0
+  Instances with likely infrastructure failures: 0
+  eval done rc=0 (log: logs/eval_incr_verified_full_glm53_claude-code_R2209.log)
+  django__django-14752: RESOLVED
+  [00:17:57] claude-code: eval updated (resolved=182, failed=45, infra=1)
+
+=== claude-code: django__django-14765 ===
+  merged 227 real preds -> predictions_glm53/predictions_claude-code_glm53.json
+  [00:17:57] launching eval ...
+  Instances resolved: 1
+  Instances unresolved: 0
+  Instances with likely infrastructure failures: 0
+  eval done rc=0 (log: logs/eval_incr_verified_full_glm53_claude-code_R2209.log)
+  django__django-14765: RESOLVED
+  [00:18:34] claude-code: eval updated (resolved=183, failed=45, infra=1)
+
+=== hermes: django__django-11740 ===
+  merged 414 real preds -> predictions_glm53/predictions_hermes_glm53.json
+  [00:18:34] launching eval ...
+  Instances resolved: 1
+  Instances unresolved: 0
+  Instances with likely infrastructure failures: 0
+  eval done rc=0 (log: logs/eval_incr_verified_full_glm53_hermes_R2209.log)
+  django__django-11740: RESOLVED
+  [00:19:09] hermes: eval updated (resolved=371, failed=40, infra=3)
+
+=== incr_eval R2209 complete in 156.4s ===

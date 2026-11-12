@@ -2,7 +2,72 @@
  "handle": "jyangballin",
  "name": "John Yang (@jyangballin) / X",
  "bio": "CS PhD @Stanford. Creator of @SWEbench (multi-lingual/modal); SWE-agent; SWE-smith; SWE-sweep; InterCode; CodeClash; ProgramBench",
- "tweets": [],
+ "tweets": [
+  {
+   "id": "2115934941007818875",
+   "created_at": "2026-10-29 22:32 UTC",
+   "created_at_ms": 1793313176000,
+   "text": "Another great whole-repo-generation benchmark led by fantastic @HantianDing!\\\n\\\nMy main learning from Hantian's work - there's a lot of creative ways to go about getting a model to build out a repo from scratch. ProgramBench gives an executable. E2E-SWE gives a specification.",
+   "url": "https://x.com/jyangballin/status/2115934941007818875",
+   "handle_guess": "jyangballin"
+  },
+  {
+   "id": "2115839169532465580",
+   "created_at": "2026-10-29 16:12 UTC",
+   "created_at_ms": 1793290343000,
+   "text": "Introducing E2E-SWE, a benchmark for reliably measuring how well coding agents turn a specification into a working software repository.\\\n\\\nAgents start from an empty workspace, work offline, and succeed only when their project installs and passes every hidden functional test. https://t.co/ajI0v2YqMK",
+   "url": "https://x.com/jyangballin/status/2115839169532465580",
+   "handle_guess": "HantianDing"
+  },
+  {
+   "id": "2115494796064403620",
+   "created_at": "2026-10-28 17:23 UTC",
+   "created_at_ms": 1793208238000,
+   "text": "SWE-sweep on the Gemini 4 Carbon model card! Congrats @OfficialLoganK @Google and the Gemini team on the fantastic numbers!\\\n\\\nFollow @KLieret for leaderboard updates, a lot of new numbers coming in :D",
+   "url": "https://x.com/jyangballin/status/2115494796064403620",
+   "handle_guess": "jyangballin"
+  },
+  {
+   "id": "2115489284404940898",
+   "created_at": "2026-10-28 17:02 UTC",
+   "created_at_ms": 1793206923000,
+   "text": "Introducing Gemini 4 Carbon, it's a big jump over Argon which we released just 2 weeks ago.\\\n\\\nGemini 4 Carbon is SOTA on cyber, long horizon tasks, ranks #1 on Artificial Analysis V5, significantly improves on usability in domains like coding, and is more aligned. https://t.co/Ikk9YedjCQ",
+   "url": "https://x.com/jyangballin/status/2115489284404940898",
+   "handle_guess": "OfficialLoganK"
+  },
+  {
+   "id": "2115466114318905603",
+   "created_at": "2026-10-28 15:29 UTC",
+   "created_at_ms": 1793201399000,
+   "text": "SWE-sweep, SWEeper-bench, now PROBE.\\\n\\\nMany coding benchmarks in the past year have gone in the direction of proposing harder versions of tasks w/ fundamentally the same SWE-bench style formulation.\\\n\\\nIn comparison, proactivity is a great direction - much less about making things",
+   "url": "https://x.com/jyangballin/status/2115466114318905603",
+   "handle_guess": "jyangballin"
+  },
+  {
+   "id": "2115439606443528405",
+   "created_at": "2026-10-28 13:44 UTC",
+   "created_at_ms": 1793195079000,
+   "text": "New paper: Frontier Coding Agents Find Different Bugs Than Maintainers Fix\\\n\\\nIn proactive bug finding, agents report fewer than 20% of the bugs humans fixed. But they report a lot of other bugs, most of which are valid. This points towards an important distributional mismatch. https://t.co/8nwKJJL2ib",
+   "url": "https://x.com/jyangballin/status/2115439606443528405",
+   "handle_guess": "mnmueller"
+  },
+  {
+   "id": "2113668094707261655",
+   "created_at": "2026-10-23 16:25 UTC",
+   "created_at_ms": 1792772718000,
+   "text": "Saturating a benchmark that tests models on rebuilding ffmpeg is gonna take a fraction of the 3 yrs it took to saturate GitHub issue resolution.\\\n\\\nCrazy times we live in. https://t.co/F4Fzpc5Zws",
+   "url": "https://x.com/jyangballin/status/2113668094707261655",
+   "handle_guess": "jyangballin"
+  },
+  {
+   "id": "2051677497562210552",
+   "created_at": "2026-05-05 14:56 UTC",
+   "created_at_ms": 1777993008000,
+   "text": "How much of SQLite, FFmpeg, PHP compiler can LMs code from scratch? Given just an executable and no starter code or internet access.\\\n\\\nIntroducing ProgramBench: 200 rigorous, whole-repo generation tasks where models design, build, and ship a working program end to end. 🧵 https://t.co/8ayeDJLXaJ",
+   "url": "https://x.com/jyangballin/status/2051677497562210552",
+   "handle_guess": "jyangballin"
+  }
+ ],
  "http_status": 200,
- "fetched_at": "2026-11-11 12:23:18"
+ "fetched_at": "2026-11-12 06:02:13"
 }

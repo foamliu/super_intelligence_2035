@@ -1,0 +1,8 @@
+
+=== claude-code: sympy__sympy-22456 ===
+  merged 260 real preds -> predictions_glm53/predictions_claude-code_glm53.json
+  [14:10:10] launching eval ...
+  Instances resolved: 1
+  Instances unresolved: 0
+  Instances with likely infrastructure failures: 0
+  eval done rc=0 (log: logs/eval_incr_verified_full_glm53_claude-code_R2268.log)

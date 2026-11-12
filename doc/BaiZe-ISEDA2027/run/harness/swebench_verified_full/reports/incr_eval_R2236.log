@@ -1,0 +1,16 @@
+[incr-eval 06:41:51] === incr_eval R2236 start ===
+[incr-eval 06:41:51] cline: 0 new instances, skip
+[incr-eval 06:41:51] codex: 0 new instances, skip
+[incr-eval 06:41:51] opencode: 0 new instances, skip
+
+=== claude-code R2236 ===
+new instances: 1 ['sphinx-doc__sphinx-10466']
+[incr-eval 06:41:51] claude-code: merged 1 new patches -> predictions_claude-code_new_R2236.json
+[incr-eval 06:41:51] claude-code: EVAL 1 instances -> run_id=verified_full_glm53_claude-code_incr_R2236
+[incr-eval 06:41:55] claude-code: eval rc=0
+[incr-eval 06:41:55]   sphinx-doc__sphinx-10466: RESOLVED
+[incr-eval 06:41:55] claude-code: cumulative n=251 resolved=203 failed=46 infra=2 -> eval_glm53_claude-code.json
+[incr-eval 06:41:55] pi: 0 new instances, skip
+[incr-eval 06:41:55] hermes: 0 new instances, skip
+[incr-eval 06:41:55] deepseek: 0 new instances, skip
+[incr-eval 06:41:55] === incr_eval R2236 done: 1 instances, +1resolved +0failed +0infra ===

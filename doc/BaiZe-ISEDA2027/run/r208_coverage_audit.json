@@ -1,0 +1,346 @@
+{
+  "round": "R208",
+  "purpose": "v11-v35 corpus coverage audit vs 158-task eval API requirement (de-risk GPU spend)",
+  "sources": {
+    "eval_apis": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/pyAether_eval_488_apis.txt",
+    "corpus": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/sft_pyaether_corpus_v11_v35_merged.jsonl"
+  },
+  "corpus_pairs": 943,
+  "corpus_unique_apis": 189,
+  "eval_api_entries": 488,
+  "eval_unique_leaf_names": 436,
+  "eval_families": 320,
+  "coverage": {
+    "tier2_class_aware_primary": {
+      "covered": 314,
+      "total": 488,
+      "pct": 64.34
+    },
+    "tier1_leaf_loose": {
+      "covered": 167,
+      "total": 488,
+      "pct": 34.22
+    },
+    "tier3_strict_full": {
+      "covered": 167,
+      "total": 488,
+      "pct": 34.22
+    }
+  },
+  "corpus_type_distribution": {
+    "S4": 204,
+    "S5": 199,
+    "S6": 188,
+    "S1": 178,
+    "S3": 149,
+    "S1_doc_to_code": 10,
+    "S2_api_lookup": 10,
+    "S3_multi_api_chain": 3,
+    "S7_corrected_prompt": 2
+  },
+  "families_total": 320,
+  "families_with_gap": 152,
+  "families_fully_uncovered": 152,
+  "families_fully_covered": 168,
+  "top_uncovered_families": [
+    {
+      "family": "emyLine",
+      "uncovered": 4,
+      "total": 4
+    },
+    {
+      "family": "emyScalarInst",
+      "uncovered": 4,
+      "total": 4
+    },
+    {
+      "family": "emyScalarNet",
+      "uncovered": 4,
+      "total": 4
+    },
+    {
+      "family": "MdeSetting",
+      "uncovered": 3,
+      "total": 3
+    },
+    {
+      "family": "dmLibObj",
+      "uncovered": 3,
+      "total": 3
+    },
+    {
+      "family": "emyPin",
+      "uncovered": 3,
+      "total": 3
+    },
+    {
+      "family": "dmCellObj",
+      "uncovered": 2,
+      "total": 2
+    },
+    {
+      "family": "dmViewObj",
+      "uncovered": 2,
+      "total": 2
+    },
+    {
+      "family": "emyArc",
+      "uncovered": 2,
+      "total": 2
+    },
+    {
+      "family": "emyEllipse",
+      "uncovered": 2,
+      "total": 2
+    },
+    {
+      "family": "emyNet",
+      "uncovered": 2,
+      "total": 2
+    },
+    {
+      "family": "emyTerm",
+      "uncovered": 2,
+      "total": 2
+    },
+    {
+      "family": "emyText",
+      "uncovered": 2,
+      "total": 2
+    },
+    {
+      "family": "EmyTechGetPurposeNum",
+      "uncovered": 1,
+      "total": 1
+    },
+    {
+      "family": "MDE_SWEEP_RANGE_START_STOP",
+      "uncovered": 1,
+      "total": 1
+    },
+    {
+      "family": "MDE_SWEEP_TYPE_LINEAR",
+      "uncovered": 1,
+      "total": 1
+    },
+    {
+      "family": "MDE_SWEEP_TYPE_LINEAR_STEP_SIZE",
+      "uncovered": 1,
+      "total": 1
+    },
+    {
+      "family": "MDE_SWEEP_VARIABLE_DESIGN_VARIABLE",
+      "uncovered": 1,
+      "total": 1
+    },
+    {
+      "family": "MdePlatSweepStepMode",
+      "uncovered": 1,
+      "total": 1
+    },
+    {
+      "family": "MdeResult",
+      "uncovered": 1,
+      "total": 1
+    },
+    {
+      "family": "PVM_EXPAND_ALL",
+      "uncovered": 1,
+      "total": 1
+    },
+    {
+      "family": "PVM_UPDATE_DESTLIB_MODE",
+      "uncovered": 1,
+      "total": 1
+    },
+    {
+      "family": "SleLeWireTypeEnum",
+      "uncovered": 1,
+      "total": 1
+    },
+    {
+      "family": "addProp",
+      "uncovered": 1,
+      "total": 1
+    },
+    {
+      "family": "aeAddHighLightRect",
+      "uncovered": 1,
+      "total": 1
+    },
+    {
+      "family": "aeAddObjectsMapping",
+      "uncovered": 1,
+      "total": 1
+    },
+    {
+      "family": "aeAddTrace",
+      "uncovered": 1,
+      "total": 1
+    },
+    {
+      "family": "aeBaseAppFormCallBack",
+      "uncovered": 1,
+      "total": 1
+    },
+    {
+      "family": "aeCheckAndSaveDesign",
+      "uncovered": 1,
+      "total": 1
+    },
+    {
+      "family": "aeCreateAppForm",
+      "uncovered": 1,
+      "total": 1
+    }
+  ],
+  "fully_uncovered_families_sample": [
+    {
+      "family": "emyLine",
+      "total": 4
+    },
+    {
+      "family": "emyScalarInst",
+      "total": 4
+    },
+    {
+      "family": "emyScalarNet",
+      "total": 4
+    },
+    {
+      "family": "MdeSetting",
+      "total": 3
+    },
+    {
+      "family": "dmLibObj",
+      "total": 3
+    },
+    {
+      "family": "emyPin",
+      "total": 3
+    },
+    {
+      "family": "dmCellObj",
+      "total": 2
+    },
+    {
+      "family": "dmViewObj",
+      "total": 2
+    },
+    {
+      "family": "emyArc",
+      "total": 2
+    },
+    {
+      "family": "emyEllipse",
+      "total": 2
+    },
+    {
+      "family": "emyNet",
+      "total": 2
+    },
+    {
+      "family": "emyTerm",
+      "total": 2
+    },
+    {
+      "family": "emyText",
+      "total": 2
+    },
+    {
+      "family": "EmyTechGetPurposeNum",
+      "total": 1
+    },
+    {
+      "family": "MDE_SWEEP_RANGE_START_STOP",
+      "total": 1
+    },
+    {
+      "family": "MDE_SWEEP_TYPE_LINEAR",
+      "total": 1
+    },
+    {
+      "family": "MDE_SWEEP_TYPE_LINEAR_STEP_SIZE",
+      "total": 1
+    },
+    {
+      "family": "MDE_SWEEP_VARIABLE_DESIGN_VARIABLE",
+      "total": 1
+    },
+    {
+      "family": "MdePlatSweepStepMode",
+      "total": 1
+    },
+    {
+      "family": "MdeResult",
+      "total": 1
+    },
+    {
+      "family": "PVM_EXPAND_ALL",
+      "total": 1
+    },
+    {
+      "family": "PVM_UPDATE_DESTLIB_MODE",
+      "total": 1
+    },
+    {
+      "family": "SleLeWireTypeEnum",
+      "total": 1
+    },
+    {
+      "family": "addProp",
+      "total": 1
+    },
+    {
+      "family": "aeAddHighLightRect",
+      "total": 1
+    },
+    {
+      "family": "aeAddObjectsMapping",
+      "total": 1
+    },
+    {
+      "family": "aeAddTrace",
+      "total": 1
+    },
+    {
+      "family": "aeBaseAppFormCallBack",
+      "total": 1
+    },
+    {
+      "family": "aeCheckAndSaveDesign",
+      "total": 1
+    },
+    {
+      "family": "aeCreateAppForm",
+      "total": 1
+    }
+  ],
+  "surplus_corpus_apis_count": 22,
+  "surplus_corpus_apis_sample": [
+    "MdeAddSpecificPoints",
+    "MdeSession",
+    "MdeSession.run",
+    "SleHierQuery",
+    "aeCrtWireLabelsAndPins",
+    "aeLeCreatePin",
+    "aeMakeSleQueryData",
+    "aeSchStretch",
+    "aelPopSignifDigs",
+    "aelPushSignifDigs",
+    "dbCrtSchWireName",
+    "dbCrtWire",
+    "dbFindInst",
+    "dbGetPinFigName",
+    "dbSchGetPinOrder",
+    "dbSchIsWire",
+    "emyDesignIsSchematic",
+    "emyFigGetPinName",
+    "emyPinGetNames",
+    "etTimeToString",
+    "getPyAePath",
+    "sleLeWireTypeEnumToEMYEndStyleEnum"
+  ],
+  "pre_gpu_verdict": "MODERATE - 50-70% coverage; SFT may help but gap material; consider v36+ augmentation targeting uncovered families.",
+  "note": "Tier-2 is the defensible primary metric: 1-dot pyAether.F covered if F in corpus; 2-dot pyAether.C.m covered if C (class) or m (method) in corpus. Surplus = corpus APIs the eval does not test (not necessarily bad)."
+}

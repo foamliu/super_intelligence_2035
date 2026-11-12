@@ -1,0 +1,16 @@
+Dear Dr. Florence,
+
+I am Yang Liu, author of Superintelligence 2035 and lead of the BaiZe-ISEDA2027 project, a ~2B domain model for chip design (EDA). We drive synthesis/simulation tools through multi-turn tool calls, so every action our model emits is text.
+
+RT-2 is the cleanest precedent for that interface: instead of a separate action head, you wrote actions as tokens in the same vocabulary as language. Two things I could not settle from the paper:
+
+1) Precision. Actions were discretized into token bins. For numerically sensitive parameters, did tokenization itself cost precision, and would you still choose verbatim text over a constrained grammar?
+
+2) Mixing. How did you set the ratio of web vision-language data to robot trajectories, and did web data ever help semantics while hurting low-level precision? At 2B scale with only tens of thousands of in-domain traces, which side would you protect?
+
+3) With 6k trials, how did you separate emergent ability from noise at small effect sizes?
+
+These answers would directly shape our action-schema and data-mixing ablations. Thank you for the paper and for any pointer to the relevant tables.
+
+Best regards,
+Yang Liu

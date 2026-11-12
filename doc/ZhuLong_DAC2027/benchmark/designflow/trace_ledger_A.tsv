@@ -141,7 +141,7 @@
 1792829965577_rser7	jkxu		98	verification	parked		2026-11-06 09:11	surveyed r148: kw-mention only, analog/netlist session, unfit shard-A L2
 1792568990736_5c450	han1li		56	verification	parked		2026-11-06 09:11	surveyed r148: kw-mention only, analog/netlist session, unfit shard-A L2
 1791973347667_tx5s5	e04201		46	verification	parked		2026-11-06 09:11	surveyed r148: kw-mention only, analog/netlist session, unfit shard-A L2
-1788772817371_ppl5a	harrys		30	digital	parked		2026-11-06 09:11	surveyed r148: kw-mention only, analog/netlist session, unfit shard-A L2
+1788772817371_ppl5a	harrys		30	digital	case	EDA-Eval-DesignFlow-McuAsmGen-001	2026-11-12 10:18	r418 reopened from parked(r148 shallow misjudge): deep-read confirms clean digital/RTL asm_assembler.py produce-task; B档 McuAsmGen-001 k=15 self-verified
 1793794350956_fi203	chengleiy	hfeg0pkn005	274	pnr_signoff	case	EDA-Eval-DesignFlow-InnovusLogAudit-001	2026-11-06 11:12	
 1793760774987_u7mv3	alan3zh	hfeg0pkn001	324	digital	case	EDA-Eval-DesignFlow-DCDirSwitch-001	2026-11-06 11:49	
 1793191074113_6vcuk.messages.json	hbpeng	hfeg0pkn005	124	eda_other	case	EDA-Eval-DesignFlow-RunsetVerFind-001	2026-11-06 13:07	
@@ -271,7 +271,6 @@
 1788347732612_bhs4z	e0025768	hfeg0pkn001	38	eda_other	case	EDA-Eval-DesignFlow-RtlDesignScenarioBoot-001	2026-11-09 09:00	
 1789904654090_nzxx2.messages.json	ziyuny	hfeg0pnd002	44	eda_other	case	EDA-Eval-DesignFlow-GgFlowReport-001	2026-11-09 09:43	
 1793240332278_86t8o.messages.json	rose3wang	hfeg0pkn003	278	digital	case	EDA-Eval-DesignFlow-TclAreaUpdate-001	2026-11-09 13:43	
-1793929852342_5jgp2.messages.json	lorikx	hfeg0pkn004	8	digital	case	EDA-Eval-DesignFlow-FiMergeVcs-001	2026-11-09 11:32	
 1793932600947_c5gwq	johnl	hfeg0pkn001	306	digital	parked		2026-11-09 12:30	A-faithful infeasible: golden=hand-migrated DC scripts (run_dc.sh bsub fqueue3_analog + run_dc_local.sh module-load + synth.tcl */* cell-policy/gtech-exclude + SPPR-removed timing_constraints.tcl + setup.sh) with A-specific hardcoded values; cannot satisfy §4.1/§4.2 hidden-B cross-input (golden not parameterized, would fail B-run). Needs B-档 reformulation as migration-program deliverable (see trace_deepreads/c5gwq_johnl_dc_migrate.md). daily-log find (mc306, 174msgs, 685KB, digital/synthesis dominant).
 1792409159286_g7hcn	shanliny	hfeg0pkn001	15	verification	parked		2026-11-09 14:57	analysis-only trace, 0 write/edit, no executable golden; A-faithful #0=analysis task, #18/19=give fix=hint; not design_flow viable
 1793098169771_pvx74	lorikx	hfeg0pkn001	29	digital	case	EDA-Eval-DesignFlow-RwConflictBackstop-001	2026-11-09 15:33	B-档 digital code-fix (sp_2pram.v rw_conflict backstop insert line2573); golden=on-disk post-fix; deepread done, case-build queued r276
@@ -398,3 +397,35 @@
 1791792527981_q4skx	e0045128	hfeg0pkn005	21	pnr_signoff	parked		2026-11-11 20:38	r391 peek: Primetime STA consultation Q&A, 15 user-turns (DMSA/hold-timing/UPF/multi-voltage/multi-corner), 0 produce-task 0 file-write, unmodellable design_flow. Only A-tool-TOP fresh candidate on 11/05 strict filter.
 1793790637246_aafag.messages.json	e0046718	hfeg0plg76	12	pnr_signoff	parked		2026-11-11 21:44	r394 deepread: trivial typo Q&A (user typed 'innouvs', agent explained Cadence Innovus via AskEDA, 0 produce-task, 0 innovus exec); D-parked boilerplate confirmed; innovus:401 kw from explanation text NOT tool use -- methodological note: high tool-kw count can be false signal from explanatory text
 1794215537758_5or9z.messages.json	e0046913	hfeg0pkn003	88	verification	parked		2026-11-11 21:50	r394 deepread (93msgs/42tool): Formality FM rtl2rtl flow diagnosis+consultation, NOT clean produce -- user asks '分析原因' x4 + conceptual Q&A (link lib/black box/set_case_analysis/dft mbist); 'add FM_CONSTRAINT_SCRIPT support' (msg63 q4) is advisory ('告诉我如何优化'), agent only wrote diag_*.py never edited Makefile/fm.tcl; overlaps FormalityLaunchDiag-001 archetype; assets in /proj/lacaa (sandbox-access risk per P-002)
+1789892513893_qopwl.messages.json	lorikx	hfeg0pkn001	30	digital	case	EDA-Eval-DesignFlow-FsdbDumpConvert-001	2026-11-11 23:01	
+1793350628620_wbhv1	lorikx	10.129.2.10	75	eda_other	case	EDA-Eval-DesignFlow-TqvVrefreshBuild-001	2026-11-11 23:41	
+1793957377461_s9bc9	e0039602	hfeg0pkn002	391	digital	case	EDA-Eval-DesignFlow-VlibDetConvert-001	2026-11-12 00:19	
+1793177577202_ii9ew	fernandoy	hfeg0plg76	63	digital	case	EDA-Eval-DesignFlow-VerdiCfgVipGen-001	2026-11-12 01:05	
+1793330336899_zh3eq	lorikx	hfeg0pkn004	45	digital	parked		2026-11-12 01:45	dup of TqvVrefreshBuild-001 (r398 wbhv1): same lorikx TQV 4-script-combine task
+1793326182885_wyezr	stevenh	hfeg0pgn145	35	digital	parked		2026-11-12 01:46	analysis-Q&A weak: stevenh asks how-to-delay-compare-timing on compare_tasks.sv#543, agent explains data flow no produce-task
+1792637822804_6xv88	e0045140	hfeg0pnd001	33	digital	case	EDA-Eval-DesignFlow-AhbSbCompareGen-001	2026-11-12 02:06	
+1793177058917_hzyu6	fernandoy	hfeg0plg76	326	digital	parked		2026-11-12 02:26	dup-of-ii9ew(r401 VerdiCfgVipGen-001): same fernandoy PIM2 UVM, same produce-task gen_verdi_cfg.py(filelist flatten+VIP bank2pu_if/dbg_if+module load ver). hzyu6=earlier 799msg/3MB, ii9ew=later 104msg+821archive. dup.
+1793619124342_usjrp					case	EDA-Eval-DesignFlow-OdtErrStatScan-001	2026-11-12 02:40	
+1793091129423_vxorx	e0046913	hfeg0pkn003	159	verification	case	EDA-Eval-DesignFlow-FmR2rFlowGen-001	2026-11-12 03:11	
+1793929852342_5jgp2	lorikx	hfeg0pkn004	8	digital	case	EDA-Eval-DesignFlow-FiMergeVcs-001	2026-11-12 03:41	
+1792113930059_f7v4d	ruisongs	hfeg0pfn090	96	digital	case	EDA-Eval-DesignFlow-SimDefineDeltaDiag-001	2026-11-12 04:54	
+1793344469517_ikg9e	e0039602	hfeg0pkn002	138	digital	case	EDA-Eval-DesignFlow-VlibFlowRetryRewrite-001	2026-11-12 05:30	
+1792654323443_2fw13.messages.json	graywang	hfeg0pjn140	51	digital	case	EDA-Eval-DesignFlow-PatternTaskXref-001	2026-11-12 06:00	
+1793343745263_sg86n.messages.json	ruisongs	hfeg0pfn090	82	digital	case	EDA-Eval-DesignFlow-CslWlGateMap-001	2026-11-12 06:41	
+1793597102437_p0nyi	ruisongs	hfeg0pfn090	55	digital	case	EDA-Eval-DesignFlow-XrunTimingCompare-001	2026-11-12 07:11	
+1793965015681_q3lrp.messages.json	graywang	hfeg0pjn140	210	digital	case	EDA-Eval-DesignFlow-SignalRunXref-001	2026-11-12 08:01	
+1791457291368_k7hc6	tongfanl	hfeg0plg49	152	digital	case	EDA-Eval-DesignFlow-VecgenProbeDiag-001	2026-11-12 08:38	
+1793427492496_njt15	tongfanl	hfhds201	367	digital	case	EDA-Eval-DesignFlow-CrcErrBitDiag-001	2026-11-12 09:34	
+1793931639221_rv1g2	e0039602	hfeg0pkn002	249	digital	case	EDA-Eval-DesignFlow-SvConvTimeoutSkip-001	2026-11-12 10:59	
+1792066483816_us0hd	e0039102	hfeg0plg74	166	digital	case	EDA-Eval-DesignFlow-RegrCaseFilter-001	2026-11-12 11:41	
+1793945349500_bwdql	eric1ch	hfeg0pkn002	127	digital	case	EDA-Eval-DesignFlow-SvTaskReport-001	2026-11-12 12:39	
+1793608238791_s4my6	e0039102	hfeg0plg74	114	digital	case	EDA-Eval-DesignFlow-RunRegrCaselistAdapter-001	2026-11-12 12:23	
+1792634547955_wzkye	gracew	hfeg0pkn004	129	digital	case	EDA-Eval-DesignFlow-Bl6CompcodeMerge-001	2026-11-12 13:21	
+1793259975527_lilaj.messages.json	lorikx	hfeg0pkn004	58	digital	claimed		2026-11-12 13:50	
+1793259975527_lilaj					case	EDA-Eval-DesignFlow-XsCheckReportDiag-001	2026-11-12 14:15	
+1792842218809_1yo6b	jkxu	hfhds209	173	digital	case	EDA-Eval-DesignFlow-RegrRerunScriptGen-001	2026-11-12 14:47	
+1793771746058_2c126	gracew	hfeg0pkn004	70	digital	case	EDA-Eval-DesignFlow-TmPatternXref-001	2026-11-12 15:33	
+1793069875156_c6xow	lorikx	10.129.2.10	158	digital	case	EDA-Eval-DesignFlow-CrCheckAudit-001	2026-11-12 16:16	
+1793323182278_49w4n	e0039602	hfeg0pkn002	118	digital	case	EDA-Eval-DesignFlow-TripleJudgeWorker-001	2026-11-12 17:01	
+1793605575195_s6n9d	xuluo	10.129.2.10	54	digital	case	EDA-Eval-DesignFlow-XyzBudgetEnum-001	2026-11-12 17:46	
+1792474615638_0mkow	yixiaow	10.129.2.14	26	eda_other	case	EDA-Eval-DesignFlow-QualibTclGen-001	2026-11-12 18:28	

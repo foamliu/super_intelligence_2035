@@ -29,7 +29,8 @@ SCRIPT_DIR="$(dirname "$(realpath "${BASH_SOURCE[0]}")")"
 
 # ============ config ============
 VLLM_VENV="${VLLM_VENV:-/tmp/vllm_venv/bin/python}"
-SFT_RUNS_DIR="$SCRIPT_DIR/sft_surrogate_runs/minicpm5_pyaether_v1"
+RUN_NAME="${RUN_NAME:-minicpm5_pyaether_v2_v11v36}"
+SFT_RUNS_DIR="$SCRIPT_DIR/sft_surrogate_runs/${RUN_NAME}"
 GPU="${GPU:-6}"
 PORT="${PORT:-8096}"
 SERVED_NAME="${SERVED_NAME:-minicpm5-sft}"
@@ -41,15 +42,16 @@ CKPT=""
 DRY_RUN=0; STATUS_ONLY=0; STOP=0
 while [ $# -gt 0 ]; do
   case "$1" in
-    --dry-run)  DRY_RUN=1 ;;
-    --status)   STATUS_ONLY=1 ;;
-    --stop)     STOP=1 ;;
-    --gpu)      GPU="$2"; shift ;;
-    --port)     PORT="$2"; shift ;;
-    --ckpt)     CKPT="$2"; shift ;;
-    --name)     SERVED_NAME="$2"; shift ;;
-    --mem)      GPU_MEM_UTIL="$2"; shift ;;
-    --max-len)  MAX_MODEL_LEN="$2"; shift ;;
+    --dry-run)   DRY_RUN=1 ;;
+    --status)    STATUS_ONLY=1 ;;
+    --stop)      STOP=1 ;;
+    --gpu)       GPU="$2"; shift ;;
+    --port)      PORT="$2"; shift ;;
+    --ckpt)      CKPT="$2"; shift ;;
+    --name)      SERVED_NAME="$2"; shift ;;
+    --mem)       GPU_MEM_UTIL="$2"; shift ;;
+    --max-len)   MAX_MODEL_LEN="$2"; shift ;;
+    --run-name)  RUN_NAME="$2"; SFT_RUNS_DIR="$SCRIPT_DIR/sft_surrogate_runs/${RUN_NAME}"; shift ;;
     *) echo "未知参数: $1"; exit 1 ;;
   esac
   shift
@@ -98,6 +100,7 @@ if [ -z "$CKPT" ]; then
   if [ ! -d "$SFT_RUNS_DIR" ]; then
     echo "❌ SFT runs dir not found: $SFT_RUNS_DIR"
     echo "   Has the SFT training finished? Run baize_posttrain_sft_surrogate.sh first."
+    echo "   Or specify --run-name <name> to point to a different run directory."
     exit 1
   fi
   # FIX R173: sort by extracted step number (numeric), not fragile `sort -t_ -k3 -n`
@@ -112,6 +115,18 @@ if [ -z "$CKPT" ]; then
     echo "   SFT training may still be running or hasn't saved a checkpoint yet."
     exit 1
   fi
+else
+  # If --ckpt is a bare name (no /), resolve relative to SFT_RUNS_DIR
+  case "$CKPT" in
+    /*) : ;;  # absolute path, use as-is
+    *)
+      if [ -d "$SFT_RUNS_DIR/$CKPT" ]; then
+        CKPT="$SFT_RUNS_DIR/$CKPT"
+      elif [ -d "$SCRIPT_DIR/$CKPT" ]; then
+        CKPT="$SCRIPT_DIR/$CKPT"
+      fi
+      ;;
+  esac
 fi
 
 if [ ! -f "$CKPT/config.json" ] && ! ls "$CKPT"/model*.safetensors >/dev/null 2>&1; then

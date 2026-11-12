@@ -1458,3 +1458,40 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1793261282500_4fq1p	t0002224	hfeg0pkn004	347	schematic_netlist	case	EDA-Eval-DesignFlow-ClosureDeckBuilder-001	2026-11-11 18:52	
 1793171759141_p33gv	scarle	hfeg0pkn002	15	analog_context	case	EDA-Eval-DesignFlow-LeakageCellPvtAudit-001	2026-11-11 19:32	
 1791961066548_kb9ob	junlingw	hfeg0plg99	11	schematic_netlist	case	EDA-Eval-DesignFlow-PwlDecodeStimGen-001	2026-11-11 21:00	
+1793608573097_mauo7	zlhou	hfeg0pjn200	39	schematic_netlist	case	EDA-Eval-DesignFlow-GioLioAbTilingGen-001	2026-11-11 22:33	
+1793167500635_mn59z	e03179	hfeg0pkn002	29	analog_context	parked		2026-11-11 22:38	DUP: mn59z already produced ProfCellReco-001 (D.jsonl line 84, 2026-11-04). Re-claim 2026-11-11 was same session file — unclaiming.
+1793070622287_pnxqe	daiweilu	hfhds209	29	waveform	case	EDA-Eval-DesignFlow-FuseAddrCompare-001	2026-11-11 23:09	
+1793692590888_zudnw	yuhzhu	hfeg0plg91	53	analog_context	case	CdlPlacePlanGen-001	2026-11-11 23:28	
+1791511259262_4qz5x	simplec	hfeg0plg56	26	schematic_netlist	case	EDA-Eval-DesignFlow-RcCellCapReport-001	2026-11-12 00:09	
+1794203033198_asrox	eva1li	hfeg0plg10	52	waveform	case	EDA-Eval-DesignFlow-IrunWarnClassify-001	2026-11-12 01:13	r528 case: irun/ncsim *W warn code extract+count+phase classify+error/fatal+export; k=17; ref PASS + 5neg NEG_RC=0 + 3seed sha256 stable
+1793621647806_3u5t4	chengk	hfeg0plg96	70	schematic_netlist	case	EDA-Eval-DesignFlow-RailMapMissingAudit-001	2026-11-12 01:34	
+1789610397098_48m5j	ericw	hfhds206	28	analog_context	case	EDA-Eval-DesignFlow-Ddr5ClDelayPivot-001	2026-11-12 02:18	shard D #530 analog_context L2
+1791946116873_bs9rk	e0039503	hfeg0pgn145	34	schematic_netlist	case	EDA-Eval-DesignFlow-CdsLibNetlistInventory-001	2026-11-12 02:44	
+1793583887609_nwlan	reedchen	hfeg0pkn001	44	waveform	case	EDA-Eval-DesignFlow-SetupHoldPostShFold-001	2026-11-12 03:13	
+1793081469014_i1s8t	chengk	hfeg0plg74		analog_context	case	EDA-Eval-DesignFlow-IddLeakRank-001	2026-11-12 04:06	analog_context iddtree leakage rank/filter/outlier pipeline; 14 conds; ref 14/14 PASS, 4 neg FAIL, det ok
+1793609997920_hsw4o	xxchen	hfeg0pbn011	43	schematic_netlist	case	EDA-Eval-DesignFlow-SpfTrueShortScan-001	2026-11-12 04:39	
+1794204364689_0o6q1	e0023936	hfhds201	60	waveform	case	EDA-Eval-DesignFlow-WvEyeSelect-001	2026-11-12 05:28	
+1793762292369_ue8qf	xxchen	10.129.2.11	12	analog_context	case	EDA-Eval-DesignFlow-SpfLayerAnnotate-001	2026-11-12 06:01	
+1794212090584_3gk8d	rhyanw	hfeg0pkn001	51	schematic_netlist	case	EDA-Eval-DesignFlow-SpiceMismatchSweep-001	2026-11-12 06:35	
+1793865253461_l06an	rongjiez	10.129.2.14	39	waveform	case	EDA-Eval-DesignFlow-WvVecCmpXTolAudit-001	2026-11-12 07:25	
+1792563728390_19ycs	devonma	10.129.2.10	19	schematic_netlist	case	EDA-Eval-DesignFlow-SpiceMeasGroupExpand-001	2026-11-12 07:52	
+1793172218139_vildy	qinqinl	hfeg0plg83	57	analog_context	parked		2026-11-12 08:04	cross-shard dup of C SacapSpfCouplingExtract-001 (sacap SPF BL coupling rongtaoy, same task family)
+1793770960378_ewsdf	zhiguo1w	hfeg0plg76	56	analog_context	case		2026-11-12 08:21	CmpEmPolyThkCalc-001 analog_context, 14 asserts, self-verify PASS
+1793874126039_qvr6i	e0039602	hfeg0plg103	148	schematic_netlist	case	EDA-Eval-DesignFlow-NetlistSvRulesReorg-001	2026-11-12 09:07	schematic_netlist, 16 asserts, self-verify PASS (ref 16/16 + no-op FAIL 10/16 + 3 fakes FAIL + 3-seed stable)
+1790044817313_ygz63	rongjiez	10.129.2.14	23	schematic_netlist	case	EDA-Eval-DesignFlow-CsvBackfillTableUpdate-001	2026-11-12 10:08	
+1793097371828_uozyg	e0023936	10.129.32.75	21	waveform	case	EDA-Eval-DesignFlow-WvWdfVerPathProc-001	2026-11-12 10:48	
+1793927167185_ayinb	dorisz	hfeg0plg98	59	waveform	case	EDA-Eval-DesignFlow-WvFsdbBatchOpenCmd-001	2026-11-12 11:35	
+1793328999007_61zln	rongtaoy	hfeg0pkn001	76	analog_context	case	EDA-Eval-DesignFlow-CslBlCouplingExtract-001	2026-11-12 11:50	
+1793178284228_y3h0j	yanxvwei	hfhds201		waveform	case	EDA-Eval-DesignFlow-WvLdqPadShiftCmp-001	2026-11-12 12:31	waveform compare script: ldqpad0 vs exp_LDQ0.vec.tol, two backends (ddr5 divideTimeRange + new build_grid/segment_windows), --method/--seg
+1793515826795_g8ory	e0023936	hfhds201	19	waveform	parked		2026-11-12 12:42	dup of SineZeroCrossFreqPeak-001 (ox6r3 e0047722): same sine+zero-cross+freq+peak WaveView Tcl task family
+1793082144264_z432i	e03179	hfhds201	30	waveform	parked		2026-11-12 12:47	vam-agent skill-dependent multi-step (Verilog-AMS cell replace), same as #539 39kt1/#533 8nqgg reject; depends on external simdir/finesim.prof non-self-contained
+1789090795893_l2fcn	oshen	hfhds201	15	analog_context	parked		2026-11-12 12:47	vague '启动业务场景: 模拟电路优化·二次执行' demo-launcher, same as #540 k34i5 reject; no concrete produce-task, agent wanders Argus docs
+1792547194816_zsj47	reedchen	hfhds201	13	schematic_netlist	parked		2026-11-12 12:51	continuation session (msg#32 '继续完成重构') + user-gave-fixes (msg#206/236/340 stimulus corrections); original GenSPPostSim_v2.py task not in this session; A-faithful violation
+1793840720980_kd6jx	dsgao	hfhds201	15	schematic_netlist	parked		2026-11-12 12:51	Q&A '两个电路有逻辑功能的区别不' netlist comparison analysis, not produce-task; assets at /proj/drcpa/ sandbox-unreachable
+1793779407315_s8mpi	xxchen	hfhds201	37	analog_context	parked		2026-11-12 12:51	Q&A investigation: StarRC runTrace metal-resistor hierarchy discrepancy (top vs sub-cell), not produce-task; .rep reports at /proj paths unreachable
+1793089586575_rs1eo	rose3wang	hfeg0pkn003	18	schematic_netlist	case	EDA-Eval-DesignFlow-TclAreaCsvAnnotate-001	2026-11-12 13:47	
+1788767715720_znoyb	rongjiez	hfeg0pkn014	25	analog_context	case	EDA-Eval-DesignFlow-MqaMd0PvtAggregate-001	2026-11-12 14:31	
+1793598753128_q2ccz	qilongw	hfeg0plg52	18	schematic_netlist	case	EDA-Eval-DesignFlow-PwrSpVSrcBitExpand-001	2026-11-12 16:21	
+1793771016430_o0tur	shanliny	hfeg0plg53	12	waveform	case	EDA-Eval-DesignFlow-Mt0BlConsistSummary-001	2026-11-12 16:40	
+1793102574043_2h9t1	kaixuanx	hfeg0pkn002	26	waveform	case	EDA-Eval-DesignFlow-PvtPwrWinAvg-001	2026-11-12 17:26	host hfeg0pkn002/10.129.2.11 unreachable from .75 (ssh timeout 2x); reclassify later if host returns
+1791955659176_a63u6	jianwang	hfeg0pkn001	23	analog_context	case	EDA-Eval-DesignFlow-IddBlkCmpHighlight-001	2026-11-12 17:49	

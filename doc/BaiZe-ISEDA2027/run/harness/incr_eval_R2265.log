@@ -1,0 +1,24 @@
+[incr-eval 13:21:26] === incr_eval R2265 start ===
+
+=== cline R2265 ===
+new instances: 2 ['sympy__sympy-21612', 'sympy__sympy-21847']
+[incr-eval 13:21:26] cline: merged 2 new patches -> predictions_cline-patched_new_R2265.json
+[incr-eval 13:21:26] cline: EVAL 2 instances -> run_id=verified_full_glm53_cline-patched_incr_R2265
+[incr-eval 13:21:55] cline: eval rc=0
+[incr-eval 13:21:55]   sympy__sympy-21612: RESOLVED
+[incr-eval 13:21:55]   sympy__sympy-21847: RESOLVED
+[incr-eval 13:21:55] cline: cumulative n=281 resolved=211 failed=69 infra=1 -> eval_glm53_cline-patched.json
+[incr-eval 13:21:55] codex: 0 new instances, skip
+[incr-eval 13:21:55] opencode: 0 new instances, skip
+[incr-eval 13:21:55] claude-code: 0 new instances, skip
+
+=== pi R2265 ===
+new instances: 1 ['django__django-17029']
+[incr-eval 13:21:55] pi: merged 1 new patches -> predictions_pi_new_R2265.json
+[incr-eval 13:21:55] pi: EVAL 1 instances -> run_id=verified_full_glm53_pi_incr_R2265
+[incr-eval 13:22:26] pi: eval rc=0
+[incr-eval 13:22:26]   django__django-17029: RESOLVED
+[incr-eval 13:22:26] pi: cumulative n=243 resolved=179 failed=64 infra=0 -> eval_glm53_pi.json
+[incr-eval 13:22:26] hermes: 0 new instances, skip
+[incr-eval 13:22:26] deepseek: 0 new instances, skip
+[incr-eval 13:22:26] === incr_eval R2265 done: 3 instances, +3resolved +0failed +0infra ===

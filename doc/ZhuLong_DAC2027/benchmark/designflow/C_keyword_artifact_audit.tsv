@@ -1,0 +1,16 @@
+term	matched	clean_boundary	substring_only	notes
+calibre	5960	5960	0	clean: ;calibre:N or ^calibre:N
+virtuoso	6842	6842	0	clean
+aether	17204	12627	4577	substring = all "pyaether" (legitimate layout_aether API, NOT path contamination)
+ipcustom	0	0	0	DEAD term: token never appears in keywords column
+layout	0	0	0	DEAD term: keyword vocab uses dbcreaterect/dbcreateinst/dbcreatepath/cellview, never bare "layout" (r415 path-contamination concern RESOLVED -- no /projects/layout/ false positives)
+lvs	6737	6737	0	clean
+drc	13244	13244	0	clean
+pexivirtuoso	0	0	0	BUG: actual token is "pex" (2482 occurrences); regex MISSES all PEX sessions. Fix: replace pexivirtuoso -> pex
+# scan: /home/t0002965/log/ssh_eda_search_20261109_224902/summary.tsv (38082 rows)
+# total C-keyword-matched (any of 8 terms): 27546
+# PEX-only (pex present, no other C-term), mc>=10: 320 sessions
+#   - PEX-dominated (pex is max keyword), mc>=10: 64 sessions -- genuine physical_verify candidates
+#   - PEX-minor (verilog/netlist-dominated, pex incidental): 256 -- correctly excluded (wrong-shard)
+# top PEX-dominated fresh candidates (not in ledger_C 698): b48ma(237) kxmzc(150) iuoie(112) f4b79(104) -- all rongtaoy except f4b79(jianilu)
+# ACTION: ledger next --n 5 awk should add `pex` term; b48ma claimed+case'd r416 (PexBlCouplingCompare-001)

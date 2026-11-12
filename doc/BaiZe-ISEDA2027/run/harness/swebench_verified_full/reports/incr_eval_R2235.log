@@ -1,0 +1,39 @@
+[incr-eval 06:18:56] === incr_eval R2235 start ===
+
+=== cline R2235 ===
+new instances: 3 ['sphinx-doc__sphinx-9461', 'sphinx-doc__sphinx-9591', 'sphinx-doc__sphinx-9602']
+[incr-eval 06:18:56] cline: merged 3 new patches -> predictions_cline-patched_new_R2235.json
+[incr-eval 06:18:56] cline: EVAL 3 instances -> run_id=verified_full_glm53_cline-patched_incr_R2235
+[incr-eval 06:19:27] cline: eval rc=0
+[incr-eval 06:19:27]   sphinx-doc__sphinx-9461: FAILED
+[incr-eval 06:19:27]   sphinx-doc__sphinx-9591: RESOLVED
+[incr-eval 06:19:27]   sphinx-doc__sphinx-9602: FAILED
+[incr-eval 06:19:27] cline: cumulative n=262 resolved=197 failed=64 infra=1 -> eval_glm53_cline-patched.json
+[incr-eval 06:19:27] codex: 0 new instances, skip
+[incr-eval 06:19:27] opencode: 0 new instances, skip
+
+=== claude-code R2235 ===
+new instances: 3 ['scikit-learn__scikit-learn-25931', 'scikit-learn__scikit-learn-9288', 'sphinx-doc__sphinx-10323']
+[incr-eval 06:19:27] claude-code: merged 3 new patches -> predictions_claude-code_new_R2235.json
+[incr-eval 06:19:27] claude-code: EVAL 3 instances -> run_id=verified_full_glm53_claude-code_incr_R2235
+[incr-eval 06:29:54] claude-code: eval rc=0
+[incr-eval 06:29:54]   scikit-learn__scikit-learn-25931: RESOLVED
+[incr-eval 06:29:54]   scikit-learn__scikit-learn-9288: RESOLVED
+[incr-eval 06:29:54]   sphinx-doc__sphinx-10323: RESOLVED
+[incr-eval 06:29:54] claude-code: cumulative n=250 resolved=202 failed=46 infra=2 -> eval_glm53_claude-code.json
+
+=== pi R2235 ===
+new instances: 4 ['django__django-15503', 'django__django-15561', 'django__django-15569', 'django__django-15572']
+[incr-eval 06:29:54] pi: merged 4 new patches -> predictions_pi_new_R2235.json
+[incr-eval 06:29:54] pi: EVAL 4 instances -> run_id=verified_full_glm53_pi_incr_R2235
+[incr-eval 06:31:46] pi: eval rc=0
+[incr-eval 06:31:46]   django__django-15503: FAILED
+[incr-eval 06:31:46]   django__django-15561: RESOLVED
+[incr-eval 06:31:46]   django__django-15569: RESOLVED
+[incr-eval 06:31:46]   django__django-15572: RESOLVED
+[incr-eval 06:31:46] pi: cumulative n=232 resolved=171 failed=61 infra=0 -> eval_glm53_pi.json
+
+=== hermes R2235 ===
+new instances: 5 ['pytest-dev__pytest-5787', 'pytest-dev__pytest-5809', 'pytest-dev__pytest-6197', 'pytest-dev__pytest-6202', 'pytest-dev__pytest-7205']
+[incr-eval 06:31:46] hermes: merged 5 new patches -> predictions_hermes_new_R2235.json
+[incr-eval 06:31:46] hermes: EVAL 5 instances -> run_id=verified_full_glm53_hermes_incr_R2235

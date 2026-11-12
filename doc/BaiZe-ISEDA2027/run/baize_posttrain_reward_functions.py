@@ -183,6 +183,16 @@ HALLUCINATED_API_PENALTY = -0.15
 UNKNOWN_API_PENALTY = -0.05
 FORMAT_BONUS = 0.02
 
+# R300: Scene-weighted enhancement constants (GRPO-compatible bonus terms)
+# The scene weight modulates BONUS terms (not base R4), creating within-group
+# variance that GRPO can exploit. A simple multiplier on the base score would
+# cancel out in GRPO's per-group normalization: advantage = (w*r - w*r_bar)/(w*sigma) = (r-r_bar)/sigma.
+# By scaling only the additive bonus/penalty terms, we preserve within-group
+# differentiation while emphasizing Layout/DesignMgmt (severe forgetting per R297).
+R300_BOTH_MISSED_BONUS = 0.03       # per correct both_missed API used (curriculum)
+R300_ANTI_FORGET_PENALTY = 0.02     # per expected base_only API the model drops
+R300_DEFAULT_SCENE_WEIGHT = 1.0     # fallback when scenario unknown
+
 # R0 component scores
 R0_SYNTAX_SCORE = 0.10
 R0_API_SCORE = 0.30
@@ -348,7 +358,130 @@ def reward_r4_api_legality(r3_score, tool_calls, api_db_path):
     return r3_score + penalty
 
 
-def check_format(solution_str):
+# ---------------------------------------------------------------------------
+# R300: Scene-weighted enhancement (GRPO-compatible, from R297 API gap analysis)
+# ---------------------------------------------------------------------------
+_SCENE_WEIGHT_CACHE: Optional[Dict[str, Any]] = None
+_SCENE_WEIGHT_PATH: Optional[str] = None
+
+
+def _load_scene_weight_config(config_path: str) -> Dict[str, Any]:
+    """Lazy-load and cache the R300 scene-weight config JSON."""
+    global _SCENE_WEIGHT_CACHE, _SCENE_WEIGHT_PATH
+    path = os.path.expanduser(config_path)
+    if _SCENE_WEIGHT_CACHE is not None and _SCENE_WEIGHT_PATH == path:
+        return _SCENE_WEIGHT_CACHE
+    try:
+        with open(path, "r") as f:
+            _SCENE_WEIGHT_CACHE = json.load(f)
+        _SCENE_WEIGHT_PATH = path
+        logger.info("R300: loaded scene-weight config from %s", path)
+    except (OSError, json.JSONDecodeError) as e:
+        logger.warning("R300: failed to load scene-weight config %s: %s", path, e)
+        _SCENE_WEIGHT_CACHE = {}
+        _SCENE_WEIGHT_PATH = path
+    return _SCENE_WEIGHT_CACHE
+
+
+def _infer_scenario(extra_info: Any, tool_calls: List[str],
+                    expected_apis: Optional[List[str]] = None) -> str:
+    """Infer the EDA scenario (layout/design_mgmt/schematic/others).
+
+    Priority:
+      1. explicit 'scenario'/'category' in task metadata (extra_info)
+      2. heuristic from API family prefixes in expected_apis or tool_calls
+         db*  -> layout  (library/cellview lifecycle = Layout/DesignMgmt)
+         emy* -> schematic
+         default -> others
+    """
+    # 1. Check metadata
+    if isinstance(extra_info, dict):
+        meta = extra_info.get("metadata", extra_info)
+        if isinstance(meta, str):
+            try:
+                meta = json.loads(meta)
+            except (json.JSONDecodeError, TypeError):
+                meta = {}
+        if isinstance(meta, dict):
+            for key in ("scenario", "category", "task_category", "scene"):
+                if key in meta:
+                    val = str(meta[key]).strip().lower()
+                    for canon in ("layout", "design_mgmt", "design management",
+                                  "schematic", "others"):
+                        if canon in val:
+                            return "design_mgmt" if "design" in val else canon
+
+    # 2. Heuristic from API families
+    apis = set()
+    if expected_apis:
+        apis.update(a.split(".")[-1] if isinstance(a, str) else "" for a in expected_apis)
+    apis.update(c.split(".")[-1] for c in tool_calls if isinstance(c, str))
+    has_db = any(a.startswith("db") for a in apis if a)
+    has_emy = any(a.startswith("emy") for a in apis if a)
+    if has_db and not has_emy:
+        return "layout"
+    if has_emy and not has_db:
+        return "schematic"
+    if has_db and has_emy:
+        return "layout"  # db* present → prioritize Layout recovery
+    return "others"
+
+
+def reward_r300_scene_weighted(r4_score: float, tool_calls: List[str],
+                               expected_apis: Optional[List[str]],
+                               scenario: str,
+                               scene_config: Dict[str, Any]) -> float:
+    """R300: Apply scene-weighted both_missed bonus + anti-forget penalty.
+
+    This is an ENHANCEMENT layer on top of R4 (paper-defined arms R1-R4 are
+    unchanged).  The bonus/penalty terms are scaled by the scene weight so
+    that Layout/DesignMgmt (severe forgetting per R297) get larger incentives.
+    These additive terms create within-group variance for GRPO.
+
+    Args:
+        r4_score: Base R4 score (paper-defined, unchanged).
+        tool_calls: List of API names the model called.
+        expected_apis: List of APIs expected for this task (from metadata).
+        scenario: Inferred scenario key (layout/design_mgmt/schematic/others).
+        scene_config: Loaded rl_scene_weight_config_r300.json dict.
+
+    Returns:
+        Enhanced reward (r4_score + weighted bonus - weighted penalty), clamped.
+    """
+    if not scene_config:
+        return r4_score
+
+    weights = scene_config.get("scene_weights", {})
+    sw = weights.get(scenario, R300_DEFAULT_SCENE_WEIGHT)
+
+    # Both-missed API bonus: reward the model for using APIs that BOTH
+    # BASE and SFT failed to use (322 APIs = RL core target per R297).
+    both_missed_set = set(scene_config.get("both_missed_api_bonus_set", []))
+    bonus_per = scene_config.get("both_missed_bonus_per_api", R300_BOTH_MISSED_BONUS)
+    bonus = 0.0
+    called_apis = set()
+    for call in tool_calls:
+        short = call.split(".")[-1] if "." in call else call
+        called_apis.add(call)
+        called_apis.add(short)
+    for api in both_missed_set:
+        if api in called_apis:
+            bonus += bonus_per * sw
+
+    # Anti-forgetting penalty: penalize dropping APIs that BASE could use
+    # but SFT forgot (164 base_only APIs per R297).
+    anti_forget_set = set(scene_config.get("anti_forget_api_set", []))
+    penalty_per = scene_config.get("anti_forget_penalty_per_api", R300_ANTI_FORGET_PENALTY)
+    penalty = 0.0
+    if expected_apis:
+        for api in expected_apis:
+            short = api.split(".")[-1] if isinstance(api, str) and "." in api else api
+            if api in anti_forget_set or short in anti_forget_set:
+                if api not in called_apis and short not in called_apis:
+                    penalty += penalty_per * sw
+
+    enhanced = r4_score + bonus - penalty
+    return max(0.0, min(enhanced, 1.2))
     """Check if the response follows expected format."""
     if not solution_str or len(solution_str.strip()) < 10:
         return False
@@ -663,6 +796,25 @@ def compute_score(data_source, solution_str, ground_truth, extra_info=None, **kw
         score = reward_r4_api_legality(r3, tool_calls, api_db_path)
     else:
         score = 0.0
+
+    # R300: Scene-weighted enhancement (GRPO-compatible, from R297 API gap).
+    # Optional layer on top of R4 — adds scenario-scaled both_missed API bonus
+    # and anti-forget penalty. Controlled by reward_kwargs:
+    #   enable_scene_weighting: true
+    #   scene_weight_config: <path to rl_scene_weight_config_r300.json>
+    # Paper-defined arms R1-R4 remain unchanged; this is a practical refinement
+    # for the surrogate pre-experiment (Phase 3).
+    enable_sw = kwargs.get("enable_scene_weighting", False)
+    sw_config_path = kwargs.get("scene_weight_config", "")
+    if enable_sw and sw_config_path and arm == "R4":
+        sw_config = _load_scene_weight_config(sw_config_path)
+        if sw_config:
+            meta = _parse_task_metadata(extra_info)
+            expected_apis = meta.get("apis_used", [])
+            scenario = _infer_scenario(extra_info, tool_calls, expected_apis)
+            score = reward_r300_scene_weighted(score, tool_calls, expected_apis,
+                                                scenario, sw_config)
+            logger.debug("R300: scenario=%s, score=%.4f", scenario, score)
 
     if check_format(solution_str) and score > 0:
         score += FORMAT_BONUS

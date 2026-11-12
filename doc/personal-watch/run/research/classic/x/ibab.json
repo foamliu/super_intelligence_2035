@@ -1,0 +1,89 @@
+{
+ "handle": "ibab",
+ "name": "Igor Babuschkin (@ibab) / X",
+ "bio": "CEO &amp; Co-Founder @river_ai_inc. Previously @xAI, Research &amp; Engineering",
+ "tweets": [
+  {
+   "id": "2116309317733536117",
+   "created_at": "2026-10-30 23:20 UTC",
+   "created_at_ms": 1793402435000,
+   "text": "Define your loss function on your laptop and execute it remotely on hundreds of GPUs",
+   "url": "https://x.com/ibab/status/2116309317733536117",
+   "handle_guess": "ibab"
+  },
+  {
+   "id": "2116291123547361328",
+   "created_at": "2026-10-30 22:08 UTC",
+   "created_at_ms": 1793398097000,
+   "text": "We just shipped something pretty unique among post-training API providers: end-to-end custom losses.\\\n\\\nThe objective you define locally gets traced into a graph, compiled and executed efficiently on our GPUs.\\\n\\\nRead more about the engineering behind it in our latest blog post. https://t.co/kmg8Q8Ogcs",
+   "url": "https://x.com/ibab/status/2116291123547361328",
+   "handle_guess": "vehsatso"
+  },
+  {
+   "id": "2116198000829898897",
+   "created_at": "2026-10-30 15:58 UTC",
+   "created_at_ms": 1793375895000,
+   "text": "Toby released his first song. Check it out",
+   "url": "https://x.com/ibab/status/2116198000829898897",
+   "handle_guess": "ibab"
+  },
+  {
+   "id": "2116185846361796823",
+   "created_at": "2026-10-30 15:09 UTC",
+   "created_at_ms": 1793372997000,
+   "text": "The River API now supports training LLMs with any loss function. You define a custom loss in PyTorch on your laptop and we efficiently execute it at scale on our remote GPU cluster with zero overhead.\\\n\\\nThe blog explains how it works: the loss function is traced on your machine,",
+   "url": "https://x.com/ibab/status/2116185846361796823",
+   "handle_guess": "ibab"
+  },
+  {
+   "id": "2116183349056229407",
+   "created_at": "2026-10-30 15:00 UTC",
+   "created_at_ms": 1793372401000,
+   "text": "Custom losses are now live on the River API.\\\n\\\nWrite your objective in PyTorch. Our Symbolic Engine compiles and runs it end-to-end across GPUs, handling efficient execution and memory usage.\\\n\\\nLearn more and see it in action with decision models and score centering:",
+   "url": "https://x.com/ibab/status/2116183349056229407",
+   "handle_guess": "river_ai_inc"
+  },
+  {
+   "id": "2116087428616274222",
+   "created_at": "2026-10-30 08:38 UTC",
+   "created_at_ms": 1793349532000,
+   "text": "Love is wise\\\n\\\nMy first song is out. Please watch.\\\nSpotify link below https://t.co/eh3ZKCs4u4",
+   "url": "https://x.com/ibab/status/2116087428616274222",
+   "handle_guess": "TobyPhln"
+  },
+  {
+   "id": "2112687069684433389",
+   "created_at": "2026-10-20 23:27 UTC",
+   "created_at_ms": 1792538823000,
+   "text": "This looks awesome, great work humans&amp; !",
+   "url": "https://x.com/ibab/status/2112687069684433389",
+   "handle_guess": "ibab"
+  },
+  {
+   "id": "2112674550907552137",
+   "created_at": "2026-10-20 22:37 UTC",
+   "created_at_ms": 1792535839000,
+   "text": "No one changes the world alone\\\nIntroducing Ampersand - the first model built for us. Ampersand is a collaborator trained to help people achieve their individual and collective goals. In multi-month simulations, users collaborating with Ampersand accomplished more than with Fable https://t.co/8r94W10Ai4",
+   "url": "https://x.com/ibab/status/2112674550907552137",
+   "handle_guess": "humansand"
+  },
+  {
+   "id": "2087145290671468569",
+   "created_at": "2026-08-11 11:53 UTC",
+   "created_at_ms": 1786449189000,
+   "text": "We've raised $1.1B to build AI that is owned and shaped by each of us. Check out the article published by the The New York Times that explains River AI's mission and where we're going next.\\\n\\\nOur first product is the River API which allows anyone to build custom agents and LLMs",
+   "url": "https://x.com/ibab/status/2087145290671468569",
+   "handle_guess": "ibab"
+  },
+  {
+   "id": "2087138596155502908",
+   "created_at": "2026-08-11 11:26 UTC",
+   "created_at_ms": 1786447593000,
+   "text": "Today, we're sharing that River AI has raised $1.1 billion, led by @generalcatalyst and @amppublic with strategic investment from @nvidia and @AMD. Additional investors include @ycombinator and @Temasek.\\\n\\\nWe imagine a future where your AI works entirely for you and deeply aligns",
+   "url": "https://x.com/ibab/status/2087138596155502908",
+   "handle_guess": "river_ai_inc"
+  }
+ ],
+ "http_status": 200,
+ "fetched_at": "2026-11-12 00:07:21"
+}

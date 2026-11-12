@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>论文观察日报 · 2026-11-12（5/5 ＋ B 轨第十二轮 47 篇 · 必读清单 37/37 全覆盖）· research 线</title>
+<style>
+  :root { --primary:#0b3d6e; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700; --bad:#cf222e;
+          --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+         color:var(--text); background:var(--bg); line-height:1.7; font-size:15px; }
+  .wrap { max-width:1040px; margin:0 auto; padding:32px 20px 80px; }
+  header.hero { background:linear-gradient(135deg,#0b3d6e 0%,#1f6feb 100%); color:#fff; border-radius:14px;
+                padding:30px 32px; margin-bottom:22px; box-shadow:0 8px 24px rgba(11,61,110,.18); }
+  header.hero h1 { margin:0 0 6px; font-size:24px; letter-spacing:.3px; }
+  header.hero .sub { font-size:15px; opacity:.95; }
+  header.hero .meta { margin-top:14px; font-size:13px; opacity:.9; display:flex; flex-wrap:wrap; gap:8px 18px; }
+  header.hero .meta span { background:rgba(255,255,255,.14); border-radius:999px; padding:2px 12px; }
+  .disc { margin-top:14px; font-size:12.5px; background:rgba(0,0,0,.18); border-radius:8px; padding:8px 12px; opacity:.95; }
+  .badge { display:inline-block; padding:1px 10px; border-radius:999px; font-size:12.5px; font-weight:700; vertical-align:middle; }
+  .b-am { background:#e6f4ea; color:#0b6b2f; }
+  .b-jz { background:#dafbe1; color:var(--ok); } .b-kp { background:#ffeef8; color:#a3238e; }
+  .b-b { background:#fff1d6; color:#7a4b00; }
+  h2.sec { font-size:19px; margin:34px 0 12px; padding-bottom:8px; border-bottom:2px solid var(--border); }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:18px 22px; margin:16px 0;
+          box-shadow:0 1px 3px rgba(27,31,36,.06); }
+  .card h3 { margin:0 0 4px; font-size:17px; line-height:1.45; }
+  .card .no { display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px; margin-right:8px;
+              border-radius:50%; background:var(--accent); color:#fff; font-size:14px; font-weight:700; vertical-align:middle; }
+  .row { display:flex; gap:10px; margin:7px 0; font-size:14px; }
+  .row .k { flex:0 0 108px; color:var(--muted); font-weight:600; }
+  .row .v { flex:1; }
+  .orig { font-style:italic; color:#0b3d6e; }
+  code { background:#eef1f4; border:1px solid #e1e4e8; border-radius:5px; padding:1px 6px;
+         font-family:Consolas,Menlo,monospace; font-size:12.5px; color:#0b3d6e; }
+  a { color:var(--accent); word-break:break-all; }
+  .reason { background:#f0f6ff; border:1px solid #cfe0f5; border-left:4px solid var(--accent); border-radius:8px;
+            padding:10px 14px; margin-top:10px; font-size:13.5px; }
+  table { border-collapse:collapse; width:100%; margin:12px 0; font-size:13px; background:var(--card); }
+  th,td { border:1px solid var(--border); padding:7px 10px; text-align:left; vertical-align:top; }
+  th { background:#eef3f8; color:var(--primary); font-weight:600; }
+  tr:nth-child(even) td { background:#fafbfc; }
+  .note { background:#fff8ef; border:1px solid #f0d9b5; border-left:4px solid var(--warn); border-radius:8px;
+          padding:10px 16px; font-size:13px; color:#6a4a00; }
+  .ok-box { background:#f0fff4; border:1px solid #b7f0c5; border-left:4px solid var(--ok); border-radius:8px;
+            padding:10px 16px; font-size:13px; }
+  details { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:10px 16px; margin:14px 0; }
+  summary { cursor:pointer; font-weight:700; color:var(--primary); }
+  footer { margin-top:44px; padding-top:16px; border-top:1px solid var(--border); font-size:12.5px; color:var(--muted); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <h1>论文观察日报 · 2026-11-12</h1>
+  <div class="sub">今日推荐 <b>5 篇「借鉴」</b>（5/5）＋ 🅱 B 轨第十二轮 4 篇经典论文（累计 <b>47</b>，<b>必读清单 37/37 全覆盖</b>）＋ 👥 作者网 <b>54</b> 人 ＋ 🗣 voice_ready 2 条 ＋ ✉ 作者信 今日 <b>5</b> 封</div>
+  <div class="meta">
+    <span>数据源：arXiv API（公告批 2026-11-10）</span>
+    <span>生成：2026-11-12 00:0x 早报 → 03:0x 增量 → 06:00 B 轨第十轮 → 09:00 第十一轮 → 12:00 第十二轮 → <b>15:00 第十三轮</b></span>
+    <span>进度：<b>5 / 5</b>（今日额度已满，06:00 轮未超额加新论文）</span>
+    <span>出口：仅 HTML（🚫 不发日报邮件）</span>
+  </div>
+  <div class="disc">⚠️ 推荐 = 待读线索，<b>非结论</b>；所有数字均为论文作者自报，本线未复现；「对各线的可执行建议」为基于论文的推断，非指令。</div>
+</header>
+
+<h2 class="sec">☀️ 今日推荐 · 5 篇「借鉴」（与在研工作相关）<span class="badge b-jz">借鉴</span></h2>
+
+<div class="card">
+  <h3><span class="no">1</span>SLIC: Reinforcement Fine-Tuning Small LMs for Multi-Turn Analog Circuit Optimization</h3>
+  <div class="row"><div class="k">中文一句话</div><div class="v">把模拟集成电路设计当成<b>多轮、依赖仿真器</b>的工程任务：用强化微调训练 <b>4B 本地模型</b>做闭环电路优化（结构化电路表示 + 离散「相对更新」动作 + 按域/成功门控的多目标奖励 + 把每步仿真反馈用于策略与 rollout 的 RGRS），并开源 <b>41 个放大器拓扑</b>的基准（分布内 / 留出拓扑 / 跨工艺节点三种协议）。摘要称：仅用开源 <b>65nm CMOS PTM</b> 训练，SLIC-Random 在 <b>8 轮内</b>分布内四指标 <b>Pass@1 87.1%</b>（比 763B 的 DeepSeek-V4.1-Flash Think <b>高 48.5 个百分点</b>）；SLIC-Softmax 留出拓扑 <b>72.6%</b>；跨 <b>5 个未见工艺节点</b>零微调迁移；商用 <b>TSMC 65nm PDK</b> 留出拓扑 <b>49.9%</b>；测试时仿真交互增到 <b>32 轮</b>可到 <b>83.2%</b>。</div></div>
+  <div class="row"><div class="k">原题</div><div class="v"><span class="orig">SLIC: Reinforcement Fine-Tuning Small LMs for Multi-Turn Analog Circuit Optimization</span></div></div>
+  <div class="row"><div class="k">作者 / 机构</div><div class="v">Yan Xu · Zhengqi Gao · Ching-Yun Ko · et al（arXiv 作者列表；<b>机构本轮未从 PDF 核验</b>，不以印象补）</div></div>
+  <div class="row"><div class="k">日期</div><div class="v">首次提交 <b>2026-11-10</b>（<code>published=2026-11-10T01:54:39Z</code>，<code>updated</code> 同日）· 距本轮唤醒 <b>≈38.2h</b>（<b>在 72h 内</b>）</div></div>
+  <div class="row"><div class="k">分类 / 标签</div><div class="v"><code>cs.LG</code> · <span class="badge b-jz">借鉴</span> · 关键词：EDA / 模拟电路 / 小模型 / 强化微调 / 多轮仿真 / 本地部署 / 跨工艺迁移</div></div>
+  <div class="row"><div class="k">链接</div><div class="v"><a href="https://arxiv.org/abs/2611.13452">https://arxiv.org/abs/2611.13452</a>（PDF 见附录 C）</div></div>
+  <div class="reason"><b>推荐理由（借鉴 · 与 designflow / zhulong / pretrain 的「小模型 + 多轮工具」直接对口）</b>
+    <ol>
+      <li><b>它是「小模型 + 仿真器闭环」的完整样板，不是又一个 benchmark</b>：动作 = <b>离散化的相对更新</b>（不是自由文本），奖励 = <b>按域与成功门控的多目标</b>，再叠加 <b>RGRS</b> 把逐步仿真反馈同时用于策略学习与在线 rollout 构造。我们的 ZhuLong 也是「模型出动作 → 工具跑 → 看指标」的闭环，差别只在工具（波形/版图仿真 vs 电路仿真）。可直接对照的三处：动作怎么离散、奖励怎么门控、失败 rollout 怎么复用。</li>
+      <li><b>「4B 打过 763B」是任务结构带来的，不是模型更强</b>：+48.5pp 的对照是<b>通用大模型直接做同一任务</b>，而非同数据同预算的 763B 微调 ⇒ 🚫 不能读成「小模型普遍更强」。真正可迁移的是：<b>把领域动作空间与奖励写死</b>，比把通用模型堆大更省。这正好支持我们 pretrain/SLM 侧的「域内 2B + 结构化接口」路线。</li>
+      <li><b>三种泛化协议可原样借</b>：分布内（同拓扑族）/ 留出拓扑（未见结构）/ 跨工艺节点（未见 PDK）。对应 designflow 的 L1–L5 保真度：<b>每一级都要单独报</b>，并且报告「测试时预算」（8 轮 vs 32 轮），否则「多给几轮就能刷上去」会被误读成模型能力。</li>
+      <li><b>边界</b>：① 模拟电路是<b>连续参数 + 小动作空间 + 可仿真</b>，EDA 数字流程是离散、长流程、工具昂贵，🚫 不可直接搬；② 87.1% / 72.6% / 49.9% / 83.2% 均为<b>作者自报</b>，基准自建、任务自选；③ 商用 PDK 上的 49.9% 是「本地推理、不传数据」的部署论证，不等于生产可用；④ 论文摘要未给训练成本与失败案例。</li>
+    </ol>
+    <b>建议动作</b>：designflow 线按它的三协议改写评测表（新增「留出拓扑/留出节点」两列 + <code>test_time_budget</code> 列）；zhulong 线评估「相对更新动作 + 门控多目标奖励」是否可映射到工具调用序列。
+  </div>
+</div>
+
+<div class="card">
+  <h3><span class="no">2</span>Plumbline: When the Loss Lies, Validating LLM Training Correctly</h3>
+  <div class="row"><div class="k">中文一句话</div><div class="v">一个<b>训练正确性验证系统</b>（摘要自述在 Amazon 生产使用）：沿训练生命周期逐段检查——从训练数据到服务模型、再到每个模型新增的层与整轮 run；诊断复用这些检查回溯根因。支持两个 agentic 用例：新模型 <b>Day-0 onboarding</b>（团队依赖前先验证训练）与训练故障根因定位。摘要称：跨 <b>3 个框架、5 个模型</b>发现 <b>61 个问题</b>，其中 <b>32 个是静默故障</b>；<b>42 个</b>已修复或上报上游、<b>8 个</b>由作者首次提出；61 个归纳为 <b>7 类失败模式</b>。</div></div>
+  <div class="row"><div class="k">原题</div><div class="v"><span class="orig">Plumbline: When the Loss Lies, Validating LLM Training Correctly</span></div></div>
+  <div class="row"><div class="k">作者 / 机构</div><div class="v">Ruochen Wen · Hongyang Wang · Siwei Li · et al（arXiv 作者列表；摘要自述「used in production at Amazon」，<b>作者所属机构未逐人核验</b>）</div></div>
+  <div class="row"><div class="k">日期</div><div class="v">首次提交 <b>2026-11-10</b>（<code>published=2026-11-10T00:13:56Z</code>，<code>updated</code> 同日）· 距本轮唤醒 <b>≈39.9h</b>（<b>在 72h 内</b>）</div></div>
+  <div class="row"><div class="k">分类 / 标签</div><div class="v"><code>cs.DC</code> · <span class="badge b-jz">借鉴</span> · 关键词：训练正确性 / 静默故障 / 故障归因 / 框架差异 / Day-0 验证</div></div>
+  <div class="row"><div class="k">链接</div><div class="v"><a href="https://arxiv.org/abs/2611.13393">https://arxiv.org/abs/2611.13393</a>（PDF 见附录 C）</div></div>
+  <div class="reason"><b>推荐理由（借鉴 · 与 pretrain 的「loss 不可信」/ harness 的「判分可信」直接对口）</b>
+    <ol>
+      <li><b>「loss 下降 ≠ 训练正确」是可复用的故障模型</b>：论文的立论是有些故障很响（崩）、有些很静（只在最终评测掉分），我们的训练看板上「loss 正常」并不能排除数据管线错位、层实现错、框架默认值变化。它把检查拆到<b>数据 / 单层 / 整轮 / 服务</b>四段，正好对应我们 pretrain 现有脚本的四个可插入点。</li>
+      <li><b>61 / 32 / 42 / 8 这组数字的价值在「静默占一半」</b>：32/61 ≈ 52% 的问题不会自己报错 ⇒ 只靠「跑通 + loss 正常」验收一定漏。可迁移动作是<b>给每类故障写一个最小可复现探针</b>（如单 batch 过拟合、标签打乱后 loss 应≈ln(V)、固定种子重放哈希一致），而不是买一个系统。</li>
+      <li><b>7 类失败模式可直接当检查表</b>：摘要只给数量、未在摘要列出七类明细 ⇒ <b>必须读正文表格</b>才能抄；在读到之前，我们只把它当「需要系统化检查」的证据，不编造类别名。</li>
+      <li><b>边界</b>：① 生产环境是 Amazon 内部栈，我们的框架/硬件不同；② 61 个问题是<b>作者在 3 框架 5 模型上的发现</b>，不是普遍故障率；③ 摘要未给误报率与检查开销；④ 作者自报，本线未复现。</li>
+    </ol>
+    <b>建议动作</b>：pretrain 线在下一轮训练前加 <b>3 个 Day-0 探针</b>（① 单 batch 过拟合到 loss&lt;0.05；② 标签打乱后 loss≈ln(V)±5%；③ 固定种子两次前向/反向的梯度哈希一致），任一失败即停训并记入 run log。
+  </div>
+</div>
+
+<div class="card">
+  <h3><span class="no">3</span>Do They Do as They Are Told? Investigating Coding Agents' Adherence to Explicit Instructions in Context Files</h3>
+  <div class="row"><div class="k">中文一句话</div><div class="v">检验 <b>agent context files（ACF，如 AGENTS.md）</b>的核心假设：写进去的指令是否真的被执行。方法：取真实 ACF 快照及其关联的 agent 生成 commit，把显式可执行指令<b>操作化成可运行测量脚本</b>，再逐条评估合规。摘要称：多数可观察指令能被操作化；agent 多数情况下会遵循，但遵循度<b>呈尖锐两极</b>——一部分始终被遵守、一部分从未被遵守，且不同指令类别与不同 coding agent 之间存在差异。</div></div>
+  <div class="row"><div class="k">原题</div><div class="v"><span class="orig">Do They Do as They Are Told? Investigating Coding Agents' Adherence to Explicit Instructions in Context Files</span></div></div>
+  <div class="row"><div class="k">作者 / 机构</div><div class="v">Gianmario Voria · Yutaro Kashiwa · Gemma Catolino · et al（arXiv 作者列表；<b>机构本轮未从 PDF 核验</b>）</div></div>
+  <div class="row"><div class="k">日期</div><div class="v">首次提交 <b>2026-11-10</b>（<code>published=2026-11-10T08:01:51Z</code>，<code>updated</code> 同日）· 距本轮唤醒 <b>≈32.1h</b>（<b>在 72h 内</b>）</div></div>
+  <div class="row"><div class="k">分类 / 标签</div><div class="v"><code>cs.SE</code> · <span class="badge b-jz">借鉴</span> · 关键词：AGENTS.md / 指令遵循 / 合规度量 / 实证研究 / agent 治理</div></div>
+  <div class="row"><div class="k">链接</div><div class="v"><a href="https://arxiv.org/abs/2611.13709">https://arxiv.org/abs/2611.13709</a>（PDF 见附录 C）</div></div>
+  <div class="reason"><b>推荐理由（借鉴 · 与 harness 的「任务书是否被执行」直接对口）</b>
+    <ol>
+      <li><b>我们的 6 线任务书就是 ACF，而且从未验证过执行率</b>：research / pretrain / vision / harness / data / zhulong / designflow 各自的任务书都写着「每轮必做」「🚫 不许」等显式指令，但没有任何机制检查 agent 是否真的执行。本文给出的方法（把指令改写成<b>可执行检查脚本</b>，再在 agent 产出上逐条判定）可以直接复用。</li>
+      <li><b>「两极分化」比「平均遵循率」更有用</b>：如果某些指令从未被遵守，继续加更多同类指令只会让任务书更长、token 更贵。可迁移动作是<b>定期审计</b>：把「从未遵守」的指令挑出来，要么改写成可验证的形式，要么删掉。</li>
+      <li><b>摘要没给具体合规率</b>（只给定性结论）⇒ 日报不编数字；要落地必须读正文的指令分类表与脚本。我们本轮只引用其方法与结论方向。</li>
+      <li><b>边界</b>：① 研究对象是真实开源项目的 AGENTS.md 与 commit，不是我们的任务书；② 「合规」由脚本代理判定，存在测量误差；③ 未覆盖多 agent 协作与长流程任务；④ 作者自报，本线未复现。</li>
+    </ol>
+    <b>建议动作</b>：harness 线做一次 <b>任务书合规审计</b>：从 6 份任务书各抽 10 条显式指令（共 60 条），逐条写成可判定的检查（文件是否存在 / 字段是否齐全 / 命令是否执行），在下一轮产出上跑一遍；输出「始终遵守 / 从未遵守 / 无法判定」三列，从未遵守的进入改写清单。
+  </div>
+</div>
+
+<div class="card">
+  <h3><span class="no">4</span>When does text encoding matter for language modeling?</h3>
+  <div class="row"><div class="k">中文一句话</div><div class="v">把「文本编码」当<b>变量</b>而不是默认：在 <b>byte-level 语言模型</b>上系统比较 UTF-8、其它 Unicode 方案、语种专用编码与自定义编码，并提出「<b>按文字系统编码 + UTF-8 回退</b>」的混合方案 <b>Aether</b>（在 4 种拼写差异大的语言上建模）。摘要称：信息密度高的字符语言（<b>中文、韩文</b>）显著受益于压缩式编码，而单字符信息量低的文字（<b>格鲁吉亚文、泰米尔文</b>）对编码选择基本不敏感 ⇒ 作者主张「编码应作为语种相关的设计选择，而非通用默认」。</div></div>
+  <div class="row"><div class="k">原题</div><div class="v"><span class="orig">When does text encoding matter for language modeling?</span></div></div>
+  <div class="row"><div class="k">作者 / 机构</div><div class="v">Eugene Jang · Catherine Arnett · Terra Blevins（arXiv 作者列表；<b>机构本轮未从 PDF 核验</b>，不以印象补）</div></div>
+  <div class="row"><div class="k">日期</div><div class="v">首次提交 <b>2026-11-10</b>（<code>published=2026-11-10T18:27:26Z</code>）· 距 03:00 唤醒 <b>≈24.6h</b>（<b>在 72h 内</b>）</div></div>
+  <div class="row"><div class="k">分类 / 标签</div><div class="v"><code>cs.CL</code> · <span class="badge b-jz">借鉴</span> · 关键词：文本编码 / byte-level LM / 多语种 / 分词 / token 预算</div></div>
+  <div class="row"><div class="k">链接</div><div class="v"><a href="https://arxiv.org/abs/2611.14459">https://arxiv.org/abs/2611.14459</a>（PDF 本轮未下载，见附录 C）</div></div>
+  <div class="reason"><b>推荐理由（借鉴 · 直接对口 data 线的「中文 token 预算」）</b>
+    <ol>
+      <li><b>它问的是我们每天在付的钱</b>：UTF-8 是变长编码，同一个汉字占 3 字节、同一个拉丁字母占 1 字节 ⇒ 在<b>固定 token 预算</b>下，不同语言的「信息量/token」并不相等。摘要的结论（中文、韩文受益于压缩式编码）正是「为什么中文语料要按字符数而不是按字节数计量」的实验依据。</li>
+      <li><b>结论有明确边界，不能直接搬</b>：实验对象是 <b>byte-level LM（无 tokenizer）</b>；我们用的是 BPE/分词器 ⇒ 🚫 不能直接读成「中文模型更省 token」。<b>可搬的是方法</b>：把「编码/分词」当作一个可消融的变量，并按文字系统分组报告。</li>
+      <li><b>可落地的一件事</b>：<code>data</code> 线在语料统计脚本里加三项「每字符 token 数」——中文 / 英文 / 代码，再算「每 1k token 覆盖的文档页数」；这张表能直接解释「为什么同样 2T token，中英配比一改评测就抖」。</li>
+      <li><b>边界与风险</b>：① 只在 4 种语言上验证；② byte-level 与 BPE 不可直接类比；③ 作者自报、无大规模下游任务验证；④ 「压缩式编码更好」不等于「分词越细越好」，需自行复现。</li>
+    </ol>
+    <b>建议动作</b>：<code>data</code> 线在下一版配比报告里加一节「编码与 token 计量口径」：给出中/英/代码的 chars-per-token 与 bytes-per-token 两个数，并在固定 token 预算下做「按字符均衡 vs 按 token 均衡」两臂对照（<b>判据</b>：留出中文评测上按字符均衡臂不低于按 token 均衡臂，且英文侧下降 ≤1 个绝对点）。
+  </div>
+</div>
+
+<div class="card">
+  <h3><span class="no">5</span>Are Dense Rewards Worth Their Tokens in GRPO?</h3>
+  <div class="row"><div class="k">中文一句话</div><div class="v">给「稠密过程奖励」算了一笔<b>算力账</b>：提出<b>等算力协议</b>（按生成 token 与训练 GPU 小时对齐预算）+ 预注册实验，指出逐步蒙特卡洛奖励的<b>续写本身就占 91% 的生成 token</b>。在 Qwen2.5-1.5B 上，该奖励「每次更新」看着领先 GRPO，但<b>等 token 结束时低 14.3 个百分点、等训练时间低 7.8 个百分点</b>；四个稠密奖励变体在同等训练时间下均未超过 GRPO。反向发现：按「预测成功率最接近 <b>1/2</b>」挑 prompt 在等算力下<b>提升 1.7（Qwen3-0.6B）/ 0.8（Qwen2.5-1.5B）个百分点</b>。据摘要：<b>1,668</b> 次运行、<b>6</b> 个模型。</div></div>
+  <div class="row"><div class="k">原题</div><div class="v"><span class="orig">Are Dense Rewards Worth Their Tokens in GRPO?</span></div></div>
+  <div class="row"><div class="k">作者 / 机构</div><div class="v">Vikash Singh · Weicong Chen · Debargha Ganguly（et al.，共 <b>19</b> 位；<b>机构本轮未从 PDF 核验</b>）</div></div>
+  <div class="row"><div class="k">日期</div><div class="v">首次提交 <b>2026-11-10</b>（<code>published=2026-11-10T04:25:22Z</code>）· 距 03:00 唤醒 <b>≈38.6h</b>（<b>在 72h 内</b>）</div></div>
+  <div class="row"><div class="k">分类 / 标签</div><div class="v"><code>cs.CL</code> · <span class="badge b-jz">借鉴</span> · 关键词：RLVR / GRPO / 过程奖励 / 等算力对比 / 预注册 / 难度采样</div></div>
+  <div class="row"><div class="k">链接</div><div class="v"><a href="https://arxiv.org/abs/2611.13560">https://arxiv.org/abs/2611.13560</a> · 代码 <a href="https://github.com/vicky157/grpo-validation">github.com/vicky157/grpo-validation</a>（PDF 59 页，本轮未下载）</div></div>
+  <div class="reason"><b>推荐理由（借鉴 · 直接对口 zhulong 的 RL 消融口径与 data 的难度采样）</b>
+    <ol>
+      <li><b>「稠密奖励免费」是错觉</b>：过程奖励要为中间步骤采样续写，而续写吃掉 <b>91%</b> 的生成 token ⇒ 只看「每次更新的分数」会系统性高估它。这个偏差量级（14.3pp / 7.8pp）大到足以改变技术选型，我们的 RL 消融如果按 update 对齐，很可能正在犯同一个错。</li>
+      <li><b>方法可原样借用</b>：matched-compute protocol（生成 token + GPU 小时双口径）+ 预注册 + 控制副作用。这正好是我们 <code>zhulong</code> 消融表缺的「算力口径」一列，也与我们已写的「等计算预算对比」原则一致。</li>
+      <li><b>一个更便宜的正向发现</b>：不改奖励，只改<b>挑哪些 prompt</b>（预测成功率≈1/2），在等算力下也能涨 1.7 / 0.8 个点 ⇒ 数据侧的「难度采样」是比「设计更复杂的奖励」更省的杠杆，可直接进 <code>data</code> 线的课程学习方案。</li>
+      <li><b>边界与风险</b>：① 模型规模 0.6B–1.5B、以数学/推理类 RLVR 为主，<b>EDA 任务未验证</b>；② 「梯度测试高估 1–2 个点」说明单 batch 诊断不可靠；③ 收益出现在训练早期，且 2× 学习率的 GRPO 只差 0.5 个点 ⇒ 别把增益全归给方法；④ 作者自报、本线未复现。</li>
+    </ol>
+    <b>建议动作</b>：<code>zhulong</code> 线把现有 RL 消融重跑为<b>等 token 预算</b>（固定 <code>gen_tokens</code>，报告 Δ 准确率与总生成 token）；<b>判据</b>：若某「稠密奖励」在等 token 下增益 &lt;1 个绝对点，则从默认配方中移除，并把省下的生成预算转投「难度采样」臂。
+  </div>
+</div>
+
+<h2 class="sec">🎯 对各线的可执行建议（pretrain / vision / harness / data / zhulong / designflow）</h2>
+<table>
+  <tr><th>线</th><th>依据</th><th>可执行动作（命令 / 实验设计 / 预注册判据）</th></tr>
+  <tr><td><b>pretrain</b></td><td>#2 Plumbline（静默故障占 32/61）· B 轨 Kimi k1.5（RL token 预算）</td><td>① 训练前跑 <b>3 个 Day-0 探针</b>：单 batch 过拟合（loss&lt;0.05）、标签打乱 loss≈ln(V)±5%、固定种子梯度哈希一致；任一失败停训。<b>判据</b>：三项全过才允许起长跑；失败样本写入 <code>run/logs/day0_probe.json</code>。<br>② 算力分配表新增 <code>rl_generate_tokens</code> 与 <code>rl_gpu_hours</code> 两列，与预训练 token 分列统计（Kimi k1.5 的「RL 是新 scaling 轴」口径）。</td></tr>
+  <tr><td><b>vision</b></td><td>B 轨 π0（VLM 主干复用）· AlphaFold（领域先验）</td><td>① 预注册两臂：<b>冻结 VLM 主干 + 只训适配层</b> vs <b>全参微调</b>（同数据、同 token 预算、同评测集）。<b>判据</b>：冻结臂在域内任务上 ≥ 全参臂 −3 个绝对点即采用（省下算力转投数据）。<br>② 若做版图/SEM：加一组「显式几何通道 vs 纯像素」，<b>判据</b>：在 held-out 新节点/新图层上 &gt; 纯像素 +2 个绝对点才保留。</td></tr>
+  <tr><td><b>harness</b></td><td>#3 ACF 合规 · B 轨 AlphaStar（动态对手池）· Kimi（自报口径）</td><td>① 任务书合规审计：6 份任务书各抽 10 条显式指令 → 写成检查脚本 → 输出「始终遵守 / 从未遵守 / 无法判定」三列。<b>判据</b>：「从未遵守」占比 &gt;20% 即触发任务书改写。<br>② 评测报告加「对池均值 + 最差对手」两列，禁止只报单次最优；引用厂商自报分数必须标「自报 + 日期」。</td></tr>
+  <tr><td><b>data</b></td><td>B 轨 AlphaFold（同族检索）· π0（跨平台多样性）· SLIC（跨工艺迁移）</td><td>① 为每条训练样本记 <code>family_id</code>（同族仓库/同族版图），做「是否检索同族上下文」A/B；<b>判据</b>：小样本任务上 +2 个绝对点才保留检索管线。<br>② EDA 语料建「工具 / 器件 / 工艺节点」三维多样性标签；固定 token 预算做三臂（单节点重复 / 多节点均衡 / 多节点按难度加权），报告每臂在留出节点上的表现。</td></tr>
+  <tr><td><b>zhulong</b></td><td>B 轨 Kimi k1.5（long2short）· AlphaStar（联盟）· π0（动作块）· #1 SLIC（门控多目标奖励）</td><td>① <code>long2short</code> 消融：长 CoT RL → 短 CoT 蒸馏 vs 直接短 CoT RL；<b>判据</b>：固定 token 预算下蒸馏臂准确率不低于直接臂，且平均生成长度 ≤ 其 60%。<br>② 动作接口两臂：<b>一次出多步（动作块）</b> vs <b>逐步出</b>；<b>判据</b>：成功率不降且工具调用轮数下降 ≥20% 才保留。<br>③ RL 陪练改为「3–5 个历史快照 + 1 个主策略」小联盟，<b>判据</b>：固定评测集提升且对最强历史快照不退步。</td></tr>
+  <tr><td><b>designflow</b></td><td>#1 SLIC（三协议基准）· AlphaStar（部分可观测）</td><td>① 评测表新增 <code>test_time_budget</code>（8 轮 / 32 轮）与「留出拓扑 / 留出节点」两列；每级保真度单独报，禁止把 32 轮结果与 8 轮结果混排。<br>② 造题标注两个新维度：<b>部分可观测</b>（agent 看不到全部中间结果）与<b>环境会变化</b>（工具版本/参数漂移）；<b>判据</b>：L4/L5 题必须至少覆盖其中一个维度。</td></tr>
+</table>
+
+<p style="font-size:13.5px;color:#59636e;margin-top:18px;"><b>🔺 03:00 增量建议（新增 2 篇 · 逐线判定，无建议的显式写「无」）</b></p>
+<table>
+  <tr><th>线</th><th>依据</th><th>可执行动作（命令 / 实验设计 / 预注册判据）</th></tr>
+  <tr><td><b>pretrain</b></td><td>#4 文本编码（chars-per-token 随语言变化）</td><td>① 分词器/编码一旦变更，<b>token 预算与 LR schedule 必须按「token 数」重算而不是按「字节数/文档数」</b>：在训练配置里显式记 <code>tokenizer_hash</code> 与 <code>chars_per_token_zh/en/code</code> 三项。<b>判据</b>：任何两次 run 的 <code>tokenizer_hash</code> 不同即视为不可直接比 loss 曲线，报告须标注。</td></tr>
+  <tr><td><b>vision</b></td><td>无（本轮 2 篇均不涉视觉编码器 / 图文对 / 视觉 RL）</td><td><b>无</b>（不凑数；视觉侧建议见上方基于 π0 / AlphaFold / Octo 的条目）</td></tr>
+  <tr><td><b>harness</b></td><td>#5 等算力协议 + 预注册</td><td>① 评测/消融模板加两栏：<code>gen_tokens</code> 与 <code>gpu_hours</code>，任何「A 优于 B」必须同时给这两个数。<b>判据</b>：只报「每次更新」或只报单次最好成绩的结果，不进入对外结论。<br>② 评测前先写预注册（假设 / 主指标 / 停止规则），落 <code>run/prereg/&lt;date&gt;-&lt;topic&gt;.md</code>；事后改指标须在报告里写明改动与原因。</td></tr>
+  <tr><td><b>data</b></td><td>#4 编码口径 · #5 难度采样（预测成功率≈1/2）</td><td>① 语料统计加 <code>chars_per_token</code>（中/英/代码）与 <code>bytes_per_token</code>；固定 token 预算做「按字符均衡 vs 按 token 均衡」两臂，<b>判据</b>：中文留出集不降且英文降 ≤1 个绝对点。<br>② 课程学习臂：按「模型预测成功率最接近 1/2」挑题，<b>判据</b>：等算力下准确率 +1 个绝对点以上才进默认配方（对标原文 1.7 / 0.8 点）。</td></tr>
+  <tr><td><b>zhulong</b></td><td>#5 稠密奖励在等 token 下排名反转</td><td>① 把现有 RL 消融<b>按等 <code>gen_tokens</code> 重跑</b>（不是等 update）：固定生成预算，报告 Δ 准确率与总生成 token。<b>判据</b>：若某稠密奖励在等 token 下增益 &lt;1 个绝对点，从默认配方移除，把预算转投难度采样臂。<br>② 单 batch 梯度测试只作诊断、不作结论（原文：它把效果高估 1–2 个点）。</td></tr>
+  <tr><td><b>designflow</b></td><td>无（本轮 2 篇不涉造题 / L1–L5 保真度 / 判分可验证性）</td><td><b>无</b></td></tr>
+</table>
+
+<p style="font-size:13.5px;color:#59636e;margin-top:18px;"><b>🔺 06:00 增量建议（B 轨第十轮 4 篇经典 · 逐线判定，无建议的显式写「无」）</b></p>
+<table>
+  <tr><th>线</th><th>依据</th><th>可执行动作（命令 / 实验设计 / 预注册判据）</th></tr>
+  <tr><td><b>pretrain</b></td><td>#38 Llama 2（7B/13B/70B 同族三档）</td><td>① 对外结果一律<b>同族至少两档规模</b>并列表（如 0.6B / 2B），禁止只报单点；<b>判据</b>：只有单档数字的实验报告不得进入选型结论。<br>② 训练记账加 <code>pretrain_tokens</code> 与 <code>posttrain_tokens</code> 两列（Llama 2 报告明确分开），避免用「总 token」掩盖后训练占比。</td></tr>
+  <tr><td><b>vision</b></td><td>#39 LLaVA-1.5（三处小改动 + 120 万数据 + 8×A100 1 天）</td><td>① 三个开关做单变量对照：<b>视觉塔分辨率（224→336）/ 投影层（Linear→MLP）/ 是否混学术 VQA</b>；<b>判据</b>：某开关在域内（版图/波形）留出集上 &lt;1 个绝对点收益 ⇒ 不引入，省下的复杂度换数据。<br>② 训练成本统一写「卡数 × 小时 × 卡型」（对标 8×A100×1 天），并注明是否含数据加载。</td></tr>
+  <tr><td><b>harness</b></td><td>#36 SWE-agent（ACI 即方法：同模型换接口分数差一大截）</td><td>① 做<b>配对实验</b>：同一 checkpoint × 两套工具封装（原样 vs ACI 式：统一 edit 命令 + 限长输出 + 错误摘要首行），跑同一族 EDA 任务；<b>判据</b>：成功率 +≥3 个绝对点且平均工具轮次不升才切默认封装。<br>② 评测报告新增「接口版本」字段（<code>aci_v1/v2</code>），🚫 不同接口的分数不得混排。</td></tr>
+  <tr><td><b>data</b></td><td>#39 LLaVA-1.5（格式提示）· #36 SWE-agent（轨迹记录）</td><td>① 把「<b>回答格式模板</b>」当独立变量做 A/B（同数据、不同模板），<b>判据</b>：格式臂在解析成功率上 +5 个绝对点且域内准确率不降才固化。<br>② 轨迹统一 <code>(cmd, obs, reward)</code> 三元组 schema，<b>失败轨迹单独打标</b>（<code>status=fail</code>）并统计负样本占比。</td></tr>
+  <tr><td><b>zhulong</b></td><td>#37 Tree of Thoughts（搜索换成功率）</td><td>① 固定总生成预算下比三臂：<b>单链 / 自洽投票 k 条 / 显式分支 + 剪枝</b>；<b>判据</b>：分支臂只有在「每题工具调用次数不增 30%」且成功率 +≥2 点时才保留，否则记「贵而不值」。<br>② 只允许在「中间状态可自动验证」的任务上开搜索（对标 24 点游戏可验算），不可验证任务保持单链。</td></tr>
+  <tr><td><b>designflow</b></td><td>#36 SWE-agent（窄接口 vs 自由 shell）</td><td>① L1–L5 保真度新增「<b>接口粒度</b>」维度（自由 shell / 受限命令集两档），造题时两档都出；<b>判据</b>：同一题在两档下的通过率差异 &gt;20 个绝对点 ⇒ 该题只保留一档，避免测到的是接口而非能力。</td></tr>
+</table>
+
+<p style="font-size:13.5px;color:#59636e;margin-top:18px;"><b>🔺 09:00 增量建议（B 轨第十一轮 4 篇经典 · 逐线判定，无建议的显式写「无」）</b></p>
+<table>
+  <tr><th>线</th><th>依据</th><th>可执行动作（命令 / 实验设计 / 预注册判据）</th></tr>
+  <tr><td><b>pretrain</b></td><td>#40 Llama 3（405B dense / 128K / 同族多档）</td><td>① <b>长上下文预注册</b>：同族两档规模（如 0.6B / 2B）× 两档上下文（8K / 32K），固定 token 预算；<b>判据</b>：域内 held-out +&gt;1 个绝对点且平均序列成本 ≤1.5× 才把长上下文进默认配置，否则只作可选能力。<br>② 训练记账新增 <code>dense_params</code> / <code>active_params</code> / <code>ctx_len</code> 三列（Llama 3 是 dense 405B，和我们对照 MoE 时最易混口径）。</td></tr>
+  <tr><td><b>vision</b></td><td>#40 Llama 3（组合式接入）· #41 RT-1（图像→动作同构）</td><td>① <b>适配器容量三档</b>：Linear / MLP / 小 Transformer，同数据同 token 预算；<b>判据</b>：域内 +≥2 绝对点才升档，否则停在最低档并把预算给数据。<br>② 观测编码<b>冻结 vs 解冻</b>做配对实验（RT-1 的做法是端到端），<b>判据</b>：解冻若带来 &lt;1 点收益则不引入（省显存换 batch）。</td></tr>
+  <tr><td><b>harness</b></td><td>#41 RT-1（大规模真评测）· #42 Christiano（成对偏好）</td><td>① 每个任务族强制记录 <code>n_eval</code> / <code>n_seeds</code> / <code>env_changed</code> 三字段；<b>判据</b>：<code>n_eval &lt; 50</code> 的差异 🚫 不得写成结论（只记「观察」）。<br>② 生成类任务同时报「自动指标」与「<b>成对盲评胜率</b>」；<b>判据</b>：两者方向相反以盲评为准，并在报告注明分歧幅度（对标 Stiennon「优化 ROUGE ≠ 人想要的」）。</td></tr>
+  <tr><td><b>data</b></td><td>#42 Christiano（反馈 &lt;1% 交互）· #43 Stiennon（偏好数据专门分析）· #41 RT-1（多样性是独立轴）</td><td>① <b>偏好数据单独建表</b>：来源 / 标注者 / 成对一致率 / tie 比例，与预训练语料分开统计；<b>判据</b>：一致率 &lt;70% 的批次先做标注校准再入训。<br>② 固定 token 预算做「单节点重复 vs 多节点均衡」两臂（RT-1 的「多样性」轴），<b>判据</b>：留出节点上 +≥2 点才改默认配比。</td></tr>
+  <tr><td><b>zhulong</b></td><td>#42 Christiano（偏好奖励）· #43 Stiennon（SFT→RM→RL 三段式）</td><td>① <b>奖励三臂</b>：纯规则奖励 / 纯偏好奖励 / 规则+偏好混合，等 <code>gen_tokens</code>；<b>判据</b>：混合臂不低于纯规则臂，且对规则覆盖不到的失败模式改善 &gt;2 点才保留。<br>② post-train 消融按「SFT-only / +RM 重排 / +RL」三级拆开报，每级记偏好数据量与算力，🚫 不得只报最终一级。</td></tr>
+  <tr><td><b>designflow</b></td><td>#41 RT-1（任务族广度决定上限）</td><td>① 先补<b>任务族覆盖矩阵</b>（族 × 难度 × 接口粒度），再谈单题难度；<b>判据</b>：L4 / L5 题必须覆盖 ≥3 个任务族，否则该批题不计入 L4/L5 统计。</td></tr>
+</table>
+
+<p style="font-size:13.5px;color:#59636e;margin-top:18px;"><b>🔺 12:00 增量建议（B 轨第十二轮 4 篇经典 · 逐线判定，无建议的显式写「无」）</b></p>
+<table>
+  <tr><th>线</th><th>依据</th><th>可执行动作（命令 / 实验设计 / 预注册判据）</th></tr>
+  <tr><td><b>pretrain</b></td><td>#47 Kimi K2（MuonClip：Muon + QK-clip，15.5T token 零 loss spike）</td><td>① WSD 长跑前做 <b>1B 级三臂对照</b>：AdamW / Muon / MuonClip（同 token、同数据），只改优化器；<b>判据</b>：MuonClip 臂在等 token 下 loss 不高于 AdamW，且 <code>spike_count</code> 降为 0，才允许进 2B 主跑。<br>② 训练日志新增两列 <code>max_attn_logit</code> 与 <code>spike_count</code>（阈值写进预注册），🚫 不靠事后肉眼判断「有没有炸」。</td></tr>
+  <tr><td><b>vision</b></td><td>#46 Sora 技术报告（仅标题级信息，正文 403 未取到）</td><td>① 若做<b>生成式数据增广</b>，预注册两个<b>分开</b>的指标：「局部保真度」（结构/尺寸/连线）与「长程一致性」（跨区域依赖），<b>判据</b>：任一指标不升即判该增广无效，🚫 不合并成一个总分掩盖退化。<br>② ⚠️ 本条<b>只有标题级信息</b>，任何具体配置/分数<b>不得引用</b>（正文 403）。</td></tr>
+  <tr><td><b>harness</b></td><td>#44 τ-bench（终态判分 + <code>pass^k</code>）· #47 Kimi K2（自选基准）</td><td>① 评测模板新增三字段：<code>(初始状态, 允许 API 集, 目标终态谓词)</code>，判分<b>只读终态</b>；同时报「单次成功率」与 <code>pass^4</code>；<b>判据</b>：两者差距 &gt;20 个绝对点 ⇒ 该任务先降方差再谈提升。<br>② 引用厂商/自报分数一律加「自报 + 日期 + 自选基准」标签，🚫 不得写成「SOTA」。</td></tr>
+  <tr><td><b>data</b></td><td>#47 Kimi K2（agentic 数据合成）· #44 τ-bench（LM 模拟用户）</td><td>① 轨迹表新增 <code>source=real|synthetic</code> 与 <code>simulator_version</code> 两列，<b>合成占比做 3 档消融</b>（0% / 30% / 60%）；<b>判据</b>：留出真实集上 +≥2 绝对点才提高合成占比。<br>② 用户模拟器先固定 2–3 个 prompt 模板做 A/B，<b>判据</b>：模板差异导致成功率波动 &gt;5 点 ⇒ 视为混淆变量，先冻结模板再比模型。</td></tr>
+  <tr><td><b>zhulong</b></td><td>#45 TD-Gammon（自对弈 + 是否给先验）· #44 τ-bench（政策违规）</td><td>① 自对弈实验加一轴：<b>原始输入 vs 加领域先验</b>（对应 TD-Gammon「加手工特征才到顶级」）；<b>判据</b>：加先验臂在固定预算下高 ≥5 绝对点才维护特征/规则管线。<br>② post-train 指标新增「<b>政策违规率</b>」= 违规次数 / 总轮数（τ-bench 的核心失败模式是「不按规则办」而非「不会调工具」）。</td></tr>
+  <tr><td><b>designflow</b></td><td>#44 τ-bench（三元组判分骨架）· #46 Sora（廉价 rollout 设想）</td><td>① L1–L5 造题统一写成 <code>(状态, 工具集, 目标谓词)</code>，判分脚本只读终态；<b>判据</b>：无法写成目标谓词的题一律降级为「主观题」，不计入 L4/L5。<br>② 若评估「生成模型预测工具输出」这条路，先做 <b>≤20 题</b>的极小验证，<b>判据</b>：结构一致率 &lt;80% 即停止投入（对应 Sora「世界模拟器」设想的可证伪检验）。</td></tr>
+</table>
+
+<p style="font-size:13.5px;color:#59636e;margin-top:18px;"><b>🔺 15:00 增量建议（B 轨第十三轮 4 篇经典 · 逐线判定，无建议的显式写「无」）</b></p>
+<table>
+  <tr><th>线</th><th>依据</th><th>可执行动作（命令 / 实验设计 / 预注册判据）</th></tr>
+  <tr><td><b>pretrain</b></td><td>#50 FlashAttention-2（25–40% → 50–73% 峰值；225 TFLOPs/s / 72% MFU）· #49 Mamba-2（同精度快 2–8×）</td><td>① 训练日志<b>固定记录 MFU</b>（<code>mfu = 6·N·tokens / (time × peak_flops)</code>）与 <code>attention_time_ratio</code> 两列，把 FA-2 的 <b>50–73%</b> 当实现效率参照；<b>判据</b>：MFU 低于区间下沿时先查 block 形状/并行划分，<b>不得</b>先调 batch 掩盖。<br>② 架构对照新增 <b>Mamba-2</b> 一档，<b>按等 loss 比吞吐</b>（不是比 tokens/s）；<b>判据</b>：等 loss 下吞吐 &gt;30% 且 32K 上下文不退化，才进 2B 候选。</td></tr>
+  <tr><td><b>vision</b></td><td>本轮 4 篇（DPO / Mamba-2 / FA-2 / Ramulator 2.0）均不涉视觉</td><td><b>无</b>（🚫 不凑数；视觉侧依据仍以 #40 Llama 3 / #41 RT-1 / #46 Sora 为准，见上表 12:00 建议）。</td></tr>
+  <tr><td><b>harness</b></td><td>#50 FA-2（成本口径）· #48 DPO（长度偏置）</td><td>① 成本报表新增 <code>mfu</code> / <code>attn_ratio</code> / <code>gpu_type</code> 三字段；<b>判据</b>：缺任一字段的实验<b>不得</b>进跨实验成本对比表（否则工程差异会被算成方法差异）。<br>② 偏好类评测<b>单列输出长度统计</b>（chosen/rejected 平均长度、长度-胜率相关性）；<b>判据</b>：长度与胜率相关性 |r|&gt;0.3 时，必须先做长度受控重采样再报胜率。</td></tr>
+  <tr><td><b>data</b></td><td>#48 DPO（<code>(prompt, chosen, rejected)</code> 三元组）· #51 Ramulator 2.0（DRAM 规格语法，DDR5/LPDDR5/HBM3/GDDR6）</td><td>① 偏好数据表<b>按 DPO 的三元组格式预注册</b>（与 RLHF 的「标量打分」分开两套 schema）；<b>判据</b>：同一批数据能同时导出两种 schema 才算合格，避免后期换训练目标时重标。<br>② 评估一条新语料形态：「DRAM 规格文档 → 可执行配置」，抽 <b>20 份</b>规格做人工对照；<b>判据</b>：字段抽取准确率 &lt;90% 则先做结构化清洗、不进预训练语料。</td></tr>
+  <tr><td><b>zhulong</b></td><td>#48 DPO（RM-free 第三条路）· #51 Ramulator 2.0（批量短评测的基座）</td><td>① 奖励消融由两臂扩到<b>三臂</b>：<code>checker</code> / <code>RM+PPO</code> / <code>DPO(离线偏好)</code>，等标注预算；<b>判据</b>：DPO 档在留出任务低于 checker 档 ≥5 绝对点 ⇒ 只作冷启动。<br>② 闭环前先做<b>模拟器吞吐标定</b>：单配置固定 trace 墙钟时间，<b>判据</b>：&gt;30s ⇒ 必须先上代理模型或缩短 trace，🚫 直接让 LLM 搜参。</td></tr>
+  <tr><td><b>designflow</b></td><td>#51 Ramulator 2.0（timing / 功耗 / 可靠性 三类模型成熟度不同）</td><td>① L1–L5 保真度分层<b>拆成三条正交轴</b>：<code>timing</code> / <code>power-thermal</code> / <code>reliability(RowHammer 类)</code>，每道题标注它依赖哪几条轴；<b>判据</b>：涉及可靠性轴的题不得只报 timing 一致率，必须单列可靠性假设。</td></tr>
+</table>
+
+<h2 class="sec">🅱 B 轨 · 经典论文（十三轮累计 <b>51</b> 篇 · <b>不占</b>每日 5 篇额度）<span class="badge b-b">经典</span></h2>
+<p style="font-size:13.5px;color:#59636e;"><b>15:00 轮新增 4 条（#48–#51）：偏好优化 / SSM 统一 / 注意力实现 / 存储模拟基座</b> —— <b>DPO</b>（把 KL 约束 RLHF 化成分类损失，RM-free 路线对照，服务 zhulong 奖励设计）· <b>Mamba-2 / SSD</b>（注意力与 SSM 由半可分矩阵统一，核心层快 2–8×，服务 pretrain 架构对照）· <b>FlashAttention-2</b>（25–40% → 50–73% 理论峰值、225 TFLOPs/s / 72% MFU，服务 pretrain 的 MFU 标尺）· <b>Ramulator 2.0</b>（模块化 DRAM 模拟器，服务 zhulong 批量评测基座 + designflow 保真度三分）。<b>必读清单仍 10/10 组、37/37 条目全覆盖</b>（本轮属「补充」）。⚠️ <b>更正</b>：候选池此前把 DPO 记为 <code>2310.16944</code>，实测该 ID 是 <b>Zephyr（dDPO 蒸馏）</b>，DPO 真实 ID 为 <code>2305.18290</code> ⇒ 已按实测收录、🚫 不沿用错误 ID。<br>12:00 轮新增 4 条（#44–#47）：补齐必读清单最后 3 项 + 中文系最新 agentic 报告 —— τ-bench（终态判分 + <code>pass^k</code>，第 7 组收尾）· TD-Gammon（TD(λ) 自对弈，第 1 组收尾）· Sora 技术报告（标题级，正文 403，第 10 组收尾）· Kimi K2（MuonClip + agentic 数据，第 9 组补新）。<b>必读清单 10/10 组、37/37 条目 —— 已全部覆盖</b>（此后转补充/更正）。⚠️ 任务书示例 <code>2401.14185</code> 实测为 <b>TDFNet（音视频语音分离）</b>、与 Kimi 无关 ⇒ 已如实更正并改用 <code>2507.20534</code>。<br>09:00 轮新增 <b>4 条</b>（#40–#43）：<b>偏好即奖励的前史</b>（Christiano 2017 → Stiennon 2020）+ <b>机器人策略的规模律</b>（RT-1）+ <b>405B 的配方公开度</b>（Llama 3）。<b>必读清单 10/10 组有落点、具体条目 34/37</b>；组内剩余（TD-Gammon · τ-bench <code>2406.12045</code> · SORA 技术报告）见文末候选池。被引数全部 <b>OpenAlex</b>（查询日 <b>2026-11-12</b>），S2 未查、🚫 不跨源比较。<br>06:00 轮新增 <b>4 条</b>（#36–#39）：<b>接口即方法</b>（SWE-agent）+ <b>推理期算力</b>（Tree of Thoughts）+ <b>开源三档配方</b>（Llama 2）+ <b>视觉最小基线</b>（LLaVA-1.5）。</p>
+<table>
+  <tr><th>#</th><th>论文（链接）</th><th>年份 · 出处</th><th>被引</th><th>一句话贡献（据摘要）</th><th>服务线</th></tr>
+  <tr><td>28</td><td><b>Highly accurate protein structure prediction with AlphaFold</b><br><a href="https://doi.org/10.1038/s41586-021-03819-2">DOI 10.1038/s41586-021-03819-2</a></td><td>2021 · <b>Nature 596(7873):583–589</b></td><td><b>45,663</b></td><td>MSA + 深度学习做蛋白质三维结构预测；摘要称在 CASP14 上「多数目标达到与实验结构可竞争」的精度，且无同源结构时仍可用。</td><td>vision · data · harness</td></tr>
+  <tr><td>29</td><td><b>Grandmaster level in StarCraft II using multi-agent reinforcement learning</b><br><a href="https://doi.org/10.1038/s41586-019-1724-z">DOI 10.1038/s41586-019-1724-z</a></td><td>2019 · <b>Nature 575(7782):350–354</b></td><td><b>3,799</b></td><td>多智能体 RL + 持续进化的「联盟」；摘要称三个种族均达宗师、高于 <b>99.8%</b> 官方排名玩家。</td><td>zhulong · harness · designflow</td></tr>
+  <tr><td>30</td><td><b>Kimi k1.5: Scaling Reinforcement Learning with LLMs</b><br><a href="https://arxiv.org/abs/2501.12599">arXiv 2501.12599</a></td><td>2025 · 预印本（v4 2025-06-03）</td><td><b>1,436</b></td><td>长上下文 RL + 改进策略优化，不依赖 MCTS / 价值函数 / PRM；摘要称 AIME <b>77.5</b>、MATH-500 <b>96.2</b>、Codeforces <b>94 百分位</b>、MathVista <b>74.9</b>，并给 long2short（短 CoT 侧 AIME <b>60.8</b> / MATH-500 <b>94.6</b> / LiveCodeBench <b>47.3</b>）。</td><td>zhulong · pretrain · harness · data</td></tr>
+  <tr><td>31</td><td><b>π₀: A Vision-Language-Action Flow Model for General Robot Control</b><br><a href="https://arxiv.org/abs/2410.24164">arXiv 2410.24164</a></td><td>2024（v4 2026-01-08）· <b>RSS 2025</b></td><td><b>3,214</b></td><td>在预训练 VLM 上加 flow matching 动作专家，用多机器人平台大规模多样数据训练；摘要称支持零样本执行、跟随语言指令与高层 VLM 策略、可微调获得新技能。</td><td>vision · zhulong · data · harness</td></tr>
+  <tr><td>32 <span class="badge b-b">新</span></td><td><b>ChatGLM: A Family of Large Language Models from GLM-130B to GLM-4 All Tools</b><br><a href="https://arxiv.org/abs/2406.12793">arXiv 2406.12793</a></td><td>2024 · 预印本技术报告（会议未查）</td><td><b>1,879</b></td><td>GLM-4 / Air / 9B 在约 <b>10 万亿</b> token（中英为主 + 24 语种小比例）上预训练、多阶段后训练对齐；摘要称 MMLU / GSM8K / MATH / BBH / GPQA / HumanEval 上「接近或超过 GPT-4」、AlignBench 中文对齐超过 GPT-4；<b>All Tools</b> 学会自主决定何时调哪个工具。</td><td>pretrain · data · zhulong · harness</td></tr>
+  <tr><td>33 <span class="badge b-b">新</span></td><td><b>MiniMax-01: Scaling Foundation Models with Lightning Attention</b><br><a href="https://arxiv.org/abs/2501.08313">arXiv 2501.08313</a></td><td>2025 · 预印本技术报告</td><td><b>213</b>⚠️</td><td>lightning attention + MoE（32 专家、总参 4,560 亿 / 激活 459 亿）；摘要称训练上下文 <b>100 万</b> token、推理外推 <b>400 万</b>，VL 版以 5,120 亿 VL token 继续训练，上下文比对手长 20–32 倍。</td><td>pretrain · zhulong · vision · harness</td></tr>
+  <tr><td>34 <span class="badge b-b">新</span></td><td><b>RT-2: Vision-Language-Action Models Transfer Web Knowledge to Robotic Control</b><br><a href="https://arxiv.org/abs/2307.15818">arXiv 2307.15818</a></td><td>2023 · 预印本（<b>会议未核验</b>）</td><td><b>2,322</b></td><td>把<b>动作写成文本 token</b>，在机器人轨迹 + 网页视觉-语言任务上共微调 VLM；摘要称 <b>6,000 次</b>评测下对未见物体泛化显著提升，能执行机器人数据中不存在的命令并做多阶段语义推理。</td><td>zhulong · vision · data · harness</td></tr>
+  <tr><td>35 <span class="badge b-b">新</span></td><td><b>Octo: An Open-Source Generalist Robot Policy</b><br><a href="https://arxiv.org/abs/2405.12213">arXiv 2405.12213</a></td><td>2024 · <b>RSS 2024</b>（DOI 10.15607/rss.2024.xx.090）</td><td><b>1,192</b></td><td>transformer 策略在 Open X-Embodiment 的 <b>80 万</b>条轨迹上训练，支持语言指令或目标图像；摘要称可在<b>消费级 GPU 上数小时</b>微调到新的传感器/动作空间，并在 <b>9 个平台</b>验证。</td><td>data · zhulong · vision · harness</td></tr>
+  <tr><td>36 <span class="badge b-b">新</span></td><td><b>SWE-agent: Agent-Computer Interfaces Enable Automated Software Engineering</b><br><a href="https://arxiv.org/abs/2405.15793">arXiv 2405.15793</a></td><td>2024 · <b>NeurIPS 2024</b>（DOI <code>10.52202/079017-1601</code>，pp.50528–50652）</td><td><b>1,502</b></td><td>「<b>接口本身就是方法</b>」：为 LM agent 定制 ACI（打开/编辑/检索/跑测试），压制低层无效动作；据摘要，SWE-bench pass@1 <b>12.5%</b>、HumanEvalFix <b>87.7%</b>，均称当时最好，并分析 ACI 如何改变 agent 行为。</td><td>harness · designflow · data</td></tr>
+  <tr><td>37 <span class="badge b-b">新</span></td><td><b>Tree of Thoughts: Deliberate Problem Solving with Large Language Models</b><br><a href="https://arxiv.org/abs/2305.10601">arXiv 2305.10601</a></td><td>2023 · <b>NeurIPS 2023</b>（DOI <code>10.52202/075280-0517</code>，pp.11809–11822）</td><td><b>3,112</b></td><td>把 CoT 推广成「思维树」：在「思维」单元上多分支探索 + 自评 + 前瞻/回溯；据摘要，24 点游戏上 GPT-4+CoT 仅 <b>4%</b>，ToT 达 <b>74%</b>（另两任务为创意写作、迷你填字）。</td><td>zhulong · harness · pretrain</td></tr>
+  <tr><td>38 <span class="badge b-b">新</span></td><td><b>Llama 2: Open Foundation and Fine-Tuned Chat Models</b><br><a href="https://arxiv.org/abs/2307.09288">arXiv 2307.09288</a></td><td>2023 · <b>预印本技术报告</b>（OpenAlex 无会场记录 ⇒ 不写会议）</td><td><b>19,635</b></td><td>7B/13B/70B 三档预训练 + 对话微调（Llama 2-Chat），并把「<b>SFT → 拒绝采样 → PPO → 多轮安全迭代</b>」配方公开写清；据摘要，多数基准优于开源对话模型，人工评测 helpfulness/safety 可作闭源替代。</td><td>pretrain · zhulong · data</td></tr>
+  <tr><td>39 <span class="badge b-b">新</span></td><td><b>Improved Baselines with Visual Instruction Tuning（LLaVA-1.5）</b><br><a href="https://arxiv.org/abs/2310.03744">arXiv 2310.03744</a></td><td>2023 · <b>CVPR 2024（highlight）</b>（DOI <code>10.1109/cvpr52733.2024.02484</code>，pp.26286–26296）</td><td><b>3,281</b></td><td>只改三处（视觉塔换 <b>CLIP-ViT-L-336px</b>、投影改 <b>MLP</b>、加学术 VQA 数据 + 简单格式提示）就在 <b>11 个基准</b>最好；据摘要，13B 仅用 <b>120 万</b>公开数据、单台 <b>8×A100 约 1 天</b>训完。</td><td>vision · data · pretrain</td></tr>
+  <tr><td>40 <span class="badge b-b">新</span></td><td><b>The Llama 3 Herd of Models</b><br><a href="https://arxiv.org/abs/2407.21783">arXiv 2407.21783</a></td><td>2024 · <b>预印本技术报告</b>（OpenAlex 无会场记录 ⇒ 不写会议）</td><td><b>23,796</b></td><td><b>405B 稠密</b> Transformer + 上下文最高 <b>128K</b>；据摘要，在大量任务上与 GPT-4 质量相当，公开 405B 预训练/后训练权重与 Llama Guard 3，并以「组合式」接入图像/视频/语音（多模态未广泛发布）。</td><td>pretrain · vision · data · zhulong</td></tr>
+  <tr><td>41 <span class="badge b-b">新</span></td><td><b>RT-1: Robotics Transformer for Real-World Control at Scale</b><br><a href="https://arxiv.org/abs/2212.06817">arXiv 2212.06817</a></td><td>2022 · <b>RSS 2023</b>（DOI <code>10.15607/rss.2023.xix.025</code>）</td><td><b>2,747</b></td><td>「任务无关大规模真机数据 + 高容量架构」；据摘要，在真实机器人上按 <b>数据规模 / 模型规模 / 数据多样性</b> 三轴验证泛化随规模提升（机器人版 scaling 观察）。</td><td>vision · harness · data · zhulong · designflow</td></tr>
+  <tr><td>42 <span class="badge b-b">新</span></td><td><b>Deep reinforcement learning from human preferences</b><br><a href="https://arxiv.org/abs/1706.03741">arXiv 1706.03741</a></td><td>2017 · <b>NeurIPS 2017</b>（OpenAlex 落地页 <code>papers.nips.cc/paper/7017</code>）</td><td><b>1,643</b></td><td>用<b>人对两条轨迹片段的成对偏好</b>定义目标（先学 reward model 再 RL）；据摘要，在 Atari 与仿真机器人上可在<b>不到 1% 交互量</b>获得反馈的情况下解决复杂任务，约 <b>1 小时</b>人类时间即可训出新行为。</td><td>zhulong · data · harness</td></tr>
+  <tr><td>43 <span class="badge b-b">新</span></td><td><b>Learning to summarize from human feedback</b><br><a href="https://arxiv.org/abs/2009.01325">arXiv 2009.01325</a></td><td>2020 · <b>NeurIPS 2020</b>（arXiv <code>comments</code> 原文）</td><td><b>945</b></td><td>「人类成对比较 → reward model → RL」跑通摘要任务；据摘要，在 TL;DR 上显著优于人类参考摘要与更大的监督模型，<b>无需新闻域微调</b>即迁移到 CNN/DM 接近人类参考，并证明<b>按人类偏好优化优于按 ROUGE 优化</b>。</td><td>zhulong · data · harness</td></tr>
+  <tr><td>44 <span class="badge b-b">新</span></td><td><b>τ-bench: A Benchmark for Tool-Agent-User Interaction in Real-World Domains</b><br><a href="https://arxiv.org/abs/2406.12045">arXiv 2406.12045</a></td><td>2024 · <b>预印本</b>（arXiv <code>comment</code> 为空；OpenAlex 无会场）</td><td><b>1,198</b></td><td>LM 模拟用户 + 域内 API + 政策约束；判分比对<b>对话结束时的数据库状态 vs 标注目标状态</b>，并提出 <code>pass^k</code> 测一致性；据摘要，gpt-4o 类 agent 成功率 <b>&lt;50%</b>、retail <code>pass^8</code> <b>&lt;25%</b>。</td><td>harness · zhulong · data · designflow</td></tr>
+  <tr><td>45 <span class="badge b-b">新</span></td><td><b>Temporal Difference Learning and TD-Gammon</b><br><a href="https://doi.org/10.1145/203330.203343">DOI 10.1145/203330.203343</a> ｜ <a href="https://doi.org/10.1162/neco.1994.6.2.215">1994 姊妹篇</a></td><td>1995 · <b>CACM 38(3):58–68</b>（Crossref 实测）</td><td><b>1,680</b>（1995）<br><b>823</b>（1994）</td><td><b>1994 摘要原文</b>：神经网络「只靠与自己下棋并从结果学习」学会西洋双陆棋（TD(λ)）；从随机权重起步达「强中级」，<b>加手工特征后达「真正惊人」</b>。⚠️ 1995 正文付费墙未读，🚫 不引胜率/ELO 数字。</td><td>zhulong · pretrain · harness</td></tr>
+  <tr><td>46 <span class="badge b-b">新</span></td><td><b>Video generation models as world simulators</b>（Sora 技术报告）<br><a href="https://openai.com/index/video-generation-models-as-world-simulators/">官方页（本机 403）</a></td><td>2024 · <b>OpenAI 技术报告</b>（无 arXiv / 无 DOI）</td><td>未查（无 DOI）</td><td>标题即主张：把<b>视频生成模型当作「世界模拟器」</b>。⚠️ <b>正文 403 未取到</b>（直连/代理/Wayback/jina 全拒）⇒ 本条<b>只有标题级信息</b>，🚫 不引任何数字与配置。</td><td>vision · designflow</td></tr>
+  <tr><td>47 <span class="badge b-b">新</span></td><td><b>Kimi K2: Open Agentic Intelligence</b><br><a href="https://arxiv.org/abs/2507.20534">arXiv 2507.20534</a></td><td>2025 · 预印本技术报告（v2 2026-02-03）</td><td><b>1,410</b></td><td><b>32B 激活 / 1T 总参</b> MoE；MuonClip（Muon + QK-clip）⇒ 15.5T token <b>零 loss spike</b>；agentic 数据合成 + 联合 RL；作者自报 Tau2-Bench <b>66.1</b> / SWE-Bench Verified <b>65.8</b>。</td><td>pretrain · data · harness · zhulong</td></tr>
+  <tr><td>48 <span class="badge b-b">新</span></td><td><b>Direct Preference Optimization: Your Language Model is Secretly a Reward Model</b>（DPO）<br><a href="https://arxiv.org/abs/2305.18290">arXiv 2305.18290</a></td><td>2023（v3 2024-07-29）· <b>NeurIPS 2023</b>（pp. 53728–53741，DOI <code>10.52202/075280-2338</code>）</td><td><b>3,123</b></td><td>把 RLHF 的奖励模型<b>换参数化使最优策略可闭式解出</b>，于是 KL 约束目标退化成<b>一个分类损失</b>：无需拟合 RM、也无需在微调中采样；摘要称情感控制超过 PPO 版 RLHF，摘要/单轮对话持平或更好且实现更简单。</td><td>zhulong · data · harness</td></tr>
+  <tr><td>49 <span class="badge b-b">新</span></td><td><b>Transformers are SSMs: Generalized Models and Efficient Algorithms Through Structured State Space Duality</b>（Mamba-2）<br><a href="https://arxiv.org/abs/2405.21060">arXiv 2405.21060</a></td><td>2024 · <b>ICML 2024</b>（据 arXiv <code>comment</code>；OpenAlex 仍记预印本）</td><td><b>1,003</b></td><td>用<b>半可分矩阵分解</b>把 SSM 与注意力变体统一成 <b>SSD</b> 框架，并设计 Mamba-2：核心层是选择性 SSM 的精化，<b>快 2–8×</b>，语言建模上<b>仍与 Transformer 有竞争力</b>（摘要原文）。</td><td>pretrain · zhulong · harness</td></tr>
+  <tr><td>50 <span class="badge b-b">新</span></td><td><b>FlashAttention-2: Faster Attention with Better Parallelism and Work Partitioning</b><br><a href="https://arxiv.org/abs/2307.08691">arXiv 2307.08691</a></td><td>2023 · <b>预印本</b>（arXiv <code>comment</code> 空、OpenAlex 无会场 ⇒ 未核到会议）</td><td><b>1,844</b></td><td>FA-1 只达理论峰值 <b>25–40%</b>（work partitioning 不佳）；FA-2 减少非 matmul FLOPs + 跨 block 并行单 head + warp 内再分工 ⇒ <b>约 2×</b>，A100 上 <b>50–73%</b> 峰值；端到端 GPT 式训练 <b>225 TFLOPs/s（72% MFU）</b>。</td><td>pretrain · harness</td></tr>
+  <tr><td>51 <span class="badge b-b">新</span></td><td><b>Ramulator 2.0: A Modern, Modular, and Extensible DRAM Simulator</b><br><a href="https://arxiv.org/abs/2308.11030">arXiv 2308.11030</a></td><td>2023（v2 2023-11-29）· <b>IEEE CAL 23(1):112–116</b>（DOI <code>10.1109/LCA.2023.3333759</code>）</td><td><b>185</b>⚠️</td><td>把 DRAM 部件抽象成<b>共享接口 + 独立实现</b>、用可读规格语法 + 模板化 lambda 快速支持 DDR5/LPDDR5/HBM3/GDDR6；以多种 RowHammer 缓解方案演示「不改基线控制器即可模块化扩展」，MIT 许可开源。⚠️ 被引 <b>低于 500 门槛</b>，按「存储领域标志性 / 常青」收录。</td><td>zhulong · designflow · data</td></tr>
+</table>
+<div class="note"><b>读法（防止把经典读成结论）</b>：① AlphaFold / AlphaStar 无 arXiv，摘要取自 Nature 页面 <code>dc.description</code>，<b>只引摘要内出现的数字</b>；② Kimi / π0 / GLM-4 / MiniMax-01 / RT-2 / Octo 的分数与能力均为<b>作者自报</b>、基准自选，不能写成「当前 SOTA」；③ 被引数高只说明影响力，不等于与我们的任务相关；④ 经典条目不进 <code>SEEN.md</code>、不占每日 5 篇额度；⑤ 03:00 轮四条元数据均实测（arXiv <code>id_list</code> <code>200</code> + <code>atom+xml</code>，OpenAlex 4/4 <code>200</code>）：<b>RT-2 会议收录未核验</b>（Crossref 未命中）、GLM-4 / MiniMax-01 为<b>技术报告</b>（无会议）、<b>Octo 经 Crossref 核到 RSS 2024</b>（<code>10.15607/rss.2024.xx.090</code>）。</div>
+
+<h2 class="sec">👥 作者关系网 · 十四轮互动（61 人建档 / 19 封已发 / 35 个 X handle 已核验 / follow 待手动）</h2>
+<table>
+  <tr><th>#</th><th>姓名</th><th>机构</th><th>代表论文</th><th>邮箱</th><th>X</th><th>状态</th></tr>
+  <tr><td>40</td><td><b>John Jumper</b></td><td>Google DeepMind（AlphaFold 一作 / 通讯）</td><td>AlphaFold（Nature 2021）</td><td>未找到（机构不公开个人邮箱）</td><td><b>未找到 X</b>（<code>@JohnJumper</code> 仅 19 followers、无 bio ⇒ 身份不可证，拒绝登记）</td><td>待跟踪（不发信）</td></tr>
+  <tr><td>41</td><td><b>Igor Babuschkin</b></td><td>River AI（CEO）· 曾任 xAI · AlphaStar 时在 DeepMind</td><td>AlphaStar（Nature 2019，二作）</td><td>未找到</td><td><b>@ibab</b>（bio = <code>CEO &amp; Co-Founder @river_ai_inc. Previously @xAI…</code>，身份一致）</td><td>待跟踪 · X 待 follow</td></tr>
+  <tr><td>42</td><td><b>Danny Driess</b></td><td>Physical Intelligence（Research Scientist）</td><td>π0（三作）· PaLM-E（一作）</td><td><b>danny.driess@gmail.com</b>（本人主页防爬写法还原，<code>200</code> / 29,043 B）</td><td><b>@DannyDriess</b>（主页 <code>href</code> + X <code>200</code>；bio = <code>Research Scientist @physical_int. Formerly Google DeepMind</code>）</td><td><b>已发信</b>（2026-11-12 00:07，英文 191 词）</td></tr>
+  <tr><td>43</td><td><b>Kimi Team（Moonshot AI）</b></td><td>Moonshot AI（北京；团队署名）</td><td>Kimi k1.5（arXiv 2501.12599）</td><td>未找到（不用客服/商务邮箱冒充作者）</td><td><b>@Kimi_Moonshot</b>（官方账号，<code>200</code>）</td><td>待跟踪 · X 待 follow</td></tr>
+  <tr><td>44 <span class="badge b-b">新</span></td><td><b>Team GLM（智谱 AI）</b></td><td>Zhipu AI（北京）· 部分作者挂清华</td><td>GLM-4 / ChatGLM（arXiv 2406.12793，团队署名）</td><td>未找到（🚫 不用商务/客服邮箱）</td><td><b>@ZhipuAI</b>（官方机构号；<code>200</code>，bio = <code>全部自研GLM模型架构</code>）</td><td>待跟踪 · X 待 follow（机构号）</td></tr>
+  <tr><td>45 <span class="badge b-b">新</span></td><td><b>MiniMax</b></td><td>MiniMax（上海；团队署名，90 人字母序）</td><td>MiniMax-01（arXiv 2501.08313）</td><td>未找到（🚫 不用客服/商务邮箱）</td><td><b>@MiniMax_AI</b>（官方机构号；<code>200</code>，bio 含 <code>Code: @MiniMax_Code</code>）</td><td>待跟踪 · X 待 follow（机构号）</td></tr>
+  <tr><td>46 <span class="badge b-b">新</span></td><td><b>Karl Pertsch</b></td><td>Physical Intelligence（member of technical staff）；前 Berkeley / Stanford 博后</td><td>Octo（arXiv 2405.12213，三作）· RT-2（作者之一）</td><td><b>karl.pertsch@gmail.com</b>（本人主页 <code>mailto:</code>，<code>200</code> / 64,903 B）</td><td><b>@KarlPertsch</b>（主页 <code>href</code> + X <code>200</code>；bio = <code>Robot Foundation Models @physical_int</code>）</td><td>待跟踪 · <b>待发信</b>（下轮）</td></tr>
+  <tr><td>47 <span class="badge b-b">新</span></td><td><b>Pete Florence</b></td><td>Generalist AI（联合创始人 &amp; CEO）；前 Google DeepMind</td><td>RT-2（arXiv 2307.15818，核心作者之一）</td><td><b>pete.florence@gmail.com</b>（本人主页防爬写法还原，<code>200</code> / 47,238 B）</td><td><b>@peteflorence</b>（主页 <code>href</code> + X <code>200</code>；bio = <code>Co-Founder &amp; CEO @GeneralistAI</code>）</td><td><b>已发信</b>（2026-11-12 03:03，英文 189 词）</td></tr>
+  <tr><td>48 <span class="badge b-b">新</span></td><td><b>Kilian Lieret</b></td><td>Meta Superintelligence（X bio 自述「prev. Princeton」）· SWE-bench 系榜单维护者</td><td>SWE-agent（arXiv 2405.15793，第 4 作者）</td><td>未找到（<code>klieret.github.io</code> 404；不猜）</td><td><b>@KLieret</b>（<code>og:title</code> = <code>Kilian Lieret (@KLieret) on X</code>；bio 自证 SWE-bench / SWE-agent 维护身份）</td><td><b>待跟踪</b>（无公开邮箱 ⇒ 不发信）</td></tr>
+  <tr><td>49 <span class="badge b-b">新</span></td><td><b>Jan Leike</b></td><td>Anthropic（alignment 方向）；论文发表时为 OpenAI</td><td>Deep RL from human preferences（arXiv 1706.03741，二作）· Learning to summarize from human feedback（2009.01325）</td><td><b>jan@anthropic.com</b>（本人主页 <code>mailto:</code>，<code>200</code> / 6,411 B）</td><td><b>@janleike</b>（主页 <code>href="https://twitter.com/janleike"</code> + X <code>200</code>、<code>og:title</code> = <code>Jan Leike (@janleike) on X</code>；⚠️ bio 未渲染，未写）</td><td><b>已发信</b>（2026-11-12 09:04，英文 199 词）</td></tr>
+  <tr><td>50 <span class="badge b-b">新</span></td><td><b>Paul Christiano</b></td><td>Alignment Research Center（Founder &amp; Director）；前 OpenAI alignment 负责人</td><td>Deep RL from human preferences（1706.03741，一作）· Learning to summarize from human feedback（2009.01325）</td><td>未找到（个人站 <code>paulfchristiano.com</code> <code>200</code> / 57,044 B 但<b>无 mailto</b>；不猜）</td><td><b>@paulfchristiano</b>（<code>200</code>，bio = <code>Founder &amp; Director of the Alignment Research Center… Previously led alignment at OpenAI</code>；X 页自证，个人站未挂 X 链接）</td><td>待跟踪 · X 待 follow（无邮箱 ⇒ 不发信）</td></tr>
+  <tr><td>51 <span class="badge b-b">新</span></td><td><b>Nisan Stiennon</b></td><td>未核验（个人站未写当前机构）</td><td>Learning to summarize from human feedback（2009.01325，一作）</td><td><b>nisan+web@stiennon.com</b>（本人站 <code>mailto:</code>，<code>200</code> / 5,575 B）</td><td><b>未找到 X</b>（<code>x.com/nisanstiennon</code> 实测 <b>404</b> ⇒ 不猜替代 handle）</td><td><b>已发信</b>（2026-11-12 12:04，英文；⚠️ <b>212 词</b>，超 ≤200 规格 12 词，已如实记账）</td></tr>
+  <tr><td>52 <span class="badge b-b">新</span></td><td><b>Bill Peebles</b></td><td>OpenAI（X bio 自述 <code>head of sora @openai</code>）</td><td>Sora 技术报告（2024，无 arXiv）· DiT（2022）</td><td>未找到（未核个人主页）</td><td><b>@billpeeb</b>（<code>200</code>，<code>&lt;title&gt;</code> = <code>Bill Peebles (@billpeeb) / X</code>，bio = <code>head of sora @openai</code>）</td><td>待跟踪 · X 待 follow（无公开邮箱 ⇒ 不发信）</td></tr>
+  <tr><td>53 <span class="badge b-b">新</span></td><td><b>Tim Brooks</b></td><td>Meta（X bio <code>superintelligence @ Meta</code>）；前 OpenAI Sora 共同负责人</td><td>Sora 技术报告（2024）· InstructPix2Pix（2022）</td><td>未找到（未核个人主页）</td><td><b>@_tim_brooks</b>（<code>200</code>，<code>&lt;title&gt;</code> = <code>Tim Brooks (@_tim_brooks) / X</code>，bio = <code>superintelligence @ Meta</code>）</td><td>待跟踪 · X 待 follow（已转 Meta ⇒ 涉 Sora 发言按「前负责人」引用）</td></tr>
+  <tr><td>54 <span class="badge b-b">新</span></td><td><b>Gerald Tesauro</b></td><td>IBM（论文发表时为 T.J. Watson Research Center；当前职位未核验）</td><td>TD-Gammon（CACM 1995，独著）· TD-Gammon（Neural Computation 1994）</td><td>未找到（旧主页 <code>308</code> → 通用页，无 <code>mailto</code>）</td><td><b>未找到 X</b>（无个人页读到 handle ⇒ 不猜）</td><td>待跟踪（1995 年论文，旧邮箱已 30 年 ⇒ 不发信）</td></tr>
+  <tr><td>55 <span class="badge b-b">新</span></td><td><b>Rafael Rafailov</b></td><td>Thinking Machines（X bio <code>I work on RL at @thinkymachines</code>）；论文时 Stanford AI Lab</td><td>DPO（<code>2305.18290</code>，一作）</td><td>未找到（主页 <code>rafaelrafailov.com</code> 直连/代理均 <code>000</code>；<code>cs.stanford.edu/~rafailov/</code> <code>403</code> ⇒ 不猜）</td><td><b>@rm_rafailov</b>（<code>200</code>，<code>&lt;title&gt;</code> = <code>Rafael Rafailov @ NeurIPS (@rm_rafailov) / X</code>，bio = <code>I work on RL at @thinkymachines. Previously at @StanfordAILab @GoogleDeepMind @UCBerkeley</code>）</td><td>待跟踪 · X 待 follow（无当前公开邮箱 ⇒ 不发信；同论文只给二作发信）</td></tr>
+  <tr><td>56 <span class="badge b-b">新</span></td><td><b>Archit Sharma</b></td><td>Google DeepMind（<code>post-training science lead</code>）；论文时 Stanford</td><td>DPO（二作）</td><td><b>architsh@stanford.edu</b>（本人主页 <code>architsharma97.github.io</code> 的 <code>mailto:</code>，<code>200</code> / 3,936 B；⚠️ 已转 GDM ⇒ 退信记「通道失效」不重发）</td><td><b>@archit_sharma97</b>（<code>200</code>，bio 自证 <code>co-created: Gemini Deep Think series, DPO</code>）</td><td><b>已发信</b>（2026-11-12 15:03，英文 <b>197 词</b>，发送前 <code>wc -w</code> 已核）· X 待 follow</td></tr>
+  <tr><td>57 <span class="badge b-b">新</span></td><td><b>Onur Mutlu</b></td><td>ETH Zurich 教授 + CMU；SAFARI 组</td><td>Ramulator 2.0（<code>2308.11030</code>，通讯/末位）· RowHammer 系列</td><td><b>omutlu@gmail.com</b>（本人 ETH 主页 <code>people.inf.ethz.ch/omutlu/</code> 的 <code>mailto:</code>，<code>200</code> / 19,850 B）</td><td><b>@_onurmutlu_</b>（<code>200</code>，bio = <code>Professor at ETH Zurich and Carnegie Mellon University ... Group: @SAFARI_ETH_CMU</code>；主页亦挂 <code>twitter.com/_onurmutlu_</code>）</td><td><b>已发信</b>（2026-11-12 15:03，英文 <b>177 词</b>，发送前 <code>wc -w</code> 已核）· X 待 follow</td></tr>
+</table>
+<p style="font-size:13px;color:#59636e;"><b>X 可达性（15:00 复测）</b>：直连 <code>x.com</code> <b><code>000</code></b> / 显式 <code>--proxy http://127.0.0.1:7897</code> <b><code>200</code></b>（与 12:00 一致 ⇒ 代理在线，非 proxy_down）。15:00 轮 <code>x_fetch.py</code> 抓 3 个 profile <b>3/3 <code>200</code></b>（<code>_onurmutlu_</code> / <code>archit_sharma97</code> / <code>rm_rafailov</code>），新核验 <b>@_onurmutlu_</b>、<b>@archit_sharma97</b>、<b>@rm_rafailov</b>；同轮 2 条拟引用推文经单条页 <code>og:title</code> 核验为<b>他人推文</b>（<code>@koraykv</code> / <code>@Shalev_lif</code>）⇒ 记 V13 / V14 <b>作废、不采用</b>（profile timeline 会混入他人推文的老问题再次复现）。<br><b>12:00 复测</b>：⚠️ 本 shell <b>未继承</b> <code>HTTP(S)_PROXY</code> ⇒ 直连 <code>x.com</code> 返回 <b><code>000</code></b>、显式 <code>--proxy http://127.0.0.1:7897</code> 返回 <b><code>200</code></b>（<code>mihomo.service</code> active 23h）⇒ <b>代理正常，不是 proxy_down</b>。12:00 轮 <code>x_fetch.py</code> 抓 2 个 profile <b>2/2 <code>200</code></b>（<code>billpeeb</code> / <code>_tim_brooks</code>），新核验 <b>@billpeeb</b> 与 <b>@_tim_brooks</b>；同轮 <code>research.ibm.com/people/t/tesauro/</code> <b>308</b> → 通用页无 <code>mailto</code> ⇒ Tesauro 记「未找到邮箱 / 未找到 X」。<br>09:00 复测：经本机 Mihomo（<code>http://127.0.0.1:7897</code>）<code>x.com</code> <b>200 / 0.86s</b>、<code>x.com/ShunyuYao12</code> <b>200 / 0.76s</b>、出口 <code>178.249.213.185</code> ⇒ 代理在线。09:00 轮抓 3 个 profile 全部 <code>200</code>（<code>RichardSSutton</code> / <code>_albertgu</code> / <code>_jasonwei</code>），新核验 <b><code>@janleike</code></b>（主页 <code>href</code> + X <code>og:title</code>）与 <b><code>@paulfchristiano</code></b>（X 页 bio 自证）；<code>x.com/nisanstiennon</code> 实测 <b>404</b> ⇒ 不登记。<b>follow 仍需登录态 ⇒ 本轮 0 follow（12:00 同），未假装已 follow</b>；待 follow 清单累计 <b>33 个 handle</b>（见 <code>research/classic/AUTHORS.md</code> 第二节，交用户手动执行）。<br>⚠️ 已知坑复述：profile 页时间线<b>会混入他人推文</b>（本轮 <code>_albertgu</code> 的 timeline 里混进了 Sutton 那条），拟引用条目一律先开单条推文页核 <code>og:title</code> 作者名。</p>
+<div class="ok-box" style="margin-top:10px;"><b>本轮作者信（今日累计 <b>7</b> 封）</b>：① <b>Danny Driess</b>（π0）—— 00:07 已发（英文 191 词）；② <b>Pete Florence</b>（RT-2）—— 03:03 已发（英文 189 词）；③ <b>Karl Pertsch</b>（Octo）—— 06:05 已发（英文 191 词）；④ <b>Jan Leike</b>（Christiano 2017 偏好奖励，<b>09:04 已发</b>，英文 <b>199 词</b>）—— 经典论文口径：「我们在做 ~2B 域内模型、动作是带可验证结果的异构 tool call；你这篇『偏好即奖励』决定了我们怎么选奖励来源，想确认三个理解」：① 10–30 步短 episode 下，学到的奖励要多少标注密度才能胜过手写可验证奖励、先坏在哪一环；② 小规模 RM 的瓶颈是容量还是标签噪声、工具调用轨迹上最先出现哪种 reward hacking；③ tie / 标注分歧如何聚合、稀疏高噪时是否仍用 pairwise logistic 目标。<code>SENT OK 2026-11-12 09:04:13</code>；草稿 <code>research/mail/drafts/1706.03741.md</code>，台账 <code>research/mail/发送记录.md</code>。⚠️ <b>Physical Intelligence 当日 2 封（Danny + Karl）= 已达「同机构 ≤2 封/天」上限</b>，今日不再向 PI 发信；同篇论文第二作者 Paul Christiano <b>本轮不重复发信</b>（同论文 ≤1）。⑤ <b>Nisan Stiennon</b>（Stiennon 2020 偏好数据）—— <b>12:04 已发</b>（英文；⚠️ <code>wc -w</code> 实测 <b>212 词</b>，<b>超 ≤200 规格 12 词</b>，<b>已如实记账并列入维护纪律</b>）—— 经典论文口径：「你们证明『按人类偏好优化 ≠ 按 ROUGE 优化』，我们有可验证 checker，想确认三点」：① 小规模（~2B、数万条域内轨迹）下标注一致率/筛选相对数据量的边际价值、先坏在哪一环；② 有可验证 checker 时是否仍建 RM、RM+checker 如何加权；③ tie 与长度偏置当年怎么处理、今天会怎么做。<code>SENT OK 2026-11-12 12:04:55</code>；草稿 <code>research/mail/drafts/2009.01325.md</code>。⚠️ 今日 5 封分属五轮（每轮 ≤3）；机构：PI 2（上限）、Generalist AI 1、Anthropic 1、Stiennon 个人站 1。⑥ <b>Archit Sharma</b>（DPO）—— <b>15:03:05 已发</b>（<code>architsh@stanford.edu</code>，英文 <b>197 词</b>，<b>发送前</b> <code>wc -w</code> 已核）—— 经典论文口径：「你们把 KL 约束 RLHF 化成分类损失；我们的场景是 ~2B + 数万条工具轨迹 + 有可验证 checker，想确认三点」：① 去掉显式 RM 是否仍成立、参考模型是否成瓶颈；② 长度/格式偏置是否观察到、今天会否加长度归一或更强正则；③ 高度 off-policy 的离线偏好数据下，如何检测隐式奖励已偏离可验证信号。⑦ <b>Onur Mutlu</b>（Ramulator 2.0）—— <b>15:03:05 已发</b>（<code>omutlu@gmail.com</code>，英文 <b>177 词</b>）—— 「我们想把 LLM 出配置 → 模拟器跑 → 回填指标做成闭环，想确认三点」：① 成千上万短配置的批量评测是否适合 Ramulator 2.0、抽象先在哪破；② 只做排序时哪些部件可简化；③ power/thermal 与 RowHammer 模型相对 timing 的成熟度。⚠️ 同论文一作 Rafael Rafailov 本轮<b>不发</b>（同论文 ≤1；且无当前公开邮箱）；Haocong Luo 同机构不重复发。今日 <b>7 封</b>，分属六轮，每轮 ≤3；机构：PI 2（上限）、Generalist AI 1、Anthropic 1、Stiennon 个人站 1、<b>Stanford 1</b>、<b>ETH Zurich 1</b>。</div>
+
+<h2 class="sec">🗣 voice_ready · 研究者言论（可发头条）—— 本期 2 条（18:00 复核后仍维持，本轮无新增合格言论）</h2>
+<p style="font-size:13px;color:#59636e;"><b>15:00 复核</b>：本轮抓到 <code>@_onurmutlu_</code> / <code>@archit_sharma97</code> / <code>@rm_rafailov</code> 三个 profile（3/3 <code>200</code>），但两条拟引用推文经<b>单条推文页 <code>og:title</code></b> 核验后分别属于 <code>@koraykv</code>（科赖·卡武克丘奥卢）与 <code>@Shalev_lif</code>，<b>不是本人</b> ⇒ 记 V13 / V14 作废，<b>不采用、不替换</b>；本期仍为 V2 / V4 两条。<br><b>12:00 复核</b>：X 可读且抓到 <code>@billpeeb</code> / <code>@_tim_brooks</code> 两条 profile（2/2 <code>200</code>、各 7 / 9 条推文），但<b>未发现「两处一致 + 正文完整」的新推文</b> ⇒ <b>不替换、不硬凑</b>，本期仍为 V1–V12 台账中的 V2 / V4 两条；V12（Jason Wei 长贴）仍因两处截断不采用。</p>
+<details class="voice-ready" open>
+<summary>本期 2 条（原文 + 链接 + 时间；中文仅翻译）· 09:00 复核：Jason Wei 2026-11-11 那条<b>两处抓取均被截断</b> ⇒ 未采用（V12），本期不加第三条</summary>
+<ul>
+  <li><b>人物</b>：Richard S. Sutton <code>@RichardSSutton</code>（University of Alberta / Amii，Dyna、TD 学习作者，图灵奖得主）</li>
+  <li><b>言论</b>：<span class="orig">"Brute force computation is not enough for intelligence. Clever new methods are needed. The science of AI is far from finished. IMHO"</span><br><b>中文翻译</b>：「暴力算力对智能来说是不够的。我们需要更聪明的新方法。AI 这门科学还远没有走到终点。依我看。」</li>
+  <li><b>时间</b>：2026-11-07 18:57 UTC（距本期 4 天，<b>未超 30 天</b>）</li>
+  <li><b>出处</b>：<a href="https://x.com/RichardSSutton/status/2119142310894334262">https://x.com/RichardSSutton/status/2119142310894334262</a>（profile 页内嵌 JSON 的 <code>full_text</code> 与 <code>created_at_ms</code> 两处一致）</li>
+  <li><b>话题点</b>：当所有人都在堆算力时，强化学习奠基者公开唱反调——「智能 ≠ 更大集群」。</li>
+  <li><b>风险</b>：这是<b>观点</b>且原文带 <code>IMHO</code>，🚫 不得写成「研究结论」或「Sutton 证明算力无用」；原文只有一句话，<b>无上下文</b>，引用时须保留 <code>IMHO</code>。</li>
+</ul>
+<hr>
+<ul>
+  <li><b>人物</b>：Tri Dao <code>@tri_dao</code>（Princeton CS 助理教授 · Together AI 首席科学家；FlashAttention 一作、Mamba 二作）</li>
+  <li><b>言论</b>：<span class="orig">"Distilling most of our expertise in kernel and inference engine optimization into an agent loop that powers our production. A 2-year project that we're finally able to share"</span><br><b>中文翻译</b>：「我们把在 kernel 与推理引擎优化上的大部分经验，蒸馏进了一个驱动我们生产环境的 agent 循环。一个做了两年、终于能对外分享的项目。」</li>
+  <li><b>时间</b>：2026-11-05 19:01 UTC（距本期 6 天，<b>未超 30 天</b>）</li>
+  <li><b>出处</b>：<a href="https://x.com/tri_dao/status/2118418321456660572">https://x.com/tri_dao/status/2118418321456660572</a>（推文页 <code>200</code>；<code>og:title</code> = <code>Tri Dao (@tri_dao) on X</code>，<code>og:description</code> 与 profile <code>full_text</code> <b>逐字一致</b> ⇒ 双源核验通过）</li>
+  <li><b>话题点</b>：「把专家经验变成 agent 循环」——连做 kernel 的顶级团队也在用 agent 固化工程经验，而不是靠人肉调优。</li>
+  <li><b>风险</b>：这是<b>自家产品</b>的发布前导语，🚫 不得写成「第三方评测证明 agent 优于手调」；原文未给任何指标，引用时<b>不得补数字</b>；agent loop 与「生产环境」的具体形态未披露。</li>
+</ul>
+</details>
+
+<details class="news-ready">
+<summary>📰 news_ready · 本期 0 条（12:00 复核后仍为 0，原因如下）</summary>
+<ul>
+  <li><b>本期 0 条（5 篇全为「借鉴」）</b>：四问均不过 —— ① SLIC 是模拟电路专用流程、Plumbline 是训练系统工具、ACF 合规是实证研究、文本编码与 GRPO 稠密奖励是方法学工作，<b>大众都无法一句话接住</b>（第①问）；② 5 篇均无「发布/开源/首次」类<b>事件点</b>（第②问；ACF 与 GRPO 两篇虽分别有「首次操作化」「预注册 1,668 次运行」，但属方法学事件，不构成大众新闻）；③ 数字虽可指到摘要（如 91%、14.3pp、1,668 runs），但<b>脱离上下文易被误读为产品结论</b>（第③问）；④ 两篇新文无配图可用（第④问）。🚫 未硬凑。</li>
+  <li><b>12:00 复核</b>：B 轨第十二轮 4 条（τ-bench 2024 / TD-Gammon 1995 / Sora 2024 / Kimi K2 2025）均为<b>经典或非新发布</b>，且 Sora 正文 403 无数字、Kimi 为作者自报 ⇒ <b>四问不过，仍 0 条</b>。</li>
+  <li><b>下期候选</b>：18:00 轮继续按四问评估新入选论文；voice_ready 两条为观点/作者自述，<b>不转 news_ready</b>。</li>
+</ul>
+</details>
+
+<h2 class="sec">附录 A · 检索式与命中数（2026-11-12 00:0x · 可核验）</h2>
+<table>
+  <tr><th>#</th><th>检索式（arXiv API）</th><th>HTTP / Content-Type</th><th>返回</th><th>窗口内（≥2026-11-09）</th></tr>
+  <tr><td>1</td><td><code>cat:cs.CL AND (abs:"language model" OR abs:"reasoning")</code></td><td><code>200</code> / <code>application/atom+xml</code>（106,222 B）</td><td>40</td><td>最新 <code>2026-11-10</code>；约 35 条</td></tr>
+  <tr><td>2</td><td><code>cat:cs.LG AND (abs:"language model" OR abs:"scaling law")</code></td><td><code>200</code> / <code>application/atom+xml</code>（102,462 B）</td><td>40</td><td>最新 <code>2026-11-10</code>；约 38 条</td></tr>
+  <tr><td>3</td><td><code>cat:cs.CV AND (abs:"multimodal" OR abs:"vision-language")</code></td><td><code>200</code> / <code>application/atom+xml</code>（104,967 B）</td><td>40</td><td>最新 <code>2026-11-10</code>；约 37 条</td></tr>
+  <tr><td>4</td><td><code>cat:cs.SE AND (abs:"agent" OR abs:"code generation")</code></td><td><code>200</code> / <code>application/atom+xml</code>（106,719 B）</td><td>40</td><td>最新 <code>2026-11-10</code>；约 30 条</td></tr>
+  <tr><td>5</td><td><code>cat:cs.AI AND (abs:"agent" OR abs:"tool use")</code></td><td><code>200</code> / <code>application/atom+xml</code>（102,495 B）</td><td>40</td><td>最新 <code>2026-11-09</code></td></tr>
+  <tr><td>6</td><td><code>(abs:"small language model" OR abs:"on-device" OR abs:"distillation") AND (cat:cs.CL OR cat:cs.LG)</code></td><td><code>200</code> / <code>application/atom+xml</code>（103,019 B）</td><td>40</td><td>最新 <code>2026-11-09</code></td></tr>
+</table>
+<p style="font-size:13px;color:#59636e;"><b>15:00 重扫</b>：单分类 5 查询 <b>5/5 <code>200</code></b> + <code>application/atom+xml; charset=utf-8</code>（cs.CL 125,187 · cs.CV 213,062 · cs.LG 298,685 · cs.AI 212,409 · cs.SE 30,986，耗时 7.95s / 3.60s / 9.19s / 4.57s / 13.57s）⇒ 与 06:00 / 09:00 / 12:00 <b>逐字节同值</b>，<b>公告批仍 2026-11-10、未刷新</b>；合并 <b>410</b> / 与 <code>SEEN.md</code> 重复 <b>13</b> / 新 <b>397</b>（<code>raw/2026-11-12-15h-candidates-r157.json</code>）⇒ 当日额度 <b>5/5</b>，<b>0 新收</b>。<br>6/6 <code>200</code> + <code>application/atom+xml</code>；相邻请求间隔 ≥3.2s；<b>公告批最新 2026-11-10</b>（本地 11-12 00:0x = UTC 11-11 16:0x，距最新批 ≈1.7 天，符合「≤72h」口径，非放宽）。<br><b>03:00 增量补验</b>：用 <code>id_list=2611.14459,2611.14493,2611.13560,2406.12793,2501.08313,2307.15818,2405.12213,2307.09288,2310.03744</code> 复核 <b>9/9 entry</b>（<code>HTTP 200</code> + <code>application/atom+xml; charset=utf-8</code>，38,801 B），其中 <code>2611.14459</code>（<code>published=2026-11-10T18:27:26Z</code>，距 03:00 唤醒 ≈24.6h）与 <code>2611.13560</code>（<code>2026-11-10T04:25:22Z</code>，≈38.6h）<b>均 &lt;72h</b>；另 7 条为 B 轨经典论文（不受 72h 限制）。<br><b>09:00 重扫</b>：单分类查询 <b>4/5 成功</b>（<code>cs.CL</code> 125,187 / <code>cs.CV</code> 213,062 / <code>cs.LG</code> 298,685 / <code>cs.AI</code> 212,409，均 <code>200</code> + <code>application/atom+xml; charset=utf-8</code>），<b>与 06:00 完全同值 ⇒ 公告批未刷新（仍 2026-11-10）</b>；第 5 个查询 <code>cs.SE</code> 返回 <b>arXiv <code>429 Too Many Requests</code></b>（本线并发请求所致）⇒ <b>如实记「失败」而非「无新增」</b>，<code>cs.SE</code> 总量沿用 06:00 的 30,986（脚本 <code>research/raw/candidates_r155.py</code> 日志 <code>/tmp/cand_r155.log</code>）。<br><b>09:00 B 轨元数据补验</b>：<code>id_list=2407.21783,2212.06817,1706.03741,2009.01325</code> <b>4/4 entry</b>（<code>HTTP 200</code> + <code>application/atom+xml; charset=utf-8</code>，73,338 B；首次提交 2024-07-31 / 2022-12-13 / 2017-06-12 / 2020-09-02），被引 OpenAlex <b>4/4 <code>200</code></b>（23,796 / 2,747 / 1,643 / 945，查询日 2026-11-12）。</p>
+<p style="font-size:13px;color:#59636e;"><b>12:00 重扫（补测 <code>cs.SE</code>）</b>：单分类 5 查询 <b>5/5 <code>200</code> + <code>application/atom+xml; charset=utf-8</code></b>（<code>cs.CL</code> 125,187 / <code>cs.CV</code> 213,062 / <code>cs.LG</code> 298,685 / <code>cs.AI</code> 212,409 / <b><code>cs.SE</code> 30,986（上轮 429，本轮恢复 <code>200</code>）</b>；合并 <b>303</b> / 与 <code>SEEN</code> 重复 <b>9</b> / 新 <b>294</b>），各分类 <code>totalResults</code> 与 06:00 / 09:00 <b>逐字节同值</b> ⇒ 公告批仍 <b>2026-11-10</b>，<b>A 轨 0 新收（当日 5/5 已满，不超额）</b>；产物 <code>research/raw/2026-11-12-pm-candidates-r156.json</code>（脚本 <code>candidates_r156.py</code>）。<br><b>12:00 B 轨元数据补验</b>：<code>id_list=2406.12045,2401.14185</code> <b>2/2 entry</b>（<code>200</code> + atom，5,114 B）、<code>id_list=2507.20534</code> <b><code>200</code></b>（14,399 B，v2）；被引 OpenAlex <b>2/2 <code>200</code></b>（τ-bench 1,198 / Kimi K2 1,410，查询日 2026-11-12）；TD-Gammon Crossref <b><code>200</code></b>（CACM 38(3):58–68）+ OpenAlex <b>1,680</b> / 1994 版 <b>823</b>；<b>Sora 官方页直连/代理/Wayback/jina 全 <code>403</code>/<code>401</code></b> ⇒ 如实记「正文未取到」。</p>
+
+<h2 class="sec">附录 B · 取数、去重与选文（5 篇 = 早报 3 + 03:00 增量 2）</h2>
+<table>
+  <tr><th>#</th><th>arXiv ID · 简称</th><th>分类</th><th>published</th><th>距唤醒</th><th>落点线</th></tr>
+  <tr><td>1</td><td><code>2611.13452</code> SLIC</td><td>cs.LG</td><td>2026-11-10T01:54:39Z</td><td>≈38.2h</td><td>designflow（主）· zhulong · pretrain</td></tr>
+  <tr><td>2</td><td><code>2611.13393</code> Plumbline</td><td>cs.DC</td><td>2026-11-10T00:13:56Z</td><td>≈39.9h</td><td>pretrain（主）· harness</td></tr>
+  <tr><td>3</td><td><code>2611.13709</code> ACF adherence</td><td>cs.SE</td><td>2026-11-10T08:01:51Z</td><td>≈32.1h</td><td>harness（主）</td></tr>
+  <tr><td>4 <span class="badge b-b">增量</span></td><td><code>2611.14459</code> Text encoding</td><td>cs.CL</td><td>2026-11-10T18:27:26Z</td><td>≈24.6h</td><td>data（主）· pretrain · zhulong</td></tr>
+  <tr><td>5 <span class="badge b-b">增量</span></td><td><code>2611.13560</code> Dense rewards in GRPO</td><td>cs.CL</td><td>2026-11-10T04:25:22Z</td><td>≈38.6h</td><td>zhulong（主）· harness · data</td></tr>
+</table>
+<p style="font-size:13px;color:#59636e;"><b>去重</b>：5 个 ID 在 <code>SEEN.md</code> / <code>papers.jsonl</code> 均 <b>0 命中</b>（本轮首次收录）；与近 7 天 <code>daily/*.html</code> 无重复。<br><b>03:00 增量为什么选这两篇</b>：早报 3 篇已覆盖 designflow / pretrain / harness，缺口是 <b>data</b> 与 <b>zhulong（RL）</b> —— 这两篇正好各补一个，且都有可回填的口径（<code>chars_per_token</code>、等算力 RL 消融）。<br><b>未选但强对口的候选（留作后续，不凑数）</b>：<code>2611.14493</code> Agent Evaluation Frameworks（trace-based judging F1=0.90、假警报少 5×，KDD 2026 accepted）· <code>2611.13855</code> On-Policy Mid-Training Distillation · <code>2406.12793</code> / <code>2501.08313</code> / <code>2307.15818</code> / <code>2405.12213</code>（已进 B 轨经典，不占 5 篇额度）。</p>
+
+<h2 class="sec">附录 C · PDF 落地校验</h2>
+<table>
+  <tr><th>arXiv ID</th><th>字节数</th><th>结构校验</th><th>说明</th></tr>
+  <tr><td><code>2611.13452</code></td><td>—</td><td>未完成（已中止）</td><td>本轮 arXiv PDF 拉取极慢（数分钟仅 ~1.8MB），已中止并删除部分文件 ⇒ 如实记「未完成」，不写页数/字符数</td></tr>
+  <tr><td><code>2611.13393</code></td><td>—</td><td>未完成</td><td>同上</td></tr>
+  <tr><td><code>2611.13709</code></td><td>—</td><td>未完成</td><td>同上</td></tr>
+  <tr><td><code>2611.14459</code></td><td>—</td><td>未下载</td><td>03:00 轮以 arXiv API 元数据为准；未声称可解析或页数（不重复上轮的超时尝试）</td></tr>
+  <tr><td><code>2611.13560</code></td><td>—</td><td>未下载</td><td>同上；摘要自述 <b>59 页 / 10 页正文 / 18 图 / 27 表</b>（<code>arxiv:comment</code>），本线未核验页数</td></tr>
+</table>
+<p style="font-size:13px;color:#59636e;"><code>research/pdf/</code> 已在 <code>.gitignore</code>，数据本体不入 git；本轮<b>不声称</b> PDF 可解析或页数，只以 arXiv API 元数据为准。</p>
+
+<h2 class="sec">附录 D · 台账、进度与口径自检</h2>
+<table>
+  <tr><th>项</th><th>本轮值</th><th>说明</th></tr>
+  <tr><td>当日进度</td><td><b>5 / 5</b></td><td>早报 3 + 03:00 增量 2，全部「借鉴」；未凑数（额度目标 5 篇，已满）</td></tr>
+  <tr><td>台账</td><td>收录 <b>+5</b></td><td><code>SEEN.md</code> +5 行；<code>papers.jsonl</code> +5 行（每 ID 恰好 1 行）；日报台账 <code>research/2026-11-12.md</code></td></tr>
+  <tr><td>B 轨</td><td><b>43 篇</b>（4+4+4+3+4+4+4+4+4+4+<b>4</b>）</td><td>不占 5 篇额度、不进 <code>SEEN.md</code>；被引 OpenAlex 4/4 <code>200</code>（第十一轮，查询日 2026-11-12）；必读清单 <b>10/10 组落点 / 34/37 条目</b></td></tr>
+  <tr><td>作者网</td><td><b>51 人</b> / <b>13 封</b>已发 / <b>27</b> handle 已核验 / <b>0 follow</b></td><td>第十一轮 +3 人（Jan Leike · Paul Christiano · Nisan Stiennon）；follow 需登录态，未假装</td></tr>
+  <tr><td><code>voice_ready</code></td><td><b>2 条</b></td><td>Tri Dao 2026-11-05 · Sutton 2026-11-07；已达「≤2 条」上限；09:00 复核 Jason Wei 11-11 长贴<b>两处均截断</b> ⇒ 未采用（V12），未硬塞</td></tr>
+  <tr><td><code>news_ready</code></td><td><b>0 条</b></td><td>5 篇均「借鉴」，四问不过；已写明理由，未硬凑</td></tr>
+  <tr><td>出口</td><td><b>仅 HTML</b></td><td>🚫 未发任何日报邮件（2026-11-07 10:50 用户令）</td></tr>
+  <tr><td>作者信</td><td><b>4 封</b>（Danny Driess · Pete Florence · Karl Pertsch · <b>Jan Leike</b>）</td><td><code>SENT OK 00:07:41</code> / <code>03:03:24</code> / <code>06:05:31</code> / <b><code>09:04:13</code></b>；草稿先入仓、台账已写、单收件人；PI 当日 2 封 = 达上限、Anthropic 1 封</td></tr>
+</table>
+
+<div class="ok-box" style="margin-top:14px;">
+  <b>本期口径自检</b>：① 当日 <b>5/5</b>（早报 3 + 03:00 增量 2，均「借鉴」；未凑数）；② 5 篇均实测 <code>HTTP 200</code> + <code>application/atom+xml</code> + 真实 <code>published</code>（<code>200 ≠ 有料</code> 已校验）；③ 与 <code>SEEN.md</code> / <code>papers.jsonl</code> / 近 7 天 <code>daily/</code> <b>0 重复</b>；④ 数字均指到摘要原句，未改写原题；⑤ B 轨 4 条均 <b>8 字段</b> + 被引查询日；⑥ 作者网 <b>不猜 handle/邮箱</b>（<code>x.com/tianhe_yu</code> 实测 404 ⇒ 不登记；<code>@JohnJumper</code> 身份不可证 ⇒ 拒绝登记）；⑦ <code>voice_ready</code> 原文 + 链接 + 时间三件套齐；⑧ 未发日报邮件、未 follow、未注册账号、未用未授权凭据；⑨ 单文件 &lt;5MB；⑩ 收尾：心跳 + 流水 + commit &amp; push；⑪ 03:00 轮新写入的 HTML 已自检标签配平（div / table / tr / td / details）与「无残留 <code>**</code>」；⑫ 06:00 轮改动后<b>再校验</b>：div 108/108、table 11/11、tr 89/89、td 323/323、details 2/2、<b>0 script</b>；A 轨<b>未超额</b>（仍 5/5），强候补 5 条已登记待用；⑬ 09:00 轮<b>再校验</b>：div 109/109、table 13/13、tr 111/111、td 400/400、details 2/2、<b>0 script</b>；B 轨 43 / 作者网 51 / 信 13 与台账一致；<b>09:00 采集 4/5 成功、<code>cs.SE</code> 429 如实记录</b>，未伪造成「无新增」。⑭ <b>12:00 轮再校验</b>：div 110/110、table 15/15、tr 134/134、td 479/479、details 2/2、<b>0 script</b>；B 轨 <b>47</b> / 作者网 <b>54</b> / 信 <b>14</b> 与台账一致；<b>cs.SE 已从 429 恢复 200</b>；<b>Sora 403 与 2401.14185 更正均如实记</b>；作者信 <b>212 词超限</b>已如实记账（不隐瞒）。⑮ <b>15:00 轮再校验</b>：div 111/111、table 17/17、tr 156/156、td 556/556、details 2/2、<b>0 script</b>；B 轨 <b>51</b> / 作者网 <b>57</b> / 信 <b>16</b> 与台账一致；<b>DPO 的 <code>2310.16944</code> 错误 ID 已更正为 <code>2305.18290</code></b>；<b>V13/V14 推文作者不符已作废</b>（未冒充原文）；两封信<b>发送前均 <code>wc -w</code> 达标</b>（197 / 177 词）。
+</div>
+
+<h2 class="sec">🔁 03:00 增量说明（00:0x → 03:0x）</h2>
+<table>
+  <tr><th>改了什么</th><th>为什么</th></tr>
+  <tr><td>A 轨 <b>3/5 → 5/5</b>：新增 #4 文本编码（data 主）· #5 GRPO 稠密奖励（zhulong 主）</td><td>早报 3 篇已覆盖 designflow / pretrain / harness；<b>data 与 zhulong（RL）是缺口</b>，且两篇都有可回填的口径（<code>chars_per_token</code>、等算力 RL 消融）。两篇 published 距本轮 24.6h / 38.6h，均 &lt;72h，与 <code>SEEN.md</code> 0 重复。</td></tr>
+  <tr><td>「对各线建议」：原 6 行<b>保留不动</b>，新增「🔺 03:00 增量建议」表 6 行</td><td>已交付的建议不撤回（可追溯）；新建议逐线判定，<b>vision / designflow 无新依据 ⇒ 显式写「无」</b>，不凑数。</td></tr>
+  <tr><td>B 轨 <b>31 → 35</b>：GLM-4 · MiniMax-01 · RT-2 · Octo</td><td>补必读清单第 9 组（中文系开源）与第 10 组（VLA）的剩余子项；元数据 arXiv <code>id_list</code> + OpenAlex 现场实测，Octo 会议经 Crossref 核到 <b>RSS 2024</b>，RT-2 会议<b>无证据 ⇒ 写「未核验」</b>。</td></tr>
+  <tr><td>作者网 <b>43 → 47</b>；X 已核验 <b>20 → 24</b>；待 follow <b>21 → 25</b></td><td>新增 Team GLM（<code>@ZhipuAI</code>）/ MiniMax（<code>@MiniMax_AI</code>）/ Karl Pertsch（<code>@KarlPertsch</code>）/ Pete Florence（<code>@peteflorence</code>）；<code>x.com/tianhe_yu</code> 实测 <b>404</b> ⇒ 一作仍记「未找到 X」，不猜替代。</td></tr>
+  <tr><td>作者信 <b>+1</b>：Pete Florence（RT-2）<code>SENT OK 03:03:24</code>，英文 189 词</td><td>RT-2「动作＝文本 token」与我们「agent 用文本 tool call 调 EDA 工具」同构，属于「经典论文启发 → 确认理解」的请教，不是问新论文细节。Karl Pertsch 邮箱已验证但因同机构（Physical Intelligence）当日已有 1 封 ⇒ <b>推迟到 18:00</b>。</td></tr>
+  <tr><td><code>voice_ready</code> 保持 <b>2 条</b>；<code>news_ready</code> 保持 <b>0 条</b>（理由已按 5 篇重写）</td><td>voice_ready 本期已达「≤2 条」上限，🚫 不替换、不硬塞；news_ready 四问对 5 篇均不过，已逐条写理由。</td></tr>
+  <tr><td>页头 / 标题 / 进度 / 附录 A·B·C·D / footer 全部同步</td><td>日报是交付物，数字必须与台账一致（<code>SEEN</code> +5、<code>papers.jsonl</code> +5、B 轨 35、作者网 47、信 2 封）。</td></tr>
+  <tr><td><b>本轮未做（如实记）</b>：两篇新文 PDF 未下载；follow 未执行（需登录态）；未发日报邮件</td><td>arXiv PDF 上轮已验证极慢，本轮不重复超时尝试；<code>follow</code> 属写操作，🚫 不用未授权凭据；日报出口只有 HTML。</td></tr>
+</table>
+
+<h2 class="sec">🔁 06:00 轮说明（03:0x → 06:0x · A 轨扫描 + B 轨第十轮）</h2>
+<table>
+  <tr><th>改了什么</th><th>为什么</th></tr>
+  <tr><td>A 轨：<b>重新扫描，不加新论文</b>（仍 5/5）</td><td>今日 5 篇额度已由 00:0x + 03:0x 两轮用满；06:00 只做「新批次扫描 + 候补登记」，🚫 <b>不超额、不硬塞</b>（目标每天 5 篇）。</td></tr>
+  <tr><td>B 轨 <b>35 → 39</b>：SWE-agent · Tree of Thoughts · Llama 2 · LLaVA-1.5</td><td>补必读清单第 7 组（ToT / SWE-agent）、第 5 组（Llama 2）、第 9 组（LLaVA-1.5）。元数据 arXiv <code>id_list</code> 4/4 + OpenAlex 4/4 现场实测；会议取自 arXiv <code>comment</code> 原文（ToT=NeurIPS 2023、LLaVA-1.5=CVPR 2024 highlight）与 OpenAlex 会场 DOI，<b>Llama 2 无会场记录 ⇒ 写「预印本技术报告」</b>。</td></tr>
+  <tr><td>作者网 <b>47 → 48</b>：Kilian Lieret <code>@KLieret</code></td><td>handle 来源 = John Yang 推文原文点名；<code>x.com/KLieret</code> <code>200</code> 且 bio 自证 SWE-bench / SWE-agent 维护身份 ⇒ 双证登记。<b>无公开邮箱 ⇒ 只跟踪不发信</b>。</td></tr>
+  <tr><td>作者信 <b>+1</b>：Karl Pertsch（Octo）<code>SENT OK 06:05:31</code>，英文 191 词</td><td>上轮已规划（邮箱已验证）；本轮 PI 当日第 2 封 = 达「同机构 ≤2 封/天」上限，之后不再向 PI 发信。</td></tr>
+  <tr><td><code>voice_ready</code>：换入 <b>Tri Dao 2026-11-05</b>（保留 Sutton）</td><td>本期仍 ≤2 条；Tri Dao 为最新可核验言论（6 天），<b>推文页 <code>og:description</code> 与 profile <code>full_text</code> 逐字一致</b>；Chelsea Finn（10-24）转备选。</td></tr>
+  <tr><td>新增「🔺 06:00 增量建议」6 线表</td><td>原 6 行 + 03:00 6 行<b>保留不动</b>（可追溯）；本轮 6 线均给出可落地动作与预注册判据，<b>无一条写「无」</b>（4 篇经典各自对口充分）。</td></tr>
+  <tr><td><b>本轮未做（如实记）</b>：A 轨 0 篇新收；PDF 未下载；follow 未执行；未发日报邮件</td><td>额度已满不超额；arXiv PDF 上轮已验证极慢；follow 属写操作需登录态；日报出口只有 HTML。</td></tr>
+</table>
+
+<div class="note" style="margin-top:14px;"><b>A 轨 06:00 扫描结果（可复核）</b>：单分类 5 查询 <b>5/5 <code>200</code> + <code>application/atom+xml; charset=utf-8</code></b>（<code>cs.CL</code> 125,187 / <code>cs.CV</code> 213,062 / <code>cs.LG</code> 298,685 / <code>cs.AI</code> 212,409 / <code>cs.SE</code> 30,986；合并 <b>303</b> / 与 <code>SEEN</code> 重复 <b>4</b> / 新 <b>299</b>），最新 <code>published=2026-11-10T18:59:54Z</code> ⇒ 公告批仍为 <b>2026-11-10</b>（未刷新）。<b>强候补（本轮未入 5/5 额度，登记待用）</b>：① <code>2611.13713</code> <b>Toward Autonomous RTL and Synthesis Optimization</b>（Dr. RTL 多智能体；20 个真实 RTL、WNS/TNS 平均 +21%/+17%、面积 −6%，均作者自报）② <code>2611.13931</code> <b>TAPCO-G</b>（LLM 引导的时序/功耗协同优化，8 个 ASAP7 基准上比 CERBERUS 平均高 5.516 分）③ <code>2611.13543</code> <b>Sanity Checks for Attention Surgery</b>（预注册 3×8 因子、4 亿 token/run；任意秩一方向 +0.0011 nats 不显著，自指方向 −0.0029 nats p=0.0023）④ <code>2611.13925</code> <b>OpenRE-Bench</b>（多智能体需求工程的统一评测 harness，651 测试 / 1,396 条过滤 issue）⑤ <code>2611.14285</code> <b>LM-SimBench</b>（LLM 训练模拟器基准，348 组并行配置、10 个模型族）。<b>下轮若需替换 5 篇中的弱条目，按上述优先级 + 「新证据优先」并写变更说明</b>；其中 ①② 与 designflow 强相关，③ 与 zhulong 消融口径强相关。</div>
+
+<h2 class="sec">🔁 09:00 轮说明（06:0x → 09:0x · A 轨重扫 + B 轨第十一轮 + 第 4 封信）</h2>
+<table>
+  <tr><th>改了什么</th><th>为什么</th></tr>
+  <tr><td>A 轨：<b>重扫，不加新论文</b>（仍 5/5）</td><td>当日 5 篇额度已满；本轮只确认公告批是否刷新 —— 4 个分类总量与 06:00 <b>逐字节同值</b> ⇒ 未刷新（仍 <code>2026-11-10</code>），🚫 不超额。第 5 个查询 <code>cs.SE</code> 撞 <code>429</code>，<b>如实记为采集失败</b>（不写成「本领域无新增」）。</td></tr>
+  <tr><td>B 轨 <b>39 → 43</b>：Llama 3 · RT-1 · Christiano 2017 · Stiennon 2020</td><td>补必读清单第 5 组（Llama 3）、第 4 组（Christiano / Stiennon 两条 RLHF 前史）、第 10 组（RT-1）；其中 Stiennon 之前因「无 arXiv」被搁置，本轮实测 <b>arXiv <code>2009.01325</code> 存在</b>（v3，NeurIPS 2020）⇒ 更正前轮判断。元数据 arXiv <code>id_list</code> 4/4 + OpenAlex 4/4 现场实测。</td></tr>
+  <tr><td>作者网 <b>48 → 51</b>：Jan Leike / Paul Christiano / Nisan Stiennon</td><td>三人是 RLHF 前史的共同作者：Leike 主页 <code>mailto</code> + 主页挂 <code>twitter.com/janleike</code>（双证）；Christiano 个人站无邮箱但 X 页 bio 自证（<b>只登记 X，不发信</b>）；Stiennon 有公开邮箱、<code>x.com/nisanstiennon</code> 实测 <b>404</b> ⇒ 写「未找到 X」，不猜。</td></tr>
+  <tr><td>作者信 <b>+1</b>：Jan Leike <code>SENT OK 09:04:13</code>，英文 199 词</td><td>经典论文口径；同篇论文第二作者 Paul Christiano <b>不重复发信</b>（同论文 ≤1）；Anthropic 当日第 1 封（PI 已 2 封达上限）。</td></tr>
+  <tr><td><code>voice_ready</code>：<b>维持 2 条</b>，新增 V12 记录但未采用</td><td>Jason Wei 2026-11-11 的长贴（「what you can do → who you know」）在 profile <code>full_text</code> 与推文页 <code>og:description</code> <b>两处都被截断</b> ⇒ 按令不冒充完整原文；本期不加第三条（宁缺勿滥）。</td></tr>
+  <tr><td>新增「🔺 09:00 增量建议」6 线表</td><td>原 6 行 + 03:00 6 行 + 06:00 6 行<b>保留不动</b>（可追溯）；本轮 6 线均给可落地动作与预注册判据，<b>无一条写「无」</b>。</td></tr>
+  <tr><td><b>本轮未做（如实记）</b>：A 轨 0 篇新收；PDF 未下载；follow 未执行；<code>cs.SE</code> 查询 429 未补测；未发日报邮件</td><td>额度已满不超额；arXiv PDF 近两轮极慢；follow 属写操作需登录态；429 后立即重试会加重限流，留待 12:00 / 18:00 轮补。</td></tr>
+</table>
+
+<div class="note" style="margin-top:14px;"><b>09:00 采集实测（可复核）</b>：单分类 4 查询 <code>200</code> + <code>application/atom+xml; charset=utf-8</code>（<code>cs.CL</code> 125,187 · <code>cs.CV</code> 213,062 · <code>cs.LG</code> 298,685 · <code>cs.AI</code> 212,409，耗时 1.86s / 2.81s / 2.87s / 1.69s）⇒ 与 06:00 记录<b>完全一致</b>；<code>cs.SE</code> 第 3 次重试仍 <code>429</code> ⇒ 脚本退出，<code>research/raw/2026-11-12-mid-candidates-r155.json</code> <b>未生成</b>（如实记，不伪造候选池）。X 侧：<code>x.com</code> <code>200</code>、3 个 profile <code>200</code>、1 个 handle <code>404</code>（<code>nisanstiennon</code>）；<b>0 follow</b>。</div>
+
+<h2 class="sec">🔁 12:00 轮说明（09:0x → 12:0x · A 轨重扫 + B 轨第十二轮 + 第 5 封信）</h2>
+<table>
+  <tr><th>改了什么</th><th>为什么</th></tr>
+  <tr><td>A 轨：<b>重扫，0 新收</b>（仍 5/5），<b>补测 <code>cs.SE</code> 成功</b></td><td>当日 5 篇额度已满；5 个分类 <code>totalResults</code> 与 06:00 / 09:00 <b>逐字节同值</b> ⇒ 公告批未刷新（仍 <code>2026-11-10</code>）。09:00 的 <code>cs.SE</code> <code>429</code> 本轮已恢复 <code>200</code>（30,986 条），<b>上次的「采集失败」已闭合</b>。</td></tr>
+  <tr><td>B 轨 <b>43 → 47</b>：τ-bench · TD-Gammon · Sora 技术报告 · Kimi K2</td><td>补齐必读清单最后 3 项（第 1 组 TD-Gammon / 第 7 组 τ-bench / 第 10 组 SORA）+ 第 9 组补最新一条（Kimi K2）。<b>必读清单 10/10 组、37/37 条目全部覆盖</b>；元数据 arXiv / Crossref / OpenAlex 现场实测。</td></tr>
+  <tr><td>⚠️ <b>更正任务书示例</b>：<code>2401.14185</code> ≠ Kimi</td><td>实测为 <b>TDFNet（音视频语音分离，cs.SD，被引 3）</b> ⇒ 按令<b>不伪造</b>，改用实测存在的 <b>Kimi K2 <code>2507.20534</code></b>；建议 supervisor 更正任务书 §6.5 示例。</td></tr>
+  <tr><td>Sora 条目标 <b>「部分核验」</b>，只写标题级信息</td><td>官方页直连 / 代理 / Wayback / jina <b>全被拒</b>（<code>403</code>/<code>401</code>）⇒ 不引任何数字、不转述配置；被引记「未查」（无 DOI）。宁可条目薄，不可编。</td></tr>
+  <tr><td>作者网 <b>51 → 54</b>：Bill Peebles · Tim Brooks · Gerald Tesauro</td><td>Sora 两位负责人 = 视频生成/世界模型一手源（X 2/2 <code>200</code> 核验）；Tesauro 旧主页 <b>308 → 通用页无 <code>mailto</code></b> ⇒ 邮箱与 X 均记「未找到」（🚫 不猜、不用 30 年前的 PDF 邮箱）。</td></tr>
+  <tr><td>作者信 <b>+1</b>：Nisan Stiennon <code>SENT OK 12:04:55</code></td><td>经典论文口径（偏好数据质量）。⚠️ <b>自查失误如实记</b>：发送前未先 <code>wc -w</code>，实测 <b>212 词</b>、超 ≤200 规格 12 词 ⇒ 已写进台账 + <code>AUTHORS.md</code> 维护纪律第 6 条（此后为<b>发送前置检查</b>）。</td></tr>
+  <tr><td><code>voice_ready</code> / <code>news_ready</code>：<b>均维持</b>（2 条 / 0 条）</td><td>X 侧本轮无「两处一致 + 正文完整」的新推文 ⇒ 不替换；B 轨 4 条均为经典/非新发布且 Sora 无正文 ⇒ 四问不过，仍 0 条（不硬凑）。</td></tr>
+  <tr><td><b>本轮未做（如实记）</b>：A 轨 0 篇新收；PDF 未下载；follow 未执行；未发日报邮件</td><td>额度已满不超额；经典轨以元数据核验优先；follow 属写操作需登录态（<b>0 follow，未假装</b>）。</td></tr>
+</table>
+
+<div class="note" style="margin-top:14px;"><b>12:00 采集实测（可复核）</b>：5 查询 <code>200</code> + <code>application/atom+xml; charset=utf-8</code>（<code>cs.CL</code> 125,187 · <code>cs.CV</code> 213,062 · <code>cs.LG</code> 298,685 · <code>cs.AI</code> 212,409 · <code>cs.SE</code> 30,986，耗时 3.08s / 2.20s / 4.58s / 2.97s / 1.98s）；合并 <b>303</b> / 重复 <b>9</b> / 新 <b>294</b>。X 侧：直连 <code>000</code> / 显式代理 <code>200</code>（<b>代理正常</b>），<code>x_fetch.py</code> 2/2 <code>200</code>；<b>0 follow</b>。</div>
+
+<h2 class="sec">🔁 15:00 轮说明（12:0x → 15:0x · A 轨重扫 + B 轨第十三轮 + 第 6/7 封信）</h2>
+<table>
+  <tr><th>改了什么</th><th>为什么</th></tr>
+  <tr><td>A 轨：<b>重扫，0 新收</b>（仍 5/5）</td><td>当日额度已满；5 个分类 <code>totalResults</code> 与 06:00 / 09:00 / 12:00 <b>逐字节同值</b>（cs.CL 125,187 · cs.CV 213,062 · cs.LG 298,685 · cs.AI 212,409 · cs.SE 30,986）⇒ 公告批仍为 <code>2026-11-10</code>，<b>未刷新</b>；合并 <b>410</b> / 重复 <b>13</b> / 新 <b>397</b>（<code>research/raw/2026-11-12-15h-candidates-r157.json</code>），全部留作后续候补，<b>不超额加新论文</b>。</td></tr>
+  <tr><td>B 轨 <b>47 → 51</b>：DPO · Mamba-2(SSD) · FlashAttention-2 · Ramulator 2.0</td><td>按 12:00 的「下轮候选」执行「补充」：<b>DPO</b> 补 zhulong 奖励设计的 RM-free 对照；<b>Mamba-2 / FA-2</b> 补 pretrain 的架构与 MFU 口径；<b>Ramulator 2.0</b> 补存储方向（本领域标志性，被引 185 未达 500 门槛，已如实标注）。</td></tr>
+  <tr><td>⚠️ <b>更正候选池错误 ID</b>：DPO ≠ <code>2310.16944</code></td><td>实测 <code>2310.16944</code> = <b>Zephyr（Direct Distillation of LM Alignment）</b>；DPO 真实 ID = <code>2305.18290</code>（v3）。按令<b>不伪造</b>，已按实测收录 #48 并在条目里显式更正。</td></tr>
+  <tr><td>作者网 <b>54 → 57</b>：Rafael Rafailov · Archit Sharma · Onur Mutlu</td><td>DPO 一作/二作 + Ramulator 通讯作者 = 顶级研究者优先覆盖。X <b>3/3 <code>200</code></b> 且 bio 自证身份；Rafailov 主页 <code>000</code>/<code>403</code> ⇒ 邮箱记「未找到」（🚫 不猜）。</td></tr>
+  <tr><td>作者信 <b>+2</b>：Archit Sharma / Onur Mutlu（均 <code>SENT OK 15:03:05</code>）</td><td>经典论文口径（「我们在做 X，你这篇的 Y 给了启发，想确认 Z」）。<b>发送前均已 <code>wc -w</code></b>（197 / 177 词 ≤200），落实 12:00 的教训。</td></tr>
+  <tr><td><code>voice_ready</code> / <code>news_ready</code>：<b>均维持</b>（2 条 / 0 条）</td><td>X 侧抓到 3 个 profile，但拟引用的 2 条推文经单条页 <code>og:title</code> 核验为<b>他人推文</b>（<code>@koraykv</code> / <code>@Shalev_lif</code>）⇒ 记 V13/V14 作废，<b>不采用</b>；B 轨 4 条为经典/非新发布 ⇒ news 四问不过，仍 0 条（不硬凑）。</td></tr>
+  <tr><td><b>本轮未做（如实记）</b>：A 轨 0 篇新收；PDF 未下载；follow 未执行；未发日报邮件</td><td>额度已满；经典轨以元数据核验优先；follow 属写操作需登录态（<b>0 follow，未假装</b>）。</td></tr>
+</table>
+
+<div class="note" style="margin-top:14px;"><b>15:00 采集实测（可复核）</b>：单分类 5 查询全部 <code>200</code> + <code>application/atom+xml; charset=utf-8</code>（耗时 7.95s / 3.60s / 9.19s / 4.57s / 13.57s，串行间隔 ≥3.2s）；B 轨元数据 arXiv <code>id_list</code> <b>3 次调用均 <code>200</code> + atom</b>（9,704 / 5,938 / 9,862 B）、被引 OpenAlex <b>4/4 <code>200</code></b>（3,123 / 1,003 / 1,844 / 185，查询日 2026-11-12）；X 侧：直连 <code>000</code> / 显式代理 <code>200</code>，3 个 profile <b>3/3 <code>200</code></b>，2 条推文复核<b>作者不符</b>；<b>0 follow</b>。</div>
+
+<h2 class="sec">🔁 18:00 轮说明（15:0x → 18:0x · A 轨重扫 + B 轨第十四轮 + 第 8/9/10 封信）</h2>
+<table>
+  <tr><th>改了什么</th><th>为什么</th></tr>
+  <tr><td>A 轨：<b>重扫，0 新收</b>（当日仍 5/5）</td><td>5 个分类 <code>totalResults</code> 与 06:00 / 09:00 / 12:00 / 15:00 <b>逐字节同值</b>（cs.CL 125,187 · cs.CV 213,062 · cs.LG 298,685 · cs.AI 212,409 · cs.SE 30,986）⇒ 公告批仍为 <code>2026-11-10</code>，<b>未刷新</b>；合并 <b>410</b> / 重复 <b>13</b> / 新 <b>397</b>（<code>research/raw/2026-11-12-18h-candidates-r158.json</code>），全部留作后续候补，<b>不超额加新论文</b>。</td></tr>
+  <tr><td>B 轨 <b>51 → 55</b>：SimPO · Zephyr · CircuitNet · Sutton《The Bitter Lesson》</td><td>按 15:00 的「下轮候选」执行「补充」：<b>SimPO</b> 补 zhulong 奖励设计的「无参考模型」对照；<b>Zephyr</b> 补 posttrain 的「AI 反馈 vs checker 偏好」；<b>CircuitNet</b> 补 designflow / data 的公开 EDA 数据集与切分纪律；<b>The Bitter Lesson</b> 按「必读基线」清单收录，<b>单列为博客条目</b>（无 arXiv / 无 DOI / 无被引口径）。</td></tr>
+  <tr><td>被引数全部<b>当场实测</b>（OpenAlex，查询日 2026-11-12）</td><td>SimPO <b>560</b>（NeurIPS 2024，DOI <code>10.52202/079017-3946</code>，pp.124198–124235）· Zephyr <b>867</b>（预印本）· CircuitNet <b>44</b>（<i>Science China Information Sciences</i> 65(12)，<b>远低于 500 门槛 ⇒ 按「本领域标志性工作」收录并在条目里显式标注</b>）；The Bitter Lesson <b>未查</b>（博客无被引口径，🚫 不写估算）。</td></tr>
+  <tr><td>作者网 <b>57 → 61</b>：Danqi Chen · Yibo Lin · Nathan Lambert · Lewis Tunstall</td><td>X <b>3/3 <code>200</code></b> 且 bio / 主页外链自证（<code>@danqi_chen</code> / <code>@natolambert</code> / <code>@_lewtun</code>）；Yibo Lin 主页无 X 外链、本轮搜索工具不可用 ⇒ 记 <b>「未找到 X」，不猜 handle</b>。邮箱一律取<b>当前主页最新地址</b>，不用论文 PDF 上的旧邮箱。</td></tr>
+  <tr><td>作者信 <b>+3</b>：Danqi Chen（中文 296 字）· Yibo Lin（中文 262 字）· Nathan Lambert（英文 178 词）</td><td>三封均 <code>SENT OK</code>（18:06:04 / 18:06:07 / 18:06:13）。经典论文口径（「我们在做 X，你这篇的 Y 给了启发，想确认 Z 的理解是否正确」）。<b>发送前均已核字数 / 词数</b>（落实 12:00 的 212 词教训）。今日累计 <b>10 封</b>，分属七轮、每轮 ≤3；机构：Princeton 1 / PKU 1 / Interconnects 1，均未超限。</td></tr>
+  <tr><td><code>voice_ready</code> / <code>news_ready</code>：<b>均维持</b>（2 条 / 0 条）</td><td>本轮抓 3 个 profile，但 2 条拟引用推文经单条页 <code>og:title</code> 核验为<b>他人推文</b>（实为 <code>@esonghori2</code> / <code>@deanwball</code>）⇒ 记 <b>V15/V16 作废</b>，不采用；B 轨 4 条为经典 / 博客 ⇒ news 四问不过，仍 <b>0 条</b>（不硬凑）。</td></tr>
+  <tr><td><b>本轮未做（如实记）</b>：A 轨 0 篇新收；PDF 未下载；follow 未执行；未发日报邮件</td><td>额度已满；经典轨以<b>元数据核验优先</b>；follow 属写操作需登录态（<b>0 follow，未假装</b>）。</td></tr>
+</table>
+
+<p style="font-size:13.5px;color:#59636e;margin-top:18px;"><b>🔺 18:00 增量建议（B 轨第十四轮 4 条 · 逐线判定，无建议的显式写「无」）</b></p>
+<table>
+  <tr><th>线</th><th>依据</th><th>可执行动作（命令 / 实验设计 / 预注册判据）</th></tr>
+  <tr><td><b>pretrain</b></td><td>#55 The Bitter Lesson（通用方法 + 算力 vs 领域先验）</td><td>立项依据里必须并列<b>通用基线</b>（同 token 预算的通用语料）；<b>预注册判据</b>：领域语料增益若在 &lt;2× token 预算内被通用基线追平，则领域配比按「战术性」投入，不写进长期路线。</td></tr>
+  <tr><td><b>vision</b></td><td>无（本轮 4 条均不涉视觉编码器 / 图文对 / 视觉 RL）</td><td><b>无</b>（不凑数；视觉侧建议见上方 π0 / AlphaFold / Octo 条目）。</td></tr>
+  <tr><td><b>harness</b></td><td>#52 SimPO（平均对数概率奖励天然偏向长答案）</td><td>评测报表新增两列：<code>avg_output_len</code> 与 <code>len_acc_corr</code>（回答长度与判定正确的相关系数）；<b>判据</b>：该相关系数 &gt;0.5 时，任何「A 优于 B」结论必须加长度控制后重跑。</td></tr>
+  <tr><td><b>data</b></td><td>#52 SimPO（偏好对需记长度差）· #54 CircuitNet（公开 EDA 数据集）</td><td>① 偏好对采集表新增 <code>len_diff</code> 与 <code>has_verifiable_evidence</code>；② 按「<b>设计切分而非样本切分</b>」重建 EDA 训练/测试，<b>判据</b>：按设计切分后指标若下降 &gt;20%，说明此前随机切分在泄漏，须全量重切。</td></tr>
+  <tr><td><b>zhulong</b></td><td>#52 SimPO（无参考模型 + 目标奖励边际 γ）· #53 Zephyr（AI 反馈 vs checker）</td><td>① 奖励消融固定三臂：<code>DPO（带参考）</code> / <code>SimPO（无参考 + γ）</code> / <code>SimPO 去 γ</code>；② 偏好来源两臂：<code>AI 反馈</code> vs <code>checker 偏好</code>；<b>判据</b>：checker 臂在同预算下不劣于 AI 反馈臂 ⇒ 优先 checker（可自动化、无标注成本）。</td></tr>
+  <tr><td><b>designflow</b></td><td>#54 CircuitNet（设计 → 指标预测的公开任务形态）</td><td>L1–L2 题面对齐「读设计特征 → 预测某项指标」，L3+ 才引入工具闭环；每题记 <code>family_id</code>（同设计族），保证留出族不进训练。</td></tr>
+</table>
+
+<div class="note" style="margin-top:14px;"><b>18:00 采集实测（可复核）</b>：单分类 5 查询全部 <code>200</code> + <code>application/atom+xml; charset=utf-8</code>（耗时 6.78s / 3.34s / 2.02s / 3.38s / 2.65s，串行间隔 ≥3.2s）；B 轨 arXiv <code>id_list</code> <b>1 次 <code>200</code> + atom</b>（7,639 B / 3 条）、OpenAlex <b>4/4 <code>200</code></b>（867 / 560 / 44 / 44，查询日 2026-11-12）；《The Bitter Lesson》页面 <b><code>200</code> / 7,297 B</b>（首句逐字核对，页面日期 March 13, 2019）；X 侧：直连 <code>000</code> / 显式代理 <code>200</code>，profile <b>3/3 <code>200</code></b>、推文页 <b>3/3 <code>200</code></b>，其中 <b>2 条作者不符</b>（作废）；<b>0 follow</b>。</div>
+
+<footer>
+  research 线 · 论文观察日报 <b>2026-11-12（5/5 ＋ 🅱 B 轨经典论文 <b>55</b> 篇（必读清单 37/37 ＋ 补充）＋ 👥 作者网 <b>61</b> 人 ＋ 🗣 voice_ready 2 条 ＋ ✉ 作者信 <b>19</b> 封）</b> ｜ 生成：2026-11-12 00:0x 早报 → 03:0x 增量 → 06:0x 第十轮 → 09:0x 第十一轮 → 12:0x 第十二轮 → 15:0x 第十三轮 → <b>18:0x 第十四轮</b><br>
+  下一轮：<b>2026-11-12 21:00 CST</b> —— A 轨当日已 5/5（如批刷新则按「新证据优先」并写变更说明，候补 397 条见 <code>raw/2026-11-12-18h-candidates-r158.json</code>）；B 轨继续<b>「补充 / 更正」</b>：IPO / KTO / ORPO 类偏好优化、EDA 方向的 LLM 评测基座、长上下文 / KV cache 压缩；作者信：优先「有可核验邮箱且未发信」的作者，<b>发送前必须先核字数（英文 <code>wc -w</code> ≤200 / 中文 ≤300 字）</b>；<b>Sora 正文仍建议再试（当前 403）</b>。<br>
+  ⚠️ 本页为论文解读 / 待读线索，<b>非结论、非官方</b>；数字均为作者自报、本线未复现；「对各线的可执行建议」为基于论文的推断，<b>非指令</b>。
+</footer>
+
+
+</div>
+</body>
+</html>

@@ -1,0 +1,415 @@
+{
+  "R320": "R4 validator aggregate stats",
+  "date": "2026-11-12",
+  "n_tasks": 113,
+  "per_model": {
+    "MC5-base": {
+      "n_tasks_evaluated": 113,
+      "aggregate_counts": {
+        "CORRECT": 93,
+        "VALID_WRONG_CONTEXT": 6,
+        "HALLUCINATION": 17,
+        "POSSIBLE_VALID_UNKNOWN": 65,
+        "HALLUCINATION_LIKELY": 112
+      },
+      "mean_r4_reward": 0.0933,
+      "total_missing": 832,
+      "total_expected": 925,
+      "missing_rate": 0.8995,
+      "per_task": [
+        {
+          "task": "EDA-Eval-PyAether-001",
+          "r4_reward": 0.0,
+          "counts": {
+            "CORRECT": 0,
+            "VALID_WRONG_CONTEXT": 0,
+            "HALLUCINATION": 0,
+            "POSSIBLE_VALID_UNKNOWN": 0,
+            "HALLUCINATION_LIKELY": 0
+          },
+          "n_missing": 4
+        },
+        {
+          "task": "EDA-Eval-PyAether-002",
+          "r4_reward": 0.0,
+          "counts": {
+            "CORRECT": 0,
+            "VALID_WRONG_CONTEXT": 0,
+            "HALLUCINATION": 0,
+            "POSSIBLE_VALID_UNKNOWN": 0,
+            "HALLUCINATION_LIKELY": 0
+          },
+          "n_missing": 4
+        },
+        {
+          "task": "EDA-Eval-PyAether-003",
+          "r4_reward": 0.0,
+          "counts": {
+            "CORRECT": 0,
+            "VALID_WRONG_CONTEXT": 0,
+            "HALLUCINATION": 0,
+            "POSSIBLE_VALID_UNKNOWN": 0,
+            "HALLUCINATION_LIKELY": 0
+          },
+          "n_missing": 1
+        },
+        {
+          "task": "EDA-Eval-PyAether-004",
+          "r4_reward": 0.0,
+          "counts": {
+            "CORRECT": 2,
+            "VALID_WRONG_CONTEXT": 0,
+            "HALLUCINATION": 0,
+            "POSSIBLE_VALID_UNKNOWN": 5,
+            "HALLUCINATION_LIKELY": 1
+          },
+          "n_missing": 2
+        },
+        {
+          "task": "EDA-Eval-PyAether-005",
+          "r4_reward": 0.0,
+          "counts": {
+            "CORRECT": 0,
+            "VALID_WRONG_CONTEXT": 0,
+            "HALLUCINATION": 1,
+            "POSSIBLE_VALID_UNKNOWN": 0,
+            "HALLUCINATION_LIKELY": 0
+          },
+          "n_missing": 3
+        },
+        {
+          "task": "EDA-Eval-PyAether-006",
+          "r4_reward": 0.0,
+          "counts": {
+            "CORRECT": 0,
+            "VALID_WRONG_CONTEXT": 0,
+            "HALLUCINATION": 0,
+            "POSSIBLE_VALID_UNKNOWN": 0,
+            "HALLUCINATION_LIKELY": 1
+          },
+          "n_missing": 1
+        },
+        {
+          "task": "EDA-Eval-PyAether-007",
+          "r4_reward": 0.0,
+          "counts": {
+            "CORRECT": 0,
+            "VALID_WRONG_CONTEXT": 0,
+            "HALLUCINATION": 0,
+            "POSSIBLE_VALID_UNKNOWN": 0,
+            "HALLUCINATION_LIKELY": 0
+          },
+          "n_missing": 3
+        },
+        {
+          "task": "EDA-Eval-PyAether-008",
+          "r4_reward": 0.0,
+          "counts": {
+            "CORRECT": 0,
+            "VALID_WRONG_CONTEXT": 0,
+            "HALLUCINATION": 2,
+            "POSSIBLE_VALID_UNKNOWN": 0,
+            "HALLUCINATION_LIKELY": 0
+          },
+          "n_missing": 2
+        },
+        {
+          "task": "EDA-Eval-PyAether-009",
+          "r4_reward": 0.0,
+          "counts": {
+            "CORRECT": 1,
+            "VALID_WRONG_CONTEXT": 0,
+            "HALLUCINATION": 0,
+            "POSSIBLE_VALID_UNKNOWN": 1,
+            "HALLUCINATION_LIKELY": 1
+          },
+          "n_missing": 6
+        },
+        {
+          "task": "EDA-Eval-PyAether-012",
+          "r4_reward": 0.0,
+          "counts": {
+            "CORRECT": 0,
+            "VALID_WRONG_CONTEXT": 0,
+            "HALLUCINATION": 0,
+            "POSSIBLE_VALID_UNKNOWN": 0,
+            "HALLUCINATION_LIKELY": 2
+          },
+          "n_missing": 1
+        }
+      ]
+    },
+    "MC5-SFT": {
+      "n_tasks_evaluated": 113,
+      "aggregate_counts": {
+        "CORRECT": 102,
+        "VALID_WRONG_CONTEXT": 29,
+        "HALLUCINATION": 10,
+        "POSSIBLE_VALID_UNKNOWN": 140,
+        "HALLUCINATION_LIKELY": 30
+      },
+      "mean_r4_reward": 0.1092,
+      "total_missing": 823,
+      "total_expected": 925,
+      "missing_rate": 0.8897,
+      "per_task": [
+        {
+          "task": "EDA-Eval-PyAether-001",
+          "r4_reward": 0.1,
+          "counts": {
+            "CORRECT": 1,
+            "VALID_WRONG_CONTEXT": 0,
+            "HALLUCINATION": 0,
+            "POSSIBLE_VALID_UNKNOWN": 0,
+            "HALLUCINATION_LIKELY": 0
+          },
+          "n_missing": 3
+        },
+        {
+          "task": "EDA-Eval-PyAether-002",
+          "r4_reward": 0.0,
+          "counts": {
+            "CORRECT": 0,
+            "VALID_WRONG_CONTEXT": 0,
+            "HALLUCINATION": 0,
+            "POSSIBLE_VALID_UNKNOWN": 0,
+            "HALLUCINATION_LIKELY": 0
+          },
+          "n_missing": 4
+        },
+        {
+          "task": "EDA-Eval-PyAether-003",
+          "r4_reward": 0.0,
+          "counts": {
+            "CORRECT": 0,
+            "VALID_WRONG_CONTEXT": 0,
+            "HALLUCINATION": 0,
+            "POSSIBLE_VALID_UNKNOWN": 0,
+            "HALLUCINATION_LIKELY": 0
+          },
+          "n_missing": 1
+        },
+        {
+          "task": "EDA-Eval-PyAether-004",
+          "r4_reward": 0.4,
+          "counts": {
+            "CORRECT": 2,
+            "VALID_WRONG_CONTEXT": 0,
+            "HALLUCINATION": 0,
+            "POSSIBLE_VALID_UNKNOWN": 1,
+            "HALLUCINATION_LIKELY": 0
+          },
+          "n_missing": 2
+        },
+        {
+          "task": "EDA-Eval-PyAether-005",
+          "r4_reward": 0.0,
+          "counts": {
+            "CORRECT": 0,
+            "VALID_WRONG_CONTEXT": 0,
+            "HALLUCINATION": 0,
+            "POSSIBLE_VALID_UNKNOWN": 0,
+            "HALLUCINATION_LIKELY": 0
+          },
+          "n_missing": 3
+        },
+        {
+          "task": "EDA-Eval-PyAether-006",
+          "r4_reward": 0.0,
+          "counts": {
+            "CORRECT": 0,
+            "VALID_WRONG_CONTEXT": 0,
+            "HALLUCINATION": 0,
+            "POSSIBLE_VALID_UNKNOWN": 0,
+            "HALLUCINATION_LIKELY": 1
+          },
+          "n_missing": 1
+        },
+        {
+          "task": "EDA-Eval-PyAether-007",
+          "r4_reward": 0.0,
+          "counts": {
+            "CORRECT": 0,
+            "VALID_WRONG_CONTEXT": 1,
+            "HALLUCINATION": 1,
+            "POSSIBLE_VALID_UNKNOWN": 0,
+            "HALLUCINATION_LIKELY": 0
+          },
+          "n_missing": 3
+        },
+        {
+          "task": "EDA-Eval-PyAether-008",
+          "r4_reward": 0.0,
+          "counts": {
+            "CORRECT": 0,
+            "VALID_WRONG_CONTEXT": 0,
+            "HALLUCINATION": 0,
+            "POSSIBLE_VALID_UNKNOWN": 2,
+            "HALLUCINATION_LIKELY": 0
+          },
+          "n_missing": 2
+        },
+        {
+          "task": "EDA-Eval-PyAether-009",
+          "r4_reward": 0.0,
+          "counts": {
+            "CORRECT": 1,
+            "VALID_WRONG_CONTEXT": 0,
+            "HALLUCINATION": 0,
+            "POSSIBLE_VALID_UNKNOWN": 1,
+            "HALLUCINATION_LIKELY": 0
+          },
+          "n_missing": 6
+        },
+        {
+          "task": "EDA-Eval-PyAether-012",
+          "r4_reward": 0.0,
+          "counts": {
+            "CORRECT": 0,
+            "VALID_WRONG_CONTEXT": 1,
+            "HALLUCINATION": 0,
+            "POSSIBLE_VALID_UNKNOWN": 1,
+            "HALLUCINATION_LIKELY": 0
+          },
+          "n_missing": 1
+        }
+      ]
+    },
+    "Qwen3.8-27B": {
+      "n_tasks_evaluated": 113,
+      "aggregate_counts": {
+        "CORRECT": 102,
+        "VALID_WRONG_CONTEXT": 8,
+        "HALLUCINATION": 9,
+        "POSSIBLE_VALID_UNKNOWN": 52,
+        "HALLUCINATION_LIKELY": 78
+      },
+      "mean_r4_reward": 0.1082,
+      "total_missing": 823,
+      "total_expected": 925,
+      "missing_rate": 0.8897,
+      "per_task": [
+        {
+          "task": "EDA-Eval-PyAether-001",
+          "r4_reward": 0.1,
+          "counts": {
+            "CORRECT": 1,
+            "VALID_WRONG_CONTEXT": 0,
+            "HALLUCINATION": 0,
+            "POSSIBLE_VALID_UNKNOWN": 0,
+            "HALLUCINATION_LIKELY": 0
+          },
+          "n_missing": 3
+        },
+        {
+          "task": "EDA-Eval-PyAether-002",
+          "r4_reward": 0.0,
+          "counts": {
+            "CORRECT": 0,
+            "VALID_WRONG_CONTEXT": 0,
+            "HALLUCINATION": 0,
+            "POSSIBLE_VALID_UNKNOWN": 0,
+            "HALLUCINATION_LIKELY": 0
+          },
+          "n_missing": 4
+        },
+        {
+          "task": "EDA-Eval-PyAether-003",
+          "r4_reward": 0.0,
+          "counts": {
+            "CORRECT": 0,
+            "VALID_WRONG_CONTEXT": 0,
+            "HALLUCINATION": 0,
+            "POSSIBLE_VALID_UNKNOWN": 0,
+            "HALLUCINATION_LIKELY": 0
+          },
+          "n_missing": 1
+        },
+        {
+          "task": "EDA-Eval-PyAether-004",
+          "r4_reward": 0.3,
+          "counts": {
+            "CORRECT": 2,
+            "VALID_WRONG_CONTEXT": 1,
+            "HALLUCINATION": 0,
+            "POSSIBLE_VALID_UNKNOWN": 0,
+            "HALLUCINATION_LIKELY": 0
+          },
+          "n_missing": 2
+        },
+        {
+          "task": "EDA-Eval-PyAether-005",
+          "r4_reward": 0.0,
+          "counts": {
+            "CORRECT": 0,
+            "VALID_WRONG_CONTEXT": 0,
+            "HALLUCINATION": 0,
+            "POSSIBLE_VALID_UNKNOWN": 0,
+            "HALLUCINATION_LIKELY": 0
+          },
+          "n_missing": 3
+        },
+        {
+          "task": "EDA-Eval-PyAether-006",
+          "r4_reward": 0.0,
+          "counts": {
+            "CORRECT": 0,
+            "VALID_WRONG_CONTEXT": 0,
+            "HALLUCINATION": 0,
+            "POSSIBLE_VALID_UNKNOWN": 0,
+            "HALLUCINATION_LIKELY": 1
+          },
+          "n_missing": 1
+        },
+        {
+          "task": "EDA-Eval-PyAether-007",
+          "r4_reward": 0.0,
+          "counts": {
+            "CORRECT": 0,
+            "VALID_WRONG_CONTEXT": 0,
+            "HALLUCINATION": 0,
+            "POSSIBLE_VALID_UNKNOWN": 0,
+            "HALLUCINATION_LIKELY": 0
+          },
+          "n_missing": 3
+        },
+        {
+          "task": "EDA-Eval-PyAether-008",
+          "r4_reward": 0.0,
+          "counts": {
+            "CORRECT": 0,
+            "VALID_WRONG_CONTEXT": 0,
+            "HALLUCINATION": 0,
+            "POSSIBLE_VALID_UNKNOWN": 0,
+            "HALLUCINATION_LIKELY": 0
+          },
+          "n_missing": 2
+        },
+        {
+          "task": "EDA-Eval-PyAether-009",
+          "r4_reward": 0.0,
+          "counts": {
+            "CORRECT": 1,
+            "VALID_WRONG_CONTEXT": 0,
+            "HALLUCINATION": 0,
+            "POSSIBLE_VALID_UNKNOWN": 1,
+            "HALLUCINATION_LIKELY": 0
+          },
+          "n_missing": 6
+        },
+        {
+          "task": "EDA-Eval-PyAether-012",
+          "r4_reward": 0.0,
+          "counts": {
+            "CORRECT": 0,
+            "VALID_WRONG_CONTEXT": 1,
+            "HALLUCINATION": 0,
+            "POSSIBLE_VALID_UNKNOWN": 4,
+            "HALLUCINATION_LIKELY": 0
+          },
+          "n_missing": 1
+        }
+      ]
+    }
+  }
+}

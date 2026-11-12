@@ -1,0 +1,14 @@
+[incr-eval 15:34:24] === incr_eval R2274 start ===
+
+=== cline R2274 ===
+new instances: 1 ['sympy__sympy-23534']
+[incr-eval 15:34:25] cline: merged 1 new patches -> predictions_cline-patched_new_R2274.json
+[incr-eval 15:34:25] cline: EVAL 1 instances -> run_id=verified_full_glm53_cline-patched_incr_R2274
+[incr-eval 15:34:52] cline: eval rc=0
+[incr-eval 15:34:52]   sympy__sympy-23534: RESOLVED
+[incr-eval 15:34:52] cline: cumulative n=289 resolved=215 failed=73 infra=1 -> eval_glm53_cline-patched.json
+
+=== codex R2274 ===
+new instances: 1 ['pylint-dev__pylint-6903']
+[incr-eval 15:34:52] codex: merged 1 new patches -> predictions_codex_new_R2274.json
+[incr-eval 15:34:52] codex: EVAL 1 instances -> run_id=verified_full_glm53_codex_incr_R2274

@@ -5658,3 +5658,13 @@
 | 2026-11-11 | 2611.12712 | Will AI mess my RTL? A snapshot-based approach to verifying AI-written RTL | cs.SE | 收录 |
 | 2026-11-11 | 2611.14009 | Coding Agent Memory Post-Training II: Unlocking the Memory Potential of Pre-trained File Operations for Long-Horizon Tasks via On-Policy Distillation | cs.LG | 收录 |
 | 2026-11-11 | 2611.13541 | Agent Benchmarks Stop Ranking Before They Run Out of Tasks | cs.AI | 收录 |
+| 2026-11-12 | 2611.13452 | SLIC: Reinforcement Fine-Tuning Small LMs for Multi-Turn Analog Circuit Optimization | cs.LG | 收录 |
+| 2026-11-12 | 2611.13393 | Plumbline: When the Loss Lies, Validating LLM Training Correctly | cs.DC | 收录 |
+| 2026-11-12 | 2611.13709 | Do They Do as They Are Told? Investigating Coding Agents' Adherence to Explicit Instructions in Context Files | cs.SE | 收录 |
+| 2026-11-12 | 2611.14459 | When does text encoding matter for language modeling? | cs.CL | 收录 |
+| 2026-11-12 | 2611.13560 | Are Dense Rewards Worth Their Tokens in GRPO? | cs.CL | 收录 |
+| 2026-11-12 | 2611.13713 | Toward Autonomous RTL and Synthesis Optimization: Benchmarking and Self-Improving Agents | cs.AI | 候选 |
+| 2026-11-12 | 2611.13931 | TAPCO-G: LLM-Guided Design-Adaptive Timing and Power Co-Optimization with Graph-Based Physical Priors | cs.AR | 候选 |
+| 2026-11-12 | 2611.13543 | Sanity Checks for Attention Surgery: Null Models and Matched Interventions for Representation-Motivated Design | cs.LG | 候选 |
+| 2026-11-12 | 2611.13925 | OpenRE-Bench: A Benchmark Harness for Multi-Agent Requirements Engineering with Mined GitHub Issues | cs.SE | 候选 |
+| 2026-11-12 | 2611.14285 | LM-SimBench: A Unified Framework, Dataset, and Benchmark for Large Language Model Training Simulation | cs.AI | 候选 |

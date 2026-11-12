@@ -1,51 +1,91 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
-WAITING: 0（🔴 2026-11-11 用户令「四层评测拿更好结果」执行中。**v6运行中:Phase1 HumanEval 54/100~82s/it(RP=1.3,ETA~63min)+Phase2 MBPP+Phase3 MATH-RP1.3+Phase4探针**·**L1 160k:58.13%新高✅(11w-16w全评完)**·**L2全貌:GSM8K=0%+BBH=0%+MATH=0%+MMLU=23.16%(4/6生成任务=0%)·生成退化根因=SSM state崩溃+模型@23%训练+code/math 26%远低于60%**·**lr-decay-iters=0:decay未配置·需data线准备4:2:4数据**·**vLLM脚本已备·.17 SSH不通·阻塞于GPU窗口**·**L3脚本已建·生成退化·L4数据在.15不通**·**🔴待决策:方案A(decay 4:2:4)/B(SFT)/C(A+B)→详见四层报告**·**论文§4.6已刷新+PDF 0err✅**·训练健康iter167760/700k ckpt166k step~7.1s<7.4s✅）
-> 2026-11-11 22:30 #2005: **v6 HumanEval监控+生成退化二次确认+四层报告刷新轮·训练健康 iter167760/700k step~7.1s<7.4s✅·v6 HumanEval 54/100运行中🟡**·**动作**：①git pull --rebase(同步✅,Already up to date) ②训练健康(.29 /proc/146283/fd/1):iter167760/700k,step7067-7239ms(均~7140ms<7.4s✅),loss2.03,lr=1e-3,0NaN/0skip,GPU 8卡100%/75GB,PID146283 etimes≈787ks≈9.1天✅ ③v6 HumanEval进度:llama-server PID2671359(port8083,t=4,nice=19,--repeat-penalty 1.3),log显示54/100@~82s/it,ETA HumanEval~63min(46项×82s)→MBPP~1.5h→MATH~1h→探针·训练step未受影响✅ ④**生成退化二次确认**:curl直查llama-server(GSM8K prompt→"The number111111..."重复崩溃;code prompt"def fibonacci(n):"→"111222333647½»..."乱码)→确认所有L2生成任务0%根因=模型token-by-token生成时SSM state崩溃退化为重复输出,repeat_penalty=1.3仅部分缓解·MMLU=23.16%正常因MCQ不需生成 ⑤BBH v4 results.json确认exact_match=0.0%,MATH v5 results.json确认exact_match=0.0% ⑥.17/.15 SSH:均Connection timed out→vLLM+L4阻塞 ⑦ckpt状态:166000,下一个168k~10min后,万整数170k~4.0h后 ⑧四层报告更新:header iter167.8k+v6 54/100+footer#2005,同步doc/reports/ ⑨📦TASK≈27KB✅/MEMORY≈27KB✅(归档#2001-#2004)·四层评测 · L1=58.13%@160k L2=HumanEval v6 54/100运行中·GSM8K=0%·MMLU=23.16%·BBH=0%·MATH=0% L3=脚本已建·生成退化 L4=未接(.15不通) · 本轮动作：v6监控+生成退化二次确认+BBH/MATH results.json确认+报告刷新+归档·未完成指令：有(v6运行中+168k~10min后)⇒WAITING:0。
-> 📦 #2001–#2004（11-11 21:50→22:14, v6 HumanEval监控(27→47/100)·训练step<7.4s✅）→ daily-memories/2026-11-11.md；**结论**：v6 HumanEval稳步推进,训练未受影响,SSH .17/.15均不通。需要时再读。
-> 📦 #1993–#2000（11-11 20:35→21:40, v5 MATH完成+v6启动监控+v3 GSM8K确认+BBH v4=0%确认+生成退化诊断+vLLM调查+L3/L4调研·训练step<7.4s✅）→ daily-memories/2026-11-11.md；**结论**：v5 MATH=0%(21:07),v6启动(21:09,RP=1.3),BBH v4=0%,GSM8K v3=0%,生成退化=SSM state崩溃+模型能力不足,vLLM有NemotronH支持(.17不通),L3/L4延后。需要时再读。
+WAITING: 1（🔴 2026-11-11 用户令「四层评测拿更好结果」执行中·**L1 17/17done(10k-170k,峰值160k=58.13%)·180k autoqueue运行中(PID2896237,.29,ETA~4h)**·**L2 🟢HF五重验证全部完成:HumanEval HF=15.0%(3/20)✅+GSM8K HF=10.0%(1/10)✅+MBPP HF=5.0%(1/20)✅+BBH HF=3.3%(1/30)✅+MATH HF=0.0%(0/10)✅(五验证llama.cpp SSM bug是0%主因,生成Avg5集=6.66%)·MMLU=23.16%**·**L3 TB smoke 0/2完成·无GPU做vLLM重试(.29/.12均满载,.17不通)**·**L4🔴SSH.15/.17timeout+EDA工具在/nasdata/(.15本地非NFS)**·**论文§4.6已刷新iter177k+PDF 0err✅·红线PASS**·训练健康iter≈177.8k/700k(25.4%) GPU 8×100%/75GB step7.04s✅）
+> 2026-11-12 18:10 #2063: **监控巡检+L3/L4资源调查轮·训练健康iter177810/700k(25.4%) step7039ms<7.4s✅ loss2.039 0NaN/0skip**·**动作**：①git pull --rebase(同步✅,Already up to date) ②训练健康(.29):iter177810,step7039ms,GPU 8×100%/75GB,loss2.039,lr=1e-3(stable),latest ckpt=iter_0176000 ③180k autoqueue运行中(PID2896237,.29,train@177810,ETA~4h) ④L3资源调查:.12 GPU 8×100%(vision R9训练中),.29 GPU 8×100%(pretrain S1),.17 SSH timeout→无可用GPU做vLLM-based L3;vLLM/SGLang未安装在.29/.12 ⑤L4调查:EDA eval工具在/nasdata/app.e0031982/code/eda_fastmcp/(.15本地,非NFS共享),SSH .15/.17均timeout→BLOCKED确认;EDA-LiveFlow-Bench有results.txt(designflow agent 62/626=9.9%,非pretrain模型);ZhuLong eval README确认pipeline在/nasdata/(.15本地) ⑥红线检查:4_llm_pretrain.tex+main.tex均无benchmark数字PASS✅ ⑦四层报告已含MATH HF+五重验证(55KB,上一轮已更新) ⑧research日报11-12已在前轮检查=不actionable ⑨📦TASK≈27KB✅/MEMORY≈29KB✅·四层评测 · L1=57.75%@170k L2=🟢HF五重验证完成(HumanEval=15.0%+GSM8K=10.0%+MBPP=5.0%+BBH=3.3%+MATH=0.0%,Avg5集=6.66%) MMLU=23.16% L3=TB 0/2(无GPU做vLLM重试) L4=🔴BLOCKED(SSH+EDA工具在.15本地) · 本轮动作：监控巡检+L3/L4资源调查(均BLOCKED:无GPU/SSH不通)·未完成指令：有(180k autoqueue运行中ETA~4h)⇒WAITING:1。
+> 📦 #2062（11-12 17:45, MATH HF eval完成+L2 HF五重验证全部完成+四层报告刷新轮·训练step~7.0s<7.4s✅）→ daily-memories/2026-11-12.md；**结论**：MATH HF=0/10=0.0%,L2 HF五重验证完成(Avg5集=6.66%),llama.cpp SSM bug确认为0%主因。需要时再读。
+> 📦 #2061（11-12 17:15, BBH HF eval结果收集+MATH HF eval启动+四层报告刷新轮·训练step7020ms<7.4s✅）→ daily-memories/2026-11-12.md；**结论**：BBH HF=1/30=3.3%,四重验证完成,MATH HF启动。需要时再读。
+> 📦 #2060（11-12 16:08, MBPP HF eval完成+L4确认+监控巡检轮·训练step7006ms<7.4s✅）→ daily-memories/2026-11-12.md；**结论**：MBPP HF pass@1=1/20=5.0%,三重验证确认llama.cpp SSM bug是0%主因。需要时再读。
+> 2026-11-12 15:30 #2059: **GSM8K HF v2完成(1/10=10.0%✅)+L4再次确认BLOCKED+四层报告刷新轮·训练健康iter176450/700k(25.2%) step~7.5s loss~2.05 0NaN/0skip**·**动作**：①git pull --rebase(同步✅) ②训练健康(.29):iter176450,step~7.5s,GPU 8×100%/75GB ③GSM8K HF v2评测完成:sglang env(transformers 5.18.0,CPU bf16,4-shot,limit=10,max_new_tokens=128,nice19)→**acc=1/10=10.0%**(第5题gt=20 pred=20✅,9/10 FAIL但生成数值答案非退化,pred=2出现3次偏小数值倾向,每题~24s,总~4min) ④🟢重大发现:GSM8K HF=10.0% vs llama.cpp=0%→模型有基础数学推理能力!llama.cpp SSM bug是L2生成0%主因(已HumanEval+GSM8K双验证) ⑤L4再次确认BLOCKED:SSH .15/.17均超时(15:18测试) ⑥四层报告刷新:hero header+GSM8K HF结果卡(含10题明细表)+本轮动作+footer ⑦📦TASK≈27KB✅/MEMORY≈27KB✅·四层评测 · L1=57.75%@170k L2=HumanEval HF=15.0%(3/20)✅+GSM8K HF=10.0%(1/10)✅ MMLU=23.16% L3=TB 0/2(完成) L4=🔴BLOCKED(SSH) · 本轮动作：GSM8K HF v2完成(10.0%)+L4确认+四层报告刷新·未完成指令：有(180k autoqueue运行中;11w/12w/13w万整数ckpt L1评测已含在autoqueue中;L2剩余BBH/MATH/MBPP可用HF重评待后续轮)⇒WAITING:1。
+> 📦 #2058（11-12 15:00, L2 HumanEval HF完整评测轮·训练step6945ms<7.4s✅）→ daily-memories/2026-11-12.md；**结论**：HumanEval HF pass@1=3/20=15.0%,确认llama.cpp SSM bug是L2生成0%主因。需要时再读。
+> 📦 #2055（11-12 14:05, 监控巡检+四层报告刷新轮·训练step6928ms<7.4s✅）→ daily-memories/2026-11-12.md；**结论**：训练健康iter175.7k,L2 HumanEval HF 1/4 PASS(25%部分),L4仍BLOCKED。需要时再读。
+> 📦 #2054（11-12 13:45, 监控巡检+L2 HumanEval HF部分评测轮·训练step7015ms<7.4s✅）→ daily-memories/2026-11-12.md；**结论**：HumanEval HF 1/4 PASS(25%部分,below_zero✅)确认llama.cpp SSM bug是L2生成0%主因,L4仍BLOCKED。需要时再读。
+> 📦 #2053（11-12 13:05, 监控巡检+L2 GSM8K生成退化诊断轮·训练step~7076ms<7.4s✅）→ daily-memories/2026-11-12.md；**结论**：GSM8K=0%(生成退化+能力不足),L4仍BLOCKED。需要时再读。
+> 📦 #2052（11-12 12:40, 监控巡检轮·训练step~7099ms<7.4s✅）→ daily-memories/2026-11-12.md；**结论**：训练健康iter175.0k,autoqueue正常,L4仍BLOCKED。需要时再读。
+> 📦 #2051（11-12 12:17, 监控巡检+autoqueue超时修复轮·训练step~7068ms<7.4s✅）→ daily-memories/2026-11-12.md；**结论**：autoqueue旧PID152293超时→重启PID2896237(18h timeout),训练健康iter174.84k。需要时再读。
+> 📦 #2050（11-12 11:46, 监控巡检+L2 v6确认+P2数据配方建议轮·训练step~7000ms<7.4s✅）→ daily-memories/2026-11-12.md；**结论**：训练健康iter174.5k,L2 v6确认HumanEval=0%/MBPP=0%为真能力问题,红线PASS。需要时再读。
+> 📦 #2050（11-12 11:46, 监控巡检+L2 v6确认+P2数据配方建议轮·训练step~7000ms<7.4s✅）→ daily-memories/2026-11-12.md；**结论**：训练健康iter174.5k,L2 v6确认HumanEval=0%/MBPP=0%,MATH进程已死(84/100),P2建议等350k再判。需要时再读。
+> 📦 #2049（11-12 11:27, 监控巡检+§4.6进度刷新轮·训练step~7000ms<7.4s✅）→ daily-memories/2026-11-12.md；**结论**：训练健康iter174.36k,§4.6刷新iter174.4k,红线PASS。需要时再读。
+> 📦 #2049（11-12 11:27, 监控巡检+§4.6进度刷新轮·训练step~7000ms<7.4s✅）→ daily-memories/2026-11-12.md；**结论**：训练健康iter174.36k,§4.6刷新iter174.4k,红线PASS。需要时再读。
+> 📦 #2048（11-12 10:58, 监控巡检+MEMORY归档瘦身轮·训练step~7050ms<7.4s✅）→ daily-memories/2026-11-12.md；**结论**：训练健康iter174.15k,autoqueue正常,L4仍BLOCKED,MEMORY瘦身30KB→22KB。需要时再读。
+> 📦 #2047（11-12 10:38, 监控巡检轮·训练step~7090ms<7.4s✅）→ daily-memories/2026-11-12.md；**结论**：训练健康iter173.99k,autoqueue正常,L4仍BLOCKED。需要时再读。
+> 📦 #2046（11-12 10:15, 监控巡检轮·训练step~7060ms<7.4s✅）→ daily-memories/2026-11-12.md；**结论**：训练健康iter173.8k,autoqueue正常,L4仍BLOCKED。需要时再读。
+> 📦 #2045（11-12 09:55, 监控巡检轮·训练step~7.05s<7.4s✅）→ daily-memories/2026-11-12.md；**结论**：训练健康iter173.6k,autoqueue正常,L4仍BLOCKED。需要时再读。
+> 📦 #2044（11-12 09:35, 监控巡检轮·训练step~7060ms<7.4s✅）→ daily-memories/2026-11-12.md；**结论**：训练健康iter173.4k,autoqueue正常,L4仍BLOCKED。需要时再读。
+> 📦 #2043（11-12 09:15, 监控巡检轮·训练step~7.05s<7.4s✅）→ daily-memories/2026-11-12.md；**结论**：训练健康iter173.28k,autoqueue正常,L4仍BLOCKED。需要时再读。
+> 📦 #2042（11-12 08:53, 监控巡检轮·训练step~7060ms<7.4s✅）→ daily-memories/2026-11-12.md；**结论**：训练健康iter173.1k,autoqueue正常,L4仍BLOCKED。需要时再读。
+> 📦 #2041（11-12 08:33, 监控巡检轮·训练step~7028ms<7.4s✅）→ daily-memories/2026-11-12.md；**结论**：训练健康iter172.93k,autoqueue正常。需要时再读。
+> 📦 #2040（11-12 08:13, 监控巡检+四层报告刷新轮·训练step~7030ms<7.4s✅）→ daily-memories/2026-11-12.md；**结论**：训练健康iter172.75k,四层报告已刷新,L3 smoke done。需要时再读。
+> 📦 #2039（11-12 07:52, 监控巡检+180k autoqueue启动轮·训练step~7010ms<7.4s✅）→ daily-memories/2026-11-12.md；**结论**：180k autoqueue已启动,L4仍BLOCKED。需要时再读。
+> 2026-11-12 07:52 #2039: **监控巡检+180k autoqueue启动轮·训练健康iter172550/700k(24.6%) step6977-7093ms(均~7010ms<7.4s✅) loss2.02-2.03 0NaN/0skip GPU 8×82-100%/75GB·180k autoqueue已启动(PID152293,.29,polling iter_0180000)**·**动作**：①git pull --rebase(同步✅) ②训练健康(.29 /proc/146283/fd/1):iter172550/700k,step6977-7093ms(均~7010ms<7.4s✅),loss2.020-2.028,0NaN/0skip,GPU 8×82-100%/75GB ③L1:17/17done,180k autoqueue已创建并启动(baize_l1_autoqueue_180k.sh,PID152293,.29,polling iter_0180000,PORT=8191,-t4,nice19,serial,自动HF→GGUF→eval→report) ④L4重测:SSH .15/.17均timeout→仍BLOCKED;查NFS共享发现zhulong/designflow bench脚本+jsonl在doc/ZhuLong_DAC2027/benchmark/(94条cline_eval_status.jsonl),但EDA工具在.15→仍需SSH ⑤research日报2026-11-12:pretrain建议=Day-0探针→mid-training不actionable(同#2037/#2038) ⑥红线检查:4_llm_pretrain.tex无benchmark数字PASS✅ ⑦无eval运行(CPU干净✅) ⑧📦TASK≈27KB✅/MEMORY≈27KB✅·四层评测 · L1=57.75%@170k(17/17,峰值160k=58.13%) L2=6/6完成(全0%除MMLU=23.16%) L3=TB 0/2(pipeline✅) L4=🔴BLOCKED(SSH) · 本轮动作：监控巡检+180k autoqueue创建启动+L4 NFS调研+红线检查·未完成指令：无(等180k ckpt落盘~14h,autoqueue自动处理)⇒WAITING:1。
+> 📦 #2038（11-12 07:25, 监控巡检轮·训练step~7.0s<7.4s✅）→ daily-memories/2026-11-12.md；**结论**：训练健康iter172.35k,无新ckpt,L4仍BLOCKED。需要时再读。
+> 📦 #2037（11-12 07:04, 监控巡检轮·训练step~7.0s<7.4s✅）→ daily-memories/2026-11-12.md；**结论**：训练健康iter172.2k,无新ckpt,L4仍BLOCKED。需要时再读。
+> 📦 #2035（11-12 06:25, 论文§4.6刷新+L2分析确认轮·训练step<7.4s✅）→ daily-memories/2026-11-12.md；**结论**：论文§4.6 iter171.8k+PDF 0err,L2根因=llama.cpp SSM bug+24.5%训练。需要时再读。
+> 📦 #2034（11-12 05:55, 170k L1 eval完成+报告刷新·训练step<7.4s✅）→ daily-memories/2026-11-12.md；**结论**：170k eval=57.75%,L1 17/17done,scaling report刷新。需要时再读。
 
-## 🔴 待决策区（需用户拍板 · 2026-11-11 #1993 整理）
+> 📦 #2033（11-12 05:45, 170k eval监控+四层报告更新·训练step<7.4s✅）→ daily-memories/2026-11-12.md；**结论**：170k eval持续运行中(76min),训练健康。需要时再读。
+> 📦 #2032（11-12 05:39, 170k eval监控+L4再测+四层报告更新·训练step<7.4s✅）→ daily-memories/2026-11-12.md；**结论**：eval持续运行,L4 SSH .15/.17均timeout→BLOCKED。需要时再读。
+> 📦 #2031（11-12 05:10, 170k eval监控+四层报告更新·训练step<7.4s✅）→ daily-memories/2026-11-12.md；**结论**：GGUF转换✅,eval运行中,stale cat清理,红线PASS。需要时再读。
+> 📦 #2030（11-12 03:56, 170k GGUF转换stuck诊断+kill重启v4+四层报告更新·训练step<7.4s✅）→ daily-memories/2026-11-12.md；**结论**：GGUF转换stuck@88%已kill,v4脚本重启(后GGUF完成,eval运行中)。需要时再读。
+> 📦 #2028（11-12 03:30, 170k GGUF转换监控+eval v3脚本启动+stale进程清理·训练step<7.4s✅）→ daily-memories/2026-11-12.md；**结论**：GGUF转换启动(18%),eval v3脚本启动,stale find进程已清理。需要时再读。
+> 📦 #2027（11-12 03:12, 170k L1 eval pipeline修复+启动·训练step<7.4s✅）→ daily-memories/2026-11-12.md；**结论**：autoqueue GGUF失败修复(mamba_dt_limit删除),GGUF转换启动,eval脚本启动(15min timeout,后超时)。需要时再读。
+> 📦 #2026（11-12 02:45, 🟢HF生成突破+GSM8K HF重评+报告更新·训练step7.1s<7.4s✅）→ daily-memories/2026-11-12.md；**结论**：HF transformers生成正常,llama.cpp SSM bug是L2=0%主因,GSM8K HF=0/10。需要时再读。
+> 📦 #2023–#2025（11-12 01:55→02:20, 监控巡检+论文§4.6刷新iter169.8k+L1 scaling report+autoqueue启动·训练step<7.4s✅）→ daily-memories/2026-11-12.md；**结论**：训练健康,论文§4.6已刷新iter169.8k+PDF 0err,170k autoqueue已启动。需要时再读。
+> 📦 #2023（11-12 01:55, 监控巡检+L1 scaling report更新·训练step7060ms<7.4s✅）→ daily-memories/2026-11-12.md；**结论**：训练健康,160k scaling report已更新。需要时再读。
+> 📦 #2021（11-12 02:00, 监控巡检+L4根因再确认+归档#2018·训练step7.1s<7.4s✅）→ daily-memories/2026-11-12.md；**结论**：训练健康,L4 BLOCKED确认。需要时再读。
+> 📦 #2020（11-12 01:20, 监控巡检+L4根因确认+归档#2018·训练step7.1s<7.4s✅）→ daily-memories/2026-11-12.md；**结论**：训练健康,L4 BLOCKED确认。需要时再读。
+> 📦 #2019（11-12 01:11, 监控巡检+红线检查+research日报·训练step7.0s<7.4s✅）→ daily-memories/2026-11-12.md；**结论**：红线检查PASS(无benchmark数字泄漏),research建议不适用。需要时再读。
+> 📦 #2018（11-12 01:05, L3 TB smoke完成0/2+论文§4.6刷新+llama-server清理·训练step7.1s<7.4s✅）→ daily-memories/2026-11-12.md；**结论**：L3 TB 0/2 reward(生成退化),论文§4.6 iter169k+PDF 0err✅。需要时再读。
+> 📦 #2017（11-12 00:45, L2 6/6完成+L3 TB smoke启动·训练step7.0s<7.4s✅）→ daily-memories/2026-11-12.md；**结论**：L2全部完成(5/6=0%),L3 TB smoke启动(Harbor 2 tasks)。需要时再读。
+> 📦 #2016（11-12 00:20, v6 HumanEval✅+MBPP/MATH监控轮·训练step7.0s<7.4s✅）→ daily-memories/2026-11-12.md；**结论**：HumanEval pass@1=0.0%,MBPP 73/100,MATH 55/100,两v6实例并发。需要时再读。
+> 📦 #2014（11-12 00:02, MBPP+MATH并发监控+重复v6实例发现·训练step7.1s<7.4s✅）→ daily-memories/2026-11-12.md；**结论**：MBPP 49/100,MATH 31/100,发现两个v6实例并发(PID2571213+2632593)。需要时再读。
+> 📦 #2013（11-11 23:55, L3 autoqueue启动+MBPP监控+L4调研·训练step7.1s<7.4s✅）→ daily-memories/2026-11-12.md；**结论**：L3 autoqueue已启动(PID1986722),MBPP 34/100,L4 BLOCKED(/nasdata/未挂载.29+SSH不通)。需要时再读。
+> 📦 #2006–#2023（11-11 22:50→11-12 02:00, 多轮监控+v6 HumanEval/MBPP/MATH评测+L3前置+L4确认+L1 scaling+autoqueue启动·训练step<7.4s✅）→ daily-memories/2026-11-11.md + 2026-11-12.md；**结论**：L2 6/6完成(5/6=0%),L3前置通过TB 0/2,L4 BLOCKED,170k autoqueue启动。需要时再读。
+> 📦 #1993–#2005（11-11 20:35→22:30, v5 MATH完成+v6启动+GSM8K/BBH确认+生成退化诊断+vLLM调查+L3/L4调研·训练step<7.4s✅）→ daily-memories/2026-11-11.md；**结论**：v5 MATH=0%,BBH v4=0%,GSM8K v3=0%,生成退化=SSM state崩溃+模型能力不足。需要时再读。
 
-**背景**：L2 GSM8K=0% / BBH=0% / MATH≈0% / MMLU=23.16%(≈随机25%)。L3/L4 因模型生成退化无法评测。三重根因：
-1. **数据配比不足**：code 19% + math 7% = 26%，远低于 DeepSeek 最优 4:2:4（code 40% + math 20% = 60%）。DeepSeek 1.3B 消融显示 4:2:4 可将 GSM8K 12.3%→15.4%、HumanEval 14.5%→20.1%。
-2. **Decay 阶段未配置**：训练命令 `--lr-decay-iters 0` = WSD scheduler 的 decay 段长度为 0，当前一直在 stable 段（lr=1e-3 恒定）。Decay 是模型 consolidate 生成能力 + 注入 domain data 的最佳时机（MiniCPM 同此策略）。
-3. **llama.cpp SSM 生成 bug**：Mamba2-hybrid 在 llama.cpp CPU 推理时 token-by-token 生成退化为重复输出（PR #31703 已提交）。MCQ（L1 58.13%）正常说明 prefill 路径无问题，仅 generation 路径有 bug。vLLM 有原生 NemotronH 支持可验证，但 .17 A40 SSH 不通。
+## 🔴 待决策区（需用户拍板 · 2026-11-12 #2059 更新 · GSM8K HF=10.0%修正诊断）
 
-**方案 A（推荐）**：在 decay 阶段混入 code:math:language=4:2:4 配比数据
-- 需要 data 线准备 ~60B token 高质量 code+math 数据
-- 配置 `--lr-decay-iters` 为非零值（如 4771 步，约 20B token decay 段）
-- 不影响当前 stable 段训练，只在 decay 时切换数据
-- 预期：参照 DeepSeek 1.3B，GSM8K 0%→~15%、HumanEval 0%→~20%（2B 应更好）
+**背景**：L2 llama.cpp: GSM8K=0% / BBH=0% / MATH≈0% / MMLU=23.16%(≈随机25%)。L3 TB 0/2。L4 BLOCKED。**🟢 HF transformers 重评: HumanEval=15.0%(3/20) + GSM8K=10.0%(1/10) → 模型有基础代码+数学能力, llama.cpp SSM bug 是 0% 主因**。
 
-**方案 B**：在 post-train SFT 阶段补数学推理+代码生成数据
-- 由 posttrain 线负责（已在 .17 准备，当前零 GPU 预研）
-- 不影响 pretrain，但 L2 改善要等到 post-train 完成
+**🟢 2026-11-12 HF transformers 重评定案（#2058+#2059）**：
+- HumanEval HF pass@1=3/20=15.0% (filter_by_substring✅, string_sequence✅, count_distinct_characters✅) vs llama.cpp 0/100=0%
+- GSM8K HF acc=1/10=10.0% (第5题gt=20 pred=20✅, 9/10 FAIL但生成数值答案非退化) vs llama.cpp 0/100=0%
+- **结论：llama.cpp SSM 生成 bug（PR #31703）是 L2 生成任务 0% 的主因（已 HumanEval+GSM8K 双验证）。模型有基础代码生成+数学推理能力, 但能力有限 (15%+10%)。**
+- **L2 评测应全面切换到 HF transformers**（BBH/MATH/MBPP 待后续轮 HF 重评）
 
-**方案 C（A+B 组合）**：decay 混入 domain data 打基础 + SFT 精调指令跟随
-- 最全面的方案，但需要 data 线 + posttrain 线协同
+**三重根因（修正后）**：
+1. **llama.cpp SSM 生成 bug（主因）**：HF transformers 生成正常, 证明模型权重/SSM 计算正确, 问题在 llama.cpp 的 SSM 生成实现 (PR #31703)。**修复路径：用 HF transformers/vLLM 替代 llama.cpp 做生成评测**。
+2. **数据配比不足**：code 19% + math 7% = 26%, HF 测试显示 code 生成有效 (HumanEval=15%), math 有基础能力 (GSM8K=10%) 但不足。仍需 decay 阶段增加 math 比例。
+3. **Decay 阶段未配置**：`--lr-decay-iters 0`, 一直在 stable 段。Decay 是注入 domain data 的最佳时机。
 
-**其他待解**：
-- .17 SSH 不通 → 无法用 A40 做 vLLM 验证（需运维检查 .17 网络）
-- .15 SSH 不通 → L4 designflow 数据不可达（需运维检查 .15 网络）
+**方案 A（推荐）**：decay 阶段混入 code:math:language=4:2:4 + L2 切换到 HF transformers 评测
+**方案 B**：post-train SFT 补数学推理 + L2 用 HF 重评
+**方案 C**：A+B 组合
 
-> 2026-11-11 20:21 #1992: **论文§4.6刷新+四层报告更新轮·训练健康 iter166730/700k step~7.1s<7.4s✅·v5 MATH 30/100运行中🟡**·**动作**：①git pull --rebase(同步✅,Already up to date) ②训练健康(.29 /proc/146283/fd/1→tail log):iter166730/700k,step6943-7218ms(均7100ms<7.4s✅),loss2.034-2.044,lr=1e-3,0NaN/0skip,GPU 8卡95-100%/75GB ③**论文§4.6刷新**:`4_llm_pretrain.tex` iter163790→166790→166730(实测),loss2.05→2.04,`tab:prod-budget` 163k→167k done,wall-clock≈58d不变(591K tok/s) ④**PDF编译**:latexmk -pdf -interaction=nonstopmode main.tex→0 error,5 pages,216060 bytes,main.pdf时间戳20:21✅ ⑤**v5 MATH进度**:hendrycks_math_algebra 0-shot limit=100,30/100,~41s/it,ETA~47min→预期接近0%(生成退化同GSM8K/BBH) ⑥**v6状态**:仍waiting for port 8083(v5完成后自动启动) ⑦research日报2026-11-11:pretrain线「无新增可用建议」(确认,不凑数) ⑧四层报告更新:header iter166730+v5 30/100+footer#1992 ⑨📦TASK≈27KB✅/MEMORY≈22KB✅·四层评测 · L1=58.13%@160k L2=GSM8K=0%·MMLU=23.16%·BBH=0%·v5 MATH 30/100运行中 L3=脚本已建·生成退化 L4=未接 · 本轮动作：论文§4.6刷新+PDF编译+报告更新·未完成指令：有(v5 MATH运行中+v6排队+170k~8h后)⇒WAITING:0。
+**其他待解**：.17/.15 SSH 不通 → vLLM 验证 + L4 designflow 数据不可达（需运维检查网络）
 
-> 2026-11-11 20:12 #1991: **v6脚本创建+启动+四层报告刷新轮·训练健康 iter166630/700k step~7.0s<7.4s✅·v5 MATH 16/100运行中🟡·v6已启动✅**·**动作**：①git pull --rebase(同步✅) ②训练健康(.29 /proc/146283/fd/1):iter166630/700k,step6943-7205ms(<7.4s✅),loss2.022-2.044,0NaN/0skip,GPU 8卡95-100%/75GB ③**v5 MATH进度**:hendrycks_math_algebra 0-shot limit=100,16/100,~42s/it,ETA~1h→预期0%(生成退化同GSM8K/BBH) ④**HumanEval/MBPP失败根因**:lm_eval需`--confirm_run_unsafe_code`CLI flag(store_true),非仅`HF_ALLOW_CODE_EVAL=1`env var→v5脚本缺此flag ⑤**v6脚本创建+启动**:`baize_l2_eval_160k_v6.sh`在.29后台(nohup,等port8083空闲)→修复:①HumanEval/MBPP加`--confirm_run_unsafe_code`②llama-server加`--repeat-penalty 1.3`(#1984诊断:RP打破SSM退化循环)③MATH用RP=1.3重跑对比v5 baseline ④生成探针验证RP效果 ⑥四层报告更新:header iter166630+v6状态+summary L2行+footer#1991,同步doc/reports/ ⑦📦TASK≈27KB✅/MEMORY≈21KB✅·四层评测 · L1=58.13%@160k L2=GSM8K=0%·MMLU=23.16%·BBH=0%·v5 MATH运行中·v6已启动(RP=1.3测试) L3=脚本已建·生成退化 L4=未接 · 本轮动作：v6脚本创建+启动+报告刷新·未完成指令：有(v5 MATH运行中+v6排队+170k~8h后)⇒WAITING:0。
-> 2026-11-11 20:05 #1990: **v5重启+L1验证+数据配比确认+四层报告刷新轮·训练健康 iter166560/700k step7043ms<7.4s✅**·**动作**：①git pull --rebase(同步✅) ②训练健康(.29 /proc/146283/fd/1):iter166560/700k,step7021-7177ms(<7.4s✅),loss2.037-2.053,0NaN/0skip,GPU 8卡92-100%/75GB ③**v5 L2 eval重启(19:58)**:llama-server PID=1648187(t=4,nice=19,port8083)启动✅·训练step7043ms<7.4s✅未受影响·HumanEval失败(lm_eval code_eval metric traceback)·MBPP失败(需confirm_run_unsafe_code=True,非仅HF_ALLOW_CODE_EVAL=1)·MATH运行中(0-shot,limit=100,2/100~50s/it,ETA~1.4h) ④**L1 160k验证**:从results.json逐集核对→arc_c=0.34 arc_e=0.62 boolq=0.67 hella=0.53 obqa=0.34 piqa=0.75 sciq=0.82 wino=0.58→harness Avg=58.13%✅新高 ⑤**数据配比确认**:从/proc/146283/cmdline提取→en_v1_4=65%+ufw_l1=5%+ufw_zh=4%+math_l1=5%+math_l3=2%+code_l2=15%+code_l3=4%=100%→code19%+math7%=26%(vs DeepSeek 60%) ⑥GPU检查:.29 8卡92-100%/.12 8卡94-100%/.17 SSH超时→vLLM仍阻塞 ⑦四层报告更新:header iter166560+v5重启状态+summary表+action#1990+footer,同步doc/reports/ ⑧📦TASK≈27KB✅/MEMORY≈21KB✅·四层评测 · L1=58.13%@160k L2=GSM8K=0%·MMLU=23.16%·BBH=0%·v5 MATH运行中 L3=脚本已建·生成退化 L4=未接 · 本轮动作：v5重启+L1验证+数据配比确认+报告刷新·未完成指令：有(v5 MATH运行中+vLLM待GPU+170k~8h后)⇒WAITING:0。
+> 📦 #1992（11-11 20:21, 论文§4.6刷新+PDF编译+四层报告更新·训练step~7.1s<7.4s✅）→ daily-memories/2026-11-11.md；**结论**：§4.6 iter166730+PDF 0err,v5 MATH 30/100。需要时再读。
+> 📦 #1991（11-11 20:12, v6脚本创建+启动+四层报告刷新·训练step~7.0s<7.4s✅）→ daily-memories/2026-11-11.md；**结论**：v6修复confirm_run_unsafe_code+RP=1.3,等port8083。需要时再读。
+> 📦 #1990（11-11 20:05, v5重启+L1验证+数据配比确认+四层报告刷新·训练step7043ms<7.4s✅）→ daily-memories/2026-11-11.md；**结论**：L1 160k harness Avg=58.13%逐集验证✅,code19%+math7%=26%。需要时再读。
 > 📦 #1989（11-11 19:42, GSM8K诊断完成+RP=1.3测试+四层报告刷新·训练step7156ms<7.4s✅）→ daily-memories/2026-11-11.md；**结论**：GSM8K=0%(双重根因:llama.cpp SSM bug+模型能力不足),RP=1.3=0%。需要时再读。
 > 📦 #1988（11-11 19:20, BBH v4完成+v5 NFS崩溃+GSM8K诊断启动·训练step7018ms<7.4s✅）→ daily-memories/2026-11-11.md；**结论**：BBH=0%,GSM8K诊断启动。需要时再读。
 > 📦 #1987（11-11 19:00, vLLM调查+生成退化根因更新+BBH监控·训练step7156ms<7.4s✅）→ daily-memories/2026-11-11.md；**结论**：vLLM有原生NemotronH支持,BBH 83/100。需要时再读。
 > 📦 #1986（11-11 18:36, BBH监控+训练健康确认+四层报告刷新·训练step7163ms<7.4s✅）→ daily-memories/2026-11-11.md；**结论**：BBH 64/100，训练健康。需要时再读。
 > 📦 #1985（11-11 18:30, BBH监控+训练健康+L1 160k验证·训练step7027ms<7.4s✅）→ daily-memories/2026-11-11.md；**结论**：L1 160k harness Avg=58.13%逐集验证✅,BBH 59/100。需要时再读。
 > 📦 #1984（11-11 18:10, 生成退化诊断+BBH监控+四层报告刷新·训练step7092ms<7.4s✅）→ daily-memories/2026-11-11.md；**结论**：首token正确但多tokenSSM崩溃,repeat_penalty可部分修复。需要时再读。
-> 2026-11-11 18:10 #1984: **生成退化诊断+BBH监控+四层报告刷新轮·训练健康 iter165640/700k step7092ms<7.4s✅·BBH 42/100运行中🟡**·**动作**：①git pull --rebase(同步✅,Already up to date) ②训练健康(.29 /proc/146283/fd/1):iter165640/700k,step7092ms(<7.4s✅),loss2.023,lr=1e-3(stable段),0NaN/0skip,GPU 8卡92-100%/75GB ③**🔬生成退化诊断(7个curl探针)**:向运行中的llama-server(port8083,bz2b-160000-f16.gguf)发送7个不同prompt→(a)GSM8K greedy→"The video111111..."(退化);(b)简单加法 greedy→"the111 2nd333...";(c)代码 greedy→"/examples111111...";(d)True/False"2+3=5"→首token="5"✅正确!→"th century"(退化);(e)知识问答→"50xxxx111";(f)temp=0.7→先连贯英文"Would it was easier..."→退化"111...";(g)repeat_penalty=1.3→打破"1"循环→"...The simplest possible way to solve this problem..."(✅连贯英文!) ④**关键结论**:模型首token logits正确(L1 MCQ 58.13%正常,"2+3=5"→"5"✅),但多token自回归生成时SSM状态崩溃→重复"1"×200+·repeat_penalty可部分修复→双重根因(模型能力不足+llama.cpp SSM生成路径放大) ⑤**HF CPU验证失败**:`causal_conv1d_cuda`仅支持CUDA→无法在CPU上对比HF vs llama.cpp生成质量→需GPU窗口 ⑥v4状态:BBH 42/100(~68s/it,ETA~66min)·HumanEval/MBPP失败(缺HF_ALLOW_CODE_EVAL,v5已修复)·MATH失败(4-shot assertion error,v5改0-shot) ⑦v5/GSM8K诊断:均在.29后台等待port 8083空闲 ⑧四层报告更新:新增"生成退化诊断"card(7探针表+5点结论+3建议)+header iter/BBH更新+footer#1984,34.9KB,同步至doc/reports/ ⑨📦TASK≈27KB✅/MEMORY≈17KB✅·四层评测 · L1=58.13%@160k L2=GSM8K=0%@160k·MMLU=23.16%@160k·BBH 42/100运行中·v5等待中·GSM8K诊断等待中·🔬生成退化诊断完成 L3=🔧脚本已建·模型生成能力不足 L4=未接(调研完·延后) · 本轮动作：生成退化诊断+BBH监控+报告刷新·未完成指令：有(BBH运行中+v5待跑+GSM8K诊断待运行)⇒WAITING:0。
 > 📦 #1983（11-11 18:00, 数据配比修正+BBH监控+四层报告刷新·训练step7.04s<7.4s✅）→ daily-memories/2026-11-11.md；**结论**：S1 blend实际含26% code+math(非"无code/math"),BBH 32/100。需要时再读。
-> 2026-11-11 18:00 #1983: **数据配比修正+BBH监控+四层报告刷新轮·训练健康 iter165560/700k step6959-7090ms<7.4s✅·BBH 32/100运行中🟡**·**动作**：①git pull --rebase(同步✅) ②训练健康(.29 /proc/146283/fd/1):iter165560/700k,step6959-7090ms(<7.4s✅),loss2.025-2.040,lr=1e-3(stable段),0NaN/0skip,GPU 8卡96-100%/75GB ③**⚠️数据配比重要修正**:从训练进程命令行参数(`ps -eo args= | grep pretrain_launcher`)提取S1 blend权重→code_l2(15%)+code_l3(4%)+math_l1(5%)+math_l3(2%)=**26% code+math**（此前#1966/#1979称"无code/math"是**错误**的）→实际配比Code19%:Math7%:Lang74%=2.7:1:10.6,远低于DeepSeek 4:2:4最优(60% code+math)→671B tok已训code~127B+math~47B,但GSM8K=0%+代码生成退化说明配比不足+stable段未consolidate ④BBH v4进度:32/100(~69s/it,ETA~78min) ⑤v5状态:PID3102868在.29后台轮询port8083,等BBH完后自动启动 ⑥GSM8K诊断:PID354759在.29后台,等v5完后运行 ⑦评测队列(port8083串行):BBH(~78min)→v5(~3h)→GSM8K诊断(~30min) ⑧四层报告更新:修正数据配比分析+MMLU完成(23.16%)+BBH(32/100)+新增S1 blend配比表+footer#1983,31.9KB,同步至doc/reports/ ⑨📦TASK≈27KB✅/MEMORY≈16KB✅·四层评测 · L1=58.13%@160k L2=GSM8K=0%@160k·MMLU=23.16%@160k·BBH 32/100运行中·v5等待中·GSM8K诊断等待中 L3=🔧脚本已建·模型生成能力不足 L4=未接(调研完·延后) · 本轮动作：数据配比修正+BBH监控+报告刷新·未完成指令：有(BBH运行中+v5待跑+GSM8K诊断待运行)⇒WAITING:0。
 > 📦 #1982（11-11 17:50, GSM8K诊断启动+BBH监控·训练step7.0s<7.4s✅）→ daily-memories/2026-11-11.md；**结论**：GSM8K诊断脚本已建(baize_l2_gsm8k_diag.sh),BBH 23/100。需要时再读。
 > 📦 #1981（11-11 17:38, v5 HF_ALLOW_CODE_EVAL修复+BBH监控·训练step7100ms<7.4s✅）→ daily-memories/2026-11-11.md；**结论**：v5脚本已修复HF_ALLOW_CODE_EVAL,BBH 14/100。需要时再读。
 > 📦 #1980（11-11 17:25, L2 v3✅完成+v4启动+四层报告刷新·训练step7150ms<7.4s✅）→ daily-memories/2026-11-11.md；**结论**：v3 GSM8K=0%+MMLU=23.16%✅,v4启动。需要时再读。
 > 📦 #1979（11-11 16:56, L3 pipeline创建+L2 v3监控+四层报告刷新·训练step7020ms<7.4s✅）→ daily-memories/2026-11-11.md；**结论**：L3脚本已建,MMLU~90%运行中。需要时再读。
-> 2026-11-11 16:56 #1979: **L3 pipeline创建+L2 v3监控+四层报告刷新轮·训练健康 iter165020/700k step7020ms<7.4s✅·MMLU~90%(20500/22800)运行中🟡·v4等v3✅·L3脚本已建✅**·**动作**：①git pull --rebase(同步✅,Already up to date) ②训练健康(.29 /proc/146283/fd/1):iter165020/700k,step7020ms(<7.4s✅),loss2.031,0NaN/0skip,GPU 8卡93-100%/75GB ③L2 v3进度:MMLU~20500/22800(90%),~1it/s,ETA~20-30min;GSM8K=0.0%(strict+flex)已确认✅ ④v4脚本(baize_l2_eval_160k_v4.sh)在.29后台(PID2515987)轮询port8082,等v3完成→自动跑 ⑤**🔧L3 pipeline创建**:脚本baize_l3_tb_smoke.sh已建,自包含Terminal-Bench smoke test·利用harness线Harbor+cline-patched(只读引用,不修改harness文件)·TB_MODEL=baize-2b-local/TB_BASE_URL=http://127.0.0.1:8083/v1·2任务(fix-git easy+break-filter-js-from-html medium)·pre-flight检查(训练step>7.4s中止/port/Docker/Harbor/TB tasks)·TB_AGENT_TIMEOUT=600s·nice19/串行·auto-cleanup·验证:.29 harbor在~/.local/bin/harbor✅,89 Docker镜像本地✅,cline在~/.local/bin/cline✅,overlay-network-host.yml存在✅·**未运行**(port8082被MMLU eval占用,需等v3/v4完成) ⑥无新万整数ckpt(最新hf_iter_160000,下一个170k ETA~10h) ⑦四层报告更新:L3 badge→🔧脚本已建·待运行,新增L3 pipeline创建节(脚本/配置/任务/护栏/状态表),summary L3行更新,iter165.02k/MMLU90%,footer#1979,两处同步 ⑧📦TASK≈27KB✅/MEMORY≈13KB✅·四层评测 · L1=58.13%@160k L2=GSM8K=0%@160k(MMLU~90%运行中,v4等待中) L3=🔧脚本已建·待运行 L4=未接(调研完·延后) · 本轮动作：L3 pipeline创建+MMLU监控+报告刷新·未完成指令：有(MMLU v3运行中+v4待跑+L3 smoke待运行)⇒WAITING:0。
 > 📦 #1978（11-11 16:39, L2 v3监控(MMLU~82%)+四层报告刷新·训练step7059ms<7.4s✅）→ daily-memories/2026-11-11.md；**结论**：MMLU~82%运行中,v4等v3。需要时再读。
 > 📦 #1977（11-11 16:32, L2 v3监控(MMLU~80%)+四层报告刷新·训练step7100ms<7.4s✅）→ daily-memories/2026-11-11.md；**结论**：MMLU~80%运行中,v4等v3。需要时再读。
 > 📦 #1976（11-11 16:20, L2 v3监控(MMLU~74%)+P2数据配比调研(DeepSeek 4:2:4)+四层报告刷新·训练step7088ms<7.4s✅）→ daily-memories/2026-11-11.md；**结论**：P2 DeepSeek消融4:2:4最优,建议decay混入code+math(方案A)。需要时再读。
@@ -58,10 +98,7 @@ WAITING: 0（🔴 2026-11-11 用户令「四层评测拿更好结果」执行中
 > 📦 #1967（11-11 15:00, L2 v3监控+四层报告刷新·训练step<7.4s✅）→ daily-memories/2026-11-11.md；**结论**：MMLU~24%运行中,v4等v3。需要时再读。
 > 📦 #1966（11-11 14:50, L3/L4可行性调研完成+定性测试+四层报告更新·训练step<7.4s✅）→ daily-memories/2026-11-11.md；**结论**：L3/L4低分/空白同一根因=训练数据缺code+math。需要时再读。
 > 📦 #1965（11-11 14:33, L2 v3监控+v4启动+§4.6刷新·训练step<7.4s✅）→ daily-memories/2026-11-11.md；**结论**：v4已启动轮询port8082,§4.6刷新iter163790。需要时再读。
-> 2026-11-11 14:2x #1964: **🔴 L2 GSM8K=0%@160k 诊断定案+四层报告更新轮·训练健康 iter163640 step7097ms<7.4s✅·L2 GSM8K=0.0%(strict+flex)✅完成·MMLU Phase2运行中🟡**·**动作**：①git pull --rebase(同步✅,Already up to date) ②训练健康(.29 /proc/146283/fd/1):iter163640/700k,step7038-7163ms(<7.4s✅),loss2.034-2.043,0NaN/0skip ③**L2 GSM8K v3 结果=0.0%(strict+flex)**,results.json确认exact_match=0.0±0.0 ④**curl直查llama-server(160k)**:GSM8K样题→模型输出" The answer is 5 years old333543111..."→尝试答案格式但内容错误→退化为重复"1"×200+→finish_reason=length ⑤**诊断定案:GSM8K=0%是真能力问题,非配置错误**——①模型有基本生成能力(产生"The answer is...")但数学内容完全错误 ②退化重复"1"是小型模型在未见推理模式上的典型行为 ③L1(loglikelihood)正常排除权重/加载问题 ④stop tokens/few-shot配置均标准 ⑤**根因=训练数据(P-5b/P-8 Ultra-FineWeb-L3)缺乏数学/代码内容** ⑥**待决策建议(写进MEMORY)**:①后续训练阶段增加code+math数据配比(参考MiniCPM/DeepSeek 15-30%) ②或在post-train SFT阶段补数学推理能力 ⑦四层报告更新:L2 badge→🔴GSM8K=0%@160k,诊断结论表替换(新增实际输出+数据配比两行),待决策新增数据建议 ⑧MMLU(v3 Phase2)运行中,gguf_lmeval_run.py loglikelihood方式 ⑨📦TASK≈27KB✅/MEMORY≈31KB✅·四层评测 · L1=58.13%@160k L2=GSM8K=0%@160k(MMLU运行中) L3=空白(调研完) L4=61任务待接 · 本轮动作：GSM8K诊断定案+报告更新·未完成指令：有(MMLU v3运行中,等结果)⇒WAITING:0。
-> 2026-11-11 14:1x #1963: **L2 v3 进度监控+四层报告归位轮·训练健康 iter163640 step7097ms<7.4s✅·L2 GSM8K v3 89/100 运行中🟡·四层报告复制到run/reports/✅**·**动作**：①git pull --rebase(同步✅,Already up to date) ②研究日报 2026-11-11：pretrain 建议均为非指令(已确认,不凑数) ③训练健康(.29 /proc/146283/fd/1):iter163640/700k,step7038-7163ms(<7.4s✅),loss2.034-2.043,0NaN/0skip,GPU 8卡100%/75GB ④L2 v3 进度:GSM8K 89/100(~25s/it,ETA~5min)→MMLU 排队(~53min)→总ETA~15:25 ⑤四层报告归位:从doc/BaiZe-ISEDA2027/reports/复制到run/reports/(符合任务书「产物落reports/」约定),更新iter≈163.6k+GSM8K 89/100+footer#1963,两处同步 ⑥L1 确认:16/16 ckpt(10k-160k)全部完成,160k=58.13%新高✅,下一个170k ETA~12h ⑦📦TASK≈27KB✅/MEMORY≈30KB✅·四层评测 · L1=58.13%@160k L2=v3 89/100运行中 L3=空白(调研完) L4=61任务待接 · 本轮动作：v3监控+四层报告归位·未完成指令：有(L2 v3 eval 运行中,等 GSM8K+MMLU 结果)⇒WAITING:0。
-> 2026-11-11 14:0x #1962: **L2 v3 进度监控+L3/L4 对接可行性调研轮·训练健康 iter163560 step7279ms<7.4s✅·L2 GSM8K v3 61/100 运行中🟡·L3/L4 调研完成📋**·**动作**：①git pull --rebase(同步✅,Already up to date) ②研究日报 2026-11-11：pretrain 建议均为非指令(shot 标注已纳入四层报告),无新增可用建议 ③训练健康(.29 /proc/146283/fd/1):iter163560/700k,step7260-7279ms(<7.4s✅),loss2.046-2.059,0NaN/0skip,GPU 8卡100%/75GB ④L2 v3 进度:GSM8K 61/100(~27s/it,ETA~17min)→MMLU 排队(~53min)→总ETA~15:10 ⑤L1 确认:16/16 ckpt(10k-160k)全部完成,160k=58.13%新高✅,下一个170k ETA~12h ⑥L3/L4 对接调研:L4 designflow run_one.sh 用 cline harness,model 参数可配(默认 deepseek-v4-pro-cloud),61任务各有 cline_session.jsonl,接 BaiZe 2B 需 OpenAI-compatible API(llama-server/vllm/sglang)→配 --model baize-2b-local;L3 TB 89题 Docker 沙盒同理;CPU llama-server 可服务但 agentic 多轮交互极慢(~30s/轮) ⑦待决策建议:①L4 先用 CPU llama-server smoke 1 个 designflow 任务(验证 pipeline)②L3 等 v3/v4 L2 完成后 CPU smoke TB 5 题 ⑧四层报告更新:header iter≈164k,L2 badge 35→61/100,#1962 动作含 L3/L4 调研结论 ⑨📦TASK≈27KB✅/MEMORY≈29KB✅·四层评测 · L1=58.13%@160k L2=v3 61/100运行中 L3=空白(调研完) L4=61任务待接 · 本轮动作：v3监控+L3/L4调研+报告更新·未完成指令：有(L2 v3 eval 运行中,等 GSM8K+MMLU 结果)⇒WAITING:0。
-> 2026-11-11 13:5x #1961: **L2 v3 进度监控+v4 脚本准备轮·训练健康 iter163460 step~7s<7.4s✅·L2 GSM8K v3 35/100 运行中🟡·v4 脚本已备✅**·**动作**：①git pull --rebase(同步✅,Already up to date) ②研究日报 2026-11-11：无 pretrain 新增可用建议(已确认,不凑数) ③L2 v3 进度：GSM8K 35/100(~27s/it,ETA~30min)→MMLU 排队(~53min)→总ETA~15:00 ④L2 v4 脚本准备：baize_l2_eval_160k_v4.sh(HumanEval 0-shot/MBPP 0-shot/hendrycks_math_algebra 4-shot/bbh_cot_fewshot_boolean_expressions 3-shot,各 limit=100,CPU llama-server port=8083,等v3完成后自动启动) ⑤L4 designflow 盘点：cline_eval/ 61 个任务,run_one.sh 用 cline harness,当前配 deepseek-v4-pro-cloud,接 BaiZe 2B 需本地 GPU 服务(vllm/sglang) ⑥训练健康确认：iter163460,step7003-7215ms(均7100ms)<7.4s✅,loss2.039-2.051,0NaN/0skip,GPU 8卡94-100%/75GB ⑦四层报告更新:L2 v3 进度+L2 v4 计划 ⑧📦TASK≈27KB✅/MEMORY≈26KB✅·四层评测 · L1=58.13%@160k L2=v3 35/100运行中 L3=空白 L4=未接 · 本轮动作：v3进度监控+v4脚本准备+L4盘点·未完成指令：有(L2 v3 eval 运行中,等 GSM8K+MMLU 结果)⇒WAITING:0。
+> 📦 #1961–#1964（11-11 13:5x→14:2x, L2 v3进度监控+v4脚本准备+L3/L4调研+GSM8K=0%诊断定案+四层报告归位·训练step<7.4s✅）→ daily-memories/2026-11-11.md；**结论**：GSM8K=0%是真能力问题(数据缺math/code,退化重复"1"),L3/L4调研完成(designflow 61任务/TB 89题需本地API),四层报告归位run/reports/。需要时再读。
 > 📦 #1959–#1960（11-11 10:0x→13:3x, 四层评测启动+L2 v2崩溃修复+v3重评启动·训练step<7.4s✅）→ daily-memories/2026-11-11.md；**结论**：L2 v2 MMLU崩溃=llama-server不返回token_logprobs→v3改用gguf_lmeval_run.py logit_bias。需要时再读。
 > 📦 #1943–#1958（11-11 06:28→09:44, 论文§4.6刷新轮+160k eval交付+GGUF转换修复·训练step<7.4s✅）→ daily-memories/2026-11-11.md；需要时再读。
 
@@ -72,6 +109,26 @@ WAITING: 0（🔴 2026-11-11 用户令「四层评测拿更好结果」执行中
 
 
 > 📦 §#1043–#1801（11-01→11-09, v4/v5/v6 eval监控+anomaly调查+100k eval交付, 共~800轮）→ daily-memories/2026-11-{01..09}.md & run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论汇总**：①100k eval 10/10 ckpt harness Avg 51.50→57.75%已交付 ②anomaly调查=口径差异(结论A):stale results.json缺piqa致低估37.4%,补全后Avg7=55.96% ③v4旧二进制回归致sciq=0.44(修复后0.88) ④llama.cpp PR#31703修复混合架构权重错位 ⑤S1训练全程健康0NaN/0skip,loss~2.05-2.16,ckpt iter_38000→138000. 需要时再读 daily-memories。
+
+---
+
+## 待决策（等用户拍板）
+
+### P2-001: L2/L3 评测瓶颈 — llama.cpp SSM bug + 早期训练（2026-11-12 #2063 更新 · HF五重验证完成）
+- **现状**：160k ckpt(25%训练) L2 评测：llama.cpp 全 0%（SSM 生成 bug）。**🟢 HF transformers 五重验证完成**：HumanEval=15.0%(3/20) + GSM8K=10.0%(1/10) + MBPP=5.0%(1/20) + BBH=3.3%(1/30) + MATH=0.0%(0/10)，生成 Avg5集=6.66%。MMLU=23.16%(≈随机25%,MC不受生成bug影响=纯能力不足)。L3 TB smoke 0/2(llama.cpp生成退化)。
+- **根因定案（HF五重验证后）**：
+  1. **llama.cpp SSM 生成 bug（主因）**：PR #31703 修复了权重映射，但生成仍退化(repetition loop)。HF transformers 生成正常，证明模型权重/SSM 计算正确。**修复路径：L2/L3 评测应用 HF transformers/vLLM 替代 llama.cpp**。
+  2. **数据配比不足**：code 19% + math 7% = 26%。HF 显示 code 生成有效(15%) + math 有基础能力(10%) 但不足。MATH=0% 是唯一 HF 也=0% 的任务(MATH-500 难度远超 2B@25%训练)。
+  3. **训练早期(25%)**：模型在 stable phase(lr=1e-3 恒定)，尚未进入 instruction-SFT/decay。MMLU≈随机说明知识能力未建立。
+- **L3/L4 资源调查（#2063 新增）**：
+  - L3：无可用 GPU 做 vLLM-based 评测(.29 pretrain 8×100%, .12 vision R9 8×100%, .17 SSH timeout)。vLLM/SGLang 未安装在 .29/.12。CPU HF 太慢(multi-turn agentic)。
+  - L4：EDA eval 工具在 `/nasdata/app.e0031982/code/eda_fastmcp/`(.15 本地,非 NFS 共享)，SSH .15/.17 均 timeout。
+- **建议（🚫 不自行改生产配置）**：
+  1. **短期(当前~350k,50%)**：维持现状继续监控。每 20k ckpt 跑 L1+L2(HF)，观察 MMLU 是否从 25% 起步上升、生成能力是否随训练改善。
+  2. **评测改进**：L2 已切换到 HF transformers（五重验证完成）。L3 需 GPU 窗口(vLLM)或等 SSH .17 恢复。L4 需 SSH .15 恢复。
+  3. **中期(350k~decay前)**：若 MMLU 仍≈25%，考虑 decay phase 增加 code/math 占比(从 6% 提到 15-20%)。
+  4. **长期**：L3 agentic 需 post-train SFT/RL（posttrain 线负责）；L4 需运维恢复 .15/.17 网络。
+- **需要的输入**：用户裁定 ① 维持现状等 350k 再判 ② 提前调整 decay phase 配比 ③ 等 .15/.17 SSH 恢复后接 L4 ④ 等 700k 训完在 post-train 阶段补 L3。
 
 ---
 

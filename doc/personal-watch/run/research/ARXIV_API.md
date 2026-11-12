@@ -2241,3 +2241,59 @@ python3 research/arxiv_fetch.py --query 'cat:cs.CL AND abs:"agent"' --max-result
 - **OpenAlex 语法坑**：`filter=doi:10.48550/arxiv.X|doi:10.48550/arxiv.Y` 会被拒 **`400 Invalid query parameters`**（「OR between filters not supported」）⇒ **只能逐条串行**（`/works/https://doi.org/10.48550/arxiv.<ID>`），间隔 2s。本轮 3/3 `200`：33,665 / 8,059 / 23,690（查询日 2026-11-11）。
 - **OpenAlex 机构字段不可信（实例）**：GPT-3 `authorships` 31 位中有 30 位被记为 `Johns Hopkins University`（实为 OpenAI）⇒ **不采用**其机构映射，本线只记「发表时机构（未逐位核验）」或不填。
 - **X（只读）通道**：必须显式带代理 `-x http://127.0.0.1:7897`（本线 shell 不继承 `~/.profile`）；`x.com` **200 / 0.79s**、出口 IP `178.249.213.185`；`syndication.twitter.com/srv/timeline-profile/screen-name/<h>` → **`429`**（未绕过）。登录前 profile 页内嵌 timeline JSON 可解析 `full_text` / `created_at_ms`（约 8–9 条），但**正文含转义引号会被截断** ⇒ 引用前须用单条推文页 `og:title` 核作者，原文**两处一致**才可用。工具：`research/classic/x_fetch.py`。
+
+## §9.154 · 2026-11-12 06:00 CST（AM 轮 · A 轨扫描 + B 轨第十轮）
+
+- **批次未刷新**：仍 `2026-11-10`（最新 `published=2026-11-10T18:59:54Z`）；但 `totalResults` 较 03:0x 上升：`cs.CL` 125,161 → **125,187**（+26）/ `cs.CV` 213,025 → **213,062** / `cs.LG` 298,625 → **298,685** / `cs.AI` 212,361 → **212,409** / `cs.SE` 30,979 → **30,986**（索引继续回填，非新批）。
+- **取数**：单分类 5 查询 **5/5 `200` + `application/atom+xml; charset=utf-8`**（1.19–4.70s，间隔 ≥3.2s）；merged **303** / seen **4** / fresh **299**（`raw/2026-11-12-am-candidates-r154.json`；脚本 `raw/candidates_r154.py`）。
+- **A 轨额度**：当日已 5/5（00:0x + 03:0x 两轮用满）⇒ 本轮**不超额**；5 条强候补写入 `SEEN.md`（状态=候选）+ 日报附录：`2611.13713` RTL/synthesis agents · `2611.13931` TAPCO-G · `2611.13543` attention surgery sanity checks · `2611.13925` OpenRE-Bench · `2611.14285` LM-SimBench。
+- **B 轨元数据**：arXiv API `id_list=2307.09288,2310.03744,2405.15793,2305.10601` **`200` + `atom+xml`**（13,172 B）；会议取自 `arxiv:comment`（ToT = `NeurIPS 2023 camera ready`；LLaVA-1.5 = `Camera ready, CVPR 2024 (highlight)`），Llama 2 无 comment、SWE-agent comment 仅给项目地址 ⇒ 由 OpenAlex 定。
+- **OpenAlex 4/4 `200`**（串行 2s）：19,635（Llama 2，source=arXiv）/ 3,281（LLaVA-1.5，CVPR pp.26286–26296，DOI `10.1109/cvpr52733.2024.02484`）/ 1,502（SWE-agent，NeurIPS pp.50528–50652，DOI `10.52202/079017-1601`）/ 3,112（ToT，NeurIPS pp.11809–11822，DOI `10.52202/075280-0517`）。查询日 **2026-11-12**。
+- **X（只读）**：经 `-x http://127.0.0.1:7897` 实测 `x.com` **200 / 0.56s**、出口 `178.249.213.185`；7 个 profile 全 `200`（`jyangballin` / `KarlPertsch` / `imhaotian` / `ShunyuYao12` / `peteflorence` / `DannyDriess` / `tri_dao`）；`https://x.com/KLieret` **200**（`og:title` + `og:description` 自证身份）⇒ 新核验 1 个。
+- **⚠️ 新口径坑（重要）**：`x_fetch.py` 从 profile 内嵌 timeline 解析出的条目**会混入他人推文** —— 本轮两条拟引用经 `x.com/<handle>/status/<id>` 的 `og:title` 核对分别显示 `Mark Müller (@mnmueller)` 与 `Mercor (@mercor)`，**与预期作者不符 ⇒ 未采用**。今后每条引用必须做「推文页 `og:title` 作者 + `og:description` 正文」双核验，且正文要与 profile `full_text` 互校。
+- **单条推文页 curl 坑**：`https://x.com/<handle>/status/<id>` 直接 GET 返回 **307**（`B=0`）⇒ 必须 `curl -sL`；`og:description` 部分推文存在、部分缺失（缺则正文无法二次核验 ⇒ 不用）。
+
+## §9.155 · 2026-11-12 09:00 CST（加轮 · A 轨重扫 + B 轨第十一轮）
+
+- **批次未刷新**：`cs.CL` **125,187** / `cs.CV` **213,062** / `cs.LG` **298,685** / `cs.AI` **212,409** —— 与 §9.154（06:00）**逐字节同值** ⇒ 公告批仍 `2026-11-10`。
+- **⚠️ 429 实例（本线自伤）**：`cs.SE` 查询三次重试均 **`429 Too Many Requests`**，原因是同一时刻另有一条 `id_list` 请求并发打在 `/api/query` 上（本线自己在两处同时取数）⇒ 脚本 `raw/candidates_r155.py` 退出、`raw/2026-11-12-mid-candidates-r155.json` **未生成**。**结论：`/api/query` 必须全局串行，且与后台脚本共用同一个 3s 限速桶；不要在扫描运行时另起 curl。**
+- **B 轨元数据**：`id_list=2407.21783,2212.06817,1706.03741,2009.01325` **`200` + `application/atom+xml; charset=utf-8`**（73,338 B；首次提交 2024-07-31 / 2022-12-13 / 2017-06-12 / 2020-09-02；最新 v3 / v2 / v4 / v3）。
+- **OpenAlex 4/4 `200`**（串行）：23,796（Llama 3，source=arXiv，无会场）/ 2,747（RT-1，**RSS 2023**，DOI `10.15607/rss.2023.xix.025`）/ 1,643（Christiano，`locations` 含 `neural information processing systems` → `papers.nips.cc/paper/7017`）/ 945（Stiennon，arXiv `comments` = `NeurIPS 2020`）。
+- **X（只读）**：`https://x.com` **200 / 0.86s**、`https://x.com/ShunyuYao12` **200 / 0.76s**、出口 `178.249.213.185`；`RichardSSutton` / `_albertgu` / `_jasonwei` 三个 profile **200**；`x.com/janleike` **200**（`og:title` = `Jan Leike (@janleike) on X`，`og:description` 未渲染）、`x.com/paulfchristiano` **200**（bio 自证 ARC）、`x.com/nisanstiennon` **404**。
+- **再次确认 profile timeline 混入他人推文**：`_albertgu` 的解析结果里出现了 Sutton 的 `2119142310894334262`（同一 `full_text`）⇒ 引用前必须开单条推文页核 `og:title`（§9.154 的纪律继续有效）。
+- **推文正文截断实例**：`x.com/_jasonwei/status/2120630417158250953` 的 `og:description` 以 `…` 结尾（profile `full_text` 同样截断）⇒ 长贴类推文在登录前**拿不到全文**，只能放弃（V12 未采用）。
+
+## §9.156 · 2026-11-12 12:00 CST（加轮 · A 轨重扫（补测 cs.SE）+ B 轨第十二轮 + 第 5 封信）
+
+- **批次未刷新**：`cs.CL` **125,187** / `cs.CV` **213,062** / `cs.LG` **298,685** / `cs.AI` **212,409** —— 与 §9.154（06:00）/ §9.155（09:00）**逐字节同值** ⇒ 公告批仍 `2026-11-10`。
+- **`cs.SE` 429 已闭合**：本轮单分类 5 查询 **5/5 `200` + `application/atom+xml; charset=utf-8`**（3.08s / 2.20s / 4.58s / 2.97s / 1.98s，间隔 ≥3.2s），`cs.SE` **`200`**、`totalResults=30,986`（与 06:00 同值）⇒ 上次的 429 是**并发自伤**，串行后恢复（**不是**接口封禁）。
+- **A 轨结果**：merged **303** / seen **9** / fresh **294**；当日额度 5/5 已满 ⇒ **0 新收**；产物 `raw/2026-11-12-pm-candidates-r156.json`（脚本 `raw/candidates_r156.py`）。
+- **B 轨元数据**：`id_list=2406.12045,2401.14185` **`200` + atom**（5,114 B；τ-bench 2024-06-17 / TDFNet 2024-01-25）；`id_list=2507.20534` **`200` + atom**（14,399 B；v2，首发 2025-07-28、更新 2026-02-03）。
+- **⚠️ 任务书示例更正**：`2401.14185` 实测 = `TDFNet: An Efficient Audio-Visual Speech Separation Model with Top-down Fusion`（cs.SD，Samuel Pegg / Kai Li / Xiaolin Hu，OpenAlex 被引 **3**）⇒ **与 Kimi / Moonshot 无关**；改用 `2507.20534`（Kimi K2）。
+- **Crossref `10.1145/203330.203343` `200`**：TD-Gammon，CACM **38(3):58–68**，1995-03（作者 Gerald Tesauro，独著）。
+- **OpenAlex（串行 2s，查询日 2026-11-12）**：τ-bench `2406.12045` **1,198**（source=arXiv）/ Kimi K2 `2507.20534` **1,410**（source=arXiv）/ TD-Gammon CACM **1,680** / 1994 Neural Computation `10.1162/neco.1994.6.2.215` **823**（并取到**完整摘要**，本线只引摘要原文）。
+- **Sora 官方页不可达（如实记）**：`https://openai.com/index/video-generation-models-as-world-simulators/` 与 `https://openai.com/research/...` 直连 / 显式代理 / Safari UA 均 **`403`**；Wayback `403`（`Just a moment...`）；`r.jina.ai` **`401`**（匿名 IP 被拒）⇒ **正文未取到**，条目只写标题级信息，**不引任何数字**，被引记「未查（无 DOI）」。
+- **X（只读）**：⚠️ **本 shell 未继承 `HTTP(S)_PROXY`** ⇒ 直连 `x.com` **`000`**、显式 `--proxy http://127.0.0.1:7897` **`200`**（`mihomo.service` active 23h）⇒ **不是 proxy_down**；`x_fetch.py` 抓 `billpeeb` / `_tim_brooks` **2/2 `200`**（bio 分别 `head of sora @openai` / `superintelligence @ Meta`）。
+- **`research.ibm.com/people/t/tesauro/` → `308` → `https://research.ibm.com/people`**（124,911 B，通用页无 `mailto:`、无 X 链接）⇒ Tesauro 邮箱与 X 均记「未找到」。
+- **发信**：Nisan Stiennon `SENT OK 12:04:55`；正文 `wc -w` = **212 词**（规格 ≤200，**超 12 词**）⇒ 已如实记账；纪律新增「发送前先 `wc -w`」。
+
+## §9.157 · 2026-11-12 15:00 CST（时窗轮 · A 轨重扫 + B 轨第十三轮 + 第 6/7 封信）
+
+- **批次仍未刷新**：单分类 5 查询 **5/5 `200` + `application/atom+xml; charset=utf-8`**（7.95s / 3.60s / 9.19s / 4.57s / 13.57s，串行间隔 ≥3.2s），`totalResults` = `cs.CL` **125,187** / `cs.CV` **213,062** / `cs.LG` **298,685** / `cs.AI` **212,409** / `cs.SE` **30,986** —— 与 §9.154 / §9.155 / §9.156 **逐字节同值** ⇒ 公告批仍 `2026-11-10`。
+- **A 轨结果**：merged **410** / seen **13** / fresh **397**；当日额度 5/5 已满 ⇒ **0 新收**；产物 `raw/2026-11-12-15h-candidates-r157.json`（脚本 `raw/candidates_r157.py`，日志 `/tmp/r157/cand.log`）。
+- **B 轨元数据（arXiv `id_list`）**：`2310.16944,2405.21060,2307.08691,2308.11030` → **`200` + atom**（9,704 B）；`2305.18290,2310.16944` → **`200` + atom**（5,938 B）；`2307.08691,2405.21060,2305.18290,2308.11030` → **`200` + atom**（9,862 B）。
+- **⚠️ 更正（候选池错误 ID）**：`2310.16944` 实测 = **`Zephyr: Direct Distillation of LM Alignment`**（Tunstall et al., 2023-10-25, cs.LG），**不是 DPO**；DPO 真实 ID = **`2305.18290`**（v3 / 2024-07-29）⇒ 已按实测收录，🚫 不沿用错误 ID。
+- **OpenAlex（查询日 2026-11-12，4/4 `200`）**：DPO **3,123**（conference-paper，NeurIPS 会场 DOI `10.52202/075280-2338`，pp. 53728–53741）· Mamba-2 `2405.21060` **1,003**（preprint；arXiv `comment` = `ICML 2024`）· FlashAttention-2 `2307.08691` **1,844**（preprint，无会场）· Ramulator 2.0 `2308.11030` **185**（article，IEEE CAL **23(1):112–116**，DOI `10.1109/LCA.2023.3333759`）。
+- **X（只读）**：直连 `x.com` **`000`** / 显式 `--proxy http://127.0.0.1:7897` **`200`**（代理在线）⇒ 3 个 profile **3/3 `200`**（`_onurmutlu_` / `archit_sharma97` / `rm_rafailov`）；**2 条拟引用推文经单条页 `og:title` 核验为他人推文**（`@koraykv` / `@Shalev_lif`）⇒ V13 / V14 **作废**；**0 follow**（写操作需登录态）。
+- **发信 2 封（均 `SENT OK 2026-11-12 15:03:05`）**：Archit Sharma（`2305.18290`，英文 **197 词**，`architsh@stanford.edu`）· Onur Mutlu（`2308.11030`，英文 **177 词**，`omutlu@gmail.com`）；**发送前 `wc -w` 均已核**（落实 12:00 教训）。
+
+## §9.158 · 2026-11-12 18:00 CST（时窗轮 · A 轨重扫 + B 轨第十四轮 + 第 8/9/10 封信）
+
+- **批次仍未刷新**：单分类 5 查询 **5/5 `200` + `application/atom+xml; charset=utf-8`**（6.78s / 3.34s / 2.02s / 3.38s / 2.65s，串行间隔 ≥3.2s），`totalResults` = `cs.CL` **125,187** / `cs.CV` **213,062** / `cs.LG` **298,685** / `cs.AI` **212,409** / `cs.SE` **30,986** —— 与 06:00 / 09:00 / 12:00 / 15:00 **逐字节同值** ⇒ 公告批仍为 `2026-11-10`。
+- **A 轨结果**：merged **410** / seen **13** / fresh **397**；当日额度 5/5 已满 ⇒ **0 新收**；产物 `raw/2026-11-12-18h-candidates-r158.json`（脚本 `raw/candidates_r158.py`）。
+- **B 轨元数据（arXiv `id_list`）**：`2310.16944,2405.14734,2208.01040` → **`200` + atom**（7,639 B / 3 条；Zephyr v1 2023-10-25 · SimPO v3 2024-11-01 · CircuitNet v4 2022-09-01）。
+- **B 轨标题检索（补核 ID 是否一手）**：`ti:"CircuitNet"` → **`200` + atom**（1 条 = `2208.01040v4`）；`ti:"Simple Preference Optimization"` → **`200` + atom**（1 条 = `2405.14734v3`）。
+- **OpenAlex（查询日 2026-11-12，4/4 `200`）**：Zephyr `2310.16944` **867**（type=`preprint`，无会场 DOI）· SimPO `2405.14734` **560**（type=`conference-paper`，会议 DOI `10.52202/079017-3946`，pp. **124198–124235**）· CircuitNet arXiv-DOI **44**，其期刊 DOI `10.1007/s11432-022-3571-8`（Sci China Inf Sci **65(12)**）亦 **44**（type=`other`）。
+- **《The Bitter Lesson》**：`http://www.incompleteideas.net/IncIdeas/BitterLesson.html` **`200` / 7,297 B**；页面日期 `March 13, 2019`；首句逐字核对通过 ⇒ **无被引口径，记「未查」**（博客条目，单列）。
+- **X（只读）**：直连 `x.com` **`000`** / 显式 `--proxy http://127.0.0.1:7897` **`200`**（代理在线）⇒ profile **3/3 `200`**（`danqi_chen` / `natolambert` / `_lewtun`）；单条推文页 **3/3 `200`**，其中 **2 条 `og:title` 为他人**（`@esonghori2` / `@deanwball`）⇒ 记 V15/V16 作废，**不采用**。
+- **发信 3 封（均 `SENT OK`）**：Danqi Chen `18:06:04`（`2405.14734`，中文 **296** 字）· Yibo Lin `18:06:07`（`2208.01040`，中文 **262** 字）· Nathan Lambert `18:06:13`（`2310.16944`，英文 **178** 词）；**发送前字数/词数均已核**。

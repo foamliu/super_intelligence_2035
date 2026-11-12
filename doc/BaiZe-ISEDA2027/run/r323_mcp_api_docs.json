@@ -1,0 +1,74 @@
+{
+  "EmyLPPHeader.getPriority": {
+    "api_type": "method",
+    "raw_desc": "`getPriority`()\n**`getPriority() -> emyInt4`** Get priority value of the EmyLPPHeader\n\nReturns\n**out**emyInt4\n\nExamples\n\n    >>> import pyAether\n    >>> lpp_header = pyAether.EmyLPPHeader.create(None, 1, 12)\n    >>> res = lpp_header.getPriority()\n"
+  },
+  "EmyLPPHeader.getPurposeNum": {
+    "api_type": "method",
+    "raw_desc": "`getPurposeNum`()\n**`getPurposeNum() -> emyPurposeNum`** Get purpose number of the EmyLPPHeader\n\nReturns\n**out**emyPurposeNum\n\nExamples\n\n    >>> import pyAether\n    >>> lpp_header = pyAether.EmyLPPHeader.create(None, 1, 12)\n    >>> res = lpp_header.getPurposeNum()\n"
+  },
+  "EmyLPPHeader.getTech": {
+    "api_type": "method",
+    "raw_desc": "`getTech`()\n**`getTech() -> emyTech`** Get the tech of the EmyLPPHeader\n\nReturns\nThe object of the emyTech\n\nExamples\n\n    >>> import pyAether\n    >>> lpp_header = pyAether.EmyLPPHeader.create(tech, 2001, 12)\n    >>> res = lpp_header.getTech()\n"
+  },
+  "EmyLPPHeader.isFilled": {
+    "api_type": "method",
+    "raw_desc": "`isFilled`()\n**`isFilled() -> emyBoolean`** Check whether the EmyLPPHeader is filled\n\nReturns\nReturns True if the EmyLPPHeader is filled\n\nExamples\n\n    >>> import pyAether\n    >>> lpp_header = pyAether.EmyLPPHeader.create(None, 1, 12)\n    >>> res = lpp_header.isFilled()\n"
+  },
+  "EmyLPPHeader.setFilled": {
+    "api_type": "method",
+    "raw_desc": "`setFilled`(*arg2=True*)\n**`setFilled(emyBoolean: =True)`** Turn the EmyLPPHeader to filled\n\nParameters\n**emyBoolean**optional default value is True.\n\nExamples\n\n    >>> import pyAether\n    >>> lpp_header = pyAether.EmyLPPHeader.create(None, 1, 12)\n    >>> lpp_header.setFilled()\n"
+  },
+  "EmyLPPHeader.setMaskNum": {
+    "api_type": "method",
+    "raw_desc": "`setMaskNum`(*color*)\n**`setMaskNum(color: emyInt4)`** Sets maskNum value to the EmyLPPHeader\n\nParameters\n**color**emyInt4\n\nExamples\n\n    >>> import pyAether\n    >>> lpp_header = pyAether.EmyLPPHeader.create(None, 1, 12)\n    >>> lpp_header.setMaskNum(25)\n"
+  },
+  "EmyLPPHeader.setPacketName": {
+    "api_type": "method",
+    "raw_desc": "`setPacketName`(*arg2=None*)\n**`setPacketName(: emyChar=None)`** Sets packet name to the EmyLPPHeader\n\nParameters\n**packetName: emyChar,**\nThe packet name to set, optional default value is None.\n\nExamples\n\n    >>> import pyAether\n    >>> lpp_header = pyAether.EmyLPPHeader.create(None, 1, 12)\n    >>> lpp_header.setPacketName(\"packet\")\n"
+  },
+  "EmyLPPHeader.setPriority": {
+    "api_type": "method",
+    "raw_desc": "`setPriority`(*arg2=0*)\n**`setPriority(emyInt4: =0)`** Sets priority value to the EmyLPPHeader\n\nParameters\n**priority: emyInt4**\nThe priority value to set, optional default value is 0.\n\nExamples\n\n    >>> import pyAether\n    >>> lpp_header = pyAether.EmyLPPHeader.create(None, 1, 12)\n    >>> lpp_header.setPriority(1)\n"
+  },
+  "EmyNtlUtil.checkViewList": {
+    "api_type": "method",
+    "raw_desc": "*static* `checkViewList`(*ntlViewList*, *ntlStopList*, *viewListList*, *stopViewNames*, *viewNames*, *ntlMsg*)\n**`checkViewList(ntlViewList: emyStringArray, ntlStopList: emyStringArray, viewListList: emyStringArray, stopViewNames: emyStringArray, viewNames: emyArray_emyScalarName, ntlMsg: emyString) -> bool`**\n\nGets the stopViewNames and viewNames with the specified ntlViewList, ntlStopList and viewListList.\n\nReturns True if successful, otherwise returns False.\n\nExamples\n\n    >>> ntlViewList = pyScript.emyStringArray()\n    >>> ntlViewList.append(\"ntlview1\")\n    >>> ntlStopList = pyScript.emyStringArray()\n    >>> viewListList = pyScript.emyStringArray()\n    >>> stopViewNames = pyScript.emyStringArray()\n    >>> viewNames = pyScript.emyArray_emyScalarName()\n    >>> ntlMsg = pyScript.emyString(\"\")\n    >>> pyScript.EmyNtlUtil.checkViewList(ntlViewList, ntlStopList, viewListList, stopViewNames, viewNames, ntlMsg)\n"
+  },
+  "MdePlatParamSweepAddSpecificPoints.getExclusionList": {
+    "api_type": "method",
+    "raw_desc": "`getExclusionList`()\n**`getExclusionList() -> list[str]`**\n\nGet the exclusion list.\n\nExamples\n\n    >>> import pyAether as pyScript\n    >>> addSpecificPoints = pyScript.MdePlatParamSweepAddSpecificPoints([\"1\", \"3\"], [\"2\"])\n    >>> addSpecificPoints.getExclusionList()\n"
+  },
+  "MdePlatParamSweepCenterSpan.getCenterValue": {
+    "api_type": "method",
+    "raw_desc": "`getCenterValue`()\n**`getCenterValue() -> str`**\n\nGet the center value.\n\nExamples\n\n    >>> import pyAether as pyScript\n    >>> stepmode = pyScript.MdePlatSweepStepModeAuto(\"12\")\n    >>> centerspan = pyScript.MdePlatParamSweepCenterSpan(\"1\", \"10\", stepmode, [\"12\", \"13\"], [\"8\"])\n    >>> centerspan.getCenterValue()\n"
+  },
+  "MdeSpeOutput.exprType": {
+    "api_type": "property",
+    "raw_desc": "**`exprType`**\n\nGet the expression type of the output.\n\nExamples\n\n    >>> import pyAether as pyScript\n    >>> output = pyScript.MdeSpeOutput()\n    >>> output.exprType\n"
+  },
+  "aeIpcProcess.readline": {
+    "api_type": "method",
+    "raw_desc": "`readline`(*timeout=None*, *isBlock=False*, *isByLine=False*)\n**`readline(timeout: int = None, isBlock: bool = False, isByLine: bool = False) -> str`**\n\nReads the output data with the specified timeout.\n\nParameters\\**timeout**int or None, default 1e6 seconds.\n**isBlock**bool, whether to block reading.\n**isByLine**bool, output data by line.\n\nReturns\n**out**str, the output string data.\n\nExamples\n\n    >>> import pyAether as pyScript\n    >>> p = pyScript.aeIpcBeginProcess(\"ping 127.0.0.1\")\n    >>> p.readline()\n    >>> pyScript.aeIpcKillProcess(p)\n"
+  },
+  "aeIpcProcess.wait": {
+    "api_type": "method",
+    "raw_desc": "`wait`(*interval=30*, *timeout=1000000.0*)\n**`wait(interval: float = 30, timeout: float = 1000000) -> None`**\n\nSuspends the parent process until the sub process terminates.\n\nParameters\n**interval**float, message interval, default 30 seconds.\n**timeout**float, max wait time, default 1000000 seconds.\n\nExamples\n\n    >>> import pyAether as pyScript\n    >>> p = pyScript.aeIpcBeginProcess('sleep 30')\n    >>> p.wait(3, 35)\n"
+  },
+  "emyAttrDisplay.create": {
+    "api_type": "method",
+    "raw_desc": "*static* `create`(*object*, *attribute*, *layerNum*, *purposeNum*, *origin*, *alignment*, *orient*, *font*, *height*)\n**`create(object: emyObject, attribute: emyAttrType, layerNum: emyLayerNum, purposeNum: emyPurposeNum, origin: emyPoint, alignment: emyTextAlign, orient: emyOrient, font: emyFont, height: emyDist) -> emyAttrDisplay`**\n\nCreates an emyAttrDisplay that shows the designated attribute of the designated object.\n\nParameters\n**object**: emyNet, emyInst, emyTerm, emyInstTerm, emyAssignment, or emyDesign.\n**attribute**: the owner object's attribute type.\n**layerNum**: layer number.\n**purposeNum**: purpose number.\n**origin**: origin location.\n**alignment**: text alignment.\n**orient**: text orientation.\n**font**: text font style.\n**height**: text height in user units.\n\nExamples\n\n    >>> import pyAether as pyScript\n    >>> display = pyScript.emyAttrDisplay.create(obj, pyScript.emyAttrType.name, 1, 12, origin, align, orient, font, 1.0)\n"
+  },
+  "emyTransformF.concat": {
+    "api_type": "method",
+    "raw_desc": "`concat`(*args*)\n**`concat(*args) -> emyTransformF`**\n\nConcatenate transforms.\n\nExamples\n\n    >>> import pyAether as pyScript\n    >>> t1 = pyScript.emyTransformF()\n    >>> t2 = pyScript.emyTransformF()\n    >>> t1.concat(t2)\n"
+  },
+  "emyTransformF.getXOffset": {
+    "api_type": "method",
+    "raw_desc": "`getXOffset`()\n**`getXOffset() -> emyFloat`**\n\nGet the X offset of the transform.\n\nExamples\n\n    >>> import pyAether as pyScript\n    >>> t = pyScript.emyTransformF()\n    >>> t.getXOffset()\n"
+  },
+  "emyTransformF.getYOffset": {
+    "api_type": "method",
+    "raw_desc": "`getYOffset`()\n**`getYOffset() -> emyFloat`**\n\nGet the Y offset of the transform.\n\nExamples\n\n    >>> import pyAether as pyScript\n    >>> t = pyScript.emyTransformF()\n    >>> t.getYOffset()\n"
+  }
+}

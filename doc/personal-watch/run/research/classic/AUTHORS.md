@@ -6,7 +6,7 @@
 > 🔴 **找 X 的铁律（不猜）**：只登记**能从可访问页面读到**的 handle（作者本人主页 `href`，并用 X 页 `og:description` 二次核对身份）；**读不到 = 写「未找到 X」**。
 > 🚫 不许猜 handle（猜错会 follow 到无关账号，比不 follow 更糟）。X.com 自 **2026-11-11 12:4x** 起经本机 Mihomo 代理**只读可达**；**follow 仍需登录态 ⇒ 未自动执行**（0 follow，未假装）。
 
-**本轮快照**：累计 **39** 人（第七轮 +5：David Silver / Oriol Vinyals / Sergey Levine / Chelsea Finn / Moo Jin Kim）｜已发信 **9**（Tri Dao · Shunyu Yao · Haoxing Ren · Jason Wei · Noah Shinn · Kaiming He · Haotian Liu · Karthik Narasimhan · **Moo Jin Kim**）｜X 已核验 **17**（`@tri_dao` / `@_albertgu` / `@ShunyuYao12` / `@edwardjhu` / `@jyangballin` / `@_jasonwei` / `@ilyasut` / `@RichardSSutton` / `@imhaotian` / `@ChunyuanLi` / `@karthik_r_n` / `@demishassabis` / `@koraykv` / **`@OriolVinyalsML` / `@svlevine` / `@chelseabfinn` / `@moo_jin_kim`**）｜X 未找到 **22**｜**X 可达（本机 Mihomo 7897，本轮 21:0x 复测 `x.com` `200` / 0.52s / 出口 `178.249.213.185`）**｜已 follow **0**（follow 需登录态 ⇒ 仍靠用户手动，见第二节）｜言论台账 **8 条**（V1–V8；完整可引用 **5** 条 = V1/V2/V4/V6/V8，V3/V5/V7 正文不完整**未采用**，V8 >30 天降级）
+**本轮快照**：累计 **61** 人（第八轮 +4：John Jumper / Igor Babuschkin / Danny Driess / Kimi Team；第九轮 +4：Team GLM / MiniMax / Karl Pertsch / Pete Florence；第十轮 +1：Kilian Lieret；第十一轮 +3：Jan Leike / Paul Christiano / Nisan Stiennon；**第十二轮 +3：Bill Peebles `@billpeeb` / Tim Brooks `@_tim_brooks` / Gerald Tesauro（未找到 X）**；**第十三轮 +3：Rafael Rafailov `@rm_rafailov` / Archit Sharma `@archit_sharma97` / Onur Mutlu `@_onurmutlu_`**；**第十四轮 +4：Danqi Chen `@danqi_chen` / Yibo Lin（未找到 X）/ Nathan Lambert `@natolambert` / Lewis Tunstall `@_lewtun`**）｜已发信 **19**（Tri Dao · Shunyu Yao · Haoxing Ren · Jason Wei · Noah Shinn · Kaiming He · Haotian Liu · Karthik Narasimhan · Moo Jin Kim · Danny Driess · Pete Florence · Karl Pertsch · Jan Leike · **Nisan Stiennon** · **Archit Sharma** · **Onur Mutlu** · **Danqi Chen** · **Yibo Lin** · **Nathan Lambert**）｜X 已核验 **35**（`@tri_dao` / `@_albertgu` / `@ShunyuYao12` / `@edwardjhu` / `@jyangballin` / `@_jasonwei` / `@ilyasut` / `@RichardSSutton` / `@imhaotian` / `@ChunyuanLi` / `@karthik_r_n` / `@demishassabis` / `@koraykv` / `@OriolVinyalsML` / `@svlevine` / `@chelseabfinn` / `@moo_jin_kim` / `@ibab` / `@DannyDriess` / `@Kimi_Moonshot` / `@ZhipuAI` / `@MiniMax_AI` / `@KarlPertsch` / `@peteflorence` / `@KLieret` / `@janleike` / `@paulfchristiano` / **`@billpeeb`** / **`@_tim_brooks`** / **`@rm_rafailov`** / **`@archit_sharma97`** / **`@_onurmutlu_`** / **`@danqi_chen`** / **`@natolambert`** / **`@_lewtun`**）｜X 未找到 **26**（61 人中 35 已核验）｜**X 可达（本机 Mihomo 7897；2026-11-12 12:0x 实测：需显式 `--proxy http://127.0.0.1:7897` —— 本 shell 环境未继承 `HTTPS_PROXY`，直连 `x.com` 返回 `000`、带代理返回 `200`；`x_fetch.py` 内部已默认走代理，2/2 `200`）**｜已 follow **0**（follow 需登录态 ⇒ 仍靠用户手动，见第二节）｜言论台账 **16 条**（V1–V16；V13/V14 与本轮 **V15/V16** 均经单条推文页 `og:title` 核验为**他人推文** —— V15 实为 `@esonghori2`、V16 实为 `@deanwball` ⇒ 作废不采用；本期 `voice_ready` 仍为 V2 / V4 两条，**本轮无新增合格言论**）
 
 
 ---
@@ -526,6 +526,298 @@
 
 ---
 
+### 40. John Jumper
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | John Jumper（美国人 ⇒ 信按英文写） |
+| 机构 | **Google DeepMind**（AlphaFold 一作 / 通讯；2024 诺贝尔化学奖共同得主） |
+| 代表论文 | AlphaFold（Nature 2021，DOI `10.1038/s41586-021-03819-2`，一作） |
+| 邮箱 | **未找到**（DeepMind 不公开个人邮箱；无本人主页可核） |
+| 主页 | **未找到本人页**（机构页 <https://deepmind.google/technologies/alphafold/> 为项目页） |
+| X 账号 | **未找到 X**（`x.com/JohnJumper` 实测 `200` 但 `og:description` = `19 followers · 7 following. Joined Dec 2008`、无 bio ⇒ **身份不可证，拒绝登记**，🚫 不猜） |
+| 状态 | 待跟踪（无邮箱、无可证 X ⇒ 本轮不发信、不 follow） |
+| 备注 | AlphaFold 的「把领域先验编码进结构」是 vision 线几何通道的参照；但**公开联系通道缺失** ⇒ 只作经典条目作者，不作本线沟通对象。 |
+
+### 41. Igor Babuschkin
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Igor Babuschkin（德国出生 ⇒ 信按英文写） |
+| 机构 | **River AI（CEO & 联合创始人）**· 曾任 xAI（Research & Engineering）· AlphaStar 发表时在 DeepMind |
+| 代表论文 | AlphaStar（Nature 2019，DOI `10.1038/s41586-019-1724-z`，二作） |
+| 邮箱 | **未找到**（无公开个人页/邮箱） |
+| 主页 | **未找到** |
+| X 账号 | **@ibab**（`x.com/ibab` `200`；bio = `CEO & Co-Founder @river_ai_inc. Previously @xAI, Research & Engineering`，与 AlphaStar 二作身份一致） |
+| 状态 | 待跟踪 · X 待 follow（无邮箱 ⇒ 不发信） |
+| 备注 | AlphaStar 联盟式 RL 的工程负责人之一；其言论对「多智能体训练/大规模 RL 工程」有参考价值，但**当前创业方向与本线偏离** ⇒ 只跟踪、不发信。 |
+
+### 42. Danny Driess
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Danny Driess（德国人 ⇒ 信按英文写） |
+| 机构 | **Physical Intelligence**（Research Scientist）· 曾任 Google DeepMind（Gemini × robotics） |
+| 代表论文 | π0（arXiv `2410.24164`，第三作）· PaLM-E（ICML 2023，一作） |
+| 邮箱 | **danny.driess@gmail.com**（来源：本人主页 `https://dannydriess.github.io/` 页内防爬写法 `danny dot driess at gmail dot com`，`HTTP 200` / 29,043 B 实测，按原样还原） |
+| 主页 | <https://dannydriess.github.io/>（实测 `200`） |
+| X 账号 | **@DannyDriess**（来源：本人主页 `href="https://twitter.com/DannyDriess"`；`x.com/DannyDriess` `200`，`<title>Danny Driess (@DannyDriess) / X</title>`） |
+| 状态 | **已发信**（2026-11-12 00:07 CST，B 轨第八轮；英文 191 词）· X 待 follow |
+| 备注 | 信问两个取舍：① 低数据域内（数万张图）flow matching 动作头 vs 离散 token 化，哪个更稳；② 动作块（action chunk）长度与异构动作空间（不同 arity 的 tool call）如何兼容。答复直接回填 zhulong 的动作接口消融。 |
+
+### 43. Kimi Team（Moonshot AI）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | **Kimi Team / Moonshot AI（团队署名，无单一作者）**；作者列表中含 **Jianlin Su**（见主表 #20） |
+| 机构 | Moonshot AI（月之暗面，北京） |
+| 代表论文 | Kimi k1.5（arXiv `2501.12599`，团队署名） |
+| 邮箱 | **未找到**（官方站未给研究联系邮箱；🚫 不用客服/商务邮箱冒充作者） |
+| 主页 | <https://www.kimi.com>（产品站；<https://www.moonshot.cn> 机构站） |
+| X 账号 | **@Kimi_Moonshot**（`200`；`<title>Kimi.ai (@Kimi_Moonshot) / X</title>`，官方账号，非个人） |
+| 状态 | 待跟踪 · X 待 follow（团队账号只作发布源，不发信） |
+| 备注 | long2short 与「RL 作为新 scaling 轴」是 zhulong 的直接参照；**团队账号的言论只作公司口径**，引用须标「Moonshot 官方账号」。 |
+
+### 44. Team GLM（智谱 AI · 团队署名）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Team GLM（GLM-4 论文的团队署名，共 **59** 位；一作 Aohan Zeng，含 Jie Tang / Juanzi Li / Minlie Huang / Yuxiao Dong） |
+| 机构 | 智谱 AI（Zhipu AI / 北京）· 部分作者挂清华大学 |
+| 代表论文 | ChatGLM / GLM-4（arXiv `2406.12793`，团队署名）· GLM-130B |
+| 邮箱 | **未找到**（官网只有商务/客服入口；🚫 不用客服邮箱冒充研究作者） |
+| 主页 | <https://github.com/THUDM>（GLM 系列代码与模型卡；`200` 未逐页核验） |
+| X 账号 | **@ZhipuAI**（**官方机构账号**，非个人；核验：<https://x.com/ZhipuAI> `200`，`<title>` = `ZhipuAI by BigModel (@ZhipuAI) / X`，`og:description` = `全部自研GLM模型架构`） |
+| 状态 | 待跟踪 · X 待 follow（机构号） |
+| 备注 | 机构号主要发产品与发布信息，**言论价值低于个人号**；若要请教 GLM-4 的中文配比细节，需先找到一作 Aohan Zeng 的当前主页/邮箱（本轮未找到公开研究邮箱 ⇒ **不发信**）。 |
+
+### 45. MiniMax（团队署名）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | MiniMax（团队署名，**按字母序**：Aonian Li · Bangwei Gong · Bo Yang …，共 **90** 位） |
+| 机构 | MiniMax（上海） |
+| 代表论文 | MiniMax-01（arXiv `2501.08313`，团队署名）· MiniMax-VL-01（同报告） |
+| 邮箱 | **未找到**（🚫 不用客服/商务邮箱） |
+| 主页 | <https://github.com/MiniMax-AI>（代码与模型开源入口） |
+| X 账号 | **@MiniMax_AI**（**官方机构账号**；核验：<https://x.com/MiniMax_AI> `200`，`<title>` = `MiniMax (official) (@MiniMax_AI) / X`，bio 指向 `Code: @MiniMax_Code`） |
+| 状态 | 待跟踪 · X 待 follow（机构号） |
+| 备注 | 关注点：线性注意力 + MoE 的长上下文工程口径；个人作者未逐一建档（90 人字母序，无声明的通讯作者）。 |
+
+### 46. Karl Pertsch
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Karl Pertsch（德国人 ⇒ 信按英文写） |
+| 机构 | **Physical Intelligence**（member of technical staff，主页自述「training robot foundation models」）；前 UC Berkeley / Stanford 博后 |
+| 代表论文 | Octo（arXiv `2405.12213`，三作 / 共同负责人，RSS 2024）· RT-2（arXiv `2307.15818`，作者之一） |
+| 邮箱 | **karl.pertsch@gmail.com**（来源：本人主页 `<a href="mailto:karl.pertsch@gmail.com">`，`HTTP 200` / 64,903 B 实测） |
+| 主页 | <https://kpertsch.github.io>（`200` / 64,903 B） |
+| X 账号 | **@KarlPertsch**（核验：主页 `href="https://twitter.com/KarlPertsch"`；<https://x.com/karlpertsch> `200`，`<title>` = `Karl Pertsch (@KarlPertsch) / X`，bio = `Robot Foundation Models @physical_int`） |
+| 状态 | **已发信**（2026-11-12 06:05 CST，英文 191 词，经典论文口径；见 `research/mail/发送记录.md`）· X 待 follow |
+| 备注 | **一份关系覆盖两条必读清单条目**（Octo + RT-2）；⚠️ 与 Danny Driess 同属 Physical Intelligence ⇒ 2026-11-12 该公司**当日 2 封**（00:07 Danny + 06:05 本封）**已达「同机构 ≤2 封/天」上限**，今日不再向 PI 发信。 |
+
+### 47. Pete Florence
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Pete Florence（美国人 ⇒ 信按英文写） |
+| 机构 | **Generalist AI**（联合创始人 & CEO）；前 Google DeepMind（Senior Research Scientist）；MIT CS PhD（导师 Russ Tedrake） |
+| 代表论文 | RT-2（arXiv `2307.15818`，54 位作者中第 13 位，核心作者之一）· RT-1 系列 · kPAM |
+| 邮箱 | **pete.florence@gmail.com**（来源：本人主页 `Email: <code>pete dot florence at gmail dot com</code>` 的防爬写法还原；`HTTP 200` / 47,238 B 实测） |
+| 主页 | <https://www.peteflorence.com>（`200` / 47,238 B） |
+| X 账号 | **@peteflorence**（核验：主页 `href="https://x.com/peteflorence"`；<https://x.com/peteflorence> `200`，`<title>` = `Pete Florence (@peteflorence) / X`，bio = `Co-Founder &amp; CEO @GeneralistAI`） |
+| 状态 | **已发信**（2026-11-12 03:1x CST，英文，经典论文口径；见 `research/mail/发送记录.md`） |
+| 备注 | RT-2 的「**动作 = 文本 token**」正是我们「agent 用文本 tool call 调 EDA 工具」的机器人版先例 ⇒ 问题集中在「离散分桶的精度损失」与「网页数据 vs 域内轨迹的混比」。 |
+
+### 48. Kilian Lieret
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Kilian Lieret（德国人 ⇒ 信按英文写） |
+| 机构 | **Meta Superintelligence**（X bio 自述「Meta Superintelligence, prev. Princeton」）；SWE-bench / SWE-agent 团队核心工程维护者 |
+| 代表论文 | SWE-agent（arXiv `2405.15793`，第 4 作者）· SWE-bench 多语/多模态版（维护者，见其 bio） |
+| 邮箱 | **未找到**（`klieret.github.io` 实测 `HTTP 404`；X bio 未挂邮箱 ⇒ 按纪律不写猜测地址） |
+| 主页 | 未找到（`klieret.github.io` 404，2026-11-12 实测） |
+| X 账号 | **@KLieret**（核验：① 来源 = John Yang 推文原文「Follow @KLieret for leaderboard updates」（`https://x.com/jyangballin/status/2115494796064403620`）；② <https://x.com/KLieret> 实测 `200`，`og:title` = `Kilian Lieret (@KLieret) on X`，`og:description` = `Meta Superintelligence, prev. Princeton. SWE-bench multilingual/multimodal, (mini-)SWE-agent, SWE-smith, CodeClash, ProgramBench, SWE-sweep` ⇒ 身份自证） |
+| 状态 | **待跟踪**（X 待 follow；无公开邮箱 ⇒ 不发信） |
+| 备注 | **harness 线的「榜单更新频率」信号源**：他负责 SWE-bench 系榜单维护，推文里常带「新模型进榜/新变体」的即时信息 ⇒ 这是「评测基准本身在变」的一手消息，比论文更早。⚠️ 已离开 Princeton 去 Meta，院校邮箱不可靠 ⇒ 只跟踪不写信。 |
+
+### 49. Jan Leike
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Jan Leike（德国人 ⇒ 信按英文写） |
+| 机构 | **Anthropic**（alignment / superalignment 方向；主页自述与主页 `publications.html` 可核）· 论文发表时为 OpenAI |
+| 代表论文 | Deep RL from human preferences（arXiv `1706.03741`，二作）· Learning to summarize from human feedback（arXiv `2009.01325`，作者）· InstructGPT 系工作（OpenAI 期间） |
+| 邮箱 | **jan@anthropic.com**（来源：本人主页 <https://jan.leike.name/> 的 `<a href="mailto:Jan%20Leike%20%3Cjan%40anthropic.com%3E">`，2026-11-12 09:0x 实测 `HTTP 200` / 6,411 B；**非 2017 年论文 PDF 旧地址**） |
+| 主页 | <https://jan.leike.name/>（`200` / 6,411 B）· 博客 <https://aligned.substack.com> |
+| X 账号 | **@janleike**（双证：① 主页 `href="https://twitter.com/janleike"` 且链接文字 `@janleike`；② <https://x.com/janleike> `200`，`og:title` = `Jan Leike (@janleike) on X`。⚠️ 该页 `og:description` 本轮未渲染 ⇒ bio 未取到，只登记 handle，不写 bio） |
+| 状态 | **已发信**（2026-11-12 09:04 CST，经典论文请教信第十三封；英文 199 词）· X 待 follow |
+| 备注 | **RLHF 这条线的「前史」作者**：2017 年偏好奖励 → 2020 年摘要偏好 → InstructGPT。信问三件可回填的事：① 工具调用短 episode（10–30 步）下，学到的奖励要多少标注密度才能胜过手写可验证奖励；② 小规模下 RM 瓶颈是容量还是标签噪声、最先出现的 reward hacking 形态；③ tie / 标注分歧如何聚合。⚠️ 与 Paul Christiano 同一篇论文 ⇒ **同篇论文本轮只发一封**（发给可核验邮箱的 Leike）。 |
+
+### 50. Paul Christiano
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Paul Christiano |
+| 机构 | **Alignment Research Center（ARC）**（Founder & Director；X bio 自述「Former Head of Safety @ CAISI. Previously led alignment at OpenAI.」） |
+| 代表论文 | Deep RL from human preferences（arXiv `1706.03741`，一作）· Learning to summarize from human feedback（arXiv `2009.01325`，末位） |
+| 邮箱 | **未找到**（个人站 <https://paulfchristiano.com/> 实测 `HTTP 200` / 57,044 B，但页内**无 `mailto:`**；只有 Google Scholar 链接 ⇒ 按纪律不写猜测地址） |
+| 主页 | <https://paulfchristiano.com/>（`200` / 57,044 B） |
+| X 账号 | **@paulfchristiano**（核验：<https://x.com/paulfchristiano> `200`，`og:title` = `Paul Christiano (@paulfchristiano) on X`，`og:description` = `Founder & Director of the Alignment Research Center. Former Head of Safety @ CAISI. Previously led alignment at OpenAI. Views my own.` ⇒ 身份自证。⚠️ 其个人站未挂 X 链接，来源为 X 页自证，非主页 `href`） |
+| 状态 | **待跟踪**（X 待 follow；无公开邮箱 ⇒ 不发信） |
+| 备注 | RLHF 思路的源头作者，但其公开表达偏 alignment 理论；对我们更直接的价值是**「奖励从哪来」的判断**，适合长期跟踪而非立刻请教（同篇论文已向 Leike 发信，🚫 不重复打扰）。 |
+
+### 51. Nisan Stiennon
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Nisan Stiennon |
+| 机构 | 未核验（个人站未写当前机构） |
+| 代表论文 | Learning to summarize from human feedback（arXiv `2009.01325`，一作） |
+| 邮箱 | **nisan+web@stiennon.com**（来源：本人站 <https://nisanstiennon.com/> 的 `<a href="mailto:nisan+web@stiennon.com">`，`HTTP 200` / 5,575 B 实测；**非 2020 年论文 PDF 旧地址**） |
+| 主页 | <https://nisanstiennon.com/>（`200` / 5,575 B；`www.` 同页同尺寸） |
+| X 账号 | **未找到 X**（`x.com/nisanstiennon` 实测 **`404`**，`og:title` = `User Profile Not Found - X｜404 Error` ⇒ 按令**不猜替代 handle、不登记**） |
+| 状态 | **已发信**（2026-11-12 12:04 CST，B 轨第十二轮；英文；⚠️ 实测 212 词，超 ≤200 规格 12 词，已如实记账） |
+| 备注 | 若 18:00 轮要发「偏好数据质量」方向的信，他是首选（RLHF 摘要范式的直接作者）；问题应聚焦**偏好数据集的构建与一致率**，而不是摘要任务本身。 |
+
+---
+
+### 52. Bill Peebles（William Peebles）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Bill Peebles（William Peebles） |
+| 机构 | OpenAI（X bio 自述 `head of sora @openai`） |
+| 代表论文 | Video generation models as world simulators（Sora 技术报告，2024，**无 arXiv**）· Scalable Diffusion Models with Transformers（DiT，2022） |
+| 邮箱 | **未找到**（本轮未核个人主页；🚫 不猜） |
+| 主页 | 未核验 |
+| X 账号 | **@billpeeb**（核验：`x_fetch.py` 实测 `200`，`<title>` = `Bill Peebles (@billpeeb) / X`，bio = `head of sora @openai 🇺🇸🇺🇸🇺🇸`） |
+| 状态 | **待跟踪**（X 待 follow；无公开邮箱 ⇒ 不发信） |
+| 备注 | Sora 负责人 ⇒ 视频生成 / 世界模型路线的**一手判断源**；⚠️ 官方页本机 403，其论文细节**只能等新发布或访谈**，🚫 不据传闻写。 |
+
+### 53. Tim Brooks
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Tim Brooks |
+| 机构 | Meta（X bio 自述 `superintelligence @ Meta`）· 前 OpenAI（Sora 共同负责人） |
+| 代表论文 | Video generation models as world simulators（Sora 技术报告，2024，**无 arXiv**）· InstructPix2Pix（2022） |
+| 邮箱 | **未找到**（本轮未核个人主页；🚫 不猜） |
+| 主页 | 未核验 |
+| X 账号 | **@_tim_brooks**（核验：`200`，`<title>` = `Tim Brooks (@_tim_brooks) / X`，bio = `superintelligence @ Meta`） |
+| 状态 | **待跟踪**（X 待 follow；无公开邮箱 ⇒ 不发信） |
+| 备注 | **已离开 OpenAI 转 Meta** ⇒ 任何涉 Sora 的发言均为「前负责人」视角，引用须标时间与身份变化，🚫 不可当成 OpenAI 现行口径。 |
+
+### 54. Gerald Tesauro
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Gerald Tesauro |
+| 机构 | IBM（论文发表时为 IBM Thomas J. Watson Research Center；**当前职位未核验**） |
+| 代表论文 | Temporal Difference Learning and TD-Gammon（CACM 1995，**独著**）· TD-Gammon, a Self-Teaching Backgammon Program（Neural Computation 1994） |
+| 邮箱 | **未找到**（旧主页 `research.ibm.com/people/t/tesauro/` 实测 **`308`** → 重定向到通用 `research.ibm.com/people`，页面无 `mailto:`） |
+| 主页 | 未核验（同上，已重定向到通用页） |
+| X 账号 | **未找到 X**（无可核个人页读到 handle ⇒ 按令不猜、不登记） |
+| 状态 | **待跟踪**（不发信） |
+| 备注 | 1995 年论文，PDF 上的邮箱已过 30 年 ⇒ 按令**必须**用当前机构主页邮箱，本轮拿不到 ⇒ 不发信；其方法论价值已通过 #45 条目落库。 |
+
+---
+
+### 55. Rafael Rafailov
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Rafael Rafailov |
+| 机构 | **Thinking Machines**（X bio 自述 `I work on RL at @thinkymachines`；论文发表时为 Stanford AI Lab，此前 Google DeepMind / UC Berkeley） |
+| 代表论文 | Direct Preference Optimization（DPO，arXiv `2305.18290`，**一作**） |
+| 邮箱 | **未找到**（个人主页 `rafaelrafailov.com` 直连与代理均 **`000`**；`cs.stanford.edu/~rafailov/` 实测 **`403`** ⇒ 按令**不猜、不写旧 PDF 地址**） |
+| 主页 | 未核验（同上不可达） |
+| X 账号 | **@rm_rafailov**（核验：`x_fetch.py` 实测 `200`，`<title>` = `Rafael Rafailov @ NeurIPS (@rm_rafailov) / X`，`og:description` = `I work on RL at @thinkymachines. Previously at @StanfordAILab @GoogleDeepMind @UCBerkeley`） |
+| 状态 | **待跟踪**（X 待 follow；无当前公开邮箱 ⇒ 不发信） |
+| 备注 | DPO 一作 ⇒ 「RM-free 偏好优化」的一手判断源。**同论文本轮只给二作 Archit Sharma 发信**（同论文 ≤1 封），一作留作回复后再评估。另注：其 X 时间线多为 **Thinking Machines 产品/推理基建**话题（Tinker、Harbor），对我们更偏「工具链」参考。 |
+
+### 56. Archit Sharma
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Archit Sharma |
+| 机构 | **Google DeepMind**（X bio `post-training science lead @GoogleDeepMind`；论文发表时为 Stanford） |
+| 代表论文 | Direct Preference Optimization（DPO，`2305.18290`，**二作**） |
+| 邮箱 | **architsh@stanford.edu**（来源：本人主页 <https://architsharma97.github.io/> 的 `mailto:`，2026-11-12 15:0x 实测 `HTTP 200` / 3,936 B；⚠️ bio 已写 `prev: @Stanford` ⇒ **若退信记「通道失效」，不重发**） |
+| 主页 | <https://architsharma97.github.io>（实测 `HTTP 200` / 3,936 B） |
+| X 账号 | **@archit_sharma97**（核验：`200`，`<title>` = `Archit Sharma (@archit_sharma97) / X`，`og:description` = `post-training science lead @GoogleDeepMind \| co-created: Gemini Deep Think series, DPO \| prev: @Stanford @Google Brain @IITKanpur @MILAMontreal` ⇒ **自证参与 DPO**） |
+| 状态 | **已发信**（2026-11-12 15:03:05 `SENT OK`）· X 待 follow |
+| 备注 | 信问三点：① ~2B + 数万条工具轨迹下「去掉显式 RM 是否仍成立、参考模型是否成瓶颈」；② 长度/格式偏置今天会否加归一或正则；③ 高度 off-policy 的离线偏好数据下如何检测「隐式奖励已偏离可验证信号」。回填 zhulong 奖励设计 / data 偏好数据 / harness 去偏。 |
+
+### 57. Onur Mutlu
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Onur Mutlu |
+| 机构 | **ETH Zurich**（教授）+ **Carnegie Mellon University**；SAFARI 组（X bio 自证 `Group: @SAFARI_ETH_CMU`） |
+| 代表论文 | Ramulator 2.0（`2308.11030`，**通讯 / 末位作者**）· RowHammer 系列（DRAM 可靠性） |
+| 邮箱 | **omutlu@gmail.com**（来源：本人当前机构主页 <https://people.inf.ethz.ch/omutlu/> 的 `mailto:omutlu@gmail.com`，2026-11-12 15:0x 实测 `HTTP 200` / 19,850 B；**非 2023 年论文 PDF 旧地址**） |
+| 主页 | <https://people.inf.ethz.ch/omutlu/>（实测 `HTTP 200` / 19,850 B） |
+| X 账号 | **@_onurmutlu_**（核验：`200`，`og:description` = `Professor at ETH Zurich and Carnegie Mellon University; Scientist, Educator, Researcher, Computer Architect @ETH_en @ETH @CarnegieMellon Group: @SAFARI_ETH_CMU`；handle 亦见于其主页 `twitter.com/_onurmutlu_`） |
+| 状态 | **已发信**（2026-11-12 15:03:05 `SENT OK`）· X 待 follow |
+| 备注 | **存储方向第一关系人**（DRAM 模拟器 / RowHammer / 内存中心计算）。信问三点：① 批量短评测（成千上万配置）是否适合 Ramulator 2.0、抽象先在哪破；② 只做「排序」时哪些建模部件可简化而不改排序；③ power/thermal 与 RowHammer 模型相对 timing 的成熟度。回填 zhulong 批量评测基座 + designflow L1–L5 保真度三分。其 X 以课程/workshop 通知为主，`voice_ready` 价值低但**技术判断密度高**。 |
+
+### 58. Danqi Chen（陈丹琦）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Danqi Chen（陈丹琦） |
+| 机构 | **Princeton University**（Princeton Language and Intelligence / CS；X bio 自证 `Associate professor @princetonPLI @PrincetonCS`） |
+| 代表论文 | SimPO（`2405.14734`，**三作 / 通讯**）· 另：SimCSE / REALM 等（本线未逐条核验，不引用） |
+| 邮箱 | **danqic@cs.princeton.edu**（来源：本人主页 <https://www.cs.princeton.edu/~danqic/> 明文，2026-11-12 18:0x 实测 `HTTP 200` / 4,734 B；**非论文 PDF 旧地址**） |
+| 主页 | <https://www.cs.princeton.edu/~danqic/>（实测 `HTTP 200` / 4,734 B，主页外链即 `twitter.com/danqi_chen`） |
+| X 账号 | **@danqi_chen**（核验：`x_fetch.py` 实测 `200`，`og:description` = `Associate professor @princetonPLI @PrincetonCS` ⇒ 身份可证） |
+| 状态 | **已发信**（2026-11-12 18:06:04 `SENT OK`）· X 待 follow |
+| 备注 | SimPO 的「去参考模型 + 平均对数概率奖励」直接对应 zhulong 的奖励取舍。信（**中文**，296 字）问三点：① 工具轨迹长度差异远大于摘要任务时长度归一是否足够；② 几万条域内偏好对下 γ/β 怎么取；③ 可验证信号偏好与人工偏好应混训还是分开加权。回填 zhulong 奖励设计 + data 偏好数据表。 |
+
+### 59. Yibo Lin（林一博）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Yibo Lin（林一博） |
+| 机构 | **北京大学**（论文作者机构含北大 / 清华；本轮只核到个人主页与邮箱，未核职称） |
+| 代表论文 | CircuitNet（`2208.01040`，**三作**）· 另：EDA / 布局布线方向多篇（本线未逐条核验） |
+| 邮箱 | **yibolin@pku.edu.cn**（来源：本人主页 <https://yibolin.com/> 的 `mailto:`，2026-11-12 18:0x 实测 `HTTP 200` / 11,701 B；**非 2022 年论文 PDF 旧地址**） |
+| 主页 | <https://yibolin.com/>（实测 `HTTP 200` / 11,701 B） |
+| X 账号 | **未找到 X**（主页未挂 X 外链；本轮搜索工具不可用 ⇒ 按令**不猜 handle**，宁缺勿错） |
+| 状态 | **已发信**（2026-11-12 18:06:07 `SENT OK`）· X 未找到 |
+| 备注 | **designflow / data 线最直接的关系人之一**（公开 EDA 数据集）。信（**中文**，262 字）问三点：① 三类标签跨工艺节点与 PDK 的可迁移性、按设计切分是否足够防泄漏；② 闭环任务（读设计→调工具→看结果）的数据集规模与样本组织建议；③ 从模型预测到 signoff 的差距卡在哪一环、哪些指标适合先做代理模型。回填 data 切分纪律 + designflow 造题 + zhulong 代理模型。 |
+
+### 60. Nathan Lambert
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Nathan Lambert |
+| 机构 | **Allen Institute for AI（Ai2）/ Trillium Labs**（X bio：`Open model research, founder, director @trillium_labs`；论文发表时为 HuggingFace H4）；Interconnects 作者 |
+| 代表论文 | Zephyr（`2310.16944`，**三作**） |
+| 邮箱 | **mail@interconnects.ai**（来源：本人站点 <https://interconnects.ai/about> 明文，2026-11-12 18:0x 实测 `HTTP 200` / 196,029 B）；⚠️ 属**其 newsletter 公开信箱**（可能由团队过滤）⇒ 30 天无回音按「通道未达」记，不催发 |
+| 主页 | <https://interconnects.ai>（about 页实测 `HTTP 200`） |
+| X 账号 | **@natolambert**（核验：`x_fetch.py` 实测 `200`，`og:description` = `Open model research, founder, director @trillium_labs ...`；站点 about 页亦外链该 handle） |
+| 状态 | **已发信**（2026-11-12 18:06:13 `SENT OK`）· X 待 follow |
+| 备注 | 后训练（尤其 RLHF / 偏好优化）**一手判断源**，言论密度高且技术性强 ⇒ `voice_ready` 高价值候选（须原文 + 链接）。信（**英文**，178 词）问三点：① ~2B + 数万条域内偏好对时 dSFT→dDPO 是否仍划算、先坏在哪；② 可验证任务上是否仍用 AI 反馈而非 checker 偏好；③ 增益里教师排序质量 vs DPO 步本身如何归因。 |
+
+### 61. Lewis Tunstall
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Lewis Tunstall |
+| 机构 | **HuggingFace**（X bio：`🤠 post-training @huggingface`；论文发表时 HF H4） |
+| 代表论文 | Zephyr（`2310.16944`，**一作**） |
+| 邮箱 | **未找到**（HF 个人页 <https://huggingface.co/lewtun> 实测 `200` / 463,995 B，无公开邮箱；个人站 `lewistunstall.github.io` 实测 **`404`** ⇒ 按令**不猜**） |
+| 主页 | <https://huggingface.co/lewtun>（实测 `HTTP 200`；页面外链 `twitter.com/_lewtun`） |
+| X 账号 | **@_lewtun**（核验：`x_fetch.py` 实测 `200`，`og:description` = `🤠 post-training @huggingface`） |
+| 状态 | **待跟踪**（X 待 follow；无公开邮箱 ⇒ 不发信；**同论文已发信给三作 Nathan Lambert**，同论文 ≤1 封） |
+| 备注 | 其 X 以 post-training 实操经验为主（MoE 训练手册、SFT/RL 取舍）⇒ `voice_ready` 候选源。⚠️ 本轮从其 profile 时间线 JSON 取到的高相关推文经单条页核验**实为他人所发**（见第二节 V15/V16 更正），**未采用**。 |
+
+---
+
 ## 二、🟢 X 能力探测（只读 · 2026-11-11 **第四轮 12:4x 起已恢复可达**）
 
 
@@ -539,6 +831,7 @@
 | 4（**第四轮**） | 同上，`https://x.com/_jasonwei` | **`200` / 0.66s**；页内 `<meta property="og:description">` = `ai researcher @meta, past: openai, google` |
 | 5（**第四轮**） | `curl -x http://127.0.0.1:7897 https://api.ipify.org` | **`178.249.213.185`**（与运维给的出口一致） |
 | 6（**第四轮**） | 未带代理的同一台机器 | **`000`** ⇒ 必须显式走代理；本线 shell 未继承 `~/.profile` 的变量（`env` 实测为空），脚本内已内置默认代理 |
+| 7（**第十一轮 09:0x**） | 显式带代理：`https://x.com` / `https://x.com/ShunyuYao12` / `https://api.ipify.org` | **`200` / 0.86s** · **`200` / 0.76s** · 出口 **`178.249.213.185`** ⇒ 代理仍在线（`x.com` 可达，follow 仍需登录态） |
 
 **能力矩阵（实测边界）**
 
@@ -550,11 +843,13 @@
 | follow / like / 发帖 | ❌ | 需登录态；🚫 令明确不许注册新账号、不许用未授权凭据 ⇒ **本轮 0 follow（未假装已 follow）** |
 | 抓取节奏 | ⏱ 受限 | 本轮 6 个 handle + 4 条推文页，串行、相邻请求 ≥3s；脚本 `research/classic/x_fetch.py`（只读，仅标准库） |
 
+> ⚠️ **本轮新增教训（V15/V16，2026-11-12 18:0x）**：对 `@_lewtun` / `@natolambert` 的 profile 页内嵌 timeline JSON 解析出的**高相关推文**，经单条推文页 `og:title` 核验**分别属于 `@esonghori2` 与 `@deanwball`**（即他人推文被混入 profile JSON）⇒ 两条**均作废、不采用**，也不进 `voice_ready`。结论：**profile JSON 只能当「线索」**，任何拟引用的言论必须先用 `x.com/<handle>/status/<id>` 的 `og:title` 核作者、`og:description` 核全文，两处与 profile 记录一致才可用。
+
 **落地**：脚本 `research/classic/x_fetch.py`，原始结果落 `research/classic/x/<handle>.json`（6 个文件，共 15.3 KB，可入 git）。
 
-### 待 follow 清单（请用户手动执行 · 17 个 handle 已在 X 侧二次核验）
+### 待 follow 清单（请用户手动执行 · 33 个 handle 已在 X 侧二次核验）
 
-| # | 人物 | handle | 主页链接 | X 侧核验（第四轮实测） | 为什么值得跟 |
+| # | 人物 | handle | 主页链接 | X 侧核验（2026-11-12 实测） | 为什么值得跟 |
 |:--|:--|:--|:--|:--|:--|
 | 1 | Tri Dao | `@tri_dao` | <https://x.com/tri_dao> | `200`，bio = `Asst. Prof @PrincetonCS, Chief Scientist @togethercompute…` | FlashAttention / Mamba 作者，kernel 与长上下文进展的第一手来源 |
 | 2 | Albert Gu | `@_albertgu` | <https://x.com/_albertgu> | `200`，bio = `assistant prof @mldcmu. chief scientist @cartesia…` | SSM / Mamba 路线主推者，架构选择的判断值得跟踪 |
@@ -573,9 +868,25 @@
 | 15（**第七轮新增**） | Sergey Levine | `@svlevine` | <https://x.com/svlevine> | `200`，bio = `Associate Professor at UC Berkeley / Co-founder, Physical Intelligence` | OpenVLA 资深作者 ⇒ VLA / 动作接口的一手来源 |
 | 16（**第七轮新增**） | Chelsea Finn | `@chelseabfinn` | <https://x.com/chelseabfinn> | `200`，bio = `Asst Prof of CS & EE @Stanford / Co-founder of Physical Intelligence…` | OpenVLA 末位 + 元学习 ⇒ VLA 与 long-context agent 方法言论 |
 | 17（**第七轮新增**） | Moo Jin Kim | `@moo_jin_kim` | <https://x.com/moo_jin_kim> | `200`，bio = `Research @OpenAI | CS PhD @StanfordAILab` | OpenVLA 一作 ⇒ 该配方细节的最直接作者（今日已发信） |
+| 18（**第八轮新增**） | Igor Babuschkin | `@ibab` | <https://x.com/ibab> | `200`，bio = `CEO & Co-Founder @river_ai_inc. Previously @xAI, Research & Engineering` | AlphaStar 二作 ⇒ 大规模多智能体 RL 的工程一手经验 |
+| 19（**第八轮新增**） | Danny Driess | `@DannyDriess` | <https://x.com/DannyDriess> | `200`，`<title>Danny Driess (@DannyDriess) / X</title>`；handle 源自主页 `href` | π0 三作 / PaLM-E 一作 ⇒ VLA 与 flow matching 动作接口一手信息 |
+| 20（**第八轮新增**） | Kimi Team（Moonshot AI） | `@Kimi_Moonshot` | <https://x.com/Kimi_Moonshot> | `200`，`<title>Kimi.ai (@Kimi_Moonshot) / X</title>`（官方账号） | Kimi k1.5 团队 ⇒ long2short / RL scaling 的官方发布源 |
+| 21（**第八轮新增**） | Physical Intelligence | `@physical_int` | <https://x.com/physical_int> | `200`，bio = `Physical Intelligence (Pi), bringing AI into the physical world.` | π0 / OpenVLA 系团队账号 ⇒ VLA 模型与数据发布的一手源 |
+| 22（**第九轮新增**） | Zhipu AI（智谱） | `@ZhipuAI` | <https://x.com/ZhipuAI> | `200`，`<title>ZhipuAI by BigModel (@ZhipuAI) / X</title>`，bio = `全部自研GLM模型架构`（**官方机构号**） | GLM-4 团队 ⇒ 中文系开源模型发布与配比口径的官方源（机构号，营销多，须筛） |
+| 23（**第九轮新增**） | MiniMax | `@MiniMax_AI` | <https://x.com/MiniMax_AI> | `200`，`<title>MiniMax (official) (@MiniMax_AI) / X</title>`，bio 含 `Code: @MiniMax_Code`（**官方机构号**） | MiniMax-01 团队 ⇒ 线性注意力 / 长上下文工程口径的官方源 |
+| 24（**第九轮新增**） | Karl Pertsch | `@KarlPertsch` | <https://x.com/KarlPertsch> | `200`，`<title>Karl Pertsch (@KarlPertsch) / X</title>`，bio = `Robot Foundation Models @physical_int`；handle 源自主页 `href` | Octo 三作 + RT-2 作者 ⇒ 通用机器人策略与「新动作空间低成本适配」一手信息 |
+| 25（**第十轮新增**） | Kilian Lieret | `@KLieret` | <https://x.com/KLieret> | `200`，`og:title` = `Kilian Lieret (@KLieret) on X`，`og:description` = `Meta Superintelligence, prev. Princeton. SWE-bench multilingual/multimodal, (mini-)SWE-agent, SWE-smith, CodeClash, ProgramBench, SWE-sweep` | SWE-agent 第 4 作者 + SWE-bench 系榜单维护者 ⇒ 「基准本身在变」的最早信号源 |
+| 25（**第九轮新增**） | Pete Florence | `@peteflorence` | <https://x.com/peteflorence> | `200`，`<title>Pete Florence (@peteflorence) / X</title>`，bio = `Co-Founder &amp; CEO @GeneralistAI`；handle 源自主页 `href` | RT-2 核心作者 ⇒ 「动作＝文本 token」与 VLA 泛化的第一手判断 |
+| 27（**第十一轮新增**） | Jan Leike | `@janleike` | <https://x.com/janleike> | `200`，`og:title` = `Jan Leike (@janleike) on X`；handle 源自主页 `href="https://twitter.com/janleike"`（⚠️ `og:description` 本轮未渲染，bio 空缺如实记） | RLHF 前史（2017 偏好奖励 / 2020 摘要偏好）作者 ⇒ 「奖励从哪来 + 标注预算」的一手判断 |
+| 28（**第十一轮新增**） | Paul Christiano | `@paulfchristiano` | <https://x.com/paulfchristiano> | `200`，`og:title` = `Paul Christiano (@paulfchristiano) on X`，bio = `Founder &amp; Director of the Alignment Research Center. Former Head of Safety @ CAISI. Previously led alignment at OpenAI. Views my own.`（X 页自证；个人站未挂 X 链接） | 偏好奖励一作 ⇒ RLHF 思路源头，但发言偏 alignment 理论，**跟踪为主** |
+| 29（**第十二轮新增**） | Bill Peebles | `@billpeeb` | <https://x.com/billpeeb> | `200`，`<title>` = `Bill Peebles (@billpeeb) / X`，bio = `head of sora @openai 🇺🇸🇺🇸🇺🇸` | Sora 负责人 ⇒ 视频生成 / 世界模型路线的一手判断源（⚠️ 官方报告本机 403，细节勿据传闻写） |
+| 30（**第十二轮新增**） | Tim Brooks | `@_tim_brooks` | <https://x.com/_tim_brooks> | `200`，`<title>` = `Tim Brooks (@_tim_brooks) / X`，bio = `superintelligence @ Meta` | Sora 共同负责人（**已转 Meta**）⇒ 涉 Sora 发言均属「前负责人」视角，引用须标身份与时间 |
+| 31（**第十三轮新增**） | Rafael Rafailov | `@rm_rafailov` | <https://x.com/rm_rafailov> | `200`，`<title>` = `Rafael Rafailov @ NeurIPS (@rm_rafailov) / X`，`og:description` = `I work on RL at @thinkymachines. Previously at @StanfordAILab @GoogleDeepMind @UCBerkeley` | DPO 一作 ⇒ 「RM-free 偏好优化 / 离线偏好」的一手判断；现做 RL 基建，工具链视角有用 |
+| 32（**第十三轮新增**） | Archit Sharma | `@archit_sharma97` | <https://x.com/archit_sharma97> | `200`，`og:description` = `post-training science lead @GoogleDeepMind \| co-created: Gemini Deep Think series, DPO \| prev: @Stanford ...` ⇒ **自证参与 DPO** | DPO 二作 + Gemini Deep Think 后训练负责人 ⇒ 后训练配方与「推理模型怎么训」的稀有信息源 |
+| 33（**第十三轮新增**） | Onur Mutlu | `@_onurmutlu_` | <https://x.com/_onurmutlu_> | `200`，`og:description` = `Professor at ETH Zurich and Carnegie Mellon University; ... Computer Architect ... Group: @SAFARI_ETH_CMU`；handle 亦见于其 ETH 主页 `twitter.com/_onurmutlu_` | **存储方向第一关系人**（DRAM 模拟器 / RowHammer / 内存中心计算）⇒ 与我们 CXMT 场景最贴的技术判断源 |
 
 
-> 17 个 handle 均来自其**本人主页的 `href`** 或**论文作者身份可核对**的路径（前 6 个第四轮、7–10 第五轮、11–13 第六轮、14–17 第七轮），并用 X 主页 `og:description` **二次核对 bio 与身份一致**；`x.com/AlecRadford` 虽 `200` 但 bio 无身份信息 ⇒ **拒绝登记**（见主表 #33）。用户 follow 后请把状态改为 `已follow` 并写日期。
+> **33 个 handle** 均来自其**本人主页的 `href`**、**X 页 `<title>`/`og:title` 自证** 或**论文作者身份可核对**的路径（前 6 个第四轮、7–10 第五轮、11–13 第六轮、14–17 第七轮、18–21 第八轮、22–25 第九轮、26 第十轮 `@KLieret`、27–28 第十一轮 `@janleike` / `@paulfchristiano`、**29–30 第十二轮 `@billpeeb` / `@_tim_brooks`**、**31–33 第十三轮 `@rm_rafailov` / `@archit_sharma97` / `@_onurmutlu_`**），并用 X 主页 `og:description` / `<title>` **二次核对身份一致**；`x.com/AlecRadford` 虽 `200` 但 bio 无身份信息、`x.com/JohnJumper` 虽 `200` 但仅 19 followers 且无 bio ⇒ **均拒绝登记**（见主表 #33 / #40）。⚠️ 序号在第十轮出现重复「25」（`@KLieret` 与 `@peteflorence` 同号）—— 属历史编号瑕疵，**handle 与核验证据不受影响**；本轮起按 27/28 续编，不再改动旧行（不删旧条目）。用户 follow 后请把状态改为 `已follow` 并写日期。
 
 ### 已核验言论台账（第四轮首获 · 原文 + 时间 + 链接）
 
@@ -584,15 +895,21 @@
 | V1 | Albert Gu `@_albertgu` | 2026-11-07 | "it's hilarious how many have taken the bitter lesson to mean just scaling up transformers. it's about scaling, but innovations in algorithmic primitives can lead to much more efficient scaling" | <https://x.com/_albertgu/status/2119206160410800219> | ✅ 已进日报 `voice_ready`（架构消融口径） |
 | V2 | Tri Dao `@tri_dao` | 2026-10-28 | "Super interesting result: H-Net learns to dynamically tokenize variable names in coding data as separate tokens, and it scales much better on code compared to BPE" | <https://x.com/tri_dao/status/2115531348161028374> | ✅ 已进日报 `voice_ready`（代码语料 tokenizer） |
 | V3 | Jason Wei `@_jasonwei` | 2026-11-10 22:31 | 起句 "Created a \"benchmark benchmark\": a frequency distribution of which benchmarks were reported by the frontier labs in 2026…"（**正文含转义引号，HTML 内嵌串被截断；推文页正文未渲染**） | <https://x.com/_jasonwei/status/2120283338640621826> | ❌ **未采用**：不满足「原文完整 + 可核验」，不冒充完整原文；仅在此登记，待下轮用其它入口取全文后再评估 |
-| V4 | Richard S. Sutton `@RichardSSutton` | 2026-11-07 18:57 | "Brute force computation is not enough for intelligence. Clever new methods are needed. The science of AI is far from finished. IMHO" | <https://x.com/RichardSSutton/status/2119142310894334262> | 🕓 **本期未用（受「每期 ≤2 条」上限）**，原文已核验 ⇒ **下期 `voice_ready` 首选候选**；话题点 = 「暴力算力 vs 更聪明的方法」；风险 = 是**观点**且带 `IMHO`，🚫 不得写成结论 |
+| V4 | Richard S. Sutton `@RichardSSutton` | 2026-11-07 18:57 | "Brute force computation is not enough for intelligence. Clever new methods are needed. The science of AI is far from finished. IMHO" | <https://x.com/RichardSSutton/status/2119142310894334262> | ✅ **已进日报 `voice_ready`（2026-11-12 期）**；话题点 = 「暴力算力 vs 更聪明的方法」；风险 = 是**观点**且带 `IMHO`，🚫 不得写成结论 |
 | V5 | Karthik Narasimhan `@karthik_r_n` | 2026-11-05 21:38 | 起句 `Just like everything else in the global economy, the future will have lots of AI agents for specialized tasks,  essentially creating multi-developer agentic systems that can benefit greatly from working together. @awhanjie 's latest paper`（**抓到的 `full_text` 在此处截断**；推文页正文未渲染） | <https://x.com/karthik_r_n/status/2118457961727275111> | ❌ **未采用（正文不完整）**：推文页 `200`、`og:title` = `Karthik Narasimhan (@karthik_r_n) on X` 作者可核，但正文不完整 ⇒ 按令**不冒充完整原文**；下轮换入口（thread 首条 / 转载全文）再评估 |
-| V6（**第七轮新增**） | Chelsea Finn `@chelseabfinn` | 2026-10-24 22:09 UTC | "Generative value classifiers are a new parametrization of Q-functions that don't require action conditioning. We think these may combine gracefully with large, pre-trained policies and learn/generalize better from a richer output signal. Paper: https://t.co/pNphW8m0uf"（原文两处换行，此处以空格连接；**起止完整**） | <https://x.com/chelseabfinn/status/2114117117813706782> | 🕓 **本期未用（受「每期 ≤2 条」上限）**，推文页 `200` + `og:title` = `Chelsea Finn (@chelseabfinn) on X` 双核验 ⇒ **下期 `voice_ready` 候选**；话题点 = 「不依赖动作条件的价值函数」；风险 = 是**作者观点 + 自家论文**，须标「作者自述」 |
+| V6（**第七轮新增**） | Chelsea Finn `@chelseabfinn` | 2026-10-24 22:09 UTC | "Generative value classifiers are a new parametrization of Q-functions that don't require action conditioning. We think these may combine gracefully with large, pre-trained policies and learn/generalize better from a richer output signal. Paper: https://t.co/pNphW8m0uf"（原文两处换行，此处以空格连接；**起止完整**） | <https://x.com/chelseabfinn/status/2114117117813706782> | ✅ **已进日报 `voice_ready`（2026-11-12 期）**，推文页 `200` + `og:title` 双核验；话题点 = 「不依赖动作条件的价值函数」；风险 = 是**作者观点 + 自家论文**，须标「作者自述」 |
 | V7（**第七轮新增**） | Sergey Levine `@svlevine` | 2026-11-09 06:02 UTC | 起句 `A VLM can figure out semantics: which object to grasp, where to put it. But how do we turn this knowledge into fluent and dexterous actions? At CoRL on Tuesday, Andy and Will will talk about Flow Reversal Steering: a method for passing VLM …"（**抓到的 `full_text` 在引号处截断**） | <https://x.com/svlevine/status/2119672075589726281> | ❌ **未采用（正文不完整）**：推文页 `200` + `og:title` = `Sergey Levine (@svlevine) on X` 作者可核，但正文不完整 ⇒ 按令**不冒充完整原文** |
 | V8（**第七轮新增**） | Oriol Vinyals `@OriolVinyalsML` | 2026-08-05 16:05 UTC | "Thirteen years ago, a quick email exchange with @JeffDean brought me to @Google. After an unforgettable journey from Brain, to DeepMind, and to @GoogleDeepMind, working on seq2seq or distillation, and co-leading huge projects such as AlphaStar, and Gemini, I'm saying goodbye to https://t.co/v2zK39buQ1"（起止完整） | <https://x.com/OriolVinyalsML/status/2085034508777304440> | 🕓 **>30 天 ⇒ 降级**（2026-08-05，98 天），**不进 `voice_ready`**；只作作者动向记录（已离开 Google，创办 Discovery Loop） |
+| V9（**第十轮新增**） | Tri Dao `@tri_dao` | 2026-11-05 19:01 UTC | "Distilling most of our expertise in kernel and inference engine optimization into an agent loop that powers our production. A 2-year project that we're finally able to share" | <https://x.com/tri_dao/status/2118418321456660572> | ✅ **已进日报 `voice_ready`（2026-11-12 06:00 期）**：推文页 `200` + `og:title` = `Tri Dao (@tri_dao) on X` + `og:description` **逐字等于** profile 抓到的 `full_text`（双源一致）⇒ 可用；话题点 = 「把 kernel/推理优化经验蒸馏进 agent loop」；风险 = 属**自家产品**宣传，🚫 不得写成第三方评测 |
+| V10（**第十轮新增**） | （拟 John Yang `@jyangballin`） | 2026-10-28 13:44 UTC | 拟用文 "New paper: Frontier Coding Agents Find Different Bugs Than Maintainers Fix…" | <https://x.com/jyangballin/status/2115439606443528405> | ❌ **未采用（作者不符）**：推文页 `200` 但 `og:title` = **`Mark Müller (@mnmueller) on X`** ≠ John Yang ⇒ profile 抓取的 timeline JSON **混入了他人推文**；按令**不采用**。这条是本轮发现的重要口径漏洞（见下方维护纪律 3） |
+| V11（**第十轮新增**） | （拟 Shunyu Yao `@ShunyuYao12`） | 2026-11-05 19:07 UTC | 拟用文 "Hy4 from @TencentHunyuan is the new #1 open-weights model on APEX-Agents…" | <https://x.com/ShunyuYao12/status/2118420063242039721> | ❌ **未采用（作者不符）**：推文页 `og:title` = **`Mercor (@mercor) on X`** ⇒ 同上，非本人推文；**不采用**（同轮另两条 `@ShunyuYao12` 的推文作者核对通过，但正文为「Try it out!」等无信息量短句 ⇒ 也不用） |
+| V12（**第十一轮新增**） | Jason Wei `@_jasonwei` | 2026-11-11 21:31 UTC | 起句 `The fall of “what you can do” and the rise of “who you know”… Traditionally, many of us believe in a world where how hard you work is more important than who you know. I used to subscribe to this idea as both a scientist, who believed that facts about our world are agnostic to who says them, and as…`（**`og:description` 以省略号截断**） | <https://x.com/_jasonwei/status/2120630417158250953> | ❌ **未采用（正文不完整）**：推文页 `200` 且 `og:title` = `Jason Wei (@_jasonwei) on X` 作者可核，但 `og:description` 与 profile `full_text` **两处都被截断**，无法给出完整原文 ⇒ 按令不采用；`voice_ready` 本期**仍为 V2 / V4 两条** |
+| V13（**第十三轮核验后作废**） | （拟 Archit Sharma `@archit_sharma97`） | 2026-10-28 17:03 UTC | 拟用文 `Just two weeks after rolling out Gemini 4 Argon, excited to share a preview of Gemini 4 Carbon - our next frontier model. It has state-of-the-art long horizon coding capabilities …`（profile 抓取截断） | <https://x.com/archit_sharma97/status/2115489649649234259> | ❌ **未采用（作者不符）**：推文页 `200` 但 `og:title` = **`koray kavukcuoglu (@koraykv) on X`** ≠ Archit Sharma ⇒ profile timeline JSON **混入他人推文**（与 V10/V11 同型）；**不采用** |
+| V14（**第十三轮核验后作废**） | （拟 Rafael Rafailov `@rm_rafailov`） | 2026-09-24 17:46 UTC | 拟用文 `We are approaching cyber-superintelligence. But our systems aren't ready. We must secure our model weights and infrastructure against three new threats: sabotage, escape, and theft…`（profile 抓取截断） | <https://x.com/rm_rafailov/status/2103179354163536228> | ❌ **未采用（作者不符）**：推文页 `200` 但 `og:title` = **`Shalev Lifshitz (@Shalev_lif) on X`** ⇒ 同上；**不采用**（此条亦说明：知名研究者时间线里**转发/引用他人**占比高，profile 解析必须先核作者） |
 
 
 
-> ⚠️ 引用纪律：只有 **V1 / V2** 两条的原文在「profile 页内嵌 JSON」与「单条推文页 `og:title` 作者核对」两处一致，才进日报 `voice_ready`；**每条都附原链接与时间**，中文仅作翻译、不作转述。
+> ⚠️ 引用纪律：`voice_ready` 只采用**原文完整 + 作者可核**的条目（V1 / V2 / V4 / V6 / V8；V3 / V5 / V7 / **V12** 正文截断不采用；V10 / V11 / **V13 / V14** 作者不符不采用），**每条附原链接与时间**，中文仅作翻译、不作转述；V8 >30 天已降级。
 
 **每个 handle 的原始快照**：`research/classic/x/<handle>.json`（字段 `bio` / `name` / `tweets[]`（`id` / `created_at` / `text` / `url`）/ `fetched_at`）。
 
@@ -613,6 +930,17 @@
 | 2026-11-11 15:05（**第五轮**） | Haotian Liu | `2304.08485` LLaVA | 本人当前主页 `mailto:`（`haotian-liu.github.io`，`200`） | `SENT OK`（`liuhaotian.cn@gmail.com`，**中文 215 字**） |
 | 2026-11-11 18:06（**第六轮**） | Karthik Narasimhan | GPT-1（无 arXiv） | 本人主页 `karthiknarasimhan.com` 的 `mailto:`（percent-encoded，`200` / 14,706 B 实测） | `SENT OK`（`karthikn@princeton.edu`，**英文 164 词**） |
 | 2026-11-11 21:04（**第七轮**） | Moo Jin Kim | `2406.09246` OpenVLA | 本人主页 `moojink.github.io` 防爬写法 `moojink at cs dot stanford dot edu`（`200` / 33,139 B 实测） | `SENT OK`（`moojink@cs.stanford.edu`，**英文 195 词**；⚠️ 已入职 OpenAI，若退信记「通道失效」） |
+| 2026-11-12 00:1x（**第八轮**） | Danny Driess | `2410.24164` π0 | 本人主页 `dannydriess.github.io` 防爬写法 `danny dot driess at gmail dot com`（`200` / 29,043 B 实测） | `SENT OK`（`danny.driess@gmail.com`，**英文 178 词**） |
+| 2026-11-12 03:03（**第九轮**） | Pete Florence | `2307.15818` RT-2 | 本人主页 `www.peteflorence.com` 明写 `pete dot florence at gmail dot com`（`200` / 47,238 B 实测） | `SENT OK`（`pete.florence@gmail.com`，**英文 189 词**） |
+| 2026-11-12 06:05（**第十轮**） | Karl Pertsch | `2405.12213` Octo | 本人主页 `kpertsch.github.io` 的 `mailto:karl.pertsch@gmail.com`（`200` / 64,903 B 复测，2026-11-12 06:0x） | `SENT OK`（`karl.pertsch@gmail.com`，**英文 191 词**；同机构 PI 当日第 2 封 = 达上限） |
+| 2026-11-12 09:04（**第十一轮**） | Jan Leike | `1706.03741` Deep RL from human preferences | 本人主页 `jan.leike.name` 的 `mailto:Jan Leike <jan@anthropic.com>`（`200` / 6,411 B，2026-11-12 09:0x） | `SENT OK`（`jan@anthropic.com`，**英文 199 词**；Anthropic 当日第 1 封） |
+
+| 2026-11-12 12:04（**第十二轮**） | Nisan Stiennon | `2009.01325` Learning to summarize from human feedback | 本人站 `nisanstiennon.com` 的 `mailto:nisan+web@stiennon.com`（`200` / 5,575 B，直连与代理 **md5 一致**） | `SENT OK`（`nisan+web@stiennon.com`，英文；⚠️ **`wc -w` 实测 212 词，超 ≤200 规格 12 词，已如实记入台账**） |
+| 2026-11-12 15:03（**第十三轮**） | Archit Sharma | `2305.18290` DPO | 本人主页 `architsharma97.github.io` 的 `mailto:architsh@stanford.edu`（`200` / 3,936 B，代理实测） | `SENT OK`（`architsh@stanford.edu`，**英文 197 词**；🚦 **发送前 `wc -w` 已核**；⚠️ 其 X bio 已写 `prev: @Stanford` ⇒ 若退信记「通道失效」不重发；Stanford 当日第 1 封（Moo Jin Kim 那封属 **11-11** 21:04，按 11-12 00:00 起算不计入今日 ⇒ 1/2）） |
+| 2026-11-12 15:03（**第十三轮**） | Onur Mutlu | `2308.11030` Ramulator 2.0 | 本人 ETH 主页 `people.inf.ethz.ch/omutlu/` 的 `mailto:omutlu@gmail.com`（`200` / 19,850 B 实测） | `SENT OK`（`omutlu@gmail.com`，**英文 177 词**；🚦 发送前 `wc -w` 已核；ETH Zurich 当日第 1 封） |
+| 2026-11-12 18:06（**第十四轮**） | Danqi Chen（陈丹琦） | `2405.14734` SimPO | 本人主页 `www.cs.princeton.edu/~danqic/` 明文 `danqic@cs.princeton.edu`（`200` / 4,734 B，2026-11-12 18:0x 实测） | `SENT OK`（**中文 296 字**，发送前 `wc` 已核；Princeton 今日第 1 封） |
+| 2026-11-12 18:06（**第十四轮**） | Yibo Lin（林一博） | `2208.01040` CircuitNet | 本人主页 `yibolin.com` 的 `mailto:yibolin@pku.edu.cn`（`200` / 11,701 B） | `SENT OK`（**中文 262 字**；PKU 首封；X 未找到） |
+| 2026-11-12 18:06（**第十四轮**） | Nathan Lambert | `2310.16944` Zephyr | 本人站点 `interconnects.ai/about` 明文 `mail@interconnects.ai`（`200` / 196,029 B） | `SENT OK`（**英文 178 词**，发送前 `wc -w` 已核；⚠️ newsletter 公开信箱 ⇒ 30 天无回音记「通道未达」，不催） |
 
 | 2026-11-11 12:4x–13:0x（**第四轮**） | （本轮 **0 封**） | 新增经典 `2005.14165` / `2203.02155` / `2302.13971` | 逐个实测：`hugotouvron.github.io` `404` · `longouyang.github.io` `404` · `ashishvaswani.com` `000` · 未命中任何 `mailto:` | **不发信**（按令不猜邮箱）。该轮结束时累计 **5 封**（分属三轮，每轮 ≤3）；第四轮把额度留给「有可核验邮箱」的候选 —— 本轮没有合格的 ⇒ **宁缺勿凑**（当日最终累计 = **9 封**，见上方各行） |
 
@@ -622,6 +950,8 @@
 
 1. **一次一作者**：同一作者 / 同一论文 ≤1 封；同一机构 ≤2 封/天（`RESEARCH_MAIL_SPEC §3`）。
 2. **邮箱取当前机构主页 / 本人 CV 的最新地址**，🚫 不用 5 年前 PDF 首页的旧邮箱（可能已失效或转他人）。
-3. **X handle 只登记可访问页面读到的**，并在 X 可达时用 `og:description` 二次核对身份；`voice_ready` **必须有原文 + 原链接 + 时间**，两处不一致或正文不完整的一律不采用（如 V3）。
+3. **X handle 只登记可访问页面读到的**，并在 X 可达时用 `og:description` 二次核对身份；`voice_ready` **必须有原文 + 原链接 + 时间**，两处不一致或正文不完整的一律不采用（如 V3）。<br>⚠️ **2026-11-12 第十轮新增教训**：`x_fetch.py` 从 profile 页内嵌 timeline JSON 解析出的条目**会混入他人推文**（本轮 V10/V11 两条经单条推文页 `og:title` 核对分别是 `@mnmueller` 与 `@mercor`）⇒ 今后**每条拟引用推文都必须先打开 `x.com/<handle>/status/<id>` 核 `og:title` 的作者名**，作者不符直接丢弃；**正文也要用 `og:description` 与 profile `full_text` 相互校验**，二者一致才算「双源一致」。
 4. 状态四态：`待跟踪` → `已follow` → `已发信` → `已回复`；每次只前进，不跳级、不回退（回信内容另存 `research/mail/replies/`）。
 5. 抓 X 一律走 `research/classic/x_fetch.py`（只读、串行、≥3s、单轮 ≤6 个 handle），原始结果落 `research/classic/x/`，**不做任何写操作**。
+6. **发送前必查词数（2026-11-12 新增，血的教训）**：英文信发送**之前**先 `wc -w <body.txt>` 确认 ≤200（中文 ≤300 字），**不达标先删改再发**。第十二轮因「先发后核」实测 **212 词**、超 12 词 ⇒ 已如实记入 `research/mail/发送记录.md`；此后本项为**发送前置检查**，不是事后记录。
+7. **X 抓取需显式代理**：本机 shell 默认**不继承** `HTTP(S)_PROXY`，直连 `x.com` 会返回 `000`；`x_fetch.py` 内部默认走 `http://127.0.0.1:7897`，手工 `curl` 时**必须加 `--proxy`**。`000` **不等于**代理挂了（本轮实测：直连 000 / 带代理 200）⇒ 先分清「无代理」与「代理挂」，再决定是否报运维。

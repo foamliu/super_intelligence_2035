@@ -243,7 +243,7 @@ vbxlf.messages.json	jason17w	hfeg0pnd002	262	spice_sim	parked		2026-11-05 12:30	
 1793965015681_q3lrp					parked		2026-11-06 21:20	digital shardA: verilog signal search (graywang)
 1793966362470_otc01					parked		2026-11-06 21:20	consulting: device type exploration (xiwang)
 1793971631579_gvexo	kerwind	hfeg0pkn002	54	spice_sim	case	EDA-Eval-DesignFlow-TimingMeasGen-001	2026-11-06 22:30	
-1793600858808_la00c.messages.json	e0029308	hfeg0pkn001	339	spice_sim	case	EDA-Eval-DesignFlow-VSplit-001	2026-11-06 23:00	
+1793600858808_la00c.messages.json	e0029308	hfeg0pkn001	339	spice_sim	parked	EDA-Eval-DesignFlow-VSplit-001	2026-11-12 05:14	collaborative-continuation (e0029308 '修改DFF仿真结果判定 先从hold来 我来给你方案' - multi-turn collaborative, not clean produce)
 1793843849886_hsizo	ynbai	hfhds201	211	spice_sim	case	EDA-Eval-DesignFlow-FinesimIgnoreGen-001	2026-11-06 23:41	
 1791602435253_66tx9	ynbai	hfhds201	162	spice_sim	case	EDA-Eval-DesignFlow-LibCellListGen-001	2026-11-07 00:03	
 1793347412273_nq8l2	zjqiao	hfhds201	98	spice_sim	case	EDA-Eval-DesignFlow-HcellMissingFind-001	2026-11-07 00:33	
@@ -1238,4 +1238,115 @@ peek:					parked		2026-11-10 23:22	peek: consultation verdi-fsdb-warning-paste
 1793669959152_3123n	lvyy	10.129.2.13	576	spice_sim	case	EDA-Eval-DesignFlow-CmlPvtAcReport-001	2026-11-11 21:38	
 1792732271802_olayh	junweix	hfeg0pkn002	21	spice_sim	parked		2026-11-11 21:28	consultation: read .sp path + explain MC netlist, 4 tool_calls all read_files, no produce-task (1111 21:2x peek)
 1792543801789_ftbpz	ruminji	hfeg0pkn004	14	spice_sim	parked		2026-11-11 21:28	consultation: 0 tool_calls, Q on LDE effect, asst tangents to DRAM half-density, no produce-task (1111 21:2x peek)
-1793759635878_p53dt	rongtaoy	hfeg0pnd002	419	spice_sim	claimed		2026-11-11 22:15	
+1793759635878_p53dt	rongtaoy	hfeg0pnd002	419	spice_sim	case	EDA-Eval-DesignFlow-NetlistWLReduce-001	2026-11-11 22:40	
+1792040981126_o5xjq					parked		2026-11-11 22:36	scout_1111: advisory 'which CAD tools for analog opt' — not design_flow
+1788764026073_8hdj3					parked		2026-11-11 22:36	scout_1111: aether/skills GUI connection session — not spice
+1792652163775_i6fn6					parked		2026-11-11 22:36	scout_1111: aether GUI process connection — not spice
+1792042618272_wl9i4					parked		2026-11-11 22:36	scout_1111: verilog/xcelium compile-time optimization — digital, not spice/char
+1790128938715_nsf5a					parked		2026-11-11 22:36	scout_1111: ModelQA tool C++/Qt + openWave.pl dev — tool dev, not spice design_flow
+1792044214783_zwqbl	zhukaic	hfeg0plg58	104	spice_sim	case	EDA-Eval-DesignFlow-OTATunePlan-001	2026-11-11 23:20	
+1793084065593_fg1kv	ghyang	10.129.2.12	33		parked		2026-11-11 23:43	wrong-domain by kw-profile: spice ratio<0.10, netlist/drc/virtuoso/aether/waveview dominant (r401 0-case)
+1790039746600_vbr3y	steveny	10.129.32.189	30		parked		2026-11-11 23:43	wrong-domain by kw-profile: spice ratio<0.10, netlist/drc/virtuoso/aether/waveview dominant (r401 0-case)
+1790558327260_3ks9d	rongjiez	10.129.2.14	36		parked		2026-11-11 23:43	wrong-domain by kw-profile: spice ratio<0.10, netlist/drc/virtuoso/aether/waveview dominant (r401 0-case)
+1793676567498_voemm	t0003117	10.129.2.14	23		parked		2026-11-11 23:43	wrong-domain by kw-profile: spice ratio<0.10, netlist/drc/virtuoso/aether/waveview dominant (r401 0-case)
+1789882786276_qx2rq	eva1wu	10.129.2.11	19		parked		2026-11-11 23:43	wrong-domain by kw-profile: spice ratio<0.10, netlist/drc/virtuoso/aether/waveview dominant (r401 0-case)
+1792047979653_stlld	t0002441	10.129.32.75	14		parked		2026-11-11 23:43	wrong-domain by kw-profile: spice ratio<0.10, netlist/drc/virtuoso/aether/waveview dominant (r401 0-case)
+1793704812714_6xldh	owench	10.129.2.11	21		parked		2026-11-11 23:43	wrong-domain by kw-profile: spice ratio<0.10, netlist/drc/virtuoso/aether/waveview dominant (r401 0-case)
+1793069063742_76i4q	wnyu	10.129.2.13	18		parked		2026-11-11 23:43	wrong-domain by kw-profile: spice ratio<0.10, netlist/drc/virtuoso/aether/waveview dominant (r401 0-case)
+1788426519867_tlloe	jason17w	hfeg0pnd002	110	spice_sim	parked		2026-11-12 00:15	wrong-domain by kw-profile: drc/verilog dominant spice ratio 0.00 physical_verify/digital (r409 0-case)
+1792560552647_csn7d	miccao	hfeg0plg36	84	spice_sim	parked		2026-11-12 00:15	wrong-domain by kw-profile: drc/calibre/lvs dominant spice ratio 0.00 physical_verify (r409 0-case)
+1791773204994_ef5ia	devonma	hfeg0pkn001	50	spice_sim	parked		2026-11-12 00:15	wrong-domain by kw-profile: drc/lvs/pyaether dominant spice ratio 0.02 physical_verify (r409 0-case)
+1790661377931_rvb3q	rongjiez	hfeg0pkn005	37	spice_sim	parked		2026-11-12 00:15	wrong-domain by kw-profile: schematic/lvs/waveview dominant spice ratio 0.01 schematic_netlist/waveform (r409 0-case)
+1789884691172_9xzbw	eva1wu	hfeg0pkn002	29	spice_sim	parked		2026-11-12 00:15	wrong-domain by kw-profile: drc/pyaether dominant spice ratio 0.02 physical_verify (r409 0-case)
+1793783426770_yxf2a	e0016021	hfeg0pkn004	22	spice_sim	parked		2026-11-12 00:15	wrong-domain by kw-profile: pyaether/virtuoso/aether dominant spice ratio 0.01 layout_aether (r409 0-case)
+1793676201790_so8k9	jcgu	hfeg0pin003	19	spice_sim	parked		2026-11-12 00:15	wrong-domain by kw-profile: aether/drc/calibre dominant spice ratio 0.01 layout_aether/physical_verify (r409 0-case)
+1792023099565_chfw6	e0042624	hfeg0pkn001	19	spice_sim	parked		2026-11-12 00:15	wrong-domain by kw-profile: pyaether/aether/virtuoso dominant spice ratio 0.02 layout_aether (r409 0-case)
+1783660998432_2azso	e03179	hfeg0pkn002	16	spice_sim	parked		2026-11-12 00:15	wrong-domain by kw-profile: netlist/aether dominant spice ratio 0.04 too small + schematic (r409 0-case)
+1793846480650_kbfjt	t0002616	hfeg0pkn004	16	spice_sim	parked		2026-11-12 00:15	wrong-domain by kw-profile: schematic/netlist/cmos dominant spice ratio 0.01 schematic_netlist (r409 0-case)
+1790219160116_nqy29	tongfanl	hfeg0pkn004	16	spice_sim	parked		2026-11-12 00:15	wrong-domain by kw-profile: analog/drc/pyaether dominant spice ratio 0.00 analog_context/physical_verify (r409 0-case)
+1789881024823_e5zat	steveny	hfeg0pnd001	15	spice_sim	parked		2026-11-12 00:15	wrong-domain by kw-profile: virtuoso/pyaether/aether dominant spice ratio 0.05 layout_aether (r409 0-case)
+1790151377749_h9psn	thomasz	hfeg0pkn004	15	spice_sim	parked		2026-11-12 00:15	wrong-domain by kw-profile: drc/netlist dominant spice ratio 0.11 physical_verify + too small (r409 0-case)
+1793753733820_4ishm	zongjiuh	hfeg0pkn001	14	spice_sim	parked		2026-11-12 00:15	wrong-domain by kw-profile: pyaether/synopsys/calibre dominant spice ratio 0.08 layout/digital (r409 0-case)
+1791448495993_j26zx	e04201	hfeg0pkn002	13	spice_sim	parked		2026-11-12 00:15	wrong-domain by kw-profile: netlist/verilog/pyaether dominant spice ratio 0.02 schematic/digital (r409 0-case)
+1792053708064_mjawu	mwxi	hfeg0pkn001	11	spice_sim	parked		2026-11-12 00:15	wrong-domain by kw-profile: synopsys/aether dominant spice ratio 0.02 digital (r409 0-case)
+1789521742488_8nzw3	steveny	hfeg0pnd001	11	spice_sim	parked		2026-11-12 00:15	wrong-domain by kw-profile: virtuoso/pyaether/aether dominant spice ratio 0.04 layout_aether (r409 0-case)
+1793873212004_g2vzh	jason17w	hfeg0pnd002	11	spice_sim	parked		2026-11-12 00:15	wrong-domain by kw-profile: netlist/waveview/verilog dominant spice ratio 0.02 schematic_netlist/waveform (r409 0-case)
+1791546149901_ukim1	mwxi	hfeg0pkn001	10	spice_sim	parked		2026-11-12 00:15	wrong-domain by kw-profile: synopsys/virtuoso/drc/calibre dominant spice ratio 0.05 digital/physical_verify (r409 0-case)
+1791979171883_hojeg	e0045128	hfeg0pkn005	10	spice_sim	parked		2026-11-12 00:15	wrong-domain by kw-profile: pyaether/virtuoso/aether dominant spice ratio 0.02 layout_aether (r409 0-case)
+1794383471111_r73sm	jiangbaol	hfeg0pkn001	586	spice_sim	case	EDA-Eval-DesignFlow-StrongarmFomSweep-001	2026-11-12 02:02	adopted orphan built by shard D (c0c1085c 01:02) into B.jsonl; spice_sim L2 A-faithful strongarm sizing-sweep FOM; negative_selftest PASS on .75 HSPICE V-2023.12; 3 fake submissions FAIL; near-dup vs StrongarmBaselineAnalyze-001 cleared (diff domain characterization/L1 vs spice_sim/L2, diff session l2j22 vs r73sm, diff task mt0-parse vs HSPICE sweep)
+1794398756746_2g3in	kejunw	hfeg0pkn002	866	spice_sim	parked		2026-11-12 00:24	consultation Q&A about fsdb waveform analysis, no produce-task (r409 rescan)
+1794395736760_zucka	hairuizh	hfeg0pkn001	582	spice_sim	case	EDA-Eval-DesignFlow-PlatMosThinIdsatIoffSweep-001	2026-11-12 01:54	
+1794397721848_op8wj	tongni	hfeg0plg49	1521	spice_sim	parked		2026-11-12 02:19	CLEAN spice_sim multi-deck LDO Vcc2sc_stdby SPEC-comparison (tran/ac/ac_load/dc_capbi/tran_mc, 104 tools 41 editor); .sp templates .inc /proj/ PDK+netlist+power+pvt paths not portable; defer to high-budget round with full PDK fetch or synthesized inline-model netlist
+1794382271104_cpb5n	jiangbaol	hfeg0pkn001	584	spice_sim	parked		2026-11-12 02:19	near-dup StrongarmFomSweep-001 (r73sm): same user jiangbaol same first-user msg '优化strongarm电路' same strongarm optimization task; 323 msgs 162 tools
+1794386723024_2kwms	e0030760	hfeg0pkn001	490	spice_sim	parked		2026-11-12 02:19	wrong-domain: first-user '把桌面路径所有文件移动到新文件夹' = file management not spice; 367 msgs 166 tools; spice grep count from finesim path in filenames not actual sim work
+1794387616147_bwlcp	rongjiez	hfeg0plg53	308	spice_sim	parked		2026-11-12 02:19	borderline waveform: U3 create 3 vec.text variants with exp_RDQS_t<0>/<1> set to Z; vec.text file manipulation not spice sim; near-dup WaveViewPanel-001 (same user rongjiez waveform); 134 msgs 67 tools
+1794378055746_1s79t	mike	hfeg0plg49	517	spice_sim	case	EDA-Eval-DesignFlow-VsimFinesimAdapt-001	2026-11-12 03:33	
+1793859557333_n70dr					parked		2026-11-12 02:44	11-12 02:3x rescan peek reject: consultation/Q&A - first user '列出所有finesim和hspice的常用option及作用' = documentation listing request not produce-task; 42 user msgs, editor(18)/run_approved(6)/read(5), no deliverable
+1794363208455_zdztp					parked		2026-11-12 02:44	11-12 02:3x rescan peek reject: consultation/Q&A - first user 'SRAMAutoSim工具UI中add instance的output和spice参数列表output有什么差异/点击generate testbench走到哪个流程' = tool UI explanation, not produce-task
+1794377663577_p1isl					parked		2026-11-12 02:44	11-12 02:3x rescan peek reject: wrong-domain (schematic_netlist=D shard) + /proj asset not portable - first user '/proj/ddgoa/V0/libs/ddgoa_cmos_io/P2STopM5/schematic/ 我想要抽取这个网表' = netlist extraction from /proj schematic, needs Virtuoso, not spice_sim
+1794401271107_fnxke					parked		2026-11-12 02:44	11-12 02:3x rescan peek reject: near-dup of op8wj (already parked r411) - same user tongni, same sim-sp-gen skill, same Vcc2sc_stdby .sp template with /proj PDK .inc paths not portable
+1794366982750_ngnm2					parked		2026-11-12 02:44	11-12 02:3x rescan peek reject: wrong-domain (waveform=D shard) + consultation - first user 'full_testbench_far.fsdb 抓取xi147.v ra210_far/ra543_far 上升到vwlp时对其他地址线coupling影响' = .fsdb waveform coupling analysis, not spice_sim produce-task; run_approved(25)/editor(24) on waveform
+1794394189493_0fuy7					parked		2026-11-12 02:44	11-12 02:3x rescan peek reject: near-dup of r73sm (already delivered StrongarmFomSweep-001) - same user jiangbaol, same first-user-msg '我现在需要优化strongarm电路应该从哪里开始', same strongarm optimization task; 0fuy7 has RAG_MCP_search_apis(10) heavy, SPICE_KW=5 low in prefix
+1794398684733_jjrpj	e0030760	10.129.2.10	509	spice_sim	parked		2026-11-12 03:58	r414 rescan reject: jjrpj not-viable B-domain L2/L3
+1794394259449_bwtk9	e0030760	10.129.2.10	509	spice_sim	parked		2026-11-12 03:58	r414 rescan reject: bwtk9 not-viable B-domain L2/L3
+1794382087740_nm5op	rongjiez	10.129.35.69	306	spice_sim	parked		2026-11-12 03:58	r414 rescan reject: nm5op not-viable B-domain L2/L3
+1794375717921_5p2v2	thomasz	10.129.35.69	122	spice_sim	parked		2026-11-12 03:58	r414 rescan reject: 5p2v2 not-viable B-domain L2/L3
+1794369069999_jlgfx	yohannw	10.129.2.11	195	spice_sim	parked		2026-11-12 03:58	r414 rescan reject: jlgfx not-viable B-domain L2/L3
+1794395852366_tef8l	yinyus	10.129.2.10	283	spice_sim	parked		2026-11-12 03:58	r414 rescan: unlocatable on recorded host (file absent /home/*/.cline on 10.129.2.10)
+1793942940446_q3y71.messages.json	declanzh	hfeg0pkn005	96	spice_sim	parked		2026-11-12 04:52	dup ie8du (declanzh core1103 .mt0 aggregation) already covered by Mt0FolderAggStat-001(k=17)+Mt0AggMinMax-001; sibling row 1793942940446_q3y71 parked 11-10 same note; DEBT cleared - synthesis not viable (redundant 3rd case)
+1793586031652_f2xzx.messages.json	ryanren	hfeg0pfn120	156	spice_sim	case	EDA-Eval-DesignFlow-VwlpPumpReport-001	2026-11-12 06:08	
+1791424827517_ca3hh.messages.json					parked		2026-11-12 05:14	ambiguous (guangmingz '解析dsim_block' - parse DSIM block, single brief turn, unclear deliverable; parked borderline)
+1791523486486_ws2bi.messages.json					parked		2026-11-12 05:14	DUP SpiceSim-001 (irene1li, same ws2bi session, tr/tf/duty/skew measurement task)
+1793668301608_71ttn.messages.json					parked		2026-11-12 05:14	continuation (tongni '继续/继续中断的工作' - resume, not first-turn produce)
+1793184645122_t1epq.messages.json					parked		2026-11-12 05:14	consultation (e0030760 '先查看lacaa最小电路设计图' - exploration, not produce)
+1793327414642_81adx.messages.json					parked		2026-11-12 05:14	DUP x6taw (clarawu, verbatim same U1-U5 content as x6taw)
+1793260065712_n78nn.messages.json					parked		2026-11-12 05:14	wrong-type (t0003117 '调出抽网表的skill' - skill invocation, not spice produce)
+1793337530823_x6taw.messages.json					parked		2026-11-12 05:14	DUP McRonMismatch-001 (clarawu, same RON_PU/PD_mismatch 6*std/230 from Ron_linMC#4.md0 task)
+1793843116422_qzva9.messages.json					parked		2026-11-12 05:14	consultation (thqu 'ntn管子阈值电压怎么查看' - how-to-view, not produce)
+1791797079020_pqeal.messages.json					parked		2026-11-12 05:14	consultation (e0039122 '阅读工程给出代码架构' - code architecture doc, not spice produce)
+1793238266404_bsjfb.messages.json					parked		2026-11-12 05:14	consultation (t0002224 '看一下这个项目详细介绍' - project intro, not produce)
+1793931174603_tc4yu.messages.json					parked		2026-11-12 05:14	consultation (lvyy '为什么PM11截止 如何调整cascode' - circuit debug consultation)
+1792297573507_9knot.messages.json					parked		2026-11-12 05:14	continuation (vincelu '能避开这些错吗' - error-avoidance, not first-turn produce)
+1793879524880_3h21t.messages.json					parked		2026-11-12 05:14	wrong-type (e0047527 bridge/EDA-bridge connection debugging, not spice produce)
+1793589408208_roznq.messages.json					parked		2026-11-12 05:14	consultation (e0024852 'which one can be used for Analyze metrics Iread/Ilead/SNM' - bitcell metric consultation)
+1793345773037_65daa.messages.json					parked		2026-11-12 05:14	dup-risk (tongni Vcc2scAct '跑仿真放结果' - 6th tongni Vcc2sc case, coverage diminishing; Vcc2scActDeckGen-001/Vcc2scTranGen-001/Vcc2scPVTvar-001/SpGen-001/VwlpRefDeckSet-001 already cover)
+1793792759786_ujw1y.messages.json					parked		2026-11-12 05:14	consultation (qiang3xu 'PRBS_TM 总结一下这个电路' - summarize, not produce)
+1792119938594_z6elv.messages.json					parked		2026-11-12 05:14	non-task (wnyu 'hi/在吗/为什么job跑得慢' - chit-chat + job-speed complaint)
+1793684384632_6dmno.messages.json					parked		2026-11-12 05:14	wrong-type (t0003117 '执行skills_v0.2/netlist_extract/SKILLS.md' - skill execution)
+1793544152898_p8z88.messages.json					parked		2026-11-12 05:14	documentation (yh1yang '整理代码形成维护文档和AI agent提示词文档' - doc generation, not spice)
+1792134251943_q9r9s.messages.json	lanxinz	hfeg0pkn001	100	spice_sim	parked		2026-11-12 06:35	dup: bare-sid 1792134251943_q9r9s already case FineSimTbAuditFix-001 (11-04); rescan suffix-mismatch dedup bug
+1794227337092_vuj95.messages.json					parked		2026-11-12 06:31	wrong-domain: find SA/SWD layout (C shard layout), not spice_sim
+1793243641918_xcuds.messages.json					parked		2026-11-12 06:31	meta/infra: skill-creator meta-skill writing, spice kw from skill content
+1792045605929_rp1xk.messages.json					parked		2026-11-12 06:31	consultation: ask what hspice sweep options to use (Q&A, no deliverable)
+1793757463114_zd8iu.messages.json					parked		2026-11-12 06:31	borderline-L1: bash bsub script num1/num2 calc fix, not spice sim proper; L1 capped
+1792837595656_ymjs5.messages.json					parked		2026-11-12 06:31	phantom: session file not found on any reachable host (harrywu)
+1793953494729_nmz6w.messages.json					parked		2026-11-12 06:31	phantom: session file not found on reachable hosts (hairuizh)
+1794210761770_t9j7w.messages.json					parked		2026-11-12 06:31	consultation: analyze hspice model_thick.sp (Q&A, no deliverable)
+1793865540752_5ue0u.messages.json					parked		2026-11-12 06:31	wrong-domain: web scan-service debug (粗扫细扫合并/部署包/页面), not spice
+1790159575229_gn11a.messages.json					parked		2026-11-12 06:31	continuation/consultation: first user='1' menu pick, yanxvwei consultation pattern
+1791954407908_szdav.messages.json					parked		2026-11-12 06:31	near-dup: jiangbaol strongarm slicer tuning, dup of delivered StrongarmFomSweep-001 (r73sm)
+1793176752981_ikfrw.messages.json	joeyl	hfeg0plg49	34	spice_sim	case	EDA-Eval-DesignFlow-C2cRfbCmStab-001	2026-11-12 07:55	spice_sim/L2/B-synthesized/k=14/c2c RFB cm stabilization/.75 selftest 9/9 PASS
+1791784036591_y9y0f.messages.json	joeyl	hfeg0plg53	34	spice_sim	case	EDA-Eval-DesignFlow-JitterTieRerun-001	2026-11-12 07:45	
+1790731913166_ki1x0.messages.json	chengk	hfeg0plg102	27	spice_sim	parked		2026-11-12 08:18	code-reading+flowchart task (IddFlowCode/test), no SPICE sim, L1 docs, not design-flow sim deliverable
+1792204849864_ly0mw.messages.json	e0039516	hfeg0plg76	19	spice_sim	parked		2026-11-12 08:19	ambiguous 'DDJOB Auto 315B' consultation, RAG search+ask_question, no SPICE sim, not design-flow deliverable
+1782803097375_exstf.messages.json	e0025730	hfeg0plg49	25	spice_sim	parked		2026-11-12 08:19	lvlshft skill sizing/code-reading on private devops tree, no real HSPICE run (only python soa_selector), not portable design-flow sim
+1792649502711_qrr6j.messages.json	thqu	hfeahpc503	14	spice_sim	parked		2026-11-12 08:21	IDD仿真激励怎么写 consultation/how-to, KB search+read scripts, no sim run, not design-flow deliverable
+1788751406721_c385l.messages.json	sophiaw	hfeg0plg09	36	spice_sim	parked		2026-11-12 08:21	AnasimPro benchmark pyAether sim-verification scenario (/rundata/ieda_agent_test), not real spice_sim, GUI automation
+1790073773700_rwf2q.messages.json	bo1zhao	hfeg0plg11	13	spice_sim	parked		2026-11-12 08:24	RedHawk-SC PDF manual reading + web fetch, no SPICE sim, exploration not design-flow deliverable
+1793237833740_jlkql.messages.json	chentong	hfeg0plg49	11	spice_sim	parked		2026-11-12 08:24	STD_Check incomplete: ends ask_question (10 msgs), no task performed, aborted
+1790578411744_brrc3.messages.json	e0039602	hfeg0pkn002	49	spice_sim	parked		2026-11-12 08:24	AutoDebug code-reading+comparison report (V3 vs 0916), no SPICE/waveform sim, L1 docs
+1789106338537_v9zug					parked		2026-11-12 09:14	kanban app session (.cline/apps/kanban/), not cline coding session, REJECT peek r421
+1791445250037_2gxuy					parked		2026-11-12 09:14	consultation: how-to open vscode, hspice:20 kw but 0 sim, REJECT peek r421
+1789371142448_mw3vr.messages.json	sophiaw	hfeg0plg09	28	spice_sim	case	EDA-Eval-DesignFlow-SpiceFlowAuto-001	2026-11-12 13:43	
+1787636335993_qe1va					parked		2026-11-12 14:05	peeked-r434:not-clean-B-produce
+1789031072098_3tnys					parked		2026-11-12 14:05	peeked-r434:not-clean-B-produce
+1792467113057_ny0wi					parked		2026-11-12 14:05	peeked-r434:not-clean-B-produce
+1792490112659_zhp1c					parked		2026-11-12 14:05	peeked-r434:not-clean-B-produce
+1791537680196_nmt8f					parked		2026-11-12 14:05	peeked-r434:not-clean-B-produce
+1792397227578_q4d8h					parked		2026-11-12 14:05	peeked-r434:not-clean-B-produce
+1792548283238_of6ff					parked		2026-11-12 14:05	peeked-r434:not-clean-B-produce
+1792630583637_kjibr					parked		2026-11-12 14:05	peeked-r434:not-clean-B-produce
+1789993978842_q63ux	yiz	hfeg0pgn145	248	spice_sim	parked		2026-11-12 14:29	peeked-r435:waveform-toggle-read-ncsim-trn-not-B-produce
+1793268873755_cwq7f	e02141	hfeg0pkn001	698	characterization	parked		2026-11-12 14:29	peeked-r435:sentaurus-tcad-deck-study-QA-not-B-produce
+1792564968145_q16oz	t0002801	hfeg0plg99	102	spice_sim	parked		2026-11-12 14:31	peeked-r435:waveform-image-merge-iwave-not-B-produce
+1790236401918_27c6f	jason17w	hfeg0pnd002	187	spice_sim	parked		2026-11-12 14:31	peeked-r435:ddr-lpddr-regression-run-verify-not-B-produce

@@ -193,6 +193,9 @@ def group_rounds(rounds):
     g = defaultdict(list)
     for r in rounds:
         s = r.get("summary") or r
+        # 跳过已作废轮次 (如 B_zh_r3 旧 78.5% 已被重跑取代, 留档但不参与聚合)
+        if s.get("status") == "SUPERSEDED":
+            continue
         tag = s.get("tag")
         ax, lvl, rn = parse_tag(tag)
         if ax is None: continue
@@ -447,12 +450,19 @@ def build_html(data, eval_map, complete, n_done):
 <div class="banner {banner_cls}">{esc(banner_msg)}</div>
 
 <div class="note">
-<b>口径</b>：基座 = <code>glm-5.2</code>（恒定，两轴内不换）｜harness = cline 3.0.51（不改版本）｜
+<b>口径</b>：harness = cline 3.0.51（不改版本）｜
 测试集 = EDA-Eval-PyAether 158 题（不跑 SKILL/Tcl）｜协议 = Pass@1 单次无 retry <code>-p 8 -n</code>｜
 每变体 {ROUNDS_PER_VARIANT} 轮。<br>
 <b>基线锚点</b>：{esc(BASELINE['name'])} = {BASELINE['mean']:.1f} ± {BASELINE['std']:.1f}%（rounds={BASELINE['rounds']}，既有 cline CLI 5-run）。<br>
 <b>轴 A</b>：thinking 档位 {THINK_LEVELS}（LANG_HINT 空）。<b>轴 B</b>：思维链语言 {LANGS}（thinking 固定 medium，prompt 末尾追加语言指令）。<br>
 <b>注</b>：glm-5.3-flash 因 HTTP 429 额度耗尽改用 ②glm-5.2（用户令允许的备选，与既有 B.glm-5.2 基线同源可直接 Δpp+McNemar）。
+</div>
+
+<div class="banner err">
+<b>⚠️ 基座严重违反口径（必读）</b>：用户令（2026-11-07）明确「两轴实验内基座必须恒定 glm-5.2」且「🚫 不用 deepseek-v4-pro-* 系列」。
+<b>实测</b>：轴 A 15/15 轮 = <code>glm-5.2</code> ✅ 恒定合规；<b>轴 B 仅 B_en_r1 = glm-5.2，其余 14 轮（en_r2/r3、zh、es、fr、ru 全部 + zh_r3 重跑）实际跑在 <code>deepseek-v4-pro-cloud</code> 上</b> ❌ —— 既不恒定，又用了被禁基座。
+后果：① 轴 B 内任何「语言间 Δpp」横比都被基座差异污染，<b>不能直接横比</b>；② 轴 B vs baseline（glm-5.2 5-run）的 Δpp / McNemar 同样被基座混杂；③ 轴 A vs 轴 B 也不可直接比。
+本报告轴 B 各行保留绝对值供参考，但<b>不作因果归因</b>。修正（同基座重跑 + 基础 prompt 中性化）另开令，见 audit 报告 §5.3。
 </div>
 
 <h2>① 轴 A 对比表（thinking 档位）</h2>
@@ -462,6 +472,9 @@ def build_html(data, eval_map, complete, n_done):
 
 <h2>② 轴 B 对比表（思维链语言）</h2>
 <p class="small">固定 thinking=medium；prompt 末尾追加语言指令（{', '.join(f'{k}={esc(v)}' for k,v in LANG_HINT_LABEL.items())}）。</p>
+<div class="banner warn">
+<b>⚠️ 降级口径（按 audit 报告 §5.3）</b>：本表 B 轴各行 <b>仅报告绝对值，不作「语言 X 提升 Δpp」式因果归因</b>。原因见上方基座违规 banner + 下方 §4.2 语言切换核查：es 注入<b>未生效</b>（思维链仍英语/中文）、fr <b>部分生效</b>（~33% 题切法语，多为简单题）、zh 与基础 prompt 中文指令 <b>confound</b>、en 真切换。即「B-es 行」实质≈「模型默认英语思维链 + 末尾无效西语提示」，不应读作「西班牙语思维链效应」。
+</div>
 {tbl(b_headers, [base_row] + b_rows)}
 
 <h2>③ 成本-分数象限分析</h2>
@@ -476,10 +489,20 @@ def build_html(data, eval_map, complete, n_done):
 <b>已知现象（需在报告中说明）</b>：A-none（不传 flag）仍有非零 reasoning 字符量。两种解释：(a) GLM-5.2 模型自发产生 thinking 块（flag 仅调节档位而非开关）；(b) 抽取法计入非 thinking 内容。<b>判定依据</b>：若 A-none 的 <i>块计数</i> 显著低于 low/medium → flag 仍生效（仅体量相近）；若计数也相近 → flag 对该模型 reasoning 体量无显著控制。Pass@1 跨档差异（none&lt;low≈medium）已证明 flag 对 <b>行为结果</b> 有效。
 </div>
 
-<h3>4.2 思维链语言是否真切换</h3>
+<h3>4.2 思维链语言是否真切换（audit 抽查结论 · 2026-11-11）</h3>
 <div class="banner warn">
-轴 B 各语言变体须抽 3~5 条 trace 核对 thinking 块 <b>正文语言</b>是否真切换为指令语言（en/zh/es/fr/ru）。<b>核验方法</b>：对每个 B-<lang> 代表轮，从 trace 目录 <code>trace_ablation_think_lang/B_&lt;lang&gt;_r&lt;N&gt;/&lt;gen_batch&gt;/cli_data/worker_*/data/sessions/&lt;sid&gt;/&lt;sid&gt;.messages.json</code> 读 assistant 消息的 thinking 块正文，肉眼/启发式判定主导语言。本生成器未自动判定语言（避免误判），完成数据后请人工抽查并在此节补录片段。未生效的变体须标注「该变体未生效」而非当有效数据。
+独立抽查（4 语言 × 3 轮 × 6 题号共 71 条有效思维链逐条复核）结论：<b>en 真切换（17/17）、zh 真切换但被基础 prompt 中文指令 confound（14/18）、es 未生效（3/21）、fr 部分生效偏弱（6/18）</b>。详细见 <code>reports/report_zhulong_lang_switch_audit_zh.html</code>。
 </div>
+{tbl(["语言", "TAG", "样本数", "TARGET", "MIXED", "ENGLISH", "COPIED_PROMPT", "漂错语言", "判定"],
+[
+ ["<b>英(en)</b>", "B_en_r1/r2/r3", "17", "17", "0", "0", "0", "0", "真切换"],
+ ["<b>中(zh)</b>", "B_zh_r1/r2/r3", "18", "14", "0", "1", "0", "3", "真切换(confound)"],
+ ["<b>西(es)</b>", "B_es_r1/r2/r3", "21", "3", "1", "15", "0", "2", "未生效"],
+ ["<b>法(fr)</b>", "B_fr_r1/r2/r3", "18", "6", "0", "11", "0", "1", "部分生效"],
+ ["<b>俄(ru)</b>", "B_ru_r1/r2/r3", "—", "—", "—", "—", "—", "—", "BLOCKED(抽检时未跑完)"],
+])}
+<div class="note"><b>阈值核对（任务书 §3）</b>：en ≥4/5 TARGET ⇒ 真切换 ✅；zh 同 ✅（但被基础 prompt「思考用中文」confound，注入只是重复）；es 仅 3/21 TARGET+1 MIXED ⇒ 未生效 ✅；fr 6/18 TARGET ⇒ 部分生效（偏弱）✅。<b>未发现 <code>COPIED_PROMPT</code></b>——所有「未遵循」样本都真实地用英语/中文思考，而非敷衍复述注入短语。<b>结构性失败模式</b>：长难题（task 120 inverter-symbol / 150 sdl-flow）在所有非英语语言里几乎必漂回英语，与注入强度无关。<b>答案/代码部分</b>仍为英语（仅要求思维链换语言，未影响输出）。</div>
+<div class="note"><b>影响评估（audit §5）</b>：B 轴现有结论<b>不能按「语言真切换」口径采信</b>。zh 分数实质≈基线（基础 prompt 已强制中文）；es 三轮实质=「模型默认英语思维链 + 末尾无效西语提示」，应作废「西班牙语」标签；fr 三轮是法语/英语思维链混合（按题难度分层），轮级 mean±std 不能当作「法语思维链效应」；en 真切换但 en_r1 基座(glm-5.2)与 en_r2/r3(deepseek-v4-pro-cloud) 不同，轮内亦不纯。叠加基座违规（见上方 banner），B 轴需在同基座 + 基础 prompt 中性化前提下重跑才能做语言间因果对比。</div>
 
 <h3>4.3 none 档实现口径</h3>
 <p>cline <code>--help</code> 枚举 = <code>none|low|medium|high|xhigh</code>（5 档）。A-none 传 <code>--thinking none</code>（CLI 接受）。若后续发现 none 不被接受则改「不传 flag」，并在报告标注口径差异。</p>
@@ -501,9 +524,10 @@ def build_html(data, eval_map, complete, n_done):
     else:
         html += "<b>趋势</b>：数据不足，待补。"
     html += """
-<b>边际收益</b>：thinking none→low 显著提升（+4.7~5.9pp），low→medium 边际趋平（≈+0.6pp），说明对 GLM-5.2 + PyAether 158 任务，开 low 档即获大部分增益，medium 以上边际收益递减。<b>成本</b>：reasoning token 跨 none/low/medium 体量相近（待 high/xhigh 确认是否陡增）。<b>语言</b>：轴 B 待跑完判定；若各语言 Pass@1 在噪声内（std~1-2pp）则思维链语言对 GLM-5.2 EDA 任务影响有限。<br>
-<b>生产配置建议</b>：若成本敏感，low 档为性价比最优点；若追求上限且 quota 充裕，medium。high/xhigh 待数据。轴 B 若无显著差异，生产可保留默认（英文）不加语言指令，避免 prompt 膨胀。<br>
-<b>⚠️ 以上结论基于部分数据，全部 30 轮完成后须重跑此脚本更新最终结论。</b>
+<b>边际收益</b>：thinking none→low 显著提升（+4.7~5.9pp），low→medium 边际趋平（≈+0.6pp），说明对 GLM-5.2 + PyAether 158 任务，开 low 档即获大部分增益，medium 以上边际收益递减。<b>成本</b>：reasoning token 跨 none/low/medium 体量相近（待 high/xhigh 确认是否陡增）。<br>
+<b>语言（轴 B · 降级结论）</b>：轴 B 5 语言 Pass@1 落在 76.2~81.2% 区间（en 80.0±4.5 / zh 81.2±3.2 / es 80.8±0.3 / fr 76.2±2.6 / ru 79.3±2.5），看似差异不大，但<b>此差异不可归因为「思维链语言的效应」</b>：(1) 基座不恒定（en_r1=glm-5.2，余 14 轮=deepseek-v4-pro-cloud，且后者为用户令禁用基座）；(2) 语言切换实测 es 未生效 / fr 部分生效 / zh 与基础 prompt confound（见 §4.2）；(3) 基础 prompt 已强制中文思考，与 B 轴注入冲突。故轴 B 仅能报告「在当前（违规）配置下各语言轮的绝对 Pass@1」，<b>不能做语言间 Δpp 横比或因果归因</b>。fr 偏低（76.2%）可能与长难题漂回英语 + 部分切换有关，但需同基座重跑方能定论。<br>
+<b>生产配置建议</b>：轴 A——若成本敏感，low 档为性价比最优点；若追求上限且 quota 充裕，medium。high/xhigh 边际不升反降（倒 U 形）。轴 B——<b>当前数据不支持改生产语言配置</b>（基座违规 + 语言切换未全生效）；如需评估思维链语言效应，须先在同基座（glm-5.2 恒定）+ 基础 prompt 中性化前提下重跑，audit 报告 §5.3 已给出最低改写建议。<br>
+<b>⚠️ 轴 A 结论基于 glm-5.2 恒定基座（合规），可信；轴 B 结论受基座违规 + 语言切换未全生效双重污染，已降级为描述性，不作因果归因。修正另开令。</b>
 </div>
 
 <h2>附：生成信息</h2>

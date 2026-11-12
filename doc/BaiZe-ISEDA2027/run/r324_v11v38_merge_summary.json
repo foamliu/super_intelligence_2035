@@ -1,0 +1,102 @@
+{
+  "meta": {
+    "round": "R324",
+    "date": "2026-11-12",
+    "purpose": "Merge v11-v37 + R323 data-gap into unified SFT v38 corpus",
+    "surrogate_disclaimer": "MiniCPM5-2B is BaiZe surrogate; gains not transferable to BaiZe"
+  },
+  "inputs": {
+    "v11_v37_pairs": 1086,
+    "r323_pairs": 258,
+    "r323_coverage": "166/166 data-gap APIs (100%)"
+  },
+  "merge": {
+    "merged_pairs": 1344,
+    "duplicates_removed": 0,
+    "output_jsonl": "sft_pyaether_corpus_v11_v38_merged.jsonl",
+    "output_jsonl_kb": 1743.3
+  },
+  "family_distribution": {
+    "before_v11_v37": {
+      "db*": 335,
+      "emy*": 394,
+      "ae*": 153,
+      "Mde*": 163,
+      "other": 352,
+      "dm*": 78,
+      "et*": 42,
+      "Emy*": 24,
+      "sle*": 12,
+      "CString*": 30,
+      "gu*": 6
+    },
+    "after_v11_v38": {
+      "db*": 351,
+      "emy*": 457,
+      "ae*": 176,
+      "Mde*": 259,
+      "other": 364,
+      "dm*": 87,
+      "et*": 42,
+      "Emy*": 48,
+      "sle*": 12,
+      "CString*": 32,
+      "gu*": 6,
+      "emc*": 13
+    }
+  },
+  "top_apis_after": {
+    "GuCartPolyLine": 26,
+    "dbCrtInst": 23,
+    "dbCloseCV": 21,
+    "emyPointF": 17,
+    "emyArray_p_emyPointArray": 17,
+    "CStringList": 17,
+    "CColor": 17,
+    "SleQueryData": 17,
+    "dbGetAllLibs": 16,
+    "dbSaveCV": 16,
+    "emyPointArrayGOA": 16,
+    "EmyNtlUtil": 15,
+    "dbOpenCV": 14,
+    "emyPointArrayF": 14,
+    "dbCreateLib": 14,
+    "dbOpenCVByType": 14,
+    "MdePlatSession": 14,
+    "dbNewCV": 13,
+    "dmGetObj": 13,
+    "goaLayerFromCellView": 13
+  },
+  "contamination_fingerprint_scan": {
+    "status": "PASS",
+    "eval_entry_points": 488,
+    "corpus_pairs_mentioning_eval_api": 1337,
+    "note": "API names are ALLOWED in training corpus. Informational only."
+  },
+  "parquet_conversion": {
+    "status": "PASS",
+    "input": "sft_pyaether_corpus_v11_v38_merged.jsonl",
+    "output": "sft_pyaether_corpus_v11_v38_merged.parquet",
+    "rows": 1344,
+    "parquet_rows": 1344,
+    "errors": 0,
+    "size_bytes": 391868,
+    "size_kb": 382.7,
+    "schema_cols": [
+      "conversation",
+      "pair_id",
+      "type",
+      "api_used",
+      "contamination_check"
+    ]
+  },
+  "train_val_split": {
+    "status": "PASS",
+    "train_rows": 1210,
+    "val_rows": 134,
+    "train_path": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/sft_surrogate_data/minicpm5_pyaether_v2_v11v38/sft_surrogate_train.parquet",
+    "val_path": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/sft_surrogate_data/minicpm5_pyaether_v2_v11v38/sft_surrogate_val.parquet",
+    "train_kb": 526.8,
+    "val_kb": 66.7
+  }
+}

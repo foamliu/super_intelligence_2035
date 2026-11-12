@@ -1,0 +1,21 @@
+spice_grep_count	user	slug	ip	host	mtime_window	first_user	verdict
+1521	tongni	1794397721848_op8wj	10.129.8.86	hfeg0plg49	>=11-10	sim-sp-gen skill Vcc2sc_stdby .sp gen	PARKED r411 02:1x: CLEAN spice_sim produce but .sp templates .inc /proj PDK+netlist+pvt paths not portable; defer high-budget round
+866	kejunw	1794398756746_2g3in	10.129.2.11	hfeg0pkn002	>=11-10	你可以直接分析分析fsdb波形吗	PARKED r409: REJECT-consultation (Q&A about fsdb waveform analysis)
+736	yanxvwei	1793859557333_n70dr	10.129.8.86	hfeg0plg49	>=11-10	列出所有finesim和hspice的常用option及作用	PARKED r413 02:3x: REJECT-consultation (documentation listing request, 42 user msgs editor(18)/run(6)/read(5), no deliverable)
+586	jiangbaol	1794383471111_r73sm	10.129.2.10	hfeg0pkn001	>=11-10	我现在需要优化strongarm电路应该从哪里开始	DELIVERED r410 02:0x: EDA-Eval-DesignFlow-StrongarmFomSweep-001 (spice_sim/L2/k=14/a-faithful)
+584	jiangbaol	1794382271104_cpb5n	10.129.2.10	hfeg0pkn001	>=11-10	(pending peek, same user as r73sm)	PARKED r411 02:1x: near-dup StrongarmFomSweep-001 (same user jiangbaol same first-msg strongarm)
+582	jiangbaol	1794394189493_0fuy7	10.129.2.10	hfeg0pkn001	>=11-10	我现在需要优化strongarm电路，应该从哪里开始	PARKED r413 02:3x: near-dup r73sm (same user jiangbaol same first-msg strongarm; RAG_search_apis(10) heavy, SPICE_KW=5 low)
+579	e0046686	1794363208455_zdztp	10.129.8.86	hfeg0plg49	>=11-10	SRAMAutoSim工具UI中add instance的output和spice参数列表的output有什么差异	PARKED r413 02:3x: REJECT-consultation (SRAMAutoSim UI explanation Q&A, not produce-task)
+517	mike	1794378055746_1s79t	10.129.8.86	hfeg0plg49	>=11-10	lpddr6 tb vsim脚本生成finesim的tb脚本要适配	CLAIMED r413 02:3x: CLEAN spice_sim produce-task (adapt Perl vsim TB-gen script for finesim, remove lpddr4/5/DBRMA, default DECQA/V0, add local fallback); DEBT:1 deepread done, synthesize next round
+509	e0030760	1794398684733_jjrpj	10.129.2.10	hfeg0pkn001	>=11-10	(pending peek, e0030760 has 3 fresh sessions)	PARKED r414 03:4x: REJECT wrong-domain file-mgmt (first-user "把桌面文件移到新文件夹", same as 2kwms; 382 msgs/172 tools all file ops)
+509	e0030760	1794394259449_bwtk9	10.129.2.10	hfeg0pkn001	>=11-10	(pending peek)	PARKED r414 03:4x: REJECT wrong-domain file-mgmt (near-dup jjrpj same user e0030760 same first-msg; 383 msgs/173 tools)
+490	e0030760	1794386723024_2kwms	10.129.2.10	hfeg0pkn001	>=11-10	(pending peek)	PARKED r411 02:1x: wrong-domain file-mgmt (first-user '把桌面文件移到新文件夹')
+470	tongni	1794401271107_fnxke	10.129.2.13	hfeg0pkn004	>=11-10	sim-sp-gen skill Vcc2sc_stdby .sp gen	PARKED r413 02:3x: near-dup op8wj (same user tongni, same sim-sp-gen skill, same /proj PDK .inc not portable)
+443	alexli	1794377663577_p1isl	10.129.2.13	hfeg0pkn004	>=11-10	/proj/ddgoa/V0/libs/.../schematic/ 我想要抽取这个网表	PARKED r413 02:3x: wrong-domain (netlist extraction=D shard, needs Virtuoso) + /proj not portable
+308	rongjiez	1794387616147_bwlcp	10.129.35.69	hfeg0plg53	>=11-10	(pending peek)	PARKED r411 02:1x: borderline waveform (vec.text variants, near-dup WaveViewPanel-001)
+306	rongjiez	1794382087740_nm5op	10.129.35.69	hfeg0plg53	>=11-10	(pending peek)	PARKED r414 03:4x: REJECT D-shard consultation (first-user "vec.text 怎么解析为波形" = waveform parsing Q&A, not produce-task; 121 msgs/61 tools)
+295	dsgao	1794366982750_ngnm2	10.129.2.11	hfeg0pkn002	>=11-10	full_testbench_far.fsdb 抓取coupling影响	PARKED r413 02:3x: wrong-domain (waveform .fsdb analysis=D shard) + consultation
+283	yinyus	1794395852366_tef8l	10.129.2.10	hfeg0pkn001	>=11-10	(pending peek)	PARKED r414 03:4x: UNLOCATABLE (slug not found under /home/*/.cline on recorded host 10.129.2.10 hfeg0pkn001; glob []; session likely moved/deleted or home not in /home) - skip
+281	hairuizh	1794395736760_zucka	10.129.2.10	hfeg0pkn001	>=11-10	(pending peek)	DELIVERED r410 01:54: EDA-Eval-DesignFlow-PlatMosThinIdsatIoffSweep-001 (spice_sim/L2)
+195	yohannw	1794369069999_jlgfx	10.129.2.11	hfeg0pkn002	>=11-10	(pending peek)	PARKED r414 03:4x: REJECT wrong-domain job-queue (first-user "丢个queue到fqueue2h任务echo hello world" = job submission, not spice/char; 102 msgs/48 tools)
+122	thomasz	1794375717921_5p2v2	10.129.35.69	hfeg0plg53	>=11-10	(pending peek)	PARKED r414 03:4x: REJECT consultation (first-user "看下这个仿真卡住了吗" Totem IR sim-stuck diagnostic, not produce-task; 53 msgs/28 tools; /rundata/totem/dscqa/IR DDR6TOP_IDD4R)

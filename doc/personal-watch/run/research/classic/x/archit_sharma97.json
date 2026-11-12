@@ -1,0 +1,73 @@
+{
+ "handle": "archit_sharma97",
+ "name": "Archit Sharma (@archit_sharma97) / X",
+ "bio": "post-training science lead @GoogleDeepMind | co-created: Gemini Deep Think series, DPO | prev: @Stanford @Google Brain @IITKanpur @MILAMontreal",
+ "tweets": [
+  {
+   "id": "2115513529952596234",
+   "created_at": "2026-10-28 18:38 UTC",
+   "created_at_ms": 1793212704000,
+   "text": "good model, works very hard",
+   "url": "https://x.com/archit_sharma97/status/2115513529952596234",
+   "handle_guess": "archit_sharma97"
+  },
+  {
+   "id": "2115489649649234259",
+   "created_at": "2026-10-28 17:03 UTC",
+   "created_at_ms": 1793207011000,
+   "text": "Just two weeks after rolling out Gemini 4 Argon, excited to share a preview of Gemini 4 Carbon - our next frontier model.  It has state-of-the-art long horizon coding capabilities driving SOTA performance across the cybersecurity defense lifecycle including detection, validation, https://t.co/acRuTEPmEw",
+   "url": "https://x.com/archit_sharma97/status/2115489649649234259",
+   "handle_guess": "koraykv"
+  },
+  {
+   "id": "2105404492674195596",
+   "created_at": "2026-09-30 21:08 UTC",
+   "created_at_ms": 1790802522000,
+   "text": "With Gemini 4 Argon, we have really scaled aggressively.\\\n\\\nWe decided we are not going to have just one but *two* off by one naming errors in the same model.",
+   "url": "https://x.com/archit_sharma97/status/2105404492674195596",
+   "handle_guess": "archit_sharma97"
+  },
+  {
+   "id": "2105391538163593317",
+   "created_at": "2026-09-30 20:17 UTC",
+   "created_at_ms": 1790799433000,
+   "text": "sorry for the delay, we’ll work faster here on :)",
+   "url": "https://x.com/archit_sharma97/status/2105391538163593317",
+   "handle_guess": "archit_sharma97"
+  },
+  {
+   "id": "2105388084154056939",
+   "created_at": "2026-09-30 20:03 UTC",
+   "created_at_ms": 1790798610000,
+   "text": "Introducing Gemini 4 Argon – our new frontier model.\\\n\\\nIt’s built for complex workflows across coding, enterprise knowledge work, and cybersecurity defense – rolling out today to a set of trusted testers through our Fairwind Program. https://t.co/X8acOWJOSF",
+   "url": "https://x.com/archit_sharma97/status/2105388084154056939",
+   "handle_guess": "GoogleDeepMind"
+  },
+  {
+   "id": "2097397389275402676",
+   "created_at": "2026-09-08 18:51 UTC",
+   "created_at_ms": 1788893480000,
+   "text": "what is funny about this whole situation is that the *rumours* about a millennium prize problem being solved led to OAI trying it out, which led to NS actually being solved*.\\\n\\\ntalk about willing things into existence",
+   "url": "https://x.com/archit_sharma97/status/2097397389275402676",
+   "handle_guess": "archit_sharma97"
+  },
+  {
+   "id": "2087974147817353274",
+   "created_at": "2026-08-13 18:46 UTC",
+   "created_at_ms": 1786646804000,
+   "text": "lots more to do, lots more to come!",
+   "url": "https://x.com/archit_sharma97/status/2087974147817353274",
+   "handle_guess": "archit_sharma97"
+  },
+  {
+   "id": "2087948169552490845",
+   "created_at": "2026-08-13 17:03 UTC",
+   "created_at_ms": 1786640610000,
+   "text": "Today we're launching Gemini 3.7 Flash - our latest workhorse model for coding and agentic workflows, with an introductory price at half the original cost of 3.6 Flash. ⚡️\\\n\\\nWe have been iterating rapidly with the Flash series, going from 3.5 to 3.7  in just 3 months, making it https://t.co/UHZ7D8SOPD",
+   "url": "https://x.com/archit_sharma97/status/2087948169552490845",
+   "handle_guess": "koraykv"
+  }
+ ],
+ "http_status": 200,
+ "fetched_at": "2026-11-12 15:03:14"
+}

@@ -1,0 +1,73 @@
+{
+ "handle": "peteflorence",
+ "name": "Pete Florence (@peteflorence) / X",
+ "bio": "Co-Founder &amp; CEO @GeneralistAI",
+ "tweets": [
+  {
+   "id": "2090592251286335962",
+   "created_at": "2026-08-21 00:10 UTC",
+   "created_at_ms": 1787271008000,
+   "text": "Good question thanks Ani. Here's a video that gives a sense of the answer here about the effect of prompting:\\\n\\\n- in the first part, the model is just babbling with no prompt in context\\\n- at the end, we add a prompt for taking money out of a pouch (generalizing to the wallet) https://t.co/vU0mCbueaq",
+   "url": "https://x.com/peteflorence/status/2090592251286335962",
+   "handle_guess": "peteflorence"
+  },
+  {
+   "id": "2090481991343116329",
+   "created_at": "2026-08-20 16:52 UTC",
+   "created_at_ms": 1787244720000,
+   "text": "Last week  @willknight came by and got a preview of one-shot prompting and we had some fun improvisational moments with the robot. Thanks Will for helping capture the moment.",
+   "url": "https://x.com/peteflorence/status/2090481991343116329",
+   "handle_guess": "peteflorence"
+  },
+  {
+   "id": "2090473350283796652",
+   "created_at": "2026-08-20 16:17 UTC",
+   "created_at_ms": 1787242660000,
+   "text": "I'm usually wary about talk of \\",
+   "url": "https://x.com/peteflorence/status/2090473350283796652",
+   "handle_guess": "willknight"
+  },
+  {
+   "id": "2090468947258650999",
+   "created_at": "2026-08-20 16:00 UTC",
+   "created_at_ms": 1787241610000,
+   "text": "@peteflorence @andyzengineer Very cool work, Pete! I'm curious if you've tried an extreme version of this: no in-context example at all; just place objects in front of the robot and see if it can infer the task. \\\n\\\nI suspect this will have non-trivial success rates, which would also allow you to figure out",
+   "url": "https://x.com/peteflorence/status/2090468947258650999",
+   "handle_guess": "Majumdar_Ani"
+  },
+  {
+   "id": "2090161945307664621",
+   "created_at": "2026-08-19 19:55 UTC",
+   "created_at_ms": 1787169358000,
+   "text": "Ever since I started working on robot foundation models a handful of years ago, the broad ability to one-shot in-context learn has been the single most vivid goal in my mind along the long road ahead. It’s something @andyzengineer  and I have especially been thinking together on",
+   "url": "https://x.com/peteflorence/status/2090161945307664621",
+   "handle_guess": "peteflorence"
+  },
+  {
+   "id": "2084662369205289381",
+   "created_at": "2026-08-04 15:26 UTC",
+   "created_at_ms": 1785857214000,
+   "text": "Butter, generalized",
+   "url": "https://x.com/peteflorence/status/2084662369205289381",
+   "handle_guess": "peteflorence"
+  },
+  {
+   "id": "2084652475869774099",
+   "created_at": "2026-08-04 14:47 UTC",
+   "created_at_ms": 1785854855000,
+   "text": "We've improved how GEN-1 learns to adapt to new actuators and new robots at the lowest level, with up to 10-20x gains on internal benchmarks. This significantly boosts performance on high-precision tasks like disassembling parts from a NIST board.\\\n\\\nRead more about GEN-1 in our https://t.co/F14VDCxuFO",
+   "url": "https://x.com/peteflorence/status/2084652475869774099",
+   "handle_guess": "GeneralistAI"
+  },
+  {
+   "id": "2041529286562402804",
+   "created_at": "2026-04-07 14:51 UTC",
+   "created_at_ms": 1775573486000,
+   "text": "https://t.co/cwqP98pKCq",
+   "url": "https://x.com/peteflorence/status/2041529286562402804",
+   "handle_guess": "peteflorence"
+  }
+ ],
+ "http_status": 200,
+ "fetched_at": "2026-11-12 06:03:18"
+}

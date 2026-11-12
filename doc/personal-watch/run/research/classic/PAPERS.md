@@ -10,7 +10,7 @@
 >
 > **元数据核验**：标题 / 首次提交日 均取自 arXiv 官方 API（`export.arxiv.org/api/query?id_list=...`，2026-11-11 两轮实测 `HTTP 200` + `application/atom+xml; charset=utf-8`，首轮 4/4、第二轮 4/4 = 累计 8/8）。
 
-**本轮快照**：累计 **27** 条（首轮 11:5x 收 4 条；第二轮 11:4x 补 4 条 EDA / agent / PEFT；第三轮 12:1x 补 4 条 RoPE / SWE-bench / Reflexion / CoT；第四轮 12:4x 补 3 条 GPT-3 / InstructGPT / LLaMA；第五轮 15:0x 补 4 条 ResNet / seq2seq / Dyna / LLaVA；第六轮 18:0x 补 4 条 GPT-1 / GPT-2 / Kaplan scaling laws / DQN；**第七轮 21:0x 补 4 条** AlphaGo / AlphaGo Zero / Gemini / OpenVLA）｜ 覆盖（一篇可服务多线，按文内「与我们工作的关系」逐条计数）：pretrain **18** · vision **6** · harness **13** · data **13** · zhulong **18** · designflow **8**
+**本轮快照**：累计 **55** 条（首轮 11:5x 收 4 条；第二轮 11:4x 补 4 条 EDA / agent / PEFT；第三轮 12:1x 补 4 条 RoPE / SWE-bench / Reflexion / CoT；第四轮 12:4x 补 3 条 GPT-3 / InstructGPT / LLaMA；第五轮 15:0x 补 4 条 ResNet / seq2seq / Dyna / LLaVA；第六轮 18:0x 补 4 条 GPT-1 / GPT-2 / Kaplan scaling laws / DQN；第七轮 21:0x 补 4 条 AlphaGo / AlphaGo Zero / Gemini / OpenVLA；第八轮 2026-11-12 00:0x 补 4 条 AlphaFold / AlphaStar / Kimi k1.5 / π0；第九轮 2026-11-12 03:0x 补 4 条 GLM-4 / MiniMax-01 / RT-2 / Octo；**第十轮 2026-11-12 06:0x 补 4 条** SWE-agent / Tree of Thoughts / Llama 2 / LLaVA-1.5；**第十一轮 2026-11-12 09:0x 补 4 条** Llama 3 / RT-1 / Christiano 2017 / Stiennon 2020；**第十二轮 2026-11-12 12:0x 补 4 条** τ-bench / TD-Gammon / Sora 技术报告 / Kimi K2；**第十三轮 2026-11-12 15:0x 补 4 条** DPO / Mamba-2(SSD) / FlashAttention-2 / Ramulator 2.0；**第十四轮 2026-11-12 18:0x 补 4 条** SimPO / Zephyr / CircuitNet / Sutton《The Bitter Lesson》（博客，单列非论文条目））｜ 覆盖（一篇可服务多线，按文内「与我们工作的关系」逐条计数）：pretrain **30** · vision **17** · harness **32** · data **32** · zhulong **39** · designflow **18**
 
 > 🆕 **第四轮（2026-11-11 12:4x）新增 3 条 = 「规模 → 指令 → 开放权重」三段主线**：GPT-3（few-shot 能力从哪来）→ InstructGPT（对齐/指令跟随的范式起点）→ LLaMA（用「多 token」把开放权重做到可用）。三篇合起来回答 data 线当前最实际的问题：**token 预算、指令数据、公开配比**。
 >
@@ -22,6 +22,34 @@
 > 🆕 **第七轮（2026-11-11 21:0x）新增 4 条 = 「搜索 / 自我对弈 / 多模态家族 / 视觉-语言-动作」**：AlphaGo（策略/价值网络 + MCTS，首次击败人类职业棋手）→ AlphaGo Zero（去掉人类数据，纯自我对弈）→ Gemini（Ultra/Pro/Nano 多模态家族，报告口径）→ OpenVLA（7B 开源 VLA，DINOv2+SigLIP 融合 + 离散动作）。**必读清单覆盖：本轮后 10/10 组均至少一条落点**（第 3 组 AlphaGo、第 8 组 DeepMind 家族、第 10 组 VLA 均补齐）。⚠️ 组内仍有未收子项，见文末候选池（AlphaFold / AlphaStar / Kimi / GLM-4 / MiniMax-01 / RT-1·RT-2·π0·Octo / SORA）。
 
 > **第七轮核验证据（可复核）**：arXiv API `id_list=2312.11805` 与 `2406.09246` **2/2** `HTTP 200` + `application/atom+xml`（83,259 B / 4,376 B；首条 2023-12-19、第二条 2024-06-13，均取 **v5 / v3** 最新版本标题）；Nature 两条经 **Crossref 2/2 `200`**（`nature16961` → 529(7587):484–489, 2016-01-27；`nature24270` → 550(7676):354–359, 2017-10）；被引数为 **OpenAlex 4/4 `200`**、查询日 **2026-11-11**。Nature 摘要文本取自 `nature.com/articles/<id>` 页面 `dc.description`（2/2 `200`），**只引摘要内出现的数字**。
+
+> 🆕 **第八轮（2026-11-12 00:0x）新增 4 条 = 「领域先验 / 自我对弈 / RL scaling / VLA 主干复用」**：AlphaFold（把领域约束编码进网络 + CASP 盲测）→ AlphaStar（联盟式多智能体 RL）→ Kimi k1.5（RL 作为新 scaling 轴 + long2short）→ π0（VLM 主干 + flow matching 动作专家）。**必读清单组内剩余**：GLM-4 / MiniMax-01、VLA 其余（RT-1 / RT-2 / Octo）、SORA、Llama 2/3、LLaVA-1.5、Tree of Thoughts / SWE-agent、TD-Gammon、Christiano 2017 / Stiennon 2020。
+
+> **第八轮核验证据（可复核）**：`nature.com/articles/s41586-021-03819-2` 与 `s41586-019-1724-z` 均 `HTTP 200`，摘要取自 `dc.description`（只引摘要内数字）；arXiv API `id_list=2501.12599,2410.24164` `HTTP 200` + `application/atom+xml`（11,826 B，首次提交 2025-01-22 / 2024-10-31）；OpenAlex `4/4 200`（45,663 / 3,799 / 1,436 / 3,214，查询日 2026-11-12）。
+
+> 🆕 **第九轮（2026-11-12 03:0x）新增 4 条 = 「中文系开源 + VLA 两条地基」**：GLM-4（中文为主 10T token + All Tools 工具选择）→ MiniMax-01（线性注意力 + MoE，百万级上下文）→ RT-2（动作＝文本 token、6k 次真机评测）→ Octo（80 万轨迹、9 平台、数小时适配新动作空间）。**必读清单：10/10 组均有落点，具体条目 26/37**；组内剩余：TD-Gammon、Christiano 2017 / Stiennon 2020、Llama 2 / 3、LLaVA-1.5、Tree of Thoughts / SWE-agent、RT-1、SORA。
+>
+> **第九轮核验证据（可复核）**：arXiv API `id_list=2611.14459,2611.14493,2611.13560,2406.12793,2501.08313,2307.15818,2405.12213,2307.09288,2310.03744` **`200` + `application/atom+xml; charset=utf-8`**（38,801 B，9 条 entry；首次提交 2026-11-10 ×3 / 2024-06-18 / 2025-01-14 / 2023-07-28 / 2024-05-20 / 2023-07-18 / 2023-10-05）；OpenAlex `6/6 200`（1,879 / 213 / 2,322 / 1,192 / 19,635 / 3,281，查询日 2026-11-12）；Crossref 精确标题 **Octo 命中**（`10.15607/rss.2024.xx.090`，2024-07-15），**RT-2 未命中 ⇒ 会议记「未核验」**。
+
+> 🆕 **第十轮（2026-11-12 06:0x）新增 4 条 = 「接口即方法 + 推理期算力 + 开源三档配方 + 视觉最小基线」**：SWE-agent（ACI 设计本身决定分数）→ Tree of Thoughts（搜索换成功率）→ Llama 2（SFT→拒绝采样→PPO 三段式，68 人报告）→ LLaVA-1.5（三处小改动 + 120 万公开数据 + 8×A100 一天）。**必读清单：10/10 组均有落点，具体条目 30/37**；组内剩余：TD-Gammon、Christiano 2017 / Stiennon 2020、Llama 3、RT-1、SORA。
+>
+> **第十轮核验证据（可复核）**：arXiv API `id_list=2307.09288,2310.03744,2405.15793,2305.10601` **`200` + `application/atom+xml; charset=utf-8`**（13,172 B，4 条 entry；首次提交 2023-07-18 / 2023-10-05 / 2024-05-06 / 2023-05-17，最新版本 v2 / v2 / v3 / v2）；会议取自 **arXiv `arxiv:comment` 原文**（ToT 明写 `NeurIPS 2023 camera ready`、LLaVA-1.5 明写 `Camera ready, CVPR 2024 (highlight)`；Llama 2 / SWE-agent 的 comment 未提会议 ⇒ 由 OpenAlex 定）；被引数 **OpenAlex 4/4 `200`**（19,635 / 3,281 / 1,502 / 3,112，查询日 2026-11-12）；会场 DOI 与页码来自 OpenAlex `primary_location`（LLaVA-1.5 `10.1109/cvpr52733.2024.02484` pp.26286–26296；SWE-agent `10.52202/079017-1601` pp.50528–50652；ToT `10.52202/075280-0517` pp.11809–11822；Llama 2 无会场记录）。
+
+> 🆕 **第十一轮（2026-11-12 09:0x）新增 4 条 = 「偏好即奖励的三段前史 + 机器人策略的规模律 + 405B 的配方公开度」**：Christiano 2017（用成对偏好定义目标，反馈量 <1%）→ Stiennon 2020（reward model 能泛化到新数据集，评测从 ROUGE 转向人类偏好）→ RT-1（任务无关数据 + 高容量 → 真机泛化随数据/模型/多样性变化）→ Llama 3（405B dense、128K 上下文、组合式接入图像/视频/语音）。**必读清单：10/10 组均有落点，具体条目 34/37**；组内剩余：**TD-Gammon**、**τ-bench `2406.12045`**、**SORA 技术报告（无 arXiv，只能引官方报告）**。
+>
+> **第十一轮核验证据（可复核）**：arXiv API `id_list=2407.21783,2212.06817,1706.03741,2009.01325` **`200` + `application/atom+xml; charset=utf-8`**（73,338 B，4 条 entry；首次提交 2024-07-31 / 2022-12-13 / 2017-06-12 / 2020-09-02；最新版本 v3 / v2 / v4 / v3）；被引数 **OpenAlex 4/4 `200`**（23,796 / 2,747 / 1,643 / 945，查询日 2026-11-12）；会议证据：RT-1 = **RSS 2023**（OpenAlex 会场 DOI `10.15607/rss.2023.xix.025`）、Christiano = **NeurIPS 2017**（OpenAlex `locations` 含 `neural information processing systems` → `papers.nips.cc/paper/7017`）、Stiennon = **NeurIPS 2020**（arXiv `comments` 原文 `NeurIPS 2020`）、Llama 3 = **预印本技术报告**（OpenAlex `primary_location.source` = arXiv，无会场 DOI）。
+> ⚠️ 第十一轮如实记：本轮 A 轨扫描第 5 个查询（`cs.SE`）遇 **arXiv `429`**（本线并发请求所致，非「无新增」）⇒ 已在 `ARXIV_API.md §9.155` 记录并改为「4/5 查询成功 + 06:00 的 `cs.SE` 值可参照」；🚫 不把 429 写成「本领域无新增」。
+
+> 🆕 **第十二轮（2026-11-12 12:0x）新增 4 条 = 「补齐必读清单最后 3 项 + 中文系最新 agentic 报告」**：τ-bench（用 LM 模拟用户 + 域内 API + 政策约束，按**终态数据库**判分 + `pass^k` 测一致性）→ **第 7 组（姚顺雨）的最后一项**；TD-Gammon（1994/1995，TD(λ) + 自对弈，只靠胜负信号学到强中级水平）→ **第 1 组（萨顿）的「相关」项**；Sora 官方技术报告（「视频生成模型是世界模拟器」，无 arXiv/DOI）→ **第 10 组（SORA）的最后一项**；Kimi K2（32B 激活 MoE、MuonClip、15.5T token 零 loss spike、agentic 数据合成 + 联合 RL）→ 第 9 组（月之暗面）的**最新一条**。**必读清单：10/10 组、37/37 条目 —— 清单内条目本轮全部覆盖完毕**（此后转「补充 / 更正」为主）。
+>
+> **第十二轮核验证据（可复核）**：arXiv API `id_list=2406.12045,2401.14185` **`200` + `application/atom+xml; charset=utf-8`**（5,114 B）；`id_list=2507.20534` **`200` + atom**（14,399 B，v2，首发 2025-07-28 / 更新 2026-02-03）；OpenAlex `2406.12045` = **1,198**、`2507.20534` = **1,410**（查询日 2026-11-12）；TD-Gammon：Crossref `10.1145/203330.203343` **`200`**（CACM **38(3):58–68**，1995-03）、OpenAlex 同 DOI **1,680**，1994 姊妹篇 `10.1162/neco.1994.6.2.215` OpenAlex **823** 且取到**完整摘要**（本线只引摘要原文）；Sora：`openai.com/index/...` 与 `openai.com/research/...` 经代理与直连**均为 `403`**、Wayback `403`、`r.jina.ai` `401` ⇒ **正文未取到**，本条**不引任何数字**。
+> ⚠️ **第十二轮如实记（更正）**：任务书 §6.5 表格把「Kimi（月之暗面报告，如 … 2401.14185 Moonshot）」作为示例 —— 本线实测 **`2401.14185` = `TDFNet: An Efficient Audio-Visual Speech Separation Model with Top-down Fusion`（cs.SD，Samuel Pegg / Kai Li / Xiaolin Hu，2024-01-25，OpenAlex 被引 3）**，**与 Kimi / Moonshot 无关** ⇒ 🚫 不据此伪造条目，改用实测存在的 **Kimi K2 `2507.20534`**；建议 supervisor 更正任务书示例。
+>
+> 🆕 **第十三轮（2026-11-12 15:0x）新增 4 条 = 「偏好优化 / SSM 统一 / 注意力实现 / 存储模拟基座」**：DPO（把 KL 约束 RLHF 化成分类损失，RM-free 路线对照）→ **zhulong 奖励设计的第三条路**；Mamba-2 / SSD（注意力与 SSM 通过半可分矩阵统一，核心层快 2–8×）→ **pretrain 架构对照 + 吞吐口径**；FlashAttention-2（25–40% → 50–73% 理论峰值，225 TFLOPs/s / 72% MFU）→ **pretrain 的 MFU 标尺**；Ramulator 2.0（模块化 DRAM 模拟器，MIT 许可）→ **zhulong 批量评测基座 + designflow 保真度三分**。**必读清单：10/10 组、37/37 条目仍全覆盖**（本轮属「补充」，故为 B 轨第十三轮）。
+>
+> **第十三轮核验证据（可复核）**：arXiv API `id_list=2310.16944,2405.21060,2307.08691,2308.11030` 与 `id_list=2305.18290,2310.16944` 均 **`200` + `application/atom+xml; charset=utf-8`**（9,704 B / 5,938 B / 9,862 B 三次调用）；被引数 **OpenAlex 4/4 `200`**（DPO **3,123** · Mamba-2 **1,003** · FlashAttention-2 **1,844** · Ramulator 2.0 **185**，查询日 2026-11-12）；会议证据：DPO = OpenAlex `conference-paper` + NeurIPS 会场 DOI `10.52202/075280-2338`（pp. 53728–53741）、Mamba-2 = arXiv `comment` 原文 `ICML 2024`、FlashAttention-2 = **未核到会场**（如实记预印本）、Ramulator 2.0 = IEEE CAL DOI `10.1109/LCA.2023.3333759`（23(1):112–116）。
+> ⚠️ **第十三轮如实记（更正）**：候选池此前把 **DPO 记为 `2310.16944`** —— 本线实测该 ID = **`Zephyr: Direct Distillation of LM Alignment`（Tunstall et al., 2023-10-25, cs.LG）**，**不是 DPO**；DPO 的真实 ID 为 **`2305.18290`**（`v3`，2024-07-29）。⇒ 已按实测 ID 收录 #48，并**在此显式更正**，🚫 不沿用错误 ID。Zephyr 本身可作「dDPO 蒸馏」候选，但本轮**不凑数**、不收录。
+
 
 ---
 
@@ -484,10 +512,492 @@
 
 ---
 
+## 28. Highly accurate protein structure prediction with AlphaFold
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Highly accurate protein structure prediction with AlphaFold |
+| 作者（前 3） | John Jumper · Richard Evans · Alexander Pritzel（et al.；DeepMind；通讯含 Demis Hassabis / John Jumper） |
+| 年份 | 2021 |
+| 会议 / 期刊 | **Nature 596(7873): 583–589**（DOI `10.1038/s41586-021-03819-2`，OpenAlex 卷期页码已核） |
+| 被引数 | **45,663**（OpenAlex，查询日 2026-11-12；S2 未查，🚫 不跨源比较） |
+| arXiv / DOI | **无 arXiv** ｜ DOI <https://doi.org/10.1038/s41586-021-03819-2> ｜ 官方介绍 <https://deepmind.google/technologies/alphafold/> |
+| 一句话贡献 | 用「多序列比对（MSA）+ 深度学习」把蛋白质三维结构预测做到**原子级精度**：据摘要，在 **CASP14** 上「多数目标达到与实验结构可竞争」的精度并大幅超过其他方法，且**在没有同源结构时**仍可用。 |
+| 与我们工作的关系 | **vision（几何先验，间接）**：AlphaFold 的核心不是「更大的 ViT」，而是**把领域约束（物理/生物先验、MSA 进化信息）编码进网络结构**；对应我们工业图像（版图 / SEM / 波形）里「已知几何/工艺约束该以什么形式进模型」。<b>动作</b>：视觉线在下一版视觉塔预注册里加一组「显式几何通道 vs 纯像素」对照（同数据、同预算），<b>判据</b>：显式几何臂在 held-out 新节点/新图层上 > 纯像素 +2 个绝对点才保留。<br>**data（先验数据 vs 原始数据）**：MSA 相当于「同族历史样本」而非更多标注；对应 data 线「同族仓库/同族版图」的检索增强。<b>动作</b>：data 线为每条样本记 `family_id`，做「是否检索同族上下文」A/B。<br>**harness（盲测协议）**：CASP = 题目冻结 + 统一提交 + 统一判分，是防泄漏典范；<b>动作</b>：harness 设计 EDA 评测时固定「冻结题目 → 提交 → 统一判分」，报告写清冻结日期。<br>**风险**：① 生物「进化同源」在版图/波形无严格对应物，🚫 不可把 MSA 类比当可直接落地的模块；② 45,663 被引主要来自生命科学，不代表与我们的相关度；③ 「原子级」是 CASP14（2020）口径。 |
+
+首次收录: 2026-11-12（第八轮）｜ 状态: 元数据已核验（Nature 页面 `dc.description` `200`；OpenAlex `200`）
+
+---
+
+## 29. Grandmaster level in StarCraft II using multi-agent reinforcement learning
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Grandmaster level in StarCraft II using multi-agent reinforcement learning |
+| 作者（前 3） | Oriol Vinyals · Igor Babuschkin · Wojciech M. Czarnecki（et al.；DeepMind；含 David Silver） |
+| 年份 | 2019 |
+| 会议 / 期刊 | **Nature 575(7782): 350–354**（DOI `10.1038/s41586-019-1724-z`） |
+| 被引数 | **3,799**（OpenAlex，查询日 2026-11-12；S2 未查） |
+| arXiv / DOI | **无 arXiv** ｜ DOI <https://doi.org/10.1038/s41586-019-1724-z> |
+| 一句话贡献 | 用**多智能体 RL + 持续进化的「联盟（league）」**（人类对局与智能体对局混用、主策略与克制策略共存）在完整《星际争霸 II》达到**宗师**水平：据摘要，三个种族均达宗师、**高于 99.8% 的官方排名玩家**（前 0.2%）。 |
+| 与我们工作的关系 | **zhulong（自对弈与陪练课程，直接）**：联盟 = 一组**互相克制、持续更新**的对手，而非单一固定 baseline；对应我们「陪练模型生成难例」的课程设计。<b>动作</b>：zhulong 线把「单基线 RL」改为「3–5 个历史快照 + 1 个主策略」小联盟，主策略只与联盟对打，<b>判据</b>：固定评测集胜率提升且对最强历史快照不退步（防只赢当前陪练）。<br>**harness（防过拟合评测）**：联盟天然构造「训练时未见但同分布」的对手；<b>动作</b>：harness 的 agent 评测引入动态题库/对手池，每轮用不同快照，报告「对池均值 + 最差对手」两列。<br>**designflow（多轮任务）**：SC2 是长时程、部分可观测、动作空间巨大的决策问题，与 EDA 多步工具调用同构；<b>动作</b>：designflow 造题显式标注「部分可观测」与「环境会变化」两类，作为 L4/L5 保真度新维度。<br>**风险**：① SC2 动作空间与奖励由游戏给定，EDA 的「胜负」需自定义且多指标，🚫 不可照搬算法；② 宗师/99.8% 是 2019 天梯口径；③ 联盟训练成本极高，只能借思路不能借规模。 |
+
+首次收录: 2026-11-12（第八轮）｜ 状态: 元数据已核验（Nature 页面 `dc.description` `200`；OpenAlex `200`）
+
+---
+
+## 30. Kimi k1.5: Scaling Reinforcement Learning with LLMs
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Kimi k1.5: Scaling Reinforcement Learning with LLMs |
+| 作者（前 3） | Kimi Team（Moonshot AI；署名列表含 Angang Du · Bofei Gao · Bowei Xing …，作者列表中另见 Jianlin Su） |
+| 年份 | 2025（arXiv 首次提交 **2025-01-22**，本线实测；最新 **v4** 2025-06-03） |
+| 会议 / 期刊 | 预印本技术报告（OpenAlex `type=preprint`；**未查**正式会议收录） |
+| 被引数 | **1,436**（OpenAlex，DOI `10.48550/arxiv.2501.12599`，查询日 2026-11-12；S2 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2501.12599> ｜ DOI `10.48550/arxiv.2501.12599` |
+| 一句话贡献 | 用**长上下文 RL 扩展 + 改进的策略优化**训练多模态 LLM，**不依赖 MCTS / 价值函数 / 过程奖励模型**：据摘要，AIME **77.5**、MATH-500 **96.2**、Codeforces **94 百分位**、MathVista **74.9**，与 OpenAI o1 相当；并给出 **long2short**（用长 CoT 提升短 CoT），短 CoT 侧 AIME **60.8**、MATH-500 **94.6**、LiveCodeBench **47.3**。 |
+| 与我们工作的关系 | **zhulong（thinking 预算 / long2short，直接）**：长 CoT 训练出的能力可**蒸馏进短 CoT**，对应我们「训练时想得长、部署时想得短」的成本结构。<b>动作</b>：zhulong 线加 `long2short` 消融（同一 base：长 CoT RL → 短 CoT 蒸馏 vs 直接短 CoT RL），<b>判据</b>：固定 token 预算下，蒸馏臂准确率不低于直接臂且平均生成长度 ≤ 其 60%。<br>**posttrain / pretrain（RL 数据墙）**：核心论点是「RL 提供新的 scaling 轴（用奖励换数据）」；<b>动作</b>：pretrain 线在算力分配表里把「RL token 预算」单列，不混算；对外统一用「总生成 token + GPU 小时」双口径。<br>**harness（自报口径）**：77.5 / 96.2 / 94 百分位均为**作者自报**、基准版本敏感；<b>动作</b>：引用时标「Moonshot 自报，2025-01」并同时记录我们自己的复测值，禁止把自报值写进对外结论。<br>**data（多模态 RL 数据）**：报告提到配方但未给完整配比；<b>动作</b>：data 线只当「多模态 RL 数据可 scale」的 existence proof，不据此推我们的配比。<br>**风险**：① 技术报告不公开训练细节（数据量、奖励设计）；② 基准分数随时间过期；③ 「不依赖 MCTS/PRM」是作者口径，复现需自行验证。 |
+
+首次收录: 2026-11-12（第八轮）｜ 状态: 元数据已核验（arXiv API `200` + `application/atom+xml`；OpenAlex `200`）
+
+---
+
+## 31. π0: A Vision-Language-Action Flow Model for General Robot Control
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | π₀: A Vision-Language-Action Flow Model for General Robot Control（arXiv 标题写作 `$π_0$`） |
+| 作者（前 3） | Kevin Black · Noah Brown · Danny Driess（et al.；Physical Intelligence；含 Chelsea Finn / Sergey Levine / Karl Pertsch） |
+| 年份 | 2024（arXiv 首次提交 **2024-10-31**，本线实测；最新 **v4** 2026-01-08） |
+| 会议 / 期刊 | **Robotics: Science and Systems (RSS) 2025**（OpenAlex `type=conference-paper`，DOI `10.15607/rss.2025.xxi.010`） |
+| 被引数 | **3,214**（OpenAlex，RSS DOI，查询日 2026-11-12；S2 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2410.24164> ｜ DOI `10.15607/rss.2025.xxi.010` ｜ 项目页 <https://physicalintelligence.company/blog/pi0> |
+| 一句话贡献 | 在**预训练 VLM** 之上加一个 **flow matching** 动作专家，用**多机器人平台的大规模多样数据**训练通用策略：据摘要，支持**零样本**执行、跟随人类语言指令与高层 VLM 策略、并可通过微调获得新技能（叠衣、清桌、装箱等）。 |
+| 与我们工作的关系 | **vision（VLM 主干复用，直接）**：π0 不重训视觉塔，而**继承 Internet 规模语义知识**再加动作头；对应 BaiZe 视觉塔「先接通用 VLM，再小成本适配域内」。<b>动作</b>：vision 线预注册「冻结 VLM 主干 + 只训适配层」与「全参微调」两臂，<b>判据</b>：冻结臂在域内任务上达到全参臂 −3 个绝对点以内即采用（省下的算力转投数据）。<br>**zhulong（动作生成方式）**：flow matching 生成连续动作块（action chunk），与「逐 token 自回归出 tool call」是两种接口；<b>动作</b>：zhulong 线对比「动作块（一次出多步）」与「逐步出」在长流程 EDA 任务上的成功率与调用成本，<b>判据</b>：动作块臂成功率不降且工具调用轮数下降 ≥20% 才保留。<br>**data（跨平台多样性）**：多机器人平台数据混合是泛化关键；<b>动作</b>：data 线为 EDA 语料建「工具/器件/工艺节点」三维多样性标签，做固定 token 预算下的多样性消融。<br>**harness（任务族评测）**：叠衣/清桌/装箱是可复现任务族而非单题；<b>动作</b>：harness 按任务族组织 EDA 用例，报告「族内平均 + 族间最差」。<br>**风险**：① 机器人高频连续控制与 EDA 离散、分钟级工具调用**时间尺度差几个数量级**，🚫 不可直接搬 flow matching 到 tool call；② 零样本/新技能均为作者自报自选任务；③ 训练数据不可得。 |
+
+首次收录: 2026-11-12（第八轮）｜ 状态: 元数据已核验（arXiv API `200` + `application/atom+xml`；OpenAlex RSS DOI `200`）
+
+---
+
+## 32. ChatGLM: A Family of Large Language Models from GLM-130B to GLM-4 All Tools（GLM-4）
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | ChatGLM: A Family of Large Language Models from GLM-130B to GLM-4 All Tools |
+| 作者（前 3） | Team GLM（智谱 AI / Zhipu AI；Aohan Zeng · Bin Xu · Bowen Wang …，共 **59** 位，含 Jie Tang / Juanzi Li / Minlie Huang / Yuxiao Dong） |
+| 年份 | 2024（arXiv 首次提交 **2024-06-18**；最新 **v2** 2024-07-30，本线实测） |
+| 会议 / 期刊 | 预印本技术报告（arXiv only；OpenAlex `type=preprint`，**会议收录未查**，🚫 不写「NeurIPS/ACL」之类未经核实的出处） |
+| 被引数 | **1,879**（OpenAlex，DOI `10.48550/arxiv.2406.12793`，查询日 2026-11-12；S2 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2406.12793> ｜ DOI `10.48550/arxiv.2406.12793` |
+| 一句话贡献 | GLM-4 系列（GLM-4 / GLM-4-Air / GLM-4-9B）在 **约 10 万亿 token（以中英为主，另有 24 语种小比例语料）**上预训练，用**多阶段后训练（SFT + 人类反馈）**做中英对齐；据摘要，GLM-4 在 MMLU / GSM8K / MATH / BBH / GPQA / HumanEval 上「接近或超过 GPT-4」、IFEval 指令遵循「接近 GPT-4-Turbo」、长上下文与 GPT-4 Turbo（128K）/ Claude 3 相当、AlignBench 中文对齐「超过 GPT-4」；**GLM-4 All Tools** 学会判断「何时、调用哪个工具」（浏览器 / Python / 文生图 / 自定义函数）。 |
+| 与我们工作的关系 | **pretrain（中文语料配比，直接）**：这是公开报告里少见的「中文为主 + 10T token」完整配方叙述，可作为 BaiZe 中文 token 预算与中英配比的对照基线（作者自报，非复现）。<b>动作</b>：pretrain 线在配比实验里加一行「中文占比」维度，固定总 token 做 3 档（30% / 50% / 70% 中文）并在同一 held-out 中文评测上报告。<br>**data（多语种长尾）**：正文提到 24 语种的小比例语料；<b>动作</b>：data 线把「长尾语种/长尾工具文档」单列一类，标出其 token 占比，便于判断是否被中英淹没。<br>**zhulong（All Tools 的工具选择）**：与我们「model 决定调哪个 EDA 工具」同构；<b>动作</b>：zhulong 线在评测里把「选错工具」「参数错」「该调不调」分开计分，而不是只算最终成功率。<br>**harness（对齐口径）**：IFEval / AlignBench 是「指令遵循」的公开口径；<b>动作</b>：harness 引用前先确认版本与语言子集，禁止把中文 AlignBench 分数与英文 IFEval 混排。<br>**风险**：① 全部为厂商自报、基准自选；② 训练数据不可得、配比只给方向不给精确比例；③ 「超过 GPT-4」是 2024 年的对照，🚫 不得当作当前 SOTA。 |
+
+首次收录: 2026-11-12（第九轮）｜ 状态: 元数据已核验（arXiv API `200` + `application/atom+xml`；OpenAlex `200`）
+
+---
+
+## 33. MiniMax-01: Scaling Foundation Models with Lightning Attention
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | MiniMax-01: Scaling Foundation Models with Lightning Attention |
+| 作者（前 3） | MiniMax（团队署名，**按字母序**：Aonian Li · Bangwei Gong · Bo Yang …，共 **90** 位） |
+| 年份 | 2025（arXiv 首次提交 **2025-01-14**，本线实测；仅 v1） |
+| 会议 / 期刊 | 预印本技术报告（arXiv only；OpenAlex `type=preprint`） |
+| 被引数 | **213**（OpenAlex，DOI `10.48550/arxiv.2501.08313`，查询日 2026-11-12；S2 未查）。⚠️ **低于 §1 的「≥500」门槛**，按用户令「必读清单优先于抽象判据」收录，🚫 不据此说它「影响力不足」或「已是经典」 |
+| arXiv / DOI | <https://arxiv.org/abs/2501.08313> ｜ DOI `10.48550/arxiv.2501.08313` ｜ 代码 <https://github.com/MiniMax-AI> |
+| 一句话贡献 | 用 **lightning attention（线性注意力）+ MoE** 做超长上下文：**32 个专家、总参 4,560 亿、每 token 激活 459 亿**，配合并行策略与计算-通信重叠；据摘要，训练上下文可达 **100 万 token**、推理外推到 **400 万 token**，MiniMax-VL-01 以 **5,120 亿**视觉-语言 token 继续训练，标准与自建基准上「与 GPT-4o / Claude-3.5-Sonnet 相当」，上下文长 **20–32 倍**。 |
+| 与我们工作的关系 | **pretrain（线性注意力 / 混合架构，直接）**：这是「把 attention 换成线性注意力 + MoE」的完整工业级配方，与 Zhulong 的架构消融（线性注意力 / SSM / 循环深度）互为对照。<b>动作</b>：zhulong/pretrain 的架构消融表加一列「长上下文吞吐（tokens/s @ 256K）」，与「短上下文质量」并列，避免只报后者。<br>**zhulong（长上下文成本）**：100 万→400 万 token 的外推口径说明「训练长度」与「推理长度」要分开报；<b>动作</b>：成本表拆 `train_ctx` / `infer_ctx`，并注明是否含外推。<br>**vision（VL 继续训练）**：VL 版是「文本模型 + 512B VL token 继续训练」，不是从头多模态；<b>动作</b>：vision 线评估「继续训练」路线时，固定 VL token 预算，对比「继续训练 vs 从头对齐」两臂。<br>**harness（长上下文评测）**：摘要只给「与 GPT-4o 相当」的定性结论，未给逐项分数；<b>动作</b>：harness 引用时标「厂商自报、无逐项数字」，并自建 4 档长度（32K/128K/512K/1M）的 retrieval 测试。<br>**风险**：① 2025 年的对照结论已过期；② 线性注意力的质量-长度权衡在第三方复现中未必一致；③ 4,560 亿参数规模的并行细节不可复现到 2B 量级，只能借「方法选择」不能借「结论」。 |
+
+首次收录: 2026-11-12（第九轮）｜ 状态: 元数据已核验（arXiv API `200` + `application/atom+xml`；OpenAlex `200`）
+
+---
+
+## 34. RT-2: Vision-Language-Action Models Transfer Web Knowledge to Robotic Control
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | RT-2: Vision-Language-Action Models Transfer Web Knowledge to Robotic Control |
+| 作者（前 3） | Anthony Brohan · Noah Brown · Justice Carbajal（et al.，共 **54** 位；含 Pete Florence（第 13）、Chelsea Finn、Sergey Levine、Karl Pertsch、Danny Driess） |
+| 年份 | 2023（arXiv 首次提交 **2023-07-28**，本线实测；仅 v1） |
+| 会议 / 期刊 | **会议收录未核验**（Crossref 精确标题检索未命中；arXiv 为预印本 ⇒ 🚫 不写「CoRL 2023」等未证实出处） |
+| 被引数 | **2,322**（OpenAlex，DOI `10.48550/arxiv.2307.15818`，查询日 2026-11-12；S2 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2307.15818> ｜ DOI `10.48550/arxiv.2307.15818` ｜ 项目页 <https://robotics-transformer.github.io/> |
+| 一句话贡献 | 把**动作表示成文本 token**（与自然语言答案同一格式），在**机器人轨迹 + 互联网视觉-语言任务（如 VQA）上共同微调** VLM，得到端到端 VLA；据摘要，**6,000 次评测**显示其对未见物体的泛化显著提升，能执行机器人数据里没有的命令（如「放到数字 3 上」）、做基础推理（拿最小/最大/离某物最近的），并可用 **chain-of-thought** 完成多阶段语义推理（如「拿石头当锤子」）。 |
+| 与我们工作的关系 | **zhulong（动作接口 = 文本 token，直接）**：这正是我们「agent 用文本 tool call 调 EDA 工具」的机器人版先例——动作不另造头，直接复用词表；<b>动作</b>：zhulong 线做「动作＝自由文本 vs 动作＝受限语法/枚举」两臂，<b>判据</b>：受限臂在参数精确率（如 W/L、约束值）上更高且解析失败率 &lt;1% 才采用。<br>**vision（VLM 主干 + 共微调）**：网页 VQA 数据与域内轨迹**混训**，说明「语义能力来自预训练、控制能力来自域内数据」；<b>动作</b>：vision 线在建域内数据时保留 10–20% 通用 VQA 混比，做「混 vs 不混」A/B，<b>判据</b>：混比臂在留出语义任务上更好且域内指标不降才保留。<br>**data（配方可借用）**：动作被序列化进训练集，意味着**数据格式统一**比数据量更关键；<b>动作</b>：data 线定义统一的 `(obs, action_text, result)` 三元组 schema，先统一格式再谈配比。<br>**harness（评测规模）**：6,000 次真机试验是「小模型 + 大评测预算」的样本；<b>动作</b>：harness 在报 EDA 结果时同时给「试验次数 / 每次成本」，避免用 20 次试验下结论。<br>**风险**：① 真机高频控制与分钟级工具调用时间尺度差异极大；② 「涌现能力」为作者自报、任务自选；③ 动作离散分桶会损失精度（对连续参数尤其明显），🚫 不可直接照搬。 |
+
+首次收录: 2026-11-12（第九轮）｜ 状态: 元数据已核验（arXiv API `200` + `application/atom+xml`；OpenAlex `200`；会议未核验）
+
+---
+
+## 35. Octo: An Open-Source Generalist Robot Policy
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Octo: An Open-Source Generalist Robot Policy |
+| 作者（前 3） | Octo Model Team（Dibya Ghosh · Homer Walke · Karl Pertsch …，共 **19** 位；含 Sergey Levine / Chelsea Finn / Dorsa Sadigh） |
+| 年份 | 2024（arXiv 首次提交 **2024-05-20**，本线实测；最新 **v2** 2024-05-26） |
+| 会议 / 期刊 | **Robotics: Science and Systems (RSS) 2024**（Crossref 实测 DOI `10.15607/rss.2024.xx.090`，`issued 2024-07-15`） |
+| 被引数 | **1,192**（OpenAlex，DOI `10.48550/arxiv.2405.12213`，查询日 2026-11-12；S2 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2405.12213> ｜ DOI `10.15607/rss.2024.xx.090` ｜ 项目页 <https://octo-models.github.io> |
+| 一句话贡献 | 开源通用机器人策略：transformer 策略在 **Open X-Embodiment 的 80 万条轨迹**上训练，可用**语言指令或目标图像**指定任务，并能在**消费级 GPU 上数小时内**微调到**新的传感器与动作空间**；据摘要，在 **9 个机器人平台**上验证其可作为通用初始化，并系统消融了架构与训练数据的设计选择。 |
+| 与我们工作的关系 | **data（跨平台数据 + 微调成本，直接）**：80 万轨迹混合训练 + 「几小时即可适配新动作空间」是「数据规模换适配成本」的量化样本；<b>动作</b>：data 线统计我们的「新工具/新 PDK 接入成本（人天）」，设目标 ≤1 天，并把所需域内样本量记进接入清单。<br>**zhulong（新动作空间适配）**：换动作空间只需微调而非重训，对应我们「新增一个 EDA 工具/命令」的场景；<b>动作</b>：zhulong 做「新增工具只用 1k / 5k / 20k 条示例」三档，报告成功率随样本量的曲线，<b>判据</b>：5k 档达到 20k 档 −5 点以内即认为「低成本可接入」。<br>**vision（多模态条件）**：语言或目标图像两种任务指定方式并存；<b>动作</b>：vision 线在版图任务上对比「文本描述 vs 参考图」，<b>判据</b>：参考图臂在布局类任务上高 ≥3 点才引入图像条件。<br>**harness（9 平台矩阵）**：跨平台矩阵而非单平台单任务；<b>动作</b>：harness 的 EDA 评测按「工具 × PDK × 任务族」出矩阵，报告每格 n 与最差格。<br>**风险**：① 机器人动作空间是同构低维连续量，EDA 工具调用是异构离散结构，🚫 不能假设「几小时适配」可平移；② 消融结论绑定其数据规模；③ 作者自报。 |
+
+首次收录: 2026-11-12（第九轮）｜ 状态: 元数据已核验（arXiv API `200` + `application/atom+xml`；OpenAlex `200`；Crossref RSS DOI `200`）
+
+---
+
+## 36. SWE-agent: Agent-Computer Interfaces Enable Automated Software Engineering
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | SWE-agent: Agent-Computer Interfaces Enable Automated Software Engineering |
+| 作者（前 3） | John Yang · Carlos E. Jimenez · Alexander Wettig（et al.，共 **7** 位；含 Shunyu Yao / Karthik Narasimhan） |
+| 年份 | 2024（arXiv 首次提交 **2024-05-06**，最新 **v3** 2024-11-11，本线实测） |
+| 会议 / 期刊 | **NeurIPS 2024**（OpenAlex `primary_location.source` = `neural information processing systems`，DOI `10.52202/079017-1601`，pp. 50528–50652） |
+| 被引数 | **1,502**（OpenAlex，DOI `10.48550/arxiv.2405.15793`，查询日 2026-11-12；S2 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2405.15793> ｜ 会场 DOI `10.52202/079017-1601` ｜ 代码 <https://swe-agent.com> |
+| 一句话贡献 | 提出「**agent-计算机接口（ACI）必须为人之外的另一种用户单独设计**」：给 LM agent 定制打开文件/编辑/检索/执行测试的接口，抑制低层无效动作；据摘要，在 SWE-bench 上 pass@1 **12.5%**、HumanEvalFix **87.7%**，均称当时最好，并分析 ACI 设计如何改变 agent 行为。 |
+| 与我们工作的关系 | **harness（直接，接口即能力）**：本文的核心主张是「**接口设计本身就是方法**」——同一模型换 ACI，SWE-bench 分数差一大截。这正是我们 harness 线在做的事（工具封装、输出截断、报错回显格式）。<b>动作</b>：harness 线做「同一个 2B/7B 模型 × 两套工具封装（原样 vs ACI 式：统一 edit 命令 + 限长输出 + 明确错误摘要）」的配对实验，<b>判据</b>：ACI 臂在一族 EDA 任务上成功率高 ≥3 点且平均轮次不升；否则不引入。<br>**designflow（工具接口保真度）**：ACI 是对真实工具（git / 测试 / 编辑器）的**窄接口**，而不是自由 shell；<b>动作</b>：designflow 的 L1–L5 保真度里加一条「接口粒度」维度（自由 shell / 受限命令集），造题时两档都出。<br>**data（轨迹数据格式）**：agent 的每一步被记录成「命令 + 观察 + 结果」，可直接转成训练轨迹；<b>动作</b>：data 线统一 `<cmd, obs, reward>` schema，并保留失败轨迹（负样本占比单独统计）。<br>**风险**：① SWE 任务（仓库级代码修复）与 EDA 工具（分钟级综合/仿真）时间尺度与错误面不同；② 12.5% 是 2024 年的基线，🚫 不可当作现在的能力参照；③ 作者自报。 |
+
+首次收录: 2026-11-12（第十轮）｜ 状态: 元数据已核验（arXiv API `200` + `application/atom+xml`；OpenAlex `200`）
+
+---
+
+## 37. Tree of Thoughts: Deliberate Problem Solving with Large Language Models
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Tree of Thoughts: Deliberate Problem Solving with Large Language Models |
+| 作者（前 3） | Shunyu Yao · Dian Yu · Jeffrey Zhao（et al.，共 **7** 位；含 Izhak Shafran / Thomas L. Griffiths / Yuan Cao / Karthik Narasimhan） |
+| 年份 | 2023（arXiv 首次提交 **2023-05-17**，最新 **v2** 2023-12-03，本线实测） |
+| 会议 / 期刊 | **NeurIPS 2023**（arXiv `comments` 明写 camera-ready；OpenAlex DOI `10.52202/075280-0517`，pp. 11809–11822） |
+| 被引数 | **3,112**（OpenAlex，DOI `10.48550/arxiv.2305.10601`，查询日 2026-11-12；S2 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2305.10601> ｜ 会场 DOI `10.52202/075280-0517` ｜ 代码 <https://github.com/princeton-nlp/tree-of-thought-llm> |
+| 一句话贡献 | 把 CoT 从「一条链」推广成「**思维树**」：在「思维」这一语义单元上做多分支探索 + 自评 + 前瞻/回溯，使推理可搜索；据摘要，在 24 点游戏上 GPT-4 + CoT 只有 **4%** 成功率，ToT 达 **74%**（另两个任务为创意写作与迷你填字）。 |
+| 与我们工作的关系 | **zhulong（推理期算力分配，直接）**：ToT 证明「**多花推理算力换成功率**」是独立可调的一根轴，和我们「thinking / 语言轴」的消融是同一族问题。<b>动作</b>：zhulong 在固定总预算下比较三臂（单链 / 自洽投票 k 条 / ToT 式显式分支 + 剪枝），<b>判据</b>：ToT 臂只有在「每题工具调用次数不增 30%」时才算赢，否则记「贵而不值」。<br>**harness（评测口径）**：ToT 的收益高度依赖「有可自动判定的中间状态」（24 点游戏可验算）；<b>动作</b>：harness 给每类 EDA 任务标注「中间步骤可否自动验证」，只在该类上允许搜索式推理，避免把不可验证任务上的失败当作方法失败。<br>**pretrain（间接）**：说明「推理能力有一部分来自推理期搜索而非权重」，<b>动作</b>：pretrain 报 base 能力时固定「无搜索」解码，别把 ToT 收益混进 base。<br>**风险**：① 任务刻意选了可搜索、可判分的玩具题，外推到长链路 EDA 流程未验证；② 成本（token × 分支数）在摘要里未给；③ 作者自报。 |
+
+首次收录: 2026-11-12（第十轮）｜ 状态: 元数据已核验（arXiv API `200` + `application/atom+xml`；OpenAlex `200`）
+
+---
+
+## 38. Llama 2: Open Foundation and Fine-Tuned Chat Models
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Llama 2: Open Foundation and Fine-Tuned Chat Models |
+| 作者（前 3） | Hugo Touvron · Louis Martin · Kevin Stone（et al.，共 **68** 位，Meta AI） |
+| 年份 | 2023（arXiv 首次提交 **2023-07-18**，最新 **v2** 2023-07-19，本线实测） |
+| 会议 / 期刊 | **预印本技术报告**（arXiv only；OpenAlex `primary_location.source` = `arXiv (Cornell University)`，无会议 DOI ⇒ 🚫 不写「某会议」） |
+| 被引数 | **19,635**（OpenAlex，DOI `10.48550/arxiv.2307.09288`，查询日 2026-11-12；S2 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2307.09288> ｜ DOI `10.48550/arxiv.2307.09288` |
+| 一句话贡献 | 7B / 13B / 70B 三档**预训练 + 对话微调**模型全家桶（Llama 2-Chat），并首次把「**SFT → RLHF（拒绝采样 + PPO）→ 多轮安全迭代**」的完整配方与安全评估公开写清；据摘要，在多数测试基准上优于开源对话模型，人工评测的 helpfulness / safety 结果「可作为闭源模型的替代」。 |
+| 与我们工作的关系 | **pretrain（配方 + 规模档位，直接）**：3 档同族模型 = 天然的「规模-能力」对照表；<b>动作</b>：pretrain 线报结果时固定「同族至少两档规模」，别只报单点，便于与我们 2B 定位比较。<br>**zhulong（post-train 三段式）**：SFT → 拒绝采样 → PPO 的顺序与「安全数据反复回流」是工业界标准做法；<b>动作</b>：zhulong 的 post-train 消融按这三级拆开报（SFT-only / +拒绝采样 / +RL），每级都记数据量与算力，<b>判据</b>：后一级必须在留出集上带来 ≥2 点且不损前一级能力才保留。<br>**data（数据量与配比披露口径）**：报告给了 token 规模与微调数据量级但**未给完整配比**——这正是我们可追问的缺口；<b>动作</b>：data 线对外汇报时也采用「总量公开、配比分级」的口径，内部留完整配比表。<br>**风险**：① 68 位作者、报告式写作，很多关键数字在附录表里，🚫 不要引二手博客的转述数字；② 2023 年的安全/对齐结论已明显过时；③ 开源许可有商用限制条款（需另核）。 |
+
+首次收录: 2026-11-12（第十轮）｜ 状态: 元数据已核验（arXiv API `200` + `application/atom+xml`；OpenAlex `200`；会议=无）
+
+---
+
+## 39. Improved Baselines with Visual Instruction Tuning（LLaVA-1.5）
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Improved Baselines with Visual Instruction Tuning |
+| 作者（前 3） | Haotian Liu · Chunyuan Li · Yuheng Li（et al.，共 **4** 位；含 Yong Jae Lee） |
+| 年份 | 2023（arXiv 首次提交 **2023-10-05**，最新 **v2** 2024-05-15，本线实测） |
+| 会议 / 期刊 | **CVPR 2024（highlight）**（arXiv `comments` 明写 camera ready；OpenAlex DOI `10.1109/cvpr52733.2024.02484`，pp. 26286–26296） |
+| 被引数 | **3,281**（OpenAlex，DOI `10.48550/arxiv.2310.03744`，查询日 2026-11-12；S2 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2310.03744> ｜ 会场 DOI `10.1109/cvpr52733.2024.02484` ｜ 项目页 <https://llava-vl.github.io> |
+| 一句话贡献 | 一篇「**把基线做扎实**」的短文：只改三处——视觉塔换 **CLIP-ViT-L-336px**、投影从 Linear 换 **MLP**、加入**学术任务型 VQA 数据 + 简单回答格式提示**——就在 **11 个基准**上取得当时最好；据摘要，**13B 权重仅用 120 万公开数据**，单台 **8×A100 约 1 天**训完。 |
+| 与我们工作的关系 | **vision（最小可行配方，直接）**：这是「**小改动 + 公开数据 + 1 天 8 卡**」的性价比样本，正好对应我们 vision 线「有限算力下先把基线打牢」的处境。<b>动作</b>：vision 线把三处改动做成三个开关（视觉塔分辨率 / 投影层类型 / 是否混学术 VQA），做 2³ 全因子或至少三组单变量对照，<b>判据</b>：某开关若在我们域内（版图/波形）指标上 <1 点收益，则不引入，避免无谓复杂度。<br>**data（数据效率口径）**：120 万条公开数据 + 简单格式提示就能对齐，说明「**格式一致性**」比数据量更便宜有效；<b>动作</b>：data 线把「回答格式模板」当作独立变量做 A/B（同数据、不同模板）。<br>**pretrain（算力口径）**：8×A100 × 1 天是罕见的「可复现训练预算」披露；<b>动作</b>：pretrain/vision 报训练成本统一用「卡数 × 小时 × 卡型」，并注明是否含数据加载。<br>**风险**：① 只报「11 个基准最好」而未逐项列数，🚫 不要转述具体分数；② 视觉塔分辨率提升带来的收益与其算力开销不可分；③ 作者自报。 |
+
+首次收录: 2026-11-12（第十轮）｜ 状态: 元数据已核验（arXiv API `200` + `application/atom+xml`；OpenAlex `200`）
+
+---
+
+## 40. The Llama 3 Herd of Models
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | The Llama 3 Herd of Models |
+| 作者（前 3） | Aaron Grattafiori · Abhimanyu Dubey · Abhinav Jauhri（et al.，**Meta AI 团队署名，作者列表 561 人**） |
+| 年份 | 2024（arXiv 首次提交 **2024-07-31**，最新 **v3** 2024-11-23，本线实测） |
+| 会议 / 期刊 | **预印本技术报告**（arXiv only；OpenAlex `primary_location.source` = `arXiv (Cornell University)`，无会场 DOI ⇒ 🚫 不写「某会议」） |
+| 被引数 | **23,796**（OpenAlex，DOI `10.48550/arxiv.2407.21783`，查询日 2026-11-12；S2 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2407.21783> ｜ DOI `10.48550/arxiv.2407.21783` |
+| 一句话贡献 | **405B 稠密 Transformer、上下文最高 128K** 的模型家族，原生支持多语言 / 代码 / 推理 / 工具；据摘要，在大量任务上与 GPT-4 质量相当，公开 405B 的预训练与后训练权重及 Llama Guard 3，并用「组合式」方式把图像 / 视频 / 语音接入（多模态版本自述仍在开发、未广泛发布）。 |
+| 与我们工作的关系 | **pretrain（规模档位 + 长上下文口径）**：同族多尺寸 + 128K 上下文 = 报「长上下文 ROI」时的外部参照；<b>动作</b>：pretrain 报长上下文消融时固定「同族两档规模」并显式注明上下文长度与位置编码方案，<b>判据</b>：上下文翻倍带来的域内增益 &gt;1 绝对点且平均序列成本增幅可接受才保留。<br>**vision（主干复用 / 组合式接入，直接）**：官方路线是「语言主干 + 视觉/语音适配器」的组合式，与我们 vision 线「冻结主干 + 适配层」同构；<b>动作</b>：把「适配器容量」当独立变量（线性 / MLP / 小 Transformer），<b>判据</b>：域内 held-out +2 绝对点才升档。<br>**data（披露口径）**：报告按能力维度（多语言 / 代码 / 推理 / 工具）组织，但摘要未给配比 —— 这正是我们对外汇报可采用的口径（**总量公开、配比分级**）。<br>**zhulong（工具使用）**：把 tool usage 列为原生能力，可作为「工具调用是否要单独 SFT 一阶段」的对照假设。<br>**风险**：① 405B 与我们 2B 差两个数量级，规模结论**不可直接迁移**；② 团队报告、数字自报；③ 多模态部分自述未发布，🚫 不得当作可用能力。 |
+
+首次收录: 2026-11-12（第十一轮）｜ 状态: 元数据已核验（arXiv API `200` + `application/atom+xml`；OpenAlex `200`；会议=无）
+
+---
+
+## 41. RT-1: Robotics Transformer for Real-World Control at Scale
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | RT-1: Robotics Transformer for Real-World Control at Scale |
+| 作者（前 3） | Anthony Brohan · Noah Brown · Justice Carbajal（et al.，**共 51 位**；含 Chelsea Finn / Brian Ichter / Sergey Levine / Karol Hausman） |
+| 年份 | 2022（arXiv 首次提交 **2022-12-13**，最新 **v2** 2023-08-11，本线实测） |
+| 会议 / 期刊 | **RSS 2023**（Robotics: Science and Systems；OpenAlex 会场 DOI `10.15607/rss.2023.xix.025`） |
+| 被引数 | **2,747**（OpenAlex，DOI `10.48550/arxiv.2212.06817`，查询日 2026-11-12；S2 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2212.06817> ｜ 会场 DOI `10.15607/rss.2023.xix.025` ｜ 项目页 <https://robotics-transformer1.github.io> |
+| 一句话贡献 | 提出 **Robotics Transformer（RT-1）**：以「任务无关的大规模真机数据 + 高容量架构」替代任务专用模型；据摘要，在真实机器人上按 **数据规模 / 模型规模 / 数据多样性** 三轴验证了泛化随规模提升的可扩展性质（即机器人版的 scaling 观察）。 |
+| 与我们工作的关系 | **vision（视觉-动作同构）**：图像帧 → 离散动作 token 的端到端路径，与我们「截图/版图 → 工具调用」的结构同型；<b>动作</b>：vision 线把「观测编码是否冻结」作为消融臂。<br>**harness（真机/真工具评测规模）**：其结论建立在**大规模真实评测**上，而不是仿真小样本；<b>动作</b>：harness 线给每个任务族记录「评测样本数 / 随机种子数 / 是否换环境」，<b>判据</b>：样本 &lt;50 的差异不得写成结论。<br>**data（多样性 &gt; 重复量）**：三轴里「数据多样性」是独立变量，正对应我们 EDA 语料的「工具 / 器件 / 节点」多样性；<b>动作</b>：固定 token 预算做「单节点重复 vs 多节点均衡」两臂。<br>**zhulong（动作接口）**：离散化动作 token 的粒度选择与我们「工具调用参数分桶 vs 自由文本」是同一取舍。<br>**designflow（任务族覆盖）**：任务族广度是能力上限的主因，<b>动作</b>：designflow 造题先补「任务族数量」，再谈单题难度。<br>**风险**：① 真机数据规模远超我们可得数据；② 摘要未给具体成功率数字（本线不转述二手数字）；③ 作者自报。 |
+
+首次收录: 2026-11-12（第十一轮）｜ 状态: 元数据已核验（arXiv API `200` + `application/atom+xml`；OpenAlex `200`）
+
+---
+
+## 42. Deep reinforcement learning from human preferences（Christiano et al. 2017）
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Deep reinforcement learning from human preferences |
+| 作者（前 3） | Paul Christiano · Jan Leike · Tom B. Brown（et al.，**共 6 位**；含 Shane Legg / Dario Amodei） |
+| 年份 | 2017（arXiv 首次提交 **2017-06-12**，最新 **v4** 2023-02-17，本线实测） |
+| 会议 / 期刊 | **NeurIPS 2017**（OpenAlex `locations` 含 `neural information processing systems`，落地页 `papers.nips.cc/paper/7017-deep-reinforcement-learning-from-human-preferences.pdf`） |
+| 被引数 | **1,643**（OpenAlex，DOI `10.48550/arxiv.1706.03741`，查询日 2026-11-12；S2 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/1706.03741> ｜ DOI `10.48550/arxiv.1706.03741` |
+| 一句话贡献 | 用**人对「两条轨迹片段」的成对偏好**定义目标：先学 reward model，再用 RL 优化策略；据摘要，在 Atari 与仿真机器人上可在**不到 1% 的交互量**获得反馈的情况下解决复杂任务，并展示约 **1 小时人类时间**即可训出全新行为。 |
+| 与我们工作的关系 | **zhulong（RLHF 的起点，直接）**：这是「reward 不是写出来的，是学出来的」的原始论证，对应我们「可验证奖励 vs 学到的奖励」这条决策线；<b>动作</b>：zhulong 做三臂（纯规则奖励 / 纯偏好奖励 / 规则+偏好混合），<b>判据</b>：混合臂在留出集上不低于纯规则臂且对规则覆盖不到的失败模式有 &gt;2 点改善才保留。<br>**data（标注预算口径）**：「&lt;1% 交互量」是可写进标注预算表的参照量级；<b>动作</b>：data 线记录「每条轨迹的标注条数 / 成对比较数 / 标注者数」。<br>**harness（偏好标注的评测化）**：成对比较天然可转成评测协议；<b>动作</b>：harness 对主观项（可读性、修复建议质量）用成对盲评，而不是绝对打分。<br>**风险**：① 2017 年任务（Atari / 仿真机器人）与 LLM 工具调用差异极大，🚫 不可直接外推比例；② 「1 小时人类时间」是特定任务下的口径；③ 作者自报。 |
+
+首次收录: 2026-11-12（第十一轮）｜ 状态: 元数据已核验（arXiv API `200` + `application/atom+xml`；OpenAlex `200`）
+
+---
+
+## 43. Learning to summarize from human feedback（Stiennon et al. 2020）
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Learning to summarize from human feedback |
+| 作者（前 3） | Nisan Stiennon · Long Ouyang · Jeff Wu（et al.，**共 9 位**；含 Daniel M. Ziegler / Alec Radford / Dario Amodei / Paul Christiano） |
+| 年份 | 2020（arXiv 首次提交 **2020-09-02**，最新 **v3** 2022-02-15，本线实测） |
+| 会议 / 期刊 | **NeurIPS 2020**（arXiv `comments` 原文 `NeurIPS 2020`） |
+| 被引数 | **945**（OpenAlex，DOI `10.48550/arxiv.2009.01325`，查询日 2026-11-12；S2 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2009.01325> ｜ DOI `10.48550/arxiv.2009.01325` |
+| 一句话贡献 | 在摘要任务上把「人类成对比较 → reward model → RL 微调」跑通：据摘要，模型在 TL;DR 上**显著优于人类参考摘要**与更大的纯监督微调模型，且**无需新闻域微调**就迁移到 CNN/DM、接近人类参考水平；并证明**按人类偏好优化优于按 ROUGE 优化**。 |
+| 与我们工作的关系 | **zhulong（RL 微调流程，直接）**：SFT → reward model → RL 的三段式在此定型，是 InstructGPT 的直接前身；<b>动作</b>：zhulong 的 post-train 消融按「SFT-only / +RM 重排 / +RL」三级拆开报，每级记偏好数据量。<br>**data（偏好数据质量）**：报告对偏好数据集做了专门分析（摘要明写）⇒ <b>动作</b>：data 线对偏好数据单独建表（来源、标注者、成对一致率），与预训练语料分开统计。<br>**harness（评测口径迁移）**：「ROUGE 优化 ≠ 人想要的」是可复用的判据：<b>动作</b>：harness 对生成类任务必须同时报「自动指标」与「成对盲评胜率」，<b>判据</b>：两者方向相反时以盲评为准并在报告中注明。<br>**风险**：① 单一任务（摘要），外推到工具调用/EDA 流程未验证；② 人类参考摘要本身有噪声；③ 作者自报。 |
+
+首次收录: 2026-11-12（第十一轮）｜ 状态: 元数据已核验（arXiv API `200` + `application/atom+xml`；OpenAlex `200`）
+
+---
+
+## 44. τ-bench: A Benchmark for Tool-Agent-User Interaction in Real-World Domains
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | τ-bench: A Benchmark for Tool-Agent-User Interaction in Real-World Domains |
+| 作者（前 3） | Shunyu Yao · Noah Shinn · Pedram Razavi（et al.，共 **4** 位；含 Karthik Narasimhan） |
+| 年份 | 2024（arXiv 首次提交 **2024-06-17**，v1，本线实测） |
+| 会议 / 期刊 | **预印本**（arXiv only；arXiv `comment` 字段为空、OpenAlex `primary_location.source` = `arXiv (Cornell University)` ⇒ 🚫 不写「某会议」） |
+| 被引数 | **1,198**（OpenAlex，DOI `10.48550/arxiv.2406.12045`，查询日 2026-11-12；S2 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2406.12045> ｜ DOI `10.48550/arxiv.2406.12045` |
+| 一句话贡献 | 用**语言模型模拟用户** + 域内 API 工具 + 政策约束，构造动态多轮对话任务；判分不靠文本匹配，而是**比对对话结束时的数据库状态与标注目标状态**，并提出 `pass^k` 衡量同一任务多次试验的**一致性**；据摘要，gpt-4o 类 SOTA 函数调用 agent 成功率 **<50%**，retail 域 `pass^8` **<25%**。 |
+| 与我们工作的关系 | **harness（直接，最高优先）**：这是「**终态判分**」的范式样本 —— 我们的 EDA 任务同样有客观终态（工具跑通 / DRC 通过 / 网表一致），比「让裁判 LLM 打分」更可验证。<b>动作</b>：harness 把每条任务写成三元组 `(初始状态, 允许的 API 集, 目标终态谓词)`，判分只读终态；并新增 `pass^k`（同任务 k 次独立试验全过率）作为稳定性指标。<b>判据</b>：报告主表必须同时给「单次成功率」与 `pass^4`；两者差距 >20 点即判定该任务对随机性过敏，须先降方差再谈提升。<br>**zhulong（规则遵循）**：论文的核心失败模式是「不按域内政策办事」而非「不会调工具」——<b>动作</b>：zhulong 的 post-train 消融加入「政策违规率」这一独立指标（违规次数 / 总轮数），不要只看任务成功率。<br>**data（用户模拟器）**：用 LM 扮演用户 = 可无限扩样的交互数据源；<b>动作</b>：data 线先固定 2–3 个用户模拟 prompt 模板做 A/B，避免模拟器本身成为混淆变量。<br>**designflow（造题结构）**：`(状态, 工具, 目标谓词)` 正好可作为 designflow L1–L5 保真度的**判分骨架**。<br>**风险**：① 摘要只给 `gpt-4o` 与 retail 两个数字，🚫 不要外推成「所有 agent 都 <50%」；② 任务域是 retail / airline，与 EDA 差异大；③ 用户模拟器与真实用户分布不一致；④ 被引数高含「被当作 baseline 引用」的成分。 |
+
+首次收录: 2026-11-12（第十二轮）｜ 状态: 元数据已核验（arXiv API `200` + `application/atom+xml`；OpenAlex `200`；会议=无）
+
+---
+
+## 45. Temporal Difference Learning and TD-Gammon
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Temporal Difference Learning and TD-Gammon |
+| 作者（前 3） | Gerald Tesauro（**独著**；论文发表时为 IBM Thomas J. Watson Research Center） |
+| 年份 | 1995（CACM **38(3):58–68**，1995-03；前身：1994 Neural Computation **6(2):215–219**） |
+| 会议 / 期刊 | **Communications of the ACM 38(3), pp. 58–68**（Crossref `10.1145/203330.203343` 实测 `200`，卷 38 / 期 3 / 页 58–68）｜ 1994 姊妹篇 **Neural Computation 6(2):215–219**（DOI `10.1162/neco.1994.6.2.215`） |
+| 被引数 | **1,680**（1995 CACM 版，OpenAlex，查询日 2026-11-12）｜ **823**（1994 Neural Computation 版，同源同查；S2 未查） |
+| arXiv / DOI | 🚫 **无 arXiv**（1995 年 ACM 期刊）｜ CACM DOI <https://doi.org/10.1145/203330.203343> ｜ Neural Computation DOI <https://doi.org/10.1162/neco.1994.6.2.215> |
+| 一句话贡献 | **1994 摘要原文（OpenAlex 全文摘要，2026-11-12 取）**：TD-Gammon 是「一个神经网络，**只靠与自己下棋并从结果中学习**就能学会下西洋双陆棋，基于 TD(λ) 强化学习算法（Sutton 1988）」；「从随机初始权重起步（因而初始策略随机）仍达到**惊人的强**水平」；「只给棋盘状态的『原始』描述时学到**强中级水平**；加入一组手工特征后达到**真正惊人**的性能」。🚫 本线**未取到 1995 CACM 正文**（付费墙），**不引任何胜率/ELO 数字**。 |
+| 与我们工作的关系 | **zhulong（自对弈 RL 的最早成功案例，直接）**：证明「**只有最终胜负信号 + 自我对弈**」也能学出强策略 —— 与我们「用可验证结果（工具跑通 / DRC 通过）当奖励、用历史快照当陪练」的路线同构。<b>动作</b>：zhulong 的自对弈实验里把「**是否给手工特征/先验**」作为一个消融轴（原始输入 vs 加领域先验），<b>判据</b>：加先验臂要在固定预算下比原始输入臂高 ≥5 绝对点才值得维护特征管线。<br>**pretrain（数据效率的极端案例）**：零外部数据、纯自生成 —— 是「合成数据能否替代真人数据」这条讨论的历史锚点；<b>动作</b>：data/pretrain 报合成数据占比时，引用它作为「纯自生成可达强中级、但需先验才到顶级」的旁证（注明是棋盘游戏）。<br>**harness（评测设计）**：棋盘游戏「规则明确、结果客观」正是 `pass^k` 与终态判分的理想前提；<b>动作</b>：harness 对自对弈类实验固定「对手池 + 固定种子 + 局数」，禁止只报对单一对手的胜率。<br>**风险**：① **单一游戏 + 1990 年代算力**，外推到 LLM 工具调用无直接证据；② 1995 CACM 正文未读，**只用 1994 摘要内的表述**；③ 被引含大量「TD 教学引用」；④ 摘要里「惊人 / staggering」是作者修辞，🚫 不可当量化结论。 |
+
+首次收录: 2026-11-12（第十二轮）｜ 状态: 元数据已核验（Crossref `200` + OpenAlex `200`；1994 摘要取 OpenAlex 全文摘要；1995 正文未取）
+
+---
+
+## 46. Video generation models as world simulators（Sora 技术报告）
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Video generation models as world simulators |
+| 作者（前 3） | Bill Peebles · Tim Brooks · Connor Holmes（et al., OpenAI；⚠️ **作者顺序未能在官方页二次核对** —— 本机 403，见下） |
+| 年份 | 2024（OpenAI 官方技术报告，2024-02 发布） |
+| 会议 / 期刊 | **OpenAI 技术报告**（🚫 **无 arXiv、无 DOI**；本线**不造 arXiv 号 / DOI**） |
+| 被引数 | **未查**（无 DOI ⇒ OpenAlex 无精确匹配；Semantic Scholar 本轮未查。🚫 不写估算值） |
+| arXiv / DOI | 🚫 无 ｜ 官方页 <https://openai.com/index/video-generation-models-as-world-simulators/>（本机实测 **`403`**：直连、Mihomo 代理、Wayback、`r.jina.ai` 全部被拒 ⇒ **正文未取到**） |
+| 一句话贡献 | 官方报告的标题即其主张：把**视频生成模型当作「世界模拟器」**，即在大规模视频上训练的生成模型可作为通往通用物理世界模拟的一条路径。（⚠️ **本行只据官方标题与公开摘要表述**；正文 403 未取到，**不引任何数字、不转述实验细节**。） |
+| 与我们工作的关系 | **vision（方法路线参照）**：视频生成所需的「时空一致性」与我们版图/波形这类二维结构数据的建模有共通点（长程依赖 + 局部保真）；<b>动作</b>：vision 线若做生成式数据增广，预注册「局部保真度」与「长程一致性」两个指标分开报，🚫 不合并成一个总分。<br>**designflow（仿真的替代品？）**：若模型能稳定预测「动作后的画面」，理论上可做**廉价 rollout**（类似 Dyna 的 model-based 规划）；<b>动作</b>：designflow 先做一个**极小规模验证**：用生成模型预测工具调用后的中间产物，与真实工具输出比对，<b>判据</b>：结构一致率 <80% 就不投这条线。<br>**pretrain（数据形态）**：报告的存在本身说明「视频数据可作为预训练主模态」——对我们只是一条旁证；<b>动作</b>：无（我们无视频数据）。<br>**风险**：① **正文未取到（403）** ⇒ 本条**只有标题级信息**，任何细节（时长、分辨率、patch 方案、分数）本线**一律不写**；② 「世界模拟器」是作者主张，不是被独立验证的结论，🚫 不可写成「Sora 已实现世界模型」；③ 官方博客式报告无同行评议。 |
+
+首次收录: 2026-11-12（第十二轮）｜ 状态: ⚠️ **部分核验**（官方页标题可确认；正文 403 未取到；无 DOI ⇒ 被引未查）
+
+---
+
+## 47. Kimi K2: Open Agentic Intelligence
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Kimi K2: Open Agentic Intelligence |
+| 作者（前 3） | Kimi Team（团队署名）· Yifan Bai · Yiping Bao（et al.，作者列表数百人，本线只列前 3） |
+| 年份 | 2025（arXiv 首次提交 **2025-07-28**，最新 **v2** 2026-02-03，本线实测） |
+| 会议 / 期刊 | **预印本技术报告**（arXiv `comment` 原文 = `tech report of Kimi K2, with minor updates`；OpenAlex `primary_location.source` = arXiv ⇒ 🚫 不写会议） |
+| 被引数 | **1,410**（OpenAlex，DOI `10.48550/arxiv.2507.20534`，查询日 2026-11-12；S2 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2507.20534> ｜ DOI `10.48550/arxiv.2507.20534` |
+| 一句话贡献 | **32B 激活 / 1T 总参**的 MoE；提出 **MuonClip**（Muon + 新的 QK-clip）解决训练不稳定，**15.5T token 预训练零 loss spike**；后训练含**大规模 agentic 数据合成 + 联合 RL**；作者自报 Tau2-Bench **66.1** / ACEBench(En) **76.5** / SWE-Bench Verified **65.8** / SWE-Bench Multilingual **47.3**（称开源非思考模型 SOTA）。 |
+| 与我们工作的关系 | **pretrain（训练稳定性，直接可用）**：`MuonClip` 的「QK-clip 防 attention logit 爆炸」是**可直接抄的工程手段**，且给了「15.5T token 零 spike」这一强证据。<b>动作</b>：pretrain 线在 WSD 长跑前先做 **1B 级小规模对照**（Muon vs MuonClip vs AdamW），监控 `max attention logit` 与 loss spike 次数；<b>判据</b>：MuonClip 若在等 token 下把 spike 次数降到 0 且 loss 不低于 AdamW，就在 2B 主跑采用。<br>**data（agentic 数据合成）**：大规模合成 agentic 轨迹是能力来源之一；<b>动作</b>：data 线把「合成轨迹 / 真实轨迹」比例单列一栏，做 3 档消融。<br>**harness（评测口径）**：Tau2-Bench / SWE-Bench 是**自选基准**，<b>动作</b>：引用其分数时必须标「作者自报 + 日期 + 自选基准」，🚫 不写成「当前 SOTA」。<br>**zhulong（联合 RL）**：真实 + 合成环境联合 RL 与我们的「可验证奖励 + 自举环境」同构；<b>动作</b>：zhulong 记录「环境真实性占比」（真实工具 vs 模拟器）作为一列。<br>**风险**：① 1T 总参远超我们 2B 量级，**规模不可迁移**，只能抄方法与判据；② 全部分数为**作者自报、基准自选**；③ 「零 loss spike」是特定配置下的结果，不等于 MuonClip 普适；④ 数百人署名，无法逐条核对。 |
+
+首次收录: 2026-11-12（第十二轮）｜ 状态: 元数据已核验（arXiv API `200` + `application/atom+xml`；OpenAlex `200`；会议=无）
+
+---
+
+## 48. Direct Preference Optimization: Your Language Model is Secretly a Reward Model（DPO）
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Direct Preference Optimization: Your Language Model is Secretly a Reward Model |
+| 作者（前 3） | Rafael Rafailov · Archit Sharma · Eric Mitchell（et al.，共 6 位：+ Stefano Ermon · Christopher D. Manning · Chelsea Finn） |
+| 年份 | 2023（arXiv 首次提交 **2023-05-29**；本线取到 **v3 / 2024-07-29**） |
+| 会议 / 期刊 | **NeurIPS 2023**（OpenAlex `type=conference-paper`、venue `neural information processing systems`，biblio pp. **53728–53741**，会场 DOI `10.52202/075280-2338`） |
+| 被引数 | **3,123**（OpenAlex，DOI `10.48550/arxiv.2305.18290`，查询日 **2026-11-12**；S2 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2305.18290> ｜ DOI `10.48550/arxiv.2305.18290` |
+| 一句话贡献 | 摘要原文：给 RLHF 的奖励模型换一种参数化，使**最优策略可闭式解出**，于是「KL 约束下的 RLHF 目标」退化为**一个简单分类损失** —— DPO 训练稳定、无需在微调中从 LM 采样、也不必拟合独立奖励模型；摘要称在情感控制上超过 PPO 版 RLHF，在摘要与单轮对话上与 PPO 持平或更好，且实现与训练显著更简单。 |
+| 与我们工作的关系 | **zhulong（奖励设计：RM-free 路线对照）**：我们现在的路线是「可验证 checker 当奖励」，DPO 给的是第三条路 —— **不建 RM、不采样，直接用成对偏好做分类损失**。<b>动作</b>：zhulong 的奖励消融表加一档「DPO（仅离线成对偏好）」与「checker 奖励」「RM+PPO」并排，<b>判据</b>：在等标注预算下，若 DPO 档在留出任务上低于 checker 档 ≥5 绝对点，则离线偏好只当冷启动、不单独使用。<br>**data（偏好数据格式）**：DPO 只需要 `(prompt, chosen, rejected)` 三元组，比 RLHF 的「打分 + 在线采样」便宜 ⇒ data 线的偏好评测协议可直接按此格式预注册。<br>**harness（已知偏置）**：论文本身未系统处理**长度偏置**（DPO 被后续工作广泛报告会利用长度）⇒ harness 报分时必须单列长度统计，🚫 不看长度只看胜率。<br>**风险**：① 实验以 1B–7B 级与对话/摘要为主，**工具调用轨迹不在其评测范围**；② 「超过 PPO」是作者自报、基准自选；③ 离线数据分布偏移问题论文未解决（已在作者信中追问）。 |
+
+首次收录: 2026-11-12（第十三轮）｜ 状态: 元数据已核验（arXiv `id_list` `200` + `application/atom+xml`；OpenAlex `200`；Crossref/OpenAlex 会场 DOI 已记）
+
+---
+
+## 49. Transformers are SSMs: Generalized Models and Efficient Algorithms Through Structured State Space Duality（Mamba-2 / SSD）
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Transformers are SSMs: Generalized Models and Efficient Algorithms Through Structured State Space Duality |
+| 作者（前 3） | Tri Dao · Albert Gu（**共 2 位**） |
+| 年份 | 2024（arXiv 首次提交 **2024-05-31**，v1） |
+| 会议 / 期刊 | **ICML 2024**（据 arXiv `comment` 字段原文 `ICML 2024`；OpenAlex 仍只记 arXiv 预印本、无会场 DOI ⇒ **不写页码**） |
+| 被引数 | **1,003**（OpenAlex，DOI `10.48550/arxiv.2405.21060`，查询日 **2026-11-12**；S2 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2405.21060> ｜ DOI `10.48550/arxiv.2405.21060` |
+| 一句话贡献 | 摘要原文：证明 SSM（如 Mamba）与注意力变体**通过半可分矩阵的多种分解紧密相关**，据此提出 **SSD** 框架，并设计 **Mamba-2** —— 其核心层是 Mamba 选择性 SSM 的改进，**快 2–8×**，同时在语言建模上**仍与 Transformer 有竞争力**。 |
+| 与我们工作的关系 | **pretrain（吞吐 + 架构对照）**：Mamba-2 的卖点是「同精度下更快」而不是「更强」⇒ 若要评估 SSM 替换 attention，必须按**等质量（loss/困惑度）比吞吐**，🚫 只比 tokens/s。<b>动作</b>：pretrain 的架构对照表新增 `Mamba-2` 一档，只跑 1B 级短跑（≤20B token），<b>判据</b>：等 loss 下吞吐提升 ≥30% 且长上下文（≥32k）不退化才进入 2B 候选。<br>**zhulong（消融基线）**：SSD 给出「注意力 ↔ SSM」的统一视角 ⇒ 消融里可把「线性注意力 / SSM / 混合」放进**同一个矩阵分解族**解释差异，而不是当成三个黑盒。<br>**harness（成本口径）**：2–8× 是**层内**加速，端到端收益取决于 attention 占比 ⇒ harness 报「每步耗时」必须同时给 `attention 时间占比`。<br>**风险**：① 2–8× 为作者自报、特定形状（chunk 大小 / 序列长）下成立；② 与 Mamba-1 共享作者，独立复现少；③ 「与 Transformer 有竞争力」限于摘要所述中小规模。 |
+
+首次收录: 2026-11-12（第十三轮）｜ 状态: 元数据已核验（arXiv `id_list` `200` + `application/atom+xml`；OpenAlex `200`；会议据 arXiv `comment` 原文）
+
+---
+
+## 50. FlashAttention-2: Faster Attention with Better Parallelism and Work Partitioning
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | FlashAttention-2: Faster Attention with Better Parallelism and Work Partitioning |
+| 作者（前 3） | Tri Dao（**独著，共 1 位**） |
+| 年份 | 2023（arXiv 首次提交 **2023-07-17**，v1） |
+| 会议 / 期刊 | ⚠️ **预印本**（arXiv `comment` 字段为空；OpenAlex `type=preprint`、location 只有 arXiv ⇒ 本线**未核到会场记录**，🚫 不写 ICLR/页码） |
+| 被引数 | **1,844**（OpenAlex，DOI `10.48550/arxiv.2307.08691`，查询日 **2026-11-12**；S2 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2307.08691> ｜ DOI `10.48550/arxiv.2307.08691` |
+| 一句话贡献 | 摘要原文：FlashAttention-1 只达到理论最大 FLOPs/s 的 **25–40%**，原因是 thread block / warp 间**工作划分不佳**；FlashAttention-2 通过减少非 matmul FLOPs、**跨 block 并行单个 head**、warp 间再分工，得到**约 2× 加速**（相对 FlashAttention-1），在 A100 上达理论峰值的 **50–73%**；端到端训练 GPT 式模型可达 **225 TFLOPs/s per A100（72% MFU）**。 |
+| 与我们工作的关系 | **pretrain（吞吐口径，直接可用）**：`25–40%` 与 `50–73%` 这两个区间是**判断「我们的 attention 实现是否还有空间」的历史标尺**；`225 TFLOPs/s / 72% MFU` 是 A100 上的参照，我们在等模型规模上应报同一口径（MFU）而不是 tokens/s。<b>动作</b>：pretrain 训练脚本固定记录 `MFU` 与 `attention 占比`，把 FlashAttention-2 的 50–73% 当作「实现效率下限参照」，低于区间下沿先查 work partitioning 与 block 形状。<br>**harness（计费口径）**：报「训练成本」须写清 `是否用 FA-2 / head_dim / 序列长`，否则跨实验不可比。<br>**zhulong**：无直接消融价值（属实现层，不改模型），列为**基线实现要求**：消融实验统一用 FA-2，避免把工程差异算成方法差异。<br>**风险**：① 全部是 A100 上的数字，未给其它卡；② 2× 是相对 FA-1、不同形状下浮动；③ 作者自报、代码开源但本线未复现。 |
+
+首次收录: 2026-11-12（第十三轮）｜ 状态: 元数据已核验（arXiv `id_list` `200` + `application/atom+xml`；OpenAlex `200`；会议=未核到）
+
+---
+
+## 51. Ramulator 2.0: A Modern, Modular, and Extensible DRAM Simulator
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Ramulator 2.0: A Modern, Modular, and Extensible DRAM Simulator |
+| 作者（前 3） | Haocong Luo · Yahya Can Tuğrul · F. Nisa Bostancı（et al.，共 6 位：+ Ataberk Olgun · A. Giray Yağlıkçı · **Onur Mutlu**） |
+| 年份 | 2023（arXiv 首次提交 **2023-08-21**；本线取到 **v2 / 2023-11-29**） |
+| 会议 / 期刊 | **IEEE Computer Architecture Letters（CAL）** 23(1):**112–116**，DOI `10.1109/LCA.2023.3333759`（OpenAlex `type=article`，2026-11-12 实测） |
+| 被引数 | **185**（OpenAlex，DOI `10.48550/arxiv.2308.11030`，查询日 **2026-11-12**；S2 未查）<br>⚠️ **低于 §1「被引 ≥500」门槛**，按判据 ④「本领域（存储）标志性 / 方法论常青」收录 —— 它是 CMU SAFARI 组维护的**公开 DRAM 模拟器**（MIT 许可），持续被新一代存储 / RowHammer 论文当评测基座。 |
+| arXiv / DOI | <https://arxiv.org/abs/2308.11030> ｜ 期刊 DOI `10.1109/LCA.2023.3333759` ｜ 代码 <https://github.com/CMU-SAFARI/ramulator2> |
+| 一句话贡献 | 摘要原文：把 DRAM 系统的关键部件与交互**抽象成共享接口 + 独立实现**，用简洁可读的 DRAM 规格语法与**可复用的模板化 lambda**（建模 DRAM 命令功能）来快速支持新标准（**DDR5 / LPDDR5 / HBM3 / GDDR6**）；作者以**多种 RowHammer 缓解方案**为例展示「不改基线控制器代码即可模块化加实现」，并称经严格验证、保持相对现有周期级模拟器**较快的模拟速度**。 |
+| 与我们工作的关系 | **zhulong（实验基座 / 成本口径）**：如果要把「LLM 出配置 → 模拟器跑 → 回填指标」做成闭环，**模拟器本身必须是可脚本化、可批量、单次成本可控的**；Ramulator 2.0 的「规格语法 + 模块化控制器」正是把配置空间暴露成可搜参数的形态。<b>动作</b>：zhulong 在设计「批量短评测」pipeline 前，先用 Ramulator 2.0 做一次**吞吐标定**（单配置固定 trace 的墙钟时间），<b>判据</b>：若单次评测 &gt;30s，则闭环必须先做代理模型 / 缩短 trace，🚫 直接上 LLM 搜参。<br>**designflow（L1–L5 保真度分层）**：本文明确区分「timing / 功耗 / 可靠性」三类模型成熟度 ⇒ designflow 的保真度分层可参照此三分，而不是笼统一个「高/中/低」。<br>**data（存储领域语料）**：DRAM 规格语法（DDR5/LPDDR5/HBM3/GDDR6）是**结构化领域文本**的样本来源 ⇒ data 线可评估「规格文档 → 可执行配置」这类任务的语料形态。<b>风险</b>：① 被引 185 未达门槛，收录属「领域标志性」判断（我们的观察）；② 摘要未给具体加速倍数与验证误差，🚫 不写「快 N 倍」；③ 与我们 CXMT 内部模型/工具链无任何对接验证。 |
+
+首次收录: 2026-11-12（第十三轮）｜ 状态: 元数据已核验（arXiv `id_list` `200` + `application/atom+xml`；OpenAlex `200` + 期刊 DOI）
+
+---
+
+## 52. SimPO: Simple Preference Optimization with a Reference-Free Reward
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | SimPO: Simple Preference Optimization with a Reference-Free Reward |
+| 作者（前 3） | Yu Meng · Mengzhou Xia · **Danqi Chen**（共 3 位） |
+| 年份 | 2024（arXiv 首次提交 **2024-05-23**；本线取到 **v3 / 2024-11-01**） |
+| 会议 / 期刊 | **NeurIPS 2024**（arXiv `comment` 原文含 `NeurIPS 2024`；OpenAlex `type=conference-paper`，会议 DOI `10.52202/079017-3946`，页码 **124198–124235**） |
+| 被引数 | **560**（OpenAlex，DOI `10.48550/arxiv.2405.14734`，查询日 **2026-11-12**；S2 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2405.14734> ｜ 会议 DOI `10.52202/079017-3946` ｜ 代码 <https://github.com/princeton-nlp/SimPO> |
+| 一句话贡献 | 摘要原文：把**序列的平均对数概率**当作隐式奖励（与生成时的打分口径一致），从而**不需要参考模型**、更省显存与算力；同时在 Bradley–Terry 目标中加入**目标奖励边际（target reward margin）**以拉开正负样本间距，作者自报在多种设置下优于 DPO 及其变体。 |
+| 与我们工作的关系 | **zhulong（奖励设计，直接影响）**：我们当前在 ~2B 规模上纠结「要不要保留参考模型」；SimPO 给出了一条**去参考模型**的路径，代价是奖励变成「平均对数概率」⇒ 长度效应被显式引入。<b>动作</b>：zhulong 的奖励消融固定三臂 —— `DPO（带参考）` / `SimPO（无参考 + γ）` / `SimPO 去 γ`，<b>预注册判据</b>：若 SimPO 三臂中「平均回答长度」与「判定正确率」的相关系数 **&gt;0.5**，则必须加长度归一或长度惩罚后重跑，否则不采信其胜出。<br>**data（偏好数据）**：γ 与 β 一起决定「多接近才算赢」，直接影响标注粒度需求 ⇒ data 线的偏好对采集表要同时记录 `长度差` 与 `胜负有无可验证依据`。<br>**harness**：评测必须报**平均输出长度**，否则「胜出」可能只是更长。<b>风险</b>：① 作者自报、本线未复现；② 摘要未给具体胜率数字 ⇒ 本文不引用任何「提升 X%」；③ 我们面对的是工具调用轨迹（长尾、含报错文本），与摘要任务分布差异大，结论不能直接搬。 |
+
+首次收录: 2026-11-12（第十四轮）｜ 状态: 元数据已核验（arXiv `id_list` `200` + `application/atom+xml`；OpenAlex `200` + 会议 DOI / 页码）
+
+---
+
+## 53. Zephyr: Direct Distillation of LM Alignment
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Zephyr: Direct Distillation of LM Alignment |
+| 作者（前 3） | Lewis Tunstall · Edward Beeching · **Nathan Lambert**（et al.，共 14 位） |
+| 年份 | 2023（arXiv 首次提交 **2023-10-25**，仅 v1） |
+| 会议 / 期刊 | **预印本**（arXiv；OpenAlex `type=preprint`，本轮**未核到会议 DOI**） |
+| 被引数 | **867**（OpenAlex，DOI `10.48550/arxiv.2310.16944`，查询日 **2026-11-12**；S2 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2310.16944> |
+| 一句话贡献 | 摘要原文：先做**蒸馏式 SFT（dSFT）**，再用**AI 反馈排序出的偏好数据**做**蒸馏式 DPO（dDPO）**，得到 Zephyr-7B；作者自报其在 7B 级 chat 基准上为当时最好，**无需人工标注**，且微调**只需数小时、无需额外采样**。 |
+| 与我们工作的关系 | **pretrain / posttrain（后训练配方）**：这是「**AI 反馈替代人工标注**」这条线的代表作 ⇒ 对我们最实际的问题是「域内偏好对只有几万条时，教师排序 + DPO 是否仍优于纯 SFT」。<b>动作</b>：posttrain 在 ~2B 上做**四臂对照**：`dSFT only` / `dSFT+dDPO(AI 反馈)` / `dSFT+DPO(checker 偏好)` / `dSFT+dDPO 但教师换成我们自己的 7B`，<b>判据</b>：以 harness 的「工具调用一次成功率」为主指标，若 checker 偏好臂不劣于 AI 反馈臂，则**优先 checker**（可自动化、无标注成本）。<br>**data（偏好数据来源）**：AI 反馈 = 可放大但会继承教师偏好；checker = 精确但覆盖窄 ⇒ data 线需要一张「哪些任务可 checker 化」的清单。<br>**zhulong（消融归因）**：Zephyr 的增益同时来自教师数据与 DPO 步，任何引用它的消融都必须把两者拆开。<b>风险</b>：① 7B 结果不外推到 2B；② 全文数字本线未复现，不引用具体分数；③ 「无需人工标注」不等于「无需人工设计教师与筛选」。 |
+
+首次收录: 2026-11-12（第十四轮）｜ 状态: 元数据已核验（arXiv `id_list` `200` + `application/atom+xml`；OpenAlex `200`；会议=未核到）
+
+---
+
+## 54. CircuitNet: An Open-Source Dataset for Machine Learning Applications in Electronic Design Automation (EDA)
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | CircuitNet: An Open-Source Dataset for Machine Learning Applications in Electronic Design Automation (EDA) |
+| 作者（前 3） | Zhuomin Chai · Yuxiang Zhao · **Yibo Lin**（共 6 位：+ Wei Liu · Runsheng Wang · Ru Huang） |
+| 年份 | 2022（arXiv 首次提交 **2022-08-01**；本线取到 **v4 / 2022-09-01**） |
+| 会议 / 期刊 | **Science China Information Sciences** 65(**12**)，DOI `10.1007/s11432-022-3571-8`（OpenAlex `type=other`，2026-11-12 实测） |
+| 被引数 | **44**（OpenAlex，上述期刊 DOI，查询日 **2026-11-12**；S2 未查）<br>⚠️ **远低于 §1「被引 ≥500」门槛**，按判据 ④「本领域（EDA / LLM-for-EDA）标志性工作」收录 —— 摘要自称 **the first open-source dataset** for ML in VLSI CAD，是本领域少数公开可下载的设计-指标数据集。 |
+| arXiv / DOI | <https://arxiv.org/abs/2208.01040> ｜ 期刊 DOI `10.1007/s11432-022-3571-8` |
+| 一句话贡献 | 摘要原文：指出 EDA 社区做跨阶段预测时**普遍缺大规模公开数据**、多数研究只能用自建小数据集验证，因此给出**首个开源数据集**（CircuitNet），用于 VLSI CAD 中的机器学习任务。 |
+| 与我们工作的关系 | **data（EDA 语料 / 切分纪律，直接可用）**：公开数据集的价值不只在于「有数据」，而在于**给了可比较的切分口径**。<b>动作</b>：data 线在建 BaiZe 的 EDA 语料时，把「**按设计切分而非按样本切分**」写成硬规则（同一设计的不同采样点不得跨 train/test），并用 CircuitNet 做一次泄漏对照实验，<b>判据</b>：按设计切分后指标若下降 &gt;20%，说明此前的随机切分确实在泄漏。<br>**designflow（造题 / 保真度）**：它把「设计 → 预测指标」做成标准任务 ⇒ designflow 的 L1–L2 题面可直接对齐这类任务形态（读设计特征、预测某项指标），L3+ 才引入工具闭环。<br>**zhulong（代理模型）**：若要把「LLM 出配置 → 工具跑 → 回填」闭环压到可承受成本，代理模型必须先在公开数据上标定误差。<b>风险</b>：① 被引 44 未达门槛，收录属「领域标志性」判断（我们的观察）；② 摘要未给数据规模 / 工艺节点 / 指标清单 ⇒ 本文只写摘要出现的内容，具体类别（IR-drop / DRC / 拥塞）属**领域常识**，未在本文摘要中出现，引用时须另行核验；③ 与我们 CXMT 内部设计数据无任何对接验证。 |
+
+首次收录: 2026-11-12（第十四轮）｜ 状态: 元数据已核验（arXiv `id_list` `200` + `application/atom+xml`；OpenAlex `200` + 期刊 DOI）
+
+---
+
+## 55. The Bitter Lesson（**非论文条目 · 博客随笔**，单列）
+
+> ⚠️ 本条**不是论文**：无 arXiv、无 DOI、无被引口径。按用户令里「必读基线」的候选清单收录（Sutton 一系），**单独标注类型**，不混入论文计数口径的引用场景。
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | The Bitter Lesson |
+| 作者 | **Richard S. Sutton**（单作者） |
+| 年份 | **2019-03-13**（页面原文日期；`HTTP 200` / 7,297 B，2026-11-12 18:0x 实测） |
+| 会议 / 期刊 | 无（个人主页随笔；`incompleteideas.net`） |
+| 被引数 | **未查**（博客无被引口径；🚫 不写任何估算值） |
+| 链接 | <http://www.incompleteideas.net/IncIdeas/BitterLesson.html> |
+| 一句话贡献 | 原文首句逐字：`The biggest lesson that can be read from 70 years of AI research is that general methods that leverage computation are ultimately the most effective, and by a large margin.`；随后论证：多数 AI 研究假设算力恒定、转而注入人类领域知识，但长期只有「利用算力」有效，且**两者在实践中往往相互挤占**。 |
+| 与我们工作的关系 | **pretrain（战略口径，不是技术细节）**：这篇是「**通用方法 + 算力** 长期胜出」最常被引的表述，直接对上我们「2B 领域模型 + 领域先验」的取舍 —— 它提醒：领域知识的注入是**短期收益**，长期会被通用方法吃掉。<b>动作</b>：pretrain 在写「为什么要做领域继续预训练」的立项依据时，必须同时给出**通用基线**（同 token 预算的通用语料）作为对照，<b>判据</b>：若领域语料带来的增益在 &lt;2× token 预算内被通用基线追平，则该领域配比按「战术性」而非「战略性」投入。<br>**designflow（造题倾向）**：提示我们少造「靠人肉先验可解」的题，多造「必须调用工具、可规模化验证」的题。<b>风险</b>：① 是**观点文**不是实验证据，🚫 不能当作「已验证结论」引用；② 常被断章取义成「数据无用 / 领域知识无用」，原文明确说两者「need not run counter」，引用须带上下文；③ 无被引数、无同行评审。 |
+
+首次收录: 2026-11-12（第十四轮）｜ 状态: 原文已实测（`HTTP 200` / 7,297 B；首句逐字核对）｜ 类型: **blog（非论文）**
+
+---
+
 ## 候选池（下轮起逐轮补，**被引数本轮未查**，勿引用）
 
+
+
 > 只登记「已实测 arXiv 元数据」的条目；被引数待下轮 OpenAlex 批量核过再写，**本表数字一律留空 = 未查**。
-> ⚠️ 第七轮**未新增候选**（4 条直接转正为 #24–#27，元数据均当场实测）；**必读清单 10/10 组已有落点**，但组内仍有未收子项，下轮优先：**AlphaFold（Nature 2021，DOI 待核）/ AlphaStar（Nature 2019，DOI 待核）**、**Kimi（`2401.14185` Moonshot 或 Kimi k1.5 `2501.12599`）· GLM-4 `2406.12793` · MiniMax-01 `2501.08313`**、**VLA 其余（RT-1 `2212.06817` / RT-2 `2307.15818` / π0 `2410.24164` / Octo `2405.12213`）· SORA（OpenAI 技术报告，无 arXiv）**。**元数据未实测前不进本表，也不凭印象写 DOI / 被引**。
+> ⚠️ 第十轮把 **Llama 2 `2307.09288` / LLaVA-1.5 `2310.03744` / SWE-agent `2405.15793` / Tree of Thoughts `2305.10601`** 四条转正为 #36–#39；**第十一轮把 Llama 3 `2407.21783` / RT-1 `2212.06817` / Christiano 2017 `1706.03741` / Stiennon 2020 `2009.01325`** 四条转正为 #40–#43；**第十二轮把 τ-bench `2406.12045` / TD-Gammon（CACM `10.1145/203330.203343`）/ Sora 技术报告 / Kimi K2 `2507.20534`** 四条转正为 #44–#47（元数据 + 被引当场实测）。✅ **必读清单 37/37 条目已全部覆盖**，此后以「补充 / 更正」为主。
+> ⚠️ **更正**：候选池此前记的「Kimi 月之暗面早期报告 `2401.14185`」**实测为 `TDFNet`（音视频语音分离，cs.SD），与 Kimi 无关** ⇒ 已删除该候选，改收 **Kimi K2 `2507.20534`**（已转正 #47）。
+> **下轮候选（🚫 未实测前不进本表、不写 DOI / 被引）**：① ~~DPO / Mamba-2 / FlashAttention-2 / 存储方向~~ ⇒ **第十三轮已转正 #48–#51**；② **`2310.16944` Zephyr（dDPO 蒸馏）** —— 实测存在（cs.LG，2023-10-25），可作「蒸馏 + 偏好」候选，待核被引；③ **版图 / EDA 预训练**（CircuitNet 类，须先实测是否 arXiv 一手）；④ Sutton《The Bitter Lesson》（**博客，无 arXiv / 无 DOI** ⇒ 只能引原文链接，单独标注）；⑤ **SimPO / IPO 类 DPO 改进**（须实测 arXiv 一手 + 被引）。
 
 
 | arXiv ID | 标题（arXiv 实测） | 首次提交 | 拟服务线 | 为什么算经典（待核被引） |
