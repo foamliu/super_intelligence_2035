@@ -1,6 +1,6 @@
 ﻿# BAIZE_DATA_TASK.md
 
-### 🔴 用户令 · 2026-11-12（**分析 stack-v3-train 里哪些数据最能提升 EDA 脚本能力，出中文 HTML 报告**）· 用户直令 · 最高优先 · 未完成
+### ✅ 用户令 · 2026-11-12（**分析 stack-v3-train 里哪些数据最能提升 EDA 脚本能力，出中文 HTML 报告**）· 用户直令 · 最高优先 · ✅ 已交付（Phase A全扫4600shard/97M repos/1.28B files/4963s + Phase B分层抽样3200文件/9类/seed=42 → V1~828文件/~0.01B tok, V2~6854文件/~0.04B tok, V3~139518文件；Tcl唯一显著EDA命中39.2%/SKILL未检出/PyAether 0命中；报告report_data_stackv3_eda_script_value_zh.html 43KB 8节+附录 0外链 0script；DATA_MAPPING.md §H.13新增；commit a6370ce60）
 
 > **用户原话**：「安排 data 在 stack-v3-train 里分析一下，看哪些对于提升 EDA 脚本能力（PyAether、Tcl、SKILL等）帮助较大。写个中文HTML报告。」
 
@@ -87,7 +87,7 @@
 ---
 
 
-### 🔴 用户令 · 2026-11-12（**把 stack-v3-train 2TB 分词**）· 用户直令 · 最高优先 · 未完成
+### 🔄 用户令 · 2026-11-12（**把 stack-v3-train 2TB 分词**）· 用户直令 · 最高优先 · 进行中（3396/4600shard 73.8% / 3177OK+219ERR / 686GB输出+3214.json / ETA~3.4h / 134 failed shards待rerun / 脚本v4已修复(Fallback2 dotted column paths + --shard-list索引映射fix) / rerun脚本stackv3_rerun_failed.sh就绪）
 
 > **用户原话**：「Data：将 stack-v3-train 2TB 分词。」
 
