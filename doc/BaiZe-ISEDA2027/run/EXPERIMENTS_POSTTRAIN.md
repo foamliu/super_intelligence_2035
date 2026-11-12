@@ -7474,3 +7474,108 @@ SFT 数据格式（doc_to_code）：
 | P1 | 数据混合防遗忘 | 30% 通用指令 + 20% agentic 工具调用 + 50% PyAether 工具调用 |
 | P1 | 训练强度调整 | LR 2e-5→1e-5，步数 90→40-60，考虑 LoRA |
 | P2 | 早期 ckpt 对比 | 测试 step_20/40/60/80 是否退化较轻（已有 ckpt） |
+
+### §R358 SFT 语料重构 — agentic tool-call 格式 + 重训启动（2026-11-13 wake358）
+
+> 替身预演声明：MiniCPM5-2B is BaiZe surrogate; gains/losses not transferable to BaiZe.
+
+**目标**：执行 R357 诊断的 P0+P1 修复方案 — 将 SFT 语料从 doc-to-code 格式重构为 agentic tool-call 格式（MiniCPM5 XML），并启动重训。
+
+**脚本**：`baize_posttrain_sft_agentic_rebuild_r358.py`（639 行）
+
+#### 数据转换
+
+| 来源 | 输入 | 转换方式 | 输出 |
+|:--|:--|:--|--:|
+| v11v38 | 1344 对 doc-to-code | doc_to_code → agentic tool-call：system(工具描述)→user(任务)→assistant(search_apis)→user(tool_result)→assistant(get_api_details)→user(tool_result)→assistant(run_code CDATA)→user(tool_result)→assistant(总结) | 1344 |
+| r127 | 200 对 agentic 轨迹 | 已有 agentic 对话 → MiniCPM5 XML 格式（A:API使用/B:错误恢复/C:多API链） | 200 |
+| general | — | 防遗忘通用指令（数学/推理/常识/代码理解） | 804 |
+
+#### MiniCPM5 XML 格式
+
+```
+<function name="search_apis">
+<param name="query">dbCrtSchWire</param>
+</function>
+
+<function name="get_api_details">
+<param name="api_name">dbCrtSchWire</param>
+</function>
+
+<function name="run_code">
+<param name="code"><![CDATA[import pyAether as pyScript
+def create_sch_wire():
+    cvId = pyScript.dbOpenCV(...)
+    pyScript.dbCrtSchWire(cv=cvId, point=point)
+]]></param>
+</function>
+```
+
+工具结果格式：`<tool_result>...</tool_result>`
+
+#### 混合比例
+
+| 类别 | 条数 | 占比 |
+|:--|--:|--:|
+| PyAether tool-call (v38 agentic) | 1344 | 52.7% |
+| Agentic (r127 XML) | 400 | 15.7% |
+| General anti-forget | 804 | 31.6% |
+| **总计** | **2548** | **100%** |
+
+#### 质量统计
+
+| 指标 | 值 |
+|:--|--:|
+| 总条数 | 2548 |
+| 中位轮数 | 9 |
+| 最大轮数 | 11 |
+| 中位字符长度 | 2089 |
+| P95 字符长度 | 3404 |
+| 含工具调用比例 | 68.4% |
+
+#### 产物
+
+| 文件 | 大小 | 说明 |
+|:--|--:|:--|
+| `sft_pyaether_agentic_v39.jsonl` | 5.5 MB | 2548 条 JSONL |
+| `sft_pyaether_agentic_v39.parquet` | 605 KB | parquet 格式 |
+| `sft_surrogate_data/agentic_v39/train.parquet` | 754 KB | 2294 条训练集 |
+| `sft_surrogate_data/agentic_v39/val.parquet` | 92 KB | 254 条验证集 |
+| `r358_agentic_rebuild_summary.json` | — | 构建摘要 |
+
+#### Contamination scan
+
+- 状态：**PASS**
+- eval entry points: 488
+- corpus pairs mentioning eval API: 2079（API 名允许出现在训练语料中，§5.1 允许 API 文档）
+
+#### SFT 训练配置
+
+| 参数 | 值 |
+|:--|:--|
+| 模型 | MiniCPM5-2B (LlamaForCausalLM) |
+| GPU | 6,7 (2×A40) |
+| max_length | 4096 |
+| batch | global=32, micro=4/GPU |
+| epochs | 3 |
+| lr | 1e-5 (cosine, warmup_ratio=0.1) |
+| total steps | 105 (35/epoch) |
+| save_freq | 20 steps |
+| output_dir | `sft_surrogate_runs/minicpm5_agentic_v39` |
+| FT mode | full |
+
+#### 与 R357 诊断的对应
+
+| R357 根因 | R358 修复 |
+|:--|:--|
+| 格式崩溃（84.2% doc_to_code, 0% tool-call） | ✅ 100% v11v38 转为 tool-call 格式 |
+| 工具协议遗忘（EDA:Generic = 1:949） | ✅ 52.7% PyAether tool-call + 15.7% agentic |
+| 长上下文退化（短 doc_to_code 对） | ✅ 多轮对话 median=9 turns, max=11 |
+
+#### 下一步
+
+1. 等 SFT 训练完成（~1h, 105 steps）
+2. serve best ckpt on GPU5 (:8097)
+3. run EDA-Eval 158 tasks
+4. compare Pass@1 vs 36% (base) and 0% (v11v38 SFT)
+
