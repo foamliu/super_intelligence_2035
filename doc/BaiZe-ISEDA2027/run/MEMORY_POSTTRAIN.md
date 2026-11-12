@@ -7,12 +7,12 @@ WAITING: 0
 
 ## 进度快照
 
-- PHASE: posttrain-wake358（2026-11-13 R358: **SFT数据重构+重训启动** — v11v38 doc-to-code→agentic tool-call格式转换,2548条语料,SFT训练已启动GPU6/7）
-- 已完成: P3预备✅;P0✅;P1✅;P2✅;R1-R210✅;R280归档;wake281-357✅;R357✅(SFT诊断);R358✅(agentic语料重构2548条+SFT启动)
-- 当前动作: wake358 R358:**agentic SFT语料重构+训练启动**:①v11v38(1344对)doc-to-code→agentic tool-call格式转换(search→get_api_details→run_code多轮对话) ②r127(200对)→MiniCPM5 XML ③混合比例52.7%PyAether/15.7%agentic/31.6%general=2548条 ④sft_pyaether_agentic_v39.parquet(605KB) ⑤contamination PASS ⑥SFT训练已启动:GPU6/7,max_len=4096,3ep,lr=1e-5,105steps,run=minicpm5_agentic_v39
-- 下一步: ①等SFT训练完成(~1h)→serve ckpt on GPU5(:8097) ②run EDA-Eval 158 tasks→compare vs 36%baseline/0%(v11v38 SFT) ③Phase3 RL待SFT配方验证
+- PHASE: posttrain-wake359（2026-11-13 R359: **SFT训练FSDP2修复+pretokenized重跑** — MultiTurnSFTDataset慢→pretokenize→custom_cls,2GPU 100%均衡训练中）
+- 已完成: P3预备✅;P0✅;P1✅;P2✅;R1-R210✅;R280归档;wake281-357✅;R357✅(SFT诊断);R358✅(agentic语料重构2548条);R359✅(FSDP2修复+pretokenized训练运行中)
+- 当前动作: wake359 R359:**SFT FSDP2 GPU不均衡根因确诊+修复**:①根因:MultiTurnSFTDataset.__getitem__每条9轮对话调18次apply_chat_template,DataLoader 8 workers→数据加载瓶颈→GPU6先完成micro-batch等GPU7→FSDP2 barrier死锁→GPU6释放显存(362MiB) ②修复:pretokenize脚本baize_posttrain_pretokenize_v39.py(37s处理2548条,loss_mask=assistant turns) ③custom_cls=PreTokenizedSFTDataset(baize_posttrain_pretokenized_dataset.py) ④pretokenized parquet:sft_surrogate_data/minicpm5_agentic_v39_pretok/(train 1MB+val 111KB) ⑤训练脚本:baize_posttrain_sft_pretok.sh ⑥SFT训练RUNNING:GPU6/7,2GPU均100%均衡(loss 2.41→2.23 @step3,~33s/step,105steps,ETA~58min) ⑦log:/tmp/baize_sft_pretok_launch.log ⑧ckpts:sft_surrogate_runs/minicpm5_agentic_v39_pretok/
+- 下一步: ①等SFT训练完成(~02:25)→serve best ckpt on GPU5(:8097) ②run EDA-Eval 158 tasks→compare vs 36%baseline/0%(v11v38 SFT) ③Phase3 RL待SFT配方验证
 - 阻塞: BaiZe ckpt inaccessible(/nas_train not mounted);P3等pretrain ckpt;36.15磁盘满
-- 本轮新增产出: R358✅(agentic语料重构脚本baize_posttrain_sft_agentic_rebuild_r358.py+v39.parquet+JSON summary+SFT训练启动)
+- 本轮新增产出: R359✅(pretokenize脚本+custom dataset class+pretokenized parquet+pretok训练脚本+FSDP2修复验证)
 - 未完成指令: L4 2026-11-12✅pipeline全完成(all 0%);11:2x✅;17:10✅拆除;13:40 Phase2✅(eval 0%,根因已确诊)/Phase3 RL launch-ready待SFT配方验证;ckpt BLOCKED
 - git: super_intelligence_2035(pulled to dbaaa0f2f);本轮 commit pending(wake358)
 - 🔧 **SDPA patch**(wake328):verl fsdp_sft_trainer.py L199 `attn_implementation="flash_attention_2"`→`"sdpa"`;root cause:flash_attn crashes on CPU meta tensor during FSDP2 init→RANK0 segfault→RANK1 NCCL deadlock;backup `.bak.flash_attn`;venv重建后需重打此patch
@@ -211,7 +211,7 @@ WAITING: 0
 [wake356 00:15] R356 designflow expand30 FINAL 0/30=0% + post-SFT eval path-error diagnosed → 原文已归档 daily-memories-posttrain/2026-11-13.md
 [wake357 01:30] R357 SFT配方诊断完成 — 36%→0%回归三大根因确诊(格式崩溃+工具协议遗忘+长上下文退化) → 原文已归档 daily-memories-posttrain/2026-11-13.md
 [wake358 01:00] R358 **agentic SFT语料重构+训练启动**:①脚本baize_posttrain_sft_agentic_rebuild_r358.py:v11v38(1344对)doc-to-code→agentic tool-call格式转换(多轮search_apis→get_api_details→run_code,MiniCPM5 XML:<function name=...><param>...</param>) ②r127(200对)→MiniCPM5 XML(A_api_usage/B_error_recovery/C_multi_api) ③混合:52.7%PyAether工具调用(1344)+15.7%agentic(400)+31.6%general防遗忘(804)=2548条 ④产物:sft_pyaether_agentic_v39.jsonl(5.5MB)+.parquet(605KB)+train/val split(2294/254) ⑤contamination PASS ⑥stats:turn_median=9,tool_call=68.4%,char_median=2089 ⑦SFT训练已启动:GPU6/7,max_len=4096,3ep,lr=1e-5,105steps,save_freq=20,run=minicpm5_agentic_v39 ⑧tunnel UP ⑨serves UP:GPU4:8098+GPU5:8097 ⑩GPU6/7 SFT training. R358✅.WAITING=0。
-
+[wake359 01:29] R359 **SFT FSDP2 GPU不均衡根因确诊+pretokenized修复**:①R358训练max_len=4096失败:GPU6→362MiB/0%,GPU7→40GB/100%,FSDP2 rank不均衡 ②max_len=2048重试:同样pattern(GPU6→362MiB after 2min) ③1GPU重试:GPU7 100%~90s后静默死亡(无traceback) ④根因确诊:verl MultiTurnSFTDataset.__getitem__每条9轮对话调18次tokenizer.apply_chat_template,DataLoader 8 workers→数据加载瓶颈→GPU6 micro-batch先完成→FSDP2 NCCL barrier等待→GPU6释放显存 ⑤修复方案:pretokenize脚本baize_posttrain_pretokenize_v39.py(37s处理2548条,loss_mask仅assistant turns)→custom_cls=PreTokenizedSFTDataset(baize_posttrain_pretokenized_dataset.py,__getitem__仅torch.tensor(list))→data.multiturn.enable=false ⑥pretokenized parquet:sft_surrogate_data/minicpm5_agentic_v39_pretok/(train 1018KB+val 111KB,loss tokens mean=199) ⑦训练脚本:baize_posttrain_sft_pretok.sh ⑧SFT训练RUNNING:GPU6/7,2GPU均100%均衡(28829/28496MiB),loss 2.41→2.34→2.23→2.17 @step4,~33s/step,105steps,save_freq=20,ETA~02:25 ⑨log:/tmp/baize_sft_pretok_launch.log ⑩ckpts:sft_surrogate_runs/minicpm5_agentic_v39_pretok/. R359✅.WAITING=0。
 
 
 

@@ -7579,3 +7579,57 @@ def create_sch_wire():
 3. run EDA-Eval 158 tasks
 4. compare Pass@1 vs 36% (base) and 0% (v11v38 SFT)
 
+---
+
+### §R359 SFT 训练 FSDP2 GPU 不均衡根因确诊 + pretokenized 修复（2026-11-13 wake359）
+
+**背景**：R358 启动的 SFT 训练（GPU6/7, max_length=4096）出现 FSDP2 GPU 不均衡：
+- GPU6: 362 MiB / 0% util（释放了显存）
+- GPU7: 40 GB / 100% util（持续计算）
+- 训练卡在 step 0 超过 11 分钟无进展
+
+**诊断过程**：
+
+1. **max_length=4096 → 2048**：同样 pattern，GPU6 在 ~2min 后降到 362 MiB
+2. **1 GPU (GPU7)**：GPU7 100% ~90s 后**静默死亡**（无 traceback，无 CUDA error）
+3. **根因确诊**：verl `MultiTurnSFTDataset.__getitem__` 对每条 9 轮对话调用 18 次 `tokenizer.apply_chat_template()`（每轮 2 次：prefix + prev_tokens）。DataLoader `num_workers=8` → 8 个 worker 进程同时执行 18 次 tokenization → **数据加载瓶颈** → GPU6 的 micro-batch 先完成 → FSDP2 NCCL barrier 等待 GPU7 → GPU6 释放显存 → 死锁
+
+**修复方案 — 离线 pretokenize**：
+
+| 步骤 | 产物 |
+|:--|:--|
+| 1. pretokenize 脚本 | `baize_posttrain_pretokenize_v39.py`（37s 处理 2548 条，loss_mask 仅 assistant turns） |
+| 2. custom dataset class | `baize_posttrain_pretokenized_dataset.py`（`PreTokenizedSFTDataset`：`__getitem__` 仅 `torch.tensor(list)`） |
+| 3. pretokenized parquet | `sft_surrogate_data/minicpm5_agentic_v39_pretok/`（train 1018 KB + val 111 KB） |
+| 4. 训练脚本 | `baize_posttrain_sft_pretok.sh`（`data.custom_cls.path=...` `data.multiturn.enable=false`） |
+
+**验证结果**：
+
+| 指标 | 修复前（MultiTurnSFTDataset） | 修复后（PreTokenizedSFTDataset） |
+|:--|:--|:--|
+| GPU6 util | 0%（362 MiB） | 100%（28829 MiB）✅ |
+| GPU7 util | 100%（23776 MiB） | 100%（28496 MiB）✅ |
+| step 0 → 1 | 卡住 >11min | 34s ✅ |
+| loss trend | N/A | 2.41→2.34→2.23→2.17→2.13→1.82 |
+
+**训练配置（R359 pretokenized run）**：
+
+| 参数 | 值 |
+|:--|:--|
+| GPUs | 6,7 (2× A40) |
+| data | `sft_surrogate_data/minicpm5_agentic_v39_pretok/` |
+| dataset_cls | `PreTokenizedSFTDataset`（custom_cls） |
+| multiturn.enable | false |
+| max_length | 2048 |
+| batch | global=64, micro/GPU=4 |
+| epochs | 3 |
+| lr | 1e-5 (cosine) |
+| total steps | 105 |
+| save_freq | 20 |
+| step time | ~33s |
+| ETA | ~02:25 (58min total) |
+| log | `/tmp/baize_sft_pretok_launch.log` |
+| output | `sft_surrogate_runs/minicpm5_agentic_v39_pretok/` |
+
+**教训**：verl 的 `MultiTurnSFTDataset` 在多轮对话（>5 turns）场景下，`__getitem__` 中的 O(N) 次 `apply_chat_template` 调用会成为 DataLoader 瓶颈，导致 FSDP2 多 GPU 同步死锁。**修复：离线 pretokenize + custom_cls 绕过 MultiTurnSFTDataset**。
+
