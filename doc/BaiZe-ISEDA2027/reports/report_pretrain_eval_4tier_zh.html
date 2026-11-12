@@ -42,8 +42,8 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
   <div class="meta">
     <span>📅 2026-11-12</span>
     <span>🏗 Mamba2-hybrid 2.22B</span>
-    <span>🔥 训练 iter≈176.8k / 700k(25.3%) · step~7.0s<7.4s✅ · loss~2.03 · 0NaN/0skip · ckpt 176k已落盘(180k ETA~6h,autoqueue运行中) · lr-decay-iters=0(stable段) · GPU 8×100%/75GB · ✅ 论文§4.6已刷新iter174.4k+PDF 0err</span>
-    <span>📊 L1: 17 ckpt ✅(160k=58.13%峰值,170k=57.75%) · 下一个180k(ETA~6h) | L2: 6/6完成 ✅ GSM8K=0%🔴 MMLU=23.16%(≈随机) BBH=0%🔴 MATH=0%🔴 HumanEval=0%(llama.cpp)🔴 MBPP=0%🔴 · 🟢<b>HF transformers三重验证</b>→llama.cpp SSM bug是0%主因 · <b>🟢HumanEval HF=3/20=15.0%✅</b> + <b>🟢GSM8K HF=1/10=10.0%✅</b> + <b>🟢MBPP HF=1/20=5.0%✅</b> vs llama.cpp全0% | L3: 🔴TB 0/2(待HF重测) | L4: 🔴SSH .15/.17均超时</span>
+    <span>🔥 训练 iter≈178.0k / 700k(25.4%) · step 7087ms<7.4s✅ · loss 2.033 · 0NaN/0skip · ckpt 178k已落盘(180k ETA~4h,autoqueue PID2896237运行中) · lr-decay-iters=0(stable段) · GPU 8×100%/75GB · ✅ 论文§4.6已刷新iter177k+PDF 0err</span>
+    <span>📊 L1: 17 ckpt ✅(160k=58.13%峰值,170k=57.75%) · 下一个180k(ETA~4h) | L2: 6/6完成 ✅ · 🟢<b>HF transformers五重验证全部完成</b>→llama.cpp SSM bug是0%主因 · <b>🟢HumanEval HF=3/20=15.0%✅</b> + <b>🟢GSM8K HF=1/10=10.0%✅</b> + <b>🟢MBPP HF=1/20=5.0%✅</b> + <b>🟡BBH HF=1/30=3.3%✅</b> + <b>🔴MATH HF=0/10=0.0%✅</b> vs llama.cpp全0% · MMLU=23.16%(≈随机) | L3: 🔴TB 0/2(无GPU做vLLM重试,.17 SSH不通) | L4: 🔴SSH .15/.17均超时(EDA工具在.15本地非NFS)</span>
   </div>
   <div style="margin-top:12px;font-size:12.5px;background:rgba(0,0,0,.18);border-radius:8px;padding:8px 12px;opacity:.95">
     ⚠️ 本报告是<b>训练监控与决策依据</b>，<b>不进论文正文</b>（2026-11-10 用户令）。用户关注点（2026-11-11）：<b>如何拿到更好的结果</b>。
@@ -90,7 +90,7 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
 </div>
 
 <!-- L2 -->
-<h2 class="sec">L2 · 复杂推理（6 集）<span class="badge b-warn">🟡 HF三重验证完成 · llama.cpp SSM bug是0%主因</span></h2>
+<h2 class="sec">L2 · 复杂推理（6 集）<span class="badge b-warn">🟡 HF五重验证全部完成 · llama.cpp SSM bug是0%主因</span></h2>
 <div class="card">
   <h3>P-8 历史结果（44.4B tokens · 2026-10-15）</h3>
   <table>
