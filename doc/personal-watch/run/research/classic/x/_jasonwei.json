@@ -4,6 +4,14 @@
  "bio": "ai researcher @meta, past: openai, google 🧠",
  "tweets": [
   {
+   "id": "2120630417158250953",
+   "created_at": "2026-11-11 21:31 UTC",
+   "created_at_ms": 1794432665000,
+   "text": "The fall of “what you can do” and the rise of “who you know”\\\n\\\nTraditionally, many of us believe in a world where how hard you work is more important than who you know. I used to subscribe to this idea as both a scientist, who believed that facts about our world are agnostic to",
+   "url": "https://x.com/_jasonwei/status/2120630417158250953",
+   "handle_guess": "_jasonwei"
+  },
+  {
    "id": "2120283338640621826",
    "created_at": "2026-11-10 22:31 UTC",
    "created_at_ms": 1794349915000,
@@ -36,30 +44,6 @@
    "handle_guess": "_jasonwei"
   },
   {
-   "id": "2112037722982584604",
-   "created_at": "2026-10-19 04:26 UTC",
-   "created_at_ms": 1792384007000,
-   "text": "spotted: andrew and muse girl on first date https://t.co/tQBVEiKxyn",
-   "url": "https://x.com/_jasonwei/status/2112037722982584604",
-   "handle_guess": "_jasonwei"
-  },
-  {
-   "id": "2109866053803413786",
-   "created_at": "2026-10-13 04:37 UTC",
-   "created_at_ms": 1791866241000,
-   "text": "hiiii 👋🏻",
-   "url": "https://x.com/_jasonwei/status/2109866053803413786",
-   "handle_guess": "michelleekokoko"
-  },
-  {
-   "id": "2109754201509445939",
-   "created_at": "2026-10-12 21:12 UTC",
-   "created_at_ms": 1791839573000,
-   "text": "anyone know who the girl at 0:30 is???\\\n\\\nasking for a friend",
-   "url": "https://x.com/_jasonwei/status/2109754201509445939",
-   "handle_guess": "andrewztan"
-  },
-  {
    "id": "1945294042138599722",
    "created_at": "2025-07-16 01:26 UTC",
    "created_at_ms": 1752629216000,
@@ -69,5 +53,5 @@
   }
  ],
  "http_status": 200,
- "fetched_at": "2026-11-11 12:23:41"
+ "fetched_at": "2026-11-12 09:03:14"
 }

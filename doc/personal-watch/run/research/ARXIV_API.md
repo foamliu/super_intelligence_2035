@@ -2252,3 +2252,13 @@ python3 research/arxiv_fetch.py --query 'cat:cs.CL AND abs:"agent"' --max-result
 - **X（只读）**：经 `-x http://127.0.0.1:7897` 实测 `x.com` **200 / 0.56s**、出口 `178.249.213.185`；7 个 profile 全 `200`（`jyangballin` / `KarlPertsch` / `imhaotian` / `ShunyuYao12` / `peteflorence` / `DannyDriess` / `tri_dao`）；`https://x.com/KLieret` **200**（`og:title` + `og:description` 自证身份）⇒ 新核验 1 个。
 - **⚠️ 新口径坑（重要）**：`x_fetch.py` 从 profile 内嵌 timeline 解析出的条目**会混入他人推文** —— 本轮两条拟引用经 `x.com/<handle>/status/<id>` 的 `og:title` 核对分别显示 `Mark Müller (@mnmueller)` 与 `Mercor (@mercor)`，**与预期作者不符 ⇒ 未采用**。今后每条引用必须做「推文页 `og:title` 作者 + `og:description` 正文」双核验，且正文要与 profile `full_text` 互校。
 - **单条推文页 curl 坑**：`https://x.com/<handle>/status/<id>` 直接 GET 返回 **307**（`B=0`）⇒ 必须 `curl -sL`；`og:description` 部分推文存在、部分缺失（缺则正文无法二次核验 ⇒ 不用）。
+
+## §9.155 · 2026-11-12 09:00 CST（加轮 · A 轨重扫 + B 轨第十一轮）
+
+- **批次未刷新**：`cs.CL` **125,187** / `cs.CV` **213,062** / `cs.LG` **298,685** / `cs.AI` **212,409** —— 与 §9.154（06:00）**逐字节同值** ⇒ 公告批仍 `2026-11-10`。
+- **⚠️ 429 实例（本线自伤）**：`cs.SE` 查询三次重试均 **`429 Too Many Requests`**，原因是同一时刻另有一条 `id_list` 请求并发打在 `/api/query` 上（本线自己在两处同时取数）⇒ 脚本 `raw/candidates_r155.py` 退出、`raw/2026-11-12-mid-candidates-r155.json` **未生成**。**结论：`/api/query` 必须全局串行，且与后台脚本共用同一个 3s 限速桶；不要在扫描运行时另起 curl。**
+- **B 轨元数据**：`id_list=2407.21783,2212.06817,1706.03741,2009.01325` **`200` + `application/atom+xml; charset=utf-8`**（73,338 B；首次提交 2024-07-31 / 2022-12-13 / 2017-06-12 / 2020-09-02；最新 v3 / v2 / v4 / v3）。
+- **OpenAlex 4/4 `200`**（串行）：23,796（Llama 3，source=arXiv，无会场）/ 2,747（RT-1，**RSS 2023**，DOI `10.15607/rss.2023.xix.025`）/ 1,643（Christiano，`locations` 含 `neural information processing systems` → `papers.nips.cc/paper/7017`）/ 945（Stiennon，arXiv `comments` = `NeurIPS 2020`）。
+- **X（只读）**：`https://x.com` **200 / 0.86s**、`https://x.com/ShunyuYao12` **200 / 0.76s**、出口 `178.249.213.185`；`RichardSSutton` / `_albertgu` / `_jasonwei` 三个 profile **200**；`x.com/janleike` **200**（`og:title` = `Jan Leike (@janleike) on X`，`og:description` 未渲染）、`x.com/paulfchristiano` **200**（bio 自证 ARC）、`x.com/nisanstiennon` **404**。
+- **再次确认 profile timeline 混入他人推文**：`_albertgu` 的解析结果里出现了 Sutton 的 `2119142310894334262`（同一 `full_text`）⇒ 引用前必须开单条推文页核 `og:title`（§9.154 的纪律继续有效）。
+- **推文正文截断实例**：`x.com/_jasonwei/status/2120630417158250953` 的 `og:description` 以 `…` 结尾（profile `full_text` 同样截断）⇒ 长贴类推文在登录前**拿不到全文**，只能放弃（V12 未采用）。

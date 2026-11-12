@@ -10,7 +10,7 @@
 >
 > **元数据核验**：标题 / 首次提交日 均取自 arXiv 官方 API（`export.arxiv.org/api/query?id_list=...`，2026-11-11 两轮实测 `HTTP 200` + `application/atom+xml; charset=utf-8`，首轮 4/4、第二轮 4/4 = 累计 8/8）。
 
-**本轮快照**：累计 **39** 条（首轮 11:5x 收 4 条；第二轮 11:4x 补 4 条 EDA / agent / PEFT；第三轮 12:1x 补 4 条 RoPE / SWE-bench / Reflexion / CoT；第四轮 12:4x 补 3 条 GPT-3 / InstructGPT / LLaMA；第五轮 15:0x 补 4 条 ResNet / seq2seq / Dyna / LLaVA；第六轮 18:0x 补 4 条 GPT-1 / GPT-2 / Kaplan scaling laws / DQN；第七轮 21:0x 补 4 条 AlphaGo / AlphaGo Zero / Gemini / OpenVLA；第八轮 2026-11-12 00:0x 补 4 条 AlphaFold / AlphaStar / Kimi k1.5 / π0；第九轮 2026-11-12 03:0x 补 4 条 GLM-4 / MiniMax-01 / RT-2 / Octo；**第十轮 2026-11-12 06:0x 补 4 条** SWE-agent / Tree of Thoughts / Llama 2 / LLaVA-1.5）｜ 覆盖（一篇可服务多线，按文内「与我们工作的关系」逐条计数）：pretrain **23** · vision **13** · harness **23** · data **21** · zhulong **27** · designflow **11**
+**本轮快照**：累计 **43** 条（首轮 11:5x 收 4 条；第二轮 11:4x 补 4 条 EDA / agent / PEFT；第三轮 12:1x 补 4 条 RoPE / SWE-bench / Reflexion / CoT；第四轮 12:4x 补 3 条 GPT-3 / InstructGPT / LLaMA；第五轮 15:0x 补 4 条 ResNet / seq2seq / Dyna / LLaVA；第六轮 18:0x 补 4 条 GPT-1 / GPT-2 / Kaplan scaling laws / DQN；第七轮 21:0x 补 4 条 AlphaGo / AlphaGo Zero / Gemini / OpenVLA；第八轮 2026-11-12 00:0x 补 4 条 AlphaFold / AlphaStar / Kimi k1.5 / π0；第九轮 2026-11-12 03:0x 补 4 条 GLM-4 / MiniMax-01 / RT-2 / Octo；**第十轮 2026-11-12 06:0x 补 4 条** SWE-agent / Tree of Thoughts / Llama 2 / LLaVA-1.5；**第十一轮 2026-11-12 09:0x 补 4 条** Llama 3 / RT-1 / Christiano 2017 / Stiennon 2020）｜ 覆盖（一篇可服务多线，按文内「与我们工作的关系」逐条计数）：pretrain **24** · vision **15** · harness **26** · data **25** · zhulong **31** · designflow **12**
 
 > 🆕 **第四轮（2026-11-11 12:4x）新增 3 条 = 「规模 → 指令 → 开放权重」三段主线**：GPT-3（few-shot 能力从哪来）→ InstructGPT（对齐/指令跟随的范式起点）→ LLaMA（用「多 token」把开放权重做到可用）。三篇合起来回答 data 线当前最实际的问题：**token 预算、指令数据、公开配比**。
 >
@@ -34,6 +34,11 @@
 > 🆕 **第十轮（2026-11-12 06:0x）新增 4 条 = 「接口即方法 + 推理期算力 + 开源三档配方 + 视觉最小基线」**：SWE-agent（ACI 设计本身决定分数）→ Tree of Thoughts（搜索换成功率）→ Llama 2（SFT→拒绝采样→PPO 三段式，68 人报告）→ LLaVA-1.5（三处小改动 + 120 万公开数据 + 8×A100 一天）。**必读清单：10/10 组均有落点，具体条目 30/37**；组内剩余：TD-Gammon、Christiano 2017 / Stiennon 2020、Llama 3、RT-1、SORA。
 >
 > **第十轮核验证据（可复核）**：arXiv API `id_list=2307.09288,2310.03744,2405.15793,2305.10601` **`200` + `application/atom+xml; charset=utf-8`**（13,172 B，4 条 entry；首次提交 2023-07-18 / 2023-10-05 / 2024-05-06 / 2023-05-17，最新版本 v2 / v2 / v3 / v2）；会议取自 **arXiv `arxiv:comment` 原文**（ToT 明写 `NeurIPS 2023 camera ready`、LLaVA-1.5 明写 `Camera ready, CVPR 2024 (highlight)`；Llama 2 / SWE-agent 的 comment 未提会议 ⇒ 由 OpenAlex 定）；被引数 **OpenAlex 4/4 `200`**（19,635 / 3,281 / 1,502 / 3,112，查询日 2026-11-12）；会场 DOI 与页码来自 OpenAlex `primary_location`（LLaVA-1.5 `10.1109/cvpr52733.2024.02484` pp.26286–26296；SWE-agent `10.52202/079017-1601` pp.50528–50652；ToT `10.52202/075280-0517` pp.11809–11822；Llama 2 无会场记录）。
+
+> 🆕 **第十一轮（2026-11-12 09:0x）新增 4 条 = 「偏好即奖励的三段前史 + 机器人策略的规模律 + 405B 的配方公开度」**：Christiano 2017（用成对偏好定义目标，反馈量 <1%）→ Stiennon 2020（reward model 能泛化到新数据集，评测从 ROUGE 转向人类偏好）→ RT-1（任务无关数据 + 高容量 → 真机泛化随数据/模型/多样性变化）→ Llama 3（405B dense、128K 上下文、组合式接入图像/视频/语音）。**必读清单：10/10 组均有落点，具体条目 34/37**；组内剩余：**TD-Gammon**、**τ-bench `2406.12045`**、**SORA 技术报告（无 arXiv，只能引官方报告）**。
+>
+> **第十一轮核验证据（可复核）**：arXiv API `id_list=2407.21783,2212.06817,1706.03741,2009.01325` **`200` + `application/atom+xml; charset=utf-8`**（73,338 B，4 条 entry；首次提交 2024-07-31 / 2022-12-13 / 2017-06-12 / 2020-09-02；最新版本 v3 / v2 / v4 / v3）；被引数 **OpenAlex 4/4 `200`**（23,796 / 2,747 / 1,643 / 945，查询日 2026-11-12）；会议证据：RT-1 = **RSS 2023**（OpenAlex 会场 DOI `10.15607/rss.2023.xix.025`）、Christiano = **NeurIPS 2017**（OpenAlex `locations` 含 `neural information processing systems` → `papers.nips.cc/paper/7017`）、Stiennon = **NeurIPS 2020**（arXiv `comments` 原文 `NeurIPS 2020`）、Llama 3 = **预印本技术报告**（OpenAlex `primary_location.source` = arXiv，无会场 DOI）。
+> ⚠️ 第十一轮如实记：本轮 A 轨扫描第 5 个查询（`cs.SE`）遇 **arXiv `429`**（本线并发请求所致，非「无新增」）⇒ 已在 `ARXIV_API.md §9.155` 记录并改为「4/5 查询成功 + 06:00 的 `cs.SE` 值可参照」；🚫 不把 429 写成「本领域无新增」。
 
 ---
 
@@ -700,10 +705,78 @@
 
 ---
 
+## 40. The Llama 3 Herd of Models
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | The Llama 3 Herd of Models |
+| 作者（前 3） | Aaron Grattafiori · Abhimanyu Dubey · Abhinav Jauhri（et al.，**Meta AI 团队署名，作者列表 561 人**） |
+| 年份 | 2024（arXiv 首次提交 **2024-07-31**，最新 **v3** 2024-11-23，本线实测） |
+| 会议 / 期刊 | **预印本技术报告**（arXiv only；OpenAlex `primary_location.source` = `arXiv (Cornell University)`，无会场 DOI ⇒ 🚫 不写「某会议」） |
+| 被引数 | **23,796**（OpenAlex，DOI `10.48550/arxiv.2407.21783`，查询日 2026-11-12；S2 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2407.21783> ｜ DOI `10.48550/arxiv.2407.21783` |
+| 一句话贡献 | **405B 稠密 Transformer、上下文最高 128K** 的模型家族，原生支持多语言 / 代码 / 推理 / 工具；据摘要，在大量任务上与 GPT-4 质量相当，公开 405B 的预训练与后训练权重及 Llama Guard 3，并用「组合式」方式把图像 / 视频 / 语音接入（多模态版本自述仍在开发、未广泛发布）。 |
+| 与我们工作的关系 | **pretrain（规模档位 + 长上下文口径）**：同族多尺寸 + 128K 上下文 = 报「长上下文 ROI」时的外部参照；<b>动作</b>：pretrain 报长上下文消融时固定「同族两档规模」并显式注明上下文长度与位置编码方案，<b>判据</b>：上下文翻倍带来的域内增益 &gt;1 绝对点且平均序列成本增幅可接受才保留。<br>**vision（主干复用 / 组合式接入，直接）**：官方路线是「语言主干 + 视觉/语音适配器」的组合式，与我们 vision 线「冻结主干 + 适配层」同构；<b>动作</b>：把「适配器容量」当独立变量（线性 / MLP / 小 Transformer），<b>判据</b>：域内 held-out +2 绝对点才升档。<br>**data（披露口径）**：报告按能力维度（多语言 / 代码 / 推理 / 工具）组织，但摘要未给配比 —— 这正是我们对外汇报可采用的口径（**总量公开、配比分级**）。<br>**zhulong（工具使用）**：把 tool usage 列为原生能力，可作为「工具调用是否要单独 SFT 一阶段」的对照假设。<br>**风险**：① 405B 与我们 2B 差两个数量级，规模结论**不可直接迁移**；② 团队报告、数字自报；③ 多模态部分自述未发布，🚫 不得当作可用能力。 |
+
+首次收录: 2026-11-12（第十一轮）｜ 状态: 元数据已核验（arXiv API `200` + `application/atom+xml`；OpenAlex `200`；会议=无）
+
+---
+
+## 41. RT-1: Robotics Transformer for Real-World Control at Scale
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | RT-1: Robotics Transformer for Real-World Control at Scale |
+| 作者（前 3） | Anthony Brohan · Noah Brown · Justice Carbajal（et al.，**共 51 位**；含 Chelsea Finn / Brian Ichter / Sergey Levine / Karol Hausman） |
+| 年份 | 2022（arXiv 首次提交 **2022-12-13**，最新 **v2** 2023-08-11，本线实测） |
+| 会议 / 期刊 | **RSS 2023**（Robotics: Science and Systems；OpenAlex 会场 DOI `10.15607/rss.2023.xix.025`） |
+| 被引数 | **2,747**（OpenAlex，DOI `10.48550/arxiv.2212.06817`，查询日 2026-11-12；S2 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2212.06817> ｜ 会场 DOI `10.15607/rss.2023.xix.025` ｜ 项目页 <https://robotics-transformer1.github.io> |
+| 一句话贡献 | 提出 **Robotics Transformer（RT-1）**：以「任务无关的大规模真机数据 + 高容量架构」替代任务专用模型；据摘要，在真实机器人上按 **数据规模 / 模型规模 / 数据多样性** 三轴验证了泛化随规模提升的可扩展性质（即机器人版的 scaling 观察）。 |
+| 与我们工作的关系 | **vision（视觉-动作同构）**：图像帧 → 离散动作 token 的端到端路径，与我们「截图/版图 → 工具调用」的结构同型；<b>动作</b>：vision 线把「观测编码是否冻结」作为消融臂。<br>**harness（真机/真工具评测规模）**：其结论建立在**大规模真实评测**上，而不是仿真小样本；<b>动作</b>：harness 线给每个任务族记录「评测样本数 / 随机种子数 / 是否换环境」，<b>判据</b>：样本 &lt;50 的差异不得写成结论。<br>**data（多样性 &gt; 重复量）**：三轴里「数据多样性」是独立变量，正对应我们 EDA 语料的「工具 / 器件 / 节点」多样性；<b>动作</b>：固定 token 预算做「单节点重复 vs 多节点均衡」两臂。<br>**zhulong（动作接口）**：离散化动作 token 的粒度选择与我们「工具调用参数分桶 vs 自由文本」是同一取舍。<br>**designflow（任务族覆盖）**：任务族广度是能力上限的主因，<b>动作</b>：designflow 造题先补「任务族数量」，再谈单题难度。<br>**风险**：① 真机数据规模远超我们可得数据；② 摘要未给具体成功率数字（本线不转述二手数字）；③ 作者自报。 |
+
+首次收录: 2026-11-12（第十一轮）｜ 状态: 元数据已核验（arXiv API `200` + `application/atom+xml`；OpenAlex `200`）
+
+---
+
+## 42. Deep reinforcement learning from human preferences（Christiano et al. 2017）
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Deep reinforcement learning from human preferences |
+| 作者（前 3） | Paul Christiano · Jan Leike · Tom B. Brown（et al.，**共 6 位**；含 Shane Legg / Dario Amodei） |
+| 年份 | 2017（arXiv 首次提交 **2017-06-12**，最新 **v4** 2023-02-17，本线实测） |
+| 会议 / 期刊 | **NeurIPS 2017**（OpenAlex `locations` 含 `neural information processing systems`，落地页 `papers.nips.cc/paper/7017-deep-reinforcement-learning-from-human-preferences.pdf`） |
+| 被引数 | **1,643**（OpenAlex，DOI `10.48550/arxiv.1706.03741`，查询日 2026-11-12；S2 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/1706.03741> ｜ DOI `10.48550/arxiv.1706.03741` |
+| 一句话贡献 | 用**人对「两条轨迹片段」的成对偏好**定义目标：先学 reward model，再用 RL 优化策略；据摘要，在 Atari 与仿真机器人上可在**不到 1% 的交互量**获得反馈的情况下解决复杂任务，并展示约 **1 小时人类时间**即可训出全新行为。 |
+| 与我们工作的关系 | **zhulong（RLHF 的起点，直接）**：这是「reward 不是写出来的，是学出来的」的原始论证，对应我们「可验证奖励 vs 学到的奖励」这条决策线；<b>动作</b>：zhulong 做三臂（纯规则奖励 / 纯偏好奖励 / 规则+偏好混合），<b>判据</b>：混合臂在留出集上不低于纯规则臂且对规则覆盖不到的失败模式有 &gt;2 点改善才保留。<br>**data（标注预算口径）**：「&lt;1% 交互量」是可写进标注预算表的参照量级；<b>动作</b>：data 线记录「每条轨迹的标注条数 / 成对比较数 / 标注者数」。<br>**harness（偏好标注的评测化）**：成对比较天然可转成评测协议；<b>动作</b>：harness 对主观项（可读性、修复建议质量）用成对盲评，而不是绝对打分。<br>**风险**：① 2017 年任务（Atari / 仿真机器人）与 LLM 工具调用差异极大，🚫 不可直接外推比例；② 「1 小时人类时间」是特定任务下的口径；③ 作者自报。 |
+
+首次收录: 2026-11-12（第十一轮）｜ 状态: 元数据已核验（arXiv API `200` + `application/atom+xml`；OpenAlex `200`）
+
+---
+
+## 43. Learning to summarize from human feedback（Stiennon et al. 2020）
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Learning to summarize from human feedback |
+| 作者（前 3） | Nisan Stiennon · Long Ouyang · Jeff Wu（et al.，**共 9 位**；含 Daniel M. Ziegler / Alec Radford / Dario Amodei / Paul Christiano） |
+| 年份 | 2020（arXiv 首次提交 **2020-09-02**，最新 **v3** 2022-02-15，本线实测） |
+| 会议 / 期刊 | **NeurIPS 2020**（arXiv `comments` 原文 `NeurIPS 2020`） |
+| 被引数 | **945**（OpenAlex，DOI `10.48550/arxiv.2009.01325`，查询日 2026-11-12；S2 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2009.01325> ｜ DOI `10.48550/arxiv.2009.01325` |
+| 一句话贡献 | 在摘要任务上把「人类成对比较 → reward model → RL 微调」跑通：据摘要，模型在 TL;DR 上**显著优于人类参考摘要**与更大的纯监督微调模型，且**无需新闻域微调**就迁移到 CNN/DM、接近人类参考水平；并证明**按人类偏好优化优于按 ROUGE 优化**。 |
+| 与我们工作的关系 | **zhulong（RL 微调流程，直接）**：SFT → reward model → RL 的三段式在此定型，是 InstructGPT 的直接前身；<b>动作</b>：zhulong 的 post-train 消融按「SFT-only / +RM 重排 / +RL」三级拆开报，每级记偏好数据量。<br>**data（偏好数据质量）**：报告对偏好数据集做了专门分析（摘要明写）⇒ <b>动作</b>：data 线对偏好数据单独建表（来源、标注者、成对一致率），与预训练语料分开统计。<br>**harness（评测口径迁移）**：「ROUGE 优化 ≠ 人想要的」是可复用的判据：<b>动作</b>：harness 对生成类任务必须同时报「自动指标」与「成对盲评胜率」，<b>判据</b>：两者方向相反时以盲评为准并在报告中注明。<br>**风险**：① 单一任务（摘要），外推到工具调用/EDA 流程未验证；② 人类参考摘要本身有噪声；③ 作者自报。 |
+
+首次收录: 2026-11-12（第十一轮）｜ 状态: 元数据已核验（arXiv API `200` + `application/atom+xml`；OpenAlex `200`）
+
+---
+
 ## 候选池（下轮起逐轮补，**被引数本轮未查**，勿引用）
 
 > 只登记「已实测 arXiv 元数据」的条目；被引数待下轮 OpenAlex 批量核过再写，**本表数字一律留空 = 未查**。
-> ⚠️ 第十轮把 **Llama 2 `2307.09288` / LLaVA-1.5 `2310.03744` / SWE-agent `2405.15793` / Tree of Thoughts `2305.10601`** 四条转正为 #36–#39（元数据 + 被引当场实测）。**下轮优先**：**Llama 3 Herd of Models `2407.21783`**、**RT-1 `2212.06817`**、**Christiano 2017 `1706.03741`（RLHF 前置）/ Stiennon 2020（无 arXiv，需另找出处）**、**TD-Gammon（Tesauro 1995，NPL/ICML 口径待核）**、**SORA（OpenAI 技术报告，无 arXiv，作者 Bill Peebles `@billpeeb` 已核验；只能引官方技术报告，🚫 不造 arXiv 号）**。**元数据未实测前不进本表，也不凭印象写 DOI / 被引**。
+> ⚠️ 第十轮把 **Llama 2 `2307.09288` / LLaVA-1.5 `2310.03744` / SWE-agent `2405.15793` / Tree of Thoughts `2305.10601`** 四条转正为 #36–#39；**第十一轮把 Llama 3 `2407.21783` / RT-1 `2212.06817` / Christiano 2017 `1706.03741` / Stiennon 2020 `2009.01325`** 四条转正为 #40–#43（元数据 + 被引当场实测）。**下轮优先**：**τ-bench `2406.12045`**（必读清单第 7 组最后一项）· **TD-Gammon（Tesauro 1995，NPL/ICML 口径待核，无 arXiv）** · **SORA（OpenAI 技术报告，无 arXiv，作者 Bill Peebles `@billpeeb` 已核验；只能引官方技术报告，🚫 不造 arXiv 号）** · （可选）**Kimi 月之暗面早期报告 `2401.14185`**、**Stiennon 之后的 RLHF 规模化综述**。**元数据未实测前不进本表，也不凭印象写 DOI / 被引**。
 
 
 | arXiv ID | 标题（arXiv 实测） | 首次提交 | 拟服务线 | 为什么算经典（待核被引） |

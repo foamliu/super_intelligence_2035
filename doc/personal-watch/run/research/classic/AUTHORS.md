@@ -6,7 +6,7 @@
 > 🔴 **找 X 的铁律（不猜）**：只登记**能从可访问页面读到**的 handle（作者本人主页 `href`，并用 X 页 `og:description` 二次核对身份）；**读不到 = 写「未找到 X」**。
 > 🚫 不许猜 handle（猜错会 follow 到无关账号，比不 follow 更糟）。X.com 自 **2026-11-11 12:4x** 起经本机 Mihomo 代理**只读可达**；**follow 仍需登录态 ⇒ 未自动执行**（0 follow，未假装）。
 
-**本轮快照**：累计 **48** 人（第八轮 +4：John Jumper / Igor Babuschkin / Danny Driess / Kimi Team；第九轮 +4：Team GLM / MiniMax / Karl Pertsch / Pete Florence；**第十轮 +1：Kilian Lieret**）｜已发信 **11**（Tri Dao · Shunyu Yao · Haoxing Ren · Jason Wei · Noah Shinn · Kaiming He · Haotian Liu · Karthik Narasimhan · Moo Jin Kim · Danny Driess · Pete Florence）｜X 已核验 **25**（`@tri_dao` / `@_albertgu` / `@ShunyuYao12` / `@edwardjhu` / `@jyangballin` / `@_jasonwei` / `@ilyasut` / `@RichardSSutton` / `@imhaotian` / `@ChunyuanLi` / `@karthik_r_n` / `@demishassabis` / `@koraykv` / `@OriolVinyalsML` / `@svlevine` / `@chelseabfinn` / `@moo_jin_kim` / `@ibab` / `@DannyDriess` / `@Kimi_Moonshot` / `@ZhipuAI` / `@MiniMax_AI` / `@KarlPertsch` / `@peteflorence` / **`@KLieret`**）｜X 未找到 **23**｜**X 可达（本机 Mihomo 7897，2026-11-12 06:0x 复盘 `x.com` `200` / 0.56s、出口 `178.249.213.185`）**｜已 follow **0**（follow 需登录态 ⇒ 仍靠用户手动，见第二节）｜言论台账 **11 条**（V1–V11；本轮新增 V9 可用、V10/V11 **作者不符 ⇒ 未采用**；本期 `voice_ready` 用 V9）
+**本轮快照**：累计 **51** 人（第八轮 +4：John Jumper / Igor Babuschkin / Danny Driess / Kimi Team；第九轮 +4：Team GLM / MiniMax / Karl Pertsch / Pete Florence；第十轮 +1：Kilian Lieret；**第十一轮 +3：Jan Leike / Paul Christiano / Nisan Stiennon**）｜已发信 **13**（Tri Dao · Shunyu Yao · Haoxing Ren · Jason Wei · Noah Shinn · Kaiming He · Haotian Liu · Karthik Narasimhan · Moo Jin Kim · Danny Driess · Pete Florence · Karl Pertsch · **Jan Leike**）｜X 已核验 **27**（`@tri_dao` / `@_albertgu` / `@ShunyuYao12` / `@edwardjhu` / `@jyangballin` / `@_jasonwei` / `@ilyasut` / `@RichardSSutton` / `@imhaotian` / `@ChunyuanLi` / `@karthik_r_n` / `@demishassabis` / `@koraykv` / `@OriolVinyalsML` / `@svlevine` / `@chelseabfinn` / `@moo_jin_kim` / `@ibab` / `@DannyDriess` / `@Kimi_Moonshot` / `@ZhipuAI` / `@MiniMax_AI` / `@KarlPertsch` / `@peteflorence` / `@KLieret` / **`@janleike`** / **`@paulfchristiano`**）｜X 未找到 **24**｜**X 可达（本机 Mihomo 7897，2026-11-12 09:0x 复测 `x.com` `200` / 0.86s、`x.com/ShunyuYao12` `200` / 0.76s、出口 `178.249.213.185`）**｜已 follow **0**（follow 需登录态 ⇒ 仍靠用户手动，见第二节）｜言论台账 **12 条**（V1–V12；第十一轮新增 V12 **正文截断 ⇒ 未采用**；本期 `voice_ready` 仍为 V2 / V4 两条）
 
 
 ---
@@ -643,6 +643,45 @@
 | 状态 | **待跟踪**（X 待 follow；无公开邮箱 ⇒ 不发信） |
 | 备注 | **harness 线的「榜单更新频率」信号源**：他负责 SWE-bench 系榜单维护，推文里常带「新模型进榜/新变体」的即时信息 ⇒ 这是「评测基准本身在变」的一手消息，比论文更早。⚠️ 已离开 Princeton 去 Meta，院校邮箱不可靠 ⇒ 只跟踪不写信。 |
 
+### 49. Jan Leike
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Jan Leike（德国人 ⇒ 信按英文写） |
+| 机构 | **Anthropic**（alignment / superalignment 方向；主页自述与主页 `publications.html` 可核）· 论文发表时为 OpenAI |
+| 代表论文 | Deep RL from human preferences（arXiv `1706.03741`，二作）· Learning to summarize from human feedback（arXiv `2009.01325`，作者）· InstructGPT 系工作（OpenAI 期间） |
+| 邮箱 | **jan@anthropic.com**（来源：本人主页 <https://jan.leike.name/> 的 `<a href="mailto:Jan%20Leike%20%3Cjan%40anthropic.com%3E">`，2026-11-12 09:0x 实测 `HTTP 200` / 6,411 B；**非 2017 年论文 PDF 旧地址**） |
+| 主页 | <https://jan.leike.name/>（`200` / 6,411 B）· 博客 <https://aligned.substack.com> |
+| X 账号 | **@janleike**（双证：① 主页 `href="https://twitter.com/janleike"` 且链接文字 `@janleike`；② <https://x.com/janleike> `200`，`og:title` = `Jan Leike (@janleike) on X`。⚠️ 该页 `og:description` 本轮未渲染 ⇒ bio 未取到，只登记 handle，不写 bio） |
+| 状态 | **已发信**（2026-11-12 09:04 CST，经典论文请教信第十三封；英文 199 词）· X 待 follow |
+| 备注 | **RLHF 这条线的「前史」作者**：2017 年偏好奖励 → 2020 年摘要偏好 → InstructGPT。信问三件可回填的事：① 工具调用短 episode（10–30 步）下，学到的奖励要多少标注密度才能胜过手写可验证奖励；② 小规模下 RM 瓶颈是容量还是标签噪声、最先出现的 reward hacking 形态；③ tie / 标注分歧如何聚合。⚠️ 与 Paul Christiano 同一篇论文 ⇒ **同篇论文本轮只发一封**（发给可核验邮箱的 Leike）。 |
+
+### 50. Paul Christiano
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Paul Christiano |
+| 机构 | **Alignment Research Center（ARC）**（Founder & Director；X bio 自述「Former Head of Safety @ CAISI. Previously led alignment at OpenAI.」） |
+| 代表论文 | Deep RL from human preferences（arXiv `1706.03741`，一作）· Learning to summarize from human feedback（arXiv `2009.01325`，末位） |
+| 邮箱 | **未找到**（个人站 <https://paulfchristiano.com/> 实测 `HTTP 200` / 57,044 B，但页内**无 `mailto:`**；只有 Google Scholar 链接 ⇒ 按纪律不写猜测地址） |
+| 主页 | <https://paulfchristiano.com/>（`200` / 57,044 B） |
+| X 账号 | **@paulfchristiano**（核验：<https://x.com/paulfchristiano> `200`，`og:title` = `Paul Christiano (@paulfchristiano) on X`，`og:description` = `Founder & Director of the Alignment Research Center. Former Head of Safety @ CAISI. Previously led alignment at OpenAI. Views my own.` ⇒ 身份自证。⚠️ 其个人站未挂 X 链接，来源为 X 页自证，非主页 `href`） |
+| 状态 | **待跟踪**（X 待 follow；无公开邮箱 ⇒ 不发信） |
+| 备注 | RLHF 思路的源头作者，但其公开表达偏 alignment 理论；对我们更直接的价值是**「奖励从哪来」的判断**，适合长期跟踪而非立刻请教（同篇论文已向 Leike 发信，🚫 不重复打扰）。 |
+
+### 51. Nisan Stiennon
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Nisan Stiennon |
+| 机构 | 未核验（个人站未写当前机构） |
+| 代表论文 | Learning to summarize from human feedback（arXiv `2009.01325`，一作） |
+| 邮箱 | **nisan+web@stiennon.com**（来源：本人站 <https://nisanstiennon.com/> 的 `<a href="mailto:nisan+web@stiennon.com">`，`HTTP 200` / 5,575 B 实测；**非 2020 年论文 PDF 旧地址**） |
+| 主页 | <https://nisanstiennon.com/>（`200` / 5,575 B；`www.` 同页同尺寸） |
+| X 账号 | **未找到 X**（`x.com/nisanstiennon` 实测 **`404`**，`og:title` = `User Profile Not Found - X｜404 Error` ⇒ 按令**不猜替代 handle、不登记**） |
+| 状态 | **待跟踪**（有可核验邮箱；本轮未发信 —— 今日已发 4 封且第 13 封给了同篇前史的 Leike，🚫 同方向不连发） |
+| 备注 | 若 18:00 轮要发「偏好数据质量」方向的信，他是首选（RLHF 摘要范式的直接作者）；问题应聚焦**偏好数据集的构建与一致率**，而不是摘要任务本身。 |
+
 ---
 
 ## 二、🟢 X 能力探测（只读 · 2026-11-11 **第四轮 12:4x 起已恢复可达**）
@@ -658,6 +697,7 @@
 | 4（**第四轮**） | 同上，`https://x.com/_jasonwei` | **`200` / 0.66s**；页内 `<meta property="og:description">` = `ai researcher @meta, past: openai, google` |
 | 5（**第四轮**） | `curl -x http://127.0.0.1:7897 https://api.ipify.org` | **`178.249.213.185`**（与运维给的出口一致） |
 | 6（**第四轮**） | 未带代理的同一台机器 | **`000`** ⇒ 必须显式走代理；本线 shell 未继承 `~/.profile` 的变量（`env` 实测为空），脚本内已内置默认代理 |
+| 7（**第十一轮 09:0x**） | 显式带代理：`https://x.com` / `https://x.com/ShunyuYao12` / `https://api.ipify.org` | **`200` / 0.86s** · **`200` / 0.76s** · 出口 **`178.249.213.185`** ⇒ 代理仍在线（`x.com` 可达，follow 仍需登录态） |
 
 **能力矩阵（实测边界）**
 
@@ -671,7 +711,7 @@
 
 **落地**：脚本 `research/classic/x_fetch.py`，原始结果落 `research/classic/x/<handle>.json`（6 个文件，共 15.3 KB，可入 git）。
 
-### 待 follow 清单（请用户手动执行 · 25 个 handle 已在 X 侧二次核验）
+### 待 follow 清单（请用户手动执行 · 28 个 handle 已在 X 侧二次核验）
 
 | # | 人物 | handle | 主页链接 | X 侧核验（2026-11-12 实测） | 为什么值得跟 |
 |:--|:--|:--|:--|:--|:--|
@@ -701,9 +741,11 @@
 | 24（**第九轮新增**） | Karl Pertsch | `@KarlPertsch` | <https://x.com/KarlPertsch> | `200`，`<title>Karl Pertsch (@KarlPertsch) / X</title>`，bio = `Robot Foundation Models @physical_int`；handle 源自主页 `href` | Octo 三作 + RT-2 作者 ⇒ 通用机器人策略与「新动作空间低成本适配」一手信息 |
 | 25（**第十轮新增**） | Kilian Lieret | `@KLieret` | <https://x.com/KLieret> | `200`，`og:title` = `Kilian Lieret (@KLieret) on X`，`og:description` = `Meta Superintelligence, prev. Princeton. SWE-bench multilingual/multimodal, (mini-)SWE-agent, SWE-smith, CodeClash, ProgramBench, SWE-sweep` | SWE-agent 第 4 作者 + SWE-bench 系榜单维护者 ⇒ 「基准本身在变」的最早信号源 |
 | 25（**第九轮新增**） | Pete Florence | `@peteflorence` | <https://x.com/peteflorence> | `200`，`<title>Pete Florence (@peteflorence) / X</title>`，bio = `Co-Founder &amp; CEO @GeneralistAI`；handle 源自主页 `href` | RT-2 核心作者 ⇒ 「动作＝文本 token」与 VLA 泛化的第一手判断 |
+| 27（**第十一轮新增**） | Jan Leike | `@janleike` | <https://x.com/janleike> | `200`，`og:title` = `Jan Leike (@janleike) on X`；handle 源自主页 `href="https://twitter.com/janleike"`（⚠️ `og:description` 本轮未渲染，bio 空缺如实记） | RLHF 前史（2017 偏好奖励 / 2020 摘要偏好）作者 ⇒ 「奖励从哪来 + 标注预算」的一手判断 |
+| 28（**第十一轮新增**） | Paul Christiano | `@paulfchristiano` | <https://x.com/paulfchristiano> | `200`，`og:title` = `Paul Christiano (@paulfchristiano) on X`，bio = `Founder &amp; Director of the Alignment Research Center. Former Head of Safety @ CAISI. Previously led alignment at OpenAI. Views my own.`（X 页自证；个人站未挂 X 链接） | 偏好奖励一作 ⇒ RLHF 思路源头，但发言偏 alignment 理论，**跟踪为主** |
 
 
-> 26 个 handle 均来自其**本人主页的 `href`** 或**论文作者身份可核对**的路径（前 6 个第四轮、7–10 第五轮、11–13 第六轮、14–17 第七轮、18–21 第八轮、22–25 第九轮、**26 第十轮 `@KLieret`**），并用 X 主页 `og:description` / `<title>` **二次核对身份一致**；`x.com/AlecRadford` 虽 `200` 但 bio 无身份信息、`x.com/JohnJumper` 虽 `200` 但仅 19 followers 且无 bio ⇒ **均拒绝登记**（见主表 #33 / #40）。用户 follow 后请把状态改为 `已follow` 并写日期。
+> **28 个 handle** 均来自其**本人主页的 `href`** 或**论文作者身份可核对**的路径（前 6 个第四轮、7–10 第五轮、11–13 第六轮、14–17 第七轮、18–21 第八轮、22–25 第九轮、26 第十轮 `@KLieret`、**27–28 第十一轮 `@janleike` / `@paulfchristiano`**），并用 X 主页 `og:description` / `<title>` **二次核对身份一致**；`x.com/AlecRadford` 虽 `200` 但 bio 无身份信息、`x.com/JohnJumper` 虽 `200` 但仅 19 followers 且无 bio ⇒ **均拒绝登记**（见主表 #33 / #40）。⚠️ 序号在第十轮出现重复「25」（`@KLieret` 与 `@peteflorence` 同号）—— 属历史编号瑕疵，**handle 与核验证据不受影响**；本轮起按 27/28 续编，不再改动旧行（不删旧条目）。用户 follow 后请把状态改为 `已follow` 并写日期。
 
 ### 已核验言论台账（第四轮首获 · 原文 + 时间 + 链接）
 
@@ -720,10 +762,11 @@
 | V9（**第十轮新增**） | Tri Dao `@tri_dao` | 2026-11-05 19:01 UTC | "Distilling most of our expertise in kernel and inference engine optimization into an agent loop that powers our production. A 2-year project that we're finally able to share" | <https://x.com/tri_dao/status/2118418321456660572> | ✅ **已进日报 `voice_ready`（2026-11-12 06:00 期）**：推文页 `200` + `og:title` = `Tri Dao (@tri_dao) on X` + `og:description` **逐字等于** profile 抓到的 `full_text`（双源一致）⇒ 可用；话题点 = 「把 kernel/推理优化经验蒸馏进 agent loop」；风险 = 属**自家产品**宣传，🚫 不得写成第三方评测 |
 | V10（**第十轮新增**） | （拟 John Yang `@jyangballin`） | 2026-10-28 13:44 UTC | 拟用文 "New paper: Frontier Coding Agents Find Different Bugs Than Maintainers Fix…" | <https://x.com/jyangballin/status/2115439606443528405> | ❌ **未采用（作者不符）**：推文页 `200` 但 `og:title` = **`Mark Müller (@mnmueller) on X`** ≠ John Yang ⇒ profile 抓取的 timeline JSON **混入了他人推文**；按令**不采用**。这条是本轮发现的重要口径漏洞（见下方维护纪律 3） |
 | V11（**第十轮新增**） | （拟 Shunyu Yao `@ShunyuYao12`） | 2026-11-05 19:07 UTC | 拟用文 "Hy4 from @TencentHunyuan is the new #1 open-weights model on APEX-Agents…" | <https://x.com/ShunyuYao12/status/2118420063242039721> | ❌ **未采用（作者不符）**：推文页 `og:title` = **`Mercor (@mercor) on X`** ⇒ 同上，非本人推文；**不采用**（同轮另两条 `@ShunyuYao12` 的推文作者核对通过，但正文为「Try it out!」等无信息量短句 ⇒ 也不用） |
+| V12（**第十一轮新增**） | Jason Wei `@_jasonwei` | 2026-11-11 21:31 UTC | 起句 `The fall of “what you can do” and the rise of “who you know”… Traditionally, many of us believe in a world where how hard you work is more important than who you know. I used to subscribe to this idea as both a scientist, who believed that facts about our world are agnostic to who says them, and as…`（**`og:description` 以省略号截断**） | <https://x.com/_jasonwei/status/2120630417158250953> | ❌ **未采用（正文不完整）**：推文页 `200` 且 `og:title` = `Jason Wei (@_jasonwei) on X` 作者可核，但 `og:description` 与 profile `full_text` **两处都被截断**，无法给出完整原文 ⇒ 按令不采用；`voice_ready` 本期**仍为 V2 / V4 两条** |
 
 
 
-> ⚠️ 引用纪律：`voice_ready` 只采用**原文完整 + 作者可核**的条目（V1 / V2 / V4 / V6 / V8；V3 / V5 / V7 正文截断不采用），**每条附原链接与时间**，中文仅作翻译、不作转述；V8 >30 天已降级。
+> ⚠️ 引用纪律：`voice_ready` 只采用**原文完整 + 作者可核**的条目（V1 / V2 / V4 / V6 / V8；V3 / V5 / V7 / **V12** 正文截断不采用；V10 / V11 作者不符不采用），**每条附原链接与时间**，中文仅作翻译、不作转述；V8 >30 天已降级。
 
 **每个 handle 的原始快照**：`research/classic/x/<handle>.json`（字段 `bio` / `name` / `tweets[]`（`id` / `created_at` / `text` / `url`）/ `fetched_at`）。
 
@@ -747,6 +790,7 @@
 | 2026-11-12 00:1x（**第八轮**） | Danny Driess | `2410.24164` π0 | 本人主页 `dannydriess.github.io` 防爬写法 `danny dot driess at gmail dot com`（`200` / 29,043 B 实测） | `SENT OK`（`danny.driess@gmail.com`，**英文 178 词**） |
 | 2026-11-12 03:03（**第九轮**） | Pete Florence | `2307.15818` RT-2 | 本人主页 `www.peteflorence.com` 明写 `pete dot florence at gmail dot com`（`200` / 47,238 B 实测） | `SENT OK`（`pete.florence@gmail.com`，**英文 189 词**） |
 | 2026-11-12 06:05（**第十轮**） | Karl Pertsch | `2405.12213` Octo | 本人主页 `kpertsch.github.io` 的 `mailto:karl.pertsch@gmail.com`（`200` / 64,903 B 复测，2026-11-12 06:0x） | `SENT OK`（`karl.pertsch@gmail.com`，**英文 191 词**；同机构 PI 当日第 2 封 = 达上限） |
+| 2026-11-12 09:04（**第十一轮**） | Jan Leike | `1706.03741` Deep RL from human preferences | 本人主页 `jan.leike.name` 的 `mailto:Jan Leike <jan@anthropic.com>`（`200` / 6,411 B，2026-11-12 09:0x） | `SENT OK`（`jan@anthropic.com`，**英文 199 词**；Anthropic 当日第 1 封） |
 
 | 2026-11-11 12:4x–13:0x（**第四轮**） | （本轮 **0 封**） | 新增经典 `2005.14165` / `2203.02155` / `2302.13971` | 逐个实测：`hugotouvron.github.io` `404` · `longouyang.github.io` `404` · `ashishvaswani.com` `000` · 未命中任何 `mailto:` | **不发信**（按令不猜邮箱）。该轮结束时累计 **5 封**（分属三轮，每轮 ≤3）；第四轮把额度留给「有可核验邮箱」的候选 —— 本轮没有合格的 ⇒ **宁缺勿凑**（当日最终累计 = **9 封**，见上方各行） |
 
