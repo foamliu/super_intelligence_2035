@@ -7090,8 +7090,24 @@ SANDBOX_PORT="${SANDBOX_PORT_HTTP:-8664}"       # alive port (8667 dead)
 - PID on 36.15：3723256
 - Log：`/tmp/designflow_baseline_5task.log`
 - Batch dir：`eval/run_batch_20261112_203445`
-- 状态：RUNNING（启动于 2026-11-12 20:34）
-- 结果：[TBD — 等待完成]
+- 状态：PARTIAL（3/5 完成，2/5 仍在跑，2026-11-12 20:49 wake340 检查）
+- 结果（status.jsonl, model=minicpm5-2b, source=36.15 EDA-Flow-Bench/eval/status.jsonl）：
+  | # | Task | verdict | cline_exit | dur_sec | reason |
+  |---|------|---------|------------|---------|--------|
+  | 1 | ABMatchPlacementCheck-001 | FAIL | 137 | 615 | no submit.zip produced (cline wrote nothing under outputs/) |
+  | 2 | Analog-001 | FAIL | 137 | 615 | no submit.zip produced (cline wrote nothing under outputs/) |
+  | 3 | AutoPR-001 | ERROR | null | null | assets dir missing (infra issue, 非 model 能力) |
+  | 4 | AnalogGroupCfgMergeDummy-001 | RUNNING | — | — | — |
+  | 5 | BitcellMcSpGen-001 | RUNNING | — | — | — |
+- **Pass@1 (partial, 3 completed): 0/3 = 0%**
+- **🔴 关键发现：600s timeout 远不足（infra-limited, 非 capability baseline）**
+  - cline_exit=137 = SIGKILL = 600s 超时杀掉 cline，模型来不及产出任何 output
+  - 对照：DeepSeek (cloud) 跑 designflow 用 2700s timeout，很多任务仍需 2000+ s
+  - MiniCPM5-2B 2B 模型经反向隧道（36.15→.17:8098）访问，额外网络延迟
+  - **结论：当前 0% 是 infra-limited（timeout 太短），非真实 capability baseline**
+  - **需重跑：timeout ≥ 1800s（建议 2700s 对齐 DeepSeek 口径），workers=1（减并发争抢）**
+- AutoPR-001 ERROR "assets dir missing" = benchmark 数据缺失（infra），与 model 无关
+- hook_blocks=0 for all → PreToolUse anti-cheat 未触发（模型未尝试泄题）
 
 ### L4.7 BaiZe Ckpt 可达性（BLOCKED）
 - `/nas_train` 未挂载于 .17（`mount | grep nas_train` → 空）
