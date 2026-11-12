@@ -7038,3 +7038,72 @@ SANDBOX_PORT="${SANDBOX_PORT_HTTP:-8664}"       # alive port (8667 dead)
 ### 5. 无伪造声明
 
 所有数字为 curl 实测 + dry-run/sandbox-check/contam-check 实跑结果。run_code 响应为原始 JSON。
+
+## §L4: L4 领域评测 — Designflow Baseline Pipeline 建立（wake339, 2026-11-12）
+
+### L4.1 定义（用户令 2026-11-12）
+- ① **zhulong 消融评测** = EDA-Eval-PyAether 158 题（cline harness，`--model` 可配）
+- ② **designflow** = EDA-LiveFlow-Bench / EDA-Flow-Bench（`cline_eval/` → 实际为 `eval/run_batch.sh`，cline-based）
+
+### L4.2 Designflow Bench 清单（36.15 实测）
+- 路径：`/nasdata/app.e0031982/code/EDA-Flow-Bench/`（36.15 NFS=/nasdata from 10.251.9.180）
+- Benchmark JSONL：`benchmarks/EDA-Eval-DesignFlow/EDA-Eval-DesignFlow.jsonl`（1163 tasks）
+  - 4 shards: A=241 / B=274 / C=311 / D=361
+- Eval runner：`eval/run_batch.sh`（基于 `eval/run_one.sh`）
+  - `--model <name>`（默认 deepseek-v4-pro-cloud）
+  - `--workers <N>`（默认 4）
+  - `--limit <N>`（最多跑 N 条）
+  - `--timeout <sec>`（默认 2400）
+  - `--jsonl <path>`（覆盖 config.yaml benchmark_file）
+- cline on 36.15：`/home/app.e0031982/.local/bin/cline`
+- Sandbox：`http://10.129.32.75:8669/v1/run_code`（36.15 直连，同网段）
+- Anti-cheat：PreToolUse hook（防泄题）
+- config.yaml：`sandbox.url=http://10.129.32.75:8669/v1/run_code`，`code_generation.timeout_per_task=2500`
+
+### L4.3 反向隧道（36.15 → .17 model endpoint）
+- 命令（在 36.15 上执行）：
+  ```bash
+  ssh -4 -p 2222 -N -o StrictHostKeyChecking=no -o ServerAliveInterval=30 \
+    -L 127.0.0.1:8098:127.0.0.1:8098 app.e0031982@localhost
+  ```
+- 效果：36.15 localhost:8098 → .17 localhost:8098（GPU4 vLLM MiniCPM5-2B）
+- 验证：`curl http://127.0.0.1:8098/v1/models` → 返回 minicpm5-2b ✅
+- PID on 36.15：3716672
+
+### L4.4 Cline Auth on 36.15
+- 命令：`~/.local/bin/cline auth -p openai-compatible -k dummy-key -m minicpm5-2b -b http://127.0.0.1:8098/v1`
+- 结果：`Provider configured: openai-compatible (minicpm5-2b)` ✅
+
+### L4.5 Sandbox 验证（from 36.15）
+- 命令：`curl -X POST http://10.129.32.75:8669/v1/run_code -d '{"code":"import pyAether as ae;print(type(ae));print(\"SANDBOX_OK\")","lang":"pyAether","host":"aether"}'`
+- 结果：`{"response":"The code execution was successful","print_log":"<class 'module'>\nSANDBOX_OK"}` ✅
+
+### L4.6 Minimal Baseline Eval（5 tasks, RUNNING）
+- 命令：
+  ```bash
+  cd /nasdata/app.e0031982/code/EDA-Flow-Bench
+  export no_proxy=localhost,127.0.0.1 PATH="$HOME/.local/bin:$PATH"
+  eval/run_batch.sh --jsonl benchmarks/EDA-Eval-DesignFlow/EDA-Eval-DesignFlow.jsonl \
+    --model minicpm5-2b --workers 2 --limit 5 --timeout 600
+  ```
+- Tasks（5）：ABMatchPlacementCheck-001 / Analog-001 / AnalogGroupCfgMergeDummy-001 / AutoPR-001 / BitcellMcSpGen-001
+- PID on 36.15：3723256
+- Log：`/tmp/designflow_baseline_5task.log`
+- Batch dir：`eval/run_batch_20261112_203445`
+- 状态：RUNNING（启动于 2026-11-12 20:34）
+- 结果：[TBD — 等待完成]
+
+### L4.7 BaiZe Ckpt 可达性（BLOCKED）
+- `/nas_train` 未挂载于 .17（`mount | grep nas_train` → 空）
+- BaiZe ckpts 在 .29 `/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/hf_iter_*/`
+- 36.15 无 GPU（`nvidia-smi` → NO_GPU）
+- 36.15 NFS=`/nasdata`（from 10.251.9.180），与 .17 `/nas_data` 不同
+- **结论**：需 pretrain 线将 HF ckpt 导出到共享 `/nas_data` NFS，post-train 方可 serve BaiZe ckpt 跑 L4
+- **当前替代**：用 MiniCPM5-2B baseline（GPU4 :8098）作为 L4 baseline proxy
+
+### L4.8 复现命令链
+1. .17 上确保 GPU4 vLLM serve UP（`:8098` minicpm5-2b）
+2. .17 上确保隧道 UP（`ssh -p 3333` → 36.15）
+3. 36.15 上起反向隧道：`ssh -4 -p 2222 -L 127.0.0.1:8098:127.0.0.1:8098 app.e0031982@localhost`
+4. 36.15 上配 cline auth：`~/.local/bin/cline auth -p openai-compatible -k dummy-key -m minicpm5-2b -b http://127.0.0.1:8098/v1`
+5. 36.15 上跑 eval：`cd /nasdata/app.e0031982/code/EDA-Flow-Bench && eval/run_batch.sh --jsonl benchmarks/EDA-Eval-DesignFlow/EDA-Eval-DesignFlow.jsonl --model minicpm5-2b --workers 2 --limit 5 --timeout 600`
