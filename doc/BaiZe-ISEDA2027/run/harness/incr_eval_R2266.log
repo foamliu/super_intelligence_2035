@@ -1,0 +1,32 @@
+[incr-eval 13:38:10] === incr_eval R2266 start ===
+
+=== cline R2266 ===
+new instances: 1 ['sympy__sympy-22080']
+[incr-eval 13:38:10] cline: merged 1 new patches -> predictions_cline-patched_new_R2266.json
+[incr-eval 13:38:10] cline: EVAL 1 instances -> run_id=verified_full_glm53_cline-patched_incr_R2266
+[incr-eval 13:38:15] cline: eval rc=0
+[incr-eval 13:38:15]   sympy__sympy-22080: FAILED
+[incr-eval 13:38:15] cline: cumulative n=282 resolved=211 failed=70 infra=1 -> eval_glm53_cline-patched.json
+[incr-eval 13:38:15] codex: 0 new instances, skip
+[incr-eval 13:38:15] opencode: 0 new instances, skip
+
+=== claude-code R2266 ===
+new instances: 1 ['sympy__sympy-21379']
+[incr-eval 13:38:15] claude-code: merged 1 new patches -> predictions_claude-code_new_R2266.json
+[incr-eval 13:38:15] claude-code: EVAL 1 instances -> run_id=verified_full_glm53_claude-code_incr_R2266
+[incr-eval 13:42:17] === incr_eval R2266 start ===
+[incr-eval 13:42:17] cline: 0 new instances, skip
+[incr-eval 13:42:17] codex: 0 new instances, skip
+[incr-eval 13:42:17] opencode: 0 new instances, skip
+
+=== claude-code R2266 ===
+new instances: 1 ['sympy__sympy-21379']
+[incr-eval 13:42:17] claude-code: merged 1 new patches -> predictions_claude-code_new_R2266.json
+[incr-eval 13:42:17] claude-code: EVAL 1 instances -> run_id=verified_full_glm53_claude-code_incr_R2266
+[incr-eval 13:43:04] claude-code: eval rc=0
+[incr-eval 13:43:04]   sympy__sympy-21379: RESOLVED
+[incr-eval 13:43:04] claude-code: cumulative n=262 resolved=210 failed=50 infra=2 -> eval_glm53_claude-code.json
+[incr-eval 13:43:04] pi: 0 new instances, skip
+[incr-eval 13:43:04] hermes: 0 new instances, skip
+[incr-eval 13:43:04] deepseek: 0 new instances, skip
+[incr-eval 13:43:04] === incr_eval R2266 done: 1 instances, +1resolved +0failed +0infra ===
