@@ -64,25 +64,38 @@ code{background:#eef2f7;padding:1px 5px;border-radius:3px;font-size:.85rem}
 </div>
 
 <h2>二、按 domain 分布（主 jsonl 1144 条）</h2>
-<table>
+<div style="display:flex;gap:24px;flex-wrap:wrap;align-items:flex-start;margin:12px 0">
+<div style="flex:0 0 480px">
+<svg viewBox="0 0 480 360" xmlns="http://www.w3.org/2000/svg" style="max-width:480px;display:block">
+<path d="M 180 180 L 180.00 40.00 A 140 140 0 0 1 307.98 123.24 Z" fill="#2c7be5" stroke="#fff" stroke-width="1.5"/><path d="M 180 180 L 307.98 123.24 A 140 140 0 0 1 289.25 267.55 Z" fill="#27ab83" stroke="#fff" stroke-width="1.5"/><path d="M 180 180 L 289.25 267.55 A 140 140 0 0 1 205.99 317.57 Z" fill="#e85a4f" stroke="#fff" stroke-width="1.5"/><path d="M 180 180 L 205.99 317.57 A 140 140 0 0 1 144.26 315.36 Z" fill="#f0ad4e" stroke="#fff" stroke-width="1.5"/><path d="M 180 180 L 144.26 315.36 A 140 140 0 0 1 89.49 286.81 Z" fill="#6f42c1" stroke="#fff" stroke-width="1.5"/><path d="M 180 180 L 89.49 286.81 A 140 140 0 0 1 55.68 244.38 Z" fill="#20c997" stroke="#fff" stroke-width="1.5"/><path d="M 180 180 L 55.68 244.38 A 140 140 0 0 1 40.84 195.35 Z" fill="#fd7e14" stroke="#fff" stroke-width="1.5"/><path d="M 180 180 L 40.84 195.35 A 140 140 0 0 1 44.25 145.75 Z" fill="#6610f2" stroke="#fff" stroke-width="1.5"/><path d="M 180 180 L 44.25 145.75 A 140 140 0 0 1 63.49 102.38 Z" fill="#e83e8c" stroke="#fff" stroke-width="1.5"/><path d="M 180 180 L 63.49 102.38 A 140 140 0 0 1 91.86 71.23 Z" fill="#17a2b8" stroke="#fff" stroke-width="1.5"/><path d="M 180 180 L 91.86 71.23 A 140 140 0 0 1 126.07 50.80 Z" fill="#ffc107" stroke="#fff" stroke-width="1.5"/><path d="M 180 180 L 126.07 50.80 A 140 140 0 0 1 158.55 41.65 Z" fill="#6c757d" stroke="#fff" stroke-width="1.5"/><path d="M 180 180 L 158.55 41.65 A 140 140 0 0 1 180.00 40.00 Z" fill="#adb5bd" stroke="#fff" stroke-width="1.5"/>
+<text x="266.15" y="47.55" text-anchor="start" font-size="11" fill="#444">spice_sim 18.4%</text><text x="336.69" y="200.34" text-anchor="start" font-size="11" fill="#444">schematic_netlist 17.4%</text><text x="261.37" y="315.44" text-anchor="start" font-size="11" fill="#444">physical_verify 11.3%</text><text x="174.36" y="337.90" text-anchor="end" font-size="11" fill="#444">analog_context 7.1%</text><text x="106.96" y="320.10" text-anchor="end" font-size="11" fill="#444">digital 7.1%</text><text x="56.43" y="278.46" text-anchor="end" font-size="11" fill="#444">layout_aether 6.2%</text><text x="28.77" y="225.76" text-anchor="end" font-size="11" fill="#444">waveform 5.9%</text><text x="22.37" y="169.16" text-anchor="end" font-size="11" fill="#444">verification 5.7%</text><text x="35.57" y="115.95" text-anchor="end" font-size="11" fill="#444">layout_virtuoso 5.4%</text><text x="63.19" y="73.61" text-anchor="end" font-size="11" fill="#444">eda_other 4.8%</text><text x="99.00" y="44.34" text-anchor="end" font-size="11" fill="#444">characterization 4.5%</text><text x="137.15" y="27.92" text-anchor="end" font-size="11" fill="#444">pg_layout 3.8%</text>
+<text x="180" y="174" text-anchor="middle" font-size="20" font-weight="700" fill="#222">1144</text>
+<text x="180" y="192" text-anchor="middle" font-size="11" fill="#666">total cases</text>
+</svg>
+</div>
+<div style="flex:1;min-width:280px">
+<h3 style="margin-top:0">domain 明细与配色对照</h3>
+<table style="font-size:.8rem">
 <thead><tr><th>domain</th><th class="num">11_12</th><th class="num">11_05</th><th class="num">Δ</th><th>占比</th><th>负责 shard</th></tr></thead>
 <tbody>
-<tr><td>spice_sim</td><td class="num">210</td><td class="num">63</td><td class="num delta-up">+147</td><td>18.4%</td><td>B</td></tr>
-<tr><td>schematic_netlist</td><td class="num">199</td><td class="num">66</td><td class="num delta-up">+133</td><td>17.4%</td><td>D</td></tr>
-<tr><td>physical_verify</td><td class="num">129</td><td class="num">56</td><td class="num delta-up">+73</td><td>11.3%</td><td>C</td></tr>
-<tr><td>analog_context</td><td class="num">81</td><td class="num">26</td><td class="num delta-up">+55</td><td>7.1%</td><td>D</td></tr>
-<tr><td>digital</td><td class="num">81</td><td class="num">24</td><td class="num delta-up">+57</td><td>7.1%</td><td>A</td></tr>
-<tr><td>layout_aether</td><td class="num">71</td><td class="num">33</td><td class="num delta-up">+38</td><td>6.2%</td><td>C</td></tr>
-<tr><td>waveform</td><td class="num">67</td><td class="num">29</td><td class="num delta-up">+38</td><td>5.9%</td><td>D</td></tr>
-<tr><td>verification</td><td class="num">65</td><td class="num">14</td><td class="num delta-up">+51</td><td>5.7%</td><td>A</td></tr>
-<tr><td>layout_virtuoso</td><td class="num">62</td><td class="num">30</td><td class="num delta-up">+32</td><td>5.4%</td><td>C</td></tr>
-<tr><td>eda_other</td><td class="num">55</td><td class="num">17</td><td class="num delta-up">+38</td><td>4.8%</td><td>A</td></tr>
-<tr><td>characterization</td><td class="num">52</td><td class="num">24</td><td class="num delta-up">+28</td><td>4.5%</td><td>B</td></tr>
-<tr><td>pg_layout</td><td class="num">44</td><td class="num">21</td><td class="num delta-up">+23</td><td>3.8%</td><td>C</td></tr>
-<tr><td>pnr_signoff</td><td class="num">28</td><td class="num">23</td><td class="num delta-up">+5</td><td>2.4%</td><td>A</td></tr>
+<tr><td><span style="display:inline-block;width:12px;height:12px;background:#2c7be5;border-radius:2px;vertical-align:middle;margin-right:6px"></span>spice_sim</td><td class="num">210</td><td class="num">63</td><td class="num delta-up">+147</td><td>18.4%</td><td>B</td></tr>
+<tr><td><span style="display:inline-block;width:12px;height:12px;background:#27ab83;border-radius:2px;vertical-align:middle;margin-right:6px"></span>schematic_netlist</td><td class="num">199</td><td class="num">66</td><td class="num delta-up">+133</td><td>17.4%</td><td>D</td></tr>
+<tr><td><span style="display:inline-block;width:12px;height:12px;background:#e85a4f;border-radius:2px;vertical-align:middle;margin-right:6px"></span>physical_verify</td><td class="num">129</td><td class="num">56</td><td class="num delta-up">+73</td><td>11.3%</td><td>C</td></tr>
+<tr><td><span style="display:inline-block;width:12px;height:12px;background:#f0ad4e;border-radius:2px;vertical-align:middle;margin-right:6px"></span>analog_context</td><td class="num">81</td><td class="num">26</td><td class="num delta-up">+55</td><td>7.1%</td><td>D</td></tr>
+<tr><td><span style="display:inline-block;width:12px;height:12px;background:#6f42c1;border-radius:2px;vertical-align:middle;margin-right:6px"></span>digital</td><td class="num">81</td><td class="num">24</td><td class="num delta-up">+57</td><td>7.1%</td><td>A</td></tr>
+<tr><td><span style="display:inline-block;width:12px;height:12px;background:#20c997;border-radius:2px;vertical-align:middle;margin-right:6px"></span>layout_aether</td><td class="num">71</td><td class="num">33</td><td class="num delta-up">+38</td><td>6.2%</td><td>C</td></tr>
+<tr><td><span style="display:inline-block;width:12px;height:12px;background:#fd7e14;border-radius:2px;vertical-align:middle;margin-right:6px"></span>waveform</td><td class="num">67</td><td class="num">29</td><td class="num delta-up">+38</td><td>5.9%</td><td>D</td></tr>
+<tr><td><span style="display:inline-block;width:12px;height:12px;background:#6610f2;border-radius:2px;vertical-align:middle;margin-right:6px"></span>verification</td><td class="num">65</td><td class="num">14</td><td class="num delta-up">+51</td><td>5.7%</td><td>A</td></tr>
+<tr><td><span style="display:inline-block;width:12px;height:12px;background:#e83e8c;border-radius:2px;vertical-align:middle;margin-right:6px"></span>layout_virtuoso</td><td class="num">62</td><td class="num">30</td><td class="num delta-up">+32</td><td>5.4%</td><td>C</td></tr>
+<tr><td><span style="display:inline-block;width:12px;height:12px;background:#17a2b8;border-radius:2px;vertical-align:middle;margin-right:6px"></span>eda_other</td><td class="num">55</td><td class="num">17</td><td class="num delta-up">+38</td><td>4.8%</td><td>A</td></tr>
+<tr><td><span style="display:inline-block;width:12px;height:12px;background:#ffc107;border-radius:2px;vertical-align:middle;margin-right:6px"></span>characterization</td><td class="num">52</td><td class="num">24</td><td class="num delta-up">+28</td><td>4.5%</td><td>B</td></tr>
+<tr><td><span style="display:inline-block;width:12px;height:12px;background:#6c757d;border-radius:2px;vertical-align:middle;margin-right:6px"></span>pg_layout</td><td class="num">44</td><td class="num">21</td><td class="num delta-up">+23</td><td>3.8%</td><td>C</td></tr>
+<tr><td><span style="display:inline-block;width:12px;height:12px;background:#adb5bd;border-radius:2px;vertical-align:middle;margin-right:6px"></span>pnr_signoff</td><td class="num">28</td><td class="num">23</td><td class="num delta-up">+5</td><td>2.4%</td><td>A</td></tr>
 <tr style="font-weight:700;background:#f0f4f8"><td>合计</td><td class="num">1144</td><td class="num">426</td><td class="num delta-up">+718</td><td>100%</td><td>—</td></tr>
 </tbody>
 </table>
+</div>
+</div>
 <div class="note">
 <b>分布观察</b>：
 <ul style="margin:6px 0 0 0">
