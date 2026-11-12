@@ -7,14 +7,14 @@ WAITING: 0
 
 ## 进度快照
 
-- PHASE: posttrain-wake307（2026-11-12 R307 工具名对齐实证[模型遵循tool schema全名pyAether_MCP_server__*而非system prompt短名]→Phase1工具名阻塞解除）
-- 已完成: P3预备✅；P0✅；P1✅；P2✅；R1-R210✅；R280归档；wake281-306✅；R307工具名对齐实证✅
-- 当前动作: wake307 ①实证测试：system prompt含短名(search_apis/run_code)+tools schema含全名(pyAether_MCP_server__*)→base+SFT模型均输出全名tool_calls✅ ②结论：工具名不匹配非真问题，模型遵循tool schema ③submit_and_exit=cline --yolo内置工具(非MCP) ④新发现：上下文溢出风险(32807>32768 tok) ⑤Phase1解锁条件：tool_calls空(修复✅)+工具名(解决✅)+沙盒(仍阻塞❌)
-- 下一步: ①沙盒恢复后用minicpm5 parser+base模型+默认模板测Phase1生成(工具名已对齐✅) ②观察context溢出(32768可能不够) ③修复SFT语料(加function格式工具调用示例) ④简化no_sandbox模板(≤20行) ⑤Phase3 RL待沙盒+GPU ⑥P3正式训练待pretrain ckpt(ETA≈2026-12-25)
-- 阻塞: 🔴沙盒10.129.32.75全端口FILTERED(生成+评分双阻塞,111th wake)+.17缺framework+pyAether→Phase1全流程需沙盒侧机器;⚠️context溢出风险(--max-model-len 32768可能不够多轮eval);P3等pretrain ckpt
-- 本轮新增产出: R307✅(工具名对齐实证[curl测试base+SFT均输出全名pyAether_MCP_server__*]+submit_and_exit来源确认[cline --yolo内置]+context溢出发现[32807>32768]+Phase1解锁条件更新[工具名✅]+EXPERIMENTS §R307+wake299/300归档)
-- 未完成指令: 🔴17:10 GPU5/6/7全✅;🔴13:40 Phase2 SFT COMPLETE✅+R300-R307✅/Phase1生成+评分需沙盒可达(待外部解锁)/Phase3 RL脚本+奖励就绪✅待沙盒+GPU
-- git: wake307 R307待提交
+- PHASE: posttrain-wake308（2026-11-12 R308 上下文溢出修复[max-model-len 32768→65536 + --enforce-eager]→Phase1 context阻塞解除）
+- 已完成: P3预备✅；P0✅；P1✅；P2✅；R1-R210✅；R280归档；wake281-307✅；R308上下文溢出修复✅
+- 当前动作: wake308 ①发现MiniCPM5原生支持131072上下文(max_position_embeddings)→32768是人为设限 ②GPU4+GPU6 serve重启:max-model-len 65536 ③CUDA graph捕获OOM(37%死亡)→加--enforce-eager修复 ④nohup被工具超时SIGTERM杀→用setsid脱离进程组 ⑤base+SFT均curl验证tool_calls✅ ⑥5端点全UP+GPU 4/5/6/7全占位✅
+- 下一步: ①沙盒恢复后用minicpm5 parser+base模型+默认模板+65536 ctx测Phase1生成(工具名✅+context✅) ②修复SFT语料(加function格式工具调用示例) ③简化no_sandbox模板(≤20行) ④Phase3 RL待沙盒+GPU ⑤P3正式训练待pretrain ckpt(ETA≈2026-12-25)
+- 阻塞: 🔴沙盒10.129.32.75全端口FILTERED(生成+评分双阻塞,112th wake)+.17缺framework+pyAether→Phase1全流程需沙盒侧机器;P3等pretrain ckpt
+- 本轮新增产出: R308✅(上下文溢出修复[max-model-len 65536+--enforce-eager]+CUDA graph OOM诊断+setsid进程分离+base/SFT tool_calls验证+5端点UP+GPU全占位+EXPERIMENTS §R308)
+- 未完成指令: 🔴17:10 GPU5/6/7全✅;🔴13:40 Phase2 SFT COMPLETE✅+R300-R308✅/Phase1生成+评分需沙盒可达(待外部解锁)/Phase3 RL脚本+奖励就绪✅待沙盒+GPU
+- git: wake308 R308待提交
 
 
 
@@ -23,9 +23,9 @@ WAITING: 0
 | GPU | 端口 | served-model-name | 用途 | VRAM | 状态 |
 |:--:|:--:|:--|:--|:--:|:--|
 | 0-3 | 8099 | qwen3.8-27b | root SGLang Qwen3.8-27B | ~45GB/卡 | ✅ root 占用，不可动 |
-| 4 | 8098 | minicpm5-2b | vLLM MiniCPM5-2B（Phase1评测用,--enable-auto-tool-choice **--tool-call-parser minicpm5**） | 37.8GB | ✅ 常驻+tool-calling(wake306) |
+| 4 | 8098 | minicpm5-2b | vLLM MiniCPM5-2B（Phase1评测用,**--max-model-len 65536 --enforce-eager** --tool-call-parser minicpm5） | 38.0GB | ✅ wake308 ctx修复 |
 | 5 | 8097 | minicpm5-2b-gpu5 | vLLM MiniCPM5-2B（17:10占位保持） | 37.8GB | ✅ 占位中 |
-| 6 | 8096 | minicpm5-sft | **vLLM SFT ckpt global_step_70**（post-SFT评测用,--enable-auto-tool-choice **--tool-call-parser minicpm5**） | 37.8GB | ✅ SFT served+tool-calling(wake306) |
+| 6 | 8096 | minicpm5-sft | **vLLM SFT ckpt global_step_70**（post-SFT评测用,**--max-model-len 65536 --enforce-eager** --tool-call-parser minicpm5） | 38.0GB | ✅ wake308 ctx修复 |
 | 7 | 8095 | minicpm5-2b-gpu7 | vLLM MiniCPM5-2B（17:10占位） | 37.8GB | ✅ 占位中(wake284) |
 
 > vLLM venv: `/tmp/vllm_venv/bin/python`（transformers 4.49.0, vLLM 0.7.3）；日志: `/tmp/vllm_gpu{5,6,7}.log`
@@ -166,3 +166,5 @@ WAITING: 0
 [wake306 08:45] R306 自定义minicpm5 vLLM tool-call parser[解析<function>XML→结构化tool_calls✅]+SFT serve修复+serve 5端点UP+sandbox 110th CLOSED+GPU全占位+git synced: 体积自检(MEMORY 31.4KB→归档wake304→daily→~29KB合规)→GPU:0-3 root SGLang~45GB/4-7 vLLM各~38GB全占位→serve健康5端点✅(8095-8099全UP)→sandbox 110th wake 7 ports仍全FILTERED(阻塞持续)→①关键发现:wake305结论"base能function XML"但tool_calls始终为空[]→根因:hermes parser期望<|tool_call_begin|>JSON格式,MiniCPM5输出<function name><param>XML格式→不匹配→parser返回tools_called=False→tool_calls=[]→cline无法收到结构化工具调用 ②编写自定义minicpm5 vLLM tool-call parser:继承ToolParser,注册@ToolParserManager.register_module("minicpm5"),extract_tool_calls用FUNCTION_CALL_REGEX+PARAM_REGEX解析<function><param>XML→ToolCall(name,arguments=json.dumps),_strip_thinking去掉心智/回覆前缀,_convert_param_value做bool/int/float/JSON类型推断,CDATA支持 ③安装:文件落/tmp/vllm_venv/.../tool_parsers/minicpm5_tool_parser.py+__init__.py加import→注册验证✅(9 parsers含minicpm5) ④重启GPU4(base)+GPU6(SFT) serve用--tool-call-parser minicpm5 ⑤curl实测SFT(:8096):tool_calls=[{name:search_apis,arguments:{"query":"pyAether bus"}}]+finish_reason=tool_calls✅ ⑥curl实测base(:8098):同上✅ ⑦CDATA多行code测试SFT:tool_calls=[{name:run_code,arguments:{"code":"import pyAether..."}}]✅ ⑧parser副本落run/baize_posttrain_vllm_minicpm5_parser.py(venv在/tmp易失,重启需重装) ⑨纠正wake305结论:SFT加--enable-auto-tool-choice后也能产生<function>XML(wake305测时缺此flag→自然语言)→SFT工具调用能力未退化,是serve配置问题 ⑩Phase1解锁条件更新:~~tool_calls空~~(本wake修复✅)+沙盒可达(仍阻塞)+工具名对齐(仍待解决)。本轮新增产出：R306✅(自定义minicpm5 vLLM tool-call parser[<function>XML→结构化tool_calls]+SFT serve修复[minicpm5 parser]+base/SFT工具调用对比curl实测[两者均生成结构化tool_calls✅]+CDATA多行code解析✅+parser落run/+EXPERIMENTS §R306+wake304归档)。未完成指令：🔴17:10 GPU5/6/7全✅;🔴13:40 Phase2 SFT COMPLETE✅+R300-R306✅/Phase1生成+评分需沙盒可达(待外部解锁)+工具名对齐(待外部解锁)/Phase3 RL脚本+奖励就绪✅待沙盒+GPU ⇒ WAITING=0。
 
 [wake307 09:15] R307 工具名对齐实证[模型遵循tool schema全名pyAether_MCP_server__*而非prompt短名]+context溢出发现[32807>32768]+serve 5端点UP+sandbox 111th CLOSED+GPU全占位+git synced: 体积自检(MEMORY 32.2KB→归档wake299/300→daily→~29KB合规)→GPU:0-3 root SGLang~45GB/4-7 vLLM各~38GB全占位→serve健康5端点✅(8095-8099全UP)→sandbox 111th wake 8 ports全FILTERED(阻塞持续)→①工具名对齐实证:curl base(:8098)+SFT(:8096)均输出全名pyAether_MCP_server__*tool_calls✅→模型遵循tool schema不遵循prompt短名 ②submit_and_exit=cline --yolo内置(非MCP) ③旧名run_pyAether_code_tool仅在old模板不受影响 ④新发现:context溢出(32807>32768 tok) ⑤Phase1仅剩沙盒一个阻塞项。本轮新增产出：R307✅(工具名对齐实证[curl base+SFT均输出全名]+submit_and_exit来源+context溢出发现+Phase1解锁条件更新+EXPERIMENTS §R307+wake299/300归档)。未完成指令：🔴17:10 GPU5/6/7全✅;🔴13:40 Phase2 SFT COMPLETE✅+R300-R307✅/Phase1生成+评分需沙盒可达(待外部解锁)/Phase3 RL脚本+奖励就绪✅待沙盒+GPU ⇒ WAITING=0。
+
+[wake308 09:35] R308 上下文溢出修复[max-model-len 32768→65536 + --enforce-eager]+serve 5端点UP+sandbox 112th CLOSED+GPU全占位+git synced: 体积自检(MEMORY ~29.5KB合规)→GPU:0-3 root SGLang~45GB/4-7 vLLM各~38GB全占位→serve健康5端点✅(8095-8099全UP)→sandbox 112th wake 7 ports全FILTERED(阻塞持续)→①发现MiniCPM5-2B原生max_position_embeddings=131072(128K)→32768是人为设限 ②GPU4(:8098 base)+GPU6(:8096 SFT) serve重启:max-model-len 32768→65536 ③首次65536不加--enforce-eager→CUDA graph捕获37%时OOM死亡→加--enforce-eager修复(跳过CUDA graph,eager模式) ④nohup &被工具超时SIGTERM杀→改用setsid脱离进程组→serve稳定 ⑤KV cache 31.89GiB,65536 tok最大并发12.15x,VRAM~38GB(与32768持平) ⑥curl验证:base+SFT均finish_reason=tool_calls+全名pyAether_MCP_server__search_apis✅ ⑦5端点全UP+GPU 4/5/6/7全占位✅ ⑧Phase1解锁条件:tool_calls空(✅wake306)+工具名(✅wake307)+context溢出(✅wake308)+沙盒(❌仍阻塞)。本轮新增产出：R308✅(上下文溢出修复[max-model-len 65536+--enforce-eager]+CUDA graph OOM诊断+setsid进程分离+base/SFT tool_calls验证+5端点UP+GPU全占位+baize_posttrain_serve_increase_ctx.sh+EXPERIMENTS §R308)。未完成指令：🔴17:10 GPU5/6/7全✅;🔴13:40 Phase2 SFT COMPLETE✅+R300-R308✅/Phase1生成+评分需沙盒可达(待外部解锁)/Phase3 RL脚本+奖励就绪✅待沙盒+GPU ⇒ WAITING=0。

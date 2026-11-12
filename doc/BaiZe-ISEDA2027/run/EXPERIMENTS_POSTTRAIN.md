@@ -5422,3 +5422,86 @@ user:   "执行代码 import pyAether as py; print(py.__version__)"
 - 上下文溢出证据：`~/.cline/data/tasks/*/api_conversation_history.json` 中 vLLM 400 响应
 - `submit_and_exit`：`~/code/eda_fastmcp/scripts/run_cli.sh` L181-184
 - 无伪造：所有数据为真实 curl 响应 / 配置文件 / task 历史 JSON。
+
+---
+
+## §R308 — 上下文溢出修复：max-model-len 32768→65536 + --enforce-eager（2026-11-12 wake308）
+
+### 1. 问题
+
+wake307 发现 vLLM 400 错误：`"This model's maximum context length is 32768 tokens. However, you requested 32807 tokens in the messages"`。
+- 溢出仅 39 tok（32807 vs 32768）
+- 旧 serve `--max-model-len 32768`，eval 多轮对话（system prompt ~2K + task prompt + 多轮 tool call/result）可超限
+
+### 2. 模型原生上下文长度
+
+```
+python3 -c "import json; c=json.load(open('/nas_data/app.e0031982/models/MiniCPM5-2B/config.json')); print(c['max_position_embeddings'])"
+→ 131072
+```
+- MiniCPM5-2B（Llama 架构）原生支持 128K 上下文，无 rope_scaling
+- SFT ckpt 同样 `max_position_embeddings=131072`
+- 32768 是人为设限，非模型能力上限
+
+### 3. 修复方案
+
+**将 GPU4（base :8098）+ GPU6（SFT :8096）的 `--max-model-len` 从 32768 提升到 65536**（2× 余量）。
+
+**VRAM 影响**：vLLM KV cache 池大小 = `gpu_mem_util × total - weights - activation`，与 max-model-len 无关。
+- 预算：0.85 × 44.55 GiB = 37.87 GiB
+- 权重 4.72 GiB + 激活 1.20 GiB → KV cache 31.89 GiB
+- 65536 tok 最大并发：12.15x（日志 `executor_base.py:116`）
+- 实测 VRAM：GPU4 37966 MiB / GPU6 37966 MiB（与旧 32768 配置 ~37874 MiB 持平）
+
+### 4. CUDA graph 捕获 OOM → --enforce-eager
+
+首次尝试 65536（不加 --enforce-eager）在 CUDA graph 捕获 37% 时进程死亡（`Capturing CUDA graph shapes: 37%` 后无更多日志，PID 消失）。
+- 根因：CUDA graph 捕获在 KV cache 分配之后额外占内存，65536 + chunked prefill 时超限
+- 修复：加 `--enforce-eager`（跳过 CUDA graph，纯 eager 模式）
+- 性能影响：eval 场景（非高吞吐 serving）可忽略；vLLM 日志警告 `async output processor cannot be used`（可接受）
+
+### 5. 进程分离：setsid vs nohup
+
+- `nohup cmd &` 在 `run_commands` 工具超时（30s）时被 SIGTERM 杀死（nohup 只防 SIGHUP 不防 SIGTERM）
+- 首次重启 GPU4：vLLM 完成启动（`Application startup complete`）后 PID 501964 被工具超时杀死
+- 修复：用 `setsid bash /tmp/serve_gpu4_65536.sh > log 2>&1 < /dev/null &` 完全脱离终端进程组
+- setsid 后进程在新 session 中，工具超时 SIGTERM 不影响
+
+### 6. 验证
+
+**GPU4 (:8098) base**：
+- `max_model_len=65536, enforce_eager=True`（日志确认）
+- curl tool-call 测试：`finish_reason: tool_calls`, `name: pyAether_MCP_server__search_apis` ✅
+- VRAM: 37966 MiB ✅
+
+**GPU6 (:8096) SFT**：
+- `max_model_len=65536, enforce_eager=True`（日志确认）
+- curl tool-call 测试：`finish_reason: tool_calls`, `name: pyAether_MCP_server__search_apis` ✅
+- VRAM: 37966 MiB ✅
+
+**全部 5 端点**：8095/8096/8097/8098/8099 全 UP ✅
+
+**GPU 占位**：GPU 4/5/6/7 全部 ~38-40 GB 占用 ✅（17:10 令持续满足）
+
+### 7. serve 脚本
+
+- `run/baize_posttrain_serve_increase_ctx.sh`：原始重启脚本（未加 --enforce-eager，CUDA graph OOM）
+- `/tmp/serve_gpu4_65536.sh` / `/tmp/serve_gpu6_65536.sh`：实际使用的启动脚本（含 --enforce-eager，setsid 启动）
+- venv 在 /tmp 易失，重启后需重建：复制 `baize_posttrain_vllm_minicpm5_parser.py` 到 venv tool_parsers + 用上述脚本启动
+
+### 8. Phase 1 解锁条件更新
+
+1. ~~`tool_calls` 始终为空~~ → wake306 修复 ✅
+2. ~~工具名对齐~~ → wake307 解决 ✅
+3. ~~上下文溢出 (32807 > 32768)~~ → **本 wake 修复 ✅（max-model-len 65536）**
+4. 沙盒 10.129.32.75 可达 → 仍阻塞（112th wake，全端口 FILTERED）❌
+
+### 9. 溯源
+
+- 模型 config：`/nas_data/app.e0031982/models/MiniCPM5-2B/config.json` → `max_position_embeddings: 131072`
+- vLLM 日志：`/tmp/vllm_gpu4_ctx3.log`（GPU4, max_model_len=65536, enforce_eager=True, startup complete）
+- vLLM 日志：`/tmp/vllm_gpu6_ctx.log`（GPU6, 同上）
+- CUDA graph OOM 日志：`/tmp/vllm_gpu4_ctx.log`（37% 后死亡）
+- curl 验证：base + SFT 均 `finish_reason: tool_calls` + 全名 tool_calls
+- nvidia-smi：GPU 4/5/6/7 全部 ~38-40 GB 占用
+- 无伪造：所有数据为真实 vLLM 日志 / curl 响应 / nvidia-smi 输出。
