@@ -7140,6 +7140,12 @@ SANDBOX_PORT="${SANDBOX_PORT_HTTP:-8664}"       # alive port (8667 dead)
   - PreToolUse hook: deployed ✅ on all tasks, hook_blocks=0 (no cheat attempts detected)
 - 预计耗时：~45min remaining for 3 tasks (at ~898s/task avg)
 - 结果：TBD（Run2 完成后从 worker log/.cache 收集 per-task verdict；current 0/2 PASS = 0% Pass@1, infra-limited [no output / missing files]）
+- **wake345 更新（21:43）**：PID 3858541 alive on 36.15（etimes≈2706s≈45min）；**2/5 DONE, 0 PASS**；task3 (AnalogGroupCfgMergeDummy-001) **RUNNING** ~1176s≈20min（run_task PID 3977343）；summary.log `[2/5] 40% PASS:0 FAIL:2`；剩 task3/4/5 三题 ~45min。
+- **🔴 发现重复启动（duplicate launch）**：36.15 上有**两个并发 run_batch.sh**：
+  - `run_batch_20261112_210026`（PID 3858541 → xargs 3858561，clean，ppid 链完整）— 即 §L4.6b 跟踪的 Run2
+  - `run_batch_20261112_205949`（孤儿：xargs PID 3855070 ppid=1，其 run_batch.sh 父进程已死）— 也跑同一 5 题，同样到 2/5 0 PASS，task3 RUNNING（run_task PID 4008459 etimes≈775s）
+  - 两个批次间隔 37s 启动（20:59:49 vs 21:00:26），疑似 wake341 启动时跑了两次；孤儿批次会继续跑完但 summary 可能不完整。**未 kill**（避免误伤；两批结果同质，浪费算力但不影响结论）；后续如需清理可 `kill 3855070`（孤儿 xargs）。
+- Run1（batch 203445）已完成结果见 §L4.6：**0/4 = 0.0% Pass@1**（1 ERROR excluded），infra-limited（600s timeout 太短，3/4 cline_exit=137 SIGKILL）→ Run2 用 2700s 重跑正是为修此 infra 问题。
 
 ### L4.6c Post-SFT Eval Progress（wake342→wake344 监控）
 - PID 789217 alive on .17（wake344: etimes≈9009s ≈ 2hr 30min）
@@ -7149,6 +7155,7 @@ SANDBOX_PORT="${SANDBOX_PORT_HTTP:-8664}"       # alive port (8667 dead)
 - 代码生成完成率：86/90 = **95.6%**（注意：这是 cline 代码生成完成数，非 Pass@1；真正 pass 需 run_eval.py 评分）
 - 预计剩余：~1.5-2hr（~68 tasks remaining, 8 workers, ~36 tasks/hr throughput）
 - 结果：TBD（等 final_report.json → run_eval.py 评分 → compare vs 36% baseline）
+- **wake345 更新（21:43）**：PID 789217 alive（etimes≈9567s≈2hr40min）；输出目录 `~/eda_code_eval/2026_1112_190335/`；**113 个 code dir**（`code/EDA-Eval-PyAether-*`），**67 个 .py 已生成**（wake344 时 52 → +15）；stats 计数文件（success/failure/timeout）因 harness flock 原子写，读取瞬间为空，以 wake344 抓取的 success=86/failure=3/timeout=1（90/158 resolved）为最近可信值；GPU5 :8097 98%util 仍活跃生成；8 workers active。预计仍需 ~1-1.5hr 完成 158 题 → run_eval.py 评分。
 
 ### L4.7 BaiZe Ckpt 可达性（BLOCKED）
 - `/nas_train` 未挂载于 .17（`mount | grep nas_train` → 空）
