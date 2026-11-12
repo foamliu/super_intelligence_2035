@@ -7981,3 +7981,74 @@ setsid bash -c "eval/run_batch.sh \
 
 **下一步**：等 code-gen 完成 → run_eval.py → final_report.json → 正式 Pass@1 → 判定 SFT v39 配方 → 如 Pass@1>0% 则 5-run eval；如仍 0% 则调整配方或 skip to RL。
 
+
+### §L4-zhulong wake376c FINAL — DUAL Pass@1 COMPLETE (2026-11-13 06:15)
+
+**🎉 FIRST REAL sandbox-executed Pass@1 results for SFT v39 surrogate**
+
+#### Final Results (single-run, sandbox-executed Pass@1)
+
+| Metric | SFT v39 step_60 (GPU5:8097) | SFT v39 step_105 (GPU6:8096) | Comparison |
+|:---|---:|---:|:---|
+| **Pass@1 (sandbox-executed)** | **2/158 = 1.3%** | **6/158 = 3.8%** | **step_105 is 3× better** |
+| Code-gen success | 42/158 (26.6%) | 62/158 (39.2%) | step_105 +12.6pp |
+| Code-gen fail | 111/158 (70.3%) | 92/158 (58.2%) | step_105 -12.1pp |
+| Code-gen timeout | 5/158 (3.2%) | 4/158 (2.5%) | ~same |
+| Pass/assemble-OK ratio | 2/42 = 4.8% | 6/62 = 9.7% | step_105 2× better |
+
+#### Passed Tasks (step_105)
+EDA-Eval-PyAether-003, 046, 067, 096, 127, 153
+
+#### Execution Failure Breakdown (step_105, 56 failed executions)
+| Error Type | Count | % |
+|:---|---:|---:|
+| SyntaxError | 17 | 30.4% |
+| AttributeError | 15 | 26.8% |
+| TypeError | 13 | 23.2% |
+| AssertionError | 3 | 5.4% |
+| NameError | 2 | 3.6% |
+| IndentationError | 2 | 3.6% |
+| ModuleNotFoundError | 1 | 1.8% |
+
+#### Key Conclusions
+1. **More SFT training = better**: step_105 (final ckpt) > step_60 at ALL metrics (Pass@1 3.8% vs 1.3%, code-gen 39.2% vs 26.6%). This is the 4th confirmation, but FIRST at real sandbox-executed Pass@1 level.
+2. **SFT v39 recipe is effective**: Unlike v11v38 (0% Pass@1, format collapse), v39 produces valid code that passes sandbox execution. The format collapse issue from v11v38 is FIXED.
+3. **Top fixable errors**: SyntaxError (formatting), AttributeError (wrong API), TypeError (wrong args) = 80.4% of execution failures. These are addressable via better SFT data + RL.
+4. **Gap to 36% baseline**: 3.8% << 36%. The 36% is full-harness (interactive multi-turn) Pass@1; this 3.8% is single-turn code-gen + sandbox. Different harness, not directly comparable. Need full-harness eval for fair comparison.
+5. **5-run eval needed**: This is single-run. Red line requires 5-run mean±std. Run 2 of 5 kicked off in wake377.
+
+#### Infrastructure Used
+- **Code-gen**: `run_cline_script.sh -p 8 -n` on .17, cline CLI → vLLM serve (GPU5:8097 / GPU6:8096)
+- **Sandbox eval**: `run_eval.py --generations <jsonl>` on .17, 4-shard parallel sandbox exec via SSH tunnel ports 8664/8665/8653/8669 → 36.15 → 10.129.32.75
+- **SSH tunnel**: `ssh -p 3333 -N -L 8664:10.129.32.75:8664 -L 8665:... -L 8653:... -L 8669:... app.e0031982@localhost` (PID618469)
+- **Eval framework**: EVAL_FW_DIR=/home/app.e0031982/code/EDA-Eval-Framework, EVAL_ROOT_DIR=~/eda_code_eval
+- **PYTHON env var**: eda_fastmcp/.venv/bin/python (system python3 lacks tqdm)
+- **providers.json**: temporarily pointed to local vLLM endpoint, restored after eval
+
+#### Reproduce Commands
+```bash
+# 1. SSH tunnel port-forward (once)
+ssh -p 3333 -N -o StrictHostKeyChecking=no -o ServerAliveInterval=30 \
+  -L 8664:10.129.32.75:8664 -L 8665:10.129.32.75:8665 \
+  -L 8653:10.129.32.75:8653 -L 8669:10.129.32.75:8669 \
+  app.e0031982@localhost &
+
+# 2. Code-gen (step_105)
+cd /home/app.e0031982/code/eda_fastmcp
+# First update ~/.cline/data/settings/providers.json to point to:
+#   baseUrl: http://127.0.0.1:8096/v1, model: minicpm5-2b-sft-v39-final, apiKey: dummy-key
+BATCH_ID=2026_1113_024153 bash scripts/run_cline_script.sh -p 8 -n
+
+# 3. Sandbox eval
+PYTHON=/home/app.e0031982/code/eda_fastmcp/.venv/bin/python \
+  python scripts/run_eval.py --generations ~/eda_code_eval/completed_code_generation_2026_1113_024153.jsonl
+```
+
+#### 5-run Eval Plan
+- Run 1: ✅ DONE (this run, Pass@1=3.8%)
+- Run 2: 🔄 KICKED OFF in wake377 (background)
+- Run 3-5: ⬜ pending (loop will handle in subsequent wakes)
+- Script: `run/baize_posttrain_5run_eval.sh --endpoint http://127.0.0.1:8096/v1 --model minicpm5-2b-sft-v39-final --label step105 --run N`
+- Results dir: `/tmp/posttrain_5run_eval/step105/run{1..5}/`
+- After 5 runs: compute mean±std, report with McNemar/paired bootstrap vs baseline
+
