@@ -36,7 +36,7 @@ export PATH="/home/app.e0031982/.local/node-20/bin:$PATH"
 export CLI_AGENT=cline                  # cline harness
 export EVAL_FW_DIR="$EVAL_FW"
 export EVAL_ROOT_DIR_OVERRIDE="$EVAL_ROOT_OVERRIDE"
-export EVAL_BENCHMARK="benchmarks/EDA-Eval-pyAether/EDA-Eval-PyAether-158.jsonl"
+export EVAL_BENCHMARK="benchmarks/EDA-Eval-pyAether/EDA-Eval-pyAether-158.jsonl"  # 小写 p (实际文件名 case-sensitive)
 export PYTHON="$BASE_DIR/venv/bin/python"
 export NO_PROXY="agi-gateway.cxmt.com,10.129.32.75,localhost,127.0.0.1"
 unset http_proxy https_proxy HTTP_PROXY HTTPS_PROXY   # cline 直连内部 gateway
