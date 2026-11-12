@@ -613,3 +613,47 @@
 
 > **运维令 §4 要求**：「明显低效则停；确有价值再报下一批。2TB 不是要"下满"，够用即停。」→ **本批 2TB 已达标且 ROI 正向，停止下载，进入过滤+分词阶段**。后续批次待运维批准。
 
+### H.13 EDA 脚本价值分析（用户令 2026-11-12 · 两阶段扫描 + 分层抽样）
+
+> **报告**：`reports/report_data_stackv3_eda_script_value_zh.html`（43KB，8节+附录，0外链，离线可开）
+> **脚本**：`run/data/stackv3_eda_scan.py`（两阶段可复跑）｜**生成器**：`run/data/gen_report_stackv3_eda_zh.py`
+> **产物**：`stackv3_eda_meta_stats.tsv`（48KB）·`stackv3_eda_value_summary.json`（2.7KB）·`stackv3_eda_sample.tsv`（555KB/3200条）·`stackv3_eda_scan_result.json`（71KB）
+
+#### Phase A 元数据全量扫描（不读 content，列裁剪）
+
+| 项 | 值 | 来源 |
+|:--|:--|:--|
+| shard | 4600 | `stackv3_eda_scan_result.json` phase_a |
+| 仓库 | 97,024,001 | 同上 |
+| 文件 | 1,275,372,793 | 同上 |
+| 字节 | 6,448,241,567,383 (5.86 TiB) | 同上 |
+| vendor | 16,439,240 (1.3%) | 同上 |
+| 耗时 | 4963s (4 workers, 1.1s/shard) | `/tmp/stackv3_eda_phaseA.log` |
+| 路径关键词命中 | 15,691,789 文件 / 88.45 GiB | path_kw_files/bytes 汇总 |
+
+#### Phase B 内容分层抽样（100 shard, seed=42, n=400/类, ≤1MB, is_vendor=false）
+
+| 类别 | 候选池 | 抽样 | EDA命中 | EDA率 | V1 | V2 | V3 | CI± |
+|:--|--:|--:|--:|--:|--:|--:|--:|--:|
+| Tcl | 2000 | 400 | 157 | 39.2% | 8 | 149 | 243 | 4.9pp |
+| SKILL | 0 | 0 | 0 | 0% | 0 | 0 | 0 | — |
+| Python-EDA | 2000 | 400 | 0 | 0.0% | 0 | 0 | 400 | 4.9pp |
+| Perl | 2000 | 400 | 8 | 2.0% | 8 | 0 | 392 | 4.9pp |
+| SVRF | 2000 | 400 | 2 | 0.5% | 2 | 0 | 398 | 4.9pp |
+| SPICE | 2000 | 400 | 0 | 0.0% | 0 | 0 | 400 | 4.9pp |
+| Makeflow | 2000 | 400 | 0 | 0.0% | 0 | 0 | 400 | 4.9pp |
+| Verilog-SV | 2000 | 400 | 0 | 0.0% | 0 | 0 | 400 | 4.9pp |
+| EDA-path-kw | 2000 | 400 | 0 | 0.0% | 0 | 0 | 400 | 4.9pp |
+
+#### 价值分层（外推因子 46x = 4600/100 shard）
+
+| 层 | 抽样文件数 | 外推文件数 | 外推字节 | 估算token | 用途 |
+|:--|--:|--:|--:|--:|:--|
+| V1 直接可用 | 18 | ~828 | ~17.7 MB | ~0.01B | Tcl SDC/XDC、Perl EDA parsing、SVRF rule deck |
+| V2 可挖掘 | 149 | ~6,854 | ~122.7 MB | ~0.04B | SFT 增强、flow 编排、Verilog/SV 上下文 |
+| V3 低价值 | 3033 | ~139,518 | — | — | 不入训练或去污染负样本 |
+
+> **关键发现**：① Tcl 是唯一有显著 EDA 命中的语言（39.2% EDA率）；② SKILL 在 HF 分类中未检出（需外部数据源）；③ PyAether 在 Python 抽样中 0 命中（需专门采集）；④ SVRF/SPICE 命中极低（<1%）；⑤ stack-v3-train 对 EDA 脚本能力的直接贡献有限（V1 仅 ~828 文件/~0.01B token），主要价值在通用代码能力基础和 V2 可挖掘的 Tcl/FPGA 脚本。
+>
+> **污染隔离实测**：Phase B 抽样 3200 文件中搜索 eda-eval/pyaether/zhulong/designflow/baize 关键词 → 命中 0，未发现评测集污染。全量入库仍需跑 13-gram 闸门。
+

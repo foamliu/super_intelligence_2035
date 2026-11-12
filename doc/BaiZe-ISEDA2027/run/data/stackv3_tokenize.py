@@ -114,8 +114,16 @@ def process_shard(args):
 
     try:
         pf = pq.ParquetFile(str(shard_path))
-        tbl = pf.read(columns=["repo_path", "files"])
-        files_col = tbl.column("files").to_pylist()
+        # Read row-group by row-group to avoid ArrowNotImplementedError
+        # on nested columns with chunked arrays — use combine_chunks() to
+        # merge chunked arrays before to_pylist()
+        files_col = []
+        for rg_idx in range(pf.num_row_groups):
+            tbl = pf.read_row_group(rg_idx, columns=["repo_path", "files"])
+            col = tbl.column("files")
+            if hasattr(col, 'combine_chunks'):
+                col = col.combine_chunks()
+            files_col.extend(col.to_pylist())
         for repo_files in files_col:
             if not repo_files:
                 continue

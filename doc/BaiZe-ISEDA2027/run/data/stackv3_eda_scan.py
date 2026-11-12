@@ -128,8 +128,52 @@ def classify_type(file_path, language):
     if any(kw in file_path.lower() for kw in ['readme','golden','expected','regression']): return 'doc'
     return 'other'
 
-def phase_a_meta_scan(shard_files, out_prefix=''):
-    """Phase A: scan metadata columns only (no content)."""
+def _phase_a_worker(shard_path):
+    """Worker function for Phase A: scan one shard, return counters as dict."""
+    lang_b = collections.Counter(); lang_f = collections.Counter()
+    ext_b = collections.Counter(); ext_f = collections.Counter()
+    pkb = collections.Counter(); pkf = collections.Counter()
+    vb = collections.Counter(); vf = collections.Counter()
+    leb = collections.Counter()
+    tf = 0; tb = 0; nr = 0; tvf = 0; tvb = 0
+    try:
+        pf = pq.ParquetFile(shard_path)
+        tbl = pf.read(columns=["repo_path","num_files",
+            "files.list.element.size_bytes","files.list.element.file_path",
+            "files.list.element.language","files.list.element.is_vendor"])
+        nr = tbl.num_rows
+        fc = tbl.column('files').to_pylist()
+        nfc = tbl.column('num_files').to_pylist()
+        for i, fl in enumerate(fc):
+            if nfc[i] == 0 or not fl: continue
+            for f in fl:
+                fb = f.get('size_bytes',0) or 0
+                ln = f.get('language','Unknown') or 'Unknown'
+                fp = f.get('file_path','') or ''
+                is_v = f.get('is_vendor',False)
+                tf += 1; tb += fb
+                lang_b[ln] += fb; lang_f[ln] += 1
+                _, ext = os.path.splitext(fp); el = ext.lower()
+                ext_b[el] += fb; ext_f[el] += 1
+                leb[(ln, el)] += fb
+                if EDA_PATH_KW.search(fp):
+                    pkb[ln] += fb; pkf[ln] += 1
+                if is_v:
+                    tvf += 1; tvb += fb
+                    vb[ln] += fb; vf[ln] += 1
+    except Exception as e:
+        return {'error': str(e), 'shard': os.path.basename(shard_path)}
+    return {'n_repos':nr,'total_files':tf,'total_bytes':tb,
+        'total_vendor_files':tvf,'total_vendor_bytes':tvb,
+        'lang_bytes':dict(lang_b),'lang_files':dict(lang_f),
+        'ext_bytes':dict(ext_b),'ext_files':dict(ext_f),
+        'path_kw_bytes':dict(pkb),'path_kw_files':dict(pkf),
+        'vendor_bytes':dict(vb),'vendor_files':dict(vf),
+        'lang_ext_bytes':{'|'.join(k):v for k,v in leb.items()}}
+
+def phase_a_meta_scan(shard_files, out_prefix='', workers=1):
+    """Phase A: scan metadata columns only (no content). Supports multiprocessing."""
+    from multiprocessing import Pool
     t_start = time.time()
     lang_bytes = collections.Counter(); lang_files = collections.Counter()
     ext_bytes = collections.Counter(); ext_files = collections.Counter()
@@ -139,41 +183,39 @@ def phase_a_meta_scan(shard_files, out_prefix=''):
     total_files = 0; total_bytes = 0; total_repos = 0
     total_vendor_files = 0; total_vendor_bytes = 0; shards_scanned = 0
 
-    for sf in shard_files:
-        t0 = time.time()
-        try:
-            pf = pq.ParquetFile(sf)
-            tbl = pf.read(columns=["repo_path","num_files",
-                "files.list.element.size_bytes","files.list.element.file_path",
-                "files.list.element.language","files.list.element.is_vendor"])
-            n_repos = tbl.num_rows; total_repos += n_repos
-            files_col = tbl.column('files').to_pylist()
-            num_files_col = tbl.column('num_files').to_pylist()
-            for i, fl in enumerate(files_col):
-                if num_files_col[i] == 0 or not fl: continue
-                for f in fl:
-                    fb = f.get('size_bytes',0) or 0
-                    ln = f.get('language','Unknown') or 'Unknown'
-                    fp = f.get('file_path','') or ''
-                    is_v = f.get('is_vendor',False)
-                    total_files += 1; total_bytes += fb
-                    lang_bytes[ln] += fb; lang_files[ln] += 1
-                    _, ext = os.path.splitext(fp); ext_low = ext.lower()
-                    ext_bytes[ext_low] += fb; ext_files[ext_low] += 1
-                    lang_ext_bytes[(ln, ext_low)] += fb
-                    if EDA_PATH_KW.search(fp):
-                        path_kw_bytes[ln] += fb; path_kw_files[ln] += 1
-                    if is_v:
-                        total_vendor_files += 1; total_vendor_bytes += fb
-                        vendor_bytes[ln] += fb; vendor_files[ln] += 1
-            dt = time.time() - t0; shards_scanned += 1
-            if shards_scanned % 50 == 0 or shards_scanned <= 3:
-                elapsed = time.time() - t_start
-                eta = elapsed / shards_scanned * (len(shard_files) - shards_scanned)
-                print(f'  [{shards_scanned}/{len(shard_files)}] {os.path.basename(sf)[:30]}... '
-                      f'repos={n_repos} time={dt:.1f}s elapsed={elapsed:.0f}s ETA={eta:.0f}s', flush=True)
-        except Exception as e:
-            print(f'  ERROR on {os.path.basename(sf)}: {e}', flush=True)
+    if workers <= 1:
+        results_iter = (_phase_a_worker(sf) for sf in shard_files)
+    else:
+        pool = Pool(workers)
+        results_iter = pool.imap_unordered(_phase_a_worker, shard_files)
+
+    for result in results_iter:
+        if 'error' in result:
+            print(f'  ERROR on {result["shard"]}: {result["error"]}', flush=True)
+            continue
+        shards_scanned += 1
+        total_repos += result['n_repos']
+        total_files += result['total_files']
+        total_bytes += result['total_bytes']
+        total_vendor_files += result['total_vendor_files']
+        total_vendor_bytes += result['total_vendor_bytes']
+        for k, v in result['lang_bytes'].items(): lang_bytes[k] += v
+        for k, v in result['lang_files'].items(): lang_files[k] += v
+        for k, v in result['ext_bytes'].items(): ext_bytes[k] += v
+        for k, v in result['ext_files'].items(): ext_files[k] += v
+        for k, v in result['path_kw_bytes'].items(): path_kw_bytes[k] += v
+        for k, v in result['path_kw_files'].items(): path_kw_files[k] += v
+        for k, v in result['vendor_bytes'].items(): vendor_bytes[k] += v
+        for k, v in result['vendor_files'].items(): vendor_files[k] += v
+        for k, v in result['lang_ext_bytes'].items():
+            ln, ext = k.split('|', 1); lang_ext_bytes[(ln, ext)] += v
+        if shards_scanned % 100 == 0 or shards_scanned <= 3:
+            elapsed = time.time() - t_start
+            eta = elapsed / shards_scanned * (len(shard_files) - shards_scanned)
+            print(f'  [{shards_scanned}/{len(shard_files)}] elapsed={elapsed:.0f}s ETA={eta:.0f}s', flush=True)
+
+    if workers > 1:
+        pool.close(); pool.join()
 
     total_time = time.time() - t_start
     _write_meta_tsv(t_start, total_time, shards_scanned, total_repos, total_files, total_bytes,
@@ -191,6 +233,7 @@ def phase_a_meta_scan(shard_files, out_prefix=''):
         'total_vendor_files': total_vendor_files, 'total_vendor_bytes': total_vendor_bytes,
         'scan_time_s': round(total_time, 1),
         'speed_s_per_shard': round(total_time/max(shards_scanned,1), 1),
+        'workers': workers,
         'lang_bytes': dict(lang_bytes.most_common()),
         'lang_files': dict(lang_files.most_common()),
         'ext_bytes': dict(ext_bytes.most_common(50)),
@@ -276,9 +319,12 @@ def phase_b_detection(shard_files, seed=42, per_class_n=400, out_prefix=''):
         t0 = time.time()
         try:
             pf = pq.ParquetFile(sf)
-            tbl = pf.read(columns=['repo_path','files'])
-            files_col = tbl.column('files').to_pylist()
-            repo_col = tbl.column('repo_path').to_pylist()
+            # Read row-group by row-group to avoid ArrowNotImplementedError
+            files_col = []; repo_col = []
+            for rg_idx in range(pf.num_row_groups):
+                tbl = pf.read_row_group(rg_idx, columns=['repo_path','files'])
+                files_col.extend(tbl.column('files').to_pylist())
+                repo_col.extend(tbl.column('repo_path').to_pylist())
             for i, fl in enumerate(files_col):
                 if not fl: continue
                 repo_p = repo_col[i] or ''
@@ -359,6 +405,7 @@ def main():
     ap.add_argument('--seed', type=int, default=42)
     ap.add_argument('--per-class-n', type=int, default=400)
     ap.add_argument('--out-prefix', default='')
+    ap.add_argument('--workers', type=int, default=1, help='Phase A parallel workers')
     args = ap.parse_args()
     all_parquets = get_all_parquets()
     print(f'Total parquet files: {len(all_parquets)}')
@@ -369,7 +416,7 @@ def main():
     phase_a_result = None; phase_b_result = None
     if args.phase in ('A','both','test'):
         print(f'\n{"="*60}\nPhase A: Metadata Scan\n{"="*60}')
-        phase_a_result = phase_a_meta_scan(shard_files, args.out_prefix)
+        phase_a_result = phase_a_meta_scan(shard_files, args.out_prefix, args.workers)
     if args.phase in ('B','both') and args.phase != 'test':
         print(f'\n{"="*60}\nPhase B: Content Sampling & Detection\n{"="*60}')
         phase_b_result = phase_b_detection(shard_files, args.seed, args.per_class_n, args.out_prefix)

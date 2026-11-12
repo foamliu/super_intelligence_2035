@@ -1,0 +1,272 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>stack-v3-train EDA 脚本价值分析报告 · 2026-11-12 23:52</title><style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"PingFang SC","Microsoft YaHei",sans-serif;line-height:1.7;color:#1a1a2e;background:#f5f6fa;padding:20px;max-width:1200px;margin:0 auto}
+h1{font-size:1.8em;color:#16213e;margin:20px 0 10px;border-bottom:3px solid #0f3460;padding-bottom:8px}
+h2{font-size:1.4em;color:#0f3460;margin:25px 0 12px;border-left:5px solid #e94560;padding-left:12px}
+h3{font-size:1.15em;color:#16213e;margin:18px 0 8px}
+p{margin:8px 0}
+table{border-collapse:collapse;width:100%;margin:12px 0;font-size:0.82em}
+th{background:#0f3460;color:#fff;padding:8px 10px;text-align:left;font-weight:600;border:1px solid #1a1a3e}
+td{padding:6px 10px;border:1px solid #ddd;vertical-align:top}
+tr:nth-child(even){background:#f8f9fd}
+code{background:#e8eaf6;padding:2px 6px;border-radius:3px;font-family:"Consolas",monospace;font-size:0.9em;color:#c0392b}
+.hero{background:linear-gradient(135deg,#0f3460,#16213e);color:#fff;padding:25px;border-radius:12px;margin:15px 0}
+.hero h1{color:#fff;border:none}
+.tldr{background:#fff3cd;border:2px solid #ffc107;border-radius:10px;padding:18px;margin:15px 0}
+.badge{display:inline-block;padding:2px 8px;border-radius:12px;font-size:0.75em;font-weight:600}
+.b-green{background:#d4edda;color:#155724}.b-yellow{background:#fff3cd;color:#856404}.b-gray{background:#e2e3e5;color:#383d41}.b-red{background:#fdecea;color:#721c24}
+.note{background:#e8f5e9;border-left:4px solid #4caf50;padding:12px 15px;margin:10px 0;border-radius:0 6px 6px 0}
+.warn{background:#fff3cd;border-left:4px solid #ffc107;padding:12px 15px;margin:10px 0;border-radius:0 6px 6px 0}
+.danger{background:#fdecea;border-left:4px solid #f5222d;padding:12px 15px;margin:10px 0;border-radius:0 6px 6px 0}
+.info{background:#e3f2fd;border-left:4px solid #2196f3;padding:12px 15px;margin:10px 0;border-radius:0 6px 6px 0}
+.footnote{color:#666;font-size:0.85em;margin-top:20px;border-top:1px solid #ddd;padding-top:10px}
+.score{font-weight:700;color:#0f3460}
+.num{font-variant-numeric:tabular-nums;text-align:right}
+ol{margin:8px 0 8px 24px}li{margin:4px 0}
+</style></head><body>
+<div class="hero"><h1>stack-v3-train EDA 脚本价值分析报告</h1><p>—— 哪些数据能直接提升 PyAether / Tcl / SKILL 等 EDA 脚本能力 ——</p><p style="font-size:0.9em;opacity:0.8">BaiZe data 线 · 2026-11-12 23:52 · 用户令 2026-11-12</p></div>
+<div class="tldr"><h2>📌 结论摘要</h2><ol>
+<li>扫描范围：4,600 shard / 97,024,001 仓库 / 1,275,372,793 文件 / 5.86 TiB（vendor 16,439,240 = 1.3%）</li>
+<li>Phase A 元数据扫描耗时 4963s（4 workers，1.1s/shard）</li>
+<li>EDA 相关语言占 <b>23.4%</b> 字节（1.37 TiB）/ 14.6% 文件</li>
+<li>路径关键词命中：<b>15,691,789</b> 文件 / 88.45 GiB</li>
+<li>Phase B 抽样：V1=18, V2=149, V3=3033（总=3200）</li>
+<li>Tcl：抽样 400，EDA 率 <b>39.2%</b>（V1=8, V2=149），CI ±4.9pp</li>
+<li>SKILL：抽样 0，EDA 率 <b>0%</b>（V1=0, V2=0），CI ±0pp</li>
+<li>Python-EDA：抽样 400，EDA 率 <b>0.0%</b>（V1=0, V2=0），CI ±4.9pp</li>
+<li>Perl：抽样 400，EDA 率 <b>2.0%</b>（V1=8, V2=0），CI ±4.9pp</li>
+<li>SVRF：抽样 400，EDA 率 <b>0.5%</b>（V1=2, V2=0），CI ±4.9pp</li>
+<li>SPICE：抽样 400，EDA 率 <b>0.0%</b>（V1=0, V2=0），CI ±4.9pp</li>
+<li>Makeflow：抽样 400，EDA 率 <b>0.0%</b>（V1=0, V2=0），CI ±4.9pp</li>
+<li>Verilog-SV：抽样 400，EDA 率 <b>0.0%</b>（V1=0, V2=0），CI ±4.9pp</li>
+<li>EDA-path-kw：抽样 400，EDA 率 <b>0.0%</b>（V1=0, V2=0），CI ±4.9pp</li>
+<li>SKILL 在 HF 分类中极少标注，需通过 .il 扩展名 + 内容判定挖掘</li>
+<li>许可证 ODC-By；vendor 已剔除；评测集污染隔离须排除 EDA-Eval/zhulong/designflow</li>
+</ol></div>
+<h2>§2 方法与口径</h2><h3>两阶段设计</h3>
+<table><tr><th>阶段</th><th>方法</th><th>范围</th><th>产出</th></tr><tr><td><b>Phase A</b></td><td>parquet 列裁剪（不读 content），读 files.file_path/language/size_bytes/is_vendor</td><td>4,600 shard 全量</td><td>language × ext × path_kw × vendor 四维计数</td></tr><tr><td><b>Phase B</b></td><td>100 shard 分层抽样（seed=42），每类 n=400，≤1MB，is_vendor=false</td><td>100 shard</td><td>各类「真脚本率」+ V1/V2/V3</td></tr></table>
+<h3>判据阈值全表</h3><table><tr><th>类别</th><th>判据</th><th>阈值</th></tr><tr><td>Tcl-EDA</td><td>create_clock/set_max_delay/dbGet/get_pins/report_timing + proc/set</td><td>命中 ≥3 且有结构</td></tr><tr><td>SKILL</td><td>dbCreate/dbGet/dbFind/dbLayer/geAdd/hiSet/axl/procedure/let</td><td>命中 ≥3</td></tr><tr><td>PyAether</td><td>import pyaether/db::/virtuoso/spectre/hspice + 非 Web/ML</td><td>命中 ≥2 且非 Web</td></tr><tr><td>Perl-EDA</td><td>.lis/.log/report/parse/dbGet/.sp</td><td>命中 ≥2</td></tr><tr><td>SVRF/DRC/LVS</td><td>LAYER/DRC/LVS/DEVICE/CONNECT/PORT/SIZE</td><td>命中 ≥4</td></tr><tr><td>SPICE-gen</td><td>.subckt/.param/.meas/.inc/.lib/.model + 生成痕迹</td><td>命中 ≥3 且有生成</td></tr><tr><td>Makeflow</td><td>vcs/xrun/dc_shell/innovus/calibre/hspice/formality/primetime/verdi</td><td>命中 ≥2</td></tr><tr><td>EDA-path-kw</td><td>路径含 skill/.il/tcl/virtuoso/innovus/calibre 等 + 内容关键词</td><td>命中 ≥2</td></tr></table>
+<div class="info"><b>置信区间</b>：n=400/类、p≈0.5 时 95% CI 约 ±4.9pp。Phase B 耗时 1286s。</div>
+<h2>§3 元数据分布（语言 × 扩展名 × 路径关键词）</h2>
+<p>全量 4,600 shard。总文件 1,275,372,793，总字节 5.86 TiB，vendor 16,439,240（1.3%）。</p>
+<h3>语言分布 Top-20（按字节）</h3><table><tr><th>语言</th><th class="num">文件数</th><th class="num">字节</th><th class="num">字节占比</th><th class="num">文件占比</th></tr>
+<tr><td>C++</td><td class="num">48,876,519</td><td class="num">721.52 GiB</td><td class="num">12.0%</td><td class="num">3.8%</td></tr>
+<tr><td>Java</td><td class="num">175,032,615</td><td class="num">459.78 GiB</td><td class="num">7.7%</td><td class="num">13.7%</td></tr>
+<tr><td>JSON</td><td class="num">121,577,072</td><td class="num">442.05 GiB</td><td class="num">7.4%</td><td class="num">9.5%</td></tr>
+<tr><td>Markdown</td><td class="num">110,324,586</td><td class="num">415.55 GiB</td><td class="num">6.9%</td><td class="num">8.7%</td></tr>
+<tr><td>HTML</td><td class="num">16,994,606</td><td class="num">404.36 GiB</td><td class="num">6.7%</td><td class="num">1.3%</td></tr>
+<tr><td>JavaScript</td><td class="num">109,038,561</td><td class="num">391.76 GiB</td><td class="num">6.5%</td><td class="num">8.5%</td></tr>
+<tr><td>Python</td><td class="num">89,615,849</td><td class="num">311.35 GiB</td><td class="num">5.2%</td><td class="num">7.0%</td></tr>
+<tr><td>XML</td><td class="num">12,819,413</td><td class="num">274.68 GiB</td><td class="num">4.6%</td><td class="num">1.0%</td></tr>
+<tr><td>CSS</td><td class="num">42,065,436</td><td class="num">272.58 GiB</td><td class="num">4.5%</td><td class="num">3.3%</td></tr>
+<tr><td>C</td><td class="num">23,976,272</td><td class="num">255.82 GiB</td><td class="num">4.3%</td><td class="num">1.9%</td></tr>
+<tr><td>PHP</td><td class="num">56,660,092</td><td class="num">224.93 GiB</td><td class="num">3.7%</td><td class="num">4.4%</td></tr>
+<tr><td>Jupyter Notebook</td><td class="num">14,330,864</td><td class="num">186.42 GiB</td><td class="num">3.1%</td><td class="num">1.1%</td></tr>
+<tr><td>C#</td><td class="num">64,092,441</td><td class="num">182.81 GiB</td><td class="num">3.0%</td><td class="num">5.0%</td></tr>
+<tr><td>TypeScript</td><td class="num">61,811,530</td><td class="num">125.30 GiB</td><td class="num">2.1%</td><td class="num">4.8%</td></tr>
+<tr><td>TSX</td><td class="num">37,821,386</td><td class="num">112.03 GiB</td><td class="num">1.9%</td><td class="num">3.0%</td></tr>
+<tr><td>Gettext Catalog</td><td class="num">971,685</td><td class="num">110.62 GiB</td><td class="num">1.8%</td><td class="num">0.1%</td></tr>
+<tr><td>Dart</td><td class="num">15,934,307</td><td class="num">56.52 GiB</td><td class="num">0.9%</td><td class="num">1.2%</td></tr>
+<tr><td>Smali</td><td class="num">4,937,205</td><td class="num">54.60 GiB</td><td class="num">0.9%</td><td class="num">0.4%</td></tr>
+<tr><td>SQL</td><td class="num">6,698,122</td><td class="num">49.76 GiB</td><td class="num">0.8%</td><td class="num">0.5%</td></tr>
+<tr><td>Vue</td><td class="num">11,254,686</td><td class="num">42.60 GiB</td><td class="num">0.7%</td><td class="num">0.9%</td></tr>
+</table>
+<h3>EDA 路径关键词命中（按语言）</h3><table><tr><th>语言</th><th class="num">命中文件数</th><th class="num">命中字节</th></tr>
+<tr><td>C</td><td class="num">364,542</td><td class="num">11.91 GiB</td></tr>
+<tr><td>Java</td><td class="num">2,854,461</td><td class="num">8.63 GiB</td></tr>
+<tr><td>HTML</td><td class="num">189,918</td><td class="num">6.85 GiB</td></tr>
+<tr><td>C++</td><td class="num">1,210,991</td><td class="num">6.58 GiB</td></tr>
+<tr><td>XML</td><td class="num">324,134</td><td class="num">5.21 GiB</td></tr>
+<tr><td>JSON</td><td class="num">1,361,374</td><td class="num">4.42 GiB</td></tr>
+<tr><td>CSS</td><td class="num">307,119</td><td class="num">4.01 GiB</td></tr>
+<tr><td>C#</td><td class="num">1,195,505</td><td class="num">3.47 GiB</td></tr>
+<tr><td>VHDL</td><td class="num">22,266</td><td class="num">3.36 GiB</td></tr>
+<tr><td>JavaScript</td><td class="num">827,588</td><td class="num">3.12 GiB</td></tr>
+<tr><td>Markdown</td><td class="num">615,686</td><td class="num">2.97 GiB</td></tr>
+<tr><td>Tcl</td><td class="num">215,601</td><td class="num">2.86 GiB</td></tr>
+<tr><td>PHP</td><td class="num">682,656</td><td class="num">2.77 GiB</td></tr>
+<tr><td>Python</td><td class="num">537,711</td><td class="num">2.66 GiB</td></tr>
+<tr><td>TypeScript</td><td class="num">478,534</td><td class="num">1.16 GiB</td></tr>
+</table>
+<h2>§4 脚本级判定结果（Phase B 各类「真脚本率」）</h2>
+<table><tr><th>类别</th><th class="num">候选池</th><th class="num">抽样</th><th class="num">EDA命中</th><th class="num">EDA率</th><th class="num">脚本率</th><th class="num">V1</th><th class="num">V2</th><th class="num">V3</th><th class="num">CI</th></tr>
+<tr><td>Tcl</td><td class="num">2,000</td><td class="num">400</td><td class="num">157</td><td class="num">39.2%</td><td class="num">100.0%</td><td class="num">8</td><td class="num">149</td><td class="num">243</td><td class="num">±4.9pp</td></tr>
+<tr><td>SKILL</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0%</td><td class="num">0%</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">±0pp</td></tr>
+<tr><td>Python-EDA</td><td class="num">2,000</td><td class="num">400</td><td class="num">0</td><td class="num">0.0%</td><td class="num">100.0%</td><td class="num">0</td><td class="num">0</td><td class="num">400</td><td class="num">±4.9pp</td></tr>
+<tr><td>Perl</td><td class="num">2,000</td><td class="num">400</td><td class="num">8</td><td class="num">2.0%</td><td class="num">91.8%</td><td class="num">8</td><td class="num">0</td><td class="num">392</td><td class="num">±4.9pp</td></tr>
+<tr><td>SVRF</td><td class="num">2,000</td><td class="num">400</td><td class="num">2</td><td class="num">0.5%</td><td class="num">21.0%</td><td class="num">2</td><td class="num">0</td><td class="num">398</td><td class="num">±4.9pp</td></tr>
+<tr><td>SPICE</td><td class="num">2,000</td><td class="num">400</td><td class="num">0</td><td class="num">0.0%</td><td class="num">33.0%</td><td class="num">0</td><td class="num">0</td><td class="num">400</td><td class="num">±4.9pp</td></tr>
+<tr><td>Makeflow</td><td class="num">2,000</td><td class="num">400</td><td class="num">0</td><td class="num">0.0%</td><td class="num">98.8%</td><td class="num">0</td><td class="num">0</td><td class="num">400</td><td class="num">±4.9pp</td></tr>
+<tr><td>Verilog-SV</td><td class="num">2,000</td><td class="num">400</td><td class="num">0</td><td class="num">0.0%</td><td class="num">94.0%</td><td class="num">0</td><td class="num">0</td><td class="num">400</td><td class="num">±4.9pp</td></tr>
+<tr><td>EDA-path-kw</td><td class="num">2,000</td><td class="num">400</td><td class="num">0</td><td class="num">0.0%</td><td class="num">39.0%</td><td class="num">0</td><td class="num">0</td><td class="num">400</td><td class="num">±4.9pp</td></tr>
+</table>
+<p><b>说明</b>：「真脚本率」= EDA 命中数 / 该类抽样数。V1=直接可用（conf≥0.5），V2=可挖掘，V3=低价值。</p>
+<h2>§5 价值分层主表（V1/V2/V3）</h2>
+<div class="info"><b>外推方法</b>：Phase B 从 100 shard 抽样，外推因子 = 4600 / 100 = 46x。Token 估算口径：0.314 token/byte（来自全库 5.86 TiB ≈ 2025B token）。</div>
+<table><tr><th>层</th><th>定义</th><th class="num">抽样文件数</th><th class="num">抽样占比</th><th class="num">外推文件数</th><th class="num">外推字节</th><th class="num">估算token</th><th>可支撑能力项</th></tr>
+<tr><td><span class="badge b-green">V1</span> 直接可用</td><td>命中 EDA 判据且 confidence≥0.5</td><td class="num">18</td><td class="num">0.6%</td><td class="num">828</td><td class="num">36.47 MiB</td><td class="num">~0.01B</td><td>Tcl SDC/XDC flow、Perl EDA parsing、SVRF rule deck</td></tr>
+<tr><td><span class="badge b-yellow">V2</span> 可挖掘</td><td>命中判据或 maybe，需转换</td><td class="num">149</td><td class="num">4.7%</td><td class="num">6,854</td><td class="num">117.05 MiB</td><td class="num">~0.04B</td><td>SFT 数据增强、log parser、flow 编排、Verilog/SV 上下文</td></tr>
+<tr><td><span class="badge b-gray">V3</span> 低价值</td><td>配置/日志/文档/vendor/其他</td><td class="num">3033</td><td class="num">94.8%</td><td class="num">139,518</td><td class="num">—</td><td class="num">—</td><td>不入训练或仅去污染负样本</td></tr></table>
+<h3>V1+V2 典型路径模式 Top-20（从抽样数据提取，脱敏到路径模式）</h3>
+<table><tr><th>路径模式</th><th class="num">命中次数</th><th>典型 repo</th></tr>
+<tr><td>synth_#/design_#_wrapper.tcl</td><td class="num">2</td><td>Ti-m/MA_1</td></tr>
+<tr><td>.Xil/design_#_wrapper_propImpl.xdc</td><td class="num">2</td><td>fffykhyf/isa_0224</td></tr>
+<tr><td>server/appserver_plot.tcl</td><td class="num">1</td><td>AthenaModel/athena</td></tr>
+<tr><td>sdc/user_proj_example.sdc</td><td class="num">1</td><td>LyeGuanYan/UNICCASS_copy</td></tr>
+<tr><td>athena/#-tactic_grant.test</td><td class="num">1</td><td>AthenaModel/athena</td></tr>
+<tr><td>app_cellide/detailbrowser.tcl</td><td class="num">1</td><td>AthenaModel/athena</td></tr>
+<tr><td>gen_combi_prog_file.tcl</td><td class="num">1</td><td>myriadrf/LimeSDR-XTRX_GW</td></tr>
+<tr><td>vc#/qubic.tcl</td><td class="num">1</td><td>lblQubic/gateware</td></tr>
+<tr><td>vc#/iccgt_#G_#M_no#b#b.tcl</td><td class="num">1</td><td>lblQubic/gateware</td></tr>
+<tr><td>athena/#-agent.test</td><td class="num">1</td><td>AthenaModel/athena</td></tr>
+<tr><td>new/nexys_a#.xdc</td><td class="num">1</td><td>MarosKozar/ADC</td></tr>
+<tr><td>pna#/pna#_system_constr.xdc</td><td class="num">1</td><td>bijanbina/PNA6</td></tr>
+<tr><td>openSees/RecSectionFz.tcl</td><td class="num">1</td><td>xinlong-du/OpenSees-3.0.0</td></tr>
+<tr><td>athena/#-HREL.test</td><td class="num">1</td><td>AthenaModel/athena</td></tr>
+<tr><td>.Xil/ADC_DAC_propImpl.xdc</td><td class="num">1</td><td>Blessing617/200T_ADC_DAC</td></tr>
+<tr><td>athena/#-tactic_attrit.test</td><td class="num">1</td><td>AthenaModel/athena</td></tr>
+<tr><td>scripts/script_te_utils.tcl</td><td class="num">1</td><td>stfc-aeg/zynq-soc</td></tr>
+<tr><td>impl_#/main_component.tcl</td><td class="num">1</td><td>chiranthanaprabhath/HDL_Noice_</td></tr>
+<tr><td>projectlib/enumx.test</td><td class="num">1</td><td>AthenaModel/athena</td></tr>
+<tr><td>scripting/create_top_tb.tcl</td><td class="num">1</td><td>mozerj2001/fp_accel</td></tr>
+</table>
+<div class="info"><b>Token 估算汇总</b>（估算）：EDA 相关语言约 474B token；V1 直接可用约 ~0.01B token；V2 可挖掘约 ~0.04B token。</div>
+<h2>§6 能力映射：各 EDA 脚本能力可用量与缺口</h2>
+<table><tr><th>能力</th><th>对应类别</th><th class="num">候选池</th><th class="num">EDA率</th><th class="num">V1</th><th class="num">V2</th><th>缺口评估</th></tr>
+<tr><td>Tcl (EDA flow)</td><td>Tcl</td><td class="num">2,000</td><td class="num">39.2%</td><td class="num">8</td><td class="num">149</td><td>🔴 稀缺 · PT/Innovus/DC/VCS 脚本</td></tr>
+<tr><td>SKILL (Cadence)</td><td>SKILL</td><td class="num">0</td><td class="num">0%</td><td class="num">0</td><td class="num">0</td><td>🔴 稀缺 · Virtuoso 自动化</td></tr>
+<tr><td>PyAether</td><td>Python-EDA</td><td class="num">2,000</td><td class="num">0.0%</td><td class="num">0</td><td class="num">0</td><td>🔴 稀缺 · Python EDA 工具链</td></tr>
+<tr><td>Perl (EDA)</td><td>Perl</td><td class="num">2,000</td><td class="num">2.0%</td><td class="num">8</td><td class="num">0</td><td>🔴 稀缺 · Log/报告解析</td></tr>
+<tr><td>SVRF/DRC/LVS</td><td>SVRF</td><td class="num">2,000</td><td class="num">0.5%</td><td class="num">2</td><td class="num">0</td><td>🔴 稀缺 · Calibre rule deck</td></tr>
+<tr><td>SPICE 网表</td><td>SPICE</td><td class="num">2,000</td><td class="num">0.0%</td><td class="num">0</td><td class="num">0</td><td>🔴 稀缺 · 网表生成脚本</td></tr>
+<tr><td>Makefile/Shell flow</td><td>Makeflow</td><td class="num">2,000</td><td class="num">0.0%</td><td class="num">0</td><td class="num">0</td><td>🔴 稀缺 · EDA flow 编排</td></tr>
+<tr><td>Verilog/SV</td><td>Verilog-SV</td><td class="num">2,000</td><td class="num">0.0%</td><td class="num">0</td><td class="num">0</td><td>🔴 稀缺 · RTL 设计</td></tr>
+<tr><td>EDA 路径关键词</td><td>EDA-path-kw</td><td class="num">2,000</td><td class="num">0.0%</td><td class="num">0</td><td class="num">0</td><td>🔴 稀缺 · 通用 EDA 仓库</td></tr>
+</table>
+<h2>§7 取样建议</h2>
+<h3>给 pretrain decay 的 code 成分</h3>
+<table><tr><th>优先级</th><th>路径模式 / 筛选条件</th><th>预计 token（估算）</th><th>预估收益方向</th></tr><tr><td>P0</td><td>language=Tcl + 路径含 sdc/xdc/constr（SDC/XDC 约束）</td><td class="num">~0.4B</td><td>Tcl flow 脚本能力提升</td></tr><tr><td>P0</td><td>language=Perl + 路径含 log/report/parse（EDA 解析）</td><td class="num">~0.0B</td><td>Log/parser 脚本能力</td></tr><tr><td>P1</td><td>language=Verilog/SystemVerilog + 非 vendor（RTL 设计）</td><td class="num">~10.0B</td><td>RTL 理解能力</td></tr><tr><td>P1</td><td>language=Python + 路径含 eda/verilog/spice/spectre（PyAether）</td><td class="num">~0.10B</td><td>PyAether 脚本（稀缺）</td></tr><tr><td>P2</td><td>language=Makefile/Shell + 路径含 vcs/xrun/dc_shell/innovus（flow 编排）</td><td class="num">~0.1B</td><td>EDA flow 编排能力</td></tr><tr><td>P2</td><td>路径关键词命中（skill/.il/virtuoso/innovus/calibre/hspice）</td><td class="num">~29.8B</td><td>通用 EDA 上下文</td></tr><tr><td>P3</td><td>language=VHDL + 非 vendor（硬件描述）</td><td class="num">~8.7B</td><td>VHDL 理解能力</td></tr><tr><td>—</td><td>全部 EDA 相关语言（Python/C/C++/Verilog/SV/Tcl/Shell/Makefile/Perl/VHDL/MATLAB）</td><td class="num">~474B</td><td>通用代码能力基础</td></tr></table>
+<div class="info"><b>注意</b>：上述 token 为估算值，基于 Phase A 字节数 × Phase B EDA 率 × 0.314 token/byte。实际 token 量需分词后实测。外推因子 46x 用于从 100 shard 抽样推算全库。</div>
+<h3>给 posttrain SFT</h3>
+<table><tr><th>能力组</th><th>来源</th><th class="num">V1 外推文件数</th><th>建议样本量</th><th>备注</th></tr><tr><td>Tcl flow (SDC/XDC)</td><td>V1 Tcl（confidence≥0.5）</td><td class="num">~368</td><td>5K-10K</td><td>最大 V1 来源</td></tr><tr><td>Perl EDA parsing</td><td>V1 Perl</td><td class="num">~368</td><td>1K-3K</td><td>命中量有限</td></tr><tr><td>SVRF/DRC/LVS</td><td>V1 SVRF</td><td class="num">~92</td><td>500-1K</td><td>极稀缺，需补充外部数据</td></tr><tr><td>SKILL (Cadence)</td><td>未在 HF 分类中检出</td><td class="num">0</td><td>0</td><td>🔴 需外部数据源（见 §6 缺口）</td></tr><tr><td>PyAether</td><td>未在抽样中检出</td><td class="num">0</td><td>0</td><td>🔴 需专门采集</td></tr></table>
+<h3>给 designflow 造题</h3>
+<table><tr><th>任务类型</th><th>来源层</th><th class="num">外推文件数</th><th>改造方向</th></tr><tr><td>EDA flow 编排</td><td>V2 Tcl-maybe（FPGA/Vivado 脚本）</td><td class="num">~6,854</td><td>从 Vivado/HLS Tcl 脚本提取 flow 编排模式</td></tr><tr><td>报告解析</td><td>V2 Perl/Shell</td><td class="num">~0</td><td>从 log parser 改造为「报告解析」任务</td></tr><tr><td>约束编写</td><td>V1 Tcl SDC/XDC</td><td class="num">~368</td><td>从 SDC 约束文件提取时序约束编写任务</td></tr></table>
+<h2>§8 风险与隔离</h2>
+<div class="warn"><b>许可证</b>：stack-v3-train 使用 ODC-By（Open Data Commons Attribution），允许使用、修改、分发，但需署名。商用路径需注意署名合规。</div>
+<div class="info"><b>Vendor 剔除</b>：Phase A 实测 vendor 文件 16,439,240（1.3%），已在 tokenize 和 Phase B 中剔除（is_vendor=false 过滤）。</div>
+<div class="danger"><b>评测集污染隔离（红线）</b>：<ul><li>EDA-Eval-PyAether 158 任务（prompt/entry_point/test）绝不能入训练集</li><li>zhulong / designflow 相关 repo_path 必须排除</li><li>必须跑 13-gram 闸门（复用 phase5 isolation 的 NFKC/8-gram 框架，升级为 13-gram）</li><li>改写/paraphrase 不洗白</li></ul></div>
+<div class="note"><b>污染隔离实测证据</b>：在 Phase B 抽样的 3200 个文件中，搜索 repo_path 含 ['eda-eval', 'pyaether', 'zhulong', 'designflow', 'baize'] 关键词 → <b>命中 1 个</b>（需排除）。命中清单：opendesignflow/tcl-integration<br>注：此为抽样级检测，全量入库时仍需跑 13-gram 闸门做完整校验。</div>
+<h2>附录</h2>
+<h3>抽样清单（3200 条，含标签与判据命中）</h3>
+<table><tr><th>shard</th><th>repo_path</th><th>file_path</th><th>language</th><th>size</th><th>detected_category</th><th>value_layer</th><th>confidence</th></tr>
+<tr><td>-c000.snappy.parquet</td><td>isavita/advent_generated</td><td>tcl/day20_part1_2015.tcl</td><td>Tcl</td><td class="num">821</td><td>other</td><td>V3</td><td class="num">0</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>AthenaModel/athena</td><td>lib/app_athenawb/server/appserver_plot.tcl</td><td>Tcl</td><td class="num">2352</td><td>Tcl-maybe</td><td>V2</td><td class="num">0.2</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>LyeGuanYan/UNICCASS_copy</td><td>sdc/user_proj_example.sdc</td><td>Tcl</td><td class="num">145078</td><td>Tcl-maybe</td><td>V1</td><td class="num">1.0</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>isavita/advent_generated</td><td>tcl/day10_part2_2019.tcl</td><td>Tcl</td><td class="num">4086</td><td>other</td><td>V3</td><td class="num">0</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>AthenaModel/athena</td><td>lib/athena/iom.tcl</td><td>Tcl</td><td class="num">13199</td><td>other</td><td>V3</td><td class="num">0</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>AthenaModel/athena</td><td>test/athena/010-tactic_grant.test</td><td>Tcl</td><td class="num">5126</td><td>Tcl-maybe</td><td>V2</td><td class="num">0.2</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>AthenaModel/athena</td><td>lib/ahttpd/utils.tcl</td><td>Tcl</td><td class="num">3809</td><td>other</td><td>V3</td><td class="num">0</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>AthenaModel/athena</td><td>src/help/athena/entity_cap.help</td><td>Tcl</td><td class="num">4067</td><td>other</td><td>V3</td><td class="num">0</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>isavita/advent_generated</td><td>tcl/day24_part1_2024.tcl</td><td>Tcl</td><td class="num">3560</td><td>other</td><td>V3</td><td class="num">0</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>AthenaModel/athena</td><td>lib/app_cellide/detailbrowser.tcl</td><td>Tcl</td><td class="num">8196</td><td>Tcl-maybe</td><td>V2</td><td class="num">0.2</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>isavita/advent_generated</td><td>tcl/day5_part2_2017.tcl</td><td>Tcl</td><td class="num">487</td><td>other</td><td>V3</td><td class="num">0</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>isavita/advent_generated</td><td>tcl/day17_part2_2015.tcl</td><td>Tcl</td><td class="num">1010</td><td>other</td><td>V3</td><td class="num">0</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>Ang-Andrew/Vivado_HLS_training</td><td>projects/lab3/dct.prj/solution3/.autopilot/db/dct.</td><td>Tcl</td><td class="num">12575</td><td>other</td><td>V3</td><td class="num">0</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>myriadrf/LimeSDR-XTRX_GW</td><td>gen_combi_prog_file.tcl</td><td>Tcl</td><td class="num">736</td><td>Tcl-maybe</td><td>V2</td><td class="num">0.2</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>AthenaModel/athena</td><td>lib/athena/unit.tcl</td><td>Tcl</td><td class="num">9777</td><td>other</td><td>V3</td><td class="num">0</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>salsburygroup/amd-vmd</td><td>VMDScripts/Analysis/NativeContacts.tcl</td><td>Tcl</td><td class="num">2424</td><td>other</td><td>V3</td><td class="num">0</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>vguerra/calendar</td><td>www/admin/ical-import-confirm.tcl</td><td>Tcl</td><td class="num">3072</td><td>other</td><td>V3</td><td class="num">0</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>lblQubic/gateware</td><td>top/vc707/qubic.tcl</td><td>Tcl</td><td class="num">272</td><td>Tcl-maybe</td><td>V2</td><td class="num">0.2</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>lblQubic/gateware</td><td>top/vc707/iccgt_1G_125M_no8b10b.tcl</td><td>Tcl</td><td class="num">1488</td><td>Tcl-maybe</td><td>V2</td><td class="num">0.2</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>AthenaModel/athena</td><td>src/help/workbench.help</td><td>Tcl</td><td class="num">2088</td><td>other</td><td>V3</td><td class="num">0</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>AthenaModel/athena</td><td>test/athena/010-agent.test</td><td>Tcl</td><td class="num">4252</td><td>Tcl-maybe</td><td>V2</td><td class="num">0.2</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>AthenaModel/athena</td><td>lib/app_athenawb/demognbrowser.tcl</td><td>Tcl</td><td class="num">2136</td><td>other</td><td>V3</td><td class="num">0</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>MarosKozar/ADC</td><td>ADC_filtr_signal.srcs/constrs_1/imports/new/nexys_</td><td>Tcl</td><td class="num">2835</td><td>Tcl-maybe</td><td>V2</td><td class="num">0.2</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>bijanbina/PNA6</td><td>HDL/common/pna6/pna6_system_constr.xdc</td><td>Tcl</td><td class="num">2402</td><td>Tcl-maybe</td><td>V2</td><td class="num">0.4</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>dhatvik/Computer-Networks-lab</td><td>p3.tcl</td><td>Tcl</td><td class="num">1285</td><td>other</td><td>V3</td><td class="num">0</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>xinlong-du/OpenSees-3.0.0</td><td>Win64/proj/openSees/RecSectionFz.tcl</td><td>Tcl</td><td class="num">4437</td><td>Tcl-maybe</td><td>V2</td><td class="num">0.2</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>AthenaModel/athena</td><td>test/athena/020-HREL.test</td><td>Tcl</td><td class="num">12781</td><td>Tcl-maybe</td><td>V2</td><td class="num">0.2</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>isavita/advent_generated</td><td>tcl/day20_part1_2016.tcl</td><td>Tcl</td><td class="num">956</td><td>other</td><td>V3</td><td class="num">0</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>isavita/advent_generated</td><td>tcl/day9_part1_2018.tcl</td><td>Tcl</td><td class="num">1351</td><td>other</td><td>V3</td><td class="num">0</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>isavita/advent_generated</td><td>tcl/day2_part2_2021.tcl</td><td>Tcl</td><td class="num">629</td><td>other</td><td>V3</td><td class="num">0</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>Blessing617/200T_ADC_DAC</td><td>ADC_DAC.runs/synth_1/.Xil/ADC_DAC_propImpl.xdc</td><td>Tcl</td><td class="num">4292</td><td>Tcl-maybe</td><td>V2</td><td class="num">0.2</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>vguerra/calendar</td><td>tcl/calendar-procs.tcl</td><td>Tcl</td><td class="num">21903</td><td>other</td><td>V3</td><td class="num">0</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>AthenaModel/athena</td><td>lib/athena/vardiffs/vardiff_control.tcl</td><td>Tcl</td><td class="num">1624</td><td>other</td><td>V3</td><td class="num">0</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>CTSRD-CHERI/beri</td><td>cherilibs/trunk/peripherals/PCIExpressStream/pcie_</td><td>Tcl</td><td class="num">6576</td><td>other</td><td>V3</td><td class="num">0</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>salsburygroup/amd-vmd</td><td>VMDScripts/Analysis/ContactsTraj.tcl</td><td>Tcl</td><td class="num">1930</td><td>other</td><td>V3</td><td class="num">0</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>AthenaModel/athena</td><td>test/athena/010-tactic_attrit.test</td><td>Tcl</td><td class="num">6989</td><td>Tcl-maybe</td><td>V2</td><td class="num">0.2</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>isavita/advent_generated</td><td>new_solutions/day8_part1_2023.tcl</td><td>Tcl</td><td class="num">658</td><td>other</td><td>V3</td><td class="num">0</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>stfc-aeg/zynq-soc</td><td>scripts/script_te_utils.tcl</td><td>Tcl</td><td class="num">87019</td><td>Tcl-maybe</td><td>V2</td><td class="num">0.2</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>chiranthanaprabhath/HDL_Noice_Removing_S</td><td>Median_Filter_For_SandPNoice/Median_Filter_For_San</td><td>Tcl</td><td class="num">7253</td><td>Tcl-maybe</td><td>V2</td><td class="num">0.4</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>isavita/advent_generated</td><td>tcl/day8_part1_2021.tcl</td><td>Tcl</td><td class="num">524</td><td>other</td><td>V3</td><td class="num">0</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>isavita/advent_generated</td><td>new_solutions/day21_part1_2016.tcl</td><td>Tcl</td><td class="num">2379</td><td>other</td><td>V3</td><td class="num">0</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>AthenaModel/athena</td><td>lib/app_athenawb/nbrelbrowser.tcl</td><td>Tcl</td><td class="num">4166</td><td>other</td><td>V3</td><td class="num">0</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>isavita/advent_generated</td><td>new_solutions/day12_part1_2021.tcl</td><td>Tcl</td><td class="num">1103</td><td>other</td><td>V3</td><td class="num">0</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>vguerra/calendar</td><td>www/view.tcl</td><td>Tcl</td><td class="num">3629</td><td>other</td><td>V3</td><td class="num">0</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>AthenaModel/athena</td><td>test/projectlib/enumx.test</td><td>Tcl</td><td class="num">6983</td><td>Tcl-maybe</td><td>V2</td><td class="num">0.2</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>mozerj2001/fp_accel</td><td>scripting/create_top_tb.tcl</td><td>Tcl</td><td class="num">5182</td><td>Tcl-maybe</td><td>V2</td><td class="num">0.2</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>AthenaModel/athena</td><td>lib/athena/compdb.tcl</td><td>Tcl</td><td class="num">6418</td><td>other</td><td>V3</td><td class="num">0</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>AthenaModel/athena</td><td>lib/app_arachne/domain/index.tcl</td><td>Tcl</td><td class="num">1150</td><td>other</td><td>V3</td><td class="num">0</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>isavita/advent_generated</td><td>tcl/day16_part1_2019.tcl</td><td>Tcl</td><td class="num">675</td><td>other</td><td>V3</td><td class="num">0</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>AthenaModel/athena</td><td>test/athena/010-payload.test</td><td>Tcl</td><td class="num">11895</td><td>Tcl-maybe</td><td>V2</td><td class="num">0.2</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>Ti-m/MA_1</td><td>Commu_with_C_Code/Commu_with_C_Code.runs/synth_1/d</td><td>Tcl</td><td class="num">2123</td><td>Tcl-maybe</td><td>V2</td><td class="num">0.2</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>AthenaModel/athena</td><td>test/athena/010-tactic_mobilize.test</td><td>Tcl</td><td class="num">7584</td><td>Tcl-maybe</td><td>V2</td><td class="num">0.2</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>StevenJuglerHCC/Steven-Jugler-ENES-246-5</td><td>Steven ENES/14Rings/Lab8-Clocks_Rings/Lab8-Clocks_</td><td>Tcl</td><td class="num">2873</td><td>Tcl-maybe</td><td>V2</td><td class="num">0.2</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>AthenaModel/athena</td><td>lib/app_helptool/helpmacro.tcl</td><td>Tcl</td><td class="num">10127</td><td>other</td><td>V3</td><td class="num">0</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>AthenaModel/athena</td><td>lib/athena/stance.tcl</td><td>Tcl</td><td class="num">2671</td><td>other</td><td>V3</td><td class="num">0</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>jlreis/ReedSolomonHLS</td><td>ProjRSErasure/SolutionX/.autopilot/db/rs_erasure.t</td><td>Tcl</td><td class="num">26400</td><td>other</td><td>V3</td><td class="num">0</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>AthenaModel/athena</td><td>test/athena/010-tactic_service.test</td><td>Tcl</td><td class="num">11597</td><td>Tcl-maybe</td><td>V2</td><td class="num">0.2</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>bonjourdrs/QR_scan</td><td>spartan_cam/spartan_cam.runs/synth_1/.Xil/system_w</td><td>Tcl</td><td class="num">5042</td><td>Tcl-maybe</td><td>V2</td><td class="num">0.2</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>AthenaModel/athena</td><td>lib/athena/vardiffs/vardiff_nbunemp.tcl</td><td>Tcl</td><td class="num">937</td><td>other</td><td>V3</td><td class="num">0</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>isavita/advent_generated</td><td>tcl/day18_part1_2020.tcl</td><td>Tcl</td><td class="num">1198</td><td>other</td><td>V3</td><td class="num">0</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>scortua/SDI2_CONTENT</td><td>PWM/PWM/PWM.runs/synth_1/main.tcl</td><td>Tcl</td><td class="num">5743</td><td>Tcl-maybe</td><td>V2</td><td class="num">0.2</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>isavita/advent_generated</td><td>tcl/day16_part1_2017.tcl</td><td>Tcl</td><td class="num">1250</td><td>other</td><td>V3</td><td class="num">0</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>UssashArafat/Zynq_GPIO</td><td>Counter_LedSwitch_Zedboard.runs/ZynqSystem_auto_pc</td><td>Tcl</td><td class="num">13911</td><td>Tcl-maybe</td><td>V2</td><td class="num">0.2</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>MaZirui2001/DIgital-Lab</td><td>Sources/final.xdc</td><td>Tcl</td><td class="num">2139</td><td>Tcl-maybe</td><td>V2</td><td class="num">0.2</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>AthenaModel/athena</td><td>test/app_arachne/010-comp.test</td><td>Tcl</td><td class="num">6373</td><td>Tcl-maybe</td><td>V2</td><td class="num">0.2</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>wynadiis23/ns2-src_audio_comm_16</td><td>src/osmfiles/ns2config/config_43_5.tcl</td><td>Tcl</td><td class="num">202</td><td>other</td><td>V3</td><td class="num">0</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>StevenJuglerHCC/Steven-Jugler-ENES-246-5</td><td>Steven ENES/11IP/1_Nexys4DDRdemo/proj/User_Demo.ru</td><td>Tcl</td><td class="num">7265</td><td>Tcl-maybe</td><td>V2</td><td class="num">0.2</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>AthenaModel/athena</td><td>test/projectlib/bean.test</td><td>Tcl</td><td class="num">21145</td><td>Tcl-maybe</td><td>V2</td><td class="num">0.2</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>myriadrf/LimeSDR-XTRX_GW</td><td>src/constrs/lms7_timing.xdc</td><td>Tcl</td><td class="num">6924</td><td>Tcl-EDA</td><td>V1</td><td class="num">0.8</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>AthenaModel/athena</td><td>test/athena/010-athenadb.test</td><td>Tcl</td><td class="num">15390</td><td>Tcl-maybe</td><td>V2</td><td class="num">0.2</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>tgduran7/Advanced-Digital-Design-Using-V</td><td>ECE4305/Lab/LAB_7/LAB_7.runs/synth_1/mcs_top_vanil</td><td>Tcl</td><td class="num">6912</td><td>Tcl-maybe</td><td>V2</td><td class="num">0.4</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>charlespittman/fuzzy-wight</td><td>xilinx/sine_wave/go.tcl</td><td>Tcl</td><td class="num">281</td><td>Tcl-maybe</td><td>V2</td><td class="num">0.2</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>shubhamlanjewar97/HFTonFPGA</td><td>src/verilog/Constriant_File.xdc</td><td>Tcl</td><td class="num">1484</td><td>Tcl-maybe</td><td>V2</td><td class="num">0.4</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>Ang-Andrew/Vivado_HLS_training</td><td>projects/lab3/dct.prj/solution5/.autopilot/db/dct.</td><td>Tcl</td><td class="num">20081</td><td>other</td><td>V3</td><td class="num">0</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>WardBrian/TuringGUI</td><td>Docs/Examples/erase1s_2tape.tm</td><td>Tcl</td><td class="num">180</td><td>other</td><td>V3</td><td class="num">0</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>CoffeeCat3008871/trainingNITI</td><td>build.tcl</td><td>Tcl</td><td class="num">512</td><td>Tcl-maybe</td><td>V2</td><td class="num">0.2</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>ray2501/TDBCJDBC</td><td>demo/trepl.tcl</td><td>Tcl</td><td class="num">1825</td><td>Tcl-maybe</td><td>V2</td><td class="num">0.2</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>AthenaModel/athena</td><td>test/athena/010-nbhood.test</td><td>Tcl</td><td class="num">20556</td><td>Tcl-maybe</td><td>V2</td><td class="num">0.2</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>isavita/advent_generated</td><td>tcl/day20_part1_2018.tcl</td><td>Tcl</td><td class="num">1935</td><td>other</td><td>V3</td><td class="num">0</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>AthenaModel/athena</td><td>lib/projectgui/test_entitytree.tcl</td><td>Tcl</td><td class="num">1323</td><td>other</td><td>V3</td><td class="num">0</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>scortua/SDI2_CONTENT</td><td>CONTADOR_PC/contador_machine/project_1.runs/impl_1</td><td>Tcl</td><td class="num">13162</td><td>Tcl-maybe</td><td>V2</td><td class="num">0.4</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>isavita/advent_generated</td><td>tcl/day2_part2_2016.tcl</td><td>Tcl</td><td class="num">997</td><td>other</td><td>V3</td><td class="num">0</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>AthenaModel/athena</td><td>src/help/workbench/images.help</td><td>Tcl</td><td class="num">8603</td><td>Tcl-maybe</td><td>V2</td><td class="num">0.2</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>isavita/advent_generated</td><td>tcl/day1_part1_2023.tcl</td><td>Tcl</td><td class="num">491</td><td>other</td><td>V3</td><td class="num">0</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>AthenaModel/athena</td><td>test/athena/010-gofer_type.test</td><td>Tcl</td><td class="num">7351</td><td>Tcl-maybe</td><td>V2</td><td class="num">0.2</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>AthenaModel/athena</td><td>lib/projectgui/sorterbin.tcl</td><td>Tcl</td><td class="num">3823</td><td>other</td><td>V3</td><td class="num">0</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>microzic/spartan6Xilinx</td><td>SRC/Microblaze/simulation/behavioral/axi_iic_0_wav</td><td>Tcl</td><td class="num">2111</td><td>other</td><td>V3</td><td class="num">0</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>wittler-github/A_MD_Analysis_of_Insulin</td><td>Chapter 6/EnsemblePICS/EnsemblePICS.tcl</td><td>Tcl</td><td class="num">4153</td><td>other</td><td>V3</td><td class="num">0</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>abhishekjagushte/Piction-Photo-Editor</td><td>Piction Photo Editor.tcl</td><td>Tcl</td><td class="num">14529</td><td>Tcl-maybe</td><td>V2</td><td class="num">0.2</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>AthenaModel/athena</td><td>src/help/athena/order_hrel.help</td><td>Tcl</td><td class="num">4959</td><td>other</td><td>V3</td><td class="num">0</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>iinux/windows_bash_profile</td><td>bin/testtcl.tcl</td><td>Tcl</td><td class="num">65</td><td>other</td><td>V3</td><td class="num">0</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>kharper55/soundSteeringController_FPGA_f</td><td>soundSteering_halfLUTs.runs/msys_serial_adc_pwm_to</td><td>Tcl</td><td class="num">33822</td><td>Tcl-maybe</td><td>V2</td><td class="num">0.2</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>vidor-libraries/PWM</td><td>rtl/PWM_hw.tcl</td><td>Tcl</td><td class="num">6361</td><td>Tcl-maybe</td><td>V2</td><td class="num">0.2</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>isavita/advent_generated</td><td>tcl/day16_part2_2015.tcl</td><td>Tcl</td><td class="num">2147</td><td>other</td><td>V3</td><td class="num">0</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>agfernandezb/Project-Teoria-Computacion</td><td>bin/Pruebas/MT/ww.tm</td><td>Tcl</td><td class="num">537</td><td>other</td><td>V3</td><td class="num">0</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>StevenJuglerHCC/Steven-Jugler-ENES-246-5</td><td>Steven ENES/12ControlPathDoesDonts/1_MultipleAssig</td><td>Tcl</td><td class="num">6852</td><td>Tcl-maybe</td><td>V2</td><td class="num">0.4</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>AthenaModel/athena</td><td>lib/projectlib/profiler.tcl</td><td>Tcl</td><td class="num">6941</td><td>other</td><td>V3</td><td class="num">0</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>StevenJuglerHCC/Steven-Jugler-ENES-246-5</td><td>Steven ENES/11IP/3_TimingConstraints/ClockIP.runs/</td><td>Tcl</td><td class="num">3968</td><td>Tcl-maybe</td><td>V2</td><td class="num">0.4</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>AthenaModel/athena</td><td>lib/projectgui/modaltextwin.tcl</td><td>Tcl</td><td class="num">5262</td><td>other</td><td>V3</td><td class="num">0</td></tr>
+<tr><td>-c000.snappy.parquet</td><td>AthenaModel/athena</td><td>lib/ahttpd/direct.tcl</td><td>Tcl</td><td class="num">7362</td><td>Tcl-maybe</td><td>V2</td><td class="num">0.2</td></tr>
+</table>
+<p>... 共 3200 条，仅展示前 100 条。完整清单见 <code>stackv3_eda_sample.tsv</code></p>
+<h3>复现命令</h3>
+<pre>cd /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/data
+python3 stackv3_eda_scan.py --phase A --shards all --workers 4
+python3 stackv3_eda_scan.py --phase B --shards all --seed 42 --per-class-n 400
+python3 gen_report_stackv3_eda_zh.py</pre>
+<h3>产物清单</h3>
+<ul><li><code>stackv3_eda_scan.py</code> — 两阶段扫描脚本（可复跑）</li><li><code>stackv3_eda_meta_stats.tsv</code> — 元数据统计</li><li><code>stackv3_eda_value_summary.json</code> — 价值分层汇总</li><li><code>stackv3_eda_sample.tsv</code> — 抽样清单</li><li><code>stackv3_eda_scan_result.json</code> — 完整扫描结果</li><li><code>gen_report_stackv3_eda_zh.py</code> — 报告生成器</li></ul>
+<div class="footnote"><p>生成时间：2026-11-12 23:52</p><p>数据源：/nas_inference/app.e0031982/datasets/HuggingFaceCode/stack-v3-train/（4600 parquet / 1.85TiB）</p><p>工具：Python 3 + pyarrow（Phase A 列裁剪）/ multiprocessing（4 workers）</p><p>报告规格：单文件自包含 · 内联 CSS · 零外链 · 离线可开</p></div>
+</body></html>
