@@ -6784,3 +6784,88 @@ bash baize_posttrain_contamination_gate.sh --sft-synth r323_datagap_sft_pairs.js
 ### 10. 无伪造声明
 
 所有数字为 local KB 实际提取 + MCP get_api_details 实际返回 + synthesis 脚本计算 + contamination gate 实跑结果。gate 报告路径：`/tmp/r323_contam_gate.md`。
+
+## §R324 (2026-11-12 wake324) SFT v38 Corpus Merge: v11-v37 (1086) + R323 Data-Gap (258) -> 1344 Pairs + Contam Gate PASS (零 GPU · CPU)
+
+### 1. 动机与任务
+
+R323 完成了 166 data-gap APIs 的全覆盖 SFT 合成（258 pairs，contam gate PASS）。但 258 pairs 尚未并入训练语料——它们是独立 jsonl（instruction/output schema），与 v11-v37 统一语料（prompt/completion schema）格式不同。
+本轮目标：**将 258 R323 data-gap pairs 合并进 v11-v37 统一语料，产出 SFT v38 训练就绪语料（jsonl + parquet + train/val split）**，使沙盒恢复后可立即重训 SFT 验证 data-gap coverage 改善。
+
+### 2. 方法：Schema 转换 + 内容去重 + 全量闸门
+
+`baize_posttrain_r324_v11v38_merge.py`：
+- 加载 `sft_pyaether_corpus_v11_v37_merged.jsonl`（1086 pairs，prompt/completion schema）
+- 加载 `r323_datagap_sft_pairs.jsonl`（258 pairs，instruction/output schema）
+- **Schema 转换**：R323 pair → `{prompt=instruction, completion=output, pair_id="R323-datagap-...", type="R323_datagap_{doc|code}", api_used=[api_name], contamination_check="passed", source="R323_datagap"}`
+- **去重**：MD5(prompt+completion) 内容哈希，命中即跳过
+- 写 `sft_pyaether_corpus_v11_v38_merged.jsonl`
+- 转 parquet（schema = conversation[system/user/assistant] + pair_id + type + api_used + contamination_check，与 v11-v37 / R210 一致）
+- 跑 contamination fingerprint scan（488 eval entry_points，informational）
+- 跑 **full 13-gram contamination gate**（`baize_posttrain_contamination_gate.sh`，536 任务黑名单）
+- 产出 train/val split（90/10，seed=42）→ `sft_surrogate_data/minicpm5_pyaether_v2_v11v38/`
+
+### 3. 结果
+
+| 指标 | 值 |
+|:--|:--|
+| v11-v37 base pairs | 1086 |
+| R323 data-gap pairs | 258 (166 APIs, 100% coverage) |
+| **v11-v38 merged pairs** | **1344** (deduped 0) |
+| 输出 jsonl | `sft_pyaether_corpus_v11_v38_merged.jsonl` (1743.3 KB) |
+| 输出 parquet | `sft_pyaether_corpus_v11_v38_merged.parquet` (382.7 KB, 1344 rows) |
+| Train/val split | train=1210 (526.8 KB) / val=134 (66.7 KB) |
+| Contam gate (13-gram) | **PASS** (1344 scanned, 0 hit) |
+| Fingerprint scan | PASS (488 eval APIs, informational) |
+| Schema match v11-v37 | ✅ [conversation, pair_id, type, api_used, contamination_check] |
+
+### 4. API 家族分布变化
+
+| 家族 | v11-v37 | v11-v38 | 增量 |
+|:--|--:|--:|--:|
+| emy* | 394 | 457 | +63 |
+| db* | 335 | 351 | +16 |
+| Mde* | 163 | 259 | +96 |
+| ae* | 153 | 176 | +23 |
+| other | 352 | 364 | +12 |
+| dm* | 78 | 87 | +9 |
+| Emy* | 24 | 48 | +24 |
+| CString* | 30 | 32 | +2 |
+| emc* | 0 | 13 | +13 (NEW) |
+| et* | 42 | 42 | 0 |
+| sle* | 12 | 12 | 0 |
+| gu* | 6 | 6 | 0 |
+
+→ R323 data-gap pairs 主要补充 Mde*(+96)、emy*(+63)、ae*(+23)、Emy*(+24)，并新增 emc*(enum constants, +13)。这正是 R321 分析中确认的"corpus 中不存在"的 166 APIs。
+
+### 5. 污染隔离闸门（红线 §5.1）
+
+```
+bash baize_posttrain_contamination_gate.sh --sft-synth sft_pyaether_corpus_v11_v38_merged.jsonl --out /tmp/r324_contam_gate.md
+```
+- 黑名单：6 评测快照并集 536 任务（含 v20260311 的 158）
+- 命中判定：13-gram 重合率 ≥ 0.8 或短 8-gram 兜底 ≥ 1
+- **扫描 1344 / 命中 0 → ✅ PASS**（exit 0）
+- gate 报告：`/tmp/r324_contam_gate.md`
+
+### 6. 对 SFT 重训的意义
+
+- v11-v36（1029 pairs）→ SFT global_step_70（当前 GPU6 serve 的 ckpt）
+- **v11-v38（1344 pairs）= v11-v37 + 166 data-gap APIs 全覆盖** → 下一次 SFT run 的训练语料
+- train/val split 已就位 → 沙盒恢复后 `bash baize_posttrain_serve_teardown.sh` 拆 GPU5/6/7 → 起训 v11v38 → 评测验证 data-gap coverage 改善
+- ⚠️ **替身预演**：MiniCPM5-2B 替身，收益不可迁移到 BaiZe
+
+### 7. 产物
+
+| 文件 | 说明 |
+|:--|:--|
+| `baize_posttrain_r324_v11v38_merge.py` | Merge + parquet + split script |
+| `sft_pyaether_corpus_v11_v38_merged.jsonl` | 1344 pairs unified corpus (1743.3 KB) |
+| `sft_pyaether_corpus_v11_v38_merged.parquet` | verl SFT parquet (382.7 KB, 1344 rows) |
+| `r324_v11v38_merge_summary.json` | Full merge summary |
+| `sft_surrogate_data/minicpm5_pyaether_v2_v11v38/sft_surrogate_train.parquet` | Train split (1210 rows, 526.8 KB) |
+| `sft_surrogate_data/minicpm5_pyaether_v2_v11v38/sft_surrogate_val.parquet` | Val split (134 rows, 66.7 KB) |
+
+### 8. 无伪造声明
+
+所有数字为 merge 脚本实际计算 + parquet read-back 验证 + contamination gate 实跑结果。gate 报告路径：`/tmp/r324_contam_gate.md`。
