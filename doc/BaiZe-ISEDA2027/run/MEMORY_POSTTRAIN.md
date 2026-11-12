@@ -7,14 +7,14 @@ WAITING: 0
 
 ## 进度快照
 
-- PHASE: posttrain-wake311（2026-11-12 R311 full static eval 50/113 done[base vs SFT,no_sandbox]+GPU4 base serve restarted+50-task intermediate results[SFT +26pp syntax,+28pp finish=stop,5x concise,4.3x faster]）
-- 已完成: P3预备✅；P0✅；P1✅；P2✅；R1-R210✅；R280归档；wake281-310✅；R311✅（full static eval running 50/113+GPU4 restart+50-task intermediate results+git committed 64ce4950c）
-- 当前动作: wake311 ①GPU4 base serve(:8098)died→restarted with setsid[65536+enforce-eager+minicpm5 parser] ②launched baize_posttrain_static_eval_full.py[113 non-techlib tasks,base:8098 vs SFT:8096,temp=0.0,max_tokens=2048,PID 554362 setsid bg] ③50/113 tasks done: SFT syntax 96%vs70%(+26pp),finish=stop 94%vs66%(+28pp),code 5x concise(1281vs6413),4.3x faster(5.5vs23.7s),has_function 100%vs92% ④EXPERIMENTS §R311 updated ⑤git committed+pushed 64ce4950c
-- 下一步: ①full 113-task eval完成后读取static_eval_r311_results.json全量分析 ②沙盒恢复后跑baize_posttrain_baseline_eval.sh获取真实Pass@1 5-run ③Phase1里程碑报告reports/report_posttrain_baseline_3model_zh.html ④Phase3 RL待沙盒+GPU ⑤P3正式训练待pretrain ckpt(ETA≈2026-12-25)
+- PHASE: posttrain-wake312（2026-11-12 R312 static eval 70/113 done+per-scenario breakdown[DesignMgmt 54→100%syn,Layout/Others 100%syn+stop,Schematic 89%]+trend stability 20→50→70确认+sandbox 114th still FILTERED）
+- 已完成: P3预备✅；P0✅；P1✅；P2✅；R1-R210✅；R280归档；wake281-311✅；R312✅（70/113 static eval progress+per-scenario+trend stability+EXPERIMENTS §R312）
+- 当前动作: wake312 ①R311 eval(PID 554362)仍在后台跑→70/113 done ②新增per-scenario breakdown:Design Mgmt syn54%→100%(+46pp最大受益),Layout syn70%→100%+stop100%,Others syn78%→100%+stop100%,Schematic syn79%→89%(唯一未满分) ③趋势稳定性:20→50→70三档syntax delta +20/+26/+25.7pp,conciseness 3.7/5.0/5.1x,稳定无反转 ④sandbox 114th wake still FILTERED(SSH:22+8080 both filtered) ⑤EXPERIMENTS §R312 updated ⑥git commit pending
+- 下一步: ①full 113-task eval完成后读取static_eval_r311_results.json全量分析+最终汇总 ②沙盒恢复后跑baize_posttrain_baseline_eval.sh获取真实Pass@1 5-run ③Phase1里程碑报告reports/report_posttrain_baseline_3model_zh.html ④Phase3 RL待沙盒+GPU ⑤P3正式训练待pretrain ckpt(ETA≈2026-12-25)
 - 阻塞: 🔴沙盒10.129.32.75全端口FILTERED(static eval不需沙盒→可跑生成;但Pass@1需沙盒);P3等pretrain ckpt
-- 本轮新增产出: R311✅(GPU4 base serve restart+full static eval running 50/113 done[PID 554362 bg]+50-task intermediate results[SFT +26pp syntax/+28pp finish=stop/5x concise/4.3x faster/100% has_function]+EXPERIMENTS §R311 updated+git commit 64ce4950c)
-- 未完成指令: 🔴17:10 GPU5/6/7全✅+GPU4 restarted✅;🔴13:40 Phase2 SFT COMPLETE✅+R300-R311✅/Phase1 static eval running(50/113 done,full in bg)/Phase3 RL脚本+奖励就绪✅待沙盒+GPU
-- git: wake311 R311 committed+pushed 64ce4950c
+- 本轮新增产出: R312✅(70/113 static eval progress+per-scenario breakdown[DesignMgmt +46pp/Layout+Others 100%/Schematic 89%]+trend stability 20→50→70确认[syntax ~+25pp stable,conciseness ~5x stable]+sandbox 114th FILTERED+EXPERIMENTS §R312)
+- 未完成指令: 🔴17:10 GPU5/6/7全✅+GPU4 restarted✅;🔴13:40 Phase2 SFT COMPLETE✅+R300-R312✅/Phase1 static eval running(70/113 done,full in bg)/Phase3 RL脚本+奖励就绪✅待沙盒+GPU
+- git: wake312 R312 pending commit
 
 
 

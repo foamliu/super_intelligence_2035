@@ -5711,3 +5711,74 @@ CUDA_VISIBLE_DEVICES=4 HF_HOME=/tmp/hf_home setsid /tmp/vllm_venv/bin/python -m 
 - GPU4 serve 日志：`/tmp/vllm_gpu4.log`
 - 数据集：`~/code/eda_fastmcp/pyAether-eval/original_dataset/EDA-Eval-PyAether-v20260311.jsonl`（158 行）
 - 无伪造：所有数据为真实 vLLM API 调用输出，静态分析由 Python compile()/ast 完成。
+
+---
+
+## §R312 (2026-11-12 wake312) R311 Static Eval 70/113 Progress: Per-Scenario Breakdown + Trend Stability Confirmation
+
+### 1. 动机
+
+wake311 启动的 full static eval（PID 554362）仍在后台运行。本轮唤醒时 70/113 任务完成，
+新增了 **per-scenario breakdown**（§R311 未做）以及趋势稳定性确认（20→50→70 三档对比）。
+
+### 2. 70-task 结果（2026-11-12 11:56 实测，eval 仍在跑）
+
+| Metric | Base (n=70) | SFT (n=70) | Delta |
+|:--|:--|:--|:--|
+| Syntax valid | 50/70 (71.4%) | 68/70 (97.1%) | **+25.7pp** |
+| finish=stop | 48/70 (68.6%) | 67/70 (95.7%) | **+27.1pp** |
+| finish=length (truncated) | 22/70 (31.4%) | 3/70 (4.3%) | **-27.1pp** |
+| has_function | 65/70 (92.9%) | 70/70 (100.0%) | **+7.1pp** |
+| API coverage (mean) | 0.189 | 0.201 | +0.012 |
+| Code length (mean chars) | 6237 | 1227 | **5.1x 更简洁** |
+| Time per task (mean sec) | 23.1 | 5.1 | **4.5x 更快** |
+| vLLM errors | 0/70 | 0/70 | — |
+
+### 3. NEW: Per-Scenario Breakdown（§R311 未做，本轮首次）
+
+| Scenario | n | Syntax B→S | stop B→S | API cov B→S |
+|:--|--:|:--|:--|:--|
+| Design Management | 13 | 54%→**100%** | 54%→92% | 0.055→0.051 |
+| Layout | 20 | 70%→**100%** | 70%→**100%** | 0.232→0.248 |
+| Others | 18 | 78%→**100%** | 72%→**100%** | 0.253→0.256 |
+| Schematic | 19 | 79%→89% | 74%→89% | 0.176→0.204 |
+
+**关键观察**：
+- **Design Management 受益最大**：syntax 54%→100%（+46pp），是 base 最差的场景、SFT 修复到满分。
+- **Layout & Others 达到 100% syntax + 100% finish=stop**：SFT 在这两个场景完全消除了截断。
+- **Schematic 是唯一 SFT 未达 100% syntax 的场景**（89%）：2/19 任务仍有语法错误，需后续 case-by-case 检查。
+- API coverage 在 Design Management 场景反而微降（0.055→0.051）——base 在该场景生成大量代码但语法错，SFT 语法正确但用了较少正确 API；需沙盒验证功能正确性。
+
+### 4. 趋势稳定性（20→50→70 三档对比）
+
+| Metric | 20-task | 50-task | 70-task | 趋势 |
+|:--|:--|:--|:--|:--|
+| Syntax valid delta | +20.0pp | +26.0pp | +25.7pp | 稳定 ~+25pp |
+| finish=stop delta | +20.0pp | +28.0pp | +27.1pp | 稳定 ~+27pp |
+| Code conciseness | 3.7x | 5.0x | 5.1x | 稳定 ~5x |
+| Time speedup | — | 4.3x | 4.5x | 稳定 ~4.5x |
+
+> 三档数据高度一致：SFT recipe 的效果方向（syntax↑, truncation↓, conciseness↑, speed↑）
+> 在 20→70 任务区间内无反转，预计 full 113-task 完成后数字不会有显著偏移。
+
+### 5. 与 D1–D6 诊断的对应
+
+| 诊断项 | R312 证据 |
+|:--|:--|
+| D1 工具调用合法率 | base 31.4% finish=length（思考模式散文）→ SFT 4.3% → 协议问题大幅修复 |
+| D3 超上下文/截断 | base 31.4% truncation → SFT 4.3%，SFT 代码 5.1x 短 → 截断问题基本消除 |
+| D5 per-scenario | Design Mgmt 受益最大(+46pp syn)，Schematic 最难(89% syn) → SFT 数据配比参考 |
+
+### 6. 局限
+
+- ⚠️ **70/113 tasks**：eval 仍在后台运行（PID 554362, etimes~33min），full 完成后需重算。
+- ⚠️ **静态评测**：无 Pass@1。syntax valid ≠ 功能正确。需沙盒恢复后跑真实评测。
+- ⚠️ **temp=0.0 单 run**：非协议冻结的 5-run mean±std。
+- **替身预演**：MiniCPM5-2B 替身，收益不可迁移到 BaiZe。
+
+### 7. 溯源
+
+- 结果文件：`run/static_eval_r311_results.json`（70 tasks / 872KB，仍在增长）
+- 评测脚本：`run/baize_posttrain_static_eval_full.py`（236 行）
+- 后台进程：PID 554362, `setsid python3 baize_posttrain_static_eval_full.py --base-url http://localhost:8098 --base-model minicpm5-2b --sft-url http://localhost:8096 --sft-model minicpm5-sft --out static_eval_r311_results.json --max-tokens 2048`
+- 无伪造：所有数据为真实 vLLM API 调用输出，分析由 Python json+ast 完成。
