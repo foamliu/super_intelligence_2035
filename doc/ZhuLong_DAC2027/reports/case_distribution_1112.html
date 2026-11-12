@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>设计流 Benchmark · 用例分布 case_distribution_1112</title>
+<style>
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;margin:0;background:#f5f7fa;color:#222;line-height:1.6}
+.wrap{max-width:1100px;margin:0 auto;padding:24px}
+h1{font-size:1.5rem;border-bottom:3px solid #2c7be5;padding-bottom:8px}
+h2{font-size:1.15rem;margin-top:28px;color:#2c7be5;border-left:4px solid #2c7be5;padding-left:10px}
+h3{font-size:1rem;margin-top:20px;color:#444}
+.kpis{display:flex;gap:12px;flex-wrap:wrap;margin:16px 0}
+.kpi{flex:1;min-width:140px;background:#fff;border:1px solid #e3e8ef;border-radius:8px;padding:14px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.kpi .n{font-size:1.6rem;font-weight:700;color:#2c7be5}
+.kpi .l{font-size:.8rem;color:#666}
+.kpi.delta .n{color:#27ab83}
+.kpi.warn .n{color:#e85a4f}
+table{border-collapse:collapse;width:100%;background:#fff;margin:8px 0;font-size:.85rem}
+th,td{border:1px solid #e3e8ef;padding:6px 10px;text-align:left;vertical-align:top}
+th{background:#f0f4f8;white-space:nowrap}
+td.num{text-align:right;font-variant-numeric:tabular-nums}
+td.delta-up{color:#1e7e34;font-weight:600}
+td.delta-flat{color:#666}
+tr.shard-A td:first-child{border-left:3px solid #2c7be5}
+tr.shard-B td:first-child{border-left:3px solid #27ab83}
+tr.shard-C td:first-child{border-left:3px solid #e85a4f}
+tr.shard-D td:first-child{border-left:3px solid #f0ad4e}
+.tag{display:inline-block;padding:2px 8px;border-radius:10px;font-size:.75rem}
+.pass{background:#d4edda;color:#155724}
+.fail{background:#f8d7da;color:#721c24}
+.draft{background:#fff3cd;color:#856404}
+.legacy{background:#eef2f7;color:#555}
+.note{background:#fffbe6;border-left:3px solid #f0ad4e;padding:10px 14px;margin:12px 0;border-radius:4px}
+.bar-row{display:flex;align-items:center;gap:8px;margin:4px 0;font-size:.85rem}
+.bar-row .lbl{width:140px;text-align:right;color:#555}
+.bar-row .bar{flex:1;background:#e3e8ef;border-radius:4px;height:18px;overflow:hidden;position:relative}
+.bar-row .fill{height:18px;background:#2c7be5;border-radius:4px;display:flex;align-items:center;padding-left:6px;color:#fff;font-size:.75rem;font-weight:600;white-space:nowrap}
+.bar-row .num{width:90px;text-align:right;font-variant-numeric:tabular-nums;font-weight:600}
+.bar-row.b-A .fill{background:#2c7be5}
+.bar-row.b-B .fill{background:#27ab83}
+.bar-row.b-C .fill{background:#e85a4f}
+.bar-row.b-D .fill{background:#f0ad4e}
+footer{margin-top:30px;color:#999;font-size:.75rem;text-align:center}
+code{background:#eef2f7;padding:1px 5px;border-radius:3px;font-size:.85rem}
+</style></head><body><div class="wrap">
+
+<h1>设计流 Benchmark · 用例分布 · 11_12</h1>
+<p>
+<span class="tag pass">4 shard 并行造题</span>
+<span class="tag legacy">mc≥10 候选池口径（11/11 用户令）</span>
+<span style="color:#999">生成时间 2026-11-12 13:30 · 数据源：4 shard jsonl + trace_ledger stats + eval_triage 11/10 batch</span>
+</p>
+
+<h2>一、用例总量（vs 11_05 对比）</h2>
+<div class="kpis">
+<div class="kpi"><div class="n">1168</div><div class="l">累计用例数（4 shard jsonl 合计）</div></div>
+<div class="kpi delta"><div class="n">+742</div><div class="l">vs 11_05（426）· +174%</div></div>
+<div class="kpi"><div class="n">1144</div><div class="l">主 jsonl（merge 后，滞后 24）</div></div>
+<div class="kpi"><div class="n">13</div><div class="l">覆盖域数（全覆盖）</div></div>
+</div>
+<div class="note">
+<b>用例数口径</b>：4 shard 各自往 <code>EDA-Eval-DesignFlow_{A,B,C,D}.jsonl</code> 追加，merge 脚本每 30min 合并到主 <code>EDA-Eval-DesignFlow.jsonl</code>。<b>累计 = A 232 + B 273 + C 311 + D 352 = 1168</b>（主 jsonl 1144，差 24 待合入）。
+<br><b>11_05 → 11_12 一周净增 742 条</b>（426 → 1168），日均 ~106 条，4 shard 并行产能稳定。
+<br><b>全部 proper design_flow</b>（mode=design_flow / entry=outputs/submit.zip / 双参 check）；<b>0 legacy scripting</b>（即时令 VIII 后新建全部走设计流契约）。
+</div>
+
+<h2>二、按 domain 分布（主 jsonl 1144 条）</h2>
+<table>
+<thead><tr><th>domain</th><th class="num">11_12</th><th class="num">11_05</th><th class="num">Δ</th><th>占比</th><th>负责 shard</th></tr></thead>
+<tbody>
+<tr><td>spice_sim</td><td class="num">210</td><td class="num">63</td><td class="num delta-up">+147</td><td>18.4%</td><td>B</td></tr>
+<tr><td>schematic_netlist</td><td class="num">199</td><td class="num">66</td><td class="num delta-up">+133</td><td>17.4%</td><td>D</td></tr>
+<tr><td>physical_verify</td><td class="num">129</td><td class="num">56</td><td class="num delta-up">+73</td><td>11.3%</td><td>C</td></tr>
+<tr><td>analog_context</td><td class="num">81</td><td class="num">26</td><td class="num delta-up">+55</td><td>7.1%</td><td>D</td></tr>
+<tr><td>digital</td><td class="num">81</td><td class="num">24</td><td class="num delta-up">+57</td><td>7.1%</td><td>A</td></tr>
+<tr><td>layout_aether</td><td class="num">71</td><td class="num">33</td><td class="num delta-up">+38</td><td>6.2%</td><td>C</td></tr>
+<tr><td>waveform</td><td class="num">67</td><td class="num">29</td><td class="num delta-up">+38</td><td>5.9%</td><td>D</td></tr>
+<tr><td>verification</td><td class="num">65</td><td class="num">14</td><td class="num delta-up">+51</td><td>5.7%</td><td>A</td></tr>
+<tr><td>layout_virtuoso</td><td class="num">62</td><td class="num">30</td><td class="num delta-up">+32</td><td>5.4%</td><td>C</td></tr>
+<tr><td>eda_other</td><td class="num">55</td><td class="num">17</td><td class="num delta-up">+38</td><td>4.8%</td><td>A</td></tr>
+<tr><td>characterization</td><td class="num">52</td><td class="num">24</td><td class="num delta-up">+28</td><td>4.5%</td><td>B</td></tr>
+<tr><td>pg_layout</td><td class="num">44</td><td class="num">21</td><td class="num delta-up">+23</td><td>3.8%</td><td>C</td></tr>
+<tr><td>pnr_signoff</td><td class="num">28</td><td class="num">23</td><td class="num delta-up">+5</td><td>2.4%</td><td>A</td></tr>
+<tr style="font-weight:700;background:#f0f4f8"><td>合计</td><td class="num">1144</td><td class="num">426</td><td class="num delta-up">+718</td><td>100%</td><td>—</td></tr>
+</tbody>
+</table>
+<div class="note">
+<b>分布观察</b>：
+<ul style="margin:6px 0 0 0">
+<li><b>spice_sim / schematic_netlist</b> 两域占 35.8%，是产出主力（B/D shard 产能最高）</li>
+<li><b>pnr_signoff</b> 一周仅 +5（28 条），是 13 域中最稀缺 —— A shard 候选池该域 produce-task 极少</li>
+<li><b>verification</b> 一周 +51（14→65），A shard r312 后引入「analysis-only → diagnosis-generator reframe」破局（EXP-DG1）</li>
+<li>所有 13 域均有 case，<b>0 空白域</b></li>
+</ul>
+</div>
+
+<h2>三、按 shard 分布（11_12）</h2>
+<div class="kpis">
+<div class="kpi"><div class="n">232</div><div class="l">shard A（digital / verification / pnr / eda_other）</div></div>
+<div class="kpi"><div class="n">273</div><div class="l">shard B（spice_sim / characterization）</div></div>
+<div class="kpi"><div class="n">311</div><div class="l">shard C（physical_verify / layout_aether / layout_virtuoso / pg_layout）</div></div>
+<div class="kpi"><div class="n">352</div><div class="l">shard D（schematic_netlist / analog_context / waveform）</div></div>
+</div>
+
+<h3>各 shard domain 明细</h3>
+<table>
+<thead><tr><th>shard</th><th>domain</th><th class="num">cases</th><th>占 shard %</th></tr></thead>
+<tbody>
+<tr class="shard-A"><td rowspan="4">A<br><span style="font-size:.7rem;color:#999">232</span></td><td>digital</td><td class="num">82</td><td>35.3%</td></tr>
+<tr class="shard-A"><td>verification</td><td class="num">66</td><td>28.4%</td></tr>
+<tr class="shard-A"><td>eda_other</td><td class="num">56</td><td>24.1%</td></tr>
+<tr class="shard-A"><td>pnr_signoff</td><td class="num">28</td><td>12.1%</td></tr>
+<tr class="shard-B"><td rowspan="2">B<br><span style="font-size:.7rem;color:#999">273</span></td><td>spice_sim</td><td class="num">220</td><td>80.6%</td></tr>
+<tr class="shard-B"><td>characterization</td><td class="num">53</td><td>19.4%</td></tr>
+<tr class="shard-C"><td rowspan="4">C<br><span style="font-size:.7rem;color:#999">311</span></td><td>physical_verify</td><td class="num">130</td><td>41.8%</td></tr>
+<tr class="shard-C"><td>layout_aether</td><td class="num">73</td><td>23.5%</td></tr>
+<tr class="shard-C"><td>layout_virtuoso</td><td class="num">64</td><td>20.6%</td></tr>
+<tr class="shard-C"><td>pg_layout</td><td class="num">44</td><td>14.1%</td></tr>
+<tr class="shard-D"><td rowspan="3">D<br><span style="font-size:.7rem;color:#999">352</span></td><td>schematic_netlist</td><td class="num">199</td><td>56.5%</td></tr>
+<tr class="shard-D"><td>analog_context</td><td class="num">83</td><td>23.6%</td></tr>
+<tr class="shard-D"><td>waveform</td><td class="num">70</td><td>19.9%</td></tr>
+</tbody>
+</table>
+
+<h3>各 shard 产能条形图</h3>
+<div class="bar-row b-A"><div class="lbl">shard A</div><div class="bar"><div class="fill" style="width:65.9%">232</div></div><div class="num">232</div></div>
+<div class="bar-row b-B"><div class="lbl">shard B</div><div class="bar"><div class="fill" style="width:77.6%">273</div></div><div class="num">273</div></div>
+<div class="bar-row b-C"><div class="lbl">shard C</div><div class="bar"><div class="fill" style="width:88.4%">311</div></div><div class="num">311</div></div>
+<div class="bar-row b-D"><div class="lbl">shard D</div><div class="bar"><div class="fill" style="width:100%">352</div></div><div class="num">352</div></div>
+<div class="note">
+<b>shard 产能差异</b>：D（352）≈ C（311）&gt; B（273）&gt; A（232）。D/C 的 domain（schematic_netlist/physical_verify）trace 来源丰富；A 的 pnr_signoff 候选稀缺，B 的 spice_sim portable-L2 供给瓶颈跨轮稳定（fresh 池 Q&A 占 ~70%，produce-task 极稀缺）。
+</div>
+
+<h2>四、判分质量（断言闸门）</h2>
+<div class="kpis">
+<div class="kpi"><div class="n">1141 / 1144</div><div class="l">含 test_rationale 断言清单</div></div>
+<div class="kpi pass"><div class="n">100%</div><div class="l">k_rationale == k_check ≥ 8 达标率</div></div>
+<div class="kpi"><div class="n">14</div><div class="l">中位数 k（独立断言数）</div></div>
+<div class="kpi"><div class="n">8 – 30</div><div class="l">k 取值范围</div></div>
+</div>
+<h3>断言数 k 分布（共 1141 条带断言）</h3>
+<div class="bar-row"><div class="lbl">k=8</div><div class="bar"><div class="fill" style="width:0.5%">1</div></div><div class="num">1</div></div>
+<div class="bar-row"><div class="lbl">k=9</div><div class="bar"><div class="fill" style="width:0.5%">1</div></div><div class="num">1</div></div>
+<div class="bar-row"><div class="lbl">k=10</div><div class="bar"><div class="fill" style="width:5%">12</div></div><div class="num">12</div></div>
+<div class="bar-row"><div class="lbl">k=11</div><div class="bar"><div class="fill" style="width:6%">15</div></div><div class="num">15</div></div>
+<div class="bar-row"><div class="lbl">k=12</div><div class="bar"><div class="fill" style="width:40%">103</div></div><div class="num">103</div></div>
+<div class="bar-row"><div class="lbl">k=13</div><div class="bar"><div class="fill" style="width:21%">55</div></div><div class="num">55</div></div>
+<div class="bar-row"><div class="lbl">k=14</div><div class="bar"><div class="fill" style="width:100%">319</div></div><div class="num">319</div></div>
+<div class="bar-row"><div class="lbl">k=15</div><div class="bar"><div class="fill" style="width:68%">217</div></div><div class="num">217</div></div>
+<div class="bar-row"><div class="lbl">k=16</div><div class="bar"><div class="fill" style="width:84%">269</div></div><div class="num">269</div></div>
+<div class="bar-row"><div class="lbl">k=17</div><div class="bar"><div class="fill" style="width:21%">66</div></div><div class="num">66</div></div>
+<div class="bar-row"><div class="lbl">k=18</div><div class="bar"><div class="fill" style="width:12%">39</div></div><div class="num">39</div></div>
+<div class="bar-row"><div class="lbl">k=19-30</div><div class="bar"><div class="fill" style="width:14%">44</div></div><div class="num">44</div></div>
+<div class="note">
+<b>21:5x 硬闸门</b>：每条 case 必须 <code>k_rationale == k_check ≥ 8</code>，否则标 <code>incomplete</code>、进 <code>rewrite_queue.tsv</code>、不许落 jsonl。<b>1141/1144 = 99.7% 带断言清单</b>（3 条无 rationale 为早期 legacy seeded）。峰值集中在 k=14（319）/ k=16（269）/ k=15（217），符合「≥8 独立条件 + 每个单独可 FAIL」的设计规范。
+</div>
+
+<h2>五、难度分布（L-tier）</h2>
+<div class="kpis">
+<div class="kpi"><div class="n">148</div><div class="l">L1（离线 Python 复刻）</div></div>
+<div class="kpi"><div class="n">62</div><div class="l">L2（真跑沙盒工具）</div></div>
+<div class="kpi warn"><div class="n">820</div><div class="l">未标 L-tier（占 71.7%）</div></div>
+<div class="kpi"><div class="n">99</div><div class="l">标 medium/hard（未分类 L）</div></div>
+</div>
+<div class="note">
+<b>难度标签待补</b>：1144 条中仅 324 条（28.3%）有显式 L1/L2 标签，820 条未标。<b>任务书 §5 配额</b>：L1 ≤30% / L2 ≥50% / L3 ≥20%，新建 case 只做 L2/L3。当前已标的 148 L1 / 62 L2 比例（L1 占已标 70.5%）<b>偏离配额</b>，但未标 820 条多为早期 seeded，实际 L2 占比应更高（待回填标签后复核）。
+</div>
+
+<h2>六、trace 覆盖率（候选池 mc≥10）</h2>
+<div class="kpis">
+<div class="kpi"><div class="n">29.7%</div><div class="l">trace 覆盖率（covered / 池）</div></div>
+<div class="kpi"><div class="n">899</div><div class="l">已覆盖 unique session</div></div>
+<div class="kpi"><div class="n">3024</div><div class="l">候选池总量（mc≥10）</div></div>
+<div class="kpi"><div class="n">1481</div><div class="l">剩余可做 session</div></div>
+</div>
+<div style="background:#e3e8ef;border-radius:6px;height:18px;overflow:hidden"><div style="width:29.7%;height:18px;background:#2c7be5"></div></div>
+<p style="color:#666;font-size:.8rem">已动过 2522（case 1298 · parked 2613 · claimed 1）· 剩余可做 ≈ 1481（池 3024 − 池内已动过 1543）</p>
+<div class="note">
+<b>两个口径别混</b>：
+<ul style="margin:6px 0 0 0">
+<li><b>用例数 1168</b> = 4 shard jsonl 行数（产出多少 case，1 session 可产多 case）</li>
+<li><b>covered 899 / 3024</b> = mc≥10 候选池内 unique session 覆盖率（trace 来源多样性指标）</li>
+</ul>
+<b>11_05 → 11_12 候选池口径变化</b>：11/05 用 mc≥100（池 696，covered 156/696=22.4%）；11/11 用户令 mc 阈值 30→10（池 3024，covered 899/3024=29.7%）。池扩大 4.3×，覆盖率绝对值 +7.3pp。
+</div>
+
+<h3>各 shard trace 覆盖率</h3>
+<div class="bar-row b-A"><div class="lbl">shard A</div><div class="bar"><div class="fill" style="width:19.5%">5.8%</div></div><div class="num">176 / 3024</div></div>
+<div class="bar-row b-B"><div class="bar"><div class="fill" style="width:27.2%">8.1%</div></div><div class="num">245 / 3024</div></div>
+<div class="bar-row b-C"><div class="bar"><div class="fill" style="width:29.3%">8.7%</div></div><div class="num">262 / 3024</div></div>
+<div class="bar-row b-D"><div class="bar"><div class="fill" style="width:23.9%">7.1%</div></div><div class="num">216 / 3024</div></div>
+
+<h2>七、pi-SUT 评测结果（eval_triage 11/10 batch · 696 cases）</h2>
+<div class="kpis">
+<div class="kpi"><div class="n">696</div><div class="l">评测样本数</div></div>
+<div class="kpi pass"><div class="n">62</div><div class="l">PASS</div></div>
+<div class="kpi fail"><div class="n">558</div><div class="l">FAIL</div></div>
+<div class="kpi warn"><div class="n">70</div><div class="l">ERROR</div></div>
+<div class="kpi"><div class="n">10.0%</div><div class="l">通过率（pass/(pass+fail)）</div></div>
+</div>
+<div class="note">
+<b>11/10 batch 评测 696 cases</b>（占当时累计 ~60%）：PASS 62 / FAIL 558 / ERROR 70 / ABSENT 6。<b>通过率 10.0%</b>（pass/(pass+fail)=62/620），略低于目标区间 20–30%，但已远高于「太简单」&gt;50% 红线。<b>99.14% 有判分证据</b>（judged 690/696）。<br>
+<b>cline_eval（手动 pi 跑）</b>：51 cases，45 有 outputs，124 条 pi_debug_status 记录（多数 PENDING，pi backlog 较大）。<br>
+<b>通过率偏低解读</b>：当前 case 多为 B 档 synthesized（隐藏输入 B + 跨输入 guard + subprocess 真跑候选 + ≥8 独立断言），判分严格；10% 通过率说明 case 难度充足，符合「不是能跑通就算过」的设计目标。后续若持续 &lt;10%，按 §5 应先查 check() 误判（ref 是否真能 PASS）。
+</div>
+
+<h2>八、资产规模（survey · 11/09 全量重扫）</h2>
+<div class="kpis">
+<div class="kpi"><div class="n">698</div><div class="l">目标机数（全部有 EDA 命中）</div></div>
+<div class="kpi"><div class="n">5999</div><div class="l">去重 session（mc≥1）</div></div>
+<div class="kpi"><div class="n">3024</div><div class="l">候选池（mc≥10）</div></div>
+<div class="kpi"><div class="n">2247</div><div class="l">mc≥30（旧口径）</div></div>
+<div class="kpi"><div class="n">317</div><div class="l">mc≥300（重度会话）</div></div>
+</div>
+<div class="note">
+<b>11/09 全量重扫</b>（EXP-FR1）：696/698 hosts reported，38082 rows，dedup 5999 sessions（+2103 vs 11/05 的 3896）。<b>根因</b>：11/05 扫描的 xargs 无 <code>exit 0</code>，ssh 遇不可达 host 返 255 → xargs abort，覆盖截到 ~42 hosts。修复后 698 台全覆盖。<br>
+<b>mc 阈值表</b>（用户 11/11 令 30→10）：mc≥10 = 3024 · mc≥15 = 2728 · mc≥20 = 2148 · mc≥30 = 2247。分 shard 未动过（mc≥10）：A 318 / B 39 / C 332 / D 252。
+</div>
+
+<h2>九、一周趋势（11_05 → 11_12）</h2>
+<table>
+<thead><tr><th>指标</th><th class="num">11_05</th><th class="num">11_12</th><th class="num">Δ</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td>累计用例数</td><td class="num">426</td><td class="num">1168</td><td class="num delta-up">+742</td><td>4 shard jsonl 合计</td></tr>
+<tr><td>覆盖域数</td><td class="num">13</td><td class="num">13</td><td class="num delta-flat">0</td><td>全覆盖，无新增域</td></tr>
+<tr><td>候选池口径</td><td>mc≥100</td><td>mc≥10</td><td class="delta-up">扩大</td><td>11/11 用户令阈值下调</td></tr>
+<tr><td>候选池总量</td><td class="num">696</td><td class="num">3024</td><td class="num delta-up">+2328</td><td>池扩大 4.3×</td></tr>
+<tr><td>trace 覆盖率</td><td class="num">22.4%</td><td class="num">29.7%</td><td class="num delta-up">+7.3pp</td><td>covered/池（口径不同，仅参考）</td></tr>
+<tr><td>断言闸门达标率</td><td class="num">0%</td><td class="num">~100%</td><td class="num delta-up">+100pp</td><td>21:5x 硬闸门落地后</td></tr>
+<tr><td>pi 评测样本</td><td class="num">—</td><td class="num">696</td><td class="num delta-up">+696</td><td>11/10 eval_triage batch</td></tr>
+<tr><td>pi 通过率</td><td class="num">—</td><td class="num">10.0%</td><td class="delta-flat">新</td><td>pass/(pass+fail)，目标 20-30%</td></tr>
+<tr><td>资产规模（去重 session）</td><td class="num">3896</td><td class="num">5999</td><td class="num delta-up">+2103</td><td>11/09 全量重扫修复 xargs abort</td></tr>
+</tbody>
+</table>
+
+<footer>
+<p>case_distribution_1112.html · 数据源：EDA-Flow-Bench/benchmarks/EDA-Eval-DesignFlow/{A,B,C,D}.jsonl + trace_ledger.py stats + eval_triage/run_batch_20261109_171201/triage_summary.json</p>
+<p>对照：case_distribution_1105（report_benchmark_11_05.html §二 评测用例盘点）</p>
+</footer>
+
+</div></body></html>
