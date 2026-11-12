@@ -1,0 +1,24 @@
+[incr-eval 02:12:34] === incr_eval R2317 start ===
+
+=== cline R2317 ===
+new instances: 2 ['django__django-13089', 'django__django-13109']
+[incr-eval 02:12:34] cline: merged 2 new patches -> predictions_cline-patched_new_R2317.json
+[incr-eval 02:12:34] cline: EVAL 2 instances -> run_id=verified_full_glm53_cline-patched_incr_R2317
+[incr-eval 02:14:42] cline: eval rc=0
+[incr-eval 02:14:42]   django__django-13089: RESOLVED
+[incr-eval 02:14:42]   django__django-13109: RESOLVED
+[incr-eval 02:14:42] cline: cumulative n=304 resolved=230 failed=74 infra=0 -> eval_glm53_cline-patched.json
+[incr-eval 02:14:42] codex: 0 new instances, skip
+[incr-eval 02:14:42] opencode: 0 new instances, skip
+
+=== claude-code R2317 ===
+new instances: 1 ['django__django-15973']
+[incr-eval 02:14:42] claude-code: merged 1 new patches -> predictions_claude-code_new_R2317.json
+[incr-eval 02:14:42] claude-code: EVAL 1 instances -> run_id=verified_full_glm53_claude-code_incr_R2317
+[incr-eval 02:15:12] claude-code: eval rc=0
+[incr-eval 02:15:12]   django__django-15973: RESOLVED
+[incr-eval 02:15:12] claude-code: cumulative n=294 resolved=240 failed=52 infra=2 -> eval_glm53_claude-code.json
+[incr-eval 02:15:12] pi: 0 new instances, skip
+[incr-eval 02:15:12] hermes: 0 new instances, skip
+[incr-eval 02:15:12] deepseek: 0 new instances, skip
+[incr-eval 02:15:12] === incr_eval R2317 done: 3 instances, +3resolved +0failed +0infra ===
