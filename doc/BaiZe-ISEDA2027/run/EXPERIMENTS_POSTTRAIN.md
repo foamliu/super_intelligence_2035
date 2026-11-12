@@ -7849,24 +7849,24 @@ setsid bash -c "eval/run_batch.sh \
 
 - **两个并行 158-task eval 仍在运行**（无 final_report.json，code-gen 阶段未完成）
 
-#### 进度表（wake367 = 03:46）
+#### 进度表（wake368 = 03:58）
 
 | eval | GPU | model | code dirs | dirs w/ pyAether_code | code-gen rate | stats (S/F/T) | queue rem | elapsed | PID alive |
 |:--|:--:|:--|--:|--:|--:|:--|--:|--:|:--|
-| step_60 | 5 (:8097) | minicpm5-2b-sft-v39 (global_step_60) | 117/158 (74%) | 27 | 23% | 95/7/1 | 47 | ~92min | 953888 ✅ |
-| step_105 | 6 (:8096) | minicpm5-2b-sft-v39-final (global_step_105) | 99/158 (63%) | 37 | 37% | 78/4/2 | 66 | ~65min | 972225 ✅ |
+| step_60 | 5 (:8097) | minicpm5-2b-sft-v39 (global_step_60) | 130/158 (82%) | 33 | 28% | 108/7/1 | 42 | ~101min | 953888 ✅ |
+| step_105 | 6 (:8096) | minicpm5-2b-sft-v39-final (global_step_105) | 113/158 (72%) | 40 | 42% | 88/5/2 | 45 | ~74min | 972225 ✅ |
 
 - **stats 文件**（`~/eda_code_eval/<run>/stats/`）：`success`=cline exit 0（非 eval pass），`failure`=cline exit≠0，`timeout`=2500s 超时；实际 Pass@1 须等 run_eval.py 评分
-- **16 cline workers 活跃**（8 per eval），GPU5=95%util GPU6=85%util
-- **code-gen rate 对比**：step_105 (37%) > step_60 (23%) → final ckpt 代码生成能力优于 intermediate ckpt → v39 format collapse FIXED（vs v11v38 §L4.9 的 22.78%）
-- **代码质量抽查**（wake367，5 个样本）：
+- **16 cline workers 活跃**（8 per eval），GPU5=85%util GPU6=98%util
+- **code-gen rate 对比**（wake368）：step_105 (42%) > step_60 (28%) → final ckpt 代码生成能力显著优于 intermediate ckpt → v39 format collapse FIXED（vs v11v38 §L4.9 的 22.78%）
+- **代码质量抽查**（wake367，5 个样本，详见 daily-memories-posttrain/2026-11-13.md）：
   - step_60 `enforce_priority_limits.py`（056）：✅ 良好——proper import, correct API (getQueueName/getMaxJobNum/setMaxJobNum), 逻辑正确, docstring 完整
-  - step_60 `create_wrapped_cstring_list.py`（074）：❌ 差——docstring 是中文指令泄漏("PICK pyScript.CStringList.create 族"), API 误用 (CStringList.create() vs CStringList()), 过度简化
+  - step_60 `create_wrapped_cstring_list.py`（074）：❌ 差——docstring 是中文指令泄漏, API 误用 (CStringList.create() vs CStringList()), 过度简化
   - step_105 `generate_balanced_policies.py`（058）：⚠️ 中等——MdePlatOGEJobPolicy 构造正确, 但 setMisc API 可能不存在, 逻辑分支合理
-  - step_105 `check_library_access.py`（042）：❌ 差——dbOpenLib3X(lib=None, mode=None) 传 None 可疑, 返回值逻辑混乱 (ok=True→return True,ok where ok=True)
-  - step_105 `create_wrapped_cstring_list.py`（074, 同题对比）：❌ 过度工程化——CString((default_val,30,1,28,2)) tuple 构造器可能不存在, cstr.value 赋值可疑
-- **结论**：v39 SFT 修复了格式崩溃（code-gen rate↑），但**语义正确性仍不确定**——部分代码 API 误用或逻辑错误，需 run_eval.py 判定实际 Pass@1
+  - step_105 `check_library_access.py`（042）：❌ 差——dbOpenLib3X(lib=None, mode=None) 传 None 可疑, 返回值逻辑混乱
+  - step_105 `create_wrapped_cstring_list.py`（074, 同题对比）：❌ 过度工程化——CString tuple 构造器可能不存在, cstr.value 赋值可疑
+- **结论**：v39 SFT 修复了格式崩溃（code-gen rate↑ from 22.78% to 28-42%），但**语义正确性仍不确定**——部分代码 API 误用或逻辑错误，需 run_eval.py 判定实际 Pass@1
 - **对比 §L4.9**（v11v38 step_90, 0/158=0%, code-gen 仅 22.78%）：v39 format collapse FIXED，代码生成质量显著改善
-- **ETA**：step_60 ~41 tasks remaining（117/158, 8 workers），step_105 ~59 tasks remaining（99/158, 8 workers）→ 约 30-50min 后两 eval 完成 code-gen → run_eval.py 产出 final_report.json
+- **ETA**（wake368）：step_60 ~42 tasks remaining（130/158, 8 workers），step_105 ~45 tasks remaining（113/158, 8 workers）→ 约 27-46min 后两 eval 完成 code-gen → run_eval.py 产出 final_report.json
 - **下一步**：等 final_report.json 产出 → 记录 Pass@1 step_60 vs step_105 → 与 base 36% 对比 → 判定 SFT v39 配方是否有效 → 如 Pass@1>0% → 5-run eval
 
