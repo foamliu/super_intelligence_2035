@@ -7,14 +7,14 @@ WAITING: 0
 
 ## 进度快照
 
-- PHASE: posttrain-wake360（2026-11-13 R360: **v39 SFT smoke test PASS(format fixed)+full 158-task eval launched** — format collapse FIXED, code coherent, semantic errors remain）
-- 已完成: P3预备✅;P0✅;P1✅;P2✅;R1-R210✅;R280归档;wake281-357✅;R357✅(SFT诊断);R358✅(agentic语料重构2548条);R359✅(FSDP2修复+pretokenized训练);R360✅(smoke test 0/2 pass but format fixed+full eval launched)
-- 当前动作: wake360 R360:**v39 SFT step_60 smoke test+full eval**:①MCP server started on :18888(PID952370,all core tools ON) ②v39 step_60 served on GPU5:8097(minicpm5-2b-sft-v39,39138MiB) ③smoke test 2 tasks:0/2 pass BUT 0 parse failures(vs v11v38 117/158),2/2 assembled OK,code coherent(python imports+docstrings+func defs) ④format collapse CONFIRMED FIXED ⑤remaining failure=semantic(API usage hallucination,not format) ⑥full 158-task eval launched(PID953888,8 parallel,/tmp/v39_full_eval_run1.log) ⑦training step~85/105,loss~0.16-0.29,ETA~12min ⑧ckpts:20/40/60/80 saved
-- 下一步: ①等训练完成(~step 105)→serve final ckpt ②collect full eval run1→score→report Pass@1 ③用final ckpt重复eval ④汇总→commit posttrain eval: ⑤Phase3 RL待SFT配方验证
+- PHASE: posttrain-wake360（2026-11-13 R360: **SFT训练完成+format collapse FIXED+full eval running** — step_105 final ckpt saved, served on GPU6:8096; step_60 eval running on GPU5:8097）
+- 已完成: P3预备✅;P0✅;P1✅;P2✅;R1-R210✅;R280归档;wake281-357✅;R357✅(SFT诊断);R358✅(agentic语料重构2548条);R359✅(FSDP2修复+pretokenized训练);R360✅(SFT训练完成+smoke test+full eval launched+final ckpt served)
+- 当前动作: wake360 R360:**v39 SFT训练完成+eval进行中**:①SFT训练COMPLETED:step105/105,loss0.215,val_loss0.256,rc=0,完成@02:27:40 ②ckpts:20/40/60/80/100/105 saved at sft_surrogate_runs/minicpm5_agentic_v39_pretok/ ③MCP server on :18888(PID952370,all core tools ON) ④v39 step_60 served on GPU5:8097(minicpm5-2b-sft-v39) ⑤smoke test 2 tasks:0/2 pass BUT format collapse FIXED(0 parse failures vs v11v38 117/158,2/2 assembled OK,code coherent) ⑥remaining failure=semantic(API usage hallucination) ⑦full 158-task eval RUNNING on step_60(PID953888,8 parallel,~18/158 tasks done in ~42min,ETA~6h,/tmp/v39_full_eval_run1.log) ⑧final ckpt step_105 served on GPU6:8096(minicpm5-2b-sft-v39-final,PID962854,verified responding) ⑨GPU6/7 freed from training(3MiB each)
+- 下一步: ①等step_60 eval完成(~6h)→score→report Pass@1 ②用final ckpt(step_105)跑正式5-run eval on GPU6:8096 ③汇总→commit posttrain eval: ④Phase3 RL待SFT配方验证
 - 阻塞: BaiZe ckpt inaccessible(/nas_train not mounted);P3等pretrain ckpt;36.15磁盘满
-- 本轮新增产出: R360✅(smoke test results+full eval launch+MCP server start)
+- 本轮新增产出: R360✅(SFT训练完成+smoke test+full eval launched+final ckpt served)
 - 未完成指令: L4 2026-11-12✅pipeline全完成(all 0%);11:2x✅;17:10✅拆除;13:40 Phase2✅(eval 0%,根因已确诊)/Phase3 RL launch-ready待SFT配方验证;ckpt BLOCKED
-- git: super_intelligence_2035(pulled to dbaaa0f2f);本轮 commit pending(wake360)
+- git: super_intelligence_2035(pushed to 0a4178c14);本轮 commit pending(wake360 training completion)
 - 🔧 **SDPA patch**(wake328):verl fsdp_sft_trainer.py L199 `attn_implementation="flash_attention_2"`→`"sdpa"`;root cause:flash_attn crashes on CPU meta tensor during FSDP2 init→RANK0 segfault→RANK1 NCCL deadlock;backup `.bak.flash_attn`;venv重建后需重打此patch
 
 
@@ -26,7 +26,7 @@ WAITING: 0
 | 0-3 | 8099 | qwen3.8-27b | root SGLang Qwen3.8-27B | ~45GB/卡 | ✅ root 占用，不可动 |
 | 4 | 8098 | minicpm5-2b | vLLM MiniCPM5-2B（Phase1评测用,--max-model-len 65536 --enforce-eager --tool-call-parser minicpm5 **--enable-auto-tool-choice** --max-num-seqs 4） | 39.1GB | ✅ wake334 restarted(PID553793 was dead→new PID799523,+no_proxy env) |
 | 5 | 8097 | minicpm5-2b-sft-v39 | **vLLM SFT v39 ckpt serve**(wake360,global_step_60,--max-model-len 65536 --enforce-eager --tool-call-parser minicpm5 **--enable-auto-tool-choice** --max-num-seqs 4) | 39.1GB | ✅ wake360 UP(v39 post-SFT eval用,format collapse FIXED) |
-| 6 | — | — | **空闲**(SFT v11v38 converged wake331,global_step_90 saved,GPU freed) | 3 MiB | ⬜ freed(wake331) |
+| 6 | 8096 | minicpm5-2b-sft-v39-final | **vLLM SFT v39 final ckpt serve**(wake360,global_step_105,--max-model-len 65536 --enforce-eager --tool-call-parser minicpm5 **--enable-auto-tool-choice** --max-num-seqs 4,PID962854) | 39.2GB | ✅ wake360 UP(v39 final ckpt,step_105,post-SFT eval用) |
 | 7 | — | — | **空闲**(同GPU6,SFT converged) | 3 MiB | ⬜ freed(wake331) |
 
 > vLLM venv: `/tmp/vllm_venv/bin/python`（transformers 4.49.0, vLLM 0.7.3）；日志: `/tmp/vllm_gpu{5,6,7}.log`
