@@ -434,4 +434,4 @@
 1793927996511_kdjt3.messages.json	e0039602	hfeg0pkn002	55	digital	case	EDA-Eval-DesignFlow-ResultMapEntryRemover-001	2026-11-12 21:28	
 1793069585233_vi5wa.messages.json	e0039602	hfeg0pkn002	541	digital	case	EDA-Eval-DesignFlow-NetlistModSplice-001	2026-11-12 22:24	
 1793967043660_sbaad	zmzhang	hfeg0plg98	122	digital	case	EDA-Eval-DesignFlow-SignalFileXref-001	2026-11-12 22:58	
-1793762539682_2izm6	e0039602	hfeg0plg103	234	digital	claimed		2026-11-13 00:36	r441: netlist+verilog+drc+lvs digital LVS/DRC session
+1793762539682_2izm6	e0039602	hfeg0plg103	234	digital	case	EDA-Eval-DesignFlow-StdcellMatch-001	2026-11-13 01:04	r441: A-faithful stdcell similar-cell matcher (token-Jaccard), L2, k=14, 5 negs+3 fakes all FAIL, ref SELFTEST PASS
