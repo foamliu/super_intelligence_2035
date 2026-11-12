@@ -7,8 +7,8 @@
 <div class="info">
 <p><strong>模型</strong>：glm-5.3-flash（网关 HTTP 429(quota exhausted·predict stalled·~37min后reset)）</p>
 <p><strong>7 路</strong>：cline / codex / opencode / claude-code / pi / hermes / deepseek</p>
-<p><strong>生成时间</strong>：2026-11-12 23:59（R2124）</p>
-<p><strong>状态</strong>：predict 2113/3500=60.4%（7路alive·网关429(quota·stalled)·predict stalled）；eval 1731 resolved(0 true backlog·incr_eval R2124已完成)；TB-2.1 7路(100p/740t)</p>
+<p><strong>生成时间</strong>：2026-11-13 00:07（R2305）</p>
+<p><strong>状态</strong>：predict 2113/3500=60.4%（7路alive·网关429(quota·stalled)·predict stalled）；eval 1731 resolved(0 true backlog·incr_eval R2305已完成)；TB-2.1 7路(100p/740t)</p>
 </div>
 <div class="note"><p><strong>资源自检</strong>：CPU 33/224=15% ✅；内存 1.1Ti avail ✅；磁盘 /data 5.8T + / 352G ✅；网关 ⚠️ 429(quota·stalled)</p></div>
 
@@ -104,7 +104,7 @@
 <tr><td>opencode</td><td>498/500</td><td>2</td><td>56/天</td><td>3/天</td><td>~0天(≈11-13)</td></tr>
 <tr><td>claude-code</td><td>283/500</td><td>217</td><td>46/天</td><td>56/天</td><td>~5天(≈11-17)</td></tr>
 <tr><td>pi</td><td>255/500</td><td>245</td><td>45/天</td><td>42/天</td><td>~5天(≈11-18)</td></tr>
-<tr><td>hermes</td><td>478/500</td><td>22</td><td>50/天</td><td>65/天</td><td>~0天(≈11-13)</td></tr>
+<tr><td>hermes</td><td>478/500</td><td>22</td><td>50/天</td><td>64/天</td><td>~0天(≈11-13)</td></tr>
 <tr><td>deepseek</td><td>175/500</td><td>325</td><td>16/天</td><td>0/天</td><td>DONE(500attempted,empty=能力,今日0产出)</td></tr>
 </table>
 <div class="note"><p><strong>复算方法</strong>：ETA = 剩余题数 ÷ 3日平均速率(由 predictions_glm53/ 文件 mtime 统计)。瓶颈=剩余最多且速率最低的活跃路。DONE=该路已 attempt 500 题、空 patch=能力差(不重启)。网关 429 会降低有效速率；当前网关429(quota·stalled)。复算命令：<code>cd swebench_verified_full/predictions_glm53 &amp;&amp; for r in cline-patched codex opencode claude-code pi hermes deepseek-harness; do n=$(ls ${r}__*.json|wc -l); echo "$r: $n/500 remaining=$((500-n))"; done</code></p></div>
@@ -112,11 +112,11 @@
 <h2>10. 后续计划</h2>
 <div class="info"><ol>
 <li>predict 7路推进至500(当前2113/3500=60.4%,网关429(quota·stalled)·predict stalled)</li>
-<li>eval 1731 resolved(0 true backlog)·新predict后增量eval(R2124: incr_eval已完成·待新predict累积)</li>
+<li>eval 1731 resolved(0 true backlog)·新predict后增量eval(R2305: incr_eval已完成·待新predict累积)</li>
 <li>TB-2.1: 7路(100p/740t),领先: pi 36p(done)，opencode 35p(done)，deepseek 11p(done)，cline 10p(done)，hermes 7p(done)，codex 1p(done)</li>
 <li>网关200稳定后各路predict继续推进至500→里程碑报告</li>
 </ol></div>
 
 <hr><p style="text-align:center;color:#7f8c8d;font-size:0.9em">
-BaiZe Harness · R2124 · 2026-11-12 23:59<br>glm-5.3-flash · SWE-bench Verified 500 + TB-2.1 89 · 7-way · 报告正文一律写 cline
+BaiZe Harness · R2305 · 2026-11-13 00:07<br>glm-5.3-flash · SWE-bench Verified 500 + TB-2.1 89 · 7-way · 报告正文一律写 cline
 </p></body></html>
