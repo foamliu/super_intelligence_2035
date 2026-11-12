@@ -1346,3 +1346,7 @@ peek:					parked		2026-11-10 23:22	peek: consultation verdi-fsdb-warning-paste
 1792397227578_q4d8h					parked		2026-11-12 14:05	peeked-r434:not-clean-B-produce
 1792548283238_of6ff					parked		2026-11-12 14:05	peeked-r434:not-clean-B-produce
 1792630583637_kjibr					parked		2026-11-12 14:05	peeked-r434:not-clean-B-produce
+1789993978842_q63ux	yiz	hfeg0pgn145	248	spice_sim	parked		2026-11-12 14:29	peeked-r435:waveform-toggle-read-ncsim-trn-not-B-produce
+1793268873755_cwq7f	e02141	hfeg0pkn001	698	characterization	parked		2026-11-12 14:29	peeked-r435:sentaurus-tcad-deck-study-QA-not-B-produce
+1792564968145_q16oz	t0002801	hfeg0plg99	102	spice_sim	parked		2026-11-12 14:31	peeked-r435:waveform-image-merge-iwave-not-B-produce
+1790236401918_27c6f	jason17w	hfeg0pnd002	187	spice_sim	parked		2026-11-12 14:31	peeked-r435:ddr-lpddr-regression-run-verify-not-B-produce
