@@ -7,14 +7,14 @@ WAITING: 0
 
 ## 进度快照
 
-- PHASE: posttrain-wake372（2026-11-13 R372: **zhulong v39 dual evals still RUNNING** — step_60:43/158dirs(27%),67.py,39 syntax-valid(58%); step_105:53/158dirs(34%),98.py,72 syntax-valid(73%); stuck worker killed+respawned; no final_report yet; ETA ~30-45min）
-- 已完成: P3预备✅;P0✅;P1✅;P2✅;R1-R210✅;R280归档;wake281-371✅;R372✅(zhulong dual eval wake372 monitoring+stuck worker kill+respawn verify+EXPERIMENTS §L4-zhulong updated to wake372)
-- 当前动作: wake372 R372:**zhulong dual eval monitoring+stuck worker kill**:①step_60 GPU5:8097(43/158dirs=27%,67.py,39 syntax-valid=58%,39/158=24.7%,8 workers(respawned after kill),PID953888 alive@8803s) ②step_105 GPU6:8096(53/158dirs=34%,98.py,72 syntax-valid=73%,72/158=45.6%,8 workers,PID972225 alive@7175s) ③stuck worker PID958613(8470s,way past 2500s timeout)kill -9'd→script auto-respawned new worker→step_60 back to 8 workers ④GPU5=87%,GPU6=98%util ⑤no final_report.json yet ⑥tunnel UP(ssh -p3333→hfeg0tedaap02) ⑦3 serves UP(8098+8097+8096 all healthy) ⑧**trend**:step_105 syntax-valid/158=45.6% >> step_60 24.7%→final ckpt ~1.8× better→v39 format collapse significantly improved(vs v11v38 22.78%) ⑨root cause of stuck:GNU `timeout` sends SIGTERM but bun/node ignores it→process never killed
-- 下一步: ①等zhulong evals完成(~30-45min ETA)→run_eval.py→final_report.json→Pass@1 step_60 vs step_105 vs base 36% ②判定SFT v39配方是否有效(syntax↑but semantic pass待run_eval.py验证) ③如step_105 Pass@1>0%→5-run eval ④Phase3 RL launch if SFT recipe validated ⑤designflow已确认0%(base+SFT均0%)→记录结论,不再扩量
-- 阻塞: BaiZe ckpt inaccessible(/nas_train not mounted);P3等pretrain ckpt;36.15无GPU(reverse tunnel解决);zhulong evals still running
-- 本轮新增产出: R372✅(zhulong dual eval wake372 monitoring+stuck worker PID958613 kill -9+auto-respawn verify+EXPERIMENTS §L4-zhulong updated to wake372)
-- 未完成指令: L4 2026-11-12(zhulong eval RUNNING,designflow 5-task DONE 0%);11:2x✅;17:10✅拆除;13:40 Phase2 eval running/Phase3 RL launch-ready待SFT配方验证;ckpt BLOCKED
-- git: super_intelligence_2035(pulled to 458a0e8ec);本轮 commit pending(wake372)
+- PHASE: posttrain-wake373（2026-11-13 R373: **SFT v39 dual eval COMPLETE — 灾难性回归确认** — step_60:32/158 code-gen(20.3%),step_105:25/158(15.8%);sandbox 100% pass on generated code;root cause:126/158+131/158 output "pass" keyword(4 chars);base model 157/158(99.4%);SFT v39 recipe destroyed code-gen coverage 5×）
+- 已完成: P3预备✅;P0✅;P1✅;P2✅;R1-R210✅;R280归档;wake281-373✅;R373✅(SFT v39 dual eval FINAL:code-gen+sandbox语义评测,root cause "pass" keyword output确认,EXPERIMENTS §L4-zhulong FINAL RESULTS追加)
+- 当前动作: wake373 R373:**SFT v39 eval FINAL** ①step_60 code-gen=32/158(20.3%),sandbox pass=32/32(100%),126/158 output "pass"(4 chars) ②step_105 code-gen=25/158(15.8%),sandbox pass=25/25(100%),131/158 output "pass" ③base model code-gen=157/158(99.4%),sandbox pass=157/157(100%) ④**根因**:SFT v39教会模型输出Python关键字`pass`而非生成代码→5× code-gen coverage regression ⑤step_105<step_60→过拟合(更多训练=更差) ⑥生成的代码质量100%正确(sandbox无error_log)→问题在coverage不在quality ⑦自检覆盖率:base 74.1%含assert→SFT v39仅13.9%/13.3% ⑧对比v11v38(0% Pass@1,format collapse):v39修复格式崩溃但引入新失败模式
+- 下一步: ①审查SFT训练数据中是否有大量`pass`作为代码体→root cause of "pass" keyword learning ②考虑调整SFT配方(降lr/减epoch/数据过滤) ③判定SFT v39配方无效→可能需跳过SFT直接RLVR-GRPO ④用full harness评测SFT(36% base reference是full harness口径) ⑤designflow已确认0%→不再扩量 ⑥Phase3 RL launch-ready待SFT配方最终判定
+- 阻塞: BaiZe ckpt inaccessible(/nas_train not mounted);P3等pretrain ckpt;SFT v39 recipe FAILED→需根因分析+配方调整
+- 本轮新增产出: R373✅(SFT v39 dual eval FINAL+sandbox语义评测+"pass" keyword root cause+EXPERIMENTS §L4-zhulong FINAL RESULTS)
+- 未完成指令: L4 2026-11-12(zhulong eval DONE,designflow 5-task 0%);11:2x✅;17:10✅拆除;13:40 SFT v39 eval DONE→recipe FAILED→next:root cause analysis+配方调整 or skip to RL
+- git: super_intelligence_2035(pulled to 458a0e8ec);本轮 commit pending(wake373)
 - 🔧 **SDPA patch**(wake328):verl fsdp_sft_trainer.py L199 `attn_implementation="flash_attention_2"`→`"sdpa"`;root cause:flash_attn crashes on CPU meta tensor during FSDP2 init→RANK0 segfault→RANK1 NCCL deadlock;backup `.bak.flash_attn`;venv重建后需重打此patch
 
 

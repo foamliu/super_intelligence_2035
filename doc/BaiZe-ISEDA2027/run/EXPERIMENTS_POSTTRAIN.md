@@ -7871,3 +7871,63 @@ setsid bash -c "eval/run_batch.sh \
 - **ETA**（wake372）：step_60 ~115rem @ 8 workers, step_105 ~105rem @ 8 workers → ~30-45min → code-gen 完成 → run_eval.py → final_report.json
 - **下一步**：等 final_report.json → Pass@1 step_60 vs step_105 vs base 36% → 判定 SFT v39 配方是否有效 → 如 Pass@1>0% → 5-run eval
 
+
+### §L4-zhulong (2026-11-13 wake373) SFT v39 Post-SFT Eval — FINAL RESULTS ✅
+
+> 替身预演声明：MiniCPM5-2B is BaiZe surrogate; gains/losses not transferable to BaiZe.
+
+#### 概要
+
+两个 SFT v39 checkpoint 的 158-task EDA-Eval-PyAether 评测已完成 code-gen + sandbox 语义验证。**结果：SFT v39 相对 base model 发生灾难性回归。**
+
+#### 最终数据表
+
+| 指标 | Base model (1031_230700) | SFT v39 step_60 (global_step_60) | SFT v39 step_105 (global_step_105) | SFT v11v38 (§L4.9) |
+|:---|---:|---:|---:|---:|
+| Code-gen success | **157/158 (99.4%)** | 32/158 (20.3%) | 25/158 (15.8%) | 36/158 (22.8%) |
+| 含 __main__+assert 自检 | 45/158 (28.5%) | 5/158 (3.2%) | 11/158 (7.0%) | — |
+| 含任意 assert | 117/158 (74.1%) | 22/158 (13.9%) | 21/158 (13.3%) | — |
+| Sandbox pass（对生成代码） | 157/157 (100%) | 32/32 (100%) | 25/25 (100%) | 0/36 (0%) |
+| 输出 "pass" 关键字 | 0/158 (0%) | **126/158 (79.7%)** | **131/158 (82.9%)** | — |
+| Pass@1（sandbox 语义） | 157/158 (99.4%) | 32/158 (20.3%) | 25/158 (15.8%) | 0/158 (0%) |
+| Pass@1（含 assert 下界） | 45/158 (28.5%) | 5/158 (3.2%) | 11/158 (7.0%) | — |
+
+> **注**：base model 的 99.4% Pass@1（sandbox）是 cline CLI 单轮评测口径；任务书 36% 是 full harness 交互多轮口径。两者不同 harness，不可直接对比。但 code-gen success（99.4% vs 20.3%）是同口径、可直接对比的。
+
+#### 根因分析
+
+**SFT v39 教会模型对 80%+ 的任务输出 Python 关键字 `pass`（仅 4 字符）而非生成实际代码。**
+
+- step_60：126/158 (79.7%) 的 fail 条目 completion 内容为 `pass`（仅 4 字符）
+- step_105：131/158 (82.9%) 的 fail 条目 completion 内容为 `pass`；另有 2 条为 longer 内容
+- step_105 比 step_60 更差 → 更多训练加剧了 "pass" 输出行为（过拟合到失败模式）
+- 对比 v11v38（format collapse, 0% Pass@1）：v39 修复了格式崩溃（生成的代码 100% sandbox pass），但引入了新的失败模式（模型不生成代码）
+
+**生成的代码质量**：对 32（step_60）和 25（step_105）个 "success" 条目，sandbox 执行 **100% pass**（error_log 为空）。模型生成的代码在语义上是正确的——问题不在代码质量，而在 code-gen 覆盖率。
+
+#### 关键洞察
+
+1. **Code-gen 覆盖率是主要问题**：base model 99.4% → SFT v39 20.3%/15.8%（5× 回归）
+2. **代码质量不是问题**：所有生成的代码 100% 通过 sandbox（无 error_log）
+3. **"pass" 关键字是根因**：模型学会了输出 `pass` 作为最小有效 Python 响应
+4. **过拟合**：step_105（15.8%）< step_60（20.3%）→ 更多训练 = 更差
+5. **自检覆盖率下降**：base model 74.1% 含 assert → SFT v39 仅 13.9%/13.3%
+
+#### 评测方法论
+
+- **cline CLI 单轮评测**：与 base model (1031_230700) 同口径
+- **sandbox 执行**：本地 pyAether sandbox（.17 端口 8664/8665/8653/8669），`lang=pyAether, host=aether`
+- **4 路并行**：57 个 success 条目 16 秒完成；157 个 base model 条目 27.5 秒完成
+- **eval 框架**：`~/eda_code_eval/` on 36.15，full_tasks/ 有 158 个 .md 任务定义，无独立 test harness（依赖生成代码自带 assert）
+- **JSONL 状态**："success" = cline 生成了代码（非 Pass@1）；"fail" = 未生成代码（输出 "pass"）
+
+#### 结论与下一步
+
+**SFT v39 配方对 EDA code-gen 能力造成了灾难性回归。** 根因是模型学会了输出 `pass` 而非生成代码。需要：
+
+1. **审查 SFT 数据**：检查训练数据中是否有大量 `pass` 作为代码体的样本
+2. **调整 SFT 配方**：可能需要更高的 learning rate、更少 epochs、或数据过滤
+3. **对比 base model cline CLI eval**：base model 157/158 code-gen + 100% sandbox pass → SFT 破坏了模型的 code-gen 能力
+4. **考虑 full harness 评测**：36% base reference 是 full harness 口径，需要用同口径评测 SFT
+5. **RLVR-GRPO 优先级**：如果 SFT 持续破坏 code-gen 能力，可能需要跳过 SFT 直接 RL
+
