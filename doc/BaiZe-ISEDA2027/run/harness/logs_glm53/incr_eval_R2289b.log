@@ -1,0 +1,35 @@
+[incr-eval 20:22:52] === incr_eval R2289b start ===
+
+=== cline R2289b ===
+new instances: 2 ['astropy__astropy-14995', 'django__django-10097']
+[incr-eval 20:22:52] cline: merged 2 new patches -> predictions_cline-patched_new_R2289b.json
+[incr-eval 20:22:52] cline: EVAL 2 instances -> run_id=verified_full_glm53_cline-patched_incr_R2289b
+[incr-eval 20:29:43] cline: eval rc=0
+[incr-eval 20:29:43]   astropy__astropy-14995: RESOLVED
+[incr-eval 20:29:43]   django__django-10097: FAILED
+[incr-eval 20:29:43] cline: cumulative n=299 resolved=222 failed=76 infra=1 -> eval_glm53_cline-patched.json
+
+=== codex R2289b ===
+new instances: 1 ['pytest-dev__pytest-5809']
+[incr-eval 20:29:43] codex: merged 1 new patches -> predictions_codex_new_R2289b.json
+[incr-eval 20:29:43] codex: EVAL 1 instances -> run_id=verified_full_glm53_codex_incr_R2289b
+[incr-eval 20:30:15] codex: eval rc=0
+[incr-eval 20:30:15]   pytest-dev__pytest-5809: RESOLVED
+[incr-eval 20:30:15] codex: cumulative n=129 resolved=82 failed=47 infra=0 -> eval_glm53_codex.json
+[incr-eval 20:30:15] opencode: 0 new instances, skip
+
+=== claude-code R2289b ===
+new instances: 4 ['django__django-11885', 'django__django-12304', 'django__django-12308', 'django__django-12325']
+[incr-eval 20:30:15] claude-code: merged 4 new patches -> predictions_claude-code_new_R2289b.json
+[incr-eval 20:30:15] claude-code: EVAL 4 instances -> run_id=verified_full_glm53_claude-code_incr_R2289b
+[incr-eval 20:32:03] claude-code: eval rc=0
+[incr-eval 20:32:03]   django__django-11885: RESOLVED
+[incr-eval 20:32:03]   django__django-12304: RESOLVED
+[incr-eval 20:32:03]   django__django-12308: RESOLVED
+[incr-eval 20:32:03]   django__django-12325: RESOLVED
+[incr-eval 20:32:03] claude-code: cumulative n=276 resolved=222 failed=52 infra=2 -> eval_glm53_claude-code.json
+
+=== pi R2289b ===
+new instances: 1 ['matplotlib__matplotlib-24177']
+[incr-eval 20:32:04] pi: merged 1 new patches -> predictions_pi_new_R2289b.json
+[incr-eval 20:32:04] pi: EVAL 1 instances -> run_id=verified_full_glm53_pi_incr_R2289b

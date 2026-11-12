@@ -1,0 +1,6 @@
+[incr-eval 20:20:18] === incr_eval R2289 start ===
+
+=== cline R2289 ===
+new instances: 2 ['astropy__astropy-14995', 'django__django-10097']
+[incr-eval 20:20:18] cline: merged 2 new patches -> predictions_cline-patched_new_R2289.json
+[incr-eval 20:20:18] cline: EVAL 2 instances -> run_id=verified_full_glm53_cline-patched_incr_R2289
