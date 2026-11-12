@@ -4,11 +4,11 @@ WAITING: 0
 
 ## 📊 进度快照
 
-PHASE:        R2276 监控轮·自检PASS·incr_eval 0NEW(eval caught up·全路NEW_real_uneval=0)·predict 4/7 alive·双报告R2275 fresh(无变化不REGEN)
-已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5 R1785-R2276·TB4 0passed(能力)·TB-2.1 oracle5/5·R1789 eval 7/7DONE·R1804双报告交付·R1969-R2275 incr_eval+监控+报告·R2276 监控轮(自检PASS·incr_eval 0NEW eval caught up·cline285/codex124·总resolved 1652不变·双报告R2275 fresh)
-当前动作:     R2276-manual(交互式手动wake): 自检PASS(CPU load44/224~20%·无harness>8000%·MEM available1075G)+gateway functional(agi-gw/9092/9093 /models=200)+predict 4/7 alive(cline run sympy-24066·codex run pylint-7277·pi run matplotlib-20826·cc alive·opencode DONE495)+incr_eval R2276(0NEW·全路NEW_real_uneval=0·eval caught up)+eval(总resolved=1652不变·cline216/285·codex80/124·opencode411/495·cc214/276·pi183/249·hermes407/449·dsh141/175)+双报告R2275 fresh(无变化不REGEN)+cline C4(285f/280r/216res/5empty·2新empty=sympy-24066/23950=能力差·pass216/280real=77.1%·失败top1=能力差)+磁盘(/data 5.8T 18%·/ 351G 4%)+research日报11-12已查(advisory·判分可信参考=非新指令)+未完成指令:有(§10:10+§22:4x)·W:0
-下一步:       ①本轮commit MEMORY心跳+push ②predict向500推进(4路alive:cline285/cc276/pi249/codex124·opencode495 DONE·hermes500attempted DONE·dsh500attempted DONE) ③新real patch→incr_eval拾取→报告更新 ④各路满500后§22:4x两基准7路全交付 ⑤dsh 500attempted DONE·325empty=能力·9093已200·不重启[CLOSED] ⑥hermes 500attempted DONE·51empty=能力·不重启[CLOSED] ⑦TB-2.1推进
-阻塞:         <各路尚未满500:cline285/cc276/pi249/codex124·§22:4x未全交付·hermes+dsh已500attempted DONE>
+PHASE:        R2277 监控轮·自检PASS·incr_eval 0NEW(eval caught up·全路NEW_real_uneval=0)·predict 4/7 alive·双报告R2275 fresh(无变化不REGEN)
+已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5 R1785-R2277·TB4 0passed(能力)·TB-2.1 oracle5/5·R1789 eval 7/7DONE·R1804双报告交付·R1969-R2276 incr_eval+监控+报告·R2277 监控轮(自检PASS·incr_eval 0NEW eval caught up·cline285/codex124/pi250·总resolved 1652不变·双报告R2275 fresh)
+当前动作:     R2277-manual(交互式手动wake): 自检PASS(CPU load34/224~15%·无harness>8000%·MEM available1.1TB)+gateway functional(9092/9093 /models=200·predict进程active)+predict 4/7 alive(cline run sympy-24213·codex run pylint-7277·pi run matplotlib-20859·cc alive·opencode DONE495)+incr_eval R2277(0NEW·全路NEW_real_uneval=0·新pi file matplotlib-20826=empty patch)+eval(总resolved=1652不变·cline216/290·codex80/125·opencode411/495·cc214/267·pi183/248·hermes407/453·dsh141/175)+双报告R2275 fresh(无变化不REGEN)+cline C4(285f/280r/216res/5empty·pass216/280real=77.1%·失败top1=能力差)+磁盘(/data 5.8T 18%·/ 351G 4%)+research日报11-12已查(advisory·判分可信/pass^k/配对实验=参考非新指令)+未完成指令:有(§10:10+§22:4x)·W:0
+下一步:       ①本轮commit MEMORY心跳+push ②predict向500推进(4路alive:cline285/cc276/pi250/codex124·opencode495 DONE·hermes500attempted DONE·dsh500attempted DONE) ③新real patch→incr_eval拾取→报告更新 ④各路满500后§22:4x两基准7路全交付 ⑤dsh 500attempted DONE·325empty=能力·9093已200·不重启[CLOSED] ⑥hermes 500attempted DONE·51empty=能力·不重启[CLOSED] ⑦TB-2.1推进
+阻塞:         <各路尚未满500:cline285/cc276/pi250/codex124·§22:4x未全交付·hermes+dsh已500attempted DONE>
 ERROR_COUNT:  0
  体积: TASK=21KB / MEMORY=30KB
  cline专项小结: predict_glm53=285files/280real/216resolved/5empty(gateway functional产real·C3 resume fix R1733仍有效)·C1:280real/285total(可复算:ls predictions_glm53/cline-patched__*.json|wc -l→285)·C2:failed=能力66/50.4%·429 44/33.6%·超时15/11.5%·5xx 1/0.8%(R2233分类)·C3:empty=5(2新empty=sympy-24066/23950·能力差·非resume bug·gateway functional)·C5:报告R2275(cline special·216/280real=77.1%)·失败top1=能力差(real patch但tests fail)·opencode411/495=83.0%·gap=能力差
@@ -17,7 +17,9 @@ ERROR_COUNT:  0
 
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 ### 本唤醒流水
-> [16:09] R2276-manual(交互式手动wake): 自检PASS(CPU load44/224~20%·无harness>8000%·MEM available1075G)+gateway functional(agi-gw/9092/9093 /models=200)+predict 4/7 alive(cline run sympy-24066·codex run pylint-7277·pi run matplotlib-20826·cc alive·opencode DONE495)+incr_eval R2276(0NEW·全路NEW_real_uneval=0·eval caught up)+eval(总resolved=1652不变·cline216/285·codex80/124·opencode411/495·cc214/276·pi183/249·hermes407/449·dsh141/175)+双报告R2275 fresh(无变化不REGEN)+cline C4(285f/280r/216res/5empty·2新empty=sympy-24066/23950=能力差·pass216/280real=77.1%·失败top1=能力差)+磁盘(/data 5.8T 18%·/ 351G 4%)+research日报11-12已查(advisory·判分可信参考=非新指令)+未完成指令:有(§10:10+§22:4x)·W:0
+> [16:20] R2277-manual(交互式手动wake): 自检PASS(CPU load34/224~15%·无harness>8000%·MEM available1.1TB)+gateway functional(9092/9093 /models=200·predict进程active)+predict 4/7 alive(cline run sympy-24213·codex run pylint-7277·pi run matplotlib-20859·cc alive·opencode DONE495)+incr_eval R2277(0NEW·全路NEW_real_uneval=0·新pi file matplotlib-20826=empty patch)+eval(总resolved=1652不变·cline216/290·codex80/125·opencode411/495·cc214/267·pi183/248·hermes407/453·dsh141/175)+双报告R2275 fresh(无变化不REGEN)+cline C4(285f/280r/216res/5empty·pass216/280real=77.1%·失败top1=能力差)+磁盘(/data 5.8T 18%·/ 351G 4%)+research日报11-12已查(advisory·判分可信/pass^k/配对实验=参考非新指令)+未完成指令:有(§10:10+§22:4x)·W:0
+
+> 📦 R2276 流水已归档 → daily-memories-harness/2026-11-12.md。结论：R2276 监控轮(自检PASS·incr_eval 0NEW·总resolved 1652不变·双报告R2275 fresh)。需要时再读。
 
 > 📦 R2275 流水已归档 → daily-memories-harness/2026-11-12.md。结论：R2275 监控轮(自检PASS·incr_eval 0NEW eval caught up·hermes+dsh 500attempted DONE·双报告REGEN R2275)。需要时再读。
 
@@ -27,7 +29,7 @@ ERROR_COUNT:  0
 
 > 📦 R2269-R2270 流水已归档 → daily-memories-harness/2026-11-12.md。结论：R2269 incr_eval 2inst(+2resolved:cc sympy23824+pi matplotlib13989)·R2270 incr_eval 2inst(+2resolved:cline sympy22914+sympy23262)·总resolved 1643→1647·双报告regen。需要时再读。
 
-> [14:1x] R2268-manual(交互式手动wake): 自检PASS(CPU load32/224~14%·无harness>8000%·MEM available1081G)+gateway 200(agi-gateway/9092/9093全functional)+predict 4/7 alive(codex run pylint-6386·cline run sympy-22714·cc run sympy-23413·pi run matplotlib-13989·opencode DONE495·hermes DEAD449·dsh DEAD175)+incr_eval R2268(2inst:+2resolved:cc sympy22456 RESOLVED+pi django7530 RESOLVED·DONE)+eval(总resolved=1643↑2·cline211/282·codex79/117·opencode411/495·cc212/265·pi182/246·hermes407/453·dsh141/175)+双报告REGENERATED(R2268·7way 10213B·cline special 8654B)+cline C4(278f/275r/211res/3empty·pass211/275real=76.7%·失败top1=能力差)+磁盘(/data 5.8T 18%·/ 352G 4%)+未完成指令:有(§10:10+§22:4x)·W:0
+> 📦 R2268 流水已归档 → daily-memories-harness/2026-11-12.md。结论：R2268 incr_eval 2inst(+2resolved:cc sympy22456+pi django7530)·总resolved 1641→1643·双报告REGEN。需要时再读。
 
 > [13:5x] R2267-manual(交互式手动wake): 自检PASS(CPU load34/224~15%·无harness>8000%·MEM available1082G)+gateway 200(agi-gateway/9092/9093全functional)+predict 4/7 alive(codex run pylint-4970·cline run sympy-22456·cc run sympy-22080·pi run django-17087·opencode DONE495·hermes DEAD449·dsh DEAD175)+incr_eval R2267(4inst:+3resolved+1failed:cc sympy21847 RESOLVED+cc sympy21930 FAILED+pi django17084 RESOLVED+pi django17087 RESOLVED·DONE)+eval(总resolved=1641↑3·cline211/282·codex79/117·opencode411/495·cc211/264·pi181/245·hermes407/453·dsh141/175)+双报告REGENERATED(R2267·7way 10300B·cline special 8643B)+cline C4(276f/275r/211res/1empty·pass211/275real=76.7%·失败top1=能力差)+磁盘(/data 5.8T 18%·/ 352G 4%)+未完成指令:有(§10:10+§22:4x)·W:0
 
