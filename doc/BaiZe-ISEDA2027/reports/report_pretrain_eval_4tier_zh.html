@@ -38,11 +38,11 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
 <div class="wrap">
 <header class="hero">
   <h1>BaiZe 2B 预训练 · 四层能力评测报告</h1>
-  <div class="sub">Mamba2-hybrid 2.22B · S1 生产 run（iter 181.0k+/700k, ~758B tokens）</div>
+  <div class="sub">Mamba2-hybrid 2.22B · S1 生产 run（iter 181.2k+/700k, ~761B tokens）</div>
   <div class="meta">
     <span>📅 2026-11-13</span>
     <span>🏗 Mamba2-hybrid 2.22B</span>
-    <span>🔥 训练 iter≈181.0k / 700k(25.9%) · step ~7093ms(<7.4s✅) · loss 2.019 · 0NaN/0skip · ckpt 180k已落盘(180k eval:llama-server+lm_eval运行中PID1673374+1682068,port8191,-t4,nice19) · lr-decay-iters=0(stable段) · GPU 8×97-100%/75GB · ✅ 论文§4.6已刷新iter177k+PDF 0err</span>
+    <span>🔥 训练 iter≈181.2k / 700k(25.9%) · step ~7048ms(<7.4s✅) · loss 2.024 · 0NaN/0skip · ckpt 180k已落盘(180k eval:llama-server+lm_eval运行中~45min,PID1673374+1682068,port8191,-t4,nice19) · lr-decay-iters=0(stable段) · GPU 8×100%/75GB · ✅ 论文§4.6已刷新iter177k+PDF 0err</span>
     <span>📊 L1: 17 ckpt ✅(160k=58.13%峰值,170k=57.75%) · 180k评测运行中(llama-server+lm_eval active,8集limit=100) | L2: 6/6完成 ✅ · 🟢<b>HF transformers五重验证全部完成</b>→llama.cpp SSM bug是0%主因 · <b>🟢HumanEval HF=3/20=15.0%✅</b> + <b>🟢GSM8K HF=1/10=10.0%✅</b> + <b>🟢MBPP HF=1/20=5.0%✅</b> + <b>🟡BBH HF=1/30=3.3%✅</b> + <b>🔴MATH HF=0/10=0.0%✅</b> vs llama.cpp全0% · MMLU=23.16%(≈随机) | L3: 🔴TB 0/2(无GPU做vLLM重试,.17 SSH不通) | L4: 🔄<b>HANDOFF→post-train</b>(2026-11-12用户令·只读引用post-train出数)</span>
   </div>
   <div style="margin-top:12px;font-size:12.5px;background:rgba(0,0,0,.18);border-radius:8px;padding:8px 12px;opacity:.95">
@@ -551,7 +551,7 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
 </div>
 
 <footer>
-  BaiZe pretrain 线 · 四层能力评测报告 · 2026-11-13 00:31 更新(#2077 · 监控巡检轮 · 训练健康iter181.0k/700k(25.9%) step7093ms<7.4s✅ loss2.019 · 180k eval:llama-server(PID1673374 port8191 -t4 nice19)+lm_eval(PID1682068)运行中·8集limit=100·output待写入 · L1 17/17(10k-170k,160k峰值58.13%) · L2 🟢HF五重验证全部完成(HumanEval=15.0%✅+GSM8K=10.0%✅+MBPP=5.0%✅+BBH=3.3%✅+MATH=0.0%✅ vs llama.cpp全0%,MMLU=23.16%)→llama.cpp SSM bug是L2生成0%主因 · L3 TB 0/2(无GPU做vLLM重试) · L4 🔄HANDOFF→post-train(2026-11-12用户令·只读引用post-train出数)) · 评测数字仅用于训练监控，不进论文正文
+  BaiZe pretrain 线 · 四层能力评测报告 · 2026-11-13 00:55 更新(#2078 · 监控巡检轮 · 训练健康iter181.2k/700k(25.9%) step7048ms<7.4s✅ loss2.024 · 180k eval:llama-server(PID1673374 port8191 -t4 nice19)+lm_eval(PID1682068)运行中~45min·8集limit=100·output待写入 · L1 17/17(10k-170k,160k峰值58.13%) · L2 🟢HF五重验证全部完成(HumanEval=15.0%✅+GSM8K=10.0%✅+MBPP=5.0%✅+BBH=3.3%✅+MATH=0.0%✅ vs llama.cpp全0%,MMLU=23.16%)→llama.cpp SSM bug是L2生成0%主因 · L3 TB 0/2(无GPU做vLLM重试) · L4 🔄HANDOFF→post-train(2026-11-12用户令·只读引用post-train出数)) · 评测数字仅用于训练监控，不进论文正文
 </footer>
 </div>
 </body>
