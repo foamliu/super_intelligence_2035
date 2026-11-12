@@ -6099,3 +6099,89 @@ wake311 启动的 full static eval（PID 554362）仍在后台运行。本轮唤
 - 后台进程：PID 554362（**已完成，不在进程列表**）
 - 分析脚本：`/tmp/full_analysis_r316.py`（产出本节所有数字）
 - 无伪造：所有数据为真实 vLLM API 调用输出，分析由 Python json 完成。
+
+---
+
+## §R317 (2026-11-12 wake317) Qwen3.8-27B Static Eval COMPLETE (113/113): 3-Model Baseline Comparison + API Knowledge Universal Bottleneck Finding
+
+> 续 R316（MiniCPM5-2B base vs SFT 静态评测完成）→ 本轮新增 Qwen3.8-27B 静态评测，完成三模型基线对比。
+> 沙盒 10.129.32.75:8664 仍 BLOCKED（第 119 次确认）→ Pass@1 仍无法执行，静态评测作为代理指标。
+
+### 1. 评测方法
+
+- 模型：Qwen3.8-27B（root SGLang on :8099, GPU0-3, TP=4 + DFLASH 推测解码）
+- **关键修正**：Qwen3.8-27B 是推理模型，默认 thinking 模式会消耗全部 token 预算→content 为空。
+  修正：payload 加 `"chat_template_kwargs": {"enable_thinking": false}` 关闭 thinking，
+  使其与 MiniCPM5-2B（无 thinking）同口径对比（纯代码生成模式）。
+- 参数：temp=0.0, max_tokens=2048（与 R311 MiniCPM5 评测一致）
+- 任务：113 non-techlib tasks（EDA-Eval-PyAether-v20260311.jsonl，排除 techlib_dependency）
+- 指标：syntax valid, finish_reason, API coverage, all_apis_correct, code_len, has_function, time
+- **注意**：查询 :8099 是只读推理，不碰 GPU0-3 分配（不 kill/restart/modify root 服务）
+- 替身/基线声明：Qwen3.8-27B 是 27B 大模型上限参照；静态评测不测 Pass@1
+
+### 2. 三模型静态评测对比（113 non-techlib tasks, 完整）
+
+| 指标 | MiniCPM5-2B base | MiniCPM5-2B SFT | Qwen3.8-27B |
+|:--|:--|:--|:--|
+| Syntax valid | 62/113 = 54.9% | 106/113 = 93.8% | 110/113 = 97.3% |
+| finish=stop | 60/113 = 53.1% | 106/113 = 93.8% | 108/113 = 95.6% |
+| Truncated (finish=length) | 53/113 = 46.9% | 7/113 = 6.2% | 5/113 = 4.4% |
+| has_function | 97/113 = 85.8% | 113/113 = 100% | 113/113 = 100% |
+| API coverage (mean) | 0.141 | 0.166 | 0.145 |
+| All APIs correct* | 3/113 = 2.7% | 3/113 = 2.7% | 3/113 = 2.7% |
+| Code length (mean chars) | 6762 | 1432 | 1924 |
+| Time (mean sec) | 25.1 | 6.3 | 2.9 |
+
+> *All APIs correct = all expected APIs present in generated code (len(missing)==0 and len(correct)>0)。
+> 注：R316 的 "All API correct 0%" 用了更严格定义（所有 API 调用均为合法 PyAether API）；
+> 此处用 "all expected APIs present" 定义，三模型一致，结论不变。
+
+### 3. Per-Scenario 对比
+
+| Scenario | n | MC5-base syn | MC5-SFT syn | Qwen syn | MC5-base all | MC5-SFT all | Qwen all |
+|:--|--:|:--|:--|:--|:--|:--|:--|
+| Schematic | 41 | 43.9% (18) | 87.8% (36) | 95.1% (39) | 0% (0) | 0% (0) | 0% (0) |
+| Layout | 28 | 60.7% (17) | 96.4% (27) | 100% (28) | 7.1% (2) | 7.1% (2) | 7.1% (2) |
+| Design Mgmt | 21 | 52.4% (11) | 95.2% (20) | 95.2% (20) | 0% (0) | 0% (0) | 0% (0) |
+| Others | 23 | 69.6% (16) | 100% (23) | 100% (23) | 4.3% (1) | 4.3% (1) | 4.3% (1) |
+
+### 4. 核心发现：API 知识是通用瓶颈，与模型规模无关
+
+1. **三模型 all_apis_correct 完全相同 (3/113 = 2.7%)**：MiniCPM5-2B base、MiniCPM5-2B SFT、Qwen3.8-27B
+   都只有 3 个任务全部期望 API 出现，且是**相同的 3 个任务**（055/061/062，各仅 1 个 expected API）。
+   → **27B 模型的 API 知识与 2B 模型一样匮乏**。
+2. **API coverage 三模型接近** (0.141 / 0.166 / 0.145)：规模差距 13.5x（2B vs 27B）未带来 API 知识提升。
+3. **Qwen 在 syntax/truncation/conciseness 上远超 MC5-base**：syn 97.3% vs 54.9% (+42.4pp),
+   truncation 4.4% vs 46.9% (-42.5pp), code 1924 vs 6762 chars (3.5x concise)。
+   → 大模型在**代码格式/结构/简洁性**上有优势，但在**API 知识**上无优势。
+4. **Qwen ≈ MC5-SFT 在 syntax/truncation**：syn 97.3% vs 93.8%, truncation 4.4% vs 6.2%。
+   → SFT 把 2B 模型的代码格式提升到接近 27B 水平（无需扩大模型）。
+5. **58pp 差距 (36%→94%) 的归因更新**：
+   - 不是模型规模问题（Qwen 27B 也只有 2.7% API correct）
+   - 是 **API 知识 + agent 迭代闭环** 问题（DeepSeek 94% 依赖 search_apis/get_api_details 工具动态学习 API）
+   - SFT 修协议层 (+38.9pp syn) 但不修 API 知识 (0pp API correct)
+   - RL 需攻 API 正确性 + 迭代闭环（执行反馈驱动 API 学习）
+
+### 5. 对 Post-Train 三步的侧重建议（更新）
+
+1. **领域退火**：API 知识语料是**唯一关键**——27B 模型也不知 PyAether API，说明 API 知识不是"涌现"的，
+   必须显式注入（PyAether API 参考文档作为退火语料）
+2. **SFT**：已验证 recipe 有效（协议层 +38.9pp，达到 27B 水平），但需加入 API 正确性导向的轨迹数据
+3. **RL（核心）**：92.9% 「语法正确但 API 错误」（R316）+ 27B 模型也不知 API → RL 的价值在于
+   **通过执行反馈驱动 API 学习**（agent 迭代闭环），而非单纯奖励格式
+
+### 6. 局限
+
+- ⚠️ **静态评测**：无 Pass@1。syntax valid ≠ 功能正确。需沙盒恢复后跑真实评测
+- ⚠️ **temp=0.0 单 run**：非协议冻结的 5-run mean±std
+- ⚠️ **Qwen thinking 关闭**：与全 harness 模式（agent + thinking）不同，仅测纯代码生成
+- **替身预演**：MiniCPM5-2B 替身，收益不可迁移到 BaiZe
+
+### 7. 溯源
+
+- Qwen 结果文件：`run/static_eval_qwen_results.json`（113 tasks / ~2.5MB, COMPLETE）
+- Qwen 评测脚本：`run/baize_posttrain_static_eval_qwen.py`（231 行，新增）
+- MiniCPM5 结果文件：`run/static_eval_r311_results.json`（113 tasks / 1.92MB, R316）
+- 三模型对比分析命令：inline `python3 << 'PYEOF'` (产出本节所有数字)
+- 沙盒状态：10.129.32.75:8664 BLOCKED（第 119 次确认）
+- 无伪造：所有数据为真实 vLLM/SGLang API 调用输出，分析由 Python json 完成。
