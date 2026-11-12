@@ -10,7 +10,7 @@
 >
 > **元数据核验**：标题 / 首次提交日 均取自 arXiv 官方 API（`export.arxiv.org/api/query?id_list=...`，2026-11-11 两轮实测 `HTTP 200` + `application/atom+xml; charset=utf-8`，首轮 4/4、第二轮 4/4 = 累计 8/8）。
 
-**本轮快照**：累计 **55** 条（首轮 11:5x 收 4 条；第二轮 11:4x 补 4 条 EDA / agent / PEFT；第三轮 12:1x 补 4 条 RoPE / SWE-bench / Reflexion / CoT；第四轮 12:4x 补 3 条 GPT-3 / InstructGPT / LLaMA；第五轮 15:0x 补 4 条 ResNet / seq2seq / Dyna / LLaVA；第六轮 18:0x 补 4 条 GPT-1 / GPT-2 / Kaplan scaling laws / DQN；第七轮 21:0x 补 4 条 AlphaGo / AlphaGo Zero / Gemini / OpenVLA；第八轮 2026-11-12 00:0x 补 4 条 AlphaFold / AlphaStar / Kimi k1.5 / π0；第九轮 2026-11-12 03:0x 补 4 条 GLM-4 / MiniMax-01 / RT-2 / Octo；**第十轮 2026-11-12 06:0x 补 4 条** SWE-agent / Tree of Thoughts / Llama 2 / LLaVA-1.5；**第十一轮 2026-11-12 09:0x 补 4 条** Llama 3 / RT-1 / Christiano 2017 / Stiennon 2020；**第十二轮 2026-11-12 12:0x 补 4 条** τ-bench / TD-Gammon / Sora 技术报告 / Kimi K2；**第十三轮 2026-11-12 15:0x 补 4 条** DPO / Mamba-2(SSD) / FlashAttention-2 / Ramulator 2.0；**第十四轮 2026-11-12 18:0x 补 4 条** SimPO / Zephyr / CircuitNet / Sutton《The Bitter Lesson》（博客，单列非论文条目））｜ 覆盖（一篇可服务多线，按文内「与我们工作的关系」逐条计数）：pretrain **30** · vision **17** · harness **32** · data **32** · zhulong **39** · designflow **18**
+**本轮快照**：累计 **63** 条（首轮 11:5x 收 4 条；第二轮 11:4x 补 4 条 EDA / agent / PEFT；第三轮 12:1x 补 4 条 RoPE / SWE-bench / Reflexion / CoT；第四轮 12:4x 补 3 条 GPT-3 / InstructGPT / LLaMA；第五轮 15:0x 补 4 条 ResNet / seq2seq / Dyna / LLaVA；第六轮 18:0x 补 4 条 GPT-1 / GPT-2 / Kaplan scaling laws / DQN；第七轮 21:0x 补 4 条 AlphaGo / AlphaGo Zero / Gemini / OpenVLA；第八轮 2026-11-12 00:0x 补 4 条 AlphaFold / AlphaStar / Kimi k1.5 / π0；第九轮 2026-11-12 03:0x 补 4 条 GLM-4 / MiniMax-01 / RT-2 / Octo；**第十轮 2026-11-12 06:0x 补 4 条** SWE-agent / Tree of Thoughts / Llama 2 / LLaVA-1.5；**第十一轮 2026-11-12 09:0x 补 4 条** Llama 3 / RT-1 / Christiano 2017 / Stiennon 2020；**第十二轮 2026-11-12 12:0x 补 4 条** τ-bench / TD-Gammon / Sora 技术报告 / Kimi K2；**第十三轮 2026-11-12 15:0x 补 4 条** DPO / Mamba-2(SSD) / FlashAttention-2 / Ramulator 2.0；**第十四轮 2026-11-12 18:0x 补 4 条** SimPO / Zephyr / CircuitNet / Sutton《The Bitter Lesson》（博客，单列非论文条目）；**第十六轮 2026-11-13 00:0x 补 4 条** KTO `2402.01306` / H₂O `2306.14048` / Self-Instruct `2212.10560` / Switch Transformer `2101.03961`）｜ 覆盖（一篇可服务多线，按文内「与我们工作的关系」逐条计数）：pretrain **30** · vision **17** · harness **32** · data **32** · zhulong **39** · designflow **18**
 
 > 🆕 **第四轮（2026-11-11 12:4x）新增 3 条 = 「规模 → 指令 → 开放权重」三段主线**：GPT-3（few-shot 能力从哪来）→ InstructGPT（对齐/指令跟随的范式起点）→ LLaMA（用「多 token」把开放权重做到可用）。三篇合起来回答 data 线当前最实际的问题：**token 预算、指令数据、公开配比**。
 >
@@ -1058,6 +1058,74 @@
 
 ---
 
+## 60. KTO: Model Alignment as Prospect Theoretic Optimization
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | KTO: Model Alignment as Prospect Theoretic Optimization |
+| 作者（前 3） | **Kawin Ethayarajh** · **Winnie Xu** · **Niklas Muennighoff**（et al.，共 5 位：+ Dan Jurafsky · Douwe Kiela） |
+| 年份 | 2024（arXiv 首次提交 **2024-02-02**；最新 v5 2026-09-08） |
+| 会议 / 期刊 | **ICML 2024**（arXiv `comment` 原文 `ICML 2024`；⚠️ OpenAlex 记为 `type=preprint`、无会场 DOI ⇒ 会议信息只引 arXiv comment） |
+| 被引数 | **951**（OpenAlex，DOI `10.48550/arxiv.2402.01306`，查询日 **2026-11-13**；S2 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2402.01306> ｜ DOI `10.48550/arxiv.2402.01306` |
+| 一句话贡献 | 摘要原文要点：把 Kahneman–Tversky **前景理论**的人类效用函数搬进对齐目标，指出 DPO 等方法隐式属于「human-aware losses（HALOs）」；KTO **只学「输出是否可取」的二元信号**（不需要成对偏好），在 **1B–30B** 尺度上匹配或超过基于偏好的方法，并强调**没有普适最优的 HALO**，最优损失取决于场景的归纳偏置。 |
+| 与我们工作的关系 | **posttrain（直接对口）**：我们的 checker 天然只给「跑通 / 失败」「DRC 过 / 不过」这类**二元信号**，而成对偏好数据稀缺且昂贵 ⇒ KTO 是「用 checker 信号直接做对齐」的最短路径。<b>动作</b>：在同一批工具轨迹上做 DPO / ORPO / KTO 三臂对照，KTO 臂只用二元标签；<b>预注册判据</b>：若 KTO 在留出任务上的通过率不低于 DPO 且标注成本 &lt;1/5，则把二元 checker 信号列为主训练信号。<br>**zhulong（奖励设计）**：把「好/坏」的**定义**（工具跑通 vs 指标改善）作为独立消融，因为 KTO 的上限由该二元标签的语义决定。<br>**data（数据表）**：偏好数据表要新增「二元可取性」列，并记录标注来源（checker / 人工）。<b>风险</b>：① 二元信号丢失「好多少」的边际信息，长尾任务可能被压平；② 论文在 1B–30B 通用对话上验证，**工具轨迹上的长度偏置未验证**；③ 951 为 OpenAlex 口径，跨源不可比。 |
+
+首次收录: 2026-11-13（第十六轮）｜ 状态: 元数据已核验（arXiv `id_list` `200` + `application/atom+xml`；OpenAlex `200`）
+
+---
+
+## 61. H₂O: Heavy-Hitter Oracle for Efficient Generative Inference of Large Language Models
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | H$_2$O: Heavy-Hitter Oracle for Efficient Generative Inference of Large Language Models |
+| 作者（前 3） | **Zhenyu Zhang** · **Ying Sheng** · **Tianyi Zhou**（et al.，共 12 位，含 Lianmin Zheng · Christopher Ré · Zhangyang Wang · **Beidi Chen**） |
+| 年份 | 2023（arXiv 首次提交 **2023-06-24**；v3 2023-12-18） |
+| 会议 / 期刊 | **NeurIPS 2023**（OpenAlex `type=conference-paper`，会议 DOI `10.52202/075280-1506`） |
+| 被引数 | **423**⚠️（OpenAlex，上述 DOI，查询日 **2026-11-13**；**低于 500**，按「奠基 / 方法论常青」收录并显式标注；S2 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2306.14048> ｜ 会议 DOI `10.52202/075280-1506` |
+| 一句话贡献 | 摘要原文要点：KV cache 随序列长度与 batch **线性增长**，是长文本生成的成本主因；作者发现**少数 token（Heavy Hitters）贡献大部分 attention 值**，且删掉它们会显著掉点；据此提出 **H₂O** 驱逐策略，动态保留「近期 + heavy hitter」的平衡，把驱逐写成动态子模问题并给出（温和假设下的）理论保证；**20% heavy hitters** 下，相对 DeepSpeed Zero-Inference / HF Accelerate / FlexGen 吞吐最高提升 **29× / 29× / 3×**，同 batch 延迟最高降 **1.9×**（OPT-6.7B / OPT-30B，另测 LLaMA、GPT-NeoX）。 |
+| 与我们工作的关系 | **zhulong（成本口径，直接对口）**：ZhuLong 的闭环会累积很长的**工具日志 / 波形摘要 / 报错堆栈**，KV cache 往往比权重更早撞墙。<b>动作</b>：在长轨迹评测里加一档「KV 预算 = 20%」的消融，记录「保留哪些 token」与通过率的关系；<b>预注册判据</b>：若 20% 预算下通过率下降 &lt;2 个百分点，则把 KV 预算作为独立成本旋钮纳入报表。<br>**harness（评测吞吐）**：批量跑题时把 KV 命中率与显存占用列入与正确率并列的指标。<br>**pretrain（间接）**：长上下文训练/推理的可行 batch 受同一约束。<b>风险</b>：① 29× / 1.9× 为**特定 serving 实现与负载**下的作者自报，不可外推；② heavy hitter 的判定依赖 attention 统计，**结构化日志是否同样稀疏未验证**；③ 本文不涉及模型能力提升。 |
+
+首次收录: 2026-11-13（第十六轮）｜ 状态: 元数据已核验（arXiv `id_list` `200` + `application/atom+xml`；OpenAlex `200` + 会议 DOI）
+
+---
+
+## 62. Self-Instruct: Aligning Language Models with Self-Generated Instructions
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Self-Instruct: Aligning Language Models with Self-Generated Instructions |
+| 作者（前 3） | **Yizhong Wang** · **Yeganeh Kordi** · **Swaroop Mishra**（et al.，共 7 位：+ Alisa Liu · Noah A. Smith · Daniel Khashabi · Hannaneh Hajishirzi） |
+| 年份 | 2022（arXiv 首次提交 **2022-12-20**；v2 2023-05-25） |
+| 会议 / 期刊 | **ACL 2023**（DOI `10.18653/v1/2023.acl-long.754`；arXiv `comment` 原文 `ACL 2023 camera ready`） |
+| 被引数 | **2,477**（OpenAlex，上述 DOI，查询日 **2026-11-13**；S2 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2212.10560> ｜ DOI `10.18653/v1/2023.acl-long.754` |
+| 一句话贡献 | 摘要原文要点：指令微调高度依赖**人工撰写的指令数据**（数量、多样性、创造性都受限）；Self-Instruct 让模型**自举生成** instruction / input / output，过滤无效与相似样本后再微调原模型；在 GPT-3 上对 Super-NaturalInstructions **绝对提升 33%**，与用私有用户数据 + 人工标注训练的 InstructGPT-001 持平；在专家新任务上仅落后 InstructGPT-001 **5 个百分点**，并公开合成数据与代码。 |
+| 与我们工作的关系 | **data（直接对口）**：EDA / 存储域的人工指令数据极少，Self-Instruct 的「种子 → 自举 → 过滤」流水线是我们扩充域内指令集的现成骨架。<b>动作</b>：用 100–200 条人工种子（版图问答、时序报告解读、工具调用）跑一轮自举，比较「只用种子」vs「种子 + 自举」在留出题上的通过率；<b>预注册判据</b>：自举数据带来的提升若 &lt;3 个百分点，则把预算转回人工种子而非继续放大合成量。<br>**harness / designflow（造题）**：把过滤规则（无效 / 相似 / 与评测重叠）固化成造题流水线的必经检查。<b>风险</b>：① 33% / 5% 为 GPT-3 时代作者自报，**模型与任务都不同**，不可直接外推；② 合成数据存在**评测污染**风险，必须先做去重与 held-out 隔离；③ 域内种子质量决定上限，自举会放大种子的偏差。 |
+
+首次收录: 2026-11-13（第十六轮）｜ 状态: 元数据已核验（arXiv `id_list` `200` + `application/atom+xml`；OpenAlex `200` + ACL DOI）
+
+---
+
+## 63. Switch Transformers: Scaling to Trillion Parameter Models with Simple and Efficient Sparsity
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Switch Transformers: Scaling to Trillion Parameter Models with Simple and Efficient Sparsity |
+| 作者（前 3） | **William Fedus** · **Barret Zoph** · **Noam Shazeer** |
+| 年份 | 2021（arXiv 首次提交 **2021-01-11**；v3 2022-06-16） |
+| 会议 / 期刊 | **JMLR**（arXiv `comment` 原文 `JMLR`；⚠️ OpenAlex 记为 `type=preprint`、无会场 DOI ⇒ 只引 arXiv comment） |
+| 被引数 | **1,665**（OpenAlex，DOI `10.48550/arxiv.2101.03961`，查询日 **2026-11-13**；S2 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2101.03961> ｜ DOI `10.48550/arxiv.2101.03961` |
+| 一句话贡献 | 摘要原文要点：MoE 用「每个样本选不同参数」换**稀疏激活**（参数量大、算力恒定），但复杂度、通信成本与训练不稳定阻碍落地；Switch Transformer 把路由简化为 **top-1**，给出降通信/降计算的设计与稳定训练技巧，并**首次用 bfloat16 训练大型稀疏模型**；基于 T5-Base/Large 在同算力下取得最高 **7×** 预训练加速，多语言上对 mT5-Base 的 **101 种语言**均有增益，最终在 C4 上预训练到**万亿参数**，相对 T5-XXL **4×** 加速。 |
+| 与我们工作的关系 | **pretrain（架构对照）**：BaiZe 2B 目前是稠密路线，Switch 提供「总参 ↑、激活算力不变」的对照轴。<b>动作</b>：在 2B 量级做小规模 MoE 试片（如 8 专家 top-1），预注册比较「同激活算力下的验证损失」与「同显存下的吞吐」；<b>判据</b>：若同激活算力下损失改善 &lt;2%，则不进入主训练配方。<br>**zhulong（成本口径）**：报表必须同时给**总参 / 激活参 / 每 token FLOPs**，否则 MoE 与稠密模型无法公平比较。<br>**data（配比）**：多语言增益提示数据配比要按语言分层报告。<b>风险</b>：① 7× / 4× 是**预训练速度**，不是能力倍数；② 万亿参数实验的稳定性技巧未必迁移到 2B；③ 路由负载均衡与通信开销在单机小集群上可能反而更贵。 |
+
+首次收录: 2026-11-13（第十六轮）｜ 状态: 元数据已核验（arXiv `id_list` `200` + `application/atom+xml`；OpenAlex `200`）
+
+---
+
 ## 候选池（下轮起逐轮补，**被引数本轮未查**，勿引用）
 
 
@@ -1065,7 +1133,7 @@
 > 只登记「已实测 arXiv 元数据」的条目；被引数待下轮 OpenAlex 批量核过再写，**本表数字一律留空 = 未查**。
 > ⚠️ 第十轮把 **Llama 2 `2307.09288` / LLaVA-1.5 `2310.03744` / SWE-agent `2405.15793` / Tree of Thoughts `2305.10601`** 四条转正为 #36–#39；**第十一轮把 Llama 3 `2407.21783` / RT-1 `2212.06817` / Christiano 2017 `1706.03741` / Stiennon 2020 `2009.01325`** 四条转正为 #40–#43；**第十二轮把 τ-bench `2406.12045` / TD-Gammon（CACM `10.1145/203330.203343`）/ Sora 技术报告 / Kimi K2 `2507.20534`** 四条转正为 #44–#47（元数据 + 被引当场实测）。✅ **必读清单 37/37 条目已全部覆盖**，此后以「补充 / 更正」为主。
 > ⚠️ **更正**：候选池此前记的「Kimi 月之暗面早期报告 `2401.14185`」**实测为 `TDFNet`（音视频语音分离，cs.SD），与 Kimi 无关** ⇒ 已删除该候选，改收 **Kimi K2 `2507.20534`**（已转正 #47）。
-> **下轮候选（🚫 未实测前不进本表、不写 DOI / 被引）**：① ~~DPO / Mamba-2 / FlashAttention-2 / 存储方向~~ ⇒ **第十三轮已转正 #48–#51**；② ~~Zephyr / CircuitNet / Bitter Lesson / SimPO~~ ⇒ **第十四轮已转正 #52–#55**；③ ~~ORPO / IPO / Lost in the Middle / vLLM~~ ⇒ **第十五轮已转正 #56–#59**；④ **KTO（`2402.01306`，Model Alignment as Prospect Theoretic Optimization）** —— 待实测 arXiv 一手 + 被引；⑤ **版图 / EDA 预训练**（除 CircuitNet 外的 LLM-for-EDA 评测基座，须先实测是否 arXiv 一手）；⑥ **KV cache 压缩 / 长上下文检索**（除 vLLM 外的 serving 侧经典，须实测 + 核被引）。
+> **下轮候选（🚫 未实测前不进本表、不写 DOI / 被引）**：① ~~DPO / Mamba-2 / FlashAttention-2 / 存储方向~~ ⇒ **第十三轮已转正 #48–#51**；② ~~Zephyr / CircuitNet / Bitter Lesson / SimPO~~ ⇒ **第十四轮已转正 #52–#55**；③ ~~ORPO / IPO / Lost in the Middle / vLLM~~ ⇒ **第十五轮已转正 #56–#59**；④ ~~KTO `2402.01306` / KV cache 压缩（H₂O）/ 指令数据自举（Self-Instruct）/ MoE（Switch）~~ ⇒ **第十六轮已转正 #60–#63**；⑤ **版图 / EDA 预训练**（除 CircuitNet 外，另有 `2309.07544` VerilogEval 已收 #7；可补「LLM-for-EDA 评测基座」如 OpenROAD / ORFS 相关一手工作，须先实测是否 arXiv 一手）；⑥ **长上下文检索 / 位置编码**（RoPE 已收 #9；可补 YaRN / LongRoPE 等，须实测 + 核被引）；⑦ **speculative decoding / 量化**（serving 侧，须实测 + 核被引）。
 
 
 | arXiv ID | 标题（arXiv 实测） | 首次提交 | 拟服务线 | 为什么算经典（待核被引） |

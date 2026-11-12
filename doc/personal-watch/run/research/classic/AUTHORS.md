@@ -6,7 +6,7 @@
 > 🔴 **找 X 的铁律（不猜）**：只登记**能从可访问页面读到**的 handle（作者本人主页 `href`，并用 X 页 `og:description` 二次核对身份）；**读不到 = 写「未找到 X」**。
 > 🚫 不许猜 handle（猜错会 follow 到无关账号，比不 follow 更糟）。X.com 自 **2026-11-11 12:4x** 起经本机 Mihomo 代理**只读可达**；**follow 仍需登录态 ⇒ 未自动执行**（0 follow，未假装）。
 
-**本轮快照**：累计 **65** 人（第八轮 +4：John Jumper / Igor Babuschkin / Danny Driess / Kimi Team；第九轮 +4：Team GLM / MiniMax / Karl Pertsch / Pete Florence；第十轮 +1：Kilian Lieret；第十一轮 +3：Jan Leike / Paul Christiano / Nisan Stiennon；**第十二轮 +3：Bill Peebles `@billpeeb` / Tim Brooks `@_tim_brooks` / Gerald Tesauro（未找到 X）**；**第十三轮 +3：Rafael Rafailov `@rm_rafailov` / Archit Sharma `@archit_sharma97` / Onur Mutlu `@_onurmutlu_`**；**第十四轮 +4：Danqi Chen `@danqi_chen` / Yibo Lin（未找到 X）/ Nathan Lambert `@natolambert` / Lewis Tunstall `@_lewtun`**；**第十五轮 +4：Percy Liang `@percyliang` / James Thorne `@j6mes` / Nelson F. Liu（X 待核实）/ Woosuk Kwon（未找到 X）**）｜已发信 **21**（Tri Dao · Shunyu Yao · Haoxing Ren · Jason Wei · Noah Shinn · Kaiming He · Haotian Liu · Karthik Narasimhan · Moo Jin Kim · Danny Driess · Pete Florence · Karl Pertsch · Jan Leike · **Nisan Stiennon** · **Archit Sharma** · **Onur Mutlu** · **Danqi Chen** · **Yibo Lin** · **Nathan Lambert** · **James Thorne** · **Nelson F. Liu**）｜X 已核验 **37**（`@tri_dao` / `@_albertgu` / `@ShunyuYao12` / `@edwardjhu` / `@jyangballin` / `@_jasonwei` / `@ilyasut` / `@RichardSSutton` / `@imhaotian` / `@ChunyuanLi` / `@karthik_r_n` / `@demishassabis` / `@koraykv` / `@OriolVinyalsML` / `@svlevine` / `@chelseabfinn` / `@moo_jin_kim` / `@ibab` / `@DannyDriess` / `@Kimi_Moonshot` / `@ZhipuAI` / `@MiniMax_AI` / `@KarlPertsch` / `@peteflorence` / `@KLieret` / `@janleike` / `@paulfchristiano` / `@billpeeb` / `@_tim_brooks` / `@rm_rafailov` / `@archit_sharma97` / `@_onurmutlu_` / `@danqi_chen` / `@natolambert` / `@_lewtun` / **`@percyliang`** / **`@j6mes`**）｜X 未找到 / 未核验 **28**（65 人中 37 已核验；本轮 `@nelsonfliu` **有页面但无 bio ⇒ 身份不可证**、`@woosuk_kwon` 仅 3 followers ⇒ 判非本人，两者均**不登记**）｜**X 可达（本机 Mihomo 7897；2026-11-12 21:0x 实测：本 shell 仍无 `HTTPS_PROXY` ⇒ 直连 `x.com` `000`、显式 `-x http://127.0.0.1:7897` 返回 `200` 且出口 IP `178.249.213.185`；`x_fetch.py` 内部默认走代理）**｜已 follow **0**（follow 需登录态 ⇒ 仍靠用户手动，见第二节）｜言论台账 **17 条**（V1–V17；V13–V16 均经单条推文页 `og:title` 核验为**他人推文** ⇒ 作废；**V17 = Percy Liang 2026-11-11 原推，两处核验通过**，因本期 `voice_ready` 已满 2 条 ⇒ 下期首发）
+**本轮快照**：累计 **69** 人（第八轮 +4：John Jumper / Igor Babuschkin / Danny Driess / Kimi Team；第九轮 +4：Team GLM / MiniMax / Karl Pertsch / Pete Florence；第十轮 +1：Kilian Lieret；第十一轮 +3：Jan Leike / Paul Christiano / Nisan Stiennon；**第十二轮 +3：Bill Peebles `@billpeeb` / Tim Brooks `@_tim_brooks` / Gerald Tesauro（未找到 X）**；**第十三轮 +3：Rafael Rafailov `@rm_rafailov` / Archit Sharma `@archit_sharma97` / Onur Mutlu `@_onurmutlu_`**；**第十四轮 +4：Danqi Chen `@danqi_chen` / Yibo Lin（未找到 X）/ Nathan Lambert `@natolambert` / Lewis Tunstall `@_lewtun`**；**第十五轮 +4：Percy Liang `@percyliang` / James Thorne `@j6mes` / Nelson F. Liu（X 待核实）/ Woosuk Kwon（未找到 X）**；**第十六轮 +4：Yizhong Wang `@yizhongwyz` / Niklas Muennighoff `@Muennighoff` / Beidi Chen `@BeidiChen` / Kawin Ethayarajh（未找到 X）**）｜已发信 **24**（Tri Dao · Shunyu Yao · Haoxing Ren · Jason Wei · Noah Shinn · Kaiming He · Haotian Liu · Karthik Narasimhan · Moo Jin Kim · Danny Driess · Pete Florence · Karl Pertsch · Jan Leike · **Nisan Stiennon** · **Archit Sharma** · **Onur Mutlu** · **Danqi Chen** · **Yibo Lin** · **Nathan Lambert** · **James Thorne** · **Nelson F. Liu** · **Yizhong Wang** · **Niklas Muennighoff** · **Beidi Chen**）｜X 已核验 **40**（`@tri_dao` / `@_albertgu` / `@ShunyuYao12` / `@edwardjhu` / `@jyangballin` / `@_jasonwei` / `@ilyasut` / `@RichardSSutton` / `@imhaotian` / `@ChunyuanLi` / `@karthik_r_n` / `@demishassabis` / `@koraykv` / `@OriolVinyalsML` / `@svlevine` / `@chelseabfinn` / `@moo_jin_kim` / `@ibab` / `@DannyDriess` / `@Kimi_Moonshot` / `@ZhipuAI` / `@MiniMax_AI` / `@KarlPertsch` / `@peteflorence` / `@KLieret` / `@janleike` / `@paulfchristiano` / `@billpeeb` / `@_tim_brooks` / `@rm_rafailov` / `@archit_sharma97` / `@_onurmutlu_` / `@danqi_chen` / `@natolambert` / `@_lewtun` / **`@percyliang`** / **`@j6mes`** / **`@yizhongwyz`** / **`@Muennighoff`** / **`@BeidiChen`**）｜X 未找到 / 未核验 **32**（69 人中 40 已核验；本轮 `@nelsonfliu` **有页面但无 bio ⇒ 身份不可证**、`@woosuk_kwon` 仅 3 followers ⇒ 判非本人，两者均**不登记**）｜**X 可达（本机 Mihomo 7897；2026-11-12 21:0x 实测：本 shell 仍无 `HTTPS_PROXY` ⇒ 直连 `x.com` `000`、显式 `-x http://127.0.0.1:7897` 返回 `200` 且出口 IP `178.249.213.185`；`x_fetch.py` 内部默认走代理）**｜已 follow **0**（follow 需登录态 ⇒ 仍靠用户手动，见第二节）｜言论台账 **17 条**（V1–V17；V13–V16 均经单条推文页 `og:title` 核验为**他人推文** ⇒ 作废；**V17 = Percy Liang 2026-11-11 原推，两处核验通过**，因本期 `voice_ready` 已满 2 条 ⇒ 下期首发）
 
 
 ---
@@ -850,6 +850,9 @@
 | 机构 | **Allen Institute for AI（Ai2）**（现职）；论文发表时为 **Stanford University** |
 | 代表论文 | Lost in the Middle（`2307.03172`，**一作**） |
 | 邮箱 | **nfliu@cs.stanford.edu**（来源：论文 HTML 作者块逐字，ar5iv 实测 `HTTP 200` / 37,518 B）；⚠️ 本人主页 <https://nelsonliu.me> 实测 `200` / 15,502 B，但邮箱是**图片** `img/email.png`（防爬）⇒ 页面无可读邮箱，只能用论文地址，**若退信记「通道失效」不重发** |
+| 2026-11-13 00:06（**第十六轮**） | Yizhong Wang | `2212.10560` Self-Instruct | 本人主页 `yizhongw.github.io` 的 `mailto:yizhongw01@gmail.com`（`200` / 26,625 B） | `SENT OK`（**中文 224 字**，发送前已核；ByteDance Seed 今日第 1 封） |
+| 2026-11-13 00:06（**第十六轮**） | Niklas Muennighoff | `2402.01306` KTO | 本人主页 `muennighoff.github.io` 的 `mailto:n.muennighoff@gmail.com`（`200` / 47,863 B） | `SENT OK`（**英文 181 词**，发送前 `wc -w` 已核；Stanford/SpaceX 今日第 1 封） |
+| 2026-11-13 00:06（**第十六轮**） | Beidi Chen | `2306.14048` H₂O | 本人 CMU 主页 `www.andrew.cmu.edu/user/beidic/` 的 `mailto:beidic@andrew.cmu.edu`（`200` / 35,488 B） | `SENT OK`（**英文 165 词**，发送前 `wc -w` 已核；CMU 今日第 1 封） |
 | 主页 | <https://nelsonliu.me>（实测 `HTTP 200` / 15,502 B） |
 | X 账号 | **未登记（待核实）**：`x.com/nelsonfliu` 实测 `200`，页面标题为 `Nelson Liu (@nelsonfliu) / X`，但 **`og:description` 只有 followers 数字、无任何自我介绍** ⇒ 按「身份不可证不登记」纪律，🚫 不写进已核验清单（与 `@JohnJumper` 同一处理口径） |
 | 状态 | **已发信**（2026-11-12 21:07:44 `SENT OK`）· X **未核验**（不加 follow 清单） |
@@ -867,6 +870,60 @@
 | X 账号 | **未找到**（`x.com/woosuk_kwon` 实测 `200`，但页面仅 **3 followers / 1 following / 2022-03 注册**、无 bio ⇒ 判为**同名非本人**，🚫 不登记） |
 | 状态 | **待跟踪**（无邮箱、无 X ⇒ 暂无法互动；仅建档） |
 | 备注 | 论文价值在 **serving 吞吐 / 显存**，服务 harness 批量评测与 zhulong 成本口径；**不是模型能力证据**。下轮可试 OpenReview / 个人主页反查邮箱后再评估发信。 |
+
+---
+
+### 66. Yizhong Wang（王一众）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Yizhong Wang（中文姓名 ⇒ 信按中文写） |
+| 机构 | **ByteDance Seed**（研究员）；X bio 自述 **2026 fall 入职 UT Austin 助理教授** |
+| 代表论文 | Self-Instruct（`2212.10560`，**一作**）· Super-NaturalInstructions（`2204.07705`，一作） |
+| 邮箱 | **yizhongw01@gmail.com**（来源：本人主页 `https://yizhongw.github.io/` 的 `mailto:`，实测 `HTTP 200` / 26,625 B） |
+| 主页 | <https://yizhongw.github.io/>（实测 `HTTP 200`） |
+| X 账号 | **@yizhongwyz**（核验：主页 `href="https://x.com/yizhongwyz"` + 推文页/主页 `og:title` = `Yizhong Wang (@yizhongwyz) on X`，bio = `Researcher at ByteDance Seed, Incoming Asst Prof @UTAustin`） |
+| 状态 | **已发信**（2026-11-13 00:1x `SENT OK`）· X 待 follow |
+| 备注 | 信（**中文**，≤300 字）问三点：① EDA / 存储域只有 100–200 条人工种子时，自举的**多样性瓶颈**先出现在种子数量还是种子类型覆盖；② 过滤「相似样本」的阈值对域内术语密集文本是否需要放宽；③ 合成指令与评测集**去污染**的最小可行做法。分别回填 data 指令数据表、designflow 造题流水线、harness 去重检查。X 上近 30 天**无可用完整原文**（最近条目为 2026-02，已超期）⇒ 暂不产 `voice_ready`。 |
+
+### 67. Niklas Muennighoff
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Niklas Muennighoff（德国人 ⇒ 信按英文写） |
+| 机构 | **Stanford / SpaceX**（X bio 自述 `ai/llms @spacex @stanford`；KTO 发表时为 Stanford） |
+| 代表论文 | KTO（`2402.01306`，**三作**）· BLOOM / StarCoder 数据相关工作（本轮未逐条核） |
+| 邮箱 | **n.muennighoff@gmail.com**（来源：本人主页 `https://muennighoff.github.io/` 的 `mailto:`，实测 `HTTP 200` / 47,863 B） |
+| 主页 | <https://muennighoff.github.io/>（实测 `HTTP 200`） |
+| X 账号 | **@Muennighoff**（核验：主页链接列表含 `x.com/Muennighoff` + X 页 `og:title` = `Niklas Muennighoff (@Muennighoff) on X`，`og:description` = `ai/llms @spacex @stanford`） |
+| 状态 | **已发信**（2026-11-13 00:1x `SENT OK`）· X 待 follow |
+| 备注 | 信（**英文**，≤200 词）问三点：① checker 只给「跑通/失败」二元标签、**没有成对偏好**时，KTO 的 `λ_D / λ_U` 如何取、先坏在哪；② 工具轨迹长度长尾（同一任务 10× token 差）下，二元可取性是否被长度主导、是否需要按 token 归一；③ 若「可取」由指标改善阈值定义（而非人工判断），KTO 的效用假设是否仍成立。分别回填 posttrain 对齐配方、zhulong 奖励设计、data 标签定义。同论文一作 Kawin Ethayarajh 无公开邮箱/X（见 #69），按「同论文 ≤1 封」本轮只发本封。 |
+
+### 68. Beidi Chen
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Beidi Chen（中文名 陈贝迪；按英文写） |
+| 机构 | **Carnegie Mellon University**（助理教授；X bio：`Asst. Prof @CarnegieMellon, @amazon Scholar, Prev: Visiting Researcher @Meta, Postdoc @Stanford, Ph.D. @RiceUniversity`） |
+| 代表论文 | H₂O（`2306.14048`，**末位作者 / 通讯圈**）· 稀疏注意力与高效推理系列（本轮未逐条核） |
+| 邮箱 | **beidic@andrew.cmu.edu**（来源：本人 CMU 主页 `https://www.andrew.cmu.edu/user/beidic/` 的 `mailto:`，实测 `HTTP 200` / 35,488 B） |
+| 主页 | <https://www.andrew.cmu.edu/user/beidic/>（实测 `HTTP 200`） |
+| X 账号 | **@BeidiChen**（核验：主页 `href="https://twitter.com/beidichen"`；`x.com/beidichen` 实测 `200` 且 `og:title` = `Beidi Chen (@BeidiChen) on X`，bio 与 CMU 教职一致 ⇒ 大小写差异不算换号） |
+| 状态 | **已发信**（2026-11-13 00:1x `SENT OK`）· X 待 follow |
+| 备注 | 信（**英文**，≤200 词）问三点：① 「heavy hitter」判定在**结构化日志 / 报错堆栈**（非自然语言）上是否同样稀疏，20% 预算是否仍够；② 多轮工具调用中前缀（系统提示 + 工具 schema）固定，是否应把固定前缀排除在驱逐之外；③ 20% 预算下掉点 &lt;2pp 的结论是否对 batch 大小与 beam 数敏感。分别回填 zhulong 长轨迹成本、harness 评测吞吐、pretrain 长上下文。 |
+
+### 69. Kawin Ethayarajh
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Kawin Ethayarajh（加拿大人 ⇒ 英文） |
+| 机构 | **Stanford University**（KTO 发表时；**现职本轮未核**） |
+| 代表论文 | KTO（`2402.01306`，**一作**） |
+| 邮箱 | **未找到**（候选主页 `kawinethayarajh.com` / `www.kawinethayarajh.com` 实测均 `000`；🚫 不猜） |
+| 主页 | **未找到**（同上；不写猜测链接） |
+| X 账号 | **未找到**（`x.com/kawinethayarajh` 实测 `404 User Profile Not Found`；🚫 不试猜其他 handle） |
+| 状态 | **待跟踪**（无邮箱、无 X ⇒ 仅建档；同论文已由三作 Muennighoff 覆盖，按「同论文 ≤1」不再追发） |
+| 备注 | KTO 的「前景理论 → HALO」框架主要出自其一作工作；若后续主页恢复或新论文挂出联系方式，再评估单独发信。 |
 
 ---
 
@@ -958,6 +1015,7 @@
 | V12（**第十一轮新增**） | Jason Wei `@_jasonwei` | 2026-11-11 21:31 UTC | 起句 `The fall of “what you can do” and the rise of “who you know”… Traditionally, many of us believe in a world where how hard you work is more important than who you know. I used to subscribe to this idea as both a scientist, who believed that facts about our world are agnostic to who says them, and as…`（**`og:description` 以省略号截断**） | <https://x.com/_jasonwei/status/2120630417158250953> | ❌ **未采用（正文不完整）**：推文页 `200` 且 `og:title` = `Jason Wei (@_jasonwei) on X` 作者可核，但 `og:description` 与 profile `full_text` **两处都被截断**，无法给出完整原文 ⇒ 按令不采用；`voice_ready` 本期**仍为 V2 / V4 两条** |
 | V13（**第十三轮核验后作废**） | （拟 Archit Sharma `@archit_sharma97`） | 2026-10-28 17:03 UTC | 拟用文 `Just two weeks after rolling out Gemini 4 Argon, excited to share a preview of Gemini 4 Carbon - our next frontier model. It has state-of-the-art long horizon coding capabilities …`（profile 抓取截断） | <https://x.com/archit_sharma97/status/2115489649649234259> | ❌ **未采用（作者不符）**：推文页 `200` 但 `og:title` = **`koray kavukcuoglu (@koraykv) on X`** ≠ Archit Sharma ⇒ profile timeline JSON **混入他人推文**（与 V10/V11 同型）；**不采用** |
 | V14（**第十三轮核验后作废**） | （拟 Rafael Rafailov `@rm_rafailov`） | 2026-09-24 17:46 UTC | 拟用文 `We are approaching cyber-superintelligence. But our systems aren't ready. We must secure our model weights and infrastructure against three new threats: sabotage, escape, and theft…`（profile 抓取截断） | <https://x.com/rm_rafailov/status/2103179354163536228> | ❌ **未采用（作者不符）**：推文页 `200` 但 `og:title` = **`Shalev Lifshitz (@Shalev_lif) on X`** ⇒ 同上；**不采用**（此条亦说明：知名研究者时间线里**转发/引用他人**占比高，profile 解析必须先核作者） |
+| V17（**第十五轮新增 · 第十六轮首发**） | Percy Liang `@percyliang` | 2026-11-11 04:51 UTC | "You can simultaneously believe that AI is transformational and that there are bottlenecks." | <https://x.com/percyliang/status/2120378748457607431> | ✅ **本期（2026-11-13）`voice_ready` 首发**：推文页 `200` / 160,932 B，`og:title` = `Percy Liang (@percyliang) on X`，`og:description` 与 profile `full_text` **逐字一致**；话题点 = 「既相信 AI 是变革性的，也相信存在瓶颈」；风险 = **观点句**，无上下文，🚫 不得写成「证明 scaling 到顶」或「瓶颈已定位」 |
 
 
 
