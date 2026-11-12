@@ -1,6 +1,8 @@
 WAITING: 0
 
-> 🆕 **【wake #1082 · 2026-11-13 05:50】v9监控·SFT ep2/5进展正常**：v9 RUNNING(PID1351796/etimes~3238s/进程健康)·SFT seed0 ep2/5 step~108/305·loss 6.67→0.24(avg 0.2431@step100)·~30s/step·全实验ETA~8-9h(完成≈13:00-14:00)·log 21行(step100@2950s)·v8 MIXED确认·analyze_v9就绪·research日报11-13 vision栏GPTQ(部署·不action)·ops/inbox RUN_ID276(非vision·不action)·git pull: Already up to date·GPU 8×H100 88-100% pretrain全占·体积TASK27KB/MEMORY 12KB均✓·**WAITING: 0**。
+> 🆕 **【wake #1083 · 2026-11-13 05:56】v9监控·SFT ep2/5 step120进展正常**：v9 RUNNING(PID1351796/etimes~3600s/进程健康)·SFT seed0 ep2/5 step~120/305·loss 6.67→0.20(avg 0.2598@step120)·~30s/step·SFT剩余~185步≈1.5h·全实验ETA~8-9h(完成≈13:00-14:00)·log最新step120@3531s·v8 MIXED确认·analyze_v9就绪·research日报11-13 vision栏GPTQ(部署·不action)·ops/inbox RUN_ID276(非vision·不action)·git pull: Already up to date·GPU 8×H100 95-100% pretrain全占·体积TASK27KB/MEMORY 12KB均✓·**WAITING: 0**。
+
+> 📦 **wake #1082 · 2026-11-13 05:50** v9监控·SFT ep2/5 step~108/305·已fold(见wake#1083)。
 
 > 📦 **wake #1081 · 2026-11-13 05:3x** v9监控·SFT seed0 step~60/305·已fold(见wake#1082)。
 
@@ -77,7 +79,7 @@ WAITING: 0
 | PHASE | 🔄 **波形 RL CPU 阶段2 · v9 RUNNING**：v8 MIXED完成(A=0%格式问题/B=45%/C=52.5%±6.1%/McNemar p=0.0312) → **v9 launched 2026-11-13 04:56**：SFT 200→500ex×5ep, eval 48→91, GRPO 15→30步, medium boost, 3 seeds + control, **ETA修正~8-9h**(SFT 31s/step×305步~2.6h + 3seeds GRPO + ctrl ~6h) · v5✅显著(A=16%→B=37%→C=53%·p=0.0009) · v6✅(p=0.267 NS) · v7✅6/6 · v8 MIXED。**WAITING: 0** |
 | WAITING | 0 |
 | 已完成 | **v9 RUNNING(2026-11-13, SFT 500ex×5ep + GRPO 30步 + 3 seeds + control)** · v8频率比较✅(MIXED, C=52.5%±6.1%, p=0.0312) · v7 sweep 18/18✅ · v6 GRPO连续奖励✅(p=0.267 NS) · v5波形类型分类✅(p=0.0009显著) · v4 RFT(NULL) · v3 GRPO(负结果) · advantage方差诊断 · 阶段1 SFT验收PASS · CPU训练循环7/7 PASS · 数据泄漏验证+报告HTML · GRPO CPU冒烟PASS · 2B文本骨干1.72B · 数据集均衡化9013条 · 波形RL计划书 · 论文改稿 · ArmE-R2/ArmD-R2 |
-| 当前动作 | **wake#1082 v9实验运行中**：PID1351796健康·SFT seed0 ep2/5 step~108/305·loss 6.67→0.24·~30s/step·ETA~8-9h(完成≈13:00-14:00)·log @ /tmp/v9_freqcmp.log。脚本: cpu_rl_v9_freqcmp_experiment.py + run_v9_freqcmp.sh + analyze_v9_freqcmp.py。 |
+| 当前动作 | **wake#1083 v9实验运行中**：PID1351796健康·SFT seed0 ep2/5 step~120/305·loss 6.67→0.20·~30s/step·ETA~8-9h(完成≈13:00-14:00)·log @ /tmp/v9_freqcmp.log。脚本: cpu_rl_v9_freqcmp_experiment.py + run_v9_freqcmp.sh + analyze_v9_freqcmp.py。 |
 | 下一步 | ①v9完成后(ETA≈13:00-14:00):运行analyze_v9_freqcmp.py分析结果 ②更新EXPERIMENTS §v9 + HTML报告 ③若v9 SIGNIFICANT:更新MEMORY状态头+commit ④若v9 MIXED/NS:分析原因设计v10 ⑤GPU训练阶段待pretrain释放(ETA≈12/24-25) |
 | 阻塞 | .12+.29 GPU全占（8×H100 100% util / ~75GB，pretrain baize2b ETA≈12/24-25）→ GPU验证待pretrain释放 ·.17+.75 SSH不可达 |
-| 更新 | **2026-11-13 05:50 (wake #1082)**：v9 RUNNING监控·PID1351796健康·SFT seed0 ep2/5 step~108/305·loss 6.67→0.24(avg 0.2431@step100)·~30s/step→ETA~8-9h(完成≈13:00-14:00)·v8 MIXED确认·analyze_v9就绪·research日报GPTQ(部署·不action)·ops/inbox非vision·git pull Already up to date·GPU pretrain全占(8×H100 88-100%)·体积TASK27KB/MEMORY 12KB均✓·WAITING=0。 |
+| 更新 | **2026-11-13 05:56 (wake #1083)**：v9 RUNNING监控·PID1351796健康·SFT seed0 ep2/5 step~120/305·loss 6.67→0.20(avg 0.2598@step120)·~30s/step→ETA~8-9h(完成≈13:00-14:00)·v8 MIXED确认·analyze_v9就绪·research日报GPTQ(部署·不action)·ops/inbox非vision·git pull Already up to date·GPU pretrain全占(8×H100 95-100%)·体积TASK27KB/MEMORY 12KB均✓·WAITING=0。 |
