@@ -1351,3 +1351,7 @@ peek:					parked		2026-11-10 23:22	peek: consultation verdi-fsdb-warning-paste
 1792564968145_q16oz	t0002801	hfeg0plg99	102	spice_sim	parked		2026-11-12 14:31	peeked-r435:waveform-image-merge-iwave-not-B-produce
 1790236401918_27c6f	jason17w	hfeg0pnd002	187	spice_sim	parked		2026-11-12 14:31	peeked-r435:ddr-lpddr-regression-run-verify-not-B-produce
 1794131955891_zm0zw	tongfanl	hfhds201	92	spice_sim	case	EDA-Eval-DesignFlow-DdrVecgenDQSELH-001	2026-11-13 00:24	
+1789718624102_tvc27	yongk1li	hfeg0plg75	88	spice_sim	parked		2026-11-13 00:35	domain mislabel: kw drc:98/lvs:77 dominant (C physical_verify), hspice:2 incidental; P-004 discipline, not B spice_sim/char
+1793348781264_721uj	gokuguo	hfeg0plg53	58	spice_sim	parked		2026-11-13 00:40	deepread: Calibre LVS rule-file difflib compare task (Test07/08/Rev13_S10 .lvs), pure physical_verify C-domain, no spice/char; P-004
+1791791403952_lvack	e0039602	hfeg0pkn002	10	spice_sim	parked		2026-11-13 00:43	deepread: wavecompare_simple project (HSPICE fail/pass FSDB waveform compare EQ/DIF/GRAY) = D waveform domain, not B; hspice kw from .tbl parsing; P-004
+1794192234037_xtqpe	zlhou	hfeg0pkn001	18	spice_sim	parked		2026-11-13 00:45	deepread: Cline workspace/config Q&A (set AIworkspace fixed cwd, identify AI-written files), A/eda_other not B; lvs/pex/hspice kw from user's existing files agent listed; P-004
