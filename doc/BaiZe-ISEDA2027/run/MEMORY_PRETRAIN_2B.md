@@ -1,11 +1,12 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
-WAITING: 1（🔴 2026-11-11 用户令「四层评测拿更好结果」执行中·**L1 17/17done(10k-170k,峰值160k=58.13%)·180k autoqueue运行中(PID2896237,.29,ETA~22:20)**·**L2部分完成(HF后端HumanEval=0%/MBPP=0%@160k·MMLU=23.16%·GSM8K=0%·MATH=84/100未完成(进程已死)·L2弱=数据缺code/math+训练仅25%)**·**L3 TB smoke 0/2(pipeline✅,2/2 reward=0.0)**·**L4🔴SSH.15/.17timeout**·**论文§4.6已刷新iter174.4k+PDF 0err✅·红线PASS**·训练健康iter≈175.0k/700k(25.0%) GPU 8×100%/75GB step~7099ms<7.4s✅）
-> 2026-11-12 12:40 #2052: **监控巡检轮·训练健康iter175010/700k(25.0%) step7054-7188ms(均~7099ms<7.4s✅) loss2.03-2.07 0NaN/0skip GPU 8×100%/75GB·180k autoqueue运行中(PID2896237,.29,elapsed~23min,polling iter_0180000,ETA~9.7h)**·**动作**：①git pull --rebase(同步✅,already up to date) ②训练健康(.29 /proc/4179185/fd/1):iter175010/700k,step7054-7188ms(均~7099ms<7.4s✅),loss2.034-2.068,0NaN/0skip,GPU 8×100%/75GB ③autoqueue健康:PID2896237 alive(.29,started 12:17),log shows "waiting for ckpt (train iter=175000,1200s)" @12:37;latest ckpt=iter_0174000(174k),180k需(180000-175010)=4990 iter×7s≈34930s≈9.7h,ETA~22:20 ④L4重测:SSH .15/.17均timeout(ConnectTimeout=10)→仍BLOCKED ⑤红线检查:4_llm_pretrain.tex grep(ARC|HellaSwag|...)=16行全为误命中(TikZ arc命令/Architecture/sec:arch ref)·实际benchmark数字0条 PASS✅ ⑥无eval运行(CPU干净✅) ⑦四层报告存在(55KB,11-12 08:15更新) ⑧📦TASK≈27KB✅/MEMORY≈26KB✅·四层评测 · L1=57.75%@170k(17/17,峰值160k=58.13%) L2=6/6完成(全0%除MMLU=23.16%) L3=TB 0/2(pipeline✅) L4=🔴BLOCKED(SSH) · 本轮动作：监控巡检+红线检查+L4重测·未完成指令：无(等180k ckpt落盘~9.7h,autoqueue自动处理)⇒WAITING:1。
+WAITING: 1（🔴 2026-11-11 用户令「四层评测拿更好结果」执行中·**L1 17/17done(10k-170k,峰值160k=58.13%)·180k autoqueue运行中(PID2896237,.29,ETA~22:20)**·**L2 GSM8K=0%根因=生成退化(repetition loop)+能力不足(RP=1.3后仍incoherent)·HumanEval/MBPP=0%·MMLU=23.16%**·**L3 TB smoke 0/2(pipeline✅,reward=0.0)**·**L4🔴SSH.15/.17timeout**·**论文§4.6已刷新iter174.4k+PDF 0err✅·红线PASS**·训练健康iter≈175.2k/700k(25.0%) GPU 8×95-100%/75GB step~7076ms<7.4s✅）
+> 2026-11-12 13:05 #2053: **监控巡检+L2 GSM8K生成退化诊断轮·训练健康iter175180/700k(25.0%) step7030-7152ms(均~7076ms<7.4s✅) loss2.04-2.06 0NaN/0skip GPU 8×95-100%/75GB·180k autoqueue运行中(PID2896237,.29,polling iter_0180000,ETA~9.5h)**·**动作**：①git pull --rebase(同步✅,already up to date) ②训练健康(.29 /tmp/baize_xmodel25_decay_v2_train.log):iter175180/700k,step7030-7152ms(均~7076ms<7.4s✅),loss2.045-2.059,0NaN/0skip,GPU 8×95-100%/75GB ③autoqueue健康:PID2896237 alive,latest ckpt=iter_0174000(174k),180k ETA~9.5h ④**L2 GSM8K生成退化诊断(P0)**:检查gsm8k_diag 0-shot/5-shot生成样本→**greedy decoding产生repetition loop**("the same thing,the same thing..."×512 tokens);RP=1.3测试→repetition减少但text仍incoherent("The birds are not yet known what happens to their foodHH...")→**verdict:0%=生成退化(config issue,无RP)+能力不足(real capability,RP后仍不会math)**;L2 6/6均0%除MMLU=23.16%≈random ⑤L4重测:SSH .15/.17均timeout→仍BLOCKED;NFS上有designflow bench数据(ZhuLong_DAC2027/benchmark/)但EDA工具在.15→仍需SSH ⑥红线检查:4_llm_pretrain.tex grep benchmark=1行(contamination blacklist描述)·实际benchmark数字0条 PASS✅ ⑦无eval运行(CPU干净✅) ⑧📦TASK≈27KB✅/MEMORY≈27KB✅·四层评测 · L1=57.75%@170k(17/17,峰值160k=58.13%) L2=GSM8K=0%(生成退化+能力不足) HumanEval/MBPP=0% MMLU=23.16% L3=TB 0/2(pipeline✅) L4=🔴BLOCKED(SSH) · 本轮动作：监控巡检+L2 GSM8K生成退化诊断+红线检查+L4重测·未完成指令：无(等180k ckpt落盘~9.5h,autoqueue自动处理)⇒WAITING:1。
+> 📦 #2052（11-12 12:40, 监控巡检轮·训练step~7099ms<7.4s✅）→ daily-memories/2026-11-12.md；**结论**：训练健康iter175.0k,autoqueue正常,L4仍BLOCKED。需要时再读。
 > 📦 #2051（11-12 12:17, 监控巡检+autoqueue超时修复轮·训练step~7068ms<7.4s✅）→ daily-memories/2026-11-12.md；**结论**：autoqueue旧PID152293超时→重启PID2896237(18h timeout),训练健康iter174.84k。需要时再读。
 > 📦 #2050（11-12 11:46, 监控巡检+L2 v6确认+P2数据配方建议轮·训练step~7000ms<7.4s✅）→ daily-memories/2026-11-12.md；**结论**：训练健康iter174.5k,L2 v6确认HumanEval=0%/MBPP=0%为真能力问题,红线PASS。需要时再读。
-> 2026-11-12 11:46 #2050: **监控巡检+L2 v6确认+P2数据配方建议轮·训练健康iter174500/700k(24.9%) step6940-7120ms(均~7000ms<7.4s✅) loss2.04-2.06 0NaN/0skip GPU 8×100%/75GB·180k autoqueue运行中(PID152293,.29,elapsed~14400s≈4h,polling iter_0180000,ETA~10h)**·**动作**：①git pull --rebase(同步✅,already up to date) ②训练健康(.29 /proc/146283/fd/1):iter174500/700k,step6940-7120ms(均~7000ms<7.4s✅),loss2.044-2.063,0NaN/0skip,GPU 8×100%/75GB ③autoqueue健康:PID152293 alive(elapsed~14400s≈4h),正确polling;latest ckpt=iter_0174000(174k),180k ETA~10h ④L2 v6确认(.29 lm_eval_results/gguf_iter_160000_l2_v6/):HF后端(hf_iter_160000,port8083)HumanEval pass@1=0/MBPP pass_at_1=0(100样本),MATH运行中(84/100@58min,~38s/sample极慢);确认L2弱=真能力问题(数据缺code/math+训练仅25%) ⑤L4重测:SSH .15/.17均timeout(ConnectTimeout=10)→仍BLOCKED ⑥红线检查:4_llm_pretrain.tex grep(ARC|HellaSwag|...|benchmark)=29行但全为误命中(TikZ arc命令/web-code-math描述/contamination blacklist)·实际benchmark数字0条 PASS✅ ⑦research日报11-12:pretrain建议=Day-0探针+RL token budget,均mid-training不actionable ⑧无eval运行(CPU干净✅) ⑨P2建议(见「待决策」区):L2/L3全0%@25%训练→等350k(50%)再判,若仍0%则需增code/math数据配比 ⑩📦TASK≈27KB✅/MEMORY≈23KB✅·四层评测 · L1=57.75%@170k(17/17,峰值160k=58.13%) L2=6/6完成(HF确认HumanEval=0%/MBPP=0%@160k,MATH运行中) L3=TB 0/2(pipeline✅) L4=🔴BLOCKED(SSH) · 本轮动作：监控巡检+L2 v6确认+红线检查+P2数据配方建议·未完成指令：无(等180k ckpt落盘~10h,autoqueue自动处理)⇒WAITING:1。
+> 📦 #2050（11-12 11:46, 监控巡检+L2 v6确认+P2数据配方建议轮·训练step~7000ms<7.4s✅）→ daily-memories/2026-11-12.md；**结论**：训练健康iter174.5k,L2 v6确认HumanEval=0%/MBPP=0%,MATH进程已死(84/100),P2建议等350k再判。需要时再读。
 > 📦 #2049（11-12 11:27, 监控巡检+§4.6进度刷新轮·训练step~7000ms<7.4s✅）→ daily-memories/2026-11-12.md；**结论**：训练健康iter174.36k,§4.6刷新iter174.4k,红线PASS。需要时再读。
-> 2026-11-12 11:27 #2049: **监控巡检+§4.6进度刷新轮·训练健康iter174360/700k(24.9%) step6932-7102ms(均~7000ms<7.4s✅) loss2.04-2.06 0NaN/0skip GPU 8×100%/75GB·180k autoqueue运行中(PID152293,.29,elapsed~12600s≈3.5h,polling iter_0180000,ETA~11h)**·**动作**：①git pull --rebase(同步✅,already up to date) ②训练健康(.29 /proc/146283/fd/1):iter174360/700k,step6932-7102ms(均~7000ms<7.4s✅),loss2.049-2.060,0NaN/0skip,GPU 8×100%/75GB ③autoqueue健康:PID152293 alive(elapsed~12600s≈3.5h),正确polling;latest ckpt=iter_0174000(174k),180k ETA~11h(需~5640 iter×7s≈39480s) ④L4重测:SSH .15/.17均timeout(ConnectTimeout=10)→仍BLOCKED;NFS上有zhulong/designflow bench数据但EDA工具在.15→仍需SSH ⑤红线检查:4_llm_pretrain.tex grep benchmark名0命中 PASS✅ ⑥无eval运行(CPU干净✅) ⑦research日报11-12:pretrain建议=Day-0探针+RL token budget,均mid-training不actionable ⑧§4.6进度刷新:iter171.8k→174.4k,tok/s 592K→598K,loss 2.03→2.05,Status 172k→174k done;latexmk编译成功(5p,216KB,0err) ⑨📦TASK≈27KB✅/MEMORY≈21KB✅·四层评测 · L1=57.75%@170k(17/17,峰值160k=58.13%) L2=6/6完成(全0%除MMLU=23.16%) L3=TB 0/2(pipeline✅) L4=🔴BLOCKED(SSH) · 本轮动作：监控巡检+§4.6进度刷新+红线检查+L4重测·未完成指令：无(等180k ckpt落盘~11h,autoqueue自动处理)⇒WAITING:1。
+> 📦 #2049（11-12 11:27, 监控巡检+§4.6进度刷新轮·训练step~7000ms<7.4s✅）→ daily-memories/2026-11-12.md；**结论**：训练健康iter174.36k,§4.6刷新iter174.4k,红线PASS。需要时再读。
 > 📦 #2048（11-12 10:58, 监控巡检+MEMORY归档瘦身轮·训练step~7050ms<7.4s✅）→ daily-memories/2026-11-12.md；**结论**：训练健康iter174.15k,autoqueue正常,L4仍BLOCKED,MEMORY瘦身30KB→22KB。需要时再读。
 > 📦 #2047（11-12 10:38, 监控巡检轮·训练step~7090ms<7.4s✅）→ daily-memories/2026-11-12.md；**结论**：训练健康iter173.99k,autoqueue正常,L4仍BLOCKED。需要时再读。
 > 📦 #2046（11-12 10:15, 监控巡检轮·训练step~7060ms<7.4s✅）→ daily-memories/2026-11-12.md；**结论**：训练健康iter173.8k,autoqueue正常,L4仍BLOCKED。需要时再读。
@@ -107,18 +108,23 @@ WAITING: 1（🔴 2026-11-11 用户令「四层评测拿更好结果」执行中
 
 ## 待决策（等用户拍板）
 
-### P2-001: L2/L3 全 0% — 是否需调整数据配比（2026-11-12 #2050）
-- **现状**：160k ckpt(25%训练) L2 评测(HF后端) HumanEval=0%, MBPP=0%, MATH运行中(预计~0%), GSM8K=0%, BBH=0%, MMLU=23.16%(≈随机25%)。L3 Terminal-bench smoke 0/2(生成退化致agent无法编辑文件)。
+### P2-001: L2/L3 全 0% — 生成退化 + 能力不足（2026-11-12 #2053 更新）
+- **现状**：160k ckpt(25%训练) L2 评测(HF后端) HumanEval=0%, MBPP=0%, MATH进程已死(84/100,预计~0%), GSM8K=0%(0-shot/5-shot均0%), BBH=0%, MMLU=23.16%(≈随机25%)。L3 Terminal-bench smoke 0/2(模型无法创建输出文件)。
+- **🔴 GSM8K 生成退化诊断（#2053 新增）**：
+  1. **Greedy decoding 退化**：0-shot GSM8K 生成样本显示模型立即陷入 repetition loop（"the same thing, the same thing..."×512 tokens），完全不尝试解题。5-shot 同样退化。
+  2. **Repeat penalty=1.3 测试**：repetition 减轻，但生成仍为 incoherent word salad（"The birds are not yet known what happens to their foodHH..."），仍 0% exact_match。
+  3. **Verdict**：GSM8K 0% = **生成退化（config issue: 无 RP → repetition loop）+ 能力不足（real capability: RP 后仍不会 math）**。不是纯评测配置问题，也不是纯能力问题——是两者叠加。
+  4. **对其他 L2 任务的影响**：HumanEval/MBPP 同样用 greedy decoding + 512 max_gen_toks，很可能也有类似退化（但 HumanEval 有 `until` stop tokens `['\nclass','\ndef','\n#','\nif','\nprint']` 可能截断部分退化）。
 - **根因分析**：
-  1. stable phase 数据配比 = 74:19:7 (web:code:math)，code/math 占 26%——数量不算低，但模型仅训 25%(174k/700k)，已消费 ~183B token，其中 code ~35B、math ~13B token。
-  2. decay phase 配比 = instruction-SFT 60% + agentic-SFT 12% + web 22% + math 4% + code 2%——code/math 仅 6%，比 stable phase 大幅下降。若 code/math 能力主要靠 stable phase 积累，decay phase 不会显著增强。
-  3. 模型当前在 stable phase（lr=1e-3 恒定），尚未进入 instruction-SFT/decay——HumanEval/MBPP 需要「按指令生成代码」的能力，这通常需要 instruction-tuning。0% 可能部分因为模型还不会「跟随指令」。
-  4. 对比参考：CodeLlama-7B 训了 ~1T code token；我们 2B 模型到训完仅 ~140B code token。但 2B 模型参数量小，需更少数据即可学到基础能力——0% 更可能是「未学够 + 未instruction-tuned」的组合。
+  1. stable phase 数据配比 = 74:19:7 (web:code:math)，code/math 占 26%。模型仅训 25%(175k/700k)，已消费 ~184B token。
+  2. 模型在 stable phase（lr=1e-3 恒定），尚未进入 instruction-SFT/decay。base model 早期生成退化是已知现象。
+  3. MMLU=23.16%≈随机25%（4选1），说明知识能力也未建立——这是 multiple-choice（logit 比较），不受生成退化影响，所以 MMLU 的低分是纯能力不足。
 - **建议（🚫 不自行改生产配置）**：
-  1. **短期（当前~350k, 50%）**：维持现状继续监控。每 20k ckpt 跑 L2 全量，观察 HumanEval/MBPP 是否从 0% 起步。若 350k 时仍 0%，进入下一步。
-  2. **中期（350k~decay前）**：若仍 0%，考虑在 decay phase 增加 code/math 占比（从 6% 提到 15-20%），或引入更高质量 code 数据（GitHub 代码 + CoT 格式 math）。
-  3. **长期**：L3 agentic 能力可能需要 post-train 阶段专门 SFT/RL（posttrain 线负责），pretrain 阶段只需保证基础 code/math 不为零。
-- **需要的输入**：用户裁定 ① 维持现状等 350k 再判 ② 提前调整 decay phase 配比 ③ 等 700k 训完在 post-train 阶段补。
+  1. **短期（当前~350k, 50%）**：维持现状继续监控。每 20k ckpt 跑 L2，观察：(a) 生成退化是否随训练减轻 (b) MMLU 是否从 25%(随机)起步上升。若 350k 时 MMLU 仍≈25% 且生成仍退化，进入下一步。
+  2. **评测改进（可在评测侧做）**：L2 生成类任务（GSM8K/HumanEval/MBPP/MATH）可加 `repeat_penalty=1.1~1.3` 作为辅助口径，观察模型是否有「被退化掩盖的真实能力」。但**不改变官方口径**（greedy/no-RP 为主报告数）。
+  3. **中期（350k~decay前）**：若仍 0%，考虑在 decay phase 增加 code/math 占比（从 6% 提到 15-20%），或引入更高质量 code/math 数据。
+  4. **长期**：L3 agentic 能力需 post-train 阶段专门 SFT/RL（posttrain 线负责）。
+- **需要的输入**：用户裁定 ① 维持现状等 350k 再判 ② 提前调整 decay phase 配比 ③ 评测侧加 RP 辅助口径先探真实能力 ④ 等 700k 训完在 post-train 阶段补。
 
 ---
 
