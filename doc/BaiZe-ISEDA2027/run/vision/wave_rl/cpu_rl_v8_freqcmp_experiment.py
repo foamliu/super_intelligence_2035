@@ -29,7 +29,7 @@ PRE-REGISTERED JUDGMENT (written BEFORE running, 2026-11-12):
 Author: vision (v8 new task dimension). License: project-internal.
 """
 from __future__ import annotations
-import sys, os, json, time, math, random, argparse, re
+import sys, os, json, time, math, random, argparse, re, gc
 from typing import Any, Dict, List, Optional, Tuple
 import numpy as np
 import torch
@@ -489,8 +489,8 @@ def mcnemar_test(b_correct, c_correct):
     n10 = sum(1 for b, c in zip(b_correct, c_correct) if not b and c)
     n_disc = n01 + n10
     if n_disc == 0: return 0.0, 1.0, 0
-    from scipy.stats import binom_test
-    p = binom_test(min(n01, n10), n_disc, 0.5)
+    from scipy.stats import binomtest
+    p = binomtest(min(n01, n10), n_disc, 0.5).pvalue
     stat = abs(n01 - n10) / max(n_disc, 1)
     return stat, p, n_disc
 
@@ -572,7 +572,7 @@ def main():
         model_sft.save_pretrained(sft_save)
         print(f"  SFT adapter saved to {sft_save}", flush=True)
         sft_ckpt_path = sft_save
-        del model_sft; import gc; gc.collect()
+        del model_sft; gc.collect()
     else:
         print("=" * 60, "\n[Phase 1] SFT SKIPPED (using existing adapter)", flush=True)
         tokenizer = AutoTokenizer.from_pretrained(args.model_path, trust_remote_code=True)

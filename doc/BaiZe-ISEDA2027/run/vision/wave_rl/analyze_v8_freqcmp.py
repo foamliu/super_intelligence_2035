@@ -2,7 +2,7 @@
 """analyze_v8_freqcmp.py - Analyze v8 frequency comparison experiment results."""
 import json, sys, os
 import numpy as np
-from scipy.stats import binom_test
+from scipy.stats import binomtest
 
 OUT_BASE = "/nas_train/app.e0031982/datasets/baize-vision/out"
 
@@ -21,7 +21,7 @@ def mcnemar(b_correct, c_correct):
     n_disc = n01 + n10
     if n_disc == 0:
         return 0.0, 1.0, 0
-    p = binom_test(min(n01, n10), n_disc, 0.5)
+    p = binomtest(min(n01, n10), n_disc, 0.5).pvalue
     return abs(n01 - n10) / max(n_disc, 1), p, n_disc
 
 
