@@ -1,0 +1,91 @@
+Traceback (most recent call last):
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/urllib3/connectionpool.py", line 670, in urlopen
+    httplib_response = self._make_request(
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/urllib3/connectionpool.py", line 392, in _make_request
+    conn.request(method, url, **httplib_request_kw)
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/http/client.py", line 1283, in request
+    self._send_request(method, url, body, headers, encode_chunked)
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/http/client.py", line 1329, in _send_request
+    self.endheaders(body, encode_chunked=encode_chunked)
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/http/client.py", line 1278, in endheaders
+    self._send_output(message_body, encode_chunked=encode_chunked)
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/http/client.py", line 1038, in _send_output
+    self.send(msg)
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/http/client.py", line 976, in send
+    self.connect()
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/docker/transport/unixconn.py", line 26, in connect
+    sock.connect(self.unix_socket)
+PermissionError: [Errno 13] Permission denied
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/requests/adapters.py", line 644, in send
+    resp = conn.urlopen(
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/urllib3/connectionpool.py", line 726, in urlopen
+    retries = retries.increment(
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/urllib3/util/retry.py", line 410, in increment
+    raise six.reraise(type(error), error, _stacktrace)
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/urllib3/packages/six.py", line 734, in reraise
+    raise value.with_traceback(tb)
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/urllib3/connectionpool.py", line 670, in urlopen
+    httplib_response = self._make_request(
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/urllib3/connectionpool.py", line 392, in _make_request
+    conn.request(method, url, **httplib_request_kw)
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/http/client.py", line 1283, in request
+    self._send_request(method, url, body, headers, encode_chunked)
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/http/client.py", line 1329, in _send_request
+    self.endheaders(body, encode_chunked=encode_chunked)
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/http/client.py", line 1278, in endheaders
+    self._send_output(message_body, encode_chunked=encode_chunked)
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/http/client.py", line 1038, in _send_output
+    self.send(msg)
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/http/client.py", line 976, in send
+    self.connect()
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/docker/transport/unixconn.py", line 26, in connect
+    sock.connect(self.unix_socket)
+urllib3.exceptions.ProtocolError: ('Connection aborted.', PermissionError(13, 'Permission denied'))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/docker/api/client.py", line 223, in _retrieve_server_version
+    return self.version(api_version=False)["ApiVersion"]
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/docker/api/daemon.py", line 181, in version
+    return self._result(self._get(url), json=True)
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/docker/utils/decorators.py", line 44, in inner
+    return f(self, *args, **kwargs)
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/docker/api/client.py", line 246, in _get
+    return self.get(url, **self._set_request_timeout(kwargs))
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/requests/sessions.py", line 602, in get
+    return self.request("GET", url, **kwargs)
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/requests/sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/requests/sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/requests/adapters.py", line 659, in send
+    raise ConnectionError(err, request=request)
+requests.exceptions.ConnectionError: ('Connection aborted.', PermissionError(13, 'Permission denied'))
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/runpy.py", line 196, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/runpy.py", line 86, in _run_code
+    exec(code, run_globals)
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/swebench/harness/run_evaluation.py", line 863, in <module>
+    main(**vars(args))
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/swebench/harness/run_evaluation.py", line 770, in main
+    client = _docker_client()
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/swebench/harness/run_evaluation.py", line 66, in _docker_client
+    return docker.from_env(
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/docker/client.py", line 110, in from_env
+    return cls(
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/docker/client.py", line 48, in __init__
+    self.api = APIClient(*args, **kwargs)
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/docker/api/client.py", line 207, in __init__
+    self._version = self._retrieve_server_version()
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/docker/api/client.py", line 230, in _retrieve_server_version
+    raise DockerException(
+docker.errors.DockerException: Error while fetching server API version: ('Connection aborted.', PermissionError(13, 'Permission denied'))

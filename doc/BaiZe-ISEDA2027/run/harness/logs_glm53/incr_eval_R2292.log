@@ -1,0 +1,14 @@
+[incr-eval 21:21:26] === incr_eval R2292 start ===
+
+=== cline R2292 ===
+new instances: 1 ['django__django-10973']
+[incr-eval 21:21:26] cline: merged 1 new patches -> predictions_cline-patched_new_R2292.json
+[incr-eval 21:21:26] cline: EVAL 1 instances -> run_id=verified_full_glm53_cline-patched_incr_R2292
+[incr-eval 21:21:30] cline: eval rc=0
+[incr-eval 21:21:30]   django__django-10973: RESOLVED
+[incr-eval 21:21:30] cline: cumulative n=300 resolved=223 failed=76 infra=1 -> eval_glm53_cline-patched.json
+
+=== codex R2292 ===
+new instances: 2 ['pytest-dev__pytest-6202', 'pytest-dev__pytest-7205']
+[incr-eval 21:21:30] codex: merged 2 new patches -> predictions_codex_new_R2292.json
+[incr-eval 21:21:30] codex: EVAL 2 instances -> run_id=verified_full_glm53_codex_incr_R2292
