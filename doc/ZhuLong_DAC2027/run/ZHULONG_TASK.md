@@ -27,23 +27,6 @@
 
 ```bash
 # (1) 版本与 flag（无输出 ⇒ 升级 4.x，记录版本）
-14) **P0.5（第一步，必做；~1–2h；零评测轮）离线摘要质量对照**：不用跑评测，用已有 trace 做「同前缀、两策略」对照——
-   a. 取 **30 个 agentic 已压缩 session**（`*.compaction.json` 且 `metadata.kind=compaction_summary`），从 `messages.json` + `source_message_count/source_last_message_key` 还原**压缩前前缀**；
-   b. **basic 侧**：对同一前缀套用 basic 的确定性规则（保留最新 user prompt + 最近 3 条 assistant），生成 basic 摘要（零 LLM）；
-   c. **agentic 侧**：直接用 trace 里已记录的 agentic 摘要（`Context summary: ## Goal ## State ...`），无需重跑；
-   d. 对比指标：4 要素覆盖率（Goal/State/Decisions/Next）、**10 条关键事实保留率**（从前缀自动抽：改过的文件路径/关键命令/数值/失败原因/结论）、token 压缩比、事实错误/编造数；
-   e. 交付 `run/compaction_p0_5_summary_quality.json`（30 条逐条 + 汇总）+ 计划书 §12.3 填数；
-   f. **决策**：若 agentic 在「事实保留率」或「4 要素覆盖率」上不比 basic 高 ≥10pp ⇒ 直接写「机制证据不足」，A/B 只跑 **Top-15 × 3 轮**的部署效果确认；若明显更好 ⇒ 按 P0e 结果继续。
-   g. 若本机有 cline SDK 的 `compact-session`（`bun -F @cline/core test:compaction -- <session-dir> --strategy both`）可直接用；没有则按 a–c 自建，**不阻塞**。
-15) **P0e（第二步，~0.3h）4.x 隔离探测**：用**隔离安装**的 cline 4.x（不覆盖现网 3.0.51）跑 1 题 `maxInputTokens=32000`，看是否在 ≈28.8k 触发且两臂一致；生效 ⇒ 强制 regime（40 题 × 6 轮）；仍忽略 ⇒ 走 item 16 fallback（不硬改源码）。
-16) **Fallback 设计（若 32K 不可实现，替代 §11 的 regime）**：
-   - 任务集改为 **Top-15~20 超长任务**（按历史 trace 总 token 排序，保证 basic 也能过 230k）；
-   - 主终点 = **arm 级 ITT Pass@1**（即“按默认策略部署”的效果：agentic 更早压缩+语义摘要 vs basic 更晚压缩+逐字保留）；
-   - 次要 = **两臂都触发压缩**的子集（机制对照，报告 n）+ **触发 token 作为中介变量**（agentic 120k vs basic 230k 的时机差）；
-   - 报告必须写明：两臂的**触发时机不同**是策略自带属性（agentic 主动提前压缩），因此主结论是「部署效果」，不是「同一触发点下的摘要质量」；后者由 P0.5 离线实验回答。
-17) **报告口径补充（v3）**：必须记录 cline 版本（3.0.51 / 4.x）、每臂触发阈值实测、每臂触发率、触发 token 中位数；结论必须区分「部署效果（ITT）」与「机制（P0.5 + 双触发子集）」两句话，不得混写。
-
-
 cline --version | tee /tmp/COMP_p0_version.log
 cline --help | grep -n -- '--compaction' | tee -a /tmp/COMP_p0_version.log
 
@@ -83,9 +66,17 @@ wc -l run/compaction_subset_40.txt   # 必须 40
 > 若升级后 `--compaction` 仍不可用：改用 data-dir 内 `global-settings.json.compactionStrategy` 控制，并**必须**用 `compaction.json.metadata.kind` 验证生效；不得因此跳过验证。
 > 若 1 题 smoke 未触发压缩（正常）：以 pilot 8 题为准判断触发率，不要因单题未触发就改档。
 
-12) **P1 结果必须落盘**：`run/compaction_pilot.json`（8 题 × 2 臂的压缩率 / Pass@1 / 单题耗时 / 最终 `maxInputTokens` / 每臂 `metadata.kind` 计数），再据此锁档进 P2。
+12) **P1 只做两件事**：8 题 × 2 臂，①确认触发（32K 路径：每臂 ≥70%；fallback 路径：15 题全部触发）②确认 `metadata.kind` 正确。结果落 `run/compaction_pilot.json`；**不再做 32K→24K→16K 的多档调档**（那个数不生效就没档可调，生效就不用调）。
 
-13) **收尾**：`run/compaction_subset_40.txt` + `run/compaction_pilot.json` + `run/run_compaction_ablation.sh` + `run/ablation_compaction_results.json` + `run/cost_C_*_r*.json` + 报告，一并 `git add`（只加本线文件）→ commit → push；MEMORY 写一行总结（v2 regime / 最终 maxInputTokens / Δ / p / 三问结论）。
+13) **收尾**：`run/compaction_subset_40.txt` + `run/compaction_pilot.json` + `run/run_compaction_ablation.sh` + `run/ablation_compaction_results.json` + `run/cost_C_*_r*.json` + 报告，一并 `git add`（只加本线文件）→ commit → push；MEMORY 写一行总结（最终 maxInputTokens 或 fallback / Δ / p / 一句话结论）。
+
+14) **🔻 简化版 v4（2026-11-12 用户质疑后收敛，执行以本条为准；§11/§12 的 P0.5/mediation 全部取消）**
+   - **就一个数**：`maxInputTokens = 32000`（`models.json`，两臂同值）→ 触发点 0.9×32K ≈ **28.8K**。
+   - **唯一前置 P0e（0.3h）**：只在**会读这个数**的 cline 上验 1 题（3.0.51 已实测不读；用隔离 4.x，或在 .29 上先试 3.0.74）。判据：`compaction.json.source_tokens ≈ 28.8K (±10%)`，且两臂都在该点触发。
+   - **路径 A（数生效，推荐）**：40 题 × 2 臂 × 3 轮 ABBA，~5.6h；只比 **Pass@1 / tok·题 / 墙钟 / 触发率**。
+   - **路径 B（数不生效，不折腾版本）**：直接换 **Top-15 超长任务**（历史 trace 总 token ≥230K，basic 必触发）× 2 臂 × 3 轮，~2–3h；主结论 = 部署效果（agentic 更早压缩+语义摘要 vs basic 更晚+逐字保留），报告注明两臂触发时机不同即可。
+   - **不做**：P0.5 离线摘要实验、混合效应/中介分析、4 档调档、额外 shard 扩展——这些都不回答“basic vs agentic 哪个好”。
+15) **报告最小集**：3 轮 Pass@1 均值±std + 逐题配对 McNemar + tok/题 + 墙钟/题 + 每臂触发率与触发 token 中位数 + 失败分类（infra/能力）；最后一句明确给结论（选 basic / 选 agentic / 证据不足）。
 
 
 
