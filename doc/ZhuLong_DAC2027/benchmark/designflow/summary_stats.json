@@ -16,7 +16,7 @@
   "hits_total": 38082,
   "hosts": 696,
   "mc10": 1436,
-  "mc100": 317,
+  "mc100": 618,
   "mc1000": 8,
   "mc15": 2684,
   "mc20": 1251,
@@ -68,7 +68,7 @@
     "scan_dir": "ssh_eda_search_20261109_224902",
     "total_rows": 38082
   },
-  "sessions": 5999,
+  "sessions": 1746,
   "shard_mc": {
     "A": 10,
     "B": 10,
@@ -152,7 +152,7 @@
     },
     "src": "designflow/summary_1105.tsv (11/05 curated, shard-A keyword filter, slug dedup)"
   },
-  "updated_at": "2026-11-12 14:31",
+  "updated_at": "2026-11-12 14:51",
   "users_mc10": 444,
   "users_mc100": 182,
   "users_mc30": 401,
