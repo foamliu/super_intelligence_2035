@@ -7843,6 +7843,14 @@ setsid bash -c "eval/run_batch.sh \
 
 → DesignFlow benchmark 对所有测试模型均为 0% Pass@1，包括 DeepSeek——这表明该 benchmark 任务难度极高或评测协议需进一步调优
 
+#### R382 确认：「check.py missing」根因 + 5-task 重跑（2026-11-13 wake382）
+
+- **根因确诊**：prior evals（status_minicpm5_expand30.jsonl, status_minicpm5_clean5.jsonl）全部 ERROR "check.py missing" 的原因 = `eval/run_one.sh` L147 preflight 检查 `benchmarks/EDA-Eval-DesignFlow/reference/<task_id>/check.py`，而 prior eval 选择的 task（IOCABufModel-001, ReadsigAddrTbl-001, LeakageCellPvtAudit-001 等）在 reference/ 目录下**没有 check.py**
+- **数据**：主 JSONL 990 tasks 中，881 同时有 check.py + assets（可供评测）；109 个缺 check.py 或 assets
+- **修复**：创建 `eval/minicpm5_sft_v39_5valid.jsonl`（5 个 valid tasks），用 `run_batch.sh --model minicpm5-2b-sft-v39-final --workers 2 --limit 5` 重跑
+- **结果**：0/5 = 0% PASS，全部 FAIL "no submit.zip produced (cline wrote nothing under outputs/)"，cline_exit=0, hook_blocks=0, dur=17-167s
+- **结论**：与 §L4.6f/§L4.10/本轮 prior 完全一致——SFT v39 final 在 designflow 上 0%，"check.py missing" 是 infra bug 非能力问题，修复后基线仍为 0%
+
 ### §L4-zhulong (2026-11-13 wake365→372) SFT v39 Post-SFT Eval — INTERMEDIATE PROGRESS (RUNNING)
 
 > 替身预演声明：MiniCPM5-2B is BaiZe surrogate; gains/losses not transferable to BaiZe.
