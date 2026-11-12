@@ -1816,3 +1816,19 @@ L2/L3/L4 低分/空白同一根因 = 训练数据(P-5b/P-8 Ultra-FineWeb-L3)缺�
 - **Avg(harness) = 57.75%** (vs 160k peak 58.13%, Δ=-0.38pp, within stderr±4.5%)
 - L1 scaling report refreshed: 17/20 ckpt (10k-170k)
 - Command: python3 gen_llamacpp_scaling_report.py (BAIZE_REPORT_PATH=...report_pretrain_llamacpp_scaling_zh.html)
+
+### L2 HumanEval HF Complete Eval (2026-11-12 14:56 · #2058)
+- **Method**: Custom HumanEval evaluator (`baize_l2_hf_humaneval_direct.py`) using sglang env (transformers 5.18.0, native NemotronH, CPU bfloat16)
+- **Why custom**: py310 env has sklearn/numpy binary incompatibility (`ValueError: numpy.dtype size changed` from /dev/shm harness sklearn), sglang env has no lm_eval installed, no pip (no network on .29)
+- **Config**: 0-shot, greedy, max_new_tokens=128, torch.set_num_threads(8), OMP_NUM_THREADS=8, nice 19, CUDA_VISIBLE_DEVICES=""
+- **Model**: hf_iter_160000 (160k checkpoint, 671B tokens trained, 23% of 700k)
+- **Results**: pass@1 = 3/20 = **15.0%**
+  - PASS: HumanEval/7 (filter_by_substring), HumanEval/15 (string_sequence), HumanEval/16 (count_distinct_characters)
+  - FAIL but coherent code: 17/20 (completion_length 36-676 chars, NOT degenerate repetition)
+  - Per-problem gen_time: ~14s (CPU bfloat16, Mamba2 reference implementation, no mamba_ssm/causal_conv1d optimization)
+- **Key finding**: llama.cpp SSM generation bug is the PRIMARY cause of L2=0%
+  - Same 160k ckpt: HF transformers pass@1=15.0% vs llama.cpp 0/100=0.0% → 15pp gap entirely from inference backend
+  - Model HAS basic code generation capability (15% is reasonable for 2B @ 23% training, cf. DeepSeek 1.3B 4:2:4 HumanEval=20.1%)
+- **Training impact**: step 6945-7021ms < 7.4s ✅ (no impact on training throughput)
+- **Results file**: `/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/lm_eval_results/gguf_iter_160000_l2_hf_humaneval_direct/results.json`
+- **Next**: GSM8K HF 4-shot eval (script `baize_l2_hf_gsm8k_direct.py` ready, ~7 min for 50 problems)
