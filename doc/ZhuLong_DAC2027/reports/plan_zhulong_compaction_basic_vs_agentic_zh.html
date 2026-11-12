@@ -356,7 +356,7 @@ setsid bash -c 'timeout --signal=TERM --kill-after=120 43200 \
 <div class="banner err">
 <b>P0d smoke 实测（2026-11-12 22:2x，cline 3.0.51，2 题）</b>：<code>models.json</code> 里 <code>contextWindow=32000</code> <b>被忽略</b>。<br>
 实测触发点：<b>basic ≈ 229.9k tokens</b>、<b>agentic ≈ 120.2k tokens</b> —— 阈值是<b>策略相关</b>的（agentic 会主动提前压缩），不是配置驱动。<br>
-⇒ <b>§11 的 tight-context regime 在 3.0.51 上不可实现</b>；若强行按原计划跑，两臂会变成「压缩过 vs 没压缩过」的对比（混杂触发时机）。
+⇒ <b>当时判断「3.0.51 不支持该配置」；但 P0d 未验证 harness 是否把 <code>--data-dir</code> 传给 cline（触发点 229.9K ≈ 默认 256K×0.9，疑似配置没接上），故该结论待 P0e 复核</b>：补 1 行 <code>--data-dir "$CLI_DATA_DIR"</code> 后再测 1 题即可定论。
 </div>
 
 <h3>12.1 决策树（P0e → P1）</h3>

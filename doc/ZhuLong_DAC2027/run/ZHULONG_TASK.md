@@ -72,7 +72,7 @@ wc -l run/compaction_subset_40.txt   # 必须 40
 
 14) **🔻 简化版 v4（2026-11-12 用户质疑后收敛，执行以本条为准；§11/§12 的 P0.5/mediation 全部取消）**
    - **就一个数**：`maxInputTokens = 32000`（`models.json`，两臂同值）→ 触发点 0.9×32K ≈ **28.8K**。
-   - **唯一前置 P0e（0.3h）**：只在**会读这个数**的 cline 上验 1 题（3.0.51 已实测不读；用隔离 4.x，或在 .29 上先试 3.0.74）。判据：`compaction.json.source_tokens ≈ 28.8K (±10%)`，且两臂都在该点触发。
+   - **唯一前置 P0e（0.3h）**：先确认 harness 把 data-dir 传给了 cline——`grep -n -- '--data-dir' scripts/run_cline_script.sh`；没有就**加 1 行** `--data-dir "$CLI_DATA_DIR"`（空值时退回默认，保持向后兼容）。然后跑 1 题验证：`compaction.json.source_tokens ≈ 28.8K (±10%)` 且两臂都在该点触发。⚠️ **P0d 的「3.0.51 忽略 models.json」未证实**：当时触发 229.9K ≈ 默认 256K×0.9，极可能只是 data-dir 没传进去；**若这 1 行生效，就不升级 4.x、不做任何 fallback**。
    - **路径 A（数生效，推荐）**：40 题 × 2 臂 × 3 轮 ABBA，~5.6h；只比 **Pass@1 / tok·题 / 墙钟 / 触发率**。
    - **路径 B（数不生效，不折腾版本）**：直接换 **Top-15 超长任务**（历史 trace 总 token ≥230K，basic 必触发）× 2 臂 × 3 轮，~2–3h；主结论 = 部署效果（agentic 更早压缩+语义摘要 vs basic 更晚+逐字保留），报告注明两臂触发时机不同即可。
    - **不做**：P0.5 离线摘要实验、混合效应/中介分析、4 档调档、额外 shard 扩展——这些都不回答“basic vs agentic 哪个好”。
