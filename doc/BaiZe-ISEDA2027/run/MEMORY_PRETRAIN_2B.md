@@ -1,6 +1,7 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
-WAITING: 1（🔴 2026-11-11 用户令「四层评测拿更好结果」执行中·**L1 17/17done(10k-170k,峰值160k=58.13%)·180k autoqueue运行中(PID2896237,.29,ETA~2.5h)**·**L2 🟢HF五重验证全部完成:HumanEval HF=15.0%(3/20)✅+GSM8K HF=10.0%(1/10)✅+MBPP HF=5.0%(1/20)✅+BBH HF=3.3%(1/30)✅+MATH HF=0.0%(0/10)✅(五验证llama.cpp SSM bug是0%主因,生成Avg5集=6.66%)·MMLU=23.16%**·**L3 TB smoke 0/2完成·无GPU做vLLM重试(.29/.12均满载,.17不通)**·**L4🔴SSH.15/.17timeout+EDA工具在/nasdata/(.15本地非NFS)**·**论文§4.6已刷新iter177k+PDF 0err✅·红线PASS**·训练健康iter≈178.8k/700k(25.5%) GPU 8×~98%/75GB step~7260ms✅）
-> 2026-11-12 20:05 #2068: **监控巡检轮·训练健康iter178790/700k(25.5%) step~7260ms<7.4s✅(1次7417ms微超,正常波动) loss2.041 0NaN/0skip**·**动作**：①git pull --rebase(冲突ZhuLong pdf→checkout --theirs+add→pull✅,Already up to date) ②训练健康(.29):/proc/PID/fd/1→iter178790,step7260ms,GPU 8×~98%/75GB,loss2.041,lr=1e-3(stable),0NaN/0skip,latest ckpt=iter_0178000 ③180k autoqueue运行中(PID2896237,.29,train@178780,ETA~2.5h,日志waiting) ④L3/L4仍BLOCKED(同#2067,无新变化) ⑤research日报11-12已读(同#2067判定,无新可操作项) ⑥红线PASS(§4.6无benchmark数字) ⑦四层报告刷新:hero header更新iter178.8k+step~7260ms+loss2.041+footer更新#2068 ⑧📦TASK≈27KB✅/MEMORY≈25KB✅·四层评测 · L1=57.75%@170k L2=🟢HF五重验证完成(HumanEval=15.0%+GSM8K=10.0%+MBPP=5.0%+BBH=3.3%+MATH=0.0%,Avg5集=6.66%) MMLU=23.16% L3=TB 0/2(无GPU做vLLM重试) L4=🔴BLOCKED(SSH+EDA工具在.15本地) · 本轮动作：监控巡检+四层报告刷新·未完成指令：有(180k autoqueue运行中ETA~2.5h)⇒WAITING:1。
+WAITING: 1（🔴 2026-11-12 用户令「L1/L2评测脚本入库+L4移交post-train」执行中·**L1/L2 eval脚本已入库baize-llm/scripts/eval/（10文件✅,README§4.6已更新✅,commit ed6ea54e4）**·**L1 17/17done(10k-170k,峰值160k=58.13%)·180k autoqueue运行中(PID2896237,.29,train@178950,ETA~2h)**·**L2 🟢HF五重验证全部完成:HumanEval HF=15.0%(3/20)✅+GSM8K HF=10.0%(1/10)✅+MBPP HF=5.0%(1/20)✅+BBH HF=3.3%(1/30)✅+MATH HF=0.0%(0/10)✅·MMLU=23.16%**·**L3 TB smoke 0/2完成·无GPU做vLLM重试(.29/.12均满载,.17不通)**·**L4 HANDOFF→post-train（2026-11-12用户令·不再做L4资源调查/SSH/.15直连·只读引用post-train出数）**·**论文§4.6已刷新iter177k+PDF 0err✅·红线PASS**·训练健康iter≈178.97k/700k(25.6%) GPU 8×71-75%/75GB step~7077-7296ms✅）
+> 2026-11-12 20:24 #2069: **L1/L2脚本入库确认+L4移交post-train+监控巡检轮·训练健康iter178970/700k(25.6%) step7077-7296ms<7.4s✅ loss2.037 0NaN/0skip**·**动作**：①git pull --rebase(Already up to date✅) ②训练健康(.29):/proc/146283/fd/1→iter178970,step7077-7296ms,GPU 8×71-75%/75GB,loss2.037,lr=1e-3(stable),0NaN/0skip ③**L1/L2评测脚本入库确认**：code/baize-llm/scripts/eval/ 10文件全在(baize_l1_autoqueue_170k/180k.sh+baize_l2_hf_humaneval.sh/.direct.sh/.direct.py/.py310.py+gsm8k/math/mbpp/bbh_direct.py),README§4.6已含口径/用法/依赖/已知坑,commit ed6ea54e4→**确认可用✅,接手维护**（今后eval脚本改动直接改scripts/eval/不再散落run/） ④**L4移交post-train（2026-11-12用户令即刻生效）**：L4状态从BLOCKED改为HANDOFF→post-train·不再做L4资源调查/SSH .15/.17/.15直连·四层口径调整为L1/L2/L3由pretrain负责,L4只读引用(post-train出数后引用) ⑤180k autoqueue运行中(PID2896237,.29,train@178950,日志waiting,ETA~2h) ⑥红线PASS(§4.6无benchmark数字) ⑦📦TASK≈28KB✅/MEMORY≈26KB✅·四层评测 · L1=57.75%@170k L2=🟢HF五重验证完成(HumanEval=15.0%+GSM8K=10.0%+MBPP=5.0%+BBH=3.3%+MATH=0.0%,Avg5集=6.66%) MMLU=23.16% L3=TB 0/2(无GPU做vLLM重试) L4=HANDOFF→post-train · 本轮动作：L1/L2脚本入库确认+L4移交post-train+监控巡检·未完成指令：有(180k autoqueue运行中ETA~2h)⇒WAITING:1。
+> 📦 #2068（11-12 20:05, 监控巡检轮·训练step7260ms<7.4s✅）→ daily-memories/2026-11-12.md；**结论**：训练健康iter178790,L4仍BLOCKED(移交前最后一轮)。需要时再读。
 > 📦 #2067（11-12 19:42, 监控巡检轮·训练step7332ms<7.4s✅）→ daily-memories/2026-11-12.md；**结论**：训练健康iter178610。需要时再读。
 > 📦 #2066（11-12 19:20, 监控巡检轮·训练step7037ms<7.4s✅）→ daily-memories/2026-11-12.md；**结论**：训练健康iter178430。需要时再读。
 > 📦 #2065（11-12 18:55, 监控巡检+四层报告刷新+MEMORY归档轮·训练step7087ms<7.4s✅）→ daily-memories/2026-11-12.md；**结论**：训练健康iter178220,归档释放7KB。需要时再读。
@@ -59,7 +60,7 @@ WAITING: 1（🔴 2026-11-11 用户令「四层评测拿更好结果」执行中
 
 ## 🔴 待决策区（需用户拍板 · 2026-11-12 #2059 更新 · GSM8K HF=10.0%修正诊断）
 
-**背景**：L2 llama.cpp: GSM8K=0% / BBH=0% / MATH≈0% / MMLU=23.16%(≈随机25%)。L3 TB 0/2。L4 BLOCKED。**🟢 HF transformers 重评: HumanEval=15.0%(3/20) + GSM8K=10.0%(1/10) → 模型有基础代码+数学能力, llama.cpp SSM bug 是 0% 主因**。
+**背景**：L2 llama.cpp: GSM8K=0% / BBH=0% / MATH≈0% / MMLU=23.16%(≈随机25%)。L3 TB 0/2。L4 HANDOFF→post-train。**🟢 HF transformers 重评: HumanEval=15.0%(3/20) + GSM8K=10.0%(1/10) → 模型有基础代码+数学能力, llama.cpp SSM bug 是 0% 主因**。
 
 **🟢 2026-11-12 HF transformers 重评定案（#2058+#2059）**：
 - HumanEval HF pass@1=3/20=15.0% (filter_by_substring✅, string_sequence✅, count_distinct_characters✅) vs llama.cpp 0/100=0%
@@ -76,7 +77,7 @@ WAITING: 1（🔴 2026-11-11 用户令「四层评测拿更好结果」执行中
 **方案 B**：post-train SFT 补数学推理 + L2 用 HF 重评
 **方案 C**：A+B 组合
 
-**其他待解**：.17/.15 SSH 不通 → vLLM 验证 + L4 designflow 数据不可达（需运维检查网络）
+**L4 已移交 post-train（2026-11-12 用户令）**：L4（zhulong 消融评测 + designflow/EDA-LiveFlow-Bench）不再由 pretrain 负责。post-train 隧道已 4 次复验 OK、run_code 端到端 PASS。Pretrain 从本轮起 L4 统一写「HANDOFF→post-train」，不再做 L4 资源调查/SSH .15/.17 直连。四层口径：L1/L2/L3 由 pretrain 负责；L4 只读引用（post-train 出数后引用）。
 
 > 📦 #1992（11-11 20:21, 论文§4.6刷新+PDF编译+四层报告更新·训练step~7.1s<7.4s✅）→ daily-memories/2026-11-11.md；**结论**：§4.6 iter166730+PDF 0err,v5 MATH 30/100。需要时再读。
 > 📦 #1991（11-11 20:12, v6脚本创建+启动+四层报告刷新·训练step~7.0s<7.4s✅）→ daily-memories/2026-11-11.md；**结论**：v6修复confirm_run_unsafe_code+RP=1.3,等port8083。需要时再读。
@@ -96,20 +97,20 @@ WAITING: 1（🔴 2026-11-11 用户令「四层评测拿更好结果」执行中
 ## 待决策（等用户拍板）
 
 ### P2-001: L2/L3 评测瓶颈 — llama.cpp SSM bug + 早期训练（2026-11-12 #2063 更新 · HF五重验证完成）
-- **现状**：160k ckpt(25%训练) L2 评测：llama.cpp 全 0%（SSM 生成 bug）。**🟢 HF transformers 五重验证完成**：HumanEval=15.0%(3/20) + GSM8K=10.0%(1/10) + MBPP=5.0%(1/20) + BBH=3.3%(1/30) + MATH=0.0%(0/10)，生成 Avg5集=6.66%。MMLU=23.16%(≈随机25%,MC不受生成bug影响=纯能力不足)。L3 TB smoke 0/2(llama.cpp生成退化)。
+- **现状**：160k ckpt(25%训练) L2 评测：llama.cpp 全 0%（SSM 生成 bug）。**🟢 HF transformers 五重验证完成**：HumanEval=15.0%(3/20) + GSM8K=10.0%(1/10) + MBPP=5.0%(1/20) + BBH=3.3%(1/30) + MATH=0.0%(0/10)，生成 Avg5集=6.66%。MMLU=23.16%(≈随机25%,MC不受生成bug影响=纯能力不足)。L3 TB smoke 0/2(llama.cpp生成退化)。L4 已移交 post-train。
 - **根因定案（HF五重验证后）**：
   1. **llama.cpp SSM 生成 bug（主因）**：PR #31703 修复了权重映射，但生成仍退化(repetition loop)。HF transformers 生成正常，证明模型权重/SSM 计算正确。**修复路径：L2/L3 评测应用 HF transformers/vLLM 替代 llama.cpp**。
   2. **数据配比不足**：code 19% + math 7% = 26%。HF 显示 code 生成有效(15%) + math 有基础能力(10%) 但不足。MATH=0% 是唯一 HF 也=0% 的任务(MATH-500 难度远超 2B@25%训练)。
   3. **训练早期(25%)**：模型在 stable phase(lr=1e-3 恒定)，尚未进入 instruction-SFT/decay。MMLU≈随机说明知识能力未建立。
-- **L3/L4 资源调查（#2063 新增）**：
+- **L3/L4 资源调查（#2063 新增 · #2069 L4 移交）**：
   - L3：无可用 GPU 做 vLLM-based 评测(.29 pretrain 8×100%, .12 vision R9 8×100%, .17 SSH timeout)。vLLM/SGLang 未安装在 .29/.12。CPU HF 太慢(multi-turn agentic)。
-  - L4：EDA eval 工具在 `/nasdata/app.e0031982/code/eda_fastmcp/`(.15 本地,非 NFS 共享)，SSH .15/.17 均 timeout。
+  - L4：**已移交 post-train（2026-11-12 用户令）**。不再做 L4 资源调查/SSH。post-train 隧道已 4 次复验 OK。
 - **建议（🚫 不自行改生产配置）**：
   1. **短期(当前~350k,50%)**：维持现状继续监控。每 20k ckpt 跑 L1+L2(HF)，观察 MMLU 是否从 25% 起步上升、生成能力是否随训练改善。
-  2. **评测改进**：L2 已切换到 HF transformers（五重验证完成）。L3 需 GPU 窗口(vLLM)或等 SSH .17 恢复。L4 需 SSH .15 恢复。
+  2. **评测改进**：L2 已切换到 HF transformers（五重验证完成）。L3 需 GPU 窗口(vLLM)或等 SSH .17 恢复。L4 已移交 post-train（不再 pretrain 负责）。
   3. **中期(350k~decay前)**：若 MMLU 仍≈25%，考虑 decay phase 增加 code/math 占比(从 6% 提到 15-20%)。
-  4. **长期**：L3 agentic 需 post-train SFT/RL（posttrain 线负责）；L4 需运维恢复 .15/.17 网络。
-- **需要的输入**：用户裁定 ① 维持现状等 350k 再判 ② 提前调整 decay phase 配比 ③ 等 .15/.17 SSH 恢复后接 L4 ④ 等 700k 训完在 post-train 阶段补 L3。
+  4. **长期**：L3 agentic 需 post-train SFT/RL（posttrain 线负责）；L4 已由 post-train 主责。
+- **需要的输入**：用户裁定 ① 维持现状等 350k 再判 ② 提前调整 decay phase 配比 ③ 等 .17 SSH 恢复后接 L3 ④ 等 700k 训完在 post-train 阶段补 L3。
 
 ---
 
