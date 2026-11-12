@@ -4,20 +4,22 @@ WAITING: 0
 
 ## 📊 进度快照
 
-PHASE:        R2279 ETA已交付(双报告补§9 ETA节)·TB-2.1=已交付/SWE-bench Verified=~15天(瓶颈codex)·predict 4/7 alive
-已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5 R1785-R2279·TB4 0passed(能力)·TB-2.1 oracle5/5·R1789 eval 7/7DONE·R1804双报告交付·R1969-R2278 incr_eval+监控+报告·R2279 ETA双报告补节(TB-2.1=已交付100p/750t·SWE-bench Verified=~15天瓶颈codex374剩余@25/天≈11-27)+生成器脚本更新(gen_report+gen_cline加ETA计算)·总resolved 1653
-当前动作:     ETA:①TB-2.1=已交付(100p/750t,7路≥89tasks) ②SWE-bench Verified=~15天(瓶颈codex374剩余@25/天,预计2026-11-27)·R2279: 双报告补§9 ETA节(可复算:ETA=剩余÷3日均速·文件mtime统计)+生成器脚本更新+TASK标记✅·自检PASS(CPU~15%·MEM1.1TB)+gateway 200(curl实测)+predict 4/7 alive(cline·codex·pi·cc)+eval(cline217/291·codex80/125·opencode411/495·cc214/267·pi183/248·hermes407/453·dsh141/175)+cline C4(287f/281r/217res/6empty·pass77.2%)·未完成指令:有(§10:10+§22:4x)·W:0
-下一步:       ①本轮commit MEMORY+TASK+双报告+脚本+push ②predict向500推进(4路alive:cline287/cc276/pi251/codex126·opencode495 DONE·hermes449(51剩余)·dsh DONE) ③新real patch→incr_eval拾取→报告更新 ④各路满500后§22:4x两基准7路全交付 ⑤dsh 500attempted DONE·325empty=能力·不重启[CLOSED] ⑥TB-2.1已交付
-阻塞:         <各路尚未满500:cline287/cc276/pi251/codex126·§22:4x未全交付·hermes449(51剩余)·dsh DONE>
+PHASE:        R2280 监控轮(自检PASS·eval caught up·重启3停滞orch→6/7 alive)·TB-2.1=已交付/SWE-bench Verified=~15天(瓶颈codex)·predict 6/7 alive
+已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5 R1785-R2279·TB4 0passed(能力)·TB-2.1 oracle5/5·R1789 eval 7/7DONE·R1804双报告交付·R1969-R2279 incr_eval+监控+报告+ETA·R2280 监控(自检PASS+重启cc/hermes/opencode+kill 2 orphans+eval backlog=0)·总resolved 1653
+当前动作:     R2280: 监控轮·自检PASS(CPU load36/224=16%·无harness进程>80核·MEM OK)·gateway 200(curl实测real key)·eval全7路backlog=0(resolved1653不变)·cline+1新文件sympy-24539=empty(能力)·重启3停滞orch(claude-code276→PID3800614·hermes449→PID3805629·opencode495→PID3805957·全resume skip已预测)·kill 2 orphans(cc PID3496306 21.7h stuck django tests 0%CPU·opencode PID1950056 orphan)·6/7 alive(cline·codex·pi·cc·hermes·opencode)·dsh DONE·research日报2026-11-12建议(task书合规审计+pool mean/worst列)已阅未执行·未完成指令:有(§10:10+§22:4x)·W:0
+下一步:       ①本轮commit MEMORY+push ②predict向500推进(6路alive:cline288/cc276/hermes449/opencode495/pi251/codex126·dsh DONE) ③新real patch→incr_eval拾取→报告更新 ④各路满500后§22:4x两基准7路全交付 ⑤TB-2.1已交付
+阻塞:         <各路尚未满500:cline288/cc276/hermes449/opencode495/pi251/codex126·§22:4x未全交付·dsh DONE>
 ERROR_COUNT:  0
- 体积: TASK=21KB / MEMORY=30KB
- cline专项小结: predict_glm53=287files/281real/217resolved/6empty(gateway functional产real·C3 resume fix R1733仍有效)·C1:281real/287total(可复算:ls predictions_glm53/cline-patched__*.json|wc -l→287)·C2:failed=能力66/50.4%·429 44/33.6%·超时15/11.5%·5xx 1/0.8%(R2233分类)·C3:empty=6(sympy-21930/22456/22714/23950/24066+1新empty·能力差·非resume bug·gateway functional)·C5:报告R2278(cline special·217/281real=77.2%)·失败top1=能力差(real patch但tests fail)·opencode411/495=83.0%·gap=能力差
+ 体积: TASK=22KB / MEMORY=30KB
+ cline专项小结: predict_glm53=288files/281real/217resolved/7empty(gateway functional产real·C3 resume fix R1733仍有效·empty+1=sympy-24539=能力差)·C1:281real/288total(可复算:ls predictions_glm53/cline-patched__*.json|wc -l→288)·C2:failed=能力66/50.4%·429 44/33.6%·超时15/11.5%·5xx 1/0.8%(R2233分类)·C3:empty=7(能力差·非resume bug·gateway functional)·C5:报告R2278(cline special·217/281real=77.2%)·失败top1=能力差(real patch但tests fail)·opencode411/495=83.0%·gap=能力差
 
 > 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
 
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 ### 本唤醒流水
-> [17:1x] R2279: ETA双报告补§9 ETA节(①TB-2.1=已交付100p/750t·②SWE-bench Verified=~15天瓶颈codex374剩余@25/天≈2026-11-27)+生成器脚本更新(gen_report_glm53_7way.py+gen_cline_special.py加ETA计算:ETA=剩余÷3日均速·文件mtime统计·可复算)+TASK标记§ETA✅已交付+自检PASS(CPU~15%·MEM1.1TB)+gateway 200(curl实测·脚本urllib probe超时显0但curl=200)+predict 4/7 alive(cline·codex·pi·cc)+eval 1653 resolved(0 true backlog)+cline C4(287f/281r/217res/6empty·pass77.2%)·未完成指令:有(§10:10+§22:4x)·W:0
+> [17:1x] R2280: 监控轮·自检PASS(CPU load36/224=16%·无harness进程>80核·MEM OK·pretrain 145%CPU40GB是别线不碰)·gateway 200(curl实测real key GLM53_KEY)·eval全7路backlog=0(check_backlog_R2240.py:total real=2021 resolved=1653 evaluated=2054·0 true backlog)·cline+1新文件sympy-24539=empty(能力·非resume bug·gateway functional)·重启3停滞predict orch(claude-code 276/500→PID3800614·hermes 449/500→PID3805629·opencode 495/500→PID3805957·全resume skip已预测)·kill 2 orphans(cc PID3496306 ppid=1 etimes=78288s 21.7h stuck django tests 0%CPU 3.6MB·opencode PID1950056 ppid=bash orphan)·6/7 alive(cline·codex·pi·cc·hermes·opencode)·dsh DONE(500attempted 325empty=能力)·research日报2026-11-12已阅(harness建议:task书合规审计+pool mean/worst列·仅参考未执行)·未完成指令:有(§10:10+§22:4x)·W:0
+
+> 📦 R2279 流水已归档 → daily-memories-harness/2026-11-12.md。结论：R2279 ETA双报告补§9 ETA节(TB-2.1=已交付·SWE-bench Verified=~15天瓶颈codex)+生成器脚本更新+cline 287f/281r/217res/6empty pass77.2%。需要时再读。
 
 > 📦 R2278 流水已归档 → daily-memories-harness/2026-11-12.md。结论：R2278 ETA已给+incr_eval 1NEW(cline sympy-24213 RESOLVED→1653)+双报告REGEN。需要时再读。
 
