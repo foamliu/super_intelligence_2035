@@ -1,0 +1,16 @@
+[incr-eval 15:22:02] === incr_eval R2273 start ===
+[incr-eval 15:22:02] cline: 0 new instances, skip
+[incr-eval 15:22:02] codex: 0 new instances, skip
+[incr-eval 15:22:02] opencode: 0 new instances, skip
+[incr-eval 15:22:02] claude-code: 0 new instances, skip
+
+=== pi R2273 ===
+new instances: 1 ['matplotlib__matplotlib-20488']
+[incr-eval 15:22:02] pi: merged 1 new patches -> predictions_pi_new_R2273.json
+[incr-eval 15:22:02] pi: EVAL 1 instances -> run_id=verified_full_glm53_pi_incr_R2273
+[incr-eval 15:22:33] pi: eval rc=0
+[incr-eval 15:22:33]   matplotlib__matplotlib-20488: FAILED
+[incr-eval 15:22:33] pi: cumulative n=248 resolved=183 failed=65 infra=0 -> eval_glm53_pi.json
+[incr-eval 15:22:33] hermes: 0 new instances, skip
+[incr-eval 15:22:33] deepseek: 0 new instances, skip
+[incr-eval 15:22:33] === incr_eval R2273 done: 1 instances, +0resolved +1failed +0infra ===

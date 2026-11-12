@@ -1,0 +1,17 @@
+[incr-eval 15:20:33] === incr_eval R2273 start ===
+[incr-eval 15:20:33] cline: 0 new instances, skip
+[incr-eval 15:20:33] codex: 0 new instances, skip
+[incr-eval 15:20:33] opencode: 0 new instances, skip
+
+=== claude-code R2273 ===
+new instances: 1 ['sympy__sympy-24661']
+[incr-eval 15:20:33] claude-code: merged 1 new patches -> predictions_claude-code_new_R2273.json
+[incr-eval 15:20:33] claude-code: EVAL 1 instances -> run_id=verified_full_glm53_claude-code_incr_R2273
+[incr-eval 15:21:01] claude-code: eval rc=0
+[incr-eval 15:21:01]   sympy__sympy-24661: RESOLVED
+[incr-eval 15:21:01] claude-code: cumulative n=267 resolved=214 failed=51 infra=2 -> eval_glm53_claude-code.json
+
+=== pi R2273 ===
+new instances: 1 ['matplotlib__matplotlib-20488']
+[incr-eval 15:21:01] pi: merged 1 new patches -> predictions_pi_new_R2273.json
+[incr-eval 15:21:01] pi: EVAL 1 instances -> run_id=verified_full_glm53_pi_incr_R2273
