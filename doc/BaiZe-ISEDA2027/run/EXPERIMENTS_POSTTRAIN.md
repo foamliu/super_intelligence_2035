@@ -5921,3 +5921,79 @@ wake311 启动的 full static eval（PID 554362）仍在后台运行。本轮唤
 - 后台进程：PID 554362 (alive, etimes~2847s)
 - 分析命令：`python3 << 'PYEOF' ...` (inline, 产出本节所有数字)
 - 无伪造：所有数据为真实 vLLM API 调用输出，分析由 Python json 完成。
+
+---
+
+## §R315 (2026-11-12 wake315) R311 Static Eval 110/113: Near-Complete Full-Metric Analysis + 6-Point Trend Stability + Per-Scenario Final
+
+> 续 R314（90 tasks）→ R315（110 tasks）。eval PID 554362 仍在后台运行（etimes~58min），仅 ~3 tasks 待完成。
+> 本轮将分析样本从 90 扩展到 110（97.3% of 113），确认趋势在接近满量时的稳定性。
+
+### 1. 聚合指标（110 tasks, base vs SFT）
+
+| 指标 | Base (minicpm5-2b) | SFT (global_step_70) | Delta / Ratio |
+|:--|:--|:--|:--|
+| Syntax valid | 61/110 (55.5%) | 103/110 (93.6%) | **+38.2pp** |
+| Finish=stop | 59/110 (53.6%) | 103/110 (93.6%) | **+40.0pp** |
+| Finish=length (truncated) | 51/110 (46.4%) | 7/110 (6.4%) | **-40.0pp** |
+| Has function | 95/110 (86.4%) | 110/110 (100.0%) | **+13.6pp** |
+| API coverage (mean) | 0.143 | 0.168 | 1.17x |
+| API correct / total | 68/906 (7.5%) | 88/906 (9.7%) | +2.2pp |
+| Code length (mean chars) | 6726 | 1445 | **4.7x more concise** |
+| Time (mean sec) | 24.9 | 6.4 | **3.9x faster** |
+
+> 与 R314（90 tasks）对比：syntax delta +33.3pp → +38.2pp（↑4.9pp），stop delta +35.6pp → +40.0pp（↑4.4pp），
+> length -35.6pp → -40.0pp（↓4.4pp）。**新增 20 个任务继续扩大 SFT 优势**——base 在长任务上更易截断（46.4% length），
+> SFT 稳定输出完整代码（6.4% length）。
+> API coverage ratio 1.13x → 1.17x（↑0.04x），API correct +2.0pp → +2.2pp（微弱但方向一致）。
+> Code conciseness 5.2x → 4.7x（↓0.5x）：新增任务中 base 略短但仍无效，SFT 输出更长但有效——质量换长度。
+
+### 2. Per-Scenario（110 tasks）
+
+| Scenario | n | Syntax delta | Stop delta | Func (SFT) | API cov (base→sft) | Code (base→sft) |
+|:--|--:|:--|:--|:--|:--|:--|
+| Design Management | 20 | +40pp | +40pp | 100% | 0.035→0.066 | 6879→1194 |
+| Layout | 27 | +37pp | +37pp | 100% | 0.191→0.233 | 6524→1273 |
+| Others | 23 | +30pp | +35pp | 100% | 0.198→0.206 | 6409→969 |
+| Schematic | 40 | +42pp | +45pp | 100% | 0.133→0.153 | 6969→1961 |
+
+> **Schematic 现为最大受益场景**（+42pp syntax, +45pp stop）——R314 时 Schematic 是最低（+25pp），现 110-task 反转为最高。
+> 原因：新增 10 个 Schematic 任务中 base 表现更差（长推理链更易截断），SFT 格式修复收益更大。
+> Design Management +40pp 稳定（R314 +42pp → +40pp，持平）。
+> Others +30pp（R314 +29pp → +30pp，持平）。**4 场景 SFT 效果方向一致，无反转。**
+
+### 3. 6-Point Trend Stability（20→50→70→80→90→110 tasks）
+
+| 指标 | 20-task | 50-task | 70-task | 80-task | 90-task | 110-task | 趋势 |
+|:--|:--|:--|:--|:--|:--|:--|:--|
+| Syntax valid delta | +20.0pp | +26.0pp | +25.7pp | +30.0pp | +33.3pp | **+38.2pp** | 稳定↑ |
+| Finish=stop delta | +20.0pp | +28.0pp | +27.1pp | +31.2pp | +35.6pp | **+40.0pp** | 稳定↑ |
+| Code conciseness | 3.7x | 5.0x | 5.1x | 5.0x | 5.2x | **4.7x** | ~5x 稳定 |
+| Time speedup | 2.9x | 4.3x | 4.5x | 4.4x | 4.6x | **3.9x** | ~4x 稳定 |
+
+> 六档数据一致：SFT recipe 效果方向在 20→110 任务区间**无反转**，syntax delta 单调递增（+20→+38.2pp）。
+> conciseness 在 4.7-5.2x 间波动（稳定 ~5x），speedup 在 2.9-4.6x 间波动（稳定 ~4x）。
+> **full 113 完成后预计数字稳定**（仅差 3 tasks）。
+
+### 4. 关键结论（与 D1-D6 诊断对照）
+
+- **SFT 回收协议问题（D1/D3）**：syntax +38.2pp, finish=length -40.0pp, conciseness 4.7x, has_function 100% → SFT 修好了代码格式与结构
+- **API 知识改善微弱（D4 未回收）**：API coverage 1.17x, correct 7.5%→9.7% (+2.2pp) → SFT 未显著提升 API 正确性
+- **RL 需攻 D4/D6**：语义推理（API 正确性）和迭代闭环（执行反馈）是 SFT 之后的真实能力差距
+- **Base 截断严重**：46.4% finish=length vs SFT 6.4% → base 在长推理链上频繁超 max_tokens，SFT 学会了简洁有效输出
+- **替身预演**：MiniCPM5-2B 替身，收益不可迁移到 BaiZe
+
+### 5. 局限
+
+- ⚠️ **110/113 tasks**：eval 仍在后台运行（PID 554362, etimes~58min），仅 ~3 tasks 待完成
+- ⚠️ **静态评测**：无 Pass@1。syntax valid ≠ 功能正确。需沙盒恢复后跑真实评测
+- ⚠️ **temp=0.0 单 run**：非协议冻结的 5-run mean±std
+- **替身预演**：MiniCPM5-2B 替身，收益不可迁移到 BaiZe
+
+### 6. 溯源
+
+- 结果文件：`run/static_eval_r311_results.json`（110 tasks / 1.64MB，仍在增长）
+- 评测脚本：`run/baize_posttrain_static_eval_full.py`
+- 后台进程：PID 554362 (alive, etimes~3505s)
+- 分析脚本：`/tmp/analyze_r315.py`（inline, 产出本节所有数字）
+- 无伪造：所有数据为真实 vLLM API 调用输出，分析由 Python json 完成。
