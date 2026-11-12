@@ -1575,3 +1575,15 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1790731913166_ki1x0	chengk	hfeg0plg96	27	schematic_netlist	parked		2026-11-13 03:56	code-reading + flowchart (IddFlowCode), non-falsifiable comprehension
 1793692877234_xlzwr	ronghu	hfeg0plg93	27	analog_context	parked		2026-11-13 03:56	char hspice removal_hbm error debug '请分析原因', non-falsifiable explain
 1793778171219_tq83u	e0046686	hfeg0plg80	28	schematic_netlist	parked		2026-11-13 03:56	rev_cali GUI param-box feature dev, not D produce-task
+1794390463016_3sogb	alexli	hfeg0pkn004	1611	schematic_netlist	parked		2026-11-13 04:15	r587 newuser-probe reject: skill-dependent (presim-automation/eda_agent), non-falsifiable skill query
+1794401065591_eo84n	xdwang	hfeg0pkn005	1453	schematic_netlist	parked		2026-11-13 04:15	r587 newuser-probe reject: Q&A inventory (count inverters in netlist), non-falsifiable comprehension
+1794400108861_liqdq	xdwang	hfeg0pkn005	1349	schematic_netlist	parked		2026-11-13 04:15	r587 newuser-probe reject: dup of eo84n (same xdwang session content)
+1794473040325_4elpt	sfeng	hfeg0pkn004	1213	schematic_netlist	parked		2026-11-13 04:15	r587 newuser-probe reject: ssh-failed (host unreachable, cannot verify content)
+1794375590334_9jyih	wendy1w	hfeg0pkn005	906	schematic_netlist	parked		2026-11-13 04:15	r587 newuser-probe reject: skill-dependent (eda_agent), non-falsifiable skill query
+1794373573339_6krs0	alexli	hfeg0pkn004	733	schematic_netlist	parked		2026-11-13 04:15	r587 newuser-probe reject: skill-dependent (spef-check), non-falsifiable skill query
+1794453844573_ynoa5	e0046913	hfeg0pkn003	785	schematic_netlist	parked		2026-11-13 04:15	r587 newuser-probe reject: asset-inaccessible /proj private wall (produce-task blocked)
+1794308888937_ddye0	haoliu	hfeg0pkn004	550	schematic_netlist	parked		2026-11-13 04:15	r587 newuser-probe reject: wrong-domain A-STA (timing analysis, shard A not D)
+1794361090583_vi4ut	vincentz	hfeg0pkn004	595	schematic_netlist	parked		2026-11-13 04:15	r587 newuser-probe reject: asset-inaccessible /proj (genuine produce-task netlist diff blocked by private wall)
+1794297506042_5z4ou	sfeng	hfeg0pkn004	397	schematic_netlist	parked		2026-11-13 04:15	r587 newuser-probe reject: ssh-failed (host unreachable, cannot verify content)
+1794445991004_godra	williang	hfeg0pkn002	387	schematic_netlist	parked		2026-11-13 04:15	r587 newuser-probe reject: Q&A inventory (find RCPC cells), non-falsifiable comprehension
+1794481677275_ojm4q	yuanlong	hfeg0pkn003	385	schematic_netlist	parked		2026-11-13 04:15	r587 newuser-probe reject: asset-inaccessible /proj (genuine produce-task SPF W/L compare blocked by private wall)
