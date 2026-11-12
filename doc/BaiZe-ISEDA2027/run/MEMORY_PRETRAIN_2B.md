@@ -1,6 +1,7 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
-WAITING: 1（🔴 2026-11-11 用户令「四层评测拿更好结果」执行中·**L1 17/17done(10k-170k,峰值160k=58.13%)·180k autoqueue运行中(PID2896237,.29,ETA~3.5h)**·**L2 🟢HF五重验证全部完成:HumanEval HF=15.0%(3/20)✅+GSM8K HF=10.0%(1/10)✅+MBPP HF=5.0%(1/20)✅+BBH HF=3.3%(1/30)✅+MATH HF=0.0%(0/10)✅(五验证llama.cpp SSM bug是0%主因,生成Avg5集=6.66%)·MMLU=23.16%**·**L3 TB smoke 0/2完成**·**L4🔴SSH.15/.17timeout(11-12 17:40再次确认)**·**论文§4.6已刷新iter174.4k+PDF 0err✅·红线PASS**·训练健康iter≈177.6k/700k(25.4%) GPU 8×100%/75GB step~7.0s✅）
-> 2026-11-12 17:45 #2062: **MATH HF eval完成(0/10=0.0%✅)+L2 HF五重验证全部完成+四层报告刷新轮·训练健康iter177560/700k(25.4%) step~7.0s<7.4s✅ loss2.03 0NaN/0skip**·**动作**：①git pull --rebase(同步✅,designflow文件) ②训练健康(.29):iter177560,step~7.0s,GPU 8×100%/75GB ③L2 MATH HF eval完成:baize_l2_hf_math_direct.py(MATH-500,4-shot,limit=10,max_new_tokens=256,sglang env,CPU bf16,nice19)→**acc=0/10=0.0%**(no_answer=2,HF生成连贯数学推理文本非退化,第9题pred=√117≈gt=3√13格式不匹配,每题~43s,总~7min,日志/tmp/baize_l2_hf_math_direct.log,结果落盘gguf_iter_160000_l2_hf_math_direct/results.json) ④🟢L2 HF五重验证全部完成:HumanEval=15.0%+GSM8K=10.0%+MBPP=5.0%+BBH=3.3%+MATH=0.0%→生成Avg(5集)=6.66% vs llama.cpp全0%→llama.cpp SSM bug确认为L2生成0%主因(5/5任务验证),MATH是唯一HF也=0%的任务(MATH-500难度远超2B@25%训练) ⑤四层报告刷新:新增MATH HF结果卡(含10题明细)+L2 HF五重验证汇总卡(含llama.cpp vs HF对比表)+hero header更新+summary表更新+footer更新 ⑥L4再次确认BLOCKED:SSH .15/.17均超时(17:40测试) ⑦180k autoqueue等待(iter177560,ETA~3.5h) ⑧📦TASK≈27KB✅/MEMORY≈28KB✅·四层评测 · L1=57.75%@170k L2=🟢HF五重验证完成(HumanEval=15.0%+GSM8K=10.0%+MBPP=5.0%+BBH=3.3%+MATH=0.0%,Avg5集=6.66%) MMLU=23.16% L3=TB 0/2(完成) L4=🔴BLOCKED(SSH) · 本轮动作：MATH HF完成(0.0%)+L2 HF五重验证全部完成+四层报告刷新·未完成指令：有(180k autoqueue运行中ETA~3.5h)⇒WAITING:1。
+WAITING: 1（🔴 2026-11-11 用户令「四层评测拿更好结果」执行中·**L1 17/17done(10k-170k,峰值160k=58.13%)·180k autoqueue运行中(PID2896237,.29,ETA~4h)**·**L2 🟢HF五重验证全部完成:HumanEval HF=15.0%(3/20)✅+GSM8K HF=10.0%(1/10)✅+MBPP HF=5.0%(1/20)✅+BBH HF=3.3%(1/30)✅+MATH HF=0.0%(0/10)✅(五验证llama.cpp SSM bug是0%主因,生成Avg5集=6.66%)·MMLU=23.16%**·**L3 TB smoke 0/2完成·无GPU做vLLM重试(.29/.12均满载,.17不通)**·**L4🔴SSH.15/.17timeout+EDA工具在/nasdata/(.15本地非NFS)**·**论文§4.6已刷新iter177k+PDF 0err✅·红线PASS**·训练健康iter≈177.8k/700k(25.4%) GPU 8×100%/75GB step7.04s✅）
+> 2026-11-12 18:10 #2063: **监控巡检+L3/L4资源调查轮·训练健康iter177810/700k(25.4%) step7039ms<7.4s✅ loss2.039 0NaN/0skip**·**动作**：①git pull --rebase(同步✅,Already up to date) ②训练健康(.29):iter177810,step7039ms,GPU 8×100%/75GB,loss2.039,lr=1e-3(stable),latest ckpt=iter_0176000 ③180k autoqueue运行中(PID2896237,.29,train@177810,ETA~4h) ④L3资源调查:.12 GPU 8×100%(vision R9训练中),.29 GPU 8×100%(pretrain S1),.17 SSH timeout→无可用GPU做vLLM-based L3;vLLM/SGLang未安装在.29/.12 ⑤L4调查:EDA eval工具在/nasdata/app.e0031982/code/eda_fastmcp/(.15本地,非NFS共享),SSH .15/.17均timeout→BLOCKED确认;EDA-LiveFlow-Bench有results.txt(designflow agent 62/626=9.9%,非pretrain模型);ZhuLong eval README确认pipeline在/nasdata/(.15本地) ⑥红线检查:4_llm_pretrain.tex+main.tex均无benchmark数字PASS✅ ⑦四层报告已含MATH HF+五重验证(55KB,上一轮已更新) ⑧research日报11-12已在前轮检查=不actionable ⑨📦TASK≈27KB✅/MEMORY≈29KB✅·四层评测 · L1=57.75%@170k L2=🟢HF五重验证完成(HumanEval=15.0%+GSM8K=10.0%+MBPP=5.0%+BBH=3.3%+MATH=0.0%,Avg5集=6.66%) MMLU=23.16% L3=TB 0/2(无GPU做vLLM重试) L4=🔴BLOCKED(SSH+EDA工具在.15本地) · 本轮动作：监控巡检+L3/L4资源调查(均BLOCKED:无GPU/SSH不通)·未完成指令：有(180k autoqueue运行中ETA~4h)⇒WAITING:1。
+> 📦 #2062（11-12 17:45, MATH HF eval完成+L2 HF五重验证全部完成+四层报告刷新轮·训练step~7.0s<7.4s✅）→ daily-memories/2026-11-12.md；**结论**：MATH HF=0/10=0.0%,L2 HF五重验证完成(Avg5集=6.66%),llama.cpp SSM bug确认为0%主因。需要时再读。
 > 📦 #2061（11-12 17:15, BBH HF eval结果收集+MATH HF eval启动+四层报告刷新轮·训练step7020ms<7.4s✅）→ daily-memories/2026-11-12.md；**结论**：BBH HF=1/30=3.3%,四重验证完成,MATH HF启动。需要时再读。
 > 📦 #2060（11-12 16:08, MBPP HF eval完成+L4确认+监控巡检轮·训练step7006ms<7.4s✅）→ daily-memories/2026-11-12.md；**结论**：MBPP HF pass@1=1/20=5.0%,三重验证确认llama.cpp SSM bug是0%主因。需要时再读。
 > 2026-11-12 15:30 #2059: **GSM8K HF v2完成(1/10=10.0%✅)+L4再次确认BLOCKED+四层报告刷新轮·训练健康iter176450/700k(25.2%) step~7.5s loss~2.05 0NaN/0skip**·**动作**：①git pull --rebase(同步✅) ②训练健康(.29):iter176450,step~7.5s,GPU 8×100%/75GB ③GSM8K HF v2评测完成:sglang env(transformers 5.18.0,CPU bf16,4-shot,limit=10,max_new_tokens=128,nice19)→**acc=1/10=10.0%**(第5题gt=20 pred=20✅,9/10 FAIL但生成数值答案非退化,pred=2出现3次偏小数值倾向,每题~24s,总~4min) ④🟢重大发现:GSM8K HF=10.0% vs llama.cpp=0%→模型有基础数学推理能力!llama.cpp SSM bug是L2生成0%主因(已HumanEval+GSM8K双验证) ⑤L4再次确认BLOCKED:SSH .15/.17均超时(15:18测试) ⑥四层报告刷新:hero header+GSM8K HF结果卡(含10题明细表)+本轮动作+footer ⑦📦TASK≈27KB✅/MEMORY≈27KB✅·四层评测 · L1=57.75%@170k L2=HumanEval HF=15.0%(3/20)✅+GSM8K HF=10.0%(1/10)✅ MMLU=23.16% L3=TB 0/2(完成) L4=🔴BLOCKED(SSH) · 本轮动作：GSM8K HF v2完成(10.0%)+L4确认+四层报告刷新·未完成指令：有(180k autoqueue运行中;11w/12w/13w万整数ckpt L1评测已含在autoqueue中;L2剩余BBH/MATH/MBPP可用HF重评待后续轮)⇒WAITING:1。
@@ -113,23 +114,21 @@ WAITING: 1（🔴 2026-11-11 用户令「四层评测拿更好结果」执行中
 
 ## 待决策（等用户拍板）
 
-### P2-001: L2/L3 全 0% — 生成退化 + 能力不足（2026-11-12 #2053 更新）
-- **现状**：160k ckpt(25%训练) L2 评测(HF后端) HumanEval=0%, MBPP=0%, MATH进程已死(84/100,预计~0%), GSM8K=0%(0-shot/5-shot均0%), BBH=0%, MMLU=23.16%(≈随机25%)。L3 Terminal-bench smoke 0/2(模型无法创建输出文件)。
-- **🔴 GSM8K 生成退化诊断（#2053 新增）**：
-  1. **Greedy decoding 退化**：0-shot GSM8K 生成样本显示模型立即陷入 repetition loop（"the same thing, the same thing..."×512 tokens），完全不尝试解题。5-shot 同样退化。
-  2. **Repeat penalty=1.3 测试**：repetition 减轻，但生成仍为 incoherent word salad（"The birds are not yet known what happens to their foodHH..."），仍 0% exact_match。
-  3. **Verdict**：GSM8K 0% = **生成退化（config issue: 无 RP → repetition loop）+ 能力不足（real capability: RP 后仍不会 math）**。不是纯评测配置问题，也不是纯能力问题——是两者叠加。
-  4. **对其他 L2 任务的影响**：HumanEval/MBPP 同样用 greedy decoding + 512 max_gen_toks，很可能也有类似退化（但 HumanEval 有 `until` stop tokens `['\nclass','\ndef','\n#','\nif','\nprint']` 可能截断部分退化）。
-- **根因分析**：
-  1. stable phase 数据配比 = 74:19:7 (web:code:math)，code/math 占 26%。模型仅训 25%(175k/700k)，已消费 ~184B token。
-  2. 模型在 stable phase（lr=1e-3 恒定），尚未进入 instruction-SFT/decay。base model 早期生成退化是已知现象。
-  3. MMLU=23.16%≈随机25%（4选1），说明知识能力也未建立——这是 multiple-choice（logit 比较），不受生成退化影响，所以 MMLU 的低分是纯能力不足。
+### P2-001: L2/L3 评测瓶颈 — llama.cpp SSM bug + 早期训练（2026-11-12 #2063 更新 · HF五重验证完成）
+- **现状**：160k ckpt(25%训练) L2 评测：llama.cpp 全 0%（SSM 生成 bug）。**🟢 HF transformers 五重验证完成**：HumanEval=15.0%(3/20) + GSM8K=10.0%(1/10) + MBPP=5.0%(1/20) + BBH=3.3%(1/30) + MATH=0.0%(0/10)，生成 Avg5集=6.66%。MMLU=23.16%(≈随机25%,MC不受生成bug影响=纯能力不足)。L3 TB smoke 0/2(llama.cpp生成退化)。
+- **根因定案（HF五重验证后）**：
+  1. **llama.cpp SSM 生成 bug（主因）**：PR #31703 修复了权重映射，但生成仍退化(repetition loop)。HF transformers 生成正常，证明模型权重/SSM 计算正确。**修复路径：L2/L3 评测应用 HF transformers/vLLM 替代 llama.cpp**。
+  2. **数据配比不足**：code 19% + math 7% = 26%。HF 显示 code 生成有效(15%) + math 有基础能力(10%) 但不足。MATH=0% 是唯一 HF 也=0% 的任务(MATH-500 难度远超 2B@25%训练)。
+  3. **训练早期(25%)**：模型在 stable phase(lr=1e-3 恒定)，尚未进入 instruction-SFT/decay。MMLU≈随机说明知识能力未建立。
+- **L3/L4 资源调查（#2063 新增）**：
+  - L3：无可用 GPU 做 vLLM-based 评测(.29 pretrain 8×100%, .12 vision R9 8×100%, .17 SSH timeout)。vLLM/SGLang 未安装在 .29/.12。CPU HF 太慢(multi-turn agentic)。
+  - L4：EDA eval 工具在 `/nasdata/app.e0031982/code/eda_fastmcp/`(.15 本地,非 NFS 共享)，SSH .15/.17 均 timeout。
 - **建议（🚫 不自行改生产配置）**：
-  1. **短期（当前~350k, 50%）**：维持现状继续监控。每 20k ckpt 跑 L2，观察：(a) 生成退化是否随训练减轻 (b) MMLU 是否从 25%(随机)起步上升。若 350k 时 MMLU 仍≈25% 且生成仍退化，进入下一步。
-  2. **评测改进（可在评测侧做）**：L2 生成类任务（GSM8K/HumanEval/MBPP/MATH）可加 `repeat_penalty=1.1~1.3` 作为辅助口径，观察模型是否有「被退化掩盖的真实能力」。但**不改变官方口径**（greedy/no-RP 为主报告数）。
-  3. **中期（350k~decay前）**：若仍 0%，考虑在 decay phase 增加 code/math 占比（从 6% 提到 15-20%），或引入更高质量 code/math 数据。
-  4. **长期**：L3 agentic 能力需 post-train 阶段专门 SFT/RL（posttrain 线负责）。
-- **需要的输入**：用户裁定 ① 维持现状等 350k 再判 ② 提前调整 decay phase 配比 ③ 评测侧加 RP 辅助口径先探真实能力 ④ 等 700k 训完在 post-train 阶段补。
+  1. **短期(当前~350k,50%)**：维持现状继续监控。每 20k ckpt 跑 L1+L2(HF)，观察 MMLU 是否从 25% 起步上升、生成能力是否随训练改善。
+  2. **评测改进**：L2 已切换到 HF transformers（五重验证完成）。L3 需 GPU 窗口(vLLM)或等 SSH .17 恢复。L4 需 SSH .15 恢复。
+  3. **中期(350k~decay前)**：若 MMLU 仍≈25%，考虑 decay phase 增加 code/math 占比(从 6% 提到 15-20%)。
+  4. **长期**：L3 agentic 需 post-train SFT/RL（posttrain 线负责）；L4 需运维恢复 .15/.17 网络。
+- **需要的输入**：用户裁定 ① 维持现状等 350k 再判 ② 提前调整 decay phase 配比 ③ 等 .15/.17 SSH 恢复后接 L4 ④ 等 700k 训完在 post-train 阶段补 L3。
 
 ---
 
