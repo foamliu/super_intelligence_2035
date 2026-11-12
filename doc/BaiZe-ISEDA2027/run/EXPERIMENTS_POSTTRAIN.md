@@ -7931,3 +7931,24 @@ setsid bash -c "eval/run_batch.sh \
 4. **考虑 full harness 评测**：36% base reference 是 full harness 口径，需要用同口径评测 SFT
 5. **RLVR-GRPO 优先级**：如果 SFT 持续破坏 code-gen 能力，可能需要跳过 SFT 直接 RL
 
+#### ⚠️ 更正（2026-11-13 wake374）：wake373 "FINAL RESULTS" 为过早快照
+
+> wake373 声称评测 "已完成" 并报告 step_60=32/158(20.3%)、step_105=25/158(15.8%)，
+> **但评测进程（PID 953888/972225）实际仍在运行**。wake374 实测发现：
+
+| 指标 | wake373 报告（过早快照） | wake374 实测（仍运行中） | 差异 |
+|:---|---:|---:|:---|
+| step_60 task dirs | 43/158 | **156/158** | +113 dirs |
+| step_60 code-gen (有.py) | 32/158 (20.3%) | **41/158 (25.9%)** | +9 |
+| step_105 task dirs | 53/158 | **160/158** | +107 dirs |
+| step_105 code-gen (有.py) | 25/158 (15.8%) | **59/158 (37.3%)** | +34 |
+
+**关键更正**：
+1. **step_105 (59/158=37.3%) > step_60 (41/158=25.9%)** → **推翻 wake373 "更多训练=更差" 结论**。step_105（更多训练）实际 code-gen 覆盖率更高，过拟合结论不成立。
+2. **"pass" 关键字根因待重新验证**：wake374 检查 156 个 session messages，**0 个** session 的 assistant text 为 standalone "pass"。wake373 报告的 "126/158 输出 pass" 需要在评测完成后用正确方法重新计数。
+3. **5 个卡死 worker 已 kill**：PID 1019914(6936s)、1032993(5838s)、1040762(5321s)、1041822(5222s)、1069510(2528s) 均 >>2500s timeout（GNU timeout SIGTERM 被 bun 忽略），已 `kill -9`，脚本自动 respawn。
+4. **评测仍在运行**：15 workers active（全部 <2500s），PID 953888@11450s + PID 972225@9822s。等 final_report.json 出来后才能出最终 Pass@1。
+5. **SFT v39 数据中 0 个 "pass"**：`sft_pyaether_agentic_v39.jsonl`（2548 条）经全量扫描，CDATA/代码块/函数体中 **0 次出现 standalone "pass"**。模型输出 "pass" 的行为不是从训练数据直接学来的，可能是格式不匹配导致的退化行为。
+
+**下一步**：等评测完成 → run_eval.py → final_report.json → 正式 Pass@1 数字 → 判定 SFT v39 配方是否有效。
+

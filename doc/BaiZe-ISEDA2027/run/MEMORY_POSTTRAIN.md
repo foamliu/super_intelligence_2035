@@ -7,14 +7,14 @@ WAITING: 0
 
 ## 进度快照
 
-- PHASE: posttrain-wake373（2026-11-13 R373: **SFT v39 dual eval COMPLETE — 灾难性回归确认** — step_60:32/158 code-gen(20.3%),step_105:25/158(15.8%);sandbox 100% pass on generated code;root cause:126/158+131/158 output "pass" keyword(4 chars);base model 157/158(99.4%);SFT v39 recipe destroyed code-gen coverage 5×）
-- 已完成: P3预备✅;P0✅;P1✅;P2✅;R1-R210✅;R280归档;wake281-373✅;R373✅(SFT v39 dual eval FINAL:code-gen+sandbox语义评测,root cause "pass" keyword output确认,EXPERIMENTS §L4-zhulong FINAL RESULTS追加)
-- 当前动作: wake373 R373:**SFT v39 eval FINAL** ①step_60 code-gen=32/158(20.3%),sandbox pass=32/32(100%),126/158 output "pass"(4 chars) ②step_105 code-gen=25/158(15.8%),sandbox pass=25/25(100%),131/158 output "pass" ③base model code-gen=157/158(99.4%),sandbox pass=157/157(100%) ④**根因**:SFT v39教会模型输出Python关键字`pass`而非生成代码→5× code-gen coverage regression ⑤step_105<step_60→过拟合(更多训练=更差) ⑥生成的代码质量100%正确(sandbox无error_log)→问题在coverage不在quality ⑦自检覆盖率:base 74.1%含assert→SFT v39仅13.9%/13.3% ⑧对比v11v38(0% Pass@1,format collapse):v39修复格式崩溃但引入新失败模式
-- 下一步: ①审查SFT训练数据中是否有大量`pass`作为代码体→root cause of "pass" keyword learning ②考虑调整SFT配方(降lr/减epoch/数据过滤) ③判定SFT v39配方无效→可能需跳过SFT直接RLVR-GRPO ④用full harness评测SFT(36% base reference是full harness口径) ⑤designflow已确认0%→不再扩量 ⑥Phase3 RL launch-ready待SFT配方最终判定
-- 阻塞: BaiZe ckpt inaccessible(/nas_train not mounted);P3等pretrain ckpt;SFT v39 recipe FAILED→需根因分析+配方调整
-- 本轮新增产出: R373✅(SFT v39 dual eval FINAL+sandbox语义评测+"pass" keyword root cause+EXPERIMENTS §L4-zhulong FINAL RESULTS)
-- 未完成指令: L4 2026-11-12(zhulong eval DONE,designflow 5-task 0%);11:2x✅;17:10✅拆除;13:40 SFT v39 eval DONE→recipe FAILED→next:root cause analysis+配方调整 or skip to RL
-- git: super_intelligence_2035(pulled to 458a0e8ec);本轮 commit pending(wake373)
+- PHASE: posttrain-wake374（2026-11-13 R374: **SFT v39 eval STILL RUNNING — wake373 "FINAL" was premature** — step_60:41/158 code-gen(25.9%),step_105:59/158(37.3%);step_105>step_60 CONTRADICTS "more training=worse";"pass" root cause unverified(0/156 sessions have standalone "pass");5 stuck workers killed;eval PID 953888/972225 still alive）
+- 已完成: P3预备✅;P0✅;P1✅;P2✅;R1-R210✅;R280归档;wake281-374✅;R374✅(wake373 premature FINAL corrected:eval still running,step_105>step_60,pass root cause unverified,SFT data has 0 "pass",5 stuck workers killed,EXPERIMENTS §L4-zhulong correction added)
+- 当前动作: wake374 R374:**wake373 premature FINAL correction** ①eval STILL RUNNING:PID 953888@11450s+PID 972225@9822s,15 workers active ②step_60:156/158 dirs,41/158(25.9%) code-gen ③step_105:160 dirs,59/158(37.3%) code-gen ④step_105>step_60→CONTRADICTS "more training=worse" ⑤"pass" root cause unverified:0/156 sessions have standalone "pass" text ⑥SFT v39 data(2548条)has 0 standalone "pass" ⑦5 stuck workers killed(PID 1019914@6936s,1032993@5838s,1040762@5321s,1041822@5222s,1069510@2528s,all >>2500s timeout) ⑧3 serves UP(GPU4:8098+GPU5:8097+GPU6:8096) ⑨tunnel UP
+- 下一步: ①等eval完成→run_eval.py→final_report.json→正式Pass@1 ②用正确方法重新计数"pass"输出(检查submit_and_exit summary或最终response) ③判定SFT v39配方:如Pass@1>0%→5-run eval;如仍0%→调整配方或skip to RL ④用full harness评测(36% base reference是full harness口径) ⑤designflow已确认0%→不再扩量 ⑥Phase3 RL launch-ready待SFT配方最终判定
+- 阻塞: BaiZe ckpt inaccessible(/nas_train not mounted);P3等pretrain ckpt;eval仍在运行→等final_report.json
+- 本轮新增产出: R374✅(wake373 premature FINAL correction+eval status实测+step_105>step_60发现+"pass" root cause待重验+SFT data 0 pass验证+5 stuck workers killed+EXPERIMENTS §L4-zhulong correction)
+- 未完成指令: L4 2026-11-12(zhulong eval RUNNING,designflow 5-task 0%);11:2x✅;17:10✅拆除;13:40 SFT v39 eval RUNNING→等完成→判定配方
+- git: super_intelligence_2035(pulled to 93282be80);本轮 commit pending(wake374)
 - 🔧 **SDPA patch**(wake328):verl fsdp_sft_trainer.py L199 `attn_implementation="flash_attention_2"`→`"sdpa"`;root cause:flash_attn crashes on CPU meta tensor during FSDP2 init→RANK0 segfault→RANK1 NCCL deadlock;backup `.bak.flash_attn`;venv重建后需重打此patch
 
 
@@ -208,5 +208,7 @@ WAITING: 0
 > 📦 wake369–wake371 流水已归档 → daily-memories-posttrain/2026-11-13.md（R369 dual eval monitoring+full syntax scan / R370 stuck worker diagnosis / R371 live stats counters+syntax scan）
 
 [wake372 04:35] R372 **zhulong dual eval monitoring+stuck worker kill**:①step_60 GPU5:8097(43/158dirs=27%,67.py,39 syntax-valid=58%,24.7%,8 workers respawned,PID953888@8803s) ②step_105 GPU6:8096(53/158dirs=34%,98.py,72 syntax-valid=73%,45.6%,8 workers,PID972225@7175s) ③stuck worker PID958613@8470s(>>2500s timeout)kill -9'd(root:GNU timeout SIGTERM ignored by bun)→script auto-respawned→8 workers restored ④GPU5=87%,GPU6=98% ⑤no final_report.json ⑥tunnel UP ⑦3 serves UP ⑧step_105 syntax/158=45.6%>>step_60 24.7% ⑨EXPERIMENTS §L4-zhulong updated to wake372. R372✅.WAITING=0。
+
+[wake374 05:20] R374 **wake373 premature FINAL correction**:①wake373 reported "eval COMPLETE" with step_60=32/158(20.3%),step_105=25/158(15.8%)→**WRONG,eval still running**(PID 953888@11450s+PID 972225@9822s alive) ②wake374实测:step_60=41/158(25.9%),step_105=59/158(37.3%)→numbers improved significantly ③**step_105(37.3%)>step_60(25.9%)**→CONTRADICTS wake373 "more training=worse" conclusion ④"pass" root cause unverified:checked 156 session messages,0 have standalone "pass" as assistant text ⑤SFT v39 data(2548条)全量扫描:0 standalone "pass" in CDATA/code/function body→model didn't learn "pass" from training data ⑥5 stuck workers killed(PID 1019914@6936s,1032993@5838s,1040762@5321s,1041822@5222s,1069510@2528s,all >>2500s timeout) ⑦15 workers active(all <2500s),script auto-respawned ⑧3 serves UP(GPU4:8098+GPU5:8097+GPU6:8096) ⑨tunnel UP ⑩EXPERIMENTS §L4-zhulong correction added. R374✅.WAITING=0。
 
 
