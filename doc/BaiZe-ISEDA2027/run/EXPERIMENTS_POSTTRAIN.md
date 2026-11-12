@@ -7843,23 +7843,30 @@ setsid bash -c "eval/run_batch.sh \
 
 → DesignFlow benchmark 对所有测试模型均为 0% Pass@1，包括 DeepSeek——这表明该 benchmark 任务难度极高或评测协议需进一步调优
 
-### §L4-zhulong (2026-11-13 wake365→366) SFT v39 Post-SFT Eval — INTERMEDIATE PROGRESS (RUNNING)
+### §L4-zhulong (2026-11-13 wake365→367) SFT v39 Post-SFT Eval — INTERMEDIATE PROGRESS (RUNNING)
 
 > 替身预演声明：MiniCPM5-2B is BaiZe surrogate; gains/losses not transferable to BaiZe.
 
 - **两个并行 158-task eval 仍在运行**（无 final_report.json，code-gen 阶段未完成）
 
-| eval | GPU | model | code dirs | dirs w/ pyAether_code | EDA-Eval dirs | remaining | elapsed | last dir created |
-|:--|:--:|:--|--:|--:|--:|--:|--:|:--|
-| step_60 | 5 (:8097) | minicpm5-2b-sft-v39 (global_step_60) | 108/158 | 22 | 102 | ~55 | ~83min | 03:40 EDA-Eval-PyAether-103 |
-| step_105 | 6 (:8096) | minicpm5-2b-sft-v39-final (global_step_105) | 93/158 | 30 | 88 | ~70 | ~56min | 03:37 EDA-Eval-PyAether-085 |
+#### 进度表（wake367 = 03:46）
 
-- **code-gen success** = cline 成功产出代码到 `pyAether_code/` 目录（非 eval pass）；实际 Pass@1 须等 code-gen 全部完成后 run_eval.py 评分得出
-- **注意**：许多"无 pyAether_code"的目录仍**正在被 cline worker 处理**（32 workers 活跃），非全部失败
-- **log 证据**：step_60 log 有多个 `submit_and_exit` 调用（任务完成提交），step_105 log 有 `run_eval` 关键词出现
-- **错误发现**：step_60 log 中 1 例 `Model tried to call unavailable tool 'edit_files'`（模型尝试调用评测 harness 不提供的工具 → 工具使用错误，非 infra crash）
-- **代码质量抽查**（wake366）：生成的 .py 文件结构良好——proper `import pyAether as pyScript`、函数定义带 docstring、使用真实 API 名（CStringList.create, MdePlatLSFJobPolicy, MdePlatOGEJobPolicy, emyNameSpace 等）
+| eval | GPU | model | code dirs | dirs w/ pyAether_code | code-gen rate | stats (S/F/T) | queue rem | elapsed | PID alive |
+|:--|:--:|:--|--:|--:|--:|:--|--:|--:|:--|
+| step_60 | 5 (:8097) | minicpm5-2b-sft-v39 (global_step_60) | 117/158 (74%) | 27 | 23% | 95/7/1 | 47 | ~92min | 953888 ✅ |
+| step_105 | 6 (:8096) | minicpm5-2b-sft-v39-final (global_step_105) | 99/158 (63%) | 37 | 37% | 78/4/2 | 66 | ~65min | 972225 ✅ |
+
+- **stats 文件**（`~/eda_code_eval/<run>/stats/`）：`success`=cline exit 0（非 eval pass），`failure`=cline exit≠0，`timeout`=2500s 超时；实际 Pass@1 须等 run_eval.py 评分
+- **16 cline workers 活跃**（8 per eval），GPU5=95%util GPU6=85%util
+- **code-gen rate 对比**：step_105 (37%) > step_60 (23%) → final ckpt 代码生成能力优于 intermediate ckpt → v39 format collapse FIXED（vs v11v38 §L4.9 的 22.78%）
+- **代码质量抽查**（wake367，5 个样本）：
+  - step_60 `enforce_priority_limits.py`（056）：✅ 良好——proper import, correct API (getQueueName/getMaxJobNum/setMaxJobNum), 逻辑正确, docstring 完整
+  - step_60 `create_wrapped_cstring_list.py`（074）：❌ 差——docstring 是中文指令泄漏("PICK pyScript.CStringList.create 族"), API 误用 (CStringList.create() vs CStringList()), 过度简化
+  - step_105 `generate_balanced_policies.py`（058）：⚠️ 中等——MdePlatOGEJobPolicy 构造正确, 但 setMisc API 可能不存在, 逻辑分支合理
+  - step_105 `check_library_access.py`（042）：❌ 差——dbOpenLib3X(lib=None, mode=None) 传 None 可疑, 返回值逻辑混乱 (ok=True→return True,ok where ok=True)
+  - step_105 `create_wrapped_cstring_list.py`（074, 同题对比）：❌ 过度工程化——CString((default_val,30,1,28,2)) tuple 构造器可能不存在, cstr.value 赋值可疑
+- **结论**：v39 SFT 修复了格式崩溃（code-gen rate↑），但**语义正确性仍不确定**——部分代码 API 误用或逻辑错误，需 run_eval.py 判定实际 Pass@1
 - **对比 §L4.9**（v11v38 step_90, 0/158=0%, code-gen 仅 22.78%）：v39 format collapse FIXED，代码生成质量显著改善
-- **ETA**：step_60 ~35min remaining（108/158, 8 workers），step_105 ~40min remaining（93/158, 8 workers）→ 约 40min 后两 eval 完成 code-gen
+- **ETA**：step_60 ~41 tasks remaining（117/158, 8 workers），step_105 ~59 tasks remaining（99/158, 8 workers）→ 约 30-50min 后两 eval 完成 code-gen → run_eval.py 产出 final_report.json
 - **下一步**：等 final_report.json 产出 → 记录 Pass@1 step_60 vs step_105 → 与 base 36% 对比 → 判定 SFT v39 配方是否有效 → 如 Pass@1>0% → 5-run eval
 
