@@ -4,14 +4,14 @@ WAITING: 0
 
 ## 📊 进度快照
 
-PHASE:        R2310 incr_eval+cleanup+报告REGEN轮(自检PASS·gateway200·incr_eval 1new(+1resolved)·cleanup4empty·0empty·predict 4/7 alive·TB-2.1=已交付/SWE-bench Verified=~15天瓶颈codex)
-已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5 R1785-R2310·TB4 0passed(能力)·TB-2.1 oracle5/5·R1789 eval 7/7DONE·R1804双报告交付·R1969-R2309 incr_eval+监控+报告+ETA·R2310 incr_eval(1new:+1resolved)+cleanup(4empty deleted)+双报告REGEN
-当前动作:     R2310: 自检PASS(CPU load~39/224≈17%·无harness>8000%·MEM avail~1059G)·gateway 9092=200(agi=401 dummy key·proxy functional)·incr_eval 1new(cc django-15161 RESOLVED→+1resolved)·cleanup 4empty(cline1·codex1·cc2 deleted)·0empty(全7路0empty)·eval cumulative:cline225/299·codex87/135·opencode414/498·cc233/286·pi188/257·hermes435/480·dsh141/175·总1723·predict 4/7 alive(cline296/codex128/cc286/pi257 real·opencode498DONE·hermes480DONE·dsh DONE)·磁盘OK(/data 5.8T 18%·/ 352G 4%)·双报告REGEN(R2310·7way 10604B·cline special 8700B)·research日报2026-11-13已审阅(harness建议=可复用优化技能=参考输入非新指令)·未完成指令:有(§10:10+§22:4x)·W:0
+PHASE:        R2311 incr_eval+cleanup+报告REGEN轮(自检PASS·gateway200/200·incr_eval 0new(全caught up)·cleanup1empty·0empty·predict 4/7 alive·TB-2.1=已交付/SWE-bench Verified=~15天瓶颈codex)
+已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5 R1785-R2311·TB4 0passed(能力)·TB-2.1 oracle5/5·R1789 eval 7/7DONE·R1804双报告交付·R1969-R2310 incr_eval+监控+报告+ETA·R2311 incr_eval(0new·全caught up)+cleanup(1empty deleted)+双报告REGEN
+当前动作:     R2311: 自检PASS(CPU load~39/224≈17%·无harness>8000%·MEM avail~1058G)·gateway 9092=200·9093=200(localhost·proxy functional)·incr_eval 0new(全7路caught up·_find_unevaluated=0 all)·cleanup 1empty(pi pytest-dev__pytest-10051 deleted)·0empty(全7路0empty)·eval cumulative:cline225/299·codex87/135·opencode414/498·cc233/286·pi188/257·hermes435/480·dsh141/175·总1723(不变)·predict 4/7 alive(cline296/codex128/cc286/pi257 real·opencode498DONE·hermes480DONE·dsh175DONE)·磁盘OK(/data 5.8T 18%·/ 352G 4%)·双报告REGEN(R2311·7way 10604B·cline special 8700B)·research日报2026-11-13已审阅(harness建议=可复用优化技能=参考输入非新指令)·未完成指令:有(§10:10+§22:4x)·W:0
 下一步:       ①本轮commit+push ②下轮continue incr_eval(gateway 200·new real patches flowing) ③predict 4/7向500推进(codex=瓶颈128/500@25/天≈15天·cc286·pi257·cline296) ④各路满500后§22:4x两基准7路全交付 ⑤TB-2.1已交付
 阻塞:         <各路尚未满500:cline296/codex128/cc286/pi257·hermes480近满·§22:4x未全交付·opencode+dsh DONE·codex=瓶颈~15天>
 ERROR_COUNT:  0
  体积: TASK=22KB / MEMORY=29KB
-  cline专项小结: predict_glm53=296real/225resolved/0empty(after cleanup·gateway 200)·C1:296real(可复算:python3 -c "import json,glob;print(sum(1 for f in glob.glob('predictions_glm53/cline-patched__*.json') if (d:=json.load(open(f))) and isinstance(d,list) and d[0].get('model_patch','').strip())")→296)·C2:failed=能力74(real patch但tests fail)+infra0·C3:empty=0(after cleanup·gateway 200·C3 resume fix R1733仍有效)·C4:225res/299eval=75.3%·C5:报告R2310(cline special·225/299·8700B)·失败top1=能力差(real patch但tests fail)·opencode414/498=83.1%·gap=能力差
+  cline专项小结: predict_glm53=296real/225resolved/0empty(gateway 200·C3 resume fix R1733仍有效)·C1:296real(可复算:python3 -c "import json,glob;print(sum(1 for f in glob.glob('predictions_glm53/cline-patched__*.json') if (d:=json.load(open(f))) and isinstance(d,list) and d[0].get('model_patch','').strip())")→296)·C2:failed=能力74(real patch但tests fail)+infra0·C3:empty=0(gateway 200·resume fix有效)·C4:225res/299eval=75.3%·C5:报告R2311(cline special·225/299·8700B)·失败top1=能力差(real patch但tests fail)·opencode414/498=83.1%·gap=能力差
 
 > 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
 
