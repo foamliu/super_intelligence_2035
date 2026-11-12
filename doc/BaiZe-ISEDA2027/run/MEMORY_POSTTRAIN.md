@@ -7,14 +7,14 @@ WAITING: 0
 
 ## 进度快照
 
-- PHASE: posttrain-wake354（2026-11-12 R354: post-SFT eval ~150/158 code-gen done[3 fail+5 timeout+2 still running] + designflow expand30 6/30 all FAIL）
-- 已完成: P3预备✅;P0✅;P1✅;P2✅;R1-R210✅;R280归档;wake281-353✅;R354✅(both jobs monitored+eval near-complete+designflow 6/30 all FAIL confirms capability gap)
-- 当前动作: wake354 R354:①**post-SFT eval ~150/158 code-gen DONE**(PID789217/789445 alive 4h42m,run dir=2026_1112_190335,158 task dirs all exist,3 failed[004/043/053]+5 timeout[025/084/081/108/137]+~142 code-generated,tasks 156+158 still running[worker-8/worker-3],scoring[run_eval.py]待全部完成后自动触发,Pass@1待出) ②**designflow expand30 6/30 RUNNING**(PID341060 alive on 36.15,~25min in,PASS:0 FAIL:5+1 ERROR[IOCBufModel shard-D infra],ETA~1.5h,all FAIL=same real-capability-gap as clean5) ③tunnel UP:port3333→36.15 ④serves UP:GPU4:8098+GPU5:8097 ⑤GPU6/7 free ⑥BaiZe ckpt BLOCKED
-- 下一步: ①等post-SFT eval tasks 156+158完成→run_eval.py自动评分→compare Pass@1 vs 36% baseline→M1=50%? ②等designflow expand30完成(~1.5h)→汇总Pass@1+失败分类 ③BaiZe ckpt:need pretrain export HF ④Phase1 3-model eval ⑤Phase3 RL launch-ready待eval
-- 阻塞: BaiZe ckpt inaccessible(/nas_train not mounted);post-SFT eval RUNNING(2 tasks left);designflow expand30 RUNNING(6/30);P3等pretrain ckpt
-- 本轮新增产出: R354✅(both jobs monitored+eval near-complete confirmed 3fail/5timeout+designflow 6/30 all FAIL confirms capability gap pattern)
-- 未完成指令: L4 2026-11-12✅pipeline+Run1/Run2/clean5 done(0%)+expand30 RUNNING+ckpt BLOCKED;11:2x✅;17:10✅拆除;13:40 Phase2✅+eval near-done/Phase3 RL launch-ready待eval
-- git: super_intelligence_2035(pulled to 4ef40f3ff);本轮 commit pending(wake354)
+- PHASE: posttrain-wake355（2026-11-13 R355: **post-SFT EDA-Eval 158-task COMPLETED Pass@1=0%** + sandbox API fixed + designflow expand30 29/30 PASS=0 RUNNING）
+- 已完成: P3预备✅;P0✅;P1✅;P2✅;R1-R210✅;R280归档;wake281-354✅;R355✅(post-SFT eval DONE 0/158+run_on_sandbox.py API fix+designflow 29/30 all FAIL)
+- 当前动作: wake355 R355:①**post-SFT eval COMPLETED**:Pass@1=0/158=0.0%[code-gen 36 success/117 fail/5 timeout;sandbox 0/36 pass(18 OtherError+15 Empty+3 Assert);run_on_sandbox.py fixed:加lang=pyAether+host=aether;final_report=20261113_0005_app.e0031982/] ②**designflow expand30 29/30 RUNNING**(PID341060 alive on 36.15,PASS:0 FAIL:9,1 task left,disk full 3G free) ③tunnel UP:port3333→36.15 ④serves UP:GPU4:8098+GPU5:8097 ⑤GPU6/7 free ⑥BaiZe ckpt BLOCKED
+- 下一步: ①等designflow expand30最后1 task完成→汇总最终Pass@1+逐题分类→记入EXPERIMENTS L4.10 ②**SFT配方诊断**:v11v38 step_90 导致36%→0%回归,需分析是否overfitting/catastrophic forgetting/语料格式不匹配→调整SFT配方或换语料重训 ③BaiZe ckpt:need pretrain export HF ④Phase3 RL launch-ready待eval
+- 阻塞: BaiZe ckpt inaccessible(/nas_train not mounted);designflow expand30 last task RUNNING;SFT回归需诊断→surrogate SFT配方待重定;P3等pretrain ckpt
+- 本轮新增产出: R355✅(post-SFT eval 0/158 final+run_on_sandbox.py API fix[lang+host]+designflow 29/30 all FAIL)
+- 未完成指令: L4 2026-11-12✅pipeline+Run1/Run2/clean5 done(0%)+expand30 RUNNING+post-SFT eval 0% DONE+ckpt BLOCKED;11:2x✅;17:10✅拆除;13:40 Phase2✅+eval DONE(0%)/Phase3 RL launch-ready待eval
+- git: super_intelligence_2035(pulled to 4ef40f3ff);本轮 commit pending(wake355)
 - 🔧 **SDPA patch**(wake328):verl fsdp_sft_trainer.py L199 `attn_implementation="flash_attention_2"`→`"sdpa"`;root cause:flash_attn crashes on CPU meta tensor during FSDP2 init→RANK0 segfault→RANK1 NCCL deadlock;backup `.bak.flash_attn`;venv重建后需重打此patch
 
 

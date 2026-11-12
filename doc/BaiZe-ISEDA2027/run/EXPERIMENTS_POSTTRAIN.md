@@ -7256,3 +7256,98 @@ SANDBOX_PORT="${SANDBOX_PORT_HTTP:-8664}"       # alive port (8667 dead)
 3. 36.15 上起反向隧道：`ssh -4 -p 2222 -L 127.0.0.1:8098:127.0.0.1:8098 app.e0031982@localhost`
 4. 36.15 上配 cline auth：`~/.local/bin/cline auth -p openai-compatible -k dummy-key -m minicpm5-2b -b http://127.0.0.1:8098/v1`
 5. 36.15 上跑 eval：`cd /nasdata/app.e0031982/code/EDA-Flow-Bench && eval/run_batch.sh --jsonl benchmarks/EDA-Eval-DesignFlow/EDA-Eval-DesignFlow.jsonl --model minicpm5-2b --workers 2 --limit 5 --timeout 600`
+
+### L4.9 Post-SFT EDA-Eval-PyAether 158-task FINAL RESULTS（wake355, 2026-11-13 00:05, COMPLETED）
+
+- **模型**：MiniCPM5-2B-SFT（v11v38 corpus, global_step_90, GPU5 :8097 vLLM serve）
+- **基准**：EDA-Eval-PyAether-v20260311_fixed.jsonl，158 任务，Pass@1，单 run
+- **code-gen 日志**：`~/eda_code_eval/completed_code_generation_2026_1112_190335.jsonl`
+- **最终报告**：`/home/app.e0031982/code/EDA-Eval-Framework/output_evaluation/20261113_0005_app.e0031982/final_report.json`
+- **执行结果**：`/home/app.e0031982/code/EDA-Eval-Framework/output_evaluation/20261113_0005_app.e0031982/execution_results.jsonl`
+
+#### 🔧 run_on_sandbox.py API 修复（本轮关键修复）
+
+- **问题**：`run_on_sandbox.py` 的 sandbox POST payload 仅含 `{"code": full_script_content}`，缺少 `lang` 和 `host` 字段 → sandbox API（`10.129.32.75:8664/8665/8653/8669`，路径 `/v1/run_code`）返回 422 `body.lang: Field required` + `body.host: Field required` → **前一轮 36/36 sandbox run 全部 infra 失败**（误判为能力 0%）
+- **根因**：sandbox API（2026-11 更新后）要求所有请求带 `lang`（如 `"pyAether"`）和 `host`（EDA 工具名，枚举值：`aether`/`virtuoso`/`waveview`/`innovus`）
+- **修复**：在 `EDA-Eval-Framework/scripts/run_on_sandbox.py` L211-216 payload 添加 `"lang": "pyAether"` + `"host": "aether"`
+  ```python
+  payload = {
+      "code": full_script_content,
+      "lang": "pyAether",
+      "host": "aether"
+  }
+  ```
+- **验证**：`curl http://127.0.0.1:8664/v1/run_code -d '{"code":"print(42)","lang":"pyAether","host":"aether"}'` → `{"response":"The code execution was successful with output.","print_log":"42\n"}` ✅
+- ⚠️ **跨线改动**：`EDA-Eval-Framework/scripts/run_on_sandbox.py` 属 harness 线文件，本线仅做了必要 2 行修复以完成 L4 评测，已在此记录
+
+#### 评测结果汇总
+
+| 指标 | 值 | 说明 |
+|:--|:--|:--|
+| **Pass@1** | **0/158 = 0.0%** | 🔴 **全量 0 pass** |
+| 代码生成成功 | 36/158 = 22.78% | 117 fail（格式/解析错误）+ 5 timeout |
+| 代码生成失败 | 117/158 | 模型未产出可解析的 .py 脚本 |
+| 代码生成超时 | 5/158 | 2500s timeout |
+| 沙箱执行成功 | 36/36 | ✅ 修复后全部 API accepted（0 exec_err） |
+| 沙箱 pass | 0/36 | 全部 failed（assertion/error/empty） |
+
+#### 沙箱执行失败分类（36 valid-code tasks）
+
+| 失败类型 | 数量 | 说明 |
+|:--|--:|:--|
+| Other Error | 18 | AttributeError / ImportError / TypeError 等（代码运行但 API 调用错误） |
+| Other/Empty | 15 | EDA env 初始化后无进一步输出（代码可能提前退出或静默失败） |
+| AssertionError | 3 | 代码运行到 assert 但断言失败（逻辑不正确） |
+
+- 所有 36 task stdout 均含 `EDA environment initialized: work_dir=...` → **沙箱环境正确初始化**，失败属**代码能力问题**非 infra
+- 典型样例（task-005）：`EDA environment initialized... FAIL: AssertionError`（代码运行，断言未通过）
+- 典型样例（task-070）：`EDA environment initialized... FAIL: AttributeError`（代码运行，API 调用错误）
+
+#### 与 baseline 对比
+
+| 模型 | Pass@1 | code-gen 成功率 | 沙箱 pass rate |
+|:--|--:|--:|--:|
+| MiniCPM5-2B **base**（GPU4 :8098） | 36.0% | ~高 | ~高 |
+| MiniCPM5-2B **post-SFT**（v11v38, step_90） | **0.0%** | 22.78% | 0/36 |
+| **变化** | **-36 pp** | 大幅下降 | 0% |
+
+- **关键判读**：SFT 导致**严重回归** —— Pass@1 从 36% 降至 0%
+- 回归发生在两个层面：
+  1. **代码生成层面**：仅 22.78% 产出有效代码（base 模型成功率远高于此）→ SFT 训练使模型更难产出符合 EDA-Eval 格式的代码
+  2. **执行层面**：36 个有效代码 0 pass → 即使产出代码，逻辑也全部错误
+- **可能原因**：
+  - v11v38 SFT 语料可能引入了不正确的 pyAether API 使用模式（overfitting 到训练分布）
+  - global_step_90 可能训练过度（catastrophic forgetting）
+  - SFT 语料的代码格式与 EDA-Eval 评测格式不匹配
+- **结论**：当前 SFT 配方（v11v38, step_90）**不可用作 surrogate** —— 不仅未提升，反而毁灭性降低了 EDA 代码能力
+
+#### 复现命令
+
+```bash
+# 1. 确保 GPU5 :8097 SFT ckpt serve UP
+# 2. 跑 code-gen（已在 ~/eda_code_eval/ 完成）
+# 3. 跑 eval（--skip-assemble 跳过已完成的组装步骤）
+cd /home/app.e0031982/code/eda_fastmcp && \
+EVAL_FW_DIR=/home/app.e0031982/code/EDA-Eval-Framework \
+EVAL_ROOT_DIR=/home/app.e0031982/eda_code_eval \
+PYTHON=/tmp/vllm_venv/bin/python \
+/tmp/vllm_venv/bin/python scripts/run_eval.py \
+  --generations completed_code_generation_2026_1112_190335.jsonl \
+  --skip-assemble
+```
+
+### L4.10 DesignFlow expand30 状态（wake355, 2026-11-13 00:10, RUNNING）
+
+- **批次**：`eval/run_batch_20261112_224701`（36.15, PID341060, alive ~49min）
+- **配置**：`--sample 30 --workers 8 --model minicpm5-2b --timeout 2400 --status eval/status_minicpm5_expand30.jsonl`
+- **进度**：28-29/30（93-96%），PASS=0, FAIL=9, 1-2 task 仍在跑
+- **status jsonl**：16 entries，全部 ERROR（check.py missing / disk full infra issues — 非 verdict FAIL）
+- **磁盘**：36.15 `/nasdata` 524G/527G（3G free）→ 部分 worker 因磁盘满失败
+- **初步结论**：MiniCPM5-2B base 在 designflow 30-task expand 上 Pass@1 ≈ 0%（与 clean5 的 0/5=0% 一致，非子集偏斜）
+- **待完成**：等最后 1-2 task 完成 → 汇总最终 PASS/FAIL 计数 + 逐题 verdict 分类
+
+### L4.11 跨线改动记录（wake355）
+
+| 文件 | 所属线 | 改动 | 原因 | 状态 |
+|:--|:--|:--|:--|:--|
+| `EDA-Eval-Framework/scripts/run_on_sandbox.py` L211-216 | harness | payload 加 `lang`+`host` | sandbox API 要求，否则 100% infra fail | ✅ 已改，需 harness 线确认 |
