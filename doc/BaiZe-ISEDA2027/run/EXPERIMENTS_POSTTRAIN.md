@@ -6255,3 +6255,130 @@ wake311 启动的 full static eval（PID 554362）仍在后台运行。本轮唤
 - contam-check 输出：`bash baize_posttrain_rl_grpo_surrogate.sh --contam-check`（本 wake 实测，报告 /tmp/baize_posttrain_contam_gate_*.md）
 - nvidia-smi：`--query-gpu` + `--query-compute-apps`（本 wake 实测，8 卡全占用）
 - 无伪造：所有数字为本 wake 真实命令输出。
+
+---
+
+## §R319 (2026-11-12 wake319) API Misuse Taxonomy: 3-Model Deep Analysis + SFT Hallucination Pattern + RL R4 Refinement (零 GPU · CPU)
+
+### 1. 动机
+
+R316-R318 已确认：三模型 all_apis_correct 均 2.7%（3/113，相同 3 任务 055/061/062），
+SFT 修复语法（54.9%→93.8%）但 API 正确性零改善（0%→0%）。但此前的分析停留在
+**聚合层**——不知道模型具体**用错了哪些 API**、**漏了哪些 API**、是否有**系统性幻觉模式**。
+
+R319 从 `static_eval_r311_results.json`（MC5 base+SFT, 1.9MB）和 `static_eval_qwen_results.json`
+（Qwen3.8-27B, 747KB）中逐任务提取 `apis_found` / `apis_correct` / `apis_missing`，
+构建 API 误用分类法，为 RL R4 奖励臂提供精确靶心。
+
+### 2. 方法
+
+脚本：`baize_posttrain_r319_api_misuse_analysis.py`（py_compile✅）
+输出：`r319_api_misuse_analysis.json`（367KB）
+
+对每个模型（MC5-base / MC5-SFT / Qwen3.8-27B）的 113 任务：
+- **wrong APIs** = `apis_found - apis_correct`（模型用了但不在 expected 集合中的 API）
+- **missing APIs** = `apis_missing`（expected 但模型没用的 API）
+- **confusion pairs** = (wrong_api, expected_api) 对，用于识别系统性混淆
+- 按场景（Schematic/Layout/DesignMgmt/Others）和类别分解
+- 三模型交叉对比：all_correct 交集、wrong/missing API 交集
+
+### 3. 核心发现
+
+#### 3.1 三模型 API 误用概览
+
+| 模型 | all_correct | has_wrong_APIs | has_missing_APIs |
+|:--|--:|--:|--:|
+| MC5-base (2B) | 3/113 (2.7%) | 51/113 (45.1%) | 110/113 (97.3%) |
+| MC5-SFT (2B step70) | 3/113 (2.7%) | **60/113 (53.1%)** | 110/113 (97.3%) |
+| Qwen3.8-27B | 3/113 (2.7%) | 42/113 (37.2%) | 110/113 (97.3%) |
+
+**关键发现：SFT 反而增加了 wrong API 使用率**（45.1% → 53.1%）。
+SFT 学会了 `emy*` 命名规范，但**幻觉出符合命名规范但不存在的 API 名**。
+
+#### 3.2 SFT 幻觉模式（177 个 distinct wrong APIs）
+
+MC5-SFT 的 top wrong APIs：
+- `emyPoint` (7x) — 不存在，模型用 `emyPoint` 替代 `emyTermType`/`emyScalarNet.create` 等
+- `emyPointF` (4x) — 不存在
+- `emyRectF` (4x) — 不存在
+- `emyInitAether` (3x) — 不存在
+- `emyCreateLibrary` (2x) — 不存在（正确是 `dbCreateLib`）
+- `emyDBOpen` (2x) — 不存在（正确是 `dbOpenCV`）
+- `emyCellView` (2x) — 不存在
+- `emyCloseDesign` (2x) — 不存在
+
+**模式**：SFT 学到了 `emy` 前缀 = EDA API 的规律，但**具体 API 名是幻觉的**。
+这些幻觉名看起来非常合理（符合 camelCase + emy 前缀），但 pyAether API 库中不存在。
+
+对比 MC5-base 的 wrong APIs：`Point`/`PointArray`/`Polygon`/`CellView.open`/`Library`/
+`DM` — 这些是**通用 OOP/其他库**的名称，完全没有 pyAether 风格。
+
+**结论**：SFT 在**命名规范**层面纠正了模型（从通用 OOP → emy* 风格），
+但在**具体 API 知识**层面产生了更精致的幻觉。这正是 RL R4 需要攻击的靶心。
+
+#### 3.3 三模型共有的 344 个缺失 API
+
+所有 3 个模型都未能使用的 344 个 expected APIs（真正的知识缺口）：
+- `dbCreateLib` (20x missing) — 创建库
+- `dbGetAllLibs` (19x) — 获取所有库
+- `dbDelLib` (18x) — 删除库
+- `emyString` (16-19x) — 字符串处理
+- `dbNewCV` (16x) — 新建 cellview
+- `dbCloseCV` (15x) — 关闭 cellview
+- `emyScalarName` (13x) — 标量命名
+- `emyBlock.create` (12x) — 创建 block
+- `emyScalarNet.create` (12x) — 创建标量网络
+- `emyPin.create` (12x) — 创建 pin
+- `emyTerm.create` (12x) — 创建 terminal
+
+这些是 pyAether 的**核心 API**，没有模型能正确使用它们。
+
+#### 3.4 三模型共有的 3 个 wrong APIs
+
+仅 `Point`、`PointArray`、`emyDesign` 是所有 3 个模型都错误使用的 API。
+这 3 个都是通用编程概念或幻觉名，不是 pyAether API。
+
+#### 3.5 MC5-SFT 按场景分解（RL 起点）
+
+| 场景 | n | all_correct | has_wrong |
+|:--|--:|--:|--:|
+| Schematic | 41 | 0 (0%) | 24 (58.5%) |
+| Design Management | 21 | 0 (0%) | 16 (76.2%) |
+| Layout | 28 | 2 (7.1%) | 12 (42.9%) |
+| Others | 23 | 1 (4.3%) | 8 (34.8%) |
+
+Schematic 和 Design Management 是 RL 最需要改善的场景（0% all_correct）。
+
+#### 3.6 API 混淆对（SFT top）
+
+`emyPoint` → `emyTermType` (6x): 模型用不存在的 `emyPoint` 替代 `emyTermType`
+`emyPoint` → `emyScalarNet.create` (6x): 替代网络创建 API
+`emyPoint` → `emyTerm.create` (6x): 替代 terminal 创建 API
+`emyPoint` → `emyBlock.create` (6x): 替代 block 创建 API
+
+**模式**：模型将 `emyPoint`（幻觉的）作为**万能替代品**，用于多种不同的 expected API。
+这说明模型对 EDA API 的**语义理解**很弱——不知道不同操作需要不同 API。
+
+### 4. 对 RL R4 奖励臂的改进建议
+
+当前 R4 设计（reward_functions.py 42KB）：检查 API 合法性。
+
+基于 R319 发现，R4 应改进为：
+
+| 改进项 | 当前 | R319 建议 | 理由 |
+|:--|:--|:--|:--|
+| API 存在性检查 | 可能只查命名规范 | **必须查 pyAether API 数据库**（8463 API） | 177 个幻觉 API 符合命名规范但不存在 |
+| 前缀部分分 | 无 | **不给 `emy*` 前缀单独加分** | SFT 幻觉 API 都有 `emy` 前缀，前缀匹配会误奖 |
+| 缺失 API 惩罚 | 无 | **对 344 核心缺失 API 给负 reward** | 这些是所有模型都 fail 的核心 API |
+| 场景加权 | 有 | **Schematic/DesignMgmt 权重提高** | 0% all_correct，改善空间最大 |
+| 万能替代检测 | 无 | **检测同一 wrong API 被用于多种 expected API** | `emyPoint` 被用于 6+ 种不同 expected API |
+
+### 5. 数据溯源
+
+- 分析脚本：`run/baize_posttrain_r319_api_misuse_analysis.py`（py_compile✅）
+- 输出 JSON：`run/r319_api_misuse_analysis.json`（367KB）
+- 输入数据：`run/static_eval_r311_results.json`（1.9MB, MC5 base+SFT）+ `run/static_eval_qwen_results.json`（747KB, Qwen）
+- sentinel 输出：`bash baize_posttrain_serve_sentinel.sh --check-once`（全 5 serve UP）
+- sandbox 输出：`timeout 8 bash -c 'echo > /dev/tcp/10.129.32.75/8667'` → exit=124（121st）
+- nvidia-smi：8 卡全占用（0-3 root SGLang ~45GB, 4-7 vLLM ~38GB）
+- 无伪造：所有数字为真实静态评测数据脚本计算结果。
