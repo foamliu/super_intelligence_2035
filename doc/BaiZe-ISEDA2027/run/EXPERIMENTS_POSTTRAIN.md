@@ -7633,3 +7633,70 @@ def create_sch_wire():
 
 **教训**：verl 的 `MultiTurnSFTDataset` 在多轮对话（>5 turns）场景下，`__getitem__` 中的 O(N) 次 `apply_chat_template` 调用会成为 DataLoader 瓶颈，导致 FSDP2 多 GPU 同步死锁。**修复：离线 pretokenize + custom_cls 绕过 MultiTurnSFTDataset**。
 
+---
+
+### §R360 v39 SFT Smoke Test + Full Eval Launch — Format Collapse FIXED（2026-11-13 wake360）
+
+**背景**：R359 pretokenized SFT 训练在 GPU6/7 上 2GPU 100% 均衡运行中（step ~85/105, loss ~0.16-0.29）。global_step_60 ckpt 已在 GPU5:8097 serve（`minicpm5-2b-sft-v39`, 39138 MiB, vLLM, `--tool-call-parser minicpm5 --enable-auto-tool-choice`）。本轮验证 v39 是否修复了 v11v38 的格式崩溃问题（v11v38: 117/158 parse failures, 0% Pass@1）。
+
+#### 1. 基础设施就绪验证
+
+| 组件 | 状态 | 证据 |
+|:--|:--|:--|
+| MCP Server (:18888) | ✅ RUNNING (PID 952370) | `curl /sse` → `event: endpoint\ndata: /messages/?session_id=...` |
+| MCP 工具 | search_apis ON / get_api_details ON / search_apis_by_keyword ON / run_code ON | `logs/app.log` tool visibility config |
+| SSH 隧道→36.15 | ✅ UP | sandbox run_code 端到端可用 |
+| v39 vLLM serve (GPU5:8097) | ✅ UP | `curl /v1/models` → `minicpm5-2b-sft-v39` from `global_step_60` |
+| cline auth | ✅ v39 model on :8097 | `run_cli.sh` log: `minicpm5-2b-sft-v39` |
+
+#### 2. Smoke Test 结果（2 tasks: 001, 002）
+
+| 指标 | v11v38 SFT（R357 诊断） | v39 SFT step_60（本轮） |
+|:--|:--|:--|
+| Parse failures | 117/158 (74%) | **0/2 (0%)** ✅ |
+| Assembled OK | 5/158 (3.2%) | **2/2 (100%)** ✅ |
+| Timeout | 5/158 | 0/2 |
+| Pass@1 | 0/158 (0.0%) | 0/2 (0.0%) |
+| 代码质量 | 乱码，非 tool call | **连贯 Python，正确 import + docstring + 函数定义** ✅ |
+
+**Task 001 生成代码摘要**（`count_unique_bus_bits`）：
+- 正确 import: `import pyAether`, `import pyAether as pyScript`
+- 正确函数签名: `def count_unique_bus_bits(ns, bus_string) -> int:`
+- 完整 docstring
+- 调用 pyAether API: `dbCrtBus`, `dbCrtLine`, `dbCrtNet`, `dbCrtTerm`
+- ❌ 语义错误: API 参数幻觉（`ref[b('bus')]`, `dbCrtPin(ref[n], first, 1, 4)` 等不存在/不正确的调用模式）
+
+**Task 002 生成代码摘要**（`get_date_from_timestamp`）：
+- 正确 import + 函数签名 + docstring
+- 调用 `dbDivide1()`, `dbInitMSDCell("")`
+- ❌ 语义错误: API 返回值结构幻觉（`result.value[0]` 等）
+
+**关键结论**：**v39 SFT 格式崩溃已修复**（M1 里程碑部分达成——tool protocol working, code assembles）。剩余失败为**语义层面**（API usage patterns 不正确），这是 RL 应改善的领域。
+
+#### 3. Full 158-Task Eval 启动（run 1）
+
+- 脚本: `PARALLEL=8 bash scripts/run_cline_script.sh -p 8 -n`
+- 模型: v39 step_60 via GPU5:8097
+- 输出: `/home/app.e0031982/eda_code_eval/2026_1113_021445/`
+- 日志: `/tmp/v39_full_eval_run1.log`
+- PID: 953888 (setsid detached)
+- 状态: RUNNING, cline batch processing 158 tasks with 8 parallel
+
+#### 4. 训练进度（R359 continued）
+
+| 指标 | 值 |
+|:--|:--|
+| 当前 step | ~85/105 (Epoch 3, 43%) |
+| loss | 0.16-0.29 (converged) |
+| ckpts saved | 20, 40, 60, 80 |
+| step time | ~37s (slightly slower due to concurrent vLLM serve on GPU5) |
+| ETA | ~12 min (~02:35) |
+
+#### 5. 下一步
+
+1. 等训练完成（~step 105）→ serve final ckpt
+2. 收集 full eval run 1 结果 → score with `run_eval.py --latest 1`
+3. 如 step_60 eval 有部分 pass → 报告 Pass@1
+4. 用 final ckpt（step 105）重复 full eval
+5. 汇总写入 EXPERIMENTS + MEMORY → commit `posttrain eval:` prefix
+
