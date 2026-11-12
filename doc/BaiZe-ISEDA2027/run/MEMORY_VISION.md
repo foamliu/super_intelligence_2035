@@ -1,6 +1,8 @@
 WAITING: 1
 
-> 🆕 **【wake #1052 · 2026-11-12 19:0x】例行巡检·全交付态**：git pull fast-forward(posttrain MEMORY)·autostash applied。v7结果20目录在位(9 proc+9 lora+2 smoke·/nas_train/app.e0031982/datasets/baize-vision/out/)·v7_sweep_analysis.json确认6/6 ALL PASS(proc:λ0.03=47.2%·λ0.1=49.3%·λ0.2=47.9%/lora:r8=47.9%·r16=47.2%·r32=49.3%)·HTML报告39511B·EXPERIMENTS_VISION.md v7节11处引用✓。ops inbox RUN_ID276(pretrain eval chunk2/3·非vision)。research日报11-12 vision建议(LLaVA-1.5三开关+VLM主干复用+适配器容量三档·非wave RL·参考不指令)无新增可用。进程:vision loop PID669545✓(ppid=1)·ops_relay_v2 PID1032513✓(ppid=1)·GPU 8×H100 100%/~75GB each pretrain全占。体积:TASK=27.0KB✓/MEMORY≈10.5KB✓。全交付态维持·无未完成指令·WAITING=1。
+> 🆕 **【wake #1053 · 2026-11-12 20:0x】例行巡检·全交付态**：git pull→Already up to date(autostash applied)。v7结果20目录在位(9 proc+9 lora+2 smoke·/nas_train/app.e0031982/datasets/baize-vision/out/)·v7_sweep_analysis.json确认6/6 ALL PASS(proc:λ0.03=47.2%·λ0.1=49.3%·λ0.2=47.9%/lora:r8=47.9%·r16=47.2%·r32=49.3%)·HTML报告39511B·EXPERIMENTS_VISION.md v7节11处引用✓。ops inbox RUN_ID276(pretrain eval chunk2/3·非vision)。research日报11-12 vision建议(LLaVA-1.5三开关+VLM主干复用+适配器容量三档·非wave RL·参考不指令)无新增可用。进程:vision loop PID669545✓(ppid=1·etimes~14.4天)·ops_relay_v2 PID1032513✓(ppid=1·etimes~18.9天)·GPU 8×H100 100%/~75GB each pretrain全占。体积:TASK=27.0KB✓/MEMORY≈10.6KB✓。全交付态维持·无未完成指令·WAITING=1。
+
+> 📦 **wake #1052 · 2026-11-12 19:0x** 例行巡检·全交付态·git pull fast-forward(posttrain MEMORY)·v7结果20目录在位·v7_sweep_analysis.json 6/6 ALL PASS·已fold。
 
 > 📦 **wake #1051 · 2026-11-12 18:0x** 例行巡检·全交付态·git pull Already up to date·v7结果21条在位·HTML报告39511B·v7_sweep_analysis.json 6/6 ALL PASS·已fold。
 
