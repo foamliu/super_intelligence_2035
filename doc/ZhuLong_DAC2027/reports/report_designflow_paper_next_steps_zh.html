@@ -62,7 +62,7 @@
   <h1>EDA-LiveFlow-Bench 论文改进建议 · shard B 视角</h1>
   <div class="meta">
     <span class="tag b">shard B · spice_sim / characterization</span>
-    <span class="tag">论文报告 v12</span> ·
+    <span class="tag">论文报告 v13</span> ·
     2026-11-12 ·
     视角：研究组成员（不是审稿人） ·
     论文目录 <code>doc/ZhuLong_DAC2027/EDA-LiveFlow-Bench_ICML2027/</code>（只读，未修改任何论文文件）
@@ -83,12 +83,12 @@
 
 <!-- ② 论文现状速览 -->
 <h2>① 论文现状速览（关键数字表）</h2>
-<p>以下数字来自论文正文与附录的当前状态（<code>main.tex \Ntasks=1155</code>，2026-11-12 08:39 同步至 shard 总和 A225+B273+C311+D346=1155；<code>\Neval=696</code> 冻结快照 2026-11-09）。</p>
+<p>以下数字来自论文正文与附录的当前状态（<code>main.tex \Ntasks=1157</code>，2026-11-12 09:37 r417 同步至 shard 总和 A226+B273+C311+D347=1157；<code>\Neval=696</code> 冻结快照 2026-11-09）。</p>
 
 <table>
   <caption class="figcap">表 1：论文关键数字（事实源：sections/*.tex + appendix/*.tex，行号为所读文件行号）</caption>
   <tr><th>项</th><th>值</th><th>出处</th></tr>
-  <tr><td>\Ntasks（活基准规模）</td><td class="num">1155</td><td><code>main.tex:43</code>（A225+B273+C311+D346）</td></tr>
+  <tr><td>\Ntasks（活基准规模）</td><td class="num">1157</td><td><code>main.tex:43</code>（A226+B273+C311+D347）</td></tr>
   <tr><td>\Neval（冻结评测 run 数）</td><td class="num">696</td><td><code>main.tex:48</code>（2026-11-09 快照）</td></tr>
   <tr><td>Pass@1（头条数字）</td><td class="num">10.0%（62/620 decided）</td><td><code>sections/4_experiments.tex:58,66</code></td></tr>
   <tr><td>三种分母估计</td><td>10.0% / 9.9% / 8.9%</td><td><code>4_experiments.tex:66</code> 脚注（PASS+FAIL=620 / +ABSENT=626 / 全 696）</td></tr>
@@ -109,7 +109,7 @@
   <tr><td>characterization</td><td class="num">53</td><td class="num">28</td><td class="num">26</td><td class="num">5</td><td class="num">19.2%</td><td>1–2（浅）</td></tr>
   <tr><td><strong>B 合计</strong></td><td class="num"><strong>273 (23.6%)</strong></td><td class="num">132</td><td class="num">121</td><td class="num">13</td><td class="num">10.7%</td><td>跨 1–2 与 5</td></tr>
 </table>
-<p class="figcap">注：B 是 4 shard 中 case 数最多的（273/1155=23.6%），但两个子领域跨度极大——characterization 19.2%（浅接地，仅次于 pnr_signoff）与 spice_sim 8.4%（深接地，低于总体），<strong>2.3 倍差距落在同一个 shard 内</strong>。详见 Q3。</p>
+<p class="figcap">注：B 是 4 shard 中 case 数最多的（273/1157=23.6%），但两个子领域跨度极大——characterization 19.2%（浅接地，仅次于 pnr_signoff）与 spice_sim 8.4%（深接地，低于总体），<strong>2.3 倍差距落在同一个 shard 内</strong>。详见 Q3。</p>
 
 <!-- ③ 六个问题 -->
 <h2>② 六个问题的回答</h2>
@@ -127,9 +127,9 @@
 <blockquote>"Depth is not measured; it is an annotation we assign per domain (a design choice, stated as such)."<span class="src">— sections/5_analysis.tex:46</span></blockquote>
 <p>而图注（<code>5_analysis.tex:65</code>）进一步承认 "this figure does not by itself establish a causal or monotone relationship"。这意味着论文的<strong>核心解释变量 = 域标签</strong>，与因变量（per-domain Pass@1）共享同一个分组来源，存在<strong>循环论证风险</strong>：你按域标 depth，又按域报 Pass%，再说 depth 解释 Pass%——这不是独立证据。审稿人会指出：任何一个与域共变的隐藏变量（任务复杂度、断言数、资产可移植性）都能顶替 depth。</p>
 
-<p><strong>③ 内部数字不一致（低级但致命，会被直接抓）。</strong>附录 A 的 per-shard 分解滞后于 \Ntasks：<code>appendix/A_benchmark_details.tex:53-54</code> 原句：</p>
-<blockquote>"As of 2026-11-12 the living build holds \Ntasks{} cases (A: 223, B: 270, C: 311, D: 341)"<span class="src">— appendix/A_benchmark_details.tex:53-54</span></blockquote>
-<p>但 \Ntasks=1155（<code>main.tex:43</code>），而 223+270+311+341=<strong>1145≠1155</strong>，且实际 jsonl 为 A225/B273/C311/D346=1155。附录的硬编码 per-shard 数滞后 10 条（A−2, B−3, D−5）。同时附录 A 还有<strong>两处未完成的 TODO</strong>：<code>appendix/A:11</code>「[TODO: show one complete task]」（benchmark 论文没有完整 worked example 是硬伤），<code>appendix/A:64</code>「TODO(T12)：摘要/引言写 268 位工程师、42 台工作站，§2 写 698 台主机、224 位去重用户…三处口径需数据侧确认后统一」。这些是<strong>审稿人扫附录 5 分钟内必发现</strong>的扣分项。</p>
+<p><strong>③ 附录 A 的 per-shard 硬编码是「会反复腐化」的脆弱点（v13 修订：r417 已补齐当前差额，但结构性隐患仍在）。</strong>附录 A 的 per-shard 分解是<strong>手写硬编码</strong>，每轮造题都要人工同步：<code>appendix/A_benchmark_details.tex:53-54</code> 当前原句（r417 同步后）：</p>
+<blockquote>"As of 2026-11-12 the living build holds \Ntasks{} cases (A: 226, B: 273, C: 311, D: 347)"<span class="src">— appendix/A_benchmark_details.tex:53-54 (r417, 2026-11-12 09:37)</span></blockquote>
+<p>v12 写作时（09:37 前）这里还是 "A: 223, B: 270, C: 311, D: 341"=1145，而当时 \Ntasks=1155、jsonl 实际 A225/B273/C311/D346=1155，<strong>滞后 10 条</strong>。r417 刚把硬编码补到 226/273/311/347=1157 与 \Ntasks 对齐——但这恰恰证明了隐患：<strong>这是一个靠 4 个 shard agent 每轮手工同步、且历史上多次滞后 8–12 条的硬编码</strong>，下一次造题（A 或 D 再 +1）它又会立刻落后。审稿人若在两次造题之间读到论文，就会看到 \Ntasks 与附录加不上的不一致。修法不是「再补一次」，而是<strong>让附录 A 的 per-shard 数从 \Ntasks 自动派生</strong>（或干脆只写 \Ntasks 总数、把 per-shard 表移到会自动 regen 的日报/附录 B）。同时附录 A 仍有<strong>两处未完成的 TODO</strong>：<code>appendix/A:11</code>「[TODO: show one complete task]」（benchmark 论文没有完整 worked example 是硬伤），<code>appendix/A:64</code>「TODO(T12)：摘要/引言写 268 位工程师、42 台工作站，§2 写 698 台主机、224 位去重用户…三处口径需数据侧确认后统一」。这些是<strong>审稿人扫附录 5 分钟内必发现</strong>的扣分项。</p>
 </div>
 
 <!-- Q2 -->
@@ -195,7 +195,7 @@
   <tr>
     <td>4</td><td><strong>A档/B档 trace 保真度披露 + 配对比较</strong></td>
     <td>保住「真实轨迹」核心卖点，预防保真度攻击</td>
-    <td>给 1155 条 case 打 <code>trace_fidelity</code> 标签（faithful/synthesized）；附录加 per-domain 比例表；在既有 faithful 与 synthesized 各抽 20 case 配对比较 Pass@1，检验合成是否系统性改变难度</td>
+    <td>给 1157 条 case 打 <code>trace_fidelity</code> 标签（faithful/synthesized）；附录加 per-domain 比例表；在既有 faithful 与 synthesized 各抽 20 case 配对比较 Pass@1，检验合成是否系统性改变难度</td>
     <td>~1 人日打标 + ~1 机器日配对跑（40 case）</td>
     <td>①各域「真实」比例多少？②合成 case 是否更易/更难？③「derived from real traces」的宣称在资产层面有多强？</td>
   </tr>
@@ -213,25 +213,25 @@
 <!-- Q5 -->
 <div class="kbox">
 <h4>Q5. benchmark 本身该怎么演进？</h4>
-<p><strong>① 1155 的分布：模拟偏重，但「反映真实使用」是 feature 不是 bug——需要补一个 macro-average 来对冲。</strong></p>
+<p><strong>① 1157 的分布：模拟偏重，但「反映真实使用」是 feature 不是 bug——需要补一个 macro-average 来对冲。</strong></p>
 <table>
-  <caption class="figcap">表 4：活集 1155 的领域分布（本人从 4 shard jsonl 实测）vs 696 评测快照</caption>
+  <caption class="figcap">表 4：活集 1157 的领域分布（本人从 4 shard jsonl 实测，2026-11-12 09:4x r417 后）vs 696 评测快照</caption>
   <tr><th>领域</th><th class="num">活集 case</th><th class="num">活集 %</th><th class="num">评测 run</th><th class="num">评测 %</th><th class="num">评测覆盖率</th></tr>
   <tr><td>spice_sim</td><td class="num">220</td><td class="num">19.0%</td><td class="num">104</td><td class="num">14.9%</td><td class="num">47%</td></tr>
-  <tr><td>schematic_netlist</td><td class="num">197</td><td class="num">17.1%</td><td class="num">131</td><td class="num">18.8%</td><td class="num">66%</td></tr>
-  <tr><td>physical_verify</td><td class="num">130</td><td class="num">11.3%</td><td class="num">73</td><td class="num">10.5%</td><td class="num">56%</td></tr>
+  <tr><td>schematic_netlist</td><td class="num">198</td><td class="num">17.1%</td><td class="num">131</td><td class="num">18.8%</td><td class="num">66%</td></tr>
+  <tr><td>physical_verify</td><td class="num">130</td><td class="num">11.2%</td><td class="num">73</td><td class="num">10.5%</td><td class="num">56%</td></tr>
   <tr><td>analog_context</td><td class="num">82</td><td class="num">7.1%</td><td class="num">55</td><td class="num">7.9%</td><td class="num">67%</td></tr>
-  <tr><td>digital</td><td class="num">76</td><td class="num">6.6%</td><td class="num">51</td><td class="num">7.3%</td><td class="num">67%</td></tr>
+  <tr><td>digital</td><td class="num">77</td><td class="num">6.7%</td><td class="num">51</td><td class="num">7.3%</td><td class="num">66%</td></tr>
   <tr><td>layout_aether</td><td class="num">73</td><td class="num">6.3%</td><td class="num">38</td><td class="num">5.5%</td><td class="num">52%</td></tr>
   <tr><td>waveform</td><td class="num">67</td><td class="num">5.8%</td><td class="num">47</td><td class="num">6.8%</td><td class="num">70%</td></tr>
   <tr><td>verification</td><td class="num">65</td><td class="num">5.6%</td><td class="num">38</td><td class="num">5.5%</td><td class="num">58%</td></tr>
-  <tr><td>layout_virtuoso</td><td class="num">64</td><td class="num">5.5%</td><td class="num">40</td><td class="num">5.7%</td><td class="num">63%</td></tr>
+  <tr><td>layout_virtuoso</td><td class="num">64</td><td class="num">5.5%</td><td class="num">40</td><td class="num">5.7%</td><td class="num">62%</td></tr>
   <tr><td>eda_other</td><td class="num">56</td><td class="num">4.8%</td><td class="num">38</td><td class="num">5.5%</td><td class="num">68%</td></tr>
   <tr><td>characterization</td><td class="num">53</td><td class="num">4.6%</td><td class="num">28</td><td class="num">4.0%</td><td class="num">53%</td></tr>
   <tr><td>pg_layout</td><td class="num">44</td><td class="num">3.8%</td><td class="num">28</td><td class="num">4.0%</td><td class="num">64%</td></tr>
   <tr><td>pnr_signoff</td><td class="num">28</td><td class="num">2.4%</td><td class="num">25</td><td class="num">3.6%</td><td class="num">89%</td></tr>
 </table>
-<p>模拟/混合信号三域（spice_sim + schematic_netlist + analog_context）= 499/1155 = <strong>43.2%</strong>。论文 §5（<code>5_analysis.tex:134</code>）已诚实承认 "top three domains hold 44.3% [of eval]… may bias aggregate metrics toward analog-friendly capabilities"。<strong>这是 feature（反映真实使用），但 micro-average 10.0% 因此偏向模拟友好的能力</strong>。建议补一个 <strong>macro-average（13 域等权 Pass% 均值）</strong>作为对照——这零成本（已有数据），却能让读者看到「等权视角下」的数字，对冲偏科质疑。</p>
+<p>模拟/混合信号三域（spice_sim + schematic_netlist + analog_context）= 500/1157 = <strong>43.2%</strong>。论文 §5（<code>5_analysis.tex:134</code>）已诚实承认 "top three domains hold 44.3% [of eval]… may bias aggregate metrics toward analog-friendly capabilities"。<strong>这是 feature（反映真实使用），但 micro-average 10.0% 因此偏向模拟友好的能力</strong>。建议补一个 <strong>macro-average（13 域等权 Pass% 均值）</strong>作为对照——这零成本（已有数据），却能让读者看到「等权视角下」的数字，对冲偏科质疑。</p>
 
 <p><strong>② 13 域是否偏科？</strong>pnr_signoff 仅 28 case（2.4%），是<strong>唯一接近「样本不足」的域</strong>（论文 §4 表注未设最低 decided 数门槛）。pg_layout 44、characterization 53 也偏少。而 spice_sim 220 一域独大。论文 §7 future work（<code>7_conclusion.tex:18</code>）说 "supplement digital synthesis and verification tasks to balance the distribution"——但<strong>trace 数据显示数字工程师用 cline 少</strong>（§2 <code>2_benchmark.tex:86</code>「digital engineers use coding agents less frequently」），靠真 trace 补 digital 会撞供给瓶颈（A 线 mc≥15 已放宽仍不够）。更现实的均衡化路径：(a) macro-average 报告（上面）；(b) 对样本不足的域（pnr/pg_layout/char）在表注加「n &lt; 30，点估计不稳定」标记；(c) <strong>不要靠合成 digital case 凑数</strong>——那会稀释「真实轨迹」卖点。</p>
 
@@ -268,7 +268,7 @@
     <td><span class="pill p3">P3</span></td>
     <td><strong>grounding-depth 实测化（50-case 日志解析）+ 修附录数字不一致</strong></td>
     <td>~4 天（日志解析 + 相关分析 + 修 appendix A 的 3 处 TODO/滞后）</td>
-    <td><strong>救灵魂论断 + 清低级硬伤</strong>。depth 是论文核心解释变量却是手工标注（§5:46），循环论证风险最高（Q1 ②）。实测化把「设计选择」变「测量量」，是方法论升级。同时顺手修掉 appendix A 的 per-shard 滞后（1145→1155）、TODO worked example、TODO(T12) 口径不统一——这些是审稿人扫附录 5 分钟必抓的扣分项。排第三是因为它比 P1/P2 费时，但两周内可完成。</td>
+    <td><strong>救灵魂论断 + 清低级硬伤</strong>。depth 是论文核心解释变量却是手工标注（§5:46），循环论证风险最高（Q1 ②）。实测化把「设计选择」变「测量量」，是方法论升级。同时顺手修掉 appendix A 的 per-shard 硬编码脆弱性（v13 注：r417 已把当前差额补齐到 226/273/311/347=1157，但这是手工同步、下一轮造题又会落后；根治法是让该数从 \Ntasks 自动派生）、TODO worked example、TODO(T12) 口径不统一——这些是审稿人扫附录 5 分钟必抓的扣分项。排第三是因为它比 P1/P2 费时，但两周内可完成。</td>
   </tr>
 </table>
 <p><strong>顺序逻辑</strong>：P1 防「数字不牢」（最显眼、最易被打）→ P2 防「身份不真」（最致命、性价比最高）→ P3 防「解释不硬 + 低级硬伤」（最重要但最费时）。两周 14 天，三件合计 ~12 天，留 2 天 buffer 写作整合。characterization 补评（Q4-3, 0.5 机器日）和 ERROR 修复（Q4-5）作为夹缝任务插入，不单独占 top-3。</p>
@@ -282,7 +282,7 @@
   <tr><td><span class="pill p1">P1</span></td><td>100-case 分层子集 + 多骨干×thinking 2×2 析因</td><td>eval 线（A 独占 eval_triage，需协调）</td><td>5 天</td><td>agi-gateway 多骨干 key 可用；子集分层脚本</td></tr>
   <tr><td><span class="pill p2">P2</span></td><td>A档/B档 trace_fidelity 打标 + 逐域披露表 + 40 case 配对比较</td><td>4 shard 造题线（各打自己的）+ eval 线跑配对</td><td>3 天</td><td>各 shard case 元数据可加字段；eval 子集</td></tr>
   <tr><td><span class="pill p3">P3</span></td><td>grounding-depth 实测化（50-case tool-call 计数 + 相关分析）</td><td>eval 线（trace_anatomy.py 扩展）</td><td>4 天</td><td>696 run session 日志留存（已确认）</td></tr>
-  <tr><td><span class="pill p2">P2</span></td><td>修 appendix A 三处硬伤：per-shard 1145→1155、TODO worked example、TODO(T12) 口径</td><td>论文线（A 主笔？需协调，避免 4 agent 抢同一文件）</td><td>0.5 天</td><td>确认谁有权改论文（当前 11-10 令：B/C/D 不碰 §5/appendix B）</td></tr>
+  <tr><td><span class="pill p2">P2</span></td><td>修 appendix A 三处硬伤：per-shard 硬编码改为从 \Ntasks 自动派生（v13 注：r417 已补齐当前差额，但治本需自动化）、TODO worked example、TODO(T12) 口径</td><td>论文线（A 主笔？需协调，避免 4 agent 抢同一文件）</td><td>0.5 天</td><td>确认谁有权改论文（当前 11-10 令：B/C/D 不碰 §5/appendix B）</td></tr>
   <tr><td><span class="pill p3">P3</span></td><td>characterization 补评剩余 ~25 case，收紧 Wilson CI</td><td>eval 线</td><td>0.5 机器日</td><td>characterization 53 case 资产齐全</td></tr>
   <tr><td><span class="pill p3">P3</span></td><td>ERROR 59 资产缺失修复 + 重跑 + 正文加资产预检协议</td><td>造题线（谁造谁修）+ eval 线重跑</td><td>2 天</td><td>定位 59 个缺失 case 的 assets/</td></tr>
   <tr><td><span class="pill p4">P4</span></td><td>补 macro-average（13 域等权 Pass%）到 §4 表</td><td>论文线</td><td>0.2 天</td><td>已有 per-domain 数据，纯计算</td></tr>
@@ -337,7 +337,7 @@
 </div>
 
 <div class="foot">
-  <p><strong>报告说明</strong>：本报告由 shard B（spice_sim / characterization）以研究组成员视角撰写，基于 2026-11-12 09:2x 的论文状态（<code>main.tex \Ntasks=1155</code>，与 jsonl A225+B273+C311+D346=1155 自洽；论文/jsonl/候选池自 09:19 v11 以来无变化）。所有论文引用均给出 section 文件 + 行号或原句，未转述。所有未运行的实验标注「建议验证」，未称「已验证」。论文文件全部只读，未修改。<strong>本版 v12 相对 v11 的增量</strong>：Q5 新增 ⑤——全量实测 B.jsonl 220 spice_sim case 用户浓度，发现 top-1 用户 tongfanl 20/220=9.1%（全 DDR6 DSCQA 主题）、top-5 15.0%，是 §5 line 134 域级失衡之下的域内二阶失衡新证，建议 §5 Threats 补「Intra-domain user concentration」一行。v11 相对 v10 的增量：2-peek 余量 spice≥10 top 全 REJECT（v9zug=kanban、2gxuy=vscode how-to），累计 peek 16 / CLEAN 2 / 最近 10 peek 0 CLEAN。</p>
+  <p><strong>报告说明</strong>：本报告由 shard B（spice_sim / characterization）以研究组成员视角撰写，基于 2026-11-12 09:4x 的论文状态（<code>main.tex \Ntasks=1157</code>，与 jsonl A226+B273+C311+D347=1157 自洽；<code>\Neval=696</code> 冻结快照未变）。所有论文引用均给出 section 文件 + 行号或原句，未转述。所有未运行的实验标注「建议验证」，未称「已验证」。论文文件全部只读，未修改。<strong>本版 v13 相对 v12 的增量</strong>：r417 commit（09:37）把 \Ntasks 1155→1157、附录 A per-shard 硬编码补齐到 226/273/311/347=1157（与 \Ntasks 对齐）——v12 写作时尚未捕获此 bump，本版同步所有 1155→1157 引用、重算表 4 活集分布（schematic_netlist 197→198、digital 76→77，模拟/混合信号三域 499→500/1157=43.2% 不变）；并<strong>重构 Q1 ③</strong>——v12 指出的「附录 per-shard 滞后 10 条」当前差额已被 r417 补齐，但隐患从「数字不一致」转为「手工硬编码的脆弱性」（每轮造题都要人工同步、历史上多次滞后 8–12 条），根治建议改为「让 per-shard 数从 \Ntasks 自动派生」而非「再补一次」。v12 相对 v11 的增量：Q5 新增 ⑤——全量实测 B.jsonl 220 spice_sim case 用户浓度，发现 top-1 用户 tongfanl 20/220=9.1%（全 DDR6 DSCQA 主题）、top-5 15.0%，是 §5 line 134 域级失衡之下的域内二阶失衡新证，建议 §5 Threats 补「Intra-domain user concentration」一行。v11 相对 v10 的增量：2-peek 余量 spice≥10 top 全 REJECT（v9zug=kanban、2gxuy=vscode how-to），累计 peek 16 / CLEAN 2 / 最近 10 peek 0 CLEAN。</p>
   <p><strong>触发与证据</strong>：本轮 mc-matrix（src=<code>designflow/summary_1105.tsv</code>）输出 mc10.fresh=0（pool 486 / touched 486 / fresh 0）⇒ 🟢 2026-11-11 用户令触发。B 域 42 条 genuine unledgered（rescan_1112_r417）无一满足 B 域过滤口径（spice 工具数 ≥10 ∧ 密度 ≥35%），最强候选 lvack hspice=8&lt;10。本轮对余量中仅有的两条 spice≥10 候选实测 peek：v9zug（hspice:14）实为 <code>.cline/apps/kanban/</code> 看板会话非编码会话；2gxuy（hspice:20，余量 spice 关键词最高）首条用户消息「怎么在当前服务器中打开 vscode」+ 工具链全 <code>list_allowed_files/search_codebase</code> 零仿真 ⇒ <strong>余量 spice 关键词最高的候选是 how-to 咨询</strong>，关键词计数系统性高估 spice 相关性。i8070（hspice:11）peek 因远端 ssh 超时未成，但过滤器显示 netlist:131 主导、密度 4.8% → 非 B 域。两条已 park 入 ledger。</p>
   <p><strong>B 线造题经验引用</strong>：Q3 ④⑤ 基于本人 273 条 B case 造题记录（273/273 断言清单达标，A 档几乎均不可行 → B 档合成；16 peek / 2 CLEAN / 最近 10 peek 0 CLEAN）。</p>
   <p><strong>未碰</strong>：board.md / 其他 shard .md / 主 jsonl / eval_triage / 论文任何文件（只读）。</p>
