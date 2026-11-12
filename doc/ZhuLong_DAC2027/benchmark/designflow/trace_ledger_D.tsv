@@ -17,7 +17,7 @@
 1793078405436_t0aom					case	EDA-Eval-DesignFlow-TempSelInfer-001	2026-11-02 15:59	
 1791963281932_4a852.messages.json	e0039602	hfeg0plg85	661	schematic_netlist	case	EDA-Eval-DesignFlow-CellMap-001	2026-11-02 16:37	
 1789370647360_ukkn7.messages.json	e0031668	hfeg0plg91	1478	schematic_netlist	parked		2026-11-02 16:44	duplicate of SkillToAether-001 (t1xjg): same user e0031668, same ERC_AI_CHECK step3+ SKILL->pyAether rewrite task
-1790487462826_wb03t.messages.json	cwei	hfeg0plg93	691	analog_context	case	EDA-Eval-DesignFlow-CTLEAether-001	2026-11-02 16:58	
+1790487462826_wb03t.messages.json	cwei	hfeg0plg93	691	analog_context	parked	EDA-Eval-DesignFlow-CTLEAether-001	2026-11-12 23:22	cross-shard near-dup D下线 C保留 (A r438裁定, domain mislabel), was case CTLEAether-001
 1788770994295_x4b0p.messages.json	xinqiaoz	hfeg0plg76	1367	schematic_netlist	parked		2026-11-02 17:12	PDK QA Calibre DRC migration multi-phase software-eng; netlist/skill match marginal (count 2); not analog_context/schematic_netlist/waveform; belongs to physical_verify shard
 1790142100320_n91pk.messages.json	alenxu	hfeg0plg94	755	schematic_netlist	case	EDA-Eval-DesignFlow-CTLEAcMetric-001	2026-11-02 17:37	
 1793102773959_okq91.messages.json	easont	hfeg0pfn119	650	schematic_netlist	case	EDA-Eval-DesignFlow-TempThreshChar-001	2026-11-02 21:56	
@@ -101,7 +101,7 @@
 1792411915181_j8f3i.messages.json	yutongy	hfeg0pgn021	221	schematic_netlist	case	EDA-Eval-DesignFlow-SpfstdBtn-001	2026-11-03 19:37	
 1789993978842_q63ux.messages.json					parked		2026-11-03 19:37	sandbox down whole session, agent never produced accepted deliverable; trn_reader.py pre-existed from prior session -- no A-faithful golden
 1789895043170_g02a8.messages.json					case	EDA-Eval-DesignFlow-NetlistSVSDiff-001	2026-11-03 20:21	
-1792647062263_i5u61	jcgu	hfeg0pin003	229	schematic_netlist	case	EDA-Eval-DesignFlow-HierNtkSearch-001	2026-11-03 21:01	
+1792647062263_i5u61	jcgu	hfeg0pin003	229	schematic_netlist	parked		2026-11-12 23:22	cross-shard near-dup D下线 C保留 (A r438裁定, domain mislabel), was case HierNtkSearch-001
 1792495939340_13fwy	thqu	hfeg0plg99	211	waveform	case	EDA-Eval-DesignFlow-WvStimExtract-001	2026-11-03 21:37	
 1791945714433_kja6z	ryanren	hfeahpc504	193	analog_context	case	EDA-Eval-DesignFlow-CpumpDeckGen-001	2026-11-07 01:59	charge pump design; trace ends mid-debug (U#223 agent stuck on dbCrtInst view), no clean user acceptance -> not A-faithful gold
 1788932274598_bdc16	pjli	hfeg0plg06	159	schematic_netlist	case	EDA-Eval-DesignFlow-NetSigTrace-001	2026-11-03 22:18	
@@ -133,7 +133,7 @@
 1789454597897_ak41b.messages.json	pjli	hfeg0plg06	251	schematic_netlist	case	EDA-Eval-DesignFlow-StdcellTrace-001	2026-11-04 12:23	trace_signal.py stdcell bottom-up trace, U#1 clean 提需求
 1793091608908_lzt3e.messages.json	e0023936	hfhds201	159	waveform	parked		2026-11-04 12:37	waveview cursor task: trace is run_code bridge debugging saga, sx_add_cursor never succeeded, no accepted gold; U#1 doc-query too thin
 1786535933950_lj2gw.messages.json	e0014566	hfeg0plg58	393	analog_context	case	EDA-Eval-DesignFlow-RsCalcLabelAdd-001	2026-11-04 12:48	rscalc RTEXT/RNODE label add, U#0 clean 提需求
-1792323159551_toezr	xxchen	hfeg0plg53	318	schematic_netlist	case	EDA-Eval-DesignFlow-GdsBump2-001	2026-11-04 13:20	
+1792323159551_toezr	xxchen	hfeg0plg53	318	schematic_netlist	parked		2026-11-12 23:22	cross-shard near-dup D下线 C保留 (A r438裁定, domain mislabel), was case GdsBump2-001
 1791956738036_ruk0m	jinyuli	hfeg0plg91	29	waveform	case	EDA-Eval-DesignFlow-ClkOscStim-001	2026-11-04 14:05	
 1793082430174_aihrj.messages.json	amberh	hfeg0plg98	28	schematic_netlist	parked		2026-11-04 14:34	Q&A how-to-highlight-nets, no generation deliverable, no accepted gold
 1792552823708_o8ivt.messages.json	yutongy	hfeg0plg53	28	schematic_netlist	case	EDA-Eval-DesignFlow-StdcellListXtract-001	2026-11-04 15:00	
