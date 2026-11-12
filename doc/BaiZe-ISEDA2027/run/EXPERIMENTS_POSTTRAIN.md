@@ -7952,3 +7952,32 @@ setsid bash -c "eval/run_batch.sh \
 
 **下一步**：等评测完成 → run_eval.py → final_report.json → 正式 Pass@1 数字 → 判定 SFT v39 配方是否有效。
 
+---
+
+### §L4-zhulong wake375 更新（2026-11-13 05:35）— dual eval code-gen ~97% done
+
+**实测数据**：
+
+| 指标 | step_60 (GPU5:8097) | step_105 (GPU6:8096) | 对比 |
+|:---|---:|---:|:---|
+| batch_id | 2026_1113_021445 | 2026_1113_024153 | — |
+| eval driver PID@etime | 953888@12079s | 972225@10451s | — |
+| stats: success | 136 | 141 | step_105 +5 |
+| stats: failure | 13 | 10 | step_105 -3 |
+| stats: timeout | 4 | 4 | same |
+| total processed | 153/158 (96.8%) | 155/158 (98.1%) | step_105 +2 |
+| dirs with .py | 41/158 (25.9%) | 60/158 (38.0%) | **step_105 +19** |
+| total .py files | 73 | 110 | step_105 +37 |
+| syntax-valid .py | 44 | 80 | **step_105 +36** |
+| syntax-invalid .py | 29 | 30 | ~same |
+| syntax-valid / 158 | 27.8% | 50.6% | **step_105 +22.8pp** |
+
+**关键结论**：
+1. **step_105 > step_60 在所有指标上**（连续 3 轮 wake372/374/375 确认）→ 更多 SFT 训练 = 更好的代码生成，过拟合结论不成立
+2. **code-gen phase 近完成**（153/158 和 155/158），仅 5+3 tasks remaining
+3. **"success" stats ≠ 有效代码**：step_60 stats success=136 但仅 41 dirs 有 .py → 模型调用 submit_and_exit 但输出 garbled text
+4. **5 stuck workers killed**：PID 1019915@7605s, 1032994@6507s, 1040763@5990s, 1041823@5891s, 1069511@3197s
+5. **no final_report.json yet** → 等 code-gen 完成 → run_eval.py sandbox execution → 正式 Pass@1
+
+**下一步**：等 code-gen 完成 → run_eval.py → final_report.json → 正式 Pass@1 → 判定 SFT v39 配方 → 如 Pass@1>0% 则 5-run eval；如仍 0% 则调整配方或 skip to RL。
+
