@@ -430,3 +430,4 @@
 1793605575195_s6n9d	xuluo	10.129.2.10	54	digital	case	EDA-Eval-DesignFlow-XyzBudgetEnum-001	2026-11-12 17:46	
 1792474615638_0mkow	yixiaow	10.129.2.14	26	eda_other	case	EDA-Eval-DesignFlow-QualibTclGen-001	2026-11-12 18:28	
 1793843123624_u65cq	e0047472	hfeg0plg53	189	pnr_signoff	case	EDA-Eval-DesignFlow-UpfIntentExtract-001	2026-11-12 19:43	
+1794208637739_ddprg	daiweilu	hfhds209	53	digital	parked		2026-11-12 20:20	r433 deepread: Q&A-only (3/3 user turns = resetfuse trigger-chain questions/confirm, agent 写 grep探针+markdown解释, 无 clean produce-task). B档 trigger-chain analyzer 理论可行但受资产可达性(/proj 9321-line testbench 私有)+时间约束, 本轮不做. P-002 复证: 512 A-dominant→top150→仅4fresh全weak.

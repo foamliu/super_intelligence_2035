@@ -1498,3 +1498,4 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1793187040509_67is1	dsgao	hfeg0pkn001	10	schematic_netlist	case	EDA-Eval-DesignFlow-TscodecompTruthTable-001	2026-11-12 18:42	
 1793877732979_qyroq	shanksw	10.129.32.75	21	schematic_netlist	case	EDA-Eval-DesignFlow-NetlistVdomPrefixCount-001	2026-11-12 19:20	
 1793243276846_85qew	qinqinl	10.129.2.12	25	analog_context	case	EDA-Eval-DesignFlow-SacapBlCouplingSummary-001	2026-11-12 19:58	
+1793347412273_nq8l2	zjqiao	10.129.32.80	98	schematic_netlist	deepread		2026-11-12 20:26	hcell/netlist cross-check produce-task; netlist file is Python script not SPICE, 327KB multi-turn session, needs full deepread next round
