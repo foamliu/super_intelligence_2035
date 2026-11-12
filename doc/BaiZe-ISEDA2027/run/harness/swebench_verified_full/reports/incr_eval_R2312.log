@@ -1,0 +1,25 @@
+[R2312-eval 01:18:04] cline: 299 already evaluated
+[R2312-eval 01:18:04] cline: 296 total real, 0 new to eval
+[R2312-eval 01:18:04] cline: no new instances to eval, skipping
+[R2312-eval 01:18:04] codex: 135 already evaluated
+[R2312-eval 01:18:04] codex: 128 total real, 0 new to eval
+[R2312-eval 01:18:04] codex: no new instances to eval, skipping
+[R2312-eval 01:18:04] opencode: 498 already evaluated
+[R2312-eval 01:18:04] opencode: 498 total real, 0 new to eval
+[R2312-eval 01:18:04] opencode: no new instances to eval, skipping
+[R2312-eval 01:18:04] claude-code: 286 already evaluated
+[R2312-eval 01:18:04] claude-code: 286 total real, 0 new to eval
+[R2312-eval 01:18:04] claude-code: no new instances to eval, skipping
+[R2312-eval 01:18:04] pi: 257 already evaluated
+[R2312-eval 01:18:04] pi: 258 total real, 1 new to eval
+[R2312-eval 01:18:04] pi: launching eval on 1 NEW instances (workers=4, timeout=1800)...
+[R2312-eval 01:18:09] pi: eval done rc=0; log -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/logs/eval_glm53_pi_R2312.log
+[R2312-eval 01:18:09] pi: MERGED resolved=189 failed=69 infra=0 total=258 -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/reports/eval_glm53_pi.json
+[R2312-eval 01:18:09] hermes: 480 already evaluated
+[R2312-eval 01:18:09] hermes: 480 total real, 0 new to eval
+[R2312-eval 01:18:09] hermes: no new instances to eval, skipping
+[R2312-eval 01:18:09] deepseek: 175 already evaluated
+[R2312-eval 01:18:09] deepseek: 175 total real, 0 new to eval
+[R2312-eval 01:18:09] deepseek: no new instances to eval, skipping
+[R2312-eval 01:18:09] 
+R2312 eval done in 4.7s
