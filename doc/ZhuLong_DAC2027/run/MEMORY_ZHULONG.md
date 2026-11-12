@@ -15,58 +15,18 @@ WAITING: 1（wake#883·2026-11-13 02:44·**🔴 21:2x 令·压缩机制消融 P2
 - [2026-11-12 18:32 · wake#873·**B_en_r1 重跑🟠监控 do-nothing** 已滚出] 原文见 `daily-memories/2026-11-12.md` §[rolled-out 19:42 wake#874 归档]（etime 02:20:56·log 12.8MB·4390 hits·被 wake#874 取代：etime 03:31:40·log 17.5MB·6124 hits）。
 - [2026-11-12 17:57 · wake#872·**B_en_r1 重跑🟠监控 do-nothing** 已滚出] 原文见 `daily-memories/2026-11-12.md` §[rolled-out 18:32 wake#873 归档]（etime 01:46:49·log 10.8MB·被 wake#873 取代：etime 02:20:56·log 12.8MB）。
 - [2026-11-12 17:22 · wake#871·**B_en_r1 重跑🟠监控 do-nothing** 已滚出] 原文见 `daily-memories/2026-11-12.md` §[rolled-out 17:57 wake#872 归档]（etime 01:10:54·log 8.2MB·2744 hits·被 wake#872 取代：etime 01:46:49·log 10.8MB·3750 hits）。
-- [2026-11-12 16:49 · wake#870·**B_en_r1 重跑🟠监控 do-nothing** 已滚出] 原文见 `daily-memories/2026-11-12.md` §[rolled-out 17:22 wake#871 归档]（etime 37:23·log 4.2MB·1430 hits·被 wake#871 取代：etime 01:10:54·log 8.2MB·2744 hits）。
-- [2026-11-12 16:12 · wake#869·**🔴 15:4x 令·B_en_r1 基座对齐重跑🟠启动+留档✅** 已滚出] 原文见 `daily-memories/2026-11-12.md` §[wake#869]（令①-③ 执行：前置核验 4-log 模型命中印证基座违规+用户前提正确·旧 B_en_r1 idx15 标 SUPERSEDED+cost 改名+备份·启动重跑 PID 2402642 batch 2026_1112_161042·log 48 hits deepseek-v4-pro-cloud ✅）。
+- [2026-11-12 16:12~16:49 · wake#869-870·B_en_r1 重跑🟠启动+监控 已滚出] 原文见 `daily-memories/2026-11-12.md` §[wake#869]/§[rolled-out 17:22 wake#871 归档]（15:4x 令·B_en_r1 基座对齐重跑：前置核验+旧 idx15 标 SUPERSEDED+cost 改名·启动 PID2402642 batch 2026_1112_161042 deepseek-v4-pro-cloud ✅·监控 do-nothing 系列·被 wake#876 取代：DONE 78.5%+报告刷新 done_all commit a909fe482）。
 
-- [2026-11-12 07:38 · wake#855·B_ru_r3 末轮跑中 round 30/30 已滚出] 原文见 `daily-memories/2026-11-12.md` §[rolled-out 08:15 wake#856 归档]（状态同 wake#854 +35min·无实质变化·被 wake#856 取代：30/30 完成 + regrade 启动）。
-
-- [2026-11-12 08:15 · wake#856·B_ru_r3 ✅ DONE 79.7%·30/30 全完·regrade 自动启动 已滚出] 原文见 `daily-memories/2026-11-12.md` §[rolled-out 08:46 wake#857 归档]（30/30 完成 + regrade 启动·被 wake#857 取代：regrade 完成 81.6% + r3 重跑启动）。
-
-- [2026-11-12 11:44 · wake#862·**B_zh_r3 重跑🟠监控 do-nothing** 已滚出] 原文见 `daily-memories/2026-11-12.md` §[rolled-out 12:19 wake#863 归档]（r3 etime 2h53m log21.3MB·被 wake#863 取代：r3 etime 3h28m log25.3MB）。
-
-- [2026-11-12 15:32 · wake#868·**done_all do-nothing·等下一条指令** 已滚出] 原文见 `daily-memories/2026-11-12.md` §[rolled-out 16:12 wake#869 归档]（状态同 wake#867·30/30 全完·被 wake#869 取代：15:4x 令 B_en_r1 重跑启动）。
-
-- [2026-11-12 14:58 · wake#867·**done_all do-nothing·等下一条指令** 已滚出] 原文见 `daily-memories/2026-11-12.md` §[rolled-out 15:32 wake#868 归档]（状态同 wake#866 14:23·被 wake#868 取代：do-nothing·无实质变化）。
-
-- [2026-11-12 14:23 · wake#866·**done_all do-nothing·等下一条指令** 已滚出] 原文见 `daily-memories/2026-11-12.md` §[rolled-out 16:12 wake#869 归档]（状态同 wake#865·do-nothing·被 wake#868 取代：do-nothing·无实质变化）。
-
-- [2026-11-12 13:42 · wake#865·**🔴 22:4x 令 + 11-07 两轴消融 ✅ 全部交付** 已滚出] 原文见 `daily-memories/2026-11-12.md` §[rolled-out 16:12 wake#869 归档]（30/30 落盘 + B_zh_r3 重跑 77.8% + 报告 §5.3 降级改写 + **⚠️ 关键发现：轴 B 基座违规仅 B_en_r1=glm-5.2** → 被 wake#869 取代：15:4x 令据此重跑 B_en_r1 对齐基座）。
-
-- [2026-11-12 12:57 · wake#864·**B_zh_r3 重跑生成✅DONE·评分🟠补跑中** 已滚出] 原文见 `daily-memories/2026-11-12.md` §[rolled-out 13:42 wake#865 归档]（评分🟠跑中·被 wake#865 取代：评分✅DONE 77.8% + JSON 回填 + 报告 §5.3 降级改写✅）。
-
-- [2026-11-12 12:19 · wake#863·**B_zh_r3 重跑🟠监控 do-nothing** 已滚出] 原文见 `daily-memories/2026-11-12.md` §[rolled-out 18:32 wake#873 归档·延迟归档]（轮次 30/30 ✅全完·B_ru 3/3=79.3±2.5%·B_zh_r2 regrade ✅81.6%·r3 重跑🟠PID 4037472 etime 3h28m·被 wake#864 取代：评分✅DONE 77.8%）。
-
-- [2026-11-12 11:08 · wake#861·**B_zh_r3 重跑🟠监控 do-nothing** 已滚出] 原文见 `daily-memories/2026-11-12.md` §[rolled-out 11:44 wake#862 归档]（r3 etime ~2h17m log17.4MB·被 wake#862 取代：r3 etime 2h53m log21.3MB）。
-
-- [2026-11-12 10:32 · wake#860·**B_zh_r3 重跑🟠监控 do-nothing** 已滚出] 原文见 `daily-memories/2026-11-12.md` §[wake#860]（r3 etime ~1h41m log14MB·被 wake#861 取代：r3 etime 2h17m log17.4MB + results JSON 核验）。
-
-- [2026-11-12 09:58 · wake#859·**B_zh_r3 重跑🟠监控 do-nothing** 已滚出] 原文见 `daily-memories/2026-11-12.md` §[rolled-out 10:32 wake#860 归档]（状态同 wake#860 -34min·r3 log 10.2MB·被 wake#860 取代）。
-
-- [2026-11-12 09:24 · wake#858·**B_zh_r3 重跑🟠监控 do-nothing** 已滚出] 原文见 `daily-memories/2026-11-12.md` §[rolled-out 10:32 wake#860 归档]（状态同 wake#859 -34min·r3 log 5.6MB 早段·被 wake#859 取代）。
-
-- [2026-11-12 08:46 · wake#857·**B_zh_r2 regrade ✅ DONE 81.6%·r3 重跑启动中** 已滚出] 原文见 `daily-memories/2026-11-12.md` §[wake#857]（regrade PID 3821059 08:03:31→08:44:56 rc=0·gap chance 1/3·闸门 n_tasks==158 PASS·129/158=81.6%·results JSON 原位回填·旧 r3 78.5% 标 SUPERSEDED·r3 重跑 PID 4037472 08:51 启动·被 wake#858 取代：r3 监控 do-nothing）。
+- [2026-11-12 07:38~15:32 · wake#855-868·B_ru_r3✅+regrade✅+B_zh_r3重跑✅+done_all 已滚出] 原文见 `daily-memories/2026-11-12.md`（30/30 全完：B_ru 3/3=79.3±2.5%·B_zh_r2 regrade ✅81.6%(gap chance 1/3)·B_zh_r3 重跑 ✅77.8% 旧 78.5%标 SUPERSEDED·报告 §5.3 降级改写·wake#865 ⚠️关键发现轴B基座违规仅 B_en_r1=glm-5.2→触发 15:4x 重跑令·done_all do-nothing 系列·均被后续 wake 取代）。
 
 - [wake#845~856 已滚出·2026-11-12 01:37–08:15] 原文见 `daily-memories/2026-11-12.md`（B_ru_r2/r3 跑中监控 + regrade 启动 + 30/30 完成系列·12 条 do-nothing 心跳·均被后续 wake 取代·无实质状态留存）。
 
-- [wake#841/842/844 已滚出·2026-11-11 23:1x ~ 11-12 01:0x] 原文见 `daily-memories/2026-11-11.md` 与 `daily-memories/2026-11-12.md`（3 条 B_ru_r1/r2 跑中监控 do-nothing 心跳·均被 wake#843/845/849 取代·gap-grabber chances_used=0/3·无实质状态变化）。
+- [2026-11-11 18:28~22:3x · wake#821-840·B 轴 lang-audit 多轮抽样 已滚出] 原文见 `daily-memories/2026-11-11.md`（gap-grabber do-nothing 巡检 + lang-audit 39/70/96/1576-trace 抽样·结论：en真切换/zh真切换/es未生效/fr部分生效/ru部分漂移·2 根因确认·已入 audit 报告·自回滚 divergent overwrite·均被后续 wake 取代）。
 
-- [2026-11-11 22:3x · opencode 96-trace 再抽样 已滚出] 原文见 `daily-memories/2026-11-11.md` §[rolled-out 23:1x]（96-trace 再抽样·en真切换/zh真切换/es未生效/fr部分生效·与 72KB 报告同向·自回滚 divergent overwrite·do-nothing）。
+- [wake#802~813 已滚出·2026-11-10 14:17–21:01] 原文见 `daily-memories/2026-11-10.md`（B_zh_r2/r3 do-nothing 监控 + wake#806 编排器 8h→12h cap 修复重启 PID3675162 + B_zh_r3 12h cap 起跑·中文思考 lang hint 生效·/home 紧非阻塞）。
 
-- [2026-11-11 20:0x · wake#840 fr_r2 spot-check 已滚出] 原文见 `daily-memories/2026-11-11.md` §[rolled-out 23:1x]（fr_r2 全量 158-session·39% target+mixed·「部分生效」与 r1 一致·fr 结论稳健·do-nothing）。
+- [wake#784~796 已滚出·2026-11-10 03:25–10:12] 原文见 `daily-memories/2026-11-10.md`（B_zh_r1/r2 跑中监控 do-nothing 系列·wake#787/789 research 日报建议纳入 P4·lang hint 注入迹象·均被 wake#790 取代）。
 
-- [2026-11-11 19:3x · opencode 全量 1576-trace 再核验 已滚出] 原文见 `daily-memories/2026-11-11.md` §[rolled-out 23:1x]（全量 1576 trace·en93/zh85/es20/fr38·与 72KB 报告同向·2 根因再确认·do-nothing）。
-
-- [2026-11-11 21:0x · opencode 再核验 B 轴 lang-switch 已滚出] 原文见 `daily-memories/2026-11-11.md` §[rolled-out 23:1x]（5 抽样/语言+全量启发式·en真切换/zh真切换/es未生效/fr部分生效（严阈值初判被 spot-check 推翻）·2 根因再确认·自回滚 divergent overwrite·do-nothing）。
-
-- [2026-11-11 18:28 · wake#839 已滚出] 原文见 `daily-memories/2026-11-11.md` §[rolled-out 21:0x opencode-session 归档]（70-trace 独立再抽样·en11/zh22/es33/fr11·en真切换/zh真切换/es未生效/fr部分生效·与 72KB 报告同向·基座混用再确认·未新增产物·do-nothing）。
-
-- [wake#821~840 已滚出·2026-11-11 01:25–22:3x 合并] 原文见 `daily-memories/2026-11-11.md`（gap-grabber do-nothing 巡检系列 + B 轴 lang-audit 多轮抽样 39/70/96/1576-trace·en真切换/zh真切换/es未生效/fr部分生效/ru部分漂移·结论已入 audit 报告·均被后续 wake 取代）。
-
-- [wake#802~813 已滚出·2026-11-10 14:17–21:01] 原文见 `daily-memories/2026-11-10.md`（B_zh_r2/r3 do-nothing 监控系列 + wake#806 编排器 8h→12h cap 修复重启 PID 3675162 + B_zh_r3 12h cap 起跑·eval PID 529130/3675162 活·中文思考 ✅ lang hint 生效·/home 1.3–5.0G/99–100% 紧）。
-
-- [wake#790/#794/#795/#796 已滚出·2026-11-10 10:45 归档] 原文见 `daily-memories/2026-11-10.md` §[rolled-out 10:45 wake#797 归档]。范围：B_zh_r2 🟠 跑中监控 do-nothing 系列（06:51–10:12）·均 pgrep 有输出→不动 eval·eval PID 529130 持续活·log 12.7MB→23.6MB 增长·log tail 持续含中文思考片段=lang hint 注入仍生效 ✅。infra 全绿各轮复核（真 loop PID 813663 https_proxy ✅·端口全 404=open·/home 紧非阻塞·cline 3.0.51·P0 三证据成立）。
-
-- [wake#784–#789 已滚出·2026-11-10 06:51 归档] 原文见 `daily-memories/2026-11-10.md` §[rolled-out 06:51 wake#790 归档]。范围：B_zh_r1 🟠 跑中监控 do-nothing 系列（03:25–06:16）·均 pgrep 有输出→不动 eval·均被 wake#790 取代。关键里程碑：wake#787=research 日报 2026-11-09 聚合口径建议纳入 P4·wake#789=research 日报 2026-11-10 不稳定度建议纳入 P4·wake#786/784=log 含中文思考片段=lang hint 注入迹象（待 trace 出后正式核验）。
 
 
 
