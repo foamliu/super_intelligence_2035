@@ -1,0 +1,65 @@
+{
+ "handle": "karpathy",
+ "name": "Andrej Karpathy (@karpathy) / X",
+ "bio": "4446988 followers · 1144 following. Earth. Joined Apr 2009. See the latest conversations with @karpathy",
+ "tweets": [
+  {
+   "id": "2119114537442189652",
+   "created_at": "2026-11-07 17:07 UTC",
+   "created_at_ms": 1794071251000,
+   "text": "Earlier this week Tristan published his top YouTube channels:\\\nhttps://t.co/NZ3UCNo6cT\\\nWhich looked excellent so clearly I had to turn it into TristanTube:\\\nhttps://t.co/l0KyW1WdNH\\\n47K super nerdy videos +TV mode for laid back watching. (One-shotted with Claude Code in 3 minutes)",
+   "url": "https://x.com/karpathy/status/2119114537442189652",
+   "handle_guess": "karpathy"
+  },
+  {
+   "id": "2116957135661945283",
+   "created_at": "2026-11-01 18:14 UTC",
+   "created_at_ms": 1793556886000,
+   "text": "Weekend hack: HackerTube. I was annoyed with YouTube's recommendations so I had Claude filter down 43M comments over 20 years of HN to 6,454 videos that keep being recommended. *Significantly* better viewing experience, ~2 hours with Opus 5.5:\\\nhttps://t.co/xULTGY6VhH\\\n\\\n- Excellent https://t.co/QRq80bJo4o",
+   "url": "https://x.com/karpathy/status/2116957135661945283",
+   "handle_guess": "karpathy"
+  },
+  {
+   "id": "2042334451611693415",
+   "created_at": "2026-10-11 19:12 UTC",
+   "created_at_ms": 1791745957000,
+   "text": "Dusting off this tweet from April because this gap in shared understanding of LLM capability is *widening*. It's now less \\",
+   "url": "https://x.com/karpathy/status/2042334451611693415",
+   "handle_guess": "karpathy"
+  },
+  {
+   "id": "2105909609487872075",
+   "created_at": "2026-10-02 06:35 UTC",
+   "created_at_ms": 1790922951000,
+   "text": "Cool eval. Simply ask an LLM “Land or Water?” and give it a latitude and longitude coordinate as text. Ask 16,200 times, plot as image. The models know. From compressing the internet.",
+   "url": "https://x.com/karpathy/status/2105909609487872075",
+   "handle_guess": "karpathy"
+  },
+  {
+   "id": "2105819303471976479",
+   "created_at": "2026-10-02 00:37 UTC",
+   "created_at_ms": 1790901420000,
+   "text": "We'll be spending a lot more time trying to understand the outputs of language models. A few thoughts, tips &amp; tricks:\\\n\\\nWriting. Something I've had success with: Ask your LLM to explain something in ASD-STE100, it's a controlled language specification originally developed for https://t.co/uMFWTcBCsl",
+   "url": "https://x.com/karpathy/status/2105819303471976479",
+   "handle_guess": "karpathy"
+  },
+  {
+   "id": "2103232383139057950",
+   "created_at": "2026-09-24 21:17 UTC",
+   "created_at_ms": 1790284650000,
+   "text": "results for all claudes https://t.co/bS5jvCC2YJ",
+   "url": "https://x.com/karpathy/status/2103232383139057950",
+   "handle_guess": "celestepoasts"
+  },
+  {
+   "id": "2042063369432183238",
+   "created_at": "2026-04-09 02:13 UTC",
+   "created_at_ms": 1775700821000,
+   "text": "The degree to which you are awed by AI is perfectly correlated with how much you use AI to code.",
+   "url": "https://x.com/karpathy/status/2042063369432183238",
+   "handle_guess": "staysaasy"
+  }
+ ],
+ "http_status": 200,
+ "fetched_at": "2026-11-13 03:04:32"
+}

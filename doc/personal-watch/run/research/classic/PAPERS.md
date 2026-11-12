@@ -10,7 +10,7 @@
 >
 > **元数据核验**：标题 / 首次提交日 均取自 arXiv 官方 API（`export.arxiv.org/api/query?id_list=...`，2026-11-11 两轮实测 `HTTP 200` + `application/atom+xml; charset=utf-8`，首轮 4/4、第二轮 4/4 = 累计 8/8）。
 
-**本轮快照**：累计 **63** 条（首轮 11:5x 收 4 条；第二轮 11:4x 补 4 条 EDA / agent / PEFT；第三轮 12:1x 补 4 条 RoPE / SWE-bench / Reflexion / CoT；第四轮 12:4x 补 3 条 GPT-3 / InstructGPT / LLaMA；第五轮 15:0x 补 4 条 ResNet / seq2seq / Dyna / LLaVA；第六轮 18:0x 补 4 条 GPT-1 / GPT-2 / Kaplan scaling laws / DQN；第七轮 21:0x 补 4 条 AlphaGo / AlphaGo Zero / Gemini / OpenVLA；第八轮 2026-11-12 00:0x 补 4 条 AlphaFold / AlphaStar / Kimi k1.5 / π0；第九轮 2026-11-12 03:0x 补 4 条 GLM-4 / MiniMax-01 / RT-2 / Octo；**第十轮 2026-11-12 06:0x 补 4 条** SWE-agent / Tree of Thoughts / Llama 2 / LLaVA-1.5；**第十一轮 2026-11-12 09:0x 补 4 条** Llama 3 / RT-1 / Christiano 2017 / Stiennon 2020；**第十二轮 2026-11-12 12:0x 补 4 条** τ-bench / TD-Gammon / Sora 技术报告 / Kimi K2；**第十三轮 2026-11-12 15:0x 补 4 条** DPO / Mamba-2(SSD) / FlashAttention-2 / Ramulator 2.0；**第十四轮 2026-11-12 18:0x 补 4 条** SimPO / Zephyr / CircuitNet / Sutton《The Bitter Lesson》（博客，单列非论文条目）；**第十六轮 2026-11-13 00:0x 补 4 条** KTO `2402.01306` / H₂O `2306.14048` / Self-Instruct `2212.10560` / Switch Transformer `2101.03961`）｜ 覆盖（一篇可服务多线，按文内「与我们工作的关系」逐条计数）：pretrain **30** · vision **17** · harness **32** · data **32** · zhulong **39** · designflow **18**
+**本轮快照**：累计 **67** 条（首轮 11:5x 收 4 条；第二轮 11:4x 补 4 条 EDA / agent / PEFT；第三轮 12:1x 补 4 条 RoPE / SWE-bench / Reflexion / CoT；第四轮 12:4x 补 3 条 GPT-3 / InstructGPT / LLaMA；第五轮 15:0x 补 4 条 ResNet / seq2seq / Dyna / LLaVA；第六轮 18:0x 补 4 条 GPT-1 / GPT-2 / Kaplan scaling laws / DQN；第七轮 21:0x 补 4 条 AlphaGo / AlphaGo Zero / Gemini / OpenVLA；第八轮 2026-11-12 00:0x 补 4 条 AlphaFold / AlphaStar / Kimi k1.5 / π0；第九轮 2026-11-12 03:0x 补 4 条 GLM-4 / MiniMax-01 / RT-2 / Octo；**第十轮 2026-11-12 06:0x 补 4 条** SWE-agent / Tree of Thoughts / Llama 2 / LLaVA-1.5；**第十一轮 2026-11-12 09:0x 补 4 条** Llama 3 / RT-1 / Christiano 2017 / Stiennon 2020；**第十二轮 2026-11-12 12:0x 补 4 条** τ-bench / TD-Gammon / Sora 技术报告 / Kimi K2；**第十三轮 2026-11-12 15:0x 补 4 条** DPO / Mamba-2(SSD) / FlashAttention-2 / Ramulator 2.0；**第十四轮 2026-11-12 18:0x 补 4 条** SimPO / Zephyr / CircuitNet / Sutton《The Bitter Lesson》（博客，单列非论文条目）；**第十六轮 2026-11-13 00:0x 补 4 条** KTO `2402.01306` / H₂O `2306.14048` / Self-Instruct `2212.10560` / Switch Transformer `2101.03961`；**第十七轮 2026-11-13 03:0x 补 4 条** Chip Placement（AlphaChip 预印本 `2004.10746`）/ YaRN `2309.00071` / Speculative Decoding `2211.17192` / GPTQ `2210.17323`）｜ 覆盖（一篇可服务多线，按文内「与我们工作的关系」逐条计数）：pretrain **32** · vision **18** · harness **35** · data **33** · zhulong **42** · designflow **19**
 
 > 🆕 **第四轮（2026-11-11 12:4x）新增 3 条 = 「规模 → 指令 → 开放权重」三段主线**：GPT-3（few-shot 能力从哪来）→ InstructGPT（对齐/指令跟随的范式起点）→ LLaMA（用「多 token」把开放权重做到可用）。三篇合起来回答 data 线当前最实际的问题：**token 预算、指令数据、公开配比**。
 >
@@ -50,6 +50,10 @@
 > **第十三轮核验证据（可复核）**：arXiv API `id_list=2310.16944,2405.21060,2307.08691,2308.11030` 与 `id_list=2305.18290,2310.16944` 均 **`200` + `application/atom+xml; charset=utf-8`**（9,704 B / 5,938 B / 9,862 B 三次调用）；被引数 **OpenAlex 4/4 `200`**（DPO **3,123** · Mamba-2 **1,003** · FlashAttention-2 **1,844** · Ramulator 2.0 **185**，查询日 2026-11-12）；会议证据：DPO = OpenAlex `conference-paper` + NeurIPS 会场 DOI `10.52202/075280-2338`（pp. 53728–53741）、Mamba-2 = arXiv `comment` 原文 `ICML 2024`、FlashAttention-2 = **未核到会场**（如实记预印本）、Ramulator 2.0 = IEEE CAL DOI `10.1109/LCA.2023.3333759`（23(1):112–116）。
 > ⚠️ **第十三轮如实记（更正）**：候选池此前把 **DPO 记为 `2310.16944`** —— 本线实测该 ID = **`Zephyr: Direct Distillation of LM Alignment`（Tunstall et al., 2023-10-25, cs.LG）**，**不是 DPO**；DPO 的真实 ID 为 **`2305.18290`**（`v3`，2024-07-29）。⇒ 已按实测 ID 收录 #48，并**在此显式更正**，🚫 不沿用错误 ID。Zephyr 本身可作「dDPO 蒸馏」候选，但本轮**不凑数**、不收录。
 
+
+> 🆕 **第十七轮（2026-11-13 03:0x）新增 4 条 = 「布局 RL 原点 + 长上下文扩展 + 解码加速 + 后训练量化」**：Chip Placement / AlphaChip（把布局写成 RL + 学一个奖励预测器当编码器 → designflow 的布局基线题、zhulong 的「代理模型只排序、真值归工具」）→ YaRN（少 10× token、2.5× 步数扩展上下文 → pretrain 长上下文的第一条低成本基线）→ Speculative Decoding（草稿 + 并行验证，输出分布不变，T5-XXL 2×–3×）→ GPTQ（175B 4 GPU 小时量化到 3–4 bit，单卡推理；2B 化后直接服务端侧/部署成本）。**必读清单：仍 10/10 组、37/37 条目全覆盖**（本轮属「补充」，且首次系统补上 **serving 侧（解码 / 量化）** 这条此前没有落点的线）。
+>
+> **第十七轮核验证据（可复核）**：arXiv API `id_list=2611.13925,2611.13543,2004.10746,2309.00071,2211.17192,2210.17323` → **`200` + `application/atom+xml; charset=utf-8`**（15,717 B / 6 条 entry）；被引数 **OpenAlex 4/4 `200`**（Chip Placement arXiv 版 **274** · YaRN **591** · Spec-Dec **354**⚠️ · GPTQ **2,195**，查询日 2026-11-13），另经 OpenAlex 精确标题检索核到 **Nature 版** `A graph placement methodology for fast chip design`（DOI `10.1038/s41586-021-03544-w`，**704**，2021）。⚠️ Spec-Dec **354 &lt; 500**、Chip Placement 预印本 **274 &lt; 500** ⇒ 均按「奠基」收录并显式标注；🚫 不把两个口径混算。
 
 ---
 
@@ -1126,6 +1130,74 @@
 
 ---
 
+## 64. Chip Placement with Deep Reinforcement Learning（AlphaChip 的预印本）
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Chip Placement with Deep Reinforcement Learning |
+| 作者（前 3） | **Azalia Mirhoseini** · **Anna Goldie** · **Mustafa Yazgan**（et al.，共 22 位，含 Ebrahim Songhori · Quoc V. Le · Jeff Dean） |
+| 年份 | 2020（arXiv 首次提交 **2020-04-22**；同行评审版 **2021**） |
+| 会议 / 期刊 | arXiv **预印本**（无 comment）；同行评审版 = **A graph placement methodology for fast chip design**, *Nature* **594**:207–212 (2021)，DOI `10.1038/s41586-021-03544-w` |
+| 被引数 | **704**（Nature 版，OpenAlex DOI `10.1038/s41586-021-03544-w`）· **274**（arXiv 预印本，DOI `10.48550/arxiv.2004.10746`）；均为 OpenAlex、查询日 **2026-11-13**；S2 未查，**两口径不可混用** |
+| arXiv / DOI | <https://arxiv.org/abs/2004.10746> ｜ Nature DOI `10.1038/s41586-021-03544-w` |
+| 一句话贡献 | 摘要原文要点：把宏单元布局写成 **RL 问题**（把网表节点放到画布上），并用「预测布局质量」的监督任务做表示学习，再把该网络当作策略/价值网络的编码器以支持迁移；目标是最小化 **PPA**，作者称在**不到 6 小时**内即可在现代加速器网表上生成「超人或有竞争力」的布局，而既有基线需要人类专家在环、耗时数周。 |
+| 与我们工作的关系 | **designflow（直接对口）**：这是「用学习/agent 做布局」的**方法论原点**，也是造题时最容易被问「和 AlphaChip 比怎样」的基线。<b>动作</b>：布局类题面固定三项口径 —— 网表输入、PPA 评估脚本、可迁移性 split（训练块 / 未见块），「未见块」单列榜单，不许混进同一条平均分。<br>**zhulong（奖励设计）**：核心技巧是**先学一个能预测奖励的代理模型**再拿它当编码器 ⇒ 与我们「LLM 出方案、工具给真值」互补：代理模型只用于**排序候选**，最终分必须由真实 PPA 工具给；加一档「代理排序 vs 随机排序」同预算对照。<br>**harness（评测）**：6 小时 vs 数周提示评测必须同时报**墙钟时间**与**工具调用次数**，否则「快」不可核验。<b>风险</b>：① 704 是 Nature 版、274 是预印本，跨源不可比；② 「superhuman」为作者自报、依赖其内部网表与工具流；③ 2020 年的 RL 配方 ≠ 今天 LLM agent 的能力证据。 |
+
+首次收录: 2026-11-13（第十七轮）｜ 状态: 元数据已核验（arXiv `id_list` `200` + `application/atom+xml`；OpenAlex 2/2 `200`；Nature 版经 OpenAlex 精确标题检索命中）
+
+---
+
+## 65. YaRN: Efficient Context Window Extension of Large Language Models
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | YaRN: Efficient Context Window Extension of Large Language Models |
+| 作者（前 3） | **Bowen Peng** · **Jeffrey Quesnelle** · **Honglu Fan**（et al.，共 4 位：+ Enrico Shippole） |
+| 年份 | 2023（arXiv 首次提交 **2023-08-31**；v3 **2026-02-06**） |
+| 会议 / 期刊 | arXiv **预印本**（无 comment；OpenAlex `type=preprint`）⇒ **本轮未核到会场，不写会议名** |
+| 被引数 | **591**（OpenAlex，DOI `10.48550/arxiv.2309.00071`，查询日 **2026-11-13**；S2 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2309.00071> ｜ DOI `10.48550/arxiv.2309.00071` |
+| 一句话贡献 | 摘要原文要点：RoPE 能编码位置信息，但模型**无法泛化到超过训练长度**；YaRN 是计算高效的上下文扩展方法，相对此前方法**少用 10× token、少用 2.5× 训练步**，让 LLaMA 类模型能有效利用并外推到远超原预训练长度的上下文，且**超过此前上下文扩展 SOTA**；还展示了**外推到微调数据长度之外**的能力（代码开源）。 |
+| 与我们工作的关系 | **pretrain（长上下文，直接对口）**：若要从 8K/32K 扩到更长，YaRN 是**成本最低的第一条基线**（只改位置编码缩放 + 少量继续训练），比从头长上下文预训练便宜一个量级。<b>动作</b>：在 2B 上做「YaRN 继续训练 1B token」vs「从零长上下文」同算力对照，评测用**同一套长文档检索 + 长轨迹任务**；<b>预注册判据</b>：若 YaRN 臂在 ≥64K 检索上掉点 &gt;3pp，则不作主路径，只作推理期临时扩展。<br>**data（语料）**：扩展训练必须配长文档语料，数据表单列「长度分布」，否则只是「位置编码能外推、内容没见过」。<br>**harness（长轨迹）**：外推能力可把长工具日志塞进同一上下文，但须与 H₂O/驱逐策略**分开消融**。<b>风险</b>：① 591 为 OpenAlex 口径；② 「超过 SOTA」是 2023 年的对比结论，**不代表对今天的长上下文模型仍成立**；③ 外推到微调长度之外为作者自报，需自测。 |
+
+首次收录: 2026-11-13（第十七轮）｜ 状态: 元数据已核验（arXiv `id_list` `200` + `application/atom+xml`；OpenAlex `200`）
+
+---
+
+## 66. Fast Inference from Transformers via Speculative Decoding
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Fast Inference from Transformers via Speculative Decoding |
+| 作者（前 3） | **Yaniv Leviathan** · **Matan Kalman** · **Yossi Matias**（共 3 位，均 Google Research） |
+| 年份 | 2022（arXiv 首次提交 **2022-11-30**；v2 2023-05-18） |
+| 会议 / 期刊 | **ICML 2023 Oral**（arXiv `comment` 原文 `ICML 2023 Oral`；OpenAlex 记为 `type=preprint` ⇒ 会议信息只引 arXiv comment） |
+| 被引数 | **354**⚠️（OpenAlex，DOI `10.48550/arxiv.2211.17192`，查询日 **2026-11-13**；**低于 500**，按「奠基 / 方法论常青」收录并显式标注；S2 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2211.17192> ｜ DOI `10.48550/arxiv.2211.17192` |
+| 一句话贡献 | 摘要原文要点：自回归解码 K 个 token 要跑 K 次串行前向，是推理慢的根因；作者提出 **speculative decoding** —— 用更高效的近似模型先「草拟」若干 token，再用**新的采样方法**在大模型上并行验证，从而在**不改变输出分布**的前提下加速；**无需重训、无需改架构**，在 T5-XXL 上相对标准 T5X 实现 **2×–3× 加速且输出完全一致**。 |
+| 与我们工作的关系 | **zhulong（serving 成本，直接对口）**：长轨迹 agent 的瓶颈常在**逐 token 解码**，speculative decoding 是「不动模型、只动解码」的即插即用加速，适合不能频繁重训的场景。<b>动作</b>：在 2B 评测服务上接一版草稿模型（同 tokenizer 的小模型），预注册比较「同 batch、同输出一致性」下的 tokens/s 与 p95 延迟；<b>判据</b>：若在 EDA/存储域文本上接受率 &lt;60%，该草稿模型不用于生产，只用于离线批量评测。<br>**harness（评测吞吐）**：批量跑题时把「解码加速比」与「判分正确率」并列报告，避免用加速换来判分漂移却看不见。<br>**pretrain（间接）**：训练不受影响，但**评测/自采样**（如 RL 采样）可直接受益。<b>风险</b>：① 354 &lt; 500，属「奠基」而非高引；② 2×–3× 是 T5-XXL + 特定实现的作者自报，**域外文本接受率可能显著更低**；③ 「输出完全一致」依赖采样方法的正确实现，自研实现需做分布一致性测试。 |
+
+首次收录: 2026-11-13（第十七轮）｜ 状态: 元数据已核验（arXiv `id_list` `200` + `application/atom+xml`；OpenAlex `200`）
+
+---
+
+## 67. GPTQ: Accurate Post-Training Quantization for Generative Pre-trained Transformers
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | GPTQ: Accurate Post-Training Quantization for Generative Pre-trained Transformers |
+| 作者（前 3） | **Elias Frantar** · **Saleh Ashkboos** · **Torsten Hoefler**（et al.，共 4 位：+ Dan Alistarh） |
+| 年份 | 2022（arXiv 首次提交 **2022-10-31**；v2 2023-03-22） |
+| 会议 / 期刊 | **ICLR 2023**（arXiv `comment` 原文 `ICLR 2023`；OpenAlex 记为 `type=preprint` ⇒ 会议信息只引 arXiv comment） |
+| 被引数 | **2,195**（OpenAlex，DOI `10.48550/arxiv.2210.17323`，查询日 **2026-11-13**；S2 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2210.17323> ｜ DOI `10.48550/arxiv.2210.17323` |
+| 一句话贡献 | 摘要原文要点：GPT/OPT 类模型推理即使只做前向也要多张高性能 GPU，限制可用性；GPTQ 是**基于近似二阶信息的一次性权重量化**方法，可在**约 4 GPU 小时**内量化 **175B** 模型到 **3–4 bit**，相对未压缩基线精度损失可忽略；压缩收益比此前 one-shot 量化方法**翻倍以上**，**首次让 175B 模型在单卡内做生成式推理**；端到端相对 FP16 约 **3.25×**（A100）/ **4.5×**（A6000）加速（作者自报）。 |
+| 与我们工作的关系 | **zhulong / vision（部署成本，直接对口）**：BaiZe 2B 若要上单卡或端侧，4-bit 权重量化是最现实的降本手段；GPTQ 是**后训练、无需重训**的路线，与 QAT 形成对照。<b>动作</b>：在 2B checkpoint 上做「FP16 / 8-bit / 4-bit GPTQ」三档，评测集固定为**同一套 EDA 与工具调用题**（不是通用困惑度）；<b>预注册判据</b>：若 4-bit 在留出题上通过率下降 &gt;2pp，则只在离线批量场景启用，不进在线服务。<br>**harness（评测口径）**：量化后模型必须用**同一判分器**重跑，不许引用 FP16 历史分数。<br>**SLM / 端侧**：4-bit 让 2B 的显存占用进入消费级显卡区间，是「端侧可跑」的前提之一。<b>风险</b>：① 3.25×/4.5× 为特定 GPU 与实现的作者自报；② 175B 的结论**不保证**在 2B 上同样无损（小模型通常更脆弱）；③ 校准集分布偏移（芯片设计文本/工具日志 vs 通用网页）可能显著影响精度，须自测。 |
+
+首次收录: 2026-11-13（第十七轮）｜ 状态: 元数据已核验（arXiv `id_list` `200` + `application/atom+xml`；OpenAlex `200`）
+
+---
+
 ## 候选池（下轮起逐轮补，**被引数本轮未查**，勿引用）
 
 
@@ -1133,7 +1205,7 @@
 > 只登记「已实测 arXiv 元数据」的条目；被引数待下轮 OpenAlex 批量核过再写，**本表数字一律留空 = 未查**。
 > ⚠️ 第十轮把 **Llama 2 `2307.09288` / LLaVA-1.5 `2310.03744` / SWE-agent `2405.15793` / Tree of Thoughts `2305.10601`** 四条转正为 #36–#39；**第十一轮把 Llama 3 `2407.21783` / RT-1 `2212.06817` / Christiano 2017 `1706.03741` / Stiennon 2020 `2009.01325`** 四条转正为 #40–#43；**第十二轮把 τ-bench `2406.12045` / TD-Gammon（CACM `10.1145/203330.203343`）/ Sora 技术报告 / Kimi K2 `2507.20534`** 四条转正为 #44–#47（元数据 + 被引当场实测）。✅ **必读清单 37/37 条目已全部覆盖**，此后以「补充 / 更正」为主。
 > ⚠️ **更正**：候选池此前记的「Kimi 月之暗面早期报告 `2401.14185`」**实测为 `TDFNet`（音视频语音分离，cs.SD），与 Kimi 无关** ⇒ 已删除该候选，改收 **Kimi K2 `2507.20534`**（已转正 #47）。
-> **下轮候选（🚫 未实测前不进本表、不写 DOI / 被引）**：① ~~DPO / Mamba-2 / FlashAttention-2 / 存储方向~~ ⇒ **第十三轮已转正 #48–#51**；② ~~Zephyr / CircuitNet / Bitter Lesson / SimPO~~ ⇒ **第十四轮已转正 #52–#55**；③ ~~ORPO / IPO / Lost in the Middle / vLLM~~ ⇒ **第十五轮已转正 #56–#59**；④ ~~KTO `2402.01306` / KV cache 压缩（H₂O）/ 指令数据自举（Self-Instruct）/ MoE（Switch）~~ ⇒ **第十六轮已转正 #60–#63**；⑤ **版图 / EDA 预训练**（除 CircuitNet 外，另有 `2309.07544` VerilogEval 已收 #7；可补「LLM-for-EDA 评测基座」如 OpenROAD / ORFS 相关一手工作，须先实测是否 arXiv 一手）；⑥ **长上下文检索 / 位置编码**（RoPE 已收 #9；可补 YaRN / LongRoPE 等，须实测 + 核被引）；⑦ **speculative decoding / 量化**（serving 侧，须实测 + 核被引）。
+> **下轮候选（🚫 未实测前不进本表、不写 DOI / 被引）**：① ~~DPO / Mamba-2 / FlashAttention-2 / 存储方向~~ ⇒ **第十三轮已转正 #48–#51**；② ~~Zephyr / CircuitNet / Bitter Lesson / SimPO~~ ⇒ **第十四轮已转正 #52–#55**；③ ~~ORPO / IPO / Lost in the Middle / vLLM~~ ⇒ **第十五轮已转正 #56–#59**；④ ~~KTO `2402.01306` / KV cache 压缩（H₂O）/ 指令数据自举（Self-Instruct）/ MoE（Switch）~~ ⇒ **第十六轮已转正 #60–#63**；⑤ ~~版图布局（AlphaChip）/ 长上下文位置编码（YaRN）/ speculative decoding / 量化（GPTQ）~~ ⇒ **第十七轮已转正 #64–#67**；⑥ **EDA 评测基座**（OpenROAD / ORFS 相关一手工作，须先实测是否 arXiv 一手 + 核被引）；⑦ **长上下文续**（LongRoPE / 位置插值对照，须实测 + 核被引）；⑧ **存储方向补充**（DRAM 模拟 / 近存计算，须核一手与被引）。
 
 
 | arXiv ID | 标题（arXiv 实测） | 首次提交 | 拟服务线 | 为什么算经典（待核被引） |

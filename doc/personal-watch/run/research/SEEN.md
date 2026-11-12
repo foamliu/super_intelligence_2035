@@ -5665,6 +5665,6 @@
 | 2026-11-12 | 2611.13560 | Are Dense Rewards Worth Their Tokens in GRPO? | cs.CL | 收录 |
 | 2026-11-12 | 2611.13713 | Toward Autonomous RTL and Synthesis Optimization: Benchmarking and Self-Improving Agents | cs.AI | 收录 |
 | 2026-11-12 | 2611.13931 | TAPCO-G: LLM-Guided Design-Adaptive Timing and Power Co-Optimization with Graph-Based Physical Priors | cs.AR | 收录 |
-| 2026-11-12 | 2611.13543 | Sanity Checks for Attention Surgery: Null Models and Matched Interventions for Representation-Motivated Design | cs.LG | 候选 |
-| 2026-11-12 | 2611.13925 | OpenRE-Bench: A Benchmark Harness for Multi-Agent Requirements Engineering with Mined GitHub Issues | cs.SE | 候选 |
+| 2026-11-12 | 2611.13543 | Sanity Checks for Attention Surgery: Null Models and Matched Interventions for Representation-Motivated Design | cs.LG | 收录 |
+| 2026-11-12 | 2611.13925 | OpenRE-Bench: A Benchmark Harness for Multi-Agent Requirements Engineering with Mined GitHub Issues | cs.SE | 收录 |
 | 2026-11-12 | 2611.14285 | LM-SimBench: A Unified Framework, Dataset, and Benchmark for Large Language Model Training Simulation | cs.AI | 收录 |

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>论文观察日报 · 2026-11-13（早报 3/5 ＋ B 轨第十六轮 63 篇 · 作者网 69 人）· research 线</title>
+<title>论文观察日报 · 2026-11-13（5/5 收口 ＋ B 轨第十七轮 67 篇 · 作者网 73 人）· research 线</title>
 <style>
   :root { --primary:#0b3d6e; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700;
           --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
@@ -54,18 +54,18 @@
 
 <header class="hero">
   <h1>论文观察日报 · 2026-11-13</h1>
-  <div class="sub">早报 <b>3 篇「借鉴」</b>（今日进度 <b>3/5</b>）＋ 🅱 B 轨第十六轮累计 <b>63</b> 篇经典（必读清单 37/37 ＋ 补充）＋ 👥 作者网 <b>69</b> 人 ＋ 🗣 voice_ready <b>1</b> 条（V17 首发）＋ ✉ 作者信本轮 <b>3</b> 封 / 累计 <b>24</b> 封</div>
+  <div class="sub">今日 <b>5 篇「借鉴」收口（5/5）</b>＋ 🅱 B 轨第十七轮累计 <b>67</b> 篇经典（必读清单 37/37 ＋ 补充 serving 侧）＋ 👥 作者网 <b>73</b> 人 ＋ 🗣 voice_ready <b>2</b> 条（V17＋V18）＋ ✉ 作者信本轮 <b>1</b> 封 / 今日 <b>4</b> 封 / 累计 <b>25</b> 封</div>
   <div class="meta">
     <span>数据源：arXiv API（公告批 2026-11-10，未刷新）</span>
-    <span>生成：2026-11-13 00:0x（00:00 时窗 · 早报）</span>
-    <span>进度：<b>3 / 5</b>（06:00 轮补齐 2 篇）</span>
+    <span>生成：2026-11-13 03:0x（03:00 时窗 · 补齐至 5/5）</span>
+    <span>进度：<b>5 / 5</b>（已收口）</span>
     <span>出口：仅 HTML（🚫 不发日报邮件）</span>
   </div>
   <div class="disc">⚠️ 推荐 = 待读线索，<b>非结论</b>；所有数字均为论文作者自报，本线未复现；「对各线的可执行建议」为基于论文的推断，非指令。</div>
 </header>
 
-<h2 class="sec">☀️ 今日推荐 · 3 篇「借鉴」<span class="badge b-jz">借鉴</span></h2>
-<p style="font-size:13px;color:#59636e;">本轮 3 篇均为 11-12 06:00 轮登记在 <code>SEEN.md</code> 的「强候补」（当时当日 5/5 已满未收），截至本轮唤醒仍在 72h 窗口内（最老 ≈56h），故在新一天额度内转正；非重复收录。</p>
+<h2 class="sec">☀️ 今日推荐 · 5 篇「借鉴」（5/5 收口）<span class="badge b-jz">借鉴</span></h2>
+<p style="font-size:13px;color:#59636e;">前 3 篇为 00:00 轮从 11-12 登记的「强候补」转正；第 4–5 篇为本轮（03:00）补齐，同为 11-12 登记在 <code>SEEN.md</code> 的强候补（当时当日 5/5 已满未收）。5 篇截至本轮唤醒均在 72h 窗口内（最老 ≈71h）⇒ 非超窗凑数，也不是重复收录。</p>
 
 <div class="card">
   <h3><span class="no">1</span>Toward Autonomous RTL and Synthesis Optimization: Benchmarking and Self-Improving Agents</h3>
@@ -121,19 +121,55 @@
   </div>
 </div>
 
+<div class="card">
+  <h3><span class="no">4</span>OpenRE-Bench: A Benchmark Harness for Multi-Agent Requirements Engineering with Mined GitHub Issues</h3>
+  <div class="row"><div class="k">中文一句话</div><div class="v">面向 LLM 多智能体<b>需求工程</b>框架的开源基准基础设施，给出四个可复用部件：<b>共享 run harness</b>（统一输入 / 阶段产物 / 指标契约）、<b>单适配器接入</b>（框架只需实现一个 adapter，用例与指标不动）、<b>可复现的 GitHub issue 挖掘管线</b>、<b>版本化用例集</b>。演示：从 5 个项目（3 种语言、5 个领域）抓取 <b>3,000 条 issue</b>，沉淀 5 例 + 5 个手写例 = v1.0；三个异构框架（MARE、iReDev、QUARE）在同一协议下运行；随附 651 个测试、1,396 条过滤 issue 池、Docker 镜像与冻结 API 快照。</div></div>
+  <div class="row"><div class="k">原题</div><div class="v"><span class="orig">OpenRE-Bench: A Benchmark Harness for Multi-Agent Requirements Engineering with Mined GitHub Issues</span></div></div>
+  <div class="row"><div class="k">作者 / 机构</div><div class="v">Haowei Cheng · Milhan Kim · Bowen Jiang · et al（共 8 位，含 Naoyasu Ubayashi、Hironori Washizaki；机构未从 PDF 核验）</div></div>
+  <div class="row"><div class="k">日期</div><div class="v">首次提交 <b>2026-11-10</b>（<code>published=2026-11-10T11:14:54Z</code>）· 距本轮 <b>≈64h</b>（在 72h 内）</div></div>
+  <div class="row"><div class="k">分类 / 标签</div><div class="v"><code>cs.SE</code> · <span class="badge b-jz">借鉴</span> · 关键词：harness / 多智能体 / 需求工程 / 基准基础设施 / 可复现</div></div>
+  <div class="row"><div class="k">链接</div><div class="v"><a href="https://arxiv.org/abs/2611.13925">https://arxiv.org/abs/2611.13925</a></div></div>
+  <div class="reason"><b>推荐理由（借鉴 · harness / designflow 直接对口）</b>
+    <ol>
+      <li><b>它把「harness」拆成了可验收的四件套</b>：契约（输入 / 阶段产物 / 指标）、适配器边界、语料生产管线、版本化用例。我们 harness 线目前最容易糊掉的是<b>适配器边界</b>——每接一个新 agent/工具就改判分器。这里明确「框架只实现一个 adapter，用例与其它 adapter 不动」，可直接抄成我们的接入规范。</li>
+      <li><b>「语料从真实 issue 挖」是可复现造题的现成模板</b>：抓取 → 过滤（3,000 → 1,396）→ 选例 → 打包 v1.0，每一步都留了数量与产物；designflow 的「需求 → 设计 → 验证」题面可照这个流水线做，但<b>必须换成 EDA/存储项目</b>的 issue 与规格文本。</li>
+      <li><b>三个异构框架同协议跑</b>：这是 benchmark 论文里少见的「跨实现可比」证据，比单框架自报更有说服力；但它<b>没有给框架间的分数差与方差</b>，不能据此判断谁更强。</li>
+    </ol>
+    <b>建议动作</b>：harness 线先写一页「adapter 契约」草案（输入 schema / 阶段产物 / 指标三项），拿现有 2 个 agent 做接入演练；预注册判据：若接入一个新 agent 需要改动 &gt;1 个判分文件，则契约设计不通过，回炉重写。
+  </div>
+</div>
+
+<div class="card">
+  <h3><span class="no">5</span>Sanity Checks for Attention Surgery: Null Models and Matched Interventions for Representation-Motivated Design</h3>
+  <div class="row"><div class="k">中文一句话</div><div class="v">把「看内部表示 → 发现某统计量很大 → 架构上删掉它 → 报告变好」这条常见链路，拆成三条可复用检查：<b>是否超过噪声底</b>、<b>是否过得了几何零模型</b>、<b>增益是否真需要被删的那个方向</b>。以 self-attention removal（删掉与自身 value 向量对齐的注意力分量）为案例：9 个预训练模型、<b>5,408 个 head</b>（124M–6.9B），一个「更早位置的因果零模型」就能解释 <b>48%–63%</b> 的 head-value 余弦对齐；预注册 3 臂 × 8 种子（每 run <b>4.0×10⁸</b> token = 399,900,672）：固定任意秩一方向 <b>+0.0011 nats（p=0.197，不显著）</b>，自指方向 <b>−0.0029 nats（Holm 校正 p=0.0023）</b>，两者直接比较 <b>−0.0040 nats（p=0.0018）</b>。</div></div>
+  <div class="row"><div class="k">原题</div><div class="v"><span class="orig">Sanity Checks for Attention Surgery: Null Models and Matched Interventions for Representation-Motivated Design</span></div></div>
+  <div class="row"><div class="k">作者 / 机构</div><div class="v">Basavaraj R M · Aryan Bharat Kumar（2 位；机构未从 PDF 核验）</div></div>
+  <div class="row"><div class="k">日期</div><div class="v">首次提交 <b>2026-11-10</b>（<code>published=2026-11-10T04:06:26Z</code>）· 距本轮 <b>≈71h</b>（在 72h 内，接近窗口边缘，如实标注）</div></div>
+  <div class="row"><div class="k">分类 / 标签</div><div class="v"><code>cs.LG</code> · <span class="badge b-jz">借鉴</span> · 关键词：消融方法论 / 零模型 / 预注册 / 注意力干预 / 分半信度</div></div>
+  <div class="row"><div class="k">链接</div><div class="v"><a href="https://arxiv.org/abs/2611.13543">https://arxiv.org/abs/2611.13543</a></div></div>
+  <div class="reason"><b>推荐理由（借鉴 · zhulong 消融设计 / pretrain 干预实验）</b>
+    <ol>
+      <li><b>它给的是一套「消融怎么才算可信」的检查表</b>，正好治我们最常见的毛病：看到一个统计量很大（比如某类 head 的余弦相似度高）就直接下「冗余/可删」的结论。三条检查可原样搬到 ZhuLong 的架构消融：噪声底、几何零模型、匹配干预。</li>
+      <li><b>「统计量可靠 ≠ 干预有效」被量化了</b>：结构统计量的分半信度 &gt;0.99，但干预效应的信度在 GPT-2 是 0.80、Pythia-160M 只有 0.42 ⇒ 同一个指标换模型就可能测不出来。这直接决定我们要跑多少种子、在什么规模上做预实验。</li>
+      <li><b>预注册 3 臂 × 8 种子、每 run 4.0×10⁸ token 的成本口径可参照</b>；但它只到 6.9B 分析 / 50.9M 训练，<b>不能外推到 2B 训练</b>，且只有两位作者、未见会场 ⇒ 当方法论参考，不当结论引用。</li>
+    </ol>
+    <b>建议动作</b>：zhulong 下一轮架构消融先写「零模型 + 匹配干预 + 种子数」三行预注册，再开跑；判据：若某消融效应的分半信度 &lt;0.6，则该结论只进「待复核」，不进决策表。
+  </div>
+</div>
+
 <h2 class="sec">🎯 对各线的可执行建议（pretrain / vision / harness / data / zhulong / designflow）</h2>
 <table>
   <tr><th>线</th><th>可执行动作（命令 / 实验设计）</th><th>预注册判据</th></tr>
-  <tr><td><b>pretrain</b></td><td>用 LM-SimBench 的阶段分解做一张「2B / 8 卡 / 固定 token 预算」的并行策略表：TP×PP×DP 取 6–8 个候选，先用模拟器预测吞吐，再实测 100 步；同时按 B 轨 Switch Transformer 做 8 专家 top-1 的 2B 小试片（同激活算力对照稠密）。</td><td>预测与实测偏差 &gt;15% ⇒ 模拟器只用于粗筛；MoE 同激活算力下验证损失改善 &lt;2% ⇒ 不进主配方。</td></tr>
-  <tr><td><b>vision</b></td><td><b>无</b>（本轮 3 篇均不涉及视觉编码器 / 图文对 / 视觉 RL，不凑数）。</td><td>—</td></tr>
-  <tr><td><b>harness</b></td><td>把 Dr. RTL 的「可复用优化技能」做成 harness 的一等对象：每次成功轨迹抽一条 skill（触发条件 + 动作序列 + 检查项），下一题开始时按相似度检索注入；报表增加「skill 复用率 / 复用后通过率」。另把 LM-SimBench 的 6 种粒度视图字段对照现有日志字段。</td><td>复用后通过率不高于基线 +2pp，或复用率 &lt;10% ⇒ 关闭该机制，不为「看起来像 agent」付复杂度。</td></tr>
-  <tr><td><b>data</b></td><td>按 Self-Instruct 的「种子 → 自举 → 过滤」做一轮 EDA 指令扩增（100–200 条人工种子），过滤规则固化为：无效样本、近似重复、与评测集重叠三查；同时把 Dr. RTL / TAPCO-G 的轨迹按「技能 / 失败原因」打标。</td><td>自举数据带来的留出题提升 &lt;3pp ⇒ 预算转回人工种子；与评测集 n-gram 重叠 &gt;8-gram 命中即剔除。</td></tr>
-  <tr><td><b>zhulong</b></td><td>加一档「KV 预算 = 20%」消融（H₂O 口径），在长工具轨迹上记录保留 token 类型与通过率；同时把成本报表拆成「总参 / 激活参 / 每 token FLOPs / KV 显存」四列，避免 MoE 与稠密、长上下文与短上下文混比。</td><td>20% 预算下通过率下降 &lt;2pp ⇒ KV 预算列为独立成本旋钮；否则先查是否把固定前缀误驱逐。</td></tr>
-  <tr><td><b>designflow</b></td><td>复刻 Dr. RTL 的「reference-based vs open-ended」两套题面协议各 5 题，并选 2 个 ASAP7 设计按固定工具版本复现 TAPCO-G 的 CERBERUS 基线；题面写明优化空间、工具版本、报告口径（WNS/TNS/面积/功耗）。</td><td>本地 CERBERUS 复现分与论文差 &gt;10% ⇒ 先查 PDK/工具版本，禁止直接引用 +5.516；open-ended 评分者一致性 &lt;0.6 ⇒ 该类题只作训练信号。</td></tr>
+  <tr><td><b>pretrain</b></td><td>① 用 LM-SimBench 的阶段分解做「2B / 8 卡 / 固定 token 预算」并行策略表（TP×PP×DP 6–8 个候选），模拟器预测后实测 100 步；② 长上下文按 <b>YaRN</b> 做「继续训练 1B token」vs「从零长上下文」同算力对照（B 轨 #65）；③ 架构消融前先按 <b>Sanity Checks</b> 写零模型 + 匹配干预 + 种子数（B 轨未收，见日报第 5 篇）。</td><td>预测与实测偏差 &gt;15% ⇒ 模拟器只用于粗筛；YaRN 臂 ≥64K 检索掉点 &gt;3pp ⇒ 只作推理期扩展；分半信度 &lt;0.6 ⇒ 结论只进「待复核」。</td></tr>
+  <tr><td><b>vision</b></td><td>把视觉塔纳入 <b>GPTQ</b> 的「FP16 / 8-bit / 4-bit」三档同评测（B 轨 #67）：同一套图文任务、同一判分器，只改权重量化；记录视觉塔单独量化 vs 与主干一起量化的差异。</td><td>4-bit 后视觉题通过率下降 &gt;2pp ⇒ 视觉塔回 8-bit（混合精度），不整模型一刀切。</td></tr>
+  <tr><td><b>harness</b></td><td>① 把 Dr. RTL 的「可复用优化技能」做成 harness 一等对象（触发条件 + 动作序列 + 检查项）；② 按 <b>OpenRE-Bench</b> 写一页「adapter 契约」草案（输入 schema / 阶段产物 / 指标），拿现有 2 个 agent 演练接入；③ 评测服务尝试 <b>speculative decoding</b> 草稿模型，报 tokens/s 与 p95。</td><td>skill 复用后通过率不高于基线 +2pp ⇒ 关闭；接入新 agent 需改 &gt;1 个判分文件 ⇒ 契约不通过；草稿接受率 &lt;60% ⇒ 只用于离线批量。</td></tr>
+  <tr><td><b>data</b></td><td>① 按 Self-Instruct 的「种子 → 自举 → 过滤」做一轮 EDA 指令扩增（100–200 条人工种子，三查：无效 / 近似重复 / 与评测集重叠）；② 为 YaRN 继续训练准备<b>长文档语料</b>，数据表单列「长度分布」（B 轨 #65）。</td><td>自举数据留出题提升 &lt;3pp ⇒ 预算转回人工种子；8-gram 与评测集重叠即剔除；长文档语料 &lt;1B token ⇒ 不做长上下文对照。</td></tr>
+  <tr><td><b>zhulong</b></td><td>① 加一档「KV 预算 = 20%」消融（H₂O 口径），记录保留 token 类型与通过率；② 成本报表拆成「总参 / 激活参 / 每 token FLOPs / KV 显存 / 解码 tokens/s」五列，并试 <b>speculative decoding</b>（B 轨 #66）；③ 部署侧接 <b>GPTQ</b> 4-bit 对照（B 轨 #67）；④ 架构消融按 <b>Sanity Checks</b> 三条检查预注册。</td><td>20% KV 预算下通过率降 &lt;2pp ⇒ 列独立成本旋钮；4-bit 通过率降 &gt;2pp ⇒ 只离线启用；草稿接受率 &lt;60% ⇒ 不上生产。</td></tr>
+  <tr><td><b>designflow</b></td><td>① 复刻 Dr. RTL 的「reference-based vs open-ended」两套题面协议各 5 题，并按固定工具版本复现 TAPCO-G 的 CERBERUS 基线；② 按 <b>AlphaChip</b>（B 轨 #64）给布局类题定三项口径：网表输入 / PPA 评估脚本 / 可迁移性 split（训练块 vs 未见块），「未见块」单列榜单；③ 按 OpenRE-Bench 的挖掘管线从 EDA/存储项目 issue 造需求题。</td><td>本地 CERBERUS 复现差 &gt;10% ⇒ 先查 PDK/工具版本，禁引 +5.516；open-ended 评分者一致性 &lt;0.6 ⇒ 只作训练信号；布局题若未见块掉点 &gt;10% ⇒ 平均分不得单独发布。</td></tr>
 </table>
 
 <details class="voice-ready" open>
-<summary>🗣 voice_ready · 本期 1 条（上限 2；宁缺勿滥，另一条候选因正文截断/超期不采用）</summary>
+<summary>🗣 voice_ready · 本期 2 条（上限 2）—— V17「变革性 ≠ 无瓶颈」＋ V18「榜单本身也会漏项」</summary>
 <ul>
   <li><b>人物</b>：Percy Liang <code>@percyliang</code>（Stanford CRFM 主任；HELM、Marin 项目负责人）</li>
   <li><b>言论</b>：<span class="orig">"You can simultaneously believe that AI is transformational and that there are bottlenecks."</span><br><b>中文翻译</b>：「你可以同时相信 AI 是变革性的，也相信它存在瓶颈。」</li>
@@ -142,64 +178,83 @@
   <li><b>话题点</b>：「变革性」与「瓶颈」不必二选一——在「scaling 是否到顶」的争吵里，这是一句罕见的中间立场。</li>
   <li><b>风险</b>：这是<b>观点句</b>，原文无上下文；🚫 不得写成「Percy Liang 证明 scaling 已到顶」或「瓶颈已定位」；引用须保留原文。</li>
 </ul>
-</details>
-
-<details class="news-ready">
-<summary>📰 news_ready · 本期 0 条（3 篇均不过四问，理由如下）</summary>
+<p style="margin:14px 0 4px;font-weight:700;color:#0b3d6e;">— 第 2 条 —</p>
 <ul>
-  <li><b>本期 0 条</b>：① 大众能懂吗 —— RTL 优化、布局后时序/功耗协同、训练模拟器都属于 EDA/系统专业话题，非本行读者无法一句话接住（第①问不过）；② 有事件点吗 —— 3 篇均为方法/系统论文，无「发布/开源/首次」事件（第②问不过）；③ 数字站得住吗 —— Dr. RTL 的 21%/17%/−6% 与 TAPCO-G 的 +5.516 都能指到摘要，但均为<b>作者自报、无方差</b>，脱离上下文易被读成产品结论（第③问不过）；④ 配图可用吗 —— 本轮未下载 PDF，无法确认可用图（第④问不过）。🚫 未硬凑。</li>
-  <li><b>下期候选</b>：06:00 轮继续按四问评估；<code>voice_ready</code> 不转 <code>news_ready</code>。</li>
+  <li><b>人物</b>：Jason Wei <code>@_jasonwei</code>（Meta AI 研究员；CoT / 指令微调 / 涌现能力作者之一）</li>
+  <li><b>言论</b>：<span class="orig">"Turns out my initial version missed a lot of evals. Claude searched harder and found 36% more mentions of benchmarks: https://t.co/ONtgbBuwEs<br><br>It still misses blog posts with fancy UI elements, long PDFs, etc. Guess we need a benchmark for creating benchmark benchmark..."</span><br><b>中文翻译</b>：「结果我最初的版本漏掉了不少评测。让 Claude 再搜得狠一点，就多找到了 36% 的基准提及。（链接）它仍然漏掉带花哨 UI 的博客文章、长 PDF 等等。看来我们需要一个『造榜单的榜单』的基准了……」</li>
+  <li><b>时间</b>：2026-11-12 17:49 UTC（距本期 <b>1 天</b>，未超 30 天）</li>
+  <li><b>出处</b>：<a href="https://x.com/_jasonwei/status/2120937085515510234">https://x.com/_jasonwei/status/2120937085515510234</a>（推文页 <code>200</code> / 169,476 B；<code>og:title</code> 与 <code>og:description</code> 均以 <code>Jason Wei on X:</code> 开头，<code>og:description</code> 与 profile <code>full_text</code> 一致；换行按原文保留）</li>
+  <li><b>话题点</b>：我们用来比较 AI 的「榜单」本身也会漏项——同一个 agent 多搜一轮就多找出 <b>36%</b> 的基准提及，说明「谁被算进排行榜」并不是中立的。</li>
+  <li><b>风险</b>：① 36% 是<b>他那次搜索的增量</b>，不是所有榜单的普适误差；② 原文带自嘲（「需要造榜的榜单」），🚫 不得写成「评测体系崩塌 / 数据造假」；③ 属作者个人观察、非同行评审结论，引用须保留原文与链接。</li>
 </ul>
 </details>
 
-<h2 class="sec">🅱 B 轨 · 经典论文第十六轮（+4 → 63）</h2>
-<p style="font-size:13px;color:#59636e;">判据：被引 ≥500 / 奠基 / 方法论常青 / 本领域标志性（满足任一）。被引数为 <b>OpenAlex</b> 实测，查询日 <b>2026-11-13</b>；S2 未查，<b>不同来源不可跨源比较</b>。H₂O 为 <b>423 ⚠️</b>（&lt;500），按「奠基」收录并显式标注。</p>
+<details class="news-ready">
+<summary>📰 news_ready · 本期 0 条（5 篇均不过四问，理由如下）</summary>
+<ul>
+  <li><b>本期 0 条</b>：① 大众能懂吗 —— RTL 综合优化、布局后时序/功耗协同、训练模拟器、基准 harness、注意力消融都属于 EDA/系统/方法论专业话题，非本行读者无法一句话接住（第①问不过）；② 有事件点吗 —— 5 篇均为方法/系统/基准论文，无「发布/开源/首次」事件（第②问不过）；③ 数字站得住吗 —— 21%/17%/−6%、+5.516、5,408 heads 等都能指到摘要，但均为<b>作者自报、无方差</b>，脱离上下文易被读成产品结论（第③问不过）；④ 配图可用吗 —— 本轮未下载 PDF，无法确认可用图（第④问不过）。🚫 未硬凑。</li>
+  <li><b>说明</b>：本期可发头条的素材在 <code>voice_ready</code>（V18「榜单本身也会漏项」），不在论文类 <code>news_ready</code>；两类不互相顶替。</li>
+</ul>
+</details>
+
+<h2 class="sec">🅱 B 轨 · 经典论文第十七轮（+4 → 67）</h2>
+<p style="font-size:13px;color:#59636e;">判据：被引 ≥500 / 奠基 / 方法论常青 / 本领域标志性（满足任一）。被引数为 <b>OpenAlex</b> 实测，查询日 <b>2026-11-13</b>；S2 未查，<b>不同来源不可跨源比较</b>。本轮 4 条：Chip Placement（AlphaChip 预印本；Nature 版 <b>704</b>、预印本 <b>274</b>）/ YaRN（<b>591</b>）/ Speculative Decoding（<b>354 ⚠️</b>，&lt;500，按「奠基」收录）/ GPTQ（<b>2,195</b>）。本轮首次系统补上 <b>serving 侧（解码加速 + 后训练量化）</b> 这条此前没有落点的线。</p>
 <table>
   <tr><th>#</th><th>论文</th><th>年份 / 会议</th><th>被引</th><th>一句话贡献（节选）</th><th>服务线</th></tr>
   <tr><td>60 <span class="badge b-b">新</span></td><td><b>KTO: Model Alignment as Prospect Theoretic Optimization</b><br><a href="https://arxiv.org/abs/2402.01306">arXiv 2402.01306</a></td><td>2024<br><span class="muted">ICML 2024（arXiv comment）</span></td><td><b>951</b></td><td>把前景理论的人类效用函数搬进对齐目标；<b>只学二元「可取/不可取」信号</b>，1B–30B 尺度匹配或超过基于成对偏好的方法，并指出没有普适最优的 HALO。</td><td>posttrain · zhulong · data</td></tr>
   <tr><td>61 <span class="badge b-b">新</span></td><td><b>H₂O: Heavy-Hitter Oracle for Efficient Generative Inference of Large Language Models</b><br><a href="https://arxiv.org/abs/2306.14048">arXiv 2306.14048</a></td><td>2023<br><span class="muted">NeurIPS 2023（DOI 10.52202/075280-1506）</span></td><td><b>423</b>⚠️</td><td>少数 token（heavy hitter）贡献大部分 attention 值；驱逐策略动态保留「近期 + heavy hitter」，20% 预算下吞吐最高 29×/29×/3×、同 batch 延迟最高降 1.9×（作者自报）。</td><td>zhulong · harness · pretrain</td></tr>
   <tr><td>62 <span class="badge b-b">新</span></td><td><b>Self-Instruct: Aligning Language Models with Self-Generated Instructions</b><br><a href="https://arxiv.org/abs/2212.10560">arXiv 2212.10560</a></td><td>2022<br><span class="muted">ACL 2023（DOI 10.18653/v1/2023.acl-long.754）</span></td><td><b>2,477</b></td><td>让模型自举生成 instruction/input/output，过滤无效与相似样本后微调；GPT-3 在 Super-NaturalInstructions 绝对提升 <b>33%</b>，专家新任务仅落后 InstructGPT-001 <b>5 个百分点</b>。</td><td>data · harness · designflow</td></tr>
-  <tr><td>63 <span class="badge b-b">新</span></td><td><b>Switch Transformers: Scaling to Trillion Parameter Models with Simple and Efficient Sparsity</b><br><a href="https://arxiv.org/abs/2101.03961">arXiv 2101.03961</a></td><td>2021<br><span class="muted">JMLR（arXiv comment）</span></td><td><b>1,665</b></td><td>把 MoE 路由简化为 <b>top-1</b>，给出降通信/降计算设计与稳定训练技巧，首次用 bfloat16 训练大型稀疏模型；同算力下最高 <b>7×</b> 预训练加速，万亿参数相对 T5-XXL <b>4×</b>。</td><td>pretrain · zhulong · data</td></tr>
+  <tr><td>63 <span class="badge b-b">上轮</span></td><td><b>Switch Transformers: Scaling to Trillion Parameter Models with Simple and Efficient Sparsity</b><br><a href="https://arxiv.org/abs/2101.03961">arXiv 2101.03961</a></td><td>2021<br><span class="muted">JMLR（arXiv comment）</span></td><td><b>1,665</b></td><td>把 MoE 路由简化为 <b>top-1</b>，给出降通信/降计算设计与稳定训练技巧，首次用 bfloat16 训练大型稀疏模型；同算力下最高 <b>7×</b> 预训练加速，万亿参数相对 T5-XXL <b>4×</b>。</td><td>pretrain · zhulong · data</td></tr>
+  <tr><td>64 <span class="badge b-b">新</span></td><td><b>Chip Placement with Deep Reinforcement Learning</b>（AlphaChip 预印本）<br><a href="https://arxiv.org/abs/2004.10746">arXiv 2004.10746</a></td><td>2020<br><span class="muted">预印本；Nature 版 2021（DOI 10.1038/s41586-021-03544-w）</span></td><td><b>704</b><br><span class="muted">Nature 版 / 预印本 274</span></td><td>把宏单元布局写成 RL（网表节点 → 画布），用「预测布局质量」做表示学习再当策略/价值编码器；目标最小化 PPA，作者称 <b>&lt;6 小时</b>生成「超人或有竞争力」布局，而基线需专家在环数周。</td><td>designflow · zhulong · harness</td></tr>
+  <tr><td>65 <span class="badge b-b">新</span></td><td><b>YaRN: Efficient Context Window Extension of Large Language Models</b><br><a href="https://arxiv.org/abs/2309.00071">arXiv 2309.00071</a></td><td>2023<br><span class="muted">预印本（未核到会场）</span></td><td><b>591</b></td><td>RoPE 无法泛化到训练长度之外；YaRN 少用 <b>10× token / 2.5× 训练步</b>扩展上下文，让 LLaMA 外推到远超原长度并超过当时 SOTA，且能外推到微调长度之外。</td><td>pretrain · data · harness</td></tr>
+  <tr><td>66 <span class="badge b-b">新</span></td><td><b>Fast Inference from Transformers via Speculative Decoding</b><br><a href="https://arxiv.org/abs/2211.17192">arXiv 2211.17192</a></td><td>2022<br><span class="muted">ICML 2023 Oral（arXiv comment）</span></td><td><b>354</b>⚠️</td><td>小模型草拟 + 大模型并行验证，<b>不改变输出分布</b>地加速解码；无需重训/改架构，T5-XXL 上 <b>2×–3×</b> 加速且输出完全一致（作者自报）。</td><td>zhulong · harness · pretrain</td></tr>
+  <tr><td>67 <span class="badge b-b">新</span></td><td><b>GPTQ: Accurate Post-Training Quantization for Generative Pre-trained Transformers</b><br><a href="https://arxiv.org/abs/2210.17323">arXiv 2210.17323</a></td><td>2022<br><span class="muted">ICLR 2023（arXiv comment）</span></td><td><b>2,195</b></td><td>基于近似二阶信息的一次性权重量化：<b>约 4 GPU 小时</b>把 175B 量化到 <b>3–4 bit</b>、精度损失可忽略；首次让 175B 单卡推理，相对 FP16 约 <b>3.25×</b>（A100）/ <b>4.5×</b>（A6000）加速。</td><td>zhulong · vision · harness</td></tr>
 </table>
-<p style="font-size:13px;">完整 63 条（8 字段 + 影响层级 + 风险）见 <code>research/classic/PAPERS.md</code>；本轮 4 条的「与我们工作的关系」均点名到具体线与预注册判据。</p>
+<p style="font-size:13px;">完整 67 条（8 字段 + 影响层级 + 风险）见 <code>research/classic/PAPERS.md</code>；本轮 4 条的「与我们工作的关系」均点名到具体线与预注册判据（Chip Placement → designflow 布局题；YaRN → pretrain 长上下文；Spec-Dec / GPTQ → zhulong serving 成本）。</p>
 
-<h2 class="sec">👥 作者关系网（本轮 +4 → 69）</h2>
+<h2 class="sec">👥 作者关系网（本轮 +4 → 73）</h2>
 <table>
   <tr><th>#</th><th>姓名</th><th>机构</th><th>代表论文</th><th>邮箱（来源）</th><th>X</th><th>状态</th></tr>
   <tr><td>66</td><td>Yizhong Wang</td><td>ByteDance Seed（X bio：2026 fall 起 UT Austin 助理教授）</td><td>Self-Instruct <code>2212.10560</code>（一作）</td><td>yizhongw01@gmail.com（主页 <code>mailto:</code>，200 / 26,625 B）</td><td><b>@yizhongwyz</b></td><td>已发信（中文 224 字）· X 待 follow</td></tr>
   <tr><td>67</td><td>Niklas Muennighoff</td><td>Stanford / SpaceX（X bio）</td><td>KTO <code>2402.01306</code>（三作）</td><td>n.muennighoff@gmail.com（主页 <code>mailto:</code>，200 / 47,863 B）</td><td><b>@Muennighoff</b></td><td>已发信（英文 181 词）· X 待 follow</td></tr>
   <tr><td>68</td><td>Beidi Chen</td><td>Carnegie Mellon University（助理教授）</td><td>H₂O <code>2306.14048</code>（末位作者）</td><td>beidic@andrew.cmu.edu（CMU 主页 <code>mailto:</code>，200 / 35,488 B）</td><td><b>@BeidiChen</b></td><td>已发信（英文 165 词）· X 待 follow</td></tr>
   <tr><td>69</td><td>Kawin Ethayarajh</td><td>Stanford（KTO 时；现职未核）</td><td>KTO <code>2402.01306</code>（一作）</td><td><b>未找到</b>（候选主页 <code>000</code>，不猜）</td><td><b>未找到</b>（<code>x.com/kawinethayarajh</code> = 404，不猜替代）</td><td>待跟踪（同论文已由三作覆盖）</td></tr>
+  <tr><td>70 <span class="badge b-b">新</span></td><td>Azalia Mirhoseini</td><td>Stanford（CS 助理教授）· Ricursive Intelligence 联创</td><td>Chip Placement <code>2004.10746</code>（一作）</td><td><b>未找到</b>（主页仅 Contact 表单、无 <code>mailto:</code>）</td><td><b>@Azaliamirh</b>（主页 href + X 页 bio 双核）</td><td>待跟踪 · X 待 follow</td></tr>
+  <tr><td>71 <span class="badge b-b">新</span></td><td>Jeffrey Quesnelle</td><td>Nous Research（联合创始人 / CTO，X bio）</td><td>YaRN <code>2309.00071</code>（二作）</td><td><b>未找到</b>（<code>theemozilla.org</code> = 000）</td><td><b>@theemozilla</b>（GitHub <code>jquesnelle</code> 外链 + X bio 三方一致）</td><td>待跟踪 · X 待 follow</td></tr>
+  <tr><td>72 <span class="badge b-b">新</span></td><td>Elias Frantar</td><td>IST Austria（GPTQ 时；现职未核）</td><td>GPTQ <code>2210.17323</code>（一作）</td><td><b>未找到</b>（<code>frantar.ai</code> = 000；组页已无其名）</td><td><b>未找到</b>（<code>@EliasFrantar</code> 页无 bio ⇒ 身份不可证）</td><td>待跟踪（同论文已由末位作者覆盖）</td></tr>
+  <tr><td>73 <span class="badge b-b">新</span></td><td>Dan Alistarh</td><td>IST Austria（教授）</td><td>GPTQ <code>2210.17323</code>（末位作者）</td><td>Dan.Alistarh@ist.ac.at（课题组页逐字，200 / 127,603 B）</td><td><b>未找到</b>（<code>@DanAlistarh</code> = 404）</td><td>已发信（英文 187 词）· X 未找到</td></tr>
 </table>
-<p style="font-size:13px;color:#59636e;">X 已核验 <b>40</b> 人（累计 69 人中）；<b>已 follow 仍为 0</b>（follow 需登录态 ⇒ 未假装执行，待用户手动）。完整 69 人档案见 <code>research/classic/AUTHORS.md</code>。</p>
+<p style="font-size:13px;color:#59636e;">X 已核验 <b>42</b> 人（累计 73 人中）；<b>已 follow 仍为 0</b>（follow 需登录态 ⇒ 未假装执行，待用户手动，清单 35 个 handle 见 <code>AUTHORS.md</code> 第二节）。完整 73 人档案见 <code>research/classic/AUTHORS.md</code>。</p>
 
-<h2 class="sec">✉ 作者信（本轮 3 封，均 <code>SENT OK 2026-11-13 00:06:16 / :16 / :17</code>）</h2>
+<h2 class="sec">✉ 作者信（03:00 轮 1 封，<code>SENT OK 2026-11-13 03:05:47</code>；今日累计 4 封 / 累计 25 封）</h2>
 <table>
   <tr><th>对象</th><th>论文</th><th>语言 / 长度</th><th>三个问题（回填哪一步）</th></tr>
-  <tr><td>Yizhong Wang</td><td><code>2212.10560</code> Self-Instruct</td><td>中文 · 224 字</td><td>种子多样性瓶颈 / 相似度阈值 / 去污染 → data 指令表、清洗规则、造题检查</td></tr>
-  <tr><td>Niklas Muennighoff</td><td><code>2402.01306</code> KTO</td><td>英文 · 181 词</td><td>二元标签下 λ 取值 / 长度长尾 / 指标阈值定义的「可取」→ posttrain、zhulong 奖励、data 标签</td></tr>
-  <tr><td>Beidi Chen</td><td><code>2306.14048</code> H₂O</td><td>英文 · 165 词</td><td>结构化日志的 heavy hitter / 固定前缀是否排除 / 20% 预算敏感性 → zhulong 成本、harness 编排与口径</td></tr>
+  <tr><td>Yizhong Wang（00:06:16）</td><td><code>2212.10560</code> Self-Instruct</td><td>中文 · 224 字</td><td>种子多样性瓶颈 / 相似度阈值 / 去污染 → data 指令表、清洗规则、造题检查</td></tr>
+  <tr><td>Niklas Muennighoff（00:06:16）</td><td><code>2402.01306</code> KTO</td><td>英文 · 181 词</td><td>二元标签下 λ 取值 / 长度长尾 / 指标阈值定义的「可取」→ posttrain、zhulong 奖励、data 标签</td></tr>
+  <tr><td>Beidi Chen（00:06:17）</td><td><code>2306.14048</code> H₂O</td><td>英文 · 165 词</td><td>结构化日志的 heavy hitter / 固定前缀是否排除 / 20% 预算敏感性 → zhulong 成本、harness 编排与口径</td></tr>
+  <tr><td><b>Dan Alistarh（03:05:47）</b></td><td><code>2210.17323</code> GPTQ</td><td>英文 · 187 词</td><td>~2B 的层敏感度与混合精度回退 / 域偏移校准集是否仍适用 Hessian 目标、怎么查校准过拟合 / KV 主导时 4-bit 与小 batch 的取舍 → zhulong 部署成本、pretrain 量化配方、harness 口径</td></tr>
 </table>
 <div class="note">红线自查：单收件人、不群发、不催；不承诺合作/署名/资助；不透露未公开内部信息；不夸大；同论文 ≤1（KTO 一作无公开联系方式，本轮只发三作）。草稿先入仓 <code>research/mail/drafts/</code>，台账 <code>research/mail/发送记录.md</code> 已追加（没写 = 没发）。</div>
 
-<h2 class="sec">附录 A · 检索式与命中数（2026-11-13 00:0x · 可核验）</h2>
+<h2 class="sec">附录 A · 检索式与命中数（2026-11-13 03:0x · 可核验）</h2>
 <table>
-  <tr><th>#</th><th>检索式（arXiv API）</th><th>HTTP / Content-Type</th><th>totalResults</th><th>耗时</th></tr>
-  <tr><td>1</td><td><code>cat:cs.CL</code>（取最新 100 条）</td><td><code>200</code> / <code>application/atom+xml; charset=utf-8</code></td><td>125,187</td><td>17.13 s</td></tr>
-  <tr><td>2</td><td><code>cat:cs.CV</code></td><td><code>200</code> / 同上</td><td>213,062</td><td>14.73 s</td></tr>
-  <tr><td>3</td><td><code>cat:cs.LG</code></td><td><code>200</code> / 同上</td><td>298,685</td><td>5.17 s</td></tr>
-  <tr><td>4</td><td><code>cat:cs.AI</code></td><td><code>200</code> / 同上</td><td>212,409</td><td>22.77 s</td></tr>
-  <tr><td>5</td><td><code>cat:cs.SE</code></td><td><code>200</code> / 同上</td><td>30,986</td><td>38.38 s</td></tr>
+  <tr><th>#</th><th>检索式（arXiv API）</th><th>HTTP / Content-Type</th><th>totalResults</th><th>耗时（03:00 轮 / 00:00 轮）</th></tr>
+  <tr><td>1</td><td><code>cat:cs.CL</code>（取最新 100 条）</td><td><code>200</code> / <code>application/atom+xml; charset=utf-8</code></td><td>125,187</td><td>1.25 s / 17.13 s</td></tr>
+  <tr><td>2</td><td><code>cat:cs.CV</code></td><td><code>200</code> / 同上</td><td>213,062</td><td>1.40 s / 14.73 s</td></tr>
+  <tr><td>3</td><td><code>cat:cs.LG</code></td><td><code>200</code> / 同上</td><td>298,685</td><td>1.19 s / 5.17 s</td></tr>
+  <tr><td>4</td><td><code>cat:cs.AI</code></td><td><code>200</code> / 同上</td><td>212,409</td><td>1.70 s / 22.77 s</td></tr>
+  <tr><td>5</td><td><code>cat:cs.SE</code></td><td><code>200</code> / 同上</td><td>30,986</td><td>1.28 s / 38.38 s</td></tr>
 </table>
-<p style="font-size:13px;">合并 <b>303</b> / 与 <code>SEEN.md</code> 重复 <b>9</b> / 新候选 <b>294</b>；窗口内最晚 <code>published = 2026-11-10T18:59:54Z</code> ⇒ 公告批仍 <b>2026-11-10</b>（与 11-12 各轮 <code>totalResults</code> 逐字节同值）。产物：<code>research/raw/2026-11-13-00h-candidates-r160.json</code>（539,359 B）。</p>
+<p style="font-size:13px;">两轮 <code>totalResults</code> <b>逐字节同值</b>（125,187 / 213,062 / 298,685 / 212,409 / 30,986）⇒ 公告批仍 <b>2026-11-10</b>，<b>03:00 轮无新论文</b>。合并 <b>303</b> / 与 <code>SEEN.md</code> 重复 <b>9</b> / 新候选 <b>294</b>（与 00:00 轮同值）；窗口内最晚 <code>published = 2026-11-10T18:59:54Z</code>。产物：<code>research/raw/2026-11-13-03h-candidates-r161.json</code>（539,353 B；脚本 <code>raw/candidates_r161.py</code>）。第 5 篇（<code>2611.13543</code>）距本轮 <b>≈71h</b>，在 72h 边缘，已如实标注。</p>
+<p style="font-size:13px;">00:00 轮产物：<code>research/raw/2026-11-13-00h-candidates-r160.json</code>（539,359 B）。</p>
 
 <h2 class="sec">附录 B · 口径自检</h2>
 <div class="ok-box">
-① 今日 3/5（未凑数，06:00 补齐 2）；② 3 篇均实测 <code>HTTP 200</code> + <code>atom+xml</code> + 真实 <code>published</code>（<code>200 ≠ 有料</code> 已校验）；③ 与 <code>SEEN.md</code> / <code>papers.jsonl</code> / 近 7 天 <code>daily/</code> 0 重复（这 3 篇此前仅为「候选」状态，未作为推荐出现过）；④ 数字均指到摘要原句，未改写原题；⑤ B 轨 4 条均 8 字段 + 被引查询日；⑥ 作者网不猜 handle/邮箱（Kawin 主页 000、X 404 ⇒ 写「未找到」）；⑦ <code>voice_ready</code> 原文 + 链接 + 时间三件套齐（V17 两处核验）；⑧ 未发日报邮件、0 follow、未注册账号、未用未授权凭据；⑨ 单文件 &lt;5MB；⑩ 收尾：心跳 + 流水 + commit &amp; push。
+① 今日 <b>5/5</b> 收口（3 篇 00:00 + 2 篇 03:00，均为 <code>SEEN.md</code> 里 11-12 登记的强候补，非超窗凑数）；② 5 篇均实测 <code>HTTP 200</code> + <code>atom+xml</code> + 真实 <code>published</code>（<code>200 ≠ 有料</code> 已校验；第 5 篇 ≈71h，已在卡内与附录 A 标注）；③ 与 <code>SEEN.md</code> / <code>papers.jsonl</code> / 近 7 天 <code>daily/</code> 0 重复（这 5 篇此前仅为「候选」状态，未作为推荐出现过）；④ 数字均指到摘要原句，未改写原题；⑤ B 轨 4 条均 8 字段 + 被引查询日，Chip Placement 双口径（Nature 704 / 预印本 274）分列、Spec-Dec 354⚠️ 显式标注；⑥ 作者网不猜 handle/邮箱（Kawin 主页 000、Elias Frantar 主页 000 且 X 无 bio、Dan Alistarh X 404 ⇒ 写「未找到」）；⑦ <code>voice_ready</code> 2 条均原文 + 链接 + 时间三件套齐（V17 两处核验、V18 推文页 <code>og:description</code> 全文核验）；⑧ 未发日报邮件、0 follow、未注册账号、未用未授权凭据；本轮唯一外发 = 1 封作者请教信（Dan Alistarh，草稿先入仓、台账已记）；⑨ 单文件 &lt;5MB；⑩ 收尾：心跳 + 流水 + commit &amp; push。
 </div>
 
 <footer>
-  研究线 · 论文观察日报 · 2026-11-13（00:00 时窗 · 早报 3/5）｜ 数据源 arXiv API ｜ 生成时间 2026-11-13 00:0x CST<br>
+  研究线 · 论文观察日报 · 2026-11-13（03:00 时窗 · 5/5 收口）｜ 数据源 arXiv API ｜ 生成时间 2026-11-13 03:0x CST<br>
   ⚠️ 本页为论文解读 / 待读线索，<b>非结论、非官方</b>；数字均为作者自报、本线未复现；「对各线的可执行建议」为基于论文的推断，<b>非指令</b>。
 </footer>
 </div>

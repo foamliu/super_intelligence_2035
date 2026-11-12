@@ -4,6 +4,30 @@
  "bio": "ai researcher @meta, past: openai, google 🧠",
  "tweets": [
   {
+   "id": "2120937085515510234",
+   "created_at": "2026-11-12 17:49 UTC",
+   "created_at_ms": 1794505780000,
+   "text": "Turns out my initial version missed a lot of evals. Claude searched harder and found 36% more mentions of benchmarks: https://t.co/ONtgbBuwEs\\\n\\\nIt still misses blog posts with fancy UI elements, long PDFs, etc. Guess we need a benchmark for creating benchmark benchmark...",
+   "url": "https://x.com/_jasonwei/status/2120937085515510234",
+   "handle_guess": "_jasonwei"
+  },
+  {
+   "id": "2120933804638613581",
+   "created_at": "2026-11-12 17:36 UTC",
+   "created_at_ms": 1794504998000,
+   "text": "This is a pretty cool benchmark of actual long-horizon tasks, with Fable 5.2 spending more than 200M tokens to try to solve each problem!",
+   "url": "https://x.com/_jasonwei/status/2120933804638613581",
+   "handle_guess": "_jasonwei"
+  },
+  {
+   "id": "2120927366226801007",
+   "created_at": "2026-11-12 17:11 UTC",
+   "created_at_ms": 1794503463000,
+   "text": "Agents can write code. Can they finish real engineering work?\\\n\\\nIntroducing OWE-Bench, a new frontier coding benchmark: 26 long-horizon engineering projects designed by Mercor experts to test AI agents on engineering work, from GPU kernels to aircraft design.\\\n\\\nBuilt by @jake_cole1 https://t.co/mNStfod6iC",
+   "url": "https://x.com/_jasonwei/status/2120927366226801007",
+   "handle_guess": "mercor"
+  },
+  {
    "id": "2120630417158250953",
    "created_at": "2026-11-11 21:31 UTC",
    "created_at_ms": 1794432665000,
@@ -20,30 +44,6 @@
    "handle_guess": "_jasonwei"
   },
   {
-   "id": "2113313158769369124",
-   "created_at": "2026-10-22 16:54 UTC",
-   "created_at_ms": 1792688095000,
-   "text": "excited for you stephanie! really like the idea of betting on conviction in new technology before market fit. as ai improves faster than ever and has an increasingly outsized impact, the way we fund the ecosystem should evolve with it",
-   "url": "https://x.com/_jasonwei/status/2113313158769369124",
-   "handle_guess": "_jasonwei"
-  },
-  {
-   "id": "2113303172894867859",
-   "created_at": "2026-10-22 16:15 UTC",
-   "created_at_ms": 1792685714000,
-   "text": "I’m starting a new early-stage AI fund, doing what I love: partnering with founders from company formation on bold bets, long before consensus.\\\n\\\nThe fund’s LPs will include Sequoia, Jeff Dean, Sachin Katti, Philip Wong (my Stanford professor and Chief Scientist adviser to TSMC),",
-   "url": "https://x.com/_jasonwei/status/2113303172894867859",
-   "handle_guess": "stephzhan"
-  },
-  {
-   "id": "2112259970108686505",
-   "created_at": "2026-10-19 19:09 UTC",
-   "created_at_ms": 1792436995000,
-   "text": "AI will not automate radiologists like you think\\\n\\\nWe have been talking for years now about AI automating jobs. Radiology has been a prime target, with Geoff Hinton once claiming, “people should stop training radiologists now, it’s just completely obvious that within five years,",
-   "url": "https://x.com/_jasonwei/status/2112259970108686505",
-   "handle_guess": "_jasonwei"
-  },
-  {
    "id": "1945294042138599722",
    "created_at": "2025-07-16 01:26 UTC",
    "created_at_ms": 1752629216000,
@@ -53,5 +53,5 @@
   }
  ],
  "http_status": 200,
- "fetched_at": "2026-11-12 09:03:14"
+ "fetched_at": "2026-11-13 03:04:51"
 }

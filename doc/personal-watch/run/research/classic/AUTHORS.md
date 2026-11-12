@@ -6,7 +6,7 @@
 > 🔴 **找 X 的铁律（不猜）**：只登记**能从可访问页面读到**的 handle（作者本人主页 `href`，并用 X 页 `og:description` 二次核对身份）；**读不到 = 写「未找到 X」**。
 > 🚫 不许猜 handle（猜错会 follow 到无关账号，比不 follow 更糟）。X.com 自 **2026-11-11 12:4x** 起经本机 Mihomo 代理**只读可达**；**follow 仍需登录态 ⇒ 未自动执行**（0 follow，未假装）。
 
-**本轮快照**：累计 **69** 人（第八轮 +4：John Jumper / Igor Babuschkin / Danny Driess / Kimi Team；第九轮 +4：Team GLM / MiniMax / Karl Pertsch / Pete Florence；第十轮 +1：Kilian Lieret；第十一轮 +3：Jan Leike / Paul Christiano / Nisan Stiennon；**第十二轮 +3：Bill Peebles `@billpeeb` / Tim Brooks `@_tim_brooks` / Gerald Tesauro（未找到 X）**；**第十三轮 +3：Rafael Rafailov `@rm_rafailov` / Archit Sharma `@archit_sharma97` / Onur Mutlu `@_onurmutlu_`**；**第十四轮 +4：Danqi Chen `@danqi_chen` / Yibo Lin（未找到 X）/ Nathan Lambert `@natolambert` / Lewis Tunstall `@_lewtun`**；**第十五轮 +4：Percy Liang `@percyliang` / James Thorne `@j6mes` / Nelson F. Liu（X 待核实）/ Woosuk Kwon（未找到 X）**；**第十六轮 +4：Yizhong Wang `@yizhongwyz` / Niklas Muennighoff `@Muennighoff` / Beidi Chen `@BeidiChen` / Kawin Ethayarajh（未找到 X）**）｜已发信 **24**（Tri Dao · Shunyu Yao · Haoxing Ren · Jason Wei · Noah Shinn · Kaiming He · Haotian Liu · Karthik Narasimhan · Moo Jin Kim · Danny Driess · Pete Florence · Karl Pertsch · Jan Leike · **Nisan Stiennon** · **Archit Sharma** · **Onur Mutlu** · **Danqi Chen** · **Yibo Lin** · **Nathan Lambert** · **James Thorne** · **Nelson F. Liu** · **Yizhong Wang** · **Niklas Muennighoff** · **Beidi Chen**）｜X 已核验 **40**（`@tri_dao` / `@_albertgu` / `@ShunyuYao12` / `@edwardjhu` / `@jyangballin` / `@_jasonwei` / `@ilyasut` / `@RichardSSutton` / `@imhaotian` / `@ChunyuanLi` / `@karthik_r_n` / `@demishassabis` / `@koraykv` / `@OriolVinyalsML` / `@svlevine` / `@chelseabfinn` / `@moo_jin_kim` / `@ibab` / `@DannyDriess` / `@Kimi_Moonshot` / `@ZhipuAI` / `@MiniMax_AI` / `@KarlPertsch` / `@peteflorence` / `@KLieret` / `@janleike` / `@paulfchristiano` / `@billpeeb` / `@_tim_brooks` / `@rm_rafailov` / `@archit_sharma97` / `@_onurmutlu_` / `@danqi_chen` / `@natolambert` / `@_lewtun` / **`@percyliang`** / **`@j6mes`** / **`@yizhongwyz`** / **`@Muennighoff`** / **`@BeidiChen`**）｜X 未找到 / 未核验 **32**（69 人中 40 已核验；本轮 `@nelsonfliu` **有页面但无 bio ⇒ 身份不可证**、`@woosuk_kwon` 仅 3 followers ⇒ 判非本人，两者均**不登记**）｜**X 可达（本机 Mihomo 7897；2026-11-12 21:0x 实测：本 shell 仍无 `HTTPS_PROXY` ⇒ 直连 `x.com` `000`、显式 `-x http://127.0.0.1:7897` 返回 `200` 且出口 IP `178.249.213.185`；`x_fetch.py` 内部默认走代理）**｜已 follow **0**（follow 需登录态 ⇒ 仍靠用户手动，见第二节）｜言论台账 **17 条**（V1–V17；V13–V16 均经单条推文页 `og:title` 核验为**他人推文** ⇒ 作废；**V17 = Percy Liang 2026-11-11 原推，两处核验通过**，因本期 `voice_ready` 已满 2 条 ⇒ 下期首发）
+**本轮快照**：累计 **73** 人（第八轮 +4：John Jumper / Igor Babuschkin / Danny Driess / Kimi Team；第九轮 +4：Team GLM / MiniMax / Karl Pertsch / Pete Florence；第十轮 +1：Kilian Lieret；第十一轮 +3：Jan Leike / Paul Christiano / Nisan Stiennon；**第十二轮 +3：Bill Peebles `@billpeeb` / Tim Brooks `@_tim_brooks` / Gerald Tesauro（未找到 X）**；**第十三轮 +3：Rafael Rafailov `@rm_rafailov` / Archit Sharma `@archit_sharma97` / Onur Mutlu `@_onurmutlu_`**；**第十四轮 +4：Danqi Chen `@danqi_chen` / Yibo Lin（未找到 X）/ Nathan Lambert `@natolambert` / Lewis Tunstall `@_lewtun`**；**第十五轮 +4：Percy Liang `@percyliang` / James Thorne `@j6mes` / Nelson F. Liu（X 待核实）/ Woosuk Kwon（未找到 X）**；**第十六轮 +4：Yizhong Wang `@yizhongwyz` / Niklas Muennighoff `@Muennighoff` / Beidi Chen `@BeidiChen` / Kawin Ethayarajh（未找到 X）**；**第十七轮 +4：Azalia Mirhoseini `@Azaliamirh` / Jeffrey Quesnelle `@theemozilla`（核验链见 #71）/ Elias Frantar（未找到 X）/ Dan Alistarh（未找到 X）**）｜已发信 **25**（Tri Dao · Shunyu Yao · Haoxing Ren · Jason Wei · Noah Shinn · Kaiming He · Haotian Liu · Karthik Narasimhan · Moo Jin Kim · Danny Driess · Pete Florence · Karl Pertsch · Jan Leike · **Nisan Stiennon** · **Archit Sharma** · **Onur Mutlu** · **Danqi Chen** · **Yibo Lin** · **Nathan Lambert** · **James Thorne** · **Nelson F. Liu** · **Yizhong Wang** · **Niklas Muennighoff** · **Beidi Chen** · **Dan Alistarh**）｜X 已核验 **42**（`@tri_dao` / `@_albertgu` / `@ShunyuYao12` / `@edwardjhu` / `@jyangballin` / `@_jasonwei` / `@ilyasut` / `@RichardSSutton` / `@imhaotian` / `@ChunyuanLi` / `@karthik_r_n` / `@demishassabis` / `@koraykv` / `@OriolVinyalsML` / `@svlevine` / `@chelseabfinn` / `@moo_jin_kim` / `@ibab` / `@DannyDriess` / `@Kimi_Moonshot` / `@ZhipuAI` / `@MiniMax_AI` / `@KarlPertsch` / `@peteflorence` / `@KLieret` / `@janleike` / `@paulfchristiano` / `@billpeeb` / `@_tim_brooks` / `@rm_rafailov` / `@archit_sharma97` / `@_onurmutlu_` / `@danqi_chen` / `@natolambert` / `@_lewtun` / **`@percyliang`** / **`@j6mes`** / **`@yizhongwyz`** / **`@Muennighoff`** / **`@BeidiChen`** · **`@Azaliamirh`** · **`@theemozilla`**）｜X 未找到 / 未核验 **31**（73 人中 42 已核验；`@nelsonfliu` 无 bio、`@woosuk_kwon` 仅 3 followers、`@EliasFrantar` 无 bio、`@DanAlistarh` 404、`@bloc97` 与 `@BowenPeng` 无 bio ⇒ 均**不登记**）｜**X 可达（本机 Mihomo 7897；2026-11-12 21:0x 实测：本 shell 仍无 `HTTPS_PROXY` ⇒ 直连 `x.com` `000`、显式 `-x http://127.0.0.1:7897` 返回 `200` 且出口 IP `178.249.213.185`；`x_fetch.py` 内部默认走代理）**｜已 follow **0**（follow 需登录态 ⇒ 仍靠用户手动，见第二节）｜言论台账 **18 条**（V1–V18；V13–V16 均经单条推文页 `og:title` 核验为**他人推文** ⇒ 作废；**V17 = Percy Liang 2026-11-11 原推，本期首发**；**V18 = Jason Wei 2026-11-12 原推（推文页 `og:description` 全文核验），本期采用**）
 
 
 ---
@@ -925,6 +925,58 @@
 | 状态 | **待跟踪**（无邮箱、无 X ⇒ 仅建档；同论文已由三作 Muennighoff 覆盖，按「同论文 ≤1」不再追发） |
 | 备注 | KTO 的「前景理论 → HALO」框架主要出自其一作工作；若后续主页恢复或新论文挂出联系方式，再评估单独发信。 |
 
+### 70. Azalia Mirhoseini
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Azalia Mirhoseini（伊朗裔美国人 ⇒ 英文） |
+| 机构 | **Stanford University**（CS 助理教授，Scaling Intelligence 实验室）· 兼 **Ricursive Intelligence** 联合创始人（X bio 自述）· 曾任 Google Brain / Anthropic / Google DeepMind |
+| 代表论文 | Chip Placement with Deep Reinforcement Learning（`2004.10746`，**一作**；同行评审版 Nature 2021 = AlphaChip）· MoE 早期工作（本轮未逐条核） |
+| 邮箱 | **未找到**（本人主页 `https://www.azaliamirhoseini.com` 实测 `HTTP 200` / 600,171 B，为 Wix 站点，**只有 Contact 表单、无可读 `mailto:`** ⇒ 按纪律不写猜测邮箱） |
+| 主页 | <https://www.azaliamirhoseini.com>（实测 `HTTP 200`） |
+| X 账号 | **@Azaliamirh**（核验：主页 `href="https://x.com/Azaliamirh"`；`x.com/Azaliamirh` 实测 `200`，`<title>` = `Azalia Mirhoseini (@Azaliamirh) / X`，bio = `Founder @RicursiveAI, Asst. Prof. of CS at Stanford. Prev: DeepMind, Anthropic, Brain. Co-Creator of MoEs, AlphaChip, Test Time Scaling.` ⇒ 身份双核） |
+| 状态 | **待跟踪**（X 待 follow；无公开邮箱 ⇒ 暂不发信） |
+| 备注 | AlphaChip 是 designflow 布局类题绕不开的基线；其 X 简介直接挂出 `AlphaChip` 与 `MoEs`，说明她仍在该方向发声。若后续主页放出邮箱或论文挂通讯地址，再评估发信（问题方向：布局题的可迁移性 split 与 PPA 评估口径）。 |
+
+### 71. Jeffrey Quesnelle
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Jeffrey Quesnelle（英文） |
+| 机构 | **Nous Research**（联合创始人 / CTO；X bio 自述） |
+| 代表论文 | YaRN（`2309.00071`，**二作**；一作 Bowen Peng） |
+| 邮箱 | **未找到**（个人域名 `theemozilla.org` 实测 `000` 不可达；🚫 不猜） |
+| 主页 | **未找到**（同上） |
+| X 账号 | **@theemozilla**（核验链：YaRN 摘要给出的代码仓库 `github.com/jquesnelle/yarn` ⇒ `github.com/jquesnelle` 页面 `HTTP 200` / 178,027 B，profile 的 `href` 指向 `twitter.com/theemozilla`；`x.com/theemozilla` 实测 `200`，`<title>` = `emozilla (@theemozilla) / X`，bio = `catholic, ai researcher, co-founder/cto of @NousResearch` ⇒ 三方一致） |
+| 状态 | **待跟踪**（X 待 follow；无邮箱） |
+| 备注 | ⚠️ X 页**不显示真名**，身份靠「论文代码仓库归属 + 该 GitHub 账号外链 + bio 机构」三方拼合 ⇒ 已在 `AUTHORS.md` 显式记录核验链，**不作为「已实名核验」**计。YaRN 的工程细节（NTK-aware 缩放、注意力温度、外推边界）他是第一手；若拿到邮箱，问题方向是「2B 上扩展到 64K 的最小继续训练量」。 |
+
+### 72. Elias Frantar
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Elias Frantar（奥地利/意大利裔 ⇒ 英文） |
+| 机构 | **IST Austria**（GPTQ 发表时，Dan Alistarh 组；**现职本轮未核**） |
+| 代表论文 | GPTQ（`2210.17323`，**一作**）· SparseGPT（本轮未核） |
+| 邮箱 | **未找到**（`frantar.ai` / `www.frantar.ai` 实测均 `000`；IST Alistarh 组页面 `HTTP 200` 但成员列表**已无其名** ⇒ 已离开；🚫 不用论文 PDF 旧邮箱） |
+| 主页 | **未找到**（同上，不写猜测链接） |
+| X 账号 | **未找到**（`x.com/EliasFrantar` 实测 `200` 但 `<title>` = `Profile / X`、**无 `og:description` / 无 bio** ⇒ 身份不可证，按纪律**不登记**） |
+| 状态 | **待跟踪**（无邮箱、无 X ⇒ 仅建档；同论文已由末位作者 Dan Alistarh 覆盖，按「同论文 ≤1」不再追发） |
+| 备注 | GPTQ 的算法细节（OBQ 近似、group size、act-order）主要出自他；若其新主页/新论文挂出联系方式，再评估单独发信（问题方向：2B 上的层敏感度与域偏移校准）。 |
+
+### 73. Dan Alistarh
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Dan Alistarh（罗马尼亚裔 ⇒ 英文） |
+| 机构 | **IST Austria**（教授，机器学习与分布式系统方向；GPTQ 末位 / 资深作者） |
+| 代表论文 | GPTQ（`2210.17323`，**末位作者**）· 分布式训练 / 稀疏化系列（本轮未逐条核） |
+| 邮箱 | **Dan.Alistarh@ist.ac.at**（来源：IST Austria 课题组页 `https://www.ist.ac.at/en/research/alistarh-group/`，实测 `HTTP 200` / 127,603 B，页面逐字含该地址；**非论文 PDF 旧地址**） |
+| 主页 | <https://www.ist.ac.at/en/research/alistarh-group/>（课题组页，实测 `HTTP 200`） |
+| X 账号 | **未找到**（`x.com/DanAlistarh` 实测 `404 User Profile Not Found`；🚫 不试猜其他 handle） |
+| 状态 | **已发信**（2026-11-13 03:05:47 `SENT OK`；英文 187 词）· X 未找到 |
+| 备注 | 信问三点：① ~2B 上哪些层组用 4-bit 更危险、混合精度回退是否值得；② 校准集为芯片设计文本/工具日志（非通用网页）时 Hessian 目标是否仍成立、如何廉价检测校准过拟合；③ 长轨迹场景下 KV cache 主导显存时，4-bit + 小 batch 何时优于 8-bit。分别回填 zhulong 部署成本、pretrain 量化配方、harness 评测口径。 |
+
 ---
 
 ## 二、🟢 X 能力探测（只读 · 2026-11-11 **第四轮 12:4x 起已恢复可达**）
@@ -956,7 +1008,7 @@
 
 **落地**：脚本 `research/classic/x_fetch.py`，原始结果落 `research/classic/x/<handle>.json`（6 个文件，共 15.3 KB，可入 git）。
 
-### 待 follow 清单（请用户手动执行 · 33 个 handle 已在 X 侧二次核验）
+### 待 follow 清单（请用户手动执行 · 35 个 handle 已在 X 侧二次核验）
 
 | # | 人物 | handle | 主页链接 | X 侧核验（2026-11-12 实测） | 为什么值得跟 |
 |:--|:--|:--|:--|:--|:--|
@@ -993,9 +1045,11 @@
 | 31（**第十三轮新增**） | Rafael Rafailov | `@rm_rafailov` | <https://x.com/rm_rafailov> | `200`，`<title>` = `Rafael Rafailov @ NeurIPS (@rm_rafailov) / X`，`og:description` = `I work on RL at @thinkymachines. Previously at @StanfordAILab @GoogleDeepMind @UCBerkeley` | DPO 一作 ⇒ 「RM-free 偏好优化 / 离线偏好」的一手判断；现做 RL 基建，工具链视角有用 |
 | 32（**第十三轮新增**） | Archit Sharma | `@archit_sharma97` | <https://x.com/archit_sharma97> | `200`，`og:description` = `post-training science lead @GoogleDeepMind \| co-created: Gemini Deep Think series, DPO \| prev: @Stanford ...` ⇒ **自证参与 DPO** | DPO 二作 + Gemini Deep Think 后训练负责人 ⇒ 后训练配方与「推理模型怎么训」的稀有信息源 |
 | 33（**第十三轮新增**） | Onur Mutlu | `@_onurmutlu_` | <https://x.com/_onurmutlu_> | `200`，`og:description` = `Professor at ETH Zurich and Carnegie Mellon University; ... Computer Architect ... Group: @SAFARI_ETH_CMU`；handle 亦见于其 ETH 主页 `twitter.com/_onurmutlu_` | **存储方向第一关系人**（DRAM 模拟器 / RowHammer / 内存中心计算）⇒ 与我们 CXMT 场景最贴的技术判断源 |
+| 34（**第十七轮新增**） | Azalia Mirhoseini | `@Azaliamirh` | <https://x.com/Azaliamirh> | `200`，`<title>` = `Azalia Mirhoseini (@Azaliamirh) / X`，bio = `Founder @RicursiveAI, Asst. Prof. of CS at Stanford. Prev: DeepMind, Anthropic, Brain. Co-Creator of MoEs, AlphaChip, Test Time Scaling.`；handle 亦见于其本人主页 `href` | AlphaChip / MoE 共同作者 + 现做「AI 设计芯片」 ⇒ **designflow 布局线的第一关系人** |
+| 35（**第十七轮新增**） | Jeffrey Quesnelle | `@theemozilla` | <https://x.com/theemozilla> | `200`，`<title>` = `emozilla (@theemozilla) / X`，bio = `catholic, ai researcher, co-founder/cto of @NousResearch`；核验链 = YaRN 代码仓库 `github.com/jquesnelle` 页外链 `twitter.com/theemozilla` | YaRN 二作 ⇒ 长上下文扩展的工程细节一手来源（⚠️ X 页不显示真名，按「机构 + 仓库归属」三方拼合登记） |
 
 
-> **33 个 handle** 均来自其**本人主页的 `href`**、**X 页 `<title>`/`og:title` 自证** 或**论文作者身份可核对**的路径（前 6 个第四轮、7–10 第五轮、11–13 第六轮、14–17 第七轮、18–21 第八轮、22–25 第九轮、26 第十轮 `@KLieret`、27–28 第十一轮 `@janleike` / `@paulfchristiano`、**29–30 第十二轮 `@billpeeb` / `@_tim_brooks`**、**31–33 第十三轮 `@rm_rafailov` / `@archit_sharma97` / `@_onurmutlu_`**），并用 X 主页 `og:description` / `<title>` **二次核对身份一致**；`x.com/AlecRadford` 虽 `200` 但 bio 无身份信息、`x.com/JohnJumper` 虽 `200` 但仅 19 followers 且无 bio ⇒ **均拒绝登记**（见主表 #33 / #40）。⚠️ 序号在第十轮出现重复「25」（`@KLieret` 与 `@peteflorence` 同号）—— 属历史编号瑕疵，**handle 与核验证据不受影响**；本轮起按 27/28 续编，不再改动旧行（不删旧条目）。用户 follow 后请把状态改为 `已follow` 并写日期。
+> **35 个 handle** 均来自其**本人主页的 `href`**、**X 页 `<title>`/`og:title` 自证** 或**论文作者身份可核对**的路径（前 6 个第四轮、7–10 第五轮、11–13 第六轮、14–17 第七轮、18–21 第八轮、22–25 第九轮、26 第十轮 `@KLieret`、27–28 第十一轮 `@janleike` / `@paulfchristiano`、**29–30 第十二轮 `@billpeeb` / `@_tim_brooks`**、**31–33 第十三轮 `@rm_rafailov` / `@archit_sharma97` / `@_onurmutlu_`**、**34–35 第十七轮 `@Azaliamirh` / `@theemozilla`**），并用 X 主页 `og:description` / `<title>` **二次核对身份一致**；`x.com/AlecRadford` 虽 `200` 但 bio 无身份信息、`x.com/JohnJumper` 虽 `200` 但仅 19 followers 且无 bio ⇒ **均拒绝登记**（见主表 #33 / #40）。⚠️ 序号在第十轮出现重复「25」（`@KLieret` 与 `@peteflorence` 同号）—— 属历史编号瑕疵，**handle 与核验证据不受影响**；本轮起按 27/28 续编，不再改动旧行（不删旧条目）。用户 follow 后请把状态改为 `已follow` 并写日期。
 
 ### 已核验言论台账（第四轮首获 · 原文 + 时间 + 链接）
 
@@ -1016,6 +1070,8 @@
 | V13（**第十三轮核验后作废**） | （拟 Archit Sharma `@archit_sharma97`） | 2026-10-28 17:03 UTC | 拟用文 `Just two weeks after rolling out Gemini 4 Argon, excited to share a preview of Gemini 4 Carbon - our next frontier model. It has state-of-the-art long horizon coding capabilities …`（profile 抓取截断） | <https://x.com/archit_sharma97/status/2115489649649234259> | ❌ **未采用（作者不符）**：推文页 `200` 但 `og:title` = **`koray kavukcuoglu (@koraykv) on X`** ≠ Archit Sharma ⇒ profile timeline JSON **混入他人推文**（与 V10/V11 同型）；**不采用** |
 | V14（**第十三轮核验后作废**） | （拟 Rafael Rafailov `@rm_rafailov`） | 2026-09-24 17:46 UTC | 拟用文 `We are approaching cyber-superintelligence. But our systems aren't ready. We must secure our model weights and infrastructure against three new threats: sabotage, escape, and theft…`（profile 抓取截断） | <https://x.com/rm_rafailov/status/2103179354163536228> | ❌ **未采用（作者不符）**：推文页 `200` 但 `og:title` = **`Shalev Lifshitz (@Shalev_lif) on X`** ⇒ 同上；**不采用**（此条亦说明：知名研究者时间线里**转发/引用他人**占比高，profile 解析必须先核作者） |
 | V17（**第十五轮新增 · 第十六轮首发**） | Percy Liang `@percyliang` | 2026-11-11 04:51 UTC | "You can simultaneously believe that AI is transformational and that there are bottlenecks." | <https://x.com/percyliang/status/2120378748457607431> | ✅ **本期（2026-11-13）`voice_ready` 首发**：推文页 `200` / 160,932 B，`og:title` = `Percy Liang (@percyliang) on X`，`og:description` 与 profile `full_text` **逐字一致**；话题点 = 「既相信 AI 是变革性的，也相信存在瓶颈」；风险 = **观点句**，无上下文，🚫 不得写成「证明 scaling 到顶」或「瓶颈已定位」 |
+| V18（**第十七轮新增**） | Jason Wei `@_jasonwei` | 2026-11-12 17:49 UTC | "Turns out my initial version missed a lot of evals. Claude searched harder and found 36% more mentions of benchmarks: https://t.co/ONtgbBuwEs — It still misses blog posts with fancy UI elements, long PDFs, etc. Guess we need a benchmark for creating benchmark benchmark..." | <https://x.com/_jasonwei/status/2120937085515510234> | ✅ **本期（2026-11-13）`voice_ready` 采用**：推文页 `200` / 169,476 B，`og:title` = `Jason Wei on X: "Turns out my initial version missed a lot of evals..."`，`og:description` 与 profile `full_text` 一致（换行处已按原文保留）；话题点 = 「衡量 AI 的榜单本身也会漏项：一个 agent 多搜一轮就多找出 36% 的评测提及」；风险 = ① 36% 是**他自己那次 agent 搜索的增量**、不是所有榜单的普适误差；② 推文自嘲「需要 benchmark 的 benchmark」，🚫 不得写成「评测体系崩塌」；③ 属作者个人观察，非同行评审结论 |
+
 
 
 
