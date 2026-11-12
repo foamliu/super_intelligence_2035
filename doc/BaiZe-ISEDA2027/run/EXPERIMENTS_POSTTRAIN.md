@@ -7146,6 +7146,16 @@ SANDBOX_PORT="${SANDBOX_PORT_HTTP:-8664}"       # alive port (8667 dead)
   - `run_batch_20261112_205949`（孤儿：xargs PID 3855070 ppid=1，其 run_batch.sh 父进程已死）— 也跑同一 5 题，同样到 2/5 0 PASS，task3 RUNNING（run_task PID 4008459 etimes≈775s）
   - 两个批次间隔 37s 启动（20:59:49 vs 21:00:26），疑似 wake341 启动时跑了两次；孤儿批次会继续跑完但 summary 可能不完整。**未 kill**（避免误伤；两批结果同质，浪费算力但不影响结论）；后续如需清理可 `kill 3855070`（孤儿 xargs）。
 - Run1（batch 203445）已完成结果见 §L4.6：**0/4 = 0.0% Pass@1**（1 ERROR excluded），infra-limited（600s timeout 太短，3/4 cline_exit=137 SIGKILL）→ Run2 用 2700s 重跑正是为修此 infra 问题。
+- **wake346 更新（21:55）**：PID 3858541 alive on 36.15（etimes≈3560s≈59min）；**4/5 tasks DONE, 0 PASS, 3 FAIL, 1 ERROR**：
+  - task1 ABMatchPlacementCheck-001: **FAIL** (no submit.zip, cline wrote nothing, dur=1045s, cline_exit=0)
+  - task2 Analog-001: **FAIL** (submit.zip missing required files: sample_output.txt, error_summary.txt, dur=751s, cline_exit=0)
+  - task3 AnalogGroupCfgMergeDummy-001: **FAIL** (B-run exit=1, NameError: name 'main' not defined in gg_cfg_merge_verify.py, dur=972s, cline_exit=1)
+  - task4 AutoPR-001: **ERROR** (assets dir missing: `/nasdata/app.e0031982/code/EDA-Flow-Bench/benchmarks/EDA-Eval-DesignFlow/assets/EDA-Eval-DesignFlow-AutoPR-001` — **infra issue, not capability**)
+  - task5 BitcellMcSpGen-001: **RUNNING** (main batch xargs child PID 4079466, ~747s≈12min in, timeout=2700s=45min)
+  - summary.log: `[4/5] 80% PASS:0 FAIL:3 | AutoPR -> rc=2`
+  - **🔴 孤儿批次已 KILL**（wake346）：PID 3855070(xargs) + 4104472(bash) + 4104521(cline) 全部已 kill，孤儿批次也到 4/5（同质结果），其 task5 被中断。主批次 3858541 确认仍 alive。清理原因：两批同时跑同一 task5 竞争 GPU4 :8098 推理资源。
+  - PreToolUse hook: deployed ✅ all tasks, hook_blocks=0
+  - **初步结论**：Run2 与 Run1 同质 — 0 PASS。失败分类：2/4 为"无输出/缺文件"(cline 产出不完整), 1/4 为"代码逻辑错"(NameError), 1/4 为 infra ERROR(assets missing)。**无 1 题 PASS ⇒ MiniCPM5-2B baseline 在 designflow 5-task 子集上 Pass@1 = 0%**。需扩到全量 61 task 确认是否为子集偏斜。
 
 ### L4.6c Post-SFT Eval Progress（wake342→wake344 监控）
 - PID 789217 alive on .17（wake344: etimes≈9009s ≈ 2hr 30min）
@@ -7156,6 +7166,7 @@ SANDBOX_PORT="${SANDBOX_PORT_HTTP:-8664}"       # alive port (8667 dead)
 - 预计剩余：~1.5-2hr（~68 tasks remaining, 8 workers, ~36 tasks/hr throughput）
 - 结果：TBD（等 final_report.json → run_eval.py 评分 → compare vs 36% baseline）
 - **wake345 更新（21:43）**：PID 789217 alive（etimes≈9567s≈2hr40min）；输出目录 `~/eda_code_eval/2026_1112_190335/`；**113 个 code dir**（`code/EDA-Eval-PyAether-*`），**67 个 .py 已生成**（wake344 时 52 → +15）；stats 计数文件（success/failure/timeout）因 harness flock 原子写，读取瞬间为空，以 wake344 抓取的 success=86/failure=3/timeout=1（90/158 resolved）为最近可信值；GPU5 :8097 98%util 仍活跃生成；8 workers active。预计仍需 ~1-1.5hr 完成 158 题 → run_eval.py 评分。
+- **wake346 更新（21:55）**：PID 789217 alive（etimes≈10308s≈2hr52min）；**103 个 EDA-Eval-PyAether-* task dir**（115 total code dir 含非任务子目录），**73 个 .py 已生成**（wake345 时 67 → +6）；GPU5 :8097 95%util 仍活跃；8 workers active（worker_8 正在跑 EDA-Eval-PyAether-102，21:52 最新 code dir）；最新 pyAether_code 产出 `acebjs_drawing_batch_geom.py`(21:41)；stats 计数文件仍因 flock 不可靠读取。**~55 tasks remaining, ETA ~3-4hr**。结果仍 TBD（等 final_report.json → run_eval.py 评分 → compare vs 36% baseline）。
 
 ### L4.7 BaiZe Ckpt 可达性（BLOCKED）
 - `/nas_train` 未挂载于 .17（`mount | grep nas_train` → 空）
